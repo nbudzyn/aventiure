@@ -15,8 +15,6 @@ import de.nb.aventiure2.playeraction.PlayerActionService;
 import static de.nb.aventiure2.data.database.AvDatabase.getDatabase;
 
 public class MainViewModel extends AndroidViewModel {
-    private final PlayerActionService playerActionService;
-
     private final LiveData<StoryState> storyText;
     private final LiveData<List<AbstractPlayerAction>> playerActions;
 
@@ -24,8 +22,9 @@ public class MainViewModel extends AndroidViewModel {
         super(application);
         final AvDatabase db = getDatabase(application);
 
-        playerActionService = new PlayerActionService(application);
+        final PlayerActionService playerActionService = new PlayerActionService(application);
 
+        // TODO Only publish new values AFTER EACHE ACTION!
         storyText = db.storyStateDao().getStoryState();
         playerActions = playerActionService.getPlayerActions();
     }

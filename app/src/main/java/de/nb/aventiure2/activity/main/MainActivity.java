@@ -46,37 +46,18 @@ public class MainActivity extends AppCompatActivity {
 
                     storyTextView.setText(text);
 
-                    storyTextScrollView.post(new Runnable() {
+                    storyTextScrollView.post(() -> {
+                        final int top = storyTextView.getBottom() -
+                                storyTextScrollView.getHeight()
+                                + storyTextScrollView.getPaddingBottom();
 
-                        @Override
-                        public void run() {
-
-                            final int top = storyTextView.getBottom() -
-                                    storyTextScrollView.getHeight()
-                                    + storyTextScrollView.getPaddingBottom();
-
-                            final int duration =
-                                    (text.length() - oldText.length()) * 5;
-                            ObjectAnimator.ofInt(storyTextScrollView, "scrollY",
-                                    top)
-                                    .setDuration(duration).start();
-
-                            // storyTextScrollView.fullScroll(ScrollView.FOCUS_DOWN);
-                        }
+                        final int duration =
+                                (text.length() - oldText.length()) * 5;
+                        ObjectAnimator.ofInt(storyTextScrollView, "scrollY",
+                                top)
+                                .setDuration(duration)
+                                .start();
                     });
-
-                    /*
-                    @Nullable final Layout layout = storyTextView.getLayout();
-                    if (layout != null) {
-                        final int scrollDelta =
-                                layout.getLineBottom(storyTextView.getLineCount() - 1)
-                                        - storyTextView.getScrollY() - storyTextView.getHeight()
-                                        + storyTextView.getPaddingTop()
-                                        + storyTextView.getPaddingBottom();
-                        if (scrollDelta > 0) {
-                            storyTextView.scrollBy(0, scrollDelta);
-                        }
-                    } */
                 }
         );
         mainViewModel.getPlayerActions().observe(this,
