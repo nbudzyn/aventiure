@@ -5,6 +5,7 @@ import androidx.annotation.Nullable;
 import androidx.room.Entity;
 import androidx.room.PrimaryKey;
 
+import de.nb.aventiure2.data.world.creature.Creature;
 import de.nb.aventiure2.data.world.object.AvObject;
 import de.nb.aventiure2.data.world.room.AvRoom;
 
@@ -36,8 +37,15 @@ public class StoryState {
     private final boolean allowsAdditionalDuSatzreihengliedOhneSubjekt;
 
     /**
+     * The creature the user has been talking to
+     * recently - if any.
+     */
+    @Nullable
+    private final Creature talkingTo;
+
+    /**
      * The last object the user interacted with
-     * recently (e.g. {@link AvObject#GOLDENE_KUGEL} - if any.
+     * recently - if any.
      */
     @Nullable
     private final AvObject lastObject;
@@ -54,7 +62,9 @@ public class StoryState {
         return new StoryState(lastActionClassName,
                 startsNew,
                 newText,
-                allowsAdditionalDuSatzreihengliedOhneSubjekt, dann, lastObject,
+                allowsAdditionalDuSatzreihengliedOhneSubjekt, dann,
+                talkingTo,
+                lastObject,
                 lastRoom);
     }
 
@@ -63,11 +73,14 @@ public class StoryState {
                @NonNull final String text,
                final boolean allowsAdditionalDuSatzreihengliedOhneSubjekt,
                final boolean dann,
+               @Nullable final Creature talkingTo,
                @Nullable final AvObject lastObject,
                @NonNull final AvRoom lastRoom) {
         this(lastAction == null ? null : lastAction.getClass().getCanonicalName(),
                 startsNew,
-                text, allowsAdditionalDuSatzreihengliedOhneSubjekt, dann, lastObject,
+                text, allowsAdditionalDuSatzreihengliedOhneSubjekt, dann,
+                talkingTo,
+                lastObject,
                 lastRoom);
     }
 
@@ -76,6 +89,7 @@ public class StoryState {
                @NonNull final String text,
                final boolean allowsAdditionalDuSatzreihengliedOhneSubjekt,
                final boolean dann,
+               @Nullable final Creature talkingTo,
                @Nullable final AvObject lastObject,
                @NonNull final AvRoom lastRoom) {
         this.lastActionClassName = lastActionClassName;
@@ -85,6 +99,7 @@ public class StoryState {
                 allowsAdditionalDuSatzreihengliedOhneSubjekt;
         this.dann = dann;
         this.lastRoom = lastRoom;
+        this.talkingTo = talkingTo;
         this.lastObject = lastObject;
     }
 
@@ -98,6 +113,19 @@ public class StoryState {
 
     public boolean allowsAdditionalDuSatzreihengliedOhneSubjekt() {
         return allowsAdditionalDuSatzreihengliedOhneSubjekt;
+    }
+
+    public boolean talkingTo(final Creature.Key creatureKey) {
+        return talkingTo(Creature.get(creatureKey));
+    }
+
+    private boolean talkingTo(final Creature creature) {
+        return creature.equals(talkingTo);
+    }
+
+    @Nullable
+    Creature getTalkingTo() {
+        return talkingTo;
     }
 
     public boolean noLastObject() {
@@ -135,7 +163,7 @@ public class StoryState {
         return dann;
     }
 
-    public StoryState prependTo(final StoryState other) {
+    StoryState prependTo(final StoryState other) {
         String res = getText().trim();
 
         switch (other.startsNew) {
@@ -193,7 +221,7 @@ public class StoryState {
 
         final String lastRelevantCharCurrent =
                 baseTrimmed.substring(baseTrimmed.length() - 1);
-        if (".!?\"\n".contains(lastRelevantCharCurrent)) {
+        if (".!?\"“\n".contains(lastRelevantCharCurrent)) {
             return false;
         }
 
@@ -205,12 +233,12 @@ public class StoryState {
     private static boolean spaceNeeded(final String base, final String addition) {
         final String lastCharCurrent =
                 base.substring(base.length() - 1);
-        if (" \"\n".contains(lastCharCurrent)) {
+        if (" „\n".contains(lastCharCurrent)) {
             return false;
         }
 
         final String firstCharAdditional = addition.substring(0, 1);
-        if (" .,;!?\n".contains(firstCharAdditional)) {
+        if (" .,;!?“\n".contains(firstCharAdditional)) {
             return false;
         }
 

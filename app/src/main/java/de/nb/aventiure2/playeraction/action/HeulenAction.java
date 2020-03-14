@@ -94,8 +94,8 @@ public class HeulenAction extends AbstractPlayerAction {
                                          final CreatureData froschprinz) {
         if (froschprinz.hasState(UNAUFFAELLIG)) {
             final String desc = "weinst immer lauter und kannst dich gar nicht trösten. " +
-                    "Und wie du so klagst, ruft dir jemand zu: \"Was hast du vor, " +
-                    "du schreist ja, dass sich ein Stein erbarmen möchte.\" Du siehst " +
+                    "Und wie du so klagst, ruft dir jemand zu: „Was hast du vor, " +
+                    "du schreist ja, dass sich ein Stein erbarmen möchte.“ Du siehst " +
                     "dich um, woher " +
                     "die Stimme käme, da erblickst du " +
                     froschprinz.akk();

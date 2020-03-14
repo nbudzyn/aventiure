@@ -11,6 +11,10 @@ import de.nb.aventiure2.data.world.entity.AbstractEntityData;
 import de.nb.aventiure2.data.world.room.AvRoom;
 import de.nb.aventiure2.german.Nominalphrase;
 
+import static de.nb.aventiure2.german.Nominalphrase.np;
+import static de.nb.aventiure2.german.NumerusGenus.N;
+import static de.nb.aventiure2.german.NumerusGenus.PL;
+
 /**
  * Changeable data for an object in the world.
  */
@@ -30,6 +34,25 @@ public class ObjectData extends AbstractEntityData {
      * Spielers immer noch dort liegt)
      */
     private final boolean demSCInDenBrunnenGefallen;
+
+    /**
+     * Gibt eine Beschreibung dieses Objekts zurück - wenn es nur eines ist - sonst
+     * etwas wie "die Dinge".
+     */
+    public static Nominalphrase getDescriptionSingleOrCollective(final List<ObjectData> objects) {
+        if (objects.isEmpty()) {
+            return np(N, "nichts");
+        }
+
+        if (objects.size() == 1) {
+            final ObjectData objectInDenBrunnenGefallen =
+                    objects.iterator().next();
+
+            return objectInDenBrunnenGefallen.getDescription(false);
+        }
+
+        return np(PL, "die Dinge", "den Dingen");
+    }
 
     public static String getAkkShort(final List<ObjectData> objectDatas) {
         if (objectDatas.size() == 1) {

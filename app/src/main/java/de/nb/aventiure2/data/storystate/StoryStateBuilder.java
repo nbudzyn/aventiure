@@ -7,6 +7,7 @@ import androidx.annotation.Nullable;
 import androidx.room.PrimaryKey;
 
 import de.nb.aventiure2.data.storystate.StoryState.StartsNew;
+import de.nb.aventiure2.data.world.creature.Creature;
 import de.nb.aventiure2.data.world.object.AvObject;
 import de.nb.aventiure2.data.world.room.AvRoom;
 
@@ -38,6 +39,12 @@ public class StoryStateBuilder {
     private boolean allowsAdditionalDuSatzreihengliedOhneSubjekt = false;
 
     private boolean dann = false;
+
+    /**
+     * The creature the user is / has recently been talking to.
+     */
+    @Nullable
+    private Creature talkingTo;
 
     /**
      * The last object.
@@ -87,6 +94,11 @@ public class StoryStateBuilder {
         return this;
     }
 
+    public StoryStateBuilder imGespraechMit(final Creature talkingTo) {
+        this.talkingTo = talkingTo;
+        return this;
+    }
+
     public StoryStateBuilder letztesObject(final AvObject lastObject) {
         this.lastObject = lastObject;
         return this;
@@ -133,6 +145,7 @@ public class StoryStateBuilder {
                 text,
                 allowsAdditionalDuSatzreihengliedOhneSubjekt,
                 dann,
+                talkingTo,
                 lastObject, lastRoom);
     }
 }

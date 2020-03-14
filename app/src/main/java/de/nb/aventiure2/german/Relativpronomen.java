@@ -4,27 +4,29 @@ import com.google.common.collect.ImmutableMap;
 
 import java.util.Map;
 
-import static de.nb.aventiure2.german.Genus.F;
-import static de.nb.aventiure2.german.Genus.M;
-import static de.nb.aventiure2.german.Genus.N;
+import static de.nb.aventiure2.german.NumerusGenus.F;
+import static de.nb.aventiure2.german.NumerusGenus.M;
+import static de.nb.aventiure2.german.NumerusGenus.N;
+import static de.nb.aventiure2.german.NumerusGenus.PL;
 
 public class Relativpronomen extends DekliniertePhrase {
-    private static final Map<Genus, Relativpronomen> ALL = ImmutableMap.of(
+    private static final Map<NumerusGenus, Relativpronomen> ALL = ImmutableMap.of(
             M, new Relativpronomen(M, "der", "dem", "den"),
             F, new Relativpronomen(F, "die", "der"),
-            N, new Relativpronomen(N, "das", "dem"));
+            N, new Relativpronomen(N, "das", "dem"),
+            PL, new Relativpronomen(N, "die", "denen"));
 
-    public static Relativpronomen get(final Genus genus) {
-        return ALL.get(genus);
+    public static Relativpronomen get(final NumerusGenus numerusGenus) {
+        return ALL.get(numerusGenus);
     }
 
-    private Relativpronomen(final Genus genus,
+    private Relativpronomen(final NumerusGenus numerusGenus,
                             final String nominativAkkusativ, final String dativ) {
-        this(genus, nominativAkkusativ, dativ, nominativAkkusativ);
+        this(numerusGenus, nominativAkkusativ, dativ, nominativAkkusativ);
     }
 
-    private Relativpronomen(final Genus genus,
+    private Relativpronomen(final NumerusGenus numerusGenus,
                             final String nominativ, final String dativ, final String akkusativ) {
-        super(genus, nominativ, dativ, akkusativ);
+        super(numerusGenus, nominativ, dativ, akkusativ);
     }
 }

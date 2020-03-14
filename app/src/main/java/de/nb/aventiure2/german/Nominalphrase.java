@@ -4,40 +4,40 @@ package de.nb.aventiure2.german;
  * Eine Nominalphrase, z.B. "ein dicker, hässlicher Frosch".
  */
 public class Nominalphrase extends DekliniertePhrase {
-    public static final Nominalphrase np(final Genus genus,
+    public static final Nominalphrase np(final NumerusGenus numerusGenus,
                                          final String nominativDativUndAkkusativ) {
-        return new Nominalphrase(genus, nominativDativUndAkkusativ);
+        return new Nominalphrase(numerusGenus, nominativDativUndAkkusativ);
     }
 
-    public static final Nominalphrase np(final Genus genus,
+    public static final Nominalphrase np(final NumerusGenus numerusGenus,
                                          final String nominativUndAkkusativ,
                                          final String dativ) {
-        return new Nominalphrase(genus, nominativUndAkkusativ, dativ);
+        return new Nominalphrase(numerusGenus, nominativUndAkkusativ, dativ);
     }
 
-    public static final Nominalphrase np(final Genus genus,
+    public static final Nominalphrase np(final NumerusGenus numerusGenus,
                                          final String nominativ, final String dativ,
                                          final String akkusativ) {
-        return new Nominalphrase(genus, nominativ, dativ, akkusativ);
+        return new Nominalphrase(numerusGenus, nominativ, dativ, akkusativ);
     }
 
-    public Nominalphrase(final Genus genus,
+    public Nominalphrase(final NumerusGenus numerusGenus,
                          final String nominativDativUndAkkusativ) {
-        this(genus, nominativDativUndAkkusativ, nominativDativUndAkkusativ);
+        this(numerusGenus, nominativDativUndAkkusativ, nominativDativUndAkkusativ);
     }
 
 
-    public Nominalphrase(final Genus genus,
+    public Nominalphrase(final NumerusGenus numerusGenus,
                          final String nominativAkkusativ, final String dativ) {
-        this(genus, nominativAkkusativ, dativ, nominativAkkusativ);
+        this(numerusGenus, nominativAkkusativ, dativ, nominativAkkusativ);
     }
 
-    public Nominalphrase(final Genus genus,
+    public Nominalphrase(final NumerusGenus numerusGenus,
                          final String nominativ, final String dativ, final String akkusativ) {
-        super(genus, nominativ, dativ, akkusativ);
+        super(numerusGenus, nominativ, dativ, akkusativ);
     }
 
     public Relativpronomen relPron() {
-        return Relativpronomen.get(getGenus());
+        return Relativpronomen.get(getNumerusGenus());
     }
 }

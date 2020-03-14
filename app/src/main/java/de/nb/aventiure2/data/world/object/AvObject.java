@@ -6,12 +6,12 @@ import java.util.List;
 
 import de.nb.aventiure2.data.world.entity.AbstractEntity;
 import de.nb.aventiure2.data.world.room.AvRoom;
-import de.nb.aventiure2.german.Genus;
 import de.nb.aventiure2.german.Nominalphrase;
+import de.nb.aventiure2.german.NumerusGenus;
 
 import static de.nb.aventiure2.data.world.object.AvObject.Key.GOLDENE_KUGEL;
-import static de.nb.aventiure2.german.Genus.F;
 import static de.nb.aventiure2.german.Nominalphrase.np;
+import static de.nb.aventiure2.german.NumerusGenus.F;
 
 /**
  * An object in the world.
@@ -49,15 +49,15 @@ public class AvObject extends AbstractEntity {
     }
 
     AvObject(final Key key,
-             final Genus genus,
+             final NumerusGenus numerusGenus,
              final String descriptionAtFirstSightNomDatAkk,
              final String normalDescriptionWhenKnownNomDatAkk,
              final String shortDescriptionWhenKnownNomDatAkk,
              final AvRoom initialRoom) {
         this(key,
-                np(genus, descriptionAtFirstSightNomDatAkk),
-                np(genus, normalDescriptionWhenKnownNomDatAkk),
-                np(genus, shortDescriptionWhenKnownNomDatAkk),
+                np(numerusGenus, descriptionAtFirstSightNomDatAkk),
+                np(numerusGenus, normalDescriptionWhenKnownNomDatAkk),
+                np(numerusGenus, shortDescriptionWhenKnownNomDatAkk),
                 initialRoom);
     }
 

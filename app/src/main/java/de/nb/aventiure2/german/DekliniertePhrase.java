@@ -1,25 +1,25 @@
 package de.nb.aventiure2.german;
 
 public abstract class DekliniertePhrase {
-    private final Genus genus;
+    private final NumerusGenus numerusGenus;
     private final String nominativ;
     private final String dativ;
     private final String akkusativ;
 
-    public DekliniertePhrase(final Genus genus,
+    public DekliniertePhrase(final NumerusGenus numerusGenus,
                              final String nominativDativUndAkkusativ) {
-        this(genus, nominativDativUndAkkusativ, nominativDativUndAkkusativ);
+        this(numerusGenus, nominativDativUndAkkusativ, nominativDativUndAkkusativ);
     }
 
 
-    public DekliniertePhrase(final Genus genus,
+    public DekliniertePhrase(final NumerusGenus numerusGenus,
                              final String nominativAkkusativ, final String dativ) {
-        this(genus, nominativAkkusativ, dativ, nominativAkkusativ);
+        this(numerusGenus, nominativAkkusativ, dativ, nominativAkkusativ);
     }
 
-    public DekliniertePhrase(final Genus genus,
+    public DekliniertePhrase(final NumerusGenus numerusGenus,
                              final String nominativ, final String dativ, final String akkusativ) {
-        this.genus = genus;
+        this.numerusGenus = numerusGenus;
         this.nominativ = nominativ;
         this.dativ = dativ;
         this.akkusativ = akkusativ;
@@ -37,7 +37,7 @@ public abstract class DekliniertePhrase {
         return akkusativ;
     }
 
-    public Genus getGenus() {
-        return genus;
+    public NumerusGenus getNumerusGenus() {
+        return numerusGenus;
     }
 }

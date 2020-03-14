@@ -5,5 +5,6 @@ package de.nb.aventiure2.data.world.creature;
  */
 public enum CreatureState {
     UNAUFFAELLIG, HAT_SC_HILFSBEREIT_ANGESPROCHEN,
-    HAT_NACH_BELOHNUNG_GEFRAGT
+    HAT_NACH_BELOHNUNG_GEFRAGT,
+    HAT_FORDERUNG_GESTELLT
 }
