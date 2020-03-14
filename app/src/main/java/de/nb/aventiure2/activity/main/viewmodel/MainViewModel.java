@@ -24,7 +24,7 @@ public class MainViewModel extends AndroidViewModel {
 
         final PlayerActionService playerActionService = new PlayerActionService(application);
 
-        // TODO Only publish new values AFTER EACHE ACTION!
+        // TODO Only publish new values AFTER EACH ACTION!
         storyText = db.storyStateDao().getStoryState();
         playerActions = playerActionService.getPlayerActions();
     }
