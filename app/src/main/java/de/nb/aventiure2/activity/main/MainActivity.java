@@ -1,10 +1,11 @@
 package de.nb.aventiure2.activity.main;
 
+import android.animation.ObjectAnimator;
 import android.os.Bundle;
 import android.os.Debug;
-import android.text.method.ScrollingMovementMethod;
 import android.util.Log;
 import android.view.WindowManager;
+import android.widget.ScrollView;
 import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -20,6 +21,7 @@ import de.nb.aventiure2.activity.main.viewmodel.MainViewModel;
 
 public class MainActivity extends AppCompatActivity {
     private TextView storyTextView;
+    private ScrollView storyTextScrollView;
     private RecyclerView actionsRecyclerView;
     private ActionsAdapter actionsAdapter;
 
@@ -31,15 +33,52 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         storyTextView = findViewById(R.id.storyTextView);
-        storyTextView.setMovementMethod(new ScrollingMovementMethod());
+        storyTextScrollView = findViewById(R.id.storyTextScrollView);
 
         createActionsRecyclerView();
 
         mainViewModel = new ViewModelProvider(this).get(MainViewModel.class);
         mainViewModel.getStoryText().observe(this,
-                t ->
-                        storyTextView.setText(t == null ? "" : t.getText()));
+                t -> {
+                    final String text = t == null ? "" : t.getText();
+                    final CharSequence oldText =
+                            storyTextView.getText() == null ? "" : storyTextView.getText();
 
+                    storyTextView.setText(text);
+
+                    storyTextScrollView.post(new Runnable() {
+
+                        @Override
+                        public void run() {
+
+                            final int top = storyTextView.getBottom() -
+                                    storyTextScrollView.getHeight()
+                                    + storyTextScrollView.getPaddingBottom();
+
+                            final int duration =
+                                    (text.length() - oldText.length()) * 5;
+                            ObjectAnimator.ofInt(storyTextScrollView, "scrollY",
+                                    top)
+                                    .setDuration(duration).start();
+
+                            // storyTextScrollView.fullScroll(ScrollView.FOCUS_DOWN);
+                        }
+                    });
+
+                    /*
+                    @Nullable final Layout layout = storyTextView.getLayout();
+                    if (layout != null) {
+                        final int scrollDelta =
+                                layout.getLineBottom(storyTextView.getLineCount() - 1)
+                                        - storyTextView.getScrollY() - storyTextView.getHeight()
+                                        + storyTextView.getPaddingTop()
+                                        + storyTextView.getPaddingBottom();
+                        if (scrollDelta > 0) {
+                            storyTextView.scrollBy(0, scrollDelta);
+                        }
+                    } */
+                }
+        );
         mainViewModel.getPlayerActions().observe(this,
                 actions -> actionsAdapter.setPlayerActions(
                         actions == null ? ImmutableList.of() : actions));
