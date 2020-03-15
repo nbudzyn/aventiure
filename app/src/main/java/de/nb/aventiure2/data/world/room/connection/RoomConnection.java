@@ -28,10 +28,12 @@ public class RoomConnection {
                                                     "Sonne ins Gesicht; der Tag ist recht heiß. " +
                                                     "Nahebei liegt ein großer, dunkler Wald",
                                             false,
+                                            false,
                                             false),
                                     du(
                                             "verlässt",
                                             "das Schloss",
+                                            false,
                                             true,
                                             true)))
                     .put(DRAUSSEN_VOR_DEM_SCHLOSS, SCHLOSS,
@@ -40,6 +42,7 @@ public class RoomConnection {
                                     du(
                                             "gehst",
                                             "wieder hinein in das Schloss",
+                                            false,
                                             true,
                                             true)))
                     .put(DRAUSSEN_VOR_DEM_SCHLOSS, IM_WALD_NAHE_DEM_SCHLOSS,
@@ -48,11 +51,13 @@ public class RoomConnection {
                                     du(
                                             "folgst",
                                             "einem Pfad in den Wald",
+                                            false,
                                             true,
                                             true),
                                     du(
                                             "läufst",
                                             "wieder in den dunklen Wald",
+                                            false,
                                             true,
                                             true)))
                     .put(IM_WALD_NAHE_DEM_SCHLOSS, DRAUSSEN_VOR_DEM_SCHLOSS,
@@ -63,6 +68,7 @@ public class RoomConnection {
                                             "zurück ans helle Tageslicht. Du stehst " +
                                                     "wieder vor dem Schloss",
                                             false,
+                                            false,
                                             true)))
                     .put(IM_WALD_NAHE_DEM_SCHLOSS, IM_WALD_BEIM_BRUNNEN,
                             con(
@@ -72,9 +78,11 @@ public class RoomConnection {
                                                     "der ist ein Brunnen. Du setzt dich an den " +
                                                     "Brunnenrand - hier ist es kühler",
                                             false,
+                                            false,
                                             true),
                                     du("kehrst",
                                             "zurück zum Brunnen unter der Linde",
+                                            false,
                                             true,
                                             true)))
                     .put(IM_WALD_BEIM_BRUNNEN, IM_WALD_NAHE_DEM_SCHLOSS,
@@ -82,6 +90,7 @@ public class RoomConnection {
                                     "Den Weg Richtung Schloss gehen",
                                     du("verlässt",
                                             "den Brunnen",
+                                            false,
                                             true,
                                             true)))
                     .build();

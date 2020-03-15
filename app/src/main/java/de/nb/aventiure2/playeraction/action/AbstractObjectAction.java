@@ -17,8 +17,9 @@ abstract class AbstractObjectAction extends AbstractPlayerAction {
     private final ObjectData objectData;
 
     public AbstractObjectAction(final AvDatabase db,
+                                final StoryState initialStoryState,
                                 @NonNull final ObjectData objectData) {
-        super(db);
+        super(db, initialStoryState);
         this.objectData = objectData;
     }
 

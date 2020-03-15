@@ -22,17 +22,18 @@ import static de.nb.aventiure2.german.GermanUtil.capitalize;
 public class NehmenAction extends AbstractObjectAction {
     private final AvRoom room;
 
-    public NehmenAction(final AvDatabase db, final ObjectData objectData, final AvRoom room) {
-        super(db, objectData);
-        this.room = room;
-    }
-
     public static Collection<AbstractPlayerAction> buildActions(
-            final AvDatabase db, final AvRoom room,
+            final AvDatabase db, final StoryState initialStoryState, final AvRoom room,
             final ObjectData objectData) {
         final ImmutableList.Builder<AbstractPlayerAction> res = ImmutableList.builder();
-        res.add(new NehmenAction(db, objectData, room));
+        res.add(new NehmenAction(db, initialStoryState, objectData, room));
         return res.build();
+    }
+
+    private NehmenAction(final AvDatabase db, final StoryState initialStoryState,
+                         final ObjectData objectData, final AvRoom room) {
+        super(db, initialStoryState, objectData);
+        this.room = room;
     }
 
     @Override
@@ -42,15 +43,15 @@ public class NehmenAction extends AbstractObjectAction {
     }
 
     @Override
-    public void narrateAndDo(final StoryState currentStoryState) {
-        n.add(buildStoryState(currentStoryState));
-        objectDataDao.update(getObject(), null, true, false);
-        playerInventoryDao.take(getObject());
+    public void narrateAndDo() {
+        n.add(buildStoryState());
+        db.objectDataDao().update(getObject(), null, true, false);
+        db.playerInventoryDao().take(getObject());
     }
 
-    private StoryStateBuilder buildStoryState(final StoryState currentStoryState) {
-        if (currentStoryState.lastActionWas(AblegenAction.class)) {
-            if (currentStoryState.lastObjectWas(getObject())) {
+    private StoryStateBuilder buildStoryState() {
+        if (initialStoryState.lastActionWas(AblegenAction.class)) {
+            if (initialStoryState.lastObjectWas(getObject())) {
                 return t(StartsNew.PARAGRAPH,
                         "Dann nimmst du " + getObjectData().akk() +
                                 " erneut")

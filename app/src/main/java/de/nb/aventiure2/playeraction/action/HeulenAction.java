@@ -29,20 +29,23 @@ import static de.nb.aventiure2.data.world.creature.CreatureState.UNAUFFAELLIG;
 public class HeulenAction extends AbstractPlayerAction {
     private final List<CreatureData> creatures;
 
-    public HeulenAction(final AvDatabase db,
-                        final List<CreatureData> creatures) {
-        super(db);
-        this.creatures = creatures;
-    }
-
     public static Collection<AbstractPlayerAction> buildActions(
-            final AvDatabase db, final PlayerStats stats, final List<CreatureData> creaturesInRoom) {
+            final AvDatabase db,
+            final StoryState initialStoryState,
+            final PlayerStats stats, final List<CreatureData> creaturesInRoom) {
         final ImmutableList.Builder<AbstractPlayerAction> res = ImmutableList.builder();
         if (stats.getStateOfMind() == PlayerStateOfMind.UNTROESTLICH) {
-            res.add(new HeulenAction(db, creaturesInRoom));
+            res.add(new HeulenAction(db, initialStoryState, creaturesInRoom));
         }
 
         return res.build();
+    }
+
+    private HeulenAction(final AvDatabase db,
+                         final StoryState initialStoryState,
+                         final List<CreatureData> creatures) {
+        super(db, initialStoryState);
+        this.creatures = creatures;
     }
 
     @Override
@@ -52,25 +55,25 @@ public class HeulenAction extends AbstractPlayerAction {
     }
 
     @Override
-    public void narrateAndDo(final StoryState currentStoryState) {
-        if (currentStoryState.lastActionWas(HeulenAction.class)) {
-            narrateAndDoWiederholung(currentStoryState);
+    public void narrateAndDo() {
+        if (initialStoryState.lastActionWas(HeulenAction.class)) {
+            narrateAndDoWiederholung();
             return;
         }
 
-        narrateAndDoErstesMal(currentStoryState);
+        narrateAndDoErstesMal();
     }
 
-    private void narrateAndDoWiederholung(final StoryState currentStoryState) {
+    private void narrateAndDoWiederholung() {
         @Nullable final CreatureData froschprinz =
                 findCreatureInRoom(FROSCHPRINZ);
 
         if (froschprinz != null) {
-            narrateAndDoFroschprinz(currentStoryState, froschprinz);
+            narrateAndDoFroschprinz(froschprinz);
             return;
         }
 
-        if (currentStoryState.allowsAdditionalDuSatzreihengliedOhneSubjekt()) {
+        if (initialStoryState.allowsAdditionalDuSatzreihengliedOhneSubjekt()) {
             switch (PlayerActionUtil.random(3)) {
                 case 1:
                     n.add(t(WORD, "und weinst")
@@ -90,8 +93,7 @@ public class HeulenAction extends AbstractPlayerAction {
                         .undWartest());
     }
 
-    private void narrateAndDoFroschprinz(final StoryState currentStoryState,
-                                         final CreatureData froschprinz) {
+    private void narrateAndDoFroschprinz(final CreatureData froschprinz) {
         if (froschprinz.hasState(UNAUFFAELLIG)) {
             final String desc = "weinst immer lauter und kannst dich gar nicht trösten. " +
                     "Und wie du so klagst, ruft dir jemand zu: „Was hast du vor, " +
@@ -99,15 +101,17 @@ public class HeulenAction extends AbstractPlayerAction {
                     "dich um, woher " +
                     "die Stimme käme, da erblickst du " +
                     froschprinz.akk();
-            if (currentStoryState.allowsAdditionalDuSatzreihengliedOhneSubjekt()) {
-                n.add(t(WORD, "und " + desc));
+            if (initialStoryState.allowsAdditionalDuSatzreihengliedOhneSubjekt()) {
+                n.add(t(WORD, "und " + desc)
+                        .imGespraechMit(froschprinz.getCreature()));
             } else {
-                n.add(t(SENTENCE, "Du " + desc));
+                n.add(t(SENTENCE, "Du " + desc)
+                        .imGespraechMit(froschprinz.getCreature()));
             }
 
-            creatureDataDao.setState(FROSCHPRINZ, HAT_SC_HILFSBEREIT_ANGESPROCHEN);
-            creatureDataDao.setKnown(FROSCHPRINZ);
-            playerStatsDao.setStateOfMind(PlayerStateOfMind.NEUTRAL);
+            db.creatureDataDao().setState(FROSCHPRINZ, HAT_SC_HILFSBEREIT_ANGESPROCHEN);
+            db.creatureDataDao().setKnown(FROSCHPRINZ);
+            db.playerStatsDao().setStateOfMind(PlayerStateOfMind.NEUTRAL);
             return;
         }
 
@@ -125,14 +129,14 @@ public class HeulenAction extends AbstractPlayerAction {
         return null;
     }
 
-    private void narrateAndDoErstesMal(final StoryState currentStoryState) {
+    private void narrateAndDoErstesMal() {
         if (PlayerActionUtil.random(2) == 1) {
             n.add(t(PARAGRAPH,
                     "Plötzlich überkommt dich ein Schluchzen"));
             return;
         }
 
-        if (currentStoryState.dann()) {
+        if (initialStoryState.dann()) {
             n.add(t(PARAGRAPH,
                     "Dann bricht die Trauer aus dir heraus und du heulst los"));
             return;

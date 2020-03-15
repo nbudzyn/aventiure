@@ -14,7 +14,6 @@ import de.nb.aventiure2.data.storystate.StoryState;
 import de.nb.aventiure2.data.storystate.StoryStateBuilder;
 import de.nb.aventiure2.data.world.creature.Creature;
 import de.nb.aventiure2.data.world.creature.CreatureData;
-import de.nb.aventiure2.data.world.creature.CreatureState;
 import de.nb.aventiure2.data.world.object.AvObject;
 import de.nb.aventiure2.data.world.object.ObjectData;
 import de.nb.aventiure2.data.world.room.AvRoom;
@@ -23,9 +22,11 @@ import de.nb.aventiure2.playeraction.AbstractPlayerAction;
 
 import static de.nb.aventiure2.data.storystate.StoryState.StartsNew.PARAGRAPH;
 import static de.nb.aventiure2.data.storystate.StoryState.StartsNew.SENTENCE;
+import static de.nb.aventiure2.data.storystate.StoryState.StartsNew.WORD;
 import static de.nb.aventiure2.data.world.creature.Creature.Key.FROSCHPRINZ;
 import static de.nb.aventiure2.data.world.creature.CreatureState.HAT_FORDERUNG_GESTELLT;
 import static de.nb.aventiure2.data.world.creature.CreatureState.HAT_NACH_BELOHNUNG_GEFRAGT;
+import static de.nb.aventiure2.data.world.creature.CreatureState.HAT_SC_HILFSBEREIT_ANGESPROCHEN;
 import static de.nb.aventiure2.data.world.object.ObjectData.getDescriptionSingleOrCollective;
 import static de.nb.aventiure2.german.GermanUtil.capitalize;
 import static de.nb.aventiure2.german.SeinUtil.istSind;
@@ -35,7 +36,7 @@ import static de.nb.aventiure2.german.SeinUtil.istSind;
  */
 public class RedenAction extends AbstractPlayerAction {
     enum Inhalt {
-        Neutral, Angebote_machen
+        Neutral, Angebote_machen, Gespraech_beenden
     }
 
     private final AvRoom room;
@@ -47,63 +48,107 @@ public class RedenAction extends AbstractPlayerAction {
     @NonNull
     private final Inhalt inhalt;
 
-    public RedenAction(final AvDatabase db, final CreatureData creatureData, final AvRoom room,
-                       final Map<AvObject.Key, ObjectData> allObjectsByKey,
-                       final Inhalt inhalt) {
-        super(db);
-        this.creatureData = creatureData;
-        this.room = room;
-        this.allObjectsByKey = allObjectsByKey;
-        this.inhalt = inhalt;
-    }
+    private final String name;
 
     public static Collection<AbstractPlayerAction> buildActions(
-            final AvDatabase db, final AvRoom room, final Map<AvObject.Key, ObjectData> allObjectsByKey,
+            final AvDatabase db, final StoryState initialStoryState, final AvRoom room,
+            final Map<AvObject.Key, ObjectData> allObjectsByKey,
             final CreatureData creatureData) {
         final ImmutableList.Builder<AbstractPlayerAction> res = ImmutableList.builder();
         if (creatureData.getCreature().getKey() == FROSCHPRINZ) {
-            res.addAll(buildFroschprinzActions(db, room, allObjectsByKey, creatureData));
+            res.addAll(buildFroschprinzActions(db, initialStoryState, room, allObjectsByKey,
+                    creatureData));
         }
 
         return res.build();
     }
 
     private static Collection<AbstractPlayerAction> buildFroschprinzActions(
-            final AvDatabase db, final AvRoom room,
+            final AvDatabase db,
+            final StoryState initialStoryState,
+            final AvRoom room,
             final Map<AvObject.Key, ObjectData> allObjectsByKey,
             final CreatureData creatureData) {
         switch (creatureData.getState()) {
             case HAT_SC_HILFSBEREIT_ANGESPROCHEN:
-                return ImmutableList.of(
-                        new RedenAction(db, creatureData, room, allObjectsByKey, Inhalt.Neutral));
+                return buildFroschprinzHatSCHillfbereitAngesprochenActions(db, initialStoryState,
+                        room, allObjectsByKey,
+                        creatureData);
             case HAT_NACH_BELOHNUNG_GEFRAGT:
-                if (filterInDenBrunnenGefallen(allObjectsByKey).isEmpty()) {
-                    return ImmutableList.of();
-                }
-
-                return ImmutableList.of(
-                        new RedenAction(db, creatureData, room, allObjectsByKey,
-                                Inhalt.Angebote_machen));
+                return buildFroschprinzHatNachBelohnungGefragtActions(
+                        db, initialStoryState, room, allObjectsByKey, creatureData);
         }
 
         return ImmutableList.of();
     }
 
-    @Override
-    @NonNull
-    public String getName() {
-        switch (inhalt) {
-            case Angebote_machen:
-                return capitalize(creatureData.dat()) + " Angebote machen";
-            default:
-                return "Mit " + creatureData.dat() + " reden";
+    private static Collection<AbstractPlayerAction> buildFroschprinzHatSCHillfbereitAngesprochenActions(
+            final AvDatabase db, final StoryState initialStoryState, final AvRoom room,
+            final Map<AvObject.Key, ObjectData> allObjectsByKey, final CreatureData creatureData) {
+        final ImmutableList.Builder<AbstractPlayerAction> res =
+                ImmutableList.builder();
+
+        res.add(new RedenAction(db, initialStoryState, creatureData, room,
+                allObjectsByKey, Inhalt.Neutral,
+                "Mit " + creatureData.dat() + " reden"));
+
+        if (initialStoryState.talkingTo(FROSCHPRINZ)) {
+            res.add(new RedenAction(db, initialStoryState, creatureData, room,
+                    allObjectsByKey,
+                    Inhalt.Gespraech_beenden,
+                    "Den Frosch ignorieren"));
         }
+        return res.build();
+    }
+
+    private static Collection<AbstractPlayerAction> buildFroschprinzHatNachBelohnungGefragtActions(
+            final AvDatabase db, final StoryState initialStoryState, final AvRoom room,
+            final Map<AvObject.Key, ObjectData> allObjectsByKey, final CreatureData creatureData) {
+        if (filterInDenBrunnenGefallen(allObjectsByKey).isEmpty()) {
+            return ImmutableList.of();
+        }
+
+        final ImmutableList.Builder<AbstractPlayerAction> res =
+                ImmutableList.builder();
+
+        res.add(new RedenAction(db, initialStoryState, creatureData, room, allObjectsByKey,
+                Inhalt.Angebote_machen,
+                capitalize(creatureData.dat()) + " Angebote machen"));
+
+        if (initialStoryState.talkingTo(FROSCHPRINZ)) {
+            res.add(new RedenAction(db, initialStoryState, creatureData, room,
+                    allObjectsByKey,
+                    Inhalt.Gespraech_beenden,
+                    "Das Gespräch beenden"));
+        }
+
+        return res.build();
+    }
+
+    private RedenAction(final AvDatabase db,
+                        final StoryState initialStoryState,
+                        @NonNull final CreatureData creatureData, final AvRoom room,
+                        final Map<AvObject.Key, ObjectData> allObjectsByKey,
+                        @NonNull final Inhalt inhalt,
+                        @NonNull final String name) {
+        super(db, initialStoryState);
+        this.creatureData = creatureData;
+        this.room = room;
+        this.allObjectsByKey = allObjectsByKey;
+        this.inhalt = inhalt;
+        this.name = name;
     }
 
     @Override
-    public void narrateAndDo(final StoryState currentStoryState) {
+    @NonNull
+    public String getName() {
+        return name;
+    }
+
+    @Override
+    public void narrateAndDo() {
         if (creatureIs(FROSCHPRINZ)) {
-            narrateAndDoFroschprinz(currentStoryState);
+            narrateAndDoFroschprinz();
             return;
         }
 
@@ -111,63 +156,81 @@ public class RedenAction extends AbstractPlayerAction {
                 creatureData.getCreature().getKey());
     }
 
-    private void narrateAndDoFroschprinz(final StoryState currentStoryState) {
+    private void narrateAndDoFroschprinz() {
         final List<ObjectData> objectsInDenBrunnenGefallen =
                 getObjectsInDenBrunnenGefallen();
 
         switch (inhalt) {
             case Angebote_machen:
-                narrateAndDoFroschprinzAngeboteMachen(currentStoryState,
+                narrateAndDoFroschprinzAngeboteMachen(
                         objectsInDenBrunnenGefallen);
                 return;
+            case Gespraech_beenden:
+                switch (creatureData.getState()) {
+                    case HAT_SC_HILFSBEREIT_ANGESPROCHEN:
+                        narrateAndDoFroschprinzAngesprochenGespraechBeenden();
+                        return;
+                    case HAT_NACH_BELOHNUNG_GEFRAGT:
+                        narrateAndDoFroschprinzNachBelohnungGefragtGespraechBeenden();
+                        return;
+                    case HAT_FORDERUNG_GESTELLT:
+                        // TODO
+                        return;
+                    default:
+                        throw new IllegalStateException(
+                                "Unexpected froschprinz state for Gespraech beenden: " +
+                                        creatureData.getState());
+                }
+
             default:
-                narrateAndDoFroschprinzAllg(currentStoryState,
+                narrateAndDoFroschprinzAllg(
                         objectsInDenBrunnenGefallen);
         }
     }
 
-    private void narrateAndDoFroschprinzAngeboteMachen(
-            final StoryState currentStoryState,
-            final List<ObjectData> objectsInDenBrunnenGefallen) {
-        if (!currentStoryState.talkingTo(FROSCHPRINZ)) {
-            n.add(t(PARAGRAPH,
-                    "„Frosch“, sprichst du ihn an, „steht dein Angebot noch?“"));
-            n.add(t(PARAGRAPH,
-                    "„Sicher“, antwortet der Frosch, „ich kann dir alles aus dem Brunnen " +
-                            "holen, was hineingefallen ist. Was gibst du mir dafür?“"));
-        }
-
+    private void narrateAndDoFroschprinzAngesprochenGespraechBeenden() {
         n.add(t(SENTENCE,
-                "„Was du haben willst, lieber Frosch“, sagst du, „meine Kleider, " +
-                        "Perlen oder Edelsteine?“"));
-
-        n.add(t(PARAGRAPH,
-                "Der Frosch antwortet: „Deine Kleider, Perlen oder Edelsteine, die mag " +
-                        "ich nicht. " +
-                        "Aber wenn ich am Tischlein neben dir sitzen soll, von deinem Tellerlein " +
-                        "essen und " +
-                        "aus deinem Becherlein trinken: Wenn du mir das versprichst, so will ich " +
-                        "hinuntersteigen und dir " +
-                        // die goldene Kugel / die Dinge
-                        getDescriptionSingleOrCollective(objectsInDenBrunnenGefallen).akk() +
-                        " wieder herauf holen.“"));
-
-        creatureDataDao.setState(FROSCHPRINZ, HAT_FORDERUNG_GESTELLT);
+                "Du tust, als hättest du nichts gehört")
+                .komma()
+                .undWartest()
+                .dann()
+                .imGespraechMit(null));
     }
 
-    private void narrateAndDoFroschprinzAllg(final StoryState currentStoryState,
-                                             final List<ObjectData> objectsInDenBrunnenGefallen) {
-        n.add(t(SENTENCE, "„Ach, du bist's, alter Wasserpatscher“, sagst du")
-                .undWartest()
-                .dann());
+    private void narrateAndDoFroschprinzAllg(final List<ObjectData> objectsInDenBrunnenGefallen) {
+        if (initialStoryState.talkingTo(FROSCHPRINZ)) {
+            n.add(t(SENTENCE, "„Ach, du bist's, alter Wasserpatscher“, sagst du")
+                    .undWartest()
+                    .dann());
+        } else {
+            if (initialStoryState.lastActionWas(RedenAction.class)) {
+                if (initialStoryState.allowsAdditionalDuSatzreihengliedOhneSubjekt()
+                        && initialStoryState.dann()) {
+                    n.add(t(WORD,
+                            "– aber dann gibst du dir einen Ruck:"));
+                } else if (initialStoryState.dann()) {
+                    n.add(t(SENTENCE,
+                            "Aber dann gibst du dir einen Ruck:"));
+
+                } else {
+                    n.add(t(SENTENCE,
+                            "Du gibst dir einen Ruck:"));
+                }
+            }
+
+            n.add(t(SENTENCE, "„Hallo, du hässlicher Frosch!“, redest du ihn an")
+                    .undWartest()
+                    .dann());
+        }
 
         if (objectsInDenBrunnenGefallen.isEmpty()) {
             return;
         }
 
-        narrateAndDoFroschprinzInDenBrunnenGefallenErklaerung(currentStoryState, objectsInDenBrunnenGefallen);
+        narrateAndDoFroschprinzInDenBrunnenGefallenErklaerung(
+                objectsInDenBrunnenGefallen);
 
-        if (creatureData.hasState(CreatureState.HAT_SC_HILFSBEREIT_ANGESPROCHEN)) {
+        if (creatureData.hasState(HAT_SC_HILFSBEREIT_ANGESPROCHEN)) {
             narrateAndDoFroschprinzHerausholenAngebot(objectsInDenBrunnenGefallen);
             return;
         }
@@ -177,8 +240,8 @@ public class RedenAction extends AbstractPlayerAction {
     }
 
     private void narrateAndDoFroschprinzInDenBrunnenGefallenErklaerung(
-            final StoryState currentStoryState, final List<ObjectData> objectsInDenBrunnenGefallen) {
-        if (currentStoryState.lastActionWas(HeulenAction.class)) {
+            final List<ObjectData> objectsInDenBrunnenGefallen) {
+        if (initialStoryState.lastActionWas(HeulenAction.class)) {
             final Nominalphrase objectsDesc =
                     getDescriptionSingleOrCollective(objectsInDenBrunnenGefallen);
 
@@ -216,7 +279,46 @@ public class RedenAction extends AbstractPlayerAction {
                 + objectsInDenBrunnenGefallenShortAkk
                 + " wieder heraufhole?“"));
 
-        creatureDataDao.setState(FROSCHPRINZ, HAT_NACH_BELOHNUNG_GEFRAGT);
+        db.creatureDataDao().setState(FROSCHPRINZ, HAT_NACH_BELOHNUNG_GEFRAGT);
+    }
+
+    private void narrateAndDoFroschprinzNachBelohnungGefragtGespraechBeenden() {
+        n.add(t(SENTENCE,
+                "„Denkst du etwa, man überschüttet dich mit Gold und Juwelen? - Vergiss es!“")
+                .imGespraechMit(null));
+    }
+
+    private void narrateAndDoFroschprinzAngeboteMachen(
+            final List<ObjectData> objectsInDenBrunnenGefallen) {
+        if (!initialStoryState.talkingTo(FROSCHPRINZ)) {
+            if (initialStoryState.lastActionWas(RedenAction.class)) {
+                n.add(t(PARAGRAPH,
+                        "Dann gehst du kurz in dich…"));
+            }
+
+            n.add(t(PARAGRAPH,
+                    "„Frosch“, sprichst du ihn an, „steht dein Angebot noch?“"));
+            n.add(t(PARAGRAPH,
+                    "„Sicher“, antwortet der Frosch, „ich kann dir alles aus dem Brunnen " +
+                            "holen, was hineingefallen ist. Was gibst du mir dafür?“"));
+        }
+
+        n.add(t(SENTENCE,
+                "„Was du haben willst, lieber Frosch“, sagst du, „meine Kleider, " +
+                        "Perlen oder Edelsteine?“"));
+
+        n.add(t(PARAGRAPH,
+                "Der Frosch antwortet: „Deine Kleider, Perlen oder Edelsteine, die mag " +
+                        "ich nicht. " +
+                        "Aber wenn ich am Tischlein neben dir sitzen soll, von deinem Tellerlein " +
+                        "essen und " +
+                        "aus deinem Becherlein trinken: Wenn du mir das versprichst, so will ich " +
+                        "hinuntersteigen und dir " +
+                        // die goldene Kugel / die Dinge
+                        getDescriptionSingleOrCollective(objectsInDenBrunnenGefallen).akk() +
+                        " wieder herauf holen.“"));
+
+        db.creatureDataDao().setState(FROSCHPRINZ, HAT_FORDERUNG_GESTELLT);
     }
 
     private List<ObjectData> getObjectsInDenBrunnenGefallen() {
@@ -228,7 +330,8 @@ public class RedenAction extends AbstractPlayerAction {
         return filterInDenBrunnenGefallen(objectsByKey.values());
     }
 
-    private static List<ObjectData> filterInDenBrunnenGefallen(final Collection<ObjectData> objects) {
+    private static List<ObjectData> filterInDenBrunnenGefallen(
+            final Collection<ObjectData> objects) {
         return objects.stream()
                 .filter(ObjectData::isDemSCInDenBrunnenGefallen)
                 .collect(Collectors.toList());

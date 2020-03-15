@@ -31,6 +31,12 @@ public class StoryState {
     private final String text;
 
     /**
+     * Ob ein Komma aussteht. Wenn ein Komma aussteht, muss als nächstes ein Komma folgen -
+     * oder das Satzende.
+     */
+    private final boolean kommaStehtAus;
+
+    /**
      * Whether the story can be continued by a Satzreihenglied without subject where
      * the player character is the implicit subject (such as " und gehst durch die Tür.")
      */
@@ -62,6 +68,7 @@ public class StoryState {
         return new StoryState(lastActionClassName,
                 startsNew,
                 newText,
+                kommaStehtAus,
                 allowsAdditionalDuSatzreihengliedOhneSubjekt, dann,
                 talkingTo,
                 lastObject,
@@ -71,6 +78,7 @@ public class StoryState {
     StoryState(@Nullable final IPlayerAction lastAction,
                @NonNull final StartsNew startsNew,
                @NonNull final String text,
+               final boolean kommaStehtAus,
                final boolean allowsAdditionalDuSatzreihengliedOhneSubjekt,
                final boolean dann,
                @Nullable final Creature talkingTo,
@@ -78,7 +86,9 @@ public class StoryState {
                @NonNull final AvRoom lastRoom) {
         this(lastAction == null ? null : lastAction.getClass().getCanonicalName(),
                 startsNew,
-                text, allowsAdditionalDuSatzreihengliedOhneSubjekt, dann,
+                text,
+                kommaStehtAus,
+                allowsAdditionalDuSatzreihengliedOhneSubjekt, dann,
                 talkingTo,
                 lastObject,
                 lastRoom);
@@ -87,6 +97,7 @@ public class StoryState {
     StoryState(@Nullable final String lastActionClassName,
                @NonNull final StartsNew startsNew,
                @NonNull final String text,
+               final boolean kommaStehtAus,
                final boolean allowsAdditionalDuSatzreihengliedOhneSubjekt,
                final boolean dann,
                @Nullable final Creature talkingTo,
@@ -95,6 +106,7 @@ public class StoryState {
         this.lastActionClassName = lastActionClassName;
         this.startsNew = startsNew;
         this.text = text;
+        this.kommaStehtAus = kommaStehtAus;
         this.allowsAdditionalDuSatzreihengliedOhneSubjekt =
                 allowsAdditionalDuSatzreihengliedOhneSubjekt;
         this.dann = dann;
@@ -111,8 +123,16 @@ public class StoryState {
         return text;
     }
 
+    protected boolean kommaStehtAus() {
+        return kommaStehtAus;
+    }
+
     public boolean allowsAdditionalDuSatzreihengliedOhneSubjekt() {
         return allowsAdditionalDuSatzreihengliedOhneSubjekt;
+    }
+
+    public boolean talkingToAnyone() {
+        return talkingTo != null;
     }
 
     public boolean talkingTo(final Creature.Key creatureKey) {
@@ -168,6 +188,10 @@ public class StoryState {
 
         switch (other.startsNew) {
             case WORD:
+                if (kommaNeeded(res, other.getText())) {
+                    res += ",";
+                }
+
                 if (spaceNeeded(res, other.getText())) {
                     res += " ";
                 }
@@ -228,6 +252,25 @@ public class StoryState {
         final String firstCharAdditional =
                 addition.trim().substring(0, 1);
         return !".!?".contains(firstCharAdditional);
+    }
+
+    private boolean kommaNeeded(final String base, final String addition) {
+        if (!kommaStehtAus) {
+            return false;
+        }
+
+        final String lastCharCurrent =
+                base.substring(base.length() - 1);
+        if (lastCharCurrent.equals(",")) {
+            return false;
+        }
+
+        final String firstCharAdditional = addition.substring(0, 1);
+        if (".,;!?“\n".contains(firstCharAdditional)) {
+            return false;
+        }
+
+        return true;
     }
 
     private static boolean spaceNeeded(final String base, final String addition) {

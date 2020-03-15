@@ -33,6 +33,12 @@ public class StoryStateBuilder {
     private String text;
 
     /**
+     * Ob ein Komma aussteht. Wenn ein Komma aussteht, muss als nächstes ein Komma folgen -
+     * oder das Satzende.
+     */
+    private boolean kommaStehtAus;
+
+    /**
      * Whether the story can be continued by a Satzreihenglied without subject where
      * the player character is the implicit subject (such as " und gehst durch die Tür.")
      */
@@ -114,6 +120,16 @@ public class StoryStateBuilder {
         return this;
     }
 
+    public StoryStateBuilder komma() {
+        return komma(true);
+    }
+
+    public StoryStateBuilder komma(final boolean kommaStehtAus) {
+        this.kommaStehtAus = kommaStehtAus;
+        return this;
+    }
+
+
     /**
      * Sets a flag that the text can be continued by a Satzreihenglied without subject where
      * the player character is the implicit subject
@@ -122,7 +138,8 @@ public class StoryStateBuilder {
         return undWartest(true);
     }
 
-    public StoryStateBuilder undWartest(final boolean allowsAdditionalPlayerSatzreihengliedOhneSubjekt) {
+    public StoryStateBuilder undWartest(
+            final boolean allowsAdditionalPlayerSatzreihengliedOhneSubjekt) {
         allowsAdditionalDuSatzreihengliedOhneSubjekt =
                 allowsAdditionalPlayerSatzreihengliedOhneSubjekt;
         return this;
@@ -143,6 +160,7 @@ public class StoryStateBuilder {
         return new StoryState(lastAction,
                 startsNew,
                 text,
+                kommaStehtAus,
                 allowsAdditionalDuSatzreihengliedOhneSubjekt,
                 dann,
                 talkingTo,

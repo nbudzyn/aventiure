@@ -8,36 +8,25 @@ import de.nb.aventiure2.data.storystate.StoryState;
 import de.nb.aventiure2.data.storystate.StoryState.StartsNew;
 import de.nb.aventiure2.data.storystate.StoryStateBuilder;
 import de.nb.aventiure2.data.storystate.StoryStateDao;
-import de.nb.aventiure2.data.world.creature.CreatureDataDao;
-import de.nb.aventiure2.data.world.object.ObjectDataDao;
-import de.nb.aventiure2.data.world.player.inventory.PlayerInventoryDao;
-import de.nb.aventiure2.data.world.player.location.PlayerLocationDao;
-import de.nb.aventiure2.data.world.player.stats.PlayerStatsDao;
-import de.nb.aventiure2.data.world.room.RoomDao;
 
 /**
  * An action the player could choose to advance the story.
  */
 public abstract class AbstractPlayerAction implements IPlayerAction {
-    private final AvDatabase db;
+    protected final AvDatabase db;
     protected final StoryStateDao n;
-    protected final RoomDao roomDao;
-    protected final ObjectDataDao objectDataDao;
-    protected final CreatureDataDao creatureDataDao;
-    protected final PlayerStatsDao playerStatsDao;
-    protected final PlayerLocationDao playerLocationDao;
-    protected final PlayerInventoryDao playerInventoryDao;
 
-    protected AbstractPlayerAction(final AvDatabase db) {
+    /**
+     * The {@link StoryState} at the beginning of the action.
+     */
+    protected final StoryState initialStoryState;
+
+    protected AbstractPlayerAction(final AvDatabase db, final StoryState initialStoryState) {
         this.db = db;
-        roomDao = db.roomDao();
-        playerStatsDao = db.playerStatsDao();
-        objectDataDao = db.objectDataDao();
-        creatureDataDao = db.creatureDataDao();
-        playerLocationDao = db.playerLocationDao();
-        playerInventoryDao = db.playerInventoryDao();
 
         n = db.storyStateDao();
+
+        this.initialStoryState = initialStoryState;
     }
 
     /**
@@ -45,13 +34,13 @@ public abstract class AbstractPlayerAction implements IPlayerAction {
      */
     abstract public String getName();
 
-    abstract public void narrateAndDo(StoryState currentStoryState);
+    abstract public void narrateAndDo();
 
     protected StoryStateBuilder t(
             final StartsNew startsNew,
             @NonNull final String text) {
         return StoryStateBuilder.t(this, startsNew, text)
                 // Sensible default - caller may override this setting
-                .letzterRaum(playerLocationDao.getPlayerLocation().getRoom());
+                .letzterRaum(db.playerLocationDao().getPlayerLocation().getRoom());
     }
 }

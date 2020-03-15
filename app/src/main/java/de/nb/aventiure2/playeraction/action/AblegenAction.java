@@ -21,17 +21,19 @@ import static de.nb.aventiure2.german.GermanUtil.capitalize;
 public class AblegenAction extends AbstractObjectAction {
     private final AvRoom room;
 
-    public AblegenAction(final AvDatabase db,
-                         final ObjectData objectData,
-                         final AvRoom room) {
-        super(db, objectData);
-        this.room = room;
+    public static Collection<AbstractPlayerAction> buildActions(
+            final AvDatabase db,
+            final StoryState initialStoryState,
+            final AvRoom room, final ObjectData objectData) {
+        return ImmutableList.of(new AblegenAction(db, initialStoryState, objectData, room));
     }
 
-    public static Collection<AbstractPlayerAction> buildActions(
-            final AvDatabase db, final AvRoom room, final ObjectData objectData) {
-        // TODO Nicht jedes Object lässt sich hochwerfen...
-        return ImmutableList.of(new AblegenAction(db, objectData, room));
+    private AblegenAction(final AvDatabase db,
+                          final StoryState initialStoryState,
+                          final ObjectData objectData,
+                          final AvRoom room) {
+        super(db, initialStoryState, objectData);
+        this.room = room;
     }
 
     @Override
@@ -41,16 +43,16 @@ public class AblegenAction extends AbstractObjectAction {
     }
 
     @Override
-    public void narrateAndDo(final StoryState currentStoryState) {
-        narrate(currentStoryState);
-        playerInventoryDao.letGo(getObject());
-        objectDataDao.setRoom(getObject(), room);
+    public void narrateAndDo() {
+        narrate();
+        db.playerInventoryDao().letGo(getObject());
+        db.objectDataDao().setRoom(getObject(), room);
     }
 
-    private void narrate(final StoryState currentStoryState) {
-        if (currentStoryState.allowsAdditionalDuSatzreihengliedOhneSubjekt()) {
-            if (currentStoryState.lastObjectWas(getObject())) {
-                if (currentStoryState.lastActionWas(NehmenAction.class)) {
+    private void narrate() {
+        if (initialStoryState.allowsAdditionalDuSatzreihengliedOhneSubjekt()) {
+            if (initialStoryState.lastObjectWas(getObject())) {
+                if (initialStoryState.lastActionWas(NehmenAction.class)) {
                     n.add(t(StartsNew.WORD,
                             "- und legst sie sogleich wieder hin"));
                     return;
@@ -63,7 +65,7 @@ public class AblegenAction extends AbstractObjectAction {
             }
 
             String text = "und legst " + getObjectData().akk();
-            if (currentStoryState.lastActionWas(BewegenAction.class)) {
+            if (initialStoryState.lastActionWas(BewegenAction.class)) {
                 text += " dort";
             }
 

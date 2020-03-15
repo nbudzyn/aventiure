@@ -34,9 +34,10 @@ public class BewegenAction extends AbstractPlayerAction {
     private final AvRoom newRoom;
 
     private BewegenAction(final AvDatabase db,
+                          final StoryState initialStoryState,
                           final AvRoom oldRoom,
                           final AvRoom newRoom) {
-        super(db);
+        super(db, initialStoryState);
 
         checkArgument(newRoom != oldRoom, "newRoom == oldRoom)");
 
@@ -45,8 +46,11 @@ public class BewegenAction extends AbstractPlayerAction {
     }
 
     public static Collection<AbstractPlayerAction> buildActions(
-            final AvDatabase db, final AvRoom room, final AvRoom connectedRoom) {
-        return ImmutableList.of(new BewegenAction(db, room, connectedRoom));
+            final AvDatabase db,
+            final StoryState initialStoryState,
+            final AvRoom room, final AvRoom connectedRoom) {
+        return ImmutableList.of(
+                new BewegenAction(db, initialStoryState, room, connectedRoom));
     }
 
     @Override
@@ -56,21 +60,20 @@ public class BewegenAction extends AbstractPlayerAction {
     }
 
     @Override
-    public void narrateAndDo(final StoryState currentStoryState) {
-        final List<ObjectData> objectsInNewRoom = objectDataDao.getObjectsInRoom(newRoom);
+    public void narrateAndDo() {
+        final List<ObjectData> objectsInNewRoom = db.objectDataDao().getObjectsInRoom(newRoom);
         final List<CreatureData> creaturesInNewRoom =
-                creatureDataDao.getCreaturesInRoom(newRoom);
+                db.creatureDataDao().getCreaturesInRoom(newRoom);
 
-        narrate(currentStoryState, objectsInNewRoom, creaturesInNewRoom);
+        narrate(objectsInNewRoom, creaturesInNewRoom);
 
-        playerLocationDao.setRoom(newRoom);
+        db.playerLocationDao().setRoom(newRoom);
         setRoomAndObjectsKnown(objectsInNewRoom);
     }
 
-    private void narrate(final StoryState currentStoryState,
-                         final List<ObjectData> objectsInNewRoom,
+    private void narrate(final List<ObjectData> objectsInNewRoom,
                          final List<CreatureData> creaturesInNewRoom) {
-        n.add(buildNewStoryStateRoomOnly(currentStoryState));
+        n.add(buildNewStoryStateRoomOnly(initialStoryState));
 
         if (!objectsInNewRoom.isEmpty()) {
             n.add(buildObjectsStoryState(objectsInNewRoom));
@@ -91,7 +94,7 @@ public class BewegenAction extends AbstractPlayerAction {
     private StoryStateBuilder buildNewStoryStateRoomOnly(final StoryState currentStoryState) {
         final AbstractDescription description =
                 RoomConnection.getFrom(oldRoom).get(newRoom)
-                        .getDescription(roomDao.isKnown(newRoom));
+                        .getDescription(db.roomDao().isKnown(newRoom));
         return buildNewStoryStateRoomOnly(currentStoryState, description);
     }
 
@@ -132,10 +135,12 @@ public class BewegenAction extends AbstractPlayerAction {
     private StoryStateBuilder buildNewStoryStateRoomOnlyNewSentence(
             final StoryState currentStoryState, final AbstractDescription desc) {
         if (currentStoryState.lastActionWas(BewegenAction.class)) {
-            return buildNewStoryStateNewRoomOnlyNewSentenceLastActionBewegen(currentStoryState, desc);
+            return buildNewStoryStateNewRoomOnlyNewSentenceLastActionBewegen(currentStoryState,
+                    desc);
         }
 
-        return buildNewStoryStateNewRoomOnlyNewSentenceLastActionNichtBewegen(currentStoryState, desc);
+        return buildNewStoryStateNewRoomOnlyNewSentenceLastActionNichtBewegen(currentStoryState,
+                desc);
     }
 
     private StoryStateBuilder buildNewStoryStateNewRoomOnlyNewSentenceLastActionBewegen(
@@ -149,6 +154,7 @@ public class BewegenAction extends AbstractPlayerAction {
             return t(StartsNew.PARAGRAPH,
                     "Du schaust dich nur kurz um, dann "
                             + uncapitalize(desc.getDescriptionHauptsatz()))
+                    .komma(desc.kommaStehtAus())
                     .undWartest(desc.allowsAdditionalDuSatzreihengliedOhneSubjekt());
         }
 
@@ -163,8 +169,8 @@ public class BewegenAction extends AbstractPlayerAction {
 
         return t(StartsNew.PARAGRAPH,
                 desc.getDescriptionHauptsatz())
-                .undWartest(
-                        desc.allowsAdditionalDuSatzreihengliedOhneSubjekt())
+                .komma(desc.kommaStehtAus())
+                .undWartest(desc.allowsAdditionalDuSatzreihengliedOhneSubjekt())
                 .dann(desc.dann());
     }
 
@@ -173,12 +179,14 @@ public class BewegenAction extends AbstractPlayerAction {
         if (currentStoryState.dann()) {
             return t(StartsNew.PARAGRAPH,
                     desc.getDescriptionHauptsatzMitKonjunktionaladverbWennNoetig("danach"))
+                    .komma(desc.kommaStehtAus())
                     .undWartest(desc.allowsAdditionalDuSatzreihengliedOhneSubjekt())
                     .dann(false);
         }
 
         return t(StartsNew.PARAGRAPH,
                 desc.getDescriptionHauptsatz())
+                .komma(desc.kommaStehtAus())
                 .undWartest(desc.allowsAdditionalDuSatzreihengliedOhneSubjekt())
                 .dann(desc.dann());
     }
@@ -266,9 +274,9 @@ public class BewegenAction extends AbstractPlayerAction {
     }
 
     private void setRoomAndObjectsKnown(final List<ObjectData> objectsInNewRoom) {
-        roomDao.setKnown(newRoom);
+        db.roomDao().setKnown(newRoom);
         for (final ObjectData objectInNewRoom : objectsInNewRoom) {
-            objectDataDao.setKnown(objectInNewRoom.getObject());
+            db.objectDataDao().setKnown(objectInNewRoom.getObject());
         }
     }
 }

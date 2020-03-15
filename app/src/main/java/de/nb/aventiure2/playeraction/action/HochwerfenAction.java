@@ -23,18 +23,22 @@ import static de.nb.aventiure2.german.GermanUtil.capitalize;
 public class HochwerfenAction extends AbstractObjectAction {
     private final AvRoom room;
 
-    public HochwerfenAction(final AvDatabase db,
-                            final ObjectData objectData,
-                            final AvRoom room) {
-        super(db, objectData);
-
-        this.room = room;
+    public static Collection<AbstractPlayerAction> buildActions(
+            final AvDatabase db, final StoryState initialStoryState,
+            final AvRoom room, final ObjectData objectData) {
+        // TODO Nicht jedes Object lässt sich hochwerfen...
+        return ImmutableList.of(
+                new HochwerfenAction(db, initialStoryState,
+                        objectData, room));
     }
 
-    public static Collection<AbstractPlayerAction> buildActions(
-            final AvDatabase db, final AvRoom room, final ObjectData objectData) {
-        // TODO Nicht jedes Object lässt sich hochwerfen...
-        return ImmutableList.of(new HochwerfenAction(db, objectData, room));
+    private HochwerfenAction(final AvDatabase db,
+                             final StoryState initialStoryState,
+                             final ObjectData objectData,
+                             final AvRoom room) {
+        super(db, initialStoryState, objectData);
+
+        this.room = room;
     }
 
     @Override
@@ -44,19 +48,19 @@ public class HochwerfenAction extends AbstractObjectAction {
     }
 
     @Override
-    public void narrateAndDo(final StoryState currentStoryState) {
-        if (currentStoryState.lastObjectWas(getObject())) {
-            if (currentStoryState.lastActionWas(HochwerfenAction.class)) {
+    public void narrateAndDo() {
+        if (initialStoryState.lastObjectWas(getObject())) {
+            if (initialStoryState.lastActionWas(HochwerfenAction.class)) {
                 narrateAndDoWiederholung();
                 return;
             }
         }
 
-        narrateAndDoErstesMal(currentStoryState);
+        narrateAndDoErstesMal();
     }
 
-    private void narrateAndDoErstesMal(final StoryState currentStoryState) {
-        if (currentStoryState.allowsAdditionalDuSatzreihengliedOhneSubjekt()) {
+    private void narrateAndDoErstesMal() {
+        if (initialStoryState.allowsAdditionalDuSatzreihengliedOhneSubjekt()) {
             n.add(t(StartsNew.WORD,
                     ", wirfst " +
                             getObjectData().akk() +
@@ -95,9 +99,9 @@ public class HochwerfenAction extends AbstractObjectAction {
                             " verschwindet, und der Brunnen ist tief, so tief, dass " +
                             "man keinen Grund sieht."));
 
-            playerInventoryDao.letGo(getObject());
-            objectDataDao.setDemSCInDenBrunnenGefallen(getObject(), true);
-            playerStatsDao.setStateOfMind(UNTROESTLICH);
+            db.playerInventoryDao().letGo(getObject());
+            db.objectDataDao().setDemSCInDenBrunnenGefallen(getObject(), true);
+            db.playerStatsDao().setStateOfMind(UNTROESTLICH);
             return;
         }
 
@@ -110,9 +114,7 @@ public class HochwerfenAction extends AbstractObjectAction {
                         " landet " +
                         room.getLocationMode().getWo()));
 
-        playerInventoryDao.letGo(getObject());
-        objectDataDao.setRoom(getObject(), room);
-
-        return;
+        db.playerInventoryDao().letGo(getObject());
+        db.objectDataDao().setRoom(getObject(), room);
     }
 }

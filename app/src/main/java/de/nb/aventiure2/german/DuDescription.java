@@ -16,23 +16,33 @@ public class DuDescription implements AbstractDescription {
      */
     private final String remainder;
 
+    /**
+     * Ob ein Komma aussteht. Wenn ein Komma aussteht, muss als Nächstes ein Komma folgen -
+     * oder das Satzende.
+     */
+    private final boolean kommaStehtAus;
+
     private final boolean allowsAdditionalDuSatzreihengliedOhneSubjekt;
 
     private final boolean dann;
 
     public static DuDescription du(final String verb, final String remainder,
+                                   final boolean kommaStehtAus,
                                    final boolean
                                            allowsAdditionalDuSatzreihengliedOhneSubjekt,
                                    final boolean dann) {
         return new DuDescription(verb, remainder,
+                kommaStehtAus,
                 allowsAdditionalDuSatzreihengliedOhneSubjekt, dann);
     }
 
     private DuDescription(final String verb, final String remainder,
+                          final boolean kommmaStehtAus,
                           final boolean allowsAdditionalDuSatzreihengliedOhneSubjekt,
                           final boolean dann) {
         this.verb = verb;
         this.remainder = remainder;
+        kommaStehtAus = kommmaStehtAus;
         this.allowsAdditionalDuSatzreihengliedOhneSubjekt =
                 allowsAdditionalDuSatzreihengliedOhneSubjekt;
         this.dann = dann;
@@ -56,6 +66,11 @@ public class DuDescription implements AbstractDescription {
      */
     public String getDescriptionSatzanschlussOhneSubjekt() {
         return verb + " " + remainder;
+    }
+
+    @Override
+    public boolean kommaStehtAus() {
+        return kommaStehtAus;
     }
 
     @Override

@@ -9,22 +9,28 @@ public class AllgDescription implements AbstractDescription {
      */
     private final String description;
 
+    private final boolean kommaStehtAus;
+
     private final boolean allowsAdditionalDuSatzreihengliedOhneSubjekt;
 
     private final boolean dann;
 
     public static AllgDescription allg(final String description,
+                                       final boolean kommaStehtAus,
                                        final boolean
                                                allowsAdditionalDuSatzreihengliedOhneSubjekt,
                                        final boolean dann) {
         return new AllgDescription(description,
+                kommaStehtAus,
                 allowsAdditionalDuSatzreihengliedOhneSubjekt, dann);
     }
 
     private AllgDescription(final String description,
+                            final boolean kommaStehtAus,
                             final boolean allowsAdditionalDuSatzreihengliedOhneSubjekt,
                             final boolean dann) {
         this.description = description;
+        this.kommaStehtAus = kommaStehtAus;
         this.allowsAdditionalDuSatzreihengliedOhneSubjekt =
                 allowsAdditionalDuSatzreihengliedOhneSubjekt;
         this.dann = dann;
@@ -41,6 +47,11 @@ public class AllgDescription implements AbstractDescription {
     @Override
     public String getDescriptionHauptsatz() {
         return description;
+    }
+
+    @Override
+    public boolean kommaStehtAus() {
+        return kommaStehtAus;
     }
 
     @Override

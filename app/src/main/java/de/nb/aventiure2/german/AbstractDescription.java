@@ -7,16 +7,18 @@ public interface AbstractDescription {
     /**
      * Gibt die Beschreibung zurück, beginnend mit einem Hauptsatz
      */
-    public abstract String getDescriptionHauptsatz();
+    String getDescriptionHauptsatz();
 
     /**
      * Gibt die Beschreibung als Hauptsatz zurück, wenn nötig mit dem angegebenen
      * <code>konjunktionaladverb</code> ("dann", "darauf") im Vorfeld.
      */
-    public abstract String
+    String
     getDescriptionHauptsatzMitKonjunktionaladverbWennNoetig(String konjunktionaladverb);
 
-    public abstract boolean allowsAdditionalDuSatzreihengliedOhneSubjekt();
+    boolean kommaStehtAus();
 
-    public abstract boolean dann();
+    boolean allowsAdditionalDuSatzreihengliedOhneSubjekt();
+
+    boolean dann();
 }

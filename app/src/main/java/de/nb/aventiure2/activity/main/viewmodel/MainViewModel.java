@@ -70,10 +70,7 @@ public class MainViewModel extends AndroidViewModel {
                             @WorkerThread
                             @Override
                             public void run() {
-                                db.runInTransaction(() ->
-                                        playerAction.narrateAndDo(
-                                                db.storyStateDao().
-                                                        getStoryState()));
+                                db.runInTransaction(playerAction::narrateAndDo);
                                 postLiveDataUpdate();
                             }
                         });
