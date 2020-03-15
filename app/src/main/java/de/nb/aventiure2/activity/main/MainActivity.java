@@ -3,6 +3,9 @@ package de.nb.aventiure2.activity.main;
 import android.animation.ObjectAnimator;
 import android.os.Bundle;
 import android.os.Debug;
+import android.text.SpannableString;
+import android.text.Spanned;
+import android.text.style.ForegroundColorSpan;
 import android.util.Log;
 import android.view.WindowManager;
 import android.widget.ScrollView;
@@ -46,16 +49,37 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void setStoryTextAndScrollToBottom(final String newText) {
-        final CharSequence oldText =
-                storyTextView.getText() == null ? "" : storyTextView.getText();
+        final String oldText =
+                storyTextView.getText() == null ? "" :
+                        storyTextView.getText().toString();
 
-        storyTextView.setText(newText);
+        final int normalTextColor = storyTextView.getCurrentTextColor();
+        final String hexColor = String.format("#%06X", (0xFFFFFF & normalTextColor));
+
+
+        final SpannableString ss = new SpannableString(newText);
+
+        final ForegroundColorSpan fscOld = new ForegroundColorSpan(
+                getResources().getColor(R.color.colorOldStoryText, getTheme()));
+
+        final ForegroundColorSpan fscNew = new ForegroundColorSpan(
+                getResources().getColor(R.color.colorNewStoryText, getTheme()));
+
+        if (newText.startsWith(oldText)) {
+            ss.setSpan(fscOld, 0, oldText.length(), Spanned.SPAN_INCLUSIVE_INCLUSIVE);
+            ss.setSpan(fscNew, oldText.length(), newText.length(), Spanned.SPAN_INCLUSIVE_INCLUSIVE);
+        } else {
+            ss.setSpan(fscNew, 0, newText.length(), Spanned.SPAN_INCLUSIVE_INCLUSIVE);
+        }
+
+        storyTextView.setText(ss);
         final int scrollDuration = calcScrollDuration(oldText, newText);
 
         scrollToBottom(scrollDuration);
     }
 
-    private static int calcScrollDuration(final CharSequence oldText, final CharSequence newText) {
+    private static int calcScrollDuration(final CharSequence oldText,
+                                          final CharSequence newText) {
         if (oldText.length() == 0) {
             return 0;
         }
