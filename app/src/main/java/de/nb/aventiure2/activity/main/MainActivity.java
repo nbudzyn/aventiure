@@ -6,6 +6,7 @@ import android.os.Debug;
 import android.text.SpannableString;
 import android.text.Spanned;
 import android.text.style.ForegroundColorSpan;
+import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.WindowManager;
 import android.widget.ScrollView;
@@ -52,10 +53,6 @@ public class MainActivity extends AppCompatActivity {
         final String oldText =
                 storyTextView.getText() == null ? "" :
                         storyTextView.getText().toString();
-
-        final int normalTextColor = storyTextView.getCurrentTextColor();
-        final String hexColor = String.format("#%06X", (0xFFFFFF & normalTextColor));
-
 
         final SpannableString ss = new SpannableString(newText);
 
@@ -106,11 +103,25 @@ public class MainActivity extends AppCompatActivity {
 
     private void createActionsRecyclerView() {
         actionsRecyclerView = findViewById(R.id.recyclerView);
+        actionsRecyclerView.addItemDecoration(
+                new VerticalSpaceItemDecoration(convertDpToPixel(24)));
 
         guiActionsAdapter = new GuiActionsAdapter(this);
         actionsRecyclerView.setAdapter(guiActionsAdapter);
 
         actionsRecyclerView.setLayoutManager(new LinearLayoutManager(this));
+    }
+
+    /**
+     * This method converts dp unit to equivalent pixels, depending on device density.
+     *
+     * @param dp A value in dp (density independent pixels) unit. Which we need to convert into pixels
+     * @return A float value to represent px equivalent to dp depending on device density
+     */
+    public int convertDpToPixel(final float dp) {
+        return Math.round(
+                dp * ((float) getResources().getDisplayMetrics().densityDpi /
+                        DisplayMetrics.DENSITY_DEFAULT));
     }
 
     @Override
