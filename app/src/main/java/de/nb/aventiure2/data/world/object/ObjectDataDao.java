@@ -72,4 +72,7 @@ public abstract class ObjectDataDao {
 
     @Query("SELECT * from ObjectData")
     public abstract LiveData<List<ObjectData>> getAll();
+
+    @Query("SELECT * from ObjectData")
+    public abstract List<ObjectData> getAllSync();
 }

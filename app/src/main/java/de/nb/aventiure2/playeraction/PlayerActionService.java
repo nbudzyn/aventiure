@@ -5,14 +5,31 @@ import android.app.Application;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.Transformations;
 
+import com.google.common.collect.ImmutableList;
+
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import de.nb.aventiure2.data.database.AvDatabase;
+import de.nb.aventiure2.data.world.creature.CreatureData;
 import de.nb.aventiure2.data.world.creature.CreatureDataDao;
+import de.nb.aventiure2.data.world.object.AvObject;
+import de.nb.aventiure2.data.world.object.ObjectData;
 import de.nb.aventiure2.data.world.object.ObjectDataDao;
 import de.nb.aventiure2.data.world.player.inventory.PlayerInventoryDao;
 import de.nb.aventiure2.data.world.player.location.PlayerLocationDao;
+import de.nb.aventiure2.data.world.player.stats.PlayerStats;
 import de.nb.aventiure2.data.world.player.stats.PlayerStatsDao;
+import de.nb.aventiure2.data.world.room.AvRoom;
+import de.nb.aventiure2.data.world.room.connection.RoomConnection;
+import de.nb.aventiure2.playeraction.action.AblegenAction;
+import de.nb.aventiure2.playeraction.action.BewegenAction;
+import de.nb.aventiure2.playeraction.action.HeulenAction;
+import de.nb.aventiure2.playeraction.action.HochwerfenAction;
+import de.nb.aventiure2.playeraction.action.NehmenAction;
+import de.nb.aventiure2.playeraction.action.RedenAction;
 
 /**
  * Repository for the actions the player can choose from.
@@ -52,5 +69,87 @@ public class PlayerActionService {
                                 null :
                                 creatureDataDao.getCreaturesInRoom(loc.getRoom())),
                 playerInventoryDao.getInventory());
+    }
+
+    public List<AbstractPlayerAction> getPlayerActionsSync() {
+        final PlayerStats stats = playerStatsDao.getPlayerStatsSync();
+
+        final AvRoom room = playerLocationDao.getPlayerLocationSync().getRoom();
+
+        final List<ObjectData> allObjects = objectDataDao.getAllSync();
+
+        final Map<AvObject.Key, ObjectData> allObjectsByKey = new HashMap<>();
+        for (final ObjectData objectData : allObjects) {
+            allObjectsByKey.put(objectData.getObject().getKey(), objectData);
+        }
+
+        final List<AvObject> inventory = playerInventoryDao.getInventorySync();
+
+        final List<CreatureData> creaturesInRoom = creatureDataDao.getCreaturesInRoomSync(room);
+
+        final List<AbstractPlayerAction> res = new ArrayList<>();
+
+        res.addAll(buildCreatureInRoomActions(room, allObjectsByKey, creaturesInRoom));
+        res.addAll(buildPlayerOnlyAction(stats, creaturesInRoom));
+        res.addAll(buildObjectInRoomActions(room, allObjectsByKey));
+        res.addAll(buildInventoryActions(room, allObjectsByKey, inventory));
+        res.addAll(buildRoomConnectionActions(room));
+
+        return res;
+    }
+
+    private ImmutableList<AbstractPlayerAction> buildCreatureInRoomActions(
+            final AvRoom room, final Map<AvObject.Key, ObjectData> allObjectsByKey,
+            final List<CreatureData> creaturesInRoom) {
+        final ImmutableList.Builder<AbstractPlayerAction> res = ImmutableList.builder();
+
+        for (final CreatureData creatureData : creaturesInRoom) {
+            res.addAll(RedenAction.buildActions(db, room, allObjectsByKey, creatureData));
+        }
+
+        return res.build();
+    }
+
+    private ImmutableList<AbstractPlayerAction> buildPlayerOnlyAction(
+            final PlayerStats stats, final List<CreatureData> creaturesInRoom) {
+        final ImmutableList.Builder<AbstractPlayerAction> res = ImmutableList.builder();
+
+        res.addAll(HeulenAction.buildActions(db, stats, creaturesInRoom));
+
+        return res.build();
+    }
+
+    private ImmutableList<AbstractPlayerAction> buildObjectInRoomActions(
+            final AvRoom room,
+            final Map<AvObject.Key, ObjectData> allObjectsByKey) {
+        final ImmutableList.Builder<AbstractPlayerAction> res = ImmutableList.builder();
+        for (final ObjectData objectData : allObjectsByKey.values()) {
+            if (room == objectData.getRoom()) {
+                res.addAll(NehmenAction.buildActions(db, room, objectData));
+            }
+        }
+        return res.build();
+    }
+
+    private ImmutableList<AbstractPlayerAction> buildInventoryActions(
+            final AvRoom room, final Map<AvObject.Key, ObjectData> allObjectsByKey,
+            final List<AvObject> inventory) {
+        final ImmutableList.Builder<AbstractPlayerAction> res = ImmutableList.builder();
+        for (final AvObject inventoryObject : inventory) {
+            final ObjectData objectData = allObjectsByKey.get(inventoryObject.getKey());
+
+            res.addAll(HochwerfenAction.buildActions(db, room, objectData));
+            res.addAll(AblegenAction.buildActions(db, room, objectData));
+        }
+        return res.build();
+    }
+
+    private ImmutableList<AbstractPlayerAction> buildRoomConnectionActions(
+            final AvRoom room) {
+        final ImmutableList.Builder<AbstractPlayerAction> res = ImmutableList.builder();
+        for (final AvRoom connectedRoom : RoomConnection.getFrom(room).keySet()) {
+            res.addAll(BewegenAction.buildActions(db, room, connectedRoom));
+        }
+        return res.build();
     }
 }

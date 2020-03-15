@@ -13,10 +13,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 import de.nb.aventiure2.R;
-import de.nb.aventiure2.playeraction.AbstractPlayerAction;
 
-public class ActionsAdapter extends RecyclerView.Adapter<ActionsAdapter.ViewHolder> {
-    private final List<AbstractPlayerAction> playerActions = new ArrayList<>();
+public class GuiActionsAdapter extends RecyclerView.Adapter<GuiActionsAdapter.ViewHolder> {
+    private final List<GuiAction> guiActions = new ArrayList<>();
     private final LayoutInflater inflater;
 
     static class ViewHolder extends RecyclerView.ViewHolder {
@@ -28,32 +27,32 @@ public class ActionsAdapter extends RecyclerView.Adapter<ActionsAdapter.ViewHold
         }
     }
 
-    ActionsAdapter(final Context context) {
+    GuiActionsAdapter(final Context context) {
         inflater = LayoutInflater.from(context);
     }
 
     @Override
-    public ActionsAdapter.ViewHolder onCreateViewHolder(final ViewGroup parent,
-                                                        final int viewType) {
+    public GuiActionsAdapter.ViewHolder onCreateViewHolder(final ViewGroup parent,
+                                                           final int viewType) {
         final FrameLayout v = (FrameLayout) inflater.inflate(R.layout.action, parent, false);
         return new ViewHolder(v);
     }
 
     @Override
     public void onBindViewHolder(final ViewHolder holder, final int position) {
-        final AbstractPlayerAction current = playerActions.get(position);
+        final GuiAction current = guiActions.get(position);
         holder.actionButton.setText(current.getName());
         holder.actionButton.setOnClickListener(v -> current.execute());
     }
 
     @Override
     public int getItemCount() {
-        return playerActions.size();
+        return guiActions.size();
     }
 
-    void setPlayerActions(final List<AbstractPlayerAction> playerActions) {
-        this.playerActions.clear();
-        this.playerActions.addAll(playerActions);
+    void setGuiActions(final List<GuiAction> guiActions) {
+        this.guiActions.clear();
+        this.guiActions.addAll(guiActions);
         notifyDataSetChanged();
     }
 }

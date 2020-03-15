@@ -23,7 +23,7 @@ public class MainActivity extends AppCompatActivity {
     private TextView storyTextView;
     private ScrollView storyTextScrollView;
     private RecyclerView actionsRecyclerView;
-    private ActionsAdapter actionsAdapter;
+    private GuiActionsAdapter guiActionsAdapter;
 
     private MainViewModel mainViewModel;
 
@@ -40,36 +40,39 @@ public class MainActivity extends AppCompatActivity {
         mainViewModel = new ViewModelProvider(this).get(MainViewModel.class);
         mainViewModel.getStoryText().observe(this,
                 t -> {
-                    final String text = t == null ? "" : t.getText();
                     final CharSequence oldText =
                             storyTextView.getText() == null ? "" : storyTextView.getText();
 
-                    storyTextView.setText(text);
+                    storyTextView.setText(t);
 
                     storyTextScrollView.post(() -> {
                         final int top = storyTextView.getBottom() -
                                 storyTextScrollView.getHeight()
                                 + storyTextScrollView.getPaddingBottom();
 
-                        final int duration =
-                                (text.length() - oldText.length()) * 5;
-                        ObjectAnimator.ofInt(storyTextScrollView, "scrollY",
-                                top)
-                                .setDuration(duration)
-                                .start();
+                        if (oldText.length() == 0) {
+                            storyTextScrollView.fullScroll(ScrollView.FOCUS_DOWN);
+                        } else {
+                            final int duration =
+                                    (t.length() - oldText.length()) * 5;
+                            ObjectAnimator.ofInt(storyTextScrollView, "scrollY",
+                                    top)
+                                    .setDuration(duration)
+                                    .start();
+                        }
                     });
                 }
         );
-        mainViewModel.getPlayerActions().observe(this,
-                actions -> actionsAdapter.setPlayerActions(
-                        actions == null ? ImmutableList.of() : actions));
+        mainViewModel.getGuiActions().observe(this,
+                g -> guiActionsAdapter.setGuiActions(
+                        g == null ? ImmutableList.of() : g));
     }
 
     private void createActionsRecyclerView() {
         actionsRecyclerView = findViewById(R.id.recyclerView);
 
-        actionsAdapter = new ActionsAdapter(this);
-        actionsRecyclerView.setAdapter(actionsAdapter);
+        guiActionsAdapter = new GuiActionsAdapter(this);
+        actionsRecyclerView.setAdapter(guiActionsAdapter);
 
         actionsRecyclerView.setLayoutManager(new LinearLayoutManager(this));
     }

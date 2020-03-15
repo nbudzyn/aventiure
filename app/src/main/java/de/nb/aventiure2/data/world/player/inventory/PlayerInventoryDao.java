@@ -31,4 +31,7 @@ public abstract class PlayerInventoryDao {
 
     @Query("SELECT object from PlayerInventoryItem")
     public abstract LiveData<List<AvObject>> getInventory();
+
+    @Query("SELECT object from PlayerInventoryItem")
+    public abstract List<AvObject> getInventorySync();
 }

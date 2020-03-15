@@ -2,11 +2,19 @@ package de.nb.aventiure2.activity.main.viewmodel;
 
 import android.app.Application;
 
+import androidx.annotation.Nullable;
+import androidx.annotation.UiThread;
+import androidx.annotation.WorkerThread;
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
+import androidx.lifecycle.MutableLiveData;
+
+import com.google.common.collect.ImmutableList;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
+import de.nb.aventiure2.activity.main.GuiAction;
 import de.nb.aventiure2.data.database.AvDatabase;
 import de.nb.aventiure2.data.storystate.StoryState;
 import de.nb.aventiure2.playeraction.AbstractPlayerAction;
@@ -15,25 +23,95 @@ import de.nb.aventiure2.playeraction.PlayerActionService;
 import static de.nb.aventiure2.data.database.AvDatabase.getDatabase;
 
 public class MainViewModel extends AndroidViewModel {
-    private final LiveData<StoryState> storyText;
-    private final LiveData<List<AbstractPlayerAction>> playerActions;
+    private final MutableLiveData<String> storyText = new MutableLiveData<>();
+    private final MutableLiveData<List<GuiAction>> playerActionHandlers = new MutableLiveData<>();
 
+    private final PlayerActionService playerActionService;
+    private final AvDatabase db;
+
+    @UiThread
     public MainViewModel(final Application application) {
         super(application);
-        final AvDatabase db = getDatabase(application);
+        db = getDatabase(application);
 
-        final PlayerActionService playerActionService = new PlayerActionService(application);
+        playerActionService = new PlayerActionService(application);
 
-        // TODO Only publish new values AFTER EACH ACTION!
-        storyText = db.storyStateDao().getStoryState();
-        playerActions = playerActionService.getPlayerActions();
+        storyText.setValue("");
+        playerActionHandlers.setValue(ImmutableList.of());
+
+        postLiveUpdateLater();
     }
 
-    public LiveData<StoryState> getStoryText() {
+    @UiThread
+    private List<GuiAction> buildGuiActions() {
+        final List<AbstractPlayerAction> playerActions =
+                playerActionService.getPlayerActionsSync();
+
+        return playerActions.stream()
+                .map(this::toGuiAction)
+                .collect(Collectors.toList());
+
+    }
+
+    @UiThread
+    private GuiAction toGuiAction(final AbstractPlayerAction playerAction) {
+        return new GuiAction() {
+            @Override
+            public String getName() {
+                return playerAction.getName();
+            }
+
+            @Override
+            public void execute() {
+                // Aktionen aus der GUI entfernen
+                playerActionHandlers.setValue(ImmutableList.of());
+
+                db.databaseWriteExecutor.execute(
+                        new Runnable() {
+                            @WorkerThread
+                            @Override
+                            public void run() {
+                                db.runInTransaction(() ->
+                                        playerAction.narrateAndDo(
+                                                db.storyStateDao().
+                                                        getStoryStateSync()));
+                                postLiveDataUpdate();
+                            }
+                        });
+            }
+        };
+    }
+
+    private void postLiveUpdateLater() {
+        db.databaseWriteExecutor.execute(
+                new Runnable() {
+                    @WorkerThread
+                    @Override
+                    public void run() {
+                        postLiveDataUpdate();
+                    }
+                });
+    }
+
+    @WorkerThread
+    private void postLiveDataUpdate() {
+        @Nullable final StoryState storyState = db.storyStateDao().getStoryStateSync();
+        if (storyState == null) {
+            postLiveUpdateLater();
+            return;
+        }
+
+        storyText.postValue(storyState.getText());
+        playerActionHandlers.postValue(buildGuiActions());
+    }
+
+    @UiThread
+    public LiveData<String> getStoryText() {
         return storyText;
     }
 
-    public LiveData<List<AbstractPlayerAction>> getPlayerActions() {
-        return playerActions;
+    @UiThread
+    public LiveData<List<GuiAction>> getGuiActions() {
+        return playerActionHandlers;
     }
 }

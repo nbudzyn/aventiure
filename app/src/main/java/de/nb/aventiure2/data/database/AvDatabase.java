@@ -77,7 +77,7 @@ public abstract class AvDatabase extends RoomDatabase {
     public abstract PlayerInventoryDao playerInventoryDao();
 
     private static volatile AvDatabase INSTANCE;
-    private static final int NUMBER_OF_THREADS = 4;
+    private static final int NUMBER_OF_THREADS = 1;
     public static final ExecutorService databaseWriteExecutor =
             Executors.newFixedThreadPool(NUMBER_OF_THREADS);
 
