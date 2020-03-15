@@ -43,13 +43,7 @@ public abstract class AbstractPlayerAction implements IPlayerAction {
     /**
      * Returns the name of the action as it is displayed to the player.
      */
-    public abstract String getName();
-
-    public void execute() {
-        AvDatabase.databaseWriteExecutor.execute(() ->
-                db.runInTransaction(() -> narrateAndDo(n.getStoryStateSync()))
-        );
-    }
+    abstract public String getName();
 
     abstract public void narrateAndDo(StoryState currentStoryState);
 
@@ -58,6 +52,6 @@ public abstract class AbstractPlayerAction implements IPlayerAction {
             @NonNull final String text) {
         return StoryStateBuilder.t(this, startsNew, text)
                 // Sensible default - caller may override this setting
-                .letzterRaum(playerLocationDao.getPlayerLocationSync().getRoom());
+                .letzterRaum(playerLocationDao.getPlayerLocation().getRoom());
     }
 }

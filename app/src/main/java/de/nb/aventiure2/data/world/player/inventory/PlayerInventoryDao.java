@@ -1,6 +1,5 @@
 package de.nb.aventiure2.data.world.player.inventory;
 
-import androidx.lifecycle.LiveData;
 import androidx.room.Dao;
 import androidx.room.Insert;
 import androidx.room.OnConflictStrategy;
@@ -30,8 +29,5 @@ public abstract class PlayerInventoryDao {
     abstract void delete(AvObject object);
 
     @Query("SELECT object from PlayerInventoryItem")
-    public abstract LiveData<List<AvObject>> getInventory();
-
-    @Query("SELECT object from PlayerInventoryItem")
-    public abstract List<AvObject> getInventorySync();
+    public abstract List<AvObject> getInventory();
 }

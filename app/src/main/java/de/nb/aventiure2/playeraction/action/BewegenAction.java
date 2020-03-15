@@ -57,9 +57,9 @@ public class BewegenAction extends AbstractPlayerAction {
 
     @Override
     public void narrateAndDo(final StoryState currentStoryState) {
-        final List<ObjectData> objectsInNewRoom = objectDataDao.getObjectsInRoomSync(newRoom);
+        final List<ObjectData> objectsInNewRoom = objectDataDao.getObjectsInRoom(newRoom);
         final List<CreatureData> creaturesInNewRoom =
-                creatureDataDao.getCreaturesInRoomSync(newRoom);
+                creatureDataDao.getCreaturesInRoom(newRoom);
 
         narrate(currentStoryState, objectsInNewRoom, creaturesInNewRoom);
 
@@ -91,7 +91,7 @@ public class BewegenAction extends AbstractPlayerAction {
     private StoryStateBuilder buildNewStoryStateRoomOnly(final StoryState currentStoryState) {
         final AbstractDescription description =
                 RoomConnection.getFrom(oldRoom).get(newRoom)
-                        .getDescription(roomDao.isKnownSync(newRoom));
+                        .getDescription(roomDao.isKnown(newRoom));
         return buildNewStoryStateRoomOnly(currentStoryState, description);
     }
 

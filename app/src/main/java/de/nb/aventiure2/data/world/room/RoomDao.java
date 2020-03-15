@@ -15,7 +15,7 @@ public abstract class RoomDao {
         insert(new KnownRoom(room));
     }
 
-    public boolean isKnownSync(final AvRoom room) {
+    public boolean isKnown(final AvRoom room) {
         return getKnownRoom(room) != null;
     }
 

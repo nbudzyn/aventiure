@@ -1,7 +1,6 @@
 package de.nb.aventiure2.data.world.object;
 
 import androidx.annotation.Nullable;
-import androidx.lifecycle.LiveData;
 import androidx.room.Dao;
 import androidx.room.Insert;
 import androidx.room.OnConflictStrategy;
@@ -65,14 +64,8 @@ public abstract class ObjectDataDao {
     public abstract void update(ObjectData objectData);
 
     @Query("SELECT * from ObjectData where :room = room")
-    public abstract List<ObjectData> getObjectsInRoomSync(AvRoom room);
-
-    @Query("SELECT * from ObjectData where :room = room")
-    public abstract LiveData<List<ObjectData>> getObjectsInRoom(AvRoom room);
+    public abstract List<ObjectData> getObjectsInRoom(AvRoom room);
 
     @Query("SELECT * from ObjectData")
-    public abstract LiveData<List<ObjectData>> getAll();
-
-    @Query("SELECT * from ObjectData")
-    public abstract List<ObjectData> getAllSync();
+    public abstract List<ObjectData> getAll();
 }

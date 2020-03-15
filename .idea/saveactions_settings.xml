@@ -9,6 +9,7 @@
         <option value="fieldCanBeFinal" />
         <option value="localCanBeFinalExceptImplicit" />
         <option value="methodMayBeStatic" />
+        <option value="customUnqualifiedStaticMemberAccess" />
         <option value="missingOverrideAnnotation" />
         <option value="useBlocks" />
         <option value="unnecessaryThis" />

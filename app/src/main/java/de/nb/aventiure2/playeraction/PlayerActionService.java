@@ -2,9 +2,6 @@ package de.nb.aventiure2.playeraction;
 
 import android.app.Application;
 
-import androidx.lifecycle.LiveData;
-import androidx.lifecycle.Transformations;
-
 import com.google.common.collect.ImmutableList;
 
 import java.util.ArrayList;
@@ -55,37 +52,21 @@ public class PlayerActionService {
         playerInventoryDao = db.playerInventoryDao();
     }
 
-    // Room executes all queries on a separate thread.
-    // Observed LiveData will notify the observer when the data has changed.
-    public LiveData<List<AbstractPlayerAction>> getPlayerActions() {
-        return new PlayerActionsLiveData(
-                db,
-                playerStatsDao.getPlayerStats(),
-                playerLocationDao.getPlayerLocation(),
-                objectDataDao.getAll(),
-                Transformations.switchMap(
-                        playerLocationDao.getPlayerLocation(),
-                        loc -> loc == null ?
-                                null :
-                                creatureDataDao.getCreaturesInRoom(loc.getRoom())),
-                playerInventoryDao.getInventory());
-    }
+    public List<AbstractPlayerAction> getPlayerActions() {
+        final PlayerStats stats = playerStatsDao.getPlayerStats();
 
-    public List<AbstractPlayerAction> getPlayerActionsSync() {
-        final PlayerStats stats = playerStatsDao.getPlayerStatsSync();
+        final AvRoom room = playerLocationDao.getPlayerLocation().getRoom();
 
-        final AvRoom room = playerLocationDao.getPlayerLocationSync().getRoom();
-
-        final List<ObjectData> allObjects = objectDataDao.getAllSync();
+        final List<ObjectData> allObjects = objectDataDao.getAll();
 
         final Map<AvObject.Key, ObjectData> allObjectsByKey = new HashMap<>();
         for (final ObjectData objectData : allObjects) {
             allObjectsByKey.put(objectData.getObject().getKey(), objectData);
         }
 
-        final List<AvObject> inventory = playerInventoryDao.getInventorySync();
+        final List<AvObject> inventory = playerInventoryDao.getInventory();
 
-        final List<CreatureData> creaturesInRoom = creatureDataDao.getCreaturesInRoomSync(room);
+        final List<CreatureData> creaturesInRoom = creatureDataDao.getCreaturesInRoom(room);
 
         final List<AbstractPlayerAction> res = new ArrayList<>();
 

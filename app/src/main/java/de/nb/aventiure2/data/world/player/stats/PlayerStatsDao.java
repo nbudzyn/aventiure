@@ -1,6 +1,5 @@
 package de.nb.aventiure2.data.world.player.stats;
 
-import androidx.lifecycle.LiveData;
 import androidx.room.Dao;
 import androidx.room.Insert;
 import androidx.room.OnConflictStrategy;
@@ -18,8 +17,5 @@ public abstract class PlayerStatsDao {
     public abstract void insert(PlayerStats stats);
 
     @Query("SELECT * from PlayerStats")
-    public abstract LiveData<PlayerStats> getPlayerStats();
-
-    @Query("SELECT * from PlayerStats")
-    public abstract PlayerStats getPlayerStatsSync();
+    public abstract PlayerStats getPlayerStats();
 }

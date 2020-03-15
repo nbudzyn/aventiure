@@ -13,6 +13,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import de.nb.aventiure2.R;
+import de.nb.aventiure2.activity.main.viewmodel.GuiAction;
 
 public class GuiActionsAdapter extends RecyclerView.Adapter<GuiActionsAdapter.ViewHolder> {
     private final List<GuiAction> guiActions = new ArrayList<>();
@@ -41,7 +42,7 @@ public class GuiActionsAdapter extends RecyclerView.Adapter<GuiActionsAdapter.Vi
     @Override
     public void onBindViewHolder(final ViewHolder holder, final int position) {
         final GuiAction current = guiActions.get(position);
-        holder.actionButton.setText(current.getName());
+        holder.actionButton.setText(current.getDisplayName());
         holder.actionButton.setOnClickListener(v -> current.execute());
     }
 

@@ -14,7 +14,6 @@ import com.google.common.collect.ImmutableList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import de.nb.aventiure2.activity.main.GuiAction;
 import de.nb.aventiure2.data.database.AvDatabase;
 import de.nb.aventiure2.data.storystate.StoryState;
 import de.nb.aventiure2.playeraction.AbstractPlayerAction;
@@ -45,7 +44,7 @@ public class MainViewModel extends AndroidViewModel {
     @UiThread
     private List<GuiAction> buildGuiActions() {
         final List<AbstractPlayerAction> playerActions =
-                playerActionService.getPlayerActionsSync();
+                playerActionService.getPlayerActions();
 
         return playerActions.stream()
                 .map(this::toGuiAction)
@@ -57,7 +56,7 @@ public class MainViewModel extends AndroidViewModel {
     private GuiAction toGuiAction(final AbstractPlayerAction playerAction) {
         return new GuiAction() {
             @Override
-            public String getName() {
+            public String getDisplayName() {
                 return playerAction.getName();
             }
 
@@ -74,7 +73,7 @@ public class MainViewModel extends AndroidViewModel {
                                 db.runInTransaction(() ->
                                         playerAction.narrateAndDo(
                                                 db.storyStateDao().
-                                                        getStoryStateSync()));
+                                                        getStoryState()));
                                 postLiveDataUpdate();
                             }
                         });
@@ -95,7 +94,7 @@ public class MainViewModel extends AndroidViewModel {
 
     @WorkerThread
     private void postLiveDataUpdate() {
-        @Nullable final StoryState storyState = db.storyStateDao().getStoryStateSync();
+        @Nullable final StoryState storyState = db.storyStateDao().getStoryState();
         if (storyState == null) {
             postLiveUpdateLater();
             return;

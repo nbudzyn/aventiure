@@ -1,11 +1,9 @@
 package de.nb.aventiure2.data.world.creature;
 
-import androidx.lifecycle.LiveData;
 import androidx.room.Dao;
 import androidx.room.Insert;
 import androidx.room.OnConflictStrategy;
 import androidx.room.Query;
-import androidx.room.Update;
 
 import java.util.List;
 
@@ -37,14 +35,8 @@ public abstract class CreatureDataDao {
     @Query("UPDATE CreatureData SET known = 1 WHERE creature = :creature")
     public abstract void setKnown(Creature creature);
 
-    @Update
-    public abstract void update(CreatureData creatureData);
-
     @Query("SELECT * from CreatureData where :room = room")
-    public abstract List<CreatureData> getCreaturesInRoomSync(AvRoom room);
-
-    @Query("SELECT * from CreatureData where :room = room")
-    public abstract LiveData<List<CreatureData>> getCreaturesInRoom(AvRoom room);
+    public abstract List<CreatureData> getCreaturesInRoom(AvRoom room);
 
     public void setState(final Creature.Key creatureKey, final CreatureState state) {
         setState(Creature.get(creatureKey), state);

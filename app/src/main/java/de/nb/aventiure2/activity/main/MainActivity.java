@@ -39,33 +39,45 @@ public class MainActivity extends AppCompatActivity {
 
         mainViewModel = new ViewModelProvider(this).get(MainViewModel.class);
         mainViewModel.getStoryText().observe(this,
-                t -> {
-                    final CharSequence oldText =
-                            storyTextView.getText() == null ? "" : storyTextView.getText();
-
-                    storyTextView.setText(t);
-
-                    storyTextScrollView.post(() -> {
-                        final int top = storyTextView.getBottom() -
-                                storyTextScrollView.getHeight()
-                                + storyTextScrollView.getPaddingBottom();
-
-                        if (oldText.length() == 0) {
-                            storyTextScrollView.fullScroll(ScrollView.FOCUS_DOWN);
-                        } else {
-                            final int duration =
-                                    (t.length() - oldText.length()) * 5;
-                            ObjectAnimator.ofInt(storyTextScrollView, "scrollY",
-                                    top)
-                                    .setDuration(duration)
-                                    .start();
-                        }
-                    });
-                }
-        );
+                this::setStoryTextAndScrollToBottom);
         mainViewModel.getGuiActions().observe(this,
                 g -> guiActionsAdapter.setGuiActions(
                         g == null ? ImmutableList.of() : g));
+    }
+
+    private void setStoryTextAndScrollToBottom(final String newText) {
+        final CharSequence oldText =
+                storyTextView.getText() == null ? "" : storyTextView.getText();
+
+        storyTextView.setText(newText);
+        final int scrollDuration = calcScrollDuration(oldText, newText);
+
+        scrollToBottom(scrollDuration);
+    }
+
+    private static int calcScrollDuration(final CharSequence oldText, final CharSequence newText) {
+        if (oldText.length() == 0) {
+            return 0;
+        }
+
+        return (newText.length() - oldText.length()) * 5;
+    }
+
+    private void scrollToBottom(final int scrollDuration) {
+        storyTextScrollView.post(() -> {
+            final int top = storyTextView.getBottom() -
+                    storyTextScrollView.getHeight()
+                    + storyTextScrollView.getPaddingBottom();
+
+            if (scrollDuration == 0) {
+                storyTextScrollView.fullScroll(ScrollView.FOCUS_DOWN);
+            } else {
+                ObjectAnimator.ofInt(storyTextScrollView, "scrollY",
+                        top)
+                        .setDuration(scrollDuration)
+                        .start();
+            }
+        });
     }
 
     private void createActionsRecyclerView() {

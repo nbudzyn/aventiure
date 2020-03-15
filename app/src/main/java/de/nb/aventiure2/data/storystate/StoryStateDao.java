@@ -1,7 +1,6 @@
 package de.nb.aventiure2.data.storystate;
 
 import androidx.annotation.Nullable;
-import androidx.lifecycle.LiveData;
 import androidx.room.Dao;
 import androidx.room.Delete;
 import androidx.room.Insert;
@@ -24,7 +23,7 @@ public abstract class StoryStateDao {
     public void add(final StoryState text) {
         checkNotNull(text, "text is null");
 
-        @Nullable final StoryState currentStoryState = getStoryStateSync();
+        @Nullable final StoryState currentStoryState = getStoryState();
 
         if (currentStoryState == null) {
             insert(text);
@@ -44,8 +43,5 @@ public abstract class StoryStateDao {
     abstract void insert(StoryState playerLocation);
 
     @Query("SELECT * from StoryState")
-    public abstract LiveData<StoryState> getStoryState();
-
-    @Query("SELECT * from StoryState")
-    public abstract StoryState getStoryStateSync();
+    public abstract StoryState getStoryState();
 }
