@@ -8,6 +8,7 @@ import androidx.room.OnConflictStrategy;
 import androidx.room.Query;
 import androidx.room.Transaction;
 
+import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 /**
@@ -41,6 +42,28 @@ public abstract class StoryStateDao {
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     abstract void insert(StoryState playerLocation);
+
+    public StoryStateBuilder chooseNextFrom(final StoryStateBuilder... alternatives) {
+        checkArgument(alternatives.length > 0,
+                "No alternatives");
+
+        final String currentText = getStoryState().getText();
+
+        @Nullable StoryStateBuilder best = null;
+        float bestScore = Float.NEGATIVE_INFINITY;
+
+        for (final StoryStateBuilder alternative : alternatives) {
+            final float score =
+                    TextAdditionEvaluator
+                            .evaluateAddition(currentText, alternative.build().getText());
+            if (score > bestScore) {
+                bestScore = score;
+                best = alternative;
+            }
+        }
+
+        return best;
+    }
 
     @Query("SELECT * from StoryState")
     public abstract StoryState getStoryState();

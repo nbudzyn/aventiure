@@ -65,8 +65,8 @@ public class RoomConnection {
                                     "Den Wald verlassen",
                                     du(
                                             "gehst",
-                                            "zurück ans helle Tageslicht. Du stehst " +
-                                                    "wieder vor dem Schloss",
+                                            "zurück ans helle Tageslicht, in den " +
+                                                    "Schlossgarten",
                                             false,
                                             false,
                                             true)))

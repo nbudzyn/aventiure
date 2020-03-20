@@ -2,6 +2,10 @@ package de.nb.aventiure2.playeraction;
 
 import androidx.annotation.NonNull;
 
+import com.google.common.collect.ImmutableCollection;
+
+import java.util.Collection;
+
 import de.nb.aventiure2.data.database.AvDatabase;
 import de.nb.aventiure2.data.storystate.IPlayerAction;
 import de.nb.aventiure2.data.storystate.StoryState;
@@ -35,6 +39,19 @@ public abstract class AbstractPlayerAction implements IPlayerAction {
     abstract public String getName();
 
     abstract public void narrateAndDo();
+
+    protected StoryStateBuilder alt(
+            final ImmutableCollection.Builder<StoryStateBuilder> alternatives) {
+        return alt(alternatives.build());
+    }
+
+    private StoryStateBuilder alt(final Collection<StoryStateBuilder> alternatives) {
+        return alt(alternatives.toArray(new StoryStateBuilder[alternatives.size()]));
+    }
+
+    protected StoryStateBuilder alt(final StoryStateBuilder... alternatives) {
+        return n.chooseNextFrom(alternatives);
+    }
 
     protected StoryStateBuilder t(
             final StartsNew startsNew,

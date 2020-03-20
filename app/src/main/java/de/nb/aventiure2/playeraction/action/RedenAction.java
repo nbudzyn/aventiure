@@ -284,7 +284,7 @@ public class RedenAction extends AbstractPlayerAction {
 
     private void narrateAndDoFroschprinzNachBelohnungGefragtGespraechBeenden() {
         n.add(t(SENTENCE,
-                "„Denkst du etwa, man überschüttet dich mit Gold und Juwelen? - Vergiss es!“")
+                "„Denkst du etwa, ich überschütte dich mit Gold und Juwelen? - Vergiss es!“")
                 .imGespraechMit(null));
     }
 

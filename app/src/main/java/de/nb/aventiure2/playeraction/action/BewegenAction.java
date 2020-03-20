@@ -147,8 +147,11 @@ public class BewegenAction extends AbstractPlayerAction {
             final StoryState currentStoryState, final AbstractDescription desc) {
         if (currentStoryState.lastRoomWas(newRoom)) {
             if (currentStoryState.noLastObject()) {
-                return t(StartsNew.SENTENCE, "Aber dann kommt dir ein Gedanke und "
-                        + uncapitalize(desc.getDescriptionHauptsatz()));
+                return alt(
+                        t(StartsNew.SENTENCE, "Was willst du hier eigentlich? "
+                                + desc.getDescriptionHauptsatz()),
+                        t(StartsNew.SENTENCE, "Aber dir kommt ein Gedanke und "
+                                + uncapitalize(desc.getDescriptionHauptsatz())));
             }
 
             return t(StartsNew.PARAGRAPH,

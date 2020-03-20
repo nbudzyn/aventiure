@@ -10,6 +10,7 @@ import java.util.List;
 
 import de.nb.aventiure2.data.database.AvDatabase;
 import de.nb.aventiure2.data.storystate.StoryState;
+import de.nb.aventiure2.data.storystate.StoryStateBuilder;
 import de.nb.aventiure2.data.world.creature.Creature;
 import de.nb.aventiure2.data.world.creature.CreatureData;
 import de.nb.aventiure2.data.world.player.stats.PlayerStateOfMind;
@@ -73,24 +74,17 @@ public class HeulenAction extends AbstractPlayerAction {
             return;
         }
 
+        final ImmutableList.Builder<StoryStateBuilder> alt = ImmutableList.builder();
         if (initialStoryState.allowsAdditionalDuSatzreihengliedOhneSubjekt()) {
-            switch (PlayerActionUtil.random(3)) {
-                case 1:
-                    n.add(t(WORD, "und weinst")
-                            .undWartest());
-                    return;
-                case 2:
-                    n.add(t(WORD, ", so viele Tränen haben sich angestaut"));
-                    return;
-                //  3: Go on
-            }
+            alt.add(t(WORD, "und weinst")
+                    .undWartest());
+            alt.add(t(WORD, ", so viele Tränen haben sich angestaut"));
         }
 
-        n.add(
-
-                t(SENTENCE,
-                        "Du kannst dich gar nicht mehr beruhigen")
-                        .undWartest());
+        alt.add(t(SENTENCE,
+                "Du kannst dich gar nicht mehr beruhigen")
+                .undWartest());
+        n.add(alt(alt));
     }
 
     private void narrateAndDoFroschprinz(final CreatureData froschprinz) {
@@ -130,21 +124,19 @@ public class HeulenAction extends AbstractPlayerAction {
     }
 
     private void narrateAndDoErstesMal() {
-        if (PlayerActionUtil.random(2) == 1) {
-            n.add(t(PARAGRAPH,
-                    "Plötzlich überkommt dich ein Schluchzen"));
-            return;
-        }
+        final ImmutableList.Builder<StoryStateBuilder> alt = ImmutableList.builder();
+        alt.add(t(PARAGRAPH,
+                "Plötzlich überkommt dich ein Schluchzen"));
 
         if (initialStoryState.dann()) {
-            n.add(t(PARAGRAPH,
+            alt.add(t(PARAGRAPH,
                     "Dann bricht die Trauer aus dir heraus und du heulst los"));
-            return;
         }
 
-        n.add(t(PARAGRAPH,
+        alt.add(t(PARAGRAPH,
                 "Du weinst")
                 .undWartest()
                 .dann());
+        n.add(alt(alt));
     }
 }
