@@ -58,17 +58,21 @@ class FroschprinzTalkStepBuilder extends AbstractCreatureTalkStepBuilder {
                         ImmutableList.of(
                                 st(VerbSubjObj.REDEN, this::narrateAndDo_angesprochen_reden),
                                 exitSt(VerbSubjObj.IGNORIEREN,
-                                        this::narrateAndDo_angesprochen_ignorieren));
+                                        this::narrateAndDo_angesprochen_ignorieren)
+                        );
             case HAT_NACH_BELOHNUNG_GEFRAGT:
                 return
                         ImmutableList.of(
                                 st(this::etwasIstInDenBrunnenGefallen,
                                         VerbSubjDatAkk.MACHEN.mitAkk(Nominalphrase.ANGEBOTE),
                                         this::narrateAndDo_nachBelohnungGefragt_AngeboteMachen),
-                                exitSt(this::narrateAndDo_nachBelohnungGefragt_GespraechBeenden));
+                                exitSt(this::narrateAndDo_nachBelohnungGefragt_GespraechBeenden)
+                        );
             case HAT_FORDERUNG_GESTELLT:
-                return ImmutableList.of();
-            // TODO     case HAT_FORDERUNG_GESTELLT
+                return ImmutableList.of(
+                        // TODO     HAT_FORDERUNG_GESTELLT - Zusagen
+                        exitSt(this::narrateAndDo_hatForderungGestellt_GespraechBeenden)
+                );
             default:
                 throw new IllegalStateException("Unexpected Froschprinz state: " +
                         creatureData.getState());
@@ -201,6 +205,17 @@ class FroschprinzTalkStepBuilder extends AbstractCreatureTalkStepBuilder {
     private void narrateAndDo_nachBelohnungGefragt_GespraechBeenden() {
         n.add(t(SENTENCE,
                 "„Denkst du etwa, ich überschütte dich mit Gold und Juwelen? - Vergiss es!“")
+                .imGespraechMit(null));
+    }
+
+    // -------------------------------------------------------------------------------
+    // .. HAT_NACH_BELOHNUNG_GEFRAGT
+    // -------------------------------------------------------------------------------
+
+    private void narrateAndDo_hatForderungGestellt_GespraechBeenden() {
+        n.add(t(SENTENCE,
+                "„Na, bei dir piept's wohl!“ - Entrüstet wendest du dich ab")
+                .undWartest()
                 .imGespraechMit(null));
     }
 
