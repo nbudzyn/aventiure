@@ -109,6 +109,8 @@ class FroschprinzTalkStepBuilder extends AbstractCreatureTalkStepBuilder {
         }
 
         if (objectsInDenBrunnenGefallen.isEmpty()) {
+            n.add(t(SENTENCE, "Der Frosch reagiert nicht")
+                    .imGespraechMit(null));
             return;
         }
 
