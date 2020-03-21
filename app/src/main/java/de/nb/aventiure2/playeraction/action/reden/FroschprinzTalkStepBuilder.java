@@ -23,10 +23,13 @@ import static de.nb.aventiure2.data.storystate.StoryState.StartsNew.PARAGRAPH;
 import static de.nb.aventiure2.data.storystate.StoryState.StartsNew.SENTENCE;
 import static de.nb.aventiure2.data.storystate.StoryState.StartsNew.WORD;
 import static de.nb.aventiure2.data.world.creature.Creature.Key.FROSCHPRINZ;
+import static de.nb.aventiure2.data.world.creature.CreatureState.AUF_DEM_WEG_ZUM_BRUNNEN_UM_DINGE_HERAUSZUHOLEN;
+import static de.nb.aventiure2.data.world.creature.CreatureState.ERWARTET_VON_SC_EINLOESUNG_SEINES_VERSPRECHENS;
 import static de.nb.aventiure2.data.world.creature.CreatureState.HAT_FORDERUNG_GESTELLT;
 import static de.nb.aventiure2.data.world.creature.CreatureState.HAT_NACH_BELOHNUNG_GEFRAGT;
 import static de.nb.aventiure2.data.world.object.ObjectData.filterInDenBrunnenGefallen;
 import static de.nb.aventiure2.data.world.object.ObjectData.getDescriptionSingleOrCollective;
+import static de.nb.aventiure2.data.world.player.stats.PlayerStateOfMind.VOLLER_FREUDE;
 import static de.nb.aventiure2.german.base.GermanUtil.capitalize;
 import static de.nb.aventiure2.german.praedikat.SeinUtil.istSind;
 
@@ -59,8 +62,14 @@ class FroschprinzTalkStepBuilder extends AbstractCreatureTalkStepBuilder {
                                         this::narrateAndDo_FroschHatAngesprochen_antworten),
                                 exitSt(VerbSubjObj.IGNORIEREN,
                                         this::narrateAndDo_FroschHatAngesprochen_Exit),
-                                immReEntrySt(this::narrateAndDo_FroschHatAngesprochen_ImmReEntry),
-                                entrySt(this::narrateAndDo_FroschHatAngesprochen_ReEntry)
+                                immReEntrySt(this::etwasIstInDenBrunnenGefallen,
+                                        this::narrateAndDo_FroschHatAngesprochen_ImmReEntry),
+                                immReEntrySt(this::nichtsIstInDenBrunnenGefallen,
+                                        this::narrateAndDo_hallo_froschReagiertNicht),
+                                entrySt(this::etwasIstInDenBrunnenGefallen,
+                                        this::narrateAndDo_FroschHatAngesprochen_ReEntry),
+                                entrySt(this::nichtsIstInDenBrunnenGefallen,
+                                        this::narrateAndDo_hallo_froschReagiertNicht)
                         );
             case HAT_NACH_BELOHNUNG_GEFRAGT:
                 return
@@ -69,16 +78,40 @@ class FroschprinzTalkStepBuilder extends AbstractCreatureTalkStepBuilder {
                                         VerbSubjDatAkk.MACHEN.mitAkk(Nominalphrase.ANGEBOTE),
                                         this::narrateAndDo_FroschHatNachBelohnungGefragt_AngeboteMachen),
                                 exitSt(this::narrateAndDo_FroschHatNachBelohnungGefragt_Exit),
-                                immReEntrySt(VerbSubjDatAkk.MACHEN.mitAkk(Nominalphrase.ANGEBOTE),
+                                immReEntrySt(this::etwasIstInDenBrunnenGefallen,
+                                        VerbSubjDatAkk.MACHEN.mitAkk(Nominalphrase.ANGEBOTE),
                                         this::narrateAndDo_FroschHatNachBelohnungGefragt_ImmReEntry),
-                                entrySt(VerbSubjDatAkk.MACHEN.mitAkk(Nominalphrase.ANGEBOTE),
-                                        this::narrateAndDo_FroschHatNachBelohnungGefragt_ReEntry)
+                                immReEntrySt(this::nichtsIstInDenBrunnenGefallen,
+                                        this::narrateAndDo_hallo_froschReagiertNicht),
+                                entrySt(this::etwasIstInDenBrunnenGefallen,
+                                        VerbSubjDatAkk.MACHEN.mitAkk(Nominalphrase.ANGEBOTE),
+                                        this::narrateAndDo_FroschHatNachBelohnungGefragt_ReEntry),
+                                entrySt(this::nichtsIstInDenBrunnenGefallen,
+                                        this::narrateAndDo_hallo_froschReagiertNicht)
                         );
             case HAT_FORDERUNG_GESTELLT:
                 return ImmutableList.of(
-                        // TODO     HAT_FORDERUNG_GESTELLT - Zusagen
-                        exitSt(this::narrateAndDo_FroschHatForderungGestellt_Exit)
+                        st(this::etwasIstInDenBrunnenGefallen,
+                                VerbSubjDatAkk.VERSPRECHEN.mitAkk(Nominalphrase.ALLES),
+                                this::narrateAndDo_FroschHatForderungGestellt_AllesVersprechen),
+                        exitSt(this::narrateAndDo_FroschHatForderungGestellt_Exit),
+                        // TODO immReEntry etwas im Brunnen
+                        immReEntrySt(this::nichtsIstInDenBrunnenGefallen,
+                                this::narrateAndDo_hallo_froschReagiertNicht),
+                        // TODO entrySt(this::etwasIstInDenBrunnenGefallen,
+                        //VerbSubjDatAkk.MACHEN.mitAkk(Nominalphrase.ANGEBOTE),
+                        //this::narrateAndDo_..._ReEntry),
+                        entrySt(this::nichtsIstInDenBrunnenGefallen,
+                                this::narrateAndDo_hallo_froschReagiertNicht)
                 );
+            case AUF_DEM_WEG_ZUM_BRUNNEN_UM_DINGE_HERAUSZUHOLEN:
+                // TODO Steps für AUF_DEM_WEG_ZUM_BRUNNEN_UM_DINGE_HERAUSZUHOLEN
+                // "Vertraue mir, bald hast du ...die goldene Kugel...
+                // wieder. Aber vergiss dein Versprechen nicht!"
+                return ImmutableList.of();
+            case ERWARTET_VON_SC_EINLOESUNG_SEINES_VERSPRECHENS:
+                // TODO Steps für HAT_DINGE_AUS_DEM_BRUNNEN_HERAUFGEHOLT
+                return ImmutableList.of();
             default:
                 throw new IllegalStateException("Unexpected Froschprinz state: " +
                         creatureData.getState());
@@ -92,11 +125,6 @@ class FroschprinzTalkStepBuilder extends AbstractCreatureTalkStepBuilder {
         n.add(t(SENTENCE, "„Ach, du bist's, alter Wasserpatscher“, sagst du")
                 .undWartest()
                 .dann());
-
-        if (objectsInDenBrunnenGefallen.isEmpty()) {
-            narrateFroschReagiertNicht();
-            return;
-        }
 
         narrateAndDoInDenBrunnenGefallenErklaerung();
         narrateAndDoHerausholenAngebot();
@@ -123,11 +151,6 @@ class FroschprinzTalkStepBuilder extends AbstractCreatureTalkStepBuilder {
         n.add(t(SENTENCE, "„Hallo, du hässlicher Frosch!“, redest du ihn an")
                 .undWartest()
                 .dann());
-
-        if (objectsInDenBrunnenGefallen.isEmpty()) {
-            narrateFroschReagiertNicht();
-            return;
-        }
 
         narrateAndDoInDenBrunnenGefallenErklaerung();
         narrateAndDoHerausholenAngebot();
@@ -209,37 +232,18 @@ class FroschprinzTalkStepBuilder extends AbstractCreatureTalkStepBuilder {
                         "hinuntersteigen und dir " +
                         // die goldene Kugel / die Dinge
                         getDescriptionSingleOrCollective(objectsInDenBrunnenGefallen).akk() +
-                        " wieder herauf holen.“"));
+                        " wieder heraufholen.“"));
 
         db.creatureDataDao().setState(FROSCHPRINZ, HAT_FORDERUNG_GESTELLT);
     }
 
     private void narrateAndDo_FroschHatNachBelohnungGefragt_ImmReEntry() {
-        if (objectsInDenBrunnenGefallen.isEmpty()) {
-            n.add(t(SENTENCE, "„Hallo nochmal, Meister Frosch!“"));
-
-            narrateFroschReagiertNicht();
-            return;
-        }
-
         n.add(t(PARAGRAPH, "Dann gehst du kurz in dich…"));
 
-        narrateAndDo_FroschHatNachBelohnungGefragt_Nachfrage();
+        narrateAndDo_FroschHatNachBelohnungGefragt_ReEntry();
     }
-
 
     private void narrateAndDo_FroschHatNachBelohnungGefragt_ReEntry() {
-        if (objectsInDenBrunnenGefallen.isEmpty()) {
-            n.add(t(SENTENCE, "„Hallo, Kollege Frosch!“"));
-
-            narrateFroschReagiertNicht();
-            return;
-        }
-
-        narrateAndDo_FroschHatNachBelohnungGefragt_Nachfrage();
-    }
-
-    private void narrateAndDo_FroschHatNachBelohnungGefragt_Nachfrage() {
         n.add(t(PARAGRAPH,
                 "„Frosch“, sprichst du ihn an, „steht dein Angebot noch?“"));
 
@@ -272,6 +276,62 @@ class FroschprinzTalkStepBuilder extends AbstractCreatureTalkStepBuilder {
     // -------------------------------------------------------------------------------
     // .. HAT_NACH_BELOHNUNG_GEFRAGT
     // -------------------------------------------------------------------------------
+    private void narrateAndDo_FroschHatForderungGestellt_AllesVersprechen() {
+        // die goldene Kugel / die Dinge
+        final Nominalphrase descObjectsInDenBrunnenGefallen =
+                getDescriptionSingleOrCollective(objectsInDenBrunnenGefallen);
+        n.add(t(PARAGRAPH,
+                "„Ach ja“, sagst du, „ich verspreche dir alles, was du " +
+                        "willst, wenn du mir nur " +
+                        descObjectsInDenBrunnenGefallen.akk() +
+                        " wiederbringst.“ Du denkst " +
+                        "aber: „Was der einfältige Frosch schwätzt, der sitzt im Wasser bei " +
+                        "seinesgleichen und quakt und kann keines Menschen Geselle sein.“"));
+
+        n.add(t(PARAGRAPH,
+                "Der Frosch, als er die Zusage erhalten hat,"));
+
+        if (room != AvRoom.IM_WALD_BEIM_BRUNNEN) {
+            n.add(t(WORD, "hüpft er sogleich davon")
+                    .imGespraechMit(null));
+
+            db.creatureDataDao().setState(FROSCHPRINZ,
+                    AUF_DEM_WEG_ZUM_BRUNNEN_UM_DINGE_HERAUSZUHOLEN);
+            // TODO Der Froschprinz muss eine KI erhalten, dass er sich
+            // vom aktuellen room Schritt für Schritt zum Brunnen bewegt
+            // und die Dinge herausholt.
+            // TODO Außerdem könnte man den Frosch auf dem Weg treffen
+            // (oder auch nicht).
+
+            return;
+        }
+
+        n.add(t(WORD, "taucht seinen Kopf " +
+                "unter, sinkt hinab und über ein Weilchen kommt er wieder herauf gerudert, " +
+                "hat " +
+                // die goldene Kugel / die Dinge
+                descObjectsInDenBrunnenGefallen.akk() +
+                " im Maul und wirft " +
+                descObjectsInDenBrunnenGefallen.persPron().akk() +
+                " ins Gras. Du " +
+                "bist voll Freude, als du " +
+                // die goldene Kugel / die Dinge
+                descObjectsInDenBrunnenGefallen.akk() +
+                " wieder erblickst")
+                .imGespraechMit(null));
+
+        db.creatureDataDao().setState(FROSCHPRINZ, ERWARTET_VON_SC_EINLOESUNG_SEINES_VERSPRECHENS);
+
+        db.playerStatsDao().setStateOfMind(VOLLER_FREUDE);
+        // TODO Und welche Auswirkung?
+        // TODO Wie zurücksetzen?
+
+        for (final ObjectData objectData : objectsInDenBrunnenGefallen) {
+            db.objectDataDao().setDemSCInDenBrunnenGefallen(
+                    objectData.getObject(), false);
+            db.objectDataDao().setRoom(objectData.getObject(), room);
+        }
+    }
 
     private void narrateAndDo_FroschHatForderungGestellt_Exit() {
         n.add(alt(
@@ -292,9 +352,25 @@ class FroschprinzTalkStepBuilder extends AbstractCreatureTalkStepBuilder {
     // .. ALLGEMEINES
     // -------------------------------------------------------------------------------
 
+    private void narrateAndDo_hallo_froschReagiertNicht() {
+        n.add(alt(
+                t(SENTENCE, "„Hallo, Kollege Frosch!“"),
+                t(SENTENCE, "„Hallo, du hässlicher Frosch!“, redest du ihn an")
+                        .undWartest()
+                        .dann(),
+                t(SENTENCE, "„Hallo nochmal, Meister Frosch!“")
+        ));
+
+        narrateFroschReagiertNicht();
+    }
+
     private void narrateFroschReagiertNicht() {
         n.add(t(SENTENCE, "Der Frosch reagiert nicht")
                 .imGespraechMit(null));
+    }
+
+    private boolean nichtsIstInDenBrunnenGefallen() {
+        return objectsInDenBrunnenGefallen.isEmpty();
     }
 
     private boolean etwasIstInDenBrunnenGefallen() {

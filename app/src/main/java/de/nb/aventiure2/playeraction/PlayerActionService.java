@@ -24,6 +24,8 @@ import de.nb.aventiure2.playeraction.action.HochwerfenAction;
 import de.nb.aventiure2.playeraction.action.NehmenAction;
 import de.nb.aventiure2.playeraction.action.RedenAction;
 
+import static de.nb.aventiure2.data.world.creature.Creature.Key.FROSCHPRINZ;
+
 /**
  * Repository for the actions the player can choose from.
  */
@@ -55,6 +57,7 @@ public class PlayerActionService {
         final List<AvObject> inventory = db.playerInventoryDao().getInventory();
 
         final List<CreatureData> creaturesInRoom = db.creatureDataDao().getCreaturesInRoom(room);
+        final CreatureData froschprinz = db.creatureDataDao().getCreature(FROSCHPRINZ);
 
         final List<AbstractPlayerAction> res = new ArrayList<>();
 
@@ -63,7 +66,8 @@ public class PlayerActionService {
         if (!currentStoryState.talkingToAnyone()) {
             res.addAll(buildPlayerOnlyAction(currentStoryState, stats, creaturesInRoom));
             res.addAll(buildObjectInRoomActions(currentStoryState, room, allObjectsByKey));
-            res.addAll(buildInventoryActions(currentStoryState, room, allObjectsByKey, inventory));
+            res.addAll(buildInventoryActions(currentStoryState, room, allObjectsByKey,
+                    froschprinz, inventory));
             res.addAll(buildRoomConnectionActions(currentStoryState, room));
         }
 
@@ -110,12 +114,14 @@ public class PlayerActionService {
     private ImmutableList<AbstractPlayerAction> buildInventoryActions(
             final StoryState currentStoryState,
             final AvRoom room, final Map<AvObject.Key, ObjectData> allObjectsByKey,
+            final CreatureData froschprinz,
             final List<AvObject> inventory) {
         final ImmutableList.Builder<AbstractPlayerAction> res = ImmutableList.builder();
         for (final AvObject inventoryObject : inventory) {
             final ObjectData objectData = allObjectsByKey.get(inventoryObject.getKey());
 
-            res.addAll(HochwerfenAction.buildActions(db, currentStoryState, room, objectData));
+            res.addAll(HochwerfenAction
+                    .buildActions(db, currentStoryState, room, objectData, froschprinz));
             res.addAll(AblegenAction.buildActions(db, currentStoryState, room, objectData));
         }
         return res.build();

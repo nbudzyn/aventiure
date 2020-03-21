@@ -64,6 +64,7 @@ public enum VerbSubjObj implements PraedikatMitEinerObjektleerstelle {
         this.abgetrenntesPraefix = abgetrenntesPraefix;
     }
 
+    @Override
     public PraedikatOhneLeerstellen mitObj(final DescribableAsDeklinierbarePhrase describable) {
         return new PraedikatSubjObjOhneLeerstellen(infinitiv, duForm, abgetrenntesPraefix,
                 kasusOderPraepositionalkasus, describable);

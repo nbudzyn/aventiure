@@ -72,6 +72,16 @@ public class CreatureData extends AbstractEntityData {
         return known;
     }
 
+    public boolean hasAnyState(final CreatureState... alternatives) {
+        for (final CreatureState test : alternatives) {
+            if (hasState(test)) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
     public boolean hasState(final CreatureState test) {
         return state == test;
     }

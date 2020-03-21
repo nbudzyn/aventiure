@@ -9,10 +9,18 @@ import java.util.Collection;
 import de.nb.aventiure2.data.database.AvDatabase;
 import de.nb.aventiure2.data.storystate.StoryState;
 import de.nb.aventiure2.data.storystate.StoryState.StartsNew;
+import de.nb.aventiure2.data.world.creature.CreatureData;
+import de.nb.aventiure2.data.world.object.AvObject;
 import de.nb.aventiure2.data.world.object.ObjectData;
 import de.nb.aventiure2.data.world.room.AvRoom;
+import de.nb.aventiure2.german.base.Nominalphrase;
+import de.nb.aventiure2.german.praedikat.SeinUtil;
 import de.nb.aventiure2.playeraction.AbstractPlayerAction;
 
+import static de.nb.aventiure2.data.world.creature.CreatureState.HAT_FORDERUNG_GESTELLT;
+import static de.nb.aventiure2.data.world.creature.CreatureState.HAT_NACH_BELOHNUNG_GEFRAGT;
+import static de.nb.aventiure2.data.world.creature.CreatureState.HAT_SC_HILFSBEREIT_ANGESPROCHEN;
+import static de.nb.aventiure2.data.world.creature.CreatureState.UNAUFFAELLIG;
 import static de.nb.aventiure2.data.world.player.stats.PlayerStateOfMind.UNTROESTLICH;
 import static de.nb.aventiure2.data.world.room.AvRoom.IM_WALD_BEIM_BRUNNEN;
 import static de.nb.aventiure2.german.base.GermanUtil.capitalize;
@@ -22,23 +30,27 @@ import static de.nb.aventiure2.german.base.GermanUtil.capitalize;
  */
 public class HochwerfenAction extends AbstractObjectAction {
     private final AvRoom room;
+    private final CreatureData froschprinzCreatureData;
 
     public static Collection<AbstractPlayerAction> buildActions(
             final AvDatabase db, final StoryState initialStoryState,
-            final AvRoom room, final ObjectData objectData) {
+            final AvRoom room, final ObjectData objectData,
+            final CreatureData froschprinzCreatureData) {
         // TODO Nicht jedes Object lässt sich hochwerfen...
         return ImmutableList.of(
                 new HochwerfenAction(db, initialStoryState,
-                        objectData, room));
+                        objectData, room, froschprinzCreatureData));
     }
 
     private HochwerfenAction(final AvDatabase db,
                              final StoryState initialStoryState,
                              final ObjectData objectData,
-                             final AvRoom room) {
+                             final AvRoom room,
+                             final CreatureData froschprinzCreatureData) {
         super(db, initialStoryState, objectData);
 
         this.room = room;
+        this.froschprinzCreatureData = froschprinzCreatureData;
     }
 
     @Override
@@ -60,26 +72,95 @@ public class HochwerfenAction extends AbstractObjectAction {
     }
 
     private void narrateAndDoErstesMal() {
+        if (room == IM_WALD_BEIM_BRUNNEN && !froschprinzCreatureData.hasState(UNAUFFAELLIG)) {
+            narrateAndDoFroschBekannt();
+            return;
+        }
+
+        final Nominalphrase objectDesc = getObjectData().getDescription(false);
+
         if (initialStoryState.allowsAdditionalDuSatzreihengliedOhneSubjekt()) {
             n.add(t(StartsNew.WORD,
                     ", wirfst " +
-                            getObjectData().akk() +
-                            // TODO Maskulinum...
-                            " in die Höhe und fängst sie wieder auf")
+                            objectDesc.akk() +
+                            " in die Höhe und fängst " +
+                            objectDesc.persPron().akk() +
+                            " wieder auf")
                     .dann());
             return;
         }
 
         n.add(t(StartsNew.PARAGRAPH,
                 "Aus Langeweile wirfst " +
-                        getObjectData().akk() +
-                        // TODO Maskulinum...
-                        " in die Höhe und fängst sie wieder auf")
+                        objectDesc.akk() +
+                        " in die Höhe und fängst " +
+                        objectDesc.persPron().akk() +
+                        " wieder auf")
                 .dann());
     }
 
+    private void narrateAndDoFroschBekannt() {
+        if (froschprinzCreatureData.hasAnyState(HAT_SC_HILFSBEREIT_ANGESPROCHEN,
+                HAT_NACH_BELOHNUNG_GEFRAGT,
+                HAT_FORDERUNG_GESTELLT)) {
+            narrateAndDoObjectFaelltSofortInDenBrunnen();
+            if (froschprinzCreatureData.getRoom() == room) {
+                n.add(t(StartsNew.PARAGRAPH,
+                        "Ob der Frosch gerade seine glitschige Nase gerümpft hat?"));
+            }
+            return;
+        }
+
+        // Der Frosch ist nicht mehr in Stimmung, Dinge aus dem Brunnen zu holen.
+        if (getObject().getKey() != AvObject.Key.GOLDENE_KUGEL) {
+            final Nominalphrase objectDesc = getObjectData().getDescription(false);
+
+            n.add(t(StartsNew.PARAGRAPH,
+                    "Du wirfst " +
+                            objectDesc.akk() +
+                            " hoch in die Luft und fängst " +
+                            objectDesc.persPron().akk() +
+                            " geschickt wieder auf")
+                    .dann());
+            return;
+        }
+
+        narrateAndDoObjectFaelltSofortInDenBrunnen();
+        if (froschprinzCreatureData.getRoom() == room) {
+            n.add(t(StartsNew.SENTENCE,
+                    capitalize(froschprinzCreatureData.nom(true)) +
+                            " schaut dich vorwurfsvoll und etwas hochnäsig an"));
+            return;
+        }
+
+        n.add(t(StartsNew.SENTENCE,
+                "Weit und breit kein Frosch zu sehen… Das war vielleicht etwas ungeschickt, " +
+                        "oder?"));
+    }
+
+    private void narrateAndDoObjectFaelltSofortInDenBrunnen() {
+        final Nominalphrase objectDesc = getObjectData().getDescription(false);
+
+        n.add(t(StartsNew.PARAGRAPH,
+                "Du wirfst " +
+                        objectDesc.akk() +
+                        " nur ein einziges Mal in die Höhe, " +
+                        "aber wie das Unglück es will, fällt " +
+                        objectDesc.persPron().akk() +
+                        " sofort in den Brunnen: " +
+                        "Platsch! – weg " +
+                        SeinUtil.istSind(objectDesc.getNumerusGenus()) +
+                        " " +
+                        objectDesc.persPron().akk())
+                .dann());
+        db.playerInventoryDao().letGo(getObject());
+        db.objectDataDao().setDemSCInDenBrunnenGefallen(getObject(),
+                true);
+    }
+
     private void narrateAndDoWiederholung() {
-        if (PlayerActionUtil.random(2) == 1) {
+        if (PlayerActionUtil.random(2) == 1 ||
+                (room == IM_WALD_BEIM_BRUNNEN && !froschprinzCreatureData.hasState(UNAUFFAELLIG))) {
             n.add(alt(t(StartsNew.SENTENCE,
                     "Und noch einmal - was ein schönes Spiel!")
                             .dann(),

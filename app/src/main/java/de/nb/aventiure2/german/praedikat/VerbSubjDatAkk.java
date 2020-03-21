@@ -11,7 +11,9 @@ import de.nb.aventiure2.german.base.DescribableAsDeklinierbarePhrase;
  */
 public enum VerbSubjDatAkk implements Praedikat {
     // "dem Frosch Angebote machen"
-    MACHEN("machen", "machst");
+    MACHEN("machen", "machst"),
+    VERSPRECHEN("versprechen", "versprichst"),
+    ;
 
     /**
      * Infinitiv des Verbs ("machen")

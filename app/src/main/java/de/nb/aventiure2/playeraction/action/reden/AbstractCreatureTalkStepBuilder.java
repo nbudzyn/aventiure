@@ -2,8 +2,10 @@ package de.nb.aventiure2.playeraction.action.reden;
 
 import androidx.annotation.NonNull;
 
+import com.google.common.collect.ImmutableCollection;
 import com.google.common.collect.ImmutableList;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
@@ -19,6 +21,7 @@ import de.nb.aventiure2.data.world.room.AvRoom;
 import de.nb.aventiure2.german.praedikat.Praedikat;
 
 import static de.nb.aventiure2.playeraction.action.reden.CreatureTalkStep.ALWAYS_POSSIBLE;
+import static de.nb.aventiure2.playeraction.action.reden.CreatureTalkStep.DEFAULT_ENTRY_NAME;
 import static de.nb.aventiure2.playeraction.action.reden.CreatureTalkStep.DEFAULT_EXIT_NAME;
 
 /**
@@ -73,16 +76,54 @@ abstract class AbstractCreatureTalkStepBuilder {
 
     abstract List<CreatureTalkStep> getAllStepsForCurrentState();
 
-    static CreatureTalkStep exitSt(
+
+    static CreatureTalkStep entrySt(
             final CreatureTalkStep.TalkStepNarrationAndAction narrationAndAction) {
-        return exitSt(DEFAULT_EXIT_NAME, narrationAndAction);
+        return entrySt(DEFAULT_ENTRY_NAME, narrationAndAction);
     }
 
-    static CreatureTalkStep exitSt(final Praedikat exitName,
-                                   final CreatureTalkStep.TalkStepNarrationAndAction narrationAndAction) {
-        return new CreatureTalkStep(true, ALWAYS_POSSIBLE, exitName,
+    static CreatureTalkStep entrySt(final Praedikat entryName,
+                                    final CreatureTalkStep.TalkStepNarrationAndAction narrationAndAction) {
+        return entrySt(ALWAYS_POSSIBLE, entryName, narrationAndAction);
+    }
+
+    static CreatureTalkStep entrySt(
+            final CreatureTalkStep.TalkStepCondition condition,
+            final CreatureTalkStep.TalkStepNarrationAndAction narrationAndAction) {
+        return entrySt(condition, DEFAULT_ENTRY_NAME, narrationAndAction);
+    }
+
+    static CreatureTalkStep entrySt(
+            final CreatureTalkStep.TalkStepCondition condition,
+            final Praedikat entryName,
+            final CreatureTalkStep.TalkStepNarrationAndAction narrationAndAction) {
+        return new CreatureTalkStep(CreatureTalkStep.Type.ENTRY, condition, entryName,
                 narrationAndAction);
     }
+
+    static CreatureTalkStep immReEntrySt(
+            final CreatureTalkStep.TalkStepNarrationAndAction narrationAndAction) {
+        return immReEntrySt(DEFAULT_ENTRY_NAME, narrationAndAction);
+    }
+
+    static CreatureTalkStep immReEntrySt(final Praedikat entryName,
+                                         final CreatureTalkStep.TalkStepNarrationAndAction narrationAndAction) {
+        return immReEntrySt(ALWAYS_POSSIBLE, entryName, narrationAndAction);
+    }
+
+    static CreatureTalkStep immReEntrySt(final CreatureTalkStep.TalkStepCondition condition,
+                                         final CreatureTalkStep.TalkStepNarrationAndAction narrationAndAction) {
+        return immReEntrySt(condition, DEFAULT_ENTRY_NAME, narrationAndAction);
+    }
+
+    static CreatureTalkStep immReEntrySt(
+            final CreatureTalkStep.TalkStepCondition condition,
+            final Praedikat entryName,
+            final CreatureTalkStep.TalkStepNarrationAndAction narrationAndAction) {
+        return new CreatureTalkStep(CreatureTalkStep.Type.IMMEDIATE_RE_ENTRY, condition,
+                entryName, narrationAndAction);
+    }
+
 
     static CreatureTalkStep st(final Praedikat name,
                                final CreatureTalkStep.TalkStepNarrationAndAction narrationAndAction) {
@@ -94,7 +135,30 @@ abstract class AbstractCreatureTalkStepBuilder {
             final Praedikat name,
             final CreatureTalkStep.TalkStepNarrationAndAction narrationAndAction) {
         return new CreatureTalkStep(
-                false, condition, name, narrationAndAction);
+                CreatureTalkStep.Type.NORMAL, condition, name, narrationAndAction);
+    }
+
+    static CreatureTalkStep exitSt(
+            final CreatureTalkStep.TalkStepNarrationAndAction narrationAndAction) {
+        return exitSt(DEFAULT_EXIT_NAME, narrationAndAction);
+    }
+
+    static CreatureTalkStep exitSt(final Praedikat exitName,
+                                   final CreatureTalkStep.TalkStepNarrationAndAction narrationAndAction) {
+        return new CreatureTalkStep(CreatureTalkStep.Type.EXIT, ALWAYS_POSSIBLE, exitName,
+                narrationAndAction);
+    }
+
+    StoryStateBuilder alt(final ImmutableCollection.Builder<StoryStateBuilder> alternatives) {
+        return alt(alternatives.build());
+    }
+
+    StoryStateBuilder alt(final Collection<StoryStateBuilder> alternatives) {
+        return alt(alternatives.toArray(new StoryStateBuilder[alternatives.size()]));
+    }
+
+    StoryStateBuilder alt(final StoryStateBuilder... alternatives) {
+        return n.chooseNextFrom(alternatives);
     }
 
     StoryStateBuilder t(

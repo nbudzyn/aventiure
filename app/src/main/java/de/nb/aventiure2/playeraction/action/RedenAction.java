@@ -59,8 +59,7 @@ public class RedenAction extends AbstractPlayerAction {
                 ImmutableList.builder();
 
         for (final CreatureTalkStep talkStep : talkSteps) {
-            if (!talkStep.isExitStep() ||
-                    initialStoryState.talkingTo(creatureData.getCreature().getKey())) {
+            if (stepTypeFits(initialStoryState, creatureData, talkStep.getStepType())) {
                 res.add(buildAction(db, initialStoryState, room, allObjectsByKey,
                         creatureData,
                         // "Mit ... reden" /  "Den ... ignorieren" / "Das Gespräch beenden"
@@ -69,6 +68,31 @@ public class RedenAction extends AbstractPlayerAction {
         }
 
         return res.build();
+    }
+
+    private static boolean stepTypeFits(final StoryState initialStoryState,
+                                        final CreatureData creatureData,
+                                        final CreatureTalkStep.Type stepType) {
+        if (initialStoryState.talkingTo(creatureData.getCreature().getKey())) {
+            // Der SC befindet sich gerade im Gespräch mit der Creature-
+            return stepType == CreatureTalkStep.Type.NORMAL ||
+                    stepType == CreatureTalkStep.Type.EXIT;
+        }
+
+        if (initialStoryState.lastActionWas(RedenAction.class)
+            // TODO Hier müsste man noch prüfen, dass der SC auch gerade MIT DIESER CREATURE
+            // geredet hat! initialStoryState.hatGeradeGeredetMit(creatureData) oder so
+        ) {
+            // Der SC hat das Gespräch mit der Creature GERADE EBEN beendet
+            // und hat es sich ganz offenbar anders überlegt
+            // (oder die Creature hat das Gespräch beendet, und der Benutzer möchte
+            // sofort wieder ein Gespräch anknüpfen).
+            return stepType == CreatureTalkStep.Type.IMMEDIATE_RE_ENTRY;
+        }
+
+        // Der SC befindet sich gerade nicht im Gespräch mit der Creature
+        // (und auch nicht GERADE EBEN so ein Gespräch beendet).
+        return stepType == CreatureTalkStep.Type.ENTRY;
     }
 
     /**

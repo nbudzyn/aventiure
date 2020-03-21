@@ -159,7 +159,6 @@ public abstract class AvDatabase extends RoomDatabase {
     private static String buildObjectsInRoomDescriptionList(final List<AvObject> objectsInRoom) {
         final StringBuilder res = new StringBuilder();
         for (int i = 0; i < objectsInRoom.size(); i++) {
-            // TODO Not always at first sight!
             res.append(objectsInRoom.get(i).getDescriptionAtFirstSight().nom());
             if (i == objectsInRoom.size() - 2) {
                 // one before the last

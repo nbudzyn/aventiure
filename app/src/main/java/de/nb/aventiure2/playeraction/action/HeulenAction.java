@@ -126,7 +126,7 @@ public class HeulenAction extends AbstractPlayerAction {
     private void narrateAndDoErstesMal() {
         final ImmutableList.Builder<StoryStateBuilder> alt = ImmutableList.builder();
         alt.add(t(PARAGRAPH,
-                "Plötzlich überkommt dich ein Schluchzen"));
+                "Dich überkommt ein Schluchzen"));
 
         if (initialStoryState.dann()) {
             alt.add(t(PARAGRAPH,

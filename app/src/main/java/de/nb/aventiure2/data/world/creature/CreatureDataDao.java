@@ -35,6 +35,13 @@ public abstract class CreatureDataDao {
     @Query("UPDATE CreatureData SET known = 1 WHERE creature = :creature")
     public abstract void setKnown(Creature creature);
 
+    public CreatureData getCreature(final Creature.Key creatureKey) {
+        return getCreature(Creature.get(creatureKey));
+    }
+
+    @Query("SELECT * from CreatureData where :creature = creature")
+    public abstract CreatureData getCreature(Creature creature);
+
     @Query("SELECT * from CreatureData where :room = room")
     public abstract List<CreatureData> getCreaturesInRoom(AvRoom room);
 

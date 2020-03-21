@@ -9,6 +9,8 @@ import static de.nb.aventiure2.german.base.NumerusGenus.PL;
 public class Nominalphrase extends DeklinierbarePhrase {
     // Allgemeine Nominalfphrasen, die sich nicht auf ein
     // AvObject oder eine AbstractEntity beziehen.
+    public static final Nominalphrase ALLES = // (Indefinitpronomen)
+            np(N, "alles", "allem");
     public static final Nominalphrase ANGEBOTE =
             np(PL, "Angebote", "Angeboten");
     public static final Nominalphrase GESPRAECH =
@@ -44,6 +46,10 @@ public class Nominalphrase extends DeklinierbarePhrase {
     public Nominalphrase(final NumerusGenus numerusGenus,
                          final String nominativ, final String dativ, final String akkusativ) {
         super(numerusGenus, nominativ, dativ, akkusativ);
+    }
+
+    public Personalpronomen persPron() {
+        return Personalpronomen.get(getNumerusGenus());
     }
 
     public Relativpronomen relPron() {

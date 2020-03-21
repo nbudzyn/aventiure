@@ -14,7 +14,7 @@ public class Relativpronomen extends DeklinierbarePhrase {
             M, new Relativpronomen(M, "der", "dem", "den"),
             F, new Relativpronomen(F, "die", "der"),
             N, new Relativpronomen(N, "das", "dem"),
-            PL, new Relativpronomen(N, "die", "denen"));
+            PL, new Relativpronomen(PL, "die", "denen"));
 
     public static Relativpronomen get(final NumerusGenus numerusGenus) {
         return ALL.get(numerusGenus);
