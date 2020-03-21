@@ -13,7 +13,7 @@ import de.nb.aventiure2.data.world.object.ObjectData;
 import de.nb.aventiure2.data.world.room.AvRoom;
 import de.nb.aventiure2.playeraction.AbstractPlayerAction;
 
-import static de.nb.aventiure2.german.GermanUtil.capitalize;
+import static de.nb.aventiure2.german.base.GermanUtil.capitalize;
 
 /**
  * Der Benutzer legt einen Gegenstand ab.

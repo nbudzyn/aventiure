@@ -1,15 +1,15 @@
-package de.nb.aventiure2.german;
+package de.nb.aventiure2.german.base;
 
 import com.google.common.collect.ImmutableMap;
 
 import java.util.Map;
 
-import static de.nb.aventiure2.german.NumerusGenus.F;
-import static de.nb.aventiure2.german.NumerusGenus.M;
-import static de.nb.aventiure2.german.NumerusGenus.N;
-import static de.nb.aventiure2.german.NumerusGenus.PL;
+import static de.nb.aventiure2.german.base.NumerusGenus.F;
+import static de.nb.aventiure2.german.base.NumerusGenus.M;
+import static de.nb.aventiure2.german.base.NumerusGenus.N;
+import static de.nb.aventiure2.german.base.NumerusGenus.PL;
 
-public class Relativpronomen extends DekliniertePhrase {
+public class Relativpronomen extends DeklinierbarePhrase {
     private static final Map<NumerusGenus, Relativpronomen> ALL = ImmutableMap.of(
             M, new Relativpronomen(M, "der", "dem", "den"),
             F, new Relativpronomen(F, "die", "der"),

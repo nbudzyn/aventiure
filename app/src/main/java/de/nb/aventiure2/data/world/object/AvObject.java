@@ -6,12 +6,12 @@ import java.util.List;
 
 import de.nb.aventiure2.data.world.entity.AbstractEntity;
 import de.nb.aventiure2.data.world.room.AvRoom;
-import de.nb.aventiure2.german.Nominalphrase;
-import de.nb.aventiure2.german.NumerusGenus;
+import de.nb.aventiure2.german.base.Nominalphrase;
+import de.nb.aventiure2.german.base.NumerusGenus;
 
 import static de.nb.aventiure2.data.world.object.AvObject.Key.GOLDENE_KUGEL;
-import static de.nb.aventiure2.german.Nominalphrase.np;
-import static de.nb.aventiure2.german.NumerusGenus.F;
+import static de.nb.aventiure2.german.base.Nominalphrase.np;
+import static de.nb.aventiure2.german.base.NumerusGenus.F;
 
 /**
  * An object in the world.

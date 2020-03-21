@@ -22,8 +22,8 @@ import de.nb.aventiure2.german.DuDescription;
 import de.nb.aventiure2.playeraction.AbstractPlayerAction;
 
 import static com.google.common.base.Preconditions.checkArgument;
-import static de.nb.aventiure2.german.GermanUtil.capitalize;
-import static de.nb.aventiure2.german.GermanUtil.uncapitalize;
+import static de.nb.aventiure2.german.base.GermanUtil.capitalize;
+import static de.nb.aventiure2.german.base.GermanUtil.uncapitalize;
 import static java.util.stream.Collectors.toList;
 
 /**

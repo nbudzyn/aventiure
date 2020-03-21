@@ -1,6 +1,6 @@
 package de.nb.aventiure2.data.world.entity;
 
-import de.nb.aventiure2.german.Nominalphrase;
+import de.nb.aventiure2.german.base.Nominalphrase;
 
 /**
  * An entity in the world (not the player character, not a room).

@@ -1,6 +1,6 @@
 package de.nb.aventiure2.german;
 
-import static de.nb.aventiure2.german.GermanUtil.capitalize;
+import static de.nb.aventiure2.german.base.GermanUtil.capitalize;
 
 /**
  * A description - assuming the player character is the (first) subject. Somehting like

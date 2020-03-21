@@ -1,4 +1,4 @@
-package de.nb.aventiure2.german;
+package de.nb.aventiure2.german.base;
 
 /**
  * Static helper methods for the german language.

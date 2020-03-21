@@ -2,7 +2,7 @@ package de.nb.aventiure2.data.world.creature;
 
 import de.nb.aventiure2.data.world.entity.AbstractEntity;
 import de.nb.aventiure2.data.world.room.AvRoom;
-import de.nb.aventiure2.german.Nominalphrase;
+import de.nb.aventiure2.german.base.Nominalphrase;
 
 /**
  * A creature in the world (not the player character)

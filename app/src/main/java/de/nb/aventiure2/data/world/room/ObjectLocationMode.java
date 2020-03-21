@@ -1,10 +1,10 @@
 package de.nb.aventiure2.data.world.room;
 
-import de.nb.aventiure2.german.TransitiveVerb;
+import de.nb.aventiure2.german.praedikat.VerbSubjObj;
 
-import static de.nb.aventiure2.german.TransitiveVerb.AUFHEBEN;
-import static de.nb.aventiure2.german.TransitiveVerb.HERAUSKLAUBEN;
-import static de.nb.aventiure2.german.TransitiveVerb.NEHMEN;
+import static de.nb.aventiure2.german.praedikat.VerbSubjObj.AUFHEBEN;
+import static de.nb.aventiure2.german.praedikat.VerbSubjObj.HERAUSKLAUBEN;
+import static de.nb.aventiure2.german.praedikat.VerbSubjObj.NEHMEN;
 
 /**
  * The kind of location an object has in a room: on the floor, on a table, ...
@@ -26,13 +26,13 @@ public enum ObjectLocationMode {
     /**
      * Das Verb das beschreibt, das der Benutzer etwas von diesem Ort <i>nimmt</i>
      */
-    private final TransitiveVerb nehmenVerb;
+    private final VerbSubjObj nehmenVerb;
 
     ObjectLocationMode(final String wo, final String wohin) {
         this(wo, wohin, NEHMEN);
     }
 
-    ObjectLocationMode(final String wo, final String wohin, final TransitiveVerb nehmenVerb) {
+    ObjectLocationMode(final String wo, final String wohin, final VerbSubjObj nehmenVerb) {
         this.wo = wo;
         this.wohin = wohin;
         this.nehmenVerb = nehmenVerb;
@@ -46,7 +46,7 @@ public enum ObjectLocationMode {
         return wohin;
     }
 
-    public TransitiveVerb getNehmenVerb() {
+    public VerbSubjObj getNehmenVerb() {
         return nehmenVerb;
     }
 }

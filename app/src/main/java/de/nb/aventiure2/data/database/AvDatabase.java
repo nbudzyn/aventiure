@@ -17,6 +17,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 import de.nb.aventiure2.data.storystate.AvStoryStateConverters;
+import de.nb.aventiure2.data.storystate.IPlayerAction;
 import de.nb.aventiure2.data.storystate.StoryState;
 import de.nb.aventiure2.data.storystate.StoryState.StartsNew;
 import de.nb.aventiure2.data.storystate.StoryStateBuilder;
@@ -114,12 +115,13 @@ public abstract class AvDatabase extends RoomDatabase {
     private static StoryStateBuilder buildInitialStoryState() {
         final StringBuilder res = new StringBuilder();
 
-        res.append("Diese Geschichte spielt in den alten Zeiten, wo das Wünschen noch geholfen hat. " +
-                "Sie beginnt im königlichen Schloss.\n");
+        res.append(
+                "Diese Geschichte spielt in den alten Zeiten, wo das Wünschen noch geholfen hat. " +
+                        "Sie beginnt im königlichen Schloss.\n");
         final List<AvObject> objectsInRoom = ImmutableList.of(AvObject.get(GOLDENE_KUGEL));
         res.append(buildObjectsInRoomDescription(objectsInRoom));
 
-        return t(null,
+        return t((IPlayerAction) null,
                 StartsNew.WORD,
                 res.toString())
                 .letzterRaum(AvRoom.SCHLOSS);

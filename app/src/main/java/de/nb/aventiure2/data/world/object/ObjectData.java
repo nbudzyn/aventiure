@@ -5,15 +5,18 @@ import androidx.annotation.Nullable;
 import androidx.room.Entity;
 import androidx.room.PrimaryKey;
 
+import java.util.Collection;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 import de.nb.aventiure2.data.world.entity.AbstractEntityData;
 import de.nb.aventiure2.data.world.room.AvRoom;
-import de.nb.aventiure2.german.Nominalphrase;
+import de.nb.aventiure2.german.base.Nominalphrase;
 
-import static de.nb.aventiure2.german.Nominalphrase.np;
-import static de.nb.aventiure2.german.NumerusGenus.N;
-import static de.nb.aventiure2.german.NumerusGenus.PL;
+import static de.nb.aventiure2.german.base.Nominalphrase.np;
+import static de.nb.aventiure2.german.base.NumerusGenus.N;
+import static de.nb.aventiure2.german.base.NumerusGenus.PL;
 
 /**
  * Changeable data for an object in the world.
@@ -34,6 +37,18 @@ public class ObjectData extends AbstractEntityData {
      * Spielers immer noch dort liegt)
      */
     private final boolean demSCInDenBrunnenGefallen;
+
+    public static List<ObjectData> filterInDenBrunnenGefallen(
+            final Map<AvObject.Key, ObjectData> objectsByKey) {
+        return filterInDenBrunnenGefallen(objectsByKey.values());
+    }
+
+    private static List<ObjectData> filterInDenBrunnenGefallen(
+            final Collection<ObjectData> objects) {
+        return objects.stream()
+                .filter(ObjectData::isDemSCInDenBrunnenGefallen)
+                .collect(Collectors.toList());
+    }
 
     /**
      * Gibt eine Beschreibung dieses Objekts zurück - wenn es nur eines ist - sonst

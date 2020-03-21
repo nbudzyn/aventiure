@@ -11,8 +11,8 @@ import static de.nb.aventiure2.data.world.creature.CreatureState.HAT_NACH_BELOHN
 import static de.nb.aventiure2.data.world.creature.CreatureState.HAT_SC_HILFSBEREIT_ANGESPROCHEN;
 import static de.nb.aventiure2.data.world.creature.CreatureState.UNAUFFAELLIG;
 import static de.nb.aventiure2.data.world.creature.CreatureStateList.sm;
-import static de.nb.aventiure2.german.Nominalphrase.np;
-import static de.nb.aventiure2.german.NumerusGenus.M;
+import static de.nb.aventiure2.german.base.Nominalphrase.np;
+import static de.nb.aventiure2.german.base.NumerusGenus.M;
 
 /**
  * All creatures in the world

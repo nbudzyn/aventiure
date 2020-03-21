@@ -1,4 +1,6 @@
-package de.nb.aventiure2.german;
+package de.nb.aventiure2.german.base;
+
+import de.nb.aventiure2.german.AbstractDescription;
 
 /**
  * A general description. The subject may be anything.

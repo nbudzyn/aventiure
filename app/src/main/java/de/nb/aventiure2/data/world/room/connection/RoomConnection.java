@@ -12,8 +12,8 @@ import static de.nb.aventiure2.data.world.room.AvRoom.DRAUSSEN_VOR_DEM_SCHLOSS;
 import static de.nb.aventiure2.data.world.room.AvRoom.IM_WALD_BEIM_BRUNNEN;
 import static de.nb.aventiure2.data.world.room.AvRoom.IM_WALD_NAHE_DEM_SCHLOSS;
 import static de.nb.aventiure2.data.world.room.AvRoom.SCHLOSS;
-import static de.nb.aventiure2.german.AllgDescription.allg;
 import static de.nb.aventiure2.german.DuDescription.du;
+import static de.nb.aventiure2.german.base.AllgDescription.allg;
 
 public class RoomConnection {
     private static final Table<AvRoom, AvRoom, RoomConnection> ALL =

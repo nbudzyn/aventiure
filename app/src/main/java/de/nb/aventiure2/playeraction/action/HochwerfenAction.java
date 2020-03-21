@@ -15,7 +15,7 @@ import de.nb.aventiure2.playeraction.AbstractPlayerAction;
 
 import static de.nb.aventiure2.data.world.player.stats.PlayerStateOfMind.UNTROESTLICH;
 import static de.nb.aventiure2.data.world.room.AvRoom.IM_WALD_BEIM_BRUNNEN;
-import static de.nb.aventiure2.german.GermanUtil.capitalize;
+import static de.nb.aventiure2.german.base.GermanUtil.capitalize;
 
 /**
  * Der Spieler(charakter) wirft einen Gegenstand hoch.
@@ -80,9 +80,15 @@ public class HochwerfenAction extends AbstractObjectAction {
 
     private void narrateAndDoWiederholung() {
         if (PlayerActionUtil.random(2) == 1) {
-            n.add(t(StartsNew.SENTENCE,
+            n.add(alt(t(StartsNew.SENTENCE,
                     "Und noch einmal - was ein schönes Spiel!")
-                    .dann());
+                            .dann(),
+                    t(StartsNew.SENTENCE,
+                            "So ein Spaß!")
+                            .dann(),
+                    t(StartsNew.SENTENCE,
+                            "Und in die Höhe damit - juchei!")
+                            .dann()));
             return;
         }
 

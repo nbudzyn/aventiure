@@ -1,6 +1,8 @@
-package de.nb.aventiure2.german;
+package de.nb.aventiure2.german.praedikat;
 
-import static de.nb.aventiure2.german.NumerusGenus.PL;
+import de.nb.aventiure2.german.base.NumerusGenus;
+
+import static de.nb.aventiure2.german.base.NumerusGenus.PL;
 
 /**
  * Hilfsmethoden zum Verb "sein".

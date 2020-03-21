@@ -8,7 +8,7 @@ import java.util.List;
 
 import de.nb.aventiure2.data.world.entity.AbstractEntityData;
 import de.nb.aventiure2.data.world.room.AvRoom;
-import de.nb.aventiure2.german.Nominalphrase;
+import de.nb.aventiure2.german.base.Nominalphrase;
 
 /**
  * Changeable data for a creature in the world.
@@ -37,7 +37,8 @@ public class CreatureData extends AbstractEntityData {
         return creature.getKey() == key;
     }
 
-    public static boolean contains(final List<CreatureData> creatureDataList, final Creature.Key key) {
+    public static boolean contains(final List<CreatureData> creatureDataList,
+                                   final Creature.Key key) {
         for (final CreatureData creatureData : creatureDataList) {
             if (creatureData.creature.getKey().equals(key)) {
                 return true;

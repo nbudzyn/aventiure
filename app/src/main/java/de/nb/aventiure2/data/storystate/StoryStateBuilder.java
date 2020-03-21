@@ -20,10 +20,10 @@ import static com.google.common.base.Preconditions.checkState;
  */
 public class StoryStateBuilder {
     /**
-     * The last action (if any).
+     * The class name of the last action (if any).
      */
     @Nullable
-    private IPlayerAction lastAction;
+    private String lastActionClassName;
 
     @NonNull
     private final StartsNew startsNew;
@@ -72,13 +72,34 @@ public class StoryStateBuilder {
         checkArgument(!TextUtils.isEmpty(text), "text is null or empty");
         checkNotNull(startsNew, "startsNew is null");
 
-        return new StoryStateBuilder(lastAction, startsNew, text);
+        return t(lastAction == null ? null : lastAction.getClass(), startsNew, text);
     }
 
-    private StoryStateBuilder(@Nullable final IPlayerAction lastAction,
+    public static StoryStateBuilder t(
+            @Nullable final Class<? extends IPlayerAction> lastActionClass,
+            @NonNull final StartsNew startsNew,
+            @NonNull final String text) {
+        checkArgument(!TextUtils.isEmpty(text), "text is null or empty");
+        checkNotNull(startsNew, "startsNew is null");
+
+        return t(toLastActionClassName(lastActionClass), startsNew, text);
+    }
+
+    public static StoryStateBuilder t(
+            @Nullable final String lastActionClassName,
+            @NonNull final StartsNew startsNew,
+            @NonNull final String text) {
+        checkArgument(!TextUtils.isEmpty(text), "text is null or empty");
+        checkNotNull(startsNew, "startsNew is null");
+
+        return new StoryStateBuilder(lastActionClassName, startsNew, text);
+    }
+
+
+    private StoryStateBuilder(@Nullable final String lastActionClassName,
                               @NonNull final StartsNew startsNew,
                               @NonNull final String text) {
-        this.lastAction = lastAction;
+        this.lastActionClassName = lastActionClassName;
         this.startsNew = startsNew;
         this.text = text;
     }
@@ -116,8 +137,21 @@ public class StoryStateBuilder {
     }
 
     public StoryStateBuilder letzteAktion(@Nullable final IPlayerAction lastAction) {
-        this.lastAction = lastAction;
+        return letzteAktion(lastAction == null ? null : lastAction.getClass());
+    }
+
+    private StoryStateBuilder letzteAktion(final Class<? extends IPlayerAction> lastActionClass) {
+        return letzteAktion(toLastActionClassName(lastActionClass));
+    }
+
+    public StoryStateBuilder letzteAktion(@Nullable final String lastActionClassName) {
+        this.lastActionClassName = lastActionClassName;
         return this;
+    }
+
+    private static String toLastActionClassName(
+            @Nullable final Class<? extends IPlayerAction> lastActionClass) {
+        return lastActionClass == null ? null : lastActionClass.getCanonicalName();
     }
 
     public StoryStateBuilder komma() {
@@ -157,7 +191,7 @@ public class StoryStateBuilder {
     public StoryState build() {
         checkState(lastRoom != null, "lastRoom is null");
 
-        return new StoryState(lastAction,
+        return new StoryState(lastActionClassName,
                 startsNew,
                 text,
                 kommaStehtAus,
