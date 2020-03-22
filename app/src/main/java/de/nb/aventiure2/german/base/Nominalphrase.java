@@ -11,6 +11,8 @@ public class Nominalphrase extends DeklinierbarePhrase {
     // AvObject oder eine AbstractEntity beziehen.
     public static final Nominalphrase ANGEBOTE =
             np(PL, "Angebote", "Angeboten");
+    public static final Nominalphrase DINGE =
+            np(PL, "die Dinge", "den Dingen");
     public static final Nominalphrase GESPRAECH =
             np(N, "das Gespräch", "dem Gespräch");
 
@@ -40,6 +42,7 @@ public class Nominalphrase extends DeklinierbarePhrase {
         return Personalpronomen.get(getNumerusGenus());
     }
 
+    @Override
     public Relativpronomen relPron() {
         return Relativpronomen.get(getNumerusGenus());
     }

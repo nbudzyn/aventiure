@@ -84,6 +84,16 @@ public abstract class DeklinierbarePhrase implements DescribableAsDeklinierbareP
         }
     }
 
+    /**
+     * Gibt ein Personalpronomen für diese Phrase zurück.
+     */
+    public abstract Personalpronomen persPron();
+
+    /**
+     * Gibt ein Relativpronomen für diese Phrase zurück.
+     */
+    public abstract Relativpronomen relPron();
+
     @Override
     public String nom() {
         return nominativ;

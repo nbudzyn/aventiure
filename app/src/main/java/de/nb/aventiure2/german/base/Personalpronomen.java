@@ -30,9 +30,15 @@ public class Personalpronomen extends DeklinierbarePhrase {
         super(numerusGenus, nominativ, dativ, akkusativ);
     }
 
+    @Override
+    public Personalpronomen persPron() {
+        return this;
+    }
+
     /**
      * "er, der..."
      */
+    @Override
     public Relativpronomen relPron() {
         return Relativpronomen.get(getNumerusGenus());
     }

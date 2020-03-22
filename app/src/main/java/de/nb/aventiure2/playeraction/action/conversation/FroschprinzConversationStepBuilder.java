@@ -14,7 +14,7 @@ import de.nb.aventiure2.data.world.creature.CreatureData;
 import de.nb.aventiure2.data.world.object.AvObject;
 import de.nb.aventiure2.data.world.object.ObjectData;
 import de.nb.aventiure2.data.world.room.AvRoom;
-import de.nb.aventiure2.german.base.Nominalphrase;
+import de.nb.aventiure2.german.base.DeklinierbarePhrase;
 import de.nb.aventiure2.playeraction.action.HeulenAction;
 
 import static de.nb.aventiure2.data.storystate.StoryState.StartsNew.PARAGRAPH;
@@ -172,7 +172,7 @@ class FroschprinzConversationStepBuilder extends AbstractCreatureConversationSte
 
     private void inDenBrunnenGefallenErklaerung() {
         if (initialStoryState.lastActionWas(HeulenAction.class)) {
-            final Nominalphrase objectsDesc =
+            final DeklinierbarePhrase objectsDesc =
                     getDescriptionSingleOrCollective(objectsInDenBrunnenGefallen);
 
             n.add(t(SENTENCE, "„Ich weine über "
@@ -304,7 +304,6 @@ class FroschprinzConversationStepBuilder extends AbstractCreatureConversationSte
     }
 
     private void froschHatForderungGestellt_ImmReEntry() {
-
         n.add(t(SENTENCE,
                 "Aber im nächsten Moment entschuldigst du schon: " +
                         "„Nicht für ungut! Wenn du mir wirklich " +
@@ -354,7 +353,7 @@ class FroschprinzConversationStepBuilder extends AbstractCreatureConversationSte
             return;
         }
 
-        final Nominalphrase descObjectsInDenBrunnenGefallen =
+        final DeklinierbarePhrase descObjectsInDenBrunnenGefallen =
                 getDescriptionSingleOrCollective(objectsInDenBrunnenGefallen);
 
         n.add(t(WORD, "taucht seinen Kopf " +

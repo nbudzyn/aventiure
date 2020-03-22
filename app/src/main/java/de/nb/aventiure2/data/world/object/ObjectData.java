@@ -12,11 +12,9 @@ import java.util.stream.Collectors;
 
 import de.nb.aventiure2.data.world.entity.AbstractEntityData;
 import de.nb.aventiure2.data.world.room.AvRoom;
+import de.nb.aventiure2.german.base.DeklinierbarePhrase;
+import de.nb.aventiure2.german.base.Indefinitpronomen;
 import de.nb.aventiure2.german.base.Nominalphrase;
-
-import static de.nb.aventiure2.german.base.Nominalphrase.np;
-import static de.nb.aventiure2.german.base.NumerusGenus.N;
-import static de.nb.aventiure2.german.base.NumerusGenus.PL;
 
 /**
  * Changeable data for an object in the world.
@@ -54,9 +52,10 @@ public class ObjectData extends AbstractEntityData {
      * Gibt eine Beschreibung dieses Objekts zurück - wenn es nur eines ist - sonst
      * etwas wie "die Dinge".
      */
-    public static Nominalphrase getDescriptionSingleOrCollective(final List<ObjectData> objects) {
+    public static DeklinierbarePhrase getDescriptionSingleOrCollective(
+            final List<ObjectData> objects) {
         if (objects.isEmpty()) {
-            return np(N, "nichts");
+            return Indefinitpronomen.NICHTS;
         }
 
         if (objects.size() == 1) {
@@ -66,7 +65,7 @@ public class ObjectData extends AbstractEntityData {
             return objectInDenBrunnenGefallen.getDescription(false);
         }
 
-        return np(PL, "die Dinge", "den Dingen");
+        return Nominalphrase.DINGE;
     }
 
     public static String getAkkShort(final List<ObjectData> objectDatas) {
