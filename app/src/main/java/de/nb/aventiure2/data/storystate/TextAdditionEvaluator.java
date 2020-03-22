@@ -16,6 +16,13 @@ class TextAdditionEvaluator {
     private TextAdditionEvaluator() {
     }
 
+    /**
+     * Bewertet diese Hinzufügung (<code>addition</code>) an diesen
+     * <code>base</code>-Text. Wiederholgungen gegenüber dem
+     * Ende des <code>base</code>-Textes gelten als schlecht.
+     *
+     * @return Bewertungsergebnis - je größer die Zahl, desto besser
+     */
     public static float evaluateAddition(final String base, final String addition) {
         // Wir wollen wiederholungen vermeiden.
         // Wenn also addition Wörter enthält, die das Ende von base wiederholen, ist
@@ -79,6 +86,15 @@ class TextAdditionEvaluator {
         }
     }
 
+    /**
+     * Bewertet diese Hinzufügung (<code>additionWords</code>) an diesen
+     * <code>baseWords</code>-Text - wobei nur Wortfolgen der Länge
+     * <code>num</code> untersucht werden. <code>additionWords</code>
+     * und <code>baseWords</code> müssen in gleicher Groß-/Kleinschreibung
+     * vorliegen.
+     *
+     * @return Bewertungsergebnis - je größer die Zahl, desto besser
+     */
     private static float evaluateAdditionWordSequence(final ImmutableList<String> baseWords,
                                                       final ImmutableList<String> additionWords,
                                                       final int num) {

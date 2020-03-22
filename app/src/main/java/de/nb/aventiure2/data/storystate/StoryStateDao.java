@@ -43,6 +43,11 @@ public abstract class StoryStateDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     abstract void insert(StoryState playerLocation);
 
+    /**
+     * Wählt einen {@link StoryStateBuilder} aus den Alternativen -
+     * versucht dabei vor allem, Wiederholgungen mit dem unmittelbar zuvor geschriebenen
+     * Story-Text zu vermeiden.
+     */
     public StoryStateBuilder chooseNextFrom(final StoryStateBuilder... alternatives) {
         checkArgument(alternatives.length > 0,
                 "No alternatives");

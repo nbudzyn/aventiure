@@ -225,6 +225,11 @@ abstract class AbstractCreatureConversationStepBuilder {
         return alt(alternatives.toArray(new StoryStateBuilder[alternatives.size()]));
     }
 
+    /**
+     * Wählt einen {@link StoryStateBuilder} aus den Alternativen -
+     * versucht dabei vor allem, Wiederholgungen mit dem unmittelbar zuvor geschriebenen
+     * Story-Text zu vermeiden.
+     */
     StoryStateBuilder alt(final StoryStateBuilder... alternatives) {
         return n.chooseNextFrom(alternatives);
     }
