@@ -63,14 +63,8 @@ class FroschprinzConversationStepBuilder extends AbstractCreatureConversationSte
                                         this::narrateAndDo_FroschHatAngesprochen_antworten),
                                 exitSt(VerbSubjObj.IGNORIEREN,
                                         this::narrateAndDo_FroschHatAngesprochen_Exit),
-                                immReEntrySt(this::etwasIstInDenBrunnenGefallen,
-                                        this::narrateAndDo_FroschHatAngesprochen_ImmReEntry),
-                                immReEntrySt(this::nichtsIstInDenBrunnenGefallen,
-                                        this::narrateAndDo_hallo_froschReagiertNicht),
-                                reEntrySt(this::etwasIstInDenBrunnenGefallen,
-                                        this::narrateAndDo_FroschHatAngesprochen_ReEntry),
-                                reEntrySt(this::nichtsIstInDenBrunnenGefallen,
-                                        this::narrateAndDo_hallo_froschReagiertNicht)
+                                immReEntrySt(this::narrateAndDo_FroschHatAngesprochen_ImmReEntry),
+                                reEntrySt(this::narrateAndDo_FroschHatAngesprochen_ReEntry)
                         );
             case HAT_NACH_BELOHNUNG_GEFRAGT:
                 return
@@ -123,15 +117,24 @@ class FroschprinzConversationStepBuilder extends AbstractCreatureConversationSte
     // .. HAT_SC_HILFSBEREIT_ANGESPROCHEN
     // -------------------------------------------------------------------------------
     private void narrateAndDo_FroschHatAngesprochen_antworten() {
-        n.add(t(SENTENCE, "„Ach, du bist's, alter Wasserpatscher“, sagst du")
-                .undWartest()
-                .dann());
+        if (nichtsIstInDenBrunnenGefallen()) {
+            n.add(t(SENTENCE, "„Ach, du bist's, alter Wasserpatscher“, sagst du")
+                    .undWartest()
+                    .dann()
+                    .imGespraechMit(null));
+            return;
+        }
 
         narrateAndDoInDenBrunnenGefallenErklaerung();
         narrateAndDoHerausholenAngebot();
     }
 
     private void narrateAndDo_FroschHatAngesprochen_ImmReEntry() {
+        if (nichtsIstInDenBrunnenGefallen()) {
+            narrateAndDo_hallo_froschReagiertNicht();
+            return;
+        }
+
         if (initialStoryState.allowsAdditionalDuSatzreihengliedOhneSubjekt()
                 && initialStoryState.dann()) {
             n.add(t(WORD,
@@ -149,6 +152,11 @@ class FroschprinzConversationStepBuilder extends AbstractCreatureConversationSte
     }
 
     private void narrateAndDo_FroschHatAngesprochen_ReEntry() {
+        if (nichtsIstInDenBrunnenGefallen()) {
+            narrateAndDo_hallo_froschReagiertNicht();
+            return;
+        }
+
         n.add(t(SENTENCE, "„Hallo, du hässlicher Frosch!“, redest du ihn an")
                 .undWartest()
                 .dann());
@@ -220,6 +228,14 @@ class FroschprinzConversationStepBuilder extends AbstractCreatureConversationSte
     // -------------------------------------------------------------------------------
 
     private void narrateAndDo_FroschHatNachBelohnungGefragt_AngeboteMachen() {
+        if (nichtsIstInDenBrunnenGefallen()) {
+            n.add(t(SENTENCE,
+                    "Dir fällt nur ein: „Für mich ergibt dies ganze Gespräch keinen Sinn!“")
+                    .dann()
+                    .imGespraechMit(null));
+            return;
+        }
+
         n.add(t(SENTENCE,
                 "„Was du haben willst, lieber Frosch“, sagst du, „meine Kleider, " +
                         "Perlen oder Edelsteine?“"));
@@ -371,7 +387,7 @@ class FroschprinzConversationStepBuilder extends AbstractCreatureConversationSte
     }
 
     private boolean nichtsIstInDenBrunnenGefallen() {
-        return objectsInDenBrunnenGefallen.isEmpty();
+        return !etwasIstInDenBrunnenGefallen();
     }
 
     private boolean etwasIstInDenBrunnenGefallen() {
