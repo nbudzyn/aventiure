@@ -14,6 +14,7 @@ import de.nb.aventiure2.data.world.creature.CreatureData;
 import de.nb.aventiure2.data.world.object.AvObject;
 import de.nb.aventiure2.data.world.object.ObjectData;
 import de.nb.aventiure2.data.world.room.AvRoom;
+import de.nb.aventiure2.german.base.Indefinitpronomen;
 import de.nb.aventiure2.german.base.Nominalphrase;
 import de.nb.aventiure2.german.praedikat.VerbSubjDatAkk;
 import de.nb.aventiure2.german.praedikat.VerbSubjObj;
@@ -92,7 +93,7 @@ class FroschprinzTalkStepBuilder extends AbstractCreatureTalkStepBuilder {
             case HAT_FORDERUNG_GESTELLT:
                 return ImmutableList.of(
                         st(this::etwasIstInDenBrunnenGefallen,
-                                VerbSubjDatAkk.VERSPRECHEN.mitAkk(Nominalphrase.ALLES),
+                                VerbSubjDatAkk.VERSPRECHEN.mitAkk(Indefinitpronomen.ALLES),
                                 this::narrateAndDo_FroschHatForderungGestellt_AllesVersprechen),
                         exitSt(this::narrateAndDo_FroschHatForderungGestellt_Exit),
                         // TODO immReEntry etwas im Brunnen

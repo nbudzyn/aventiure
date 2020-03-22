@@ -9,8 +9,6 @@ import static de.nb.aventiure2.german.base.NumerusGenus.PL;
 public class Nominalphrase extends DeklinierbarePhrase {
     // Allgemeine Nominalfphrasen, die sich nicht auf ein
     // AvObject oder eine AbstractEntity beziehen.
-    public static final Nominalphrase ALLES = // (Indefinitpronomen)
-            np(N, "alles", "allem");
     public static final Nominalphrase ANGEBOTE =
             np(PL, "Angebote", "Angeboten");
     public static final Nominalphrase GESPRAECH =
@@ -18,29 +16,19 @@ public class Nominalphrase extends DeklinierbarePhrase {
 
     public static final Nominalphrase np(final NumerusGenus numerusGenus,
                                          final String nominativDativUndAkkusativ) {
-        return new Nominalphrase(numerusGenus, nominativDativUndAkkusativ);
+        return np(numerusGenus, nominativDativUndAkkusativ, nominativDativUndAkkusativ);
     }
 
     public static final Nominalphrase np(final NumerusGenus numerusGenus,
                                          final String nominativUndAkkusativ,
                                          final String dativ) {
-        return new Nominalphrase(numerusGenus, nominativUndAkkusativ, dativ);
+        return np(numerusGenus, nominativUndAkkusativ, dativ, nominativUndAkkusativ);
     }
 
     public static final Nominalphrase np(final NumerusGenus numerusGenus,
                                          final String nominativ, final String dativ,
                                          final String akkusativ) {
         return new Nominalphrase(numerusGenus, nominativ, dativ, akkusativ);
-    }
-
-    public Nominalphrase(final NumerusGenus numerusGenus,
-                         final String nominativDativUndAkkusativ) {
-        this(numerusGenus, nominativDativUndAkkusativ, nominativDativUndAkkusativ);
-    }
-
-    public Nominalphrase(final NumerusGenus numerusGenus,
-                         final String nominativAkkusativ, final String dativ) {
-        this(numerusGenus, nominativAkkusativ, dativ, nominativAkkusativ);
     }
 
     public Nominalphrase(final NumerusGenus numerusGenus,

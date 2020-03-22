@@ -89,8 +89,18 @@ public class CreatureTalkStep {
      */
     private final TalkStepNarrationAndAction narrationAndAction;
 
+    /**
+     * If this condition does not hold, the step is impossible
+     * (there won't be an action for the step)
+     */
     private final TalkStepCondition condition;
 
+    /**
+     * Constructor.
+     *
+     * @param condition If this condition does not hold, this step is impossible
+     *                  (there won't be an action for this step).
+     */
     CreatureTalkStep(
             final Type stepType,
             final TalkStepCondition condition,
@@ -102,6 +112,9 @@ public class CreatureTalkStep {
         this.narrationAndAction = narrationAndAction;
     }
 
+    /**
+     * Whether the step is possible. (If a step is impossible, there won't be an action for the step.)
+     */
     public boolean isStepPossible() {
         return condition.isStepPossible();
     }

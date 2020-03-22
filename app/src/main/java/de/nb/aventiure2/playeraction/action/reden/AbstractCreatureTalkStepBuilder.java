@@ -76,7 +76,6 @@ abstract class AbstractCreatureTalkStepBuilder {
 
     abstract List<CreatureTalkStep> getAllStepsForCurrentState();
 
-
     static CreatureTalkStep entrySt(
             final CreatureTalkStep.TalkStepNarrationAndAction narrationAndAction) {
         return entrySt(DEFAULT_ENTRY_RE_ENTRY_NAME, narrationAndAction);
@@ -87,12 +86,24 @@ abstract class AbstractCreatureTalkStepBuilder {
         return entrySt(ALWAYS_POSSIBLE, entryName, narrationAndAction);
     }
 
+    /**
+     * Creates a {@link CreatureTalkStep} to enter a conversation.
+     *
+     * @param condition If this condition does not hold, this step is impossible
+     *                  (there won't be an action for this step).
+     */
     static CreatureTalkStep entrySt(
             final CreatureTalkStep.TalkStepCondition condition,
             final CreatureTalkStep.TalkStepNarrationAndAction narrationAndAction) {
         return entrySt(condition, DEFAULT_ENTRY_RE_ENTRY_NAME, narrationAndAction);
     }
 
+    /**
+     * Creates a {@link CreatureTalkStep} to enter a conversation.
+     *
+     * @param condition If this condition does not hold, this step is impossible
+     *                  (there won't be an action for this step).
+     */
     static CreatureTalkStep entrySt(
             final CreatureTalkStep.TalkStepCondition condition,
             final Praedikat entryName,
@@ -111,11 +122,23 @@ abstract class AbstractCreatureTalkStepBuilder {
         return immReEntrySt(ALWAYS_POSSIBLE, entryName, narrationAndAction);
     }
 
+    /**
+     * Creates a {@link CreatureTalkStep} to immediately re-enter a conversation.
+     *
+     * @param condition If this condition does not hold, this step is impossible
+     *                  (there won't be an action for this step).
+     */
     static CreatureTalkStep immReEntrySt(final CreatureTalkStep.TalkStepCondition condition,
                                          final CreatureTalkStep.TalkStepNarrationAndAction narrationAndAction) {
         return immReEntrySt(condition, DEFAULT_ENTRY_RE_ENTRY_NAME, narrationAndAction);
     }
 
+    /**
+     * Creates a {@link CreatureTalkStep} to immediately re-enter a conversation.
+     *
+     * @param condition If this condition does not hold, this step is impossible
+     *                  (there won't be an action for this step).
+     */
     static CreatureTalkStep immReEntrySt(
             final CreatureTalkStep.TalkStepCondition condition,
             final Praedikat entryName,
@@ -134,12 +157,24 @@ abstract class AbstractCreatureTalkStepBuilder {
         return reEntrySt(ALWAYS_POSSIBLE, entryName, narrationAndAction);
     }
 
+    /**
+     * Creates a {@link CreatureTalkStep} to re-enter a conversation (but not immediately)
+     *
+     * @param condition If this condition does not hold, this step is impossible
+     *                  (there won't be an action for this step).
+     */
     static CreatureTalkStep reEntrySt(
             final CreatureTalkStep.TalkStepCondition condition,
             final CreatureTalkStep.TalkStepNarrationAndAction narrationAndAction) {
         return reEntrySt(condition, DEFAULT_ENTRY_RE_ENTRY_NAME, narrationAndAction);
     }
 
+    /**
+     * Creates a {@link CreatureTalkStep} to re-enter a conversation (but not immediately)
+     *
+     * @param condition If this condition does not hold, this step is impossible
+     *                  (there won't be an action for this step).
+     */
     static CreatureTalkStep reEntrySt(
             final CreatureTalkStep.TalkStepCondition condition,
             final Praedikat entryName,
@@ -148,12 +183,17 @@ abstract class AbstractCreatureTalkStepBuilder {
                 narrationAndAction);
     }
 
-
     static CreatureTalkStep st(final Praedikat name,
                                final CreatureTalkStep.TalkStepNarrationAndAction narrationAndAction) {
         return st(ALWAYS_POSSIBLE, name, narrationAndAction);
     }
 
+    /**
+     * Creates a normal {@link CreatureTalkStep}
+     *
+     * @param condition If this condition does not hold, this step is impossible
+     *                  (there won't be an action for this step).
+     */
     static CreatureTalkStep st(
             final CreatureTalkStep.TalkStepCondition condition,
             final Praedikat name,
