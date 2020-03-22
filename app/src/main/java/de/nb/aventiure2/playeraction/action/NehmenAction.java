@@ -30,11 +30,8 @@ import static de.nb.aventiure2.german.praedikat.VerbSubjObj.NEHMEN;
  * Der Spieler(charakter) nimmt einen Gegenstand (oder in Ausnahmefällen eine
  * Creature) an sich.
  */
-public class NehmenAction extends AbstractPlayerAction {
+public class NehmenAction extends AbstractEntityAction {
     private final AvRoom room;
-
-    @NonNull
-    private final AbstractEntityData entityData;
 
     public static Collection<AbstractPlayerAction> buildObjectActions(
             final AvDatabase db, final StoryState initialStoryState, final AvRoom room,
@@ -58,8 +55,7 @@ public class NehmenAction extends AbstractPlayerAction {
 
     private NehmenAction(final AvDatabase db, final StoryState initialStoryState,
                          final AbstractEntityData entityData, final AvRoom room) {
-        super(db, initialStoryState);
-        this.entityData = entityData;
+        super(db, initialStoryState, entityData);
         this.room = room;
     }
 
@@ -67,9 +63,9 @@ public class NehmenAction extends AbstractPlayerAction {
     @NonNull
     public String getName() {
         final PraedikatMitEinerObjektleerstelle praedikat =
-                entityData instanceof CreatureData ? NEHMEN : MITNEHMEN;
+                getEntityData() instanceof CreatureData ? MITNEHMEN : NEHMEN;
 
-        return praedikat.mitObj(entityData).getDescriptionInfinitiv();
+        return praedikat.mitObj(getEntityData()).getDescriptionInfinitiv();
     }
 
     @Override
@@ -79,12 +75,12 @@ public class NehmenAction extends AbstractPlayerAction {
     }
 
     private void removeFromRoomAndTake() {
-        if (entityData instanceof ObjectData) {
-            removeFromRoomAndTake((ObjectData) entityData);
-        } else if (entityData instanceof CreatureData) {
-            removeFromRoomAndTake((CreatureData) entityData);
+        if (getEntityData() instanceof ObjectData) {
+            removeFromRoomAndTake((ObjectData) getEntityData());
+        } else if (getEntityData() instanceof CreatureData) {
+            removeFromRoomAndTake((CreatureData) getEntityData());
         } else {
-            throw new IllegalStateException("Unexpected entity data: " + entityData);
+            throw new IllegalStateException("Unexpected entity data: " + getEntityData());
         }
     }
 
@@ -106,15 +102,15 @@ public class NehmenAction extends AbstractPlayerAction {
     }
 
     private void narrate() {
-        if (entityData instanceof ObjectData) {
-            narrateObject((ObjectData) entityData);
+        if (getEntityData() instanceof ObjectData) {
+            narrateObject((ObjectData) getEntityData());
             return;
         }
-        if (entityData instanceof CreatureData) {
-            narrateCreature((CreatureData) entityData);
+        if (getEntityData() instanceof CreatureData) {
+            narrateCreature((CreatureData) getEntityData());
             return;
         }
-        throw new IllegalStateException("Unexpected entity data: " + entityData);
+        throw new IllegalStateException("Unexpected entity data: " + getEntityData());
     }
 
     private void narrateObject(final ObjectData objectData) {
@@ -162,20 +158,10 @@ public class NehmenAction extends AbstractPlayerAction {
                                 + "Kleidung zu reinigen, aber der Schleim verteilt sich nur "
                                 + "überall - igitt!"),
                 t(StartsNew.PARAGRAPH,
-                        "Du erbarmmst dich und packst den Frosch in deine Tasche. Er fasst "
-                                + "sich sehr eklig an und du bist zufrieden, als die Prozedur "
+                        "Du erbarmst dich und packst den Frosch in deine Tasche. Er fasst "
+                                + "sich sehr eklig an und du bist glücklich, als die Prozedur "
                                 + "vorbei ist.")
                         .dann()
         ));
     }
-
-    @Override
-    protected StoryStateBuilder t(@NonNull final StoryState.StartsNew startsNew,
-                                  @NonNull final String text) {
-        return super.t(startsNew, text)
-                .letztesObject(
-                        entityData instanceof ObjectData ? ((ObjectData) entityData).getObject() :
-                                null);
-    }
-
 }

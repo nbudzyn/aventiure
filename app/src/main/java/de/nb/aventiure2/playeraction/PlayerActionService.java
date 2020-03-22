@@ -125,12 +125,14 @@ public class PlayerActionService {
             final CreatureData froschprinz,
             final List<AvObject> inventory) {
         final ImmutableList.Builder<AbstractPlayerAction> res = ImmutableList.builder();
+
+        res.addAll(AblegenAction.buildCreatureActions(db, currentStoryState, room, froschprinz));
+
         for (final AvObject inventoryObject : inventory) {
             final ObjectData objectData = allObjectsByKey.get(inventoryObject.getKey());
-
             res.addAll(HochwerfenAction
                     .buildActions(db, currentStoryState, room, objectData, froschprinz));
-            res.addAll(AblegenAction.buildActions(db, currentStoryState, room, objectData));
+            res.addAll(AblegenAction.buildObjectActions(db, currentStoryState, room, objectData));
         }
         return res.build();
     }

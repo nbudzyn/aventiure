@@ -13,9 +13,11 @@ import static de.nb.aventiure2.german.base.PraepositionMitKasus.MIT_DAT;
  * Ein Verb (ggf. mit Präfix), das genau mit einem Subjekt und einem (Präpositional-) Objekt steht.
  */
 public enum VerbSubjObj implements PraedikatMitEinerObjektleerstelle {
+    ABSETZEN("absetzen", AKK, "setzt", "ab"),
     AUFHEBEN("aufheben", AKK, "hebst", "auf"),
     BEENDEN("beenden", AKK, "beendest"),
     HERAUSKLAUBEN("herausklauben", AKK, "klaubst", "heraus"),
+    HINLEGEN("hinlegen", AKK, "legst", "hin"),
     IGNORIEREN("ignorieren", AKK, "ignorierst"),
     MITNEHMEN("mitnehmen", AKK, "nimmst", "mit"),
     NEHMEN("nehmen", AKK, "nimmst"),
