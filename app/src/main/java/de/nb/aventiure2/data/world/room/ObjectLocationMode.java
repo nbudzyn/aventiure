@@ -15,7 +15,7 @@ public enum ObjectLocationMode {
     TISCH("auf einem Tisch", "auf einen Tisch"),
     WALDBODEN("zwischen Blättern und Gestrüpp", "auf den Waldboden",
             HERAUSKLAUBEN),
-    NEBEN_DEM_BRUNNEN("neben dem Brunnnen", "neben den Brunnen",
+    GRAS_NEBEN_DEM_BRUNNEN("neben dem Brunnnen", "neben den Brunnen",
             AUFHEBEN),
     AM_GRUNDE_DES_BRUNNENS("am Grunde des Brunnens", "auf den Grund des Brunnens");
 
