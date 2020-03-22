@@ -14,10 +14,7 @@ import de.nb.aventiure2.data.world.creature.CreatureData;
 import de.nb.aventiure2.data.world.object.AvObject;
 import de.nb.aventiure2.data.world.object.ObjectData;
 import de.nb.aventiure2.data.world.room.AvRoom;
-import de.nb.aventiure2.german.base.Indefinitpronomen;
 import de.nb.aventiure2.german.base.Nominalphrase;
-import de.nb.aventiure2.german.praedikat.VerbSubjDatAkk;
-import de.nb.aventiure2.german.praedikat.VerbSubjObj;
 import de.nb.aventiure2.playeraction.action.HeulenAction;
 
 import static de.nb.aventiure2.data.storystate.StoryState.StartsNew.PARAGRAPH;
@@ -32,7 +29,13 @@ import static de.nb.aventiure2.data.world.object.ObjectData.filterInDenBrunnenGe
 import static de.nb.aventiure2.data.world.object.ObjectData.getDescriptionSingleOrCollective;
 import static de.nb.aventiure2.data.world.player.stats.PlayerStateOfMind.VOLLER_FREUDE;
 import static de.nb.aventiure2.german.base.GermanUtil.capitalize;
+import static de.nb.aventiure2.german.base.Indefinitpronomen.ALLES;
+import static de.nb.aventiure2.german.base.Nominalphrase.ANGEBOTE;
 import static de.nb.aventiure2.german.praedikat.SeinUtil.istSind;
+import static de.nb.aventiure2.german.praedikat.VerbSubjDatAkk.MACHEN;
+import static de.nb.aventiure2.german.praedikat.VerbSubjDatAkk.VERSPRECHEN;
+import static de.nb.aventiure2.german.praedikat.VerbSubjObj.IGNORIEREN;
+import static de.nb.aventiure2.german.praedikat.VerbSubjObj.REDEN;
 
 /**
  * Erzeugt {@link CreatureConversationStep}s für den
@@ -59,45 +62,47 @@ class FroschprinzConversationStepBuilder extends AbstractCreatureConversationSte
             case HAT_SC_HILFSBEREIT_ANGESPROCHEN:
                 return
                         ImmutableList.of(
-                                st(VerbSubjObj.REDEN,
-                                        this::narrateAndDo_FroschHatAngesprochen_antworten),
-                                exitSt(VerbSubjObj.IGNORIEREN,
-                                        this::narrateAndDo_FroschHatAngesprochen_Exit),
-                                immReEntrySt(this::narrateAndDo_FroschHatAngesprochen_ImmReEntry),
-                                reEntrySt(this::narrateAndDo_FroschHatAngesprochen_ReEntry)
+                                st(REDEN,
+                                        this::froschHatAngesprochen_antworten),
+                                exitSt(IGNORIEREN,
+                                        this::froschHatAngesprochen_Exit),
+                                immReEntrySt(this::froschHatAngesprochen_ImmReEntry),
+                                reEntrySt(this::froschHatAngesprochen_ReEntry)
                         );
             case HAT_NACH_BELOHNUNG_GEFRAGT:
                 return
                         ImmutableList.of(
                                 st(this::etwasIstInDenBrunnenGefallen,
-                                        VerbSubjDatAkk.MACHEN.mitAkk(Nominalphrase.ANGEBOTE),
-                                        this::narrateAndDo_FroschHatNachBelohnungGefragt_AngeboteMachen),
-                                exitSt(this::narrateAndDo_FroschHatNachBelohnungGefragt_Exit),
+                                        MACHEN.mitAkk(ANGEBOTE),
+                                        this::froschHatNachBelohnungGefragt_AngeboteMachen),
+                                exitSt(this::froschHatNachBelohnungGefragt_Exit),
                                 immReEntrySt(this::etwasIstInDenBrunnenGefallen,
-                                        VerbSubjDatAkk.MACHEN.mitAkk(Nominalphrase.ANGEBOTE),
-                                        this::narrateAndDo_FroschHatNachBelohnungGefragt_ImmReEntry),
+                                        MACHEN.mitAkk(ANGEBOTE),
+                                        this::froschHatNachBelohnungGefragt_ImmReEntry),
                                 immReEntrySt(this::nichtsIstInDenBrunnenGefallen,
-                                        this::narrateAndDo_hallo_froschReagiertNicht),
+                                        this::hallo_froschReagiertNicht),
                                 reEntrySt(this::etwasIstInDenBrunnenGefallen,
-                                        VerbSubjDatAkk.MACHEN.mitAkk(Nominalphrase.ANGEBOTE),
-                                        this::narrateAndDo_FroschHatNachBelohnungGefragt_ReEntry),
+                                        MACHEN.mitAkk(ANGEBOTE),
+                                        this::froschHatNachBelohnungGefragt_ReEntry),
                                 reEntrySt(this::nichtsIstInDenBrunnenGefallen,
-                                        this::narrateAndDo_hallo_froschReagiertNicht)
+                                        this::hallo_froschReagiertNicht)
                         );
             case HAT_FORDERUNG_GESTELLT:
                 return ImmutableList.of(
                         st(this::etwasIstInDenBrunnenGefallen,
-                                VerbSubjDatAkk.VERSPRECHEN.mitAkk(Indefinitpronomen.ALLES),
-                                this::narrateAndDo_FroschHatForderungGestellt_AllesVersprechen),
-                        exitSt(this::narrateAndDo_FroschHatForderungGestellt_Exit),
-                        // TODO immReEntry etwas im Brunnen
+                                VERSPRECHEN.mitAkk(ALLES),
+                                this::froschHatForderungGestellt_AllesVersprechen),
+                        exitSt(this::froschHatForderungGestellt_Exit),
+                        immReEntrySt(this::etwasIstInDenBrunnenGefallen,
+                                VERSPRECHEN.mitAkk(ALLES),
+                                this::froschHatForderungGestellt_ImmReEntry),
                         immReEntrySt(this::nichtsIstInDenBrunnenGefallen,
-                                this::narrateAndDo_hallo_froschReagiertNicht),
-                        // TODO entrySt(this::etwasIstInDenBrunnenGefallen,
-                        //VerbSubjDatAkk.MACHEN.mitAkk(Nominalphrase.ANGEBOTE),
-                        //this::narrateAndDo_..._ReEntry),
+                                this::hallo_froschReagiertNicht),
+                        reEntrySt(this::etwasIstInDenBrunnenGefallen,
+                                VERSPRECHEN.mitAkk(ALLES),
+                                this::froschHatForderungGestellt_reEntry),
                         reEntrySt(this::nichtsIstInDenBrunnenGefallen,
-                                this::narrateAndDo_hallo_froschReagiertNicht)
+                                this::hallo_froschReagiertNicht)
                 );
             case AUF_DEM_WEG_ZUM_BRUNNEN_UM_DINGE_HERAUSZUHOLEN:
                 // TODO Steps für AUF_DEM_WEG_ZUM_BRUNNEN_UM_DINGE_HERAUSZUHOLEN
@@ -116,7 +121,7 @@ class FroschprinzConversationStepBuilder extends AbstractCreatureConversationSte
     // -------------------------------------------------------------------------------
     // .. HAT_SC_HILFSBEREIT_ANGESPROCHEN
     // -------------------------------------------------------------------------------
-    private void narrateAndDo_FroschHatAngesprochen_antworten() {
+    private void froschHatAngesprochen_antworten() {
         if (nichtsIstInDenBrunnenGefallen()) {
             n.add(t(SENTENCE, "„Ach, du bist's, alter Wasserpatscher“, sagst du")
                     .undWartest()
@@ -125,13 +130,13 @@ class FroschprinzConversationStepBuilder extends AbstractCreatureConversationSte
             return;
         }
 
-        narrateAndDoInDenBrunnenGefallenErklaerung();
-        narrateAndDoHerausholenAngebot();
+        inDenBrunnenGefallenErklaerung();
+        herausholenAngebot();
     }
 
-    private void narrateAndDo_FroschHatAngesprochen_ImmReEntry() {
+    private void froschHatAngesprochen_ImmReEntry() {
         if (nichtsIstInDenBrunnenGefallen()) {
-            narrateAndDo_hallo_froschReagiertNicht();
+            hallo_froschReagiertNicht();
             return;
         }
 
@@ -148,12 +153,12 @@ class FroschprinzConversationStepBuilder extends AbstractCreatureConversationSte
                     "Du gibst dir einen Ruck:"));
         }
 
-        narrateAndDo_FroschHatAngesprochen_ReEntry();
+        froschHatAngesprochen_ReEntry();
     }
 
-    private void narrateAndDo_FroschHatAngesprochen_ReEntry() {
+    private void froschHatAngesprochen_ReEntry() {
         if (nichtsIstInDenBrunnenGefallen()) {
-            narrateAndDo_hallo_froschReagiertNicht();
+            hallo_froschReagiertNicht();
             return;
         }
 
@@ -161,11 +166,11 @@ class FroschprinzConversationStepBuilder extends AbstractCreatureConversationSte
                 .undWartest()
                 .dann());
 
-        narrateAndDoInDenBrunnenGefallenErklaerung();
-        narrateAndDoHerausholenAngebot();
+        inDenBrunnenGefallenErklaerung();
+        herausholenAngebot();
     }
 
-    private void narrateAndDoInDenBrunnenGefallenErklaerung() {
+    private void inDenBrunnenGefallenErklaerung() {
         if (initialStoryState.lastActionWas(HeulenAction.class)) {
             final Nominalphrase objectsDesc =
                     getDescriptionSingleOrCollective(objectsInDenBrunnenGefallen);
@@ -193,7 +198,7 @@ class FroschprinzConversationStepBuilder extends AbstractCreatureConversationSte
         n.add(t(SENTENCE, "„Mir sind Dinge in den Brunnen hinabgefallen.“"));
     }
 
-    private void narrateAndDoHerausholenAngebot() {
+    private void herausholenAngebot() {
         final String objectsInDenBrunnenGefallenShortAkk =
                 ObjectData.getAkkShort(objectsInDenBrunnenGefallen);
 
@@ -214,7 +219,7 @@ class FroschprinzConversationStepBuilder extends AbstractCreatureConversationSte
         db.creatureDataDao().setState(FROSCHPRINZ, HAT_NACH_BELOHNUNG_GEFRAGT);
     }
 
-    private void narrateAndDo_FroschHatAngesprochen_Exit() {
+    private void froschHatAngesprochen_Exit() {
         n.add(t(SENTENCE,
                 "Du tust, als hättest du nichts gehört")
                 .komma()
@@ -227,15 +232,7 @@ class FroschprinzConversationStepBuilder extends AbstractCreatureConversationSte
     // .. HAT_NACH_BELOHNUNG_GEFRAGT
     // -------------------------------------------------------------------------------
 
-    private void narrateAndDo_FroschHatNachBelohnungGefragt_AngeboteMachen() {
-        if (nichtsIstInDenBrunnenGefallen()) {
-            n.add(t(SENTENCE,
-                    "Dir fällt nur ein: „Für mich ergibt dies ganze Gespräch keinen Sinn!“")
-                    .dann()
-                    .imGespraechMit(null));
-            return;
-        }
-
+    private void froschHatNachBelohnungGefragt_AngeboteMachen() {
         n.add(t(SENTENCE,
                 "„Was du haben willst, lieber Frosch“, sagst du, „meine Kleider, " +
                         "Perlen oder Edelsteine?“"));
@@ -254,13 +251,13 @@ class FroschprinzConversationStepBuilder extends AbstractCreatureConversationSte
         db.creatureDataDao().setState(FROSCHPRINZ, HAT_FORDERUNG_GESTELLT);
     }
 
-    private void narrateAndDo_FroschHatNachBelohnungGefragt_ImmReEntry() {
+    private void froschHatNachBelohnungGefragt_ImmReEntry() {
         n.add(t(PARAGRAPH, "Dann gehst du kurz in dich…"));
 
-        narrateAndDo_FroschHatNachBelohnungGefragt_ReEntry();
+        froschHatNachBelohnungGefragt_ReEntry();
     }
 
-    private void narrateAndDo_FroschHatNachBelohnungGefragt_ReEntry() {
+    private void froschHatNachBelohnungGefragt_ReEntry() {
         n.add(t(PARAGRAPH,
                 "„Frosch“, sprichst du ihn an, „steht dein Angebot noch?“"));
 
@@ -284,7 +281,7 @@ class FroschprinzConversationStepBuilder extends AbstractCreatureConversationSte
         db.creatureDataDao().setState(FROSCHPRINZ, HAT_FORDERUNG_GESTELLT);
     }
 
-    private void narrateAndDo_FroschHatNachBelohnungGefragt_Exit() {
+    private void froschHatNachBelohnungGefragt_Exit() {
         n.add(t(SENTENCE,
                 "„Denkst du etwa, ich überschütte dich mit Gold und Juwelen? - Vergiss es!“")
                 .imGespraechMit(null));
@@ -293,18 +290,52 @@ class FroschprinzConversationStepBuilder extends AbstractCreatureConversationSte
     // -------------------------------------------------------------------------------
     // .. HAT_NACH_BELOHNUNG_GEFRAGT
     // -------------------------------------------------------------------------------
-    private void narrateAndDo_FroschHatForderungGestellt_AllesVersprechen() {
+    private void froschHatForderungGestellt_AllesVersprechen() {
         // die goldene Kugel / die Dinge
-        final Nominalphrase descObjectsInDenBrunnenGefallen =
-                getDescriptionSingleOrCollective(objectsInDenBrunnenGefallen);
         n.add(t(PARAGRAPH,
                 "„Ach ja“, sagst du, „ich verspreche dir alles, was du " +
                         "willst, wenn du mir nur " +
-                        descObjectsInDenBrunnenGefallen.akk() +
+                        getDescriptionSingleOrCollective(objectsInDenBrunnenGefallen).akk() +
                         " wiederbringst.“ Du denkst " +
                         "aber: „Was der einfältige Frosch schwätzt, der sitzt im Wasser bei " +
                         "seinesgleichen und quakt und kann keines Menschen Geselle sein.“"));
 
+        froschReagiertAufVersprechen();
+    }
+
+    private void froschHatForderungGestellt_ImmReEntry() {
+
+        n.add(t(SENTENCE,
+                "Aber im nächsten Moment entschuldigst du schon: " +
+                        "„Nicht für ungut! Wenn du mir wirklich " +
+                        getDescriptionSingleOrCollective(objectsInDenBrunnenGefallen).akk() +
+                        " wieder besorgen kannst – ich verspreche dir alles, was du willst!“" +
+                        " Bei dir selbst denkst du: " +
+                        "„Was der einfältige Frosch schwätzt, der sitzt im Wasser bei " +
+                        "seinesgleichen und quakt und kann keines Menschen Geselle sein.“"
+        ));
+
+        froschReagiertAufVersprechen();
+    }
+
+    private void froschHatForderungGestellt_reEntry() {
+
+        n.add(t(SENTENCE,
+                "„Lieber Frosch“, sagst du, „ich habe es mir überlegt. Ich verspreche dir alles, " +
+                        "was du " +
+                        "willst, wenn du mir nur " +
+                        getDescriptionSingleOrCollective(objectsInDenBrunnenGefallen).akk() +
+                        " wiederbringst.“ –"));
+        n.add(t(SENTENCE,
+                "Was du dir eigentlich überlegt hast, ist:" +
+                        " „Was der einfältige Frosch schwätzt, der sitzt im" +
+                        " Wasser bei seinesgleichen und quakt und kann keines Menschen " +
+                        "Geselle sein.“"));
+
+        froschReagiertAufVersprechen();
+    }
+
+    private void froschReagiertAufVersprechen() {
         n.add(t(PARAGRAPH,
                 "Der Frosch, als er die Zusage erhalten hat,"));
 
@@ -322,6 +353,9 @@ class FroschprinzConversationStepBuilder extends AbstractCreatureConversationSte
 
             return;
         }
+
+        final Nominalphrase descObjectsInDenBrunnenGefallen =
+                getDescriptionSingleOrCollective(objectsInDenBrunnenGefallen);
 
         n.add(t(WORD, "taucht seinen Kopf " +
                 "unter, sinkt hinab und über ein Weilchen kommt er wieder herauf gerudert, " +
@@ -350,7 +384,8 @@ class FroschprinzConversationStepBuilder extends AbstractCreatureConversationSte
         }
     }
 
-    private void narrateAndDo_FroschHatForderungGestellt_Exit() {
+
+    private void froschHatForderungGestellt_Exit() {
         n.add(alt(
                 t(SENTENCE,
                         "„Na, bei dir piept's wohl!“ – Entrüstet wendest du dich ab")
@@ -369,7 +404,7 @@ class FroschprinzConversationStepBuilder extends AbstractCreatureConversationSte
     // .. ALLGEMEINES
     // -------------------------------------------------------------------------------
 
-    private void narrateAndDo_hallo_froschReagiertNicht() {
+    private void hallo_froschReagiertNicht() {
         n.add(alt(
                 t(SENTENCE, "„Hallo, Kollege Frosch!“"),
                 t(SENTENCE, "„Hallo, du hässlicher Frosch!“, redest du ihn an")
@@ -378,10 +413,10 @@ class FroschprinzConversationStepBuilder extends AbstractCreatureConversationSte
                 t(SENTENCE, "„Hallo nochmal, Meister Frosch!“")
         ));
 
-        narrateFroschReagiertNicht();
+        froschReagiertNicht();
     }
 
-    private void narrateFroschReagiertNicht() {
+    private void froschReagiertNicht() {
         n.add(t(SENTENCE, "Der Frosch reagiert nicht")
                 .imGespraechMit(null));
     }
