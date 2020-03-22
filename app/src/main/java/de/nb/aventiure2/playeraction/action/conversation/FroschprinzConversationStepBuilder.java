@@ -1,4 +1,4 @@
-package de.nb.aventiure2.playeraction.action.reden;
+package de.nb.aventiure2.playeraction.action.conversation;
 
 import androidx.annotation.NonNull;
 
@@ -35,24 +35,24 @@ import static de.nb.aventiure2.german.base.GermanUtil.capitalize;
 import static de.nb.aventiure2.german.praedikat.SeinUtil.istSind;
 
 /**
- * Erzeugt {@link CreatureTalkStep}s für den
+ * Erzeugt {@link CreatureConversationStep}s für den
  * {@link de.nb.aventiure2.data.world.creature.Creature.Key#FROSCHPRINZ}en.
  */
-class FroschprinzTalkStepBuilder extends AbstractCreatureTalkStepBuilder {
+class FroschprinzConversationStepBuilder extends AbstractCreatureConversationStepBuilder {
     private final List<ObjectData> objectsInDenBrunnenGefallen;
 
-    FroschprinzTalkStepBuilder(final AvDatabase db, final StoryState initialStoryState,
-                               final Class<? extends IPlayerAction> currentActionClass,
-                               final AvRoom room,
-                               final Map<AvObject.Key, ObjectData> allObjectsByKey,
-                               @NonNull final CreatureData creatureData) {
+    FroschprinzConversationStepBuilder(final AvDatabase db, final StoryState initialStoryState,
+                                       final Class<? extends IPlayerAction> currentActionClass,
+                                       final AvRoom room,
+                                       final Map<AvObject.Key, ObjectData> allObjectsByKey,
+                                       @NonNull final CreatureData creatureData) {
         super(db, initialStoryState, currentActionClass, room, allObjectsByKey, creatureData);
 
         objectsInDenBrunnenGefallen = filterInDenBrunnenGefallen(allObjectsByKey);
     }
 
     @Override
-    List<CreatureTalkStep> getAllStepsForCurrentState() {
+    List<CreatureConversationStep> getAllStepsForCurrentState() {
         switch (creatureData.getState()) {
             case UNAUFFAELLIG:
                 return ImmutableList.of();

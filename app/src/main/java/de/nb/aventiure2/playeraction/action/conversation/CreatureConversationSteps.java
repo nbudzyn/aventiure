@@ -1,4 +1,4 @@
-package de.nb.aventiure2.playeraction.action.reden;
+package de.nb.aventiure2.playeraction.action.conversation;
 
 import com.google.common.collect.ImmutableList;
 
@@ -16,19 +16,20 @@ import de.nb.aventiure2.data.world.room.AvRoom;
 import static de.nb.aventiure2.data.world.creature.Creature.Key.FROSCHPRINZ;
 
 /**
- * Contains all {@link CreatureTalkStep}s;
+ * Contains all {@link CreatureConversationStep}s;
  */
-public class CreatureTalkSteps {
-    public static List<CreatureTalkStep> getPossibleSteps(
+public class CreatureConversationSteps {
+    public static List<CreatureConversationStep> getPossibleSteps(
             final AvDatabase db, final StoryState initialStoryState,
             final Class<? extends IPlayerAction> currentActionClass,
             final AvRoom room,
             final Map<AvObject.Key, ObjectData> allObjectsByKey,
             final CreatureData creatureData) {
-        AbstractCreatureTalkStepBuilder stepBuilder = null;
+        AbstractCreatureConversationStepBuilder stepBuilder = null;
         if (creatureData.creatureIs(FROSCHPRINZ)) {
             stepBuilder =
-                    new FroschprinzTalkStepBuilder(db, initialStoryState, currentActionClass,
+                    new FroschprinzConversationStepBuilder(db, initialStoryState,
+                            currentActionClass,
                             room, allObjectsByKey, creatureData);
         }
 
@@ -39,6 +40,6 @@ public class CreatureTalkSteps {
         return stepBuilder.getPossibleSteps();
     }
 
-    private CreatureTalkSteps() {
+    private CreatureConversationSteps() {
     }
 }

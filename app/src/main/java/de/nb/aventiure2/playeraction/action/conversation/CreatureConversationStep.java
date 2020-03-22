@@ -1,4 +1,4 @@
-package de.nb.aventiure2.playeraction.action.reden;
+package de.nb.aventiure2.playeraction.action.conversation;
 
 import de.nb.aventiure2.data.world.creature.Creature;
 import de.nb.aventiure2.data.world.creature.CreatureState;
@@ -18,7 +18,7 @@ import de.nb.aventiure2.german.praedikat.VerbSubjObj;
  * von einem {@link de.nb.aventiure2.data.world.room.AvRoom} zum anderen führt,
  * oft im Rahmen einer {@link de.nb.aventiure2.playeraction.action.BewegenAction}.
  */
-public class CreatureTalkStep {
+public class CreatureConversationStep {
     public enum Type {
         /**
          * Ein Entry-Schritt ist nur möglich, wenn der SC unmittelbar zuvor NICHT
@@ -52,9 +52,9 @@ public class CreatureTalkStep {
             VerbSubjObj.BEENDEN.mitObj(Nominalphrase.GESPRAECH);
 
     /**
-     * Condition to check whether a <code>CreatureTalkStep</code> is possible / allowed.
+     * Condition to check whether a <code>CreatureConversationStep</code> is possible / allowed.
      */
-    interface TalkStepCondition {
+    interface Condition {
         /**
          * Return true iff the step is possible / allowed.
          */
@@ -62,17 +62,17 @@ public class CreatureTalkStep {
     }
 
     /**
-     * This ist what the talk step actually does.
+     * This ist what the conversation step actually does.
      */
-    interface TalkStepNarrationAndAction {
+    interface NarrationAndAction {
         /**
-         * Führt den {@link CreatureTalkStep} aus - erzählt die Geschichte weiter
+         * Führt den {@link CreatureConversationStep} aus - erzählt die Geschichte weiter
          * und verändert ggf. die Welt.
          */
         void narrateAndDo();
     }
 
-    final static TalkStepCondition ALWAYS_POSSIBLE = () -> true;
+    final static Condition ALWAYS_POSSIBLE = () -> true;
 
     /**
      * Typ des Schritts
@@ -85,15 +85,15 @@ public class CreatureTalkStep {
     private final Praedikat name;
 
     /**
-     * This ist what the talk step actually does.
+     * This ist what the conversation step actually does.
      */
-    private final TalkStepNarrationAndAction narrationAndAction;
+    private final NarrationAndAction narrationAndAction;
 
     /**
      * If this condition does not hold, the step is impossible
      * (there won't be an action for the step)
      */
-    private final TalkStepCondition condition;
+    private final Condition condition;
 
     /**
      * Constructor.
@@ -101,11 +101,11 @@ public class CreatureTalkStep {
      * @param condition If this condition does not hold, this step is impossible
      *                  (there won't be an action for this step).
      */
-    CreatureTalkStep(
+    CreatureConversationStep(
             final Type stepType,
-            final TalkStepCondition condition,
+            final Condition condition,
             final Praedikat name,
-            final TalkStepNarrationAndAction narrationAndAction) {
+            final NarrationAndAction narrationAndAction) {
         this.stepType = stepType;
         this.condition = condition;
         this.name = name;
@@ -131,7 +131,7 @@ public class CreatureTalkStep {
     }
 
     /**
-     * Die Talk-Step-Aktion ausführen.
+     * Den Schritt ausführen.
      */
     public void narrateAndDo() {
         narrationAndAction.narrateAndDo();

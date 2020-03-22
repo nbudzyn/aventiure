@@ -19,8 +19,8 @@ import de.nb.aventiure2.german.praedikat.Praedikat;
 import de.nb.aventiure2.german.praedikat.PraedikatMitEinerObjektleerstelle;
 import de.nb.aventiure2.german.praedikat.PraedikatOhneLeerstellen;
 import de.nb.aventiure2.playeraction.AbstractPlayerAction;
-import de.nb.aventiure2.playeraction.action.reden.CreatureTalkStep;
-import de.nb.aventiure2.playeraction.action.reden.CreatureTalkSteps;
+import de.nb.aventiure2.playeraction.action.conversation.CreatureConversationStep;
+import de.nb.aventiure2.playeraction.action.conversation.CreatureConversationSteps;
 
 /**
  * Der Spieler(charakter) redet mit einem Wesen.
@@ -32,15 +32,15 @@ public class RedenAction extends AbstractPlayerAction {
     @NonNull
     private final CreatureData creatureData;
 
-    private final CreatureTalkStep creatureTalkStep;
+    private final CreatureConversationStep creatureConversationStep;
     private final String name;
 
     public static Collection<AbstractPlayerAction> buildActions(
             final AvDatabase db, final StoryState initialStoryState, final AvRoom room,
             final Map<AvObject.Key, ObjectData> allObjectsByKey,
             final CreatureData creatureData) {
-        final List<CreatureTalkStep> talkSteps =
-                CreatureTalkSteps.getPossibleSteps(
+        final List<CreatureConversationStep> talkSteps =
+                CreatureConversationSteps.getPossibleSteps(
                         db, initialStoryState, RedenAction.class, room,
                         allObjectsByKey, creatureData);
 
@@ -54,11 +54,11 @@ public class RedenAction extends AbstractPlayerAction {
                                                                  final AvRoom room,
                                                                  final Map<AvObject.Key, ObjectData> allObjectsByKey,
                                                                  final CreatureData creatureData,
-                                                                 final List<CreatureTalkStep> talkSteps) {
+                                                                 final List<CreatureConversationStep> talkSteps) {
         final ImmutableList.Builder<AbstractPlayerAction> res =
                 ImmutableList.builder();
 
-        for (final CreatureTalkStep talkStep : talkSteps) {
+        for (final CreatureConversationStep talkStep : talkSteps) {
             if (stepTypeFits(initialStoryState, creatureData, talkStep.getStepType())) {
                 res.add(buildAction(db, initialStoryState, room, allObjectsByKey,
                         creatureData,
@@ -72,11 +72,11 @@ public class RedenAction extends AbstractPlayerAction {
 
     private static boolean stepTypeFits(final StoryState initialStoryState,
                                         final CreatureData creatureData,
-                                        final CreatureTalkStep.Type stepType) {
+                                        final CreatureConversationStep.Type stepType) {
         if (initialStoryState.talkingTo(creatureData.getCreature().getKey())) {
             // Der SC befindet sich gerade im Gespräch mit der Creature-
-            return stepType == CreatureTalkStep.Type.NORMAL ||
-                    stepType == CreatureTalkStep.Type.EXIT;
+            return stepType == CreatureConversationStep.Type.NORMAL ||
+                    stepType == CreatureConversationStep.Type.EXIT;
         }
 
         if (initialStoryState.lastActionWas(RedenAction.class)
@@ -87,12 +87,12 @@ public class RedenAction extends AbstractPlayerAction {
             // und hat es sich ganz offenbar anders überlegt
             // (oder die Creature hat das Gespräch beendet, und der Benutzer möchte
             // sofort wieder ein Gespräch anknüpfen).
-            return stepType == CreatureTalkStep.Type.IMMEDIATE_RE_ENTRY;
+            return stepType == CreatureConversationStep.Type.IMMEDIATE_RE_ENTRY;
         }
 
         // Der SC befindet sich gerade nicht im Gespräch mit der Creature
         // (und auch nicht GERADE EBEN so ein Gespräch beendet).
-        return stepType == CreatureTalkStep.Type.ENTRY_RE_ENTRY;
+        return stepType == CreatureConversationStep.Type.ENTRY_RE_ENTRY;
     }
 
     /**
@@ -104,7 +104,7 @@ public class RedenAction extends AbstractPlayerAction {
                                            final AvRoom room,
                                            final Map<AvObject.Key, ObjectData> allObjectsByKey,
                                            final CreatureData creatureData,
-                                           final CreatureTalkStep talkStep) {
+                                           final CreatureConversationStep talkStep) {
         final PraedikatOhneLeerstellen praedikatOhneLeerstellen =
                 fuelleGgfPraedikatLeerstelleMitCreature(talkStep.getName(), creatureData);
 
@@ -137,7 +137,7 @@ public class RedenAction extends AbstractPlayerAction {
                                            final AvRoom room,
                                            final Map<AvObject.Key, ObjectData> allObjectsByKey,
                                            final CreatureData creatureData,
-                                           final CreatureTalkStep talkStep,
+                                           final CreatureConversationStep talkStep,
                                            final PraedikatOhneLeerstellen praedikatOhneLeerstellen) {
         return new RedenAction(db, initialStoryState, creatureData, room, allObjectsByKey,
                 talkStep,
@@ -149,13 +149,13 @@ public class RedenAction extends AbstractPlayerAction {
                         final StoryState initialStoryState,
                         @NonNull final CreatureData creatureData, final AvRoom room,
                         final Map<AvObject.Key, ObjectData> allObjectsByKey,
-                        final CreatureTalkStep creatureTalkStep,
+                        final CreatureConversationStep creatureConversationStep,
                         @NonNull final String name) {
         super(db, initialStoryState);
         this.creatureData = creatureData;
         this.room = room;
         this.allObjectsByKey = allObjectsByKey;
-        this.creatureTalkStep = creatureTalkStep;
+        this.creatureConversationStep = creatureConversationStep;
         this.name = name;
     }
 
@@ -167,7 +167,7 @@ public class RedenAction extends AbstractPlayerAction {
 
     @Override
     public void narrateAndDo() {
-        creatureTalkStep.narrateAndDo();
+        creatureConversationStep.narrateAndDo();
     }
 
     @Override
