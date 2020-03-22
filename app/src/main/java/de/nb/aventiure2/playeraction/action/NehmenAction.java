@@ -10,19 +10,33 @@ import de.nb.aventiure2.data.database.AvDatabase;
 import de.nb.aventiure2.data.storystate.StoryState;
 import de.nb.aventiure2.data.storystate.StoryState.StartsNew;
 import de.nb.aventiure2.data.storystate.StoryStateBuilder;
+import de.nb.aventiure2.data.world.creature.Creature;
+import de.nb.aventiure2.data.world.creature.CreatureData;
+import de.nb.aventiure2.data.world.entity.AbstractEntityData;
 import de.nb.aventiure2.data.world.object.ObjectData;
+import de.nb.aventiure2.data.world.player.stats.PlayerStateOfMind;
 import de.nb.aventiure2.data.world.room.AvRoom;
+import de.nb.aventiure2.german.praedikat.PraedikatMitEinerObjektleerstelle;
 import de.nb.aventiure2.playeraction.AbstractPlayerAction;
 
-import static de.nb.aventiure2.german.base.GermanUtil.capitalize;
+import static com.google.common.base.Preconditions.checkArgument;
+import static de.nb.aventiure2.data.world.creature.Creature.Key.FROSCHPRINZ;
+import static de.nb.aventiure2.data.world.creature.CreatureState.ERWARTET_VON_SC_EINLOESUNG_SEINES_VERSPRECHENS;
+import static de.nb.aventiure2.data.world.creature.CreatureState.ERWARTET_VON_SC_EINLOESUNG_SEINES_VERSPRECHENS_VON_SC_GETRAGEN;
+import static de.nb.aventiure2.german.praedikat.VerbSubjObj.MITNEHMEN;
+import static de.nb.aventiure2.german.praedikat.VerbSubjObj.NEHMEN;
 
 /**
- * Der Spieler(charakter) nimmt einen Gegenstand an sich.
+ * Der Spieler(charakter) nimmt einen Gegenstand (oder in Ausnahmefällen eine
+ * Creature) an sich.
  */
-public class NehmenAction extends AbstractObjectAction {
+public class NehmenAction extends AbstractPlayerAction {
     private final AvRoom room;
 
-    public static Collection<AbstractPlayerAction> buildActions(
+    @NonNull
+    private final AbstractEntityData entityData;
+
+    public static Collection<AbstractPlayerAction> buildObjectActions(
             final AvDatabase db, final StoryState initialStoryState, final AvRoom room,
             final ObjectData objectData) {
         final ImmutableList.Builder<AbstractPlayerAction> res = ImmutableList.builder();
@@ -30,43 +44,138 @@ public class NehmenAction extends AbstractObjectAction {
         return res.build();
     }
 
+    public static Collection<AbstractPlayerAction> buildCreatureActions(
+            final AvDatabase db,
+            final StoryState initialStoryState, final AvRoom room,
+            final CreatureData creatureData) {
+        final ImmutableList.Builder<AbstractPlayerAction> res = ImmutableList.builder();
+        if (creatureData.creatureIs(Creature.Key.FROSCHPRINZ) &&
+                creatureData.hasState(ERWARTET_VON_SC_EINLOESUNG_SEINES_VERSPRECHENS)) {
+            res.add(new NehmenAction(db, initialStoryState, creatureData, room));
+        }
+        return res.build();
+    }
+
     private NehmenAction(final AvDatabase db, final StoryState initialStoryState,
-                         final ObjectData objectData, final AvRoom room) {
-        super(db, initialStoryState, objectData);
+                         final AbstractEntityData entityData, final AvRoom room) {
+        super(db, initialStoryState);
+        this.entityData = entityData;
         this.room = room;
     }
 
     @Override
     @NonNull
     public String getName() {
-        return capitalize(getObjectData().akk()) + " nehmen";
+        final PraedikatMitEinerObjektleerstelle praedikat =
+                entityData instanceof CreatureData ? NEHMEN : MITNEHMEN;
+
+        return praedikat.mitObj(entityData).getDescriptionInfinitiv();
     }
 
     @Override
     public void narrateAndDo() {
-        n.add(buildStoryState());
-        db.objectDataDao().update(getObject(), null, true, false);
-        db.playerInventoryDao().take(getObject());
+        narrate();
+        removeFromRoomAndTake();
     }
 
-    private StoryStateBuilder buildStoryState() {
-        if (initialStoryState.lastActionWas(AblegenAction.class)) {
-            if (initialStoryState.lastObjectWas(getObject())) {
-                return t(StartsNew.PARAGRAPH,
-                        "Dann nimmst du " + getObjectData().akk() +
-                                " erneut")
-                        .undWartest();
-            }
+    private void removeFromRoomAndTake() {
+        if (entityData instanceof ObjectData) {
+            removeFromRoomAndTake((ObjectData) entityData);
+        } else if (entityData instanceof CreatureData) {
+            removeFromRoomAndTake((CreatureData) entityData);
+        } else {
+            throw new IllegalStateException("Unexpected entity data: " + entityData);
+        }
+    }
 
-            return t(StartsNew.SENTENCE,
-                    "Dann nimmst du als nächstes "
-                            + getObjectData().akk())
+    private void removeFromRoomAndTake(final ObjectData objectData) {
+        db.objectDataDao().update(objectData.getObject(), null, true, false);
+        db.playerInventoryDao().take(objectData.getObject());
+    }
+
+    private void removeFromRoomAndTake(final CreatureData creatureData) {
+        checkArgument(creatureData.creatureIs(Creature.Key.FROSCHPRINZ) &&
+                        creatureData.hasState(ERWARTET_VON_SC_EINLOESUNG_SEINES_VERSPRECHENS),
+                "Unexpected creature data: " + creatureData);
+
+        db.creatureDataDao().setRoom(FROSCHPRINZ, null);
+        db.creatureDataDao()
+                .setState(FROSCHPRINZ,
+                        ERWARTET_VON_SC_EINLOESUNG_SEINES_VERSPRECHENS_VON_SC_GETRAGEN);
+        db.playerStatsDao().setStateOfMind(PlayerStateOfMind.NEUTRAL);
+    }
+
+    private void narrate() {
+        if (entityData instanceof ObjectData) {
+            narrateObject((ObjectData) entityData);
+            return;
+        }
+        if (entityData instanceof CreatureData) {
+            narrateCreature((CreatureData) entityData);
+            return;
+        }
+        throw new IllegalStateException("Unexpected entity data: " + entityData);
+    }
+
+    private void narrateObject(final ObjectData objectData) {
+        if (initialStoryState.lastActionWas(AblegenAction.class)) {
+            n.add(buildStoryStateObjectNachAblegen(objectData));
+            return;
+        }
+
+        n.add(t(StartsNew.PARAGRAPH,
+                room.getLocationMode().getNehmenVerb().getDescriptionHauptsatz(objectData))
+                .undWartest()
+                .dann());
+    }
+
+    private StoryStateBuilder buildStoryStateObjectNachAblegen(final ObjectData objectData) {
+        if (initialStoryState.lastObjectWas(objectData.getObject())) {
+            return t(StartsNew.PARAGRAPH,
+                    "Dann nimmst du " + objectData.akk() +
+                            " erneut")
                     .undWartest();
         }
 
-        return t(StartsNew.PARAGRAPH,
-                room.getLocationMode().getNehmenVerb().getDescriptionHauptsatz(getObjectData()))
-                .undWartest()
-                .dann();
+        return t(StartsNew.SENTENCE,
+                "Dann nimmst du " + objectData.akk())
+                .undWartest();
     }
+
+
+    private void narrateCreature(final CreatureData creatureData) {
+        checkArgument(creatureData.creatureIs(Creature.Key.FROSCHPRINZ) &&
+                        creatureData.hasState(ERWARTET_VON_SC_EINLOESUNG_SEINES_VERSPRECHENS),
+                "Unexpected creature data: " + creatureData);
+
+        n.add(alt(
+                t(StartsNew.PARAGRAPH,
+                        "Du ekelst dich sehr, aber mit einiger Überwindung nimmst du den Frosch in "
+                                + "die Hand. "
+                                + "Er ist glibschig und schleimig – pfui-bäh! – schnell lässt du ihn in "
+                                + "eine Tasche gleiten. Sein gedämpftes Quaken könnte wohlig sein oder "
+                                + "genauso gut vorwurfsvoll"),
+                t(StartsNew.PARAGRAPH,
+                        "Den Frosch in die Hand nehmen?? – Wer hat dir bloß solche Flausen "
+                                + "in den Kopf gesetzt! Kräftig packst du den Frosch und versenkst "
+                                + "ihn tief in deiner Tasche. Du versuchst, deine Hand an der "
+                                + "Kleidung zu reinigen, aber der Schleim verteilt sich nur "
+                                + "überall - igitt!"),
+                t(StartsNew.PARAGRAPH,
+                        "Du erbarmmst dich und packst den Frosch in deine Tasche. Er fasst "
+                                + "sich sehr eklig an und du bist zufrieden, als die Prozedur "
+                                + "vorbei ist.")
+                        .dann()
+        ));
+    }
+
+    @Override
+    protected StoryStateBuilder t(@NonNull final StoryState.StartsNew startsNew,
+                                  @NonNull final String text) {
+        return super.t(startsNew, text)
+                .letztesObject(
+                        entityData instanceof ObjectData ? ((ObjectData) entityData).getObject() :
+                                null);
+    }
+
 }

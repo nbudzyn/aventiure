@@ -1,5 +1,6 @@
 package de.nb.aventiure2.data.world.creature;
 
+import androidx.annotation.Nullable;
 import androidx.room.Dao;
 import androidx.room.Insert;
 import androidx.room.OnConflictStrategy;
@@ -34,6 +35,13 @@ public abstract class CreatureDataDao {
 
     @Query("UPDATE CreatureData SET known = 1 WHERE creature = :creature")
     public abstract void setKnown(Creature creature);
+
+    public void setRoom(final Creature.Key key, final @Nullable AvRoom room) {
+        setRoom(Creature.get(key), room);
+    }
+
+    @Query("UPDATE CreatureData SET room = :room WHERE creature = :creature")
+    public abstract void setRoom(Creature creature, AvRoom room);
 
     public CreatureData getCreature(final Creature.Key creatureKey) {
         return getCreature(Creature.get(creatureKey));

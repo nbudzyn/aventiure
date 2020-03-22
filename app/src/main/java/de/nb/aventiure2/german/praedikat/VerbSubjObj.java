@@ -17,6 +17,7 @@ public enum VerbSubjObj implements PraedikatMitEinerObjektleerstelle {
     BEENDEN("beenden", AKK, "beendest"),
     HERAUSKLAUBEN("herausklauben", AKK, "klaubst", "heraus"),
     IGNORIEREN("ignorieren", AKK, "ignorierst"),
+    MITNEHMEN("mitnehmen", AKK, "nimmst", "mit"),
     NEHMEN("nehmen", AKK, "nimmst"),
     REDEN("reden", MIT_DAT, "redest");
 

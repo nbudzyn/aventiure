@@ -115,6 +115,8 @@ class FroschprinzConversationStepBuilder extends AbstractCreatureConversationSte
                 return ImmutableList.of(
                         entrySt(this::hallo_froschErinnertAnVersprechen)
                 );
+            case ERWARTET_VON_SC_EINLOESUNG_SEINES_VERSPRECHENS_VON_SC_GETRAGEN:
+                return ImmutableList.of();
             default:
                 throw new IllegalStateException("Unexpected Froschprinz state: "
                         + creatureData.getState());

@@ -2,9 +2,6 @@ package de.nb.aventiure2.playeraction.action;
 
 import androidx.annotation.NonNull;
 
-import com.google.common.collect.ImmutableList;
-
-import java.util.Collection;
 import java.util.List;
 
 import de.nb.aventiure2.data.database.AvDatabase;
@@ -24,6 +21,8 @@ import de.nb.aventiure2.playeraction.AbstractPlayerAction;
 import de.nb.aventiure2.playeraction.action.creature.reaction.CreatureReactionsCoordinator;
 
 import static com.google.common.base.Preconditions.checkArgument;
+import static de.nb.aventiure2.german.DuDescription.du;
+import static de.nb.aventiure2.german.base.AllgDescription.allg;
 import static de.nb.aventiure2.german.base.GermanUtil.capitalize;
 import static de.nb.aventiure2.german.base.GermanUtil.uncapitalize;
 import static java.util.stream.Collectors.toList;
@@ -32,26 +31,37 @@ import static java.util.stream.Collectors.toList;
  * Der Spieler(charakter) bewegt sich in einen anderen Raum.
  */
 public class BewegenAction extends AbstractPlayerAction {
+    public enum NumberOfPossibilities {
+        /**
+         * Whether this is the only way the SC could take
+         */
+        ONLY_WAY,
+        /**
+         * There have been two movement possibilities for the player to choose
+         * from
+         */
+        ONE_IN_ONE_OUT,
+        /**
+         * There have been several ways
+         */
+        SEVERAL_WAYS
+    }
+
     private final AvRoom oldRoom;
     private final AvRoom newRoom;
 
-    /**
-     * Whether this is the only way the SC could take.
-     */
-    private final boolean onlyWay;
+    private final NumberOfPossibilities numberOfPossibilities;
 
     /**
      * Creates a new {@link BewegenAction}.
-     *
-     * @param onlyWay Whether this is the only way the SC could take.
      */
     private BewegenAction(final AvDatabase db,
                           final StoryState initialStoryState,
                           final AvRoom oldRoom,
                           final AvRoom newRoom,
-                          final boolean onlyWay) {
+                          final NumberOfPossibilities numberOfPossibilities) {
         super(db, initialStoryState);
-        this.onlyWay = onlyWay;
+        this.numberOfPossibilities = numberOfPossibilities;
 
         checkArgument(newRoom != oldRoom, "newRoom == oldRoom)");
 
@@ -59,21 +69,13 @@ public class BewegenAction extends AbstractPlayerAction {
         this.newRoom = newRoom;
     }
 
-    /**
-     * Creates {@link BewegenAction}s (in all typical cases exactly one) from the
-     * <code>room</code> to the <code>connectedRoom</code>.
-     *
-     * @param exactlyOneConnectedRoom Whether this is the only connected room from
-     *                                this room to which the player can (currently) go
-     */
-    public static Collection<AbstractPlayerAction> buildActions(
+    public static AbstractPlayerAction buildAction(
             final AvDatabase db,
             final StoryState initialStoryState,
             final AvRoom room, final AvRoom connectedRoom,
-            final boolean exactlyOneConnectedRoom) {
-        return ImmutableList.of(
-                new BewegenAction(db, initialStoryState, room,
-                        connectedRoom, exactlyOneConnectedRoom));
+            final NumberOfPossibilities numberOfPossibilities) {
+        return new BewegenAction(db, initialStoryState, room,
+                connectedRoom, numberOfPossibilities);
     }
 
     @Override
@@ -124,22 +126,43 @@ public class BewegenAction extends AbstractPlayerAction {
     }
 
     private StoryStateBuilder buildNewStoryStateRoomOnly(final StoryState currentStoryState) {
+        final AbstractDescription description = getMovementDescription(currentStoryState);
+        return buildNewStoryStateRoomOnly(currentStoryState, description);
+    }
+
+    private AbstractDescription getMovementDescription(final StoryState currentStoryState) {
         final boolean newRoomKnown = db.roomDao().isKnown(newRoom);
 
-        if (newRoomKnown
-                && onlyWay
-                && currentStoryState.allowsAdditionalDuSatzreihengliedOhneSubjekt()
-                && currentStoryState.lastActionWas(NehmenAction.class)
-                && db.playerStatsDao().getPlayerStats().getStateOfMind() ==
-                PlayerStateOfMind.VOLLER_FREUDE) {
-            return t(StartsNew.WORD,
-                    "und springst damit fort");
+        if (newRoomKnown) {
+            if (numberOfPossibilities == NumberOfPossibilities.ONLY_WAY) {
+                if (db.playerStatsDao().getPlayerStats().getStateOfMind() ==
+                        PlayerStateOfMind.VOLLER_FREUDE &&
+                        currentStoryState.allowsAdditionalDuSatzreihengliedOhneSubjekt() &&
+                        currentStoryState.lastActionWas(NehmenAction.class)) {
+                    return du("springst", "damit fort",
+                            false, true,
+                            true);
+                }
+
+                if (db.playerStatsDao().getPlayerStats().getStateOfMind() ==
+                        PlayerStateOfMind.UNTROESTLICH) {
+                    return allg("Tieftraurig trottest du von dannen",
+                            false, true, false);
+                }
+            } else if (numberOfPossibilities == NumberOfPossibilities.ONE_IN_ONE_OUT
+                    && currentStoryState.lastActionWas(BewegenAction.class) &&
+                    !currentStoryState.lastRoomWas(newRoom) &&
+                    db.playerStatsDao().getPlayerStats().getStateOfMind() ==
+                            PlayerStateOfMind.VOLLER_FREUDE &&
+                    currentStoryState.allowsAdditionalDuSatzreihengliedOhneSubjekt()) {
+                return du("eilst", "weiter",
+                        false, true,
+                        false);
+            }
         }
 
-        final AbstractDescription description =
-                RoomConnection.getFrom(oldRoom).get(newRoom)
-                        .getDescription(newRoomKnown);
-        return buildNewStoryStateRoomOnly(currentStoryState, description);
+        return RoomConnection.getFrom(oldRoom).get(newRoom)
+                .getDescription(db.roomDao().isKnown(newRoom));
     }
 
     /**

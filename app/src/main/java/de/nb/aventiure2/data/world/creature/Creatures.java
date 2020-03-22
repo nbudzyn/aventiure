@@ -8,6 +8,7 @@ import de.nb.aventiure2.data.world.room.AvRoom;
 
 import static de.nb.aventiure2.data.world.creature.CreatureState.AUF_DEM_WEG_ZUM_BRUNNEN_UM_DINGE_HERAUSZUHOLEN;
 import static de.nb.aventiure2.data.world.creature.CreatureState.ERWARTET_VON_SC_EINLOESUNG_SEINES_VERSPRECHENS;
+import static de.nb.aventiure2.data.world.creature.CreatureState.ERWARTET_VON_SC_EINLOESUNG_SEINES_VERSPRECHENS_VON_SC_GETRAGEN;
 import static de.nb.aventiure2.data.world.creature.CreatureState.HAT_FORDERUNG_GESTELLT;
 import static de.nb.aventiure2.data.world.creature.CreatureState.HAT_NACH_BELOHNUNG_GEFRAGT;
 import static de.nb.aventiure2.data.world.creature.CreatureState.HAT_SC_HILFSBEREIT_ANGESPROCHEN;
@@ -36,6 +37,8 @@ public class Creatures {
                             sm(UNAUFFAELLIG, HAT_SC_HILFSBEREIT_ANGESPROCHEN,
                                     HAT_NACH_BELOHNUNG_GEFRAGT, HAT_FORDERUNG_GESTELLT,
                                     AUF_DEM_WEG_ZUM_BRUNNEN_UM_DINGE_HERAUSZUHOLEN,
-                                    ERWARTET_VON_SC_EINLOESUNG_SEINES_VERSPRECHENS))
+                                    ERWARTET_VON_SC_EINLOESUNG_SEINES_VERSPRECHENS,
+                                    ERWARTET_VON_SC_EINLOESUNG_SEINES_VERSPRECHENS_VON_SC_GETRAGEN
+                            ))
             );
 }

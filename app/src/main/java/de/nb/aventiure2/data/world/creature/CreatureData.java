@@ -1,6 +1,7 @@
 package de.nb.aventiure2.data.world.creature;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.room.Entity;
 import androidx.room.PrimaryKey;
 
@@ -19,13 +20,14 @@ public class CreatureData extends AbstractEntityData {
     @NonNull
     private final Creature creature;
 
+    @Nullable
     private final AvRoom room;
 
     private final boolean known;
 
     private final CreatureState state;
 
-    CreatureData(@NonNull final Creature creature, @NonNull final AvRoom room,
+    CreatureData(@NonNull final Creature creature, @Nullable final AvRoom room,
                  final boolean known, final CreatureState state) {
         this.creature = creature;
         this.room = room;
