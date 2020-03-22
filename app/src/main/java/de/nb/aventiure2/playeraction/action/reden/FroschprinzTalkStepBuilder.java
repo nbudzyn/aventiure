@@ -66,9 +66,9 @@ class FroschprinzTalkStepBuilder extends AbstractCreatureTalkStepBuilder {
                                         this::narrateAndDo_FroschHatAngesprochen_ImmReEntry),
                                 immReEntrySt(this::nichtsIstInDenBrunnenGefallen,
                                         this::narrateAndDo_hallo_froschReagiertNicht),
-                                entrySt(this::etwasIstInDenBrunnenGefallen,
+                                reEntrySt(this::etwasIstInDenBrunnenGefallen,
                                         this::narrateAndDo_FroschHatAngesprochen_ReEntry),
-                                entrySt(this::nichtsIstInDenBrunnenGefallen,
+                                reEntrySt(this::nichtsIstInDenBrunnenGefallen,
                                         this::narrateAndDo_hallo_froschReagiertNicht)
                         );
             case HAT_NACH_BELOHNUNG_GEFRAGT:
@@ -83,10 +83,10 @@ class FroschprinzTalkStepBuilder extends AbstractCreatureTalkStepBuilder {
                                         this::narrateAndDo_FroschHatNachBelohnungGefragt_ImmReEntry),
                                 immReEntrySt(this::nichtsIstInDenBrunnenGefallen,
                                         this::narrateAndDo_hallo_froschReagiertNicht),
-                                entrySt(this::etwasIstInDenBrunnenGefallen,
+                                reEntrySt(this::etwasIstInDenBrunnenGefallen,
                                         VerbSubjDatAkk.MACHEN.mitAkk(Nominalphrase.ANGEBOTE),
                                         this::narrateAndDo_FroschHatNachBelohnungGefragt_ReEntry),
-                                entrySt(this::nichtsIstInDenBrunnenGefallen,
+                                reEntrySt(this::nichtsIstInDenBrunnenGefallen,
                                         this::narrateAndDo_hallo_froschReagiertNicht)
                         );
             case HAT_FORDERUNG_GESTELLT:
@@ -101,7 +101,7 @@ class FroschprinzTalkStepBuilder extends AbstractCreatureTalkStepBuilder {
                         // TODO entrySt(this::etwasIstInDenBrunnenGefallen,
                         //VerbSubjDatAkk.MACHEN.mitAkk(Nominalphrase.ANGEBOTE),
                         //this::narrateAndDo_..._ReEntry),
-                        entrySt(this::nichtsIstInDenBrunnenGefallen,
+                        reEntrySt(this::nichtsIstInDenBrunnenGefallen,
                                 this::narrateAndDo_hallo_froschReagiertNicht)
                 );
             case AUF_DEM_WEG_ZUM_BRUNNEN_UM_DINGE_HERAUSZUHOLEN:

@@ -21,7 +21,7 @@ import de.nb.aventiure2.data.world.room.AvRoom;
 import de.nb.aventiure2.german.praedikat.Praedikat;
 
 import static de.nb.aventiure2.playeraction.action.reden.CreatureTalkStep.ALWAYS_POSSIBLE;
-import static de.nb.aventiure2.playeraction.action.reden.CreatureTalkStep.DEFAULT_ENTRY_NAME;
+import static de.nb.aventiure2.playeraction.action.reden.CreatureTalkStep.DEFAULT_ENTRY_RE_ENTRY_NAME;
 import static de.nb.aventiure2.playeraction.action.reden.CreatureTalkStep.DEFAULT_EXIT_NAME;
 
 /**
@@ -79,7 +79,7 @@ abstract class AbstractCreatureTalkStepBuilder {
 
     static CreatureTalkStep entrySt(
             final CreatureTalkStep.TalkStepNarrationAndAction narrationAndAction) {
-        return entrySt(DEFAULT_ENTRY_NAME, narrationAndAction);
+        return entrySt(DEFAULT_ENTRY_RE_ENTRY_NAME, narrationAndAction);
     }
 
     static CreatureTalkStep entrySt(final Praedikat entryName,
@@ -90,20 +90,20 @@ abstract class AbstractCreatureTalkStepBuilder {
     static CreatureTalkStep entrySt(
             final CreatureTalkStep.TalkStepCondition condition,
             final CreatureTalkStep.TalkStepNarrationAndAction narrationAndAction) {
-        return entrySt(condition, DEFAULT_ENTRY_NAME, narrationAndAction);
+        return entrySt(condition, DEFAULT_ENTRY_RE_ENTRY_NAME, narrationAndAction);
     }
 
     static CreatureTalkStep entrySt(
             final CreatureTalkStep.TalkStepCondition condition,
             final Praedikat entryName,
             final CreatureTalkStep.TalkStepNarrationAndAction narrationAndAction) {
-        return new CreatureTalkStep(CreatureTalkStep.Type.ENTRY, condition, entryName,
+        return new CreatureTalkStep(CreatureTalkStep.Type.ENTRY_RE_ENTRY, condition, entryName,
                 narrationAndAction);
     }
 
     static CreatureTalkStep immReEntrySt(
             final CreatureTalkStep.TalkStepNarrationAndAction narrationAndAction) {
-        return immReEntrySt(DEFAULT_ENTRY_NAME, narrationAndAction);
+        return immReEntrySt(DEFAULT_ENTRY_RE_ENTRY_NAME, narrationAndAction);
     }
 
     static CreatureTalkStep immReEntrySt(final Praedikat entryName,
@@ -113,7 +113,7 @@ abstract class AbstractCreatureTalkStepBuilder {
 
     static CreatureTalkStep immReEntrySt(final CreatureTalkStep.TalkStepCondition condition,
                                          final CreatureTalkStep.TalkStepNarrationAndAction narrationAndAction) {
-        return immReEntrySt(condition, DEFAULT_ENTRY_NAME, narrationAndAction);
+        return immReEntrySt(condition, DEFAULT_ENTRY_RE_ENTRY_NAME, narrationAndAction);
     }
 
     static CreatureTalkStep immReEntrySt(
@@ -122,6 +122,30 @@ abstract class AbstractCreatureTalkStepBuilder {
             final CreatureTalkStep.TalkStepNarrationAndAction narrationAndAction) {
         return new CreatureTalkStep(CreatureTalkStep.Type.IMMEDIATE_RE_ENTRY, condition,
                 entryName, narrationAndAction);
+    }
+
+    static CreatureTalkStep reEntrySt(
+            final CreatureTalkStep.TalkStepNarrationAndAction narrationAndAction) {
+        return reEntrySt(DEFAULT_ENTRY_RE_ENTRY_NAME, narrationAndAction);
+    }
+
+    static CreatureTalkStep reEntrySt(final Praedikat entryName,
+                                      final CreatureTalkStep.TalkStepNarrationAndAction narrationAndAction) {
+        return reEntrySt(ALWAYS_POSSIBLE, entryName, narrationAndAction);
+    }
+
+    static CreatureTalkStep reEntrySt(
+            final CreatureTalkStep.TalkStepCondition condition,
+            final CreatureTalkStep.TalkStepNarrationAndAction narrationAndAction) {
+        return reEntrySt(condition, DEFAULT_ENTRY_RE_ENTRY_NAME, narrationAndAction);
+    }
+
+    static CreatureTalkStep reEntrySt(
+            final CreatureTalkStep.TalkStepCondition condition,
+            final Praedikat entryName,
+            final CreatureTalkStep.TalkStepNarrationAndAction narrationAndAction) {
+        return new CreatureTalkStep(CreatureTalkStep.Type.ENTRY_RE_ENTRY, condition, entryName,
+                narrationAndAction);
     }
 
 

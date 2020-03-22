@@ -25,7 +25,7 @@ public class CreatureTalkStep {
          * im Gespräch mit der {@link Creature} war UND DIESES GESPRÄCH AUCH NICHT GERADE
          * EBEN BEENDET HAT. Der Benutzer möchte ein Gespräch beginnen.
          */
-        ENTRY,
+        ENTRY_RE_ENTRY,
         /**
          * Ein Entry-Schritt ist nur möglich, wenn der SC unmittelbar zuvor noch im Gespräch
          * mit der {@link Creature} war. Der Benutzer möchte das Gespräch fortführen.
@@ -45,7 +45,7 @@ public class CreatureTalkStep {
         IMMEDIATE_RE_ENTRY
     }
 
-    final static PraedikatMitEinerObjektleerstelle DEFAULT_ENTRY_NAME =
+    final static PraedikatMitEinerObjektleerstelle DEFAULT_ENTRY_RE_ENTRY_NAME =
             VerbSubjObj.REDEN;
 
     final static PraedikatOhneLeerstellen DEFAULT_EXIT_NAME =

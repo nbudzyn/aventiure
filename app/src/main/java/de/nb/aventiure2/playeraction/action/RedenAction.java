@@ -92,7 +92,7 @@ public class RedenAction extends AbstractPlayerAction {
 
         // Der SC befindet sich gerade nicht im Gespräch mit der Creature
         // (und auch nicht GERADE EBEN so ein Gespräch beendet).
-        return stepType == CreatureTalkStep.Type.ENTRY;
+        return stepType == CreatureTalkStep.Type.ENTRY_RE_ENTRY;
     }
 
     /**
