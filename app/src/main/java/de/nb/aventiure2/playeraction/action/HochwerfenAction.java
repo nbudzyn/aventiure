@@ -100,7 +100,7 @@ public class HochwerfenAction extends AbstractObjectAction {
     }
 
     private void narrateAndDoFroschBekannt() {
-        if (froschprinzCreatureData.hasAnyState(HAT_SC_HILFSBEREIT_ANGESPROCHEN,
+        if (froschprinzCreatureData.hasState(HAT_SC_HILFSBEREIT_ANGESPROCHEN,
                 HAT_NACH_BELOHNUNG_GEFRAGT,
                 HAT_FORDERUNG_GESTELLT)) {
             narrateAndDoObjectFaelltSofortInDenBrunnen();

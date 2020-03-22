@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import de.nb.aventiure2.data.database.AvDatabase;
 import de.nb.aventiure2.data.storystate.StoryState;
@@ -131,8 +132,14 @@ public class PlayerActionService {
             final StoryState currentStoryState,
             final AvRoom room) {
         final ImmutableList.Builder<AbstractPlayerAction> res = ImmutableList.builder();
-        for (final AvRoom connectedRoom : RoomConnection.getFrom(room).keySet()) {
-            res.addAll(BewegenAction.buildActions(db, currentStoryState, room, connectedRoom));
+
+        final Set<AvRoom> connectedRooms = RoomConnection.getFrom(room).keySet();
+
+        final boolean exactlyOneConnectedRoom = connectedRooms.size() == 1;
+
+        for (final AvRoom connectedRoom : connectedRooms) {
+            res.addAll(BewegenAction.buildActions(
+                    db, currentStoryState, room, connectedRoom, exactlyOneConnectedRoom));
         }
         return res.build();
     }

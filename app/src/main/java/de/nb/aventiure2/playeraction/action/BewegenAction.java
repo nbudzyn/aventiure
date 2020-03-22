@@ -15,11 +15,13 @@ import de.nb.aventiure2.data.world.creature.CreatureData;
 import de.nb.aventiure2.data.world.creature.CreatureState;
 import de.nb.aventiure2.data.world.entity.AbstractEntityData;
 import de.nb.aventiure2.data.world.object.ObjectData;
+import de.nb.aventiure2.data.world.player.stats.PlayerStateOfMind;
 import de.nb.aventiure2.data.world.room.AvRoom;
 import de.nb.aventiure2.data.world.room.connection.RoomConnection;
 import de.nb.aventiure2.german.AbstractDescription;
 import de.nb.aventiure2.german.DuDescription;
 import de.nb.aventiure2.playeraction.AbstractPlayerAction;
+import de.nb.aventiure2.playeraction.action.creature.reaction.CreatureReactionsCoordinator;
 
 import static com.google.common.base.Preconditions.checkArgument;
 import static de.nb.aventiure2.german.base.GermanUtil.capitalize;
@@ -33,11 +35,23 @@ public class BewegenAction extends AbstractPlayerAction {
     private final AvRoom oldRoom;
     private final AvRoom newRoom;
 
+    /**
+     * Whether this is the only way the SC could take.
+     */
+    private final boolean onlyWay;
+
+    /**
+     * Creates a new {@link BewegenAction}.
+     *
+     * @param onlyWay Whether this is the only way the SC could take.
+     */
     private BewegenAction(final AvDatabase db,
                           final StoryState initialStoryState,
                           final AvRoom oldRoom,
-                          final AvRoom newRoom) {
+                          final AvRoom newRoom,
+                          final boolean onlyWay) {
         super(db, initialStoryState);
+        this.onlyWay = onlyWay;
 
         checkArgument(newRoom != oldRoom, "newRoom == oldRoom)");
 
@@ -45,12 +59,21 @@ public class BewegenAction extends AbstractPlayerAction {
         this.newRoom = newRoom;
     }
 
+    /**
+     * Creates {@link BewegenAction}s (in all typical cases exactly one) from the
+     * <code>room</code> to the <code>connectedRoom</code>.
+     *
+     * @param exactlyOneConnectedRoom Whether this is the only connected room from
+     *                                this room to which the player can (currently) go
+     */
     public static Collection<AbstractPlayerAction> buildActions(
             final AvDatabase db,
             final StoryState initialStoryState,
-            final AvRoom room, final AvRoom connectedRoom) {
+            final AvRoom room, final AvRoom connectedRoom,
+            final boolean exactlyOneConnectedRoom) {
         return ImmutableList.of(
-                new BewegenAction(db, initialStoryState, room, connectedRoom));
+                new BewegenAction(db, initialStoryState, room,
+                        connectedRoom, exactlyOneConnectedRoom));
     }
 
     @Override
@@ -61,27 +84,36 @@ public class BewegenAction extends AbstractPlayerAction {
 
     @Override
     public void narrateAndDo() {
+        final List<CreatureData> creaturesInOldRoom =
+                db.creatureDataDao().getCreaturesInRoom(oldRoom);
+
         final List<ObjectData> objectsInNewRoom = db.objectDataDao().getObjectsInRoom(newRoom);
         final List<CreatureData> creaturesInNewRoom =
                 db.creatureDataDao().getCreaturesInRoom(newRoom);
 
-        narrate(objectsInNewRoom, creaturesInNewRoom);
+        narrate(creaturesInOldRoom, objectsInNewRoom, creaturesInNewRoom);
 
         db.playerLocationDao().setRoom(newRoom);
         setRoomAndObjectsKnown(objectsInNewRoom);
     }
 
-    private void narrate(final List<ObjectData> objectsInNewRoom,
+    private void narrate(final List<CreatureData> creaturesInOldRoom,
+                         final List<ObjectData> objectsInNewRoom,
                          final List<CreatureData> creaturesInNewRoom) {
         n.add(buildNewStoryStateRoomOnly(initialStoryState));
+
+        final CreatureReactionsCoordinator
+                creatureReactionsCoordinator =
+                new CreatureReactionsCoordinator(db, getClass());
+        creatureReactionsCoordinator.onLeaveRoom(oldRoom, creaturesInOldRoom);
 
         if (!objectsInNewRoom.isEmpty()) {
             n.add(buildObjectsStoryState(objectsInNewRoom));
         }
 
-        final List<CreatureData> visibleCreatures = filterVisible(creaturesInNewRoom);
-        if (!visibleCreatures.isEmpty()) {
-            n.add(buildCreaturesStoryState(visibleCreatures));
+        final List<CreatureData> visibleCreaturesInNewRoom = filterVisible(creaturesInNewRoom);
+        if (!visibleCreaturesInNewRoom.isEmpty()) {
+            n.add(buildCreaturesStoryState(visibleCreaturesInNewRoom));
         }
     }
 
@@ -92,9 +124,21 @@ public class BewegenAction extends AbstractPlayerAction {
     }
 
     private StoryStateBuilder buildNewStoryStateRoomOnly(final StoryState currentStoryState) {
+        final boolean newRoomKnown = db.roomDao().isKnown(newRoom);
+
+        if (newRoomKnown
+                && onlyWay
+                && currentStoryState.allowsAdditionalDuSatzreihengliedOhneSubjekt()
+                && currentStoryState.lastActionWas(NehmenAction.class)
+                && db.playerStatsDao().getPlayerStats().getStateOfMind() ==
+                PlayerStateOfMind.VOLLER_FREUDE) {
+            return t(StartsNew.WORD,
+                    "und springst damit fort");
+        }
+
         final AbstractDescription description =
                 RoomConnection.getFrom(oldRoom).get(newRoom)
-                        .getDescription(db.roomDao().isKnown(newRoom));
+                        .getDescription(newRoomKnown);
         return buildNewStoryStateRoomOnly(currentStoryState, description);
     }
 

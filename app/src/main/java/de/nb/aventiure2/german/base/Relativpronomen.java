@@ -3,6 +3,7 @@ package de.nb.aventiure2.german.base;
 import com.google.common.collect.ImmutableMap;
 
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 import static de.nb.aventiure2.german.base.NumerusGenus.F;
 import static de.nb.aventiure2.german.base.NumerusGenus.M;
@@ -19,7 +20,8 @@ public class Relativpronomen extends DeklinierbarePhrase {
         WERWAS
     }
 
-    private static final Map<Typ, Map<NumerusGenus, Relativpronomen>> ALL = ImmutableMap.of();
+    private static final Map<Typ, Map<NumerusGenus, Relativpronomen>> ALL =
+            new ConcurrentHashMap<>();
 
     static {
         // "das Kind, das"

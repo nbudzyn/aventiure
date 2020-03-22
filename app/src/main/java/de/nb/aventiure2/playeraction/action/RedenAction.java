@@ -19,8 +19,8 @@ import de.nb.aventiure2.german.praedikat.Praedikat;
 import de.nb.aventiure2.german.praedikat.PraedikatMitEinerObjektleerstelle;
 import de.nb.aventiure2.german.praedikat.PraedikatOhneLeerstellen;
 import de.nb.aventiure2.playeraction.AbstractPlayerAction;
-import de.nb.aventiure2.playeraction.action.conversation.CreatureConversationStep;
-import de.nb.aventiure2.playeraction.action.conversation.CreatureConversationSteps;
+import de.nb.aventiure2.playeraction.action.creature.conversation.CreatureConversationStep;
+import de.nb.aventiure2.playeraction.action.creature.conversation.CreatureConversationSteps;
 
 /**
  * Der Spieler(charakter) redet mit einem Wesen.

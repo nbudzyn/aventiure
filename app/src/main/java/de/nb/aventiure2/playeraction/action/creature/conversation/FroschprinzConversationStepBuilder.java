@@ -1,4 +1,4 @@
-package de.nb.aventiure2.playeraction.action.conversation;
+package de.nb.aventiure2.playeraction.action.creature.conversation;
 
 import androidx.annotation.NonNull;
 
@@ -368,7 +368,10 @@ class FroschprinzConversationStepBuilder extends AbstractCreatureConversationSte
                 + descObjectsInDenBrunnenGefallen.persPron().akk()
                 + " ins Gras. Du "
                 + "bist voll Freude, als du "
-                // die goldene Kugel / die Dinge
+                // die goldene Kugel / die Dinge / TODO Synonym: "die schönes Spielzeug"
+                // Idee zu Synonymen: Synonyme sollte erst NACH dem Originalbegriff auftauchen
+                // und automatisch gewählt werden, wenn syn() oder Ähnliches
+                // programmiert wird.
                 + descObjectsInDenBrunnenGefallen.akk()
                 + " wieder erblickst")
                 .imGespraechMit(null));

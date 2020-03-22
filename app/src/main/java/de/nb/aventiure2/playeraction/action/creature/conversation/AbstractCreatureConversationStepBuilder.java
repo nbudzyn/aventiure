@@ -1,4 +1,4 @@
-package de.nb.aventiure2.playeraction.action.conversation;
+package de.nb.aventiure2.playeraction.action.creature.conversation;
 
 import androidx.annotation.NonNull;
 
@@ -20,9 +20,9 @@ import de.nb.aventiure2.data.world.object.ObjectData;
 import de.nb.aventiure2.data.world.room.AvRoom;
 import de.nb.aventiure2.german.praedikat.Praedikat;
 
-import static de.nb.aventiure2.playeraction.action.conversation.CreatureConversationStep.ALWAYS_POSSIBLE;
-import static de.nb.aventiure2.playeraction.action.conversation.CreatureConversationStep.DEFAULT_ENTRY_RE_ENTRY_NAME;
-import static de.nb.aventiure2.playeraction.action.conversation.CreatureConversationStep.DEFAULT_EXIT_NAME;
+import static de.nb.aventiure2.playeraction.action.creature.conversation.CreatureConversationStep.ALWAYS_POSSIBLE;
+import static de.nb.aventiure2.playeraction.action.creature.conversation.CreatureConversationStep.DEFAULT_ENTRY_RE_ENTRY_NAME;
+import static de.nb.aventiure2.playeraction.action.creature.conversation.CreatureConversationStep.DEFAULT_EXIT_NAME;
 
 /**
  * Abstrakte Oberklasse zum Erzeugen von {@link CreatureConversationStep}s für eine

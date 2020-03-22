@@ -1,4 +1,4 @@
-package de.nb.aventiure2.playeraction.action.conversation;
+package de.nb.aventiure2.playeraction.action.creature.conversation;
 
 import com.google.common.collect.ImmutableList;
 

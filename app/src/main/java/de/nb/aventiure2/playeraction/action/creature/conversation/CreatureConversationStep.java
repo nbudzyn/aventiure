@@ -1,4 +1,4 @@
-package de.nb.aventiure2.playeraction.action.conversation;
+package de.nb.aventiure2.playeraction.action.creature.conversation;
 
 import de.nb.aventiure2.data.world.creature.Creature;
 import de.nb.aventiure2.data.world.creature.CreatureState;
@@ -115,7 +115,7 @@ public class CreatureConversationStep {
     /**
      * Whether the step is possible. (If a step is impossible, there won't be an action for the step.)
      */
-    public boolean isStepPossible() {
+    boolean isStepPossible() {
         return condition.isStepPossible();
     }
 
