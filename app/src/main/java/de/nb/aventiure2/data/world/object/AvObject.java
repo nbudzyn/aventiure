@@ -1,10 +1,13 @@
 package de.nb.aventiure2.data.world.object;
 
+import androidx.annotation.Nullable;
+
 import com.google.common.collect.ImmutableList;
 
 import java.util.List;
 
 import de.nb.aventiure2.data.world.entity.AbstractEntity;
+import de.nb.aventiure2.data.world.entity.AbstractEntityData;
 import de.nb.aventiure2.data.world.room.AvRoom;
 import de.nb.aventiure2.german.base.Nominalphrase;
 import de.nb.aventiure2.german.base.NumerusGenus;
@@ -28,7 +31,7 @@ public class AvObject extends AbstractEntity {
                                     "einer goldenen Kugel"),
                             np(F, "die goldene Kugel", "der goldenen Kugel"),
                             np(F, "die Kugel", "der Kugel"),
-                            AvRoom.SCHLOSS)
+                            AvRoom.SCHLOSS_VORHALLE)
             );
 
     private final Key key;
@@ -46,6 +49,25 @@ public class AvObject extends AbstractEntity {
         }
 
         throw new IllegalStateException("Unexpected key: " + key);
+    }
+
+    public static boolean isObject(final AbstractEntityData entityData,
+                                   final AvObject.Key objectKey) {
+        @Nullable final AvObject object = extractObject(entityData);
+        if (object == null) {
+            return false;
+        }
+
+        return object.getKey() == objectKey;
+    }
+
+    @Nullable
+    public static AvObject extractObject(final AbstractEntityData entityData) {
+        if (!(entityData instanceof ObjectData)) {
+            return null;
+        }
+
+        return ((ObjectData) entityData).getObject();
     }
 
     AvObject(final Key key,

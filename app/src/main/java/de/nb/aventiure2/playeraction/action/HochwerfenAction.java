@@ -62,14 +62,14 @@ public class HochwerfenAction extends AbstractObjectAction {
 
     @Override
     public void narrateAndDo() {
-        if (initialStoryState.lastObjectWas(getObject())) {
-            if (initialStoryState.lastActionWas(HochwerfenAction.class)) {
-                narrateAndDoWiederholung();
-                return;
-            }
+        if (initialStoryState.lastObjectWas(getObject()) &&
+                initialStoryState.lastActionWas(HochwerfenAction.class)) {
+            narrateAndDoWiederholung();
+        } else {
+            narrateAndDoErstesMal();
         }
 
-        narrateAndDoErstesMal();
+        creatureReactionsCoordinator.onHochwerfen(room, getObjectData());
     }
 
     private void narrateAndDoErstesMal() {
@@ -105,10 +105,8 @@ public class HochwerfenAction extends AbstractObjectAction {
                 HAT_NACH_BELOHNUNG_GEFRAGT,
                 HAT_FORDERUNG_GESTELLT)) {
             narrateAndDoObjectFaelltSofortInDenBrunnen();
-            if (froschprinzCreatureData.getRoom() == room) {
-                n.add(t(StartsNew.PARAGRAPH,
-                        "Ob der Frosch gerade seine glitschige Nase gerümpft hat?"));
-            }
+            // Der Spieler hat ein weiteres Objekt in den Brunnen fallen
+            // lassen, obwohl er noch mit dem Frosch verhandelt.
             return;
         }
 
@@ -126,11 +124,12 @@ public class HochwerfenAction extends AbstractObjectAction {
             return;
         }
 
+        // Der Spieler hat die goldene Kugel letztlich in den Brunnen
+        // fallen lassen, NACHDEM der Frosch schon Dinge hochgeholt hat.
+        // Dann ist die Kugel jetzt WEG - PECH.
+
         narrateAndDoObjectFaelltSofortInDenBrunnen();
         if (froschprinzCreatureData.getRoom() == room) {
-            n.add(t(StartsNew.SENTENCE,
-                    capitalize(froschprinzCreatureData.nom(true)) +
-                            " schaut dich vorwurfsvoll und etwas hochnäsig an"));
             return;
         }
 

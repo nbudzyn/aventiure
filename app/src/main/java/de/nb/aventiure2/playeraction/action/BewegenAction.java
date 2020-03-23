@@ -9,7 +9,6 @@ import de.nb.aventiure2.data.storystate.StoryState;
 import de.nb.aventiure2.data.storystate.StoryState.StartsNew;
 import de.nb.aventiure2.data.storystate.StoryStateBuilder;
 import de.nb.aventiure2.data.world.creature.CreatureData;
-import de.nb.aventiure2.data.world.creature.CreatureState;
 import de.nb.aventiure2.data.world.entity.AbstractEntityData;
 import de.nb.aventiure2.data.world.object.ObjectData;
 import de.nb.aventiure2.data.world.player.stats.PlayerStateOfMind;
@@ -18,14 +17,12 @@ import de.nb.aventiure2.data.world.room.connection.RoomConnection;
 import de.nb.aventiure2.german.AbstractDescription;
 import de.nb.aventiure2.german.DuDescription;
 import de.nb.aventiure2.playeraction.AbstractPlayerAction;
-import de.nb.aventiure2.playeraction.action.creature.reaction.CreatureReactionsCoordinator;
 
 import static com.google.common.base.Preconditions.checkArgument;
 import static de.nb.aventiure2.german.DuDescription.du;
 import static de.nb.aventiure2.german.base.AllgDescription.allg;
 import static de.nb.aventiure2.german.base.GermanUtil.capitalize;
 import static de.nb.aventiure2.german.base.GermanUtil.uncapitalize;
-import static java.util.stream.Collectors.toList;
 
 /**
  * Der Spieler(charakter) bewegt sich in einen anderen Raum.
@@ -93,36 +90,18 @@ public class BewegenAction extends AbstractPlayerAction {
         final List<CreatureData> creaturesInNewRoom =
                 db.creatureDataDao().getCreaturesInRoom(newRoom);
 
-        narrate(creaturesInOldRoom, objectsInNewRoom, creaturesInNewRoom);
-
-        db.playerLocationDao().setRoom(newRoom);
-        setRoomAndObjectsKnown(objectsInNewRoom);
-    }
-
-    private void narrate(final List<CreatureData> creaturesInOldRoom,
-                         final List<ObjectData> objectsInNewRoom,
-                         final List<CreatureData> creaturesInNewRoom) {
         n.add(buildNewStoryStateRoomOnly(initialStoryState));
 
-        final CreatureReactionsCoordinator
-                creatureReactionsCoordinator =
-                new CreatureReactionsCoordinator(db, getClass());
         creatureReactionsCoordinator.onLeaveRoom(oldRoom, creaturesInOldRoom);
 
         if (!objectsInNewRoom.isEmpty()) {
             n.add(buildObjectsStoryState(objectsInNewRoom));
         }
 
-        final List<CreatureData> visibleCreaturesInNewRoom = filterVisible(creaturesInNewRoom);
-        if (!visibleCreaturesInNewRoom.isEmpty()) {
-            n.add(buildCreaturesStoryState(visibleCreaturesInNewRoom));
-        }
-    }
+        db.playerLocationDao().setRoom(newRoom);
+        setRoomAndObjectsKnown(objectsInNewRoom);
 
-    private static List<CreatureData> filterVisible(final List<CreatureData> creatures) {
-        return creatures.stream()
-                .filter(cd -> cd.getState() != CreatureState.UNAUFFAELLIG)
-                .collect(toList());
+        creatureReactionsCoordinator.onEnterRoom(oldRoom, newRoom, creaturesInNewRoom);
     }
 
     private StoryStateBuilder buildNewStoryStateRoomOnly(final StoryState currentStoryState) {
@@ -286,32 +265,6 @@ public class BewegenAction extends AbstractPlayerAction {
         }
 
         return res + " liegen";
-    }
-
-    private StoryStateBuilder buildCreaturesStoryState(final List<CreatureData> creatures) {
-        return t(StartsNew.SENTENCE, buildCreaturesInRoomDescription(creatures));
-    }
-
-    /**
-     * @return Something similar to <code>Hier sitzt der hässliche Frosch.</code>
-     */
-    private static String buildCreaturesInRoomDescription(final List<CreatureData> creatures) {
-        return buildCreaturesInRoomDescriptionPrefix(creatures.size())
-                + " "
-                + buildEntitiesInRoomDescriptionList(creatures);
-    }
-
-    /**
-     * @return Something similar to <code>Hier sitzt</code>
-     */
-    private static String buildCreaturesInRoomDescriptionPrefix(final int numberOfCreatures) {
-        final String res = "Hier";
-
-        if (numberOfCreatures == 1) {
-            return res + " sitzt";
-        }
-
-        return res + " sitzen";
     }
 
     /**

@@ -72,6 +72,8 @@ public class NehmenAction extends AbstractEntityAction {
     public void narrateAndDo() {
         narrate();
         removeFromRoomAndTake();
+
+        creatureReactionsCoordinator.onNehmen(room, getEntityData());
     }
 
     private void removeFromRoomAndTake() {

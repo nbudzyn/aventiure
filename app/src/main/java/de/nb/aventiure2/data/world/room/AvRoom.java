@@ -1,7 +1,7 @@
 package de.nb.aventiure2.data.world.room;
 
 public enum AvRoom {
-    SCHLOSS(ObjectLocationMode.TISCH),
+    SCHLOSS_VORHALLE(ObjectLocationMode.TISCH),
     DRAUSSEN_VOR_DEM_SCHLOSS,
     IM_WALD_NAHE_DEM_SCHLOSS(ObjectLocationMode.WALDBODEN),
     IM_WALD_BEIM_BRUNNEN(ObjectLocationMode.GRAS_NEBEN_DEM_BRUNNEN),

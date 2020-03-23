@@ -6,6 +6,7 @@ import java.util.List;
 
 import de.nb.aventiure2.data.world.room.AvRoom;
 
+import static de.nb.aventiure2.data.world.creature.CreatureState.AUFMERKSAM;
 import static de.nb.aventiure2.data.world.creature.CreatureState.AUF_DEM_WEG_ZUM_BRUNNEN_UM_DINGE_HERAUSZUHOLEN;
 import static de.nb.aventiure2.data.world.creature.CreatureState.ERWARTET_VON_SC_EINLOESUNG_SEINES_VERSPRECHENS;
 import static de.nb.aventiure2.data.world.creature.CreatureState.ERWARTET_VON_SC_EINLOESUNG_SEINES_VERSPRECHENS_VON_SC_GETRAGEN;
@@ -15,6 +16,7 @@ import static de.nb.aventiure2.data.world.creature.CreatureState.HAT_SC_HILFSBER
 import static de.nb.aventiure2.data.world.creature.CreatureState.UNAUFFAELLIG;
 import static de.nb.aventiure2.data.world.creature.CreatureStateList.sm;
 import static de.nb.aventiure2.german.base.Nominalphrase.np;
+import static de.nb.aventiure2.german.base.NumerusGenus.F;
 import static de.nb.aventiure2.german.base.NumerusGenus.M;
 
 /**
@@ -23,6 +25,16 @@ import static de.nb.aventiure2.german.base.NumerusGenus.M;
 public class Creatures {
     public static final List<Creature> ALL =
             ImmutableList.of(
+                    new Creature(Creature.Key.SCHLOSSWACHE,
+                            np(F, "eine Schlosswache mit langer Hellebarde",
+                                    "einer Schlosswache mit langer Hellebarde"),
+                            np(F, "die Schlosswache mit ihrer langen Hellebarde",
+                                    "der Schlosswache mit ihrer langen Hellebarde"),
+                            np(F, "die Schlosswache",
+                                    "der Schlosswache"),
+                            AvRoom.SCHLOSS_VORHALLE,
+                            sm(UNAUFFAELLIG, AUFMERKSAM
+                            )),
                     new Creature(Creature.Key.FROSCHPRINZ,
                             np(M, "ein dicker, hässlicher Frosch",
                                     "einem dicken, hässlichen Frosch",

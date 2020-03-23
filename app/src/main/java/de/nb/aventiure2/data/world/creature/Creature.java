@@ -9,7 +9,7 @@ import de.nb.aventiure2.german.base.Nominalphrase;
  */
 public class Creature extends AbstractEntity {
     public enum Key {
-        FROSCHPRINZ
+        SCHLOSSWACHE, FROSCHPRINZ
     }
 
     private final Creature.Key key;
@@ -28,6 +28,22 @@ public class Creature extends AbstractEntity {
         }
 
         throw new IllegalStateException("Unexpected key: " + key);
+    }
+
+    /**
+     * Constructor for a creature.
+     *
+     * @param states The first state is the initial state.
+     */
+    Creature(final Creature.Key key,
+             final Nominalphrase descriptionAtFirstSight,
+             final Nominalphrase descriptionWhenKnown,
+             final AvRoom initialRoom,
+             final CreatureStateList states) {
+        super(descriptionAtFirstSight, descriptionWhenKnown, descriptionWhenKnown);
+        this.key = key;
+        this.initialRoom = initialRoom;
+        this.states = states;
     }
 
     /**

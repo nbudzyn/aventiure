@@ -15,6 +15,7 @@ import de.nb.aventiure2.data.world.entity.AbstractEntityData;
 import de.nb.aventiure2.data.world.object.ObjectData;
 import de.nb.aventiure2.data.world.player.stats.PlayerStateOfMind;
 import de.nb.aventiure2.data.world.room.AvRoom;
+import de.nb.aventiure2.german.base.Nominalphrase;
 import de.nb.aventiure2.german.praedikat.PraedikatMitEinerObjektleerstelle;
 import de.nb.aventiure2.playeraction.AbstractPlayerAction;
 
@@ -72,6 +73,8 @@ public class AblegenAction extends AbstractEntityAction {
     public void narrateAndDo() {
         narrate();
         letGoAndAddToRoom();
+
+        creatureReactionsCoordinator.onAblegen(room, getEntityData());
     }
 
     private void letGoAndAddToRoom() {
@@ -116,11 +119,15 @@ public class AblegenAction extends AbstractEntityAction {
 
 
     private void narrateObject(final ObjectData objectData) {
+        final Nominalphrase objDesc = objectData.getDescription(false);
+
         if (initialStoryState.allowsAdditionalDuSatzreihengliedOhneSubjekt()) {
             if (initialStoryState.lastObjectWas(objectData.getObject())) {
                 if (initialStoryState.lastActionWas(NehmenAction.class)) {
                     n.add(t(StartsNew.WORD,
-                            "- und legst sie sogleich wieder hin"));
+                            "- und legst "
+                                    + objDesc.persPron().akk()
+                                    + " sogleich wieder hin"));
                     return;
                 }
 
@@ -130,7 +137,7 @@ public class AblegenAction extends AbstractEntityAction {
                 return;
             }
 
-            String text = "und legst " + objectData.akk();
+            String text = "und legst " + objDesc.akk();
             if (initialStoryState.lastActionWas(BewegenAction.class)) {
                 text += " dort";
             }
@@ -141,12 +148,21 @@ public class AblegenAction extends AbstractEntityAction {
             return;
         }
 
+        if (initialStoryState.lastActionWas(NehmenAction.class)) {
+            if (initialStoryState.lastObjectWas(objectData.getObject())) {
+                n.add(t(StartsNew.PARAGRAPH,
+                        "Du legst " + objDesc.akk() + " wieder hin")
+                        .undWartest()
+                        .dann());
+                return;
+            }
+        }
+
         n.add(t(StartsNew.PARAGRAPH,
-                "Du legst " + objectData.akk() + " hin")
+                "Du legst " + objDesc.akk() + " hin")
                 .undWartest()
                 .dann());
     }
-
 
     private void narrateCreature(final CreatureData creatureData) {
         checkArgument(creatureData.creatureIs(Creature.Key.FROSCHPRINZ) &&

@@ -11,14 +11,14 @@ import de.nb.aventiure2.german.AbstractDescription;
 import static de.nb.aventiure2.data.world.room.AvRoom.DRAUSSEN_VOR_DEM_SCHLOSS;
 import static de.nb.aventiure2.data.world.room.AvRoom.IM_WALD_BEIM_BRUNNEN;
 import static de.nb.aventiure2.data.world.room.AvRoom.IM_WALD_NAHE_DEM_SCHLOSS;
-import static de.nb.aventiure2.data.world.room.AvRoom.SCHLOSS;
+import static de.nb.aventiure2.data.world.room.AvRoom.SCHLOSS_VORHALLE;
 import static de.nb.aventiure2.german.DuDescription.du;
 import static de.nb.aventiure2.german.base.AllgDescription.allg;
 
 public class RoomConnection {
     private static final Table<AvRoom, AvRoom, RoomConnection> ALL =
             ImmutableTable.<AvRoom, AvRoom, RoomConnection>builder()
-                    .put(SCHLOSS, DRAUSSEN_VOR_DEM_SCHLOSS,
+                    .put(SCHLOSS_VORHALLE, DRAUSSEN_VOR_DEM_SCHLOSS,
                             con(
                                     "Das Schloss verlassen",
                                     du(
@@ -36,7 +36,7 @@ public class RoomConnection {
                                             false,
                                             true,
                                             true)))
-                    .put(DRAUSSEN_VOR_DEM_SCHLOSS, SCHLOSS,
+                    .put(DRAUSSEN_VOR_DEM_SCHLOSS, SCHLOSS_VORHALLE,
                             con(
                                     "Das Schloss betreten",
                                     du(

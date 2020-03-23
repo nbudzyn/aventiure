@@ -68,4 +68,11 @@ public abstract class ObjectDataDao {
 
     @Query("SELECT * from ObjectData")
     public abstract List<ObjectData> getAll();
+
+    public ObjectData get(final AvObject.Key objectKey) {
+        return get(AvObject.get(objectKey));
+    }
+
+    @Query("SELECT * from ObjectData where :object = object")
+    public abstract ObjectData get(AvObject object);
 }

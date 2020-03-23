@@ -97,9 +97,9 @@ public abstract class AvDatabase extends RoomDatabase {
 
                 // The player starts in the castle:
                 INSTANCE.playerStatsDao().insert(buildInitialPlayerStats());
-                INSTANCE.playerLocationDao().setRoom(AvRoom.SCHLOSS);
+                INSTANCE.playerLocationDao().setRoom(AvRoom.SCHLOSS_VORHALLE);
                 INSTANCE.storyStateDao().add(buildInitialStoryState());
-                INSTANCE.roomDao().setKnown(AvRoom.SCHLOSS);
+                INSTANCE.roomDao().setKnown(AvRoom.SCHLOSS_VORHALLE);
                 INSTANCE.objectDataDao().setKnown(GOLDENE_KUGEL);
             });
         }
@@ -117,14 +117,15 @@ public abstract class AvDatabase extends RoomDatabase {
 
         res.append(
                 "Diese Geschichte spielt in den alten Zeiten, wo das Wünschen noch geholfen hat. " +
-                        "Sie beginnt im königlichen Schloss.\n");
+                        "Sie beginnt im königlichen Schloss, in einer prächtigen "
+                        + "Vorhalle, Marmor und Brokat überall.\n");
         final List<AvObject> objectsInRoom = ImmutableList.of(AvObject.get(GOLDENE_KUGEL));
         res.append(buildObjectsInRoomDescription(objectsInRoom));
 
         return t((IPlayerAction) null,
                 StartsNew.WORD,
                 res.toString())
-                .letzterRaum(AvRoom.SCHLOSS);
+                .letzterRaum(AvRoom.SCHLOSS_VORHALLE);
     }
 
     /**

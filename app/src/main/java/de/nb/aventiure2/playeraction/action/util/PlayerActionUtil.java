@@ -1,8 +1,8 @@
-package de.nb.aventiure2.playeraction.action;
+package de.nb.aventiure2.playeraction.action.util;
 
 import java.util.Random;
 
-class PlayerActionUtil {
+public class PlayerActionUtil {
     private static final Random random = new Random();
 
     // Not to be called

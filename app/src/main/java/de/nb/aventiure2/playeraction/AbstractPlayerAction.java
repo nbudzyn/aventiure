@@ -12,6 +12,7 @@ import de.nb.aventiure2.data.storystate.StoryState;
 import de.nb.aventiure2.data.storystate.StoryState.StartsNew;
 import de.nb.aventiure2.data.storystate.StoryStateBuilder;
 import de.nb.aventiure2.data.storystate.StoryStateDao;
+import de.nb.aventiure2.playeraction.action.creature.reaction.CreatureReactionsCoordinator;
 
 /**
  * An action the player could choose to advance the story.
@@ -19,6 +20,8 @@ import de.nb.aventiure2.data.storystate.StoryStateDao;
 public abstract class AbstractPlayerAction implements IPlayerAction {
     protected final AvDatabase db;
     protected final StoryStateDao n;
+
+    protected final CreatureReactionsCoordinator creatureReactionsCoordinator;
 
     /**
      * The {@link StoryState} at the beginning of the action.
@@ -29,6 +32,8 @@ public abstract class AbstractPlayerAction implements IPlayerAction {
         this.db = db;
 
         n = db.storyStateDao();
+
+        creatureReactionsCoordinator = new CreatureReactionsCoordinator(db, getClass());
 
         this.initialStoryState = initialStoryState;
     }
