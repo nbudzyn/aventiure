@@ -19,9 +19,11 @@ import java.util.concurrent.Executors;
 import de.nb.aventiure2.data.storystate.AvStoryStateConverters;
 import de.nb.aventiure2.data.storystate.IPlayerAction;
 import de.nb.aventiure2.data.storystate.StoryState;
-import de.nb.aventiure2.data.storystate.StoryState.StartsNew;
+import de.nb.aventiure2.data.storystate.StoryState.StructuralElement;
 import de.nb.aventiure2.data.storystate.StoryStateBuilder;
 import de.nb.aventiure2.data.storystate.StoryStateDao;
+import de.nb.aventiure2.data.world.counter.Counter;
+import de.nb.aventiure2.data.world.counter.CounterDao;
 import de.nb.aventiure2.data.world.creature.CreatureConverters;
 import de.nb.aventiure2.data.world.creature.CreatureData;
 import de.nb.aventiure2.data.world.creature.CreatureDataDao;
@@ -47,6 +49,7 @@ import static de.nb.aventiure2.data.storystate.StoryStateBuilder.t;
 import static de.nb.aventiure2.data.world.object.AvObject.Key.GOLDENE_KUGEL;
 
 @Database(entities = {
+        Counter.class,
         StoryState.class,
         KnownRoom.class,
         ObjectData.class,
@@ -63,6 +66,8 @@ import static de.nb.aventiure2.data.world.object.AvObject.Key.GOLDENE_KUGEL;
 // "In a real app, you should consider setting a directory for Room to use to export the
 // schema so you can check the current schema into your version control system."
 public abstract class AvDatabase extends RoomDatabase {
+    public abstract CounterDao counterDao();
+
     public abstract StoryStateDao storyStateDao();
 
     public abstract RoomDao roomDao();
@@ -123,7 +128,7 @@ public abstract class AvDatabase extends RoomDatabase {
         res.append(buildObjectsInRoomDescription(objectsInRoom));
 
         return t((IPlayerAction) null,
-                StartsNew.WORD,
+                StructuralElement.WORD,
                 res.toString())
                 .letzterRaum(AvRoom.SCHLOSS_VORHALLE);
     }

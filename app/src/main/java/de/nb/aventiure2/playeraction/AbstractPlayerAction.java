@@ -9,7 +9,7 @@ import java.util.Collection;
 import de.nb.aventiure2.data.database.AvDatabase;
 import de.nb.aventiure2.data.storystate.IPlayerAction;
 import de.nb.aventiure2.data.storystate.StoryState;
-import de.nb.aventiure2.data.storystate.StoryState.StartsNew;
+import de.nb.aventiure2.data.storystate.StoryState.StructuralElement;
 import de.nb.aventiure2.data.storystate.StoryStateBuilder;
 import de.nb.aventiure2.data.storystate.StoryStateDao;
 import de.nb.aventiure2.playeraction.action.creature.reaction.CreatureReactionsCoordinator;
@@ -59,7 +59,7 @@ public abstract class AbstractPlayerAction implements IPlayerAction {
     }
 
     protected StoryStateBuilder t(
-            final StartsNew startsNew,
+            final StructuralElement startsNew,
             @NonNull final String text) {
         return StoryStateBuilder.t(this, startsNew, text)
                 // Sensible default - caller may override this setting

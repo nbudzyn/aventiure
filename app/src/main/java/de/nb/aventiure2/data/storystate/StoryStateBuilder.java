@@ -6,7 +6,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.room.PrimaryKey;
 
-import de.nb.aventiure2.data.storystate.StoryState.StartsNew;
+import de.nb.aventiure2.data.storystate.StoryState.StructuralElement;
 import de.nb.aventiure2.data.world.creature.Creature;
 import de.nb.aventiure2.data.world.object.AvObject;
 import de.nb.aventiure2.data.world.room.AvRoom;
@@ -25,8 +25,15 @@ public class StoryStateBuilder {
     @Nullable
     private String lastActionClassName;
 
-    @NonNull
-    private final StartsNew startsNew;
+    /**
+     * This {@link StoryState} starts a new ... (paragraph, e.g.)
+     */
+    private final StructuralElement startsNew;
+
+    /**
+     * This {@link StoryState} ends this ... (paragraph, e.g.)
+     */
+    private StructuralElement endsThis = StructuralElement.WORD;
 
     @PrimaryKey
     @NonNull
@@ -67,7 +74,7 @@ public class StoryStateBuilder {
 
     public static StoryStateBuilder t(
             @Nullable final IPlayerAction lastAction,
-            @NonNull final StartsNew startsNew,
+            @NonNull final StructuralElement startsNew,
             @NonNull final String text) {
         checkArgument(!TextUtils.isEmpty(text), "text is null or empty");
         checkNotNull(startsNew, "startsNew is null");
@@ -77,7 +84,7 @@ public class StoryStateBuilder {
 
     public static StoryStateBuilder t(
             @Nullable final Class<? extends IPlayerAction> lastActionClass,
-            @NonNull final StartsNew startsNew,
+            @NonNull final StoryState.StructuralElement startsNew,
             @NonNull final String text) {
         checkArgument(!TextUtils.isEmpty(text), "text is null or empty");
         checkNotNull(startsNew, "startsNew is null");
@@ -87,7 +94,7 @@ public class StoryStateBuilder {
 
     public static StoryStateBuilder t(
             @Nullable final String lastActionClassName,
-            @NonNull final StartsNew startsNew,
+            @NonNull final StoryState.StructuralElement startsNew,
             @NonNull final String text) {
         checkArgument(!TextUtils.isEmpty(text), "text is null or empty");
         checkNotNull(startsNew, "startsNew is null");
@@ -97,18 +104,11 @@ public class StoryStateBuilder {
 
 
     private StoryStateBuilder(@Nullable final String lastActionClassName,
-                              @NonNull final StartsNew startsNew,
+                              @NonNull final StoryState.StructuralElement startsNew,
                               @NonNull final String text) {
         this.lastActionClassName = lastActionClassName;
         this.startsNew = startsNew;
         this.text = text;
-    }
-
-    public StoryStateBuilder appendPeriodAndText(final String text,
-                                                 final boolean allowsAdditionalDuSatzreihengliedOhneSubjekt,
-                                                 final boolean dann) {
-        return appendText(". ", false, false)
-                .appendText(text, allowsAdditionalDuSatzreihengliedOhneSubjekt, dann);
     }
 
     public StoryStateBuilder appendText(final String text,
@@ -140,12 +140,17 @@ public class StoryStateBuilder {
         return letzteAktion(lastAction == null ? null : lastAction.getClass());
     }
 
-    private StoryStateBuilder letzteAktion(final Class<? extends IPlayerAction> lastActionClass) {
+    public StoryStateBuilder letzteAktion(final Class<? extends IPlayerAction> lastActionClass) {
         return letzteAktion(toLastActionClassName(lastActionClass));
     }
 
     public StoryStateBuilder letzteAktion(@Nullable final String lastActionClassName) {
         this.lastActionClassName = lastActionClassName;
+        return this;
+    }
+
+    public StoryStateBuilder beendet(final StructuralElement structuralElement) {
+        endsThis = structuralElement;
         return this;
     }
 
@@ -193,6 +198,7 @@ public class StoryStateBuilder {
 
         return new StoryState(lastActionClassName,
                 startsNew,
+                endsThis,
                 text,
                 kommaStehtAus,
                 allowsAdditionalDuSatzreihengliedOhneSubjekt,

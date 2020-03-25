@@ -26,7 +26,7 @@ public abstract class AbstractEntityAction extends AbstractPlayerAction {
     }
 
     @Override
-    protected StoryStateBuilder t(@NonNull final StoryState.StartsNew startsNew,
+    protected StoryStateBuilder t(@NonNull final StoryState.StructuralElement startsNew,
                                   @NonNull final String text) {
         return super.t(startsNew, text)
                 .letztesObject(

@@ -8,7 +8,6 @@ import java.util.Collection;
 
 import de.nb.aventiure2.data.database.AvDatabase;
 import de.nb.aventiure2.data.storystate.StoryState;
-import de.nb.aventiure2.data.storystate.StoryState.StartsNew;
 import de.nb.aventiure2.data.world.creature.Creature;
 import de.nb.aventiure2.data.world.creature.CreatureData;
 import de.nb.aventiure2.data.world.entity.AbstractEntityData;
@@ -20,6 +19,7 @@ import de.nb.aventiure2.german.praedikat.PraedikatMitEinerObjektleerstelle;
 import de.nb.aventiure2.playeraction.AbstractPlayerAction;
 
 import static com.google.common.base.Preconditions.checkArgument;
+import static de.nb.aventiure2.data.storystate.StoryState.StructuralElement.PARAGRAPH;
 import static de.nb.aventiure2.data.world.creature.Creature.Key.FROSCHPRINZ;
 import static de.nb.aventiure2.data.world.creature.CreatureState.ERWARTET_VON_SC_EINLOESUNG_SEINES_VERSPRECHENS;
 import static de.nb.aventiure2.data.world.creature.CreatureState.ERWARTET_VON_SC_EINLOESUNG_SEINES_VERSPRECHENS_VON_SC_GETRAGEN;
@@ -124,14 +124,14 @@ public class AblegenAction extends AbstractEntityAction {
         if (initialStoryState.allowsAdditionalDuSatzreihengliedOhneSubjekt()) {
             if (initialStoryState.lastObjectWas(objectData.getObject())) {
                 if (initialStoryState.lastActionWas(NehmenAction.class)) {
-                    n.add(t(StartsNew.WORD,
+                    n.add(t(StoryState.StructuralElement.WORD,
                             "- und legst "
                                     + objDesc.persPron().akk()
                                     + " sogleich wieder hin"));
                     return;
                 }
 
-                n.add(t(StartsNew.WORD,
+                n.add(t(StoryState.StructuralElement.WORD,
                         ", dann legst du sie hin")
                         .undWartest());
                 return;
@@ -144,13 +144,13 @@ public class AblegenAction extends AbstractEntityAction {
 
             text += " hin";
 
-            n.add(t(StartsNew.WORD, text));
+            n.add(t(StoryState.StructuralElement.WORD, text));
             return;
         }
 
         if (initialStoryState.lastActionWas(NehmenAction.class)) {
             if (initialStoryState.lastObjectWas(objectData.getObject())) {
-                n.add(t(StartsNew.PARAGRAPH,
+                n.add(t(StoryState.StructuralElement.PARAGRAPH,
                         "Du legst " + objDesc.akk() + " wieder hin")
                         .undWartest()
                         .dann());
@@ -158,7 +158,7 @@ public class AblegenAction extends AbstractEntityAction {
             }
         }
 
-        n.add(t(StartsNew.PARAGRAPH,
+        n.add(t(StoryState.StructuralElement.PARAGRAPH,
                 "Du legst " + objDesc.akk() + " hin")
                 .undWartest()
                 .dann());
@@ -171,18 +171,20 @@ public class AblegenAction extends AbstractEntityAction {
                 "Unexpected creature data: " + creatureData);
 
         n.add(alt(
-                t(StartsNew.PARAGRAPH,
+                t(StoryState.StructuralElement.PARAGRAPH,
                         "Du wühlst in deiner Tasche und auf einmal schauert's dich und "
                                 + "der nasse Frosch sitzt in deiner Hand. Schnell "
                                 + room.getLocationMode().getWohin()
                                 + " mit ihm!")
-                        .dann(),
-                t(StartsNew.PARAGRAPH,
+                        .dann()
+                        .beendet(PARAGRAPH),
+                t(StoryState.StructuralElement.PARAGRAPH,
                         "Du schüttest deine Tasche aus, bis der Frosch endlich " +
                                 room.getLocationMode().getWohin() +
                                 " fällt. Puh.")
-                        .dann(),
-                t(StartsNew.PARAGRAPH,
+                        .dann()
+                        .beendet(PARAGRAPH),
+                t(StoryState.StructuralElement.PARAGRAPH,
                         "Du wühlst in deiner Tasche. Da quakt es erbost, auf einmal "
                                 + "springt der Fosch heraus und direkt "
                                 + room.getLocationMode().getWohin()

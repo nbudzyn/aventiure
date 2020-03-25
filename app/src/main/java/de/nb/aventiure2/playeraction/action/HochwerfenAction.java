@@ -8,22 +8,24 @@ import java.util.Collection;
 
 import de.nb.aventiure2.data.database.AvDatabase;
 import de.nb.aventiure2.data.storystate.StoryState;
-import de.nb.aventiure2.data.storystate.StoryState.StartsNew;
+import de.nb.aventiure2.data.storystate.StoryState.StructuralElement;
 import de.nb.aventiure2.data.world.creature.CreatureData;
 import de.nb.aventiure2.data.world.object.AvObject;
 import de.nb.aventiure2.data.world.object.ObjectData;
 import de.nb.aventiure2.data.world.room.AvRoom;
+import de.nb.aventiure2.german.DuDescription;
 import de.nb.aventiure2.german.base.Nominalphrase;
 import de.nb.aventiure2.german.praedikat.SeinUtil;
 import de.nb.aventiure2.playeraction.AbstractPlayerAction;
-import de.nb.aventiure2.playeraction.action.util.PlayerActionUtil;
 
+import static de.nb.aventiure2.data.storystate.StoryState.StructuralElement.PARAGRAPH;
 import static de.nb.aventiure2.data.world.creature.CreatureState.HAT_FORDERUNG_GESTELLT;
 import static de.nb.aventiure2.data.world.creature.CreatureState.HAT_NACH_BELOHNUNG_GEFRAGT;
 import static de.nb.aventiure2.data.world.creature.CreatureState.HAT_SC_HILFSBEREIT_ANGESPROCHEN;
 import static de.nb.aventiure2.data.world.creature.CreatureState.UNAUFFAELLIG;
 import static de.nb.aventiure2.data.world.player.stats.PlayerStateOfMind.UNTROESTLICH;
 import static de.nb.aventiure2.data.world.room.AvRoom.IM_WALD_BEIM_BRUNNEN;
+import static de.nb.aventiure2.german.DuDescription.du;
 import static de.nb.aventiure2.german.base.GermanUtil.capitalize;
 
 /**
@@ -81,7 +83,7 @@ public class HochwerfenAction extends AbstractObjectAction {
         final Nominalphrase objectDesc = getObjectData().getDescription(false);
 
         if (initialStoryState.allowsAdditionalDuSatzreihengliedOhneSubjekt()) {
-            n.add(t(StartsNew.WORD,
+            n.add(t(StoryState.StructuralElement.WORD,
                     ", wirfst " +
                             objectDesc.akk() +
                             " in die Höhe und fängst " +
@@ -91,13 +93,25 @@ public class HochwerfenAction extends AbstractObjectAction {
             return;
         }
 
-        n.add(t(StartsNew.PARAGRAPH,
-                "Aus Langeweile wirfst " +
+        n.add(t(StoryState.StructuralElement.PARAGRAPH,
+                vorfeldEmotionFuersHochwerfen()
+                        + " wirfst " +
                         objectDesc.akk() +
                         " in die Höhe und fängst " +
                         objectDesc.persPron().akk() +
                         " wieder auf")
                 .dann());
+    }
+
+    private String vorfeldEmotionFuersHochwerfen() {
+        switch (db.playerStatsDao().getPlayerStats().getStateOfMind()) {
+            case ANGESPANNT:
+                return "Aus Trotz";
+            case VOLLER_FREUDE:
+                return "Fröhlich";
+            default:
+                return "Aus Langeweile";
+        }
     }
 
     private void narrateAndDoFroschBekannt() {
@@ -114,7 +128,7 @@ public class HochwerfenAction extends AbstractObjectAction {
         if (getObject().getKey() != AvObject.Key.GOLDENE_KUGEL) {
             final Nominalphrase objectDesc = getObjectData().getDescription(false);
 
-            n.add(t(StartsNew.PARAGRAPH,
+            n.add(t(StoryState.StructuralElement.PARAGRAPH,
                     "Du wirfst " +
                             objectDesc.akk() +
                             " hoch in die Luft und fängst " +
@@ -133,7 +147,7 @@ public class HochwerfenAction extends AbstractObjectAction {
             return;
         }
 
-        n.add(t(StartsNew.SENTENCE,
+        n.add(t(StoryState.StructuralElement.SENTENCE,
                 "Weit und breit kein Frosch zu sehen… Das war vielleicht etwas ungeschickt, " +
                         "oder?"));
     }
@@ -141,9 +155,8 @@ public class HochwerfenAction extends AbstractObjectAction {
     private void narrateAndDoObjectFaelltSofortInDenBrunnen() {
         final Nominalphrase objectDesc = getObjectData().getDescription(false);
 
-        n.add(t(StartsNew.PARAGRAPH,
-                "Du wirfst " +
-                        objectDesc.akk() +
+        final DuDescription duDesc = du("wirfst",
+                objectDesc.akk() +
                         " nur ein einziges Mal in die Höhe, " +
                         "aber wie das Unglück es will, fällt " +
                         objectDesc.persPron().akk() +
@@ -151,40 +164,54 @@ public class HochwerfenAction extends AbstractObjectAction {
                         "Platsch! – weg " +
                         SeinUtil.istSind(objectDesc.getNumerusGenus()) +
                         " " +
-                        objectDesc.persPron().akk())
-                .dann());
+                        objectDesc.persPron().akk(), false,
+                false, !initialStoryState.dann());
+
+        if (initialStoryState.dann()) {
+            n.add(t(StructuralElement.PARAGRAPH,
+                    duDesc.getDescriptionHauptsatzMitKonjunktionaladverbWennNoetig("dann"))
+                    .beendet(PARAGRAPH));
+        } else {
+            n.add(t(StructuralElement.PARAGRAPH,
+                    duDesc.getDescriptionHauptsatz())
+                    .beendet(PARAGRAPH));
+        }
+
         db.playerInventoryDao().letGo(getObject());
         db.objectDataDao().setDemSCInDenBrunnenGefallen(getObject(),
                 true);
     }
 
     private void narrateAndDoWiederholung() {
-        if (PlayerActionUtil.random(2) == 1 ||
-                (room == IM_WALD_BEIM_BRUNNEN && !froschprinzCreatureData.hasState(UNAUFFAELLIG))) {
-            n.add(alt(t(StartsNew.SENTENCE,
-                    "Und noch einmal - was ein schönes Spiel!")
+        if (db.counterDao()
+                .isFirstTime("SchlosswacheReactions_HochwerfenAction_Wiederholung") ||
+                (room == IM_WALD_BEIM_BRUNNEN && !froschprinzCreatureData
+                        .hasState(UNAUFFAELLIG))) {
+            n.add(alt(t(StoryState.StructuralElement.SENTENCE,
+                    "Und noch einmal – was ein schönes Spiel!")
                             .dann(),
-                    t(StartsNew.SENTENCE,
+                    t(StoryState.StructuralElement.SENTENCE,
                             "So ein Spaß!")
                             .dann(),
-                    t(StartsNew.SENTENCE,
-                            "Und in die Höhe damit - juchei!")
+                    t(StoryState.StructuralElement.SENTENCE,
+                            "Und in die Höhe damit – juchei!")
                             .dann()));
             return;
         }
 
         if (room == IM_WALD_BEIM_BRUNNEN) {
-            n.add(t(StartsNew.SENTENCE,
+            n.add(t(StoryState.StructuralElement.SENTENCE,
                     "Noch einmal wirfst du " +
                             getObjectData().akk() +
-                            " in die Höhe... doch oh nein, " +
+                            " in die Höhe… doch oh nein, " +
                             getObjectData().nom(true) +
                             " fällt dir nicht in die Hände, sondern schlägt vorbei " +
                             "auf den Brunnenrand und rollt geradezu ins Wasser hinein." +
                             " Du folgst ihr mit den Augen nach, aber " +
                             getObjectData().nom(true) +
                             " verschwindet, und der Brunnen ist tief, so tief, dass " +
-                            "man keinen Grund sieht."));
+                            "man keinen Grund sieht.")
+                    .beendet(PARAGRAPH));
 
             db.playerInventoryDao().letGo(getObject());
             db.objectDataDao().setDemSCInDenBrunnenGefallen(getObject(), true);
@@ -192,7 +219,7 @@ public class HochwerfenAction extends AbstractObjectAction {
             return;
         }
 
-        n.add(t(StartsNew.SENTENCE,
+        n.add(t(StructuralElement.SENTENCE,
                 "Übermütig schleuderst du " +
                         getObjectData().akk() +
                         " noch einmal in die Luft, aber sie wieder aufzufangen will dir " +

@@ -33,9 +33,8 @@ class TextAdditionEvaluator {
         // dabei verwerfen wir Interpunktion.
         final ImmutableList<String> additionWords = splitInWords(addition);
 
-        // Dasselbe machen wir mit dem Ende
-        // von base.
-        final ImmutableList<String> baseWords = splitEndInWords(base, 40);
+        // Dasselbe machen wir mit dem Ende von base.
+        final ImmutableList<String> baseWords = splitEndInWords(base, 100);
 
         // Dann suchen wir: Gibt es am Ende von base genau 10 Wörter aus addition in Folge?
         res += evaluateAdditionWordSequence(baseWords, additionWords, 10);

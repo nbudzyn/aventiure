@@ -18,9 +18,9 @@ import de.nb.aventiure2.german.base.DeklinierbarePhrase;
 import de.nb.aventiure2.german.base.Nominalphrase;
 import de.nb.aventiure2.playeraction.action.HeulenAction;
 
-import static de.nb.aventiure2.data.storystate.StoryState.StartsNew.PARAGRAPH;
-import static de.nb.aventiure2.data.storystate.StoryState.StartsNew.SENTENCE;
-import static de.nb.aventiure2.data.storystate.StoryState.StartsNew.WORD;
+import static de.nb.aventiure2.data.storystate.StoryState.StructuralElement.PARAGRAPH;
+import static de.nb.aventiure2.data.storystate.StoryState.StructuralElement.SENTENCE;
+import static de.nb.aventiure2.data.storystate.StoryState.StructuralElement.WORD;
 import static de.nb.aventiure2.data.world.creature.Creature.Key.FROSCHPRINZ;
 import static de.nb.aventiure2.data.world.creature.CreatureState.AUF_DEM_WEG_ZUM_BRUNNEN_UM_DINGE_HERAUSZUHOLEN;
 import static de.nb.aventiure2.data.world.creature.CreatureState.ERWARTET_VON_SC_EINLOESUNG_SEINES_VERSPRECHENS;
@@ -219,7 +219,8 @@ class FroschprinzConversationStepBuilder extends AbstractCreatureConversationSte
                 + creatureData.nom(true)
                 + ", „ich kann wohl Rat schaffen, aber was gibst du mir, wenn ich "
                 + objectsInDenBrunnenGefallenShortAkk
-                + " wieder heraufhole?“"));
+                + " wieder heraufhole?“")
+                .beendet(PARAGRAPH));
 
         db.creatureDataDao().setState(FROSCHPRINZ, HAT_NACH_BELOHNUNG_GEFRAGT);
     }
@@ -251,7 +252,8 @@ class FroschprinzConversationStepBuilder extends AbstractCreatureConversationSte
                         + "hinuntersteigen und dir "
                         // die goldene Kugel / die Dinge
                         + getDescriptionSingleOrCollective(objectsInDenBrunnenGefallen).akk()
-                        + " wieder heraufholen.“"));
+                        + " wieder heraufholen.“")
+                .beendet(PARAGRAPH));
 
         db.creatureDataDao().setState(FROSCHPRINZ, HAT_FORDERUNG_GESTELLT);
     }
@@ -281,14 +283,15 @@ class FroschprinzConversationStepBuilder extends AbstractCreatureConversationSte
                         + "hinuntersteigen und dir "
                         // die goldene Kugel / die Dinge
                         + getDescriptionSingleOrCollective(objectsInDenBrunnenGefallen).akk()
-                        + " wieder herauf holen.“"));
+                        + " wieder herauf holen.“")
+                .beendet(PARAGRAPH));
 
         db.creatureDataDao().setState(FROSCHPRINZ, HAT_FORDERUNG_GESTELLT);
     }
 
     private void froschHatNachBelohnungGefragt_Exit() {
         n.add(t(SENTENCE,
-                "„Denkst du etwa, ich überschütte dich mit Gold und Juwelen? - Vergiss es!“")
+                "„Denkst du etwa, ich überschütte dich mit Gold und Juwelen? – Vergiss es!“")
                 .imGespraechMit(null));
     }
 
@@ -345,7 +348,8 @@ class FroschprinzConversationStepBuilder extends AbstractCreatureConversationSte
 
         if (room != AvRoom.IM_WALD_BEIM_BRUNNEN) {
             n.add(t(WORD, "hüpft er sogleich davon")
-                    .imGespraechMit(null));
+                    .imGespraechMit(null)
+                    .beendet(PARAGRAPH));
 
             db.creatureDataDao().setState(FROSCHPRINZ,
                     AUF_DEM_WEG_ZUM_BRUNNEN_UM_DINGE_HERAUSZUHOLEN);
@@ -403,7 +407,8 @@ class FroschprinzConversationStepBuilder extends AbstractCreatureConversationSte
                 t(SENTENCE,
                         "„Am Ende willst du noch in meinem Bettchen schlafen! Schäm dich, "
                                 + "Frosch!“")
-                        .imGespraechMit(null)));
+                        .imGespraechMit(null)
+                        .beendet(PARAGRAPH)));
     }
 
     // -------------------------------------------------------------------------------
@@ -433,7 +438,8 @@ class FroschprinzConversationStepBuilder extends AbstractCreatureConversationSte
 
     private void froschReagiertNicht() {
         n.add(t(SENTENCE, "Der Frosch reagiert nicht")
-                .imGespraechMit(null));
+                .imGespraechMit(null)
+                .beendet(PARAGRAPH));
     }
 
     private void hallo_froschErinnertAnVersprechen() {
@@ -444,18 +450,19 @@ class FroschprinzConversationStepBuilder extends AbstractCreatureConversationSte
                                 + creatureData.akk(true)
                                 + " an: „Wie läuft's, Frosch? Schönes Wetter heut.“ "
                                 + "„Vergiss dein Versprechen nicht“, sagt er nur."
-                ).imGespraechMit(null),
+                ).imGespraechMit(null)
+                        .beendet(PARAGRAPH),
                 t(SENTENCE,
                         "Du holst Luft, aber da kommt dir "
                                 + creatureData.nom()
                                 + " schon zuvor: „Wir sehen uns noch!“"
-                ).imGespraechMit(null),
+                ).imGespraechMit(null)
+                        .beendet(PARAGRAPH),
                 t(SENTENCE,
-                        "„Immer eine Freude, dich zu sehen!“ begrüßt du "
-                                + froschDesc.akk()
-                                + " „Absolut!“ gibt "
-                                + froschDesc.persPron().nom()
-                                + " zurück – und sieht dich mit festem Blick an."
+                        "„Und jetzt, Frosch?“ "
+                                + " „Du weißt, was du versprochen hast“, gibt "
+                                + froschDesc.persPron().nom(false)
+                                + " zurück."
                 ).imGespraechMit(null)
         ));
     }

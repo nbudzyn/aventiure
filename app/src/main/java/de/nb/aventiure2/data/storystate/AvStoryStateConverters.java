@@ -4,15 +4,15 @@ import androidx.room.TypeConverter;
 
 public class AvStoryStateConverters {
     @TypeConverter
-    public static StoryState.StartsNew stringToStartsNew(final String string) {
+    public static StoryState.StructuralElement stringToStartsNew(final String string) {
         if (string == null) {
             return null;
         }
-        return StoryState.StartsNew.valueOf(string);
+        return StoryState.StructuralElement.valueOf(string);
     }
 
     @TypeConverter
-    public static String startsNewToString(final StoryState.StartsNew startsNew) {
+    public static String startsNewToString(final StoryState.StructuralElement startsNew) {
         if (startsNew == null) {
             return null;
         }

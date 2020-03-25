@@ -6,7 +6,7 @@ import java.util.List;
 
 import de.nb.aventiure2.data.database.AvDatabase;
 import de.nb.aventiure2.data.storystate.StoryState;
-import de.nb.aventiure2.data.storystate.StoryState.StartsNew;
+import de.nb.aventiure2.data.storystate.StoryState.StructuralElement;
 import de.nb.aventiure2.data.storystate.StoryStateBuilder;
 import de.nb.aventiure2.data.world.creature.CreatureData;
 import de.nb.aventiure2.data.world.entity.AbstractEntityData;
@@ -19,6 +19,8 @@ import de.nb.aventiure2.german.DuDescription;
 import de.nb.aventiure2.playeraction.AbstractPlayerAction;
 
 import static com.google.common.base.Preconditions.checkArgument;
+import static de.nb.aventiure2.data.world.room.AvRoom.DRAUSSEN_VOR_DEM_SCHLOSS;
+import static de.nb.aventiure2.data.world.room.AvRoom.SCHLOSS_VORHALLE;
 import static de.nb.aventiure2.german.DuDescription.du;
 import static de.nb.aventiure2.german.base.AllgDescription.allg;
 import static de.nb.aventiure2.german.base.GermanUtil.capitalize;
@@ -92,13 +94,22 @@ public class BewegenAction extends AbstractPlayerAction {
 
         n.add(buildNewStoryStateRoomOnly(initialStoryState));
 
+        if (oldRoom == SCHLOSS_VORHALLE && newRoom == DRAUSSEN_VOR_DEM_SCHLOSS
+                && db.playerStatsDao().getPlayerStats().getStateOfMind()
+                == PlayerStateOfMind.ANGESPANNT) {
+            db.playerStatsDao().setStateOfMind(PlayerStateOfMind.NEUTRAL);
+        }
+
         creatureReactionsCoordinator.onLeaveRoom(oldRoom, creaturesInOldRoom);
 
         if (!objectsInNewRoom.isEmpty()) {
             n.add(buildObjectsStoryState(objectsInNewRoom));
         }
 
-        db.playerLocationDao().setRoom(newRoom);
+        db.playerLocationDao().
+
+                setRoom(newRoom);
+
         setRoomAndObjectsKnown(objectsInNewRoom);
 
         creatureReactionsCoordinator.onEnterRoom(oldRoom, newRoom, creaturesInNewRoom);
@@ -166,13 +177,13 @@ public class BewegenAction extends AbstractPlayerAction {
             final StoryState currentStoryState, final DuDescription duDesc) {
         if (currentStoryState.lastActionWas(BewegenAction.class) &&
                 currentStoryState.lastRoomWas(newRoom)) {
-            return t(StartsNew.WORD,
+            return t(StructuralElement.WORD,
                     ", besinnst dich aber und "
                             + duDesc.getDescriptionSatzanschlussOhneSubjekt())
                     .dann(duDesc.dann());
         }
 
-        return t(StartsNew.WORD,
+        return t(StoryState.StructuralElement.WORD,
                 "und " +
                         duDesc.getDescriptionSatzanschlussOhneSubjekt())
                 .dann(duDesc.dann());
@@ -194,13 +205,13 @@ public class BewegenAction extends AbstractPlayerAction {
         if (currentStoryState.lastRoomWas(newRoom)) {
             if (currentStoryState.noLastObject()) {
                 return alt(
-                        t(StartsNew.SENTENCE, "Was willst du hier eigentlich? "
+                        t(StoryState.StructuralElement.SENTENCE, "Was willst du hier eigentlich? "
                                 + desc.getDescriptionHauptsatz()),
-                        t(StartsNew.SENTENCE, "Aber dir kommt ein Gedanke und "
+                        t(StoryState.StructuralElement.SENTENCE, "Aber dir kommt ein Gedanke und "
                                 + uncapitalize(desc.getDescriptionHauptsatz())));
             }
 
-            return t(StartsNew.PARAGRAPH,
+            return t(StoryState.StructuralElement.PARAGRAPH,
                     "Du schaust dich nur kurz um, dann "
                             + uncapitalize(desc.getDescriptionHauptsatz()))
                     .komma(desc.kommaStehtAus())
@@ -209,14 +220,14 @@ public class BewegenAction extends AbstractPlayerAction {
 
         if (currentStoryState.dann()) {
             // "Du stehst wieder vor dem Schloss; dann gehst du wieder hinein in das Schloss."
-            return t(StartsNew.WORD,
+            return t(StoryState.StructuralElement.WORD,
                     "; " +
                             uncapitalize(
                                     desc.getDescriptionHauptsatzMitKonjunktionaladverbWennNoetig(
                                             "dann")));
         }
 
-        return t(StartsNew.PARAGRAPH,
+        return t(StoryState.StructuralElement.PARAGRAPH,
                 desc.getDescriptionHauptsatz())
                 .komma(desc.kommaStehtAus())
                 .undWartest(desc.allowsAdditionalDuSatzreihengliedOhneSubjekt())
@@ -226,14 +237,14 @@ public class BewegenAction extends AbstractPlayerAction {
     private StoryStateBuilder buildNewStoryStateNewRoomOnlyNewSentenceLastActionNichtBewegen(
             final StoryState currentStoryState, final AbstractDescription desc) {
         if (currentStoryState.dann()) {
-            return t(StartsNew.PARAGRAPH,
+            return t(StoryState.StructuralElement.PARAGRAPH,
                     desc.getDescriptionHauptsatzMitKonjunktionaladverbWennNoetig("danach"))
                     .komma(desc.kommaStehtAus())
                     .undWartest(desc.allowsAdditionalDuSatzreihengliedOhneSubjekt())
                     .dann(false);
         }
 
-        return t(StartsNew.PARAGRAPH,
+        return t(StoryState.StructuralElement.PARAGRAPH,
                 desc.getDescriptionHauptsatz())
                 .komma(desc.kommaStehtAus())
                 .undWartest(desc.allowsAdditionalDuSatzreihengliedOhneSubjekt())
@@ -241,7 +252,8 @@ public class BewegenAction extends AbstractPlayerAction {
     }
 
     private StoryStateBuilder buildObjectsStoryState(final List<ObjectData> objectsInNewRoom) {
-        return t(StartsNew.SENTENCE, buildObjectsInRoomDescription(objectsInNewRoom))
+        return t(StoryState.StructuralElement.SENTENCE,
+                buildObjectsInRoomDescription(objectsInNewRoom))
                 .letztesObject(objectsInNewRoom.get(objectsInNewRoom.size() - 1).getObject());
     }
 
@@ -290,7 +302,7 @@ public class BewegenAction extends AbstractPlayerAction {
 
     @Override
     protected StoryStateBuilder t(
-            @NonNull final StartsNew startsNew,
+            @NonNull final StructuralElement startsNew,
             @NonNull final String text) {
         return super.t(startsNew, text)
                 .letzterRaum(oldRoom);

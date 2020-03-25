@@ -17,9 +17,9 @@ import de.nb.aventiure2.data.world.player.stats.PlayerStateOfMind;
 import de.nb.aventiure2.data.world.player.stats.PlayerStats;
 import de.nb.aventiure2.playeraction.AbstractPlayerAction;
 
-import static de.nb.aventiure2.data.storystate.StoryState.StartsNew.PARAGRAPH;
-import static de.nb.aventiure2.data.storystate.StoryState.StartsNew.SENTENCE;
-import static de.nb.aventiure2.data.storystate.StoryState.StartsNew.WORD;
+import static de.nb.aventiure2.data.storystate.StoryState.StructuralElement.PARAGRAPH;
+import static de.nb.aventiure2.data.storystate.StoryState.StructuralElement.SENTENCE;
+import static de.nb.aventiure2.data.storystate.StoryState.StructuralElement.WORD;
 import static de.nb.aventiure2.data.world.creature.Creature.Key.FROSCHPRINZ;
 import static de.nb.aventiure2.data.world.creature.CreatureState.HAT_SC_HILFSBEREIT_ANGESPROCHEN;
 import static de.nb.aventiure2.data.world.creature.CreatureState.UNAUFFAELLIG;

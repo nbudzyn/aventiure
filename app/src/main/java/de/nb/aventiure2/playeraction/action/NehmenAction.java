@@ -8,7 +8,7 @@ import java.util.Collection;
 
 import de.nb.aventiure2.data.database.AvDatabase;
 import de.nb.aventiure2.data.storystate.StoryState;
-import de.nb.aventiure2.data.storystate.StoryState.StartsNew;
+import de.nb.aventiure2.data.storystate.StoryState.StructuralElement;
 import de.nb.aventiure2.data.storystate.StoryStateBuilder;
 import de.nb.aventiure2.data.world.creature.Creature;
 import de.nb.aventiure2.data.world.creature.CreatureData;
@@ -20,6 +20,7 @@ import de.nb.aventiure2.german.praedikat.PraedikatMitEinerObjektleerstelle;
 import de.nb.aventiure2.playeraction.AbstractPlayerAction;
 
 import static com.google.common.base.Preconditions.checkArgument;
+import static de.nb.aventiure2.data.storystate.StoryState.StructuralElement.PARAGRAPH;
 import static de.nb.aventiure2.data.world.creature.Creature.Key.FROSCHPRINZ;
 import static de.nb.aventiure2.data.world.creature.CreatureState.ERWARTET_VON_SC_EINLOESUNG_SEINES_VERSPRECHENS;
 import static de.nb.aventiure2.data.world.creature.CreatureState.ERWARTET_VON_SC_EINLOESUNG_SEINES_VERSPRECHENS_VON_SC_GETRAGEN;
@@ -121,7 +122,7 @@ public class NehmenAction extends AbstractEntityAction {
             return;
         }
 
-        n.add(t(StartsNew.PARAGRAPH,
+        n.add(t(StoryState.StructuralElement.PARAGRAPH,
                 room.getLocationMode().getNehmenVerb().getDescriptionHauptsatz(objectData))
                 .undWartest()
                 .dann());
@@ -129,13 +130,13 @@ public class NehmenAction extends AbstractEntityAction {
 
     private StoryStateBuilder buildStoryStateObjectNachAblegen(final ObjectData objectData) {
         if (initialStoryState.lastObjectWas(objectData.getObject())) {
-            return t(StartsNew.PARAGRAPH,
+            return t(StructuralElement.PARAGRAPH,
                     "Dann nimmst du " + objectData.akk() +
                             " erneut")
                     .undWartest();
         }
 
-        return t(StartsNew.SENTENCE,
+        return t(StoryState.StructuralElement.SENTENCE,
                 "Dann nimmst du " + objectData.akk())
                 .undWartest();
     }
@@ -147,19 +148,20 @@ public class NehmenAction extends AbstractEntityAction {
                 "Unexpected creature data: " + creatureData);
 
         n.add(alt(
-                t(StartsNew.PARAGRAPH,
+                t(StructuralElement.PARAGRAPH,
                         "Du ekelst dich sehr, aber mit einiger Überwindung nimmst du den Frosch in "
                                 + "die Hand. "
                                 + "Er ist glibschig und schleimig – pfui-bäh! – schnell lässt du ihn in "
                                 + "eine Tasche gleiten. Sein gedämpftes Quaken könnte wohlig sein oder "
                                 + "genauso gut vorwurfsvoll"),
-                t(StartsNew.PARAGRAPH,
+                t(StoryState.StructuralElement.PARAGRAPH,
                         "Den Frosch in die Hand nehmen?? – Wer hat dir bloß solche Flausen "
                                 + "in den Kopf gesetzt! Kräftig packst du den Frosch und versenkst "
                                 + "ihn tief in deiner Tasche. Du versuchst, deine Hand an der "
                                 + "Kleidung zu reinigen, aber der Schleim verteilt sich nur "
-                                + "überall - igitt!"),
-                t(StartsNew.PARAGRAPH,
+                                + "überall – igitt!")
+                        .beendet(PARAGRAPH),
+                t(StoryState.StructuralElement.PARAGRAPH,
                         "Du erbarmst dich und packst den Frosch in deine Tasche. Er fasst "
                                 + "sich sehr eklig an und du bist glücklich, als die Prozedur "
                                 + "vorbei ist.")

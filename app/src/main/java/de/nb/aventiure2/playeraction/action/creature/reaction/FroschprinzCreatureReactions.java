@@ -8,7 +8,8 @@ import de.nb.aventiure2.data.world.entity.AbstractEntityData;
 import de.nb.aventiure2.data.world.object.ObjectData;
 import de.nb.aventiure2.data.world.room.AvRoom;
 
-import static de.nb.aventiure2.data.storystate.StoryState.StartsNew.SENTENCE;
+import static de.nb.aventiure2.data.storystate.StoryState.StructuralElement.PARAGRAPH;
+import static de.nb.aventiure2.data.storystate.StoryState.StructuralElement.SENTENCE;
 import static de.nb.aventiure2.data.world.creature.CreatureState.ERWARTET_VON_SC_EINLOESUNG_SEINES_VERSPRECHENS;
 import static de.nb.aventiure2.data.world.creature.CreatureState.HAT_FORDERUNG_GESTELLT;
 import static de.nb.aventiure2.data.world.creature.CreatureState.HAT_NACH_BELOHNUNG_GEFRAGT;
@@ -32,7 +33,7 @@ class FroschprinzCreatureReactions extends AbstractCreatureReactions {
             n.add(t(SENTENCE,
                     " „Warte, warte“, ruft der Frosch, „nimm mich mit, ich kann nicht so "
                             + "laufen wie du.“ Aber was hilft ihm, dass er dir "
-                            + "sein „Quak, quak!“ so laut nachschreit "
+                            + "sein „Quak, quak!“ so laut nachschreit, "
                             + "als er kann, du hörst nicht darauf")
                     .undWartest()
                     .letzterRaum(oldRoom));
@@ -47,7 +48,7 @@ class FroschprinzCreatureReactions extends AbstractCreatureReactions {
             return;
         }
 
-        n.add(t(StoryState.StartsNew.SENTENCE,
+        n.add(t(StoryState.StructuralElement.SENTENCE,
                 "Hier sitzt "
                         + froschprinz.getDescription(false).nom()));
 
@@ -86,9 +87,11 @@ class FroschprinzCreatureReactions extends AbstractCreatureReactions {
             if (!scHatObjektAufgefangen) {
                 // Der Spieler hat ein weiteres Objekt in den Brunnen fallen
                 // lassen, obwohl er noch mit dem Frosch verhandelt.
-                n.add(t(StoryState.StartsNew.PARAGRAPH,
+                n.add(t(StoryState.StructuralElement.PARAGRAPH,
                         "Ob der Frosch gerade seine glitschige Nase gerümpft hat?")
-                        .letztesObject(objectData.getObject()));
+                        .letztesObject(objectData.getObject())
+                        .beendet(PARAGRAPH)
+                );
             }
             return;
         }
@@ -104,7 +107,7 @@ class FroschprinzCreatureReactions extends AbstractCreatureReactions {
         // Der Spieler hat die goldene Kugel letztlich in den Brunnen
         // fallen lassen, NACHDEM der Frosch schon Dinge hochgeholt hat.
         // Dann ist die Kugel jetzt WEG - PECH.
-        n.add(t(StoryState.StartsNew.SENTENCE,
+        n.add(t(StoryState.StructuralElement.SENTENCE,
                 capitalize(froschprinzCreatureData.nom(true)) +
                         " schaut dich vorwurfsvoll und etwas hochnäsig an")
                 .letztesObject(objectData.getObject()));

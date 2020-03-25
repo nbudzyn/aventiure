@@ -5,6 +5,8 @@ import androidx.annotation.Nullable;
 import androidx.room.Entity;
 import androidx.room.PrimaryKey;
 
+import com.google.common.base.Preconditions;
+
 import de.nb.aventiure2.data.world.creature.Creature;
 import de.nb.aventiure2.data.world.object.AvObject;
 import de.nb.aventiure2.data.world.room.AvRoom;
@@ -14,11 +16,27 @@ import de.nb.aventiure2.data.world.room.AvRoom;
  */
 @Entity
 public class StoryState {
-    public enum StartsNew {
-        PARAGRAPH, SENTENCE, WORD
+    public enum StructuralElement {
+        CHAPTER, PARAGRAPH, SENTENCE, WORD;
+
+        public static StructuralElement max(final StructuralElement endsThis,
+                                            final StructuralElement startsNew) {
+            if (endsThis.ordinal() < startsNew.ordinal()) {
+                return endsThis;
+            }
+            return startsNew;
+        }
     }
 
-    private final StartsNew startsNew;
+    /**
+     * This {@link StoryState} starts a new ... (paragraph, e.g.)
+     */
+    private final StructuralElement startsNew;
+
+    /**
+     * This {@link StoryState} ends this ... (paragraph, e.g.)
+     */
+    private final StructuralElement endsThis;
 
     /**
      * Canonical class name of the last action (if any).
@@ -67,6 +85,7 @@ public class StoryState {
     StoryState butWithText(final String newText) {
         return new StoryState(lastActionClassName,
                 startsNew,
+                endsThis,
                 newText,
                 kommaStehtAus,
                 allowsAdditionalDuSatzreihengliedOhneSubjekt, dann,
@@ -76,7 +95,8 @@ public class StoryState {
     }
 
     StoryState(@Nullable final IPlayerAction lastAction,
-               @NonNull final StartsNew startsNew,
+               @NonNull final StructuralElement startsNew,
+               @NonNull final StructuralElement endsThis,
                @NonNull final String text,
                final boolean kommaStehtAus,
                final boolean allowsAdditionalDuSatzreihengliedOhneSubjekt,
@@ -86,6 +106,7 @@ public class StoryState {
                @NonNull final AvRoom lastRoom) {
         this(lastAction == null ? null : lastAction.getClass().getCanonicalName(),
                 startsNew,
+                endsThis,
                 text,
                 kommaStehtAus,
                 allowsAdditionalDuSatzreihengliedOhneSubjekt, dann,
@@ -95,7 +116,8 @@ public class StoryState {
     }
 
     StoryState(@Nullable final String lastActionClassName,
-               @NonNull final StartsNew startsNew,
+               @NonNull final StructuralElement startsNew,
+               @NonNull final StructuralElement endsThis,
                @NonNull final String text,
                final boolean kommaStehtAus,
                final boolean allowsAdditionalDuSatzreihengliedOhneSubjekt,
@@ -103,8 +125,14 @@ public class StoryState {
                @Nullable final Creature talkingTo,
                @Nullable final AvObject lastObject,
                @NonNull final AvRoom lastRoom) {
+        Preconditions.checkArgument(!allowsAdditionalDuSatzreihengliedOhneSubjekt
+                        || endsThis == StructuralElement.WORD,
+                "!allowsAdditionalDuSatzreihengliedOhneSubjekt "
+                        + "|| endsThis == StructuralElement.WORD verletzt");
+
         this.lastActionClassName = lastActionClassName;
         this.startsNew = startsNew;
+        this.endsThis = endsThis;
         this.text = text;
         this.kommaStehtAus = kommaStehtAus;
         this.allowsAdditionalDuSatzreihengliedOhneSubjekt =
@@ -115,8 +143,12 @@ public class StoryState {
         this.lastObject = lastObject;
     }
 
-    StartsNew getStartsNew() {
+    StructuralElement getStartsNew() {
         return startsNew;
+    }
+
+    StructuralElement getEndsThis() {
+        return endsThis;
     }
 
     public String getText() {
@@ -186,7 +218,10 @@ public class StoryState {
     StoryState prependTo(final StoryState other) {
         String res = getText().trim();
 
-        switch (other.startsNew) {
+        final StructuralElement separation =
+                StructuralElement.max(endsThis, other.startsNew);
+
+        switch (separation) {
             case WORD:
                 if (kommaNeeded(res, other.getText())) {
                     res += ",";
@@ -212,8 +247,20 @@ public class StoryState {
                     res += "\n";
                 }
                 break;
+            case CHAPTER:
+                if (periodNeededToStartNewSentence(res, other.getText())) {
+                    res += ".";
+                }
+
+                final int numNewlinesNeeded =
+                        howManyNewlinesNeedeToStartNewChapter(res, other.getText());
+                for (int i = 0; i < numNewlinesNeeded; i++) {
+                    res += "\n";
+                }
+                break;
             default:
-                throw new IllegalStateException("Unexpected Starts-New value: " + other.startsNew);
+                throw new IllegalStateException("Unexpected structural element value: "
+                        + separation);
         }
 
         res += other.getText();
@@ -221,21 +268,42 @@ public class StoryState {
         return other.butWithText(res);
     }
 
+    private static int howManyNewlinesNeedeToStartNewChapter(
+            final String base, final String addition) {
+        final String baseTrimmed = base.trim();
+        final String additionTrimmed = addition.trim();
+
+        if (baseTrimmed.endsWith("\n\n")) {
+            return 0;
+        }
+
+        if (additionTrimmed.startsWith("\n\n")) {
+            return 0;
+        }
+
+        if (baseTrimmed.endsWith("\n")) {
+            if (additionTrimmed.startsWith("\n")) {
+                return 0;
+            }
+            return 1;
+        }
+
+        if (additionTrimmed.startsWith("\n")) {
+            return 1;
+        }
+
+        return 0;
+    }
+
     private static boolean newlineNeededToStartNewParagraph(
             final String base, final String addition) {
-        final String baseTrimmed =
-                base.trim();
-
-        final String lastRelevantCharCurrent =
-                baseTrimmed.substring(baseTrimmed.length() - 1);
-        if (lastRelevantCharCurrent.equals("\n")) {
+        final String baseTrimmed = base.trim();
+        if (baseTrimmed.endsWith("\n")) {
             return false;
         }
 
-        final String firstCharAdditional =
-                addition.trim().substring(0, 1);
-
-        return !firstCharAdditional.equals("\n");
+        final String additionTrimmed = addition.trim();
+        return !additionTrimmed.startsWith("\n");
     }
 
     private static boolean periodNeededToStartNewSentence(
@@ -243,9 +311,9 @@ public class StoryState {
         final String baseTrimmed =
                 base.trim();
 
-        final String lastRelevantCharCurrent =
+        final String lastRelevantCharBase =
                 baseTrimmed.substring(baseTrimmed.length() - 1);
-        if (".!?\"“\n".contains(lastRelevantCharCurrent)) {
+        if (".!?\"“\n".contains(lastRelevantCharBase)) {
             return false;
         }
 
@@ -259,9 +327,9 @@ public class StoryState {
             return false;
         }
 
-        final String lastCharCurrent =
+        final String lastCharBase =
                 base.substring(base.length() - 1);
-        if (lastCharCurrent.equals(",")) {
+        if (lastCharBase.equals(",")) {
             return false;
         }
 
@@ -274,9 +342,9 @@ public class StoryState {
     }
 
     private static boolean spaceNeeded(final String base, final String addition) {
-        final String lastCharCurrent =
+        final String lastCharBase =
                 base.substring(base.length() - 1);
-        if (" „\n".contains(lastCharCurrent)) {
+        if (" „\n".contains(lastCharBase)) {
             return false;
         }
 

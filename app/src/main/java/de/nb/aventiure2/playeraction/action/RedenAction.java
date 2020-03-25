@@ -172,7 +172,7 @@ public class RedenAction extends AbstractPlayerAction {
 
     @Override
     protected StoryStateBuilder t(
-            @NonNull final StoryState.StartsNew startsNew,
+            @NonNull final StoryState.StructuralElement startsNew,
             @NonNull final String text) {
         return super.t(startsNew, text)
                 .imGespraechMit(creatureData.getCreature());

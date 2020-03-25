@@ -70,7 +70,7 @@ abstract class AbstractCreatureReactions {
     }
 
     protected StoryStateBuilder t(
-            @NonNull final StoryState.StartsNew startsNew,
+            @NonNull final StoryState.StructuralElement startsNew,
             @NonNull final String text) {
 
         return StoryStateBuilder.t(playerActionClass, startsNew, text)

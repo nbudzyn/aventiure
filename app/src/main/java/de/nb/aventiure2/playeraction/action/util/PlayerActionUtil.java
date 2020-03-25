@@ -11,7 +11,11 @@ public class PlayerActionUtil {
 
     /**
      * Returns a random number from 0 to num - 1.
+     *
+     * @Deprecated In many cases {@link de.nb.aventiure2.data.world.counter.CounterDao}
+     * is the better idea as it is predictable
      */
+    @Deprecated
     public static int random(final int num) {
         return random.nextInt(num);
     }

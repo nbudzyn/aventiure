@@ -23,7 +23,7 @@ public class RoomConnection {
                                     "Das Schloss verlassen",
                                     du(
                                             "gehst",
-                                            "hinaus. " +
+                                            "hinaus.\n\n" +
                                                     "Draußen scheint dir die " +
                                                     "Sonne ins Gesicht; der Tag ist recht heiß. " +
                                                     "Nahebei liegt ein großer, dunkler Wald",
@@ -76,7 +76,7 @@ public class RoomConnection {
                                     allg(
                                             "Der Pfad führt zu einer alten Linde, unter " +
                                                     "der ist ein Brunnen. Du setzt dich an den " +
-                                                    "Brunnenrand - hier ist es kühler",
+                                                    "Brunnenrand – hier ist es kühler",
                                             false,
                                             false,
                                             true),
