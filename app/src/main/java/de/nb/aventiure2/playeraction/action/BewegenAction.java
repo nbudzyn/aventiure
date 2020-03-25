@@ -202,7 +202,8 @@ public class BewegenAction extends AbstractPlayerAction {
 
     private StoryStateBuilder buildNewStoryStateNewRoomOnlyNewSentenceLastActionBewegen(
             final StoryState currentStoryState, final AbstractDescription desc) {
-        if (currentStoryState.lastRoomWas(newRoom)) {
+        if (currentStoryState.lastRoomWas(newRoom) &&
+                numberOfPossibilities != NumberOfPossibilities.ONLY_WAY) {
             if (currentStoryState.noLastObject()) {
                 return alt(
                         t(StoryState.StructuralElement.SENTENCE, "Was willst du hier eigentlich? "

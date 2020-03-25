@@ -15,6 +15,10 @@ public enum ObjectLocationMode {
     TISCH("auf einem Tisch", "auf einen Tisch"),
     WALDBODEN("zwischen Blättern und Gestrüpp", "auf den Waldboden",
             HERAUSKLAUBEN),
+    VOR_DER_HUETTE("auf dem Erdboden vor der Hütte", "auf den Erdboden vor der Hütte",
+            HERAUSKLAUBEN),
+    ERDBODEN("auf dem Erdboden", "auf den Erdboden"),
+    NEBEN_DIR_IM_BETT("neben dir im Bett", "neben dich in das Bett"),
     GRAS_NEBEN_DEM_BRUNNEN("neben dem Brunnnen", "neben den Brunnen",
             AUFHEBEN),
     AM_GRUNDE_DES_BRUNNENS("am Grunde des Brunnens", "auf den Grund des Brunnens");

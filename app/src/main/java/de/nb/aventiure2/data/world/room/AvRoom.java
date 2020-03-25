@@ -4,6 +4,10 @@ public enum AvRoom {
     SCHLOSS_VORHALLE(ObjectLocationMode.TISCH),
     DRAUSSEN_VOR_DEM_SCHLOSS,
     IM_WALD_NAHE_DEM_SCHLOSS(ObjectLocationMode.WALDBODEN),
+    ABZWEIG_IM_WALD(ObjectLocationMode.WALDBODEN),
+    VOR_DER_HUETTE_IM_WALD(ObjectLocationMode.VOR_DER_HUETTE),
+    HUETTE_IM_WALD(ObjectLocationMode.ERDBODEN),
+    BETT_IN_DER_HUETTE_IM_WALD(ObjectLocationMode.NEBEN_DIR_IM_BETT),
     IM_WALD_BEIM_BRUNNEN(ObjectLocationMode.GRAS_NEBEN_DEM_BRUNNEN),
     UNTEN_IM_BRUNNEN(ObjectLocationMode.AM_GRUNDE_DES_BRUNNENS);
 
