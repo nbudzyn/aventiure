@@ -160,6 +160,11 @@ public class RedenAction extends AbstractPlayerAction {
     }
 
     @Override
+    public String getType() {
+        return "actionReden";
+    }
+
+    @Override
     @NonNull
     public String getName() {
         return name;

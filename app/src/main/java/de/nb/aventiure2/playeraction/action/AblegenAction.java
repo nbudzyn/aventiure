@@ -70,6 +70,11 @@ public class AblegenAction extends AbstractEntityAction {
     }
 
     @Override
+    public String getType() {
+        return "actionAblegen";
+    }
+
+    @Override
     public void narrateAndDo() {
         narrate();
         letGoAndAddToRoom();

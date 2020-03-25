@@ -61,6 +61,11 @@ public class NehmenAction extends AbstractEntityAction {
     }
 
     @Override
+    public String getType() {
+        return "actionNehmen";
+    }
+
+    @Override
     @NonNull
     public String getName() {
         final PraedikatMitEinerObjektleerstelle praedikat =

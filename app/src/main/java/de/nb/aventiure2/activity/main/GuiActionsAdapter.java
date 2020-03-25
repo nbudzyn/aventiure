@@ -7,6 +7,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.FrameLayout;
 
+import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.ArrayList;
@@ -43,6 +44,15 @@ public class GuiActionsAdapter extends RecyclerView.Adapter<GuiActionsAdapter.Vi
     public void onBindViewHolder(final ViewHolder holder, final int position) {
         final GuiAction current = guiActions.get(position);
         holder.actionButton.setText(current.getDisplayName());
+
+        final String colorName = current.getActionType();
+        final int colorResourceId =
+                holder.actionButton.getResources().getIdentifier(
+                        colorName, "color",
+                        holder.actionButton.getContext().getPackageName());
+
+        holder.actionButton.setBackgroundColor(
+                ContextCompat.getColor(holder.actionButton.getContext(), colorResourceId));
         holder.actionButton.setOnClickListener(v -> current.execute());
     }
 

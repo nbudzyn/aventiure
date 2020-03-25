@@ -61,6 +61,11 @@ public class MainViewModel extends AndroidViewModel {
             }
 
             @Override
+            public String getActionType() {
+                return playerAction.getType();
+            }
+
+            @Override
             public void execute() {
                 // Aktionen aus der GUI entfernen
                 playerActionHandlers.setValue(ImmutableList.of());

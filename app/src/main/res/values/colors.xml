@@ -1,8 +1,40 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="colorPrimary">#008577</color>
-    <color name="colorPrimaryDark">#00574B</color>
-    <color name="colorAccent">#D81B60</color>
+    <color name="colorPrimary">#25509E</color>
+    <color name="colorPrimaryDark">#143A81</color>
+    <color name="colorAccent">#C2150C</color>
     <color name="colorOldStoryText">#999999</color>
     <color name="colorNewStoryText">#333333</color>
+    <color name="actionBewegen">#3BC34C</color>
+    <color name="actionNehmen">#D9E924</color>
+    <color name="actionAblegen">#AFBF0C</color>
+    <color name="actionHochwerfen">#F0FC6D</color>
+    <color name="actionHeulen">#FF766F</color>
+    <color name="actionReden">#FF9D98</color>
+
+    <!--
+.color-primary-0 { color: #3BC34C }	/* Main Primary color */
+.color-primary-1 { color: #87E393 }
+.color-primary-2 { color: #5BD26A }
+.color-primary-3 { color: #1CB830 }
+.color-primary-4 { color: #0A961B }
+
+.color-secondary-1-0 { color: #3E63A7 }	/* Main Secondary color (1) */
+.color-secondary-1-1 { color: #87A3D5 }
+.color-secondary-1-2 { color: #5C7EBC }
+.color-secondary-1-3 { color: #25509E }
+.color-secondary-1-4 { color: #143A81 }
+
+.color-secondary-2-0 { color: #E9F84B }	/* Main Secondary color (2) */
+.color-secondary-2-1 { color: #F4FD97 }
+.color-secondary-2-2 { color: #F0FC6D }
+.color-secondary-2-3 { color: #D9E924 }
+.color-secondary-2-4 { color: #AFBF0C }
+
+.color-complement-0 { color: #FC554C }	/* Main Complement color */
+.color-complement-1 { color: #FF9D98 }
+.color-complement-2 { color: #FF766F }
+.color-complement-3 { color: #ED2F25 }
+.color-complement-4 { color: #C2150C }
+    -->
 </resources>

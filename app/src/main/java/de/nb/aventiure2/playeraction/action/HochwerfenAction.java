@@ -57,6 +57,11 @@ public class HochwerfenAction extends AbstractObjectAction {
     }
 
     @Override
+    public String getType() {
+        return "actionHochwerfen";
+    }
+
+    @Override
     @NonNull
     public String getName() {
         return capitalize(getObjectData().akk()) + " hochwerfen";

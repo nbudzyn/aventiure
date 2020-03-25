@@ -50,6 +50,11 @@ public class HeulenAction extends AbstractPlayerAction {
     }
 
     @Override
+    public String getType() {
+        return "actionHeulen";
+    }
+
+    @Override
     @NonNull
     public String getName() {
         return "Heulen";

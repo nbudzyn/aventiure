@@ -78,6 +78,11 @@ public class BewegenAction extends AbstractPlayerAction {
     }
 
     @Override
+    public String getType() {
+        return "actionBewegen";
+    }
+
+    @Override
     @NonNull
     public String getName() {
         return RoomConnection.getFrom(oldRoom).get(newRoom).getActionName();

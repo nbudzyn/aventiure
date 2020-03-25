@@ -8,4 +8,6 @@ public interface GuiAction {
     String getDisplayName();
 
     void execute();
+
+    String getActionType();
 }
