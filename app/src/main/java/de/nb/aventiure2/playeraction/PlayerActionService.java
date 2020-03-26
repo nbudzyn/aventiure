@@ -24,6 +24,7 @@ import de.nb.aventiure2.playeraction.action.HeulenAction;
 import de.nb.aventiure2.playeraction.action.HochwerfenAction;
 import de.nb.aventiure2.playeraction.action.NehmenAction;
 import de.nb.aventiure2.playeraction.action.RedenAction;
+import de.nb.aventiure2.playeraction.action.SchlafenAction;
 
 import static de.nb.aventiure2.data.world.creature.Creature.Key.FROSCHPRINZ;
 import static de.nb.aventiure2.playeraction.action.BewegenAction.NumberOfPossibilities.ONE_IN_ONE_OUT;
@@ -68,7 +69,7 @@ public class PlayerActionService {
         res.addAll(buildCreatureInRoomActions(currentStoryState, room, allObjectsByKey,
                 creaturesInRoom));
         if (!currentStoryState.talkingToAnyone()) {
-            res.addAll(buildPlayerOnlyAction(currentStoryState, stats, creaturesInRoom));
+            res.addAll(buildPlayerOnlyAction(currentStoryState, room, stats, creaturesInRoom));
             res.addAll(buildObjectInRoomActions(currentStoryState, room, allObjectsByKey));
             res.addAll(buildInventoryActions(currentStoryState, room, allObjectsByKey,
                     froschprinz, inventory));
@@ -97,10 +98,12 @@ public class PlayerActionService {
 
     private ImmutableList<AbstractPlayerAction> buildPlayerOnlyAction(
             final StoryState currentStoryState,
-            final PlayerStats stats, final List<CreatureData> creaturesInRoom) {
+            final AvRoom room, final PlayerStats stats,
+            final List<CreatureData> creaturesInRoom) {
         final ImmutableList.Builder<AbstractPlayerAction> res = ImmutableList.builder();
 
         res.addAll(HeulenAction.buildActions(db, currentStoryState, stats, creaturesInRoom));
+        res.addAll(SchlafenAction.buildActions(db, currentStoryState, room));
 
         return res.build();
     }

@@ -1,5 +1,6 @@
 package de.nb.aventiure2.german.base;
 
+import static de.nb.aventiure2.german.base.Kasus.AKK;
 import static de.nb.aventiure2.german.base.Kasus.DAT;
 
 /**
@@ -9,7 +10,9 @@ public enum PraepositionMitKasus implements KasusOderPraepositionalkasus {
     /**
      * "mit dem Frosch"
      */
-    MIT_DAT("mit", DAT);
+    MIT_DAT("mit", DAT),
+
+    AN_AKK("an", AKK);
 
     /**
      * Die Präposition (z.B. "mit")

@@ -25,7 +25,7 @@ import static de.nb.aventiure2.data.world.creature.CreatureState.HAT_SC_HILFSBER
 import static de.nb.aventiure2.data.world.creature.CreatureState.UNAUFFAELLIG;
 
 /**
- * Der Spieler(charakter) heult.
+ * Der Spielercharakter heult.
  */
 public class HeulenAction extends AbstractPlayerAction {
     private final List<CreatureData> creatures;

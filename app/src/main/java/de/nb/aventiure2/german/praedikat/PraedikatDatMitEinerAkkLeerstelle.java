@@ -45,23 +45,6 @@ class PraedikatDatMitEinerAkkLeerstelle implements PraedikatMitEinerObjektleerst
         this.describableDat = describableDat;
     }
 
-    /**
-     * Gibt einen Satz zurück mit diesem Prädikat und diesem Akkusativobjekt zurück.
-     */
-    @Override
-    public String getDescriptionHauptsatz(
-            final DescribableAsDeklinierbarePhrase describableAkk) {
-        return mitAkk(describableAkk).getDescriptionHauptsatz();
-    }
-
-    /**
-     * Gibt eine Infinitivkonstruktion zurück mit diesem Prädikat und diesem Akkusativobjekt.
-     */
-    @Override
-    public String getDescriptionInfinitiv(final DescribableAsDeklinierbarePhrase describableAkk) {
-        return mitAkk(describableAkk).getDescriptionInfinitiv();
-    }
-
     @Override
     public PraedikatOhneLeerstellen mitObj(final DescribableAsDeklinierbarePhrase describable) {
         return mitAkk(describable);

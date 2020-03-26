@@ -128,7 +128,7 @@ public class NehmenAction extends AbstractEntityAction {
         }
 
         n.add(t(StoryState.StructuralElement.PARAGRAPH,
-                room.getLocationMode().getNehmenVerb().getDescriptionHauptsatz(objectData))
+                room.getLocationMode().getNehmenPraedikat().getDescriptionHauptsatz(objectData))
                 .undWartest()
                 .dann());
     }

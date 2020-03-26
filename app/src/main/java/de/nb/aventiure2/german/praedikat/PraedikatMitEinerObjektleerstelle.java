@@ -16,14 +16,18 @@ public interface PraedikatMitEinerObjektleerstelle extends Praedikat {
     PraedikatOhneLeerstellen mitObj(final DescribableAsDeklinierbarePhrase describable);
 
     /**
-     * Gibt einen Satz zurück mit diesem Prädikat und diesem <code>describable</code>.
+     * Gibt einen Satz zurück mit diesem Verb und diesem <code>describable</code>.
      * ("Du nimmst den Ast")
      */
-    String getDescriptionHauptsatz(final DescribableAsDeklinierbarePhrase describable);
+    default String getDescriptionHauptsatz(final DescribableAsDeklinierbarePhrase describable) {
+        return mitObj(describable).getDescriptionHauptsatz();
+    }
 
     /**
-     * Gibt eine Infinitivkonstruktion zurück mit diesem Prädikat und dieser Entity / diesem
-     * Konzept.
+     * Gibt eine Infinitivkonstruktion zurück mit diesem Verb und dieser Entity / diesem Konzept.
+     * ("Den Frosch ignorieren", "Das Leben genießen")
      */
-    String getDescriptionInfinitiv(final DescribableAsDeklinierbarePhrase describable);
+    default String getDescriptionInfinitiv(final DescribableAsDeklinierbarePhrase describable) {
+        return mitObj(describable).getDescriptionInfinitiv();
+    }
 }

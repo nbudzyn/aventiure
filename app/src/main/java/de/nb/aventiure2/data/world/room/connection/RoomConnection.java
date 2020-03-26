@@ -143,7 +143,7 @@ public class RoomConnection {
                                             false
                                     ),
                                     du("schiebst", "dich noch einmal in die "
-                                                    + "kleine Hütte, in der es außer Tisch und"
+                                                    + "kleine Hütte, in der es außer Tisch und "
                                                     + "Bett wenig zu sehen gibt",
                                             true,
                                             true,

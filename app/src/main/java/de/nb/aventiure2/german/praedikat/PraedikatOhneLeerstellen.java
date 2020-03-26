@@ -15,7 +15,10 @@ public interface PraedikatOhneLeerstellen extends Praedikat {
     String getDescriptionHauptsatz();
 
     /**
-     * Gibt eine Infinitivkonstruktion zurück mit diesem Prädikat.
+     * Gibt eine Infinitivkonstruktion mit diesem
+     * Prädikat zurück. Implizit (oder bei reflexiven Verben auch explizit) bezieht sich der
+     * Infinitiv auf die 1. Person - Beispiele: "[Ich möchte] Das Schwert nehmen",
+     * "[Ich möchte] Die Kugel an mich nehmen"
      */
     String getDescriptionInfinitiv();
 

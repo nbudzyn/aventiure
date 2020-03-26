@@ -47,25 +47,6 @@ class PraedikatAkkMitEinerDatLeerstelle implements PraedikatMitEinerObjektleerst
         this.describableAkk = describableAkk;
     }
 
-    /**
-     * Gibt einen Satz zurück mit diesem Prädikat und diesem Dativobjektt zurück.
-     * ("Du machst dem Frosch Angebote")
-     */
-    @Override
-    public String getDescriptionHauptsatz(
-            final DescribableAsDeklinierbarePhrase describableDat) {
-        return mitDat(describableDat).getDescriptionHauptsatz();
-    }
-
-    /**
-     * Gibt eine Infinitivkonstruktion zurück mit diesem Prädikat und diesem Dativobjektt.
-     * ("Dem Frosch Angebote machen")
-     */
-    @Override
-    public String getDescriptionInfinitiv(final DescribableAsDeklinierbarePhrase describableDat) {
-        return mitDat(describableDat).getDescriptionInfinitiv();
-    }
-
     @Override
     public PraedikatOhneLeerstellen mitObj(final DescribableAsDeklinierbarePhrase describable) {
         return mitDat(describable);

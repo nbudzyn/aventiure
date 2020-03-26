@@ -72,22 +72,4 @@ public enum VerbSubjObj implements PraedikatMitEinerObjektleerstelle {
         return new PraedikatSubjObjOhneLeerstellen(infinitiv, duForm, abgetrenntesPraefix,
                 kasusOderPraepositionalkasus, describable);
     }
-
-    /**
-     * Gibt einen Satz zurück mit diesem Verb und diesem <code>describable</code>.
-     * ("Du nimmst den Ast")
-     */
-    @Override
-    public String getDescriptionHauptsatz(final DescribableAsDeklinierbarePhrase describable) {
-        return mitObj(describable).getDescriptionHauptsatz();
-    }
-
-    /**
-     * Gibt eine Infinitivkonstruktion zurück mit diesem Verb und dieser Entity / diesem Konzept.
-     * ("Den Frosch ignorieren", "Das Leben genießen")
-     */
-    @Override
-    public String getDescriptionInfinitiv(final DescribableAsDeklinierbarePhrase describable) {
-        return mitObj(describable).getDescriptionInfinitiv();
-    }
 }
