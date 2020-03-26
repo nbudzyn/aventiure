@@ -8,6 +8,7 @@ public enum AvRoom {
     VOR_DER_HUETTE_IM_WALD(ObjectLocationMode.VOR_DER_HUETTE),
     HUETTE_IM_WALD(ObjectLocationMode.HOLZTISCH),
     BETT_IN_DER_HUETTE_IM_WALD(ObjectLocationMode.NEBEN_DIR_IM_BETT),
+    HINTER_DER_HUETTE(ObjectLocationMode.UNTER_DEM_BAUM),
     IM_WALD_BEIM_BRUNNEN(ObjectLocationMode.GRAS_NEBEN_DEM_BRUNNEN),
     UNTEN_IM_BRUNNEN(ObjectLocationMode.AM_GRUNDE_DES_BRUNNENS);
 

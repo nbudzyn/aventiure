@@ -11,6 +11,7 @@ import de.nb.aventiure2.german.AbstractDescription;
 import static de.nb.aventiure2.data.world.room.AvRoom.ABZWEIG_IM_WALD;
 import static de.nb.aventiure2.data.world.room.AvRoom.BETT_IN_DER_HUETTE_IM_WALD;
 import static de.nb.aventiure2.data.world.room.AvRoom.DRAUSSEN_VOR_DEM_SCHLOSS;
+import static de.nb.aventiure2.data.world.room.AvRoom.HINTER_DER_HUETTE;
 import static de.nb.aventiure2.data.world.room.AvRoom.HUETTE_IM_WALD;
 import static de.nb.aventiure2.data.world.room.AvRoom.IM_WALD_BEIM_BRUNNEN;
 import static de.nb.aventiure2.data.world.room.AvRoom.IM_WALD_NAHE_DEM_SCHLOSS;
@@ -159,6 +160,36 @@ public class RoomConnection {
                                             true
                                     )
                             ))
+                    .put(VOR_DER_HUETTE_IM_WALD, HINTER_DER_HUETTE,
+                            con("Um die Hütte herumgehen",
+                                    allg("Ein paar Schritte um die Hütte herum, und "
+                                                    + "du kommst in einen kleinen, völlig "
+                                                    + "verwilderten Garten. In seiner Mitte "
+                                                    + "steht einzeln… es könnte ein "
+                                                    + "Apfelbaum sein. Früchte siehst du von "
+                                                    + "unten keine.",
+                                            false,
+                                            false,
+                                            false
+                                    ),
+                                    du("schaust", "noch einmal in den alten "
+                                                    + "Garten hinter der Hütte, wo der "
+                                                    + "Apfelbaum wächst",
+                                            true,
+                                            true,
+                                            true
+                                    )
+                            ))
+                    .put(HINTER_DER_HUETTE, VOR_DER_HUETTE_IM_WALD,
+                            con("Zur Vorderseite der Hütte gehen",
+                                    du("kehrst", "zurück zur Vorderseite der "
+                                                    + "Hütte",
+                                            false,
+                                            true,
+                                            true
+                                    )
+                            )
+                    )
                     .put(HUETTE_IM_WALD, BETT_IN_DER_HUETTE_IM_WALD,
                             con("In das Bett legen",
                                     du("legst", "dich in das hölzere Bettgestell. "
@@ -169,46 +200,53 @@ public class RoomConnection {
                                             false,
                                             false
                                     ),
+
                                     allg("Noch einmal legst du dich in das Holzbett",
                                             false,
                                             true,
                                             true
                                     )
                             ))
-                    .put(BETT_IN_DER_HUETTE_IM_WALD, HUETTE_IM_WALD,
-                            con("Aufstehen",
-                                    allg("Du reckst dich noch einmal und stehst "
-                                                    + "wieder auf",
-                                            false,
-                                            false,
-                                            true
-                                    )
-                            ))
-                    .put(ABZWEIG_IM_WALD, IM_WALD_BEIM_BRUNNEN,
-                            con(
-                                    "Auf dem Hauptpfad tiefer in den Wald gehen",
-                                    allg(
-                                            "Der breitere Pfad führt zu einer alten "
-                                                    + "Linde, unter der ist ein Brunnen. Du setzt "
-                                                    + "dich an den Brunnenrand – hier ist es "
-                                                    + "angenehm kühl",
-                                            false,
-                                            false,
-                                            true),
+                    .
 
-                                    du("kehrst",
-                                            "zurück zum Brunnen unter der Linde",
-                                            false,
-                                            true,
-                                            true)))
-                    .put(IM_WALD_BEIM_BRUNNEN, ABZWEIG_IM_WALD,
-                            con(
-                                    "Den Weg Richtung Schloss gehen",
-                                    du("verlässt",
-                                            "den Brunnen",
-                                            false,
-                                            true,
-                                            true)))
+                            put(BETT_IN_DER_HUETTE_IM_WALD, HUETTE_IM_WALD,
+                                    con("Aufstehen",
+                                            allg("Du reckst dich noch einmal und stehst "
+                                                            + "wieder auf",
+                                                    false,
+                                                    false,
+                                                    true
+                                            )
+                                    ))
+                    .
+
+                            put(ABZWEIG_IM_WALD, IM_WALD_BEIM_BRUNNEN,
+                                    con(
+                                            "Auf dem Hauptpfad tiefer in den Wald gehen",
+                                            allg(
+                                                    "Der breitere Pfad führt zu einer alten "
+                                                            + "Linde, unter der ist ein Brunnen. Du setzt "
+                                                            + "dich an den Brunnenrand – hier ist es "
+                                                            + "angenehm kühl",
+                                                    false,
+                                                    false,
+                                                    true),
+
+                                            du("kehrst",
+                                                    "zurück zum Brunnen unter der Linde",
+                                                    false,
+                                                    true,
+                                                    true)))
+                    .
+
+                            put(IM_WALD_BEIM_BRUNNEN, ABZWEIG_IM_WALD,
+                                    con(
+                                            "Den Weg Richtung Schloss gehen",
+                                            du("verlässt",
+                                                    "den Brunnen",
+                                                    false,
+                                                    true,
+                                                    true)))
                     .
 
                             build();

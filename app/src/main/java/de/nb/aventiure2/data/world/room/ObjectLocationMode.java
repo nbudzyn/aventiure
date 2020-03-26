@@ -22,9 +22,9 @@ public enum ObjectLocationMode {
     HOLZTISCH("auf dem hölzernen Tisch", "auf den Holztisch"),
     NEBEN_DIR_IM_BETT("neben dir im Bett", "neben dich in das Bett",
             AN_SICH_NEHMEN),
-    GRAS_NEBEN_DEM_BRUNNEN("neben dem Brunnnen", "neben den Brunnen",
-            AUFHEBEN),
-    AM_GRUNDE_DES_BRUNNENS("am Grunde des Brunnens", "auf den Grund des Brunnens");
+    GRAS_NEBEN_DEM_BRUNNEN("neben dem Brunnnen", "neben den Brunnen", AUFHEBEN),
+    AM_GRUNDE_DES_BRUNNENS("am Grunde des Brunnens", "auf den Grund des Brunnens"),
+    UNTER_DEM_BAUM("unter dem Baum", "unter den Baum", AUFHEBEN);
 
     private final String wo;
 
