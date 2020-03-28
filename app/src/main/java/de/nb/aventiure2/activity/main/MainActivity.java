@@ -64,7 +64,8 @@ public class MainActivity extends AppCompatActivity {
 
         if (newText.startsWith(oldText)) {
             ss.setSpan(fscOld, 0, oldText.length(), Spanned.SPAN_INCLUSIVE_INCLUSIVE);
-            ss.setSpan(fscNew, oldText.length(), newText.length(), Spanned.SPAN_INCLUSIVE_INCLUSIVE);
+            ss.setSpan(fscNew, oldText.length(), newText.length(),
+                    Spanned.SPAN_INCLUSIVE_INCLUSIVE);
         } else {
             ss.setSpan(fscNew, 0, newText.length(), Spanned.SPAN_INCLUSIVE_INCLUSIVE);
         }
@@ -90,7 +91,7 @@ public class MainActivity extends AppCompatActivity {
                     storyTextScrollView.getHeight()
                     + storyTextScrollView.getPaddingBottom();
 
-            if (scrollDuration == 0) {
+            if (scrollDuration <= 0) {
                 storyTextScrollView.fullScroll(ScrollView.FOCUS_DOWN);
             } else {
                 ObjectAnimator.ofInt(storyTextScrollView, "scrollY",
@@ -132,7 +133,8 @@ public class MainActivity extends AppCompatActivity {
         // See https://stackoverflow.com/questions/8840954/how-do-i-keep-my-screen-unlocked-during-usb-debugging
         if (BuildConfig.DEBUG) { // don't even consider it otherwise
             if (Debug.isDebuggerConnected()) {
-                Log.d("SCREEN", "Keeping screen on for debugging, detach debugger and force an onResume to turn it off.");
+                Log.d("SCREEN",
+                        "Keeping screen on for debugging, detach debugger and force an onResume to turn it off.");
                 getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
             } else {
                 getWindow().clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);

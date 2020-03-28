@@ -162,7 +162,7 @@ public class RoomConnection {
                             ))
                     .put(VOR_DER_HUETTE_IM_WALD, HINTER_DER_HUETTE,
                             con("Um die Hütte herumgehen",
-                                    allg("Ein paar Schritte um die Hütte herum, und "
+                                    allg("Ein paar Schritte um die Hütte herum und "
                                                     + "du kommst in einen kleinen, völlig "
                                                     + "verwilderten Garten. In seiner Mitte "
                                                     + "steht einzeln… es könnte ein "
