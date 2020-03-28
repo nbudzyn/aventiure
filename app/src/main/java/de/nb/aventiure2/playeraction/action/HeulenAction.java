@@ -30,11 +30,11 @@ import static de.nb.aventiure2.data.world.creature.CreatureState.UNAUFFAELLIG;
 public class HeulenAction extends AbstractPlayerAction {
     private final List<CreatureData> creatures;
 
-    public static Collection<AbstractPlayerAction> buildActions(
+    public static Collection<HeulenAction> buildActions(
             final AvDatabase db,
             final StoryState initialStoryState,
             final PlayerStats stats, final List<CreatureData> creaturesInRoom) {
-        final ImmutableList.Builder<AbstractPlayerAction> res = ImmutableList.builder();
+        final ImmutableList.Builder<HeulenAction> res = ImmutableList.builder();
         if (stats.getStateOfMind() == PlayerStateOfMind.UNTROESTLICH) {
             res.add(new HeulenAction(db, initialStoryState, creaturesInRoom));
         }

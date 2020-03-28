@@ -17,7 +17,6 @@ import de.nb.aventiure2.data.world.object.ObjectData;
 import de.nb.aventiure2.data.world.player.stats.PlayerStateOfMind;
 import de.nb.aventiure2.data.world.room.AvRoom;
 import de.nb.aventiure2.german.praedikat.PraedikatMitEinerObjektleerstelle;
-import de.nb.aventiure2.playeraction.AbstractPlayerAction;
 
 import static com.google.common.base.Preconditions.checkArgument;
 import static de.nb.aventiure2.data.storystate.StoryState.StructuralElement.PARAGRAPH;
@@ -34,19 +33,19 @@ import static de.nb.aventiure2.german.praedikat.VerbSubjObj.NEHMEN;
 public class NehmenAction extends AbstractEntityAction {
     private final AvRoom room;
 
-    public static Collection<AbstractPlayerAction> buildObjectActions(
+    public static Collection<NehmenAction> buildObjectActions(
             final AvDatabase db, final StoryState initialStoryState, final AvRoom room,
             final ObjectData objectData) {
-        final ImmutableList.Builder<AbstractPlayerAction> res = ImmutableList.builder();
+        final ImmutableList.Builder<NehmenAction> res = ImmutableList.builder();
         res.add(new NehmenAction(db, initialStoryState, objectData, room));
         return res.build();
     }
 
-    public static Collection<AbstractPlayerAction> buildCreatureActions(
+    public static Collection<NehmenAction> buildCreatureActions(
             final AvDatabase db,
             final StoryState initialStoryState, final AvRoom room,
             final CreatureData creatureData) {
-        final ImmutableList.Builder<AbstractPlayerAction> res = ImmutableList.builder();
+        final ImmutableList.Builder<NehmenAction> res = ImmutableList.builder();
         if (creatureData.creatureIs(Creature.Key.FROSCHPRINZ) &&
                 creatureData.hasState(ERWARTET_VON_SC_EINLOESUNG_SEINES_VERSPRECHENS)) {
             res.add(new NehmenAction(db, initialStoryState, creatureData, room));

@@ -16,7 +16,6 @@ import de.nb.aventiure2.data.world.room.AvRoom;
 import de.nb.aventiure2.german.DuDescription;
 import de.nb.aventiure2.german.base.Nominalphrase;
 import de.nb.aventiure2.german.praedikat.SeinUtil;
-import de.nb.aventiure2.playeraction.AbstractPlayerAction;
 
 import static de.nb.aventiure2.data.storystate.StoryState.StructuralElement.PARAGRAPH;
 import static de.nb.aventiure2.data.world.creature.CreatureState.HAT_FORDERUNG_GESTELLT;
@@ -35,7 +34,7 @@ public class HochwerfenAction extends AbstractObjectAction {
     private final AvRoom room;
     private final CreatureData froschprinzCreatureData;
 
-    public static Collection<AbstractPlayerAction> buildActions(
+    public static Collection<HochwerfenAction> buildActions(
             final AvDatabase db, final StoryState initialStoryState,
             final AvRoom room, final ObjectData objectData,
             final CreatureData froschprinzCreatureData) {
@@ -189,7 +188,7 @@ public class HochwerfenAction extends AbstractObjectAction {
 
     private void narrateAndDoWiederholung() {
         if (db.counterDao()
-                .isFirstTime("SchlosswacheReactions_HochwerfenAction_Wiederholung") ||
+                .incAndGet("HochwerfenAction_Wiederholung") == 1 ||
                 (room == IM_WALD_BEIM_BRUNNEN && !froschprinzCreatureData
                         .hasState(UNAUFFAELLIG))) {
             n.add(alt(t(StoryState.StructuralElement.SENTENCE,

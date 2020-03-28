@@ -27,7 +27,7 @@ import static de.nb.aventiure2.german.base.GermanUtil.capitalize;
 import static de.nb.aventiure2.german.base.GermanUtil.uncapitalize;
 
 /**
- * Der Spieler(charakter) bewegt sich in einen anderen Raum.
+ * Der Spielercharakter bewegt sich in einen anderen Raum.
  */
 public class BewegenAction extends AbstractPlayerAction {
     public enum NumberOfPossibilities {
@@ -51,6 +51,15 @@ public class BewegenAction extends AbstractPlayerAction {
 
     private final NumberOfPossibilities numberOfPossibilities;
 
+    public static BewegenAction buildAction(
+            final AvDatabase db,
+            final StoryState initialStoryState,
+            final AvRoom room, final AvRoom connectedRoom,
+            final NumberOfPossibilities numberOfPossibilities) {
+        return new BewegenAction(db, initialStoryState, room,
+                connectedRoom, numberOfPossibilities);
+    }
+
     /**
      * Creates a new {@link BewegenAction}.
      */
@@ -66,15 +75,6 @@ public class BewegenAction extends AbstractPlayerAction {
 
         this.oldRoom = oldRoom;
         this.newRoom = newRoom;
-    }
-
-    public static AbstractPlayerAction buildAction(
-            final AvDatabase db,
-            final StoryState initialStoryState,
-            final AvRoom room, final AvRoom connectedRoom,
-            final NumberOfPossibilities numberOfPossibilities) {
-        return new BewegenAction(db, initialStoryState, room,
-                connectedRoom, numberOfPossibilities);
     }
 
     @Override

@@ -10,29 +10,15 @@ import androidx.room.Query;
  */
 @Dao
 public abstract class CounterDao {
-    public boolean isFirstTime(final String id) {
-        return isFirstSecondThird_orNthTime(id, 1);
-    }
-
-    public boolean isFirstOrSecdondTime(final String id) {
-        return isFirstSecondThird_orNthTime(id, 2);
-    }
-
-    public boolean isFirstSecdondOrThirdTime(final String id) {
-        return isFirstSecondThird_orNthTime(id, 3);
-    }
-
-    public boolean isFirstSecondThird_orNthTime(final String id, final int n) {
-        insert(new Counter(id, n)); // ignore, if row already exists
+    public int incAndGet(final String id) {
+        insert(new Counter(id, 0)); // ignore, if row already exists
 
         final int value = getValue(id);
-        if (value == 0) {
-            return false;
-        }
+        final int newValue = value + 1;
 
-        setValue(id, value - 1);
+        setValue(id, newValue);
 
-        return true;
+        return newValue;
     }
 
     @Insert(onConflict = OnConflictStrategy.IGNORE)

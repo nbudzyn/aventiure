@@ -48,8 +48,8 @@ class SchlosswacheCreatureReactions extends AbstractCreatureReactions {
 
         final ObjectData goldeneKugel = db.objectDataDao().get(GOLDENE_KUGEL);
         if (goldeneKugel.getRoom() == AvRoom.SCHLOSS_VORHALLE) {
-            if (!db.counterDao()
-                    .isFirstTime("SchlosswacheReactions_onEnterRoom_SchlossVorhalle")) {
+            if (db.counterDao().incAndGet(
+                    "SchlosswacheReactions_onEnterRoom_SchlossVorhalle") > 1) {
                 n.add(t(SENTENCE,
                         capitalize(wache.nom(true))
                                 + " scheint dich nicht zu bemerken")
@@ -129,8 +129,8 @@ class SchlosswacheCreatureReactions extends AbstractCreatureReactions {
                                                        final CreatureData wache,
                                                        final ObjectData goldeneKugelData,
                                                        final StoryState currentStoryState) {
-        if (db.counterDao().isFirstTime(
-                "SchlosswacheReactions_nehmenGoldeneKugel_wacheIstAufmerksam")) {
+        if (db.counterDao().incAndGet(
+                "SchlosswacheReactions_nehmenGoldeneKugel_wacheIstAufmerksam") > 1) {
             nehmenGoldeneKugel_wacheIstAufmerksam_erwischt(room, wache, goldeneKugelData,
                     currentStoryState);
             return;
@@ -222,8 +222,8 @@ class SchlosswacheCreatureReactions extends AbstractCreatureReactions {
     private void ablegen_wacheIstAufmerksam(
             final CreatureData wache, final AbstractEntityData abgelegtData,
             final StoryState currentStoryState) {
-        if (!db.counterDao()
-                .isFirstOrSecdondTime("SchlosswacheReactions_ablegen_wacheIstAufmerksam")) {
+        if (db.counterDao()
+                .incAndGet("SchlosswacheReactions_ablegen_wacheIstAufmerksam") > 2) {
             return;
         }
 

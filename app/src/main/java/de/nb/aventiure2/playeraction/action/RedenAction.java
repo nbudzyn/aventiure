@@ -35,7 +35,7 @@ public class RedenAction extends AbstractPlayerAction {
     private final CreatureConversationStep creatureConversationStep;
     private final String name;
 
-    public static Collection<AbstractPlayerAction> buildActions(
+    public static Collection<RedenAction> buildActions(
             final AvDatabase db, final StoryState initialStoryState, final AvRoom room,
             final Map<AvObject.Key, ObjectData> allObjectsByKey,
             final CreatureData creatureData) {
@@ -49,13 +49,13 @@ public class RedenAction extends AbstractPlayerAction {
                 talkSteps);
     }
 
-    private static Collection<AbstractPlayerAction> buildActions(final AvDatabase db,
-                                                                 final StoryState initialStoryState,
-                                                                 final AvRoom room,
-                                                                 final Map<AvObject.Key, ObjectData> allObjectsByKey,
-                                                                 final CreatureData creatureData,
-                                                                 final List<CreatureConversationStep> talkSteps) {
-        final ImmutableList.Builder<AbstractPlayerAction> res =
+    private static Collection<RedenAction> buildActions(final AvDatabase db,
+                                                        final StoryState initialStoryState,
+                                                        final AvRoom room,
+                                                        final Map<AvObject.Key, ObjectData> allObjectsByKey,
+                                                        final CreatureData creatureData,
+                                                        final List<CreatureConversationStep> talkSteps) {
+        final ImmutableList.Builder<RedenAction> res =
                 ImmutableList.builder();
 
         for (final CreatureConversationStep talkStep : talkSteps) {

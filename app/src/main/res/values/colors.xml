@@ -6,6 +6,7 @@
     <color name="colorOldStoryText">#999999</color>
     <color name="colorNewStoryText">#333333</color>
     <color name="actionBewegen">#3BC34C</color>
+    <color name="actionKlettern">#1CB830</color>
     <color name="actionNehmen">#D9E924</color>
     <color name="actionAblegen">#AFBF0C</color>
     <color name="actionHochwerfen">#F0FC6D</color>

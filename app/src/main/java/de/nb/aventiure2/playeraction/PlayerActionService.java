@@ -73,7 +73,7 @@ public class PlayerActionService {
             res.addAll(buildObjectInRoomActions(currentStoryState, room, allObjectsByKey));
             res.addAll(buildInventoryActions(currentStoryState, room, allObjectsByKey,
                     froschprinz, inventory));
-            res.addAll(buildRoomConnectionActions(currentStoryState, room));
+            res.addAll(buildRoomActions(currentStoryState, room));
         }
 
         return res;
@@ -137,6 +137,26 @@ public class PlayerActionService {
                     .buildActions(db, currentStoryState, room, objectData, froschprinz));
             res.addAll(AblegenAction.buildObjectActions(db, currentStoryState, room, objectData));
         }
+        return res.build();
+    }
+
+    private ImmutableList<AbstractPlayerAction> buildRoomActions(
+            final StoryState currentStoryState,
+            final AvRoom room) {
+        final ImmutableList.Builder<AbstractPlayerAction> res = ImmutableList.builder();
+
+        res.addAll(buildRoomSpecificActions(currentStoryState, room));
+        res.addAll(buildRoomConnectionActions(currentStoryState, room));
+
+        return res.build();
+    }
+
+    private ImmutableList<AbstractPlayerAction> buildRoomSpecificActions(
+            final StoryState currentStoryState, final AvRoom room) {
+        final ImmutableList.Builder<AbstractPlayerAction> res = ImmutableList.builder();
+
+        res.addAll(KletternAction.buildActions(db, currentStoryState, room));
+
         return res.build();
     }
 

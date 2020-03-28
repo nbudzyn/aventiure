@@ -32,7 +32,7 @@ import static de.nb.aventiure2.german.praedikat.VerbSubjObj.HINLEGEN;
 public class AblegenAction extends AbstractEntityAction {
     private final AvRoom room;
 
-    public static Collection<AbstractPlayerAction> buildObjectActions(
+    public static Collection<AblegenAction> buildObjectActions(
             final AvDatabase db, final StoryState initialStoryState, final AvRoom room,
             final ObjectData objectData) {
         return ImmutableList.of(new AblegenAction(db, initialStoryState, objectData, room));

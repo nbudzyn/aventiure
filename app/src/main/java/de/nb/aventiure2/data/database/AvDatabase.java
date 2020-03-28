@@ -89,9 +89,7 @@ public abstract class AvDatabase extends RoomDatabase {
 
     private static final RoomDatabase.Callback roomDatabaseCallback = new RoomDatabase.Callback() {
         @Override
-        public void
-        onCreate
-                (@NonNull final SupportSQLiteDatabase db) {
+        public void onCreate(@NonNull final SupportSQLiteDatabase db) {
             super.onCreate(db);
 
             databaseWriteExecutor.execute(() -> {
