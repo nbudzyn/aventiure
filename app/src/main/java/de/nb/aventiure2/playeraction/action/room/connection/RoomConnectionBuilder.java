@@ -288,7 +288,7 @@ class RoomConnectionBuilder {
         if (!newRoomKnown) {
             return du(
                     "gehst",
-                    "hinaus in die Gärten vor dem Schloss.\n\n" +
+                    "über die Marmortreppe hinaus in die Gärten vor dem Schloss.\n\n" +
                             "Draußen scheint dir die " +
                             "Sonne ins Gesicht; der Tag ist recht heiß. "
                             +
@@ -311,7 +311,8 @@ class RoomConnectionBuilder {
     private static AbstractDescription getDesc_SchlossVorhalle_DraussenVorDemSchloss_FestBegonnen() {
         return du(
                 "stehst",
-                "vom Tisch auf und gehst hinaus in den Trubel im Schlossgarten",
+                "vom Tisch auf und gehst über die Marmortreppe hinaus in den Trubel "
+                        + "im Schlossgarten",
                 false,
                 false,
                 true,
@@ -402,7 +403,8 @@ class RoomConnectionBuilder {
                             + "Du ergatterst einen Platz auf einer Bank.\n"
                             + "Unter einem Baldachin sitzen – soweit du durch das Gedänge "
                             + "erkennen kannst – "
-                            + "einige Ritter an goldenen Tellern vor Fasan und anderem Wildbret. "
+                            + "einige Hofleute an einer Tafel mit "
+                            + "goldenen Tellern vor Fasan und anderem Wildbret. "
                             + "Immerhin stellt "
                             + "dir ein eifriger Diener einen leeren Holzteller und einen "
                             + "Löffel bereit",

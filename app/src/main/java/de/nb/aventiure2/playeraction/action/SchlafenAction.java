@@ -114,7 +114,7 @@ public class SchlafenAction extends AbstractPlayerAction {
             wannDesc = "nach einigen Stunden";
             timeElapsed = hours(9);
         } else {
-            wannDesc = "am nächsten Morgen";
+            wannDesc = "am andern Tage";
             timeElapsed = timeSpanUntilNextMorning;
         }
 
