@@ -13,6 +13,7 @@ import static de.nb.aventiure2.data.world.invisible.InvisibleState.BEGONNEN;
 import static de.nb.aventiure2.data.world.invisible.Invisibles.COUNTER_ID_VOR_DEM_SCHLOSS_SCHLOSSFEST_KNOWN;
 import static de.nb.aventiure2.data.world.invisible.Invisibles.SCHLOSSFEST_BEGINN_DATE_TIME;
 import static de.nb.aventiure2.data.world.room.AvRoom.DRAUSSEN_VOR_DEM_SCHLOSS;
+import static de.nb.aventiure2.data.world.time.AvDateTime.isWithin;
 import static de.nb.aventiure2.data.world.time.AvTimeSpan.mins;
 import static de.nb.aventiure2.data.world.time.AvTimeSpan.noTime;
 
@@ -26,8 +27,7 @@ class SchlossfestReactions extends AbstractInvisibleReactions {
     public AvTimeSpan onTimePassed(final AvDateTime lastTime, final AvDateTime now) {
         AvTimeSpan timeElapsed = noTime();
 
-        if (lastTime.isBefore(SCHLOSSFEST_BEGINN_DATE_TIME) &&
-                !now.isBefore(SCHLOSSFEST_BEGINN_DATE_TIME)) {
+        if (isWithin(SCHLOSSFEST_BEGINN_DATE_TIME, lastTime, now)) {
             timeElapsed = timeElapsed.plus(schlossfestBeginnt());
         }
 

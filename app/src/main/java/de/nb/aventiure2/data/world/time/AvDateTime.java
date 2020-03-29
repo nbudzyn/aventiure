@@ -16,6 +16,12 @@ public class AvDateTime {
     @NonNull
     private long secsSinceBeginning;
 
+    public static boolean isWithin(final AvDateTime dateTime,
+                                   final AvDateTime lowerBoundExclusive,
+                                   final AvDateTime upperBoundInclusive) {
+        return lowerBoundExclusive.isBefore(dateTime) && !upperBoundInclusive.isBefore(dateTime);
+    }
+
     public AvDateTime(final int daySinceBeginning, final AvTime time) {
         this(daySinceBeginning * SECS_IN_A_DAY + time.getSecsSinceMidnight());
     }
@@ -33,6 +39,10 @@ public class AvDateTime {
 
     public AvDateTime plus(final AvTimeSpan add) {
         return new AvDateTime(secsSinceBeginning + add.getSecs());
+    }
+
+    public AvDateTime minus(final AvTimeSpan sub) {
+        return new AvDateTime(secsSinceBeginning - sub.getSecs());
     }
 
     public AvTimeSpan minus(final AvDateTime sub) {

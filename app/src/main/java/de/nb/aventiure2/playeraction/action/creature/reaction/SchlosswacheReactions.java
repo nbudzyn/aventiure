@@ -30,6 +30,7 @@ import static de.nb.aventiure2.data.world.invisible.Invisibles.COUNTER_ID_VOR_DE
 import static de.nb.aventiure2.data.world.invisible.Invisibles.SCHLOSSFEST_BEGINN_DATE_TIME;
 import static de.nb.aventiure2.data.world.room.AvRoom.DRAUSSEN_VOR_DEM_SCHLOSS;
 import static de.nb.aventiure2.data.world.room.AvRoom.SCHLOSS_VORHALLE;
+import static de.nb.aventiure2.data.world.time.AvDateTime.isWithin;
 import static de.nb.aventiure2.data.world.time.AvTimeSpan.mins;
 import static de.nb.aventiure2.data.world.time.AvTimeSpan.noTime;
 import static de.nb.aventiure2.data.world.time.AvTimeSpan.secs;
@@ -150,7 +151,7 @@ class SchlosswacheReactions extends AbstractCreatureReactions {
                                                              final ObjectData goldeneKugelData,
                                                              final StoryState currentStoryState) {
         if (db.counterDao().incAndGet(
-                "SchlosswacheReactions_nehmenGoldeneKugel_wacheIstAufmerksam") > 1) {
+                "SchlosswacheReactions_nehmenGoldeneKugel_wacheIstAufmerksam") == 1) {
             return nehmenGoldeneKugel_wacheIstAufmerksam_erwischt(room, wache, goldeneKugelData,
                     currentStoryState);
         }
@@ -353,8 +354,7 @@ class SchlosswacheReactions extends AbstractCreatureReactions {
                                    final StoryState currentStoryState) {
         AvTimeSpan timeElapsed = noTime();
 
-        if (lastTime.isBefore(SCHLOSSFEST_BEGINN_DATE_TIME) &&
-                !now.isBefore(SCHLOSSFEST_BEGINN_DATE_TIME)) {
+        if (isWithin(SCHLOSSFEST_BEGINN_DATE_TIME, lastTime, now)) {
             timeElapsed = timeElapsed.plus(schlossfestBeginnt(currentStoryState));
         }
 

@@ -13,18 +13,25 @@ import de.nb.aventiure2.data.world.time.AvTimeSpan;
 
 import static de.nb.aventiure2.data.storystate.StoryState.StructuralElement.PARAGRAPH;
 import static de.nb.aventiure2.data.storystate.StoryState.StructuralElement.SENTENCE;
+import static de.nb.aventiure2.data.world.entity.creature.Creature.Key.FROSCHPRINZ;
+import static de.nb.aventiure2.data.world.entity.creature.CreatureState.AUF_DEM_WEG_ZUM_SCHLOSSFEST;
 import static de.nb.aventiure2.data.world.entity.creature.CreatureState.ERWARTET_VON_SC_EINLOESUNG_SEINES_VERSPRECHENS;
 import static de.nb.aventiure2.data.world.entity.creature.CreatureState.HAT_FORDERUNG_GESTELLT;
 import static de.nb.aventiure2.data.world.entity.creature.CreatureState.HAT_NACH_BELOHNUNG_GEFRAGT;
 import static de.nb.aventiure2.data.world.entity.creature.CreatureState.HAT_SC_HILFSBEREIT_ANGESPROCHEN;
 import static de.nb.aventiure2.data.world.entity.creature.CreatureState.UNAUFFAELLIG;
 import static de.nb.aventiure2.data.world.entity.object.AvObject.Key.GOLDENE_KUGEL;
+import static de.nb.aventiure2.data.world.invisible.Invisibles.SCHLOSSFEST_BEGINN_DATE_TIME;
 import static de.nb.aventiure2.data.world.room.AvRoom.IM_WALD_BEIM_BRUNNEN;
+import static de.nb.aventiure2.data.world.time.AvTimeSpan.hours;
 import static de.nb.aventiure2.data.world.time.AvTimeSpan.noTime;
 import static de.nb.aventiure2.data.world.time.AvTimeSpan.secs;
 import static de.nb.aventiure2.german.base.GermanUtil.capitalize;
 
 class FroschprinzReactions extends AbstractCreatureReactions {
+    private static final AvDateTime FROSCHPRINZ_LAEUFT_FRUEHESTENS_ZUM_SCHLOSSFEST_DATE_TIME =
+            SCHLOSSFEST_BEGINN_DATE_TIME.minus(hours(12));
+
     FroschprinzReactions(final AvDatabase db,
                          final Class<? extends IPlayerAction> playerActionClass) {
         super(db, playerActionClass);
@@ -130,17 +137,39 @@ class FroschprinzReactions extends AbstractCreatureReactions {
     @Override
     public AvTimeSpan onTimePassed(final AvDateTime lastTime, final AvDateTime now,
                                    final StoryState currentStoryState) {
-        // STORY Wenn das Schlossfest noch nicht begonnen
-        //  hat, läuft der Frosch irgendwenn zum Schlossfest los,
-        //  z.B. am Vorabend.
-        //  -> Statuswechsel, Frosch "verschwindet" aus der Welt
-        //  Ggf. kann das der Spieler miterleben.
-        //  (Es sei, denn der Spieler hätte den Frosch mitgenommen oder irgendwo anders
-        //  hingetragen.)
+        AvTimeSpan timeElapsed = noTime();
+
+        final CreatureData froschhprinz = db.creatureDataDao().getCreature(FROSCHPRINZ);
+
+        if (!now.isBefore(FROSCHPRINZ_LAEUFT_FRUEHESTENS_ZUM_SCHLOSSFEST_DATE_TIME)
+                && froschhprinz.hasState(ERWARTET_VON_SC_EINLOESUNG_SEINES_VERSPRECHENS)) {
+            timeElapsed = timeElapsed.plus(
+                    froschprinz_laeuft_zum_schlossfest_los(froschhprinz));
+        }
+
+        return timeElapsed;
+    }
+
+    private AvTimeSpan froschprinz_laeuft_zum_schlossfest_los(
+            final CreatureData froschhprinz) {
+        final AvTimeSpan timeElapsed;
+        if (db.playerLocationDao().getPlayerLocation().getRoom() ==
+                froschhprinz.getRoom()) {
+            n.add(t(PARAGRAPH, "Plitsch platsch, plitsch platsch hüpft der Frosch davon")
+                    .beendet(PARAGRAPH));
+            timeElapsed = secs(5);
+        } else {
+            timeElapsed = noTime();
+        }
+
+        db.creatureDataDao().setRoom(FROSCHPRINZ, null);
+        db.creatureDataDao().setState(FROSCHPRINZ, AUF_DEM_WEG_ZUM_SCHLOSSFEST);
 
         // STORY Irgendwann (x Stunden danach?!) taucht der Frosch beim
         //   Spieler am Tisch im Schlossfest auf.
+        //   Dazu müsste man an Creatures Zeitpunkte speichern können z.B.
+        //   WANN_DER_FROSCH_LOSGELAUFEN_IST
 
-        return noTime();
+        return timeElapsed;
     }
 }
