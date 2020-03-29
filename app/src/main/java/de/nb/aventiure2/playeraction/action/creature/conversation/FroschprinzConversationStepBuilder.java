@@ -14,6 +14,7 @@ import de.nb.aventiure2.data.world.creature.CreatureData;
 import de.nb.aventiure2.data.world.object.AvObject;
 import de.nb.aventiure2.data.world.object.ObjectData;
 import de.nb.aventiure2.data.world.room.AvRoom;
+import de.nb.aventiure2.data.world.time.AvTimeSpan;
 import de.nb.aventiure2.german.base.DeklinierbarePhrase;
 import de.nb.aventiure2.german.base.Nominalphrase;
 import de.nb.aventiure2.playeraction.action.HeulenAction;
@@ -29,6 +30,8 @@ import static de.nb.aventiure2.data.world.creature.CreatureState.HAT_NACH_BELOHN
 import static de.nb.aventiure2.data.world.object.ObjectData.filterInDenBrunnenGefallen;
 import static de.nb.aventiure2.data.world.object.ObjectData.getDescriptionSingleOrCollective;
 import static de.nb.aventiure2.data.world.player.stats.PlayerStateOfMind.VOLLER_FREUDE;
+import static de.nb.aventiure2.data.world.time.AvTimeSpan.noTime;
+import static de.nb.aventiure2.data.world.time.AvTimeSpan.secs;
 import static de.nb.aventiure2.german.base.GermanUtil.capitalize;
 import static de.nb.aventiure2.german.base.Indefinitpronomen.ALLES;
 import static de.nb.aventiure2.german.base.Nominalphrase.ANGEBOTE;
@@ -104,14 +107,14 @@ class FroschprinzConversationStepBuilder extends AbstractCreatureConversationSte
                                 this::hallo_froschReagiertNicht)
                 );
             case AUF_DEM_WEG_ZUM_BRUNNEN_UM_DINGE_HERAUSZUHOLEN:
-                // TODO Steps für AUF_DEM_WEG_ZUM_BRUNNEN_UM_DINGE_HERAUSZUHOLEN
+                // STORY Steps für AUF_DEM_WEG_ZUM_BRUNNEN_UM_DINGE_HERAUSZUHOLEN
                 return ImmutableList.of(
-                        // TODO "Vertraue mir, bald hast du ...die goldene Kugel...
+                        // STORY "Vertraue mir, bald hast du ...die goldene Kugel...
                         // wieder. Aber vergiss dein Versprechen nicht!"
                         entrySt(this::hallo_froschErinnertAnVersprechen)
                 );
             case ERWARTET_VON_SC_EINLOESUNG_SEINES_VERSPRECHENS:
-                // TODO Steps für HAT_DINGE_AUS_DEM_BRUNNEN_HERAUFGEHOLT
+                // STORY Steps für HAT_DINGE_AUS_DEM_BRUNNEN_HERAUFGEHOLT
                 return ImmutableList.of(
                         entrySt(this::hallo_froschErinnertAnVersprechen)
                 );
@@ -126,23 +129,23 @@ class FroschprinzConversationStepBuilder extends AbstractCreatureConversationSte
     // -------------------------------------------------------------------------------
     // .. HAT_SC_HILFSBEREIT_ANGESPROCHEN
     // -------------------------------------------------------------------------------
-    private void froschHatAngesprochen_antworten() {
+    private AvTimeSpan froschHatAngesprochen_antworten() {
         if (nichtsIstInDenBrunnenGefallen()) {
             n.add(t(SENTENCE, "„Ach, du bist's, alter Wasserpatscher“, sagst du")
                     .undWartest()
                     .dann()
                     .imGespraechMit(null));
-            return;
+            return secs(5);
         }
 
-        inDenBrunnenGefallenErklaerung();
-        herausholenAngebot();
+        AvTimeSpan timeElapsed = noTime();
+        timeElapsed = timeElapsed.plus(inDenBrunnenGefallenErklaerung());
+        return timeElapsed.plus(herausholenAngebot());
     }
 
-    private void froschHatAngesprochen_ImmReEntry() {
+    private AvTimeSpan froschHatAngesprochen_ImmReEntry() {
         if (nichtsIstInDenBrunnenGefallen()) {
-            hallo_froschReagiertNicht();
-            return;
+            return hallo_froschReagiertNicht();
         }
 
         if (initialStoryState.allowsAdditionalDuSatzreihengliedOhneSubjekt()
@@ -158,24 +161,25 @@ class FroschprinzConversationStepBuilder extends AbstractCreatureConversationSte
                     "Du gibst dir einen Ruck:"));
         }
 
-        froschHatAngesprochen_ReEntry();
+        return froschHatAngesprochen_ReEntry();
     }
 
-    private void froschHatAngesprochen_ReEntry() {
+    private AvTimeSpan froschHatAngesprochen_ReEntry() {
         if (nichtsIstInDenBrunnenGefallen()) {
-            hallo_froschReagiertNicht();
-            return;
+            return hallo_froschReagiertNicht();
         }
 
         n.add(t(SENTENCE, "„Hallo, du hässlicher Frosch!“, redest du ihn an")
                 .undWartest()
                 .dann());
 
-        inDenBrunnenGefallenErklaerung();
-        herausholenAngebot();
+
+        AvTimeSpan timeElapsed = noTime();
+        timeElapsed = timeElapsed.plus(inDenBrunnenGefallenErklaerung());
+        return timeElapsed.plus(herausholenAngebot());
     }
 
-    private void inDenBrunnenGefallenErklaerung() {
+    private AvTimeSpan inDenBrunnenGefallenErklaerung() {
         if (initialStoryState.lastActionWas(HeulenAction.class)) {
             final DeklinierbarePhrase objectsDesc =
                     getDescriptionSingleOrCollective(objectsInDenBrunnenGefallen);
@@ -187,7 +191,7 @@ class FroschprinzConversationStepBuilder extends AbstractCreatureConversationSte
                     + " mir in den Brunnen hinabgefallen " +
                     istSind(objectsDesc.getNumerusGenus()) +
                     ".“"));
-            return;
+            return secs(10);
         }
 
         if (objectsInDenBrunnenGefallen.size() == 1) {
@@ -197,13 +201,14 @@ class FroschprinzConversationStepBuilder extends AbstractCreatureConversationSte
             n.add(t(SENTENCE, "„"
                     + capitalize(objectInDenBrunnenGefallen.nom())
                     + " ist mir in den Brunnen hinabgefallen.“"));
-            return;
+            return secs(10);
         }
 
         n.add(t(SENTENCE, "„Mir sind Dinge in den Brunnen hinabgefallen.“"));
+        return secs(5);
     }
 
-    private void herausholenAngebot() {
+    private AvTimeSpan herausholenAngebot() {
         final String objectsInDenBrunnenGefallenShortAkk =
                 ObjectData.getAkkShort(objectsInDenBrunnenGefallen);
 
@@ -223,22 +228,25 @@ class FroschprinzConversationStepBuilder extends AbstractCreatureConversationSte
                 .beendet(PARAGRAPH));
 
         db.creatureDataDao().setState(FROSCHPRINZ, HAT_NACH_BELOHNUNG_GEFRAGT);
+
+        return secs(15);
     }
 
-    private void froschHatAngesprochen_Exit() {
+    private AvTimeSpan froschHatAngesprochen_Exit() {
         n.add(t(SENTENCE,
                 "Du tust, als hättest du nichts gehört")
                 .komma()
                 .undWartest()
                 .dann()
                 .imGespraechMit(null));
+        return secs(3);
     }
 
     // -------------------------------------------------------------------------------
     // .. HAT_NACH_BELOHNUNG_GEFRAGT
     // -------------------------------------------------------------------------------
 
-    private void froschHatNachBelohnungGefragt_AngeboteMachen() {
+    private AvTimeSpan froschHatNachBelohnungGefragt_AngeboteMachen() {
         n.add(t(SENTENCE,
                 "„Was du haben willst, lieber Frosch“, sagst du, „meine Kleider, "
                         + "Perlen oder Edelsteine?“"));
@@ -256,15 +264,16 @@ class FroschprinzConversationStepBuilder extends AbstractCreatureConversationSte
                 .beendet(PARAGRAPH));
 
         db.creatureDataDao().setState(FROSCHPRINZ, HAT_FORDERUNG_GESTELLT);
+        return secs(20);
     }
 
-    private void froschHatNachBelohnungGefragt_ImmReEntry() {
+    private AvTimeSpan froschHatNachBelohnungGefragt_ImmReEntry() {
         n.add(t(PARAGRAPH, "Dann gehst du kurz in dich…"));
 
-        froschHatNachBelohnungGefragt_ReEntry();
+        return froschHatNachBelohnungGefragt_ReEntry();
     }
 
-    private void froschHatNachBelohnungGefragt_ReEntry() {
+    private AvTimeSpan froschHatNachBelohnungGefragt_ReEntry() {
         n.add(t(PARAGRAPH,
                 "„Frosch“, sprichst du ihn an, „steht dein Angebot noch?“"));
 
@@ -287,18 +296,21 @@ class FroschprinzConversationStepBuilder extends AbstractCreatureConversationSte
                 .beendet(PARAGRAPH));
 
         db.creatureDataDao().setState(FROSCHPRINZ, HAT_FORDERUNG_GESTELLT);
+
+        return secs(30);
     }
 
-    private void froschHatNachBelohnungGefragt_Exit() {
+    private AvTimeSpan froschHatNachBelohnungGefragt_Exit() {
         n.add(t(SENTENCE,
                 "„Denkst du etwa, ich überschütte dich mit Gold und Juwelen? – Vergiss es!“")
                 .imGespraechMit(null));
+        return secs(5);
     }
 
     // -------------------------------------------------------------------------------
     // .. HAT_NACH_BELOHNUNG_GEFRAGT
     // -------------------------------------------------------------------------------
-    private void froschHatForderungGestellt_AllesVersprechen() {
+    private AvTimeSpan froschHatForderungGestellt_AllesVersprechen() {
         // die goldene Kugel / die Dinge
         n.add(t(PARAGRAPH,
                 "„Ach ja“, sagst du, „ich verspreche dir alles, was du "
@@ -308,13 +320,13 @@ class FroschprinzConversationStepBuilder extends AbstractCreatureConversationSte
                         + "aber: „Was der einfältige Frosch schwätzt, der sitzt im Wasser bei "
                         + "seinesgleichen und quakt und kann keines Menschen Geselle sein.“"));
 
-        froschReagiertAufVersprechen();
+        return secs(20).plus(froschReagiertAufVersprechen());
     }
 
-    private void froschHatForderungGestellt_ImmReEntry() {
+    private AvTimeSpan froschHatForderungGestellt_ImmReEntry() {
         n.add(t(SENTENCE,
                 "Aber im nächsten Moment entschuldigst du schon: "
-                        + "„Nicht für ungut! Wenn du mir wirklich "
+                        + "„Nichts für ungut! Wenn du mir wirklich "
                         + getDescriptionSingleOrCollective(objectsInDenBrunnenGefallen).akk()
                         + " wieder besorgen kannst – ich verspreche dir alles, was du willst!“"
                         + " Bei dir selbst denkst du: "
@@ -322,11 +334,10 @@ class FroschprinzConversationStepBuilder extends AbstractCreatureConversationSte
                         + "seinesgleichen und quakt und kann keines Menschen Geselle sein.“"
         ));
 
-        froschReagiertAufVersprechen();
+        return secs(20).plus(froschReagiertAufVersprechen());
     }
 
-    private void froschHatForderungGestellt_reEntry() {
-
+    private AvTimeSpan froschHatForderungGestellt_reEntry() {
         n.add(t(SENTENCE,
                 "„Lieber Frosch“, sagst du, „ich habe es mir überlegt. Ich verspreche dir alles, "
                         + "was du "
@@ -339,10 +350,10 @@ class FroschprinzConversationStepBuilder extends AbstractCreatureConversationSte
                         + " Wasser bei seinesgleichen und quakt und kann keines Menschen "
                         + "Geselle sein.“"));
 
-        froschReagiertAufVersprechen();
+        return secs(20).plus(froschReagiertAufVersprechen());
     }
 
-    private void froschReagiertAufVersprechen() {
+    private AvTimeSpan froschReagiertAufVersprechen() {
         n.add(t(PARAGRAPH,
                 "Der Frosch, als er die Zusage erhalten hat,"));
 
@@ -353,13 +364,13 @@ class FroschprinzConversationStepBuilder extends AbstractCreatureConversationSte
 
             db.creatureDataDao().setState(FROSCHPRINZ,
                     AUF_DEM_WEG_ZUM_BRUNNEN_UM_DINGE_HERAUSZUHOLEN);
-            // TODO Der Froschprinz muss eine KI erhalten, dass er sich
+            // STORY Der Froschprinz muss eine KI erhalten, dass er sich
             // vom aktuellen room Schritt für Schritt zum Brunnen bewegt
             // und die Dinge herausholt.
-            // TODO Außerdem könnte man den Frosch auf dem Weg treffen
+            // STORY Außerdem könnte man den Frosch auf dem Weg treffen
             // (oder auch nicht).
 
-            return;
+            return secs(5);
         }
 
         final DeklinierbarePhrase descObjectsInDenBrunnenGefallen =
@@ -385,17 +396,18 @@ class FroschprinzConversationStepBuilder extends AbstractCreatureConversationSte
         db.creatureDataDao().setState(FROSCHPRINZ, ERWARTET_VON_SC_EINLOESUNG_SEINES_VERSPRECHENS);
 
         db.playerStatsDao().setStateOfMind(VOLLER_FREUDE);
-        // TODO Und welche Auswirkung?
-        // TODO Wie zurücksetzen?
+        // STORY Und welche Auswirkung?
 
         for (final ObjectData objectData : objectsInDenBrunnenGefallen) {
             db.objectDataDao().setDemSCInDenBrunnenGefallen(
                     objectData.getObject(), false);
             db.objectDataDao().setRoom(objectData.getObject(), room);
         }
+
+        return secs(30);
     }
 
-    private void froschHatForderungGestellt_Exit() {
+    private AvTimeSpan froschHatForderungGestellt_Exit() {
         n.add(alt(
                 t(SENTENCE,
                         "„Na, bei dir piept's wohl!“ – Entrüstet wendest du dich ab")
@@ -409,6 +421,8 @@ class FroschprinzConversationStepBuilder extends AbstractCreatureConversationSte
                                 + "Frosch!“")
                         .imGespraechMit(null)
                         .beendet(PARAGRAPH)));
+
+        return secs(10);
     }
 
     // -------------------------------------------------------------------------------
@@ -424,7 +438,7 @@ class FroschprinzConversationStepBuilder extends AbstractCreatureConversationSte
     // .. ALLGEMEINES
     // -------------------------------------------------------------------------------
 
-    private void hallo_froschReagiertNicht() {
+    private AvTimeSpan hallo_froschReagiertNicht() {
         n.add(alt(
                 t(SENTENCE, "„Hallo, Kollege Frosch!“"),
                 t(SENTENCE, "„Hallo, du hässlicher Frosch!“, redest du ihn an")
@@ -433,16 +447,17 @@ class FroschprinzConversationStepBuilder extends AbstractCreatureConversationSte
                 t(SENTENCE, "„Hallo nochmal, Meister Frosch!“")
         ));
 
-        froschReagiertNicht();
+        return secs(3).plus(froschReagiertNicht());
     }
 
-    private void froschReagiertNicht() {
+    private AvTimeSpan froschReagiertNicht() {
         n.add(t(SENTENCE, "Der Frosch reagiert nicht")
                 .imGespraechMit(null)
                 .beendet(PARAGRAPH));
+        return secs(3);
     }
 
-    private void hallo_froschErinnertAnVersprechen() {
+    private AvTimeSpan hallo_froschErinnertAnVersprechen() {
         final Nominalphrase froschDesc = creatureData.getDescription(true);
         n.add(alt(
                 t(SENTENCE,
@@ -465,6 +480,8 @@ class FroschprinzConversationStepBuilder extends AbstractCreatureConversationSte
                                 + " zurück."
                 ).imGespraechMit(null)
         ));
+
+        return secs(15);
     }
 
     private boolean nichtsIstInDenBrunnenGefallen() {

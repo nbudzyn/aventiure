@@ -44,13 +44,17 @@ import de.nb.aventiure2.data.world.room.AvRoom;
 import de.nb.aventiure2.data.world.room.AvRoomConverters;
 import de.nb.aventiure2.data.world.room.KnownRoom;
 import de.nb.aventiure2.data.world.room.RoomDao;
+import de.nb.aventiure2.data.world.time.AvDateTime;
+import de.nb.aventiure2.data.world.time.AvDateTimeDao;
 
 import static de.nb.aventiure2.data.storystate.StoryStateBuilder.t;
 import static de.nb.aventiure2.data.world.object.AvObject.Key.GOLDENE_KUGEL;
+import static de.nb.aventiure2.data.world.time.AvTime.oClock;
 
 @Database(entities = {
         Counter.class,
         StoryState.class,
+        AvDateTime.class,
         KnownRoom.class,
         ObjectData.class,
         CreatureData.class,
@@ -67,6 +71,8 @@ import static de.nb.aventiure2.data.world.object.AvObject.Key.GOLDENE_KUGEL;
 // schema so you can check the current schema into your version control system."
 public abstract class AvDatabase extends RoomDatabase {
     public abstract CounterDao counterDao();
+
+    public abstract AvDateTimeDao dateTimeDao();
 
     public abstract StoryStateDao storyStateDao();
 
@@ -104,6 +110,9 @@ public abstract class AvDatabase extends RoomDatabase {
                 INSTANCE.storyStateDao().add(buildInitialStoryState());
                 INSTANCE.roomDao().setKnown(AvRoom.SCHLOSS_VORHALLE);
                 INSTANCE.objectDataDao().setKnown(GOLDENE_KUGEL);
+                INSTANCE.dateTimeDao().setDateTime(
+                        1, oClock(14, 30));
+
             });
         }
     };

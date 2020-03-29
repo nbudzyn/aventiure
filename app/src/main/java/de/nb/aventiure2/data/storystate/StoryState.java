@@ -292,7 +292,7 @@ public class StoryState {
             return 1;
         }
 
-        return 0;
+        return 2;
     }
 
     private static boolean newlineNeededToStartNewParagraph(
@@ -313,7 +313,7 @@ public class StoryState {
 
         final String lastRelevantCharBase =
                 baseTrimmed.substring(baseTrimmed.length() - 1);
-        if (".!?\"“\n".contains(lastRelevantCharBase)) {
+        if ("….!?\"“\n".contains(lastRelevantCharBase)) {
             return false;
         }
 

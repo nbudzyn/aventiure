@@ -14,6 +14,7 @@ import de.nb.aventiure2.data.world.object.ObjectData;
 import de.nb.aventiure2.data.world.player.stats.PlayerStateOfMind;
 import de.nb.aventiure2.data.world.room.AvRoom;
 import de.nb.aventiure2.data.world.room.connection.RoomConnection;
+import de.nb.aventiure2.data.world.time.AvTimeSpan;
 import de.nb.aventiure2.german.AbstractDescription;
 import de.nb.aventiure2.german.DuDescription;
 import de.nb.aventiure2.playeraction.AbstractPlayerAction;
@@ -21,6 +22,7 @@ import de.nb.aventiure2.playeraction.AbstractPlayerAction;
 import static com.google.common.base.Preconditions.checkArgument;
 import static de.nb.aventiure2.data.world.room.AvRoom.DRAUSSEN_VOR_DEM_SCHLOSS;
 import static de.nb.aventiure2.data.world.room.AvRoom.SCHLOSS_VORHALLE;
+import static de.nb.aventiure2.data.world.time.AvTimeSpan.secs;
 import static de.nb.aventiure2.german.DuDescription.du;
 import static de.nb.aventiure2.german.base.AllgDescription.allg;
 import static de.nb.aventiure2.german.base.GermanUtil.capitalize;
@@ -89,7 +91,7 @@ public class BewegenAction extends AbstractPlayerAction {
     }
 
     @Override
-    public void narrateAndDo() {
+    public AvTimeSpan narrateAndDo() {
         final List<CreatureData> creaturesInOldRoom =
                 db.creatureDataDao().getCreaturesInRoom(oldRoom);
 
@@ -97,7 +99,7 @@ public class BewegenAction extends AbstractPlayerAction {
         final List<CreatureData> creaturesInNewRoom =
                 db.creatureDataDao().getCreaturesInRoom(newRoom);
 
-        n.add(buildNewStoryStateRoomOnly(initialStoryState));
+        AvTimeSpan elapsedTime = narrateRoomOnly();
 
         if (oldRoom == SCHLOSS_VORHALLE && newRoom == DRAUSSEN_VOR_DEM_SCHLOSS
                 && db.playerStatsDao().getPlayerStats().getStateOfMind()
@@ -105,28 +107,41 @@ public class BewegenAction extends AbstractPlayerAction {
             db.playerStatsDao().setStateOfMind(PlayerStateOfMind.NEUTRAL);
         }
 
-        creatureReactionsCoordinator.onLeaveRoom(oldRoom, creaturesInOldRoom);
+        elapsedTime = elapsedTime.plus(creatureReactionsCoordinator
+                .onLeaveRoom(oldRoom, creaturesInOldRoom));
 
         if (!objectsInNewRoom.isEmpty()) {
-            n.add(buildObjectsStoryState(objectsInNewRoom));
+            elapsedTime = elapsedTime.plus(narrateObjects(objectsInNewRoom));
         }
 
-        db.playerLocationDao().
-
-                setRoom(newRoom);
+        db.playerLocationDao().setRoom(newRoom);
 
         setRoomAndObjectsKnown(objectsInNewRoom);
 
-        creatureReactionsCoordinator.onEnterRoom(oldRoom, newRoom, creaturesInNewRoom);
+        return elapsedTime.plus(creatureReactionsCoordinator
+                .onEnterRoom(oldRoom, newRoom, creaturesInNewRoom));
     }
 
-    private StoryStateBuilder buildNewStoryStateRoomOnly(final StoryState currentStoryState) {
-        final AbstractDescription description = getMovementDescription(currentStoryState);
-        return buildNewStoryStateRoomOnly(currentStoryState, description);
+    private AvTimeSpan narrateObjects(final List<ObjectData> objectsInNewRoom) {
+        n.add(t(StructuralElement.SENTENCE,
+                buildObjectsInRoomDescription(objectsInNewRoom))
+                .letztesObject(objectsInNewRoom.get(objectsInNewRoom.size() - 1).getObject()));
+
+        return secs(objectsInNewRoom.size() * 2);
+    }
+
+    private AvTimeSpan narrateRoomOnly() {
+        final AbstractDescription description = getMovementDescription(initialStoryState);
+        n.add(buildNewStoryStateRoomOnly(initialStoryState, description));
+
+        return description.getTimeElapsed();
     }
 
     private AbstractDescription getMovementDescription(final StoryState currentStoryState) {
         final boolean newRoomKnown = db.roomDao().isKnown(newRoom);
+
+        final AbstractDescription standardDescription = RoomConnection.getFrom(oldRoom).get(newRoom)
+                .getDescription(db.roomDao().isKnown(newRoom));
 
         if (newRoomKnown) {
             if (numberOfPossibilities == NumberOfPossibilities.ONLY_WAY) {
@@ -136,13 +151,14 @@ public class BewegenAction extends AbstractPlayerAction {
                         currentStoryState.lastActionWas(NehmenAction.class)) {
                     return du("springst", "damit fort",
                             false, true,
-                            true);
+                            true, standardDescription.getTimeElapsed().times(0.8));
                 }
 
                 if (db.playerStatsDao().getPlayerStats().getStateOfMind() ==
                         PlayerStateOfMind.UNTROESTLICH) {
                     return allg("Tieftraurig trottest du von dannen",
-                            false, true, false);
+                            false, true,
+                            false, standardDescription.getTimeElapsed().times(2));
                 }
             } else if (numberOfPossibilities == NumberOfPossibilities.ONE_IN_ONE_OUT
                     && currentStoryState.lastActionWas(BewegenAction.class) &&
@@ -152,12 +168,11 @@ public class BewegenAction extends AbstractPlayerAction {
                     currentStoryState.allowsAdditionalDuSatzreihengliedOhneSubjekt()) {
                 return du("eilst", "weiter",
                         false, true,
-                        false);
+                        false, standardDescription.getTimeElapsed().times(0.8));
             }
         }
 
-        return RoomConnection.getFrom(oldRoom).get(newRoom)
-                .getDescription(db.roomDao().isKnown(newRoom));
+        return standardDescription;
     }
 
     /**
@@ -255,12 +270,6 @@ public class BewegenAction extends AbstractPlayerAction {
                 .komma(desc.kommaStehtAus())
                 .undWartest(desc.allowsAdditionalDuSatzreihengliedOhneSubjekt())
                 .dann(desc.dann());
-    }
-
-    private StoryStateBuilder buildObjectsStoryState(final List<ObjectData> objectsInNewRoom) {
-        return t(StoryState.StructuralElement.SENTENCE,
-                buildObjectsInRoomDescription(objectsInNewRoom))
-                .letztesObject(objectsInNewRoom.get(objectsInNewRoom.size() - 1).getObject());
     }
 
     /**

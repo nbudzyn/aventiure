@@ -14,6 +14,7 @@ import de.nb.aventiure2.data.world.entity.AbstractEntityData;
 import de.nb.aventiure2.data.world.object.ObjectData;
 import de.nb.aventiure2.data.world.player.stats.PlayerStateOfMind;
 import de.nb.aventiure2.data.world.room.AvRoom;
+import de.nb.aventiure2.data.world.time.AvTimeSpan;
 import de.nb.aventiure2.german.base.Nominalphrase;
 import de.nb.aventiure2.german.praedikat.PraedikatMitEinerObjektleerstelle;
 import de.nb.aventiure2.playeraction.AbstractPlayerAction;
@@ -23,6 +24,7 @@ import static de.nb.aventiure2.data.storystate.StoryState.StructuralElement.PARA
 import static de.nb.aventiure2.data.world.creature.Creature.Key.FROSCHPRINZ;
 import static de.nb.aventiure2.data.world.creature.CreatureState.ERWARTET_VON_SC_EINLOESUNG_SEINES_VERSPRECHENS;
 import static de.nb.aventiure2.data.world.creature.CreatureState.ERWARTET_VON_SC_EINLOESUNG_SEINES_VERSPRECHENS_VON_SC_GETRAGEN;
+import static de.nb.aventiure2.data.world.time.AvTimeSpan.secs;
 import static de.nb.aventiure2.german.praedikat.VerbSubjObj.ABSETZEN;
 import static de.nb.aventiure2.german.praedikat.VerbSubjObj.HINLEGEN;
 
@@ -75,11 +77,14 @@ public class AblegenAction extends AbstractEntityAction {
     }
 
     @Override
-    public void narrateAndDo() {
-        narrate();
+    public AvTimeSpan narrateAndDo() {
+        AvTimeSpan timeElapsed = narrate();
         letGoAndAddToRoom();
 
-        creatureReactionsCoordinator.onAblegen(room, getEntityData());
+        timeElapsed =
+                timeElapsed.plus(creatureReactionsCoordinator.onAblegen(room, getEntityData()));
+
+        return timeElapsed;
     }
 
     private void letGoAndAddToRoom() {
@@ -110,20 +115,18 @@ public class AblegenAction extends AbstractEntityAction {
         db.playerStatsDao().setStateOfMind(PlayerStateOfMind.NEUTRAL);
     }
 
-    private void narrate() {
+    private AvTimeSpan narrate() {
         if (getEntityData() instanceof ObjectData) {
-            narrateObject((ObjectData) getEntityData());
-            return;
+            return narrateObject((ObjectData) getEntityData());
         }
         if (getEntityData() instanceof CreatureData) {
-            narrateCreature((CreatureData) getEntityData());
-            return;
+            return narrateCreature((CreatureData) getEntityData());
         }
         throw new IllegalStateException("Unexpected entity data: " + getEntityData());
     }
 
 
-    private void narrateObject(final ObjectData objectData) {
+    private AvTimeSpan narrateObject(final ObjectData objectData) {
         final Nominalphrase objDesc = objectData.getDescription(false);
 
         if (initialStoryState.allowsAdditionalDuSatzreihengliedOhneSubjekt()) {
@@ -133,13 +136,13 @@ public class AblegenAction extends AbstractEntityAction {
                             "- und legst "
                                     + objDesc.persPron().akk()
                                     + " sogleich wieder hin"));
-                    return;
+                    return secs(3);
                 }
 
                 n.add(t(StoryState.StructuralElement.WORD,
                         ", dann legst du sie hin")
                         .undWartest());
-                return;
+                return secs(5);
             }
 
             String text = "und legst " + objDesc.akk();
@@ -150,7 +153,7 @@ public class AblegenAction extends AbstractEntityAction {
             text += " hin";
 
             n.add(t(StoryState.StructuralElement.WORD, text));
-            return;
+            return secs(3);
         }
 
         if (initialStoryState.lastActionWas(NehmenAction.class)) {
@@ -159,7 +162,7 @@ public class AblegenAction extends AbstractEntityAction {
                         "Du legst " + objDesc.akk() + " wieder hin")
                         .undWartest()
                         .dann());
-                return;
+                return secs(5);
             }
         }
 
@@ -167,9 +170,11 @@ public class AblegenAction extends AbstractEntityAction {
                 "Du legst " + objDesc.akk() + " hin")
                 .undWartest()
                 .dann());
+
+        return secs(3);
     }
 
-    private void narrateCreature(final CreatureData creatureData) {
+    private AvTimeSpan narrateCreature(final CreatureData creatureData) {
         checkArgument(creatureData.creatureIs(Creature.Key.FROSCHPRINZ) &&
                         creatureData
                                 .hasState(ERWARTET_VON_SC_EINLOESUNG_SEINES_VERSPRECHENS_VON_SC_GETRAGEN),
@@ -195,5 +200,7 @@ public class AblegenAction extends AbstractEntityAction {
                                 + room.getLocationMode().getWohin()
                 )
         ));
+
+        return secs(7);
     }
 }

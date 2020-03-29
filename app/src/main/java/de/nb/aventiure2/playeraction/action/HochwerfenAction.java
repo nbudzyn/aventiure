@@ -13,6 +13,7 @@ import de.nb.aventiure2.data.world.creature.CreatureData;
 import de.nb.aventiure2.data.world.object.AvObject;
 import de.nb.aventiure2.data.world.object.ObjectData;
 import de.nb.aventiure2.data.world.room.AvRoom;
+import de.nb.aventiure2.data.world.time.AvTimeSpan;
 import de.nb.aventiure2.german.DuDescription;
 import de.nb.aventiure2.german.base.Nominalphrase;
 import de.nb.aventiure2.german.praedikat.SeinUtil;
@@ -24,6 +25,8 @@ import static de.nb.aventiure2.data.world.creature.CreatureState.HAT_SC_HILFSBER
 import static de.nb.aventiure2.data.world.creature.CreatureState.UNAUFFAELLIG;
 import static de.nb.aventiure2.data.world.player.stats.PlayerStateOfMind.UNTROESTLICH;
 import static de.nb.aventiure2.data.world.room.AvRoom.IM_WALD_BEIM_BRUNNEN;
+import static de.nb.aventiure2.data.world.time.AvTimeSpan.noTime;
+import static de.nb.aventiure2.data.world.time.AvTimeSpan.secs;
 import static de.nb.aventiure2.german.DuDescription.du;
 import static de.nb.aventiure2.german.base.GermanUtil.capitalize;
 
@@ -67,21 +70,22 @@ public class HochwerfenAction extends AbstractObjectAction {
     }
 
     @Override
-    public void narrateAndDo() {
+    public AvTimeSpan narrateAndDo() {
+        AvTimeSpan timeElapsed = noTime();
+
         if (initialStoryState.lastObjectWas(getObject()) &&
                 initialStoryState.lastActionWas(HochwerfenAction.class)) {
-            narrateAndDoWiederholung();
+            timeElapsed = timeElapsed.plus(narrateAndDoWiederholung());
         } else {
-            narrateAndDoErstesMal();
+            timeElapsed = timeElapsed.plus(narrateAndDoErstesMal());
         }
 
-        creatureReactionsCoordinator.onHochwerfen(room, getObjectData());
+        return timeElapsed.plus(creatureReactionsCoordinator.onHochwerfen(room, getObjectData()));
     }
 
-    private void narrateAndDoErstesMal() {
+    private AvTimeSpan narrateAndDoErstesMal() {
         if (room == IM_WALD_BEIM_BRUNNEN && !froschprinzCreatureData.hasState(UNAUFFAELLIG)) {
-            narrateAndDoFroschBekannt();
-            return;
+            return narrateAndDoFroschBekannt();
         }
 
         final Nominalphrase objectDesc = getObjectData().getDescription(false);
@@ -94,7 +98,7 @@ public class HochwerfenAction extends AbstractObjectAction {
                             objectDesc.persPron().akk() +
                             " wieder auf")
                     .dann());
-            return;
+            return secs(3);
         }
 
         n.add(t(StoryState.StructuralElement.PARAGRAPH,
@@ -105,6 +109,7 @@ public class HochwerfenAction extends AbstractObjectAction {
                         objectDesc.persPron().akk() +
                         " wieder auf")
                 .dann());
+        return secs(3);
     }
 
     private String vorfeldEmotionFuersHochwerfen() {
@@ -118,14 +123,13 @@ public class HochwerfenAction extends AbstractObjectAction {
         }
     }
 
-    private void narrateAndDoFroschBekannt() {
+    private AvTimeSpan narrateAndDoFroschBekannt() {
         if (froschprinzCreatureData.hasState(HAT_SC_HILFSBEREIT_ANGESPROCHEN,
                 HAT_NACH_BELOHNUNG_GEFRAGT,
                 HAT_FORDERUNG_GESTELLT)) {
-            narrateAndDoObjectFaelltSofortInDenBrunnen();
+            return narrateAndDoObjectFaelltSofortInDenBrunnen();
             // Der Spieler hat ein weiteres Objekt in den Brunnen fallen
             // lassen, obwohl er noch mit dem Frosch verhandelt.
-            return;
         }
 
         // Der Frosch ist nicht mehr in Stimmung, Dinge aus dem Brunnen zu holen.
@@ -139,24 +143,25 @@ public class HochwerfenAction extends AbstractObjectAction {
                             objectDesc.persPron().akk() +
                             " geschickt wieder auf")
                     .dann());
-            return;
+            return secs(3);
         }
 
         // Der Spieler hat die goldene Kugel letztlich in den Brunnen
         // fallen lassen, NACHDEM der Frosch schon Dinge hochgeholt hat.
         // Dann ist die Kugel jetzt WEG - PECH.
 
-        narrateAndDoObjectFaelltSofortInDenBrunnen();
+        final AvTimeSpan timeElapsed = narrateAndDoObjectFaelltSofortInDenBrunnen();
         if (froschprinzCreatureData.getRoom() == room) {
-            return;
+            return timeElapsed;
         }
 
         n.add(t(StoryState.StructuralElement.SENTENCE,
                 "Weit und breit kein Frosch zu sehen… Das war vielleicht etwas ungeschickt, " +
                         "oder?"));
+        return timeElapsed;
     }
 
-    private void narrateAndDoObjectFaelltSofortInDenBrunnen() {
+    private AvTimeSpan narrateAndDoObjectFaelltSofortInDenBrunnen() {
         final Nominalphrase objectDesc = getObjectData().getDescription(false);
 
         final DuDescription duDesc = du("wirfst",
@@ -169,7 +174,8 @@ public class HochwerfenAction extends AbstractObjectAction {
                         SeinUtil.istSind(objectDesc.getNumerusGenus()) +
                         " " +
                         objectDesc.persPron().akk(), false,
-                false, !initialStoryState.dann());
+                false, !initialStoryState.dann(),
+                secs(10));
 
         if (initialStoryState.dann()) {
             n.add(t(StructuralElement.PARAGRAPH,
@@ -184,9 +190,11 @@ public class HochwerfenAction extends AbstractObjectAction {
         db.playerInventoryDao().letGo(getObject());
         db.objectDataDao().setDemSCInDenBrunnenGefallen(getObject(),
                 true);
+
+        return duDesc.getTimeElapsed();
     }
 
-    private void narrateAndDoWiederholung() {
+    private AvTimeSpan narrateAndDoWiederholung() {
         if (db.counterDao()
                 .incAndGet("HochwerfenAction_Wiederholung") == 1 ||
                 (room == IM_WALD_BEIM_BRUNNEN && !froschprinzCreatureData
@@ -200,7 +208,7 @@ public class HochwerfenAction extends AbstractObjectAction {
                     t(StoryState.StructuralElement.SENTENCE,
                             "Und in die Höhe damit – juchei!")
                             .dann()));
-            return;
+            return secs(3);
         }
 
         if (room == IM_WALD_BEIM_BRUNNEN) {
@@ -220,7 +228,7 @@ public class HochwerfenAction extends AbstractObjectAction {
             db.playerInventoryDao().letGo(getObject());
             db.objectDataDao().setDemSCInDenBrunnenGefallen(getObject(), true);
             db.playerStatsDao().setStateOfMind(UNTROESTLICH);
-            return;
+            return secs(10);
         }
 
         n.add(t(StructuralElement.SENTENCE,
@@ -234,5 +242,6 @@ public class HochwerfenAction extends AbstractObjectAction {
 
         db.playerInventoryDao().letGo(getObject());
         db.objectDataDao().setRoom(getObject(), room);
+        return secs(5);
     }
 }

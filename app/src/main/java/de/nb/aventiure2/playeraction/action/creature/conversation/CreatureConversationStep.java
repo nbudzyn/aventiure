@@ -2,6 +2,7 @@ package de.nb.aventiure2.playeraction.action.creature.conversation;
 
 import de.nb.aventiure2.data.world.creature.Creature;
 import de.nb.aventiure2.data.world.creature.CreatureState;
+import de.nb.aventiure2.data.world.time.AvTimeSpan;
 import de.nb.aventiure2.german.base.Nominalphrase;
 import de.nb.aventiure2.german.praedikat.Praedikat;
 import de.nb.aventiure2.german.praedikat.PraedikatMitEinerObjektleerstelle;
@@ -68,8 +69,10 @@ public class CreatureConversationStep {
         /**
          * Führt den {@link CreatureConversationStep} aus - erzählt die Geschichte weiter
          * und verändert ggf. die Welt.
+         *
+         * @return Zeitspanne die das alles dauert
          */
-        void narrateAndDo();
+        AvTimeSpan narrateAndDo();
     }
 
     final static Condition ALWAYS_POSSIBLE = () -> true;
@@ -133,7 +136,7 @@ public class CreatureConversationStep {
     /**
      * Den Schritt ausführen.
      */
-    public void narrateAndDo() {
-        narrationAndAction.narrateAndDo();
+    public AvTimeSpan narrateAndDo() {
+        return narrationAndAction.narrateAndDo();
     }
 }

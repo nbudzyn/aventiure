@@ -14,9 +14,11 @@ import de.nb.aventiure2.data.world.creature.CreatureData;
 import de.nb.aventiure2.data.world.entity.AbstractEntityData;
 import de.nb.aventiure2.data.world.object.ObjectData;
 import de.nb.aventiure2.data.world.room.AvRoom;
+import de.nb.aventiure2.data.world.time.AvTimeSpan;
 
 import static de.nb.aventiure2.data.world.creature.Creature.Key.FROSCHPRINZ;
 import static de.nb.aventiure2.data.world.creature.Creature.Key.SCHLOSSWACHE;
+import static de.nb.aventiure2.data.world.time.AvTimeSpan.noTime;
 
 public final class CreatureReactionsCoordinator {
     private final AvDatabase db;
@@ -35,52 +37,72 @@ public final class CreatureReactionsCoordinator {
                 .build();
     }
 
-    public void onLeaveRoom(final AvRoom oldRoom,
-                            final List<CreatureData> creaturesInOldRoom) {
+    public AvTimeSpan onLeaveRoom(final AvRoom oldRoom,
+                                  final List<CreatureData> creaturesInOldRoom) {
+        AvTimeSpan timeElapsed = noTime();
         final StoryState currentStoryState = n.getStoryState();
 
         for (final CreatureData creatureInOldRoom : creaturesInOldRoom) {
-            getReactions(creatureInOldRoom).onLeaveRoom(oldRoom, creatureInOldRoom,
-                    currentStoryState);
+            timeElapsed = timeElapsed.plus(
+                    getReactions(creatureInOldRoom).onLeaveRoom(oldRoom, creatureInOldRoom,
+                            currentStoryState));
         }
+
+        return timeElapsed;
     }
 
-    public void onEnterRoom(final AvRoom oldRoom,
-                            final AvRoom newRoom, final List<CreatureData> creaturesInNewRoom) {
+    public AvTimeSpan onEnterRoom(final AvRoom oldRoom,
+                                  final AvRoom newRoom,
+                                  final List<CreatureData> creaturesInNewRoom) {
+        AvTimeSpan timeElapsed = noTime();
         final StoryState currentStoryState = n.getStoryState();
 
         for (final CreatureData creatureInNewRoom : creaturesInNewRoom) {
-            getReactions(creatureInNewRoom).onEnterRoom(oldRoom, newRoom, creatureInNewRoom,
-                    currentStoryState);
+            timeElapsed = timeElapsed.plus(
+                    getReactions(creatureInNewRoom).onEnterRoom(oldRoom, newRoom, creatureInNewRoom,
+                            currentStoryState));
         }
+
+        return timeElapsed;
     }
 
-    public void onNehmen(final AvRoom room,
-                         final AbstractEntityData entityData) {
+    public AvTimeSpan onNehmen(final AvRoom room,
+                               final AbstractEntityData entityData) {
+        AvTimeSpan timeElapsed = noTime();
         final StoryState currentStoryState = n.getStoryState();
 
         for (final CreatureData creatureInRoom : getCreaturesInRoom(room)) {
-            getReactions(creatureInRoom).onNehmen(room, creatureInRoom, entityData,
-                    currentStoryState);
+            timeElapsed = timeElapsed.plus(getReactions(creatureInRoom)
+                    .onNehmen(room, creatureInRoom, entityData, currentStoryState));
         }
+
+        return timeElapsed;
     }
 
-    public void onAblegen(final AvRoom room, final AbstractEntityData entityData) {
+    public AvTimeSpan onAblegen(final AvRoom room, final AbstractEntityData entityData) {
+        AvTimeSpan timeElapsed = noTime();
         final StoryState currentStoryState = n.getStoryState();
 
         for (final CreatureData creatureInRoom : getCreaturesInRoom(room)) {
-            getReactions(creatureInRoom).onAblegen(room, creatureInRoom, entityData,
-                    currentStoryState);
+            timeElapsed = timeElapsed.plus(getReactions(creatureInRoom)
+                    .onAblegen(room, creatureInRoom, entityData,
+                            currentStoryState));
         }
+
+        return timeElapsed;
     }
 
-    public void onHochwerfen(final AvRoom room, final ObjectData objectData) {
+    public AvTimeSpan onHochwerfen(final AvRoom room, final ObjectData objectData) {
+        AvTimeSpan timeElapsed = noTime();
         final StoryState currentStoryState = n.getStoryState();
 
         for (final CreatureData creatureInRoom : getCreaturesInRoom(room)) {
-            getReactions(creatureInRoom).onHochwerfen(room, creatureInRoom, objectData,
-                    currentStoryState);
+            timeElapsed = timeElapsed.plus(getReactions(creatureInRoom)
+                    .onHochwerfen(room, creatureInRoom, objectData,
+                            currentStoryState));
         }
+
+        return timeElapsed;
     }
 
     private List<CreatureData> getCreaturesInRoom(final AvRoom room) {

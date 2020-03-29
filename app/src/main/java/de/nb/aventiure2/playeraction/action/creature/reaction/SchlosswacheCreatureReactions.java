@@ -11,6 +11,7 @@ import de.nb.aventiure2.data.world.entity.AbstractEntityData;
 import de.nb.aventiure2.data.world.object.ObjectData;
 import de.nb.aventiure2.data.world.player.stats.PlayerStateOfMind;
 import de.nb.aventiure2.data.world.room.AvRoom;
+import de.nb.aventiure2.data.world.time.AvTimeSpan;
 import de.nb.aventiure2.playeraction.action.AblegenAction;
 
 import static de.nb.aventiure2.data.storystate.StoryState.StructuralElement.PARAGRAPH;
@@ -22,6 +23,8 @@ import static de.nb.aventiure2.data.world.creature.CreatureState.UNAUFFAELLIG;
 import static de.nb.aventiure2.data.world.object.AvObject.Key.GOLDENE_KUGEL;
 import static de.nb.aventiure2.data.world.object.AvObject.extractObject;
 import static de.nb.aventiure2.data.world.object.AvObject.isObject;
+import static de.nb.aventiure2.data.world.time.AvTimeSpan.noTime;
+import static de.nb.aventiure2.data.world.time.AvTimeSpan.secs;
 import static de.nb.aventiure2.german.base.GermanUtil.capitalize;
 
 class SchlosswacheCreatureReactions extends AbstractCreatureReactions {
@@ -31,19 +34,21 @@ class SchlosswacheCreatureReactions extends AbstractCreatureReactions {
     }
 
     @Override
-    public void onLeaveRoom(final AvRoom oldRoom, final CreatureData wache,
-                            final StoryState currentStoryState) {
+    public AvTimeSpan onLeaveRoom(final AvRoom oldRoom, final CreatureData wache,
+                                  final StoryState currentStoryState) {
+        return noTime();
     }
 
     @Override
-    public void onEnterRoom(final AvRoom oldRoom, final AvRoom newRoom, final CreatureData wache,
-                            final StoryState currentStoryState) {
+    public AvTimeSpan onEnterRoom(final AvRoom oldRoom, final AvRoom newRoom,
+                                  final CreatureData wache,
+                                  final StoryState currentStoryState) {
         if (newRoom != AvRoom.SCHLOSS_VORHALLE) {
-            return;
+            return noTime();
         }
 
         if (wache.hasState(UNAUFFAELLIG)) {
-            return;
+            return noTime();
         }
 
         final ObjectData goldeneKugel = db.objectDataDao().get(GOLDENE_KUGEL);
@@ -54,15 +59,15 @@ class SchlosswacheCreatureReactions extends AbstractCreatureReactions {
                         capitalize(wache.nom(true))
                                 + " scheint dich nicht zu bemerken")
                         .letzterRaum(oldRoom));
-                return;
+                return secs(3);
             }
         }
 
-        scMussDasSchlossVerlassen(oldRoom, newRoom);
+        return scMussDasSchlossVerlassen(oldRoom, newRoom);
     }
 
-    private void scMussDasSchlossVerlassen(final AvRoom oldRoom, final AvRoom newRoom) {
-        // TODO Ausspinnen: Der Spieler sollte selbst entscheiden,
+    private AvTimeSpan scMussDasSchlossVerlassen(final AvRoom oldRoom, final AvRoom newRoom) {
+        // STORY Ausspinnen: Der Spieler sollte selbst entscheiden,
         // ob der das Schloss wieder verlässt - oder ggf. im Kerker landet.
         n.add(alt(
                 t(SENTENCE,
@@ -85,35 +90,37 @@ class SchlosswacheCreatureReactions extends AbstractCreatureReactions {
         ));
 
         db.playerLocationDao().setRoom(oldRoom);
+
+        return secs(10);
     }
 
     @Override
-    public void onNehmen(final AvRoom room, final CreatureData wacheInRoom,
-                         final AbstractEntityData genommenData,
-                         final StoryState currentStoryState) {
+    public AvTimeSpan onNehmen(final AvRoom room, final CreatureData wacheInRoom,
+                               final AbstractEntityData genommenData,
+                               final StoryState currentStoryState) {
         if (room != AvRoom.SCHLOSS_VORHALLE) {
-            return;
+            return noTime();
         }
 
         switch (wacheInRoom.getState()) {
             case UNAUFFAELLIG:
-                nehmen_wacheWirdAufmerksam(wacheInRoom, genommenData);
-                return;
+                return nehmen_wacheWirdAufmerksam(wacheInRoom, genommenData);
             case AUFMERKSAM:
                 if (isObject(genommenData, GOLDENE_KUGEL)) {
-                    nehmenGoldeneKugel_wacheIstAufmerksam(room, wacheInRoom,
+                    return nehmenGoldeneKugel_wacheIstAufmerksam(room, wacheInRoom,
                             (ObjectData) genommenData, currentStoryState);
-                    return;
                 }
+            default:
+                return noTime();
         }
     }
 
-    private void nehmen_wacheWirdAufmerksam(final CreatureData wache,
-                                            final AbstractEntityData genommenData) {
+    private AvTimeSpan nehmen_wacheWirdAufmerksam(final CreatureData wache,
+                                                  final AbstractEntityData genommenData) {
         n.add(t(PARAGRAPH,
                 "Da wird eine Wache auf dich aufmerksam. "
                         + "„Wie seid Ihr hier hereingekommen?“, fährt sie dich "
-                        // TODO Ausspinnen: Nach einer Übernachtung (z.B. in einer Hütte im
+                        // STORY Ausspinnen: Nach einer Übernachtung (z.B. in einer Hütte im
                         // Wald?) ist Sonntag, es gibt ein Fest mit Essen, und der
                         // Frosch kriegt seinen Willen.
                         + "scharf an. „Das Fest ist erst am Sonntag. Heute "
@@ -123,27 +130,27 @@ class SchlosswacheCreatureReactions extends AbstractCreatureReactions {
         db.creatureDataDao().setState(SCHLOSSWACHE, AUFMERKSAM);
         db.creatureDataDao().setKnown(SCHLOSSWACHE);
         db.playerStatsDao().setStateOfMind(PlayerStateOfMind.ANGESPANNT);
+        return secs(20);
     }
 
-    private void nehmenGoldeneKugel_wacheIstAufmerksam(final AvRoom room,
-                                                       final CreatureData wache,
-                                                       final ObjectData goldeneKugelData,
-                                                       final StoryState currentStoryState) {
+    private AvTimeSpan nehmenGoldeneKugel_wacheIstAufmerksam(final AvRoom room,
+                                                             final CreatureData wache,
+                                                             final ObjectData goldeneKugelData,
+                                                             final StoryState currentStoryState) {
         if (db.counterDao().incAndGet(
                 "SchlosswacheReactions_nehmenGoldeneKugel_wacheIstAufmerksam") > 1) {
-            nehmenGoldeneKugel_wacheIstAufmerksam_erwischt(room, wache, goldeneKugelData,
+            return nehmenGoldeneKugel_wacheIstAufmerksam_erwischt(room, wache, goldeneKugelData,
                     currentStoryState);
-            return;
         }
 
-        nehmenGoldeneKugel_wacheIstAufmerksam_nichtErwischt(wache, goldeneKugelData,
+        return nehmenGoldeneKugel_wacheIstAufmerksam_nichtErwischt(wache, goldeneKugelData,
                 currentStoryState);
     }
 
-    private void nehmenGoldeneKugel_wacheIstAufmerksam_erwischt(final AvRoom room,
-                                                                final CreatureData wache,
-                                                                final ObjectData goldeneKugelData,
-                                                                final StoryState currentStoryState) {
+    private AvTimeSpan nehmenGoldeneKugel_wacheIstAufmerksam_erwischt(final AvRoom room,
+                                                                      final CreatureData wache,
+                                                                      final ObjectData goldeneKugelData,
+                                                                      final StoryState currentStoryState) {
         final ImmutableList.Builder<StoryStateBuilder> alt = ImmutableList.builder();
 
         if (currentStoryState.allowsAdditionalDuSatzreihengliedOhneSubjekt()) {
@@ -160,8 +167,8 @@ class SchlosswacheCreatureReactions extends AbstractCreatureReactions {
 
         n.add(alt(alt));
 
-        // TODO Geschichte ausspinnen: Spieler muss die Kugel selbst
-        // ablegen bzw. kommt ggf. in den Kerker
+        // STORY Geschichte ausspinnen: Spieler muss die Kugel selbst
+        //  ablegen bzw. kommt ggf. in den Kerker
         n.add(t(PARAGRAPH,
                 "Da legst du doch besser die schöne goldene Kugel "
                         + "wieder an ihren Platz")
@@ -171,9 +178,10 @@ class SchlosswacheCreatureReactions extends AbstractCreatureReactions {
 
         db.playerInventoryDao().letGo(goldeneKugelData.getObject());
         db.objectDataDao().setRoom(goldeneKugelData.getObject(), room);
+        return secs(20);
     }
 
-    private void nehmenGoldeneKugel_wacheIstAufmerksam_nichtErwischt(
+    private AvTimeSpan nehmenGoldeneKugel_wacheIstAufmerksam_nichtErwischt(
             final CreatureData wache,
             final ObjectData goldeneKugelData,
             final StoryState currentStoryState) {
@@ -202,35 +210,39 @@ class SchlosswacheCreatureReactions extends AbstractCreatureReactions {
                 .letztesObject(extractObject(goldeneKugelData)));
 
         n.add(alt(alt));
+
+        return secs(3);
     }
 
     @Override
-    public void onAblegen(final AvRoom room, final CreatureData wacheInRoom,
-                          final AbstractEntityData abgelegtData,
-                          final StoryState currentStoryState) {
+    public AvTimeSpan onAblegen(final AvRoom room, final CreatureData wacheInRoom,
+                                final AbstractEntityData abgelegtData,
+                                final StoryState currentStoryState) {
         if (room != AvRoom.SCHLOSS_VORHALLE) {
-            return;
+            return noTime();
         }
 
         switch (wacheInRoom.getState()) {
             case AUFMERKSAM:
-                ablegen_wacheIstAufmerksam(wacheInRoom, abgelegtData, currentStoryState);
-                return;
+                return ablegen_wacheIstAufmerksam(wacheInRoom, abgelegtData, currentStoryState);
+            default:
+                return noTime();
         }
     }
 
-    private void ablegen_wacheIstAufmerksam(
+    private AvTimeSpan ablegen_wacheIstAufmerksam(
             final CreatureData wache, final AbstractEntityData abgelegtData,
             final StoryState currentStoryState) {
         if (db.counterDao()
                 .incAndGet("SchlosswacheReactions_ablegen_wacheIstAufmerksam") > 2) {
-            return;
+            return noTime();
         }
 
         if (currentStoryState.allowsAdditionalDuSatzreihengliedOhneSubjekt()) {
             t(WORD, ", von der kopfschüttelnden Wache beobachtet")
                     .dann()
                     .letztesObject(extractObject(abgelegtData));
+            return secs(5);
         }
 
         n.add(alt(
@@ -246,50 +258,50 @@ class SchlosswacheCreatureReactions extends AbstractCreatureReactions {
                         .letztesObject(extractObject(abgelegtData))
         ));
         db.playerStatsDao().setStateOfMind(PlayerStateOfMind.ANGESPANNT);
+        return secs(5);
     }
 
     @Override
-    public void onHochwerfen(final AvRoom room, final CreatureData wacheInRoom,
-                             final ObjectData objectData,
-                             final StoryState currentStoryState) {
+    public AvTimeSpan onHochwerfen(final AvRoom room, final CreatureData wacheInRoom,
+                                   final ObjectData objectData,
+                                   final StoryState currentStoryState) {
         if (room != AvRoom.SCHLOSS_VORHALLE) {
-            return;
+            return noTime();
         }
 
         switch (wacheInRoom.getState()) {
             case AUFMERKSAM:
                 if (objectData.getObject().getKey() == GOLDENE_KUGEL) {
-                    hochwerfenGoldeneKugel_wacheIstAufmerksam(room, wacheInRoom,
+                    return hochwerfenGoldeneKugel_wacheIstAufmerksam(room, wacheInRoom,
                             objectData, currentStoryState);
-                    return;
                 }
-                return;
+            default:
+                return noTime();
         }
     }
 
-    private void hochwerfenGoldeneKugel_wacheIstAufmerksam(final AvRoom room,
-                                                           final CreatureData wacheInRoom,
-                                                           final ObjectData goldeneKugelData,
-                                                           final StoryState currentStoryState) {
+    private AvTimeSpan hochwerfenGoldeneKugel_wacheIstAufmerksam(final AvRoom room,
+                                                                 final CreatureData wacheInRoom,
+                                                                 final ObjectData goldeneKugelData,
+                                                                 final StoryState currentStoryState) {
 
         final boolean scHatKugelAufgefangen =
                 db.playerInventoryDao().getInventory().stream().map(o -> o.getKey())
                         .anyMatch(k -> k == goldeneKugelData.getObject().getKey());
 
         if (scHatKugelAufgefangen) {
-            hochwerfenGoldeneKugel_wacheIstAufmerksam_wiederGefangen(room, wacheInRoom,
+            return hochwerfenGoldeneKugel_wacheIstAufmerksam_wiederGefangen(room, wacheInRoom,
                     goldeneKugelData, currentStoryState);
-            return;
         }
 
-        hochwerfenGoldeneKugel_wacheIstAufmerksam_nichtWiederGefangen(room, wacheInRoom,
+        return hochwerfenGoldeneKugel_wacheIstAufmerksam_nichtWiederGefangen(room, wacheInRoom,
                 goldeneKugelData, currentStoryState);
     }
 
-    private void hochwerfenGoldeneKugel_wacheIstAufmerksam_wiederGefangen(final AvRoom room,
-                                                                          final CreatureData wacheInRoom,
-                                                                          final ObjectData goldeneKugelData,
-                                                                          final StoryState currentStoryState) {
+    private AvTimeSpan hochwerfenGoldeneKugel_wacheIstAufmerksam_wiederGefangen(final AvRoom room,
+                                                                                final CreatureData wacheInRoom,
+                                                                                final ObjectData goldeneKugelData,
+                                                                                final StoryState currentStoryState) {
         n.add(t(PARAGRAPH, "„Was treibt Ihr für einen Unfug, legt sofort das "
                 + "Schmuckstück wieder hin!“, "
                 + "ruft dir "
@@ -298,7 +310,7 @@ class SchlosswacheCreatureReactions extends AbstractCreatureReactions {
                 .letztesObject(goldeneKugelData.getObject()));
 
         // TODO Geschichte ausspinnen: Spieler muss die Kugel selbst
-        // ablegen bzw. kommt ggf. in den Kerker
+        //  ablegen bzw. kommt ggf. in den Kerker
         n.add(t(PARAGRAPH,
                 "Eingeschüchtert legst du die schöne goldene Kugel "
                         + "wieder an ihren Platz")
@@ -309,14 +321,18 @@ class SchlosswacheCreatureReactions extends AbstractCreatureReactions {
         db.playerInventoryDao().letGo(goldeneKugelData.getObject());
         db.objectDataDao().setRoom(goldeneKugelData.getObject(), room);
         db.playerStatsDao().setStateOfMind(PlayerStateOfMind.ANGESPANNT);
+
+        return secs(10);
     }
 
-    private void hochwerfenGoldeneKugel_wacheIstAufmerksam_nichtWiederGefangen(
+    private AvTimeSpan hochwerfenGoldeneKugel_wacheIstAufmerksam_nichtWiederGefangen(
             final AvRoom room,
             final CreatureData wacheInRoom,
             final ObjectData goldeneKugelData,
             final StoryState currentStoryState) {
         n.add(t(PARAGRAPH, "Die Wache sieht sehr missbilligend zu")
                 .letztesObject(goldeneKugelData.getObject()));
+
+        return secs(3);
     }
 }

@@ -1,5 +1,7 @@
 package de.nb.aventiure2.german;
 
+import de.nb.aventiure2.data.world.time.AvTimeSpan;
+
 import static de.nb.aventiure2.german.base.GermanUtil.capitalize;
 
 /**
@@ -26,26 +28,31 @@ public class DuDescription implements AbstractDescription {
 
     private final boolean dann;
 
+    private final AvTimeSpan timeElapsed;
+
     public static DuDescription du(final String verb, final String remainder,
                                    final boolean kommaStehtAus,
                                    final boolean
                                            allowsAdditionalDuSatzreihengliedOhneSubjekt,
-                                   final boolean dann) {
+                                   final boolean dann,
+                                   final AvTimeSpan timeElapsed) {
         return new DuDescription(verb, remainder,
                 kommaStehtAus,
-                allowsAdditionalDuSatzreihengliedOhneSubjekt, dann);
+                allowsAdditionalDuSatzreihengliedOhneSubjekt, dann, timeElapsed);
     }
 
     private DuDescription(final String verb, final String remainder,
                           final boolean kommmaStehtAus,
                           final boolean allowsAdditionalDuSatzreihengliedOhneSubjekt,
-                          final boolean dann) {
+                          final boolean dann,
+                          final AvTimeSpan timeElapsed) {
         this.verb = verb;
         this.remainder = remainder;
         kommaStehtAus = kommmaStehtAus;
         this.allowsAdditionalDuSatzreihengliedOhneSubjekt =
                 allowsAdditionalDuSatzreihengliedOhneSubjekt;
         this.dann = dann;
+        this.timeElapsed = timeElapsed;
     }
 
     @Override
@@ -81,5 +88,10 @@ public class DuDescription implements AbstractDescription {
     @Override
     public boolean dann() {
         return dann;
+    }
+
+    @Override
+    public AvTimeSpan getTimeElapsed() {
+        return timeElapsed;
     }
 }

@@ -1,5 +1,7 @@
 package de.nb.aventiure2.german;
 
+import de.nb.aventiure2.data.world.time.AvTimeSpan;
+
 /**
  * Abstract superclass for a description.
  */
@@ -21,4 +23,9 @@ public interface AbstractDescription {
     boolean allowsAdditionalDuSatzreihengliedOhneSubjekt();
 
     boolean dann();
+
+    /**
+     * Zeit, die vergangen ist, während das das beschriebene geschehen ist
+     */
+    AvTimeSpan getTimeElapsed();
 }

@@ -10,8 +10,10 @@ import de.nb.aventiure2.data.database.AvDatabase;
 import de.nb.aventiure2.data.storystate.StoryState;
 import de.nb.aventiure2.data.world.player.stats.PlayerStateOfMind;
 import de.nb.aventiure2.data.world.room.AvRoom;
+import de.nb.aventiure2.data.world.time.AvTimeSpan;
 
 import static de.nb.aventiure2.data.storystate.StoryState.StructuralElement.PARAGRAPH;
+import static de.nb.aventiure2.data.world.time.AvTimeSpan.mins;
 
 /**
  * Der Spielercharakter klettert.
@@ -57,31 +59,28 @@ class KletternAction extends AbstractPlayerAction {
     }
 
     @Override
-    public void narrateAndDo() {
+    public AvTimeSpan narrateAndDo() {
         switch (room) {
             case HINTER_DER_HUETTE:
-                narrateAndDoKletternBaumHinterHuette();
-                return;
+                return narrateAndDoKletternBaumHinterHuette();
         }
 
         throw new IllegalStateException("Unexpected room: " + room);
     }
 
-    public void narrateAndDoKletternBaumHinterHuette() {
+    public AvTimeSpan narrateAndDoKletternBaumHinterHuette() {
         final int count = db.counterDao().incAndGet("KletternAction_BaumHinterHuette");
         switch (count) {
             case 1:
-                narrateAndDoKletternBaumHinterHuetteErstesMal();
-                return;
+                return narrateAndDoKletternBaumHinterHuetteErstesMal();
             case 2:
-                narrateAndDoKletternBaumHinterHuetteZweitesMal();
-                return;
+                return narrateAndDoKletternBaumHinterHuetteZweitesMal();
             default:
-                narrateAndDoKletternBaumHinterHuetteNtesMal();
+                return narrateAndDoKletternBaumHinterHuetteNtesMal();
         }
     }
 
-    private void narrateAndDoKletternBaumHinterHuetteErstesMal() {
+    private AvTimeSpan narrateAndDoKletternBaumHinterHuetteErstesMal() {
         n.add(t(PARAGRAPH,
                 "Vom Stamm geht in Hüfthöhe ein kräftiger Ast ab, den kannst du "
                         + "ohne Mühe "
@@ -101,16 +100,19 @@ class KletternAction extends AbstractPlayerAction {
                 .beendet(PARAGRAPH));
 
         db.playerStatsDao().setStateOfMind(PlayerStateOfMind.ERSCHOEPFT);
+
+        return mins(10);
     }
 
-    private void narrateAndDoKletternBaumHinterHuetteZweitesMal() {
+    private AvTimeSpan narrateAndDoKletternBaumHinterHuetteZweitesMal() {
         n.add(t(PARAGRAPH, "Noch einmal kletterst du eine, zwei Etagen den Baum hinauf. "
-                + "Du schaust ins Blattwerk und bist stolz auf dich, dann vorsichtig "
-                + "wieder herunter")
+                + "Du schaust ins Blattwerk und bist stolz auf dich, dann geht es vorsichtig "
+                + "wieder hinunter")
                 .beendet(PARAGRAPH));
+        return mins(10);
     }
 
-    private void narrateAndDoKletternBaumHinterHuetteNtesMal() {
+    private AvTimeSpan narrateAndDoKletternBaumHinterHuetteNtesMal() {
         n.add(alt(
                 t(PARAGRAPH,
                         "Ein weites Mal kletterst du auf den Baum. Ein zurückschwingender "
@@ -122,5 +124,7 @@ class KletternAction extends AbstractPlayerAction {
         ));
 
         db.playerStatsDao().setStateOfMind(PlayerStateOfMind.ERSCHOEPFT);
+
+        return mins(15);
     }
 }

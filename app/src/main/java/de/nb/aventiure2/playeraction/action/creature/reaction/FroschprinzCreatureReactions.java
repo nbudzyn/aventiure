@@ -5,8 +5,10 @@ import de.nb.aventiure2.data.storystate.IPlayerAction;
 import de.nb.aventiure2.data.storystate.StoryState;
 import de.nb.aventiure2.data.world.creature.CreatureData;
 import de.nb.aventiure2.data.world.entity.AbstractEntityData;
+import de.nb.aventiure2.data.world.object.AvObject;
 import de.nb.aventiure2.data.world.object.ObjectData;
 import de.nb.aventiure2.data.world.room.AvRoom;
+import de.nb.aventiure2.data.world.time.AvTimeSpan;
 
 import static de.nb.aventiure2.data.storystate.StoryState.StructuralElement.PARAGRAPH;
 import static de.nb.aventiure2.data.storystate.StoryState.StructuralElement.SENTENCE;
@@ -17,17 +19,19 @@ import static de.nb.aventiure2.data.world.creature.CreatureState.HAT_SC_HILFSBER
 import static de.nb.aventiure2.data.world.creature.CreatureState.UNAUFFAELLIG;
 import static de.nb.aventiure2.data.world.object.AvObject.Key.GOLDENE_KUGEL;
 import static de.nb.aventiure2.data.world.room.AvRoom.IM_WALD_BEIM_BRUNNEN;
+import static de.nb.aventiure2.data.world.time.AvTimeSpan.noTime;
+import static de.nb.aventiure2.data.world.time.AvTimeSpan.secs;
 import static de.nb.aventiure2.german.base.GermanUtil.capitalize;
 
 class FroschprinzCreatureReactions extends AbstractCreatureReactions {
-    public FroschprinzCreatureReactions(final AvDatabase db,
-                                        final Class<? extends IPlayerAction> playerActionClass) {
+    FroschprinzCreatureReactions(final AvDatabase db,
+                                 final Class<? extends IPlayerAction> playerActionClass) {
         super(db, playerActionClass);
     }
 
     @Override
-    public void onLeaveRoom(final AvRoom oldRoom, final CreatureData froschprinz,
-                            final StoryState currentStoryState) {
+    public AvTimeSpan onLeaveRoom(final AvRoom oldRoom, final CreatureData froschprinz,
+                                  final StoryState currentStoryState) {
         if (froschprinz.hasState(ERWARTET_VON_SC_EINLOESUNG_SEINES_VERSPRECHENS)
                 && oldRoom != AvRoom.SCHLOSS_VORHALLE) {
             n.add(t(SENTENCE,
@@ -37,48 +41,55 @@ class FroschprinzCreatureReactions extends AbstractCreatureReactions {
                             + "als er kann, du hörst nicht darauf")
                     .undWartest()
                     .letzterRaum(oldRoom));
+
+            return noTime();
         }
+
+        return noTime();
     }
 
     @Override
-    public void onEnterRoom(final AvRoom oldRoom, final AvRoom newRoom,
-                            final CreatureData froschprinz,
-                            final StoryState currentStoryState) {
+    public AvTimeSpan onEnterRoom(final AvRoom oldRoom, final AvRoom newRoom,
+                                  final CreatureData froschprinz,
+                                  final StoryState currentStoryState) {
         if (froschprinz.hasState(UNAUFFAELLIG)) {
-            return;
+            return noTime();
         }
 
         n.add(t(StoryState.StructuralElement.SENTENCE,
                 "Hier sitzt "
                         + froschprinz.getDescription(false).nom()));
 
-        // TODO Bei späterem Status sollte der Froschprinz den SC ansprechen und auf
-        // sein Versprechen hinweisen!
+        return noTime();
+
+        // STORY Bei späterem Status sollte der Froschprinz den SC ansprechen und auf
+        //  sein Versprechen hinweisen!
     }
 
     @Override
-    public void onNehmen(final AvRoom room, final CreatureData froschprinzInRoom,
-                         final AbstractEntityData genommenData,
-                         final StoryState currentStoryState) {
-    }
-
-
-    @Override
-    public void onAblegen(final AvRoom room, final CreatureData froschprinzInRoom,
-                          final AbstractEntityData abgelegtData,
-                          final StoryState currentStoryState) {
+    public AvTimeSpan onNehmen(final AvRoom room, final CreatureData froschprinzInRoom,
+                               final AbstractEntityData genommenData,
+                               final StoryState currentStoryState) {
+        return noTime();
     }
 
     @Override
-    public void onHochwerfen(final AvRoom room, final CreatureData froschprinzCreatureData,
-                             final ObjectData objectData,
-                             final StoryState currentStoryState) {
+    public AvTimeSpan onAblegen(final AvRoom room, final CreatureData froschprinzInRoom,
+                                final AbstractEntityData abgelegtData,
+                                final StoryState currentStoryState) {
+        return noTime();
+    }
+
+    @Override
+    public AvTimeSpan onHochwerfen(final AvRoom room, final CreatureData froschprinzCreatureData,
+                                   final ObjectData objectData,
+                                   final StoryState currentStoryState) {
         if (room != IM_WALD_BEIM_BRUNNEN || froschprinzCreatureData.hasState(UNAUFFAELLIG)) {
-            return;
+            return noTime();
         }
 
         final boolean scHatObjektAufgefangen =
-                db.playerInventoryDao().getInventory().stream().map(o -> o.getKey())
+                db.playerInventoryDao().getInventory().stream().map(AvObject::getKey)
                         .anyMatch(k -> k == objectData.getObject().getKey());
 
         if (froschprinzCreatureData.hasState(HAT_SC_HILFSBEREIT_ANGESPROCHEN,
@@ -93,15 +104,15 @@ class FroschprinzCreatureReactions extends AbstractCreatureReactions {
                         .beendet(PARAGRAPH)
                 );
             }
-            return;
+            return secs(3);
         }
 
         if (objectData.getObject().getKey() != GOLDENE_KUGEL) {
-            return;
+            return noTime();
         }
 
         if (scHatObjektAufgefangen) {
-            return;
+            return noTime();
         }
 
         // Der Spieler hat die goldene Kugel letztlich in den Brunnen
@@ -111,5 +122,7 @@ class FroschprinzCreatureReactions extends AbstractCreatureReactions {
                 capitalize(froschprinzCreatureData.nom(true)) +
                         " schaut dich vorwurfsvoll und etwas hochnäsig an")
                 .letztesObject(objectData.getObject()));
+
+        return secs(5);
     }
 }

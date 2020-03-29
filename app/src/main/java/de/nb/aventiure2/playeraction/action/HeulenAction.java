@@ -15,6 +15,7 @@ import de.nb.aventiure2.data.world.creature.Creature;
 import de.nb.aventiure2.data.world.creature.CreatureData;
 import de.nb.aventiure2.data.world.player.stats.PlayerStateOfMind;
 import de.nb.aventiure2.data.world.player.stats.PlayerStats;
+import de.nb.aventiure2.data.world.time.AvTimeSpan;
 import de.nb.aventiure2.playeraction.AbstractPlayerAction;
 
 import static de.nb.aventiure2.data.storystate.StoryState.StructuralElement.PARAGRAPH;
@@ -23,6 +24,8 @@ import static de.nb.aventiure2.data.storystate.StoryState.StructuralElement.WORD
 import static de.nb.aventiure2.data.world.creature.Creature.Key.FROSCHPRINZ;
 import static de.nb.aventiure2.data.world.creature.CreatureState.HAT_SC_HILFSBEREIT_ANGESPROCHEN;
 import static de.nb.aventiure2.data.world.creature.CreatureState.UNAUFFAELLIG;
+import static de.nb.aventiure2.data.world.time.AvTimeSpan.mins;
+import static de.nb.aventiure2.data.world.time.AvTimeSpan.secs;
 
 /**
  * Der Spielercharakter heult.
@@ -61,22 +64,20 @@ public class HeulenAction extends AbstractPlayerAction {
     }
 
     @Override
-    public void narrateAndDo() {
+    public AvTimeSpan narrateAndDo() {
         if (initialStoryState.lastActionWas(HeulenAction.class)) {
-            narrateAndDoWiederholung();
-            return;
+            return narrateAndDoWiederholung();
         }
 
-        narrateAndDoErstesMal();
+        return narrateAndDoErstesMal();
     }
 
-    private void narrateAndDoWiederholung() {
+    private AvTimeSpan narrateAndDoWiederholung() {
         @Nullable final CreatureData froschprinz =
                 findCreatureInRoom(FROSCHPRINZ);
 
         if (froschprinz != null) {
-            narrateAndDoFroschprinz(froschprinz);
-            return;
+            return narrateAndDoFroschprinz(froschprinz);
         }
 
         final ImmutableList.Builder<StoryStateBuilder> alt = ImmutableList.builder();
@@ -90,9 +91,11 @@ public class HeulenAction extends AbstractPlayerAction {
                 "Du kannst dich gar nicht mehr beruhigen")
                 .undWartest());
         n.add(alt(alt));
+
+        return mins(1);
     }
 
-    private void narrateAndDoFroschprinz(final CreatureData froschprinz) {
+    private AvTimeSpan narrateAndDoFroschprinz(final CreatureData froschprinz) {
         if (froschprinz.hasState(UNAUFFAELLIG)) {
             final String desc = "weinst immer lauter und kannst dich gar nicht trösten. " +
                     "Und wie du so klagst, ruft dir jemand zu: „Was hast du vor, " +
@@ -111,7 +114,7 @@ public class HeulenAction extends AbstractPlayerAction {
             db.creatureDataDao().setState(FROSCHPRINZ, HAT_SC_HILFSBEREIT_ANGESPROCHEN);
             db.creatureDataDao().setKnown(FROSCHPRINZ);
             db.playerStatsDao().setStateOfMind(PlayerStateOfMind.NEUTRAL);
-            return;
+            return secs(30);
         }
 
         throw new IllegalStateException("Unexpected creature state: " + froschprinz.getState());
@@ -128,7 +131,7 @@ public class HeulenAction extends AbstractPlayerAction {
         return null;
     }
 
-    private void narrateAndDoErstesMal() {
+    private AvTimeSpan narrateAndDoErstesMal() {
         final ImmutableList.Builder<StoryStateBuilder> alt = ImmutableList.builder();
         alt.add(t(PARAGRAPH,
                 "Dich überkommt ein Schluchzen"));
@@ -143,5 +146,7 @@ public class HeulenAction extends AbstractPlayerAction {
                 .undWartest()
                 .dann());
         n.add(alt(alt));
+
+        return mins(1);
     }
 }

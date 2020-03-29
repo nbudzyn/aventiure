@@ -1,5 +1,6 @@
 package de.nb.aventiure2.german.base;
 
+import de.nb.aventiure2.data.world.time.AvTimeSpan;
 import de.nb.aventiure2.german.AbstractDescription;
 
 /**
@@ -17,25 +18,30 @@ public class AllgDescription implements AbstractDescription {
 
     private final boolean dann;
 
+    private final AvTimeSpan timeElapsed;
+
     public static AllgDescription allg(final String description,
                                        final boolean kommaStehtAus,
                                        final boolean
                                                allowsAdditionalDuSatzreihengliedOhneSubjekt,
-                                       final boolean dann) {
+                                       final boolean dann,
+                                       final AvTimeSpan timeElapsed) {
         return new AllgDescription(description,
                 kommaStehtAus,
-                allowsAdditionalDuSatzreihengliedOhneSubjekt, dann);
+                allowsAdditionalDuSatzreihengliedOhneSubjekt, dann, timeElapsed);
     }
 
     private AllgDescription(final String description,
                             final boolean kommaStehtAus,
                             final boolean allowsAdditionalDuSatzreihengliedOhneSubjekt,
-                            final boolean dann) {
+                            final boolean dann,
+                            final AvTimeSpan timeElapsed) {
         this.description = description;
         this.kommaStehtAus = kommaStehtAus;
         this.allowsAdditionalDuSatzreihengliedOhneSubjekt =
                 allowsAdditionalDuSatzreihengliedOhneSubjekt;
         this.dann = dann;
+        this.timeElapsed = timeElapsed;
     }
 
     @Override
@@ -64,5 +70,10 @@ public class AllgDescription implements AbstractDescription {
     @Override
     public boolean dann() {
         return dann;
+    }
+
+    @Override
+    public AvTimeSpan getTimeElapsed() {
+        return timeElapsed;
     }
 }

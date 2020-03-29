@@ -16,6 +16,7 @@ import de.nb.aventiure2.data.world.entity.AbstractEntityData;
 import de.nb.aventiure2.data.world.object.ObjectData;
 import de.nb.aventiure2.data.world.player.stats.PlayerStateOfMind;
 import de.nb.aventiure2.data.world.room.AvRoom;
+import de.nb.aventiure2.data.world.time.AvTimeSpan;
 import de.nb.aventiure2.german.praedikat.PraedikatMitEinerObjektleerstelle;
 
 import static com.google.common.base.Preconditions.checkArgument;
@@ -23,6 +24,7 @@ import static de.nb.aventiure2.data.storystate.StoryState.StructuralElement.PARA
 import static de.nb.aventiure2.data.world.creature.Creature.Key.FROSCHPRINZ;
 import static de.nb.aventiure2.data.world.creature.CreatureState.ERWARTET_VON_SC_EINLOESUNG_SEINES_VERSPRECHENS;
 import static de.nb.aventiure2.data.world.creature.CreatureState.ERWARTET_VON_SC_EINLOESUNG_SEINES_VERSPRECHENS_VON_SC_GETRAGEN;
+import static de.nb.aventiure2.data.world.time.AvTimeSpan.secs;
 import static de.nb.aventiure2.german.praedikat.VerbSubjObj.MITNEHMEN;
 import static de.nb.aventiure2.german.praedikat.VerbSubjObj.NEHMEN;
 
@@ -74,11 +76,14 @@ public class NehmenAction extends AbstractEntityAction {
     }
 
     @Override
-    public void narrateAndDo() {
-        narrate();
+    public AvTimeSpan narrateAndDo() {
+        AvTimeSpan timeElapsed = narrate();
         removeFromRoomAndTake();
 
-        creatureReactionsCoordinator.onNehmen(room, getEntityData());
+        timeElapsed =
+                timeElapsed.plus(creatureReactionsCoordinator.onNehmen(room, getEntityData()));
+
+        return timeElapsed;
     }
 
     private void removeFromRoomAndTake() {
@@ -108,28 +113,27 @@ public class NehmenAction extends AbstractEntityAction {
         db.playerStatsDao().setStateOfMind(PlayerStateOfMind.NEUTRAL);
     }
 
-    private void narrate() {
+    private AvTimeSpan narrate() {
         if (getEntityData() instanceof ObjectData) {
-            narrateObject((ObjectData) getEntityData());
-            return;
+            return narrateObject((ObjectData) getEntityData());
         }
         if (getEntityData() instanceof CreatureData) {
-            narrateCreature((CreatureData) getEntityData());
-            return;
+            return narrateCreature((CreatureData) getEntityData());
         }
         throw new IllegalStateException("Unexpected entity data: " + getEntityData());
     }
 
-    private void narrateObject(final ObjectData objectData) {
+    private AvTimeSpan narrateObject(final ObjectData objectData) {
         if (initialStoryState.lastActionWas(AblegenAction.class)) {
             n.add(buildStoryStateObjectNachAblegen(objectData));
-            return;
+            return secs(5);
         }
 
         n.add(t(StoryState.StructuralElement.PARAGRAPH,
                 room.getLocationMode().getNehmenPraedikat().getDescriptionHauptsatz(objectData))
                 .undWartest()
                 .dann());
+        return secs(5);
     }
 
     private StoryStateBuilder buildStoryStateObjectNachAblegen(final ObjectData objectData) {
@@ -146,7 +150,7 @@ public class NehmenAction extends AbstractEntityAction {
     }
 
 
-    private void narrateCreature(final CreatureData creatureData) {
+    private AvTimeSpan narrateCreature(final CreatureData creatureData) {
         checkArgument(creatureData.creatureIs(Creature.Key.FROSCHPRINZ) &&
                         creatureData.hasState(ERWARTET_VON_SC_EINLOESUNG_SEINES_VERSPRECHENS),
                 "Unexpected creature data: " + creatureData);
@@ -171,5 +175,7 @@ public class NehmenAction extends AbstractEntityAction {
                                 + "vorbei ist.")
                         .dann()
         ));
+
+        return secs(20);
     }
 }

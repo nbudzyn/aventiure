@@ -15,6 +15,7 @@ import de.nb.aventiure2.data.world.creature.CreatureData;
 import de.nb.aventiure2.data.world.object.AvObject;
 import de.nb.aventiure2.data.world.object.ObjectData;
 import de.nb.aventiure2.data.world.room.AvRoom;
+import de.nb.aventiure2.data.world.time.AvTimeSpan;
 import de.nb.aventiure2.german.praedikat.Praedikat;
 import de.nb.aventiure2.german.praedikat.PraedikatMitEinerObjektleerstelle;
 import de.nb.aventiure2.german.praedikat.PraedikatOhneLeerstellen;
@@ -171,8 +172,8 @@ public class RedenAction extends AbstractPlayerAction {
     }
 
     @Override
-    public void narrateAndDo() {
-        creatureConversationStep.narrateAndDo();
+    public AvTimeSpan narrateAndDo() {
+        return creatureConversationStep.narrateAndDo();
     }
 
     @Override

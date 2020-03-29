@@ -17,6 +17,8 @@ import static de.nb.aventiure2.data.world.room.AvRoom.IM_WALD_BEIM_BRUNNEN;
 import static de.nb.aventiure2.data.world.room.AvRoom.IM_WALD_NAHE_DEM_SCHLOSS;
 import static de.nb.aventiure2.data.world.room.AvRoom.SCHLOSS_VORHALLE;
 import static de.nb.aventiure2.data.world.room.AvRoom.VOR_DER_HUETTE_IM_WALD;
+import static de.nb.aventiure2.data.world.time.AvTimeSpan.mins;
+import static de.nb.aventiure2.data.world.time.AvTimeSpan.secs;
 import static de.nb.aventiure2.german.DuDescription.du;
 import static de.nb.aventiure2.german.base.AllgDescription.allg;
 
@@ -34,13 +36,15 @@ public class RoomConnection {
                                                     "Nahebei liegt ein großer, dunkler Wald",
                                             false,
                                             false,
-                                            false),
+                                            false,
+                                            mins(1)),
                                     du(
                                             "verlässt",
                                             "das Schloss",
                                             false,
                                             true,
-                                            true)))
+                                            true,
+                                            mins(1))))
                     .put(DRAUSSEN_VOR_DEM_SCHLOSS, SCHLOSS_VORHALLE,
                             con(
                                     "Das Schloss betreten",
@@ -49,7 +53,8 @@ public class RoomConnection {
                                             "wieder hinein in das Schloss",
                                             false,
                                             true,
-                                            true)))
+                                            true,
+                                            mins(1))))
                     .put(DRAUSSEN_VOR_DEM_SCHLOSS, IM_WALD_NAHE_DEM_SCHLOSS,
                             con(
                                     "In den Wald gehen",
@@ -58,13 +63,15 @@ public class RoomConnection {
                                             "einem Pfad in den Wald",
                                             false,
                                             true,
-                                            true),
+                                            true,
+                                            mins(10)),
                                     du(
                                             "läufst",
                                             "wieder in den dunklen Wald",
                                             false,
                                             true,
-                                            true)))
+                                            true,
+                                            mins(10))))
                     .put(IM_WALD_NAHE_DEM_SCHLOSS, DRAUSSEN_VOR_DEM_SCHLOSS,
                             con(
                                     "Den Wald verlassen",
@@ -72,7 +79,8 @@ public class RoomConnection {
                                                     + "Tageslicht, in den Schlossgarten",
                                             false,
                                             false,
-                                            true)))
+                                            true,
+                                            mins(10))))
                     .put(IM_WALD_NAHE_DEM_SCHLOSS, ABZWEIG_IM_WALD,
                             con("Tiefer in den Wald hineingehen",
                                     allg("Nicht lang, und zur Linken geht zwischen "
@@ -80,13 +88,15 @@ public class RoomConnection {
                                                     + "den Farn wuchert",
                                             true,
                                             false,
-                                            false
+                                            false,
+                                            mins(5)
                                     ),
                                     du("kommst",
                                             "an den farnüberwachsenen Abzweig",
                                             false,
                                             true,
-                                            false
+                                            false,
+                                            mins(5)
                                     )
                             ))
                     .put(ABZWEIG_IM_WALD, IM_WALD_NAHE_DEM_SCHLOSS,
@@ -96,7 +106,8 @@ public class RoomConnection {
                                                     + "abzweigt",
                                             true,
                                             true,
-                                            false
+                                            false,
+                                            mins(5)
                                     )
                             ))
                     .put(ABZWEIG_IM_WALD, VOR_DER_HUETTE_IM_WALD,
@@ -111,13 +122,15 @@ public class RoomConnection {
                                                     + "in den Angeln",
                                             false,
                                             false,
-                                            false
+                                            false,
+                                            mins(2)
                                     ),
                                     du("wählst", "noch einmal den überwachsenen "
                                                     + "Pfad zur Hütte",
                                             false,
                                             true,
-                                            false)
+                                            false,
+                                            mins(2))
                             ))
                     .put(VOR_DER_HUETTE_IM_WALD, ABZWEIG_IM_WALD,
                             con("Auf den Hauptpfad zurückkehren",
@@ -125,7 +138,8 @@ public class RoomConnection {
                                                     + "Hauptpfad",
                                             false,
                                             true,
-                                            true
+                                            true,
+                                            mins(2)
                                     )
                             ))
                     .put(VOR_DER_HUETTE_IM_WALD, HUETTE_IM_WALD,
@@ -141,14 +155,16 @@ public class RoomConnection {
                                                     + "einen Tisch, aber sonst keine Einrichtung",
                                             false,
                                             false,
-                                            false
+                                            false,
+                                            mins(1)
                                     ),
                                     du("schiebst", "dich noch einmal in die "
                                                     + "kleine Hütte, in der es außer Tisch und "
                                                     + "Bett wenig zu sehen gibt",
                                             true,
                                             true,
-                                            false
+                                            false,
+                                            mins(1)
                                     )
                             ))
                     .put(HUETTE_IM_WALD, VOR_DER_HUETTE_IM_WALD,
@@ -157,7 +173,8 @@ public class RoomConnection {
                                                     + "draußen",
                                             false,
                                             true,
-                                            true
+                                            true,
+                                            secs(15)
                                     )
                             ))
                     .put(VOR_DER_HUETTE_IM_WALD, HINTER_DER_HUETTE,
@@ -170,14 +187,16 @@ public class RoomConnection {
                                                     + "unten keine.",
                                             false,
                                             false,
-                                            false
+                                            false,
+                                            secs(30)
                                     ),
                                     du("schaust", "noch einmal in den alten "
                                                     + "Garten hinter der Hütte, wo der "
                                                     + "Apfelbaum wächst",
                                             true,
                                             true,
-                                            true
+                                            true,
+                                            secs(30)
                                     )
                             ))
                     .put(HINTER_DER_HUETTE, VOR_DER_HUETTE_IM_WALD,
@@ -186,7 +205,8 @@ public class RoomConnection {
                                                     + "Hütte",
                                             false,
                                             true,
-                                            true
+                                            true,
+                                            secs(15)
                                     )
                             )
                     )
@@ -198,13 +218,15 @@ public class RoomConnection {
                                                     + "einmal auszustrecken",
                                             false,
                                             false,
-                                            false
+                                            false,
+                                            secs(15)
                                     ),
 
                                     allg("Noch einmal legst du dich in das Holzbett",
                                             false,
                                             true,
-                                            true
+                                            true,
+                                            secs(15)
                                     )
                             ))
                     .
@@ -215,7 +237,8 @@ public class RoomConnection {
                                                             + "wieder auf",
                                                     false,
                                                     false,
-                                                    true
+                                                    true,
+                                                    secs(10)
                                             )
                                     ))
                     .
@@ -230,26 +253,26 @@ public class RoomConnection {
                                                             + "angenehm kühl",
                                                     false,
                                                     false,
-                                                    true),
+                                                    true,
+                                                    mins(5)
+                                            ),
 
                                             du("kehrst",
                                                     "zurück zum Brunnen unter der Linde",
                                                     false,
                                                     true,
-                                                    true)))
-                    .
-
-                            put(IM_WALD_BEIM_BRUNNEN, ABZWEIG_IM_WALD,
-                                    con(
-                                            "Den Weg Richtung Schloss gehen",
-                                            du("verlässt",
-                                                    "den Brunnen",
-                                                    false,
                                                     true,
-                                                    true)))
-                    .
-
-                            build();
+                                                    mins(3))))
+                    .put(IM_WALD_BEIM_BRUNNEN, ABZWEIG_IM_WALD,
+                            con(
+                                    "Den Weg Richtung Schloss gehen",
+                                    du("verlässt",
+                                            "den Brunnen",
+                                            false,
+                                            true,
+                                            true,
+                                            mins(3)
+                                    ))).build();
 
     private final String actionName;
     private final AbstractDescription descriptionFirstTime;

@@ -12,6 +12,7 @@ import de.nb.aventiure2.data.storystate.StoryState;
 import de.nb.aventiure2.data.storystate.StoryState.StructuralElement;
 import de.nb.aventiure2.data.storystate.StoryStateBuilder;
 import de.nb.aventiure2.data.storystate.StoryStateDao;
+import de.nb.aventiure2.data.world.time.AvTimeSpan;
 import de.nb.aventiure2.playeraction.action.creature.reaction.CreatureReactionsCoordinator;
 
 /**
@@ -43,7 +44,7 @@ public abstract class AbstractPlayerAction implements IPlayerAction {
      */
     abstract public String getName();
 
-    abstract public void narrateAndDo();
+    abstract public AvTimeSpan narrateAndDo();
 
     protected StoryStateBuilder alt(
             final ImmutableCollection.Builder<StoryStateBuilder> alternatives) {

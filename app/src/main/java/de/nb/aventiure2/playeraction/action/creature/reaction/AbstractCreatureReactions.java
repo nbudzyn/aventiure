@@ -15,6 +15,7 @@ import de.nb.aventiure2.data.world.creature.CreatureData;
 import de.nb.aventiure2.data.world.entity.AbstractEntityData;
 import de.nb.aventiure2.data.world.object.ObjectData;
 import de.nb.aventiure2.data.world.room.AvRoom;
+import de.nb.aventiure2.data.world.time.AvTimeSpan;
 
 abstract class AbstractCreatureReactions {
     protected final AvDatabase db;
@@ -33,28 +34,28 @@ abstract class AbstractCreatureReactions {
      * <i>Make sure you alwasy set <code>letzterRaum</code> to <code>oldRoom</code> when creating
      * <code>StoryState</code>s</i>.
      */
-    public abstract void onLeaveRoom(final AvRoom oldRoom, final CreatureData creature,
-                                     StoryState currentStoryState);
+    public abstract AvTimeSpan onLeaveRoom(final AvRoom oldRoom, final CreatureData creature,
+                                           StoryState currentStoryState);
 
     /**
      * Called after the PC has entered the <code>newRoom</code>.
      * <i>Make sure you alwasy set <code>letzterRaum</code> to <code>oldRoom</code> when creating
      * <code>StoryState</code>s</i>.
      */
-    public abstract void onEnterRoom(final AvRoom oldRoom, AvRoom newRoom,
-                                     CreatureData creatureInNewRoom,
-                                     StoryState currentStoryState);
+    public abstract AvTimeSpan onEnterRoom(final AvRoom oldRoom, AvRoom newRoom,
+                                           CreatureData creatureInNewRoom,
+                                           StoryState currentStoryState);
 
-    public abstract void onNehmen(AvRoom room, CreatureData creatureInRoom,
-                                  AbstractEntityData genommenData,
-                                  StoryState currentStoryState);
+    public abstract AvTimeSpan onNehmen(AvRoom room, CreatureData creatureInRoom,
+                                        AbstractEntityData genommenData,
+                                        StoryState currentStoryState);
 
-    public abstract void onAblegen(AvRoom room, CreatureData creatureInRoom,
-                                   AbstractEntityData abgelegtData,
-                                   StoryState currentStoryState);
+    public abstract AvTimeSpan onAblegen(AvRoom room, CreatureData creatureInRoom,
+                                         AbstractEntityData abgelegtData,
+                                         StoryState currentStoryState);
 
-    public abstract void onHochwerfen(AvRoom room, CreatureData creatureInRoom,
-                                      ObjectData objectData, StoryState currentStoryState);
+    public abstract AvTimeSpan onHochwerfen(AvRoom room, CreatureData creatureInRoom,
+                                            ObjectData objectData, StoryState currentStoryState);
 
     protected StoryStateBuilder alt(
             final ImmutableCollection.Builder<StoryStateBuilder> alternatives) {
