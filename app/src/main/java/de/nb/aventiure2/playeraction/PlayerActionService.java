@@ -17,7 +17,6 @@ import de.nb.aventiure2.data.world.entity.object.AvObject;
 import de.nb.aventiure2.data.world.entity.object.ObjectData;
 import de.nb.aventiure2.data.world.player.stats.PlayerStats;
 import de.nb.aventiure2.data.world.room.AvRoom;
-import de.nb.aventiure2.data.world.room.connection.RoomConnection;
 import de.nb.aventiure2.playeraction.action.AblegenAction;
 import de.nb.aventiure2.playeraction.action.BewegenAction;
 import de.nb.aventiure2.playeraction.action.HeulenAction;
@@ -25,6 +24,7 @@ import de.nb.aventiure2.playeraction.action.HochwerfenAction;
 import de.nb.aventiure2.playeraction.action.NehmenAction;
 import de.nb.aventiure2.playeraction.action.RedenAction;
 import de.nb.aventiure2.playeraction.action.SchlafenAction;
+import de.nb.aventiure2.playeraction.action.room.connection.RoomConnection;
 
 import static de.nb.aventiure2.data.world.entity.creature.Creature.Key.FROSCHPRINZ;
 import static de.nb.aventiure2.playeraction.action.BewegenAction.NumberOfPossibilities.ONE_IN_ONE_OUT;

@@ -1,4 +1,4 @@
-package de.nb.aventiure2.data.world.room.connection;
+package de.nb.aventiure2.playeraction.action.room.connection;
 
 import com.google.common.collect.ImmutableTable;
 import com.google.common.collect.Table;
