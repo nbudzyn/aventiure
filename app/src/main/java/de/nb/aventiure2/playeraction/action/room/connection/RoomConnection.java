@@ -36,10 +36,6 @@ public class RoomConnection {
         return new RoomConnection(actionDescription,
                 isNewRoomKnown ->
                         isNewRoomKnown ?
-                                // Beschreibung schon bekannt?
-                                // TODO SPÄTER!                        db.counterDao().incAndGet(
-                                // "RoomConnection_description_" + newRoomDescriptionFirstTime)
-                                // != 1 ?
                                 newRoomDescriptionKnown : newRoomDescriptionFirstTime);
     }
 

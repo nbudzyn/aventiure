@@ -37,7 +37,7 @@ class RoomConnectionBuilder {
                                 "Das Schloss verlassen",
                                 du(
                                         "gehst",
-                                        "hinaus.\n\n" +
+                                        "hinaus in die Gärten vor dem Schloss.\n\n" +
                                                 "Draußen scheint dir die " +
                                                 "Sonne ins Gesicht; der Tag ist recht heiß. "
                                                 +
