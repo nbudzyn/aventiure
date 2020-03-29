@@ -2,19 +2,21 @@ package de.nb.aventiure2.playeraction.action.invisible.reaction;
 
 import de.nb.aventiure2.data.database.AvDatabase;
 import de.nb.aventiure2.data.storystate.IPlayerAction;
+import de.nb.aventiure2.data.world.player.stats.PlayerStateOfMind;
+import de.nb.aventiure2.data.world.room.AvRoom;
 import de.nb.aventiure2.data.world.time.AvDateTime;
 import de.nb.aventiure2.data.world.time.AvTimeSpan;
 
+import static de.nb.aventiure2.data.storystate.StoryState.StructuralElement.PARAGRAPH;
 import static de.nb.aventiure2.data.world.invisible.Invisible.Key.SCHLOSSFEST;
 import static de.nb.aventiure2.data.world.invisible.InvisibleState.BEGONNEN;
-import static de.nb.aventiure2.data.world.time.AvTime.oClock;
+import static de.nb.aventiure2.data.world.invisible.Invisibles.COUNTER_ID_VOR_DEM_SCHLOSS_SCHLOSSFEST_KNOWN;
+import static de.nb.aventiure2.data.world.invisible.Invisibles.SCHLOSSFEST_BEGINN_DATE_TIME;
+import static de.nb.aventiure2.data.world.room.AvRoom.DRAUSSEN_VOR_DEM_SCHLOSS;
+import static de.nb.aventiure2.data.world.time.AvTimeSpan.mins;
 import static de.nb.aventiure2.data.world.time.AvTimeSpan.noTime;
 
-public class SchlossfestReactions extends AbstractInvisibleReactions {
-    public static final AvDateTime SCHLOSSFEST_BEGINN_DATE_TIME =
-            new AvDateTime(2,
-                    oClock(5, 30));
-
+class SchlossfestReactions extends AbstractInvisibleReactions {
     SchlossfestReactions(final AvDatabase db,
                          final Class<? extends IPlayerAction> playerActionClass) {
         super(db, playerActionClass);
@@ -33,8 +35,25 @@ public class SchlossfestReactions extends AbstractInvisibleReactions {
     }
 
     private AvTimeSpan schlossfestBeginnt() {
-        db.invisibleDataDao().setState(SCHLOSSFEST, BEGONNEN);
+        final AvRoom currentRoom = db.playerLocationDao().getPlayerLocation().getRoom();
 
-        return noTime(); // Passiert nebenher und braucht KEINE zusätzliche Zeit
+        final AvTimeSpan timeElapsed;
+        if (currentRoom == DRAUSSEN_VOR_DEM_SCHLOSS) {
+            n.add(t(PARAGRAPH, "Dir fällt auf, dass Handwerker dabei sind, überall "
+                    + "im Schlossgarten kleine bunte Pagoden aufzubauen. Du schaust eine Weile "
+                    + "zu, und wie es scheint, beginnen von überallher Menschen zu "
+                    + "strömen. Aus dem Schloss weht dich der Geruch von Gebratenem an."));
+
+            // Der Spieler weiß jetzt, dass das Schlossfest läuft
+            db.counterDao().inc(COUNTER_ID_VOR_DEM_SCHLOSS_SCHLOSSFEST_KNOWN);
+
+            timeElapsed = mins(30);
+        } else {
+            timeElapsed = noTime();  // Passiert nebenher und braucht KEINE zusätzliche Zeit
+        }
+
+        db.playerStatsDao().setStateOfMind(PlayerStateOfMind.NEUTRAL);
+        db.invisibleDataDao().setState(SCHLOSSFEST, BEGONNEN);
+        return timeElapsed;
     }
 }

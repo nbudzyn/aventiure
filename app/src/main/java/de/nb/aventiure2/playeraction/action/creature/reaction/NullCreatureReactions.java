@@ -53,7 +53,8 @@ class NullCreatureReactions extends AbstractCreatureReactions {
     }
 
     @Override
-    public AvTimeSpan onTimePassed(final AvDateTime lastTime, final AvDateTime now) {
+    public AvTimeSpan onTimePassed(final AvDateTime lastTime, final AvDateTime now,
+                                   final StoryState currentStoryState) {
         return noTime();
     }
 }

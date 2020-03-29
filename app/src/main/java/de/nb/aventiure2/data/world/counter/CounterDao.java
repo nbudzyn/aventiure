@@ -10,6 +10,10 @@ import androidx.room.Query;
  */
 @Dao
 public abstract class CounterDao {
+    public void inc(final String id) {
+        incAndGet(id);
+    }
+
     public int incAndGet(final String id) {
         insert(new Counter(id, 0)); // ignore, if row already exists
 

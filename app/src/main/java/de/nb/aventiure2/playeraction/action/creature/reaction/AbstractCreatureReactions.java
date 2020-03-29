@@ -58,7 +58,8 @@ abstract class AbstractCreatureReactions {
     public abstract AvTimeSpan onHochwerfen(AvRoom room, CreatureData creatureInRoom,
                                             ObjectData objectData, StoryState currentStoryState);
 
-    public abstract AvTimeSpan onTimePassed(AvDateTime lastTime, AvDateTime now);
+    public abstract AvTimeSpan onTimePassed(AvDateTime lastTime, AvDateTime now,
+                                            final StoryState currentStoryState);
 
     protected StoryStateBuilder alt(
             final ImmutableCollection.Builder<StoryStateBuilder> alternatives) {

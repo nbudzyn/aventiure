@@ -128,7 +128,19 @@ class FroschprinzReactions extends AbstractCreatureReactions {
     }
 
     @Override
-    public AvTimeSpan onTimePassed(final AvDateTime lastTime, final AvDateTime now) {
+    public AvTimeSpan onTimePassed(final AvDateTime lastTime, final AvDateTime now,
+                                   final StoryState currentStoryState) {
+        // STORY Wenn das Schlossfest noch nicht begonnen
+        //  hat, läuft der Frosch irgendwenn zum Schlossfest los,
+        //  z.B. am Vorabend.
+        //  -> Statuswechsel, Frosch "verschwindet" aus der Welt
+        //  Ggf. kann das der Spieler miterleben.
+        //  (Es sei, denn der Spieler hätte den Frosch mitgenommen oder irgendwo anders
+        //  hingetragen.)
+
+        // STORY Irgendwann (x Stunden danach?!) taucht der Frosch beim
+        //   Spieler am Tisch im Schlossfest auf.
+
         return noTime();
     }
 }

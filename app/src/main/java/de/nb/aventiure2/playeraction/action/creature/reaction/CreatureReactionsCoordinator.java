@@ -114,7 +114,7 @@ public final class CreatureReactionsCoordinator {
 
         for (final CreatureData creatureInRoom : getAllCreatures()) {
             timeElapsed = timeElapsed.plus(getReactions(creatureInRoom)
-                    .onTimePassed(lastTime, now));
+                    .onTimePassed(lastTime, now, getCurrentStoryState()));
         }
 
         return timeElapsed;

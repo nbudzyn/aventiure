@@ -26,10 +26,14 @@ import static de.nb.aventiure2.data.world.entity.object.AvObject.extractObject;
 import static de.nb.aventiure2.data.world.entity.object.AvObject.isObject;
 import static de.nb.aventiure2.data.world.invisible.Invisible.Key.SCHLOSSFEST;
 import static de.nb.aventiure2.data.world.invisible.InvisibleState.BEGONNEN;
+import static de.nb.aventiure2.data.world.invisible.Invisibles.COUNTER_ID_VOR_DEM_SCHLOSS_SCHLOSSFEST_KNOWN;
+import static de.nb.aventiure2.data.world.invisible.Invisibles.SCHLOSSFEST_BEGINN_DATE_TIME;
+import static de.nb.aventiure2.data.world.room.AvRoom.DRAUSSEN_VOR_DEM_SCHLOSS;
+import static de.nb.aventiure2.data.world.room.AvRoom.SCHLOSS_VORHALLE;
+import static de.nb.aventiure2.data.world.time.AvTimeSpan.mins;
 import static de.nb.aventiure2.data.world.time.AvTimeSpan.noTime;
 import static de.nb.aventiure2.data.world.time.AvTimeSpan.secs;
 import static de.nb.aventiure2.german.base.GermanUtil.capitalize;
-import static de.nb.aventiure2.playeraction.action.invisible.reaction.SchlossfestReactions.SCHLOSSFEST_BEGINN_DATE_TIME;
 
 class SchlosswacheReactions extends AbstractCreatureReactions {
     public SchlosswacheReactions(final AvDatabase db,
@@ -345,21 +349,57 @@ class SchlosswacheReactions extends AbstractCreatureReactions {
     }
 
     @Override
-    public AvTimeSpan onTimePassed(final AvDateTime lastTime, final AvDateTime now) {
+    public AvTimeSpan onTimePassed(final AvDateTime lastTime, final AvDateTime now,
+                                   final StoryState currentStoryState) {
         AvTimeSpan timeElapsed = noTime();
 
         if (lastTime.isBefore(SCHLOSSFEST_BEGINN_DATE_TIME) &&
                 !now.isBefore(SCHLOSSFEST_BEGINN_DATE_TIME)) {
-            timeElapsed = timeElapsed.plus(schlossfestBeginnt());
+            timeElapsed = timeElapsed.plus(schlossfestBeginnt(currentStoryState));
         }
 
         return timeElapsed;
     }
 
-    private AvTimeSpan schlossfestBeginnt() {
+    private AvTimeSpan schlossfestBeginnt(final StoryState currentStoryState) {
+        final AvRoom currentRoom = db.playerLocationDao().getPlayerLocation().getRoom();
+
+        if (currentRoom == SCHLOSS_VORHALLE) {
+            return schlossfestBeginnt_Vorhalle(currentStoryState);
+        }
+
         // Beim Fest ist die Schlosswache beschäftigt
         db.creatureDataDao().setState(SCHLOSSWACHE, UNAUFFAELLIG);
-
         return noTime(); // Passiert nebenher und braucht KEINE zusätzliche Zeit
+    }
+
+    private AvTimeSpan schlossfestBeginnt_Vorhalle(final StoryState currentStoryState) {
+        final String text;
+        if (currentStoryState.dann()) {
+            text = "Dann spricht dich die Wache an:";
+        } else {
+            text = "Die Wache spricht dich an:";
+        }
+
+        n.add(t(PARAGRAPH, text + " „Wenn ich Euch dann hinausbitten dürfte? Wer wollte "
+                + " denn den Vorbereitungen für das große Fest im Wege stehen?“ – Nein, "
+                + "das willst du sicher nicht.\n"
+                + "Draußen sind Handwerker dabei, im ganzen Schlossgarten kleine bunte "
+                + "Pagoden aufzubauen. Du schaust eine Zeitlang zu.\n"
+                + "Zunehmend strömen von allen Seiten Menschen herzu und wie es scheint, ist auch "
+                + "der Zugang zum Schloss für alle geöffnet. Aus dem Schloss weht dich der "
+                + "Geruch von Gebratenem an.")
+                .letzterRaum(SCHLOSS_VORHALLE)
+                .beendet(PARAGRAPH));
+
+        db.playerLocationDao().setRoom(DRAUSSEN_VOR_DEM_SCHLOSS);
+        db.playerStatsDao().setStateOfMind(PlayerStateOfMind.NEUTRAL);
+
+        // Der Spieler weiß jetzt, dass das Schlossfest läuft
+        db.counterDao().inc(COUNTER_ID_VOR_DEM_SCHLOSS_SCHLOSSFEST_KNOWN);
+
+        // Beim Fest ist die Schlosswache mit anderen Dingen beschäftigt
+        db.creatureDataDao().setState(SCHLOSSWACHE, UNAUFFAELLIG);
+        return mins(45);
     }
 }

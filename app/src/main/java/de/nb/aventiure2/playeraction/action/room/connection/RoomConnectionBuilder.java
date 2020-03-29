@@ -12,6 +12,7 @@ import de.nb.aventiure2.data.world.room.AvRoom;
 import de.nb.aventiure2.data.world.time.AvTimeSpan;
 import de.nb.aventiure2.german.AbstractDescription;
 
+import static de.nb.aventiure2.data.world.invisible.Invisibles.COUNTER_ID_VOR_DEM_SCHLOSS_SCHLOSSFEST_KNOWN;
 import static de.nb.aventiure2.data.world.room.AvRoom.ABZWEIG_IM_WALD;
 import static de.nb.aventiure2.data.world.room.AvRoom.BETT_IN_DER_HUETTE_IM_WALD;
 import static de.nb.aventiure2.data.world.room.AvRoom.DRAUSSEN_VOR_DEM_SCHLOSS;
@@ -346,9 +347,7 @@ class RoomConnectionBuilder {
     @NonNull
     private AbstractDescription getDesc_ImWaldNaheDemSchloss_DraussenVorDemSchloss_FestBegonnen(
             final AvTimeSpan timeSpan) {
-        if (db.counterDao().incAndGet(
-                "RoomConnectionBuilder_ImWaldNaheDemSchloss_DraussenVorDemSchloss_Schlossfest")
-                == 1) {
+        if (db.counterDao().incAndGet(COUNTER_ID_VOR_DEM_SCHLOSS_SCHLOSSFEST_KNOWN) == 1) {
             return du("bist", "von dem Lärm überrascht, der dir "
                             + "schon von weitem "
                             + "entgegenschallt. Als du aus dem Wald heraustrittst, "

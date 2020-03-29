@@ -37,7 +37,7 @@ public class StoryStateBuilder {
 
     @PrimaryKey
     @NonNull
-    private String text;
+    private final String text;
 
     /**
      * Ob ein Komma aussteht. Wenn ein Komma aussteht, muss als nächstes ein Komma folgen -
@@ -109,16 +109,6 @@ public class StoryStateBuilder {
         this.lastActionClassName = lastActionClassName;
         this.startsNew = startsNew;
         this.text = text;
-    }
-
-    public StoryStateBuilder appendText(final String text,
-                                        final boolean allowsAdditionalDuSatzreihengliedOhneSubjekt,
-                                        final boolean dann) {
-        this.text += text;
-        this.allowsAdditionalDuSatzreihengliedOhneSubjekt =
-                allowsAdditionalDuSatzreihengliedOhneSubjekt;
-        this.dann = dann;
-        return this;
     }
 
     public StoryStateBuilder imGespraechMit(final Creature talkingTo) {
