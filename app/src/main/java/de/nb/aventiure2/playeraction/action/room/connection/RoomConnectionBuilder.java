@@ -1,10 +1,11 @@
 package de.nb.aventiure2.playeraction.action.room.connection;
 
-import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.ImmutableList;
 
-import java.util.Map;
+import java.util.List;
 
 import de.nb.aventiure2.data.world.room.AvRoom;
+import de.nb.aventiure2.german.AbstractDescription;
 
 import static de.nb.aventiure2.data.world.room.AvRoom.ABZWEIG_IM_WALD;
 import static de.nb.aventiure2.data.world.room.AvRoom.BETT_IN_DER_HUETTE_IM_WALD;
@@ -28,12 +29,11 @@ class RoomConnectionBuilder {
         this.from = from;
     }
 
-    Map<AvRoom, RoomConnection> getConnections() {
+    List<RoomConnection> getConnections() {
         switch (from) {
             case SCHLOSS_VORHALLE:
-                return ImmutableMap.of(
-                        DRAUSSEN_VOR_DEM_SCHLOSS,
-                        con(
+                return ImmutableList.of(
+                        con(DRAUSSEN_VOR_DEM_SCHLOSS,
                                 "Das Schloss verlassen",
                                 du(
                                         "gehst",
@@ -54,9 +54,8 @@ class RoomConnectionBuilder {
                                         true,
                                         mins(1))));
             case DRAUSSEN_VOR_DEM_SCHLOSS:
-                return ImmutableMap.of(
-                        SCHLOSS_VORHALLE,
-                        con(
+                return ImmutableList.of(
+                        con(SCHLOSS_VORHALLE,
                                 "Das Schloss betreten",
                                 du(
                                         "gehst",
@@ -65,8 +64,7 @@ class RoomConnectionBuilder {
                                         true,
                                         true,
                                         mins(1))),
-                        IM_WALD_NAHE_DEM_SCHLOSS,
-                        con(
+                        con(IM_WALD_NAHE_DEM_SCHLOSS,
                                 "In den Wald gehen",
                                 du(
                                         "folgst",
@@ -83,20 +81,12 @@ class RoomConnectionBuilder {
                                         true,
                                         mins(10))));
             case IM_WALD_NAHE_DEM_SCHLOSS:
-                return ImmutableMap.of(
-                        DRAUSSEN_VOR_DEM_SCHLOSS,
-                        con(
+                return ImmutableList.of(
+                        con(DRAUSSEN_VOR_DEM_SCHLOSS,
                                 "Den Wald verlassen",
-                                du("erreichst", "bald das helle "
-                                                + "Tageslicht, in dem der Schlossgarten "
-                                                + "liegt",
-                                        // STORY Und bei Nacht?!
-                                        true,
-                                        false,
-                                        false,
-                                        mins(10))),
-                        ABZWEIG_IM_WALD,
-                        con("Tiefer in den Wald hineingehen",
+                                RoomConnectionBuilder::getDesc_ImWaldNaheDemSchloss_DraussenVorDemSchloss),
+                        con(ABZWEIG_IM_WALD,
+                                "Tiefer in den Wald hineingehen",
                                 allg("Nicht lang, und zur Linken geht zwischen "
                                                 + "den Bäumen ein alter, düsterer Weg ab, über "
                                                 + "den Farn wuchert",
@@ -114,9 +104,9 @@ class RoomConnectionBuilder {
                                 )
                         ));
             case ABZWEIG_IM_WALD:
-                return ImmutableMap.of(
-                        IM_WALD_NAHE_DEM_SCHLOSS,
-                        con("In Richtung Schloss gehen",
+                return ImmutableList.of(
+                        con(IM_WALD_NAHE_DEM_SCHLOSS,
+                                "In Richtung Schloss gehen",
                                 allg("Von dort gehst du weiter in Richtung Schloss",
                                         false,
                                         true,
@@ -124,8 +114,8 @@ class RoomConnectionBuilder {
                                         mins(5)
                                 )
                         ),
-                        VOR_DER_HUETTE_IM_WALD,
-                        con("Den überwachsenen Abzweig nehmen",
+                        con(VOR_DER_HUETTE_IM_WALD,
+                                "Den überwachsenen Abzweig nehmen",
                                 allg("Du fasst dir ein Herz und stapfst zwischen "
                                                 + "dem Unkraut einen Weg entlang, "
                                                 + "der wohl schon länger nicht mehr benutzt wurde. Hinter der "
@@ -146,8 +136,7 @@ class RoomConnectionBuilder {
                                         false,
                                         mins(2))
                         ),
-                        IM_WALD_BEIM_BRUNNEN,
-                        con(
+                        con(IM_WALD_BEIM_BRUNNEN,
                                 "Auf dem Hauptpfad tiefer in den Wald gehen",
                                 allg(
                                         "Der breitere Pfad führt zu einer alten "
@@ -167,9 +156,9 @@ class RoomConnectionBuilder {
                                         true,
                                         mins(3))));
             case VOR_DER_HUETTE_IM_WALD:
-                return ImmutableMap.of(
-                        ABZWEIG_IM_WALD,
-                        con("Auf den Hauptpfad zurückkehren",
+                return ImmutableList.of(
+                        con(ABZWEIG_IM_WALD,
+                                "Auf den Hauptpfad zurückkehren",
                                 allg("Durch Farn und Gestrüpp gehst du zurück zum "
                                                 + "Hauptpfad",
                                         false,
@@ -178,8 +167,8 @@ class RoomConnectionBuilder {
                                         mins(2)
                                 )
                         ),
-                        HUETTE_IM_WALD,
-                        con("Die Hütte betreten",
+                        con(HUETTE_IM_WALD,
+                                "Die Hütte betreten",
                                 allg("Du schiebst die Tür zur Seite und "
                                                 + "zwängst dich hinein. Durch Ritzen in den "
                                                 + "Fensterläden fällt ein wenig Licht: "
@@ -202,8 +191,8 @@ class RoomConnectionBuilder {
                                         false,
                                         mins(1)
                                 )),
-                        HINTER_DER_HUETTE,
-                        con("Um die Hütte herumgehen",
+                        con(HINTER_DER_HUETTE,
+                                "Um die Hütte herumgehen",
                                 allg("Ein paar Schritte um die Hütte herum und "
                                                 + "du kommst in einen kleinen, völlig "
                                                 + "verwilderten Garten. In seiner Mitte "
@@ -225,9 +214,9 @@ class RoomConnectionBuilder {
                                 )
                         ));
             case HUETTE_IM_WALD:
-                return ImmutableMap.of(
-                        VOR_DER_HUETTE_IM_WALD,
-                        con("Die Hütte verlassen",
+                return ImmutableList.of(
+                        con(VOR_DER_HUETTE_IM_WALD,
+                                "Die Hütte verlassen",
                                 du("zwängst", "dich wieder durch die Tür nach "
                                                 + "draußen",
                                         false,
@@ -236,8 +225,8 @@ class RoomConnectionBuilder {
                                         secs(15)
                                 )
                         ),
-                        BETT_IN_DER_HUETTE_IM_WALD,
-                        con("In das Bett legen",
+                        con(BETT_IN_DER_HUETTE_IM_WALD,
+                                "In das Bett legen",
                                 du("legst", "dich in das hölzere Bettgestell. "
                                                 + "Gemütlich ist etwas anderes, aber nach den "
                                                 + "vielen Schritten tut es sehr gut, sich "
@@ -256,9 +245,9 @@ class RoomConnectionBuilder {
                                 )
                         ));
             case HINTER_DER_HUETTE:
-                return ImmutableMap.of(
-                        VOR_DER_HUETTE_IM_WALD,
-                        con("Zur Vorderseite der Hütte gehen",
+                return ImmutableList.of(
+                        con(VOR_DER_HUETTE_IM_WALD,
+                                "Zur Vorderseite der Hütte gehen",
                                 du("kehrst", "zurück zur Vorderseite der "
                                                 + "Hütte",
                                         false,
@@ -269,9 +258,9 @@ class RoomConnectionBuilder {
                         )
                 );
             case BETT_IN_DER_HUETTE_IM_WALD:
-                return ImmutableMap.of(
-                        HUETTE_IM_WALD,
-                        con("Aufstehen",
+                return ImmutableList.of(
+                        con(HUETTE_IM_WALD,
+                                "Aufstehen",
                                 allg("Du reckst dich noch einmal und stehst "
                                                 + "wieder auf",
                                         false,
@@ -281,9 +270,8 @@ class RoomConnectionBuilder {
                                 )
                         ));
             case IM_WALD_BEIM_BRUNNEN:
-                return ImmutableMap.of(
-                        ABZWEIG_IM_WALD,
-                        con(
+                return ImmutableList.of(
+                        con(ABZWEIG_IM_WALD,
                                 "Den Weg Richtung Schloss gehen",
                                 du("verlässt",
                                         "den Brunnen und erreichst bald "
@@ -297,5 +285,17 @@ class RoomConnectionBuilder {
             default:
                 throw new IllegalStateException("Unexpected from: " + from);
         }
+    }
+
+    private static AbstractDescription getDesc_ImWaldNaheDemSchloss_DraussenVorDemSchloss(
+            final boolean isNewRoomKnown) {
+        return du("erreichst", "bald das helle "
+                        + "Tageslicht, in dem der Schlossgarten "
+                        + "liegt",
+                // STORY Und bei Nacht?!
+                true,
+                false,
+                false,
+                mins(10));
     }
 }

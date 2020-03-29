@@ -5,7 +5,6 @@ import androidx.annotation.NonNull;
 import com.google.common.collect.ImmutableList;
 
 import java.util.List;
-import java.util.Set;
 
 import de.nb.aventiure2.data.database.AvDatabase;
 import de.nb.aventiure2.data.storystate.StoryState;
@@ -20,6 +19,7 @@ import de.nb.aventiure2.data.world.time.AvTimeSpan;
 import de.nb.aventiure2.german.AbstractDescription;
 import de.nb.aventiure2.german.DuDescription;
 import de.nb.aventiure2.playeraction.AbstractPlayerAction;
+import de.nb.aventiure2.playeraction.action.room.connection.RoomConnection;
 import de.nb.aventiure2.playeraction.action.room.connection.RoomConnections;
 
 import static com.google.common.base.Preconditions.checkArgument;
@@ -55,8 +55,8 @@ public class BewegenAction extends AbstractPlayerAction {
     }
 
     private final AvRoom oldRoom;
-    private final AvRoom newRoom;
 
+    private final RoomConnection roomConnection;
     private final NumberOfPossibilities numberOfPossibilities;
 
     public static ImmutableList<AbstractPlayerAction> buildActions(
@@ -65,14 +65,14 @@ public class BewegenAction extends AbstractPlayerAction {
             final AvRoom room) {
         final ImmutableList.Builder<AbstractPlayerAction> res = ImmutableList.builder();
 
-        final Set<AvRoom> connectedRooms = RoomConnections.getFrom(room).keySet();
+        final List<RoomConnection> roomConnections = RoomConnections.getFrom(room);
 
         final BewegenAction.NumberOfPossibilities numberOfPossibilities =
-                calcNumberOfPossibilities(connectedRooms.size());
+                calcNumberOfPossibilities(roomConnections.size());
 
-        for (final AvRoom connectedRoom : connectedRooms) {
+        for (final RoomConnection roomConnection : roomConnections) {
             res.add(new BewegenAction(db, currentStoryState, room,
-                    connectedRoom, numberOfPossibilities));
+                    roomConnection, numberOfPossibilities));
         }
         return res.build();
     }
@@ -95,15 +95,16 @@ public class BewegenAction extends AbstractPlayerAction {
     private BewegenAction(final AvDatabase db,
                           final StoryState initialStoryState,
                           final AvRoom oldRoom,
-                          final AvRoom newRoom,
+                          final RoomConnection roomConnection,
                           final NumberOfPossibilities numberOfPossibilities) {
         super(db, initialStoryState);
         this.numberOfPossibilities = numberOfPossibilities;
 
-        checkArgument(newRoom != oldRoom, "newRoom == oldRoom)");
+        checkArgument(roomConnection.getTo() != oldRoom,
+                "newRoom == oldRoom)");
 
         this.oldRoom = oldRoom;
-        this.newRoom = newRoom;
+        this.roomConnection = roomConnection;
     }
 
     @Override
@@ -114,7 +115,7 @@ public class BewegenAction extends AbstractPlayerAction {
     @Override
     @NonNull
     public String getName() {
-        return RoomConnections.getFrom(oldRoom).get(newRoom).getActionName();
+        return roomConnection.getActionName();
     }
 
     @Override
@@ -122,13 +123,14 @@ public class BewegenAction extends AbstractPlayerAction {
         final List<CreatureData> creaturesInOldRoom =
                 db.creatureDataDao().getCreaturesInRoom(oldRoom);
 
-        final List<ObjectData> objectsInNewRoom = db.objectDataDao().getObjectsInRoom(newRoom);
+        final List<ObjectData> objectsInNewRoom =
+                db.objectDataDao().getObjectsInRoom(roomConnection.getTo());
         final List<CreatureData> creaturesInNewRoom =
-                db.creatureDataDao().getCreaturesInRoom(newRoom);
+                db.creatureDataDao().getCreaturesInRoom(roomConnection.getTo());
 
         AvTimeSpan elapsedTime = narrateRoomOnly();
 
-        if (oldRoom == SCHLOSS_VORHALLE && newRoom == DRAUSSEN_VOR_DEM_SCHLOSS
+        if (oldRoom == SCHLOSS_VORHALLE && roomConnection.getTo() == DRAUSSEN_VOR_DEM_SCHLOSS
                 && db.playerStatsDao().getPlayerStats().getStateOfMind()
                 == PlayerStateOfMind.ANGESPANNT) {
             db.playerStatsDao().setStateOfMind(PlayerStateOfMind.NEUTRAL);
@@ -141,12 +143,12 @@ public class BewegenAction extends AbstractPlayerAction {
             elapsedTime = elapsedTime.plus(narrateObjects(objectsInNewRoom));
         }
 
-        db.playerLocationDao().setRoom(newRoom);
+        db.playerLocationDao().setRoom(roomConnection.getTo());
 
         setRoomAndObjectsKnown(objectsInNewRoom);
 
         return elapsedTime.plus(creatureReactionsCoordinator
-                .onEnterRoom(oldRoom, newRoom, creaturesInNewRoom));
+                .onEnterRoom(oldRoom, roomConnection.getTo(), creaturesInNewRoom));
     }
 
     private AvTimeSpan narrateObjects(final List<ObjectData> objectsInNewRoom) {
@@ -165,11 +167,10 @@ public class BewegenAction extends AbstractPlayerAction {
     }
 
     private AbstractDescription getMovementDescription(final StoryState currentStoryState) {
-        final boolean newRoomKnown = db.roomDao().isKnown(newRoom);
+        final boolean newRoomKnown = db.roomDao().isKnown(roomConnection.getTo());
 
         final AbstractDescription standardDescription =
-                RoomConnections.getFrom(oldRoom).get(newRoom)
-                        .getDescription(db.roomDao().isKnown(newRoom));
+                roomConnection.getDescription(newRoomKnown);
 
         if (newRoomKnown) {
             if (numberOfPossibilities == NumberOfPossibilities.ONLY_WAY) {
@@ -190,7 +191,7 @@ public class BewegenAction extends AbstractPlayerAction {
                 }
             } else if (numberOfPossibilities == NumberOfPossibilities.ONE_IN_ONE_OUT
                     && currentStoryState.lastActionWas(BewegenAction.class) &&
-                    !currentStoryState.lastRoomWas(newRoom) &&
+                    !lastRoomWasNewRoom(currentStoryState) &&
                     db.playerStatsDao().getPlayerStats().getStateOfMind() ==
                             PlayerStateOfMind.VOLLER_FREUDE &&
                     currentStoryState.allowsAdditionalDuSatzreihengliedOhneSubjekt()) {
@@ -224,7 +225,7 @@ public class BewegenAction extends AbstractPlayerAction {
     private StoryStateBuilder buildNewStoryStateSatzanschluss(
             final StoryState currentStoryState, final DuDescription duDesc) {
         if (currentStoryState.lastActionWas(BewegenAction.class) &&
-                currentStoryState.lastRoomWas(newRoom)) {
+                lastRoomWasNewRoom(currentStoryState)) {
             return t(StructuralElement.WORD,
                     ", besinnst dich aber und "
                             + duDesc.getDescriptionSatzanschlussOhneSubjekt())
@@ -250,7 +251,7 @@ public class BewegenAction extends AbstractPlayerAction {
 
     private StoryStateBuilder buildNewStoryStateNewRoomOnlyNewSentenceLastActionBewegen(
             final StoryState currentStoryState, final AbstractDescription desc) {
-        if (currentStoryState.lastRoomWas(newRoom) &&
+        if (lastRoomWasNewRoom(currentStoryState) &&
                 numberOfPossibilities != NumberOfPossibilities.ONLY_WAY) {
             if (currentStoryState.noLastObject()) {
                 return alt(
@@ -283,6 +284,10 @@ public class BewegenAction extends AbstractPlayerAction {
                 .dann(desc.dann());
     }
 
+    private boolean lastRoomWasNewRoom(final StoryState currentStoryState) {
+        return currentStoryState.lastRoomWas(roomConnection.getTo());
+    }
+
     private StoryStateBuilder buildNewStoryStateNewRoomOnlyNewSentenceLastActionNichtBewegen(
             final StoryState currentStoryState, final AbstractDescription desc) {
         if (currentStoryState.dann()) {
@@ -313,7 +318,7 @@ public class BewegenAction extends AbstractPlayerAction {
      * @return Something similar to <code>Hier liegt</code>
      */
     private String buildObjectInRoomDescriptionPrefix(final int numberOfObjects) {
-        final String res = capitalize(newRoom.getLocationMode().getWo());
+        final String res = capitalize(roomConnection.getTo().getLocationMode().getWo());
 
         if (numberOfObjects == 1) {
             return res + " liegt";
@@ -352,7 +357,7 @@ public class BewegenAction extends AbstractPlayerAction {
     }
 
     private void setRoomAndObjectsKnown(final List<ObjectData> objectsInNewRoom) {
-        db.roomDao().setKnown(newRoom);
+        db.roomDao().setKnown(roomConnection.getTo());
         for (final ObjectData objectInNewRoom : objectsInNewRoom) {
             db.objectDataDao().setKnown(objectInNewRoom.getObject());
         }
