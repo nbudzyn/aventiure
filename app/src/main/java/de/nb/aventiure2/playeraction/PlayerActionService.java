@@ -8,7 +8,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import de.nb.aventiure2.data.database.AvDatabase;
 import de.nb.aventiure2.data.storystate.StoryState;
@@ -24,12 +23,8 @@ import de.nb.aventiure2.playeraction.action.HochwerfenAction;
 import de.nb.aventiure2.playeraction.action.NehmenAction;
 import de.nb.aventiure2.playeraction.action.RedenAction;
 import de.nb.aventiure2.playeraction.action.SchlafenAction;
-import de.nb.aventiure2.playeraction.action.room.connection.RoomConnection;
 
 import static de.nb.aventiure2.data.world.entity.creature.Creature.Key.FROSCHPRINZ;
-import static de.nb.aventiure2.playeraction.action.BewegenAction.NumberOfPossibilities.ONE_IN_ONE_OUT;
-import static de.nb.aventiure2.playeraction.action.BewegenAction.NumberOfPossibilities.ONLY_WAY;
-import static de.nb.aventiure2.playeraction.action.BewegenAction.NumberOfPossibilities.SEVERAL_WAYS;
 
 /**
  * Repository for the actions the player can choose from.
@@ -146,7 +141,7 @@ public class PlayerActionService {
         final ImmutableList.Builder<AbstractPlayerAction> res = ImmutableList.builder();
 
         res.addAll(buildRoomSpecificActions(currentStoryState, room));
-        res.addAll(buildRoomConnectionActions(currentStoryState, room));
+        res.addAll(BewegenAction.buildActions(db, currentStoryState, room));
 
         return res.build();
     }
@@ -158,34 +153,5 @@ public class PlayerActionService {
         res.addAll(KletternAction.buildActions(db, currentStoryState, room));
 
         return res.build();
-    }
-
-    private ImmutableList<AbstractPlayerAction> buildRoomConnectionActions(
-            final StoryState currentStoryState,
-            final AvRoom room) {
-        final ImmutableList.Builder<AbstractPlayerAction> res = ImmutableList.builder();
-
-        final Set<AvRoom> connectedRooms = RoomConnection.getFrom(room).keySet();
-
-        final BewegenAction.NumberOfPossibilities numberOfPossibilities =
-                calcNumberOfPossibilities(connectedRooms.size());
-
-        for (final AvRoom connectedRoom : connectedRooms) {
-            res.add(BewegenAction.buildAction(
-                    db, currentStoryState, room, connectedRoom, numberOfPossibilities));
-        }
-        return res.build();
-    }
-
-    private static BewegenAction.NumberOfPossibilities calcNumberOfPossibilities(
-            final int numericalNumber) {
-        switch (numericalNumber) {
-            case 1:
-                return ONLY_WAY;
-            case 2:
-                return ONE_IN_ONE_OUT;
-            default:
-                return SEVERAL_WAYS;
-        }
     }
 }

@@ -2,7 +2,10 @@ package de.nb.aventiure2.playeraction.action;
 
 import androidx.annotation.NonNull;
 
+import com.google.common.collect.ImmutableList;
+
 import java.util.List;
+import java.util.Set;
 
 import de.nb.aventiure2.data.database.AvDatabase;
 import de.nb.aventiure2.data.storystate.StoryState;
@@ -27,12 +30,15 @@ import static de.nb.aventiure2.german.DuDescription.du;
 import static de.nb.aventiure2.german.base.AllgDescription.allg;
 import static de.nb.aventiure2.german.base.GermanUtil.capitalize;
 import static de.nb.aventiure2.german.base.GermanUtil.uncapitalize;
+import static de.nb.aventiure2.playeraction.action.BewegenAction.NumberOfPossibilities.ONE_IN_ONE_OUT;
+import static de.nb.aventiure2.playeraction.action.BewegenAction.NumberOfPossibilities.ONLY_WAY;
+import static de.nb.aventiure2.playeraction.action.BewegenAction.NumberOfPossibilities.SEVERAL_WAYS;
 
 /**
  * Der Spielercharakter bewegt sich in einen anderen Raum.
  */
 public class BewegenAction extends AbstractPlayerAction {
-    public enum NumberOfPossibilities {
+    enum NumberOfPossibilities {
         /**
          * Whether this is the only way the SC could take
          */
@@ -53,13 +59,34 @@ public class BewegenAction extends AbstractPlayerAction {
 
     private final NumberOfPossibilities numberOfPossibilities;
 
-    public static BewegenAction buildAction(
+    public static ImmutableList<AbstractPlayerAction> buildActions(
             final AvDatabase db,
-            final StoryState initialStoryState,
-            final AvRoom room, final AvRoom connectedRoom,
-            final NumberOfPossibilities numberOfPossibilities) {
-        return new BewegenAction(db, initialStoryState, room,
-                connectedRoom, numberOfPossibilities);
+            final StoryState currentStoryState,
+            final AvRoom room) {
+        final ImmutableList.Builder<AbstractPlayerAction> res = ImmutableList.builder();
+
+        final Set<AvRoom> connectedRooms = RoomConnection.getFrom(room).keySet();
+
+        final BewegenAction.NumberOfPossibilities numberOfPossibilities =
+                calcNumberOfPossibilities(connectedRooms.size());
+
+        for (final AvRoom connectedRoom : connectedRooms) {
+            res.add(new BewegenAction(db, currentStoryState, room,
+                    connectedRoom, numberOfPossibilities));
+        }
+        return res.build();
+    }
+
+    private static BewegenAction.NumberOfPossibilities calcNumberOfPossibilities(
+            final int numericalNumber) {
+        switch (numericalNumber) {
+            case 1:
+                return ONLY_WAY;
+            case 2:
+                return ONE_IN_ONE_OUT;
+            default:
+                return SEVERAL_WAYS;
+        }
     }
 
     /**
