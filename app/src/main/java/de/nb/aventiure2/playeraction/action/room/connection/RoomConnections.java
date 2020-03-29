@@ -9,6 +9,6 @@ public class RoomConnections {
         final RoomConnectionBuilder roomConnectionBuilder =
                 new RoomConnectionBuilder(from);
 
-        return roomConnectionBuilder.getPossibleConnections();
+        return roomConnectionBuilder.getConnections();
     }
 }
