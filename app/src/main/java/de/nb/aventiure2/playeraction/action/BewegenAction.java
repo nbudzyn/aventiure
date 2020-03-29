@@ -65,7 +65,8 @@ public class BewegenAction extends AbstractPlayerAction {
             final AvRoom room) {
         final ImmutableList.Builder<AbstractPlayerAction> res = ImmutableList.builder();
 
-        final List<RoomConnection> roomConnections = RoomConnections.getFrom(room);
+        final List<RoomConnection> roomConnections =
+                RoomConnections.getFrom(db, room);
 
         final BewegenAction.NumberOfPossibilities numberOfPossibilities =
                 calcNumberOfPossibilities(roomConnections.size());

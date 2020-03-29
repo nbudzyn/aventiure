@@ -1,10 +1,15 @@
 package de.nb.aventiure2.playeraction.action.room.connection;
 
+import androidx.annotation.NonNull;
+
 import com.google.common.collect.ImmutableList;
 
 import java.util.List;
 
+import de.nb.aventiure2.data.database.AvDatabase;
+import de.nb.aventiure2.data.world.invisible.Invisible;
 import de.nb.aventiure2.data.world.room.AvRoom;
+import de.nb.aventiure2.data.world.time.AvTimeSpan;
 import de.nb.aventiure2.german.AbstractDescription;
 
 import static de.nb.aventiure2.data.world.room.AvRoom.ABZWEIG_IM_WALD;
@@ -23,9 +28,11 @@ import static de.nb.aventiure2.german.base.AllgDescription.allg;
 import static de.nb.aventiure2.playeraction.action.room.connection.RoomConnection.con;
 
 class RoomConnectionBuilder {
+    private final AvDatabase db;
     private final AvRoom from;
 
-    RoomConnectionBuilder(final AvRoom from) {
+    RoomConnectionBuilder(final AvDatabase db, final AvRoom from) {
+        this.db = db;
         this.from = from;
     }
 
@@ -84,7 +91,7 @@ class RoomConnectionBuilder {
                 return ImmutableList.of(
                         con(DRAUSSEN_VOR_DEM_SCHLOSS,
                                 "Den Wald verlassen",
-                                RoomConnectionBuilder::getDesc_ImWaldNaheDemSchloss_DraussenVorDemSchloss),
+                                this::getDesc_ImWaldNaheDemSchloss_DraussenVorDemSchloss),
                         con(ABZWEIG_IM_WALD,
                                 "Tiefer in den Wald hineingehen",
                                 allg("Nicht lang, und zur Linken geht zwischen "
@@ -287,8 +294,22 @@ class RoomConnectionBuilder {
         }
     }
 
-    private static AbstractDescription getDesc_ImWaldNaheDemSchloss_DraussenVorDemSchloss(
+    private AbstractDescription getDesc_ImWaldNaheDemSchloss_DraussenVorDemSchloss(
             final boolean isNewRoomKnown) {
+        final AvTimeSpan timeElapsed = mins(10);
+
+        switch (db.invisibleDataDao().getInvisible(Invisible.Key.SCHLOSSFEST).getState()) {
+            case BEGONNEN:
+                return getDesc_ImWaldNaheDemSchloss_DraussenVorDemSchloss_FestBegonnen(timeElapsed);
+
+            default:
+                return getDesc_ImWaldNaheDemSchloss_DraussenVorDemSchloss_KeinFest(timeElapsed);
+        }
+    }
+
+    @NonNull
+    private static AbstractDescription getDesc_ImWaldNaheDemSchloss_DraussenVorDemSchloss_KeinFest(
+            final AvTimeSpan timeElapsed) {
         return du("erreichst", "bald das helle "
                         + "Tageslicht, in dem der Schlossgarten "
                         + "liegt",
@@ -296,6 +317,32 @@ class RoomConnectionBuilder {
                 true,
                 false,
                 false,
-                mins(10));
+                timeElapsed);
+    }
+
+    @NonNull
+    private AbstractDescription getDesc_ImWaldNaheDemSchloss_DraussenVorDemSchloss_FestBegonnen(
+            final AvTimeSpan timeSpan) {
+        if (db.counterDao().incAndGet(
+                "RoomConnectionBuilder_DraussenVorDemSchloss_Schlossfest") == 1) {
+            return du("bist", "von dem Lärm überrascht, der dir "
+                            + "schon von weitem "
+                            + "entgegenschallt. Als du aus dem Wald heraustrittst, "
+                            + "ist der Anblick überwältigend: "
+                            + "Überall im Schlossgarten stehen kleine Pagoden "
+                            + "in lustigen Farben. Kinder werden auf Kähnen durch Kanäle "
+                            + "gestakt und aus dem Schloss duftet es verführerisch nach "
+                            + "Gebratenem",
+                    false,
+                    false,
+                    false,
+                    timeSpan);
+        }
+
+        return allg("Das Schlossfest ist immer noch in vollem Gange",
+                false,
+                false,
+                false,
+                timeSpan);
     }
 }
