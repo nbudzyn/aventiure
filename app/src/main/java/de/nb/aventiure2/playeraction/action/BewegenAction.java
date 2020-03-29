@@ -20,7 +20,7 @@ import de.nb.aventiure2.data.world.time.AvTimeSpan;
 import de.nb.aventiure2.german.AbstractDescription;
 import de.nb.aventiure2.german.DuDescription;
 import de.nb.aventiure2.playeraction.AbstractPlayerAction;
-import de.nb.aventiure2.playeraction.action.room.connection.RoomConnection;
+import de.nb.aventiure2.playeraction.action.room.connection.RoomConnections;
 
 import static com.google.common.base.Preconditions.checkArgument;
 import static de.nb.aventiure2.data.world.room.AvRoom.DRAUSSEN_VOR_DEM_SCHLOSS;
@@ -65,7 +65,7 @@ public class BewegenAction extends AbstractPlayerAction {
             final AvRoom room) {
         final ImmutableList.Builder<AbstractPlayerAction> res = ImmutableList.builder();
 
-        final Set<AvRoom> connectedRooms = RoomConnection.getFrom(room).keySet();
+        final Set<AvRoom> connectedRooms = RoomConnections.getFrom(room).keySet();
 
         final BewegenAction.NumberOfPossibilities numberOfPossibilities =
                 calcNumberOfPossibilities(connectedRooms.size());
@@ -114,7 +114,7 @@ public class BewegenAction extends AbstractPlayerAction {
     @Override
     @NonNull
     public String getName() {
-        return RoomConnection.getFrom(oldRoom).get(newRoom).getActionName();
+        return RoomConnections.getFrom(oldRoom).get(newRoom).getActionName();
     }
 
     @Override
@@ -167,8 +167,9 @@ public class BewegenAction extends AbstractPlayerAction {
     private AbstractDescription getMovementDescription(final StoryState currentStoryState) {
         final boolean newRoomKnown = db.roomDao().isKnown(newRoom);
 
-        final AbstractDescription standardDescription = RoomConnection.getFrom(oldRoom).get(newRoom)
-                .getDescription(db.roomDao().isKnown(newRoom));
+        final AbstractDescription standardDescription =
+                RoomConnections.getFrom(oldRoom).get(newRoom)
+                        .getDescription(db.roomDao().isKnown(newRoom));
 
         if (newRoomKnown) {
             if (numberOfPossibilities == NumberOfPossibilities.ONLY_WAY) {
