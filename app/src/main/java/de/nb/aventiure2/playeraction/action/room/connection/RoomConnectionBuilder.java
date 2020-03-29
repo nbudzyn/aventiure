@@ -42,35 +42,12 @@ class RoomConnectionBuilder {
                 return ImmutableList.of(
                         con(DRAUSSEN_VOR_DEM_SCHLOSS,
                                 "Das Schloss verlassen",
-                                du(
-                                        "gehst",
-                                        "hinaus in die Gärten vor dem Schloss.\n\n" +
-                                                "Draußen scheint dir die " +
-                                                "Sonne ins Gesicht; der Tag ist recht heiß. "
-                                                +
-                                                "Nahebei liegt ein großer, dunkler Wald",
-                                        false,
-                                        false,
-                                        false,
-                                        mins(1)),
-                                du(
-                                        "verlässt",
-                                        "das Schloss",
-                                        false,
-                                        true,
-                                        true,
-                                        mins(1))));
+                                this::getDesc_SchlossVorhalle_DraussenVorDemSchloss));
             case DRAUSSEN_VOR_DEM_SCHLOSS:
                 return ImmutableList.of(
                         con(SCHLOSS_VORHALLE,
                                 "Das Schloss betreten",
-                                du(
-                                        "gehst",
-                                        "wieder hinein in das Schloss",
-                                        false,
-                                        true,
-                                        true,
-                                        mins(1))),
+                                this::getDesc_DraussenVorDemSchloss_SchlossVorhalle),
                         con(IM_WALD_NAHE_DEM_SCHLOSS,
                                 "In den Wald gehen",
                                 du(
@@ -294,6 +271,52 @@ class RoomConnectionBuilder {
         }
     }
 
+    private AbstractDescription getDesc_SchlossVorhalle_DraussenVorDemSchloss(
+            final boolean newRoomKnown) {
+        switch (db.invisibleDataDao().getInvisible(Invisible.Key.SCHLOSSFEST).getState()) {
+            case BEGONNEN:
+                return getDesc_SchlossVorhalle_DraussenVorDemSchloss_FestBegonnen();
+
+            default:
+                return getDesc_SchlossVorhalle_DraussenVorDemSchlosss_KeinFest(newRoomKnown);
+        }
+    }
+
+    private static AbstractDescription getDesc_SchlossVorhalle_DraussenVorDemSchlosss_KeinFest(
+            final boolean newRoomKnown) {
+        if (!newRoomKnown) {
+            return du(
+                    "gehst",
+                    "hinaus in die Gärten vor dem Schloss.\n\n" +
+                            "Draußen scheint dir die " +
+                            "Sonne ins Gesicht; der Tag ist recht heiß. "
+                            +
+                            "Nahebei liegt ein großer, dunkler Wald",
+                    false,
+                    false,
+                    false,
+                    mins(1));
+        }
+
+        return du(
+                "verlässt",
+                "das Schloss",
+                false,
+                true,
+                true,
+                mins(1));
+    }
+
+    private static AbstractDescription getDesc_SchlossVorhalle_DraussenVorDemSchloss_FestBegonnen() {
+        return du(
+                "stehst",
+                "vom Tisch auf und gehst hinaus in den Trubel im Schlossgarten",
+                false,
+                false,
+                true,
+                mins(3));
+    }
+
     private AbstractDescription getDesc_ImWaldNaheDemSchloss_DraussenVorDemSchloss(
             final boolean isNewRoomKnown) {
         final AvTimeSpan timeElapsed = mins(10);
@@ -324,7 +347,8 @@ class RoomConnectionBuilder {
     private AbstractDescription getDesc_ImWaldNaheDemSchloss_DraussenVorDemSchloss_FestBegonnen(
             final AvTimeSpan timeSpan) {
         if (db.counterDao().incAndGet(
-                "RoomConnectionBuilder_DraussenVorDemSchloss_Schlossfest") == 1) {
+                "RoomConnectionBuilder_ImWaldNaheDemSchloss_DraussenVorDemSchloss_Schlossfest")
+                == 1) {
             return du("bist", "von dem Lärm überrascht, der dir "
                             + "schon von weitem "
                             + "entgegenschallt. Als du aus dem Wald heraustrittst, "
@@ -344,5 +368,57 @@ class RoomConnectionBuilder {
                 false,
                 false,
                 timeSpan);
+    }
+
+    private AbstractDescription getDesc_DraussenVorDemSchloss_SchlossVorhalle(
+            final boolean isNewRoomKnown) {
+        switch (db.invisibleDataDao().getInvisible(Invisible.Key.SCHLOSSFEST).getState()) {
+            case BEGONNEN:
+                return getDesc_DraussenVorDemSchloss_SchlossVorhalle_FestBegonnen();
+
+            default:
+                return getDesc_DraussenVorDemSchloss_SchlossVorhalle_KeinFest();
+        }
+    }
+
+    private static AbstractDescription getDesc_DraussenVorDemSchloss_SchlossVorhalle_KeinFest() {
+        return du(
+                "gehst",
+                "wieder hinein in das Schloss",
+                false,
+                true,
+                true,
+                mins(1));
+    }
+
+    private AbstractDescription
+    getDesc_DraussenVorDemSchloss_SchlossVorhalle_FestBegonnen() {
+        if (db.counterDao().incAndGet(
+                "RoomConnectionBuilder_SchlossVorhalle_DraussenVorDemSchloss_Schlossfest")
+                == 1) {
+            return allg("Vor dem Schloss gibt es ein großes Gedränge und es dauert "
+                            + "eine Weile, bis "
+                            + "die Menge dich hineinschiebt. Die prächtige Vorhalle steht voller "
+                            + "Tische, auf denen in großen Schüsseln Eintöpfe dampfen. "
+                            + "Du ergatterst einen Platz auf einer Bank.\n"
+                            + "Unter einem Baldachin sitzen – soweit du durch das Gedänge "
+                            + "erkennen kannst – "
+                            + "einige Ritter an goldenen Tellern vor Fasan und anderem Wildbret. "
+                            + "Immerhin stellt "
+                            + "dir ein eifriger Diener einen leeren Holzteller und einen "
+                            + "Löffel bereit",
+                    false,
+                    false,
+                    false,
+                    mins(10));
+        }
+
+        return du("betrittst",
+                "wieder das Schloss und suchst dir im Gedränge einen Platz "
+                        + "an einem Tisch",
+                false,
+                false,
+                false,
+                mins(5));
     }
 }

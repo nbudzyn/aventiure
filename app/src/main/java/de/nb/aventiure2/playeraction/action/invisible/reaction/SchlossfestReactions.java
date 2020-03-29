@@ -10,8 +10,8 @@ import static de.nb.aventiure2.data.world.invisible.InvisibleState.BEGONNEN;
 import static de.nb.aventiure2.data.world.time.AvTime.oClock;
 import static de.nb.aventiure2.data.world.time.AvTimeSpan.noTime;
 
-class SchlossfestReactions extends AbstractInvisibleReactions {
-    private static final AvDateTime SCHLOSSFEST_BEGINN_DATE_TIME =
+public class SchlossfestReactions extends AbstractInvisibleReactions {
+    public static final AvDateTime SCHLOSSFEST_BEGINN_DATE_TIME =
             new AvDateTime(2,
                     oClock(5, 30));
 

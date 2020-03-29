@@ -92,7 +92,7 @@ class KletternAction extends AbstractPlayerAction {
                         + "Ast entlang, "
                         + "der immer dünner wird und gefährlich schwankt. Irgendeine "
                         + "Aussicht hast du "
-                        + "nicht, und Äpfel sind auch keine zu sehen. Vielleicht doch kein "
+                        + "nicht, und Äpfel sind auch keine zu finden. Vielleicht doch kein "
                         + "Apfelbaum. "
                         + "Mit einiger Mühe drehst du auf dem Ast um und hangelst dich "
                         + "vorsichtig "

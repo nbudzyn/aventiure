@@ -24,9 +24,12 @@ import static de.nb.aventiure2.data.world.entity.creature.CreatureState.UNAUFFAE
 import static de.nb.aventiure2.data.world.entity.object.AvObject.Key.GOLDENE_KUGEL;
 import static de.nb.aventiure2.data.world.entity.object.AvObject.extractObject;
 import static de.nb.aventiure2.data.world.entity.object.AvObject.isObject;
+import static de.nb.aventiure2.data.world.invisible.Invisible.Key.SCHLOSSFEST;
+import static de.nb.aventiure2.data.world.invisible.InvisibleState.BEGONNEN;
 import static de.nb.aventiure2.data.world.time.AvTimeSpan.noTime;
 import static de.nb.aventiure2.data.world.time.AvTimeSpan.secs;
 import static de.nb.aventiure2.german.base.GermanUtil.capitalize;
+import static de.nb.aventiure2.playeraction.action.invisible.reaction.SchlossfestReactions.SCHLOSSFEST_BEGINN_DATE_TIME;
 
 class SchlosswacheReactions extends AbstractCreatureReactions {
     public SchlosswacheReactions(final AvDatabase db,
@@ -100,6 +103,10 @@ class SchlosswacheReactions extends AbstractCreatureReactions {
                                final AbstractEntityData genommenData,
                                final StoryState currentStoryState) {
         if (room != AvRoom.SCHLOSS_VORHALLE) {
+            return noTime();
+        }
+
+        if (db.invisibleDataDao().getInvisible(SCHLOSSFEST).hasState(BEGONNEN)) {
             return noTime();
         }
 
@@ -339,6 +346,20 @@ class SchlosswacheReactions extends AbstractCreatureReactions {
 
     @Override
     public AvTimeSpan onTimePassed(final AvDateTime lastTime, final AvDateTime now) {
-        return noTime();
+        AvTimeSpan timeElapsed = noTime();
+
+        if (lastTime.isBefore(SCHLOSSFEST_BEGINN_DATE_TIME) &&
+                !now.isBefore(SCHLOSSFEST_BEGINN_DATE_TIME)) {
+            timeElapsed = timeElapsed.plus(schlossfestBeginnt());
+        }
+
+        return timeElapsed;
+    }
+
+    private AvTimeSpan schlossfestBeginnt() {
+        // Beim Fest ist die Schlosswache beschäftigt
+        db.creatureDataDao().setState(SCHLOSSWACHE, UNAUFFAELLIG);
+
+        return noTime(); // Passiert nebenher und braucht KEINE zusätzliche Zeit
     }
 }
