@@ -1,4 +1,4 @@
-package de.nb.aventiure2.data.world.object;
+package de.nb.aventiure2.data.world.entity.object;
 
 import androidx.annotation.Nullable;
 
@@ -6,13 +6,13 @@ import com.google.common.collect.ImmutableList;
 
 import java.util.List;
 
-import de.nb.aventiure2.data.world.entity.AbstractEntity;
-import de.nb.aventiure2.data.world.entity.AbstractEntityData;
+import de.nb.aventiure2.data.world.entity.base.AbstractEntity;
+import de.nb.aventiure2.data.world.entity.base.AbstractEntityData;
 import de.nb.aventiure2.data.world.room.AvRoom;
 import de.nb.aventiure2.german.base.Nominalphrase;
 import de.nb.aventiure2.german.base.NumerusGenus;
 
-import static de.nb.aventiure2.data.world.object.AvObject.Key.GOLDENE_KUGEL;
+import static de.nb.aventiure2.data.world.entity.object.AvObject.Key.GOLDENE_KUGEL;
 import static de.nb.aventiure2.german.base.Nominalphrase.np;
 import static de.nb.aventiure2.german.base.NumerusGenus.F;
 
@@ -97,7 +97,6 @@ public class AvObject extends AbstractEntity {
         return key;
     }
 
-    // TODO Use or remove
     public AvRoom getInitialRoom() {
         return initialRoom;
     }

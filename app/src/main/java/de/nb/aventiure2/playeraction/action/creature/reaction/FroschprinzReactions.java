@@ -3,29 +3,30 @@ package de.nb.aventiure2.playeraction.action.creature.reaction;
 import de.nb.aventiure2.data.database.AvDatabase;
 import de.nb.aventiure2.data.storystate.IPlayerAction;
 import de.nb.aventiure2.data.storystate.StoryState;
-import de.nb.aventiure2.data.world.creature.CreatureData;
-import de.nb.aventiure2.data.world.entity.AbstractEntityData;
-import de.nb.aventiure2.data.world.object.AvObject;
-import de.nb.aventiure2.data.world.object.ObjectData;
+import de.nb.aventiure2.data.world.entity.base.AbstractEntityData;
+import de.nb.aventiure2.data.world.entity.creature.CreatureData;
+import de.nb.aventiure2.data.world.entity.object.AvObject;
+import de.nb.aventiure2.data.world.entity.object.ObjectData;
 import de.nb.aventiure2.data.world.room.AvRoom;
+import de.nb.aventiure2.data.world.time.AvDateTime;
 import de.nb.aventiure2.data.world.time.AvTimeSpan;
 
 import static de.nb.aventiure2.data.storystate.StoryState.StructuralElement.PARAGRAPH;
 import static de.nb.aventiure2.data.storystate.StoryState.StructuralElement.SENTENCE;
-import static de.nb.aventiure2.data.world.creature.CreatureState.ERWARTET_VON_SC_EINLOESUNG_SEINES_VERSPRECHENS;
-import static de.nb.aventiure2.data.world.creature.CreatureState.HAT_FORDERUNG_GESTELLT;
-import static de.nb.aventiure2.data.world.creature.CreatureState.HAT_NACH_BELOHNUNG_GEFRAGT;
-import static de.nb.aventiure2.data.world.creature.CreatureState.HAT_SC_HILFSBEREIT_ANGESPROCHEN;
-import static de.nb.aventiure2.data.world.creature.CreatureState.UNAUFFAELLIG;
-import static de.nb.aventiure2.data.world.object.AvObject.Key.GOLDENE_KUGEL;
+import static de.nb.aventiure2.data.world.entity.creature.CreatureState.ERWARTET_VON_SC_EINLOESUNG_SEINES_VERSPRECHENS;
+import static de.nb.aventiure2.data.world.entity.creature.CreatureState.HAT_FORDERUNG_GESTELLT;
+import static de.nb.aventiure2.data.world.entity.creature.CreatureState.HAT_NACH_BELOHNUNG_GEFRAGT;
+import static de.nb.aventiure2.data.world.entity.creature.CreatureState.HAT_SC_HILFSBEREIT_ANGESPROCHEN;
+import static de.nb.aventiure2.data.world.entity.creature.CreatureState.UNAUFFAELLIG;
+import static de.nb.aventiure2.data.world.entity.object.AvObject.Key.GOLDENE_KUGEL;
 import static de.nb.aventiure2.data.world.room.AvRoom.IM_WALD_BEIM_BRUNNEN;
 import static de.nb.aventiure2.data.world.time.AvTimeSpan.noTime;
 import static de.nb.aventiure2.data.world.time.AvTimeSpan.secs;
 import static de.nb.aventiure2.german.base.GermanUtil.capitalize;
 
-class FroschprinzCreatureReactions extends AbstractCreatureReactions {
-    FroschprinzCreatureReactions(final AvDatabase db,
-                                 final Class<? extends IPlayerAction> playerActionClass) {
+class FroschprinzReactions extends AbstractCreatureReactions {
+    FroschprinzReactions(final AvDatabase db,
+                         final Class<? extends IPlayerAction> playerActionClass) {
         super(db, playerActionClass);
     }
 
@@ -90,7 +91,7 @@ class FroschprinzCreatureReactions extends AbstractCreatureReactions {
 
         final boolean scHatObjektAufgefangen =
                 db.playerInventoryDao().getInventory().stream().map(AvObject::getKey)
-                        .anyMatch(k -> k == objectData.getObject().getKey());
+                        .anyMatch(k -> k == objectData.getKey());
 
         if (froschprinzCreatureData.hasState(HAT_SC_HILFSBEREIT_ANGESPROCHEN,
                 HAT_NACH_BELOHNUNG_GEFRAGT,
@@ -107,7 +108,7 @@ class FroschprinzCreatureReactions extends AbstractCreatureReactions {
             return secs(3);
         }
 
-        if (objectData.getObject().getKey() != GOLDENE_KUGEL) {
+        if (objectData.getKey() != GOLDENE_KUGEL) {
             return noTime();
         }
 
@@ -124,5 +125,10 @@ class FroschprinzCreatureReactions extends AbstractCreatureReactions {
                 .letztesObject(objectData.getObject()));
 
         return secs(5);
+    }
+
+    @Override
+    public AvTimeSpan onTimePassed(final AvDateTime lastTime, final AvDateTime now) {
+        return noTime();
     }
 }

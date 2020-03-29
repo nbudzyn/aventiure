@@ -1,4 +1,4 @@
-package de.nb.aventiure2.data.world.object;
+package de.nb.aventiure2.data.world.entity.object;
 
 import androidx.annotation.Nullable;
 import androidx.room.Dao;

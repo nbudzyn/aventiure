@@ -1,4 +1,4 @@
-package de.nb.aventiure2.data.world.creature;
+package de.nb.aventiure2.data.world.entity.creature;
 
 import androidx.room.TypeConverter;
 

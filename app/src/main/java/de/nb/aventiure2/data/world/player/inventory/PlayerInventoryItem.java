@@ -4,7 +4,7 @@ import androidx.annotation.NonNull;
 import androidx.room.Entity;
 import androidx.room.PrimaryKey;
 
-import de.nb.aventiure2.data.world.object.AvObject;
+import de.nb.aventiure2.data.world.entity.object.AvObject;
 
 /**
  * An item the player character's carries with them.

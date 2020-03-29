@@ -14,9 +14,9 @@ import de.nb.aventiure2.data.storystate.IPlayerAction;
 import de.nb.aventiure2.data.storystate.StoryState;
 import de.nb.aventiure2.data.storystate.StoryStateBuilder;
 import de.nb.aventiure2.data.storystate.StoryStateDao;
-import de.nb.aventiure2.data.world.creature.CreatureData;
-import de.nb.aventiure2.data.world.object.AvObject;
-import de.nb.aventiure2.data.world.object.ObjectData;
+import de.nb.aventiure2.data.world.entity.creature.CreatureData;
+import de.nb.aventiure2.data.world.entity.object.AvObject;
+import de.nb.aventiure2.data.world.entity.object.ObjectData;
 import de.nb.aventiure2.data.world.room.AvRoom;
 import de.nb.aventiure2.german.praedikat.Praedikat;
 
@@ -26,7 +26,7 @@ import static de.nb.aventiure2.playeraction.action.creature.conversation.Creatur
 
 /**
  * Abstrakte Oberklasse zum Erzeugen von {@link CreatureConversationStep}s für eine
- * {@link de.nb.aventiure2.data.world.creature.Creature}.
+ * {@link de.nb.aventiure2.data.world.entity.creature.Creature}.
  */
 abstract class AbstractCreatureConversationStepBuilder {
     protected final AvDatabase db;

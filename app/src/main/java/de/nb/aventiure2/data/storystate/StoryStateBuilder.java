@@ -7,8 +7,8 @@ import androidx.annotation.Nullable;
 import androidx.room.PrimaryKey;
 
 import de.nb.aventiure2.data.storystate.StoryState.StructuralElement;
-import de.nb.aventiure2.data.world.creature.Creature;
-import de.nb.aventiure2.data.world.object.AvObject;
+import de.nb.aventiure2.data.world.entity.creature.Creature;
+import de.nb.aventiure2.data.world.entity.object.AvObject;
 import de.nb.aventiure2.data.world.room.AvRoom;
 
 import static com.google.common.base.Preconditions.checkArgument;

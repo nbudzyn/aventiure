@@ -5,8 +5,8 @@ import androidx.annotation.NonNull;
 import de.nb.aventiure2.data.database.AvDatabase;
 import de.nb.aventiure2.data.storystate.StoryState;
 import de.nb.aventiure2.data.storystate.StoryStateBuilder;
-import de.nb.aventiure2.data.world.object.AvObject;
-import de.nb.aventiure2.data.world.object.ObjectData;
+import de.nb.aventiure2.data.world.entity.object.AvObject;
+import de.nb.aventiure2.data.world.entity.object.ObjectData;
 import de.nb.aventiure2.playeraction.AbstractPlayerAction;
 
 /**

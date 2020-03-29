@@ -2,7 +2,6 @@ package de.nb.aventiure2.activity.main.viewmodel;
 
 import android.app.Application;
 
-import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.UiThread;
 import androidx.annotation.WorkerThread;
@@ -17,7 +16,6 @@ import java.util.stream.Collectors;
 
 import de.nb.aventiure2.data.database.AvDatabase;
 import de.nb.aventiure2.data.storystate.StoryState;
-import de.nb.aventiure2.data.world.time.AvTimeSpan;
 import de.nb.aventiure2.playeraction.AbstractPlayerAction;
 import de.nb.aventiure2.playeraction.PlayerActionService;
 
@@ -77,20 +75,10 @@ public class MainViewModel extends AndroidViewModel {
                             @WorkerThread
                             @Override
                             public void run() {
-                                db.runInTransaction(() -> doActionAndPassTime());
+                                db.runInTransaction(playerAction::doAndPassTime);
                                 postLiveDataUpdate();
                             }
                         });
-            }
-
-            @NonNull
-            private void doActionAndPassTime() {
-                final AvTimeSpan timeElapsed =
-                        playerAction.narrateAndDo();
-
-                // STORY Z.B. Das Fest starten, wenn die Zeit erreicht ist.
-
-                db.dateTimeDao().passTime(timeElapsed);
             }
         };
     }

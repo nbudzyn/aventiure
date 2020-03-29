@@ -3,6 +3,8 @@ package de.nb.aventiure2.data.world.time;
 import androidx.annotation.NonNull;
 import androidx.room.PrimaryKey;
 
+import java.util.Objects;
+
 import static com.google.common.base.Preconditions.checkState;
 
 /**
@@ -70,6 +72,23 @@ public class AvTime {
 
     long getSecsSinceMidnight() {
         return secsSinceMidnight;
+    }
+
+    @Override
+    public boolean equals(final Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        final AvTime avTime = (AvTime) o;
+        return secsSinceMidnight == avTime.secsSinceMidnight;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(secsSinceMidnight);
     }
 
     @NonNull

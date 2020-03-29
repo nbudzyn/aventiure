@@ -11,9 +11,9 @@ import java.util.Map;
 import de.nb.aventiure2.data.database.AvDatabase;
 import de.nb.aventiure2.data.storystate.StoryState;
 import de.nb.aventiure2.data.storystate.StoryStateBuilder;
-import de.nb.aventiure2.data.world.creature.CreatureData;
-import de.nb.aventiure2.data.world.object.AvObject;
-import de.nb.aventiure2.data.world.object.ObjectData;
+import de.nb.aventiure2.data.world.entity.creature.CreatureData;
+import de.nb.aventiure2.data.world.entity.object.AvObject;
+import de.nb.aventiure2.data.world.entity.object.ObjectData;
 import de.nb.aventiure2.data.world.room.AvRoom;
 import de.nb.aventiure2.data.world.time.AvTimeSpan;
 import de.nb.aventiure2.german.praedikat.Praedikat;
@@ -74,7 +74,7 @@ public class RedenAction extends AbstractPlayerAction {
     private static boolean stepTypeFits(final StoryState initialStoryState,
                                         final CreatureData creatureData,
                                         final CreatureConversationStep.Type stepType) {
-        if (initialStoryState.talkingTo(creatureData.getCreature().getKey())) {
+        if (initialStoryState.talkingTo(creatureData.getKey())) {
             // Der SC befindet sich gerade im Gespräch mit der Creature-
             return stepType == CreatureConversationStep.Type.NORMAL ||
                     stepType == CreatureConversationStep.Type.EXIT;

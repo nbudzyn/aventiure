@@ -6,30 +6,31 @@ import de.nb.aventiure2.data.database.AvDatabase;
 import de.nb.aventiure2.data.storystate.IPlayerAction;
 import de.nb.aventiure2.data.storystate.StoryState;
 import de.nb.aventiure2.data.storystate.StoryStateBuilder;
-import de.nb.aventiure2.data.world.creature.CreatureData;
-import de.nb.aventiure2.data.world.entity.AbstractEntityData;
-import de.nb.aventiure2.data.world.object.ObjectData;
+import de.nb.aventiure2.data.world.entity.base.AbstractEntityData;
+import de.nb.aventiure2.data.world.entity.creature.CreatureData;
+import de.nb.aventiure2.data.world.entity.object.ObjectData;
 import de.nb.aventiure2.data.world.player.stats.PlayerStateOfMind;
 import de.nb.aventiure2.data.world.room.AvRoom;
+import de.nb.aventiure2.data.world.time.AvDateTime;
 import de.nb.aventiure2.data.world.time.AvTimeSpan;
 import de.nb.aventiure2.playeraction.action.AblegenAction;
 
 import static de.nb.aventiure2.data.storystate.StoryState.StructuralElement.PARAGRAPH;
 import static de.nb.aventiure2.data.storystate.StoryState.StructuralElement.SENTENCE;
 import static de.nb.aventiure2.data.storystate.StoryState.StructuralElement.WORD;
-import static de.nb.aventiure2.data.world.creature.Creature.Key.SCHLOSSWACHE;
-import static de.nb.aventiure2.data.world.creature.CreatureState.AUFMERKSAM;
-import static de.nb.aventiure2.data.world.creature.CreatureState.UNAUFFAELLIG;
-import static de.nb.aventiure2.data.world.object.AvObject.Key.GOLDENE_KUGEL;
-import static de.nb.aventiure2.data.world.object.AvObject.extractObject;
-import static de.nb.aventiure2.data.world.object.AvObject.isObject;
+import static de.nb.aventiure2.data.world.entity.creature.Creature.Key.SCHLOSSWACHE;
+import static de.nb.aventiure2.data.world.entity.creature.CreatureState.AUFMERKSAM;
+import static de.nb.aventiure2.data.world.entity.creature.CreatureState.UNAUFFAELLIG;
+import static de.nb.aventiure2.data.world.entity.object.AvObject.Key.GOLDENE_KUGEL;
+import static de.nb.aventiure2.data.world.entity.object.AvObject.extractObject;
+import static de.nb.aventiure2.data.world.entity.object.AvObject.isObject;
 import static de.nb.aventiure2.data.world.time.AvTimeSpan.noTime;
 import static de.nb.aventiure2.data.world.time.AvTimeSpan.secs;
 import static de.nb.aventiure2.german.base.GermanUtil.capitalize;
 
-class SchlosswacheCreatureReactions extends AbstractCreatureReactions {
-    public SchlosswacheCreatureReactions(final AvDatabase db,
-                                         final Class<? extends IPlayerAction> playerActionClass) {
+class SchlosswacheReactions extends AbstractCreatureReactions {
+    public SchlosswacheReactions(final AvDatabase db,
+                                 final Class<? extends IPlayerAction> playerActionClass) {
         super(db, playerActionClass);
     }
 
@@ -271,7 +272,7 @@ class SchlosswacheCreatureReactions extends AbstractCreatureReactions {
 
         switch (wacheInRoom.getState()) {
             case AUFMERKSAM:
-                if (objectData.getObject().getKey() == GOLDENE_KUGEL) {
+                if (objectData.getKey() == GOLDENE_KUGEL) {
                     return hochwerfenGoldeneKugel_wacheIstAufmerksam(room, wacheInRoom,
                             objectData, currentStoryState);
                 }
@@ -287,7 +288,7 @@ class SchlosswacheCreatureReactions extends AbstractCreatureReactions {
 
         final boolean scHatKugelAufgefangen =
                 db.playerInventoryDao().getInventory().stream().map(o -> o.getKey())
-                        .anyMatch(k -> k == goldeneKugelData.getObject().getKey());
+                        .anyMatch(k -> k == goldeneKugelData.getKey());
 
         if (scHatKugelAufgefangen) {
             return hochwerfenGoldeneKugel_wacheIstAufmerksam_wiederGefangen(room, wacheInRoom,
@@ -334,5 +335,10 @@ class SchlosswacheCreatureReactions extends AbstractCreatureReactions {
                 .letztesObject(goldeneKugelData.getObject()));
 
         return secs(3);
+    }
+
+    @Override
+    public AvTimeSpan onTimePassed(final AvDateTime lastTime, final AvDateTime now) {
+        return noTime();
     }
 }

@@ -3,6 +3,8 @@ package de.nb.aventiure2.data.world.time;
 import androidx.annotation.NonNull;
 import androidx.room.PrimaryKey;
 
+import java.util.Objects;
+
 import javax.annotation.concurrent.Immutable;
 
 import static de.nb.aventiure2.data.world.time.AvTime.HOURS_IN_A_DAY;
@@ -78,10 +80,31 @@ public class AvTimeSpan {
         return secs((long) factor * secs);
     }
 
+
+    public boolean isNoTime() {
+        return equals(noTime());
+    }
+
+    @Override
+    public boolean equals(final Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        final AvTimeSpan that = (AvTimeSpan) o;
+        return secs == that.secs;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(secs);
+    }
+
     @NonNull
     @Override
     public String toString() {
         return String.format("%02dh %02dmin %02ds", getHourPart(), getMinPart(), getSecPart());
     }
-
 }

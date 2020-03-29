@@ -1,4 +1,4 @@
-package de.nb.aventiure2.data.world.creature;
+package de.nb.aventiure2.data.world.entity.creature;
 
 /**
  * A state a creature can be in.

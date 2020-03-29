@@ -7,7 +7,7 @@ import androidx.room.Query;
 
 import java.util.List;
 
-import de.nb.aventiure2.data.world.object.AvObject;
+import de.nb.aventiure2.data.world.entity.object.AvObject;
 
 /**
  * Room DAO for {@link de.nb.aventiure2.data.world.player.inventory.PlayerInventoryItem}s.

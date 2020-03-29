@@ -22,7 +22,25 @@ import static de.nb.aventiure2.data.world.time.AvTimeSpan.secs;
 import static de.nb.aventiure2.german.DuDescription.du;
 import static de.nb.aventiure2.german.base.AllgDescription.allg;
 
+/**
+ * Die Verbindung von einem Raum zu einem anderen, wie sie der SC beim Bewegen benutzten kann -
+ * einschließlich ihrer Beschreibung, wie sie beim Bewegen angezeigt wird (ohne Gegenstände,
+ * {@link de.nb.aventiure2.data.world.entity.creature.Creature}s etc.)
+ */
 public class RoomConnection {
+    /**
+     * Interface zur Erzeugung der Beschreibung für die Bewegung von einem Raum zu einem
+     * anderen.
+     */
+    @FunctionalInterface
+    private interface DescriptionProvider {
+        /**
+         * Erzeugt die Beschreibung für die Bewegung von einem Raum zu einem anderen (ohne
+         * Gegenstände, {@link de.nb.aventiure2.data.world.entity.creature.Creature}s etc.)
+         */
+        AbstractDescription getDescription(boolean isNewRoomKnown);
+    }
+
     private static final Table<AvRoom, AvRoom, RoomConnection> ALL =
             ImmutableTable.<AvRoom, AvRoom, RoomConnection>builder()
                     .put(SCHLOSS_VORHALLE, DRAUSSEN_VOR_DEM_SCHLOSS,
@@ -32,7 +50,8 @@ public class RoomConnection {
                                             "gehst",
                                             "hinaus.\n\n" +
                                                     "Draußen scheint dir die " +
-                                                    "Sonne ins Gesicht; der Tag ist recht heiß. " +
+                                                    "Sonne ins Gesicht; der Tag ist recht heiß. "
+                                                    +
                                                     "Nahebei liegt ein großer, dunkler Wald",
                                             false,
                                             false,
@@ -75,11 +94,13 @@ public class RoomConnection {
                     .put(IM_WALD_NAHE_DEM_SCHLOSS, DRAUSSEN_VOR_DEM_SCHLOSS,
                             con(
                                     "Den Wald verlassen",
-                                    allg("Von dort gehst du zurück ans helle "
-                                                    + "Tageslicht, in den Schlossgarten",
-                                            false,
-                                            false,
+                                    du("erreichst", "bald das helle "
+                                                    + "Tageslicht, in dem der Schlossgarten "
+                                                    + "liegt",
+                                            // STORY Und bei Nacht?!
                                             true,
+                                            false,
+                                            false,
                                             mins(10))))
                     .put(IM_WALD_NAHE_DEM_SCHLOSS, ABZWEIG_IM_WALD,
                             con("Tiefer in den Wald hineingehen",
@@ -101,10 +122,8 @@ public class RoomConnection {
                             ))
                     .put(ABZWEIG_IM_WALD, IM_WALD_NAHE_DEM_SCHLOSS,
                             con("In Richtung Schloss gehen",
-                                    du("erreichst",
-                                            "die Stelle, wo der überwachsene Weg "
-                                                    + "abzweigt",
-                                            true,
+                                    allg("Von dort gehst du weiter in Richtung Schloss",
+                                            false,
                                             true,
                                             false,
                                             mins(5)
@@ -267,16 +286,17 @@ public class RoomConnection {
                             con(
                                     "Den Weg Richtung Schloss gehen",
                                     du("verlässt",
-                                            "den Brunnen",
+                                            "den Brunnen und erreichst bald "
+                                                    + "die Stelle, wo der überwachsene Weg "
+                                                    + "abzweigt",
+                                            true,
                                             false,
-                                            true,
-                                            true,
+                                            false,
                                             mins(3)
                                     ))).build();
 
     private final String actionName;
-    private final AbstractDescription descriptionFirstTime;
-    private final AbstractDescription descriptionKnown;
+    private final DescriptionProvider descriptionProvider;
 
     public static Map<AvRoom, RoomConnection> getFrom(final AvRoom from) {
         return ALL.row(from);
@@ -284,23 +304,27 @@ public class RoomConnection {
 
     private static RoomConnection con(final String actionDescription,
                                       final AbstractDescription newRoomDescription) {
-        return con(actionDescription, newRoomDescription,
-                newRoomDescription);
+        return new RoomConnection(actionDescription,
+                isNewRoomKnown -> newRoomDescription);
     }
 
     private static RoomConnection con(final String actionDescription,
                                       final AbstractDescription newRoomDescriptionFirstTime,
                                       final AbstractDescription newRoomDescriptionKnown) {
-        return new RoomConnection(actionDescription, newRoomDescriptionFirstTime,
-                newRoomDescriptionKnown);
+        return new RoomConnection(actionDescription,
+                isNewRoomKnown ->
+                        isNewRoomKnown ?
+                                // Beschreibung schon bekannt?
+                                // TODO SPÄTER!                        db.counterDao().incAndGet(
+                                // "RoomConnection_description_" + newRoomDescriptionFirstTime)
+                                // != 1 ?
+                                newRoomDescriptionKnown : newRoomDescriptionFirstTime);
     }
 
     private RoomConnection(final String actionName,
-                           final AbstractDescription descriptionFirstTime,
-                           final AbstractDescription descriptionKnown) {
+                           final DescriptionProvider descriptionProvider) {
         this.actionName = actionName;
-        this.descriptionFirstTime = descriptionFirstTime;
-        this.descriptionKnown = descriptionKnown;
+        this.descriptionProvider = descriptionProvider;
     }
 
     public String getActionName() {
@@ -309,11 +333,6 @@ public class RoomConnection {
 
     public AbstractDescription getDescription(
             final boolean isNewRoomKnown) {
-        if (isNewRoomKnown) {
-            return descriptionKnown;
-        }
-
-        return descriptionFirstTime;
+        return descriptionProvider.getDescription(isNewRoomKnown);
     }
-
 }

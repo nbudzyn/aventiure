@@ -31,8 +31,24 @@ public class AvDateTime {
         this.secsSinceBeginning = secsSinceBeginning;
     }
 
+    public AvDateTime plus(final AvTimeSpan add) {
+        return new AvDateTime(secsSinceBeginning + add.getSecs());
+    }
+
+    public AvTimeSpan minus(final AvDateTime sub) {
+        return new AvTimeSpan(secsSinceBeginning - sub.secsSinceBeginning);
+    }
+
     public AvTimeSpan timeSpanUntil(final AvTime otherTime) {
         return getTime().timeSpanUntil(otherTime);
+    }
+
+    public boolean isBefore(final AvDateTime other) {
+        return secsSinceBeginning < other.secsSinceBeginning;
+    }
+
+    public boolean isAfter(final AvDateTime other) {
+        return secsSinceBeginning > other.secsSinceBeginning;
     }
 
     public void add(final AvTimeSpan add) {

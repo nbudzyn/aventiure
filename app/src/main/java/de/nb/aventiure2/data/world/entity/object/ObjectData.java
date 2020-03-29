@@ -1,4 +1,4 @@
-package de.nb.aventiure2.data.world.object;
+package de.nb.aventiure2.data.world.entity.object;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -10,7 +10,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import de.nb.aventiure2.data.world.entity.AbstractEntityData;
+import de.nb.aventiure2.data.world.entity.base.AbstractEntityData;
 import de.nb.aventiure2.data.world.room.AvRoom;
 import de.nb.aventiure2.german.base.DeklinierbarePhrase;
 import de.nb.aventiure2.german.base.Indefinitpronomen;
@@ -20,7 +20,7 @@ import de.nb.aventiure2.german.base.Nominalphrase;
  * Changeable data for an object in the world.
  */
 @Entity
-public class ObjectData extends AbstractEntityData {
+public class ObjectData extends AbstractEntityData<AvObject.Key> {
     @PrimaryKey
     @NonNull
     private final AvObject object;
@@ -110,5 +110,10 @@ public class ObjectData extends AbstractEntityData {
 
     public boolean isDemSCInDenBrunnenGefallen() {
         return demSCInDenBrunnenGefallen;
+    }
+
+    @Override
+    public AvObject.Key getKey() {
+        return object.getKey();
     }
 }

@@ -7,8 +7,8 @@ import androidx.room.PrimaryKey;
 
 import com.google.common.base.Preconditions;
 
-import de.nb.aventiure2.data.world.creature.Creature;
-import de.nb.aventiure2.data.world.object.AvObject;
+import de.nb.aventiure2.data.world.entity.creature.Creature;
+import de.nb.aventiure2.data.world.entity.object.AvObject;
 import de.nb.aventiure2.data.world.room.AvRoom;
 
 /**

@@ -1,5 +1,6 @@
-package de.nb.aventiure2.data.world.entity;
+package de.nb.aventiure2.data.world.entity.base;
 
+import de.nb.aventiure2.data.world.base.AbstractKeyData;
 import de.nb.aventiure2.german.base.DescribableAsDeklinierbarePhrase;
 import de.nb.aventiure2.german.base.KasusOderPraepositionalkasus;
 import de.nb.aventiure2.german.base.Nominalphrase;
@@ -7,7 +8,8 @@ import de.nb.aventiure2.german.base.Nominalphrase;
 /**
  * Changeable Data for some entity in the world.
  */
-public abstract class AbstractEntityData implements DescribableAsDeklinierbarePhrase {
+public abstract class AbstractEntityData<K> extends AbstractKeyData<K>
+        implements DescribableAsDeklinierbarePhrase {
     /**
      * Gibt eine Beschreibung der Entity in diesem
      * Kasus ("die Tür") oder Präspositionalkasus ("mit der Tür") zurück.

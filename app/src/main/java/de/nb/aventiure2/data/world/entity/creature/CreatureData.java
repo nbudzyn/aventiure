@@ -1,13 +1,11 @@
-package de.nb.aventiure2.data.world.creature;
+package de.nb.aventiure2.data.world.entity.creature;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.room.Entity;
 import androidx.room.PrimaryKey;
 
-import java.util.List;
-
-import de.nb.aventiure2.data.world.entity.AbstractEntityData;
+import de.nb.aventiure2.data.world.entity.base.AbstractEntityData;
 import de.nb.aventiure2.data.world.room.AvRoom;
 import de.nb.aventiure2.german.base.Nominalphrase;
 
@@ -15,7 +13,7 @@ import de.nb.aventiure2.german.base.Nominalphrase;
  * Changeable data for a creature in the world.
  */
 @Entity
-public class CreatureData extends AbstractEntityData {
+public class CreatureData extends AbstractEntityData<Creature.Key> {
     @PrimaryKey
     @NonNull
     private final Creature creature;
@@ -35,19 +33,8 @@ public class CreatureData extends AbstractEntityData {
         this.state = state;
     }
 
-    public boolean creatureIs(final Creature.Key key) {
-        return creature.getKey() == key;
-    }
-
-    public static boolean contains(final List<CreatureData> creatureDataList,
-                                   final Creature.Key key) {
-        for (final CreatureData creatureData : creatureDataList) {
-            if (creatureData.creature.getKey().equals(key)) {
-                return true;
-            }
-        }
-
-        return false;
+    public boolean creatureIs(final Creature.Key someKey) {
+        return getKey() == someKey;
     }
 
     @Override
@@ -88,5 +75,8 @@ public class CreatureData extends AbstractEntityData {
         return state;
     }
 
-
+    @Override
+    public Creature.Key getKey() {
+        return creature.getKey();
+    }
 }

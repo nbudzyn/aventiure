@@ -1,7 +1,7 @@
 package de.nb.aventiure2.playeraction.action.creature.conversation;
 
-import de.nb.aventiure2.data.world.creature.Creature;
-import de.nb.aventiure2.data.world.creature.CreatureState;
+import de.nb.aventiure2.data.world.entity.creature.Creature;
+import de.nb.aventiure2.data.world.entity.creature.CreatureState;
 import de.nb.aventiure2.data.world.time.AvTimeSpan;
 import de.nb.aventiure2.german.base.Nominalphrase;
 import de.nb.aventiure2.german.praedikat.Praedikat;

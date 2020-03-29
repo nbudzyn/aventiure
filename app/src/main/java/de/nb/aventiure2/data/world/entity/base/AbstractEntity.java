@@ -1,4 +1,4 @@
-package de.nb.aventiure2.data.world.entity;
+package de.nb.aventiure2.data.world.entity.base;
 
 import de.nb.aventiure2.german.base.Nominalphrase;
 

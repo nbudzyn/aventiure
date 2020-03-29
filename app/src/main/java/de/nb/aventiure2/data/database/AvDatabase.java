@@ -24,14 +24,18 @@ import de.nb.aventiure2.data.storystate.StoryStateBuilder;
 import de.nb.aventiure2.data.storystate.StoryStateDao;
 import de.nb.aventiure2.data.world.counter.Counter;
 import de.nb.aventiure2.data.world.counter.CounterDao;
-import de.nb.aventiure2.data.world.creature.CreatureConverters;
-import de.nb.aventiure2.data.world.creature.CreatureData;
-import de.nb.aventiure2.data.world.creature.CreatureDataDao;
-import de.nb.aventiure2.data.world.creature.CreatureStateConverters;
-import de.nb.aventiure2.data.world.object.AvObject;
-import de.nb.aventiure2.data.world.object.AvObjectConverters;
-import de.nb.aventiure2.data.world.object.ObjectData;
-import de.nb.aventiure2.data.world.object.ObjectDataDao;
+import de.nb.aventiure2.data.world.entity.creature.CreatureConverters;
+import de.nb.aventiure2.data.world.entity.creature.CreatureData;
+import de.nb.aventiure2.data.world.entity.creature.CreatureDataDao;
+import de.nb.aventiure2.data.world.entity.creature.CreatureStateConverters;
+import de.nb.aventiure2.data.world.entity.object.AvObject;
+import de.nb.aventiure2.data.world.entity.object.AvObjectConverters;
+import de.nb.aventiure2.data.world.entity.object.ObjectData;
+import de.nb.aventiure2.data.world.entity.object.ObjectDataDao;
+import de.nb.aventiure2.data.world.invisible.InvisibleConverters;
+import de.nb.aventiure2.data.world.invisible.InvisibleData;
+import de.nb.aventiure2.data.world.invisible.InvisibleDataDao;
+import de.nb.aventiure2.data.world.invisible.InvisibleStateConverters;
 import de.nb.aventiure2.data.world.player.inventory.PlayerInventoryDao;
 import de.nb.aventiure2.data.world.player.inventory.PlayerInventoryItem;
 import de.nb.aventiure2.data.world.player.location.PlayerLocation;
@@ -48,7 +52,7 @@ import de.nb.aventiure2.data.world.time.AvDateTime;
 import de.nb.aventiure2.data.world.time.AvDateTimeDao;
 
 import static de.nb.aventiure2.data.storystate.StoryStateBuilder.t;
-import static de.nb.aventiure2.data.world.object.AvObject.Key.GOLDENE_KUGEL;
+import static de.nb.aventiure2.data.world.entity.object.AvObject.Key.GOLDENE_KUGEL;
 import static de.nb.aventiure2.data.world.time.AvTime.oClock;
 
 @Database(entities = {
@@ -56,13 +60,17 @@ import static de.nb.aventiure2.data.world.time.AvTime.oClock;
         StoryState.class,
         AvDateTime.class,
         KnownRoom.class,
+        InvisibleData.class,
         ObjectData.class,
         CreatureData.class,
         PlayerStats.class,
         PlayerLocation.class, PlayerInventoryItem.class},
         version = 1,
         exportSchema = false)
-@TypeConverters({AvStoryStateConverters.class, AvRoomConverters.class, AvObjectConverters.class,
+@TypeConverters({AvStoryStateConverters.class, AvRoomConverters.class,
+        InvisibleConverters.class,
+        InvisibleStateConverters.class,
+        AvObjectConverters.class,
         CreatureConverters.class,
         CreatureStateConverters.class,
         PlayerStateOfMindConverters.class})
@@ -77,6 +85,8 @@ public abstract class AvDatabase extends RoomDatabase {
     public abstract StoryStateDao storyStateDao();
 
     public abstract RoomDao roomDao();
+
+    public abstract InvisibleDataDao invisibleDataDao();
 
     public abstract ObjectDataDao objectDataDao();
 
@@ -100,6 +110,12 @@ public abstract class AvDatabase extends RoomDatabase {
 
             databaseWriteExecutor.execute(() -> {
                 // Populate the database in the background:
+                // Set date and time in the game
+                INSTANCE.dateTimeDao().setDateTime(
+                        1, oClock(14, 30));
+                // Invisibles have their initial state
+                INSTANCE.invisibleDataDao().insertInitial();
+
                 // Objects are placed at their respective initial location.
                 INSTANCE.objectDataDao().insertInitial();
                 INSTANCE.creatureDataDao().insertInitial();
@@ -110,9 +126,6 @@ public abstract class AvDatabase extends RoomDatabase {
                 INSTANCE.storyStateDao().add(buildInitialStoryState());
                 INSTANCE.roomDao().setKnown(AvRoom.SCHLOSS_VORHALLE);
                 INSTANCE.objectDataDao().setKnown(GOLDENE_KUGEL);
-                INSTANCE.dateTimeDao().setDateTime(
-                        1, oClock(14, 30));
-
             });
         }
     };

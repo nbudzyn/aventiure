@@ -11,10 +11,11 @@ import de.nb.aventiure2.data.storystate.IPlayerAction;
 import de.nb.aventiure2.data.storystate.StoryState;
 import de.nb.aventiure2.data.storystate.StoryStateBuilder;
 import de.nb.aventiure2.data.storystate.StoryStateDao;
-import de.nb.aventiure2.data.world.creature.CreatureData;
-import de.nb.aventiure2.data.world.entity.AbstractEntityData;
-import de.nb.aventiure2.data.world.object.ObjectData;
+import de.nb.aventiure2.data.world.entity.base.AbstractEntityData;
+import de.nb.aventiure2.data.world.entity.creature.CreatureData;
+import de.nb.aventiure2.data.world.entity.object.ObjectData;
 import de.nb.aventiure2.data.world.room.AvRoom;
+import de.nb.aventiure2.data.world.time.AvDateTime;
 import de.nb.aventiure2.data.world.time.AvTimeSpan;
 
 abstract class AbstractCreatureReactions {
@@ -56,6 +57,8 @@ abstract class AbstractCreatureReactions {
 
     public abstract AvTimeSpan onHochwerfen(AvRoom room, CreatureData creatureInRoom,
                                             ObjectData objectData, StoryState currentStoryState);
+
+    public abstract AvTimeSpan onTimePassed(AvDateTime lastTime, AvDateTime now);
 
     protected StoryStateBuilder alt(
             final ImmutableCollection.Builder<StoryStateBuilder> alternatives) {

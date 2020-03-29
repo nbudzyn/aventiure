@@ -1,4 +1,4 @@
-package de.nb.aventiure2.data.world.creature;
+package de.nb.aventiure2.data.world.entity.creature;
 
 import androidx.annotation.Nullable;
 import androidx.room.Dao;
@@ -52,6 +52,9 @@ public abstract class CreatureDataDao {
 
     @Query("SELECT * from CreatureData where :room = room")
     public abstract List<CreatureData> getCreaturesInRoom(AvRoom room);
+
+    @Query("SELECT * from CreatureData")
+    public abstract List<CreatureData> getAll();
 
     public void setState(final Creature.Key creatureKey, final CreatureState state) {
         setState(Creature.get(creatureKey), state);

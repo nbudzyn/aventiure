@@ -12,9 +12,9 @@ import java.util.Set;
 
 import de.nb.aventiure2.data.database.AvDatabase;
 import de.nb.aventiure2.data.storystate.StoryState;
-import de.nb.aventiure2.data.world.creature.CreatureData;
-import de.nb.aventiure2.data.world.object.AvObject;
-import de.nb.aventiure2.data.world.object.ObjectData;
+import de.nb.aventiure2.data.world.entity.creature.CreatureData;
+import de.nb.aventiure2.data.world.entity.object.AvObject;
+import de.nb.aventiure2.data.world.entity.object.ObjectData;
 import de.nb.aventiure2.data.world.player.stats.PlayerStats;
 import de.nb.aventiure2.data.world.room.AvRoom;
 import de.nb.aventiure2.data.world.room.connection.RoomConnection;
@@ -26,7 +26,7 @@ import de.nb.aventiure2.playeraction.action.NehmenAction;
 import de.nb.aventiure2.playeraction.action.RedenAction;
 import de.nb.aventiure2.playeraction.action.SchlafenAction;
 
-import static de.nb.aventiure2.data.world.creature.Creature.Key.FROSCHPRINZ;
+import static de.nb.aventiure2.data.world.entity.creature.Creature.Key.FROSCHPRINZ;
 import static de.nb.aventiure2.playeraction.action.BewegenAction.NumberOfPossibilities.ONE_IN_ONE_OUT;
 import static de.nb.aventiure2.playeraction.action.BewegenAction.NumberOfPossibilities.ONLY_WAY;
 import static de.nb.aventiure2.playeraction.action.BewegenAction.NumberOfPossibilities.SEVERAL_WAYS;
@@ -56,7 +56,7 @@ public class PlayerActionService {
 
         final Map<AvObject.Key, ObjectData> allObjectsByKey = new HashMap<>();
         for (final ObjectData objectData : allObjects) {
-            allObjectsByKey.put(objectData.getObject().getKey(), objectData);
+            allObjectsByKey.put(objectData.getKey(), objectData);
         }
 
         final List<AvObject> inventory = db.playerInventoryDao().getInventory();

@@ -1,6 +1,6 @@
-package de.nb.aventiure2.data.world.creature;
+package de.nb.aventiure2.data.world.entity.creature;
 
-import de.nb.aventiure2.data.world.entity.AbstractEntity;
+import de.nb.aventiure2.data.world.entity.base.AbstractEntity;
 import de.nb.aventiure2.data.world.room.AvRoom;
 import de.nb.aventiure2.german.base.Nominalphrase;
 
@@ -21,9 +21,9 @@ public class Creature extends AbstractEntity {
     private final CreatureStateList states;
 
     public static Creature get(final Creature.Key key) {
-        for (final Creature object : Creatures.ALL) {
-            if (object.key == key) {
-                return object;
+        for (final Creature creature : Creatures.ALL) {
+            if (creature.key == key) {
+                return creature;
             }
         }
 

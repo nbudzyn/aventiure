@@ -8,12 +8,12 @@ import java.util.Map;
 import de.nb.aventiure2.data.database.AvDatabase;
 import de.nb.aventiure2.data.storystate.IPlayerAction;
 import de.nb.aventiure2.data.storystate.StoryState;
-import de.nb.aventiure2.data.world.creature.CreatureData;
-import de.nb.aventiure2.data.world.object.AvObject;
-import de.nb.aventiure2.data.world.object.ObjectData;
+import de.nb.aventiure2.data.world.entity.creature.CreatureData;
+import de.nb.aventiure2.data.world.entity.object.AvObject;
+import de.nb.aventiure2.data.world.entity.object.ObjectData;
 import de.nb.aventiure2.data.world.room.AvRoom;
 
-import static de.nb.aventiure2.data.world.creature.Creature.Key.FROSCHPRINZ;
+import static de.nb.aventiure2.data.world.entity.creature.Creature.Key.FROSCHPRINZ;
 
 /**
  * Contains all {@link CreatureConversationStep}s;
