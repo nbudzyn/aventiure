@@ -19,7 +19,7 @@ import static de.nb.aventiure2.data.world.time.AvTimeSpan.mins;
 /**
  * Der Spielercharakter klettert.
  */
-class KletternAction extends AbstractPlayerAction {
+public class KletternAction extends AbstractPlayerAction {
     private final AvRoom room;
 
     public static Collection<KletternAction> buildActions(
