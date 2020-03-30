@@ -74,7 +74,7 @@ public class SchlafenAction extends AbstractPlayerAction {
         }
 
         alt.add(t(PARAGRAPH,
-                "Müde bist du nicht")
+                "Müde bist du noch nicht")
                 .dann());
         alt.add(t(PARAGRAPH,
                 "Gibt es hier eigentlich Spinnen?"));

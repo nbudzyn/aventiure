@@ -115,12 +115,12 @@ class KletternAction extends AbstractPlayerAction {
     private AvTimeSpan narrateAndDoKletternBaumHinterHuetteNtesMal() {
         n.add(alt(
                 t(PARAGRAPH,
-                        "Ein weites Mal kletterst du auf den Baum. Ein zurückschwingender "
+                        "Ein weiteres Mal kletterst du auf den Baum. Ein zurückschwingender "
                                 + "Ast verpasst dir beim Abstieg ein Schramme")
                         .dann(),
                 t(PARAGRAPH, "Es ist anstrengend, aber du kletterst noch einmal "
                         + "auf den Baum. Neues gibt es hier oben nicht zu erleben und unten bist "
-                        + "du ziemlich erschöpft")
+                        + "du ziemlich erschöpft. Ein Nickerchen täte dir gut")
         ));
 
         db.playerStatsDao().setStateOfMind(PlayerStateOfMind.ERSCHOEPFT);

@@ -103,7 +103,7 @@ public class HochwerfenAction extends AbstractObjectAction {
 
         n.add(t(StoryState.StructuralElement.PARAGRAPH,
                 vorfeldEmotionFuersHochwerfen()
-                        + " wirfst " +
+                        + " wirfst du " +
                         objectDesc.akk() +
                         " in die Höhe und fängst " +
                         objectDesc.persPron().akk() +
