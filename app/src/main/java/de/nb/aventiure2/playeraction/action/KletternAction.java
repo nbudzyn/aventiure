@@ -1,4 +1,4 @@
-package de.nb.aventiure2.playeraction;
+package de.nb.aventiure2.playeraction.action;
 
 import androidx.annotation.NonNull;
 
@@ -11,6 +11,7 @@ import de.nb.aventiure2.data.storystate.StoryState;
 import de.nb.aventiure2.data.world.player.stats.PlayerStateOfMind;
 import de.nb.aventiure2.data.world.room.AvRoom;
 import de.nb.aventiure2.data.world.time.AvTimeSpan;
+import de.nb.aventiure2.playeraction.AbstractPlayerAction;
 
 import static de.nb.aventiure2.data.storystate.StoryState.StructuralElement.PARAGRAPH;
 import static de.nb.aventiure2.data.world.time.AvTimeSpan.mins;

@@ -20,6 +20,7 @@ import de.nb.aventiure2.playeraction.action.AblegenAction;
 import de.nb.aventiure2.playeraction.action.BewegenAction;
 import de.nb.aventiure2.playeraction.action.HeulenAction;
 import de.nb.aventiure2.playeraction.action.HochwerfenAction;
+import de.nb.aventiure2.playeraction.action.KletternAction;
 import de.nb.aventiure2.playeraction.action.NehmenAction;
 import de.nb.aventiure2.playeraction.action.RedenAction;
 import de.nb.aventiure2.playeraction.action.SchlafenAction;
