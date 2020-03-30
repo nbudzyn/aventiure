@@ -78,6 +78,9 @@ public class SchlafenAction extends AbstractPlayerAction {
                 .dann());
         alt.add(t(PARAGRAPH,
                 "Gibt es hier eigentlich Spinnen?"));
+        alt.add(t(PARAGRAPH,
+                "Du drehst dich von einer Seite auf die andere")
+                .dann());
 
         n.add(alt(alt));
 

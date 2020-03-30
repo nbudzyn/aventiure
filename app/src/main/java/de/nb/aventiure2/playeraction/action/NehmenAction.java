@@ -124,9 +124,26 @@ public class NehmenAction extends AbstractEntityAction {
     }
 
     private AvTimeSpan narrateObject(final ObjectData objectData) {
-        if (initialStoryState.lastActionWas(AblegenAction.class)) {
-            n.add(buildStoryStateObjectNachAblegen(objectData));
-            return secs(5);
+        if (initialStoryState.lastObjectWas(objectData.getObject())) {
+            if (initialStoryState.lastActionWas(AblegenAction.class)) {
+                n.add(buildStoryStateObjectNachAblegen(objectData));
+                return secs(5);
+            }
+
+            final PlayerStateOfMind playerStateOfMind =
+                    db.playerStatsDao().getPlayerStats().getStateOfMind();
+
+            if (initialStoryState.lastActionWas(HochwerfenAction.class) &&
+                    playerStateOfMind.isEmotional()) {
+                n.add(t(StoryState.StructuralElement.PARAGRAPH,
+                        room.getLocationMode().getNehmenPraedikat()
+                                .getDescriptionHauptsatz(
+                                        objectData,
+                                        playerStateOfMind.getAdverbialeAngabe()))
+                        .undWartest()
+                        .dann());
+                return secs(5);
+            }
         }
 
         n.add(t(StoryState.StructuralElement.PARAGRAPH,

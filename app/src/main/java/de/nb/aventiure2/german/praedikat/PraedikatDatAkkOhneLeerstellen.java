@@ -3,6 +3,8 @@ package de.nb.aventiure2.german.praedikat;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
+import javax.annotation.Nonnull;
+
 import de.nb.aventiure2.german.base.DescribableAsDeklinierbarePhrase;
 
 import static de.nb.aventiure2.german.base.GermanUtil.capitalize;
@@ -70,6 +72,24 @@ public class PraedikatDatAkkOhneLeerstellen implements PraedikatOhneLeerstellen 
 
         return "Du " + duForm +
                 " " + describableDat.dat(true) +
+                " " + describableAkk.akk(true) +
+                " " + abgetrenntesPraefix;
+    }
+
+    @Override
+    public String getDescriptionHauptsatz(@Nonnull final AdverbialeAngabe adverbialeAngabe) {
+        if (abgetrenntesPraefix == null) {
+            return capitalize(adverbialeAngabe.getText()) + // Aus Langeweile
+                    " " + duForm +
+                    " du " +
+                    describableDat.dat(true) +
+                    " " + describableAkk.akk(true);
+        }
+
+        return capitalize(adverbialeAngabe.getText()) + // Aus Langeweile
+                " " + duForm +
+                " du " +
+                describableDat.dat(true) +
                 " " + describableAkk.akk(true) +
                 " " + abgetrenntesPraefix;
     }

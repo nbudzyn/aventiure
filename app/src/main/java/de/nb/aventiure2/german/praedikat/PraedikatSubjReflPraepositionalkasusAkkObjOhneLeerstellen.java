@@ -1,5 +1,7 @@
 package de.nb.aventiure2.german.praedikat;
 
+import javax.annotation.Nonnull;
+
 import de.nb.aventiure2.german.base.DescribableAsDeklinierbarePhrase;
 import de.nb.aventiure2.german.base.Reflexivpronomen;
 
@@ -29,6 +31,17 @@ class PraedikatSubjReflPraepositionalkasusAkkObjOhneLeerstellen
         return "Du "
                 + reflPraepositionalkasusVerbAkkObj.getDuForm() // "nimmst"
                 + " " + akkObj.akk(true) // "die goldene Kugel"
+                + " " +
+                Reflexivpronomen.P2_SG.im(reflPraepositionalkasusVerbAkkObj.
+                        getPrapositionMitKasus());// "an dich"
+    }
+
+    @Override
+    public String getDescriptionHauptsatz(@Nonnull final AdverbialeAngabe adverbialeAngabe) {
+        return capitalize(adverbialeAngabe.getText()) + // Aus Langeweile
+                " " + reflPraepositionalkasusVerbAkkObj.getDuForm() // "nimmst"
+                + " du "
+                + akkObj.akk(true) // "die goldene Kugel"
                 + " " +
                 Reflexivpronomen.P2_SG.im(reflPraepositionalkasusVerbAkkObj.
                         getPrapositionMitKasus());// "an dich"

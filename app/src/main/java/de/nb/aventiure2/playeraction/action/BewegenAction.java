@@ -131,11 +131,7 @@ public class BewegenAction extends AbstractPlayerAction {
 
         AvTimeSpan elapsedTime = narrateRoomOnly();
 
-        if (oldRoom == SCHLOSS_VORHALLE && roomConnection.getTo() == DRAUSSEN_VOR_DEM_SCHLOSS
-                && db.playerStatsDao().getPlayerStats().getStateOfMind()
-                == PlayerStateOfMind.ANGESPANNT) {
-            db.playerStatsDao().setStateOfMind(PlayerStateOfMind.NEUTRAL);
-        }
+        updatePlayerStateOfMind();
 
         elapsedTime = elapsedTime.plus(creatureReactionsCoordinator
                 .onLeaveRoom(oldRoom, creaturesInOldRoom));
@@ -150,6 +146,21 @@ public class BewegenAction extends AbstractPlayerAction {
 
         return elapsedTime.plus(creatureReactionsCoordinator
                 .onEnterRoom(oldRoom, roomConnection.getTo(), creaturesInNewRoom));
+    }
+
+    /**
+     * Aktualisiert den Gemütszustand des Spielercharakters. "Zeit heilt alle Wunden" - oder so
+     * ähnlich.
+     */
+    private void updatePlayerStateOfMind() {
+        final PlayerStateOfMind playerStateOfMind =
+                db.playerStatsDao().getPlayerStats().getStateOfMind();
+        if (oldRoom == SCHLOSS_VORHALLE && roomConnection.getTo() == DRAUSSEN_VOR_DEM_SCHLOSS
+                && playerStateOfMind == PlayerStateOfMind.ANGESPANNT) {
+            db.playerStatsDao().setStateOfMind(PlayerStateOfMind.NEUTRAL);
+        } else if (playerStateOfMind == PlayerStateOfMind.ETWAS_GEKNICKT) {
+            db.playerStatsDao().setStateOfMind(PlayerStateOfMind.NEUTRAL);
+        }
     }
 
     private AvTimeSpan narrateObjects(final List<ObjectData> objectsInNewRoom) {

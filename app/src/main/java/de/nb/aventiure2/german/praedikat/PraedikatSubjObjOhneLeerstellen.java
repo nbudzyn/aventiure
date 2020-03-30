@@ -75,6 +75,26 @@ class PraedikatSubjObjOhneLeerstellen implements PraedikatOhneLeerstellen {
     }
 
     /**
+     * Gibt einen Satz zurück mit diesem Prädikat und dieser adverbialen Angabe.
+     * ("Aus Langeweile nimmst du den Ast")
+     */
+    @Override
+    public String getDescriptionHauptsatz(@NonNull final AdverbialeAngabe adverbialeAngabe) {
+        if (abgetrenntesPraefix == null) {
+            return capitalize(adverbialeAngabe.getText()) +
+                    " " + duForm +
+                    " du " +
+                    objekt.im(kasusOderPraepositionalkasus, true);
+        }
+
+        return capitalize(adverbialeAngabe.getText()) +
+                " " + duForm +
+                " du " +
+                objekt.im(kasusOderPraepositionalkasus, true) +
+                " " + abgetrenntesPraefix;
+    }
+
+    /**
      * Gibt eine Infinitivkonstruktion zurück mit Prädikat.
      * ("Den Frosch ignorieren", "Das Leben genießen")
      */

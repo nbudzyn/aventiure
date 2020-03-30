@@ -24,6 +24,16 @@ public interface PraedikatMitEinerObjektleerstelle extends Praedikat {
     }
 
     /**
+     * Gibt einen Satz zurück mit diesem Verb und diesem <code>describable</code> und
+     * dieser adverbialen Angabe ("Aus Langeweile nimmst du den Ast")
+     */
+    default String getDescriptionHauptsatz(
+            final DescribableAsDeklinierbarePhrase describable,
+            final AdverbialeAngabe adverbialeAngabe) {
+        return mitObj(describable).getDescriptionHauptsatz(adverbialeAngabe);
+    }
+
+    /**
      * Gibt eine Infinitivkonstruktion zurück mit diesem Verb und dieser Entity / diesem Konzept.
      * ("Den Frosch ignorieren", "Das Leben genießen")
      */
