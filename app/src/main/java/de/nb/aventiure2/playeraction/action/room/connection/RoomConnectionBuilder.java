@@ -338,7 +338,27 @@ class RoomConnectionBuilder {
         return du("erreichst", "bald das helle "
                         + "Tageslicht, in dem der Schlossgarten "
                         + "liegt",
-                // STORY Und bei Nacht?!
+                // STORY Hier und an vielen anderen Stellen berücksichtigen, dass die
+                //  Welt bei Nacht anders aussieht. Tendenziell sieht man einfach
+                //  weniger Details. Vielleicht hört man beim ersten Mal auch Wölfe heulen,
+                //   fürchtet sich vor Räubern, es knarzt im Unterholz o.Ä.
+                //  Problem: Man braucht eigentlich MEHRERE zusätzliche Texte:
+                //  - Einen Text, wenn man bei Nacht erstmals irgendwohin geht
+                //  - Einen Text, wenn man bei Nacht irgendwohin geht, wo man bei
+                //   Nacht oder Tag schon war
+                //  - Einen Text, wenn man bei TAG irgendwohin geht, wo man bei Nacht schon
+                //   war
+                // Die elapsed time kannn unterschiedlich sein - in der Nacht oft länger
+                // STORY gegen Abend wird man müde und kann auf jeden Fall einschlafen
+                // STORY Wenn man schläft, "verpasst" man Reactions, die man dann später
+                //  (beim Aufwachen) merkt ("Der Frosch ist verschwunden".) Man könnte alle
+                //  verpassten Reactions als Texte speichern (Problem, wenn der Frosch nur kurz
+                //  verschwundenn ist), inhaltlich speichern
+                //  (WasIstAllesPassiert.FroschIstVerschwunden = true), oder man speichert
+                //  den Stand VOR dem Einschlafen und vergleicht mit dem Stand NACH dem
+                //  Einschlafen.
+                // STORY Es kommt die Dämmerung, dann die Nacht, später die Dämmerung und
+                // der Tag.
                 true,
                 false,
                 false,

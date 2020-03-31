@@ -77,7 +77,7 @@ class SchlosswacheReactions extends AbstractCreatureReactions {
 
     private AvTimeSpan scMussDasSchlossVerlassen(final AvRoom oldRoom, final AvRoom newRoom) {
         // STORY Ausspinnen: Der Spieler sollte selbst entscheiden,
-        // ob der das Schloss wieder verlässt - oder ggf. im Kerker landet.
+        //  ob der das Schloss wieder verlässt - oder ggf. im Kerker landet.
         n.add(alt(
                 t(SENTENCE,
                         "Die Wache spricht dich sofort an und macht dir unmissverständlich "
@@ -133,9 +133,8 @@ class SchlosswacheReactions extends AbstractCreatureReactions {
         n.add(t(PARAGRAPH,
                 "Da wird eine Wache auf dich aufmerksam. "
                         + "„Wie seid Ihr hier hereingekommen?“, fährt sie dich "
-                        // STORY Ausspinnen: Nach einer Übernachtung (z.B. in einer Hütte im
-                        // Wald?) ist Sonntag, es gibt ein Fest mit Essen, und der
-                        // Frosch kriegt seinen Willen.
+                        // STORY Ausspinnen: Auf dem Fest kriegt der Frosch beim Essen
+                        //  seinen Willen.
                         + "scharf an. „Das Fest ist erst am Sonntag. Heute "
                         + "ist Samstag und Ihr habt hier nichts zu suchen!“ "
                         + "Mit kräftiger Hand klopft die Wache auf ihre Hellebarde")

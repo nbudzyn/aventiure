@@ -70,7 +70,7 @@ class FroschprinzReactions extends AbstractCreatureReactions {
 
         return noTime();
 
-        // STORY Bei späterem Status sollte der Froschprinz den SC ansprechen und auf
+        // STORY Bei späterem Status könnte der Froschprinz den SC ansprechen und auf
         //  sein Versprechen hinweisen!
     }
 
@@ -168,7 +168,8 @@ class FroschprinzReactions extends AbstractCreatureReactions {
         // STORY Irgendwann (x Stunden danach?!) taucht der Frosch beim
         //   Spieler am Tisch im Schlossfest auf.
         //   Dazu müsste man an Creatures Zeitpunkte speichern können z.B.
-        //   WANN_DER_FROSCH_LOSGELAUFEN_IST
+        //   WANN_DER_FROSCH_LOSGELAUFEN_IST oder
+        //   lastReferenceDateTime
 
         return timeElapsed;
     }

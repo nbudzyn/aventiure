@@ -107,14 +107,14 @@ class FroschprinzConversationStepBuilder extends AbstractCreatureConversationSte
                                 this::hallo_froschReagiertNicht)
                 );
             case AUF_DEM_WEG_ZUM_BRUNNEN_UM_DINGE_HERAUSZUHOLEN:
-                // STORY Steps für AUF_DEM_WEG_ZUM_BRUNNEN_UM_DINGE_HERAUSZUHOLEN
                 return ImmutableList.of(
-                        // STORY "Vertraue mir, bald hast du ...die goldene Kugel...
-                        // wieder. Aber vergiss dein Versprechen nicht!"
-                        entrySt(this::hallo_froschErinnertAnVersprechen)
+                        entrySt(
+                                // STORY "Vertraue mir, bald hast du ...die goldene Kugel...
+                                //  wieder. Aber vergiss dein Versprechen nicht!"
+                                //  Bis dahin:
+                                this::hallo_froschErinnertAnVersprechen)
                 );
             case ERWARTET_VON_SC_EINLOESUNG_SEINES_VERSPRECHENS:
-                // STORY Steps für HAT_DINGE_AUS_DEM_BRUNNEN_HERAUFGEHOLT
                 return ImmutableList.of(
                         entrySt(this::hallo_froschErinnertAnVersprechen)
                 );
@@ -364,12 +364,14 @@ class FroschprinzConversationStepBuilder extends AbstractCreatureConversationSte
 
             db.creatureDataDao().setState(FROSCHPRINZ,
                     AUF_DEM_WEG_ZUM_BRUNNEN_UM_DINGE_HERAUSZUHOLEN);
-            // STORY Der Froschprinz muss eine KI erhalten, dass er sich
-            // vom aktuellen room Schritt für Schritt zum Brunnen bewegt
-            // und die Dinge herausholt.
-            // STORY Außerdem könnte man den Frosch auf dem Weg treffen
-            // (oder auch nicht).
-
+            // STORY Der Froschprinz muss eine KI erhalten, dass er
+            //  nach einer Weile automatisch beim Brunnen
+            //  auftaucht und sich, die Dinge herausholt
+            //  und sie dem SC übergibt oder beim Brunnen bereitlegt
+            //  (dann sollte er das ankündigen).
+            //  Oder wir überspringen diesen Schritt, und der Frosch bewegt
+            //  sich nie vom Brunnen fort, solange er nichts herausgeholt hat
+            //  (IllegalState).
             return secs(5);
         }
 
@@ -396,7 +398,8 @@ class FroschprinzConversationStepBuilder extends AbstractCreatureConversationSte
         db.creatureDataDao().setState(FROSCHPRINZ, ERWARTET_VON_SC_EINLOESUNG_SEINES_VERSPRECHENS);
 
         db.playerStatsDao().setStateOfMind(VOLLER_FREUDE);
-        // STORY Und welche Auswirkung?
+        // STORY Und welche Auswirkung? Vielleicht auf Texte, z.B. auf
+        //  den direkt folgenden Nehmen-Text?
 
         for (final ObjectData objectData : objectsInDenBrunnenGefallen) {
             db.objectDataDao().setDemSCInDenBrunnenGefallen(

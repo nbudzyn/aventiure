@@ -57,8 +57,6 @@ public abstract class AbstractPlayerAction implements IPlayerAction {
 
         final AvTimeSpan timeElapsed = narrateAndDo();
 
-        // STORY Z.B. Das Fest starten, wenn die Zeit erreicht ist.
-
         final AvDateTime newTime =
                 updateWorld(lastTimeForWorldUpdate, lastTimeForWorldUpdate.plus(timeElapsed));
 
