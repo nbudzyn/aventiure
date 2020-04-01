@@ -6,7 +6,6 @@ import androidx.room.Delete;
 import androidx.room.Insert;
 import androidx.room.OnConflictStrategy;
 import androidx.room.Query;
-import androidx.room.Transaction;
 
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
@@ -20,7 +19,6 @@ public abstract class StoryStateDao {
         add(text.build());
     }
 
-    @Transaction
     public void add(final StoryState text) {
         checkNotNull(text, "text is null");
 

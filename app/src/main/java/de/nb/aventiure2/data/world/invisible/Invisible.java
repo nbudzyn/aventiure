@@ -7,7 +7,7 @@ package de.nb.aventiure2.data.world.invisible;
  */
 public class Invisible {
     public enum Key {
-        SCHLOSSFEST
+        SCHLOSSFEST, TAGESZEIT
     }
 
     private final Invisible.Key key;

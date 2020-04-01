@@ -6,6 +6,10 @@ import androidx.room.PrimaryKey;
 import java.util.Objects;
 
 import static com.google.common.base.Preconditions.checkState;
+import static de.nb.aventiure2.data.world.time.Tageszeit.ABENDS;
+import static de.nb.aventiure2.data.world.time.Tageszeit.MORGENS;
+import static de.nb.aventiure2.data.world.time.Tageszeit.NACHTS;
+import static de.nb.aventiure2.data.world.time.Tageszeit.TAGSUEBER;
 
 /**
  * Uhrzeit in der Spielwelt
@@ -22,6 +26,10 @@ public class AvTime {
     @NonNull
     private int secsSinceMidnight;
 
+    public static AvTime oClock(final int hoursSinceMidnight) {
+        return oClock(hoursSinceMidnight, 0);
+    }
+
     public static AvTime oClock(final int hoursSinceMidnight, final int minutesSinceHourStart) {
         return new AvTime(hoursSinceMidnight, minutesSinceHourStart);
     }
@@ -34,6 +42,26 @@ public class AvTime {
         checkState(secsSinceMidnight < SECS_IN_A_DAY,
                 "secsSinceMidnight >= SECS_IN_A_DAY");
         this.secsSinceMidnight = secsSinceMidnight;
+    }
+
+    public Tageszeit getTageszeit() {
+        if (isBefore(oClock(6))) {
+            return NACHTS;
+        }
+
+        if (isBefore(oClock(8))) {
+            return MORGENS;
+        }
+
+        if (isBefore(oClock(17))) {
+            return TAGSUEBER;
+        }
+
+        if (isBefore(oClock(18, 30))) {
+            return ABENDS;
+        }
+
+        return NACHTS;
     }
 
     public AvTimeSpan timeSpanUntil(final AvTime other) {

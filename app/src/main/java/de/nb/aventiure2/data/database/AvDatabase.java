@@ -64,7 +64,8 @@ import static de.nb.aventiure2.data.world.time.AvTime.oClock;
         ObjectData.class,
         CreatureData.class,
         PlayerStats.class,
-        PlayerLocation.class, PlayerInventoryItem.class},
+        PlayerLocation.class,
+        PlayerInventoryItem.class},
         version = 1,
         exportSchema = false)
 @TypeConverters({AvStoryStateConverters.class, AvRoomConverters.class,
@@ -108,25 +109,26 @@ public abstract class AvDatabase extends RoomDatabase {
         public void onCreate(@NonNull final SupportSQLiteDatabase db) {
             super.onCreate(db);
 
-            databaseWriteExecutor.execute(() -> {
-                // Populate the database in the background:
-                // Set date and time in the game
-                INSTANCE.dateTimeDao().setDateTime(
-                        1, oClock(14, 30));
-                // Invisibles have their initial state
-                INSTANCE.invisibleDataDao().insertInitial();
+            databaseWriteExecutor.execute(() ->
+                    INSTANCE.runInTransaction(() -> {
+                        // Populate the database in the background:
+                        // Set date and time in the game
+                        INSTANCE.dateTimeDao().setDateTime(
+                                1, oClock(14, 30));
+                        // Invisibles have their initial state
+                        INSTANCE.invisibleDataDao().insertInitial();
 
-                // Objects are placed at their respective initial location.
-                INSTANCE.objectDataDao().insertInitial();
-                INSTANCE.creatureDataDao().insertInitial();
+                        // Objects are placed at their respective initial location.
+                        INSTANCE.objectDataDao().insertInitial();
+                        INSTANCE.creatureDataDao().insertInitial();
 
-                // The player starts in the castle:
-                INSTANCE.playerStatsDao().insert(buildInitialPlayerStats());
-                INSTANCE.playerLocationDao().setRoom(AvRoom.SCHLOSS_VORHALLE);
-                INSTANCE.storyStateDao().add(buildInitialStoryState());
-                INSTANCE.roomDao().setKnown(AvRoom.SCHLOSS_VORHALLE);
-                INSTANCE.objectDataDao().setKnown(GOLDENE_KUGEL);
-            });
+                        // The player starts in the castle:
+                        INSTANCE.playerStatsDao().insert(buildInitialPlayerStats());
+                        INSTANCE.playerLocationDao().setRoom(AvRoom.SCHLOSS_VORHALLE);
+                        INSTANCE.storyStateDao().add(buildInitialStoryState());
+                        INSTANCE.roomDao().setKnown(AvRoom.SCHLOSS_VORHALLE);
+                        INSTANCE.objectDataDao().setKnown(GOLDENE_KUGEL);
+                    }));
         }
     };
 
@@ -141,7 +143,8 @@ public abstract class AvDatabase extends RoomDatabase {
         final StringBuilder res = new StringBuilder();
 
         res.append(
-                "Diese Geschichte spielt in den alten Zeiten, wo das Wünschen noch geholfen hat. " +
+                "Diese Geschichte spielt in den alten Zeiten, wo das Wünschen noch geholfen hat. "
+                        +
                         "Sie beginnt im königlichen Schloss, in einer prächtigen "
                         + "Vorhalle, Marmor und Brokat überall.\n");
         final List<AvObject> objectsInRoom = ImmutableList.of(AvObject.get(GOLDENE_KUGEL));
@@ -182,7 +185,8 @@ public abstract class AvDatabase extends RoomDatabase {
     /**
      * @return Something similar to <code>eine goldene Kugel</code>
      */
-    private static String buildObjectsInRoomDescriptionList(final List<AvObject> objectsInRoom) {
+    private static String buildObjectsInRoomDescriptionList(
+            final List<AvObject> objectsInRoom) {
         final StringBuilder res = new StringBuilder();
         for (int i = 0; i < objectsInRoom.size(); i++) {
             res.append(objectsInRoom.get(i).getDescriptionAtFirstSight().nom());

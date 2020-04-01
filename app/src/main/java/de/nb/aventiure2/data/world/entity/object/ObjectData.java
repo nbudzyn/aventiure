@@ -34,6 +34,8 @@ public class ObjectData extends AbstractEntityData<AvObject.Key> {
      * Ob das Objekt dem Spieler (-Charakter) in den Brunnen gefallen ist (und nach Kenntnis des
      * Spielers immer noch dort liegt)
      */
+    // TODO Allgemeineres Konzept, das nicht speziell mit der Spielwelt zusammenhängt?
+    //  Vielleicht so etwas wie Tags, Status oder Ähnliches?
     private final boolean demSCInDenBrunnenGefallen;
 
     public static List<ObjectData> filterInDenBrunnenGefallen(

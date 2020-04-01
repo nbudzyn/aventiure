@@ -5,7 +5,8 @@ package de.nb.aventiure2.data.world.invisible;
  */
 public enum InvisibleState {
     // ALLGEMEIN
+    NORMAL,
     // SCHLOSSFEST
     NOCH_NICHT_BEGONNEN,
-    BEGONNEN
+    BEGONNEN,
 }

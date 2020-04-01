@@ -15,6 +15,8 @@ import static de.nb.aventiure2.data.world.time.AvTime.SECS_IN_AN_HOUR;
  */
 @Immutable
 public class AvTimeSpan {
+    public static final AvTimeSpan ONE_DAY = days(1);
+
     /**
      * Gesamte Zeitspanne in Sekunden
      */
@@ -24,6 +26,10 @@ public class AvTimeSpan {
 
     public static AvTimeSpan noTime() {
         return secs(0);
+    }
+
+    public static AvTimeSpan days(final long days) {
+        return hours(days * HOURS_IN_A_DAY);
     }
 
     public static AvTimeSpan hours(final long hours) {
@@ -80,6 +86,13 @@ public class AvTimeSpan {
         return secs((long) factor * secs);
     }
 
+    public boolean longerThan(final AvTimeSpan other) {
+        return secs > other.secs;
+    }
+
+    public boolean smallerThan(final AvTimeSpan other) {
+        return secs < other.secs;
+    }
 
     public boolean isNoTime() {
         return equals(noTime());

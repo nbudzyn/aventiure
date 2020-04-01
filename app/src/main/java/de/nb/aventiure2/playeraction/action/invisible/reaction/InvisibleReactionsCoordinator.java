@@ -33,6 +33,7 @@ public final class InvisibleReactionsCoordinator {
 
         allInvisibleReactions = ImmutableMap.<Invisible.Key, AbstractInvisibleReactions>builder()
                 .put(Invisible.Key.SCHLOSSFEST, new SchlossfestReactions(db, playerActionClass))
+                .put(Invisible.Key.TAGESZEIT, new TageszeitReactions(db, playerActionClass))
                 .build();
 
         nullInvisibleReactions = new NullInvisibleReactions(db, playerActionClass);
@@ -58,7 +59,8 @@ public final class InvisibleReactionsCoordinator {
     }
 
     private AbstractInvisibleReactions getReactions(final InvisibleData Invisible) {
-        @Nullable final AbstractInvisibleReactions res = allInvisibleReactions.get(Invisible.getKey());
+        @Nullable final AbstractInvisibleReactions res =
+                allInvisibleReactions.get(Invisible.getKey());
         if (res != null) {
             return res;
         }

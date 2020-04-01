@@ -38,6 +38,8 @@ public class StoryState {
      */
     private final StructuralElement endsThis;
 
+    // TODO Use @Embedded?
+
     /**
      * Canonical class name of the last action (if any).
      */

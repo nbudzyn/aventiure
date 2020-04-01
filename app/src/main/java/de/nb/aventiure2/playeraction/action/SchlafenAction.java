@@ -21,7 +21,6 @@ import static de.nb.aventiure2.data.world.player.stats.PlayerStateOfMind.NEUTRAL
 import static de.nb.aventiure2.data.world.time.AvTime.oClock;
 import static de.nb.aventiure2.data.world.time.AvTimeSpan.hours;
 import static de.nb.aventiure2.data.world.time.AvTimeSpan.mins;
-import static de.nb.aventiure2.german.base.GermanUtil.capitalize;
 
 /**
  * Der Spielercharakter legt sich schlafen.
@@ -108,27 +107,22 @@ public class SchlafenAction extends AbstractPlayerAction {
         final AvTimeSpan timeSpanUntilNextMorning =
                 // Wieviel Zeit ist bis 7 Uhr morgens?
                 db.dateTimeDao().getDateTime().timeSpanUntil(
-                        oClock(7, 0));
+                        oClock(7));
 
-        final String wannDesc;
         final AvTimeSpan timeElapsed;
         if (timeSpanUntilNextMorning.getAsHours() < 1 ||
                 timeSpanUntilNextMorning.getAsHours() > 18) {
-            wannDesc = "nach einigen Stunden";
             timeElapsed = hours(9);
         } else {
-            wannDesc = "am andern Tage";
             timeElapsed = timeSpanUntilNextMorning;
         }
 
         n.add(alt(
                 t(CHAPTER,
-                        "Du schläfst tief und fest und wachst erst "
-                                + wannDesc
-                                + " wieder auf"),
+                        "Nach einem langen Schlaf wachst du gut erholt wieder auf"),
                 t(CHAPTER,
-                        capitalize(wannDesc)
-                                + " wachst du gut erholt wieder auf")
+                        "Du schläfst tief und fest und wachst erst nach einigen Stunden "
+                                + "wieder auf")
         ));
 
         db.playerStatsDao().setStateOfMind(NEUTRAL);

@@ -15,6 +15,7 @@ public class InvisibleData extends AbstractKeyData<Invisible.Key> {
     @NonNull
     private final Invisible invisible;
 
+    @NonNull
     private final InvisibleState state;
 
     InvisibleData(@NonNull final Invisible invisible, final InvisibleState state) {

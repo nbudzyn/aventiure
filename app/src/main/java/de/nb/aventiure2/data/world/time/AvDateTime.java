@@ -37,6 +37,10 @@ public class AvDateTime {
         this.secsSinceBeginning = secsSinceBeginning;
     }
 
+    public Tageszeit getTageszeit() {
+        return getTime().getTageszeit();
+    }
+
     public AvDateTime plus(final AvTimeSpan add) {
         return new AvDateTime(secsSinceBeginning + add.getSecs());
     }

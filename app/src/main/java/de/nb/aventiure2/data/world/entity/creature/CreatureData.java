@@ -23,7 +23,12 @@ public class CreatureData extends AbstractEntityData<Creature.Key> {
 
     private final boolean known;
 
+    @NonNull
     private final CreatureState state;
+
+    // STORY Anhand eines StatusDatums kann das Spiel ermitteln, wann der
+    //  Frosch im Schloss ankommt.
+    //  Nullable?! (Zu mühevoll?)
 
     CreatureData(@NonNull final Creature creature, @Nullable final AvRoom room,
                  final boolean known, final CreatureState state) {

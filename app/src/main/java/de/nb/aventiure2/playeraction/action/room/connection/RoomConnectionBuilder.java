@@ -358,7 +358,13 @@ class RoomConnectionBuilder {
                 //  den Stand VOR dem Einschlafen und vergleicht mit dem Stand NACH dem
                 //  Einschlafen.
                 // STORY Es kommt die Dämmerung, dann die Nacht, später die Dämmerung und
-                // der Tag.
+                //  der Tag.
+                // STORY Alle Texte überprüfen: Was bezieht sich auf eine bestimmte
+                //  Tageszeit? ("es ist sehr heiß" / "hier ist es kühler"?)
+                //  Möglichst flexibel gestalten.
+                // STORY Nachts sieht man nicht so gut - sieht man alle Objects?
+                // STORY Nachts schlafen die Creatures?
+                // STORY Nachts ist man hauptsächlich MUEDE / ERSCHOEPFT
                 true,
                 false,
                 false,
