@@ -272,6 +272,10 @@ class RoomConnectionBuilder {
         }
     }
 
+    // -------------------------------------------------------------------
+    // --- SCHLOSS_VORHALLE
+    // -------------------------------------------------------------------
+
     private AbstractDescription getDesc_SchlossVorhalle_DraussenVorDemSchloss(
             final boolean newRoomKnown) {
         switch (db.invisibleDataDao().getInvisible(Invisible.Key.SCHLOSSFEST).getState()) {
@@ -282,6 +286,10 @@ class RoomConnectionBuilder {
                 return getDesc_SchlossVorhalle_DraussenVorDemSchlosss_KeinFest(newRoomKnown);
         }
     }
+
+    // -------------------------------------------------------------------
+    // --- DRAUSSEN_VOR_DEM_SCHLOSS
+    // -------------------------------------------------------------------
 
     private static AbstractDescription getDesc_SchlossVorhalle_DraussenVorDemSchlosss_KeinFest(
             final boolean newRoomKnown) {
@@ -318,6 +326,67 @@ class RoomConnectionBuilder {
                 true,
                 mins(3));
     }
+
+    // -------------------------------------------------------------------
+    // --- DRAUSSEN_VOR_DEM_SCHLOSS
+    // -------------------------------------------------------------------
+
+    private AbstractDescription getDesc_DraussenVorDemSchloss_SchlossVorhalle(
+            final boolean isNewRoomKnown) {
+        switch (db.invisibleDataDao().getInvisible(Invisible.Key.SCHLOSSFEST).getState()) {
+            case BEGONNEN:
+                return getDesc_DraussenVorDemSchloss_SchlossVorhalle_FestBegonnen();
+
+            default:
+                return getDesc_DraussenVorDemSchloss_SchlossVorhalle_KeinFest();
+        }
+    }
+
+    private static AbstractDescription getDesc_DraussenVorDemSchloss_SchlossVorhalle_KeinFest() {
+        return du(
+                "gehst",
+                "wieder hinein in das Schloss",
+                false,
+                true,
+                true,
+                mins(1));
+    }
+
+    private AbstractDescription
+    getDesc_DraussenVorDemSchloss_SchlossVorhalle_FestBegonnen() {
+        if (db.counterDao().incAndGet(
+                "RoomConnectionBuilder_SchlossVorhalle_DraussenVorDemSchloss_Schlossfest")
+                == 1) {
+            return allg("Vor dem Schloss gibt es ein großes Gedränge und es dauert "
+                            + "eine Weile, bis "
+                            + "die Menge dich hineinschiebt. Die prächtige Vorhalle steht voller "
+                            + "Tische, auf denen in großen Schüsseln Eintöpfe dampfen. "
+                            + "Du ergatterst einen Platz auf einer Bank.\n"
+                            + "Unter einem Baldachin sitzen – soweit du durch das Gedänge "
+                            + "erkennen kannst – "
+                            + "einige Hofleute an einer Tafel mit "
+                            + "goldenen Tellern vor Fasan und anderem Wildbret. "
+                            + "Immerhin stellt "
+                            + "dir ein eifriger Diener einen leeren Holzteller und einen "
+                            + "Löffel bereit",
+                    false,
+                    false,
+                    false,
+                    mins(10));
+        }
+
+        return du("betrittst",
+                "wieder das Schloss und suchst dir im Gedränge einen Platz "
+                        + "an einem Tisch",
+                false,
+                false,
+                false,
+                mins(5));
+    }
+
+    // -------------------------------------------------------------------
+    // --- IM_WALD_NAHE_DEM_SCHLOSS
+    // -------------------------------------------------------------------
 
     private AbstractDescription getDesc_ImWaldNaheDemSchloss_DraussenVorDemSchloss(
             final boolean isNewRoomKnown) {
@@ -394,58 +463,5 @@ class RoomConnectionBuilder {
                 false,
                 false,
                 timeSpan);
-    }
-
-    private AbstractDescription getDesc_DraussenVorDemSchloss_SchlossVorhalle(
-            final boolean isNewRoomKnown) {
-        switch (db.invisibleDataDao().getInvisible(Invisible.Key.SCHLOSSFEST).getState()) {
-            case BEGONNEN:
-                return getDesc_DraussenVorDemSchloss_SchlossVorhalle_FestBegonnen();
-
-            default:
-                return getDesc_DraussenVorDemSchloss_SchlossVorhalle_KeinFest();
-        }
-    }
-
-    private static AbstractDescription getDesc_DraussenVorDemSchloss_SchlossVorhalle_KeinFest() {
-        return du(
-                "gehst",
-                "wieder hinein in das Schloss",
-                false,
-                true,
-                true,
-                mins(1));
-    }
-
-    private AbstractDescription
-    getDesc_DraussenVorDemSchloss_SchlossVorhalle_FestBegonnen() {
-        if (db.counterDao().incAndGet(
-                "RoomConnectionBuilder_SchlossVorhalle_DraussenVorDemSchloss_Schlossfest")
-                == 1) {
-            return allg("Vor dem Schloss gibt es ein großes Gedränge und es dauert "
-                            + "eine Weile, bis "
-                            + "die Menge dich hineinschiebt. Die prächtige Vorhalle steht voller "
-                            + "Tische, auf denen in großen Schüsseln Eintöpfe dampfen. "
-                            + "Du ergatterst einen Platz auf einer Bank.\n"
-                            + "Unter einem Baldachin sitzen – soweit du durch das Gedänge "
-                            + "erkennen kannst – "
-                            + "einige Hofleute an einer Tafel mit "
-                            + "goldenen Tellern vor Fasan und anderem Wildbret. "
-                            + "Immerhin stellt "
-                            + "dir ein eifriger Diener einen leeren Holzteller und einen "
-                            + "Löffel bereit",
-                    false,
-                    false,
-                    false,
-                    mins(10));
-        }
-
-        return du("betrittst",
-                "wieder das Schloss und suchst dir im Gedränge einen Platz "
-                        + "an einem Tisch",
-                false,
-                false,
-                false,
-                mins(5));
     }
 }
