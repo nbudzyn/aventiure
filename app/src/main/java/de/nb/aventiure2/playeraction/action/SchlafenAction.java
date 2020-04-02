@@ -55,6 +55,8 @@ public class SchlafenAction extends AbstractPlayerAction {
 
     @Override
     public AvTimeSpan narrateAndDo() {
+        // STORY Nachts ist man immer müde oder nachts wird man leichter müde oder
+        //  nachts kann man immer einschlafen...
         if (db.playerStatsDao().getPlayerStats().getStateOfMind() == ERSCHOEPFT) {
             return narrateAndDoSchlaeftEin();
         }

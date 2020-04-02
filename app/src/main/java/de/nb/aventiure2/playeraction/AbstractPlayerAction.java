@@ -12,8 +12,11 @@ import de.nb.aventiure2.data.storystate.StoryState;
 import de.nb.aventiure2.data.storystate.StoryState.StructuralElement;
 import de.nb.aventiure2.data.storystate.StoryStateBuilder;
 import de.nb.aventiure2.data.storystate.StoryStateDao;
+import de.nb.aventiure2.data.world.lichtverhaeltnisse.Lichtverhaeltnisse;
+import de.nb.aventiure2.data.world.room.AvRoom;
 import de.nb.aventiure2.data.world.time.AvDateTime;
 import de.nb.aventiure2.data.world.time.AvTimeSpan;
+import de.nb.aventiure2.data.world.time.Tageszeit;
 import de.nb.aventiure2.playeraction.action.creature.reaction.CreatureReactionsCoordinator;
 import de.nb.aventiure2.playeraction.action.invisible.reaction.InvisibleReactionsCoordinator;
 
@@ -80,6 +83,11 @@ public abstract class AbstractPlayerAction implements IPlayerAction {
     }
 
     abstract public AvTimeSpan narrateAndDo();
+
+    protected Lichtverhaeltnisse getLichtverhaeltnisse(final AvRoom room) {
+        final Tageszeit tageszeit = db.dateTimeDao().getDateTime().getTageszeit();
+        return Lichtverhaeltnisse.getLichtverhaeltnisse(tageszeit, room);
+    }
 
     protected StoryStateBuilder alt(
             final ImmutableCollection.Builder<StoryStateBuilder> alternatives) {

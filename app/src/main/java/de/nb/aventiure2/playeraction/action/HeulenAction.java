@@ -97,6 +97,7 @@ public class HeulenAction extends AbstractPlayerAction {
 
     private AvTimeSpan narrateAndDoFroschprinz(final CreatureData froschprinz) {
         if (froschprinz.hasState(UNAUFFAELLIG)) {
+            // STORY Nachts schläft der Frosch
             final String desc = "weinst immer lauter und kannst dich gar nicht trösten. " +
                     "Und wie du so klagst, ruft dir jemand zu: „Was hast du vor, " +
                     "du schreist ja, dass sich ein Stein erbarmen möchte.“ Du siehst " +

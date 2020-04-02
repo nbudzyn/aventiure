@@ -172,8 +172,6 @@ public class TageszeitReactions extends AbstractInvisibleReactions {
                                 t(SENTENCE, "Die Sonne ist jetzt untergegangen"),
                                 t(PARAGRAPH, "Es ist dunkel geworden"),
                                 t(SENTENCE, "Die Sonne ist untergegangen"),
-                                // TODO Bei Beleuchtung sieht man auch nachts noch gut!
-                                //  Z.B. Im Schloss
                                 t(SENTENCE,
                                         "Inzwischen ist es Nacht und man sieht nicht "
                                                 + "mehr so gut"),

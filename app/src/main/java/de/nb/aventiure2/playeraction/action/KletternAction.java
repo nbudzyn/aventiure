@@ -14,6 +14,7 @@ import de.nb.aventiure2.data.world.time.AvTimeSpan;
 import de.nb.aventiure2.playeraction.AbstractPlayerAction;
 
 import static de.nb.aventiure2.data.storystate.StoryState.StructuralElement.PARAGRAPH;
+import static de.nb.aventiure2.data.world.lichtverhaeltnisse.Lichtverhaeltnisse.DUNKEL;
 import static de.nb.aventiure2.data.world.time.AvTimeSpan.mins;
 
 /**
@@ -82,6 +83,10 @@ public class KletternAction extends AbstractPlayerAction {
     }
 
     private AvTimeSpan narrateAndDoKletternBaumHinterHuetteErstesMal() {
+        final String dunkelNachsatz =
+                getLichtverhaeltnisse(room) == DUNKEL ?
+                        " Und das alles im Dunkeln!" : "";
+
         n.add(t(PARAGRAPH,
                 "Vom Stamm geht in Hüfthöhe ein kräftiger Ast ab, den kannst du "
                         + "ohne Mühe "
@@ -97,7 +102,8 @@ public class KletternAction extends AbstractPlayerAction {
                         + "Apfelbaum. "
                         + "Mit einiger Mühe drehst du auf dem Ast um und hangelst dich "
                         + "vorsichtig "
-                        + "wieder herab auf den Boden. Das war anstrengend!")
+                        + "wieder herab auf den Boden. Das war anstrengend!"
+                        + dunkelNachsatz)
                 .beendet(PARAGRAPH));
 
         db.playerStatsDao().setStateOfMind(PlayerStateOfMind.ERSCHOEPFT);
@@ -114,6 +120,10 @@ public class KletternAction extends AbstractPlayerAction {
     }
 
     private AvTimeSpan narrateAndDoKletternBaumHinterHuetteNtesMal() {
+        final String erschoepftMuedeNachsatz =
+                getLichtverhaeltnisse(room) == DUNKEL ?
+                        "Ein Nickerchen täte dir gut" : "Und müde";
+
         n.add(alt(
                 t(PARAGRAPH,
                         "Ein weiteres Mal kletterst du auf den Baum. Ein zurückschwingender "
@@ -121,7 +131,7 @@ public class KletternAction extends AbstractPlayerAction {
                         .dann(),
                 t(PARAGRAPH, "Es ist anstrengend, aber du kletterst noch einmal "
                         + "auf den Baum. Neues gibt es hier oben nicht zu erleben und unten bist "
-                        + "du ziemlich erschöpft. Ein Nickerchen täte dir gut")
+                        + "du ziemlich erschöpft. " + erschoepftMuedeNachsatz)
         ));
 
         db.playerStatsDao().setStateOfMind(PlayerStateOfMind.ERSCHOEPFT);

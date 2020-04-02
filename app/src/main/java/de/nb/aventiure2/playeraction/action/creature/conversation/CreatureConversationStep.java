@@ -15,7 +15,7 @@ import de.nb.aventiure2.german.praedikat.VerbSubjObj;
  * anderen, oft im Rahmen einer {@link de.nb.aventiure2.playeraction.action.RedenAction}.
  * <p>
  * Das Konzept ist ähnliche wie die
- * {@link de.nb.aventiure2.data.world.room.connection.RoomConnection}, die
+ * {@link de.nb.aventiure2.playeraction.action.room.connection.RoomConnection}, die
  * von einem {@link de.nb.aventiure2.data.world.room.AvRoom} zum anderen führt,
  * oft im Rahmen einer {@link de.nb.aventiure2.playeraction.action.BewegenAction}.
  */

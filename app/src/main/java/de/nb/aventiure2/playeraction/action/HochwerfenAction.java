@@ -24,6 +24,7 @@ import static de.nb.aventiure2.data.world.entity.creature.CreatureState.HAT_FORD
 import static de.nb.aventiure2.data.world.entity.creature.CreatureState.HAT_NACH_BELOHNUNG_GEFRAGT;
 import static de.nb.aventiure2.data.world.entity.creature.CreatureState.HAT_SC_HILFSBEREIT_ANGESPROCHEN;
 import static de.nb.aventiure2.data.world.entity.creature.CreatureState.UNAUFFAELLIG;
+import static de.nb.aventiure2.data.world.lichtverhaeltnisse.Lichtverhaeltnisse.HELL;
 import static de.nb.aventiure2.data.world.player.stats.PlayerStateOfMind.ETWAS_GEKNICKT;
 import static de.nb.aventiure2.data.world.player.stats.PlayerStateOfMind.UNTROESTLICH;
 import static de.nb.aventiure2.data.world.room.AvRoom.IM_WALD_BEIM_BRUNNEN;
@@ -168,8 +169,11 @@ public class HochwerfenAction extends AbstractObjectAction {
             return timeElapsed;
         }
 
+        final String praefix =
+                getLichtverhaeltnisse() == HELL ? "Weit und breit" : "Im Dunkeln ist";
+
         n.add(t(StoryState.StructuralElement.SENTENCE,
-                "Weit und breit kein Frosch zu sehen… Das war vielleicht etwas ungeschickt, " +
+                praefix + " kein Frosch zu sehen… Das war vielleicht etwas ungeschickt, " +
                         "oder?"));
         if (!db.playerStatsDao().getPlayerStats().getStateOfMind().isTraurigerAls(ETWAS_GEKNICKT)) {
             db.playerStatsDao().setStateOfMind(ETWAS_GEKNICKT);

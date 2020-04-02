@@ -168,8 +168,7 @@ class FroschprinzReactions extends AbstractCreatureReactions {
         // STORY Irgendwann (x Stunden danach?!) taucht der Frosch beim
         //   Spieler am Tisch im Schlossfest auf.
         //   Dazu müsste man an Creatures Zeitpunkte speichern können z.B.
-        //   WANN_DER_FROSCH_LOSGELAUFEN_IST oder
-        //   lastReferenceDateTime
+        //   statusDateTime
 
         return timeElapsed;
     }
