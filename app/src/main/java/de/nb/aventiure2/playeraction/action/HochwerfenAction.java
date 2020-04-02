@@ -170,7 +170,7 @@ public class HochwerfenAction extends AbstractObjectAction {
         }
 
         final String praefix =
-                getLichtverhaeltnisse() == HELL ? "Weit und breit" : "Im Dunkeln ist";
+                getLichtverhaeltnisse(room) == HELL ? "Weit und breit" : "Im Dunkeln ist";
 
         n.add(t(StoryState.StructuralElement.SENTENCE,
                 praefix + " kein Frosch zu sehen… Das war vielleicht etwas ungeschickt, " +
