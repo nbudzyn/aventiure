@@ -1,6 +1,6 @@
 package de.nb.aventiure2.data.world.room;
 
-import de.nb.aventiure2.data.world.base.Lichtverhaeltnisse;
+import de.nb.aventiure2.data.world.lichtverhaeltnisse.Lichtverhaeltnisse;
 
 public enum RoomKnown {
     // Order is relevant, see #max()

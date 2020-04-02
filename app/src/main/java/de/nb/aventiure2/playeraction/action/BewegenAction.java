@@ -10,10 +10,10 @@ import de.nb.aventiure2.data.database.AvDatabase;
 import de.nb.aventiure2.data.storystate.StoryState;
 import de.nb.aventiure2.data.storystate.StoryState.StructuralElement;
 import de.nb.aventiure2.data.storystate.StoryStateBuilder;
-import de.nb.aventiure2.data.world.base.Lichtverhaeltnisse;
 import de.nb.aventiure2.data.world.entity.base.AbstractEntityData;
 import de.nb.aventiure2.data.world.entity.creature.CreatureData;
 import de.nb.aventiure2.data.world.entity.object.ObjectData;
+import de.nb.aventiure2.data.world.lichtverhaeltnisse.Lichtverhaeltnisse;
 import de.nb.aventiure2.data.world.player.stats.PlayerStateOfMind;
 import de.nb.aventiure2.data.world.room.AvRoom;
 import de.nb.aventiure2.data.world.room.RoomKnown;
@@ -126,7 +126,7 @@ public class BewegenAction extends AbstractPlayerAction {
     public AvTimeSpan narrateAndDo() {
         final Tageszeit tageszeit = db.dateTimeDao().getDateTime().getTageszeit();
         final Lichtverhaeltnisse lichtverhaeltnisseInNewRoom =
-                getLichtverhaeltnisseInRoom(roomConnection.getTo(), tageszeit);
+                Lichtverhaeltnisse.getLichtverhaeltnisse(tageszeit, roomConnection.getTo());
 
         final RoomKnown newRoomKnown = db.roomDao().getKnown(roomConnection.getTo());
 
@@ -151,20 +151,11 @@ public class BewegenAction extends AbstractPlayerAction {
 
         db.playerLocationDao().setRoom(roomConnection.getTo());
 
-        setRoomAndObjectsKnown(objectsInNewRoom, tageszeit.getLichtverhaeltnisseDraussen(),
+        setRoomAndObjectsKnown(objectsInNewRoom, lichtverhaeltnisseInNewRoom,
                 newRoomKnown);
 
         return elapsedTime.plus(creatureReactionsCoordinator
                 .onEnterRoom(oldRoom, roomConnection.getTo(), creaturesInNewRoom));
-    }
-
-    private static Lichtverhaeltnisse getLichtverhaeltnisseInRoom(
-            final AvRoom room, final Tageszeit tageszeit) {
-        if (room == SCHLOSS_VORHALLE) {
-            return Lichtverhaeltnisse.HELL;
-        }
-
-        return tageszeit.getLichtverhaeltnisseDraussen();
     }
 
     /**

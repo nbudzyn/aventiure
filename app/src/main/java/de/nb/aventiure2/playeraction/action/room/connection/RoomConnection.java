@@ -1,12 +1,12 @@
 package de.nb.aventiure2.playeraction.action.room.connection;
 
-import de.nb.aventiure2.data.world.base.Lichtverhaeltnisse;
+import de.nb.aventiure2.data.world.lichtverhaeltnisse.Lichtverhaeltnisse;
 import de.nb.aventiure2.data.world.room.AvRoom;
 import de.nb.aventiure2.data.world.room.RoomKnown;
 import de.nb.aventiure2.german.AbstractDescription;
 
-import static de.nb.aventiure2.data.world.base.Lichtverhaeltnisse.DUNKEL;
-import static de.nb.aventiure2.data.world.base.Lichtverhaeltnisse.HELL;
+import static de.nb.aventiure2.data.world.lichtverhaeltnisse.Lichtverhaeltnisse.DUNKEL;
+import static de.nb.aventiure2.data.world.lichtverhaeltnisse.Lichtverhaeltnisse.HELL;
 import static de.nb.aventiure2.data.world.room.RoomKnown.KNOWN_FROM_DARKNESS;
 import static de.nb.aventiure2.data.world.room.RoomKnown.UNKNOWN;
 
