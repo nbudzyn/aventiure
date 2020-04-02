@@ -7,11 +7,14 @@ import com.google.common.collect.ImmutableList;
 import java.util.List;
 
 import de.nb.aventiure2.data.database.AvDatabase;
+import de.nb.aventiure2.data.world.base.Lichtverhaeltnisse;
 import de.nb.aventiure2.data.world.invisible.Invisible;
 import de.nb.aventiure2.data.world.room.AvRoom;
+import de.nb.aventiure2.data.world.room.RoomKnown;
 import de.nb.aventiure2.data.world.time.AvTimeSpan;
 import de.nb.aventiure2.german.AbstractDescription;
 
+import static de.nb.aventiure2.data.world.base.Lichtverhaeltnisse.HELL;
 import static de.nb.aventiure2.data.world.invisible.Invisibles.COUNTER_ID_VOR_DEM_SCHLOSS_SCHLOSSFEST_KNOWN;
 import static de.nb.aventiure2.data.world.room.AvRoom.ABZWEIG_IM_WALD;
 import static de.nb.aventiure2.data.world.room.AvRoom.BETT_IN_DER_HUETTE_IM_WALD;
@@ -22,6 +25,8 @@ import static de.nb.aventiure2.data.world.room.AvRoom.IM_WALD_BEIM_BRUNNEN;
 import static de.nb.aventiure2.data.world.room.AvRoom.IM_WALD_NAHE_DEM_SCHLOSS;
 import static de.nb.aventiure2.data.world.room.AvRoom.SCHLOSS_VORHALLE;
 import static de.nb.aventiure2.data.world.room.AvRoom.VOR_DER_HUETTE_IM_WALD;
+import static de.nb.aventiure2.data.world.room.RoomKnown.KNOWN_FROM_DARKNESS;
+import static de.nb.aventiure2.data.world.room.RoomKnown.UNKNOWN;
 import static de.nb.aventiure2.data.world.time.AvTimeSpan.mins;
 import static de.nb.aventiure2.data.world.time.AvTimeSpan.secs;
 import static de.nb.aventiure2.german.DuDescription.du;
@@ -54,6 +59,23 @@ class RoomConnectionBuilder {
                                 du(
                                         "folgst",
                                         "einem Pfad in den Wald",
+                                        false,
+                                        true,
+                                        true,
+                                        mins(10)),
+                                allg(
+                                        "Jeder kennt die Geschichten, die man "
+                                                + "sich über den Wald erzählt: Räuber sind noch "
+                                                + "die kleinste Gefahr. Aber das schreckt dich ganz "
+                                                + "offenbar nicht und du folgst dem erstbesten "
+                                                + "Pfad hinein in den dunklen Wald",
+                                        false,
+                                        false,
+                                        false,
+                                        mins(12)),
+                                du(
+                                        "läufst",
+                                        "wieder in den dunklen Wald",
                                         false,
                                         true,
                                         true,
@@ -114,6 +136,27 @@ class RoomConnectionBuilder {
                                         false,
                                         mins(2)
                                 ),
+                                allg("Hat gerade neben dir im Unterholz geknarzt? "
+                                                + "Wie auch immer, du fasst dir ein Herz und "
+                                                + "stapfst durch das "
+                                                + "dem Unkraut einen düsteren Trampelpfad entlang. "
+                                                + "Hinter der "
+                                                + "nächsten Biegung stehst du unvermittelt vor"
+                                                + " der Tür einer Holzhütte. "
+                                                + "Die Tür hängt nur noch lose "
+                                                + "in den Angeln",
+                                        false,
+                                        false,
+                                        false,
+                                        mins(2)
+                                ),
+                                du("wählst", "noch einmal den überwachsenen "
+                                                + "Pfad zur Hütte. Es wirkt alles so, also sei "
+                                                + "er schon lange nicht mehr benutzt worden",
+                                        true,
+                                        false,
+                                        true,
+                                        mins(2)),
                                 du("wählst", "noch einmal den überwachsenen "
                                                 + "Pfad zur Hütte",
                                         false,
@@ -126,14 +169,33 @@ class RoomConnectionBuilder {
                                 allg(
                                         "Der breitere Pfad führt zu einer alten "
                                                 + "Linde, unter der ist ein Brunnen. Du setzt "
-                                                + "dich an den Brunnenrand – hier ist es "
+                                                + "dich an den Brunnenrand – "
+                                                + "hier ist es "
                                                 + "angenehm kühl",
                                         false,
                                         false,
                                         true,
                                         mins(5)
                                 ),
-
+                                du(
+                                        "gehst", "den breiteren Pfad weiter in "
+                                                + "den Wald hinein. Wohl ist dir dabei nicht.\n"
+                                                + "In der Ferne heult ein Wolf – oder hast du "
+                                                + " dir das eingebildet? Dann kommst du an einen "
+                                                + "Baum, unter dem ist ein Brunnen. Kühl ist es "
+                                                + "hier",
+                                        false,
+                                        false,
+                                        false,
+                                        mins(10)
+                                ),
+                                du("kehrst",
+                                        "zurück zum Brunnen – unter einer Linde, wie "
+                                                + "du bei Licht erkennen kannst",
+                                        true,
+                                        false,
+                                        false,
+                                        mins(4)),
                                 du("kehrst",
                                         "zurück zum Brunnen unter der Linde",
                                         false,
@@ -168,13 +230,37 @@ class RoomConnectionBuilder {
                                         false,
                                         mins(1)
                                 ),
+                                allg("Du schiebst die Tür zur Seite und "
+                                                + "zwängst dich hinein. Erst ist alles "
+                                                + "stockdunkel, aber dann kannst du doch mit "
+                                                + "Mühe ein Bettgestell und einen Tisch "
+                                                + "ausmachen",
+                                        false,
+                                        false,
+                                        false,
+                                        secs(90)
+                                ),
+                                du("schiebst", "dich noch einmal in die "
+                                                + "kleine Hütte. Durch Ritzen in den "
+                                                + "Fensterläden fällt ein wenig Licht: "
+                                                + "Die Hütte ist "
+                                                + "anscheinend trocken und, wie es aussieht, "
+                                                + "bis auf einige "
+                                                + "Tausendfüßler "
+                                                + "unbewohnt. Du siehst ein Bettgestell, "
+                                                + "einen Tisch, aber sonst keine Einrichtung",
+                                        true,
+                                        true,
+                                        false,
+                                        mins(1)
+                                ),
                                 du("schiebst", "dich noch einmal in die "
                                                 + "kleine Hütte, in der es außer Tisch und "
                                                 + "Bett wenig zu sehen gibt",
                                         true,
                                         true,
                                         false,
-                                        mins(1)
+                                        secs(15)
                                 )),
                         con(HINTER_DER_HUETTE,
                                 "Um die Hütte herumgehen",
@@ -184,6 +270,24 @@ class RoomConnectionBuilder {
                                                 + "steht einzeln… es könnte ein "
                                                 + "Apfelbaum sein. Früchte siehst du von "
                                                 + "unten keine.",
+                                        false,
+                                        false,
+                                        false,
+                                        secs(30)
+                                ),
+                                allg("Vorsichtig gehtst du im Dunkeln ein paar Schritte "
+                                                + "um die Hütte herum. Du kannst die Silhuette "
+                                                + "eines einzelnen Baums erkennen, vielleicht – "
+                                                + "ein Apfelbaum",
+                                        false,
+                                        false,
+                                        false,
+                                        mins(1)
+                                ),
+                                du("schaust", "noch einmal hinter die Hütte. "
+                                                + "Im Licht erkennst du dort einen kleinen, völlig "
+                                                + "verwilderten Garten mit dem einzelnen Baum in "
+                                                + "der Mitte",
                                         false,
                                         false,
                                         false,
@@ -221,7 +325,6 @@ class RoomConnectionBuilder {
                                         false,
                                         secs(15)
                                 ),
-
                                 allg("Noch einmal legst du dich in das Holzbett",
                                         false,
                                         true,
@@ -277,13 +380,14 @@ class RoomConnectionBuilder {
     // -------------------------------------------------------------------
 
     private AbstractDescription getDesc_SchlossVorhalle_DraussenVorDemSchloss(
-            final boolean newRoomKnown) {
+            final RoomKnown newRoomKnown, final Lichtverhaeltnisse lichtverhaeltnisse) {
         switch (db.invisibleDataDao().getInvisible(Invisible.Key.SCHLOSSFEST).getState()) {
             case BEGONNEN:
                 return getDesc_SchlossVorhalle_DraussenVorDemSchloss_FestBegonnen();
 
             default:
-                return getDesc_SchlossVorhalle_DraussenVorDemSchlosss_KeinFest(newRoomKnown);
+                return getDesc_SchlossVorhalle_DraussenVorDemSchlosss_KeinFest(newRoomKnown,
+                        lichtverhaeltnisse);
         }
     }
 
@@ -292,20 +396,28 @@ class RoomConnectionBuilder {
     // -------------------------------------------------------------------
 
     private static AbstractDescription getDesc_SchlossVorhalle_DraussenVorDemSchlosss_KeinFest(
-            final boolean newRoomKnown) {
-        if (!newRoomKnown) {
+            final RoomKnown roomKnown, final Lichtverhaeltnisse lichtverhaeltnisse) {
+        if (roomKnown == UNKNOWN) {
+            return getDesc_SchlossVorhalle_DraussenVorDemSchlosss_KeinFest_Unknown(
+                    lichtverhaeltnisse);
+        }
+
+        if (roomKnown == KNOWN_FROM_DARKNESS && lichtverhaeltnisse == HELL) {
             return du(
-                    "gehst",
-                    "über die Marmortreppe hinaus in die Gärten vor dem Schloss.\n\n" +
-                            "Draußen scheint dir die " +
-                            "Sonne ins Gesicht; der Tag ist recht heiß. "
-                            +
-                            "Nahebei liegt ein großer, dunkler Wald",
+                    "verlässt",
+                    "das Schloss. Draußen scheint dir die " +
+                            "Sonne ins Gesicht; "
+                            // STORY Vielleicht ist es nur tagsüber / mittags heiß und morgens
+                            //  noch nicht?
+                            + "der Tag ist recht heiß",
                     false,
                     false,
                     false,
                     mins(1));
         }
+
+        // STORY: Wenn man aus dem hellen (Schloss) ins Dunkle kommt:
+        //  "Draußen ist es dunkel" o.Ä.
 
         return du(
                 "verlässt",
@@ -316,9 +428,43 @@ class RoomConnectionBuilder {
                 mins(1));
     }
 
-    private static AbstractDescription getDesc_SchlossVorhalle_DraussenVorDemSchloss_FestBegonnen() {
+    @NonNull
+    private static AbstractDescription getDesc_SchlossVorhalle_DraussenVorDemSchlosss_KeinFest_Unknown(
+            final Lichtverhaeltnisse lichtverhaeltnisse) {
+        if (lichtverhaeltnisse == HELL) {
+            return du(
+                    "gehst",
+                    "über die Marmortreppe hinaus in die Gärten vor dem Schloss.\n\n" +
+                            "Draußen scheint dir die " +
+                            "Sonne ins Gesicht; "
+                            // STORY Vielleicht ist es nur tagsüber / mittags heiß und morgens
+                            //  noch nicht?
+                            + "der Tag ist recht heiß. " +
+                            "Nahebei liegt ein großer, dunkler Wald",
+                    false,
+                    false,
+                    false,
+                    mins(1));
+        }
+
+        return du(
+                "gehst",
+                "über die Marmortreppe hinaus den Garten vor dem Schloss.\n\n" +
+                        "Draußen ist es dunkel. " +
+                        "In der Nähe liegt ein großer Wald, der sehr bedrohlich wirkt",
+                true,
+                false,
+                false,
+                mins(1));
+    }
+
+    private static AbstractDescription
+    getDesc_SchlossVorhalle_DraussenVorDemSchloss_FestBegonnen() {
         return du(
                 "stehst",
+                // STORY: Nachts ist weniger Trubel? (Wäre das ein Statuswechsel beim
+                //  Schlossfest? Oder Zumindest auch eine Reaction wie der Auf- /
+                //  Abbau des Schlossfestes?)
                 "vom Tisch auf und gehst über die Marmortreppe hinaus in den Trubel "
                         + "im Schlossgarten",
                 false,
@@ -332,7 +478,7 @@ class RoomConnectionBuilder {
     // -------------------------------------------------------------------
 
     private AbstractDescription getDesc_DraussenVorDemSchloss_SchlossVorhalle(
-            final boolean isNewRoomKnown) {
+            final RoomKnown newRoomKnown, final Lichtverhaeltnisse lichtverhaeltnisse) {
         switch (db.invisibleDataDao().getInvisible(Invisible.Key.SCHLOSSFEST).getState()) {
             case BEGONNEN:
                 return getDesc_DraussenVorDemSchloss_SchlossVorhalle_FestBegonnen();
@@ -342,7 +488,8 @@ class RoomConnectionBuilder {
         }
     }
 
-    private static AbstractDescription getDesc_DraussenVorDemSchloss_SchlossVorhalle_KeinFest() {
+    private static AbstractDescription
+    getDesc_DraussenVorDemSchloss_SchlossVorhalle_KeinFest() {
         return du(
                 "gehst",
                 "wieder hinein in das Schloss",
@@ -389,60 +536,63 @@ class RoomConnectionBuilder {
     // -------------------------------------------------------------------
 
     private AbstractDescription getDesc_ImWaldNaheDemSchloss_DraussenVorDemSchloss(
-            final boolean isNewRoomKnown) {
-        final AvTimeSpan timeElapsed = mins(10);
+            final RoomKnown newRoomKnown, final Lichtverhaeltnisse lichtverhaeltnisse) {
 
         switch (db.invisibleDataDao().getInvisible(Invisible.Key.SCHLOSSFEST).getState()) {
             case BEGONNEN:
-                return getDesc_ImWaldNaheDemSchloss_DraussenVorDemSchloss_FestBegonnen(timeElapsed);
+                return getDesc_ImWaldNaheDemSchloss_DraussenVorDemSchloss_FestBegonnen(
+                        mins(10));
 
             default:
-                return getDesc_ImWaldNaheDemSchloss_DraussenVorDemSchloss_KeinFest(timeElapsed);
+                return getDesc_ImWaldNaheDemSchloss_DraussenVorDemSchloss_KeinFest(
+                        lichtverhaeltnisse);
         }
     }
 
     @NonNull
-    private static AbstractDescription getDesc_ImWaldNaheDemSchloss_DraussenVorDemSchloss_KeinFest(
-            final AvTimeSpan timeElapsed) {
-        return du("erreichst", "bald das helle "
-                        + "Tageslicht, in dem der Schlossgarten "
-                        + "liegt",
-                // STORY Hier und an vielen anderen Stellen berücksichtigen, dass die
-                //  Welt bei Nacht anders aussieht. Tendenziell sieht man einfach
-                //  weniger Details. Vielleicht hört man beim ersten Mal auch Wölfe heulen,
-                //   fürchtet sich vor Räubern, es knarzt im Unterholz o.Ä.
-                //  Problem: Man braucht eigentlich MEHRERE zusätzliche Texte:
-                //  - Einen Text, wenn man bei Nacht erstmals irgendwohin geht
-                //  - Einen Text, wenn man bei Nacht irgendwohin geht, wo man bei
-                //   Nacht oder Tag schon war
-                //  - Einen Text, wenn man bei TAG irgendwohin geht, wo man bei Nacht schon
-                //   war
-                // Die elapsed time kannn unterschiedlich sein - in der Nacht oft länger
-                // STORY gegen Abend wird man müde und kann auf jeden Fall einschlafen
-                // STORY Wenn man schläft, "verpasst" man Reactions, die man dann später
-                //  (beim Aufwachen) merkt ("Der Frosch ist verschwunden".) Man könnte alle
-                //  verpassten Reactions als Texte speichern (Problem, wenn der Frosch nur kurz
-                //  verschwundenn ist), inhaltlich speichern
-                //  (WasIstAllesPassiert.FroschIstVerschwunden = true), oder man speichert
-                //  den Stand VOR dem Einschlafen und vergleicht mit dem Stand NACH dem
-                //  Einschlafen.
-                // STORY Es kommt die Dämmerung, dann die Nacht, später die Dämmerung und
-                //  der Tag.
-                // STORY Alle Texte überprüfen: Was bezieht sich auf eine bestimmte
-                //  Tageszeit? ("es ist sehr heiß" / "hier ist es kühler"?)
-                //  Möglichst flexibel gestalten.
-                // STORY Nachts sieht man nicht so gut - sieht man alle Objects?
-                // STORY Nachts schlafen die Creatures?
-                // STORY Nachts ist man hauptsächlich MUEDE / ERSCHOEPFT
-                true,
+    private static AbstractDescription
+    getDesc_ImWaldNaheDemSchloss_DraussenVorDemSchloss_KeinFest(
+            final Lichtverhaeltnisse lichtverhaeltnisse) {
+        if (lichtverhaeltnisse == HELL) {
+            return du("erreichst", "bald das helle "
+                            + "Tageslicht, in dem der Schlossgarten "
+                            + "liegt",
+                    true,
+                    false,
+                    false,
+                    mins(10));
+        }
+
+        return du("gehts", "noch eine Weile vorsichtig durch den dunklen "
+                        + "Wald, dann öffnet sich der Weg wieder und du stehst im Schlossgarten "
+                        + "unter dem Sternenhimmel",
                 false,
                 false,
-                timeElapsed);
+                false,
+                mins(15));
+
+
+        // STORY Lichtverhältnisse auch bei den anderen Aktionen berücksichtigen,
+        //  insbesondere nach derselben Logik (z.B. "im Schloss ist es immer hell",
+        //  "eine Fackel bringt auch nachts Licht" etc.)
+        // STORY gegen Abend wird man müde und kann auf jeden Fall einschlafen
+        // STORY Wenn man schläft, "verpasst" man Reactions, die man dann später
+        //  (beim Aufwachen) merkt ("Der Frosch ist verschwunden".) Man könnte alle
+        //  verpassten Reactions als Texte speichern (Problem, wenn der Frosch nur kurz
+        //  verschwundenn ist), inhaltlich speichern
+        //  (WasIstAllesPassiert.FroschIstVerschwunden = true), oder man speichert
+        //  den Stand VOR dem Einschlafen und vergleicht mit dem Stand NACH dem
+        //  Einschlafen.
+        // STORY Nachts sieht man nicht so gut - sieht man alle Objects?
+        // STORY Nachts schlafen die Creatures?
+        // STORY Nachts ist man hauptsächlich MUEDE / ERSCHOEPFT
     }
 
     @NonNull
-    private AbstractDescription getDesc_ImWaldNaheDemSchloss_DraussenVorDemSchloss_FestBegonnen(
-            final AvTimeSpan timeSpan) {
+    private AbstractDescription
+    getDesc_ImWaldNaheDemSchloss_DraussenVorDemSchloss_FestBegonnen
+            (
+                    final AvTimeSpan timeSpan) {
         if (db.counterDao().incAndGet(COUNTER_ID_VOR_DEM_SCHLOSS_SCHLOSSFEST_KNOWN) == 1) {
             return du("bist", "von dem Lärm überrascht, der dir "
                             + "schon von weitem "

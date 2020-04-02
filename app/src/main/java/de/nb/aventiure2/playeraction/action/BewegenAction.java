@@ -10,12 +10,15 @@ import de.nb.aventiure2.data.database.AvDatabase;
 import de.nb.aventiure2.data.storystate.StoryState;
 import de.nb.aventiure2.data.storystate.StoryState.StructuralElement;
 import de.nb.aventiure2.data.storystate.StoryStateBuilder;
+import de.nb.aventiure2.data.world.base.Lichtverhaeltnisse;
 import de.nb.aventiure2.data.world.entity.base.AbstractEntityData;
 import de.nb.aventiure2.data.world.entity.creature.CreatureData;
 import de.nb.aventiure2.data.world.entity.object.ObjectData;
 import de.nb.aventiure2.data.world.player.stats.PlayerStateOfMind;
 import de.nb.aventiure2.data.world.room.AvRoom;
+import de.nb.aventiure2.data.world.room.RoomKnown;
 import de.nb.aventiure2.data.world.time.AvTimeSpan;
+import de.nb.aventiure2.data.world.time.Tageszeit;
 import de.nb.aventiure2.german.AbstractDescription;
 import de.nb.aventiure2.german.DuDescription;
 import de.nb.aventiure2.playeraction.AbstractPlayerAction;
@@ -121,6 +124,12 @@ public class BewegenAction extends AbstractPlayerAction {
 
     @Override
     public AvTimeSpan narrateAndDo() {
+        final Tageszeit tageszeit = db.dateTimeDao().getDateTime().getTageszeit();
+        final Lichtverhaeltnisse lichtverhaeltnisseInNewRoom =
+                getLichtverhaeltnisseInRoom(roomConnection.getTo(), tageszeit);
+
+        final RoomKnown newRoomKnown = db.roomDao().getKnown(roomConnection.getTo());
+
         final List<CreatureData> creaturesInOldRoom =
                 db.creatureDataDao().getCreaturesInRoom(oldRoom);
 
@@ -129,7 +138,7 @@ public class BewegenAction extends AbstractPlayerAction {
         final List<CreatureData> creaturesInNewRoom =
                 db.creatureDataDao().getCreaturesInRoom(roomConnection.getTo());
 
-        AvTimeSpan elapsedTime = narrateRoomOnly();
+        AvTimeSpan elapsedTime = narrateRoomOnly(newRoomKnown, lichtverhaeltnisseInNewRoom);
 
         updatePlayerStateOfMind();
 
@@ -142,10 +151,20 @@ public class BewegenAction extends AbstractPlayerAction {
 
         db.playerLocationDao().setRoom(roomConnection.getTo());
 
-        setRoomAndObjectsKnown(objectsInNewRoom);
+        setRoomAndObjectsKnown(objectsInNewRoom, tageszeit.getLichtverhaeltnisseDraussen(),
+                newRoomKnown);
 
         return elapsedTime.plus(creatureReactionsCoordinator
                 .onEnterRoom(oldRoom, roomConnection.getTo(), creaturesInNewRoom));
+    }
+
+    private static Lichtverhaeltnisse getLichtverhaeltnisseInRoom(
+            final AvRoom room, final Tageszeit tageszeit) {
+        if (room == SCHLOSS_VORHALLE) {
+            return Lichtverhaeltnisse.HELL;
+        }
+
+        return tageszeit.getLichtverhaeltnisseDraussen();
     }
 
     /**
@@ -171,20 +190,24 @@ public class BewegenAction extends AbstractPlayerAction {
         return secs(objectsInNewRoom.size() * 2);
     }
 
-    private AvTimeSpan narrateRoomOnly() {
-        final AbstractDescription description = getMovementDescription(initialStoryState);
+    private AvTimeSpan narrateRoomOnly(final RoomKnown newRoomKnown,
+                                       final Lichtverhaeltnisse lichtverhaeltnisseInNewRoom) {
+        final AbstractDescription description =
+                getMovementDescription(initialStoryState, newRoomKnown,
+                        lichtverhaeltnisseInNewRoom);
         n.add(buildNewStoryStateRoomOnly(initialStoryState, description));
 
         return description.getTimeElapsed();
     }
 
-    private AbstractDescription getMovementDescription(final StoryState currentStoryState) {
-        final boolean newRoomKnown = db.roomDao().isKnown(roomConnection.getTo());
-
+    private AbstractDescription getMovementDescription(final StoryState currentStoryState,
+                                                       final RoomKnown newRoomKnown,
+                                                       final Lichtverhaeltnisse
+                                                               lichtverhaeltnisseInNewRoom) {
         final AbstractDescription standardDescription =
-                roomConnection.getDescription(newRoomKnown);
+                roomConnection.getDescription(newRoomKnown, lichtverhaeltnisseInNewRoom);
 
-        if (newRoomKnown) {
+        if (newRoomKnown == RoomKnown.KNOWN_FROM_LIGHT) {
             if (numberOfPossibilities == NumberOfPossibilities.ONLY_WAY) {
                 if (db.playerStatsDao().getPlayerStats().getStateOfMind() ==
                         PlayerStateOfMind.VOLLER_FREUDE &&
@@ -368,10 +391,20 @@ public class BewegenAction extends AbstractPlayerAction {
                 .letzterRaum(oldRoom);
     }
 
-    private void setRoomAndObjectsKnown(final List<ObjectData> objectsInNewRoom) {
-        db.roomDao().setKnown(roomConnection.getTo());
+    private void setRoomAndObjectsKnown(
+            final List<ObjectData> objectsInNewRoom,
+            final Lichtverhaeltnisse lichtverhaeltnisse, final RoomKnown newRoomKnownOldValue) {
+        db.roomDao().setKnown(roomConnection.getTo(),
+                getNewKnown(newRoomKnownOldValue, lichtverhaeltnisse));
+
         for (final ObjectData objectInNewRoom : objectsInNewRoom) {
             db.objectDataDao().setKnown(objectInNewRoom.getObject());
         }
+    }
+
+    @NonNull
+    private static RoomKnown getNewKnown(final RoomKnown oldKnown,
+                                         final Lichtverhaeltnisse lichtverhaeltnisse) {
+        return RoomKnown.max(oldKnown, RoomKnown.getKnown(lichtverhaeltnisse));
     }
 }

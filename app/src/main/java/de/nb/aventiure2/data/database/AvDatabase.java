@@ -46,8 +46,10 @@ import de.nb.aventiure2.data.world.player.stats.PlayerStats;
 import de.nb.aventiure2.data.world.player.stats.PlayerStatsDao;
 import de.nb.aventiure2.data.world.room.AvRoom;
 import de.nb.aventiure2.data.world.room.AvRoomConverters;
-import de.nb.aventiure2.data.world.room.KnownRoom;
 import de.nb.aventiure2.data.world.room.RoomDao;
+import de.nb.aventiure2.data.world.room.RoomData;
+import de.nb.aventiure2.data.world.room.RoomKnown;
+import de.nb.aventiure2.data.world.room.RoomKnownConverters;
 import de.nb.aventiure2.data.world.time.AvDateTime;
 import de.nb.aventiure2.data.world.time.AvDateTimeDao;
 
@@ -59,7 +61,7 @@ import static de.nb.aventiure2.data.world.time.AvTime.oClock;
         Counter.class,
         StoryState.class,
         AvDateTime.class,
-        KnownRoom.class,
+        RoomData.class,
         InvisibleData.class,
         ObjectData.class,
         CreatureData.class,
@@ -69,6 +71,7 @@ import static de.nb.aventiure2.data.world.time.AvTime.oClock;
         version = 1,
         exportSchema = false)
 @TypeConverters({AvStoryStateConverters.class, AvRoomConverters.class,
+        RoomKnownConverters.class,
         InvisibleConverters.class,
         InvisibleStateConverters.class,
         AvObjectConverters.class,
@@ -126,7 +129,8 @@ public abstract class AvDatabase extends RoomDatabase {
                         INSTANCE.playerStatsDao().insert(buildInitialPlayerStats());
                         INSTANCE.playerLocationDao().setRoom(AvRoom.SCHLOSS_VORHALLE);
                         INSTANCE.storyStateDao().add(buildInitialStoryState());
-                        INSTANCE.roomDao().setKnown(AvRoom.SCHLOSS_VORHALLE);
+                        INSTANCE.roomDao()
+                                .setKnown(AvRoom.SCHLOSS_VORHALLE, RoomKnown.KNOWN_FROM_LIGHT);
                         INSTANCE.objectDataDao().setKnown(GOLDENE_KUGEL);
                     }));
         }

@@ -5,20 +5,29 @@ import androidx.room.Entity;
 import androidx.room.PrimaryKey;
 
 /**
- * A Room the player already knows (and recognizes).
+ * Changeable data for a room in the world.
  */
 @Entity
-public class KnownRoom {
+public class RoomData {
     @NonNull
     @PrimaryKey
     private final AvRoom room;
 
-    KnownRoom(@NonNull final AvRoom room) {
+    @NonNull
+    private final RoomKnown known;
+
+    RoomData(@NonNull final AvRoom room, @NonNull final RoomKnown known) {
         this.room = room;
+        this.known = known;
     }
 
     @NonNull
     public AvRoom getRoom() {
         return room;
+    }
+
+    @NonNull
+    public RoomKnown getKnown() {
+        return known;
     }
 }

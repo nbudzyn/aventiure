@@ -1,7 +1,14 @@
 package de.nb.aventiure2.playeraction.action.room.connection;
 
+import de.nb.aventiure2.data.world.base.Lichtverhaeltnisse;
 import de.nb.aventiure2.data.world.room.AvRoom;
+import de.nb.aventiure2.data.world.room.RoomKnown;
 import de.nb.aventiure2.german.AbstractDescription;
+
+import static de.nb.aventiure2.data.world.base.Lichtverhaeltnisse.DUNKEL;
+import static de.nb.aventiure2.data.world.base.Lichtverhaeltnisse.HELL;
+import static de.nb.aventiure2.data.world.room.RoomKnown.KNOWN_FROM_DARKNESS;
+import static de.nb.aventiure2.data.world.room.RoomKnown.UNKNOWN;
 
 /**
  * Die Verbindung von einem Raum zu einem anderen, wie sie der SC beim Bewegen benutzten kann -
@@ -19,7 +26,8 @@ public class RoomConnection {
          * Erzeugt die Beschreibung für die Bewegung von einem Raum zu einem anderen (ohne
          * Gegenstände, {@link de.nb.aventiure2.data.world.entity.creature.Creature}s etc.)
          */
-        AbstractDescription getDescription(boolean isNewRoomKnown);
+        AbstractDescription getDescription(RoomKnown newRoomKnow,
+                                           Lichtverhaeltnisse lichtverhaeltnisseInNewRoom);
     }
 
     private final AvRoom to;
@@ -29,17 +37,39 @@ public class RoomConnection {
     static RoomConnection con(final AvRoom to, final String actionDescription,
                               final AbstractDescription newRoomDescription) {
         return con(to, actionDescription,
-                isNewRoomKnown -> newRoomDescription);
+                (isNewRoomKnown, lichtverhaeltnisseInNewRoom) -> newRoomDescription);
     }
 
     static RoomConnection con(final AvRoom to,
                               final String actionDescription,
-                              final AbstractDescription newRoomDescriptionFirstTime,
+                              final AbstractDescription newRoomDescriptionUnknown,
                               final AbstractDescription newRoomDescriptionKnown) {
         return con(to, actionDescription,
-                isNewRoomKnown ->
-                        isNewRoomKnown ?
-                                newRoomDescriptionKnown : newRoomDescriptionFirstTime);
+                (newRoomKnown, lichtverhaeltnisseInNewRoom) ->
+                        newRoomKnown == UNKNOWN ?
+                                newRoomDescriptionUnknown : newRoomDescriptionKnown);
+    }
+
+    static RoomConnection con(final AvRoom to,
+                              final String actionDescription,
+                              final AbstractDescription newRoomDescriptionUnknownHell,
+                              final AbstractDescription newRoomDescriptionUnknownDunkel,
+                              final AbstractDescription newRoomDescriptionKnownFromDarknessHell,
+                              final AbstractDescription newRoomDescriptionOther) {
+        return con(to, actionDescription,
+                (newRoomKnown, lichtverhaeltnisseInNewRoom) -> {
+                    if (newRoomKnown == UNKNOWN && lichtverhaeltnisseInNewRoom == HELL) {
+                        return newRoomDescriptionUnknownHell;
+                    }
+                    if (newRoomKnown == UNKNOWN && lichtverhaeltnisseInNewRoom == DUNKEL) {
+                        return newRoomDescriptionUnknownDunkel;
+                    }
+                    if (newRoomKnown == KNOWN_FROM_DARKNESS
+                            && lichtverhaeltnisseInNewRoom == HELL) {
+                        return newRoomDescriptionKnownFromDarknessHell;
+                    }
+                    return newRoomDescriptionOther;
+                });
     }
 
     static RoomConnection con(final AvRoom to,
@@ -65,7 +95,7 @@ public class RoomConnection {
     }
 
     public AbstractDescription getDescription(
-            final boolean isNewRoomKnown) {
-        return descriptionProvider.getDescription(isNewRoomKnown);
+            final RoomKnown newRoomKnown, final Lichtverhaeltnisse lichtverhaeltnisseInNewRoom) {
+        return descriptionProvider.getDescription(newRoomKnown, lichtverhaeltnisseInNewRoom);
     }
 }
