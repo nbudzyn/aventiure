@@ -63,7 +63,7 @@ public class PraedikatDatAkkOhneLeerstellen implements PraedikatOhneLeerstellen 
      * ("Du machst dem Frosch Angebote")
      */
     @Override
-    public String getDescriptionHauptsatz() {
+    public String getDescriptionDuHauptsatz() {
         if (abgetrenntesPraefix == null) {
             return "Du " + duForm +
                     " " + describableDat.dat(true) +
@@ -77,7 +77,12 @@ public class PraedikatDatAkkOhneLeerstellen implements PraedikatOhneLeerstellen 
     }
 
     @Override
-    public String getDescriptionHauptsatz(@Nonnull final AdverbialeAngabe adverbialeAngabe) {
+    public boolean duHauptsatzLaesstSichMitNachfolgendemDuHauptsatzZusammenziehen() {
+        return true;
+    }
+
+    @Override
+    public String getDescriptionDuHauptsatz(@Nonnull final AdverbialeAngabe adverbialeAngabe) {
         if (abgetrenntesPraefix == null) {
             return capitalize(adverbialeAngabe.getText()) + // Aus Langeweile
                     " " + duForm +

@@ -44,6 +44,8 @@ dependencies {
     // UI
     implementation "com.google.android.material:material:$rootProject.materialVersion"
 
+    implementation 'org.jetbrains:annotations:13.0@jar'
+
     // Testing
     androidTestImplementation "androidx.arch.core:core-testing:$rootProject.coreTestingVersion"
 }

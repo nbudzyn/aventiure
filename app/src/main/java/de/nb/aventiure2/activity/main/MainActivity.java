@@ -36,6 +36,7 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        // TODO Use view binding
         storyTextView = findViewById(R.id.storyTextView);
         storyTextScrollView = findViewById(R.id.storyTextScrollView);
 

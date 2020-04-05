@@ -1,5 +1,7 @@
 package de.nb.aventiure2.german.base;
 
+import androidx.annotation.Nullable;
+
 /**
  * Etwas das sich mit einer deklinierbaren Phrase (z.B. "die goldene Kugel" oder
  * "der Sinn des Lebens") beschreiben lässt.
@@ -54,4 +56,10 @@ public interface DescribableAsDeklinierbarePhrase {
      *                     eine <i>kurze</i> Phrase verwendet werden soll
      */
     DeklinierbarePhrase getDescription(final boolean shortIfKnown);
+
+    @Override
+    boolean equals(@Nullable final Object obj);
+
+    @Override
+    int hashCode();
 }

@@ -27,7 +27,7 @@ class PraedikatSubjReflPraepositionalkasusAkkObjOhneLeerstellen
     }
 
     @Override
-    public String getDescriptionHauptsatz() {
+    public String getDescriptionDuHauptsatz() {
         return "Du "
                 + reflPraepositionalkasusVerbAkkObj.getDuForm() // "nimmst"
                 + " " + akkObj.akk(true) // "die goldene Kugel"
@@ -37,7 +37,12 @@ class PraedikatSubjReflPraepositionalkasusAkkObjOhneLeerstellen
     }
 
     @Override
-    public String getDescriptionHauptsatz(@Nonnull final AdverbialeAngabe adverbialeAngabe) {
+    public boolean duHauptsatzLaesstSichMitNachfolgendemDuHauptsatzZusammenziehen() {
+        return true;
+    }
+
+    @Override
+    public String getDescriptionDuHauptsatz(@Nonnull final AdverbialeAngabe adverbialeAngabe) {
         return capitalize(adverbialeAngabe.getText()) + // Aus Langeweile
                 " " + reflPraepositionalkasusVerbAkkObj.getDuForm() // "nimmst"
                 + " du "

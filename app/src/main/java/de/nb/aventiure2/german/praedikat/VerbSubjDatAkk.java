@@ -56,7 +56,7 @@ public enum VerbSubjDatAkk implements Praedikat {
     public String getDescriptionHauptsatz(
             final DescribableAsDeklinierbarePhrase describableDat,
             final DescribableAsDeklinierbarePhrase describableAkk) {
-        return mitDat(describableDat).getDescriptionHauptsatz(describableAkk);
+        return mitDat(describableDat).getDescriptionDuHauptsatz(describableAkk);
     }
 
     /**

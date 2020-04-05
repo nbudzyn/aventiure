@@ -47,25 +47,35 @@ public abstract class StoryStateDao {
      * Story-Text zu vermeiden.
      */
     public StoryStateBuilder chooseNextFrom(final StoryStateBuilder... alternatives) {
+        return alternatives[chooseNextIndexFrom(alternatives)];
+    }
+
+    /**
+     * Wählt einen {@link StoryStateBuilder} aus den Alternativen und gibt den Indes zurück -
+     * versucht dabei vor allem, Wiederholgungen mit dem unmittelbar zuvor geschriebenen
+     * Story-Text zu vermeiden.
+     */
+    public int chooseNextIndexFrom(final StoryStateBuilder... alternatives) {
         checkArgument(alternatives.length > 0,
                 "No alternatives");
 
         final String currentText = getStoryState().getText();
 
-        @Nullable StoryStateBuilder best = null;
+        int bestIndex = -1;
         float bestScore = Float.NEGATIVE_INFINITY;
 
-        for (final StoryStateBuilder alternative : alternatives) {
+        for (int i = 0; i < alternatives.length; i++) {
+            final StoryStateBuilder alternative = alternatives[i];
             final float score =
                     TextAdditionEvaluator
                             .evaluateAddition(currentText, alternative.build().getText());
             if (score > bestScore) {
                 bestScore = score;
-                best = alternative;
+                bestIndex = i;
             }
         }
 
-        return best;
+        return bestIndex;
     }
 
     @Query("SELECT * from StoryState")

@@ -1,29 +1,35 @@
 package de.nb.aventiure2.data.world.room;
 
 import de.nb.aventiure2.german.praedikat.PraedikatMitEinerObjektleerstelle;
+import de.nb.aventiure2.german.praedikat.ZweiVerbenSubjObj;
 
 import static de.nb.aventiure2.german.praedikat.ReflPraepositionalkasusVerbAkkObj.AN_SICH_NEHMEN;
 import static de.nb.aventiure2.german.praedikat.VerbSubjObj.AUFHEBEN;
-import static de.nb.aventiure2.german.praedikat.VerbSubjObj.HERAUSKLAUBEN;
 import static de.nb.aventiure2.german.praedikat.VerbSubjObj.NEHMEN;
+import static de.nb.aventiure2.german.praedikat.VerbSubjObj.POLIEREN;
 
 /**
  * The kind of location an object has in a room: on the floor, on a table, ...
  */
 public enum ObjectLocationMode {
+    AM_GRUNDE_DES_BRUNNENS("am Grunde des Brunnens", "auf den Grund des Brunnens"),
     BODEN("auf dem Boden", "auf den Boden", AUFHEBEN),
     // TODO Not everything fits on a table
     EIN_TISCH("auf einem Tisch", "auf einen Tisch"),
-    WALDBODEN("zwischen Blättern und Gestrüpp", "auf den Waldboden",
-            HERAUSKLAUBEN),
-    VOR_DER_HUETTE("auf dem Erdboden vor der Hütte", "auf den Erdboden vor der Hütte",
+    GRAS_NEBEN_DEM_BRUNNEN("neben dem Brunnnen", "neben den Brunnen",
             AUFHEBEN),
-    // TODO Not everything fits on a table
-    HOLZTISCH("auf dem hölzernen Tisch", "auf den Holztisch"),
     NEBEN_DIR_IM_BETT("neben dir im Bett", "neben dich in das Bett",
             AN_SICH_NEHMEN),
-    GRAS_NEBEN_DEM_BRUNNEN("neben dem Brunnnen", "neben den Brunnen", AUFHEBEN),
-    AM_GRUNDE_DES_BRUNNENS("am Grunde des Brunnens", "auf den Grund des Brunnens"),
+    // TODO Not everything fits on a table
+    HOLZTISCH("auf dem hölzernen Tisch", "auf den Holztisch"),
+    VOR_DER_HUETTE("auf dem Erdboden vor der Hütte", "auf den Erdboden vor der Hütte",
+            AUFHEBEN),
+    MATSCHIGER_WALDBODENN("auf dem matschigen Waldboden",
+            "auf den matschigen Waldboden",
+            new ZweiVerbenSubjObj(AUFHEBEN, POLIEREN)),
+    // STORY    WALDBODEN("zwischen Blättern und Gestrüpp", "auf den Waldboden",
+    //         HERAUSKLAUBEN),
+    WALDWEG("auf dem Weg", "auf den Weg"),
     UNTER_DEM_BAUM("unter dem Baum", "unter den Baum", AUFHEBEN);
 
     private final String wo;

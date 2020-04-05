@@ -57,4 +57,9 @@ class PraedikatAkkMitEinerDatLeerstelle implements PraedikatMitEinerObjektleerst
         return new PraedikatDatAkkOhneLeerstellen(infinitiv, duForm, abgetrenntesPraefix,
                 describableDat, describableAkk);
     }
+
+    @Override
+    public boolean duHauptsatzLaesstSichMitNachfolgendemDuHauptsatzZusammenziehen() {
+        return true;
+    }
 }

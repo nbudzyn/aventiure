@@ -16,8 +16,8 @@ import java.util.stream.Collectors;
 
 import de.nb.aventiure2.data.database.AvDatabase;
 import de.nb.aventiure2.data.storystate.StoryState;
-import de.nb.aventiure2.playeraction.AbstractPlayerAction;
-import de.nb.aventiure2.playeraction.PlayerActionService;
+import de.nb.aventiure2.scaction.AbstractScAction;
+import de.nb.aventiure2.scaction.ScActionService;
 
 import static de.nb.aventiure2.data.database.AvDatabase.getDatabase;
 
@@ -25,7 +25,7 @@ public class MainViewModel extends AndroidViewModel {
     private final MutableLiveData<String> storyText = new MutableLiveData<>();
     private final MutableLiveData<List<GuiAction>> playerActionHandlers = new MutableLiveData<>();
 
-    private final PlayerActionService playerActionService;
+    private final ScActionService scActionService;
     private final AvDatabase db;
 
     @UiThread
@@ -33,7 +33,7 @@ public class MainViewModel extends AndroidViewModel {
         super(application);
         db = getDatabase(application);
 
-        playerActionService = new PlayerActionService(application);
+        scActionService = new ScActionService(application);
 
         storyText.setValue("");
         playerActionHandlers.setValue(ImmutableList.of());
@@ -43,8 +43,8 @@ public class MainViewModel extends AndroidViewModel {
 
     @UiThread
     private List<GuiAction> buildGuiActions() {
-        final List<AbstractPlayerAction> playerActions =
-                playerActionService.getPlayerActions();
+        final List<AbstractScAction> playerActions =
+                scActionService.getPlayerActions();
 
         return playerActions.stream()
                 .map(this::toGuiAction)
@@ -53,7 +53,7 @@ public class MainViewModel extends AndroidViewModel {
     }
 
     @UiThread
-    private GuiAction toGuiAction(final AbstractPlayerAction playerAction) {
+    private GuiAction toGuiAction(final AbstractScAction playerAction) {
         return new GuiAction() {
             @Override
             public String getDisplayName() {

@@ -1,24 +1,15 @@
 package de.nb.aventiure2.german.base;
 
 import de.nb.aventiure2.data.world.time.AvTimeSpan;
-import de.nb.aventiure2.german.AbstractDescription;
 
 /**
  * A general description. The subject may be anything.
  */
-public class AllgDescription implements AbstractDescription {
+public class AllgDescription extends AbstractDescription {
     /**
      * Something like "Der Weg führt weiter in den Wald hinein. Dann stehst du vor einer Kirche"
      */
     private final String description;
-
-    private final boolean kommaStehtAus;
-
-    private final boolean allowsAdditionalDuSatzreihengliedOhneSubjekt;
-
-    private final boolean dann;
-
-    private final AvTimeSpan timeElapsed;
 
     public static AllgDescription allg(final String description,
                                        final boolean kommaStehtAus,
@@ -36,12 +27,8 @@ public class AllgDescription implements AbstractDescription {
                             final boolean allowsAdditionalDuSatzreihengliedOhneSubjekt,
                             final boolean dann,
                             final AvTimeSpan timeElapsed) {
+        super(kommaStehtAus, allowsAdditionalDuSatzreihengliedOhneSubjekt, dann, timeElapsed);
         this.description = description;
-        this.kommaStehtAus = kommaStehtAus;
-        this.allowsAdditionalDuSatzreihengliedOhneSubjekt =
-                allowsAdditionalDuSatzreihengliedOhneSubjekt;
-        this.dann = dann;
-        this.timeElapsed = timeElapsed;
     }
 
     @Override
@@ -57,23 +44,4 @@ public class AllgDescription implements AbstractDescription {
         return description;
     }
 
-    @Override
-    public boolean kommaStehtAus() {
-        return kommaStehtAus;
-    }
-
-    @Override
-    public boolean allowsAdditionalDuSatzreihengliedOhneSubjekt() {
-        return allowsAdditionalDuSatzreihengliedOhneSubjekt;
-    }
-
-    @Override
-    public boolean dann() {
-        return dann;
-    }
-
-    @Override
-    public AvTimeSpan getTimeElapsed() {
-        return timeElapsed;
-    }
 }

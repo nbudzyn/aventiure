@@ -3,7 +3,10 @@ package de.nb.aventiure2.data.world.time;
 import androidx.annotation.NonNull;
 import androidx.room.PrimaryKey;
 
+import java.util.Locale;
 import java.util.Objects;
+
+import javax.annotation.concurrent.Immutable;
 
 import static com.google.common.base.Preconditions.checkState;
 import static de.nb.aventiure2.data.world.time.Tageszeit.ABENDS;
@@ -12,8 +15,9 @@ import static de.nb.aventiure2.data.world.time.Tageszeit.NACHTS;
 import static de.nb.aventiure2.data.world.time.Tageszeit.TAGSUEBER;
 
 /**
- * Uhrzeit in der Spielwelt
+ * Wertobjekt für eine Uhrzeit in der Spielwelt
  */
+@Immutable
 public class AvTime {
     static final int SECS_IN_AN_HOUR = 60 * 60;
     static final int HOURS_IN_A_DAY = 24;
@@ -23,7 +27,6 @@ public class AvTime {
      * Sekunden seit Mitternacht
      */
     @PrimaryKey
-    @NonNull
     private int secsSinceMidnight;
 
     public static AvTime oClock(final int hoursSinceMidnight) {
@@ -34,7 +37,7 @@ public class AvTime {
         return new AvTime(hoursSinceMidnight, minutesSinceHourStart);
     }
 
-    public AvTime(final int hoursSinceMidnight, final int minutesSinceHourStart) {
+    AvTime(final int hoursSinceMidnight, final int minutesSinceHourStart) {
         this(hoursSinceMidnight * 60 * 60 + minutesSinceHourStart * 60);
     }
 
@@ -64,7 +67,7 @@ public class AvTime {
         return NACHTS;
     }
 
-    public AvTimeSpan timeSpanUntil(final AvTime other) {
+    public AvTimeSpan timeSpanUntil(@NonNull final AvTime other) {
         if (!other.isBefore(this)) {
             return new AvTimeSpan(other.secsSinceMidnight - secsSinceMidnight);
         }
@@ -72,7 +75,7 @@ public class AvTime {
                 SECS_IN_A_DAY + other.secsSinceMidnight - secsSinceMidnight);
     }
 
-    public void rotate(final AvTimeSpan add) {
+    public void rotate(@NonNull final AvTimeSpan add) {
         secsSinceMidnight = (int) ((secsSinceMidnight + add.getSecs()) % SECS_IN_A_DAY);
     }
 
@@ -94,7 +97,7 @@ public class AvTime {
         return secsSinceMidnight < other.secsSinceMidnight;
     }
 
-    public boolean isAfter(final AvTime other) {
+    public boolean isAfter(@NonNull final AvTime other) {
         return secsSinceMidnight > other.secsSinceMidnight;
     }
 
@@ -122,6 +125,6 @@ public class AvTime {
     @NonNull
     @Override
     public String toString() {
-        return String.format("%02d:%02d:%02d", getHour(), getMin(), getSec());
+        return String.format(Locale.GERMANY, "%02d:%02d:%02d", getHour(), getMin(), getSec());
     }
 }

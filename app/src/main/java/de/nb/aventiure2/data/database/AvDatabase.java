@@ -40,10 +40,11 @@ import de.nb.aventiure2.data.world.player.inventory.PlayerInventoryDao;
 import de.nb.aventiure2.data.world.player.inventory.PlayerInventoryItem;
 import de.nb.aventiure2.data.world.player.location.PlayerLocation;
 import de.nb.aventiure2.data.world.player.location.PlayerLocationDao;
-import de.nb.aventiure2.data.world.player.stats.PlayerStateOfMind;
-import de.nb.aventiure2.data.world.player.stats.PlayerStateOfMindConverters;
-import de.nb.aventiure2.data.world.player.stats.PlayerStats;
-import de.nb.aventiure2.data.world.player.stats.PlayerStatsDao;
+import de.nb.aventiure2.data.world.player.stats.ScHungerConverters;
+import de.nb.aventiure2.data.world.player.stats.ScStateOfMind;
+import de.nb.aventiure2.data.world.player.stats.ScStateOfMindConverters;
+import de.nb.aventiure2.data.world.player.stats.ScStats;
+import de.nb.aventiure2.data.world.player.stats.ScStatsDao;
 import de.nb.aventiure2.data.world.room.AvRoom;
 import de.nb.aventiure2.data.world.room.AvRoomConverters;
 import de.nb.aventiure2.data.world.room.RoomDao;
@@ -51,40 +52,46 @@ import de.nb.aventiure2.data.world.room.RoomData;
 import de.nb.aventiure2.data.world.room.RoomKnown;
 import de.nb.aventiure2.data.world.room.RoomKnownConverters;
 import de.nb.aventiure2.data.world.time.AvDateTime;
-import de.nb.aventiure2.data.world.time.AvDateTimeDao;
+import de.nb.aventiure2.data.world.time.AvDateTimeConverters;
+import de.nb.aventiure2.data.world.time.AvNow;
+import de.nb.aventiure2.data.world.time.AvNowDao;
 
 import static de.nb.aventiure2.data.storystate.StoryStateBuilder.t;
 import static de.nb.aventiure2.data.world.entity.object.AvObject.Key.GOLDENE_KUGEL;
+import static de.nb.aventiure2.data.world.player.stats.ScHunger.SATT;
 import static de.nb.aventiure2.data.world.time.AvTime.oClock;
 
 @Database(entities = {
         Counter.class,
         StoryState.class,
-        AvDateTime.class,
+        AvNow.class,
         RoomData.class,
         InvisibleData.class,
         ObjectData.class,
         CreatureData.class,
-        PlayerStats.class,
+        ScStats.class,
         PlayerLocation.class,
         PlayerInventoryItem.class},
         version = 1,
         exportSchema = false)
-@TypeConverters({AvStoryStateConverters.class, AvRoomConverters.class,
+@TypeConverters({
+        AvDateTimeConverters.class,
+        AvStoryStateConverters.class, AvRoomConverters.class,
         RoomKnownConverters.class,
         InvisibleConverters.class,
         InvisibleStateConverters.class,
         AvObjectConverters.class,
         CreatureConverters.class,
         CreatureStateConverters.class,
-        PlayerStateOfMindConverters.class})
+        ScStateOfMindConverters.class,
+        ScHungerConverters.class})
 // TODO Database migrations, exportSchema = true?
 // "In a real app, you should consider setting a directory for Room to use to export the
 // schema so you can check the current schema into your version control system."
 public abstract class AvDatabase extends RoomDatabase {
     public abstract CounterDao counterDao();
 
-    public abstract AvDateTimeDao dateTimeDao();
+    public abstract AvNowDao dateTimeDao();
 
     public abstract StoryStateDao storyStateDao();
 
@@ -98,7 +105,7 @@ public abstract class AvDatabase extends RoomDatabase {
 
     public abstract PlayerLocationDao playerLocationDao();
 
-    public abstract PlayerStatsDao playerStatsDao();
+    public abstract ScStatsDao playerStatsDao();
 
     public abstract PlayerInventoryDao playerInventoryDao();
 
@@ -116,7 +123,7 @@ public abstract class AvDatabase extends RoomDatabase {
                     INSTANCE.runInTransaction(() -> {
                         // Populate the database in the background:
                         // Set date and time in the game
-                        INSTANCE.dateTimeDao().setDateTime(
+                        INSTANCE.dateTimeDao().setNow(
                                 1, oClock(14, 30));
                         // Invisibles have their initial state
                         INSTANCE.invisibleDataDao().insertInitial();
@@ -126,7 +133,10 @@ public abstract class AvDatabase extends RoomDatabase {
                         INSTANCE.creatureDataDao().insertInitial();
 
                         // The player starts in the castle:
-                        INSTANCE.playerStatsDao().insert(buildInitialPlayerStats());
+                        INSTANCE.playerStatsDao().insert(new ScStats(
+                                ScStateOfMind.NEUTRAL, SATT,
+                                new AvDateTime(1, oClock(8))));
+
                         INSTANCE.playerLocationDao().setRoom(AvRoom.SCHLOSS_VORHALLE);
                         INSTANCE.storyStateDao().add(buildInitialStoryState());
                         INSTANCE.roomDao()
@@ -135,10 +145,6 @@ public abstract class AvDatabase extends RoomDatabase {
                     }));
         }
     };
-
-    private static PlayerStats buildInitialPlayerStats() {
-        return new PlayerStats(PlayerStateOfMind.NEUTRAL);
-    }
 
     /**
      * @return Something similar to <code>Du befindest dich in einem Schloss. Hier liegt eine goldene Kugel.</code>

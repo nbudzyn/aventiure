@@ -47,6 +47,11 @@ public enum ReflPraepositionalkasusVerbAkkObj implements PraedikatMitEinerObjekt
                 this, describable);
     }
 
+    @Override
+    public boolean duHauptsatzLaesstSichMitNachfolgendemDuHauptsatzZusammenziehen() {
+        return true;
+    }
+
     @NonNull
     public String getInfinitiv() {
         return infinitiv;

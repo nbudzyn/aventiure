@@ -63,13 +63,30 @@ class PraedikatSubjObjOhneLeerstellen implements PraedikatOhneLeerstellen {
      * ("Du nimmst den Ast")
      */
     @Override
-    public String getDescriptionHauptsatz() {
+    public String getDescriptionDuHauptsatz() {
         if (abgetrenntesPraefix == null) {
-            return "Du " + duForm +
+            return "Du " + getDescriptionHauptsatzMitEingespartemVorfeldSubj();
+        }
+
+        return "Du " + getDescriptionHauptsatzMitEingespartemVorfeldSubj();
+    }
+
+    @Override
+    public boolean duHauptsatzLaesstSichMitNachfolgendemDuHauptsatzZusammenziehen() {
+        return true;
+    }
+
+    /**
+     * Gibt einen Satz zurück mit diesem Prädikat, bei dem das Subjekt, das im Vorfeld
+     * stünde, eingespart ist ("nimmst den Ast")
+     */
+    public String getDescriptionHauptsatzMitEingespartemVorfeldSubj() {
+        if (abgetrenntesPraefix == null) {
+            return duForm +
                     " " + objekt.im(kasusOderPraepositionalkasus, true);
         }
 
-        return "Du " + duForm +
+        return duForm +
                 " " + objekt.im(kasusOderPraepositionalkasus, true) +
                 " " + abgetrenntesPraefix;
     }
@@ -79,7 +96,7 @@ class PraedikatSubjObjOhneLeerstellen implements PraedikatOhneLeerstellen {
      * ("Aus Langeweile nimmst du den Ast")
      */
     @Override
-    public String getDescriptionHauptsatz(@NonNull final AdverbialeAngabe adverbialeAngabe) {
+    public String getDescriptionDuHauptsatz(@NonNull final AdverbialeAngabe adverbialeAngabe) {
         if (abgetrenntesPraefix == null) {
             return capitalize(adverbialeAngabe.getText()) +
                     " " + duForm +
@@ -102,5 +119,14 @@ class PraedikatSubjObjOhneLeerstellen implements PraedikatOhneLeerstellen {
     public String getDescriptionInfinitiv() {
         return capitalize(objekt.im(kasusOderPraepositionalkasus, true) +
                 " " + infinitiv);
+    }
+
+    @NonNull
+    public KasusOderPraepositionalkasus getKasusOderPraepositionalkasus() {
+        return kasusOderPraepositionalkasus;
+    }
+
+    public DescribableAsDeklinierbarePhrase getObjekt() {
+        return objekt;
     }
 }

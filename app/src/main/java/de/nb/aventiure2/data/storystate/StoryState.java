@@ -84,7 +84,7 @@ public class StoryState {
 
     private final boolean dann;
 
-    StoryState butWithText(final String newText) {
+    private StoryState butWithText(final String newText) {
         return new StoryState(lastActionClassName,
                 startsNew,
                 endsThis,
@@ -308,22 +308,6 @@ public class StoryState {
         return !additionTrimmed.startsWith("\n");
     }
 
-    private static boolean periodNeededToStartNewSentence(
-            final String base, final String addition) {
-        final String baseTrimmed =
-                base.trim();
-
-        final String lastRelevantCharBase =
-                baseTrimmed.substring(baseTrimmed.length() - 1);
-        if ("….!?\"“\n".contains(lastRelevantCharBase)) {
-            return false;
-        }
-
-        final String firstCharAdditional =
-                addition.trim().substring(0, 1);
-        return !".!?".contains(firstCharAdditional);
-    }
-
     private boolean kommaNeeded(final String base, final String addition) {
         if (!kommaStehtAus) {
             return false;
@@ -343,6 +327,22 @@ public class StoryState {
         return true;
     }
 
+    public static boolean periodNeededToStartNewSentence(
+            final String base, final String addition) {
+        final String baseTrimmed =
+                base.trim();
+
+        final String lastRelevantCharBase =
+                baseTrimmed.substring(baseTrimmed.length() - 1);
+        if ("….!?\"“\n".contains(lastRelevantCharBase)) {
+            return false;
+        }
+
+        final String firstCharAdditional =
+                addition.trim().substring(0, 1);
+        return !".!?".contains(firstCharAdditional);
+    }
+
     private static boolean spaceNeeded(final String base, final String addition) {
         final String lastCharBase =
                 base.substring(base.length() - 1);
@@ -351,10 +351,6 @@ public class StoryState {
         }
 
         final String firstCharAdditional = addition.substring(0, 1);
-        if (" .,;!?“\n".contains(firstCharAdditional)) {
-            return false;
-        }
-
-        return true;
+        return !" .,;!?“\n".contains(firstCharAdditional);
     }
 }

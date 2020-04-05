@@ -21,6 +21,7 @@ public enum VerbSubjObj implements PraedikatMitEinerObjektleerstelle {
     IGNORIEREN("ignorieren", AKK, "ignorierst"),
     MITNEHMEN("mitnehmen", AKK, "nimmst", "mit"),
     NEHMEN("nehmen", AKK, "nimmst"),
+    POLIEREN("polieren", AKK, "polierst"),
     REDEN("reden", MIT_DAT, "redest");
 
     /**
@@ -68,8 +69,24 @@ public enum VerbSubjObj implements PraedikatMitEinerObjektleerstelle {
     }
 
     @Override
-    public PraedikatOhneLeerstellen mitObj(final DescribableAsDeklinierbarePhrase describable) {
+    public PraedikatSubjObjOhneLeerstellen mitObj(
+            final DescribableAsDeklinierbarePhrase describable) {
         return new PraedikatSubjObjOhneLeerstellen(infinitiv, duForm, abgetrenntesPraefix,
                 kasusOderPraepositionalkasus, describable);
+    }
+
+    @Override
+    public boolean duHauptsatzLaesstSichMitNachfolgendemDuHauptsatzZusammenziehen() {
+        return true;
+    }
+
+    @NonNull
+    String getInfinitiv() {
+        return infinitiv;
+    }
+
+    @NonNull
+    KasusOderPraepositionalkasus getKasusOderPraepositionalkasus() {
+        return kasusOderPraepositionalkasus;
     }
 }

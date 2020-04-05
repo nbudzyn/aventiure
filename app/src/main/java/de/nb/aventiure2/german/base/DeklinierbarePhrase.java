@@ -1,5 +1,7 @@
 package de.nb.aventiure2.german.base;
 
+import java.util.Objects;
+
 /**
  * Eine Phrase, die dekliniert werden kann, also insbesonder ein Pronomen ("sie") oder
  * eine (andere) Nominalphrase ("die goldene Kugel").
@@ -84,16 +86,6 @@ public abstract class DeklinierbarePhrase implements DescribableAsDeklinierbareP
         }
     }
 
-    /**
-     * Gibt ein Personalpronomen für diese Phrase zurück.
-     */
-    public abstract Personalpronomen persPron();
-
-    /**
-     * Gibt ein Relativpronomen für diese Phrase zurück.
-     */
-    public abstract Relativpronomen relPron();
-
     @Override
     public String nom() {
         return nominativ;
@@ -111,5 +103,35 @@ public abstract class DeklinierbarePhrase implements DescribableAsDeklinierbareP
 
     public NumerusGenus getNumerusGenus() {
         return numerusGenus;
+    }
+
+    /**
+     * Gibt ein Personalpronomen für diese Phrase zurück.
+     */
+    public abstract Personalpronomen persPron();
+
+    /**
+     * Gibt ein Relativpronomen für diese Phrase zurück.
+     */
+    public abstract Relativpronomen relPron();
+
+    @Override
+    public boolean equals(final Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        final DeklinierbarePhrase that = (DeklinierbarePhrase) o;
+        return numerusGenus == that.numerusGenus &&
+                Objects.equals(nominativ, that.nominativ) &&
+                Objects.equals(dativ, that.dativ) &&
+                Objects.equals(akkusativ, that.akkusativ);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(numerusGenus, nominativ, dativ, akkusativ);
     }
 }

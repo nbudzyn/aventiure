@@ -13,7 +13,7 @@ import static de.nb.aventiure2.german.base.Relativpronomen.Typ.REGEL;
 import static de.nb.aventiure2.german.base.Relativpronomen.Typ.WERWAS;
 
 public class Relativpronomen extends DeklinierbarePhrase {
-    public static enum Typ {
+    public enum Typ {
         // "das Kind, das"
         REGEL,
         // "alles, was"

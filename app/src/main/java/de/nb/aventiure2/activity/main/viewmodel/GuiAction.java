@@ -1,7 +1,9 @@
 package de.nb.aventiure2.activity.main.viewmodel;
 
+import de.nb.aventiure2.scaction.AbstractScAction;
+
 /**
- * An {@link de.nb.aventiure2.playeraction.AbstractPlayerAction} as it is displayed to the
+ * An {@link AbstractScAction} as it is displayed to the
  * player.
  */
 public interface GuiAction {

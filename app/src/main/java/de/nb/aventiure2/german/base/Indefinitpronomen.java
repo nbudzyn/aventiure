@@ -1,10 +1,15 @@
 package de.nb.aventiure2.german.base;
 
+import java.util.Objects;
+
+import javax.annotation.ParametersAreNonnullByDefault;
+
 import static de.nb.aventiure2.german.base.NumerusGenus.N;
 
 /**
  * Ein Pronomen wie "alles", "nichts".
  */
+@ParametersAreNonnullByDefault
 public class Indefinitpronomen extends DeklinierbarePhrase {
     public static final Indefinitpronomen ALLES =
             ip(N, Relativpronomen.Typ.WERWAS, "alles", "allem");
@@ -54,5 +59,25 @@ public class Indefinitpronomen extends DeklinierbarePhrase {
     @Override
     public Relativpronomen relPron() {
         return Relativpronomen.get(relPronTyp, getNumerusGenus());
+    }
+
+    @Override
+    public boolean equals(final Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        if (!super.equals(o)) {
+            return false;
+        }
+        final Indefinitpronomen that = (Indefinitpronomen) o;
+        return relPronTyp == that.relPronTyp;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(super.hashCode(), relPronTyp);
     }
 }

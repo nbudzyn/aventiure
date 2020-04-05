@@ -118,6 +118,14 @@ public class AvTimeSpan {
     @NonNull
     @Override
     public String toString() {
+        if (getHourPart() == 0) {
+            if (getMinPart() == 0) {
+                return String.format("%02ds", getSecPart());
+            }
+
+            return String.format("%02dmin %02ds", getMinPart(), getSecPart());
+        }
+
         return String.format("%02dh %02dmin %02ds", getHourPart(), getMinPart(), getSecPart());
     }
 }
