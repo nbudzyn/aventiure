@@ -120,6 +120,13 @@ class FroschprinzConversationStepBuilder extends AbstractCreatureConversationSte
                 );
             case ERWARTET_VON_SC_EINLOESUNG_SEINES_VERSPRECHENS_VON_SC_GETRAGEN:
                 return ImmutableList.of();
+            case HAT_HOCHHEBEN_GEFORDERT:
+                return ImmutableList.of(
+                        // STORY Frosch auf den Tisch hochheben - das ist vermutlich eine AKTION
+                        //  die WÄHREND des Gesprächs geht!
+                        //  Hochheben:  "dein Herz klopft gewaltig"
+                        exitSt(this::froschHatHochhebenGefordert_Exit)
+                );
             default:
                 throw new IllegalStateException("Unexpected Froschprinz state: "
                         + creatureData.getState());
@@ -398,8 +405,6 @@ class FroschprinzConversationStepBuilder extends AbstractCreatureConversationSte
         db.creatureDataDao().setState(FROSCHPRINZ, ERWARTET_VON_SC_EINLOESUNG_SEINES_VERSPRECHENS);
 
         db.playerStatsDao().setStateOfMind(VOLLER_FREUDE);
-        // STORY Und welche Auswirkung? Vielleicht auf Texte, z.B. auf
-        //  den direkt folgenden Nehmen-Text?
 
         for (final ObjectData objectData : objectsInDenBrunnenGefallen) {
             db.objectDataDao().setDemSCInDenBrunnenGefallen(
@@ -436,6 +441,32 @@ class FroschprinzConversationStepBuilder extends AbstractCreatureConversationSte
     // .. ERWARTET_VON_SC_EINLOESUNG_SEINES_VERSPRECHENS
     // -------------------------------------------------------------------------------
 
+    // -------------------------------------------------------------------------------
+    // .. HAT_HOCHHEBEN_GEFORDERT
+    // -------------------------------------------------------------------------------
+
+    private AvTimeSpan froschHatHochhebenGefordert_Exit() {
+        n.add(alt(
+                t(PARAGRAPH,
+                        "„Du tickst ja wohl nicht richtig! So ein Ekeltier wie du hat auf "
+                                + "meiner Tafel nichts "
+                                + "verloren!“ Du wendest du dich empört ab")
+                        .undWartest()
+                        .imGespraechMit(null),
+                t(PARAGRAPH,
+                        "„Ich soll deine schleimigen Patscher auf den Tisch stellen? "
+                                + "Dafür musst du dir wen anderes suchen!“")
+                        .imGespraechMit(null),
+                t(PARAGRAPH,
+                        "Dir wird ganz angst, aber du sagst: „Du denkst wohl, was man "
+                                + "versprochen hat, das "
+                                + "muss man auch halten? Da bist du bei mir an den Falschen "
+                                + "geraten!“ Demonstrativ wendest du dich ab")
+                        .imGespraechMit(null)
+        ));
+
+        return secs(15);
+    }
 
     // -------------------------------------------------------------------------------
     // .. ALLGEMEINES

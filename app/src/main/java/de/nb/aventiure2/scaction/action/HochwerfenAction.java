@@ -164,7 +164,6 @@ public class HochwerfenAction extends AbstractObjectAction {
         // Der Spieler hat die goldene Kugel letztlich in den Brunnen
         // fallen lassen, NACHDEM der Frosch schon Dinge hochgeholt hat.
         // Dann ist die Kugel jetzt WEG - PECH.
-
         final AvTimeSpan timeElapsed = narrateAndDoObjectFaelltSofortInDenBrunnen();
         if (froschprinzCreatureData.getRoom() == room) {
             return timeElapsed;

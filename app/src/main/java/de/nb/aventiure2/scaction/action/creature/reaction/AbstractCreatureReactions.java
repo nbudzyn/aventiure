@@ -38,7 +38,7 @@ abstract class AbstractCreatureReactions extends AbstractReactions {
                                         AbstractEntityData genommenData,
                                         StoryState currentStoryState);
 
-    public abstract AvTimeSpan onEssen(AvRoom room, CreatureData creatureInRoom,
+    public abstract AvTimeSpan onEssen(AvRoom room, CreatureData creature,
                                        StoryState currentStoryState);
 
     public abstract AvTimeSpan onAblegen(AvRoom room, CreatureData creatureInRoom,

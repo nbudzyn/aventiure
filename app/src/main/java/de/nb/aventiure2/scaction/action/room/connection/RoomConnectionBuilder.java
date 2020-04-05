@@ -508,12 +508,12 @@ class RoomConnectionBuilder {
     @NonNull
     private static AbstractDescription
     getDesc_SchlossVorhalle_DraussenVorDemSchloss_FestBegonnen() {
-        return du(
-                "stehst",
-                // STORY: Nachts ist weniger Trubel? (Wäre das ein Statuswechsel beim
-                //  Schlossfest? Oder Zumindest auch eine Reaction wie der Auf- /
-                //  Abbau des Schlossfestes?)
-                "vom Tisch auf und gehst über die Marmortreppe hinaus in den Trubel "
+        return allg(
+                "Du stehst "
+                        // STORY: Nachts ist weniger Trubel? (Wäre das ein Statuswechsel beim
+                        //  Schlossfest? Oder Zumindest auch eine Reaction wie der Auf- /
+                        //  Abbau des Schlossfestes?)
+                        + "vom Tisch auf und gehst über die Marmortreppe hinaus in den Trubel "
                         + "im Schlossgarten",
                 false,
                 false,

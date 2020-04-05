@@ -12,6 +12,7 @@ import static de.nb.aventiure2.data.world.entity.creature.CreatureState.AUF_DEM_
 import static de.nb.aventiure2.data.world.entity.creature.CreatureState.ERWARTET_VON_SC_EINLOESUNG_SEINES_VERSPRECHENS;
 import static de.nb.aventiure2.data.world.entity.creature.CreatureState.ERWARTET_VON_SC_EINLOESUNG_SEINES_VERSPRECHENS_VON_SC_GETRAGEN;
 import static de.nb.aventiure2.data.world.entity.creature.CreatureState.HAT_FORDERUNG_GESTELLT;
+import static de.nb.aventiure2.data.world.entity.creature.CreatureState.HAT_HOCHHEBEN_GEFORDERT;
 import static de.nb.aventiure2.data.world.entity.creature.CreatureState.HAT_NACH_BELOHNUNG_GEFRAGT;
 import static de.nb.aventiure2.data.world.entity.creature.CreatureState.HAT_SC_HILFSBEREIT_ANGESPROCHEN;
 import static de.nb.aventiure2.data.world.entity.creature.CreatureState.UNAUFFAELLIG;
@@ -52,7 +53,8 @@ public class Creatures {
                                     AUF_DEM_WEG_ZUM_BRUNNEN_UM_DINGE_HERAUSZUHOLEN,
                                     ERWARTET_VON_SC_EINLOESUNG_SEINES_VERSPRECHENS,
                                     ERWARTET_VON_SC_EINLOESUNG_SEINES_VERSPRECHENS_VON_SC_GETRAGEN,
-                                    AUF_DEM_WEG_ZUM_SCHLOSSFEST
+                                    AUF_DEM_WEG_ZUM_SCHLOSSFEST,
+                                    HAT_HOCHHEBEN_GEFORDERT
                             ))
             );
 }

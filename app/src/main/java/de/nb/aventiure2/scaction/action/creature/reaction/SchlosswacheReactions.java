@@ -248,7 +248,7 @@ class SchlosswacheReactions extends AbstractCreatureReactions {
     }
 
     @Override
-    public AvTimeSpan onEssen(final AvRoom room, final CreatureData creatureInRoom,
+    public AvTimeSpan onEssen(final AvRoom room, final CreatureData wache,
                               final StoryState currentStoryState) {
         // Der Schlosswache ist es egal, wenn der Spieler beim Fest etwas ist.
         // Und bei anderen Speisen ist es ihr erst recht egal.

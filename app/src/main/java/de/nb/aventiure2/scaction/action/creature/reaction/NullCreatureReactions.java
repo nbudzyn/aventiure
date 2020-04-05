@@ -39,7 +39,7 @@ class NullCreatureReactions extends AbstractCreatureReactions {
     }
 
     @Override
-    public AvTimeSpan onEssen(final AvRoom room, final CreatureData creatureInRoom,
+    public AvTimeSpan onEssen(final AvRoom room, final CreatureData creature,
                               final StoryState currentStoryState) {
         return noTime();
     }

@@ -87,9 +87,9 @@ public final class CreatureReactionsCoordinator {
     public AvTimeSpan onEssen(final AvRoom room) {
         AvTimeSpan timeElapsed = noTime();
 
-        for (final CreatureData creatureInRoom : getCreaturesInRoom(room)) {
-            timeElapsed = timeElapsed.plus(getReactions(creatureInRoom)
-                    .onEssen(room, creatureInRoom, getCurrentStoryState()));
+        for (final CreatureData creature : getAllCreatures()) {
+            timeElapsed = timeElapsed.plus(getReactions(creature)
+                    .onEssen(room, creature, getCurrentStoryState()));
         }
 
         return timeElapsed;
