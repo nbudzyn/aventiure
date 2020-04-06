@@ -126,6 +126,14 @@ class FroschprinzConversationStepBuilder extends AbstractCreatureConversationSte
                         //  die WÄHREND des Gesprächs geht!
                         //  Hochheben:  "dein Herz klopft gewaltig"
                         exitSt(this::froschHatHochhebenGefordert_Exit)
+                        // STORY:
+                        //  Tisch beim Schlossfest als eigenen Raum modellieren,
+                        //  An einen Tisch setzen = Bewegung, location = "auf dem Tisch"
+                        //  STORY Frosch nehmen erhält am Tisch eine separate
+                        //   Beschreibung (ohne "in die Tasche")
+                        //   Ggf. Extra Satz beim verlassen des Tisches MIT FROSCH:
+                        //   "du steckst den Frosch in eine Tasche"
+                        //  STORY  Frosch absetzen -> Frosch landet auf dem Tisch
                 );
             default:
                 throw new IllegalStateException("Unexpected Froschprinz state: "

@@ -201,7 +201,6 @@ class FroschprinzReactions extends AbstractCreatureReactions {
                 // lassen, obwohl er noch mit dem Frosch verhandelt.
                 n.add(t(StoryState.StructuralElement.PARAGRAPH,
                         "Ob der Frosch gerade seine glitschige Nase gerümpft hat?")
-                        .letztesObject(objectData.getObject())
                         .beendet(PARAGRAPH)
                 );
             }
@@ -221,8 +220,7 @@ class FroschprinzReactions extends AbstractCreatureReactions {
         // Dann ist die Kugel jetzt WEG - PECH.
         n.add(t(StoryState.StructuralElement.SENTENCE,
                 capitalize(froschprinzCreatureData.nom(true)) +
-                        " schaut dich vorwurfsvoll und etwas hochnäsig an")
-                .letztesObject(objectData.getObject()));
+                        " schaut dich vorwurfsvoll und etwas hochnäsig an"));
 
         return secs(5);
     }

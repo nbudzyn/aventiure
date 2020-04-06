@@ -189,7 +189,7 @@ class RoomConnectionBuilder {
                                         "gehst", "den breiteren Pfad weiter in "
                                                 + "den Wald hinein. Wohl ist dir dabei nicht.\n"
                                                 + "In der Ferne heult ein Wolf – oder hast du "
-                                                + " dir das eingebildet?\nDann kommst du an einen "
+                                                + "dir das eingebildet?\nDann kommst du an einen "
                                                 + "Baum, unter dem ist ein Brunnen. Kühl ist es "
                                                 + "hier, und der Weg scheint zu Ende zu sein",
                                         false,

@@ -25,7 +25,6 @@ import static de.nb.aventiure2.data.world.entity.creature.Creature.Key.SCHLOSSWA
 import static de.nb.aventiure2.data.world.entity.creature.CreatureState.AUFMERKSAM;
 import static de.nb.aventiure2.data.world.entity.creature.CreatureState.UNAUFFAELLIG;
 import static de.nb.aventiure2.data.world.entity.object.AvObject.Key.GOLDENE_KUGEL;
-import static de.nb.aventiure2.data.world.entity.object.AvObject.extractObject;
 import static de.nb.aventiure2.data.world.entity.object.AvObject.isObject;
 import static de.nb.aventiure2.data.world.invisible.Invisible.Key.SCHLOSSFEST;
 import static de.nb.aventiure2.data.world.invisible.InvisibleState.BEGONNEN;
@@ -158,8 +157,7 @@ class SchlosswacheReactions extends AbstractCreatureReactions {
                         //  seinen Willen.
                         + "scharf an. „Das Fest ist erst am Sonntag. Heute "
                         + "ist Samstag und Ihr habt hier nichts zu suchen!“ "
-                        + "Mit kräftiger Hand klopft die Wache auf ihre Hellebarde")
-                .letztesObject(extractObject(genommenData)));
+                        + "Mit kräftiger Hand klopft die Wache auf ihre Hellebarde"));
         db.creatureDataDao().setState(SCHLOSSWACHE, AUFMERKSAM);
         db.creatureDataDao().setKnown(SCHLOSSWACHE);
         db.playerStatsDao().setStateOfMind(ScStateOfMind.ANGESPANNT);
@@ -225,22 +223,19 @@ class SchlosswacheReactions extends AbstractCreatureReactions {
                     ", während "
                             + wache.nom(false)
                             + " gerade damit beschäftigt ist, ihre Waffen zu polieren")
-                    .dann()
-                    .letztesObject(extractObject(goldeneKugelData)));
+                    .dann());
         } else {
             alt.add(t(SENTENCE,
                     "Du hast großes Glück, denn "
                             + wache.nom(false)
                             + " ist gerade damit beschäftigt, ihre Waffen zu polieren")
-                    .dann()
-                    .letztesObject(extractObject(goldeneKugelData)));
+                    .dann());
         }
 
         alt.add(t(SENTENCE,
                 capitalize(wache.dat())
                         + " ist anscheinend nichts aufgefallen")
-                .dann()
-                .letztesObject(extractObject(goldeneKugelData)));
+                .dann());
 
         n.add(alt(alt));
 
@@ -281,8 +276,7 @@ class SchlosswacheReactions extends AbstractCreatureReactions {
 
         if (currentStoryState.allowsAdditionalDuSatzreihengliedOhneSubjekt()) {
             t(WORD, ", von der kopfschüttelnden Wache beobachtet")
-                    .dann()
-                    .letztesObject(extractObject(abgelegtData));
+                    .dann();
             return secs(5);
         }
 
@@ -290,13 +284,11 @@ class SchlosswacheReactions extends AbstractCreatureReactions {
                 t(SENTENCE,
                         capitalize(wache.nom(false))
                                 + " beoabachtet dich dabei")
-                        .dann()
-                        .letztesObject(extractObject(abgelegtData)),
+                        .dann(),
                 t(SENTENCE,
                         capitalize(wache.nom())
                                 + " sieht dir belustig dabei zu")
                         .dann()
-                        .letztesObject(extractObject(abgelegtData))
         ));
         db.playerStatsDao().setStateOfMind(ScStateOfMind.ANGESPANNT);
         return secs(5);
@@ -347,8 +339,7 @@ class SchlosswacheReactions extends AbstractCreatureReactions {
                 + "Schmuckstück wieder hin!“, "
                 + "ruft dir "
                 + wacheInRoom.nom(true)
-                + " zu")
-                .letztesObject(goldeneKugelData.getObject()));
+                + " zu"));
 
         // TODO Geschichte ausspinnen: Spieler muss die Kugel selbst
         //  ablegen bzw. kommt ggf. in den Kerker
@@ -371,8 +362,7 @@ class SchlosswacheReactions extends AbstractCreatureReactions {
             final CreatureData wacheInRoom,
             final ObjectData goldeneKugelData,
             final StoryState currentStoryState) {
-        n.add(t(PARAGRAPH, "Die Wache sieht sehr missbilligend zu")
-                .letztesObject(goldeneKugelData.getObject()));
+        n.add(t(PARAGRAPH, "Die Wache sieht sehr missbilligend zu"));
 
         return secs(3);
     }
