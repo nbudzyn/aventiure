@@ -52,14 +52,15 @@ public class EssenAction extends AbstractScAction {
     }
 
     private static boolean raumEnthaeltEtwasEssbares(final AvDatabase db, final AvRoom room) {
-        if (room == AvRoom.SCHLOSS_VORHALLE &&
+        if (room == AvRoom.SCHLOSS_VORHALLE_TISCH_BEIM_FEST &&
                 db.invisibleDataDao().getInvisible(Invisible.Key.SCHLOSSFEST).getState()
                         == BEGONNEN) {
             return true;
         }
 
         if (room == AvRoom.WALDWILDNIS_HINTER_DEM_BRUNNEN) {
-            // STORY Früchte sind im Dunkeln kaum zu sehen
+            // STORY Früchte sind im Dunkeln kaum zu sehen, selbst wenn man den Weg
+            // schon kennt
             return true;
         }
 
@@ -82,7 +83,7 @@ public class EssenAction extends AbstractScAction {
     @NonNull
     public String getName() {
         switch (room) {
-            case SCHLOSS_VORHALLE:
+            case SCHLOSS_VORHALLE_TISCH_BEIM_FEST:
                 return "Eintopf essen";
             case WALDWILDNIS_HINTER_DEM_BRUNNEN:
                 return "Früchte essen";
@@ -95,7 +96,7 @@ public class EssenAction extends AbstractScAction {
     public AvTimeSpan narrateAndDo() {
         AvTimeSpan timeElapsed;
         switch (room) {
-            case SCHLOSS_VORHALLE:
+            case SCHLOSS_VORHALLE_TISCH_BEIM_FEST:
                 timeElapsed = narrateAndDoSchlossfest();
                 break;
             case WALDWILDNIS_HINTER_DEM_BRUNNEN:
@@ -155,7 +156,8 @@ public class EssenAction extends AbstractScAction {
     private AvTimeSpan narrateAndDoSchlossfestSatt() {
         n.add(alt(
                 t(SENTENCE,
-                        "Hunger hast du zwar keinen, aber eine Kleinigkeit… – du nimmst dir "
+                        "Hunger hast du zwar keinen mehr, aber eine Kleinigkeit… – du "
+                                + "nimmst dir "
                                 + "eine halbe Kelle "
                                 + "von dem Eintopf und isst")
                         .dann(),

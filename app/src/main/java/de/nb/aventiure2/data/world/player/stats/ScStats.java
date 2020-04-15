@@ -23,6 +23,7 @@ public class ScStats {
     @PrimaryKey // Something has to be the primary key
     @NonNull
     private final ScStateOfMind stateOfMind;
+    // TODO Hieraus eine MoodComponent machen (die fürs erste nur der SC hat)
 
     private final ScHunger hunger;
 

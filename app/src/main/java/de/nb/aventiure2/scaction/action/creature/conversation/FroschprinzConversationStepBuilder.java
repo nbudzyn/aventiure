@@ -464,13 +464,15 @@ class FroschprinzConversationStepBuilder extends AbstractCreatureConversationSte
                 t(PARAGRAPH,
                         "„Ich soll deine schleimigen Patscher auf den Tisch stellen? "
                                 + "Dafür musst du dir wen anderes suchen!“")
-                        .imGespraechMit(null),
+                        .imGespraechMit(null)
+                        .beendet(PARAGRAPH),
                 t(PARAGRAPH,
                         "Dir wird ganz angst, aber du sagst: „Du denkst wohl, was man "
                                 + "versprochen hat, das "
                                 + "muss man auch halten? Da bist du bei mir an den Falschen "
                                 + "geraten!“ Demonstrativ wendest du dich ab")
                         .imGespraechMit(null)
+                        .undWartest()
         ));
 
         return secs(15);

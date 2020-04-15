@@ -30,6 +30,7 @@ import static de.nb.aventiure2.data.world.invisible.InvisibleState.BEGONNEN;
 import static de.nb.aventiure2.data.world.lichtverhaeltnisse.Lichtverhaeltnisse.HELL;
 import static de.nb.aventiure2.data.world.room.AvRoom.DRAUSSEN_VOR_DEM_SCHLOSS;
 import static de.nb.aventiure2.data.world.room.AvRoom.SCHLOSS_VORHALLE;
+import static de.nb.aventiure2.data.world.room.AvRoom.SCHLOSS_VORHALLE_TISCH_BEIM_FEST;
 import static de.nb.aventiure2.data.world.time.AvTimeSpan.secs;
 import static de.nb.aventiure2.german.base.AllgDescription.allg;
 import static de.nb.aventiure2.german.base.DuDescription.du;
@@ -167,9 +168,10 @@ public class BewegenAction extends AbstractScAction {
     }
 
     private boolean scWirdMitEssenKonfrontiert() {
-        if (roomConnection.getTo() == AvRoom.SCHLOSS_VORHALLE &&
-                db.invisibleDataDao()
-                        .getInvisible(Invisible.Key.SCHLOSSFEST).getState() == BEGONNEN) {
+        if (roomConnection.getTo() == AvRoom.SCHLOSS_VORHALLE ||
+                roomConnection.getTo() == SCHLOSS_VORHALLE_TISCH_BEIM_FEST &&
+                        db.invisibleDataDao()
+                                .getInvisible(Invisible.Key.SCHLOSSFEST).getState() == BEGONNEN) {
             return true;
         }
         if (roomConnection.getTo() == AvRoom.WALDWILDNIS_HINTER_DEM_BRUNNEN) {

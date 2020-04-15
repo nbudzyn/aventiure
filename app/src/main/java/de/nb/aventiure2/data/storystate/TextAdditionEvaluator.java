@@ -118,6 +118,29 @@ class TextAdditionEvaluator {
                     final int distanceAddition = additionWordsIndex;
                     final int distance = distanceBase + distanceAddition;
 
+                    // TODO Je kürzen additionWords ist, desto größer die
+                    //  Wahrscheinliche, dass es keine Wiederholungen gibt.
+                    //  Damit werden kurze additions gegenüber längeren
+                    //  tendenziell bevorzugt und sogar wiederholt
+                    //  (z.B. "Mmmh!"). Deshalb sollten kurze
+                    //  additions ein penalty für KÜRZE erhalten.
+                    //  Z.B. Jedes FEHLENDE Wort bis zu einer max-Anzahl
+                    //  durchgehen und eine Kürzepenalty für das Wort
+                    //  einrechnen, auch geteilt durch die "distance",
+                    //  also den index des Worts. D.h.:
+                    //  Fehlendes zweites Wort: halbe Penalty,
+                    //  Fehlendes drittes Wort: Drittel-Penalty
+                    //  Fehlendes viertes Wort: Viertel-Penalty
+                    //  Etc.
+                    //  Am besten mal mit "Mmh" testen, was eine gute Basis-Penalty ist.
+                    //  Oder Penalty für "fehlende" Wörter der Reihe nach aufschlagen und
+                    //  Dazu vorher Durchschnitt für ein "durchschnittliches fehldes Wort
+                    //  berechnen (LOG)
+                    // STORY Abends wird man MUEDE (neuer Status, ähnlich
+                    //  wie ERSCHOEPFT. Wer MUEDE ist, kann ebenfalls einschlafen
+                    // STORY Man BLEIBT in aller Regel MUEDE, solange man nicht schläft -
+                    //  kommt drauf an, ob welche Emotion die STAERKERE ist
+                    //  Z.B. wird man nicht GEKNICKT, wenn man MUEDE ist.
                     final float penalty =
                             (num * num * num) / (float)
                                     (distance * distance);

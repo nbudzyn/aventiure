@@ -30,7 +30,7 @@ import static de.nb.aventiure2.data.world.invisible.Invisible.Key.SCHLOSSFEST;
 import static de.nb.aventiure2.data.world.invisible.InvisibleState.BEGONNEN;
 import static de.nb.aventiure2.data.world.invisible.Invisibles.SCHLOSSFEST_BEGINN_DATE_TIME;
 import static de.nb.aventiure2.data.world.room.AvRoom.IM_WALD_BEIM_BRUNNEN;
-import static de.nb.aventiure2.data.world.room.AvRoom.SCHLOSS_VORHALLE;
+import static de.nb.aventiure2.data.world.room.AvRoom.SCHLOSS_VORHALLE_TISCH_BEIM_FEST;
 import static de.nb.aventiure2.data.world.time.AvTimeSpan.hours;
 import static de.nb.aventiure2.data.world.time.AvTimeSpan.noTime;
 import static de.nb.aventiure2.data.world.time.AvTimeSpan.secs;
@@ -50,7 +50,8 @@ class FroschprinzReactions extends AbstractCreatureReactions {
     public AvTimeSpan onLeaveRoom(final AvRoom oldRoom, final CreatureData froschprinz,
                                   final StoryState currentStoryState) {
         if (froschprinz.hasState(ERWARTET_VON_SC_EINLOESUNG_SEINES_VERSPRECHENS)
-                && oldRoom != AvRoom.SCHLOSS_VORHALLE) {
+                && oldRoom != AvRoom.SCHLOSS_VORHALLE
+                && oldRoom != SCHLOSS_VORHALLE_TISCH_BEIM_FEST) {
             n.add(t(SENTENCE,
                     " „Warte, warte“, ruft der Frosch, „nimm mich mit, ich kann nicht so "
                             + "laufen wie du.“ Aber was hilft ihm, dass er dir "
@@ -108,7 +109,7 @@ class FroschprinzReactions extends AbstractCreatureReactions {
     @ParametersAreNonnullByDefault
     public AvTimeSpan onEssen(final AvRoom room, final CreatureData froschprinz,
                               final StoryState currentStoryState) {
-        if (room != SCHLOSS_VORHALLE ||
+        if (room != SCHLOSS_VORHALLE_TISCH_BEIM_FEST ||
                 !db.invisibleDataDao().getInvisible(SCHLOSSFEST)
                         .hasState(BEGONNEN)) {
             // Wenn der Spieler nicht auf dem Schlossfest isst, ist es dem

@@ -5,6 +5,7 @@ import de.nb.aventiure2.german.praedikat.AdverbialeAngabe;
 /**
  * Gemütszustand des Spielercharakters
  */
+// TODO Umbenennen in mood
 public enum ScStateOfMind {
     VOLLER_FREUDE(5, "fröhlich"),
     NEUTRAL(0, "aus Langeweile"),

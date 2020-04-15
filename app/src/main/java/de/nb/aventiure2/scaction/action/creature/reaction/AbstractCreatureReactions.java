@@ -12,6 +12,25 @@ import de.nb.aventiure2.data.world.time.AvTimeSpan;
 import de.nb.aventiure2.scaction.action.base.reaction.AbstractReactions;
 
 abstract class AbstractCreatureReactions extends AbstractReactions {
+    // STORY Jeder Creature (jedem NPC) ein Ziel geben!
+
+    // STORY Zu jedem Schritt einen Konflikt / ein Hindernis vorsehen: Gegenspieler, Rivale o.Ä.
+
+    // STORY Der Wald kämpft (nachts) gegen den Spieler. Als wäre er böse.
+
+    // STORY Player should care about their character / stuff / achievements / reputation.
+
+    // STORY Es gibt Tasks. Gewisse Aktionen schalten ein neuen Task frei. Wenn ein
+    //  Task-Ziel erreicht wird, wird eine neue (möglichst abstrakte) Überschrift gesetzt und
+    //  damit ein Kapitel begonnen. Die Überschrift bezieht sich lose auf einen der
+    //  Task, die der Spieler zuerst begonnen hat und die noch nicht abgeschlossen
+    //  wurden. Für jeden Task stehen mehrere Überschriften bereit, die in Reihenfolge
+    //  gewählt werden.
+    //  Es könnte zwischen Taskbeginn und erreichten Task-Ziel auch Zwischenpunkte geben,
+    //  basierend auf Story-Telling-Theorien.
+    //  Tasks einschließlich dieser Zwischenpunkte könnten auch generiert werden,
+    //  basierend auf Story-Telling-Theorien.
+
     public AbstractCreatureReactions(final AvDatabase db,
                                      final Class<? extends IPlayerAction> scActionClass) {
         super(db, scActionClass);

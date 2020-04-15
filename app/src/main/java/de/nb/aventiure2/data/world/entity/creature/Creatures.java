@@ -56,5 +56,6 @@ public class Creatures {
                                     AUF_DEM_WEG_ZUM_SCHLOSSFEST,
                                     HAT_HOCHHEBEN_GEFORDERT
                             ))
+                    // STORY Wölfe hetzen Spieler nachts
             );
 }

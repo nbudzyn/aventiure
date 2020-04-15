@@ -54,7 +54,7 @@ class SchlosswacheReactions extends AbstractCreatureReactions {
     public AvTimeSpan onEnterRoom(final AvRoom oldRoom, final AvRoom newRoom,
                                   final CreatureData wache,
                                   final StoryState currentStoryState) {
-        if (newRoom != AvRoom.SCHLOSS_VORHALLE) {
+        if (newRoom != SCHLOSS_VORHALLE) {
             return noTime();
         }
 
@@ -63,7 +63,7 @@ class SchlosswacheReactions extends AbstractCreatureReactions {
         }
 
         final ObjectData goldeneKugel = db.objectDataDao().get(GOLDENE_KUGEL);
-        if (goldeneKugel.getRoom() == AvRoom.SCHLOSS_VORHALLE) {
+        if (goldeneKugel.getRoom() == SCHLOSS_VORHALLE) {
             if (db.counterDao().incAndGet(
                     "SchlosswacheReactions_onEnterRoom_SchlossVorhalle") > 1) {
                 n.add(t(SENTENCE,
@@ -127,7 +127,7 @@ class SchlosswacheReactions extends AbstractCreatureReactions {
     public AvTimeSpan onNehmen(final AvRoom room, final CreatureData wacheInRoom,
                                final AbstractEntityData genommenData,
                                final StoryState currentStoryState) {
-        if (room != AvRoom.SCHLOSS_VORHALLE) {
+        if (room != SCHLOSS_VORHALLE) {
             return noTime();
         }
 
@@ -254,7 +254,7 @@ class SchlosswacheReactions extends AbstractCreatureReactions {
     public AvTimeSpan onAblegen(final AvRoom room, final CreatureData wacheInRoom,
                                 final AbstractEntityData abgelegtData,
                                 final StoryState currentStoryState) {
-        if (room != AvRoom.SCHLOSS_VORHALLE) {
+        if (room != SCHLOSS_VORHALLE) {
             return noTime();
         }
 
@@ -298,7 +298,7 @@ class SchlosswacheReactions extends AbstractCreatureReactions {
     public AvTimeSpan onHochwerfen(final AvRoom room, final CreatureData wacheInRoom,
                                    final ObjectData objectData,
                                    final StoryState currentStoryState) {
-        if (room != AvRoom.SCHLOSS_VORHALLE) {
+        if (room != SCHLOSS_VORHALLE) {
             return noTime();
         }
 

@@ -20,8 +20,25 @@ import static de.nb.aventiure2.german.base.NumerusGenus.F;
  * An object in the world.
  */
 public class AvObject extends AbstractEntity {
+    // TODO Entity-Component-System-Pattern verwenden:
+    //  Alles erhält eine GameObjectId / GameEntityId: AvObject, Räume, auch der Spieler.
+    //  Components sind mit dieser ID verknüpft (Schlüssel für diesen Component-Typ)
+    //  und nur Components speichern ihren State.
+    //  ObjectData etc. zu Components umbauen, Gemeinsamkeiten zu separaten
+    //  Components zusammenfassen.
+    //  Interfaces für die Components verwenden?
+    //  Idee:
+    //  RoomFactory roomFactory = new Assemblage(component1::new, component2::new);
+    //  Room schloss = RoomFactory.create();
+
+    // TODO Dinge / Frösche etc. könnten collectible sein.
+
+    // TODO Eine der Components ist das Inventory / ContainerComponent. Der Player
+    //  - aber vielleicht auch Räume oder bisherige AvObjects - können ein Inventory haben.
+
     public enum Key {
         GOLDENE_KUGEL
+        // STORY Spieler kauft Lampe (z.B. für Hütte) auf Schlossfest
     }
 
     public static final List<AvObject> ALL =
@@ -32,6 +49,11 @@ public class AvObject extends AbstractEntity {
                             np(F, "die goldene Kugel", "der goldenen Kugel"),
                             np(F, "die Kugel", "der Kugel"),
                             AvRoom.SCHLOSS_VORHALLE)
+                    // STORY Die goldene Kugel kann verloren gehen, zum Beispiel wenn man sie im
+                    //  Sumpf ablegt. Dann gibt es eine art Reset und eine ähnliche goldene
+                    //  Kugel erscheint wieder im Schloss. Der Text dort sagt so dann etwas wie
+                    //  "eine goldene kugel wie du sie schon einmal gesehen hast, nur etwas
+                    //  kleiner".
             );
 
     private final Key key;

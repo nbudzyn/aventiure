@@ -32,15 +32,14 @@ public class ScAutomaticReactions extends AbstractReactions {
                 return noTime();
             case HUNGRIG:
                 n.add(alt(
-                        t(SENTENCE, "Dir läuft das Wasser im Munde zusammen")
-                                .undWartest(),
+                        t(SENTENCE, "Mmh!"),
+                        t(SENTENCE, "Dir läuft das Wasser im Munde zusammen"),
                         t(SENTENCE, "Du hast Hunger")
                                 .undWartest(),
                         t(SENTENCE, "Du bist hungrig")
                                 .undWartest(),
                         t(SENTENCE, "Dir fällt auf, wie hungrig du bist")
                                 .komma()
-                                .undWartest()
                 ));
                 return noTime();
             default:
