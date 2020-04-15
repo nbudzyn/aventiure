@@ -6,6 +6,7 @@ import com.google.common.collect.ImmutableList;
 
 import java.util.List;
 
+import de.nb.aventiure2.data.world.base.GameObjectId;
 import de.nb.aventiure2.data.world.entity.base.AbstractEntity;
 import de.nb.aventiure2.data.world.entity.base.AbstractEntityData;
 import de.nb.aventiure2.data.world.room.AvRoom;
@@ -21,8 +22,9 @@ import static de.nb.aventiure2.german.base.NumerusGenus.F;
  */
 public class AvObject extends AbstractEntity {
     // TODO Entity-Component-System-Pattern verwenden:
-    //  Alles erhält eine GameObjectId / GameEntityId: AvObject, Räume, auch der Spieler.
-    //  Components sind mit dieser ID verknüpft (Schlüssel für diesen Component-Typ)
+    //  Auch Räume erhalten eine GameObjectId.
+
+    // TODO Components werden mit der Game-Object-ID verknüpft (Schlüssel für diesen Component-Typ)
     //  und nur Components speichern ihren State.
     //  ObjectData etc. zu Components umbauen, Gemeinsamkeiten zu separaten
     //  Components zusammenfassen.
@@ -37,8 +39,22 @@ public class AvObject extends AbstractEntity {
     //  - aber vielleicht auch Räume oder bisherige AvObjects - können ein Inventory haben.
 
     public enum Key {
-        GOLDENE_KUGEL
+        GOLDENE_KUGEL(10_000);
         // STORY Spieler kauft Lampe (z.B. für Hütte) auf Schlossfest
+
+        private final GameObjectId gameObjectId;
+
+        private Key(final int gameObjectId) {
+            this(new GameObjectId(gameObjectId));
+        }
+
+        Key(final GameObjectId gameObjectId) {
+            this.gameObjectId = gameObjectId;
+        }
+
+        public GameObjectId getGameObjectId() {
+            return gameObjectId;
+        }
     }
 
     public static final List<AvObject> ALL =
@@ -110,7 +126,8 @@ public class AvObject extends AbstractEntity {
              final Nominalphrase normalDescriptionWhenKnown,
              final Nominalphrase shortDescriptionWhenKnown,
              final AvRoom initialRoom) {
-        super(descriptionAtFirstSight, normalDescriptionWhenKnown, shortDescriptionWhenKnown);
+        super(key.getGameObjectId(), descriptionAtFirstSight, normalDescriptionWhenKnown,
+                shortDescriptionWhenKnown);
         this.key = key;
         this.initialRoom = initialRoom;
     }

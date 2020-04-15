@@ -1,5 +1,6 @@
 package de.nb.aventiure2.data.world.entity.creature;
 
+import de.nb.aventiure2.data.world.base.GameObjectId;
 import de.nb.aventiure2.data.world.entity.base.AbstractEntity;
 import de.nb.aventiure2.data.world.room.AvRoom;
 import de.nb.aventiure2.german.base.Nominalphrase;
@@ -9,7 +10,21 @@ import de.nb.aventiure2.german.base.Nominalphrase;
  */
 public class Creature extends AbstractEntity {
     public enum Key {
-        SCHLOSSWACHE, FROSCHPRINZ
+        SCHLOSSWACHE(20_000), FROSCHPRINZ(20_001);
+
+        private final GameObjectId gameObjectId;
+
+        private Key(final int gameObjectId) {
+            this(new GameObjectId(gameObjectId));
+        }
+
+        Key(final GameObjectId gameObjectId) {
+            this.gameObjectId = gameObjectId;
+        }
+
+        public GameObjectId getGameObjectId() {
+            return gameObjectId;
+        }
     }
 
     private final Creature.Key key;
@@ -40,7 +55,8 @@ public class Creature extends AbstractEntity {
              final Nominalphrase descriptionWhenKnown,
              final AvRoom initialRoom,
              final CreatureStateList states) {
-        super(descriptionAtFirstSight, descriptionWhenKnown, descriptionWhenKnown);
+        super(key.getGameObjectId(), descriptionAtFirstSight, descriptionWhenKnown,
+                descriptionWhenKnown);
         this.key = key;
         this.initialRoom = initialRoom;
         this.states = states;
@@ -57,7 +73,8 @@ public class Creature extends AbstractEntity {
              final Nominalphrase shortDescriptionWhenKnown,
              final AvRoom initialRoom,
              final CreatureStateList states) {
-        super(descriptionAtFirstSight, normalDescriptionWhenKnown, shortDescriptionWhenKnown);
+        super(key.getGameObjectId(), descriptionAtFirstSight, normalDescriptionWhenKnown,
+                shortDescriptionWhenKnown);
         this.key = key;
         this.initialRoom = initialRoom;
         this.states = states;
