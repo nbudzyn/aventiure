@@ -1,17 +1,26 @@
 package de.nb.aventiure2.data.storystate;
 
+import androidx.annotation.NonNull;
+
 import com.google.common.collect.ImmutableList;
+
+import org.jetbrains.annotations.Contract;
 
 import java.util.LinkedList;
 import java.util.List;
 
+import de.nb.aventiure2.logger.Logger;
+
 import static java.util.Arrays.asList;
 
 class TextAdditionEvaluator {
+    private static final float ERFAHRUNGSWERT = 0.0001f;
+
+    private static final Logger LOGGER = Logger.getLogger();
+
     private static final List<String> REPITION_ACCEPTABLE =
-            asList(new String[]{
-                    "ein", "eines", "einem", "einen", "eine", "einer", "der", "des", "dem", "den",
-                    "die", "das", "derer", "denen"});
+            asList("ein", "eines", "einem", "einen", "eine", "einer", "der", "des", "dem", "den",
+                    "die", "das", "derer", "denen");
 
     private TextAdditionEvaluator() {
     }
@@ -23,7 +32,7 @@ class TextAdditionEvaluator {
      *
      * @return Bewertungsergebnis - je größer die Zahl, desto besser
      */
-    public static float evaluateAddition(final String base, final String addition) {
+    static float evaluateAddition(final String base, final String addition) {
         // Wir wollen wiederholungen vermeiden.
         // Wenn also addition Wörter enthält, die das Ende von base wiederholen, ist
         // das schlecht.
@@ -58,7 +67,8 @@ class TextAdditionEvaluator {
         return splitEndInWords(text, Integer.MAX_VALUE);
     }
 
-    private static ImmutableList<String> splitEndInWords(final String text, final int maxWords) {
+    private static ImmutableList<String> splitEndInWords(@NonNull final String text,
+                                                         final int maxWords) {
         final LinkedList<String> res = new LinkedList<>();
         int to = text.length() - 1;
         while (true) {
@@ -94,9 +104,10 @@ class TextAdditionEvaluator {
      *
      * @return Bewertungsergebnis - je größer die Zahl, desto besser
      */
-    private static float evaluateAdditionWordSequence(final ImmutableList<String> baseWords,
-                                                      final ImmutableList<String> additionWords,
-                                                      final int num) {
+    private static float evaluateAdditionWordSequence(
+            @NonNull final ImmutableList<String> baseWords,
+            final ImmutableList<String> additionWords,
+            final int num) {
         float res = 0;
         // Wir suchen: Gibt es am Ende von baseWords genau num Wörter aus dem Anfang von
         // additionWords in Folge?
@@ -110,48 +121,33 @@ class TextAdditionEvaluator {
                 final List<String> additionSequence =
                         additionWords.subList(additionWordsIndex, additionWordsIndex + num);
 
+                final int distanceBase = baseWords.size() - num - baseWordsIndex;
+                final int distance = distanceBase + additionWordsIndex + 1;
+                final float penaltyIfUnacceptableRepitition =
+                        (num * num * num) / (float)
+                                (distance * distance);
+
+                // Längere additionSequences haben logischerweise mehr Wiederholungen
+                // als kürzere. Deshalb haben kürzere additionSequences einen
+                // Vorteil gegenüber längeren, wenn wir penalties nur ABZIEHEN.
+                // Deshalb ADDIEREN wir hier eine DURCHSCHNITTLICHE
+                // penalty. Damit pendelt res immer um 0 statt mit
+                // längeren additionSequences immer kleiner und kleiner zu werden.
+                res += penaltyIfUnacceptableRepitition * ERFAHRUNGSWERT;
+
                 if (baseSequence.equals(additionSequence) &&
                         !repetitionAcceptable(baseSequence)) {
                     // Schlecht! - Und je näher am Ende von baseWords und je näher am
                     //  Anfang von additionWords, desto schlechter (negative Zahlen).
-                    final int distanceBase = baseWords.size() - num - baseWordsIndex;
-                    final int distanceAddition = additionWordsIndex;
-                    final int distance = distanceBase + distanceAddition;
 
-                    // TODO Je kürzen additionWords ist, desto größer die
-                    //  Wahrscheinliche, dass es keine Wiederholungen gibt.
-                    //  Damit werden kurze additions gegenüber längeren
-                    //  tendenziell bevorzugt und sogar wiederholt
-                    //  (z.B. "Mmmh!"). Deshalb sollten kurze
-                    //  additions ein penalty für KÜRZE erhalten.
-                    //  Z.B. Jedes FEHLENDE Wort bis zu einer max-Anzahl
-                    //  durchgehen und eine Kürzepenalty für das Wort
-                    //  einrechnen, auch geteilt durch die "distance",
-                    //  also den index des Worts. D.h.:
-                    //  Fehlendes zweites Wort: halbe Penalty,
-                    //  Fehlendes drittes Wort: Drittel-Penalty
-                    //  Fehlendes viertes Wort: Viertel-Penalty
-                    //  Etc.
-                    //  Am besten mal mit "Mmh" testen, was eine gute Basis-Penalty ist.
-                    //  Oder Penalty für "fehlende" Wörter der Reihe nach aufschlagen und
-                    //  Dazu vorher Durchschnitt für ein "durchschnittliches fehldes Wort
-                    //  berechnen (LOG)
-                    // STORY Abends wird man MUEDE (neuer Status, ähnlich
-                    //  wie ERSCHOEPFT. Wer MUEDE ist, kann ebenfalls einschlafen
-                    // STORY Man BLEIBT in aller Regel MUEDE, solange man nicht schläft -
-                    //  kommt drauf an, ob welche Emotion die STAERKERE ist
-                    //  Z.B. wird man nicht GEKNICKT, wenn man MUEDE ist.
-                    final float penalty =
-                            (num * num * num) / (float)
-                                    (distance * distance);
-                    res -= penalty;
+                    res -= penaltyIfUnacceptableRepitition;
                 }
             }
         }
         return res;
     }
 
-    private static boolean repetitionAcceptable(final List<String> sequence) {
+    private static boolean repetitionAcceptable(@NonNull final List<String> sequence) {
         if (sequence.isEmpty()) {
             return true;
         }
@@ -162,6 +158,7 @@ class TextAdditionEvaluator {
         return repetitionAcceptable(sequence.iterator().next());
     }
 
+    @Contract(pure = true)
     private static boolean repetitionAcceptable(final String word) {
         return REPITION_ACCEPTABLE.contains(word);
     }
