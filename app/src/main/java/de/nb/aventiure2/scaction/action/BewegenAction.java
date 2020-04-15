@@ -168,13 +168,20 @@ public class BewegenAction extends AbstractScAction {
     }
 
     private boolean scWirdMitEssenKonfrontiert() {
-        if (roomConnection.getTo() == AvRoom.SCHLOSS_VORHALLE ||
-                roomConnection.getTo() == SCHLOSS_VORHALLE_TISCH_BEIM_FEST &&
-                        db.invisibleDataDao()
-                                .getInvisible(Invisible.Key.SCHLOSSFEST).getState() == BEGONNEN) {
-            return true;
+        final AvRoom newRoom = roomConnection.getTo();
+
+        if (db.invisibleDataDao()
+                .getInvisible(Invisible.Key.SCHLOSSFEST).getState() == BEGONNEN) {
+            if (oldRoom == DRAUSSEN_VOR_DEM_SCHLOSS &&
+                    newRoom == AvRoom.SCHLOSS_VORHALLE) {
+                return true;
+            }
+            if (newRoom == SCHLOSS_VORHALLE_TISCH_BEIM_FEST) {
+                return true;
+            }
         }
-        if (roomConnection.getTo() == AvRoom.WALDWILDNIS_HINTER_DEM_BRUNNEN) {
+
+        if (newRoom == AvRoom.WALDWILDNIS_HINTER_DEM_BRUNNEN) {
             // STORY Im Dunkeln kann man keine Früchte sehen
             return true;
         }
