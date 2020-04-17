@@ -7,10 +7,10 @@ import androidx.annotation.Nullable;
 import androidx.room.PrimaryKey;
 
 import de.nb.aventiure2.data.storystate.StoryState.StructuralElement;
+import de.nb.aventiure2.data.world.base.GameObject;
 import de.nb.aventiure2.data.world.base.GameObjectId;
 import de.nb.aventiure2.data.world.entity.creature.Creature;
 import de.nb.aventiure2.data.world.entity.object.AvObject;
-import de.nb.aventiure2.data.world.room.AvRoom;
 import de.nb.aventiure2.data.world.room.Rooms;
 
 import static com.google.common.base.Preconditions.checkArgument;
@@ -72,7 +72,7 @@ public class StoryStateBuilder {
      * <p>Needs to be set before calling {@link #build()}.</p>
      */
     @Nullable
-    private AvRoom lastRoom;
+    private GameObject lastRoom;
 
     public static StoryStateBuilder t(
             @Nullable final IPlayerAction lastAction,
@@ -127,7 +127,7 @@ public class StoryStateBuilder {
         return letzterRaum(Rooms.get(lastRoom));
     }
 
-    public StoryStateBuilder letzterRaum(final AvRoom lastRoom) {
+    public StoryStateBuilder letzterRaum(final GameObject lastRoom) {
         this.lastRoom = lastRoom;
         return this;
     }

@@ -13,8 +13,8 @@ import de.nb.aventiure2.data.storystate.StoryState;
 import de.nb.aventiure2.data.storystate.StoryState.StructuralElement;
 import de.nb.aventiure2.data.storystate.StoryStateBuilder;
 import de.nb.aventiure2.data.storystate.StoryStateDao;
+import de.nb.aventiure2.data.world.base.GameObject;
 import de.nb.aventiure2.data.world.lichtverhaeltnisse.Lichtverhaeltnisse;
-import de.nb.aventiure2.data.world.room.AvRoom;
 import de.nb.aventiure2.data.world.time.AvDateTime;
 import de.nb.aventiure2.data.world.time.AvTimeSpan;
 import de.nb.aventiure2.data.world.time.Tageszeit;
@@ -100,7 +100,7 @@ public abstract class AbstractScAction implements IPlayerAction {
 
     abstract public AvTimeSpan narrateAndDo();
 
-    protected Lichtverhaeltnisse getLichtverhaeltnisse(final AvRoom room) {
+    protected Lichtverhaeltnisse getLichtverhaeltnisse(final GameObject room) {
         return Lichtverhaeltnisse.getLichtverhaeltnisse(getTageszeit(), room.getId());
     }
 

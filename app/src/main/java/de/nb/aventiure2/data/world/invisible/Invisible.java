@@ -1,14 +1,15 @@
 package de.nb.aventiure2.data.world.invisible;
 
-import de.nb.aventiure2.data.world.base.AbstractGameObject;
+import de.nb.aventiure2.data.world.base.GameObject;
 import de.nb.aventiure2.data.world.base.GameObjectId;
+import de.nb.aventiure2.data.world.entity.base.Entity;
 
 /**
  * An invisible concept, idea, event or the like, that has a state.
  *
- * @see de.nb.aventiure2.data.world.entity.base.AbstractEntity
+ * @see Entity
  */
-public class Invisible extends AbstractGameObject {
+public class Invisible extends GameObject {
     private final InvisibleStateList states;
 
     /**

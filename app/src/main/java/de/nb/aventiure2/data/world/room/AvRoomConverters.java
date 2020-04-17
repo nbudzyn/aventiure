@@ -2,11 +2,12 @@ package de.nb.aventiure2.data.world.room;
 
 import androidx.room.TypeConverter;
 
+import de.nb.aventiure2.data.world.base.GameObject;
 import de.nb.aventiure2.data.world.base.GameObjectId;
 
 public class AvRoomConverters {
     @TypeConverter
-    public static AvRoom longToRoom(final Long aLong) {
+    public static GameObject longToRoom(final Long aLong) {
         if (aLong == null) {
             return null;
         }
@@ -14,7 +15,7 @@ public class AvRoomConverters {
     }
 
     @TypeConverter
-    public static Long roomToString(final AvRoom room) {
+    public static Long roomToString(final GameObject room) {
         if (room == null) {
             return null;
         }

@@ -8,13 +8,13 @@ import de.nb.aventiure2.data.database.AvDatabase;
 import de.nb.aventiure2.data.storystate.IPlayerAction;
 import de.nb.aventiure2.data.storystate.StoryState;
 import de.nb.aventiure2.data.storystate.StoryStateBuilder;
+import de.nb.aventiure2.data.world.base.GameObject;
 import de.nb.aventiure2.data.world.base.GameObjectId;
 import de.nb.aventiure2.data.world.entity.base.AbstractEntityData;
 import de.nb.aventiure2.data.world.entity.creature.CreatureData;
 import de.nb.aventiure2.data.world.entity.object.ObjectData;
 import de.nb.aventiure2.data.world.lichtverhaeltnisse.Lichtverhaeltnisse;
 import de.nb.aventiure2.data.world.player.stats.ScStateOfMind;
-import de.nb.aventiure2.data.world.room.AvRoom;
 import de.nb.aventiure2.data.world.time.AvDateTime;
 import de.nb.aventiure2.data.world.time.AvTimeSpan;
 import de.nb.aventiure2.scaction.action.AblegenAction;
@@ -46,13 +46,13 @@ class SchlosswacheReactions extends AbstractCreatureReactions {
     }
 
     @Override
-    public AvTimeSpan onLeaveRoom(final AvRoom oldRoom, final CreatureData wache,
+    public AvTimeSpan onLeaveRoom(final GameObject oldRoom, final CreatureData wache,
                                   final StoryState currentStoryState) {
         return noTime();
     }
 
     @Override
-    public AvTimeSpan onEnterRoom(final AvRoom oldRoom, final AvRoom newRoom,
+    public AvTimeSpan onEnterRoom(final GameObject oldRoom, final GameObject newRoom,
                                   final CreatureData wache,
                                   final StoryState currentStoryState) {
         if (!newRoom.is(SCHLOSS_VORHALLE)) {
@@ -78,7 +78,8 @@ class SchlosswacheReactions extends AbstractCreatureReactions {
         return scMussDasSchlossVerlassen(oldRoom, newRoom);
     }
 
-    private AvTimeSpan scMussDasSchlossVerlassen(final AvRoom oldRoom, final AvRoom newRoom) {
+    private AvTimeSpan scMussDasSchlossVerlassen(final GameObject oldRoom,
+                                                 final GameObject newRoom) {
         // STORY Ausspinnen: Der Spieler sollte selbst entscheiden,
         //  ob der das Schloss wieder verlässt - oder ggf. im Kerker landet.
         n.add(alt(
@@ -127,7 +128,7 @@ class SchlosswacheReactions extends AbstractCreatureReactions {
     }
 
     @Override
-    public AvTimeSpan onNehmen(final AvRoom room, final CreatureData wacheInRoom,
+    public AvTimeSpan onNehmen(final GameObject room, final CreatureData wacheInRoom,
                                final AbstractEntityData genommenData,
                                final StoryState currentStoryState) {
         if (!room.equals(SCHLOSS_VORHALLE)) {
@@ -167,7 +168,7 @@ class SchlosswacheReactions extends AbstractCreatureReactions {
         return secs(20);
     }
 
-    private AvTimeSpan nehmenGoldeneKugel_wacheIstAufmerksam(final AvRoom room,
+    private AvTimeSpan nehmenGoldeneKugel_wacheIstAufmerksam(final GameObject room,
                                                              final CreatureData wache,
                                                              final ObjectData goldeneKugelData,
                                                              final StoryState currentStoryState) {
@@ -181,7 +182,7 @@ class SchlosswacheReactions extends AbstractCreatureReactions {
                 currentStoryState);
     }
 
-    private AvTimeSpan nehmenGoldeneKugel_wacheIstAufmerksam_erwischt(final AvRoom room,
+    private AvTimeSpan nehmenGoldeneKugel_wacheIstAufmerksam_erwischt(final GameObject room,
                                                                       final CreatureData wache,
                                                                       final ObjectData goldeneKugelData,
                                                                       final StoryState currentStoryState) {
@@ -246,7 +247,7 @@ class SchlosswacheReactions extends AbstractCreatureReactions {
     }
 
     @Override
-    public AvTimeSpan onEssen(final AvRoom room, final CreatureData wache,
+    public AvTimeSpan onEssen(final GameObject room, final CreatureData wache,
                               final StoryState currentStoryState) {
         // Der Schlosswache ist es egal, wenn der Spieler beim Fest etwas ist.
         // Und bei anderen Speisen ist es ihr erst recht egal.
@@ -254,7 +255,7 @@ class SchlosswacheReactions extends AbstractCreatureReactions {
     }
 
     @Override
-    public AvTimeSpan onAblegen(final AvRoom room, final CreatureData wacheInRoom,
+    public AvTimeSpan onAblegen(final GameObject room, final CreatureData wacheInRoom,
                                 final AbstractEntityData abgelegtData,
                                 final StoryState currentStoryState) {
         if (!room.equals(SCHLOSS_VORHALLE)) {
@@ -298,7 +299,7 @@ class SchlosswacheReactions extends AbstractCreatureReactions {
     }
 
     @Override
-    public AvTimeSpan onHochwerfen(final AvRoom room, final CreatureData wacheInRoom,
+    public AvTimeSpan onHochwerfen(final GameObject room, final CreatureData wacheInRoom,
                                    final ObjectData objectData,
                                    final StoryState currentStoryState) {
         if (!room.equals(SCHLOSS_VORHALLE)) {
@@ -316,7 +317,7 @@ class SchlosswacheReactions extends AbstractCreatureReactions {
         }
     }
 
-    private AvTimeSpan hochwerfenGoldeneKugel_wacheIstAufmerksam(final AvRoom room,
+    private AvTimeSpan hochwerfenGoldeneKugel_wacheIstAufmerksam(final GameObject room,
                                                                  final CreatureData wacheInRoom,
                                                                  final ObjectData goldeneKugelData,
                                                                  final StoryState currentStoryState) {
@@ -334,10 +335,11 @@ class SchlosswacheReactions extends AbstractCreatureReactions {
                 goldeneKugelData, currentStoryState);
     }
 
-    private AvTimeSpan hochwerfenGoldeneKugel_wacheIstAufmerksam_wiederGefangen(final AvRoom room,
-                                                                                final CreatureData wacheInRoom,
-                                                                                final ObjectData goldeneKugelData,
-                                                                                final StoryState currentStoryState) {
+    private AvTimeSpan hochwerfenGoldeneKugel_wacheIstAufmerksam_wiederGefangen(
+            final GameObject room,
+            final CreatureData wacheInRoom,
+            final ObjectData goldeneKugelData,
+            final StoryState currentStoryState) {
         n.add(t(PARAGRAPH, "„Was treibt Ihr für einen Unfug, legt sofort das "
                 + "Schmuckstück wieder hin!“, "
                 + "ruft dir "
@@ -361,7 +363,7 @@ class SchlosswacheReactions extends AbstractCreatureReactions {
     }
 
     private AvTimeSpan hochwerfenGoldeneKugel_wacheIstAufmerksam_nichtWiederGefangen(
-            final AvRoom room,
+            final GameObject room,
             final CreatureData wacheInRoom,
             final ObjectData goldeneKugelData,
             final StoryState currentStoryState) {
@@ -383,7 +385,7 @@ class SchlosswacheReactions extends AbstractCreatureReactions {
     }
 
     private AvTimeSpan schlossfestBeginnt(final StoryState currentStoryState) {
-        final AvRoom currentRoom =
+        final GameObject currentRoom =
                 db.playerLocationDao().getPlayerLocation().getRoom();
 
         if (currentRoom.equals(SCHLOSS_VORHALLE)) {

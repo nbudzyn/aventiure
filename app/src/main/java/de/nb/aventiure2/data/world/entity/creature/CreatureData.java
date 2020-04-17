@@ -5,9 +5,9 @@ import androidx.annotation.Nullable;
 import androidx.room.Entity;
 import androidx.room.PrimaryKey;
 
+import de.nb.aventiure2.data.world.base.GameObject;
 import de.nb.aventiure2.data.world.base.GameObjectId;
 import de.nb.aventiure2.data.world.entity.base.AbstractEntityData;
-import de.nb.aventiure2.data.world.room.AvRoom;
 import de.nb.aventiure2.german.base.Nominalphrase;
 
 /**
@@ -20,7 +20,7 @@ public class CreatureData extends AbstractEntityData {
     private final Creature creature;
 
     @Nullable
-    private final AvRoom room;
+    private final GameObject room;
 
     private final boolean known;
 
@@ -31,7 +31,7 @@ public class CreatureData extends AbstractEntityData {
     //  Frosch im Schloss ankommt.
     //  Nullable?! (Zu mühevoll?)
 
-    CreatureData(@NonNull final Creature creature, @Nullable final AvRoom room,
+    CreatureData(@NonNull final Creature creature, @Nullable final GameObject room,
                  final boolean known, final CreatureState state) {
         super(creature.getId());
         this.creature = creature;
@@ -60,7 +60,7 @@ public class CreatureData extends AbstractEntityData {
     }
 
     @NonNull
-    public AvRoom getRoom() {
+    public GameObject getRoom() {
         return room;
     }
 

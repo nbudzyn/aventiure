@@ -1,19 +1,19 @@
 package de.nb.aventiure2.data.world.entity.creature;
 
+import de.nb.aventiure2.data.world.base.GameObject;
 import de.nb.aventiure2.data.world.base.GameObjectId;
-import de.nb.aventiure2.data.world.entity.base.AbstractEntity;
-import de.nb.aventiure2.data.world.room.AvRoom;
+import de.nb.aventiure2.data.world.entity.base.Entity;
 import de.nb.aventiure2.data.world.room.Rooms;
 import de.nb.aventiure2.german.base.Nominalphrase;
 
 /**
  * A creature in the world (not the player character)
  */
-public class Creature extends AbstractEntity {
+public class Creature extends Entity {
     /**
      * The initial room where this creature can be found.
      */
-    private final AvRoom initialRoom;
+    private final GameObject initialRoom;
     private final CreatureStateList states;
 
     /**
@@ -24,7 +24,7 @@ public class Creature extends AbstractEntity {
     Creature(final GameObjectId id,
              final Nominalphrase descriptionAtFirstSight,
              final Nominalphrase descriptionWhenKnown,
-             final AvRoom initialRoom,
+             final GameObject initialRoom,
              final CreatureStateList states) {
         super(id, descriptionAtFirstSight, descriptionWhenKnown,
                 descriptionWhenKnown);
@@ -56,7 +56,7 @@ public class Creature extends AbstractEntity {
              final Nominalphrase descriptionAtFirstSight,
              final Nominalphrase normalDescriptionWhenKnown,
              final Nominalphrase shortDescriptionWhenKnown,
-             final AvRoom initialRoom,
+             final GameObject initialRoom,
              final CreatureStateList states) {
         super(id, descriptionAtFirstSight, normalDescriptionWhenKnown,
                 shortDescriptionWhenKnown);
@@ -64,7 +64,7 @@ public class Creature extends AbstractEntity {
         this.states = states;
     }
 
-    public AvRoom getInitialRoom() {
+    public GameObject getInitialRoom() {
         return initialRoom;
     }
 

@@ -11,10 +11,10 @@ import java.util.Map;
 import de.nb.aventiure2.data.database.AvDatabase;
 import de.nb.aventiure2.data.storystate.StoryState;
 import de.nb.aventiure2.data.storystate.StoryStateBuilder;
+import de.nb.aventiure2.data.world.base.GameObject;
 import de.nb.aventiure2.data.world.base.GameObjectId;
 import de.nb.aventiure2.data.world.entity.creature.CreatureData;
 import de.nb.aventiure2.data.world.entity.object.ObjectData;
-import de.nb.aventiure2.data.world.room.AvRoom;
 import de.nb.aventiure2.data.world.time.AvTimeSpan;
 import de.nb.aventiure2.german.praedikat.Praedikat;
 import de.nb.aventiure2.german.praedikat.PraedikatMitEinerObjektleerstelle;
@@ -27,7 +27,7 @@ import de.nb.aventiure2.scaction.action.creature.conversation.CreatureConversati
  * Der Spieler(charakter) redet mit einem Wesen.
  */
 public class RedenAction extends AbstractScAction {
-    private final AvRoom room;
+    private final GameObject room;
     private final Map<GameObjectId, ObjectData> allObjectsById;
 
     @NonNull
@@ -37,7 +37,7 @@ public class RedenAction extends AbstractScAction {
     private final String name;
 
     public static Collection<RedenAction> buildActions(
-            final AvDatabase db, final StoryState initialStoryState, final AvRoom room,
+            final AvDatabase db, final StoryState initialStoryState, final GameObject room,
             final Map<GameObjectId, ObjectData> allObjectsById,
             final CreatureData creatureData) {
         final List<CreatureConversationStep> talkSteps =
@@ -52,7 +52,7 @@ public class RedenAction extends AbstractScAction {
 
     private static Collection<RedenAction> buildActions(final AvDatabase db,
                                                         final StoryState initialStoryState,
-                                                        final AvRoom room,
+                                                        final GameObject room,
                                                         final Map<GameObjectId, ObjectData> allObjectsById,
                                                         final CreatureData creatureData,
                                                         final List<CreatureConversationStep> talkSteps) {
@@ -102,7 +102,7 @@ public class RedenAction extends AbstractScAction {
     @NonNull
     private static RedenAction buildAction(final AvDatabase db,
                                            final StoryState initialStoryState,
-                                           final AvRoom room,
+                                           final GameObject room,
                                            final Map<GameObjectId, ObjectData> allObjectsById,
                                            final CreatureData creatureData,
                                            final CreatureConversationStep talkStep) {
@@ -135,7 +135,7 @@ public class RedenAction extends AbstractScAction {
      */
     @NonNull
     private static RedenAction buildAction(final AvDatabase db, final StoryState initialStoryState,
-                                           final AvRoom room,
+                                           final GameObject room,
                                            final Map<GameObjectId, ObjectData> allObjectsById,
                                            final CreatureData creatureData,
                                            final CreatureConversationStep talkStep,
@@ -148,7 +148,7 @@ public class RedenAction extends AbstractScAction {
 
     private RedenAction(final AvDatabase db,
                         final StoryState initialStoryState,
-                        @NonNull final CreatureData creatureData, final AvRoom room,
+                        @NonNull final CreatureData creatureData, final GameObject room,
                         final Map<GameObjectId, ObjectData> allObjectsById,
                         final CreatureConversationStep creatureConversationStep,
                         @NonNull final String name) {

@@ -9,9 +9,9 @@ import java.util.Collection;
 import de.nb.aventiure2.data.database.AvDatabase;
 import de.nb.aventiure2.data.storystate.StoryState;
 import de.nb.aventiure2.data.storystate.StoryState.StructuralElement;
+import de.nb.aventiure2.data.world.base.GameObject;
 import de.nb.aventiure2.data.world.entity.creature.CreatureData;
 import de.nb.aventiure2.data.world.entity.object.ObjectData;
-import de.nb.aventiure2.data.world.room.AvRoom;
 import de.nb.aventiure2.data.world.time.AvTimeSpan;
 import de.nb.aventiure2.german.base.DeklinierbarePhrase;
 import de.nb.aventiure2.german.base.DuDescription;
@@ -38,12 +38,12 @@ import static de.nb.aventiure2.german.base.GermanUtil.capitalize;
  * Der Spieler(charakter) wirft einen Gegenstand hoch.
  */
 public class HochwerfenAction extends AbstractObjectAction {
-    private final AvRoom room;
+    private final GameObject room;
     private final CreatureData froschprinzCreatureData;
 
     public static Collection<HochwerfenAction> buildActions(
             final AvDatabase db, final StoryState initialStoryState,
-            final AvRoom room, final ObjectData objectData,
+            final GameObject room, final ObjectData objectData,
             final CreatureData froschprinzCreatureData) {
         // TODO Nicht jedes Object lässt sich hochwerfen...
         return ImmutableList.of(
@@ -54,7 +54,7 @@ public class HochwerfenAction extends AbstractObjectAction {
     private HochwerfenAction(final AvDatabase db,
                              final StoryState initialStoryState,
                              final ObjectData objectData,
-                             final AvRoom room,
+                             final GameObject room,
                              final CreatureData froschprinzCreatureData) {
         super(db, initialStoryState, objectData);
 
@@ -265,7 +265,7 @@ public class HochwerfenAction extends AbstractObjectAction {
                         "dieses Mal nicht gelingen. " +
                         capitalize(getObjectData().nom(true)) +
                         " landet " +
-                        room.getLocationMode().getWo()));
+                        room.getStoringPlace().getLocationMode().getWo()));
 
         db.playerInventoryDao().letGo(getObject());
         db.objectDataDao().setRoom(getObject(), room);

@@ -11,12 +11,12 @@ import java.util.Map;
 
 import de.nb.aventiure2.data.database.AvDatabase;
 import de.nb.aventiure2.data.storystate.StoryState;
+import de.nb.aventiure2.data.world.base.GameObject;
 import de.nb.aventiure2.data.world.base.GameObjectId;
 import de.nb.aventiure2.data.world.entity.creature.CreatureData;
 import de.nb.aventiure2.data.world.entity.object.AvObject;
 import de.nb.aventiure2.data.world.entity.object.ObjectData;
 import de.nb.aventiure2.data.world.player.stats.ScStats;
-import de.nb.aventiure2.data.world.room.AvRoom;
 import de.nb.aventiure2.scaction.action.AblegenAction;
 import de.nb.aventiure2.scaction.action.BewegenAction;
 import de.nb.aventiure2.scaction.action.EssenAction;
@@ -48,7 +48,7 @@ public class ScActionService {
 
         final ScStats stats = db.playerStatsDao().getPlayerStats();
 
-        final AvRoom room = db.playerLocationDao().getPlayerLocation().getRoom();
+        final GameObject room = db.playerLocationDao().getPlayerLocation().getRoom();
 
         final List<ObjectData> allObjects = db.objectDataDao().getAll();
 
@@ -79,7 +79,7 @@ public class ScActionService {
 
     private ImmutableList<AbstractScAction> buildCreatureInRoomActions(
             final StoryState currentStoryState,
-            final AvRoom room, final Map<GameObjectId, ObjectData> allObjectsById,
+            final GameObject room, final Map<GameObjectId, ObjectData> allObjectsById,
             final List<CreatureData> creaturesInRoom) {
         final ImmutableList.Builder<AbstractScAction> res = ImmutableList.builder();
 
@@ -96,7 +96,7 @@ public class ScActionService {
 
     private ImmutableList<AbstractScAction> buildPlayerOnlyAction(
             final StoryState currentStoryState,
-            final AvRoom room, final ScStats stats,
+            final GameObject room, final ScStats stats,
             final List<CreatureData> creaturesInRoom) {
         final ImmutableList.Builder<AbstractScAction> res = ImmutableList.builder();
 
@@ -108,7 +108,7 @@ public class ScActionService {
 
     private ImmutableList<AbstractScAction> buildObjectInRoomActions(
             final StoryState currentStoryState,
-            final AvRoom room,
+            final GameObject room,
             final Map<GameObjectId, ObjectData> allObjectsById) {
         final ImmutableList.Builder<AbstractScAction> res = ImmutableList.builder();
         for (final ObjectData objectData : allObjectsById.values()) {
@@ -125,7 +125,7 @@ public class ScActionService {
 
     private ImmutableList<AbstractScAction> buildInventoryActions(
             final StoryState currentStoryState,
-            final AvRoom room, final Map<GameObjectId, ObjectData> allObjectsById,
+            final GameObject room, final Map<GameObjectId, ObjectData> allObjectsById,
             final CreatureData froschprinz,
             final List<AvObject> inventory) {
         final ImmutableList.Builder<AbstractScAction> res = ImmutableList.builder();
@@ -143,7 +143,7 @@ public class ScActionService {
 
     private ImmutableList<AbstractScAction> buildRoomActions(
             final StoryState currentStoryState,
-            final AvRoom room) {
+            final GameObject room) {
         final ImmutableList.Builder<AbstractScAction> res = ImmutableList.builder();
 
         res.addAll(buildRoomSpecificActions(currentStoryState, room));
@@ -153,7 +153,7 @@ public class ScActionService {
     }
 
     private ImmutableList<AbstractScAction> buildRoomSpecificActions(
-            final StoryState currentStoryState, final AvRoom room) {
+            final StoryState currentStoryState, final GameObject room) {
         final ImmutableList.Builder<AbstractScAction> res = ImmutableList.builder();
 
         res.addAll(KletternAction.buildActions(db, currentStoryState, room));

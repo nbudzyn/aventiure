@@ -3,10 +3,10 @@ package de.nb.aventiure2.scaction.action.creature.reaction;
 import de.nb.aventiure2.data.database.AvDatabase;
 import de.nb.aventiure2.data.storystate.IPlayerAction;
 import de.nb.aventiure2.data.storystate.StoryState;
+import de.nb.aventiure2.data.world.base.GameObject;
 import de.nb.aventiure2.data.world.entity.base.AbstractEntityData;
 import de.nb.aventiure2.data.world.entity.creature.CreatureData;
 import de.nb.aventiure2.data.world.entity.object.ObjectData;
-import de.nb.aventiure2.data.world.room.AvRoom;
 import de.nb.aventiure2.data.world.time.AvDateTime;
 import de.nb.aventiure2.data.world.time.AvTimeSpan;
 import de.nb.aventiure2.scaction.action.base.reaction.AbstractReactions;
@@ -41,7 +41,7 @@ abstract class AbstractCreatureReactions extends AbstractReactions {
      * <i>Make sure you alwasy set <code>letzterRaum</code> to <code>oldRoom</code> when creating
      * <code>StoryState</code>s</i>.
      */
-    public abstract AvTimeSpan onLeaveRoom(final AvRoom oldRoom, final CreatureData creature,
+    public abstract AvTimeSpan onLeaveRoom(final GameObject oldRoom, final CreatureData creature,
                                            StoryState currentStoryState);
 
     /**
@@ -49,22 +49,22 @@ abstract class AbstractCreatureReactions extends AbstractReactions {
      * <i>Make sure you alwasy set <code>letzterRaum</code> to <code>oldRoom</code> when creating
      * <code>StoryState</code>s</i>.
      */
-    public abstract AvTimeSpan onEnterRoom(final AvRoom oldRoom, AvRoom newRoom,
+    public abstract AvTimeSpan onEnterRoom(final GameObject oldRoom, GameObject newRoom,
                                            CreatureData creatureInNewRoom,
                                            StoryState currentStoryState);
 
-    public abstract AvTimeSpan onNehmen(AvRoom room, CreatureData creatureInRoom,
+    public abstract AvTimeSpan onNehmen(GameObject room, CreatureData creatureInRoom,
                                         AbstractEntityData genommenData,
                                         StoryState currentStoryState);
 
-    public abstract AvTimeSpan onEssen(AvRoom room, CreatureData creature,
+    public abstract AvTimeSpan onEssen(GameObject room, CreatureData creature,
                                        StoryState currentStoryState);
 
-    public abstract AvTimeSpan onAblegen(AvRoom room, CreatureData creatureInRoom,
+    public abstract AvTimeSpan onAblegen(GameObject room, CreatureData creatureInRoom,
                                          AbstractEntityData abgelegtData,
                                          StoryState currentStoryState);
 
-    public abstract AvTimeSpan onHochwerfen(AvRoom room, CreatureData creatureInRoom,
+    public abstract AvTimeSpan onHochwerfen(GameObject room, CreatureData creatureInRoom,
                                             ObjectData objectData, StoryState currentStoryState);
 
     public abstract AvTimeSpan onTimePassed(AvDateTime lastTime, AvDateTime now,

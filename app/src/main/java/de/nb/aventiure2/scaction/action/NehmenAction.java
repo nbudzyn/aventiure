@@ -10,12 +10,12 @@ import de.nb.aventiure2.data.database.AvDatabase;
 import de.nb.aventiure2.data.storystate.StoryState;
 import de.nb.aventiure2.data.storystate.StoryState.StructuralElement;
 import de.nb.aventiure2.data.storystate.StoryStateBuilder;
+import de.nb.aventiure2.data.world.base.GameObject;
 import de.nb.aventiure2.data.world.entity.base.AbstractEntityData;
 import de.nb.aventiure2.data.world.entity.creature.CreatureData;
 import de.nb.aventiure2.data.world.entity.creature.Creatures;
 import de.nb.aventiure2.data.world.entity.object.ObjectData;
 import de.nb.aventiure2.data.world.player.stats.ScStateOfMind;
-import de.nb.aventiure2.data.world.room.AvRoom;
 import de.nb.aventiure2.data.world.time.AvTimeSpan;
 import de.nb.aventiure2.german.praedikat.PraedikatMitEinerObjektleerstelle;
 
@@ -33,10 +33,10 @@ import static de.nb.aventiure2.german.praedikat.VerbSubjObj.NEHMEN;
  * Creature) an sich.
  */
 public class NehmenAction extends AbstractEntityAction {
-    private final AvRoom room;
+    private final GameObject room;
 
     public static Collection<NehmenAction> buildObjectActions(
-            final AvDatabase db, final StoryState initialStoryState, final AvRoom room,
+            final AvDatabase db, final StoryState initialStoryState, final GameObject room,
             final ObjectData objectData) {
         final ImmutableList.Builder<NehmenAction> res = ImmutableList.builder();
         res.add(new NehmenAction(db, initialStoryState, objectData, room));
@@ -45,7 +45,7 @@ public class NehmenAction extends AbstractEntityAction {
 
     public static Collection<NehmenAction> buildCreatureActions(
             final AvDatabase db,
-            final StoryState initialStoryState, final AvRoom room,
+            final StoryState initialStoryState, final GameObject room,
             final CreatureData creatureData) {
         final ImmutableList.Builder<NehmenAction> res = ImmutableList.builder();
         if (creatureData.creatureIs(FROSCHPRINZ) &&
@@ -56,7 +56,7 @@ public class NehmenAction extends AbstractEntityAction {
     }
 
     private NehmenAction(final AvDatabase db, final StoryState initialStoryState,
-                         final AbstractEntityData entityData, final AvRoom room) {
+                         final AbstractEntityData entityData, final GameObject room) {
         super(db, initialStoryState, entityData);
         this.room = room;
     }
@@ -126,7 +126,7 @@ public class NehmenAction extends AbstractEntityAction {
     @NonNull
     private AvTimeSpan narrateObject(@NonNull final ObjectData objectData) {
         final PraedikatMitEinerObjektleerstelle nehmenPraedikat =
-                room.getLocationMode().getNehmenPraedikat();
+                room.getStoringPlace().getLocationMode().getNehmenPraedikat();
         if (initialStoryState.lastObjectWas(objectData.getObject())) {
             if (initialStoryState.lastActionWas(AblegenAction.class)) {
                 n.add(buildStoryStateObjectNachAblegen(objectData));

@@ -2,8 +2,8 @@ package de.nb.aventiure2.scaction.action.invisible.reaction;
 
 import de.nb.aventiure2.data.database.AvDatabase;
 import de.nb.aventiure2.data.storystate.IPlayerAction;
+import de.nb.aventiure2.data.world.base.GameObject;
 import de.nb.aventiure2.data.world.player.stats.ScStateOfMind;
-import de.nb.aventiure2.data.world.room.AvRoom;
 import de.nb.aventiure2.data.world.time.AvDateTime;
 import de.nb.aventiure2.data.world.time.AvTimeSpan;
 
@@ -35,7 +35,7 @@ class SchlossfestReactions extends AbstractInvisibleReactions {
     }
 
     private AvTimeSpan schlossfestBeginnt() {
-        final AvRoom currentRoom = db.playerLocationDao().getPlayerLocation().getRoom();
+        final GameObject currentRoom = db.playerLocationDao().getPlayerLocation().getRoom();
 
         final AvTimeSpan timeElapsed;
         if (currentRoom.is(DRAUSSEN_VOR_DEM_SCHLOSS)) {

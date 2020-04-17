@@ -14,10 +14,10 @@ import de.nb.aventiure2.data.storystate.IPlayerAction;
 import de.nb.aventiure2.data.storystate.StoryState;
 import de.nb.aventiure2.data.storystate.StoryStateBuilder;
 import de.nb.aventiure2.data.storystate.StoryStateDao;
+import de.nb.aventiure2.data.world.base.GameObject;
 import de.nb.aventiure2.data.world.base.GameObjectId;
 import de.nb.aventiure2.data.world.entity.creature.CreatureData;
 import de.nb.aventiure2.data.world.entity.object.ObjectData;
-import de.nb.aventiure2.data.world.room.AvRoom;
 import de.nb.aventiure2.german.praedikat.Praedikat;
 
 import static de.nb.aventiure2.scaction.action.creature.conversation.CreatureConversationStep.ALWAYS_POSSIBLE;
@@ -39,7 +39,7 @@ abstract class AbstractCreatureConversationStepBuilder {
 
     protected final Class<? extends IPlayerAction> currentActionClass;
 
-    protected final AvRoom room;
+    protected final GameObject room;
     protected final Map<GameObjectId, ObjectData> allObjectsById;
 
     @NonNull
@@ -47,7 +47,7 @@ abstract class AbstractCreatureConversationStepBuilder {
 
     AbstractCreatureConversationStepBuilder(final AvDatabase db, final StoryState initialStoryState,
                                             final Class<? extends IPlayerAction> currentActionClass,
-                                            final AvRoom room,
+                                            final GameObject room,
                                             final Map<GameObjectId, ObjectData> allObjectsById,
                                             @NonNull final CreatureData creatureData) {
         this.db = db;

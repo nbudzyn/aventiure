@@ -12,11 +12,11 @@ import de.nb.aventiure2.data.database.AvDatabase;
 import de.nb.aventiure2.data.storystate.IPlayerAction;
 import de.nb.aventiure2.data.storystate.StoryState;
 import de.nb.aventiure2.data.storystate.StoryStateDao;
+import de.nb.aventiure2.data.world.base.GameObject;
 import de.nb.aventiure2.data.world.base.GameObjectId;
 import de.nb.aventiure2.data.world.entity.base.AbstractEntityData;
 import de.nb.aventiure2.data.world.entity.creature.CreatureData;
 import de.nb.aventiure2.data.world.entity.object.ObjectData;
-import de.nb.aventiure2.data.world.room.AvRoom;
 import de.nb.aventiure2.data.world.time.AvDateTime;
 import de.nb.aventiure2.data.world.time.AvTimeSpan;
 
@@ -45,7 +45,7 @@ public final class CreatureReactionsCoordinator {
         nullCreatureReactions = new NullCreatureReactions(db, playerActionClass);
     }
 
-    public AvTimeSpan onLeaveRoom(final AvRoom oldRoom,
+    public AvTimeSpan onLeaveRoom(final GameObject oldRoom,
                                   final List<CreatureData> creaturesInOldRoom) {
         AvTimeSpan timeElapsed = noTime();
 
@@ -58,8 +58,8 @@ public final class CreatureReactionsCoordinator {
         return timeElapsed;
     }
 
-    public AvTimeSpan onEnterRoom(final AvRoom oldRoom,
-                                  final AvRoom newRoom,
+    public AvTimeSpan onEnterRoom(final GameObject oldRoom,
+                                  final GameObject newRoom,
                                   final List<CreatureData> creaturesInNewRoom) {
         AvTimeSpan timeElapsed = noTime();
 
@@ -72,7 +72,7 @@ public final class CreatureReactionsCoordinator {
         return timeElapsed;
     }
 
-    public AvTimeSpan onNehmen(final AvRoom room,
+    public AvTimeSpan onNehmen(final GameObject room,
                                final AbstractEntityData entityData) {
         AvTimeSpan timeElapsed = noTime();
 
@@ -84,7 +84,7 @@ public final class CreatureReactionsCoordinator {
         return timeElapsed;
     }
 
-    public AvTimeSpan onEssen(final AvRoom room) {
+    public AvTimeSpan onEssen(final GameObject room) {
         AvTimeSpan timeElapsed = noTime();
 
         for (final CreatureData creature : getAllCreatures()) {
@@ -95,7 +95,7 @@ public final class CreatureReactionsCoordinator {
         return timeElapsed;
     }
 
-    public AvTimeSpan onAblegen(final AvRoom room, final AbstractEntityData entityData) {
+    public AvTimeSpan onAblegen(final GameObject room, final AbstractEntityData entityData) {
         AvTimeSpan timeElapsed = noTime();
 
         for (final CreatureData creatureInRoom : getCreaturesInRoom(room)) {
@@ -107,7 +107,7 @@ public final class CreatureReactionsCoordinator {
         return timeElapsed;
     }
 
-    public AvTimeSpan onHochwerfen(final AvRoom room, final ObjectData objectData) {
+    public AvTimeSpan onHochwerfen(final GameObject room, final ObjectData objectData) {
         AvTimeSpan timeElapsed = noTime();
 
         for (final CreatureData creatureInRoom : getCreaturesInRoom(room)) {
@@ -140,7 +140,7 @@ public final class CreatureReactionsCoordinator {
         return n.getStoryState();
     }
 
-    private List<CreatureData> getCreaturesInRoom(final AvRoom room) {
+    private List<CreatureData> getCreaturesInRoom(final GameObject room) {
         return db.creatureDataDao().getCreaturesInRoom(room);
     }
 

@@ -10,9 +10,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import de.nb.aventiure2.data.world.base.GameObject;
 import de.nb.aventiure2.data.world.base.GameObjectId;
 import de.nb.aventiure2.data.world.entity.base.AbstractEntityData;
-import de.nb.aventiure2.data.world.room.AvRoom;
 import de.nb.aventiure2.german.base.DeklinierbarePhrase;
 import de.nb.aventiure2.german.base.Indefinitpronomen;
 import de.nb.aventiure2.german.base.Nominalphrase;
@@ -27,7 +27,7 @@ public class ObjectData extends AbstractEntityData {
     private final AvObject object;
 
     @Nullable
-    private final AvRoom room;
+    private final GameObject room;
 
     private final boolean known;
 
@@ -79,7 +79,7 @@ public class ObjectData extends AbstractEntityData {
         return "sie";
     }
 
-    public ObjectData(@NonNull final AvObject object, @Nullable final AvRoom room,
+    public ObjectData(@NonNull final AvObject object, @Nullable final GameObject room,
                       final boolean known, final boolean demSCInDenBrunnenGefallen) {
         super(object.getId());
         this.object = object;
@@ -104,7 +104,7 @@ public class ObjectData extends AbstractEntityData {
     }
 
     @Nullable
-    public AvRoom getRoom() {
+    public GameObject getRoom() {
         return room;
     }
 

@@ -8,6 +8,7 @@ import androidx.room.Query;
 
 import javax.annotation.Nonnull;
 
+import de.nb.aventiure2.data.world.base.GameObject;
 import de.nb.aventiure2.data.world.base.GameObjectId;
 
 /**
@@ -19,7 +20,7 @@ public abstract class RoomDao {
         setKnown(Rooms.get(room), known);
     }
 
-    public void setKnown(final AvRoom room, final RoomKnown known) {
+    public void setKnown(final GameObject room, final RoomKnown known) {
         insert(new RoomData(room, known));
     }
 
@@ -29,7 +30,7 @@ public abstract class RoomDao {
     }
 
     public @Nonnull
-    RoomKnown getKnown(final AvRoom room) {
+    RoomKnown getKnown(final GameObject room) {
         @Nullable final RoomData roomData = getRoomData(room);
         if (roomData == null) {
             return RoomKnown.UNKNOWN;
@@ -43,5 +44,5 @@ public abstract class RoomDao {
 
     @Query("SELECT * from RoomData where :room = room")
     @Nullable
-    abstract RoomData getRoomData(AvRoom room);
+    abstract RoomData getRoomData(GameObject room);
 }

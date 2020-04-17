@@ -9,7 +9,7 @@ import java.util.Collection;
 import de.nb.aventiure2.data.database.AvDatabase;
 import de.nb.aventiure2.data.storystate.StoryState;
 import de.nb.aventiure2.data.storystate.StoryStateBuilder;
-import de.nb.aventiure2.data.world.room.AvRoom;
+import de.nb.aventiure2.data.world.base.GameObject;
 import de.nb.aventiure2.data.world.time.AvDateTime;
 import de.nb.aventiure2.data.world.time.AvTimeSpan;
 import de.nb.aventiure2.scaction.AbstractScAction;
@@ -30,7 +30,7 @@ import static de.nb.aventiure2.data.world.time.AvTimeSpan.mins;
 public class SchlafenAction extends AbstractScAction {
     public static Collection<SchlafenAction> buildActions(
             final AvDatabase db,
-            final StoryState initialStoryState, final AvRoom room) {
+            final StoryState initialStoryState, final GameObject room) {
         final ImmutableList.Builder<SchlafenAction> res = ImmutableList.builder();
         if (room.is(BETT_IN_DER_HUETTE_IM_WALD)) {
             res.add(new SchlafenAction(db, initialStoryState));

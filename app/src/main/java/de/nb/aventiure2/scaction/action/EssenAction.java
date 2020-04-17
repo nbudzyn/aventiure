@@ -8,9 +8,9 @@ import java.util.Collection;
 
 import de.nb.aventiure2.data.database.AvDatabase;
 import de.nb.aventiure2.data.storystate.StoryState;
+import de.nb.aventiure2.data.world.base.GameObject;
 import de.nb.aventiure2.data.world.invisible.Invisibles;
 import de.nb.aventiure2.data.world.player.stats.ScHunger;
-import de.nb.aventiure2.data.world.room.AvRoom;
 import de.nb.aventiure2.data.world.time.AvTimeSpan;
 import de.nb.aventiure2.german.base.AbstractDescription;
 import de.nb.aventiure2.german.base.DuDescription;
@@ -31,11 +31,11 @@ import static de.nb.aventiure2.german.base.DuDescription.du;
  */
 public class EssenAction extends AbstractScAction {
     public static final String COUNTER_FELSENBIRNEN = "EssenAction_Felsenbirnen";
-    private final AvRoom room;
+    private final GameObject room;
 
     public static Collection<EssenAction> buildActions(
             final AvDatabase db,
-            final StoryState initialStoryState, final AvRoom room) {
+            final StoryState initialStoryState, final GameObject room) {
         final ImmutableList.Builder<EssenAction> res = ImmutableList.builder();
         if (essenMoeglich(db, initialStoryState, room)) {
             res.add(new EssenAction(db, initialStoryState, room));
@@ -45,7 +45,7 @@ public class EssenAction extends AbstractScAction {
     }
 
     private static boolean essenMoeglich(final AvDatabase db, final StoryState initialStoryState,
-                                         final AvRoom room) {
+                                         final GameObject room) {
         if (initialStoryState.lastActionWas(EssenAction.class)) {
             return false;
         }
@@ -53,7 +53,7 @@ public class EssenAction extends AbstractScAction {
         return raumEnthaeltEtwasEssbares(db, room);
     }
 
-    private static boolean raumEnthaeltEtwasEssbares(final AvDatabase db, final AvRoom room) {
+    private static boolean raumEnthaeltEtwasEssbares(final AvDatabase db, final GameObject room) {
         if (room.is(SCHLOSS_VORHALLE_TISCH_BEIM_FEST) &&
                 db.invisibleDataDao().getInvisible(Invisibles.SCHLOSSFEST).getState()
                         == BEGONNEN) {
@@ -71,7 +71,7 @@ public class EssenAction extends AbstractScAction {
 
     private EssenAction(final AvDatabase db,
                         final StoryState initialStoryState,
-                        final AvRoom room) {
+                        final GameObject room) {
         super(db, initialStoryState);
         this.room = room;
     }

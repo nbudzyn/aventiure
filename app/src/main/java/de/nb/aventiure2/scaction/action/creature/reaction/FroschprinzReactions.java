@@ -5,12 +5,12 @@ import javax.annotation.ParametersAreNonnullByDefault;
 import de.nb.aventiure2.data.database.AvDatabase;
 import de.nb.aventiure2.data.storystate.IPlayerAction;
 import de.nb.aventiure2.data.storystate.StoryState;
+import de.nb.aventiure2.data.world.base.GameObject;
 import de.nb.aventiure2.data.world.entity.base.AbstractEntityData;
 import de.nb.aventiure2.data.world.entity.creature.CreatureData;
 import de.nb.aventiure2.data.world.entity.object.AvObject;
 import de.nb.aventiure2.data.world.entity.object.ObjectData;
 import de.nb.aventiure2.data.world.player.stats.ScStateOfMind;
-import de.nb.aventiure2.data.world.room.AvRoom;
 import de.nb.aventiure2.data.world.time.AvDateTime;
 import de.nb.aventiure2.data.world.time.AvTimeSpan;
 
@@ -48,7 +48,7 @@ class FroschprinzReactions extends AbstractCreatureReactions {
     }
 
     @Override
-    public AvTimeSpan onLeaveRoom(final AvRoom oldRoom, final CreatureData froschprinz,
+    public AvTimeSpan onLeaveRoom(final GameObject oldRoom, final CreatureData froschprinz,
                                   final StoryState currentStoryState) {
         if (froschprinz.hasState(ERWARTET_VON_SC_EINLOESUNG_SEINES_VERSPRECHENS)
                 && oldRoom.is(SCHLOSS_VORHALLE)
@@ -68,7 +68,7 @@ class FroschprinzReactions extends AbstractCreatureReactions {
     }
 
     @Override
-    public AvTimeSpan onEnterRoom(final AvRoom oldRoom, final AvRoom newRoom,
+    public AvTimeSpan onEnterRoom(final GameObject oldRoom, final GameObject newRoom,
                                   final CreatureData froschprinz,
                                   final StoryState currentStoryState) {
         switch (froschprinz.getState()) {
@@ -100,7 +100,7 @@ class FroschprinzReactions extends AbstractCreatureReactions {
     }
 
     @Override
-    public AvTimeSpan onNehmen(final AvRoom room, final CreatureData froschprinzInRoom,
+    public AvTimeSpan onNehmen(final GameObject room, final CreatureData froschprinzInRoom,
                                final AbstractEntityData genommenData,
                                final StoryState currentStoryState) {
         return noTime();
@@ -108,7 +108,7 @@ class FroschprinzReactions extends AbstractCreatureReactions {
 
     @Override
     @ParametersAreNonnullByDefault
-    public AvTimeSpan onEssen(final AvRoom room, final CreatureData froschprinz,
+    public AvTimeSpan onEssen(final GameObject room, final CreatureData froschprinz,
                               final StoryState currentStoryState) {
         if (!room.is(SCHLOSS_VORHALLE_TISCH_BEIM_FEST) ||
                 !db.invisibleDataDao().getInvisible(SCHLOSSFEST)
@@ -136,7 +136,7 @@ class FroschprinzReactions extends AbstractCreatureReactions {
         return noTime();
     }
 
-    private AvTimeSpan froschprinzHuepftAusTascheUndWillMitessen(final AvRoom room,
+    private AvTimeSpan froschprinzHuepftAusTascheUndWillMitessen(final GameObject room,
                                                                  final CreatureData froschprinz) {
         n.add(t(SENTENCE,
                 "Auf einmal ruckelt es unangenehm in deiner Tasche, und eh du dich's versiehst "
@@ -154,7 +154,7 @@ class FroschprinzReactions extends AbstractCreatureReactions {
         return secs(25);
     }
 
-    private AvTimeSpan froschprinzHatHochhebenGeforodertUndWillMitessen(final AvRoom room,
+    private AvTimeSpan froschprinzHatHochhebenGeforodertUndWillMitessen(final GameObject room,
                                                                         final CreatureData froschprinz) {
         n.add(alt(
                 t(PARAGRAPH, "„Heb mich auf den Tisch“, ruft der Frosch, „wie sollen wir "
@@ -176,14 +176,14 @@ class FroschprinzReactions extends AbstractCreatureReactions {
 
     @Override
     @ParametersAreNonnullByDefault
-    public AvTimeSpan onAblegen(final AvRoom room, final CreatureData froschprinzInRoom,
+    public AvTimeSpan onAblegen(final GameObject room, final CreatureData froschprinzInRoom,
                                 final AbstractEntityData abgelegtData,
                                 final StoryState currentStoryState) {
         return noTime();
     }
 
     @Override
-    public AvTimeSpan onHochwerfen(final AvRoom room,
+    public AvTimeSpan onHochwerfen(final GameObject room,
                                    final CreatureData froschprinzCreatureData,
                                    final ObjectData objectData,
                                    final StoryState currentStoryState) {

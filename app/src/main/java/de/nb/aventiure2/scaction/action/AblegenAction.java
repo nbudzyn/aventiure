@@ -8,12 +8,12 @@ import java.util.Collection;
 
 import de.nb.aventiure2.data.database.AvDatabase;
 import de.nb.aventiure2.data.storystate.StoryState;
+import de.nb.aventiure2.data.world.base.GameObject;
 import de.nb.aventiure2.data.world.entity.base.AbstractEntityData;
 import de.nb.aventiure2.data.world.entity.creature.CreatureData;
 import de.nb.aventiure2.data.world.entity.creature.Creatures;
 import de.nb.aventiure2.data.world.entity.object.ObjectData;
 import de.nb.aventiure2.data.world.player.stats.ScStateOfMind;
-import de.nb.aventiure2.data.world.room.AvRoom;
 import de.nb.aventiure2.data.world.time.AvTimeSpan;
 import de.nb.aventiure2.german.base.Nominalphrase;
 import de.nb.aventiure2.german.praedikat.PraedikatMitEinerObjektleerstelle;
@@ -32,17 +32,17 @@ import static de.nb.aventiure2.german.praedikat.VerbSubjObj.HINLEGEN;
  * Der Benutzer legt einen Gegenstand ab.
  */
 public class AblegenAction extends AbstractEntityAction {
-    private final AvRoom room;
+    private final GameObject room;
 
     public static Collection<AblegenAction> buildObjectActions(
-            final AvDatabase db, final StoryState initialStoryState, final AvRoom room,
+            final AvDatabase db, final StoryState initialStoryState, final GameObject room,
             final ObjectData objectData) {
         return ImmutableList.of(new AblegenAction(db, initialStoryState, objectData, room));
     }
 
     public static Collection<AbstractScAction> buildCreatureActions(
             final AvDatabase db,
-            final StoryState initialStoryState, final AvRoom room,
+            final StoryState initialStoryState, final GameObject room,
             final CreatureData creatureData) {
         final ImmutableList.Builder<AbstractScAction> res = ImmutableList.builder();
         if (creatureData.creatureIs(FROSCHPRINZ) &&
@@ -57,7 +57,7 @@ public class AblegenAction extends AbstractEntityAction {
     private AblegenAction(final AvDatabase db,
                           final StoryState initialStoryState,
                           final AbstractEntityData entityData,
-                          final AvRoom room) {
+                          final GameObject room) {
         super(db, initialStoryState, entityData);
         this.room = room;
     }
@@ -184,20 +184,20 @@ public class AblegenAction extends AbstractEntityAction {
                 t(StoryState.StructuralElement.PARAGRAPH,
                         "Du wühlst in deiner Tasche und auf einmal schauert's dich und "
                                 + "der nasse Frosch sitzt in deiner Hand. Schnell "
-                                + room.getLocationMode().getWohin()
+                                + room.getStoringPlace().getLocationMode().getWohin()
                                 + " mit ihm!")
                         .dann()
                         .beendet(PARAGRAPH),
                 t(StoryState.StructuralElement.PARAGRAPH,
                         "Du schüttest deine Tasche aus, bis der Frosch endlich " +
-                                room.getLocationMode().getWohin() +
+                                room.getStoringPlace().getLocationMode().getWohin() +
                                 " fällt. Puh.")
                         .dann()
                         .beendet(PARAGRAPH),
                 t(StoryState.StructuralElement.PARAGRAPH,
                         "Du wühlst in deiner Tasche. Da quakt es erbost, auf einmal "
                                 + "springt der Fosch heraus und direkt "
-                                + room.getLocationMode().getWohin()
+                                + room.getStoringPlace().getLocationMode().getWohin()
                 )
         ));
 

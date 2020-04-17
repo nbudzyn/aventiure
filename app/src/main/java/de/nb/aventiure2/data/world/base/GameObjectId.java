@@ -5,7 +5,7 @@ import androidx.annotation.NonNull;
 import java.util.Objects;
 
 /**
- * ID of an {@link AbstractGameObject}
+ * ID of an {@link GameObject}
  */
 public class GameObjectId {
     private final long value;

@@ -4,6 +4,8 @@ import androidx.annotation.NonNull;
 import androidx.room.Entity;
 import androidx.room.PrimaryKey;
 
+import de.nb.aventiure2.data.world.base.GameObject;
+
 /**
  * Changeable data for a room in the world.
  */
@@ -11,18 +13,18 @@ import androidx.room.PrimaryKey;
 public class RoomData {
     @NonNull
     @PrimaryKey
-    private final AvRoom room;
+    private final GameObject room;
 
     @NonNull
     private final RoomKnown known;
 
-    RoomData(@NonNull final AvRoom room, @NonNull final RoomKnown known) {
+    RoomData(@NonNull final GameObject room, @NonNull final RoomKnown known) {
         this.room = room;
         this.known = known;
     }
 
     @NonNull
-    public AvRoom getRoom() {
+    public GameObject getRoom() {
         return room;
     }
 

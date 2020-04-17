@@ -8,8 +8,8 @@ import java.util.Collection;
 
 import de.nb.aventiure2.data.database.AvDatabase;
 import de.nb.aventiure2.data.storystate.StoryState;
+import de.nb.aventiure2.data.world.base.GameObject;
 import de.nb.aventiure2.data.world.player.stats.ScStateOfMind;
-import de.nb.aventiure2.data.world.room.AvRoom;
 import de.nb.aventiure2.data.world.time.AvTimeSpan;
 import de.nb.aventiure2.scaction.AbstractScAction;
 
@@ -22,11 +22,11 @@ import static de.nb.aventiure2.data.world.time.AvTimeSpan.mins;
  * Der Spielercharakter klettert.
  */
 public class KletternAction extends AbstractScAction {
-    private final AvRoom room;
+    private final GameObject room;
 
     public static Collection<KletternAction> buildActions(
             final AvDatabase db,
-            final StoryState initialStoryState, final AvRoom room) {
+            final StoryState initialStoryState, final GameObject room) {
         final ImmutableList.Builder<KletternAction> res = ImmutableList.builder();
         if (room.is(HINTER_DER_HUETTE)) {
             res.add(new KletternAction(db, initialStoryState, room));
@@ -40,7 +40,7 @@ public class KletternAction extends AbstractScAction {
      */
     private KletternAction(final AvDatabase db,
                            final StoryState initialStoryState,
-                           final AvRoom room) {
+                           final GameObject room) {
         super(db, initialStoryState);
         this.room = room;
     }

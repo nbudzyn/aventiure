@@ -2,10 +2,10 @@ package de.nb.aventiure2.data.world.entity.object;
 
 import androidx.annotation.Nullable;
 
+import de.nb.aventiure2.data.world.base.GameObject;
 import de.nb.aventiure2.data.world.base.GameObjectId;
-import de.nb.aventiure2.data.world.entity.base.AbstractEntity;
 import de.nb.aventiure2.data.world.entity.base.AbstractEntityData;
-import de.nb.aventiure2.data.world.room.AvRoom;
+import de.nb.aventiure2.data.world.entity.base.Entity;
 import de.nb.aventiure2.data.world.room.Rooms;
 import de.nb.aventiure2.german.base.Nominalphrase;
 import de.nb.aventiure2.german.base.NumerusGenus;
@@ -15,7 +15,7 @@ import static de.nb.aventiure2.german.base.Nominalphrase.np;
 /**
  * An object in the world.
  */
-public class AvObject extends AbstractEntity {
+public class AvObject extends Entity {
     // TODO Aus dem, was in den Subklassen on AbstractGameObject noch ist,
     //  components machen. Components werden mit der Game-Object-ID
     //  verknüpft (Schlüssel gemeinsam mit dem Component-Typ)
@@ -35,7 +35,7 @@ public class AvObject extends AbstractEntity {
     /**
      * The initial room where this object can be found.
      */
-    private final AvRoom initialRoom;
+    private final GameObject initialRoom;
 
     public static boolean isObject(final AbstractEntityData entityData,
                                    final GameObjectId id) {
@@ -72,7 +72,7 @@ public class AvObject extends AbstractEntity {
              final String descriptionAtFirstSightNomDatAkk,
              final String normalDescriptionWhenKnownNomDatAkk,
              final String shortDescriptionWhenKnownNomDatAkk,
-             final AvRoom initialRoom) {
+             final GameObject initialRoom) {
         this(id,
                 np(numerusGenus, descriptionAtFirstSightNomDatAkk),
                 np(numerusGenus, normalDescriptionWhenKnownNomDatAkk),
@@ -93,13 +93,13 @@ public class AvObject extends AbstractEntity {
              final Nominalphrase descriptionAtFirstSight,
              final Nominalphrase normalDescriptionWhenKnown,
              final Nominalphrase shortDescriptionWhenKnown,
-             final AvRoom initialRoom) {
+             final GameObject initialRoom) {
         super(id, descriptionAtFirstSight, normalDescriptionWhenKnown,
                 shortDescriptionWhenKnown);
         this.initialRoom = initialRoom;
     }
 
-    public AvRoom getInitialRoom() {
+    public GameObject getInitialRoom() {
         return initialRoom;
     }
 }

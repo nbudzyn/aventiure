@@ -8,8 +8,8 @@ import androidx.room.Query;
 
 import java.util.List;
 
+import de.nb.aventiure2.data.world.base.GameObject;
 import de.nb.aventiure2.data.world.base.GameObjectId;
-import de.nb.aventiure2.data.world.room.AvRoom;
 
 /**
  * Room DAO for {@link CreatureData}s.
@@ -37,12 +37,12 @@ public abstract class CreatureDataDao {
     @Query("UPDATE CreatureData SET known = 1 WHERE creature = :creature")
     public abstract void setKnown(Creature creature);
 
-    public void setRoom(final GameObjectId id, final @Nullable AvRoom room) {
+    public void setRoom(final GameObjectId id, final @Nullable GameObject room) {
         setRoom(Creatures.get(id), room);
     }
 
     @Query("UPDATE CreatureData SET room = :room WHERE creature = :creature")
-    public abstract void setRoom(Creature creature, AvRoom room);
+    public abstract void setRoom(Creature creature, GameObject room);
 
     public CreatureData getCreature(final GameObjectId id) {
         return getCreature(Creatures.get(id));
@@ -52,7 +52,7 @@ public abstract class CreatureDataDao {
     public abstract CreatureData getCreature(Creature creature);
 
     @Query("SELECT * from CreatureData where :room = room")
-    public abstract List<CreatureData> getCreaturesInRoom(AvRoom room);
+    public abstract List<CreatureData> getCreaturesInRoom(GameObject room);
 
     @Query("SELECT * from CreatureData")
     public abstract List<CreatureData> getAll();

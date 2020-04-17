@@ -10,13 +10,13 @@ import de.nb.aventiure2.data.database.AvDatabase;
 import de.nb.aventiure2.data.storystate.StoryState;
 import de.nb.aventiure2.data.storystate.StoryState.StructuralElement;
 import de.nb.aventiure2.data.storystate.StoryStateBuilder;
+import de.nb.aventiure2.data.world.base.GameObject;
 import de.nb.aventiure2.data.world.entity.base.AbstractEntityData;
 import de.nb.aventiure2.data.world.entity.creature.CreatureData;
 import de.nb.aventiure2.data.world.entity.object.ObjectData;
 import de.nb.aventiure2.data.world.invisible.Invisibles;
 import de.nb.aventiure2.data.world.lichtverhaeltnisse.Lichtverhaeltnisse;
 import de.nb.aventiure2.data.world.player.stats.ScStateOfMind;
-import de.nb.aventiure2.data.world.room.AvRoom;
 import de.nb.aventiure2.data.world.room.RoomKnown;
 import de.nb.aventiure2.data.world.time.AvTimeSpan;
 import de.nb.aventiure2.german.base.AbstractDescription;
@@ -61,7 +61,7 @@ public class BewegenAction extends AbstractScAction {
         SEVERAL_WAYS
     }
 
-    private final AvRoom oldRoom;
+    private final GameObject oldRoom;
 
     private final RoomConnection roomConnection;
     private final NumberOfPossibilities numberOfPossibilities;
@@ -69,7 +69,7 @@ public class BewegenAction extends AbstractScAction {
     public static ImmutableList<AbstractScAction> buildActions(
             final AvDatabase db,
             final StoryState currentStoryState,
-            final AvRoom room) {
+            final GameObject room) {
         final ImmutableList.Builder<AbstractScAction> res = ImmutableList.builder();
 
         final List<RoomConnection> roomConnections =
@@ -102,7 +102,7 @@ public class BewegenAction extends AbstractScAction {
      */
     private BewegenAction(final AvDatabase db,
                           final StoryState initialStoryState,
-                          final AvRoom oldRoom,
+                          final GameObject oldRoom,
                           final RoomConnection roomConnection,
                           final NumberOfPossibilities numberOfPossibilities) {
         super(db, initialStoryState);
@@ -169,7 +169,7 @@ public class BewegenAction extends AbstractScAction {
     }
 
     private boolean scWirdMitEssenKonfrontiert() {
-        final AvRoom newRoom = roomConnection.getTo();
+        final GameObject newRoom = roomConnection.getTo();
 
         if (db.invisibleDataDao()
                 .getInvisible(Invisibles.SCHLOSSFEST).getState() == BEGONNEN) {
@@ -385,7 +385,8 @@ public class BewegenAction extends AbstractScAction {
      */
     @NonNull
     private String buildObjectInRoomDescriptionPrefix(final int numberOfObjects) {
-        final String res = capitalize(roomConnection.getTo().getLocationMode().getWo());
+        final String res =
+                capitalize(roomConnection.getTo().getStoringPlace().getLocationMode().getWo());
 
         if (numberOfObjects == 1) {
             return res + " liegt";

@@ -7,9 +7,9 @@ import com.google.common.collect.ImmutableList;
 import java.util.List;
 
 import de.nb.aventiure2.data.database.AvDatabase;
+import de.nb.aventiure2.data.world.base.GameObject;
 import de.nb.aventiure2.data.world.invisible.Invisibles;
 import de.nb.aventiure2.data.world.lichtverhaeltnisse.Lichtverhaeltnisse;
-import de.nb.aventiure2.data.world.room.AvRoom;
 import de.nb.aventiure2.data.world.room.RoomKnown;
 import de.nb.aventiure2.data.world.time.AvTimeSpan;
 import de.nb.aventiure2.data.world.time.Tageszeit;
@@ -39,9 +39,9 @@ import static de.nb.aventiure2.scaction.action.room.connection.RoomConnection.co
 
 class RoomConnectionBuilder {
     private final AvDatabase db;
-    private final AvRoom from;
+    private final GameObject from;
 
-    RoomConnectionBuilder(final AvDatabase db, final AvRoom from) {
+    RoomConnectionBuilder(final AvDatabase db, final GameObject from) {
         this.db = db;
         this.from = from;
     }

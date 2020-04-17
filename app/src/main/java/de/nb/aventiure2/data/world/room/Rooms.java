@@ -4,6 +4,7 @@ import com.google.common.collect.ImmutableList;
 
 import java.util.List;
 
+import de.nb.aventiure2.data.world.base.GameObject;
 import de.nb.aventiure2.data.world.base.GameObjectId;
 
 /**
@@ -23,28 +24,33 @@ public class Rooms {
     public static final GameObjectId UNTEN_IM_BRUNNEN = new GameObjectId(30_010);
     public static final GameObjectId WALDWILDNIS_HINTER_DEM_BRUNNEN = new GameObjectId(30_011);
 
-    public static final List<AvRoom> ALL =
-            ImmutableList.of(
-                    new AvRoom(SCHLOSS_VORHALLE, ObjectLocationMode.EIN_TISCH),
-                    new AvRoom(SCHLOSS_VORHALLE_TISCH_BEIM_FEST, ObjectLocationMode.HOLZTISCH),
-                    new AvRoom(DRAUSSEN_VOR_DEM_SCHLOSS),
-                    new AvRoom(IM_WALD_NAHE_DEM_SCHLOSS, ObjectLocationMode.WALDWEG),
-                    new AvRoom(ABZWEIG_IM_WALD, ObjectLocationMode.WALDWEG),
-                    new AvRoom(VOR_DER_HUETTE_IM_WALD, ObjectLocationMode.VOR_DER_HUETTE),
-                    new AvRoom(HUETTE_IM_WALD, ObjectLocationMode.HOLZTISCH),
-                    new AvRoom(BETT_IN_DER_HUETTE_IM_WALD, ObjectLocationMode.NEBEN_DIR_IM_BETT),
-                    new AvRoom(HINTER_DER_HUETTE, ObjectLocationMode.UNTER_DEM_BAUM),
-                    new AvRoom(IM_WALD_BEIM_BRUNNEN, ObjectLocationMode.GRAS_NEBEN_DEM_BRUNNEN),
-                    new AvRoom(UNTEN_IM_BRUNNEN, ObjectLocationMode.AM_GRUNDE_DES_BRUNNENS),
-                    new AvRoom(WALDWILDNIS_HINTER_DEM_BRUNNEN,
-                            ObjectLocationMode.MATSCHIGER_WALDBODENN)
-            );
+    public static final List<GameObject> ALL;
+
+    static {
+        final RoomFactory f = new RoomFactory();
+
+        ALL = ImmutableList.of(
+                f.create(SCHLOSS_VORHALLE, ObjectLocationMode.EIN_TISCH),
+                f.create(SCHLOSS_VORHALLE_TISCH_BEIM_FEST, ObjectLocationMode.HOLZTISCH),
+                f.create(DRAUSSEN_VOR_DEM_SCHLOSS),
+                f.create(IM_WALD_NAHE_DEM_SCHLOSS, ObjectLocationMode.WALDWEG),
+                f.create(ABZWEIG_IM_WALD, ObjectLocationMode.WALDWEG),
+                f.create(VOR_DER_HUETTE_IM_WALD, ObjectLocationMode.VOR_DER_HUETTE),
+                f.create(HUETTE_IM_WALD, ObjectLocationMode.HOLZTISCH),
+                f.create(BETT_IN_DER_HUETTE_IM_WALD, ObjectLocationMode.NEBEN_DIR_IM_BETT),
+                f.create(HINTER_DER_HUETTE, ObjectLocationMode.UNTER_DEM_BAUM),
+                f.create(IM_WALD_BEIM_BRUNNEN, ObjectLocationMode.GRAS_NEBEN_DEM_BRUNNEN),
+                f.create(UNTEN_IM_BRUNNEN, ObjectLocationMode.AM_GRUNDE_DES_BRUNNENS),
+                f.create(WALDWILDNIS_HINTER_DEM_BRUNNEN,
+                        ObjectLocationMode.MATSCHIGER_WALDBODENN)
+        );
+    }
 
     private Rooms() {
     }
 
-    public static AvRoom get(final GameObjectId id) {
-        for (final AvRoom room : ALL) {
+    public static GameObject get(final GameObjectId id) {
+        for (final GameObject room : ALL) {
             if (room.is(id)) {
                 return room;
             }

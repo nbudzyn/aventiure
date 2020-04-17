@@ -1,8 +1,8 @@
 package de.nb.aventiure2.scaction.action.room.connection;
 
+import de.nb.aventiure2.data.world.base.GameObject;
 import de.nb.aventiure2.data.world.base.GameObjectId;
 import de.nb.aventiure2.data.world.lichtverhaeltnisse.Lichtverhaeltnisse;
-import de.nb.aventiure2.data.world.room.AvRoom;
 import de.nb.aventiure2.data.world.room.RoomKnown;
 import de.nb.aventiure2.data.world.room.Rooms;
 import de.nb.aventiure2.german.base.AbstractDescription;
@@ -32,7 +32,7 @@ public class RoomConnection {
                                            Lichtverhaeltnisse lichtverhaeltnisseInNewRoom);
     }
 
-    private final AvRoom to;
+    private final GameObject to;
     private final String actionName;
     private final RoomConnection.DescriptionProvider descriptionProvider;
 
@@ -86,7 +86,7 @@ public class RoomConnection {
         this(Rooms.get(to), actionName, descriptionProvider);
     }
 
-    private RoomConnection(final AvRoom to,
+    private RoomConnection(final GameObject to,
                            final String actionName,
                            final DescriptionProvider descriptionProvider) {
         this.to = to;
@@ -98,7 +98,7 @@ public class RoomConnection {
         return actionName;
     }
 
-    public AvRoom getTo() {
+    public GameObject getTo() {
         return to;
     }
 

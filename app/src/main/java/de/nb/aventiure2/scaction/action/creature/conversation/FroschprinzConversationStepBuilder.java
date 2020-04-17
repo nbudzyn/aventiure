@@ -10,11 +10,11 @@ import java.util.Map;
 import de.nb.aventiure2.data.database.AvDatabase;
 import de.nb.aventiure2.data.storystate.IPlayerAction;
 import de.nb.aventiure2.data.storystate.StoryState;
+import de.nb.aventiure2.data.world.base.GameObject;
 import de.nb.aventiure2.data.world.base.GameObjectId;
 import de.nb.aventiure2.data.world.entity.creature.CreatureData;
 import de.nb.aventiure2.data.world.entity.creature.Creatures;
 import de.nb.aventiure2.data.world.entity.object.ObjectData;
-import de.nb.aventiure2.data.world.room.AvRoom;
 import de.nb.aventiure2.data.world.time.AvTimeSpan;
 import de.nb.aventiure2.german.base.DeklinierbarePhrase;
 import de.nb.aventiure2.german.base.Nominalphrase;
@@ -52,7 +52,7 @@ class FroschprinzConversationStepBuilder extends AbstractCreatureConversationSte
 
     FroschprinzConversationStepBuilder(final AvDatabase db, final StoryState initialStoryState,
                                        final Class<? extends IPlayerAction> currentActionClass,
-                                       final AvRoom room,
+                                       final GameObject room,
                                        final Map<GameObjectId, ObjectData> allObjectsById,
                                        @NonNull final CreatureData creatureData) {
         super(db, initialStoryState, currentActionClass, room, allObjectsById, creatureData);

@@ -7,11 +7,11 @@ import androidx.room.PrimaryKey;
 
 import com.google.common.base.Preconditions;
 
+import de.nb.aventiure2.data.world.base.GameObject;
 import de.nb.aventiure2.data.world.base.GameObjectId;
 import de.nb.aventiure2.data.world.entity.creature.Creature;
 import de.nb.aventiure2.data.world.entity.creature.Creatures;
 import de.nb.aventiure2.data.world.entity.object.AvObject;
-import de.nb.aventiure2.data.world.room.AvRoom;
 
 /**
  * The text of the story, together with state relevant for going on with the story. Only things that have already happened.
@@ -82,7 +82,7 @@ public class StoryState {
      * The room the user was in before the last action.
      */
     @NonNull
-    private final AvRoom lastRoom;
+    private final GameObject lastRoom;
 
     private final boolean dann;
 
@@ -107,7 +107,7 @@ public class StoryState {
                final boolean dann,
                @Nullable final Creature talkingTo,
                @Nullable final AvObject lastObject,
-               @NonNull final AvRoom lastRoom) {
+               @NonNull final GameObject lastRoom) {
         this(lastAction == null ? null : lastAction.getClass().getCanonicalName(),
                 startsNew,
                 endsThis,
@@ -128,7 +128,7 @@ public class StoryState {
                final boolean dann,
                @Nullable final Creature talkingTo,
                @Nullable final AvObject lastObject,
-               @NonNull final AvRoom lastRoom) {
+               @NonNull final GameObject lastRoom) {
         Preconditions.checkArgument(!allowsAdditionalDuSatzreihengliedOhneSubjekt
                         || endsThis == StructuralElement.WORD,
                 "!allowsAdditionalDuSatzreihengliedOhneSubjekt "
@@ -197,12 +197,12 @@ public class StoryState {
         return lastObject;
     }
 
-    public boolean lastRoomWas(final AvRoom room) {
+    public boolean lastRoomWas(final GameObject room) {
         return room.equals(lastRoom);
     }
 
     @NonNull
-    public AvRoom getLastRoom() {
+    public GameObject getLastRoom() {
         return lastRoom;
     }
 

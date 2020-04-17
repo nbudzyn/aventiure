@@ -4,7 +4,7 @@ import java.util.List;
 import java.util.Objects;
 
 /**
- * Data for an {@link AbstractGameObject} referenced by its {@link GameObjectId}.
+ * Data for an {@link GameObject} referenced by its {@link GameObjectId}.
  */
 public abstract class AbstractGameData {
     private GameObjectId gameObjectId;
