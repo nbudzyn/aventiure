@@ -11,6 +11,7 @@ import de.nb.aventiure2.data.world.base.GameObjectId;
 import de.nb.aventiure2.data.world.entity.creature.Creature;
 import de.nb.aventiure2.data.world.entity.object.AvObject;
 import de.nb.aventiure2.data.world.room.AvRoom;
+import de.nb.aventiure2.data.world.room.Rooms;
 
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
@@ -123,7 +124,7 @@ public class StoryStateBuilder {
     }
 
     public StoryStateBuilder letzterRaum(final GameObjectId lastRoom) {
-        return letzterRaum(AvRoom.get(lastRoom));
+        return letzterRaum(Rooms.get(lastRoom));
     }
 
     public StoryStateBuilder letzterRaum(final AvRoom lastRoom) {

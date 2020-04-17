@@ -3,6 +3,7 @@ package de.nb.aventiure2.data.world.entity.creature;
 import de.nb.aventiure2.data.world.base.GameObjectId;
 import de.nb.aventiure2.data.world.entity.base.AbstractEntity;
 import de.nb.aventiure2.data.world.room.AvRoom;
+import de.nb.aventiure2.data.world.room.Rooms;
 import de.nb.aventiure2.german.base.Nominalphrase;
 
 /**
@@ -56,7 +57,7 @@ public class Creature extends AbstractEntity {
              final GameObjectId initialRoom,
              final CreatureStateList states) {
         this(id, descriptionAtFirstSight, normalDescriptionWhenKnown,
-                shortDescriptionWhenKnown, AvRoom.get(initialRoom), states);
+                shortDescriptionWhenKnown, Rooms.get(initialRoom), states);
     }
 
     /**

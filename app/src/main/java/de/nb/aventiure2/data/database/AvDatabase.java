@@ -59,7 +59,7 @@ import de.nb.aventiure2.data.world.time.AvNowDao;
 import static de.nb.aventiure2.data.storystate.StoryStateBuilder.t;
 import static de.nb.aventiure2.data.world.entity.object.AvObject.GOLDENE_KUGEL;
 import static de.nb.aventiure2.data.world.player.stats.ScHunger.SATT;
-import static de.nb.aventiure2.data.world.room.AvRoom.SCHLOSS_VORHALLE;
+import static de.nb.aventiure2.data.world.room.Rooms.SCHLOSS_VORHALLE;
 import static de.nb.aventiure2.data.world.time.AvTime.oClock;
 
 @Database(entities = {

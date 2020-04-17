@@ -10,10 +10,11 @@ import de.nb.aventiure2.data.world.base.GameObjectId;
 import de.nb.aventiure2.data.world.entity.base.AbstractEntity;
 import de.nb.aventiure2.data.world.entity.base.AbstractEntityData;
 import de.nb.aventiure2.data.world.room.AvRoom;
+import de.nb.aventiure2.data.world.room.Rooms;
 import de.nb.aventiure2.german.base.Nominalphrase;
 import de.nb.aventiure2.german.base.NumerusGenus;
 
-import static de.nb.aventiure2.data.world.room.AvRoom.SCHLOSS_VORHALLE;
+import static de.nb.aventiure2.data.world.room.Rooms.SCHLOSS_VORHALLE;
 import static de.nb.aventiure2.german.base.Nominalphrase.np;
 import static de.nb.aventiure2.german.base.NumerusGenus.F;
 
@@ -98,7 +99,7 @@ public class AvObject extends AbstractEntity {
              final GameObjectId initialRoom) {
         this(id, numerusGenus, descriptionAtFirstSightNomDatAkk,
                 normalDescriptionWhenKnownNomDatAkk, shortDescriptionWhenKnownNomDatAkk,
-                AvRoom.get(initialRoom));
+                Rooms.get(initialRoom));
     }
 
     AvObject(final GameObjectId id,
@@ -120,7 +121,7 @@ public class AvObject extends AbstractEntity {
              final Nominalphrase shortDescriptionWhenKnown,
              final GameObjectId initialRoom) {
         this(id, descriptionAtFirstSight, normalDescriptionWhenKnown, shortDescriptionWhenKnown,
-                AvRoom.get(initialRoom));
+                Rooms.get(initialRoom));
     }
 
     AvObject(final GameObjectId id,

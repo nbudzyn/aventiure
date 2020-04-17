@@ -16,7 +16,7 @@ import de.nb.aventiure2.data.world.base.GameObjectId;
 @Dao
 public abstract class RoomDao {
     public void setKnown(final GameObjectId room, final RoomKnown known) {
-        setKnown(AvRoom.get(room), known);
+        setKnown(Rooms.get(room), known);
     }
 
     public void setKnown(final AvRoom room, final RoomKnown known) {
@@ -25,7 +25,7 @@ public abstract class RoomDao {
 
     public @Nonnull
     RoomKnown getKnown(final GameObjectId room) {
-        return getKnown(AvRoom.get(room));
+        return getKnown(Rooms.get(room));
     }
 
     public @Nonnull

@@ -11,8 +11,9 @@ import java.util.List;
 
 import de.nb.aventiure2.data.world.base.GameObjectId;
 import de.nb.aventiure2.data.world.room.AvRoom;
+import de.nb.aventiure2.data.world.room.Rooms;
 
-import static de.nb.aventiure2.data.world.room.AvRoom.UNTEN_IM_BRUNNEN;
+import static de.nb.aventiure2.data.world.room.Rooms.UNTEN_IM_BRUNNEN;
 
 /**
  * Room DAO for {@link ObjectData}s.
@@ -41,7 +42,7 @@ public abstract class ObjectDataDao {
     }
 
     public void setRoom(final AvObject object, final GameObjectId room) {
-        setRoom(object, AvRoom.get(room));
+        setRoom(object, Rooms.get(room));
     }
 
     @Query("UPDATE ObjectData SET room = :room WHERE object = :object")

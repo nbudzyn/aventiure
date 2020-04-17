@@ -19,7 +19,7 @@ import static de.nb.aventiure2.data.storystate.StoryState.StructuralElement.PARA
 import static de.nb.aventiure2.data.storystate.StoryState.StructuralElement.SENTENCE;
 import static de.nb.aventiure2.data.world.player.stats.ScStateOfMind.ERSCHOEPFT;
 import static de.nb.aventiure2.data.world.player.stats.ScStateOfMind.NEUTRAL;
-import static de.nb.aventiure2.data.world.room.AvRoom.BETT_IN_DER_HUETTE_IM_WALD;
+import static de.nb.aventiure2.data.world.room.Rooms.BETT_IN_DER_HUETTE_IM_WALD;
 import static de.nb.aventiure2.data.world.time.AvTime.oClock;
 import static de.nb.aventiure2.data.world.time.AvTimeSpan.hours;
 import static de.nb.aventiure2.data.world.time.AvTimeSpan.mins;

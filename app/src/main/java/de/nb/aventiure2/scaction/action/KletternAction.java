@@ -15,7 +15,7 @@ import de.nb.aventiure2.scaction.AbstractScAction;
 
 import static de.nb.aventiure2.data.storystate.StoryState.StructuralElement.PARAGRAPH;
 import static de.nb.aventiure2.data.world.lichtverhaeltnisse.Lichtverhaeltnisse.DUNKEL;
-import static de.nb.aventiure2.data.world.room.AvRoom.HINTER_DER_HUETTE;
+import static de.nb.aventiure2.data.world.room.Rooms.HINTER_DER_HUETTE;
 import static de.nb.aventiure2.data.world.time.AvTimeSpan.mins;
 
 /**

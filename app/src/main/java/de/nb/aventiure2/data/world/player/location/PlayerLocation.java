@@ -6,6 +6,7 @@ import androidx.room.PrimaryKey;
 
 import de.nb.aventiure2.data.world.base.GameObjectId;
 import de.nb.aventiure2.data.world.room.AvRoom;
+import de.nb.aventiure2.data.world.room.Rooms;
 
 /**
  * The player character's location in the world.
@@ -17,7 +18,7 @@ public class PlayerLocation {
     private final AvRoom room;
 
     PlayerLocation(@NonNull final GameObjectId room) {
-        this(AvRoom.get(room));
+        this(Rooms.get(room));
     }
 
     PlayerLocation(@NonNull final AvRoom room) {

@@ -10,7 +10,7 @@ public class AvRoomConverters {
         if (aLong == null) {
             return null;
         }
-        return AvRoom.get(new GameObjectId(aLong));
+        return Rooms.get(new GameObjectId(aLong));
     }
 
     @TypeConverter

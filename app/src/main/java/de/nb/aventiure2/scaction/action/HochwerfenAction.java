@@ -28,7 +28,7 @@ import static de.nb.aventiure2.data.world.lichtverhaeltnisse.Lichtverhaeltnisse.
 import static de.nb.aventiure2.data.world.lichtverhaeltnisse.Lichtverhaeltnisse.HELL;
 import static de.nb.aventiure2.data.world.player.stats.ScStateOfMind.ETWAS_GEKNICKT;
 import static de.nb.aventiure2.data.world.player.stats.ScStateOfMind.UNTROESTLICH;
-import static de.nb.aventiure2.data.world.room.AvRoom.IM_WALD_BEIM_BRUNNEN;
+import static de.nb.aventiure2.data.world.room.Rooms.IM_WALD_BEIM_BRUNNEN;
 import static de.nb.aventiure2.data.world.time.AvTimeSpan.noTime;
 import static de.nb.aventiure2.data.world.time.AvTimeSpan.secs;
 import static de.nb.aventiure2.german.base.DuDescription.du;

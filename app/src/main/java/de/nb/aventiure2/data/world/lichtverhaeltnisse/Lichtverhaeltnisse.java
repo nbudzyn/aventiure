@@ -5,8 +5,8 @@ import org.jetbrains.annotations.Contract;
 import de.nb.aventiure2.data.world.base.GameObjectId;
 import de.nb.aventiure2.data.world.time.Tageszeit;
 
-import static de.nb.aventiure2.data.world.room.AvRoom.SCHLOSS_VORHALLE;
-import static de.nb.aventiure2.data.world.room.AvRoom.SCHLOSS_VORHALLE_TISCH_BEIM_FEST;
+import static de.nb.aventiure2.data.world.room.Rooms.SCHLOSS_VORHALLE;
+import static de.nb.aventiure2.data.world.room.Rooms.SCHLOSS_VORHALLE_TISCH_BEIM_FEST;
 import static de.nb.aventiure2.data.world.time.Tageszeit.NACHTS;
 
 public enum Lichtverhaeltnisse {

@@ -4,6 +4,7 @@ import de.nb.aventiure2.data.world.base.GameObjectId;
 import de.nb.aventiure2.data.world.lichtverhaeltnisse.Lichtverhaeltnisse;
 import de.nb.aventiure2.data.world.room.AvRoom;
 import de.nb.aventiure2.data.world.room.RoomKnown;
+import de.nb.aventiure2.data.world.room.Rooms;
 import de.nb.aventiure2.german.base.AbstractDescription;
 
 import static de.nb.aventiure2.data.world.lichtverhaeltnisse.Lichtverhaeltnisse.DUNKEL;
@@ -82,7 +83,7 @@ public class RoomConnection {
     private RoomConnection(final GameObjectId to,
                            final String actionName,
                            final DescriptionProvider descriptionProvider) {
-        this(AvRoom.get(to), actionName, descriptionProvider);
+        this(Rooms.get(to), actionName, descriptionProvider);
     }
 
     private RoomConnection(final AvRoom to,
