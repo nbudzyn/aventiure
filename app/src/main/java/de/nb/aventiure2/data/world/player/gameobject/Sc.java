@@ -7,7 +7,9 @@ import de.nb.aventiure2.data.world.base.GameObjectId;
  * Der vom Spieler gesteuerte Charakter.
  */
 public class Sc extends AbstractGameObject {
+    public static GameObjectId SPIELER_CHARACTER = new GameObjectId(40_000);
+
     public Sc() {
-        super(new GameObjectId(1));
+        super(SPIELER_CHARACTER);
     }
 }
