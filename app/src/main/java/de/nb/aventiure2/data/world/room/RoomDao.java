@@ -13,8 +13,17 @@ import javax.annotation.Nonnull;
  */
 @Dao
 public abstract class RoomDao {
+    public void setKnown(final AvRoom.Key room, final RoomKnown known) {
+        setKnown(AvRoom.get(room), known);
+    }
+
     public void setKnown(final AvRoom room, final RoomKnown known) {
         insert(new RoomData(room, known));
+    }
+
+    public @Nonnull
+    RoomKnown getKnown(final AvRoom.Key room) {
+        return getKnown(AvRoom.get(room));
     }
 
     public @Nonnull

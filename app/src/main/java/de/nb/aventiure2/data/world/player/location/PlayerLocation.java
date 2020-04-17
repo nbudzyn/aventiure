@@ -15,6 +15,10 @@ public class PlayerLocation {
     @NonNull
     private final AvRoom room;
 
+    PlayerLocation(@NonNull final AvRoom.Key room) {
+        this(AvRoom.get(room));
+    }
+
     PlayerLocation(@NonNull final AvRoom room) {
         this.room = room;
     }

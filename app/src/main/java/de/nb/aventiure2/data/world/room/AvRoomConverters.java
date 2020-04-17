@@ -8,7 +8,7 @@ public class AvRoomConverters {
         if (string == null) {
             return null;
         }
-        return AvRoom.valueOf(string);
+        return AvRoom.get(AvRoom.Key.valueOf(string));
     }
 
     @TypeConverter
@@ -17,6 +17,6 @@ public class AvRoomConverters {
             return null;
         }
 
-        return room.name();
+        return room.getKey().name();
     }
 }

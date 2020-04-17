@@ -71,6 +71,21 @@ public class Creature extends AbstractEntity {
              final Nominalphrase descriptionAtFirstSight,
              final Nominalphrase normalDescriptionWhenKnown,
              final Nominalphrase shortDescriptionWhenKnown,
+             final AvRoom.Key initialRoom,
+             final CreatureStateList states) {
+        this(key, descriptionAtFirstSight, normalDescriptionWhenKnown,
+                shortDescriptionWhenKnown, AvRoom.get(initialRoom), states);
+    }
+
+    /**
+     * Constructor for a creature.
+     *
+     * @param states The first state is the initial state.
+     */
+    Creature(final Creature.Key key,
+             final Nominalphrase descriptionAtFirstSight,
+             final Nominalphrase normalDescriptionWhenKnown,
+             final Nominalphrase shortDescriptionWhenKnown,
              final AvRoom initialRoom,
              final CreatureStateList states) {
         super(key.getGameObjectId(), descriptionAtFirstSight, normalDescriptionWhenKnown,

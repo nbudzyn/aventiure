@@ -45,7 +45,6 @@ import de.nb.aventiure2.data.world.player.stats.ScStateOfMind;
 import de.nb.aventiure2.data.world.player.stats.ScStateOfMindConverters;
 import de.nb.aventiure2.data.world.player.stats.ScStats;
 import de.nb.aventiure2.data.world.player.stats.ScStatsDao;
-import de.nb.aventiure2.data.world.room.AvRoom;
 import de.nb.aventiure2.data.world.room.AvRoomConverters;
 import de.nb.aventiure2.data.world.room.RoomDao;
 import de.nb.aventiure2.data.world.room.RoomData;
@@ -59,6 +58,7 @@ import de.nb.aventiure2.data.world.time.AvNowDao;
 import static de.nb.aventiure2.data.storystate.StoryStateBuilder.t;
 import static de.nb.aventiure2.data.world.entity.object.AvObject.Key.GOLDENE_KUGEL;
 import static de.nb.aventiure2.data.world.player.stats.ScHunger.SATT;
+import static de.nb.aventiure2.data.world.room.AvRoom.Key.SCHLOSS_VORHALLE;
 import static de.nb.aventiure2.data.world.time.AvTime.oClock;
 
 @Database(entities = {
@@ -137,10 +137,10 @@ public abstract class AvDatabase extends RoomDatabase {
                                 ScStateOfMind.NEUTRAL, SATT,
                                 new AvDateTime(1, oClock(8))));
 
-                        INSTANCE.playerLocationDao().setRoom(AvRoom.SCHLOSS_VORHALLE);
+                        INSTANCE.playerLocationDao().setRoom(SCHLOSS_VORHALLE);
                         INSTANCE.storyStateDao().add(buildInitialStoryState());
                         INSTANCE.roomDao()
-                                .setKnown(AvRoom.SCHLOSS_VORHALLE, RoomKnown.KNOWN_FROM_LIGHT);
+                                .setKnown(SCHLOSS_VORHALLE, RoomKnown.KNOWN_FROM_LIGHT);
                         INSTANCE.objectDataDao().setKnown(GOLDENE_KUGEL);
                     }));
         }
@@ -163,7 +163,7 @@ public abstract class AvDatabase extends RoomDatabase {
         return t((IPlayerAction) null,
                 StructuralElement.WORD,
                 res.toString())
-                .letzterRaum(AvRoom.SCHLOSS_VORHALLE);
+                .letzterRaum(SCHLOSS_VORHALLE);
     }
 
     /**

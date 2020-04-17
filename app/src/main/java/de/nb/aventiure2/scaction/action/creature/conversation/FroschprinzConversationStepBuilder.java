@@ -30,6 +30,7 @@ import static de.nb.aventiure2.data.world.entity.creature.CreatureState.HAT_NACH
 import static de.nb.aventiure2.data.world.entity.object.ObjectData.filterInDenBrunnenGefallen;
 import static de.nb.aventiure2.data.world.entity.object.ObjectData.getDescriptionSingleOrCollective;
 import static de.nb.aventiure2.data.world.player.stats.ScStateOfMind.VOLLER_FREUDE;
+import static de.nb.aventiure2.data.world.room.AvRoom.Key.IM_WALD_BEIM_BRUNNEN;
 import static de.nb.aventiure2.data.world.time.AvTimeSpan.noTime;
 import static de.nb.aventiure2.data.world.time.AvTimeSpan.secs;
 import static de.nb.aventiure2.german.base.GermanUtil.capitalize;
@@ -372,7 +373,7 @@ class FroschprinzConversationStepBuilder extends AbstractCreatureConversationSte
         n.add(t(PARAGRAPH,
                 "Der Frosch, als er die Zusage erhalten hat,"));
 
-        if (room != AvRoom.IM_WALD_BEIM_BRUNNEN) {
+        if (room.getKey() != IM_WALD_BEIM_BRUNNEN) {
             n.add(t(WORD, "hüpft er sogleich davon")
                     .imGespraechMit(null)
                     .beendet(PARAGRAPH));

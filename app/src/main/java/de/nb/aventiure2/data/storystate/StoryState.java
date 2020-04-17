@@ -196,7 +196,7 @@ public class StoryState {
     }
 
     public boolean lastRoomWas(final AvRoom room) {
-        return room == lastRoom;
+        return room.equals(lastRoom);
     }
 
     @NonNull

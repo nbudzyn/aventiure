@@ -15,6 +15,7 @@ import de.nb.aventiure2.scaction.AbstractScAction;
 
 import static de.nb.aventiure2.data.storystate.StoryState.StructuralElement.PARAGRAPH;
 import static de.nb.aventiure2.data.world.lichtverhaeltnisse.Lichtverhaeltnisse.DUNKEL;
+import static de.nb.aventiure2.data.world.room.AvRoom.Key.HINTER_DER_HUETTE;
 import static de.nb.aventiure2.data.world.time.AvTimeSpan.mins;
 
 /**
@@ -27,7 +28,7 @@ public class KletternAction extends AbstractScAction {
             final AvDatabase db,
             final StoryState initialStoryState, final AvRoom room) {
         final ImmutableList.Builder<KletternAction> res = ImmutableList.builder();
-        if (room == AvRoom.HINTER_DER_HUETTE) {
+        if (room.getKey() == HINTER_DER_HUETTE) {
             res.add(new KletternAction(db, initialStoryState, room));
         }
 
@@ -52,7 +53,7 @@ public class KletternAction extends AbstractScAction {
     @Override
     @NonNull
     public String getName() {
-        switch (room) {
+        switch (room.getKey()) {
             case HINTER_DER_HUETTE:
                 return "Auf den Baum klettern";
         }
@@ -62,7 +63,7 @@ public class KletternAction extends AbstractScAction {
 
     @Override
     public AvTimeSpan narrateAndDo() {
-        switch (room) {
+        switch (room.getKey()) {
             case HINTER_DER_HUETTE:
                 return narrateAndDoBaumHinterHuette();
         }

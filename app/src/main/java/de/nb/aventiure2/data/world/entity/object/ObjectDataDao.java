@@ -11,6 +11,8 @@ import java.util.List;
 
 import de.nb.aventiure2.data.world.room.AvRoom;
 
+import static de.nb.aventiure2.data.world.room.AvRoom.Key.UNTEN_IM_BRUNNEN;
+
 /**
  * Room DAO for {@link ObjectData}s.
  */
@@ -33,8 +35,12 @@ public abstract class ObjectDataDao {
         setDemSCInDenBrunnenGefallenInternal(object, demSCInDenBrunnenGefallen);
 
         if (demSCInDenBrunnenGefallen) {
-            setRoom(object, AvRoom.UNTEN_IM_BRUNNEN);
+            setRoom(object, UNTEN_IM_BRUNNEN);
         }
+    }
+
+    public void setRoom(final AvObject object, final AvRoom.Key room) {
+        setRoom(object, AvRoom.get(room));
     }
 
     @Query("UPDATE ObjectData SET room = :room WHERE object = :object")

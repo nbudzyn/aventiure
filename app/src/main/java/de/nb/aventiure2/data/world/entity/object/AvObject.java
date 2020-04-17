@@ -14,6 +14,7 @@ import de.nb.aventiure2.german.base.Nominalphrase;
 import de.nb.aventiure2.german.base.NumerusGenus;
 
 import static de.nb.aventiure2.data.world.entity.object.AvObject.Key.GOLDENE_KUGEL;
+import static de.nb.aventiure2.data.world.room.AvRoom.Key.SCHLOSS_VORHALLE;
 import static de.nb.aventiure2.german.base.Nominalphrase.np;
 import static de.nb.aventiure2.german.base.NumerusGenus.F;
 
@@ -64,7 +65,7 @@ public class AvObject extends AbstractEntity {
                                     "einer goldenen Kugel"),
                             np(F, "die goldene Kugel", "der goldenen Kugel"),
                             np(F, "die Kugel", "der Kugel"),
-                            AvRoom.SCHLOSS_VORHALLE)
+                            SCHLOSS_VORHALLE)
                     // STORY Die goldene Kugel kann verloren gehen, zum Beispiel wenn man sie im
                     //  Sumpf ablegt. Dann gibt es eine art Reset und eine ähnliche goldene
                     //  Kugel erscheint wieder im Schloss. Der Text dort sagt so dann etwas wie
@@ -113,12 +114,32 @@ public class AvObject extends AbstractEntity {
              final String descriptionAtFirstSightNomDatAkk,
              final String normalDescriptionWhenKnownNomDatAkk,
              final String shortDescriptionWhenKnownNomDatAkk,
+             final AvRoom.Key initialRoom) {
+        this(key, numerusGenus, descriptionAtFirstSightNomDatAkk,
+                normalDescriptionWhenKnownNomDatAkk, shortDescriptionWhenKnownNomDatAkk,
+                AvRoom.get(initialRoom));
+    }
+
+    AvObject(final Key key,
+             final NumerusGenus numerusGenus,
+             final String descriptionAtFirstSightNomDatAkk,
+             final String normalDescriptionWhenKnownNomDatAkk,
+             final String shortDescriptionWhenKnownNomDatAkk,
              final AvRoom initialRoom) {
         this(key,
                 np(numerusGenus, descriptionAtFirstSightNomDatAkk),
                 np(numerusGenus, normalDescriptionWhenKnownNomDatAkk),
                 np(numerusGenus, shortDescriptionWhenKnownNomDatAkk),
                 initialRoom);
+    }
+
+    AvObject(final Key key,
+             final Nominalphrase descriptionAtFirstSight,
+             final Nominalphrase normalDescriptionWhenKnown,
+             final Nominalphrase shortDescriptionWhenKnown,
+             final AvRoom.Key initialRoom) {
+        this(key, descriptionAtFirstSight, normalDescriptionWhenKnown, shortDescriptionWhenKnown,
+                AvRoom.get(initialRoom));
     }
 
     AvObject(final Key key,

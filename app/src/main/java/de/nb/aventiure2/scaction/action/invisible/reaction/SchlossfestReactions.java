@@ -12,7 +12,7 @@ import static de.nb.aventiure2.data.world.invisible.Invisible.Key.SCHLOSSFEST;
 import static de.nb.aventiure2.data.world.invisible.InvisibleState.BEGONNEN;
 import static de.nb.aventiure2.data.world.invisible.Invisibles.COUNTER_ID_VOR_DEM_SCHLOSS_SCHLOSSFEST_KNOWN;
 import static de.nb.aventiure2.data.world.invisible.Invisibles.SCHLOSSFEST_BEGINN_DATE_TIME;
-import static de.nb.aventiure2.data.world.room.AvRoom.DRAUSSEN_VOR_DEM_SCHLOSS;
+import static de.nb.aventiure2.data.world.room.AvRoom.Key.DRAUSSEN_VOR_DEM_SCHLOSS;
 import static de.nb.aventiure2.data.world.time.AvDateTime.isWithin;
 import static de.nb.aventiure2.data.world.time.AvTimeSpan.mins;
 import static de.nb.aventiure2.data.world.time.AvTimeSpan.noTime;
@@ -38,7 +38,7 @@ class SchlossfestReactions extends AbstractInvisibleReactions {
         final AvRoom currentRoom = db.playerLocationDao().getPlayerLocation().getRoom();
 
         final AvTimeSpan timeElapsed;
-        if (currentRoom == DRAUSSEN_VOR_DEM_SCHLOSS) {
+        if (currentRoom.getKey() == DRAUSSEN_VOR_DEM_SCHLOSS) {
             n.add(t(PARAGRAPH, "Dir fällt auf, dass Handwerker dabei sind, überall "
                     + "im Schlossgarten kleine bunte Pagoden aufzubauen. Du schaust eine Weile "
                     + "zu, und wie es scheint, beginnen von überallher Menschen zu "

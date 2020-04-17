@@ -49,7 +49,7 @@ public abstract class AbstractReactions {
                 .letzterRaum(db.playerLocationDao().getPlayerLocation().getRoom());
     }
 
-    protected Lichtverhaeltnisse getLichtverhaeltnisse(final AvRoom room) {
+    protected Lichtverhaeltnisse getLichtverhaeltnisse(final AvRoom.Key room) {
         return Lichtverhaeltnisse.getLichtverhaeltnisse(getTageszeit(), room);
     }
 

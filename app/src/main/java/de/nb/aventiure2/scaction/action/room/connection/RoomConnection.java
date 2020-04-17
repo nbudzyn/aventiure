@@ -34,13 +34,13 @@ public class RoomConnection {
     private final String actionName;
     private final RoomConnection.DescriptionProvider descriptionProvider;
 
-    static RoomConnection con(final AvRoom to, final String actionDescription,
+    static RoomConnection con(final AvRoom.Key to, final String actionDescription,
                               final AbstractDescription newRoomDescription) {
         return con(to, actionDescription,
                 (isNewRoomKnown, lichtverhaeltnisseInNewRoom) -> newRoomDescription);
     }
 
-    static RoomConnection con(final AvRoom to,
+    static RoomConnection con(final AvRoom.Key to,
                               final String actionDescription,
                               final AbstractDescription newRoomDescriptionUnknown,
                               final AbstractDescription newRoomDescriptionKnown) {
@@ -50,7 +50,7 @@ public class RoomConnection {
                                 newRoomDescriptionUnknown : newRoomDescriptionKnown);
     }
 
-    static RoomConnection con(final AvRoom to,
+    static RoomConnection con(final AvRoom.Key to,
                               final String actionDescription,
                               final AbstractDescription newRoomDescriptionUnknownHell,
                               final AbstractDescription newRoomDescriptionUnknownDunkel,
@@ -72,10 +72,16 @@ public class RoomConnection {
                 });
     }
 
-    static RoomConnection con(final AvRoom to,
+    static RoomConnection con(final AvRoom.Key to,
                               final String actionName,
                               final DescriptionProvider descriptionProvider) {
         return new RoomConnection(to, actionName, descriptionProvider);
+    }
+
+    private RoomConnection(final AvRoom.Key to,
+                           final String actionName,
+                           final DescriptionProvider descriptionProvider) {
+        this(AvRoom.get(to), actionName, descriptionProvider);
     }
 
     private RoomConnection(final AvRoom to,

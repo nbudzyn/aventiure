@@ -19,6 +19,7 @@ import static de.nb.aventiure2.data.storystate.StoryState.StructuralElement.PARA
 import static de.nb.aventiure2.data.storystate.StoryState.StructuralElement.SENTENCE;
 import static de.nb.aventiure2.data.world.player.stats.ScStateOfMind.ERSCHOEPFT;
 import static de.nb.aventiure2.data.world.player.stats.ScStateOfMind.NEUTRAL;
+import static de.nb.aventiure2.data.world.room.AvRoom.Key.BETT_IN_DER_HUETTE_IM_WALD;
 import static de.nb.aventiure2.data.world.time.AvTime.oClock;
 import static de.nb.aventiure2.data.world.time.AvTimeSpan.hours;
 import static de.nb.aventiure2.data.world.time.AvTimeSpan.mins;
@@ -31,7 +32,7 @@ public class SchlafenAction extends AbstractScAction {
             final AvDatabase db,
             final StoryState initialStoryState, final AvRoom room) {
         final ImmutableList.Builder<SchlafenAction> res = ImmutableList.builder();
-        if (room == AvRoom.BETT_IN_DER_HUETTE_IM_WALD) {
+        if (room.getKey() == BETT_IN_DER_HUETTE_IM_WALD) {
             res.add(new SchlafenAction(db, initialStoryState));
         }
 

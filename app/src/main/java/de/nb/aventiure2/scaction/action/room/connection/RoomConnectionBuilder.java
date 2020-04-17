@@ -18,17 +18,17 @@ import de.nb.aventiure2.german.base.AbstractDescription;
 import static de.nb.aventiure2.data.world.invisible.InvisibleState.BEGONNEN;
 import static de.nb.aventiure2.data.world.invisible.Invisibles.COUNTER_ID_VOR_DEM_SCHLOSS_SCHLOSSFEST_KNOWN;
 import static de.nb.aventiure2.data.world.lichtverhaeltnisse.Lichtverhaeltnisse.HELL;
-import static de.nb.aventiure2.data.world.room.AvRoom.ABZWEIG_IM_WALD;
-import static de.nb.aventiure2.data.world.room.AvRoom.BETT_IN_DER_HUETTE_IM_WALD;
-import static de.nb.aventiure2.data.world.room.AvRoom.DRAUSSEN_VOR_DEM_SCHLOSS;
-import static de.nb.aventiure2.data.world.room.AvRoom.HINTER_DER_HUETTE;
-import static de.nb.aventiure2.data.world.room.AvRoom.HUETTE_IM_WALD;
-import static de.nb.aventiure2.data.world.room.AvRoom.IM_WALD_BEIM_BRUNNEN;
-import static de.nb.aventiure2.data.world.room.AvRoom.IM_WALD_NAHE_DEM_SCHLOSS;
-import static de.nb.aventiure2.data.world.room.AvRoom.SCHLOSS_VORHALLE;
-import static de.nb.aventiure2.data.world.room.AvRoom.SCHLOSS_VORHALLE_TISCH_BEIM_FEST;
-import static de.nb.aventiure2.data.world.room.AvRoom.VOR_DER_HUETTE_IM_WALD;
-import static de.nb.aventiure2.data.world.room.AvRoom.WALDWILDNIS_HINTER_DEM_BRUNNEN;
+import static de.nb.aventiure2.data.world.room.AvRoom.Key.ABZWEIG_IM_WALD;
+import static de.nb.aventiure2.data.world.room.AvRoom.Key.BETT_IN_DER_HUETTE_IM_WALD;
+import static de.nb.aventiure2.data.world.room.AvRoom.Key.DRAUSSEN_VOR_DEM_SCHLOSS;
+import static de.nb.aventiure2.data.world.room.AvRoom.Key.HINTER_DER_HUETTE;
+import static de.nb.aventiure2.data.world.room.AvRoom.Key.HUETTE_IM_WALD;
+import static de.nb.aventiure2.data.world.room.AvRoom.Key.IM_WALD_BEIM_BRUNNEN;
+import static de.nb.aventiure2.data.world.room.AvRoom.Key.IM_WALD_NAHE_DEM_SCHLOSS;
+import static de.nb.aventiure2.data.world.room.AvRoom.Key.SCHLOSS_VORHALLE;
+import static de.nb.aventiure2.data.world.room.AvRoom.Key.SCHLOSS_VORHALLE_TISCH_BEIM_FEST;
+import static de.nb.aventiure2.data.world.room.AvRoom.Key.VOR_DER_HUETTE_IM_WALD;
+import static de.nb.aventiure2.data.world.room.AvRoom.Key.WALDWILDNIS_HINTER_DEM_BRUNNEN;
 import static de.nb.aventiure2.data.world.room.RoomKnown.KNOWN_FROM_DARKNESS;
 import static de.nb.aventiure2.data.world.room.RoomKnown.UNKNOWN;
 import static de.nb.aventiure2.data.world.time.AvTimeSpan.mins;
@@ -51,7 +51,7 @@ class RoomConnectionBuilder {
         //  schloss::getDesc_DraussenVorDemSchloss().
         //  from-Räume (SchlossConnectionBuilder etc.) von AbstractRoomConnectionBuilder ableiten.
 
-        switch (from) {
+        switch (from.getKey()) {
             case SCHLOSS_VORHALLE:
                 final ImmutableList.Builder<RoomConnection> resSchlossVorhalle =
                         ImmutableList.builder();
@@ -726,6 +726,6 @@ class RoomConnectionBuilder {
 
     private Lichtverhaeltnisse getLichtverhaeltnisseFrom() {
         final Tageszeit tageszeit = db.dateTimeDao().now().getTageszeit();
-        return Lichtverhaeltnisse.getLichtverhaeltnisse(tageszeit, from);
+        return Lichtverhaeltnisse.getLichtverhaeltnisse(tageszeit, from.getKey());
     }
 }

@@ -28,7 +28,7 @@ import static de.nb.aventiure2.data.world.lichtverhaeltnisse.Lichtverhaeltnisse.
 import static de.nb.aventiure2.data.world.lichtverhaeltnisse.Lichtverhaeltnisse.HELL;
 import static de.nb.aventiure2.data.world.player.stats.ScStateOfMind.ETWAS_GEKNICKT;
 import static de.nb.aventiure2.data.world.player.stats.ScStateOfMind.UNTROESTLICH;
-import static de.nb.aventiure2.data.world.room.AvRoom.IM_WALD_BEIM_BRUNNEN;
+import static de.nb.aventiure2.data.world.room.AvRoom.Key.IM_WALD_BEIM_BRUNNEN;
 import static de.nb.aventiure2.data.world.time.AvTimeSpan.noTime;
 import static de.nb.aventiure2.data.world.time.AvTimeSpan.secs;
 import static de.nb.aventiure2.german.base.DuDescription.du;
@@ -88,7 +88,8 @@ public class HochwerfenAction extends AbstractObjectAction {
     }
 
     private AvTimeSpan narrateAndDoErstesMal(final StoryState currentStoryState) {
-        if (room == IM_WALD_BEIM_BRUNNEN && !froschprinzCreatureData.hasState(UNAUFFAELLIG)) {
+        if (room.getKey() == IM_WALD_BEIM_BRUNNEN && !froschprinzCreatureData
+                .hasState(UNAUFFAELLIG)) {
             return narrateAndDoFroschBekannt();
         }
 
@@ -217,7 +218,7 @@ public class HochwerfenAction extends AbstractObjectAction {
     private AvTimeSpan narrateAndDoWiederholung() {
         if (db.counterDao()
                 .incAndGet("HochwerfenAction_Wiederholung") == 1 ||
-                (room == IM_WALD_BEIM_BRUNNEN && !froschprinzCreatureData
+                (room.getKey() == IM_WALD_BEIM_BRUNNEN && !froschprinzCreatureData
                         .hasState(UNAUFFAELLIG))) {
             n.add(alt(t(StoryState.StructuralElement.SENTENCE,
                     "Und noch einmal – was ein schönes Spiel!")
@@ -231,7 +232,7 @@ public class HochwerfenAction extends AbstractObjectAction {
             return secs(3);
         }
 
-        if (room == IM_WALD_BEIM_BRUNNEN) {
+        if (room.getKey() == IM_WALD_BEIM_BRUNNEN) {
             final String dunkelheitNachsatz =
                     getLichtverhaeltnisse(room) == DUNKEL ?
                             "– bei dieser Dunkelheit schon gar nicht" : "";

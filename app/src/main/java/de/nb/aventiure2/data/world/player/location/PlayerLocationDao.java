@@ -13,6 +13,10 @@ import de.nb.aventiure2.data.world.room.AvRoom;
 @Dao
 public abstract class PlayerLocationDao {
     public void setRoom(final AvRoom room) {
+        setRoom(room.getKey());
+    }
+
+    public void setRoom(final AvRoom.Key room) {
         deleteAll();
 
         insert(new PlayerLocation(room));

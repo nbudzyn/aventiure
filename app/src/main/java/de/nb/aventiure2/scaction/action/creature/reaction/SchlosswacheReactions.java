@@ -30,8 +30,8 @@ import static de.nb.aventiure2.data.world.invisible.Invisible.Key.SCHLOSSFEST;
 import static de.nb.aventiure2.data.world.invisible.InvisibleState.BEGONNEN;
 import static de.nb.aventiure2.data.world.invisible.Invisibles.COUNTER_ID_VOR_DEM_SCHLOSS_SCHLOSSFEST_KNOWN;
 import static de.nb.aventiure2.data.world.invisible.Invisibles.SCHLOSSFEST_BEGINN_DATE_TIME;
-import static de.nb.aventiure2.data.world.room.AvRoom.DRAUSSEN_VOR_DEM_SCHLOSS;
-import static de.nb.aventiure2.data.world.room.AvRoom.SCHLOSS_VORHALLE;
+import static de.nb.aventiure2.data.world.room.AvRoom.Key.DRAUSSEN_VOR_DEM_SCHLOSS;
+import static de.nb.aventiure2.data.world.room.AvRoom.Key.SCHLOSS_VORHALLE;
 import static de.nb.aventiure2.data.world.time.AvDateTime.isWithin;
 import static de.nb.aventiure2.data.world.time.AvTimeSpan.mins;
 import static de.nb.aventiure2.data.world.time.AvTimeSpan.noTime;
@@ -54,7 +54,7 @@ class SchlosswacheReactions extends AbstractCreatureReactions {
     public AvTimeSpan onEnterRoom(final AvRoom oldRoom, final AvRoom newRoom,
                                   final CreatureData wache,
                                   final StoryState currentStoryState) {
-        if (newRoom != SCHLOSS_VORHALLE) {
+        if (newRoom.getKey() != SCHLOSS_VORHALLE) {
             return noTime();
         }
 
@@ -63,13 +63,13 @@ class SchlosswacheReactions extends AbstractCreatureReactions {
         }
 
         final ObjectData goldeneKugel = db.objectDataDao().get(GOLDENE_KUGEL);
-        if (goldeneKugel.getRoom() == SCHLOSS_VORHALLE) {
+        if (goldeneKugel.getRoom().getKey() == SCHLOSS_VORHALLE) {
             if (db.counterDao().incAndGet(
                     "SchlosswacheReactions_onEnterRoom_SchlossVorhalle") > 1) {
                 n.add(t(SENTENCE,
                         capitalize(wache.nom(true))
                                 + " scheint dich nicht zu bemerken")
-                        .letzterRaum(oldRoom));
+                        .letzterRaum(oldRoom.getKey()));
                 return secs(3);
             }
         }
@@ -88,10 +88,10 @@ class SchlosswacheReactions extends AbstractCreatureReactions {
                                 + "leicht zu "
                                 + "überzeugen und trittst wieder "
                                 + schlossVerlassenWohinDescription(
-                                SCHLOSS_VORHALLE, oldRoom)
+                                SCHLOSS_VORHALLE, oldRoom.getKey())
                                 // "in den Sonnenschein"
                                 + " hinaus")
-                        .letzterRaum(newRoom)
+                        .letzterRaum(newRoom.getKey())
                         .beendet(PARAGRAPH),
                 t(PARAGRAPH,
                         "„Heho, was wird das?“, tönt dir eine laute Stimme entgegen. "
@@ -100,17 +100,17 @@ class SchlosswacheReactions extends AbstractCreatureReactions {
                                 + "passen. Und "
                                 + "seinem Kerkermeister auch.“ "
                                 + "Du bleibst besser draußen")
-                        .letzterRaum(newRoom)
+                        .letzterRaum(newRoom.getKey())
                         .beendet(PARAGRAPH)
         ));
 
-        db.playerLocationDao().setRoom(oldRoom);
+        db.playerLocationDao().setRoom(oldRoom.getKey());
 
         return secs(10);
     }
 
-    private String schlossVerlassenWohinDescription(final AvRoom schlossRoom,
-                                                    final AvRoom wohinRoom) {
+    private String schlossVerlassenWohinDescription(final AvRoom.Key schlossRoom,
+                                                    final AvRoom.Key wohinRoom) {
         final Lichtverhaeltnisse lichtverhaeltnisseImSchloss = getLichtverhaeltnisse(schlossRoom);
         final Lichtverhaeltnisse lichtverhaeltnisseDraussen = getLichtverhaeltnisse(wohinRoom);
         if (lichtverhaeltnisseImSchloss // Im Schloss ist es immer hell, wenn es also draußen
@@ -127,7 +127,7 @@ class SchlosswacheReactions extends AbstractCreatureReactions {
     public AvTimeSpan onNehmen(final AvRoom room, final CreatureData wacheInRoom,
                                final AbstractEntityData genommenData,
                                final StoryState currentStoryState) {
-        if (room != SCHLOSS_VORHALLE) {
+        if (!room.equals(SCHLOSS_VORHALLE)) {
             return noTime();
         }
 
@@ -254,7 +254,7 @@ class SchlosswacheReactions extends AbstractCreatureReactions {
     public AvTimeSpan onAblegen(final AvRoom room, final CreatureData wacheInRoom,
                                 final AbstractEntityData abgelegtData,
                                 final StoryState currentStoryState) {
-        if (room != SCHLOSS_VORHALLE) {
+        if (!room.equals(SCHLOSS_VORHALLE)) {
             return noTime();
         }
 
@@ -298,7 +298,7 @@ class SchlosswacheReactions extends AbstractCreatureReactions {
     public AvTimeSpan onHochwerfen(final AvRoom room, final CreatureData wacheInRoom,
                                    final ObjectData objectData,
                                    final StoryState currentStoryState) {
-        if (room != SCHLOSS_VORHALLE) {
+        if (!room.equals(SCHLOSS_VORHALLE)) {
             return noTime();
         }
 
@@ -380,9 +380,10 @@ class SchlosswacheReactions extends AbstractCreatureReactions {
     }
 
     private AvTimeSpan schlossfestBeginnt(final StoryState currentStoryState) {
-        final AvRoom currentRoom = db.playerLocationDao().getPlayerLocation().getRoom();
+        final AvRoom.Key currentRoom =
+                db.playerLocationDao().getPlayerLocation().getRoom().getKey();
 
-        if (currentRoom == SCHLOSS_VORHALLE) {
+        if (currentRoom.equals(SCHLOSS_VORHALLE)) {
             return schlossfestBeginnt_Vorhalle(currentStoryState);
         }
 

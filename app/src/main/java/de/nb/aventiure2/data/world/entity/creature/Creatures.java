@@ -4,8 +4,6 @@ import com.google.common.collect.ImmutableList;
 
 import java.util.List;
 
-import de.nb.aventiure2.data.world.room.AvRoom;
-
 import static de.nb.aventiure2.data.world.entity.creature.CreatureState.AUFMERKSAM;
 import static de.nb.aventiure2.data.world.entity.creature.CreatureState.AUF_DEM_WEG_ZUM_BRUNNEN_UM_DINGE_HERAUSZUHOLEN;
 import static de.nb.aventiure2.data.world.entity.creature.CreatureState.AUF_DEM_WEG_ZUM_SCHLOSSFEST;
@@ -17,6 +15,8 @@ import static de.nb.aventiure2.data.world.entity.creature.CreatureState.HAT_NACH
 import static de.nb.aventiure2.data.world.entity.creature.CreatureState.HAT_SC_HILFSBEREIT_ANGESPROCHEN;
 import static de.nb.aventiure2.data.world.entity.creature.CreatureState.UNAUFFAELLIG;
 import static de.nb.aventiure2.data.world.entity.creature.CreatureStateList.sl;
+import static de.nb.aventiure2.data.world.room.AvRoom.Key.IM_WALD_BEIM_BRUNNEN;
+import static de.nb.aventiure2.data.world.room.AvRoom.Key.SCHLOSS_VORHALLE;
 import static de.nb.aventiure2.german.base.Nominalphrase.np;
 import static de.nb.aventiure2.german.base.NumerusGenus.F;
 import static de.nb.aventiure2.german.base.NumerusGenus.M;
@@ -34,7 +34,7 @@ public class Creatures {
                                     "der Schlosswache mit ihrer langen Hellebarde"),
                             np(F, "die Schlosswache",
                                     "der Schlosswache"),
-                            AvRoom.SCHLOSS_VORHALLE,
+                            SCHLOSS_VORHALLE,
                             sl(UNAUFFAELLIG, AUFMERKSAM
                             )),
                     new Creature(Creature.Key.FROSCHPRINZ,
@@ -47,7 +47,7 @@ public class Creatures {
                             np(M, "der Frosch",
                                     "dem Frosch",
                                     "den Frosch"),
-                            AvRoom.IM_WALD_BEIM_BRUNNEN,
+                            IM_WALD_BEIM_BRUNNEN,
                             sl(UNAUFFAELLIG, HAT_SC_HILFSBEREIT_ANGESPROCHEN,
                                     HAT_NACH_BELOHNUNG_GEFRAGT, HAT_FORDERUNG_GESTELLT,
                                     AUF_DEM_WEG_ZUM_BRUNNEN_UM_DINGE_HERAUSZUHOLEN,

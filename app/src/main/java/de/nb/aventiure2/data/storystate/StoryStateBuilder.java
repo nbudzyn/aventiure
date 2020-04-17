@@ -121,6 +121,10 @@ public class StoryStateBuilder {
         return this;
     }
 
+    public StoryStateBuilder letzterRaum(final AvRoom.Key lastRoom) {
+        return letzterRaum(AvRoom.get(lastRoom));
+    }
+
     public StoryStateBuilder letzterRaum(final AvRoom lastRoom) {
         this.lastRoom = lastRoom;
         return this;
