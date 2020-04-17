@@ -2,11 +2,11 @@ package de.nb.aventiure2.data.world.lichtverhaeltnisse;
 
 import org.jetbrains.annotations.Contract;
 
-import de.nb.aventiure2.data.world.room.AvRoom;
+import de.nb.aventiure2.data.world.base.GameObjectId;
 import de.nb.aventiure2.data.world.time.Tageszeit;
 
-import static de.nb.aventiure2.data.world.room.AvRoom.Key.SCHLOSS_VORHALLE;
-import static de.nb.aventiure2.data.world.room.AvRoom.Key.SCHLOSS_VORHALLE_TISCH_BEIM_FEST;
+import static de.nb.aventiure2.data.world.room.AvRoom.SCHLOSS_VORHALLE;
+import static de.nb.aventiure2.data.world.room.AvRoom.SCHLOSS_VORHALLE_TISCH_BEIM_FEST;
 import static de.nb.aventiure2.data.world.time.Tageszeit.NACHTS;
 
 public enum Lichtverhaeltnisse {
@@ -24,8 +24,8 @@ public enum Lichtverhaeltnisse {
 
     @Contract(pure = true)
     public static Lichtverhaeltnisse getLichtverhaeltnisse(final Tageszeit tageszeit,
-                                                           final AvRoom.Key room) {
-        if (room == SCHLOSS_VORHALLE || room == SCHLOSS_VORHALLE_TISCH_BEIM_FEST) {
+                                                           final GameObjectId room) {
+        if (room.equals(SCHLOSS_VORHALLE) || room.equals(SCHLOSS_VORHALLE_TISCH_BEIM_FEST)) {
             // im Schloss ist es immer gut beleuchtet
             return HELL;
         }

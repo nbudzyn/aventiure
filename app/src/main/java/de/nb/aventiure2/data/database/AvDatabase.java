@@ -22,6 +22,7 @@ import de.nb.aventiure2.data.storystate.StoryState;
 import de.nb.aventiure2.data.storystate.StoryState.StructuralElement;
 import de.nb.aventiure2.data.storystate.StoryStateBuilder;
 import de.nb.aventiure2.data.storystate.StoryStateDao;
+import de.nb.aventiure2.data.world.base.GameObjectIdConverters;
 import de.nb.aventiure2.data.world.counter.Counter;
 import de.nb.aventiure2.data.world.counter.CounterDao;
 import de.nb.aventiure2.data.world.entity.creature.CreatureConverters;
@@ -56,9 +57,9 @@ import de.nb.aventiure2.data.world.time.AvNow;
 import de.nb.aventiure2.data.world.time.AvNowDao;
 
 import static de.nb.aventiure2.data.storystate.StoryStateBuilder.t;
-import static de.nb.aventiure2.data.world.entity.object.AvObject.Key.GOLDENE_KUGEL;
+import static de.nb.aventiure2.data.world.entity.object.AvObject.GOLDENE_KUGEL;
 import static de.nb.aventiure2.data.world.player.stats.ScHunger.SATT;
-import static de.nb.aventiure2.data.world.room.AvRoom.Key.SCHLOSS_VORHALLE;
+import static de.nb.aventiure2.data.world.room.AvRoom.SCHLOSS_VORHALLE;
 import static de.nb.aventiure2.data.world.time.AvTime.oClock;
 
 @Database(entities = {
@@ -80,6 +81,7 @@ import static de.nb.aventiure2.data.world.time.AvTime.oClock;
         RoomKnownConverters.class,
         InvisibleConverters.class,
         InvisibleStateConverters.class,
+        GameObjectIdConverters.class,
         AvObjectConverters.class,
         CreatureConverters.class,
         CreatureStateConverters.class,

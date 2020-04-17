@@ -12,23 +12,23 @@ import de.nb.aventiure2.data.database.AvDatabase;
 import de.nb.aventiure2.data.storystate.IPlayerAction;
 import de.nb.aventiure2.data.storystate.StoryState;
 import de.nb.aventiure2.data.storystate.StoryStateDao;
+import de.nb.aventiure2.data.world.base.GameObjectId;
 import de.nb.aventiure2.data.world.entity.base.AbstractEntityData;
-import de.nb.aventiure2.data.world.entity.creature.Creature;
 import de.nb.aventiure2.data.world.entity.creature.CreatureData;
 import de.nb.aventiure2.data.world.entity.object.ObjectData;
 import de.nb.aventiure2.data.world.room.AvRoom;
 import de.nb.aventiure2.data.world.time.AvDateTime;
 import de.nb.aventiure2.data.world.time.AvTimeSpan;
 
-import static de.nb.aventiure2.data.world.entity.creature.Creature.Key.FROSCHPRINZ;
-import static de.nb.aventiure2.data.world.entity.creature.Creature.Key.SCHLOSSWACHE;
+import static de.nb.aventiure2.data.world.entity.creature.Creature.FROSCHPRINZ;
+import static de.nb.aventiure2.data.world.entity.creature.Creature.SCHLOSSWACHE;
 import static de.nb.aventiure2.data.world.time.AvTimeSpan.noTime;
 
 public final class CreatureReactionsCoordinator {
     private final AvDatabase db;
     private final StoryStateDao n;
 
-    private final Map<Creature.Key, AbstractCreatureReactions> allCreatureReactions;
+    private final Map<GameObjectId, AbstractCreatureReactions> allCreatureReactions;
 
     private final NullCreatureReactions nullCreatureReactions;
 
@@ -37,7 +37,7 @@ public final class CreatureReactionsCoordinator {
         this.db = db;
         n = db.storyStateDao();
 
-        allCreatureReactions = ImmutableMap.<Creature.Key, AbstractCreatureReactions>builder()
+        allCreatureReactions = ImmutableMap.<GameObjectId, AbstractCreatureReactions>builder()
                 .put(FROSCHPRINZ, new FroschprinzReactions(db, playerActionClass))
                 .put(SCHLOSSWACHE, new SchlosswacheReactions(db, playerActionClass))
                 .build();
@@ -147,7 +147,7 @@ public final class CreatureReactionsCoordinator {
     @Nonnull
     private AbstractCreatureReactions getReactions(final CreatureData creature) {
         @Nullable final AbstractCreatureReactions res =
-                allCreatureReactions.get(creature.getKey());
+                allCreatureReactions.get(creature.getGameObjectId());
         if (res != null) {
             return res;
         }

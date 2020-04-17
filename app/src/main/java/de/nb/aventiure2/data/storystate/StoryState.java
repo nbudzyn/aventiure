@@ -7,6 +7,7 @@ import androidx.room.PrimaryKey;
 
 import com.google.common.base.Preconditions;
 
+import de.nb.aventiure2.data.world.base.GameObjectId;
 import de.nb.aventiure2.data.world.entity.creature.Creature;
 import de.nb.aventiure2.data.world.entity.object.AvObject;
 import de.nb.aventiure2.data.world.room.AvRoom;
@@ -169,8 +170,8 @@ public class StoryState {
         return talkingTo != null;
     }
 
-    public boolean talkingTo(final Creature.Key creatureKey) {
-        return talkingTo(Creature.get(creatureKey));
+    public boolean talkingTo(final GameObjectId gameObjectId) {
+        return talkingTo(Creature.get(gameObjectId));
     }
 
     private boolean talkingTo(final Creature creature) {

@@ -4,13 +4,14 @@ import androidx.annotation.NonNull;
 import androidx.room.Entity;
 import androidx.room.PrimaryKey;
 
-import de.nb.aventiure2.data.world.base.AbstractKeyData;
+import de.nb.aventiure2.data.world.base.AbstractGameData;
+import de.nb.aventiure2.data.world.base.GameObjectId;
 
 /**
  * Changeable data for an {@link Invisible} in the world.
  */
 @Entity
-public class InvisibleData extends AbstractKeyData<Invisible.Key> {
+public class InvisibleData extends AbstractGameData {
     @PrimaryKey
     @NonNull
     private final Invisible invisible;
@@ -19,12 +20,13 @@ public class InvisibleData extends AbstractKeyData<Invisible.Key> {
     private final InvisibleState state;
 
     InvisibleData(@NonNull final Invisible invisible, final InvisibleState state) {
+        super(invisible.getId());
         this.invisible = invisible;
         this.state = state;
     }
 
-    public boolean invisibleIs(final Invisible.Key someKey) {
-        return getKey() == someKey;
+    public boolean invisibleIs(final GameObjectId someGameObjectId) {
+        return getGameObjectId().equals(someGameObjectId);
     }
 
     @NonNull
@@ -44,10 +46,5 @@ public class InvisibleData extends AbstractKeyData<Invisible.Key> {
 
     public InvisibleState getState() {
         return state;
-    }
-
-    @Override
-    public Invisible.Key getKey() {
-        return invisible.getKey();
     }
 }

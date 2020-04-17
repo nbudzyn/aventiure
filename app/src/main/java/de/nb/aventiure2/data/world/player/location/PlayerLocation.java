@@ -4,6 +4,7 @@ import androidx.annotation.NonNull;
 import androidx.room.Entity;
 import androidx.room.PrimaryKey;
 
+import de.nb.aventiure2.data.world.base.GameObjectId;
 import de.nb.aventiure2.data.world.room.AvRoom;
 
 /**
@@ -15,7 +16,7 @@ public class PlayerLocation {
     @NonNull
     private final AvRoom room;
 
-    PlayerLocation(@NonNull final AvRoom.Key room) {
+    PlayerLocation(@NonNull final GameObjectId room) {
         this(AvRoom.get(room));
     }
 

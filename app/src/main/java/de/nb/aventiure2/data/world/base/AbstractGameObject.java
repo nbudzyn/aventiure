@@ -14,9 +14,14 @@ public class AbstractGameObject {
         this.id = id;
     }
 
+    public boolean is(final GameObjectId someId) {
+        return getId().equals(someId);
+    }
+
     public GameObjectId getId() {
         return id;
     }
+
 
     @Override
     public boolean equals(final Object o) {

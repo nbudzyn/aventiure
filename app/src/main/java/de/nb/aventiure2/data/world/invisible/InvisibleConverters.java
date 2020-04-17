@@ -2,21 +2,23 @@ package de.nb.aventiure2.data.world.invisible;
 
 import androidx.room.TypeConverter;
 
+import de.nb.aventiure2.data.world.base.GameObjectId;
+
 public class InvisibleConverters {
     @TypeConverter
-    public static Invisible stringToInvisible(final String string) {
-        if (string == null) {
+    public static Invisible longToInvisible(final Long aLong) {
+        if (aLong == null) {
             return null;
         }
-        return Invisible.get(Invisible.Key.valueOf(string));
+        return Invisible.get(new GameObjectId(aLong));
     }
 
     @TypeConverter
-    public static String invisibleToString(final Invisible invisble) {
+    public static Long invisibleToLong(final Invisible invisble) {
         if (invisble == null) {
             return null;
         }
 
-        return invisble.getKey().name();
+        return invisble.getId().toLong();
     }
 }

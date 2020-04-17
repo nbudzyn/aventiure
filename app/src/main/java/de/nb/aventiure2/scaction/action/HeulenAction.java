@@ -11,7 +11,7 @@ import java.util.List;
 import de.nb.aventiure2.data.database.AvDatabase;
 import de.nb.aventiure2.data.storystate.StoryState;
 import de.nb.aventiure2.data.storystate.StoryStateBuilder;
-import de.nb.aventiure2.data.world.entity.creature.Creature;
+import de.nb.aventiure2.data.world.base.GameObjectId;
 import de.nb.aventiure2.data.world.entity.creature.CreatureData;
 import de.nb.aventiure2.data.world.player.stats.ScStateOfMind;
 import de.nb.aventiure2.data.world.player.stats.ScStats;
@@ -21,7 +21,7 @@ import de.nb.aventiure2.scaction.AbstractScAction;
 import static de.nb.aventiure2.data.storystate.StoryState.StructuralElement.PARAGRAPH;
 import static de.nb.aventiure2.data.storystate.StoryState.StructuralElement.SENTENCE;
 import static de.nb.aventiure2.data.storystate.StoryState.StructuralElement.WORD;
-import static de.nb.aventiure2.data.world.entity.creature.Creature.Key.FROSCHPRINZ;
+import static de.nb.aventiure2.data.world.entity.creature.Creature.FROSCHPRINZ;
 import static de.nb.aventiure2.data.world.entity.creature.CreatureState.HAT_SC_HILFSBEREIT_ANGESPROCHEN;
 import static de.nb.aventiure2.data.world.entity.creature.CreatureState.UNAUFFAELLIG;
 import static de.nb.aventiure2.data.world.time.AvTimeSpan.mins;
@@ -122,9 +122,9 @@ public class HeulenAction extends AbstractScAction {
     }
 
     @Nullable
-    private CreatureData findCreatureInRoom(final Creature.Key key) {
+    private CreatureData findCreatureInRoom(final GameObjectId id) {
         for (final CreatureData creatureData : creatures) {
-            if (creatureData.creatureIs(key)) {
+            if (creatureData.creatureIs(id)) {
                 return creatureData;
             }
         }

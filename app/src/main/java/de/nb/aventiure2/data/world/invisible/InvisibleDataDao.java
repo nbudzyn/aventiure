@@ -7,6 +7,8 @@ import androidx.room.Query;
 
 import java.util.List;
 
+import de.nb.aventiure2.data.world.base.GameObjectId;
+
 /**
  * Room DAO for {@link InvisibleData}s.
  */
@@ -25,20 +27,20 @@ public abstract class InvisibleDataDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     public abstract void insert(InvisibleData invisbleData);
 
-    public InvisibleData getInvisible(final Invisible.Key invisibleKey) {
-        return getInvisible(Invisible.get(invisibleKey));
+    public InvisibleData getInvisible(final GameObjectId id) {
+        return getInvisible(Invisible.get(id));
     }
 
     @Query("SELECT * from InvisibleData where :invisible = invisible")
     public abstract InvisibleData getInvisible(Invisible invisible);
 
-    public void setState(final Invisible.Key invisibleKey, final InvisibleState state) {
-        setState(Invisible.get(invisibleKey), state);
+    public void setState(final GameObjectId gameObjectId, final InvisibleState state) {
+        setState(Invisible.get(gameObjectId), state);
     }
 
     public void setState(final Invisible invisible, final InvisibleState state) {
         if (!invisible.isStateAllowed(state)) {
-            throw new IllegalArgumentException("Illegal state for " + invisible.getKey() +
+            throw new IllegalArgumentException("Illegal state for " + invisible.getId() +
                     ": " + state + ". Expected states: " + invisible.getAllowedStates());
         }
 

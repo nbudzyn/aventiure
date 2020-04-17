@@ -14,8 +14,8 @@ import de.nb.aventiure2.data.storystate.IPlayerAction;
 import de.nb.aventiure2.data.storystate.StoryState;
 import de.nb.aventiure2.data.storystate.StoryStateBuilder;
 import de.nb.aventiure2.data.storystate.StoryStateDao;
+import de.nb.aventiure2.data.world.base.GameObjectId;
 import de.nb.aventiure2.data.world.entity.creature.CreatureData;
-import de.nb.aventiure2.data.world.entity.object.AvObject;
 import de.nb.aventiure2.data.world.entity.object.ObjectData;
 import de.nb.aventiure2.data.world.room.AvRoom;
 import de.nb.aventiure2.german.praedikat.Praedikat;
@@ -40,7 +40,7 @@ abstract class AbstractCreatureConversationStepBuilder {
     protected final Class<? extends IPlayerAction> currentActionClass;
 
     protected final AvRoom room;
-    protected final Map<AvObject.Key, ObjectData> allObjectsByKey;
+    protected final Map<GameObjectId, ObjectData> allObjectsById;
 
     @NonNull
     protected final CreatureData creatureData;
@@ -48,7 +48,7 @@ abstract class AbstractCreatureConversationStepBuilder {
     AbstractCreatureConversationStepBuilder(final AvDatabase db, final StoryState initialStoryState,
                                             final Class<? extends IPlayerAction> currentActionClass,
                                             final AvRoom room,
-                                            final Map<AvObject.Key, ObjectData> allObjectsByKey,
+                                            final Map<GameObjectId, ObjectData> allObjectsById,
                                             @NonNull final CreatureData creatureData) {
         this.db = db;
 
@@ -58,7 +58,7 @@ abstract class AbstractCreatureConversationStepBuilder {
         this.currentActionClass = currentActionClass;
         this.room = room;
         this.creatureData = creatureData;
-        this.allObjectsByKey = allObjectsByKey;
+        this.allObjectsById = allObjectsById;
     }
 
     List<CreatureConversationStep> getPossibleSteps() {

@@ -8,12 +8,12 @@ import java.util.Map;
 import de.nb.aventiure2.data.database.AvDatabase;
 import de.nb.aventiure2.data.storystate.IPlayerAction;
 import de.nb.aventiure2.data.storystate.StoryState;
+import de.nb.aventiure2.data.world.base.GameObjectId;
 import de.nb.aventiure2.data.world.entity.creature.CreatureData;
-import de.nb.aventiure2.data.world.entity.object.AvObject;
 import de.nb.aventiure2.data.world.entity.object.ObjectData;
 import de.nb.aventiure2.data.world.room.AvRoom;
 
-import static de.nb.aventiure2.data.world.entity.creature.Creature.Key.FROSCHPRINZ;
+import static de.nb.aventiure2.data.world.entity.creature.Creature.FROSCHPRINZ;
 
 /**
  * Contains all {@link CreatureConversationStep}s;
@@ -23,14 +23,14 @@ public class CreatureConversationSteps {
             final AvDatabase db, final StoryState initialStoryState,
             final Class<? extends IPlayerAction> currentActionClass,
             final AvRoom room,
-            final Map<AvObject.Key, ObjectData> allObjectsByKey,
+            final Map<GameObjectId, ObjectData> allObjectsById,
             final CreatureData creatureData) {
         AbstractCreatureConversationStepBuilder stepBuilder = null;
         if (creatureData.creatureIs(FROSCHPRINZ)) {
             stepBuilder =
                     new FroschprinzConversationStepBuilder(db, initialStoryState,
                             currentActionClass,
-                            room, allObjectsByKey, creatureData);
+                            room, allObjectsById, creatureData);
         }
 
         if (stepBuilder == null) {

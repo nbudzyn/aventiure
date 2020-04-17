@@ -16,7 +16,7 @@ import de.nb.aventiure2.data.world.time.AvTimeSpan;
 
 import static de.nb.aventiure2.data.storystate.StoryState.StructuralElement.PARAGRAPH;
 import static de.nb.aventiure2.data.storystate.StoryState.StructuralElement.SENTENCE;
-import static de.nb.aventiure2.data.world.entity.creature.Creature.Key.FROSCHPRINZ;
+import static de.nb.aventiure2.data.world.entity.creature.Creature.FROSCHPRINZ;
 import static de.nb.aventiure2.data.world.entity.creature.CreatureState.AUF_DEM_WEG_ZUM_SCHLOSSFEST;
 import static de.nb.aventiure2.data.world.entity.creature.CreatureState.ERWARTET_VON_SC_EINLOESUNG_SEINES_VERSPRECHENS;
 import static de.nb.aventiure2.data.world.entity.creature.CreatureState.ERWARTET_VON_SC_EINLOESUNG_SEINES_VERSPRECHENS_VON_SC_GETRAGEN;
@@ -25,13 +25,13 @@ import static de.nb.aventiure2.data.world.entity.creature.CreatureState.HAT_HOCH
 import static de.nb.aventiure2.data.world.entity.creature.CreatureState.HAT_NACH_BELOHNUNG_GEFRAGT;
 import static de.nb.aventiure2.data.world.entity.creature.CreatureState.HAT_SC_HILFSBEREIT_ANGESPROCHEN;
 import static de.nb.aventiure2.data.world.entity.creature.CreatureState.UNAUFFAELLIG;
-import static de.nb.aventiure2.data.world.entity.object.AvObject.Key.GOLDENE_KUGEL;
-import static de.nb.aventiure2.data.world.invisible.Invisible.Key.SCHLOSSFEST;
+import static de.nb.aventiure2.data.world.entity.object.AvObject.GOLDENE_KUGEL;
+import static de.nb.aventiure2.data.world.invisible.Invisible.SCHLOSSFEST;
 import static de.nb.aventiure2.data.world.invisible.InvisibleState.BEGONNEN;
 import static de.nb.aventiure2.data.world.invisible.Invisibles.SCHLOSSFEST_BEGINN_DATE_TIME;
-import static de.nb.aventiure2.data.world.room.AvRoom.Key.IM_WALD_BEIM_BRUNNEN;
-import static de.nb.aventiure2.data.world.room.AvRoom.Key.SCHLOSS_VORHALLE;
-import static de.nb.aventiure2.data.world.room.AvRoom.Key.SCHLOSS_VORHALLE_TISCH_BEIM_FEST;
+import static de.nb.aventiure2.data.world.room.AvRoom.IM_WALD_BEIM_BRUNNEN;
+import static de.nb.aventiure2.data.world.room.AvRoom.SCHLOSS_VORHALLE;
+import static de.nb.aventiure2.data.world.room.AvRoom.SCHLOSS_VORHALLE_TISCH_BEIM_FEST;
 import static de.nb.aventiure2.data.world.time.AvTimeSpan.hours;
 import static de.nb.aventiure2.data.world.time.AvTimeSpan.noTime;
 import static de.nb.aventiure2.data.world.time.AvTimeSpan.secs;
@@ -51,15 +51,15 @@ class FroschprinzReactions extends AbstractCreatureReactions {
     public AvTimeSpan onLeaveRoom(final AvRoom oldRoom, final CreatureData froschprinz,
                                   final StoryState currentStoryState) {
         if (froschprinz.hasState(ERWARTET_VON_SC_EINLOESUNG_SEINES_VERSPRECHENS)
-                && oldRoom.getKey() != SCHLOSS_VORHALLE
-                && oldRoom.getKey() != SCHLOSS_VORHALLE_TISCH_BEIM_FEST) {
+                && oldRoom.is(SCHLOSS_VORHALLE)
+                && !oldRoom.is(SCHLOSS_VORHALLE_TISCH_BEIM_FEST)) {
             n.add(t(SENTENCE,
                     " „Warte, warte“, ruft der Frosch, „nimm mich mit, ich kann nicht so "
                             + "laufen wie du.“ Aber was hilft ihm, dass er dir "
                             + "sein „Quak, quak!“ so laut nachschreit, "
                             + "als er kann, du hörst nicht darauf")
                     .undWartest()
-                    .letzterRaum(oldRoom.getKey()));
+                    .letzterRaum(oldRoom));
 
             return noTime();
         }
@@ -110,7 +110,7 @@ class FroschprinzReactions extends AbstractCreatureReactions {
     @ParametersAreNonnullByDefault
     public AvTimeSpan onEssen(final AvRoom room, final CreatureData froschprinz,
                               final StoryState currentStoryState) {
-        if (room.getKey() != SCHLOSS_VORHALLE_TISCH_BEIM_FEST ||
+        if (!room.is(SCHLOSS_VORHALLE_TISCH_BEIM_FEST) ||
                 !db.invisibleDataDao().getInvisible(SCHLOSSFEST)
                         .hasState(BEGONNEN)) {
             // Wenn der Spieler nicht auf dem Schlossfest isst, ist es dem
@@ -187,14 +187,14 @@ class FroschprinzReactions extends AbstractCreatureReactions {
                                    final CreatureData froschprinzCreatureData,
                                    final ObjectData objectData,
                                    final StoryState currentStoryState) {
-        if (room.getKey() != IM_WALD_BEIM_BRUNNEN || froschprinzCreatureData
+        if (!room.is(IM_WALD_BEIM_BRUNNEN) || froschprinzCreatureData
                 .hasState(UNAUFFAELLIG)) {
             return noTime();
         }
 
         final boolean scHatObjektAufgefangen =
-                db.playerInventoryDao().getInventory().stream().map(AvObject::getKey)
-                        .anyMatch(k -> k == objectData.getKey());
+                db.playerInventoryDao().getInventory().stream().map(AvObject::getId)
+                        .anyMatch(k -> k == objectData.getGameObjectId());
 
         if (froschprinzCreatureData.hasState(HAT_SC_HILFSBEREIT_ANGESPROCHEN,
                 HAT_NACH_BELOHNUNG_GEFRAGT,
@@ -210,7 +210,7 @@ class FroschprinzReactions extends AbstractCreatureReactions {
             return secs(3);
         }
 
-        if (objectData.getKey() != GOLDENE_KUGEL) {
+        if (!objectData.getGameObjectId().equals(GOLDENE_KUGEL)) {
             return noTime();
         }
 

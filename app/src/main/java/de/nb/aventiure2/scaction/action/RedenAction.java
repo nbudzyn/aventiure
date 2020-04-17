@@ -11,8 +11,8 @@ import java.util.Map;
 import de.nb.aventiure2.data.database.AvDatabase;
 import de.nb.aventiure2.data.storystate.StoryState;
 import de.nb.aventiure2.data.storystate.StoryStateBuilder;
+import de.nb.aventiure2.data.world.base.GameObjectId;
 import de.nb.aventiure2.data.world.entity.creature.CreatureData;
-import de.nb.aventiure2.data.world.entity.object.AvObject;
 import de.nb.aventiure2.data.world.entity.object.ObjectData;
 import de.nb.aventiure2.data.world.room.AvRoom;
 import de.nb.aventiure2.data.world.time.AvTimeSpan;
@@ -28,7 +28,7 @@ import de.nb.aventiure2.scaction.action.creature.conversation.CreatureConversati
  */
 public class RedenAction extends AbstractScAction {
     private final AvRoom room;
-    private final Map<AvObject.Key, ObjectData> allObjectsByKey;
+    private final Map<GameObjectId, ObjectData> allObjectsById;
 
     @NonNull
     private final CreatureData creatureData;
@@ -38,14 +38,14 @@ public class RedenAction extends AbstractScAction {
 
     public static Collection<RedenAction> buildActions(
             final AvDatabase db, final StoryState initialStoryState, final AvRoom room,
-            final Map<AvObject.Key, ObjectData> allObjectsByKey,
+            final Map<GameObjectId, ObjectData> allObjectsById,
             final CreatureData creatureData) {
         final List<CreatureConversationStep> talkSteps =
                 CreatureConversationSteps.getPossibleSteps(
                         db, initialStoryState, RedenAction.class, room,
-                        allObjectsByKey, creatureData);
+                        allObjectsById, creatureData);
 
-        return buildActions(db, initialStoryState, room, allObjectsByKey,
+        return buildActions(db, initialStoryState, room, allObjectsById,
                 creatureData,
                 talkSteps);
     }
@@ -53,7 +53,7 @@ public class RedenAction extends AbstractScAction {
     private static Collection<RedenAction> buildActions(final AvDatabase db,
                                                         final StoryState initialStoryState,
                                                         final AvRoom room,
-                                                        final Map<AvObject.Key, ObjectData> allObjectsByKey,
+                                                        final Map<GameObjectId, ObjectData> allObjectsById,
                                                         final CreatureData creatureData,
                                                         final List<CreatureConversationStep> talkSteps) {
         final ImmutableList.Builder<RedenAction> res =
@@ -61,7 +61,7 @@ public class RedenAction extends AbstractScAction {
 
         for (final CreatureConversationStep talkStep : talkSteps) {
             if (stepTypeFits(initialStoryState, creatureData, talkStep.getStepType())) {
-                res.add(buildAction(db, initialStoryState, room, allObjectsByKey,
+                res.add(buildAction(db, initialStoryState, room, allObjectsById,
                         creatureData,
                         // "Mit ... reden" /  "Den ... ignorieren" / "Das Gespräch beenden"
                         talkStep));
@@ -74,7 +74,7 @@ public class RedenAction extends AbstractScAction {
     private static boolean stepTypeFits(final StoryState initialStoryState,
                                         final CreatureData creatureData,
                                         final CreatureConversationStep.Type stepType) {
-        if (initialStoryState.talkingTo(creatureData.getKey())) {
+        if (initialStoryState.talkingTo(creatureData.getGameObjectId())) {
             // Der SC befindet sich gerade im Gespräch mit der Creature-
             return stepType == CreatureConversationStep.Type.NORMAL ||
                     stepType == CreatureConversationStep.Type.EXIT;
@@ -103,13 +103,13 @@ public class RedenAction extends AbstractScAction {
     private static RedenAction buildAction(final AvDatabase db,
                                            final StoryState initialStoryState,
                                            final AvRoom room,
-                                           final Map<AvObject.Key, ObjectData> allObjectsByKey,
+                                           final Map<GameObjectId, ObjectData> allObjectsById,
                                            final CreatureData creatureData,
                                            final CreatureConversationStep talkStep) {
         final PraedikatOhneLeerstellen praedikatOhneLeerstellen =
                 fuelleGgfPraedikatLeerstelleMitCreature(talkStep.getName(), creatureData);
 
-        return buildAction(db, initialStoryState, room, allObjectsByKey, creatureData,
+        return buildAction(db, initialStoryState, room, allObjectsById, creatureData,
                 talkStep,
                 praedikatOhneLeerstellen);
     }
@@ -136,11 +136,11 @@ public class RedenAction extends AbstractScAction {
     @NonNull
     private static RedenAction buildAction(final AvDatabase db, final StoryState initialStoryState,
                                            final AvRoom room,
-                                           final Map<AvObject.Key, ObjectData> allObjectsByKey,
+                                           final Map<GameObjectId, ObjectData> allObjectsById,
                                            final CreatureData creatureData,
                                            final CreatureConversationStep talkStep,
                                            final PraedikatOhneLeerstellen praedikatOhneLeerstellen) {
-        return new RedenAction(db, initialStoryState, creatureData, room, allObjectsByKey,
+        return new RedenAction(db, initialStoryState, creatureData, room, allObjectsById,
                 talkStep,
                 // "Dem Frosch Angebote machen"
                 praedikatOhneLeerstellen.getDescriptionInfinitiv());
@@ -149,13 +149,13 @@ public class RedenAction extends AbstractScAction {
     private RedenAction(final AvDatabase db,
                         final StoryState initialStoryState,
                         @NonNull final CreatureData creatureData, final AvRoom room,
-                        final Map<AvObject.Key, ObjectData> allObjectsByKey,
+                        final Map<GameObjectId, ObjectData> allObjectsById,
                         final CreatureConversationStep creatureConversationStep,
                         @NonNull final String name) {
         super(db, initialStoryState);
         this.creatureData = creatureData;
         this.room = room;
-        this.allObjectsByKey = allObjectsByKey;
+        this.allObjectsById = allObjectsById;
         this.creatureConversationStep = creatureConversationStep;
         this.name = name;
     }

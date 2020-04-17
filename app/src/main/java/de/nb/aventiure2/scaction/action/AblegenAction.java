@@ -21,7 +21,7 @@ import de.nb.aventiure2.scaction.AbstractScAction;
 
 import static com.google.common.base.Preconditions.checkArgument;
 import static de.nb.aventiure2.data.storystate.StoryState.StructuralElement.PARAGRAPH;
-import static de.nb.aventiure2.data.world.entity.creature.Creature.Key.FROSCHPRINZ;
+import static de.nb.aventiure2.data.world.entity.creature.Creature.FROSCHPRINZ;
 import static de.nb.aventiure2.data.world.entity.creature.CreatureState.ERWARTET_VON_SC_EINLOESUNG_SEINES_VERSPRECHENS;
 import static de.nb.aventiure2.data.world.entity.creature.CreatureState.ERWARTET_VON_SC_EINLOESUNG_SEINES_VERSPRECHENS_VON_SC_GETRAGEN;
 import static de.nb.aventiure2.data.world.time.AvTimeSpan.secs;
@@ -45,7 +45,7 @@ public class AblegenAction extends AbstractEntityAction {
             final StoryState initialStoryState, final AvRoom room,
             final CreatureData creatureData) {
         final ImmutableList.Builder<AbstractScAction> res = ImmutableList.builder();
-        if (creatureData.creatureIs(Creature.Key.FROSCHPRINZ) &&
+        if (creatureData.creatureIs(FROSCHPRINZ) &&
                 creatureData
                         .hasState(ERWARTET_VON_SC_EINLOESUNG_SEINES_VERSPRECHENS_VON_SC_GETRAGEN)) {
             res.add(new AblegenAction(db, initialStoryState, creatureData, room));
@@ -103,7 +103,7 @@ public class AblegenAction extends AbstractEntityAction {
     }
 
     private void letGoAndAddToRoom(final CreatureData creatureData) {
-        checkArgument(creatureData.creatureIs(Creature.Key.FROSCHPRINZ) &&
+        checkArgument(creatureData.creatureIs(FROSCHPRINZ) &&
                         creatureData.hasState(
                                 ERWARTET_VON_SC_EINLOESUNG_SEINES_VERSPRECHENS_VON_SC_GETRAGEN),
                 "Unexpected creature data: " + creatureData);
@@ -175,7 +175,7 @@ public class AblegenAction extends AbstractEntityAction {
     }
 
     private AvTimeSpan narrateCreature(final CreatureData creatureData) {
-        checkArgument(creatureData.creatureIs(Creature.Key.FROSCHPRINZ) &&
+        checkArgument(creatureData.creatureIs(Creature.FROSCHPRINZ) &&
                         creatureData
                                 .hasState(ERWARTET_VON_SC_EINLOESUNG_SEINES_VERSPRECHENS_VON_SC_GETRAGEN),
                 "Unexpected creature data: " + creatureData);

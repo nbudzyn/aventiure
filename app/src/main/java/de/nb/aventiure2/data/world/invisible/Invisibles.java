@@ -6,8 +6,8 @@ import java.util.List;
 
 import de.nb.aventiure2.data.world.time.AvDateTime;
 
-import static de.nb.aventiure2.data.world.invisible.Invisible.Key.SCHLOSSFEST;
-import static de.nb.aventiure2.data.world.invisible.Invisible.Key.TAGESZEIT;
+import static de.nb.aventiure2.data.world.invisible.Invisible.SCHLOSSFEST;
+import static de.nb.aventiure2.data.world.invisible.Invisible.TAGESZEIT;
 import static de.nb.aventiure2.data.world.invisible.InvisibleState.BEGONNEN;
 import static de.nb.aventiure2.data.world.invisible.InvisibleState.NOCH_NICHT_BEGONNEN;
 import static de.nb.aventiure2.data.world.invisible.InvisibleState.NORMAL;

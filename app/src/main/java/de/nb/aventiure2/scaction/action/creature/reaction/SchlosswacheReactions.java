@@ -8,6 +8,7 @@ import de.nb.aventiure2.data.database.AvDatabase;
 import de.nb.aventiure2.data.storystate.IPlayerAction;
 import de.nb.aventiure2.data.storystate.StoryState;
 import de.nb.aventiure2.data.storystate.StoryStateBuilder;
+import de.nb.aventiure2.data.world.base.GameObjectId;
 import de.nb.aventiure2.data.world.entity.base.AbstractEntityData;
 import de.nb.aventiure2.data.world.entity.creature.CreatureData;
 import de.nb.aventiure2.data.world.entity.object.ObjectData;
@@ -21,17 +22,17 @@ import de.nb.aventiure2.scaction.action.AblegenAction;
 import static de.nb.aventiure2.data.storystate.StoryState.StructuralElement.PARAGRAPH;
 import static de.nb.aventiure2.data.storystate.StoryState.StructuralElement.SENTENCE;
 import static de.nb.aventiure2.data.storystate.StoryState.StructuralElement.WORD;
-import static de.nb.aventiure2.data.world.entity.creature.Creature.Key.SCHLOSSWACHE;
+import static de.nb.aventiure2.data.world.entity.creature.Creature.SCHLOSSWACHE;
 import static de.nb.aventiure2.data.world.entity.creature.CreatureState.AUFMERKSAM;
 import static de.nb.aventiure2.data.world.entity.creature.CreatureState.UNAUFFAELLIG;
-import static de.nb.aventiure2.data.world.entity.object.AvObject.Key.GOLDENE_KUGEL;
+import static de.nb.aventiure2.data.world.entity.object.AvObject.GOLDENE_KUGEL;
 import static de.nb.aventiure2.data.world.entity.object.AvObject.isObject;
-import static de.nb.aventiure2.data.world.invisible.Invisible.Key.SCHLOSSFEST;
+import static de.nb.aventiure2.data.world.invisible.Invisible.SCHLOSSFEST;
 import static de.nb.aventiure2.data.world.invisible.InvisibleState.BEGONNEN;
 import static de.nb.aventiure2.data.world.invisible.Invisibles.COUNTER_ID_VOR_DEM_SCHLOSS_SCHLOSSFEST_KNOWN;
 import static de.nb.aventiure2.data.world.invisible.Invisibles.SCHLOSSFEST_BEGINN_DATE_TIME;
-import static de.nb.aventiure2.data.world.room.AvRoom.Key.DRAUSSEN_VOR_DEM_SCHLOSS;
-import static de.nb.aventiure2.data.world.room.AvRoom.Key.SCHLOSS_VORHALLE;
+import static de.nb.aventiure2.data.world.room.AvRoom.DRAUSSEN_VOR_DEM_SCHLOSS;
+import static de.nb.aventiure2.data.world.room.AvRoom.SCHLOSS_VORHALLE;
 import static de.nb.aventiure2.data.world.time.AvDateTime.isWithin;
 import static de.nb.aventiure2.data.world.time.AvTimeSpan.mins;
 import static de.nb.aventiure2.data.world.time.AvTimeSpan.noTime;
@@ -54,7 +55,7 @@ class SchlosswacheReactions extends AbstractCreatureReactions {
     public AvTimeSpan onEnterRoom(final AvRoom oldRoom, final AvRoom newRoom,
                                   final CreatureData wache,
                                   final StoryState currentStoryState) {
-        if (newRoom.getKey() != SCHLOSS_VORHALLE) {
+        if (!newRoom.is(SCHLOSS_VORHALLE)) {
             return noTime();
         }
 
@@ -63,13 +64,13 @@ class SchlosswacheReactions extends AbstractCreatureReactions {
         }
 
         final ObjectData goldeneKugel = db.objectDataDao().get(GOLDENE_KUGEL);
-        if (goldeneKugel.getRoom().getKey() == SCHLOSS_VORHALLE) {
+        if (goldeneKugel.getRoom().is(SCHLOSS_VORHALLE)) {
             if (db.counterDao().incAndGet(
                     "SchlosswacheReactions_onEnterRoom_SchlossVorhalle") > 1) {
                 n.add(t(SENTENCE,
                         capitalize(wache.nom(true))
                                 + " scheint dich nicht zu bemerken")
-                        .letzterRaum(oldRoom.getKey()));
+                        .letzterRaum(oldRoom));
                 return secs(3);
             }
         }
@@ -88,10 +89,10 @@ class SchlosswacheReactions extends AbstractCreatureReactions {
                                 + "leicht zu "
                                 + "überzeugen und trittst wieder "
                                 + schlossVerlassenWohinDescription(
-                                SCHLOSS_VORHALLE, oldRoom.getKey())
+                                SCHLOSS_VORHALLE, oldRoom.getId())
                                 // "in den Sonnenschein"
                                 + " hinaus")
-                        .letzterRaum(newRoom.getKey())
+                        .letzterRaum(newRoom)
                         .beendet(PARAGRAPH),
                 t(PARAGRAPH,
                         "„Heho, was wird das?“, tönt dir eine laute Stimme entgegen. "
@@ -100,19 +101,21 @@ class SchlosswacheReactions extends AbstractCreatureReactions {
                                 + "passen. Und "
                                 + "seinem Kerkermeister auch.“ "
                                 + "Du bleibst besser draußen")
-                        .letzterRaum(newRoom.getKey())
+                        .letzterRaum(newRoom)
                         .beendet(PARAGRAPH)
         ));
 
-        db.playerLocationDao().setRoom(oldRoom.getKey());
+        db.playerLocationDao().setRoom(oldRoom);
 
         return secs(10);
     }
 
-    private String schlossVerlassenWohinDescription(final AvRoom.Key schlossRoom,
-                                                    final AvRoom.Key wohinRoom) {
-        final Lichtverhaeltnisse lichtverhaeltnisseImSchloss = getLichtverhaeltnisse(schlossRoom);
-        final Lichtverhaeltnisse lichtverhaeltnisseDraussen = getLichtverhaeltnisse(wohinRoom);
+    private String schlossVerlassenWohinDescription(final GameObjectId schlossRoom,
+                                                    final GameObjectId wohinRoom) {
+        final Lichtverhaeltnisse lichtverhaeltnisseImSchloss =
+                getLichtverhaeltnisse(schlossRoom);
+        final Lichtverhaeltnisse lichtverhaeltnisseDraussen =
+                getLichtverhaeltnisse(wohinRoom);
         if (lichtverhaeltnisseImSchloss // Im Schloss ist es immer hell, wenn es also draußen
                 // auch hell ist...
                 == lichtverhaeltnisseDraussen) {
@@ -304,7 +307,7 @@ class SchlosswacheReactions extends AbstractCreatureReactions {
 
         switch (wacheInRoom.getState()) {
             case AUFMERKSAM:
-                if (objectData.getKey() == GOLDENE_KUGEL) {
+                if (objectData.getGameObjectId().equals(GOLDENE_KUGEL)) {
                     return hochwerfenGoldeneKugel_wacheIstAufmerksam(room, wacheInRoom,
                             objectData, currentStoryState);
                 }
@@ -319,8 +322,8 @@ class SchlosswacheReactions extends AbstractCreatureReactions {
                                                                  final StoryState currentStoryState) {
 
         final boolean scHatKugelAufgefangen =
-                db.playerInventoryDao().getInventory().stream().map(o -> o.getKey())
-                        .anyMatch(k -> k == goldeneKugelData.getKey());
+                db.playerInventoryDao().getInventory().stream().map(o -> o.getId())
+                        .anyMatch(id -> id.equals(goldeneKugelData.getGameObjectId()));
 
         if (scHatKugelAufgefangen) {
             return hochwerfenGoldeneKugel_wacheIstAufmerksam_wiederGefangen(room, wacheInRoom,
@@ -380,8 +383,8 @@ class SchlosswacheReactions extends AbstractCreatureReactions {
     }
 
     private AvTimeSpan schlossfestBeginnt(final StoryState currentStoryState) {
-        final AvRoom.Key currentRoom =
-                db.playerLocationDao().getPlayerLocation().getRoom().getKey();
+        final AvRoom currentRoom =
+                db.playerLocationDao().getPlayerLocation().getRoom();
 
         if (currentRoom.equals(SCHLOSS_VORHALLE)) {
             return schlossfestBeginnt_Vorhalle(currentStoryState);

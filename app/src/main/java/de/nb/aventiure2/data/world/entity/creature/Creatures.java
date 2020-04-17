@@ -15,8 +15,8 @@ import static de.nb.aventiure2.data.world.entity.creature.CreatureState.HAT_NACH
 import static de.nb.aventiure2.data.world.entity.creature.CreatureState.HAT_SC_HILFSBEREIT_ANGESPROCHEN;
 import static de.nb.aventiure2.data.world.entity.creature.CreatureState.UNAUFFAELLIG;
 import static de.nb.aventiure2.data.world.entity.creature.CreatureStateList.sl;
-import static de.nb.aventiure2.data.world.room.AvRoom.Key.IM_WALD_BEIM_BRUNNEN;
-import static de.nb.aventiure2.data.world.room.AvRoom.Key.SCHLOSS_VORHALLE;
+import static de.nb.aventiure2.data.world.room.AvRoom.IM_WALD_BEIM_BRUNNEN;
+import static de.nb.aventiure2.data.world.room.AvRoom.SCHLOSS_VORHALLE;
 import static de.nb.aventiure2.german.base.Nominalphrase.np;
 import static de.nb.aventiure2.german.base.NumerusGenus.F;
 import static de.nb.aventiure2.german.base.NumerusGenus.M;
@@ -27,7 +27,7 @@ import static de.nb.aventiure2.german.base.NumerusGenus.M;
 public class Creatures {
     public static final List<Creature> ALL =
             ImmutableList.of(
-                    new Creature(Creature.Key.SCHLOSSWACHE,
+                    new Creature(Creature.SCHLOSSWACHE,
                             np(F, "eine Schlosswache mit langer Hellebarde",
                                     "einer Schlosswache mit langer Hellebarde"),
                             np(F, "die Schlosswache mit ihrer langen Hellebarde",
@@ -37,7 +37,7 @@ public class Creatures {
                             SCHLOSS_VORHALLE,
                             sl(UNAUFFAELLIG, AUFMERKSAM
                             )),
-                    new Creature(Creature.Key.FROSCHPRINZ,
+                    new Creature(Creature.FROSCHPRINZ,
                             np(M, "ein dicker, hässlicher Frosch",
                                     "einem dicken, hässlichen Frosch",
                                     "einen dicken, hässlichen Frosch"),

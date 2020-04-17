@@ -13,8 +13,7 @@ import de.nb.aventiure2.data.world.room.AvRoom;
 import de.nb.aventiure2.german.base.Nominalphrase;
 import de.nb.aventiure2.german.base.NumerusGenus;
 
-import static de.nb.aventiure2.data.world.entity.object.AvObject.Key.GOLDENE_KUGEL;
-import static de.nb.aventiure2.data.world.room.AvRoom.Key.SCHLOSS_VORHALLE;
+import static de.nb.aventiure2.data.world.room.AvRoom.SCHLOSS_VORHALLE;
 import static de.nb.aventiure2.german.base.Nominalphrase.np;
 import static de.nb.aventiure2.german.base.NumerusGenus.F;
 
@@ -22,6 +21,9 @@ import static de.nb.aventiure2.german.base.NumerusGenus.F;
  * An object in the world.
  */
 public class AvObject extends AbstractEntity {
+    public static GameObjectId GOLDENE_KUGEL = new GameObjectId(10_000);
+    // STORY Spieler kauft Lampe (z.B. für Hütte) auf Schlossfest
+
     // TODO Entity-Component-System-Pattern verwenden:
     //  Auch Räume erhalten eine GameObjectId.
 
@@ -39,25 +41,6 @@ public class AvObject extends AbstractEntity {
     // TODO Eine der Components ist das Inventory / ContainerComponent. Der Player
     //  - aber vielleicht auch Räume oder bisherige AvObjects - können ein Inventory haben.
 
-    public enum Key {
-        GOLDENE_KUGEL(10_000);
-        // STORY Spieler kauft Lampe (z.B. für Hütte) auf Schlossfest
-
-        private final GameObjectId gameObjectId;
-
-        private Key(final int gameObjectId) {
-            this(new GameObjectId(gameObjectId));
-        }
-
-        Key(final GameObjectId gameObjectId) {
-            this.gameObjectId = gameObjectId;
-        }
-
-        public GameObjectId getGameObjectId() {
-            return gameObjectId;
-        }
-    }
-
     public static final List<AvObject> ALL =
             ImmutableList.of(
                     new AvObject(GOLDENE_KUGEL,
@@ -73,31 +56,29 @@ public class AvObject extends AbstractEntity {
                     //  kleiner".
             );
 
-    private final Key key;
-
     /**
      * The initial room where this object can be found.
      */
     private final AvRoom initialRoom;
 
-    public static AvObject get(final Key key) {
+    public static AvObject get(final GameObjectId id) {
         for (final AvObject object : ALL) {
-            if (object.key == key) {
+            if (object.is(id)) {
                 return object;
             }
         }
 
-        throw new IllegalStateException("Unexpected key: " + key);
+        throw new IllegalStateException("Unexpected game object id: " + id);
     }
 
     public static boolean isObject(final AbstractEntityData entityData,
-                                   final AvObject.Key objectKey) {
+                                   final GameObjectId id) {
         @Nullable final AvObject object = extractObject(entityData);
         if (object == null) {
             return false;
         }
 
-        return object.getKey() == objectKey;
+        return object.is(id);
     }
 
     @Nullable
@@ -109,72 +90,50 @@ public class AvObject extends AbstractEntity {
         return ((ObjectData) entityData).getObject();
     }
 
-    AvObject(final Key key,
+    AvObject(final GameObjectId id,
              final NumerusGenus numerusGenus,
              final String descriptionAtFirstSightNomDatAkk,
              final String normalDescriptionWhenKnownNomDatAkk,
              final String shortDescriptionWhenKnownNomDatAkk,
-             final AvRoom.Key initialRoom) {
-        this(key, numerusGenus, descriptionAtFirstSightNomDatAkk,
+             final GameObjectId initialRoom) {
+        this(id, numerusGenus, descriptionAtFirstSightNomDatAkk,
                 normalDescriptionWhenKnownNomDatAkk, shortDescriptionWhenKnownNomDatAkk,
                 AvRoom.get(initialRoom));
     }
 
-    AvObject(final Key key,
+    AvObject(final GameObjectId id,
              final NumerusGenus numerusGenus,
              final String descriptionAtFirstSightNomDatAkk,
              final String normalDescriptionWhenKnownNomDatAkk,
              final String shortDescriptionWhenKnownNomDatAkk,
              final AvRoom initialRoom) {
-        this(key,
+        this(id,
                 np(numerusGenus, descriptionAtFirstSightNomDatAkk),
                 np(numerusGenus, normalDescriptionWhenKnownNomDatAkk),
                 np(numerusGenus, shortDescriptionWhenKnownNomDatAkk),
                 initialRoom);
     }
 
-    AvObject(final Key key,
+    AvObject(final GameObjectId id,
              final Nominalphrase descriptionAtFirstSight,
              final Nominalphrase normalDescriptionWhenKnown,
              final Nominalphrase shortDescriptionWhenKnown,
-             final AvRoom.Key initialRoom) {
-        this(key, descriptionAtFirstSight, normalDescriptionWhenKnown, shortDescriptionWhenKnown,
+             final GameObjectId initialRoom) {
+        this(id, descriptionAtFirstSight, normalDescriptionWhenKnown, shortDescriptionWhenKnown,
                 AvRoom.get(initialRoom));
     }
 
-    AvObject(final Key key,
+    AvObject(final GameObjectId id,
              final Nominalphrase descriptionAtFirstSight,
              final Nominalphrase normalDescriptionWhenKnown,
              final Nominalphrase shortDescriptionWhenKnown,
              final AvRoom initialRoom) {
-        super(key.getGameObjectId(), descriptionAtFirstSight, normalDescriptionWhenKnown,
+        super(id, descriptionAtFirstSight, normalDescriptionWhenKnown,
                 shortDescriptionWhenKnown);
-        this.key = key;
         this.initialRoom = initialRoom;
-    }
-
-    public Key getKey() {
-        return key;
     }
 
     public AvRoom getInitialRoom() {
         return initialRoom;
-    }
-
-    @Override
-    public boolean equals(final Object o) {
-        if (this == o) {
-            return true;
-        }
-        if (o == null || getClass() != o.getClass()) {
-            return false;
-        }
-        final AvObject avObject = (AvObject) o;
-        return key == avObject.key;
-    }
-
-    @Override
-    public int hashCode() {
-        return key.hashCode();
     }
 }

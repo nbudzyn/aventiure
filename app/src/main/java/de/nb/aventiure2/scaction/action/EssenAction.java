@@ -20,8 +20,8 @@ import static de.nb.aventiure2.data.storystate.StoryState.StructuralElement.PARA
 import static de.nb.aventiure2.data.storystate.StoryState.StructuralElement.SENTENCE;
 import static de.nb.aventiure2.data.world.invisible.InvisibleState.BEGONNEN;
 import static de.nb.aventiure2.data.world.player.stats.ScHunger.SATT;
-import static de.nb.aventiure2.data.world.room.AvRoom.Key.SCHLOSS_VORHALLE_TISCH_BEIM_FEST;
-import static de.nb.aventiure2.data.world.room.AvRoom.Key.WALDWILDNIS_HINTER_DEM_BRUNNEN;
+import static de.nb.aventiure2.data.world.room.AvRoom.SCHLOSS_VORHALLE_TISCH_BEIM_FEST;
+import static de.nb.aventiure2.data.world.room.AvRoom.WALDWILDNIS_HINTER_DEM_BRUNNEN;
 import static de.nb.aventiure2.data.world.time.AvTimeSpan.mins;
 import static de.nb.aventiure2.german.base.AllgDescription.allg;
 import static de.nb.aventiure2.german.base.DuDescription.du;
@@ -54,13 +54,13 @@ public class EssenAction extends AbstractScAction {
     }
 
     private static boolean raumEnthaeltEtwasEssbares(final AvDatabase db, final AvRoom room) {
-        if (room.getKey() == SCHLOSS_VORHALLE_TISCH_BEIM_FEST &&
-                db.invisibleDataDao().getInvisible(Invisible.Key.SCHLOSSFEST).getState()
+        if (room.is(SCHLOSS_VORHALLE_TISCH_BEIM_FEST) &&
+                db.invisibleDataDao().getInvisible(Invisible.SCHLOSSFEST).getState()
                         == BEGONNEN) {
             return true;
         }
 
-        if (room.getKey() == WALDWILDNIS_HINTER_DEM_BRUNNEN) {
+        if (room.is(WALDWILDNIS_HINTER_DEM_BRUNNEN)) {
             // STORY Früchte sind im Dunkeln kaum zu sehen, selbst wenn man den Weg
             // schon kennt
             return true;
@@ -84,11 +84,12 @@ public class EssenAction extends AbstractScAction {
     @Override
     @NonNull
     public String getName() {
-        switch (room.getKey()) {
-            case SCHLOSS_VORHALLE_TISCH_BEIM_FEST:
-                return "Eintopf essen";
-            case WALDWILDNIS_HINTER_DEM_BRUNNEN:
-                return "Früchte essen";
+        if (room.is(SCHLOSS_VORHALLE_TISCH_BEIM_FEST)) {
+            return "Eintopf essen";
+        }
+
+        if (room.is(WALDWILDNIS_HINTER_DEM_BRUNNEN)) {
+            return "Früchte essen";
         }
 
         throw new IllegalStateException("Unexpected room: " + room);
@@ -97,15 +98,12 @@ public class EssenAction extends AbstractScAction {
     @Override
     public AvTimeSpan narrateAndDo() {
         AvTimeSpan timeElapsed;
-        switch (room.getKey()) {
-            case SCHLOSS_VORHALLE_TISCH_BEIM_FEST:
-                timeElapsed = narrateAndDoSchlossfest();
-                break;
-            case WALDWILDNIS_HINTER_DEM_BRUNNEN:
-                timeElapsed = narrateAndDoFelsenbirnen();
-                break;
-            default:
-                throw new IllegalStateException("Unexpected room: " + room);
+        if (room.is(SCHLOSS_VORHALLE_TISCH_BEIM_FEST)) {
+            timeElapsed = narrateAndDoSchlossfest();
+        } else if (room.is(WALDWILDNIS_HINTER_DEM_BRUNNEN)) {
+            timeElapsed = narrateAndDoFelsenbirnen();
+        } else {
+            throw new IllegalStateException("Unexpected room: " + room);
         }
 
         timeElapsed = timeElapsed.plus(creatureReactionsCoordinator.onEssen(room));

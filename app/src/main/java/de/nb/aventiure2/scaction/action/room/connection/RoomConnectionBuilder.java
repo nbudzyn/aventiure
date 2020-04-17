@@ -18,17 +18,17 @@ import de.nb.aventiure2.german.base.AbstractDescription;
 import static de.nb.aventiure2.data.world.invisible.InvisibleState.BEGONNEN;
 import static de.nb.aventiure2.data.world.invisible.Invisibles.COUNTER_ID_VOR_DEM_SCHLOSS_SCHLOSSFEST_KNOWN;
 import static de.nb.aventiure2.data.world.lichtverhaeltnisse.Lichtverhaeltnisse.HELL;
-import static de.nb.aventiure2.data.world.room.AvRoom.Key.ABZWEIG_IM_WALD;
-import static de.nb.aventiure2.data.world.room.AvRoom.Key.BETT_IN_DER_HUETTE_IM_WALD;
-import static de.nb.aventiure2.data.world.room.AvRoom.Key.DRAUSSEN_VOR_DEM_SCHLOSS;
-import static de.nb.aventiure2.data.world.room.AvRoom.Key.HINTER_DER_HUETTE;
-import static de.nb.aventiure2.data.world.room.AvRoom.Key.HUETTE_IM_WALD;
-import static de.nb.aventiure2.data.world.room.AvRoom.Key.IM_WALD_BEIM_BRUNNEN;
-import static de.nb.aventiure2.data.world.room.AvRoom.Key.IM_WALD_NAHE_DEM_SCHLOSS;
-import static de.nb.aventiure2.data.world.room.AvRoom.Key.SCHLOSS_VORHALLE;
-import static de.nb.aventiure2.data.world.room.AvRoom.Key.SCHLOSS_VORHALLE_TISCH_BEIM_FEST;
-import static de.nb.aventiure2.data.world.room.AvRoom.Key.VOR_DER_HUETTE_IM_WALD;
-import static de.nb.aventiure2.data.world.room.AvRoom.Key.WALDWILDNIS_HINTER_DEM_BRUNNEN;
+import static de.nb.aventiure2.data.world.room.AvRoom.ABZWEIG_IM_WALD;
+import static de.nb.aventiure2.data.world.room.AvRoom.BETT_IN_DER_HUETTE_IM_WALD;
+import static de.nb.aventiure2.data.world.room.AvRoom.DRAUSSEN_VOR_DEM_SCHLOSS;
+import static de.nb.aventiure2.data.world.room.AvRoom.HINTER_DER_HUETTE;
+import static de.nb.aventiure2.data.world.room.AvRoom.HUETTE_IM_WALD;
+import static de.nb.aventiure2.data.world.room.AvRoom.IM_WALD_BEIM_BRUNNEN;
+import static de.nb.aventiure2.data.world.room.AvRoom.IM_WALD_NAHE_DEM_SCHLOSS;
+import static de.nb.aventiure2.data.world.room.AvRoom.SCHLOSS_VORHALLE;
+import static de.nb.aventiure2.data.world.room.AvRoom.SCHLOSS_VORHALLE_TISCH_BEIM_FEST;
+import static de.nb.aventiure2.data.world.room.AvRoom.VOR_DER_HUETTE_IM_WALD;
+import static de.nb.aventiure2.data.world.room.AvRoom.WALDWILDNIS_HINTER_DEM_BRUNNEN;
 import static de.nb.aventiure2.data.world.room.RoomKnown.KNOWN_FROM_DARKNESS;
 import static de.nb.aventiure2.data.world.room.RoomKnown.UNKNOWN;
 import static de.nb.aventiure2.data.world.time.AvTimeSpan.mins;
@@ -51,411 +51,451 @@ class RoomConnectionBuilder {
         //  schloss::getDesc_DraussenVorDemSchloss().
         //  from-Räume (SchlossConnectionBuilder etc.) von AbstractRoomConnectionBuilder ableiten.
 
-        switch (from.getKey()) {
-            case SCHLOSS_VORHALLE:
-                final ImmutableList.Builder<RoomConnection> resSchlossVorhalle =
-                        ImmutableList.builder();
-                resSchlossVorhalle.add(con(DRAUSSEN_VOR_DEM_SCHLOSS,
-                        "Das Schloss verlassen",
-                        this::getDesc_SchlossVorhalle_DraussenVorDemSchloss));
-                if (db.invisibleDataDao().getInvisible(Invisible.Key.SCHLOSSFEST)
-                        .hasState(BEGONNEN)) {
-                    resSchlossVorhalle.add(con(SCHLOSS_VORHALLE_TISCH_BEIM_FEST,
-                            "An einen Tisch setzen",
-                            this::getDesc_SchlossVorhalle_SchlossVorhalleTischBeimFest));
-                }
-                return resSchlossVorhalle.build();
-            case SCHLOSS_VORHALLE_TISCH_BEIM_FEST:
-                return ImmutableList.of(
-                        con(SCHLOSS_VORHALLE,
-                                "Vom Tisch aufstehen",
-                                RoomConnectionBuilder::getDesc_SchlossVorhalleTischBeimFest_SchlossVorhalle));
-            case DRAUSSEN_VOR_DEM_SCHLOSS:
-                return ImmutableList.of(
-                        con(SCHLOSS_VORHALLE,
-                                "Das Schloss betreten",
-                                this::getDesc_DraussenVorDemSchloss_SchlossVorhalle),
-                        con(IM_WALD_NAHE_DEM_SCHLOSS,
-                                "In den Wald gehen",
-                                du(
-                                        "folgst",
-                                        "einem Pfad in den Wald",
-                                        false,
-                                        true,
-                                        true,
-                                        mins(10)),
-                                allg(
-                                        "Jeder kennt die Geschichten, die man "
-                                                + "sich über den Wald erzählt: Räuber sind noch "
-                                                + "die kleinste Gefahr. Aber das schreckt dich ganz "
-                                                + "offenbar nicht und du folgst dem erstbesten "
-                                                + "Pfad hinein in den dunklen Wald",
-                                        false,
-                                        false,
-                                        false,
-                                        mins(12)),
-                                du(
-                                        "läufst",
-                                        "wieder in den dunklen Wald",
-                                        false,
-                                        true,
-                                        true,
-                                        mins(10)),
-                                du(
-                                        "läufst",
-                                        "wieder in den dunklen Wald",
-                                        false,
-                                        true,
-                                        true,
-                                        mins(10))));
-            case IM_WALD_NAHE_DEM_SCHLOSS:
-                return ImmutableList.of(
-                        con(DRAUSSEN_VOR_DEM_SCHLOSS,
-                                "Den Wald verlassen",
-                                this::getDesc_ImWaldNaheDemSchloss_DraussenVorDemSchloss),
-                        con(ABZWEIG_IM_WALD,
-                                "Tiefer in den Wald hineingehen",
-                                allg("Nicht lang, und zur Linken geht zwischen "
-                                                + "den Bäumen ein alter, düsterer Weg ab, über "
-                                                + "den Farn wuchert",
-                                        true,
-                                        false,
-                                        false,
-                                        mins(5)
-                                ),
-                                du("kommst",
-                                        "an den farnüberwachsenen Abzweig",
-                                        false,
-                                        true,
-                                        false,
-                                        mins(5)
-                                )
-                        ));
-            case ABZWEIG_IM_WALD:
-                return ImmutableList.of(
-                        con(IM_WALD_NAHE_DEM_SCHLOSS,
-                                "In Richtung Schloss gehen",
-                                allg("Von dort gehst du weiter in Richtung Schloss",
-                                        false,
-                                        false,
-                                        // Verhindert "Von dort gehst du weiter in Richtung
-                                        // Schloss und gehst noch eine Weile vorsichtig durch
-                                        // den dunklen Wald..."
-                                        false,
-                                        mins(5)
-                                )
-                        ),
-                        con(VOR_DER_HUETTE_IM_WALD,
-                                "Den überwachsenen Abzweig nehmen",
-                                allg("Du fasst dir ein Herz und stapfst zwischen "
-                                                + "dem Unkraut einen Weg entlang, "
-                                                + "der wohl schon länger nicht mehr benutzt wurde. Hinter der "
-                                                + "nächsten Biegung stehst du unvermittelt vor"
-                                                + " einer Holzhütte. "
-                                                + "Die Fensterläden sind "
-                                                + "geschlossen, die Tür hängt nur noch lose "
-                                                + "in den Angeln",
-                                        false,
-                                        false,
-                                        false,
-                                        mins(2)
-                                ),
-                                allg("Hat gerade neben dir im Unterholz geknarzt? "
-                                                + "Wie auch immer, du fasst dir ein Herz und "
-                                                + "stapfst durch das "
-                                                + "dem Unkraut einen düsteren Trampelpfad entlang. "
-                                                + "Hinter der "
-                                                + "nächsten Biegung stehst du unvermittelt vor"
-                                                + " der Tür einer Holzhütte. "
-                                                + "Die Tür hängt nur noch lose "
-                                                + "in den Angeln",
-                                        false,
-                                        false,
-                                        false,
-                                        mins(2)
-                                ),
-                                du("wählst", "noch einmal den überwachsenen "
-                                                + "Pfad zur Hütte. Es wirkt alles so, also sei "
-                                                + "er schon lange nicht mehr benutzt worden",
-                                        true,
-                                        false,
-                                        true,
-                                        mins(2)),
-                                du("wählst", "noch einmal den überwachsenen "
-                                                + "Pfad zur Hütte",
-                                        false,
-                                        true,
-                                        false,
-                                        mins(2))
-                        ),
-                        con(IM_WALD_BEIM_BRUNNEN,
-                                "Auf dem Hauptpfad tiefer in den Wald gehen",
-                                allg(
-                                        "Der breitere Pfad führt zu einer alten "
-                                                + "Linde, unter der ist ein Brunnen. "
-                                                + "Hinter dem Brunnen endet der Weg und der "
-                                                + "wilde Wald beginnt.\n"
-                                                + "Du setzt "
-                                                + "dich an den Brunnenrand – "
-                                                + "hier ist es "
-                                                + "angenehm kühl",
-                                        false,
-                                        false,
-                                        true,
-                                        mins(5)
-                                ),
-                                du(
-                                        "gehst", "den breiteren Pfad weiter in "
-                                                + "den Wald hinein. Wohl ist dir dabei nicht.\n"
-                                                + "In der Ferne heult ein Wolf – oder hast du "
-                                                + "dir das eingebildet?\nDann kommst du an einen "
-                                                + "Baum, unter dem ist ein Brunnen. Kühl ist es "
-                                                + "hier, und der Weg scheint zu Ende zu sein",
-                                        false,
-                                        false,
-                                        false,
-                                        mins(10)
-                                ),
-                                du("kehrst",
-                                        "zurück zum Brunnen – unter einer Linde, wie "
-                                                + "du bei Licht erkennen kannst. Hinter dem "
-                                                + "Brunnen beginnt der wilde Wald",
-                                        true,
-                                        false,
-                                        false,
-                                        mins(4)),
-                                du("kehrst",
-                                        "zurück zum Brunnen unter der Linde",
-                                        false,
-                                        true,
-                                        true,
-                                        mins(3))));
-            case VOR_DER_HUETTE_IM_WALD:
-                return ImmutableList.of(
-                        con(ABZWEIG_IM_WALD,
-                                "Auf den Hauptpfad zurückkehren",
-                                allg("Durch Farn und Gestrüpp gehst du zurück zum "
-                                                + "Hauptpfad",
-                                        false,
-                                        true,
-                                        true,
-                                        mins(2)
-                                )
-                        ),
-                        con(HUETTE_IM_WALD,
-                                "Die Hütte betreten",
-                                allg("Du schiebst die Tür zur Seite und "
-                                                + "zwängst dich hinein. Durch Ritzen in den "
-                                                + "Fensterläden fällt ein wenig Licht: "
-                                                + "Die Hütte ist "
-                                                + "anscheinend trocken und, wie es aussieht, "
-                                                + "bis auf einige "
-                                                + "Tausendfüßler "
-                                                + "unbewohnt. Du siehst ein Bettgestell, "
-                                                + "einen Tisch, aber sonst keine Einrichtung",
-                                        false,
-                                        false,
-                                        false,
-                                        mins(1)
-                                ),
-                                allg("Du schiebst die Tür zur Seite und "
-                                                + "zwängst dich hinein. Erst ist alles "
-                                                + "stockdunkel, aber dann kannst du doch mit "
-                                                + "Mühe ein Bettgestell und einen Tisch "
-                                                + "ausmachen",
-                                        false,
-                                        false,
-                                        false,
-                                        secs(90)
-                                ),
-                                du("schiebst", "dich noch einmal in die "
-                                                + "kleine Hütte. Durch Ritzen in den "
-                                                + "Fensterläden fällt ein wenig Licht: "
-                                                + "Die Hütte ist "
-                                                + "anscheinend trocken und, wie es aussieht, "
-                                                + "bis auf einige "
-                                                + "Tausendfüßler "
-                                                + "unbewohnt. Du siehst ein Bettgestell, "
-                                                + "einen Tisch, aber sonst keine Einrichtung",
-                                        true,
-                                        true,
-                                        false,
-                                        mins(1)
-                                ),
-                                du("schiebst", "dich noch einmal in die "
-                                                + "kleine Hütte, in der es außer Tisch und "
-                                                + "Bett wenig zu sehen gibt",
-                                        true,
-                                        true,
-                                        false,
-                                        secs(15)
-                                )),
-                        con(HINTER_DER_HUETTE,
-                                "Um die Hütte herumgehen",
-                                allg("Ein paar Schritte um die Hütte herum und "
-                                                + "du kommst in einen kleinen, völlig "
-                                                + "verwilderten Garten. In seiner Mitte "
-                                                + "steht einzeln… es könnte ein "
-                                                + "Apfelbaum sein. Früchte siehst du von "
-                                                + "unten keine.",
-                                        false,
-                                        false,
-                                        false,
-                                        secs(30)
-                                ),
-                                allg("Vorsichtig gehtst du im Dunkeln ein paar Schritte "
-                                                + "um die Hütte herum. Du kannst die Silhuette "
-                                                + "eines einzelnen Baums erkennen, vielleicht – "
-                                                + "ein Apfelbaum",
-                                        false,
-                                        false,
-                                        false,
-                                        mins(1)
-                                ),
-                                du("schaust", "noch einmal hinter die Hütte. "
-                                                + "Im Licht erkennst du dort einen kleinen, völlig "
-                                                + "verwilderten Garten mit dem einzelnen Baum in "
-                                                + "der Mitte",
-                                        false,
-                                        false,
-                                        false,
-                                        secs(30)
-                                ),
-                                du("schaust", "noch einmal in den alten "
-                                                + "Garten hinter der Hütte, wo der "
-                                                + "Baum wächst",
-                                        true,
-                                        true,
-                                        true,
-                                        secs(30)
-                                )
-                        ));
-            case HUETTE_IM_WALD:
-                // STORY Spieler richtet Hütte gemütlich ein. Hütte ist gegen Wölfe etc. geschützt.
+        if (from.is(SCHLOSS_VORHALLE)) {
+            final ImmutableList.Builder<RoomConnection> resSchlossVorhalle =
+                    ImmutableList.builder();
+            resSchlossVorhalle.add(con(DRAUSSEN_VOR_DEM_SCHLOSS,
+                    "Das Schloss verlassen",
+                    this::getDesc_SchlossVorhalle_DraussenVorDemSchloss));
+            if (db.invisibleDataDao().getInvisible(Invisible.SCHLOSSFEST)
+                    .hasState(BEGONNEN)) {
+                resSchlossVorhalle.add(con(SCHLOSS_VORHALLE_TISCH_BEIM_FEST,
+                        "An einen Tisch setzen",
+                        this::getDesc_SchlossVorhalle_SchlossVorhalleTischBeimFest));
+            }
+            return resSchlossVorhalle.build();
+        }
+        if (from.is(SCHLOSS_VORHALLE_TISCH_BEIM_FEST)) {
+            return ImmutableList.of(
+                    con(SCHLOSS_VORHALLE,
+                            "Vom Tisch aufstehen",
+                            RoomConnectionBuilder::getDesc_SchlossVorhalleTischBeimFest_SchlossVorhalle));
+        }
+        if (from.is(DRAUSSEN_VOR_DEM_SCHLOSS)) {
+            return ImmutableList.of(
 
-                return ImmutableList.of(
-                        con(VOR_DER_HUETTE_IM_WALD,
-                                "Die Hütte verlassen",
-                                du("zwängst", "dich wieder durch die Tür nach "
-                                                + "draußen",
-                                        false,
-                                        true,
-                                        true,
-                                        secs(15)
-                                )
-                        ),
-                        con(BETT_IN_DER_HUETTE_IM_WALD,
-                                "In das Bett legen",
-                                du("legst", "dich in das hölzere Bettgestell. "
-                                                + "Gemütlich ist etwas anderes, aber nach den "
-                                                + "vielen Schritten tut es sehr gut, sich "
-                                                + "einmal auszustrecken",
-                                        false,
-                                        false,
-                                        false,
-                                        secs(15)
-                                ),
-                                allg("Noch einmal legst du dich in das Holzbett",
-                                        false,
-                                        true,
-                                        true,
-                                        secs(15)
-                                )
-                        ));
-            case HINTER_DER_HUETTE:
-                return ImmutableList.of(
-                        con(VOR_DER_HUETTE_IM_WALD,
-                                "Zur Vorderseite der Hütte gehen",
-                                du("kehrst", "zurück zur Vorderseite der "
-                                                + "Hütte",
-                                        false,
-                                        true,
-                                        true,
-                                        secs(15)
-                                )
-                        )
-                );
-            case BETT_IN_DER_HUETTE_IM_WALD:
-                return ImmutableList.of(
-                        con(HUETTE_IM_WALD,
-                                "Aufstehen",
-                                allg("Du reckst dich noch einmal und stehst "
-                                                + "wieder auf",
-                                        false,
-                                        false,
-                                        true,
-                                        secs(10)
-                                )
-                        ));
-            case IM_WALD_BEIM_BRUNNEN:
-                final ImmutableList.Builder<RoomConnection> resImWaldBeimBrunnnen =
-                        ImmutableList.builder();
+                    con(SCHLOSS_VORHALLE,
+                            "Das Schloss betreten",
+                            this::getDesc_DraussenVorDemSchloss_SchlossVorhalle),
 
-                resImWaldBeimBrunnnen.add(con(ABZWEIG_IM_WALD,
-                        "Den Weg Richtung Schloss gehen",
-                        allg("Du verlässt den Brunnen und erreichst bald "
-                                        + "die Stelle, wo der überwachsene Weg "
-                                        + "abzweigt",
+                    con(IM_WALD_NAHE_DEM_SCHLOSS,
+                            "In den Wald gehen",
+                            du(
+                                    "folgst",
+                                    "einem Pfad in den Wald",
+                                    false,
+                                    true,
+                                    true,
+                                    mins(10)),
+
+                            allg(
+                                    "Jeder kennt die Geschichten, die man "
+                                            + "sich über den Wald erzählt: Räuber sind noch "
+                                            + "die kleinste Gefahr. Aber das schreckt dich ganz "
+                                            + "offenbar nicht und du folgst dem erstbesten "
+                                            + "Pfad hinein in den dunklen Wald",
+                                    false,
+                                    false,
+                                    false,
+                                    mins(12)),
+
+                            du(
+                                    "läufst",
+                                    "wieder in den dunklen Wald",
+                                    false,
+                                    true,
+                                    true,
+                                    mins(10)),
+
+                            du(
+                                    "läufst",
+                                    "wieder in den dunklen Wald",
+                                    false,
+                                    true,
+                                    true,
+                                    mins(10))));
+        }
+        if (from.is(IM_WALD_NAHE_DEM_SCHLOSS)) {
+            return ImmutableList.of(
+                    con(DRAUSSEN_VOR_DEM_SCHLOSS,
+                            "Den Wald verlassen",
+                            this::getDesc_ImWaldNaheDemSchloss_DraussenVorDemSchloss),
+                    con(ABZWEIG_IM_WALD,
+                            "Tiefer in den Wald hineingehen",
+                            allg("Nicht lang, und zur Linken geht zwischen "
+                                            + "den Bäumen ein alter, düsterer Weg ab, über "
+                                            + "den Farn wuchert",
+                                    true,
+                                    false,
+                                    false,
+                                    mins(5)
+                            ),
+                            du("kommst",
+                                    "an den farnüberwachsenen Abzweig",
+                                    false,
+                                    true,
+                                    false,
+                                    mins(5)
+                            )
+                    ));
+        }
+        if (from.is(ABZWEIG_IM_WALD)) {
+            return ImmutableList.of(
+
+                    con(IM_WALD_NAHE_DEM_SCHLOSS,
+                            "In Richtung Schloss gehen",
+                            allg("Von dort gehst du weiter in Richtung Schloss",
+                                    false,
+                                    false,
+                                    // Verhindert "Von dort gehst du weiter in Richtung
+                                    // Schloss und gehst noch eine Weile vorsichtig durch
+                                    // den dunklen Wald..."
+                                    false,
+                                    mins(5)
+                            )
+                    ),
+
+                    con(VOR_DER_HUETTE_IM_WALD,
+                            "Den überwachsenen Abzweig nehmen",
+                            allg("Du fasst dir ein Herz und stapfst zwischen "
+                                            + "dem Unkraut einen Weg entlang, "
+                                            + "der wohl schon länger nicht mehr benutzt wurde. Hinter der "
+                                            + "nächsten Biegung stehst du unvermittelt vor"
+                                            + " einer Holzhütte. "
+                                            + "Die Fensterläden sind "
+                                            + "geschlossen, die Tür hängt nur noch lose "
+                                            + "in den Angeln",
+                                    false,
+                                    false,
+                                    false,
+                                    mins(2)
+                            ),
+
+                            allg("Hat gerade neben dir im Unterholz geknarzt? "
+                                            + "Wie auch immer, du fasst dir ein Herz und "
+                                            + "stapfst durch das "
+                                            + "dem Unkraut einen düsteren Trampelpfad entlang. "
+                                            + "Hinter der "
+                                            + "nächsten Biegung stehst du unvermittelt vor"
+                                            + " der Tür einer Holzhütte. "
+                                            + "Die Tür hängt nur noch lose "
+                                            + "in den Angeln",
+                                    false,
+                                    false,
+                                    false,
+                                    mins(2)
+                            ),
+
+                            du("wählst", "noch einmal den überwachsenen "
+                                            + "Pfad zur Hütte. Es wirkt alles so, also sei "
+                                            + "er schon lange nicht mehr benutzt worden",
+                                    true,
+                                    false,
+                                    true,
+                                    mins(2)),
+
+                            du("wählst", "noch einmal den überwachsenen "
+                                            + "Pfad zur Hütte",
+                                    false,
+                                    true,
+                                    false,
+                                    mins(2))
+                    ),
+
+                    con(IM_WALD_BEIM_BRUNNEN,
+                            "Auf dem Hauptpfad tiefer in den Wald gehen",
+                            allg(
+                                    "Der breitere Pfad führt zu einer alten "
+                                            + "Linde, unter der ist ein Brunnen. "
+                                            + "Hinter dem Brunnen endet der Weg und der "
+                                            + "wilde Wald beginnt.\n"
+                                            + "Du setzt "
+                                            + "dich an den Brunnenrand – "
+                                            + "hier ist es "
+                                            + "angenehm kühl",
+                                    false,
+                                    false,
+                                    true,
+                                    mins(5)
+                            ),
+
+                            du(
+                                    "gehst", "den breiteren Pfad weiter in "
+                                            + "den Wald hinein. Wohl ist dir dabei nicht.\n"
+                                            + "In der Ferne heult ein Wolf – oder hast du "
+                                            + "dir das eingebildet?\nDann kommst du an einen "
+                                            + "Baum, unter dem ist ein Brunnen. Kühl ist es "
+                                            + "hier, und der Weg scheint zu Ende zu sein",
+                                    false,
+                                    false,
+                                    false,
+                                    mins(10)
+                            ),
+
+                            du("kehrst",
+                                    "zurück zum Brunnen – unter einer Linde, wie "
+                                            + "du bei Licht erkennen kannst. Hinter dem "
+                                            + "Brunnen beginnt der wilde Wald",
+                                    true,
+                                    false,
+                                    false,
+                                    mins(4)),
+
+                            du("kehrst",
+                                    "zurück zum Brunnen unter der Linde",
+                                    false,
+                                    true,
+                                    true,
+                                    mins(3))));
+        }
+        if (from.is(VOR_DER_HUETTE_IM_WALD)) {
+            return ImmutableList.of(
+                    con(ABZWEIG_IM_WALD,
+                            "Auf den Hauptpfad zurückkehren",
+                            allg("Durch Farn und Gestrüpp gehst du zurück zum "
+                                            + "Hauptpfad",
+                                    false,
+                                    true,
+                                    true,
+                                    mins(2)
+                            )
+                    ),
+                    con(HUETTE_IM_WALD,
+                            "Die Hütte betreten",
+                            allg("Du schiebst die Tür zur Seite und "
+                                            + "zwängst dich hinein. Durch Ritzen in den "
+                                            + "Fensterläden fällt ein wenig Licht: "
+                                            + "Die Hütte ist "
+                                            + "anscheinend trocken und, wie es aussieht, "
+                                            + "bis auf einige "
+                                            + "Tausendfüßler "
+                                            + "unbewohnt. Du siehst ein Bettgestell, "
+                                            + "einen Tisch, aber sonst keine Einrichtung",
+                                    false,
+                                    false,
+                                    false,
+                                    mins(1)
+                            ),
+                            allg("Du schiebst die Tür zur Seite und "
+                                            + "zwängst dich hinein. Erst ist alles "
+                                            + "stockdunkel, aber dann kannst du doch mit "
+                                            + "Mühe ein Bettgestell und einen Tisch "
+                                            + "ausmachen",
+                                    false,
+                                    false,
+                                    false,
+                                    secs(90)
+                            ),
+                            du("schiebst", "dich noch einmal in die "
+                                            + "kleine Hütte. Durch Ritzen in den "
+                                            + "Fensterläden fällt ein wenig Licht: "
+                                            + "Die Hütte ist "
+                                            + "anscheinend trocken und, wie es aussieht, "
+                                            + "bis auf einige "
+                                            + "Tausendfüßler "
+                                            + "unbewohnt. Du siehst ein Bettgestell, "
+                                            + "einen Tisch, aber sonst keine Einrichtung",
+                                    true,
+                                    true,
+                                    false,
+                                    mins(1)
+                            ),
+                            du("schiebst", "dich noch einmal in die "
+                                            + "kleine Hütte, in der es außer Tisch und "
+                                            + "Bett wenig zu sehen gibt",
+                                    true,
+                                    true,
+                                    false,
+                                    secs(15)
+                            )),
+                    con(HINTER_DER_HUETTE,
+                            "Um die Hütte herumgehen",
+                            allg("Ein paar Schritte um die Hütte herum und "
+                                            + "du kommst in einen kleinen, völlig "
+                                            + "verwilderten Garten. In seiner Mitte "
+                                            + "steht einzeln… es könnte ein "
+                                            + "Apfelbaum sein. Früchte siehst du von "
+                                            + "unten keine.",
+                                    false,
+                                    false,
+                                    false,
+                                    secs(30)
+                            ),
+                            allg("Vorsichtig gehtst du im Dunkeln ein paar Schritte "
+                                            + "um die Hütte herum. Du kannst die Silhuette "
+                                            + "eines einzelnen Baums erkennen, vielleicht – "
+                                            + "ein Apfelbaum",
+                                    false,
+                                    false,
+                                    false,
+                                    mins(1)
+                            ),
+                            du("schaust", "noch einmal hinter die Hütte. "
+                                            + "Im Licht erkennst du dort einen kleinen, völlig "
+                                            + "verwilderten Garten mit dem einzelnen Baum in "
+                                            + "der Mitte",
+                                    false,
+                                    false,
+                                    false,
+                                    secs(30)
+                            ),
+                            du("schaust", "noch einmal in den alten "
+                                            + "Garten hinter der Hütte, wo der "
+                                            + "Baum wächst",
+                                    true,
+                                    true,
+                                    true,
+                                    secs(30)
+                            )
+                    ));
+        }
+        if (from.is(HUETTE_IM_WALD)) {
+            // STORY Spieler richtet Hütte gemütlich ein. Hütte ist gegen Wölfe etc. geschützt.
+
+            return ImmutableList.of(
+
+                    con(VOR_DER_HUETTE_IM_WALD,
+                            "Die Hütte verlassen",
+                            du("zwängst", "dich wieder durch die Tür nach "
+                                            + "draußen",
+                                    false,
+                                    true,
+                                    true,
+                                    secs(15)
+                            )
+                    ),
+
+                    con(BETT_IN_DER_HUETTE_IM_WALD,
+                            "In das Bett legen",
+                            du("legst", "dich in das hölzere Bettgestell. "
+                                            + "Gemütlich ist etwas anderes, aber nach den "
+                                            + "vielen Schritten tut es sehr gut, sich "
+                                            + "einmal auszustrecken",
+                                    false,
+                                    false,
+                                    false,
+                                    secs(15)
+                            ),
+
+                            allg("Noch einmal legst du dich in das Holzbett",
+                                    false,
+                                    true,
+                                    true,
+                                    secs(15)
+                            )
+                    ));
+        }
+        if (from.is(HINTER_DER_HUETTE)) {
+            return ImmutableList.of(
+
+                    con(VOR_DER_HUETTE_IM_WALD,
+                            "Zur Vorderseite der Hütte gehen",
+                            du("kehrst", "zurück zur Vorderseite der "
+                                            + "Hütte",
+                                    false,
+                                    true,
+                                    true,
+                                    secs(15)
+                            )
+                    )
+            );
+        }
+        if (from.is(BETT_IN_DER_HUETTE_IM_WALD)) {
+            return ImmutableList.of(
+
+                    con(HUETTE_IM_WALD,
+                            "Aufstehen",
+                            allg("Du reckst dich noch einmal und stehst "
+                                            + "wieder auf",
+                                    false,
+                                    false,
+                                    true,
+                                    secs(10)
+                            )
+                    ));
+        }
+        if (from.is(IM_WALD_BEIM_BRUNNEN)) {
+            final ImmutableList.Builder<RoomConnection> resImWaldBeimBrunnnen =
+                    ImmutableList.builder();
+
+            resImWaldBeimBrunnnen.add(
+
+                    con(ABZWEIG_IM_WALD,
+                            "Den Weg Richtung Schloss gehen",
+                            allg("Du verlässt den Brunnen und erreichst bald "
+                                            + "die Stelle, wo der überwachsene Weg "
+                                            + "abzweigt",
+                                    true,
+                                    false,
+                                    false,
+                                    mins(3)
+                            )));
+            if (
+
+                    getLichtverhaeltnisseFrom() == HELL ||
+                            db.roomDao().
+
+                                    getKnown(WALDWILDNIS_HINTER_DEM_BRUNNEN).
+
+                                    isKnown()) {
+                resImWaldBeimBrunnnen.add(con(WALDWILDNIS_HINTER_DEM_BRUNNEN,
+                        "Hinter dem Brunnen in die Wildnis schlagen",
+                        allg("Du verlässt den Brunnen und schlägst dich in die "
+                                        + "Wildnis "
+                                        + "hinter dem "
+                                        + "Brunnen. Umgestürzte Bäume, abgefallene "
+                                        + "Äste, modriger Grund – es ist schwer, durch "
+                                        + "diese Wildnis voranzukommen. "
+                                        + "Nicht weit in den Wald, und dir fällt ein "
+                                        + "Strauch mit kleinen, "
+                                        + "purpurnen Früchten auf, wie zu klein geratene "
+                                        + "Äpfel",
                                 true,
                                 false,
+                                true,
+                                mins(5)),
+                        allg("Noch einmal kämpfst du dich durch den wilden "
+                                        + "Wald hinter dem Brunnen, bis du den Strauch mit den "
+                                        + "kleinen, violetten Früchten erreichst",
                                 false,
-                                mins(3)
-                        )));
-                if (getLichtverhaeltnisseFrom() == HELL ||
-                        db.roomDao().getKnown(WALDWILDNIS_HINTER_DEM_BRUNNEN).isKnown()) {
-                    resImWaldBeimBrunnnen.add(con(WALDWILDNIS_HINTER_DEM_BRUNNEN,
-                            "Hinter dem Brunnen in die Wildnis schlagen",
-                            allg("Du verlässt den Brunnen und schlägst dich in die "
-                                            + "Wildnis "
-                                            + "hinter dem "
-                                            + "Brunnen. Umgestürzte Bäume, abgefallene "
-                                            + "Äste, modriger Grund – es ist schwer, durch "
-                                            + "diese Wildnis voranzukommen. "
-                                            + "Nicht weit in den Wald, und dir fällt ein "
-                                            + "Strauch mit kleinen, "
-                                            + "purpurnen Früchten auf, wie zu klein geratene "
-                                            + "Äpfel",
-                                    true,
-                                    false,
-                                    true,
-                                    mins(5)),
-                            allg("Noch einmal kämpfst du dich durch den wilden "
-                                            + "Wald hinter dem Brunnen, bis du den Strauch mit den "
-                                            + "kleinen, violetten Früchten erreichst",
-                                    false,
-                                    false,
-                                    false,
-                                    mins(4))));
-                }
+                                false,
+                                false,
+                                mins(4))));
+            }
 
-                return resImWaldBeimBrunnnen.build();
-            case WALDWILDNIS_HINTER_DEM_BRUNNEN:
-                return ImmutableList.of(
-                        con(IM_WALD_BEIM_BRUNNEN,
-                                "Zum Brunnen gehen",
-                                allg(
-                                        "Durch den wilden Wald suchst du dir einen Weg "
-                                                + "zurück zum Brunnen",
-                                        false,
-                                        true,
-                                        true,
-                                        mins(3))
-                        ));
+            return resImWaldBeimBrunnnen.build();
+        }
+        if (from.is(WALDWILDNIS_HINTER_DEM_BRUNNEN)) {
+            return ImmutableList.of(
+
+                    con(IM_WALD_BEIM_BRUNNEN,
+                            "Zum Brunnen gehen",
+                            allg(
+                                    "Durch den wilden Wald suchst du dir einen Weg "
+                                            + "zurück zum Brunnen",
+                                    false,
+                                    true,
+                                    true,
+                                    mins(3))
+                    ));
             // STORY Nächster Raum: "wirst du von einer dichten Dornenhecke
             //  zurückgehalten"
-            default:
-                throw new IllegalStateException("Unexpected from: " + from);
         }
+
+        throw new
+
+                IllegalStateException("Unexpected from: " + from);
+
     }
 
-    // -------------------------------------------------------------------
-    // --- SCHLOSS_VORHALLE
-    // -------------------------------------------------------------------
+// -------------------------------------------------------------------
+// --- SCHLOSS_VORHALLE
+// -------------------------------------------------------------------
 
 
     private AbstractDescription getDesc_SchlossVorhalle_DraussenVorDemSchloss(
             final RoomKnown newRoomKnown, final Lichtverhaeltnisse lichtverhaeltnisse) {
-        switch (db.invisibleDataDao().getInvisible(Invisible.Key.SCHLOSSFEST).getState()) {
+        switch (db.invisibleDataDao().getInvisible(Invisible.SCHLOSSFEST).getState()) {
             case BEGONNEN:
                 return getDesc_SchlossVorhalle_DraussenVorDemSchloss_FestBegonnen();
 
@@ -572,9 +612,9 @@ class RoomConnectionBuilder {
                 mins(3));
     }
 
-    // -------------------------------------------------------------------
-    // --- SCHLOSS_VORHALLE_TISCH_BEIM_FEST
-    // -------------------------------------------------------------------
+// -------------------------------------------------------------------
+// --- SCHLOSS_VORHALLE_TISCH_BEIM_FEST
+// -------------------------------------------------------------------
 
     private static AbstractDescription getDesc_SchlossVorhalleTischBeimFest_SchlossVorhalle(
             final RoomKnown newRoomKnown, final Lichtverhaeltnisse lichtverhaeltnisse) {
@@ -586,13 +626,13 @@ class RoomConnectionBuilder {
                 mins(3));
     }
 
-    // -------------------------------------------------------------------
-    // --- DRAUSSEN_VOR_DEM_SCHLOSS
-    // -------------------------------------------------------------------
+// -------------------------------------------------------------------
+// --- DRAUSSEN_VOR_DEM_SCHLOSS
+// -------------------------------------------------------------------
 
     private AbstractDescription getDesc_DraussenVorDemSchloss_SchlossVorhalle(
             final RoomKnown newRoomKnown, final Lichtverhaeltnisse lichtverhaeltnisse) {
-        switch (db.invisibleDataDao().getInvisible(Invisible.Key.SCHLOSSFEST).getState()) {
+        switch (db.invisibleDataDao().getInvisible(Invisible.SCHLOSSFEST).getState()) {
             case BEGONNEN:
                 return getDesc_DraussenVorDemSchloss_SchlossVorhalle_FestBegonnen();
 
@@ -636,14 +676,14 @@ class RoomConnectionBuilder {
                 mins(2));
     }
 
-    // -------------------------------------------------------------------
-    // --- IM_WALD_NAHE_DEM_SCHLOSS
-    // -------------------------------------------------------------------
+// -------------------------------------------------------------------
+// --- IM_WALD_NAHE_DEM_SCHLOSS
+// -------------------------------------------------------------------
 
     private AbstractDescription getDesc_ImWaldNaheDemSchloss_DraussenVorDemSchloss(
             final RoomKnown newRoomKnown, final Lichtverhaeltnisse lichtverhaeltnisse) {
 
-        switch (db.invisibleDataDao().getInvisible(Invisible.Key.SCHLOSSFEST).getState()) {
+        switch (db.invisibleDataDao().getInvisible(Invisible.SCHLOSSFEST).getState()) {
             case BEGONNEN:
                 return getDesc_ImWaldNaheDemSchloss_DraussenVorDemSchloss_FestBegonnen(
                         mins(10));
@@ -720,12 +760,12 @@ class RoomConnectionBuilder {
                 timeSpan);
     }
 
-    // -------------------------------------------------------------------
-    // --- Allgemein
-    // -------------------------------------------------------------------
+// -------------------------------------------------------------------
+// --- Allgemein
+// -------------------------------------------------------------------
 
     private Lichtverhaeltnisse getLichtverhaeltnisseFrom() {
         final Tageszeit tageszeit = db.dateTimeDao().now().getTageszeit();
-        return Lichtverhaeltnisse.getLichtverhaeltnisse(tageszeit, from.getKey());
+        return Lichtverhaeltnisse.getLichtverhaeltnisse(tageszeit, from.getId());
     }
 }

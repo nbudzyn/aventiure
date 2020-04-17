@@ -1,27 +1,27 @@
 package de.nb.aventiure2.data.world.invisible;
 
+import de.nb.aventiure2.data.world.base.AbstractGameObject;
+import de.nb.aventiure2.data.world.base.GameObjectId;
+
 /**
  * An invisible concept, idea, event or the like, that has a state.
  *
  * @see de.nb.aventiure2.data.world.entity.base.AbstractEntity
  */
-public class Invisible {
-    public enum Key {
-        SCHLOSSFEST, TAGESZEIT
-    }
-
-    private final Invisible.Key key;
+public class Invisible extends AbstractGameObject {
+    public static GameObjectId SCHLOSSFEST = new GameObjectId(40_000);
+    public static GameObjectId TAGESZEIT = new GameObjectId(40_001);
 
     private final InvisibleStateList states;
 
-    public static Invisible get(final Invisible.Key key) {
+    public static Invisible get(final GameObjectId id) {
         for (final Invisible invisible : Invisibles.ALL) {
-            if (invisible.key == key) {
+            if (invisible.is(id)) {
                 return invisible;
             }
         }
 
-        throw new IllegalStateException("Unexpected key: " + key);
+        throw new IllegalStateException("Unexpected game object id: " + id);
     }
 
     /**
@@ -29,14 +29,10 @@ public class Invisible {
      *
      * @param states The first state is the initial state.
      */
-    Invisible(final Invisible.Key key,
+    Invisible(final GameObjectId id,
               final InvisibleStateList states) {
-        this.key = key;
+        super(id);
         this.states = states;
-    }
-
-    public Invisible.Key getKey() {
-        return key;
     }
 
     public boolean isStateAllowed(final InvisibleState state) {
@@ -49,22 +45,5 @@ public class Invisible {
 
     public InvisibleState getInitialState() {
         return states.getInitial();
-    }
-
-    @Override
-    public boolean equals(final Object o) {
-        if (this == o) {
-            return true;
-        }
-        if (o == null || getClass() != o.getClass()) {
-            return false;
-        }
-        final Invisible invisible = (Invisible) o;
-        return key == invisible.key;
-    }
-
-    @Override
-    public int hashCode() {
-        return key.hashCode();
     }
 }

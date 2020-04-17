@@ -10,6 +10,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import de.nb.aventiure2.data.world.base.GameObjectId;
 import de.nb.aventiure2.data.world.entity.base.AbstractEntityData;
 import de.nb.aventiure2.data.world.room.AvRoom;
 import de.nb.aventiure2.german.base.DeklinierbarePhrase;
@@ -20,7 +21,7 @@ import de.nb.aventiure2.german.base.Nominalphrase;
  * Changeable data for an object in the world.
  */
 @Entity
-public class ObjectData extends AbstractEntityData<AvObject.Key> {
+public class ObjectData extends AbstractEntityData {
     @PrimaryKey
     @NonNull
     private final AvObject object;
@@ -39,8 +40,8 @@ public class ObjectData extends AbstractEntityData<AvObject.Key> {
     private final boolean demSCInDenBrunnenGefallen;
 
     public static List<ObjectData> filterInDenBrunnenGefallen(
-            final Map<AvObject.Key, ObjectData> objectsByKey) {
-        return filterInDenBrunnenGefallen(objectsByKey.values());
+            final Map<GameObjectId, ObjectData> objectsById) {
+        return filterInDenBrunnenGefallen(objectsById.values());
     }
 
     private static List<ObjectData> filterInDenBrunnenGefallen(
@@ -80,6 +81,7 @@ public class ObjectData extends AbstractEntityData<AvObject.Key> {
 
     public ObjectData(@NonNull final AvObject object, @Nullable final AvRoom room,
                       final boolean known, final boolean demSCInDenBrunnenGefallen) {
+        super(object.getId());
         this.object = object;
         this.room = room;
         this.known = known;
@@ -112,10 +114,5 @@ public class ObjectData extends AbstractEntityData<AvObject.Key> {
 
     public boolean isDemSCInDenBrunnenGefallen() {
         return demSCInDenBrunnenGefallen;
-    }
-
-    @Override
-    public AvObject.Key getKey() {
-        return object.getKey();
     }
 }

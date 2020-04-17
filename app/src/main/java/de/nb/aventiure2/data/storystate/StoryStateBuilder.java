@@ -7,6 +7,7 @@ import androidx.annotation.Nullable;
 import androidx.room.PrimaryKey;
 
 import de.nb.aventiure2.data.storystate.StoryState.StructuralElement;
+import de.nb.aventiure2.data.world.base.GameObjectId;
 import de.nb.aventiure2.data.world.entity.creature.Creature;
 import de.nb.aventiure2.data.world.entity.object.AvObject;
 import de.nb.aventiure2.data.world.room.AvRoom;
@@ -121,7 +122,7 @@ public class StoryStateBuilder {
         return this;
     }
 
-    public StoryStateBuilder letzterRaum(final AvRoom.Key lastRoom) {
+    public StoryStateBuilder letzterRaum(final GameObjectId lastRoom) {
         return letzterRaum(AvRoom.get(lastRoom));
     }
 

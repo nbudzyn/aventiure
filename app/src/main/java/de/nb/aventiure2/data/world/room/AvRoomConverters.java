@@ -2,21 +2,23 @@ package de.nb.aventiure2.data.world.room;
 
 import androidx.room.TypeConverter;
 
+import de.nb.aventiure2.data.world.base.GameObjectId;
+
 public class AvRoomConverters {
     @TypeConverter
-    public static AvRoom stringToRoom(final String string) {
-        if (string == null) {
+    public static AvRoom longToRoom(final Long aLong) {
+        if (aLong == null) {
             return null;
         }
-        return AvRoom.get(AvRoom.Key.valueOf(string));
+        return AvRoom.get(new GameObjectId(aLong));
     }
 
     @TypeConverter
-    public static String roomToString(final AvRoom room) {
+    public static Long roomToString(final AvRoom room) {
         if (room == null) {
             return null;
         }
 
-        return room.getKey().name();
+        return room.getId().toLong();
     }
 }

@@ -10,6 +10,7 @@ import javax.annotation.Nullable;
 import de.nb.aventiure2.data.database.AvDatabase;
 import de.nb.aventiure2.data.storystate.IPlayerAction;
 import de.nb.aventiure2.data.storystate.StoryStateDao;
+import de.nb.aventiure2.data.world.base.GameObjectId;
 import de.nb.aventiure2.data.world.invisible.Invisible;
 import de.nb.aventiure2.data.world.invisible.InvisibleData;
 import de.nb.aventiure2.data.world.time.AvDateTime;
@@ -21,7 +22,7 @@ public final class InvisibleReactionsCoordinator {
     private final AvDatabase db;
     private final StoryStateDao n;
 
-    private final Map<Invisible.Key, AbstractInvisibleReactions> allInvisibleReactions;
+    private final Map<GameObjectId, AbstractInvisibleReactions> allInvisibleReactions;
 
     private final NullInvisibleReactions nullInvisibleReactions;
 
@@ -30,9 +31,9 @@ public final class InvisibleReactionsCoordinator {
         this.db = db;
         n = db.storyStateDao();
 
-        allInvisibleReactions = ImmutableMap.<Invisible.Key, AbstractInvisibleReactions>builder()
-                .put(Invisible.Key.SCHLOSSFEST, new SchlossfestReactions(db, scActionClass))
-                .put(Invisible.Key.TAGESZEIT, new TageszeitReactions(db, scActionClass))
+        allInvisibleReactions = ImmutableMap.<GameObjectId, AbstractInvisibleReactions>builder()
+                .put(Invisible.SCHLOSSFEST, new SchlossfestReactions(db, scActionClass))
+                .put(Invisible.TAGESZEIT, new TageszeitReactions(db, scActionClass))
                 .build();
 
         nullInvisibleReactions = new NullInvisibleReactions(db, scActionClass);
@@ -53,9 +54,9 @@ public final class InvisibleReactionsCoordinator {
         return db.invisibleDataDao().getAll();
     }
 
-    private AbstractInvisibleReactions getReactions(final InvisibleData Invisible) {
+    private AbstractInvisibleReactions getReactions(final InvisibleData invisibleData) {
         @Nullable final AbstractInvisibleReactions res =
-                allInvisibleReactions.get(Invisible.getKey());
+                allInvisibleReactions.get(invisibleData.getGameObjectId());
         if (res != null) {
             return res;
         }

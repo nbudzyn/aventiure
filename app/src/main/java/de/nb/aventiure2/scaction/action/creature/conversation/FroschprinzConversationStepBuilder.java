@@ -10,8 +10,8 @@ import java.util.Map;
 import de.nb.aventiure2.data.database.AvDatabase;
 import de.nb.aventiure2.data.storystate.IPlayerAction;
 import de.nb.aventiure2.data.storystate.StoryState;
+import de.nb.aventiure2.data.world.base.GameObjectId;
 import de.nb.aventiure2.data.world.entity.creature.CreatureData;
-import de.nb.aventiure2.data.world.entity.object.AvObject;
 import de.nb.aventiure2.data.world.entity.object.ObjectData;
 import de.nb.aventiure2.data.world.room.AvRoom;
 import de.nb.aventiure2.data.world.time.AvTimeSpan;
@@ -22,7 +22,7 @@ import de.nb.aventiure2.scaction.action.HeulenAction;
 import static de.nb.aventiure2.data.storystate.StoryState.StructuralElement.PARAGRAPH;
 import static de.nb.aventiure2.data.storystate.StoryState.StructuralElement.SENTENCE;
 import static de.nb.aventiure2.data.storystate.StoryState.StructuralElement.WORD;
-import static de.nb.aventiure2.data.world.entity.creature.Creature.Key.FROSCHPRINZ;
+import static de.nb.aventiure2.data.world.entity.creature.Creature.FROSCHPRINZ;
 import static de.nb.aventiure2.data.world.entity.creature.CreatureState.AUF_DEM_WEG_ZUM_BRUNNEN_UM_DINGE_HERAUSZUHOLEN;
 import static de.nb.aventiure2.data.world.entity.creature.CreatureState.ERWARTET_VON_SC_EINLOESUNG_SEINES_VERSPRECHENS;
 import static de.nb.aventiure2.data.world.entity.creature.CreatureState.HAT_FORDERUNG_GESTELLT;
@@ -30,7 +30,7 @@ import static de.nb.aventiure2.data.world.entity.creature.CreatureState.HAT_NACH
 import static de.nb.aventiure2.data.world.entity.object.ObjectData.filterInDenBrunnenGefallen;
 import static de.nb.aventiure2.data.world.entity.object.ObjectData.getDescriptionSingleOrCollective;
 import static de.nb.aventiure2.data.world.player.stats.ScStateOfMind.VOLLER_FREUDE;
-import static de.nb.aventiure2.data.world.room.AvRoom.Key.IM_WALD_BEIM_BRUNNEN;
+import static de.nb.aventiure2.data.world.room.AvRoom.IM_WALD_BEIM_BRUNNEN;
 import static de.nb.aventiure2.data.world.time.AvTimeSpan.noTime;
 import static de.nb.aventiure2.data.world.time.AvTimeSpan.secs;
 import static de.nb.aventiure2.german.base.GermanUtil.capitalize;
@@ -44,7 +44,7 @@ import static de.nb.aventiure2.german.praedikat.VerbSubjObj.REDEN;
 
 /**
  * Erzeugt {@link CreatureConversationStep}s für den
- * {@link de.nb.aventiure2.data.world.entity.creature.Creature.Key#FROSCHPRINZ}en.
+ * {@link de.nb.aventiure2.data.world.entity.creature.Creature#FROSCHPRINZ}en.
  */
 class FroschprinzConversationStepBuilder extends AbstractCreatureConversationStepBuilder {
     private final List<ObjectData> objectsInDenBrunnenGefallen;
@@ -52,11 +52,11 @@ class FroschprinzConversationStepBuilder extends AbstractCreatureConversationSte
     FroschprinzConversationStepBuilder(final AvDatabase db, final StoryState initialStoryState,
                                        final Class<? extends IPlayerAction> currentActionClass,
                                        final AvRoom room,
-                                       final Map<AvObject.Key, ObjectData> allObjectsByKey,
+                                       final Map<GameObjectId, ObjectData> allObjectsById,
                                        @NonNull final CreatureData creatureData) {
-        super(db, initialStoryState, currentActionClass, room, allObjectsByKey, creatureData);
+        super(db, initialStoryState, currentActionClass, room, allObjectsById, creatureData);
 
-        objectsInDenBrunnenGefallen = filterInDenBrunnenGefallen(allObjectsByKey);
+        objectsInDenBrunnenGefallen = filterInDenBrunnenGefallen(allObjectsById);
     }
 
     @Override
@@ -373,7 +373,7 @@ class FroschprinzConversationStepBuilder extends AbstractCreatureConversationSte
         n.add(t(PARAGRAPH,
                 "Der Frosch, als er die Zusage erhalten hat,"));
 
-        if (room.getKey() != IM_WALD_BEIM_BRUNNEN) {
+        if (!room.is(IM_WALD_BEIM_BRUNNEN)) {
             n.add(t(WORD, "hüpft er sogleich davon")
                     .imGespraechMit(null)
                     .beendet(PARAGRAPH));

@@ -5,6 +5,7 @@ import androidx.annotation.Nullable;
 import androidx.room.Entity;
 import androidx.room.PrimaryKey;
 
+import de.nb.aventiure2.data.world.base.GameObjectId;
 import de.nb.aventiure2.data.world.entity.base.AbstractEntityData;
 import de.nb.aventiure2.data.world.room.AvRoom;
 import de.nb.aventiure2.german.base.Nominalphrase;
@@ -13,7 +14,7 @@ import de.nb.aventiure2.german.base.Nominalphrase;
  * Changeable data for a creature in the world.
  */
 @Entity
-public class CreatureData extends AbstractEntityData<Creature.Key> {
+public class CreatureData extends AbstractEntityData {
     @PrimaryKey
     @NonNull
     private final Creature creature;
@@ -32,14 +33,15 @@ public class CreatureData extends AbstractEntityData<Creature.Key> {
 
     CreatureData(@NonNull final Creature creature, @Nullable final AvRoom room,
                  final boolean known, final CreatureState state) {
+        super(creature.getId());
         this.creature = creature;
         this.room = room;
         this.known = known;
         this.state = state;
     }
 
-    public boolean creatureIs(final Creature.Key someKey) {
-        return getKey() == someKey;
+    public boolean creatureIs(final GameObjectId gameObjectId) {
+        return getGameObjectId().equals(gameObjectId);
     }
 
     @Override
@@ -78,10 +80,5 @@ public class CreatureData extends AbstractEntityData<Creature.Key> {
 
     public CreatureState getState() {
         return state;
-    }
-
-    @Override
-    public Creature.Key getKey() {
-        return creature.getKey();
     }
 }

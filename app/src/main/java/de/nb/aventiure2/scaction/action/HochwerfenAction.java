@@ -10,7 +10,6 @@ import de.nb.aventiure2.data.database.AvDatabase;
 import de.nb.aventiure2.data.storystate.StoryState;
 import de.nb.aventiure2.data.storystate.StoryState.StructuralElement;
 import de.nb.aventiure2.data.world.entity.creature.CreatureData;
-import de.nb.aventiure2.data.world.entity.object.AvObject;
 import de.nb.aventiure2.data.world.entity.object.ObjectData;
 import de.nb.aventiure2.data.world.room.AvRoom;
 import de.nb.aventiure2.data.world.time.AvTimeSpan;
@@ -24,11 +23,12 @@ import static de.nb.aventiure2.data.world.entity.creature.CreatureState.HAT_FORD
 import static de.nb.aventiure2.data.world.entity.creature.CreatureState.HAT_NACH_BELOHNUNG_GEFRAGT;
 import static de.nb.aventiure2.data.world.entity.creature.CreatureState.HAT_SC_HILFSBEREIT_ANGESPROCHEN;
 import static de.nb.aventiure2.data.world.entity.creature.CreatureState.UNAUFFAELLIG;
+import static de.nb.aventiure2.data.world.entity.object.AvObject.GOLDENE_KUGEL;
 import static de.nb.aventiure2.data.world.lichtverhaeltnisse.Lichtverhaeltnisse.DUNKEL;
 import static de.nb.aventiure2.data.world.lichtverhaeltnisse.Lichtverhaeltnisse.HELL;
 import static de.nb.aventiure2.data.world.player.stats.ScStateOfMind.ETWAS_GEKNICKT;
 import static de.nb.aventiure2.data.world.player.stats.ScStateOfMind.UNTROESTLICH;
-import static de.nb.aventiure2.data.world.room.AvRoom.Key.IM_WALD_BEIM_BRUNNEN;
+import static de.nb.aventiure2.data.world.room.AvRoom.IM_WALD_BEIM_BRUNNEN;
 import static de.nb.aventiure2.data.world.time.AvTimeSpan.noTime;
 import static de.nb.aventiure2.data.world.time.AvTimeSpan.secs;
 import static de.nb.aventiure2.german.base.DuDescription.du;
@@ -88,7 +88,7 @@ public class HochwerfenAction extends AbstractObjectAction {
     }
 
     private AvTimeSpan narrateAndDoErstesMal(final StoryState currentStoryState) {
-        if (room.getKey() == IM_WALD_BEIM_BRUNNEN && !froschprinzCreatureData
+        if (room.is(IM_WALD_BEIM_BRUNNEN) && !froschprinzCreatureData
                 .hasState(UNAUFFAELLIG)) {
             return narrateAndDoFroschBekannt();
         }
@@ -149,7 +149,7 @@ public class HochwerfenAction extends AbstractObjectAction {
         }
 
         // Der Frosch ist nicht mehr in Stimmung, Dinge aus dem Brunnen zu holen.
-        if (getObject().getKey() != AvObject.Key.GOLDENE_KUGEL) {
+        if (getObject().is(GOLDENE_KUGEL)) {
             final Nominalphrase objectDesc = getObjectData().getDescription(false);
 
             n.add(t(StoryState.StructuralElement.PARAGRAPH,
@@ -218,7 +218,7 @@ public class HochwerfenAction extends AbstractObjectAction {
     private AvTimeSpan narrateAndDoWiederholung() {
         if (db.counterDao()
                 .incAndGet("HochwerfenAction_Wiederholung") == 1 ||
-                (room.getKey() == IM_WALD_BEIM_BRUNNEN && !froschprinzCreatureData
+                (room.is(IM_WALD_BEIM_BRUNNEN) && !froschprinzCreatureData
                         .hasState(UNAUFFAELLIG))) {
             n.add(alt(t(StoryState.StructuralElement.SENTENCE,
                     "Und noch einmal – was ein schönes Spiel!")
@@ -232,7 +232,7 @@ public class HochwerfenAction extends AbstractObjectAction {
             return secs(3);
         }
 
-        if (room.getKey() == IM_WALD_BEIM_BRUNNEN) {
+        if (room.is(IM_WALD_BEIM_BRUNNEN)) {
             final String dunkelheitNachsatz =
                     getLichtverhaeltnisse(room) == DUNKEL ?
                             "– bei dieser Dunkelheit schon gar nicht" : "";

@@ -9,9 +9,10 @@ import androidx.room.Update;
 
 import java.util.List;
 
+import de.nb.aventiure2.data.world.base.GameObjectId;
 import de.nb.aventiure2.data.world.room.AvRoom;
 
-import static de.nb.aventiure2.data.world.room.AvRoom.Key.UNTEN_IM_BRUNNEN;
+import static de.nb.aventiure2.data.world.room.AvRoom.UNTEN_IM_BRUNNEN;
 
 /**
  * Room DAO for {@link ObjectData}s.
@@ -39,15 +40,15 @@ public abstract class ObjectDataDao {
         }
     }
 
-    public void setRoom(final AvObject object, final AvRoom.Key room) {
+    public void setRoom(final AvObject object, final GameObjectId room) {
         setRoom(object, AvRoom.get(room));
     }
 
     @Query("UPDATE ObjectData SET room = :room WHERE object = :object")
     public abstract void setRoom(AvObject object, AvRoom room);
 
-    public void setKnown(final AvObject.Key objectKey) {
-        setKnown(AvObject.get(objectKey));
+    public void setKnown(final GameObjectId id) {
+        setKnown(AvObject.get(id));
     }
 
     @Query("UPDATE ObjectData SET known = 1 WHERE object = :object")
@@ -75,8 +76,8 @@ public abstract class ObjectDataDao {
     @Query("SELECT * from ObjectData")
     public abstract List<ObjectData> getAll();
 
-    public ObjectData get(final AvObject.Key objectKey) {
-        return get(AvObject.get(objectKey));
+    public ObjectData get(final GameObjectId id) {
+        return get(AvObject.get(id));
     }
 
     @Query("SELECT * from ObjectData where :object = object")

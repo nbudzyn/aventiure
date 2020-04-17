@@ -28,10 +28,10 @@ import de.nb.aventiure2.scaction.action.room.connection.RoomConnections;
 import static com.google.common.base.Preconditions.checkArgument;
 import static de.nb.aventiure2.data.world.invisible.InvisibleState.BEGONNEN;
 import static de.nb.aventiure2.data.world.lichtverhaeltnisse.Lichtverhaeltnisse.HELL;
-import static de.nb.aventiure2.data.world.room.AvRoom.Key.DRAUSSEN_VOR_DEM_SCHLOSS;
-import static de.nb.aventiure2.data.world.room.AvRoom.Key.SCHLOSS_VORHALLE;
-import static de.nb.aventiure2.data.world.room.AvRoom.Key.SCHLOSS_VORHALLE_TISCH_BEIM_FEST;
-import static de.nb.aventiure2.data.world.room.AvRoom.Key.WALDWILDNIS_HINTER_DEM_BRUNNEN;
+import static de.nb.aventiure2.data.world.room.AvRoom.DRAUSSEN_VOR_DEM_SCHLOSS;
+import static de.nb.aventiure2.data.world.room.AvRoom.SCHLOSS_VORHALLE;
+import static de.nb.aventiure2.data.world.room.AvRoom.SCHLOSS_VORHALLE_TISCH_BEIM_FEST;
+import static de.nb.aventiure2.data.world.room.AvRoom.WALDWILDNIS_HINTER_DEM_BRUNNEN;
 import static de.nb.aventiure2.data.world.time.AvTimeSpan.secs;
 import static de.nb.aventiure2.german.base.AllgDescription.allg;
 import static de.nb.aventiure2.german.base.DuDescription.du;
@@ -172,17 +172,17 @@ public class BewegenAction extends AbstractScAction {
         final AvRoom newRoom = roomConnection.getTo();
 
         if (db.invisibleDataDao()
-                .getInvisible(Invisible.Key.SCHLOSSFEST).getState() == BEGONNEN) {
-            if (oldRoom.getKey() == DRAUSSEN_VOR_DEM_SCHLOSS &&
-                    newRoom.getKey() == SCHLOSS_VORHALLE) {
+                .getInvisible(Invisible.SCHLOSSFEST).getState() == BEGONNEN) {
+            if (oldRoom.is(DRAUSSEN_VOR_DEM_SCHLOSS) &&
+                    newRoom.is(SCHLOSS_VORHALLE)) {
                 return true;
             }
-            if (newRoom.getKey() == SCHLOSS_VORHALLE_TISCH_BEIM_FEST) {
+            if (newRoom.is(SCHLOSS_VORHALLE_TISCH_BEIM_FEST)) {
                 return true;
             }
         }
 
-        if (newRoom.getKey() == WALDWILDNIS_HINTER_DEM_BRUNNEN) {
+        if (newRoom.is(WALDWILDNIS_HINTER_DEM_BRUNNEN)) {
             // STORY Im Dunkeln kann man keine Früchte sehen
             return true;
         }
@@ -197,8 +197,8 @@ public class BewegenAction extends AbstractScAction {
     private void updatePlayerStateOfMind() {
         final ScStateOfMind scStateOfMind =
                 db.playerStatsDao().getPlayerStats().getStateOfMind();
-        if (oldRoom.getKey() == SCHLOSS_VORHALLE
-                && roomConnection.getTo().getKey() == DRAUSSEN_VOR_DEM_SCHLOSS
+        if (oldRoom.is(SCHLOSS_VORHALLE)
+                && roomConnection.getTo().is(DRAUSSEN_VOR_DEM_SCHLOSS)
                 && scStateOfMind == ScStateOfMind.ANGESPANNT) {
             db.playerStatsDao().setStateOfMind(ScStateOfMind.NEUTRAL);
         } else if (scStateOfMind == ScStateOfMind.ETWAS_GEKNICKT) {
@@ -421,7 +421,7 @@ public class BewegenAction extends AbstractScAction {
             @NonNull final StructuralElement startsNew,
             @NonNull final String text) {
         return super.t(startsNew, text)
-                .letzterRaum(oldRoom.getKey());
+                .letzterRaum(oldRoom);
     }
 
     private void setRoomAndObjectsKnown(

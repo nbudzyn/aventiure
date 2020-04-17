@@ -8,12 +8,14 @@ import androidx.room.Query;
 
 import javax.annotation.Nonnull;
 
+import de.nb.aventiure2.data.world.base.GameObjectId;
+
 /**
  * DAO for {@link AvRoom}s.
  */
 @Dao
 public abstract class RoomDao {
-    public void setKnown(final AvRoom.Key room, final RoomKnown known) {
+    public void setKnown(final GameObjectId room, final RoomKnown known) {
         setKnown(AvRoom.get(room), known);
     }
 
@@ -22,7 +24,7 @@ public abstract class RoomDao {
     }
 
     public @Nonnull
-    RoomKnown getKnown(final AvRoom.Key room) {
+    RoomKnown getKnown(final GameObjectId room) {
         return getKnown(AvRoom.get(room));
     }
 

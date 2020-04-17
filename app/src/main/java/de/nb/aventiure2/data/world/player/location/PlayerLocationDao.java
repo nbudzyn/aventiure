@@ -5,6 +5,7 @@ import androidx.room.Insert;
 import androidx.room.OnConflictStrategy;
 import androidx.room.Query;
 
+import de.nb.aventiure2.data.world.base.GameObjectId;
 import de.nb.aventiure2.data.world.room.AvRoom;
 
 /**
@@ -13,10 +14,10 @@ import de.nb.aventiure2.data.world.room.AvRoom;
 @Dao
 public abstract class PlayerLocationDao {
     public void setRoom(final AvRoom room) {
-        setRoom(room.getKey());
+        setRoom(room.getId());
     }
 
-    public void setRoom(final AvRoom.Key room) {
+    public void setRoom(final GameObjectId room) {
         deleteAll();
 
         insert(new PlayerLocation(room));

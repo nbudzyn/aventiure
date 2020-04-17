@@ -9,25 +9,8 @@ import de.nb.aventiure2.german.base.Nominalphrase;
  * A creature in the world (not the player character)
  */
 public class Creature extends AbstractEntity {
-    public enum Key {
-        SCHLOSSWACHE(20_000), FROSCHPRINZ(20_001);
-
-        private final GameObjectId gameObjectId;
-
-        private Key(final int gameObjectId) {
-            this(new GameObjectId(gameObjectId));
-        }
-
-        Key(final GameObjectId gameObjectId) {
-            this.gameObjectId = gameObjectId;
-        }
-
-        public GameObjectId getGameObjectId() {
-            return gameObjectId;
-        }
-    }
-
-    private final Creature.Key key;
+    public static final GameObjectId SCHLOSSWACHE = new GameObjectId(20_000);
+    public static final GameObjectId FROSCHPRINZ = new GameObjectId(20_001);
 
     /**
      * The initial room where this creature can be found.
@@ -35,14 +18,14 @@ public class Creature extends AbstractEntity {
     private final AvRoom initialRoom;
     private final CreatureStateList states;
 
-    public static Creature get(final Creature.Key key) {
+    public static Creature get(final GameObjectId id) {
         for (final Creature creature : Creatures.ALL) {
-            if (creature.key == key) {
+            if (creature.is(id)) {
                 return creature;
             }
         }
 
-        throw new IllegalStateException("Unexpected key: " + key);
+        throw new IllegalStateException("Unexpected game object ID: " + id);
     }
 
     /**
@@ -50,14 +33,13 @@ public class Creature extends AbstractEntity {
      *
      * @param states The first state is the initial state.
      */
-    Creature(final Creature.Key key,
+    Creature(final GameObjectId id,
              final Nominalphrase descriptionAtFirstSight,
              final Nominalphrase descriptionWhenKnown,
              final AvRoom initialRoom,
              final CreatureStateList states) {
-        super(key.getGameObjectId(), descriptionAtFirstSight, descriptionWhenKnown,
+        super(id, descriptionAtFirstSight, descriptionWhenKnown,
                 descriptionWhenKnown);
-        this.key = key;
         this.initialRoom = initialRoom;
         this.states = states;
     }
@@ -67,13 +49,13 @@ public class Creature extends AbstractEntity {
      *
      * @param states The first state is the initial state.
      */
-    Creature(final Creature.Key key,
+    Creature(final GameObjectId id,
              final Nominalphrase descriptionAtFirstSight,
              final Nominalphrase normalDescriptionWhenKnown,
              final Nominalphrase shortDescriptionWhenKnown,
-             final AvRoom.Key initialRoom,
+             final GameObjectId initialRoom,
              final CreatureStateList states) {
-        this(key, descriptionAtFirstSight, normalDescriptionWhenKnown,
+        this(id, descriptionAtFirstSight, normalDescriptionWhenKnown,
                 shortDescriptionWhenKnown, AvRoom.get(initialRoom), states);
     }
 
@@ -82,24 +64,18 @@ public class Creature extends AbstractEntity {
      *
      * @param states The first state is the initial state.
      */
-    Creature(final Creature.Key key,
+    Creature(final GameObjectId id,
              final Nominalphrase descriptionAtFirstSight,
              final Nominalphrase normalDescriptionWhenKnown,
              final Nominalphrase shortDescriptionWhenKnown,
              final AvRoom initialRoom,
              final CreatureStateList states) {
-        super(key.getGameObjectId(), descriptionAtFirstSight, normalDescriptionWhenKnown,
+        super(id, descriptionAtFirstSight, normalDescriptionWhenKnown,
                 shortDescriptionWhenKnown);
-        this.key = key;
         this.initialRoom = initialRoom;
         this.states = states;
     }
 
-    public Creature.Key getKey() {
-        return key;
-    }
-
-    // TODO Use or remove
     public AvRoom getInitialRoom() {
         return initialRoom;
     }
@@ -114,22 +90,5 @@ public class Creature extends AbstractEntity {
 
     public CreatureState getInitialState() {
         return states.getInitial();
-    }
-
-    @Override
-    public boolean equals(final Object o) {
-        if (this == o) {
-            return true;
-        }
-        if (o == null || getClass() != o.getClass()) {
-            return false;
-        }
-        final Creature creature = (Creature) o;
-        return key == creature.key;
-    }
-
-    @Override
-    public int hashCode() {
-        return key.hashCode();
     }
 }

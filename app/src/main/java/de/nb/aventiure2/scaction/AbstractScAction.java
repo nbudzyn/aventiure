@@ -101,7 +101,7 @@ public abstract class AbstractScAction implements IPlayerAction {
     abstract public AvTimeSpan narrateAndDo();
 
     protected Lichtverhaeltnisse getLichtverhaeltnisse(final AvRoom room) {
-        return Lichtverhaeltnisse.getLichtverhaeltnisse(getTageszeit(), room.getKey());
+        return Lichtverhaeltnisse.getLichtverhaeltnisse(getTageszeit(), room.getId());
     }
 
     protected Tageszeit getTageszeit() {

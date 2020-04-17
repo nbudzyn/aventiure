@@ -11,8 +11,8 @@ import de.nb.aventiure2.data.storystate.IPlayerAction;
 import de.nb.aventiure2.data.storystate.StoryState;
 import de.nb.aventiure2.data.storystate.StoryStateBuilder;
 import de.nb.aventiure2.data.storystate.StoryStateDao;
+import de.nb.aventiure2.data.world.base.GameObjectId;
 import de.nb.aventiure2.data.world.lichtverhaeltnisse.Lichtverhaeltnisse;
-import de.nb.aventiure2.data.world.room.AvRoom;
 import de.nb.aventiure2.data.world.time.Tageszeit;
 
 public abstract class AbstractReactions {
@@ -49,7 +49,7 @@ public abstract class AbstractReactions {
                 .letzterRaum(db.playerLocationDao().getPlayerLocation().getRoom());
     }
 
-    protected Lichtverhaeltnisse getLichtverhaeltnisse(final AvRoom.Key room) {
+    protected Lichtverhaeltnisse getLichtverhaeltnisse(final GameObjectId room) {
         return Lichtverhaeltnisse.getLichtverhaeltnisse(getTageszeit(), room);
     }
 
