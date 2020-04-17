@@ -13,7 +13,7 @@ import de.nb.aventiure2.data.storystate.StoryStateBuilder;
 import de.nb.aventiure2.data.world.entity.base.AbstractEntityData;
 import de.nb.aventiure2.data.world.entity.creature.CreatureData;
 import de.nb.aventiure2.data.world.entity.object.ObjectData;
-import de.nb.aventiure2.data.world.invisible.Invisible;
+import de.nb.aventiure2.data.world.invisible.Invisibles;
 import de.nb.aventiure2.data.world.lichtverhaeltnisse.Lichtverhaeltnisse;
 import de.nb.aventiure2.data.world.player.stats.ScStateOfMind;
 import de.nb.aventiure2.data.world.room.AvRoom;
@@ -172,7 +172,7 @@ public class BewegenAction extends AbstractScAction {
         final AvRoom newRoom = roomConnection.getTo();
 
         if (db.invisibleDataDao()
-                .getInvisible(Invisible.SCHLOSSFEST).getState() == BEGONNEN) {
+                .getInvisible(Invisibles.SCHLOSSFEST).getState() == BEGONNEN) {
             if (oldRoom.is(DRAUSSEN_VOR_DEM_SCHLOSS) &&
                     newRoom.is(SCHLOSS_VORHALLE)) {
                 return true;

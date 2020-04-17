@@ -11,8 +11,8 @@ import de.nb.aventiure2.data.storystate.StoryState;
 import de.nb.aventiure2.data.storystate.StoryState.StructuralElement;
 import de.nb.aventiure2.data.storystate.StoryStateBuilder;
 import de.nb.aventiure2.data.world.entity.base.AbstractEntityData;
-import de.nb.aventiure2.data.world.entity.creature.Creature;
 import de.nb.aventiure2.data.world.entity.creature.CreatureData;
+import de.nb.aventiure2.data.world.entity.creature.Creatures;
 import de.nb.aventiure2.data.world.entity.object.ObjectData;
 import de.nb.aventiure2.data.world.player.stats.ScStateOfMind;
 import de.nb.aventiure2.data.world.room.AvRoom;
@@ -21,9 +21,9 @@ import de.nb.aventiure2.german.praedikat.PraedikatMitEinerObjektleerstelle;
 
 import static com.google.common.base.Preconditions.checkArgument;
 import static de.nb.aventiure2.data.storystate.StoryState.StructuralElement.PARAGRAPH;
-import static de.nb.aventiure2.data.world.entity.creature.Creature.FROSCHPRINZ;
 import static de.nb.aventiure2.data.world.entity.creature.CreatureState.ERWARTET_VON_SC_EINLOESUNG_SEINES_VERSPRECHENS;
 import static de.nb.aventiure2.data.world.entity.creature.CreatureState.ERWARTET_VON_SC_EINLOESUNG_SEINES_VERSPRECHENS_VON_SC_GETRAGEN;
+import static de.nb.aventiure2.data.world.entity.creature.Creatures.FROSCHPRINZ;
 import static de.nb.aventiure2.data.world.time.AvTimeSpan.secs;
 import static de.nb.aventiure2.german.praedikat.VerbSubjObj.MITNEHMEN;
 import static de.nb.aventiure2.german.praedikat.VerbSubjObj.NEHMEN;
@@ -175,7 +175,7 @@ public class NehmenAction extends AbstractEntityAction {
 
 
     private AvTimeSpan narrateCreature(final CreatureData creatureData) {
-        checkArgument(creatureData.creatureIs(Creature.FROSCHPRINZ) &&
+        checkArgument(creatureData.creatureIs(Creatures.FROSCHPRINZ) &&
                         creatureData.hasState(ERWARTET_VON_SC_EINLOESUNG_SEINES_VERSPRECHENS),
                 "Unexpected creature data: " + creatureData);
 

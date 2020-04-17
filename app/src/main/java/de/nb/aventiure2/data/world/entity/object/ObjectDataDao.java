@@ -21,7 +21,7 @@ import static de.nb.aventiure2.data.world.room.Rooms.UNTEN_IM_BRUNNEN;
 @Dao
 public abstract class ObjectDataDao {
     public void insertInitial() {
-        for (final AvObject object : AvObject.ALL) {
+        for (final AvObject object : AvObjects.ALL) {
             insertInitial(object);
         }
     }
@@ -49,7 +49,7 @@ public abstract class ObjectDataDao {
     public abstract void setRoom(AvObject object, AvRoom room);
 
     public void setKnown(final GameObjectId id) {
-        setKnown(AvObject.get(id));
+        setKnown(AvObjects.get(id));
     }
 
     @Query("UPDATE ObjectData SET known = 1 WHERE object = :object")
@@ -78,7 +78,7 @@ public abstract class ObjectDataDao {
     public abstract List<ObjectData> getAll();
 
     public ObjectData get(final GameObjectId id) {
-        return get(AvObject.get(id));
+        return get(AvObjects.get(id));
     }
 
     @Query("SELECT * from ObjectData where :object = object")

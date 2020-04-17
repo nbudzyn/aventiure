@@ -10,7 +10,7 @@ public class InvisibleConverters {
         if (aLong == null) {
             return null;
         }
-        return Invisible.get(new GameObjectId(aLong));
+        return Invisibles.get(new GameObjectId(aLong));
     }
 
     @TypeConverter

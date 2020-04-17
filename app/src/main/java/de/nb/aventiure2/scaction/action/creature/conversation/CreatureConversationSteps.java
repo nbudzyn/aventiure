@@ -13,7 +13,7 @@ import de.nb.aventiure2.data.world.entity.creature.CreatureData;
 import de.nb.aventiure2.data.world.entity.object.ObjectData;
 import de.nb.aventiure2.data.world.room.AvRoom;
 
-import static de.nb.aventiure2.data.world.entity.creature.Creature.FROSCHPRINZ;
+import static de.nb.aventiure2.data.world.entity.creature.Creatures.FROSCHPRINZ;
 
 /**
  * Contains all {@link CreatureConversationStep}s;

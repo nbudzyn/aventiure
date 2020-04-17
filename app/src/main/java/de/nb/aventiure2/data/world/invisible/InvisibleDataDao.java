@@ -28,14 +28,14 @@ public abstract class InvisibleDataDao {
     public abstract void insert(InvisibleData invisbleData);
 
     public InvisibleData getInvisible(final GameObjectId id) {
-        return getInvisible(Invisible.get(id));
+        return getInvisible(Invisibles.get(id));
     }
 
     @Query("SELECT * from InvisibleData where :invisible = invisible")
     public abstract InvisibleData getInvisible(Invisible invisible);
 
     public void setState(final GameObjectId gameObjectId, final InvisibleState state) {
-        setState(Invisible.get(gameObjectId), state);
+        setState(Invisibles.get(gameObjectId), state);
     }
 
     public void setState(final Invisible invisible, final InvisibleState state) {

@@ -31,21 +31,21 @@ public abstract class CreatureDataDao {
     public abstract void insert(CreatureData creatureData);
 
     public void setKnown(final GameObjectId id) {
-        setKnown(Creature.get(id));
+        setKnown(Creatures.get(id));
     }
 
     @Query("UPDATE CreatureData SET known = 1 WHERE creature = :creature")
     public abstract void setKnown(Creature creature);
 
     public void setRoom(final GameObjectId id, final @Nullable AvRoom room) {
-        setRoom(Creature.get(id), room);
+        setRoom(Creatures.get(id), room);
     }
 
     @Query("UPDATE CreatureData SET room = :room WHERE creature = :creature")
     public abstract void setRoom(Creature creature, AvRoom room);
 
     public CreatureData getCreature(final GameObjectId id) {
-        return getCreature(Creature.get(id));
+        return getCreature(Creatures.get(id));
     }
 
     @Query("SELECT * from CreatureData where :creature = creature")
@@ -58,7 +58,7 @@ public abstract class CreatureDataDao {
     public abstract List<CreatureData> getAll();
 
     public void setState(final GameObjectId id, final CreatureState state) {
-        setState(Creature.get(id), state);
+        setState(Creatures.get(id), state);
     }
 
     public void setState(final Creature creature, final CreatureState state) {

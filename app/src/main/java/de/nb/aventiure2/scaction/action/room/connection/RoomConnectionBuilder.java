@@ -7,7 +7,7 @@ import com.google.common.collect.ImmutableList;
 import java.util.List;
 
 import de.nb.aventiure2.data.database.AvDatabase;
-import de.nb.aventiure2.data.world.invisible.Invisible;
+import de.nb.aventiure2.data.world.invisible.Invisibles;
 import de.nb.aventiure2.data.world.lichtverhaeltnisse.Lichtverhaeltnisse;
 import de.nb.aventiure2.data.world.room.AvRoom;
 import de.nb.aventiure2.data.world.room.RoomKnown;
@@ -57,7 +57,7 @@ class RoomConnectionBuilder {
             resSchlossVorhalle.add(con(DRAUSSEN_VOR_DEM_SCHLOSS,
                     "Das Schloss verlassen",
                     this::getDesc_SchlossVorhalle_DraussenVorDemSchloss));
-            if (db.invisibleDataDao().getInvisible(Invisible.SCHLOSSFEST)
+            if (db.invisibleDataDao().getInvisible(Invisibles.SCHLOSSFEST)
                     .hasState(BEGONNEN)) {
                 resSchlossVorhalle.add(con(SCHLOSS_VORHALLE_TISCH_BEIM_FEST,
                         "An einen Tisch setzen",
@@ -495,7 +495,7 @@ class RoomConnectionBuilder {
 
     private AbstractDescription getDesc_SchlossVorhalle_DraussenVorDemSchloss(
             final RoomKnown newRoomKnown, final Lichtverhaeltnisse lichtverhaeltnisse) {
-        switch (db.invisibleDataDao().getInvisible(Invisible.SCHLOSSFEST).getState()) {
+        switch (db.invisibleDataDao().getInvisible(Invisibles.SCHLOSSFEST).getState()) {
             case BEGONNEN:
                 return getDesc_SchlossVorhalle_DraussenVorDemSchloss_FestBegonnen();
 
@@ -632,7 +632,7 @@ class RoomConnectionBuilder {
 
     private AbstractDescription getDesc_DraussenVorDemSchloss_SchlossVorhalle(
             final RoomKnown newRoomKnown, final Lichtverhaeltnisse lichtverhaeltnisse) {
-        switch (db.invisibleDataDao().getInvisible(Invisible.SCHLOSSFEST).getState()) {
+        switch (db.invisibleDataDao().getInvisible(Invisibles.SCHLOSSFEST).getState()) {
             case BEGONNEN:
                 return getDesc_DraussenVorDemSchloss_SchlossVorhalle_FestBegonnen();
 
@@ -683,7 +683,7 @@ class RoomConnectionBuilder {
     private AbstractDescription getDesc_ImWaldNaheDemSchloss_DraussenVorDemSchloss(
             final RoomKnown newRoomKnown, final Lichtverhaeltnisse lichtverhaeltnisse) {
 
-        switch (db.invisibleDataDao().getInvisible(Invisible.SCHLOSSFEST).getState()) {
+        switch (db.invisibleDataDao().getInvisible(Invisibles.SCHLOSSFEST).getState()) {
             case BEGONNEN:
                 return getDesc_ImWaldNaheDemSchloss_DraussenVorDemSchloss_FestBegonnen(
                         mins(10));

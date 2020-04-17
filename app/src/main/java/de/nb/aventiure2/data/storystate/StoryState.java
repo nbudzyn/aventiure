@@ -9,6 +9,7 @@ import com.google.common.base.Preconditions;
 
 import de.nb.aventiure2.data.world.base.GameObjectId;
 import de.nb.aventiure2.data.world.entity.creature.Creature;
+import de.nb.aventiure2.data.world.entity.creature.Creatures;
 import de.nb.aventiure2.data.world.entity.object.AvObject;
 import de.nb.aventiure2.data.world.room.AvRoom;
 
@@ -171,7 +172,7 @@ public class StoryState {
     }
 
     public boolean talkingTo(final GameObjectId gameObjectId) {
-        return talkingTo(Creature.get(gameObjectId));
+        return talkingTo(Creatures.get(gameObjectId));
     }
 
     private boolean talkingTo(final Creature creature) {

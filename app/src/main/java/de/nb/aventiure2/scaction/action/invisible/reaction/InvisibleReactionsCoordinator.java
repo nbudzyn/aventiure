@@ -11,8 +11,8 @@ import de.nb.aventiure2.data.database.AvDatabase;
 import de.nb.aventiure2.data.storystate.IPlayerAction;
 import de.nb.aventiure2.data.storystate.StoryStateDao;
 import de.nb.aventiure2.data.world.base.GameObjectId;
-import de.nb.aventiure2.data.world.invisible.Invisible;
 import de.nb.aventiure2.data.world.invisible.InvisibleData;
+import de.nb.aventiure2.data.world.invisible.Invisibles;
 import de.nb.aventiure2.data.world.time.AvDateTime;
 import de.nb.aventiure2.data.world.time.AvTimeSpan;
 
@@ -32,8 +32,8 @@ public final class InvisibleReactionsCoordinator {
         n = db.storyStateDao();
 
         allInvisibleReactions = ImmutableMap.<GameObjectId, AbstractInvisibleReactions>builder()
-                .put(Invisible.SCHLOSSFEST, new SchlossfestReactions(db, scActionClass))
-                .put(Invisible.TAGESZEIT, new TageszeitReactions(db, scActionClass))
+                .put(Invisibles.SCHLOSSFEST, new SchlossfestReactions(db, scActionClass))
+                .put(Invisibles.TAGESZEIT, new TageszeitReactions(db, scActionClass))
                 .build();
 
         nullInvisibleReactions = new NullInvisibleReactions(db, scActionClass);

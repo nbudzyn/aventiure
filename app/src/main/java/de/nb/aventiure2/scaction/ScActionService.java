@@ -27,7 +27,7 @@ import de.nb.aventiure2.scaction.action.NehmenAction;
 import de.nb.aventiure2.scaction.action.RedenAction;
 import de.nb.aventiure2.scaction.action.SchlafenAction;
 
-import static de.nb.aventiure2.data.world.entity.creature.Creature.FROSCHPRINZ;
+import static de.nb.aventiure2.data.world.entity.creature.Creatures.FROSCHPRINZ;
 
 /**
  * Repository for the actions the player can choose from.

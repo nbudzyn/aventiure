@@ -4,6 +4,8 @@ import com.google.common.collect.ImmutableList;
 
 import java.util.List;
 
+import de.nb.aventiure2.data.world.base.GameObjectId;
+
 import static de.nb.aventiure2.data.world.entity.creature.CreatureState.AUFMERKSAM;
 import static de.nb.aventiure2.data.world.entity.creature.CreatureState.AUF_DEM_WEG_ZUM_BRUNNEN_UM_DINGE_HERAUSZUHOLEN;
 import static de.nb.aventiure2.data.world.entity.creature.CreatureState.AUF_DEM_WEG_ZUM_SCHLOSSFEST;
@@ -25,9 +27,12 @@ import static de.nb.aventiure2.german.base.NumerusGenus.M;
  * All creatures in the world
  */
 public class Creatures {
+    public static final GameObjectId FROSCHPRINZ = new GameObjectId(20_001);
+    public static final GameObjectId SCHLOSSWACHE = new GameObjectId(20_000);
+
     public static final List<Creature> ALL =
             ImmutableList.of(
-                    new Creature(Creature.SCHLOSSWACHE,
+                    new Creature(SCHLOSSWACHE,
                             np(F, "eine Schlosswache mit langer Hellebarde",
                                     "einer Schlosswache mit langer Hellebarde"),
                             np(F, "die Schlosswache mit ihrer langen Hellebarde",
@@ -37,7 +42,7 @@ public class Creatures {
                             SCHLOSS_VORHALLE,
                             sl(UNAUFFAELLIG, AUFMERKSAM
                             )),
-                    new Creature(Creature.FROSCHPRINZ,
+                    new Creature(FROSCHPRINZ,
                             np(M, "ein dicker, hässlicher Frosch",
                                     "einem dicken, hässlichen Frosch",
                                     "einen dicken, hässlichen Frosch"),
@@ -58,4 +63,14 @@ public class Creatures {
                             ))
                     // STORY Wölfe hetzen Spieler nachts
             );
+
+    public static Creature get(final GameObjectId id) {
+        for (final Creature creature : ALL) {
+            if (creature.is(id)) {
+                return creature;
+            }
+        }
+
+        throw new IllegalStateException("Unexpected game object ID: " + id);
+    }
 }

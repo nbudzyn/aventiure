@@ -31,6 +31,7 @@ import de.nb.aventiure2.data.world.entity.creature.CreatureDataDao;
 import de.nb.aventiure2.data.world.entity.creature.CreatureStateConverters;
 import de.nb.aventiure2.data.world.entity.object.AvObject;
 import de.nb.aventiure2.data.world.entity.object.AvObjectConverters;
+import de.nb.aventiure2.data.world.entity.object.AvObjects;
 import de.nb.aventiure2.data.world.entity.object.ObjectData;
 import de.nb.aventiure2.data.world.entity.object.ObjectDataDao;
 import de.nb.aventiure2.data.world.invisible.InvisibleConverters;
@@ -57,7 +58,7 @@ import de.nb.aventiure2.data.world.time.AvNow;
 import de.nb.aventiure2.data.world.time.AvNowDao;
 
 import static de.nb.aventiure2.data.storystate.StoryStateBuilder.t;
-import static de.nb.aventiure2.data.world.entity.object.AvObject.GOLDENE_KUGEL;
+import static de.nb.aventiure2.data.world.entity.object.AvObjects.GOLDENE_KUGEL;
 import static de.nb.aventiure2.data.world.player.stats.ScHunger.SATT;
 import static de.nb.aventiure2.data.world.room.Rooms.SCHLOSS_VORHALLE;
 import static de.nb.aventiure2.data.world.time.AvTime.oClock;
@@ -159,7 +160,7 @@ public abstract class AvDatabase extends RoomDatabase {
                         +
                         "Sie beginnt im königlichen Schloss, in einer prächtigen "
                         + "Vorhalle, Marmor und Brokat überall.\n");
-        final List<AvObject> objectsInRoom = ImmutableList.of(AvObject.get(GOLDENE_KUGEL));
+        final List<AvObject> objectsInRoom = ImmutableList.of(AvObjects.get(GOLDENE_KUGEL));
         res.append(buildObjectsInRoomDescription(objectsInRoom));
 
         return t((IPlayerAction) null,

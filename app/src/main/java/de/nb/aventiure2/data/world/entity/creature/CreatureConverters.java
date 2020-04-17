@@ -10,7 +10,7 @@ public class CreatureConverters {
         if (along == null) {
             return null;
         }
-        return Creature.get(new GameObjectId(along));
+        return Creatures.get(new GameObjectId(along));
     }
 
     @TypeConverter

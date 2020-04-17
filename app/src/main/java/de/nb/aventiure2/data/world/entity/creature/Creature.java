@@ -10,24 +10,11 @@ import de.nb.aventiure2.german.base.Nominalphrase;
  * A creature in the world (not the player character)
  */
 public class Creature extends AbstractEntity {
-    public static final GameObjectId SCHLOSSWACHE = new GameObjectId(20_000);
-    public static final GameObjectId FROSCHPRINZ = new GameObjectId(20_001);
-
     /**
      * The initial room where this creature can be found.
      */
     private final AvRoom initialRoom;
     private final CreatureStateList states;
-
-    public static Creature get(final GameObjectId id) {
-        for (final Creature creature : Creatures.ALL) {
-            if (creature.is(id)) {
-                return creature;
-            }
-        }
-
-        throw new IllegalStateException("Unexpected game object ID: " + id);
-    }
 
     /**
      * Constructor for a creature.

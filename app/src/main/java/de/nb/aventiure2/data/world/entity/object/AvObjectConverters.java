@@ -10,7 +10,7 @@ public class AvObjectConverters {
         if (aLong == null) {
             return null;
         }
-        return AvObject.get(new GameObjectId(aLong));
+        return AvObjects.get(new GameObjectId(aLong));
     }
 
     @TypeConverter

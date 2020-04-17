@@ -6,10 +6,10 @@ import de.nb.aventiure2.data.world.base.GameObjectId;
 /**
  * Der vom Spieler gesteuerte Charakter.
  */
-public class Sc extends AbstractGameObject {
+public class SpielerCharakter extends AbstractGameObject {
     public static GameObjectId SPIELER_CHARACTER = new GameObjectId(40_000);
 
-    public Sc() {
+    public SpielerCharakter() {
         super(SPIELER_CHARACTER);
     }
 }

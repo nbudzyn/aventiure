@@ -20,8 +20,8 @@ import de.nb.aventiure2.data.world.room.AvRoom;
 import de.nb.aventiure2.data.world.time.AvDateTime;
 import de.nb.aventiure2.data.world.time.AvTimeSpan;
 
-import static de.nb.aventiure2.data.world.entity.creature.Creature.FROSCHPRINZ;
-import static de.nb.aventiure2.data.world.entity.creature.Creature.SCHLOSSWACHE;
+import static de.nb.aventiure2.data.world.entity.creature.Creatures.FROSCHPRINZ;
+import static de.nb.aventiure2.data.world.entity.creature.Creatures.SCHLOSSWACHE;
 import static de.nb.aventiure2.data.world.time.AvTimeSpan.noTime;
 
 public final class CreatureReactionsCoordinator {

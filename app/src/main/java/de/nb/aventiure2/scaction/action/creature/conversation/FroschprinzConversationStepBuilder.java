@@ -12,6 +12,7 @@ import de.nb.aventiure2.data.storystate.IPlayerAction;
 import de.nb.aventiure2.data.storystate.StoryState;
 import de.nb.aventiure2.data.world.base.GameObjectId;
 import de.nb.aventiure2.data.world.entity.creature.CreatureData;
+import de.nb.aventiure2.data.world.entity.creature.Creatures;
 import de.nb.aventiure2.data.world.entity.object.ObjectData;
 import de.nb.aventiure2.data.world.room.AvRoom;
 import de.nb.aventiure2.data.world.time.AvTimeSpan;
@@ -22,11 +23,11 @@ import de.nb.aventiure2.scaction.action.HeulenAction;
 import static de.nb.aventiure2.data.storystate.StoryState.StructuralElement.PARAGRAPH;
 import static de.nb.aventiure2.data.storystate.StoryState.StructuralElement.SENTENCE;
 import static de.nb.aventiure2.data.storystate.StoryState.StructuralElement.WORD;
-import static de.nb.aventiure2.data.world.entity.creature.Creature.FROSCHPRINZ;
 import static de.nb.aventiure2.data.world.entity.creature.CreatureState.AUF_DEM_WEG_ZUM_BRUNNEN_UM_DINGE_HERAUSZUHOLEN;
 import static de.nb.aventiure2.data.world.entity.creature.CreatureState.ERWARTET_VON_SC_EINLOESUNG_SEINES_VERSPRECHENS;
 import static de.nb.aventiure2.data.world.entity.creature.CreatureState.HAT_FORDERUNG_GESTELLT;
 import static de.nb.aventiure2.data.world.entity.creature.CreatureState.HAT_NACH_BELOHNUNG_GEFRAGT;
+import static de.nb.aventiure2.data.world.entity.creature.Creatures.FROSCHPRINZ;
 import static de.nb.aventiure2.data.world.entity.object.ObjectData.filterInDenBrunnenGefallen;
 import static de.nb.aventiure2.data.world.entity.object.ObjectData.getDescriptionSingleOrCollective;
 import static de.nb.aventiure2.data.world.player.stats.ScStateOfMind.VOLLER_FREUDE;
@@ -44,7 +45,7 @@ import static de.nb.aventiure2.german.praedikat.VerbSubjObj.REDEN;
 
 /**
  * Erzeugt {@link CreatureConversationStep}s für den
- * {@link de.nb.aventiure2.data.world.entity.creature.Creature#FROSCHPRINZ}en.
+ * {@link Creatures#FROSCHPRINZ}en.
  */
 class FroschprinzConversationStepBuilder extends AbstractCreatureConversationStepBuilder {
     private final List<ObjectData> objectsInDenBrunnenGefallen;

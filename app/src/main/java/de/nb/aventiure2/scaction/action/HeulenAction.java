@@ -21,9 +21,9 @@ import de.nb.aventiure2.scaction.AbstractScAction;
 import static de.nb.aventiure2.data.storystate.StoryState.StructuralElement.PARAGRAPH;
 import static de.nb.aventiure2.data.storystate.StoryState.StructuralElement.SENTENCE;
 import static de.nb.aventiure2.data.storystate.StoryState.StructuralElement.WORD;
-import static de.nb.aventiure2.data.world.entity.creature.Creature.FROSCHPRINZ;
 import static de.nb.aventiure2.data.world.entity.creature.CreatureState.HAT_SC_HILFSBEREIT_ANGESPROCHEN;
 import static de.nb.aventiure2.data.world.entity.creature.CreatureState.UNAUFFAELLIG;
+import static de.nb.aventiure2.data.world.entity.creature.Creatures.FROSCHPRINZ;
 import static de.nb.aventiure2.data.world.time.AvTimeSpan.mins;
 import static de.nb.aventiure2.data.world.time.AvTimeSpan.secs;
 

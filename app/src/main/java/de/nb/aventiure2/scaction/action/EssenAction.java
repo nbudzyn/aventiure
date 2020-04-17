@@ -8,7 +8,7 @@ import java.util.Collection;
 
 import de.nb.aventiure2.data.database.AvDatabase;
 import de.nb.aventiure2.data.storystate.StoryState;
-import de.nb.aventiure2.data.world.invisible.Invisible;
+import de.nb.aventiure2.data.world.invisible.Invisibles;
 import de.nb.aventiure2.data.world.player.stats.ScHunger;
 import de.nb.aventiure2.data.world.room.AvRoom;
 import de.nb.aventiure2.data.world.time.AvTimeSpan;
@@ -55,7 +55,7 @@ public class EssenAction extends AbstractScAction {
 
     private static boolean raumEnthaeltEtwasEssbares(final AvDatabase db, final AvRoom room) {
         if (room.is(SCHLOSS_VORHALLE_TISCH_BEIM_FEST) &&
-                db.invisibleDataDao().getInvisible(Invisible.SCHLOSSFEST).getState()
+                db.invisibleDataDao().getInvisible(Invisibles.SCHLOSSFEST).getState()
                         == BEGONNEN) {
             return true;
         }

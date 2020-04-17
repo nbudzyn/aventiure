@@ -16,7 +16,6 @@ import de.nb.aventiure2.data.world.time.AvTimeSpan;
 
 import static de.nb.aventiure2.data.storystate.StoryState.StructuralElement.PARAGRAPH;
 import static de.nb.aventiure2.data.storystate.StoryState.StructuralElement.SENTENCE;
-import static de.nb.aventiure2.data.world.entity.creature.Creature.FROSCHPRINZ;
 import static de.nb.aventiure2.data.world.entity.creature.CreatureState.AUF_DEM_WEG_ZUM_SCHLOSSFEST;
 import static de.nb.aventiure2.data.world.entity.creature.CreatureState.ERWARTET_VON_SC_EINLOESUNG_SEINES_VERSPRECHENS;
 import static de.nb.aventiure2.data.world.entity.creature.CreatureState.ERWARTET_VON_SC_EINLOESUNG_SEINES_VERSPRECHENS_VON_SC_GETRAGEN;
@@ -25,9 +24,10 @@ import static de.nb.aventiure2.data.world.entity.creature.CreatureState.HAT_HOCH
 import static de.nb.aventiure2.data.world.entity.creature.CreatureState.HAT_NACH_BELOHNUNG_GEFRAGT;
 import static de.nb.aventiure2.data.world.entity.creature.CreatureState.HAT_SC_HILFSBEREIT_ANGESPROCHEN;
 import static de.nb.aventiure2.data.world.entity.creature.CreatureState.UNAUFFAELLIG;
-import static de.nb.aventiure2.data.world.entity.object.AvObject.GOLDENE_KUGEL;
-import static de.nb.aventiure2.data.world.invisible.Invisible.SCHLOSSFEST;
+import static de.nb.aventiure2.data.world.entity.creature.Creatures.FROSCHPRINZ;
+import static de.nb.aventiure2.data.world.entity.object.AvObjects.GOLDENE_KUGEL;
 import static de.nb.aventiure2.data.world.invisible.InvisibleState.BEGONNEN;
+import static de.nb.aventiure2.data.world.invisible.Invisibles.SCHLOSSFEST;
 import static de.nb.aventiure2.data.world.invisible.Invisibles.SCHLOSSFEST_BEGINN_DATE_TIME;
 import static de.nb.aventiure2.data.world.room.Rooms.IM_WALD_BEIM_BRUNNEN;
 import static de.nb.aventiure2.data.world.room.Rooms.SCHLOSS_VORHALLE;

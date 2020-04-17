@@ -23,7 +23,7 @@ import static de.nb.aventiure2.data.world.entity.creature.CreatureState.HAT_FORD
 import static de.nb.aventiure2.data.world.entity.creature.CreatureState.HAT_NACH_BELOHNUNG_GEFRAGT;
 import static de.nb.aventiure2.data.world.entity.creature.CreatureState.HAT_SC_HILFSBEREIT_ANGESPROCHEN;
 import static de.nb.aventiure2.data.world.entity.creature.CreatureState.UNAUFFAELLIG;
-import static de.nb.aventiure2.data.world.entity.object.AvObject.GOLDENE_KUGEL;
+import static de.nb.aventiure2.data.world.entity.object.AvObjects.GOLDENE_KUGEL;
 import static de.nb.aventiure2.data.world.lichtverhaeltnisse.Lichtverhaeltnisse.DUNKEL;
 import static de.nb.aventiure2.data.world.lichtverhaeltnisse.Lichtverhaeltnisse.HELL;
 import static de.nb.aventiure2.data.world.player.stats.ScStateOfMind.ETWAS_GEKNICKT;
