@@ -18,23 +18,28 @@ import de.nb.aventiure2.data.world.syscomp.storingplace.IHasStoringPlaceGO;
  */
 public class LocationComp extends AbstractStatefulComponent<LocationPCD> {
     private final AvDatabase db;
-    private final GameObjectId initialLocation;
+    private final GameObjectId initialLocationId;
+
+    @Nullable
+    private final GameObjectId initialLastLocationId;
 
     /**
      * Constructor for a {@link LocationComp}.
      */
     public LocationComp(final GameObjectId gameObjectId,
                         final AvDatabase db,
-                        final GameObjectId initialLocation) {
+                        final GameObjectId initialLocationId,
+                        final GameObjectId initialLastLocationId) {
         super(gameObjectId, db.locationDao());
         this.db = db;
-        this.initialLocation = initialLocation;
+        this.initialLocationId = initialLocationId;
+        this.initialLastLocationId = initialLastLocationId;
     }
 
     @Override
     @NonNull
     protected LocationPCD createInitialState() {
-        return new LocationPCD(getGameObjectId(), initialLocation);
+        return new LocationPCD(getGameObjectId(), initialLocationId, initialLastLocationId);
     }
 
     public boolean hasLocation(final @Nullable IHasStoringPlaceGO gameObject) {
@@ -76,10 +81,44 @@ public class LocationComp extends AbstractStatefulComponent<LocationPCD> {
     }
 
     public void setLocation(final GameObjectId locationId) {
+        if (Objects.equals(getLocationId(), locationId)) {
+            return;
+        }
+
         if (getGameObjectId().equals(locationId)) {
             throw new IllegalStateException("A game object cannot contain itself.");
         }
 
+
+        getPcd().setLastLocationId(getLocationId());
+
         getPcd().setLocationId(locationId);
+    }
+
+    public boolean lastLocationWas(final @Nullable IHasStoringPlaceGO gameObject) {
+        return lastLocationWas(gameObject != null ? gameObject.getId() : null);
+    }
+
+    public boolean lastLocationWas(final @Nullable GameObjectId locationId) {
+        return Objects.equals(getPcd().getLastLocationId(), locationId);
+    }
+
+    @Nullable
+    public IHasStoringPlaceGO getLastLocation() {
+        @Nullable final GameObjectId locationId = getLastLocationId();
+        if (locationId == null) {
+            return null;
+        }
+
+        // TODO Ist es gut, wenn die Komponente GameObjects aufruft?
+        //  Vielleicht wäre es besser, wenn sich die Komponente
+        //  nur ihr eigenes DAO merken würde und sich weder
+        //  um andere Komponente noch andere Game Objects kümmern würde?
+        return (IHasStoringPlaceGO) GameObjects.load(db, locationId);
+    }
+
+    @Nullable
+    public GameObjectId getLastLocationId() {
+        return getPcd().getLastLocationId();
     }
 }

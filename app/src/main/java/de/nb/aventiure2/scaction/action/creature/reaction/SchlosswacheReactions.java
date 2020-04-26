@@ -25,6 +25,7 @@ import de.nb.aventiure2.data.world.time.AvTimeSpan;
 import static de.nb.aventiure2.data.storystate.StoryState.StructuralElement.PARAGRAPH;
 import static de.nb.aventiure2.data.storystate.StoryState.StructuralElement.SENTENCE;
 import static de.nb.aventiure2.data.storystate.StoryState.StructuralElement.WORD;
+import static de.nb.aventiure2.data.storystate.StoryStateBuilder.t;
 import static de.nb.aventiure2.data.world.gameobjects.GameObjects.COUNTER_ID_VOR_DEM_SCHLOSS_SCHLOSSFEST_KNOWN;
 import static de.nb.aventiure2.data.world.gameobjects.GameObjects.DRAUSSEN_VOR_DEM_SCHLOSS;
 import static de.nb.aventiure2.data.world.gameobjects.GameObjects.GOLDENE_KUGEL;
@@ -74,8 +75,7 @@ class SchlosswacheReactions
                     "SchlosswacheReactions_onEnterRoom_SchlossVorhalle") > 1) {
                 n.add(t(SENTENCE,
                         capitalize(getReactorDescription(true).nom())
-                                + " scheint dich nicht zu bemerken")
-                        .letzterRaum(oldRoom));
+                                + " scheint dich nicht zu bemerken"));
                 return secs(3);
             }
         }
@@ -98,7 +98,6 @@ class SchlosswacheReactions
                                 SCHLOSS_VORHALLE, oldRoom.getId())
                                 // "in den Sonnenschein"
                                 + " hinaus")
-                        .letzterRaum(newRoom)
                         .beendet(PARAGRAPH),
                 t(PARAGRAPH,
                         "„Heho, was wird das?“, tönt dir eine laute Stimme entgegen. "
@@ -107,7 +106,6 @@ class SchlosswacheReactions
                                 + "passen. Und "
                                 + "seinem Kerkermeister auch.“ "
                                 + "Du bleibst besser draußen")
-                        .letzterRaum(newRoom)
                         .beendet(PARAGRAPH)
         ));
 
@@ -408,7 +406,6 @@ class SchlosswacheReactions
                 + "Zunehmend strömen von allen Seiten Menschen herzu und wie es scheint, ist auch "
                 + "der Zugang zum Schloss für alle geöffnet. Aus dem Schloss weht dich der "
                 + "Geruch von Gebratenem an.")
-                .letzterRaum(SCHLOSS_VORHALLE)
                 .beendet(PARAGRAPH));
 
         sc.locationComp().setLocation(DRAUSSEN_VOR_DEM_SCHLOSS);

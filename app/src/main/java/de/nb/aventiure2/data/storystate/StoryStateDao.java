@@ -15,8 +15,6 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
 
-import de.nb.aventiure2.data.world.base.GameObjectId;
-import de.nb.aventiure2.data.world.syscomp.storingplace.IHasStoringPlaceGO;
 import de.nb.aventiure2.data.world.time.AvTimeSpan;
 import de.nb.aventiure2.german.base.AbstractDescription;
 import de.nb.aventiure2.german.base.DuDescription;
@@ -68,61 +66,46 @@ public abstract class StoryStateDao {
         }
     }
 
-    public AvTimeSpan addAlt(final AbstractDescription... alternatives) {
-        return addAlt(SENTENCE, alternatives);
-    }
-
     public AvTimeSpan addAlt(final StoryState.StructuralElement startsNewUnlessSatzreihung,
                              final AbstractDescription... alternatives) {
         final StoryState initialStoryState = getStoryState();
         return addAlt(startsNewUnlessSatzreihung,
-                asList(alternatives), initialStoryState, initialStoryState.getLastRoom());
+                asList(alternatives), initialStoryState);
     }
 
     public AvTimeSpan addAlt(final ImmutableCollection.Builder<AbstractDescription> alternatives) {
         return addAlt(alternatives.build());
     }
 
-    public AvTimeSpan addAlt(final Collection<AbstractDescription> alternatives) {
-        return addAlt(SENTENCE, alternatives);
-    }
-
     public AvTimeSpan addAlt(final StoryState.StructuralElement startsNewUnlessSatzreihung,
                              final Collection<AbstractDescription> alternatives) {
         final StoryState initialStoryState = getStoryState();
         return addAlt(startsNewUnlessSatzreihung,
-                alternatives, initialStoryState, initialStoryState.getLastRoom());
+                alternatives, initialStoryState);
     }
 
-    public AvTimeSpan addAlt(final @Nullable IHasStoringPlaceGO lastRoom,
-                             final AbstractDescription... alternatives) {
-        return addAlt(getStoryState(), lastRoom, alternatives);
+    public AvTimeSpan addAlt(final AbstractDescription... alternatives) {
+        return addAlt(getStoryState(), alternatives);
     }
 
     public AvTimeSpan addAlt(final StoryState initialStoryState,
-                             final @Nullable IHasStoringPlaceGO lastRoom,
                              final AbstractDescription... alternatives) {
-        return addAlt(asList(alternatives), initialStoryState,
-                lastRoom != null ? lastRoom.getId() : null);
+        return addAlt(asList(alternatives), initialStoryState);
     }
 
-    public AvTimeSpan addAlt(final Collection<AbstractDescription> alternatives,
-                             final @Nullable IHasStoringPlaceGO lastRoom) {
+    public AvTimeSpan addAlt(final Collection<AbstractDescription> alternatives) {
         return addAlt(alternatives,
-                getStoryState(),
-                lastRoom != null ? lastRoom.getId() : null);
+                getStoryState());
     }
 
     public AvTimeSpan addAlt(final Collection<AbstractDescription> alternatives,
-                             final StoryState initialStoryState,
-                             final @Nullable GameObjectId lastRoomId) {
-        return addAlt(SENTENCE, alternatives, initialStoryState, lastRoomId);
+                             final StoryState initialStoryState) {
+        return addAlt(SENTENCE, alternatives, initialStoryState);
     }
 
     public AvTimeSpan addAlt(final StoryState.StructuralElement startsNewUnlessSatzreihung,
                              final Collection<AbstractDescription> alternatives,
-                             final StoryState initialStoryState,
-                             final @Nullable GameObjectId lastRoomId) {
+                             final StoryState initialStoryState) {
         checkArgument(alternatives.size() > 0,
                 "No alternatives");
 
@@ -132,7 +115,7 @@ public abstract class StoryStateDao {
         for (final AbstractDescription descAlternative : alternatives) {
             final List<StoryStateBuilder> storyStateBuildersForAlternative =
                     toStoryStateBuilders(startsNewUnlessSatzreihung, descAlternative,
-                            initialStoryState, lastRoomId);
+                            initialStoryState);
             final IndexAndScore indexAndScore = chooseNextIndexAndScoreFrom(
                     initialStoryState,
                     storyStateBuildersForAlternative);
@@ -156,30 +139,13 @@ public abstract class StoryStateDao {
     public AvTimeSpan add(final StoryState.StructuralElement startsNewUnlessSatzreihung,
                           final AbstractDescription desc) {
         final StoryState initialStoryState = getStoryState();
-        return add(startsNewUnlessSatzreihung, desc, initialStoryState,
-                initialStoryState.getLastRoom());
-    }
-
-    public AvTimeSpan add(final StoryState.StructuralElement startsNewUnlessSatzreihung,
-                          final AbstractDescription desc,
-                          final @Nullable IHasStoringPlaceGO lastRoom) {
-        final StoryState initialStoryState = getStoryState();
-        return add(startsNewUnlessSatzreihung, desc, initialStoryState,
-                lastRoom != null ? lastRoom.getId() : null);
-    }
-
-    public AvTimeSpan add(final StoryState.StructuralElement startsNewUnlessSatzreihung,
-                          final AbstractDescription desc, @Nullable final GameObjectId lastRoom) {
-        final StoryState initialStoryState = getStoryState();
-        return add(startsNewUnlessSatzreihung, desc, initialStoryState, lastRoom);
+        return add(startsNewUnlessSatzreihung, desc, initialStoryState);
     }
 
     private AvTimeSpan add(final StoryState.StructuralElement startsNewUnlessSatzreihung,
-                           final AbstractDescription desc, final StoryState initialStoryState,
-                           @Nullable final GameObjectId lastRoom) {
+                           final AbstractDescription desc, final StoryState initialStoryState) {
         add(chooseNextFrom(initialStoryState,
-                toStoryStateBuilders(startsNewUnlessSatzreihung, desc, initialStoryState,
-                        lastRoom)));
+                toStoryStateBuilders(startsNewUnlessSatzreihung, desc, initialStoryState)));
 
         return desc.getTimeElapsed();
     }
@@ -187,8 +153,7 @@ public abstract class StoryStateDao {
     private static List<StoryStateBuilder> toStoryStateBuilders(
             final StoryState.StructuralElement startsNewUnlessSatzreihung,
             final AbstractDescription desc,
-            final StoryState initialStoryState,
-            @Nullable final GameObjectId lastRoom) {
+            final StoryState initialStoryState) {
         if (initialStoryState.allowsAdditionalDuSatzreihengliedOhneSubjekt() &&
                 desc instanceof DuDescription) {
             final DuDescription duDesc = (DuDescription) desc;
@@ -196,25 +161,21 @@ public abstract class StoryStateDao {
                     "und " +
                             duDesc.getDescriptionSatzanschlussOhneSubjekt())
                     .komma(duDesc.isKommaStehtAus())
-                    .dann(duDesc.isDann())
-                    .letzterRaum(lastRoom));
+                    .dann(duDesc.isDann()));
         } else if (initialStoryState.dann()) {
             return ImmutableList.of(t(startsNewUnlessSatzreihung,
                     desc.getDescriptionHauptsatzMitKonjunktionaladverbWennNoetig("dann"))
                     .komma(desc.isKommaStehtAus())
-                    .undWartest(desc.isAllowsAdditionalDuSatzreihengliedOhneSubjekt())
-                    .letzterRaum(lastRoom));
+                    .undWartest(desc.isAllowsAdditionalDuSatzreihengliedOhneSubjekt()));
         } else {
             final ImmutableList.Builder<StoryStateBuilder> alternatives =
                     ImmutableList.builder();
-            alternatives.add(toHauptsatzStoryStateBuilder(startsNewUnlessSatzreihung, desc)
-                    .letzterRaum(lastRoom));
+            alternatives.add(toHauptsatzStoryStateBuilder(startsNewUnlessSatzreihung, desc));
 
             if (desc instanceof DuDescription) {
                 alternatives.add(toHauptsatzMitSpeziellemVorfeldStoryStateBuilder(
                         startsNewUnlessSatzreihung,
-                        (DuDescription) desc)
-                        .letzterRaum(lastRoom));
+                        (DuDescription) desc));
             }
 
             return alternatives.build();
@@ -283,7 +244,7 @@ public abstract class StoryStateDao {
      * versucht dabei vor allem, Wiederholgungen mit dem unmittelbar zuvor geschriebenen
      * Story-Text zu vermeiden.
      */
-    public static StoryStateBuilder
+    private static StoryStateBuilder
     chooseNextFrom(final StoryState initialStoryState, final StoryStateBuilder... alternatives) {
         return alternatives[chooseNextIndexFrom(initialStoryState, alternatives)];
     }

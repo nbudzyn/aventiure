@@ -36,13 +36,15 @@ public class CreatureFactory {
                              final String normalDescriptionWhenKnownNomDatAkk,
                              final String shortDescriptionWhenKnownNomDatAkk,
                              final GameObjectStateList states,
-                             @Nullable final GameObjectId initialLocationId) {
+                             @Nullable final GameObjectId initialLocationId,
+                             @Nullable final GameObjectId initialLastLocationId) {
         return create(id,
                 np(numerusGenus, descriptionAtFirstSightNomDatAkk),
                 np(numerusGenus, normalDescriptionWhenKnownNomDatAkk),
                 np(numerusGenus, shortDescriptionWhenKnownNomDatAkk),
                 states,
-                initialLocationId);
+                initialLocationId,
+                initialLastLocationId);
     }
 
     public GameObject create(final GameObjectId id,
@@ -50,11 +52,12 @@ public class CreatureFactory {
                              final Nominalphrase normalDescriptionWhenKnown,
                              final Nominalphrase shortDescriptionWhenKnown,
                              final GameObjectStateList states,
-                             @Nullable final GameObjectId initialLocationId) {
+                             @Nullable final GameObjectId initialLocationId,
+                             @Nullable final GameObjectId initialLastLocationId) {
         return new Creature(id,
                 new DescriptionComp(id, descriptionAtFirstSight, normalDescriptionWhenKnown,
                         shortDescriptionWhenKnown),
-                new LocationComp(id, db, initialLocationId),
+                new LocationComp(id, db, initialLocationId, initialLastLocationId),
                 new StateComp(id, db, states));
     }
 

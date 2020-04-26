@@ -46,7 +46,6 @@ import de.nb.aventiure2.data.world.time.AvNowDao;
 
 import static de.nb.aventiure2.data.storystate.StoryStateBuilder.t;
 import static de.nb.aventiure2.data.world.gameobjects.GameObjects.GOLDENE_KUGEL;
-import static de.nb.aventiure2.data.world.gameobjects.GameObjects.SCHLOSS_VORHALLE;
 import static de.nb.aventiure2.data.world.time.AvTime.oClock;
 
 @Database(entities = {
@@ -128,8 +127,7 @@ public abstract class AvDatabase extends RoomDatabase {
                 (IDescribableGO) GameObjects.load(INSTANCE, GOLDENE_KUGEL));
         res.append(buildObjectsInRoomDescription(objectsInRoom));
 
-        return t(StructuralElement.WORD, res.toString())
-                .letzterRaum(SCHLOSS_VORHALLE);
+        return t(StructuralElement.WORD, res.toString());
     }
 
     /**

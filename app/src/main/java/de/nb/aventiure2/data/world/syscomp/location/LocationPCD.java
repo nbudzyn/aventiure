@@ -16,17 +16,32 @@ class LocationPCD extends AbstractPersistentComponentData {
     @Nullable
     private GameObjectId locationId;
 
-    LocationPCD(@NonNull final GameObjectId gameObjectId, @Nullable final GameObjectId locationId) {
+    @Nullable
+    private GameObjectId lastLocationId;
+
+    LocationPCD(@NonNull final GameObjectId gameObjectId,
+                @Nullable final GameObjectId locationId,
+                @Nullable final GameObjectId lastLocationId) {
         super(gameObjectId);
+        this.locationId = locationId;
+        this.lastLocationId = lastLocationId;
+    }
+
+    @Nullable
+    GameObjectId getLocationId() {
+        return locationId;
+    }
+
+    void setLocationId(@Nullable final GameObjectId locationId) {
         this.locationId = locationId;
     }
 
     @Nullable
-    public GameObjectId getLocationId() {
-        return locationId;
+    GameObjectId getLastLocationId() {
+        return lastLocationId;
     }
 
-    public void setLocationId(@Nullable final GameObjectId locationId) {
-        this.locationId = locationId;
+    void setLastLocationId(@Nullable final GameObjectId lastLocationId) {
+        this.lastLocationId = lastLocationId;
     }
 }

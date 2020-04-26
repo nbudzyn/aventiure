@@ -31,6 +31,7 @@ import de.nb.aventiure2.scaction.action.room.connection.RoomConnection;
 import de.nb.aventiure2.scaction.action.room.connection.RoomConnections;
 
 import static com.google.common.base.Preconditions.checkArgument;
+import static de.nb.aventiure2.data.storystate.StoryStateBuilder.t;
 import static de.nb.aventiure2.data.world.gameobjects.GameObjects.DRAUSSEN_VOR_DEM_SCHLOSS;
 import static de.nb.aventiure2.data.world.gameobjects.GameObjects.SCHLOSSFEST;
 import static de.nb.aventiure2.data.world.gameobjects.GameObjects.SCHLOSS_VORHALLE;
@@ -233,7 +234,7 @@ public class BewegenAction<R extends ISpatiallyConnectedGO & IHasStoringPlaceGO,
         if (description instanceof DuDescription && initialStoryState
                 .allowsAdditionalDuSatzreihengliedOhneSubjekt() && sc.memoryComp().getLastAction()
                 .is(Action.Type.BEWEGEN) &&
-                lastRoomWasNewRoom(initialStoryState)) {
+                sc.locationComp().lastLocationWas(roomConnection.getTo())) {
             n.add(t(StructuralElement.WORD,
                     ", besinnst dich aber und "
                             + ((DuDescription) description)
@@ -256,7 +257,7 @@ public class BewegenAction<R extends ISpatiallyConnectedGO & IHasStoringPlaceGO,
         final StoryStateBuilder result;
         if (sc.memoryComp().lastActionWas(Action.Type.BEWEGEN, (GameObjectId) null)) {
             final StoryStateBuilder result1;
-            if (lastRoomWasNewRoom(initialStoryState) &&
+            if (sc.locationComp().lastLocationWas(roomConnection.getTo()) &&
                     numberOfPossibilities != NumberOfPossibilities.ONLY_WAY) {
                 if (sc.memoryComp().getLastAction().is(Action.Type.BEWEGEN)) {
                     final ImmutableList.Builder<StoryStateBuilder> alt = ImmutableList.builder();
@@ -338,7 +339,7 @@ public class BewegenAction<R extends ISpatiallyConnectedGO & IHasStoringPlaceGO,
                 }
             } else if (numberOfPossibilities == NumberOfPossibilities.ONE_IN_ONE_OUT
                     && sc.memoryComp().getLastAction().is(Action.Type.BEWEGEN) &&
-                    !lastRoomWasNewRoom(currentStoryState) &&
+                    !sc.locationComp().lastLocationWas(roomConnection.getTo()) &&
                     sc.feelingsComp().hasMood(Mood.VOLLER_FREUDE) &&
                     lichtverhaeltnisseInNewRoom ==
                             HELL &&
@@ -349,10 +350,6 @@ public class BewegenAction<R extends ISpatiallyConnectedGO & IHasStoringPlaceGO,
         }
 
         return standardDescription;
-    }
-
-    private boolean lastRoomWasNewRoom(@NonNull final StoryState currentStoryState) {
-        return currentStoryState.lastRoomWas(roomConnection.getTo());
     }
 
     private StoryStateBuilder buildNewStoryStateNewRoomOnlyNewSentenceLastActionNichtBewegen(
@@ -440,14 +437,6 @@ public class BewegenAction<R extends ISpatiallyConnectedGO & IHasStoringPlaceGO,
     @NonNull
     private static Action buildMemorizedAction() {
         return new Action(Action.Type.BEWEGEN, (IGameObject) null);
-    }
-
-    @Override
-    protected StoryStateBuilder t(
-            @NonNull final StructuralElement startsNew,
-            @NonNull final String text) {
-        return super.t(startsNew, text)
-                .letzterRaum(oldRoom);
     }
 
     private void setRoomAndObjectsKnown(

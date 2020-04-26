@@ -145,7 +145,7 @@ public class GameObjects {
                             np(F, "die Schlosswache",
                                     "der Schlosswache"),
                             sl(UNAUFFAELLIG, AUFMERKSAM),
-                            SCHLOSS_VORHALLE),
+                            SCHLOSS_VORHALLE, DRAUSSEN_VOR_DEM_SCHLOSS),
                     creature.create(FROSCHPRINZ,
                             np(M, "ein dicker, hässlicher Frosch",
                                     "einem dicken, hässlichen Frosch",
@@ -162,7 +162,7 @@ public class GameObjects {
                                     ERWARTET_VON_SC_EINLOESUNG_SEINES_VERSPRECHENS,
                                     AUF_DEM_WEG_ZUM_SCHLOSSFEST,
                                     HAT_HOCHHEBEN_GEFORDERT),
-                            IM_WALD_BEIM_BRUNNEN),
+                            IM_WALD_BEIM_BRUNNEN, ABZWEIG_IM_WALD),
                     // STORY Anhand eines StatusDatums kann das Spiel ermitteln, wann der
                     //  Frosch im Schloss ankommt.
                     //  Besser nicht Nullable! (Nicht schlüssig, weil jedes HasState,
@@ -177,7 +177,7 @@ public class GameObjects {
                                     "einer goldenen Kugel"),
                             np(F, "die goldene Kugel", "der goldenen Kugel"),
                             np(F, "die Kugel", "der Kugel"),
-                            SCHLOSS_VORHALLE)
+                            SCHLOSS_VORHALLE, DRAUSSEN_VOR_DEM_SCHLOSS)
                     // STORY Die goldene Kugel kann verloren gehen, zum Beispiel wenn man sie im
                     //  Sumpf ablegt. Dann gibt es eine art Reset und eine ähnliche goldene
                     //  Kugel erscheint wieder im Schloss. Der Text dort sagt so dann etwas wie

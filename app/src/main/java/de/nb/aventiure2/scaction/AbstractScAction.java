@@ -10,7 +10,6 @@ import java.util.Collection;
 import de.nb.aventiure2.data.database.AvDatabase;
 import de.nb.aventiure2.data.storystate.IPlayerAction;
 import de.nb.aventiure2.data.storystate.StoryState;
-import de.nb.aventiure2.data.storystate.StoryState.StructuralElement;
 import de.nb.aventiure2.data.storystate.StoryStateBuilder;
 import de.nb.aventiure2.data.storystate.StoryStateDao;
 import de.nb.aventiure2.data.world.base.GameObjectId;
@@ -182,13 +181,5 @@ public abstract class AbstractScAction implements IPlayerAction {
 
     protected StoryStateBuilder alt(final StoryStateBuilder... alternatives) {
         return n.chooseNextFrom(alternatives);
-    }
-
-    protected StoryStateBuilder t(
-            final StructuralElement startsNew,
-            @NonNull final String text) {
-        return StoryStateBuilder.t(startsNew, text)
-                // Sensible default - caller may override this setting
-                .letzterRaum(sc.locationComp().getLocation());
     }
 }

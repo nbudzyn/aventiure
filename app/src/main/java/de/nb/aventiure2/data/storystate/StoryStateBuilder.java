@@ -13,7 +13,6 @@ import de.nb.aventiure2.data.world.syscomp.alive.ILivingBeingGO;
 
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
-import static com.google.common.base.Preconditions.checkState;
 
 /**
  * Builder for {@link StoryState}.
@@ -77,13 +76,6 @@ public class StoryStateBuilder {
     @Nullable
     private GameObjectId persPronKandidat;
 
-    /**
-     * The room the user was in at the beginning of the last action.
-     * <p>Needs to be set before calling {@link #build()}.</p>
-     */
-    @Nullable
-    private GameObjectId lastRoom;
-
     public static StoryStateBuilder t(
             @NonNull final StructuralElement startsNew,
             @NonNull final String text) {
@@ -133,15 +125,6 @@ public class StoryStateBuilder {
         return this;
     }
 
-    public StoryStateBuilder letzterRaum(@Nullable final IGameObject lastRoom) {
-        return letzterRaum(lastRoom.getId());
-    }
-
-    public StoryStateBuilder letzterRaum(@Nullable final GameObjectId lastRoom) {
-        this.lastRoom = lastRoom;
-        return this;
-    }
-
     public StoryStateBuilder beendet(final StructuralElement structuralElement) {
         endsThis = structuralElement;
         return this;
@@ -181,8 +164,6 @@ public class StoryStateBuilder {
     }
 
     public StoryState build() {
-        checkState(lastRoom != null, "lastRoom is null");
-
         return new StoryState(
                 startsNew,
                 endsThis,
@@ -191,6 +172,6 @@ public class StoryStateBuilder {
                 allowsAdditionalDuSatzreihengliedOhneSubjekt,
                 dann,
                 talkingTo,
-                persPronKandidat, lastRoom);
+                persPronKandidat);
     }
 }

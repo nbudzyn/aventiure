@@ -1,13 +1,10 @@
 package de.nb.aventiure2.scaction.action.base.reaction;
 
-import androidx.annotation.NonNull;
-
 import com.google.common.collect.ImmutableCollection;
 
 import java.util.Collection;
 
 import de.nb.aventiure2.data.database.AvDatabase;
-import de.nb.aventiure2.data.storystate.StoryState;
 import de.nb.aventiure2.data.storystate.StoryStateBuilder;
 import de.nb.aventiure2.data.storystate.StoryStateDao;
 import de.nb.aventiure2.data.world.base.GameObjectId;
@@ -68,15 +65,6 @@ public abstract class AbstractReactions {
     protected Nominalphrase getDescription(final IDescribableGO gameObject,
                                            final boolean shortIfKnown) {
         return GameObjects.getPOVDescription(sc, gameObject, shortIfKnown);
-    }
-
-    protected StoryStateBuilder t(
-            @NonNull final StoryState.StructuralElement startsNew,
-            @NonNull final String text) {
-
-        return StoryStateBuilder.t(startsNew, text)
-                // Sensible default - caller may override this setting
-                .letzterRaum(sc.locationComp().getLocation());
     }
 
     protected Lichtverhaeltnisse getLichtverhaeltnisse(final GameObjectId room) {

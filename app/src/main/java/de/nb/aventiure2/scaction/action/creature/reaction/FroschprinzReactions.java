@@ -16,6 +16,7 @@ import de.nb.aventiure2.data.world.time.AvTimeSpan;
 
 import static de.nb.aventiure2.data.storystate.StoryState.StructuralElement.PARAGRAPH;
 import static de.nb.aventiure2.data.storystate.StoryState.StructuralElement.SENTENCE;
+import static de.nb.aventiure2.data.storystate.StoryStateBuilder.t;
 import static de.nb.aventiure2.data.world.gameobjects.GameObjects.FROSCHPRINZ;
 import static de.nb.aventiure2.data.world.gameobjects.GameObjects.GOLDENE_KUGEL;
 import static de.nb.aventiure2.data.world.gameobjects.GameObjects.IM_WALD_BEIM_BRUNNEN;
@@ -61,8 +62,7 @@ class FroschprinzReactions
                             + "laufen wie du.“ Aber was hilft ihm, dass er dir "
                             + "sein „Quak, quak!“ so laut nachschreit, "
                             + "als er kann, du hörst nicht darauf")
-                    .undWartest()
-                    .letzterRaum(oldRoom));
+                    .undWartest());
 
             return noTime();
         }

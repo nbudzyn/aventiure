@@ -191,11 +191,10 @@ public class RedenAction<L extends ILivingBeingGO & IDescribableGO>
         return new Action(Action.Type.REDEN, creature);
     }
 
-    @Override
     protected StoryStateBuilder t(
             @NonNull final StoryState.StructuralElement startsNew,
             @NonNull final String text) {
-        return super.t(startsNew, text)
+        return t(startsNew, text)
                 .imGespraechMit(creature);
     }
 }

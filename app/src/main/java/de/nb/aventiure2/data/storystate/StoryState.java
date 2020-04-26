@@ -7,7 +7,6 @@ import androidx.room.PrimaryKey;
 
 import com.google.common.base.Preconditions;
 
-import de.nb.aventiure2.data.world.base.GameObject;
 import de.nb.aventiure2.data.world.base.GameObjectId;
 import de.nb.aventiure2.data.world.base.IGameObject;
 import de.nb.aventiure2.data.world.syscomp.alive.ILivingBeingGO;
@@ -87,13 +86,6 @@ public class StoryState {
     @Nullable
     private final GameObjectId persPronKandidat;
 
-    /**
-     * The room the user was in before the last action.
-     */
-    // TODO Das gehört zum Game Object!
-    @NonNull
-    private final GameObjectId lastRoom;
-
     private final boolean dann;
 
     private StoryState butWithText(final String newText) {
@@ -104,8 +96,7 @@ public class StoryState {
                 kommaStehtAus,
                 allowsAdditionalDuSatzreihengliedOhneSubjekt, dann,
                 talkingTo,
-                persPronKandidat,
-                lastRoom);
+                persPronKandidat);
     }
 
     StoryState(@NonNull final StructuralElement startsNew,
@@ -115,8 +106,7 @@ public class StoryState {
                final boolean allowsAdditionalDuSatzreihengliedOhneSubjekt,
                final boolean dann,
                @Nullable final GameObjectId talkingTo,
-               @Nullable final GameObjectId persPronKandidat,
-               @NonNull final GameObjectId lastRoom) {
+               @Nullable final GameObjectId persPronKandidat) {
         Preconditions.checkArgument(!allowsAdditionalDuSatzreihengliedOhneSubjekt
                         || endsThis == StructuralElement.WORD,
                 "!allowsAdditionalDuSatzreihengliedOhneSubjekt "
@@ -129,7 +119,6 @@ public class StoryState {
         this.allowsAdditionalDuSatzreihengliedOhneSubjekt =
                 allowsAdditionalDuSatzreihengliedOhneSubjekt;
         this.dann = dann;
-        this.lastRoom = lastRoom;
         this.talkingTo = talkingTo;
         this.persPronKandidat = persPronKandidat;
     }
@@ -198,19 +187,6 @@ public class StoryState {
     @Nullable
     GameObjectId getPersPronKandidat() {
         return persPronKandidat;
-    }
-
-    public boolean lastRoomWas(final GameObject room) {
-        return room.is(lastRoom);
-    }
-
-    public boolean lastRoomWas(final GameObjectId roomId) {
-        return roomId.equals(lastRoom);
-    }
-
-    @NonNull
-    public GameObjectId getLastRoom() {
-        return lastRoom;
     }
 
     public boolean dann() {

@@ -35,7 +35,7 @@ public class SpielerCharakterFactory {
 
     public SpielerCharakter create(final GameObjectId id) {
         return new SpielerCharakter(id,
-                new LocationComp(id, db, SCHLOSS_VORHALLE),
+                new LocationComp(id, db, SCHLOSS_VORHALLE, null),
                 new StoringPlaceComp(id, IN_EINER_TASCHE),
                 new FeelingsComp(id, db, Mood.NEUTRAL, SATT,
                         new AvDateTime(1, oClock(8)),

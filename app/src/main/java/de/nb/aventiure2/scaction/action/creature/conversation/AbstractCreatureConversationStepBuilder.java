@@ -260,7 +260,6 @@ abstract class AbstractCreatureConversationStepBuilder<LIV extends ILivingBeingG
             @NonNull final StoryState.StructuralElement startsNew,
             @NonNull final String text) {
         return StoryStateBuilder.t(startsNew, text)
-                .letzterRaum(sc.locationComp().getLocation())
                 // Sensible default - caller may override this setting
                 .imGespraechMit(creature);
     }
