@@ -9,13 +9,13 @@ import de.nb.aventiure2.german.praedikat.VerbSubjObj;
 
 /**
  * Ein Schritt in einem Gespräch mit einer Kreatur.
- * Führt in der Regel von einem {@link de.nb.aventiure2.data.world.gameobjectstate.GameObjectState}
+ * Führt in der Regel von einem {@link de.nb.aventiure2.data.world.syscomp.state.GameObjectState}
  * zu einem
  * anderen, oft im Rahmen einer {@link de.nb.aventiure2.scaction.action.RedenAction}.
  * <p>
  * Das Konzept ist ähnliche wie die
  * {@link de.nb.aventiure2.scaction.action.room.connection.RoomConnection}, die
- * von einem {@link de.nb.aventiure2.data.world.spatialconnection.ISpatiallyConnectedGO} zum
+ * von einem {@link de.nb.aventiure2.data.world.syscomp.spatialconnection.ISpatiallyConnectedGO} zum
  * anderen führt,
  * oft im Rahmen einer {@link de.nb.aventiure2.scaction.action.BewegenAction}.
  */

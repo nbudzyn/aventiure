@@ -6,8 +6,8 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
 
-import de.nb.aventiure2.data.world.description.IDescribableGO;
-import de.nb.aventiure2.data.world.location.ILocatableGO;
+import de.nb.aventiure2.data.world.syscomp.description.IDescribableGO;
+import de.nb.aventiure2.data.world.syscomp.location.ILocatableGO;
 
 /**
  * Base implementation for any object within in the game. An <i>entity</i> in the
@@ -80,7 +80,7 @@ public class GameObject implements IGameObject, ComponentContext {
 
     /**
      * Gibt zurück, ob sich beide Game Objects an derselben Location gemäß
-     * {@link de.nb.aventiure2.data.world.location.LocationComp} befinden.
+     * {@link de.nb.aventiure2.data.world.syscomp.location.LocationComp} befinden.
      */
     public boolean hasSameLocationAs(
             final ILocatableGO other) {

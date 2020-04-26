@@ -6,8 +6,8 @@ import java.util.List;
 
 import de.nb.aventiure2.data.database.AvDatabase;
 import de.nb.aventiure2.data.storystate.StoryState;
-import de.nb.aventiure2.data.world.alive.ILivingBeingGO;
-import de.nb.aventiure2.data.world.storingplace.IHasStoringPlaceGO;
+import de.nb.aventiure2.data.world.syscomp.alive.ILivingBeingGO;
+import de.nb.aventiure2.data.world.syscomp.storingplace.IHasStoringPlaceGO;
 
 import static de.nb.aventiure2.data.world.gameobjects.GameObjects.FROSCHPRINZ;
 

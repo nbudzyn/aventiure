@@ -7,10 +7,10 @@ import androidx.room.PrimaryKey;
 
 import com.google.common.base.Preconditions;
 
-import de.nb.aventiure2.data.world.alive.ILivingBeingGO;
 import de.nb.aventiure2.data.world.base.GameObject;
 import de.nb.aventiure2.data.world.base.GameObjectId;
 import de.nb.aventiure2.data.world.base.IGameObject;
+import de.nb.aventiure2.data.world.syscomp.alive.ILivingBeingGO;
 
 /**
  * The text of the story, together with state relevant for going on with the story. Only things that have already happened.
