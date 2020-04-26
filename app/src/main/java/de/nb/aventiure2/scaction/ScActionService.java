@@ -2,21 +2,24 @@ package de.nb.aventiure2.scaction;
 
 import android.app.Application;
 
+import androidx.annotation.Nullable;
+
 import com.google.common.collect.ImmutableList;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
+
+import javax.annotation.ParametersAreNonnullByDefault;
 
 import de.nb.aventiure2.data.database.AvDatabase;
 import de.nb.aventiure2.data.storystate.StoryState;
-import de.nb.aventiure2.data.world.base.GameObject;
-import de.nb.aventiure2.data.world.base.GameObjectId;
-import de.nb.aventiure2.data.world.entity.creature.CreatureData;
-import de.nb.aventiure2.data.world.entity.object.AvObject;
-import de.nb.aventiure2.data.world.entity.object.ObjectData;
-import de.nb.aventiure2.data.world.player.stats.ScStats;
+import de.nb.aventiure2.data.world.alive.ILivingBeingGO;
+import de.nb.aventiure2.data.world.base.IGameObject;
+import de.nb.aventiure2.data.world.description.IDescribableGO;
+import de.nb.aventiure2.data.world.location.ILocatableGO;
+import de.nb.aventiure2.data.world.player.SpielerCharakter;
+import de.nb.aventiure2.data.world.spatialconnection.ISpatiallyConnectedGO;
+import de.nb.aventiure2.data.world.storingplace.IHasStoringPlaceGO;
 import de.nb.aventiure2.scaction.action.AblegenAction;
 import de.nb.aventiure2.scaction.action.BewegenAction;
 import de.nb.aventiure2.scaction.action.EssenAction;
@@ -27,11 +30,15 @@ import de.nb.aventiure2.scaction.action.NehmenAction;
 import de.nb.aventiure2.scaction.action.RedenAction;
 import de.nb.aventiure2.scaction.action.SchlafenAction;
 
-import static de.nb.aventiure2.data.world.entity.creature.Creatures.FROSCHPRINZ;
+import static de.nb.aventiure2.data.world.gameobjects.GameObjects.SPIELER_CHARAKTER;
+import static de.nb.aventiure2.data.world.gameobjects.GameObjects.loadDescribableLivingInventory;
+import static de.nb.aventiure2.data.world.gameobjects.GameObjects.loadDescribableNonLivingInventory;
+import static de.nb.aventiure2.data.world.gameobjects.GameObjects.loadSC;
 
 /**
  * Repository for the actions the player can choose from.
  */
+@ParametersAreNonnullByDefault
 public class ScActionService {
     private final AvDatabase db;
 
@@ -43,79 +50,94 @@ public class ScActionService {
         db = AvDatabase.getDatabase(application);
     }
 
-    public List<AbstractScAction> getPlayerActions() {
+    // TODO Have a convention like "Never do this", better have typical combinations
+    //  available?
+    public <DESC_OBJ extends ILocatableGO & IDescribableGO,
+            LIV extends ILocatableGO & IDescribableGO & ILivingBeingGO> List<AbstractScAction>
+    getPlayerActions() {
         final StoryState currentStoryState = db.storyStateDao().getStoryState();
 
-        final ScStats stats = db.playerStatsDao().getPlayerStats();
+        final SpielerCharakter spielerCharakter = loadSC(db);
 
-        final GameObject room = db.playerLocationDao().getPlayerLocation().getRoom();
+        final @Nullable IHasStoringPlaceGO room = spielerCharakter.locationComp().getLocation();
 
-        final List<ObjectData> allObjects = db.objectDataDao().getAll();
+        final ImmutableList<DESC_OBJ> objectInventory =
+                loadDescribableNonLivingInventory(db, SPIELER_CHARAKTER);
+        final ImmutableList<LIV> livingBeingsInventory =
+                loadDescribableLivingInventory(db, SPIELER_CHARAKTER);
 
-        final Map<GameObjectId, ObjectData> allObjectsById = new HashMap<>();
-        for (final ObjectData objectData : allObjects) {
-            allObjectsById.put(objectData.getGameObjectId(), objectData);
-        }
-
-        final List<AvObject> inventory = db.playerInventoryDao().getInventory();
-
-        final List<CreatureData> creaturesInRoom = db.creatureDataDao().getCreaturesInRoom(room);
-        final CreatureData froschprinz = db.creatureDataDao().getCreature(FROSCHPRINZ);
+        final ImmutableList<DESC_OBJ> objectsInRoom =
+                room != null ? loadDescribableNonLivingInventory(db, room) : ImmutableList.of();
+        final ImmutableList<LIV> livingBeingsInRoom =
+                room != null ? loadDescribableLivingInventory(db, room) : ImmutableList.of();
 
         final List<AbstractScAction> res = new ArrayList<>();
 
-        res.addAll(buildCreatureInRoomActions(currentStoryState, room, allObjectsById,
-                creaturesInRoom));
+        if (room != null) {
+            res.addAll(buildCreatureInRoomActions(currentStoryState, room,
+                    livingBeingsInRoom));
+        }
         if (!currentStoryState.talkingToAnyone()) {
-            res.addAll(buildPlayerOnlyAction(currentStoryState, room, stats, creaturesInRoom));
-            res.addAll(buildObjectInRoomActions(currentStoryState, room, allObjectsById));
-            res.addAll(buildInventoryActions(currentStoryState, room, allObjectsById,
-                    froschprinz, inventory));
-            res.addAll(buildRoomActions(currentStoryState, room));
+            res.addAll(
+                    buildPlayerOnlyAction(currentStoryState, spielerCharakter,
+                            room, livingBeingsInRoom));
+            if (room != null) {
+                res.addAll(buildObjectInRoomActions(currentStoryState, room, objectsInRoom));
+            }
+            res.addAll(buildInventoryActions(currentStoryState, room, livingBeingsInventory));
+            res.addAll(buildInventoryActions(currentStoryState, room, objectInventory));
+
+            if (room instanceof ISpatiallyConnectedGO) {
+                res.addAll(buildRoomActions(
+                        currentStoryState, (IHasStoringPlaceGO & ISpatiallyConnectedGO) room));
+            }
         }
 
         return res;
     }
 
-    private ImmutableList<AbstractScAction> buildCreatureInRoomActions(
+    private <LIV extends IDescribableGO & ILocatableGO & ILivingBeingGO>
+    ImmutableList<AbstractScAction> buildCreatureInRoomActions(
             final StoryState currentStoryState,
-            final GameObject room, final Map<GameObjectId, ObjectData> allObjectsById,
-            final List<CreatureData> creaturesInRoom) {
+            final IHasStoringPlaceGO room,
+            final List<LIV> creaturesInRoom) {
         final ImmutableList.Builder<AbstractScAction> res = ImmutableList.builder();
 
-        for (final CreatureData creatureData : creaturesInRoom) {
-            res.addAll(RedenAction.buildActions(db, currentStoryState, room, allObjectsById,
-                    creatureData));
+        for (final LIV creature : creaturesInRoom) {
+            res.addAll(RedenAction.buildActions(db, currentStoryState, room,
+                    creature));
             res.addAll(
-                    NehmenAction.buildCreatureActions(db, currentStoryState, room,
-                            creatureData));
+                    NehmenAction.buildCreatureActions(db, currentStoryState,
+                            room, creature));
         }
 
         return res.build();
     }
 
     private ImmutableList<AbstractScAction> buildPlayerOnlyAction(
-            final StoryState currentStoryState,
-            final GameObject room, final ScStats stats,
-            final List<CreatureData> creaturesInRoom) {
+            final StoryState currentStoryState, final SpielerCharakter spielerCharakter,
+            final @Nullable IGameObject room,
+            final List<? extends ILivingBeingGO> creaturesInRoom) {
         final ImmutableList.Builder<AbstractScAction> res = ImmutableList.builder();
 
-        res.addAll(HeulenAction.buildActions(db, currentStoryState, stats, creaturesInRoom));
+        res.addAll(HeulenAction
+                .buildActions(db, currentStoryState, spielerCharakter, creaturesInRoom));
+
         res.addAll(SchlafenAction.buildActions(db, currentStoryState, room));
 
         return res.build();
     }
 
-    private ImmutableList<AbstractScAction> buildObjectInRoomActions(
+    private <DESC_OBJ extends ILocatableGO & IDescribableGO>
+    ImmutableList<AbstractScAction> buildObjectInRoomActions(
             final StoryState currentStoryState,
-            final GameObject room,
-            final Map<GameObjectId, ObjectData> allObjectsById) {
+            final IHasStoringPlaceGO room,
+            final List<DESC_OBJ> objectsInRoom) {
         final ImmutableList.Builder<AbstractScAction> res = ImmutableList.builder();
-        for (final ObjectData objectData : allObjectsById.values()) {
-            if (room == objectData.getRoom()) {
-                res.addAll(
-                        NehmenAction.buildObjectActions(db, currentStoryState, room, objectData));
-            }
+        for (final DESC_OBJ object : objectsInRoom) {
+            res.addAll(
+                    NehmenAction.buildObjectActions(db, currentStoryState,
+                            room, object));
         }
 
         res.addAll(EssenAction.buildActions(db, currentStoryState, room));
@@ -123,27 +145,31 @@ public class ScActionService {
         return res.build();
     }
 
-    private ImmutableList<AbstractScAction> buildInventoryActions(
+    private <DESC_OBJ extends IDescribableGO & ILocatableGO>
+    ImmutableList<AbstractScAction> buildInventoryActions(
             final StoryState currentStoryState,
-            final GameObject room, final Map<GameObjectId, ObjectData> allObjectsById,
-            final CreatureData froschprinz,
-            final List<AvObject> inventory) {
+            final @Nullable IHasStoringPlaceGO room,
+            final List<DESC_OBJ> inventory) {
         final ImmutableList.Builder<AbstractScAction> res = ImmutableList.builder();
 
-        res.addAll(AblegenAction.buildCreatureActions(db, currentStoryState, room, froschprinz));
-
-        for (final AvObject inventoryObject : inventory) {
-            final ObjectData objectData = allObjectsById.get(inventoryObject.getId());
-            res.addAll(HochwerfenAction
-                    .buildActions(db, currentStoryState, room, objectData, froschprinz));
-            res.addAll(AblegenAction.buildObjectActions(db, currentStoryState, room, objectData));
+        for (final DESC_OBJ inventoryObject : inventory) {
+            if (room != null) {
+                // Das inventoryObject könnte auch ein ILivingBeing sein!
+                res.addAll(HochwerfenAction
+                        .buildActions(
+                                db, currentStoryState, room, inventoryObject));
+                res.addAll(
+                        AblegenAction.buildActions(
+                                db, currentStoryState, inventoryObject, room));
+            }
         }
         return res.build();
     }
 
-    private ImmutableList<AbstractScAction> buildRoomActions(
+    private <R extends ISpatiallyConnectedGO & IHasStoringPlaceGO>
+    ImmutableList<AbstractScAction> buildRoomActions(
             final StoryState currentStoryState,
-            final GameObject room) {
+            final R room) {
         final ImmutableList.Builder<AbstractScAction> res = ImmutableList.builder();
 
         res.addAll(buildRoomSpecificActions(currentStoryState, room));
@@ -153,7 +179,7 @@ public class ScActionService {
     }
 
     private ImmutableList<AbstractScAction> buildRoomSpecificActions(
-            final StoryState currentStoryState, final GameObject room) {
+            final StoryState currentStoryState, final IGameObject room) {
         final ImmutableList.Builder<AbstractScAction> res = ImmutableList.builder();
 
         res.addAll(KletternAction.buildActions(db, currentStoryState, room));

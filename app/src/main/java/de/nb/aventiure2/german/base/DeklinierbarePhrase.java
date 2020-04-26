@@ -6,7 +6,7 @@ import java.util.Objects;
  * Eine Phrase, die dekliniert werden kann, also insbesonder ein Pronomen ("sie") oder
  * eine (andere) Nominalphrase ("die goldene Kugel").
  */
-public abstract class DeklinierbarePhrase implements DescribableAsDeklinierbarePhrase {
+public abstract class DeklinierbarePhrase {
     private final NumerusGenus numerusGenus;
     private final String nominativ;
     private final String dativ;
@@ -29,32 +29,6 @@ public abstract class DeklinierbarePhrase implements DescribableAsDeklinierbareP
         this.nominativ = nominativ;
         this.dativ = dativ;
         this.akkusativ = akkusativ;
-    }
-
-    @Override
-    public String im(final KasusOderPraepositionalkasus kasusOderPraepositionalkasus,
-                     final boolean shortIfKnown) {
-        return im(kasusOderPraepositionalkasus);
-    }
-
-    @Override
-    public DeklinierbarePhrase getDescription(final boolean shortIfKnown) {
-        return this;
-    }
-
-    @Override
-    public String nom(final boolean shortIfKnown) {
-        return nom();
-    }
-
-    @Override
-    public String dat(final boolean shortIfKnown) {
-        return dat();
-    }
-
-    @Override
-    public String akk(final boolean shortIfKnown) {
-        return akk();
     }
 
     public String im(final KasusOderPraepositionalkasus kasusOderPraepositionalkasus) {
@@ -86,17 +60,14 @@ public abstract class DeklinierbarePhrase implements DescribableAsDeklinierbareP
         }
     }
 
-    @Override
     public String nom() {
         return nominativ;
     }
 
-    @Override
     public String dat() {
         return dativ;
     }
 
-    @Override
     public String akk() {
         return akkusativ;
     }

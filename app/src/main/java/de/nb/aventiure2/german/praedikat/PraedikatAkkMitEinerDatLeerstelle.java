@@ -3,7 +3,7 @@ package de.nb.aventiure2.german.praedikat;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
-import de.nb.aventiure2.german.base.DescribableAsDeklinierbarePhrase;
+import de.nb.aventiure2.german.base.DeklinierbarePhrase;
 
 /**
  * Ein Prädikat, in dem ein Akkusative schon gesetzt ist und genau nur noch für
@@ -36,11 +36,11 @@ class PraedikatAkkMitEinerDatLeerstelle implements PraedikatMitEinerObjektleerst
      * Das (Objekt / Wesen / Konzept für das) Akkusativobjekt (z.B. "Angebote")
      */
     @NonNull
-    private final DescribableAsDeklinierbarePhrase describableAkk;
+    private final DeklinierbarePhrase describableAkk;
 
     public PraedikatAkkMitEinerDatLeerstelle(final String infinitiv, final String duForm,
                                              final String abgetrenntesPraefix,
-                                             final DescribableAsDeklinierbarePhrase describableAkk) {
+                                             final DeklinierbarePhrase describableAkk) {
         this.infinitiv = infinitiv;
         this.duForm = duForm;
         this.abgetrenntesPraefix = abgetrenntesPraefix;
@@ -48,12 +48,12 @@ class PraedikatAkkMitEinerDatLeerstelle implements PraedikatMitEinerObjektleerst
     }
 
     @Override
-    public PraedikatOhneLeerstellen mitObj(final DescribableAsDeklinierbarePhrase describable) {
+    public PraedikatOhneLeerstellen mitObj(final DeklinierbarePhrase describable) {
         return mitDat(describable);
     }
 
     public PraedikatOhneLeerstellen mitDat(
-            final DescribableAsDeklinierbarePhrase describableDat) {
+            final DeklinierbarePhrase describableDat) {
         return new PraedikatDatAkkOhneLeerstellen(infinitiv, duForm, abgetrenntesPraefix,
                 describableDat, describableAkk);
     }

@@ -8,25 +8,26 @@ import java.util.Collection;
 
 import de.nb.aventiure2.data.database.AvDatabase;
 import de.nb.aventiure2.data.storystate.StoryState;
-import de.nb.aventiure2.data.world.base.GameObject;
-import de.nb.aventiure2.data.world.player.stats.ScStateOfMind;
+import de.nb.aventiure2.data.world.base.IGameObject;
+import de.nb.aventiure2.data.world.feelings.Mood;
+import de.nb.aventiure2.data.world.memory.Action;
 import de.nb.aventiure2.data.world.time.AvTimeSpan;
 import de.nb.aventiure2.scaction.AbstractScAction;
 
 import static de.nb.aventiure2.data.storystate.StoryState.StructuralElement.PARAGRAPH;
+import static de.nb.aventiure2.data.world.gameobjects.GameObjects.HINTER_DER_HUETTE;
 import static de.nb.aventiure2.data.world.lichtverhaeltnisse.Lichtverhaeltnisse.DUNKEL;
-import static de.nb.aventiure2.data.world.room.Rooms.HINTER_DER_HUETTE;
 import static de.nb.aventiure2.data.world.time.AvTimeSpan.mins;
 
 /**
  * Der Spielercharakter klettert.
  */
 public class KletternAction extends AbstractScAction {
-    private final GameObject room;
+    private final IGameObject room;
 
     public static Collection<KletternAction> buildActions(
             final AvDatabase db,
-            final StoryState initialStoryState, final GameObject room) {
+            final StoryState initialStoryState, final IGameObject room) {
         final ImmutableList.Builder<KletternAction> res = ImmutableList.builder();
         if (room.is(HINTER_DER_HUETTE)) {
             res.add(new KletternAction(db, initialStoryState, room));
@@ -40,7 +41,7 @@ public class KletternAction extends AbstractScAction {
      */
     private KletternAction(final AvDatabase db,
                            final StoryState initialStoryState,
-                           final GameObject room) {
+                           final IGameObject room) {
         super(db, initialStoryState);
         this.room = room;
     }
@@ -63,13 +64,16 @@ public class KletternAction extends AbstractScAction {
     @Override
     public AvTimeSpan narrateAndDo() {
         if (room.is(HINTER_DER_HUETTE)) {
-            return narrateAndDoBaumHinterHuette();
+            final AvTimeSpan avTimeSpan = narrateAndDoBaumHinterHuette();
+            sc.memoryComp().setLastAction(buildMemorizedAction());
+
+            return avTimeSpan;
         }
 
         throw new IllegalStateException("Unexpected room: " + room);
     }
 
-    public AvTimeSpan narrateAndDoBaumHinterHuette() {
+    private AvTimeSpan narrateAndDoBaumHinterHuette() {
         final int count = db.counterDao().incAndGet("KletternAction_BaumHinterHuette");
         switch (count) {
             case 1:
@@ -106,7 +110,7 @@ public class KletternAction extends AbstractScAction {
                         + dunkelNachsatz)
                 .beendet(PARAGRAPH));
 
-        db.playerStatsDao().setStateOfMind(ScStateOfMind.ERSCHOEPFT);
+        sc.feelingsComp().setMood(Mood.ERSCHOEPFT);
 
         return mins(10);
     }
@@ -134,8 +138,18 @@ public class KletternAction extends AbstractScAction {
                         + "du ziemlich erschöpft. " + erschoepftMuedeNachsatz)
         ));
 
-        db.playerStatsDao().setStateOfMind(ScStateOfMind.ERSCHOEPFT);
+        sc.feelingsComp().setMood(Mood.ERSCHOEPFT);
 
         return mins(15);
+    }
+
+    @Override
+    protected boolean isDefinitivWiederholung() {
+        return buildMemorizedAction().equals(sc.memoryComp().getLastAction());
+    }
+
+    @NonNull
+    private static Action buildMemorizedAction() {
+        return new Action(Action.Type.KLETTERN, (IGameObject) null);
     }
 }

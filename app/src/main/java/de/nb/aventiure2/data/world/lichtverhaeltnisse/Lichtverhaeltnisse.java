@@ -1,12 +1,14 @@
 package de.nb.aventiure2.data.world.lichtverhaeltnisse;
 
+import androidx.annotation.Nullable;
+
 import org.jetbrains.annotations.Contract;
 
 import de.nb.aventiure2.data.world.base.GameObjectId;
 import de.nb.aventiure2.data.world.time.Tageszeit;
 
-import static de.nb.aventiure2.data.world.room.Rooms.SCHLOSS_VORHALLE;
-import static de.nb.aventiure2.data.world.room.Rooms.SCHLOSS_VORHALLE_TISCH_BEIM_FEST;
+import static de.nb.aventiure2.data.world.gameobjects.GameObjects.SCHLOSS_VORHALLE;
+import static de.nb.aventiure2.data.world.gameobjects.GameObjects.SCHLOSS_VORHALLE_TISCH_BEIM_FEST;
 import static de.nb.aventiure2.data.world.time.Tageszeit.NACHTS;
 
 public enum Lichtverhaeltnisse {
@@ -24,8 +26,13 @@ public enum Lichtverhaeltnisse {
 
     @Contract(pure = true)
     public static Lichtverhaeltnisse getLichtverhaeltnisse(final Tageszeit tageszeit,
-                                                           final GameObjectId room) {
-        if (room.equals(SCHLOSS_VORHALLE) || room.equals(SCHLOSS_VORHALLE_TISCH_BEIM_FEST)) {
+                                                           @Nullable final GameObjectId roomId) {
+        if (roomId == null) {
+            // In irgendeiner raumlosen Sphäre ist es hell!
+            return HELL;
+        }
+
+        if (roomId.equals(SCHLOSS_VORHALLE) || roomId.equals(SCHLOSS_VORHALLE_TISCH_BEIM_FEST)) {
             // im Schloss ist es immer gut beleuchtet
             return HELL;
         }

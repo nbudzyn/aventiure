@@ -7,11 +7,9 @@ import androidx.annotation.Nullable;
 import androidx.room.PrimaryKey;
 
 import de.nb.aventiure2.data.storystate.StoryState.StructuralElement;
-import de.nb.aventiure2.data.world.base.GameObject;
+import de.nb.aventiure2.data.world.alive.ILivingBeingGO;
 import de.nb.aventiure2.data.world.base.GameObjectId;
-import de.nb.aventiure2.data.world.entity.creature.Creature;
-import de.nb.aventiure2.data.world.entity.object.AvObject;
-import de.nb.aventiure2.data.world.room.Rooms;
+import de.nb.aventiure2.data.world.base.IGameObject;
 
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
@@ -21,12 +19,6 @@ import static com.google.common.base.Preconditions.checkState;
  * Builder for {@link StoryState}.
  */
 public class StoryStateBuilder {
-    /**
-     * The class name of the last action (if any).
-     */
-    @Nullable
-    private String lastActionClassName;
-
     /**
      * This {@link StoryState} starts a new ... (paragraph, e.g.)
      */
@@ -59,100 +51,100 @@ public class StoryStateBuilder {
      * The creature the user is / has recently been talking to.
      */
     @Nullable
-    private Creature talkingTo;
+    private GameObjectId talkingTo;
 
     /**
-     * The last object.
+     * Wenn dieses Game Object als unmittelbar nächstes verwendet werden soll, kann man
+     * ein Personalpronomen verwenden.
+     * <p>
+     * Darf nur gesetzt werden wenn man sich sicher ist, wenn es also keine
+     * Fehlreferenzierungen, Doppeldeutigkeiten
+     * oder unerwünschten Wiederholungen geben kann. Typische Fälle wären "Du nimmst du Lampe und
+     * zündest sie an." oder "Du stellst die Lampe auf den Tisch und zündest sie an."
+     * <p>
+     * Negatitvbeispiele wäre:
+     * <ul>
+     *     <li>"Du stellst die Lampe auf die Theke und zündest sie an." (Fehlreferenzierung)
+     *     <li>"Du nimmst den Ball und den Schuh und wirfst ihn in die Luft." (Doppeldeutigkeit)
+     *     <li>"Du nimmst die Lampe, und zündest sie an. Dann stellst du sie wieder ab,
+     *     schaust sie dir aber dann noch einmal genauer an: Sie ... sie ... sie" (Unerwünschte
+     *     Wiederholung)
+     *     <li>"Du stellst die Lampe auf den Tisch. Der Tisch ist aus Holz und hat viele
+     *     schöne Gravuren - er muss sehr wertvoll sein. Dann nimmst du sie wieder in die Hand."
+     *     (Referenziertes Objekt zu weit entfernt.)
+     * </ul>
      */
     @Nullable
-    private AvObject lastObject;
+    private GameObjectId persPronKandidat;
 
     /**
      * The room the user was in at the beginning of the last action.
      * <p>Needs to be set before calling {@link #build()}.</p>
      */
     @Nullable
-    private GameObject lastRoom;
+    private GameObjectId lastRoom;
 
     public static StoryStateBuilder t(
-            @Nullable final IPlayerAction lastAction,
             @NonNull final StructuralElement startsNew,
             @NonNull final String text) {
         checkArgument(!TextUtils.isEmpty(text), "text is null or empty");
         checkNotNull(startsNew, "startsNew is null");
 
-        return t(lastAction == null ? null : lastAction.getClass(), startsNew, text);
-    }
-
-    public static StoryStateBuilder t(
-            @Nullable final Class<? extends IPlayerAction> lastActionClass,
-            @NonNull final StoryState.StructuralElement startsNew,
-            @NonNull final String text) {
-        checkArgument(!TextUtils.isEmpty(text), "text is null or empty");
-        checkNotNull(startsNew, "startsNew is null");
-
-        return t(toLastActionClassName(lastActionClass), startsNew, text);
-    }
-
-    public static StoryStateBuilder t(
-            @Nullable final String lastActionClassName,
-            @NonNull final StoryState.StructuralElement startsNew,
-            @NonNull final String text) {
-        checkArgument(!TextUtils.isEmpty(text), "text is null or empty");
-        checkNotNull(startsNew, "startsNew is null");
-
-        return new StoryStateBuilder(lastActionClassName, startsNew, text);
+        return new StoryStateBuilder(startsNew, text);
     }
 
 
-    private StoryStateBuilder(@Nullable final String lastActionClassName,
-                              @NonNull final StoryState.StructuralElement startsNew,
+    private StoryStateBuilder(@NonNull final StoryState.StructuralElement startsNew,
                               @NonNull final String text) {
-        this.lastActionClassName = lastActionClassName;
         this.startsNew = startsNew;
         this.text = text;
     }
 
-    public StoryStateBuilder imGespraechMit(final Creature talkingTo) {
+    public StoryStateBuilder imGespraechMit(final ILivingBeingGO talkingTo) {
+        return imGespraechMit(talkingTo.getId());
+    }
+
+    public StoryStateBuilder imGespraechMit(final GameObjectId talkingTo) {
         this.talkingTo = talkingTo;
         return this;
     }
 
-    public StoryStateBuilder letztesObject(final AvObject lastObject) {
-        this.lastObject = lastObject;
+    public StoryStateBuilder imGespraechMitNiemandem() {
+        talkingTo = null;
         return this;
     }
 
-    public StoryStateBuilder letzterRaum(final GameObjectId lastRoom) {
-        return letzterRaum(Rooms.get(lastRoom));
+    /**
+     * Legt den Kandidaten für ein Personalpronomen fest.
+     *
+     * @see #persPronKandidat
+     */
+    public StoryStateBuilder persPronKandidat(@Nullable final IGameObject lastObject) {
+        return persPronKandidat(lastObject == null ? null : lastObject.getId());
     }
 
-    public StoryStateBuilder letzterRaum(final GameObject lastRoom) {
+    /**
+     * Legt den Kandidaten für ein Personalpronomen fest.
+     *
+     * @see #persPronKandidat
+     */
+    public StoryStateBuilder persPronKandidat(@Nullable final GameObjectId lastObject) {
+        persPronKandidat = lastObject;
+        return this;
+    }
+
+    public StoryStateBuilder letzterRaum(@Nullable final IGameObject lastRoom) {
+        return letzterRaum(lastRoom.getId());
+    }
+
+    public StoryStateBuilder letzterRaum(@Nullable final GameObjectId lastRoom) {
         this.lastRoom = lastRoom;
-        return this;
-    }
-
-    public StoryStateBuilder letzteAktion(@Nullable final IPlayerAction lastAction) {
-        return letzteAktion(lastAction == null ? null : lastAction.getClass());
-    }
-
-    public StoryStateBuilder letzteAktion(final Class<? extends IPlayerAction> lastActionClass) {
-        return letzteAktion(toLastActionClassName(lastActionClass));
-    }
-
-    public StoryStateBuilder letzteAktion(@Nullable final String lastActionClassName) {
-        this.lastActionClassName = lastActionClassName;
         return this;
     }
 
     public StoryStateBuilder beendet(final StructuralElement structuralElement) {
         endsThis = structuralElement;
         return this;
-    }
-
-    private static String toLastActionClassName(
-            @Nullable final Class<? extends IPlayerAction> lastActionClass) {
-        return lastActionClass == null ? null : lastActionClass.getCanonicalName();
     }
 
     public StoryStateBuilder komma() {
@@ -192,7 +184,7 @@ public class StoryStateBuilder {
     public StoryState build() {
         checkState(lastRoom != null, "lastRoom is null");
 
-        return new StoryState(lastActionClassName,
+        return new StoryState(
                 startsNew,
                 endsThis,
                 text,
@@ -200,6 +192,6 @@ public class StoryStateBuilder {
                 allowsAdditionalDuSatzreihengliedOhneSubjekt,
                 dann,
                 talkingTo,
-                lastObject, lastRoom);
+                persPronKandidat, lastRoom);
     }
 }

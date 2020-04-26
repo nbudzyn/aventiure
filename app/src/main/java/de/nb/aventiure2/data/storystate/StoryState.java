@@ -7,11 +7,10 @@ import androidx.room.PrimaryKey;
 
 import com.google.common.base.Preconditions;
 
+import de.nb.aventiure2.data.world.alive.ILivingBeingGO;
 import de.nb.aventiure2.data.world.base.GameObject;
 import de.nb.aventiure2.data.world.base.GameObjectId;
-import de.nb.aventiure2.data.world.entity.creature.Creature;
-import de.nb.aventiure2.data.world.entity.creature.Creatures;
-import de.nb.aventiure2.data.world.entity.object.AvObject;
+import de.nb.aventiure2.data.world.base.IGameObject;
 
 /**
  * The text of the story, together with state relevant for going on with the story. Only things that have already happened.
@@ -40,14 +39,6 @@ public class StoryState {
      */
     private final StructuralElement endsThis;
 
-    // TODO Use @Embedded?
-
-    /**
-     * Canonical class name of the last action (if any).
-     */
-    @Nullable
-    private final String lastActionClassName;
-
     @PrimaryKey
     @NonNull
     private final String text;
@@ -68,73 +59,69 @@ public class StoryState {
      * The creature the user has been talking to
      * recently - if any.
      */
+    // TODO Das gehört zum Game Object!
     @Nullable
-    private final Creature talkingTo;
+    private final GameObjectId talkingTo;
 
     /**
-     * The last object the user interacted with
-     * recently - if any.
+     * Wenn dieses Game Object als unmittelbar nächstes verwendet werden soll, kann man
+     * ein Personalpronomen verwenden.
+     * <p>
+     * Darf nur gesetzt werden wenn man sich sicher ist, wenn es also keine
+     * Fehlreferenzierungen, Doppeldeutigkeiten
+     * oder unerwünschten Wiederholungen geben kann. Typische Fälle wären "Du nimmst du Lampe und
+     * zündest sie an." oder "Du stellst die Lampe auf den Tisch und zündest sie an."
+     * <p>
+     * Negatitvbeispiele wäre:
+     * <ul>
+     *     <li>"Du stellst die Lampe auf die Theke und zündest sie an." (Fehlreferenzierung)
+     *     <li>"Du nimmst den Ball und den Schuh und wirfst ihn in die Luft." (Doppeldeutigkeit)
+     *     <li>"Du nimmst die Lampe, und zündest sie an. Dann stellst du sie wieder ab,
+     *     schaust sie dir aber dann noch einmal genauer an: Sie ... sie ... sie" (Unerwünschte
+     *     Wiederholung)
+     *     <li>"Du stellst die Lampe auf den Tisch. Der Tisch ist aus Holz und hat viele
+     *     schöne Gravuren - er muss sehr wertvoll sein. Dann nimmst du sie wieder in die Hand."
+     *     (Referenziertes Objekt zu weit entfernt.)
+     * </ul>
      */
     @Nullable
-    private final AvObject lastObject;
+    private final GameObjectId persPronKandidat;
 
     /**
      * The room the user was in before the last action.
      */
+    // TODO Das gehört zum Game Object!
     @NonNull
-    private final GameObject lastRoom;
+    private final GameObjectId lastRoom;
 
     private final boolean dann;
 
     private StoryState butWithText(final String newText) {
-        return new StoryState(lastActionClassName,
+        return new StoryState(
                 startsNew,
                 endsThis,
                 newText,
                 kommaStehtAus,
                 allowsAdditionalDuSatzreihengliedOhneSubjekt, dann,
                 talkingTo,
-                lastObject,
+                persPronKandidat,
                 lastRoom);
     }
 
-    StoryState(@Nullable final IPlayerAction lastAction,
-               @NonNull final StructuralElement startsNew,
+    StoryState(@NonNull final StructuralElement startsNew,
                @NonNull final StructuralElement endsThis,
                @NonNull final String text,
                final boolean kommaStehtAus,
                final boolean allowsAdditionalDuSatzreihengliedOhneSubjekt,
                final boolean dann,
-               @Nullable final Creature talkingTo,
-               @Nullable final AvObject lastObject,
-               @NonNull final GameObject lastRoom) {
-        this(lastAction == null ? null : lastAction.getClass().getCanonicalName(),
-                startsNew,
-                endsThis,
-                text,
-                kommaStehtAus,
-                allowsAdditionalDuSatzreihengliedOhneSubjekt, dann,
-                talkingTo,
-                lastObject,
-                lastRoom);
-    }
-
-    StoryState(@Nullable final String lastActionClassName,
-               @NonNull final StructuralElement startsNew,
-               @NonNull final StructuralElement endsThis,
-               @NonNull final String text,
-               final boolean kommaStehtAus,
-               final boolean allowsAdditionalDuSatzreihengliedOhneSubjekt,
-               final boolean dann,
-               @Nullable final Creature talkingTo,
-               @Nullable final AvObject lastObject,
-               @NonNull final GameObject lastRoom) {
+               @Nullable final GameObjectId talkingTo,
+               @Nullable final GameObjectId persPronKandidat,
+               @NonNull final GameObjectId lastRoom) {
         Preconditions.checkArgument(!allowsAdditionalDuSatzreihengliedOhneSubjekt
                         || endsThis == StructuralElement.WORD,
                 "!allowsAdditionalDuSatzreihengliedOhneSubjekt "
                         + "|| endsThis == StructuralElement.WORD verletzt");
 
-        this.lastActionClassName = lastActionClassName;
         this.startsNew = startsNew;
         this.endsThis = endsThis;
         this.text = text;
@@ -144,7 +131,7 @@ public class StoryState {
         this.dann = dann;
         this.lastRoom = lastRoom;
         this.talkingTo = talkingTo;
-        this.lastObject = lastObject;
+        this.persPronKandidat = persPronKandidat;
     }
 
     StructuralElement getStartsNew() {
@@ -155,6 +142,7 @@ public class StoryState {
         return endsThis;
     }
 
+    @NonNull
     public String getText() {
         return text;
     }
@@ -172,47 +160,57 @@ public class StoryState {
     }
 
     public boolean talkingTo(final GameObjectId gameObjectId) {
-        return talkingTo(Creatures.get(gameObjectId));
+        return gameObjectId.equals(talkingTo);
     }
 
-    private boolean talkingTo(final Creature creature) {
-        return creature.equals(talkingTo);
+    public boolean talkingTo(final ILivingBeingGO creature) {
+        return creature.is(talkingTo);
     }
 
     @Nullable
-    Creature getTalkingTo() {
+    GameObjectId getTalkingTo() {
         return talkingTo;
     }
 
-    public boolean noLastObject() {
-        return lastObject == null;
+    /**
+     * Es gibt keinen Kandidaten für ein Personalpronomen.
+     *
+     * @see #persPronKandidat
+     */
+    public boolean noPersPronKandidat() {
+        return persPronKandidat == null;
     }
 
-    public boolean lastObjectWas(final AvObject object) {
-        return object.equals(lastObject);
+    /**
+     * Legt den Kandidaten für ein Personalpronomen fest.
+     *
+     * @see #persPronKandidat
+     */
+    public boolean persPronKandidatIs(final IGameObject object) {
+        return object.is(persPronKandidat);
     }
 
+    /**
+     * Gibt den Kandidaten für ein Personalpronomen zurück.
+     *
+     * @see #persPronKandidat
+     */
     @Nullable
-    AvObject getLastObject() {
-        return lastObject;
+    GameObjectId getPersPronKandidat() {
+        return persPronKandidat;
     }
 
     public boolean lastRoomWas(final GameObject room) {
-        return room.equals(lastRoom);
+        return room.is(lastRoom);
+    }
+
+    public boolean lastRoomWas(final GameObjectId roomId) {
+        return roomId.equals(lastRoom);
     }
 
     @NonNull
-    public GameObject getLastRoom() {
+    public GameObjectId getLastRoom() {
         return lastRoom;
-    }
-
-    public boolean lastActionWas(final Class<? extends IPlayerAction> actionClass) {
-        return actionClass.getCanonicalName().equals(lastActionClassName);
-    }
-
-    @Nullable
-    String getLastActionClassName() {
-        return lastActionClassName;
     }
 
     public boolean dann() {

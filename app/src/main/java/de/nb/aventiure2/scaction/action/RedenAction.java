@@ -6,16 +6,17 @@ import com.google.common.collect.ImmutableList;
 
 import java.util.Collection;
 import java.util.List;
-import java.util.Map;
 
 import de.nb.aventiure2.data.database.AvDatabase;
 import de.nb.aventiure2.data.storystate.StoryState;
 import de.nb.aventiure2.data.storystate.StoryStateBuilder;
-import de.nb.aventiure2.data.world.base.GameObject;
-import de.nb.aventiure2.data.world.base.GameObjectId;
-import de.nb.aventiure2.data.world.entity.creature.CreatureData;
-import de.nb.aventiure2.data.world.entity.object.ObjectData;
+import de.nb.aventiure2.data.world.alive.ILivingBeingGO;
+import de.nb.aventiure2.data.world.description.IDescribableGO;
+import de.nb.aventiure2.data.world.gameobjects.GameObjects;
+import de.nb.aventiure2.data.world.memory.Action;
+import de.nb.aventiure2.data.world.storingplace.IHasStoringPlaceGO;
 import de.nb.aventiure2.data.world.time.AvTimeSpan;
+import de.nb.aventiure2.german.base.Nominalphrase;
 import de.nb.aventiure2.german.praedikat.Praedikat;
 import de.nb.aventiure2.german.praedikat.PraedikatMitEinerObjektleerstelle;
 import de.nb.aventiure2.german.praedikat.PraedikatOhneLeerstellen;
@@ -23,46 +24,45 @@ import de.nb.aventiure2.scaction.AbstractScAction;
 import de.nb.aventiure2.scaction.action.creature.conversation.CreatureConversationStep;
 import de.nb.aventiure2.scaction.action.creature.conversation.CreatureConversationSteps;
 
+import static de.nb.aventiure2.data.world.gameobjects.GameObjects.SPIELER_CHARAKTER;
+import static de.nb.aventiure2.data.world.gameobjects.GameObjects.loadSC;
+
 /**
  * Der Spieler(charakter) redet mit einem Wesen.
  */
-public class RedenAction extends AbstractScAction {
-    private final GameObject room;
-    private final Map<GameObjectId, ObjectData> allObjectsById;
-
+public class RedenAction<L extends ILivingBeingGO & IDescribableGO>
+        extends AbstractScAction {
     @NonNull
-    private final CreatureData creatureData;
+    private final L creature;
 
     private final CreatureConversationStep creatureConversationStep;
     private final String name;
 
-    public static Collection<RedenAction> buildActions(
-            final AvDatabase db, final StoryState initialStoryState, final GameObject room,
-            final Map<GameObjectId, ObjectData> allObjectsById,
-            final CreatureData creatureData) {
+    public static <L extends ILivingBeingGO & IDescribableGO>
+    Collection<RedenAction<L>> buildActions(
+            final AvDatabase db, final StoryState initialStoryState, final IHasStoringPlaceGO room,
+            final L creature) {
         final List<CreatureConversationStep> talkSteps =
                 CreatureConversationSteps.getPossibleSteps(
-                        db, initialStoryState, RedenAction.class, room,
-                        allObjectsById, creatureData);
+                        db, initialStoryState, room, creature);
 
-        return buildActions(db, initialStoryState, room, allObjectsById,
-                creatureData,
+        return buildActions(db, initialStoryState,
+                creature,
                 talkSteps);
     }
 
-    private static Collection<RedenAction> buildActions(final AvDatabase db,
-                                                        final StoryState initialStoryState,
-                                                        final GameObject room,
-                                                        final Map<GameObjectId, ObjectData> allObjectsById,
-                                                        final CreatureData creatureData,
-                                                        final List<CreatureConversationStep> talkSteps) {
-        final ImmutableList.Builder<RedenAction> res =
+    private static <L extends ILivingBeingGO & IDescribableGO>
+    Collection<RedenAction<L>> buildActions(final AvDatabase db,
+                                            final StoryState initialStoryState,
+                                            final L creature,
+                                            final List<CreatureConversationStep> talkSteps) {
+        final ImmutableList.Builder<RedenAction<L>> res =
                 ImmutableList.builder();
 
         for (final CreatureConversationStep talkStep : talkSteps) {
-            if (stepTypeFits(initialStoryState, creatureData, talkStep.getStepType())) {
-                res.add(buildAction(db, initialStoryState, room, allObjectsById,
-                        creatureData,
+            if (stepTypeFits(db, initialStoryState, creature, talkStep.getStepType())) {
+                res.add(buildAction(db, initialStoryState,
+                        creature,
                         // "Mit ... reden" /  "Den ... ignorieren" / "Das Gespräch beenden"
                         talkStep));
             }
@@ -71,19 +71,18 @@ public class RedenAction extends AbstractScAction {
         return res.build();
     }
 
-    private static boolean stepTypeFits(final StoryState initialStoryState,
-                                        final CreatureData creatureData,
+    private static boolean stepTypeFits(final AvDatabase db,
+                                        final StoryState initialStoryState,
+                                        final ILivingBeingGO creature,
                                         final CreatureConversationStep.Type stepType) {
-        if (initialStoryState.talkingTo(creatureData.getGameObjectId())) {
+        if (initialStoryState.talkingTo(creature)) {
             // Der SC befindet sich gerade im Gespräch mit der Creature-
             return stepType == CreatureConversationStep.Type.NORMAL ||
                     stepType == CreatureConversationStep.Type.EXIT;
         }
 
-        if (initialStoryState.lastActionWas(RedenAction.class)
-            // TODO Hier müsste man noch prüfen, dass der SC auch gerade MIT DIESER CREATURE
-            // geredet hat! initialStoryState.hatGeradeGeredetMit(creatureData) oder so
-        ) {
+        if (loadSC(db).memoryComp().lastActionWas(
+                Action.Type.REDEN, creature)) {
             // Der SC hat das Gespräch mit der Creature GERADE EBEN beendet
             // und hat es sich ganz offenbar anders überlegt
             // (oder die Creature hat das Gespräch beendet, und der Benutzer möchte
@@ -97,32 +96,37 @@ public class RedenAction extends AbstractScAction {
     }
 
     /**
-     * Erzeugt eine <code>RedenAction</code> für dieses {@link CreatureData}.
+     * Erzeugt eine <code>RedenAction</code> für dieses {@link ILivingBeingGO}.
      */
     @NonNull
-    private static RedenAction buildAction(final AvDatabase db,
-                                           final StoryState initialStoryState,
-                                           final GameObject room,
-                                           final Map<GameObjectId, ObjectData> allObjectsById,
-                                           final CreatureData creatureData,
-                                           final CreatureConversationStep talkStep) {
+    private static <L extends ILivingBeingGO & IDescribableGO>
+    RedenAction buildAction(final AvDatabase db,
+                            final StoryState initialStoryState,
+                            final L creature,
+                            final CreatureConversationStep talkStep) {
         final PraedikatOhneLeerstellen praedikatOhneLeerstellen =
-                fuelleGgfPraedikatLeerstelleMitCreature(talkStep.getName(), creatureData);
+                fuelleGgfPraedikatLeerstelleMitCreature(db, talkStep.getName(), creature);
 
-        return buildAction(db, initialStoryState, room, allObjectsById, creatureData,
+        return buildAction(db, initialStoryState, creature,
                 talkStep,
                 praedikatOhneLeerstellen);
     }
 
     private static PraedikatOhneLeerstellen fuelleGgfPraedikatLeerstelleMitCreature(
+            final AvDatabase db,
             final Praedikat praedikat,
-            final CreatureData creatureData) {
+            final IDescribableGO creature) {
         if (praedikat instanceof PraedikatOhneLeerstellen) {
             return (PraedikatOhneLeerstellen) praedikat;
         }
 
         if (praedikat instanceof PraedikatMitEinerObjektleerstelle) {
-            return ((PraedikatMitEinerObjektleerstelle) praedikat).mitObj(creatureData);
+            final Nominalphrase creatureDesc =
+                    GameObjects.getPOVDescription(db, SPIELER_CHARAKTER, creature, true);
+
+
+            return ((PraedikatMitEinerObjektleerstelle) praedikat).mitObj(
+                    creatureDesc);
         }
 
         throw new IllegalArgumentException("Unexpected type of Prädikat: "
@@ -134,13 +138,12 @@ public class RedenAction extends AbstractScAction {
      * mit diesem {@link PraedikatOhneLeerstellen}.
      */
     @NonNull
-    private static RedenAction buildAction(final AvDatabase db, final StoryState initialStoryState,
-                                           final GameObject room,
-                                           final Map<GameObjectId, ObjectData> allObjectsById,
-                                           final CreatureData creatureData,
-                                           final CreatureConversationStep talkStep,
-                                           final PraedikatOhneLeerstellen praedikatOhneLeerstellen) {
-        return new RedenAction(db, initialStoryState, creatureData, room, allObjectsById,
+    private static <L extends ILivingBeingGO & IDescribableGO>
+    RedenAction<L> buildAction(final AvDatabase db, final StoryState initialStoryState,
+                               final L creatureData,
+                               final CreatureConversationStep talkStep,
+                               final PraedikatOhneLeerstellen praedikatOhneLeerstellen) {
+        return new RedenAction<>(db, initialStoryState, creatureData,
                 talkStep,
                 // "Dem Frosch Angebote machen"
                 praedikatOhneLeerstellen.getDescriptionInfinitiv());
@@ -148,14 +151,11 @@ public class RedenAction extends AbstractScAction {
 
     private RedenAction(final AvDatabase db,
                         final StoryState initialStoryState,
-                        @NonNull final CreatureData creatureData, final GameObject room,
-                        final Map<GameObjectId, ObjectData> allObjectsById,
+                        @NonNull final L creature,
                         final CreatureConversationStep creatureConversationStep,
                         @NonNull final String name) {
         super(db, initialStoryState);
-        this.creatureData = creatureData;
-        this.room = room;
-        this.allObjectsById = allObjectsById;
+        this.creature = creature;
         this.creatureConversationStep = creatureConversationStep;
         this.name = name;
     }
@@ -173,7 +173,22 @@ public class RedenAction extends AbstractScAction {
 
     @Override
     public AvTimeSpan narrateAndDo() {
-        return creatureConversationStep.narrateAndDo();
+        final CreatureConversationStep timeSpan = creatureConversationStep;
+        sc.memoryComp().setLastAction(buildMemorizedAction());
+
+        return timeSpan.narrateAndDo();
+    }
+
+    @Override
+    protected boolean isDefinitivWiederholung() {
+        // Man sagt ja jedes Mal etwas anderes, kommt von einem
+        // Verhandlungsschritt zum nächsten etc.
+        return false;
+    }
+
+    @NonNull
+    private Action buildMemorizedAction() {
+        return new Action(Action.Type.REDEN, creature);
     }
 
     @Override
@@ -181,6 +196,6 @@ public class RedenAction extends AbstractScAction {
             @NonNull final StoryState.StructuralElement startsNew,
             @NonNull final String text) {
         return super.t(startsNew, text)
-                .imGespraechMit(creatureData.getCreature());
+                .imGespraechMit(creature);
     }
 }

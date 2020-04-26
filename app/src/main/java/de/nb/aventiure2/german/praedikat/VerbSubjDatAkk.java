@@ -3,7 +3,7 @@ package de.nb.aventiure2.german.praedikat;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
-import de.nb.aventiure2.german.base.DescribableAsDeklinierbarePhrase;
+import de.nb.aventiure2.german.base.DeklinierbarePhrase;
 
 /**
  * Ein Verb (ggf. mit Präfix), das genau mit einem Subjekt, einem Dativobjekt und
@@ -54,8 +54,8 @@ public enum VerbSubjDatAkk implements Praedikat {
      * ("Du machst dem Frosch Angebote")
      */
     public String getDescriptionHauptsatz(
-            final DescribableAsDeklinierbarePhrase describableDat,
-            final DescribableAsDeklinierbarePhrase describableAkk) {
+            final DeklinierbarePhrase describableDat,
+            final DeklinierbarePhrase describableAkk) {
         return mitDat(describableDat).getDescriptionDuHauptsatz(describableAkk);
     }
 
@@ -63,19 +63,19 @@ public enum VerbSubjDatAkk implements Praedikat {
      * Gibt eine Infinitivkonstruktion zurück mit diesem Verb und diesen Objekten.
      * ("Dem Frosch Angebote machen")
      */
-    public String getDescriptionInfinitiv(final DescribableAsDeklinierbarePhrase describableDat,
-                                          final DescribableAsDeklinierbarePhrase describableAkk) {
+    public String getDescriptionInfinitiv(final DeklinierbarePhrase describableDat,
+                                          final DeklinierbarePhrase describableAkk) {
         return mitDat(describableDat).getDescriptionInfinitiv(describableAkk);
     }
 
     public PraedikatMitEinerObjektleerstelle mitDat(
-            final DescribableAsDeklinierbarePhrase describableDat) {
+            final DeklinierbarePhrase describableDat) {
         return new PraedikatDatMitEinerAkkLeerstelle(infinitiv, duForm, abgetrenntesPraefix,
                 describableDat);
     }
 
     public PraedikatMitEinerObjektleerstelle mitAkk(
-            final DescribableAsDeklinierbarePhrase describableAkk) {
+            final DeklinierbarePhrase describableAkk) {
         return new PraedikatAkkMitEinerDatLeerstelle(infinitiv, duForm, abgetrenntesPraefix,
                 describableAkk);
     }

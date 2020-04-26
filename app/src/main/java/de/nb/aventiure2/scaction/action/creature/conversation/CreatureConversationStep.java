@@ -1,7 +1,5 @@
 package de.nb.aventiure2.scaction.action.creature.conversation;
 
-import de.nb.aventiure2.data.world.entity.creature.Creature;
-import de.nb.aventiure2.data.world.entity.creature.CreatureState;
 import de.nb.aventiure2.data.world.time.AvTimeSpan;
 import de.nb.aventiure2.german.base.Nominalphrase;
 import de.nb.aventiure2.german.praedikat.Praedikat;
@@ -10,36 +8,38 @@ import de.nb.aventiure2.german.praedikat.PraedikatOhneLeerstellen;
 import de.nb.aventiure2.german.praedikat.VerbSubjObj;
 
 /**
- * Ein Schritt in einem Gespräch mit einer {@link Creature}.
- * Führt in der Regel von einem {@link CreatureState} zu einem
+ * Ein Schritt in einem Gespräch mit einer Kreatur.
+ * Führt in der Regel von einem {@link de.nb.aventiure2.data.world.gameobjectstate.GameObjectState}
+ * zu einem
  * anderen, oft im Rahmen einer {@link de.nb.aventiure2.scaction.action.RedenAction}.
  * <p>
  * Das Konzept ist ähnliche wie die
  * {@link de.nb.aventiure2.scaction.action.room.connection.RoomConnection}, die
- * von einem {@link de.nb.aventiure2.data.world.room.AvRoom} zum anderen führt,
+ * von einem {@link de.nb.aventiure2.data.world.spatialconnection.ISpatiallyConnectedGO} zum
+ * anderen führt,
  * oft im Rahmen einer {@link de.nb.aventiure2.scaction.action.BewegenAction}.
  */
 public class CreatureConversationStep {
     public enum Type {
         /**
          * Ein Entry-Schritt ist nur möglich, wenn der SC unmittelbar zuvor NICHT
-         * im Gespräch mit der {@link Creature} war UND DIESES GESPRÄCH AUCH NICHT GERADE
+         * im Gespräch mit der Kreatur war UND DIESES GESPRÄCH AUCH NICHT GERADE
          * EBEN BEENDET HAT. Der Benutzer möchte ein Gespräch beginnen.
          */
         ENTRY_RE_ENTRY,
         /**
          * Ein Entry-Schritt ist nur möglich, wenn der SC unmittelbar zuvor noch im Gespräch
-         * mit der {@link Creature} war. Der Benutzer möchte das Gespräch fortführen.
+         * mit der Kreatur war. Der Benutzer möchte das Gespräch fortführen.
          */
         NORMAL,
         /**
          * Ein Entry-Schritt ist nur möglich, wenn der SC unmittelbar zuvor noch im Gespräch
-         * mit der {@link Creature} war. Der Benutzer möchte das Gespräch beenden.
+         * mit der Kreatur war. Der Benutzer möchte das Gespräch beenden.
          */
         EXIT,
         /**
          * Ein Entry-Schritt ist nur möglich, wenn der SC GERADE EBEN das
-         * im Gespräch mit der {@link Creature} beendet hat (oder die Creature hat das Gespräch
+         * im Gespräch mit der Kreatur beendet hat (oder die Creature hat das Gespräch
          * beendet). Der Benutzer hat es sich offenbar
          * anders überlegt und möchte sofort wieder ein Gespräch beginnen.
          */

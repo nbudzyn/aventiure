@@ -8,20 +8,24 @@ import java.util.Collection;
 
 import de.nb.aventiure2.data.database.AvDatabase;
 import de.nb.aventiure2.data.storystate.StoryState;
-import de.nb.aventiure2.data.world.base.GameObject;
-import de.nb.aventiure2.data.world.invisible.Invisibles;
-import de.nb.aventiure2.data.world.player.stats.ScHunger;
+import de.nb.aventiure2.data.world.base.IGameObject;
+import de.nb.aventiure2.data.world.feelings.Hunger;
+import de.nb.aventiure2.data.world.gameobjectstate.IHasStateGO;
+import de.nb.aventiure2.data.world.memory.Action;
+import de.nb.aventiure2.data.world.storingplace.IHasStoringPlaceGO;
 import de.nb.aventiure2.data.world.time.AvTimeSpan;
 import de.nb.aventiure2.german.base.AbstractDescription;
-import de.nb.aventiure2.german.base.DuDescription;
 import de.nb.aventiure2.scaction.AbstractScAction;
 
 import static de.nb.aventiure2.data.storystate.StoryState.StructuralElement.PARAGRAPH;
 import static de.nb.aventiure2.data.storystate.StoryState.StructuralElement.SENTENCE;
-import static de.nb.aventiure2.data.world.invisible.InvisibleState.BEGONNEN;
-import static de.nb.aventiure2.data.world.player.stats.ScHunger.SATT;
-import static de.nb.aventiure2.data.world.room.Rooms.SCHLOSS_VORHALLE_TISCH_BEIM_FEST;
-import static de.nb.aventiure2.data.world.room.Rooms.WALDWILDNIS_HINTER_DEM_BRUNNEN;
+import static de.nb.aventiure2.data.world.feelings.Hunger.SATT;
+import static de.nb.aventiure2.data.world.gameobjects.GameObjects.SCHLOSSFEST;
+import static de.nb.aventiure2.data.world.gameobjects.GameObjects.SCHLOSS_VORHALLE_TISCH_BEIM_FEST;
+import static de.nb.aventiure2.data.world.gameobjects.GameObjects.WALDWILDNIS_HINTER_DEM_BRUNNEN;
+import static de.nb.aventiure2.data.world.gameobjects.GameObjects.load;
+import static de.nb.aventiure2.data.world.gameobjects.GameObjects.loadSC;
+import static de.nb.aventiure2.data.world.gameobjectstate.GameObjectState.BEGONNEN;
 import static de.nb.aventiure2.data.world.time.AvTimeSpan.mins;
 import static de.nb.aventiure2.german.base.AllgDescription.allg;
 import static de.nb.aventiure2.german.base.DuDescription.du;
@@ -31,11 +35,11 @@ import static de.nb.aventiure2.german.base.DuDescription.du;
  */
 public class EssenAction extends AbstractScAction {
     public static final String COUNTER_FELSENBIRNEN = "EssenAction_Felsenbirnen";
-    private final GameObject room;
+    private final IHasStoringPlaceGO room;
 
     public static Collection<EssenAction> buildActions(
             final AvDatabase db,
-            final StoryState initialStoryState, final GameObject room) {
+            final StoryState initialStoryState, final IHasStoringPlaceGO room) {
         final ImmutableList.Builder<EssenAction> res = ImmutableList.builder();
         if (essenMoeglich(db, initialStoryState, room)) {
             res.add(new EssenAction(db, initialStoryState, room));
@@ -45,18 +49,21 @@ public class EssenAction extends AbstractScAction {
     }
 
     private static boolean essenMoeglich(final AvDatabase db, final StoryState initialStoryState,
-                                         final GameObject room) {
-        if (initialStoryState.lastActionWas(EssenAction.class)) {
+                                         final IHasStoringPlaceGO room) {
+        if (loadSC(db).memoryComp().getLastAction().is(Action.Type.ESSEN)) {
+            // TODO Es könnten sich verschiedene essbare Dinge am selben Ort befinden!
+            //  Das zweite sollte man durchaus essen können, wenn man schon das
+            //  erste gegessen hat!
             return false;
         }
 
         return raumEnthaeltEtwasEssbares(db, room);
     }
 
-    private static boolean raumEnthaeltEtwasEssbares(final AvDatabase db, final GameObject room) {
+    private static boolean raumEnthaeltEtwasEssbares(final AvDatabase db,
+                                                     final IHasStoringPlaceGO room) {
         if (room.is(SCHLOSS_VORHALLE_TISCH_BEIM_FEST) &&
-                db.invisibleDataDao().getInvisible(Invisibles.SCHLOSSFEST).getState()
-                        == BEGONNEN) {
+                ((IHasStateGO) load(db, SCHLOSSFEST)).stateComp().hasState(BEGONNEN)) {
             return true;
         }
 
@@ -71,7 +78,7 @@ public class EssenAction extends AbstractScAction {
 
     private EssenAction(final AvDatabase db,
                         final StoryState initialStoryState,
-                        final GameObject room) {
+                        final IHasStoringPlaceGO room) {
         super(db, initialStoryState);
         this.room = room;
     }
@@ -106,13 +113,15 @@ public class EssenAction extends AbstractScAction {
             throw new IllegalStateException("Unexpected room: " + room);
         }
 
+        sc.memoryComp().setLastAction(buildMemorizedAction());
+
         timeElapsed = timeElapsed.plus(creatureReactionsCoordinator.onEssen(room));
 
         return timeElapsed;
     }
 
     private AvTimeSpan narrateAndDoSchlossfest() {
-        final ScHunger hunger = getHunger();
+        final Hunger hunger = getHunger();
         switch (hunger) {
             case HUNGRIG:
                 return narrateAndDoSchlossfestHungrig();
@@ -154,36 +163,43 @@ public class EssenAction extends AbstractScAction {
     }
 
     private AvTimeSpan narrateAndDoSchlossfestSatt() {
-        n.add(alt(
-                t(SENTENCE,
-                        "Hunger hast du zwar keinen mehr, aber eine Kleinigkeit… – du "
+        return n.addAlt(
+                allg("Hunger hast du zwar keinen mehr, aber eine Kleinigkeit… – du "
                                 + "nimmst dir "
                                 + "eine halbe Kelle "
-                                + "von dem Eintopf und isst")
-                        .dann(),
-                t(SENTENCE, "Du isst ein paar Löffel vom Eintopf")
-                        .dann(),
-                t(SENTENCE, "Du bist eigentlich satt, aber einen oder zwei Löffel Eintopf "
-                        + "lässt du "
-                        + "dir trotzdem schmecken")
-                        .dann())
-        );
-        return mins(2);
+                                + "von dem Eintopf und isst",
+                        false,
+                        false,
+                        true,
+                        mins(2)),
+                du("isst ein paar Löffel vom Eintopf",
+                        false,
+                        true,
+                        true,
+                        mins(2)),
+                du("bist", "eigentlich satt, aber einen oder zwei Löffel Eintopf "
+                                + "lässt du "
+                                + "dir trotzdem schmecken",
+                        "eigentlich",
+                        false,
+                        false,
+                        true,
+                        mins(2)));
     }
 
     private AvTimeSpan narrateAndDoFelsenbirnen() {
-        final ScHunger hunger = getHunger();
+        final Hunger hunger = getHunger();
 
-        final AbstractDescription desc = getDescFelsenbirnen(hunger);
+        final Collection<AbstractDescription> descAlternatives = getDescFelsenbirnen(hunger);
 
-        final AvTimeSpan timeElapsed = narrateStartsNewWordOrSentence(desc);
+        final AvTimeSpan timeElapsed = narrateStartsNewWordOrSentence(descAlternatives);
 
         saveSatt();
 
         return timeElapsed;
     }
 
-    private AbstractDescription getDescFelsenbirnen(final ScHunger hunger) {
+    private Collection<AbstractDescription> getDescFelsenbirnen(final Hunger hunger) {
         switch (hunger) {
             case HUNGRIG:
                 return getDescFelsenbirnenHungrig();
@@ -194,20 +210,21 @@ public class EssenAction extends AbstractScAction {
         }
     }
 
-    private AbstractDescription getDescFelsenbirnenHungrig() {
+    private Collection<AbstractDescription> getDescFelsenbirnenHungrig() {
         if (db.counterDao().incAndGet(COUNTER_FELSENBIRNEN) == 1) {
-            return du("nimmst", "eine von den Früchten, "
-                            + "schaust sie kurz an, dann "
-                            + "beißt du hinein… – "
-                            + "Mmh! Die Frucht ist saftig und schmeckt süß wie Marzipan!\n"
-                            + "Du isst dich an den Früchten satt",
-                    false,
-                    true,
-                    true,
-                    mins(10));
+            return ImmutableList.of(
+                    du("nimmst", "eine von den Früchten, "
+                                    + "schaust sie kurz an, dann "
+                                    + "beißt du hinein… – "
+                                    + "Mmh! Die Frucht ist saftig und schmeckt süß wie Marzipan!\n"
+                                    + "Du isst dich an den Früchten satt",
+                            false,
+                            true,
+                            true,
+                            mins(10)));
         }
 
-        return alt(
+        return ImmutableList.of(
                 du("isst", "dich an den süßen Früchten satt",
                         false,
                         true,
@@ -228,24 +245,27 @@ public class EssenAction extends AbstractScAction {
         );
     }
 
-    private AbstractDescription getDescFelsenbirnenSatt() {
+    private Collection<AbstractDescription> getDescFelsenbirnenSatt() {
         if (db.counterDao().incAndGet(COUNTER_FELSENBIRNEN) == 1) {
-            return du("nimmst", "eine von den Früchten und beißt hinein. "
-                            + "Sie ist überrasschend süß und saftig. Du isst die Frucht auf",
-                    false,
-                    true,
-                    true,
-                    mins(3));
+            return ImmutableList.of(
+                    du("nimmst", "eine von den Früchten und beißt hinein. "
+                                    + "Sie ist überrasschend süß und saftig. Du isst die Frucht auf",
+                            false,
+                            true,
+                            true,
+                            mins(3)));
         }
 
-        return alt(
+        return ImmutableList.of(
                 du("hast", "nur wenig Hunger und beißt lustlos in eine der Früchte",
+                        "Hunger",
                         false,
                         false,
                         true,
                         mins(3)),
-                allg("Die süßen Früchte lässt du dich nicht entgehen, auch wenn du kaum Hunger "
+                du("lässt", "dir die süßen Früchte nicht entgehen, auch wenn du kaum Hunger "
                                 + "hast",
+                        "die süßen Früchte",
                         true,
                         true,
                         false,
@@ -253,38 +273,30 @@ public class EssenAction extends AbstractScAction {
         );
     }
 
-    private AvTimeSpan narrateStartsNewWordOrSentence(final AbstractDescription desc) {
-        if (initialStoryState.allowsAdditionalDuSatzreihengliedOhneSubjekt() &&
-                desc instanceof DuDescription) {
-            final DuDescription duDesc = (DuDescription) desc;
-            n.add(t(StoryState.StructuralElement.WORD,
-                    "und " +
-                            duDesc.getDescriptionSatzanschlussOhneSubjekt())
-                    .komma(duDesc.kommaStehtAus())
-                    .dann(duDesc.dann()));
-        } else if (initialStoryState.dann()) {
-            n.add(t(SENTENCE,
-                    desc.getDescriptionHauptsatzMitKonjunktionaladverbWennNoetig("dann"))
-                    .komma(desc.kommaStehtAus())
-                    .undWartest(desc.allowsAdditionalDuSatzreihengliedOhneSubjekt())
-                    .dann(false));
-        } else {
-            n.add(t(SENTENCE,
-                    desc.getDescriptionHauptsatz())
-                    .komma(desc.kommaStehtAus())
-                    .undWartest(desc.allowsAdditionalDuSatzreihengliedOhneSubjekt())
-                    .dann(desc.dann()));
-        }
-
-        return desc.getTimeElapsed();
+    private AvTimeSpan narrateStartsNewWordOrSentence(final Collection<AbstractDescription>
+                                                              descAlternatives) {
+        return n.addAlt(descAlternatives);
     }
 
-    private ScHunger getHunger() {
-        return db.playerStatsDao().getPlayerStats().getHunger();
+    private Hunger getHunger() {
+        return sc.feelingsComp().getHunger();
+    }
+
+    @Override
+    protected boolean isDefinitivWiederholung() {
+        return buildMemorizedAction().equals(sc.memoryComp().getLastAction());
+    }
+
+    @NonNull
+    private static Action buildMemorizedAction() {
+        return new Action(Action.Type.ESSEN, (IGameObject) null);
     }
 
     private void saveSatt() {
-        db.playerStatsDao().setHunger(SATT);
-        db.playerStatsDao().setZuletztGegessen(db.dateTimeDao().now());
+        sc.feelingsComp().setHunger(SATT);
+        // TODO NOW auch zu einem GameObject machen mit einer entsprechenden Stateful Component
+        // TODO Regel aufstellen: Die Aktionen dürfen nicht auf die DAOs zugreifen.
+        //  Z.B. von DB nur ein Interface definieren, das durchgereicht wird?!
+        sc.feelingsComp().setZuletztGegessen(db.dateTimeDao().now());
     }
 }

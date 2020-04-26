@@ -3,7 +3,7 @@ package de.nb.aventiure2.german.praedikat;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
-import de.nb.aventiure2.german.base.DescribableAsDeklinierbarePhrase;
+import de.nb.aventiure2.german.base.DeklinierbarePhrase;
 import de.nb.aventiure2.german.base.KasusOderPraepositionalkasus;
 
 import static de.nb.aventiure2.german.base.GermanUtil.capitalize;
@@ -44,13 +44,13 @@ class PraedikatSubjObjOhneLeerstellen implements PraedikatOhneLeerstellen {
     /**
      * Das Objekt (z.B. ein Ding, Wesen, Konzept oder deklinierbare Phrase)
      */
-    private final DescribableAsDeklinierbarePhrase objekt;
+    private final DeklinierbarePhrase objekt;
 
 
     public PraedikatSubjObjOhneLeerstellen(final String infinitiv, final String duForm,
                                            final String abgetrenntesPraefix,
                                            final KasusOderPraepositionalkasus kasusOderPraepositionalkasus,
-                                           final DescribableAsDeklinierbarePhrase objekt) {
+                                           final DeklinierbarePhrase objekt) {
         this.infinitiv = infinitiv;
         this.duForm = duForm;
         this.abgetrenntesPraefix = abgetrenntesPraefix;
@@ -83,11 +83,11 @@ class PraedikatSubjObjOhneLeerstellen implements PraedikatOhneLeerstellen {
     public String getDescriptionHauptsatzMitEingespartemVorfeldSubj() {
         if (abgetrenntesPraefix == null) {
             return duForm +
-                    " " + objekt.im(kasusOderPraepositionalkasus, true);
+                    " " + objekt.im(kasusOderPraepositionalkasus);
         }
 
         return duForm +
-                " " + objekt.im(kasusOderPraepositionalkasus, true) +
+                " " + objekt.im(kasusOderPraepositionalkasus) +
                 " " + abgetrenntesPraefix;
     }
 
@@ -101,13 +101,13 @@ class PraedikatSubjObjOhneLeerstellen implements PraedikatOhneLeerstellen {
             return capitalize(adverbialeAngabe.getText()) +
                     " " + duForm +
                     " du " +
-                    objekt.im(kasusOderPraepositionalkasus, true);
+                    objekt.im(kasusOderPraepositionalkasus);
         }
 
         return capitalize(adverbialeAngabe.getText()) +
                 " " + duForm +
                 " du " +
-                objekt.im(kasusOderPraepositionalkasus, true) +
+                objekt.im(kasusOderPraepositionalkasus) +
                 " " + abgetrenntesPraefix;
     }
 
@@ -117,7 +117,7 @@ class PraedikatSubjObjOhneLeerstellen implements PraedikatOhneLeerstellen {
      */
     @Override
     public String getDescriptionInfinitiv() {
-        return capitalize(objekt.im(kasusOderPraepositionalkasus, true) +
+        return capitalize(objekt.im(kasusOderPraepositionalkasus) +
                 " " + infinitiv);
     }
 
@@ -126,7 +126,7 @@ class PraedikatSubjObjOhneLeerstellen implements PraedikatOhneLeerstellen {
         return kasusOderPraepositionalkasus;
     }
 
-    public DescribableAsDeklinierbarePhrase getObjekt() {
+    public DeklinierbarePhrase getObjekt() {
         return objekt;
     }
 }

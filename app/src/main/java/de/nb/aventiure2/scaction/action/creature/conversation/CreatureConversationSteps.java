@@ -3,17 +3,13 @@ package de.nb.aventiure2.scaction.action.creature.conversation;
 import com.google.common.collect.ImmutableList;
 
 import java.util.List;
-import java.util.Map;
 
 import de.nb.aventiure2.data.database.AvDatabase;
-import de.nb.aventiure2.data.storystate.IPlayerAction;
 import de.nb.aventiure2.data.storystate.StoryState;
-import de.nb.aventiure2.data.world.base.GameObject;
-import de.nb.aventiure2.data.world.base.GameObjectId;
-import de.nb.aventiure2.data.world.entity.creature.CreatureData;
-import de.nb.aventiure2.data.world.entity.object.ObjectData;
+import de.nb.aventiure2.data.world.alive.ILivingBeingGO;
+import de.nb.aventiure2.data.world.storingplace.IHasStoringPlaceGO;
 
-import static de.nb.aventiure2.data.world.entity.creature.Creatures.FROSCHPRINZ;
+import static de.nb.aventiure2.data.world.gameobjects.GameObjects.FROSCHPRINZ;
 
 /**
  * Contains all {@link CreatureConversationStep}s;
@@ -21,16 +17,13 @@ import static de.nb.aventiure2.data.world.entity.creature.Creatures.FROSCHPRINZ;
 public class CreatureConversationSteps {
     public static List<CreatureConversationStep> getPossibleSteps(
             final AvDatabase db, final StoryState initialStoryState,
-            final Class<? extends IPlayerAction> currentActionClass,
-            final GameObject room,
-            final Map<GameObjectId, ObjectData> allObjectsById,
-            final CreatureData creatureData) {
+            final IHasStoringPlaceGO room,
+            final ILivingBeingGO creature) {
         AbstractCreatureConversationStepBuilder stepBuilder = null;
-        if (creatureData.creatureIs(FROSCHPRINZ)) {
+        if (creature.is(FROSCHPRINZ)) {
             stepBuilder =
                     new FroschprinzConversationStepBuilder(db, initialStoryState,
-                            currentActionClass,
-                            room, allObjectsById, creatureData);
+                            room, creature);
         }
 
         if (stepBuilder == null) {

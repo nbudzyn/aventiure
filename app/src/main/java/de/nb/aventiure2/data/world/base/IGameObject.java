@@ -1,0 +1,17 @@
+package de.nb.aventiure2.data.world.base;
+
+/**
+ * Interface for any object within in the game. An <i>entity</i> in the
+ * entity-component-system pattern.
+ */
+public interface IGameObject {
+    boolean is(GameObjectId someId);
+
+    GameObjectId getId();
+
+    @Override
+    boolean equals(Object o);
+
+    @Override
+    int hashCode();
+}

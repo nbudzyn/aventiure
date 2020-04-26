@@ -3,19 +3,20 @@ package de.nb.aventiure2.scaction.action.invisible.reaction;
 import androidx.annotation.NonNull;
 
 import de.nb.aventiure2.data.database.AvDatabase;
-import de.nb.aventiure2.data.storystate.IPlayerAction;
+import de.nb.aventiure2.data.world.base.IGameObject;
 import de.nb.aventiure2.data.world.time.AvDateTime;
 import de.nb.aventiure2.data.world.time.AvTimeSpan;
 import de.nb.aventiure2.data.world.time.Tageszeit;
 
 import static de.nb.aventiure2.data.storystate.StoryState.StructuralElement.PARAGRAPH;
 import static de.nb.aventiure2.data.storystate.StoryState.StructuralElement.SENTENCE;
+import static de.nb.aventiure2.data.world.gameobjects.GameObjects.TAGESZEIT;
 import static de.nb.aventiure2.data.world.time.AvTimeSpan.noTime;
 
-public class TageszeitReactions extends AbstractInvisibleReactions {
-    TageszeitReactions(final AvDatabase db,
-                       final Class<? extends IPlayerAction> playerActionClass) {
-        super(db, playerActionClass);
+public class TageszeitReactions
+        extends AbstractInvisibleReactions<IGameObject> {
+    TageszeitReactions(final AvDatabase db) {
+        super(db, TAGESZEIT);
     }
 
     @Override

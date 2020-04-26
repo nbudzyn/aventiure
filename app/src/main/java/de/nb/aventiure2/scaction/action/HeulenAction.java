@@ -1,7 +1,6 @@
 package de.nb.aventiure2.scaction.action;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 
 import com.google.common.collect.ImmutableList;
 
@@ -11,19 +10,25 @@ import java.util.List;
 import de.nb.aventiure2.data.database.AvDatabase;
 import de.nb.aventiure2.data.storystate.StoryState;
 import de.nb.aventiure2.data.storystate.StoryStateBuilder;
+import de.nb.aventiure2.data.world.alive.ILivingBeingGO;
 import de.nb.aventiure2.data.world.base.GameObjectId;
-import de.nb.aventiure2.data.world.entity.creature.CreatureData;
-import de.nb.aventiure2.data.world.player.stats.ScStateOfMind;
-import de.nb.aventiure2.data.world.player.stats.ScStats;
+import de.nb.aventiure2.data.world.description.IDescribableGO;
+import de.nb.aventiure2.data.world.feelings.Mood;
+import de.nb.aventiure2.data.world.gameobjectstate.IHasStateGO;
+import de.nb.aventiure2.data.world.memory.Action;
+import de.nb.aventiure2.data.world.memory.Known;
+import de.nb.aventiure2.data.world.player.SpielerCharakter;
 import de.nb.aventiure2.data.world.time.AvTimeSpan;
 import de.nb.aventiure2.scaction.AbstractScAction;
 
 import static de.nb.aventiure2.data.storystate.StoryState.StructuralElement.PARAGRAPH;
 import static de.nb.aventiure2.data.storystate.StoryState.StructuralElement.SENTENCE;
 import static de.nb.aventiure2.data.storystate.StoryState.StructuralElement.WORD;
-import static de.nb.aventiure2.data.world.entity.creature.CreatureState.HAT_SC_HILFSBEREIT_ANGESPROCHEN;
-import static de.nb.aventiure2.data.world.entity.creature.CreatureState.UNAUFFAELLIG;
-import static de.nb.aventiure2.data.world.entity.creature.Creatures.FROSCHPRINZ;
+import static de.nb.aventiure2.data.world.feelings.Mood.UNTROESTLICH;
+import static de.nb.aventiure2.data.world.gameobjects.GameObjects.FROSCHPRINZ;
+import static de.nb.aventiure2.data.world.gameobjects.GameObjects.load;
+import static de.nb.aventiure2.data.world.gameobjectstate.GameObjectState.HAT_SC_HILFSBEREIT_ANGESPROCHEN;
+import static de.nb.aventiure2.data.world.gameobjectstate.GameObjectState.UNAUFFAELLIG;
 import static de.nb.aventiure2.data.world.time.AvTimeSpan.mins;
 import static de.nb.aventiure2.data.world.time.AvTimeSpan.secs;
 
@@ -31,14 +36,14 @@ import static de.nb.aventiure2.data.world.time.AvTimeSpan.secs;
  * Der Spielercharakter heult.
  */
 public class HeulenAction extends AbstractScAction {
-    private final List<CreatureData> creatures;
+    private final List<? extends ILivingBeingGO> creaturesInRoom;
 
     public static Collection<HeulenAction> buildActions(
             final AvDatabase db,
             final StoryState initialStoryState,
-            final ScStats stats, final List<CreatureData> creaturesInRoom) {
+            final SpielerCharakter sc, final List<? extends ILivingBeingGO> creaturesInRoom) {
         final ImmutableList.Builder<HeulenAction> res = ImmutableList.builder();
-        if (stats.getStateOfMind() == ScStateOfMind.UNTROESTLICH) {
+        if (sc.feelingsComp().hasMood(UNTROESTLICH)) {
             res.add(new HeulenAction(db, initialStoryState, creaturesInRoom));
         }
 
@@ -47,9 +52,9 @@ public class HeulenAction extends AbstractScAction {
 
     private HeulenAction(final AvDatabase db,
                          final StoryState initialStoryState,
-                         final List<CreatureData> creatures) {
+                         final List<? extends ILivingBeingGO> creaturesInRoom) {
         super(db, initialStoryState);
-        this.creatures = creatures;
+        this.creaturesInRoom = creaturesInRoom;
     }
 
     @Override
@@ -65,19 +70,19 @@ public class HeulenAction extends AbstractScAction {
 
     @Override
     public AvTimeSpan narrateAndDo() {
-        if (initialStoryState.lastActionWas(HeulenAction.class)) {
+        if (isDefinitivWiederholung()) {
             return narrateAndDoWiederholung();
         }
 
         return narrateAndDoErstesMal();
     }
 
-    private AvTimeSpan narrateAndDoWiederholung() {
-        @Nullable final CreatureData froschprinz =
-                findCreatureInRoom(FROSCHPRINZ);
-
-        if (froschprinz != null) {
-            return narrateAndDoFroschprinz(froschprinz);
+    private <F extends IDescribableGO & IHasStateGO & ILivingBeingGO>
+    AvTimeSpan narrateAndDoWiederholung() {
+        final F froschprinz = (F) load(db, FROSCHPRINZ);
+        if (creaturesInRoom.contains(froschprinz) &&
+                (froschprinz.stateComp().hasState(UNAUFFAELLIG))) {
+            return narrateAndDoFroschprinzUnauffaellig(froschprinz);
         }
 
         final ImmutableList.Builder<StoryStateBuilder> alt = ImmutableList.builder();
@@ -92,48 +97,48 @@ public class HeulenAction extends AbstractScAction {
                 .undWartest());
         n.add(alt(alt));
 
+        sc.memoryComp().setLastAction(buildMemorizedAction());
+
         return mins(1);
     }
 
-    private AvTimeSpan narrateAndDoFroschprinz(final CreatureData froschprinz) {
-        if (froschprinz.hasState(UNAUFFAELLIG)) {
-            // STORY Nachts schläft der Frosch
-            final String desc = "weinst immer lauter und kannst dich gar nicht trösten. " +
-                    "Und wie du so klagst, ruft dir jemand zu: „Was hast du vor, " +
-                    "du schreist ja, dass sich ein Stein erbarmen möchte.“ Du siehst " +
-                    "dich um, woher " +
-                    "die Stimme käme, da erblickst du " +
-                    froschprinz.akk();
-            if (initialStoryState.allowsAdditionalDuSatzreihengliedOhneSubjekt()) {
-                n.add(t(WORD, "und " + desc)
-                        .imGespraechMit(froschprinz.getCreature()));
-            } else {
-                n.add(t(SENTENCE, "Du " + desc)
-                        .imGespraechMit(froschprinz.getCreature()));
-            }
-
-            db.creatureDataDao().setState(FROSCHPRINZ, HAT_SC_HILFSBEREIT_ANGESPROCHEN);
-            db.creatureDataDao().setKnown(FROSCHPRINZ);
-            db.playerStatsDao().setStateOfMind(ScStateOfMind.NEUTRAL);
-            return secs(30);
+    private <F extends IDescribableGO & IHasStateGO & ILivingBeingGO>
+    AvTimeSpan narrateAndDoFroschprinzUnauffaellig(final F froschprinz) {
+        // STORY Nachts schläft der Frosch?!
+        final String desc = "weinst immer lauter und kannst dich gar nicht trösten. " +
+                "Und wie du so klagst, ruft dir jemand zu: „Was hast du vor, " +
+                "du schreist ja, dass sich ein Stein erbarmen möchte.“ Du siehst " +
+                "dich um, woher " +
+                "die Stimme käme, da erblickst du " +
+                getDescription(froschprinz).akk();
+        if (initialStoryState.allowsAdditionalDuSatzreihengliedOhneSubjekt()) {
+            n.add(t(WORD, "und " + desc)
+                    .imGespraechMit(froschprinz));
+        } else {
+            n.add(t(SENTENCE, "Du " + desc)
+                    .imGespraechMit(froschprinz));
         }
 
-        throw new IllegalStateException("Unexpected creature state: " + froschprinz.getState());
+        sc.memoryComp().setLastAction(buildMemorizedAction());
+        froschprinz.stateComp().setState(HAT_SC_HILFSBEREIT_ANGESPROCHEN);
+        sc.memoryComp().upgradeKnown(FROSCHPRINZ, Known.getKnown(getLichtverhaeltnisse(
+                sc.locationComp().getLocation())));
+        sc.feelingsComp().setMood(Mood.NEUTRAL);
+        return secs(30);
     }
 
-    @Nullable
-    private CreatureData findCreatureInRoom(final GameObjectId id) {
-        for (final CreatureData creatureData : creatures) {
-            if (creatureData.creatureIs(id)) {
-                return creatureData;
-            }
-        }
+    @Override
+    protected boolean isDefinitivWiederholung() {
+        return sc.memoryComp().lastActionWas(buildMemorizedAction());
+    }
 
-        return null;
+    private static Action buildMemorizedAction() {
+        return new Action(Action.Type.HEULEN, (GameObjectId) null);
     }
 
     private AvTimeSpan narrateAndDoErstesMal() {
         final ImmutableList.Builder<StoryStateBuilder> alt = ImmutableList.builder();
+
         alt.add(t(PARAGRAPH,
                 "Dich überkommt ein Schluchzen"));
 
@@ -147,6 +152,8 @@ public class HeulenAction extends AbstractScAction {
                 .undWartest()
                 .dann());
         n.add(alt(alt));
+
+        sc.memoryComp().setLastAction(buildMemorizedAction());
 
         return mins(1);
     }

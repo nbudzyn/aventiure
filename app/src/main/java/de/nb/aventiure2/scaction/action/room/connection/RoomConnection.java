@@ -1,21 +1,19 @@
 package de.nb.aventiure2.scaction.action.room.connection;
 
-import de.nb.aventiure2.data.world.base.GameObject;
 import de.nb.aventiure2.data.world.base.GameObjectId;
 import de.nb.aventiure2.data.world.lichtverhaeltnisse.Lichtverhaeltnisse;
-import de.nb.aventiure2.data.world.room.RoomKnown;
-import de.nb.aventiure2.data.world.room.Rooms;
+import de.nb.aventiure2.data.world.memory.Known;
 import de.nb.aventiure2.german.base.AbstractDescription;
 
 import static de.nb.aventiure2.data.world.lichtverhaeltnisse.Lichtverhaeltnisse.DUNKEL;
 import static de.nb.aventiure2.data.world.lichtverhaeltnisse.Lichtverhaeltnisse.HELL;
-import static de.nb.aventiure2.data.world.room.RoomKnown.KNOWN_FROM_DARKNESS;
-import static de.nb.aventiure2.data.world.room.RoomKnown.UNKNOWN;
+import static de.nb.aventiure2.data.world.memory.Known.KNOWN_FROM_DARKNESS;
+import static de.nb.aventiure2.data.world.memory.Known.UNKNOWN;
 
 /**
  * Die Verbindung von einem Raum zu einem anderen, wie sie der SC beim Bewegen benutzten kann -
  * einschließlich ihrer Beschreibung, wie sie beim Bewegen angezeigt wird (ohne Gegenstände,
- * {@link de.nb.aventiure2.data.world.entity.creature.Creature}s etc.)
+ * Kreaturen etc.)
  */
 public class RoomConnection {
     /**
@@ -26,13 +24,13 @@ public class RoomConnection {
     interface DescriptionProvider {
         /**
          * Erzeugt die Beschreibung für die Bewegung von einem Raum zu einem anderen (ohne
-         * Gegenstände, {@link de.nb.aventiure2.data.world.entity.creature.Creature}s etc.)
+         * Gegenstände, Kreaturen etc.)
          */
-        AbstractDescription getDescription(RoomKnown newRoomKnow,
+        AbstractDescription getDescription(Known newRoomKnow,
                                            Lichtverhaeltnisse lichtverhaeltnisseInNewRoom);
     }
 
-    private final GameObject to;
+    private final GameObjectId to;
     private final String actionName;
     private final RoomConnection.DescriptionProvider descriptionProvider;
 
@@ -83,12 +81,6 @@ public class RoomConnection {
     private RoomConnection(final GameObjectId to,
                            final String actionName,
                            final DescriptionProvider descriptionProvider) {
-        this(Rooms.get(to), actionName, descriptionProvider);
-    }
-
-    private RoomConnection(final GameObject to,
-                           final String actionName,
-                           final DescriptionProvider descriptionProvider) {
         this.to = to;
         this.actionName = actionName;
         this.descriptionProvider = descriptionProvider;
@@ -98,12 +90,12 @@ public class RoomConnection {
         return actionName;
     }
 
-    public GameObject getTo() {
+    public GameObjectId getTo() {
         return to;
     }
 
     public AbstractDescription getDescription(
-            final RoomKnown newRoomKnown, final Lichtverhaeltnisse lichtverhaeltnisseInNewRoom) {
+            final Known newRoomKnown, final Lichtverhaeltnisse lichtverhaeltnisseInNewRoom) {
         return descriptionProvider.getDescription(newRoomKnown, lichtverhaeltnisseInNewRoom);
     }
 }

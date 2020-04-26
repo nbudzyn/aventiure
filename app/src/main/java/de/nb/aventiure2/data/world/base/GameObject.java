@@ -1,39 +1,102 @@
 package de.nb.aventiure2.data.world.base;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Objects;
 
-import de.nb.aventiure2.data.world.room.StoringPlace;
+import de.nb.aventiure2.data.world.description.IDescribableGO;
+import de.nb.aventiure2.data.world.location.ILocatableGO;
 
 /**
- * Any object within in the game. An <i>entity</i> in the entity-component-system pattern.
+ * Base implementation for any object within in the game. An <i>entity</i> in the
+ * entity-component-system pattern.
  */
-public class GameObject {
+public class GameObject implements IGameObject, ComponentContext {
+    private enum InternalState {
+        NOT_LOADED, LOADED
+    }
+
     private final GameObjectId id;
 
-    // Components
-    @Nullable
-    private StoringPlace storingPlace;
+    private InternalState internalState = InternalState.NOT_LOADED;
+
+    private final List<IComponent> components = new LinkedList<>();
 
     public GameObject(final GameObjectId id) {
         this.id = id;
     }
 
-    public void setStoringPlace(final @Nullable StoringPlace storingPlace) {
-        this.storingPlace = storingPlace;
+    /**
+     * During construction, each {@link IComponent} must be added here.
+     */
+    protected <C extends IComponent> C addComponent(final C component) {
+        components.add(component);
+        component.setContext(this);
+        return component;
     }
 
-    public @Nullable
-    StoringPlace getStoringPlace() {
-        return storingPlace;
+    /**
+     * Speichert die initialen Daten des Game Objects (d.h. seiner Koponenten) in die Datenbank.
+     */
+    public void saveInitialState() {
+        for (final IComponent component : components) {
+            component.saveInitialState();
+        }
     }
 
+    /**
+     * Lädt alle Daten für dieses Game Object (d.h. die Daten aller seiner Komponenten)
+     * aus der Datenbank - <i>es sei denn, sie wurden schon geladen</i>.
+     */
+    public void load() {
+        if (internalState != InternalState.NOT_LOADED) {
+            return;
+        }
+
+        for (final IComponent component : components) {
+            component.load();
+        }
+
+        internalState = InternalState.LOADED;
+    }
+
+    /**
+     * Speichert alle Daten für dieses Game Obect (d.h. die Daten aller seiner Komponenten)
+     * in die Datenbank. Wenn das Objekt gar nicht geladen wurde, passiert nichts.
+     */
+    public void save() {
+        if (internalState == InternalState.NOT_LOADED) {
+            return;
+        }
+
+        for (final IComponent component : components) {
+            component.save();
+        }
+
+        internalState = InternalState.NOT_LOADED;
+    }
+
+    /**
+     * Gibt zurück, ob sich beide Game Objects an derselben Location gemäß
+     * {@link de.nb.aventiure2.data.world.location.LocationComp} befinden.
+     */
+    public boolean hasSameLocationAs(
+            final ILocatableGO other) {
+        if (!(this instanceof ILocatableGO)) {
+            return false;
+        }
+
+        return ((ILocatableGO) this).locationComp().hasLocation(other.locationComp().getLocation());
+    }
+
+    @Override
     public boolean is(final GameObjectId someId) {
         return getId().equals(someId);
     }
 
+    @Override
     public GameObjectId getId() {
         return id;
     }
@@ -58,6 +121,14 @@ public class GameObject {
     @NonNull
     @Override
     public String toString() {
+        if (internalState == InternalState.NOT_LOADED) {
+            return id.toString();
+        }
+
+        if (this instanceof IDescribableGO) {
+            return ((IDescribableGO) this).descriptionComp().toString();
+        }
+
         return id.toString();
     }
 }

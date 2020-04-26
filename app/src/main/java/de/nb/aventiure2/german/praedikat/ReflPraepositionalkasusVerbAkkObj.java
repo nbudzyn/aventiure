@@ -2,7 +2,7 @@ package de.nb.aventiure2.german.praedikat;
 
 import androidx.annotation.NonNull;
 
-import de.nb.aventiure2.german.base.DescribableAsDeklinierbarePhrase;
+import de.nb.aventiure2.german.base.DeklinierbarePhrase;
 import de.nb.aventiure2.german.base.PraepositionMitKasus;
 
 /**
@@ -42,7 +42,7 @@ public enum ReflPraepositionalkasusVerbAkkObj implements PraedikatMitEinerObjekt
     }
 
     @Override
-    public PraedikatOhneLeerstellen mitObj(final DescribableAsDeklinierbarePhrase describable) {
+    public PraedikatOhneLeerstellen mitObj(final DeklinierbarePhrase describable) {
         return new PraedikatSubjReflPraepositionalkasusAkkObjOhneLeerstellen(
                 this, describable);
     }

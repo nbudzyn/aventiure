@@ -7,30 +7,34 @@ import com.google.common.collect.ImmutableList;
 import java.util.List;
 
 import de.nb.aventiure2.data.database.AvDatabase;
-import de.nb.aventiure2.data.world.base.GameObject;
-import de.nb.aventiure2.data.world.invisible.Invisibles;
+import de.nb.aventiure2.data.world.gameobjectstate.IHasStateGO;
 import de.nb.aventiure2.data.world.lichtverhaeltnisse.Lichtverhaeltnisse;
-import de.nb.aventiure2.data.world.room.RoomKnown;
+import de.nb.aventiure2.data.world.memory.Known;
+import de.nb.aventiure2.data.world.player.SpielerCharakter;
+import de.nb.aventiure2.data.world.spatialconnection.ISpatiallyConnectedGO;
 import de.nb.aventiure2.data.world.time.AvTimeSpan;
 import de.nb.aventiure2.data.world.time.Tageszeit;
 import de.nb.aventiure2.german.base.AbstractDescription;
 
-import static de.nb.aventiure2.data.world.invisible.InvisibleState.BEGONNEN;
-import static de.nb.aventiure2.data.world.invisible.Invisibles.COUNTER_ID_VOR_DEM_SCHLOSS_SCHLOSSFEST_KNOWN;
+import static de.nb.aventiure2.data.world.gameobjects.GameObjects.ABZWEIG_IM_WALD;
+import static de.nb.aventiure2.data.world.gameobjects.GameObjects.BETT_IN_DER_HUETTE_IM_WALD;
+import static de.nb.aventiure2.data.world.gameobjects.GameObjects.COUNTER_ID_VOR_DEM_SCHLOSS_SCHLOSSFEST_KNOWN;
+import static de.nb.aventiure2.data.world.gameobjects.GameObjects.DRAUSSEN_VOR_DEM_SCHLOSS;
+import static de.nb.aventiure2.data.world.gameobjects.GameObjects.HINTER_DER_HUETTE;
+import static de.nb.aventiure2.data.world.gameobjects.GameObjects.HUETTE_IM_WALD;
+import static de.nb.aventiure2.data.world.gameobjects.GameObjects.IM_WALD_BEIM_BRUNNEN;
+import static de.nb.aventiure2.data.world.gameobjects.GameObjects.IM_WALD_NAHE_DEM_SCHLOSS;
+import static de.nb.aventiure2.data.world.gameobjects.GameObjects.SCHLOSSFEST;
+import static de.nb.aventiure2.data.world.gameobjects.GameObjects.SCHLOSS_VORHALLE;
+import static de.nb.aventiure2.data.world.gameobjects.GameObjects.SCHLOSS_VORHALLE_TISCH_BEIM_FEST;
+import static de.nb.aventiure2.data.world.gameobjects.GameObjects.VOR_DER_HUETTE_IM_WALD;
+import static de.nb.aventiure2.data.world.gameobjects.GameObjects.WALDWILDNIS_HINTER_DEM_BRUNNEN;
+import static de.nb.aventiure2.data.world.gameobjects.GameObjects.load;
+import static de.nb.aventiure2.data.world.gameobjects.GameObjects.loadSC;
+import static de.nb.aventiure2.data.world.gameobjectstate.GameObjectState.BEGONNEN;
 import static de.nb.aventiure2.data.world.lichtverhaeltnisse.Lichtverhaeltnisse.HELL;
-import static de.nb.aventiure2.data.world.room.RoomKnown.KNOWN_FROM_DARKNESS;
-import static de.nb.aventiure2.data.world.room.RoomKnown.UNKNOWN;
-import static de.nb.aventiure2.data.world.room.Rooms.ABZWEIG_IM_WALD;
-import static de.nb.aventiure2.data.world.room.Rooms.BETT_IN_DER_HUETTE_IM_WALD;
-import static de.nb.aventiure2.data.world.room.Rooms.DRAUSSEN_VOR_DEM_SCHLOSS;
-import static de.nb.aventiure2.data.world.room.Rooms.HINTER_DER_HUETTE;
-import static de.nb.aventiure2.data.world.room.Rooms.HUETTE_IM_WALD;
-import static de.nb.aventiure2.data.world.room.Rooms.IM_WALD_BEIM_BRUNNEN;
-import static de.nb.aventiure2.data.world.room.Rooms.IM_WALD_NAHE_DEM_SCHLOSS;
-import static de.nb.aventiure2.data.world.room.Rooms.SCHLOSS_VORHALLE;
-import static de.nb.aventiure2.data.world.room.Rooms.SCHLOSS_VORHALLE_TISCH_BEIM_FEST;
-import static de.nb.aventiure2.data.world.room.Rooms.VOR_DER_HUETTE_IM_WALD;
-import static de.nb.aventiure2.data.world.room.Rooms.WALDWILDNIS_HINTER_DEM_BRUNNEN;
+import static de.nb.aventiure2.data.world.memory.Known.KNOWN_FROM_DARKNESS;
+import static de.nb.aventiure2.data.world.memory.Known.UNKNOWN;
 import static de.nb.aventiure2.data.world.time.AvTimeSpan.mins;
 import static de.nb.aventiure2.data.world.time.AvTimeSpan.secs;
 import static de.nb.aventiure2.german.base.AllgDescription.allg;
@@ -39,10 +43,15 @@ import static de.nb.aventiure2.scaction.action.room.connection.RoomConnection.co
 
 class RoomConnectionBuilder {
     private final AvDatabase db;
-    private final GameObject from;
 
-    RoomConnectionBuilder(final AvDatabase db, final GameObject from) {
+    private final SpielerCharakter sc;
+
+    private final ISpatiallyConnectedGO from;
+
+
+    RoomConnectionBuilder(final AvDatabase db, final ISpatiallyConnectedGO from) {
         this.db = db;
+        sc = loadSC(db);
         this.from = from;
     }
 
@@ -57,8 +66,7 @@ class RoomConnectionBuilder {
             resSchlossVorhalle.add(con(DRAUSSEN_VOR_DEM_SCHLOSS,
                     "Das Schloss verlassen",
                     this::getDesc_SchlossVorhalle_DraussenVorDemSchloss));
-            if (db.invisibleDataDao().getInvisible(Invisibles.SCHLOSSFEST)
-                    .hasState(BEGONNEN)) {
+            if (((IHasStateGO) load(db, SCHLOSSFEST)).stateComp().hasState(BEGONNEN)) {
                 resSchlossVorhalle.add(con(SCHLOSS_VORHALLE_TISCH_BEIM_FEST,
                         "An einen Tisch setzen",
                         this::getDesc_SchlossVorhalle_SchlossVorhalleTischBeimFest));
@@ -102,6 +110,7 @@ class RoomConnectionBuilder {
                             du(
                                     "läufst",
                                     "wieder in den dunklen Wald",
+                                    "wieder",
                                     false,
                                     true,
                                     true,
@@ -110,6 +119,7 @@ class RoomConnectionBuilder {
                             du(
                                     "läufst",
                                     "wieder in den dunklen Wald",
+                                    "wieder",
                                     false,
                                     true,
                                     true,
@@ -353,7 +363,6 @@ class RoomConnectionBuilder {
             // STORY Spieler richtet Hütte gemütlich ein. Hütte ist gegen Wölfe etc. geschützt.
 
             return ImmutableList.of(
-
                     con(VOR_DER_HUETTE_IM_WALD,
                             "Die Hütte verlassen",
                             du("zwängst", "dich wieder durch die Tür nach "
@@ -387,7 +396,6 @@ class RoomConnectionBuilder {
         }
         if (from.is(HINTER_DER_HUETTE)) {
             return ImmutableList.of(
-
                     con(VOR_DER_HUETTE_IM_WALD,
                             "Zur Vorderseite der Hütte gehen",
                             du("kehrst", "zurück zur Vorderseite der "
@@ -401,43 +409,33 @@ class RoomConnectionBuilder {
             );
         }
         if (from.is(BETT_IN_DER_HUETTE_IM_WALD)) {
-            return ImmutableList.of(
-
-                    con(HUETTE_IM_WALD,
-                            "Aufstehen",
-                            allg("Du reckst dich noch einmal und stehst "
-                                            + "wieder auf",
-                                    false,
-                                    false,
-                                    true,
-                                    secs(10)
-                            )
-                    ));
+            return ImmutableList.of(con(HUETTE_IM_WALD,
+                    "Aufstehen",
+                    allg("Du reckst dich noch einmal und stehst "
+                                    + "wieder auf",
+                            false,
+                            false,
+                            true,
+                            secs(10)
+                    )
+            ));
         }
         if (from.is(IM_WALD_BEIM_BRUNNEN)) {
             final ImmutableList.Builder<RoomConnection> resImWaldBeimBrunnnen =
                     ImmutableList.builder();
 
-            resImWaldBeimBrunnnen.add(
-
-                    con(ABZWEIG_IM_WALD,
-                            "Den Weg Richtung Schloss gehen",
-                            allg("Du verlässt den Brunnen und erreichst bald "
-                                            + "die Stelle, wo der überwachsene Weg "
-                                            + "abzweigt",
-                                    true,
-                                    false,
-                                    false,
-                                    mins(3)
-                            )));
-            if (
-
-                    getLichtverhaeltnisseFrom() == HELL ||
-                            db.roomDao().
-
-                                    getKnown(WALDWILDNIS_HINTER_DEM_BRUNNEN).
-
-                                    isKnown()) {
+            resImWaldBeimBrunnnen.add(con(ABZWEIG_IM_WALD,
+                    "Den Weg Richtung Schloss gehen",
+                    allg("Du verlässt den Brunnen und erreichst bald "
+                                    + "die Stelle, wo der überwachsene Weg "
+                                    + "abzweigt",
+                            true,
+                            false,
+                            false,
+                            mins(3)
+                    )));
+            if (getLichtverhaeltnisseFrom() == HELL ||
+                    sc.memoryComp().isKnown(WALDWILDNIS_HINTER_DEM_BRUNNEN)) {
                 resImWaldBeimBrunnnen.add(con(WALDWILDNIS_HINTER_DEM_BRUNNEN,
                         "Hinter dem Brunnen in die Wildnis schlagen",
                         allg("Du verlässt den Brunnen und schlägst dich in die "
@@ -466,25 +464,24 @@ class RoomConnectionBuilder {
             return resImWaldBeimBrunnnen.build();
         }
         if (from.is(WALDWILDNIS_HINTER_DEM_BRUNNEN)) {
-            return ImmutableList.of(
+            return ImmutableList.of(con(IM_WALD_BEIM_BRUNNEN,
+                    "Zum Brunnen gehen",
+                    du("suchst", "dir einen Weg "
+                                    + "durch den wilden Wald zurück zum Brunnen",
+                            "durch den wilden Wald",
 
-                    con(IM_WALD_BEIM_BRUNNEN,
-                            "Zum Brunnen gehen",
-                            allg(
-                                    "Durch den wilden Wald suchst du dir einen Weg "
-                                            + "zurück zum Brunnen",
-                                    false,
-                                    true,
-                                    true,
-                                    mins(3))
-                    ));
+                            //allg(
+                            // "Durch den wilden Wald suchst du dir einen Weg"
+                            false,
+                            true,
+                            true,
+                            mins(3))
+            ));
             // STORY Nächster Raum: "wirst du von einer dichten Dornenhecke
             //  zurückgehalten"
         }
 
-        throw new
-
-                IllegalStateException("Unexpected from: " + from);
+        throw new IllegalStateException("Unexpected from: " + from);
 
     }
 
@@ -494,8 +491,8 @@ class RoomConnectionBuilder {
 
 
     private AbstractDescription getDesc_SchlossVorhalle_DraussenVorDemSchloss(
-            final RoomKnown newRoomKnown, final Lichtverhaeltnisse lichtverhaeltnisse) {
-        switch (db.invisibleDataDao().getInvisible(Invisibles.SCHLOSSFEST).getState()) {
+            final Known newRoomKnown, final Lichtverhaeltnisse lichtverhaeltnisse) {
+        switch (((IHasStateGO) load(db, SCHLOSSFEST)).stateComp().getState()) {
             case BEGONNEN:
                 return getDesc_SchlossVorhalle_DraussenVorDemSchloss_FestBegonnen();
 
@@ -506,13 +503,13 @@ class RoomConnectionBuilder {
     }
 
     private static AbstractDescription getDesc_SchlossVorhalle_DraussenVorDemSchlosss_KeinFest(
-            final RoomKnown roomKnown, final Lichtverhaeltnisse lichtverhaeltnisse) {
-        if (roomKnown == UNKNOWN) {
+            final Known known, final Lichtverhaeltnisse lichtverhaeltnisse) {
+        if (known == UNKNOWN) {
             return getDesc_SchlossVorhalle_DraussenVorDemSchlosss_KeinFest_Unknown(
                     lichtverhaeltnisse);
         }
 
-        if (roomKnown == KNOWN_FROM_DARKNESS && lichtverhaeltnisse == HELL) {
+        if (known == KNOWN_FROM_DARKNESS && lichtverhaeltnisse == HELL) {
             return du(
                     "verlässt",
                     "das Schloss. Draußen scheint dir die " +
@@ -545,13 +542,14 @@ class RoomConnectionBuilder {
         if (lichtverhaeltnisse == HELL) {
             return du(
                     "gehst",
-                    "über die Marmortreppe hinaus in die Gärten vor dem Schloss.\n\n" +
+                    "über eine Marmortreppe hinaus in die Gärten vor dem Schloss.\n\n" +
                             "Draußen scheint dir die " +
                             "Sonne ins Gesicht; "
                             // STORY Vielleicht ist es nur tagsüber / mittags heiß und morgens
                             //  noch nicht?
                             + "der Tag ist recht heiß. " +
                             "Nahebei liegt ein großer, dunkler Wald",
+                    "über eine Marmortreppe",
                     false,
                     false,
                     false,
@@ -560,9 +558,10 @@ class RoomConnectionBuilder {
 
         return du(
                 "gehst",
-                "über die Marmortreppe hinaus den Garten vor dem Schloss.\n\n" +
+                "über eine Marmortreppe hinaus den Garten vor dem Schloss.\n\n" +
                         "Draußen ist es dunkel. " +
                         "In der Nähe liegt ein großer Wald, der sehr bedrohlich wirkt",
+                "über eine Marmortreppe",
                 true,
                 false,
                 false,
@@ -572,12 +571,12 @@ class RoomConnectionBuilder {
     @NonNull
     private static AbstractDescription
     getDesc_SchlossVorhalle_DraussenVorDemSchloss_FestBegonnen() {
-        return allg(
-                "Du stehst "
-                        // STORY: Nachts ist weniger Trubel? (Wäre das ein Statuswechsel beim
-                        //  Schlossfest? Oder Zumindest auch eine Reaction wie der Auf- /
-                        //  Abbau des Schlossfestes?)
-                        + "vom Tisch auf und gehst über die Marmortreppe hinaus in den Trubel "
+        return du(
+                "stehst",
+                // STORY: Nachts ist weniger Trubel? (Wäre das ein Statuswechsel beim
+                //  Schlossfest? Oder Zumindest auch eine Reaction wie der Auf- /
+                //  Abbau des Schlossfestes?)
+                "vom Tisch auf und gehst über die Marmortreppe hinaus in den Trubel "
                         + "im Schlossgarten",
                 false,
                 false,
@@ -586,7 +585,7 @@ class RoomConnectionBuilder {
     }
 
     private AbstractDescription getDesc_SchlossVorhalle_SchlossVorhalleTischBeimFest(
-            final RoomKnown newRoomKnown, final Lichtverhaeltnisse lichtverhaeltnisse) {
+            final Known newRoomKnown, final Lichtverhaeltnisse lichtverhaeltnisse) {
         if (db.counterDao().incAndGet(
                 "RoomConnectionBuilder_SchlossVorhalle_SchlossVorhalleTischBeimFest")
                 == 1) {
@@ -605,7 +604,8 @@ class RoomConnectionBuilder {
         }
 
         return du("suchst",
-                "dir im Gedränge einen Platz an einem Tisch",
+                "dir erneut im Gedränge einen Platz an einem Tisch",
+                "erneut",
                 false,
                 false,
                 false,
@@ -617,9 +617,9 @@ class RoomConnectionBuilder {
 // -------------------------------------------------------------------
 
     private static AbstractDescription getDesc_SchlossVorhalleTischBeimFest_SchlossVorhalle(
-            final RoomKnown newRoomKnown, final Lichtverhaeltnisse lichtverhaeltnisse) {
-        return allg(
-                "Du stehst vom Tisch auf",
+            final Known newRoomKnown, final Lichtverhaeltnisse lichtverhaeltnisse) {
+        return du(
+                "stehst", "vom Tisch auf",
                 false,
                 true,
                 true,
@@ -631,8 +631,8 @@ class RoomConnectionBuilder {
 // -------------------------------------------------------------------
 
     private AbstractDescription getDesc_DraussenVorDemSchloss_SchlossVorhalle(
-            final RoomKnown newRoomKnown, final Lichtverhaeltnisse lichtverhaeltnisse) {
-        switch (db.invisibleDataDao().getInvisible(Invisibles.SCHLOSSFEST).getState()) {
+            final Known newRoomKnown, final Lichtverhaeltnisse lichtverhaeltnisse) {
+        switch (((IHasStateGO) load(db, SCHLOSSFEST)).stateComp().getState()) {
             case BEGONNEN:
                 return getDesc_DraussenVorDemSchloss_SchlossVorhalle_FestBegonnen();
 
@@ -669,7 +669,7 @@ class RoomConnectionBuilder {
         }
 
         return du("betrittst",
-                "wieder das Schloss",
+                "wieder das Schloss", "wieder",
                 false,
                 true,
                 true,
@@ -681,9 +681,9 @@ class RoomConnectionBuilder {
 // -------------------------------------------------------------------
 
     private AbstractDescription getDesc_ImWaldNaheDemSchloss_DraussenVorDemSchloss(
-            final RoomKnown newRoomKnown, final Lichtverhaeltnisse lichtverhaeltnisse) {
+            final Known newRoomKnown, final Lichtverhaeltnisse lichtverhaeltnisse) {
 
-        switch (db.invisibleDataDao().getInvisible(Invisibles.SCHLOSSFEST).getState()) {
+        switch (((IHasStateGO) load(db, SCHLOSSFEST)).stateComp().getState()) {
             case BEGONNEN:
                 return getDesc_ImWaldNaheDemSchloss_DraussenVorDemSchloss_FestBegonnen(
                         mins(10));
@@ -701,7 +701,7 @@ class RoomConnectionBuilder {
         if (lichtverhaeltnisse == HELL) {
             return du("erreichst", "bald das helle "
                             + "Tageslicht, in dem der Schlossgarten "
-                            + "liegt",
+                            + "liegt", "bald",
                     true,
                     false,
                     false,
@@ -710,7 +710,7 @@ class RoomConnectionBuilder {
 
         return du("gehts", "noch eine Weile vorsichtig durch den dunklen "
                         + "Wald, dann öffnet sich der Weg wieder und du stehst im Schlossgarten "
-                        + "unter dem Sternenhimmel",
+                        + "unter dem Sternenhimmel", "noch eine Weile",
                 false,
                 false,
                 false,

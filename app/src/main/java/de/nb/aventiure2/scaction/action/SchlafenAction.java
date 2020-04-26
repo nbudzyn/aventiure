@@ -1,6 +1,7 @@
 package de.nb.aventiure2.scaction.action;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
 import com.google.common.collect.ImmutableList;
 
@@ -8,21 +9,24 @@ import java.util.Collection;
 
 import de.nb.aventiure2.data.database.AvDatabase;
 import de.nb.aventiure2.data.storystate.StoryState;
-import de.nb.aventiure2.data.storystate.StoryStateBuilder;
-import de.nb.aventiure2.data.world.base.GameObject;
+import de.nb.aventiure2.data.world.base.GameObjectId;
+import de.nb.aventiure2.data.world.base.IGameObject;
+import de.nb.aventiure2.data.world.memory.Action;
 import de.nb.aventiure2.data.world.time.AvDateTime;
 import de.nb.aventiure2.data.world.time.AvTimeSpan;
+import de.nb.aventiure2.german.base.AbstractDescription;
 import de.nb.aventiure2.scaction.AbstractScAction;
 
 import static de.nb.aventiure2.data.storystate.StoryState.StructuralElement.CHAPTER;
-import static de.nb.aventiure2.data.storystate.StoryState.StructuralElement.PARAGRAPH;
 import static de.nb.aventiure2.data.storystate.StoryState.StructuralElement.SENTENCE;
-import static de.nb.aventiure2.data.world.player.stats.ScStateOfMind.ERSCHOEPFT;
-import static de.nb.aventiure2.data.world.player.stats.ScStateOfMind.NEUTRAL;
-import static de.nb.aventiure2.data.world.room.Rooms.BETT_IN_DER_HUETTE_IM_WALD;
+import static de.nb.aventiure2.data.world.feelings.Mood.ERSCHOEPFT;
+import static de.nb.aventiure2.data.world.feelings.Mood.NEUTRAL;
+import static de.nb.aventiure2.data.world.gameobjects.GameObjects.BETT_IN_DER_HUETTE_IM_WALD;
 import static de.nb.aventiure2.data.world.time.AvTime.oClock;
 import static de.nb.aventiure2.data.world.time.AvTimeSpan.hours;
 import static de.nb.aventiure2.data.world.time.AvTimeSpan.mins;
+import static de.nb.aventiure2.german.base.AllgDescription.allg;
+import static de.nb.aventiure2.german.base.DuDescription.du;
 
 /**
  * Der Spielercharakter legt sich schlafen.
@@ -30,9 +34,10 @@ import static de.nb.aventiure2.data.world.time.AvTimeSpan.mins;
 public class SchlafenAction extends AbstractScAction {
     public static Collection<SchlafenAction> buildActions(
             final AvDatabase db,
-            final StoryState initialStoryState, final GameObject room) {
+            final StoryState initialStoryState,
+            @Nullable final IGameObject room) {
         final ImmutableList.Builder<SchlafenAction> res = ImmutableList.builder();
-        if (room.is(BETT_IN_DER_HUETTE_IM_WALD)) {
+        if (room != null && room.is(BETT_IN_DER_HUETTE_IM_WALD)) {
             res.add(new SchlafenAction(db, initialStoryState));
         }
 
@@ -60,7 +65,7 @@ public class SchlafenAction extends AbstractScAction {
         // STORY Nachts ist man immer müde oder nachts wird man leichter müde oder
         //  nachts kann man immer einschlafen...
         // STORY "Vor Hunger kannst du nicht einschlafen"
-        if (db.playerStatsDao().getPlayerStats().getStateOfMind() == ERSCHOEPFT) {
+        if (sc.feelingsComp().hasMood(ERSCHOEPFT)) {
             return narrateAndDoSchlaeftEin();
         }
 
@@ -69,27 +74,39 @@ public class SchlafenAction extends AbstractScAction {
 
     @NonNull
     private AvTimeSpan narrateAndDoSchlaeftNichtEin() {
-        final ImmutableList.Builder<StoryStateBuilder> alt = ImmutableList.builder();
+        sc.memoryComp().setLastAction(buildMemorizedAction());
 
-        if (!initialStoryState.lastActionWas(SchlafenAction.class)) {
-            alt.add(t(PARAGRAPH,
-                    "Du schließt kurz die Augen. Die Aufregung der letzten Stunden "
+        final ImmutableList.Builder<AbstractDescription> alt = ImmutableList.builder();
+        if (!isDefinitivWiederholung()) {
+            alt.add(du("schließt", "kurz die Augen. Die Aufregung der letzten Stunden "
                             + "steckt dir noch in den Knochen – an Einschlafen ist "
-                            + "nicht zu denken"));
+                            + "nicht zu denken",
+                    false,
+                    false,
+                    false,
+                    mins(1)));
         }
 
-        alt.add(t(PARAGRAPH,
-                "Müde bist du noch nicht")
-                .dann());
-        alt.add(t(PARAGRAPH,
-                "Gibt es hier eigentlich Spinnen?"));
-        alt.add(t(PARAGRAPH,
-                "Du drehst dich von einer Seite auf die andere")
-                .dann());
+        alt.add(allg("Müde bist du noch nicht",
+                false,
+                false,
+                true,
+                mins(1)));
 
-        n.add(alt(alt));
+        alt.add(allg("Gibt es hier eigentlich Spinnen?",
+                false,
+                false,
+                false,
+                mins(1)));
 
-        return mins(1);
+        alt.add(du("drehst dich von einer Seite auf die andere",
+                "von einer Seite",
+                false,
+                false,
+                false,
+                mins(1)));
+
+        return n.addAlt(alt);
     }
 
     private AvTimeSpan narrateAndDoSchlaeftEin() {
@@ -112,6 +129,8 @@ public class SchlafenAction extends AbstractScAction {
 
         final AvTimeSpan timeElapsed = schlafen();
 
+        sc.memoryComp().setLastAction(buildMemorizedAction());
+
         n.add(alt(
                 t(CHAPTER,
                         "Nach einem langen Schlaf wachst du gut erholt wieder auf"),
@@ -120,10 +139,26 @@ public class SchlafenAction extends AbstractScAction {
                                 + "wieder auf")
         ));
 
-        db.playerStatsDao().setStateOfMind(NEUTRAL);
+        sc.feelingsComp().setMood(NEUTRAL);
 
         return timeElapsed;
     }
+
+    @Override
+    protected boolean isDefinitivWiederholung() {
+        // Gilt auch als Wiederholung, wenn der Spielercharakter nicht
+        // einschläft - schließlich kann man es, wenn die Entscheidung, ob
+        // es sich um eine Wiederholung handelt, relevant ist, noch gar nicht
+        // wissen.
+        return buildMemorizedAction().equals(sc.memoryComp().getLastAction());
+    }
+
+    @NonNull
+    private static Action buildMemorizedAction() {
+        return new Action(Action.Type.SCHLAFEN_ODER_VERGEBLICHER_EINSCHLAF_VERSUCH,
+                (GameObjectId) null);
+    }
+
 
     private AvTimeSpan schlafen() {
         final AvDateTime now = db.dateTimeDao().now();

@@ -31,7 +31,10 @@ public class MainViewModel extends AndroidViewModel {
     @UiThread
     public MainViewModel(final Application application) {
         super(application);
+
         db = getDatabase(application);
+        // After installing the app, this call also initializes the game and fills the
+        // database.
 
         scActionService = new ScActionService(application);
 
@@ -41,7 +44,7 @@ public class MainViewModel extends AndroidViewModel {
         postLiveUpdateLater();
     }
 
-    @UiThread
+    @WorkerThread
     private List<GuiAction> buildGuiActions() {
         final List<AbstractScAction> playerActions =
                 scActionService.getPlayerActions();
@@ -52,7 +55,7 @@ public class MainViewModel extends AndroidViewModel {
 
     }
 
-    @UiThread
+    @WorkerThread
     private GuiAction toGuiAction(final AbstractScAction playerAction) {
         return new GuiAction() {
             @Override

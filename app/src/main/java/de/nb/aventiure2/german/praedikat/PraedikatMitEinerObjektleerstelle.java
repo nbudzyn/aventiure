@@ -1,6 +1,6 @@
 package de.nb.aventiure2.german.praedikat;
 
-import de.nb.aventiure2.german.base.DescribableAsDeklinierbarePhrase;
+import de.nb.aventiure2.german.base.DeklinierbarePhrase;
 
 /**
  * Ein Prädikat, in dem (noch) für genau ein Objekt eine Leerstelle besteht. Beispiele:
@@ -13,13 +13,13 @@ public interface PraedikatMitEinerObjektleerstelle extends Praedikat {
     /**
      * Füllt die Objekt-Leerstelle mit diesem Objekt.
      */
-    PraedikatOhneLeerstellen mitObj(final DescribableAsDeklinierbarePhrase describable);
+    PraedikatOhneLeerstellen mitObj(final DeklinierbarePhrase describable);
 
     /**
      * Gibt einen Satz zurück mit diesem Verb und diesem <code>describable</code>.
      * ("Du nimmst den Ast")
      */
-    default String getDescriptionDuHauptsatz(final DescribableAsDeklinierbarePhrase describable) {
+    default String getDescriptionDuHauptsatz(final DeklinierbarePhrase describable) {
         return mitObj(describable).getDescriptionDuHauptsatz();
     }
 
@@ -37,7 +37,7 @@ public interface PraedikatMitEinerObjektleerstelle extends Praedikat {
      * dieser adverbialen Angabe ("Aus Langeweile nimmst du den Ast")
      */
     default String getDescriptionDuHauptsatz(
-            final DescribableAsDeklinierbarePhrase describable,
+            final DeklinierbarePhrase describable,
             final AdverbialeAngabe adverbialeAngabe) {
         return mitObj(describable).getDescriptionDuHauptsatz(adverbialeAngabe);
     }
@@ -46,7 +46,7 @@ public interface PraedikatMitEinerObjektleerstelle extends Praedikat {
      * Gibt eine Infinitivkonstruktion zurück mit diesem Verb und dieser Entity / diesem Konzept.
      * ("Den Frosch ignorieren", "Das Leben genießen")
      */
-    default String getDescriptionInfinitiv(final DescribableAsDeklinierbarePhrase describable) {
+    default String getDescriptionInfinitiv(final DeklinierbarePhrase describable) {
         return mitObj(describable).getDescriptionInfinitiv();
     }
 }

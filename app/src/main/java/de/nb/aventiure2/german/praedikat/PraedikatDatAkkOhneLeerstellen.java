@@ -5,7 +5,7 @@ import androidx.annotation.Nullable;
 
 import javax.annotation.Nonnull;
 
-import de.nb.aventiure2.german.base.DescribableAsDeklinierbarePhrase;
+import de.nb.aventiure2.german.base.DeklinierbarePhrase;
 
 import static de.nb.aventiure2.german.base.GermanUtil.capitalize;
 
@@ -39,18 +39,18 @@ public class PraedikatDatAkkOhneLeerstellen implements PraedikatOhneLeerstellen 
      * Das (Objekt / Wesen / Konzept für das) Dativobjekt (z.B. "Angebote")
      */
     @NonNull
-    private final DescribableAsDeklinierbarePhrase describableDat;
+    private final DeklinierbarePhrase describableDat;
 
     /**
      * Das (Objekt / Wesen / Konzept für das) Akkusativobjekte (z.B. der Frosch)
      */
     @NonNull
-    private final DescribableAsDeklinierbarePhrase describableAkk;
+    private final DeklinierbarePhrase describableAkk;
 
     public PraedikatDatAkkOhneLeerstellen(final String infinitiv, final String duForm,
                                           final String abgetrenntesPraefix,
-                                          final DescribableAsDeklinierbarePhrase describableDat,
-                                          final DescribableAsDeklinierbarePhrase describableAkk) {
+                                          final DeklinierbarePhrase describableDat,
+                                          final DeklinierbarePhrase describableAkk) {
         this.infinitiv = infinitiv;
         this.duForm = duForm;
         this.abgetrenntesPraefix = abgetrenntesPraefix;
@@ -66,13 +66,13 @@ public class PraedikatDatAkkOhneLeerstellen implements PraedikatOhneLeerstellen 
     public String getDescriptionDuHauptsatz() {
         if (abgetrenntesPraefix == null) {
             return "Du " + duForm +
-                    " " + describableDat.dat(true) +
-                    " " + describableAkk.akk(true);
+                    " " + describableDat.dat() +
+                    " " + describableAkk.akk();
         }
 
         return "Du " + duForm +
-                " " + describableDat.dat(true) +
-                " " + describableAkk.akk(true) +
+                " " + describableDat.dat() +
+                " " + describableAkk.akk() +
                 " " + abgetrenntesPraefix;
     }
 
@@ -87,15 +87,15 @@ public class PraedikatDatAkkOhneLeerstellen implements PraedikatOhneLeerstellen 
             return capitalize(adverbialeAngabe.getText()) + // Aus Langeweile
                     " " + duForm +
                     " du " +
-                    describableDat.dat(true) +
-                    " " + describableAkk.akk(true);
+                    describableDat.dat() +
+                    " " + describableAkk.akk();
         }
 
         return capitalize(adverbialeAngabe.getText()) + // Aus Langeweile
                 " " + duForm +
                 " du " +
-                describableDat.dat(true) +
-                " " + describableAkk.akk(true) +
+                describableDat.dat() +
+                " " + describableAkk.akk() +
                 " " + abgetrenntesPraefix;
     }
 
@@ -105,8 +105,8 @@ public class PraedikatDatAkkOhneLeerstellen implements PraedikatOhneLeerstellen 
      */
     @Override
     public String getDescriptionInfinitiv() {
-        return capitalize(describableDat.dat(true)) +
-                " " + describableAkk.akk(true) +
+        return capitalize(describableDat.dat()) +
+                " " + describableAkk.akk() +
                 " " + infinitiv;
     }
 }

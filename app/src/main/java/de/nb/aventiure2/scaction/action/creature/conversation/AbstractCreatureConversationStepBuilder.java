@@ -7,29 +7,33 @@ import com.google.common.collect.ImmutableList;
 
 import java.util.Collection;
 import java.util.List;
-import java.util.Map;
 
 import de.nb.aventiure2.data.database.AvDatabase;
-import de.nb.aventiure2.data.storystate.IPlayerAction;
 import de.nb.aventiure2.data.storystate.StoryState;
 import de.nb.aventiure2.data.storystate.StoryStateBuilder;
 import de.nb.aventiure2.data.storystate.StoryStateDao;
-import de.nb.aventiure2.data.world.base.GameObject;
-import de.nb.aventiure2.data.world.base.GameObjectId;
-import de.nb.aventiure2.data.world.entity.creature.CreatureData;
-import de.nb.aventiure2.data.world.entity.object.ObjectData;
+import de.nb.aventiure2.data.world.alive.ILivingBeingGO;
+import de.nb.aventiure2.data.world.description.IDescribableGO;
+import de.nb.aventiure2.data.world.gameobjects.GameObjects;
+import de.nb.aventiure2.data.world.player.SpielerCharakter;
+import de.nb.aventiure2.data.world.storingplace.IHasStoringPlaceGO;
+import de.nb.aventiure2.german.base.Nominalphrase;
 import de.nb.aventiure2.german.praedikat.Praedikat;
 
+import static de.nb.aventiure2.data.world.gameobjects.GameObjects.loadSC;
 import static de.nb.aventiure2.scaction.action.creature.conversation.CreatureConversationStep.ALWAYS_POSSIBLE;
 import static de.nb.aventiure2.scaction.action.creature.conversation.CreatureConversationStep.DEFAULT_ENTRY_RE_ENTRY_NAME;
 import static de.nb.aventiure2.scaction.action.creature.conversation.CreatureConversationStep.DEFAULT_EXIT_NAME;
 
 /**
  * Abstrakte Oberklasse zum Erzeugen von {@link CreatureConversationStep}s für eine
- * {@link de.nb.aventiure2.data.world.entity.creature.Creature}.
+ * Kreatur.
  */
-abstract class AbstractCreatureConversationStepBuilder {
+abstract class AbstractCreatureConversationStepBuilder<LIV extends ILivingBeingGO> {
     protected final AvDatabase db;
+
+    protected final SpielerCharakter sc;
+
     protected final StoryStateDao n;
 
     /**
@@ -37,28 +41,23 @@ abstract class AbstractCreatureConversationStepBuilder {
      */
     protected final StoryState initialStoryState;
 
-    protected final Class<? extends IPlayerAction> currentActionClass;
-
-    protected final GameObject room;
-    protected final Map<GameObjectId, ObjectData> allObjectsById;
+    protected final IHasStoringPlaceGO room;
 
     @NonNull
-    protected final CreatureData creatureData;
+    protected final LIV creature;
 
     AbstractCreatureConversationStepBuilder(final AvDatabase db, final StoryState initialStoryState,
-                                            final Class<? extends IPlayerAction> currentActionClass,
-                                            final GameObject room,
-                                            final Map<GameObjectId, ObjectData> allObjectsById,
-                                            @NonNull final CreatureData creatureData) {
+                                            final IHasStoringPlaceGO room,
+                                            @NonNull final LIV creature) {
         this.db = db;
 
         n = db.storyStateDao();
 
+        sc = loadSC(db);
+
         this.initialStoryState = initialStoryState;
-        this.currentActionClass = currentActionClass;
         this.room = room;
-        this.creatureData = creatureData;
-        this.allObjectsById = allObjectsById;
+        this.creature = creature;
     }
 
     List<CreatureConversationStep> getPossibleSteps() {
@@ -217,6 +216,29 @@ abstract class AbstractCreatureConversationStepBuilder {
                 narrationAndAction);
     }
 
+    /**
+     * Gibt eine (evtl. auch etwas längere) Nominalphrase zurück, die das Game Object beschreibt.
+     * Die Phrase wird in der Regel unterschiedlich sein, je nachdem, ob
+     * ob der Spieler das Game Object schon kennt oder nicht.
+     */
+    protected Nominalphrase getDescription(final IDescribableGO gameObject) {
+        return getDescription(gameObject, false);
+    }
+
+    /**
+     * Gibt eine Nominalphrase zurück, die das Game Object beschreibt.
+     * Die Phrase wird in der Regel unterschiedlich sein, je nachdem, ob
+     * ob der Spieler das Game Object schon kennt oder nicht.
+     *
+     * @param shortIfKnown <i>Falls der Spieler(-charakter)</i> das
+     *                     Game Object schon kennt, wird eher eine
+     *                     kürzere Beschreibung gewählt
+     */
+    protected Nominalphrase getDescription(final IDescribableGO gameObject,
+                                           final boolean shortIfKnown) {
+        return GameObjects.getPOVDescription(sc, gameObject, shortIfKnown);
+    }
+
     StoryStateBuilder alt(final ImmutableCollection.Builder<StoryStateBuilder> alternatives) {
         return alt(alternatives.build());
     }
@@ -237,9 +259,9 @@ abstract class AbstractCreatureConversationStepBuilder {
     StoryStateBuilder t(
             @NonNull final StoryState.StructuralElement startsNew,
             @NonNull final String text) {
-        return StoryStateBuilder.t(currentActionClass, startsNew, text)
-                .letzterRaum(db.playerLocationDao().getPlayerLocation().getRoom())
+        return StoryStateBuilder.t(startsNew, text)
+                .letzterRaum(sc.locationComp().getLocation())
                 // Sensible default - caller may override this setting
-                .imGespraechMit(creatureData.getCreature());
+                .imGespraechMit(creature);
     }
 }

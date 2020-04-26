@@ -5,35 +5,34 @@ import androidx.annotation.NonNull;
 import com.google.common.collect.ImmutableList;
 
 import java.util.List;
-import java.util.Map;
 
 import de.nb.aventiure2.data.database.AvDatabase;
-import de.nb.aventiure2.data.storystate.IPlayerAction;
 import de.nb.aventiure2.data.storystate.StoryState;
-import de.nb.aventiure2.data.world.base.GameObject;
-import de.nb.aventiure2.data.world.base.GameObjectId;
-import de.nb.aventiure2.data.world.entity.creature.CreatureData;
-import de.nb.aventiure2.data.world.entity.creature.Creatures;
-import de.nb.aventiure2.data.world.entity.object.ObjectData;
+import de.nb.aventiure2.data.world.alive.ILivingBeingGO;
+import de.nb.aventiure2.data.world.description.IDescribableGO;
+import de.nb.aventiure2.data.world.gameobjectstate.IHasStateGO;
+import de.nb.aventiure2.data.world.location.ILocatableGO;
+import de.nb.aventiure2.data.world.memory.Action;
+import de.nb.aventiure2.data.world.storingplace.IHasStoringPlaceGO;
 import de.nb.aventiure2.data.world.time.AvTimeSpan;
 import de.nb.aventiure2.german.base.DeklinierbarePhrase;
+import de.nb.aventiure2.german.base.Indefinitpronomen;
 import de.nb.aventiure2.german.base.Nominalphrase;
-import de.nb.aventiure2.scaction.action.HeulenAction;
 
 import static de.nb.aventiure2.data.storystate.StoryState.StructuralElement.PARAGRAPH;
 import static de.nb.aventiure2.data.storystate.StoryState.StructuralElement.SENTENCE;
 import static de.nb.aventiure2.data.storystate.StoryState.StructuralElement.WORD;
-import static de.nb.aventiure2.data.world.entity.creature.CreatureState.AUF_DEM_WEG_ZUM_BRUNNEN_UM_DINGE_HERAUSZUHOLEN;
-import static de.nb.aventiure2.data.world.entity.creature.CreatureState.ERWARTET_VON_SC_EINLOESUNG_SEINES_VERSPRECHENS;
-import static de.nb.aventiure2.data.world.entity.creature.CreatureState.HAT_FORDERUNG_GESTELLT;
-import static de.nb.aventiure2.data.world.entity.creature.CreatureState.HAT_NACH_BELOHNUNG_GEFRAGT;
-import static de.nb.aventiure2.data.world.entity.creature.Creatures.FROSCHPRINZ;
-import static de.nb.aventiure2.data.world.entity.object.ObjectData.filterInDenBrunnenGefallen;
-import static de.nb.aventiure2.data.world.entity.object.ObjectData.getDescriptionSingleOrCollective;
-import static de.nb.aventiure2.data.world.player.stats.ScStateOfMind.VOLLER_FREUDE;
-import static de.nb.aventiure2.data.world.room.Rooms.IM_WALD_BEIM_BRUNNEN;
+import static de.nb.aventiure2.data.world.feelings.Mood.VOLLER_FREUDE;
+import static de.nb.aventiure2.data.world.gameobjects.GameObjects.IM_WALD_BEIM_BRUNNEN;
+import static de.nb.aventiure2.data.world.gameobjects.GameObjects.UNTEN_IM_BRUNNEN;
+import static de.nb.aventiure2.data.world.gameobjects.GameObjects.loadDescribableNonLivingInventory;
+import static de.nb.aventiure2.data.world.gameobjectstate.GameObjectState.AUF_DEM_WEG_ZUM_BRUNNEN_UM_DINGE_HERAUSZUHOLEN;
+import static de.nb.aventiure2.data.world.gameobjectstate.GameObjectState.ERWARTET_VON_SC_EINLOESUNG_SEINES_VERSPRECHENS;
+import static de.nb.aventiure2.data.world.gameobjectstate.GameObjectState.HAT_FORDERUNG_GESTELLT;
+import static de.nb.aventiure2.data.world.gameobjectstate.GameObjectState.HAT_NACH_BELOHNUNG_GEFRAGT;
 import static de.nb.aventiure2.data.world.time.AvTimeSpan.noTime;
 import static de.nb.aventiure2.data.world.time.AvTimeSpan.secs;
+import static de.nb.aventiure2.german.base.DuDescription.du;
 import static de.nb.aventiure2.german.base.GermanUtil.capitalize;
 import static de.nb.aventiure2.german.base.Indefinitpronomen.ALLES;
 import static de.nb.aventiure2.german.base.Nominalphrase.ANGEBOTE;
@@ -45,24 +44,52 @@ import static de.nb.aventiure2.german.praedikat.VerbSubjObj.REDEN;
 
 /**
  * Erzeugt {@link CreatureConversationStep}s für den
- * {@link Creatures#FROSCHPRINZ}en.
+ * {@link de.nb.aventiure2.data.world.gameobjects.GameObjects#FROSCHPRINZ}en.
  */
-class FroschprinzConversationStepBuilder extends AbstractCreatureConversationStepBuilder {
-    private final List<ObjectData> objectsInDenBrunnenGefallen;
+class FroschprinzConversationStepBuilder<LOC_DESC extends ILocatableGO & IDescribableGO,
+        LIV extends ILivingBeingGO & IDescribableGO & IHasStateGO>
+        extends AbstractCreatureConversationStepBuilder<LIV> {
+    private final List<LOC_DESC> objectsInDenBrunnenGefallen;
 
     FroschprinzConversationStepBuilder(final AvDatabase db, final StoryState initialStoryState,
-                                       final Class<? extends IPlayerAction> currentActionClass,
-                                       final GameObject room,
-                                       final Map<GameObjectId, ObjectData> allObjectsById,
-                                       @NonNull final CreatureData creatureData) {
-        super(db, initialStoryState, currentActionClass, room, allObjectsById, creatureData);
+                                       final IHasStoringPlaceGO room,
+                                       @NonNull final LIV creature) {
+        super(db, initialStoryState, room, creature);
 
-        objectsInDenBrunnenGefallen = filterInDenBrunnenGefallen(allObjectsById);
+        objectsInDenBrunnenGefallen = loadDescribableNonLivingInventory(db, UNTEN_IM_BRUNNEN);
+    }
+
+    /**
+     * Gibt eine Beschreibung dieses Objekts zurück - wenn es nur eines ist - sonst
+     * etwas wie "die Dinge".
+     */
+    private DeklinierbarePhrase getDescriptionSingleOrCollective(
+            final List<? extends IDescribableGO> objects) {
+        if (objects.isEmpty()) {
+            return Indefinitpronomen.NICHTS;
+        }
+
+        if (objects.size() == 1) {
+            final IDescribableGO objectInDenBrunnenGefallen =
+                    objects.iterator().next();
+
+            return getDescription(objectInDenBrunnenGefallen, false);
+        }
+
+        return Nominalphrase.DINGE;
+    }
+
+    private String getAkkShort(final List<? extends IDescribableGO> objects) {
+        if (objects.size() == 1) {
+            return getDescription(objects.iterator().next(), true).akk();
+        }
+
+        return "sie";
     }
 
     @Override
     List<CreatureConversationStep> getAllStepsForCurrentState() {
-        switch (creatureData.getState()) {
+        switch (creature.stateComp().getState()) {
             case UNAUFFAELLIG:
                 return ImmutableList.of();
             case HAT_SC_HILFSBEREIT_ANGESPROCHEN:
@@ -120,8 +147,6 @@ class FroschprinzConversationStepBuilder extends AbstractCreatureConversationSte
                 return ImmutableList.of(
                         entrySt(this::hallo_froschErinnertAnVersprechen)
                 );
-            case ERWARTET_VON_SC_EINLOESUNG_SEINES_VERSPRECHENS_VON_SC_GETRAGEN:
-                return ImmutableList.of();
             case HAT_HOCHHEBEN_GEFORDERT:
                 return ImmutableList.of(
                         // STORY Frosch auf den Tisch hochheben - das ist vermutlich eine AKTION
@@ -139,7 +164,7 @@ class FroschprinzConversationStepBuilder extends AbstractCreatureConversationSte
                 );
             default:
                 throw new IllegalStateException("Unexpected Froschprinz state: "
-                        + creatureData.getState());
+                        + creature.stateComp().getState());
         }
     }
 
@@ -151,7 +176,7 @@ class FroschprinzConversationStepBuilder extends AbstractCreatureConversationSte
             n.add(t(SENTENCE, "„Ach, du bist's, alter Wasserpatscher“, sagst du")
                     .undWartest()
                     .dann()
-                    .imGespraechMit(null));
+                    .imGespraechMitNiemandem());
             return secs(5);
         }
 
@@ -197,7 +222,7 @@ class FroschprinzConversationStepBuilder extends AbstractCreatureConversationSte
     }
 
     private AvTimeSpan inDenBrunnenGefallenErklaerung() {
-        if (initialStoryState.lastActionWas(HeulenAction.class)) {
+        if (sc.memoryComp().getLastAction().is(Action.Type.HEULEN)) {
             final DeklinierbarePhrase objectsDesc =
                     getDescriptionSingleOrCollective(objectsInDenBrunnenGefallen);
 
@@ -212,11 +237,11 @@ class FroschprinzConversationStepBuilder extends AbstractCreatureConversationSte
         }
 
         if (objectsInDenBrunnenGefallen.size() == 1) {
-            final ObjectData objectInDenBrunnenGefallen =
+            final IDescribableGO objectInDenBrunnenGefallen =
                     objectsInDenBrunnenGefallen.iterator().next();
 
             n.add(t(SENTENCE, "„"
-                    + capitalize(objectInDenBrunnenGefallen.nom())
+                    + capitalize(getDescription(objectInDenBrunnenGefallen).nom())
                     + " ist mir in den Brunnen hinabgefallen.“"));
             return secs(10);
         }
@@ -227,10 +252,10 @@ class FroschprinzConversationStepBuilder extends AbstractCreatureConversationSte
 
     private AvTimeSpan herausholenAngebot() {
         final String objectsInDenBrunnenGefallenShortAkk =
-                ObjectData.getAkkShort(objectsInDenBrunnenGefallen);
+                getAkkShort(objectsInDenBrunnenGefallen);
 
         final String ratschlag;
-        if (initialStoryState.lastActionWas(HeulenAction.class)) {
+        if (sc.memoryComp().getLastAction().is(Action.Type.HEULEN)) {
             ratschlag = "weine nicht";
         } else {
             ratschlag = "sorge dich nicht";
@@ -238,13 +263,13 @@ class FroschprinzConversationStepBuilder extends AbstractCreatureConversationSte
         n.add(t(PARAGRAPH, "„Sei still und "
                 + ratschlag
                 + "“, antwortet "
-                + creatureData.nom(true)
+                + getDescription(creature, true).nom()
                 + ", „ich kann wohl Rat schaffen, aber was gibst du mir, wenn ich "
                 + objectsInDenBrunnenGefallenShortAkk
                 + " wieder heraufhole?“")
                 .beendet(PARAGRAPH));
 
-        db.creatureDataDao().setState(FROSCHPRINZ, HAT_NACH_BELOHNUNG_GEFRAGT);
+        creature.stateComp().setState(HAT_NACH_BELOHNUNG_GEFRAGT);
 
         return secs(15);
     }
@@ -255,7 +280,7 @@ class FroschprinzConversationStepBuilder extends AbstractCreatureConversationSte
                 .komma()
                 .undWartest()
                 .dann()
-                .imGespraechMit(null));
+                .imGespraechMitNiemandem());
         return secs(3);
     }
 
@@ -280,14 +305,19 @@ class FroschprinzConversationStepBuilder extends AbstractCreatureConversationSte
                         + " wieder heraufholen.“")
                 .beendet(PARAGRAPH));
 
-        db.creatureDataDao().setState(FROSCHPRINZ, HAT_FORDERUNG_GESTELLT);
+        creature.stateComp().setState(HAT_FORDERUNG_GESTELLT);
         return secs(20);
     }
 
     private AvTimeSpan froschHatNachBelohnungGefragt_ImmReEntry() {
-        n.add(t(PARAGRAPH, "Dann gehst du kurz in dich…"));
-
-        return froschHatNachBelohnungGefragt_ReEntry();
+        return
+                n.add(du("gehst", "kurz in dich…",
+                        false,
+                        false,
+                        false,
+                        secs(5)))
+                        .plus(
+                                froschHatNachBelohnungGefragt_ReEntry());
     }
 
     private AvTimeSpan froschHatNachBelohnungGefragt_ReEntry() {
@@ -312,7 +342,7 @@ class FroschprinzConversationStepBuilder extends AbstractCreatureConversationSte
                         + " wieder herauf holen.“")
                 .beendet(PARAGRAPH));
 
-        db.creatureDataDao().setState(FROSCHPRINZ, HAT_FORDERUNG_GESTELLT);
+        creature.stateComp().setState(HAT_FORDERUNG_GESTELLT);
 
         return secs(30);
     }
@@ -320,7 +350,7 @@ class FroschprinzConversationStepBuilder extends AbstractCreatureConversationSte
     private AvTimeSpan froschHatNachBelohnungGefragt_Exit() {
         n.add(t(SENTENCE,
                 "„Denkst du etwa, ich überschütte dich mit Gold und Juwelen? – Vergiss es!“")
-                .imGespraechMit(null));
+                .imGespraechMitNiemandem());
         return secs(5);
     }
 
@@ -342,7 +372,7 @@ class FroschprinzConversationStepBuilder extends AbstractCreatureConversationSte
 
     private AvTimeSpan froschHatForderungGestellt_ImmReEntry() {
         n.add(t(SENTENCE,
-                "Aber im nächsten Moment entschuldigst du schon: "
+                "Aber im nächsten Moment entschuldigst du dich schon: "
                         + "„Nichts für ungut! Wenn du mir wirklich "
                         + getDescriptionSingleOrCollective(objectsInDenBrunnenGefallen).akk()
                         + " wieder besorgen kannst – ich verspreche dir alles, was du willst!“"
@@ -376,11 +406,10 @@ class FroschprinzConversationStepBuilder extends AbstractCreatureConversationSte
 
         if (!room.is(IM_WALD_BEIM_BRUNNEN)) {
             n.add(t(WORD, "hüpft er sogleich davon")
-                    .imGespraechMit(null)
+                    .imGespraechMitNiemandem()
                     .beendet(PARAGRAPH));
 
-            db.creatureDataDao().setState(FROSCHPRINZ,
-                    AUF_DEM_WEG_ZUM_BRUNNEN_UM_DINGE_HERAUSZUHOLEN);
+            creature.stateComp().setState(AUF_DEM_WEG_ZUM_BRUNNEN_UM_DINGE_HERAUSZUHOLEN);
             // STORY Der Froschprinz muss eine KI erhalten, dass er
             //  nach einer Weile automatisch beim Brunnen
             //  auftaucht und sich, die Dinge herausholt
@@ -410,16 +439,14 @@ class FroschprinzConversationStepBuilder extends AbstractCreatureConversationSte
                 // programmiert wird.
                 + descObjectsInDenBrunnenGefallen.akk()
                 + " wieder erblickst")
-                .imGespraechMit(null));
+                .imGespraechMitNiemandem());
 
-        db.creatureDataDao().setState(FROSCHPRINZ, ERWARTET_VON_SC_EINLOESUNG_SEINES_VERSPRECHENS);
+        creature.stateComp().setState(ERWARTET_VON_SC_EINLOESUNG_SEINES_VERSPRECHENS);
 
-        db.playerStatsDao().setStateOfMind(VOLLER_FREUDE);
+        sc.feelingsComp().setMood(VOLLER_FREUDE);
 
-        for (final ObjectData objectData : objectsInDenBrunnenGefallen) {
-            db.objectDataDao().setDemSCInDenBrunnenGefallen(
-                    objectData.getObject(), false);
-            db.objectDataDao().setRoom(objectData.getObject(), room);
+        for (final LOC_DESC object : objectsInDenBrunnenGefallen) {
+            object.locationComp().setLocation(room);
         }
 
         return secs(30);
@@ -430,14 +457,14 @@ class FroschprinzConversationStepBuilder extends AbstractCreatureConversationSte
                 t(SENTENCE,
                         "„Na, bei dir piept's wohl!“ – Entrüstet wendest du dich ab")
                         .undWartest()
-                        .imGespraechMit(null),
+                        .imGespraechMitNiemandem(),
                 t(SENTENCE,
                         "„Wenn ich darüber nachdenke… – nein!“")
-                        .imGespraechMit(null),
+                        .imGespraechMitNiemandem(),
                 t(SENTENCE,
                         "„Am Ende willst du noch in meinem Bettchen schlafen! Schäm dich, "
                                 + "Frosch!“")
-                        .imGespraechMit(null)
+                        .imGespraechMitNiemandem()
                         .beendet(PARAGRAPH)));
 
         return secs(10);
@@ -462,18 +489,18 @@ class FroschprinzConversationStepBuilder extends AbstractCreatureConversationSte
                                 + "meiner Tafel nichts "
                                 + "verloren!“ Du wendest du dich empört ab")
                         .undWartest()
-                        .imGespraechMit(null),
+                        .imGespraechMitNiemandem(),
                 t(PARAGRAPH,
                         "„Ich soll deine schleimigen Patscher auf den Tisch stellen? "
                                 + "Dafür musst du dir wen anderes suchen!“")
-                        .imGespraechMit(null)
+                        .imGespraechMitNiemandem()
                         .beendet(PARAGRAPH),
                 t(PARAGRAPH,
                         "Dir wird ganz angst, aber du sagst: „Du denkst wohl, was man "
                                 + "versprochen hat, das "
                                 + "muss man auch halten? Da bist du bei mir an den Falschen "
                                 + "geraten!“ Demonstrativ wendest du dich ab")
-                        .imGespraechMit(null)
+                        .imGespraechMitNiemandem()
                         .undWartest()
         ));
 
@@ -498,33 +525,32 @@ class FroschprinzConversationStepBuilder extends AbstractCreatureConversationSte
 
     private AvTimeSpan froschReagiertNicht() {
         n.add(t(SENTENCE, "Der Frosch reagiert nicht")
-                .imGespraechMit(null)
+                .imGespraechMitNiemandem()
                 .beendet(PARAGRAPH));
         return secs(3);
     }
 
     private AvTimeSpan hallo_froschErinnertAnVersprechen() {
-        final Nominalphrase froschDesc = creatureData.getDescription(true);
         n.add(alt(
                 t(SENTENCE,
+                        // TODO "Du hebst die Kugel auf. Du sprichst den Frosch an..."
+                        //  Der Narrator sollte automatisch dann, und etc. erkennen und wählen
                         "Du sprichst "
-                                + creatureData.akk(true)
+                                + getDescription(creature, true).akk()
                                 + " an: „Wie läuft's, Frosch? Schönes Wetter heut.“ "
                                 + "„Vergiss dein Versprechen nicht“, sagt er nur."
-                ).imGespraechMit(null)
+                ).imGespraechMitNiemandem()
                         .beendet(PARAGRAPH),
                 t(SENTENCE,
                         "Du holst Luft, aber da kommt dir "
-                                + creatureData.nom()
+                                + getDescription(creature).nom()
                                 + " schon zuvor: „Wir sehen uns noch!“"
-                ).imGespraechMit(null)
+                ).imGespraechMitNiemandem()
                         .beendet(PARAGRAPH),
                 t(SENTENCE,
                         "„Und jetzt, Frosch?“ "
-                                + " „Du weißt, was du versprochen hast“, gibt "
-                                + froschDesc.persPron().nom(false)
-                                + " zurück."
-                ).imGespraechMit(null)
+                                + " „Du weißt, was du versprochen hast“, gibt er zurück."
+                ).imGespraechMitNiemandem()
         ));
 
         return secs(15);

@@ -1,27 +1,27 @@
 package de.nb.aventiure2.scaction.action.creature.reaction;
 
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 
 import java.util.List;
 import java.util.Map;
-
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import java.util.function.Function;
 
 import de.nb.aventiure2.data.database.AvDatabase;
-import de.nb.aventiure2.data.storystate.IPlayerAction;
 import de.nb.aventiure2.data.storystate.StoryState;
 import de.nb.aventiure2.data.storystate.StoryStateDao;
-import de.nb.aventiure2.data.world.base.GameObject;
+import de.nb.aventiure2.data.world.alive.ILivingBeingGO;
 import de.nb.aventiure2.data.world.base.GameObjectId;
-import de.nb.aventiure2.data.world.entity.base.AbstractEntityData;
-import de.nb.aventiure2.data.world.entity.creature.CreatureData;
-import de.nb.aventiure2.data.world.entity.object.ObjectData;
+import de.nb.aventiure2.data.world.base.IGameObject;
+import de.nb.aventiure2.data.world.description.IDescribableGO;
+import de.nb.aventiure2.data.world.location.ILocatableGO;
+import de.nb.aventiure2.data.world.storingplace.IHasStoringPlaceGO;
 import de.nb.aventiure2.data.world.time.AvDateTime;
 import de.nb.aventiure2.data.world.time.AvTimeSpan;
 
-import static de.nb.aventiure2.data.world.entity.creature.Creatures.FROSCHPRINZ;
-import static de.nb.aventiure2.data.world.entity.creature.Creatures.SCHLOSSWACHE;
+import static de.nb.aventiure2.data.world.gameobjects.GameObjects.FROSCHPRINZ;
+import static de.nb.aventiure2.data.world.gameobjects.GameObjects.SCHLOSSWACHE;
+import static de.nb.aventiure2.data.world.gameobjects.GameObjects.loadDescribableLivingInventory;
 import static de.nb.aventiure2.data.world.time.AvTimeSpan.noTime;
 
 public final class CreatureReactionsCoordinator {
@@ -30,128 +30,94 @@ public final class CreatureReactionsCoordinator {
 
     private final Map<GameObjectId, AbstractCreatureReactions> allCreatureReactions;
 
-    private final NullCreatureReactions nullCreatureReactions;
-
-    public CreatureReactionsCoordinator(final AvDatabase db,
-                                        final Class<? extends IPlayerAction> playerActionClass) {
+    public CreatureReactionsCoordinator(final AvDatabase db) {
         this.db = db;
         n = db.storyStateDao();
 
         allCreatureReactions = ImmutableMap.<GameObjectId, AbstractCreatureReactions>builder()
-                .put(FROSCHPRINZ, new FroschprinzReactions(db, playerActionClass))
-                .put(SCHLOSSWACHE, new SchlosswacheReactions(db, playerActionClass))
+                .put(FROSCHPRINZ, new FroschprinzReactions(db))
+                .put(SCHLOSSWACHE, new SchlosswacheReactions(db))
                 .build();
-
-        nullCreatureReactions = new NullCreatureReactions(db, playerActionClass);
     }
 
-    public AvTimeSpan onLeaveRoom(final GameObject oldRoom,
-                                  final List<CreatureData> creaturesInOldRoom) {
-        AvTimeSpan timeElapsed = noTime();
-
-        for (final CreatureData creatureInOldRoom : creaturesInOldRoom) {
-            timeElapsed = timeElapsed.plus(
-                    getReactions(creatureInOldRoom).onLeaveRoom(oldRoom, creatureInOldRoom,
-                            getCurrentStoryState()));
-        }
-
-        return timeElapsed;
+    public AvTimeSpan onLeaveRoom(final IGameObject oldRoom,
+                                  final List<? extends ILivingBeingGO> creaturesInOldRoom) {
+        return doReactions(creaturesInOldRoom,
+                r -> r.onLeaveRoom(oldRoom, getCurrentStoryState()));
     }
 
-    public AvTimeSpan onEnterRoom(final GameObject oldRoom,
-                                  final GameObject newRoom,
-                                  final List<CreatureData> creaturesInNewRoom) {
-        AvTimeSpan timeElapsed = noTime();
 
-        for (final CreatureData creatureInNewRoom : creaturesInNewRoom) {
-            timeElapsed = timeElapsed.plus(
-                    getReactions(creatureInNewRoom).onEnterRoom(oldRoom, newRoom, creatureInNewRoom,
-                            getCurrentStoryState()));
-        }
-
-        return timeElapsed;
+    public AvTimeSpan onEnterRoom(final IHasStoringPlaceGO oldRoom,
+                                  final IHasStoringPlaceGO newRoom,
+                                  final List<? extends ILivingBeingGO> creaturesInNewRoom) {
+        return doReactions(creaturesInNewRoom,
+                r -> r.onEnterRoom(oldRoom, newRoom,
+                        getCurrentStoryState()));
     }
 
-    public AvTimeSpan onNehmen(final GameObject room,
-                               final AbstractEntityData entityData) {
-        AvTimeSpan timeElapsed = noTime();
-
-        for (final CreatureData creatureInRoom : getCreaturesInRoom(room)) {
-            timeElapsed = timeElapsed.plus(getReactions(creatureInRoom)
-                    .onNehmen(room, creatureInRoom, entityData, getCurrentStoryState()));
-        }
-
-        return timeElapsed;
+    public AvTimeSpan onNehmen(final IHasStoringPlaceGO room,
+                               final ILocatableGO taken) {
+        return doReactions(getCreaturesInRoom(room),
+                r -> r.onNehmen(room, taken, getCurrentStoryState()));
     }
 
-    public AvTimeSpan onEssen(final GameObject room) {
-        AvTimeSpan timeElapsed = noTime();
-
-        for (final CreatureData creature : getAllCreatures()) {
-            timeElapsed = timeElapsed.plus(getReactions(creature)
-                    .onEssen(room, creature, getCurrentStoryState()));
-        }
-
-        return timeElapsed;
+    public AvTimeSpan onEssen(final IHasStoringPlaceGO room) {
+        return doReactionsForAllCreatures(
+                r -> r.onEssen(room, getCurrentStoryState()));
     }
 
-    public AvTimeSpan onAblegen(final GameObject room, final AbstractEntityData entityData) {
-        AvTimeSpan timeElapsed = noTime();
-
-        for (final CreatureData creatureInRoom : getCreaturesInRoom(room)) {
-            timeElapsed = timeElapsed.plus(getReactions(creatureInRoom)
-                    .onAblegen(room, creatureInRoom, entityData,
-                            getCurrentStoryState()));
-        }
-
-        return timeElapsed;
+    public AvTimeSpan onAblegen(final IHasStoringPlaceGO room,
+                                final IGameObject abgelegt) {
+        return doReactions(getCreaturesInRoom(room),
+                r -> r.onAblegen(room, abgelegt,
+                        getCurrentStoryState()));
     }
 
-    public AvTimeSpan onHochwerfen(final GameObject room, final ObjectData objectData) {
-        AvTimeSpan timeElapsed = noTime();
-
-        for (final CreatureData creatureInRoom : getCreaturesInRoom(room)) {
-            timeElapsed = timeElapsed.plus(getReactions(creatureInRoom)
-                    .onHochwerfen(room, creatureInRoom, objectData,
-                            getCurrentStoryState()));
-        }
-
-        return timeElapsed;
+    public AvTimeSpan onHochwerfen(final IHasStoringPlaceGO room,
+                                   final ILocatableGO objectData) {
+        return doReactions(getCreaturesInRoom(room),
+                r -> r.onHochwerfen(room, objectData,
+                        getCurrentStoryState()));
     }
-
 
     public AvTimeSpan onTimePassed(final AvDateTime lastTime, final AvDateTime now) {
-        AvTimeSpan timeElapsed = noTime();
-
-        for (final CreatureData creatureInRoom : getAllCreatures()) {
-            timeElapsed = timeElapsed.plus(getReactions(creatureInRoom)
-                    .onTimePassed(lastTime, now, getCurrentStoryState()));
-        }
-
-        return timeElapsed;
+        return doReactionsForAllCreatures(
+                r -> r.onTimePassed(lastTime, now, getCurrentStoryState()));
     }
-
-    private List<CreatureData> getAllCreatures() {
-        return db.creatureDataDao().getAll();
-    }
-
 
     private StoryState getCurrentStoryState() {
         return n.getStoryState();
     }
 
-    private List<CreatureData> getCreaturesInRoom(final GameObject room) {
-        return db.creatureDataDao().getCreaturesInRoom(room);
+    private <LIV extends ILocatableGO & IDescribableGO & ILivingBeingGO>
+    ImmutableList<LIV> getCreaturesInRoom(final IHasStoringPlaceGO room) {
+        return loadDescribableLivingInventory(db, room);
     }
 
-    @Nonnull
-    private AbstractCreatureReactions getReactions(final CreatureData creature) {
-        @Nullable final AbstractCreatureReactions res =
-                allCreatureReactions.get(creature.getGameObjectId());
-        if (res != null) {
-            return res;
+    private AvTimeSpan doReactions(final List<? extends ILivingBeingGO> creatures,
+                                   final Function<AbstractCreatureReactions,
+                                           AvTimeSpan> reaction) {
+        AvTimeSpan timeElapsed = noTime();
+
+        for (final ILivingBeingGO creature : creatures) {
+            final AbstractCreatureReactions reactions = allCreatureReactions.get(creature.getId());
+            if (reactions != null) {
+                timeElapsed = timeElapsed.plus(reaction.apply(reactions));
+            }
         }
 
-        return nullCreatureReactions;
+        return timeElapsed;
     }
+
+    private AvTimeSpan doReactionsForAllCreatures(
+            final Function<AbstractCreatureReactions, AvTimeSpan> reaction) {
+        AvTimeSpan timeElapsed = noTime();
+
+        for (final AbstractCreatureReactions reactions : allCreatureReactions.values()) {
+            timeElapsed = timeElapsed.plus(reaction.apply(reactions));
+        }
+
+        return timeElapsed;
+    }
+
 }

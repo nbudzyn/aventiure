@@ -6,24 +6,29 @@ import com.google.common.collect.ImmutableList;
 
 import java.util.Collection;
 
+import javax.annotation.ParametersAreNonnullByDefault;
+
 import de.nb.aventiure2.data.database.AvDatabase;
 import de.nb.aventiure2.data.storystate.StoryState;
 import de.nb.aventiure2.data.storystate.StoryState.StructuralElement;
 import de.nb.aventiure2.data.storystate.StoryStateBuilder;
-import de.nb.aventiure2.data.world.base.GameObject;
-import de.nb.aventiure2.data.world.entity.base.AbstractEntityData;
-import de.nb.aventiure2.data.world.entity.creature.CreatureData;
-import de.nb.aventiure2.data.world.entity.creature.Creatures;
-import de.nb.aventiure2.data.world.entity.object.ObjectData;
-import de.nb.aventiure2.data.world.player.stats.ScStateOfMind;
+import de.nb.aventiure2.data.world.alive.ILivingBeingGO;
+import de.nb.aventiure2.data.world.description.IDescribableGO;
+import de.nb.aventiure2.data.world.feelings.Mood;
+import de.nb.aventiure2.data.world.gameobjectstate.IHasStateGO;
+import de.nb.aventiure2.data.world.location.ILocatableGO;
+import de.nb.aventiure2.data.world.memory.Action;
+import de.nb.aventiure2.data.world.memory.Known;
+import de.nb.aventiure2.data.world.storingplace.IHasStoringPlaceGO;
 import de.nb.aventiure2.data.world.time.AvTimeSpan;
 import de.nb.aventiure2.german.praedikat.PraedikatMitEinerObjektleerstelle;
+import de.nb.aventiure2.scaction.AbstractScAction;
 
 import static com.google.common.base.Preconditions.checkArgument;
 import static de.nb.aventiure2.data.storystate.StoryState.StructuralElement.PARAGRAPH;
-import static de.nb.aventiure2.data.world.entity.creature.CreatureState.ERWARTET_VON_SC_EINLOESUNG_SEINES_VERSPRECHENS;
-import static de.nb.aventiure2.data.world.entity.creature.CreatureState.ERWARTET_VON_SC_EINLOESUNG_SEINES_VERSPRECHENS_VON_SC_GETRAGEN;
-import static de.nb.aventiure2.data.world.entity.creature.Creatures.FROSCHPRINZ;
+import static de.nb.aventiure2.data.world.gameobjects.GameObjects.FROSCHPRINZ;
+import static de.nb.aventiure2.data.world.gameobjects.GameObjects.SPIELER_CHARAKTER;
+import static de.nb.aventiure2.data.world.gameobjectstate.GameObjectState.ERWARTET_VON_SC_EINLOESUNG_SEINES_VERSPRECHENS;
 import static de.nb.aventiure2.data.world.time.AvTimeSpan.secs;
 import static de.nb.aventiure2.german.praedikat.VerbSubjObj.MITNEHMEN;
 import static de.nb.aventiure2.german.praedikat.VerbSubjObj.NEHMEN;
@@ -32,33 +37,44 @@ import static de.nb.aventiure2.german.praedikat.VerbSubjObj.NEHMEN;
  * Der Spieler(charakter) nimmt einen Gegenstand (oder in Ausnahmefällen eine
  * Creature) an sich.
  */
-public class NehmenAction extends AbstractEntityAction {
-    private final GameObject room;
+@ParametersAreNonnullByDefault
+public class NehmenAction
+        <GO extends IDescribableGO & ILocatableGO,
+                LIVGO extends IDescribableGO & ILocatableGO & ILivingBeingGO>
+        extends AbstractScAction {
+    private final IHasStoringPlaceGO room;
+    @NonNull
+    private final GO gameObject;
 
-    public static Collection<NehmenAction> buildObjectActions(
-            final AvDatabase db, final StoryState initialStoryState, final GameObject room,
-            final ObjectData objectData) {
+    public static <GO extends IDescribableGO & ILocatableGO>
+    Collection<NehmenAction> buildObjectActions(final AvDatabase db,
+                                                final StoryState initialStoryState,
+                                                final IHasStoringPlaceGO room,
+                                                final GO object) {
         final ImmutableList.Builder<NehmenAction> res = ImmutableList.builder();
-        res.add(new NehmenAction(db, initialStoryState, objectData, room));
+        res.add(new NehmenAction<>(db, initialStoryState, room, object));
         return res.build();
     }
 
-    public static Collection<NehmenAction> buildCreatureActions(
+    public static <LIVGO extends IDescribableGO & ILocatableGO & ILivingBeingGO>
+    Collection<NehmenAction> buildCreatureActions(
             final AvDatabase db,
-            final StoryState initialStoryState, final GameObject room,
-            final CreatureData creatureData) {
+            final StoryState initialStoryState, final IHasStoringPlaceGO room,
+            final LIVGO creature) {
         final ImmutableList.Builder<NehmenAction> res = ImmutableList.builder();
-        if (creatureData.creatureIs(FROSCHPRINZ) &&
-                creatureData.hasState(ERWARTET_VON_SC_EINLOESUNG_SEINES_VERSPRECHENS)) {
-            res.add(new NehmenAction(db, initialStoryState, creatureData, room));
+        if (creature.is(FROSCHPRINZ) &&
+                ((IHasStateGO) creature).stateComp()
+                        .hasState(ERWARTET_VON_SC_EINLOESUNG_SEINES_VERSPRECHENS)) {
+            res.add(new NehmenAction<>(db, initialStoryState, room, creature));
         }
         return res.build();
     }
 
     private NehmenAction(final AvDatabase db, final StoryState initialStoryState,
-                         final AbstractEntityData entityData, final GameObject room) {
-        super(db, initialStoryState, entityData);
+                         final IHasStoringPlaceGO room, @NonNull final GO gameObject) {
+        super(db, initialStoryState);
         this.room = room;
+        this.gameObject = gameObject;
     }
 
     @Override
@@ -70,89 +86,86 @@ public class NehmenAction extends AbstractEntityAction {
     @NonNull
     public String getName() {
         final PraedikatMitEinerObjektleerstelle praedikat =
-                getEntityData() instanceof CreatureData ? MITNEHMEN : NEHMEN;
+                gameObject instanceof ILivingBeingGO ? MITNEHMEN : NEHMEN;
 
-        return praedikat.mitObj(getEntityData()).getDescriptionInfinitiv();
+        return praedikat.mitObj(getDescription(gameObject, true)).getDescriptionInfinitiv();
     }
 
     @Override
     public AvTimeSpan narrateAndDo() {
         AvTimeSpan timeElapsed = narrate();
-        removeFromRoomAndTake();
+        removeFromRoomAndTakeCreatureOrObject();
+
+        sc.memoryComp().setLastAction(buildMemorizedAction());
 
         timeElapsed =
-                timeElapsed.plus(creatureReactionsCoordinator.onNehmen(room, getEntityData()));
+                timeElapsed.plus(creatureReactionsCoordinator.onNehmen(room, gameObject));
 
         return timeElapsed;
     }
 
-    private void removeFromRoomAndTake() {
-        if (getEntityData() instanceof ObjectData) {
-            removeFromRoomAndTake((ObjectData) getEntityData());
-        } else if (getEntityData() instanceof CreatureData) {
-            removeFromRoomAndTake((CreatureData) getEntityData());
+    private void removeFromRoomAndTakeCreatureOrObject() {
+        if (gameObject instanceof ILivingBeingGO) {
+            removeFromRoomAndTakeCreature((LIVGO) gameObject);
         } else {
-            throw new IllegalStateException("Unexpected entity data: " + getEntityData());
+            removeFromRoomAndTake();
         }
     }
 
-    private void removeFromRoomAndTake(@NonNull final ObjectData objectData) {
-        db.objectDataDao().update(objectData.getObject(), null, true, false);
-        db.playerInventoryDao().take(objectData.getObject());
+    private void removeFromRoomAndTakeCreature(@NonNull final LIVGO creature) {
+        checkArgument(creature.is(FROSCHPRINZ) &&
+                        ((IHasStateGO) creature).stateComp()
+                                .hasState(ERWARTET_VON_SC_EINLOESUNG_SEINES_VERSPRECHENS),
+                "Unexpected creature: " + creature);
+
+        removeFromRoomAndTake();
+        sc.feelingsComp().setMood(Mood.NEUTRAL);
     }
 
-    private void removeFromRoomAndTake(final CreatureData creatureData) {
-        checkArgument(creatureData.creatureIs(FROSCHPRINZ) &&
-                        creatureData.hasState(ERWARTET_VON_SC_EINLOESUNG_SEINES_VERSPRECHENS),
-                "Unexpected creature data: " + creatureData);
-
-        db.creatureDataDao().setRoom(FROSCHPRINZ, null);
-        db.creatureDataDao()
-                .setState(FROSCHPRINZ,
-                        ERWARTET_VON_SC_EINLOESUNG_SEINES_VERSPRECHENS_VON_SC_GETRAGEN);
-        db.playerStatsDao().setStateOfMind(ScStateOfMind.NEUTRAL);
+    private void removeFromRoomAndTake() {
+        sc.memoryComp().upgradeKnown(gameObject, Known.getKnown(getLichtverhaeltnisse(room)));
+        gameObject.locationComp().setLocation(SPIELER_CHARAKTER);
     }
+
 
     private AvTimeSpan narrate() {
-        if (getEntityData() instanceof ObjectData) {
-            return narrateObject((ObjectData) getEntityData());
+        if (gameObject instanceof ILivingBeingGO) {
+            return narrateCreature((LIVGO) gameObject);
         }
-        if (getEntityData() instanceof CreatureData) {
-            return narrateCreature((CreatureData) getEntityData());
-        }
-        throw new IllegalStateException("Unexpected entity data: " + getEntityData());
+
+        return narrateObject();
     }
 
     @NonNull
-    private AvTimeSpan narrateObject(@NonNull final ObjectData objectData) {
+    private AvTimeSpan narrateObject() {
         final PraedikatMitEinerObjektleerstelle nehmenPraedikat =
-                room.getStoringPlace().getLocationMode().getNehmenPraedikat();
-        if (initialStoryState.lastObjectWas(objectData.getObject())) {
-            if (initialStoryState.lastActionWas(AblegenAction.class)) {
-                n.add(buildStoryStateObjectNachAblegen(objectData));
+                room.storingPlaceComp().getLocationMode().getNehmenPraedikat();
+        if (sc.memoryComp().getLastAction().hasObject(gameObject)) {
+            if (sc.memoryComp().getLastAction().is(Action.Type.ABLEGEN)) {
+                n.add(buildStoryStateObjectNachAblegen());
                 return secs(5);
             }
 
-            final ScStateOfMind scStateOfMind =
-                    db.playerStatsDao().getPlayerStats().getStateOfMind();
+            final Mood mood = sc.feelingsComp().getMood();
 
-            if (initialStoryState.lastActionWas(HochwerfenAction.class) &&
-                    scStateOfMind.isEmotional()) {
+            if (sc.memoryComp().getLastAction().is(Action.Type.HOCHWERFEN) &&
+                    mood.isEmotional()) {
                 n.add(t(StoryState.StructuralElement.PARAGRAPH,
                         nehmenPraedikat
                                 .getDescriptionDuHauptsatz(
-                                        objectData,
-                                        scStateOfMind.getAdverbialeAngabe()))
+                                        getDescription(gameObject, true),
+                                        mood.getAdverbialeAngabe()))
                         .undWartest(
                                 nehmenPraedikat
                                         .duHauptsatzLaesstSichMitNachfolgendemDuHauptsatzZusammenziehen())
+                        .persPronKandidat(gameObject)
                         .dann());
                 return secs(5);
             }
         }
 
         n.add(t(StoryState.StructuralElement.PARAGRAPH,
-                nehmenPraedikat.getDescriptionDuHauptsatz(objectData))
+                nehmenPraedikat.getDescriptionDuHauptsatz(getDescription(gameObject, true)))
                 .undWartest(
                         nehmenPraedikat
                                 .duHauptsatzLaesstSichMitNachfolgendemDuHauptsatzZusammenziehen())
@@ -160,24 +173,31 @@ public class NehmenAction extends AbstractEntityAction {
         return secs(5);
     }
 
-    private StoryStateBuilder buildStoryStateObjectNachAblegen(final ObjectData objectData) {
-        if (initialStoryState.lastObjectWas(objectData.getObject())) {
+    private StoryStateBuilder buildStoryStateObjectNachAblegen() {
+        if (sc.memoryComp().getLastAction().hasObject(gameObject) &&
+                (sc.memoryComp().getLastAction().is(
+                        Action.Type.ABLEGEN, Action.Type.HOCHWERFEN))) {
             return t(StructuralElement.PARAGRAPH,
-                    "Dann nimmst du " + objectData.akk() +
+                    "Dann nimmst du " + getDescription(gameObject).akk() +
                             " erneut")
-                    .undWartest();
+                    .undWartest()
+                    .persPronKandidat(gameObject);
         }
 
         return t(StoryState.StructuralElement.SENTENCE,
-                "Dann nimmst du " + objectData.akk())
-                .undWartest();
+                "Dann nimmst du " + getDescription(gameObject).akk())
+                .undWartest()
+                .persPronKandidat(gameObject);
+
     }
 
 
-    private AvTimeSpan narrateCreature(final CreatureData creatureData) {
-        checkArgument(creatureData.creatureIs(Creatures.FROSCHPRINZ) &&
-                        creatureData.hasState(ERWARTET_VON_SC_EINLOESUNG_SEINES_VERSPRECHENS),
-                "Unexpected creature data: " + creatureData);
+    @NonNull
+    private AvTimeSpan narrateCreature(final LIVGO creature) {
+        checkArgument(creature.is(FROSCHPRINZ) &&
+                        ((IHasStateGO) creature).stateComp()
+                                .hasState(ERWARTET_VON_SC_EINLOESUNG_SEINES_VERSPRECHENS),
+                "Unexpected creature: " + creature);
 
         n.add(alt(
                 t(StructuralElement.PARAGRAPH,
@@ -201,5 +221,15 @@ public class NehmenAction extends AbstractEntityAction {
         ));
 
         return secs(20);
+    }
+
+    @Override
+    protected boolean isDefinitivWiederholung() {
+        return buildMemorizedAction().equals(sc.memoryComp().getLastAction());
+    }
+
+    @NonNull
+    private Action buildMemorizedAction() {
+        return new Action(Action.Type.NEHMEN, gameObject);
     }
 }

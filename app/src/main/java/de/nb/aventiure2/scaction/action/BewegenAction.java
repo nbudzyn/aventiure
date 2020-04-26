@@ -10,14 +10,19 @@ import de.nb.aventiure2.data.database.AvDatabase;
 import de.nb.aventiure2.data.storystate.StoryState;
 import de.nb.aventiure2.data.storystate.StoryState.StructuralElement;
 import de.nb.aventiure2.data.storystate.StoryStateBuilder;
+import de.nb.aventiure2.data.world.alive.ILivingBeingGO;
 import de.nb.aventiure2.data.world.base.GameObject;
-import de.nb.aventiure2.data.world.entity.base.AbstractEntityData;
-import de.nb.aventiure2.data.world.entity.creature.CreatureData;
-import de.nb.aventiure2.data.world.entity.object.ObjectData;
-import de.nb.aventiure2.data.world.invisible.Invisibles;
+import de.nb.aventiure2.data.world.base.GameObjectId;
+import de.nb.aventiure2.data.world.base.IGameObject;
+import de.nb.aventiure2.data.world.description.IDescribableGO;
+import de.nb.aventiure2.data.world.feelings.Mood;
+import de.nb.aventiure2.data.world.gameobjectstate.IHasStateGO;
 import de.nb.aventiure2.data.world.lichtverhaeltnisse.Lichtverhaeltnisse;
-import de.nb.aventiure2.data.world.player.stats.ScStateOfMind;
-import de.nb.aventiure2.data.world.room.RoomKnown;
+import de.nb.aventiure2.data.world.location.ILocatableGO;
+import de.nb.aventiure2.data.world.memory.Action;
+import de.nb.aventiure2.data.world.memory.Known;
+import de.nb.aventiure2.data.world.spatialconnection.ISpatiallyConnectedGO;
+import de.nb.aventiure2.data.world.storingplace.IHasStoringPlaceGO;
 import de.nb.aventiure2.data.world.time.AvTimeSpan;
 import de.nb.aventiure2.german.base.AbstractDescription;
 import de.nb.aventiure2.german.base.DuDescription;
@@ -26,14 +31,17 @@ import de.nb.aventiure2.scaction.action.room.connection.RoomConnection;
 import de.nb.aventiure2.scaction.action.room.connection.RoomConnections;
 
 import static com.google.common.base.Preconditions.checkArgument;
-import static de.nb.aventiure2.data.world.invisible.InvisibleState.BEGONNEN;
+import static de.nb.aventiure2.data.world.gameobjects.GameObjects.DRAUSSEN_VOR_DEM_SCHLOSS;
+import static de.nb.aventiure2.data.world.gameobjects.GameObjects.SCHLOSSFEST;
+import static de.nb.aventiure2.data.world.gameobjects.GameObjects.SCHLOSS_VORHALLE;
+import static de.nb.aventiure2.data.world.gameobjects.GameObjects.SCHLOSS_VORHALLE_TISCH_BEIM_FEST;
+import static de.nb.aventiure2.data.world.gameobjects.GameObjects.WALDWILDNIS_HINTER_DEM_BRUNNEN;
+import static de.nb.aventiure2.data.world.gameobjects.GameObjects.load;
+import static de.nb.aventiure2.data.world.gameobjects.GameObjects.loadDescribableLivingInventory;
+import static de.nb.aventiure2.data.world.gameobjects.GameObjects.loadDescribableNonLivingInventory;
+import static de.nb.aventiure2.data.world.gameobjectstate.GameObjectState.BEGONNEN;
 import static de.nb.aventiure2.data.world.lichtverhaeltnisse.Lichtverhaeltnisse.HELL;
-import static de.nb.aventiure2.data.world.room.Rooms.DRAUSSEN_VOR_DEM_SCHLOSS;
-import static de.nb.aventiure2.data.world.room.Rooms.SCHLOSS_VORHALLE;
-import static de.nb.aventiure2.data.world.room.Rooms.SCHLOSS_VORHALLE_TISCH_BEIM_FEST;
-import static de.nb.aventiure2.data.world.room.Rooms.WALDWILDNIS_HINTER_DEM_BRUNNEN;
 import static de.nb.aventiure2.data.world.time.AvTimeSpan.secs;
-import static de.nb.aventiure2.german.base.AllgDescription.allg;
 import static de.nb.aventiure2.german.base.DuDescription.du;
 import static de.nb.aventiure2.german.base.GermanUtil.capitalize;
 import static de.nb.aventiure2.german.base.GermanUtil.uncapitalize;
@@ -44,7 +52,10 @@ import static de.nb.aventiure2.scaction.action.BewegenAction.NumberOfPossibiliti
 /**
  * Der Spielercharakter bewegt sich in einen anderen Raum.
  */
-public class BewegenAction extends AbstractScAction {
+public class BewegenAction<R extends ISpatiallyConnectedGO & IHasStoringPlaceGO,
+        LOC_DESC extends ILocatableGO & IDescribableGO,
+        LIV extends ILocatableGO & IDescribableGO & ILivingBeingGO>
+        extends AbstractScAction {
     enum NumberOfPossibilities {
         /**
          * Whether this is the only way the SC could take
@@ -61,15 +72,16 @@ public class BewegenAction extends AbstractScAction {
         SEVERAL_WAYS
     }
 
-    private final GameObject oldRoom;
+    private final R oldRoom;
 
     private final RoomConnection roomConnection;
     private final NumberOfPossibilities numberOfPossibilities;
 
-    public static ImmutableList<AbstractScAction> buildActions(
+    public static <R extends ISpatiallyConnectedGO & IHasStoringPlaceGO>
+    ImmutableList<AbstractScAction> buildActions(
             final AvDatabase db,
             final StoryState currentStoryState,
-            final GameObject room) {
+            final R room) {
         final ImmutableList.Builder<AbstractScAction> res = ImmutableList.builder();
 
         final List<RoomConnection> roomConnections =
@@ -79,7 +91,7 @@ public class BewegenAction extends AbstractScAction {
                 calcNumberOfPossibilities(roomConnections.size());
 
         for (final RoomConnection roomConnection : roomConnections) {
-            res.add(new BewegenAction(db, currentStoryState, room,
+            res.add(new BewegenAction<>(db, currentStoryState, room,
                     roomConnection, numberOfPossibilities));
         }
         return res.build();
@@ -102,14 +114,13 @@ public class BewegenAction extends AbstractScAction {
      */
     private BewegenAction(final AvDatabase db,
                           final StoryState initialStoryState,
-                          final GameObject oldRoom,
+                          final R oldRoom,
                           final RoomConnection roomConnection,
                           final NumberOfPossibilities numberOfPossibilities) {
         super(db, initialStoryState);
         this.numberOfPossibilities = numberOfPossibilities;
 
-        checkArgument(roomConnection.getTo() != oldRoom,
-                "newRoom == oldRoom)");
+        checkArgument(!oldRoom.is(roomConnection.getTo()), "newRoom == oldRoom)");
 
         this.oldRoom = oldRoom;
         this.roomConnection = roomConnection;
@@ -131,17 +142,13 @@ public class BewegenAction extends AbstractScAction {
         final Lichtverhaeltnisse lichtverhaeltnisseInNewRoom =
                 getLichtverhaeltnisse(roomConnection.getTo());
 
-        final RoomKnown newRoomKnown = db.roomDao().getKnown(roomConnection.getTo());
+        final ImmutableList<LIV> creaturesInOldRoom = loadDescribableLivingInventory(db, oldRoom);
+        final ImmutableList<LOC_DESC> objectsInNewRoom =
+                loadDescribableNonLivingInventory(db, roomConnection.getTo());
+        final ImmutableList<LIV> creaturesInNewRoom =
+                loadDescribableLivingInventory(db, roomConnection.getTo());
 
-        final List<CreatureData> creaturesInOldRoom =
-                db.creatureDataDao().getCreaturesInRoom(oldRoom);
-
-        final List<ObjectData> objectsInNewRoom =
-                db.objectDataDao().getObjectsInRoom(roomConnection.getTo());
-        final List<CreatureData> creaturesInNewRoom =
-                db.creatureDataDao().getCreaturesInRoom(roomConnection.getTo());
-
-        AvTimeSpan elapsedTime = narrateRoomOnly(newRoomKnown, lichtverhaeltnisseInNewRoom);
+        AvTimeSpan elapsedTime = narrateRoomOnly(lichtverhaeltnisseInNewRoom);
 
         if (scWirdMitEssenKonfrontiert()) {
             elapsedTime = elapsedTime.plus(scAutomaticReactions
@@ -159,20 +166,25 @@ public class BewegenAction extends AbstractScAction {
             elapsedTime = elapsedTime.plus(narrateObjects(objectsInNewRoom));
         }
 
-        db.playerLocationDao().setRoom(roomConnection.getTo());
+        sc.locationComp().setLocation(roomConnection.getTo());
+        sc.memoryComp().setLastAction(buildMemorizedAction());
 
-        setRoomAndObjectsKnown(objectsInNewRoom, lichtverhaeltnisseInNewRoom,
-                newRoomKnown);
+        setRoomAndObjectsKnown(objectsInNewRoom, lichtverhaeltnisseInNewRoom);
 
-        return elapsedTime.plus(creatureReactionsCoordinator
-                .onEnterRoom(oldRoom, roomConnection.getTo(), creaturesInNewRoom));
+        final GameObject toGameObject = load(db, roomConnection.getTo());
+        if (toGameObject instanceof IHasStoringPlaceGO) {
+            elapsedTime = elapsedTime.plus(creatureReactionsCoordinator
+                    .onEnterRoom(oldRoom,
+                            (IHasStoringPlaceGO) toGameObject, creaturesInNewRoom));
+
+        }
+        return elapsedTime;
     }
 
     private boolean scWirdMitEssenKonfrontiert() {
-        final GameObject newRoom = roomConnection.getTo();
+        final GameObject newRoom = load(db, roomConnection.getTo());
 
-        if (db.invisibleDataDao()
-                .getInvisible(Invisibles.SCHLOSSFEST).getState() == BEGONNEN) {
+        if (((IHasStateGO) load(db, SCHLOSSFEST)).stateComp().hasState(BEGONNEN)) {
             if (oldRoom.is(DRAUSSEN_VOR_DEM_SCHLOSS) &&
                     newRoom.is(SCHLOSS_VORHALLE)) {
                 return true;
@@ -195,67 +207,140 @@ public class BewegenAction extends AbstractScAction {
      * ähnlich.
      */
     private void updatePlayerStateOfMind() {
-        final ScStateOfMind scStateOfMind =
-                db.playerStatsDao().getPlayerStats().getStateOfMind();
+        final Mood mood = sc.feelingsComp().getMood();
         if (oldRoom.is(SCHLOSS_VORHALLE)
-                && roomConnection.getTo().is(DRAUSSEN_VOR_DEM_SCHLOSS)
-                && scStateOfMind == ScStateOfMind.ANGESPANNT) {
-            db.playerStatsDao().setStateOfMind(ScStateOfMind.NEUTRAL);
-        } else if (scStateOfMind == ScStateOfMind.ETWAS_GEKNICKT) {
-            db.playerStatsDao().setStateOfMind(ScStateOfMind.NEUTRAL);
+                && roomConnection.getTo().equals(DRAUSSEN_VOR_DEM_SCHLOSS)
+                && mood == Mood.ANGESPANNT) {
+            sc.feelingsComp().setMood(Mood.NEUTRAL);
+        } else if (mood == Mood.ETWAS_GEKNICKT) {
+            sc.feelingsComp().setMood(Mood.NEUTRAL);
         }
     }
 
     @NonNull
-    private AvTimeSpan narrateObjects(final List<ObjectData> objectsInNewRoom) {
+    private AvTimeSpan narrateObjects(final List<? extends IDescribableGO> objectsInNewRoom) {
         n.add(t(StructuralElement.SENTENCE,
                 buildObjectsInRoomDescription(objectsInNewRoom))
-                .letztesObject(objectsInNewRoom.get(objectsInNewRoom.size() - 1).getObject()));
+                .persPronKandidat(objectsInNewRoom.get(objectsInNewRoom.size() - 1)));
 
         return secs(objectsInNewRoom.size() * 2);
     }
 
-    private AvTimeSpan narrateRoomOnly(final RoomKnown newRoomKnown,
-                                       final Lichtverhaeltnisse lichtverhaeltnisseInNewRoom) {
-        final AbstractDescription description =
-                getMovementDescription(initialStoryState, newRoomKnown,
-                        lichtverhaeltnisseInNewRoom);
-        n.add(buildNewStoryStateRoomOnly(initialStoryState, description));
+    private AvTimeSpan narrateRoomOnly(final Lichtverhaeltnisse lichtverhaeltnisseInNewRoom) {
+        final AbstractDescription description = getMovementDescription(initialStoryState,
+                lichtverhaeltnisseInNewRoom);
+
+        if (description instanceof DuDescription && initialStoryState
+                .allowsAdditionalDuSatzreihengliedOhneSubjekt() && sc.memoryComp().getLastAction()
+                .is(Action.Type.BEWEGEN) &&
+                lastRoomWasNewRoom(initialStoryState)) {
+            n.add(t(StructuralElement.WORD,
+                    ", besinnst dich aber und "
+                            + ((DuDescription) description)
+                            .getDescriptionSatzanschlussOhneSubjekt())
+                    .dann(description.dann()));
+
+            return description.getTimeElapsed();
+        }
+
+        if (description instanceof DuDescription) {
+            final DuDescription duDescription =
+                    (DuDescription) description;
+
+            if (initialStoryState.allowsAdditionalDuSatzreihengliedOhneSubjekt()) {
+                n.add(duDescription);
+                return duDescription.getTimeElapsed();
+            }
+        }
+
+        final StoryStateBuilder result;
+        if (sc.memoryComp().lastActionWas(Action.Type.BEWEGEN, (GameObjectId) null)) {
+            final StoryStateBuilder result1;
+            if (lastRoomWasNewRoom(initialStoryState) &&
+                    numberOfPossibilities != NumberOfPossibilities.ONLY_WAY) {
+                if (sc.memoryComp().getLastAction().is(Action.Type.BEWEGEN)) {
+                    final ImmutableList.Builder<StoryStateBuilder> alt = ImmutableList.builder();
+                    alt.add(t(StructuralElement.SENTENCE,
+                            "Was willst du hier eigentlich? "
+                                    + description.getDescriptionHauptsatz()));
+                    if (description instanceof DuDescription) {
+                        alt.add(t(StructuralElement.SENTENCE,
+                                "Was willst du hier eigentlich? "
+                                        + ((DuDescription) description)
+                                        .getDescriptionHauptsatzMitSpeziellemVorfeld()));
+                    }
+
+                    alt.add(t(StructuralElement.SENTENCE,
+                            "Aber dir kommt ein Gedanke und "
+                                    + uncapitalize(description.getDescriptionHauptsatz())));
+
+
+                    result1 = alt(alt);
+                    n.add(result1);
+                } else {
+                    result1 = t(StructuralElement.PARAGRAPH,
+                            "Du schaust dich nur kurz um, dann "
+                                    + uncapitalize(description.getDescriptionHauptsatz()))
+                            .komma(description.kommaStehtAus())
+                            .undWartest(description.allowsAdditionalDuSatzreihengliedOhneSubjekt());
+                    n.add(result1);
+                }
+
+            } else if (initialStoryState.dann()) {
+                // "Du stehst wieder vor dem Schloss; dann gehst du wieder hinein in das Schloss."
+                result1 = t(StructuralElement.WORD,
+                        "; " +
+                                uncapitalize(
+                                        description
+                                                .getDescriptionHauptsatzMitKonjunktionaladverbWennNoetig(
+                                                        "dann")));
+
+                n.add(result1);
+            } else {
+                n.add(StructuralElement.PARAGRAPH, description);
+            }
+        } else {
+            result = buildNewStoryStateNewRoomOnlyNewSentenceLastActionNichtBewegen(
+                    initialStoryState,
+                    description);
+
+            n.add(result);
+        }
 
         return description.getTimeElapsed();
     }
 
     private AbstractDescription getMovementDescription(final StoryState currentStoryState,
-                                                       final RoomKnown newRoomKnown,
                                                        final Lichtverhaeltnisse
                                                                lichtverhaeltnisseInNewRoom) {
+        final Known newRoomKnown = sc.memoryComp().getKnown(roomConnection.getTo());
+
         final AbstractDescription standardDescription =
                 roomConnection.getDescription(newRoomKnown, lichtverhaeltnisseInNewRoom);
 
-        if (newRoomKnown == RoomKnown.KNOWN_FROM_LIGHT) {
+        if (newRoomKnown == Known.KNOWN_FROM_LIGHT) {
             if (numberOfPossibilities == NumberOfPossibilities.ONLY_WAY) {
-                if (db.playerStatsDao().getPlayerStats().getStateOfMind() ==
-                        ScStateOfMind.VOLLER_FREUDE &&
+                if (sc.feelingsComp().hasMood(Mood.VOLLER_FREUDE) &&
                         lichtverhaeltnisseInNewRoom == HELL &&
                         currentStoryState.allowsAdditionalDuSatzreihengliedOhneSubjekt() &&
-                        currentStoryState.lastActionWas(NehmenAction.class)) {
-                    return du("springst", "damit fort",
+                        sc.memoryComp().getLastAction().is(Action.Type.NEHMEN)) {
+                    return du("springst", "damit fort", "damit",
                             false, true,
                             true, standardDescription.getTimeElapsed().times(0.8));
                 }
 
-                if (db.playerStatsDao().getPlayerStats().getStateOfMind() ==
-                        ScStateOfMind.UNTROESTLICH) {
-                    return allg("Tieftraurig trottest du von dannen",
+                if (sc.feelingsComp().hasMood(Mood.UNTROESTLICH)) {
+                    return du("trottest", "tieftraurig von dannen",
+                            "tieftraurig",
                             false, true,
                             false, standardDescription.getTimeElapsed().times(2));
                 }
             } else if (numberOfPossibilities == NumberOfPossibilities.ONE_IN_ONE_OUT
-                    && currentStoryState.lastActionWas(BewegenAction.class) &&
+                    && sc.memoryComp().getLastAction().is(Action.Type.BEWEGEN) &&
                     !lastRoomWasNewRoom(currentStoryState) &&
-                    db.playerStatsDao().getPlayerStats().getStateOfMind() ==
-                            ScStateOfMind.VOLLER_FREUDE &&
-                    lichtverhaeltnisseInNewRoom == HELL &&
+                    sc.feelingsComp().hasMood(Mood.VOLLER_FREUDE) &&
+                    lichtverhaeltnisseInNewRoom ==
+                            HELL &&
                     currentStoryState.allowsAdditionalDuSatzreihengliedOhneSubjekt()) {
                 return du("eilst", "weiter",
                         false, true,
@@ -264,89 +349,6 @@ public class BewegenAction extends AbstractScAction {
         }
 
         return standardDescription;
-    }
-
-    /**
-     * Gets the description for entering the new room.
-     */
-    private StoryStateBuilder buildNewStoryStateRoomOnly(
-            final StoryState currentStoryState,
-            final AbstractDescription description) {
-        if (description instanceof DuDescription) {
-            final DuDescription duDescription =
-                    (DuDescription) description;
-
-            if (currentStoryState.allowsAdditionalDuSatzreihengliedOhneSubjekt()) {
-                return buildNewStoryStateSatzanschluss(currentStoryState, duDescription);
-            }
-        }
-
-        return buildNewStoryStateRoomOnlyNewSentence(currentStoryState, description);
-    }
-
-    private StoryStateBuilder buildNewStoryStateSatzanschluss(
-            @NonNull final StoryState currentStoryState, final DuDescription duDesc) {
-        if (currentStoryState.lastActionWas(BewegenAction.class) &&
-                lastRoomWasNewRoom(currentStoryState)) {
-            return t(StructuralElement.WORD,
-                    ", besinnst dich aber und "
-                            + duDesc.getDescriptionSatzanschlussOhneSubjekt())
-                    .dann(duDesc.dann());
-        }
-
-        return t(StoryState.StructuralElement.WORD,
-                "und " +
-                        duDesc.getDescriptionSatzanschlussOhneSubjekt())
-                .komma(duDesc.kommaStehtAus())
-                .dann(duDesc.dann());
-    }
-
-    private StoryStateBuilder buildNewStoryStateRoomOnlyNewSentence(
-            @NonNull final StoryState currentStoryState, final AbstractDescription desc) {
-        if (currentStoryState.lastActionWas(BewegenAction.class)) {
-            return buildNewStoryStateNewRoomOnlyNewSentenceLastActionBewegen(currentStoryState,
-                    desc);
-        }
-
-        return buildNewStoryStateNewRoomOnlyNewSentenceLastActionNichtBewegen(currentStoryState,
-                desc);
-    }
-
-    private StoryStateBuilder buildNewStoryStateNewRoomOnlyNewSentenceLastActionBewegen(
-            final StoryState currentStoryState, final AbstractDescription desc) {
-        if (lastRoomWasNewRoom(currentStoryState) &&
-                numberOfPossibilities != NumberOfPossibilities.ONLY_WAY) {
-            if (currentStoryState.noLastObject()) {
-                return alt(
-                        t(StoryState.StructuralElement.SENTENCE,
-                                "Was willst du hier eigentlich? "
-                                        + desc.getDescriptionHauptsatz()),
-                        t(StoryState.StructuralElement.SENTENCE,
-                                "Aber dir kommt ein Gedanke und "
-                                        + uncapitalize(desc.getDescriptionHauptsatz())));
-            }
-
-            return t(StoryState.StructuralElement.PARAGRAPH,
-                    "Du schaust dich nur kurz um, dann "
-                            + uncapitalize(desc.getDescriptionHauptsatz()))
-                    .komma(desc.kommaStehtAus())
-                    .undWartest(desc.allowsAdditionalDuSatzreihengliedOhneSubjekt());
-        }
-
-        if (currentStoryState.dann()) {
-            // "Du stehst wieder vor dem Schloss; dann gehst du wieder hinein in das Schloss."
-            return t(StoryState.StructuralElement.WORD,
-                    "; " +
-                            uncapitalize(
-                                    desc.getDescriptionHauptsatzMitKonjunktionaladverbWennNoetig(
-                                            "dann")));
-        }
-
-        return t(StoryState.StructuralElement.PARAGRAPH,
-                desc.getDescriptionHauptsatz())
-                .komma(desc.kommaStehtAus())
-                .undWartest(desc.allowsAdditionalDuSatzreihengliedOhneSubjekt())
-                .dann(desc.dann());
     }
 
     private boolean lastRoomWasNewRoom(@NonNull final StoryState currentStoryState) {
@@ -363,18 +365,30 @@ public class BewegenAction extends AbstractScAction {
                     .dann(false);
         }
 
-        return t(StoryState.StructuralElement.PARAGRAPH,
+        final ImmutableList.Builder<StoryStateBuilder> alt = ImmutableList.builder();
+        alt.add(t(StoryState.StructuralElement.PARAGRAPH,
                 desc.getDescriptionHauptsatz())
                 .komma(desc.kommaStehtAus())
                 .undWartest(desc.allowsAdditionalDuSatzreihengliedOhneSubjekt())
-                .dann(desc.dann());
+                .dann(desc.dann()));
+
+        if (desc instanceof DuDescription) {
+            alt.add(t(StoryState.StructuralElement.PARAGRAPH,
+                    ((DuDescription) desc).getDescriptionHauptsatzMitSpeziellemVorfeld())
+                    .komma(desc.kommaStehtAus())
+                    .undWartest(desc.allowsAdditionalDuSatzreihengliedOhneSubjekt())
+                    .dann(desc.dann()));
+        }
+
+        return alt(alt);
     }
 
     /**
      * @return Something similar to <code>Auf dem Boden liegt eine goldene Kugel.</code>
      */
     @NonNull
-    private String buildObjectsInRoomDescription(@NonNull final List<ObjectData> objectsInRoom) {
+    private String buildObjectsInRoomDescription(
+            @NonNull final List<? extends IDescribableGO> objectsInRoom) {
         return buildObjectInRoomDescriptionPrefix(objectsInRoom.size())
                 + " "
                 + buildEntitiesInRoomDescriptionList(objectsInRoom);
@@ -386,7 +400,9 @@ public class BewegenAction extends AbstractScAction {
     @NonNull
     private String buildObjectInRoomDescriptionPrefix(final int numberOfObjects) {
         final String res =
-                capitalize(roomConnection.getTo().getStoringPlace().getLocationMode().getWo());
+                capitalize(
+                        ((IHasStoringPlaceGO) load(db, roomConnection.getTo()))
+                                .storingPlaceComp().getLocationMode().getWo());
 
         if (numberOfObjects == 1) {
             return res + " liegt";
@@ -399,11 +415,11 @@ public class BewegenAction extends AbstractScAction {
      * @return Something similar to <code>der hässliche Frosch</code>
      */
     @NonNull
-    private static String buildEntitiesInRoomDescriptionList(
-            @NonNull final List<? extends AbstractEntityData> entities) {
+    private String buildEntitiesInRoomDescriptionList(
+            @NonNull final List<? extends IDescribableGO> entities) {
         final StringBuilder res = new StringBuilder();
         for (int i = 0; i < entities.size(); i++) {
-            res.append(entities.get(i).getDescription(false).nom());
+            res.append(getDescription(entities.get(i), false).nom());
             if (i == entities.size() - 2) {
                 // one before the last
                 res.append(" und ");
@@ -418,6 +434,16 @@ public class BewegenAction extends AbstractScAction {
     }
 
     @Override
+    protected boolean isDefinitivWiederholung() {
+        return buildMemorizedAction().equals(sc.memoryComp().getLastAction());
+    }
+
+    @NonNull
+    private static Action buildMemorizedAction() {
+        return new Action(Action.Type.BEWEGEN, (IGameObject) null);
+    }
+
+    @Override
     protected StoryStateBuilder t(
             @NonNull final StructuralElement startsNew,
             @NonNull final String text) {
@@ -426,19 +452,14 @@ public class BewegenAction extends AbstractScAction {
     }
 
     private void setRoomAndObjectsKnown(
-            @NonNull final List<ObjectData> objectsInNewRoom,
-            final Lichtverhaeltnisse lichtverhaeltnisse, final RoomKnown newRoomKnownOldValue) {
-        db.roomDao().setKnown(roomConnection.getTo(),
-                getNewKnown(newRoomKnownOldValue, lichtverhaeltnisse));
+            @NonNull final List<? extends IGameObject> objectsInNewRoom,
+            final Lichtverhaeltnisse lichtverhaeltnisse) {
+        final Known known = Known.getKnown(lichtverhaeltnisse);
 
-        for (final ObjectData objectInNewRoom : objectsInNewRoom) {
-            db.objectDataDao().setKnown(objectInNewRoom.getObject());
+        sc.memoryComp().upgradeKnown(roomConnection.getTo(), known);
+
+        for (final IGameObject objectInNewRoom : objectsInNewRoom) {
+            sc.memoryComp().upgradeKnown(objectInNewRoom, known);
         }
-    }
-
-    @NonNull
-    private static RoomKnown getNewKnown(final RoomKnown oldKnown,
-                                         final Lichtverhaeltnisse lichtverhaeltnisse) {
-        return RoomKnown.max(oldKnown, RoomKnown.getKnown(lichtverhaeltnisse));
     }
 }

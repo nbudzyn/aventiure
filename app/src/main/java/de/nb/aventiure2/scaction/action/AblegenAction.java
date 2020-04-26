@@ -8,12 +8,13 @@ import java.util.Collection;
 
 import de.nb.aventiure2.data.database.AvDatabase;
 import de.nb.aventiure2.data.storystate.StoryState;
-import de.nb.aventiure2.data.world.base.GameObject;
-import de.nb.aventiure2.data.world.entity.base.AbstractEntityData;
-import de.nb.aventiure2.data.world.entity.creature.CreatureData;
-import de.nb.aventiure2.data.world.entity.creature.Creatures;
-import de.nb.aventiure2.data.world.entity.object.ObjectData;
-import de.nb.aventiure2.data.world.player.stats.ScStateOfMind;
+import de.nb.aventiure2.data.world.alive.ILivingBeingGO;
+import de.nb.aventiure2.data.world.description.IDescribableGO;
+import de.nb.aventiure2.data.world.feelings.Mood;
+import de.nb.aventiure2.data.world.location.ILocatableGO;
+import de.nb.aventiure2.data.world.memory.Action;
+import de.nb.aventiure2.data.world.memory.Known;
+import de.nb.aventiure2.data.world.storingplace.IHasStoringPlaceGO;
 import de.nb.aventiure2.data.world.time.AvTimeSpan;
 import de.nb.aventiure2.german.base.Nominalphrase;
 import de.nb.aventiure2.german.praedikat.PraedikatMitEinerObjektleerstelle;
@@ -21,54 +22,52 @@ import de.nb.aventiure2.scaction.AbstractScAction;
 
 import static com.google.common.base.Preconditions.checkArgument;
 import static de.nb.aventiure2.data.storystate.StoryState.StructuralElement.PARAGRAPH;
-import static de.nb.aventiure2.data.world.entity.creature.CreatureState.ERWARTET_VON_SC_EINLOESUNG_SEINES_VERSPRECHENS;
-import static de.nb.aventiure2.data.world.entity.creature.CreatureState.ERWARTET_VON_SC_EINLOESUNG_SEINES_VERSPRECHENS_VON_SC_GETRAGEN;
-import static de.nb.aventiure2.data.world.entity.creature.Creatures.FROSCHPRINZ;
+import static de.nb.aventiure2.data.world.gameobjects.GameObjects.FROSCHPRINZ;
 import static de.nb.aventiure2.data.world.time.AvTimeSpan.secs;
+import static de.nb.aventiure2.german.base.DuDescription.du;
 import static de.nb.aventiure2.german.praedikat.VerbSubjObj.ABSETZEN;
 import static de.nb.aventiure2.german.praedikat.VerbSubjObj.HINLEGEN;
 
 /**
  * Der Benutzer legt einen Gegenstand ab.
  */
-public class AblegenAction extends AbstractEntityAction {
-    private final GameObject room;
+public class AblegenAction
+        <GO extends IDescribableGO & ILocatableGO,
+                LIVGO extends IDescribableGO & ILocatableGO & ILivingBeingGO>
+        extends AbstractScAction {
+    private final IHasStoringPlaceGO room;
+    @NonNull
+    private final GO gameObject;
 
-    public static Collection<AblegenAction> buildObjectActions(
-            final AvDatabase db, final StoryState initialStoryState, final GameObject room,
-            final ObjectData objectData) {
-        return ImmutableList.of(new AblegenAction(db, initialStoryState, objectData, room));
-    }
-
-    public static Collection<AbstractScAction> buildCreatureActions(
-            final AvDatabase db,
-            final StoryState initialStoryState, final GameObject room,
-            final CreatureData creatureData) {
-        final ImmutableList.Builder<AbstractScAction> res = ImmutableList.builder();
-        if (creatureData.creatureIs(FROSCHPRINZ) &&
-                creatureData
-                        .hasState(ERWARTET_VON_SC_EINLOESUNG_SEINES_VERSPRECHENS_VON_SC_GETRAGEN)) {
-            res.add(new AblegenAction(db, initialStoryState, creatureData, room));
+    public static <GO extends IDescribableGO & ILocatableGO>
+    Collection<AblegenAction> buildActions(
+            final AvDatabase db, final StoryState initialStoryState,
+            final GO gameObject,
+            final IHasStoringPlaceGO room) {
+        if (gameObject instanceof ILivingBeingGO &&
+                !(gameObject.is(FROSCHPRINZ))) {
+            return ImmutableList.of();
         }
-        return res.build();
-    }
 
+        return ImmutableList.of(new AblegenAction(db, initialStoryState, gameObject, room));
+    }
 
     private AblegenAction(final AvDatabase db,
                           final StoryState initialStoryState,
-                          final AbstractEntityData entityData,
-                          final GameObject room) {
-        super(db, initialStoryState, entityData);
+                          final GO gameObject,
+                          final IHasStoringPlaceGO room) {
+        super(db, initialStoryState);
         this.room = room;
+        this.gameObject = gameObject;
     }
 
     @Override
     @NonNull
     public String getName() {
         final PraedikatMitEinerObjektleerstelle praedikat =
-                getEntityData() instanceof CreatureData ? ABSETZEN : HINLEGEN;
+                gameObject instanceof ILivingBeingGO ? ABSETZEN : HINLEGEN;
 
-        return praedikat.mitObj(getEntityData()).getDescriptionInfinitiv();
+        return praedikat.mitObj(getDescription(gameObject, true)).getDescriptionInfinitiv();
     }
 
     @Override
@@ -79,59 +78,50 @@ public class AblegenAction extends AbstractEntityAction {
     @Override
     public AvTimeSpan narrateAndDo() {
         AvTimeSpan timeElapsed = narrate();
-        letGoAndAddToRoom();
+        letGoAndAddToRoomCreatureOrObject();
 
         timeElapsed =
-                timeElapsed.plus(creatureReactionsCoordinator.onAblegen(room, getEntityData()));
+                timeElapsed.plus(creatureReactionsCoordinator.onAblegen(room, gameObject));
 
         return timeElapsed;
     }
 
-    private void letGoAndAddToRoom() {
-        if (getEntityData() instanceof ObjectData) {
-            letGoAndAddToRoom((ObjectData) getEntityData());
-        } else if (getEntityData() instanceof CreatureData) {
-            letGoAndAddToRoom((CreatureData) getEntityData());
+    private void letGoAndAddToRoomCreatureOrObject() {
+        if (gameObject instanceof ILivingBeingGO) {
+            letGoAndAddToRoomCreature((LIVGO) gameObject);
         } else {
-            throw new IllegalStateException("Unexpected entity data: " + getEntityData());
+            letGoAndAddToRoom();
         }
     }
 
-    private void letGoAndAddToRoom(final ObjectData objectData) {
-        db.playerInventoryDao().letGo(objectData.getObject());
-        db.objectDataDao().setRoom(objectData.getObject(), room);
+    private void letGoAndAddToRoomCreature(final LIVGO creature) {
+        checkArgument(creature.is(FROSCHPRINZ),
+                "Unexpected creature: " + creature);
+
+        letGoAndAddToRoom();
+        sc.feelingsComp().setMood(Mood.NEUTRAL);
     }
 
-    private void letGoAndAddToRoom(final CreatureData creatureData) {
-        checkArgument(creatureData.creatureIs(FROSCHPRINZ) &&
-                        creatureData.hasState(
-                                ERWARTET_VON_SC_EINLOESUNG_SEINES_VERSPRECHENS_VON_SC_GETRAGEN),
-                "Unexpected creature data: " + creatureData);
-
-        db.creatureDataDao().setRoom(FROSCHPRINZ, room);
-        db.creatureDataDao()
-                .setState(FROSCHPRINZ,
-                        ERWARTET_VON_SC_EINLOESUNG_SEINES_VERSPRECHENS);
-        db.playerStatsDao().setStateOfMind(ScStateOfMind.NEUTRAL);
+    private void letGoAndAddToRoom() {
+        sc.memoryComp().upgradeKnown(gameObject, Known.getKnown(getLichtverhaeltnisse(room)));
+        gameObject.locationComp().setLocation(room);
+        sc.memoryComp().setLastAction(buildMemorizedAction());
     }
 
     private AvTimeSpan narrate() {
-        if (getEntityData() instanceof ObjectData) {
-            return narrateObject((ObjectData) getEntityData());
+        if (gameObject instanceof ILivingBeingGO) {
+            return narrateCreature((LIVGO) gameObject);
         }
-        if (getEntityData() instanceof CreatureData) {
-            return narrateCreature((CreatureData) getEntityData());
-        }
-        throw new IllegalStateException("Unexpected entity data: " + getEntityData());
+
+        return narrateObject();
     }
 
-
-    private AvTimeSpan narrateObject(final ObjectData objectData) {
-        final Nominalphrase objDesc = objectData.getDescription(false);
+    private AvTimeSpan narrateObject() {
+        final Nominalphrase objDesc = getDescription(gameObject, false);
 
         if (initialStoryState.allowsAdditionalDuSatzreihengliedOhneSubjekt()) {
-            if (initialStoryState.lastObjectWas(objectData.getObject())) {
-                if (initialStoryState.lastActionWas(NehmenAction.class)) {
+            if (initialStoryState.persPronKandidatIs(gameObject)) {
+                if (sc.memoryComp().lastActionWas(Action.Type.NEHMEN, gameObject)) {
                     n.add(t(StoryState.StructuralElement.WORD,
                             "- und legst "
                                     + objDesc.persPron().akk()
@@ -139,68 +129,79 @@ public class AblegenAction extends AbstractEntityAction {
                     return secs(3);
                 }
 
-                n.add(t(StoryState.StructuralElement.WORD,
-                        ", dann legst du sie hin")
-                        .undWartest());
-                return secs(5);
-            }
+                if (sc.memoryComp().getLastAction().hasObject(gameObject)) {
+                    n.add(t(StoryState.StructuralElement.WORD,
+                            ", dann legst du "
+                                    + objDesc.persPron().akk()
+                                    + " hin")
+                            .undWartest());
+                    return secs(5);
+                }
 
-            String text = "und legst " + objDesc.akk();
-            if (initialStoryState.lastActionWas(BewegenAction.class)) {
-                text += " dort";
-            }
+                String text = "und legst " + objDesc.akk();
+                if (sc.memoryComp().getLastAction().is(Action.Type.BEWEGEN)) {
+                    text += " dort";
+                }
 
-            text += " hin";
+                text += " hin";
 
-            n.add(t(StoryState.StructuralElement.WORD, text));
-            return secs(3);
-        }
-
-        if (initialStoryState.lastActionWas(NehmenAction.class)) {
-            if (initialStoryState.lastObjectWas(objectData.getObject())) {
-                n.add(t(StoryState.StructuralElement.PARAGRAPH,
-                        "Du legst " + objDesc.akk() + " wieder hin")
-                        .undWartest()
-                        .dann());
-                return secs(5);
+                n.add(t(StoryState.StructuralElement.WORD, text));
+                return secs(3);
             }
         }
 
-        n.add(t(StoryState.StructuralElement.PARAGRAPH,
-                "Du legst " + objDesc.akk() + " hin")
-                .undWartest()
-                .dann());
+        if (sc.memoryComp().lastActionWas(Action.Type.NEHMEN, gameObject)) {
+            return n.add(StoryState.StructuralElement.PARAGRAPH,
+                    du("legst", objDesc.akk() + " wieder hin",
+                            false,
+                            true,
+                            true,
+                            secs(5)));
+        }
 
-        return secs(3);
+        return n.add(StoryState.StructuralElement.PARAGRAPH,
+                du("legst", objDesc.akk() + " hin",
+                        false,
+                        true,
+                        true,
+                        secs(3)));
     }
 
-    private AvTimeSpan narrateCreature(final CreatureData creatureData) {
-        checkArgument(creatureData.creatureIs(Creatures.FROSCHPRINZ) &&
-                        creatureData
-                                .hasState(ERWARTET_VON_SC_EINLOESUNG_SEINES_VERSPRECHENS_VON_SC_GETRAGEN),
-                "Unexpected creature data: " + creatureData);
+    private AvTimeSpan narrateCreature(final LIVGO creature) {
+        checkArgument(creature.is(FROSCHPRINZ),
+                "Unexpected creature data: " + creature);
 
         n.add(alt(
                 t(StoryState.StructuralElement.PARAGRAPH,
                         "Du wühlst in deiner Tasche und auf einmal schauert's dich und "
                                 + "der nasse Frosch sitzt in deiner Hand. Schnell "
-                                + room.getStoringPlace().getLocationMode().getWohin()
+                                + room.storingPlaceComp().getLocationMode().getWohin()
                                 + " mit ihm!")
                         .dann()
                         .beendet(PARAGRAPH),
                 t(StoryState.StructuralElement.PARAGRAPH,
                         "Du schüttest deine Tasche aus, bis der Frosch endlich " +
-                                room.getStoringPlace().getLocationMode().getWohin() +
+                                room.storingPlaceComp().getLocationMode().getWohin() +
                                 " fällt. Puh.")
                         .dann()
                         .beendet(PARAGRAPH),
                 t(StoryState.StructuralElement.PARAGRAPH,
                         "Du wühlst in deiner Tasche. Da quakt es erbost, auf einmal "
                                 + "springt der Fosch heraus und direkt "
-                                + room.getStoringPlace().getLocationMode().getWohin()
+                                + room.storingPlaceComp().getLocationMode().getWohin()
                 )
         ));
 
         return secs(7);
+    }
+
+    @Override
+    protected boolean isDefinitivWiederholung() {
+        return buildMemorizedAction().equals(sc.memoryComp().getLastAction());
+    }
+
+    @NonNull
+    private Action buildMemorizedAction() {
+        return new Action(Action.Type.ABLEGEN, gameObject);
     }
 }

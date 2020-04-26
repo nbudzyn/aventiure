@@ -1,26 +1,28 @@
 package de.nb.aventiure2.scaction.action.invisible.reaction;
 
+import androidx.annotation.Nullable;
+
 import de.nb.aventiure2.data.database.AvDatabase;
-import de.nb.aventiure2.data.storystate.IPlayerAction;
-import de.nb.aventiure2.data.world.base.GameObject;
-import de.nb.aventiure2.data.world.player.stats.ScStateOfMind;
+import de.nb.aventiure2.data.world.base.IGameObject;
+import de.nb.aventiure2.data.world.feelings.Mood;
+import de.nb.aventiure2.data.world.gameobjectstate.IHasStateGO;
 import de.nb.aventiure2.data.world.time.AvDateTime;
 import de.nb.aventiure2.data.world.time.AvTimeSpan;
 
 import static de.nb.aventiure2.data.storystate.StoryState.StructuralElement.PARAGRAPH;
-import static de.nb.aventiure2.data.world.invisible.InvisibleState.BEGONNEN;
-import static de.nb.aventiure2.data.world.invisible.Invisibles.COUNTER_ID_VOR_DEM_SCHLOSS_SCHLOSSFEST_KNOWN;
-import static de.nb.aventiure2.data.world.invisible.Invisibles.SCHLOSSFEST;
-import static de.nb.aventiure2.data.world.invisible.Invisibles.SCHLOSSFEST_BEGINN_DATE_TIME;
-import static de.nb.aventiure2.data.world.room.Rooms.DRAUSSEN_VOR_DEM_SCHLOSS;
+import static de.nb.aventiure2.data.world.gameobjects.GameObjects.COUNTER_ID_VOR_DEM_SCHLOSS_SCHLOSSFEST_KNOWN;
+import static de.nb.aventiure2.data.world.gameobjects.GameObjects.DRAUSSEN_VOR_DEM_SCHLOSS;
+import static de.nb.aventiure2.data.world.gameobjects.GameObjects.SCHLOSSFEST;
+import static de.nb.aventiure2.data.world.gameobjects.GameObjects.SCHLOSSFEST_BEGINN_DATE_TIME;
+import static de.nb.aventiure2.data.world.gameobjectstate.GameObjectState.BEGONNEN;
 import static de.nb.aventiure2.data.world.time.AvDateTime.isWithin;
 import static de.nb.aventiure2.data.world.time.AvTimeSpan.mins;
 import static de.nb.aventiure2.data.world.time.AvTimeSpan.noTime;
 
-class SchlossfestReactions extends AbstractInvisibleReactions {
-    SchlossfestReactions(final AvDatabase db,
-                         final Class<? extends IPlayerAction> playerActionClass) {
-        super(db, playerActionClass);
+class SchlossfestReactions
+        extends AbstractInvisibleReactions<IHasStateGO> {
+    SchlossfestReactions(final AvDatabase db) {
+        super(db, SCHLOSSFEST);
     }
 
     @Override
@@ -35,7 +37,11 @@ class SchlossfestReactions extends AbstractInvisibleReactions {
     }
 
     private AvTimeSpan schlossfestBeginnt() {
-        final GameObject currentRoom = db.playerLocationDao().getPlayerLocation().getRoom();
+        final @Nullable IGameObject currentRoom = sc.locationComp().getLocation();
+
+        if (currentRoom == null) {
+            return noTime();
+        }
 
         final AvTimeSpan timeElapsed;
         if (currentRoom.is(DRAUSSEN_VOR_DEM_SCHLOSS)) {
@@ -52,8 +58,8 @@ class SchlossfestReactions extends AbstractInvisibleReactions {
             timeElapsed = noTime();  // Passiert nebenher und braucht KEINE zusätzliche Zeit
         }
 
-        db.playerStatsDao().setStateOfMind(ScStateOfMind.NEUTRAL);
-        db.invisibleDataDao().setState(SCHLOSSFEST, BEGONNEN);
+        sc.feelingsComp().setMood(Mood.NEUTRAL);
+        getReactor().stateComp().setState(BEGONNEN);
         return timeElapsed;
     }
 }
