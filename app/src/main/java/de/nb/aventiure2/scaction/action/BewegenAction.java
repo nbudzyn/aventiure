@@ -238,7 +238,7 @@ public class BewegenAction<R extends ISpatiallyConnectedGO & IHasStoringPlaceGO,
                     ", besinnst dich aber und "
                             + ((DuDescription) description)
                             .getDescriptionSatzanschlussOhneSubjekt())
-                    .dann(description.dann()));
+                    .dann(description.isDann()));
 
             return description.getTimeElapsed();
         }
@@ -281,8 +281,9 @@ public class BewegenAction<R extends ISpatiallyConnectedGO & IHasStoringPlaceGO,
                     result1 = t(StructuralElement.PARAGRAPH,
                             "Du schaust dich nur kurz um, dann "
                                     + uncapitalize(description.getDescriptionHauptsatz()))
-                            .komma(description.kommaStehtAus())
-                            .undWartest(description.allowsAdditionalDuSatzreihengliedOhneSubjekt());
+                            .komma(description.isKommaStehtAus())
+                            .undWartest(
+                                    description.isAllowsAdditionalDuSatzreihengliedOhneSubjekt());
                     n.add(result1);
                 }
 
@@ -325,15 +326,15 @@ public class BewegenAction<R extends ISpatiallyConnectedGO & IHasStoringPlaceGO,
                         currentStoryState.allowsAdditionalDuSatzreihengliedOhneSubjekt() &&
                         sc.memoryComp().getLastAction().is(Action.Type.NEHMEN)) {
                     return du("springst", "damit fort", "damit",
-                            false, true,
-                            true, standardDescription.getTimeElapsed().times(0.8));
+                            standardDescription.getTimeElapsed().times(0.8))
+                            .undWartest()
+                            .dann();
                 }
 
                 if (sc.feelingsComp().hasMood(Mood.UNTROESTLICH)) {
-                    return du("trottest", "tieftraurig von dannen",
-                            "tieftraurig",
-                            false, true,
-                            false, standardDescription.getTimeElapsed().times(2));
+                    return du("trottest", "tieftraurig von dannen", "tieftraurig",
+                            standardDescription.getTimeElapsed().times(2))
+                            .undWartest();
                 }
             } else if (numberOfPossibilities == NumberOfPossibilities.ONE_IN_ONE_OUT
                     && sc.memoryComp().getLastAction().is(Action.Type.BEWEGEN) &&
@@ -342,9 +343,8 @@ public class BewegenAction<R extends ISpatiallyConnectedGO & IHasStoringPlaceGO,
                     lichtverhaeltnisseInNewRoom ==
                             HELL &&
                     currentStoryState.allowsAdditionalDuSatzreihengliedOhneSubjekt()) {
-                return du("eilst", "weiter",
-                        false, true,
-                        false, standardDescription.getTimeElapsed().times(0.8));
+                return du("eilst", "weiter", standardDescription.getTimeElapsed().times(0.8))
+                        .undWartest();
             }
         }
 
@@ -360,24 +360,23 @@ public class BewegenAction<R extends ISpatiallyConnectedGO & IHasStoringPlaceGO,
         if (currentStoryState.dann()) {
             return t(StoryState.StructuralElement.PARAGRAPH,
                     desc.getDescriptionHauptsatzMitKonjunktionaladverbWennNoetig("danach"))
-                    .komma(desc.kommaStehtAus())
-                    .undWartest(desc.allowsAdditionalDuSatzreihengliedOhneSubjekt())
-                    .dann(false);
+                    .komma(desc.isKommaStehtAus())
+                    .undWartest(desc.isAllowsAdditionalDuSatzreihengliedOhneSubjekt());
         }
 
         final ImmutableList.Builder<StoryStateBuilder> alt = ImmutableList.builder();
         alt.add(t(StoryState.StructuralElement.PARAGRAPH,
                 desc.getDescriptionHauptsatz())
-                .komma(desc.kommaStehtAus())
-                .undWartest(desc.allowsAdditionalDuSatzreihengliedOhneSubjekt())
-                .dann(desc.dann()));
+                .komma(desc.isKommaStehtAus())
+                .undWartest(desc.isAllowsAdditionalDuSatzreihengliedOhneSubjekt())
+                .dann(desc.isDann()));
 
         if (desc instanceof DuDescription) {
             alt.add(t(StoryState.StructuralElement.PARAGRAPH,
                     ((DuDescription) desc).getDescriptionHauptsatzMitSpeziellemVorfeld())
-                    .komma(desc.kommaStehtAus())
-                    .undWartest(desc.allowsAdditionalDuSatzreihengliedOhneSubjekt())
-                    .dann(desc.dann()));
+                    .komma(desc.isKommaStehtAus())
+                    .undWartest(desc.isAllowsAdditionalDuSatzreihengliedOhneSubjekt())
+                    .dann(desc.isDann()));
         }
 
         return alt(alt);

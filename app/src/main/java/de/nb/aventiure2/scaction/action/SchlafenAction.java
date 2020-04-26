@@ -79,32 +79,16 @@ public class SchlafenAction extends AbstractScAction {
         final ImmutableList.Builder<AbstractDescription> alt = ImmutableList.builder();
         if (!isDefinitivWiederholung()) {
             alt.add(du("schließt", "kurz die Augen. Die Aufregung der letzten Stunden "
-                            + "steckt dir noch in den Knochen – an Einschlafen ist "
-                            + "nicht zu denken",
-                    false,
-                    false,
-                    false,
-                    mins(1)));
+                    + "steckt dir noch in den Knochen – an Einschlafen ist "
+                    + "nicht zu denken", mins(1)));
         }
 
-        alt.add(allg("Müde bist du noch nicht",
-                false,
-                false,
-                true,
-                mins(1)));
+        alt.add(allg("Müde bist du noch nicht", mins(1))
+                .dann());
 
-        alt.add(allg("Gibt es hier eigentlich Spinnen?",
-                false,
-                false,
-                false,
-                mins(1)));
+        alt.add(allg("Gibt es hier eigentlich Spinnen?", mins(1)));
 
-        alt.add(du("drehst dich von einer Seite auf die andere",
-                "von einer Seite",
-                false,
-                false,
-                false,
-                mins(1)));
+        alt.add(du("drehst dich von einer Seite auf die andere", "von einer Seite", mins(1)));
 
         return n.addAlt(alt);
     }

@@ -156,7 +156,6 @@ public class StoryStateBuilder {
         return this;
     }
 
-
     /**
      * Sets a flag that the text can be continued by a Satzreihenglied without subject where
      * the player character is the implicit subject

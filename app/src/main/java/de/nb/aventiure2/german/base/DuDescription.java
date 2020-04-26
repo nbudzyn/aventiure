@@ -13,7 +13,7 @@ import static de.nb.aventiure2.german.base.GermanUtil.capitalize;
  * A description - assuming the player character is the (first) subject. Somehting like
  * "Du gehts in den Wald."
  */
-public class DuDescription extends AbstractDescription {
+public class DuDescription extends AbstractDescription<DuDescription> {
     /**
      * Something like "gehst"
      */
@@ -30,52 +30,30 @@ public class DuDescription extends AbstractDescription {
     @Nullable
     private final String vorfeldSatzglied;
 
-    // "Du gewinnst"
-    public static DuDescription du(final String verb,
-                                   final boolean kommaStehtAus,
-                                   final boolean
-                                           allowsAdditionalDuSatzreihengliedOhneSubjekt,
-                                   final boolean dann,
-                                   final AvTimeSpan timeElapsed) {
-        return du(verb, null, null,
-                kommaStehtAus,
-                allowsAdditionalDuSatzreihengliedOhneSubjekt, dann, timeElapsed);
-    }
 
+    public static DuDescription du(final String verb,
+                                   final AvTimeSpan timeElapsed) {
+        return du(verb, null, timeElapsed);
+    }
 
     public static DuDescription du(final String verb,
                                    @Nullable final String remainder,
-                                   final boolean kommaStehtAus,
-                                   final boolean
-                                           allowsAdditionalDuSatzreihengliedOhneSubjekt,
-                                   final boolean dann,
                                    final AvTimeSpan timeElapsed) {
-        return du(verb, remainder, null,
-                kommaStehtAus,
-                allowsAdditionalDuSatzreihengliedOhneSubjekt, dann, timeElapsed);
+        return du(verb, remainder, null, timeElapsed);
     }
 
     public static DuDescription du(final String verb,
                                    @Nullable final String remainder,
                                    @Nullable final String vorfeldSatzglied,
-                                   final boolean kommaStehtAus,
-                                   final boolean
-                                           allowsAdditionalDuSatzreihengliedOhneSubjekt,
-                                   final boolean dann,
                                    final AvTimeSpan timeElapsed) {
-        return new DuDescription(verb, remainder, vorfeldSatzglied,
-                kommaStehtAus,
-                allowsAdditionalDuSatzreihengliedOhneSubjekt, dann, timeElapsed);
+        return new DuDescription(verb, remainder, vorfeldSatzglied, timeElapsed);
     }
 
     private DuDescription(final String verb,
                           @Nullable final String remainder,
                           @Nullable final String vorfeldSatzglied,
-                          final boolean kommaStehtAus,
-                          final boolean allowsAdditionalDuSatzreihengliedOhneSubjekt,
-                          final boolean dann,
                           final AvTimeSpan timeElapsed) {
-        super(kommaStehtAus, allowsAdditionalDuSatzreihengliedOhneSubjekt, dann, timeElapsed);
+        super(timeElapsed);
 
         checkArgument(vorfeldSatzglied == null || remainder != null,
                 "Kein remainder, aber ein vorfeldSatzglied? Unmöglich!");
@@ -106,6 +84,11 @@ public class DuDescription extends AbstractDescription {
     public String getDescriptionHauptsatzMitSpeziellemVorfeld() {
         if (vorfeldSatzglied == null) {
             return getDescriptionHauptsatz();
+        }
+
+        if (remainder == null) {
+            throw new IllegalStateException(
+                    "Keine remainder, aber ein Vorfeldsatzglied: " + vorfeldSatzglied);
         }
 
         @Nullable final String remainderWithoutVorfeldSatzglied =

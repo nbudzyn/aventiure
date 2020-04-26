@@ -195,15 +195,14 @@ public abstract class StoryStateDao {
             return ImmutableList.of(t(StoryState.StructuralElement.WORD,
                     "und " +
                             duDesc.getDescriptionSatzanschlussOhneSubjekt())
-                    .komma(duDesc.kommaStehtAus())
-                    .dann(duDesc.dann())
+                    .komma(duDesc.isKommaStehtAus())
+                    .dann(duDesc.isDann())
                     .letzterRaum(lastRoom));
         } else if (initialStoryState.dann()) {
             return ImmutableList.of(t(startsNewUnlessSatzreihung,
                     desc.getDescriptionHauptsatzMitKonjunktionaladverbWennNoetig("dann"))
-                    .komma(desc.kommaStehtAus())
-                    .undWartest(desc.allowsAdditionalDuSatzreihengliedOhneSubjekt())
-                    .dann(false)
+                    .komma(desc.isKommaStehtAus())
+                    .undWartest(desc.isAllowsAdditionalDuSatzreihengliedOhneSubjekt())
                     .letzterRaum(lastRoom));
         } else {
             final ImmutableList.Builder<StoryStateBuilder> alternatives =
@@ -227,9 +226,9 @@ public abstract class StoryStateDao {
             @NonNull final AbstractDescription desc) {
         return t(startsNewUnlessSatzreihung,
                 desc.getDescriptionHauptsatz())
-                .komma(desc.kommaStehtAus())
-                .undWartest(desc.allowsAdditionalDuSatzreihengliedOhneSubjekt())
-                .dann(desc.dann());
+                .komma(desc.isKommaStehtAus())
+                .undWartest(desc.isAllowsAdditionalDuSatzreihengliedOhneSubjekt())
+                .dann(desc.isDann());
     }
 
     private static StoryStateBuilder toHauptsatzMitSpeziellemVorfeldStoryStateBuilder(
@@ -237,9 +236,9 @@ public abstract class StoryStateDao {
             @NonNull final DuDescription desc) {
         return t(startsNewUnlessSatzreihung,
                 desc.getDescriptionHauptsatzMitSpeziellemVorfeld())
-                .komma(desc.kommaStehtAus())
-                .undWartest(desc.allowsAdditionalDuSatzreihengliedOhneSubjekt())
-                .dann(desc.dann());
+                .komma(desc.isKommaStehtAus())
+                .undWartest(desc.isAllowsAdditionalDuSatzreihengliedOhneSubjekt())
+                .dann(desc.isDann());
     }
 
     public void add(final StoryStateBuilder text) {

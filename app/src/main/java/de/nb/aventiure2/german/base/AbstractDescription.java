@@ -5,27 +5,20 @@ import de.nb.aventiure2.data.world.time.AvTimeSpan;
 /**
  * Abstract superclass for a description.
  */
-public abstract class AbstractDescription {
+public abstract class AbstractDescription<SELF extends AbstractDescription<?>> {
     /**
      * Ob ein Komma aussteht. Wenn ein Komma aussteht, muss als Nächstes ein Komma folgen -
      * oder das Satzende.
      */
-    private final boolean kommaStehtAus;
+    private boolean kommaStehtAus = false;
 
-    private final boolean allowsAdditionalDuSatzreihengliedOhneSubjekt;
+    private boolean allowsAdditionalDuSatzreihengliedOhneSubjekt = false;
 
-    private final boolean dann;
+    private boolean dann = false;
 
     private final AvTimeSpan timeElapsed;
 
-    public AbstractDescription(final boolean kommaStehtAus,
-                               final boolean allowsAdditionalDuSatzreihengliedOhneSubjekt,
-                               final boolean dann,
-                               final AvTimeSpan timeElapsed) {
-        this.kommaStehtAus = kommaStehtAus;
-        this.allowsAdditionalDuSatzreihengliedOhneSubjekt =
-                allowsAdditionalDuSatzreihengliedOhneSubjekt;
-        this.dann = dann;
+    public AbstractDescription(final AvTimeSpan timeElapsed) {
         this.timeElapsed = timeElapsed;
     }
 
@@ -41,18 +34,50 @@ public abstract class AbstractDescription {
     public abstract String
     getDescriptionHauptsatzMitKonjunktionaladverbWennNoetig(String konjunktionaladverb);
 
-    public boolean kommaStehtAus() {
+    public SELF komma() {
+        return komma(true);
+    }
+
+    public SELF komma(final boolean kommaStehtAus) {
+        this.kommaStehtAus = kommaStehtAus;
+        return (SELF) this;
+    }
+
+    public boolean isKommaStehtAus() {
         return kommaStehtAus;
     }
 
-    public boolean allowsAdditionalDuSatzreihengliedOhneSubjekt() {
+    /**
+     * Sets a flag that the text can be continued by a Satzreihenglied without subject where
+     * the player character is the implicit subject
+     */
+    public SELF undWartest() {
+        return undWartest(true);
+    }
+
+    public SELF undWartest(
+            final boolean allowsAdditionalPlayerSatzreihengliedOhneSubjekt) {
+        allowsAdditionalDuSatzreihengliedOhneSubjekt =
+                allowsAdditionalPlayerSatzreihengliedOhneSubjekt;
+        return (SELF) this;
+    }
+
+    public boolean isAllowsAdditionalDuSatzreihengliedOhneSubjekt() {
         return allowsAdditionalDuSatzreihengliedOhneSubjekt;
     }
 
-    public boolean dann() {
-        return dann;
+    public SELF dann() {
+        return dann(true);
     }
 
+    public SELF dann(final boolean dann) {
+        this.dann = dann;
+        return (SELF) this;
+    }
+
+    public boolean isDann() {
+        return dann;
+    }
 
     /**
      * Zeit, die vergangen ist, während das das beschriebene geschehen ist

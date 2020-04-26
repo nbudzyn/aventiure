@@ -174,9 +174,8 @@ public class NehmenAction
     }
 
     private StoryStateBuilder buildStoryStateObjectNachAblegen() {
-        if (sc.memoryComp().getLastAction().hasObject(gameObject) &&
-                (sc.memoryComp().getLastAction().is(
-                        Action.Type.ABLEGEN, Action.Type.HOCHWERFEN))) {
+        if (sc.memoryComp().getLastAction().is(
+                Action.Type.ABLEGEN, Action.Type.HOCHWERFEN)) {
             return t(StructuralElement.PARAGRAPH,
                     "Dann nimmst du " + getDescription(gameObject).akk() +
                             " erneut")

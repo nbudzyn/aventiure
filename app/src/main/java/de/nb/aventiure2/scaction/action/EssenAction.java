@@ -165,26 +165,17 @@ public class EssenAction extends AbstractScAction {
     private AvTimeSpan narrateAndDoSchlossfestSatt() {
         return n.addAlt(
                 allg("Hunger hast du zwar keinen mehr, aber eine Kleinigkeit… – du "
-                                + "nimmst dir "
-                                + "eine halbe Kelle "
-                                + "von dem Eintopf und isst",
-                        false,
-                        false,
-                        true,
-                        mins(2)),
-                du("isst ein paar Löffel vom Eintopf",
-                        false,
-                        true,
-                        true,
-                        mins(2)),
+                        + "nimmst dir "
+                        + "eine halbe Kelle "
+                        + "von dem Eintopf und isst", mins(2))
+                        .dann(),
+                du("isst", "ein paar Löffel vom Eintopf", mins(2))
+                        .undWartest()
+                        .dann(),
                 du("bist", "eigentlich satt, aber einen oder zwei Löffel Eintopf "
-                                + "lässt du "
-                                + "dir trotzdem schmecken",
-                        "eigentlich",
-                        false,
-                        false,
-                        true,
-                        mins(2)));
+                        + "lässt du "
+                        + "dir trotzdem schmecken", "eigentlich", mins(2))
+                        .dann());
     }
 
     private AvTimeSpan narrateAndDoFelsenbirnen() {
@@ -214,34 +205,24 @@ public class EssenAction extends AbstractScAction {
         if (db.counterDao().incAndGet(COUNTER_FELSENBIRNEN) == 1) {
             return ImmutableList.of(
                     du("nimmst", "eine von den Früchten, "
-                                    + "schaust sie kurz an, dann "
-                                    + "beißt du hinein… – "
-                                    + "Mmh! Die Frucht ist saftig und schmeckt süß wie Marzipan!\n"
-                                    + "Du isst dich an den Früchten satt",
-                            false,
-                            true,
-                            true,
-                            mins(10)));
+                            + "schaust sie kurz an, dann "
+                            + "beißt du hinein… – "
+                            + "Mmh! Die Frucht ist saftig und schmeckt süß wie Marzipan!\n"
+                            + "Du isst dich an den Früchten satt", mins(10))
+                            .undWartest()
+                            .dann());
         }
 
         return ImmutableList.of(
-                du("isst", "dich an den süßen Früchten satt",
-                        false,
-                        true,
-                        true,
-                        mins(10)),
+                du("isst", "dich an den süßen Früchten satt", mins(10))
+                        .undWartest()
+                        .dann(),
                 du("bedienst", "dich an den süßen Früchten, als ob es kein Morgen "
-                                + "gäbe. Schließlich bist du vollkommen satt",
-                        false,
-                        true,
-                        false,
-                        mins(10)),
+                        + "gäbe. Schließlich bist du vollkommen satt", mins(10))
+                        .undWartest(),
                 du("isst", "so lange von den Früchten, bis dein Hunger gestillt "
-                                + "ist",
-                        false,
-                        false,
-                        true,
-                        mins(10))
+                        + "ist", mins(10))
+                        .dann()
         );
     }
 
@@ -250,26 +231,19 @@ public class EssenAction extends AbstractScAction {
             return ImmutableList.of(
                     du("nimmst", "eine von den Früchten und beißt hinein. "
                                     + "Sie ist überrasschend süß und saftig. Du isst die Frucht auf",
-                            false,
-                            true,
-                            true,
-                            mins(3)));
+                            mins(3))
+                            .undWartest()
+                            .dann());
         }
 
         return ImmutableList.of(
-                du("hast", "nur wenig Hunger und beißt lustlos in eine der Früchte",
-                        "Hunger",
-                        false,
-                        false,
-                        true,
-                        mins(3)),
-                du("lässt", "dir die süßen Früchte nicht entgehen, auch wenn du kaum Hunger "
-                                + "hast",
-                        "die süßen Früchte",
-                        true,
-                        true,
-                        false,
+                du("hast", "nur wenig Hunger und beißt lustlos in eine der Früchte", "Hunger",
                         mins(3))
+                        .dann(),
+                du("lässt", "dir die süßen Früchte nicht entgehen, auch wenn du kaum Hunger "
+                        + "hast", "die süßen Früchte", mins(3))
+                        .komma()
+                        .undWartest()
         );
     }
 

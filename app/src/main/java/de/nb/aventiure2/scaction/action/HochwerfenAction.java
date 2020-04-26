@@ -176,13 +176,10 @@ public class HochwerfenAction<OBJ extends IDescribableGO & ILocatableGO>
 
             return n.add(PARAGRAPH,
                     du("wirfst", objectDesc.akk() +
-                                    " hoch in die Luft und fängst " +
-                                    objectDesc.persPron().akk() +
-                                    " geschickt wieder auf",
-                            false,
-                            false,
-                            true,
-                            secs(3)));
+                            " hoch in die Luft und fängst " +
+                            objectDesc.persPron().akk() +
+                            " geschickt wieder auf", secs(3))
+                            .dann());
         }
 
         // Der Spieler hat die goldene Kugel letztlich in den Brunnen
@@ -208,20 +205,17 @@ public class HochwerfenAction<OBJ extends IDescribableGO & ILocatableGO>
     private AvTimeSpan narrateAndDoObjectFaelltSofortInDenBrunnen() {
         final Nominalphrase objectDesc = getDescription(object, false);
 
-        final DuDescription duDesc = du("wirfst",
-                objectDesc.akk() +
-                        " nur ein einziges Mal in die Höhe, " +
-                        "aber wie das Unglück es will, fällt " +
-                        objectDesc.persPron().akk() +
-                        " sofort in den Brunnen: " +
-                        "Platsch! – weg " +
-                        SeinUtil.istSind(objectDesc.getNumerusGenus()) +
-                        " " +
-                        objectDesc.persPron().akk(),
-                "nur ein einziges Mal",
-                false,
-                false, !initialStoryState.dann(),
-                secs(10));
+        final boolean dann = !initialStoryState.dann();
+        final DuDescription duDesc = du("wirfst", objectDesc.akk() +
+                " nur ein einziges Mal in die Höhe, " +
+                "aber wie das Unglück es will, fällt " +
+                objectDesc.persPron().akk() +
+                " sofort in den Brunnen: " +
+                "Platsch! – weg " +
+                SeinUtil.istSind(objectDesc.getNumerusGenus()) +
+                " " +
+                objectDesc.persPron().akk(), "nur ein einziges Mal", secs(10))
+                .dann(dann);
 
         if (initialStoryState.dann()) {
             n.add(t(StructuralElement.PARAGRAPH,

@@ -311,11 +311,7 @@ class FroschprinzConversationStepBuilder<LOC_DESC extends ILocatableGO & IDescri
 
     private AvTimeSpan froschHatNachBelohnungGefragt_ImmReEntry() {
         return
-                n.add(du("gehst", "kurz in dich…",
-                        false,
-                        false,
-                        false,
-                        secs(5)))
+                n.add(du("gehst", "kurz in dich…", secs(5)))
                         .plus(
                                 froschHatNachBelohnungGefragt_ReEntry());
     }

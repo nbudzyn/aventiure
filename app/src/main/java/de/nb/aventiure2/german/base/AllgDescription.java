@@ -5,29 +5,20 @@ import de.nb.aventiure2.data.world.time.AvTimeSpan;
 /**
  * A general description. The subject may be anything.
  */
-public class AllgDescription extends AbstractDescription {
+public class AllgDescription extends AbstractDescription<AllgDescription> {
     /**
      * Something like "Der Weg führt weiter in den Wald hinein. Dann stehst du vor einer Kirche"
      */
     private final String description;
 
     public static AllgDescription allg(final String description,
-                                       final boolean kommaStehtAus,
-                                       final boolean
-                                               allowsAdditionalDuSatzreihengliedOhneSubjekt,
-                                       final boolean dann,
                                        final AvTimeSpan timeElapsed) {
-        return new AllgDescription(description,
-                kommaStehtAus,
-                allowsAdditionalDuSatzreihengliedOhneSubjekt, dann, timeElapsed);
+        return new AllgDescription(description, timeElapsed);
     }
 
     private AllgDescription(final String description,
-                            final boolean kommaStehtAus,
-                            final boolean allowsAdditionalDuSatzreihengliedOhneSubjekt,
-                            final boolean dann,
                             final AvTimeSpan timeElapsed) {
-        super(kommaStehtAus, allowsAdditionalDuSatzreihengliedOhneSubjekt, dann, timeElapsed);
+        super(timeElapsed);
         this.description = description;
     }
 

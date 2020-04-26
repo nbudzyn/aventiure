@@ -152,19 +152,15 @@ public class AblegenAction
 
         if (sc.memoryComp().lastActionWas(Action.Type.NEHMEN, gameObject)) {
             return n.add(StoryState.StructuralElement.PARAGRAPH,
-                    du("legst", objDesc.akk() + " wieder hin",
-                            false,
-                            true,
-                            true,
-                            secs(5)));
+                    du("legst", objDesc.akk() + " wieder hin", secs(5))
+                            .undWartest()
+                            .dann());
         }
 
         return n.add(StoryState.StructuralElement.PARAGRAPH,
-                du("legst", objDesc.akk() + " hin",
-                        false,
-                        true,
-                        true,
-                        secs(3)));
+                du("legst", objDesc.akk() + " hin", secs(3))
+                        .undWartest()
+                        .dann());
     }
 
     private AvTimeSpan narrateCreature(final LIVGO creature) {
