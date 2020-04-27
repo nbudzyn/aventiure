@@ -9,7 +9,6 @@ import com.google.common.base.Preconditions;
 
 import de.nb.aventiure2.data.world.base.GameObjectId;
 import de.nb.aventiure2.data.world.base.IGameObject;
-import de.nb.aventiure2.data.world.syscomp.alive.ILivingBeingGO;
 
 /**
  * The text of the story, together with state relevant for going on with the story. Only things that have already happened.
@@ -55,14 +54,6 @@ public class StoryState {
     private final boolean allowsAdditionalDuSatzreihengliedOhneSubjekt;
 
     /**
-     * The creature the user has been talking to
-     * recently - if any.
-     */
-    // TODO Das gehört zum Game Object!
-    @Nullable
-    private final GameObjectId talkingTo;
-
-    /**
      * Wenn dieses Game Object als unmittelbar nächstes verwendet werden soll, kann man
      * ein Personalpronomen verwenden.
      * <p>
@@ -95,7 +86,6 @@ public class StoryState {
                 newText,
                 kommaStehtAus,
                 allowsAdditionalDuSatzreihengliedOhneSubjekt, dann,
-                talkingTo,
                 persPronKandidat);
     }
 
@@ -105,7 +95,6 @@ public class StoryState {
                final boolean kommaStehtAus,
                final boolean allowsAdditionalDuSatzreihengliedOhneSubjekt,
                final boolean dann,
-               @Nullable final GameObjectId talkingTo,
                @Nullable final GameObjectId persPronKandidat) {
         Preconditions.checkArgument(!allowsAdditionalDuSatzreihengliedOhneSubjekt
                         || endsThis == StructuralElement.WORD,
@@ -119,7 +108,6 @@ public class StoryState {
         this.allowsAdditionalDuSatzreihengliedOhneSubjekt =
                 allowsAdditionalDuSatzreihengliedOhneSubjekt;
         this.dann = dann;
-        this.talkingTo = talkingTo;
         this.persPronKandidat = persPronKandidat;
     }
 
@@ -142,23 +130,6 @@ public class StoryState {
 
     public boolean allowsAdditionalDuSatzreihengliedOhneSubjekt() {
         return allowsAdditionalDuSatzreihengliedOhneSubjekt;
-    }
-
-    public boolean talkingToAnyone() {
-        return talkingTo != null;
-    }
-
-    public boolean talkingTo(final GameObjectId gameObjectId) {
-        return gameObjectId.equals(talkingTo);
-    }
-
-    public boolean talkingTo(final ILivingBeingGO creature) {
-        return creature.is(talkingTo);
-    }
-
-    @Nullable
-    GameObjectId getTalkingTo() {
-        return talkingTo;
     }
 
     /**

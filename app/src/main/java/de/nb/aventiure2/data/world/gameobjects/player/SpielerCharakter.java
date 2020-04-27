@@ -11,30 +11,36 @@ import de.nb.aventiure2.data.world.syscomp.feelings.IFeelingBeingGO;
 import de.nb.aventiure2.data.world.syscomp.location.ILocatableGO;
 import de.nb.aventiure2.data.world.syscomp.location.LocationComp;
 import de.nb.aventiure2.data.world.syscomp.memory.IHasMemoryGO;
-import de.nb.aventiure2.data.world.syscomp.memory.Memory;
+import de.nb.aventiure2.data.world.syscomp.memory.MemoryComp;
 import de.nb.aventiure2.data.world.syscomp.storingplace.IHasStoringPlaceGO;
 import de.nb.aventiure2.data.world.syscomp.storingplace.StoringPlaceComp;
+import de.nb.aventiure2.data.world.syscomp.talking.ITalkerGO;
+import de.nb.aventiure2.data.world.syscomp.talking.TalkingComp;
 
 public class SpielerCharakter extends GameObject
-        implements ILocatableGO, IHasStoringPlaceGO, IFeelingBeingGO, IHasMemoryGO, ILivingBeingGO {
+        implements ILocatableGO, IHasStoringPlaceGO, IFeelingBeingGO,
+        ITalkerGO, IHasMemoryGO, ILivingBeingGO {
     private final LocationComp locationComp;
     private final StoringPlaceComp storingPlaceComp;
     private final FeelingsComp feelingsComp;
-    private final Memory memory;
+    private final TalkingComp talkingComp;
+    private final MemoryComp memoryComp;
     private final AliveComp alive;
 
     public SpielerCharakter(final GameObjectId id,
                             final LocationComp locationComp,
                             final StoringPlaceComp storingPlaceComp,
                             final FeelingsComp feelingsComp,
-                            final Memory memory) {
+                            final MemoryComp memoryComp,
+                            final TalkingComp talkingComp) {
         super(id);
         // Jede Komponente muss registiert werden!
         this.locationComp = addComponent(locationComp);
         this.storingPlaceComp = addComponent(storingPlaceComp);
         this.feelingsComp = addComponent(feelingsComp);
-        this.memory = addComponent(memory);
+        this.memoryComp = addComponent(memoryComp);
         alive = addComponent(new AliveComp(id));
+        this.talkingComp = addComponent(talkingComp);
     }
 
     @Nonnull
@@ -57,8 +63,14 @@ public class SpielerCharakter extends GameObject
 
     @Nonnull
     @Override
-    public Memory memoryComp() {
-        return memory;
+    public TalkingComp talkingComp() {
+        return talkingComp;
+    }
+
+    @Nonnull
+    @Override
+    public MemoryComp memoryComp() {
+        return memoryComp;
     }
 
     @Nonnull

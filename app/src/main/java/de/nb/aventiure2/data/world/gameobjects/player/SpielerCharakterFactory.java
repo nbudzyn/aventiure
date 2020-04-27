@@ -10,8 +10,9 @@ import de.nb.aventiure2.data.world.syscomp.feelings.FeelingsComp;
 import de.nb.aventiure2.data.world.syscomp.feelings.Mood;
 import de.nb.aventiure2.data.world.syscomp.location.LocationComp;
 import de.nb.aventiure2.data.world.syscomp.memory.Known;
-import de.nb.aventiure2.data.world.syscomp.memory.Memory;
+import de.nb.aventiure2.data.world.syscomp.memory.MemoryComp;
 import de.nb.aventiure2.data.world.syscomp.storingplace.StoringPlaceComp;
+import de.nb.aventiure2.data.world.syscomp.talking.TalkingComp;
 import de.nb.aventiure2.data.world.time.AvDateTime;
 
 import static de.nb.aventiure2.data.world.gameobjects.GameObjects.GOLDENE_KUGEL;
@@ -40,7 +41,8 @@ public class SpielerCharakterFactory {
                 new FeelingsComp(id, db, Mood.NEUTRAL, SATT,
                         new AvDateTime(1, oClock(8)),
                         hours(6)),
-                new Memory(id, db, createKnownMap()));
+                new MemoryComp(id, db, createKnownMap()),
+                new TalkingComp(id, db));
     }
 
     private static Map<GameObjectId, Known> createKnownMap() {

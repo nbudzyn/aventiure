@@ -9,5 +9,5 @@ import de.nb.aventiure2.data.world.base.IGameObject;
  */
 public interface IFeelingBeingGO extends IGameObject {
     @Nonnull
-    public FeelingsComp feelingsComp();
+    FeelingsComp feelingsComp();
 }

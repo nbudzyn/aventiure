@@ -9,19 +9,19 @@ import java.util.List;
 
 import de.nb.aventiure2.data.database.AvDatabase;
 import de.nb.aventiure2.data.storystate.StoryState;
-import de.nb.aventiure2.data.storystate.StoryStateBuilder;
 import de.nb.aventiure2.data.world.gameobjects.GameObjects;
 import de.nb.aventiure2.data.world.syscomp.alive.ILivingBeingGO;
 import de.nb.aventiure2.data.world.syscomp.description.IDescribableGO;
 import de.nb.aventiure2.data.world.syscomp.memory.Action;
 import de.nb.aventiure2.data.world.syscomp.storingplace.IHasStoringPlaceGO;
+import de.nb.aventiure2.data.world.syscomp.talking.ITalkerGO;
 import de.nb.aventiure2.data.world.time.AvTimeSpan;
 import de.nb.aventiure2.german.base.Nominalphrase;
 import de.nb.aventiure2.german.praedikat.Praedikat;
 import de.nb.aventiure2.german.praedikat.PraedikatMitEinerObjektleerstelle;
 import de.nb.aventiure2.german.praedikat.PraedikatOhneLeerstellen;
 import de.nb.aventiure2.scaction.AbstractScAction;
-import de.nb.aventiure2.scaction.action.creature.conversation.CreatureConversationStep;
+import de.nb.aventiure2.scaction.action.creature.conversation.ConversationStep;
 import de.nb.aventiure2.scaction.action.creature.conversation.CreatureConversationSteps;
 
 import static de.nb.aventiure2.data.world.gameobjects.GameObjects.SPIELER_CHARAKTER;
@@ -30,39 +30,39 @@ import static de.nb.aventiure2.data.world.gameobjects.GameObjects.loadSC;
 /**
  * Der Spieler(charakter) redet mit einem Wesen.
  */
-public class RedenAction<L extends ILivingBeingGO & IDescribableGO>
+public class RedenAction<TALKER extends IDescribableGO & ITalkerGO>
         extends AbstractScAction {
     @NonNull
-    private final L creature;
+    private final TALKER talker;
 
-    private final CreatureConversationStep creatureConversationStep;
+    private final ConversationStep conversationStep;
     private final String name;
 
-    public static <L extends ILivingBeingGO & IDescribableGO>
-    Collection<RedenAction<L>> buildActions(
+    public static <TALKER extends IDescribableGO & ITalkerGO>
+    Collection<RedenAction<TALKER>> buildActions(
             final AvDatabase db, final StoryState initialStoryState, final IHasStoringPlaceGO room,
-            final L creature) {
-        final List<CreatureConversationStep> talkSteps =
+            final TALKER talker) {
+        final List<ConversationStep> talkSteps =
                 CreatureConversationSteps.getPossibleSteps(
-                        db, initialStoryState, room, creature);
+                        db, initialStoryState, room, talker);
 
         return buildActions(db, initialStoryState,
-                creature,
+                talker,
                 talkSteps);
     }
 
-    private static <L extends ILivingBeingGO & IDescribableGO>
-    Collection<RedenAction<L>> buildActions(final AvDatabase db,
-                                            final StoryState initialStoryState,
-                                            final L creature,
-                                            final List<CreatureConversationStep> talkSteps) {
-        final ImmutableList.Builder<RedenAction<L>> res =
+    private static <TALKER extends IDescribableGO & ITalkerGO>
+    Collection<RedenAction<TALKER>> buildActions(final AvDatabase db,
+                                                 final StoryState initialStoryState,
+                                                 final TALKER talker,
+                                                 final List<ConversationStep> talkSteps) {
+        final ImmutableList.Builder<RedenAction<TALKER>> res =
                 ImmutableList.builder();
 
-        for (final CreatureConversationStep talkStep : talkSteps) {
-            if (stepTypeFits(db, initialStoryState, creature, talkStep.getStepType())) {
+        for (final ConversationStep talkStep : talkSteps) {
+            if (stepTypeFits(db, talker, talkStep.getStepType())) {
                 res.add(buildAction(db, initialStoryState,
-                        creature,
+                        talker,
                         // "Mit ... reden" /  "Den ... ignorieren" / "Das Gespräch beenden"
                         talkStep));
             }
@@ -72,42 +72,41 @@ public class RedenAction<L extends ILivingBeingGO & IDescribableGO>
     }
 
     private static boolean stepTypeFits(final AvDatabase db,
-                                        final StoryState initialStoryState,
-                                        final ILivingBeingGO creature,
-                                        final CreatureConversationStep.Type stepType) {
-        if (initialStoryState.talkingTo(creature)) {
+                                        final ITalkerGO talker,
+                                        final ConversationStep.Type stepType) {
+        if (talker.talkingComp().isTalkingTo(SPIELER_CHARAKTER)) {
             // Der SC befindet sich gerade im Gespräch mit der Creature-
-            return stepType == CreatureConversationStep.Type.NORMAL ||
-                    stepType == CreatureConversationStep.Type.EXIT;
+            return stepType == ConversationStep.Type.NORMAL ||
+                    stepType == ConversationStep.Type.EXIT;
         }
 
         if (loadSC(db).memoryComp().lastActionWas(
-                Action.Type.REDEN, creature)) {
+                Action.Type.REDEN, talker)) {
             // Der SC hat das Gespräch mit der Creature GERADE EBEN beendet
             // und hat es sich ganz offenbar anders überlegt
             // (oder die Creature hat das Gespräch beendet, und der Benutzer möchte
             // sofort wieder ein Gespräch anknüpfen).
-            return stepType == CreatureConversationStep.Type.IMMEDIATE_RE_ENTRY;
+            return stepType == ConversationStep.Type.IMMEDIATE_RE_ENTRY;
         }
 
         // Der SC befindet sich gerade nicht im Gespräch mit der Creature
         // (und auch nicht GERADE EBEN so ein Gespräch beendet).
-        return stepType == CreatureConversationStep.Type.ENTRY_RE_ENTRY;
+        return stepType == ConversationStep.Type.ENTRY_RE_ENTRY;
     }
 
     /**
      * Erzeugt eine <code>RedenAction</code> für dieses {@link ILivingBeingGO}.
      */
     @NonNull
-    private static <L extends ILivingBeingGO & IDescribableGO>
-    RedenAction buildAction(final AvDatabase db,
-                            final StoryState initialStoryState,
-                            final L creature,
-                            final CreatureConversationStep talkStep) {
+    private static <TALKER extends IDescribableGO & ITalkerGO>
+    RedenAction<TALKER> buildAction(final AvDatabase db,
+                                    final StoryState initialStoryState,
+                                    final TALKER talker,
+                                    final ConversationStep talkStep) {
         final PraedikatOhneLeerstellen praedikatOhneLeerstellen =
-                fuelleGgfPraedikatLeerstelleMitCreature(db, talkStep.getName(), creature);
+                fuelleGgfPraedikatLeerstelleMitCreature(db, talkStep.getName(), talker);
 
-        return buildAction(db, initialStoryState, creature,
+        return buildAction(db, initialStoryState, talker,
                 talkStep,
                 praedikatOhneLeerstellen);
     }
@@ -115,14 +114,14 @@ public class RedenAction<L extends ILivingBeingGO & IDescribableGO>
     private static PraedikatOhneLeerstellen fuelleGgfPraedikatLeerstelleMitCreature(
             final AvDatabase db,
             final Praedikat praedikat,
-            final IDescribableGO creature) {
+            final IDescribableGO talker) {
         if (praedikat instanceof PraedikatOhneLeerstellen) {
             return (PraedikatOhneLeerstellen) praedikat;
         }
 
         if (praedikat instanceof PraedikatMitEinerObjektleerstelle) {
             final Nominalphrase creatureDesc =
-                    GameObjects.getPOVDescription(db, SPIELER_CHARAKTER, creature, true);
+                    GameObjects.getPOVDescription(db, SPIELER_CHARAKTER, talker, true);
 
 
             return ((PraedikatMitEinerObjektleerstelle) praedikat).mitObj(
@@ -138,12 +137,12 @@ public class RedenAction<L extends ILivingBeingGO & IDescribableGO>
      * mit diesem {@link PraedikatOhneLeerstellen}.
      */
     @NonNull
-    private static <L extends ILivingBeingGO & IDescribableGO>
-    RedenAction<L> buildAction(final AvDatabase db, final StoryState initialStoryState,
-                               final L creatureData,
-                               final CreatureConversationStep talkStep,
-                               final PraedikatOhneLeerstellen praedikatOhneLeerstellen) {
-        return new RedenAction<>(db, initialStoryState, creatureData,
+    private static <TALKER extends IDescribableGO & ITalkerGO>
+    RedenAction<TALKER> buildAction(final AvDatabase db, final StoryState initialStoryState,
+                                    final TALKER talker,
+                                    final ConversationStep talkStep,
+                                    final PraedikatOhneLeerstellen praedikatOhneLeerstellen) {
+        return new RedenAction<>(db, initialStoryState, talker,
                 talkStep,
                 // "Dem Frosch Angebote machen"
                 praedikatOhneLeerstellen.getDescriptionInfinitiv());
@@ -151,12 +150,12 @@ public class RedenAction<L extends ILivingBeingGO & IDescribableGO>
 
     private RedenAction(final AvDatabase db,
                         final StoryState initialStoryState,
-                        @NonNull final L creature,
-                        final CreatureConversationStep creatureConversationStep,
+                        @NonNull final TALKER talker,
+                        final ConversationStep conversationStep,
                         @NonNull final String name) {
         super(db, initialStoryState);
-        this.creature = creature;
-        this.creatureConversationStep = creatureConversationStep;
+        this.talker = talker;
+        this.conversationStep = conversationStep;
         this.name = name;
     }
 
@@ -173,10 +172,9 @@ public class RedenAction<L extends ILivingBeingGO & IDescribableGO>
 
     @Override
     public AvTimeSpan narrateAndDo() {
-        final CreatureConversationStep timeSpan = creatureConversationStep;
         sc.memoryComp().setLastAction(buildMemorizedAction());
 
-        return timeSpan.narrateAndDo();
+        return conversationStep.narrateAndDo();
     }
 
     @Override
@@ -188,13 +186,6 @@ public class RedenAction<L extends ILivingBeingGO & IDescribableGO>
 
     @NonNull
     private Action buildMemorizedAction() {
-        return new Action(Action.Type.REDEN, creature);
-    }
-
-    protected StoryStateBuilder t(
-            @NonNull final StoryState.StructuralElement startsNew,
-            @NonNull final String text) {
-        return t(startsNew, text)
-                .imGespraechMit(creature);
+        return new Action(Action.Type.REDEN, talker);
     }
 }

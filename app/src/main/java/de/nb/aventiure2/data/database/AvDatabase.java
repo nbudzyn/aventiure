@@ -40,6 +40,8 @@ import de.nb.aventiure2.data.world.syscomp.memory.MemoryPCD;
 import de.nb.aventiure2.data.world.syscomp.state.GameObjectStateConverters;
 import de.nb.aventiure2.data.world.syscomp.state.StateDao;
 import de.nb.aventiure2.data.world.syscomp.state.StatePCD;
+import de.nb.aventiure2.data.world.syscomp.talking.TalkingDao;
+import de.nb.aventiure2.data.world.syscomp.talking.TalkingPCD;
 import de.nb.aventiure2.data.world.time.AvDateTimeConverters;
 import de.nb.aventiure2.data.world.time.AvNow;
 import de.nb.aventiure2.data.world.time.AvNowDao;
@@ -56,6 +58,7 @@ import static de.nb.aventiure2.data.world.time.AvTime.oClock;
         LocationPCD.class,
         FeelingsPCD.class,
         MemoryPCD.class,
+        TalkingPCD.class,
         KnownInfo.class},
         version = 1,
         exportSchema = false)
@@ -85,6 +88,8 @@ public abstract class AvDatabase extends RoomDatabase {
     public abstract FeelingsDao feelingsDao();
 
     public abstract MemoryDao memoryDao();
+
+    public abstract TalkingDao talkingDao();
 
     private static volatile AvDatabase INSTANCE;
     private static final int NUMBER_OF_THREADS = 1;

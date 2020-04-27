@@ -18,6 +18,7 @@ import de.nb.aventiure2.data.world.syscomp.feelings.Mood;
 import de.nb.aventiure2.data.world.syscomp.memory.Action;
 import de.nb.aventiure2.data.world.syscomp.memory.Known;
 import de.nb.aventiure2.data.world.syscomp.state.IHasStateGO;
+import de.nb.aventiure2.data.world.syscomp.talking.ITalkerGO;
 import de.nb.aventiure2.data.world.time.AvTimeSpan;
 import de.nb.aventiure2.scaction.AbstractScAction;
 
@@ -78,7 +79,7 @@ public class HeulenAction extends AbstractScAction {
         return narrateAndDoErstesMal();
     }
 
-    private <F extends IDescribableGO & IHasStateGO & ILivingBeingGO>
+    private <F extends IDescribableGO & IHasStateGO & ITalkerGO>
     AvTimeSpan narrateAndDoWiederholung() {
         final F froschprinz = (F) load(db, FROSCHPRINZ);
         if (creaturesInRoom.contains(froschprinz) &&
@@ -103,9 +104,10 @@ public class HeulenAction extends AbstractScAction {
         return mins(1);
     }
 
-    private <F extends IDescribableGO & IHasStateGO & ILivingBeingGO>
+    private <F extends IDescribableGO & IHasStateGO & ITalkerGO>
     AvTimeSpan narrateAndDoFroschprinzUnauffaellig(final F froschprinz) {
         // STORY Nachts schläft der Frosch?!
+
         final String desc = "weinst immer lauter und kannst dich gar nicht trösten. " +
                 "Und wie du so klagst, ruft dir jemand zu: „Was hast du vor, " +
                 "du schreist ja, dass sich ein Stein erbarmen möchte.“ Du siehst " +
@@ -113,15 +115,14 @@ public class HeulenAction extends AbstractScAction {
                 "die Stimme käme, da erblickst du " +
                 getDescription(froschprinz).akk();
         if (initialStoryState.allowsAdditionalDuSatzreihengliedOhneSubjekt()) {
-            n.add(t(WORD, "und " + desc)
-                    .imGespraechMit(froschprinz));
+            n.add(t(WORD, "und " + desc));
         } else {
-            n.add(t(SENTENCE, "Du " + desc)
-                    .imGespraechMit(froschprinz));
+            n.add(t(SENTENCE, "Du " + desc));
         }
 
         sc.memoryComp().setLastAction(buildMemorizedAction());
         froschprinz.stateComp().setState(HAT_SC_HILFSBEREIT_ANGESPROCHEN);
+        froschprinz.talkingComp().setTalkingTo(sc);
         sc.memoryComp().upgradeKnown(FROSCHPRINZ, Known.getKnown(getLichtverhaeltnisse(
                 sc.locationComp().getLocation())));
         sc.feelingsComp().setMood(Mood.NEUTRAL);

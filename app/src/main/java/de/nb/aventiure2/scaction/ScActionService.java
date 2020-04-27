@@ -20,6 +20,7 @@ import de.nb.aventiure2.data.world.syscomp.description.IDescribableGO;
 import de.nb.aventiure2.data.world.syscomp.location.ILocatableGO;
 import de.nb.aventiure2.data.world.syscomp.spatialconnection.ISpatiallyConnectedGO;
 import de.nb.aventiure2.data.world.syscomp.storingplace.IHasStoringPlaceGO;
+import de.nb.aventiure2.data.world.syscomp.talking.ITalkerGO;
 import de.nb.aventiure2.scaction.action.AblegenAction;
 import de.nb.aventiure2.scaction.action.BewegenAction;
 import de.nb.aventiure2.scaction.action.EssenAction;
@@ -77,7 +78,7 @@ public class ScActionService {
             res.addAll(buildCreatureInRoomActions(currentStoryState, room,
                     livingBeingsInRoom));
         }
-        if (!currentStoryState.talkingToAnyone()) {
+        if (!spielerCharakter.talkingComp().isInConversation()) {
             res.addAll(
                     buildPlayerOnlyAction(currentStoryState, spielerCharakter,
                             room, livingBeingsInRoom));
@@ -104,8 +105,10 @@ public class ScActionService {
         final ImmutableList.Builder<AbstractScAction> res = ImmutableList.builder();
 
         for (final LIV creature : creaturesInRoom) {
-            res.addAll(RedenAction.buildActions(db, currentStoryState, room,
-                    creature));
+            if (creature instanceof ITalkerGO) {
+                res.addAll(RedenAction.buildActions(db, currentStoryState, room,
+                        (IDescribableGO & ITalkerGO) creature));
+            }
             res.addAll(
                     NehmenAction.buildCreatureActions(db, currentStoryState,
                             room, creature));
@@ -135,6 +138,11 @@ public class ScActionService {
             final List<DESC_OBJ> objectsInRoom) {
         final ImmutableList.Builder<AbstractScAction> res = ImmutableList.builder();
         for (final DESC_OBJ object : objectsInRoom) {
+            if (object instanceof ITalkerGO) {
+                res.addAll(RedenAction.buildActions(db, currentStoryState, room,
+                        (IDescribableGO & ITalkerGO) object));
+            }
+
             res.addAll(
                     NehmenAction.buildObjectActions(db, currentStoryState,
                             room, object));

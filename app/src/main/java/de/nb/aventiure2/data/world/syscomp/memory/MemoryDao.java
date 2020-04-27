@@ -13,7 +13,7 @@ import de.nb.aventiure2.data.world.base.GameObjectId;
 import de.nb.aventiure2.data.world.base.IComponentDao;
 
 /**
- * Android ROOM DAO for the {@link Memory} component.
+ * Android ROOM DAO for the {@link MemoryComp} component.
  */
 @Dao
 public abstract class MemoryDao implements IComponentDao<MemoryPCD> {

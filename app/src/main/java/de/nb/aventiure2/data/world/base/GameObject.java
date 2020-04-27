@@ -24,6 +24,12 @@ public class GameObject implements IGameObject, ComponentContext {
 
     private final List<IComponent> components = new LinkedList<>();
 
+    // TODO Event-Dispatching in Game-Objects, jedes Game-Object kann ein Interface haben, dass es
+    //  (eine gewisse Klasse von) Events verarbeiten kann. Die Klasse Game Objects iteriert
+    //  darüber . Das Game Object
+    //  mit diesem interface delegiert die Verarbeitung an einen reactor (ISoundsoReactor / IActor)
+    //  Der kann seine eigenen (keine fremden?!) Daten ändern und darf vor allem auch erzählen.
+
     public GameObject(final GameObjectId id) {
         this.id = id;
     }

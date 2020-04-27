@@ -18,7 +18,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
 import static de.nb.aventiure2.data.world.syscomp.memory.Known.UNKNOWN;
 
 /**
- * Mutable - and therefore persistent - data of the {@link Memory} component.
+ * Mutable - and therefore persistent - data of the {@link MemoryComp} component.
  */
 @Entity
 public

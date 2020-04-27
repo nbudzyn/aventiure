@@ -11,6 +11,7 @@ import de.nb.aventiure2.data.world.syscomp.description.IDescribableGO;
 import de.nb.aventiure2.data.world.syscomp.location.ILocatableGO;
 import de.nb.aventiure2.data.world.syscomp.state.IHasStateGO;
 import de.nb.aventiure2.data.world.syscomp.storingplace.IHasStoringPlaceGO;
+import de.nb.aventiure2.data.world.syscomp.talking.ITalkerGO;
 import de.nb.aventiure2.data.world.time.AvDateTime;
 import de.nb.aventiure2.data.world.time.AvTimeSpan;
 
@@ -42,7 +43,7 @@ import static de.nb.aventiure2.german.base.GermanUtil.capitalize;
 
 @ParametersAreNonnullByDefault
 class FroschprinzReactions
-        <F extends IDescribableGO & ILivingBeingGO & IHasStateGO & ILocatableGO>
+        <F extends IDescribableGO & ILivingBeingGO & IHasStateGO & ILocatableGO & ITalkerGO>
         extends AbstractCreatureReactions<F> {
     private static final AvDateTime FROSCHPRINZ_LAEUFT_FRUEHESTENS_ZUM_SCHLOSSFEST_DATE_TIME =
             SCHLOSSFEST_BEGINN_DATE_TIME.minus(hours(12));
@@ -153,11 +154,11 @@ class FroschprinzReactions
                         + "„Heb mich herauf!“ ruft er "
                         + "„weißt du nicht, was du zu mir gesagt bei dem kühlen "
                         + "Brunnenwasser? Heb mich herauf!“")
-                .beendet(PARAGRAPH)
-                .imGespraechMit(getReactor()));
+                .beendet(PARAGRAPH));
 
         getReactor().locationComp().setLocation(room);
         getReactor().stateComp().setState(HAT_HOCHHEBEN_GEFORDERT);
+        getReactor().talkingComp().setTalkingTo(sc);
         sc.feelingsComp().setMood(ANGESPANNT);
         return secs(25);
     }
@@ -167,16 +168,14 @@ class FroschprinzReactions
                 t(PARAGRAPH, "„Heb mich auf den Tisch“, ruft der Frosch, „wie sollen wir "
                         + "zwei sonst zusammmen essen?“ Dir klopft das Herz")
                         .undWartest()
-                        .dann()
-                        .imGespraechMit(getReactor()),
+                        .dann(),
                 t(SENTENCE, "„Versprechen muss man halten!“, ruft der Frosch")
-                        .beendet(PARAGRAPH)
-                        .imGespraechMit(getReactor()),
+                        .beendet(PARAGRAPH),
                 t(PARAGRAPH, "Der Frosch lässt seine lange, schleimige Zunge vorschnellen. "
                         + "Hat er „Mitessen!“ gequakt?")
-                        .beendet(PARAGRAPH)
-                        .imGespraechMit(getReactor())));
+                        .beendet(PARAGRAPH)));
 
+        getReactor().talkingComp().setTalkingTo(sc);
         sc.feelingsComp().setMood(ANGESPANNT);
         return secs(15);
     }

@@ -9,7 +9,6 @@ import androidx.room.PrimaryKey;
 import de.nb.aventiure2.data.storystate.StoryState.StructuralElement;
 import de.nb.aventiure2.data.world.base.GameObjectId;
 import de.nb.aventiure2.data.world.base.IGameObject;
-import de.nb.aventiure2.data.world.syscomp.alive.ILivingBeingGO;
 
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
@@ -45,12 +44,6 @@ public class StoryStateBuilder {
     private boolean allowsAdditionalDuSatzreihengliedOhneSubjekt = false;
 
     private boolean dann = false;
-
-    /**
-     * The creature the user is / has recently been talking to.
-     */
-    @Nullable
-    private GameObjectId talkingTo;
 
     /**
      * Wenn dieses Game Object als unmittelbar nächstes verwendet werden soll, kann man
@@ -90,20 +83,6 @@ public class StoryStateBuilder {
                               @NonNull final String text) {
         this.startsNew = startsNew;
         this.text = text;
-    }
-
-    public StoryStateBuilder imGespraechMit(final ILivingBeingGO talkingTo) {
-        return imGespraechMit(talkingTo.getId());
-    }
-
-    public StoryStateBuilder imGespraechMit(final GameObjectId talkingTo) {
-        this.talkingTo = talkingTo;
-        return this;
-    }
-
-    public StoryStateBuilder imGespraechMitNiemandem() {
-        talkingTo = null;
-        return this;
     }
 
     /**
@@ -171,7 +150,6 @@ public class StoryStateBuilder {
                 kommaStehtAus,
                 allowsAdditionalDuSatzreihengliedOhneSubjekt,
                 dann,
-                talkingTo,
                 persPronKandidat);
     }
 }

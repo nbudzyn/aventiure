@@ -19,7 +19,7 @@ import de.nb.aventiure2.german.praedikat.VerbSubjObj;
  * anderen führt,
  * oft im Rahmen einer {@link de.nb.aventiure2.scaction.action.BewegenAction}.
  */
-public class CreatureConversationStep {
+public class ConversationStep {
     public enum Type {
         /**
          * Ein Entry-Schritt ist nur möglich, wenn der SC unmittelbar zuvor NICHT
@@ -67,7 +67,7 @@ public class CreatureConversationStep {
      */
     interface NarrationAndAction {
         /**
-         * Führt den {@link CreatureConversationStep} aus - erzählt die Geschichte weiter
+         * Führt den {@link ConversationStep} aus - erzählt die Geschichte weiter
          * und verändert ggf. die Welt.
          *
          * @return Zeitspanne die das alles dauert
@@ -104,7 +104,7 @@ public class CreatureConversationStep {
      * @param condition If this condition does not hold, this step is impossible
      *                  (there won't be an action for this step).
      */
-    CreatureConversationStep(
+    ConversationStep(
             final Type stepType,
             final Condition condition,
             final Praedikat name,

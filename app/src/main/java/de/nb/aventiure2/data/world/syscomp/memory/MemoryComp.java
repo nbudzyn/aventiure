@@ -19,17 +19,17 @@ import static com.google.common.base.Preconditions.checkNotNull;
  * Component for a {@link GameObject}: The game object
  * remembers things.
  */
-public class Memory extends AbstractStatefulComponent<MemoryPCD> {
+public class MemoryComp extends AbstractStatefulComponent<MemoryPCD> {
     private final AvDatabase db;
     @NonNull
     private final Map<GameObjectId, Known> initiallyKnown;
 
     /**
-     * Constructor for {@link Memory}.
+     * Constructor for {@link MemoryComp}.
      */
-    public Memory(final GameObjectId gameObjectId,
-                  final AvDatabase db,
-                  final Map<GameObjectId, Known> initiallyKnown) {
+    public MemoryComp(final GameObjectId gameObjectId,
+                      final AvDatabase db,
+                      final Map<GameObjectId, Known> initiallyKnown) {
         super(gameObjectId, db.memoryDao());
         this.db = db;
         this.initiallyKnown = initiallyKnown;

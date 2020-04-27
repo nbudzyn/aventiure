@@ -14,22 +14,22 @@ import de.nb.aventiure2.data.storystate.StoryStateBuilder;
 import de.nb.aventiure2.data.storystate.StoryStateDao;
 import de.nb.aventiure2.data.world.gameobjects.GameObjects;
 import de.nb.aventiure2.data.world.gameobjects.player.SpielerCharakter;
-import de.nb.aventiure2.data.world.syscomp.alive.ILivingBeingGO;
 import de.nb.aventiure2.data.world.syscomp.description.IDescribableGO;
 import de.nb.aventiure2.data.world.syscomp.storingplace.IHasStoringPlaceGO;
+import de.nb.aventiure2.data.world.syscomp.talking.ITalkerGO;
 import de.nb.aventiure2.german.base.Nominalphrase;
 import de.nb.aventiure2.german.praedikat.Praedikat;
 
 import static de.nb.aventiure2.data.world.gameobjects.GameObjects.loadSC;
-import static de.nb.aventiure2.scaction.action.creature.conversation.CreatureConversationStep.ALWAYS_POSSIBLE;
-import static de.nb.aventiure2.scaction.action.creature.conversation.CreatureConversationStep.DEFAULT_ENTRY_RE_ENTRY_NAME;
-import static de.nb.aventiure2.scaction.action.creature.conversation.CreatureConversationStep.DEFAULT_EXIT_NAME;
+import static de.nb.aventiure2.scaction.action.creature.conversation.ConversationStep.ALWAYS_POSSIBLE;
+import static de.nb.aventiure2.scaction.action.creature.conversation.ConversationStep.DEFAULT_ENTRY_RE_ENTRY_NAME;
+import static de.nb.aventiure2.scaction.action.creature.conversation.ConversationStep.DEFAULT_EXIT_NAME;
 
 /**
- * Abstrakte Oberklasse zum Erzeugen von {@link CreatureConversationStep}s für eine
+ * Abstrakte Oberklasse zum Erzeugen von {@link ConversationStep}s für eine
  * Kreatur.
  */
-abstract class AbstractCreatureConversationStepBuilder<LIV extends ILivingBeingGO> {
+abstract class AbstractConversationStepBuilder<TALKER extends ITalkerGO> {
     protected final AvDatabase db;
 
     protected final SpielerCharakter sc;
@@ -44,11 +44,11 @@ abstract class AbstractCreatureConversationStepBuilder<LIV extends ILivingBeingG
     protected final IHasStoringPlaceGO room;
 
     @NonNull
-    protected final LIV creature;
+    protected final TALKER talker;
 
-    AbstractCreatureConversationStepBuilder(final AvDatabase db, final StoryState initialStoryState,
-                                            final IHasStoringPlaceGO room,
-                                            @NonNull final LIV creature) {
+    AbstractConversationStepBuilder(final AvDatabase db, final StoryState initialStoryState,
+                                    final IHasStoringPlaceGO room,
+                                    @NonNull final TALKER talker) {
         this.db = db;
 
         n = db.storyStateDao();
@@ -57,14 +57,14 @@ abstract class AbstractCreatureConversationStepBuilder<LIV extends ILivingBeingG
 
         this.initialStoryState = initialStoryState;
         this.room = room;
-        this.creature = creature;
+        this.talker = talker;
     }
 
-    List<CreatureConversationStep> getPossibleSteps() {
-        final ImmutableList.Builder<CreatureConversationStep> res =
+    List<ConversationStep> getPossibleSteps() {
+        final ImmutableList.Builder<ConversationStep> res =
                 ImmutableList.builder();
 
-        for (final CreatureConversationStep step : getAllStepsForCurrentState()) {
+        for (final ConversationStep step : getAllStepsForCurrentState()) {
             if (step.isStepPossible()) {
                 res.add(step);
             }
@@ -73,145 +73,145 @@ abstract class AbstractCreatureConversationStepBuilder<LIV extends ILivingBeingG
         return res.build();
     }
 
-    abstract List<CreatureConversationStep> getAllStepsForCurrentState();
+    abstract List<ConversationStep> getAllStepsForCurrentState();
 
-    static CreatureConversationStep entrySt(
-            final CreatureConversationStep.NarrationAndAction narrationAndAction) {
+    static ConversationStep entrySt(
+            final ConversationStep.NarrationAndAction narrationAndAction) {
         return entrySt(DEFAULT_ENTRY_RE_ENTRY_NAME, narrationAndAction);
     }
 
-    static CreatureConversationStep entrySt(final Praedikat entryName,
-                                            final CreatureConversationStep.NarrationAndAction narrationAndAction) {
+    static ConversationStep entrySt(final Praedikat entryName,
+                                    final ConversationStep.NarrationAndAction narrationAndAction) {
         return entrySt(ALWAYS_POSSIBLE, entryName, narrationAndAction);
     }
 
     /**
-     * Creates a {@link CreatureConversationStep} to enter a conversation.
+     * Creates a {@link ConversationStep} to enter a conversation.
      *
      * @param condition If this condition does not hold, this step is impossible
      *                  (there won't be an action for this step).
      */
-    static CreatureConversationStep entrySt(
-            final CreatureConversationStep.Condition condition,
-            final CreatureConversationStep.NarrationAndAction narrationAndAction) {
+    static ConversationStep entrySt(
+            final ConversationStep.Condition condition,
+            final ConversationStep.NarrationAndAction narrationAndAction) {
         return entrySt(condition, DEFAULT_ENTRY_RE_ENTRY_NAME, narrationAndAction);
     }
 
     /**
-     * Creates a {@link CreatureConversationStep} to enter a conversation.
+     * Creates a {@link ConversationStep} to enter a conversation.
      *
      * @param condition If this condition does not hold, this step is impossible
      *                  (there won't be an action for this step).
      */
-    static CreatureConversationStep entrySt(
-            final CreatureConversationStep.Condition condition,
+    static ConversationStep entrySt(
+            final ConversationStep.Condition condition,
             final Praedikat entryName,
-            final CreatureConversationStep.NarrationAndAction narrationAndAction) {
-        return new CreatureConversationStep(CreatureConversationStep.Type.ENTRY_RE_ENTRY, condition,
+            final ConversationStep.NarrationAndAction narrationAndAction) {
+        return new ConversationStep(ConversationStep.Type.ENTRY_RE_ENTRY, condition,
                 entryName,
                 narrationAndAction);
     }
 
-    static CreatureConversationStep immReEntrySt(
-            final CreatureConversationStep.NarrationAndAction narrationAndAction) {
+    static ConversationStep immReEntrySt(
+            final ConversationStep.NarrationAndAction narrationAndAction) {
         return immReEntrySt(DEFAULT_ENTRY_RE_ENTRY_NAME, narrationAndAction);
     }
 
-    static CreatureConversationStep immReEntrySt(final Praedikat entryName,
-                                                 final CreatureConversationStep.NarrationAndAction narrationAndAction) {
+    static ConversationStep immReEntrySt(final Praedikat entryName,
+                                         final ConversationStep.NarrationAndAction narrationAndAction) {
         return immReEntrySt(ALWAYS_POSSIBLE, entryName, narrationAndAction);
     }
 
     /**
-     * Creates a {@link CreatureConversationStep} to immediately re-enter a conversation.
+     * Creates a {@link ConversationStep} to immediately re-enter a conversation.
      *
      * @param condition If this condition does not hold, this step is impossible
      *                  (there won't be an action for this step).
      */
-    static CreatureConversationStep immReEntrySt(final CreatureConversationStep.Condition condition,
-                                                 final CreatureConversationStep.NarrationAndAction narrationAndAction) {
+    static ConversationStep immReEntrySt(final ConversationStep.Condition condition,
+                                         final ConversationStep.NarrationAndAction narrationAndAction) {
         return immReEntrySt(condition, DEFAULT_ENTRY_RE_ENTRY_NAME, narrationAndAction);
     }
 
     /**
-     * Creates a {@link CreatureConversationStep} to immediately re-enter a conversation.
+     * Creates a {@link ConversationStep} to immediately re-enter a conversation.
      *
      * @param condition If this condition does not hold, this step is impossible
      *                  (there won't be an action for this step).
      */
-    static CreatureConversationStep immReEntrySt(
-            final CreatureConversationStep.Condition condition,
+    static ConversationStep immReEntrySt(
+            final ConversationStep.Condition condition,
             final Praedikat entryName,
-            final CreatureConversationStep.NarrationAndAction narrationAndAction) {
-        return new CreatureConversationStep(CreatureConversationStep.Type.IMMEDIATE_RE_ENTRY,
+            final ConversationStep.NarrationAndAction narrationAndAction) {
+        return new ConversationStep(ConversationStep.Type.IMMEDIATE_RE_ENTRY,
                 condition,
                 entryName, narrationAndAction);
     }
 
-    static CreatureConversationStep reEntrySt(
-            final CreatureConversationStep.NarrationAndAction narrationAndAction) {
+    static ConversationStep reEntrySt(
+            final ConversationStep.NarrationAndAction narrationAndAction) {
         return reEntrySt(DEFAULT_ENTRY_RE_ENTRY_NAME, narrationAndAction);
     }
 
-    static CreatureConversationStep reEntrySt(final Praedikat entryName,
-                                              final CreatureConversationStep.NarrationAndAction narrationAndAction) {
+    static ConversationStep reEntrySt(final Praedikat entryName,
+                                      final ConversationStep.NarrationAndAction narrationAndAction) {
         return reEntrySt(ALWAYS_POSSIBLE, entryName, narrationAndAction);
     }
 
     /**
-     * Creates a {@link CreatureConversationStep} to re-enter a conversation (but not immediately)
+     * Creates a {@link ConversationStep} to re-enter a conversation (but not immediately)
      *
      * @param condition If this condition does not hold, this step is impossible
      *                  (there won't be an action for this step).
      */
-    static CreatureConversationStep reEntrySt(
-            final CreatureConversationStep.Condition condition,
-            final CreatureConversationStep.NarrationAndAction narrationAndAction) {
+    static ConversationStep reEntrySt(
+            final ConversationStep.Condition condition,
+            final ConversationStep.NarrationAndAction narrationAndAction) {
         return reEntrySt(condition, DEFAULT_ENTRY_RE_ENTRY_NAME, narrationAndAction);
     }
 
     /**
-     * Creates a {@link CreatureConversationStep} to re-enter a conversation (but not immediately)
+     * Creates a {@link ConversationStep} to re-enter a conversation (but not immediately)
      *
      * @param condition If this condition does not hold, this step is impossible
      *                  (there won't be an action for this step).
      */
-    static CreatureConversationStep reEntrySt(
-            final CreatureConversationStep.Condition condition,
+    static ConversationStep reEntrySt(
+            final ConversationStep.Condition condition,
             final Praedikat entryName,
-            final CreatureConversationStep.NarrationAndAction narrationAndAction) {
-        return new CreatureConversationStep(CreatureConversationStep.Type.ENTRY_RE_ENTRY, condition,
+            final ConversationStep.NarrationAndAction narrationAndAction) {
+        return new ConversationStep(ConversationStep.Type.ENTRY_RE_ENTRY, condition,
                 entryName,
                 narrationAndAction);
     }
 
-    static CreatureConversationStep st(final Praedikat name,
-                                       final CreatureConversationStep.NarrationAndAction narrationAndAction) {
+    static ConversationStep st(final Praedikat name,
+                               final ConversationStep.NarrationAndAction narrationAndAction) {
         return st(ALWAYS_POSSIBLE, name, narrationAndAction);
     }
 
     /**
-     * Creates a normal {@link CreatureConversationStep}
+     * Creates a normal {@link ConversationStep}
      *
      * @param condition If this condition does not hold, this step is impossible
      *                  (there won't be an action for this step).
      */
-    static CreatureConversationStep st(
-            final CreatureConversationStep.Condition condition,
+    static ConversationStep st(
+            final ConversationStep.Condition condition,
             final Praedikat name,
-            final CreatureConversationStep.NarrationAndAction narrationAndAction) {
-        return new CreatureConversationStep(
-                CreatureConversationStep.Type.NORMAL, condition, name, narrationAndAction);
+            final ConversationStep.NarrationAndAction narrationAndAction) {
+        return new ConversationStep(
+                ConversationStep.Type.NORMAL, condition, name, narrationAndAction);
     }
 
-    static CreatureConversationStep exitSt(
-            final CreatureConversationStep.NarrationAndAction narrationAndAction) {
+    static ConversationStep exitSt(
+            final ConversationStep.NarrationAndAction narrationAndAction) {
         return exitSt(DEFAULT_EXIT_NAME, narrationAndAction);
     }
 
-    static CreatureConversationStep exitSt(final Praedikat exitName,
-                                           final CreatureConversationStep.NarrationAndAction narrationAndAction) {
-        return new CreatureConversationStep(CreatureConversationStep.Type.EXIT, ALWAYS_POSSIBLE,
+    static ConversationStep exitSt(final Praedikat exitName,
+                                   final ConversationStep.NarrationAndAction narrationAndAction) {
+        return new ConversationStep(ConversationStep.Type.EXIT, ALWAYS_POSSIBLE,
                 exitName,
                 narrationAndAction);
     }
@@ -254,13 +254,5 @@ abstract class AbstractCreatureConversationStepBuilder<LIV extends ILivingBeingG
      */
     StoryStateBuilder alt(final StoryStateBuilder... alternatives) {
         return n.chooseNextFrom(alternatives);
-    }
-
-    StoryStateBuilder t(
-            @NonNull final StoryState.StructuralElement startsNew,
-            @NonNull final String text) {
-        return StoryStateBuilder.t(startsNew, text)
-                // Sensible default - caller may override this setting
-                .imGespraechMit(creature);
     }
 }
