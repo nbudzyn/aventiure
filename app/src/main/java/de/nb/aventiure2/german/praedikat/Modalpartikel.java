@@ -3,12 +3,12 @@ package de.nb.aventiure2.german.praedikat;
 import androidx.annotation.NonNull;
 
 /**
- * Eine adverbiale Angabe (z.B. "aus Langeweile" oder "fröhlich").
+ * Eine Modalpartikel ist etwas wie "doch", "halt", "eben".
  */
-public class AdverbialeAngabe {
+public class Modalpartikel {
     private final String text;
 
-    public AdverbialeAngabe(final String text) {
+    public Modalpartikel(final String text) {
         this.text = text;
     }
 

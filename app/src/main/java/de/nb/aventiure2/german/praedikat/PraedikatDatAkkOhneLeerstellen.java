@@ -1,13 +1,18 @@
 package de.nb.aventiure2.german.praedikat;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
+
+import java.util.Collection;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 import de.nb.aventiure2.german.base.DeklinierbarePhrase;
+import de.nb.aventiure2.german.base.Numerus;
+import de.nb.aventiure2.german.base.Person;
 
 import static de.nb.aventiure2.german.base.GermanUtil.capitalize;
+import static de.nb.aventiure2.german.base.GermanUtil.joinToNull;
 
 /**
  * Ein Prädikat, in dem ein Dativobjekt und Akkusativobjekt gesetzt sind
@@ -15,25 +20,11 @@ import static de.nb.aventiure2.german.base.GermanUtil.capitalize;
  */
 public class PraedikatDatAkkOhneLeerstellen implements PraedikatOhneLeerstellen {
     /**
-     * Infinitiv des Verbs ("machen")
+     * Das Verb an sich, ohne Informationen zur Valenz, ohne Ergänzungen, ohne
+     * Angaben
      */
     @NonNull
-    private final String infinitiv;
-
-    /**
-     * 2. Person Singular Präsens Indikativ des Verbs, ggf. ohne abgetrenntes Präfix
-     * ("machst")
-     */
-    @NonNull
-    private final String duForm;
-
-    /**
-     * Ggf. das abgetrennte Präfix des Verbs.
-     * <p>
-     * Wird das Präfix <i>nicht</i> abgetrennt ("ver"), ist dieses Feld <code>null</code>.
-     */
-    @Nullable
-    private final String abgetrenntesPraefix;
+    private final Verb verb;
 
     /**
      * Das (Objekt / Wesen / Konzept für das) Dativobjekt (z.B. "Angebote")
@@ -47,13 +38,10 @@ public class PraedikatDatAkkOhneLeerstellen implements PraedikatOhneLeerstellen 
     @NonNull
     private final DeklinierbarePhrase describableAkk;
 
-    public PraedikatDatAkkOhneLeerstellen(final String infinitiv, final String duForm,
-                                          final String abgetrenntesPraefix,
+    public PraedikatDatAkkOhneLeerstellen(final Verb verb,
                                           final DeklinierbarePhrase describableDat,
                                           final DeklinierbarePhrase describableAkk) {
-        this.infinitiv = infinitiv;
-        this.duForm = duForm;
-        this.abgetrenntesPraefix = abgetrenntesPraefix;
+        this.verb = verb;
         this.describableDat = describableDat;
         this.describableAkk = describableAkk;
     }
@@ -63,17 +51,15 @@ public class PraedikatDatAkkOhneLeerstellen implements PraedikatOhneLeerstellen 
      * ("Du machst dem Frosch Angebote")
      */
     @Override
-    public String getDescriptionDuHauptsatz() {
-        if (abgetrenntesPraefix == null) {
-            return "Du " + duForm +
-                    " " + describableDat.dat() +
-                    " " + describableAkk.akk();
-        }
-
-        return "Du " + duForm +
-                " " + describableDat.dat() +
-                " " + describableAkk.akk() +
-                " " + abgetrenntesPraefix;
+    public String getDescriptionDuHauptsatz(
+            final Collection<Modalpartikel> modalpartikeln) {
+        return joinToNull(
+                "Du",
+                verb.getDuForm(),
+                describableDat.dat(),
+                joinToNull(modalpartikeln),
+                describableAkk.akk(),
+                verb.getPartikel());
     }
 
     @Override
@@ -83,30 +69,41 @@ public class PraedikatDatAkkOhneLeerstellen implements PraedikatOhneLeerstellen 
 
     @Override
     public String getDescriptionDuHauptsatz(@Nonnull final AdverbialeAngabe adverbialeAngabe) {
-        if (abgetrenntesPraefix == null) {
+        if (verb.getPartikel() == null) {
             return capitalize(adverbialeAngabe.getText()) + // Aus Langeweile
-                    " " + duForm +
+                    " " + verb.getDuForm() +
                     " du " +
                     describableDat.dat() +
                     " " + describableAkk.akk();
         }
 
         return capitalize(adverbialeAngabe.getText()) + // Aus Langeweile
-                " " + duForm +
+                " " + verb.getDuForm() +
                 " du " +
                 describableDat.dat() +
                 " " + describableAkk.akk() +
-                " " + abgetrenntesPraefix;
+                " " + verb.getPartikel();
     }
 
-    /**
-     * Gibt eine Infinitivkonstruktion mit diesem Prädikat zurück.
-     * ("Dem Frosch Angebote machen")
-     */
     @Override
-    public String getDescriptionInfinitiv() {
-        return capitalize(describableDat.dat()) +
+    public String getDescriptionInfinitiv(final Person person, final Numerus numerus) {
+        return describableDat.dat() +
                 " " + describableAkk.akk() +
-                " " + infinitiv;
+                " " + verb.getInfinitiv();
+    }
+
+    @Override
+    public String getDescriptionZuInfinitiv(final Person person, final Numerus numerus) {
+        return getDescriptionZuInfinitiv(person, numerus, null);
+    }
+
+    @Override
+    public String getDescriptionZuInfinitiv(final Person person, final Numerus numerus,
+                                            @Nullable final AdverbialeAngabe adverbialeAngabe) {
+        return joinToNull(
+                describableDat.dat(), // "dem Frosch"
+                adverbialeAngabe, // "erneut"
+                describableAkk.akk(), // "das Gold"
+                verb.getZuInfinitiv()); // "anzubieten"
     }
 }

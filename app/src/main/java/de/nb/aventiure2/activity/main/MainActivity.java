@@ -38,6 +38,9 @@ public class MainActivity extends AppCompatActivity {
 
         // TODO Use view binding
         storyTextView = findViewById(R.id.storyTextView);
+
+        // TODO Blocksatz?
+        // TODO Automatische Trennung?!
         storyTextScrollView = findViewById(R.id.storyTextScrollView);
 
         createActionsRecyclerView();

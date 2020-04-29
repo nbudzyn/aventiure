@@ -1,12 +1,19 @@
 package de.nb.aventiure2.german.praedikat;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
+
+import java.util.Collection;
+
+import javax.annotation.Nullable;
 
 import de.nb.aventiure2.german.base.DeklinierbarePhrase;
 import de.nb.aventiure2.german.base.KasusOderPraepositionalkasus;
+import de.nb.aventiure2.german.base.Numerus;
+import de.nb.aventiure2.german.base.Person;
 
 import static de.nb.aventiure2.german.base.GermanUtil.capitalize;
+import static de.nb.aventiure2.german.base.GermanUtil.joinToNull;
+import static java.util.Arrays.asList;
 
 /**
  * Ein Prädikat (Verb ggf. mit Präfix) bei dem das Verb mit einem Subjekt und einem
@@ -14,10 +21,11 @@ import static de.nb.aventiure2.german.base.GermanUtil.capitalize;
  */
 class PraedikatSubjObjOhneLeerstellen implements PraedikatOhneLeerstellen {
     /**
-     * Infinitiv des Verbs ("aufheben")
+     * Das Verb an sich, ohne Informationen zur Valenz, ohne Ergänzungen, ohne
+     * Angaben
      */
     @NonNull
-    private final String infinitiv;
+    private final Verb verb;
 
     /**
      * Der Kasus (z.B. Akkusativ, "die Kugel nehmen") oder Präpositionalkasus
@@ -27,33 +35,15 @@ class PraedikatSubjObjOhneLeerstellen implements PraedikatOhneLeerstellen {
     private final KasusOderPraepositionalkasus kasusOderPraepositionalkasus;
 
     /**
-     * 2. Person Singular Präsens Indikativ des Verbs, ggf. ohne abgetrenntes Präfix
-     * ("hebst")
-     */
-    @NonNull
-    private final String duForm;
-
-    /**
-     * Ggf. das abgetrennte Präfix des Verbs ("auf").
-     * <p>
-     * Wird das Präfix <i>nicht</i> abgetrennt ("ver"), ist dieses Feld <code>null</code>.
-     */
-    @Nullable
-    private final String abgetrenntesPraefix;
-
-    /**
      * Das Objekt (z.B. ein Ding, Wesen, Konzept oder deklinierbare Phrase)
      */
     private final DeklinierbarePhrase objekt;
 
 
-    public PraedikatSubjObjOhneLeerstellen(final String infinitiv, final String duForm,
-                                           final String abgetrenntesPraefix,
+    public PraedikatSubjObjOhneLeerstellen(final Verb verb,
                                            final KasusOderPraepositionalkasus kasusOderPraepositionalkasus,
                                            final DeklinierbarePhrase objekt) {
-        this.infinitiv = infinitiv;
-        this.duForm = duForm;
-        this.abgetrenntesPraefix = abgetrenntesPraefix;
+        this.verb = verb;
         this.kasusOderPraepositionalkasus = kasusOderPraepositionalkasus;
         this.objekt = objekt;
     }
@@ -63,12 +53,9 @@ class PraedikatSubjObjOhneLeerstellen implements PraedikatOhneLeerstellen {
      * ("Du nimmst den Ast")
      */
     @Override
-    public String getDescriptionDuHauptsatz() {
-        if (abgetrenntesPraefix == null) {
-            return "Du " + getDescriptionHauptsatzMitEingespartemVorfeldSubj();
-        }
-
-        return "Du " + getDescriptionHauptsatzMitEingespartemVorfeldSubj();
+    public String getDescriptionDuHauptsatz(
+            final Collection<Modalpartikel> modalpartikeln) {
+        return "Du " + getDescriptionHauptsatzMitEingespartemVorfeldSubj(modalpartikeln);
     }
 
     @Override
@@ -80,15 +67,25 @@ class PraedikatSubjObjOhneLeerstellen implements PraedikatOhneLeerstellen {
      * Gibt einen Satz zurück mit diesem Prädikat, bei dem das Subjekt, das im Vorfeld
      * stünde, eingespart ist ("nimmst den Ast")
      */
-    public String getDescriptionHauptsatzMitEingespartemVorfeldSubj() {
-        if (abgetrenntesPraefix == null) {
-            return duForm +
-                    " " + objekt.im(kasusOderPraepositionalkasus);
-        }
+    public String getDescriptionHauptsatzMitEingespartemVorfeldSubj(
+            final Modalpartikel... modalpartikeln) {
+        return getDescriptionHauptsatzMitEingespartemVorfeldSubj(
+                asList(modalpartikeln)
+        );
+    }
 
-        return duForm +
-                " " + objekt.im(kasusOderPraepositionalkasus) +
-                " " + abgetrenntesPraefix;
+    /**
+     * Gibt einen Satz zurück mit diesem Prädikat, bei dem das Subjekt, das im Vorfeld
+     * stünde, eingespart ist ("nimmst den Ast"), sowie ggf. diesen
+     * Modalpartikeln ("nimmst den Ast eben doch").
+     */
+    public String getDescriptionHauptsatzMitEingespartemVorfeldSubj(
+            final Collection<Modalpartikel> modalpartikeln) {
+        return joinToNull(
+                verb.getDuForm(),
+                objekt.im(kasusOderPraepositionalkasus),
+                joinToNull(modalpartikeln),
+                verb.getPartikel());
     }
 
     /**
@@ -97,28 +94,49 @@ class PraedikatSubjObjOhneLeerstellen implements PraedikatOhneLeerstellen {
      */
     @Override
     public String getDescriptionDuHauptsatz(@NonNull final AdverbialeAngabe adverbialeAngabe) {
-        if (abgetrenntesPraefix == null) {
+        if (verb.getPartikel() == null) {
             return capitalize(adverbialeAngabe.getText()) +
-                    " " + duForm +
+                    " " + verb.getDuForm() +
                     " du " +
                     objekt.im(kasusOderPraepositionalkasus);
         }
 
         return capitalize(adverbialeAngabe.getText()) +
-                " " + duForm +
+                " " + verb.getDuForm() +
                 " du " +
                 objekt.im(kasusOderPraepositionalkasus) +
-                " " + abgetrenntesPraefix;
+                " " + verb.getPartikel();
     }
 
     /**
      * Gibt eine Infinitivkonstruktion zurück mit Prädikat.
-     * ("Den Frosch ignorieren", "Das Leben genießen")
+     * ("den Frosch ignorieren", "das Leben genießen")
      */
     @Override
-    public String getDescriptionInfinitiv() {
-        return capitalize(objekt.im(kasusOderPraepositionalkasus) +
-                " " + infinitiv);
+    public String getDescriptionInfinitiv(final Person person, final Numerus numerus) {
+        return objekt.im(kasusOderPraepositionalkasus) +
+                " " + verb.getInfinitiv();
+    }
+
+    /**
+     * Gibt eine Infinitivkonstruktion zurück mit Prädikat.
+     * ("den Frosch zu ignorieren", "das Leben zu genießen")
+     */
+    @Override
+    public String getDescriptionZuInfinitiv(final Person person, final Numerus numerus) {
+        return getDescriptionZuInfinitiv(person, numerus, null);
+    }
+
+    /**
+     * Gibt eine Infinitivkonstruktion zurück mit Prädikat.
+     * ("den Frosch erneut zu ignorieren", "das Leben zu genießen")
+     */
+    @Override
+    public String getDescriptionZuInfinitiv(final Person person, final Numerus numerus,
+                                            @Nullable final AdverbialeAngabe adverbialeAngabe) {
+        return joinToNull(objekt.im(kasusOderPraepositionalkasus),
+                adverbialeAngabe,
+                verb.getZuInfinitiv());
     }
 
     @NonNull

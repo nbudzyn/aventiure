@@ -18,11 +18,13 @@ import java.util.Objects;
 import de.nb.aventiure2.data.world.time.AvTimeSpan;
 import de.nb.aventiure2.german.base.AbstractDescription;
 import de.nb.aventiure2.german.base.DuDescription;
+import de.nb.aventiure2.german.base.StructuralElement;
 
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
-import static de.nb.aventiure2.data.storystate.StoryState.StructuralElement.SENTENCE;
 import static de.nb.aventiure2.data.storystate.StoryStateBuilder.t;
+import static de.nb.aventiure2.german.base.StructuralElement.SENTENCE;
+import static de.nb.aventiure2.german.base.StructuralElement.min;
 import static java.util.Arrays.asList;
 
 /**
@@ -66,55 +68,39 @@ public abstract class StoryStateDao {
         }
     }
 
-    public AvTimeSpan addAlt(final StoryState.StructuralElement startsNewUnlessSatzreihung,
-                             final AbstractDescription... alternatives) {
+    public AvTimeSpan addAlt(final AbstractDescription<?>... alternatives) {
         final StoryState initialStoryState = getStoryState();
-        return addAlt(startsNewUnlessSatzreihung,
+        return addAlt(
                 asList(alternatives), initialStoryState);
     }
 
-    public AvTimeSpan addAlt(final ImmutableCollection.Builder<AbstractDescription> alternatives) {
+    public AvTimeSpan addAlt(
+            final ImmutableCollection.Builder<AbstractDescription<?>> alternatives) {
         return addAlt(alternatives.build());
     }
 
-    public AvTimeSpan addAlt(final StoryState.StructuralElement startsNewUnlessSatzreihung,
-                             final Collection<AbstractDescription> alternatives) {
+    public AvTimeSpan addAlt(final Collection<AbstractDescription<?>> alternatives) {
         final StoryState initialStoryState = getStoryState();
-        return addAlt(startsNewUnlessSatzreihung,
+        return addAlt(
                 alternatives, initialStoryState);
     }
 
-    public AvTimeSpan addAlt(final AbstractDescription... alternatives) {
-        return addAlt(getStoryState(), alternatives);
-    }
-
-    public AvTimeSpan addAlt(final StoryState initialStoryState,
-                             final AbstractDescription... alternatives) {
+    private AvTimeSpan addAlt(final StoryState initialStoryState,
+                              final AbstractDescription<?>... alternatives) {
         return addAlt(asList(alternatives), initialStoryState);
     }
 
-    public AvTimeSpan addAlt(final Collection<AbstractDescription> alternatives) {
-        return addAlt(alternatives,
-                getStoryState());
-    }
-
-    public AvTimeSpan addAlt(final Collection<AbstractDescription> alternatives,
-                             final StoryState initialStoryState) {
-        return addAlt(SENTENCE, alternatives, initialStoryState);
-    }
-
-    public AvTimeSpan addAlt(final StoryState.StructuralElement startsNewUnlessSatzreihung,
-                             final Collection<AbstractDescription> alternatives,
-                             final StoryState initialStoryState) {
+    private AvTimeSpan addAlt(final Collection<AbstractDescription<?>> alternatives,
+                              final StoryState initialStoryState) {
         checkArgument(alternatives.size() > 0,
                 "No alternatives");
 
         AbstractDescription bestDesc = null;
         float bestScore = Float.NEGATIVE_INFINITY;
         StoryStateBuilder bestStoryStateBuilder = null;
-        for (final AbstractDescription descAlternative : alternatives) {
+        for (final AbstractDescription<?> descAlternative : alternatives) {
             final List<StoryStateBuilder> storyStateBuildersForAlternative =
-                    toStoryStateBuilders(startsNewUnlessSatzreihung, descAlternative,
+                    toStoryStateBuilders(descAlternative,
                             initialStoryState);
             final IndexAndScore indexAndScore = chooseNextIndexAndScoreFrom(
                     initialStoryState,
@@ -132,49 +118,53 @@ public abstract class StoryStateDao {
         return bestDesc.getTimeElapsed();
     }
 
-    public AvTimeSpan add(final AbstractDescription desc) {
-        return add(SENTENCE, desc);
-    }
-
-    public AvTimeSpan add(final StoryState.StructuralElement startsNewUnlessSatzreihung,
-                          final AbstractDescription desc) {
+    public AvTimeSpan add(final AbstractDescription<?> desc) {
         final StoryState initialStoryState = getStoryState();
-        return add(startsNewUnlessSatzreihung, desc, initialStoryState);
+        return add(desc, initialStoryState);
     }
 
-    private AvTimeSpan add(final StoryState.StructuralElement startsNewUnlessSatzreihung,
-                           final AbstractDescription desc, final StoryState initialStoryState) {
+    private AvTimeSpan add(final AbstractDescription<?> desc, final StoryState initialStoryState) {
         add(chooseNextFrom(initialStoryState,
-                toStoryStateBuilders(startsNewUnlessSatzreihung, desc, initialStoryState)));
+                toStoryStateBuilders(desc, initialStoryState)));
 
         return desc.getTimeElapsed();
     }
 
     private static List<StoryStateBuilder> toStoryStateBuilders(
-            final StoryState.StructuralElement startsNewUnlessSatzreihung,
-            final AbstractDescription desc,
+            final AbstractDescription<?> desc,
             final StoryState initialStoryState) {
         if (initialStoryState.allowsAdditionalDuSatzreihengliedOhneSubjekt() &&
                 desc instanceof DuDescription) {
             final DuDescription duDesc = (DuDescription) desc;
-            return ImmutableList.of(t(StoryState.StructuralElement.WORD,
+            return ImmutableList.of(t(desc.getStartsNew(),
                     "und " +
                             duDesc.getDescriptionSatzanschlussOhneSubjekt())
                     .komma(duDesc.isKommaStehtAus())
                     .dann(duDesc.isDann()));
         } else if (initialStoryState.dann()) {
-            return ImmutableList.of(t(startsNewUnlessSatzreihung,
+            return ImmutableList.of(t(
+                    min(desc.getStartsNew(), SENTENCE),
                     desc.getDescriptionHauptsatzMitKonjunktionaladverbWennNoetig("dann"))
                     .komma(desc.isKommaStehtAus())
                     .undWartest(desc.isAllowsAdditionalDuSatzreihengliedOhneSubjekt()));
         } else {
             final ImmutableList.Builder<StoryStateBuilder> alternatives =
                     ImmutableList.builder();
-            alternatives.add(toHauptsatzStoryStateBuilder(startsNewUnlessSatzreihung, desc));
+
+            final StructuralElement startsNew =
+                    (desc instanceof DuDescription) ?
+                            // Bei einer DuDescription ist der Hauptsatz ein echter
+                            // Hauptsatz. Daher muss ein neuer Satz begonnen werden.
+                            min(desc.getStartsNew(), SENTENCE) :
+                            // Ansonsten könnte der "Hauptsatz" auch einfach ein paar Wörter sein,
+                            // die Vorgabe WORD soll dann erhalten bleiben
+                            desc.getStartsNew();
+
+            alternatives.add(toHauptsatzStoryStateBuilder(startsNew, desc));
 
             if (desc instanceof DuDescription) {
                 alternatives.add(toHauptsatzMitSpeziellemVorfeldStoryStateBuilder(
-                        startsNewUnlessSatzreihung,
+                        startsNew,
                         (DuDescription) desc));
             }
 
@@ -183,7 +173,7 @@ public abstract class StoryStateDao {
     }
 
     private static StoryStateBuilder toHauptsatzStoryStateBuilder(
-            final StoryState.StructuralElement startsNewUnlessSatzreihung,
+            final StructuralElement startsNewUnlessSatzreihung,
             @NonNull final AbstractDescription desc) {
         return t(startsNewUnlessSatzreihung,
                 desc.getDescriptionHauptsatz())
@@ -193,7 +183,7 @@ public abstract class StoryStateDao {
     }
 
     private static StoryStateBuilder toHauptsatzMitSpeziellemVorfeldStoryStateBuilder(
-            final StoryState.StructuralElement startsNewUnlessSatzreihung,
+            final StructuralElement startsNewUnlessSatzreihung,
             @NonNull final DuDescription desc) {
         return t(startsNewUnlessSatzreihung,
                 desc.getDescriptionHauptsatzMitSpeziellemVorfeld())

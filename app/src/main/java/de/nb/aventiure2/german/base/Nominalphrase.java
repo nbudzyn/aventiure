@@ -1,7 +1,7 @@
 package de.nb.aventiure2.german.base;
 
 import static de.nb.aventiure2.german.base.NumerusGenus.N;
-import static de.nb.aventiure2.german.base.NumerusGenus.PL;
+import static de.nb.aventiure2.german.base.NumerusGenus.PL_MFN;
 
 /**
  * Eine Nominalphrase, z.B. "ein dicker, hässlicher Frosch".
@@ -10,9 +10,9 @@ public class Nominalphrase extends DeklinierbarePhrase {
     // Allgemeine Nominalfphrasen, die sich nicht auf ein
     // AvObject oder eine AbstractEntity beziehen.
     public static final Nominalphrase ANGEBOTE =
-            np(PL, "Angebote", "Angeboten");
+            np(PL_MFN, "Angebote", "Angeboten");
     public static final Nominalphrase DINGE =
-            np(PL, "die Dinge", "den Dingen");
+            np(PL_MFN, "die Dinge", "den Dingen");
     public static final Nominalphrase GESPRAECH =
             np(N, "das Gespräch", "dem Gespräch");
 
@@ -38,6 +38,7 @@ public class Nominalphrase extends DeklinierbarePhrase {
         super(numerusGenus, nominativ, dativ, akkusativ);
     }
 
+    @Override
     public Personalpronomen persPron() {
         return Personalpronomen.get(getNumerusGenus());
     }

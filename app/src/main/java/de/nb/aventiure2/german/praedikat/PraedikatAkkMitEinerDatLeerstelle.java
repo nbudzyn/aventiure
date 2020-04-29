@@ -1,7 +1,6 @@
 package de.nb.aventiure2.german.praedikat;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 
 import de.nb.aventiure2.german.base.DeklinierbarePhrase;
 
@@ -12,25 +11,11 @@ import de.nb.aventiure2.german.base.DeklinierbarePhrase;
  */
 class PraedikatAkkMitEinerDatLeerstelle implements PraedikatMitEinerObjektleerstelle {
     /**
-     * Infinitiv des Verbs ("machen")
+     * Das Verb an sich, ohne Informationen zur Valenz, ohne Ergänzungen, ohne
+     * Angaben
      */
     @NonNull
-    private final String infinitiv;
-
-    /**
-     * 2. Person Singular Präsens Indikativ des Verbs, ggf. ohne abgetrenntes Präfix
-     * ("machst")
-     */
-    @NonNull
-    private final String duForm;
-
-    /**
-     * Ggf. das abgetrennte Präfix des Verbs.
-     * <p>
-     * Wird das Präfix <i>nicht</i> abgetrennt ("ver"), ist dieses Feld <code>null</code>.
-     */
-    @Nullable
-    private final String abgetrenntesPraefix;
+    private final Verb verb;
 
     /**
      * Das (Objekt / Wesen / Konzept für das) Akkusativobjekt (z.B. "Angebote")
@@ -38,12 +23,9 @@ class PraedikatAkkMitEinerDatLeerstelle implements PraedikatMitEinerObjektleerst
     @NonNull
     private final DeklinierbarePhrase describableAkk;
 
-    public PraedikatAkkMitEinerDatLeerstelle(final String infinitiv, final String duForm,
-                                             final String abgetrenntesPraefix,
+    public PraedikatAkkMitEinerDatLeerstelle(final Verb verb,
                                              final DeklinierbarePhrase describableAkk) {
-        this.infinitiv = infinitiv;
-        this.duForm = duForm;
-        this.abgetrenntesPraefix = abgetrenntesPraefix;
+        this.verb = verb;
         this.describableAkk = describableAkk;
     }
 
@@ -54,7 +36,7 @@ class PraedikatAkkMitEinerDatLeerstelle implements PraedikatMitEinerObjektleerst
 
     public PraedikatOhneLeerstellen mitDat(
             final DeklinierbarePhrase describableDat) {
-        return new PraedikatDatAkkOhneLeerstellen(infinitiv, duForm, abgetrenntesPraefix,
+        return new PraedikatDatAkkOhneLeerstellen(verb,
                 describableDat, describableAkk);
     }
 

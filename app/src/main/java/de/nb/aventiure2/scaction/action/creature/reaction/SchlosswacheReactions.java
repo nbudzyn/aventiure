@@ -22,9 +22,6 @@ import de.nb.aventiure2.data.world.syscomp.storingplace.IHasStoringPlaceGO;
 import de.nb.aventiure2.data.world.time.AvDateTime;
 import de.nb.aventiure2.data.world.time.AvTimeSpan;
 
-import static de.nb.aventiure2.data.storystate.StoryState.StructuralElement.PARAGRAPH;
-import static de.nb.aventiure2.data.storystate.StoryState.StructuralElement.SENTENCE;
-import static de.nb.aventiure2.data.storystate.StoryState.StructuralElement.WORD;
 import static de.nb.aventiure2.data.storystate.StoryStateBuilder.t;
 import static de.nb.aventiure2.data.world.gameobjects.GameObjects.COUNTER_ID_VOR_DEM_SCHLOSS_SCHLOSSFEST_KNOWN;
 import static de.nb.aventiure2.data.world.gameobjects.GameObjects.DRAUSSEN_VOR_DEM_SCHLOSS;
@@ -43,12 +40,16 @@ import static de.nb.aventiure2.data.world.time.AvDateTime.isWithin;
 import static de.nb.aventiure2.data.world.time.AvTimeSpan.mins;
 import static de.nb.aventiure2.data.world.time.AvTimeSpan.noTime;
 import static de.nb.aventiure2.data.world.time.AvTimeSpan.secs;
+import static de.nb.aventiure2.german.base.AllgDescription.neuerSatz;
 import static de.nb.aventiure2.german.base.GermanUtil.capitalize;
+import static de.nb.aventiure2.german.base.StructuralElement.PARAGRAPH;
+import static de.nb.aventiure2.german.base.StructuralElement.SENTENCE;
+import static de.nb.aventiure2.german.base.StructuralElement.WORD;
 
 class SchlosswacheReactions
         <W extends IDescribableGO & ILivingBeingGO & IHasStateGO & ILocatableGO>
         extends AbstractCreatureReactions<W> {
-    public SchlosswacheReactions(final AvDatabase db) {
+    SchlosswacheReactions(final AvDatabase db) {
         super(db, SCHLOSSWACHE);
     }
 
@@ -73,18 +74,16 @@ class SchlosswacheReactions
         if (goldeneKugel.locationComp().hasLocation(SCHLOSS_VORHALLE)) {
             if (db.counterDao().incAndGet(
                     "SchlosswacheReactions_onEnterRoom_SchlossVorhalle") > 1) {
-                n.add(t(SENTENCE,
-                        capitalize(getReactorDescription(true).nom())
-                                + " scheint dich nicht zu bemerken"));
-                return secs(3);
+                return n.add(neuerSatz(capitalize(
+                        getReactorDescription(true).nom())
+                        + " scheint dich nicht zu bemerken", secs(3)));
             }
         }
 
-        return scMussDasSchlossVerlassen(oldRoom, newRoom);
+        return scMussDasSchlossVerlassen(oldRoom);
     }
 
-    private AvTimeSpan scMussDasSchlossVerlassen(final IHasStoringPlaceGO oldRoom,
-                                                 final IGameObject newRoom) {
+    private AvTimeSpan scMussDasSchlossVerlassen(final IHasStoringPlaceGO oldRoom) {
         // STORY Ausspinnen: Der Spieler sollte selbst entscheiden,
         //  ob der das Schloss wieder verlässt - oder ggf. im Kerker landet.
         n.add(alt(
@@ -157,19 +156,20 @@ class SchlosswacheReactions
     }
 
     private AvTimeSpan nehmen_wacheWirdAufmerksam(final IGameObject genommen) {
-        n.add(t(PARAGRAPH,
-                "Da wird eine Wache auf dich aufmerksam. "
-                        + "„Wie seid Ihr hier hereingekommen?“, fährt sie dich "
-                        // STORY Ausspinnen: Auf dem Fest kriegt der Frosch beim Essen
-                        //  seinen Willen.
-                        + "scharf an. „Das Fest ist erst am Sonntag. Heute "
-                        + "ist Samstag und Ihr habt hier nichts zu suchen!“ "
-                        + "Mit kräftiger Hand klopft die Wache auf ihre Hellebarde"));
         getReactor().stateComp().setState(AUFMERKSAM);
         sc.memoryComp().upgradeKnown(SCHLOSSWACHE, Known.getKnown(getLichtverhaeltnisse(
                 sc.locationComp().getLocationId())));
         sc.feelingsComp().setMood(Mood.ANGESPANNT);
-        return secs(20);
+
+        return n.add(
+                neuerSatz(PARAGRAPH, "Da wird eine Wache auf dich aufmerksam. "
+                                + "„Wie seid Ihr hier hereingekommen?“, fährt sie dich "
+                                // STORY Ausspinnen: Auf dem Fest kriegt der Frosch beim Essen
+                                //  seinen Willen.
+                                + "scharf an. „Das Fest ist erst am Sonntag. Heute "
+                                + "ist Samstag und Ihr habt hier nichts zu suchen!“ "
+                                + "Mit kräftiger Hand klopft die Wache auf ihre Hellebarde",
+                        secs(20)));
     }
 
     private AvTimeSpan nehmenGoldeneKugel_wacheIstAufmerksam(final IHasStoringPlaceGO room,
@@ -226,13 +226,13 @@ class SchlosswacheReactions
         if (currentStoryState.allowsAdditionalDuSatzreihengliedOhneSubjekt()) {
             alt.add(t(WORD,
                     ", während "
-                            + getReactorDescription(false).nom()
+                            + getReactorDescription().nom()
                             + " gerade damit beschäftigt ist, ihre Waffen zu polieren")
                     .dann());
         } else {
             alt.add(t(SENTENCE,
                     "Du hast großes Glück, denn "
-                            + getReactorDescription(false).nom()
+                            + getReactorDescription().nom()
                             + " ist gerade damit beschäftigt, ihre Waffen zu polieren")
                     .dann());
         }
@@ -283,18 +283,14 @@ class SchlosswacheReactions
             return secs(5);
         }
 
-        n.add(alt(
-                t(SENTENCE,
-                        capitalize(getReactorDescription(false).nom())
-                                + " beoabachtet dich dabei")
-                        .dann(),
-                t(SENTENCE,
-                        capitalize(getReactorDescription().nom())
-                                + " sieht dir belustig dabei zu")
-                        .dann()
-        ));
         sc.feelingsComp().setMood(Mood.ANGESPANNT);
-        return secs(5);
+        return n.addAlt(
+                neuerSatz(capitalize(getReactorDescription().nom())
+                        + " beoabachtet dich dabei", secs(5))
+                        .dann(),
+                neuerSatz(capitalize(getReactorDescription().nom())
+                        + " sieht dir belustig dabei zu", secs(5))
+                        .dann());
     }
 
     @Override
@@ -337,11 +333,12 @@ class SchlosswacheReactions
             final IHasStoringPlaceGO room,
             final ILocatableGO goldeneKugel,
             final StoryState currentStoryState) {
-        n.add(t(PARAGRAPH, "„Was treibt Ihr für einen Unfug, legt sofort das "
-                + "Schmuckstück wieder hin!“, "
-                + "ruft dir "
-                + getReactorDescription(true).nom()
-                + " zu"));
+        final AvTimeSpan timeSpan = n.add(
+                neuerSatz(PARAGRAPH, "„Was treibt Ihr für einen Unfug, legt sofort das "
+                        + "Schmuckstück wieder hin!“, "
+                        + "ruft dir "
+                        + getReactorDescription(true).nom()
+                        + " zu", secs(5)));
 
         // TODO Geschichte ausspinnen: Spieler muss die Kugel selbst
         //  ablegen bzw. kommt ggf. in den Kerker
@@ -354,16 +351,15 @@ class SchlosswacheReactions
         sc.memoryComp().setLastAction(Action.Type.ABLEGEN, goldeneKugel);
         sc.feelingsComp().setMood(Mood.ANGESPANNT);
 
-        return secs(10);
+        return timeSpan.plus(secs(5));
     }
 
     private AvTimeSpan hochwerfenGoldeneKugel_wacheIstAufmerksam_nichtWiederGefangen(
             final IHasStoringPlaceGO room,
             final IGameObject goldeneKugel,
             final StoryState currentStoryState) {
-        n.add(t(PARAGRAPH, "Die Wache sieht sehr missbilligend zu"));
-
-        return secs(3);
+        return n.add(
+                neuerSatz(PARAGRAPH, "Die Wache sieht sehr missbilligend zu", secs(3)));
     }
 
     @Override

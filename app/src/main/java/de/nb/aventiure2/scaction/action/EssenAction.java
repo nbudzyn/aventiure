@@ -17,8 +17,6 @@ import de.nb.aventiure2.data.world.time.AvTimeSpan;
 import de.nb.aventiure2.german.base.AbstractDescription;
 import de.nb.aventiure2.scaction.AbstractScAction;
 
-import static de.nb.aventiure2.data.storystate.StoryState.StructuralElement.PARAGRAPH;
-import static de.nb.aventiure2.data.storystate.StoryState.StructuralElement.SENTENCE;
 import static de.nb.aventiure2.data.storystate.StoryStateBuilder.t;
 import static de.nb.aventiure2.data.world.gameobjects.GameObjects.SCHLOSSFEST;
 import static de.nb.aventiure2.data.world.gameobjects.GameObjects.SCHLOSS_VORHALLE_TISCH_BEIM_FEST;
@@ -28,28 +26,30 @@ import static de.nb.aventiure2.data.world.gameobjects.GameObjects.loadSC;
 import static de.nb.aventiure2.data.world.syscomp.feelings.Hunger.SATT;
 import static de.nb.aventiure2.data.world.syscomp.state.GameObjectState.BEGONNEN;
 import static de.nb.aventiure2.data.world.time.AvTimeSpan.mins;
-import static de.nb.aventiure2.german.base.AllgDescription.allg;
+import static de.nb.aventiure2.german.base.AllgDescription.neuerSatz;
 import static de.nb.aventiure2.german.base.DuDescription.du;
+import static de.nb.aventiure2.german.base.StructuralElement.PARAGRAPH;
+import static de.nb.aventiure2.german.base.StructuralElement.SENTENCE;
 
 /**
  * Der SC möchte etwas essen.
  */
 public class EssenAction extends AbstractScAction {
-    public static final String COUNTER_FELSENBIRNEN = "EssenAction_Felsenbirnen";
+    private static final String COUNTER_FELSENBIRNEN = "EssenAction_Felsenbirnen";
     private final IHasStoringPlaceGO room;
 
     public static Collection<EssenAction> buildActions(
             final AvDatabase db,
             final StoryState initialStoryState, final IHasStoringPlaceGO room) {
         final ImmutableList.Builder<EssenAction> res = ImmutableList.builder();
-        if (essenMoeglich(db, initialStoryState, room)) {
+        if (essenMoeglich(db, room)) {
             res.add(new EssenAction(db, initialStoryState, room));
         }
 
         return res.build();
     }
 
-    private static boolean essenMoeglich(final AvDatabase db, final StoryState initialStoryState,
+    private static boolean essenMoeglich(final AvDatabase db,
                                          final IHasStoringPlaceGO room) {
         if (loadSC(db).memoryComp().getLastAction().is(Action.Type.ESSEN)) {
             // TODO Es könnten sich verschiedene essbare Dinge am selben Ort befinden!
@@ -165,7 +165,7 @@ public class EssenAction extends AbstractScAction {
 
     private AvTimeSpan narrateAndDoSchlossfestSatt() {
         return n.addAlt(
-                allg("Hunger hast du zwar keinen mehr, aber eine Kleinigkeit… – du "
+                neuerSatz("Hunger hast du zwar keinen mehr, aber eine Kleinigkeit… – du "
                         + "nimmst dir "
                         + "eine halbe Kelle "
                         + "von dem Eintopf und isst", mins(2))
@@ -173,7 +173,7 @@ public class EssenAction extends AbstractScAction {
                 du("isst", "ein paar Löffel vom Eintopf", mins(2))
                         .undWartest()
                         .dann(),
-                du("bist", "eigentlich satt, aber einen oder zwei Löffel Eintopf "
+                du(SENTENCE, "bist", "eigentlich satt, aber einen oder zwei Löffel Eintopf "
                         + "lässt du "
                         + "dir trotzdem schmecken", "eigentlich", mins(2))
                         .dann());
@@ -182,7 +182,7 @@ public class EssenAction extends AbstractScAction {
     private AvTimeSpan narrateAndDoFelsenbirnen() {
         final Hunger hunger = getHunger();
 
-        final Collection<AbstractDescription> descAlternatives = getDescFelsenbirnen(hunger);
+        final Collection<AbstractDescription<?>> descAlternatives = getDescFelsenbirnen(hunger);
 
         final AvTimeSpan timeElapsed = narrateStartsNewWordOrSentence(descAlternatives);
 
@@ -191,7 +191,7 @@ public class EssenAction extends AbstractScAction {
         return timeElapsed;
     }
 
-    private Collection<AbstractDescription> getDescFelsenbirnen(final Hunger hunger) {
+    private Collection<AbstractDescription<?>> getDescFelsenbirnen(final Hunger hunger) {
         switch (hunger) {
             case HUNGRIG:
                 return getDescFelsenbirnenHungrig();
@@ -202,10 +202,10 @@ public class EssenAction extends AbstractScAction {
         }
     }
 
-    private Collection<AbstractDescription> getDescFelsenbirnenHungrig() {
+    private Collection<AbstractDescription<?>> getDescFelsenbirnenHungrig() {
         if (db.counterDao().incAndGet(COUNTER_FELSENBIRNEN) == 1) {
             return ImmutableList.of(
-                    du("nimmst", "eine von den Früchten, "
+                    du(SENTENCE, "nimmst", "eine von den Früchten, "
                             + "schaust sie kurz an, dann "
                             + "beißt du hinein… – "
                             + "Mmh! Die Frucht ist saftig und schmeckt süß wie Marzipan!\n"
@@ -227,7 +227,7 @@ public class EssenAction extends AbstractScAction {
         );
     }
 
-    private Collection<AbstractDescription> getDescFelsenbirnenSatt() {
+    private Collection<AbstractDescription<?>> getDescFelsenbirnenSatt() {
         if (db.counterDao().incAndGet(COUNTER_FELSENBIRNEN) == 1) {
             return ImmutableList.of(
                     du("nimmst", "eine von den Früchten und beißt hinein. "
@@ -238,17 +238,19 @@ public class EssenAction extends AbstractScAction {
         }
 
         return ImmutableList.of(
-                du("hast", "nur wenig Hunger und beißt lustlos in eine der Früchte", "Hunger",
+                du(SENTENCE, "hast", "nur wenig Hunger und beißt lustlos in eine der Früchte",
+                        "Hunger",
                         mins(3))
                         .dann(),
-                du("lässt", "dir die süßen Früchte nicht entgehen, auch wenn du kaum Hunger "
-                        + "hast", "die süßen Früchte", mins(3))
+                du(SENTENCE, "lässt",
+                        "dir die süßen Früchte nicht entgehen, auch wenn du kaum Hunger "
+                                + "hast", "die süßen Früchte", mins(3))
                         .komma()
                         .undWartest()
         );
     }
 
-    private AvTimeSpan narrateStartsNewWordOrSentence(final Collection<AbstractDescription>
+    private AvTimeSpan narrateStartsNewWordOrSentence(final Collection<AbstractDescription<?>>
                                                               descAlternatives) {
         return n.addAlt(descAlternatives);
     }

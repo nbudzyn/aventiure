@@ -1,7 +1,6 @@
 package de.nb.aventiure2.german.praedikat;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 
 import de.nb.aventiure2.german.base.DeklinierbarePhrase;
 
@@ -11,37 +10,21 @@ import de.nb.aventiure2.german.base.DeklinierbarePhrase;
  */
 class PraedikatDatMitEinerAkkLeerstelle implements PraedikatMitEinerObjektleerstelle {
     /**
-     * Infinitiv des Verbs
+     * Das Verb an sich, ohne Informationen zur Valenz, ohne Ergänzungen, ohne
+     * Angaben
      */
     @NonNull
-    private final String infinitiv;
+    private final Verb verb;
 
     /**
-     * 2. Person Singular Präsens Indikativ des Verbs, ggf. ohne abgetrenntes Präfix
-     */
-    @NonNull
-    private final String duForm;
-
-    /**
-     * Ggf. das abgetrennte Präfix des Verbs.
-     * <p>
-     * Wird das Präfix <i>nicht</i> abgetrennt ("ver"), ist dieses Feld <code>null</code>.
-     */
-    @Nullable
-    private final String abgetrenntesPraefix;
-
-    /**
-     * Das (Objekt / Wesen / Konzept für das) Dativobjekt
+     * Das Dativobjekt
      */
     @NonNull
     private final DeklinierbarePhrase describableDat;
 
-    public PraedikatDatMitEinerAkkLeerstelle(final String infinitiv, final String duForm,
-                                             final String abgetrenntesPraefix,
+    public PraedikatDatMitEinerAkkLeerstelle(final Verb verb,
                                              final DeklinierbarePhrase describableDat) {
-        this.infinitiv = infinitiv;
-        this.duForm = duForm;
-        this.abgetrenntesPraefix = abgetrenntesPraefix;
+        this.verb = verb;
         this.describableDat = describableDat;
     }
 
@@ -52,7 +35,7 @@ class PraedikatDatMitEinerAkkLeerstelle implements PraedikatMitEinerObjektleerst
 
     public PraedikatOhneLeerstellen mitAkk(
             final DeklinierbarePhrase describableAkk) {
-        return new PraedikatDatAkkOhneLeerstellen(infinitiv, duForm, abgetrenntesPraefix,
+        return new PraedikatDatAkkOhneLeerstellen(verb,
                 describableDat, describableAkk);
     }
 

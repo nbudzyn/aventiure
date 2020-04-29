@@ -9,8 +9,6 @@ import de.nb.aventiure2.data.world.syscomp.state.IHasStateGO;
 import de.nb.aventiure2.data.world.time.AvDateTime;
 import de.nb.aventiure2.data.world.time.AvTimeSpan;
 
-import static de.nb.aventiure2.data.storystate.StoryState.StructuralElement.PARAGRAPH;
-import static de.nb.aventiure2.data.storystate.StoryStateBuilder.t;
 import static de.nb.aventiure2.data.world.gameobjects.GameObjects.COUNTER_ID_VOR_DEM_SCHLOSS_SCHLOSSFEST_KNOWN;
 import static de.nb.aventiure2.data.world.gameobjects.GameObjects.DRAUSSEN_VOR_DEM_SCHLOSS;
 import static de.nb.aventiure2.data.world.gameobjects.GameObjects.SCHLOSSFEST;
@@ -19,6 +17,8 @@ import static de.nb.aventiure2.data.world.syscomp.state.GameObjectState.BEGONNEN
 import static de.nb.aventiure2.data.world.time.AvDateTime.isWithin;
 import static de.nb.aventiure2.data.world.time.AvTimeSpan.mins;
 import static de.nb.aventiure2.data.world.time.AvTimeSpan.noTime;
+import static de.nb.aventiure2.german.base.AllgDescription.neuerSatz;
+import static de.nb.aventiure2.german.base.StructuralElement.PARAGRAPH;
 
 class SchlossfestReactions
         extends AbstractInvisibleReactions<IHasStateGO> {
@@ -44,23 +44,21 @@ class SchlossfestReactions
             return noTime();
         }
 
-        final AvTimeSpan timeElapsed;
-        if (currentRoom.is(DRAUSSEN_VOR_DEM_SCHLOSS)) {
-            n.add(t(PARAGRAPH, "Dir fällt auf, dass Handwerker dabei sind, überall "
-                    + "im Schlossgarten kleine bunte Pagoden aufzubauen. Du schaust eine Weile "
-                    + "zu, und wie es scheint, beginnen von überallher Menschen zu "
-                    + "strömen. Aus dem Schloss weht dich der Geruch von Gebratenem an."));
-
-            // Der Spieler weiß jetzt, dass das Schlossfest läuft
-            db.counterDao().inc(COUNTER_ID_VOR_DEM_SCHLOSS_SCHLOSSFEST_KNOWN);
-
-            timeElapsed = mins(30);
-        } else {
-            timeElapsed = noTime();  // Passiert nebenher und braucht KEINE zusätzliche Zeit
-        }
-
         sc.feelingsComp().setMood(Mood.NEUTRAL);
         getReactor().stateComp().setState(BEGONNEN);
-        return timeElapsed;
+
+        if (!currentRoom.is(DRAUSSEN_VOR_DEM_SCHLOSS)) {
+            return noTime();  // Passiert nebenher und braucht KEINE zusätzliche Zeit
+        }
+
+        // Der Spieler weiß jetzt, dass das Schlossfest läuft
+        db.counterDao().inc(COUNTER_ID_VOR_DEM_SCHLOSS_SCHLOSSFEST_KNOWN);
+
+        return n.add(
+                neuerSatz(PARAGRAPH, "Dir fällt auf, dass Handwerker dabei sind, überall "
+                                + "im Schlossgarten kleine bunte Pagoden aufzubauen. Du schaust eine Weile "
+                                + "zu, und wie es scheint, beginnen von überallher Menschen zu "
+                                + "strömen. Aus dem Schloss weht dich der Geruch von Gebratenem an.",
+                        mins(30)));
     }
 }

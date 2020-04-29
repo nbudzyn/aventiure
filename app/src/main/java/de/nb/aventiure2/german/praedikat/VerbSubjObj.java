@@ -25,10 +25,11 @@ public enum VerbSubjObj implements PraedikatMitEinerObjektleerstelle {
     REDEN("reden", MIT_DAT, "redest");
 
     /**
-     * Infinitiv des Verbs ("aufheben")
+     * Das Verb an sich, ohne Informationen zur Valenz, ohne Ergänzungen, ohne
+     * Angaben
      */
     @NonNull
-    private final String infinitiv;
+    private final Verb verb;
 
     /**
      * Der Kasus (z.B. Akkusativ, "die Kugel nehmen") oder Präpositionalkasus
@@ -37,56 +38,34 @@ public enum VerbSubjObj implements PraedikatMitEinerObjektleerstelle {
     @NonNull
     private final KasusOderPraepositionalkasus kasusOderPraepositionalkasus;
 
-    /**
-     * 2. Person Singular Präsens Indikativ des Verbs, ggf. ohne abgetrenntes Präfix
-     * ("hebst")
-     */
-    @NonNull
-    private final String duForm;
-
-    /**
-     * Ggf. das abgetrennte Präfix des Verbs ("auf").
-     * <p>
-     * Wird das Präfix <i>nicht</i> abgetrennt ("ver"), ist dieses Feld <code>null</code>.
-     */
-    @Nullable
-    private final String abgetrenntesPraefix;
-
-    private VerbSubjObj(@NonNull final String infinitiv,
-                        @NonNull final KasusOderPraepositionalkasus kasusOderPraepositionalkasus,
-                        @NonNull final String duForm) {
-        this(infinitiv, kasusOderPraepositionalkasus, duForm, null);
+    VerbSubjObj(@NonNull final String infinitiv,
+                @NonNull final KasusOderPraepositionalkasus kasusOderPraepositionalkasus,
+                @NonNull final String duForm) {
+        this(new Verb(infinitiv, duForm), kasusOderPraepositionalkasus);
     }
 
-    private VerbSubjObj(@NonNull final String infinitiv,
-                        @NonNull final KasusOderPraepositionalkasus kasusOderPraepositionalkasus,
-                        @NonNull final String duForm,
-                        @Nullable final String abgetrenntesPraefix) {
-        this.infinitiv = infinitiv;
+    VerbSubjObj(@NonNull final String infinitiv,
+                @NonNull final KasusOderPraepositionalkasus kasusOderPraepositionalkasus,
+                @NonNull final String duForm,
+                @Nullable final String partikel) {
+        this(new Verb(infinitiv, duForm, partikel), kasusOderPraepositionalkasus);
+    }
+
+    VerbSubjObj(@NonNull final Verb verb,
+                @NonNull final KasusOderPraepositionalkasus kasusOderPraepositionalkasus) {
+        this.verb = verb;
         this.kasusOderPraepositionalkasus = kasusOderPraepositionalkasus;
-        this.duForm = duForm;
-        this.abgetrenntesPraefix = abgetrenntesPraefix;
     }
 
     @Override
     public PraedikatSubjObjOhneLeerstellen mitObj(
             final DeklinierbarePhrase describable) {
-        return new PraedikatSubjObjOhneLeerstellen(infinitiv, duForm, abgetrenntesPraefix,
+        return new PraedikatSubjObjOhneLeerstellen(verb,
                 kasusOderPraepositionalkasus, describable);
     }
 
     @Override
     public boolean duHauptsatzLaesstSichMitNachfolgendemDuHauptsatzZusammenziehen() {
         return true;
-    }
-
-    @NonNull
-    String getInfinitiv() {
-        return infinitiv;
-    }
-
-    @NonNull
-    KasusOderPraepositionalkasus getKasusOderPraepositionalkasus() {
-        return kasusOderPraepositionalkasus;
     }
 }

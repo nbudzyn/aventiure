@@ -8,11 +8,13 @@ import de.nb.aventiure2.data.world.time.AvDateTime;
 import de.nb.aventiure2.data.world.time.AvTimeSpan;
 import de.nb.aventiure2.scaction.action.base.reaction.AbstractReactions;
 
-import static de.nb.aventiure2.data.storystate.StoryState.StructuralElement.PARAGRAPH;
-import static de.nb.aventiure2.data.storystate.StoryState.StructuralElement.SENTENCE;
 import static de.nb.aventiure2.data.storystate.StoryStateBuilder.t;
 import static de.nb.aventiure2.data.world.syscomp.feelings.Hunger.HUNGRIG;
 import static de.nb.aventiure2.data.world.time.AvTimeSpan.noTime;
+import static de.nb.aventiure2.german.base.AllgDescription.neuerSatz;
+import static de.nb.aventiure2.german.base.DuDescription.du;
+import static de.nb.aventiure2.german.base.StructuralElement.PARAGRAPH;
+import static de.nb.aventiure2.german.base.StructuralElement.SENTENCE;
 
 /**
  * "Automatische" Reaktionen des Spielercharakters, z.B. darauf, dass Zeit vergeht.
@@ -29,17 +31,16 @@ public class ScAutomaticReactions extends AbstractReactions {
             case SATT:
                 return noTime();
             case HUNGRIG:
-                n.add(alt(
-                        t(SENTENCE, "Mmh!"),
-                        t(SENTENCE, "Dir läuft das Wasser im Munde zusammen"),
-                        t(SENTENCE, "Du hast Hunger")
+                return n.addAlt(
+                        neuerSatz("Mmh!", noTime()),
+                        neuerSatz("Dir läuft das Wasser im Munde zusammen", noTime()),
+                        du(SENTENCE, "hast", "Hunger", noTime())
                                 .undWartest(),
-                        t(SENTENCE, "Du bist hungrig")
+                        du(SENTENCE, "bist", "hungrig", noTime())
                                 .undWartest(),
-                        t(SENTENCE, "Dir fällt auf, wie hungrig du bist")
+                        neuerSatz("Dir fällt auf, wie hungrig du bist", noTime())
                                 .komma()
-                ));
-                return noTime();
+                );
             default:
                 throw new IllegalStateException("Unerwarteter Hunger-Wert: " + hunger);
         }

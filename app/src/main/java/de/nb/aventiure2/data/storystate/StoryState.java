@@ -9,23 +9,13 @@ import com.google.common.base.Preconditions;
 
 import de.nb.aventiure2.data.world.base.GameObjectId;
 import de.nb.aventiure2.data.world.base.IGameObject;
+import de.nb.aventiure2.german.base.StructuralElement;
 
 /**
  * The text of the story, together with state relevant for going on with the story. Only things that have already happened.
  */
 @Entity
 public class StoryState {
-    public enum StructuralElement {
-        CHAPTER, PARAGRAPH, SENTENCE, WORD;
-
-        public static StructuralElement max(final StructuralElement endsThis,
-                                            final StructuralElement startsNew) {
-            if (endsThis.ordinal() < startsNew.ordinal()) {
-                return endsThis;
-            }
-            return startsNew;
-        }
-    }
 
     /**
      * This {@link StoryState} starts a new ... (paragraph, e.g.)

@@ -7,14 +7,14 @@ import java.util.Map;
 import static de.nb.aventiure2.german.base.NumerusGenus.F;
 import static de.nb.aventiure2.german.base.NumerusGenus.M;
 import static de.nb.aventiure2.german.base.NumerusGenus.N;
-import static de.nb.aventiure2.german.base.NumerusGenus.PL;
+import static de.nb.aventiure2.german.base.NumerusGenus.PL_MFN;
 
 public class Personalpronomen extends DeklinierbarePhrase {
     private static final Map<NumerusGenus, Personalpronomen> ALL = ImmutableMap.of(
             M, new Personalpronomen(M, "er", "ihm", "ihn"),
             F, new Personalpronomen(F, "sie", "ihr"),
             N, new Personalpronomen(N, "es", "ihm"),
-            PL, new Personalpronomen(PL, "sie", "ihnen"));
+            PL_MFN, new Personalpronomen(PL_MFN, "sie", "ihnen"));
 
     public static Personalpronomen get(final NumerusGenus numerusGenus) {
         return ALL.get(numerusGenus);

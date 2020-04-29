@@ -26,6 +26,9 @@ import de.nb.aventiure2.scaction.action.creature.conversation.CreatureConversati
 
 import static de.nb.aventiure2.data.world.gameobjects.GameObjects.SPIELER_CHARAKTER;
 import static de.nb.aventiure2.data.world.gameobjects.GameObjects.loadSC;
+import static de.nb.aventiure2.german.base.GermanUtil.capitalize;
+import static de.nb.aventiure2.german.base.Numerus.SG;
+import static de.nb.aventiure2.german.base.Person.P1;
 
 /**
  * Der Spieler(charakter) redet mit einem Wesen.
@@ -145,7 +148,8 @@ public class RedenAction<TALKER extends IDescribableGO & ITalkerGO>
         return new RedenAction<>(db, initialStoryState, talker,
                 talkStep,
                 // "Dem Frosch Angebote machen"
-                praedikatOhneLeerstellen.getDescriptionInfinitiv());
+                // "Das Angebot von *mir* weisen"
+                capitalize(praedikatOhneLeerstellen.getDescriptionInfinitiv(P1, SG)));
     }
 
     private RedenAction(final AvDatabase db,

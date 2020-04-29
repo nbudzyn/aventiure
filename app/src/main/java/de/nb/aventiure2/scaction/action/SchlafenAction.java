@@ -17,8 +17,6 @@ import de.nb.aventiure2.data.world.time.AvTimeSpan;
 import de.nb.aventiure2.german.base.AbstractDescription;
 import de.nb.aventiure2.scaction.AbstractScAction;
 
-import static de.nb.aventiure2.data.storystate.StoryState.StructuralElement.CHAPTER;
-import static de.nb.aventiure2.data.storystate.StoryState.StructuralElement.SENTENCE;
 import static de.nb.aventiure2.data.storystate.StoryStateBuilder.t;
 import static de.nb.aventiure2.data.world.gameobjects.GameObjects.BETT_IN_DER_HUETTE_IM_WALD;
 import static de.nb.aventiure2.data.world.syscomp.feelings.Mood.ERSCHOEPFT;
@@ -26,8 +24,10 @@ import static de.nb.aventiure2.data.world.syscomp.feelings.Mood.NEUTRAL;
 import static de.nb.aventiure2.data.world.time.AvTime.oClock;
 import static de.nb.aventiure2.data.world.time.AvTimeSpan.hours;
 import static de.nb.aventiure2.data.world.time.AvTimeSpan.mins;
-import static de.nb.aventiure2.german.base.AllgDescription.allg;
+import static de.nb.aventiure2.german.base.AllgDescription.neuerSatz;
 import static de.nb.aventiure2.german.base.DuDescription.du;
+import static de.nb.aventiure2.german.base.StructuralElement.CHAPTER;
+import static de.nb.aventiure2.german.base.StructuralElement.SENTENCE;
 
 /**
  * Der Spielercharakter legt sich schlafen.
@@ -77,17 +77,17 @@ public class SchlafenAction extends AbstractScAction {
     private AvTimeSpan narrateAndDoSchlaeftNichtEin() {
         sc.memoryComp().setLastAction(buildMemorizedAction());
 
-        final ImmutableList.Builder<AbstractDescription> alt = ImmutableList.builder();
+        final ImmutableList.Builder<AbstractDescription<?>> alt = ImmutableList.builder();
         if (!isDefinitivWiederholung()) {
             alt.add(du("schließt", "kurz die Augen. Die Aufregung der letzten Stunden "
                     + "steckt dir noch in den Knochen – an Einschlafen ist "
                     + "nicht zu denken", mins(1)));
         }
 
-        alt.add(allg("Müde bist du noch nicht", mins(1))
+        alt.add(neuerSatz("Müde bist du noch nicht", mins(1))
                 .dann());
 
-        alt.add(allg("Gibt es hier eigentlich Spinnen?", mins(1)));
+        alt.add(neuerSatz("Gibt es hier eigentlich Spinnen?", mins(1)));
 
         alt.add(du("drehst dich von einer Seite auf die andere", "von einer Seite", mins(1)));
 

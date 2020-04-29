@@ -14,11 +14,13 @@ import de.nb.aventiure2.data.world.syscomp.memory.Action;
 import de.nb.aventiure2.data.world.time.AvTimeSpan;
 import de.nb.aventiure2.scaction.AbstractScAction;
 
-import static de.nb.aventiure2.data.storystate.StoryState.StructuralElement.PARAGRAPH;
 import static de.nb.aventiure2.data.storystate.StoryStateBuilder.t;
 import static de.nb.aventiure2.data.world.gameobjects.GameObjects.HINTER_DER_HUETTE;
 import static de.nb.aventiure2.data.world.lichtverhaeltnisse.Lichtverhaeltnisse.DUNKEL;
 import static de.nb.aventiure2.data.world.time.AvTimeSpan.mins;
+import static de.nb.aventiure2.german.base.AllgDescription.neuerSatz;
+import static de.nb.aventiure2.german.base.DuDescription.du;
+import static de.nb.aventiure2.german.base.StructuralElement.PARAGRAPH;
 
 /**
  * Der Spielercharakter klettert.
@@ -125,23 +127,23 @@ public class KletternAction extends AbstractScAction {
     }
 
     private AvTimeSpan narrateAndDoBaumHinterHuetteNtesMal() {
+        sc.feelingsComp().setMood(Mood.ERSCHOEPFT);
+
         final String erschoepftMuedeNachsatz =
                 getLichtverhaeltnisse(room) == DUNKEL ?
                         "Ein Nickerchen täte dir gut" : "Und müde";
 
-        n.add(alt(
-                t(PARAGRAPH,
-                        "Ein weiteres Mal kletterst du auf den Baum. Ein zurückschwingender "
-                                + "Ast verpasst dir beim Abstieg ein Schramme")
+        return n.addAlt(
+                du(PARAGRAPH, "kletterst",
+                        "ein weiteres Mal auf den Baum. Ein zurückschwingender "
+                                + "Ast verpasst dir beim Abstieg ein Schramme",
+                        "ein weiteres Mal", mins(15))
                         .dann(),
-                t(PARAGRAPH, "Es ist anstrengend, aber du kletterst noch einmal "
-                        + "auf den Baum. Neues gibt es hier oben nicht zu erleben und unten bist "
-                        + "du ziemlich erschöpft. " + erschoepftMuedeNachsatz)
-        ));
-
-        sc.feelingsComp().setMood(Mood.ERSCHOEPFT);
-
-        return mins(15);
+                neuerSatz(PARAGRAPH,
+                        "Es ist anstrengend, aber du kletterst noch einmal "
+                                + "auf den Baum. Neues gibt es hier oben nicht zu erleben und unten bist "
+                                + "du ziemlich erschöpft. " + erschoepftMuedeNachsatz, mins(15)
+                ));
     }
 
     @Override

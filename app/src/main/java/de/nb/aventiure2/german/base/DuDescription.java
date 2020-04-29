@@ -36,24 +36,47 @@ public class DuDescription extends AbstractDescription<DuDescription> {
         return du(verb, null, timeElapsed);
     }
 
+    public static DuDescription du(final StructuralElement startsNew,
+                                   final String verb,
+                                   final AvTimeSpan timeElapsed) {
+        return du(startsNew, verb, null, timeElapsed);
+    }
+
     public static DuDescription du(final String verb,
                                    @Nullable final String remainder,
                                    final AvTimeSpan timeElapsed) {
         return du(verb, remainder, null, timeElapsed);
     }
 
+    public static DuDescription du(final StructuralElement startsNew,
+                                   final String verb,
+                                   @Nullable final String remainder,
+                                   final AvTimeSpan timeElapsed) {
+        return du(startsNew, verb, remainder, null, timeElapsed);
+    }
+
     public static DuDescription du(final String verb,
                                    @Nullable final String remainder,
                                    @Nullable final String vorfeldSatzglied,
                                    final AvTimeSpan timeElapsed) {
-        return new DuDescription(verb, remainder, vorfeldSatzglied, timeElapsed);
+        return du(StructuralElement.WORD, verb, remainder, vorfeldSatzglied, timeElapsed);
     }
 
-    private DuDescription(final String verb,
+    public static DuDescription du(final StructuralElement startsNew,
+                                   final String verb,
+                                   @Nullable final String remainder,
+                                   @Nullable final String vorfeldSatzglied,
+                                   final AvTimeSpan timeElapsed) {
+        return new DuDescription(startsNew, verb, remainder, vorfeldSatzglied, timeElapsed);
+    }
+
+    private DuDescription(final StructuralElement startsNew,
+                          final String verb,
                           @Nullable final String remainder,
                           @Nullable final String vorfeldSatzglied,
                           final AvTimeSpan timeElapsed) {
-        super(timeElapsed);
+        // TODO Alle du()-Auftrag prüfen, ggf. auf SENTENCE setzen
+        super(startsNew, timeElapsed);
 
         checkArgument(vorfeldSatzglied == null || remainder != null,
                 "Kein remainder, aber ein vorfeldSatzglied? Unmöglich!");
@@ -76,9 +99,10 @@ public class DuDescription extends AbstractDescription<DuDescription> {
 
         // Konjunktionaladverb ist nötig:
         // Du gehst in den Wald. Dann gehst du den Fluss entlang.
-        return buildHauptsatz(konjunktionaladverb,
-                verb,
-                remainder);
+        return buildHauptsatz(konjunktionaladverb, // "dann"
+                verb, // "gehst"
+                Joiner.on(" ").skipNulls()
+                        .join("du", remainder)); // "du den Fluss entlang"
     }
 
     public String getDescriptionHauptsatzMitSpeziellemVorfeld() {
@@ -96,7 +120,8 @@ public class DuDescription extends AbstractDescription<DuDescription> {
 
         return buildHauptsatz(vorfeldSatzglied,
                 verb,
-                Joiner.on(" ").skipNulls().join("du", remainderWithoutVorfeldSatzglied));
+                Joiner.on(" ").skipNulls()
+                        .join("du", remainderWithoutVorfeldSatzglied));
     }
 
     @Override
@@ -161,11 +186,11 @@ public class DuDescription extends AbstractDescription<DuDescription> {
     }
 
     private static String buildHauptsatz(final String vorfeld, final String verb,
-                                         @Nullable final String remainder) {
+                                         @Nullable final String mittelfeldEtc) {
         return Joiner.on(" ").skipNulls().join(
                 capitalize(vorfeld),
                 verb,
-                remainder);
+                mittelfeldEtc);
     }
 
     /**

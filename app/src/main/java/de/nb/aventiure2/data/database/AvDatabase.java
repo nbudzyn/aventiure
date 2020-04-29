@@ -18,7 +18,6 @@ import java.util.concurrent.Executors;
 
 import de.nb.aventiure2.data.storystate.AvStoryStateConverters;
 import de.nb.aventiure2.data.storystate.StoryState;
-import de.nb.aventiure2.data.storystate.StoryState.StructuralElement;
 import de.nb.aventiure2.data.storystate.StoryStateBuilder;
 import de.nb.aventiure2.data.storystate.StoryStateDao;
 import de.nb.aventiure2.data.world.base.GameObjectIdConverters;
@@ -45,6 +44,7 @@ import de.nb.aventiure2.data.world.syscomp.talking.TalkingPCD;
 import de.nb.aventiure2.data.world.time.AvDateTimeConverters;
 import de.nb.aventiure2.data.world.time.AvNow;
 import de.nb.aventiure2.data.world.time.AvNowDao;
+import de.nb.aventiure2.german.base.StructuralElement;
 
 import static de.nb.aventiure2.data.storystate.StoryStateBuilder.t;
 import static de.nb.aventiure2.data.world.gameobjects.GameObjects.GOLDENE_KUGEL;

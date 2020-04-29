@@ -8,7 +8,6 @@ import java.util.List;
 
 import de.nb.aventiure2.data.database.AvDatabase;
 import de.nb.aventiure2.data.storystate.StoryState;
-import de.nb.aventiure2.data.storystate.StoryState.StructuralElement;
 import de.nb.aventiure2.data.storystate.StoryStateBuilder;
 import de.nb.aventiure2.data.world.base.GameObject;
 import de.nb.aventiure2.data.world.base.GameObjectId;
@@ -26,6 +25,7 @@ import de.nb.aventiure2.data.world.syscomp.storingplace.IHasStoringPlaceGO;
 import de.nb.aventiure2.data.world.time.AvTimeSpan;
 import de.nb.aventiure2.german.base.AbstractDescription;
 import de.nb.aventiure2.german.base.DuDescription;
+import de.nb.aventiure2.german.base.StructuralElement;
 import de.nb.aventiure2.scaction.AbstractScAction;
 import de.nb.aventiure2.scaction.action.room.connection.RoomConnection;
 import de.nb.aventiure2.scaction.action.room.connection.RoomConnections;
@@ -43,6 +43,8 @@ import static de.nb.aventiure2.data.world.gameobjects.GameObjects.loadDescribabl
 import static de.nb.aventiure2.data.world.lichtverhaeltnisse.Lichtverhaeltnisse.HELL;
 import static de.nb.aventiure2.data.world.syscomp.state.GameObjectState.BEGONNEN;
 import static de.nb.aventiure2.data.world.time.AvTimeSpan.secs;
+import static de.nb.aventiure2.german.base.AllgDescription.neuerSatz;
+import static de.nb.aventiure2.german.base.AllgDescription.satzanschluss;
 import static de.nb.aventiure2.german.base.DuDescription.du;
 import static de.nb.aventiure2.german.base.GermanUtil.capitalize;
 import static de.nb.aventiure2.german.base.GermanUtil.uncapitalize;
@@ -235,13 +237,13 @@ public class BewegenAction<R extends ISpatiallyConnectedGO & IHasStoringPlaceGO,
                 .allowsAdditionalDuSatzreihengliedOhneSubjekt() && sc.memoryComp().getLastAction()
                 .is(Action.Type.BEWEGEN) &&
                 sc.locationComp().lastLocationWas(roomConnection.getTo())) {
-            n.add(t(StructuralElement.WORD,
-                    ", besinnst dich aber und "
-                            + ((DuDescription) description)
-                            .getDescriptionSatzanschlussOhneSubjekt())
-                    .dann(description.isDann()));
-
-            return description.getTimeElapsed();
+            return n.add(
+                    satzanschluss(", besinnst dich aber und "
+                                    + ((DuDescription) description)
+                                    .getDescriptionSatzanschlussOhneSubjekt(),
+                            description.getTimeElapsed())
+                            .dann(description.isDann())
+                            .komma(description.isKommaStehtAus()));
         }
 
         if (description instanceof DuDescription) {
@@ -249,14 +251,11 @@ public class BewegenAction<R extends ISpatiallyConnectedGO & IHasStoringPlaceGO,
                     (DuDescription) description;
 
             if (initialStoryState.allowsAdditionalDuSatzreihengliedOhneSubjekt()) {
-                n.add(duDescription);
-                return duDescription.getTimeElapsed();
+                return n.add(duDescription);
             }
         }
 
-        final StoryStateBuilder result;
         if (sc.memoryComp().lastActionWas(Action.Type.BEWEGEN, (GameObjectId) null)) {
-            final StoryStateBuilder result1;
             if (sc.locationComp().lastLocationWas(roomConnection.getTo()) &&
                     numberOfPossibilities != NumberOfPossibilities.ONLY_WAY) {
                 if (sc.memoryComp().getLastAction().is(Action.Type.BEWEGEN)) {
@@ -276,40 +275,46 @@ public class BewegenAction<R extends ISpatiallyConnectedGO & IHasStoringPlaceGO,
                                     + uncapitalize(description.getDescriptionHauptsatz())));
 
 
-                    result1 = alt(alt);
-                    n.add(result1);
-                } else {
-                    result1 = t(StructuralElement.PARAGRAPH,
-                            "Du schaust dich nur kurz um, dann "
-                                    + uncapitalize(description.getDescriptionHauptsatz()))
-                            .komma(description.isKommaStehtAus())
-                            .undWartest(
-                                    description.isAllowsAdditionalDuSatzreihengliedOhneSubjekt());
-                    n.add(result1);
-                }
+                    n.add(alt(alt));
 
+                    return description.getTimeElapsed();
+                } else {
+                    return n.add(
+                            du("schaust", "dich nur kurz um, dann "
+                                            + uncapitalize(description.getDescriptionHauptsatz()),
+                                    description.getTimeElapsed())
+                                    .komma(description.isKommaStehtAus())
+                                    .undWartest(
+                                            description
+                                                    .isAllowsAdditionalDuSatzreihengliedOhneSubjekt()));
+                }
             } else if (initialStoryState.dann()) {
                 // "Du stehst wieder vor dem Schloss; dann gehst du wieder hinein in das Schloss."
-                result1 = t(StructuralElement.WORD,
-                        "; " +
-                                uncapitalize(
-                                        description
-                                                .getDescriptionHauptsatzMitKonjunktionaladverbWennNoetig(
-                                                        "dann")));
-
-                n.add(result1);
+                return n.add(
+                        satzanschluss(
+                                "; " +
+                                        uncapitalize(
+                                                description
+                                                        .getDescriptionHauptsatzMitKonjunktionaladverbWennNoetig(
+                                                                "dann")),
+                                description.getTimeElapsed())
+                                .komma(description.isKommaStehtAus()));
             } else {
-                n.add(StructuralElement.PARAGRAPH, description);
+                return n.add(description);
             }
         } else {
-            result = buildNewStoryStateNewRoomOnlyNewSentenceLastActionNichtBewegen(
-                    initialStoryState,
-                    description);
+            if (initialStoryState.dann()) {
+                return n.add(
+                        neuerSatz(StructuralElement.PARAGRAPH, description
+                                        .getDescriptionHauptsatzMitKonjunktionaladverbWennNoetig("danach"),
+                                description.getTimeElapsed())
+                                .komma(description.isKommaStehtAus())
+                                .undWartest(description
+                                        .isAllowsAdditionalDuSatzreihengliedOhneSubjekt()));
+            }
 
-            n.add(result);
+            return n.add(description);
         }
-
-        return description.getTimeElapsed();
     }
 
     private AbstractDescription getMovementDescription(final StoryState currentStoryState,
@@ -350,33 +355,6 @@ public class BewegenAction<R extends ISpatiallyConnectedGO & IHasStoringPlaceGO,
         }
 
         return standardDescription;
-    }
-
-    private StoryStateBuilder buildNewStoryStateNewRoomOnlyNewSentenceLastActionNichtBewegen(
-            @NonNull final StoryState currentStoryState, final AbstractDescription desc) {
-        if (currentStoryState.dann()) {
-            return t(StoryState.StructuralElement.PARAGRAPH,
-                    desc.getDescriptionHauptsatzMitKonjunktionaladverbWennNoetig("danach"))
-                    .komma(desc.isKommaStehtAus())
-                    .undWartest(desc.isAllowsAdditionalDuSatzreihengliedOhneSubjekt());
-        }
-
-        final ImmutableList.Builder<StoryStateBuilder> alt = ImmutableList.builder();
-        alt.add(t(StoryState.StructuralElement.PARAGRAPH,
-                desc.getDescriptionHauptsatz())
-                .komma(desc.isKommaStehtAus())
-                .undWartest(desc.isAllowsAdditionalDuSatzreihengliedOhneSubjekt())
-                .dann(desc.isDann()));
-
-        if (desc instanceof DuDescription) {
-            alt.add(t(StoryState.StructuralElement.PARAGRAPH,
-                    ((DuDescription) desc).getDescriptionHauptsatzMitSpeziellemVorfeld())
-                    .komma(desc.isKommaStehtAus())
-                    .undWartest(desc.isAllowsAdditionalDuSatzreihengliedOhneSubjekt())
-                    .dann(desc.isDann()));
-        }
-
-        return alt(alt);
     }
 
     /**

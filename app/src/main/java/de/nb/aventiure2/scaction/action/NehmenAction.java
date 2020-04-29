@@ -10,7 +10,6 @@ import javax.annotation.ParametersAreNonnullByDefault;
 
 import de.nb.aventiure2.data.database.AvDatabase;
 import de.nb.aventiure2.data.storystate.StoryState;
-import de.nb.aventiure2.data.storystate.StoryState.StructuralElement;
 import de.nb.aventiure2.data.storystate.StoryStateBuilder;
 import de.nb.aventiure2.data.world.syscomp.alive.ILivingBeingGO;
 import de.nb.aventiure2.data.world.syscomp.description.IDescribableGO;
@@ -21,16 +20,24 @@ import de.nb.aventiure2.data.world.syscomp.memory.Known;
 import de.nb.aventiure2.data.world.syscomp.state.IHasStateGO;
 import de.nb.aventiure2.data.world.syscomp.storingplace.IHasStoringPlaceGO;
 import de.nb.aventiure2.data.world.time.AvTimeSpan;
+import de.nb.aventiure2.german.base.StructuralElement;
+import de.nb.aventiure2.german.praedikat.AdverbialeAngabe;
+import de.nb.aventiure2.german.praedikat.Modalpartikel;
 import de.nb.aventiure2.german.praedikat.PraedikatMitEinerObjektleerstelle;
 import de.nb.aventiure2.scaction.AbstractScAction;
 
 import static com.google.common.base.Preconditions.checkArgument;
-import static de.nb.aventiure2.data.storystate.StoryState.StructuralElement.PARAGRAPH;
 import static de.nb.aventiure2.data.storystate.StoryStateBuilder.t;
 import static de.nb.aventiure2.data.world.gameobjects.GameObjects.FROSCHPRINZ;
 import static de.nb.aventiure2.data.world.gameobjects.GameObjects.SPIELER_CHARAKTER;
 import static de.nb.aventiure2.data.world.syscomp.state.GameObjectState.ERWARTET_VON_SC_EINLOESUNG_SEINES_VERSPRECHENS;
 import static de.nb.aventiure2.data.world.time.AvTimeSpan.secs;
+import static de.nb.aventiure2.german.base.AllgDescription.neuerSatz;
+import static de.nb.aventiure2.german.base.GermanUtil.capitalize;
+import static de.nb.aventiure2.german.base.Numerus.SG;
+import static de.nb.aventiure2.german.base.Person.P1;
+import static de.nb.aventiure2.german.base.Person.P2;
+import static de.nb.aventiure2.german.base.StructuralElement.PARAGRAPH;
 import static de.nb.aventiure2.german.praedikat.VerbSubjObj.MITNEHMEN;
 import static de.nb.aventiure2.german.praedikat.VerbSubjObj.NEHMEN;
 
@@ -89,7 +96,9 @@ public class NehmenAction
         final PraedikatMitEinerObjektleerstelle praedikat =
                 gameObject instanceof ILivingBeingGO ? MITNEHMEN : NEHMEN;
 
-        return praedikat.mitObj(getDescription(gameObject, true)).getDescriptionInfinitiv();
+        return capitalize(praedikat.mitObj(getDescription(gameObject, true))
+                // "Die Schale an *mich* nehmen"
+                .getDescriptionInfinitiv(P1, SG));
     }
 
     @Override
@@ -143,7 +152,7 @@ public class NehmenAction
                 room.storingPlaceComp().getLocationMode().getNehmenPraedikat();
         if (sc.memoryComp().getLastAction().hasObject(gameObject)) {
             if (sc.memoryComp().getLastAction().is(Action.Type.ABLEGEN)) {
-                n.add(buildStoryStateObjectNachAblegen());
+                n.add(buildStoryStateObjectNachAblegen(nehmenPraedikat));
                 return secs(5);
             }
 
@@ -151,7 +160,7 @@ public class NehmenAction
 
             if (sc.memoryComp().getLastAction().is(Action.Type.HOCHWERFEN) &&
                     mood.isEmotional()) {
-                n.add(t(StoryState.StructuralElement.PARAGRAPH,
+                n.add(t(StructuralElement.PARAGRAPH,
                         nehmenPraedikat
                                 .getDescriptionDuHauptsatz(
                                         getDescription(gameObject, true),
@@ -165,26 +174,57 @@ public class NehmenAction
             }
         }
 
-        n.add(t(StoryState.StructuralElement.PARAGRAPH,
-                nehmenPraedikat.getDescriptionDuHauptsatz(getDescription(gameObject, true)))
-                .undWartest(
-                        nehmenPraedikat
-                                .duHauptsatzLaesstSichMitNachfolgendemDuHauptsatzZusammenziehen())
-                .dann());
-        return secs(5);
+        return n.add(
+                neuerSatz(PARAGRAPH,
+                        nehmenPraedikat.getDescriptionDuHauptsatz(getDescription(gameObject, true)),
+                        secs(5))
+                        .undWartest(
+                                nehmenPraedikat
+                                        .duHauptsatzLaesstSichMitNachfolgendemDuHauptsatzZusammenziehen())
+                        .dann());
     }
 
-    private StoryStateBuilder buildStoryStateObjectNachAblegen() {
+    private StoryStateBuilder buildStoryStateObjectNachAblegen(
+            final PraedikatMitEinerObjektleerstelle nehmenPraedikat) {
         if (sc.memoryComp().getLastAction().is(
                 Action.Type.ABLEGEN, Action.Type.HOCHWERFEN)) {
+            if (initialStoryState.dann()) {
+                return t(StructuralElement.PARAGRAPH,
+                        "Dann nimmst du " + getDescription(gameObject).akk() +
+                                " erneut")
+                        .undWartest()
+                        .persPronKandidat(gameObject);
+            }
+
+            if (initialStoryState.allowsAdditionalDuSatzreihengliedOhneSubjekt()) {
+                return t(StructuralElement.WORD,
+                        ", nur um "
+                                + nehmenPraedikat
+                                .mitObj(getDescription(gameObject, true).persPron())
+                                .getDescriptionZuInfinitiv(
+                                        P2, SG,
+                                        new AdverbialeAngabe(
+                                                "gleich erneut"))) // "zu nehmen", "an dich zu nehmen", "aufzuheben"
+                        .komma()
+                        .dann()
+                        .persPronKandidat(gameObject);
+
+            }
+
             return t(StructuralElement.PARAGRAPH,
-                    "Dann nimmst du " + getDescription(gameObject).akk() +
-                            " erneut")
+                    "Ach nein, "
+                            // du nimmst die Kugel besser doch
+                            + nehmenPraedikat
+                            .mitObj(getDescription(gameObject, true))
+                            .getDescriptionDuHauptsatz(
+                                    new Modalpartikel("besser"),
+                                    new Modalpartikel("doch")))
                     .undWartest()
+                    .dann()
                     .persPronKandidat(gameObject);
         }
 
-        return t(StoryState.StructuralElement.SENTENCE,
+        return t(StructuralElement.SENTENCE,
                 "Dann nimmst du " + getDescription(gameObject).akk())
                 .undWartest()
                 .persPronKandidat(gameObject);
@@ -206,14 +246,14 @@ public class NehmenAction
                                 + "Er ist glibschig und schleimig – pfui-bäh! – schnell lässt du ihn in "
                                 + "eine Tasche gleiten. Sein gedämpftes Quaken könnte wohlig sein oder "
                                 + "genauso gut vorwurfsvoll"),
-                t(StoryState.StructuralElement.PARAGRAPH,
+                t(StructuralElement.PARAGRAPH,
                         "Den Frosch in die Hand nehmen?? – Wer hat dir bloß solche Flausen "
                                 + "in den Kopf gesetzt! Kräftig packst du den Frosch und versenkst "
                                 + "ihn tief in deiner Tasche. Du versuchst, deine Hand an der "
                                 + "Kleidung zu reinigen, aber der Schleim verteilt sich nur "
                                 + "überall – igitt!")
                         .beendet(PARAGRAPH),
-                t(StoryState.StructuralElement.PARAGRAPH,
+                t(StructuralElement.PARAGRAPH,
                         "Du erbarmst dich und packst den Frosch in deine Tasche. Er fasst "
                                 + "sich sehr eklig an und du bist glücklich, als die Prozedur "
                                 + "vorbei ist.")

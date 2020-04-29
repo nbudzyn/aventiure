@@ -8,7 +8,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import static de.nb.aventiure2.german.base.NumerusGenus.F;
 import static de.nb.aventiure2.german.base.NumerusGenus.M;
 import static de.nb.aventiure2.german.base.NumerusGenus.N;
-import static de.nb.aventiure2.german.base.NumerusGenus.PL;
+import static de.nb.aventiure2.german.base.NumerusGenus.PL_MFN;
 import static de.nb.aventiure2.german.base.Relativpronomen.Typ.REGEL;
 import static de.nb.aventiure2.german.base.Relativpronomen.Typ.WERWAS;
 
@@ -29,7 +29,7 @@ public class Relativpronomen extends DeklinierbarePhrase {
                 M, new Relativpronomen(M, "der", "dem", "den"),
                 F, new Relativpronomen(F, "die", "der"),
                 N, new Relativpronomen(N, "das", "dem"),
-                PL, new Relativpronomen(PL, "die", "denen")));
+                PL_MFN, new Relativpronomen(PL_MFN, "die", "denen")));
 
         // "alles, was"
         ALL.put(WERWAS, ImmutableMap.of(
@@ -40,7 +40,7 @@ public class Relativpronomen extends DeklinierbarePhrase {
                 N, new Relativpronomen(N, "was",
                         // Ersatz
                         ALL.get(REGEL).get(N).dat()),
-                PL, ALL.get(REGEL).get(PL)));
+                PL_MFN, ALL.get(REGEL).get(PL_MFN)));
     }
 
     public static Relativpronomen get(final NumerusGenus numerusGenus) {

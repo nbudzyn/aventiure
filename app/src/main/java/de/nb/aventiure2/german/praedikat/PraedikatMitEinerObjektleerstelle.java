@@ -1,6 +1,8 @@
 package de.nb.aventiure2.german.praedikat;
 
 import de.nb.aventiure2.german.base.DeklinierbarePhrase;
+import de.nb.aventiure2.german.base.Numerus;
+import de.nb.aventiure2.german.base.Person;
 
 /**
  * Ein Prädikat, in dem (noch) für genau ein Objekt eine Leerstelle besteht. Beispiele:
@@ -43,10 +45,33 @@ public interface PraedikatMitEinerObjektleerstelle extends Praedikat {
     }
 
     /**
-     * Gibt eine Infinitivkonstruktion zurück mit diesem Verb und dieser Entity / diesem Konzept.
-     * ("Den Frosch ignorieren", "Das Leben genießen")
+     * Gibt eine Infinitivkonstruktion mit diesem
+     * Verb und diesem <code>describable</code> zurück ("das Schwert nehmen")
+     * <p>
+     * Implizit (oder bei reflexiven Verben auch explizit) hat der
+     * Infinitiv eine Person und einen Numerus - Beispiel:
+     * "[Ich möchte] die Kugel an mich nehmen"
+     * (nicht *"[Ich möchte] die Kugel an sich nehmen" oder
+     * *"[Ich möchte] die Kugel an uns nehmen")
      */
-    default String getDescriptionInfinitiv(final DeklinierbarePhrase describable) {
-        return mitObj(describable).getDescriptionInfinitiv();
+    default String getDescriptionInfinitiv(
+            final Person person, final Numerus numerus,
+            final DeklinierbarePhrase describable) {
+        return mitObj(describable).getDescriptionInfinitiv(person, numerus);
+    }
+
+    /**
+     * Gibt eine zu-Infinitivkonstruktion mit diesem
+     * Verb und diesem <code>describable</code> zurück ("das Schwert zu nehmen")
+     * <p>
+     * Implizit (oder bei reflexiven Verben auch explizit) hat der
+     * Infinitiv eine Person und einen Numerus - Beispiel:
+     * "[Mir ist wichtig,] die Kugel an mich zu nehmen"
+     * (nicht *"[Mir ist wichtig,] die Kugel an sich zu nehmen")
+     */
+    default String getDescriptionZuInfinitiv(
+            final Person person, final Numerus numerus,
+            final DeklinierbarePhrase describable) {
+        return mitObj(describable).getDescriptionInfinitiv(person, numerus);
     }
 }

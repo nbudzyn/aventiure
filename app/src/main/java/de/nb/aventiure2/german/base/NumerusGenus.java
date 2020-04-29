@@ -8,5 +8,5 @@ public enum NumerusGenus {
     // Singular Neutrum
     N,
     // Plural
-    PL
+    PL_MFN
 }

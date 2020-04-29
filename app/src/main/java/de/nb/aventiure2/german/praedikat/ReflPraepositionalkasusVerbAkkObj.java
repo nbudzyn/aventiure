@@ -13,17 +13,11 @@ public enum ReflPraepositionalkasusVerbAkkObj implements PraedikatMitEinerObjekt
     AN_SICH_NEHMEN("nehmen", "nimmst", PraepositionMitKasus.AN_AKK);
 
     /**
-     * Infinitiv des Verbs ("nehmen")
+     * Das Verb an sich, ohne Informationen zur Valenz, ohne Ergänzungen, ohne
+     * Angaben
      */
     @NonNull
-    private final String infinitiv;
-
-    /**
-     * 2. Person Singular Präsens Indikativ des Verbs
-     * ("nimmst")
-     */
-    @NonNull
-    private final String duForm;
+    private final Verb verb;
 
     /**
      * Die Präposition und der Kasus, mit dem sie steht (z.B.
@@ -36,8 +30,7 @@ public enum ReflPraepositionalkasusVerbAkkObj implements PraedikatMitEinerObjekt
                                               @NonNull final String duForm,
                                               @NonNull
                                               final PraepositionMitKasus prapositionMitKasus) {
-        this.infinitiv = infinitiv;
-        this.duForm = duForm;
+        verb = new Verb(infinitiv, duForm);
         this.prapositionMitKasus = prapositionMitKasus;
     }
 
@@ -53,13 +46,8 @@ public enum ReflPraepositionalkasusVerbAkkObj implements PraedikatMitEinerObjekt
     }
 
     @NonNull
-    public String getInfinitiv() {
-        return infinitiv;
-    }
-
-    @NonNull
-    public String getDuForm() {
-        return duForm;
+    public Verb getVerb() {
+        return verb;
     }
 
     @NonNull

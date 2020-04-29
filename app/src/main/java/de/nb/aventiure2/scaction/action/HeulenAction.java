@@ -20,11 +20,9 @@ import de.nb.aventiure2.data.world.syscomp.memory.Known;
 import de.nb.aventiure2.data.world.syscomp.state.IHasStateGO;
 import de.nb.aventiure2.data.world.syscomp.talking.ITalkerGO;
 import de.nb.aventiure2.data.world.time.AvTimeSpan;
+import de.nb.aventiure2.german.base.AbstractDescription;
 import de.nb.aventiure2.scaction.AbstractScAction;
 
-import static de.nb.aventiure2.data.storystate.StoryState.StructuralElement.PARAGRAPH;
-import static de.nb.aventiure2.data.storystate.StoryState.StructuralElement.SENTENCE;
-import static de.nb.aventiure2.data.storystate.StoryState.StructuralElement.WORD;
 import static de.nb.aventiure2.data.storystate.StoryStateBuilder.t;
 import static de.nb.aventiure2.data.world.gameobjects.GameObjects.FROSCHPRINZ;
 import static de.nb.aventiure2.data.world.gameobjects.GameObjects.load;
@@ -33,6 +31,10 @@ import static de.nb.aventiure2.data.world.syscomp.state.GameObjectState.HAT_SC_H
 import static de.nb.aventiure2.data.world.syscomp.state.GameObjectState.UNAUFFAELLIG;
 import static de.nb.aventiure2.data.world.time.AvTimeSpan.mins;
 import static de.nb.aventiure2.data.world.time.AvTimeSpan.secs;
+import static de.nb.aventiure2.german.base.AllgDescription.neuerSatz;
+import static de.nb.aventiure2.german.base.DuDescription.du;
+import static de.nb.aventiure2.german.base.StructuralElement.SENTENCE;
+import static de.nb.aventiure2.german.base.StructuralElement.WORD;
 
 /**
  * Der Spielercharakter heult.
@@ -79,13 +81,15 @@ public class HeulenAction extends AbstractScAction {
         return narrateAndDoErstesMal();
     }
 
-    private <F extends IDescribableGO & IHasStateGO & ITalkerGO>
+    private <F extends IDescribableGO & IHasStateGO & ITalkerGO & ILivingBeingGO>
     AvTimeSpan narrateAndDoWiederholung() {
         final F froschprinz = (F) load(db, FROSCHPRINZ);
         if (creaturesInRoom.contains(froschprinz) &&
                 (froschprinz.stateComp().hasState(UNAUFFAELLIG))) {
             return narrateAndDoFroschprinzUnauffaellig(froschprinz);
         }
+
+        sc.memoryComp().setLastAction(buildMemorizedAction());
 
         final ImmutableList.Builder<StoryStateBuilder> alt = ImmutableList.builder();
         if (initialStoryState.allowsAdditionalDuSatzreihengliedOhneSubjekt()) {
@@ -99,8 +103,6 @@ public class HeulenAction extends AbstractScAction {
                 .undWartest());
         n.add(alt(alt));
 
-        sc.memoryComp().setLastAction(buildMemorizedAction());
-
         return mins(1);
     }
 
@@ -108,25 +110,19 @@ public class HeulenAction extends AbstractScAction {
     AvTimeSpan narrateAndDoFroschprinzUnauffaellig(final F froschprinz) {
         // STORY Nachts schläft der Frosch?!
 
-        final String desc = "weinst immer lauter und kannst dich gar nicht trösten. " +
-                "Und wie du so klagst, ruft dir jemand zu: „Was hast du vor, " +
-                "du schreist ja, dass sich ein Stein erbarmen möchte.“ Du siehst " +
-                "dich um, woher " +
-                "die Stimme käme, da erblickst du " +
-                getDescription(froschprinz).akk();
-        if (initialStoryState.allowsAdditionalDuSatzreihengliedOhneSubjekt()) {
-            n.add(t(WORD, "und " + desc));
-        } else {
-            n.add(t(SENTENCE, "Du " + desc));
-        }
-
         sc.memoryComp().setLastAction(buildMemorizedAction());
         froschprinz.stateComp().setState(HAT_SC_HILFSBEREIT_ANGESPROCHEN);
         froschprinz.talkingComp().setTalkingTo(sc);
         sc.memoryComp().upgradeKnown(FROSCHPRINZ, Known.getKnown(getLichtverhaeltnisse(
                 sc.locationComp().getLocation())));
         sc.feelingsComp().setMood(Mood.NEUTRAL);
-        return secs(30);
+
+        return n.add(du("weinst", "immer lauter und kannst dich gar nicht trösten. " +
+                "Und wie du so klagst, ruft dir jemand zu: „Was hast du vor, " +
+                "du schreist ja, dass sich ein Stein erbarmen möchte.“ Du siehst " +
+                "dich um, woher " +
+                "die Stimme käme, da erblickst du " +
+                getDescription(froschprinz).akk(), "immer lauter", secs(30)));
     }
 
     @Override
@@ -139,24 +135,19 @@ public class HeulenAction extends AbstractScAction {
     }
 
     private AvTimeSpan narrateAndDoErstesMal() {
-        final ImmutableList.Builder<StoryStateBuilder> alt = ImmutableList.builder();
-
-        alt.add(t(PARAGRAPH,
-                "Dich überkommt ein Schluchzen"));
-
-        if (initialStoryState.dann()) {
-            alt.add(t(PARAGRAPH,
-                    "Dann bricht die Trauer aus dir heraus und du heulst los"));
-        }
-
-        alt.add(t(PARAGRAPH,
-                "Du weinst")
-                .undWartest()
-                .dann());
-        n.add(alt(alt));
-
         sc.memoryComp().setLastAction(buildMemorizedAction());
 
-        return mins(1);
+        final ImmutableList.Builder<AbstractDescription<?>> alt = ImmutableList.builder();
+        alt.add(neuerSatz("Dich überkommt ein Schluchzen", mins(1)));
+
+        if (initialStoryState.dann()) {
+            alt.add(neuerSatz("Dann bricht die Trauer aus dir heraus und du heulst los",
+                    mins(1)));
+        }
+
+        alt.add(du("weinst", mins(1))
+                .undWartest()
+                .dann());
+        return n.addAlt(alt);
     }
 }

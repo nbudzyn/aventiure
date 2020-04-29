@@ -37,8 +37,9 @@ import static de.nb.aventiure2.data.world.syscomp.memory.Known.UNKNOWN;
 import static de.nb.aventiure2.data.world.syscomp.state.GameObjectState.BEGONNEN;
 import static de.nb.aventiure2.data.world.time.AvTimeSpan.mins;
 import static de.nb.aventiure2.data.world.time.AvTimeSpan.secs;
-import static de.nb.aventiure2.german.base.AllgDescription.allg;
+import static de.nb.aventiure2.german.base.AllgDescription.neuerSatz;
 import static de.nb.aventiure2.german.base.DuDescription.du;
+import static de.nb.aventiure2.german.base.StructuralElement.SENTENCE;
 import static de.nb.aventiure2.scaction.action.room.connection.RoomConnection.con;
 
 class RoomConnectionBuilder {
@@ -92,7 +93,7 @@ class RoomConnectionBuilder {
                                     .undWartest()
                                     .dann(),
 
-                            allg("Jeder kennt die Geschichten, die man "
+                            neuerSatz("Jeder kennt die Geschichten, die man "
                                     + "sich über den Wald erzählt: Räuber sind noch "
                                     + "die kleinste Gefahr. Aber das schreckt dich ganz "
                                     + "offenbar nicht und du folgst dem erstbesten "
@@ -113,7 +114,7 @@ class RoomConnectionBuilder {
                             this::getDesc_ImWaldNaheDemSchloss_DraussenVorDemSchloss),
                     con(ABZWEIG_IM_WALD,
                             "Tiefer in den Wald hineingehen",
-                            allg("Nicht lang, und zur Linken geht zwischen "
+                            neuerSatz("Nicht lang, und zur Linken geht zwischen "
                                     + "den Bäumen ein alter, düsterer Weg ab, über "
                                     + "den Farn wuchert", mins(5))
                                     .komma(),
@@ -129,21 +130,22 @@ class RoomConnectionBuilder {
 
                     con(IM_WALD_NAHE_DEM_SCHLOSS,
                             "In Richtung Schloss gehen",
-                            allg("Von dort gehst du weiter in Richtung Schloss", mins(5))
+                            neuerSatz("Von dort gehst du weiter in Richtung Schloss", mins(5))
                     ),
 
                     con(VOR_DER_HUETTE_IM_WALD,
                             "Den überwachsenen Abzweig nehmen",
-                            allg("Du fasst dir ein Herz und stapfst zwischen "
-                                    + "dem Unkraut einen Weg entlang, "
-                                    + "der wohl schon länger nicht mehr benutzt wurde. Hinter der "
-                                    + "nächsten Biegung stehst du unvermittelt vor"
-                                    + " einer Holzhütte. "
-                                    + "Die Fensterläden sind "
-                                    + "geschlossen, die Tür hängt nur noch lose "
-                                    + "in den Angeln", mins(2)),
+                            du(SENTENCE, "fasst",
+                                    "dir ein Herz und stapfst zwischen "
+                                            + "dem Unkraut einen Weg entlang, "
+                                            + "der wohl schon länger nicht mehr benutzt wurde. Hinter der "
+                                            + "nächsten Biegung stehst du unvermittelt vor"
+                                            + " einer Holzhütte. "
+                                            + "Die Fensterläden sind "
+                                            + "geschlossen, die Tür hängt nur noch lose "
+                                            + "in den Angeln", mins(2)),
 
-                            allg("Hat gerade neben dir im Unterholz geknarzt? "
+                            neuerSatz("Hat gerade neben dir im Unterholz geknarzt? "
                                     + "Wie auch immer, du fasst dir ein Herz und "
                                     + "stapfst durch das "
                                     + "dem Unkraut einen düsteren Trampelpfad entlang. "
@@ -166,7 +168,7 @@ class RoomConnectionBuilder {
 
                     con(IM_WALD_BEIM_BRUNNEN,
                             "Auf dem Hauptpfad tiefer in den Wald gehen",
-                            allg("Der breitere Pfad führt zu einer alten "
+                            neuerSatz("Der breitere Pfad führt zu einer alten "
                                     + "Linde, unter der ist ein Brunnen. "
                                     + "Hinter dem Brunnen endet der Weg und der "
                                     + "wilde Wald beginnt.\n"
@@ -188,7 +190,7 @@ class RoomConnectionBuilder {
                                     + "Brunnen beginnt der wilde Wald", mins(4))
                                     .komma(),
 
-                            du("kehrst", "zurück zum Brunnen unter der Linde", mins(3))
+                            du("kehrst", "zurück zum Brunnen", mins(3))
                                     .undWartest()
                                     .dann()));
         }
@@ -196,14 +198,14 @@ class RoomConnectionBuilder {
             return ImmutableList.of(
                     con(ABZWEIG_IM_WALD,
                             "Auf den Hauptpfad zurückkehren",
-                            allg("Durch Farn und Gestrüpp gehst du zurück zum "
+                            neuerSatz("Durch Farn und Gestrüpp gehst du zurück zum "
                                     + "Hauptpfad", mins(2))
                                     .undWartest()
                                     .dann()
                     ),
                     con(HUETTE_IM_WALD,
                             "Die Hütte betreten",
-                            allg("Du schiebst die Tür zur Seite und "
+                            neuerSatz("Du schiebst die Tür zur Seite und "
                                     + "zwängst dich hinein. Durch Ritzen in den "
                                     + "Fensterläden fällt ein wenig Licht: "
                                     + "Die Hütte ist "
@@ -212,7 +214,7 @@ class RoomConnectionBuilder {
                                     + "Tausendfüßler "
                                     + "unbewohnt. Du siehst ein Bettgestell, "
                                     + "einen Tisch, aber sonst keine Einrichtung", mins(1)),
-                            allg("Du schiebst die Tür zur Seite und "
+                            neuerSatz("Du schiebst die Tür zur Seite und "
                                     + "zwängst dich hinein. Erst ist alles "
                                     + "stockdunkel, aber dann kannst du doch mit "
                                     + "Mühe ein Bettgestell und einen Tisch "
@@ -235,13 +237,13 @@ class RoomConnectionBuilder {
                                     .undWartest()),
                     con(HINTER_DER_HUETTE,
                             "Um die Hütte herumgehen",
-                            allg("Ein paar Schritte um die Hütte herum und "
+                            neuerSatz("Ein paar Schritte um die Hütte herum und "
                                     + "du kommst in einen kleinen, völlig "
                                     + "verwilderten Garten. In seiner Mitte "
                                     + "steht einzeln… es könnte ein "
                                     + "Apfelbaum sein. Früchte siehst du von "
                                     + "unten keine.", secs(30)),
-                            allg("Vorsichtig gehtst du im Dunkeln ein paar Schritte "
+                            neuerSatz("Vorsichtig gehst du im Dunkeln ein paar Schritte "
                                     + "um die Hütte herum. Du kannst die Silhuette "
                                     + "eines einzelnen Baums erkennen, vielleicht – "
                                     + "ein Apfelbaum", mins(1)),
@@ -276,7 +278,7 @@ class RoomConnectionBuilder {
                                     + "vielen Schritten tut es sehr gut, sich "
                                     + "einmal auszustrecken", secs(15)),
 
-                            allg("Noch einmal legst du dich in das Holzbett", secs(15))
+                            neuerSatz("Noch einmal legst du dich in das Holzbett", secs(15))
                                     .undWartest()
                                     .dann()
                     ));
@@ -295,7 +297,7 @@ class RoomConnectionBuilder {
         if (from.is(BETT_IN_DER_HUETTE_IM_WALD)) {
             return ImmutableList.of(con(HUETTE_IM_WALD,
                     "Aufstehen",
-                    allg("Du reckst dich noch einmal und stehst "
+                    du(SENTENCE, "reckst", "dich noch einmal und stehst "
                             + "wieder auf", secs(10))
                             .dann()
             ));
@@ -306,7 +308,7 @@ class RoomConnectionBuilder {
 
             resImWaldBeimBrunnnen.add(con(ABZWEIG_IM_WALD,
                     "Den Weg Richtung Schloss gehen",
-                    allg("Du verlässt den Brunnen und erreichst bald "
+                    du(SENTENCE, "verlässt", "den Brunnen und erreichst bald "
                             + "die Stelle, wo der überwachsene Weg "
                             + "abzweigt", mins(3))
                             .komma()));
@@ -314,7 +316,7 @@ class RoomConnectionBuilder {
                     sc.memoryComp().isKnown(WALDWILDNIS_HINTER_DEM_BRUNNEN)) {
                 resImWaldBeimBrunnnen.add(con(WALDWILDNIS_HINTER_DEM_BRUNNEN,
                         "Hinter dem Brunnen in die Wildnis schlagen",
-                        allg("Du verlässt den Brunnen und schlägst dich in die "
+                        du(SENTENCE, "verlässt", "den Brunnen und schlägst dich in die "
                                 + "Wildnis "
                                 + "hinter dem "
                                 + "Brunnen. Umgestürzte Bäume, abgefallene "
@@ -326,9 +328,13 @@ class RoomConnectionBuilder {
                                 + "Äpfel", mins(5))
                                 .komma()
                                 .dann(),
-                        allg("Noch einmal kämpfst du dich durch den wilden "
-                                + "Wald hinter dem Brunnen, bis du den Strauch mit den "
-                                + "kleinen, violetten Früchten erreichst", mins(4))));
+                        du("kämpfst", "dich noch einmal durch den wilden "
+                                        + "Wald hinter dem Brunnen, bis du den Strauch mit den "
+                                        + "kleinen, violetten Früchten erreichst",
+                                "noch einmal",
+                                mins(4))
+                                .komma()
+                                .undWartest()));
             }
 
             return resImWaldBeimBrunnnen.build();
@@ -424,8 +430,9 @@ class RoomConnectionBuilder {
         // STORY: Nachts ist weniger Trubel? (Wäre das ein Statuswechsel beim
         //  Schlossfest? Oder Zumindest auch eine Reaction wie der Auf- /
         //  Abbau des Schlossfestes?)
-        return du("stehst", "vom Tisch auf und gehst über die Marmortreppe hinaus in den Trubel "
-                + "im Schlossgarten", mins(3))
+        return du(SENTENCE, "stehst",
+                "vom Tisch auf und gehst über die Marmortreppe hinaus in den Trubel "
+                        + "im Schlossgarten", mins(3))
                 .dann();
     }
 
@@ -486,7 +493,7 @@ class RoomConnectionBuilder {
         if (db.counterDao().incAndGet(
                 "RoomConnectionBuilder_DraussenVorDemSchloss_SchlossVorhalle_FestBegonnen")
                 == 1) {
-            return allg("Vor dem Schloss gibt es ein großes Gedränge und es dauert "
+            return neuerSatz("Vor dem Schloss gibt es ein großes Gedränge und es dauert "
                     + "eine Weile, bis "
                     + "die Menge dich hineinschiebt. Die prächtige Vorhalle steht voller "
                     + "Tische, auf denen in großen Schüsseln Eintöpfe dampfen", mins(7))
@@ -524,10 +531,11 @@ class RoomConnectionBuilder {
             return du("erreichst", "bald das helle "
                     + "Tageslicht, in dem der Schlossgarten "
                     + "liegt", "bald", mins(10))
+                    .undWartest()
                     .komma();
         }
 
-        return du("gehts", "noch eine Weile vorsichtig durch den dunklen "
+        return du(SENTENCE, "gehst", "noch eine Weile vorsichtig durch den dunklen "
                 + "Wald, dann öffnet sich der Weg wieder und du stehst im Schlossgarten "
                 + "unter dem Sternenhimmel", "noch eine Weile", mins(15));
         // STORY Lichtverhältnisse auch bei den anderen Aktionen berücksichtigen,
@@ -562,7 +570,7 @@ class RoomConnectionBuilder {
                     + "Gebratenem", timeSpan);
         }
 
-        return allg("Das Schlossfest ist immer noch in vollem Gange", timeSpan);
+        return neuerSatz("Das Schlossfest ist immer noch in vollem Gange", timeSpan);
     }
 
 // -------------------------------------------------------------------

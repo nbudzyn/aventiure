@@ -10,7 +10,6 @@ import javax.annotation.ParametersAreNonnullByDefault;
 
 import de.nb.aventiure2.data.database.AvDatabase;
 import de.nb.aventiure2.data.storystate.StoryState;
-import de.nb.aventiure2.data.storystate.StoryState.StructuralElement;
 import de.nb.aventiure2.data.world.syscomp.alive.ILivingBeingGO;
 import de.nb.aventiure2.data.world.syscomp.description.IDescribableGO;
 import de.nb.aventiure2.data.world.syscomp.location.ILocatableGO;
@@ -21,10 +20,10 @@ import de.nb.aventiure2.data.world.time.AvTimeSpan;
 import de.nb.aventiure2.german.base.DeklinierbarePhrase;
 import de.nb.aventiure2.german.base.DuDescription;
 import de.nb.aventiure2.german.base.Nominalphrase;
+import de.nb.aventiure2.german.base.StructuralElement;
 import de.nb.aventiure2.german.praedikat.SeinUtil;
 import de.nb.aventiure2.scaction.AbstractScAction;
 
-import static de.nb.aventiure2.data.storystate.StoryState.StructuralElement.PARAGRAPH;
 import static de.nb.aventiure2.data.storystate.StoryStateBuilder.t;
 import static de.nb.aventiure2.data.world.gameobjects.GameObjects.FROSCHPRINZ;
 import static de.nb.aventiure2.data.world.gameobjects.GameObjects.GOLDENE_KUGEL;
@@ -41,8 +40,11 @@ import static de.nb.aventiure2.data.world.syscomp.state.GameObjectState.HAT_SC_H
 import static de.nb.aventiure2.data.world.syscomp.state.GameObjectState.UNAUFFAELLIG;
 import static de.nb.aventiure2.data.world.time.AvTimeSpan.noTime;
 import static de.nb.aventiure2.data.world.time.AvTimeSpan.secs;
+import static de.nb.aventiure2.german.base.AllgDescription.neuerSatz;
+import static de.nb.aventiure2.german.base.AllgDescription.satzanschluss;
 import static de.nb.aventiure2.german.base.DuDescription.du;
 import static de.nb.aventiure2.german.base.GermanUtil.capitalize;
+import static de.nb.aventiure2.german.base.StructuralElement.PARAGRAPH;
 
 /**
  * Der Spieler(charakter) wirft einen Gegenstand hoch.
@@ -116,29 +118,30 @@ public class HochwerfenAction<OBJ extends IDescribableGO & ILocatableGO>
         final Nominalphrase objectDesc = getDescription(object, false);
 
         if (initialStoryState.allowsAdditionalDuSatzreihengliedOhneSubjekt()) {
-            n.add(t(StoryState.StructuralElement.WORD,
-                    ", wirfst " +
+            return n.add(
+                    satzanschluss(", wirfst " +
                             getObjektNominalphraseOderWennSoebenErwaehntPersPron(currentStoryState,
                                     objectDesc)
                                     .akk() +
                             " in die Höhe und fängst " +
                             objectDesc.persPron().akk() +
-                            " wieder auf")
-                    .dann());
-            return secs(3);
+                            " wieder auf", secs(3))
+                            .dann());
         }
 
-        n.add(t(StoryState.StructuralElement.PARAGRAPH,
-                vorfeldEmotionFuersHochwerfen()
-                        + " wirfst du " +
+        final String emotionSatzglied = emotionSatzgliedFuersHochwerfen();
+
+        return n.add(
+                du(PARAGRAPH, "wirfst",
                         getObjektNominalphraseOderWennSoebenErwaehntPersPron(currentStoryState,
-                                objectDesc)
-                                .akk() +
-                        " in die Höhe und fängst " +
-                        objectDesc.persPron().akk() +
-                        " wieder auf")
-                .dann());
-        return secs(3);
+                                objectDesc).akk()
+                                + " "
+                                + emotionSatzglied
+                                + " in die Höhe und fängst " +
+                                objectDesc.persPron().akk() +
+                                " wieder auf",
+                        emotionSatzglied, secs(3))
+                        .dann());
     }
 
     /**
@@ -155,8 +158,8 @@ public class HochwerfenAction<OBJ extends IDescribableGO & ILocatableGO>
     }
 
     @NonNull
-    private String vorfeldEmotionFuersHochwerfen() {
-        return capitalize(sc.feelingsComp().getMood().getAdverbialeAngabe().getText());
+    private String emotionSatzgliedFuersHochwerfen() {
+        return sc.feelingsComp().getMood().getAdverbialeAngabe().getText();
     }
 
     private <F extends IHasStateGO & ILocatableGO> AvTimeSpan narrateAndDoFroschBekannt(
@@ -175,8 +178,8 @@ public class HochwerfenAction<OBJ extends IDescribableGO & ILocatableGO>
         if (object.is(GOLDENE_KUGEL)) {
             final Nominalphrase objectDesc = getDescription(object);
 
-            return n.add(PARAGRAPH,
-                    du("wirfst", objectDesc.akk() +
+            return n.add(
+                    du(PARAGRAPH, "wirfst", objectDesc.akk() +
                             " hoch in die Luft und fängst " +
                             objectDesc.persPron().akk() +
                             " geschickt wieder auf", secs(3))
@@ -191,22 +194,21 @@ public class HochwerfenAction<OBJ extends IDescribableGO & ILocatableGO>
             return timeElapsed;
         }
 
-        final String praefix =
-                getLichtverhaeltnisse(room) == HELL ? "Weit und breit" : "Im Dunkeln ist";
-
-        n.add(t(StoryState.StructuralElement.SENTENCE,
-                praefix + " kein Frosch zu sehen… Das war vielleicht etwas ungeschickt, " +
-                        "oder?"));
         if (!sc.feelingsComp().getMood().isTraurigerAls(ETWAS_GEKNICKT)) {
             sc.feelingsComp().setMood(ETWAS_GEKNICKT);
         }
-        return timeElapsed;
+
+        final String praefix =
+                getLichtverhaeltnisse(room) == HELL ? "Weit und breit" : "Im Dunkeln ist";
+
+        return n.add(
+                neuerSatz(praefix + " kein Frosch zu sehen… Das war vielleicht etwas "
+                        + "ungeschickt, oder?", timeElapsed));
     }
 
     private AvTimeSpan narrateAndDoObjectFaelltSofortInDenBrunnen() {
         final Nominalphrase objectDesc = getDescription(object, false);
 
-        final boolean dann = !initialStoryState.dann();
         final DuDescription duDesc = du("wirfst", objectDesc.akk() +
                 " nur ein einziges Mal in die Höhe, " +
                 "aber wie das Unglück es will, fällt " +
@@ -216,7 +218,7 @@ public class HochwerfenAction<OBJ extends IDescribableGO & ILocatableGO>
                 SeinUtil.istSind(objectDesc.getNumerusGenus()) +
                 " " +
                 objectDesc.persPron().akk(), "nur ein einziges Mal", secs(10))
-                .dann(dann);
+                .dann(!initialStoryState.dann());
 
         if (initialStoryState.dann()) {
             n.add(t(StructuralElement.PARAGRAPH,
@@ -241,16 +243,13 @@ public class HochwerfenAction<OBJ extends IDescribableGO & ILocatableGO>
                 .incAndGet("HochwerfenAction_Wiederholung") == 1 ||
                 (room.is(IM_WALD_BEIM_BRUNNEN) && !froschprinz.stateComp()
                         .hasState(UNAUFFAELLIG))) {
-            n.add(alt(t(StoryState.StructuralElement.SENTENCE,
-                    "Und noch einmal – was ein schönes Spiel!")
+            return n.addAlt(
+                    neuerSatz("Und noch einmal – was ein schönes Spiel!", secs(3))
                             .dann(),
-                    t(StoryState.StructuralElement.SENTENCE,
-                            "So ein Spaß!")
+                    neuerSatz("So ein Spaß!", secs(3))
                             .dann(),
-                    t(StoryState.StructuralElement.SENTENCE,
-                            "Und in die Höhe damit – juchei!")
-                            .dann()));
-            return secs(3);
+                    neuerSatz("Und in die Höhe damit – juchei!", secs(3))
+                            .dann());
         }
 
         if (room.is(IM_WALD_BEIM_BRUNNEN)) {
@@ -258,7 +257,7 @@ public class HochwerfenAction<OBJ extends IDescribableGO & ILocatableGO>
                     getLichtverhaeltnisse(room) == DUNKEL ?
                             "– bei dieser Dunkelheit schon gar nicht" : "";
 
-            n.add(t(StoryState.StructuralElement.SENTENCE,
+            n.add(t(StructuralElement.SENTENCE,
                     "Noch einmal wirfst du " +
                             getDescription(object).akk() +
                             " in die Höhe… doch oh nein, " +

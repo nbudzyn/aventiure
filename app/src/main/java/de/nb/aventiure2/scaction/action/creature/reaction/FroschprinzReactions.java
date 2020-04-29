@@ -14,9 +14,8 @@ import de.nb.aventiure2.data.world.syscomp.storingplace.IHasStoringPlaceGO;
 import de.nb.aventiure2.data.world.syscomp.talking.ITalkerGO;
 import de.nb.aventiure2.data.world.time.AvDateTime;
 import de.nb.aventiure2.data.world.time.AvTimeSpan;
+import de.nb.aventiure2.german.base.StructuralElement;
 
-import static de.nb.aventiure2.data.storystate.StoryState.StructuralElement.PARAGRAPH;
-import static de.nb.aventiure2.data.storystate.StoryState.StructuralElement.SENTENCE;
 import static de.nb.aventiure2.data.storystate.StoryStateBuilder.t;
 import static de.nb.aventiure2.data.world.gameobjects.GameObjects.FROSCHPRINZ;
 import static de.nb.aventiure2.data.world.gameobjects.GameObjects.GOLDENE_KUGEL;
@@ -39,7 +38,10 @@ import static de.nb.aventiure2.data.world.syscomp.state.GameObjectState.UNAUFFAE
 import static de.nb.aventiure2.data.world.time.AvTimeSpan.hours;
 import static de.nb.aventiure2.data.world.time.AvTimeSpan.noTime;
 import static de.nb.aventiure2.data.world.time.AvTimeSpan.secs;
+import static de.nb.aventiure2.german.base.AllgDescription.neuerSatz;
 import static de.nb.aventiure2.german.base.GermanUtil.capitalize;
+import static de.nb.aventiure2.german.base.StructuralElement.PARAGRAPH;
+import static de.nb.aventiure2.german.base.StructuralElement.SENTENCE;
 
 @ParametersAreNonnullByDefault
 class FroschprinzReactions
@@ -58,14 +60,12 @@ class FroschprinzReactions
         if (getReactor().stateComp().hasState(ERWARTET_VON_SC_EINLOESUNG_SEINES_VERSPRECHENS)
                 && oldRoom.is(SCHLOSS_VORHALLE)
                 && !oldRoom.is(SCHLOSS_VORHALLE_TISCH_BEIM_FEST)) {
-            n.add(t(SENTENCE,
-                    " „Warte, warte“, ruft der Frosch, „nimm mich mit, ich kann nicht so "
+            return n.add(
+                    neuerSatz(" „Warte, warte“, ruft der Frosch, „nimm mich mit, ich kann nicht so "
                             + "laufen wie du.“ Aber was hilft ihm, dass er dir "
                             + "sein „Quak, quak!“ so laut nachschreit, "
-                            + "als er kann, du hörst nicht darauf")
-                    .undWartest());
-
-            return noTime();
+                            + "als er kann, du hörst nicht darauf", noTime())
+                            .undWartest());
         }
 
         return noTime();
@@ -81,24 +81,21 @@ class FroschprinzReactions
             // STORY Bei einem Status dazwischen könnte der Froschprinz den SC ansprechen und auf
             //  sein Versprechen hinweisen!
             case HAT_HOCHHEBEN_GEFORDERT:
-                n.add(t(PARAGRAPH,
-                        // STORY Weitere Alternativen!
-                        "Plötzlich sitzt "
-                                + getReactorDescription().nom()
-                                + " neben dir auf der Bank. „Denk an dein "
-                                + "Versprechen“, quakt er dir zu, "
-                                + "„Lass uns aus einem Tellerlein essen!“ Du bist ganz "
-                                + "erschrocken – was für eine "
-                                + "abstoßende Vorstellung!"));
-
                 sc.feelingsComp().setMood(ANGESPANNT);
 
-                return secs(30);
+                return n.add(
+                        // STORY Weitere Alternativen!
+                        neuerSatz(PARAGRAPH, "Plötzlich sitzt "
+                                        + getReactorDescription().nom()
+                                        + " neben dir auf der Bank. „Denk an dein "
+                                        + "Versprechen“, quakt er dir zu, "
+                                        + "„Lass uns aus einem Tellerlein essen!“ Du bist ganz "
+                                        + "erschrocken – was für eine "
+                                        + "abstoßende Vorstellung!",
+                                secs(30)));
             default:
-                n.add(t(StoryState.StructuralElement.SENTENCE,
-                        "Hier sitzt "
-                                + getReactorDescription(false).nom()));
-                return noTime();
+                return n.add(neuerSatz("Hier sitzt "
+                        + getReactorDescription().nom(), noTime()));
         }
 
     }
@@ -206,7 +203,7 @@ class FroschprinzReactions
             if (!scHatObjektAufgefangen) {
                 // Der Spieler hat ein weiteres Objekt in den Brunnen fallen
                 // lassen, obwohl er noch mit dem Frosch verhandelt.
-                n.add(t(StoryState.StructuralElement.PARAGRAPH,
+                n.add(t(StructuralElement.PARAGRAPH,
                         "Ob der Frosch gerade seine glitschige Nase gerümpft hat?")
                         .beendet(PARAGRAPH)
                 );
@@ -225,12 +222,11 @@ class FroschprinzReactions
         // Der Spieler hat die goldene Kugel letztlich in den Brunnen
         // fallen lassen, NACHDEM der Frosch schon Dinge hochgeholt hat.
         // Dann ist die Kugel jetzt WEG - PECH.
-        n.add(t(StoryState.StructuralElement.SENTENCE,
+        return n.add(neuerSatz(
                 capitalize(
                         getReactorDescription(true).nom()) +
-                        " schaut dich vorwurfsvoll und etwas hochnäsig an"));
-
-        return secs(5);
+                        " schaut dich vorwurfsvoll und etwas hochnäsig an",
+                secs(5)));
     }
 
     @Override

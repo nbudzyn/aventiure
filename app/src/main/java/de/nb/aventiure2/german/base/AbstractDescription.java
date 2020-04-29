@@ -1,11 +1,25 @@
 package de.nb.aventiure2.german.base;
 
+import de.nb.aventiure2.data.storystate.StoryState;
 import de.nb.aventiure2.data.world.time.AvTimeSpan;
 
 /**
  * Abstract superclass for a description.
  */
 public abstract class AbstractDescription<SELF extends AbstractDescription<?>> {
+    /**
+     * This {@link StoryState} starts a new ... (paragraph, e.g.)
+     */
+    private final StructuralElement startsNew;
+    // TODO startsNew verwenden und aus StoryState ausbauen.
+
+    /**
+     * This {@link StoryState} ends this ... (paragraph, e.g.)
+     */
+    private StructuralElement endsThis = StructuralElement.WORD;
+    // TODO beendet...() etc. wie bei StoryState anbieten
+    // TODO endsThis verwenden und aus StoryState ausbauen.
+
     /**
      * Ob ein Komma aussteht. Wenn ein Komma aussteht, muss als Nächstes ein Komma folgen -
      * oder das Satzende.
@@ -18,8 +32,14 @@ public abstract class AbstractDescription<SELF extends AbstractDescription<?>> {
 
     private final AvTimeSpan timeElapsed;
 
-    public AbstractDescription(final AvTimeSpan timeElapsed) {
+    public AbstractDescription(final StructuralElement startsNew,
+                               final AvTimeSpan timeElapsed) {
+        this.startsNew = startsNew;
         this.timeElapsed = timeElapsed;
+    }
+
+    public StructuralElement getStartsNew() {
+        return startsNew;
     }
 
     /**
@@ -77,6 +97,15 @@ public abstract class AbstractDescription<SELF extends AbstractDescription<?>> {
 
     public boolean isDann() {
         return dann;
+    }
+
+    public SELF beendet(final StructuralElement structuralElement) {
+        endsThis = structuralElement;
+        return (SELF) this;
+    }
+
+    public StructuralElement getEndsThis() {
+        return endsThis;
     }
 
     /**

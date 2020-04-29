@@ -1,18 +1,40 @@
 package de.nb.aventiure2.german.base;
 
+import com.google.common.collect.ImmutableMap;
+
+import java.util.Map;
+
+import static de.nb.aventiure2.german.base.Numerus.PL;
+import static de.nb.aventiure2.german.base.Numerus.SG;
+import static de.nb.aventiure2.german.base.Person.P1;
+import static de.nb.aventiure2.german.base.Person.P2;
+import static de.nb.aventiure2.german.base.Person.P3;
+
 public class Reflexivpronomen {
-    public static final Reflexivpronomen P1_SG = new Reflexivpronomen("mir", "mich");
-    public static final Reflexivpronomen P2_SG = new Reflexivpronomen("dir", "dich");
-    public static final Reflexivpronomen P3_SG = new Reflexivpronomen("sich");
+    private static final Map<Numerus, Map<Person, Reflexivpronomen>> ALL = ImmutableMap.of(
+            SG, ImmutableMap.of(
+                    P1, new Reflexivpronomen("mir", "mich"),
+                    P2, new Reflexivpronomen("dir", "dich"),
+                    P3, new Reflexivpronomen("sich")
+            ),
+            PL, ImmutableMap.of(
+                    P1, new Reflexivpronomen("uns"),
+                    P2, new Reflexivpronomen("euch"),
+                    P3, new Reflexivpronomen("sich")
+            ));
 
     private final String dativ;
     private final String akkusativ;
 
-    public Reflexivpronomen(final String dativAkkusativ) {
+    public static Reflexivpronomen get(final Person person, final Numerus numerus) {
+        return ALL.get(numerus).get(person);
+    }
+
+    private Reflexivpronomen(final String dativAkkusativ) {
         this(dativAkkusativ, dativAkkusativ);
     }
 
-    public Reflexivpronomen(final String dativ, final String akkusativ) {
+    private Reflexivpronomen(final String dativ, final String akkusativ) {
         this.dativ = dativ;
         this.akkusativ = akkusativ;
     }
@@ -53,5 +75,4 @@ public class Reflexivpronomen {
     public String akk() {
         return akkusativ;
     }
-
 }

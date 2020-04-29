@@ -4,6 +4,8 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import de.nb.aventiure2.german.base.DeklinierbarePhrase;
+import de.nb.aventiure2.german.base.Numerus;
+import de.nb.aventiure2.german.base.Person;
 
 /**
  * Ein Verb (ggf. mit Präfix), das genau mit einem Subjekt, einem Dativobjekt und
@@ -16,37 +18,25 @@ public enum VerbSubjDatAkk implements Praedikat {
     ;
 
     /**
-     * Infinitiv des Verbs ("machen")
+     * Das Verb an sich, ohne Informationen zur Valenz, ohne Ergänzungen, ohne
+     * Angaben
      */
     @NonNull
-    private final String infinitiv;
+    private final Verb verb;
 
-    /**
-     * 2. Person Singular Präsens Indikativ des Verbs, ggf. ohne abgetrenntes Präfix
-     * ("machst")
-     */
-    @NonNull
-    private final String duForm;
-
-    /**
-     * Ggf. das abgetrennte Präfix des Verbs.
-     * <p>
-     * Wird das Präfix <i>nicht</i> abgetrennt ("ver"), ist dieses Feld <code>null</code>.
-     */
-    @Nullable
-    private final String abgetrenntesPraefix;
-
-    private VerbSubjDatAkk(@NonNull final String infinitiv,
-                           @NonNull final String duForm) {
-        this(infinitiv, duForm, null);
+    VerbSubjDatAkk(@NonNull final String infinitiv,
+                   @NonNull final String duForm) {
+        this(new Verb(infinitiv, duForm));
     }
 
-    private VerbSubjDatAkk(@NonNull final String infinitiv,
-                           @NonNull final String duForm,
-                           @Nullable final String abgetrenntesPraefix) {
-        this.infinitiv = infinitiv;
-        this.duForm = duForm;
-        this.abgetrenntesPraefix = abgetrenntesPraefix;
+    VerbSubjDatAkk(@NonNull final String infinitiv,
+                   @NonNull final String duForm,
+                   @Nullable final String partikel) {
+        this(new Verb(infinitiv, duForm, partikel));
+    }
+
+    VerbSubjDatAkk(final Verb verb) {
+        this.verb = verb;
     }
 
     /**
@@ -61,22 +51,35 @@ public enum VerbSubjDatAkk implements Praedikat {
 
     /**
      * Gibt eine Infinitivkonstruktion zurück mit diesem Verb und diesen Objekten.
-     * ("Dem Frosch Angebote machen")
+     * ("dem Frosch Angebote machen")
      */
-    public String getDescriptionInfinitiv(final DeklinierbarePhrase describableDat,
+    public String getDescriptionInfinitiv(final Person person, final Numerus numerus,
+                                          final DeklinierbarePhrase describableDat,
                                           final DeklinierbarePhrase describableAkk) {
-        return mitDat(describableDat).getDescriptionInfinitiv(describableAkk);
+        return mitDat(describableDat).getDescriptionInfinitiv(
+                person, numerus, describableAkk);
+    }
+
+    /**
+     * Gibt eine Infinitivkonstruktion zurück mit diesem Verb und diesen Objekten.
+     * ("dem Frosch Angebote zu machen")
+     */
+    public String getDescriptionZuInfinitiv(final Person person, final Numerus numerus,
+                                            final DeklinierbarePhrase describableDat,
+                                            final DeklinierbarePhrase describableAkk) {
+        return mitDat(describableDat).getDescriptionInfinitiv(
+                person, numerus, describableAkk);
     }
 
     public PraedikatMitEinerObjektleerstelle mitDat(
             final DeklinierbarePhrase describableDat) {
-        return new PraedikatDatMitEinerAkkLeerstelle(infinitiv, duForm, abgetrenntesPraefix,
+        return new PraedikatDatMitEinerAkkLeerstelle(verb,
                 describableDat);
     }
 
     public PraedikatMitEinerObjektleerstelle mitAkk(
             final DeklinierbarePhrase describableAkk) {
-        return new PraedikatAkkMitEinerDatLeerstelle(infinitiv, duForm, abgetrenntesPraefix,
+        return new PraedikatAkkMitEinerDatLeerstelle(verb,
                 describableAkk);
     }
 }
