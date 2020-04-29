@@ -24,7 +24,8 @@ import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static de.nb.aventiure2.data.storystate.StoryStateBuilder.t;
 import static de.nb.aventiure2.german.base.StructuralElement.SENTENCE;
-import static de.nb.aventiure2.german.base.StructuralElement.min;
+import static de.nb.aventiure2.german.base.StructuralElement.WORD;
+import static de.nb.aventiure2.german.base.StructuralElement.max;
 import static java.util.Arrays.asList;
 
 /**
@@ -133,7 +134,9 @@ public abstract class StoryStateDao {
     private static List<StoryStateBuilder> toStoryStateBuilders(
             final AbstractDescription<?> desc,
             final StoryState initialStoryState) {
-        if (initialStoryState.allowsAdditionalDuSatzreihengliedOhneSubjekt() &&
+        if (initialStoryState
+                .allowsAdditionalDuSatzreihengliedOhneSubjekt() &&
+                desc.getStartsNew() == WORD &&
                 desc instanceof DuDescription) {
             final DuDescription duDesc = (DuDescription) desc;
             return ImmutableList.of(t(desc.getStartsNew(),
@@ -143,7 +146,7 @@ public abstract class StoryStateDao {
                     .dann(duDesc.isDann()));
         } else if (initialStoryState.dann()) {
             return ImmutableList.of(t(
-                    min(desc.getStartsNew(), SENTENCE),
+                    max(desc.getStartsNew(), SENTENCE),
                     desc.getDescriptionHauptsatzMitKonjunktionaladverbWennNoetig("dann"))
                     .komma(desc.isKommaStehtAus())
                     .undWartest(desc.isAllowsAdditionalDuSatzreihengliedOhneSubjekt()));
@@ -155,7 +158,7 @@ public abstract class StoryStateDao {
                     (desc instanceof DuDescription) ?
                             // Bei einer DuDescription ist der Hauptsatz ein echter
                             // Hauptsatz. Daher muss ein neuer Satz begonnen werden.
-                            min(desc.getStartsNew(), SENTENCE) :
+                            max(desc.getStartsNew(), SENTENCE) :
                             // Ansonsten könnte der "Hauptsatz" auch einfach ein paar Wörter sein,
                             // die Vorgabe WORD soll dann erhalten bleiben
                             desc.getStartsNew();

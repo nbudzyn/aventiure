@@ -48,6 +48,7 @@ import static de.nb.aventiure2.german.base.AllgDescription.satzanschluss;
 import static de.nb.aventiure2.german.base.DuDescription.du;
 import static de.nb.aventiure2.german.base.GermanUtil.capitalize;
 import static de.nb.aventiure2.german.base.GermanUtil.uncapitalize;
+import static de.nb.aventiure2.german.base.StructuralElement.WORD;
 import static de.nb.aventiure2.scaction.action.BewegenAction.NumberOfPossibilities.ONE_IN_ONE_OUT;
 import static de.nb.aventiure2.scaction.action.BewegenAction.NumberOfPossibilities.ONLY_WAY;
 import static de.nb.aventiure2.scaction.action.BewegenAction.NumberOfPossibilities.SEVERAL_WAYS;
@@ -246,13 +247,10 @@ public class BewegenAction<R extends ISpatiallyConnectedGO & IHasStoringPlaceGO,
                             .komma(description.isKommaStehtAus()));
         }
 
-        if (description instanceof DuDescription) {
-            final DuDescription duDescription =
-                    (DuDescription) description;
-
-            if (initialStoryState.allowsAdditionalDuSatzreihengliedOhneSubjekt()) {
-                return n.add(duDescription);
-            }
+        if (description.getStartsNew() == WORD &&
+                initialStoryState.allowsAdditionalDuSatzreihengliedOhneSubjekt() &&
+                description instanceof DuDescription) {
+            return n.add(description);
         }
 
         if (sc.memoryComp().lastActionWas(Action.Type.BEWEGEN, (GameObjectId) null)) {
