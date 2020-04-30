@@ -2,7 +2,7 @@ package de.nb.aventiure2.data.world.syscomp.memory;
 
 import androidx.room.TypeConverter;
 
-public class InteractionTypeConverters {
+public class ActionTypeConverters {
     @TypeConverter
     public static Action.Type stringToEnum(final String string) {
         if (string == null) {

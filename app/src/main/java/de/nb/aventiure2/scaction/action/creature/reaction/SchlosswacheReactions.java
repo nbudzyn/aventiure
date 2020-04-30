@@ -6,7 +6,6 @@ import com.google.common.collect.ImmutableList;
 
 import de.nb.aventiure2.data.database.AvDatabase;
 import de.nb.aventiure2.data.storystate.StoryState;
-import de.nb.aventiure2.data.storystate.StoryStateBuilder;
 import de.nb.aventiure2.data.world.base.GameObject;
 import de.nb.aventiure2.data.world.base.GameObjectId;
 import de.nb.aventiure2.data.world.base.IGameObject;
@@ -21,8 +20,9 @@ import de.nb.aventiure2.data.world.syscomp.state.IHasStateGO;
 import de.nb.aventiure2.data.world.syscomp.storingplace.IHasStoringPlaceGO;
 import de.nb.aventiure2.data.world.time.AvDateTime;
 import de.nb.aventiure2.data.world.time.AvTimeSpan;
+import de.nb.aventiure2.german.base.AbstractDescription;
+import de.nb.aventiure2.german.base.NumerusGenus;
 
-import static de.nb.aventiure2.data.storystate.StoryStateBuilder.t;
 import static de.nb.aventiure2.data.world.gameobjects.GameObjects.COUNTER_ID_VOR_DEM_SCHLOSS_SCHLOSSFEST_KNOWN;
 import static de.nb.aventiure2.data.world.gameobjects.GameObjects.DRAUSSEN_VOR_DEM_SCHLOSS;
 import static de.nb.aventiure2.data.world.gameobjects.GameObjects.GOLDENE_KUGEL;
@@ -41,10 +41,10 @@ import static de.nb.aventiure2.data.world.time.AvTimeSpan.mins;
 import static de.nb.aventiure2.data.world.time.AvTimeSpan.noTime;
 import static de.nb.aventiure2.data.world.time.AvTimeSpan.secs;
 import static de.nb.aventiure2.german.base.AllgDescription.neuerSatz;
+import static de.nb.aventiure2.german.base.AllgDescription.satzanschluss;
+import static de.nb.aventiure2.german.base.DuDescription.du;
 import static de.nb.aventiure2.german.base.GermanUtil.capitalize;
 import static de.nb.aventiure2.german.base.StructuralElement.PARAGRAPH;
-import static de.nb.aventiure2.german.base.StructuralElement.SENTENCE;
-import static de.nb.aventiure2.german.base.StructuralElement.WORD;
 
 class SchlosswacheReactions
         <W extends IDescribableGO & ILivingBeingGO & IHasStateGO & ILocatableGO>
@@ -86,32 +86,32 @@ class SchlosswacheReactions
     private AvTimeSpan scMussDasSchlossVerlassen(final IHasStoringPlaceGO oldRoom) {
         // STORY Ausspinnen: Der Spieler sollte selbst entscheiden,
         //  ob der das Schloss wieder verlässt - oder ggf. im Kerker landet.
-        n.add(alt(
-                t(SENTENCE,
-                        "Die Wache spricht dich sofort an und macht dir unmissverständlich "
+
+        sc.locationComp().setLocation(oldRoom);
+        sc.memoryComp().setLastAction(new Action(Action.Type.BEWEGEN, (GameObject) null));
+
+        return n.addAlt(
+                neuerSatz("Die Wache spricht dich sofort an und macht dir unmissverständlich "
                                 + "klar, dass du hier "
                                 + "vor dem großen Fest nicht erwünscht bist. Du bist "
                                 + "leicht zu "
                                 + "überzeugen und trittst wieder "
                                 + schlossVerlassenWohinDescription(
-                                SCHLOSS_VORHALLE, oldRoom.getId())
+                        SCHLOSS_VORHALLE, oldRoom.getId())
                                 // "in den Sonnenschein"
-                                + " hinaus")
+                                + " hinaus",
+                        secs(10))
                         .beendet(PARAGRAPH),
-                t(PARAGRAPH,
+                neuerSatz(PARAGRAPH,
                         "„Heho, was wird das?“, tönt dir eine laute Stimme entgegen. "
                                 + "„Als ob hier ein jeder "
                                 + "nach Belieben hereinspazieren könnt. Das würde dem König so "
                                 + "passen. Und "
                                 + "seinem Kerkermeister auch.“ "
-                                + "Du bleibst besser draußen")
+                                + "Du bleibst besser draußen",
+                        secs(10))
                         .beendet(PARAGRAPH)
-        ));
-
-        sc.locationComp().setLocation(oldRoom);
-        sc.memoryComp().setLastAction(new Action(Action.Type.BEWEGEN, (GameObject) null));
-
-        return secs(10);
+        );
     }
 
     private String schlossVerlassenWohinDescription(final GameObjectId schlossRoom,
@@ -143,7 +143,7 @@ class SchlosswacheReactions
 
         switch (getReactor().stateComp().getState()) {
             case UNAUFFAELLIG:
-                return nehmen_wacheWirdAufmerksam(genommen);
+                return nehmen_wacheWirdAufmerksam();
             case AUFMERKSAM:
                 // TODO "collectibleComp.isCollectible()"?
                 if (genommen.is(GOLDENE_KUGEL)) {
@@ -155,7 +155,7 @@ class SchlosswacheReactions
         }
     }
 
-    private AvTimeSpan nehmen_wacheWirdAufmerksam(final IGameObject genommen) {
+    private AvTimeSpan nehmen_wacheWirdAufmerksam() {
         getReactor().stateComp().setState(AUFMERKSAM);
         sc.memoryComp().upgradeKnown(SCHLOSSWACHE, Known.getKnown(getLichtverhaeltnisse(
                 sc.locationComp().getLocationId())));
@@ -181,70 +181,70 @@ class SchlosswacheReactions
                     currentStoryState);
         }
 
-        return nehmenGoldeneKugel_wacheIstAufmerksam_nichtErwischt(goldeneKugel,
+        return nehmenGoldeneKugel_wacheIstAufmerksam_nichtErwischt(
                 currentStoryState);
     }
 
     private AvTimeSpan nehmenGoldeneKugel_wacheIstAufmerksam_erwischt(final IHasStoringPlaceGO room,
                                                                       final ILocatableGO goldeneKugel,
                                                                       final StoryState currentStoryState) {
-        final ImmutableList.Builder<StoryStateBuilder> alt = ImmutableList.builder();
+        final ImmutableList.Builder<AbstractDescription<?>> alt = ImmutableList.builder();
 
         if (currentStoryState.allowsAdditionalDuSatzreihengliedOhneSubjekt()) {
-            alt.add(
-                    t(WORD,
-                            ", doch keine Sekunde später baut sich die Wache vor dir auf. "
-                                    + "„Wir haben hier sehr gute Verliese, Ihr dürftet "
-                                    + "überrascht sein“, sagt sie und schaut dich "
-                                    + "durchdringend an"));
+            alt.add(satzanschluss(", doch keine Sekunde später baut sich die Wache vor dir auf. "
+                            + "„Wir haben hier sehr gute Verliese, Ihr dürftet "
+                            + "überrascht sein“, sagt sie und schaut dich "
+                            + "durchdringend an",
+                    secs(15)));
         }
 
-        alt.add(t(SENTENCE, "„Ihr habt da wohl etas, das nicht Euch gehört“, "
-                + "wirst du von hinten angesprochen."));
+        alt.add(neuerSatz("„Ihr habt da wohl etwas, das nicht Euch gehört“, "
+                        + "wirst du von hinten angesprochen.",
+                secs(15)));
 
-        n.add(alt(alt));
+        final AvTimeSpan timeElapsed = n.addAlt(alt);
 
         // STORY Geschichte ausspinnen: Spieler muss die Kugel selbst
         //  ablegen bzw. kommt ggf. in den Kerker
-        n.add(t(PARAGRAPH,
-                "Da legst du doch besser die schöne goldene Kugel "
-                        + "wieder an ihren Platz")
-                .undWartest()
-                .persPronKandidat(goldeneKugel));
-
         sc.memoryComp().setLastAction(Action.Type.ABLEGEN, goldeneKugel);
 
         goldeneKugel.locationComp().setLocation(room);
-        return secs(20);
+
+        return timeElapsed.plus(n.add(neuerSatz(PARAGRAPH,
+                "Da legst du doch besser die schöne goldene Kugel "
+                        + "wieder an ihren Platz",
+                secs(5))
+                .undWartest()
+                .phorikKandidat(NumerusGenus.F, goldeneKugel.getId())));
     }
 
     private AvTimeSpan nehmenGoldeneKugel_wacheIstAufmerksam_nichtErwischt(
-            final IGameObject goldeneKugel,
             final StoryState currentStoryState) {
-        final ImmutableList.Builder<StoryStateBuilder> alt = ImmutableList.builder();
+        final ImmutableList.Builder<AbstractDescription<?>> alt = ImmutableList.builder();
 
         if (currentStoryState.allowsAdditionalDuSatzreihengliedOhneSubjekt()) {
-            alt.add(t(WORD,
+            alt.add(satzanschluss(
                     ", während "
                             + getReactorDescription().nom()
-                            + " gerade damit beschäftigt ist, ihre Waffen zu polieren")
+                            + " gerade damit beschäftigt ist, ihre Waffen zu polieren",
+                    secs(3))
                     .dann());
         } else {
-            alt.add(t(SENTENCE,
-                    "Du hast großes Glück, denn "
+            alt.add(du(
+                    "hast", "großes Glück, denn "
                             + getReactorDescription().nom()
-                            + " ist gerade damit beschäftigt, ihre Waffen zu polieren")
+                            + " ist gerade damit beschäftigt, ihre Waffen zu polieren", secs(3))
+                    .komma(true)
                     .dann());
         }
 
-        alt.add(t(SENTENCE,
+        alt.add(neuerSatz(
                 capitalize(getDescription(getReactor()).dat())
-                        + " ist anscheinend nichts aufgefallen")
+                        + " ist anscheinend nichts aufgefallen",
+                secs(3))
                 .dann());
 
-        n.add(alt(alt));
-
-        return secs(3);
+        return n.addAlt(alt);
     }
 
     @Override
@@ -263,14 +263,13 @@ class SchlosswacheReactions
 
         switch (getReactor().stateComp().getState()) {
             case AUFMERKSAM:
-                return ablegen_wacheIstAufmerksam(abgelegt, currentStoryState);
+                return ablegen_wacheIstAufmerksam(currentStoryState);
             default:
                 return noTime();
         }
     }
 
     private AvTimeSpan ablegen_wacheIstAufmerksam(
-            final IGameObject abgelegt,
             final StoryState currentStoryState) {
         if (db.counterDao()
                 .incAndGet("SchlosswacheReactions_ablegen_wacheIstAufmerksam") > 2) {
@@ -278,9 +277,9 @@ class SchlosswacheReactions
         }
 
         if (currentStoryState.allowsAdditionalDuSatzreihengliedOhneSubjekt()) {
-            t(WORD, ", von der kopfschüttelnden Wache beobachtet")
-                    .dann();
-            return secs(5);
+            return n.add(satzanschluss(", von der kopfschüttelnden Wache beobachtet",
+                    secs(5))
+                    .dann());
         }
 
         sc.feelingsComp().setMood(Mood.ANGESPANNT);
@@ -304,8 +303,8 @@ class SchlosswacheReactions
         switch (getReactor().stateComp().getState()) {
             case AUFMERKSAM:
                 if (object.is(GOLDENE_KUGEL)) {
-                    return hochwerfenGoldeneKugel_wacheIstAufmerksam(room, object,
-                            currentStoryState);
+                    return hochwerfenGoldeneKugel_wacheIstAufmerksam(room, object
+                    );
                 }
             default:
                 return noTime();
@@ -314,25 +313,23 @@ class SchlosswacheReactions
     }
 
     private AvTimeSpan hochwerfenGoldeneKugel_wacheIstAufmerksam(final IHasStoringPlaceGO room,
-                                                                 final ILocatableGO goldeneKugel,
-                                                                 final StoryState currentStoryState) {
+                                                                 final ILocatableGO goldeneKugel) {
 
         final boolean scHatKugelAufgefangen =
                 goldeneKugel.locationComp().hasLocation(SPIELER_CHARAKTER);
 
         if (scHatKugelAufgefangen) {
             return hochwerfenGoldeneKugel_wacheIstAufmerksam_wiederGefangen(room,
-                    goldeneKugel, currentStoryState);
+                    goldeneKugel);
         }
 
-        return hochwerfenGoldeneKugel_wacheIstAufmerksam_nichtWiederGefangen(room,
-                goldeneKugel, currentStoryState);
+        return hochwerfenGoldeneKugel_wacheIstAufmerksam_nichtWiederGefangen(
+        );
     }
 
     private AvTimeSpan hochwerfenGoldeneKugel_wacheIstAufmerksam_wiederGefangen(
             final IHasStoringPlaceGO room,
-            final ILocatableGO goldeneKugel,
-            final StoryState currentStoryState) {
+            final ILocatableGO goldeneKugel) {
         final AvTimeSpan timeSpan = n.add(
                 neuerSatz(PARAGRAPH, "„Was treibt Ihr für einen Unfug, legt sofort das "
                         + "Schmuckstück wieder hin!“, "
@@ -342,22 +339,19 @@ class SchlosswacheReactions
 
         // TODO Geschichte ausspinnen: Spieler muss die Kugel selbst
         //  ablegen bzw. kommt ggf. in den Kerker
-        n.add(t(PARAGRAPH,
-                "Eingeschüchtert legst du die schöne goldene Kugel wieder an ihren Platz")
-                .undWartest()
-                .persPronKandidat(goldeneKugel));
-
         goldeneKugel.locationComp().setLocation(room);
         sc.memoryComp().setLastAction(Action.Type.ABLEGEN, goldeneKugel);
         sc.feelingsComp().setMood(Mood.ANGESPANNT);
 
-        return timeSpan.plus(secs(5));
+        return timeSpan.plus(n.add(du(PARAGRAPH,
+                "legst", "die schöne goldene Kugel eingeschüchtert wieder an ihren Platz",
+                "eingeschüchtert",
+                secs(5))
+                .undWartest()
+                .phorikKandidat(NumerusGenus.F, goldeneKugel.getId())));
     }
 
-    private AvTimeSpan hochwerfenGoldeneKugel_wacheIstAufmerksam_nichtWiederGefangen(
-            final IHasStoringPlaceGO room,
-            final IGameObject goldeneKugel,
-            final StoryState currentStoryState) {
+    private AvTimeSpan hochwerfenGoldeneKugel_wacheIstAufmerksam_nichtWiederGefangen() {
         return n.add(
                 neuerSatz(PARAGRAPH, "Die Wache sieht sehr missbilligend zu", secs(3)));
     }
@@ -394,16 +388,6 @@ class SchlosswacheReactions
             text = "Die Wache spricht dich an:";
         }
 
-        n.add(t(PARAGRAPH, text + " „Wenn ich Euch dann hinausbitten dürfte? Wer wollte "
-                + " denn den Vorbereitungen für das große Fest im Wege stehen?“ – Nein, "
-                + "das willst du sicher nicht.\n"
-                + "Draußen sind Handwerker dabei, im ganzen Schlossgarten kleine bunte "
-                + "Pagoden aufzubauen. Du schaust eine Zeitlang zu.\n"
-                + "Zunehmend strömen von allen Seiten Menschen herzu und wie es scheint, ist auch "
-                + "der Zugang zum Schloss für alle geöffnet. Aus dem Schloss weht dich der "
-                + "Geruch von Gebratenem an.")
-                .beendet(PARAGRAPH));
-
         sc.locationComp().setLocation(DRAUSSEN_VOR_DEM_SCHLOSS);
         sc.feelingsComp().setMood(NEUTRAL);
 
@@ -412,6 +396,16 @@ class SchlosswacheReactions
 
         // Beim Fest ist die Schlosswache mit anderen Dingen beschäftigt
         getReactor().stateComp().setState(UNAUFFAELLIG);
-        return mins(45);
+
+        return n.add(neuerSatz(PARAGRAPH,
+                text + " „Wenn ich Euch dann hinausbitten dürfte? Wer wollte "
+                        + " denn den Vorbereitungen für das große Fest im Wege stehen?“ – Nein, "
+                        + "das willst du sicher nicht.\n"
+                        + "Draußen sind Handwerker dabei, im ganzen Schlossgarten kleine bunte "
+                        + "Pagoden aufzubauen. Du schaust eine Zeitlang zu.\n"
+                        + "Zunehmend strömen von allen Seiten Menschen herzu und wie es scheint, ist auch "
+                        + "der Zugang zum Schloss für alle geöffnet. Aus dem Schloss weht dich der "
+                        + "Geruch von Gebratenem an.", mins(45))
+                .beendet(PARAGRAPH));
     }
 }

@@ -6,8 +6,13 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.room.PrimaryKey;
 
+import javax.annotation.ParametersAreNonnullByDefault;
+
 import de.nb.aventiure2.data.world.base.GameObjectId;
 import de.nb.aventiure2.data.world.base.IGameObject;
+import de.nb.aventiure2.german.base.DeklinierbarePhrase;
+import de.nb.aventiure2.german.base.NumerusGenus;
+import de.nb.aventiure2.german.base.PhorikKandidat;
 import de.nb.aventiure2.german.base.StructuralElement;
 
 import static com.google.common.base.Preconditions.checkArgument;
@@ -16,6 +21,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
 /**
  * Builder for {@link StoryState}.
  */
+@ParametersAreNonnullByDefault
 public class StoryStateBuilder {
     /**
      * This {@link StoryState} starts a new ... (paragraph, e.g.)
@@ -46,19 +52,21 @@ public class StoryStateBuilder {
     private boolean dann = false;
 
     /**
-     * Wenn dieses Game Object als unmittelbar nächstes verwendet werden soll, kann man
-     * ein Personalpronomen verwenden.
+     * Hierauf könnte sich ein Pronomen (z.B. ein Personalpronomen) unmittelbar
+     * danach (<i>anaphorisch</i>) beziehen. Dazu müssen (in aller Regel) die grammatischen
+     * Merkmale übereinstimmen und es muss mit dem Pronomen dieses Bezugsobjekt
+     * gemeint sein.
      * <p>
-     * Darf nur gesetzt werden wenn man sich sicher ist, wenn es also keine
+     * Dieses Feld nur gesetzt werden wenn man sich sicher ist, wenn es also keine
      * Fehlreferenzierungen, Doppeldeutigkeiten
-     * oder unerwünschten Wiederholungen geben kann. Typische Fälle wären "Du nimmst du Lampe und
+     * oder unerwünschten Wiederholungen geben kann. Typische Fälle wären "Du nimmst die Lampe und
      * zündest sie an." oder "Du stellst die Lampe auf den Tisch und zündest sie an."
      * <p>
      * Negatitvbeispiele wäre:
      * <ul>
      *     <li>"Du stellst die Lampe auf die Theke und zündest sie an." (Fehlreferenzierung)
      *     <li>"Du nimmst den Ball und den Schuh und wirfst ihn in die Luft." (Doppeldeutigkeit)
-     *     <li>"Du nimmst die Lampe, und zündest sie an. Dann stellst du sie wieder ab,
+     *     <li>"Du nimmst die Lampe und zündest sie an. Dann stellst du sie wieder ab,
      *     schaust sie dir aber dann noch einmal genauer an: Sie ... sie ... sie" (Unerwünschte
      *     Wiederholung)
      *     <li>"Du stellst die Lampe auf den Tisch. Der Tisch ist aus Holz und hat viele
@@ -67,11 +75,11 @@ public class StoryStateBuilder {
      * </ul>
      */
     @Nullable
-    private GameObjectId persPronKandidat;
+    private PhorikKandidat phorikKandidat;
 
     public static StoryStateBuilder t(
-            @NonNull final StructuralElement startsNew,
-            @NonNull final String text) {
+            final StructuralElement startsNew,
+            final String text) {
         checkArgument(!TextUtils.isEmpty(text), "text is null or empty");
         checkNotNull(startsNew, "startsNew is null");
 
@@ -79,28 +87,33 @@ public class StoryStateBuilder {
     }
 
 
-    private StoryStateBuilder(@NonNull final StructuralElement startsNew,
-                              @NonNull final String text) {
+    private StoryStateBuilder(final StructuralElement startsNew,
+                              final String text) {
         this.startsNew = startsNew;
         this.text = text;
     }
 
-    /**
-     * Legt den Kandidaten für ein Personalpronomen fest.
-     *
-     * @see #persPronKandidat
-     */
-    public StoryStateBuilder persPronKandidat(@Nullable final IGameObject lastObject) {
-        return persPronKandidat(lastObject == null ? null : lastObject.getId());
+    public StoryStateBuilder phorikKandidat(final DeklinierbarePhrase deklinierbarePhrase,
+                                            final IGameObject gameObject) {
+        phorikKandidat(deklinierbarePhrase.getNumerusGenus(), gameObject.getId());
+        return this;
     }
 
-    /**
-     * Legt den Kandidaten für ein Personalpronomen fest.
-     *
-     * @see #persPronKandidat
-     */
-    public StoryStateBuilder persPronKandidat(@Nullable final GameObjectId lastObject) {
-        persPronKandidat = lastObject;
+    public StoryStateBuilder phorikKandidat(final NumerusGenus numerusGenus,
+                                            final IGameObject gameObject) {
+        phorikKandidat(numerusGenus, gameObject.getId());
+        return this;
+    }
+
+    public StoryStateBuilder phorikKandidat(final NumerusGenus numerusGenus,
+                                            final GameObjectId gameObjectId) {
+        phorikKandidat(new PhorikKandidat(numerusGenus, gameObjectId));
+        return this;
+    }
+
+    public StoryStateBuilder phorikKandidat(
+            @Nullable final PhorikKandidat phorikKandidat) {
+        this.phorikKandidat = phorikKandidat;
         return this;
     }
 
@@ -150,6 +163,6 @@ public class StoryStateBuilder {
                 kommaStehtAus,
                 allowsAdditionalDuSatzreihengliedOhneSubjekt,
                 dann,
-                persPronKandidat);
+                phorikKandidat);
     }
 }

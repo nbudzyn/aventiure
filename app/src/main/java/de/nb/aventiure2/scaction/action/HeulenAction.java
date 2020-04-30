@@ -9,7 +9,6 @@ import java.util.List;
 
 import de.nb.aventiure2.data.database.AvDatabase;
 import de.nb.aventiure2.data.storystate.StoryState;
-import de.nb.aventiure2.data.storystate.StoryStateBuilder;
 import de.nb.aventiure2.data.world.base.GameObjectId;
 import de.nb.aventiure2.data.world.gameobjects.player.SpielerCharakter;
 import de.nb.aventiure2.data.world.syscomp.alive.ILivingBeingGO;
@@ -23,7 +22,6 @@ import de.nb.aventiure2.data.world.time.AvTimeSpan;
 import de.nb.aventiure2.german.base.AbstractDescription;
 import de.nb.aventiure2.scaction.AbstractScAction;
 
-import static de.nb.aventiure2.data.storystate.StoryStateBuilder.t;
 import static de.nb.aventiure2.data.world.gameobjects.GameObjects.FROSCHPRINZ;
 import static de.nb.aventiure2.data.world.gameobjects.GameObjects.load;
 import static de.nb.aventiure2.data.world.syscomp.feelings.Mood.UNTROESTLICH;
@@ -32,9 +30,8 @@ import static de.nb.aventiure2.data.world.syscomp.state.GameObjectState.UNAUFFAE
 import static de.nb.aventiure2.data.world.time.AvTimeSpan.mins;
 import static de.nb.aventiure2.data.world.time.AvTimeSpan.secs;
 import static de.nb.aventiure2.german.base.AllgDescription.neuerSatz;
+import static de.nb.aventiure2.german.base.AllgDescription.satzanschluss;
 import static de.nb.aventiure2.german.base.DuDescription.du;
-import static de.nb.aventiure2.german.base.StructuralElement.SENTENCE;
-import static de.nb.aventiure2.german.base.StructuralElement.WORD;
 
 /**
  * Der Spielercharakter heult.
@@ -91,19 +88,16 @@ public class HeulenAction extends AbstractScAction {
 
         sc.memoryComp().setLastAction(buildMemorizedAction());
 
-        final ImmutableList.Builder<StoryStateBuilder> alt = ImmutableList.builder();
+        final ImmutableList.Builder<AbstractDescription<?>> alt = ImmutableList.builder();
         if (initialStoryState.allowsAdditionalDuSatzreihengliedOhneSubjekt()) {
-            alt.add(t(WORD, "und weinst")
+            alt.add(satzanschluss("und weinst", mins(1))
                     .undWartest());
-            alt.add(t(WORD, ", so viele Tränen haben sich angestaut"));
+            alt.add(satzanschluss(", so viele Tränen haben sich angestaut", mins(1)));
         }
 
-        alt.add(t(SENTENCE,
-                "Du kannst dich gar nicht mehr beruhigen")
+        alt.add(du("kannst", "dich gar nicht mehr beruhigen", mins(1))
                 .undWartest());
-        n.add(alt(alt));
-
-        return mins(1);
+        return n.addAlt(alt);
     }
 
     private <F extends IDescribableGO & IHasStateGO & ITalkerGO>

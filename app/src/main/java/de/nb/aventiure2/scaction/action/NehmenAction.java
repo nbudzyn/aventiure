@@ -10,7 +10,6 @@ import javax.annotation.ParametersAreNonnullByDefault;
 
 import de.nb.aventiure2.data.database.AvDatabase;
 import de.nb.aventiure2.data.storystate.StoryState;
-import de.nb.aventiure2.data.storystate.StoryStateBuilder;
 import de.nb.aventiure2.data.world.syscomp.alive.ILivingBeingGO;
 import de.nb.aventiure2.data.world.syscomp.description.IDescribableGO;
 import de.nb.aventiure2.data.world.syscomp.feelings.Mood;
@@ -20,6 +19,7 @@ import de.nb.aventiure2.data.world.syscomp.memory.Known;
 import de.nb.aventiure2.data.world.syscomp.state.IHasStateGO;
 import de.nb.aventiure2.data.world.syscomp.storingplace.IHasStoringPlaceGO;
 import de.nb.aventiure2.data.world.time.AvTimeSpan;
+import de.nb.aventiure2.german.base.Nominalphrase;
 import de.nb.aventiure2.german.base.StructuralElement;
 import de.nb.aventiure2.german.praedikat.AdverbialeAngabe;
 import de.nb.aventiure2.german.praedikat.Modalpartikel;
@@ -27,12 +27,13 @@ import de.nb.aventiure2.german.praedikat.PraedikatMitEinerObjektleerstelle;
 import de.nb.aventiure2.scaction.AbstractScAction;
 
 import static com.google.common.base.Preconditions.checkArgument;
-import static de.nb.aventiure2.data.storystate.StoryStateBuilder.t;
 import static de.nb.aventiure2.data.world.gameobjects.GameObjects.FROSCHPRINZ;
 import static de.nb.aventiure2.data.world.gameobjects.GameObjects.SPIELER_CHARAKTER;
 import static de.nb.aventiure2.data.world.syscomp.state.GameObjectState.ERWARTET_VON_SC_EINLOESUNG_SEINES_VERSPRECHENS;
 import static de.nb.aventiure2.data.world.time.AvTimeSpan.secs;
 import static de.nb.aventiure2.german.base.AllgDescription.neuerSatz;
+import static de.nb.aventiure2.german.base.AllgDescription.satzanschluss;
+import static de.nb.aventiure2.german.base.DuDescription.du;
 import static de.nb.aventiure2.german.base.GermanUtil.capitalize;
 import static de.nb.aventiure2.german.base.Numerus.SG;
 import static de.nb.aventiure2.german.base.Person.P1;
@@ -152,25 +153,28 @@ public class NehmenAction
                 room.storingPlaceComp().getLocationMode().getNehmenPraedikat();
         if (sc.memoryComp().getLastAction().hasObject(gameObject)) {
             if (sc.memoryComp().getLastAction().is(Action.Type.ABLEGEN)) {
-                n.add(buildStoryStateObjectNachAblegen(nehmenPraedikat));
-                return secs(5);
+                return narrateObjectNachAblegen(nehmenPraedikat);
             }
 
             final Mood mood = sc.feelingsComp().getMood();
 
             if (sc.memoryComp().getLastAction().is(Action.Type.HOCHWERFEN) &&
                     mood.isEmotional()) {
-                n.add(t(StructuralElement.PARAGRAPH,
+                // TODO Es wäre gut, wenn das nehmenPraedikat direkt
+                //  eine DuDescription erzeugen könnte, gleich mit dann etc.
+                //  Leider müssen wir bis dahin ein AllgDescription bauen. :-(
+                final Nominalphrase objectDesc = getDescription(gameObject, true);
+                return n.add(neuerSatz(StructuralElement.PARAGRAPH,
                         nehmenPraedikat
                                 .getDescriptionDuHauptsatz(
-                                        getDescription(gameObject, true),
-                                        mood.getAdverbialeAngabe()))
+                                        objectDesc,
+                                        mood.getAdverbialeAngabe()),
+                        secs(5))
                         .undWartest(
                                 nehmenPraedikat
                                         .duHauptsatzLaesstSichMitNachfolgendemDuHauptsatzZusammenziehen())
-                        .persPronKandidat(gameObject)
+                        .phorikKandidat(objectDesc, gameObject.getId())
                         .dann());
-                return secs(5);
             }
         }
 
@@ -184,51 +188,56 @@ public class NehmenAction
                         .dann());
     }
 
-    private StoryStateBuilder buildStoryStateObjectNachAblegen(
+    private AvTimeSpan narrateObjectNachAblegen(
             final PraedikatMitEinerObjektleerstelle nehmenPraedikat) {
         if (sc.memoryComp().getLastAction().is(
                 Action.Type.ABLEGEN, Action.Type.HOCHWERFEN)) {
             if (initialStoryState.dann()) {
-                return t(StructuralElement.PARAGRAPH,
-                        "Dann nimmst du " + getDescription(gameObject).akk() +
-                                " erneut")
+                final Nominalphrase objectDesc = getDescription(gameObject);
+                return n.add(neuerSatz(StructuralElement.PARAGRAPH,
+                        "Dann nimmst du " + objectDesc.akk() +
+                                " erneut",
+                        secs(5))
                         .undWartest()
-                        .persPronKandidat(gameObject);
+                        .phorikKandidat(objectDesc, gameObject.getId()));
             }
 
             if (initialStoryState.allowsAdditionalDuSatzreihengliedOhneSubjekt()) {
-                return t(StructuralElement.WORD,
+                return n.add(satzanschluss(
                         ", nur um "
                                 + nehmenPraedikat
                                 .mitObj(getDescription(gameObject, true).persPron())
                                 .getDescriptionZuInfinitiv(
                                         P2, SG,
                                         new AdverbialeAngabe(
-                                                "gleich erneut"))) // "zu nehmen", "an dich zu nehmen", "aufzuheben"
+                                                "gleich erneut")),
+                        secs(5))
+                        // "zu nehmen", "an dich zu nehmen", "aufzuheben"
                         .komma()
-                        .dann()
-                        .persPronKandidat(gameObject);
-
+                        .dann());
             }
 
-            return t(StructuralElement.PARAGRAPH,
+            final Nominalphrase objectDesc = getDescription(gameObject, true);
+            return n.add(neuerSatz(StructuralElement.PARAGRAPH,
                     "Ach nein, "
                             // du nimmst die Kugel besser doch
                             + nehmenPraedikat
-                            .mitObj(getDescription(gameObject, true))
+                            .mitObj(objectDesc)
                             .getDescriptionDuHauptsatz(
                                     new Modalpartikel("besser"),
-                                    new Modalpartikel("doch")))
+                                    new Modalpartikel("doch")),
+                    secs(5))
                     .undWartest()
                     .dann()
-                    .persPronKandidat(gameObject);
+                    .phorikKandidat(objectDesc.getNumerusGenus(), gameObject.getId()));
         }
 
-        return t(StructuralElement.SENTENCE,
-                "Dann nimmst du " + getDescription(gameObject).akk())
+        final Nominalphrase objectDesc = getDescription(gameObject, true);
+        return n.add(neuerSatz(
+                "Dann nimmst du " + objectDesc.akk(),
+                secs(5))
                 .undWartest()
-                .persPronKandidat(gameObject);
-
+                .phorikKandidat(objectDesc.getNumerusGenus(), gameObject.getId()));
     }
 
 
@@ -239,28 +248,27 @@ public class NehmenAction
                                 .hasState(ERWARTET_VON_SC_EINLOESUNG_SEINES_VERSPRECHENS),
                 "Unexpected creature: " + creature);
 
-        n.add(alt(
-                t(StructuralElement.PARAGRAPH,
-                        "Du ekelst dich sehr, aber mit einiger Überwindung nimmst du den Frosch in "
+        return n.addAlt(
+                du(PARAGRAPH,
+                        "ekelst", "dich sehr, aber mit einiger Überwindung nimmst du den Frosch in "
                                 + "die Hand. "
                                 + "Er ist glibschig und schleimig – pfui-bäh! – schnell lässt du ihn in "
                                 + "eine Tasche gleiten. Sein gedämpftes Quaken könnte wohlig sein oder "
-                                + "genauso gut vorwurfsvoll"),
-                t(StructuralElement.PARAGRAPH,
+                                + "genauso gut vorwurfsvoll", secs(20))
+                        .beendet(PARAGRAPH),
+                neuerSatz(PARAGRAPH,
                         "Den Frosch in die Hand nehmen?? – Wer hat dir bloß solche Flausen "
                                 + "in den Kopf gesetzt! Kräftig packst du den Frosch und versenkst "
                                 + "ihn tief in deiner Tasche. Du versuchst, deine Hand an der "
                                 + "Kleidung zu reinigen, aber der Schleim verteilt sich nur "
-                                + "überall – igitt!")
+                                + "überall – igitt!", secs(20))
                         .beendet(PARAGRAPH),
-                t(StructuralElement.PARAGRAPH,
-                        "Du erbarmst dich und packst den Frosch in deine Tasche. Er fasst "
+                du(PARAGRAPH,
+                        "erbarmst", "dich und packst den Frosch in deine Tasche. Er fasst "
                                 + "sich sehr eklig an und du bist glücklich, als die Prozedur "
-                                + "vorbei ist.")
+                                + "vorbei ist.", secs(20))
                         .dann()
-        ));
-
-        return secs(20);
+        );
     }
 
     @Override

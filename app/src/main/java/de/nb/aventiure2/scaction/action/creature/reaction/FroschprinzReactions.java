@@ -16,7 +16,6 @@ import de.nb.aventiure2.data.world.time.AvDateTime;
 import de.nb.aventiure2.data.world.time.AvTimeSpan;
 import de.nb.aventiure2.german.base.StructuralElement;
 
-import static de.nb.aventiure2.data.storystate.StoryStateBuilder.t;
 import static de.nb.aventiure2.data.world.gameobjects.GameObjects.FROSCHPRINZ;
 import static de.nb.aventiure2.data.world.gameobjects.GameObjects.GOLDENE_KUGEL;
 import static de.nb.aventiure2.data.world.gameobjects.GameObjects.IM_WALD_BEIM_BRUNNEN;
@@ -41,7 +40,6 @@ import static de.nb.aventiure2.data.world.time.AvTimeSpan.secs;
 import static de.nb.aventiure2.german.base.AllgDescription.neuerSatz;
 import static de.nb.aventiure2.german.base.GermanUtil.capitalize;
 import static de.nb.aventiure2.german.base.StructuralElement.PARAGRAPH;
-import static de.nb.aventiure2.german.base.StructuralElement.SENTENCE;
 
 @ParametersAreNonnullByDefault
 class FroschprinzReactions
@@ -144,37 +142,41 @@ class FroschprinzReactions
     }
 
     private AvTimeSpan froschprinzHuepftAusTascheUndWillMitessen(final IHasStoringPlaceGO room) {
-        n.add(t(SENTENCE,
+        getReactor().locationComp().setLocation(room);
+        getReactor().stateComp().setState(HAT_HOCHHEBEN_GEFORDERT);
+        getReactor().talkingComp().setTalkingTo(sc);
+        sc.feelingsComp().setMood(ANGESPANNT);
+
+        return n.add(neuerSatz(
                 "Auf einmal ruckelt es unangenehm in deiner Tasche, und eh du dich's versiehst "
                         + "hüpft der garstige Frosch heraus. Patsch! – sitzt er neben dir auf der "
                         + "Holzbank und drängt sich nass an deinen Oberschenkel. "
                         + "„Heb mich herauf!“ ruft er "
                         + "„weißt du nicht, was du zu mir gesagt bei dem kühlen "
-                        + "Brunnenwasser? Heb mich herauf!“")
+                        + "Brunnenwasser? Heb mich herauf!“",
+                secs(25))
                 .beendet(PARAGRAPH));
-
-        getReactor().locationComp().setLocation(room);
-        getReactor().stateComp().setState(HAT_HOCHHEBEN_GEFORDERT);
-        getReactor().talkingComp().setTalkingTo(sc);
-        sc.feelingsComp().setMood(ANGESPANNT);
-        return secs(25);
     }
 
     private AvTimeSpan froschprinzHatHochhebenGefordertUndWillMitessen() {
-        n.add(alt(
-                t(PARAGRAPH, "„Heb mich auf den Tisch“, ruft der Frosch, „wie sollen wir "
-                        + "zwei sonst zusammmen essen?“ Dir klopft das Herz")
-                        .undWartest()
-                        .dann(),
-                t(SENTENCE, "„Versprechen muss man halten!“, ruft der Frosch")
-                        .beendet(PARAGRAPH),
-                t(PARAGRAPH, "Der Frosch lässt seine lange, schleimige Zunge vorschnellen. "
-                        + "Hat er „Mitessen!“ gequakt?")
-                        .beendet(PARAGRAPH)));
-
         getReactor().talkingComp().setTalkingTo(sc);
         sc.feelingsComp().setMood(ANGESPANNT);
-        return secs(15);
+
+        return n.addAlt(
+                neuerSatz(PARAGRAPH,
+                        "„Heb mich auf den Tisch“, ruft der Frosch, „wie sollen wir "
+                                + "zwei sonst zusammmen essen?“ Dir klopft das Herz",
+                        secs(15))
+                        .undWartest()
+                        .dann(),
+                neuerSatz("„Versprechen muss man halten!“, ruft der Frosch",
+                        secs(15))
+                        .beendet(PARAGRAPH),
+                neuerSatz(PARAGRAPH,
+                        "Der Frosch lässt seine lange, schleimige Zunge vorschnellen. "
+                                + "Hat er „Mitessen!“ gequakt?",
+                        secs(15))
+                        .beendet(PARAGRAPH));
     }
 
     @Override
@@ -203,12 +205,13 @@ class FroschprinzReactions
             if (!scHatObjektAufgefangen) {
                 // Der Spieler hat ein weiteres Objekt in den Brunnen fallen
                 // lassen, obwohl er noch mit dem Frosch verhandelt.
-                n.add(t(StructuralElement.PARAGRAPH,
-                        "Ob der Frosch gerade seine glitschige Nase gerümpft hat?")
+                return n.add(neuerSatz(StructuralElement.PARAGRAPH,
+                        "Ob der Frosch gerade seine glitschige Nase gerümpft hat?",
+                        secs(3))
                         .beendet(PARAGRAPH)
                 );
             }
-            return secs(3);
+            return noTime();
         }
 
         if (!object.is(GOLDENE_KUGEL)) {
@@ -245,15 +248,7 @@ class FroschprinzReactions
     }
 
     private AvTimeSpan froschprinz_laeuft_zum_schlossfest_los() {
-        final AvTimeSpan timeElapsed;
         // TODO Find all equals() warnings and fix the code.
-        if (sc.hasSameLocationAs(getReactor())) {
-            n.add(t(PARAGRAPH, "Plitsch platsch, plitsch platsch hüpft der Frosch davon")
-                    .beendet(PARAGRAPH));
-            timeElapsed = secs(5);
-        } else {
-            timeElapsed = noTime();
-        }
 
         getReactor().locationComp().unsetLocation();
         getReactor().stateComp().setState(AUF_DEM_WEG_ZUM_SCHLOSSFEST);
@@ -262,7 +257,13 @@ class FroschprinzReactions
         //   Spieler am Tisch im Schlossfest auf.
         //   Dazu müsste man an Creatures Zeitpunkte speichern können z.B.
         //   statusDateTime
+        if (sc.hasSameLocationAs(getReactor())) {
+            return n.add(neuerSatz(PARAGRAPH,
+                    "Plitsch platsch, plitsch platsch hüpft der Frosch davon",
+                    secs(5))
+                    .beendet(PARAGRAPH));
+        }
 
-        return timeElapsed;
+        return noTime();
     }
 }

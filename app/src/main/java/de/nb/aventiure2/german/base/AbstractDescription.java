@@ -1,24 +1,23 @@
 package de.nb.aventiure2.german.base;
 
+import androidx.annotation.Nullable;
+
 import de.nb.aventiure2.data.storystate.StoryState;
 import de.nb.aventiure2.data.world.time.AvTimeSpan;
 
 /**
  * Abstract superclass for a description.
  */
-public abstract class AbstractDescription<SELF extends AbstractDescription<?>> {
+public abstract class AbstractDescription<SELF extends AbstractDescription<SELF>> {
     /**
      * This {@link StoryState} starts a new ... (paragraph, e.g.)
      */
     private final StructuralElement startsNew;
-    // TODO startsNew verwenden und aus StoryState ausbauen.
 
     /**
      * This {@link StoryState} ends this ... (paragraph, e.g.)
      */
     private StructuralElement endsThis = StructuralElement.WORD;
-    // TODO beendet...() etc. wie bei StoryState anbieten
-    // TODO endsThis verwenden und aus StoryState ausbauen.
 
     /**
      * Ob ein Komma aussteht. Wenn ein Komma aussteht, muss als Nächstes ein Komma folgen -
@@ -31,6 +30,32 @@ public abstract class AbstractDescription<SELF extends AbstractDescription<?>> {
     private boolean dann = false;
 
     private final AvTimeSpan timeElapsed;
+
+    /**
+     * Hierauf könnte sich ein Pronomen (z.B. ein Personalpronomen) unmittelbar
+     * danach (<i>anaphorisch</i>) beziehen. Dazu müssen (in aller Regel) die grammatischen
+     * Merkmale übereinstimmen und es muss mit dem Pronomen dieses Bezugsobjekt
+     * gemeint sein.
+     * <p>
+     * Dieses Feld nur gesetzt werden wenn man sich sicher ist, wenn es also keine
+     * Fehlreferenzierungen, Doppeldeutigkeiten
+     * oder unerwünschten Wiederholungen geben kann. Typische Fälle wären "Du nimmst die Lampe und
+     * zündest sie an." oder "Du stellst die Lampe auf den Tisch und zündest sie an."
+     * <p>
+     * Negatitvbeispiele wäre:
+     * <ul>
+     *     <li>"Du stellst die Lampe auf die Theke und zündest sie an." (Fehlreferenzierung)
+     *     <li>"Du nimmst den Ball und den Schuh und wirfst ihn in die Luft." (Doppeldeutigkeit)
+     *     <li>"Du nimmst die Lampe und zündest sie an. Dann stellst du sie wieder ab,
+     *     schaust sie dir aber dann noch einmal genauer an: Sie ... sie ... sie" (Unerwünschte
+     *     Wiederholung)
+     *     <li>"Du stellst die Lampe auf den Tisch. Der Tisch ist aus Holz und hat viele
+     *     schöne Gravuren - er muss sehr wertvoll sein. Dann nimmst du sie wieder in die Hand."
+     *     (Referenziertes Objekt zu weit entfernt.)
+     * </ul>
+     */
+    @Nullable
+    private PhorikKandidat phorikKandidat;
 
     public AbstractDescription(final StructuralElement startsNew,
                                final AvTimeSpan timeElapsed) {
@@ -106,6 +131,27 @@ public abstract class AbstractDescription<SELF extends AbstractDescription<?>> {
 
     public StructuralElement getEndsThis() {
         return endsThis;
+    }
+
+    public SELF phorikKandidat(final DeklinierbarePhrase deklinierbarePhrase,
+                               final IBezugsobjekt bezugsobjekt) {
+        return phorikKandidat(deklinierbarePhrase.getNumerusGenus(), bezugsobjekt);
+    }
+
+    public SELF phorikKandidat(final NumerusGenus numerusGenus,
+                               final IBezugsobjekt bezugsobjekt) {
+        return phorikKandidat(new PhorikKandidat(numerusGenus, bezugsobjekt));
+    }
+
+
+    public SELF phorikKandidat(@Nullable final PhorikKandidat phorikKandidat) {
+        this.phorikKandidat = phorikKandidat;
+        return (SELF) this;
+    }
+
+    @Nullable
+    public PhorikKandidat getPhorikKandidat() {
+        return phorikKandidat;
     }
 
     /**

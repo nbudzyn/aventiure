@@ -21,7 +21,9 @@ import de.nb.aventiure2.data.world.syscomp.description.IDescribableGO;
 import de.nb.aventiure2.data.world.time.AvDateTime;
 import de.nb.aventiure2.data.world.time.AvTimeSpan;
 import de.nb.aventiure2.data.world.time.Tageszeit;
+import de.nb.aventiure2.german.base.DeklinierbarePhrase;
 import de.nb.aventiure2.german.base.Nominalphrase;
+import de.nb.aventiure2.german.base.Personalpronomen;
 import de.nb.aventiure2.scaction.action.creature.reaction.CreatureReactionsCoordinator;
 import de.nb.aventiure2.scaction.action.invisible.reaction.InvisibleReactionsCoordinator;
 import de.nb.aventiure2.scaction.action.scautomaticreaction.ScAutomaticReactions;
@@ -130,6 +132,30 @@ public abstract class AbstractScAction implements IPlayerAction {
      * nicht dasselbe schon einmal getan hat - oder das sich das System unsicher ist.
      */
     abstract protected boolean isDefinitivWiederholung();
+
+    /**
+     * Gibt das Personalpronomen zurück, mit dem ein
+     * anaphorischer Bezug auf dieses
+     * Game Object möglich ist - wenn das nicht möglich ist, dann eine kurze
+     * Beschreibung des Game Objects.
+     * <br/>
+     * Beispiel 1: "Du hebst die Lampe auf..." - jetzt ist ein anaphorischer Bezug
+     * auf die Lampe möglich und diese Methode gibt "sie" zurück.
+     * <br/>
+     * Beispiel 2: "Du zündest das Feuer an..." - jetzt ist <i>kein</i> anaphorischer Bezug
+     * auf die Lampe möglich und diese Methode gibt "die mysteriöse Lampe" zurück.
+     */
+    protected DeklinierbarePhrase getAnaphPersPronWennMglSonstDescription(
+            final IDescribableGO describableGO,
+            final boolean descShortIfKnown) {
+        @Nullable final Personalpronomen anaphPersPron =
+                initialStoryState.getAnaphPersPronWennMgl(describableGO);
+        if (anaphPersPron != null) {
+            return anaphPersPron;
+        }
+
+        return getDescription(describableGO, descShortIfKnown);
+    }
 
     /**
      * Gibt eine (evtl. auch etwas längere) Nominalphrase zurück, die das Game Object beschreibt.

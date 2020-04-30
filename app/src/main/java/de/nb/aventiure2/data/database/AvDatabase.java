@@ -17,6 +17,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 import de.nb.aventiure2.data.storystate.AvStoryStateConverters;
+import de.nb.aventiure2.data.storystate.NumerusGenusConverters;
 import de.nb.aventiure2.data.storystate.StoryState;
 import de.nb.aventiure2.data.storystate.StoryStateBuilder;
 import de.nb.aventiure2.data.storystate.StoryStateDao;
@@ -31,7 +32,7 @@ import de.nb.aventiure2.data.world.syscomp.feelings.HungerConverters;
 import de.nb.aventiure2.data.world.syscomp.feelings.MoodConverters;
 import de.nb.aventiure2.data.world.syscomp.location.LocationDao;
 import de.nb.aventiure2.data.world.syscomp.location.LocationPCD;
-import de.nb.aventiure2.data.world.syscomp.memory.InteractionTypeConverters;
+import de.nb.aventiure2.data.world.syscomp.memory.ActionTypeConverters;
 import de.nb.aventiure2.data.world.syscomp.memory.KnownConverters;
 import de.nb.aventiure2.data.world.syscomp.memory.KnownInfo;
 import de.nb.aventiure2.data.world.syscomp.memory.MemoryDao;
@@ -63,9 +64,10 @@ import static de.nb.aventiure2.data.world.time.AvTime.oClock;
         version = 1,
         exportSchema = false)
 @TypeConverters({
+        NumerusGenusConverters.class,
         AvDateTimeConverters.class,
         AvStoryStateConverters.class,
-        InteractionTypeConverters.class,
+        ActionTypeConverters.class,
         KnownConverters.class,
         GameObjectStateConverters.class,
         GameObjectIdConverters.class,

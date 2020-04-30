@@ -17,7 +17,6 @@ import de.nb.aventiure2.data.world.time.AvTimeSpan;
 import de.nb.aventiure2.german.base.AbstractDescription;
 import de.nb.aventiure2.scaction.AbstractScAction;
 
-import static de.nb.aventiure2.data.storystate.StoryStateBuilder.t;
 import static de.nb.aventiure2.data.world.gameobjects.GameObjects.SCHLOSSFEST;
 import static de.nb.aventiure2.data.world.gameobjects.GameObjects.SCHLOSS_VORHALLE_TISCH_BEIM_FEST;
 import static de.nb.aventiure2.data.world.gameobjects.GameObjects.WALDWILDNIS_HINTER_DEM_BRUNNEN;
@@ -134,33 +133,39 @@ public class EssenAction extends AbstractScAction {
     }
 
     private AvTimeSpan narrateAndDoSchlossfestHungrig() {
-        n.add(alt(
-                t(SENTENCE,
-                        "Du füllst dir von dem Eintopf ein und langst kräftig zu")
+        saveSatt();
+
+        return n.addAlt(
+                du(SENTENCE,
+                        "füllst", "dir von dem Eintopf ein und langst kräftig zu",
+                        mins(10))
                         .beendet(PARAGRAPH),
-                t(SENTENCE, "Du nimmst dir eine gute Kelle von dem Eintopf und isst")
+                du(SENTENCE, "nimmst", "dir eine gute Kelle von dem Eintopf und isst",
+                        mins(10))
                         .dann(),
-                t(SENTENCE, "Du nimmst dir vom Eintopf und isst, als wenn du vier Wochen "
-                        + "hungern solltest")
-                        .dann(),
-                t(SENTENCE, "Du greifst zu und isst mit Lust, bis du deinen Hunger gestillt "
-                        + "hast")
+                du(SENTENCE, "nimmst", "dir vom Eintopf und isst, als wenn du vier Wochen "
+                                + "hungern solltest",
+                        mins(10))
                         .komma()
                         .dann(),
-                t(SENTENCE, "Du isst vom Eintopf, bis dein Hunger gestillt ist")
+                du(SENTENCE, "greifst", "zu und isst mit Lust, bis du "
+                                + "deinen Hunger gestillt hast",
+                        mins(10))
+                        .komma()
+                        .dann(),
+                du("isst", "vom Eintopf, bis dein Hunger gestillt ist",
+                        mins(10))
                         .komma()
                         .undWartest()
                         .dann(),
-                t(SENTENCE, "Du bedienst dich am Eintopf und löffelst los")
+                du(SENTENCE, "bedienst", "dich am Eintopf und löffelst los",
+                        mins(10))
                         .beendet(PARAGRAPH)
                         .dann(),
-                t(SENTENCE, "Du isst vom Eintopf und stillst deinen Hunger")
+                du(SENTENCE, "isst", "vom Eintopf und stillst deinen Hunger",
+                        mins(10))
                         .dann()
-        ));
-
-        saveSatt();
-
-        return mins(10);
+        );
     }
 
     private AvTimeSpan narrateAndDoSchlossfestSatt() {

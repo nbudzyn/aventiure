@@ -124,7 +124,8 @@ public abstract class StoryStateDao {
         return add(desc, initialStoryState);
     }
 
-    private AvTimeSpan add(final AbstractDescription<?> desc, final StoryState initialStoryState) {
+    private AvTimeSpan add(final AbstractDescription<?> desc,
+                           final StoryState initialStoryState) {
         add(chooseNextFrom(initialStoryState,
                 toStoryStateBuilders(desc, initialStoryState)));
 
@@ -143,13 +144,15 @@ public abstract class StoryStateDao {
                     "und " +
                             duDesc.getDescriptionSatzanschlussOhneSubjekt())
                     .komma(duDesc.isKommaStehtAus())
-                    .dann(duDesc.isDann()));
+                    .dann(duDesc.isDann())
+                    .beendet(desc.getEndsThis()));
         } else if (initialStoryState.dann()) {
             return ImmutableList.of(t(
                     max(desc.getStartsNew(), SENTENCE),
                     desc.getDescriptionHauptsatzMitKonjunktionaladverbWennNoetig("dann"))
                     .komma(desc.isKommaStehtAus())
-                    .undWartest(desc.isAllowsAdditionalDuSatzreihengliedOhneSubjekt()));
+                    .undWartest(desc.isAllowsAdditionalDuSatzreihengliedOhneSubjekt())
+                    .beendet(desc.getEndsThis()));
         } else {
             final ImmutableList.Builder<StoryStateBuilder> alternatives =
                     ImmutableList.builder();
@@ -176,23 +179,25 @@ public abstract class StoryStateDao {
     }
 
     private static StoryStateBuilder toHauptsatzStoryStateBuilder(
-            final StructuralElement startsNewUnlessSatzreihung,
+            final StructuralElement startsNew,
             @NonNull final AbstractDescription desc) {
-        return t(startsNewUnlessSatzreihung,
+        return t(startsNew,
                 desc.getDescriptionHauptsatz())
                 .komma(desc.isKommaStehtAus())
                 .undWartest(desc.isAllowsAdditionalDuSatzreihengliedOhneSubjekt())
-                .dann(desc.isDann());
+                .dann(desc.isDann())
+                .beendet(desc.getEndsThis());
     }
 
     private static StoryStateBuilder toHauptsatzMitSpeziellemVorfeldStoryStateBuilder(
-            final StructuralElement startsNewUnlessSatzreihung,
+            final StructuralElement startsNew,
             @NonNull final DuDescription desc) {
-        return t(startsNewUnlessSatzreihung,
+        return t(startsNew,
                 desc.getDescriptionHauptsatzMitSpeziellemVorfeld())
                 .komma(desc.isKommaStehtAus())
                 .undWartest(desc.isAllowsAdditionalDuSatzreihengliedOhneSubjekt())
-                .dann(desc.isDann());
+                .dann(desc.isDann())
+                .beendet(desc.getEndsThis());
     }
 
     public void add(final StoryStateBuilder text) {

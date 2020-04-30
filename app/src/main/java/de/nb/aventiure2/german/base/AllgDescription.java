@@ -11,19 +11,22 @@ public class AllgDescription extends AbstractDescription<AllgDescription> {
      */
     private final String description;
 
-    public static AllgDescription neuerSatz(final String description,
-                                            final AvTimeSpan timeElapsed) {
+    public static AllgDescription neuerSatz(
+            final String description,
+            final AvTimeSpan timeElapsed) {
         return new AllgDescription(StructuralElement.SENTENCE, description, timeElapsed);
     }
 
-    public static AllgDescription neuerSatz(final StructuralElement startsNew,
-                                            final String description,
-                                            final AvTimeSpan timeElapsed) {
+    public static AllgDescription neuerSatz(
+            final StructuralElement startsNew,
+            final String description,
+            final AvTimeSpan timeElapsed) {
         return new AllgDescription(startsNew, description, timeElapsed);
     }
 
-    public static AllgDescription satzanschluss(final String description,
-                                                final AvTimeSpan timeElapsed) {
+    public static AllgDescription satzanschluss(
+            final String description,
+            final AvTimeSpan timeElapsed) {
         return new AllgDescription(StructuralElement.WORD, description, timeElapsed);
     }
 

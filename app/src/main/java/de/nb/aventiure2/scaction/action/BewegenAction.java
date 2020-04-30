@@ -2,13 +2,13 @@ package de.nb.aventiure2.scaction.action;
 
 import androidx.annotation.NonNull;
 
+import com.google.common.base.Function;
 import com.google.common.collect.ImmutableList;
 
 import java.util.List;
 
 import de.nb.aventiure2.data.database.AvDatabase;
 import de.nb.aventiure2.data.storystate.StoryState;
-import de.nb.aventiure2.data.storystate.StoryStateBuilder;
 import de.nb.aventiure2.data.world.base.GameObject;
 import de.nb.aventiure2.data.world.base.GameObjectId;
 import de.nb.aventiure2.data.world.base.IGameObject;
@@ -25,13 +25,11 @@ import de.nb.aventiure2.data.world.syscomp.storingplace.IHasStoringPlaceGO;
 import de.nb.aventiure2.data.world.time.AvTimeSpan;
 import de.nb.aventiure2.german.base.AbstractDescription;
 import de.nb.aventiure2.german.base.DuDescription;
-import de.nb.aventiure2.german.base.StructuralElement;
 import de.nb.aventiure2.scaction.AbstractScAction;
 import de.nb.aventiure2.scaction.action.room.connection.RoomConnection;
 import de.nb.aventiure2.scaction.action.room.connection.RoomConnections;
 
 import static com.google.common.base.Preconditions.checkArgument;
-import static de.nb.aventiure2.data.storystate.StoryStateBuilder.t;
 import static de.nb.aventiure2.data.world.gameobjects.GameObjects.DRAUSSEN_VOR_DEM_SCHLOSS;
 import static de.nb.aventiure2.data.world.gameobjects.GameObjects.SCHLOSSFEST;
 import static de.nb.aventiure2.data.world.gameobjects.GameObjects.SCHLOSS_VORHALLE;
@@ -48,6 +46,7 @@ import static de.nb.aventiure2.german.base.AllgDescription.satzanschluss;
 import static de.nb.aventiure2.german.base.DuDescription.du;
 import static de.nb.aventiure2.german.base.GermanUtil.capitalize;
 import static de.nb.aventiure2.german.base.GermanUtil.uncapitalize;
+import static de.nb.aventiure2.german.base.StructuralElement.PARAGRAPH;
 import static de.nb.aventiure2.german.base.StructuralElement.WORD;
 import static de.nb.aventiure2.scaction.action.BewegenAction.NumberOfPossibilities.ONE_IN_ONE_OUT;
 import static de.nb.aventiure2.scaction.action.BewegenAction.NumberOfPossibilities.ONLY_WAY;
@@ -223,11 +222,17 @@ public class BewegenAction<R extends ISpatiallyConnectedGO & IHasStoringPlaceGO,
 
     @NonNull
     private AvTimeSpan narrateObjects(final List<? extends IDescribableGO> objectsInNewRoom) {
-        n.add(t(StructuralElement.SENTENCE,
-                buildObjectsInRoomDescription(objectsInNewRoom))
-                .persPronKandidat(objectsInNewRoom.get(objectsInNewRoom.size() - 1)));
+        final IDescribableGO lastObject = objectsInNewRoom.get(objectsInNewRoom.size() - 1);
 
-        return secs(objectsInNewRoom.size() * 2);
+        return n.add(
+                neuerSatz(
+                        buildObjectsInRoomDescription(objectsInNewRoom,
+                                describable -> getDescription(describable, false).nom()),
+                        secs(objectsInNewRoom.size() * 2))
+                        .phorikKandidat(
+                                getDescription(lastObject, false)
+                                        .getNumerusGenus(),
+                                lastObject.getId()));
     }
 
     private AvTimeSpan narrateRoomOnly(final Lichtverhaeltnisse lichtverhaeltnisseInNewRoom) {
@@ -238,6 +243,8 @@ public class BewegenAction<R extends ISpatiallyConnectedGO & IHasStoringPlaceGO,
                 .allowsAdditionalDuSatzreihengliedOhneSubjekt() && sc.memoryComp().getLastAction()
                 .is(Action.Type.BEWEGEN) &&
                 sc.locationComp().lastLocationWas(roomConnection.getTo())) {
+
+
             return n.add(
                     satzanschluss(", besinnst dich aber und "
                                     + ((DuDescription) description)
@@ -257,25 +264,25 @@ public class BewegenAction<R extends ISpatiallyConnectedGO & IHasStoringPlaceGO,
             if (sc.locationComp().lastLocationWas(roomConnection.getTo()) &&
                     numberOfPossibilities != NumberOfPossibilities.ONLY_WAY) {
                 if (sc.memoryComp().getLastAction().is(Action.Type.BEWEGEN)) {
-                    final ImmutableList.Builder<StoryStateBuilder> alt = ImmutableList.builder();
-                    alt.add(t(StructuralElement.SENTENCE,
+                    final ImmutableList.Builder<AbstractDescription<?>> alt =
+                            ImmutableList.builder();
+                    alt.add(neuerSatz(
                             "Was willst du hier eigentlich? "
-                                    + description.getDescriptionHauptsatz()));
+                                    + description.getDescriptionHauptsatz(),
+                            description.getTimeElapsed()));
                     if (description instanceof DuDescription) {
-                        alt.add(t(StructuralElement.SENTENCE,
+                        alt.add(neuerSatz(
                                 "Was willst du hier eigentlich? "
                                         + ((DuDescription) description)
-                                        .getDescriptionHauptsatzMitSpeziellemVorfeld()));
+                                        .getDescriptionHauptsatzMitSpeziellemVorfeld(),
+                                description.getTimeElapsed()));
                     }
 
-                    alt.add(t(StructuralElement.SENTENCE,
-                            "Aber dir kommt ein Gedanke und "
-                                    + uncapitalize(description.getDescriptionHauptsatz())));
+                    alt.add(neuerSatz("Aber dir kommt ein Gedanke und "
+                                    + uncapitalize(description.getDescriptionHauptsatz()),
+                            description.getTimeElapsed()));
 
-
-                    n.add(alt(alt));
-
-                    return description.getTimeElapsed();
+                    return n.addAlt(alt);
                 } else {
                     return n.add(
                             du("schaust", "dich nur kurz um, dann "
@@ -303,7 +310,7 @@ public class BewegenAction<R extends ISpatiallyConnectedGO & IHasStoringPlaceGO,
         } else {
             if (initialStoryState.dann()) {
                 return n.add(
-                        neuerSatz(StructuralElement.PARAGRAPH, description
+                        neuerSatz(PARAGRAPH, description
                                         .getDescriptionHauptsatzMitKonjunktionaladverbWennNoetig("danach"),
                                 description.getTimeElapsed())
                                 .komma(description.isKommaStehtAus())
@@ -360,10 +367,11 @@ public class BewegenAction<R extends ISpatiallyConnectedGO & IHasStoringPlaceGO,
      */
     @NonNull
     private String buildObjectsInRoomDescription(
-            @NonNull final List<? extends IDescribableGO> objectsInRoom) {
+            @NonNull final List<? extends IDescribableGO> objectsInRoom,
+            final Function<IDescribableGO, String> describer) {
         return buildObjectInRoomDescriptionPrefix(objectsInRoom.size())
                 + " "
-                + buildEntitiesInRoomDescriptionList(objectsInRoom);
+                + buildEntitiesInRoomDescriptionList(objectsInRoom, describer);
     }
 
     /**
@@ -387,11 +395,12 @@ public class BewegenAction<R extends ISpatiallyConnectedGO & IHasStoringPlaceGO,
      * @return Something similar to <code>der hässliche Frosch</code>
      */
     @NonNull
-    private String buildEntitiesInRoomDescriptionList(
-            @NonNull final List<? extends IDescribableGO> entities) {
+    private static String buildEntitiesInRoomDescriptionList(
+            @NonNull final List<? extends IDescribableGO> entities,
+            final Function<IDescribableGO, String> describer) {
         final StringBuilder res = new StringBuilder();
         for (int i = 0; i < entities.size(); i++) {
-            res.append(getDescription(entities.get(i), false).nom());
+            res.append(describer.apply(entities.get(i)));
             if (i == entities.size() - 2) {
                 // one before the last
                 res.append(" und ");

@@ -18,13 +18,10 @@ import de.nb.aventiure2.data.world.syscomp.state.IHasStateGO;
 import de.nb.aventiure2.data.world.syscomp.storingplace.IHasStoringPlaceGO;
 import de.nb.aventiure2.data.world.time.AvTimeSpan;
 import de.nb.aventiure2.german.base.DeklinierbarePhrase;
-import de.nb.aventiure2.german.base.DuDescription;
 import de.nb.aventiure2.german.base.Nominalphrase;
-import de.nb.aventiure2.german.base.StructuralElement;
 import de.nb.aventiure2.german.praedikat.SeinUtil;
 import de.nb.aventiure2.scaction.AbstractScAction;
 
-import static de.nb.aventiure2.data.storystate.StoryStateBuilder.t;
 import static de.nb.aventiure2.data.world.gameobjects.GameObjects.FROSCHPRINZ;
 import static de.nb.aventiure2.data.world.gameobjects.GameObjects.GOLDENE_KUGEL;
 import static de.nb.aventiure2.data.world.gameobjects.GameObjects.IM_WALD_BEIM_BRUNNEN;
@@ -115,14 +112,13 @@ public class HochwerfenAction<OBJ extends IDescribableGO & ILocatableGO>
             return narrateAndDoFroschBekannt((IHasStateGO & ILocatableGO) froschprinz);
         }
 
-        final Nominalphrase objectDesc = getDescription(object, false);
+        final DeklinierbarePhrase objectDesc =
+                getAnaphPersPronWennMglSonstDescription(object, false);
 
         if (initialStoryState.allowsAdditionalDuSatzreihengliedOhneSubjekt()) {
             return n.add(
                     satzanschluss(", wirfst " +
-                            getObjektNominalphraseOderWennSoebenErwaehntPersPron(currentStoryState,
-                                    objectDesc)
-                                    .akk() +
+                            objectDesc.akk() +
                             " in die Höhe und fängst " +
                             objectDesc.persPron().akk() +
                             " wieder auf", secs(3))
@@ -133,8 +129,7 @@ public class HochwerfenAction<OBJ extends IDescribableGO & ILocatableGO>
 
         return n.add(
                 du(PARAGRAPH, "wirfst",
-                        getObjektNominalphraseOderWennSoebenErwaehntPersPron(currentStoryState,
-                                objectDesc).akk()
+                        objectDesc.akk()
                                 + " "
                                 + emotionSatzglied
                                 + " in die Höhe und fängst " +
@@ -142,19 +137,6 @@ public class HochwerfenAction<OBJ extends IDescribableGO & ILocatableGO>
                                 " wieder auf",
                         emotionSatzglied, secs(3))
                         .dann());
-    }
-
-    /**
-     * Gibt etwas wie "die goldene Kugel" zurück - oder "sie", wenn die goldene Kugel
-     * das letzte Objekt war.
-     * <p>
-     * Hiermit lassen sich Wiederholungen vermeiden: "Du hebst die goldene Kugel auf, wirfts
-     * <i>sie</i> in die Höhe..."
-     */
-    private DeklinierbarePhrase getObjektNominalphraseOderWennSoebenErwaehntPersPron(
-            final StoryState currentStoryState, final Nominalphrase objectDesc) {
-        return currentStoryState.persPronKandidatIs(object) ? objectDesc.persPron() :
-                objectDesc;
     }
 
     @NonNull
@@ -209,30 +191,20 @@ public class HochwerfenAction<OBJ extends IDescribableGO & ILocatableGO>
     private AvTimeSpan narrateAndDoObjectFaelltSofortInDenBrunnen() {
         final Nominalphrase objectDesc = getDescription(object, false);
 
-        final DuDescription duDesc = du("wirfst", objectDesc.akk() +
-                " nur ein einziges Mal in die Höhe, " +
-                "aber wie das Unglück es will, fällt " +
-                objectDesc.persPron().akk() +
-                " sofort in den Brunnen: " +
-                "Platsch! – weg " +
-                SeinUtil.istSind(objectDesc.getNumerusGenus()) +
-                " " +
-                objectDesc.persPron().akk(), "nur ein einziges Mal", secs(10))
-                .dann(!initialStoryState.dann());
-
-        if (initialStoryState.dann()) {
-            n.add(t(StructuralElement.PARAGRAPH,
-                    duDesc.getDescriptionHauptsatzMitKonjunktionaladverbWennNoetig("dann"))
-                    .beendet(PARAGRAPH));
-        } else {
-            n.add(t(StructuralElement.PARAGRAPH,
-                    duDesc.getDescriptionHauptsatz())
-                    .beendet(PARAGRAPH));
-        }
-
         object.locationComp().setLocation(UNTEN_IM_BRUNNEN);
 
-        return duDesc.getTimeElapsed();
+        return n.add(
+                du(PARAGRAPH, "wirfst", objectDesc.akk() +
+                        " nur ein einziges Mal in die Höhe, " +
+                        "aber wie das Unglück es will, fällt " +
+                        objectDesc.persPron().akk() +
+                        " sofort in den Brunnen: " +
+                        "Platsch! – weg " +
+                        SeinUtil.istSind(objectDesc.getNumerusGenus()) +
+                        " " +
+                        objectDesc.persPron().akk(), "nur ein einziges Mal", secs(10))
+                        .dann(!initialStoryState.dann())
+                        .beendet(PARAGRAPH));
     }
 
     @NonNull
@@ -257,10 +229,12 @@ public class HochwerfenAction<OBJ extends IDescribableGO & ILocatableGO>
                     getLichtverhaeltnisse(room) == DUNKEL ?
                             "– bei dieser Dunkelheit schon gar nicht" : "";
 
-            n.add(t(StructuralElement.SENTENCE,
-                    "Noch einmal wirfst du " +
-                            getDescription(object).akk() +
-                            " in die Höhe… doch oh nein, " +
+            object.locationComp().setLocation(UNTEN_IM_BRUNNEN);
+            sc.feelingsComp().setMood(UNTROESTLICH);
+
+            return n.add(du("wirfst",
+                    getDescription(object).akk() +
+                            " noch einmal in die Höhe… doch oh nein, " +
                             getDescription(object, true).nom() +
                             " fällt dir nicht in die Hände, sondern schlägt vorbei " +
                             "auf den Brunnenrand und rollt geradezu ins Wasser hinein." +
@@ -268,29 +242,26 @@ public class HochwerfenAction<OBJ extends IDescribableGO & ILocatableGO>
                             getDescription(object, true).nom() +
                             " verschwindet, und der Brunnen ist tief, so tief, dass " +
                             "man keinen Grund sieht"
-                            + dunkelheitNachsatz
-                            + ".")
+                            + dunkelheitNachsatz,
+                    "noch einmal", secs(10))
                     .beendet(PARAGRAPH));
-
-            object.locationComp().setLocation(UNTEN_IM_BRUNNEN);
-            sc.feelingsComp().setMood(UNTROESTLICH);
-            return secs(10);
         }
-
-        n.add(t(StructuralElement.SENTENCE,
-                "Übermütig schleuderst du " +
-                        getDescription(object).akk() +
-                        " noch einmal in die Luft, aber sie wieder aufzufangen will dir " +
-                        "dieses Mal nicht gelingen. " +
-                        capitalize(getDescription(object, true).nom()) +
-                        " landet " +
-                        room.storingPlaceComp().getLocationMode().getWo()));
 
         object.locationComp().setLocation(room);
         if (!sc.feelingsComp().getMood().isTraurigerAls(ETWAS_GEKNICKT)) {
             sc.feelingsComp().setMood(ETWAS_GEKNICKT);
         }
-        return secs(5);
+
+        return n.add(du("schleuderst",
+                getDescription(object).akk() +
+                        " übermütig noch einmal in die Luft, aber sie wieder aufzufangen will dir "
+                        +
+                        "dieses Mal nicht gelingen. " +
+                        capitalize(getDescription(object, true).nom()) +
+                        " landet " +
+                        room.storingPlaceComp().getLocationMode().getWo(),
+                "übermütig",
+                secs(5)));
     }
 
     @Override

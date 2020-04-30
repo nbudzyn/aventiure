@@ -8,7 +8,6 @@ import de.nb.aventiure2.data.world.time.AvDateTime;
 import de.nb.aventiure2.data.world.time.AvTimeSpan;
 import de.nb.aventiure2.scaction.action.base.reaction.AbstractReactions;
 
-import static de.nb.aventiure2.data.storystate.StoryStateBuilder.t;
 import static de.nb.aventiure2.data.world.syscomp.feelings.Hunger.HUNGRIG;
 import static de.nb.aventiure2.data.world.time.AvTimeSpan.noTime;
 import static de.nb.aventiure2.german.base.AllgDescription.neuerSatz;
@@ -64,23 +63,27 @@ public class ScAutomaticReactions extends AbstractReactions {
 
     @NonNull
     private AvTimeSpan scWirdHungrig() {
-        n.add(
-                alt(
-                        t(PARAGRAPH, "Du fühlst dich allmählich etwas hungrig")
-                                .undWartest(),
-                        t(SENTENCE, "Wann hast du eigentlich zuletzt etwas gegessen? Das "
-                                + "muss schon eine Weile her sein."),
-                        t(PARAGRAPH, "So langsam bekommst du Hunger"),
-                        t(PARAGRAPH, "Allmählich überkommt dich der Hunger"),
-                        t(PARAGRAPH, "Allmählich regt sich wieder der Hunger")
-                                .undWartest(),
-                        t(SENTENCE, "Dir fällt auf, dass du Hunger hast")
-                                .komma(),
-                        t(SENTENCE, "Du empfindest wieder leichter Hunger")
-                                .undWartest()
-                )
+        return n.addAlt(
+                du(PARAGRAPH, "fühlst", "dich allmählich etwas hungrig",
+                        noTime())
+                        .undWartest(),
+                neuerSatz("Wann hast du eigentlich zuletzt etwas gegessen? Das "
+                                + "muss schon eine Weile her sein.",
+                        noTime()),
+                du(PARAGRAPH, "bekommst", "so langsam Hunger",
+                        "so langsam",
+                        noTime()),
+                neuerSatz(PARAGRAPH, "Allmählich überkommt dich der Hunger",
+                        noTime()),
+                neuerSatz(PARAGRAPH, "Allmählich regt sich wieder der Hunger",
+                        noTime())
+                        .undWartest(),
+                neuerSatz(SENTENCE, "Dir fällt auf, dass du Hunger hast",
+                        noTime())
+                        .komma(),
+                du("empfindest", "wieder leichten Hunger",
+                        noTime())
+                        .undWartest()
         );
-
-        return noTime();
     }
 }

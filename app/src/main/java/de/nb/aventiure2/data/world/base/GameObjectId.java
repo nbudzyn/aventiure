@@ -4,10 +4,12 @@ import androidx.annotation.NonNull;
 
 import java.util.Objects;
 
+import de.nb.aventiure2.german.base.IBezugsobjekt;
+
 /**
  * ID of an {@link GameObject}
  */
-public class GameObjectId {
+public class GameObjectId implements IBezugsobjekt {
     private final long value;
 
     public GameObjectId(final long value) {

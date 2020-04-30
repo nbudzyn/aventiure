@@ -14,7 +14,6 @@ import de.nb.aventiure2.data.world.syscomp.memory.Action;
 import de.nb.aventiure2.data.world.time.AvTimeSpan;
 import de.nb.aventiure2.scaction.AbstractScAction;
 
-import static de.nb.aventiure2.data.storystate.StoryStateBuilder.t;
 import static de.nb.aventiure2.data.world.gameobjects.GameObjects.HINTER_DER_HUETTE;
 import static de.nb.aventiure2.data.world.lichtverhaeltnisse.Lichtverhaeltnisse.DUNKEL;
 import static de.nb.aventiure2.data.world.time.AvTimeSpan.mins;
@@ -94,7 +93,9 @@ public class KletternAction extends AbstractScAction {
                 getLichtverhaeltnisse(room) == DUNKEL ?
                         " Und das alles im Dunkeln!" : "";
 
-        n.add(t(PARAGRAPH,
+        sc.feelingsComp().setMood(Mood.ERSCHOEPFT);
+
+        return n.add(neuerSatz(PARAGRAPH,
                 "Vom Stamm geht in Hüfthöhe ein kräftiger Ast ab, den kannst du "
                         + "ohne Mühe "
                         + "ersteigen. Danach wird es schwieriger. Du ziehst dich eine "
@@ -110,20 +111,16 @@ public class KletternAction extends AbstractScAction {
                         + "Mit einiger Mühe drehst du auf dem Ast um und hangelst dich "
                         + "vorsichtig "
                         + "wieder herab auf den Boden. Das war anstrengend!"
-                        + dunkelNachsatz)
+                        + dunkelNachsatz, mins(10))
                 .beendet(PARAGRAPH));
-
-        sc.feelingsComp().setMood(Mood.ERSCHOEPFT);
-
-        return mins(10);
     }
 
     private AvTimeSpan narrateAndDoBaumHinterHuetteZweitesMal() {
-        n.add(t(PARAGRAPH, "Noch einmal kletterst du eine, zwei Etagen den Baum hinauf. "
-                + "Du schaust ins Blattwerk und bist stolz auf dich, dann geht es vorsichtig "
-                + "wieder hinunter")
-                .beendet(PARAGRAPH));
-        return mins(10);
+        return n.add(
+                neuerSatz(PARAGRAPH, "Noch einmal kletterst du eine, zwei Etagen den Baum hinauf. "
+                        + "Du schaust ins Blattwerk und bist stolz auf dich, dann geht es vorsichtig "
+                        + "wieder hinunter", mins(10))
+                        .beendet(PARAGRAPH));
     }
 
     private AvTimeSpan narrateAndDoBaumHinterHuetteNtesMal() {

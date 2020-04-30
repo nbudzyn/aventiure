@@ -17,13 +17,13 @@ import de.nb.aventiure2.data.world.time.AvTimeSpan;
 import de.nb.aventiure2.german.base.AbstractDescription;
 import de.nb.aventiure2.scaction.AbstractScAction;
 
-import static de.nb.aventiure2.data.storystate.StoryStateBuilder.t;
 import static de.nb.aventiure2.data.world.gameobjects.GameObjects.BETT_IN_DER_HUETTE_IM_WALD;
 import static de.nb.aventiure2.data.world.syscomp.feelings.Mood.ERSCHOEPFT;
 import static de.nb.aventiure2.data.world.syscomp.feelings.Mood.NEUTRAL;
 import static de.nb.aventiure2.data.world.time.AvTime.oClock;
 import static de.nb.aventiure2.data.world.time.AvTimeSpan.hours;
 import static de.nb.aventiure2.data.world.time.AvTimeSpan.mins;
+import static de.nb.aventiure2.data.world.time.AvTimeSpan.noTime;
 import static de.nb.aventiure2.german.base.AllgDescription.neuerSatz;
 import static de.nb.aventiure2.german.base.DuDescription.du;
 import static de.nb.aventiure2.german.base.StructuralElement.CHAPTER;
@@ -95,38 +95,38 @@ public class SchlafenAction extends AbstractScAction {
     }
 
     private AvTimeSpan narrateAndDoSchlaeftEin() {
-        n.add(alt(
-                t(SENTENCE,
-                        "Du schließt nur kurz die Augen. Die Erlebnisse der letzten Stunden "
+        final AvTimeSpan timeElapsed = n.addAlt(
+                du(SENTENCE,
+                        "schließt", "nur kurz die Augen. Die Erlebnisse der letzten Stunden "
                                 + "gehen dir durch den Kopf. Was wäre wohl passiert, wenn du…\n"
                                 + "Kaum hast du die Augen geschlossen, bist du auch schon "
-                                + "eingeschlafen")
+                                + "eingeschlafen",
+                        "nur kurz",
+                        schlafen())
                         .beendet(CHAPTER),
-                t(SENTENCE,
-                        "Jetzt, da du liegst, fällt dir erst auf, wir erschöpft du "
-                                + "eigentlich bist. Nur ganz kurz die Augen schließen…")
+                neuerSatz("Jetzt, da du liegst, fällt dir erst auf, wir erschöpft du "
+                                + "eigentlich bist. Nur ganz kurz die Augen schließen…",
+                        schlafen())
                         .beendet(CHAPTER),
-                t(SENTENCE,
-                        "Du fühlst dich auf einmal warm und schwer. Du kuschelst dich an "
-                                + "das harte Holz und schon bist du eingeschlafen")
-                        .beendet(CHAPTER)
-        ));
-
-        final AvTimeSpan timeElapsed = schlafen();
+                du("fühlst", "dich auf einmal warm und schwer. Du kuschelst dich an "
+                                + "das harte Holz und schon bist du eingeschlafen",
+                        "warm und schwer",
+                        schlafen())
+                        .beendet(CHAPTER));
 
         sc.memoryComp().setLastAction(buildMemorizedAction());
 
-        n.add(alt(
-                t(CHAPTER,
-                        "Nach einem langen Schlaf wachst du gut erholt wieder auf"),
-                t(CHAPTER,
-                        "Du schläfst tief und fest und wachst erst nach einigen Stunden "
-                                + "wieder auf")
-        ));
-
         sc.feelingsComp().setMood(NEUTRAL);
 
-        return timeElapsed;
+        return timeElapsed.plus(n.addAlt(
+                du(CHAPTER,
+                        "wachst", "nach einem langen Schlaf gut erholt wieder auf",
+                        "nach einem langen Schlaf", noTime()),
+                du(CHAPTER,
+                        "schläfst", "tief und fest und wachst erst nach einigen "
+                                + "Stunden wieder auf",
+                        "tief",
+                        noTime())));
     }
 
     @Override
