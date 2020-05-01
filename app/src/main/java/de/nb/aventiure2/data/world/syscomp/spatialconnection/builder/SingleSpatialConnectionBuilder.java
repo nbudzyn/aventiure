@@ -7,6 +7,7 @@ import com.google.common.collect.ImmutableList;
 import java.util.List;
 
 import de.nb.aventiure2.data.database.AvDatabase;
+import de.nb.aventiure2.data.world.base.GameObjectId;
 import de.nb.aventiure2.data.world.gameobjects.player.SpielerCharakter;
 import de.nb.aventiure2.data.world.lichtverhaeltnisse.Lichtverhaeltnisse;
 import de.nb.aventiure2.data.world.syscomp.memory.Known;
@@ -41,14 +42,14 @@ import static de.nb.aventiure2.german.base.AllgDescription.neuerSatz;
 import static de.nb.aventiure2.german.base.DuDescription.du;
 import static de.nb.aventiure2.german.base.StructuralElement.SENTENCE;
 
-class SingleSpatialConnectionBuilder {
+public class SingleSpatialConnectionBuilder {
     private final AvDatabase db;
 
     private final SpielerCharakter sc;
 
     private final ISpatiallyConnectedGO from;
 
-    SingleSpatialConnectionBuilder(final AvDatabase db, final ISpatiallyConnectedGO from) {
+    public SingleSpatialConnectionBuilder(final AvDatabase db, final ISpatiallyConnectedGO from) {
         this.db = db;
         sc = loadSC(db);
         this.from = from;
@@ -583,6 +584,29 @@ class SingleSpatialConnectionBuilder {
 // -------------------------------------------------------------------
 // --- Allgemein
 // -------------------------------------------------------------------
+
+    public boolean isAlternativeMovementDescriptionAllowed(final GameObjectId to) {
+        if (from.is(SCHLOSS_VORHALLE) &&
+                to.equals(SCHLOSS_VORHALLE_TISCH_BEIM_FEST) &&
+                ((IHasStateGO) load(db, SCHLOSSFEST)).stateComp().hasState(BEGONNEN) &&
+                db.counterDao()
+                        .get("RoomConnectionBuilder_SchlossVorhalle_SchlossVorhalleTischBeimFest")
+                        == 0) {
+            return false;
+        }
+
+        if (from.is(DRAUSSEN_VOR_DEM_SCHLOSS) &&
+                to.equals(SCHLOSS_VORHALLE) &&
+                ((IHasStateGO) load(db, SCHLOSSFEST)).stateComp().hasState(BEGONNEN) &&
+                db.counterDao()
+                        .get("RoomConnectionBuilder_DraussenVorDemSchloss_SchlossVorhalle_FestBegonnen")
+                        == 0) {
+            return false;
+        }
+
+        return true;
+    }
+
 
     private Lichtverhaeltnisse getLichtverhaeltnisseFrom() {
         final Tageszeit tageszeit = db.dateTimeDao().now().getTageszeit();

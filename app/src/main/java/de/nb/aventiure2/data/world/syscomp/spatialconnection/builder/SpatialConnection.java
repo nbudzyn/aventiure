@@ -17,20 +17,15 @@ import static de.nb.aventiure2.data.world.syscomp.memory.Known.UNKNOWN;
  */
 public class SpatialConnection {
     @FunctionalInterface
-    interface DescriptionProviderAndSCMovingSideEffectsEffectuator {
-        // TODO Wie wollen hier gerade KEINE Seiteneffekte, außer incAndGet(),
-        //  wenn eine Beschreibung das erste / zweite... Mal erfolgt ist.
-        //  Damit das incAndGet() aber funktioniert, müssen wir hier
-        //  direkt das n.add() machen!! Also sollten die Methoden alle
-        //  narrateSCMove...() oder ähnlich heißen!
-        AbstractDescription getDescriptionAndDoSCMovingSideEffects(Known newRoomKnow,
-                                                                   Lichtverhaeltnisse lichtverhaeltnisseInNewRoom);
+    interface SCMoveDescriptionProvider {
+        AbstractDescription getSCMoveDescription(Known newRoomKnow,
+                                                 Lichtverhaeltnisse lichtverhaeltnisseInNewRoom);
     }
 
     private final GameObjectId to;
     private final String actionName;
-    private final DescriptionProviderAndSCMovingSideEffectsEffectuator
-            descriptionProviderAndSCMovingSideEffectsEffectuator;
+    private final SCMoveDescriptionProvider
+            SCMoveDescriptionProvider;
 
     static SpatialConnection con(final GameObjectId to, final String actionDescription,
                                  final AbstractDescription newRoomDescription) {
@@ -72,18 +67,18 @@ public class SpatialConnection {
 
     static SpatialConnection con(final GameObjectId to,
                                  final String actionName,
-                                 final DescriptionProviderAndSCMovingSideEffectsEffectuator descriptionProviderAndSCMovingSideEffectsEffectuator) {
+                                 final SCMoveDescriptionProvider SCMoveDescriptionProvider) {
         return new SpatialConnection(to, actionName,
-                descriptionProviderAndSCMovingSideEffectsEffectuator);
+                SCMoveDescriptionProvider);
     }
 
     private SpatialConnection(final GameObjectId to,
                               final String actionName,
-                              final DescriptionProviderAndSCMovingSideEffectsEffectuator descriptionProviderAndSCMovingSideEffectsEffectuator) {
+                              final SCMoveDescriptionProvider SCMoveDescriptionProvider) {
         this.to = to;
         this.actionName = actionName;
-        this.descriptionProviderAndSCMovingSideEffectsEffectuator =
-                descriptionProviderAndSCMovingSideEffectsEffectuator;
+        this.SCMoveDescriptionProvider =
+                SCMoveDescriptionProvider;
     }
 
     public String getActionName() {
@@ -94,9 +89,9 @@ public class SpatialConnection {
         return to;
     }
 
-    public AbstractDescription getDescriptionAndDoSCMovingSideEffects(
+    public AbstractDescription getSCMoveDescription(
             final Known newRoomKnown, final Lichtverhaeltnisse lichtverhaeltnisseInNewRoom) {
-        return descriptionProviderAndSCMovingSideEffectsEffectuator
-                .getDescriptionAndDoSCMovingSideEffects(newRoomKnown, lichtverhaeltnisseInNewRoom);
+        return SCMoveDescriptionProvider
+                .getSCMoveDescription(newRoomKnown, lichtverhaeltnisseInNewRoom);
     }
 }

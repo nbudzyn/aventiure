@@ -7,6 +7,7 @@ import com.google.common.collect.ImmutableList;
 import java.util.List;
 
 import de.nb.aventiure2.data.database.AvDatabase;
+import de.nb.aventiure2.data.world.base.GameObjectId;
 import de.nb.aventiure2.data.world.lichtverhaeltnisse.Lichtverhaeltnisse;
 import de.nb.aventiure2.data.world.syscomp.memory.Known;
 import de.nb.aventiure2.data.world.syscomp.state.IHasStateGO;
@@ -29,8 +30,23 @@ import static de.nb.aventiure2.german.base.DuDescription.du;
  * {@link de.nb.aventiure2.data.world.gameobjects.GameObjects#SCHLOSS_VORHALLE}.
  */
 class SchlossVorhalleConnectionBuilder extends AbstractSpatialConnectionBuilder {
+
+    public static final String COUNTER_TISCH_BEIM_FEST =
+            "RoomConnectionBuilder_SchlossVorhalle_SchlossVorhalleTischBeimFest";
+
     SchlossVorhalleConnectionBuilder(final AvDatabase db) {
         super(db, SCHLOSS_VORHALLE);
+    }
+
+    @Override
+    boolean isAlternativeMovementDescriptionAllowed(final GameObjectId to) {
+        if (to.equals(SCHLOSS_VORHALLE_TISCH_BEIM_FEST) &&
+                ((IHasStateGO) load(db, SCHLOSSFEST)).stateComp().hasState(BEGONNEN) &&
+                db.counterDao().get(COUNTER_TISCH_BEIM_FEST) == 0) {
+            return false;
+        }
+
+        return true;
     }
 
     @Override

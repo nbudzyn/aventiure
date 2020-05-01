@@ -14,7 +14,6 @@ import de.nb.aventiure2.data.world.syscomp.memory.Action;
 import de.nb.aventiure2.data.world.syscomp.state.IHasStateGO;
 import de.nb.aventiure2.data.world.syscomp.storingplace.IHasStoringPlaceGO;
 import de.nb.aventiure2.data.world.time.AvTimeSpan;
-import de.nb.aventiure2.german.base.AbstractDescription;
 import de.nb.aventiure2.scaction.AbstractScAction;
 
 import static de.nb.aventiure2.data.world.gameobjects.GameObjects.SCHLOSSFEST;
@@ -190,39 +189,36 @@ public class EssenAction extends AbstractScAction {
     private AvTimeSpan narrateAndDoFelsenbirnen() {
         final Hunger hunger = getHunger();
 
-        final Collection<AbstractDescription<?>> descAlternatives = getDescFelsenbirnen(hunger);
-
-        final AvTimeSpan timeElapsed = narrateStartsNewWordOrSentence(descAlternatives);
+        final AvTimeSpan timeElapsed = narrateFelsenbirnen(hunger);
 
         saveSatt();
 
         return timeElapsed;
     }
 
-    private Collection<AbstractDescription<?>> getDescFelsenbirnen(final Hunger hunger) {
+    private AvTimeSpan narrateFelsenbirnen(final Hunger hunger) {
         switch (hunger) {
             case HUNGRIG:
-                return getDescFelsenbirnenHungrig();
+                return narrateFelsenbirnenHungrig();
             case SATT:
-                return getDescFelsenbirnenSatt();
+                return narrateFelsenbirnenSatt();
             default:
                 throw new IllegalStateException("Unerwarteter Hunger-Wert: " + hunger);
         }
     }
 
-    private Collection<AbstractDescription<?>> getDescFelsenbirnenHungrig() {
+    private AvTimeSpan narrateFelsenbirnenHungrig() {
         if (db.counterDao().incAndGet(COUNTER_FELSENBIRNEN) == 1) {
-            return ImmutableList.of(
-                    du(SENTENCE, "nimmst", "eine von den Früchten, "
-                            + "schaust sie kurz an, dann "
-                            + "beißt du hinein… – "
-                            + "Mmh! Die Frucht ist saftig und schmeckt süß wie Marzipan!\n"
-                            + "Du isst dich an den Früchten satt", mins(10))
-                            .undWartest()
-                            .dann());
+            return n.add(du(SENTENCE, "nimmst", "eine von den Früchten, "
+                    + "schaust sie kurz an, dann "
+                    + "beißt du hinein… – "
+                    + "Mmh! Die Frucht ist saftig und schmeckt süß wie Marzipan!\n"
+                    + "Du isst dich an den Früchten satt", mins(10))
+                    .undWartest()
+                    .dann());
         }
 
-        return ImmutableList.of(
+        return n.addAlt(
                 du("isst", "dich an den süßen Früchten satt", mins(10))
                         .undWartest()
                         .dann(),
@@ -236,9 +232,9 @@ public class EssenAction extends AbstractScAction {
         );
     }
 
-    private Collection<AbstractDescription<?>> getDescFelsenbirnenSatt() {
+    private AvTimeSpan narrateFelsenbirnenSatt() {
         if (db.counterDao().incAndGet(COUNTER_FELSENBIRNEN) == 1) {
-            return ImmutableList.of(
+            return n.add(
                     du("nimmst", "eine von den Früchten und beißt hinein. "
                                     + "Sie ist überraschend süß und saftig. Du isst die Frucht auf",
                             mins(3))
@@ -246,7 +242,7 @@ public class EssenAction extends AbstractScAction {
                             .dann());
         }
 
-        return ImmutableList.of(
+        return n.addAlt(
                 du(SENTENCE, "hast", "nur wenig Hunger und beißt lustlos in eine der Früchte",
                         "Hunger",
                         mins(3))
@@ -261,11 +257,6 @@ public class EssenAction extends AbstractScAction {
                         .undWartest()
                         .dann()
         );
-    }
-
-    private AvTimeSpan narrateStartsNewWordOrSentence(final Collection<AbstractDescription<?>>
-                                                              descAlternatives) {
-        return n.addAlt(descAlternatives);
     }
 
     private Hunger getHunger() {

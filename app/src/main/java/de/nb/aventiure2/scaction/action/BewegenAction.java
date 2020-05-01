@@ -22,6 +22,7 @@ import de.nb.aventiure2.data.world.syscomp.location.ILocatableGO;
 import de.nb.aventiure2.data.world.syscomp.memory.Action;
 import de.nb.aventiure2.data.world.syscomp.memory.Known;
 import de.nb.aventiure2.data.world.syscomp.spatialconnection.ISpatiallyConnectedGO;
+import de.nb.aventiure2.data.world.syscomp.spatialconnection.builder.SingleSpatialConnectionBuilder;
 import de.nb.aventiure2.data.world.syscomp.spatialconnection.builder.SpatialConnection;
 import de.nb.aventiure2.data.world.syscomp.spatialconnection.builder.SpatialConnections;
 import de.nb.aventiure2.data.world.syscomp.state.IHasStateGO;
@@ -331,10 +332,21 @@ public class BewegenAction<R extends ISpatiallyConnectedGO & IHasStoringPlaceGO,
                                                                   lichtverhaeltnisseInNewRoom) {
         final Known newRoomKnown = sc.memoryComp().getKnown(spatialConnection.getTo());
 
+        final SingleSpatialConnectionBuilder singleSpatialConnectionBuilder =
+                new SingleSpatialConnectionBuilder(db, oldRoom);
+
+        final boolean alternativeDescriptionAllowed =
+                singleSpatialConnectionBuilder.isAlternativeMovementDescriptionAllowed(
+                        spatialConnection.getTo()
+                );
+
         final AbstractDescription standardDescription =
                 spatialConnection
-                        .getDescriptionAndDoSCMovingSideEffects(newRoomKnown,
-                                lichtverhaeltnisseInNewRoom);
+                        .getSCMoveDescription(newRoomKnown, lichtverhaeltnisseInNewRoom);
+
+        if (!alternativeDescriptionAllowed) {
+            return standardDescription;
+        }
 
         if (newRoomKnown == Known.KNOWN_FROM_LIGHT) {
             if (numberOfPossibilities == ONLY_WAY) {

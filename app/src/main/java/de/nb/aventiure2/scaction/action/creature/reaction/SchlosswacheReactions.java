@@ -392,7 +392,7 @@ class SchlosswacheReactions
         sc.feelingsComp().setMood(NEUTRAL);
 
         // Der Spieler weiß jetzt, dass das Schlossfest läuft
-        db.counterDao().inc(COUNTER_ID_VOR_DEM_SCHLOSS_SCHLOSSFEST_KNOWN);
+        db.counterDao().incAndGet(COUNTER_ID_VOR_DEM_SCHLOSS_SCHLOSSFEST_KNOWN);
 
         // Beim Fest ist die Schlosswache mit anderen Dingen beschäftigt
         getReactor().stateComp().setState(UNAUFFAELLIG);
