@@ -1,14 +1,14 @@
 package de.nb.aventiure2.data.world.syscomp.spatialconnection.impl;
 
 import de.nb.aventiure2.data.world.base.GameObjectId;
-import de.nb.aventiure2.data.world.lichtverhaeltnisse.Lichtverhaeltnisse;
 import de.nb.aventiure2.data.world.syscomp.memory.Known;
+import de.nb.aventiure2.data.world.syscomp.storingplace.Lichtverhaeltnisse;
 import de.nb.aventiure2.german.base.AbstractDescription;
 
-import static de.nb.aventiure2.data.world.lichtverhaeltnisse.Lichtverhaeltnisse.DUNKEL;
-import static de.nb.aventiure2.data.world.lichtverhaeltnisse.Lichtverhaeltnisse.HELL;
 import static de.nb.aventiure2.data.world.syscomp.memory.Known.KNOWN_FROM_DARKNESS;
 import static de.nb.aventiure2.data.world.syscomp.memory.Known.UNKNOWN;
+import static de.nb.aventiure2.data.world.syscomp.storingplace.Lichtverhaeltnisse.DUNKEL;
+import static de.nb.aventiure2.data.world.syscomp.storingplace.Lichtverhaeltnisse.HELL;
 
 /**
  * Die Verbindung von einem Raum zu einem anderen, wie sie der SC beim Bewegen benutzten kann -

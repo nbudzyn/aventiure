@@ -27,14 +27,14 @@ import static de.nb.aventiure2.data.world.gameobjects.GameObjects.GOLDENE_KUGEL;
 import static de.nb.aventiure2.data.world.gameobjects.GameObjects.IM_WALD_BEIM_BRUNNEN;
 import static de.nb.aventiure2.data.world.gameobjects.GameObjects.UNTEN_IM_BRUNNEN;
 import static de.nb.aventiure2.data.world.gameobjects.GameObjects.load;
-import static de.nb.aventiure2.data.world.lichtverhaeltnisse.Lichtverhaeltnisse.DUNKEL;
-import static de.nb.aventiure2.data.world.lichtverhaeltnisse.Lichtverhaeltnisse.HELL;
 import static de.nb.aventiure2.data.world.syscomp.feelings.Mood.ETWAS_GEKNICKT;
 import static de.nb.aventiure2.data.world.syscomp.feelings.Mood.UNTROESTLICH;
 import static de.nb.aventiure2.data.world.syscomp.state.GameObjectState.HAT_FORDERUNG_GESTELLT;
 import static de.nb.aventiure2.data.world.syscomp.state.GameObjectState.HAT_NACH_BELOHNUNG_GEFRAGT;
 import static de.nb.aventiure2.data.world.syscomp.state.GameObjectState.HAT_SC_HILFSBEREIT_ANGESPROCHEN;
 import static de.nb.aventiure2.data.world.syscomp.state.GameObjectState.UNAUFFAELLIG;
+import static de.nb.aventiure2.data.world.syscomp.storingplace.Lichtverhaeltnisse.DUNKEL;
+import static de.nb.aventiure2.data.world.syscomp.storingplace.Lichtverhaeltnisse.HELL;
 import static de.nb.aventiure2.data.world.time.AvTimeSpan.noTime;
 import static de.nb.aventiure2.data.world.time.AvTimeSpan.secs;
 import static de.nb.aventiure2.german.base.AllgDescription.neuerSatz;
@@ -94,7 +94,7 @@ public class HochwerfenAction<OBJ extends IDescribableGO & ILocatableGO>
         AvTimeSpan timeElapsed = noTime();
 
         if (!isDefinitivWiederholung()) {
-            timeElapsed = timeElapsed.plus(narrateAndDoErstesMal(initialStoryState));
+            timeElapsed = timeElapsed.plus(narrateAndDoErstesMal());
         } else {
             timeElapsed = timeElapsed.plus(narrateAndDoWiederholung());
         }
@@ -104,7 +104,7 @@ public class HochwerfenAction<OBJ extends IDescribableGO & ILocatableGO>
         return timeElapsed.plus(creatureReactionsCoordinator.onHochwerfen(room, object));
     }
 
-    private AvTimeSpan narrateAndDoErstesMal(final StoryState currentStoryState) {
+    private AvTimeSpan narrateAndDoErstesMal() {
         final IHasStateGO froschprinz = (IHasStateGO) load(db, FROSCHPRINZ);
 
         if (room.is(IM_WALD_BEIM_BRUNNEN) && !froschprinz.stateComp()
@@ -181,7 +181,7 @@ public class HochwerfenAction<OBJ extends IDescribableGO & ILocatableGO>
         }
 
         final String praefix =
-                getLichtverhaeltnisse(room) == HELL ? "Weit und breit" : "Im Dunkeln ist";
+                room.getLichtverhaeltnisseInside() == HELL ? "Weit und breit" : "Im Dunkeln ist";
 
         return n.add(
                 neuerSatz(praefix + " kein Frosch zu sehen… Das war vielleicht etwas "
@@ -226,7 +226,7 @@ public class HochwerfenAction<OBJ extends IDescribableGO & ILocatableGO>
 
         if (room.is(IM_WALD_BEIM_BRUNNEN)) {
             final String dunkelheitNachsatz =
-                    getLichtverhaeltnisse(room) == DUNKEL ?
+                    room.getLichtverhaeltnisseInside() == DUNKEL ?
                             "– bei dieser Dunkelheit schon gar nicht" : "";
 
             object.locationComp().setLocation(UNTEN_IM_BRUNNEN);

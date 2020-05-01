@@ -4,7 +4,7 @@ import androidx.annotation.NonNull;
 
 import org.jetbrains.annotations.Contract;
 
-import de.nb.aventiure2.data.world.lichtverhaeltnisse.Lichtverhaeltnisse;
+import de.nb.aventiure2.data.world.syscomp.storingplace.Lichtverhaeltnisse;
 
 public enum Known {
     // Order is relevant, see #max()

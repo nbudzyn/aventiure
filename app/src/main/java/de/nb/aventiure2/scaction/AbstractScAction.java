@@ -12,11 +12,9 @@ import de.nb.aventiure2.data.storystate.IPlayerAction;
 import de.nb.aventiure2.data.storystate.StoryState;
 import de.nb.aventiure2.data.storystate.StoryStateBuilder;
 import de.nb.aventiure2.data.storystate.StoryStateDao;
-import de.nb.aventiure2.data.world.base.GameObjectId;
 import de.nb.aventiure2.data.world.base.IGameObject;
 import de.nb.aventiure2.data.world.gameobjects.GameObjects;
 import de.nb.aventiure2.data.world.gameobjects.player.SpielerCharakter;
-import de.nb.aventiure2.data.world.lichtverhaeltnisse.Lichtverhaeltnisse;
 import de.nb.aventiure2.data.world.syscomp.description.IDescribableGO;
 import de.nb.aventiure2.data.world.time.AvDateTime;
 import de.nb.aventiure2.data.world.time.AvTimeSpan;
@@ -182,14 +180,6 @@ public abstract class AbstractScAction implements IPlayerAction {
 
     protected boolean isKnownToPlayerCharacter(final IGameObject gameObject) {
         return sc.memoryComp().isKnown(gameObject);
-    }
-
-    protected Lichtverhaeltnisse getLichtverhaeltnisse(@Nullable final IGameObject room) {
-        return getLichtverhaeltnisse(room != null ? room.getId() : null);
-    }
-
-    protected Lichtverhaeltnisse getLichtverhaeltnisse(@Nullable final GameObjectId roomId) {
-        return Lichtverhaeltnisse.getLichtverhaeltnisse(getTageszeit(), roomId);
     }
 
     protected Tageszeit getTageszeit() {

@@ -112,7 +112,8 @@ public class AblegenAction
     }
 
     private void letGoAndAddToRoom() {
-        sc.memoryComp().upgradeKnown(gameObject, Known.getKnown(getLichtverhaeltnisse(room)));
+        sc.memoryComp().upgradeKnown(gameObject,
+                Known.getKnown(room.getLichtverhaeltnisseInside()));
         gameObject.locationComp().setLocation(room);
         sc.memoryComp().setLastAction(buildMemorizedAction());
     }

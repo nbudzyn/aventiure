@@ -107,9 +107,9 @@ public class HeulenAction extends AbstractScAction {
         sc.memoryComp().setLastAction(buildMemorizedAction());
         froschprinz.stateComp().setState(HAT_SC_HILFSBEREIT_ANGESPROCHEN);
         froschprinz.talkingComp().setTalkingTo(sc);
-        sc.memoryComp().upgradeKnown(FROSCHPRINZ, Known.getKnown(getLichtverhaeltnisse(
-                sc.locationComp().getLocation())));
         sc.feelingsComp().setMood(Mood.NEUTRAL);
+        sc.memoryComp().upgradeKnown(FROSCHPRINZ, Known.getKnown(
+                sc.locationComp().getLocation().getLichtverhaeltnisseInside()));
 
         return n.add(du("weinst", "immer lauter und kannst dich gar nicht trösten. " +
                 "Und wie du so klagst, ruft dir jemand zu: „Was hast du vor, " +

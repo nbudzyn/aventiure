@@ -11,11 +11,12 @@ import de.nb.aventiure2.data.storystate.StoryState;
 import de.nb.aventiure2.data.world.base.IGameObject;
 import de.nb.aventiure2.data.world.syscomp.feelings.Mood;
 import de.nb.aventiure2.data.world.syscomp.memory.Action;
+import de.nb.aventiure2.data.world.syscomp.storingplace.IHasStoringPlaceGO;
 import de.nb.aventiure2.data.world.time.AvTimeSpan;
 import de.nb.aventiure2.scaction.AbstractScAction;
 
 import static de.nb.aventiure2.data.world.gameobjects.GameObjects.HINTER_DER_HUETTE;
-import static de.nb.aventiure2.data.world.lichtverhaeltnisse.Lichtverhaeltnisse.DUNKEL;
+import static de.nb.aventiure2.data.world.syscomp.storingplace.Lichtverhaeltnisse.DUNKEL;
 import static de.nb.aventiure2.data.world.time.AvTimeSpan.mins;
 import static de.nb.aventiure2.german.base.AllgDescription.neuerSatz;
 import static de.nb.aventiure2.german.base.DuDescription.du;
@@ -25,11 +26,11 @@ import static de.nb.aventiure2.german.base.StructuralElement.PARAGRAPH;
  * Der Spielercharakter klettert.
  */
 public class KletternAction extends AbstractScAction {
-    private final IGameObject room;
+    private final IHasStoringPlaceGO room;
 
     public static Collection<KletternAction> buildActions(
             final AvDatabase db,
-            final StoryState initialStoryState, final IGameObject room) {
+            final StoryState initialStoryState, final IHasStoringPlaceGO room) {
         final ImmutableList.Builder<KletternAction> res = ImmutableList.builder();
         if (room.is(HINTER_DER_HUETTE)) {
             res.add(new KletternAction(db, initialStoryState, room));
@@ -43,7 +44,7 @@ public class KletternAction extends AbstractScAction {
      */
     private KletternAction(final AvDatabase db,
                            final StoryState initialStoryState,
-                           final IGameObject room) {
+                           final IHasStoringPlaceGO room) {
         super(db, initialStoryState);
         this.room = room;
     }
@@ -90,7 +91,7 @@ public class KletternAction extends AbstractScAction {
     @NonNull
     private AvTimeSpan narrateAndDoBaumHinterHuetteErstesMal() {
         final String dunkelNachsatz =
-                getLichtverhaeltnisse(room) == DUNKEL ?
+                room.getLichtverhaeltnisseInside() == DUNKEL ?
                         " Und das alles im Dunkeln!" : "";
 
         sc.feelingsComp().setMood(Mood.ERSCHOEPFT);
@@ -127,7 +128,7 @@ public class KletternAction extends AbstractScAction {
         sc.feelingsComp().setMood(Mood.ERSCHOEPFT);
 
         final String erschoepftMuedeNachsatz =
-                getLichtverhaeltnisse(room) == DUNKEL ?
+                room.getLichtverhaeltnisseInside() == DUNKEL ?
                         "Ein Nickerchen täte dir gut" : "Und müde";
 
         return n.addAlt(

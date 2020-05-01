@@ -14,7 +14,6 @@ import de.nb.aventiure2.data.storystate.StoryState;
 import de.nb.aventiure2.data.world.base.GameObject;
 import de.nb.aventiure2.data.world.base.GameObjectId;
 import de.nb.aventiure2.data.world.base.IGameObject;
-import de.nb.aventiure2.data.world.lichtverhaeltnisse.Lichtverhaeltnisse;
 import de.nb.aventiure2.data.world.syscomp.alive.ILivingBeingGO;
 import de.nb.aventiure2.data.world.syscomp.description.IDescribableGO;
 import de.nb.aventiure2.data.world.syscomp.feelings.Mood;
@@ -25,6 +24,7 @@ import de.nb.aventiure2.data.world.syscomp.spatialconnection.ISpatiallyConnected
 import de.nb.aventiure2.data.world.syscomp.spatialconnection.impl.SpatialConnection;
 import de.nb.aventiure2.data.world.syscomp.state.IHasStateGO;
 import de.nb.aventiure2.data.world.syscomp.storingplace.IHasStoringPlaceGO;
+import de.nb.aventiure2.data.world.syscomp.storingplace.Lichtverhaeltnisse;
 import de.nb.aventiure2.data.world.time.AvTimeSpan;
 import de.nb.aventiure2.german.base.AbstractDescription;
 import de.nb.aventiure2.german.base.DuDescription;
@@ -40,8 +40,8 @@ import static de.nb.aventiure2.data.world.gameobjects.GameObjects.WALDWILDNIS_HI
 import static de.nb.aventiure2.data.world.gameobjects.GameObjects.load;
 import static de.nb.aventiure2.data.world.gameobjects.GameObjects.loadDescribableLivingInventory;
 import static de.nb.aventiure2.data.world.gameobjects.GameObjects.loadDescribableNonLivingInventory;
-import static de.nb.aventiure2.data.world.lichtverhaeltnisse.Lichtverhaeltnisse.HELL;
 import static de.nb.aventiure2.data.world.syscomp.state.GameObjectState.BEGONNEN;
+import static de.nb.aventiure2.data.world.syscomp.storingplace.Lichtverhaeltnisse.HELL;
 import static de.nb.aventiure2.data.world.time.AvTimeSpan.secs;
 import static de.nb.aventiure2.german.base.AllgDescription.neuerSatz;
 import static de.nb.aventiure2.german.base.AllgDescription.satzanschluss;
@@ -145,8 +145,11 @@ public class BewegenAction<R extends ISpatiallyConnectedGO & IHasStoringPlaceGO,
 
     @Override
     public AvTimeSpan narrateAndDo() {
+        final IHasStoringPlaceGO to =
+                (IHasStoringPlaceGO) load(db, spatialConnection.getTo());
+
         final Lichtverhaeltnisse lichtverhaeltnisseInNewRoom =
-                getLichtverhaeltnisse(spatialConnection.getTo());
+                to.getLichtverhaeltnisseInside();
 
         final ImmutableList<LIV> creaturesInOldRoom = loadDescribableLivingInventory(db, oldRoom);
         final ImmutableList<LOC_DESC> objectsInNewRoom =

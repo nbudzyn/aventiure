@@ -7,9 +7,7 @@ import com.google.common.collect.ImmutableList;
 import de.nb.aventiure2.data.database.AvDatabase;
 import de.nb.aventiure2.data.storystate.StoryState;
 import de.nb.aventiure2.data.world.base.GameObject;
-import de.nb.aventiure2.data.world.base.GameObjectId;
 import de.nb.aventiure2.data.world.base.IGameObject;
-import de.nb.aventiure2.data.world.lichtverhaeltnisse.Lichtverhaeltnisse;
 import de.nb.aventiure2.data.world.syscomp.alive.ILivingBeingGO;
 import de.nb.aventiure2.data.world.syscomp.description.IDescribableGO;
 import de.nb.aventiure2.data.world.syscomp.feelings.Mood;
@@ -18,6 +16,7 @@ import de.nb.aventiure2.data.world.syscomp.memory.Action;
 import de.nb.aventiure2.data.world.syscomp.memory.Known;
 import de.nb.aventiure2.data.world.syscomp.state.IHasStateGO;
 import de.nb.aventiure2.data.world.syscomp.storingplace.IHasStoringPlaceGO;
+import de.nb.aventiure2.data.world.syscomp.storingplace.Lichtverhaeltnisse;
 import de.nb.aventiure2.data.world.time.AvDateTime;
 import de.nb.aventiure2.data.world.time.AvTimeSpan;
 import de.nb.aventiure2.german.base.AbstractDescription;
@@ -97,7 +96,7 @@ class SchlosswacheReactions
                                 + "leicht zu "
                                 + "überzeugen und trittst wieder "
                                 + schlossVerlassenWohinDescription(
-                        SCHLOSS_VORHALLE, oldRoom.getId())
+                        ((IHasStoringPlaceGO) load(db, SCHLOSS_VORHALLE)), oldRoom)
                                 // "in den Sonnenschein"
                                 + " hinaus",
                         secs(10))
@@ -114,13 +113,13 @@ class SchlosswacheReactions
         );
     }
 
-    private String schlossVerlassenWohinDescription(final GameObjectId schlossRoom,
-                                                    final GameObjectId wohinRoom) {
+    private static String schlossVerlassenWohinDescription(final IHasStoringPlaceGO schlossRoom,
+                                                           final IHasStoringPlaceGO wohinRoom) {
         final Lichtverhaeltnisse lichtverhaeltnisseImSchloss =
-                getLichtverhaeltnisse(schlossRoom);
+                schlossRoom.getLichtverhaeltnisseInside();
         final Lichtverhaeltnisse lichtverhaeltnisseDraussen =
-                getLichtverhaeltnisse(wohinRoom);
-        if (lichtverhaeltnisseImSchloss // Im Schloss ist es immer hell, wenn es also draußen
+                wohinRoom.getLichtverhaeltnisseInside();
+        if (lichtverhaeltnisseImSchloss  // Im Schloss ist es immer hell, wenn es also draußen
                 // auch hell ist...
                 == lichtverhaeltnisseDraussen) {
             return "in den Sonnenschein";
@@ -157,8 +156,8 @@ class SchlosswacheReactions
 
     private AvTimeSpan nehmen_wacheWirdAufmerksam() {
         getReactor().stateComp().setState(AUFMERKSAM);
-        sc.memoryComp().upgradeKnown(SCHLOSSWACHE, Known.getKnown(getLichtverhaeltnisse(
-                sc.locationComp().getLocationId())));
+        sc.memoryComp().upgradeKnown(SCHLOSSWACHE,
+                Known.getKnown(sc.locationComp().getLocation().getLichtverhaeltnisseInside()));
         sc.feelingsComp().setMood(Mood.ANGESPANNT);
 
         return n.add(

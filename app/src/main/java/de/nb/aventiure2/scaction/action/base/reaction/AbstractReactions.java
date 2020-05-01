@@ -7,10 +7,8 @@ import java.util.Collection;
 import de.nb.aventiure2.data.database.AvDatabase;
 import de.nb.aventiure2.data.storystate.StoryStateBuilder;
 import de.nb.aventiure2.data.storystate.StoryStateDao;
-import de.nb.aventiure2.data.world.base.GameObjectId;
 import de.nb.aventiure2.data.world.gameobjects.GameObjects;
 import de.nb.aventiure2.data.world.gameobjects.player.SpielerCharakter;
-import de.nb.aventiure2.data.world.lichtverhaeltnisse.Lichtverhaeltnisse;
 import de.nb.aventiure2.data.world.syscomp.description.IDescribableGO;
 import de.nb.aventiure2.data.world.time.Tageszeit;
 import de.nb.aventiure2.german.base.Nominalphrase;
@@ -65,10 +63,6 @@ public abstract class AbstractReactions {
     protected Nominalphrase getDescription(final IDescribableGO gameObject,
                                            final boolean shortIfKnown) {
         return GameObjects.getPOVDescription(sc, gameObject, shortIfKnown);
-    }
-
-    protected Lichtverhaeltnisse getLichtverhaeltnisse(final GameObjectId room) {
-        return Lichtverhaeltnisse.getLichtverhaeltnisse(getTageszeit(), room);
     }
 
     protected Tageszeit getTageszeit() {

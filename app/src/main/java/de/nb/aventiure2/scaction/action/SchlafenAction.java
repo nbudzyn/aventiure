@@ -96,6 +96,8 @@ public class SchlafenAction extends AbstractScAction {
 
     private AvTimeSpan narrateAndDoSchlaeftEin() {
         final AvTimeSpan timeElapsed = n.addAlt(
+                // TODO Irgendwie wird immer nur dieser Text gewählt, nicht die anderen
+                //  beiden...
                 du(SENTENCE,
                         "schließt", "nur kurz die Augen. Die Erlebnisse der letzten Stunden "
                                 + "gehen dir durch den Kopf. Was wäre wohl passiert, wenn du…\n"

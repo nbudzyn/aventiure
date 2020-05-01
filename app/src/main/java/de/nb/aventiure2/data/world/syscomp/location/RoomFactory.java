@@ -2,6 +2,7 @@ package de.nb.aventiure2.data.world.syscomp.location;
 
 import javax.annotation.Nonnull;
 
+import de.nb.aventiure2.data.database.AvDatabase;
 import de.nb.aventiure2.data.world.base.GameObject;
 import de.nb.aventiure2.data.world.base.GameObjectId;
 import de.nb.aventiure2.data.world.syscomp.spatialconnection.AbstractSpatialConnectionComp;
@@ -14,17 +15,22 @@ import de.nb.aventiure2.data.world.syscomp.storingplace.StoringPlaceType;
  * A factory for special {@link GameObject}s: Rooms in the world.
  */
 public class RoomFactory {
-    public RoomFactory() {
+    private final AvDatabase db;
+
+    public RoomFactory(final AvDatabase db) {
+        this.db = db;
     }
 
-    public static GameObject create(final GameObjectId id,
-                                    final AbstractSpatialConnectionComp spatialConnectionComp) {
-        return create(id, StoringPlaceType.BODEN, spatialConnectionComp);
+    public GameObject create(final GameObjectId id,
+                             final boolean dauerhaftBeleuchtet,
+                             final AbstractSpatialConnectionComp spatialConnectionComp) {
+        return create(id, StoringPlaceType.BODEN, dauerhaftBeleuchtet, spatialConnectionComp);
     }
 
-    public static GameObject create(final GameObjectId id, final StoringPlaceType locationMode,
-                                    final AbstractSpatialConnectionComp spatialConnectionComp) {
-        return new Room(id, new StoringPlaceComp(id, locationMode),
+    public GameObject create(final GameObjectId id, final StoringPlaceType locationMode,
+                             final boolean dauerhaftBeleuchtet,
+                             final AbstractSpatialConnectionComp spatialConnectionComp) {
+        return new Room(id, new StoringPlaceComp(id, db, locationMode, dauerhaftBeleuchtet),
                 spatialConnectionComp);
     }
 

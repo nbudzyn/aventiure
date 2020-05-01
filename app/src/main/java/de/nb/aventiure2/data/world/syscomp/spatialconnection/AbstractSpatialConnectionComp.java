@@ -11,10 +11,9 @@ import de.nb.aventiure2.data.world.base.AbstractStatelessComponent;
 import de.nb.aventiure2.data.world.base.GameObject;
 import de.nb.aventiure2.data.world.base.GameObjectId;
 import de.nb.aventiure2.data.world.gameobjects.GameObjects;
-import de.nb.aventiure2.data.world.lichtverhaeltnisse.Lichtverhaeltnisse;
 import de.nb.aventiure2.data.world.syscomp.memory.Known;
 import de.nb.aventiure2.data.world.syscomp.spatialconnection.impl.SpatialConnection;
-import de.nb.aventiure2.data.world.time.Tageszeit;
+import de.nb.aventiure2.data.world.syscomp.storingplace.Lichtverhaeltnisse;
 
 /**
  * Component für ein {@link GameObject}: Das Game Object (z.B. ein Raum) ist räumlich mit
@@ -59,11 +58,5 @@ public abstract class AbstractSpatialConnectionComp extends AbstractStatelessCom
     @NonNull
     protected ISpatiallyConnectedGO getFrom() {
         return (ISpatiallyConnectedGO) GameObjects.load(db, getGameObjectId());
-    }
-
-    @NonNull
-    protected Lichtverhaeltnisse getLichtverhaeltnisseFrom() {
-        final Tageszeit tageszeit = db.dateTimeDao().now().getTageszeit();
-        return Lichtverhaeltnisse.getLichtverhaeltnisse(tageszeit, getFrom().getId());
     }
 }

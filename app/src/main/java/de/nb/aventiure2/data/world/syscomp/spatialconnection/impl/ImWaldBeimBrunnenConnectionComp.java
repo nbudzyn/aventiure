@@ -11,16 +11,16 @@ import javax.annotation.ParametersAreNonnullByDefault;
 import de.nb.aventiure2.data.database.AvDatabase;
 import de.nb.aventiure2.data.world.base.GameObjectId;
 import de.nb.aventiure2.data.world.gameobjects.GameObjects;
-import de.nb.aventiure2.data.world.lichtverhaeltnisse.Lichtverhaeltnisse;
 import de.nb.aventiure2.data.world.syscomp.memory.Known;
 import de.nb.aventiure2.data.world.syscomp.spatialconnection.AbstractSpatialConnectionComp;
+import de.nb.aventiure2.data.world.syscomp.storingplace.Lichtverhaeltnisse;
 
 import static de.nb.aventiure2.data.world.gameobjects.GameObjects.ABZWEIG_IM_WALD;
 import static de.nb.aventiure2.data.world.gameobjects.GameObjects.IM_WALD_BEIM_BRUNNEN;
 import static de.nb.aventiure2.data.world.gameobjects.GameObjects.WALDWILDNIS_HINTER_DEM_BRUNNEN;
 import static de.nb.aventiure2.data.world.gameobjects.GameObjects.loadSC;
-import static de.nb.aventiure2.data.world.lichtverhaeltnisse.Lichtverhaeltnisse.HELL;
 import static de.nb.aventiure2.data.world.syscomp.spatialconnection.impl.SpatialConnection.con;
+import static de.nb.aventiure2.data.world.syscomp.storingplace.Lichtverhaeltnisse.HELL;
 import static de.nb.aventiure2.data.world.time.AvTimeSpan.mins;
 import static de.nb.aventiure2.german.base.DuDescription.du;
 import static de.nb.aventiure2.german.base.StructuralElement.SENTENCE;
@@ -56,7 +56,8 @@ public class ImWaldBeimBrunnenConnectionComp extends AbstractSpatialConnectionCo
                         + "die Stelle, wo der überwachsene Weg "
                         + "abzweigt", mins(3))
                         .komma()));
-        if (getLichtverhaeltnisseFrom() == HELL ||
+
+        if (getContext().getLichtverhaeltnisseInside() == HELL ||
                 loadSC(db).memoryComp().isKnown(WALDWILDNIS_HINTER_DEM_BRUNNEN)) {
             resImWaldBeimBrunnnen.add(con(WALDWILDNIS_HINTER_DEM_BRUNNEN,
                     "Hinter dem Brunnen in die Wildnis schlagen",

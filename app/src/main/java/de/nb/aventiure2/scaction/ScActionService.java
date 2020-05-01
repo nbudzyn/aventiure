@@ -187,7 +187,7 @@ public class ScActionService {
     }
 
     private ImmutableList<AbstractScAction> buildRoomSpecificActions(
-            final StoryState currentStoryState, final IGameObject room) {
+            final StoryState currentStoryState, final IHasStoringPlaceGO room) {
         final ImmutableList.Builder<AbstractScAction> res = ImmutableList.builder();
 
         res.addAll(KletternAction.buildActions(db, currentStoryState, room));
