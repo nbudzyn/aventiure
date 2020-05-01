@@ -22,14 +22,13 @@ import de.nb.aventiure2.data.world.syscomp.location.ILocatableGO;
 import de.nb.aventiure2.data.world.syscomp.memory.Action;
 import de.nb.aventiure2.data.world.syscomp.memory.Known;
 import de.nb.aventiure2.data.world.syscomp.spatialconnection.ISpatiallyConnectedGO;
-import de.nb.aventiure2.data.world.syscomp.spatialconnection.builder.SingleSpatialConnectionBuilder;
-import de.nb.aventiure2.data.world.syscomp.spatialconnection.builder.SpatialConnection;
-import de.nb.aventiure2.data.world.syscomp.spatialconnection.builder.SpatialConnections;
+import de.nb.aventiure2.data.world.syscomp.spatialconnection.impl.SpatialConnection;
 import de.nb.aventiure2.data.world.syscomp.state.IHasStateGO;
 import de.nb.aventiure2.data.world.syscomp.storingplace.IHasStoringPlaceGO;
 import de.nb.aventiure2.data.world.time.AvTimeSpan;
 import de.nb.aventiure2.german.base.AbstractDescription;
 import de.nb.aventiure2.german.base.DuDescription;
+import de.nb.aventiure2.german.base.StructuralElement;
 import de.nb.aventiure2.scaction.AbstractScAction;
 
 import static com.google.common.base.Preconditions.checkArgument;
@@ -90,8 +89,9 @@ public class BewegenAction<R extends ISpatiallyConnectedGO & IHasStoringPlaceGO,
             final R room) {
         final ImmutableList.Builder<AbstractScAction> res = ImmutableList.builder();
 
+
         final List<SpatialConnection> spatialConnections =
-                SpatialConnections.getFrom(db, room);
+                room.spatialConnectionComp().getConnections();
 
         final NumberOfPossibilities numberOfPossibilities =
                 calcNumberOfPossibilities(spatialConnections.size());
@@ -296,7 +296,8 @@ public class BewegenAction<R extends ISpatiallyConnectedGO & IHasStoringPlaceGO,
                                             description
                                                     .isAllowsAdditionalDuSatzreihengliedOhneSubjekt()));
                 }
-            } else if (initialStoryState.dann()) {
+            } else if (initialStoryState.getEndsThis() == StructuralElement.WORD &&
+                    initialStoryState.dann()) {
                 // "Du stehst wieder vor dem Schloss; dann gehst du wieder hinein in das Schloss."
                 final String satzEvtlMitDann = description
                         .getDescriptionHauptsatzMitKonjunktionaladverbWennNoetig(
@@ -308,7 +309,8 @@ public class BewegenAction<R extends ISpatiallyConnectedGO & IHasStoringPlaceGO,
                                                 satzEvtlMitDann),
                                 description.getTimeElapsed())
                                 .komma(description.isKommaStehtAus())
-                                .dann(!satzEvtlMitDann.startsWith("Dann")));
+                                .dann(description.isDann()
+                                        && !satzEvtlMitDann.startsWith("Dann")));
             } else {
                 return n.add(description);
             }
@@ -332,13 +334,10 @@ public class BewegenAction<R extends ISpatiallyConnectedGO & IHasStoringPlaceGO,
                                                                   lichtverhaeltnisseInNewRoom) {
         final Known newRoomKnown = sc.memoryComp().getKnown(spatialConnection.getTo());
 
-        final SingleSpatialConnectionBuilder singleSpatialConnectionBuilder =
-                new SingleSpatialConnectionBuilder(db, oldRoom);
-
         final boolean alternativeDescriptionAllowed =
-                singleSpatialConnectionBuilder.isAlternativeMovementDescriptionAllowed(
-                        spatialConnection.getTo()
-                );
+                oldRoom.spatialConnectionComp().isAlternativeMovementDescriptionAllowed(
+                        spatialConnection.getTo(),
+                        newRoomKnown, lichtverhaeltnisseInNewRoom);
 
         final AbstractDescription standardDescription =
                 spatialConnection

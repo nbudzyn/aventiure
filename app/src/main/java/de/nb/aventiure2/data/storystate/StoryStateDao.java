@@ -154,7 +154,8 @@ public abstract class StoryStateDao {
                     satzEvtlMitDann)
                     .komma(desc.isKommaStehtAus())
                     .undWartest(desc.isAllowsAdditionalDuSatzreihengliedOhneSubjekt())
-                    .dann(!satzEvtlMitDann.startsWith("Dann"))
+                    .dann(desc.isDann()
+                            && !satzEvtlMitDann.startsWith("Dann"))
                     .beendet(desc.getEndsThis()));
         } else {
             final ImmutableList.Builder<StoryStateBuilder> alternatives =
@@ -162,12 +163,18 @@ public abstract class StoryStateDao {
 
             final StructuralElement startsNew = startsNewAtLeastSentenceForDuDescription(desc);
 
-            alternatives.add(toHauptsatzStoryStateBuilder(startsNew, desc));
+            final StoryStateBuilder standard = toHauptsatzStoryStateBuilder(startsNew, desc);
+            alternatives.add(standard);
 
             if (desc instanceof DuDescription) {
-                alternatives.add(toHauptsatzMitSpeziellemVorfeldStoryStateBuilder(
-                        startsNewAtLeastSentenceForDuDescription(desc),
-                        (DuDescription) desc));
+                final StoryStateBuilder speziellesVorfeld =
+                        toHauptsatzMitSpeziellemVorfeldStoryStateBuilder(
+                                startsNewAtLeastSentenceForDuDescription(desc),
+                                (DuDescription) desc);
+                if (!speziellesVorfeld.build().getText().equals(
+                        standard.build().getText())) {
+                    alternatives.add(speziellesVorfeld);
+                }
             }
 
             return alternatives.build();

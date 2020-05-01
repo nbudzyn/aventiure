@@ -22,6 +22,12 @@ import de.nb.aventiure2.data.world.syscomp.location.ILocatableGO;
 import de.nb.aventiure2.data.world.syscomp.location.LocationSystem;
 import de.nb.aventiure2.data.world.syscomp.location.RoomFactory;
 import de.nb.aventiure2.data.world.syscomp.memory.IHasMemoryGO;
+import de.nb.aventiure2.data.world.syscomp.spatialconnection.impl.DraussenVorDemSchlossConnectionComp;
+import de.nb.aventiure2.data.world.syscomp.spatialconnection.impl.ImWaldBeimBrunnenConnectionComp;
+import de.nb.aventiure2.data.world.syscomp.spatialconnection.impl.ImWaldNaheDemSchlossConnectionComp;
+import de.nb.aventiure2.data.world.syscomp.spatialconnection.impl.SchlossVorhalleConnectionComp;
+import de.nb.aventiure2.data.world.syscomp.spatialconnection.impl.SchlossVorhalleTischBeimFestConnectionComp;
+import de.nb.aventiure2.data.world.syscomp.spatialconnection.impl.SimpleConnectionCompFactory;
 import de.nb.aventiure2.data.world.syscomp.storingplace.IHasStoringPlaceGO;
 import de.nb.aventiure2.data.world.syscomp.storingplace.StoringPlaceType;
 import de.nb.aventiure2.data.world.time.AvDateTime;
@@ -120,23 +126,36 @@ public class GameObjects {
             final CreatureFactory creature = new CreatureFactory(db);
             final InvisibleFactory invisible = new InvisibleFactory(db);
             final RoomFactory room = new RoomFactory();
+            final SimpleConnectionCompFactory connection = new SimpleConnectionCompFactory(db);
 
             ALL = new GameObjectIdMap();
             ALL.putAll(
                     spieler.create(SPIELER_CHARAKTER),
-                    room.create(SCHLOSS_VORHALLE, StoringPlaceType.EIN_TISCH),
-                    room.create(SCHLOSS_VORHALLE_TISCH_BEIM_FEST, StoringPlaceType.HOLZTISCH),
-                    room.create(DRAUSSEN_VOR_DEM_SCHLOSS),
-                    room.create(IM_WALD_NAHE_DEM_SCHLOSS, StoringPlaceType.WALDWEG),
-                    room.create(ABZWEIG_IM_WALD, StoringPlaceType.WALDWEG),
-                    room.create(VOR_DER_HUETTE_IM_WALD, StoringPlaceType.VOR_DER_HUETTE),
-                    room.create(HUETTE_IM_WALD, StoringPlaceType.HOLZTISCH),
-                    room.create(BETT_IN_DER_HUETTE_IM_WALD, StoringPlaceType.NEBEN_DIR_IM_BETT),
-                    room.create(HINTER_DER_HUETTE, StoringPlaceType.UNTER_DEM_BAUM),
-                    room.create(IM_WALD_BEIM_BRUNNEN, StoringPlaceType.GRAS_NEBEN_DEM_BRUNNEN),
-                    room.create(UNTEN_IM_BRUNNEN, StoringPlaceType.AM_GRUNDE_DES_BRUNNENS),
+                    room.create(SCHLOSS_VORHALLE, StoringPlaceType.EIN_TISCH,
+                            new SchlossVorhalleConnectionComp(db)),
+                    room.create(SCHLOSS_VORHALLE_TISCH_BEIM_FEST, StoringPlaceType.HOLZTISCH,
+                            new SchlossVorhalleTischBeimFestConnectionComp(db)),
+                    room.create(DRAUSSEN_VOR_DEM_SCHLOSS,
+                            new DraussenVorDemSchlossConnectionComp(db)),
+                    room.create(IM_WALD_NAHE_DEM_SCHLOSS, StoringPlaceType.WALDWEG,
+                            new ImWaldNaheDemSchlossConnectionComp(db)),
+                    room.create(ABZWEIG_IM_WALD, StoringPlaceType.WALDWEG,
+                            connection.createAbzweigImWald()),
+                    room.create(VOR_DER_HUETTE_IM_WALD, StoringPlaceType.VOR_DER_HUETTE,
+                            connection.createVorDerHuetteImWald()),
+                    room.create(HUETTE_IM_WALD, StoringPlaceType.HOLZTISCH,
+                            connection.createHuetteImWald()),
+                    room.create(BETT_IN_DER_HUETTE_IM_WALD, StoringPlaceType.NEBEN_DIR_IM_BETT,
+                            connection.createBettInDerHuetteImWald()),
+                    room.create(HINTER_DER_HUETTE, StoringPlaceType.UNTER_DEM_BAUM,
+                            connection.createHinterDerHuette()),
+                    room.create(IM_WALD_BEIM_BRUNNEN, StoringPlaceType.GRAS_NEBEN_DEM_BRUNNEN,
+                            new ImWaldBeimBrunnenConnectionComp(db)),
+                    room.create(UNTEN_IM_BRUNNEN, StoringPlaceType.AM_GRUNDE_DES_BRUNNENS,
+                            connection.createNoConnections(UNTEN_IM_BRUNNEN)),
                     room.create(WALDWILDNIS_HINTER_DEM_BRUNNEN,
-                            StoringPlaceType.MATSCHIGER_WALDBODENN),
+                            StoringPlaceType.MATSCHIGER_WALDBODENN,
+                            connection.createWaldwildnisHinterDemBrunnen()),
                     creature.createBasic(SCHLOSSWACHE,
                             np(F, "eine Schlosswache mit langer Hellebarde",
                                     "einer Schlosswache mit langer Hellebarde"),

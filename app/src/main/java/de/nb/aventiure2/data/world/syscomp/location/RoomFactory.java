@@ -4,8 +4,8 @@ import javax.annotation.Nonnull;
 
 import de.nb.aventiure2.data.world.base.GameObject;
 import de.nb.aventiure2.data.world.base.GameObjectId;
+import de.nb.aventiure2.data.world.syscomp.spatialconnection.AbstractSpatialConnectionComp;
 import de.nb.aventiure2.data.world.syscomp.spatialconnection.ISpatiallyConnectedGO;
-import de.nb.aventiure2.data.world.syscomp.spatialconnection.SpatialConnectionComp;
 import de.nb.aventiure2.data.world.syscomp.storingplace.IHasStoringPlaceGO;
 import de.nb.aventiure2.data.world.syscomp.storingplace.StoringPlaceComp;
 import de.nb.aventiure2.data.world.syscomp.storingplace.StoringPlaceType;
@@ -17,24 +17,28 @@ public class RoomFactory {
     public RoomFactory() {
     }
 
-    public static GameObject create(final GameObjectId id) {
-        return create(id, StoringPlaceType.BODEN);
+    public static GameObject create(final GameObjectId id,
+                                    final AbstractSpatialConnectionComp spatialConnectionComp) {
+        return create(id, StoringPlaceType.BODEN, spatialConnectionComp);
     }
 
-    public static GameObject create(final GameObjectId id, final StoringPlaceType locationMode) {
-        return new Room(id, new StoringPlaceComp(id, locationMode));
+    public static GameObject create(final GameObjectId id, final StoringPlaceType locationMode,
+                                    final AbstractSpatialConnectionComp spatialConnectionComp) {
+        return new Room(id, new StoringPlaceComp(id, locationMode),
+                spatialConnectionComp);
     }
 
     private static class Room extends GameObject
             implements IHasStoringPlaceGO, ISpatiallyConnectedGO {
         private final StoringPlaceComp storingPlaceComp;
-        private final SpatialConnectionComp spatialConnectionComp;
+        private final AbstractSpatialConnectionComp spatialConnectionComp;
 
-        public Room(final GameObjectId id, final StoringPlaceComp storingPlaceComp) {
+        public Room(final GameObjectId id, final StoringPlaceComp storingPlaceComp,
+                    final AbstractSpatialConnectionComp spatialConnectionComp) {
             super(id);
             // Jede Komponente muss registiert werden!
             this.storingPlaceComp = addComponent(storingPlaceComp);
-            spatialConnectionComp = addComponent(new SpatialConnectionComp(id));
+            this.spatialConnectionComp = addComponent(spatialConnectionComp);
         }
 
         @Nonnull
@@ -45,7 +49,7 @@ public class RoomFactory {
 
         @Nonnull
         @Override
-        public SpatialConnectionComp spatialConnectionComp() {
+        public AbstractSpatialConnectionComp spatialConnectionComp() {
             return spatialConnectionComp;
         }
     }

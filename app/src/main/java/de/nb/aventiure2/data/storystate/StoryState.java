@@ -135,7 +135,7 @@ public class StoryState {
         return startsNew;
     }
 
-    StructuralElement getEndsThis() {
+    public StructuralElement getEndsThis() {
         return endsThis;
     }
 

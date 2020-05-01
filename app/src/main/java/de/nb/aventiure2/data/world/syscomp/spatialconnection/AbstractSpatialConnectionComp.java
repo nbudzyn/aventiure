@@ -1,31 +1,38 @@
-package de.nb.aventiure2.data.world.syscomp.spatialconnection.builder;
+package de.nb.aventiure2.data.world.syscomp.spatialconnection;
+
+import androidx.annotation.NonNull;
 
 import java.util.List;
 
+import javax.annotation.ParametersAreNonnullByDefault;
+
 import de.nb.aventiure2.data.database.AvDatabase;
+import de.nb.aventiure2.data.world.base.AbstractStatelessComponent;
+import de.nb.aventiure2.data.world.base.GameObject;
 import de.nb.aventiure2.data.world.base.GameObjectId;
+import de.nb.aventiure2.data.world.gameobjects.GameObjects;
 import de.nb.aventiure2.data.world.lichtverhaeltnisse.Lichtverhaeltnisse;
 import de.nb.aventiure2.data.world.syscomp.memory.Known;
-import de.nb.aventiure2.data.world.syscomp.spatialconnection.ISpatiallyConnectedGO;
+import de.nb.aventiure2.data.world.syscomp.spatialconnection.impl.SpatialConnection;
 import de.nb.aventiure2.data.world.time.Tageszeit;
 
-import static de.nb.aventiure2.data.world.gameobjects.GameObjects.load;
-
 /**
- * Builds all {@link SpatialConnection}s starting from
- * one {@link ISpatiallyConnectedGO}.
+ * Component für ein {@link GameObject}: Das Game Object (z.B. ein Raum) ist räumlich mit
+ * anderen Game Objects (z.B. anderen Räumen) verbunden ist, so dass sich der
+ * Spielercharakter oder jemand anderes entlang diesen Verbindungen bewegen kann.
  */
-abstract class AbstractSpatialConnectionBuilder {
+@ParametersAreNonnullByDefault
+public abstract class AbstractSpatialConnectionComp extends AbstractStatelessComponent {
     protected final AvDatabase db;
-    private final GameObjectId gameObjectId;
 
-    AbstractSpatialConnectionBuilder(
-            final AvDatabase db, final GameObjectId gameObjectId) {
+    public AbstractSpatialConnectionComp(final GameObjectId id,
+                                         final AvDatabase db) {
+        super(id);
         this.db = db;
-        this.gameObjectId = gameObjectId;
     }
 
-    abstract List<SpatialConnection> getConnections();
+    @NonNull
+    public abstract List<SpatialConnection> getConnections();
 
     /**
      * Gibt zurück, ob bei einer Bewegung zu <code>to</code> hin
@@ -45,12 +52,16 @@ abstract class AbstractSpatialConnectionBuilder {
      * {@link SpatialConnection.SCMoveDescriptionProvider#getSCMoveDescription(Known, Lichtverhaeltnisse)}-Methode
      * aufgerufen wird!
      */
-    abstract boolean isAlternativeMovementDescriptionAllowed(final GameObjectId to);
+    public abstract boolean isAlternativeMovementDescriptionAllowed(final GameObjectId to,
+                                                                    Known newRoomKnown,
+                                                                    Lichtverhaeltnisse lichtverhaeltnisseInNewRoom);
 
+    @NonNull
     protected ISpatiallyConnectedGO getFrom() {
-        return (ISpatiallyConnectedGO) load(db, gameObjectId);
+        return (ISpatiallyConnectedGO) GameObjects.load(db, getGameObjectId());
     }
 
+    @NonNull
     protected Lichtverhaeltnisse getLichtverhaeltnisseFrom() {
         final Tageszeit tageszeit = db.dateTimeDao().now().getTageszeit();
         return Lichtverhaeltnisse.getLichtverhaeltnisse(tageszeit, getFrom().getId());

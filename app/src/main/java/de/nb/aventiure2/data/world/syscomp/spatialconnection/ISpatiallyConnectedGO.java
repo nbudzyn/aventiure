@@ -11,5 +11,5 @@ import de.nb.aventiure2.data.world.base.IGameObject;
  */
 public interface ISpatiallyConnectedGO extends IGameObject {
     @Nonnull
-    public SpatialConnectionComp spatialConnectionComp();
+    public AbstractSpatialConnectionComp spatialConnectionComp();
 }

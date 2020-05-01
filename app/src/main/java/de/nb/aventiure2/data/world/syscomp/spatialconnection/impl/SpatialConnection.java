@@ -1,4 +1,4 @@
-package de.nb.aventiure2.data.world.syscomp.spatialconnection.builder;
+package de.nb.aventiure2.data.world.syscomp.spatialconnection.impl;
 
 import de.nb.aventiure2.data.world.base.GameObjectId;
 import de.nb.aventiure2.data.world.lichtverhaeltnisse.Lichtverhaeltnisse;

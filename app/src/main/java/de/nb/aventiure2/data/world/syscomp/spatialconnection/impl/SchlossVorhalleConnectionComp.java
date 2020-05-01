@@ -1,4 +1,4 @@
-package de.nb.aventiure2.data.world.syscomp.spatialconnection.builder;
+package de.nb.aventiure2.data.world.syscomp.spatialconnection.impl;
 
 import androidx.annotation.NonNull;
 
@@ -6,10 +6,14 @@ import com.google.common.collect.ImmutableList;
 
 import java.util.List;
 
+import javax.annotation.ParametersAreNonnullByDefault;
+
 import de.nb.aventiure2.data.database.AvDatabase;
 import de.nb.aventiure2.data.world.base.GameObjectId;
+import de.nb.aventiure2.data.world.gameobjects.GameObjects;
 import de.nb.aventiure2.data.world.lichtverhaeltnisse.Lichtverhaeltnisse;
 import de.nb.aventiure2.data.world.syscomp.memory.Known;
+import de.nb.aventiure2.data.world.syscomp.spatialconnection.AbstractSpatialConnectionComp;
 import de.nb.aventiure2.data.world.syscomp.state.IHasStateGO;
 import de.nb.aventiure2.german.base.AbstractDescription;
 
@@ -17,7 +21,6 @@ import static de.nb.aventiure2.data.world.gameobjects.GameObjects.DRAUSSEN_VOR_D
 import static de.nb.aventiure2.data.world.gameobjects.GameObjects.SCHLOSSFEST;
 import static de.nb.aventiure2.data.world.gameobjects.GameObjects.SCHLOSS_VORHALLE;
 import static de.nb.aventiure2.data.world.gameobjects.GameObjects.SCHLOSS_VORHALLE_TISCH_BEIM_FEST;
-import static de.nb.aventiure2.data.world.gameobjects.GameObjects.load;
 import static de.nb.aventiure2.data.world.lichtverhaeltnisse.Lichtverhaeltnisse.HELL;
 import static de.nb.aventiure2.data.world.syscomp.memory.Known.KNOWN_FROM_DARKNESS;
 import static de.nb.aventiure2.data.world.syscomp.memory.Known.UNKNOWN;
@@ -26,22 +29,26 @@ import static de.nb.aventiure2.data.world.time.AvTimeSpan.mins;
 import static de.nb.aventiure2.german.base.DuDescription.du;
 
 /**
- * Builds all {@link SpatialConnection} starting from
- * {@link de.nb.aventiure2.data.world.gameobjects.GameObjects#SCHLOSS_VORHALLE}.
+ * An implementation of {@link AbstractSpatialConnectionComp}
+ * for the {@link de.nb.aventiure2.data.world.gameobjects.GameObjects#SCHLOSS_VORHALLE}
+ * room.
  */
-class SchlossVorhalleConnectionBuilder extends AbstractSpatialConnectionBuilder {
-
-    public static final String COUNTER_TISCH_BEIM_FEST =
+@ParametersAreNonnullByDefault
+public class SchlossVorhalleConnectionComp extends AbstractSpatialConnectionComp {
+    private static final String COUNTER_TISCH_BEIM_FEST =
             "RoomConnectionBuilder_SchlossVorhalle_SchlossVorhalleTischBeimFest";
 
-    SchlossVorhalleConnectionBuilder(final AvDatabase db) {
-        super(db, SCHLOSS_VORHALLE);
+    public SchlossVorhalleConnectionComp(
+            final AvDatabase db) {
+        super(SCHLOSS_VORHALLE, db);
     }
 
     @Override
-    boolean isAlternativeMovementDescriptionAllowed(final GameObjectId to) {
+    public boolean isAlternativeMovementDescriptionAllowed(final GameObjectId to,
+                                                           final Known newRoomKnown,
+                                                           final Lichtverhaeltnisse lichtverhaeltnisseInNewRoom) {
         if (to.equals(SCHLOSS_VORHALLE_TISCH_BEIM_FEST) &&
-                ((IHasStateGO) load(db, SCHLOSSFEST)).stateComp().hasState(BEGONNEN) &&
+                ((IHasStateGO) GameObjects.load(db, SCHLOSSFEST)).stateComp().hasState(BEGONNEN) &&
                 db.counterDao().get(COUNTER_TISCH_BEIM_FEST) == 0) {
             return false;
         }
@@ -50,12 +57,13 @@ class SchlossVorhalleConnectionBuilder extends AbstractSpatialConnectionBuilder 
     }
 
     @Override
-    List<SpatialConnection> getConnections() {
+    @NonNull
+    public List<SpatialConnection> getConnections() {
         final ImmutableList.Builder<SpatialConnection> res = ImmutableList.builder();
         res.add(SpatialConnection.con(DRAUSSEN_VOR_DEM_SCHLOSS,
                 "Das Schloss verlassen",
                 this::getDescTo_DraussenVorDemSchloss));
-        if (((IHasStateGO) load(db, SCHLOSSFEST)).stateComp().hasState(BEGONNEN)) {
+        if (((IHasStateGO) GameObjects.load(db, SCHLOSSFEST)).stateComp().hasState(BEGONNEN)) {
             res.add(SpatialConnection.con(SCHLOSS_VORHALLE_TISCH_BEIM_FEST,
                     "An einen Tisch setzen",
                     this::getDescTo_SchlossVorhalleTischBeimFest));
@@ -65,7 +73,7 @@ class SchlossVorhalleConnectionBuilder extends AbstractSpatialConnectionBuilder 
 
     private AbstractDescription getDescTo_DraussenVorDemSchloss(
             final Known newRoomKnown, final Lichtverhaeltnisse lichtverhaeltnisse) {
-        switch (((IHasStateGO) load(db, SCHLOSSFEST)).stateComp().getState()) {
+        switch (((IHasStateGO) GameObjects.load(db, SCHLOSSFEST)).stateComp().getState()) {
             case BEGONNEN:
                 return getDescTo_DraussenVorDemSchloss_FestBegonnen();
 
