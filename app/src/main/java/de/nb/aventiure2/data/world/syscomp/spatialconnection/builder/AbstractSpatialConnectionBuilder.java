@@ -1,10 +1,11 @@
-package de.nb.aventiure2.data.world.syscomp.spatialconnection;
+package de.nb.aventiure2.data.world.syscomp.spatialconnection.builder;
 
 import java.util.List;
 
 import de.nb.aventiure2.data.database.AvDatabase;
 import de.nb.aventiure2.data.world.base.GameObjectId;
 import de.nb.aventiure2.data.world.lichtverhaeltnisse.Lichtverhaeltnisse;
+import de.nb.aventiure2.data.world.syscomp.spatialconnection.ISpatiallyConnectedGO;
 import de.nb.aventiure2.data.world.time.Tageszeit;
 
 import static de.nb.aventiure2.data.world.gameobjects.GameObjects.load;

@@ -1,4 +1,4 @@
-package de.nb.aventiure2.data.world.syscomp.spatialconnection;
+package de.nb.aventiure2.data.world.syscomp.spatialconnection.builder;
 
 import androidx.annotation.NonNull;
 
@@ -10,6 +10,7 @@ import de.nb.aventiure2.data.database.AvDatabase;
 import de.nb.aventiure2.data.world.gameobjects.player.SpielerCharakter;
 import de.nb.aventiure2.data.world.lichtverhaeltnisse.Lichtverhaeltnisse;
 import de.nb.aventiure2.data.world.syscomp.memory.Known;
+import de.nb.aventiure2.data.world.syscomp.spatialconnection.ISpatiallyConnectedGO;
 import de.nb.aventiure2.data.world.syscomp.state.IHasStateGO;
 import de.nb.aventiure2.data.world.time.AvTimeSpan;
 import de.nb.aventiure2.data.world.time.Tageszeit;
@@ -33,7 +34,6 @@ import static de.nb.aventiure2.data.world.gameobjects.GameObjects.loadSC;
 import static de.nb.aventiure2.data.world.lichtverhaeltnisse.Lichtverhaeltnisse.HELL;
 import static de.nb.aventiure2.data.world.syscomp.memory.Known.KNOWN_FROM_DARKNESS;
 import static de.nb.aventiure2.data.world.syscomp.memory.Known.UNKNOWN;
-import static de.nb.aventiure2.data.world.syscomp.spatialconnection.SpatialConnection.con;
 import static de.nb.aventiure2.data.world.syscomp.state.GameObjectState.BEGONNEN;
 import static de.nb.aventiure2.data.world.time.AvTimeSpan.mins;
 import static de.nb.aventiure2.data.world.time.AvTimeSpan.secs;
@@ -64,18 +64,18 @@ class SingleSpatialConnectionBuilder {
         }
         if (from.is(SCHLOSS_VORHALLE_TISCH_BEIM_FEST)) {
             return ImmutableList.of(
-                    con(SCHLOSS_VORHALLE,
+                    SpatialConnection.con(SCHLOSS_VORHALLE,
                             "Vom Tisch aufstehen",
                             SingleSpatialConnectionBuilder::getDesc_SchlossVorhalleTischBeimFest_SchlossVorhalle));
         }
         if (from.is(DRAUSSEN_VOR_DEM_SCHLOSS)) {
             return ImmutableList.of(
 
-                    con(SCHLOSS_VORHALLE,
+                    SpatialConnection.con(SCHLOSS_VORHALLE,
                             "Das Schloss betreten",
                             this::getDesc_DraussenVorDemSchloss_SchlossVorhalle),
 
-                    con(IM_WALD_NAHE_DEM_SCHLOSS,
+                    SpatialConnection.con(IM_WALD_NAHE_DEM_SCHLOSS,
                             "In den Wald gehen",
                             du("folgst", "einem Pfad in den Wald", mins(10))
                                     .undWartest()
@@ -97,10 +97,10 @@ class SingleSpatialConnectionBuilder {
         }
         if (from.is(IM_WALD_NAHE_DEM_SCHLOSS)) {
             return ImmutableList.of(
-                    con(DRAUSSEN_VOR_DEM_SCHLOSS,
+                    SpatialConnection.con(DRAUSSEN_VOR_DEM_SCHLOSS,
                             "Den Wald verlassen",
                             this::getDesc_ImWaldNaheDemSchloss_DraussenVorDemSchloss),
-                    con(ABZWEIG_IM_WALD,
+                    SpatialConnection.con(ABZWEIG_IM_WALD,
                             "Tiefer in den Wald hineingehen",
                             neuerSatz("Nicht lang, und zur Linken geht zwischen "
                                     + "den Bäumen ein alter, düsterer Weg ab, über "
@@ -116,12 +116,12 @@ class SingleSpatialConnectionBuilder {
             // den dunklen Wald..."
             return ImmutableList.of(
 
-                    con(IM_WALD_NAHE_DEM_SCHLOSS,
+                    SpatialConnection.con(IM_WALD_NAHE_DEM_SCHLOSS,
                             "In Richtung Schloss gehen",
                             neuerSatz("Von dort gehst du weiter in Richtung Schloss", mins(5))
                     ),
 
-                    con(VOR_DER_HUETTE_IM_WALD,
+                    SpatialConnection.con(VOR_DER_HUETTE_IM_WALD,
                             "Den überwachsenen Abzweig nehmen",
                             du(SENTENCE, "fasst",
                                     "dir ein Herz und stapfst zwischen "
@@ -154,7 +154,7 @@ class SingleSpatialConnectionBuilder {
                                     .undWartest()
                     ),
 
-                    con(IM_WALD_BEIM_BRUNNEN,
+                    SpatialConnection.con(IM_WALD_BEIM_BRUNNEN,
                             "Auf dem Hauptpfad tiefer in den Wald gehen",
                             neuerSatz("Der breitere Pfad führt zu einer alten "
                                     + "Linde, unter der ist ein Brunnen. "
@@ -184,14 +184,14 @@ class SingleSpatialConnectionBuilder {
         }
         if (from.is(VOR_DER_HUETTE_IM_WALD)) {
             return ImmutableList.of(
-                    con(ABZWEIG_IM_WALD,
+                    SpatialConnection.con(ABZWEIG_IM_WALD,
                             "Auf den Hauptpfad zurückkehren",
                             neuerSatz("Durch Farn und Gestrüpp gehst du zurück zum "
                                     + "Hauptpfad", mins(2))
                                     .undWartest()
                                     .dann()
                     ),
-                    con(HUETTE_IM_WALD,
+                    SpatialConnection.con(HUETTE_IM_WALD,
                             "Die Hütte betreten",
                             neuerSatz("Du schiebst die Tür zur Seite und "
                                     + "zwängst dich hinein. Durch Ritzen in den "
@@ -223,7 +223,7 @@ class SingleSpatialConnectionBuilder {
                                     + "Bett wenig zu sehen gibt", secs(15))
                                     .komma()
                                     .undWartest()),
-                    con(HINTER_DER_HUETTE,
+                    SpatialConnection.con(HINTER_DER_HUETTE,
                             "Um die Hütte herumgehen",
                             neuerSatz("Ein paar Schritte um die Hütte herum und "
                                     + "du kommst in einen kleinen, völlig "
@@ -251,7 +251,7 @@ class SingleSpatialConnectionBuilder {
             // STORY Spieler richtet Hütte gemütlich ein. Hütte ist gegen Wölfe etc. geschützt.
 
             return ImmutableList.of(
-                    con(VOR_DER_HUETTE_IM_WALD,
+                    SpatialConnection.con(VOR_DER_HUETTE_IM_WALD,
                             "Die Hütte verlassen",
                             du("zwängst", "dich wieder durch die Tür nach "
                                     + "draußen", secs(15))
@@ -259,7 +259,7 @@ class SingleSpatialConnectionBuilder {
                                     .dann()
                     ),
 
-                    con(BETT_IN_DER_HUETTE_IM_WALD,
+                    SpatialConnection.con(BETT_IN_DER_HUETTE_IM_WALD,
                             "In das Bett legen",
                             du("legst", "dich in das hölzere Bettgestell. "
                                     + "Gemütlich ist etwas anderes, aber nach den "
@@ -273,7 +273,7 @@ class SingleSpatialConnectionBuilder {
         }
         if (from.is(HINTER_DER_HUETTE)) {
             return ImmutableList.of(
-                    con(VOR_DER_HUETTE_IM_WALD,
+                    SpatialConnection.con(VOR_DER_HUETTE_IM_WALD,
                             "Zur Vorderseite der Hütte gehen",
                             du("kehrst", "zurück zur Vorderseite der "
                                     + "Hütte", secs(15))
@@ -283,7 +283,7 @@ class SingleSpatialConnectionBuilder {
             );
         }
         if (from.is(BETT_IN_DER_HUETTE_IM_WALD)) {
-            return ImmutableList.of(con(HUETTE_IM_WALD,
+            return ImmutableList.of(SpatialConnection.con(HUETTE_IM_WALD,
                     "Aufstehen",
                     du(SENTENCE, "reckst", "dich noch einmal und stehst "
                             + "wieder auf", secs(10))
@@ -294,7 +294,7 @@ class SingleSpatialConnectionBuilder {
             final ImmutableList.Builder<SpatialConnection> resImWaldBeimBrunnnen =
                     ImmutableList.builder();
 
-            resImWaldBeimBrunnnen.add(con(ABZWEIG_IM_WALD,
+            resImWaldBeimBrunnnen.add(SpatialConnection.con(ABZWEIG_IM_WALD,
                     "Den Weg Richtung Schloss gehen",
                     du(SENTENCE, "verlässt", "den Brunnen und erreichst bald "
                             + "die Stelle, wo der überwachsene Weg "
@@ -302,7 +302,7 @@ class SingleSpatialConnectionBuilder {
                             .komma()));
             if (getLichtverhaeltnisseFrom() == HELL ||
                     sc.memoryComp().isKnown(WALDWILDNIS_HINTER_DEM_BRUNNEN)) {
-                resImWaldBeimBrunnnen.add(con(WALDWILDNIS_HINTER_DEM_BRUNNEN,
+                resImWaldBeimBrunnnen.add(SpatialConnection.con(WALDWILDNIS_HINTER_DEM_BRUNNEN,
                         "Hinter dem Brunnen in die Wildnis schlagen",
                         du(SENTENCE, "verlässt", "den Brunnen und schlägst dich in die "
                                 + "Wildnis "
@@ -331,7 +331,7 @@ class SingleSpatialConnectionBuilder {
         if (from.is(WALDWILDNIS_HINTER_DEM_BRUNNEN)) {
             //allg(
             // "Durch den wilden Wald suchst du dir einen Weg"
-            return ImmutableList.of(con(IM_WALD_BEIM_BRUNNEN,
+            return ImmutableList.of(SpatialConnection.con(IM_WALD_BEIM_BRUNNEN,
                     "Zum Brunnen gehen",
                     du("suchst", "dir einen Weg "
                                     + "durch den wilden Wald zurück zum Brunnen", "durch den wilden Wald",
@@ -350,11 +350,11 @@ class SingleSpatialConnectionBuilder {
     private List<SpatialConnection> getSpatialConnectionsSchlossVorhalle() {
         final ImmutableList.Builder<SpatialConnection> resSchlossVorhalle =
                 ImmutableList.builder();
-        resSchlossVorhalle.add(con(DRAUSSEN_VOR_DEM_SCHLOSS,
+        resSchlossVorhalle.add(SpatialConnection.con(DRAUSSEN_VOR_DEM_SCHLOSS,
                 "Das Schloss verlassen",
                 this::getDesc_SchlossVorhalle_DraussenVorDemSchloss));
         if (((IHasStateGO) load(db, SCHLOSSFEST)).stateComp().hasState(BEGONNEN)) {
-            resSchlossVorhalle.add(con(SCHLOSS_VORHALLE_TISCH_BEIM_FEST,
+            resSchlossVorhalle.add(SpatialConnection.con(SCHLOSS_VORHALLE_TISCH_BEIM_FEST,
                     "An einen Tisch setzen",
                     this::getDesc_SchlossVorhalle_SchlossVorhalleTischBeimFest));
         }

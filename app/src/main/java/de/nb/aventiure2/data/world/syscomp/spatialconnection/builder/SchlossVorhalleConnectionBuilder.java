@@ -1,4 +1,4 @@
-package de.nb.aventiure2.data.world.syscomp.spatialconnection;
+package de.nb.aventiure2.data.world.syscomp.spatialconnection.builder;
 
 import androidx.annotation.NonNull;
 
@@ -20,7 +20,6 @@ import static de.nb.aventiure2.data.world.gameobjects.GameObjects.load;
 import static de.nb.aventiure2.data.world.lichtverhaeltnisse.Lichtverhaeltnisse.HELL;
 import static de.nb.aventiure2.data.world.syscomp.memory.Known.KNOWN_FROM_DARKNESS;
 import static de.nb.aventiure2.data.world.syscomp.memory.Known.UNKNOWN;
-import static de.nb.aventiure2.data.world.syscomp.spatialconnection.SpatialConnection.con;
 import static de.nb.aventiure2.data.world.syscomp.state.GameObjectState.BEGONNEN;
 import static de.nb.aventiure2.data.world.time.AvTimeSpan.mins;
 import static de.nb.aventiure2.german.base.DuDescription.du;
@@ -37,11 +36,11 @@ class SchlossVorhalleConnectionBuilder extends AbstractSpatialConnectionBuilder 
     @Override
     List<SpatialConnection> getConnections() {
         final ImmutableList.Builder<SpatialConnection> res = ImmutableList.builder();
-        res.add(con(DRAUSSEN_VOR_DEM_SCHLOSS,
+        res.add(SpatialConnection.con(DRAUSSEN_VOR_DEM_SCHLOSS,
                 "Das Schloss verlassen",
                 this::getDescTo_DraussenVorDemSchloss));
         if (((IHasStateGO) load(db, SCHLOSSFEST)).stateComp().hasState(BEGONNEN)) {
-            res.add(con(SCHLOSS_VORHALLE_TISCH_BEIM_FEST,
+            res.add(SpatialConnection.con(SCHLOSS_VORHALLE_TISCH_BEIM_FEST,
                     "An einen Tisch setzen",
                     this::getDescTo_SchlossVorhalleTischBeimFest));
         }
