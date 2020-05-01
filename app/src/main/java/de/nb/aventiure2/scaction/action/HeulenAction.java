@@ -109,7 +109,7 @@ public class HeulenAction extends AbstractScAction {
         froschprinz.talkingComp().setTalkingTo(sc);
         sc.feelingsComp().setMood(Mood.NEUTRAL);
         sc.memoryComp().upgradeKnown(FROSCHPRINZ, Known.getKnown(
-                sc.locationComp().getLocation().getLichtverhaeltnisseInside()));
+                sc.locationComp().getLocation().storingPlaceComp().getLichtverhaeltnisseInside()));
 
         return n.add(du("weinst", "immer lauter und kannst dich gar nicht trösten. " +
                 "Und wie du so klagst, ruft dir jemand zu: „Was hast du vor, " +

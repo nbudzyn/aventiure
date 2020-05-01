@@ -12,7 +12,7 @@ import de.nb.aventiure2.data.world.syscomp.location.LocationComp;
 import de.nb.aventiure2.data.world.syscomp.memory.Known;
 import de.nb.aventiure2.data.world.syscomp.memory.MemoryComp;
 import de.nb.aventiure2.data.world.syscomp.storingplace.StoringPlaceComp;
-import de.nb.aventiure2.data.world.syscomp.talking.TalkingComp;
+import de.nb.aventiure2.data.world.syscomp.talking.impl.NoSCTalkActionsTalkingComp;
 import de.nb.aventiure2.data.world.time.AvDateTime;
 
 import static de.nb.aventiure2.data.world.gameobjects.GameObjects.GOLDENE_KUGEL;
@@ -42,7 +42,7 @@ public class SpielerCharakterFactory {
                         new AvDateTime(1, oClock(8)),
                         hours(6)),
                 new MemoryComp(id, db, createKnownMap()),
-                new TalkingComp(id, db));
+                new NoSCTalkActionsTalkingComp(SPIELER_CHARAKTER, db));
     }
 
     private static Map<GameObjectId, Known> createKnownMap() {

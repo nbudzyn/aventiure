@@ -9,5 +9,5 @@ import de.nb.aventiure2.data.world.base.IGameObject;
  */
 public interface ITalkerGO extends IGameObject {
     @Nonnull
-    TalkingComp talkingComp();
+    AbstractTalkingComp talkingComp();
 }

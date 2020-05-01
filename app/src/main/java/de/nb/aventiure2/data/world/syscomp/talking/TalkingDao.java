@@ -9,7 +9,7 @@ import de.nb.aventiure2.data.world.base.GameObjectId;
 import de.nb.aventiure2.data.world.base.IComponentDao;
 
 /**
- * Android ROOM DAO for the {@link TalkingComp} component.
+ * Android ROOM DAO for the {@link AbstractTalkingComp} component.
  */
 @Dao
 public abstract class TalkingDao implements IComponentDao<TalkingPCD> {

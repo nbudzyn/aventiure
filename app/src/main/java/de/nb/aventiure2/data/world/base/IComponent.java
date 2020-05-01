@@ -5,13 +5,6 @@ package de.nb.aventiure2.data.world.base;
  */
 interface IComponent {
     /**
-     * Hier registriert sich das Game Object bei der Component. Bei Bedarf kann die
-     * Komponente hier dem Game Object "Nachrichten schicken" oder "Fragen stellen",
-     * die ggf. auch andere Components treffen können.
-     */
-    void setContext(ComponentContext componentContext);
-
-    /**
      * Speichert die initialen Daten der Komponente (sofern sie welche hat) in die
      * Datenbank.
      */

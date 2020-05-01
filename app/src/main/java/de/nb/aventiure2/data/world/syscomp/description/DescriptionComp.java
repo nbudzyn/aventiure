@@ -32,6 +32,21 @@ public class DescriptionComp extends AbstractStatelessComponent {
         return descriptionAtFirstSight;
     }
 
+    public Nominalphrase getDescription(final boolean known,
+                                        final boolean shortIfKnown) {
+        if (known) {
+            return getDescriptionWhenKnown(shortIfKnown);
+        }
+
+        return getDescriptionAtFirstSight();
+    }
+
+    public Nominalphrase getDescriptionWhenKnown(final boolean shortIfKnown) {
+        return shortIfKnown ?
+                getShortDescriptionWhenKnown() :
+                getNormalDescriptionWhenKnown();
+    }
+
     public Nominalphrase getNormalDescriptionWhenKnown() {
         return normalDescriptionWhenKnown;
     }

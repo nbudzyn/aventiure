@@ -3,22 +3,15 @@ package de.nb.aventiure2.scaction;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
-import com.google.common.collect.ImmutableCollection;
-
-import java.util.Collection;
-
 import de.nb.aventiure2.data.database.AvDatabase;
 import de.nb.aventiure2.data.storystate.IPlayerAction;
 import de.nb.aventiure2.data.storystate.StoryState;
-import de.nb.aventiure2.data.storystate.StoryStateBuilder;
 import de.nb.aventiure2.data.storystate.StoryStateDao;
-import de.nb.aventiure2.data.world.base.IGameObject;
 import de.nb.aventiure2.data.world.gameobjects.GameObjects;
 import de.nb.aventiure2.data.world.gameobjects.player.SpielerCharakter;
 import de.nb.aventiure2.data.world.syscomp.description.IDescribableGO;
 import de.nb.aventiure2.data.world.time.AvDateTime;
 import de.nb.aventiure2.data.world.time.AvTimeSpan;
-import de.nb.aventiure2.data.world.time.Tageszeit;
 import de.nb.aventiure2.german.base.DeklinierbarePhrase;
 import de.nb.aventiure2.german.base.Nominalphrase;
 import de.nb.aventiure2.german.base.Personalpronomen;
@@ -176,26 +169,5 @@ public abstract class AbstractScAction implements IPlayerAction {
     protected Nominalphrase getDescription(final IDescribableGO gameObject,
                                            final boolean shortIfKnown) {
         return GameObjects.getPOVDescription(sc, gameObject, shortIfKnown);
-    }
-
-    protected boolean isKnownToPlayerCharacter(final IGameObject gameObject) {
-        return sc.memoryComp().isKnown(gameObject);
-    }
-
-    protected Tageszeit getTageszeit() {
-        return db.dateTimeDao().now().getTageszeit();
-    }
-
-    protected StoryStateBuilder alt(
-            @NonNull final ImmutableCollection.Builder<StoryStateBuilder> alternatives) {
-        return alt(alternatives.build());
-    }
-
-    protected StoryStateBuilder alt(@NonNull final Collection<StoryStateBuilder> alternatives) {
-        return alt(alternatives.toArray(new StoryStateBuilder[0]));
-    }
-
-    protected StoryStateBuilder alt(final StoryStateBuilder... alternatives) {
-        return n.chooseNextFrom(alternatives);
     }
 }

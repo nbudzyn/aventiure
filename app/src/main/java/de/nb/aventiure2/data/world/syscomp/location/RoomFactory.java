@@ -7,9 +7,12 @@ import de.nb.aventiure2.data.world.base.GameObject;
 import de.nb.aventiure2.data.world.base.GameObjectId;
 import de.nb.aventiure2.data.world.syscomp.spatialconnection.AbstractSpatialConnectionComp;
 import de.nb.aventiure2.data.world.syscomp.spatialconnection.ISpatiallyConnectedGO;
+import de.nb.aventiure2.data.world.syscomp.spatialconnection.impl.ImWaldBeimBrunnenConnectionComp;
 import de.nb.aventiure2.data.world.syscomp.storingplace.IHasStoringPlaceGO;
 import de.nb.aventiure2.data.world.syscomp.storingplace.StoringPlaceComp;
 import de.nb.aventiure2.data.world.syscomp.storingplace.StoringPlaceType;
+
+import static de.nb.aventiure2.data.world.gameobjects.GameObjects.IM_WALD_BEIM_BRUNNEN;
 
 /**
  * A factory for special {@link GameObject}s: Rooms in the world.
@@ -19,6 +22,15 @@ public class RoomFactory {
 
     public RoomFactory(final AvDatabase db) {
         this.db = db;
+    }
+
+    public GameObject createImWaldBeimBrunnen() {
+        final StoringPlaceComp storingPlaceComp = new StoringPlaceComp(IM_WALD_BEIM_BRUNNEN, db,
+                StoringPlaceType.GRAS_NEBEN_DEM_BRUNNEN,
+                false);
+
+        return new Room(IM_WALD_BEIM_BRUNNEN, storingPlaceComp,
+                new ImWaldBeimBrunnenConnectionComp(db, storingPlaceComp));
     }
 
     public GameObject create(final GameObjectId id,

@@ -14,8 +14,8 @@ import de.nb.aventiure2.data.world.syscomp.memory.IHasMemoryGO;
 import de.nb.aventiure2.data.world.syscomp.memory.MemoryComp;
 import de.nb.aventiure2.data.world.syscomp.storingplace.IHasStoringPlaceGO;
 import de.nb.aventiure2.data.world.syscomp.storingplace.StoringPlaceComp;
+import de.nb.aventiure2.data.world.syscomp.talking.AbstractTalkingComp;
 import de.nb.aventiure2.data.world.syscomp.talking.ITalkerGO;
-import de.nb.aventiure2.data.world.syscomp.talking.TalkingComp;
 
 public class SpielerCharakter extends GameObject
         implements ILocatableGO, IHasStoringPlaceGO, IFeelingBeingGO,
@@ -23,7 +23,7 @@ public class SpielerCharakter extends GameObject
     private final LocationComp locationComp;
     private final StoringPlaceComp storingPlaceComp;
     private final FeelingsComp feelingsComp;
-    private final TalkingComp talkingComp;
+    private final AbstractTalkingComp talkingComp;
     private final MemoryComp memoryComp;
     private final AliveComp alive;
 
@@ -32,7 +32,7 @@ public class SpielerCharakter extends GameObject
                             final StoringPlaceComp storingPlaceComp,
                             final FeelingsComp feelingsComp,
                             final MemoryComp memoryComp,
-                            final TalkingComp talkingComp) {
+                            final AbstractTalkingComp talkingComp) {
         super(id);
         // Jede Komponente muss registiert werden!
         this.locationComp = addComponent(locationComp);
@@ -63,7 +63,7 @@ public class SpielerCharakter extends GameObject
 
     @Nonnull
     @Override
-    public TalkingComp talkingComp() {
+    public AbstractTalkingComp talkingComp() {
         return talkingComp;
     }
 

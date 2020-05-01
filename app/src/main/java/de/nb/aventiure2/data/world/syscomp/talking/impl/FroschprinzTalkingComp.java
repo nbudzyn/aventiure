@@ -1,6 +1,6 @@
-package de.nb.aventiure2.scaction.action.creature.conversation;
+package de.nb.aventiure2.data.world.syscomp.talking.impl;
 
-import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
 import com.google.common.collect.ImmutableList;
 
@@ -8,25 +8,33 @@ import java.util.List;
 
 import de.nb.aventiure2.data.database.AvDatabase;
 import de.nb.aventiure2.data.storystate.StoryState;
+import de.nb.aventiure2.data.world.base.GameObjectId;
+import de.nb.aventiure2.data.world.gameobjects.GameObjects;
+import de.nb.aventiure2.data.world.syscomp.description.DescriptionComp;
 import de.nb.aventiure2.data.world.syscomp.description.IDescribableGO;
 import de.nb.aventiure2.data.world.syscomp.location.ILocatableGO;
 import de.nb.aventiure2.data.world.syscomp.memory.Action;
-import de.nb.aventiure2.data.world.syscomp.state.IHasStateGO;
-import de.nb.aventiure2.data.world.syscomp.storingplace.IHasStoringPlaceGO;
-import de.nb.aventiure2.data.world.syscomp.talking.ITalkerGO;
+import de.nb.aventiure2.data.world.syscomp.state.StateComp;
+import de.nb.aventiure2.data.world.syscomp.talking.AbstractTalkingComp;
 import de.nb.aventiure2.data.world.time.AvTimeSpan;
 import de.nb.aventiure2.german.base.DeklinierbarePhrase;
 import de.nb.aventiure2.german.base.Indefinitpronomen;
 import de.nb.aventiure2.german.base.Nominalphrase;
 
+import static de.nb.aventiure2.data.world.gameobjects.GameObjects.FROSCHPRINZ;
 import static de.nb.aventiure2.data.world.gameobjects.GameObjects.IM_WALD_BEIM_BRUNNEN;
 import static de.nb.aventiure2.data.world.gameobjects.GameObjects.UNTEN_IM_BRUNNEN;
-import static de.nb.aventiure2.data.world.gameobjects.GameObjects.loadDescribableNonLivingInventory;
+import static de.nb.aventiure2.data.world.gameobjects.GameObjects.loadSC;
 import static de.nb.aventiure2.data.world.syscomp.feelings.Mood.VOLLER_FREUDE;
 import static de.nb.aventiure2.data.world.syscomp.state.GameObjectState.AUF_DEM_WEG_ZUM_BRUNNEN_UM_DINGE_HERAUSZUHOLEN;
 import static de.nb.aventiure2.data.world.syscomp.state.GameObjectState.ERWARTET_VON_SC_EINLOESUNG_SEINES_VERSPRECHENS;
 import static de.nb.aventiure2.data.world.syscomp.state.GameObjectState.HAT_FORDERUNG_GESTELLT;
 import static de.nb.aventiure2.data.world.syscomp.state.GameObjectState.HAT_NACH_BELOHNUNG_GEFRAGT;
+import static de.nb.aventiure2.data.world.syscomp.talking.impl.SCTalkAction.entrySt;
+import static de.nb.aventiure2.data.world.syscomp.talking.impl.SCTalkAction.exitSt;
+import static de.nb.aventiure2.data.world.syscomp.talking.impl.SCTalkAction.immReEntrySt;
+import static de.nb.aventiure2.data.world.syscomp.talking.impl.SCTalkAction.reEntrySt;
+import static de.nb.aventiure2.data.world.syscomp.talking.impl.SCTalkAction.st;
 import static de.nb.aventiure2.data.world.time.AvTimeSpan.noTime;
 import static de.nb.aventiure2.data.world.time.AvTimeSpan.secs;
 import static de.nb.aventiure2.german.base.AllgDescription.neuerSatz;
@@ -44,20 +52,23 @@ import static de.nb.aventiure2.german.praedikat.VerbSubjObj.IGNORIEREN;
 import static de.nb.aventiure2.german.praedikat.VerbSubjObj.REDEN;
 
 /**
- * Erzeugt {@link ConversationStep}s für den
- * {@link de.nb.aventiure2.data.world.gameobjects.GameObjects#FROSCHPRINZ}en.
+ * Component for den {@link GameObjects#FROSCHPRINZ}en: Der Spieler
+ * kann mit dem Froschprinzen im Gespräch sein (dann auch umgekehrt).
+ * <p>
+ * Es gibt {@link SCTalkAction}s, also mögliche Redebeiträge, die der
+ * Spieler(-Charakter) an den Froschprinzen richten kann (und auf die der
+ * Froschprinz dann jeweils reagiert).
  */
-class FroschprinzConversationStepBuilder<LOC_DESC extends ILocatableGO & IDescribableGO,
-        F extends IDescribableGO & IHasStateGO & ITalkerGO>
-        extends AbstractConversationStepBuilder<F> {
-    private final List<LOC_DESC> objectsInDenBrunnenGefallen;
+public class FroschprinzTalkingComp extends AbstractTalkingComp {
+    private final DescriptionComp descriptionComp;
+    private final StateComp stateComp;
 
-    FroschprinzConversationStepBuilder(final AvDatabase db, final StoryState initialStoryState,
-                                       final IHasStoringPlaceGO room,
-                                       @NonNull final F froschprinz) {
-        super(db, initialStoryState, room, froschprinz);
-
-        objectsInDenBrunnenGefallen = loadDescribableNonLivingInventory(db, UNTEN_IM_BRUNNEN);
+    public FroschprinzTalkingComp(final AvDatabase db,
+                                  final DescriptionComp descriptionComp,
+                                  final StateComp stateComp) {
+        super(FROSCHPRINZ, db);
+        this.descriptionComp = descriptionComp;
+        this.stateComp = stateComp;
     }
 
     /**
@@ -89,8 +100,11 @@ class FroschprinzConversationStepBuilder<LOC_DESC extends ILocatableGO & IDescri
     }
 
     @Override
-    List<ConversationStep> getAllStepsForCurrentState() {
-        switch (talker.stateComp().getState()) {
+    protected Iterable<SCTalkAction> getSCTalkActionsWithoutCheckingConditions() {
+        final ImmutableList<? extends IDescribableGO> objectsInDenBrunnenGefallen =
+                getObjectsInDenBrunnenGefallen();
+
+        switch (stateComp.getState()) {
             case UNAUFFAELLIG:
                 return ImmutableList.of();
             case HAT_SC_HILFSBEREIT_ANGESPROCHEN:
@@ -104,36 +118,38 @@ class FroschprinzConversationStepBuilder<LOC_DESC extends ILocatableGO & IDescri
                 );
             case HAT_NACH_BELOHNUNG_GEFRAGT:
                 return ImmutableList.of(
-                        st(this::etwasIstInDenBrunnenGefallen,
+                        st(() -> !objectsInDenBrunnenGefallen.isEmpty(),
                                 MACHEN.mitAkk(ANGEBOTE),
                                 this::froschHatNachBelohnungGefragt_AngeboteMachen),
                         exitSt(this::froschHatNachBelohnungGefragt_Exit),
-                        immReEntrySt(this::etwasIstInDenBrunnenGefallen,
+                        immReEntrySt(() -> !objectsInDenBrunnenGefallen.isEmpty(),
                                 MACHEN.mitAkk(ANGEBOTE),
                                 this::froschHatNachBelohnungGefragt_ImmReEntry),
-                        immReEntrySt(this::nichtsIstInDenBrunnenGefallen,
+                        immReEntrySt(() -> objectsInDenBrunnenGefallen.isEmpty(),
                                 this::hallo_froschReagiertNicht),
-                        reEntrySt(this::etwasIstInDenBrunnenGefallen,
+                        reEntrySt(() -> !objectsInDenBrunnenGefallen.isEmpty(),
                                 MACHEN.mitAkk(ANGEBOTE),
                                 this::froschHatNachBelohnungGefragt_ReEntry),
-                        reEntrySt(this::nichtsIstInDenBrunnenGefallen,
+                        reEntrySt(() -> objectsInDenBrunnenGefallen.isEmpty(),
                                 this::hallo_froschReagiertNicht)
                 );
             case HAT_FORDERUNG_GESTELLT:
+
+
                 return ImmutableList.of(
-                        st(this::etwasIstInDenBrunnenGefallen,
+                        st(() -> !objectsInDenBrunnenGefallen.isEmpty(),
                                 VERSPRECHEN.mitAkk(ALLES),
                                 this::froschHatForderungGestellt_AllesVersprechen),
                         exitSt(this::froschHatForderungGestellt_Exit),
-                        immReEntrySt(this::etwasIstInDenBrunnenGefallen,
+                        immReEntrySt(() -> !objectsInDenBrunnenGefallen.isEmpty(),
                                 VERSPRECHEN.mitAkk(ALLES),
                                 this::froschHatForderungGestellt_ImmReEntry),
-                        immReEntrySt(this::nichtsIstInDenBrunnenGefallen,
+                        immReEntrySt(() -> objectsInDenBrunnenGefallen.isEmpty(),
                                 this::hallo_froschReagiertNicht),
-                        reEntrySt(this::etwasIstInDenBrunnenGefallen,
+                        reEntrySt(() -> !objectsInDenBrunnenGefallen.isEmpty(),
                                 VERSPRECHEN.mitAkk(ALLES),
                                 this::froschHatForderungGestellt_reEntry),
-                        reEntrySt(this::nichtsIstInDenBrunnenGefallen,
+                        reEntrySt(() -> objectsInDenBrunnenGefallen.isEmpty(),
                                 this::hallo_froschReagiertNicht)
                 );
             case AUF_DEM_WEG_ZUM_BRUNNEN_UM_DINGE_HERAUSZUHOLEN:
@@ -165,7 +181,7 @@ class FroschprinzConversationStepBuilder<LOC_DESC extends ILocatableGO & IDescri
                 );
             default:
                 throw new IllegalStateException("Unexpected Froschprinz state: "
-                        + talker.stateComp().getState());
+                        + stateComp.getState());
         }
     }
 
@@ -173,8 +189,11 @@ class FroschprinzConversationStepBuilder<LOC_DESC extends ILocatableGO & IDescri
     // .. HAT_SC_HILFSBEREIT_ANGESPROCHEN
     // -------------------------------------------------------------------------------
     private AvTimeSpan froschHatAngesprochen_antworten() {
-        if (nichtsIstInDenBrunnenGefallen()) {
-            talker.talkingComp().unsetTalkingTo();
+        final ImmutableList<? extends IDescribableGO> objectsInDenBrunnenGefallen =
+                getObjectsInDenBrunnenGefallen();
+
+        if (objectsInDenBrunnenGefallen.isEmpty()) {
+            unsetTalkingTo();
 
             return n.add(neuerSatz("„Ach, du bist's, alter Wasserpatscher“, sagst du",
                     secs(5))
@@ -188,17 +207,22 @@ class FroschprinzConversationStepBuilder<LOC_DESC extends ILocatableGO & IDescri
     }
 
     private AvTimeSpan froschHatAngesprochen_ImmReEntry() {
-        if (nichtsIstInDenBrunnenGefallen()) {
+        final ImmutableList<? extends IDescribableGO> objectsInDenBrunnenGefallen =
+                getObjectsInDenBrunnenGefallen();
+
+        if (objectsInDenBrunnenGefallen.isEmpty()) {
             return hallo_froschReagiertNicht();
         }
 
-        if (initialStoryState.allowsAdditionalDuSatzreihengliedOhneSubjekt()
-                && initialStoryState.dann()) {
-            n.add(satzanschluss("– aber dann gibst du dir einen Ruck:",
-                    noTime()));
-        } else if (initialStoryState.dann()) {
-            n.add(neuerSatz("Aber dann gibst du dir einen Ruck:", noTime()));
+        final StoryState initialStoryState = db.storyStateDao().getStoryState();
 
+        if (initialStoryState.dann()) {
+            if (initialStoryState.allowsAdditionalDuSatzreihengliedOhneSubjekt()) {
+                n.add(satzanschluss("– aber dann gibst du dir einen Ruck:",
+                        noTime()));
+            } else {
+                n.add(neuerSatz("Aber dann gibst du dir einen Ruck:", noTime()));
+            }
         } else {
             n.add(du("gibst", "dir einen Ruck:", noTime()));
         }
@@ -207,7 +231,10 @@ class FroschprinzConversationStepBuilder<LOC_DESC extends ILocatableGO & IDescri
     }
 
     private AvTimeSpan froschHatAngesprochen_ReEntry() {
-        if (nichtsIstInDenBrunnenGefallen()) {
+        final ImmutableList<? extends IDescribableGO> objectsInDenBrunnenGefallen =
+                getObjectsInDenBrunnenGefallen();
+
+        if (objectsInDenBrunnenGefallen.isEmpty()) {
             return hallo_froschReagiertNicht();
         }
 
@@ -216,14 +243,17 @@ class FroschprinzConversationStepBuilder<LOC_DESC extends ILocatableGO & IDescri
                         .undWartest()
                         .dann());
 
-        sc.talkingComp().setTalkingTo(talker);
+        loadSC(db).talkingComp().setTalkingTo(FROSCHPRINZ);
 
         timeElapsed = timeElapsed.plus(inDenBrunnenGefallenErklaerung());
         return timeElapsed.plus(herausholenAngebot());
     }
 
     private AvTimeSpan inDenBrunnenGefallenErklaerung() {
-        if (sc.memoryComp().getLastAction().is(Action.Type.HEULEN)) {
+        final ImmutableList<? extends IDescribableGO> objectsInDenBrunnenGefallen =
+                getObjectsInDenBrunnenGefallen();
+
+        if (loadSC(db).memoryComp().getLastAction().is(Action.Type.HEULEN)) {
             final DeklinierbarePhrase objectsDesc =
                     getDescriptionSingleOrCollective(objectsInDenBrunnenGefallen);
 
@@ -250,22 +280,25 @@ class FroschprinzConversationStepBuilder<LOC_DESC extends ILocatableGO & IDescri
     }
 
     private AvTimeSpan herausholenAngebot() {
+        final ImmutableList<? extends IDescribableGO> objectsInDenBrunnenGefallen =
+                getObjectsInDenBrunnenGefallen();
+
         final String objectsInDenBrunnenGefallenShortAkk =
                 getAkkShort(objectsInDenBrunnenGefallen);
 
         final String ratschlag;
-        if (sc.memoryComp().getLastAction().is(Action.Type.HEULEN)) {
+        if (loadSC(db).memoryComp().getLastAction().is(Action.Type.HEULEN)) {
             ratschlag = "weine nicht";
         } else {
             ratschlag = "sorge dich nicht";
         }
 
-        talker.stateComp().setState(HAT_NACH_BELOHNUNG_GEFRAGT);
+        stateComp.setState(HAT_NACH_BELOHNUNG_GEFRAGT);
 
         return n.add(neuerSatz(PARAGRAPH, "„Sei still und "
                         + ratschlag
                         + "“, antwortet "
-                        + getDescription(talker, true).nom()
+                        + getFroschprinzDescription(true).nom()
                         + ", „ich kann wohl Rat schaffen, aber was gibst du mir, wenn ich "
                         + objectsInDenBrunnenGefallenShortAkk
                         + " wieder heraufhole?“",
@@ -274,7 +307,7 @@ class FroschprinzConversationStepBuilder<LOC_DESC extends ILocatableGO & IDescri
     }
 
     private AvTimeSpan froschHatAngesprochen_Exit() {
-        talker.talkingComp().unsetTalkingTo();
+        unsetTalkingTo();
 
         return n.add(du(SENTENCE, "tust", ", als hättest du nichts gehört",
                 secs(3))
@@ -288,13 +321,16 @@ class FroschprinzConversationStepBuilder<LOC_DESC extends ILocatableGO & IDescri
     // -------------------------------------------------------------------------------
 
     private AvTimeSpan froschHatNachBelohnungGefragt_AngeboteMachen() {
-        sc.talkingComp().setTalkingTo(talker);
+        loadSC(db).talkingComp().setTalkingTo(FROSCHPRINZ);
 
         final AvTimeSpan timeSpan = n.add(neuerSatz(SENTENCE,
                 "„Was du haben willst, lieber Frosch“, sagst du, „meine Kleider, "
                         + "Perlen oder Edelsteine?“", secs(5)));
 
-        talker.stateComp().setState(HAT_FORDERUNG_GESTELLT);
+        stateComp.setState(HAT_FORDERUNG_GESTELLT);
+
+        final ImmutableList<? extends IDescribableGO> objectsInDenBrunnenGefallen =
+                getObjectsInDenBrunnenGefallen();
 
         return timeSpan.plus(n.add(neuerSatz(PARAGRAPH,
                 "Der Frosch antwortet: „Deine Kleider, Perlen oder Edelsteine, die mag "
@@ -317,7 +353,7 @@ class FroschprinzConversationStepBuilder<LOC_DESC extends ILocatableGO & IDescri
     }
 
     private AvTimeSpan froschHatNachBelohnungGefragt_ReEntry() {
-        sc.talkingComp().setTalkingTo(talker);
+        loadSC(db).talkingComp().setTalkingTo(getGameObjectId());
 
         AvTimeSpan timeSpan = n.add(
                 neuerSatz(PARAGRAPH, "„Frosch“, sprichst du ihn an, „steht dein Angebot noch?“",
@@ -332,7 +368,10 @@ class FroschprinzConversationStepBuilder<LOC_DESC extends ILocatableGO & IDescri
                         secs(10))));
 
 
-        talker.stateComp().setState(HAT_FORDERUNG_GESTELLT);
+        stateComp.setState(HAT_FORDERUNG_GESTELLT);
+
+        final ImmutableList<? extends IDescribableGO> objectsInDenBrunnenGefallen =
+                getObjectsInDenBrunnenGefallen();
 
         return timeSpan.plus(n.add(neuerSatz(PARAGRAPH,
                 "Der Frosch antwortet: „Deine Kleider, Perlen oder Edelsteine, die mag "
@@ -349,7 +388,7 @@ class FroschprinzConversationStepBuilder<LOC_DESC extends ILocatableGO & IDescri
     }
 
     private AvTimeSpan froschHatNachBelohnungGefragt_Exit() {
-        talker.talkingComp().unsetTalkingTo();
+        unsetTalkingTo();
 
         return n.add(
                 neuerSatz(
@@ -361,6 +400,9 @@ class FroschprinzConversationStepBuilder<LOC_DESC extends ILocatableGO & IDescri
     // .. HAT_NACH_BELOHNUNG_GEFRAGT
     // -------------------------------------------------------------------------------
     private AvTimeSpan froschHatForderungGestellt_AllesVersprechen() {
+        final ImmutableList<? extends IDescribableGO> objectsInDenBrunnenGefallen =
+                getObjectsInDenBrunnenGefallen();
+
         // die goldene Kugel / die Dinge
         final AvTimeSpan timeSpan = n.add(
                 neuerSatz(PARAGRAPH, "„Ach ja“, sagst du, „ich verspreche dir alles, was du "
@@ -375,6 +417,9 @@ class FroschprinzConversationStepBuilder<LOC_DESC extends ILocatableGO & IDescri
     }
 
     private AvTimeSpan froschHatForderungGestellt_ImmReEntry() {
+        final ImmutableList<? extends IDescribableGO> objectsInDenBrunnenGefallen =
+                getObjectsInDenBrunnenGefallen();
+
         final AvTimeSpan timeSpan = n.add(neuerSatz(
                 "Aber im nächsten Moment entschuldigst du dich schon: "
                         + "„Nichts für ungut! Wenn du mir wirklich "
@@ -389,6 +434,9 @@ class FroschprinzConversationStepBuilder<LOC_DESC extends ILocatableGO & IDescri
     }
 
     private AvTimeSpan froschHatForderungGestellt_reEntry() {
+        final ImmutableList<? extends IDescribableGO> objectsInDenBrunnenGefallen =
+                getObjectsInDenBrunnenGefallen();
+
         final AvTimeSpan timeSpan = n.add(neuerSatz(
                 "„Lieber Frosch“, sagst du, „ich habe es mir überlegt. Ich verspreche dir alles, "
                         + "was du "
@@ -402,15 +450,16 @@ class FroschprinzConversationStepBuilder<LOC_DESC extends ILocatableGO & IDescri
         return timeSpan.plus(froschReagiertAufVersprechen());
     }
 
-    private AvTimeSpan froschReagiertAufVersprechen() {
+    private <LOC_DESC extends ILocatableGO & IDescribableGO> AvTimeSpan froschReagiertAufVersprechen() {
         n.add(neuerSatz(PARAGRAPH,
                 "Der Frosch, als er die Zusage erhalten hat,",
                 noTime()));
 
-        if (!room.is(IM_WALD_BEIM_BRUNNEN)) {
-            talker.talkingComp().unsetTalkingTo();
+        @Nullable final GameObjectId scLocationId = loadSC(db).locationComp().getLocationId();
+        if (!scLocationId.equals(IM_WALD_BEIM_BRUNNEN)) {
+            unsetTalkingTo();
 
-            talker.stateComp().setState(AUF_DEM_WEG_ZUM_BRUNNEN_UM_DINGE_HERAUSZUHOLEN);
+            stateComp.setState(AUF_DEM_WEG_ZUM_BRUNNEN_UM_DINGE_HERAUSZUHOLEN);
             // STORY Der Froschprinz muss eine KI erhalten, dass er
             //  nach einer Weile automatisch beim Brunnen
             //  auftaucht und sich, die Dinge herausholt
@@ -424,18 +473,20 @@ class FroschprinzConversationStepBuilder<LOC_DESC extends ILocatableGO & IDescri
                     .beendet(PARAGRAPH));
         }
 
+        final ImmutableList<LOC_DESC> objectsInDenBrunnenGefallen =
+                getObjectsInDenBrunnenGefallen();
+
         final DeklinierbarePhrase descObjectsInDenBrunnenGefallen =
                 getDescriptionSingleOrCollective(objectsInDenBrunnenGefallen);
 
-        talker.talkingComp().unsetTalkingTo();
+        unsetTalkingTo();
 
+        stateComp.setState(ERWARTET_VON_SC_EINLOESUNG_SEINES_VERSPRECHENS);
 
-        talker.stateComp().setState(ERWARTET_VON_SC_EINLOESUNG_SEINES_VERSPRECHENS);
-
-        sc.feelingsComp().setMood(VOLLER_FREUDE);
+        loadSC(db).feelingsComp().setMood(VOLLER_FREUDE);
 
         for (final LOC_DESC object : objectsInDenBrunnenGefallen) {
-            object.locationComp().setLocation(room);
+            object.locationComp().setLocation(scLocationId);
         }
 
         return n.add(satzanschluss("taucht seinen Kopf "
@@ -457,7 +508,7 @@ class FroschprinzConversationStepBuilder<LOC_DESC extends ILocatableGO & IDescri
     }
 
     private AvTimeSpan froschHatForderungGestellt_Exit() {
-        talker.talkingComp().unsetTalkingTo();
+        unsetTalkingTo();
 
         return n.addAlt(
                 neuerSatz("„Na, bei dir piept's wohl!“ – Entrüstet wendest du dich ab",
@@ -484,7 +535,7 @@ class FroschprinzConversationStepBuilder<LOC_DESC extends ILocatableGO & IDescri
     // -------------------------------------------------------------------------------
 
     private AvTimeSpan froschHatHochhebenGefordert_Exit() {
-        talker.talkingComp().unsetTalkingTo();
+        unsetTalkingTo();
 
         return n.addAlt(
                 neuerSatz(PARAGRAPH,
@@ -523,7 +574,7 @@ class FroschprinzConversationStepBuilder<LOC_DESC extends ILocatableGO & IDescri
     }
 
     private AvTimeSpan froschReagiertNicht() {
-        talker.talkingComp().unsetTalkingTo();
+        unsetTalkingTo();
 
         return n.add(neuerSatz("Der Frosch reagiert nicht",
                 secs(3))
@@ -531,17 +582,17 @@ class FroschprinzConversationStepBuilder<LOC_DESC extends ILocatableGO & IDescri
     }
 
     private AvTimeSpan hallo_froschErinnertAnVersprechen() {
-        talker.talkingComp().unsetTalkingTo();
+        unsetTalkingTo();
 
         return n.addAlt(
                 du(
                         "sprichst",
-                        getDescription(talker, true).akk()
+                        getFroschprinzDescription(true).akk()
                                 + " an: „Wie läuft's, Frosch? Schönes Wetter heut.“ "
                                 + "„Vergiss dein Versprechen nicht“, sagt er nur",
                         secs(15)).beendet(PARAGRAPH),
                 du("holst", "Luft, aber da kommt dir "
-                                + getDescription(talker).nom()
+                                + getFroschprinzDescription().nom()
                                 + " schon zuvor: „Wir sehen uns noch!“",
                         secs(15)).beendet(PARAGRAPH),
                 neuerSatz("„Und jetzt, Frosch?“ "
@@ -549,11 +600,33 @@ class FroschprinzConversationStepBuilder<LOC_DESC extends ILocatableGO & IDescri
                         secs(15)));
     }
 
-    private boolean nichtsIstInDenBrunnenGefallen() {
-        return !etwasIstInDenBrunnenGefallen();
+    private <LOC_DESC extends ILocatableGO & IDescribableGO>
+    ImmutableList<LOC_DESC> getObjectsInDenBrunnenGefallen() {
+        // STORY Es könnten auch andere Gegenstände unten im Brunnen
+        //  sein - hier filtern known durch den SC.
+        return GameObjects.loadDescribableNonLivingInventory(db, UNTEN_IM_BRUNNEN);
     }
 
-    private boolean etwasIstInDenBrunnenGefallen() {
-        return !objectsInDenBrunnenGefallen.isEmpty();
+    /**
+     * Gibt eine Nominalphrase zurück, die den Froschprinzen beschreibt.
+     * Die Phrase kann unterschiedlich sein, je nachdem, ob
+     * ob der Spieler den Froschprinzen schon kennt oder nicht.
+     */
+    protected Nominalphrase getFroschprinzDescription() {
+        return getFroschprinzDescription(false);
+    }
+
+    /**
+     * Gibt eine Nominalphrase zurück, die den Froschprinzen beschreibt.
+     * Die Phrase kann unterschiedlich sein, je nachdem, ob
+     * ob der Spieler den Froschprinzen schon kennt oder nicht.
+     *
+     * @param shortIfKnown <i>Falls der Spieler(-charakter)</i> den
+     *                     Froschprinzen schon kennt, wird eher eine
+     *                     kürzere Beschreibung gewählt
+     */
+    protected Nominalphrase getFroschprinzDescription(final boolean shortIfKnown) {
+        return descriptionComp.getDescription(
+                loadSC(db).memoryComp().isKnown(FROSCHPRINZ), shortIfKnown);
     }
 }

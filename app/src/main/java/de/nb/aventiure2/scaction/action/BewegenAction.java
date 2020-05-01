@@ -149,7 +149,7 @@ public class BewegenAction<R extends ISpatiallyConnectedGO & IHasStoringPlaceGO,
                 (IHasStoringPlaceGO) load(db, spatialConnection.getTo());
 
         final Lichtverhaeltnisse lichtverhaeltnisseInNewRoom =
-                to.getLichtverhaeltnisseInside();
+                to.storingPlaceComp().getLichtverhaeltnisseInside();
 
         final ImmutableList<LIV> creaturesInOldRoom = loadDescribableLivingInventory(db, oldRoom);
         final ImmutableList<LOC_DESC> objectsInNewRoom =

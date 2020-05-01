@@ -116,9 +116,9 @@ class SchlosswacheReactions
     private static String schlossVerlassenWohinDescription(final IHasStoringPlaceGO schlossRoom,
                                                            final IHasStoringPlaceGO wohinRoom) {
         final Lichtverhaeltnisse lichtverhaeltnisseImSchloss =
-                schlossRoom.getLichtverhaeltnisseInside();
+                schlossRoom.storingPlaceComp().getLichtverhaeltnisseInside();
         final Lichtverhaeltnisse lichtverhaeltnisseDraussen =
-                wohinRoom.getLichtverhaeltnisseInside();
+                wohinRoom.storingPlaceComp().getLichtverhaeltnisseInside();
         if (lichtverhaeltnisseImSchloss  // Im Schloss ist es immer hell, wenn es also draußen
                 // auch hell ist...
                 == lichtverhaeltnisseDraussen) {
@@ -157,7 +157,8 @@ class SchlosswacheReactions
     private AvTimeSpan nehmen_wacheWirdAufmerksam() {
         getReactor().stateComp().setState(AUFMERKSAM);
         sc.memoryComp().upgradeKnown(SCHLOSSWACHE,
-                Known.getKnown(sc.locationComp().getLocation().getLichtverhaeltnisseInside()));
+                Known.getKnown(sc.locationComp().getLocation().storingPlaceComp()
+                        .getLichtverhaeltnisseInside()));
         sc.feelingsComp().setMood(Mood.ANGESPANNT);
 
         return n.add(

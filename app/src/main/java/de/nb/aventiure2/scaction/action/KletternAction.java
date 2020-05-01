@@ -91,7 +91,7 @@ public class KletternAction extends AbstractScAction {
     @NonNull
     private AvTimeSpan narrateAndDoBaumHinterHuetteErstesMal() {
         final String dunkelNachsatz =
-                room.getLichtverhaeltnisseInside() == DUNKEL ?
+                room.storingPlaceComp().getLichtverhaeltnisseInside() == DUNKEL ?
                         " Und das alles im Dunkeln!" : "";
 
         sc.feelingsComp().setMood(Mood.ERSCHOEPFT);
@@ -128,7 +128,7 @@ public class KletternAction extends AbstractScAction {
         sc.feelingsComp().setMood(Mood.ERSCHOEPFT);
 
         final String erschoepftMuedeNachsatz =
-                room.getLichtverhaeltnisseInside() == DUNKEL ?
+                room.storingPlaceComp().getLichtverhaeltnisseInside() == DUNKEL ?
                         "Ein Nickerchen täte dir gut" : "Und müde";
 
         return n.addAlt(

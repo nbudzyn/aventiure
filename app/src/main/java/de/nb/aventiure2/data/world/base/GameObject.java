@@ -8,16 +8,12 @@ import java.util.Objects;
 
 import de.nb.aventiure2.data.world.syscomp.description.IDescribableGO;
 import de.nb.aventiure2.data.world.syscomp.location.ILocatableGO;
-import de.nb.aventiure2.data.world.syscomp.storingplace.IHasStoringPlaceGO;
-import de.nb.aventiure2.data.world.syscomp.storingplace.Lichtverhaeltnisse;
-
-import static de.nb.aventiure2.data.world.syscomp.storingplace.Lichtverhaeltnisse.HELL;
 
 /**
  * Base implementation for any object within in the game. An <i>entity</i> in the
  * entity-component-system pattern.
  */
-public class GameObject implements IGameObject, ComponentContext {
+public class GameObject implements IGameObject {
     private enum InternalState {
         NOT_LOADED, LOADED
     }
@@ -43,7 +39,6 @@ public class GameObject implements IGameObject, ComponentContext {
      */
     protected <C extends IComponent> C addComponent(final C component) {
         components.add(component);
-        component.setContext(this);
         return component;
     }
 
@@ -99,16 +94,6 @@ public class GameObject implements IGameObject, ComponentContext {
         }
 
         return ((ILocatableGO) this).locationComp().hasLocation(other.locationComp().getLocation());
-    }
-
-    @Override
-    public Lichtverhaeltnisse getLichtverhaeltnisseInside() {
-        if (!(this instanceof IHasStoringPlaceGO)) {
-            // In irgendeiner raumlosen Sphäre ist es immer hell;
-            return HELL;
-        }
-
-        return ((IHasStoringPlaceGO) this).storingPlaceComp().getLichtverhaeltnisseInside();
     }
 
     @Override

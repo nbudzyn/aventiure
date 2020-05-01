@@ -8,7 +8,7 @@ import de.nb.aventiure2.data.world.base.AbstractPersistentComponentData;
 import de.nb.aventiure2.data.world.base.GameObjectId;
 
 /**
- * Mutable - and therefore persistent - data of the {@link TalkingComp} component.
+ * Mutable - and therefore persistent - data of the {@link AbstractTalkingComp} component.
  */
 @Entity
 public

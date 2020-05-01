@@ -14,6 +14,7 @@ import de.nb.aventiure2.data.world.gameobjects.GameObjects;
 import de.nb.aventiure2.data.world.syscomp.memory.Known;
 import de.nb.aventiure2.data.world.syscomp.spatialconnection.AbstractSpatialConnectionComp;
 import de.nb.aventiure2.data.world.syscomp.storingplace.Lichtverhaeltnisse;
+import de.nb.aventiure2.data.world.syscomp.storingplace.StoringPlaceComp;
 
 import static de.nb.aventiure2.data.world.gameobjects.GameObjects.ABZWEIG_IM_WALD;
 import static de.nb.aventiure2.data.world.gameobjects.GameObjects.IM_WALD_BEIM_BRUNNEN;
@@ -32,9 +33,13 @@ import static de.nb.aventiure2.german.base.StructuralElement.SENTENCE;
  */
 @ParametersAreNonnullByDefault
 public class ImWaldBeimBrunnenConnectionComp extends AbstractSpatialConnectionComp {
+    private final StoringPlaceComp storingPlaceComp;
+
     public ImWaldBeimBrunnenConnectionComp(
-            final AvDatabase db) {
+            final AvDatabase db,
+            final StoringPlaceComp storingPlaceComp) {
         super(IM_WALD_BEIM_BRUNNEN, db);
+        this.storingPlaceComp = storingPlaceComp;
     }
 
     @Override
@@ -57,7 +62,7 @@ public class ImWaldBeimBrunnenConnectionComp extends AbstractSpatialConnectionCo
                         + "abzweigt", mins(3))
                         .komma()));
 
-        if (getContext().getLichtverhaeltnisseInside() == HELL ||
+        if (storingPlaceComp.getLichtverhaeltnisseInside() == HELL ||
                 loadSC(db).memoryComp().isKnown(WALDWILDNIS_HINTER_DEM_BRUNNEN)) {
             resImWaldBeimBrunnnen.add(con(WALDWILDNIS_HINTER_DEM_BRUNNEN,
                     "Hinter dem Brunnen in die Wildnis schlagen",

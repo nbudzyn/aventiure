@@ -15,14 +15,13 @@ import de.nb.aventiure2.data.world.syscomp.description.IDescribableGO;
 import de.nb.aventiure2.data.world.syscomp.memory.Action;
 import de.nb.aventiure2.data.world.syscomp.storingplace.IHasStoringPlaceGO;
 import de.nb.aventiure2.data.world.syscomp.talking.ITalkerGO;
+import de.nb.aventiure2.data.world.syscomp.talking.impl.SCTalkAction;
 import de.nb.aventiure2.data.world.time.AvTimeSpan;
 import de.nb.aventiure2.german.base.Nominalphrase;
 import de.nb.aventiure2.german.praedikat.Praedikat;
 import de.nb.aventiure2.german.praedikat.PraedikatMitEinerObjektleerstelle;
 import de.nb.aventiure2.german.praedikat.PraedikatOhneLeerstellen;
 import de.nb.aventiure2.scaction.AbstractScAction;
-import de.nb.aventiure2.scaction.action.creature.conversation.ConversationStep;
-import de.nb.aventiure2.scaction.action.creature.conversation.CreatureConversationSteps;
 
 import static de.nb.aventiure2.data.world.gameobjects.GameObjects.SPIELER_CHARAKTER;
 import static de.nb.aventiure2.data.world.gameobjects.GameObjects.loadSC;
@@ -38,16 +37,15 @@ public class RedenAction<TALKER extends IDescribableGO & ITalkerGO>
     @NonNull
     private final TALKER talker;
 
-    private final ConversationStep conversationStep;
+    private final SCTalkAction conversationStep;
     private final String name;
 
     public static <TALKER extends IDescribableGO & ITalkerGO>
     Collection<RedenAction<TALKER>> buildActions(
             final AvDatabase db, final StoryState initialStoryState, final IHasStoringPlaceGO room,
             final TALKER talker) {
-        final List<ConversationStep> talkSteps =
-                CreatureConversationSteps.getPossibleSteps(
-                        db, initialStoryState, room, talker);
+        final List<SCTalkAction> talkSteps =
+                talker.talkingComp().getSCConversationSteps();
 
         return buildActions(db, initialStoryState,
                 talker,
@@ -58,11 +56,11 @@ public class RedenAction<TALKER extends IDescribableGO & ITalkerGO>
     Collection<RedenAction<TALKER>> buildActions(final AvDatabase db,
                                                  final StoryState initialStoryState,
                                                  final TALKER talker,
-                                                 final List<ConversationStep> talkSteps) {
+                                                 final List<SCTalkAction> talkSteps) {
         final ImmutableList.Builder<RedenAction<TALKER>> res =
                 ImmutableList.builder();
 
-        for (final ConversationStep talkStep : talkSteps) {
+        for (final SCTalkAction talkStep : talkSteps) {
             if (stepTypeFits(db, talker, talkStep.getStepType())) {
                 res.add(buildAction(db, initialStoryState,
                         talker,
@@ -76,11 +74,11 @@ public class RedenAction<TALKER extends IDescribableGO & ITalkerGO>
 
     private static boolean stepTypeFits(final AvDatabase db,
                                         final ITalkerGO talker,
-                                        final ConversationStep.Type stepType) {
+                                        final SCTalkAction.Type stepType) {
         if (talker.talkingComp().isTalkingTo(SPIELER_CHARAKTER)) {
             // Der SC befindet sich gerade im Gespräch mit der Creature-
-            return stepType == ConversationStep.Type.NORMAL ||
-                    stepType == ConversationStep.Type.EXIT;
+            return stepType == SCTalkAction.Type.NORMAL ||
+                    stepType == SCTalkAction.Type.EXIT;
         }
 
         if (loadSC(db).memoryComp().lastActionWas(
@@ -89,12 +87,12 @@ public class RedenAction<TALKER extends IDescribableGO & ITalkerGO>
             // und hat es sich ganz offenbar anders überlegt
             // (oder die Creature hat das Gespräch beendet, und der Benutzer möchte
             // sofort wieder ein Gespräch anknüpfen).
-            return stepType == ConversationStep.Type.IMMEDIATE_RE_ENTRY;
+            return stepType == SCTalkAction.Type.IMMEDIATE_RE_ENTRY;
         }
 
         // Der SC befindet sich gerade nicht im Gespräch mit der Creature
         // (und auch nicht GERADE EBEN so ein Gespräch beendet).
-        return stepType == ConversationStep.Type.ENTRY_RE_ENTRY;
+        return stepType == SCTalkAction.Type.ENTRY_RE_ENTRY;
     }
 
     /**
@@ -105,7 +103,7 @@ public class RedenAction<TALKER extends IDescribableGO & ITalkerGO>
     RedenAction<TALKER> buildAction(final AvDatabase db,
                                     final StoryState initialStoryState,
                                     final TALKER talker,
-                                    final ConversationStep talkStep) {
+                                    final SCTalkAction talkStep) {
         final PraedikatOhneLeerstellen praedikatOhneLeerstellen =
                 fuelleGgfPraedikatLeerstelleMitCreature(db, talkStep.getName(), talker);
 
@@ -143,7 +141,7 @@ public class RedenAction<TALKER extends IDescribableGO & ITalkerGO>
     private static <TALKER extends IDescribableGO & ITalkerGO>
     RedenAction<TALKER> buildAction(final AvDatabase db, final StoryState initialStoryState,
                                     final TALKER talker,
-                                    final ConversationStep talkStep,
+                                    final SCTalkAction talkStep,
                                     final PraedikatOhneLeerstellen praedikatOhneLeerstellen) {
         return new RedenAction<>(db, initialStoryState, talker,
                 talkStep,
@@ -155,7 +153,7 @@ public class RedenAction<TALKER extends IDescribableGO & ITalkerGO>
     private RedenAction(final AvDatabase db,
                         final StoryState initialStoryState,
                         @NonNull final TALKER talker,
-                        final ConversationStep conversationStep,
+                        final SCTalkAction conversationStep,
                         @NonNull final String name) {
         super(db, initialStoryState);
         this.talker = talker;

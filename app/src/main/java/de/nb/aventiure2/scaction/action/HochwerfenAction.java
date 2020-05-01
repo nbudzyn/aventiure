@@ -181,7 +181,8 @@ public class HochwerfenAction<OBJ extends IDescribableGO & ILocatableGO>
         }
 
         final String praefix =
-                room.getLichtverhaeltnisseInside() == HELL ? "Weit und breit" : "Im Dunkeln ist";
+                room.storingPlaceComp().getLichtverhaeltnisseInside() == HELL ? "Weit und breit" :
+                        "Im Dunkeln ist";
 
         return n.add(
                 neuerSatz(praefix + " kein Frosch zu sehen… Das war vielleicht etwas "
@@ -226,7 +227,7 @@ public class HochwerfenAction<OBJ extends IDescribableGO & ILocatableGO>
 
         if (room.is(IM_WALD_BEIM_BRUNNEN)) {
             final String dunkelheitNachsatz =
-                    room.getLichtverhaeltnisseInside() == DUNKEL ?
+                    room.storingPlaceComp().getLichtverhaeltnisseInside() == DUNKEL ?
                             "– bei dieser Dunkelheit schon gar nicht" : "";
 
             object.locationComp().setLocation(UNTEN_IM_BRUNNEN);

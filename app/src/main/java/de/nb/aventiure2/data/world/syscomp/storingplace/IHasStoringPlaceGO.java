@@ -9,8 +9,6 @@ import de.nb.aventiure2.data.world.base.IGameObject;
  * bestimmten Ort (z.B. "auf dem Boden" oder "auf einem Tisch").
  */
 public interface IHasStoringPlaceGO extends IGameObject {
-    Lichtverhaeltnisse getLichtverhaeltnisseInside();
-
     @Nonnull
     public StoringPlaceComp storingPlaceComp();
 }

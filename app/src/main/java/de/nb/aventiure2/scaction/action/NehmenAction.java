@@ -136,7 +136,7 @@ public class NehmenAction
 
     private void removeFromRoomAndTake() {
         sc.memoryComp().upgradeKnown(gameObject, Known.getKnown(
-                room.getLichtverhaeltnisseInside()));
+                room.storingPlaceComp().getLichtverhaeltnisseInside()));
         gameObject.locationComp().setLocation(SPIELER_CHARAKTER);
     }
 

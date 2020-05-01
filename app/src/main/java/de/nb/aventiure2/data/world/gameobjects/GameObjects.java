@@ -23,7 +23,6 @@ import de.nb.aventiure2.data.world.syscomp.location.LocationSystem;
 import de.nb.aventiure2.data.world.syscomp.location.RoomFactory;
 import de.nb.aventiure2.data.world.syscomp.memory.IHasMemoryGO;
 import de.nb.aventiure2.data.world.syscomp.spatialconnection.impl.DraussenVorDemSchlossConnectionComp;
-import de.nb.aventiure2.data.world.syscomp.spatialconnection.impl.ImWaldBeimBrunnenConnectionComp;
 import de.nb.aventiure2.data.world.syscomp.spatialconnection.impl.ImWaldNaheDemSchlossConnectionComp;
 import de.nb.aventiure2.data.world.syscomp.spatialconnection.impl.SchlossVorhalleConnectionComp;
 import de.nb.aventiure2.data.world.syscomp.spatialconnection.impl.SchlossVorhalleTischBeimFestConnectionComp;
@@ -36,14 +35,7 @@ import de.nb.aventiure2.german.base.Nominalphrase;
 import static com.google.common.base.Predicates.not;
 import static com.google.common.collect.ImmutableList.toImmutableList;
 import static de.nb.aventiure2.data.world.syscomp.state.GameObjectState.AUFMERKSAM;
-import static de.nb.aventiure2.data.world.syscomp.state.GameObjectState.AUF_DEM_WEG_ZUM_BRUNNEN_UM_DINGE_HERAUSZUHOLEN;
-import static de.nb.aventiure2.data.world.syscomp.state.GameObjectState.AUF_DEM_WEG_ZUM_SCHLOSSFEST;
 import static de.nb.aventiure2.data.world.syscomp.state.GameObjectState.BEGONNEN;
-import static de.nb.aventiure2.data.world.syscomp.state.GameObjectState.ERWARTET_VON_SC_EINLOESUNG_SEINES_VERSPRECHENS;
-import static de.nb.aventiure2.data.world.syscomp.state.GameObjectState.HAT_FORDERUNG_GESTELLT;
-import static de.nb.aventiure2.data.world.syscomp.state.GameObjectState.HAT_HOCHHEBEN_GEFORDERT;
-import static de.nb.aventiure2.data.world.syscomp.state.GameObjectState.HAT_NACH_BELOHNUNG_GEFRAGT;
-import static de.nb.aventiure2.data.world.syscomp.state.GameObjectState.HAT_SC_HILFSBEREIT_ANGESPROCHEN;
 import static de.nb.aventiure2.data.world.syscomp.state.GameObjectState.NOCH_NICHT_BEGONNEN;
 import static de.nb.aventiure2.data.world.syscomp.state.GameObjectState.NORMAL;
 import static de.nb.aventiure2.data.world.syscomp.state.GameObjectState.UNAUFFAELLIG;
@@ -51,7 +43,6 @@ import static de.nb.aventiure2.data.world.syscomp.state.GameObjectStateList.sl;
 import static de.nb.aventiure2.data.world.time.AvTime.oClock;
 import static de.nb.aventiure2.german.base.Nominalphrase.np;
 import static de.nb.aventiure2.german.base.NumerusGenus.F;
-import static de.nb.aventiure2.german.base.NumerusGenus.M;
 
 /**
  * All game objects
@@ -158,9 +149,7 @@ public class GameObjects {
                     room.create(HINTER_DER_HUETTE, StoringPlaceType.UNTER_DEM_BAUM,
                             false,
                             connection.createHinterDerHuette()),
-                    room.create(IM_WALD_BEIM_BRUNNEN, StoringPlaceType.GRAS_NEBEN_DEM_BRUNNEN,
-                            false,
-                            new ImWaldBeimBrunnenConnectionComp(db)),
+                    room.createImWaldBeimBrunnen(),
                     room.create(UNTEN_IM_BRUNNEN, StoringPlaceType.AM_GRUNDE_DES_BRUNNENS,
                             false,
                             connection.createNoConnections(UNTEN_IM_BRUNNEN)),
@@ -177,27 +166,9 @@ public class GameObjects {
                                     "der Schlosswache"),
                             sl(UNAUFFAELLIG, AUFMERKSAM),
                             SCHLOSS_VORHALLE, DRAUSSEN_VOR_DEM_SCHLOSS),
-                    creature.createTalking(FROSCHPRINZ,
-                            np(M, "ein dicker, hässlicher Frosch",
-                                    "einem dicken, hässlichen Frosch",
-                                    "einen dicken, hässlichen Frosch"),
-                            np(M, "der hässliche Frosch",
-                                    "dem hässlichen Frosch",
-                                    "den hässlichen Frosch"),
-                            np(M, "der Frosch",
-                                    "dem Frosch",
-                                    "den Frosch"),
-                            sl(UNAUFFAELLIG, HAT_SC_HILFSBEREIT_ANGESPROCHEN,
-                                    HAT_NACH_BELOHNUNG_GEFRAGT, HAT_FORDERUNG_GESTELLT,
-                                    AUF_DEM_WEG_ZUM_BRUNNEN_UM_DINGE_HERAUSZUHOLEN,
-                                    ERWARTET_VON_SC_EINLOESUNG_SEINES_VERSPRECHENS,
-                                    AUF_DEM_WEG_ZUM_SCHLOSSFEST,
-                                    HAT_HOCHHEBEN_GEFORDERT),
-                            IM_WALD_BEIM_BRUNNEN, ABZWEIG_IM_WALD),
+                    creature.createFroschprinz(),
                     // STORY Anhand eines StatusDatums kann das Spiel ermitteln, wann der
                     //  Frosch im Schloss ankommt.
-                    //  Besser nicht Nullable! (Nicht schlüssig, weil jedes HasState,
-                    //  wenn es exisitiert immer einen Status hat!)
 
                     // STORY Wölfe (Creatures? Invisibles?) hetzen Spieler nachts
 
@@ -397,19 +368,19 @@ public class GameObjects {
                                     final IDescribableGO describable,
                                     final boolean shortIfKnown) {
         if (observer instanceof IHasMemoryGO) {
-            if (((IHasMemoryGO) observer).memoryComp().isKnown(describable)) {
-                return shortIfKnown ?
-                        describable.descriptionComp().getShortDescriptionWhenKnown() :
-                        describable.descriptionComp().getNormalDescriptionWhenKnown();
-            }
-
-            return describable.descriptionComp().getDescriptionAtFirstSight();
+            return getPOVDescription((IHasMemoryGO) observer, describable,
+                    shortIfKnown);
         }
 
         return describable.descriptionComp().getNormalDescriptionWhenKnown();
-
     }
 
+    private static Nominalphrase getPOVDescription(final IHasMemoryGO observer,
+                                                   final IDescribableGO describable,
+                                                   final boolean shortIfKnown) {
+        return describable.descriptionComp().getDescription(
+                observer.memoryComp().isKnown(describable), shortIfKnown);
+    }
 
     /**
      * Lädt (sofern nicht schon geschehen) den Spieler-Charakter und gibt ihn zurück.
