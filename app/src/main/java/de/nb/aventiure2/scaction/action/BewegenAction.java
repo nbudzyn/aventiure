@@ -295,15 +295,17 @@ public class BewegenAction<R extends ISpatiallyConnectedGO & IHasStoringPlaceGO,
                 }
             } else if (initialStoryState.dann()) {
                 // "Du stehst wieder vor dem Schloss; dann gehst du wieder hinein in das Schloss."
+                final String satzEvtlMitDann = description
+                        .getDescriptionHauptsatzMitKonjunktionaladverbWennNoetig(
+                                "dann");
                 return n.add(
                         satzanschluss(
                                 "; " +
                                         uncapitalize(
-                                                description
-                                                        .getDescriptionHauptsatzMitKonjunktionaladverbWennNoetig(
-                                                                "dann")),
+                                                satzEvtlMitDann),
                                 description.getTimeElapsed())
-                                .komma(description.isKommaStehtAus()));
+                                .komma(description.isKommaStehtAus())
+                                .dann(!satzEvtlMitDann.startsWith("Dann")));
             } else {
                 return n.add(description);
             }

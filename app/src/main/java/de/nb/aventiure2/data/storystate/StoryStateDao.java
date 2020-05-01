@@ -147,35 +147,42 @@ public abstract class StoryStateDao {
                     .dann(duDesc.isDann())
                     .beendet(desc.getEndsThis()));
         } else if (initialStoryState.dann()) {
+            final String satzEvtlMitDann =
+                    desc.getDescriptionHauptsatzMitKonjunktionaladverbWennNoetig("dann");
             return ImmutableList.of(t(
-                    max(desc.getStartsNew(), SENTENCE),
-                    desc.getDescriptionHauptsatzMitKonjunktionaladverbWennNoetig("dann"))
+                    startsNewAtLeastSentenceForDuDescription(desc),
+                    satzEvtlMitDann)
                     .komma(desc.isKommaStehtAus())
                     .undWartest(desc.isAllowsAdditionalDuSatzreihengliedOhneSubjekt())
+                    .dann(!satzEvtlMitDann.startsWith("Dann"))
                     .beendet(desc.getEndsThis()));
         } else {
             final ImmutableList.Builder<StoryStateBuilder> alternatives =
                     ImmutableList.builder();
 
-            final StructuralElement startsNew =
-                    (desc instanceof DuDescription) ?
-                            // Bei einer DuDescription ist der Hauptsatz ein echter
-                            // Hauptsatz. Daher muss ein neuer Satz begonnen werden.
-                            max(desc.getStartsNew(), SENTENCE) :
-                            // Ansonsten könnte der "Hauptsatz" auch einfach ein paar Wörter sein,
-                            // die Vorgabe WORD soll dann erhalten bleiben
-                            desc.getStartsNew();
+            final StructuralElement startsNew = startsNewAtLeastSentenceForDuDescription(desc);
 
             alternatives.add(toHauptsatzStoryStateBuilder(startsNew, desc));
 
             if (desc instanceof DuDescription) {
                 alternatives.add(toHauptsatzMitSpeziellemVorfeldStoryStateBuilder(
-                        startsNew,
+                        startsNewAtLeastSentenceForDuDescription(desc),
                         (DuDescription) desc));
             }
 
             return alternatives.build();
         }
+    }
+
+    private static StructuralElement startsNewAtLeastSentenceForDuDescription(
+            final AbstractDescription<?> desc) {
+        return (desc instanceof DuDescription) ?
+                // Bei einer DuDescription ist der Hauptsatz ein echter
+                // Hauptsatz. Daher muss ein neuer Satz begonnen werden.
+                max(desc.getStartsNew(), SENTENCE) :
+                // Ansonsten könnte der "Hauptsatz" auch einfach ein paar Wörter sein,
+                // die Vorgabe WORD soll dann erhalten bleiben
+                desc.getStartsNew();
     }
 
     private static StoryStateBuilder toHauptsatzStoryStateBuilder(

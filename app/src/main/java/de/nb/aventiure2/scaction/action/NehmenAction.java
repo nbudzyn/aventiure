@@ -35,6 +35,7 @@ import static de.nb.aventiure2.german.base.AllgDescription.neuerSatz;
 import static de.nb.aventiure2.german.base.AllgDescription.satzanschluss;
 import static de.nb.aventiure2.german.base.DuDescription.du;
 import static de.nb.aventiure2.german.base.GermanUtil.capitalize;
+import static de.nb.aventiure2.german.base.GermanUtil.uncapitalize;
 import static de.nb.aventiure2.german.base.Numerus.SG;
 import static de.nb.aventiure2.german.base.Person.P1;
 import static de.nb.aventiure2.german.base.Person.P2;
@@ -221,11 +222,11 @@ public class NehmenAction
             return n.add(neuerSatz(StructuralElement.PARAGRAPH,
                     "Ach nein, "
                             // du nimmst die Kugel besser doch
-                            + nehmenPraedikat
+                            + uncapitalize(nehmenPraedikat
                             .mitObj(objectDesc)
                             .getDescriptionDuHauptsatz(
                                     new Modalpartikel("besser"),
-                                    new Modalpartikel("doch")),
+                                    new Modalpartikel("doch"))),
                     secs(5))
                     .undWartest()
                     .dann()

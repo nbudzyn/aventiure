@@ -334,7 +334,8 @@ class RoomConnectionBuilder {
                                 "noch einmal",
                                 mins(4))
                                 .komma()
-                                .undWartest()));
+                                .undWartest()
+                                .dann()));
             }
 
             return resImWaldBeimBrunnnen.build();
@@ -430,9 +431,13 @@ class RoomConnectionBuilder {
         // STORY: Nachts ist weniger Trubel? (Wäre das ein Statuswechsel beim
         //  Schlossfest? Oder Zumindest auch eine Reaction wie der Auf- /
         //  Abbau des Schlossfestes?)
-        return du(SENTENCE, "stehst",
-                "vom Tisch auf und gehst über die Marmortreppe hinaus in den Trubel "
-                        + "im Schlossgarten", mins(3))
+        return du("gehst",
+                "über die Marmortreppe hinaus in den Trubel "
+                        + "im Schlossgarten",
+                // TODO Nach dem "Trubel" funktioniert "Aus Langeweile..." nicht mehr.
+                //  Stimmung des Spielers verbessern? ("Aufgedreht"? "Aufgekratzt"?)
+                "über die Marmortreppe",
+                mins(3))
                 .dann();
     }
 

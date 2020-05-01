@@ -135,6 +135,9 @@ public class EssenAction extends AbstractScAction {
     private AvTimeSpan narrateAndDoSchlossfestHungrig() {
         saveSatt();
 
+        // TODO Danach passt "Aus Langeweile wirfst du..." nicht mehr gut.
+        //  Laune verbessern zu "Aufgedreht" oder so?!
+
         return n.addAlt(
                 du(SENTENCE,
                         "füllst", "dir von dem Eintopf ein und langst kräftig zu",
@@ -225,7 +228,8 @@ public class EssenAction extends AbstractScAction {
                         .dann(),
                 du("bedienst", "dich an den süßen Früchten, als ob es kein Morgen "
                         + "gäbe. Schließlich bist du vollkommen satt", mins(10))
-                        .undWartest(),
+                        .undWartest()
+                        .dann(),
                 du("isst", "so lange von den Früchten, bis dein Hunger gestillt "
                         + "ist", mins(10))
                         .dann()
@@ -236,7 +240,7 @@ public class EssenAction extends AbstractScAction {
         if (db.counterDao().incAndGet(COUNTER_FELSENBIRNEN) == 1) {
             return ImmutableList.of(
                     du("nimmst", "eine von den Früchten und beißt hinein. "
-                                    + "Sie ist überrasschend süß und saftig. Du isst die Frucht auf",
+                                    + "Sie ist überraschend süß und saftig. Du isst die Frucht auf",
                             mins(3))
                             .undWartest()
                             .dann());
@@ -247,11 +251,15 @@ public class EssenAction extends AbstractScAction {
                         "Hunger",
                         mins(3))
                         .dann(),
+                // TODO Das mit dem "entgehen lassen" macht keinen Sinn, wenn man sich gerade erst
+                //  satt gegessen hat. Umformulieren? Nur beim ersten Mal, wenn man
+                //  außerdem satt ist?
                 du(SENTENCE, "lässt",
                         "dir die süßen Früchte nicht entgehen, auch wenn du kaum Hunger "
                                 + "hast", "die süßen Früchte", mins(3))
                         .komma()
                         .undWartest()
+                        .dann()
         );
     }
 
