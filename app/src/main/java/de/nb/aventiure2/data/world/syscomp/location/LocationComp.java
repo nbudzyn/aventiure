@@ -58,9 +58,23 @@ public class LocationComp extends AbstractStatefulComponent<LocationPCD> {
         }
 
         // TODO Ist es gut, wenn die Komponente GameObjects aufruft?
-        //  Vielleicht wäre es besser, wenn sich die Komponente
-        //  nur ihr eigenes DAO merken würde und sich weder
-        //  um andere Komponente noch andere Game Objects kümmern würde?
+        //  Ideen könnten sein:
+        //  - Die Komponente darf sich nur um sich selbst kümmern.
+        //  - Die Komponente darf sich nur um sich selbst kümmern sowie
+        //    um dieselbe Komponenten-Klasse bei anderen Game Objets
+        //    (also nur um ihr "System").
+        //  - Die Komponente darf sich nur um sich selbst kümmern sowie
+        //    um dieselbe Komponenten-Klasse bei anderen Game Objets
+        //    (also nur um ihr "System") - und sie darf ihr eigenes Game Object
+        //    nach Dingen fragen (über ein dünnes Interface wie ComponentContext).
+        //  - Die Komponente darf sich um sich selbst kümmern
+        //    und sie darf auch andere Game Objects laden und mit ihnen interagieren,
+        //    allerdings nicht direkt mit anderen Komponenten dieser
+        //    Game Objects, außer diese anderen Komponenten gehören zum
+        //    eigenen "System" (also: Die LocationComp darf mit anderen
+        //    Game Objects interagieren sowie deren LocationComps - aber nicht
+        //    deren XYZComps).
+        //  - Eine Komponente darf alles, was auch eine ScAction (z.B.) darf.
         return (IHasStoringPlaceGO) GameObjects.load(db, locationId);
     }
 

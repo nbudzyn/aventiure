@@ -1,4 +1,4 @@
-package de.nb.aventiure2.scaction.action.room.connection;
+package de.nb.aventiure2.data.world.syscomp.spatialconnection;
 
 import androidx.annotation.NonNull;
 
@@ -10,7 +10,6 @@ import de.nb.aventiure2.data.database.AvDatabase;
 import de.nb.aventiure2.data.world.gameobjects.player.SpielerCharakter;
 import de.nb.aventiure2.data.world.lichtverhaeltnisse.Lichtverhaeltnisse;
 import de.nb.aventiure2.data.world.syscomp.memory.Known;
-import de.nb.aventiure2.data.world.syscomp.spatialconnection.ISpatiallyConnectedGO;
 import de.nb.aventiure2.data.world.syscomp.state.IHasStateGO;
 import de.nb.aventiure2.data.world.time.AvTimeSpan;
 import de.nb.aventiure2.data.world.time.Tageszeit;
@@ -34,51 +33,40 @@ import static de.nb.aventiure2.data.world.gameobjects.GameObjects.loadSC;
 import static de.nb.aventiure2.data.world.lichtverhaeltnisse.Lichtverhaeltnisse.HELL;
 import static de.nb.aventiure2.data.world.syscomp.memory.Known.KNOWN_FROM_DARKNESS;
 import static de.nb.aventiure2.data.world.syscomp.memory.Known.UNKNOWN;
+import static de.nb.aventiure2.data.world.syscomp.spatialconnection.SpatialConnection.con;
 import static de.nb.aventiure2.data.world.syscomp.state.GameObjectState.BEGONNEN;
 import static de.nb.aventiure2.data.world.time.AvTimeSpan.mins;
 import static de.nb.aventiure2.data.world.time.AvTimeSpan.secs;
 import static de.nb.aventiure2.german.base.AllgDescription.neuerSatz;
 import static de.nb.aventiure2.german.base.DuDescription.du;
 import static de.nb.aventiure2.german.base.StructuralElement.SENTENCE;
-import static de.nb.aventiure2.scaction.action.room.connection.RoomConnection.con;
 
-class RoomConnectionBuilder {
+class SingleSpatialConnectionBuilder {
     private final AvDatabase db;
 
     private final SpielerCharakter sc;
 
     private final ISpatiallyConnectedGO from;
 
-
-    RoomConnectionBuilder(final AvDatabase db, final ISpatiallyConnectedGO from) {
+    SingleSpatialConnectionBuilder(final AvDatabase db, final ISpatiallyConnectedGO from) {
         this.db = db;
         sc = loadSC(db);
         this.from = from;
     }
 
-    List<RoomConnection> getConnections() {
+    List<SpatialConnection> getConnections() {
         // TODO Meldungen auf from-Räume aufteilen in der Art
         //  schloss::getDesc_DraussenVorDemSchloss().
         //  from-Räume (SchlossConnectionBuilder etc.) von AbstractRoomConnectionBuilder ableiten.
 
         if (from.is(SCHLOSS_VORHALLE)) {
-            final ImmutableList.Builder<RoomConnection> resSchlossVorhalle =
-                    ImmutableList.builder();
-            resSchlossVorhalle.add(con(DRAUSSEN_VOR_DEM_SCHLOSS,
-                    "Das Schloss verlassen",
-                    this::getDesc_SchlossVorhalle_DraussenVorDemSchloss));
-            if (((IHasStateGO) load(db, SCHLOSSFEST)).stateComp().hasState(BEGONNEN)) {
-                resSchlossVorhalle.add(con(SCHLOSS_VORHALLE_TISCH_BEIM_FEST,
-                        "An einen Tisch setzen",
-                        this::getDesc_SchlossVorhalle_SchlossVorhalleTischBeimFest));
-            }
-            return resSchlossVorhalle.build();
+            return getSpatialConnectionsSchlossVorhalle();
         }
         if (from.is(SCHLOSS_VORHALLE_TISCH_BEIM_FEST)) {
             return ImmutableList.of(
                     con(SCHLOSS_VORHALLE,
                             "Vom Tisch aufstehen",
-                            RoomConnectionBuilder::getDesc_SchlossVorhalleTischBeimFest_SchlossVorhalle));
+                            SingleSpatialConnectionBuilder::getDesc_SchlossVorhalleTischBeimFest_SchlossVorhalle));
         }
         if (from.is(DRAUSSEN_VOR_DEM_SCHLOSS)) {
             return ImmutableList.of(
@@ -303,7 +291,7 @@ class RoomConnectionBuilder {
             ));
         }
         if (from.is(IM_WALD_BEIM_BRUNNEN)) {
-            final ImmutableList.Builder<RoomConnection> resImWaldBeimBrunnnen =
+            final ImmutableList.Builder<SpatialConnection> resImWaldBeimBrunnnen =
                     ImmutableList.builder();
 
             resImWaldBeimBrunnnen.add(con(ABZWEIG_IM_WALD,
@@ -357,6 +345,20 @@ class RoomConnectionBuilder {
 
         throw new IllegalStateException("Unexpected from: " + from);
 
+    }
+
+    private List<SpatialConnection> getSpatialConnectionsSchlossVorhalle() {
+        final ImmutableList.Builder<SpatialConnection> resSchlossVorhalle =
+                ImmutableList.builder();
+        resSchlossVorhalle.add(con(DRAUSSEN_VOR_DEM_SCHLOSS,
+                "Das Schloss verlassen",
+                this::getDesc_SchlossVorhalle_DraussenVorDemSchloss));
+        if (((IHasStateGO) load(db, SCHLOSSFEST)).stateComp().hasState(BEGONNEN)) {
+            resSchlossVorhalle.add(con(SCHLOSS_VORHALLE_TISCH_BEIM_FEST,
+                    "An einen Tisch setzen",
+                    this::getDesc_SchlossVorhalle_SchlossVorhalleTischBeimFest));
+        }
+        return resSchlossVorhalle.build();
     }
 
 // -------------------------------------------------------------------

@@ -2,10 +2,12 @@ package de.nb.aventiure2.scaction.action;
 
 import androidx.annotation.NonNull;
 
-import com.google.common.base.Function;
 import com.google.common.collect.ImmutableList;
 
+import org.checkerframework.checker.nullness.qual.Nullable;
+
 import java.util.List;
+import java.util.function.Function;
 
 import de.nb.aventiure2.data.database.AvDatabase;
 import de.nb.aventiure2.data.storystate.StoryState;
@@ -20,14 +22,14 @@ import de.nb.aventiure2.data.world.syscomp.location.ILocatableGO;
 import de.nb.aventiure2.data.world.syscomp.memory.Action;
 import de.nb.aventiure2.data.world.syscomp.memory.Known;
 import de.nb.aventiure2.data.world.syscomp.spatialconnection.ISpatiallyConnectedGO;
+import de.nb.aventiure2.data.world.syscomp.spatialconnection.SpatialConnection;
+import de.nb.aventiure2.data.world.syscomp.spatialconnection.SpatialConnections;
 import de.nb.aventiure2.data.world.syscomp.state.IHasStateGO;
 import de.nb.aventiure2.data.world.syscomp.storingplace.IHasStoringPlaceGO;
 import de.nb.aventiure2.data.world.time.AvTimeSpan;
 import de.nb.aventiure2.german.base.AbstractDescription;
 import de.nb.aventiure2.german.base.DuDescription;
 import de.nb.aventiure2.scaction.AbstractScAction;
-import de.nb.aventiure2.scaction.action.room.connection.RoomConnection;
-import de.nb.aventiure2.scaction.action.room.connection.RoomConnections;
 
 import static com.google.common.base.Preconditions.checkArgument;
 import static de.nb.aventiure2.data.world.gameobjects.GameObjects.DRAUSSEN_VOR_DEM_SCHLOSS;
@@ -77,7 +79,7 @@ public class BewegenAction<R extends ISpatiallyConnectedGO & IHasStoringPlaceGO,
 
     private final R oldRoom;
 
-    private final RoomConnection roomConnection;
+    private final SpatialConnection spatialConnection;
     private final NumberOfPossibilities numberOfPossibilities;
 
     public static <R extends ISpatiallyConnectedGO & IHasStoringPlaceGO>
@@ -87,20 +89,20 @@ public class BewegenAction<R extends ISpatiallyConnectedGO & IHasStoringPlaceGO,
             final R room) {
         final ImmutableList.Builder<AbstractScAction> res = ImmutableList.builder();
 
-        final List<RoomConnection> roomConnections =
-                RoomConnections.getFrom(db, room);
+        final List<SpatialConnection> spatialConnections =
+                SpatialConnections.getFrom(db, room);
 
-        final BewegenAction.NumberOfPossibilities numberOfPossibilities =
-                calcNumberOfPossibilities(roomConnections.size());
+        final NumberOfPossibilities numberOfPossibilities =
+                calcNumberOfPossibilities(spatialConnections.size());
 
-        for (final RoomConnection roomConnection : roomConnections) {
+        for (final SpatialConnection spatialConnection : spatialConnections) {
             res.add(new BewegenAction<>(db, currentStoryState, room,
-                    roomConnection, numberOfPossibilities));
+                    spatialConnection, numberOfPossibilities));
         }
         return res.build();
     }
 
-    private static BewegenAction.NumberOfPossibilities calcNumberOfPossibilities(
+    private static NumberOfPossibilities calcNumberOfPossibilities(
             final int numericalNumber) {
         switch (numericalNumber) {
             case 1:
@@ -118,15 +120,15 @@ public class BewegenAction<R extends ISpatiallyConnectedGO & IHasStoringPlaceGO,
     private BewegenAction(final AvDatabase db,
                           final StoryState initialStoryState,
                           final R oldRoom,
-                          final RoomConnection roomConnection,
+                          final SpatialConnection spatialConnection,
                           final NumberOfPossibilities numberOfPossibilities) {
         super(db, initialStoryState);
         this.numberOfPossibilities = numberOfPossibilities;
 
-        checkArgument(!oldRoom.is(roomConnection.getTo()), "newRoom == oldRoom)");
+        checkArgument(!oldRoom.is(spatialConnection.getTo()), "newRoom == oldRoom)");
 
         this.oldRoom = oldRoom;
-        this.roomConnection = roomConnection;
+        this.spatialConnection = spatialConnection;
     }
 
     @Override
@@ -137,21 +139,21 @@ public class BewegenAction<R extends ISpatiallyConnectedGO & IHasStoringPlaceGO,
     @Override
     @NonNull
     public String getName() {
-        return roomConnection.getActionName();
+        return spatialConnection.getActionName();
     }
 
     @Override
     public AvTimeSpan narrateAndDo() {
         final Lichtverhaeltnisse lichtverhaeltnisseInNewRoom =
-                getLichtverhaeltnisse(roomConnection.getTo());
+                getLichtverhaeltnisse(spatialConnection.getTo());
 
         final ImmutableList<LIV> creaturesInOldRoom = loadDescribableLivingInventory(db, oldRoom);
         final ImmutableList<LOC_DESC> objectsInNewRoom =
-                loadDescribableNonLivingInventory(db, roomConnection.getTo());
+                loadDescribableNonLivingInventory(db, spatialConnection.getTo());
         final ImmutableList<LIV> creaturesInNewRoom =
-                loadDescribableLivingInventory(db, roomConnection.getTo());
+                loadDescribableLivingInventory(db, spatialConnection.getTo());
 
-        AvTimeSpan elapsedTime = narrateRoomOnly(lichtverhaeltnisseInNewRoom);
+        AvTimeSpan elapsedTime = narrateAndDoRoomOnly(lichtverhaeltnisseInNewRoom);
 
         if (scWirdMitEssenKonfrontiert()) {
             elapsedTime = elapsedTime.plus(scAutomaticReactions
@@ -169,12 +171,12 @@ public class BewegenAction<R extends ISpatiallyConnectedGO & IHasStoringPlaceGO,
             elapsedTime = elapsedTime.plus(narrateObjects(objectsInNewRoom));
         }
 
-        sc.locationComp().setLocation(roomConnection.getTo());
+        sc.locationComp().setLocation(spatialConnection.getTo());
         sc.memoryComp().setLastAction(buildMemorizedAction());
 
         setRoomAndObjectsKnown(objectsInNewRoom, lichtverhaeltnisseInNewRoom);
 
-        final GameObject toGameObject = load(db, roomConnection.getTo());
+        final GameObject toGameObject = load(db, spatialConnection.getTo());
         if (toGameObject instanceof IHasStoringPlaceGO) {
             elapsedTime = elapsedTime.plus(creatureReactionsCoordinator
                     .onEnterRoom(oldRoom,
@@ -185,7 +187,7 @@ public class BewegenAction<R extends ISpatiallyConnectedGO & IHasStoringPlaceGO,
     }
 
     private boolean scWirdMitEssenKonfrontiert() {
-        final GameObject newRoom = load(db, roomConnection.getTo());
+        final GameObject newRoom = load(db, spatialConnection.getTo());
 
         if (((IHasStateGO) load(db, SCHLOSSFEST)).stateComp().hasState(BEGONNEN)) {
             if (oldRoom.is(DRAUSSEN_VOR_DEM_SCHLOSS) &&
@@ -212,7 +214,7 @@ public class BewegenAction<R extends ISpatiallyConnectedGO & IHasStoringPlaceGO,
     private void updatePlayerStateOfMind() {
         final Mood mood = sc.feelingsComp().getMood();
         if (oldRoom.is(SCHLOSS_VORHALLE)
-                && roomConnection.getTo().equals(DRAUSSEN_VOR_DEM_SCHLOSS)
+                && spatialConnection.getTo().equals(DRAUSSEN_VOR_DEM_SCHLOSS)
                 && mood == Mood.ANGESPANNT) {
             sc.feelingsComp().setMood(Mood.NEUTRAL);
         } else if (mood == Mood.ETWAS_GEKNICKT) {
@@ -235,14 +237,14 @@ public class BewegenAction<R extends ISpatiallyConnectedGO & IHasStoringPlaceGO,
                                 lastObject.getId()));
     }
 
-    private AvTimeSpan narrateRoomOnly(final Lichtverhaeltnisse lichtverhaeltnisseInNewRoom) {
-        final AbstractDescription description = getMovementDescription(initialStoryState,
+    private AvTimeSpan narrateAndDoRoomOnly(final Lichtverhaeltnisse lichtverhaeltnisseInNewRoom) {
+        final AbstractDescription description = getNormalDescriptionAndDo(initialStoryState,
                 lichtverhaeltnisseInNewRoom);
 
         if (description instanceof DuDescription && initialStoryState
                 .allowsAdditionalDuSatzreihengliedOhneSubjekt() && sc.memoryComp().getLastAction()
                 .is(Action.Type.BEWEGEN) &&
-                sc.locationComp().lastLocationWas(roomConnection.getTo())) {
+                sc.locationComp().lastLocationWas(spatialConnection.getTo())) {
 
 
             return n.add(
@@ -261,8 +263,8 @@ public class BewegenAction<R extends ISpatiallyConnectedGO & IHasStoringPlaceGO,
         }
 
         if (sc.memoryComp().lastActionWas(Action.Type.BEWEGEN, (GameObjectId) null)) {
-            if (sc.locationComp().lastLocationWas(roomConnection.getTo()) &&
-                    numberOfPossibilities != NumberOfPossibilities.ONLY_WAY) {
+            if (sc.locationComp().lastLocationWas(spatialConnection.getTo()) &&
+                    numberOfPossibilities != ONLY_WAY) {
                 if (sc.memoryComp().getLastAction().is(Action.Type.BEWEGEN)) {
                     final ImmutableList.Builder<AbstractDescription<?>> alt =
                             ImmutableList.builder();
@@ -324,16 +326,18 @@ public class BewegenAction<R extends ISpatiallyConnectedGO & IHasStoringPlaceGO,
         }
     }
 
-    private AbstractDescription getMovementDescription(final StoryState currentStoryState,
-                                                       final Lichtverhaeltnisse
-                                                               lichtverhaeltnisseInNewRoom) {
-        final Known newRoomKnown = sc.memoryComp().getKnown(roomConnection.getTo());
+    private AbstractDescription getNormalDescriptionAndDo(final StoryState currentStoryState,
+                                                          final Lichtverhaeltnisse
+                                                                  lichtverhaeltnisseInNewRoom) {
+        final Known newRoomKnown = sc.memoryComp().getKnown(spatialConnection.getTo());
 
         final AbstractDescription standardDescription =
-                roomConnection.getDescription(newRoomKnown, lichtverhaeltnisseInNewRoom);
+                spatialConnection
+                        .getDescriptionAndDoSCMovingSideEffects(newRoomKnown,
+                                lichtverhaeltnisseInNewRoom);
 
         if (newRoomKnown == Known.KNOWN_FROM_LIGHT) {
-            if (numberOfPossibilities == NumberOfPossibilities.ONLY_WAY) {
+            if (numberOfPossibilities == ONLY_WAY) {
                 if (sc.feelingsComp().hasMood(Mood.VOLLER_FREUDE) &&
                         lichtverhaeltnisseInNewRoom == HELL &&
                         currentStoryState.allowsAdditionalDuSatzreihengliedOhneSubjekt() &&
@@ -349,9 +353,9 @@ public class BewegenAction<R extends ISpatiallyConnectedGO & IHasStoringPlaceGO,
                             standardDescription.getTimeElapsed().times(2))
                             .undWartest();
                 }
-            } else if (numberOfPossibilities == NumberOfPossibilities.ONE_IN_ONE_OUT
+            } else if (numberOfPossibilities == ONE_IN_ONE_OUT
                     && sc.memoryComp().getLastAction().is(Action.Type.BEWEGEN) &&
-                    !sc.locationComp().lastLocationWas(roomConnection.getTo()) &&
+                    !sc.locationComp().lastLocationWas(spatialConnection.getTo()) &&
                     sc.feelingsComp().hasMood(Mood.VOLLER_FREUDE) &&
                     lichtverhaeltnisseInNewRoom ==
                             HELL &&
@@ -383,7 +387,7 @@ public class BewegenAction<R extends ISpatiallyConnectedGO & IHasStoringPlaceGO,
     private String buildObjectInRoomDescriptionPrefix(final int numberOfObjects) {
         final String res =
                 capitalize(
-                        ((IHasStoringPlaceGO) load(db, roomConnection.getTo()))
+                        ((IHasStoringPlaceGO) load(db, spatialConnection.getTo()))
                                 .storingPlaceComp().getLocationMode().getWo());
 
         if (numberOfObjects == 1) {
@@ -399,7 +403,7 @@ public class BewegenAction<R extends ISpatiallyConnectedGO & IHasStoringPlaceGO,
     @NonNull
     private static String buildEntitiesInRoomDescriptionList(
             @NonNull final List<? extends IDescribableGO> entities,
-            final Function<IDescribableGO, String> describer) {
+            final Function<IDescribableGO, @Nullable String> describer) {
         final StringBuilder res = new StringBuilder();
         for (int i = 0; i < entities.size(); i++) {
             res.append(describer.apply(entities.get(i)));
@@ -431,7 +435,7 @@ public class BewegenAction<R extends ISpatiallyConnectedGO & IHasStoringPlaceGO,
             final Lichtverhaeltnisse lichtverhaeltnisse) {
         final Known known = Known.getKnown(lichtverhaeltnisse);
 
-        sc.memoryComp().upgradeKnown(roomConnection.getTo(), known);
+        sc.memoryComp().upgradeKnown(spatialConnection.getTo(), known);
 
         for (final IGameObject objectInNewRoom : objectsInNewRoom) {
             sc.memoryComp().upgradeKnown(objectInNewRoom, known);
