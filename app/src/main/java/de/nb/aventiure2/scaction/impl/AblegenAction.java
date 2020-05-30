@@ -150,18 +150,18 @@ public class AblegenAction
                 if (sc.memoryComp().lastActionWas(Action.Type.NEHMEN, gameObject)) {
                     return n.add(satzanschluss(
                             "– und legst "
-                                    + gameObjektPersPron
+                                    + gameObjektPersPron.akk()
                                     + " sogleich wieder hin", secs(3)));
                 }
 
                 if (sc.memoryComp().getLastAction().hasObject(gameObject)) {
                     return n.add(satzanschluss(", dann legst du "
-                            + gameObjektPersPron
+                            + gameObjektPersPron.akk()
                             + " hin", secs(5))
                             .undWartest());
                 }
 
-                String text = "und legst " + gameObjektPersPron;
+                String text = "und legst " + gameObjektPersPron.akk();
                 if (sc.memoryComp().getLastAction().is(Action.Type.BEWEGEN)) {
                     text += " dort";
                 }

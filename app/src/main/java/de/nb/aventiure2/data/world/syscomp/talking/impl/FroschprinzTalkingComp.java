@@ -171,7 +171,6 @@ public class FroschprinzTalkingComp extends AbstractTalkingComp {
                         //  Hochheben:  "dein Herz klopft gewaltig"
                         exitSt(this::froschHatHochhebenGefordert_Exit)
                         // STORY:
-                        //  Tisch beim Schlossfest als eigenen Raum modellieren,
                         //  An einen Tisch setzen = Bewegung, location = "auf dem Tisch"
                         //  STORY Frosch nehmen erhält am Tisch eine separate
                         //   Beschreibung (ohne "in die Tasche")
