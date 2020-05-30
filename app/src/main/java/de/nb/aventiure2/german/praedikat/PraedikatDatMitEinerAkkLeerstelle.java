@@ -2,7 +2,7 @@ package de.nb.aventiure2.german.praedikat;
 
 import androidx.annotation.NonNull;
 
-import de.nb.aventiure2.german.base.DeklinierbarePhrase;
+import de.nb.aventiure2.german.base.SubstantivischePhrase;
 
 /**
  * Ein Prädikat, in dem ein Dativobjekt schon gesetzt ist und genau nur noch für
@@ -20,21 +20,21 @@ class PraedikatDatMitEinerAkkLeerstelle implements PraedikatMitEinerObjektleerst
      * Das Dativobjekt
      */
     @NonNull
-    private final DeklinierbarePhrase describableDat;
+    private final SubstantivischePhrase describableDat;
 
     public PraedikatDatMitEinerAkkLeerstelle(final Verb verb,
-                                             final DeklinierbarePhrase describableDat) {
+                                             final SubstantivischePhrase describableDat) {
         this.verb = verb;
         this.describableDat = describableDat;
     }
 
     @Override
-    public PraedikatOhneLeerstellen mitObj(final DeklinierbarePhrase describable) {
+    public PraedikatOhneLeerstellen mitObj(final SubstantivischePhrase describable) {
         return mitAkk(describable);
     }
 
     public PraedikatOhneLeerstellen mitAkk(
-            final DeklinierbarePhrase describableAkk) {
+            final SubstantivischePhrase describableAkk) {
         return new PraedikatDatAkkOhneLeerstellen(verb,
                 describableDat, describableAkk);
     }

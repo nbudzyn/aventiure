@@ -3,9 +3,9 @@ package de.nb.aventiure2.german.praedikat;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
-import de.nb.aventiure2.german.base.DeklinierbarePhrase;
 import de.nb.aventiure2.german.base.Numerus;
 import de.nb.aventiure2.german.base.Person;
+import de.nb.aventiure2.german.base.SubstantivischePhrase;
 
 /**
  * Ein Verb (ggf. mit Präfix), das genau mit einem Subjekt, einem Dativobjekt und
@@ -44,8 +44,8 @@ public enum VerbSubjDatAkk implements Praedikat {
      * ("Du machst dem Frosch Angebote")
      */
     public String getDescriptionHauptsatz(
-            final DeklinierbarePhrase describableDat,
-            final DeklinierbarePhrase describableAkk) {
+            final SubstantivischePhrase describableDat,
+            final SubstantivischePhrase describableAkk) {
         return mitDat(describableDat).getDescriptionDuHauptsatz(describableAkk);
     }
 
@@ -54,8 +54,8 @@ public enum VerbSubjDatAkk implements Praedikat {
      * ("dem Frosch Angebote machen")
      */
     public String getDescriptionInfinitiv(final Person person, final Numerus numerus,
-                                          final DeklinierbarePhrase describableDat,
-                                          final DeklinierbarePhrase describableAkk) {
+                                          final SubstantivischePhrase describableDat,
+                                          final SubstantivischePhrase describableAkk) {
         return mitDat(describableDat).getDescriptionInfinitiv(
                 person, numerus, describableAkk);
     }
@@ -65,20 +65,20 @@ public enum VerbSubjDatAkk implements Praedikat {
      * ("dem Frosch Angebote zu machen")
      */
     public String getDescriptionZuInfinitiv(final Person person, final Numerus numerus,
-                                            final DeklinierbarePhrase describableDat,
-                                            final DeklinierbarePhrase describableAkk) {
+                                            final SubstantivischePhrase describableDat,
+                                            final SubstantivischePhrase describableAkk) {
         return mitDat(describableDat).getDescriptionInfinitiv(
                 person, numerus, describableAkk);
     }
 
     public PraedikatMitEinerObjektleerstelle mitDat(
-            final DeklinierbarePhrase describableDat) {
+            final SubstantivischePhrase describableDat) {
         return new PraedikatDatMitEinerAkkLeerstelle(verb,
                 describableDat);
     }
 
     public PraedikatMitEinerObjektleerstelle mitAkk(
-            final DeklinierbarePhrase describableAkk) {
+            final SubstantivischePhrase describableAkk) {
         return new PraedikatAkkMitEinerDatLeerstelle(verb,
                 describableAkk);
     }

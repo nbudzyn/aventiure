@@ -5,8 +5,11 @@ import androidx.annotation.Nullable;
 
 import com.google.common.collect.ImmutableList;
 
+import org.jetbrains.annotations.Contract;
+
 import java.util.Collection;
 import java.util.List;
+import java.util.function.Predicate;
 
 import javax.annotation.Nonnull;
 
@@ -22,6 +25,8 @@ import de.nb.aventiure2.data.world.syscomp.location.ILocatableGO;
 import de.nb.aventiure2.data.world.syscomp.location.LocationSystem;
 import de.nb.aventiure2.data.world.syscomp.location.RoomFactory;
 import de.nb.aventiure2.data.world.syscomp.memory.IHasMemoryGO;
+import de.nb.aventiure2.data.world.syscomp.reaction.IReactions;
+import de.nb.aventiure2.data.world.syscomp.reaction.IResponder;
 import de.nb.aventiure2.data.world.syscomp.spatialconnection.impl.DraussenVorDemSchlossConnectionComp;
 import de.nb.aventiure2.data.world.syscomp.spatialconnection.impl.ImWaldNaheDemSchlossConnectionComp;
 import de.nb.aventiure2.data.world.syscomp.spatialconnection.impl.SchlossVorhalleConnectionComp;
@@ -32,14 +37,7 @@ import de.nb.aventiure2.data.world.syscomp.storingplace.StoringPlaceType;
 import de.nb.aventiure2.data.world.time.AvDateTime;
 import de.nb.aventiure2.german.base.Nominalphrase;
 
-import static com.google.common.base.Predicates.not;
 import static com.google.common.collect.ImmutableList.toImmutableList;
-import static de.nb.aventiure2.data.world.syscomp.state.GameObjectState.AUFMERKSAM;
-import static de.nb.aventiure2.data.world.syscomp.state.GameObjectState.BEGONNEN;
-import static de.nb.aventiure2.data.world.syscomp.state.GameObjectState.NOCH_NICHT_BEGONNEN;
-import static de.nb.aventiure2.data.world.syscomp.state.GameObjectState.NORMAL;
-import static de.nb.aventiure2.data.world.syscomp.state.GameObjectState.UNAUFFAELLIG;
-import static de.nb.aventiure2.data.world.syscomp.state.GameObjectStateList.sl;
 import static de.nb.aventiure2.data.world.time.AvTime.oClock;
 import static de.nb.aventiure2.german.base.Nominalphrase.np;
 import static de.nb.aventiure2.german.base.NumerusGenus.F;
@@ -59,7 +57,7 @@ public class GameObjects {
     public static final GameObjectId SPIELER_CHARAKTER = new GameObjectId(1);
 
     // OBJECTS
-    public static GameObjectId GOLDENE_KUGEL = new GameObjectId(10_000);
+    public static final GameObjectId GOLDENE_KUGEL = new GameObjectId(10_000);
 
     // CREATURES
     public static final GameObjectId FROSCHPRINZ = new GameObjectId(20_001);
@@ -87,6 +85,8 @@ public class GameObjects {
      * Vor einem Zugriff auf <code>ALL</code> muss {@link #prepare(AvDatabase)} aufgerufen werden!
      */
     private static GameObjectIdMap ALL;
+
+    private static GOReactionsCoordinator REACTIONS_COORDINATOR;
 
     // SYSTEMS
     private static LocationSystem LOCATION_SYSTEM;
@@ -157,23 +157,19 @@ public class GameObjects {
                             StoringPlaceType.MATSCHIGER_WALDBODENN,
                             false,
                             connection.createWaldwildnisHinterDemBrunnen()),
-                    creature.createBasic(SCHLOSSWACHE,
-                            np(F, "eine Schlosswache mit langer Hellebarde",
-                                    "einer Schlosswache mit langer Hellebarde"),
-                            np(F, "die Schlosswache mit ihrer langen Hellebarde",
-                                    "der Schlosswache mit ihrer langen Hellebarde"),
-                            np(F, "die Schlosswache",
-                                    "der Schlosswache"),
-                            sl(UNAUFFAELLIG, AUFMERKSAM),
-                            SCHLOSS_VORHALLE, DRAUSSEN_VOR_DEM_SCHLOSS),
+                    creature.createSchlosswache(),
                     creature.createFroschprinz(),
                     // STORY Anhand eines StatusDatums kann das Spiel ermitteln, wann der
                     //  Frosch im Schloss ankommt.
 
                     // STORY Wölfe (Creatures? Invisibles?) hetzen Spieler nachts
+                    //  Es könnte z.B. Räume neben dem Weg geben, die der Spieler in aller Regel
+                    //  nicht betreten, kann, wo aber die Wölfe laufen.
+                    //  Es könnte einen sicheren Platz geben - z.B. wäre der Weg sicher
+                    //  oder die Hütte.
 
-                    invisible.create(SCHLOSSFEST, sl(NOCH_NICHT_BEGONNEN, BEGONNEN)),
-                    invisible.create(TAGESZEIT, sl(NORMAL)),
+                    invisible.createSchlossfest(),
+                    invisible.createTageszeit(),
                     object.create(GOLDENE_KUGEL,
                             np(F, "eine goldene Kugel",
                                     "einer goldenen Kugel"),
@@ -192,6 +188,10 @@ public class GameObjects {
 
         if (LOCATION_SYSTEM == null) {
             LOCATION_SYSTEM = new LocationSystem(db);
+        }
+
+        if (REACTIONS_COORDINATOR == null) {
+            REACTIONS_COORDINATOR = new GOReactionsCoordinator(db);
         }
     }
 
@@ -213,6 +213,27 @@ public class GameObjects {
     //  (allerdings ist das quasi die Rückrichtung zur location....). Der Player
     //  - aber vielleicht auch Räume oder bisherige AvObjects - könnten ein Inventory haben.
 
+    @Contract(pure = true)
+    @NonNull
+    public static GOReactionsCoordinator narrateAndDoReactions() {
+        return REACTIONS_COORDINATOR;
+    }
+
+    static <R extends IReactions,
+            G extends GameObject & IResponder>
+    List<G>
+    loadResponders(final AvDatabase db, final Class<R> reactionsInterface) {
+        prepare(db);
+
+        final ImmutableList<GameObject> res =
+                ALL.values().stream()
+                        .filter(IResponder.class::isInstance)
+                        .filter(resp -> IResponder.reactsTo(resp, reactionsInterface))
+                        .collect(toImmutableList());
+        GameObjects.loadGameObjects(res);
+
+        return (ImmutableList<G>) (ImmutableList<?>) res;
+    }
 
     /**
      * Lädt (soweit noch nicht geschehen) alle Gegenstände im Inventar des Spieler-Charakters,
@@ -274,7 +295,7 @@ public class GameObjects {
      * <code>inventoryHolder</code>s und gibt sie zurück -
      * nur Gegenstände, die eine Beschreibung haben.
      */
-    public static <LOC_DESC extends ILocatableGO & IDescribableGO>
+    private static <LOC_DESC extends ILocatableGO & IDescribableGO>
     ImmutableList<LOC_DESC> loadDescribableInventory(final AvDatabase db,
                                                      final IHasStoringPlaceGO inventoryHolder) {
         return loadDescribableInventory(db, inventoryHolder.getId());
@@ -283,9 +304,9 @@ public class GameObjects {
     /**
      * Lädt (soweit noch nicht geschehen) die Game Objects im Inventar dieses
      * <code>inventoryHolder</code>s und gibt sie zurück -
-     * nur Gegenstände, die eine Beschreibung haben, nicht den Spieler-Charakter.
+     * nur Dinge (oder Kreaturen...), die eine Beschreibung haben, nicht den Spieler-Charakter.
      */
-    public static <LOC_DESC extends ILocatableGO & IDescribableGO>
+    private static <LOC_DESC extends ILocatableGO & IDescribableGO>
     ImmutableList<LOC_DESC> loadDescribableInventory(final AvDatabase db,
                                                      final GameObjectId inventoryHolder) {
         prepare(db);
@@ -293,21 +314,21 @@ public class GameObjects {
         final ImmutableList<GameObject> res =
                 LOCATION_SYSTEM.findByLocation(inventoryHolder)
                         .stream()
-                        .filter(not(SPIELER_CHARAKTER::equals))
+                        .filter(((Predicate<GameObjectId>) SPIELER_CHARAKTER::equals).negate())
                         .map(id -> get(db, id))
                         .filter(IDescribableGO.class::isInstance)
                         .collect(toImmutableList());
-        GameObjects.loadGameObjects(db, res);
+        GameObjects.loadGameObjects(res);
 
         return (ImmutableList<LOC_DESC>) (ImmutableList<?>) res;
     }
 
-    public static ImmutableList<ILivingBeingGO> loadLivingBeings(final AvDatabase db) {
+    public static ImmutableList<ILivingBeingGO> loadLivingBeings() {
         final ImmutableList<GameObject> res =
                 ALL.values().stream()
                         .filter(ILivingBeingGO.class::isInstance)
                         .collect(toImmutableList());
-        GameObjects.loadGameObjects(db, res);
+        GameObjects.loadGameObjects(res);
 
         return (ImmutableList<ILivingBeingGO>) (ImmutableList<?>) res;
     }
@@ -315,17 +336,16 @@ public class GameObjects {
     private static <GO extends IGameObject> ImmutableList<GO> filterNoLivingBeing(
             final List<GO> gameObjects) {
         return gameObjects.stream()
-                .filter(not(ILivingBeingGO.class::isInstance))
+                .filter(((Predicate<GO>) ILivingBeingGO.class::isInstance).negate())
                 .collect(toImmutableList());
     }
 
     private static <DESC_OBJ extends ILocatableGO & IDescribableGO,
             LIV extends ILocatableGO & IDescribableGO & ILivingBeingGO>
     ImmutableList<LIV> filterLivingBeing(final List<DESC_OBJ> gameObjects) {
-        return (ImmutableList<LIV>) (ImmutableList<?>)
-                gameObjects.stream()
-                        .filter(ILivingBeingGO.class::isInstance)
-                        .collect(toImmutableList());
+        return (ImmutableList<LIV>) gameObjects.stream()
+                .filter(ILivingBeingGO.class::isInstance)
+                .collect(toImmutableList());
     }
 
     /**
@@ -393,8 +413,7 @@ public class GameObjects {
     /**
      * Lädt (sofern nicht schon geschehen) diese Game Objects und gibt es zurück.
      */
-    private static void loadGameObjects(final AvDatabase db,
-                                        final Collection<? extends GameObject> gameObjects) {
+    private static void loadGameObjects(final Collection<? extends GameObject> gameObjects) {
         for (final GameObject gameObject : gameObjects) {
             gameObject.load();
         }

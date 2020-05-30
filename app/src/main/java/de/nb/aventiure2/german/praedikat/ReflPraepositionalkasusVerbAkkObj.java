@@ -2,8 +2,8 @@ package de.nb.aventiure2.german.praedikat;
 
 import androidx.annotation.NonNull;
 
-import de.nb.aventiure2.german.base.DeklinierbarePhrase;
 import de.nb.aventiure2.german.base.PraepositionMitKasus;
+import de.nb.aventiure2.german.base.SubstantivischePhrase;
 
 /**
  * Ein Verb wie "... an sich nehmen", das mit einem "reflexiven Präpositionalkonstruktion" steht
@@ -35,7 +35,7 @@ public enum ReflPraepositionalkasusVerbAkkObj implements PraedikatMitEinerObjekt
     }
 
     @Override
-    public PraedikatOhneLeerstellen mitObj(final DeklinierbarePhrase describable) {
+    public PraedikatOhneLeerstellen mitObj(final SubstantivischePhrase describable) {
         return new PraedikatSubjReflPraepositionalkasusAkkObjOhneLeerstellen(
                 this, describable);
     }

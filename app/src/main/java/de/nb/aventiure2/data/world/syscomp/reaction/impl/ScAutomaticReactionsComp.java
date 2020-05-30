@@ -1,13 +1,15 @@
-package de.nb.aventiure2.scaction.action.scautomaticreaction;
+package de.nb.aventiure2.data.world.syscomp.reaction.impl;
 
 import androidx.annotation.NonNull;
 
 import de.nb.aventiure2.data.database.AvDatabase;
-import de.nb.aventiure2.data.world.syscomp.feelings.Hunger;
+import de.nb.aventiure2.data.world.syscomp.feelings.FeelingsComp;
+import de.nb.aventiure2.data.world.syscomp.reaction.AbstractReactionsComp;
+import de.nb.aventiure2.data.world.syscomp.reaction.interfaces.ITimePassedReactions;
 import de.nb.aventiure2.data.world.time.AvDateTime;
 import de.nb.aventiure2.data.world.time.AvTimeSpan;
-import de.nb.aventiure2.scaction.action.base.reaction.AbstractReactions;
 
+import static de.nb.aventiure2.data.world.gameobjects.GameObjects.SPIELER_CHARAKTER;
 import static de.nb.aventiure2.data.world.syscomp.feelings.Hunger.HUNGRIG;
 import static de.nb.aventiure2.data.world.time.AvTimeSpan.noTime;
 import static de.nb.aventiure2.german.base.AllgDescription.neuerSatz;
@@ -19,39 +21,23 @@ import static de.nb.aventiure2.german.base.StructuralElement.SENTENCE;
  * "Automatische" Reaktionen des Spielercharakters, z.B. darauf, dass Zeit vergeht.
  * (Z.B.: Spielercharakter wird hungrig.)
  */
-public class ScAutomaticReactions extends AbstractReactions {
-    public ScAutomaticReactions(final AvDatabase db) {
-        super(db);
+public class ScAutomaticReactionsComp
+        extends AbstractReactionsComp
+        implements ITimePassedReactions {
+    private final FeelingsComp feelingsComp;
+
+    public ScAutomaticReactionsComp(final AvDatabase db, final FeelingsComp feelingsComp) {
+        super(SPIELER_CHARAKTER, db);
+        this.feelingsComp = feelingsComp;
     }
 
-    public AvTimeSpan onWirdMitEssenKonfrontiert() {
-        final Hunger hunger = sc.feelingsComp().getHunger();
-        switch (hunger) {
-            case SATT:
-                return noTime();
-            case HUNGRIG:
-                return n.addAlt(
-                        neuerSatz("Mmh!", noTime()),
-                        neuerSatz("Dir läuft das Wasser im Munde zusammen", noTime()),
-                        du(SENTENCE, "hast", "Hunger", noTime())
-                                .undWartest(),
-                        du(SENTENCE, "bist", "hungrig", noTime())
-                                .undWartest(),
-                        neuerSatz("Dir fällt auf, wie hungrig du bist", noTime())
-                                .komma()
-                );
-            default:
-                throw new IllegalStateException("Unerwarteter Hunger-Wert: " + hunger);
-        }
-    }
-
+    @Override
     public AvTimeSpan onTimePassed(final AvDateTime lastTime, final AvDateTime now) {
         AvTimeSpan timeElapsed = noTime();
 
-        final AvDateTime wiederHungrigAb =
-                sc.feelingsComp().getWiederHungrigAb();
+        final AvDateTime wiederHungrigAb = feelingsComp.getWiederHungrigAb();
         if (!now.isBefore(wiederHungrigAb)) {
-            sc.feelingsComp().setHunger(HUNGRIG);
+            feelingsComp.setHunger(HUNGRIG);
 
             if (lastTime.isBefore(wiederHungrigAb)) {
                 timeElapsed = timeElapsed.plus(scWirdHungrig());

@@ -1,4 +1,4 @@
-package de.nb.aventiure2.scaction.action;
+package de.nb.aventiure2.scaction.impl;
 
 import androidx.annotation.NonNull;
 
@@ -14,8 +14,9 @@ import de.nb.aventiure2.data.storystate.StoryState;
 import de.nb.aventiure2.data.world.base.GameObject;
 import de.nb.aventiure2.data.world.base.GameObjectId;
 import de.nb.aventiure2.data.world.base.IGameObject;
-import de.nb.aventiure2.data.world.syscomp.alive.ILivingBeingGO;
+import de.nb.aventiure2.data.world.gameobjects.GameObjects;
 import de.nb.aventiure2.data.world.syscomp.description.IDescribableGO;
+import de.nb.aventiure2.data.world.syscomp.feelings.Hunger;
 import de.nb.aventiure2.data.world.syscomp.feelings.Mood;
 import de.nb.aventiure2.data.world.syscomp.location.ILocatableGO;
 import de.nb.aventiure2.data.world.syscomp.memory.Action;
@@ -38,10 +39,10 @@ import static de.nb.aventiure2.data.world.gameobjects.GameObjects.SCHLOSS_VORHAL
 import static de.nb.aventiure2.data.world.gameobjects.GameObjects.SCHLOSS_VORHALLE_TISCH_BEIM_FEST;
 import static de.nb.aventiure2.data.world.gameobjects.GameObjects.WALDWILDNIS_HINTER_DEM_BRUNNEN;
 import static de.nb.aventiure2.data.world.gameobjects.GameObjects.load;
-import static de.nb.aventiure2.data.world.gameobjects.GameObjects.loadDescribableLivingInventory;
 import static de.nb.aventiure2.data.world.gameobjects.GameObjects.loadDescribableNonLivingInventory;
 import static de.nb.aventiure2.data.world.syscomp.state.GameObjectState.BEGONNEN;
 import static de.nb.aventiure2.data.world.syscomp.storingplace.Lichtverhaeltnisse.HELL;
+import static de.nb.aventiure2.data.world.time.AvTimeSpan.noTime;
 import static de.nb.aventiure2.data.world.time.AvTimeSpan.secs;
 import static de.nb.aventiure2.german.base.AllgDescription.neuerSatz;
 import static de.nb.aventiure2.german.base.AllgDescription.satzanschluss;
@@ -49,17 +50,17 @@ import static de.nb.aventiure2.german.base.DuDescription.du;
 import static de.nb.aventiure2.german.base.GermanUtil.capitalize;
 import static de.nb.aventiure2.german.base.GermanUtil.uncapitalize;
 import static de.nb.aventiure2.german.base.StructuralElement.PARAGRAPH;
+import static de.nb.aventiure2.german.base.StructuralElement.SENTENCE;
 import static de.nb.aventiure2.german.base.StructuralElement.WORD;
-import static de.nb.aventiure2.scaction.action.BewegenAction.NumberOfPossibilities.ONE_IN_ONE_OUT;
-import static de.nb.aventiure2.scaction.action.BewegenAction.NumberOfPossibilities.ONLY_WAY;
-import static de.nb.aventiure2.scaction.action.BewegenAction.NumberOfPossibilities.SEVERAL_WAYS;
+import static de.nb.aventiure2.scaction.impl.BewegenAction.NumberOfPossibilities.ONE_IN_ONE_OUT;
+import static de.nb.aventiure2.scaction.impl.BewegenAction.NumberOfPossibilities.ONLY_WAY;
+import static de.nb.aventiure2.scaction.impl.BewegenAction.NumberOfPossibilities.SEVERAL_WAYS;
 
 /**
  * Der Spielercharakter bewegt sich in einen anderen Raum.
  */
 public class BewegenAction<R extends ISpatiallyConnectedGO & IHasStoringPlaceGO,
-        LOC_DESC extends ILocatableGO & IDescribableGO,
-        LIV extends ILocatableGO & IDescribableGO & ILivingBeingGO>
+        LOC_DESC extends ILocatableGO & IDescribableGO>
         extends AbstractScAction {
     enum NumberOfPossibilities {
         /**
@@ -151,25 +152,20 @@ public class BewegenAction<R extends ISpatiallyConnectedGO & IHasStoringPlaceGO,
         final Lichtverhaeltnisse lichtverhaeltnisseInNewRoom =
                 to.storingPlaceComp().getLichtverhaeltnisseInside();
 
-        final ImmutableList<LIV> creaturesInOldRoom = loadDescribableLivingInventory(db, oldRoom);
         final ImmutableList<LOC_DESC> objectsInNewRoom =
                 loadDescribableNonLivingInventory(db, spatialConnection.getTo());
-        final ImmutableList<LIV> creaturesInNewRoom =
-                loadDescribableLivingInventory(db, spatialConnection.getTo());
 
         AvTimeSpan elapsedTime = narrateAndDoRoomOnly(lichtverhaeltnisseInNewRoom);
 
         if (scWirdMitEssenKonfrontiert()) {
-            elapsedTime = elapsedTime.plus(scAutomaticReactions
-                    .onWirdMitEssenKonfrontiert());
+            elapsedTime = elapsedTime.plus(narrateAndDoSCMitEssenKonfrontiert());
         }
-
-        //  hier prüfen, ob der TO-Raum etwas zu essen enthält
 
         updatePlayerStateOfMind();
 
-        elapsedTime = elapsedTime.plus(creatureReactionsCoordinator
-                .onLeaveRoom(oldRoom, creaturesInOldRoom));
+        elapsedTime = elapsedTime.plus(
+                GameObjects.narrateAndDoReactions()
+                        .onLeave(sc, oldRoom, spatialConnection.getTo()));
 
         if (!objectsInNewRoom.isEmpty()) {
             elapsedTime = elapsedTime.plus(narrateObjects(objectsInNewRoom));
@@ -180,14 +176,9 @@ public class BewegenAction<R extends ISpatiallyConnectedGO & IHasStoringPlaceGO,
 
         setRoomAndObjectsKnown(objectsInNewRoom, lichtverhaeltnisseInNewRoom);
 
-        final GameObject toGameObject = load(db, spatialConnection.getTo());
-        if (toGameObject instanceof IHasStoringPlaceGO) {
-            elapsedTime = elapsedTime.plus(creatureReactionsCoordinator
-                    .onEnterRoom(oldRoom,
-                            (IHasStoringPlaceGO) toGameObject, creaturesInNewRoom));
-
-        }
-        return elapsedTime;
+        return elapsedTime.plus(
+                GameObjects.narrateAndDoReactions()
+                        .onEnter(sc, oldRoom, spatialConnection.getTo()));
     }
 
     private boolean scWirdMitEssenKonfrontiert() {
@@ -209,6 +200,31 @@ public class BewegenAction<R extends ISpatiallyConnectedGO & IHasStoringPlaceGO,
         }
 
         return false;
+    }
+
+    private AvTimeSpan narrateAndDoSCMitEssenKonfrontiert() {
+        final Hunger hunger = sc.feelingsComp().getHunger();
+        switch (hunger) {
+            case SATT:
+                return noTime();
+            case HUNGRIG:
+                return narrateAnDoSCMitEssenKonfrontiertReagiertHungrig();
+            default:
+                throw new IllegalStateException("Unerwarteter Hunger-Wert: " + hunger);
+        }
+    }
+
+    private AvTimeSpan narrateAnDoSCMitEssenKonfrontiertReagiertHungrig() {
+        return n.addAlt(
+                neuerSatz("Mmh!", noTime()),
+                neuerSatz("Dir läuft das Wasser im Munde zusammen", noTime()),
+                du(SENTENCE, "hast", "Hunger", noTime())
+                        .undWartest(),
+                du(SENTENCE, "bist", "hungrig", noTime())
+                        .undWartest(),
+                neuerSatz("Dir fällt auf, wie hungrig du bist", noTime())
+                        .komma()
+        );
     }
 
     /**

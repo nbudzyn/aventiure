@@ -20,7 +20,7 @@ import de.nb.aventiure2.german.praedikat.VerbSubjObj;
  * {@link de.nb.aventiure2.data.world.syscomp.spatialconnection.impl.SpatialConnection},
  * die von einem
  * {@link de.nb.aventiure2.data.world.syscomp.spatialconnection.ISpatiallyConnectedGO} zum
- * anderen führt, oft im Rahmen einer {@link de.nb.aventiure2.scaction.action.BewegenAction}.
+ * anderen führt, oft im Rahmen einer {@link de.nb.aventiure2.scaction.impl.BewegenAction}.
  */
 public class SCTalkAction {
     public enum Type {

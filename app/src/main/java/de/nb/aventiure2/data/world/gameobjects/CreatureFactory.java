@@ -1,7 +1,8 @@
 package de.nb.aventiure2.data.world.gameobjects;
 
+import androidx.annotation.NonNull;
+
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 
 import de.nb.aventiure2.data.database.AvDatabase;
 import de.nb.aventiure2.data.world.base.GameObject;
@@ -12,17 +13,23 @@ import de.nb.aventiure2.data.world.syscomp.description.DescriptionComp;
 import de.nb.aventiure2.data.world.syscomp.description.IDescribableGO;
 import de.nb.aventiure2.data.world.syscomp.location.ILocatableGO;
 import de.nb.aventiure2.data.world.syscomp.location.LocationComp;
-import de.nb.aventiure2.data.world.syscomp.state.GameObjectStateList;
+import de.nb.aventiure2.data.world.syscomp.reaction.AbstractReactionsComp;
+import de.nb.aventiure2.data.world.syscomp.reaction.IResponder;
+import de.nb.aventiure2.data.world.syscomp.reaction.impl.FroschprinzReactionsComp;
+import de.nb.aventiure2.data.world.syscomp.reaction.impl.SchlosswacheReactionsComp;
 import de.nb.aventiure2.data.world.syscomp.state.IHasStateGO;
 import de.nb.aventiure2.data.world.syscomp.state.StateComp;
 import de.nb.aventiure2.data.world.syscomp.talking.AbstractTalkingComp;
 import de.nb.aventiure2.data.world.syscomp.talking.ITalkerGO;
 import de.nb.aventiure2.data.world.syscomp.talking.impl.FroschprinzTalkingComp;
-import de.nb.aventiure2.german.base.Nominalphrase;
 
 import static de.nb.aventiure2.data.world.gameobjects.GameObjects.ABZWEIG_IM_WALD;
+import static de.nb.aventiure2.data.world.gameobjects.GameObjects.DRAUSSEN_VOR_DEM_SCHLOSS;
 import static de.nb.aventiure2.data.world.gameobjects.GameObjects.FROSCHPRINZ;
 import static de.nb.aventiure2.data.world.gameobjects.GameObjects.IM_WALD_BEIM_BRUNNEN;
+import static de.nb.aventiure2.data.world.gameobjects.GameObjects.SCHLOSSWACHE;
+import static de.nb.aventiure2.data.world.gameobjects.GameObjects.SCHLOSS_VORHALLE;
+import static de.nb.aventiure2.data.world.syscomp.state.GameObjectState.AUFMERKSAM;
 import static de.nb.aventiure2.data.world.syscomp.state.GameObjectState.AUF_DEM_WEG_ZUM_BRUNNEN_UM_DINGE_HERAUSZUHOLEN;
 import static de.nb.aventiure2.data.world.syscomp.state.GameObjectState.AUF_DEM_WEG_ZUM_SCHLOSSFEST;
 import static de.nb.aventiure2.data.world.syscomp.state.GameObjectState.ERWARTET_VON_SC_EINLOESUNG_SEINES_VERSPRECHENS;
@@ -33,33 +40,39 @@ import static de.nb.aventiure2.data.world.syscomp.state.GameObjectState.HAT_SC_H
 import static de.nb.aventiure2.data.world.syscomp.state.GameObjectState.UNAUFFAELLIG;
 import static de.nb.aventiure2.data.world.syscomp.state.GameObjectStateList.sl;
 import static de.nb.aventiure2.german.base.Nominalphrase.np;
+import static de.nb.aventiure2.german.base.NumerusGenus.F;
 import static de.nb.aventiure2.german.base.NumerusGenus.M;
 
 /**
  * A factory for special {@link GameObject}s: Creatures.
  */
-public class CreatureFactory {
+class CreatureFactory {
     private final AvDatabase db;
 
-    public CreatureFactory(final AvDatabase db) {
+    CreatureFactory(final AvDatabase db) {
         this.db = db;
     }
 
-    public GameObject createBasic(final GameObjectId id,
-                                  final Nominalphrase descriptionAtFirstSight,
-                                  final Nominalphrase normalDescriptionWhenKnown,
-                                  final Nominalphrase shortDescriptionWhenKnown,
-                                  final GameObjectStateList states,
-                                  @Nullable final GameObjectId initialLocationId,
-                                  @Nullable final GameObjectId initialLastLocationId) {
-        return new BasicCreature(id,
-                new DescriptionComp(id, descriptionAtFirstSight, normalDescriptionWhenKnown,
-                        shortDescriptionWhenKnown),
-                new LocationComp(id, db, initialLocationId, initialLastLocationId),
-                new StateComp(id, db, states));
+    GameObject createSchlosswache() {
+        final StateComp stateComp =
+                new StateComp(SCHLOSSWACHE, db, sl(UNAUFFAELLIG, AUFMERKSAM));
+        final DescriptionComp descriptionComp =
+                new DescriptionComp(SCHLOSSWACHE,
+                        np(F, "eine Schlosswache mit langer Hellebarde",
+                                "einer Schlosswache mit langer Hellebarde"),
+                        np(F, "die Schlosswache mit ihrer langen Hellebarde",
+                                "der Schlosswache mit ihrer langen Hellebarde"),
+                        np(F, "die Schlosswache",
+                                "der Schlosswache"));
+        final LocationComp locationComp =
+                new LocationComp(SCHLOSSWACHE, db, SCHLOSS_VORHALLE, DRAUSSEN_VOR_DEM_SCHLOSS);
+
+        return new ReactionsCreature(SCHLOSSWACHE,
+                descriptionComp, locationComp, stateComp,
+                new SchlosswacheReactionsComp(db, descriptionComp, stateComp, locationComp));
     }
 
-    public GameObject createFroschprinz() {
+    GameObject createFroschprinz() {
         final StateComp stateComp =
                 new StateComp(FROSCHPRINZ, db, sl(UNAUFFAELLIG, HAT_SC_HILFSBEREIT_ANGESPROCHEN,
                         HAT_NACH_BELOHNUNG_GEFRAGT, HAT_FORDERUNG_GESTELLT,
@@ -76,11 +89,17 @@ public class CreatureFactory {
                         np(M, "der Frosch",
                                 "dem Frosch",
                                 "den Frosch"));
-        return new TalkingCreature(FROSCHPRINZ,
+        final LocationComp locationComp =
+                new LocationComp(FROSCHPRINZ, db, IM_WALD_BEIM_BRUNNEN, ABZWEIG_IM_WALD);
+        final FroschprinzTalkingComp talkingComp =
+                new FroschprinzTalkingComp(db, descriptionComp, stateComp);
+        return new TalkingReactionsCreature(FROSCHPRINZ,
                 descriptionComp,
-                new LocationComp(FROSCHPRINZ, db, IM_WALD_BEIM_BRUNNEN, ABZWEIG_IM_WALD),
+                locationComp,
                 stateComp,
-                new FroschprinzTalkingComp(db, descriptionComp, stateComp));
+                talkingComp,
+                new FroschprinzReactionsComp(db,
+                        descriptionComp, talkingComp, stateComp, locationComp));
     }
 
     private static class BasicCreature extends GameObject
@@ -90,10 +109,10 @@ public class CreatureFactory {
         private final StateComp stateComp;
         private final AliveComp alive;
 
-        public BasicCreature(final GameObjectId id,
-                             final DescriptionComp descriptionComp,
-                             final LocationComp locationComp,
-                             final StateComp stateComp) {
+        private BasicCreature(final GameObjectId id,
+                              final DescriptionComp descriptionComp,
+                              final LocationComp locationComp,
+                              final StateComp stateComp) {
             super(id);
             // Jede Komponente muss registiert werden!
             this.descriptionComp = addComponent(descriptionComp);
@@ -102,6 +121,7 @@ public class CreatureFactory {
             alive = addComponent(new AliveComp(id));
         }
 
+        @NonNull
         @Override
         public DescriptionComp descriptionComp() {
             return descriptionComp;
@@ -113,6 +133,7 @@ public class CreatureFactory {
             return locationComp;
         }
 
+        @NonNull
         @Override
         public StateComp stateComp() {
             return stateComp;
@@ -125,16 +146,38 @@ public class CreatureFactory {
         }
     }
 
-    private static class TalkingCreature extends BasicCreature
+    private static class ReactionsCreature extends BasicCreature
+            implements IResponder {
+        private final AbstractReactionsComp reactionsComp;
+
+        private ReactionsCreature(final GameObjectId id,
+                                  final DescriptionComp descriptionComp,
+                                  final LocationComp locationComp,
+                                  final StateComp stateComp,
+                                  final AbstractReactionsComp reactionsComp) {
+            super(id, descriptionComp, locationComp, stateComp);
+            // Jede Komponente muss registiert werden!
+            this.reactionsComp = addComponent(reactionsComp);
+        }
+
+        @Override
+        @NonNull
+        public AbstractReactionsComp reactionsComp() {
+            return reactionsComp;
+        }
+    }
+
+    private static class TalkingReactionsCreature extends ReactionsCreature
             implements ITalkerGO {
         private final AbstractTalkingComp talkingComp;
 
-        public TalkingCreature(final GameObjectId id,
-                               final DescriptionComp descriptionComp,
-                               final LocationComp locationComp,
-                               final StateComp stateComp,
-                               final AbstractTalkingComp talkingComp) {
-            super(id, descriptionComp, locationComp, stateComp);
+        TalkingReactionsCreature(final GameObjectId id,
+                                 final DescriptionComp descriptionComp,
+                                 final LocationComp locationComp,
+                                 final StateComp stateComp,
+                                 final AbstractTalkingComp talkingComp,
+                                 final AbstractReactionsComp reactionsComp) {
+            super(id, descriptionComp, locationComp, stateComp, reactionsComp);
             // Jede Komponente muss registiert werden!
             this.talkingComp = addComponent(talkingComp);
         }

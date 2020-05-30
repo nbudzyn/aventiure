@@ -10,7 +10,6 @@ import de.nb.aventiure2.data.database.AvDatabase;
 import de.nb.aventiure2.data.world.base.AbstractStatelessComponent;
 import de.nb.aventiure2.data.world.base.GameObject;
 import de.nb.aventiure2.data.world.base.GameObjectId;
-import de.nb.aventiure2.data.world.gameobjects.GameObjects;
 import de.nb.aventiure2.data.world.syscomp.memory.Known;
 import de.nb.aventiure2.data.world.syscomp.spatialconnection.impl.SpatialConnection;
 import de.nb.aventiure2.data.world.syscomp.storingplace.Lichtverhaeltnisse;
@@ -54,9 +53,4 @@ public abstract class AbstractSpatialConnectionComp extends AbstractStatelessCom
     public abstract boolean isAlternativeMovementDescriptionAllowed(final GameObjectId to,
                                                                     Known newRoomKnown,
                                                                     Lichtverhaeltnisse lichtverhaeltnisseInNewRoom);
-
-    @NonNull
-    protected ISpatiallyConnectedGO getFrom() {
-        return (ISpatiallyConnectedGO) GameObjects.load(db, getGameObjectId());
-    }
 }

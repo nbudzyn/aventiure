@@ -1,4 +1,4 @@
-package de.nb.aventiure2.scaction.action;
+package de.nb.aventiure2.scaction.impl;
 
 import androidx.annotation.NonNull;
 
@@ -105,18 +105,22 @@ public class HeulenAction extends AbstractScAction {
         // STORY Nachts schläft der Frosch?!
 
         sc.memoryComp().setLastAction(buildMemorizedAction());
+
+        final AvTimeSpan timeElapsed =
+                n.add(du("weinst", "immer lauter und kannst dich gar nicht trösten. " +
+                        "Und wie du so klagst, ruft dir jemand zu: „Was hast du vor, " +
+                        "du schreist ja, dass sich ein Stein erbarmen möchte.“ Du siehst " +
+                        "dich um, woher " +
+                        "die Stimme käme, da erblickst du " +
+                        getDescription(froschprinz).akk(), "immer lauter", secs(30)));
+
         froschprinz.stateComp().setState(HAT_SC_HILFSBEREIT_ANGESPROCHEN);
         froschprinz.talkingComp().setTalkingTo(sc);
         sc.feelingsComp().setMood(Mood.NEUTRAL);
         sc.memoryComp().upgradeKnown(FROSCHPRINZ, Known.getKnown(
                 sc.locationComp().getLocation().storingPlaceComp().getLichtverhaeltnisseInside()));
 
-        return n.add(du("weinst", "immer lauter und kannst dich gar nicht trösten. " +
-                "Und wie du so klagst, ruft dir jemand zu: „Was hast du vor, " +
-                "du schreist ja, dass sich ein Stein erbarmen möchte.“ Du siehst " +
-                "dich um, woher " +
-                "die Stimme käme, da erblickst du " +
-                getDescription(froschprinz).akk(), "immer lauter", secs(30)));
+        return timeElapsed;
     }
 
     @Override

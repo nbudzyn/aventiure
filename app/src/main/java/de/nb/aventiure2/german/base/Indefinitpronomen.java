@@ -10,7 +10,7 @@ import static de.nb.aventiure2.german.base.NumerusGenus.N;
  * Ein Pronomen wie "alles", "nichts".
  */
 @ParametersAreNonnullByDefault
-public class Indefinitpronomen extends DeklinierbarePhrase {
+public class Indefinitpronomen extends SubstantivischePhrase {
     public static final Indefinitpronomen ALLES =
             ip(N, Relativpronomen.Typ.WERWAS, "alles", "allem");
     public static final Indefinitpronomen NICHTS =
@@ -54,6 +54,11 @@ public class Indefinitpronomen extends DeklinierbarePhrase {
     public Personalpronomen persPron() {
         // "Ich habe mir alles angesehen. Es hat mir gefallen."
         return Personalpronomen.get(getNumerusGenus());
+    }
+
+    @Override
+    public Possessivartikel possArt() {
+        return Possessivartikel.get(getNumerusGenus());
     }
 
     @Override

@@ -1,8 +1,8 @@
 package de.nb.aventiure2.german.praedikat;
 
-import de.nb.aventiure2.german.base.DeklinierbarePhrase;
 import de.nb.aventiure2.german.base.Numerus;
 import de.nb.aventiure2.german.base.Person;
+import de.nb.aventiure2.german.base.SubstantivischePhrase;
 
 /**
  * Ein Prädikat, in dem (noch) für genau ein Objekt eine Leerstelle besteht. Beispiele:
@@ -15,13 +15,13 @@ public interface PraedikatMitEinerObjektleerstelle extends Praedikat {
     /**
      * Füllt die Objekt-Leerstelle mit diesem Objekt.
      */
-    PraedikatOhneLeerstellen mitObj(final DeklinierbarePhrase describable);
+    PraedikatOhneLeerstellen mitObj(final SubstantivischePhrase describable);
 
     /**
      * Gibt einen Satz zurück mit diesem Verb und diesem <code>describable</code>.
      * ("Du nimmst den Ast")
      */
-    default String getDescriptionDuHauptsatz(final DeklinierbarePhrase describable) {
+    default String getDescriptionDuHauptsatz(final SubstantivischePhrase describable) {
         return mitObj(describable).getDescriptionDuHauptsatz();
     }
 
@@ -39,7 +39,7 @@ public interface PraedikatMitEinerObjektleerstelle extends Praedikat {
      * dieser adverbialen Angabe ("Aus Langeweile nimmst du den Ast")
      */
     default String getDescriptionDuHauptsatz(
-            final DeklinierbarePhrase describable,
+            final SubstantivischePhrase describable,
             final AdverbialeAngabe adverbialeAngabe) {
         return mitObj(describable).getDescriptionDuHauptsatz(adverbialeAngabe);
     }
@@ -56,7 +56,7 @@ public interface PraedikatMitEinerObjektleerstelle extends Praedikat {
      */
     default String getDescriptionInfinitiv(
             final Person person, final Numerus numerus,
-            final DeklinierbarePhrase describable) {
+            final SubstantivischePhrase describable) {
         return mitObj(describable).getDescriptionInfinitiv(person, numerus);
     }
 
@@ -71,7 +71,7 @@ public interface PraedikatMitEinerObjektleerstelle extends Praedikat {
      */
     default String getDescriptionZuInfinitiv(
             final Person person, final Numerus numerus,
-            final DeklinierbarePhrase describable) {
+            final SubstantivischePhrase describable) {
         return mitObj(describable).getDescriptionInfinitiv(person, numerus);
     }
 }

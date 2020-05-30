@@ -9,7 +9,7 @@ import static de.nb.aventiure2.german.base.NumerusGenus.M;
 import static de.nb.aventiure2.german.base.NumerusGenus.N;
 import static de.nb.aventiure2.german.base.NumerusGenus.PL_MFN;
 
-public class Personalpronomen extends DeklinierbarePhrase {
+public class Personalpronomen extends SubstantivischePhrase {
     private static final Map<NumerusGenus, Personalpronomen> ALL = ImmutableMap.of(
             M, new Personalpronomen(M, "er", "ihm", "ihn"),
             F, new Personalpronomen(F, "sie", "ihr"),
@@ -41,5 +41,13 @@ public class Personalpronomen extends DeklinierbarePhrase {
     @Override
     public Relativpronomen relPron() {
         return Relativpronomen.get(getNumerusGenus());
+    }
+
+    /**
+     * "Er... sein..."
+     */
+    @Override
+    public Possessivartikel possArt() {
+        return Possessivartikel.get(getNumerusGenus());
     }
 }

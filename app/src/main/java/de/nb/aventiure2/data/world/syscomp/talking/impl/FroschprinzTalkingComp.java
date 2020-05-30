@@ -17,9 +17,9 @@ import de.nb.aventiure2.data.world.syscomp.memory.Action;
 import de.nb.aventiure2.data.world.syscomp.state.StateComp;
 import de.nb.aventiure2.data.world.syscomp.talking.AbstractTalkingComp;
 import de.nb.aventiure2.data.world.time.AvTimeSpan;
-import de.nb.aventiure2.german.base.DeklinierbarePhrase;
 import de.nb.aventiure2.german.base.Indefinitpronomen;
 import de.nb.aventiure2.german.base.Nominalphrase;
+import de.nb.aventiure2.german.base.SubstantivischePhrase;
 
 import static de.nb.aventiure2.data.world.gameobjects.GameObjects.FROSCHPRINZ;
 import static de.nb.aventiure2.data.world.gameobjects.GameObjects.IM_WALD_BEIM_BRUNNEN;
@@ -75,7 +75,7 @@ public class FroschprinzTalkingComp extends AbstractTalkingComp {
      * Gibt eine Beschreibung dieses Objekts zurück - wenn es nur eines ist - sonst
      * etwas wie "die Dinge".
      */
-    private DeklinierbarePhrase getDescriptionSingleOrCollective(
+    private SubstantivischePhrase getDescriptionSingleOrCollective(
             final List<? extends IDescribableGO> objects) {
         if (objects.isEmpty()) {
             return Indefinitpronomen.NICHTS;
@@ -254,7 +254,7 @@ public class FroschprinzTalkingComp extends AbstractTalkingComp {
                 getObjectsInDenBrunnenGefallen();
 
         if (loadSC(db).memoryComp().getLastAction().is(Action.Type.HEULEN)) {
-            final DeklinierbarePhrase objectsDesc =
+            final SubstantivischePhrase objectsDesc =
                     getDescriptionSingleOrCollective(objectsInDenBrunnenGefallen);
 
             return n.add(
@@ -476,7 +476,7 @@ public class FroschprinzTalkingComp extends AbstractTalkingComp {
         final ImmutableList<LOC_DESC> objectsInDenBrunnenGefallen =
                 getObjectsInDenBrunnenGefallen();
 
-        final DeklinierbarePhrase descObjectsInDenBrunnenGefallen =
+        final SubstantivischePhrase descObjectsInDenBrunnenGefallen =
                 getDescriptionSingleOrCollective(objectsInDenBrunnenGefallen);
 
         unsetTalkingTo();
@@ -485,11 +485,7 @@ public class FroschprinzTalkingComp extends AbstractTalkingComp {
 
         loadSC(db).feelingsComp().setMood(VOLLER_FREUDE);
 
-        for (final LOC_DESC object : objectsInDenBrunnenGefallen) {
-            object.locationComp().setLocation(scLocationId);
-        }
-
-        return n.add(satzanschluss("taucht seinen Kopf "
+        AvTimeSpan timeElapsed = n.add(satzanschluss("taucht seinen Kopf "
                         + "unter, sinkt hinab und über ein Weilchen kommt er wieder herauf gerudert, "
                         + "hat "
                         // die goldene Kugel / die Dinge
@@ -505,6 +501,13 @@ public class FroschprinzTalkingComp extends AbstractTalkingComp {
                         + descObjectsInDenBrunnenGefallen.akk()
                         + " wieder erblickst",
                 secs(30)));
+
+        for (final LOC_DESC object : objectsInDenBrunnenGefallen) {
+            timeElapsed = timeElapsed.plus(object.locationComp()
+                    .narrateAndSetLocation(scLocationId));
+        }
+
+        return timeElapsed;
     }
 
     private AvTimeSpan froschHatForderungGestellt_Exit() {

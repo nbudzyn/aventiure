@@ -11,6 +11,7 @@ import de.nb.aventiure2.data.world.syscomp.feelings.Mood;
 import de.nb.aventiure2.data.world.syscomp.location.LocationComp;
 import de.nb.aventiure2.data.world.syscomp.memory.Known;
 import de.nb.aventiure2.data.world.syscomp.memory.MemoryComp;
+import de.nb.aventiure2.data.world.syscomp.reaction.impl.ScAutomaticReactionsComp;
 import de.nb.aventiure2.data.world.syscomp.storingplace.StoringPlaceComp;
 import de.nb.aventiure2.data.world.syscomp.talking.impl.NoSCTalkActionsTalkingComp;
 import de.nb.aventiure2.data.world.time.AvDateTime;
@@ -35,14 +36,16 @@ public class SpielerCharakterFactory {
     }
 
     public SpielerCharakter create(final GameObjectId id) {
+        final FeelingsComp feelingsComp = new FeelingsComp(id, db, Mood.NEUTRAL, SATT,
+                new AvDateTime(1, oClock(8)),
+                hours(6));
         return new SpielerCharakter(id,
                 new LocationComp(id, db, SCHLOSS_VORHALLE, null),
                 new StoringPlaceComp(id, db, IN_EINER_TASCHE, false),
-                new FeelingsComp(id, db, Mood.NEUTRAL, SATT,
-                        new AvDateTime(1, oClock(8)),
-                        hours(6)),
+                feelingsComp,
                 new MemoryComp(id, db, createKnownMap()),
-                new NoSCTalkActionsTalkingComp(SPIELER_CHARAKTER, db));
+                new NoSCTalkActionsTalkingComp(SPIELER_CHARAKTER, db),
+                new ScAutomaticReactionsComp(db, feelingsComp));
     }
 
     private static Map<GameObjectId, Known> createKnownMap() {

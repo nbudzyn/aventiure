@@ -1,11 +1,14 @@
-package de.nb.aventiure2.scaction.action.invisible.reaction;
+package de.nb.aventiure2.data.world.syscomp.reaction.impl;
 
 import androidx.annotation.Nullable;
 
 import de.nb.aventiure2.data.database.AvDatabase;
 import de.nb.aventiure2.data.world.base.IGameObject;
+import de.nb.aventiure2.data.world.gameobjects.player.SpielerCharakter;
 import de.nb.aventiure2.data.world.syscomp.feelings.Mood;
-import de.nb.aventiure2.data.world.syscomp.state.IHasStateGO;
+import de.nb.aventiure2.data.world.syscomp.reaction.AbstractReactionsComp;
+import de.nb.aventiure2.data.world.syscomp.reaction.interfaces.ITimePassedReactions;
+import de.nb.aventiure2.data.world.syscomp.state.StateComp;
 import de.nb.aventiure2.data.world.time.AvDateTime;
 import de.nb.aventiure2.data.world.time.AvTimeSpan;
 
@@ -13,6 +16,7 @@ import static de.nb.aventiure2.data.world.gameobjects.GameObjects.COUNTER_ID_VOR
 import static de.nb.aventiure2.data.world.gameobjects.GameObjects.DRAUSSEN_VOR_DEM_SCHLOSS;
 import static de.nb.aventiure2.data.world.gameobjects.GameObjects.SCHLOSSFEST;
 import static de.nb.aventiure2.data.world.gameobjects.GameObjects.SCHLOSSFEST_BEGINN_DATE_TIME;
+import static de.nb.aventiure2.data.world.gameobjects.GameObjects.loadSC;
 import static de.nb.aventiure2.data.world.syscomp.state.GameObjectState.BEGONNEN;
 import static de.nb.aventiure2.data.world.time.AvDateTime.isWithin;
 import static de.nb.aventiure2.data.world.time.AvTimeSpan.mins;
@@ -20,10 +24,18 @@ import static de.nb.aventiure2.data.world.time.AvTimeSpan.noTime;
 import static de.nb.aventiure2.german.base.AllgDescription.neuerSatz;
 import static de.nb.aventiure2.german.base.StructuralElement.PARAGRAPH;
 
-class SchlossfestReactions
-        extends AbstractInvisibleReactions<IHasStateGO> {
-    SchlossfestReactions(final AvDatabase db) {
-        super(db, SCHLOSSFEST);
+/**
+ * "Reaktionen" des Schlossfestess, z.B. darauf, dass Zeit vergeht.
+ * (Z.B.: Das Schlossfest beginnt.)
+ */
+public class SchlossfestReactionsComp
+        extends AbstractReactionsComp
+        implements ITimePassedReactions {
+    private final StateComp stateComp;
+
+    public SchlossfestReactionsComp(final AvDatabase db, final StateComp stateComp) {
+        super(SCHLOSSFEST, db);
+        this.stateComp = stateComp;
     }
 
     @Override
@@ -38,6 +50,8 @@ class SchlossfestReactions
     }
 
     private AvTimeSpan schlossfestBeginnt() {
+        final SpielerCharakter sc = loadSC(db);
+
         final @Nullable IGameObject currentRoom = sc.locationComp().getLocation();
 
         if (currentRoom == null) {
@@ -45,7 +59,7 @@ class SchlossfestReactions
         }
 
         sc.feelingsComp().setMood(Mood.NEUTRAL);
-        getReactor().stateComp().setState(BEGONNEN);
+        stateComp.setState(BEGONNEN);
 
         if (!currentRoom.is(DRAUSSEN_VOR_DEM_SCHLOSS)) {
             return noTime();  // Passiert nebenher und braucht KEINE zusätzliche Zeit

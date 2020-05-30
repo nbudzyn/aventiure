@@ -5,7 +5,7 @@ package de.nb.aventiure2.data.world.base;
  * entity-component-system pattern.
  */
 public interface IGameObject {
-    boolean is(GameObjectId someId);
+    boolean is(GameObjectId... someIdAlternatives);
 
     GameObjectId getId();
 

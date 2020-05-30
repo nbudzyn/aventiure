@@ -1,4 +1,4 @@
-package de.nb.aventiure2.scaction.action;
+package de.nb.aventiure2.scaction.impl;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -21,7 +21,7 @@ import de.nb.aventiure2.german.base.Personalpronomen;
 import de.nb.aventiure2.german.praedikat.PraedikatMitEinerObjektleerstelle;
 import de.nb.aventiure2.scaction.AbstractScAction;
 
-import static com.google.common.base.Preconditions.checkArgument;
+import static com.google.common.base.Preconditions.checkState;
 import static de.nb.aventiure2.data.world.gameobjects.GameObjects.FROSCHPRINZ;
 import static de.nb.aventiure2.data.world.time.AvTimeSpan.secs;
 import static de.nb.aventiure2.german.base.AllgDescription.satzanschluss;
@@ -86,44 +86,61 @@ public class AblegenAction
 
     @Override
     public AvTimeSpan narrateAndDo() {
-        AvTimeSpan timeElapsed = narrate();
-        letGoAndAddToRoomCreatureOrObject();
+        if (gameObject instanceof ILivingBeingGO) {
+            return narrateAndDoLivingBeing();
+        }
 
-        timeElapsed =
-                timeElapsed.plus(creatureReactionsCoordinator.onAblegen(room, gameObject));
+        return narrateAndDoObject();
+    }
+
+    private AvTimeSpan narrateAndDoLivingBeing() {
+        checkState(gameObject.is(FROSCHPRINZ),
+                "Unexpected creature data: " + gameObject);
+
+        AvTimeSpan timeElapsed = n.addAlt(
+                du(PARAGRAPH,
+                        "wühlst", "in deiner Tasche und auf einmal "
+                                + "schauert's dich und "
+                                + "der nasse Frosch sitzt in deiner Hand. Schnell "
+                                + room.storingPlaceComp().getLocationMode().getWohin()
+                                + " mit ihm!",
+                        secs(7))
+                        .dann()
+                        .beendet(PARAGRAPH),
+                du(PARAGRAPH,
+                        "schüttest", "deine Tasche aus, bis der Frosch endlich " +
+                                room.storingPlaceComp().getLocationMode().getWohin() +
+                                " fällt. Puh.",
+                        secs(7))
+                        .dann()
+                        .beendet(PARAGRAPH),
+                du(PARAGRAPH,
+                        "wühlst", "in deiner Tasche. Da quakt es erbost, auf einmal "
+                                + "springt der Fosch heraus und direkt "
+                                + room.storingPlaceComp().getLocationMode().getWohin(),
+                        secs(7)
+                ));
+        timeElapsed = timeElapsed.plus(narrateUpgradeKnownAndSetLocationAndAction());
+        sc.feelingsComp().setMood(Mood.NEUTRAL);
 
         return timeElapsed;
     }
 
-    private void letGoAndAddToRoomCreatureOrObject() {
-        if (gameObject instanceof ILivingBeingGO) {
-            letGoAndAddToRoomCreature((LIVGO) gameObject);
-        } else {
-            letGoAndAddToRoom();
-        }
+    private AvTimeSpan narrateAndDoObject() {
+        final AvTimeSpan timeElapsed;
+        timeElapsed = narrateObject();
+        // TODO onLeave() und onEnter() feuern!
+
+        return timeElapsed.plus(narrateUpgradeKnownAndSetLocationAndAction());
     }
 
-    private void letGoAndAddToRoomCreature(final LIVGO creature) {
-        checkArgument(creature.is(FROSCHPRINZ),
-                "Unexpected creature: " + creature);
-
-        letGoAndAddToRoom();
-        sc.feelingsComp().setMood(Mood.NEUTRAL);
-    }
-
-    private void letGoAndAddToRoom() {
+    private AvTimeSpan narrateUpgradeKnownAndSetLocationAndAction() {
         sc.memoryComp().upgradeKnown(gameObject,
                 Known.getKnown(room.storingPlaceComp().getLichtverhaeltnisseInside()));
-        gameObject.locationComp().setLocation(room);
+        final AvTimeSpan timeSpan = gameObject.locationComp().narrateAndSetLocation(room);
         sc.memoryComp().setLastAction(buildMemorizedAction());
-    }
 
-    private AvTimeSpan narrate() {
-        if (gameObject instanceof ILivingBeingGO) {
-            return narrateCreature((LIVGO) gameObject);
-        }
-
-        return narrateObject();
+        return timeSpan;
     }
 
     private AvTimeSpan narrateObject() {
@@ -171,35 +188,6 @@ public class AblegenAction
                         getDescription(gameObject, false).akk() + " hin", secs(3))
                         .undWartest()
                         .dann());
-    }
-
-    private AvTimeSpan narrateCreature(final LIVGO creature) {
-        checkArgument(creature.is(FROSCHPRINZ),
-                "Unexpected creature data: " + creature);
-
-        return n.addAlt(
-                du(PARAGRAPH,
-                        "wühlst", "in deiner Tasche und auf einmal "
-                                + "schauert's dich und "
-                                + "der nasse Frosch sitzt in deiner Hand. Schnell "
-                                + room.storingPlaceComp().getLocationMode().getWohin()
-                                + " mit ihm!",
-                        secs(7))
-                        .dann()
-                        .beendet(PARAGRAPH),
-                du(PARAGRAPH,
-                        "schüttest", "deine Tasche aus, bis der Frosch endlich " +
-                                room.storingPlaceComp().getLocationMode().getWohin() +
-                                " fällt. Puh.",
-                        secs(7))
-                        .dann()
-                        .beendet(PARAGRAPH),
-                du(PARAGRAPH,
-                        "wühlst", "in deiner Tasche. Da quakt es erbost, auf einmal "
-                                + "springt der Fosch heraus und direkt "
-                                + room.storingPlaceComp().getLocationMode().getWohin(),
-                        secs(7)
-                ));
     }
 
     @Override

@@ -133,9 +133,9 @@ public abstract class AbstractDescription<SELF extends AbstractDescription<SELF>
         return endsThis;
     }
 
-    public SELF phorikKandidat(final DeklinierbarePhrase deklinierbarePhrase,
+    public SELF phorikKandidat(final SubstantivischePhrase substantivischePhrase,
                                final IBezugsobjekt bezugsobjekt) {
-        return phorikKandidat(deklinierbarePhrase.getNumerusGenus(), bezugsobjekt);
+        return phorikKandidat(substantivischePhrase.getNumerusGenus(), bezugsobjekt);
     }
 
     public SELF phorikKandidat(final NumerusGenus numerusGenus,

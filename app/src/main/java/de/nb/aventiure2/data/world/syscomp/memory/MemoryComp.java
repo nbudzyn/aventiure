@@ -116,11 +116,6 @@ public class MemoryComp extends AbstractStatefulComponent<MemoryPCD> {
         return getPcd().getKnown(otherGameObjectId);
     }
 
-    private void setKnown(final IGameObject otherGameObject,
-                          @NonNull final Known known) {
-        setKnown(otherGameObject.getId(), known);
-    }
-
     private void setKnown(final GameObjectId otherGameObjectId,
                           @NonNull final Known known) {
         getPcd().setKnown(otherGameObjectId, known);

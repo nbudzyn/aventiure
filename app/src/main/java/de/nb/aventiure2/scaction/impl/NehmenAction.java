@@ -1,4 +1,4 @@
-package de.nb.aventiure2.scaction.action;
+package de.nb.aventiure2.scaction.impl;
 
 import androidx.annotation.NonNull;
 
@@ -10,6 +10,7 @@ import javax.annotation.ParametersAreNonnullByDefault;
 
 import de.nb.aventiure2.data.database.AvDatabase;
 import de.nb.aventiure2.data.storystate.StoryState;
+import de.nb.aventiure2.data.world.gameobjects.GameObjects;
 import de.nb.aventiure2.data.world.syscomp.alive.ILivingBeingGO;
 import de.nb.aventiure2.data.world.syscomp.description.IDescribableGO;
 import de.nb.aventiure2.data.world.syscomp.feelings.Mood;
@@ -20,13 +21,15 @@ import de.nb.aventiure2.data.world.syscomp.state.IHasStateGO;
 import de.nb.aventiure2.data.world.syscomp.storingplace.IHasStoringPlaceGO;
 import de.nb.aventiure2.data.world.time.AvTimeSpan;
 import de.nb.aventiure2.german.base.Nominalphrase;
+import de.nb.aventiure2.german.base.NumerusGenus;
 import de.nb.aventiure2.german.base.StructuralElement;
+import de.nb.aventiure2.german.base.SubstantivischePhrase;
 import de.nb.aventiure2.german.praedikat.AdverbialeAngabe;
 import de.nb.aventiure2.german.praedikat.Modalpartikel;
 import de.nb.aventiure2.german.praedikat.PraedikatMitEinerObjektleerstelle;
 import de.nb.aventiure2.scaction.AbstractScAction;
 
-import static com.google.common.base.Preconditions.checkArgument;
+import static com.google.common.base.Preconditions.checkState;
 import static de.nb.aventiure2.data.world.gameobjects.GameObjects.FROSCHPRINZ;
 import static de.nb.aventiure2.data.world.gameobjects.GameObjects.SPIELER_CHARAKTER;
 import static de.nb.aventiure2.data.world.syscomp.state.GameObjectState.ERWARTET_VON_SC_EINLOESUNG_SEINES_VERSPRECHENS;
@@ -49,8 +52,7 @@ import static de.nb.aventiure2.german.praedikat.VerbSubjObj.NEHMEN;
  */
 @ParametersAreNonnullByDefault
 public class NehmenAction
-        <GO extends IDescribableGO & ILocatableGO,
-                LIVGO extends IDescribableGO & ILocatableGO & ILivingBeingGO>
+        <GO extends IDescribableGO & ILocatableGO>
         extends AbstractScAction {
     private final IHasStoringPlaceGO room;
     @NonNull
@@ -105,49 +107,105 @@ public class NehmenAction
 
     @Override
     public AvTimeSpan narrateAndDo() {
-        AvTimeSpan timeElapsed = narrate();
-        removeFromRoomAndTakeCreatureOrObject();
-
-        sc.memoryComp().setLastAction(buildMemorizedAction());
-
-        timeElapsed =
-                timeElapsed.plus(creatureReactionsCoordinator.onNehmen(room, gameObject));
-
-        return timeElapsed;
-    }
-
-    private void removeFromRoomAndTakeCreatureOrObject() {
         if (gameObject instanceof ILivingBeingGO) {
-            removeFromRoomAndTakeCreature((LIVGO) gameObject);
-        } else {
-            removeFromRoomAndTake();
+            return narrateAndDoLivingBeing();
         }
+        return narrateAndDoObject();
     }
 
-    private void removeFromRoomAndTakeCreature(@NonNull final LIVGO creature) {
-        checkArgument(creature.is(FROSCHPRINZ) &&
-                        ((IHasStateGO) creature).stateComp()
-                                .hasState(ERWARTET_VON_SC_EINLOESUNG_SEINES_VERSPRECHENS),
-                "Unexpected creature: " + creature);
+    private AvTimeSpan narrateAndDoLivingBeing() {
+        checkState(gameObject.is(FROSCHPRINZ),
+                "Unexpected creature: " + gameObject);
+        checkState(((IHasStateGO) gameObject).stateComp()
+                        .hasState(ERWARTET_VON_SC_EINLOESUNG_SEINES_VERSPRECHENS),
+                "Unexpected state: " + gameObject);
 
-        removeFromRoomAndTake();
-        sc.feelingsComp().setMood(Mood.NEUTRAL);
-    }
+        final Nominalphrase froschDesc = getDescription(gameObject, true);
 
-    private void removeFromRoomAndTake() {
+        AvTimeSpan timeElapsed = n.addAlt(
+                du(PARAGRAPH,
+                        "ekelst",
+                        "dich sehr, aber mit einiger Überwindung nimmst du "
+                                + froschDesc.akk()
+                                + " in "
+                                + "die Hand", secs(10))
+                        .phorikKandidat(froschDesc, FROSCHPRINZ)
+                        .undWartest()
+                        .dann(),
+                neuerSatz(PARAGRAPH,
+                        capitalize(froschDesc.akk())
+                                + " in die Hand nehmen?? – Wer hat dir bloß solche Flausen "
+                                + "in den Kopf gesetzt! Kräftig packst du "
+                                + froschDesc.akk(), secs(10))
+                        .phorikKandidat(froschDesc, FROSCHPRINZ)
+                        .undWartest()
+                        .dann(),
+                du(PARAGRAPH,
+                        "erbarmst", "dich", secs(10))
+                        .undWartest()
+        );
+
+        timeElapsed = timeElapsed.plus(
+                GameObjects.narrateAndDoReactions().onLeave(FROSCHPRINZ, room, sc));
+
         sc.memoryComp().upgradeKnown(gameObject, Known.getKnown(
                 room.storingPlaceComp().getLichtverhaeltnisseInside()));
         gameObject.locationComp().setLocation(SPIELER_CHARAKTER);
+        sc.feelingsComp().setMood(Mood.NEUTRAL);
+
+        final SubstantivischePhrase froschDescOderAnapher =
+                getAnaphPersPronWennMglSonstShortDescription(FROSCHPRINZ);
+
+        timeElapsed = timeElapsed.plus(
+                timeElapsed.plus(n.addAlt(
+                        neuerSatz(capitalize(froschDescOderAnapher.nom()) // "er"
+                                + " ist glibschig und schleimig – pfui-bäh! – schnell lässt du "
+                                + froschDescOderAnapher.persPron().akk()
+                                + " in "
+                                + "eine Tasche gleiten. "
+                                + capitalize(
+                                froschDescOderAnapher.possArt().vor(NumerusGenus.N).nom())
+                                + " gedämpftes Quaken könnte wohlig sein oder "
+                                + "genauso gut vorwurfsvoll", secs(10))
+                                .beendet(PARAGRAPH),
+                        du("versenkst",
+                                froschDescOderAnapher.akk() // "ihn"
+                                        + " tief in deine Tasche. Du versuchst, deine Hand an der "
+                                        + "Kleidung zu reinigen, aber der Schleim verteilt sich nur "
+                                        + "überall – igitt!",
+                                "tief in deine Tasche", secs(10))
+                                .beendet(PARAGRAPH),
+                        du("packst",
+                                froschDescOderAnapher.akk() // "ihn"
+                                        + " in deine Tasche. "
+                                        + capitalize(froschDesc.persPron().nom())
+                                        + " fasst "
+                                        + "sich sehr eklig an und du bist glücklich, als die Prozedur "
+                                        + "vorbei ist.", secs(10))
+                                .dann()
+                )));
+
+        timeElapsed = timeElapsed.plus(
+                GameObjects.narrateAndDoReactions().onEnter(FROSCHPRINZ, room, sc));
+
+        sc.memoryComp().setLastAction(buildMemorizedAction());
+        return timeElapsed;
     }
 
+    private AvTimeSpan narrateAndDoObject() {
+        sc.memoryComp().upgradeKnown(gameObject, Known.getKnown(
+                room.storingPlaceComp().getLichtverhaeltnisseInside()));
 
-    private AvTimeSpan narrate() {
-        if (gameObject instanceof ILivingBeingGO) {
-            return narrateCreature((LIVGO) gameObject);
-        }
+        AvTimeSpan timeElapsed = narrateObject();
 
-        return narrateObject();
+        timeElapsed = timeElapsed.plus(
+                gameObject.locationComp().narrateAndSetLocation(SPIELER_CHARAKTER));
+        sc.memoryComp().setLastAction(buildMemorizedAction());
+
+        // STORY Die Schlosswache ist in die Köchin verliebt und bekommt von ihr kekse. Das soll aber geheim bleiben. Der Spieler bekommt was mit. Daher darf er die Kugel mitnehmen...
+        return timeElapsed;
     }
+
 
     @NonNull
     private AvTimeSpan narrateObject() {
@@ -182,7 +240,8 @@ public class NehmenAction
 
         return n.add(
                 neuerSatz(PARAGRAPH,
-                        nehmenPraedikat.getDescriptionDuHauptsatz(getDescription(gameObject, true)),
+                        nehmenPraedikat
+                                .getDescriptionDuHauptsatz(getDescription(gameObject, true)),
                         secs(5))
                         .undWartest(
                                 nehmenPraedikat
@@ -242,36 +301,6 @@ public class NehmenAction
                 .phorikKandidat(objectDesc.getNumerusGenus(), gameObject.getId()));
     }
 
-
-    @NonNull
-    private AvTimeSpan narrateCreature(final LIVGO creature) {
-        checkArgument(creature.is(FROSCHPRINZ) &&
-                        ((IHasStateGO) creature).stateComp()
-                                .hasState(ERWARTET_VON_SC_EINLOESUNG_SEINES_VERSPRECHENS),
-                "Unexpected creature: " + creature);
-
-        return n.addAlt(
-                du(PARAGRAPH,
-                        "ekelst", "dich sehr, aber mit einiger Überwindung nimmst du den Frosch in "
-                                + "die Hand. "
-                                + "Er ist glibschig und schleimig – pfui-bäh! – schnell lässt du ihn in "
-                                + "eine Tasche gleiten. Sein gedämpftes Quaken könnte wohlig sein oder "
-                                + "genauso gut vorwurfsvoll", secs(20))
-                        .beendet(PARAGRAPH),
-                neuerSatz(PARAGRAPH,
-                        "Den Frosch in die Hand nehmen?? – Wer hat dir bloß solche Flausen "
-                                + "in den Kopf gesetzt! Kräftig packst du den Frosch und versenkst "
-                                + "ihn tief in deiner Tasche. Du versuchst, deine Hand an der "
-                                + "Kleidung zu reinigen, aber der Schleim verteilt sich nur "
-                                + "überall – igitt!", secs(20))
-                        .beendet(PARAGRAPH),
-                du(PARAGRAPH,
-                        "erbarmst", "dich und packst den Frosch in deine Tasche. Er fasst "
-                                + "sich sehr eklig an und du bist glücklich, als die Prozedur "
-                                + "vorbei ist.", secs(20))
-                        .dann()
-        );
-    }
 
     @Override
     protected boolean isDefinitivWiederholung() {

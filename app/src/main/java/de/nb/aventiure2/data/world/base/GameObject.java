@@ -2,12 +2,12 @@ package de.nb.aventiure2.data.world.base;
 
 import androidx.annotation.NonNull;
 
+import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
 
 import de.nb.aventiure2.data.world.syscomp.description.IDescribableGO;
-import de.nb.aventiure2.data.world.syscomp.location.ILocatableGO;
 
 /**
  * Base implementation for any object within in the game. An <i>entity</i> in the
@@ -83,22 +83,10 @@ public class GameObject implements IGameObject {
         internalState = InternalState.NOT_LOADED;
     }
 
-    /**
-     * Gibt zurück, ob sich beide Game Objects an derselben Location gemäß
-     * {@link de.nb.aventiure2.data.world.syscomp.location.LocationComp} befinden.
-     */
-    public boolean hasSameLocationAs(
-            final ILocatableGO other) {
-        if (!(this instanceof ILocatableGO)) {
-            return false;
-        }
-
-        return ((ILocatableGO) this).locationComp().hasLocation(other.locationComp().getLocation());
-    }
-
     @Override
-    public boolean is(final GameObjectId someId) {
-        return getId().equals(someId);
+    public boolean is(final GameObjectId... someIdAlternatives) {
+        return Arrays.stream(someIdAlternatives)
+                .anyMatch(getId()::equals);
     }
 
     @Override

@@ -12,6 +12,8 @@ import de.nb.aventiure2.data.world.syscomp.location.ILocatableGO;
 import de.nb.aventiure2.data.world.syscomp.location.LocationComp;
 import de.nb.aventiure2.data.world.syscomp.memory.IHasMemoryGO;
 import de.nb.aventiure2.data.world.syscomp.memory.MemoryComp;
+import de.nb.aventiure2.data.world.syscomp.reaction.IResponder;
+import de.nb.aventiure2.data.world.syscomp.reaction.impl.ScAutomaticReactionsComp;
 import de.nb.aventiure2.data.world.syscomp.storingplace.IHasStoringPlaceGO;
 import de.nb.aventiure2.data.world.syscomp.storingplace.StoringPlaceComp;
 import de.nb.aventiure2.data.world.syscomp.talking.AbstractTalkingComp;
@@ -19,28 +21,31 @@ import de.nb.aventiure2.data.world.syscomp.talking.ITalkerGO;
 
 public class SpielerCharakter extends GameObject
         implements ILocatableGO, IHasStoringPlaceGO, IFeelingBeingGO,
-        ITalkerGO, IHasMemoryGO, ILivingBeingGO {
+        ITalkerGO, IHasMemoryGO, ILivingBeingGO, IResponder {
     private final LocationComp locationComp;
     private final StoringPlaceComp storingPlaceComp;
     private final FeelingsComp feelingsComp;
     private final AbstractTalkingComp talkingComp;
     private final MemoryComp memoryComp;
-    private final AliveComp alive;
+    private final AliveComp aliveComp;
+    private final ScAutomaticReactionsComp reactionsComp;
 
     public SpielerCharakter(final GameObjectId id,
                             final LocationComp locationComp,
                             final StoringPlaceComp storingPlaceComp,
                             final FeelingsComp feelingsComp,
                             final MemoryComp memoryComp,
-                            final AbstractTalkingComp talkingComp) {
+                            final AbstractTalkingComp talkingComp,
+                            final ScAutomaticReactionsComp reactionsComp) {
         super(id);
         // Jede Komponente muss registiert werden!
         this.locationComp = addComponent(locationComp);
         this.storingPlaceComp = addComponent(storingPlaceComp);
         this.feelingsComp = addComponent(feelingsComp);
         this.memoryComp = addComponent(memoryComp);
-        alive = addComponent(new AliveComp(id));
+        aliveComp = addComponent(new AliveComp(id));
         this.talkingComp = addComponent(talkingComp);
+        this.reactionsComp = reactionsComp;
     }
 
     @Nonnull
@@ -76,6 +81,11 @@ public class SpielerCharakter extends GameObject
     @Nonnull
     @Override
     public AliveComp aliveComp() {
-        return alive;
+        return aliveComp;
+    }
+
+    @Override
+    public ScAutomaticReactionsComp reactionsComp() {
+        return reactionsComp;
     }
 }

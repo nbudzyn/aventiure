@@ -29,8 +29,8 @@ public enum PraepositionMitKasus implements KasusOderPraepositionalkasus {
         this.kasus = kasus;
     }
 
-    public String getDescription(final DeklinierbarePhrase deklinierbarePhrase) {
-        return praeposition + " " + deklinierbarePhrase.im(kasus);
+    public String getDescription(final SubstantivischePhrase substantivischePhrase) {
+        return praeposition + " " + substantivischePhrase.im(kasus);
     }
 
     public String getPraeposition() {

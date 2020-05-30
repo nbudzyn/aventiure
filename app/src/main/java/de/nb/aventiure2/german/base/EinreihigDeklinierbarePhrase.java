@@ -3,48 +3,32 @@ package de.nb.aventiure2.german.base;
 import java.util.Objects;
 
 /**
- * Eine Phrase, die dekliniert werden kann, also insbesonder ein Pronomen ("sie") oder
- * eine (andere) Nominalphrase ("die goldene Kugel").
+ * Eine Phrase, die auf Basis einer einzigen Formenreihe dekliniert werden kann.
  */
-public abstract class DeklinierbarePhrase {
+public abstract class EinreihigDeklinierbarePhrase {
     private final NumerusGenus numerusGenus;
     private final String nominativ;
     private final String dativ;
     private final String akkusativ;
 
-    public DeklinierbarePhrase(final NumerusGenus numerusGenus,
-                               final String nominativDativUndAkkusativ) {
+    public EinreihigDeklinierbarePhrase(final NumerusGenus numerusGenus,
+                                        final String nominativDativUndAkkusativ) {
         this(numerusGenus, nominativDativUndAkkusativ, nominativDativUndAkkusativ);
     }
 
 
-    public DeklinierbarePhrase(final NumerusGenus numerusGenus,
-                               final String nominativAkkusativ, final String dativ) {
+    public EinreihigDeklinierbarePhrase(final NumerusGenus numerusGenus,
+                                        final String nominativAkkusativ, final String dativ) {
         this(numerusGenus, nominativAkkusativ, dativ, nominativAkkusativ);
     }
 
-    public DeklinierbarePhrase(final NumerusGenus numerusGenus,
-                               final String nominativ, final String dativ, final String akkusativ) {
+    public EinreihigDeklinierbarePhrase(final NumerusGenus numerusGenus,
+                                        final String nominativ, final String dativ,
+                                        final String akkusativ) {
         this.numerusGenus = numerusGenus;
         this.nominativ = nominativ;
         this.dativ = dativ;
         this.akkusativ = akkusativ;
-    }
-
-    public String im(final KasusOderPraepositionalkasus kasusOderPraepositionalkasus) {
-        if (kasusOderPraepositionalkasus instanceof Kasus) {
-            return im((Kasus) kasusOderPraepositionalkasus);
-        }
-
-        if (kasusOderPraepositionalkasus instanceof PraepositionMitKasus) {
-            final PraepositionMitKasus praepositionMitKasus =
-                    (PraepositionMitKasus) kasusOderPraepositionalkasus;
-
-            return praepositionMitKasus.getDescription(this);
-        }
-
-        throw new IllegalArgumentException("Unexpected Kasus or Präpositionalkasus: " +
-                kasusOderPraepositionalkasus);
     }
 
     public String im(final Kasus kasus) {
@@ -76,16 +60,6 @@ public abstract class DeklinierbarePhrase {
         return numerusGenus;
     }
 
-    /**
-     * Gibt ein Personalpronomen für diese Phrase zurück.
-     */
-    public abstract Personalpronomen persPron();
-
-    /**
-     * Gibt ein Relativpronomen für diese Phrase zurück.
-     */
-    public abstract Relativpronomen relPron();
-
     @Override
     public boolean equals(final Object o) {
         if (this == o) {
@@ -94,7 +68,7 @@ public abstract class DeklinierbarePhrase {
         if (o == null || getClass() != o.getClass()) {
             return false;
         }
-        final DeklinierbarePhrase that = (DeklinierbarePhrase) o;
+        final EinreihigDeklinierbarePhrase that = (EinreihigDeklinierbarePhrase) o;
         return numerusGenus == that.numerusGenus &&
                 Objects.equals(nominativ, that.nominativ) &&
                 Objects.equals(dativ, that.dativ) &&

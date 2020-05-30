@@ -11,6 +11,9 @@ import de.nb.aventiure2.data.world.base.GameObject;
 import de.nb.aventiure2.data.world.base.GameObjectId;
 import de.nb.aventiure2.data.world.gameobjects.GameObjects;
 import de.nb.aventiure2.data.world.syscomp.storingplace.IHasStoringPlaceGO;
+import de.nb.aventiure2.data.world.time.AvTimeSpan;
+
+import static de.nb.aventiure2.data.world.time.AvTimeSpan.noTime;
 
 /**
  * Component for a {@link GameObject}: The game object
@@ -29,7 +32,7 @@ public class LocationComp extends AbstractStatefulComponent<LocationPCD> {
     public LocationComp(final GameObjectId gameObjectId,
                         final AvDatabase db,
                         final GameObjectId initialLocationId,
-                        final GameObjectId initialLastLocationId) {
+                        @Nullable final GameObjectId initialLastLocationId) {
         super(gameObjectId, db.locationDao());
         this.db = db;
         this.initialLocationId = initialLocationId;
@@ -40,6 +43,31 @@ public class LocationComp extends AbstractStatefulComponent<LocationPCD> {
     @NonNull
     protected LocationPCD createInitialState() {
         return new LocationPCD(getGameObjectId(), initialLocationId, initialLastLocationId);
+    }
+
+    public AvTimeSpan narrateAndSetLocation(@Nullable final IHasStoringPlaceGO newLocation) {
+        return narrateAndSetLocation(
+                newLocation != null ? newLocation.getId() : null);
+    }
+
+    public AvTimeSpan narrateAndSetLocation(@Nullable final GameObjectId newLocationId) {
+        AvTimeSpan timeElapsed = noTime();
+
+        @Nullable final IHasStoringPlaceGO location = getLocation();
+        if (location != null) {
+            GameObjects.narrateAndDoReactions()
+                    .onLeave(getGameObjectId(), location, newLocationId);
+        }
+
+        setLocation(newLocationId);
+
+        if (newLocationId != null) {
+            timeElapsed = timeElapsed.plus(
+                    GameObjects.narrateAndDoReactions()
+                            .onEnter(getGameObjectId(), getLastLocation(), newLocationId));
+        }
+
+        return timeElapsed;
     }
 
     public boolean hasLocation(final @Nullable IHasStoringPlaceGO gameObject) {
@@ -87,14 +115,14 @@ public class LocationComp extends AbstractStatefulComponent<LocationPCD> {
      * Sets the location to <code>null</code>.
      */
     public void unsetLocation() {
-        getPcd().setLocationId(null);
+        setLocation((GameObjectId) null);
     }
 
     public void setLocation(final IHasStoringPlaceGO storingPlace) {
         setLocation(storingPlace.getId());
     }
 
-    public void setLocation(final GameObjectId locationId) {
+    public void setLocation(@Nullable final GameObjectId locationId) {
         if (Objects.equals(getLocationId(), locationId)) {
             return;
         }
@@ -118,9 +146,9 @@ public class LocationComp extends AbstractStatefulComponent<LocationPCD> {
     }
 
     @Nullable
-    public IHasStoringPlaceGO getLastLocation() {
-        @Nullable final GameObjectId locationId = getLastLocationId();
-        if (locationId == null) {
+    private IHasStoringPlaceGO getLastLocation() {
+        @Nullable final GameObjectId lastLocationId = getLastLocationId();
+        if (lastLocationId == null) {
             return null;
         }
 
@@ -128,11 +156,11 @@ public class LocationComp extends AbstractStatefulComponent<LocationPCD> {
         //  Vielleicht wäre es besser, wenn sich die Komponente
         //  nur ihr eigenes DAO merken würde und sich weder
         //  um andere Komponente noch andere Game Objects kümmern würde?
-        return (IHasStoringPlaceGO) GameObjects.load(db, locationId);
+        return (IHasStoringPlaceGO) GameObjects.load(db, lastLocationId);
     }
 
     @Nullable
-    public GameObjectId getLastLocationId() {
+    private GameObjectId getLastLocationId() {
         return getPcd().getLastLocationId();
     }
 }

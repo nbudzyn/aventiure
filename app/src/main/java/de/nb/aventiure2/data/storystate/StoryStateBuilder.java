@@ -10,10 +10,10 @@ import javax.annotation.ParametersAreNonnullByDefault;
 
 import de.nb.aventiure2.data.world.base.GameObjectId;
 import de.nb.aventiure2.data.world.base.IGameObject;
-import de.nb.aventiure2.german.base.DeklinierbarePhrase;
 import de.nb.aventiure2.german.base.NumerusGenus;
 import de.nb.aventiure2.german.base.PhorikKandidat;
 import de.nb.aventiure2.german.base.StructuralElement;
+import de.nb.aventiure2.german.base.SubstantivischePhrase;
 
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
@@ -93,9 +93,9 @@ public class StoryStateBuilder {
         this.text = text;
     }
 
-    public StoryStateBuilder phorikKandidat(final DeklinierbarePhrase deklinierbarePhrase,
+    public StoryStateBuilder phorikKandidat(final SubstantivischePhrase substantivischePhrase,
                                             final IGameObject gameObject) {
-        phorikKandidat(deklinierbarePhrase.getNumerusGenus(), gameObject.getId());
+        phorikKandidat(substantivischePhrase.getNumerusGenus(), gameObject.getId());
         return this;
     }
 

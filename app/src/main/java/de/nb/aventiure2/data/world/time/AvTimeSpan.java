@@ -3,6 +3,9 @@ package de.nb.aventiure2.data.world.time;
 import androidx.annotation.NonNull;
 import androidx.room.PrimaryKey;
 
+import org.jetbrains.annotations.Contract;
+
+import java.util.Locale;
 import java.util.Objects;
 
 import javax.annotation.concurrent.Immutable;
@@ -21,52 +24,61 @@ public class AvTimeSpan {
      * Gesamte Zeitspanne in Sekunden
      */
     @PrimaryKey
-    @NonNull
     private final long secs;
 
+    @NonNull
+    @Contract(pure = true)
     public static AvTimeSpan noTime() {
         return secs(0);
     }
 
+    @NonNull
+    @Contract(pure = true)
     public static AvTimeSpan days(final long days) {
         return hours(days * HOURS_IN_A_DAY);
     }
 
+    @NonNull
+    @Contract(pure = true)
     public static AvTimeSpan hours(final long hours) {
         return mins(hours * 60);
     }
 
+    @NonNull
+    @Contract(pure = true)
     public static AvTimeSpan mins(final long mins) {
         return secs(mins * 60);
     }
 
+    @NonNull
+    @Contract(value = "_ -> new", pure = true)
     public static AvTimeSpan secs(final long secs) {
         return new AvTimeSpan(secs);
     }
 
-    AvTimeSpan(@NonNull final long secs) {
+    AvTimeSpan(final long secs) {
         this.secs = secs;
     }
 
-    public AvTimeSpan plus(final AvTimeSpan add) {
+    public AvTimeSpan plus(@NonNull final AvTimeSpan add) {
         return new AvTimeSpan(secs + add.secs);
     }
 
-    int getSecPart() {
+    private int getSecPart() {
         return (int) (secs
                 - (getDays() * SECS_IN_AN_HOUR * HOURS_IN_A_DAY)
                 - (getHourPart() * SECS_IN_AN_HOUR)
                 - (getMinPart() * 60));
     }
 
-    int getMinPart() {
+    private int getMinPart() {
         return (int) (secs
                 - (getDays() * SECS_IN_AN_HOUR * HOURS_IN_A_DAY)
                 - (getHourPart() * SECS_IN_AN_HOUR))
                 / 60;
     }
 
-    public int getHourPart() {
+    private int getHourPart() {
         return (int) (secs - (getDays() * SECS_IN_AN_HOUR * HOURS_IN_A_DAY)) / SECS_IN_AN_HOUR;
     }
 
@@ -86,11 +98,11 @@ public class AvTimeSpan {
         return secs((long) factor * secs);
     }
 
-    public boolean longerThan(final AvTimeSpan other) {
+    public boolean longerThan(@NonNull final AvTimeSpan other) {
         return secs > other.secs;
     }
 
-    public boolean smallerThan(final AvTimeSpan other) {
+    public boolean smallerThan(@NonNull final AvTimeSpan other) {
         return secs < other.secs;
     }
 
@@ -98,6 +110,7 @@ public class AvTimeSpan {
         return equals(noTime());
     }
 
+    @Contract(value = "null -> false", pure = true)
     @Override
     public boolean equals(final Object o) {
         if (this == o) {
@@ -120,12 +133,13 @@ public class AvTimeSpan {
     public String toString() {
         if (getHourPart() == 0) {
             if (getMinPart() == 0) {
-                return String.format("%02ds", getSecPart());
+                return String.format(Locale.GERMANY, "%02ds", getSecPart());
             }
 
-            return String.format("%02dmin %02ds", getMinPart(), getSecPart());
+            return String.format(Locale.GERMANY, "%02dmin %02ds", getMinPart(), getSecPart());
         }
 
-        return String.format("%02dh %02dmin %02ds", getHourPart(), getMinPart(), getSecPart());
+        return String.format(Locale.GERMANY, "%02dh %02dmin %02ds", getHourPart(), getMinPart(),
+                getSecPart());
     }
 }

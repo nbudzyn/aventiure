@@ -145,6 +145,7 @@ public abstract class StoryStateDao {
                             duDesc.getDescriptionSatzanschlussOhneSubjekt())
                     .komma(duDesc.isKommaStehtAus())
                     .dann(duDesc.isDann())
+                    .phorikKandidat(duDesc.getPhorikKandidat())
                     .beendet(desc.getEndsThis()));
         } else if (initialStoryState.dann()) {
             final String satzEvtlMitDann =
@@ -156,6 +157,7 @@ public abstract class StoryStateDao {
                     .undWartest(desc.isAllowsAdditionalDuSatzreihengliedOhneSubjekt())
                     .dann(desc.isDann()
                             && !satzEvtlMitDann.startsWith("Dann"))
+                    .phorikKandidat(desc.getPhorikKandidat())
                     .beendet(desc.getEndsThis()));
         } else {
             final ImmutableList.Builder<StoryStateBuilder> alternatives =
@@ -200,6 +202,7 @@ public abstract class StoryStateDao {
                 .komma(desc.isKommaStehtAus())
                 .undWartest(desc.isAllowsAdditionalDuSatzreihengliedOhneSubjekt())
                 .dann(desc.isDann())
+                .phorikKandidat(desc.getPhorikKandidat())
                 .beendet(desc.getEndsThis());
     }
 
@@ -211,6 +214,7 @@ public abstract class StoryStateDao {
                 .komma(desc.isKommaStehtAus())
                 .undWartest(desc.isAllowsAdditionalDuSatzreihengliedOhneSubjekt())
                 .dann(desc.isDann())
+                .phorikKandidat(desc.getPhorikKandidat())
                 .beendet(desc.getEndsThis());
     }
 

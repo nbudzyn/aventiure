@@ -1,9 +1,10 @@
-package de.nb.aventiure2.scaction.action.invisible.reaction;
+package de.nb.aventiure2.data.world.syscomp.reaction.impl;
 
 import androidx.annotation.NonNull;
 
 import de.nb.aventiure2.data.database.AvDatabase;
-import de.nb.aventiure2.data.world.base.IGameObject;
+import de.nb.aventiure2.data.world.syscomp.reaction.AbstractReactionsComp;
+import de.nb.aventiure2.data.world.syscomp.reaction.interfaces.ITimePassedReactions;
 import de.nb.aventiure2.data.world.time.AvDateTime;
 import de.nb.aventiure2.data.world.time.AvTimeSpan;
 import de.nb.aventiure2.data.world.time.Tageszeit;
@@ -14,10 +15,14 @@ import static de.nb.aventiure2.german.base.AllgDescription.neuerSatz;
 import static de.nb.aventiure2.german.base.StructuralElement.PARAGRAPH;
 import static de.nb.aventiure2.german.base.StructuralElement.SENTENCE;
 
-public class TageszeitReactions
-        extends AbstractInvisibleReactions<IGameObject> {
-    TageszeitReactions(final AvDatabase db) {
-        super(db, TAGESZEIT);
+/**
+ * Sorgt dafür, dass Sätze erzählt werden wie "Allmählich wird es Abend".
+ */
+public class TageszeitReactionsComp
+        extends AbstractReactionsComp
+        implements ITimePassedReactions {
+    public TageszeitReactionsComp(final AvDatabase db) {
+        super(TAGESZEIT, db);
     }
 
     @Override

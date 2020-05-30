@@ -3,6 +3,7 @@ package de.nb.aventiure2.data.world.syscomp.feelings;
 import androidx.annotation.NonNull;
 
 import de.nb.aventiure2.data.database.AvDatabase;
+import de.nb.aventiure2.data.storystate.StoryStateDao;
 import de.nb.aventiure2.data.world.base.AbstractStatefulComponent;
 import de.nb.aventiure2.data.world.base.GameObject;
 import de.nb.aventiure2.data.world.base.GameObjectId;
@@ -15,6 +16,24 @@ import de.nb.aventiure2.data.world.time.AvTimeSpan;
  */
 public class FeelingsComp extends AbstractStatefulComponent<FeelingsPCD> {
     private final AvDatabase db;
+
+    protected final StoryStateDao n;
+
+    // STORY Jedes FeelingBeing kann zu jedem anderen Feeling Being Gefühle verschiedener
+    //  Stärke aufbauen. Default ist 0 (oder je ein anderer Wert für in-Group / out-Group,
+    //  die letzlich den Persönlichkeit des Beings wieder geben. Es gibt eine Methode, die
+    //  ermittelt, wer in-group ist)
+    //  Bei Interaktionen werden die Gefühle aktualisiert, entweder durch eine dauerhafte
+    //  Verstärkung oder durch einen Reset (Enttäuschung oder "ich habe mich in ihm getäuscht").
+    //  Dazu gibt es
+    //  - die Anzahl der Einzahlungen auf das Gefühl
+    //  - die Summe
+    //  (oder so ähnlich)
+    //  Gefühle könnten zb sein
+    //  - Zuneigung / Abneigung
+    //  - Dankbarkeit / Rachedurst
+    //  - Vertrauen / Misstrauen
+
     @NonNull
     private final Mood initialMood;
     @NonNull
@@ -41,6 +60,8 @@ public class FeelingsComp extends AbstractStatefulComponent<FeelingsPCD> {
         this.initialHunger = initialHunger;
         this.initialZuletztGegessen = initialZuletztGegessen;
         this.zeitspanneNachEssenBisWiederHungrig = zeitspanneNachEssenBisWiederHungrig;
+
+        n = db.storyStateDao();
     }
 
     @Override

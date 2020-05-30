@@ -1,4 +1,4 @@
-package de.nb.aventiure2.scaction.action;
+package de.nb.aventiure2.scaction.impl;
 
 import androidx.annotation.NonNull;
 

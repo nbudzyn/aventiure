@@ -1,6 +1,6 @@
 package de.nb.aventiure2.german.praedikat;
 
-import de.nb.aventiure2.german.base.DeklinierbarePhrase;
+import de.nb.aventiure2.german.base.SubstantivischePhrase;
 
 /**
  * Zwei Verben, die mit demselben Subjekt und (inhaltlich)
@@ -21,9 +21,9 @@ public class ZweiVerbenSubjObj implements PraedikatMitEinerObjektleerstelle {
     }
 
     @Override
-    public PraedikatOhneLeerstellen mitObj(final DeklinierbarePhrase deklinierbarePhrase) {
+    public PraedikatOhneLeerstellen mitObj(final SubstantivischePhrase substantivischePhrase) {
         // "die goldene Kugel"
-        final DeklinierbarePhrase erstesObj = deklinierbarePhrase;
+        final SubstantivischePhrase erstesObj = substantivischePhrase;
 
         return mitObj(
                 // "die goldene Kugel"
@@ -32,13 +32,13 @@ public class ZweiVerbenSubjObj implements PraedikatMitEinerObjektleerstelle {
                 erstesObj.persPron());
     }
 
-    public PraedikatOhneLeerstellen mitObj(final DeklinierbarePhrase ersteDeklinierbarePhrase,
-                                           final DeklinierbarePhrase zweiteDeklinierbarePhrase) {
+    public PraedikatOhneLeerstellen mitObj(final SubstantivischePhrase ersteSubstantivischePhrase,
+                                           final SubstantivischePhrase zweiteSubstantivischePhrase) {
         return new ZweiPraedikateSubjObjOhneLeerstellen(
                 // "die goldene Kugel"
-                erstesVerb.mitObj(ersteDeklinierbarePhrase),
+                erstesVerb.mitObj(ersteSubstantivischePhrase),
                 // "sie"
-                zweitesVerb.mitObj(zweiteDeklinierbarePhrase));
+                zweitesVerb.mitObj(zweiteSubstantivischePhrase));
     }
 
     @Override

@@ -5,10 +5,10 @@ import java.util.Collection;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-import de.nb.aventiure2.german.base.DeklinierbarePhrase;
 import de.nb.aventiure2.german.base.Numerus;
 import de.nb.aventiure2.german.base.Person;
 import de.nb.aventiure2.german.base.Reflexivpronomen;
+import de.nb.aventiure2.german.base.SubstantivischePhrase;
 
 import static de.nb.aventiure2.german.base.GermanUtil.capitalize;
 import static de.nb.aventiure2.german.base.GermanUtil.joinToNull;
@@ -24,11 +24,11 @@ class PraedikatSubjReflPraepositionalkasusAkkObjOhneLeerstellen
         implements PraedikatOhneLeerstellen {
     private final ReflPraepositionalkasusVerbAkkObj reflPraepositionalkasusVerbAkkObj;
 
-    private final DeklinierbarePhrase akkObj;
+    private final SubstantivischePhrase akkObj;
 
     PraedikatSubjReflPraepositionalkasusAkkObjOhneLeerstellen(
             final ReflPraepositionalkasusVerbAkkObj reflPraepositionalkasusVerbAkkObj,
-            final DeklinierbarePhrase akkObj) {
+            final SubstantivischePhrase akkObj) {
 
         this.reflPraepositionalkasusVerbAkkObj = reflPraepositionalkasusVerbAkkObj;
         this.akkObj = akkObj;

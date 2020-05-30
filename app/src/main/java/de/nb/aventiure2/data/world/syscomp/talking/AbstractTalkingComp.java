@@ -142,7 +142,7 @@ public abstract class AbstractTalkingComp extends AbstractStatefulComponent<Talk
     }
 
     @Nullable
-    ITalkerGO getTalkingTo() {
+    private ITalkerGO getTalkingTo() {
         @Nullable final GameObjectId talkingToId = getTalkingToId();
         if (talkingToId == null) {
             return null;
@@ -152,7 +152,7 @@ public abstract class AbstractTalkingComp extends AbstractStatefulComponent<Talk
     }
 
     @Nullable
-    GameObjectId getTalkingToId() {
+    private GameObjectId getTalkingToId() {
         return getPcd().getTalkingToId();
     }
 }

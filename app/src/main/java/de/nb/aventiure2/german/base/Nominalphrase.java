@@ -6,7 +6,7 @@ import static de.nb.aventiure2.german.base.NumerusGenus.PL_MFN;
 /**
  * Eine Nominalphrase, z.B. "ein dicker, hässlicher Frosch".
  */
-public class Nominalphrase extends DeklinierbarePhrase {
+public class Nominalphrase extends SubstantivischePhrase {
     // Allgemeine Nominalfphrasen, die sich nicht auf ein
     // AvObject oder eine AbstractEntity beziehen.
     public static final Nominalphrase ANGEBOTE =
@@ -41,6 +41,11 @@ public class Nominalphrase extends DeklinierbarePhrase {
     @Override
     public Personalpronomen persPron() {
         return Personalpronomen.get(getNumerusGenus());
+    }
+
+    @Override
+    public Possessivartikel possArt() {
+        return Possessivartikel.get(getNumerusGenus());
     }
 
     @Override

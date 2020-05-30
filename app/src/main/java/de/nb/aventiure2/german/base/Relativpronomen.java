@@ -12,7 +12,7 @@ import static de.nb.aventiure2.german.base.NumerusGenus.PL_MFN;
 import static de.nb.aventiure2.german.base.Relativpronomen.Typ.REGEL;
 import static de.nb.aventiure2.german.base.Relativpronomen.Typ.WERWAS;
 
-public class Relativpronomen extends DeklinierbarePhrase {
+public class Relativpronomen extends SubstantivischePhrase {
     public enum Typ {
         // "das Kind, das"
         REGEL,
@@ -69,6 +69,11 @@ public class Relativpronomen extends DeklinierbarePhrase {
     public Personalpronomen persPron() {
         // "Das Haus, das ich gesehen habe, - es ist ein schönes Haus."
         return Personalpronomen.get(getNumerusGenus());
+    }
+
+    @Override
+    public Possessivartikel possArt() {
+        return Possessivartikel.get(getNumerusGenus());
     }
 
     @Override

@@ -1,4 +1,4 @@
-package de.nb.aventiure2.scaction.action;
+package de.nb.aventiure2.scaction.impl;
 
 import androidx.annotation.NonNull;
 
@@ -9,6 +9,7 @@ import java.util.Collection;
 import de.nb.aventiure2.data.database.AvDatabase;
 import de.nb.aventiure2.data.storystate.StoryState;
 import de.nb.aventiure2.data.world.base.IGameObject;
+import de.nb.aventiure2.data.world.gameobjects.GameObjects;
 import de.nb.aventiure2.data.world.syscomp.feelings.Hunger;
 import de.nb.aventiure2.data.world.syscomp.memory.Action;
 import de.nb.aventiure2.data.world.syscomp.state.IHasStateGO;
@@ -114,7 +115,8 @@ public class EssenAction extends AbstractScAction {
 
         sc.memoryComp().setLastAction(buildMemorizedAction());
 
-        timeElapsed = timeElapsed.plus(creatureReactionsCoordinator.onEssen(room));
+        timeElapsed = timeElapsed.plus(GameObjects.narrateAndDoReactions()
+                .onEssen(sc));
 
         return timeElapsed;
     }

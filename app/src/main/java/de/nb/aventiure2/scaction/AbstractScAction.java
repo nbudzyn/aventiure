@@ -7,17 +7,15 @@ import de.nb.aventiure2.data.database.AvDatabase;
 import de.nb.aventiure2.data.storystate.IPlayerAction;
 import de.nb.aventiure2.data.storystate.StoryState;
 import de.nb.aventiure2.data.storystate.StoryStateDao;
+import de.nb.aventiure2.data.world.base.GameObjectId;
 import de.nb.aventiure2.data.world.gameobjects.GameObjects;
 import de.nb.aventiure2.data.world.gameobjects.player.SpielerCharakter;
 import de.nb.aventiure2.data.world.syscomp.description.IDescribableGO;
 import de.nb.aventiure2.data.world.time.AvDateTime;
 import de.nb.aventiure2.data.world.time.AvTimeSpan;
-import de.nb.aventiure2.german.base.DeklinierbarePhrase;
 import de.nb.aventiure2.german.base.Nominalphrase;
 import de.nb.aventiure2.german.base.Personalpronomen;
-import de.nb.aventiure2.scaction.action.creature.reaction.CreatureReactionsCoordinator;
-import de.nb.aventiure2.scaction.action.invisible.reaction.InvisibleReactionsCoordinator;
-import de.nb.aventiure2.scaction.action.scautomaticreaction.ScAutomaticReactions;
+import de.nb.aventiure2.german.base.SubstantivischePhrase;
 
 import static de.nb.aventiure2.data.world.gameobjects.GameObjects.loadSC;
 import static de.nb.aventiure2.data.world.time.AvTimeSpan.noTime;
@@ -42,10 +40,6 @@ public abstract class AbstractScAction implements IPlayerAction {
 
     protected final SpielerCharakter sc;
 
-    protected final CreatureReactionsCoordinator creatureReactionsCoordinator;
-    protected final InvisibleReactionsCoordinator invisibleReactionsCoordinator;
-    protected final ScAutomaticReactions scAutomaticReactions;
-
     /**
      * The {@link StoryState} at the beginning of the action.
      */
@@ -57,10 +51,6 @@ public abstract class AbstractScAction implements IPlayerAction {
         n = db.storyStateDao();
 
         sc = loadSC(db);
-
-        creatureReactionsCoordinator = new CreatureReactionsCoordinator(db);
-        invisibleReactionsCoordinator = new InvisibleReactionsCoordinator(db);
-        scAutomaticReactions = new ScAutomaticReactions(db);
 
         this.initialStoryState = initialStoryState;
     }
@@ -75,6 +65,11 @@ public abstract class AbstractScAction implements IPlayerAction {
      * Aktualisiert dabei auch die Welt.
      */
     public final void doAndPassTime() {
+        // TODO Möglichst dieses ewige Rumreichen der
+        //  verflossenen Zeit ausbauen.
+        //  Kann nicht die Zeit jeweils beim narraten upgedatet werden?
+        //  Und man vergleich hier nur vorher-Zeit mit nachher-Zeit?
+
         final AvDateTime start = db.dateTimeDao().now();
 
         final AvTimeSpan timeElapsed = narrateAndDo();
@@ -91,21 +86,19 @@ public abstract class AbstractScAction implements IPlayerAction {
         GameObjects.saveAll(db);
     }
 
-    private AvTimeSpan updateWorld(final AvDateTime lastTime, @NonNull final AvDateTime now) {
+    private static AvTimeSpan updateWorld(final AvDateTime lastTime,
+                                          @NonNull final AvDateTime now) {
         if (now.equals(lastTime)) {
             return noTime();
         }
 
         AvTimeSpan additionalTimeElapsed =
-                creatureReactionsCoordinator.onTimePassed(lastTime, now);
-        additionalTimeElapsed =
-                additionalTimeElapsed.plus(
-                        invisibleReactionsCoordinator.onTimePassed(lastTime, now));
+                GameObjects.narrateAndDoReactions().onTimePassed(lastTime, now);
 
-        additionalTimeElapsed =
-                additionalTimeElapsed.plus(
-                        scAutomaticReactions.onTimePassed(lastTime, now));
-
+        // Falls jetzt noch etwas passiert ist,
+        // was Zeit gebraucht hat, dann erneut
+        // allen die Zeit geben, in dieser Zeit etwas
+        // getan zu haben.
         additionalTimeElapsed =
                 additionalTimeElapsed.plus(updateWorld(now, now.plus(additionalTimeElapsed)));
 
@@ -130,17 +123,56 @@ public abstract class AbstractScAction implements IPlayerAction {
      * Game Object möglich ist - wenn das nicht möglich ist, dann eine kurze
      * Beschreibung des Game Objects.
      * <br/>
+     * Es muss sich um eine {@link IDescribableGO} handeln!
+     * <br/>
+     * Beispiel 1: "Du hebst die Lampe auf..." - jetzt ist ein anaphorischer Bezug
+     * auf die Lampe möglich und diese Methode gibt "sie" zurück.
+     * <br/>
+     * Beispiel 2: "Du zündest das Feuer an..." - jetzt ist <i>kein</i> anaphorischer Bezug
+     * auf die Lampe möglich und diese Methode gibt "die Lampe" zurück.
+     */
+    protected SubstantivischePhrase getAnaphPersPronWennMglSonstShortDescription(
+            final GameObjectId describableId) {
+        return getAnaphPersPronWennMglSonstDescription(
+                (IDescribableGO) GameObjects.load(db, describableId), true);
+    }
+
+
+    /**
+     * Gibt das Personalpronomen zurück, mit dem ein
+     * anaphorischer Bezug auf dieses
+     * Game Object möglich ist - wenn das nicht möglich ist, dann eine kurze
+     * Beschreibung des Game Objects.
+     * <br/>
+     * Beispiel 1: "Du hebst die Lampe auf..." - jetzt ist ein anaphorischer Bezug
+     * auf die Lampe möglich und diese Methode gibt "sie" zurück.
+     * <br/>
+     * Beispiel 2: "Du zündest das Feuer an..." - jetzt ist <i>kein</i> anaphorischer Bezug
+     * auf die Lampe möglich und diese Methode gibt "die mysteriöse Lampe" oder "die Lampe" zurück.
+     */
+    protected SubstantivischePhrase getAnaphPersPronWennMglSonstShortDescription(
+            final IDescribableGO describableGO) {
+        return getAnaphPersPronWennMglSonstDescription(
+                describableGO, true);
+    }
+
+    /**
+     * Gibt das Personalpronomen zurück, mit dem ein
+     * anaphorischer Bezug auf dieses
+     * Game Object möglich ist - wenn das nicht möglich ist, dann eine
+     * Beschreibung des Game Objects.
+     * <br/>
      * Beispiel 1: "Du hebst die Lampe auf..." - jetzt ist ein anaphorischer Bezug
      * auf die Lampe möglich und diese Methode gibt "sie" zurück.
      * <br/>
      * Beispiel 2: "Du zündest das Feuer an..." - jetzt ist <i>kein</i> anaphorischer Bezug
      * auf die Lampe möglich und diese Methode gibt "die mysteriöse Lampe" zurück.
      */
-    protected DeklinierbarePhrase getAnaphPersPronWennMglSonstDescription(
+    protected SubstantivischePhrase getAnaphPersPronWennMglSonstDescription(
             final IDescribableGO describableGO,
             final boolean descShortIfKnown) {
         @Nullable final Personalpronomen anaphPersPron =
-                initialStoryState.getAnaphPersPronWennMgl(describableGO);
+                db.storyStateDao().getStoryState().getAnaphPersPronWennMgl(describableGO);
         if (anaphPersPron != null) {
             return anaphPersPron;
         }
@@ -151,7 +183,7 @@ public abstract class AbstractScAction implements IPlayerAction {
     /**
      * Gibt eine (evtl. auch etwas längere) Nominalphrase zurück, die das Game Object beschreibt.
      * Die Phrase wird in der Regel unterschiedlich sein, je nachdem, ob
-     * ob der Spieler das Game Object schon kennt oder nicht.
+     * der Spieler das Game Object schon kennt oder nicht.
      */
     protected Nominalphrase getDescription(final IDescribableGO gameObject) {
         return getDescription(gameObject, false);

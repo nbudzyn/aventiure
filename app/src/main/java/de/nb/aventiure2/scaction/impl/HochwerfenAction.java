@@ -1,4 +1,4 @@
-package de.nb.aventiure2.scaction.action;
+package de.nb.aventiure2.scaction.impl;
 
 import androidx.annotation.NonNull;
 
@@ -10,6 +10,7 @@ import javax.annotation.ParametersAreNonnullByDefault;
 
 import de.nb.aventiure2.data.database.AvDatabase;
 import de.nb.aventiure2.data.storystate.StoryState;
+import de.nb.aventiure2.data.world.gameobjects.GameObjects;
 import de.nb.aventiure2.data.world.syscomp.alive.ILivingBeingGO;
 import de.nb.aventiure2.data.world.syscomp.description.IDescribableGO;
 import de.nb.aventiure2.data.world.syscomp.location.ILocatableGO;
@@ -17,8 +18,9 @@ import de.nb.aventiure2.data.world.syscomp.memory.Action;
 import de.nb.aventiure2.data.world.syscomp.state.IHasStateGO;
 import de.nb.aventiure2.data.world.syscomp.storingplace.IHasStoringPlaceGO;
 import de.nb.aventiure2.data.world.time.AvTimeSpan;
-import de.nb.aventiure2.german.base.DeklinierbarePhrase;
+import de.nb.aventiure2.german.base.AbstractDescription;
 import de.nb.aventiure2.german.base.Nominalphrase;
+import de.nb.aventiure2.german.base.SubstantivischePhrase;
 import de.nb.aventiure2.german.praedikat.SeinUtil;
 import de.nb.aventiure2.scaction.AbstractScAction;
 
@@ -63,7 +65,7 @@ public class HochwerfenAction<OBJ extends IDescribableGO & ILocatableGO>
             return ImmutableList.of();
         }
 
-        // TODO Nicht jedes Object lässt sich hochwerfen...
+        // STORY Nicht jedes Object lässt sich hochwerfen...
         return ImmutableList.of(
                 new HochwerfenAction<>(db, initialStoryState,
                         gameObject, room));
@@ -101,7 +103,7 @@ public class HochwerfenAction<OBJ extends IDescribableGO & ILocatableGO>
 
         sc.memoryComp().setLastAction(buildMemorizedAction());
 
-        return timeElapsed.plus(creatureReactionsCoordinator.onHochwerfen(room, object));
+        return timeElapsed;
     }
 
     private AvTimeSpan narrateAndDoErstesMal() {
@@ -112,11 +114,11 @@ public class HochwerfenAction<OBJ extends IDescribableGO & ILocatableGO>
             return narrateAndDoFroschBekannt((IHasStateGO & ILocatableGO) froschprinz);
         }
 
-        final DeklinierbarePhrase objectDesc =
+        final SubstantivischePhrase objectDesc =
                 getAnaphPersPronWennMglSonstDescription(object, false);
 
         if (initialStoryState.allowsAdditionalDuSatzreihengliedOhneSubjekt()) {
-            return n.add(
+            return narrateAndDoHochwerfenAuffangen(
                     satzanschluss(", wirfst " +
                             objectDesc.akk() +
                             " in die Höhe und fängst " +
@@ -127,7 +129,7 @@ public class HochwerfenAction<OBJ extends IDescribableGO & ILocatableGO>
 
         final String emotionSatzglied = emotionSatzgliedFuersHochwerfen();
 
-        return n.add(
+        return narrateAndDoHochwerfenAuffangen(
                 du(PARAGRAPH, "wirfst",
                         objectDesc.akk()
                                 + " "
@@ -146,11 +148,13 @@ public class HochwerfenAction<OBJ extends IDescribableGO & ILocatableGO>
 
     private <F extends IHasStateGO & ILocatableGO> AvTimeSpan narrateAndDoFroschBekannt(
             final F froschprinz) {
-        // TODO Eine eigene Frosch-Statemaschine-Component bauen - oder eine
-        //  eine froschprinzComp, die die Frosch-KI beeinhaltet?
+        // TODO Für jede State Machine ein eigenes State Enum. Nur im PCD
+        //  sind es Strings.
+
         if (froschprinz.stateComp().hasState(HAT_SC_HILFSBEREIT_ANGESPROCHEN,
                 HAT_NACH_BELOHNUNG_GEFRAGT,
                 HAT_FORDERUNG_GESTELLT)) {
+
             return narrateAndDoObjectFaelltSofortInDenBrunnen();
             // Der Spieler hat ein weiteres Objekt in den Brunnen fallen
             // lassen, obwohl er noch mit dem Frosch verhandelt.
@@ -160,7 +164,7 @@ public class HochwerfenAction<OBJ extends IDescribableGO & ILocatableGO>
         if (object.is(GOLDENE_KUGEL)) {
             final Nominalphrase objectDesc = getDescription(object);
 
-            return n.add(
+            return narrateAndDoHochwerfenAuffangen(
                     du(PARAGRAPH, "wirfst", objectDesc.akk() +
                             " hoch in die Luft und fängst " +
                             objectDesc.persPron().akk() +
@@ -189,12 +193,21 @@ public class HochwerfenAction<OBJ extends IDescribableGO & ILocatableGO>
                         + "ungeschickt, oder?", timeElapsed));
     }
 
+    private AvTimeSpan narrateAndDoHochwerfenAuffangen(final AbstractDescription<?> desc) {
+        AvTimeSpan timeElapsed = n.add(desc);
+
+        timeElapsed = timeElapsed.plus(
+                GameObjects.narrateAndDoReactions()
+                        .onLeave(object, sc, sc));
+
+        return timeElapsed.plus(GameObjects.narrateAndDoReactions()
+                .onEnter(object, sc, sc));
+    }
+
     private AvTimeSpan narrateAndDoObjectFaelltSofortInDenBrunnen() {
         final Nominalphrase objectDesc = getDescription(object, false);
 
-        object.locationComp().setLocation(UNTEN_IM_BRUNNEN);
-
-        return n.add(
+        final AvTimeSpan timeSpan = n.add(
                 du(PARAGRAPH, "wirfst", objectDesc.akk() +
                         " nur ein einziges Mal in die Höhe, " +
                         "aber wie das Unglück es will, fällt " +
@@ -206,6 +219,9 @@ public class HochwerfenAction<OBJ extends IDescribableGO & ILocatableGO>
                         objectDesc.persPron().akk(), "nur ein einziges Mal", secs(10))
                         .dann(!initialStoryState.dann())
                         .beendet(PARAGRAPH));
+
+        return timeSpan.plus(
+                object.locationComp().narrateAndSetLocation(UNTEN_IM_BRUNNEN));
     }
 
     @NonNull
@@ -230,10 +246,7 @@ public class HochwerfenAction<OBJ extends IDescribableGO & ILocatableGO>
                     room.storingPlaceComp().getLichtverhaeltnisseInside() == DUNKEL ?
                             "– bei dieser Dunkelheit schon gar nicht" : "";
 
-            object.locationComp().setLocation(UNTEN_IM_BRUNNEN);
-            sc.feelingsComp().setMood(UNTROESTLICH);
-
-            return n.add(du("wirfst",
+            final AvTimeSpan timeSpan = n.add(du("wirfst",
                     getDescription(object).akk() +
                             " noch einmal in die Höhe… doch oh nein, " +
                             getDescription(object, true).nom() +
@@ -246,14 +259,13 @@ public class HochwerfenAction<OBJ extends IDescribableGO & ILocatableGO>
                             + dunkelheitNachsatz,
                     "noch einmal", secs(10))
                     .beendet(PARAGRAPH));
+
+            sc.feelingsComp().setMood(UNTROESTLICH);
+
+            return timeSpan.plus(object.locationComp().narrateAndSetLocation(UNTEN_IM_BRUNNEN));
         }
 
-        object.locationComp().setLocation(room);
-        if (!sc.feelingsComp().getMood().isTraurigerAls(ETWAS_GEKNICKT)) {
-            sc.feelingsComp().setMood(ETWAS_GEKNICKT);
-        }
-
-        return n.add(du("schleuderst",
+        final AvTimeSpan timeSpan = n.add(du("schleuderst",
                 getDescription(object).akk() +
                         " übermütig noch einmal in die Luft, aber sie wieder aufzufangen will dir "
                         +
@@ -263,6 +275,12 @@ public class HochwerfenAction<OBJ extends IDescribableGO & ILocatableGO>
                         room.storingPlaceComp().getLocationMode().getWo(),
                 "übermütig",
                 secs(5)));
+
+        if (!sc.feelingsComp().getMood().isTraurigerAls(ETWAS_GEKNICKT)) {
+            sc.feelingsComp().setMood(ETWAS_GEKNICKT);
+        }
+
+        return timeSpan.plus(object.locationComp().narrateAndSetLocation(room));
     }
 
     @Override

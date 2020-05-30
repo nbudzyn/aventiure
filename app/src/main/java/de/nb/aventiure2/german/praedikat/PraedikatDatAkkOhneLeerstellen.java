@@ -7,9 +7,9 @@ import java.util.Collection;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-import de.nb.aventiure2.german.base.DeklinierbarePhrase;
 import de.nb.aventiure2.german.base.Numerus;
 import de.nb.aventiure2.german.base.Person;
+import de.nb.aventiure2.german.base.SubstantivischePhrase;
 
 import static de.nb.aventiure2.german.base.GermanUtil.capitalize;
 import static de.nb.aventiure2.german.base.GermanUtil.joinToNull;
@@ -30,17 +30,17 @@ public class PraedikatDatAkkOhneLeerstellen implements PraedikatOhneLeerstellen 
      * Das (Objekt / Wesen / Konzept für das) Dativobjekt (z.B. "Angebote")
      */
     @NonNull
-    private final DeklinierbarePhrase describableDat;
+    private final SubstantivischePhrase describableDat;
 
     /**
      * Das (Objekt / Wesen / Konzept für das) Akkusativobjekte (z.B. der Frosch)
      */
     @NonNull
-    private final DeklinierbarePhrase describableAkk;
+    private final SubstantivischePhrase describableAkk;
 
     public PraedikatDatAkkOhneLeerstellen(final Verb verb,
-                                          final DeklinierbarePhrase describableDat,
-                                          final DeklinierbarePhrase describableAkk) {
+                                          final SubstantivischePhrase describableDat,
+                                          final SubstantivischePhrase describableAkk) {
         this.verb = verb;
         this.describableDat = describableDat;
         this.describableAkk = describableAkk;

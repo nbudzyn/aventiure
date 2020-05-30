@@ -6,10 +6,10 @@ import java.util.Collection;
 
 import javax.annotation.Nullable;
 
-import de.nb.aventiure2.german.base.DeklinierbarePhrase;
 import de.nb.aventiure2.german.base.KasusOderPraepositionalkasus;
 import de.nb.aventiure2.german.base.Numerus;
 import de.nb.aventiure2.german.base.Person;
+import de.nb.aventiure2.german.base.SubstantivischePhrase;
 
 import static de.nb.aventiure2.german.base.GermanUtil.capitalize;
 import static de.nb.aventiure2.german.base.GermanUtil.joinToNull;
@@ -37,12 +37,12 @@ class PraedikatSubjObjOhneLeerstellen implements PraedikatOhneLeerstellen {
     /**
      * Das Objekt (z.B. ein Ding, Wesen, Konzept oder deklinierbare Phrase)
      */
-    private final DeklinierbarePhrase objekt;
+    private final SubstantivischePhrase objekt;
 
 
     public PraedikatSubjObjOhneLeerstellen(final Verb verb,
                                            final KasusOderPraepositionalkasus kasusOderPraepositionalkasus,
-                                           final DeklinierbarePhrase objekt) {
+                                           final SubstantivischePhrase objekt) {
         this.verb = verb;
         this.kasusOderPraepositionalkasus = kasusOderPraepositionalkasus;
         this.objekt = objekt;
@@ -144,7 +144,7 @@ class PraedikatSubjObjOhneLeerstellen implements PraedikatOhneLeerstellen {
         return kasusOderPraepositionalkasus;
     }
 
-    public DeklinierbarePhrase getObjekt() {
+    public SubstantivischePhrase getObjekt() {
         return objekt;
     }
 }
