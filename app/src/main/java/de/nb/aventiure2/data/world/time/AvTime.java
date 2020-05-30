@@ -37,17 +37,17 @@ public class AvTime {
         return new AvTime(hoursSinceMidnight, minutesSinceHourStart);
     }
 
-    AvTime(final int hoursSinceMidnight, final int minutesSinceHourStart) {
+    private AvTime(final int hoursSinceMidnight, final int minutesSinceHourStart) {
         this(hoursSinceMidnight * 60 * 60 + minutesSinceHourStart * 60);
     }
 
-    AvTime(@NonNull final int secsSinceMidnight) {
+    AvTime(final int secsSinceMidnight) {
         checkState(secsSinceMidnight < SECS_IN_A_DAY,
                 "secsSinceMidnight >= SECS_IN_A_DAY");
         this.secsSinceMidnight = secsSinceMidnight;
     }
 
-    public Tageszeit getTageszeit() {
+    Tageszeit getTageszeit() {
         if (isBefore(oClock(6))) {
             return NACHTS;
         }
@@ -67,7 +67,7 @@ public class AvTime {
         return NACHTS;
     }
 
-    public AvTimeSpan timeSpanUntil(@NonNull final AvTime other) {
+    AvTimeSpan timeSpanUntil(@NonNull final AvTime other) {
         if (!other.isBefore(this)) {
             return new AvTimeSpan(other.secsSinceMidnight - secsSinceMidnight);
         }

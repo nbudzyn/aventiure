@@ -38,6 +38,7 @@ import static de.nb.aventiure2.data.world.syscomp.state.GameObjectState.HAT_HOCH
 import static de.nb.aventiure2.data.world.syscomp.state.GameObjectState.HAT_NACH_BELOHNUNG_GEFRAGT;
 import static de.nb.aventiure2.data.world.syscomp.state.GameObjectState.HAT_SC_HILFSBEREIT_ANGESPROCHEN;
 import static de.nb.aventiure2.data.world.syscomp.state.GameObjectState.UNAUFFAELLIG;
+import static de.nb.aventiure2.data.world.syscomp.state.GameObjectState.WARTET_AUF_SC_BEIM_SCHLOSSFEST;
 import static de.nb.aventiure2.data.world.syscomp.state.GameObjectStateList.sl;
 import static de.nb.aventiure2.german.base.Nominalphrase.np;
 import static de.nb.aventiure2.german.base.NumerusGenus.F;
@@ -79,6 +80,7 @@ class CreatureFactory {
                         AUF_DEM_WEG_ZUM_BRUNNEN_UM_DINGE_HERAUSZUHOLEN,
                         ERWARTET_VON_SC_EINLOESUNG_SEINES_VERSPRECHENS,
                         AUF_DEM_WEG_ZUM_SCHLOSSFEST,
+                        WARTET_AUF_SC_BEIM_SCHLOSSFEST,
                         HAT_HOCHHEBEN_GEFORDERT));
         final DescriptionComp descriptionComp =
                 new DescriptionComp(FROSCHPRINZ, np(M, "ein dicker, hässlicher Frosch",

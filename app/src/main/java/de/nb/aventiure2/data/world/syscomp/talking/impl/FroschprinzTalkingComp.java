@@ -125,17 +125,15 @@ public class FroschprinzTalkingComp extends AbstractTalkingComp {
                         immReEntrySt(() -> !objectsInDenBrunnenGefallen.isEmpty(),
                                 MACHEN.mitAkk(ANGEBOTE),
                                 this::froschHatNachBelohnungGefragt_ImmReEntry),
-                        immReEntrySt(() -> objectsInDenBrunnenGefallen.isEmpty(),
+                        immReEntrySt(objectsInDenBrunnenGefallen::isEmpty,
                                 this::hallo_froschReagiertNicht),
                         reEntrySt(() -> !objectsInDenBrunnenGefallen.isEmpty(),
                                 MACHEN.mitAkk(ANGEBOTE),
                                 this::froschHatNachBelohnungGefragt_ReEntry),
-                        reEntrySt(() -> objectsInDenBrunnenGefallen.isEmpty(),
+                        reEntrySt(objectsInDenBrunnenGefallen::isEmpty,
                                 this::hallo_froschReagiertNicht)
                 );
             case HAT_FORDERUNG_GESTELLT:
-
-
                 return ImmutableList.of(
                         st(() -> !objectsInDenBrunnenGefallen.isEmpty(),
                                 VERSPRECHEN.mitAkk(ALLES),
@@ -144,12 +142,12 @@ public class FroschprinzTalkingComp extends AbstractTalkingComp {
                         immReEntrySt(() -> !objectsInDenBrunnenGefallen.isEmpty(),
                                 VERSPRECHEN.mitAkk(ALLES),
                                 this::froschHatForderungGestellt_ImmReEntry),
-                        immReEntrySt(() -> objectsInDenBrunnenGefallen.isEmpty(),
+                        immReEntrySt(objectsInDenBrunnenGefallen::isEmpty,
                                 this::hallo_froschReagiertNicht),
                         reEntrySt(() -> !objectsInDenBrunnenGefallen.isEmpty(),
                                 VERSPRECHEN.mitAkk(ALLES),
                                 this::froschHatForderungGestellt_reEntry),
-                        reEntrySt(() -> objectsInDenBrunnenGefallen.isEmpty(),
+                        reEntrySt(objectsInDenBrunnenGefallen::isEmpty,
                                 this::hallo_froschReagiertNicht)
                 );
             case AUF_DEM_WEG_ZUM_BRUNNEN_UM_DINGE_HERAUSZUHOLEN:
@@ -164,6 +162,8 @@ public class FroschprinzTalkingComp extends AbstractTalkingComp {
                 return ImmutableList.of(
                         entrySt(this::hallo_froschErinnertAnVersprechen)
                 );
+            case WARTET_AUF_SC_BEIM_SCHLOSSFEST:
+                return ImmutableList.of();
             case HAT_HOCHHEBEN_GEFORDERT:
                 return ImmutableList.of(
                         // STORY Frosch auf den Tisch hochheben - das ist vermutlich eine AKTION
@@ -456,7 +456,7 @@ public class FroschprinzTalkingComp extends AbstractTalkingComp {
                 noTime()));
 
         @Nullable final GameObjectId scLocationId = loadSC(db).locationComp().getLocationId();
-        if (!scLocationId.equals(IM_WALD_BEIM_BRUNNEN)) {
+        if (!IM_WALD_BEIM_BRUNNEN.equals(scLocationId)) {
             unsetTalkingTo();
 
             stateComp.setState(AUF_DEM_WEG_ZUM_BRUNNEN_UM_DINGE_HERAUSZUHOLEN);
@@ -615,7 +615,7 @@ public class FroschprinzTalkingComp extends AbstractTalkingComp {
      * Die Phrase kann unterschiedlich sein, je nachdem, ob
      * ob der Spieler den Froschprinzen schon kennt oder nicht.
      */
-    protected Nominalphrase getFroschprinzDescription() {
+    private Nominalphrase getFroschprinzDescription() {
         return getFroschprinzDescription(false);
     }
 
@@ -628,7 +628,7 @@ public class FroschprinzTalkingComp extends AbstractTalkingComp {
      *                     Froschprinzen schon kennt, wird eher eine
      *                     kürzere Beschreibung gewählt
      */
-    protected Nominalphrase getFroschprinzDescription(final boolean shortIfKnown) {
+    private Nominalphrase getFroschprinzDescription(final boolean shortIfKnown) {
         return descriptionComp.getDescription(
                 loadSC(db).memoryComp().isKnown(FROSCHPRINZ), shortIfKnown);
     }

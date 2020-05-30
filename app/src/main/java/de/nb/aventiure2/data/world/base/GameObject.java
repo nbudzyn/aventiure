@@ -85,8 +85,7 @@ public class GameObject implements IGameObject {
 
     @Override
     public boolean is(final GameObjectId... someIdAlternatives) {
-        return Arrays.stream(someIdAlternatives)
-                .anyMatch(getId()::equals);
+        return Arrays.asList(someIdAlternatives).contains(getId());
     }
 
     @Override

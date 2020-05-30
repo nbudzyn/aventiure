@@ -236,15 +236,6 @@ public class GameObjects {
     }
 
     /**
-     * Lädt (soweit noch nicht geschehen) alle Gegenstände im Inventar des Spieler-Charakters,
-     * und gibt sie zurück.
-     */
-    public static <LOC_DESC extends ILocatableGO & IDescribableGO>
-    ImmutableList<LOC_DESC> loadSCInventory(final AvDatabase db) {
-        return loadDescribableInventory(db, SPIELER_CHARAKTER);
-    }
-
-    /**
      * Lädt (soweit noch nicht geschehen) die nicht-lebenden Game Objects im Inventar dieses
      * <code>inventoryHolder</code>s und gibt sie zurück -
      * nur Gegenstände, die eine Beschreibung haben, nicht den Spieler-Charakter.
@@ -321,16 +312,6 @@ public class GameObjects {
         GameObjects.loadGameObjects(res);
 
         return (ImmutableList<LOC_DESC>) (ImmutableList<?>) res;
-    }
-
-    public static ImmutableList<ILivingBeingGO> loadLivingBeings() {
-        final ImmutableList<GameObject> res =
-                ALL.values().stream()
-                        .filter(ILivingBeingGO.class::isInstance)
-                        .collect(toImmutableList());
-        GameObjects.loadGameObjects(res);
-
-        return (ImmutableList<ILivingBeingGO>) (ImmutableList<?>) res;
     }
 
     private static <GO extends IGameObject> ImmutableList<GO> filterNoLivingBeing(

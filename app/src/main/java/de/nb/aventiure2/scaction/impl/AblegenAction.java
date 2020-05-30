@@ -37,16 +37,14 @@ import static de.nb.aventiure2.german.praedikat.VerbSubjObj.HINLEGEN;
  * Der Benutzer legt einen Gegenstand ab.
  */
 public class AblegenAction
-        <GO extends IDescribableGO & ILocatableGO,
-                LIVGO extends IDescribableGO & ILocatableGO & ILivingBeingGO>
+        <GO extends IDescribableGO & ILocatableGO>
         extends AbstractScAction {
     private final IHasStoringPlaceGO room;
     @NonNull
     private final GO gameObject;
 
-    public static <GO extends IDescribableGO & ILocatableGO,
-            LIVGO extends IDescribableGO & ILocatableGO & ILivingBeingGO>
-    Collection<AblegenAction<GO, LIVGO>> buildActions(
+    public static <GO extends IDescribableGO & ILocatableGO>
+    Collection<AblegenAction<GO>> buildActions(
             final AvDatabase db, final StoryState initialStoryState,
             final GO gameObject,
             final IHasStoringPlaceGO room) {

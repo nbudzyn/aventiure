@@ -21,13 +21,13 @@ public class AvDateTime {
      * Sekunden seit einem Referenzzeitpunkt
      */
     @PrimaryKey
-    @NonNull
     private final long secsSinceBeginning;
 
     public static boolean isWithin(final AvDateTime dateTime,
                                    @NonNull final AvDateTime lowerBoundExclusive,
                                    final AvDateTime upperBoundInclusive) {
-        return lowerBoundExclusive.isBefore(dateTime) && !upperBoundInclusive.isBefore(dateTime);
+        return lowerBoundExclusive.isBefore(dateTime) &&
+                upperBoundInclusive.isEqualOrAfter(dateTime);
     }
 
     public AvDateTime(final int daySinceBeginning, @NonNull final AvTime time) {
@@ -41,7 +41,7 @@ public class AvDateTime {
                 + minutesSinceHourStart * 60);
     }
 
-    AvDateTime(@NonNull final long secsSinceBeginning) {
+    AvDateTime(final long secsSinceBeginning) {
         this.secsSinceBeginning = secsSinceBeginning;
     }
 
@@ -65,8 +65,16 @@ public class AvDateTime {
         return getTime().timeSpanUntil(otherTime);
     }
 
+    public boolean isEqualOrBefore(@NonNull final AvDateTime other) {
+        return secsSinceBeginning <= other.secsSinceBeginning;
+    }
+
     public boolean isBefore(@NonNull final AvDateTime other) {
         return secsSinceBeginning < other.secsSinceBeginning;
+    }
+
+    public boolean isEqualOrAfter(@NonNull final AvDateTime other) {
+        return secsSinceBeginning >= other.secsSinceBeginning;
     }
 
     public boolean isAfter(@NonNull final AvDateTime other) {

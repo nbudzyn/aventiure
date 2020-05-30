@@ -14,7 +14,6 @@ import de.nb.aventiure2.data.storystate.StoryState;
 import de.nb.aventiure2.data.world.base.GameObject;
 import de.nb.aventiure2.data.world.base.GameObjectId;
 import de.nb.aventiure2.data.world.base.IGameObject;
-import de.nb.aventiure2.data.world.gameobjects.GameObjects;
 import de.nb.aventiure2.data.world.syscomp.description.IDescribableGO;
 import de.nb.aventiure2.data.world.syscomp.feelings.Hunger;
 import de.nb.aventiure2.data.world.syscomp.feelings.Mood;
@@ -163,22 +162,20 @@ public class BewegenAction<R extends ISpatiallyConnectedGO & IHasStoringPlaceGO,
 
         updatePlayerStateOfMind();
 
-        elapsedTime = elapsedTime.plus(
-                GameObjects.narrateAndDoReactions()
-                        .onLeave(sc, oldRoom, spatialConnection.getTo()));
+        return elapsedTime = elapsedTime.plus(sc.locationComp()
+                .narrateAndSetLocation(spatialConnection.getTo(),
+                        () -> {
+                            AvTimeSpan elapsedTimeOnEnter = noTime();
+                            if (!objectsInNewRoom.isEmpty()) {
+                                elapsedTimeOnEnter = elapsedTimeOnEnter.plus(
+                                        narrateObjects(objectsInNewRoom));
+                            }
 
-        if (!objectsInNewRoom.isEmpty()) {
-            elapsedTime = elapsedTime.plus(narrateObjects(objectsInNewRoom));
-        }
+                            sc.memoryComp().setLastAction(buildMemorizedAction());
 
-        sc.locationComp().setLocation(spatialConnection.getTo());
-        sc.memoryComp().setLastAction(buildMemorizedAction());
-
-        setRoomAndObjectsKnown(objectsInNewRoom, lichtverhaeltnisseInNewRoom);
-
-        return elapsedTime.plus(
-                GameObjects.narrateAndDoReactions()
-                        .onEnter(sc, oldRoom, spatialConnection.getTo()));
+                            setRoomAndObjectsKnown(objectsInNewRoom, lichtverhaeltnisseInNewRoom);
+                            return elapsedTimeOnEnter;
+                        }));
     }
 
     private boolean scWirdMitEssenKonfrontiert() {

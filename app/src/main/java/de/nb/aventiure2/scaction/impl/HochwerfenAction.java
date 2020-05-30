@@ -27,8 +27,10 @@ import de.nb.aventiure2.scaction.AbstractScAction;
 import static de.nb.aventiure2.data.world.gameobjects.GameObjects.FROSCHPRINZ;
 import static de.nb.aventiure2.data.world.gameobjects.GameObjects.GOLDENE_KUGEL;
 import static de.nb.aventiure2.data.world.gameobjects.GameObjects.IM_WALD_BEIM_BRUNNEN;
+import static de.nb.aventiure2.data.world.gameobjects.GameObjects.SPIELER_CHARAKTER;
 import static de.nb.aventiure2.data.world.gameobjects.GameObjects.UNTEN_IM_BRUNNEN;
 import static de.nb.aventiure2.data.world.gameobjects.GameObjects.load;
+import static de.nb.aventiure2.data.world.gameobjects.GameObjects.loadSC;
 import static de.nb.aventiure2.data.world.syscomp.feelings.Mood.ETWAS_GEKNICKT;
 import static de.nb.aventiure2.data.world.syscomp.feelings.Mood.UNTROESTLICH;
 import static de.nb.aventiure2.data.world.syscomp.state.GameObjectState.HAT_FORDERUNG_GESTELLT;
@@ -197,11 +199,20 @@ public class HochwerfenAction<OBJ extends IDescribableGO & ILocatableGO>
         AvTimeSpan timeElapsed = n.add(desc);
 
         timeElapsed = timeElapsed.plus(
-                GameObjects.narrateAndDoReactions()
-                        .onLeave(object, sc, sc));
+                object.locationComp()
+                        .narrateAndDoLeaveReactions(SPIELER_CHARAKTER)
+        );
 
         return timeElapsed.plus(GameObjects.narrateAndDoReactions()
-                .onEnter(object, sc, sc));
+                // Hier wird das onLeave() und onEnter() etwas missbraucht, um Reaktionen auf
+                // das Hochwerfen zu provozieren. Da from und to gleich sind, müssen wir
+                // from explizit angebeben, es darf nicht die lastLocation verwendet werden,
+                // wie es sonst automatisch passiert.
+                .onEnter(object,
+                        // from
+                        loadSC(db),
+                        // to
+                        SPIELER_CHARAKTER));
     }
 
     private AvTimeSpan narrateAndDoObjectFaelltSofortInDenBrunnen() {

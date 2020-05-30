@@ -6,6 +6,8 @@ import de.nb.aventiure2.data.database.AvDatabase;
 import de.nb.aventiure2.data.world.base.AbstractStatefulComponent;
 import de.nb.aventiure2.data.world.base.GameObject;
 import de.nb.aventiure2.data.world.base.GameObjectId;
+import de.nb.aventiure2.data.world.time.AvDateTime;
+import de.nb.aventiure2.data.world.time.AvNowDao;
 
 /**
  * Component für ein {@link GameObject}: Das Game Object hat einen Zustand (der sich
@@ -13,6 +15,8 @@ import de.nb.aventiure2.data.world.base.GameObjectId;
  */
 public class StateComp extends AbstractStatefulComponent<StatePCD> {
     private final GameObjectStateList states;
+
+    private final AvNowDao nowDao;
 
     /**
      * Constructor for a {@link StateComp}.
@@ -24,12 +28,15 @@ public class StateComp extends AbstractStatefulComponent<StatePCD> {
                      final GameObjectStateList states) {
         super(gameObjectId, db.stateDao());
         this.states = states;
+
+        nowDao = db.nowDao();
     }
 
     @Override
     @NonNull
     protected StatePCD createInitialState() {
-        return new StatePCD(getGameObjectId(), states.getInitial());
+        return new StatePCD(getGameObjectId(), states.getInitial(),
+                nowDao.now());
     }
 
     public boolean hasState(final GameObjectState... alternatives) {
@@ -45,7 +52,16 @@ public class StateComp extends AbstractStatefulComponent<StatePCD> {
             throw new IllegalArgumentException("State not allowed: " + state);
         }
 
+        if (state.equals(getState())) {
+            return;
+        }
+
         getPcd().setState(state);
+        getPcd().setStateDateTime(nowDao.now());
+    }
+
+    public AvDateTime getStateDateTime() {
+        return getPcd().getStateDateTime();
     }
 
     private boolean isStateAllowed(final GameObjectState state) {

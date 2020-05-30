@@ -36,7 +36,7 @@ public class ScAutomaticReactionsComp
         AvTimeSpan timeElapsed = noTime();
 
         final AvDateTime wiederHungrigAb = feelingsComp.getWiederHungrigAb();
-        if (!now.isBefore(wiederHungrigAb)) {
+        if (now.isEqualOrAfter(wiederHungrigAb)) {
             feelingsComp.setHunger(HUNGRIG);
 
             if (lastTime.isBefore(wiederHungrigAb)) {

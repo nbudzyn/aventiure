@@ -4,6 +4,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import java.util.Objects;
+import java.util.function.Supplier;
 
 import de.nb.aventiure2.data.database.AvDatabase;
 import de.nb.aventiure2.data.world.base.AbstractStatefulComponent;
@@ -45,29 +46,47 @@ public class LocationComp extends AbstractStatefulComponent<LocationPCD> {
         return new LocationPCD(getGameObjectId(), initialLocationId, initialLastLocationId);
     }
 
+    public AvTimeSpan narrateAndUnsetLocation() {
+        return narrateAndSetLocation((GameObjectId) null);
+    }
+
     public AvTimeSpan narrateAndSetLocation(@Nullable final IHasStoringPlaceGO newLocation) {
         return narrateAndSetLocation(
                 newLocation != null ? newLocation.getId() : null);
     }
 
     public AvTimeSpan narrateAndSetLocation(@Nullable final GameObjectId newLocationId) {
-        AvTimeSpan timeElapsed = noTime();
+        return narrateAndSetLocation(newLocationId, () -> noTime());
+    }
 
-        @Nullable final IHasStoringPlaceGO location = getLocation();
-        if (location != null) {
-            GameObjects.narrateAndDoReactions()
-                    .onLeave(getGameObjectId(), location, newLocationId);
-        }
+    public AvTimeSpan narrateAndSetLocation(@Nullable final GameObjectId newLocationId,
+                                            final Supplier<AvTimeSpan> onEnter) {
+        AvTimeSpan timeElapsed = narrateAndDoLeaveReactions(newLocationId);
 
         setLocation(newLocationId);
 
-        if (newLocationId != null) {
-            timeElapsed = timeElapsed.plus(
-                    GameObjects.narrateAndDoReactions()
-                            .onEnter(getGameObjectId(), getLastLocation(), newLocationId));
+        timeElapsed = timeElapsed.plus(onEnter.get());
+
+        return timeElapsed.plus(narrateAndDoEnterReactions(newLocationId));
+    }
+
+    public AvTimeSpan narrateAndDoLeaveReactions(
+            @Nullable final GameObjectId newLocationId) {
+        @Nullable final IHasStoringPlaceGO from = getLocation();
+        if (from == null) {
+            return noTime();
         }
 
-        return timeElapsed;
+        return GameObjects.narrateAndDoReactions()
+                .onLeave(getGameObjectId(), from, newLocationId);
+    }
+
+    public AvTimeSpan narrateAndDoEnterReactions(@Nullable final GameObjectId newLocationId) {
+        if (newLocationId == null) {
+            return noTime();
+        }
+        return GameObjects.narrateAndDoReactions()
+                .onEnter(getGameObjectId(), getLastLocation(), newLocationId);
     }
 
     public boolean hasLocation(final @Nullable IHasStoringPlaceGO gameObject) {
@@ -118,11 +137,7 @@ public class LocationComp extends AbstractStatefulComponent<LocationPCD> {
         setLocation((GameObjectId) null);
     }
 
-    public void setLocation(final IHasStoringPlaceGO storingPlace) {
-        setLocation(storingPlace.getId());
-    }
-
-    public void setLocation(@Nullable final GameObjectId locationId) {
+    private void setLocation(@Nullable final GameObjectId locationId) {
         if (Objects.equals(getLocationId(), locationId)) {
             return;
         }

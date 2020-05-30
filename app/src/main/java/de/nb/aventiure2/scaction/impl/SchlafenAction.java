@@ -80,16 +80,20 @@ public class SchlafenAction extends AbstractScAction {
         final ImmutableList.Builder<AbstractDescription<?>> alt = ImmutableList.builder();
         if (!isDefinitivWiederholung()) {
             alt.add(du("schließt", "kurz die Augen. Die Aufregung der letzten Stunden "
-                    + "steckt dir noch in den Knochen – an Einschlafen ist "
-                    + "nicht zu denken", mins(1)));
+                            + "steckt dir noch in den Knochen – an Einschlafen ist "
+                            + "nicht zu denken",
+                    "kurz",
+                    mins(1)));
         }
 
-        alt.add(neuerSatz("Müde bist du noch nicht", mins(1))
+        alt.add(du("bist", "noch nicht müde",
+                "müde", mins(1))
                 .dann());
 
         alt.add(neuerSatz("Gibt es hier eigentlich Spinnen?", mins(1)));
 
-        alt.add(du("drehst dich von einer Seite auf die andere", "von einer Seite", mins(1)));
+        alt.add(du("drehst", "dich von einer Seite auf die andere",
+                "von einer Seite", mins(1)));
 
         return n.addAlt(alt);
     }
@@ -163,7 +167,7 @@ public class SchlafenAction extends AbstractScAction {
 
 
     private AvTimeSpan schlafen() {
-        final AvDateTime now = db.dateTimeDao().now();
+        final AvDateTime now = db.nowDao().now();
 
         if (now.getTime().isBefore(oClock(16, 30))) {
             return hours(8);

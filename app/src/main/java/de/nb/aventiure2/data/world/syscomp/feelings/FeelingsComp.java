@@ -15,7 +15,6 @@ import de.nb.aventiure2.data.world.time.AvTimeSpan;
  * has needs and feelings.
  */
 public class FeelingsComp extends AbstractStatefulComponent<FeelingsPCD> {
-    private final AvDatabase db;
 
     protected final StoryStateDao n;
 
@@ -55,7 +54,6 @@ public class FeelingsComp extends AbstractStatefulComponent<FeelingsPCD> {
                         @NonNull final AvDateTime initialZuletztGegessen,
                         final AvTimeSpan zeitspanneNachEssenBisWiederHungrig) {
         super(gameObjectId, db.feelingsDao());
-        this.db = db;
         this.initialMood = initialMood;
         this.initialHunger = initialHunger;
         this.initialZuletztGegessen = initialZuletztGegessen;
@@ -80,7 +78,6 @@ public class FeelingsComp extends AbstractStatefulComponent<FeelingsPCD> {
         return getPcd().getMood();
     }
 
-    @NonNull
     public void setMood(final Mood mood) {
         getPcd().setMood(mood);
     }
@@ -90,7 +87,6 @@ public class FeelingsComp extends AbstractStatefulComponent<FeelingsPCD> {
         return getPcd().getHunger();
     }
 
-    @NonNull
     public void setHunger(final Hunger hunger) {
         getPcd().setHunger(hunger);
     }
@@ -101,16 +97,15 @@ public class FeelingsComp extends AbstractStatefulComponent<FeelingsPCD> {
     }
 
     @NonNull
-    public AvDateTime getZuletztGegessen() {
+    private AvDateTime getZuletztGegessen() {
         return getPcd().getZuletztGegessen();
     }
 
-    @NonNull
     public void setZuletztGegessen(final AvDateTime zuletztGegessen) {
         getPcd().setZuletztGegessen(zuletztGegessen);
     }
 
-    public AvTimeSpan getZeitspanneNachEssenBisWiederHungrig() {
+    private AvTimeSpan getZeitspanneNachEssenBisWiederHungrig() {
         return zeitspanneNachEssenBisWiederHungrig;
     }
 }

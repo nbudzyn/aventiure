@@ -55,7 +55,7 @@ public class StoringPlaceComp extends AbstractStatelessComponent {
             return HELL;
         }
 
-        return db.dateTimeDao().now().getTageszeit().getLichtverhaeltnisseDraussen();
+        return db.nowDao().now().getTageszeit().getLichtverhaeltnisseDraussen();
     }
 
     private boolean isDauerhaftBeleuchtet() {

@@ -10,7 +10,6 @@ import javax.annotation.ParametersAreNonnullByDefault;
 
 import de.nb.aventiure2.data.database.AvDatabase;
 import de.nb.aventiure2.data.storystate.StoryState;
-import de.nb.aventiure2.data.world.gameobjects.GameObjects;
 import de.nb.aventiure2.data.world.syscomp.alive.ILivingBeingGO;
 import de.nb.aventiure2.data.world.syscomp.description.IDescribableGO;
 import de.nb.aventiure2.data.world.syscomp.feelings.Mood;
@@ -146,47 +145,55 @@ public class NehmenAction
         );
 
         timeElapsed = timeElapsed.plus(
-                GameObjects.narrateAndDoReactions().onLeave(FROSCHPRINZ, room, sc));
+                gameObject.locationComp()
+                        .narrateAndSetLocation(SPIELER_CHARAKTER,
+                                () -> {
+                                    sc.memoryComp().upgradeKnown(gameObject, Known.getKnown(
+                                            room.storingPlaceComp().getLichtverhaeltnisseInside()));
+                                    sc.feelingsComp().setMood(Mood.NEUTRAL);
 
-        sc.memoryComp().upgradeKnown(gameObject, Known.getKnown(
-                room.storingPlaceComp().getLichtverhaeltnisseInside()));
-        gameObject.locationComp().setLocation(SPIELER_CHARAKTER);
-        sc.feelingsComp().setMood(Mood.NEUTRAL);
+                                    final SubstantivischePhrase froschDescOderAnapher =
+                                            getAnaphPersPronWennMglSonstShortDescription(
+                                                    FROSCHPRINZ);
 
-        final SubstantivischePhrase froschDescOderAnapher =
-                getAnaphPersPronWennMglSonstShortDescription(FROSCHPRINZ);
-
-        timeElapsed = timeElapsed.plus(
-                timeElapsed.plus(n.addAlt(
-                        neuerSatz(capitalize(froschDescOderAnapher.nom()) // "er"
-                                + " ist glibschig und schleimig – pfui-bäh! – schnell lässt du "
-                                + froschDescOderAnapher.persPron().akk()
-                                + " in "
-                                + "eine Tasche gleiten. "
-                                + capitalize(
-                                froschDescOderAnapher.possArt().vor(NumerusGenus.N).nom())
-                                + " gedämpftes Quaken könnte wohlig sein oder "
-                                + "genauso gut vorwurfsvoll", secs(10))
-                                .beendet(PARAGRAPH),
-                        du("versenkst",
-                                froschDescOderAnapher.akk() // "ihn"
-                                        + " tief in deine Tasche. Du versuchst, deine Hand an der "
-                                        + "Kleidung zu reinigen, aber der Schleim verteilt sich nur "
-                                        + "überall – igitt!",
-                                "tief in deine Tasche", secs(10))
-                                .beendet(PARAGRAPH),
-                        du("packst",
-                                froschDescOderAnapher.akk() // "ihn"
-                                        + " in deine Tasche. "
-                                        + capitalize(froschDesc.persPron().nom())
-                                        + " fasst "
-                                        + "sich sehr eklig an und du bist glücklich, als die Prozedur "
-                                        + "vorbei ist.", secs(10))
-                                .dann()
-                )));
-
-        timeElapsed = timeElapsed.plus(
-                GameObjects.narrateAndDoReactions().onEnter(FROSCHPRINZ, room, sc));
+                                    return n.addAlt(
+                                            neuerSatz(
+                                                    capitalize(
+                                                            froschDescOderAnapher.nom()) // "er"
+                                                            + " ist glibschig und "
+                                                            + "schleimig – pfui-bäh! – schnell lässt du "
+                                                            + froschDescOderAnapher.persPron().akk()
+                                                            + " in "
+                                                            + "eine Tasche gleiten. "
+                                                            + capitalize(
+                                                            froschDescOderAnapher.possArt()
+                                                                    .vor(NumerusGenus.N).nom())
+                                                            + " gedämpftes Quaken könnte "
+                                                            + "wohlig sein oder "
+                                                            + "genauso gut vorwurfsvoll", secs(10))
+                                                    .beendet(PARAGRAPH),
+                                            du("versenkst",
+                                                    froschDescOderAnapher.akk() // "ihn"
+                                                            + " tief in deine Tasche. Du "
+                                                            + "versuchst, deine Hand an der "
+                                                            + "Kleidung zu reinigen, aber der "
+                                                            + "Schleim verteilt sich nur "
+                                                            + "überall – igitt!",
+                                                    "tief in deine Tasche", secs(10))
+                                                    .beendet(PARAGRAPH),
+                                            du("packst",
+                                                    froschDescOderAnapher.akk() // "ihn"
+                                                            + " in deine Tasche. "
+                                                            + capitalize(
+                                                            froschDesc.persPron().nom())
+                                                            + " fasst "
+                                                            + "sich sehr eklig an und du bist "
+                                                            + "glücklich, als die Prozedur "
+                                                            + "vorbei ist.", secs(10))
+                                                    .dann()
+                                    );
+                                })
+        );
 
         sc.memoryComp().setLastAction(buildMemorizedAction());
         return timeElapsed;

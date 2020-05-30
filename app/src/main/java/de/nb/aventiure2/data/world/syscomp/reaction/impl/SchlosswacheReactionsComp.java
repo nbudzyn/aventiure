@@ -453,39 +453,37 @@ public class SchlosswacheReactionsComp
         // Beim Fest ist die Schlosswache mit anderen Dingen beschäftigt
         stateComp.setState(UNAUFFAELLIG);
 
-        AvTimeSpan timeElapsed = n.add(neuerSatz(PARAGRAPH,
+        final AvTimeSpan timeElapsed = n.add(neuerSatz(PARAGRAPH,
                 "Die Wache spricht dich an: „Wenn ich Euch dann "
                         + "hinausbitten dürfte? Wer wollte "
                         + "denn den Vorbereitungen für das große Fest im Wege stehen?“ – Nein, "
                         + "das willst du sicher nicht.", secs(30)));
 
-        final IHasStoringPlaceGO from = sc.locationComp().getLocation();
-        if (from != null) {
-            timeElapsed = timeElapsed.plus(
-                    GameObjects.narrateAndDoReactions()
-                            .onLeave(sc, from, DRAUSSEN_VOR_DEM_SCHLOSS));
-        }
-
-        sc.locationComp().setLocation(DRAUSSEN_VOR_DEM_SCHLOSS);
-        sc.feelingsComp().setMood(NEUTRAL);
-
-        // Der Spieler weiß jetzt, dass das Schlossfest läuft
-        db.counterDao().incAndGet(COUNTER_ID_VOR_DEM_SCHLOSS_SCHLOSSFEST_KNOWN);
-
-        timeElapsed = timeElapsed.plus(timeElapsed.plus(
-                n.add(neuerSatz(PARAGRAPH,
-                        "Draußen sind Handwerker dabei, im ganzen Schlossgarten kleine bunte "
-                                + "Pagoden aufzubauen. Du schaust eine Zeitlang zu.\n"
-                                + "Zunehmend strömen von allen Seiten Menschen herzu und wie es scheint, "
-                                + "ist auch "
-                                + "der Zugang zum Schloss jetzt für alle geöffnet. Aus dem Schloss "
-                                + "weht dich der "
-                                + "Geruch von Gebratenem an.", mins(44))
-                        .beendet(PARAGRAPH))));
-
         return timeElapsed.plus(
-                GameObjects.narrateAndDoReactions()
-                        .onEnter(sc, from, DRAUSSEN_VOR_DEM_SCHLOSS));
+                sc.locationComp().narrateAndSetLocation(DRAUSSEN_VOR_DEM_SCHLOSS,
+                        () -> {
+                            final AvTimeSpan timeElapsedOnEnter =
+                                    n.add(neuerSatz(PARAGRAPH,
+                                            "Draußen sind Handwerker dabei, im "
+                                                    + "ganzen Schlossgarten kleine bunte "
+                                                    + "Pagoden aufzubauen. Du schaust eine "
+                                                    + "Zeitlang zu.\n"
+                                                    + "Zunehmend strömen von allen Seiten "
+                                                    + "Menschen herzu und wie es scheint, "
+                                                    + "ist auch "
+                                                    + "der Zugang zum Schloss jetzt für alle "
+                                                    + "geöffnet. Aus dem Schloss "
+                                                    + "weht dich der "
+                                                    + "Geruch von Gebratenem an.", mins(44))
+                                            .beendet(PARAGRAPH));
+
+                            sc.feelingsComp().setMood(NEUTRAL);
+
+                            // Der Spieler weiß jetzt, dass das Schlossfest läuft
+                            db.counterDao().incAndGet(COUNTER_ID_VOR_DEM_SCHLOSS_SCHLOSSFEST_KNOWN);
+
+                            return timeElapsedOnEnter;
+                        }));
     }
 
     /**

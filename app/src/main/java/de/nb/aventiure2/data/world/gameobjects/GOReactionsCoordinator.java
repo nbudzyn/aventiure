@@ -20,8 +20,6 @@ import de.nb.aventiure2.data.world.syscomp.storingplace.IHasStoringPlaceGO;
 import de.nb.aventiure2.data.world.time.AvDateTime;
 import de.nb.aventiure2.data.world.time.AvTimeSpan;
 
-import static com.google.common.base.Predicates.alwaysTrue;
-import static com.google.common.base.Predicates.not;
 import static de.nb.aventiure2.data.world.time.AvTimeSpan.noTime;
 
 public class GOReactionsCoordinator {
@@ -45,14 +43,6 @@ public class GOReactionsCoordinator {
                 from, toId);
     }
 
-    public AvTimeSpan onLeave(final GameObjectId locatableId,
-                              final IHasStoringPlaceGO from,
-                              @Nullable final IHasStoringPlaceGO to) {
-        return onLeave(
-                (ILocatableGO) GameObjects.load(db, locatableId),
-                from, to);
-    }
-
     public AvTimeSpan onLeave(final ILocatableGO locatable,
                               final IHasStoringPlaceGO from,
                               @Nullable final GameObjectId toId) {
@@ -72,23 +62,8 @@ public class GOReactionsCoordinator {
                               final IHasStoringPlaceGO from,
                               @Nullable final IHasStoringPlaceGO to) {
         return doReactions(IMovementReactions.class,
-                not(locatable::equals),
+                ((Predicate<IResponder>) locatable::equals).negate(),
                 reactions -> reactions.onLeave(locatable, from, to));
-    }
-
-    public AvTimeSpan onEnter(final ILocatableGO locatable,
-                              @Nullable final GameObjectId fromId,
-                              final IHasStoringPlaceGO to) {
-        if (fromId == null) {
-            return onEnter(locatable, (IHasStoringPlaceGO) null, to);
-        }
-
-        final GameObject from = GameObjects.load(db, fromId);
-        if (!(from instanceof IHasStoringPlaceGO)) {
-            return noTime();
-        }
-
-        return onEnter(locatable, (IHasStoringPlaceGO) from, to);
     }
 
     public AvTimeSpan onEnter(final GameObjectId locatableId,
@@ -97,14 +72,6 @@ public class GOReactionsCoordinator {
         return onEnter(
                 (ILocatableGO) GameObjects.load(db, locatableId),
                 from, toId);
-    }
-
-    public AvTimeSpan onEnter(final GameObjectId locatableId,
-                              @Nullable final IHasStoringPlaceGO from,
-                              final IHasStoringPlaceGO to) {
-        return onEnter(
-                (ILocatableGO) GameObjects.load(db, locatableId),
-                from, to);
     }
 
     public AvTimeSpan onEnter(final ILocatableGO locatable,
@@ -122,18 +89,14 @@ public class GOReactionsCoordinator {
                               @Nullable final IHasStoringPlaceGO from,
                               final IHasStoringPlaceGO to) {
         return doReactions(IMovementReactions.class,
-                not(locatable::equals),
+                ((Predicate<IResponder>) locatable::equals).negate(),
                 reactions -> reactions.onEnter(locatable, from, to));
     }
 
     // IEssenReactions
-    public AvTimeSpan onEssen(final GameObjectId gameObjectId) {
-        return onEssen(GameObjects.load(db, gameObjectId));
-    }
-
     public AvTimeSpan onEssen(final IGameObject gameObject) {
         return doReactions(IEssenReactions.class,
-                not(gameObject::equals),
+                ((Predicate<IResponder>) gameObject::equals).negate(),
                 reactions -> reactions.onEssen(gameObject));
     }
 
@@ -150,7 +113,7 @@ public class GOReactionsCoordinator {
     private <R extends IReactions> AvTimeSpan doReactions(
             final Class<R> reactionsInterface,
             final Function<R, AvTimeSpan> narrateAndDoReaction) {
-        return doReactions(reactionsInterface, alwaysTrue(),
+        return doReactions(reactionsInterface, responder -> true,
                 narrateAndDoReaction);
     }
 

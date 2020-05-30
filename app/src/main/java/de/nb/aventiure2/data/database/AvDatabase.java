@@ -79,7 +79,7 @@ import static de.nb.aventiure2.data.world.time.AvTime.oClock;
 public abstract class AvDatabase extends RoomDatabase {
     public abstract CounterDao counterDao();
 
-    public abstract AvNowDao dateTimeDao();
+    public abstract AvNowDao nowDao();
 
     public abstract StoryStateDao storyStateDao();
 
@@ -106,13 +106,13 @@ public abstract class AvDatabase extends RoomDatabase {
             databaseWriteExecutor.execute(() ->
                     INSTANCE.runInTransaction(() -> {
                         // Populate the database in the background:
-                        // Save initial state for all game objects
-                        GameObjects.saveAllInitialState(INSTANCE);
 
                         // Set date and time in the game
-                        // TODO Have Date / Time be a game object
-                        INSTANCE.dateTimeDao().setNow(
+                        INSTANCE.nowDao().setNow(
                                 1, oClock(14, 30));
+
+                        // Save initial state for all game objects
+                        GameObjects.saveAllInitialState(INSTANCE);
 
                         INSTANCE.storyStateDao().add(buildInitialStoryState());
                     }));

@@ -70,17 +70,17 @@ public abstract class AbstractScAction implements IPlayerAction {
         //  Kann nicht die Zeit jeweils beim narraten upgedatet werden?
         //  Und man vergleich hier nur vorher-Zeit mit nachher-Zeit?
 
-        final AvDateTime start = db.dateTimeDao().now();
+        final AvDateTime start = db.nowDao().now();
 
         final AvTimeSpan timeElapsed = narrateAndDo();
 
         final AvDateTime dateTimeAfterActionBeforeUpdateWorld = start.plus(timeElapsed);
-        db.dateTimeDao().setNow(dateTimeAfterActionBeforeUpdateWorld);
+        db.nowDao().setNow(dateTimeAfterActionBeforeUpdateWorld);
 
         final AvTimeSpan extraTimeElapsedDuringWorldUpdate =
                 updateWorld(start, start.plus(timeElapsed));
 
-        db.dateTimeDao().setNow(dateTimeAfterActionBeforeUpdateWorld
+        db.nowDao().setNow(dateTimeAfterActionBeforeUpdateWorld
                 .plus(extraTimeElapsedDuringWorldUpdate));
 
         GameObjects.saveAll(db);
