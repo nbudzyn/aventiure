@@ -170,13 +170,20 @@ public class FroschprinzTalkingComp extends AbstractTalkingComp {
                         //  die WÄHREND des Gesprächs geht!
                         //  Hochheben:  "dein Herz klopft gewaltig"
                         exitSt(this::froschHatHochhebenGefordert_Exit)
-                        // STORY:
-                        //  An einen Tisch setzen = Bewegung, location = "auf dem Tisch"
-                        //  STORY Frosch nehmen erhält am Tisch eine separate
+                        // STORY: Der Tisch hat ZWEI Plätze, wo Dinge sein können:
+                        //  AUF DER BANK und AUF DEM TISCH.
+                        //  Der Frosch sitzt initial AUF DER BANK.
+                        //  Bei jeder AblegenAction kann man ggf. wählen, WOHIN abgelegt werden
+                        //  soll ("Die Kugel auf den Tisch legen", "die Kugel auf die Bank legen")
+                        // STORY Frosch nehmen erhält am Tisch eine separate
                         //   Beschreibung (ohne "in die Tasche")
                         //   Ggf. Extra Satz beim verlassen des Tisches MIT FROSCH:
                         //   "du steckst den Frosch in eine Tasche"
-                        //  STORY  Frosch absetzen -> Frosch landet auf dem Tisch
+                        // STORY Ein Schritt im Gespräch entspricht "Frosch nehmen". Damit ist
+                        //  das Gespräch beendet. Man kann den Frosch dann "auf den Tisch setzen"
+                        //  (oder natürlich auch wieder auf die Bank).
+                        // STORY Der Frosch reagiert natürlich unterschiedlich, ob man ihn auf den
+                        //  Tisch oder die Bank setzt.
                 );
             default:
                 throw new IllegalStateException("Unexpected Froschprinz state: "
