@@ -142,8 +142,7 @@ public class FroschprinzReactionsComp
             case HAT_HOCHHEBEN_GEFORDERT:
                 loadSC(db).feelingsComp().setMood(ANGESPANNT);
 
-                return n.add(
-                        // STORY Weitere Alternativen!
+                return n.addAlt(
                         neuerSatz(PARAGRAPH, "Plötzlich sitzt "
                                         + getFroschprinzDescription().nom()
                                         + " neben dir auf der Bank. „Denk an dein "
@@ -151,7 +150,14 @@ public class FroschprinzReactionsComp
                                         + "„Lass uns aus einem Tellerlein essen!“ Du bist ganz "
                                         + "erschrocken – was für eine "
                                         + "abstoßende Vorstellung!",
-                                secs(30)));
+                                secs(30)),
+                        neuerSatz("Da stößt es schon von der Seite an dein Bein. "
+                                        + "Du drehst dich "
+                                        + "hastig weg und dein Herz klopft vor schlechtem "
+                                        + "Gewissen, als "
+                                        + "der Frosch „Heb mich herauf, heb mich herauf!“ quakt",
+                                secs(20))
+                                .beendet(PARAGRAPH));
             default:
                 return n.add(neuerSatz("Hier sitzt "
                         + getFroschprinzDescription().nom(), noTime()));
