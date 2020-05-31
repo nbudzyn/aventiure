@@ -66,7 +66,8 @@ class CreatureFactory {
                         np(F, "die Schlosswache",
                                 "der Schlosswache"));
         final LocationComp locationComp =
-                new LocationComp(SCHLOSSWACHE, db, SCHLOSS_VORHALLE, DRAUSSEN_VOR_DEM_SCHLOSS);
+                new LocationComp(SCHLOSSWACHE, db, SCHLOSS_VORHALLE, DRAUSSEN_VOR_DEM_SCHLOSS,
+                        false);
 
         return new ReactionsCreature(SCHLOSSWACHE,
                 descriptionComp, locationComp, stateComp,
@@ -92,7 +93,8 @@ class CreatureFactory {
                                 "dem Frosch",
                                 "den Frosch"));
         final LocationComp locationComp =
-                new LocationComp(FROSCHPRINZ, db, IM_WALD_BEIM_BRUNNEN, ABZWEIG_IM_WALD);
+                new LocationComp(FROSCHPRINZ, db, IM_WALD_BEIM_BRUNNEN, ABZWEIG_IM_WALD,
+                        true);
         final FroschprinzTalkingComp talkingComp =
                 new FroschprinzTalkingComp(db, descriptionComp, stateComp);
         return new TalkingReactionsCreature(FROSCHPRINZ,

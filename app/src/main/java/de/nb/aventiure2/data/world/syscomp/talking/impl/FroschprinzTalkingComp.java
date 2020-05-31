@@ -24,6 +24,7 @@ import de.nb.aventiure2.german.base.SubstantivischePhrase;
 import static de.nb.aventiure2.data.world.gameobjects.GameObjects.FROSCHPRINZ;
 import static de.nb.aventiure2.data.world.gameobjects.GameObjects.IM_WALD_BEIM_BRUNNEN;
 import static de.nb.aventiure2.data.world.gameobjects.GameObjects.UNTEN_IM_BRUNNEN;
+import static de.nb.aventiure2.data.world.gameobjects.GameObjects.loadDescribableNonLivingMovableInventory;
 import static de.nb.aventiure2.data.world.gameobjects.GameObjects.loadSC;
 import static de.nb.aventiure2.data.world.syscomp.feelings.Mood.VOLLER_FREUDE;
 import static de.nb.aventiure2.data.world.syscomp.state.GameObjectState.AUF_DEM_WEG_ZUM_BRUNNEN_UM_DINGE_HERAUSZUHOLEN;
@@ -614,8 +615,8 @@ public class FroschprinzTalkingComp extends AbstractTalkingComp {
     private <LOC_DESC extends ILocatableGO & IDescribableGO>
     ImmutableList<LOC_DESC> getObjectsInDenBrunnenGefallen() {
         // STORY Es könnten auch andere Gegenstände unten im Brunnen
-        //  sein - hier filtern known durch den SC.
-        return GameObjects.loadDescribableNonLivingInventory(db, UNTEN_IM_BRUNNEN);
+        //  sein - hier filtern nach Known durch den SC.
+        return loadDescribableNonLivingMovableInventory(db, UNTEN_IM_BRUNNEN);
     }
 
     /**

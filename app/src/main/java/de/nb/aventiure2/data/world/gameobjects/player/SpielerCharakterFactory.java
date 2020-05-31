@@ -40,7 +40,9 @@ public class SpielerCharakterFactory {
                 new AvDateTime(1, oClock(8)),
                 hours(6));
         return new SpielerCharakter(id,
-                new LocationComp(id, db, SCHLOSS_VORHALLE, null),
+                new LocationComp(id, db, SCHLOSS_VORHALLE, null,
+                        // Ein NSC könnte den Spieler nicht so mir-nichts-dir-nichts mitnehmen.
+                        false),
                 new StoringPlaceComp(id, db, IN_EINER_TASCHE, false),
                 feelingsComp,
                 new MemoryComp(id, db, createKnownMap()),

@@ -109,9 +109,11 @@ public class ScActionService {
                 res.addAll(RedenAction.buildActions(db, currentStoryState, room,
                         (IDescribableGO & ITalkerGO) creature));
             }
-            res.addAll(
-                    NehmenAction.buildCreatureActions(db, currentStoryState,
-                            room, creature));
+            if (creature.locationComp().isMovable()) {
+                res.addAll(
+                        NehmenAction.buildCreatureActions(db, currentStoryState,
+                                room, creature));
+            }
         }
 
         return res.build();
@@ -143,9 +145,11 @@ public class ScActionService {
                         (IDescribableGO & ITalkerGO) object));
             }
 
-            res.addAll(
-                    NehmenAction.buildObjectActions(db, currentStoryState,
-                            room, object));
+            if (object.locationComp().isMovable()) {
+                res.addAll(
+                        NehmenAction.buildObjectActions(db, currentStoryState,
+                                room, object));
+            }
         }
 
         res.addAll(EssenAction.buildActions(db, currentStoryState, room));

@@ -27,7 +27,7 @@ import static de.nb.aventiure2.data.world.gameobjects.GameObjects.GOLDENE_KUGEL;
 import static de.nb.aventiure2.data.world.gameobjects.GameObjects.IM_WALD_BEIM_BRUNNEN;
 import static de.nb.aventiure2.data.world.gameobjects.GameObjects.SCHLOSSFEST;
 import static de.nb.aventiure2.data.world.gameobjects.GameObjects.SCHLOSSFEST_BEGINN_DATE_TIME;
-import static de.nb.aventiure2.data.world.gameobjects.GameObjects.SCHLOSS_VORHALLE_TISCH_BEIM_FEST;
+import static de.nb.aventiure2.data.world.gameobjects.GameObjects.SCHLOSS_VORHALLE_AM_TISCH_BEIM_FEST;
 import static de.nb.aventiure2.data.world.gameobjects.GameObjects.SPIELER_CHARAKTER;
 import static de.nb.aventiure2.data.world.gameobjects.GameObjects.UNTEN_IM_BRUNNEN;
 import static de.nb.aventiure2.data.world.gameobjects.GameObjects.loadSC;
@@ -96,7 +96,7 @@ public class FroschprinzReactionsComp
         }
 
         if (stateComp.hasState(ERWARTET_VON_SC_EINLOESUNG_SEINES_VERSPRECHENS)
-                && !from.is(SCHLOSS_VORHALLE_TISCH_BEIM_FEST)) {
+                && !from.is(SCHLOSS_VORHALLE_AM_TISCH_BEIM_FEST)) {
             return n.add(
                     neuerSatz(" „Warte, warte“, ruft der Frosch, „nimm mich mit, "
                             + "ich kann nicht so "
@@ -214,7 +214,7 @@ public class FroschprinzReactionsComp
 
         final SpielerCharakter sc = (SpielerCharakter) gameObject;
 
-        if (!sc.locationComp().hasLocation(SCHLOSS_VORHALLE_TISCH_BEIM_FEST)) {
+        if (!sc.locationComp().hasLocation(SCHLOSS_VORHALLE_AM_TISCH_BEIM_FEST)) {
             // Wenn der Spieler nicht im Schloss isst, ist es dem Frosch egal
             return noTime();
         }
@@ -246,7 +246,7 @@ public class FroschprinzReactionsComp
 
     private AvTimeSpan froschprinzHuepftAusTascheUndWillMitessen(
             final SpielerCharakter sc) {
-        return locationComp.narrateAndSetLocation(SCHLOSS_VORHALLE_TISCH_BEIM_FEST,
+        return locationComp.narrateAndSetLocation(SCHLOSS_VORHALLE_AM_TISCH_BEIM_FEST,
                 () -> {
                     final AvTimeSpan timeSpan = n.add(neuerSatz(
                             "Auf einmal ruckelt es unangenehm in deiner Tasche, und eh "
@@ -356,7 +356,7 @@ public class FroschprinzReactionsComp
 
     private AvTimeSpan froschprinzAufSchlossfestAngekommen() {
         return locationComp.narrateAndSetLocation(
-                SCHLOSS_VORHALLE_TISCH_BEIM_FEST,
+                SCHLOSS_VORHALLE_AM_TISCH_BEIM_FEST,
                 () -> {
                     stateComp.setState(WARTET_AUF_SC_BEIM_SCHLOSSFEST);
                     return noTime();

@@ -28,7 +28,7 @@ import static de.nb.aventiure2.german.base.StructuralElement.SENTENCE;
 
 /**
  * An implementation of {@link AbstractSpatialConnectionComp}
- * for the {@link GameObjects#SCHLOSS_VORHALLE_TISCH_BEIM_FEST}
+ * for the {@link GameObjects#SCHLOSS_VORHALLE_AM_TISCH_BEIM_FEST}
  * room.
  */
 @ParametersAreNonnullByDefault

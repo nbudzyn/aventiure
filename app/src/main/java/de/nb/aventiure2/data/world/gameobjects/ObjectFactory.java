@@ -31,13 +31,15 @@ public class ObjectFactory {
                              final String normalDescriptionWhenKnownNomDatAkk,
                              final String shortDescriptionWhenKnownNomDatAkk,
                              @Nullable final GameObjectId initialLocationId,
-                             @Nullable final GameObjectId initialLastLocationId) {
+                             @Nullable final GameObjectId initialLastLocationId,
+                             final boolean movable) {
         return create(id,
                 np(numerusGenus, descriptionAtFirstSightNomDatAkk),
                 np(numerusGenus, normalDescriptionWhenKnownNomDatAkk),
                 np(numerusGenus, shortDescriptionWhenKnownNomDatAkk),
                 initialLocationId,
-                initialLastLocationId);
+                initialLastLocationId,
+                movable);
     }
 
     public GameObject create(final GameObjectId id,
@@ -45,11 +47,12 @@ public class ObjectFactory {
                              final Nominalphrase normalDescriptionWhenKnown,
                              final Nominalphrase shortDescriptionWhenKnown,
                              @Nullable final GameObjectId initialLocationId,
-                             @Nullable final GameObjectId initialLastLocationId) {
+                             @Nullable final GameObjectId initialLastLocationId,
+                             final boolean movable) {
         return new ObjectFactory.Object(id,
                 new DescriptionComp(id, descriptionAtFirstSight, normalDescriptionWhenKnown,
                         shortDescriptionWhenKnown),
-                new LocationComp(id, db, initialLocationId, initialLastLocationId));
+                new LocationComp(id, db, initialLocationId, initialLastLocationId, movable));
     }
 
     private static class Object extends GameObject

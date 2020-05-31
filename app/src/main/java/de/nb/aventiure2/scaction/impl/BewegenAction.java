@@ -35,10 +35,10 @@ import static com.google.common.base.Preconditions.checkArgument;
 import static de.nb.aventiure2.data.world.gameobjects.GameObjects.DRAUSSEN_VOR_DEM_SCHLOSS;
 import static de.nb.aventiure2.data.world.gameobjects.GameObjects.SCHLOSSFEST;
 import static de.nb.aventiure2.data.world.gameobjects.GameObjects.SCHLOSS_VORHALLE;
-import static de.nb.aventiure2.data.world.gameobjects.GameObjects.SCHLOSS_VORHALLE_TISCH_BEIM_FEST;
+import static de.nb.aventiure2.data.world.gameobjects.GameObjects.SCHLOSS_VORHALLE_AM_TISCH_BEIM_FEST;
 import static de.nb.aventiure2.data.world.gameobjects.GameObjects.WALDWILDNIS_HINTER_DEM_BRUNNEN;
 import static de.nb.aventiure2.data.world.gameobjects.GameObjects.load;
-import static de.nb.aventiure2.data.world.gameobjects.GameObjects.loadDescribableNonLivingInventory;
+import static de.nb.aventiure2.data.world.gameobjects.GameObjects.loadDescribableNonLivingMovableInventory;
 import static de.nb.aventiure2.data.world.syscomp.state.GameObjectState.BEGONNEN;
 import static de.nb.aventiure2.data.world.syscomp.storingplace.Lichtverhaeltnisse.HELL;
 import static de.nb.aventiure2.data.world.time.AvTimeSpan.noTime;
@@ -151,8 +151,9 @@ public class BewegenAction<R extends ISpatiallyConnectedGO & IHasStoringPlaceGO,
         final Lichtverhaeltnisse lichtverhaeltnisseInNewRoom =
                 to.storingPlaceComp().getLichtverhaeltnisseInside();
 
-        final ImmutableList<LOC_DESC> objectsInNewRoom =
-                loadDescribableNonLivingInventory(db, spatialConnection.getTo());
+        // Unbewegliche Objekte sollen in der Raumbeschreibung mitgenannt werden!
+        final ImmutableList<LOC_DESC> movableObjectsInNewRoom =
+                loadDescribableNonLivingMovableInventory(db, spatialConnection.getTo());
 
         AvTimeSpan elapsedTime = narrateAndDoRoomOnly(lichtverhaeltnisseInNewRoom);
 
@@ -166,14 +167,15 @@ public class BewegenAction<R extends ISpatiallyConnectedGO & IHasStoringPlaceGO,
                 .narrateAndSetLocation(spatialConnection.getTo(),
                         () -> {
                             AvTimeSpan elapsedTimeOnEnter = noTime();
-                            if (!objectsInNewRoom.isEmpty()) {
+                            if (!movableObjectsInNewRoom.isEmpty()) {
                                 elapsedTimeOnEnter = elapsedTimeOnEnter.plus(
-                                        narrateObjects(objectsInNewRoom));
+                                        narrateObjects(movableObjectsInNewRoom));
                             }
 
                             sc.memoryComp().setLastAction(buildMemorizedAction());
 
-                            setRoomAndObjectsKnown(objectsInNewRoom, lichtverhaeltnisseInNewRoom);
+                            setRoomAndObjectsKnown(movableObjectsInNewRoom,
+                                    lichtverhaeltnisseInNewRoom);
                             return elapsedTimeOnEnter;
                         }));
     }
@@ -186,7 +188,7 @@ public class BewegenAction<R extends ISpatiallyConnectedGO & IHasStoringPlaceGO,
                     newRoom.is(SCHLOSS_VORHALLE)) {
                 return true;
             }
-            if (newRoom.is(SCHLOSS_VORHALLE_TISCH_BEIM_FEST)) {
+            if (newRoom.is(SCHLOSS_VORHALLE_AM_TISCH_BEIM_FEST)) {
                 return true;
             }
         }

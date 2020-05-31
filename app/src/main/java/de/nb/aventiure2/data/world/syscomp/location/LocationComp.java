@@ -28,16 +28,25 @@ public class LocationComp extends AbstractStatefulComponent<LocationPCD> {
     private final GameObjectId initialLastLocationId;
 
     /**
+     * Ob das Game Object (z.B. vom Spieler) von einem Ort in der Welt zu einem
+     * anderen bewegt werden kann. (Die goldene Kugel z.B. ist <i>movable</i>,
+     * ein langer Holztisch nicht.)
+     */
+    private final boolean movable;
+
+    /**
      * Constructor for a {@link LocationComp}.
      */
     public LocationComp(final GameObjectId gameObjectId,
                         final AvDatabase db,
                         final GameObjectId initialLocationId,
-                        @Nullable final GameObjectId initialLastLocationId) {
+                        @Nullable final GameObjectId initialLastLocationId,
+                        final boolean movable) {
         super(gameObjectId, db.locationDao());
         this.db = db;
         this.initialLocationId = initialLocationId;
         this.initialLastLocationId = initialLastLocationId;
+        this.movable = movable;
     }
 
     @Override
@@ -177,5 +186,9 @@ public class LocationComp extends AbstractStatefulComponent<LocationPCD> {
     @Nullable
     private GameObjectId getLastLocationId() {
         return getPcd().getLastLocationId();
+    }
+
+    public boolean isMovable() {
+        return movable;
     }
 }

@@ -15,7 +15,7 @@ import de.nb.aventiure2.data.world.syscomp.storingplace.Lichtverhaeltnisse;
 
 /**
  * An implementation of {@link AbstractSpatialConnectionComp}
- * for the {@link GameObjects#SCHLOSS_VORHALLE_TISCH_BEIM_FEST}
+ * for the {@link GameObjects#SCHLOSS_VORHALLE_AM_TISCH_BEIM_FEST}
  * room.
  */
 @ParametersAreNonnullByDefault

@@ -17,20 +17,20 @@ import de.nb.aventiure2.data.world.syscomp.storingplace.Lichtverhaeltnisse;
 import de.nb.aventiure2.german.base.AbstractDescription;
 
 import static de.nb.aventiure2.data.world.gameobjects.GameObjects.SCHLOSS_VORHALLE;
-import static de.nb.aventiure2.data.world.gameobjects.GameObjects.SCHLOSS_VORHALLE_TISCH_BEIM_FEST;
+import static de.nb.aventiure2.data.world.gameobjects.GameObjects.SCHLOSS_VORHALLE_AM_TISCH_BEIM_FEST;
 import static de.nb.aventiure2.data.world.time.AvTimeSpan.mins;
 import static de.nb.aventiure2.german.base.DuDescription.du;
 
 /**
  * An implementation of {@link AbstractSpatialConnectionComp}
- * for the {@link GameObjects#SCHLOSS_VORHALLE_TISCH_BEIM_FEST}
+ * for the {@link GameObjects#SCHLOSS_VORHALLE_AM_TISCH_BEIM_FEST}
  * room.
  */
 @ParametersAreNonnullByDefault
 public class SchlossVorhalleTischBeimFestConnectionComp extends AbstractSpatialConnectionComp {
     public SchlossVorhalleTischBeimFestConnectionComp(
             final AvDatabase db) {
-        super(SCHLOSS_VORHALLE_TISCH_BEIM_FEST, db);
+        super(SCHLOSS_VORHALLE_AM_TISCH_BEIM_FEST, db);
     }
 
     @Override

@@ -17,11 +17,11 @@ public enum StoringPlaceType {
     BODEN("auf dem Boden", "auf den Boden", AUFHEBEN),
     // TODO Not everything fits on a table
     EIN_TISCH("auf einem Tisch", "auf einen Tisch"),
+    NEBEN_SC_AUF_BANK("neben dir auf der Bank", "neben dich auf die Bank"),
     GRAS_NEBEN_DEM_BRUNNEN("neben dem Brunnnen", "neben den Brunnen",
             AUFHEBEN),
     NEBEN_DIR_IM_BETT("neben dir im Bett", "neben dich in das Bett",
             AN_SICH_NEHMEN),
-    // TODO Not everything fits on a table
     HOLZTISCH("auf dem hölzernen Tisch", "auf den Holztisch"),
     VOR_DER_HUETTE("auf dem Erdboden vor der Hütte", "auf den Erdboden vor der Hütte",
             AUFHEBEN),

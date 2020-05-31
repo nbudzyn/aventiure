@@ -20,7 +20,7 @@ import de.nb.aventiure2.german.base.AbstractDescription;
 import static de.nb.aventiure2.data.world.gameobjects.GameObjects.DRAUSSEN_VOR_DEM_SCHLOSS;
 import static de.nb.aventiure2.data.world.gameobjects.GameObjects.SCHLOSSFEST;
 import static de.nb.aventiure2.data.world.gameobjects.GameObjects.SCHLOSS_VORHALLE;
-import static de.nb.aventiure2.data.world.gameobjects.GameObjects.SCHLOSS_VORHALLE_TISCH_BEIM_FEST;
+import static de.nb.aventiure2.data.world.gameobjects.GameObjects.SCHLOSS_VORHALLE_AM_TISCH_BEIM_FEST;
 import static de.nb.aventiure2.data.world.syscomp.memory.Known.KNOWN_FROM_DARKNESS;
 import static de.nb.aventiure2.data.world.syscomp.memory.Known.UNKNOWN;
 import static de.nb.aventiure2.data.world.syscomp.state.GameObjectState.BEGONNEN;
@@ -47,7 +47,7 @@ public class SchlossVorhalleConnectionComp extends AbstractSpatialConnectionComp
     public boolean isAlternativeMovementDescriptionAllowed(final GameObjectId to,
                                                            final Known newRoomKnown,
                                                            final Lichtverhaeltnisse lichtverhaeltnisseInNewRoom) {
-        if (to.equals(SCHLOSS_VORHALLE_TISCH_BEIM_FEST) &&
+        if (to.equals(SCHLOSS_VORHALLE_AM_TISCH_BEIM_FEST) &&
                 ((IHasStateGO) GameObjects.load(db, SCHLOSSFEST)).stateComp().hasState(BEGONNEN) &&
                 db.counterDao().get(COUNTER_TISCH_BEIM_FEST) == 0) {
             return false;
@@ -64,7 +64,7 @@ public class SchlossVorhalleConnectionComp extends AbstractSpatialConnectionComp
                 "Das Schloss verlassen",
                 this::getDescTo_DraussenVorDemSchloss));
         if (((IHasStateGO) GameObjects.load(db, SCHLOSSFEST)).stateComp().hasState(BEGONNEN)) {
-            res.add(SpatialConnection.con(SCHLOSS_VORHALLE_TISCH_BEIM_FEST,
+            res.add(SpatialConnection.con(SCHLOSS_VORHALLE_AM_TISCH_BEIM_FEST,
                     "An einen Tisch setzen",
                     this::getDescTo_SchlossVorhalleTischBeimFest));
         }
@@ -153,7 +153,8 @@ public class SchlossVorhalleConnectionComp extends AbstractSpatialConnectionComp
         if (db.counterDao().incAndGet(
                 "RoomConnectionBuilder_SchlossVorhalle_SchlossVorhalleTischBeimFest")
                 == 1) {
-            return du("ergatterst", "einen Platz auf einer Bank.\n"
+            return du("ergatterst", "einen Platz auf einer Bank an einem langen,"
+                    + " aus Brettern gezimmerten Tisch.\n"
                     + "Unter einem Baldachin sitzen – soweit du durch das Gedänge "
                     + "erkennen kannst – "
                     + "einige Hofleute an einer Tafel mit "

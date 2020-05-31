@@ -41,6 +41,7 @@ import static com.google.common.collect.ImmutableList.toImmutableList;
 import static de.nb.aventiure2.data.world.time.AvTime.oClock;
 import static de.nb.aventiure2.german.base.Nominalphrase.np;
 import static de.nb.aventiure2.german.base.NumerusGenus.F;
+import static de.nb.aventiure2.german.base.NumerusGenus.M;
 
 /**
  * All game objects
@@ -58,6 +59,8 @@ public class GameObjects {
 
     // OBJECTS
     public static final GameObjectId GOLDENE_KUGEL = new GameObjectId(10_000);
+    public static final GameObjectId SCHLOSS_VORHALLE_LANGER_TISCH_BEIM_FEST =
+            new GameObjectId(10_001);
 
     // CREATURES
     public static final GameObjectId FROSCHPRINZ = new GameObjectId(20_001);
@@ -65,7 +68,7 @@ public class GameObjects {
 
     // RÄUME
     public static final GameObjectId SCHLOSS_VORHALLE = new GameObjectId(30_000);
-    public static final GameObjectId SCHLOSS_VORHALLE_TISCH_BEIM_FEST = new GameObjectId(30_001);
+    public static final GameObjectId SCHLOSS_VORHALLE_AM_TISCH_BEIM_FEST = new GameObjectId(30_001);
     public static final GameObjectId DRAUSSEN_VOR_DEM_SCHLOSS = new GameObjectId(30_002);
     public static final GameObjectId IM_WALD_NAHE_DEM_SCHLOSS = new GameObjectId(30_003);
     public static final GameObjectId ABZWEIG_IM_WALD = new GameObjectId(30_004);
@@ -125,7 +128,8 @@ public class GameObjects {
                     room.create(SCHLOSS_VORHALLE, StoringPlaceType.EIN_TISCH,
                             true,
                             new SchlossVorhalleConnectionComp(db)),
-                    room.create(SCHLOSS_VORHALLE_TISCH_BEIM_FEST, StoringPlaceType.HOLZTISCH,
+                    room.create(SCHLOSS_VORHALLE_AM_TISCH_BEIM_FEST,
+                            StoringPlaceType.NEBEN_SC_AUF_BANK,
                             true,
                             new SchlossVorhalleTischBeimFestConnectionComp(db)),
                     room.create(DRAUSSEN_VOR_DEM_SCHLOSS,
@@ -175,13 +179,25 @@ public class GameObjects {
                                     "einer goldenen Kugel"),
                             np(F, "die goldene Kugel", "der goldenen Kugel"),
                             np(F, "die Kugel", "der Kugel"),
-                            SCHLOSS_VORHALLE, DRAUSSEN_VOR_DEM_SCHLOSS)
+                            SCHLOSS_VORHALLE, DRAUSSEN_VOR_DEM_SCHLOSS,
+                            true),
                     // STORY Die goldene Kugel kann verloren gehen, zum Beispiel wenn man sie im
                     //  Sumpf ablegt. Dann gibt es eine art Reset und eine ähnliche goldene
                     //  Kugel erscheint wieder im Schloss. Der Text dort sagt so dann etwas wie
                     //  "eine goldene kugel wie du sie schon einmal gesehen hast, nur etwas
                     //  kleiner".
-
+                    // STORY Wenn man die goldene Kugel auf den Weg legt oder beim Schlossfest
+                    //  auf den Tisch, verschwindet sie einfach, wenn man weggeht (sie wird
+                    //  gestohlen) - vorausgesetzt, man braucht sie nicht mehr.
+                    object.create(SCHLOSS_VORHALLE_LANGER_TISCH_BEIM_FEST,
+                            np(M, "ein langer, aus Brettern gezimmerter Tisch",
+                                    "einem langen, aus Brettern gezimmertem Tisch",
+                                    "einen langen, aus Brettern gezimmerten Tisch"),
+                            np(M, "der lange Brettertisch", "dem langen Brettertisch",
+                                    "den langen Brettertisch"),
+                            np(M, "der Tisch", "dem Tisch", "den Tisch"),
+                            SCHLOSS_VORHALLE_AM_TISCH_BEIM_FEST, SCHLOSS_VORHALLE,
+                            false)
                     // STORY Spieler kauft Lampe (z.B. für Hütte) auf Schlossfest
             );
         }
@@ -245,6 +261,26 @@ public class GameObjects {
             final AvDatabase db,
             final IHasStoringPlaceGO inventoryHolder) {
         return filterNoLivingBeing(loadDescribableInventory(db, inventoryHolder));
+    }
+
+    /**
+     * Ermittelt die nicht-lebenden Game Objects,
+     * die <i>movable</i> sind (also z.B. vom SC bewegt werden könnten) an dieser
+     * <i>locationId</i>, lädt sie (sofern noch nicht geschehen) und gibt sie zurück -
+     * nur Gegenstände, die eine Beschreibung haben, nicht den Spieler-Charakter.
+     */
+    public static <LOC_DESC extends ILocatableGO & IDescribableGO>
+    ImmutableList<LOC_DESC> loadDescribableNonLivingMovableInventory(
+            final AvDatabase db,
+            final GameObjectId locationId) {
+        return filterMovable(loadDescribableNonLivingInventory(db, locationId));
+    }
+
+    private static <GO extends ILocatableGO> ImmutableList<GO> filterMovable(
+            final List<GO> gameObjects) {
+        return gameObjects.stream()
+                .filter(go -> go.locationComp().isMovable())
+                .collect(toImmutableList());
     }
 
     /**

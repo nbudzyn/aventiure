@@ -18,7 +18,7 @@ import de.nb.aventiure2.data.world.time.AvTimeSpan;
 import de.nb.aventiure2.scaction.AbstractScAction;
 
 import static de.nb.aventiure2.data.world.gameobjects.GameObjects.SCHLOSSFEST;
-import static de.nb.aventiure2.data.world.gameobjects.GameObjects.SCHLOSS_VORHALLE_TISCH_BEIM_FEST;
+import static de.nb.aventiure2.data.world.gameobjects.GameObjects.SCHLOSS_VORHALLE_AM_TISCH_BEIM_FEST;
 import static de.nb.aventiure2.data.world.gameobjects.GameObjects.WALDWILDNIS_HINTER_DEM_BRUNNEN;
 import static de.nb.aventiure2.data.world.gameobjects.GameObjects.load;
 import static de.nb.aventiure2.data.world.gameobjects.GameObjects.loadSC;
@@ -62,7 +62,7 @@ public class EssenAction extends AbstractScAction {
 
     private static boolean raumEnthaeltEtwasEssbares(final AvDatabase db,
                                                      final IHasStoringPlaceGO room) {
-        if (room.is(SCHLOSS_VORHALLE_TISCH_BEIM_FEST) &&
+        if (room.is(SCHLOSS_VORHALLE_AM_TISCH_BEIM_FEST) &&
                 ((IHasStateGO) load(db, SCHLOSSFEST)).stateComp().hasState(BEGONNEN)) {
             return true;
         }
@@ -91,7 +91,7 @@ public class EssenAction extends AbstractScAction {
     @Override
     @NonNull
     public String getName() {
-        if (room.is(SCHLOSS_VORHALLE_TISCH_BEIM_FEST)) {
+        if (room.is(SCHLOSS_VORHALLE_AM_TISCH_BEIM_FEST)) {
             return "Eintopf essen";
         }
 
@@ -105,7 +105,7 @@ public class EssenAction extends AbstractScAction {
     @Override
     public AvTimeSpan narrateAndDo() {
         AvTimeSpan timeElapsed;
-        if (room.is(SCHLOSS_VORHALLE_TISCH_BEIM_FEST)) {
+        if (room.is(SCHLOSS_VORHALLE_AM_TISCH_BEIM_FEST)) {
             timeElapsed = narrateAndDoSchlossfest();
         } else if (room.is(WALDWILDNIS_HINTER_DEM_BRUNNEN)) {
             timeElapsed = narrateAndDoFelsenbirnen();
