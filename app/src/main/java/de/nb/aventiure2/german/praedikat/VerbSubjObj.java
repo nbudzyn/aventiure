@@ -19,10 +19,12 @@ public enum VerbSubjObj implements PraedikatMitEinerObjektleerstelle {
     HERAUSKLAUBEN("herausklauben", AKK, "klaubst", "heraus"),
     HINLEGEN("hinlegen", AKK, "legst", "hin"),
     IGNORIEREN("ignorieren", AKK, "ignorierst"),
+    LEGEN("legen", AKK, "legst"),
     MITNEHMEN("mitnehmen", AKK, "nimmst", "mit"),
     NEHMEN("nehmen", AKK, "nimmst"),
     POLIEREN("polieren", AKK, "polierst"),
-    REDEN("reden", MIT_DAT, "redest");
+    REDEN("reden", MIT_DAT, "redest"),
+    SETZEN("setzen", AKK, "setzt");
 
     /**
      * Das Verb an sich, ohne Informationen zur Valenz, ohne Ergänzungen, ohne

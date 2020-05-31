@@ -114,9 +114,21 @@ class PraedikatSubjObjOhneLeerstellen implements PraedikatOhneLeerstellen {
      */
     @Override
     public String getDescriptionInfinitiv(final Person person, final Numerus numerus) {
-        return objekt.im(kasusOderPraepositionalkasus) +
-                " " + verb.getInfinitiv();
+        return getDescriptionInfinitiv(person, numerus, null);
     }
+
+    /**
+     * Gibt eine Infinitivkonstruktion zurück mit Prädikat.
+     * ("den Frosch ignorieren", "das Leben genießen")
+     */
+    @Override
+    public String getDescriptionInfinitiv(final Person person, final Numerus numerus,
+                                          @Nullable final AdverbialeAngabe adverbialeAngabe) {
+        return joinToNull(objekt.im(kasusOderPraepositionalkasus),
+                adverbialeAngabe,
+                verb.getInfinitiv());
+    }
+
 
     /**
      * Gibt eine Infinitivkonstruktion zurück mit Prädikat.

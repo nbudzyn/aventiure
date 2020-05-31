@@ -18,6 +18,7 @@ public enum StoringPlaceType {
     // TODO Not everything fits on a table
     EIN_TISCH("auf einem Tisch", "auf einen Tisch"),
     NEBEN_SC_AUF_BANK("neben dir auf der Bank", "neben dich auf die Bank"),
+    TISCH("auf dem Tisch", "auf den Tisch"),
     GRAS_NEBEN_DEM_BRUNNEN("neben dem Brunnnen", "neben den Brunnen",
             AUFHEBEN),
     NEBEN_DIR_IM_BETT("neben dir im Bett", "neben dich in das Bett",

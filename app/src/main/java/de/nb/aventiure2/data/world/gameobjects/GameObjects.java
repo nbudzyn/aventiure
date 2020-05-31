@@ -38,6 +38,7 @@ import de.nb.aventiure2.data.world.time.AvDateTime;
 import de.nb.aventiure2.german.base.Nominalphrase;
 
 import static com.google.common.collect.ImmutableList.toImmutableList;
+import static de.nb.aventiure2.data.world.syscomp.storingplace.StoringPlaceType.TISCH;
 import static de.nb.aventiure2.data.world.time.AvTime.oClock;
 import static de.nb.aventiure2.german.base.Nominalphrase.np;
 import static de.nb.aventiure2.german.base.NumerusGenus.F;
@@ -84,6 +85,9 @@ public class GameObjects {
     public static final GameObjectId TAGESZEIT = new GameObjectId(40_001);
     public static final GameObjectId SCHLOSSFEST = new GameObjectId(40_000);
 
+    // Sonstige Konstanten
+    private static final boolean SCHLOSS_VORHALLE_DAUERHAFT_BELEUCHTET = true;
+
     /**
      * Vor einem Zugriff auf <code>ALL</code> muss {@link #prepare(AvDatabase)} aufgerufen werden!
      */
@@ -126,7 +130,7 @@ public class GameObjects {
             ALL.putAll(
                     spieler.create(SPIELER_CHARAKTER),
                     room.create(SCHLOSS_VORHALLE, StoringPlaceType.EIN_TISCH,
-                            true,
+                            SCHLOSS_VORHALLE_DAUERHAFT_BELEUCHTET,
                             new SchlossVorhalleConnectionComp(db)),
                     room.create(SCHLOSS_VORHALLE_AM_TISCH_BEIM_FEST,
                             StoringPlaceType.NEBEN_SC_AUF_BANK,
@@ -197,7 +201,9 @@ public class GameObjects {
                                     "den langen Brettertisch"),
                             np(M, "der Tisch", "dem Tisch", "den Tisch"),
                             SCHLOSS_VORHALLE_AM_TISCH_BEIM_FEST, SCHLOSS_VORHALLE,
-                            false)
+                            false,
+                            TISCH,
+                            SCHLOSS_VORHALLE_DAUERHAFT_BELEUCHTET)
                     // STORY Spieler kauft Lampe (z.B. für Hütte) auf Schlossfest
             );
         }
@@ -254,7 +260,7 @@ public class GameObjects {
     /**
      * Lädt (soweit noch nicht geschehen) die nicht-lebenden Game Objects im Inventar dieses
      * <code>inventoryHolder</code>s und gibt sie zurück -
-     * nur Gegenstände, die eine Beschreibung haben, nicht den Spieler-Charakter.
+     * nur Gegenstände, die eine Beschreibung haben.
      */
     public static <LOC_DESC extends ILocatableGO & IDescribableGO>
     ImmutableList<LOC_DESC> loadDescribableNonLivingInventory(
@@ -265,9 +271,45 @@ public class GameObjects {
 
     /**
      * Ermittelt die nicht-lebenden Game Objects,
+     * an denen etwas abgelegt werden kann an an diesem Ort, lädt sie (sofern noch nicht geschehen)
+     * und gibt sie zurück -
+     * nur Gegenstände, die eine Beschreibung haben.
+     */
+    public static <LOC_DESC_HAS_STORING_PLACE extends ILocatableGO & IDescribableGO & IHasStoringPlaceGO>
+    ImmutableList<LOC_DESC_HAS_STORING_PLACE> loadDescribableNonLivingHasStoringPlaceInventory(
+            final AvDatabase db,
+            final IHasStoringPlaceGO inventoryHolder) {
+        return filterHasStoringPlace(
+                loadDescribableNonLivingInventory(db, inventoryHolder.getId()));
+    }
+
+    /**
+     * Ermittelt die nicht-lebenden Game Objects,
+     * an denen etwas abgelegt werden kann an (innerhalb) dieser
+     * <i>locationId</i>, lädt sie (sofern noch nicht geschehen) und gibt sie zurück -
+     * nur Gegenstände, die eine Beschreibung haben.
+     */
+    public static <LOC_DESC_HAS_STORING_PLACE extends ILocatableGO & IDescribableGO & IHasStoringPlaceGO>
+    ImmutableList<LOC_DESC_HAS_STORING_PLACE> loadDescribableNonLivingHasStoringPlaceInventory(
+            final AvDatabase db,
+            final GameObjectId locationId) {
+        return filterHasStoringPlace(loadDescribableNonLivingInventory(db, locationId));
+    }
+
+    private static <LOC_DESC extends ILocatableGO & IDescribableGO,
+            LOC_DESC_HAS_STORING_PLACE extends ILocatableGO & IDescribableGO & IHasStoringPlaceGO>
+    ImmutableList<LOC_DESC_HAS_STORING_PLACE> filterHasStoringPlace(
+            final List<LOC_DESC> gameObjects) {
+        return (ImmutableList<LOC_DESC_HAS_STORING_PLACE>) gameObjects.stream()
+                .filter(IHasStoringPlaceGO.class::isInstance)
+                .collect(toImmutableList());
+    }
+
+    /**
+     * Ermittelt die nicht-lebenden Game Objects,
      * die <i>movable</i> sind (also z.B. vom SC bewegt werden könnten) an dieser
      * <i>locationId</i>, lädt sie (sofern noch nicht geschehen) und gibt sie zurück -
-     * nur Gegenstände, die eine Beschreibung haben, nicht den Spieler-Charakter.
+     * nur Gegenstände, die eine Beschreibung haben.
      */
     public static <LOC_DESC extends ILocatableGO & IDescribableGO>
     ImmutableList<LOC_DESC> loadDescribableNonLivingMovableInventory(
@@ -286,7 +328,7 @@ public class GameObjects {
     /**
      * Lädt (soweit noch nicht geschehen) die nicht-lebenden Game Objects von dieser
      * <i>locationId</i> zurück und gibt sie zurück -
-     * nur Gegenstände, die eine Beschreibung haben, nicht den Spieler-Charakter.
+     * nur Gegenstände, die eine Beschreibung haben.
      */
     public static <LOC_DESC extends ILocatableGO & IDescribableGO>
     ImmutableList<LOC_DESC> loadDescribableNonLivingInventory(

@@ -154,6 +154,8 @@ public class BewegenAction<R extends ISpatiallyConnectedGO & IHasStoringPlaceGO,
         // Unbewegliche Objekte sollen in der Raumbeschreibung mitgenannt werden!
         final ImmutableList<LOC_DESC> movableObjectsInNewRoom =
                 loadDescribableNonLivingMovableInventory(db, spatialConnection.getTo());
+        // TODO Auch Objekte, die rekursiv enthalten sind (Kugel auf einem Tisch)
+        //  beschreiben!
 
         AvTimeSpan elapsedTime = narrateAndDoRoomOnly(lichtverhaeltnisseInNewRoom);
 

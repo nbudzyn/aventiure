@@ -69,6 +69,18 @@ public interface PraedikatOhneLeerstellen extends Praedikat {
     String getDescriptionInfinitiv(Person person, Numerus numerus);
 
     /**
+     * Gibt eine Infinitivkonstruktion mit diesem
+     * Prädikat zurück ("das Schwert erneut nehmen")
+     * <p>
+     * Implizit (oder bei reflexiven Verben auch explizit) hat der
+     * Infinitiv eine Person und einen Numerus - Beispiel:
+     * "[Ich möchte] die Kugel erneut an mich nehmen"
+     * (nicht *"[Ich möchte] die Kugel erneut an sich nehmen")
+     */
+    String getDescriptionInfinitiv(Person person, Numerus numerus,
+                                   @Nullable AdverbialeAngabe adverbialeAngabe);
+
+    /**
      * Gibt eine Infinitivkonstruktion mit dem zu-Infinitiv mit diesem
      * Prädikat zurück ("das Schwert zu nehmen")
      * <p>

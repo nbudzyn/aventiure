@@ -57,6 +57,9 @@ public class NehmenAction
     @NonNull
     private final GO gameObject;
 
+    // STORY Hier überall ermöglichen, dass man auch rekursiv enthaltene Dinge nehmen kann,
+    //  z.B. eine Goldene Kugel, die auf einem Tisch liegt.
+
     public static <GO extends IDescribableGO & ILocatableGO>
     Collection<NehmenAction> buildObjectActions(final AvDatabase db,
                                                 final StoryState initialStoryState,

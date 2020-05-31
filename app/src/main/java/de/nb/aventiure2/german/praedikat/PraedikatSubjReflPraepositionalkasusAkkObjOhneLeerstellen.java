@@ -69,14 +69,19 @@ class PraedikatSubjReflPraepositionalkasusAkkObjOhneLeerstellen
 
     @Override
     public String getDescriptionInfinitiv(final Person person, final Numerus numerus) {
+        return getDescriptionInfinitiv(person, numerus, null);
+    }
+
+    @Override
+    public String getDescriptionInfinitiv(final Person person, final Numerus numerus,
+                                          @Nullable final AdverbialeAngabe adverbialeAngabe) {
         checkKeinPartikelVerb();
 
-        return akkObj.akk() // "die goldene Kugel"
-                + " "
-                + Reflexivpronomen.get(person, numerus).im(reflPraepositionalkasusVerbAkkObj.
-                getPrapositionMitKasus()) // "an mich"
-                + " "
-                + reflPraepositionalkasusVerbAkkObj.getVerb().getInfinitiv();// "nehmen"
+        return joinToNull(akkObj.akk(), // "die goldene Kugel"
+                adverbialeAngabe, // "erneut"
+                Reflexivpronomen.get(person, numerus).im(reflPraepositionalkasusVerbAkkObj.
+                        getPrapositionMitKasus()), // "an mich"
+                reflPraepositionalkasusVerbAkkObj.getVerb().getInfinitiv());// "nehmen"
     }
 
     @Override

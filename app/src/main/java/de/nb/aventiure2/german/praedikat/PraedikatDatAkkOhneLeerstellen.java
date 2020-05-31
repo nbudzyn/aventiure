@@ -87,9 +87,17 @@ public class PraedikatDatAkkOhneLeerstellen implements PraedikatOhneLeerstellen 
 
     @Override
     public String getDescriptionInfinitiv(final Person person, final Numerus numerus) {
-        return describableDat.dat() +
-                " " + describableAkk.akk() +
-                " " + verb.getInfinitiv();
+        return getDescriptionInfinitiv(person, numerus, null);
+    }
+
+    @Override
+    public String getDescriptionInfinitiv(final Person person, final Numerus numerus,
+                                          @Nullable final AdverbialeAngabe adverbialeAngabe) {
+        return joinToNull(
+                describableDat.dat(), // "dem Frosch"
+                adverbialeAngabe, // "erneut"
+                describableAkk.akk(), // "das Gold"
+                verb.getInfinitiv()); // "anbieten"
     }
 
     @Override

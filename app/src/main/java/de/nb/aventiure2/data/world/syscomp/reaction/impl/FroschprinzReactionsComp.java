@@ -142,6 +142,8 @@ public class FroschprinzReactionsComp
             case HAT_HOCHHEBEN_GEFORDERT:
                 loadSC(db).feelingsComp().setMood(ANGESPANNT);
 
+                // TODO Wenn der Frosch nur rekursiv enthalten ist (Frosch sitzt auf dem Tisch),
+                //  dann hier prüfen und ggf. beschreiben (vgl. AblegenAction)
                 return n.addAlt(
                         neuerSatz(PARAGRAPH, "Plötzlich sitzt "
                                         + getFroschprinzDescription().nom()
@@ -159,6 +161,9 @@ public class FroschprinzReactionsComp
                                 secs(20))
                                 .beendet(PARAGRAPH));
             default:
+                // TODO Wenn der Frosch nur rekursiv enthalten ist (Frosch sitzt auf dem Tisch),
+                //  dann beschreiben (vgl. AblegenAction)
+
                 return n.add(neuerSatz("Hier sitzt "
                         + getFroschprinzDescription().nom(), noTime()));
         }

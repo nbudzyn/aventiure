@@ -85,13 +85,20 @@ class ZweiPraedikateSubjObjOhneLeerstellen implements PraedikatOhneLeerstellen {
         return false;
     }
 
-    /**
-     * Gibt eine Reihung von Infinitivphrasen zurück.
-     * ("Die goldene Kugel aufheben und ein Bad nehmen")
-     */
     @Override
     public String getDescriptionInfinitiv(final Person person, final Numerus numerus) {
-        return ersterSatz.getDescriptionInfinitiv(person, numerus)
+        return getDescriptionInfinitiv(person, numerus, null);
+    }
+
+    /**
+     * Gibt eine Infinitivkonstruktion mit dem Infinitiv mit diesem
+     * Prädikat zurück. Die adverbiale Angabe wird im ersten
+     * Teilsatz verwendet.
+     */
+    @Override
+    public String getDescriptionInfinitiv(final Person person, final Numerus numerus,
+                                          @Nullable final AdverbialeAngabe adverbialeAngabe) {
+        return ersterSatz.getDescriptionInfinitiv(person, numerus, adverbialeAngabe)
                 + " und "
                 + zweiterSatz.getDescriptionInfinitiv(person, numerus);
     }

@@ -17,6 +17,7 @@ import de.nb.aventiure2.german.base.Nominalphrase;
 import de.nb.aventiure2.german.base.Personalpronomen;
 import de.nb.aventiure2.german.base.SubstantivischePhrase;
 
+import static de.nb.aventiure2.data.world.gameobjects.GameObjects.getPOVDescription;
 import static de.nb.aventiure2.data.world.gameobjects.GameObjects.loadSC;
 import static de.nb.aventiure2.data.world.time.AvTimeSpan.noTime;
 
@@ -200,6 +201,6 @@ public abstract class AbstractScAction implements IPlayerAction {
      */
     protected Nominalphrase getDescription(final IDescribableGO gameObject,
                                            final boolean shortIfKnown) {
-        return GameObjects.getPOVDescription(sc, gameObject, shortIfKnown);
+        return getPOVDescription(sc, gameObject, shortIfKnown);
     }
 }
