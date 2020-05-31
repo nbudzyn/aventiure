@@ -166,22 +166,24 @@ public class FroschprinzTalkingComp extends AbstractTalkingComp {
                 return ImmutableList.of();
             case HAT_HOCHHEBEN_GEFORDERT:
                 return ImmutableList.of(
-                        // STORY Frosch auf den Tisch hochheben - das ist vermutlich eine AKTION
-                        //  die WÄHREND des Gesprächs geht!
-                        //  Hochheben:  "dein Herz klopft gewaltig"
                         exitSt(this::froschHatHochhebenGefordert_Exit)
-                        // STORY: Der Tisch hat ZWEI Plätze, wo Dinge sein können:
-                        //  AUF DER BANK und AUF DEM TISCH.
-                        //  Der Frosch sitzt initial AUF DER BANK.
+                        // STORY: Der "Raum" AM TISCH enthält ein Objekt, nämlich den Tisch.
+                        //  Auch (gewisse) Objekte können Dinge "enthalten" ("auf dem Tisch").
+                        //  Der Frosch sitzt initial im Raum selbst, d.h. AUF DER BANK.
                         //  Bei jeder AblegenAction kann man ggf. wählen, WOHIN abgelegt werden
                         //  soll ("Die Kugel auf den Tisch legen", "die Kugel auf die Bank legen")
+                        // STORY generell kann man mit allen Objekten interagieren, die sich
+                        //  (direkt oder mittelbar) im aktuellen Raum befinden.
+                        //  Als Raum wird dabei das äußerste Objekt betrachtet.
                         // STORY Frosch nehmen erhält am Tisch eine separate
-                        //   Beschreibung (ohne "in die Tasche")
+                        //   Beschreibung ("dein Herz klopft gewaltig, dann greifst du den Frosch",
+                        //   ohne "in die Tasche") und ist vermutlich eine
+                        //   AKTION oder eine Talk-Step, der WÄHREND des Gesprächs geht!
                         //   Ggf. Extra Satz beim verlassen des Tisches MIT FROSCH:
                         //   "du steckst den Frosch in eine Tasche"
                         // STORY Ein Schritt im Gespräch entspricht "Frosch nehmen". Damit ist
-                        //  das Gespräch beendet. Man kann den Frosch dann "auf den Tisch setzen"
-                        //  (oder natürlich auch wieder auf die Bank).
+                        //  das Gespräch beendet. Man kann den Frosch dann "auf dem Tisch absetzen"
+                        //  (oder natürlich auch wieder auf der Bank).
                         // STORY Der Frosch reagiert natürlich unterschiedlich, ob man ihn auf den
                         //  Tisch oder die Bank setzt.
                 );
