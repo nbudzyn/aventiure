@@ -245,7 +245,7 @@ public class BewegenAction<R extends ISpatiallyConnectedGO & ILocationGO,
     private AvTimeSpan narrateObjects(final List<? extends IDescribableGO> objectsInNewRoom) {
         final IDescribableGO lastObject = objectsInNewRoom.get(objectsInNewRoom.size() - 1);
 
-        // TODO Objekte, die rekursiv enthalten sind (Kugel auf einem Tisch),
+        // FIXME Objekte, die rekursiv enthalten sind (Kugel auf einem Tisch),
         //  mit ihrer korrekten detaillierten Location beschreiben!
 
         return n.add(
