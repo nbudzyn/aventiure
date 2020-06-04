@@ -139,33 +139,33 @@ public class EssenAction extends AbstractScAction {
         //  Laune verbessern zu "Aufgedreht" oder so?!
 
         return n.addAlt(
-                du(SENTENCE,
+                du(PARAGRAPH,
                         "füllst", "dir von dem Eintopf ein und langst kräftig zu",
                         mins(10))
                         .beendet(PARAGRAPH),
-                du(SENTENCE, "nimmst", "dir eine gute Kelle von dem Eintopf und isst",
+                du(PARAGRAPH, "nimmst", "dir eine gute Kelle von dem Eintopf und isst",
                         mins(10))
                         .dann(),
-                du(SENTENCE, "nimmst", "dir vom Eintopf und isst, als wenn du vier Wochen "
+                du(PARAGRAPH, "nimmst", "dir vom Eintopf und isst, als wenn du vier Wochen "
                                 + "hungern solltest",
                         mins(10))
                         .komma()
                         .dann(),
-                du(SENTENCE, "greifst", "zu und isst mit Lust, bis du "
+                du(PARAGRAPH, "greifst", "zu und isst mit Lust, bis du "
                                 + "deinen Hunger gestillt hast",
                         mins(10))
                         .komma()
                         .dann(),
-                du("isst", "vom Eintopf, bis dein Hunger gestillt ist",
+                du(PARAGRAPH, "isst", "vom Eintopf, bis dein Hunger gestillt ist",
                         mins(10))
                         .komma()
                         .undWartest()
                         .dann(),
-                du(SENTENCE, "bedienst", "dich am Eintopf und löffelst los",
+                du(PARAGRAPH, "bedienst", "dich am Eintopf und löffelst los",
                         mins(10))
                         .beendet(PARAGRAPH)
                         .dann(),
-                du(SENTENCE, "isst", "vom Eintopf und stillst deinen Hunger",
+                du(PARAGRAPH, "isst", "vom Eintopf und stillst deinen Hunger",
                         mins(10))
                         .dann()
         );

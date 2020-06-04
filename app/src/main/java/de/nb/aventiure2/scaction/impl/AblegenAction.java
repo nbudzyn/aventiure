@@ -27,7 +27,7 @@ import static com.google.common.base.Preconditions.checkState;
 import static de.nb.aventiure2.data.world.gameobjects.GameObjects.FROSCHPRINZ;
 import static de.nb.aventiure2.data.world.gameobjects.GameObjects.SPIELER_CHARAKTER;
 import static de.nb.aventiure2.data.world.gameobjects.GameObjects.getPOVDescription;
-import static de.nb.aventiure2.data.world.gameobjects.GameObjects.loadDescribableNonLivingHasStoringPlaceInventory;
+import static de.nb.aventiure2.data.world.gameobjects.GameObjects.loadDescribableNonLivingLocationRecursiveInventory;
 import static de.nb.aventiure2.data.world.syscomp.memory.Action.Type.NEHMEN;
 import static de.nb.aventiure2.data.world.time.AvTimeSpan.secs;
 import static de.nb.aventiure2.german.base.AllgDescription.satzanschluss;
@@ -73,49 +73,23 @@ public class AblegenAction
             final AvDatabase db, final StoryState initialStoryState,
             final GO gameObject,
             final ILocationGO location) {
-        return buildActions(db, initialStoryState, gameObject, location, true);
-    }
-
-    private static <GO extends IDescribableGO & ILocatableGO>
-    Collection<AblegenAction<GO>> buildActions(
-            final AvDatabase db, final StoryState initialStoryState,
-            final GO gameObject,
-            final ILocationGO location,
-            final boolean isOutermost) {
-        final ImmutableList.Builder<AblegenAction<GO>> res = ImmutableList.builder();
-
-        if (!(gameObject instanceof ILivingBeingGO) || gameObject.is(FROSCHPRINZ)) {
-            res.add(new AblegenAction<>(
-                    db, initialStoryState, gameObject, location, isOutermost));
+        if ((gameObject instanceof ILivingBeingGO) &&
+                !gameObject.is(FROSCHPRINZ)) {
+            return ImmutableList.of();
         }
 
-        res.addAll(buildRecursiveActions(db, initialStoryState, gameObject, location));
-
-        return res.build();
-    }
-
-    /**
-     * Erzeugt alle Aktionen, mit denen der Benutzer dieses <code>gameObject</code>
-     * auf / in allen {@link ILocationGO}s ablegen kann, die die
-     * <code>outerLocation</code> enthält
-     * <p>
-     * Beispiel: Erzeugt die Aktion, auf dem Tisch ablegen kann, der sich in einem bestimmten
-     * Raum (<code>outerLocation</code>) befindet.
-     */
-    private static <GO extends IDescribableGO & ILocatableGO>
-    Collection<AblegenAction<GO>> buildRecursiveActions(
-            final AvDatabase db, final StoryState initialStoryState, final GO gameObject,
-            final ILocationGO outerLocation) {
         final ImmutableList.Builder<AblegenAction<GO>> res = ImmutableList.builder();
+        res.add(new AblegenAction<>(
+                db, initialStoryState, gameObject, location,
+                true));
 
         for (final ILocationGO innerLocation :
-                loadDescribableNonLivingHasStoringPlaceInventory(
-                        db, outerLocation)) {
+                loadDescribableNonLivingLocationRecursiveInventory(
+                        db, location)) {
             // Z.B. "Auf dem Tisch absetzen"
-            res.addAll(
-                    buildActions(
-                            db, initialStoryState, gameObject, innerLocation,
-                            false));
+            res.add(new AblegenAction<>(
+                    db, initialStoryState, gameObject, innerLocation,
+                    false));
         }
 
         return res.build();

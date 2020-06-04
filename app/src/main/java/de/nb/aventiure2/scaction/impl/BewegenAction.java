@@ -37,7 +37,7 @@ import static de.nb.aventiure2.data.world.gameobjects.GameObjects.SCHLOSS_VORHAL
 import static de.nb.aventiure2.data.world.gameobjects.GameObjects.SCHLOSS_VORHALLE_AM_TISCH_BEIM_FEST;
 import static de.nb.aventiure2.data.world.gameobjects.GameObjects.WALDWILDNIS_HINTER_DEM_BRUNNEN;
 import static de.nb.aventiure2.data.world.gameobjects.GameObjects.load;
-import static de.nb.aventiure2.data.world.gameobjects.GameObjects.loadDescribableNonLivingMovableInventory;
+import static de.nb.aventiure2.data.world.gameobjects.GameObjects.loadDescribableNonLivingMovableRecursiveInventory;
 import static de.nb.aventiure2.data.world.syscomp.memory.Action.Type.BEWEGEN;
 import static de.nb.aventiure2.data.world.syscomp.state.GameObjectState.BEGONNEN;
 import static de.nb.aventiure2.data.world.syscomp.storingplace.Lichtverhaeltnisse.HELL;
@@ -153,9 +153,9 @@ public class BewegenAction<R extends ISpatiallyConnectedGO & ILocationGO,
 
         // Unbewegliche Objekte sollen in der Raumbeschreibung mitgenannt werden!
         final ImmutableList<LOC_DESC> movableObjectsInNewRoom =
-                loadDescribableNonLivingMovableInventory(db, spatialConnection.getTo());
-        // TODO Auch Objekte, die rekursiv enthalten sind (Kugel auf einem Tisch)
-        //  beschreiben!
+                loadDescribableNonLivingMovableRecursiveInventory(db, spatialConnection.getTo());
+        // TODO Objekte, die rekursiv enthalten sind (Kugel auf einem Tisch),
+        //  mit ihrer detaillierten Location beschreiben!
 
         AvTimeSpan elapsedTime = narrateAndDoRoomOnly(lichtverhaeltnisseInNewRoom);
 

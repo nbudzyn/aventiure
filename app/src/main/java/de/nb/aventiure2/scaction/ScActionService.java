@@ -14,6 +14,7 @@ import javax.annotation.ParametersAreNonnullByDefault;
 import de.nb.aventiure2.data.database.AvDatabase;
 import de.nb.aventiure2.data.storystate.StoryState;
 import de.nb.aventiure2.data.world.base.IGameObject;
+import de.nb.aventiure2.data.world.gameobjects.GameObjects;
 import de.nb.aventiure2.data.world.gameobjects.player.SpielerCharakter;
 import de.nb.aventiure2.data.world.syscomp.alive.ILivingBeingGO;
 import de.nb.aventiure2.data.world.syscomp.description.IDescribableGO;
@@ -32,8 +33,8 @@ import de.nb.aventiure2.scaction.impl.RedenAction;
 import de.nb.aventiure2.scaction.impl.SchlafenAction;
 
 import static de.nb.aventiure2.data.world.gameobjects.GameObjects.SPIELER_CHARAKTER;
-import static de.nb.aventiure2.data.world.gameobjects.GameObjects.loadDescribableLivingInventory;
-import static de.nb.aventiure2.data.world.gameobjects.GameObjects.loadDescribableNonLivingInventory;
+import static de.nb.aventiure2.data.world.gameobjects.GameObjects.loadDescribableLivingRecursiveInventory;
+import static de.nb.aventiure2.data.world.gameobjects.GameObjects.loadDescribableNonLivingRecursiveInventory;
 import static de.nb.aventiure2.data.world.gameobjects.GameObjects.loadSC;
 
 /**
@@ -62,15 +63,17 @@ public class ScActionService {
 
         final @Nullable ILocationGO room = spielerCharakter.locationComp().getLocation();
 
-        final ImmutableList<DESC_OBJ> objectInventory =
-                loadDescribableNonLivingInventory(db, SPIELER_CHARAKTER);
-        final ImmutableList<LIV> livingBeingsInventory =
-                loadDescribableLivingInventory(db, SPIELER_CHARAKTER);
+        final ImmutableList<DESC_OBJ> scInventoryObjects =
+                GameObjects.loadDescribableNonLivingRecursiveInventory(db, SPIELER_CHARAKTER);
+        final ImmutableList<LIV> scInventoryLivingBeings =
+                loadDescribableLivingRecursiveInventory(db, SPIELER_CHARAKTER);
 
         final ImmutableList<DESC_OBJ> objectsInRoom =
-                room != null ? loadDescribableNonLivingInventory(db, room) : ImmutableList.of();
+                room != null ? loadDescribableNonLivingRecursiveInventory(db, room) :
+                        ImmutableList.of();
         final ImmutableList<LIV> livingBeingsInRoom =
-                room != null ? loadDescribableLivingInventory(db, room) : ImmutableList.of();
+                room != null ? GameObjects.loadDescribableLivingRecursiveInventory(db, room) :
+                        ImmutableList.of();
 
         final List<AbstractScAction> res = new ArrayList<>();
 
@@ -85,8 +88,8 @@ public class ScActionService {
             if (room != null) {
                 res.addAll(buildObjectInRoomActions(currentStoryState, room, objectsInRoom));
             }
-            res.addAll(buildInventoryActions(currentStoryState, room, livingBeingsInventory));
-            res.addAll(buildInventoryActions(currentStoryState, room, objectInventory));
+            res.addAll(buildInventoryActions(currentStoryState, room, scInventoryLivingBeings));
+            res.addAll(buildInventoryActions(currentStoryState, room, scInventoryObjects));
 
             if (room instanceof ISpatiallyConnectedGO) {
                 res.addAll(buildRoomActions(
@@ -110,14 +113,9 @@ public class ScActionService {
                         (IDescribableGO & ITalkerGO) creature));
             }
             if (creature.locationComp().isMovable()) {
-                // STORY Hier überall ermöglichen, dass man auch rekursiv enthaltene Dinge nehmen kann,
-                //  z.B. eine Goldene Kugel, die auf einem Tisch liegt.
-                //  Ggf. daran orientieren, wie die AblegenAction die Daten
-                //  zusammenstellt.
-
                 res.addAll(
                         NehmenAction.buildCreatureActions(db, currentStoryState,
-                                room, creature));
+                                creature));
             }
         }
 
@@ -151,14 +149,8 @@ public class ScActionService {
             }
 
             if (object.locationComp().isMovable()) {
-                // STORY Hier überall ermöglichen, dass man auch rekursiv enthaltene Dinge nehmen kann,
-                //  z.B. eine Goldene Kugel, die auf einem Tisch liegt.
-                //  Ggf. daran orientieren, wie die AblegenAction die Daten
-                //  zusammenstellt.
-
                 res.addAll(
-                        NehmenAction.buildObjectActions(db, currentStoryState,
-                                room, object));
+                        NehmenAction.buildObjectActions(db, currentStoryState, object));
             }
         }
 

@@ -17,7 +17,6 @@ import de.nb.aventiure2.data.world.syscomp.location.ILocatableGO;
 import de.nb.aventiure2.data.world.syscomp.memory.Action;
 import de.nb.aventiure2.data.world.syscomp.memory.Known;
 import de.nb.aventiure2.data.world.syscomp.state.IHasStateGO;
-import de.nb.aventiure2.data.world.syscomp.storingplace.ILocationGO;
 import de.nb.aventiure2.data.world.time.AvTimeSpan;
 import de.nb.aventiure2.german.base.Nominalphrase;
 import de.nb.aventiure2.german.base.NumerusGenus;
@@ -28,6 +27,7 @@ import de.nb.aventiure2.german.praedikat.Modalpartikel;
 import de.nb.aventiure2.german.praedikat.PraedikatMitEinerObjektleerstelle;
 import de.nb.aventiure2.scaction.AbstractScAction;
 
+import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkState;
 import static de.nb.aventiure2.data.world.gameobjects.GameObjects.FROSCHPRINZ;
 import static de.nb.aventiure2.data.world.gameobjects.GameObjects.SPIELER_CHARAKTER;
@@ -53,38 +53,38 @@ import static de.nb.aventiure2.german.praedikat.VerbSubjObj.NEHMEN;
 public class NehmenAction
         <GO extends IDescribableGO & ILocatableGO>
         extends AbstractScAction {
-    private final ILocationGO location;
     @NonNull
     private final GO gameObject;
 
     public static <GO extends IDescribableGO & ILocatableGO>
     Collection<NehmenAction> buildObjectActions(final AvDatabase db,
                                                 final StoryState initialStoryState,
-                                                final ILocationGO room,
                                                 final GO object) {
         final ImmutableList.Builder<NehmenAction> res = ImmutableList.builder();
-        res.add(new NehmenAction<>(db, initialStoryState, room, object));
+        res.add(new NehmenAction<>(db, initialStoryState, object));
         return res.build();
     }
 
     public static <LIVGO extends IDescribableGO & ILocatableGO & ILivingBeingGO>
     Collection<NehmenAction> buildCreatureActions(
             final AvDatabase db,
-            final StoryState initialStoryState, final ILocationGO room,
+            final StoryState initialStoryState,
             final LIVGO creature) {
         final ImmutableList.Builder<NehmenAction> res = ImmutableList.builder();
         if (creature.is(FROSCHPRINZ) &&
                 ((IHasStateGO) creature).stateComp()
                         .hasState(ERWARTET_VON_SC_EINLOESUNG_SEINES_VERSPRECHENS)) {
-            res.add(new NehmenAction<>(db, initialStoryState, room, creature));
+            res.add(new NehmenAction<>(db, initialStoryState, creature));
         }
         return res.build();
     }
 
     private NehmenAction(final AvDatabase db, final StoryState initialStoryState,
-                         final ILocationGO location, @NonNull final GO gameObject) {
+                         @NonNull final GO gameObject) {
         super(db, initialStoryState);
-        this.location = location;
+
+        checkArgument(gameObject.locationComp().getLocation() != null);
+
         this.gameObject = gameObject;
     }
 
@@ -149,7 +149,8 @@ public class NehmenAction
                         .narrateAndSetLocation(SPIELER_CHARAKTER,
                                 () -> {
                                     sc.memoryComp().upgradeKnown(gameObject, Known.getKnown(
-                                            location.storingPlaceComp().getLichtverhaeltnisse()));
+                                            gameObject.locationComp().getLocation()
+                                                    .storingPlaceComp().getLichtverhaeltnisse()));
                                     sc.feelingsComp().setMood(Mood.NEUTRAL);
 
                                     final SubstantivischePhrase froschDescOderAnapher =
@@ -201,7 +202,8 @@ public class NehmenAction
 
     private AvTimeSpan narrateAndDoObject() {
         sc.memoryComp().upgradeKnown(gameObject, Known.getKnown(
-                location.storingPlaceComp().getLichtverhaeltnisse()));
+                gameObject.locationComp().getLocation().storingPlaceComp()
+                        .getLichtverhaeltnisse()));
 
         AvTimeSpan timeElapsed = narrateObject();
 
@@ -218,7 +220,8 @@ public class NehmenAction
     @NonNull
     private AvTimeSpan narrateObject() {
         final PraedikatMitEinerObjektleerstelle nehmenPraedikat =
-                location.storingPlaceComp().getLocationMode().getNehmenPraedikat();
+                gameObject.locationComp().getLocation()
+                        .storingPlaceComp().getLocationMode().getNehmenPraedikat();
 
         if (sc.memoryComp().getLastAction().hasObject(gameObject)) {
             if (sc.memoryComp().getLastAction().is(Action.Type.ABLEGEN)) {
@@ -320,6 +323,6 @@ public class NehmenAction
 
     @NonNull
     private Action buildMemorizedAction() {
-        return new Action(Action.Type.NEHMEN, gameObject, location);
+        return new Action(Action.Type.NEHMEN, gameObject, gameObject.locationComp().getLocation());
     }
 }

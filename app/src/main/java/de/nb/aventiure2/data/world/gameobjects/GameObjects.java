@@ -258,15 +258,16 @@ public class GameObjects {
     }
 
     /**
-     * Lädt (soweit noch nicht geschehen) die nicht-lebenden Game Objects im Inventar dieses
-     * <code>inventoryHolder</code>s und gibt sie zurück -
+     * Lädt (soweit noch nicht geschehen) die nicht-lebenden Game Objects an dieser
+     * <code>location</code> (auch rekursiv enthaltene, z.B. Kugel auf Tisch in Raum)
+     * und gibt sie zurück -
      * nur Gegenstände, die eine Beschreibung haben.
      */
     public static <LOC_DESC extends ILocatableGO & IDescribableGO>
-    ImmutableList<LOC_DESC> loadDescribableNonLivingInventory(
+    ImmutableList<LOC_DESC> loadDescribableNonLivingRecursiveInventory(
             final AvDatabase db,
-            final ILocationGO inventoryHolder) {
-        return filterNoLivingBeing(loadDescribableInventory(db, inventoryHolder));
+            final ILocationGO location) {
+        return filterNoLivingBeing(loadDescribableRecursiveInventory(db, location));
     }
 
     /**
@@ -275,32 +276,19 @@ public class GameObjects {
      * und gibt sie zurück -
      * nur Gegenstände, die eine Beschreibung haben.
      */
-    public static <LOC_DESC_HAS_STORING_PLACE extends ILocatableGO & IDescribableGO & ILocationGO>
-    ImmutableList<LOC_DESC_HAS_STORING_PLACE> loadDescribableNonLivingHasStoringPlaceInventory(
+    public static <LOCATABLE_DESC_LOCATION extends ILocatableGO & IDescribableGO & ILocationGO>
+    ImmutableList<LOCATABLE_DESC_LOCATION> loadDescribableNonLivingLocationRecursiveInventory(
             final AvDatabase db,
             final ILocationGO inventoryHolder) {
-        return filterHasStoringPlace(
-                loadDescribableNonLivingInventory(db, inventoryHolder.getId()));
-    }
-
-    /**
-     * Ermittelt die nicht-lebenden Game Objects,
-     * an denen etwas abgelegt werden kann an (innerhalb) dieser
-     * <i>locationId</i>, lädt sie (sofern noch nicht geschehen) und gibt sie zurück -
-     * nur Gegenstände, die eine Beschreibung haben.
-     */
-    public static <LOC_DESC_HAS_STORING_PLACE extends ILocatableGO & IDescribableGO & ILocationGO>
-    ImmutableList<LOC_DESC_HAS_STORING_PLACE> loadDescribableNonLivingHasStoringPlaceInventory(
-            final AvDatabase db,
-            final GameObjectId locationId) {
-        return filterHasStoringPlace(loadDescribableNonLivingInventory(db, locationId));
+        return filterLocation(
+                loadDescribableNonLivingRecursiveInventory(db, inventoryHolder.getId()));
     }
 
     private static <LOC_DESC extends ILocatableGO & IDescribableGO,
-            LOC_DESC_HAS_STORING_PLACE extends ILocatableGO & IDescribableGO & ILocationGO>
-    ImmutableList<LOC_DESC_HAS_STORING_PLACE> filterHasStoringPlace(
+            LOCATABLE_DESC_LOCATION extends ILocatableGO & IDescribableGO & ILocationGO>
+    ImmutableList<LOCATABLE_DESC_LOCATION> filterLocation(
             final List<LOC_DESC> gameObjects) {
-        return (ImmutableList<LOC_DESC_HAS_STORING_PLACE>) gameObjects.stream()
+        return (ImmutableList<LOCATABLE_DESC_LOCATION>) gameObjects.stream()
                 .filter(ILocationGO.class::isInstance)
                 .collect(toImmutableList());
     }
@@ -308,14 +296,16 @@ public class GameObjects {
     /**
      * Ermittelt die nicht-lebenden Game Objects,
      * die <i>movable</i> sind (also z.B. vom SC bewegt werden könnten) an dieser
-     * <i>locationId</i>, lädt sie (sofern noch nicht geschehen) und gibt sie zurück -
+     * <i>locationId</i> (auch rekursiv enthaltene, z.B. Kugel auf einem Tisch in einem Raum),
+     * lädt sie (sofern noch nicht geschehen) und gibt sie zurück -
      * nur Gegenstände, die eine Beschreibung haben.
      */
     public static <LOC_DESC extends ILocatableGO & IDescribableGO>
-    ImmutableList<LOC_DESC> loadDescribableNonLivingMovableInventory(
+    ImmutableList<LOC_DESC> loadDescribableNonLivingMovableRecursiveInventory(
             final AvDatabase db,
             final GameObjectId locationId) {
-        return filterMovable(loadDescribableNonLivingInventory(db, locationId));
+        return filterMovable(
+                loadDescribableNonLivingRecursiveInventory(db, locationId));
     }
 
     private static <GO extends ILocatableGO> ImmutableList<GO> filterMovable(
@@ -327,61 +317,104 @@ public class GameObjects {
 
     /**
      * Lädt (soweit noch nicht geschehen) die nicht-lebenden Game Objects von dieser
-     * <i>locationId</i> zurück und gibt sie zurück -
+     * <i>locationId</i> zurück (auch rekursiv, z.B. Kugel auf einem Tisch in einem Raum)
+     * und gibt sie zurück -
      * nur Gegenstände, die eine Beschreibung haben.
      */
     public static <LOC_DESC extends ILocatableGO & IDescribableGO>
-    ImmutableList<LOC_DESC> loadDescribableNonLivingInventory(
+    ImmutableList<LOC_DESC> loadDescribableNonLivingRecursiveInventory(
             final AvDatabase db,
             final GameObjectId locationId) {
-        return filterNoLivingBeing(loadDescribableInventory(db, locationId));
+        return filterNoLivingBeing(loadDescribableRecursiveInventory(db, locationId));
     }
 
     /**
      * Lädt (soweit noch nicht geschehen) alle lebenden Game Objects von dieser
-     * * <i>locationId</i> zurück und gibt sie zurück -
+     * <i>locationId</i> zurück und gibt sie zurück, auch rekursiv
+     * (also Kugel auf einem Tisch im Raum o.ä.) -
      * nur Gegenstände, die eine Beschreibung haben, nicht den Spieler-Charakter.
      */
     public static <LIV extends ILocatableGO & IDescribableGO & ILivingBeingGO>
-    ImmutableList<LIV> loadDescribableLivingInventory(final AvDatabase db,
-                                                      final GameObjectId locationId) {
-        return filterLivingBeing(loadDescribableInventory(db, locationId));
+    ImmutableList<LIV> loadDescribableLivingRecursiveInventory(final AvDatabase db,
+                                                               final GameObjectId locationId) {
+        return filterLivingBeing(loadDescribableRecursiveInventory(db, locationId));
     }
 
     /**
-     * Lädt (soweit noch nicht geschehen) alle lebenden Game Objects im Inventar dieses
-     * <code>inventoryHolder</code>s und gibt sie zurück -
-     * nur Gegenstände, die eine Beschreibung haben, nicht den Spieler-Charakter.
+     * Lädt (soweit noch nicht geschehen) alle lebenden Game Objects im Inventar dieser
+     * <code>location</code>s und gibt sie zurück, auch rekursiv
+     * (also Kugel auf einem Tisch im Raum o.ä.) -
+     * nur Game Objects, die eine Beschreibung haben, nicht den Spieler-Charakter.
      */
     public static <LIV extends ILocatableGO & IDescribableGO & ILivingBeingGO>
-    ImmutableList<LIV> loadDescribableLivingInventory(final AvDatabase db,
-                                                      final ILocationGO inventoryHolder) {
-        return filterLivingBeing(loadDescribableInventory(db, inventoryHolder));
+    ImmutableList<LIV> loadDescribableLivingRecursiveInventory(final AvDatabase db,
+                                                               final ILocationGO location) {
+        return filterLivingBeing(loadDescribableRecursiveInventory(db, location));
     }
 
     /**
-     * Lädt (soweit noch nicht geschehen) alle Game Objects im Inventar dieses
-     * <code>inventoryHolder</code>s und gibt sie zurück -
+     * Lädt (soweit noch nicht geschehen) alle Game Objects an dieser
+     * <code>location</code>s (auch rekursiv enthaltene, z.B. Kugel auf einem Tisch in einem Raum)
+     * und gibt sie zurück -
      * nur Gegenstände, die eine Beschreibung haben.
      */
     private static <LOC_DESC extends ILocatableGO & IDescribableGO>
-    ImmutableList<LOC_DESC> loadDescribableInventory(final AvDatabase db,
-                                                     final ILocationGO inventoryHolder) {
-        return loadDescribableInventory(db, inventoryHolder.getId());
+    ImmutableList<LOC_DESC> loadDescribableRecursiveInventory(final AvDatabase db,
+                                                              final ILocationGO location) {
+        return loadDescribableRecursiveInventory(db, location.getId());
     }
 
     /**
-     * Lädt (soweit noch nicht geschehen) die Game Objects im Inventar dieses
-     * <code>inventoryHolder</code>s und gibt sie zurück -
-     * nur Dinge (oder Kreaturen...), die eine Beschreibung haben, nicht den Spieler-Charakter.
+     * Lädt (soweit noch nicht geschehen) die Game Objects an dieser
+     * <code>locationId</code> (auch rekursiv, z.B. Kugel auf Tisch in Raum)
+     * und gibt sie zurück - nur Game Objects, die eine Beschreibung haben,
+     * nicht den Spieler-Charakter.
+     */
+    private static <LOC_DESC extends ILocatableGO & IDescribableGO>
+    ImmutableList<LOC_DESC> loadDescribableRecursiveInventory(final AvDatabase db,
+                                                              final GameObjectId locationId) {
+        final ImmutableList<LOC_DESC> directContainedList =
+                loadDescribableInventory(db, locationId);
+
+        final ImmutableList.Builder<LOC_DESC> res = ImmutableList.builder();
+        res.addAll(directContainedList);
+
+        for (final LOC_DESC directContained : directContainedList) {
+            if (directContained instanceof ILocationGO) {
+                res.addAll(loadDescribableInventory(db, (ILocationGO) directContained));
+            }
+        }
+
+        return res.build();
+    }
+
+    /**
+     * Lädt (soweit noch nicht geschehen) die Game Objects an dieser
+     * <code>location</code> (<i>nicht</i> rekursiv, also <i>nicht</i> die Kugel
+     * auf einem Tisch in einem Raum, sondern nur den Tisch)
+     * und gibt sie zurück - nur Game Objects, die eine Beschreibung haben,
+     * nicht den Spieler-Charakter.
      */
     private static <LOC_DESC extends ILocatableGO & IDescribableGO>
     ImmutableList<LOC_DESC> loadDescribableInventory(final AvDatabase db,
-                                                     final GameObjectId inventoryHolder) {
+                                                     final ILocationGO location) {
+        return loadDescribableInventory(db, location.getId());
+    }
+
+    /**
+     * Lädt (soweit noch nicht geschehen) die Game Objects an dieser
+     * <code>locationId</code> (<i>nicht</i> rekursiv, also <i>nicht</i> die Kugel
+     * auf einem Tisch in einem Raum, sondern nur den Tisch)
+     * und gibt sie zurück - nur Game Objects, die eine Beschreibung haben,
+     * nicht den Spieler-Charakter.
+     */
+    private static <LOC_DESC extends ILocatableGO & IDescribableGO>
+    ImmutableList<LOC_DESC> loadDescribableInventory(final AvDatabase db,
+                                                     final GameObjectId locationId) {
         prepare(db);
 
         final ImmutableList<GameObject> res =
-                LOCATION_SYSTEM.findByLocation(inventoryHolder)
+                LOCATION_SYSTEM.findByLocation(locationId)
                         .stream()
                         .filter(((Predicate<GameObjectId>) SPIELER_CHARAKTER::equals).negate())
                         .map(id -> get(db, id))
@@ -391,6 +424,7 @@ public class GameObjects {
 
         return (ImmutableList<LOC_DESC>) (ImmutableList<?>) res;
     }
+
 
     private static <GO extends IGameObject> ImmutableList<GO> filterNoLivingBeing(
             final List<GO> gameObjects) {

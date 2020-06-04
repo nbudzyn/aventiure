@@ -277,7 +277,7 @@ public class FroschprinzReactionsComp
         final AvTimeSpan timeSpan = n.add(du(
                 "spürst", "auf einmal etwas Feuchtes an deinem rechten Bein – oh "
                         + "nein, der "
-                        + "garstige Frosch! „Heb mich herauf!“ ruft er „weißt du nicht, was du "
+                        + "garstige Frosch! „Heb mich herauf!“, ruft er, „weißt du nicht, was du "
                         + "zu mir gesagt bei dem kühlen Brunnenwasser? Heb mich herauf!“",
                 "auf einmal",
                 secs(20))
@@ -289,6 +289,10 @@ public class FroschprinzReactionsComp
     }
 
     private void setFroschHatHochhebenGefordert(final SpielerCharakter sc) {
+        // STORY Eher nicht im Gespräch, sondern Gespräch ist
+        //  beendet und SC kann den Frosch nehmen und auf dem Tisch wieder absetzen?
+        //  Dann entsprechend in der Talking-Component Beenden-Option für HAT_HOCHHEBEN_GEFORDERT
+        //  entfernen.
         talkingComp.setTalkingTo(sc);
         sc.feelingsComp().setMood(ANGESPANNT);
         stateComp.setState(HAT_HOCHHEBEN_GEFORDERT);
