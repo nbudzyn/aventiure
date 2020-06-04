@@ -60,7 +60,7 @@ public class GameObjects {
 
     // OBJECTS
     public static final GameObjectId GOLDENE_KUGEL = new GameObjectId(10_000);
-    public static final GameObjectId SCHLOSS_VORHALLE_LANGER_TISCH_BEIM_FEST =
+    private static final GameObjectId SCHLOSS_VORHALLE_LANGER_TISCH_BEIM_FEST =
             new GameObjectId(10_001);
 
     // CREATURES

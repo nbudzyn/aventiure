@@ -9,14 +9,10 @@ import org.jetbrains.annotations.Contract;
 import java.util.LinkedList;
 import java.util.List;
 
-import de.nb.aventiure2.logger.Logger;
-
 import static java.util.Arrays.asList;
 
 class TextAdditionEvaluator {
     private static final float ERFAHRUNGSWERT = 0.0001f;
-
-    private static final Logger LOGGER = Logger.getLogger();
 
     private static final List<String> REPITION_ACCEPTABLE =
             asList("ein", "eines", "einem", "einen", "eine", "einer", "der", "des", "dem", "den",

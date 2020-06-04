@@ -43,9 +43,9 @@ public class GOReactionsCoordinator {
                 from, toId);
     }
 
-    public AvTimeSpan onLeave(final ILocatableGO locatable,
-                              final ILocationGO from,
-                              @Nullable final GameObjectId toId) {
+    private AvTimeSpan onLeave(final ILocatableGO locatable,
+                               final ILocationGO from,
+                               @Nullable final GameObjectId toId) {
         if (toId == null) {
             return onLeave(locatable, from, (ILocationGO) null);
         }
@@ -58,9 +58,9 @@ public class GOReactionsCoordinator {
         return onLeave(locatable, from, (ILocationGO) to);
     }
 
-    public AvTimeSpan onLeave(final ILocatableGO locatable,
-                              final ILocationGO from,
-                              @Nullable final ILocationGO to) {
+    private AvTimeSpan onLeave(final ILocatableGO locatable,
+                               final ILocationGO from,
+                               @Nullable final ILocationGO to) {
         return doReactions(IMovementReactions.class,
                 ((Predicate<IResponder>) locatable::equals).negate(),
                 reactions -> reactions.onLeave(locatable, from, to));
@@ -85,9 +85,9 @@ public class GOReactionsCoordinator {
         return onEnter(locatable, from, (ILocationGO) to);
     }
 
-    public AvTimeSpan onEnter(final ILocatableGO locatable,
-                              @Nullable final ILocationGO from,
-                              final ILocationGO to) {
+    private AvTimeSpan onEnter(final ILocatableGO locatable,
+                               @Nullable final ILocationGO from,
+                               final ILocationGO to) {
         return doReactions(IMovementReactions.class,
                 ((Predicate<IResponder>) locatable::equals).negate(),
                 reactions -> reactions.onEnter(locatable, from, to));

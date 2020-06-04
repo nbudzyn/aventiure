@@ -10,5 +10,5 @@ import de.nb.aventiure2.data.world.base.IGameObject;
  */
 public interface ILocationGO extends IGameObject {
     @Nonnull
-    public StoringPlaceComp storingPlaceComp();
+    StoringPlaceComp storingPlaceComp();
 }
