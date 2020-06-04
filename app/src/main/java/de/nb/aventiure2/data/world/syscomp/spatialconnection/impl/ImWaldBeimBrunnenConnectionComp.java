@@ -62,7 +62,7 @@ public class ImWaldBeimBrunnenConnectionComp extends AbstractSpatialConnectionCo
                         + "abzweigt", mins(3))
                         .komma()));
 
-        if (storingPlaceComp.getLichtverhaeltnisseInside() == HELL ||
+        if (storingPlaceComp.getLichtverhaeltnisse() == HELL ||
                 loadSC(db).memoryComp().isKnown(WALDWILDNIS_HINTER_DEM_BRUNNEN)) {
             resImWaldBeimBrunnnen.add(con(WALDWILDNIS_HINTER_DEM_BRUNNEN,
                     "Hinter dem Brunnen in die Wildnis schlagen",

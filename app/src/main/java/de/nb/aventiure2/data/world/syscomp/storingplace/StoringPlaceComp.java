@@ -42,15 +42,20 @@ public class StoringPlaceComp extends AbstractStatelessComponent {
         return locationMode;
     }
 
-    public Lichtverhaeltnisse getLichtverhaeltnisseInside() {
-        // STORY Der SC oder ein anderes Game Object, dass sich IN
-        //   diesem IHasStoringPlaceGO befindet, könnte eine Fackel dabei haben.
+    /**
+     * Gibt die Lichtverhältnisse an diesem Ort zurück (z.B. in diesem Raum,
+     * auf diesem Tisch, in der Tasche o.Ä.)
+     */
+    public Lichtverhaeltnisse getLichtverhaeltnisse() {
+        // STORY Der SC oder ein anderes Game Object, dass sich an
+        //   dieser Location befindet, könnte eine Fackel dabei haben.
 
         if (isDauerhaftBeleuchtet()) {
-            // STORY Es könnte Räume geben, die auch tagsüber dunkel sind, z.B.
-            //  weil sie keine Fenster haben. Man bräuchte quasi drei Möglichkeiten:
+            // STORY Es könnte Räume oder Locations geben, die auch tagsüber dunkel sind, z.B.
+            //  weil sie keine Fenster haben, oder Taschen etc.. Man bräuchte quasi
+            //  drei Möglichkeiten:
             //  - dauerhaft beleuchtet
-            //  - dauerheft dunkel
+            //  - dauerhaft dunkel
             //  - tageszeitenabhaengig beleuchtet
             return HELL;
         }

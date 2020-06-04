@@ -17,7 +17,7 @@ import de.nb.aventiure2.data.world.syscomp.location.ILocatableGO;
 import de.nb.aventiure2.data.world.syscomp.memory.Action;
 import de.nb.aventiure2.data.world.syscomp.memory.Known;
 import de.nb.aventiure2.data.world.syscomp.state.IHasStateGO;
-import de.nb.aventiure2.data.world.syscomp.storingplace.IHasStoringPlaceGO;
+import de.nb.aventiure2.data.world.syscomp.storingplace.ILocationGO;
 import de.nb.aventiure2.data.world.time.AvTimeSpan;
 import de.nb.aventiure2.german.base.Nominalphrase;
 import de.nb.aventiure2.german.base.NumerusGenus;
@@ -53,17 +53,14 @@ import static de.nb.aventiure2.german.praedikat.VerbSubjObj.NEHMEN;
 public class NehmenAction
         <GO extends IDescribableGO & ILocatableGO>
         extends AbstractScAction {
-    private final IHasStoringPlaceGO room;
+    private final ILocationGO location;
     @NonNull
     private final GO gameObject;
-
-    // STORY Hier überall ermöglichen, dass man auch rekursiv enthaltene Dinge nehmen kann,
-    //  z.B. eine Goldene Kugel, die auf einem Tisch liegt.
 
     public static <GO extends IDescribableGO & ILocatableGO>
     Collection<NehmenAction> buildObjectActions(final AvDatabase db,
                                                 final StoryState initialStoryState,
-                                                final IHasStoringPlaceGO room,
+                                                final ILocationGO room,
                                                 final GO object) {
         final ImmutableList.Builder<NehmenAction> res = ImmutableList.builder();
         res.add(new NehmenAction<>(db, initialStoryState, room, object));
@@ -73,7 +70,7 @@ public class NehmenAction
     public static <LIVGO extends IDescribableGO & ILocatableGO & ILivingBeingGO>
     Collection<NehmenAction> buildCreatureActions(
             final AvDatabase db,
-            final StoryState initialStoryState, final IHasStoringPlaceGO room,
+            final StoryState initialStoryState, final ILocationGO room,
             final LIVGO creature) {
         final ImmutableList.Builder<NehmenAction> res = ImmutableList.builder();
         if (creature.is(FROSCHPRINZ) &&
@@ -85,9 +82,9 @@ public class NehmenAction
     }
 
     private NehmenAction(final AvDatabase db, final StoryState initialStoryState,
-                         final IHasStoringPlaceGO room, @NonNull final GO gameObject) {
+                         final ILocationGO location, @NonNull final GO gameObject) {
         super(db, initialStoryState);
-        this.room = room;
+        this.location = location;
         this.gameObject = gameObject;
     }
 
@@ -103,7 +100,7 @@ public class NehmenAction
                 gameObject instanceof ILivingBeingGO ? MITNEHMEN : NEHMEN;
 
         return capitalize(praedikat.mitObj(getDescription(gameObject, true))
-                // "Die Schale an *mich* nehmen"
+                // Relevant für etwas wie "Die Schale an *mich* nehmen"
                 .getDescriptionInfinitiv(P1, SG));
     }
 
@@ -152,7 +149,7 @@ public class NehmenAction
                         .narrateAndSetLocation(SPIELER_CHARAKTER,
                                 () -> {
                                     sc.memoryComp().upgradeKnown(gameObject, Known.getKnown(
-                                            room.storingPlaceComp().getLichtverhaeltnisseInside()));
+                                            location.storingPlaceComp().getLichtverhaeltnisse()));
                                     sc.feelingsComp().setMood(Mood.NEUTRAL);
 
                                     final SubstantivischePhrase froschDescOderAnapher =
@@ -204,7 +201,7 @@ public class NehmenAction
 
     private AvTimeSpan narrateAndDoObject() {
         sc.memoryComp().upgradeKnown(gameObject, Known.getKnown(
-                room.storingPlaceComp().getLichtverhaeltnisseInside()));
+                location.storingPlaceComp().getLichtverhaeltnisse()));
 
         AvTimeSpan timeElapsed = narrateObject();
 
@@ -212,7 +209,8 @@ public class NehmenAction
                 gameObject.locationComp().narrateAndSetLocation(SPIELER_CHARAKTER));
         sc.memoryComp().setLastAction(buildMemorizedAction());
 
-        // STORY Die Schlosswache ist in die Köchin verliebt und bekommt von ihr kekse. Das soll aber geheim bleiben. Der Spieler bekommt was mit. Daher darf er die Kugel mitnehmen...
+        // STORY Die Schlosswache ist in die Köchin verliebt und bekommt von ihr Kekse. Das soll
+        //  aber geheim bleiben. Der Spieler bekommt was mit. Daher darf er die Kugel mitnehmen...
         return timeElapsed;
     }
 
@@ -220,7 +218,8 @@ public class NehmenAction
     @NonNull
     private AvTimeSpan narrateObject() {
         final PraedikatMitEinerObjektleerstelle nehmenPraedikat =
-                room.storingPlaceComp().getLocationMode().getNehmenPraedikat();
+                location.storingPlaceComp().getLocationMode().getNehmenPraedikat();
+
         if (sc.memoryComp().getLastAction().hasObject(gameObject)) {
             if (sc.memoryComp().getLastAction().is(Action.Type.ABLEGEN)) {
                 return narrateObjectNachAblegen(nehmenPraedikat);
@@ -232,7 +231,9 @@ public class NehmenAction
                     mood.isEmotional()) {
                 // TODO Es wäre gut, wenn das nehmenPraedikat direkt
                 //  eine DuDescription erzeugen könnte, gleich mit dann etc.
-                //  Leider müssen wir bis dahin ein AllgDescription bauen. :-(
+                //  Oder wenn man vielleicht etwas ähliches wie eine DuDescription
+                //  erzeugen könnte, die intern das nehmenPraedikat enthält.
+                //  Leider müssen wir bis dahin eine AllgDescription bauen. :-(
                 final Nominalphrase objectDesc = getDescription(gameObject, true);
                 return n.add(neuerSatz(StructuralElement.PARAGRAPH,
                         nehmenPraedikat
@@ -319,6 +320,6 @@ public class NehmenAction
 
     @NonNull
     private Action buildMemorizedAction() {
-        return new Action(Action.Type.NEHMEN, gameObject, room);
+        return new Action(Action.Type.NEHMEN, gameObject, location);
     }
 }

@@ -4,7 +4,7 @@ import androidx.annotation.Nullable;
 
 import de.nb.aventiure2.data.world.syscomp.location.ILocatableGO;
 import de.nb.aventiure2.data.world.syscomp.reaction.IReactions;
-import de.nb.aventiure2.data.world.syscomp.storingplace.IHasStoringPlaceGO;
+import de.nb.aventiure2.data.world.syscomp.storingplace.ILocationGO;
 import de.nb.aventiure2.data.world.time.AvTimeSpan;
 
 /**
@@ -27,12 +27,12 @@ public interface IMovementReactions extends IReactions {
      * (This is called at the beginning of the movement.)
      */
     AvTimeSpan onLeave(ILocatableGO locatable,
-                       IHasStoringPlaceGO from, @Nullable IHasStoringPlaceGO to);
+                       ILocationGO from, @Nullable ILocationGO to);
 
     /**
      * The <code>locatable</code> enters a place (after having left some other place).
      * (This is called at the end of the movement.)
      */
     AvTimeSpan onEnter(ILocatableGO locatable,
-                       @Nullable IHasStoringPlaceGO from, IHasStoringPlaceGO to);
+                       @Nullable ILocationGO from, ILocationGO to);
 }

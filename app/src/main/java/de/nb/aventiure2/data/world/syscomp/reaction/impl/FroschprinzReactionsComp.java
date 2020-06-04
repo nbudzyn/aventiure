@@ -15,7 +15,7 @@ import de.nb.aventiure2.data.world.syscomp.reaction.interfaces.IMovementReaction
 import de.nb.aventiure2.data.world.syscomp.reaction.interfaces.ITimePassedReactions;
 import de.nb.aventiure2.data.world.syscomp.state.IHasStateGO;
 import de.nb.aventiure2.data.world.syscomp.state.StateComp;
-import de.nb.aventiure2.data.world.syscomp.storingplace.IHasStoringPlaceGO;
+import de.nb.aventiure2.data.world.syscomp.storingplace.ILocationGO;
 import de.nb.aventiure2.data.world.syscomp.talking.impl.FroschprinzTalkingComp;
 import de.nb.aventiure2.data.world.time.AvDateTime;
 import de.nb.aventiure2.data.world.time.AvTimeSpan;
@@ -79,8 +79,8 @@ public class FroschprinzReactionsComp
 
     @Override
     public AvTimeSpan onLeave(final ILocatableGO locatable,
-                              final IHasStoringPlaceGO from,
-                              @Nullable final IHasStoringPlaceGO to) {
+                              final ILocationGO from,
+                              @Nullable final ILocationGO to) {
         if (locatable.is(SPIELER_CHARAKTER)) {
             return onSCLeave(from, to);
         }
@@ -88,8 +88,8 @@ public class FroschprinzReactionsComp
         return noTime();
     }
 
-    private AvTimeSpan onSCLeave(final IHasStoringPlaceGO from,
-                                 @Nullable final IHasStoringPlaceGO to) {
+    private AvTimeSpan onSCLeave(final ILocationGO from,
+                                 @Nullable final ILocationGO to) {
         if (!locationComp.hasLocation(from)) {
             // Spieler lässt den Frosch nicht zurück
             return noTime();
@@ -113,8 +113,8 @@ public class FroschprinzReactionsComp
 
     @Override
     public AvTimeSpan onEnter(final ILocatableGO locatable,
-                              @Nullable final IHasStoringPlaceGO from,
-                              final IHasStoringPlaceGO to) {
+                              @Nullable final ILocationGO from,
+                              final ILocationGO to) {
         if (locatable.is(SPIELER_CHARAKTER)) {
             return onSCEnter(from, to);
         }
@@ -126,8 +126,8 @@ public class FroschprinzReactionsComp
         return noTime();
     }
 
-    private AvTimeSpan onSCEnter(@Nullable final IHasStoringPlaceGO from,
-                                 final IHasStoringPlaceGO to) {
+    private AvTimeSpan onSCEnter(@Nullable final ILocationGO from,
+                                 final ILocationGO to) {
         if (!locationComp.hasLocation(to)) {
             // Spieler hat nicht den Raum betreten, wo der Frosch sitzt.
             return noTime();
@@ -169,8 +169,8 @@ public class FroschprinzReactionsComp
         }
     }
 
-    private AvTimeSpan onGoldeneKugelEnter(@Nullable final IHasStoringPlaceGO from,
-                                           final IHasStoringPlaceGO to) {
+    private AvTimeSpan onGoldeneKugelEnter(@Nullable final ILocationGO from,
+                                           final ILocationGO to) {
         if (from == null || !from.is(SPIELER_CHARAKTER)) {
             return noTime();
         }
@@ -342,7 +342,7 @@ public class FroschprinzReactionsComp
 
         AvTimeSpan timeElapsed = noTime();
 
-        @Nullable final IHasStoringPlaceGO scLocation = loadSC(db).locationComp().getLocation();
+        @Nullable final ILocationGO scLocation = loadSC(db).locationComp().getLocation();
 
         if ((scLocation != null && locationComp.hasLocation(scLocation)) ||
                 locationComp.hasLocation(SPIELER_CHARAKTER)) {

@@ -75,7 +75,7 @@ public class DuDescription extends AbstractDescription<DuDescription> {
                           @Nullable final String remainder,
                           @Nullable final String vorfeldSatzglied,
                           final AvTimeSpan timeElapsed) {
-        // TODO Alle du()-Auftrag prüfen, ggf. auf SENTENCE setzen
+        // TODO Alle du()-Aufrufe prüfen, ggf. auf SENTENCE setzen
         super(startsNew, timeElapsed);
 
         checkArgument(vorfeldSatzglied == null || remainder != null,

@@ -32,7 +32,7 @@ import de.nb.aventiure2.data.world.syscomp.spatialconnection.impl.ImWaldNaheDemS
 import de.nb.aventiure2.data.world.syscomp.spatialconnection.impl.SchlossVorhalleConnectionComp;
 import de.nb.aventiure2.data.world.syscomp.spatialconnection.impl.SchlossVorhalleTischBeimFestConnectionComp;
 import de.nb.aventiure2.data.world.syscomp.spatialconnection.impl.SimpleConnectionCompFactory;
-import de.nb.aventiure2.data.world.syscomp.storingplace.IHasStoringPlaceGO;
+import de.nb.aventiure2.data.world.syscomp.storingplace.ILocationGO;
 import de.nb.aventiure2.data.world.syscomp.storingplace.StoringPlaceType;
 import de.nb.aventiure2.data.world.time.AvDateTime;
 import de.nb.aventiure2.german.base.Nominalphrase;
@@ -134,7 +134,7 @@ public class GameObjects {
                             new SchlossVorhalleConnectionComp(db)),
                     room.create(SCHLOSS_VORHALLE_AM_TISCH_BEIM_FEST,
                             StoringPlaceType.NEBEN_SC_AUF_BANK,
-                            true,
+                            SCHLOSS_VORHALLE_DAUERHAFT_BELEUCHTET,
                             new SchlossVorhalleTischBeimFestConnectionComp(db)),
                     room.create(DRAUSSEN_VOR_DEM_SCHLOSS,
                             false,
@@ -265,7 +265,7 @@ public class GameObjects {
     public static <LOC_DESC extends ILocatableGO & IDescribableGO>
     ImmutableList<LOC_DESC> loadDescribableNonLivingInventory(
             final AvDatabase db,
-            final IHasStoringPlaceGO inventoryHolder) {
+            final ILocationGO inventoryHolder) {
         return filterNoLivingBeing(loadDescribableInventory(db, inventoryHolder));
     }
 
@@ -275,10 +275,10 @@ public class GameObjects {
      * und gibt sie zurück -
      * nur Gegenstände, die eine Beschreibung haben.
      */
-    public static <LOC_DESC_HAS_STORING_PLACE extends ILocatableGO & IDescribableGO & IHasStoringPlaceGO>
+    public static <LOC_DESC_HAS_STORING_PLACE extends ILocatableGO & IDescribableGO & ILocationGO>
     ImmutableList<LOC_DESC_HAS_STORING_PLACE> loadDescribableNonLivingHasStoringPlaceInventory(
             final AvDatabase db,
-            final IHasStoringPlaceGO inventoryHolder) {
+            final ILocationGO inventoryHolder) {
         return filterHasStoringPlace(
                 loadDescribableNonLivingInventory(db, inventoryHolder.getId()));
     }
@@ -289,7 +289,7 @@ public class GameObjects {
      * <i>locationId</i>, lädt sie (sofern noch nicht geschehen) und gibt sie zurück -
      * nur Gegenstände, die eine Beschreibung haben.
      */
-    public static <LOC_DESC_HAS_STORING_PLACE extends ILocatableGO & IDescribableGO & IHasStoringPlaceGO>
+    public static <LOC_DESC_HAS_STORING_PLACE extends ILocatableGO & IDescribableGO & ILocationGO>
     ImmutableList<LOC_DESC_HAS_STORING_PLACE> loadDescribableNonLivingHasStoringPlaceInventory(
             final AvDatabase db,
             final GameObjectId locationId) {
@@ -297,11 +297,11 @@ public class GameObjects {
     }
 
     private static <LOC_DESC extends ILocatableGO & IDescribableGO,
-            LOC_DESC_HAS_STORING_PLACE extends ILocatableGO & IDescribableGO & IHasStoringPlaceGO>
+            LOC_DESC_HAS_STORING_PLACE extends ILocatableGO & IDescribableGO & ILocationGO>
     ImmutableList<LOC_DESC_HAS_STORING_PLACE> filterHasStoringPlace(
             final List<LOC_DESC> gameObjects) {
         return (ImmutableList<LOC_DESC_HAS_STORING_PLACE>) gameObjects.stream()
-                .filter(IHasStoringPlaceGO.class::isInstance)
+                .filter(ILocationGO.class::isInstance)
                 .collect(toImmutableList());
     }
 
@@ -355,7 +355,7 @@ public class GameObjects {
      */
     public static <LIV extends ILocatableGO & IDescribableGO & ILivingBeingGO>
     ImmutableList<LIV> loadDescribableLivingInventory(final AvDatabase db,
-                                                      final IHasStoringPlaceGO inventoryHolder) {
+                                                      final ILocationGO inventoryHolder) {
         return filterLivingBeing(loadDescribableInventory(db, inventoryHolder));
     }
 
@@ -366,7 +366,7 @@ public class GameObjects {
      */
     private static <LOC_DESC extends ILocatableGO & IDescribableGO>
     ImmutableList<LOC_DESC> loadDescribableInventory(final AvDatabase db,
-                                                     final IHasStoringPlaceGO inventoryHolder) {
+                                                     final ILocationGO inventoryHolder) {
         return loadDescribableInventory(db, inventoryHolder.getId());
     }
 

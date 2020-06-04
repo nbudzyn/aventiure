@@ -117,7 +117,7 @@ public class HeulenAction extends AbstractScAction {
         froschprinz.talkingComp().setTalkingTo(sc);
         sc.feelingsComp().setMood(Mood.NEUTRAL);
         sc.memoryComp().upgradeKnown(FROSCHPRINZ, Known.getKnown(
-                sc.locationComp().getLocation().storingPlaceComp().getLichtverhaeltnisseInside()));
+                sc.locationComp().getLocation().storingPlaceComp().getLichtverhaeltnisse()));
 
         return timeElapsed;
     }

@@ -15,7 +15,7 @@ import de.nb.aventiure2.data.world.syscomp.feelings.Mood;
 import de.nb.aventiure2.data.world.syscomp.location.ILocatableGO;
 import de.nb.aventiure2.data.world.syscomp.memory.Action;
 import de.nb.aventiure2.data.world.syscomp.memory.Known;
-import de.nb.aventiure2.data.world.syscomp.storingplace.IHasStoringPlaceGO;
+import de.nb.aventiure2.data.world.syscomp.storingplace.ILocationGO;
 import de.nb.aventiure2.data.world.time.AvTimeSpan;
 import de.nb.aventiure2.german.base.AbstractDescription;
 import de.nb.aventiure2.german.base.Personalpronomen;
@@ -48,7 +48,7 @@ import static de.nb.aventiure2.german.praedikat.VerbSubjObj.SETZEN;
 public class AblegenAction
         <GO extends IDescribableGO & ILocatableGO>
         extends AbstractScAction {
-    private final IHasStoringPlaceGO location;
+    private final ILocationGO location;
 
     @NonNull
     private final GO gameObject;
@@ -63,7 +63,7 @@ public class AblegenAction
     /**
      * Erzeugt alle Aktionen, mit denen der Benutzer dieses <code>gameObject</code> in dieser
      * <code>location</code> ablegen kann - sowie auf / in allen rekursiv enthaltenen
-     * {@link IHasStoringPlaceGO}s.
+     * {@link ILocationGO}s.
      * <p>
      * Beispiel: Erzeugt die Aktionen, mit denen der Benutzer die goldene Kugel in einem
      * Raum ablegen kann oder auf dem Tisch, der sich in dem Raum befindet.
@@ -72,7 +72,7 @@ public class AblegenAction
     Collection<AblegenAction<GO>> buildActions(
             final AvDatabase db, final StoryState initialStoryState,
             final GO gameObject,
-            final IHasStoringPlaceGO location) {
+            final ILocationGO location) {
         return buildActions(db, initialStoryState, gameObject, location, true);
     }
 
@@ -80,7 +80,7 @@ public class AblegenAction
     Collection<AblegenAction<GO>> buildActions(
             final AvDatabase db, final StoryState initialStoryState,
             final GO gameObject,
-            final IHasStoringPlaceGO location,
+            final ILocationGO location,
             final boolean isOutermost) {
         final ImmutableList.Builder<AblegenAction<GO>> res = ImmutableList.builder();
 
@@ -96,7 +96,7 @@ public class AblegenAction
 
     /**
      * Erzeugt alle Aktionen, mit denen der Benutzer dieses <code>gameObject</code>
-     * auf / in allen {@link IHasStoringPlaceGO}s ablegen kann, die die
+     * auf / in allen {@link ILocationGO}s ablegen kann, die die
      * <code>outerLocation</code> enthält
      * <p>
      * Beispiel: Erzeugt die Aktion, auf dem Tisch ablegen kann, der sich in einem bestimmten
@@ -105,10 +105,10 @@ public class AblegenAction
     private static <GO extends IDescribableGO & ILocatableGO>
     Collection<AblegenAction<GO>> buildRecursiveActions(
             final AvDatabase db, final StoryState initialStoryState, final GO gameObject,
-            final IHasStoringPlaceGO outerLocation) {
+            final ILocationGO outerLocation) {
         final ImmutableList.Builder<AblegenAction<GO>> res = ImmutableList.builder();
 
-        for (final IHasStoringPlaceGO innerLocation :
+        for (final ILocationGO innerLocation :
                 loadDescribableNonLivingHasStoringPlaceInventory(
                         db, outerLocation)) {
             // Z.B. "Auf dem Tisch absetzen"
@@ -124,7 +124,7 @@ public class AblegenAction
     private AblegenAction(final AvDatabase db,
                           final StoryState initialStoryState,
                           final @NonNull GO gameObject,
-                          final IHasStoringPlaceGO location,
+                          final ILocationGO location,
                           final boolean detailLocationNecessaryInDescription) {
         super(db, initialStoryState);
         this.location = location;
@@ -223,7 +223,7 @@ public class AblegenAction
 
     private AvTimeSpan narrateUpgradeKnownAndSetLocationAndAction() {
         sc.memoryComp().upgradeKnown(gameObject,
-                Known.getKnown(location.storingPlaceComp().getLichtverhaeltnisseInside()));
+                Known.getKnown(location.storingPlaceComp().getLichtverhaeltnisse()));
         final AvTimeSpan timeSpan = gameObject.locationComp().narrateAndSetLocation(
                 location);
         sc.memoryComp().setLastAction(buildMemorizedAction());

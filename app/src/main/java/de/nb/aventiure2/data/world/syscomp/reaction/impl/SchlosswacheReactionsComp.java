@@ -22,7 +22,7 @@ import de.nb.aventiure2.data.world.syscomp.reaction.interfaces.IMovementReaction
 import de.nb.aventiure2.data.world.syscomp.reaction.interfaces.ITimePassedReactions;
 import de.nb.aventiure2.data.world.syscomp.state.IHasStateGO;
 import de.nb.aventiure2.data.world.syscomp.state.StateComp;
-import de.nb.aventiure2.data.world.syscomp.storingplace.IHasStoringPlaceGO;
+import de.nb.aventiure2.data.world.syscomp.storingplace.ILocationGO;
 import de.nb.aventiure2.data.world.syscomp.storingplace.Lichtverhaeltnisse;
 import de.nb.aventiure2.data.world.time.AvDateTime;
 import de.nb.aventiure2.data.world.time.AvTimeSpan;
@@ -77,15 +77,15 @@ public class SchlosswacheReactionsComp
 
     @Override
     public AvTimeSpan onLeave(final ILocatableGO locatable,
-                              final IHasStoringPlaceGO from,
-                              @Nullable final IHasStoringPlaceGO to) {
+                              final ILocationGO from,
+                              @Nullable final ILocationGO to) {
         return noTime();
     }
 
     @Override
     public AvTimeSpan onEnter(final ILocatableGO locatable,
-                              @Nullable final IHasStoringPlaceGO from,
-                              final IHasStoringPlaceGO to) {
+                              @Nullable final ILocationGO from,
+                              final ILocationGO to) {
         if (locatable.is(SPIELER_CHARAKTER)) {
             return onSCEnter(from, to);
         }
@@ -101,8 +101,8 @@ public class SchlosswacheReactionsComp
         return noTime();
     }
 
-    private AvTimeSpan onSCEnter(@Nullable final IHasStoringPlaceGO from,
-                                 final IHasStoringPlaceGO to) {
+    private AvTimeSpan onSCEnter(@Nullable final ILocationGO from,
+                                 final ILocationGO to) {
         if (!to.is(SCHLOSS_VORHALLE)) {
             return noTime();
         }
@@ -134,7 +134,7 @@ public class SchlosswacheReactionsComp
     }
 
     private AvTimeSpan scMussDasSchlossWiederVerlassen(
-            final IHasStoringPlaceGO raumAusDemDerSCDasSchlossBetretenHat) {
+            final ILocationGO raumAusDemDerSCDasSchlossBetretenHat) {
         // STORY Ausspinnen: Der Spieler sollte selbst entscheiden,
         //  ob der das Schloss wieder verlässt - oder ggf. im Kerker landet.
 
@@ -173,19 +173,19 @@ public class SchlosswacheReactionsComp
     }
 
     private String schlossVerlassenWohinDescription(
-            final IHasStoringPlaceGO raumAusDemDerSCDasSchlossBetretenHat) {
+            final ILocationGO raumAusDemDerSCDasSchlossBetretenHat) {
         return schlossVerlassenWohinDescription(
-                ((IHasStoringPlaceGO) GameObjects.load(db, SCHLOSS_VORHALLE)),
+                ((ILocationGO) GameObjects.load(db, SCHLOSS_VORHALLE)),
                 raumAusDemDerSCDasSchlossBetretenHat);
     }
 
     private static String schlossVerlassenWohinDescription(
-            final IHasStoringPlaceGO schlossRoom,
-            final IHasStoringPlaceGO wohinRoom) {
+            final ILocationGO schlossRoom,
+            final ILocationGO wohinRoom) {
         final Lichtverhaeltnisse lichtverhaeltnisseImSchloss =
-                getLichtverhaeltnisseInside(schlossRoom);
+                getLichtverhaeltnisse(schlossRoom);
         final Lichtverhaeltnisse lichtverhaeltnisseDraussen =
-                getLichtverhaeltnisseInside(wohinRoom);
+                getLichtverhaeltnisse(wohinRoom);
         if (lichtverhaeltnisseImSchloss  // Im Schloss ist es immer hell, wenn es also draußen
                 // auch hell ist...
                 == lichtverhaeltnisseDraussen) {
@@ -203,7 +203,7 @@ public class SchlosswacheReactionsComp
      */
     @Contract("_, null -> !null")
     private AvTimeSpan onRelocationToSC(final ILocatableGO locatable,
-                                        @Nullable final IHasStoringPlaceGO from) {
+                                        @Nullable final ILocationGO from) {
         if (from == null || !locationComp.hasLocation(from)) {
             // The Schlosswache does not notice.
             return noTime();
@@ -237,7 +237,7 @@ public class SchlosswacheReactionsComp
     private AvTimeSpan scHatEtwasGenommen_wacheWirdAufmerksam() {
         stateComp.setState(AUFMERKSAM);
         final SpielerCharakter sc = loadSC(db);
-        @Nullable final IHasStoringPlaceGO from = sc.locationComp().getLocation();
+        @Nullable final ILocationGO from = sc.locationComp().getLocation();
 
         final AvTimeSpan timeElapsed = n.add(
                 neuerSatz(PARAGRAPH, "Da wird eine Wache auf dich aufmerksam. "
@@ -250,24 +250,27 @@ public class SchlosswacheReactionsComp
                         secs(20)));
 
         sc.memoryComp().upgradeKnown(SCHLOSSWACHE,
-                Known.getKnown(getLichtverhaeltnisseInside(from)));
+                Known.getKnown(getLichtverhaeltnisse(from)));
         sc.feelingsComp().setMood(Mood.ANGESPANNT);
 
         return timeElapsed;
     }
 
-    private static Lichtverhaeltnisse getLichtverhaeltnisseInside(
-            @Nullable final IHasStoringPlaceGO from) {
-        if (from == null) {
+    /**
+     * Gibt die Lichtverhältnisse an diesem Ort zurück.
+     */
+    private static Lichtverhaeltnisse getLichtverhaeltnisse(
+            @Nullable final ILocationGO location) {
+        if (location == null) {
             return Lichtverhaeltnisse.HELL;
         }
 
-        return from.storingPlaceComp().getLichtverhaeltnisseInside();
+        return location.storingPlaceComp().getLichtverhaeltnisse();
     }
 
     private AvTimeSpan scHatGoldeneKugelGenommenOderHochgeworfenUndAufgefangen_wacheIstAufmerksam(
             final ILocatableGO goldeneKugel,
-            final IHasStoringPlaceGO fromSchlossVorhalleOderSC) {
+            final ILocationGO fromSchlossVorhalleOderSC) {
         if (fromSchlossVorhalleOderSC.is(SPIELER_CHARAKTER)) {
             return scHatGoldeneKugelHochgeworfenUndAufgefangen_wacheIstAufmerksam(goldeneKugel);
         }
@@ -385,7 +388,7 @@ public class SchlosswacheReactionsComp
      * Gegenstand also abgelegt, an jemand anderen weitergegeben, gestohlen bekommen,
      * der Gegenstand hat sich aufgelöst o.Ä.
      */
-    private AvTimeSpan onRelocationFromSC(final IHasStoringPlaceGO to) {
+    private AvTimeSpan onRelocationFromSC(final ILocationGO to) {
         if (!locationComp.hasLocation(to)) {
             // The Schlosswache does not notice.
             return noTime();

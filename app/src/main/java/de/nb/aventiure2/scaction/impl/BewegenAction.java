@@ -22,7 +22,7 @@ import de.nb.aventiure2.data.world.syscomp.memory.Known;
 import de.nb.aventiure2.data.world.syscomp.spatialconnection.ISpatiallyConnectedGO;
 import de.nb.aventiure2.data.world.syscomp.spatialconnection.impl.SpatialConnection;
 import de.nb.aventiure2.data.world.syscomp.state.IHasStateGO;
-import de.nb.aventiure2.data.world.syscomp.storingplace.IHasStoringPlaceGO;
+import de.nb.aventiure2.data.world.syscomp.storingplace.ILocationGO;
 import de.nb.aventiure2.data.world.syscomp.storingplace.Lichtverhaeltnisse;
 import de.nb.aventiure2.data.world.time.AvTimeSpan;
 import de.nb.aventiure2.german.base.AbstractDescription;
@@ -58,7 +58,7 @@ import static de.nb.aventiure2.scaction.impl.BewegenAction.NumberOfPossibilities
 /**
  * Der Spielercharakter bewegt sich in einen anderen Raum.
  */
-public class BewegenAction<R extends ISpatiallyConnectedGO & IHasStoringPlaceGO,
+public class BewegenAction<R extends ISpatiallyConnectedGO & ILocationGO,
         LOC_DESC extends ILocatableGO & IDescribableGO>
         extends AbstractScAction {
     enum NumberOfPossibilities {
@@ -82,7 +82,7 @@ public class BewegenAction<R extends ISpatiallyConnectedGO & IHasStoringPlaceGO,
     private final SpatialConnection spatialConnection;
     private final NumberOfPossibilities numberOfPossibilities;
 
-    public static <R extends ISpatiallyConnectedGO & IHasStoringPlaceGO>
+    public static <R extends ISpatiallyConnectedGO & ILocationGO>
     ImmutableList<AbstractScAction> buildActions(
             final AvDatabase db,
             final StoryState currentStoryState,
@@ -145,11 +145,11 @@ public class BewegenAction<R extends ISpatiallyConnectedGO & IHasStoringPlaceGO,
 
     @Override
     public AvTimeSpan narrateAndDo() {
-        final IHasStoringPlaceGO to =
-                (IHasStoringPlaceGO) load(db, spatialConnection.getTo());
+        final ILocationGO to =
+                (ILocationGO) load(db, spatialConnection.getTo());
 
         final Lichtverhaeltnisse lichtverhaeltnisseInNewRoom =
-                to.storingPlaceComp().getLichtverhaeltnisseInside();
+                to.storingPlaceComp().getLichtverhaeltnisse();
 
         // Unbewegliche Objekte sollen in der Raumbeschreibung mitgenannt werden!
         final ImmutableList<LOC_DESC> movableObjectsInNewRoom =
@@ -165,7 +165,7 @@ public class BewegenAction<R extends ISpatiallyConnectedGO & IHasStoringPlaceGO,
 
         updatePlayerStateOfMind();
 
-        return elapsedTime = elapsedTime.plus(sc.locationComp()
+        return elapsedTime.plus(sc.locationComp()
                 .narrateAndSetLocation(spatialConnection.getTo(),
                         () -> {
                             AvTimeSpan elapsedTimeOnEnter = noTime();
@@ -420,7 +420,7 @@ public class BewegenAction<R extends ISpatiallyConnectedGO & IHasStoringPlaceGO,
     private String buildObjectInRoomDescriptionPrefix(final int numberOfObjects) {
         final String res =
                 capitalize(
-                        ((IHasStoringPlaceGO) load(db, spatialConnection.getTo()))
+                        ((ILocationGO) load(db, spatialConnection.getTo()))
                                 .storingPlaceComp().getLocationMode().getWo());
 
         if (numberOfObjects == 1) {

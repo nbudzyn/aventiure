@@ -16,7 +16,7 @@ import de.nb.aventiure2.data.world.syscomp.description.IDescribableGO;
 import de.nb.aventiure2.data.world.syscomp.location.ILocatableGO;
 import de.nb.aventiure2.data.world.syscomp.memory.Action;
 import de.nb.aventiure2.data.world.syscomp.state.IHasStateGO;
-import de.nb.aventiure2.data.world.syscomp.storingplace.IHasStoringPlaceGO;
+import de.nb.aventiure2.data.world.syscomp.storingplace.ILocationGO;
 import de.nb.aventiure2.data.world.time.AvTimeSpan;
 import de.nb.aventiure2.german.base.AbstractDescription;
 import de.nb.aventiure2.german.base.Nominalphrase;
@@ -56,12 +56,12 @@ public class HochwerfenAction<OBJ extends IDescribableGO & ILocatableGO>
     @NonNull
     private final OBJ object;
 
-    private final IHasStoringPlaceGO room;
+    private final ILocationGO room;
 
     public static <OBJ extends IDescribableGO & ILocatableGO>
     Collection<HochwerfenAction> buildActions(
             final AvDatabase db, final StoryState initialStoryState,
-            final IHasStoringPlaceGO room, @NonNull final OBJ gameObject) {
+            final ILocationGO room, @NonNull final OBJ gameObject) {
         if (gameObject instanceof ILivingBeingGO) {
             // STORY Froschprinz o.Ä. hochwerfen?
             return ImmutableList.of();
@@ -76,7 +76,7 @@ public class HochwerfenAction<OBJ extends IDescribableGO & ILocatableGO>
     private HochwerfenAction(final AvDatabase db,
                              final StoryState initialStoryState,
                              @NonNull final OBJ object,
-                             final IHasStoringPlaceGO room) {
+                             final ILocationGO room) {
         super(db, initialStoryState);
         this.object = object;
         this.room = room;
@@ -187,7 +187,7 @@ public class HochwerfenAction<OBJ extends IDescribableGO & ILocatableGO>
         }
 
         final String praefix =
-                room.storingPlaceComp().getLichtverhaeltnisseInside() == HELL ? "Weit und breit" :
+                room.storingPlaceComp().getLichtverhaeltnisse() == HELL ? "Weit und breit" :
                         "Im Dunkeln ist";
 
         return n.add(
@@ -254,7 +254,7 @@ public class HochwerfenAction<OBJ extends IDescribableGO & ILocatableGO>
 
         if (room.is(IM_WALD_BEIM_BRUNNEN)) {
             final String dunkelheitNachsatz =
-                    room.storingPlaceComp().getLichtverhaeltnisseInside() == DUNKEL ?
+                    room.storingPlaceComp().getLichtverhaeltnisse() == DUNKEL ?
                             "– bei dieser Dunkelheit schon gar nicht" : "";
 
             final AvTimeSpan timeSpan = n.add(du("wirfst",

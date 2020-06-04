@@ -12,7 +12,7 @@ import de.nb.aventiure2.data.world.syscomp.description.DescriptionComp;
 import de.nb.aventiure2.data.world.syscomp.description.IDescribableGO;
 import de.nb.aventiure2.data.world.syscomp.location.ILocatableGO;
 import de.nb.aventiure2.data.world.syscomp.location.LocationComp;
-import de.nb.aventiure2.data.world.syscomp.storingplace.IHasStoringPlaceGO;
+import de.nb.aventiure2.data.world.syscomp.storingplace.ILocationGO;
 import de.nb.aventiure2.data.world.syscomp.storingplace.StoringPlaceComp;
 import de.nb.aventiure2.data.world.syscomp.storingplace.StoringPlaceType;
 import de.nb.aventiure2.german.base.Nominalphrase;
@@ -104,7 +104,7 @@ public class ObjectFactory {
     }
 
     private static class StoringPlaceObject extends SimpleObject
-            implements IHasStoringPlaceGO {
+            implements ILocationGO {
         private final StoringPlaceComp storingPlaceComp;
 
         public StoringPlaceObject(final GameObjectId id,

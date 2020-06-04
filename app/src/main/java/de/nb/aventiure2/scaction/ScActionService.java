@@ -19,7 +19,7 @@ import de.nb.aventiure2.data.world.syscomp.alive.ILivingBeingGO;
 import de.nb.aventiure2.data.world.syscomp.description.IDescribableGO;
 import de.nb.aventiure2.data.world.syscomp.location.ILocatableGO;
 import de.nb.aventiure2.data.world.syscomp.spatialconnection.ISpatiallyConnectedGO;
-import de.nb.aventiure2.data.world.syscomp.storingplace.IHasStoringPlaceGO;
+import de.nb.aventiure2.data.world.syscomp.storingplace.ILocationGO;
 import de.nb.aventiure2.data.world.syscomp.talking.ITalkerGO;
 import de.nb.aventiure2.scaction.impl.AblegenAction;
 import de.nb.aventiure2.scaction.impl.BewegenAction;
@@ -60,7 +60,7 @@ public class ScActionService {
 
         final SpielerCharakter spielerCharakter = loadSC(db);
 
-        final @Nullable IHasStoringPlaceGO room = spielerCharakter.locationComp().getLocation();
+        final @Nullable ILocationGO room = spielerCharakter.locationComp().getLocation();
 
         final ImmutableList<DESC_OBJ> objectInventory =
                 loadDescribableNonLivingInventory(db, SPIELER_CHARAKTER);
@@ -90,7 +90,7 @@ public class ScActionService {
 
             if (room instanceof ISpatiallyConnectedGO) {
                 res.addAll(buildRoomActions(
-                        currentStoryState, (IHasStoringPlaceGO & ISpatiallyConnectedGO) room));
+                        currentStoryState, (ILocationGO & ISpatiallyConnectedGO) room));
             }
         }
 
@@ -100,7 +100,7 @@ public class ScActionService {
     private <LIV extends IDescribableGO & ILocatableGO & ILivingBeingGO>
     ImmutableList<AbstractScAction> buildCreatureInRoomActions(
             final StoryState currentStoryState,
-            final IHasStoringPlaceGO room,
+            final ILocationGO room,
             final List<LIV> creaturesInRoom) {
         final ImmutableList.Builder<AbstractScAction> res = ImmutableList.builder();
 
@@ -110,6 +110,9 @@ public class ScActionService {
                         (IDescribableGO & ITalkerGO) creature));
             }
             if (creature.locationComp().isMovable()) {
+                // STORY Hier überall ermöglichen, dass man auch rekursiv enthaltene Dinge nehmen kann,
+                //  z.B. eine Goldene Kugel, die auf einem Tisch liegt.
+
                 res.addAll(
                         NehmenAction.buildCreatureActions(db, currentStoryState,
                                 room, creature));
@@ -136,7 +139,7 @@ public class ScActionService {
     private <DESC_OBJ extends ILocatableGO & IDescribableGO>
     ImmutableList<AbstractScAction> buildObjectInRoomActions(
             final StoryState currentStoryState,
-            final IHasStoringPlaceGO room,
+            final ILocationGO room,
             final List<DESC_OBJ> objectsInRoom) {
         final ImmutableList.Builder<AbstractScAction> res = ImmutableList.builder();
         for (final DESC_OBJ object : objectsInRoom) {
@@ -146,6 +149,9 @@ public class ScActionService {
             }
 
             if (object.locationComp().isMovable()) {
+                // STORY Hier überall ermöglichen, dass man auch rekursiv enthaltene Dinge nehmen kann,
+                //  z.B. eine Goldene Kugel, die auf einem Tisch liegt.
+
                 res.addAll(
                         NehmenAction.buildObjectActions(db, currentStoryState,
                                 room, object));
@@ -160,7 +166,7 @@ public class ScActionService {
     private <DESC_OBJ extends IDescribableGO & ILocatableGO>
     ImmutableList<AbstractScAction> buildInventoryActions(
             final StoryState currentStoryState,
-            final @Nullable IHasStoringPlaceGO room,
+            final @Nullable ILocationGO room,
             final List<DESC_OBJ> inventory) {
         final ImmutableList.Builder<AbstractScAction> res = ImmutableList.builder();
 
@@ -178,7 +184,7 @@ public class ScActionService {
         return res.build();
     }
 
-    private <R extends ISpatiallyConnectedGO & IHasStoringPlaceGO>
+    private <R extends ISpatiallyConnectedGO & ILocationGO>
     ImmutableList<AbstractScAction> buildRoomActions(
             final StoryState currentStoryState,
             final R room) {
@@ -191,7 +197,7 @@ public class ScActionService {
     }
 
     private ImmutableList<AbstractScAction> buildRoomSpecificActions(
-            final StoryState currentStoryState, final IHasStoringPlaceGO room) {
+            final StoryState currentStoryState, final ILocationGO room) {
         final ImmutableList.Builder<AbstractScAction> res = ImmutableList.builder();
 
         res.addAll(KletternAction.buildActions(db, currentStoryState, room));

@@ -14,13 +14,13 @@ import de.nb.aventiure2.data.world.syscomp.memory.IHasMemoryGO;
 import de.nb.aventiure2.data.world.syscomp.memory.MemoryComp;
 import de.nb.aventiure2.data.world.syscomp.reaction.IResponder;
 import de.nb.aventiure2.data.world.syscomp.reaction.impl.ScAutomaticReactionsComp;
-import de.nb.aventiure2.data.world.syscomp.storingplace.IHasStoringPlaceGO;
+import de.nb.aventiure2.data.world.syscomp.storingplace.ILocationGO;
 import de.nb.aventiure2.data.world.syscomp.storingplace.StoringPlaceComp;
 import de.nb.aventiure2.data.world.syscomp.talking.AbstractTalkingComp;
 import de.nb.aventiure2.data.world.syscomp.talking.ITalkerGO;
 
 public class SpielerCharakter extends GameObject
-        implements ILocatableGO, IHasStoringPlaceGO, IFeelingBeingGO,
+        implements ILocatableGO, ILocationGO, IFeelingBeingGO,
         ITalkerGO, IHasMemoryGO, ILivingBeingGO, IResponder {
     private final LocationComp locationComp;
     private final StoringPlaceComp storingPlaceComp;

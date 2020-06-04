@@ -8,7 +8,7 @@ import de.nb.aventiure2.data.world.base.GameObjectId;
 import de.nb.aventiure2.data.world.syscomp.spatialconnection.AbstractSpatialConnectionComp;
 import de.nb.aventiure2.data.world.syscomp.spatialconnection.ISpatiallyConnectedGO;
 import de.nb.aventiure2.data.world.syscomp.spatialconnection.impl.ImWaldBeimBrunnenConnectionComp;
-import de.nb.aventiure2.data.world.syscomp.storingplace.IHasStoringPlaceGO;
+import de.nb.aventiure2.data.world.syscomp.storingplace.ILocationGO;
 import de.nb.aventiure2.data.world.syscomp.storingplace.StoringPlaceComp;
 import de.nb.aventiure2.data.world.syscomp.storingplace.StoringPlaceType;
 
@@ -47,7 +47,7 @@ public class RoomFactory {
     }
 
     private static class Room extends GameObject
-            implements IHasStoringPlaceGO, ISpatiallyConnectedGO {
+            implements ILocationGO, ISpatiallyConnectedGO {
         private final StoringPlaceComp storingPlaceComp;
         private final AbstractSpatialConnectionComp spatialConnectionComp;
 

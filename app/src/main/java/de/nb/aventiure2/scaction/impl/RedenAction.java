@@ -13,7 +13,7 @@ import de.nb.aventiure2.data.world.gameobjects.GameObjects;
 import de.nb.aventiure2.data.world.syscomp.alive.ILivingBeingGO;
 import de.nb.aventiure2.data.world.syscomp.description.IDescribableGO;
 import de.nb.aventiure2.data.world.syscomp.memory.Action;
-import de.nb.aventiure2.data.world.syscomp.storingplace.IHasStoringPlaceGO;
+import de.nb.aventiure2.data.world.syscomp.storingplace.ILocationGO;
 import de.nb.aventiure2.data.world.syscomp.talking.ITalkerGO;
 import de.nb.aventiure2.data.world.syscomp.talking.impl.SCTalkAction;
 import de.nb.aventiure2.data.world.time.AvTimeSpan;
@@ -42,7 +42,7 @@ public class RedenAction<TALKER extends IDescribableGO & ITalkerGO>
 
     public static <TALKER extends IDescribableGO & ITalkerGO>
     Collection<RedenAction<TALKER>> buildActions(
-            final AvDatabase db, final StoryState initialStoryState, final IHasStoringPlaceGO room,
+            final AvDatabase db, final StoryState initialStoryState, final ILocationGO room,
             final TALKER talker) {
         final List<SCTalkAction> talkSteps =
                 talker.talkingComp().getSCConversationSteps();

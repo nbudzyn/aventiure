@@ -12,7 +12,7 @@ import de.nb.aventiure2.data.world.gameobjects.GameObjects;
 import de.nb.aventiure2.data.world.syscomp.feelings.Hunger;
 import de.nb.aventiure2.data.world.syscomp.memory.Action;
 import de.nb.aventiure2.data.world.syscomp.state.IHasStateGO;
-import de.nb.aventiure2.data.world.syscomp.storingplace.IHasStoringPlaceGO;
+import de.nb.aventiure2.data.world.syscomp.storingplace.ILocationGO;
 import de.nb.aventiure2.data.world.time.AvTimeSpan;
 import de.nb.aventiure2.scaction.AbstractScAction;
 
@@ -34,11 +34,11 @@ import static de.nb.aventiure2.german.base.StructuralElement.SENTENCE;
  */
 public class EssenAction extends AbstractScAction {
     private static final String COUNTER_FELSENBIRNEN = "EssenAction_Felsenbirnen";
-    private final IHasStoringPlaceGO room;
+    private final ILocationGO room;
 
     public static Collection<EssenAction> buildActions(
             final AvDatabase db,
-            final StoryState initialStoryState, final IHasStoringPlaceGO room) {
+            final StoryState initialStoryState, final ILocationGO room) {
         final ImmutableList.Builder<EssenAction> res = ImmutableList.builder();
         if (essenMoeglich(db, room)) {
             res.add(new EssenAction(db, initialStoryState, room));
@@ -48,7 +48,7 @@ public class EssenAction extends AbstractScAction {
     }
 
     private static boolean essenMoeglich(final AvDatabase db,
-                                         final IHasStoringPlaceGO room) {
+                                         final ILocationGO room) {
         if (loadSC(db).memoryComp().getLastAction().is(Action.Type.ESSEN)) {
             // TODO Es könnten sich verschiedene essbare Dinge am selben Ort befinden!
             //  Das zweite sollte man durchaus essen können, wenn man schon das
@@ -60,7 +60,7 @@ public class EssenAction extends AbstractScAction {
     }
 
     private static boolean raumEnthaeltEtwasEssbares(final AvDatabase db,
-                                                     final IHasStoringPlaceGO room) {
+                                                     final ILocationGO room) {
         if (room.is(SCHLOSS_VORHALLE_AM_TISCH_BEIM_FEST) &&
                 ((IHasStateGO) load(db, SCHLOSSFEST)).stateComp().hasState(BEGONNEN)) {
             return true;
@@ -77,7 +77,7 @@ public class EssenAction extends AbstractScAction {
 
     private EssenAction(final AvDatabase db,
                         final StoryState initialStoryState,
-                        final IHasStoringPlaceGO room) {
+                        final ILocationGO room) {
         super(db, initialStoryState);
         this.room = room;
     }
