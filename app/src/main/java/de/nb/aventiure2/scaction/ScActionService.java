@@ -112,6 +112,8 @@ public class ScActionService {
             if (creature.locationComp().isMovable()) {
                 // STORY Hier überall ermöglichen, dass man auch rekursiv enthaltene Dinge nehmen kann,
                 //  z.B. eine Goldene Kugel, die auf einem Tisch liegt.
+                //  Ggf. daran orientieren, wie die AblegenAction die Daten
+                //  zusammenstellt.
 
                 res.addAll(
                         NehmenAction.buildCreatureActions(db, currentStoryState,
@@ -151,6 +153,8 @@ public class ScActionService {
             if (object.locationComp().isMovable()) {
                 // STORY Hier überall ermöglichen, dass man auch rekursiv enthaltene Dinge nehmen kann,
                 //  z.B. eine Goldene Kugel, die auf einem Tisch liegt.
+                //  Ggf. daran orientieren, wie die AblegenAction die Daten
+                //  zusammenstellt.
 
                 res.addAll(
                         NehmenAction.buildObjectActions(db, currentStoryState,
