@@ -154,8 +154,6 @@ public class BewegenAction<R extends ISpatiallyConnectedGO & ILocationGO,
         // Unbewegliche Objekte sollen in der Raumbeschreibung mitgenannt werden!
         final ImmutableList<LOC_DESC> movableObjectsInNewRoom =
                 loadDescribableNonLivingMovableRecursiveInventory(db, spatialConnection.getTo());
-        // TODO Objekte, die rekursiv enthalten sind (Kugel auf einem Tisch),
-        //  mit ihrer detaillierten Location beschreiben!
 
         AvTimeSpan elapsedTime = narrateAndDoRoomOnly(lichtverhaeltnisseInNewRoom);
 
@@ -246,6 +244,9 @@ public class BewegenAction<R extends ISpatiallyConnectedGO & ILocationGO,
     @NonNull
     private AvTimeSpan narrateObjects(final List<? extends IDescribableGO> objectsInNewRoom) {
         final IDescribableGO lastObject = objectsInNewRoom.get(objectsInNewRoom.size() - 1);
+
+        // TODO Objekte, die rekursiv enthalten sind (Kugel auf einem Tisch),
+        //  mit ihrer korrekten detaillierten Location beschreiben!
 
         return n.add(
                 neuerSatz(
