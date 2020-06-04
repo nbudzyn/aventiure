@@ -12,7 +12,6 @@ import java.util.function.Function;
 import de.nb.aventiure2.data.database.AvDatabase;
 import de.nb.aventiure2.data.storystate.StoryState;
 import de.nb.aventiure2.data.world.base.GameObject;
-import de.nb.aventiure2.data.world.base.GameObjectId;
 import de.nb.aventiure2.data.world.base.IGameObject;
 import de.nb.aventiure2.data.world.syscomp.description.IDescribableGO;
 import de.nb.aventiure2.data.world.syscomp.feelings.Hunger;
@@ -39,6 +38,7 @@ import static de.nb.aventiure2.data.world.gameobjects.GameObjects.SCHLOSS_VORHAL
 import static de.nb.aventiure2.data.world.gameobjects.GameObjects.WALDWILDNIS_HINTER_DEM_BRUNNEN;
 import static de.nb.aventiure2.data.world.gameobjects.GameObjects.load;
 import static de.nb.aventiure2.data.world.gameobjects.GameObjects.loadDescribableNonLivingMovableInventory;
+import static de.nb.aventiure2.data.world.syscomp.memory.Action.Type.BEWEGEN;
 import static de.nb.aventiure2.data.world.syscomp.state.GameObjectState.BEGONNEN;
 import static de.nb.aventiure2.data.world.syscomp.storingplace.Lichtverhaeltnisse.HELL;
 import static de.nb.aventiure2.data.world.time.AvTimeSpan.noTime;
@@ -264,7 +264,7 @@ public class BewegenAction<R extends ISpatiallyConnectedGO & IHasStoringPlaceGO,
 
         if (description instanceof DuDescription && initialStoryState
                 .allowsAdditionalDuSatzreihengliedOhneSubjekt() && sc.memoryComp().getLastAction()
-                .is(Action.Type.BEWEGEN) &&
+                .is(BEWEGEN) &&
                 sc.locationComp().lastLocationWas(spatialConnection.getTo())) {
 
 
@@ -283,10 +283,11 @@ public class BewegenAction<R extends ISpatiallyConnectedGO & IHasStoringPlaceGO,
             return n.add(description);
         }
 
-        if (sc.memoryComp().lastActionWas(Action.Type.BEWEGEN, (GameObjectId) null)) {
+        if (sc.memoryComp().getLastAction().is(BEWEGEN)) {
             if (sc.locationComp().lastLocationWas(spatialConnection.getTo()) &&
                     numberOfPossibilities != ONLY_WAY) {
-                if (sc.memoryComp().getLastAction().is(Action.Type.BEWEGEN)) {
+                // FIXME Diese Prüfung ist Unfug - wurde ja eben schon geprüft?!
+                if (sc.memoryComp().getLastAction().is(BEWEGEN)) {
                     final ImmutableList.Builder<AbstractDescription<?>> alt =
                             ImmutableList.builder();
                     alt.add(neuerSatz(
@@ -307,6 +308,7 @@ public class BewegenAction<R extends ISpatiallyConnectedGO & IHasStoringPlaceGO,
 
                     return n.addAlt(alt);
                 } else {
+                    // FIXME Wann ist dieser Fall gewünscht?
                     return n.add(
                             du("schaust", "dich nur kurz um, dann "
                                             + uncapitalize(description.getDescriptionHauptsatz()),
@@ -385,7 +387,7 @@ public class BewegenAction<R extends ISpatiallyConnectedGO & IHasStoringPlaceGO,
                             .undWartest();
                 }
             } else if (numberOfPossibilities == ONE_IN_ONE_OUT
-                    && sc.memoryComp().getLastAction().is(Action.Type.BEWEGEN) &&
+                    && sc.memoryComp().getLastAction().is(BEWEGEN) &&
                     !sc.locationComp().lastLocationWas(spatialConnection.getTo()) &&
                     sc.feelingsComp().hasMood(Mood.VOLLER_FREUDE) &&
                     lichtverhaeltnisseInNewRoom ==
@@ -457,8 +459,8 @@ public class BewegenAction<R extends ISpatiallyConnectedGO & IHasStoringPlaceGO,
     }
 
     @NonNull
-    private static Action buildMemorizedAction() {
-        return new Action(Action.Type.BEWEGEN, (IGameObject) null);
+    private Action buildMemorizedAction() {
+        return new Action(BEWEGEN, spatialConnection.getTo());
     }
 
     private void setRoomAndObjectsKnown(

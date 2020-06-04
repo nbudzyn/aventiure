@@ -9,7 +9,6 @@ import java.util.Collection;
 
 import de.nb.aventiure2.data.database.AvDatabase;
 import de.nb.aventiure2.data.storystate.StoryState;
-import de.nb.aventiure2.data.world.base.GameObjectId;
 import de.nb.aventiure2.data.world.base.IGameObject;
 import de.nb.aventiure2.data.world.syscomp.memory.Action;
 import de.nb.aventiure2.data.world.time.AvDateTime;
@@ -161,8 +160,7 @@ public class SchlafenAction extends AbstractScAction {
 
     @NonNull
     private static Action buildMemorizedAction() {
-        return new Action(Action.Type.SCHLAFEN_ODER_VERGEBLICHER_EINSCHLAF_VERSUCH,
-                (GameObjectId) null);
+        return new Action(Action.Type.SCHLAFEN_ODER_VERGEBLICHER_EINSCHLAF_VERSUCH);
     }
 
 

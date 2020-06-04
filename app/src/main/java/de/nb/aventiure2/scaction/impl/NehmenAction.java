@@ -319,6 +319,6 @@ public class NehmenAction
 
     @NonNull
     private Action buildMemorizedAction() {
-        return new Action(Action.Type.NEHMEN, gameObject);
+        return new Action(Action.Type.NEHMEN, gameObject, room);
     }
 }

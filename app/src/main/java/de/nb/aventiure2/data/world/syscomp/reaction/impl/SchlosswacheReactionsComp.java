@@ -9,7 +9,6 @@ import org.jetbrains.annotations.Contract;
 import javax.annotation.Nullable;
 
 import de.nb.aventiure2.data.database.AvDatabase;
-import de.nb.aventiure2.data.world.base.GameObject;
 import de.nb.aventiure2.data.world.gameobjects.GameObjects;
 import de.nb.aventiure2.data.world.gameobjects.player.SpielerCharakter;
 import de.nb.aventiure2.data.world.syscomp.description.DescriptionComp;
@@ -167,7 +166,8 @@ public class SchlosswacheReactionsComp
         timeSpan = timeSpan.plus(
                 sc.locationComp().narrateAndSetLocation(raumAusDemDerSCDasSchlossBetretenHat));
 
-        sc.memoryComp().setLastAction(new Action(Action.Type.BEWEGEN, (GameObject) null));
+        sc.memoryComp().setLastAction(
+                new Action(Action.Type.BEWEGEN, raumAusDemDerSCDasSchlossBetretenHat));
 
         return timeSpan;
     }
@@ -309,7 +309,8 @@ public class SchlosswacheReactionsComp
                         sc.locationComp().getLocation()
                 ));
 
-        sc.memoryComp().setLastAction(Action.Type.ABLEGEN, goldeneKugel);
+        sc.memoryComp()
+                .setLastAction(Action.Type.ABLEGEN, goldeneKugel, sc.locationComp().getLocation());
 
         return timeSpan;
     }
@@ -346,7 +347,7 @@ public class SchlosswacheReactionsComp
         timeElapsed = timeElapsed.plus(
                 goldeneKugel.locationComp().narrateAndSetLocation(SCHLOSS_VORHALLE));
 
-        loadSC(db).memoryComp().setLastAction(Action.Type.ABLEGEN, goldeneKugel);
+        loadSC(db).memoryComp().setLastAction(Action.Type.ABLEGEN, goldeneKugel, SCHLOSS_VORHALLE);
 
         return timeElapsed;
     }

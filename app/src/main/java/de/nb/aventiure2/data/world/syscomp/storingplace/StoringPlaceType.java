@@ -1,5 +1,6 @@
 package de.nb.aventiure2.data.world.syscomp.storingplace;
 
+import de.nb.aventiure2.german.praedikat.AdverbialeAngabe;
 import de.nb.aventiure2.german.praedikat.PraedikatMitEinerObjektleerstelle;
 import de.nb.aventiure2.german.praedikat.ZweiVerbenSubjObj;
 
@@ -54,8 +55,16 @@ public enum StoringPlaceType {
         this.nehmenPraedikat = nehmenPraedikat;
     }
 
+    public AdverbialeAngabe getWoAdvAngabe() {
+        return new AdverbialeAngabe(getWo());
+    }
+
     public String getWo() {
         return wo;
+    }
+
+    public AdverbialeAngabe getWohinAdvAngabe() {
+        return new AdverbialeAngabe(getWohin());
     }
 
     public String getWohin() {

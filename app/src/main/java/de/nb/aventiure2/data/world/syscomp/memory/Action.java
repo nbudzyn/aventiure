@@ -2,6 +2,9 @@ package de.nb.aventiure2.data.world.syscomp.memory;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.room.Ignore;
+
+import com.google.common.base.Joiner;
 
 import org.jetbrains.annotations.Contract;
 
@@ -33,19 +36,60 @@ public class Action {
     @NonNull
     private final Type type;
 
+    /**
+     * Das vorrangige Objekt der Aktion: Der genommene Gegenstand, der Ort, zu dem sich der
+     * Benutzer bewegt hat o.Ä.
+     */
+    @Nullable
+    private final GameObjectId object;
+
+    /**
+     * Ein zusätzliches "Adverbial" der Aktion, z.B. der Ort, <i>von dem</i>
+     * ein Gegenstand ({@link #object}) genommen wurde etc.
+     */
+    @Nullable
+    private final GameObjectId adverbial;
+
+    @Ignore
+    public Action(@NonNull final Type type) {
+        this(type, (GameObjectId) null);
+    }
+
+    @Ignore
     public Action(@NonNull final Type type,
                   @Nullable final IGameObject object) {
-        this(type, object != null ? object.getId() : null);
+        this(type, object, (IGameObject) null);
     }
 
     public Action(@NonNull final Type type,
-                  @Nullable final GameObjectId gameObjectId) {
-        this.type = type;
-        this.gameObjectId = gameObjectId;
+                  @Nullable final IGameObject object,
+                  @Nullable final IGameObject adverbial) {
+        this(type,
+                object != null ? object.getId() : null,
+                adverbial != null ? adverbial.getId() : null);
     }
 
-    @Nullable
-    private final GameObjectId gameObjectId;
+    public Action(@NonNull final Type type,
+                  @Nullable final IGameObject object,
+                  @Nullable final GameObjectId adverbial) {
+        this(type,
+                object != null ? object.getId() : null,
+                adverbial);
+    }
+
+    @Ignore
+    public Action(@NonNull final Type type,
+                  @Nullable final GameObjectId object) {
+        this(type, object, null);
+    }
+
+    public Action(@NonNull final Type type,
+                  @Nullable final GameObjectId object,
+                  @Nullable final GameObjectId adverbial) {
+        this.type = type;
+        this.object = object;
+        this.adverbial = adverbial;
+    }
 
     public boolean is(final Type... someTypes) {
         return asList(someTypes).contains(type);
@@ -56,22 +100,34 @@ public class Action {
         return type;
     }
 
-    public boolean hasObject(@Nullable final IGameObject gameObject) {
+    /**
+     * Prüft, ob die Aktion <hashCode>someGameObject</hashCode> als vorrangige Objekt hat.
+     * (<i>Prüft nicht das {@link #adverbial}!</i>
+     */
+    public boolean hasObject(@Nullable final IGameObject someGameObject) {
         return hasObject(
-                gameObject != null ? gameObject.getId() : gameObjectId);
+                someGameObject != null ? someGameObject.getId() : object);
     }
 
+    /**
+     * Prüft, ob die Aktion <hashCode>someGameObjectId</hashCode> als vorrangige Objekt hat.
+     * (<i>Prüft nicht das {@link #adverbial}!</i>
+     */
     @Contract(pure = true)
-    private boolean hasObject(@Nullable final GameObjectId otherGameObjectId) {
-        return Objects.equals(gameObjectId, otherGameObjectId);
+    private boolean hasObject(@Nullable final GameObjectId someGameObjectId) {
+        return Objects.equals(object, someGameObjectId);
     }
 
     @Nullable
-    public GameObjectId getGameObjectId() {
-        return gameObjectId;
+    public GameObjectId getObject() {
+        return object;
     }
 
-    @Contract(value = "null -> false", pure = true)
+    @Nullable
+    public GameObjectId getAdverbial() {
+        return adverbial;
+    }
+
     @Override
     public boolean equals(final Object o) {
         if (this == o) {
@@ -80,14 +136,15 @@ public class Action {
         if (o == null || getClass() != o.getClass()) {
             return false;
         }
-        final Action that = (Action) o;
-        return type == that.type &&
-                Objects.equals(gameObjectId, that.gameObjectId);
+        final Action action = (Action) o;
+        return type == action.type &&
+                Objects.equals(object, action.object) &&
+                Objects.equals(adverbial, action.adverbial);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(type, gameObjectId);
+        return Objects.hash(type, object, adverbial);
     }
 
     @Override
@@ -95,9 +152,10 @@ public class Action {
     public String toString() {
         final StringBuilder res = new StringBuilder();
         res.append(type);
-        if (gameObjectId != null) {
+        if (object != null) {
             res.append("(")
-                    .append(gameObjectId)
+                    .append(Joiner.on(",").skipNulls()
+                            .join(object, adverbial))
                     .append(")");
         }
 

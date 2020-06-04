@@ -17,6 +17,7 @@ import de.nb.aventiure2.data.world.syscomp.memory.Action;
 import de.nb.aventiure2.data.world.syscomp.memory.Known;
 import de.nb.aventiure2.data.world.syscomp.storingplace.IHasStoringPlaceGO;
 import de.nb.aventiure2.data.world.time.AvTimeSpan;
+import de.nb.aventiure2.german.base.AbstractDescription;
 import de.nb.aventiure2.german.base.Personalpronomen;
 import de.nb.aventiure2.german.praedikat.AdverbialeAngabe;
 import de.nb.aventiure2.german.praedikat.PraedikatMitEinerObjektleerstelle;
@@ -51,8 +52,12 @@ public class AblegenAction
     @NonNull
     private final GO gameObject;
 
-    @NonNull
-    private final String name;
+    /**
+     * Ob der genaue Ort, wo das {@link #gameObject} abgelegt wird, in der Beschreibung
+     * erwähnt werden <i>muss</i> (z.B. "legst ... auf den Tisch") oder nicht
+     * ("legst ... hin", also auf den Fußboden).
+     */
+    private final boolean detailLocationNecessaryInDescription;
 
     /**
      * Erzeugt alle Aktionen, mit denen der Benutzer dieses <code>gameObject</code> in dieser
@@ -79,43 +84,13 @@ public class AblegenAction
         final ImmutableList.Builder<AblegenAction<GO>> res = ImmutableList.builder();
 
         if (!(gameObject instanceof ILivingBeingGO) || gameObject.is(FROSCHPRINZ)) {
-            @Nullable final String wohin =
-                    isOutermost ?
-                            null :
-                            location.storingPlaceComp().getLocationMode().getWohin();
-
             res.add(new AblegenAction<>(
-                    db, initialStoryState, gameObject, location,
-                    buildName(db, gameObject, wohin)));
+                    db, initialStoryState, gameObject, location, isOutermost));
         }
 
         res.addAll(buildRecursiveActions(db, initialStoryState, gameObject, location));
 
         return res.build();
-    }
-
-    private static <GO extends IDescribableGO & ILocatableGO>
-    String buildName(final AvDatabase db, final GO gameObject, final String wohin) {
-        @Nullable final AdverbialeAngabe adverbialeAngabe =
-                wohin != null ? new AdverbialeAngabe(wohin) : null;
-
-        return capitalize(
-                buildPraedikat(gameObject, wohin)
-                        .mitObj(
-                                getPOVDescription(
-                                        db, SPIELER_CHARAKTER, gameObject, true))
-                        .getDescriptionInfinitiv(P1, SG, adverbialeAngabe));
-    }
-
-    @NonNull
-    private static <GO extends IDescribableGO & ILocatableGO>
-    PraedikatMitEinerObjektleerstelle buildPraedikat(
-            final GO gameObject, @Nullable final String wohin) {
-        if (wohin == null) {
-            return gameObject instanceof ILivingBeingGO ? ABSETZEN : HINLEGEN;
-        }
-
-        return gameObject instanceof ILivingBeingGO ? SETZEN : LEGEN;
     }
 
     /**
@@ -149,17 +124,38 @@ public class AblegenAction
                           final StoryState initialStoryState,
                           final @NonNull GO gameObject,
                           final IHasStoringPlaceGO location,
-                          @NonNull final String name) {
+                          final boolean detailLocationNecessaryInDescription) {
         super(db, initialStoryState);
         this.location = location;
         this.gameObject = gameObject;
-        this.name = name;
+        this.detailLocationNecessaryInDescription = detailLocationNecessaryInDescription;
     }
 
     @Override
     @NonNull
     public String getName() {
-        return name;
+        return capitalize(
+                getPraedikat()
+                        .mitObj(
+                                getPOVDescription(
+                                        db, SPIELER_CHARAKTER, gameObject, true))
+                        .getDescriptionInfinitiv(P1, SG, getWohinDetail()));
+    }
+
+    @NonNull
+    private PraedikatMitEinerObjektleerstelle getPraedikat() {
+        if (getWohinDetail() == null) {
+            return gameObject instanceof ILivingBeingGO ? ABSETZEN : HINLEGEN;
+        } else {
+            return gameObject instanceof ILivingBeingGO ? SETZEN : LEGEN;
+        }
+    }
+
+    @Nullable
+    private AdverbialeAngabe getWohinDetail() {
+        return detailLocationNecessaryInDescription ?
+                null :
+                location.storingPlaceComp().getLocationMode().getWohinAdvAngabe();
     }
 
     @Override
@@ -169,9 +165,6 @@ public class AblegenAction
 
     @Override
     public AvTimeSpan narrateAndDo() {
-        // TODO Hier sicherstellen, das das richtige Prädikat und das richtige "wohin"
-        //  verwendet wird, siehe oben! Ggf. Texte anpassen!
-
         if (gameObject instanceof ILivingBeingGO) {
             return narrateAndDoLivingBeing();
         }
@@ -183,29 +176,39 @@ public class AblegenAction
         checkState(gameObject.is(FROSCHPRINZ),
                 "Unexpected creature data: " + gameObject);
 
-        AvTimeSpan timeElapsed = n.addAlt(
-                du(PARAGRAPH,
-                        "wühlst", "in deiner Tasche und auf einmal "
-                                + "schauert's dich und "
-                                + "der nasse Frosch sitzt in deiner Hand. Schnell "
-                                + location.storingPlaceComp().getLocationMode().getWohin()
-                                + " mit ihm!",
-                        secs(7))
-                        .dann()
-                        .beendet(PARAGRAPH),
-                du(PARAGRAPH,
-                        "schüttest", "deine Tasche aus, bis der Frosch endlich " +
-                                location.storingPlaceComp().getLocationMode().getWohin() +
-                                " fällt. Puh.",
-                        secs(7))
-                        .dann()
-                        .beendet(PARAGRAPH),
-                du(PARAGRAPH,
-                        "wühlst", "in deiner Tasche. Da quakt es erbost, auf einmal "
-                                + "springt der Fosch heraus und direkt "
-                                + location.storingPlaceComp().getLocationMode().getWohin(),
-                        secs(7)
-                ));
+        final ImmutableList.Builder<AbstractDescription<?>> alt =
+                ImmutableList.builder();
+
+        alt.add(du(PARAGRAPH,
+                "wühlst", "in deiner Tasche und auf einmal "
+                        + "schauert's dich und "
+                        + "der nasse Frosch sitzt in deiner Hand. Schnell "
+                        + location.storingPlaceComp().getLocationMode().getWohin()
+                        + " mit ihm!",
+                secs(7))
+                .dann()
+                .beendet(PARAGRAPH));
+
+        if (getWohinDetail() == null) {
+            // Wenn kein wohin-Detail nötig ist, dann ist es wohl Tisch o.Ä. und "fällt" passt.
+            alt.add(du(PARAGRAPH,
+                    "schüttest", "deine Tasche aus, bis der Frosch endlich " +
+                            location.storingPlaceComp().getLocationMode().getWohin() +
+                            " fällt. Puh.",
+                    secs(7))
+                    .dann()
+                    .beendet(PARAGRAPH));
+        }
+
+        alt.add(du(PARAGRAPH,
+                "wühlst", "in deiner Tasche. Da quakt es erbost, auf einmal "
+                        + "springt der Fosch heraus und direkt "
+                        + location.storingPlaceComp().getLocationMode().getWohin(),
+                secs(7)
+        ));
+
+        AvTimeSpan timeElapsed = n.addAlt(alt);
+
         timeElapsed = timeElapsed.plus(narrateUpgradeKnownAndSetLocationAndAction());
         sc.feelingsComp().setMood(Mood.NEUTRAL);
 
@@ -213,10 +216,7 @@ public class AblegenAction
     }
 
     private AvTimeSpan narrateAndDoObject() {
-        final AvTimeSpan timeElapsed;
-        timeElapsed = narrateObject();
-        // TODO onLeave() und onEnter() feuern!
-
+        final AvTimeSpan timeElapsed = narrateObject();
         return timeElapsed.plus(narrateUpgradeKnownAndSetLocationAndAction());
     }
 
@@ -231,40 +231,52 @@ public class AblegenAction
     }
 
     private AvTimeSpan narrateObject() {
+        @Nullable final AdverbialeAngabe wohinDetail = getWohinDetail();
+
         if (initialStoryState.allowsAdditionalDuSatzreihengliedOhneSubjekt()) {
             @Nullable final Personalpronomen gameObjektPersPron =
                     initialStoryState.getAnaphPersPronWennMgl(gameObject);
 
             if (gameObjektPersPron != null) {
-                if (sc.memoryComp().lastActionWas(Action.Type.NEHMEN, gameObject)) {
+                if (sc.memoryComp().lastActionWas(Action.Type.NEHMEN, gameObject, location)) {
                     return n.add(satzanschluss(
                             "– und legst "
                                     + gameObjektPersPron.akk()
-                                    + " sogleich wieder hin", secs(3)));
+                                    + " sogleich wieder "
+                                    + (wohinDetail != null ? "dort" : "")
+                                    + "hin", secs(3)));
                 }
+
+                // STORY nimmst... und legst sie auf den Tisch
+                // STORY nimmst... vom Tisch und legst sie auf den Boden
 
                 if (sc.memoryComp().getLastAction().hasObject(gameObject)) {
                     return n.add(satzanschluss(", dann legst du "
-                            + gameObjektPersPron.akk()
-                            + " hin", secs(5))
+                                    + gameObjektPersPron.akk()
+                                    + (wohinDetail == null ? " hin" : " " + wohinDetail), // "auf den Tisch"
+                            secs(5))
                             .undWartest());
                 }
 
-                String text = "und legst " + gameObjektPersPron.akk();
-                if (sc.memoryComp().getLastAction().is(Action.Type.BEWEGEN)) {
-                    text += " dort";
-                }
 
-                text += " hin";
-
-                n.add(satzanschluss(text, secs(3)));
+                return n.add(du("legst",
+                        gameObjektPersPron.akk() +
+                                ((sc.memoryComp().getLastAction().is(Action.Type.BEWEGEN) &&
+                                        wohinDetail == null) ?
+                                        " dort" :
+                                        "") +
+                                (wohinDetail == null ? " hin" : " " + wohinDetail),
+                        secs(3)));
             }
         }
 
-        if (sc.memoryComp().lastActionWas(Action.Type.NEHMEN, gameObject)) {
+        if (sc.memoryComp().lastActionWas(Action.Type.NEHMEN, gameObject, location)) {
             return n.add(
                     du(PARAGRAPH, "legst",
-                            getDescription(gameObject, false).akk() + " wieder hin",
+                            getDescription(gameObject, false).akk() +
+                                    " wieder "
+                                    + (wohinDetail != null ? "dort" : "")
+                                    + "hin",
                             secs(5))
                             .undWartest()
                             .dann());
@@ -272,7 +284,9 @@ public class AblegenAction
 
         return n.add(
                 du(PARAGRAPH, "legst",
-                        getDescription(gameObject, false).akk() + " hin", secs(3))
+                        getDescription(gameObject, false).akk()
+                                + (wohinDetail == null ? " hin" : " " + wohinDetail),
+                        secs(3))
                         .undWartest()
                         .dann());
     }
@@ -284,6 +298,6 @@ public class AblegenAction
 
     @NonNull
     private Action buildMemorizedAction() {
-        return new Action(Action.Type.ABLEGEN, gameObject);
+        return new Action(Action.Type.ABLEGEN, gameObject, location);
     }
 }

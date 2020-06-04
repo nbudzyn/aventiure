@@ -55,7 +55,7 @@ class MemoryPCD extends AbstractPersistentComponentData {
     }
 
     void setLastAction(@NonNull final Action lastAction) {
-        checkArgument(!getGameObjectId().equals(lastAction.getGameObjectId()),
+        checkArgument(!getGameObjectId().equals(lastAction.getObject()),
                 "Interaktion des Game Objects " + getGameObjectId()
                         + " mit sich selbst nicht erlaubt");
 

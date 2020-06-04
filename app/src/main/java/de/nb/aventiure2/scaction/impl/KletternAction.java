@@ -8,7 +8,6 @@ import java.util.Collection;
 
 import de.nb.aventiure2.data.database.AvDatabase;
 import de.nb.aventiure2.data.storystate.StoryState;
-import de.nb.aventiure2.data.world.base.IGameObject;
 import de.nb.aventiure2.data.world.syscomp.feelings.Mood;
 import de.nb.aventiure2.data.world.syscomp.memory.Action;
 import de.nb.aventiure2.data.world.syscomp.storingplace.IHasStoringPlaceGO;
@@ -151,6 +150,6 @@ public class KletternAction extends AbstractScAction {
 
     @NonNull
     private static Action buildMemorizedAction() {
-        return new Action(Action.Type.KLETTERN, (IGameObject) null);
+        return new Action(Action.Type.KLETTERN);
     }
 }

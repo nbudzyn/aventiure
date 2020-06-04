@@ -40,10 +40,9 @@ public class MemoryComp extends AbstractStatefulComponent<MemoryPCD> {
     protected MemoryPCD createInitialState() {
         return new MemoryPCD(getGameObjectId(),
                 // Wahrscheinlich ist das Game Objekt also letztes irgendwohin gegangen
-                new Action(Action.Type.SPIELBEGINN, (GameObjectId) null),
+                new Action(Action.Type.SPIELBEGINN),
                 initiallyKnown);
     }
-
 
     public boolean lastActionWas(final Action.Type actionType,
                                  final IGameObject gameObject) {
@@ -54,6 +53,12 @@ public class MemoryComp extends AbstractStatefulComponent<MemoryPCD> {
     public boolean lastActionWas(final Action.Type actionType,
                                  final GameObjectId gameObjectId) {
         return lastActionWas(new Action(actionType, gameObjectId));
+    }
+
+    public boolean lastActionWas(final Action.Type actionType,
+                                 @Nullable final IGameObject gameObject,
+                                 @Nullable final IGameObject adverbial) {
+        return lastActionWas(new Action(actionType, gameObject, adverbial));
     }
 
     public boolean lastActionWas(@NonNull final Action action) {
@@ -67,7 +72,19 @@ public class MemoryComp extends AbstractStatefulComponent<MemoryPCD> {
 
     public void setLastAction(@NonNull final Action.Type actionType,
                               @Nullable final IGameObject object) {
-        setLastAction(actionType, object != null ? object.getId() : null);
+        setLastAction(actionType, object, (IGameObject) null);
+    }
+
+    public void setLastAction(@NonNull final Action.Type actionType,
+                              @Nullable final IGameObject object,
+                              @Nullable final IGameObject adverbial) {
+        setLastAction(new Action(actionType, object, adverbial));
+    }
+
+    public void setLastAction(@NonNull final Action.Type actionType,
+                              @Nullable final IGameObject object,
+                              @Nullable final GameObjectId adverbial) {
+        setLastAction(new Action(actionType, object, adverbial));
     }
 
     public void setLastAction(@NonNull final Action.Type actionType,

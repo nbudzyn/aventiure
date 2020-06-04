@@ -8,7 +8,6 @@ import java.util.Collection;
 
 import de.nb.aventiure2.data.database.AvDatabase;
 import de.nb.aventiure2.data.storystate.StoryState;
-import de.nb.aventiure2.data.world.base.IGameObject;
 import de.nb.aventiure2.data.world.gameobjects.GameObjects;
 import de.nb.aventiure2.data.world.syscomp.feelings.Hunger;
 import de.nb.aventiure2.data.world.syscomp.memory.Action;
@@ -272,7 +271,7 @@ public class EssenAction extends AbstractScAction {
 
     @NonNull
     private static Action buildMemorizedAction() {
-        return new Action(Action.Type.ESSEN, (IGameObject) null);
+        return new Action(Action.Type.ESSEN);
     }
 
     private void saveSatt() {

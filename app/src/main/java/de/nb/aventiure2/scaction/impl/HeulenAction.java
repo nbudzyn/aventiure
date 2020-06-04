@@ -9,7 +9,6 @@ import java.util.List;
 
 import de.nb.aventiure2.data.database.AvDatabase;
 import de.nb.aventiure2.data.storystate.StoryState;
-import de.nb.aventiure2.data.world.base.GameObjectId;
 import de.nb.aventiure2.data.world.gameobjects.player.SpielerCharakter;
 import de.nb.aventiure2.data.world.syscomp.alive.ILivingBeingGO;
 import de.nb.aventiure2.data.world.syscomp.description.IDescribableGO;
@@ -129,7 +128,7 @@ public class HeulenAction extends AbstractScAction {
     }
 
     private static Action buildMemorizedAction() {
-        return new Action(Action.Type.HEULEN, (GameObjectId) null);
+        return new Action(Action.Type.HEULEN);
     }
 
     private AvTimeSpan narrateAndDoErstesMal() {
