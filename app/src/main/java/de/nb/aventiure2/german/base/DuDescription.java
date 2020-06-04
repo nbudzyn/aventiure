@@ -199,4 +199,5 @@ public class DuDescription extends AbstractDescription<DuDescription> {
     public String getDescriptionSatzanschlussOhneSubjekt() {
         return verb + " " + remainder;
     }
+
 }

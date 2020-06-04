@@ -28,6 +28,7 @@ import static de.nb.aventiure2.data.world.gameobjects.GameObjects.FROSCHPRINZ;
 import static de.nb.aventiure2.data.world.gameobjects.GameObjects.SPIELER_CHARAKTER;
 import static de.nb.aventiure2.data.world.gameobjects.GameObjects.getPOVDescription;
 import static de.nb.aventiure2.data.world.gameobjects.GameObjects.loadDescribableNonLivingHasStoringPlaceInventory;
+import static de.nb.aventiure2.data.world.syscomp.memory.Action.Type.NEHMEN;
 import static de.nb.aventiure2.data.world.time.AvTimeSpan.secs;
 import static de.nb.aventiure2.german.base.AllgDescription.satzanschluss;
 import static de.nb.aventiure2.german.base.DuDescription.du;
@@ -238,7 +239,7 @@ public class AblegenAction
                     initialStoryState.getAnaphPersPronWennMgl(gameObject);
 
             if (gameObjektPersPron != null) {
-                if (sc.memoryComp().lastActionWas(Action.Type.NEHMEN, gameObject, location)) {
+                if (sc.memoryComp().lastActionWas(NEHMEN, gameObject, location)) {
                     return n.add(satzanschluss(
                             "– und legst "
                                     + gameObjektPersPron.akk()
@@ -247,13 +248,24 @@ public class AblegenAction
                                     + "hin", secs(3)));
                 }
 
-                // STORY nimmst... und legst sie auf den Tisch
-                // STORY nimmst... vom Tisch und legst sie auf den Boden
+                if (sc.memoryComp().getLastAction().is(NEHMEN) &&
+                        sc.memoryComp().getLastAction().hasObject(gameObject)) {
+                    return n.add(du("legst",
+                            gameObjektPersPron.akk() +
+                                    " " +
+                                    location.storingPlaceComp().getLocationMode()
+                                            .getWohinAdvAngabe().getText(),
+                            secs(3))
+                            .dann()
+                            .phorikKandidat(gameObjektPersPron, gameObject.getId()));
+                }
 
                 if (sc.memoryComp().getLastAction().hasObject(gameObject)) {
                     return n.add(satzanschluss(", dann legst du "
                                     + gameObjektPersPron.akk()
-                                    + (wohinDetail == null ? " hin" : " " + wohinDetail), // "auf den Tisch"
+                                    + (wohinDetail == null ?
+                                    " hin" :
+                                    " " + wohinDetail), // "auf den Tisch"
                             secs(5))
                             .undWartest());
                 }
@@ -270,7 +282,7 @@ public class AblegenAction
             }
         }
 
-        if (sc.memoryComp().lastActionWas(Action.Type.NEHMEN, gameObject, location)) {
+        if (sc.memoryComp().lastActionWas(NEHMEN, gameObject, location)) {
             return n.add(
                     du(PARAGRAPH, "legst",
                             getDescription(gameObject, false).akk() +
