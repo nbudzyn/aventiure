@@ -20,7 +20,6 @@ import static com.google.common.base.Preconditions.checkNotNull;
  * remembers things.
  */
 public class MemoryComp extends AbstractStatefulComponent<MemoryPCD> {
-    private final AvDatabase db;
     @NonNull
     private final Map<GameObjectId, Known> initiallyKnown;
 
@@ -29,9 +28,8 @@ public class MemoryComp extends AbstractStatefulComponent<MemoryPCD> {
      */
     public MemoryComp(final GameObjectId gameObjectId,
                       final AvDatabase db,
-                      final Map<GameObjectId, Known> initiallyKnown) {
+                      @NonNull final Map<GameObjectId, Known> initiallyKnown) {
         super(gameObjectId, db.memoryDao());
-        this.db = db;
         this.initiallyKnown = initiallyKnown;
     }
 
@@ -50,8 +48,8 @@ public class MemoryComp extends AbstractStatefulComponent<MemoryPCD> {
                 gameObject != null ? gameObject.getId() : null);
     }
 
-    public boolean lastActionWas(final Action.Type actionType,
-                                 final GameObjectId gameObjectId) {
+    private boolean lastActionWas(final Action.Type actionType,
+                                  final GameObjectId gameObjectId) {
         return lastActionWas(new Action(actionType, gameObjectId));
     }
 

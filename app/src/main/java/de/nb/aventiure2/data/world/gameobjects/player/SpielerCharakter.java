@@ -1,5 +1,7 @@
 package de.nb.aventiure2.data.world.gameobjects.player;
 
+import androidx.annotation.NonNull;
+
 import javax.annotation.Nonnull;
 
 import de.nb.aventiure2.data.world.base.GameObject;
@@ -30,13 +32,13 @@ public class SpielerCharakter extends GameObject
     private final AliveComp aliveComp;
     private final ScAutomaticReactionsComp reactionsComp;
 
-    public SpielerCharakter(final GameObjectId id,
-                            final LocationComp locationComp,
-                            final StoringPlaceComp storingPlaceComp,
-                            final FeelingsComp feelingsComp,
-                            final MemoryComp memoryComp,
-                            final AbstractTalkingComp talkingComp,
-                            final ScAutomaticReactionsComp reactionsComp) {
+    SpielerCharakter(final GameObjectId id,
+                     final LocationComp locationComp,
+                     final StoringPlaceComp storingPlaceComp,
+                     final FeelingsComp feelingsComp,
+                     final MemoryComp memoryComp,
+                     final AbstractTalkingComp talkingComp,
+                     final ScAutomaticReactionsComp reactionsComp) {
         super(id);
         // Jede Komponente muss registiert werden!
         this.locationComp = addComponent(locationComp);
@@ -84,6 +86,7 @@ public class SpielerCharakter extends GameObject
         return aliveComp;
     }
 
+    @NonNull
     @Override
     public ScAutomaticReactionsComp reactionsComp() {
         return reactionsComp;

@@ -320,11 +320,10 @@ public class BewegenAction<R extends ISpatiallyConnectedGO & ILocationGO,
     private String buildObjectsInLocationDescription(
             final ILocationGO location,
             @NonNull final List<? extends IDescribableGO> movableObjectsInLocation) {
-        final String res = buildObjectInLocationDescriptionPrefix(location,
+        return buildObjectInLocationDescriptionPrefix(location,
                 movableObjectsInLocation.size())
                 + " "
                 + buildDescriptionAufzaehlung(movableObjectsInLocation);
-        return res;
     }
 
     private boolean scWirdMitEssenKonfrontiert() {

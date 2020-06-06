@@ -389,7 +389,7 @@ public class GameObjects {
      * und gibt sie zurück -
      * nur Gegenstände, die eine Beschreibung haben.
      */
-    public static <LOC_DESC extends ILocatableGO & IDescribableGO>
+    private static <LOC_DESC extends ILocatableGO & IDescribableGO>
     ImmutableList<LOC_DESC> loadDescribableNonLivingInventory(
             final AvDatabase db,
             final GameObjectId locationId) {
