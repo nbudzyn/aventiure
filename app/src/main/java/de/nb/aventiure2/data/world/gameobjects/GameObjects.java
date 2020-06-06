@@ -272,7 +272,8 @@ public class GameObjects {
 
     /**
      * Ermittelt die nicht-lebenden Game Objects,
-     * an denen etwas abgelegt werden kann an an diesem Ort, lädt sie (sofern noch nicht geschehen)
+     * an denen etwas abgelegt werden kann an diesem Ort (auch rekursiv), lädt sie
+     * (sofern noch nicht geschehen)
      * und gibt sie zurück -
      * nur Gegenstände, die eine Beschreibung haben.
      */
@@ -282,6 +283,21 @@ public class GameObjects {
             final ILocationGO inventoryHolder) {
         return filterLocation(
                 loadDescribableNonLivingRecursiveInventory(db, inventoryHolder.getId()));
+    }
+
+    /**
+     * Ermittelt die nicht-lebenden Game Objects,
+     * an denen etwas abgelegt werden kann an diesem Ort (<i>nicht</i>> rekursiv), lädt sie
+     * (sofern noch nicht geschehen)
+     * und gibt sie zurück -
+     * nur Gegenstände, die eine Beschreibung haben.
+     */
+    public static <LOCATABLE_DESC_LOCATION extends ILocatableGO & IDescribableGO & ILocationGO>
+    ImmutableList<LOCATABLE_DESC_LOCATION> loadDescribableNonLivingLocationInventory(
+            final AvDatabase db,
+            final ILocationGO inventoryHolder) {
+        return filterLocation(
+                loadDescribableNonLivingInventory(db, inventoryHolder.getId()));
     }
 
     private static <LOC_DESC extends ILocatableGO & IDescribableGO,
@@ -308,10 +324,48 @@ public class GameObjects {
                 loadDescribableNonLivingRecursiveInventory(db, locationId));
     }
 
+    /**
+     * Ermittelt die nicht-lebenden Game Objects,
+     * die <i>movable</i> sind (also z.B. vom SC bewegt werden könnten) an dieser
+     * <i>locationId</i> (aber <i>nicht</i> rekursiv enthaltene, z.B. <i>nicht</i>
+     * die Kugel auf einem Tisch in einem Raum),
+     * lädt sie (sofern noch nicht geschehen) und gibt sie zurück -
+     * nur Gegenstände, die eine Beschreibung haben.
+     */
+    public static <LOC_DESC extends ILocatableGO & IDescribableGO>
+    ImmutableList<LOC_DESC> loadDescribableNonLivingMovableInventory(
+            final AvDatabase db,
+            final GameObjectId locationId) {
+        return filterMovable(
+                loadDescribableNonLivingInventory(db, locationId));
+    }
+
+    /**
+     * Ermittelt die Game Objects,
+     * die <i>nicht movable</i> sind (also <i>nicht</i> bewegt werden könnten) an dieser
+     * <i>locationId</i> (aber <i>nicht</i> rekursiv enthaltene, z.B. eine
+     * <i>nicht</i> die schwere Vase auf einem Tisch in einem Raum),
+     * lädt sie (sofern noch nicht geschehen) und gibt sie zurück -
+     * nur Gegenstände, die eine Beschreibung haben.
+     */
+    public static <LOC_DESC extends ILocatableGO & IDescribableGO>
+    ImmutableList<LOC_DESC> loadDescribableNonMovableInventory(
+            final AvDatabase db,
+            final GameObjectId locationId) {
+        return filterNotMovable(loadDescribableInventory(db, locationId));
+    }
+
     private static <GO extends ILocatableGO> ImmutableList<GO> filterMovable(
             final List<GO> gameObjects) {
         return gameObjects.stream()
                 .filter(go -> go.locationComp().isMovable())
+                .collect(toImmutableList());
+    }
+
+    private static <GO extends ILocatableGO> ImmutableList<GO> filterNotMovable(
+            final List<GO> gameObjects) {
+        return gameObjects.stream()
+                .filter(go -> !go.locationComp().isMovable())
                 .collect(toImmutableList());
     }
 
@@ -326,6 +380,20 @@ public class GameObjects {
             final AvDatabase db,
             final GameObjectId locationId) {
         return filterNoLivingBeing(loadDescribableRecursiveInventory(db, locationId));
+    }
+
+    /**
+     * Lädt (soweit noch nicht geschehen) die nicht-lebenden Game Objects von dieser
+     * <i>locationId</i> zurück (aber <i>nicht</i> rekursiv, z.B. <i>nicht</i> die
+     * Kugel auf einem Tisch in einem Raum)
+     * und gibt sie zurück -
+     * nur Gegenstände, die eine Beschreibung haben.
+     */
+    public static <LOC_DESC extends ILocatableGO & IDescribableGO>
+    ImmutableList<LOC_DESC> loadDescribableNonLivingInventory(
+            final AvDatabase db,
+            final GameObjectId locationId) {
+        return filterNoLivingBeing(loadDescribableInventory(db, locationId));
     }
 
     /**
@@ -443,16 +511,6 @@ public class GameObjects {
 
     /**
      * Gibt eine beschreibende Nominalphrase zurück, die das <code>describable</code>
-     * aus Sicht das Beobachters mit der <code>observerId</code> beschreibt.
-     */
-    public static @NonNull
-    Nominalphrase getPOVDescription(final AvDatabase db, final GameObjectId observerId,
-                                    final IDescribableGO describable) {
-        return getPOVDescription(db, observerId, describable, false);
-    }
-
-    /**
-     * Gibt eine beschreibende Nominalphrase zurück, die das <code>describable</code>
      * aus Sicht das Beobachters mit der <code>observerId</code> beschreibt, ggf. kurz.
      */
     public static @NonNull
@@ -460,16 +518,6 @@ public class GameObjects {
                                     final IDescribableGO describable,
                                     final boolean shortIfKnown) {
         return getPOVDescription(load(db, observerId), describable, shortIfKnown);
-    }
-
-    /**
-     * Gibt eine beschreibende Nominalphrase zurück, die das <code>describable</code>
-     * aus Sicht des <code>observer</code>s beschreibt.
-     */
-    public static @NonNull
-    Nominalphrase getPOVDescription(final IGameObject observer,
-                                    final IDescribableGO describable) {
-        return getPOVDescription(observer, describable, false);
     }
 
     /**

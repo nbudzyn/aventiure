@@ -25,8 +25,6 @@ import de.nb.aventiure2.scaction.AbstractScAction;
 
 import static com.google.common.base.Preconditions.checkState;
 import static de.nb.aventiure2.data.world.gameobjects.GameObjects.FROSCHPRINZ;
-import static de.nb.aventiure2.data.world.gameobjects.GameObjects.SPIELER_CHARAKTER;
-import static de.nb.aventiure2.data.world.gameobjects.GameObjects.getPOVDescription;
 import static de.nb.aventiure2.data.world.gameobjects.GameObjects.loadDescribableNonLivingLocationRecursiveInventory;
 import static de.nb.aventiure2.data.world.syscomp.memory.Action.Type.NEHMEN;
 import static de.nb.aventiure2.data.world.time.AvTimeSpan.secs;
@@ -111,9 +109,7 @@ public class AblegenAction
     public String getName() {
         return capitalize(
                 getPraedikat()
-                        .mitObj(
-                                getPOVDescription(
-                                        db, SPIELER_CHARAKTER, gameObject, true))
+                        .mitObj(getDescription(gameObject, true))
                         .getDescriptionInfinitiv(P1, SG, getWohinDetail()));
     }
 

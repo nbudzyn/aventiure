@@ -104,6 +104,14 @@ public class MemoryComp extends AbstractStatefulComponent<MemoryPCD> {
         return getKnown(otherGameObjectId).isKnown();
     }
 
+    public void upgradeKnown(
+            @NonNull final Iterable<? extends IGameObject> objects,
+            @NonNull final Known minimalKnown) {
+        for (final IGameObject object : objects) {
+            upgradeKnown(object, minimalKnown);
+        }
+    }
+
     /**
      * Sets the known value, but does not make it worse than it is.
      */
