@@ -203,4 +203,10 @@ public abstract class AbstractScAction implements IPlayerAction {
                                            final boolean shortIfKnown) {
         return getPOVDescription(sc, gameObject, shortIfKnown);
     }
+
+    @NonNull
+    @Override
+    public String toString() {
+        return getName();
+    }
 }

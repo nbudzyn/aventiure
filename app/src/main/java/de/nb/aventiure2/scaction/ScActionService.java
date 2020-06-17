@@ -89,7 +89,7 @@ public class ScActionService {
         final List<AbstractScAction> res = new ArrayList<>();
 
         if (room != null) {
-            res.addAll(buildCreatureInRoomActions(currentStoryState, room,
+            res.addAll(buildCreatureInRoomActions(currentStoryState, spielerCharakter, room,
                     livingBeingsInRoom));
         }
         if (!spielerCharakter.talkingComp().isInConversation()) {
@@ -114,6 +114,7 @@ public class ScActionService {
     private <LIV extends IDescribableGO & ILocatableGO & ILivingBeingGO>
     ImmutableList<AbstractScAction> buildCreatureInRoomActions(
             final StoryState currentStoryState,
+            final SpielerCharakter spielerCharakter,
             final ILocationGO room,
             final List<LIV> creaturesInRoom) {
         final ImmutableList.Builder<AbstractScAction> res = ImmutableList.builder();
@@ -123,10 +124,10 @@ public class ScActionService {
                 res.addAll(RedenAction.buildActions(db, currentStoryState, room,
                         (IDescribableGO & ITalkerGO) creature));
             }
-            if (creature.locationComp().isMovable()) {
-                res.addAll(
-                        NehmenAction.buildCreatureActions(db, currentStoryState,
-                                creature));
+            if (!spielerCharakter.talkingComp().isInConversation()) {
+                if (creature.locationComp().isMovable()) {
+                    res.addAll(NehmenAction.buildCreatureActions(db, currentStoryState, creature));
+                }
             }
         }
 

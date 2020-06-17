@@ -77,6 +77,8 @@ import static de.nb.aventiure2.data.world.time.AvTime.oClock;
 // "In a real app, you should consider setting a directory for Room to [...] export the
 // schema so you can check the current schema into your version control system."
 public abstract class AvDatabase extends RoomDatabase {
+    public static final String DATABASE_NAME = "aventiureDatabase";
+
     public abstract CounterDao counterDao();
 
     public abstract AvNowDao nowDao();
@@ -98,6 +100,8 @@ public abstract class AvDatabase extends RoomDatabase {
     public static final ExecutorService databaseWriteExecutor =
             Executors.newFixedThreadPool(NUMBER_OF_THREADS);
 
+    private static boolean inMemory = false;
+
     private static final RoomDatabase.Callback roomDatabaseCallback = new RoomDatabase.Callback() {
         @Override
         public void onCreate(@NonNull final SupportSQLiteDatabase db) {
@@ -118,6 +122,21 @@ public abstract class AvDatabase extends RoomDatabase {
                     }));
         }
     };
+
+    public static void setInMemory(final boolean inMemory) {
+        AvDatabase.inMemory = inMemory;
+    }
+
+    /*
+    public static void resetDatabase(Context context) {
+        if (!inMemory) {
+            throw new IllegalStateException(
+                    "Resetting non-in-memory database? Why would you do that?");
+        }
+        context.deleteDatabase(DATABASE_NAME);
+        ...
+    }
+    */
 
     /**
      * @return Something similar to <code>Du befindest dich in einem Schloss. Hier liegt eine goldene Kugel.</code>
@@ -189,10 +208,29 @@ public abstract class AvDatabase extends RoomDatabase {
         if (INSTANCE == null) {
             synchronized (AvDatabase.class) {
                 if (INSTANCE == null) {
-                    INSTANCE = Room.databaseBuilder(context.getApplicationContext(),
-                            AvDatabase.class, "aventiureDatabase")
-                            .addCallback(roomDatabaseCallback)
-                            .build();
+                    if (inMemory) {
+                        INSTANCE = Room.inMemoryDatabaseBuilder(context, AvDatabase.class)
+                                .allowMainThreadQueries()
+                                .addCallback(roomDatabaseCallback)
+                                .build();
+                        if (INSTANCE.nowDao().now() == null) {
+                            try {
+                                Thread.sleep(5000);
+                            } catch (final InterruptedException e) {
+                                Thread.currentThread().interrupt();
+                            }
+
+                            if (INSTANCE.nowDao().now() == null) {
+                                throw new IllegalStateException("roomDatabaseCallback not called");
+                            }
+                        }
+
+                    } else {
+                        INSTANCE = Room.databaseBuilder(context.getApplicationContext(),
+                                AvDatabase.class, DATABASE_NAME)
+                                .addCallback(roomDatabaseCallback)
+                                .build();
+                    }
                 }
             }
         }

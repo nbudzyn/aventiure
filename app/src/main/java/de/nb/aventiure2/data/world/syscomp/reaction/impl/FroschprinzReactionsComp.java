@@ -370,7 +370,6 @@ public class FroschprinzReactionsComp
 
     private AvTimeSpan froschprinzHatHochhebenGefordertUndWillMitessen() {
         final SpielerCharakter sc = loadSC();
-        talkingComp.setTalkingTo(sc);
         sc.feelingsComp().setMood(ANGESPANNT);
 
         return n.addAlt(
