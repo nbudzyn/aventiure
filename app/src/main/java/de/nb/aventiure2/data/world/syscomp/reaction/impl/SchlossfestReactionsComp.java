@@ -16,7 +16,6 @@ import static de.nb.aventiure2.data.world.gameobjects.GameObjects.COUNTER_ID_VOR
 import static de.nb.aventiure2.data.world.gameobjects.GameObjects.DRAUSSEN_VOR_DEM_SCHLOSS;
 import static de.nb.aventiure2.data.world.gameobjects.GameObjects.SCHLOSSFEST;
 import static de.nb.aventiure2.data.world.gameobjects.GameObjects.SCHLOSSFEST_BEGINN_DATE_TIME;
-import static de.nb.aventiure2.data.world.gameobjects.GameObjects.loadSC;
 import static de.nb.aventiure2.data.world.syscomp.state.GameObjectState.BEGONNEN;
 import static de.nb.aventiure2.data.world.time.AvDateTime.isWithin;
 import static de.nb.aventiure2.data.world.time.AvTimeSpan.mins;
@@ -50,7 +49,7 @@ public class SchlossfestReactionsComp
     }
 
     private AvTimeSpan schlossfestBeginnt() {
-        final SpielerCharakter sc = loadSC(db);
+        final SpielerCharakter sc = loadSC();
 
         final @Nullable IGameObject currentRoom = sc.locationComp().getLocation();
 

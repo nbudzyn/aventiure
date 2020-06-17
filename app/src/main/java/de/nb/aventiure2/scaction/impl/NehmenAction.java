@@ -32,6 +32,8 @@ import static com.google.common.base.Preconditions.checkState;
 import static de.nb.aventiure2.data.world.gameobjects.GameObjects.FROSCHPRINZ;
 import static de.nb.aventiure2.data.world.gameobjects.GameObjects.SPIELER_CHARAKTER;
 import static de.nb.aventiure2.data.world.syscomp.state.GameObjectState.ERWARTET_VON_SC_EINLOESUNG_SEINES_VERSPRECHENS;
+import static de.nb.aventiure2.data.world.syscomp.state.GameObjectState.HAT_HOCHHEBEN_GEFORDERT;
+import static de.nb.aventiure2.data.world.time.AvTimeSpan.noTime;
 import static de.nb.aventiure2.data.world.time.AvTimeSpan.secs;
 import static de.nb.aventiure2.german.base.AllgDescription.neuerSatz;
 import static de.nb.aventiure2.german.base.AllgDescription.satzanschluss;
@@ -42,6 +44,7 @@ import static de.nb.aventiure2.german.base.Numerus.SG;
 import static de.nb.aventiure2.german.base.Person.P1;
 import static de.nb.aventiure2.german.base.Person.P2;
 import static de.nb.aventiure2.german.base.StructuralElement.PARAGRAPH;
+import static de.nb.aventiure2.german.base.StructuralElement.SENTENCE;
 import static de.nb.aventiure2.german.praedikat.VerbSubjObj.MITNEHMEN;
 import static de.nb.aventiure2.german.praedikat.VerbSubjObj.NEHMEN;
 
@@ -73,7 +76,8 @@ public class NehmenAction
         final ImmutableList.Builder<NehmenAction> res = ImmutableList.builder();
         if (creature.is(FROSCHPRINZ) &&
                 ((IHasStateGO) creature).stateComp()
-                        .hasState(ERWARTET_VON_SC_EINLOESUNG_SEINES_VERSPRECHENS)) {
+                        .hasState(ERWARTET_VON_SC_EINLOESUNG_SEINES_VERSPRECHENS,
+                                HAT_HOCHHEBEN_GEFORDERT)) {
             res.add(new NehmenAction<>(db, initialStoryState, creature));
         }
         return res.build();
@@ -116,8 +120,17 @@ public class NehmenAction
         checkState(gameObject.is(FROSCHPRINZ),
                 "Unexpected creature: " + gameObject);
         checkState(((IHasStateGO) gameObject).stateComp()
-                        .hasState(ERWARTET_VON_SC_EINLOESUNG_SEINES_VERSPRECHENS),
+                        .hasState(ERWARTET_VON_SC_EINLOESUNG_SEINES_VERSPRECHENS,
+                                HAT_HOCHHEBEN_GEFORDERT),
                 "Unexpected state: " + gameObject);
+
+        return narrateAndDoFroschprinz();
+    }
+
+    private AvTimeSpan narrateAndDoFroschprinz() {
+        if (((IHasStateGO) gameObject).stateComp().hasState(HAT_HOCHHEBEN_GEFORDERT)) {
+            return narrateAndDoFroschprinz_HatHochhebenGefordert();
+        }
 
         final Nominalphrase froschDesc = getDescription(gameObject, true);
 
@@ -193,6 +206,43 @@ public class NehmenAction
                                                             + "vorbei ist.", secs(10))
                                                     .dann()
                                     );
+                                })
+        );
+
+        sc.memoryComp().setLastAction(buildMemorizedAction());
+        return timeElapsed;
+    }
+
+    private AvTimeSpan narrateAndDoFroschprinz_HatHochhebenGefordert() {
+        AvTimeSpan timeElapsed = n.addAlt(
+                du(PARAGRAPH,
+                        "zauderst", "und dein Herz klopft gewaltig, als du endlich "
+                                + getDescription(gameObject, true).akk()
+                                + " greifst",
+                        secs(5))
+                        .phorikKandidat(getDescription(gameObject, true), FROSCHPRINZ)
+                        .komma()
+                        .dann(),
+                neuerSatz(SENTENCE,
+                        "Dir wird ganz angst, aber was man "
+                                + "versprochen hat, das muss man auch halten! Du nimmst "
+                                + getDescription(gameObject, true).akk()
+                                + " in die Hand",
+                        secs(15))
+                        .phorikKandidat(getDescription(gameObject, true), FROSCHPRINZ)
+                        .undWartest()
+                        .dann());
+
+        timeElapsed = timeElapsed.plus(
+                gameObject.locationComp()
+                        .narrateAndSetLocation(SPIELER_CHARAKTER,
+                                () -> {
+                                    sc.memoryComp().upgradeKnown(gameObject, Known.getKnown(
+                                            gameObject.locationComp().getLocation()
+                                                    .storingPlaceComp().getLichtverhaeltnisse()));
+                                    sc.feelingsComp().setMood(Mood.ANGESPANNT);
+
+                                    return noTime();
                                 })
         );
 

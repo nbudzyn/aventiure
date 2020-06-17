@@ -38,7 +38,6 @@ import static de.nb.aventiure2.data.world.gameobjects.GameObjects.SCHLOSSFEST_BE
 import static de.nb.aventiure2.data.world.gameobjects.GameObjects.SCHLOSSWACHE;
 import static de.nb.aventiure2.data.world.gameobjects.GameObjects.SCHLOSS_VORHALLE;
 import static de.nb.aventiure2.data.world.gameobjects.GameObjects.SPIELER_CHARAKTER;
-import static de.nb.aventiure2.data.world.gameobjects.GameObjects.loadSC;
 import static de.nb.aventiure2.data.world.syscomp.feelings.Mood.NEUTRAL;
 import static de.nb.aventiure2.data.world.syscomp.state.GameObjectState.AUFMERKSAM;
 import static de.nb.aventiure2.data.world.syscomp.state.GameObjectState.BEGONNEN;
@@ -138,7 +137,7 @@ public class SchlosswacheReactionsComp
         // STORY Ausspinnen: Der Spieler sollte selbst entscheiden,
         //  ob der das Schloss wieder verlässt - oder ggf. im Kerker landet.
 
-        final SpielerCharakter sc = loadSC(db);
+        final SpielerCharakter sc = loadSC();
 
         AvTimeSpan timeSpan = n.addAlt(
                 neuerSatz("Die Wache spricht dich sofort an und macht dir unmissverständlich "
@@ -236,7 +235,7 @@ public class SchlosswacheReactionsComp
 
     private AvTimeSpan scHatEtwasGenommen_wacheWirdAufmerksam() {
         stateComp.setState(AUFMERKSAM);
-        final SpielerCharakter sc = loadSC(db);
+        final SpielerCharakter sc = loadSC();
         @Nullable final ILocationGO from = sc.locationComp().getLocation();
 
         final AvTimeSpan timeElapsed = n.add(
@@ -297,7 +296,7 @@ public class SchlosswacheReactionsComp
         // TODO Geschichte ausspinnen: Spieler muss die Kugel selbst
         //  ablegen bzw. kommt ggf. in den Kerker
 
-        final SpielerCharakter sc = loadSC(db);
+        final SpielerCharakter sc = loadSC();
         sc.feelingsComp().setMood(Mood.ANGESPANNT);
 
         timeSpan = timeSpan.plus(n.add(du(PARAGRAPH,
@@ -350,7 +349,7 @@ public class SchlosswacheReactionsComp
         timeElapsed = timeElapsed.plus(
                 goldeneKugel.locationComp().narrateAndSetLocation(SCHLOSS_VORHALLE));
 
-        loadSC(db).memoryComp().setLastAction(Action.Type.ABLEGEN, goldeneKugel, SCHLOSS_VORHALLE);
+        loadSC().memoryComp().setLastAction(Action.Type.ABLEGEN, goldeneKugel, SCHLOSS_VORHALLE);
 
         return timeElapsed;
     }
@@ -418,7 +417,7 @@ public class SchlosswacheReactionsComp
                     .dann());
         }
 
-        loadSC(db).feelingsComp().setMood(Mood.ANGESPANNT);
+        loadSC().feelingsComp().setMood(Mood.ANGESPANNT);
         return n.addAlt(
                 neuerSatz(capitalize(getSchlosswacheDescription().nom())
                         + " beoabachtet dich dabei", secs(5))
@@ -442,7 +441,7 @@ public class SchlosswacheReactionsComp
     }
 
     private AvTimeSpan schlossfestBeginnt() {
-        final SpielerCharakter sc = loadSC(db);
+        final SpielerCharakter sc = loadSC();
         if (sc.locationComp().hasLocation(SCHLOSS_VORHALLE)) {
             return schlossfestBeginnt_Vorhalle(sc);
         }
@@ -510,6 +509,6 @@ public class SchlosswacheReactionsComp
      */
     private Nominalphrase getSchlosswacheDescription(final boolean shortIfKnown) {
         return descriptionComp.getDescription(
-                loadSC(db).memoryComp().isKnown(SCHLOSSWACHE), shortIfKnown);
+                loadSC().memoryComp().isKnown(SCHLOSSWACHE), shortIfKnown);
     }
 }

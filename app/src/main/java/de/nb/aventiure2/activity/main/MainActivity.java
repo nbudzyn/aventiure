@@ -7,7 +7,6 @@ import android.text.SpannableString;
 import android.text.Spanned;
 import android.text.style.ForegroundColorSpan;
 import android.util.DisplayMetrics;
-import android.util.Log;
 import android.view.WindowManager;
 import android.widget.ScrollView;
 import android.widget.TextView;
@@ -22,8 +21,11 @@ import com.google.common.collect.ImmutableList;
 import de.nb.aventiure2.BuildConfig;
 import de.nb.aventiure2.R;
 import de.nb.aventiure2.activity.main.viewmodel.MainViewModel;
+import de.nb.aventiure2.logger.Logger;
 
 public class MainActivity extends AppCompatActivity {
+    private static final Logger LOGGER = Logger.getLogger();
+
     private TextView storyTextView;
     private ScrollView storyTextScrollView;
     private RecyclerView actionsRecyclerView;
@@ -137,12 +139,12 @@ public class MainActivity extends AppCompatActivity {
         // See https://stackoverflow.com/questions/8840954/how-do-i-keep-my-screen-unlocked-during-usb-debugging
         if (BuildConfig.DEBUG) { // don't even consider it otherwise
             if (Debug.isDebuggerConnected()) {
-                Log.d("SCREEN",
+                LOGGER.d(
                         "Keeping screen on for debugging, detach debugger and force an onResume to turn it off.");
                 getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
             } else {
                 getWindow().clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
-                Log.d("SCREEN", "Keeping screen on for debugging is now deactivated.");
+                LOGGER.d("Keeping screen on for debugging is now deactivated.");
             }
         }
     }

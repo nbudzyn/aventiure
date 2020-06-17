@@ -235,6 +235,17 @@ public class StoryState {
         // TODO "Dann" nur verwenden, wenn der es einen Aktor gibt und der Aktor im letzten
         //  Satz gleich war. (Nach der Logik kann man dann auch für Beschreibungen in
         //  der dritten Person verwenden!)
+
+        // STORY Statt dann auch andere "Temporaladverbialia" verwenden,
+        //  siehe "Grammatik der deutschen Sprache E2.3": darauf,
+        //  kurz danach, sofort, bald etc. Vielleicht abhängig davon, wie lang
+        //  Das letzte Ereignis gedauert hat, oder wie lang das aktuelle Ereignis
+        //  dauert? Wenn das aktuelle Ereignis 0sek dauert, geschieht es offenbar
+        //  gleichzeitig?! Also etwas schreiben wie "zugleich"?!
+
+        // TODO Idee könnte sein, dass erst mehrere Alternativen erstellt werden
+        //  und auf Basis des bisherigen Textes ermittelt wird, welche Alternative
+        //  besser passt?
         return dann;
     }
 

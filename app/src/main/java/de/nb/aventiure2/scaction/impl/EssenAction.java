@@ -10,19 +10,23 @@ import de.nb.aventiure2.data.database.AvDatabase;
 import de.nb.aventiure2.data.storystate.StoryState;
 import de.nb.aventiure2.data.world.gameobjects.GameObjects;
 import de.nb.aventiure2.data.world.syscomp.feelings.Hunger;
+import de.nb.aventiure2.data.world.syscomp.location.ILocatableGO;
 import de.nb.aventiure2.data.world.syscomp.memory.Action;
 import de.nb.aventiure2.data.world.syscomp.state.IHasStateGO;
 import de.nb.aventiure2.data.world.syscomp.storingplace.ILocationGO;
 import de.nb.aventiure2.data.world.time.AvTimeSpan;
 import de.nb.aventiure2.scaction.AbstractScAction;
 
+import static de.nb.aventiure2.data.world.gameobjects.GameObjects.FROSCHPRINZ;
 import static de.nb.aventiure2.data.world.gameobjects.GameObjects.SCHLOSSFEST;
 import static de.nb.aventiure2.data.world.gameobjects.GameObjects.SCHLOSS_VORHALLE_AM_TISCH_BEIM_FEST;
+import static de.nb.aventiure2.data.world.gameobjects.GameObjects.SPIELER_CHARAKTER;
 import static de.nb.aventiure2.data.world.gameobjects.GameObjects.WALDWILDNIS_HINTER_DEM_BRUNNEN;
 import static de.nb.aventiure2.data.world.gameobjects.GameObjects.load;
 import static de.nb.aventiure2.data.world.gameobjects.GameObjects.loadSC;
 import static de.nb.aventiure2.data.world.syscomp.feelings.Hunger.SATT;
 import static de.nb.aventiure2.data.world.syscomp.state.GameObjectState.BEGONNEN;
+import static de.nb.aventiure2.data.world.syscomp.state.GameObjectState.HAT_HOCHHEBEN_GEFORDERT;
 import static de.nb.aventiure2.data.world.time.AvTimeSpan.mins;
 import static de.nb.aventiure2.german.base.AllgDescription.neuerSatz;
 import static de.nb.aventiure2.german.base.DuDescription.du;
@@ -47,12 +51,21 @@ public class EssenAction extends AbstractScAction {
         return res.build();
     }
 
-    private static boolean essenMoeglich(final AvDatabase db,
-                                         final ILocationGO room) {
+    private static <LOC_STAT extends ILocatableGO & IHasStateGO>
+    boolean essenMoeglich(final AvDatabase db,
+                          final ILocationGO room) {
         if (loadSC(db).memoryComp().getLastAction().is(Action.Type.ESSEN)) {
             // TODO Es könnten sich verschiedene essbare Dinge am selben Ort befinden!
             //  Das zweite sollte man durchaus essen können, wenn man schon das
             //  erste gegessen hat!
+            return false;
+        }
+
+        final LOC_STAT froschprinz = (LOC_STAT) load(db, FROSCHPRINZ);
+        if (room.is(SCHLOSS_VORHALLE_AM_TISCH_BEIM_FEST) &&
+                froschprinz.locationComp().hasLocation(SPIELER_CHARAKTER) &&
+                froschprinz.stateComp().hasState(HAT_HOCHHEBEN_GEFORDERT)) {
+            // SC hat gerade den Frosch in der Hand
             return false;
         }
 

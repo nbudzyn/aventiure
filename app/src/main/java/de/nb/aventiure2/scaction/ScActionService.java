@@ -1,6 +1,6 @@
 package de.nb.aventiure2.scaction;
 
-import android.app.Application;
+import android.content.Context;
 
 import androidx.annotation.Nullable;
 
@@ -48,12 +48,23 @@ public class ScActionService {
     // dependency. This adds complexity and much more code, and this sample is not about testing.
     // See the BasicSample in the android-architecture-components repository at
     // https://github.com/googlesamples
-    public ScActionService(final Application application) {
-        db = AvDatabase.getDatabase(application);
+    public ScActionService(final Context context) {
+        db = AvDatabase.getDatabase(context);
     }
 
     // TODO Have a convention like "Never do this", better have typical combinations
     //  available?
+    // TODO Test schreiben, der zufällig angebotene Aktionen ausführt und
+    //  scheitert, wenn eine RuntimeException fliegt.
+    //  Ohne GUI, aber mit Datenbank! (Datenbank initial wie auch produktiv.)
+    // TODO Für den Test, der zufällig angebotene Aktionen ausführt:
+    //  Nicht nur zufällig sondern nach konfigurierbaren Vorgaben. Z.B.
+    //  Aktionen gemäß Primzahlen, immer abwechselnd, bestimmte Festlegungen, sonst
+    //  zufällig o.Ä.
+    // TODO Button(s) anbieten, die bestimmte Aktionsfolgen durchführen, z.B.
+    //  "Durchklicken bis zum Frosch" oder "vom Frosch bis zum nächsten Morgen" o.Ä.
+    //  (Vielleicht gewisse Buttons nur an gewissen Orten anbieten, oder wenn gewisse
+    //  Aktionen zurzeit angeboten werden?!)
     public <DESC_OBJ extends ILocatableGO & IDescribableGO,
             LIV extends ILocatableGO & IDescribableGO & ILivingBeingGO> List<AbstractScAction>
     getPlayerActions() {

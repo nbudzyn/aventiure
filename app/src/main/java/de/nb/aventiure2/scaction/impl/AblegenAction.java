@@ -5,6 +5,8 @@ import androidx.annotation.Nullable;
 
 import com.google.common.collect.ImmutableList;
 
+import org.jetbrains.annotations.Contract;
+
 import java.util.Collection;
 
 import de.nb.aventiure2.data.database.AvDatabase;
@@ -15,23 +17,30 @@ import de.nb.aventiure2.data.world.syscomp.feelings.Mood;
 import de.nb.aventiure2.data.world.syscomp.location.ILocatableGO;
 import de.nb.aventiure2.data.world.syscomp.memory.Action;
 import de.nb.aventiure2.data.world.syscomp.memory.Known;
+import de.nb.aventiure2.data.world.syscomp.state.IHasStateGO;
 import de.nb.aventiure2.data.world.syscomp.storingplace.ILocationGO;
 import de.nb.aventiure2.data.world.time.AvTimeSpan;
 import de.nb.aventiure2.german.base.AbstractDescription;
 import de.nb.aventiure2.german.base.Personalpronomen;
+import de.nb.aventiure2.german.base.SubstantivischePhrase;
 import de.nb.aventiure2.german.praedikat.AdverbialeAngabe;
 import de.nb.aventiure2.german.praedikat.PraedikatMitEinerObjektleerstelle;
 import de.nb.aventiure2.scaction.AbstractScAction;
 
 import static com.google.common.base.Preconditions.checkState;
 import static de.nb.aventiure2.data.world.gameobjects.GameObjects.FROSCHPRINZ;
+import static de.nb.aventiure2.data.world.gameobjects.GameObjects.SCHLOSS_VORHALLE_AM_TISCH_BEIM_FEST;
+import static de.nb.aventiure2.data.world.gameobjects.GameObjects.SCHLOSS_VORHALLE_LANGER_TISCH_BEIM_FEST;
 import static de.nb.aventiure2.data.world.gameobjects.GameObjects.loadDescribableNonLivingLocationRecursiveInventory;
 import static de.nb.aventiure2.data.world.syscomp.memory.Action.Type.NEHMEN;
+import static de.nb.aventiure2.data.world.syscomp.state.GameObjectState.HAT_HOCHHEBEN_GEFORDERT;
 import static de.nb.aventiure2.data.world.time.AvTimeSpan.secs;
+import static de.nb.aventiure2.german.base.AllgDescription.neuerSatz;
 import static de.nb.aventiure2.german.base.AllgDescription.satzanschluss;
 import static de.nb.aventiure2.german.base.DuDescription.du;
 import static de.nb.aventiure2.german.base.GermanUtil.capitalize;
 import static de.nb.aventiure2.german.base.Numerus.SG;
+import static de.nb.aventiure2.german.base.NumerusGenus.M;
 import static de.nb.aventiure2.german.base.Person.P1;
 import static de.nb.aventiure2.german.base.StructuralElement.PARAGRAPH;
 import static de.nb.aventiure2.german.praedikat.VerbSubjObj.ABSETZEN;
@@ -71,8 +80,7 @@ public class AblegenAction
             final AvDatabase db, final StoryState initialStoryState,
             final GO gameObject,
             final ILocationGO location) {
-        if ((gameObject instanceof ILivingBeingGO) &&
-                !gameObject.is(FROSCHPRINZ)) {
+        if ((gameObject instanceof ILivingBeingGO) && !gameObject.is(FROSCHPRINZ)) {
             return ImmutableList.of();
         }
 
@@ -147,6 +155,14 @@ public class AblegenAction
         checkState(gameObject.is(FROSCHPRINZ),
                 "Unexpected creature data: " + gameObject);
 
+        return narrateAndDoFroschprinz();
+    }
+
+    private AvTimeSpan narrateAndDoFroschprinz() {
+        if (((IHasStateGO) gameObject).stateComp().hasState(HAT_HOCHHEBEN_GEFORDERT)) {
+            return narrateAndDoFroschprinz_HatHochhebenGefordert();
+        }
+
         final ImmutableList.Builder<AbstractDescription<?>> alt =
                 ImmutableList.builder();
 
@@ -182,6 +198,67 @@ public class AblegenAction
 
         timeElapsed = timeElapsed.plus(narrateUpgradeKnownAndSetLocationAndAction());
         sc.feelingsComp().setMood(Mood.NEUTRAL);
+
+        return timeElapsed;
+    }
+
+    private AvTimeSpan narrateAndDoFroschprinz_HatHochhebenGefordert() {
+        if (!location.is(SCHLOSS_VORHALLE_LANGER_TISCH_BEIM_FEST)) {
+            final ImmutableList.Builder<AbstractDescription<?>> alt =
+                    ImmutableList.builder();
+
+            if (sc.memoryComp().lastActionWas(NEHMEN, gameObject, sc)) {
+                if (initialStoryState.allowsAdditionalDuSatzreihengliedOhneSubjekt()) {
+                    if (initialStoryState.dann()) {
+                        alt.add(satzanschluss(
+                                ", aber dann denkst du dir: „So ein Ekeltier hat auf "
+                                        + "meiner Tafel nichts "
+                                        + "verloren!“, und setzt den Frosch wieder ab",
+                                secs(5))
+                                .phorikKandidat(M, FROSCHPRINZ));
+                        alt.add(satzanschluss(
+                                ", aber dann stellst du dir vor, die schleimigen "
+                                        + "Patscher auf den Tisch zu stellen und setzt den "
+                                        + "Frosch gleich wieder ab",
+                                secs(5))
+                                .phorikKandidat(M, FROSCHPRINZ));
+                    }
+                }
+            }
+
+            alt.add(neuerSatz(
+                    "Der Frosch will auf den Tisch, aber du setzt den Frosch"
+                            + (location.is(SCHLOSS_VORHALLE_AM_TISCH_BEIM_FEST) ?
+                            " wieder " :
+                            " ")
+                            + location.storingPlaceComp().getLocationMode().getWohin()
+                            + " und "
+                            + "wendest dich demonstrativ ab",
+                    secs(5))
+                    .phorikKandidat(M, FROSCHPRINZ));
+
+            AvTimeSpan timeElapsed = n.addAlt(alt);
+
+            timeElapsed = timeElapsed.plus(narrateUpgradeKnownAndSetLocationAndAction());
+            sc.feelingsComp().setMood(Mood.ANGESPANNT);
+
+            return timeElapsed;
+        }
+
+        final SubstantivischePhrase gameObjectOrPersPron =
+                getAnaphPersPronWennMglSonstDescription(gameObject, true);
+
+        AvTimeSpan timeElapsed = n.add(
+                du("setzt", gameObjectOrPersPron.akk() +
+                                " " +
+                                location.storingPlaceComp().getLocationMode().getWohin(),
+                        secs(2))
+                        .undWartest()
+                        .dann()
+                        .phorikKandidat(M, FROSCHPRINZ));
+
+        timeElapsed = timeElapsed.plus(narrateUpgradeKnownAndSetLocationAndAction());
+        sc.feelingsComp().setMood(Mood.ANGESPANNT);
 
         return timeElapsed;
     }
@@ -240,7 +317,6 @@ public class AblegenAction
                             .undWartest());
                 }
 
-
                 return n.add(du("legst",
                         gameObjektPersPron.akk() +
                                 ((sc.memoryComp().getLastAction().is(Action.Type.BEWEGEN) &&
@@ -278,6 +354,7 @@ public class AblegenAction
         return buildMemorizedAction().equals(sc.memoryComp().getLastAction());
     }
 
+    @Contract(" -> new")
     @NonNull
     private Action buildMemorizedAction() {
         return new Action(Action.Type.ABLEGEN, gameObject, location);

@@ -1,10 +1,14 @@
 package de.nb.aventiure2.data.world.syscomp.reaction;
 
+import androidx.annotation.NonNull;
+
 import de.nb.aventiure2.data.database.AvDatabase;
 import de.nb.aventiure2.data.storystate.StoryStateDao;
 import de.nb.aventiure2.data.world.base.AbstractStatelessComponent;
 import de.nb.aventiure2.data.world.base.GameObject;
 import de.nb.aventiure2.data.world.base.GameObjectId;
+import de.nb.aventiure2.data.world.gameobjects.GameObjects;
+import de.nb.aventiure2.data.world.gameobjects.player.SpielerCharakter;
 
 /**
  * Component für ein {@link GameObject}: The game object might
@@ -42,5 +46,10 @@ public class AbstractReactionsComp extends AbstractStatelessComponent {
         this.db = db;
 
         n = db.storyStateDao();
+    }
+
+    @NonNull
+    protected SpielerCharakter loadSC() {
+        return GameObjects.loadSC(db);
     }
 }

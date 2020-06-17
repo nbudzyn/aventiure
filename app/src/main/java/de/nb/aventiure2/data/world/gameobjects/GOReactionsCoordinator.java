@@ -20,6 +20,7 @@ import de.nb.aventiure2.data.world.syscomp.storingplace.ILocationGO;
 import de.nb.aventiure2.data.world.time.AvDateTime;
 import de.nb.aventiure2.data.world.time.AvTimeSpan;
 
+import static de.nb.aventiure2.data.world.gameobjects.GameObjects.load;
 import static de.nb.aventiure2.data.world.time.AvTimeSpan.noTime;
 
 public class GOReactionsCoordinator {
@@ -39,7 +40,7 @@ public class GOReactionsCoordinator {
         //  Problem: Wenn der Dieb den Spieler bestiehlt o.Ä. kennt man den
         //  Aktor nicht. Aktor also separater Parameter?
         return onLeave(
-                (ILocatableGO) GameObjects.load(db, locatableId),
+                (ILocatableGO) load(db, locatableId),
                 from, toId);
     }
 
@@ -50,7 +51,7 @@ public class GOReactionsCoordinator {
             return onLeave(locatable, from, (ILocationGO) null);
         }
 
-        final GameObject to = GameObjects.load(db, toId);
+        final GameObject to = load(db, toId);
         if (!(to instanceof ILocationGO)) {
             return noTime();
         }
@@ -70,14 +71,14 @@ public class GOReactionsCoordinator {
                               @Nullable final ILocationGO from,
                               final GameObjectId toId) {
         return onEnter(
-                (ILocatableGO) GameObjects.load(db, locatableId),
+                (ILocatableGO) load(db, locatableId),
                 from, toId);
     }
 
     public AvTimeSpan onEnter(final ILocatableGO locatable,
                               @Nullable final ILocationGO from,
                               final GameObjectId toId) {
-        final GameObject to = GameObjects.load(db, toId);
+        final GameObject to = load(db, toId);
         if (!(to instanceof ILocationGO)) {
             return noTime();
         }

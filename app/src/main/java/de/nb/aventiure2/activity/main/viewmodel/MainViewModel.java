@@ -73,7 +73,7 @@ public class MainViewModel extends AndroidViewModel {
                 // Aktionen aus der GUI entfernen
                 playerActionHandlers.setValue(ImmutableList.of());
 
-                db.databaseWriteExecutor.execute(
+                AvDatabase.databaseWriteExecutor.execute(
                         new Runnable() {
                             @WorkerThread
                             @Override

@@ -165,29 +165,10 @@ public class FroschprinzTalkingComp extends AbstractTalkingComp {
                 );
             case WARTET_AUF_SC_BEIM_SCHLOSSFEST:
                 return ImmutableList.of();
+            case AUF_DEM_WEG_ZUM_SCHLOSSFEST:
+                return ImmutableList.of();
             case HAT_HOCHHEBEN_GEFORDERT:
-                return ImmutableList.of(
-                        exitSt(this::froschHatHochhebenGefordert_Exit)
-                        // STORY: Der "Raum" AM TISCH enthält ein Objekt, nämlich den Tisch.
-                        //  Auch (gewisse) Objekte können Dinge "enthalten" ("auf dem Tisch").
-                        //  Der Frosch sitzt initial im Raum selbst, d.h. AUF DER BANK.
-                        //  Bei jeder AblegenAction kann man ggf. wählen, WOHIN abgelegt werden
-                        //  soll ("Die Kugel auf den Tisch legen", "die Kugel auf die Bank legen")
-                        // STORY generell kann man mit allen Objekten interagieren, die sich
-                        //  (direkt oder mittelbar) im aktuellen Raum befinden.
-                        //  Als Raum wird dabei das äußerste Objekt betrachtet.
-                        // STORY Frosch nehmen erhält am Tisch eine separate
-                        //   Beschreibung ("dein Herz klopft gewaltig, dann greifst du den Frosch",
-                        //   ohne "in die Tasche") und ist vermutlich eine
-                        //   AKTION oder eine Talk-Step, der WÄHREND des Gesprächs geht!
-                        //   Ggf. Extra Satz beim verlassen des Tisches MIT FROSCH:
-                        //   "du steckst den Frosch in eine Tasche"
-                        // STORY Ein Schritt im Gespräch entspricht "Frosch nehmen". Damit ist
-                        //  das Gespräch beendet. Man kann den Frosch dann "auf dem Tisch absetzen"
-                        //  (oder natürlich auch wieder auf der Bank).
-                        // STORY Der Frosch reagiert natürlich unterschiedlich, ob man ihn auf den
-                        //  Tisch oder die Bank setzt.
-                );
+                return ImmutableList.of();
             default:
                 throw new IllegalStateException("Unexpected Froschprinz state: "
                         + stateComp.getState());
@@ -541,34 +522,6 @@ public class FroschprinzTalkingComp extends AbstractTalkingComp {
     // -------------------------------------------------------------------------------
     // .. ERWARTET_VON_SC_EINLOESUNG_SEINES_VERSPRECHENS
     // -------------------------------------------------------------------------------
-
-    // -------------------------------------------------------------------------------
-    // .. HAT_HOCHHEBEN_GEFORDERT
-    // -------------------------------------------------------------------------------
-
-    private AvTimeSpan froschHatHochhebenGefordert_Exit() {
-        unsetTalkingTo();
-
-        return n.addAlt(
-                neuerSatz(PARAGRAPH,
-                        "„Du tickst ja wohl nicht richtig! So ein Ekeltier wie du hat auf "
-                                + "meiner Tafel nichts "
-                                + "verloren!“ Du wendest du dich empört ab",
-                        secs(15))
-                        .undWartest(),
-                neuerSatz(PARAGRAPH,
-                        "„Ich soll deine schleimigen Patscher auf den Tisch stellen? "
-                                + "Dafür musst du dir wen anderes suchen!“",
-                        secs(15))
-                        .beendet(PARAGRAPH),
-                neuerSatz(PARAGRAPH,
-                        "Dir wird ganz angst, aber du sagst: „Du denkst wohl, was man "
-                                + "versprochen hat, das "
-                                + "muss man auch halten? Da bist du bei mir an den Falschen "
-                                + "geraten!“ Demonstrativ wendest du dich ab",
-                        secs(15))
-                        .undWartest());
-    }
 
     // -------------------------------------------------------------------------------
     // .. ALLGEMEINES
