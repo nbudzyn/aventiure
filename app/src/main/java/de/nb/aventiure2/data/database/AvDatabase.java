@@ -4,6 +4,7 @@ import android.content.Context;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.annotation.VisibleForTesting;
 import androidx.room.Database;
 import androidx.room.Room;
 import androidx.room.RoomDatabase;
@@ -78,6 +79,11 @@ import static de.nb.aventiure2.data.world.time.AvTime.oClock;
 // schema so you can check the current schema into your version control system."
 public abstract class AvDatabase extends RoomDatabase {
     public static final String DATABASE_NAME = "aventiureDatabase";
+
+    @VisibleForTesting
+    public static void resetDatabase() {
+        INSTANCE = null;
+    }
 
     public abstract CounterDao counterDao();
 

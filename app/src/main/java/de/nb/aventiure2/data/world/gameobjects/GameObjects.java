@@ -2,6 +2,7 @@ package de.nb.aventiure2.data.world.gameobjects;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.annotation.VisibleForTesting;
 
 import com.google.common.collect.ImmutableList;
 
@@ -97,6 +98,14 @@ public class GameObjects {
 
     // SYSTEMS
     private static LocationSystem LOCATION_SYSTEM;
+
+    @VisibleForTesting
+    public static void reset(final AvDatabase db) {
+        ALL = null;
+        REACTIONS_COORDINATOR = null;
+        LOCATION_SYSTEM = null;
+        saveAllInitialState(db);
+    }
 
     /**
      * Speichert für alle Game Objects ihre initialen Daten in die Datenbank.
