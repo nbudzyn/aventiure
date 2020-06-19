@@ -233,7 +233,7 @@ public class WalkerTest {
         public AbstractScAction chooseAction(
                 final List<? extends AbstractScAction> actionAlternatives) {
             count++;
-            if (count > 10) {
+            if (count > 100) {
                 return null;
             }
 
