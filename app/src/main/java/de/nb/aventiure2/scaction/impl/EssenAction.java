@@ -63,7 +63,7 @@ public class EssenAction extends AbstractScAction {
 
         final LOC_STAT froschprinz = (LOC_STAT) load(db, FROSCHPRINZ);
         if (room.is(SCHLOSS_VORHALLE_AM_TISCH_BEIM_FEST) &&
-                froschprinz.locationComp().hasLocation(SPIELER_CHARAKTER) &&
+                froschprinz.locationComp().hasRecursiveLocation(SPIELER_CHARAKTER) &&
                 froschprinz.stateComp().hasState(HAT_HOCHHEBEN_GEFORDERT)) {
             // SC hat gerade den Frosch in der Hand
             return false;

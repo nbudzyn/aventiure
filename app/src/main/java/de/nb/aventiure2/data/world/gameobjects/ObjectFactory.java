@@ -30,6 +30,24 @@ public class ObjectFactory {
         this.db = db;
     }
 
+    /**
+     * Erzeugt ein Objekt, das immer gleich beschrieben wird ("eine Tasche", niemals "die Tasche").
+     */
+    GameObject create(final GameObjectId id,
+                      final Nominalphrase descriptionAtFirstSightAndWhenKnown,
+                      @Nullable final GameObjectId initialLocationId,
+                      @Nullable final GameObjectId initialLastLocationId,
+                      final boolean movable) {
+        return create(id,
+                descriptionAtFirstSightAndWhenKnown,
+                descriptionAtFirstSightAndWhenKnown,
+                descriptionAtFirstSightAndWhenKnown,
+                initialLocationId,
+                initialLastLocationId,
+                movable);
+    }
+
+
     public GameObject create(final GameObjectId id,
                              final NumerusGenus numerusGenus,
                              final String descriptionAtFirstSightNomDatAkk,

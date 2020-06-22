@@ -60,9 +60,10 @@ public class GameObjects {
     public static final GameObjectId SPIELER_CHARAKTER = new GameObjectId(1);
 
     // OBJECTS
-    public static final GameObjectId GOLDENE_KUGEL = new GameObjectId(10_000);
+    public static final GameObjectId EINE_TASCHE_DES_SPIELER_CHARAKTERS = new GameObjectId(10_000);
+    public static final GameObjectId GOLDENE_KUGEL = new GameObjectId(10_100);
     public static final GameObjectId SCHLOSS_VORHALLE_LANGER_TISCH_BEIM_FEST =
-            new GameObjectId(10_001);
+            new GameObjectId(10_101);
 
     // CREATURES
     public static final GameObjectId FROSCHPRINZ = new GameObjectId(20_001);
@@ -187,6 +188,11 @@ public class GameObjects {
 
                     invisible.createSchlossfest(),
                     invisible.createTageszeit(),
+                    object.create(EINE_TASCHE_DES_SPIELER_CHARAKTERS,
+                            np(F, "eine Tasche", "einer Tasche"),
+                            SPIELER_CHARAKTER, null,
+                            true),
+
                     object.create(GOLDENE_KUGEL,
                             np(F, "eine goldene Kugel",
                                     "einer goldenen Kugel"),
@@ -290,8 +296,22 @@ public class GameObjects {
     ImmutableList<LOCATABLE_DESC_LOCATION> loadDescribableNonLivingLocationRecursiveInventory(
             final AvDatabase db,
             final ILocationGO inventoryHolder) {
+        return loadDescribableNonLivingLocationRecursiveInventory(db, inventoryHolder.getId());
+    }
+
+    /**
+     * Ermittelt die nicht-lebenden Game Objects,
+     * an denen etwas abgelegt werden kann an diesem Ort (auch rekursiv), lädt sie
+     * (sofern noch nicht geschehen)
+     * und gibt sie zurück -
+     * nur Gegenstände, die eine Beschreibung haben.
+     */
+    public static <LOCATABLE_DESC_LOCATION extends ILocatableGO & IDescribableGO & ILocationGO>
+    ImmutableList<LOCATABLE_DESC_LOCATION> loadDescribableNonLivingLocationRecursiveInventory(
+            final AvDatabase db,
+            final GameObjectId inventoryHolderId) {
         return filterLocation(
-                loadDescribableNonLivingRecursiveInventory(db, inventoryHolder.getId()));
+                loadDescribableNonLivingRecursiveInventory(db, inventoryHolderId));
     }
 
     /**

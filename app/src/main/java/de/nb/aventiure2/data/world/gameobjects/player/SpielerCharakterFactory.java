@@ -16,6 +16,7 @@ import de.nb.aventiure2.data.world.syscomp.storingplace.StoringPlaceComp;
 import de.nb.aventiure2.data.world.syscomp.talking.impl.NoSCTalkActionsTalkingComp;
 import de.nb.aventiure2.data.world.time.AvDateTime;
 
+import static de.nb.aventiure2.data.world.gameobjects.GameObjects.EINE_TASCHE_DES_SPIELER_CHARAKTERS;
 import static de.nb.aventiure2.data.world.gameobjects.GameObjects.GOLDENE_KUGEL;
 import static de.nb.aventiure2.data.world.gameobjects.GameObjects.SCHLOSS_VORHALLE;
 import static de.nb.aventiure2.data.world.gameobjects.GameObjects.SPIELER_CHARAKTER;
@@ -54,6 +55,7 @@ public class SpielerCharakterFactory {
         return ImmutableMap.<GameObjectId, Known>builder()
                 .put(SPIELER_CHARAKTER, KNOWN_FROM_LIGHT)
                 .put(SCHLOSS_VORHALLE, KNOWN_FROM_LIGHT)
+                .put(EINE_TASCHE_DES_SPIELER_CHARAKTERS, KNOWN_FROM_LIGHT)
                 .put(GOLDENE_KUGEL, KNOWN_FROM_LIGHT)
                 .build();
     }

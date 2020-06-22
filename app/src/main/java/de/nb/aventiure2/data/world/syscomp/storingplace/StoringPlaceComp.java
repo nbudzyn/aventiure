@@ -4,7 +4,9 @@ import de.nb.aventiure2.data.database.AvDatabase;
 import de.nb.aventiure2.data.world.base.AbstractStatelessComponent;
 import de.nb.aventiure2.data.world.base.GameObject;
 import de.nb.aventiure2.data.world.base.GameObjectId;
+import de.nb.aventiure2.data.world.base.IGameObject;
 
+import static de.nb.aventiure2.data.world.gameobjects.GameObjects.loadDescribableNonLivingLocationRecursiveInventory;
 import static de.nb.aventiure2.data.world.syscomp.storingplace.Lichtverhaeltnisse.HELL;
 
 /**
@@ -36,6 +38,39 @@ public class StoringPlaceComp extends AbstractStatelessComponent {
         this.db = db;
         this.locationMode = locationMode;
         this.dauerhaftBeleuchtet = dauerhaftBeleuchtet;
+    }
+
+    /**
+     * Gibt zurück, ob es sich bei diesem Game Objekt um eine der Alternativen handelt oder
+     * dieses Game Object in seinem Inventar (ggf. auch rekursiv) eine der Alternativen enthält.
+     */
+    public boolean isOrHasInInventory(final IGameObject... someAlternatives) {
+        for (final IGameObject alternative : someAlternatives) {
+            if (isOrHasInInventory(alternative.getId())) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    /**
+     * Gibt zurück, ob es sich bei diesem Game Objekt um eine der Alternativen handelt oder
+     * dieses Game Object in seinem Inventar (ggf. auch rekursiv) eine der Alternativen enthält.
+     */
+    public boolean isOrHasInInventory(final GameObjectId... someIdAlternatives) {
+        for (final GameObjectId idAlternative : someIdAlternatives) {
+            if (getGameObjectId().equals(idAlternative)) {
+                return true;
+            }
+
+            if (loadDescribableNonLivingLocationRecursiveInventory(db, getGameObjectId())
+                    .contains(idAlternative)) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     public StoringPlaceType getLocationMode() {

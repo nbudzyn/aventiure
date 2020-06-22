@@ -178,7 +178,7 @@ public class HochwerfenAction<OBJ extends IDescribableGO & ILocatableGO>
         // fallen lassen, NACHDEM der Frosch schon Dinge hochgeholt hat.
         // Dann ist die Kugel jetzt WEG - PECH.
         final AvTimeSpan timeElapsed = narrateAndDoObjectFaelltSofortInDenBrunnen();
-        if (froschprinz.locationComp().hasLocation(room)) {
+        if (froschprinz.locationComp().hasRecursiveLocation(room)) {
             return timeElapsed;
         }
 

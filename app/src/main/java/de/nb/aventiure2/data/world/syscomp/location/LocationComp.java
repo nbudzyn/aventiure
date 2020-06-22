@@ -98,8 +98,38 @@ public class LocationComp extends AbstractStatefulComponent<LocationPCD> {
                 .onEnter(getGameObjectId(), getLastLocation(), newLocationId);
     }
 
-    public boolean hasLocation(final @Nullable ILocationGO gameObject) {
-        return hasLocation(gameObject != null ? gameObject.getId() : null);
+    public boolean hasRecursiveLocation(final @Nullable GameObjectId locationId) {
+        final GameObject location = GameObjects.load(db, locationId);
+        if (!(location instanceof ILocationGO)) {
+            return false;
+        }
+
+        return hasRecursiveLocation((ILocationGO) location);
+    }
+
+    /**
+     * Gibt zurück, ob sich das Game Object an dieser <code>location</code> befindet (z.B.
+     * in einem Raum) - oder vielleicht auch an einer untergeordneten Location (z.B. in einer
+     * Vase auf einem Tisch in diesem Raum).
+     */
+    public boolean hasRecursiveLocation(final @Nullable ILocationGO location) {
+        if (hasLocation(location)) {
+            return true;
+        }
+
+        if (!(location instanceof ILocatableGO)) {
+            return false;
+        }
+
+        return hasRecursiveLocation(((ILocatableGO) location).locationComp().getLocation());
+    }
+
+    /**
+     * Gibt zurück, ob sich das Game Object an dieser <code>location</code> befindet (<i>nicht</i>
+     * rekursiv, also <i>nicht</i> auf einem Tisch in diesem Raum).
+     */
+    public boolean hasLocation(final @Nullable ILocationGO location) {
+        return hasLocation(location != null ? location.getId() : null);
     }
 
     public boolean hasLocation(final @Nullable GameObjectId locationId) {

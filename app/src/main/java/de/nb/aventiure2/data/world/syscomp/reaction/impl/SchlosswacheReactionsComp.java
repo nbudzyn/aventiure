@@ -89,11 +89,11 @@ public class SchlosswacheReactionsComp
             return onSCEnter(from, to);
         }
 
-        if (to.is(SPIELER_CHARAKTER)) {
+        if (loadSC().storingPlaceComp().isOrHasInInventory(to)) {
             return onRelocationToSC(locatable, from);
         }
 
-        if (from != null && from.is(SPIELER_CHARAKTER)) {
+        if (from != null && loadSC().storingPlaceComp().isOrHasInInventory(from)) {
             return onRelocationFromSC(to);
         }
 
@@ -116,7 +116,8 @@ public class SchlosswacheReactionsComp
         }
 
         final ILocatableGO goldeneKugel = (ILocatableGO) GameObjects.load(db, GOLDENE_KUGEL);
-        if (goldeneKugel.locationComp().hasLocation(SCHLOSS_VORHALLE)) {
+        if (!goldeneKugel.locationComp().hasRecursiveLocation(SPIELER_CHARAKTER)
+                && goldeneKugel.locationComp().hasRecursiveLocation(SCHLOSS_VORHALLE)) {
             if (db.counterDao().incAndGet(
                     "SchlosswacheReactions_onEnterRoom_SchlossVorhalle") > 1) {
                 return n.add(neuerSatz(
@@ -203,12 +204,14 @@ public class SchlosswacheReactionsComp
     @Contract("_, null -> !null")
     private AvTimeSpan onRelocationToSC(final ILocatableGO locatable,
                                         @Nullable final ILocationGO from) {
-        if (from == null || !locationComp.hasLocation(from)) {
+        if (from == null || !locationComp.hasRecursiveLocation(from)) {
             // The Schlosswache does not notice.
             return noTime();
         }
 
-        if (!from.is(SCHLOSS_VORHALLE, SPIELER_CHARAKTER)) {
+        if (!((ILocationGO) GameObjects.load(db, SCHLOSS_VORHALLE)).storingPlaceComp()
+                .isOrHasInInventory(from)
+                && !loadSC().storingPlaceComp().isOrHasInInventory(from)) {
             return noTime();
         }
 
@@ -218,7 +221,9 @@ public class SchlosswacheReactionsComp
 
         switch (stateComp.getState()) {
             case UNAUFFAELLIG:
-                if (!from.is(SCHLOSS_VORHALLE, SPIELER_CHARAKTER)) {
+                if (!((ILocationGO) GameObjects.load(db, SCHLOSS_VORHALLE)).storingPlaceComp()
+                        .isOrHasInInventory(from)
+                        && !loadSC().storingPlaceComp().isOrHasInInventory(from)) {
                     return noTime();
                 }
                 return scHatEtwasGenommen_wacheWirdAufmerksam();
@@ -270,7 +275,7 @@ public class SchlosswacheReactionsComp
     private AvTimeSpan scHatGoldeneKugelGenommenOderHochgeworfenUndAufgefangen_wacheIstAufmerksam(
             final ILocatableGO goldeneKugel,
             final ILocationGO fromSchlossVorhalleOderSC) {
-        if (fromSchlossVorhalleOderSC.is(SPIELER_CHARAKTER)) {
+        if (loadSC().storingPlaceComp().isOrHasInInventory(fromSchlossVorhalleOderSC)) {
             return scHatGoldeneKugelHochgeworfenUndAufgefangen_wacheIstAufmerksam(goldeneKugel);
         }
 
@@ -388,7 +393,7 @@ public class SchlosswacheReactionsComp
      * der Gegenstand hat sich aufgelöst o.Ä.
      */
     private AvTimeSpan onRelocationFromSC(final ILocationGO to) {
-        if (!locationComp.hasLocation(to)) {
+        if (!locationComp.hasRecursiveLocation(to)) {
             // The Schlosswache does not notice.
             return noTime();
         }
@@ -442,7 +447,7 @@ public class SchlosswacheReactionsComp
 
     private AvTimeSpan schlossfestBeginnt() {
         final SpielerCharakter sc = loadSC();
-        if (sc.locationComp().hasLocation(SCHLOSS_VORHALLE)) {
+        if (sc.locationComp().hasRecursiveLocation(SCHLOSS_VORHALLE)) {
             return schlossfestBeginnt_Vorhalle(sc);
         }
 

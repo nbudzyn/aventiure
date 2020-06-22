@@ -68,6 +68,7 @@ public class NehmenAction
 
 // TODO Der Spieler trägt zwei Dinge stets mit sich herum:
 //  EINE TASCHE (in eine Tasche, in einer Tasche)
+//  SEINE HAENDE (in die Hand, in der Hand)
 //
 //  Nehmen / mitbehmen Action legt Gegenstände grundsätzlich IN EINE
 //  TASCHE.
@@ -327,33 +328,33 @@ public class NehmenAction
 
     @NonNull
     private AvTimeSpan narrateObject() {
-        final PraedikatMitEinerObjektleerstelle nehmenPraedikat =
+        final PraedikatMitEinerObjektleerstelle mitnehmenPraedikat =
                 gameObject.locationComp().getLocation()
-                        .storingPlaceComp().getLocationMode().getNehmenPraedikat();
+                        .storingPlaceComp().getLocationMode().getMitnehmenPraedikat();
 
         if (sc.memoryComp().getLastAction().hasObject(gameObject)) {
             if (sc.memoryComp().getLastAction().is(Action.Type.ABLEGEN)) {
-                return narrateObjectNachAblegen(nehmenPraedikat);
+                return narrateObjectNachAblegen(mitnehmenPraedikat);
             }
 
             final Mood mood = sc.feelingsComp().getMood();
 
             if (sc.memoryComp().getLastAction().is(Action.Type.HOCHWERFEN) &&
                     mood.isEmotional()) {
-                // TODO Es wäre gut, wenn das nehmenPraedikat direkt
+                // TODO Es wäre gut, wenn das mitnehmenPraedikat direkt
                 //  eine DuDescription erzeugen könnte, gleich mit dann etc.
                 //  Oder wenn man vielleicht etwas ähliches wie eine DuDescription
-                //  erzeugen könnte, die intern das nehmenPraedikat enthält.
+                //  erzeugen könnte, die intern das mitnehmenPraedikat enthält.
                 //  Leider müssen wir bis dahin eine AllgDescription bauen. :-(
                 final Nominalphrase objectDesc = getDescription(gameObject, true);
                 return n.add(neuerSatz(StructuralElement.PARAGRAPH,
-                        nehmenPraedikat
+                        mitnehmenPraedikat
                                 .getDescriptionDuHauptsatz(
                                         objectDesc,
                                         mood.getAdverbialeAngabe()),
                         secs(5))
                         .undWartest(
-                                nehmenPraedikat
+                                mitnehmenPraedikat
                                         .duHauptsatzLaesstSichMitNachfolgendemDuHauptsatzZusammenziehen())
                         .phorikKandidat(objectDesc, gameObject.getId())
                         .dann());
@@ -362,11 +363,11 @@ public class NehmenAction
 
         return n.add(
                 neuerSatz(PARAGRAPH,
-                        nehmenPraedikat
+                        mitnehmenPraedikat
                                 .getDescriptionDuHauptsatz(getDescription(gameObject, true)),
                         secs(5))
                         .undWartest(
-                                nehmenPraedikat
+                                mitnehmenPraedikat
                                         .duHauptsatzLaesstSichMitNachfolgendemDuHauptsatzZusammenziehen())
                         .dann());
     }

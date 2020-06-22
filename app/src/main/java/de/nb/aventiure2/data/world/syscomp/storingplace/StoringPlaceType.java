@@ -40,19 +40,19 @@ public enum StoringPlaceType {
     private final String wohin;
 
     /**
-     * Das Verb das beschreibt, das der Benutzer etwas von diesem Ort <i>nimmt</i>
+     * Das Verb das beschreibt, das der Benutzer etwas von diesem Ort <i>mitnimmt</i>
      */
-    private final PraedikatMitEinerObjektleerstelle nehmenPraedikat;
+    private final PraedikatMitEinerObjektleerstelle mitnehmenPraedikat;
 
     StoringPlaceType(final String wo, final String wohin) {
         this(wo, wohin, NEHMEN);
     }
 
     StoringPlaceType(final String wo, final String wohin,
-                     final PraedikatMitEinerObjektleerstelle nehmenPraedikat) {
+                     final PraedikatMitEinerObjektleerstelle mitnehmenPraedikat) {
         this.wo = wo;
         this.wohin = wohin;
-        this.nehmenPraedikat = nehmenPraedikat;
+        this.mitnehmenPraedikat = mitnehmenPraedikat;
     }
 
     public AdverbialeAngabe getWoAdvAngabe() {
@@ -71,7 +71,7 @@ public enum StoringPlaceType {
         return wohin;
     }
 
-    public PraedikatMitEinerObjektleerstelle getNehmenPraedikat() {
-        return nehmenPraedikat;
+    public PraedikatMitEinerObjektleerstelle getMitnehmenPraedikat() {
+        return mitnehmenPraedikat;
     }
 }

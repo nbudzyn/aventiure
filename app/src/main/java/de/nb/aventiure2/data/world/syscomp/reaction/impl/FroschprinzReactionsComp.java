@@ -92,10 +92,11 @@ public class FroschprinzReactionsComp
 
     private AvTimeSpan onSCLeave(final ILocationGO from,
                                  @Nullable final ILocationGO to) {
-        if (!locationComp.hasLocation(from)) {
+        if (locationComp.hasRecursiveLocation(SPIELER_CHARAKTER) ||
+                !locationComp.hasRecursiveLocation(from)) {
             // Spieler lässt den Frosch nicht zurück
 
-            if (locationComp.hasLocation(SPIELER_CHARAKTER)) {
+            if (locationComp.hasRecursiveLocation(SPIELER_CHARAKTER)) {
                 // Spieler nimmt den Frosch mit
                 return onSCLeaveMitFroschprinz(from, to);
             }
@@ -164,7 +165,8 @@ public class FroschprinzReactionsComp
 
     private AvTimeSpan onSCEnter(@Nullable final ILocationGO from,
                                  final ILocationGO to) {
-        if (!locationComp.hasLocation(to)) {
+        if (locationComp.hasRecursiveLocation(SPIELER_CHARAKTER) ||
+                !locationComp.hasRecursiveLocation(to)) {
             // Spieler hat nicht den Raum betreten, wo der Frosch sitzt.
             return noTime();
         }
@@ -208,7 +210,9 @@ public class FroschprinzReactionsComp
     @Contract("null, _ -> !null")
     private AvTimeSpan onGoldeneKugelEnter(@Nullable final ILocationGO from,
                                            final ILocationGO to) {
-        if (from == null || !from.is(SPIELER_CHARAKTER)) {
+        if (from == null || !loadSC().storingPlaceComp().isOrHasInInventory(from)) {
+            // auch nicht vom Spieler oder aus einer Tasche des Spielers o.Ä.
+
             return noTime();
         }
 
@@ -251,7 +255,8 @@ public class FroschprinzReactionsComp
         if (to.is(SCHLOSS_VORHALLE_LANGER_TISCH_BEIM_FEST)) {
             // Der Froschprinz hat es auf den Tisch beim Schlossfest geschafft!
             // Ist der Spieler auch da?
-            if (!loadSC().locationComp().hasLocation(SCHLOSS_VORHALLE_AM_TISCH_BEIM_FEST)) {
+            if (!loadSC().locationComp()
+                    .hasRecursiveLocation(SCHLOSS_VORHALLE_AM_TISCH_BEIM_FEST)) {
                 return noTime();
 
                 // STORY Wenn der Spieler später auch an den Tisch kommt,
@@ -264,8 +269,12 @@ public class FroschprinzReactionsComp
             return noTime();
         }
 
-        // Der Froschprinz ist irgendwo anders hingekommen.
-        if (from == null || !from.is(SPIELER_CHARAKTER)) {
+        if (
+            // Der Froschprinz ist aus dem Nichts erschienen.
+                from == null ||
+                        // oder der Froschprinz kam zumindest nicht vom Spieler, auch nicht aus
+                        // einer Tasche o.Ä.
+                        !loadSC().storingPlaceComp().isOrHasInInventory(from)) {
             return noTime();
         }
 
@@ -286,7 +295,7 @@ public class FroschprinzReactionsComp
     @Override
     public AvTimeSpan onEssen(final IGameObject gameObject) {
         if (!gameObject.is(SPIELER_CHARAKTER)) {
-            // Wenn nicht der Spieler ist, ist es dem Frosch egal
+            // Wenn nicht der Spieler isst, ist es dem Frosch egal
             return noTime();
         }
 
@@ -294,7 +303,7 @@ public class FroschprinzReactionsComp
     }
 
     private AvTimeSpan onSCEssen() {
-        if (!loadSC().locationComp().hasLocation(SCHLOSS_VORHALLE_AM_TISCH_BEIM_FEST)) {
+        if (!loadSC().locationComp().hasRecursiveLocation(SCHLOSS_VORHALLE_AM_TISCH_BEIM_FEST)) {
             // Wenn der Spieler nicht im Schloss isst, ist es dem Frosch egal
             return noTime();
         }
@@ -311,7 +320,7 @@ public class FroschprinzReactionsComp
 
     private AvTimeSpan onSCEssenBeimSchlossfest() {
         if (stateComp.hasState(ERWARTET_VON_SC_EINLOESUNG_SEINES_VERSPRECHENS)
-                && locationComp.hasLocation(SPIELER_CHARAKTER)) {
+                && locationComp.hasRecursiveLocation(SPIELER_CHARAKTER)) {
             return froschprinzHuepftAusTascheUndWillMitessen();
         }
 
@@ -417,8 +426,9 @@ public class FroschprinzReactionsComp
 
         @Nullable final ILocationGO scLocation = loadSC().locationComp().getLocation();
 
-        if ((scLocation != null && locationComp.hasLocation(scLocation)) ||
-                locationComp.hasLocation(SPIELER_CHARAKTER)) {
+        // STORY Der Spieler sollte auch mitbekommen, dass der Frosch wegläuft, wenn
+        //  er z.B. auf einem Stuhl sitzt o.Ä.
+        if ((scLocation != null && locationComp.hasRecursiveLocation(scLocation))) {
             timeElapsed = timeElapsed.plus(n.add(neuerSatz(PARAGRAPH,
                     "Plitsch platsch, plitsch platsch hüpft der Frosch davon",
                     secs(5))
