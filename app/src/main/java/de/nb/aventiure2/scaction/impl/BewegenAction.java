@@ -96,6 +96,31 @@ public class BewegenAction<R extends ISpatiallyConnectedGO & ILocationGO,
             @NonNull final R room) {
         final ImmutableList.Builder<AbstractScAction> res = builder();
 
+        // STORY Spieler ist Rapunzels Königssohn: Rapunzel: Man muss eine Strickleiter
+        //  besorgen - oder Seide kaufen und etwas zum Stricken??? Gold gabs vielleicht
+        //  vom Froschprinzen?
+
+// STORY Spieler ist Rapunzel: In Hinterhaus ein kleines Fenster, daraus konnte man in einen
+//  prächtigen Garten sehen, der voll der schönsten Blumen und Kräuter stand; er war aber von
+//  einer hohen Mauer umgeben,.  stand an die- sem Fenster und sah in den Garten hinab, da
+//  erblickte sie ein Beet, das mit den schönsten Rapunzeln bepflanzt war: und sie sahen so
+//  frisch und grün aus, daß sie lüstern ward und das größte Verlangen empfand, von den Rapunzeln
+//  zu essen.  In der Abenddämmerung stieg er also über die Mauer in den Garten die Mauer
+//  herabgeklettert stach in aller Eile eine Handvoll Rapunzeln als er aber  erschrak er gewaltig,
+//  denn er sah die Zauberin vor sich stehen. »Wie kannst du es wagen,« sprach sie mit zornigem
+//  Blick, die Zaube- rin, die ihn mit bösen und giftigen Blicken ansah  »in meinen Garten zu
+//  steigen und wie ein Dieb mir meine Rapunzeln zu stehlen?
+//        das soll dir schlecht bekommen.«
+//        In ihrem Zorne
+//        Schloß es die Zauberin in einen Turm, der in einem Walde lag, und weder Treppe noch
+//        Türe hatte, nur ganz oben war ein kleines Fensterchen.
+//        Es soll ihm gut gehen, und ich will für es sorgen stellte  sich unten hin und rief
+//        den Wald als es anfing dunkel zu werden  in ihrer Einsamkeit Türe des Turms, keine
+//        ich weiß nicht, wie ich herabkommen kann. einen Strang Seide mit, daraus will ich
+//        eine Leiter flechten, und wenn die fertig ist, so steige ich herunter wickelte sie
+//        oben um einen Fenster- haken, und dann fielen 20 Ellen herunter laß herunter Leiter,
+//        auf welcher man  sprang aber die Dornen, in die er fiel,
+
 
         final List<SpatialConnection> spatialConnections =
                 room.spatialConnectionComp().getConnections();

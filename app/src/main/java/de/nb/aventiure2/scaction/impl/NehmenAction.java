@@ -64,6 +64,64 @@ public class NehmenAction
                                                 final StoryState initialStoryState,
                                                 final GO object) {
         final ImmutableList.Builder<NehmenAction> res = ImmutableList.builder();
+
+
+// TODO Der Spieler trägt zwei Dinge stets mit sich herum:
+//  EINE TASCHE (in eine Tasche, in einer Tasche)
+//
+//  Nehmen / mitbehmen Action legt Gegenstände grundsätzlich IN EINE
+//  TASCHE.
+//                >
+//  Die Prüfungen, ob sich etwas "beim SC" befindet,  müssen überprüft
+//                >werden und im Zweifel einfach rekursiv prüfen.
+//
+//  Einzelne Dinge kann man in / auf die HAND nehmen, nämlich den Frosch.
+//  Den kann man manchmal NICHTBmitnehmen. Man kann diese Dinge in die HAND
+//                >nehmen, wenn sie sich in der TASCHE oder im selben RAUM befinden.
+//
+//  Wenn man etwas zb den Frosch in der HAND hat, kann man bestimmte
+//  Aktionen nicht mehr tun, zb Essen.
+//                >
+//  Was man in der TASCHE oder in der HAND hat, kann man irgendwo im Raum
+//  absetzen.
+//                >
+//  Hat man den Frosch in der HAND oder 8n der TASCHE und verlässt den
+//  Tisch beim Schlossfest, hüpft der Frosch weg / hinaus. Der Spieler
+//                >merkt gar nicht recht wohin.
+//
+//  Den Frosch auf den Tisch setzen
+//
+//  und setzt ihn auf den Tisch.
+//
+//  Wie er nun da sitzt glotzt er dich mit großen Glubschaugen an und
+//                >spricht: Nun füll deine Holzschale auf, wir wollen zusammen essen.«
+//
+//  Eintopf essen
+//
+//  Was hatte deine Großmutter immer gesagt?
+//  »Wer dir geholfen in der Not, den sollst du hernach nicht verachten.«
+//  Du füllst deine Schale neu mit Eintopf, steckst deinen Holzlöffel
+//  hinein... aber was ist das? Auch ein goldener Löffel fährt mit in die
+//  Schale. Du schaust verwirrt auf - kein Frosch mehr auf dem Tisch, doch
+//                >neben dir auf der Bank sitzt ein junger Mann mit schönen freundlichen
+//                >Augen. In Samt und Seide ist er gekleidet, mit goldenen Ketten um den
+//  Hals. "Ihr habt mich erlöst", sagt er, "ich danke euch!" Eine böse Hexe
+//                >hätte ihn verwünscht. "Ich werde euch nicht vergessen!"
+//                >
+//  Am Tisch um euch herum entsteht Aufregung. Er erhebt sich und schickt
+//                >sich an, die Halle zu verlassen.
+//                >
+//  Vom Tisch aufstehen.
+//                >
+//  Du stehst vom Tisch auf, aber die Menge hat dich schon von dem jungen
+//  Königssohn getrennt.
+//
+//  Das Schloss verlassen
+//                >
+//  Du drängst dich durch das Eingangstor und siehst  noch einen Wagen
+//                >davonfahren, mit acht weißen Pferden bespannt, jedes mit weißen
+//  Straußfedern auf dem Kopf.
+
         res.add(new NehmenAction<>(db, initialStoryState, object));
         return res.build();
     }
