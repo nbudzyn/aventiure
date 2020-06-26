@@ -180,13 +180,15 @@ public class ScActionService {
 
         for (final DESC_OBJ inventoryObject : inventory) {
             if (room != null) {
-                // Das inventoryObject könnte auch ein ILivingBeing sein!
-                res.addAll(HochwerfenAction
-                        .buildActions(
-                                db, currentStoryState, room, inventoryObject));
-                res.addAll(
-                        AblegenAction.buildActions(
-                                db, currentStoryState, inventoryObject, room));
+                if (inventoryObject.locationComp().isMovable()) {
+                    // Das inventoryObject könnte auch ein ILivingBeing sein!
+                    res.addAll(HochwerfenAction
+                            .buildActions(
+                                    db, currentStoryState, room, inventoryObject));
+                    res.addAll(
+                            AblegenAction.buildActions(
+                                    db, currentStoryState, inventoryObject, room));
+                }
             }
         }
         return res.build();

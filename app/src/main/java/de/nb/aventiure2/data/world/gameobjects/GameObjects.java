@@ -39,6 +39,7 @@ import de.nb.aventiure2.data.world.time.AvDateTime;
 import de.nb.aventiure2.german.base.Nominalphrase;
 
 import static com.google.common.collect.ImmutableList.toImmutableList;
+import static de.nb.aventiure2.data.world.syscomp.storingplace.StoringPlaceType.IN_EINER_TASCHE;
 import static de.nb.aventiure2.data.world.syscomp.storingplace.StoringPlaceType.TISCH;
 import static de.nb.aventiure2.data.world.time.AvTime.oClock;
 import static de.nb.aventiure2.german.base.Nominalphrase.np;
@@ -191,8 +192,9 @@ public class GameObjects {
                     object.create(EINE_TASCHE_DES_SPIELER_CHARAKTERS,
                             np(F, "eine Tasche", "einer Tasche"),
                             SPIELER_CHARAKTER, null,
-                            true),
-
+                            false, // Man kann nicht "eine Tasche hinlegen" o.Ä.
+                            IN_EINER_TASCHE,
+                            false),
                     object.create(GOLDENE_KUGEL,
                             np(F, "eine goldene Kugel",
                                     "einer goldenen Kugel"),

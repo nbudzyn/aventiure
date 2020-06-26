@@ -29,8 +29,8 @@ import de.nb.aventiure2.scaction.AbstractScAction;
 
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkState;
+import static de.nb.aventiure2.data.world.gameobjects.GameObjects.EINE_TASCHE_DES_SPIELER_CHARAKTERS;
 import static de.nb.aventiure2.data.world.gameobjects.GameObjects.FROSCHPRINZ;
-import static de.nb.aventiure2.data.world.gameobjects.GameObjects.SPIELER_CHARAKTER;
 import static de.nb.aventiure2.data.world.syscomp.state.GameObjectState.ERWARTET_VON_SC_EINLOESUNG_SEINES_VERSPRECHENS;
 import static de.nb.aventiure2.data.world.syscomp.state.GameObjectState.HAT_HOCHHEBEN_GEFORDERT;
 import static de.nb.aventiure2.data.world.time.AvTimeSpan.noTime;
@@ -66,38 +66,31 @@ public class NehmenAction
         final ImmutableList.Builder<NehmenAction> res = ImmutableList.builder();
 
 
-// TODO Der Spieler trägt zwei Dinge stets mit sich herum:
-//  EINE TASCHE (in eine Tasche, in einer Tasche)
+// TODO Der Spieler trägt außerdem stets bei sich:
 //  SEINE HAENDE (in die Hand, in der Hand)
 //
-//  Nehmen / mitbehmen Action legt Gegenstände grundsätzlich IN EINE
-//  TASCHE.
-//                >
-//  Die Prüfungen, ob sich etwas "beim SC" befindet,  müssen überprüft
-//                >werden und im Zweifel einfach rekursiv prüfen.
-//
-//  Einzelne Dinge kann man in / auf die HAND nehmen, nämlich den Frosch.
+// TODO Einzelne Dinge kann man in / auf die HAND nehmen, nämlich den Frosch.
 //  Den kann man manchmal NICHTBmitnehmen. Man kann diese Dinge in die HAND
 //                >nehmen, wenn sie sich in der TASCHE oder im selben RAUM befinden.
 //
-//  Wenn man etwas zb den Frosch in der HAND hat, kann man bestimmte
+// TODO Wenn man etwas zb den Frosch in der HAND hat, kann man bestimmte
 //  Aktionen nicht mehr tun, zb Essen.
-//                >
-//  Was man in der TASCHE oder in der HAND hat, kann man irgendwo im Raum
+//
+// TODO Was man in der TASCHE oder in der HAND hat, kann man irgendwo im Raum
 //  absetzen.
 //                >
-//  Hat man den Frosch in der HAND oder 8n der TASCHE und verlässt den
+// TODO Hat man den Frosch in der HAND oder 8n der TASCHE und verlässt den
 //  Tisch beim Schlossfest, hüpft der Frosch weg / hinaus. Der Spieler
 //                >merkt gar nicht recht wohin.
 //
-//  Den Frosch auf den Tisch setzen
+// TODO Den Frosch auf den Tisch setzen
 //
 //  und setzt ihn auf den Tisch.
 //
 //  Wie er nun da sitzt glotzt er dich mit großen Glubschaugen an und
 //                >spricht: Nun füll deine Holzschale auf, wir wollen zusammen essen.«
 //
-//  Eintopf essen
+// TODO Eintopf essen
 //
 //  Was hatte deine Großmutter immer gesagt?
 //  »Wer dir geholfen in der Not, den sollst du hernach nicht verachten.«
@@ -112,12 +105,12 @@ public class NehmenAction
 //  Am Tisch um euch herum entsteht Aufregung. Er erhebt sich und schickt
 //                >sich an, die Halle zu verlassen.
 //                >
-//  Vom Tisch aufstehen.
+// STORY Vom Tisch aufstehen.
 //                >
 //  Du stehst vom Tisch auf, aber die Menge hat dich schon von dem jungen
 //  Königssohn getrennt.
 //
-//  Das Schloss verlassen
+// STORY Das Schloss verlassen
 //                >
 //  Du drängst dich durch das Eingangstor und siehst  noch einen Wagen
 //                >davonfahren, mit acht weißen Pferden bespannt, jedes mit weißen
@@ -218,7 +211,7 @@ public class NehmenAction
 
         timeElapsed = timeElapsed.plus(
                 gameObject.locationComp()
-                        .narrateAndSetLocation(SPIELER_CHARAKTER,
+                        .narrateAndSetLocation(EINE_TASCHE_DES_SPIELER_CHARAKTERS,
                                 () -> {
                                     sc.memoryComp().upgradeKnown(gameObject, Known.getKnown(
                                             gameObject.locationComp().getLocation()
@@ -294,7 +287,9 @@ public class NehmenAction
 
         timeElapsed = timeElapsed.plus(
                 gameObject.locationComp()
-                        .narrateAndSetLocation(SPIELER_CHARAKTER,
+                        .narrateAndSetLocation(
+                                // FIXME Hier eigentlich die Hände des Spielers!
+                                EINE_TASCHE_DES_SPIELER_CHARAKTERS,
                                 () -> {
                                     sc.memoryComp().upgradeKnown(gameObject, Known.getKnown(
                                             gameObject.locationComp().getLocation()
@@ -317,11 +312,10 @@ public class NehmenAction
         AvTimeSpan timeElapsed = narrateObject();
 
         timeElapsed = timeElapsed.plus(
-                gameObject.locationComp().narrateAndSetLocation(SPIELER_CHARAKTER));
+                gameObject.locationComp()
+                        .narrateAndSetLocation(EINE_TASCHE_DES_SPIELER_CHARAKTERS));
         sc.memoryComp().setLastAction(buildMemorizedAction());
 
-        // STORY Die Schlosswache ist in die Köchin verliebt und bekommt von ihr Kekse. Das soll
-        //  aber geheim bleiben. Der Spieler bekommt was mit. Daher darf er die Kugel mitnehmen...
         return timeElapsed;
     }
 

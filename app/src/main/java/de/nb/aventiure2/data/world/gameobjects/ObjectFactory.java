@@ -79,6 +79,21 @@ public class ObjectFactory {
     }
 
     GameObject create(final GameObjectId id,
+                      final Nominalphrase descriptionAtFirstSightAndWhenKnown,
+                      @Nullable final GameObjectId initialLocationId,
+                      @Nullable final GameObjectId initialLastLocationId,
+                      final boolean movable,
+                      final StoringPlaceType locationMode,
+                      final boolean dauerhaftBeleuchtet) {
+        return create(id,
+                descriptionAtFirstSightAndWhenKnown,
+                descriptionAtFirstSightAndWhenKnown,
+                descriptionAtFirstSightAndWhenKnown,
+                initialLocationId, initialLastLocationId,
+                movable, locationMode, dauerhaftBeleuchtet);
+    }
+
+    GameObject create(final GameObjectId id,
                       final Nominalphrase descriptionAtFirstSight,
                       final Nominalphrase normalDescriptionWhenKnown,
                       final Nominalphrase shortDescriptionWhenKnown,
