@@ -10,6 +10,7 @@ import de.nb.aventiure2.data.database.AvDatabase;
 import de.nb.aventiure2.data.world.base.AbstractStatefulComponent;
 import de.nb.aventiure2.data.world.base.GameObject;
 import de.nb.aventiure2.data.world.base.GameObjectId;
+import de.nb.aventiure2.data.world.base.IGameObject;
 import de.nb.aventiure2.data.world.gameobjects.GameObjects;
 import de.nb.aventiure2.data.world.syscomp.storingplace.ILocationGO;
 import de.nb.aventiure2.data.world.time.AvTimeSpan;
@@ -68,6 +69,13 @@ public class LocationComp extends AbstractStatefulComponent<LocationPCD> {
         return narrateAndSetLocation(newLocationId, () -> noTime());
     }
 
+
+    public AvTimeSpan narrateAndSetLocation(@Nullable final ILocationGO newLocation,
+                                            final Supplier<AvTimeSpan> onEnter) {
+        return narrateAndSetLocation(
+                newLocation != null ? newLocation.getId() : null, onEnter);
+    }
+
     public AvTimeSpan narrateAndSetLocation(@Nullable final GameObjectId newLocationId,
                                             final Supplier<AvTimeSpan> onEnter) {
         AvTimeSpan timeElapsed = narrateAndDoLeaveReactions(newLocationId);
@@ -98,8 +106,38 @@ public class LocationComp extends AbstractStatefulComponent<LocationPCD> {
                 .onEnter(getGameObjectId(), getLastLocation(), newLocationId);
     }
 
-    public boolean hasRecursiveLocation(final @Nullable GameObjectId locationId) {
+    /**
+     * Gibt zurück, ob sich diese beiden Game Objects dieselbe äußerste Location haben
+     * (z.B. denselben Raum).
+     */
+    public boolean hasSameUpperMostLocationAs(final @Nullable GameObjectId otherId) {
+        return hasSameUpperMostLocationAs(GameObjects.load(db, otherId));
+    }
+
+    /**
+     * Gibt zurück, ob sich diese beiden Game Objects dieselbe äußerste Location haben
+     * (z.B. denselben Raum).
+     */
+    public boolean hasSameUpperMostLocationAs(final @Nullable IGameObject other) {
+        ILocationGO otherUpperMostLocation = null;
+        if (other instanceof ILocationGO) {
+            otherUpperMostLocation = (ILocationGO) other;
+        }
+
+        if (other instanceof ILocatableGO) {
+            otherUpperMostLocation = ((ILocatableGO) other).locationComp().getUpperMostLocation();
+        }
+
+        if (otherUpperMostLocation == null) {
+            return false;
+        }
+
+        return otherUpperMostLocation.equals(getUpperMostLocation());
+    }
+
+    public boolean hasRecursiveLocation(final GameObjectId locationId) {
         final GameObject location = GameObjects.load(db, locationId);
+
         if (!(location instanceof ILocationGO)) {
             return false;
         }
@@ -107,21 +145,45 @@ public class LocationComp extends AbstractStatefulComponent<LocationPCD> {
         return hasRecursiveLocation((ILocationGO) location);
     }
 
-    /**
-     * Gibt zurück, ob sich das Game Object an dieser <code>location</code> befindet (z.B.
-     * in einem Raum) - oder vielleicht auch an einer untergeordneten Location (z.B. in einer
-     * Vase auf einem Tisch in diesem Raum).
-     */
-    public boolean hasRecursiveLocation(final @Nullable ILocationGO location) {
-        if (hasLocation(location)) {
-            return true;
-        }
-
-        if (!(location instanceof ILocatableGO)) {
+    public boolean hasRecursiveLocation(final ILocationGO location) {
+        @Nullable final ILocationGO myLocation = getLocation();
+        if (myLocation == null) {
             return false;
         }
 
-        return hasRecursiveLocation(((ILocatableGO) location).locationComp().getLocation());
+        if (myLocation.equals(location)) {
+            return true;
+        }
+
+        if (!(myLocation instanceof ILocatableGO)) {
+            return false;
+        }
+
+        return ((ILocatableGO) myLocation).locationComp().hasRecursiveLocation(location);
+    }
+
+    public boolean hasUpperMostLocation(final GameObjectId locationId) {
+        final GameObject location = GameObjects.load(db, locationId);
+
+        if (!(location instanceof ILocationGO)) {
+            return false;
+        }
+
+        return hasUpperMostLocation((ILocationGO) location);
+    }
+
+    public boolean hasUpperMostLocation(final ILocationGO location) {
+        return location.equals(getUpperMostLocation());
+    }
+
+    private @Nullable
+    ILocationGO getUpperMostLocation() {
+        @Nullable final ILocationGO res = getLocation();
+        if (res instanceof ILocatableGO) {
+            return ((ILocatableGO) res).locationComp().getUpperMostLocation();
+        }
+
+        return res;
     }
 
     /**

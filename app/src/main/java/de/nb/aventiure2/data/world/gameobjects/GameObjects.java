@@ -39,12 +39,14 @@ import de.nb.aventiure2.data.world.time.AvDateTime;
 import de.nb.aventiure2.german.base.Nominalphrase;
 
 import static com.google.common.collect.ImmutableList.toImmutableList;
-import static de.nb.aventiure2.data.world.syscomp.storingplace.StoringPlaceType.IN_EINER_TASCHE;
+import static de.nb.aventiure2.data.world.syscomp.storingplace.StoringPlaceType.EINE_TASCHE;
+import static de.nb.aventiure2.data.world.syscomp.storingplace.StoringPlaceType.HAENDE;
 import static de.nb.aventiure2.data.world.syscomp.storingplace.StoringPlaceType.TISCH;
 import static de.nb.aventiure2.data.world.time.AvTime.oClock;
 import static de.nb.aventiure2.german.base.Nominalphrase.np;
 import static de.nb.aventiure2.german.base.NumerusGenus.F;
 import static de.nb.aventiure2.german.base.NumerusGenus.M;
+import static de.nb.aventiure2.german.base.NumerusGenus.PL_MFN;
 
 /**
  * All game objects
@@ -61,7 +63,8 @@ public class GameObjects {
     public static final GameObjectId SPIELER_CHARAKTER = new GameObjectId(1);
 
     // OBJECTS
-    public static final GameObjectId EINE_TASCHE_DES_SPIELER_CHARAKTERS = new GameObjectId(10_000);
+    public static final GameObjectId HAENDE_DES_SPIELER_CHARAKTERS = new GameObjectId(10_000);
+    public static final GameObjectId EINE_TASCHE_DES_SPIELER_CHARAKTERS = new GameObjectId(10_001);
     public static final GameObjectId GOLDENE_KUGEL = new GameObjectId(10_100);
     public static final GameObjectId SCHLOSS_VORHALLE_LANGER_TISCH_BEIM_FEST =
             new GameObjectId(10_101);
@@ -193,7 +196,13 @@ public class GameObjects {
                             np(F, "eine Tasche", "einer Tasche"),
                             SPIELER_CHARAKTER, null,
                             false, // Man kann nicht "eine Tasche hinlegen" o.Ä.
-                            IN_EINER_TASCHE,
+                            EINE_TASCHE,
+                            false),
+                    object.create(HAENDE_DES_SPIELER_CHARAKTERS,
+                            np(PL_MFN, "deine Hände", "deinen Händen"),
+                            SPIELER_CHARAKTER, null,
+                            false,
+                            HAENDE,
                             false),
                     object.create(GOLDENE_KUGEL,
                             np(F, "eine goldene Kugel",
@@ -469,7 +478,7 @@ public class GameObjects {
      * und gibt sie zurück - nur Game Objects, die eine Beschreibung haben,
      * nicht den Spieler-Charakter.
      */
-    private static <LOC_DESC extends ILocatableGO & IDescribableGO>
+    public static <LOC_DESC extends ILocatableGO & IDescribableGO>
     ImmutableList<LOC_DESC> loadDescribableRecursiveInventory(final AvDatabase db,
                                                               final GameObjectId locationId) {
         final ImmutableList<LOC_DESC> directContainedList =

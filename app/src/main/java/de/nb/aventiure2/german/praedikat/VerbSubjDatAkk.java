@@ -67,7 +67,7 @@ public enum VerbSubjDatAkk implements Praedikat {
     public String getDescriptionZuInfinitiv(final Person person, final Numerus numerus,
                                             final SubstantivischePhrase describableDat,
                                             final SubstantivischePhrase describableAkk) {
-        return mitDat(describableDat).getDescriptionInfinitiv(
+        return mitDat(describableDat).getDescriptionZuInfinitiv(
                 person, numerus, describableAkk);
     }
 

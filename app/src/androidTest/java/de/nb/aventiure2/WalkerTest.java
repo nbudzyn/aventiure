@@ -177,7 +177,7 @@ public class WalkerTest {
                 "Die Kugel auf den Tisch legen",
                 "Die Kugel nehmen",
                 "Eintopf essen",
-                "Den Frosch mitnehmen", // TODO "auf die Hand nehmen?"
+                "Den Frosch in deine Hände nehmen",
                 "Den Frosch auf den Tisch setzen"
         };
 
@@ -221,6 +221,8 @@ public class WalkerTest {
      * Wählt Aktionen zufällig aus
      */
     private static class RandomActionChooser implements IActionChooser {
+        private final static int NUM_STEPS = 15;
+
         private final Random rand;
         private int count = 0;
 
@@ -233,7 +235,7 @@ public class WalkerTest {
         public AbstractScAction chooseAction(
                 final List<? extends AbstractScAction> actionAlternatives) {
             count++;
-            if (count > 100) {
+            if (count > NUM_STEPS) {
                 return null;
             }
 

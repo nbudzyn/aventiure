@@ -13,7 +13,8 @@ import static de.nb.aventiure2.german.praedikat.VerbSubjObj.POLIEREN;
  * Where an object is stored specifically
  */
 public enum StoringPlaceType {
-    IN_EINER_TASCHE("in einer Tasche", "in eine Tasche"),
+    EINE_TASCHE("in einer Tasche", "in eine Tasche"),
+    HAENDE("in den Händen", "in die Hände"),
     AM_GRUNDE_DES_BRUNNENS("am Grunde des Brunnens", "auf den Grund des Brunnens"),
     BODEN("auf dem Boden", "auf den Boden", AUFHEBEN),
     // TODO Not everything fits on a table

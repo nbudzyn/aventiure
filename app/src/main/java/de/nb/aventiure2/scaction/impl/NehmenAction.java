@@ -10,6 +10,7 @@ import javax.annotation.ParametersAreNonnullByDefault;
 
 import de.nb.aventiure2.data.database.AvDatabase;
 import de.nb.aventiure2.data.storystate.StoryState;
+import de.nb.aventiure2.data.world.base.GameObjectId;
 import de.nb.aventiure2.data.world.syscomp.alive.ILivingBeingGO;
 import de.nb.aventiure2.data.world.syscomp.description.IDescribableGO;
 import de.nb.aventiure2.data.world.syscomp.feelings.Mood;
@@ -17,6 +18,7 @@ import de.nb.aventiure2.data.world.syscomp.location.ILocatableGO;
 import de.nb.aventiure2.data.world.syscomp.memory.Action;
 import de.nb.aventiure2.data.world.syscomp.memory.Known;
 import de.nb.aventiure2.data.world.syscomp.state.IHasStateGO;
+import de.nb.aventiure2.data.world.syscomp.storingplace.ILocationGO;
 import de.nb.aventiure2.data.world.time.AvTimeSpan;
 import de.nb.aventiure2.german.base.Nominalphrase;
 import de.nb.aventiure2.german.base.NumerusGenus;
@@ -31,6 +33,9 @@ import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkState;
 import static de.nb.aventiure2.data.world.gameobjects.GameObjects.EINE_TASCHE_DES_SPIELER_CHARAKTERS;
 import static de.nb.aventiure2.data.world.gameobjects.GameObjects.FROSCHPRINZ;
+import static de.nb.aventiure2.data.world.gameobjects.GameObjects.HAENDE_DES_SPIELER_CHARAKTERS;
+import static de.nb.aventiure2.data.world.gameobjects.GameObjects.SPIELER_CHARAKTER;
+import static de.nb.aventiure2.data.world.gameobjects.GameObjects.load;
 import static de.nb.aventiure2.data.world.syscomp.state.GameObjectState.ERWARTET_VON_SC_EINLOESUNG_SEINES_VERSPRECHENS;
 import static de.nb.aventiure2.data.world.syscomp.state.GameObjectState.HAT_HOCHHEBEN_GEFORDERT;
 import static de.nb.aventiure2.data.world.time.AvTimeSpan.noTime;
@@ -45,6 +50,7 @@ import static de.nb.aventiure2.german.base.Person.P1;
 import static de.nb.aventiure2.german.base.Person.P2;
 import static de.nb.aventiure2.german.base.StructuralElement.PARAGRAPH;
 import static de.nb.aventiure2.german.base.StructuralElement.SENTENCE;
+import static de.nb.aventiure2.german.praedikat.VerbSubjAkkPraep.NEHMEN_IN;
 import static de.nb.aventiure2.german.praedikat.VerbSubjObj.MITNEHMEN;
 import static de.nb.aventiure2.german.praedikat.VerbSubjObj.NEHMEN;
 
@@ -54,10 +60,13 @@ import static de.nb.aventiure2.german.praedikat.VerbSubjObj.NEHMEN;
  */
 @ParametersAreNonnullByDefault
 public class NehmenAction
-        <GO extends IDescribableGO & ILocatableGO>
+        <GO extends IDescribableGO & ILocatableGO,
+                TARGET_LOC extends IDescribableGO & ILocationGO & ILocatableGO>
         extends AbstractScAction {
     @NonNull
     private final GO gameObject;
+
+    private final TARGET_LOC targetLocation;
 
     public static <GO extends IDescribableGO & ILocatableGO>
     Collection<NehmenAction> buildObjectActions(final AvDatabase db,
@@ -65,21 +74,12 @@ public class NehmenAction
                                                 final GO object) {
         final ImmutableList.Builder<NehmenAction> res = ImmutableList.builder();
 
-
-// TODO Der Spieler trägt außerdem stets bei sich:
-//  SEINE HAENDE (in die Hand, in der Hand)
-//
-// TODO Einzelne Dinge kann man in / auf die HAND nehmen, nämlich den Frosch.
-//  Den kann man manchmal NICHTBmitnehmen. Man kann diese Dinge in die HAND
-//                >nehmen, wenn sie sich in der TASCHE oder im selben RAUM befinden.
-//
 // TODO Wenn man etwas zb den Frosch in der HAND hat, kann man bestimmte
-//  Aktionen nicht mehr tun, zb Essen.
+//  Aktionen nicht mehr tun, zb Essen, andere Dinge nehmen oder ablegen etc.
 //
-// TODO Was man in der TASCHE oder in der HAND hat, kann man irgendwo im Raum
-//  absetzen.
+// TODO Was man in der HAND hat, kann man irgendwo im Raum absetzen.
 //                >
-// TODO Hat man den Frosch in der HAND oder 8n der TASCHE und verlässt den
+// TODO Hat man den Frosch in der HAND oder in der TASCHE und verlässt den
 //  Tisch beim Schlossfest, hüpft der Frosch weg / hinaus. Der Spieler
 //                >merkt gar nicht recht wohin.
 //
@@ -116,7 +116,11 @@ public class NehmenAction
 //                >davonfahren, mit acht weißen Pferden bespannt, jedes mit weißen
 //  Straußfedern auf dem Kopf.
 
-        res.add(new NehmenAction<>(db, initialStoryState, object));
+        res.add(new NehmenAction<>(db, initialStoryState,
+                object, EINE_TASCHE_DES_SPIELER_CHARAKTERS));
+
+        // STORY Kann Dinge alternativ in die Hand nehmen?
+
         return res.build();
     }
 
@@ -125,23 +129,64 @@ public class NehmenAction
             final AvDatabase db,
             final StoryState initialStoryState,
             final LIVGO creature) {
-        final ImmutableList.Builder<NehmenAction> res = ImmutableList.builder();
-        if (creature.is(FROSCHPRINZ) &&
-                ((IHasStateGO) creature).stateComp()
-                        .hasState(ERWARTET_VON_SC_EINLOESUNG_SEINES_VERSPRECHENS,
-                                HAT_HOCHHEBEN_GEFORDERT)) {
-            res.add(new NehmenAction<>(db, initialStoryState, creature));
+        if (creature.is(FROSCHPRINZ)) {
+            return buildFroschprinzActions(db, initialStoryState, creature);
         }
-        return res.build();
+        return ImmutableList.of();
     }
 
+    public static <LIVGO extends IDescribableGO & ILocatableGO & ILivingBeingGO>
+    Collection<NehmenAction> buildFroschprinzActions(
+            final AvDatabase db,
+            final StoryState initialStoryState,
+            final LIVGO froschprinz) {
+        if (((IHasStateGO) froschprinz).stateComp()
+                .hasState(ERWARTET_VON_SC_EINLOESUNG_SEINES_VERSPRECHENS)) {
+            return ImmutableList.of(
+                    new NehmenAction<>(db, initialStoryState,
+                            froschprinz, EINE_TASCHE_DES_SPIELER_CHARAKTERS));
+        }
+
+        if (((IHasStateGO) froschprinz).stateComp()
+                .hasState(HAT_HOCHHEBEN_GEFORDERT)) {
+            return ImmutableList.of(
+                    new NehmenAction<>(db, initialStoryState,
+                            froschprinz, HAENDE_DES_SPIELER_CHARAKTERS));
+        }
+
+        return ImmutableList.of();
+    }
+
+    /**
+     * Erzeugt eine {@link NehmenAction}.
+     *
+     * @param gameObject       das genommene Objekt
+     * @param targetLocationId der Ort am SC, wohin es genommen wird, z.B.
+     *                         in die Hände o.Ä.
+     */
     private NehmenAction(final AvDatabase db, final StoryState initialStoryState,
-                         @NonNull final GO gameObject) {
+                         @NonNull final GO gameObject,
+                         @NonNull final GameObjectId targetLocationId) {
+        this(db, initialStoryState, gameObject, (TARGET_LOC) load(db, targetLocationId));
+    }
+
+    /**
+     * Erzeugt eine {@link NehmenAction}.
+     *
+     * @param gameObject     das genommene Objekt
+     * @param targetLocation der Ort am SC, wohin es genommen wird, z.B.
+     *                       in die Hände o.Ä.
+     */
+    private NehmenAction(final AvDatabase db, final StoryState initialStoryState,
+                         @NonNull final GO gameObject, @NonNull final TARGET_LOC targetLocation) {
         super(db, initialStoryState);
 
         checkArgument(gameObject.locationComp().getLocation() != null);
+        checkArgument(targetLocation.locationComp().getLocationId().equals(SPIELER_CHARAKTER),
+                "Nehmen bedeutet: Zum Spielercharakter");
 
         this.gameObject = gameObject;
+        this.targetLocation = targetLocation;
     }
 
     @Override
@@ -152,12 +197,22 @@ public class NehmenAction
     @Override
     @NonNull
     public String getName() {
-        final PraedikatMitEinerObjektleerstelle praedikat =
-                gameObject instanceof ILivingBeingGO ? MITNEHMEN : NEHMEN;
+        final PraedikatMitEinerObjektleerstelle praedikat = getPraedikatFuerName();
 
         return capitalize(praedikat.mitObj(getDescription(gameObject, true))
                 // Relevant für etwas wie "Die Schale an *mich* nehmen"
                 .getDescriptionInfinitiv(P1, SG));
+    }
+
+    @NonNull
+    private PraedikatMitEinerObjektleerstelle getPraedikatFuerName() {
+        if (targetLocation.is(HAENDE_DES_SPIELER_CHARAKTERS)) {
+            return NEHMEN_IN.mitPraep(
+                    targetLocation.descriptionComp()
+                            .getDescription(true, true)); // "in die Hände nehmen"
+        }
+
+        return gameObject instanceof ILivingBeingGO ? MITNEHMEN : NEHMEN;
     }
 
     @Override
@@ -211,7 +266,7 @@ public class NehmenAction
 
         timeElapsed = timeElapsed.plus(
                 gameObject.locationComp()
-                        .narrateAndSetLocation(EINE_TASCHE_DES_SPIELER_CHARAKTERS,
+                        .narrateAndSetLocation(targetLocation,
                                 () -> {
                                     sc.memoryComp().upgradeKnown(gameObject, Known.getKnown(
                                             gameObject.locationComp().getLocation()
@@ -288,8 +343,7 @@ public class NehmenAction
         timeElapsed = timeElapsed.plus(
                 gameObject.locationComp()
                         .narrateAndSetLocation(
-                                // FIXME Hier eigentlich die Hände des Spielers!
-                                EINE_TASCHE_DES_SPIELER_CHARAKTERS,
+                                targetLocation,
                                 () -> {
                                     sc.memoryComp().upgradeKnown(gameObject, Known.getKnown(
                                             gameObject.locationComp().getLocation()
@@ -313,7 +367,7 @@ public class NehmenAction
 
         timeElapsed = timeElapsed.plus(
                 gameObject.locationComp()
-                        .narrateAndSetLocation(EINE_TASCHE_DES_SPIELER_CHARAKTERS));
+                        .narrateAndSetLocation(targetLocation));
         sc.memoryComp().setLastAction(buildMemorizedAction());
 
         return timeElapsed;

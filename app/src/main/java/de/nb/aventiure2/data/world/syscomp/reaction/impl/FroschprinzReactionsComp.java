@@ -426,9 +426,7 @@ public class FroschprinzReactionsComp
 
         @Nullable final ILocationGO scLocation = loadSC().locationComp().getLocation();
 
-        // STORY Der Spieler sollte auch mitbekommen, dass der Frosch wegläuft, wenn
-        //  er z.B. auf einem Stuhl sitzt o.Ä.
-        if ((scLocation != null && locationComp.hasRecursiveLocation(scLocation))) {
+        if ((scLocation != null && locationComp.hasSameUpperMostLocationAs(SPIELER_CHARAKTER))) {
             timeElapsed = timeElapsed.plus(n.add(neuerSatz(PARAGRAPH,
                     "Plitsch platsch, plitsch platsch hüpft der Frosch davon",
                     secs(5))

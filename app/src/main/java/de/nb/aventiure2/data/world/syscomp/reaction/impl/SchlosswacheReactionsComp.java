@@ -393,7 +393,7 @@ public class SchlosswacheReactionsComp
      * der Gegenstand hat sich aufgelöst o.Ä.
      */
     private AvTimeSpan onRelocationFromSC(final ILocationGO to) {
-        if (!locationComp.hasRecursiveLocation(to)) {
+        if (!locationComp.hasSameUpperMostLocationAs(to)) {
             // The Schlosswache does not notice.
             return noTime();
         }

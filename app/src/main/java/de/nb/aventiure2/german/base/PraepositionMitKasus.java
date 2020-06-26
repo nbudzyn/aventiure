@@ -7,12 +7,14 @@ import static de.nb.aventiure2.german.base.Kasus.DAT;
  * Eine Präposition, die einen bestimmten Kasus fordert.
  */
 public enum PraepositionMitKasus implements KasusOderPraepositionalkasus {
+    AN_AKK("an", AKK),
+    IN_AKK("in", AKK),
+
     /**
      * "mit dem Frosch"
      */
-    MIT_DAT("mit", DAT),
+    MIT_DAT("mit", DAT);
 
-    AN_AKK("an", AKK);
 
     /**
      * Die Präposition (z.B. "mit")
