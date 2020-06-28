@@ -158,6 +158,11 @@ public class SchlafenAction extends AbstractScAction {
         return buildMemorizedAction().equals(sc.memoryComp().getLastAction());
     }
 
+    @Override
+    protected boolean isDefinitivDiskontinuitaet() {
+        return false;
+    }
+
     @NonNull
     private static Action buildMemorizedAction() {
         return new Action(Action.Type.SCHLAFEN_ODER_VERGEBLICHER_EINSCHLAF_VERSUCH);

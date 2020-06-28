@@ -177,7 +177,7 @@ public class AblegenAction
                 .beendet(PARAGRAPH));
 
         if (getWohinDetail() == null) {
-            // Wenn kein wohin-Detail nötig ist, dann ist es wohl Tisch o.Ä. und "fällt" passt.
+            // Wenn kein wohin-Detail nötig ist, dann ist es wohl kein Tisch o.Ä. und "fällt" passt.
             alt.add(du(PARAGRAPH,
                     "schüttest", "deine Tasche aus, bis der Frosch endlich " +
                             location.storingPlaceComp().getLocationMode().getWohin() +
@@ -204,42 +204,7 @@ public class AblegenAction
 
     private AvTimeSpan narrateAndDoFroschprinz_HatHochhebenGefordert() {
         if (!location.is(SCHLOSS_VORHALLE_LANGER_TISCH_BEIM_FEST)) {
-            final ImmutableList.Builder<AbstractDescription<?>> alt =
-                    ImmutableList.builder();
-
-            if (sc.memoryComp().lastActionWas(NEHMEN, gameObject, sc)) {
-                if (initialStoryState.allowsAdditionalDuSatzreihengliedOhneSubjekt()) {
-                    if (initialStoryState.dann()) {
-                        alt.add(satzanschluss(
-                                ", aber dann denkst du dir: „So ein Ekeltier hat auf "
-                                        + "meiner Tafel nichts "
-                                        + "verloren!“, und setzt den Frosch wieder ab",
-                                secs(5))
-                                .phorikKandidat(M, FROSCHPRINZ));
-                        alt.add(satzanschluss(
-                                ", aber dann stellst du dir vor, die schleimigen "
-                                        + "Patscher auf den Tisch zu stellen und setzt den "
-                                        + "Frosch gleich wieder ab",
-                                secs(5))
-                                .phorikKandidat(M, FROSCHPRINZ));
-                    }
-                }
-            }
-
-            alt.add(neuerSatz(
-                    "Der Frosch will auf den Tisch, aber du setzt den Frosch"
-                            + (location.is(SCHLOSS_VORHALLE_AM_TISCH_BEIM_FEST) ?
-                            " wieder " :
-                            " ")
-                            + location.storingPlaceComp().getLocationMode().getWohin()
-                            + " und "
-                            + "wendest dich demonstrativ ab",
-                    secs(5))
-                    .dann()
-                    .phorikKandidat(M, FROSCHPRINZ));
-
-            AvTimeSpan timeElapsed = n.addAlt(alt);
-
+            AvTimeSpan timeElapsed = narrateFroschprinz_HatHochhebenGefordert();
             timeElapsed = timeElapsed.plus(narrateUpgradeKnownAndSetLocationAndAction());
             sc.feelingsComp().setMood(Mood.ANGESPANNT);
 
@@ -262,6 +227,43 @@ public class AblegenAction
         sc.feelingsComp().setMood(Mood.ANGESPANNT);
 
         return timeElapsed;
+    }
+
+    private AvTimeSpan narrateFroschprinz_HatHochhebenGefordert() {
+        if (isDefinitivDiskontinuitaet() &&
+                initialStoryState.allowsAdditionalDuSatzreihengliedOhneSubjekt() &&
+                initialStoryState.dann()) {
+
+            final ImmutableList.Builder<AbstractDescription<?>> alt =
+                    ImmutableList.builder();
+            alt.add(satzanschluss(
+                    ", aber dann denkst du dir: „So ein Ekeltier hat auf "
+                            + "meiner Tafel nichts "
+                            + "verloren!“, und setzt den Frosch wieder ab",
+                    secs(5))
+                    .dann()
+                    .phorikKandidat(M, FROSCHPRINZ));
+            alt.add(satzanschluss(
+                    ", aber dann stellst du dir vor, die schleimigen "
+                            + "Patscher auf den Tisch zu stellen, und setzt den "
+                            + "Frosch gleich wieder ab",
+                    secs(5))
+                    .dann()
+                    .phorikKandidat(M, FROSCHPRINZ));
+            return n.addAlt(alt);
+        }
+
+        return n.add(neuerSatz(
+                "Der Frosch will auf den Tisch, aber du setzt den Frosch"
+                        + (location.is(SCHLOSS_VORHALLE_AM_TISCH_BEIM_FEST) ?
+                        " wieder " :
+                        " ")
+                        + location.storingPlaceComp().getLocationMode().getWohin()
+                        + " und "
+                        + "wendest dich demonstrativ ab",
+                secs(5))
+                .dann()
+                .phorikKandidat(M, FROSCHPRINZ));
     }
 
     private AvTimeSpan narrateAndDoObject() {
@@ -287,7 +289,7 @@ public class AblegenAction
                     initialStoryState.getAnaphPersPronWennMgl(gameObject);
 
             if (gameObjektPersPron != null) {
-                if (sc.memoryComp().lastActionWas(NEHMEN, gameObject, location)) {
+                if (isDefinitivDiskontinuitaet()) {
                     return n.add(satzanschluss(
                             "– und legst "
                                     + gameObjektPersPron.akk()
@@ -329,7 +331,7 @@ public class AblegenAction
             }
         }
 
-        if (sc.memoryComp().lastActionWas(NEHMEN, gameObject, location)) {
+        if (isDefinitivDiskontinuitaet()) {
             return n.add(
                     du(PARAGRAPH, "legst",
                             getDescription(gameObject, false).akk() +
@@ -353,6 +355,13 @@ public class AblegenAction
     @Override
     protected boolean isDefinitivWiederholung() {
         return buildMemorizedAction().equals(sc.memoryComp().getLastAction());
+    }
+
+    @Override
+    protected boolean isDefinitivDiskontinuitaet() {
+        return sc.memoryComp().getLastAction().is(NEHMEN) &&
+                sc.memoryComp().getLastAction().hasObject(gameObject) &&
+                gameObject.locationComp().lastLocationWas(location);
     }
 
     @Contract(" -> new")

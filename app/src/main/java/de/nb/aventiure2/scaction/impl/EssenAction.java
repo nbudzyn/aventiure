@@ -81,7 +81,7 @@ public class EssenAction extends AbstractScAction {
 
         if (room.is(WALDWILDNIS_HINTER_DEM_BRUNNEN)) {
             // STORY Früchte sind im Dunkeln kaum zu sehen, selbst wenn man den Weg
-            // schon kennt
+            //  schon kennt
             return true;
         }
 
@@ -282,6 +282,12 @@ public class EssenAction extends AbstractScAction {
         return buildMemorizedAction().equals(sc.memoryComp().getLastAction());
     }
 
+    @Override
+    protected boolean isDefinitivDiskontinuitaet() {
+        // Höchstens, wenn man sich gerade zuvor an etwas satt gegessen hat?
+        return false;
+    }
+
     @NonNull
     private static Action buildMemorizedAction() {
         return new Action(Action.Type.ESSEN);
@@ -289,7 +295,7 @@ public class EssenAction extends AbstractScAction {
 
     private void saveSatt() {
         sc.feelingsComp().setHunger(SATT);
-        // TODO NOW auch zu einem GameObject machen mit einer entsprechenden Stateful Component
+        // TODO NOW auch zu einem GameObject machen mit einer entsprechenden Stateful Component??
         // TODO Regel aufstellen: Die Aktionen dürfen nicht auf die DAOs zugreifen.
         //  Z.B. von DB nur ein Interface definieren, das durchgereicht wird?!
         sc.feelingsComp().setZuletztGegessen(db.nowDao().now());

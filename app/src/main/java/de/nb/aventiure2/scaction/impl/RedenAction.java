@@ -81,12 +81,7 @@ public class RedenAction<TALKER extends IDescribableGO & ITalkerGO>
                     stepType == SCTalkAction.Type.EXIT;
         }
 
-        if (loadSC(db).memoryComp().lastActionWas(
-                Action.Type.REDEN, talker)) {
-            // Der SC hat das Gespräch mit der Creature GERADE EBEN beendet
-            // und hat es sich ganz offenbar anders überlegt
-            // (oder die Creature hat das Gespräch beendet, und der Benutzer möchte
-            // sofort wieder ein Gespräch anknüpfen).
+        if (isDefinitivDiskontinuität(db, talker)) {
             return stepType == SCTalkAction.Type.IMMEDIATE_RE_ENTRY;
         }
 
@@ -125,12 +120,10 @@ public class RedenAction<TALKER extends IDescribableGO & ITalkerGO>
                     GameObjects.getPOVDescription(db, SPIELER_CHARAKTER, talker, true);
 
 
-            return ((PraedikatMitEinerObjektleerstelle) praedikat).mitObj(
-                    creatureDesc);
+            return ((PraedikatMitEinerObjektleerstelle) praedikat).mitObj(creatureDesc);
         }
 
-        throw new IllegalArgumentException("Unexpected type of Prädikat: "
-                + praedikat);
+        throw new IllegalArgumentException("Unexpected type of Prädikat: " + praedikat);
     }
 
     /**
@@ -184,6 +177,21 @@ public class RedenAction<TALKER extends IDescribableGO & ITalkerGO>
         // Man sagt ja jedes Mal etwas anderes, kommt von einem
         // Verhandlungsschritt zum nächsten etc.
         return false;
+    }
+
+    @Override
+    protected boolean isDefinitivDiskontinuitaet() {
+        return isDefinitivDiskontinuität(db, talker);
+    }
+
+    private static boolean isDefinitivDiskontinuität(final AvDatabase db, final ITalkerGO talker) {
+        // Der SC hat das Gespräch mit der Creature GERADE EBEN beendet
+        // und hat es sich ganz offenbar anders überlegt.
+        // Ider die Creature hat das Gespräch beendet und der Benutzer möchte
+        // sofort wieder ein Gespräch anknüpfen.
+
+        return loadSC(db).memoryComp().lastActionWas(Action.Type.REDEN, talker) &&
+                !talker.talkingComp().isTalkingTo(SPIELER_CHARAKTER);
     }
 
     @NonNull

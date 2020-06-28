@@ -332,9 +332,7 @@ public class NehmenAction
     }
 
     private AvTimeSpan narrateFroschprinz_HatHochhebenGefordert() {
-        if (sc.memoryComp().getLastAction().hasObject(gameObject) &&
-                sc.memoryComp().getLastAction().is(Action.Type.ABLEGEN) &&
-                initialStoryState.dann()) {
+        if (isDefinitivDiskontinuitaet() && initialStoryState.dann()) {
             // Aber dann nimmst du ihn doch wieder
             final SubstantivischePhrase froschDescOderAnapher =
                     getAnaphPersPronWennMglSonstShortDescription(FROSCHPRINZ);
@@ -387,11 +385,20 @@ public class NehmenAction
                 gameObject.locationComp().getLocation()
                         .storingPlaceComp().getLocationMode().getMitnehmenPraedikat();
 
-        if (sc.memoryComp().getLastAction().hasObject(gameObject)) {
-            if (sc.memoryComp().getLastAction().is(Action.Type.ABLEGEN)) {
-                return narrateObjectNachAblegen(mitnehmenPraedikat);
-            }
+        if (isDefinitivDiskontinuitaet()) {
+            return narrateObjectDiskontinuitaet(mitnehmenPraedikat);
+        }
 
+        if (sc.memoryComp().getLastAction().is(Action.Type.ABLEGEN)) {
+            final Nominalphrase objectDesc = getDescription(gameObject, true);
+            return n.add(neuerSatz(
+                    "Dann nimmst du " + objectDesc.akk(),
+                    secs(5))
+                    .undWartest()
+                    .phorikKandidat(objectDesc.getNumerusGenus(), gameObject.getId()));
+        }
+
+        if (sc.memoryComp().getLastAction().hasObject(gameObject)) {
             final Mood mood = sc.feelingsComp().getMood();
 
             if (sc.memoryComp().getLastAction().is(Action.Type.HOCHWERFEN) &&
@@ -427,55 +434,45 @@ public class NehmenAction
                         .dann());
     }
 
-    private AvTimeSpan narrateObjectNachAblegen(
+    private AvTimeSpan narrateObjectDiskontinuitaet(
             final PraedikatMitEinerObjektleerstelle nehmenPraedikat) {
-        if (sc.memoryComp().getLastAction().is(
-                Action.Type.ABLEGEN, Action.Type.HOCHWERFEN)) {
-            if (initialStoryState.dann()) {
-                final Nominalphrase objectDesc = getDescription(gameObject);
-                return n.add(neuerSatz(StructuralElement.PARAGRAPH,
-                        "Dann nimmst du " + objectDesc.akk() +
-                                " erneut",
-                        secs(5))
-                        .undWartest()
-                        .phorikKandidat(objectDesc, gameObject.getId()));
-            }
-
-            if (initialStoryState.allowsAdditionalDuSatzreihengliedOhneSubjekt()) {
-                return n.add(satzanschluss(
-                        ", nur um "
-                                + nehmenPraedikat
-                                .mitObj(getDescription(gameObject, true).persPron())
-                                .getDescriptionZuInfinitiv(
-                                        P2, SG,
-                                        new AdverbialeAngabe(
-                                                "gleich erneut")),
-                        secs(5))
-                        // "zu nehmen", "an dich zu nehmen", "aufzuheben"
-                        .komma()
-                        .dann());
-            }
-
-            final Nominalphrase objectDesc = getDescription(gameObject, true);
+        if (initialStoryState.dann()) {
+            final Nominalphrase objectDesc = getDescription(gameObject);
             return n.add(neuerSatz(StructuralElement.PARAGRAPH,
-                    "Ach nein, "
-                            // du nimmst die Kugel besser doch
-                            + uncapitalize(nehmenPraedikat
-                            .mitObj(objectDesc)
-                            .getDescriptionDuHauptsatz(
-                                    new Modalpartikel("besser"),
-                                    new Modalpartikel("doch"))),
+                    "Dann nimmst du " + objectDesc.akk() +
+                            " erneut",
                     secs(5))
                     .undWartest()
-                    .dann()
-                    .phorikKandidat(objectDesc.getNumerusGenus(), gameObject.getId()));
+                    .phorikKandidat(objectDesc, gameObject.getId()));
+        }
+
+        if (initialStoryState.allowsAdditionalDuSatzreihengliedOhneSubjekt()) {
+            return n.add(satzanschluss(
+                    ", nur um "
+                            + nehmenPraedikat
+                            .mitObj(getDescription(gameObject, true).persPron())
+                            .getDescriptionZuInfinitiv(
+                                    P2, SG,
+                                    new AdverbialeAngabe(
+                                            "gleich erneut")),
+                    secs(5))
+                    // "zu nehmen", "an dich zu nehmen", "aufzuheben"
+                    .komma()
+                    .dann());
         }
 
         final Nominalphrase objectDesc = getDescription(gameObject, true);
-        return n.add(neuerSatz(
-                "Dann nimmst du " + objectDesc.akk(),
+        return n.add(neuerSatz(StructuralElement.PARAGRAPH,
+                "Ach nein, "
+                        // du nimmst die Kugel besser doch
+                        + uncapitalize(nehmenPraedikat
+                        .mitObj(objectDesc)
+                        .getDescriptionDuHauptsatz(
+                                new Modalpartikel("besser"),
+                                new Modalpartikel("doch"))),
                 secs(5))
                 .undWartest()
+                .dann()
                 .phorikKandidat(objectDesc.getNumerusGenus(), gameObject.getId()));
     }
 
@@ -483,6 +480,12 @@ public class NehmenAction
     @Override
     protected boolean isDefinitivWiederholung() {
         return buildMemorizedAction().equals(sc.memoryComp().getLastAction());
+    }
+
+    @Override
+    protected boolean isDefinitivDiskontinuitaet() {
+        return sc.memoryComp().getLastAction().is(Action.Type.ABLEGEN) &&
+                sc.memoryComp().getLastAction().hasObject(gameObject);
     }
 
     @NonNull

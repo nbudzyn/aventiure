@@ -114,9 +114,19 @@ public abstract class AbstractScAction implements IPlayerAction {
      * gegeben haben.)
      * <p>
      * Ein Rückgabewert von {@code false} kann also bedeuten, dass der Benutzer definitiv
-     * nicht dasselbe schon einmal getan hat - oder das sich das System unsicher ist.
+     * nicht dasselbe schon einmal getan hat - oder dass sich das System unsicher ist.
      */
     abstract protected boolean isDefinitivWiederholung();
+
+    /**
+     * Gibt zurück, ob diese Handlung definitiv eine <i>Diskontinuität</i> in der Erzählung
+     * bedeutet. Das könnte z.B. der Fall, sein, wenn der Benutzer einen Gegenstand nimmt
+     * und ihn dann gleich wieder an derselben Stelle absetzt.
+     * <p>
+     * Ein Rückgabewert von {@code false} kann also bedeuten, dass es sich definitiv <i>nicht </i>
+     * um eine Diskontinuität handelt - oder das sich das System unsicher ist.
+     */
+    abstract protected boolean isDefinitivDiskontinuitaet();
 
     /**
      * Gibt das Personalpronomen zurück, mit dem ein

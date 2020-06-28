@@ -121,7 +121,6 @@ public class BewegenAction<R extends ISpatiallyConnectedGO & ILocationGO,
 //        oben um einen Fenster- haken, und dann fielen 20 Ellen herunter laß herunter Leiter,
 //        auf welcher man  sprang aber die Dornen, in die er fiel,
 
-
         final List<SpatialConnection> spatialConnections =
                 room.spatialConnectionComp().getConnections();
 
@@ -418,8 +417,7 @@ public class BewegenAction<R extends ISpatiallyConnectedGO & ILocationGO,
 
         if (description instanceof DuDescription &&
                 initialStoryState.allowsAdditionalDuSatzreihengliedOhneSubjekt() &&
-                sc.memoryComp().getLastAction().is(BEWEGEN) &&
-                sc.locationComp().lastLocationWas(spatialConnection.getTo())) {
+                isDefinitivDiskontinuitaet()) {
             return n.add(
                     satzanschluss(", besinnst dich aber und "
                                     + ((DuDescription) description)
@@ -435,37 +433,39 @@ public class BewegenAction<R extends ISpatiallyConnectedGO & ILocationGO,
             return n.add(description);
         }
 
-        if (sc.memoryComp().getLastAction().is(BEWEGEN)) {
-            if (sc.locationComp().lastLocationWas(spatialConnection.getTo())) {
-                final ImmutableList.Builder<AbstractDescription<?>> alt = builder();
-                if (numberOfPossibilities == ONLY_WAY) {
-                    alt.add(
-                            du("schaust", "dich nur kurz um, dann "
-                                            + uncapitalize(description.getDescriptionHauptsatz()),
-                                    description.getTimeElapsed())
-                                    .komma(description.isKommaStehtAus())
-                                    .undWartest(
-                                            description
-                                                    .isAllowsAdditionalDuSatzreihengliedOhneSubjekt()));
-                } else {
+        if (isDefinitivDiskontinuitaet()) {
+            final ImmutableList.Builder<AbstractDescription<?>> alt = builder();
+            if (numberOfPossibilities == ONLY_WAY) {
+                alt.add(
+                        du("schaust", "dich nur kurz um, dann "
+                                        + uncapitalize(description.getDescriptionHauptsatz()),
+                                description.getTimeElapsed())
+                                .komma(description.isKommaStehtAus())
+                                .undWartest(
+                                        description
+                                                .isAllowsAdditionalDuSatzreihengliedOhneSubjekt()));
+            } else {
+                alt.add(neuerSatz(
+                        "Was willst du hier eigentlich? "
+                                + description.getDescriptionHauptsatz(),
+                        description.getTimeElapsed()));
+                if (description instanceof DuDescription) {
                     alt.add(neuerSatz(
                             "Was willst du hier eigentlich? "
-                                    + description.getDescriptionHauptsatz(),
-                            description.getTimeElapsed()));
-                    if (description instanceof DuDescription) {
-                        alt.add(neuerSatz(
-                                "Was willst du hier eigentlich? "
-                                        + ((DuDescription) description)
-                                        .getDescriptionHauptsatzMitSpeziellemVorfeld(),
-                                description.getTimeElapsed()));
-                    }
-
-                    alt.add(neuerSatz("Aber dir kommt ein Gedanke und "
-                                    + uncapitalize(description.getDescriptionHauptsatz()),
+                                    + ((DuDescription) description)
+                                    .getDescriptionHauptsatzMitSpeziellemVorfeld(),
                             description.getTimeElapsed()));
                 }
-                return n.addAlt(alt);
-            } else if (initialStoryState.getEndsThis() == StructuralElement.WORD &&
+
+                alt.add(neuerSatz("Aber dir kommt ein Gedanke und "
+                                + uncapitalize(description.getDescriptionHauptsatz()),
+                        description.getTimeElapsed()));
+            }
+            return n.addAlt(alt);
+        }
+
+        if (sc.memoryComp().getLastAction().is(BEWEGEN)) {
+            if (initialStoryState.getEndsThis() == StructuralElement.WORD &&
                     initialStoryState.dann()) {
                 // "Du stehst wieder vor dem Schloss; dann gehst du wieder hinein in das Schloss."
                 final String satzEvtlMitDann = description
@@ -580,21 +580,27 @@ public class BewegenAction<R extends ISpatiallyConnectedGO & ILocationGO,
         return getDescription(d, false).nom();
     }
 
+    private void upgradeKnown(
+            @NonNull final List<? extends IGameObject> objects,
+            final Lichtverhaeltnisse lichtverhaeltnisse) {
+        final Known known = Known.getKnown(lichtverhaeltnisse);
+        sc.memoryComp().upgradeKnown(objects, known);
+    }
+
     @Override
     protected boolean isDefinitivWiederholung() {
         return buildMemorizedAction().equals(sc.memoryComp().getLastAction());
+    }
+
+    @Override
+    protected boolean isDefinitivDiskontinuitaet() {
+        return sc.memoryComp().getLastAction().is(BEWEGEN) &&
+                sc.locationComp().lastLocationWas(spatialConnection.getTo());
     }
 
     @Contract(" -> new")
     @NonNull
     private Action buildMemorizedAction() {
         return new Action(BEWEGEN, spatialConnection.getTo());
-    }
-
-    private void upgradeKnown(
-            @NonNull final List<? extends IGameObject> objects,
-            final Lichtverhaeltnisse lichtverhaeltnisse) {
-        final Known known = Known.getKnown(lichtverhaeltnisse);
-        sc.memoryComp().upgradeKnown(objects, known);
     }
 }

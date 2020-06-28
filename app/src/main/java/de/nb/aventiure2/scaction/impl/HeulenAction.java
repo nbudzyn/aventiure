@@ -122,15 +122,6 @@ public class HeulenAction extends AbstractScAction {
         return timeElapsed;
     }
 
-    @Override
-    protected boolean isDefinitivWiederholung() {
-        return sc.memoryComp().lastActionWas(buildMemorizedAction());
-    }
-
-    private static Action buildMemorizedAction() {
-        return new Action(Action.Type.HEULEN);
-    }
-
     private AvTimeSpan narrateAndDoErstesMal() {
         sc.memoryComp().setLastAction(buildMemorizedAction());
 
@@ -146,5 +137,19 @@ public class HeulenAction extends AbstractScAction {
                 .undWartest()
                 .dann());
         return n.addAlt(alt);
+    }
+
+    @Override
+    protected boolean isDefinitivWiederholung() {
+        return sc.memoryComp().lastActionWas(buildMemorizedAction());
+    }
+
+    @Override
+    protected boolean isDefinitivDiskontinuitaet() {
+        return false;
+    }
+
+    private static Action buildMemorizedAction() {
+        return new Action(Action.Type.HEULEN);
     }
 }

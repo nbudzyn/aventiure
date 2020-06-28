@@ -63,14 +63,11 @@ public class HochwerfenAction<OBJ extends IDescribableGO & ILocatableGO>
             final AvDatabase db, final StoryState initialStoryState,
             final ILocationGO room, @NonNull final OBJ gameObject) {
         if (gameObject instanceof ILivingBeingGO) {
-            // STORY Froschprinz o.Ä. hochwerfen?
             return ImmutableList.of();
         }
 
         // STORY Nicht jedes Object lässt sich hochwerfen...
-        return ImmutableList.of(
-                new HochwerfenAction<>(db, initialStoryState,
-                        gameObject, room));
+        return ImmutableList.of(new HochwerfenAction<>(db, initialStoryState, gameObject, room));
     }
 
     private HochwerfenAction(final AvDatabase db,
@@ -111,8 +108,8 @@ public class HochwerfenAction<OBJ extends IDescribableGO & ILocatableGO>
     private AvTimeSpan narrateAndDoErstesMal() {
         final IHasStateGO froschprinz = (IHasStateGO) load(db, FROSCHPRINZ);
 
-        if (room.is(IM_WALD_BEIM_BRUNNEN) && !froschprinz.stateComp()
-                .hasState(UNAUFFAELLIG)) {
+        if (room.is(IM_WALD_BEIM_BRUNNEN) &&
+                !froschprinz.stateComp().hasState(UNAUFFAELLIG)) {
             return narrateAndDoFroschBekannt((IHasStateGO & ILocatableGO) froschprinz);
         }
 
@@ -199,8 +196,7 @@ public class HochwerfenAction<OBJ extends IDescribableGO & ILocatableGO>
         AvTimeSpan timeElapsed = n.add(desc);
 
         timeElapsed = timeElapsed.plus(
-                object.locationComp()
-                        .narrateAndDoLeaveReactions(SPIELER_CHARAKTER)
+                object.locationComp().narrateAndDoLeaveReactions(SPIELER_CHARAKTER)
         );
 
         return timeElapsed.plus(GameObjects.narrateAndDoReactions()
@@ -297,6 +293,11 @@ public class HochwerfenAction<OBJ extends IDescribableGO & ILocatableGO>
     @Override
     protected boolean isDefinitivWiederholung() {
         return buildMemorizedAction().equals(sc.memoryComp().getLastAction());
+    }
+
+    @Override
+    protected boolean isDefinitivDiskontinuitaet() {
+        return false;
     }
 
     @NonNull
