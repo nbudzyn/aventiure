@@ -47,6 +47,7 @@ import static de.nb.aventiure2.german.base.StructuralElement.SENTENCE;
 import static de.nb.aventiure2.german.praedikat.SeinUtil.istSind;
 import static de.nb.aventiure2.german.praedikat.VerbSubjDatAkk.MACHEN;
 import static de.nb.aventiure2.german.praedikat.VerbSubjDatAkk.VERSPRECHEN;
+import static de.nb.aventiure2.german.praedikat.VerbSubjObj.DISKUTIEREN;
 import static de.nb.aventiure2.german.praedikat.VerbSubjObj.IGNORIEREN;
 import static de.nb.aventiure2.german.praedikat.VerbSubjObj.REDEN;
 
@@ -163,13 +164,13 @@ public class FroschprinzTalkingComp extends AbstractTalkingComp {
                         entrySt(this::hallo_froschErinnertAnVersprechen)
                 );
             case WARTET_AUF_SC_BEIM_SCHLOSSFEST:
-                return ImmutableList.of();
             case AUF_DEM_WEG_ZUM_SCHLOSSFEST:
-                return ImmutableList.of();
             case HAT_HOCHHEBEN_GEFORDERT:
                 return ImmutableList.of();
-            case WILL_BEIM_SCHLOSSFEST_ZUSAMMEN_ESSEN:
-                return ImmutableList.of();
+            case BEIM_SCHLOSSFEST_AUF_TISCH_WILL_ZUSAMMEN_ESSEN:
+                return ImmutableList.of(
+                        entrySt(DISKUTIEREN, this::froschAufTischDraengelt)
+                );
             default:
                 throw new IllegalStateException("Unexpected Froschprinz state: "
                         + stateComp.getState());
@@ -565,6 +566,28 @@ public class FroschprinzTalkingComp extends AbstractTalkingComp {
                                 + " „Du weißt, was du versprochen hast“, gibt er zurück",
                         secs(15)));
     }
+
+    private AvTimeSpan froschAufTischDraengelt() {
+        unsetTalkingTo();
+
+        final Nominalphrase froschprinzDesc = getFroschprinzDescription(true);
+        return n.addAlt(
+                du(
+                        "hast", "gerade Luft geholt, da schneidet dir "
+                                + froschprinzDesc.nom()
+                                + " schon das Wort ab. „Was gibt es da noch zu besprechen?“, quakt "
+                                + froschprinzDesc.persPron().nom()
+                                + " dich laut an",
+                        "gerade",
+                        secs(10))
+                        .phorikKandidat(froschprinzDesc, FROSCHPRINZ),
+                du("druckst", "ein bisschen herum und faselst etwas von "
+                                + "hygienischen Gründen. "
+                                + capitalize(froschprinzDesc.nom())
+                                + " schaut dich nur… traurig? verächtlich?… an",
+                        secs(15)).beendet(PARAGRAPH));
+    }
+
 
     private <LOC_DESC extends ILocatableGO & IDescribableGO>
     ImmutableList<LOC_DESC> getObjectsInDenBrunnenGefallen() {

@@ -122,6 +122,7 @@ public abstract class AvDatabase extends RoomDatabase {
                                 1, oClock(14, 30));
 
                         // Save initial state for all game objects
+                        GameObjectService.getInstance(INSTANCE).init(INSTANCE);
                         GameObjectService.getInstance(INSTANCE).saveAllInitialState();
 
                         INSTANCE.storyStateDao().add(buildInitialStoryState());

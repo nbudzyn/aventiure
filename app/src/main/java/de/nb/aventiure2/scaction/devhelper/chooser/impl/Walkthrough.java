@@ -56,7 +56,8 @@ public class Walkthrough {
                     "Die Kugel nehmen",
                     "Eintopf essen",
                     "Den Frosch in die Hände nehmen",
-                    "Den Frosch auf den Tisch setzen");
+                    "Den Frosch auf den Tisch setzen",
+                    "Mit dem Frosch diskutieren");
 
     public static final Walkthrough ANFANG_BIS_SCHLOSSFEST_SCHLOSS_BETRETEN =
             ANFANG_BIS_FROSCHVERSPRECHEN

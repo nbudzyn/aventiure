@@ -1,6 +1,7 @@
 package de.nb.aventiure2.data.world.syscomp.reaction;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
 import de.nb.aventiure2.data.database.AvDatabase;
 import de.nb.aventiure2.data.storystate.StoryStateDao;
@@ -9,6 +10,9 @@ import de.nb.aventiure2.data.world.base.GameObject;
 import de.nb.aventiure2.data.world.base.GameObjectId;
 import de.nb.aventiure2.data.world.gameobjects.GameObjectService;
 import de.nb.aventiure2.data.world.gameobjects.player.SpielerCharakter;
+import de.nb.aventiure2.data.world.syscomp.description.IDescribableGO;
+import de.nb.aventiure2.german.base.Personalpronomen;
+import de.nb.aventiure2.german.base.SubstantivischePhrase;
 
 /**
  * Component für ein {@link GameObject}: The game object might
@@ -49,6 +53,68 @@ public class AbstractReactionsComp extends AbstractStatelessComponent {
         this.gos = gos;
 
         n = db.storyStateDao();
+    }
+
+    /**
+     * Gibt das Personalpronomen zurück, mit dem ein
+     * anaphorischer Bezug auf dieses
+     * Game Object möglich ist - wenn das nicht möglich ist, dann eine kurze
+     * Beschreibung des Game Objects.
+     * <br/>
+     * Es muss sich um eine {@link IDescribableGO} handeln!
+     * <br/>
+     * Beispiel 1: "Du hebst die Lampe auf..." - jetzt ist ein anaphorischer Bezug
+     * auf die Lampe möglich und diese Methode gibt "sie" zurück.
+     * <br/>
+     * Beispiel 2: "Du zündest das Feuer an..." - jetzt ist <i>kein</i> anaphorischer Bezug
+     * auf die Lampe möglich und diese Methode gibt "die Lampe" zurück.
+     */
+    protected SubstantivischePhrase getAnaphPersPronWennMglSonstShortDescription(
+            final GameObjectId describableId) {
+        return getAnaphPersPronWennMglSonstDescription(
+                (IDescribableGO) gos.load(describableId), true);
+    }
+
+    /**
+     * Gibt das Personalpronomen zurück, mit dem ein
+     * anaphorischer Bezug auf dieses
+     * Game Object möglich ist - wenn das nicht möglich ist, dann eine kurze
+     * Beschreibung des Game Objects.
+     * <br/>
+     * Beispiel 1: "Du hebst die Lampe auf..." - jetzt ist ein anaphorischer Bezug
+     * auf die Lampe möglich und diese Methode gibt "sie" zurück.
+     * <br/>
+     * Beispiel 2: "Du zündest das Feuer an..." - jetzt ist <i>kein</i> anaphorischer Bezug
+     * auf die Lampe möglich und diese Methode gibt "die mysteriöse Lampe" oder "die Lampe" zurück.
+     */
+    protected SubstantivischePhrase getAnaphPersPronWennMglSonstShortDescription(
+            final IDescribableGO describableGO) {
+        return getAnaphPersPronWennMglSonstDescription(
+                describableGO, true);
+    }
+
+    /**
+     * Gibt das Personalpronomen zurück, mit dem ein
+     * anaphorischer Bezug auf dieses
+     * Game Object möglich ist - wenn das nicht möglich ist, dann eine
+     * Beschreibung des Game Objects.
+     * <br/>
+     * Beispiel 1: "Du hebst die Lampe auf..." - jetzt ist ein anaphorischer Bezug
+     * auf die Lampe möglich und diese Methode gibt "sie" zurück.
+     * <br/>
+     * Beispiel 2: "Du zündest das Feuer an..." - jetzt ist <i>kein</i> anaphorischer Bezug
+     * auf die Lampe möglich und diese Methode gibt "die mysteriöse Lampe" zurück.
+     */
+    protected SubstantivischePhrase getAnaphPersPronWennMglSonstDescription(
+            final IDescribableGO describableGO,
+            final boolean descShortIfKnown) {
+        @Nullable final Personalpronomen anaphPersPron =
+                db.storyStateDao().getStoryState().getAnaphPersPronWennMgl(describableGO);
+        if (anaphPersPron != null) {
+            return anaphPersPron;
+        }
+
+        return gos.getDescription(describableGO, descShortIfKnown);
     }
 
     @NonNull

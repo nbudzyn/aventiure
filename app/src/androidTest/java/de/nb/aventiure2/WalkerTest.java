@@ -66,7 +66,7 @@ public class WalkerTest {
         AvDatabase.resetDatabase();
 
         db = AvDatabase.getDatabase(appContext);
-        GameObjectService.reset();
+        GameObjectService.reset(db);
 
         scActionService = new ScActionService(appContext);
     }
@@ -78,6 +78,9 @@ public class WalkerTest {
 
     private void walkRandomly() {
         final RandomActionChooser actionChooser = new RandomActionChooser();
+        // TODO Nicht nur zufällig sondern nach konfigurierbaren Vorgaben. Z.B.
+        //  Aktionen gemäß Primzahlen, immer abwechselnd, bestimmte Festlegungen, sonst
+        //  zufällig o.Ä.
 
         walkActions(actionChooser);
     }

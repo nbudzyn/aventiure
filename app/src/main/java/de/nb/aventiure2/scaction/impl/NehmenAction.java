@@ -106,8 +106,7 @@ public class NehmenAction
                             froschprinz, EINE_TASCHE_DES_SPIELER_CHARAKTERS));
         }
 
-        if (((IHasStateGO) froschprinz).stateComp()
-                .hasState(HAT_HOCHHEBEN_GEFORDERT)) {
+        if (((IHasStateGO) froschprinz).stateComp().hasState(HAT_HOCHHEBEN_GEFORDERT)) {
             return ImmutableList.of(
                     new NehmenAction<>(db, gos, initialStoryState,
                             froschprinz, HAENDE_DES_SPIELER_CHARAKTERS));
@@ -160,7 +159,7 @@ public class NehmenAction
     public String getName() {
         final PraedikatMitEinerObjektleerstelle praedikat = getPraedikatFuerName();
 
-        return capitalize(praedikat.mitObj(getDescription(gameObject, true))
+        return capitalize(praedikat.mitObj(gos.getDescription(gameObject, true))
                 // Relevant für etwas wie "Die Schale an *mich* nehmen"
                 .getDescriptionInfinitiv(P1, SG));
     }
@@ -200,7 +199,7 @@ public class NehmenAction
             return narrateAndDoFroschprinz_HatHochhebenGefordert();
         }
 
-        final Nominalphrase froschDesc = getDescription(gameObject, true);
+        final Nominalphrase froschDesc = gos.getDescription(gameObject, true);
 
         AvTimeSpan timeElapsed = n.addAlt(
                 du(PARAGRAPH,
@@ -319,19 +318,19 @@ public class NehmenAction
         return n.addAlt(
                 du(PARAGRAPH,
                         "zauderst", "und dein Herz klopft gewaltig, als du endlich "
-                                + getDescription(gameObject, true).akk()
+                                + gos.getDescription(gameObject, true).akk()
                                 + " greifst",
                         secs(5))
-                        .phorikKandidat(getDescription(gameObject, true), FROSCHPRINZ)
+                        .phorikKandidat(gos.getDescription(gameObject, true), FROSCHPRINZ)
                         .komma()
                         .dann(),
                 neuerSatz(SENTENCE,
                         "Dir wird ganz angst, aber was man "
                                 + "versprochen hat, das muss man auch halten! Du nimmst "
-                                + getDescription(gameObject, true).akk()
+                                + gos.getDescription(gameObject, true).akk()
                                 + " in die Hände",
                         secs(15))
-                        .phorikKandidat(getDescription(gameObject, true), FROSCHPRINZ)
+                        .phorikKandidat(gos.getDescription(gameObject, true), FROSCHPRINZ)
                         .undWartest()
                         .dann());
     }
@@ -362,7 +361,7 @@ public class NehmenAction
         }
 
         if (sc.memoryComp().getLastAction().is(Action.Type.ABLEGEN)) {
-            final Nominalphrase objectDesc = getDescription(gameObject, true);
+            final Nominalphrase objectDesc = gos.getDescription(gameObject, true);
             return n.add(neuerSatz(
                     "Dann nimmst du " + objectDesc.akk(),
                     secs(5))
@@ -380,7 +379,7 @@ public class NehmenAction
                 //  Oder wenn man vielleicht etwas ähliches wie eine DuDescription
                 //  erzeugen könnte, die intern das mitnehmenPraedikat enthält.
                 //  Leider müssen wir bis dahin eine AllgDescription bauen. :-(
-                final Nominalphrase objectDesc = getDescription(gameObject, true);
+                final Nominalphrase objectDesc = gos.getDescription(gameObject, true);
                 return n.add(neuerSatz(StructuralElement.PARAGRAPH,
                         mitnehmenPraedikat
                                 .getDescriptionDuHauptsatz(
@@ -398,7 +397,7 @@ public class NehmenAction
         return n.add(
                 neuerSatz(PARAGRAPH,
                         mitnehmenPraedikat
-                                .getDescriptionDuHauptsatz(getDescription(gameObject, true)),
+                                .getDescriptionDuHauptsatz(gos.getDescription(gameObject, true)),
                         secs(5))
                         .undWartest(
                                 mitnehmenPraedikat
@@ -409,7 +408,7 @@ public class NehmenAction
     private AvTimeSpan narrateObjectDiskontinuitaet(
             final PraedikatMitEinerObjektleerstelle nehmenPraedikat) {
         if (initialStoryState.dann()) {
-            final Nominalphrase objectDesc = getDescription(gameObject);
+            final Nominalphrase objectDesc = gos.getDescription(gameObject);
             return n.add(neuerSatz(StructuralElement.PARAGRAPH,
                     "Dann nimmst du " + objectDesc.akk() +
                             " erneut",
@@ -422,7 +421,7 @@ public class NehmenAction
             return n.add(satzanschluss(
                     ", nur um "
                             + nehmenPraedikat
-                            .mitObj(getDescription(gameObject, true).persPron())
+                            .mitObj(gos.getDescription(gameObject, true).persPron())
                             .getDescriptionZuInfinitiv(
                                     P2, SG,
                                     new AdverbialeAngabe(
@@ -433,7 +432,7 @@ public class NehmenAction
                     .dann());
         }
 
-        final Nominalphrase objectDesc = getDescription(gameObject, true);
+        final Nominalphrase objectDesc = gos.getDescription(gameObject, true);
         return n.add(neuerSatz(StructuralElement.PARAGRAPH,
                 "Ach nein, "
                         // du nimmst die Kugel besser doch

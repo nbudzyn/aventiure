@@ -25,23 +25,23 @@ import de.nb.aventiure2.german.praedikat.VerbSubjObj;
 public class SCTalkAction {
     public enum Type {
         /**
-         * Ein Entry-Schritt ist nur möglich, wenn der SC unmittelbar zuvor NICHT
+         * Ein ENTRY_RE_ENTRY-Schritt ist nur möglich, wenn der SC unmittelbar zuvor NICHT
          * im Gespräch mit der Kreatur war UND DIESES GESPRÄCH AUCH NICHT GERADE
          * EBEN BEENDET HAT. Der Benutzer möchte ein Gespräch beginnen.
          */
         ENTRY_RE_ENTRY,
         /**
-         * Ein Entry-Schritt ist nur möglich, wenn der SC unmittelbar zuvor noch im Gespräch
+         * Ein NORMAL-Schritt ist nur möglich, wenn der SC unmittelbar zuvor noch im Gespräch
          * mit der Kreatur war. Der Benutzer möchte das Gespräch fortführen.
          */
         NORMAL,
         /**
-         * Ein Entry-Schritt ist nur möglich, wenn der SC unmittelbar zuvor noch im Gespräch
+         * Ein EXIT-Schritt ist nur möglich, wenn der SC unmittelbar zuvor noch im Gespräch
          * mit der Kreatur war. Der Benutzer möchte das Gespräch beenden.
          */
         EXIT,
         /**
-         * Ein Entry-Schritt ist nur möglich, wenn der SC GERADE EBEN das
+         * Ein IMMEDIATE_RE_ENTRY-Schritt ist nur möglich, wenn der SC GERADE EBEN das
          * im Gespräch mit der Kreatur beendet hat (oder die Creature hat das Gespräch
          * beendet). Der Benutzer hat es sich offenbar
          * anders überlegt und möchte sofort wieder ein Gespräch beginnen.

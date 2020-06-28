@@ -23,6 +23,7 @@ import de.nb.aventiure2.data.world.time.AvDateTime;
 import de.nb.aventiure2.data.world.time.AvTimeSpan;
 import de.nb.aventiure2.german.base.Nominalphrase;
 import de.nb.aventiure2.german.base.StructuralElement;
+import de.nb.aventiure2.german.base.SubstantivischePhrase;
 
 import static de.nb.aventiure2.data.world.gameobjects.GameObjectService.FROSCHPRINZ;
 import static de.nb.aventiure2.data.world.gameobjects.GameObjectService.GOLDENE_KUGEL;
@@ -36,6 +37,7 @@ import static de.nb.aventiure2.data.world.gameobjects.GameObjectService.UNTEN_IM
 import static de.nb.aventiure2.data.world.syscomp.feelings.Mood.ANGESPANNT;
 import static de.nb.aventiure2.data.world.syscomp.state.GameObjectState.AUF_DEM_WEG_ZUM_SCHLOSSFEST;
 import static de.nb.aventiure2.data.world.syscomp.state.GameObjectState.BEGONNEN;
+import static de.nb.aventiure2.data.world.syscomp.state.GameObjectState.BEIM_SCHLOSSFEST_AUF_TISCH_WILL_ZUSAMMEN_ESSEN;
 import static de.nb.aventiure2.data.world.syscomp.state.GameObjectState.ERWARTET_VON_SC_EINLOESUNG_SEINES_VERSPRECHENS;
 import static de.nb.aventiure2.data.world.syscomp.state.GameObjectState.HAT_FORDERUNG_GESTELLT;
 import static de.nb.aventiure2.data.world.syscomp.state.GameObjectState.HAT_HOCHHEBEN_GEFORDERT;
@@ -43,7 +45,6 @@ import static de.nb.aventiure2.data.world.syscomp.state.GameObjectState.HAT_NACH
 import static de.nb.aventiure2.data.world.syscomp.state.GameObjectState.HAT_SC_HILFSBEREIT_ANGESPROCHEN;
 import static de.nb.aventiure2.data.world.syscomp.state.GameObjectState.UNAUFFAELLIG;
 import static de.nb.aventiure2.data.world.syscomp.state.GameObjectState.WARTET_AUF_SC_BEIM_SCHLOSSFEST;
-import static de.nb.aventiure2.data.world.syscomp.state.GameObjectState.WILL_BEIM_SCHLOSSFEST_ZUSAMMEN_ESSEN;
 import static de.nb.aventiure2.data.world.time.AvTimeSpan.hours;
 import static de.nb.aventiure2.data.world.time.AvTimeSpan.noTime;
 import static de.nb.aventiure2.data.world.time.AvTimeSpan.secs;
@@ -200,6 +201,32 @@ public class FroschprinzReactionsComp
                                         + "der Frosch „Heb mich herauf, heb mich herauf!“ quakt",
                                 secs(20))
                                 .beendet(PARAGRAPH));
+            case BEIM_SCHLOSSFEST_AUF_TISCH_WILL_ZUSAMMEN_ESSEN:
+                loadSC().feelingsComp().setMood(ANGESPANNT);
+
+                final Nominalphrase froschprinzDesc = getFroschprinzDescription();
+                return n.addAlt(
+                        neuerSatz(PARAGRAPH, "Auf einmal sitzt "
+                                        + froschprinzDesc.nom()
+                                        + " bei dir auf dem Tisch. „Auf, füll deine "
+                                        + "Schale, wir wollen zusammen essen“, quakt " +
+                                        froschprinzDesc.persPron().nom() +
+                                        " dich an. Es schauert dich bei dem Gedanken",
+                                secs(10))
+                                .beendet(PARAGRAPH),
+                        neuerSatz(PARAGRAPH, "Platsch – da springt auf einmal "
+                                        + froschprinzDesc.nom()
+                                        + " vor dich auf den Tisch. Gerade noch, dass er "
+                                        + "dir nicht in die Essensschale gehüpft ist. Dir läuft "
+                                        + "ein Schauer über den Rücken, als "
+                                        + froschprinzDesc.persPron().nom()
+                                        + " fodert: „Nicht länger gezögert – nun lass uns zusammen "
+                                        + "essen!“",
+                                secs(10))
+                                .beendet(PARAGRAPH)
+                );
+
+
             default:
                 // TODO Wenn der Frosch nur rekursiv enthalten ist (Frosch sitzt auf dem Tisch),
                 //  dann beschreiben (vgl. BewegenAction)
@@ -256,71 +283,7 @@ public class FroschprinzReactionsComp
     private AvTimeSpan onFroschprinzEnter(@Nullable final ILocationGO from, final ILocationGO to) {
         if (to.is(SCHLOSS_VORHALLE_LANGER_TISCH_BEIM_FEST)) {
             // Der Froschprinz hat es auf den Tisch beim Schlossfest geschafft!
-            // Ist der Spieler auch da?
-            if (!loadSC().locationComp()
-                    .hasRecursiveLocation(SCHLOSS_VORHALLE_AM_TISCH_BEIM_FEST)) {
-                stateComp.setState(WILL_BEIM_SCHLOSSFEST_ZUSAMMEN_ESSEN);
-
-                // STORY ...wie auch immer der Frosch es auf den Tisch geschafft hat...
-                // Status WILL_BEIM_SCHLOSSFEST_ZUSAMMEN_ESSEN: Wenn der Spieler auch an den Tisch
-                // kommt, muss der Frosch irgendwie reagieren! (Auf einmal... Will
-                // zusammmen essen...)
-
-                return noTime();
-            }
-
-            //  TODO Wie er nun da sitzt glotzt er dich mit großen Glubschaugen an und
-//                >spricht: Nun füll deine Holzschale auf, wir wollen zusammen essen.«
-
-
-            // STORY Der Froschprinz hat es auf dem Tisch geschafft (vermutlich hat
-            //  der Spieler ihn dort abgesetzt :-) ) - hier muss die Geschichte
-            //  weitergehen!
-
-            // final SubstantivischePhrase froschDescOderAnapher =
-            //       getAnaphPersPronWennMglSonstShortDescription(
-            //            FROSCHPRINZ);
-
-
-//            n.add(neuerSatz(
-//                    capitalize(
-//                            froschprinzDesc.nom()) +
-//                            " schaut dich vorwurfsvoll und etwas hochnäsig an",
-//                    secs(5))
-//                    .phorikKandidat(froschprinzDesc, FROSCHPRINZ))
-
-            // TODO  stateComp.setState(WILL_BEIM_SCHLOSSFEST_ZUSAMMEN_ESSEN);
-
-
-//
-// STORY Eintopf essen
-//
-//  Was hatte deine Großmutter immer gesagt?
-//  »Wer dir geholfen in der Not, den sollst du hernach nicht verachten.«
-//  Du füllst deine Schale neu mit Eintopf, steckst deinen Holzlöffel
-//  hinein... aber was ist das? Auch ein goldener Löffel fährt mit in die
-//  Schale. Du schaust verwirrt auf - kein Frosch mehr auf dem Tisch, doch
-//                >neben dir auf der Bank sitzt ein junger Mann mit schönen freundlichen
-//                >Augen. In Samt und Seide ist er gekleidet, mit goldenen Ketten um den
-//  Hals. "Ihr habt mich erlöst", sagt er, "ich danke euch!" Eine böse Hexe
-//                >hätte ihn verwünscht. "Ich werde euch nicht vergessen!"
-//                >
-//  Am Tisch um euch herum entsteht Aufregung. Der schmucke Mann erhebt sich und schickt
-//                >sich an, die Halle zu verlassen.
-//                >
-// STORY Vom Tisch aufstehen.
-//                >
-//  Du stehst vom Tisch auf, aber die Menge hat dich schon von dem jungen
-//  Königssohn getrennt.
-//
-// STORY Das Schloss verlassen
-//                >
-//  Du drängst dich durch das Eingangstor und siehst  noch einen Wagen
-//                >davonfahren, mit acht weißen Pferden bespannt, jedes mit weißen
-//  Straußfedern auf dem Kopf.
-
-
-            return noTime();
+            return onFroschprinzEnterTischBeimSchlossfest();
         }
 
         if (
@@ -344,6 +307,31 @@ public class FroschprinzReactionsComp
                         " quakt erbost",
                 secs(5))
                 .phorikKandidat(froschprinzDesc, FROSCHPRINZ));
+    }
+
+    private AvTimeSpan onFroschprinzEnterTischBeimSchlossfest() {
+        // Ist der Spieler auch da?
+        if (!loadSC().locationComp()
+                .hasRecursiveLocation(SCHLOSS_VORHALLE_AM_TISCH_BEIM_FEST)) {
+            stateComp.setState(BEIM_SCHLOSSFEST_AUF_TISCH_WILL_ZUSAMMEN_ESSEN);
+
+            return noTime();
+        }
+
+        final SubstantivischePhrase froschDescOderAnapher =
+                getAnaphPersPronWennMglSonstShortDescription(FROSCHPRINZ);
+
+        stateComp.setState(BEIM_SCHLOSSFEST_AUF_TISCH_WILL_ZUSAMMEN_ESSEN);
+
+        return n.add(neuerSatz(
+                "Wie " +
+                        froschDescOderAnapher.nom() +
+                        " nun da sitzt, glotzt " +
+                        froschDescOderAnapher.nom() +
+                        " dich mit großen Glubschaugen an und spricht: „Nun füll deine "
+                        + "Holzschale auf, wir wollen zusammen essen.“",
+                secs(10))
+                .phorikKandidat(froschDescOderAnapher, FROSCHPRINZ));
     }
 
     @Override
@@ -385,6 +373,33 @@ public class FroschprinzReactionsComp
         if (stateComp.hasState(HAT_HOCHHEBEN_GEFORDERT)) {
             return froschprinzHatHochhebenGefordertUndWillMitessen();
         }
+
+// STORY BEIM_SCHLOSSFEST_AUF_TISCH_WILL_ZUSAMMEN_ESSEN: Eintopf essen
+//
+//  Was hatte deine Großmutter immer gesagt?
+//  »Wer dir geholfen in der Not, den sollst du hernach nicht verachten.«
+//  Du füllst deine Schale neu mit Eintopf, steckst deinen Holzlöffel
+//  hinein... aber was ist das? Auch ein goldener Löffel fährt mit in die
+//  Schale. Du schaust verwirrt auf - kein Frosch mehr auf dem Tisch, doch
+//                >neben dir auf der Bank sitzt ein junger Mann mit schönen freundlichen
+//                >Augen. In Samt und Seide ist er gekleidet, mit goldenen Ketten um den
+//  Hals. "Ihr habt mich erlöst", sagt er, "ich danke euch!" Eine böse Hexe
+//                >hätte ihn verwünscht. "Ich werde euch nicht vergessen!"
+//                >
+//  Am Tisch um euch herum entsteht Aufregung. Der schmucke Mann erhebt sich und schickt
+//                >sich an, die Halle zu verlassen.
+//                >
+// STORY Vom Tisch aufstehen.
+//                >
+//  Du stehst vom Tisch auf, aber die Menge hat dich schon von dem jungen
+//  Königssohn getrennt.
+//
+// STORY Das Schloss verlassen
+//                >
+//  Du drängst dich durch das Eingangstor und siehst  noch einen Wagen
+//                >davonfahren, mit acht weißen Pferden bespannt, jedes mit weißen
+//  Straußfedern auf dem Kopf.
+
 
         return noTime();
     }

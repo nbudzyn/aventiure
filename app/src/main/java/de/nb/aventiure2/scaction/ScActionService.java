@@ -49,22 +49,12 @@ public class ScActionService {
     // https://github.com/googlesamples
     public ScActionService(final Context context) {
         db = AvDatabase.getDatabase(context);
+
         gos = GameObjectService.getInstance(db);
     }
 
     // TODO Have a convention like "Never do this", better have typical combinations
     //  available?
-    // TODO Test schreiben, der zufällig angebotene Aktionen ausführt und
-    //  scheitert, wenn eine RuntimeException fliegt.
-    //  Ohne GUI, aber mit Datenbank! (Datenbank initial wie auch produktiv.)
-    // TODO Für den Test, der zufällig angebotene Aktionen ausführt:
-    //  Nicht nur zufällig sondern nach konfigurierbaren Vorgaben. Z.B.
-    //  Aktionen gemäß Primzahlen, immer abwechselnd, bestimmte Festlegungen, sonst
-    //  zufällig o.Ä.
-    // TODO Button(s) anbieten, die bestimmte Aktionsfolgen durchführen, z.B.
-    //  "Durchklicken bis zum Frosch" oder "vom Frosch bis zum nächsten Morgen" o.Ä.
-    //  (Vielleicht gewisse Buttons nur an gewissen Orten anbieten, oder wenn gewisse
-    //  Aktionen zurzeit angeboten werden?!)
     public <DESC_OBJ extends ILocatableGO & IDescribableGO,
             LIV extends ILocatableGO & IDescribableGO & ILivingBeingGO> List<AbstractScAction>
     getPlayerActions() {

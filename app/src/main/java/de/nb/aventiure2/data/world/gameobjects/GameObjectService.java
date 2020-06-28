@@ -3,6 +3,7 @@ package de.nb.aventiure2.data.world.gameobjects;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.VisibleForTesting;
+import androidx.annotation.WorkerThread;
 
 import com.google.common.collect.ImmutableList;
 
@@ -116,13 +117,14 @@ public class GameObjectService {
     }
 
     @VisibleForTesting
-    public static void reset() {
+    @WorkerThread
+    public static void reset(final AvDatabase db) {
         INSTANCE = null;
+        GameObjectService.getInstance(db).init(db);
+        GameObjectService.getInstance(db).saveAllInitialState();
     }
 
     private GameObjectService(final AvDatabase db) {
-        init(db);
-        saveAllInitialState();
     }
 
     /**
@@ -130,7 +132,7 @@ public class GameObjectService {
      * werden die Daten der Objekte <i>noch nicht</i> aus der Datenbank geladen),
      * startet außerdem alle <i>Systems</i> (sofern noch nicht geschehen).
      */
-    private void init(final AvDatabase db) {
+    public void init(final AvDatabase db) {
         final SpielerCharakterFactory spieler = new SpielerCharakterFactory(db, this);
         final ObjectFactory object = new ObjectFactory(db, this);
         final CreatureFactory creature = new CreatureFactory(db, this);
@@ -544,6 +546,29 @@ public class GameObjectService {
         return (ImmutableList<LIV>) gameObjects.stream()
                 .filter(ILivingBeingGO.class::isInstance)
                 .collect(toImmutableList());
+    }
+
+    /**
+     * Gibt eine (evtl. auch etwas längere) Nominalphrase zurück, die das Game Object beschreibt.
+     * Die Phrase wird in der Regel unterschiedlich sein, je nachdem, ob
+     * der Spieler das Game Object schon kennt oder nicht.
+     */
+    public Nominalphrase getDescription(final IDescribableGO gameObject) {
+        return getDescription(gameObject, false);
+    }
+
+    /**
+     * Gibt eine Nominalphrase zurück, die das Game Object beschreibt.
+     * Die Phrase wird in der Regel unterschiedlich sein, je nachdem, ob
+     * ob der Spieler das Game Object schon kennt oder nicht.
+     *
+     * @param shortIfKnown <i>Falls der Spieler(-charakter)</i> das
+     *                     Game Object schon kennt, wird eher eine
+     *                     kürzere Beschreibung gewählt
+     */
+    public Nominalphrase getDescription(final IDescribableGO gameObject,
+                                        final boolean shortIfKnown) {
+        return getPOVDescription(loadSC(), gameObject, shortIfKnown);
     }
 
     /**

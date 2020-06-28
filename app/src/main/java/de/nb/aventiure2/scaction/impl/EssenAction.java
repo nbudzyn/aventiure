@@ -136,6 +136,7 @@ public class EssenAction extends AbstractScAction {
 
     private AvTimeSpan narrateAndDoSchlossfest() {
         final Hunger hunger = getHunger();
+
         switch (hunger) {
             case HUNGRIG:
                 return narrateAndDoSchlossfestHungrig();

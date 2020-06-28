@@ -88,7 +88,6 @@ public class GOReactionsCoordinator {
                                @Nullable final ILocationGO from,
                                final ILocationGO to) {
         return doReactions(IMovementReactions.class,
-                ((Predicate<IResponder>) locatable::equals).negate(),
                 reactions -> reactions.onEnter(locatable, from, to));
     }
 

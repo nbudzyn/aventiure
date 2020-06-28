@@ -267,7 +267,7 @@ public class BewegenAction<R extends ISpatiallyConnectedGO & ILocationGO,
                         objectsDescription,
                         secs(numObjects * 2))
                         .phorikKandidat(
-                                getDescription(lastObject,
+                                gos.getDescription(lastObject,
                                         false),
                                 lastObject.getId()));
     }
@@ -576,7 +576,7 @@ public class BewegenAction<R extends ISpatiallyConnectedGO & ILocationGO,
     }
 
     private String getNom(final IDescribableGO d) {
-        return getDescription(d, false).nom();
+        return gos.getDescription(d, false).nom();
     }
 
     private void upgradeKnown(

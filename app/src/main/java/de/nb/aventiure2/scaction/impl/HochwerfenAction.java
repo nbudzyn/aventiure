@@ -87,7 +87,7 @@ public class HochwerfenAction<OBJ extends IDescribableGO & ILocatableGO>
     @Override
     @NonNull
     public String getName() {
-        return capitalize(getDescription(object).akk()) + " hochwerfen";
+        return capitalize(gos.getDescription(object).akk()) + " hochwerfen";
     }
 
     @Override
@@ -161,7 +161,7 @@ public class HochwerfenAction<OBJ extends IDescribableGO & ILocatableGO>
 
         // Der Frosch ist nicht mehr in Stimmung, Dinge aus dem Brunnen zu holen.
         if (object.is(GOLDENE_KUGEL)) {
-            final Nominalphrase objectDesc = getDescription(object);
+            final Nominalphrase objectDesc = gos.getDescription(object);
 
             return narrateAndDoHochwerfenAuffangen(
                     du(PARAGRAPH, "wirfst", objectDesc.akk() +
@@ -212,7 +212,7 @@ public class HochwerfenAction<OBJ extends IDescribableGO & ILocatableGO>
     }
 
     private AvTimeSpan narrateAndDoObjectFaelltSofortInDenBrunnen() {
-        final Nominalphrase objectDesc = getDescription(object, false);
+        final Nominalphrase objectDesc = gos.getDescription(object, false);
 
         final AvTimeSpan timeSpan = n.add(
                 du(PARAGRAPH, "wirfst", objectDesc.akk() +
@@ -254,13 +254,13 @@ public class HochwerfenAction<OBJ extends IDescribableGO & ILocatableGO>
                             "– bei dieser Dunkelheit schon gar nicht" : "";
 
             final AvTimeSpan timeSpan = n.add(du("wirfst",
-                    getDescription(object).akk() +
+                    gos.getDescription(object).akk() +
                             " noch einmal in die Höhe… doch oh nein, " +
-                            getDescription(object, true).nom() +
+                            gos.getDescription(object, true).nom() +
                             " fällt dir nicht in die Hände, sondern schlägt vorbei " +
                             "auf den Brunnenrand und rollt geradezu ins Wasser hinein." +
                             " Du folgst ihr mit den Augen nach, aber " +
-                            getDescription(object, true).nom() +
+                            gos.getDescription(object, true).nom() +
                             " verschwindet, und der Brunnen ist tief, so tief, dass " +
                             "man keinen Grund sieht"
                             + dunkelheitNachsatz,
@@ -273,11 +273,11 @@ public class HochwerfenAction<OBJ extends IDescribableGO & ILocatableGO>
         }
 
         final AvTimeSpan timeSpan = n.add(du("schleuderst",
-                getDescription(object).akk() +
+                gos.getDescription(object).akk() +
                         " übermütig noch einmal in die Luft, aber sie wieder aufzufangen will dir "
                         +
                         "dieses Mal nicht gelingen. " +
-                        capitalize(getDescription(object, true).nom()) +
+                        capitalize(gos.getDescription(object, true).nom()) +
                         " landet " +
                         room.storingPlaceComp().getLocationMode().getWo(),
                 "übermütig",

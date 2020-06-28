@@ -32,6 +32,7 @@ import static de.nb.aventiure2.data.world.gameobjects.GameObjectService.SCHLOSS_
 import static de.nb.aventiure2.data.world.syscomp.state.GameObjectState.AUFMERKSAM;
 import static de.nb.aventiure2.data.world.syscomp.state.GameObjectState.AUF_DEM_WEG_ZUM_BRUNNEN_UM_DINGE_HERAUSZUHOLEN;
 import static de.nb.aventiure2.data.world.syscomp.state.GameObjectState.AUF_DEM_WEG_ZUM_SCHLOSSFEST;
+import static de.nb.aventiure2.data.world.syscomp.state.GameObjectState.BEIM_SCHLOSSFEST_AUF_TISCH_WILL_ZUSAMMEN_ESSEN;
 import static de.nb.aventiure2.data.world.syscomp.state.GameObjectState.ERWARTET_VON_SC_EINLOESUNG_SEINES_VERSPRECHENS;
 import static de.nb.aventiure2.data.world.syscomp.state.GameObjectState.HAT_FORDERUNG_GESTELLT;
 import static de.nb.aventiure2.data.world.syscomp.state.GameObjectState.HAT_HOCHHEBEN_GEFORDERT;
@@ -39,7 +40,6 @@ import static de.nb.aventiure2.data.world.syscomp.state.GameObjectState.HAT_NACH
 import static de.nb.aventiure2.data.world.syscomp.state.GameObjectState.HAT_SC_HILFSBEREIT_ANGESPROCHEN;
 import static de.nb.aventiure2.data.world.syscomp.state.GameObjectState.UNAUFFAELLIG;
 import static de.nb.aventiure2.data.world.syscomp.state.GameObjectState.WARTET_AUF_SC_BEIM_SCHLOSSFEST;
-import static de.nb.aventiure2.data.world.syscomp.state.GameObjectState.WILL_BEIM_SCHLOSSFEST_ZUSAMMEN_ESSEN;
 import static de.nb.aventiure2.data.world.syscomp.state.GameObjectStateList.sl;
 import static de.nb.aventiure2.german.base.Nominalphrase.np;
 import static de.nb.aventiure2.german.base.NumerusGenus.F;
@@ -86,7 +86,7 @@ class CreatureFactory {
                         AUF_DEM_WEG_ZUM_SCHLOSSFEST,
                         WARTET_AUF_SC_BEIM_SCHLOSSFEST,
                         HAT_HOCHHEBEN_GEFORDERT,
-                        WILL_BEIM_SCHLOSSFEST_ZUSAMMEN_ESSEN));
+                        BEIM_SCHLOSSFEST_AUF_TISCH_WILL_ZUSAMMEN_ESSEN));
         final DescriptionComp descriptionComp =
                 new DescriptionComp(FROSCHPRINZ, np(M, "ein dicker, hässlicher Frosch",
                         "einem dicken, hässlichen Frosch",

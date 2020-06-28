@@ -13,11 +13,9 @@ import de.nb.aventiure2.data.world.gameobjects.player.SpielerCharakter;
 import de.nb.aventiure2.data.world.syscomp.description.IDescribableGO;
 import de.nb.aventiure2.data.world.time.AvDateTime;
 import de.nb.aventiure2.data.world.time.AvTimeSpan;
-import de.nb.aventiure2.german.base.Nominalphrase;
 import de.nb.aventiure2.german.base.Personalpronomen;
 import de.nb.aventiure2.german.base.SubstantivischePhrase;
 
-import static de.nb.aventiure2.data.world.gameobjects.GameObjectService.getPOVDescription;
 import static de.nb.aventiure2.data.world.time.AvTimeSpan.noTime;
 
 /**
@@ -150,7 +148,6 @@ public abstract class AbstractScAction implements IPlayerAction {
                 (IDescribableGO) gos.load(describableId), true);
     }
 
-
     /**
      * Gibt das Personalpronomen zurück, mit dem ein
      * anaphorischer Bezug auf dieses
@@ -190,30 +187,7 @@ public abstract class AbstractScAction implements IPlayerAction {
             return anaphPersPron;
         }
 
-        return getDescription(describableGO, descShortIfKnown);
-    }
-
-    /**
-     * Gibt eine (evtl. auch etwas längere) Nominalphrase zurück, die das Game Object beschreibt.
-     * Die Phrase wird in der Regel unterschiedlich sein, je nachdem, ob
-     * der Spieler das Game Object schon kennt oder nicht.
-     */
-    protected Nominalphrase getDescription(final IDescribableGO gameObject) {
-        return getDescription(gameObject, false);
-    }
-
-    /**
-     * Gibt eine Nominalphrase zurück, die das Game Object beschreibt.
-     * Die Phrase wird in der Regel unterschiedlich sein, je nachdem, ob
-     * ob der Spieler das Game Object schon kennt oder nicht.
-     *
-     * @param shortIfKnown <i>Falls der Spieler(-charakter)</i> das
-     *                     Game Object schon kennt, wird eher eine
-     *                     kürzere Beschreibung gewählt
-     */
-    protected Nominalphrase getDescription(final IDescribableGO gameObject,
-                                           final boolean shortIfKnown) {
-        return getPOVDescription(sc, gameObject, shortIfKnown);
+        return gos.getDescription(describableGO, descShortIfKnown);
     }
 
     @NonNull

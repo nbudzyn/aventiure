@@ -91,8 +91,7 @@ public class AblegenAction
                 true));
 
         for (final ILocationGO innerLocation :
-                gos.loadDescribableNonLivingLocationRecursiveInventory(
-                        location)) {
+                gos.loadDescribableNonLivingLocationRecursiveInventory(location)) {
             // Z.B. "Auf dem Tisch absetzen"
             res.add(new AblegenAction<>(
                     db, gos, initialStoryState, gameObject, innerLocation,
@@ -119,7 +118,7 @@ public class AblegenAction
     public String getName() {
         return capitalize(
                 getPraedikat()
-                        .mitObj(getDescription(gameObject, true))
+                        .mitObj(gos.getDescription(gameObject, true))
                         .getDescriptionInfinitiv(P1, SG, getWohinDetail()));
     }
 
@@ -336,7 +335,7 @@ public class AblegenAction
         if (isDefinitivDiskontinuitaet()) {
             return n.add(
                     du(PARAGRAPH, "legst",
-                            getDescription(gameObject, false).akk() +
+                            gos.getDescription(gameObject, false).akk() +
                                     " wieder "
                                     + (wohinDetail != null ? "dort" : "")
                                     + "hin",
@@ -347,7 +346,7 @@ public class AblegenAction
 
         return n.add(
                 du(PARAGRAPH, "legst",
-                        getDescription(gameObject, false).akk()
+                        gos.getDescription(gameObject, false).akk()
                                 + (wohinDetail == null ? " hin" : " " + wohinDetail),
                         secs(3))
                         .undWartest()
