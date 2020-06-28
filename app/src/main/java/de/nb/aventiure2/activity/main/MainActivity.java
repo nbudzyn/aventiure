@@ -7,11 +7,18 @@ import android.text.SpannableString;
 import android.text.Spanned;
 import android.text.style.ForegroundColorSpan;
 import android.util.DisplayMetrics;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
+import android.view.MotionEvent;
+import android.view.View;
 import android.view.WindowManager;
 import android.widget.ScrollView;
 import android.widget.TextView;
 
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -22,12 +29,18 @@ import de.nb.aventiure2.BuildConfig;
 import de.nb.aventiure2.R;
 import de.nb.aventiure2.activity.main.viewmodel.MainViewModel;
 import de.nb.aventiure2.logger.Logger;
+import de.nb.aventiure2.scaction.devhelper.chooser.impl.Walkthrough;
 
 public class MainActivity extends AppCompatActivity {
     private static final Logger LOGGER = Logger.getLogger();
 
     private TextView storyTextView;
+
     private ScrollView storyTextScrollView;
+
+    @Nullable
+    private ObjectAnimator storyTextScrollViewAnimator;
+
     private RecyclerView actionsRecyclerView;
     private GuiActionsAdapter guiActionsAdapter;
 
@@ -44,8 +57,21 @@ public class MainActivity extends AppCompatActivity {
         // TODO Blocksatz?
         // TODO Automatische Trennung?!
         storyTextScrollView = findViewById(R.id.storyTextScrollView);
+        storyTextView.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(final View v, final MotionEvent event) {
+                if (storyTextScrollViewAnimator != null) {
+                    storyTextScrollViewAnimator.cancel();
+                }
+
+                return false;
+            }
+        });
 
         createActionsRecyclerView();
+
+        final Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
 
         mainViewModel = new ViewModelProvider(this).get(MainViewModel.class);
         mainViewModel.getStoryText().observe(this,
@@ -82,6 +108,31 @@ public class MainActivity extends AppCompatActivity {
         scrollToBottom(scrollDuration);
     }
 
+    @Override
+    public boolean onCreateOptionsMenu(final Menu menu) {
+        final MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.menu_main, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(final MenuItem item) {
+        // Handle item selection
+        switch (item.getItemId()) {
+            case R.id.walk_anfang_bis_froschversprechen:
+                mainViewModel.walkActions(Walkthrough.ANFANG_BIS_FROSCHVERSPRECHEN);
+                return true;
+            case R.id.walk_anfang_bis_schlossfest_schloss_betreten:
+                mainViewModel.walkActions(Walkthrough.ANFANG_BIS_SCHLOSSFEST_SCHLOSS_BETRETEN);
+                return true;
+            case R.id.walk_full:
+                mainViewModel.walkActions(Walkthrough.FULL);
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+    }
+
     private static int calcScrollDuration(final CharSequence oldText,
                                           final CharSequence newText) {
         if (oldText.length() == 0) {
@@ -100,10 +151,11 @@ public class MainActivity extends AppCompatActivity {
             if (scrollDuration <= 0) {
                 storyTextScrollView.fullScroll(ScrollView.FOCUS_DOWN);
             } else {
-                ObjectAnimator.ofInt(storyTextScrollView, "scrollY",
-                        top)
-                        .setDuration(scrollDuration)
-                        .start();
+                storyTextScrollViewAnimator = ObjectAnimator
+                        .ofInt(storyTextScrollView, "scrollY", top)
+                        .setDuration(scrollDuration);
+                storyTextScrollViewAnimator.setAutoCancel(true);
+                storyTextScrollViewAnimator.start();
             }
         });
     }

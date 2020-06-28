@@ -16,12 +16,19 @@ import java.util.stream.Collectors;
 
 import de.nb.aventiure2.data.database.AvDatabase;
 import de.nb.aventiure2.data.storystate.StoryState;
+import de.nb.aventiure2.logger.Logger;
 import de.nb.aventiure2.scaction.AbstractScAction;
 import de.nb.aventiure2.scaction.ScActionService;
+import de.nb.aventiure2.scaction.devhelper.chooser.ExpectedActionNotFoundException;
+import de.nb.aventiure2.scaction.devhelper.chooser.IActionChooser;
+import de.nb.aventiure2.scaction.devhelper.chooser.impl.Walkthrough;
+import de.nb.aventiure2.scaction.devhelper.chooser.impl.WalkthroughActionChooser;
 
 import static de.nb.aventiure2.data.database.AvDatabase.getDatabase;
 
 public class MainViewModel extends AndroidViewModel {
+    private static final Logger LOGGER = Logger.getLogger();
+
     private final MutableLiveData<String> storyText = new MutableLiveData<>();
     private final MutableLiveData<List<GuiAction>> playerActionHandlers = new MutableLiveData<>();
 
@@ -55,6 +62,63 @@ public class MainViewModel extends AndroidViewModel {
 
     }
 
+    @UiThread
+    public void walkActions() {
+        final WalkthroughActionChooser actionChooser =
+                new WalkthroughActionChooser(Walkthrough.FULL);
+        walkActions(actionChooser);
+    }
+
+    @UiThread
+    public void walkActions(final Walkthrough walkthrough) {
+        walkActions(new WalkthroughActionChooser(walkthrough));
+    }
+
+
+    @UiThread
+    public void walkActions(final IActionChooser actionChooser) {
+        // Aktionen aus der GUI entfernen
+        playerActionHandlers.setValue(ImmutableList.of());
+
+        AvDatabase.databaseWriteExecutor.execute(
+                new Runnable() {
+                    @WorkerThread
+                    @Override
+                    public void run() {
+                        walkActionsWork(actionChooser);
+                    }
+                });
+    }
+
+    @WorkerThread
+    private void walkActionsWork(final IActionChooser actionChooser) {
+        while (true) {
+            try {
+                @Nullable final AbstractScAction playerAction =
+                        actionChooser.chooseAction(
+                                scActionService.getPlayerActions());
+                // ExpectedActionNotFoundException
+
+                if (playerAction == null) {
+                    break;
+                }
+
+                LOGGER.d("Action: " + playerAction.getName());
+                db.runInTransaction(playerAction::doAndPassTime);
+            } catch (final ExpectedActionNotFoundException e) {
+                LOGGER.i(e.getMessage());
+                // Im Moment wird die Action einfach übersprungen.
+                // Um Fehler im Walkthrough zu finden gibt es ja, den WalkerTest
+
+                // TODO Fehlermeldung zeigen: e.getMessage
+                //  - oder nachfragen, ob der Schritt oder alle
+                //  Schritte übersprungen werden sollen...
+            }
+        }
+
+        postLiveDataUpdate();
+    }
+
     @WorkerThread
     private GuiAction toGuiAction(final AbstractScAction playerAction) {
         return new GuiAction() {
@@ -69,6 +133,7 @@ public class MainViewModel extends AndroidViewModel {
             }
 
             @Override
+            @UiThread
             public void execute() {
                 // Aktionen aus der GUI entfernen
                 playerActionHandlers.setValue(ImmutableList.of());
@@ -78,6 +143,7 @@ public class MainViewModel extends AndroidViewModel {
                             @WorkerThread
                             @Override
                             public void run() {
+                                LOGGER.d("Action: " + playerAction.getName());
                                 db.runInTransaction(playerAction::doAndPassTime);
                                 postLiveDataUpdate();
                             }

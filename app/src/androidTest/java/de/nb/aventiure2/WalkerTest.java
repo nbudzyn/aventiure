@@ -2,7 +2,6 @@ package de.nb.aventiure2;
 
 import android.content.Context;
 
-import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule;
 import androidx.test.core.app.ApplicationProvider;
@@ -16,13 +15,17 @@ import org.junit.runner.RunWith;
 
 import java.io.File;
 import java.util.List;
-import java.util.Random;
 
 import de.nb.aventiure2.data.database.AvDatabase;
 import de.nb.aventiure2.data.world.gameobjects.GameObjects;
 import de.nb.aventiure2.logger.Logger;
 import de.nb.aventiure2.scaction.AbstractScAction;
 import de.nb.aventiure2.scaction.ScActionService;
+import de.nb.aventiure2.scaction.devhelper.chooser.ExpectedActionNotFoundException;
+import de.nb.aventiure2.scaction.devhelper.chooser.IActionChooser;
+import de.nb.aventiure2.scaction.devhelper.chooser.impl.RandomActionChooser;
+import de.nb.aventiure2.scaction.devhelper.chooser.impl.Walkthrough;
+import de.nb.aventiure2.scaction.devhelper.chooser.impl.WalkthroughActionChooser;
 
 import static junit.framework.TestCase.fail;
 
@@ -48,10 +51,11 @@ public class WalkerTest {
 
     @Test
     public void walkActions() {
-        for (int maxSteps = 0; maxSteps < WalkthroughActionChooser.WALKTHROUGH.length; maxSteps++) {
+        for (int maxSteps = 0;
+             maxSteps < Walkthrough.FULL.numSteps(); maxSteps++) {
             LOGGER.d("--- Neuer Durchlauf: " + maxSteps + " Schritte ---");
 
-            doWalkthrough(maxSteps);
+            doWalkthrough(Walkthrough.FULL.truncate(maxSteps));
             walkRandomly();
 
             resetDatabase();
@@ -78,8 +82,9 @@ public class WalkerTest {
         walkActions(actionChooser);
     }
 
-    private void doWalkthrough(final int maxSteps) {
-        final WalkthroughActionChooser actionChooser = new WalkthroughActionChooser(maxSteps);
+    private void doWalkthrough(final Walkthrough walkthrough) {
+        final WalkthroughActionChooser actionChooser =
+                new WalkthroughActionChooser(walkthrough);
 
         walkActions(actionChooser);
     }
@@ -93,13 +98,19 @@ public class WalkerTest {
                 fail("No actions");
             }
 
-            @Nullable final AbstractScAction playerAction =
-                    actionChooser.chooseAction(scActionService.getPlayerActions());
-            if (playerAction == null) {
-                return;
-            }
+            try {
+                @Nullable final AbstractScAction playerAction =
+                        actionChooser.chooseAction(
+                                scActionService
+                                        .getPlayerActions()); // ExpectedActionNotFoundException
+                if (playerAction == null) {
+                    return;
+                }
 
-            doAction(playerAction);
+                doAction(playerAction);
+            } catch (final ExpectedActionNotFoundException e) {
+                fail(e.getMessage());
+            }
         }
     }
 
@@ -127,122 +138,6 @@ public class WalkerTest {
         }
     }
 
-    /**
-     * Interface für Klassen, die aus einer Liste von {@link AbstractScAction}s eine auswählen.
-     */
-    private interface IActionChooser {
-        @Nullable
-        AbstractScAction chooseAction(
-                final List<? extends AbstractScAction> actionAlternatives);
-    }
-
-    /**
-     * Geht einen vordefinierten Pfad von Aktionen
-     */
-    private static class WalkthroughActionChooser implements IActionChooser {
-        private static final String[] WALKTHROUGH = {
-                "Die Kugel nehmen", "Das Schloss verlassen", "In den Wald gehen",
-                "Tiefer in den Wald hineingehen", "Auf dem Hauptpfad tiefer in den Wald gehen",
-                "Die goldene Kugel hochwerfen", "Die goldene Kugel hochwerfen",
-                "Die goldene Kugel hochwerfen", "Heulen", "Heulen",
-                "Mit dem Frosch reden", "Dem Frosch Angebote machen",
-                "Dem Frosch alles versprechen", "Den Frosch mitnehmen",
-                "Die Kugel nehmen",
-                "Hinter dem Brunnen in die Wildnis schlagen",
-                "Früchte essen", "Die Kugel hinlegen", "Den Frosch absetzen",
-                "Mit dem Frosch reden",
-                "Den Frosch mitnehmen", "Die Kugel nehmen",
-                "Zum Brunnen gehen",
-                "Den Weg Richtung Schloss gehen",
-                "Den überwachsenen Abzweig nehmen",
-                "Um die Hütte herumgehen",
-                "Auf den Baum klettern",
-                "Zur Vorderseite der Hütte gehen",
-                "Die Hütte betreten", "In das Bett legen", "Ein Nickerchen machen",
-                "Ein Nickerchen machen",
-                "Aufstehen",
-                "Die Hütte verlassen",
-                "Um die Hütte herumgehen",
-                "Auf den Baum klettern",
-                "Auf den Baum klettern",
-                "Zur Vorderseite der Hütte gehen",
-                "Die Hütte betreten", "In das Bett legen", "Ein Nickerchen machen",
-                "Aufstehen",
-                "Die Hütte verlassen",
-                "Auf den Hauptpfad zurückkehren",
-                "In Richtung Schloss gehen",
-                "Den Wald verlassen",
-                "Das Schloss betreten",
-                "An einen Tisch setzen",
-                "Die Kugel auf den Tisch legen",
-                "Die Kugel nehmen",
-                "Eintopf essen",
-                "Den Frosch in deine Hände nehmen",
-                "Den Frosch auf den Tisch setzen"
-        };
-
-        private int index = -1;
-        private final int maxSteps;
-
-        public WalkthroughActionChooser(final int maxSteps) {
-            this.maxSteps = maxSteps;
-        }
-
-        @Override
-        @Nullable
-        public AbstractScAction chooseAction(
-                final List<? extends AbstractScAction> actionAlternatives) {
-            index++;
-
-            if (index >= maxSteps || index >= WALKTHROUGH.length) {
-                return null;
-            }
-
-            return findAction(actionAlternatives, WALKTHROUGH[index]);
-        }
-
-        @NonNull
-        private static AbstractScAction findAction(
-                final List<? extends AbstractScAction> actionAlternatives,
-                final String actionName) {
-            return actionAlternatives.stream()
-                    .filter(a -> a.getName().equals(actionName))
-                    .findAny()
-                    .orElseGet(() -> {
-                                fail("Action missing: " + actionName + ". "
-                                        + "Options are: " + actionAlternatives);
-                                return null;
-                            }
-                    );
-        }
-    }
-
-    /**
-     * Wählt Aktionen zufällig aus
-     */
-    private static class RandomActionChooser implements IActionChooser {
-        private final static int NUM_STEPS = 15;
-
-        private final Random rand;
-        private int count = 0;
-
-        public RandomActionChooser() {
-            rand = new Random();
-        }
-
-        @Override
-        @Nullable
-        public AbstractScAction chooseAction(
-                final List<? extends AbstractScAction> actionAlternatives) {
-            count++;
-            if (count > NUM_STEPS) {
-                return null;
-            }
-
-            return actionAlternatives.get(
-                    rand.nextInt(actionAlternatives.size()));
-        }
-    }
 }
 
 

@@ -74,23 +74,18 @@ public class NehmenAction
                                                 final GO object) {
         final ImmutableList.Builder<NehmenAction> res = ImmutableList.builder();
 
-// TODO Wenn man etwas zb den Frosch in der HAND hat, kann man bestimmte
-//  Aktionen nicht mehr tun, zb Essen, andere Dinge nehmen oder ablegen etc.
-//
-// TODO Was man in der HAND hat, kann man irgendwo im Raum absetzen.
-//                >
-// TODO Hat man den Frosch in der HAND oder in der TASCHE und verlässt den
+// STORY Hat man den Frosch in der HAND oder in der TASCHE und verlässt den
 //  Tisch beim Schlossfest, hüpft der Frosch weg / hinaus. Der Spieler
 //                >merkt gar nicht recht wohin.
 //
-// TODO Den Frosch auf den Tisch setzen
+// STORY Den Frosch auf den Tisch setzen
 //
 //  und setzt ihn auf den Tisch.
 //
 //  Wie er nun da sitzt glotzt er dich mit großen Glubschaugen an und
 //                >spricht: Nun füll deine Holzschale auf, wir wollen zusammen essen.«
 //
-// TODO Eintopf essen
+// STORY Eintopf essen
 //
 //  Was hatte deine Großmutter immer gesagt?
 //  »Wer dir geholfen in der Not, den sollst du hernach nicht verachten.«
@@ -102,7 +97,7 @@ public class NehmenAction
 //  Hals. "Ihr habt mich erlöst", sagt er, "ich danke euch!" Eine böse Hexe
 //                >hätte ihn verwünscht. "Ich werde euch nicht vergessen!"
 //                >
-//  Am Tisch um euch herum entsteht Aufregung. Er erhebt sich und schickt
+//  Am Tisch um euch herum entsteht Aufregung. Der schmucke Mann erhebt sich und schickt
 //                >sich an, die Halle zu verlassen.
 //                >
 // STORY Vom Tisch aufstehen.
@@ -118,8 +113,6 @@ public class NehmenAction
 
         res.add(new NehmenAction<>(db, initialStoryState,
                 object, EINE_TASCHE_DES_SPIELER_CHARAKTERS));
-
-        // STORY Kann Dinge alternativ in die Hand nehmen?
 
         return res.build();
     }
