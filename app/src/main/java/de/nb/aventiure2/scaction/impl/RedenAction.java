@@ -9,7 +9,7 @@ import java.util.List;
 
 import de.nb.aventiure2.data.database.AvDatabase;
 import de.nb.aventiure2.data.storystate.StoryState;
-import de.nb.aventiure2.data.world.gameobjects.GameObjects;
+import de.nb.aventiure2.data.world.gameobjects.GameObjectService;
 import de.nb.aventiure2.data.world.syscomp.alive.ILivingBeingGO;
 import de.nb.aventiure2.data.world.syscomp.description.IDescribableGO;
 import de.nb.aventiure2.data.world.syscomp.memory.Action;
@@ -23,8 +23,7 @@ import de.nb.aventiure2.german.praedikat.PraedikatMitEinerObjektleerstelle;
 import de.nb.aventiure2.german.praedikat.PraedikatOhneLeerstellen;
 import de.nb.aventiure2.scaction.AbstractScAction;
 
-import static de.nb.aventiure2.data.world.gameobjects.GameObjects.SPIELER_CHARAKTER;
-import static de.nb.aventiure2.data.world.gameobjects.GameObjects.loadSC;
+import static de.nb.aventiure2.data.world.gameobjects.GameObjectService.SPIELER_CHARAKTER;
 import static de.nb.aventiure2.german.base.GermanUtil.capitalize;
 import static de.nb.aventiure2.german.base.Numerus.SG;
 import static de.nb.aventiure2.german.base.Person.P1;
@@ -42,18 +41,20 @@ public class RedenAction<TALKER extends IDescribableGO & ITalkerGO>
 
     public static <TALKER extends IDescribableGO & ITalkerGO>
     Collection<RedenAction<TALKER>> buildActions(
-            final AvDatabase db, final StoryState initialStoryState, final ILocationGO room,
+            final AvDatabase db, final GameObjectService gos,
+            final StoryState initialStoryState, final ILocationGO room,
             final TALKER talker) {
         final List<SCTalkAction> talkSteps =
                 talker.talkingComp().getSCConversationSteps();
 
-        return buildActions(db, initialStoryState,
+        return buildActions(db, gos, initialStoryState,
                 talker,
                 talkSteps);
     }
 
     private static <TALKER extends IDescribableGO & ITalkerGO>
     Collection<RedenAction<TALKER>> buildActions(final AvDatabase db,
+                                                 final GameObjectService gos,
                                                  final StoryState initialStoryState,
                                                  final TALKER talker,
                                                  final List<SCTalkAction> talkSteps) {
@@ -61,8 +62,8 @@ public class RedenAction<TALKER extends IDescribableGO & ITalkerGO>
                 ImmutableList.builder();
 
         for (final SCTalkAction talkStep : talkSteps) {
-            if (stepTypeFits(db, talker, talkStep.getStepType())) {
-                res.add(buildAction(db, initialStoryState,
+            if (stepTypeFits(gos, talker, talkStep.getStepType())) {
+                res.add(buildAction(db, gos, initialStoryState,
                         talker,
                         // "Mit ... reden" /  "Den ... ignorieren" / "Das Gespräch beenden"
                         talkStep));
@@ -72,7 +73,7 @@ public class RedenAction<TALKER extends IDescribableGO & ITalkerGO>
         return res.build();
     }
 
-    private static boolean stepTypeFits(final AvDatabase db,
+    private static boolean stepTypeFits(final GameObjectService gos,
                                         final ITalkerGO talker,
                                         final SCTalkAction.Type stepType) {
         if (talker.talkingComp().isTalkingTo(SPIELER_CHARAKTER)) {
@@ -81,7 +82,7 @@ public class RedenAction<TALKER extends IDescribableGO & ITalkerGO>
                     stepType == SCTalkAction.Type.EXIT;
         }
 
-        if (isDefinitivDiskontinuität(db, talker)) {
+        if (isDefinitivDiskontinuitaet(gos, talker)) {
             return stepType == SCTalkAction.Type.IMMEDIATE_RE_ENTRY;
         }
 
@@ -96,19 +97,20 @@ public class RedenAction<TALKER extends IDescribableGO & ITalkerGO>
     @NonNull
     private static <TALKER extends IDescribableGO & ITalkerGO>
     RedenAction<TALKER> buildAction(final AvDatabase db,
+                                    final GameObjectService gos,
                                     final StoryState initialStoryState,
                                     final TALKER talker,
                                     final SCTalkAction talkStep) {
         final PraedikatOhneLeerstellen praedikatOhneLeerstellen =
-                fuelleGgfPraedikatLeerstelleMitCreature(db, talkStep.getName(), talker);
+                fuelleGgfPraedikatLeerstelleMitCreature(gos, talkStep.getName(), talker);
 
-        return buildAction(db, initialStoryState, talker,
+        return buildAction(db, gos, initialStoryState, talker,
                 talkStep,
                 praedikatOhneLeerstellen);
     }
 
     private static PraedikatOhneLeerstellen fuelleGgfPraedikatLeerstelleMitCreature(
-            final AvDatabase db,
+            final GameObjectService goService,
             final Praedikat praedikat,
             final IDescribableGO talker) {
         if (praedikat instanceof PraedikatOhneLeerstellen) {
@@ -117,7 +119,7 @@ public class RedenAction<TALKER extends IDescribableGO & ITalkerGO>
 
         if (praedikat instanceof PraedikatMitEinerObjektleerstelle) {
             final Nominalphrase creatureDesc =
-                    GameObjects.getPOVDescription(db, SPIELER_CHARAKTER, talker, true);
+                    goService.getPOVDescription(SPIELER_CHARAKTER, talker, true);
 
 
             return ((PraedikatMitEinerObjektleerstelle) praedikat).mitObj(creatureDesc);
@@ -132,11 +134,13 @@ public class RedenAction<TALKER extends IDescribableGO & ITalkerGO>
      */
     @NonNull
     private static <TALKER extends IDescribableGO & ITalkerGO>
-    RedenAction<TALKER> buildAction(final AvDatabase db, final StoryState initialStoryState,
+    RedenAction<TALKER> buildAction(final AvDatabase db,
+                                    final GameObjectService gos,
+                                    final StoryState initialStoryState,
                                     final TALKER talker,
                                     final SCTalkAction talkStep,
                                     final PraedikatOhneLeerstellen praedikatOhneLeerstellen) {
-        return new RedenAction<>(db, initialStoryState, talker,
+        return new RedenAction<>(db, gos, initialStoryState, talker,
                 talkStep,
                 // "Dem Frosch Angebote machen"
                 // "Das Angebot von *mir* weisen"
@@ -144,11 +148,12 @@ public class RedenAction<TALKER extends IDescribableGO & ITalkerGO>
     }
 
     private RedenAction(final AvDatabase db,
+                        final GameObjectService gos,
                         final StoryState initialStoryState,
                         @NonNull final TALKER talker,
                         final SCTalkAction conversationStep,
                         @NonNull final String name) {
-        super(db, initialStoryState);
+        super(db, gos, initialStoryState);
         this.talker = talker;
         this.conversationStep = conversationStep;
         this.name = name;
@@ -181,16 +186,17 @@ public class RedenAction<TALKER extends IDescribableGO & ITalkerGO>
 
     @Override
     protected boolean isDefinitivDiskontinuitaet() {
-        return isDefinitivDiskontinuität(db, talker);
+        return isDefinitivDiskontinuitaet(gos, talker);
     }
 
-    private static boolean isDefinitivDiskontinuität(final AvDatabase db, final ITalkerGO talker) {
+    private static boolean isDefinitivDiskontinuitaet(final GameObjectService goService,
+                                                      final ITalkerGO talker) {
         // Der SC hat das Gespräch mit der Creature GERADE EBEN beendet
         // und hat es sich ganz offenbar anders überlegt.
         // Ider die Creature hat das Gespräch beendet und der Benutzer möchte
         // sofort wieder ein Gespräch anknüpfen.
 
-        return loadSC(db).memoryComp().lastActionWas(Action.Type.REDEN, talker) &&
+        return goService.loadSC().memoryComp().lastActionWas(Action.Type.REDEN, talker) &&
                 !talker.talkingComp().isTalkingTo(SPIELER_CHARAKTER);
     }
 

@@ -11,6 +11,7 @@ import javax.annotation.ParametersAreNonnullByDefault;
 import de.nb.aventiure2.data.database.AvDatabase;
 import de.nb.aventiure2.data.storystate.StoryState;
 import de.nb.aventiure2.data.world.base.GameObjectId;
+import de.nb.aventiure2.data.world.gameobjects.GameObjectService;
 import de.nb.aventiure2.data.world.syscomp.alive.ILivingBeingGO;
 import de.nb.aventiure2.data.world.syscomp.description.IDescribableGO;
 import de.nb.aventiure2.data.world.syscomp.feelings.Mood;
@@ -31,11 +32,10 @@ import de.nb.aventiure2.scaction.AbstractScAction;
 
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkState;
-import static de.nb.aventiure2.data.world.gameobjects.GameObjects.EINE_TASCHE_DES_SPIELER_CHARAKTERS;
-import static de.nb.aventiure2.data.world.gameobjects.GameObjects.FROSCHPRINZ;
-import static de.nb.aventiure2.data.world.gameobjects.GameObjects.HAENDE_DES_SPIELER_CHARAKTERS;
-import static de.nb.aventiure2.data.world.gameobjects.GameObjects.SPIELER_CHARAKTER;
-import static de.nb.aventiure2.data.world.gameobjects.GameObjects.load;
+import static de.nb.aventiure2.data.world.gameobjects.GameObjectService.EINE_TASCHE_DES_SPIELER_CHARAKTERS;
+import static de.nb.aventiure2.data.world.gameobjects.GameObjectService.FROSCHPRINZ;
+import static de.nb.aventiure2.data.world.gameobjects.GameObjectService.HAENDE_DES_SPIELER_CHARAKTERS;
+import static de.nb.aventiure2.data.world.gameobjects.GameObjectService.SPIELER_CHARAKTER;
 import static de.nb.aventiure2.data.world.syscomp.state.GameObjectState.ERWARTET_VON_SC_EINLOESUNG_SEINES_VERSPRECHENS;
 import static de.nb.aventiure2.data.world.syscomp.state.GameObjectState.HAT_HOCHHEBEN_GEFORDERT;
 import static de.nb.aventiure2.data.world.time.AvTimeSpan.noTime;
@@ -70,44 +70,12 @@ public class NehmenAction
 
     public static <GO extends IDescribableGO & ILocatableGO>
     Collection<NehmenAction> buildObjectActions(final AvDatabase db,
+                                                final GameObjectService gos,
                                                 final StoryState initialStoryState,
                                                 final GO object) {
         final ImmutableList.Builder<NehmenAction> res = ImmutableList.builder();
 
-// STORY Den Frosch auf den Tisch setzen
-//
-//  und setzt ihn auf den Tisch.
-//
-//  Wie er nun da sitzt glotzt er dich mit großen Glubschaugen an und
-//                >spricht: Nun füll deine Holzschale auf, wir wollen zusammen essen.«
-//
-// STORY Eintopf essen
-//
-//  Was hatte deine Großmutter immer gesagt?
-//  »Wer dir geholfen in der Not, den sollst du hernach nicht verachten.«
-//  Du füllst deine Schale neu mit Eintopf, steckst deinen Holzlöffel
-//  hinein... aber was ist das? Auch ein goldener Löffel fährt mit in die
-//  Schale. Du schaust verwirrt auf - kein Frosch mehr auf dem Tisch, doch
-//                >neben dir auf der Bank sitzt ein junger Mann mit schönen freundlichen
-//                >Augen. In Samt und Seide ist er gekleidet, mit goldenen Ketten um den
-//  Hals. "Ihr habt mich erlöst", sagt er, "ich danke euch!" Eine böse Hexe
-//                >hätte ihn verwünscht. "Ich werde euch nicht vergessen!"
-//                >
-//  Am Tisch um euch herum entsteht Aufregung. Der schmucke Mann erhebt sich und schickt
-//                >sich an, die Halle zu verlassen.
-//                >
-// STORY Vom Tisch aufstehen.
-//                >
-//  Du stehst vom Tisch auf, aber die Menge hat dich schon von dem jungen
-//  Königssohn getrennt.
-//
-// STORY Das Schloss verlassen
-//                >
-//  Du drängst dich durch das Eingangstor und siehst  noch einen Wagen
-//                >davonfahren, mit acht weißen Pferden bespannt, jedes mit weißen
-//  Straußfedern auf dem Kopf.
-
-        res.add(new NehmenAction<>(db, initialStoryState,
+        res.add(new NehmenAction<>(db, gos, initialStoryState,
                 object, EINE_TASCHE_DES_SPIELER_CHARAKTERS));
 
         return res.build();
@@ -116,10 +84,11 @@ public class NehmenAction
     public static <LIVGO extends IDescribableGO & ILocatableGO & ILivingBeingGO>
     Collection<NehmenAction> buildCreatureActions(
             final AvDatabase db,
+            final GameObjectService gos,
             final StoryState initialStoryState,
             final LIVGO creature) {
         if (creature.is(FROSCHPRINZ)) {
-            return buildFroschprinzActions(db, initialStoryState, creature);
+            return buildFroschprinzActions(db, gos, initialStoryState, creature);
         }
         return ImmutableList.of();
     }
@@ -127,19 +96,20 @@ public class NehmenAction
     public static <LIVGO extends IDescribableGO & ILocatableGO & ILivingBeingGO>
     Collection<NehmenAction> buildFroschprinzActions(
             final AvDatabase db,
+            final GameObjectService gos,
             final StoryState initialStoryState,
             final LIVGO froschprinz) {
         if (((IHasStateGO) froschprinz).stateComp()
                 .hasState(ERWARTET_VON_SC_EINLOESUNG_SEINES_VERSPRECHENS)) {
             return ImmutableList.of(
-                    new NehmenAction<>(db, initialStoryState,
+                    new NehmenAction<>(db, gos, initialStoryState,
                             froschprinz, EINE_TASCHE_DES_SPIELER_CHARAKTERS));
         }
 
         if (((IHasStateGO) froschprinz).stateComp()
                 .hasState(HAT_HOCHHEBEN_GEFORDERT)) {
             return ImmutableList.of(
-                    new NehmenAction<>(db, initialStoryState,
+                    new NehmenAction<>(db, gos, initialStoryState,
                             froschprinz, HAENDE_DES_SPIELER_CHARAKTERS));
         }
 
@@ -153,10 +123,11 @@ public class NehmenAction
      * @param targetLocationId der Ort am SC, wohin es genommen wird, z.B.
      *                         in die Hände o.Ä.
      */
-    private NehmenAction(final AvDatabase db, final StoryState initialStoryState,
+    private NehmenAction(final AvDatabase db, final GameObjectService gos,
+                         final StoryState initialStoryState,
                          @NonNull final GO gameObject,
                          @NonNull final GameObjectId targetLocationId) {
-        this(db, initialStoryState, gameObject, (TARGET_LOC) load(db, targetLocationId));
+        this(db, gos, initialStoryState, gameObject, (TARGET_LOC) gos.load(targetLocationId));
     }
 
     /**
@@ -166,9 +137,10 @@ public class NehmenAction
      * @param targetLocation der Ort am SC, wohin es genommen wird, z.B.
      *                       in die Hände o.Ä.
      */
-    private NehmenAction(final AvDatabase db, final StoryState initialStoryState,
+    private NehmenAction(final AvDatabase db, final GameObjectService gos,
+                         final StoryState initialStoryState,
                          @NonNull final GO gameObject, @NonNull final TARGET_LOC targetLocation) {
-        super(db, initialStoryState);
+        super(db, gos, initialStoryState);
 
         checkArgument(gameObject.locationComp().getLocation() != null);
         checkArgument(targetLocation.locationComp().getLocationId().equals(SPIELER_CHARAKTER),

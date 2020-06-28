@@ -14,7 +14,7 @@ import javax.annotation.ParametersAreNonnullByDefault;
 import de.nb.aventiure2.data.database.AvDatabase;
 import de.nb.aventiure2.data.storystate.StoryState;
 import de.nb.aventiure2.data.world.base.IGameObject;
-import de.nb.aventiure2.data.world.gameobjects.GameObjects;
+import de.nb.aventiure2.data.world.gameobjects.GameObjectService;
 import de.nb.aventiure2.data.world.gameobjects.player.SpielerCharakter;
 import de.nb.aventiure2.data.world.syscomp.alive.ILivingBeingGO;
 import de.nb.aventiure2.data.world.syscomp.description.IDescribableGO;
@@ -32,11 +32,8 @@ import de.nb.aventiure2.scaction.impl.NehmenAction;
 import de.nb.aventiure2.scaction.impl.RedenAction;
 import de.nb.aventiure2.scaction.impl.SchlafenAction;
 
-import static de.nb.aventiure2.data.world.gameobjects.GameObjects.HAENDE_DES_SPIELER_CHARAKTERS;
-import static de.nb.aventiure2.data.world.gameobjects.GameObjects.SPIELER_CHARAKTER;
-import static de.nb.aventiure2.data.world.gameobjects.GameObjects.loadDescribableLivingRecursiveInventory;
-import static de.nb.aventiure2.data.world.gameobjects.GameObjects.loadDescribableNonLivingRecursiveInventory;
-import static de.nb.aventiure2.data.world.gameobjects.GameObjects.loadSC;
+import static de.nb.aventiure2.data.world.gameobjects.GameObjectService.HAENDE_DES_SPIELER_CHARAKTERS;
+import static de.nb.aventiure2.data.world.gameobjects.GameObjectService.SPIELER_CHARAKTER;
 
 /**
  * Repository for the actions the player can choose from.
@@ -44,6 +41,7 @@ import static de.nb.aventiure2.data.world.gameobjects.GameObjects.loadSC;
 @ParametersAreNonnullByDefault
 public class ScActionService {
     private final AvDatabase db;
+    private final GameObjectService gos;
 
     // Note that in order to unit test the repository, you have to remove the Application
     // dependency. This adds complexity and much more code, and this sample is not about testing.
@@ -51,6 +49,7 @@ public class ScActionService {
     // https://github.com/googlesamples
     public ScActionService(final Context context) {
         db = AvDatabase.getDatabase(context);
+        gos = GameObjectService.getInstance(db);
     }
 
     // TODO Have a convention like "Never do this", better have typical combinations
@@ -71,22 +70,22 @@ public class ScActionService {
     getPlayerActions() {
         final StoryState currentStoryState = db.storyStateDao().getStoryState();
 
-        final SpielerCharakter spielerCharakter = loadSC(db);
+        final SpielerCharakter spielerCharakter = gos.loadSC();
 
         final @Nullable ILocationGO room = spielerCharakter.locationComp().getLocation();
 
         final ImmutableList<DESC_OBJ> scInventoryObjects =
-                GameObjects.loadDescribableNonLivingRecursiveInventory(db, SPIELER_CHARAKTER);
+                gos.loadDescribableNonLivingRecursiveInventory(SPIELER_CHARAKTER);
         final ImmutableList<LIV> scInventoryLivingBeings =
-                loadDescribableLivingRecursiveInventory(db, SPIELER_CHARAKTER);
+                gos.loadDescribableLivingRecursiveInventory(SPIELER_CHARAKTER);
         final ImmutableList<? extends ILocatableGO> wasSCInDenHaendenHat =
-                GameObjects.loadDescribableRecursiveInventory(db, HAENDE_DES_SPIELER_CHARAKTERS);
+                gos.loadDescribableRecursiveInventory(HAENDE_DES_SPIELER_CHARAKTERS);
 
         final ImmutableList<DESC_OBJ> objectsInRoom =
-                room != null ? loadDescribableNonLivingRecursiveInventory(db, room) :
+                room != null ? gos.loadDescribableNonLivingRecursiveInventory(room) :
                         ImmutableList.of();
         final ImmutableList<LIV> livingBeingsInRoom =
-                room != null ? GameObjects.loadDescribableLivingRecursiveInventory(db, room) :
+                room != null ? gos.loadDescribableLivingRecursiveInventory(room) :
                         ImmutableList.of();
 
         final List<AbstractScAction> res = new ArrayList<>();
@@ -129,13 +128,14 @@ public class ScActionService {
 
         for (final LIV creature : creaturesInRoom) {
             if (creature instanceof ITalkerGO) {
-                res.addAll(RedenAction.buildActions(db, currentStoryState, room,
+                res.addAll(RedenAction.buildActions(db, gos, currentStoryState, room,
                         (IDescribableGO & ITalkerGO) creature));
             }
             if (wasSCInDenHaendenHat.isEmpty() &&
                     !spielerCharakter.talkingComp().isInConversation()) {
                 if (creature.locationComp().isMovable()) {
-                    res.addAll(NehmenAction.buildCreatureActions(db, currentStoryState, creature));
+                    res.addAll(NehmenAction
+                            .buildCreatureActions(db, gos, currentStoryState, creature));
                 }
             }
         }
@@ -152,10 +152,10 @@ public class ScActionService {
         final ImmutableList.Builder<AbstractScAction> res = ImmutableList.builder();
 
         res.addAll(HeulenAction
-                .buildActions(db, currentStoryState, spielerCharakter, creaturesInRoom));
+                .buildActions(db, gos, currentStoryState, spielerCharakter, creaturesInRoom));
 
         if (wasSCInDenHaendenHat.isEmpty()) {
-            res.addAll(SchlafenAction.buildActions(db, currentStoryState, room));
+            res.addAll(SchlafenAction.buildActions(db, gos, currentStoryState, room));
         }
 
         return res.build();
@@ -170,18 +170,18 @@ public class ScActionService {
         final ImmutableList.Builder<AbstractScAction> res = ImmutableList.builder();
         for (final DESC_OBJ object : objectsInRoom) {
             if (object instanceof ITalkerGO) {
-                res.addAll(RedenAction.buildActions(db, currentStoryState, room,
+                res.addAll(RedenAction.buildActions(db, gos, currentStoryState, room,
                         (IDescribableGO & ITalkerGO) object));
             }
 
             if (wasSCInDenHaendenHat.isEmpty() && object.locationComp().isMovable()) {
                 res.addAll(
-                        NehmenAction.buildObjectActions(db, currentStoryState, object));
+                        NehmenAction.buildObjectActions(db, gos, currentStoryState, object));
             }
         }
 
         if (wasSCInDenHaendenHat.isEmpty()) {
-            res.addAll(EssenAction.buildActions(db, currentStoryState, room));
+            res.addAll(EssenAction.buildActions(db, gos, currentStoryState, room));
         }
 
         return res.build();
@@ -202,10 +202,10 @@ public class ScActionService {
                     // Das inventoryObject könnte auch ein ILivingBeing sein!
                     res.addAll(HochwerfenAction
                             .buildActions(
-                                    db, currentStoryState, room, inventoryObject));
+                                    db, gos, currentStoryState, room, inventoryObject));
                     res.addAll(
                             AblegenAction.buildActions(
-                                    db, currentStoryState, inventoryObject, room));
+                                    db, gos, currentStoryState, inventoryObject, room));
                 }
             }
         }
@@ -236,7 +236,7 @@ public class ScActionService {
         final ImmutableList.Builder<AbstractScAction> res = ImmutableList.builder();
 
         res.addAll(buildRoomSpecificActions(currentStoryState, room));
-        res.addAll(BewegenAction.buildActions(db, currentStoryState, room));
+        res.addAll(BewegenAction.buildActions(db, gos, currentStoryState, room));
 
         return res.build();
     }
@@ -245,7 +245,7 @@ public class ScActionService {
             final StoryState currentStoryState, final ILocationGO room) {
         final ImmutableList.Builder<AbstractScAction> res = ImmutableList.builder();
 
-        res.addAll(KletternAction.buildActions(db, currentStoryState, room));
+        res.addAll(KletternAction.buildActions(db, gos, currentStoryState, room));
 
         return res.build();
     }

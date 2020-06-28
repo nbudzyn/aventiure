@@ -17,7 +17,7 @@ import java.io.File;
 import java.util.List;
 
 import de.nb.aventiure2.data.database.AvDatabase;
-import de.nb.aventiure2.data.world.gameobjects.GameObjects;
+import de.nb.aventiure2.data.world.gameobjects.GameObjectService;
 import de.nb.aventiure2.logger.Logger;
 import de.nb.aventiure2.scaction.AbstractScAction;
 import de.nb.aventiure2.scaction.ScActionService;
@@ -66,7 +66,7 @@ public class WalkerTest {
         AvDatabase.resetDatabase();
 
         db = AvDatabase.getDatabase(appContext);
-        GameObjects.reset(db);
+        GameObjectService.reset();
 
         scActionService = new ScActionService(appContext);
     }

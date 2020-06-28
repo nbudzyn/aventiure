@@ -10,27 +10,27 @@ import javax.annotation.ParametersAreNonnullByDefault;
 
 import de.nb.aventiure2.data.database.AvDatabase;
 import de.nb.aventiure2.data.world.base.GameObjectId;
-import de.nb.aventiure2.data.world.gameobjects.GameObjects;
+import de.nb.aventiure2.data.world.gameobjects.GameObjectService;
 import de.nb.aventiure2.data.world.syscomp.memory.Known;
 import de.nb.aventiure2.data.world.syscomp.spatialconnection.AbstractSpatialConnectionComp;
 import de.nb.aventiure2.data.world.syscomp.storingplace.Lichtverhaeltnisse;
 import de.nb.aventiure2.german.base.AbstractDescription;
 
-import static de.nb.aventiure2.data.world.gameobjects.GameObjects.SCHLOSS_VORHALLE;
-import static de.nb.aventiure2.data.world.gameobjects.GameObjects.SCHLOSS_VORHALLE_AM_TISCH_BEIM_FEST;
+import static de.nb.aventiure2.data.world.gameobjects.GameObjectService.SCHLOSS_VORHALLE;
+import static de.nb.aventiure2.data.world.gameobjects.GameObjectService.SCHLOSS_VORHALLE_AM_TISCH_BEIM_FEST;
 import static de.nb.aventiure2.data.world.time.AvTimeSpan.mins;
 import static de.nb.aventiure2.german.base.DuDescription.du;
 
 /**
  * An implementation of {@link AbstractSpatialConnectionComp}
- * for the {@link GameObjects#SCHLOSS_VORHALLE_AM_TISCH_BEIM_FEST}
+ * for the {@link GameObjectService#SCHLOSS_VORHALLE_AM_TISCH_BEIM_FEST}
  * room.
  */
 @ParametersAreNonnullByDefault
 public class SchlossVorhalleTischBeimFestConnectionComp extends AbstractSpatialConnectionComp {
     public SchlossVorhalleTischBeimFestConnectionComp(
-            final AvDatabase db) {
-        super(SCHLOSS_VORHALLE_AM_TISCH_BEIM_FEST, db);
+            final AvDatabase db, final GameObjectService gos) {
+        super(SCHLOSS_VORHALLE_AM_TISCH_BEIM_FEST, db, gos);
     }
 
     @Override

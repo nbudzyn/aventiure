@@ -25,9 +25,12 @@ import static de.nb.aventiure2.german.base.Nominalphrase.np;
  */
 public class ObjectFactory {
     private final AvDatabase db;
+    private final GameObjectService gos;
 
-    ObjectFactory(final AvDatabase db) {
+    ObjectFactory(final AvDatabase db,
+                  final GameObjectService gos) {
         this.db = db;
+        this.gos = gos;
     }
 
     /**
@@ -75,7 +78,7 @@ public class ObjectFactory {
         return new SimpleObject(id,
                 new DescriptionComp(id, descriptionAtFirstSight, normalDescriptionWhenKnown,
                         shortDescriptionWhenKnown),
-                new LocationComp(id, db, initialLocationId, initialLastLocationId, movable));
+                new LocationComp(id, db, gos, initialLocationId, initialLastLocationId, movable));
     }
 
     GameObject create(final GameObjectId id,
@@ -105,8 +108,8 @@ public class ObjectFactory {
         return new StoringPlaceObject(id,
                 new DescriptionComp(id, descriptionAtFirstSight, normalDescriptionWhenKnown,
                         shortDescriptionWhenKnown),
-                new LocationComp(id, db, initialLocationId, initialLastLocationId, movable),
-                new StoringPlaceComp(id, db, locationMode, dauerhaftBeleuchtet));
+                new LocationComp(id, db, gos, initialLocationId, initialLastLocationId, movable),
+                new StoringPlaceComp(id, db, gos, locationMode, dauerhaftBeleuchtet));
     }
 
     private static class SimpleObject extends GameObject

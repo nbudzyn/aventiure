@@ -10,7 +10,7 @@ import javax.annotation.ParametersAreNonnullByDefault;
 
 import de.nb.aventiure2.data.database.AvDatabase;
 import de.nb.aventiure2.data.world.base.GameObjectId;
-import de.nb.aventiure2.data.world.gameobjects.GameObjects;
+import de.nb.aventiure2.data.world.gameobjects.GameObjectService;
 import de.nb.aventiure2.data.world.syscomp.memory.Known;
 import de.nb.aventiure2.data.world.syscomp.spatialconnection.AbstractSpatialConnectionComp;
 import de.nb.aventiure2.data.world.syscomp.state.IHasStateGO;
@@ -18,11 +18,11 @@ import de.nb.aventiure2.data.world.syscomp.storingplace.Lichtverhaeltnisse;
 import de.nb.aventiure2.data.world.time.AvTimeSpan;
 import de.nb.aventiure2.german.base.AbstractDescription;
 
-import static de.nb.aventiure2.data.world.gameobjects.GameObjects.ABZWEIG_IM_WALD;
-import static de.nb.aventiure2.data.world.gameobjects.GameObjects.COUNTER_ID_VOR_DEM_SCHLOSS_SCHLOSSFEST_KNOWN;
-import static de.nb.aventiure2.data.world.gameobjects.GameObjects.DRAUSSEN_VOR_DEM_SCHLOSS;
-import static de.nb.aventiure2.data.world.gameobjects.GameObjects.IM_WALD_NAHE_DEM_SCHLOSS;
-import static de.nb.aventiure2.data.world.gameobjects.GameObjects.SCHLOSSFEST;
+import static de.nb.aventiure2.data.world.gameobjects.GameObjectService.ABZWEIG_IM_WALD;
+import static de.nb.aventiure2.data.world.gameobjects.GameObjectService.COUNTER_ID_VOR_DEM_SCHLOSS_SCHLOSSFEST_KNOWN;
+import static de.nb.aventiure2.data.world.gameobjects.GameObjectService.DRAUSSEN_VOR_DEM_SCHLOSS;
+import static de.nb.aventiure2.data.world.gameobjects.GameObjectService.IM_WALD_NAHE_DEM_SCHLOSS;
+import static de.nb.aventiure2.data.world.gameobjects.GameObjectService.SCHLOSSFEST;
 import static de.nb.aventiure2.data.world.syscomp.state.GameObjectState.BEGONNEN;
 import static de.nb.aventiure2.data.world.syscomp.storingplace.Lichtverhaeltnisse.HELL;
 import static de.nb.aventiure2.data.world.time.AvTimeSpan.mins;
@@ -33,14 +33,15 @@ import static de.nb.aventiure2.german.base.StructuralElement.SENTENCE;
 
 /**
  * An implementation of {@link AbstractSpatialConnectionComp}
- * for the {@link GameObjects#IM_WALD_NAHE_DEM_SCHLOSS}
+ * for the {@link GameObjectService#IM_WALD_NAHE_DEM_SCHLOSS}
  * room.
  */
 @ParametersAreNonnullByDefault
 public class ImWaldNaheDemSchlossConnectionComp extends AbstractSpatialConnectionComp {
     public ImWaldNaheDemSchlossConnectionComp(
-            final AvDatabase db) {
-        super(IM_WALD_NAHE_DEM_SCHLOSS, db);
+            final AvDatabase db,
+            final GameObjectService gos) {
+        super(IM_WALD_NAHE_DEM_SCHLOSS, db, gos);
     }
 
     @Override
@@ -48,7 +49,8 @@ public class ImWaldNaheDemSchlossConnectionComp extends AbstractSpatialConnectio
                                                            final Known newRoomKnown,
                                                            final Lichtverhaeltnisse lichtverhaeltnisseInNewRoom) {
         if (to.equals(DRAUSSEN_VOR_DEM_SCHLOSS) &&
-                ((IHasStateGO) GameObjects.load(db, SCHLOSSFEST)).stateComp().hasState(BEGONNEN) &&
+                ((IHasStateGO) gos.load(SCHLOSSFEST)).stateComp()
+                        .hasState(BEGONNEN) &&
                 db.counterDao().get(COUNTER_ID_VOR_DEM_SCHLOSS_SCHLOSSFEST_KNOWN) == 0) {
             return false;
         }
@@ -78,7 +80,7 @@ public class ImWaldNaheDemSchlossConnectionComp extends AbstractSpatialConnectio
     private AbstractDescription getDescTo_DraussenVorDemSchloss(
             final Known newRoomKnown, final Lichtverhaeltnisse lichtverhaeltnisse) {
 
-        switch (((IHasStateGO) GameObjects.load(db, SCHLOSSFEST)).stateComp().getState()) {
+        switch (((IHasStateGO) gos.load(SCHLOSSFEST)).stateComp().getState()) {
             case BEGONNEN:
                 return getDescTo_DraussenVorDemSchloss_FestBegonnen(
                         mins(10));

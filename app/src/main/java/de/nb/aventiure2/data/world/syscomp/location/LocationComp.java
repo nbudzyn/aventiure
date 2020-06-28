@@ -11,7 +11,7 @@ import de.nb.aventiure2.data.world.base.AbstractStatefulComponent;
 import de.nb.aventiure2.data.world.base.GameObject;
 import de.nb.aventiure2.data.world.base.GameObjectId;
 import de.nb.aventiure2.data.world.base.IGameObject;
-import de.nb.aventiure2.data.world.gameobjects.GameObjects;
+import de.nb.aventiure2.data.world.gameobjects.GameObjectService;
 import de.nb.aventiure2.data.world.syscomp.storingplace.ILocationGO;
 import de.nb.aventiure2.data.world.time.AvTimeSpan;
 
@@ -23,6 +23,7 @@ import static de.nb.aventiure2.data.world.time.AvTimeSpan.noTime;
  */
 public class LocationComp extends AbstractStatefulComponent<LocationPCD> {
     private final AvDatabase db;
+    private final GameObjectService gos;
     private final GameObjectId initialLocationId;
 
     @Nullable
@@ -40,11 +41,13 @@ public class LocationComp extends AbstractStatefulComponent<LocationPCD> {
      */
     public LocationComp(final GameObjectId gameObjectId,
                         final AvDatabase db,
+                        final GameObjectService gos,
                         final GameObjectId initialLocationId,
                         @Nullable final GameObjectId initialLastLocationId,
                         final boolean movable) {
         super(gameObjectId, db.locationDao());
         this.db = db;
+        this.gos = gos;
         this.initialLocationId = initialLocationId;
         this.initialLastLocationId = initialLastLocationId;
         this.movable = movable;
@@ -94,7 +97,7 @@ public class LocationComp extends AbstractStatefulComponent<LocationPCD> {
             return noTime();
         }
 
-        return GameObjects.narrateAndDoReactions()
+        return gos.narrateAndDoReactions()
                 .onLeave(getGameObjectId(), from, newLocationId);
     }
 
@@ -102,7 +105,7 @@ public class LocationComp extends AbstractStatefulComponent<LocationPCD> {
         if (newLocationId == null) {
             return noTime();
         }
-        return GameObjects.narrateAndDoReactions()
+        return gos.narrateAndDoReactions()
                 .onEnter(getGameObjectId(), getLastLocation(), newLocationId);
     }
 
@@ -111,7 +114,7 @@ public class LocationComp extends AbstractStatefulComponent<LocationPCD> {
      * (z.B. denselben Raum).
      */
     public boolean hasSameUpperMostLocationAs(final @Nullable GameObjectId otherId) {
-        return hasSameUpperMostLocationAs(GameObjects.load(db, otherId));
+        return hasSameUpperMostLocationAs(gos.load(otherId));
     }
 
     /**
@@ -136,7 +139,7 @@ public class LocationComp extends AbstractStatefulComponent<LocationPCD> {
     }
 
     public boolean hasRecursiveLocation(final GameObjectId locationId) {
-        final GameObject location = GameObjects.load(db, locationId);
+        final GameObject location = gos.load(locationId);
 
         if (!(location instanceof ILocationGO)) {
             return false;
@@ -163,7 +166,7 @@ public class LocationComp extends AbstractStatefulComponent<LocationPCD> {
     }
 
     public boolean hasUpperMostLocation(final GameObjectId locationId) {
-        final GameObject location = GameObjects.load(db, locationId);
+        final GameObject location = gos.load(locationId);
 
         if (!(location instanceof ILocationGO)) {
             return false;
@@ -223,7 +226,7 @@ public class LocationComp extends AbstractStatefulComponent<LocationPCD> {
         //    Game Objects interagieren sowie deren LocationComps - aber nicht
         //    deren XYZComps).
         //  - Eine Komponente darf alles, was auch eine ScAction (z.B.) darf.
-        return (ILocationGO) GameObjects.load(db, locationId);
+        return (ILocationGO) gos.load(locationId);
     }
 
     @Nullable
@@ -272,7 +275,7 @@ public class LocationComp extends AbstractStatefulComponent<LocationPCD> {
         //  Vielleicht wäre es besser, wenn sich die Komponente
         //  nur ihr eigenes DAO merken würde und sich weder
         //  um andere Komponente noch andere Game Objects kümmern würde?
-        return (ILocationGO) GameObjects.load(db, lastLocationId);
+        return (ILocationGO) gos.load(lastLocationId);
     }
 
     @Nullable

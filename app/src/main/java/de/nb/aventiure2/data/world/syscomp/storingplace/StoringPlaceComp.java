@@ -5,8 +5,8 @@ import de.nb.aventiure2.data.world.base.AbstractStatelessComponent;
 import de.nb.aventiure2.data.world.base.GameObject;
 import de.nb.aventiure2.data.world.base.GameObjectId;
 import de.nb.aventiure2.data.world.base.IGameObject;
+import de.nb.aventiure2.data.world.gameobjects.GameObjectService;
 
-import static de.nb.aventiure2.data.world.gameobjects.GameObjects.loadDescribableNonLivingLocationRecursiveInventory;
 import static de.nb.aventiure2.data.world.syscomp.storingplace.Lichtverhaeltnisse.HELL;
 
 /**
@@ -16,6 +16,7 @@ import static de.nb.aventiure2.data.world.syscomp.storingplace.Lichtverhaeltniss
  */
 public class StoringPlaceComp extends AbstractStatelessComponent {
     private final AvDatabase db;
+    private final GameObjectService gos;
     private final StoringPlaceType locationMode;
 
     /**
@@ -26,16 +27,19 @@ public class StoringPlaceComp extends AbstractStatelessComponent {
 
     public StoringPlaceComp(final GameObjectId id,
                             final AvDatabase db,
+                            final GameObjectService gos,
                             final boolean dauerhaftBeleuchtet) {
-        this(id, db, StoringPlaceType.BODEN, dauerhaftBeleuchtet);
+        this(id, db, gos, StoringPlaceType.BODEN, dauerhaftBeleuchtet);
     }
 
     public StoringPlaceComp(final GameObjectId id,
                             final AvDatabase db,
+                            final GameObjectService gos,
                             final StoringPlaceType locationMode,
                             final boolean dauerhaftBeleuchtet) {
         super(id);
         this.db = db;
+        this.gos = gos;
         this.locationMode = locationMode;
         this.dauerhaftBeleuchtet = dauerhaftBeleuchtet;
     }
@@ -64,7 +68,7 @@ public class StoringPlaceComp extends AbstractStatelessComponent {
                 return true;
             }
 
-            if (loadDescribableNonLivingLocationRecursiveInventory(db, getGameObjectId())
+            if (gos.loadDescribableNonLivingLocationRecursiveInventory(getGameObjectId())
                     .contains(idAlternative)) {
                 return true;
             }

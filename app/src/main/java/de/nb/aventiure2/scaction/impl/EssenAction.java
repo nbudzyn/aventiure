@@ -8,7 +8,7 @@ import java.util.Collection;
 
 import de.nb.aventiure2.data.database.AvDatabase;
 import de.nb.aventiure2.data.storystate.StoryState;
-import de.nb.aventiure2.data.world.gameobjects.GameObjects;
+import de.nb.aventiure2.data.world.gameobjects.GameObjectService;
 import de.nb.aventiure2.data.world.syscomp.feelings.Hunger;
 import de.nb.aventiure2.data.world.syscomp.location.ILocatableGO;
 import de.nb.aventiure2.data.world.syscomp.memory.Action;
@@ -17,13 +17,11 @@ import de.nb.aventiure2.data.world.syscomp.storingplace.ILocationGO;
 import de.nb.aventiure2.data.world.time.AvTimeSpan;
 import de.nb.aventiure2.scaction.AbstractScAction;
 
-import static de.nb.aventiure2.data.world.gameobjects.GameObjects.FROSCHPRINZ;
-import static de.nb.aventiure2.data.world.gameobjects.GameObjects.SCHLOSSFEST;
-import static de.nb.aventiure2.data.world.gameobjects.GameObjects.SCHLOSS_VORHALLE_AM_TISCH_BEIM_FEST;
-import static de.nb.aventiure2.data.world.gameobjects.GameObjects.SPIELER_CHARAKTER;
-import static de.nb.aventiure2.data.world.gameobjects.GameObjects.WALDWILDNIS_HINTER_DEM_BRUNNEN;
-import static de.nb.aventiure2.data.world.gameobjects.GameObjects.load;
-import static de.nb.aventiure2.data.world.gameobjects.GameObjects.loadSC;
+import static de.nb.aventiure2.data.world.gameobjects.GameObjectService.FROSCHPRINZ;
+import static de.nb.aventiure2.data.world.gameobjects.GameObjectService.SCHLOSSFEST;
+import static de.nb.aventiure2.data.world.gameobjects.GameObjectService.SCHLOSS_VORHALLE_AM_TISCH_BEIM_FEST;
+import static de.nb.aventiure2.data.world.gameobjects.GameObjectService.SPIELER_CHARAKTER;
+import static de.nb.aventiure2.data.world.gameobjects.GameObjectService.WALDWILDNIS_HINTER_DEM_BRUNNEN;
 import static de.nb.aventiure2.data.world.syscomp.feelings.Hunger.SATT;
 import static de.nb.aventiure2.data.world.syscomp.state.GameObjectState.BEGONNEN;
 import static de.nb.aventiure2.data.world.syscomp.state.GameObjectState.HAT_HOCHHEBEN_GEFORDERT;
@@ -42,10 +40,11 @@ public class EssenAction extends AbstractScAction {
 
     public static Collection<EssenAction> buildActions(
             final AvDatabase db,
+            final GameObjectService gos,
             final StoryState initialStoryState, final ILocationGO room) {
         final ImmutableList.Builder<EssenAction> res = ImmutableList.builder();
-        if (essenMoeglich(db, room)) {
-            res.add(new EssenAction(db, initialStoryState, room));
+        if (essenMoeglich(db, gos, room)) {
+            res.add(new EssenAction(db, gos, initialStoryState, room));
         }
 
         return res.build();
@@ -53,15 +52,16 @@ public class EssenAction extends AbstractScAction {
 
     private static <LOC_STAT extends ILocatableGO & IHasStateGO>
     boolean essenMoeglich(final AvDatabase db,
+                          final GameObjectService gos,
                           final ILocationGO room) {
-        if (loadSC(db).memoryComp().getLastAction().is(Action.Type.ESSEN)) {
+        if (gos.loadSC().memoryComp().getLastAction().is(Action.Type.ESSEN)) {
             // TODO Es könnten sich verschiedene essbare Dinge am selben Ort befinden!
             //  Das zweite sollte man durchaus essen können, wenn man schon das
             //  erste gegessen hat!
             return false;
         }
 
-        final LOC_STAT froschprinz = (LOC_STAT) load(db, FROSCHPRINZ);
+        final LOC_STAT froschprinz = (LOC_STAT) gos.load(FROSCHPRINZ);
         if (room.is(SCHLOSS_VORHALLE_AM_TISCH_BEIM_FEST) &&
                 froschprinz.locationComp().hasRecursiveLocation(SPIELER_CHARAKTER) &&
                 froschprinz.stateComp().hasState(HAT_HOCHHEBEN_GEFORDERT)) {
@@ -69,13 +69,13 @@ public class EssenAction extends AbstractScAction {
             return false;
         }
 
-        return raumEnthaeltEtwasEssbares(db, room);
+        return raumEnthaeltEtwasEssbares(gos, room);
     }
 
-    private static boolean raumEnthaeltEtwasEssbares(final AvDatabase db,
+    private static boolean raumEnthaeltEtwasEssbares(final GameObjectService gos,
                                                      final ILocationGO room) {
         if (room.is(SCHLOSS_VORHALLE_AM_TISCH_BEIM_FEST) &&
-                ((IHasStateGO) load(db, SCHLOSSFEST)).stateComp().hasState(BEGONNEN)) {
+                ((IHasStateGO) gos.load(SCHLOSSFEST)).stateComp().hasState(BEGONNEN)) {
             return true;
         }
 
@@ -89,9 +89,10 @@ public class EssenAction extends AbstractScAction {
     }
 
     private EssenAction(final AvDatabase db,
+                        final GameObjectService gos,
                         final StoryState initialStoryState,
                         final ILocationGO room) {
-        super(db, initialStoryState);
+        super(db, gos, initialStoryState);
         this.room = room;
     }
 
@@ -127,7 +128,7 @@ public class EssenAction extends AbstractScAction {
 
         sc.memoryComp().setLastAction(buildMemorizedAction());
 
-        timeElapsed = timeElapsed.plus(GameObjects.narrateAndDoReactions()
+        timeElapsed = timeElapsed.plus(gos.narrateAndDoReactions()
                 .onEssen(sc));
 
         return timeElapsed;

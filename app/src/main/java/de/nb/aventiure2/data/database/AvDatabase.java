@@ -25,7 +25,7 @@ import de.nb.aventiure2.data.storystate.StoryStateDao;
 import de.nb.aventiure2.data.world.base.GameObjectIdConverters;
 import de.nb.aventiure2.data.world.counter.Counter;
 import de.nb.aventiure2.data.world.counter.CounterDao;
-import de.nb.aventiure2.data.world.gameobjects.GameObjects;
+import de.nb.aventiure2.data.world.gameobjects.GameObjectService;
 import de.nb.aventiure2.data.world.syscomp.description.IDescribableGO;
 import de.nb.aventiure2.data.world.syscomp.feelings.FeelingsDao;
 import de.nb.aventiure2.data.world.syscomp.feelings.FeelingsPCD;
@@ -49,7 +49,7 @@ import de.nb.aventiure2.data.world.time.AvNowDao;
 import de.nb.aventiure2.german.base.StructuralElement;
 
 import static de.nb.aventiure2.data.storystate.StoryStateBuilder.t;
-import static de.nb.aventiure2.data.world.gameobjects.GameObjects.GOLDENE_KUGEL;
+import static de.nb.aventiure2.data.world.gameobjects.GameObjectService.GOLDENE_KUGEL;
 import static de.nb.aventiure2.data.world.time.AvTime.oClock;
 
 @Database(entities = {
@@ -78,7 +78,7 @@ import static de.nb.aventiure2.data.world.time.AvTime.oClock;
 // "In a real app, you should consider setting a directory for Room to [...] export the
 // schema so you can check the current schema into your version control system."
 public abstract class AvDatabase extends RoomDatabase {
-    public static final String DATABASE_NAME = "aventiureDatabase";
+    private static final String DATABASE_NAME = "aventiureDatabase";
 
     @VisibleForTesting
     public static void resetDatabase() {
@@ -122,7 +122,7 @@ public abstract class AvDatabase extends RoomDatabase {
                                 1, oClock(14, 30));
 
                         // Save initial state for all game objects
-                        GameObjects.saveAllInitialState(INSTANCE);
+                        GameObjectService.getInstance(INSTANCE).saveAllInitialState();
 
                         INSTANCE.storyStateDao().add(buildInitialStoryState());
                     }));
@@ -156,7 +156,7 @@ public abstract class AvDatabase extends RoomDatabase {
                         "Sie beginnt im königlichen Schloss, in einer prächtigen "
                         + "Vorhalle, Marmor und Brokat überall.\n");
         final List<IDescribableGO> objectsInRoom = ImmutableList.of(
-                (IDescribableGO) GameObjects.load(INSTANCE, GOLDENE_KUGEL));
+                (IDescribableGO) GameObjectService.getInstance(INSTANCE).load(GOLDENE_KUGEL));
         res.append(buildObjectsInRoomDescription(objectsInRoom));
 
         return t(StructuralElement.WORD, res.toString());

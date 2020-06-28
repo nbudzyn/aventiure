@@ -10,7 +10,7 @@ import javax.annotation.ParametersAreNonnullByDefault;
 
 import de.nb.aventiure2.data.database.AvDatabase;
 import de.nb.aventiure2.data.storystate.StoryState;
-import de.nb.aventiure2.data.world.gameobjects.GameObjects;
+import de.nb.aventiure2.data.world.gameobjects.GameObjectService;
 import de.nb.aventiure2.data.world.syscomp.alive.ILivingBeingGO;
 import de.nb.aventiure2.data.world.syscomp.description.IDescribableGO;
 import de.nb.aventiure2.data.world.syscomp.location.ILocatableGO;
@@ -24,13 +24,11 @@ import de.nb.aventiure2.german.base.SubstantivischePhrase;
 import de.nb.aventiure2.german.praedikat.SeinUtil;
 import de.nb.aventiure2.scaction.AbstractScAction;
 
-import static de.nb.aventiure2.data.world.gameobjects.GameObjects.FROSCHPRINZ;
-import static de.nb.aventiure2.data.world.gameobjects.GameObjects.GOLDENE_KUGEL;
-import static de.nb.aventiure2.data.world.gameobjects.GameObjects.IM_WALD_BEIM_BRUNNEN;
-import static de.nb.aventiure2.data.world.gameobjects.GameObjects.SPIELER_CHARAKTER;
-import static de.nb.aventiure2.data.world.gameobjects.GameObjects.UNTEN_IM_BRUNNEN;
-import static de.nb.aventiure2.data.world.gameobjects.GameObjects.load;
-import static de.nb.aventiure2.data.world.gameobjects.GameObjects.loadSC;
+import static de.nb.aventiure2.data.world.gameobjects.GameObjectService.FROSCHPRINZ;
+import static de.nb.aventiure2.data.world.gameobjects.GameObjectService.GOLDENE_KUGEL;
+import static de.nb.aventiure2.data.world.gameobjects.GameObjectService.IM_WALD_BEIM_BRUNNEN;
+import static de.nb.aventiure2.data.world.gameobjects.GameObjectService.SPIELER_CHARAKTER;
+import static de.nb.aventiure2.data.world.gameobjects.GameObjectService.UNTEN_IM_BRUNNEN;
 import static de.nb.aventiure2.data.world.syscomp.feelings.Mood.ETWAS_GEKNICKT;
 import static de.nb.aventiure2.data.world.syscomp.feelings.Mood.UNTROESTLICH;
 import static de.nb.aventiure2.data.world.syscomp.state.GameObjectState.HAT_FORDERUNG_GESTELLT;
@@ -60,21 +58,23 @@ public class HochwerfenAction<OBJ extends IDescribableGO & ILocatableGO>
 
     public static <OBJ extends IDescribableGO & ILocatableGO>
     Collection<HochwerfenAction> buildActions(
-            final AvDatabase db, final StoryState initialStoryState,
+            final AvDatabase db, final GameObjectService gos, final StoryState initialStoryState,
             final ILocationGO room, @NonNull final OBJ gameObject) {
         if (gameObject instanceof ILivingBeingGO) {
             return ImmutableList.of();
         }
 
         // STORY Nicht jedes Object lässt sich hochwerfen...
-        return ImmutableList.of(new HochwerfenAction<>(db, initialStoryState, gameObject, room));
+        return ImmutableList
+                .of(new HochwerfenAction<>(db, gos, initialStoryState, gameObject, room));
     }
 
     private HochwerfenAction(final AvDatabase db,
+                             final GameObjectService gos,
                              final StoryState initialStoryState,
                              @NonNull final OBJ object,
                              final ILocationGO room) {
-        super(db, initialStoryState);
+        super(db, gos, initialStoryState);
         this.object = object;
         this.room = room;
     }
@@ -106,7 +106,7 @@ public class HochwerfenAction<OBJ extends IDescribableGO & ILocatableGO>
     }
 
     private AvTimeSpan narrateAndDoErstesMal() {
-        final IHasStateGO froschprinz = (IHasStateGO) load(db, FROSCHPRINZ);
+        final IHasStateGO froschprinz = (IHasStateGO) gos.load(FROSCHPRINZ);
 
         if (room.is(IM_WALD_BEIM_BRUNNEN) &&
                 !froschprinz.stateComp().hasState(UNAUFFAELLIG)) {
@@ -199,14 +199,14 @@ public class HochwerfenAction<OBJ extends IDescribableGO & ILocatableGO>
                 object.locationComp().narrateAndDoLeaveReactions(SPIELER_CHARAKTER)
         );
 
-        return timeElapsed.plus(GameObjects.narrateAndDoReactions()
+        return timeElapsed.plus(gos.narrateAndDoReactions()
                 // Hier wird das onLeave() und onEnter() etwas missbraucht, um Reaktionen auf
                 // das Hochwerfen zu provozieren. Da from und to gleich sind, müssen wir
                 // from explizit angebeben, es darf nicht die lastLocation verwendet werden,
                 // wie es sonst automatisch passiert.
                 .onEnter(object,
                         // from
-                        loadSC(db),
+                        gos.loadSC(),
                         // to
                         SPIELER_CHARAKTER));
     }
@@ -233,7 +233,7 @@ public class HochwerfenAction<OBJ extends IDescribableGO & ILocatableGO>
 
     @NonNull
     private AvTimeSpan narrateAndDoWiederholung() {
-        final IHasStateGO froschprinz = (IHasStateGO) load(db, FROSCHPRINZ);
+        final IHasStateGO froschprinz = (IHasStateGO) gos.load(FROSCHPRINZ);
 
         if (db.counterDao()
                 .incAndGet("HochwerfenAction_Wiederholung") == 1 ||

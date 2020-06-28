@@ -10,17 +10,17 @@ import javax.annotation.ParametersAreNonnullByDefault;
 
 import de.nb.aventiure2.data.database.AvDatabase;
 import de.nb.aventiure2.data.world.base.GameObjectId;
-import de.nb.aventiure2.data.world.gameobjects.GameObjects;
+import de.nb.aventiure2.data.world.gameobjects.GameObjectService;
 import de.nb.aventiure2.data.world.syscomp.memory.Known;
 import de.nb.aventiure2.data.world.syscomp.spatialconnection.AbstractSpatialConnectionComp;
 import de.nb.aventiure2.data.world.syscomp.state.IHasStateGO;
 import de.nb.aventiure2.data.world.syscomp.storingplace.Lichtverhaeltnisse;
 import de.nb.aventiure2.german.base.AbstractDescription;
 
-import static de.nb.aventiure2.data.world.gameobjects.GameObjects.DRAUSSEN_VOR_DEM_SCHLOSS;
-import static de.nb.aventiure2.data.world.gameobjects.GameObjects.SCHLOSSFEST;
-import static de.nb.aventiure2.data.world.gameobjects.GameObjects.SCHLOSS_VORHALLE;
-import static de.nb.aventiure2.data.world.gameobjects.GameObjects.SCHLOSS_VORHALLE_AM_TISCH_BEIM_FEST;
+import static de.nb.aventiure2.data.world.gameobjects.GameObjectService.DRAUSSEN_VOR_DEM_SCHLOSS;
+import static de.nb.aventiure2.data.world.gameobjects.GameObjectService.SCHLOSSFEST;
+import static de.nb.aventiure2.data.world.gameobjects.GameObjectService.SCHLOSS_VORHALLE;
+import static de.nb.aventiure2.data.world.gameobjects.GameObjectService.SCHLOSS_VORHALLE_AM_TISCH_BEIM_FEST;
 import static de.nb.aventiure2.data.world.syscomp.memory.Known.KNOWN_FROM_DARKNESS;
 import static de.nb.aventiure2.data.world.syscomp.memory.Known.UNKNOWN;
 import static de.nb.aventiure2.data.world.syscomp.state.GameObjectState.BEGONNEN;
@@ -30,7 +30,7 @@ import static de.nb.aventiure2.german.base.DuDescription.du;
 
 /**
  * An implementation of {@link AbstractSpatialConnectionComp}
- * for the {@link de.nb.aventiure2.data.world.gameobjects.GameObjects#SCHLOSS_VORHALLE}
+ * for the {@link GameObjectService#SCHLOSS_VORHALLE}
  * room.
  */
 @ParametersAreNonnullByDefault
@@ -39,8 +39,8 @@ public class SchlossVorhalleConnectionComp extends AbstractSpatialConnectionComp
             "RoomConnectionBuilder_SchlossVorhalle_SchlossVorhalleTischBeimFest";
 
     public SchlossVorhalleConnectionComp(
-            final AvDatabase db) {
-        super(SCHLOSS_VORHALLE, db);
+            final AvDatabase db, final GameObjectService gos) {
+        super(SCHLOSS_VORHALLE, db, gos);
     }
 
     @Override
@@ -48,7 +48,8 @@ public class SchlossVorhalleConnectionComp extends AbstractSpatialConnectionComp
                                                            final Known newRoomKnown,
                                                            final Lichtverhaeltnisse lichtverhaeltnisseInNewRoom) {
         if (to.equals(SCHLOSS_VORHALLE_AM_TISCH_BEIM_FEST) &&
-                ((IHasStateGO) GameObjects.load(db, SCHLOSSFEST)).stateComp().hasState(BEGONNEN) &&
+                ((IHasStateGO) gos.load(SCHLOSSFEST)).stateComp()
+                        .hasState(BEGONNEN) &&
                 db.counterDao().get(COUNTER_TISCH_BEIM_FEST) == 0) {
             return false;
         }
@@ -63,7 +64,8 @@ public class SchlossVorhalleConnectionComp extends AbstractSpatialConnectionComp
         res.add(SpatialConnection.con(DRAUSSEN_VOR_DEM_SCHLOSS,
                 "Das Schloss verlassen",
                 this::getDescTo_DraussenVorDemSchloss));
-        if (((IHasStateGO) GameObjects.load(db, SCHLOSSFEST)).stateComp().hasState(BEGONNEN)) {
+        if (((IHasStateGO) gos.load(SCHLOSSFEST)).stateComp()
+                .hasState(BEGONNEN)) {
             res.add(SpatialConnection.con(SCHLOSS_VORHALLE_AM_TISCH_BEIM_FEST,
                     "An einen Tisch setzen",
                     this::getDescTo_SchlossVorhalleTischBeimFest));
@@ -73,7 +75,7 @@ public class SchlossVorhalleConnectionComp extends AbstractSpatialConnectionComp
 
     private AbstractDescription getDescTo_DraussenVorDemSchloss(
             final Known newRoomKnown, final Lichtverhaeltnisse lichtverhaeltnisse) {
-        switch (((IHasStateGO) GameObjects.load(db, SCHLOSSFEST)).stateComp().getState()) {
+        switch (((IHasStateGO) gos.load(SCHLOSSFEST)).stateComp().getState()) {
             case BEGONNEN:
                 return getDescTo_DraussenVorDemSchloss_FestBegonnen();
 

@@ -10,16 +10,15 @@ import javax.annotation.ParametersAreNonnullByDefault;
 
 import de.nb.aventiure2.data.database.AvDatabase;
 import de.nb.aventiure2.data.world.base.GameObjectId;
-import de.nb.aventiure2.data.world.gameobjects.GameObjects;
+import de.nb.aventiure2.data.world.gameobjects.GameObjectService;
 import de.nb.aventiure2.data.world.syscomp.memory.Known;
 import de.nb.aventiure2.data.world.syscomp.spatialconnection.AbstractSpatialConnectionComp;
 import de.nb.aventiure2.data.world.syscomp.storingplace.Lichtverhaeltnisse;
 import de.nb.aventiure2.data.world.syscomp.storingplace.StoringPlaceComp;
 
-import static de.nb.aventiure2.data.world.gameobjects.GameObjects.ABZWEIG_IM_WALD;
-import static de.nb.aventiure2.data.world.gameobjects.GameObjects.IM_WALD_BEIM_BRUNNEN;
-import static de.nb.aventiure2.data.world.gameobjects.GameObjects.WALDWILDNIS_HINTER_DEM_BRUNNEN;
-import static de.nb.aventiure2.data.world.gameobjects.GameObjects.loadSC;
+import static de.nb.aventiure2.data.world.gameobjects.GameObjectService.ABZWEIG_IM_WALD;
+import static de.nb.aventiure2.data.world.gameobjects.GameObjectService.IM_WALD_BEIM_BRUNNEN;
+import static de.nb.aventiure2.data.world.gameobjects.GameObjectService.WALDWILDNIS_HINTER_DEM_BRUNNEN;
 import static de.nb.aventiure2.data.world.syscomp.spatialconnection.impl.SpatialConnection.con;
 import static de.nb.aventiure2.data.world.syscomp.storingplace.Lichtverhaeltnisse.HELL;
 import static de.nb.aventiure2.data.world.time.AvTimeSpan.mins;
@@ -28,7 +27,7 @@ import static de.nb.aventiure2.german.base.StructuralElement.SENTENCE;
 
 /**
  * An implementation of {@link AbstractSpatialConnectionComp}
- * for the {@link GameObjects#SCHLOSS_VORHALLE_AM_TISCH_BEIM_FEST}
+ * for the {@link GameObjectService#SCHLOSS_VORHALLE_AM_TISCH_BEIM_FEST}
  * room.
  */
 @ParametersAreNonnullByDefault
@@ -37,8 +36,9 @@ public class ImWaldBeimBrunnenConnectionComp extends AbstractSpatialConnectionCo
 
     public ImWaldBeimBrunnenConnectionComp(
             final AvDatabase db,
+            final GameObjectService gos,
             final StoringPlaceComp storingPlaceComp) {
-        super(IM_WALD_BEIM_BRUNNEN, db);
+        super(IM_WALD_BEIM_BRUNNEN, db, gos);
         this.storingPlaceComp = storingPlaceComp;
     }
 
@@ -63,7 +63,7 @@ public class ImWaldBeimBrunnenConnectionComp extends AbstractSpatialConnectionCo
                         .komma()));
 
         if (storingPlaceComp.getLichtverhaeltnisse() == HELL ||
-                loadSC(db).memoryComp().isKnown(WALDWILDNIS_HINTER_DEM_BRUNNEN)) {
+                gos.loadSC().memoryComp().isKnown(WALDWILDNIS_HINTER_DEM_BRUNNEN)) {
             resImWaldBeimBrunnnen.add(con(WALDWILDNIS_HINTER_DEM_BRUNNEN,
                     "Hinter dem Brunnen in die Wildnis schlagen",
                     du(SENTENCE, "verlässt", "den Brunnen und schlägst dich in die "

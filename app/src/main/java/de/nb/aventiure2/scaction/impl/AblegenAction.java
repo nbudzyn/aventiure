@@ -11,6 +11,7 @@ import java.util.Collection;
 
 import de.nb.aventiure2.data.database.AvDatabase;
 import de.nb.aventiure2.data.storystate.StoryState;
+import de.nb.aventiure2.data.world.gameobjects.GameObjectService;
 import de.nb.aventiure2.data.world.syscomp.alive.ILivingBeingGO;
 import de.nb.aventiure2.data.world.syscomp.description.IDescribableGO;
 import de.nb.aventiure2.data.world.syscomp.feelings.Mood;
@@ -28,10 +29,9 @@ import de.nb.aventiure2.german.praedikat.PraedikatMitEinerObjektleerstelle;
 import de.nb.aventiure2.scaction.AbstractScAction;
 
 import static com.google.common.base.Preconditions.checkState;
-import static de.nb.aventiure2.data.world.gameobjects.GameObjects.FROSCHPRINZ;
-import static de.nb.aventiure2.data.world.gameobjects.GameObjects.SCHLOSS_VORHALLE_AM_TISCH_BEIM_FEST;
-import static de.nb.aventiure2.data.world.gameobjects.GameObjects.SCHLOSS_VORHALLE_LANGER_TISCH_BEIM_FEST;
-import static de.nb.aventiure2.data.world.gameobjects.GameObjects.loadDescribableNonLivingLocationRecursiveInventory;
+import static de.nb.aventiure2.data.world.gameobjects.GameObjectService.FROSCHPRINZ;
+import static de.nb.aventiure2.data.world.gameobjects.GameObjectService.SCHLOSS_VORHALLE_AM_TISCH_BEIM_FEST;
+import static de.nb.aventiure2.data.world.gameobjects.GameObjectService.SCHLOSS_VORHALLE_LANGER_TISCH_BEIM_FEST;
 import static de.nb.aventiure2.data.world.syscomp.memory.Action.Type.NEHMEN;
 import static de.nb.aventiure2.data.world.syscomp.state.GameObjectState.HAT_HOCHHEBEN_GEFORDERT;
 import static de.nb.aventiure2.data.world.time.AvTimeSpan.secs;
@@ -77,7 +77,8 @@ public class AblegenAction
      */
     public static <GO extends IDescribableGO & ILocatableGO>
     Collection<AblegenAction<GO>> buildActions(
-            final AvDatabase db, final StoryState initialStoryState,
+            final AvDatabase db, final GameObjectService gos,
+            final StoryState initialStoryState,
             final GO gameObject,
             final ILocationGO location) {
         if ((gameObject instanceof ILivingBeingGO) && !gameObject.is(FROSCHPRINZ)) {
@@ -86,15 +87,15 @@ public class AblegenAction
 
         final ImmutableList.Builder<AblegenAction<GO>> res = ImmutableList.builder();
         res.add(new AblegenAction<>(
-                db, initialStoryState, gameObject, location,
+                db, gos, initialStoryState, gameObject, location,
                 true));
 
         for (final ILocationGO innerLocation :
-                loadDescribableNonLivingLocationRecursiveInventory(
-                        db, location)) {
+                gos.loadDescribableNonLivingLocationRecursiveInventory(
+                        location)) {
             // Z.B. "Auf dem Tisch absetzen"
             res.add(new AblegenAction<>(
-                    db, initialStoryState, gameObject, innerLocation,
+                    db, gos, initialStoryState, gameObject, innerLocation,
                     false));
         }
 
@@ -102,11 +103,12 @@ public class AblegenAction
     }
 
     private AblegenAction(final AvDatabase db,
+                          final GameObjectService gos,
                           final StoryState initialStoryState,
                           final @NonNull GO gameObject,
                           final ILocationGO location,
                           final boolean detailLocationNecessaryInDescription) {
-        super(db, initialStoryState);
+        super(db, gos, initialStoryState);
         this.location = location;
         this.gameObject = gameObject;
         this.detailLocationNecessaryInDescription = detailLocationNecessaryInDescription;

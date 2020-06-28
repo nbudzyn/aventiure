@@ -7,7 +7,7 @@ import de.nb.aventiure2.data.storystate.StoryStateDao;
 import de.nb.aventiure2.data.world.base.AbstractStatelessComponent;
 import de.nb.aventiure2.data.world.base.GameObject;
 import de.nb.aventiure2.data.world.base.GameObjectId;
-import de.nb.aventiure2.data.world.gameobjects.GameObjects;
+import de.nb.aventiure2.data.world.gameobjects.GameObjectService;
 import de.nb.aventiure2.data.world.gameobjects.player.SpielerCharakter;
 
 /**
@@ -16,6 +16,7 @@ import de.nb.aventiure2.data.world.gameobjects.player.SpielerCharakter;
  */
 public class AbstractReactionsComp extends AbstractStatelessComponent {
     protected final AvDatabase db;
+    protected final GameObjectService gos;
 
     protected final StoryStateDao n;
 
@@ -41,15 +42,17 @@ public class AbstractReactionsComp extends AbstractStatelessComponent {
     //  basierend auf Story-Telling-Theorien.
 
     public AbstractReactionsComp(final GameObjectId id,
-                                 final AvDatabase db) {
+                                 final AvDatabase db,
+                                 final GameObjectService gos) {
         super(id);
         this.db = db;
+        this.gos = gos;
 
         n = db.storyStateDao();
     }
 
     @NonNull
     protected SpielerCharakter loadSC() {
-        return GameObjects.loadSC(db);
+        return gos.loadSC();
     }
 }

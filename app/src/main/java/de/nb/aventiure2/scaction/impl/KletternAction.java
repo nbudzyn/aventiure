@@ -8,13 +8,14 @@ import java.util.Collection;
 
 import de.nb.aventiure2.data.database.AvDatabase;
 import de.nb.aventiure2.data.storystate.StoryState;
+import de.nb.aventiure2.data.world.gameobjects.GameObjectService;
 import de.nb.aventiure2.data.world.syscomp.feelings.Mood;
 import de.nb.aventiure2.data.world.syscomp.memory.Action;
 import de.nb.aventiure2.data.world.syscomp.storingplace.ILocationGO;
 import de.nb.aventiure2.data.world.time.AvTimeSpan;
 import de.nb.aventiure2.scaction.AbstractScAction;
 
-import static de.nb.aventiure2.data.world.gameobjects.GameObjects.HINTER_DER_HUETTE;
+import static de.nb.aventiure2.data.world.gameobjects.GameObjectService.HINTER_DER_HUETTE;
 import static de.nb.aventiure2.data.world.syscomp.storingplace.Lichtverhaeltnisse.DUNKEL;
 import static de.nb.aventiure2.data.world.time.AvTimeSpan.mins;
 import static de.nb.aventiure2.german.base.AllgDescription.neuerSatz;
@@ -29,10 +30,11 @@ public class KletternAction extends AbstractScAction {
 
     public static Collection<KletternAction> buildActions(
             final AvDatabase db,
+            final GameObjectService gos,
             final StoryState initialStoryState, final ILocationGO room) {
         final ImmutableList.Builder<KletternAction> res = ImmutableList.builder();
         if (room.is(HINTER_DER_HUETTE)) {
-            res.add(new KletternAction(db, initialStoryState, room));
+            res.add(new KletternAction(db, gos, initialStoryState, room));
         }
 
         return res.build();
@@ -42,9 +44,10 @@ public class KletternAction extends AbstractScAction {
      * Creates a new <code>KletternAction</code>.
      */
     private KletternAction(final AvDatabase db,
+                           final GameObjectService gos,
                            final StoryState initialStoryState,
                            final ILocationGO room) {
-        super(db, initialStoryState);
+        super(db, gos, initialStoryState);
         this.room = room;
     }
 

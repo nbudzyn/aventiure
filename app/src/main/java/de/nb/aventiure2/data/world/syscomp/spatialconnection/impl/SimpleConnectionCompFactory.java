@@ -4,15 +4,16 @@ import androidx.annotation.NonNull;
 
 import de.nb.aventiure2.data.database.AvDatabase;
 import de.nb.aventiure2.data.world.base.GameObjectId;
+import de.nb.aventiure2.data.world.gameobjects.GameObjectService;
 
-import static de.nb.aventiure2.data.world.gameobjects.GameObjects.ABZWEIG_IM_WALD;
-import static de.nb.aventiure2.data.world.gameobjects.GameObjects.BETT_IN_DER_HUETTE_IM_WALD;
-import static de.nb.aventiure2.data.world.gameobjects.GameObjects.HINTER_DER_HUETTE;
-import static de.nb.aventiure2.data.world.gameobjects.GameObjects.HUETTE_IM_WALD;
-import static de.nb.aventiure2.data.world.gameobjects.GameObjects.IM_WALD_BEIM_BRUNNEN;
-import static de.nb.aventiure2.data.world.gameobjects.GameObjects.IM_WALD_NAHE_DEM_SCHLOSS;
-import static de.nb.aventiure2.data.world.gameobjects.GameObjects.VOR_DER_HUETTE_IM_WALD;
-import static de.nb.aventiure2.data.world.gameobjects.GameObjects.WALDWILDNIS_HINTER_DEM_BRUNNEN;
+import static de.nb.aventiure2.data.world.gameobjects.GameObjectService.ABZWEIG_IM_WALD;
+import static de.nb.aventiure2.data.world.gameobjects.GameObjectService.BETT_IN_DER_HUETTE_IM_WALD;
+import static de.nb.aventiure2.data.world.gameobjects.GameObjectService.HINTER_DER_HUETTE;
+import static de.nb.aventiure2.data.world.gameobjects.GameObjectService.HUETTE_IM_WALD;
+import static de.nb.aventiure2.data.world.gameobjects.GameObjectService.IM_WALD_BEIM_BRUNNEN;
+import static de.nb.aventiure2.data.world.gameobjects.GameObjectService.IM_WALD_NAHE_DEM_SCHLOSS;
+import static de.nb.aventiure2.data.world.gameobjects.GameObjectService.VOR_DER_HUETTE_IM_WALD;
+import static de.nb.aventiure2.data.world.gameobjects.GameObjectService.WALDWILDNIS_HINTER_DEM_BRUNNEN;
 import static de.nb.aventiure2.data.world.syscomp.spatialconnection.impl.SpatialConnection.con;
 import static de.nb.aventiure2.data.world.time.AvTimeSpan.mins;
 import static de.nb.aventiure2.data.world.time.AvTimeSpan.secs;
@@ -23,15 +24,19 @@ import static de.nb.aventiure2.german.base.StructuralElement.SENTENCE;
 
 public class SimpleConnectionCompFactory {
     private final AvDatabase db;
+    private final GameObjectService gos;
 
-    public SimpleConnectionCompFactory(final AvDatabase db) {
+    public SimpleConnectionCompFactory(final AvDatabase db,
+                                       final GameObjectService gos) {
         this.db = db;
+        this.gos = gos;
     }
 
     @NonNull
     public SimpleConnectionComp createVorDerHuetteImWald() {
         return new SimpleConnectionComp(VOR_DER_HUETTE_IM_WALD,
                 db,
+                gos,
                 con(ABZWEIG_IM_WALD,
                         "Auf den Hauptpfad zurückkehren",
                         neuerSatz("Durch Farn und Gestrüpp gehst du zurück zum "
@@ -100,6 +105,7 @@ public class SimpleConnectionCompFactory {
     public SimpleConnectionComp createHuetteImWald() {
         return new SimpleConnectionComp(HUETTE_IM_WALD,
                 db,
+                gos,
                 con(VOR_DER_HUETTE_IM_WALD,
                         "Die Hütte verlassen",
                         du("zwängst", "dich wieder durch die Tür nach "
@@ -126,6 +132,7 @@ public class SimpleConnectionCompFactory {
     public SimpleConnectionComp createHinterDerHuette() {
         return new SimpleConnectionComp(HINTER_DER_HUETTE,
                 db,
+                gos,
                 con(VOR_DER_HUETTE_IM_WALD,
                         "Zur Vorderseite der Hütte gehen",
                         du("kehrst", "zurück zur Vorderseite der "
@@ -140,6 +147,7 @@ public class SimpleConnectionCompFactory {
     public SimpleConnectionComp createBettInDerHuetteImWald() {
         return new SimpleConnectionComp(BETT_IN_DER_HUETTE_IM_WALD,
                 db,
+                gos,
                 con(HUETTE_IM_WALD,
                         "Aufstehen",
                         du(SENTENCE, "reckst", "dich noch einmal und stehst "
@@ -152,6 +160,7 @@ public class SimpleConnectionCompFactory {
     public SimpleConnectionComp createWaldwildnisHinterDemBrunnen() {
         return new SimpleConnectionComp(WALDWILDNIS_HINTER_DEM_BRUNNEN,
                 db,
+                gos,
                 con(IM_WALD_BEIM_BRUNNEN,
                         "Zum Brunnen gehen",
                         du("suchst", "dir einen Weg "
@@ -169,6 +178,7 @@ public class SimpleConnectionCompFactory {
     public SimpleConnectionComp createAbzweigImWald() {
         return new SimpleConnectionComp(ABZWEIG_IM_WALD,
                 db,
+                gos,
                 con(IM_WALD_NAHE_DEM_SCHLOSS,
                         "In Richtung Schloss gehen",
                         neuerSatz("Von dort gehst du weiter in Richtung Schloss", mins(5))
@@ -241,6 +251,6 @@ public class SimpleConnectionCompFactory {
 
     public SimpleConnectionComp createNoConnections(final GameObjectId gameObjectId) {
         return new SimpleConnectionComp(gameObjectId,
-                db);
+                db, gos);
     }
 }

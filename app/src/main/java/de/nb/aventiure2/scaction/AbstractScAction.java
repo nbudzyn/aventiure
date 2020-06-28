@@ -8,7 +8,7 @@ import de.nb.aventiure2.data.storystate.IPlayerAction;
 import de.nb.aventiure2.data.storystate.StoryState;
 import de.nb.aventiure2.data.storystate.StoryStateDao;
 import de.nb.aventiure2.data.world.base.GameObjectId;
-import de.nb.aventiure2.data.world.gameobjects.GameObjects;
+import de.nb.aventiure2.data.world.gameobjects.GameObjectService;
 import de.nb.aventiure2.data.world.gameobjects.player.SpielerCharakter;
 import de.nb.aventiure2.data.world.syscomp.description.IDescribableGO;
 import de.nb.aventiure2.data.world.time.AvDateTime;
@@ -17,8 +17,7 @@ import de.nb.aventiure2.german.base.Nominalphrase;
 import de.nb.aventiure2.german.base.Personalpronomen;
 import de.nb.aventiure2.german.base.SubstantivischePhrase;
 
-import static de.nb.aventiure2.data.world.gameobjects.GameObjects.getPOVDescription;
-import static de.nb.aventiure2.data.world.gameobjects.GameObjects.loadSC;
+import static de.nb.aventiure2.data.world.gameobjects.GameObjectService.getPOVDescription;
 import static de.nb.aventiure2.data.world.time.AvTimeSpan.noTime;
 
 /**
@@ -37,6 +36,7 @@ public abstract class AbstractScAction implements IPlayerAction {
     //    selbst in ihren eigenen Text ein.
 
     protected final AvDatabase db;
+    protected final GameObjectService gos;
     protected final StoryStateDao n;
 
     protected final SpielerCharakter sc;
@@ -46,12 +46,14 @@ public abstract class AbstractScAction implements IPlayerAction {
      */
     protected final StoryState initialStoryState;
 
-    protected AbstractScAction(@NonNull final AvDatabase db, final StoryState initialStoryState) {
+    protected AbstractScAction(@NonNull final AvDatabase db, final GameObjectService gos,
+                               final StoryState initialStoryState) {
         this.db = db;
+        this.gos = gos;
 
         n = db.storyStateDao();
 
-        sc = loadSC(db);
+        sc = gos.loadSC();
 
         this.initialStoryState = initialStoryState;
     }
@@ -84,17 +86,17 @@ public abstract class AbstractScAction implements IPlayerAction {
         db.nowDao().setNow(dateTimeAfterActionBeforeUpdateWorld
                 .plus(extraTimeElapsedDuringWorldUpdate));
 
-        GameObjects.saveAll(db);
+        gos.saveAll();
     }
 
-    private static AvTimeSpan updateWorld(final AvDateTime lastTime,
-                                          @NonNull final AvDateTime now) {
+    private AvTimeSpan updateWorld(final AvDateTime lastTime,
+                                   @NonNull final AvDateTime now) {
         if (now.equals(lastTime)) {
             return noTime();
         }
 
         AvTimeSpan additionalTimeElapsed =
-                GameObjects.narrateAndDoReactions().onTimePassed(lastTime, now);
+                gos.narrateAndDoReactions().onTimePassed(lastTime, now);
 
         // Falls jetzt noch etwas passiert ist,
         // was Zeit gebraucht hat, dann erneut
@@ -145,7 +147,7 @@ public abstract class AbstractScAction implements IPlayerAction {
     protected SubstantivischePhrase getAnaphPersPronWennMglSonstShortDescription(
             final GameObjectId describableId) {
         return getAnaphPersPronWennMglSonstDescription(
-                (IDescribableGO) GameObjects.load(db, describableId), true);
+                (IDescribableGO) gos.load(describableId), true);
     }
 
 

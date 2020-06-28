@@ -6,7 +6,7 @@ import javax.annotation.Nullable;
 
 import de.nb.aventiure2.data.database.AvDatabase;
 import de.nb.aventiure2.data.world.base.IGameObject;
-import de.nb.aventiure2.data.world.gameobjects.GameObjects;
+import de.nb.aventiure2.data.world.gameobjects.GameObjectService;
 import de.nb.aventiure2.data.world.gameobjects.player.SpielerCharakter;
 import de.nb.aventiure2.data.world.syscomp.description.DescriptionComp;
 import de.nb.aventiure2.data.world.syscomp.location.ILocatableGO;
@@ -24,15 +24,15 @@ import de.nb.aventiure2.data.world.time.AvTimeSpan;
 import de.nb.aventiure2.german.base.Nominalphrase;
 import de.nb.aventiure2.german.base.StructuralElement;
 
-import static de.nb.aventiure2.data.world.gameobjects.GameObjects.FROSCHPRINZ;
-import static de.nb.aventiure2.data.world.gameobjects.GameObjects.GOLDENE_KUGEL;
-import static de.nb.aventiure2.data.world.gameobjects.GameObjects.IM_WALD_BEIM_BRUNNEN;
-import static de.nb.aventiure2.data.world.gameobjects.GameObjects.SCHLOSSFEST;
-import static de.nb.aventiure2.data.world.gameobjects.GameObjects.SCHLOSSFEST_BEGINN_DATE_TIME;
-import static de.nb.aventiure2.data.world.gameobjects.GameObjects.SCHLOSS_VORHALLE_AM_TISCH_BEIM_FEST;
-import static de.nb.aventiure2.data.world.gameobjects.GameObjects.SCHLOSS_VORHALLE_LANGER_TISCH_BEIM_FEST;
-import static de.nb.aventiure2.data.world.gameobjects.GameObjects.SPIELER_CHARAKTER;
-import static de.nb.aventiure2.data.world.gameobjects.GameObjects.UNTEN_IM_BRUNNEN;
+import static de.nb.aventiure2.data.world.gameobjects.GameObjectService.FROSCHPRINZ;
+import static de.nb.aventiure2.data.world.gameobjects.GameObjectService.GOLDENE_KUGEL;
+import static de.nb.aventiure2.data.world.gameobjects.GameObjectService.IM_WALD_BEIM_BRUNNEN;
+import static de.nb.aventiure2.data.world.gameobjects.GameObjectService.SCHLOSSFEST;
+import static de.nb.aventiure2.data.world.gameobjects.GameObjectService.SCHLOSSFEST_BEGINN_DATE_TIME;
+import static de.nb.aventiure2.data.world.gameobjects.GameObjectService.SCHLOSS_VORHALLE_AM_TISCH_BEIM_FEST;
+import static de.nb.aventiure2.data.world.gameobjects.GameObjectService.SCHLOSS_VORHALLE_LANGER_TISCH_BEIM_FEST;
+import static de.nb.aventiure2.data.world.gameobjects.GameObjectService.SPIELER_CHARAKTER;
+import static de.nb.aventiure2.data.world.gameobjects.GameObjectService.UNTEN_IM_BRUNNEN;
 import static de.nb.aventiure2.data.world.syscomp.feelings.Mood.ANGESPANNT;
 import static de.nb.aventiure2.data.world.syscomp.state.GameObjectState.AUF_DEM_WEG_ZUM_SCHLOSSFEST;
 import static de.nb.aventiure2.data.world.syscomp.state.GameObjectState.BEGONNEN;
@@ -43,6 +43,7 @@ import static de.nb.aventiure2.data.world.syscomp.state.GameObjectState.HAT_NACH
 import static de.nb.aventiure2.data.world.syscomp.state.GameObjectState.HAT_SC_HILFSBEREIT_ANGESPROCHEN;
 import static de.nb.aventiure2.data.world.syscomp.state.GameObjectState.UNAUFFAELLIG;
 import static de.nb.aventiure2.data.world.syscomp.state.GameObjectState.WARTET_AUF_SC_BEIM_SCHLOSSFEST;
+import static de.nb.aventiure2.data.world.syscomp.state.GameObjectState.WILL_BEIM_SCHLOSSFEST_ZUSAMMEN_ESSEN;
 import static de.nb.aventiure2.data.world.time.AvTimeSpan.hours;
 import static de.nb.aventiure2.data.world.time.AvTimeSpan.noTime;
 import static de.nb.aventiure2.data.world.time.AvTimeSpan.secs;
@@ -68,11 +69,12 @@ public class FroschprinzReactionsComp
     private final LocationComp locationComp;
 
     public FroschprinzReactionsComp(final AvDatabase db,
+                                    final GameObjectService gos,
                                     final DescriptionComp descriptionComp,
                                     final FroschprinzTalkingComp talkingComp,
                                     final StateComp stateComp,
                                     final LocationComp locationComp) {
-        super(FROSCHPRINZ, db);
+        super(FROSCHPRINZ, db, gos);
         this.descriptionComp = descriptionComp;
         this.talkingComp = talkingComp;
         this.stateComp = stateComp;
@@ -257,15 +259,67 @@ public class FroschprinzReactionsComp
             // Ist der Spieler auch da?
             if (!loadSC().locationComp()
                     .hasRecursiveLocation(SCHLOSS_VORHALLE_AM_TISCH_BEIM_FEST)) {
-                return noTime();
+                stateComp.setState(WILL_BEIM_SCHLOSSFEST_ZUSAMMEN_ESSEN);
 
-                // STORY Wenn der Spieler später auch an den Tisch kommt,
-                //  muss der Frosch irgendwie reagieren!
+                // STORY ...wie auch immer der Frosch es auf den Tisch geschafft hat...
+                // Status WILL_BEIM_SCHLOSSFEST_ZUSAMMEN_ESSEN: Wenn der Spieler auch an den Tisch
+                // kommt, muss der Frosch irgendwie reagieren! (Auf einmal... Will
+                // zusammmen essen...)
+
+                return noTime();
             }
+
+            //  TODO Wie er nun da sitzt glotzt er dich mit großen Glubschaugen an und
+//                >spricht: Nun füll deine Holzschale auf, wir wollen zusammen essen.«
+
 
             // STORY Der Froschprinz hat es auf dem Tisch geschafft (vermutlich hat
             //  der Spieler ihn dort abgesetzt :-) ) - hier muss die Geschichte
             //  weitergehen!
+
+            // final SubstantivischePhrase froschDescOderAnapher =
+            //       getAnaphPersPronWennMglSonstShortDescription(
+            //            FROSCHPRINZ);
+
+
+//            n.add(neuerSatz(
+//                    capitalize(
+//                            froschprinzDesc.nom()) +
+//                            " schaut dich vorwurfsvoll und etwas hochnäsig an",
+//                    secs(5))
+//                    .phorikKandidat(froschprinzDesc, FROSCHPRINZ))
+
+            // TODO  stateComp.setState(WILL_BEIM_SCHLOSSFEST_ZUSAMMEN_ESSEN);
+
+
+//
+// STORY Eintopf essen
+//
+//  Was hatte deine Großmutter immer gesagt?
+//  »Wer dir geholfen in der Not, den sollst du hernach nicht verachten.«
+//  Du füllst deine Schale neu mit Eintopf, steckst deinen Holzlöffel
+//  hinein... aber was ist das? Auch ein goldener Löffel fährt mit in die
+//  Schale. Du schaust verwirrt auf - kein Frosch mehr auf dem Tisch, doch
+//                >neben dir auf der Bank sitzt ein junger Mann mit schönen freundlichen
+//                >Augen. In Samt und Seide ist er gekleidet, mit goldenen Ketten um den
+//  Hals. "Ihr habt mich erlöst", sagt er, "ich danke euch!" Eine böse Hexe
+//                >hätte ihn verwünscht. "Ich werde euch nicht vergessen!"
+//                >
+//  Am Tisch um euch herum entsteht Aufregung. Der schmucke Mann erhebt sich und schickt
+//                >sich an, die Halle zu verlassen.
+//                >
+// STORY Vom Tisch aufstehen.
+//                >
+//  Du stehst vom Tisch auf, aber die Menge hat dich schon von dem jungen
+//  Königssohn getrennt.
+//
+// STORY Das Schloss verlassen
+//                >
+//  Du drängst dich durch das Eingangstor und siehst  noch einen Wagen
+//                >davonfahren, mit acht weißen Pferden bespannt, jedes mit weißen
+//  Straußfedern auf dem Kopf.
+
+
             return noTime();
         }
 
@@ -474,7 +528,7 @@ public class FroschprinzReactionsComp
     }
 
     private boolean schlossfestHatBegonnen() {
-        return ((IHasStateGO) GameObjects.load(db, SCHLOSSFEST))
+        return ((IHasStateGO) gos.load(SCHLOSSFEST))
                 .stateComp().hasState(BEGONNEN);
     }
 }

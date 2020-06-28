@@ -49,9 +49,9 @@ import static de.nb.aventiure2.german.base.NumerusGenus.M;
 import static de.nb.aventiure2.german.base.NumerusGenus.PL_MFN;
 
 /**
- * All game objects
+ * Service managing all game objects.
  */
-public class GameObjects {
+public class GameObjectService {
     public static final AvDateTime SCHLOSSFEST_BEGINN_DATE_TIME =
             new AvDateTime(2,
                     oClock(5, 30));
@@ -94,152 +94,156 @@ public class GameObjects {
     // Sonstige Konstanten
     private static final boolean SCHLOSS_VORHALLE_DAUERHAFT_BELEUCHTET = true;
 
-    /**
-     * Vor einem Zugriff auf <code>ALL</code> muss {@link #prepare(AvDatabase)} aufgerufen werden!
-     */
-    private static GameObjectIdMap ALL;
+    private static volatile GameObjectService INSTANCE;
 
-    private static GOReactionsCoordinator REACTIONS_COORDINATOR;
+
+    private GameObjectIdMap all;
+
+    private GOReactionsCoordinator reactionsCoordinator;
 
     // SYSTEMS
-    private static LocationSystem LOCATION_SYSTEM;
+    private LocationSystem locationSystem;
+
+    public static GameObjectService getInstance(final AvDatabase db) {
+        if (INSTANCE == null) {
+            synchronized (GameObjectService.class) {
+                if (INSTANCE == null) {
+                    INSTANCE = new GameObjectService(db);
+                }
+            }
+        }
+        return INSTANCE;
+    }
 
     @VisibleForTesting
-    public static void reset(final AvDatabase db) {
-        ALL = null;
-        REACTIONS_COORDINATOR = null;
-        LOCATION_SYSTEM = null;
-        saveAllInitialState(db);
+    public static void reset() {
+        INSTANCE = null;
+    }
+
+    private GameObjectService(final AvDatabase db) {
+        init(db);
+        saveAllInitialState();
+    }
+
+    /**
+     * Füllt die interne Liste aller Game Objects (dabei
+     * werden die Daten der Objekte <i>noch nicht</i> aus der Datenbank geladen),
+     * startet außerdem alle <i>Systems</i> (sofern noch nicht geschehen).
+     */
+    private void init(final AvDatabase db) {
+        final SpielerCharakterFactory spieler = new SpielerCharakterFactory(db, this);
+        final ObjectFactory object = new ObjectFactory(db, this);
+        final CreatureFactory creature = new CreatureFactory(db, this);
+        final InvisibleFactory invisible = new InvisibleFactory(db, this);
+        final RoomFactory room = new RoomFactory(db, this);
+        final SimpleConnectionCompFactory connection = new SimpleConnectionCompFactory(db, this);
+
+        all = new GameObjectIdMap();
+        all.putAll(
+                spieler.create(SPIELER_CHARAKTER),
+                room.create(SCHLOSS_VORHALLE, StoringPlaceType.EIN_TISCH,
+                        SCHLOSS_VORHALLE_DAUERHAFT_BELEUCHTET,
+                        new SchlossVorhalleConnectionComp(db, this)),
+                room.create(SCHLOSS_VORHALLE_AM_TISCH_BEIM_FEST,
+                        StoringPlaceType.NEBEN_SC_AUF_BANK,
+                        SCHLOSS_VORHALLE_DAUERHAFT_BELEUCHTET,
+                        new SchlossVorhalleTischBeimFestConnectionComp(db, this)),
+                room.create(DRAUSSEN_VOR_DEM_SCHLOSS,
+                        false,
+                        new DraussenVorDemSchlossConnectionComp(db, this)),
+                room.create(IM_WALD_NAHE_DEM_SCHLOSS, StoringPlaceType.WALDWEG,
+                        false,
+                        new ImWaldNaheDemSchlossConnectionComp(db, this)),
+                room.create(ABZWEIG_IM_WALD, StoringPlaceType.WALDWEG,
+                        false,
+                        connection.createAbzweigImWald()),
+                room.create(VOR_DER_HUETTE_IM_WALD, StoringPlaceType.VOR_DER_HUETTE,
+                        false,
+                        connection.createVorDerHuetteImWald()),
+                room.create(HUETTE_IM_WALD, StoringPlaceType.HOLZTISCH,
+                        false,
+                        connection.createHuetteImWald()),
+                room.create(BETT_IN_DER_HUETTE_IM_WALD, StoringPlaceType.NEBEN_DIR_IM_BETT,
+                        false,
+                        connection.createBettInDerHuetteImWald()),
+                room.create(HINTER_DER_HUETTE, StoringPlaceType.UNTER_DEM_BAUM,
+                        false,
+                        connection.createHinterDerHuette()),
+                room.createImWaldBeimBrunnen(),
+                room.create(UNTEN_IM_BRUNNEN, StoringPlaceType.AM_GRUNDE_DES_BRUNNENS,
+                        false,
+                        connection.createNoConnections(UNTEN_IM_BRUNNEN)),
+                room.create(WALDWILDNIS_HINTER_DEM_BRUNNEN,
+                        StoringPlaceType.MATSCHIGER_WALDBODENN,
+                        false,
+                        connection.createWaldwildnisHinterDemBrunnen()),
+                creature.createSchlosswache(),
+                creature.createFroschprinz(),
+                // STORY Anhand eines StatusDatums kann das Spiel ermitteln, wann der
+                //  Frosch im Schloss ankommt.
+
+                // STORY Wölfe (Creatures? Invisibles?) hetzen Spieler nachts
+                //  Es könnte z.B. Räume neben dem Weg geben, die der Spieler in aller Regel
+                //  nicht betreten, kann, wo aber die Wölfe laufen.
+                //  Es könnte einen sicheren Platz geben - z.B. wäre der Weg sicher
+                //  oder die Hütte.
+
+                invisible.createSchlossfest(),
+                invisible.createTageszeit(),
+                object.create(EINE_TASCHE_DES_SPIELER_CHARAKTERS,
+                        np(F, "eine Tasche", "einer Tasche"),
+                        SPIELER_CHARAKTER, null,
+                        false, // Man kann nicht "eine Tasche hinlegen" o.Ä.
+                        EINE_TASCHE,
+                        false),
+                object.create(HAENDE_DES_SPIELER_CHARAKTERS,
+                        np(PL_MFN, "die Hände", "den Händen"),
+                        SPIELER_CHARAKTER, null,
+                        false,
+                        HAENDE,
+                        false),
+                object.create(GOLDENE_KUGEL,
+                        np(F, "eine goldene Kugel",
+                                "einer goldenen Kugel"),
+                        np(F, "die goldene Kugel", "der goldenen Kugel"),
+                        np(F, "die Kugel", "der Kugel"),
+                        SCHLOSS_VORHALLE, DRAUSSEN_VOR_DEM_SCHLOSS,
+                        true),
+                // STORY Die goldene Kugel kann verloren gehen, zum Beispiel wenn man sie im
+                //  Sumpf ablegt. Dann gibt es eine art Reset und eine ähnliche goldene
+                //  Kugel erscheint wieder im Schloss. Der Text dort sagt so dann etwas wie
+                //  "eine goldene kugel wie du sie schon einmal gesehen hast, nur etwas
+                //  kleiner".
+                // STORY Wenn man die goldene Kugel auf den Weg legt oder beim Schlossfest
+                //  auf den Tisch, verschwindet sie einfach, wenn man weggeht (sie wird
+                //  gestohlen) - vorausgesetzt, man braucht sie nicht mehr.
+                object.create(SCHLOSS_VORHALLE_LANGER_TISCH_BEIM_FEST,
+                        np(M, "ein langer, aus Brettern gezimmerter Tisch",
+                                "einem langen, aus Brettern gezimmertem Tisch",
+                                "einen langen, aus Brettern gezimmerten Tisch"),
+                        np(M, "der lange Brettertisch", "dem langen Brettertisch",
+                                "den langen Brettertisch"),
+                        np(M, "der Tisch", "dem Tisch", "den Tisch"),
+                        SCHLOSS_VORHALLE_AM_TISCH_BEIM_FEST, SCHLOSS_VORHALLE,
+                        false,
+                        TISCH,
+                        SCHLOSS_VORHALLE_DAUERHAFT_BELEUCHTET)
+                // STORY Spieler kauft Lampe (z.B. für Hütte) auf Schlossfest
+        );
+
+        locationSystem = new LocationSystem(db);
+
+        reactionsCoordinator = new GOReactionsCoordinator(this);
     }
 
     /**
      * Speichert für alle Game Objects ihre initialen Daten in die Datenbank.
      * War die Datenbank vorher leer, ist hiermit das Spiel auf Anfang zurückgesetzt.
      */
-    public static void saveAllInitialState(final AvDatabase db) {
-        prepare(db);
 
-        for (final GameObject gameObject : ALL.values()) {
+    public void saveAllInitialState() {
+        for (final GameObject gameObject : all.values()) {
             gameObject.saveInitialState();
-        }
-    }
-
-    /**
-     * Muss vor jedem Datenbank-Zugriff
-     * aufgerufen werden. Kann gefahrlos mehrfach hintereinander aufgerufen werden.
-     * Füllt beim ersten Aufruf die interne Liste aller Game Objects (dabei
-     * werden die Daten der Objekte <i>noch nicht</i> aus der Datenbank geladen),
-     * startet außerdem alle <i>Systems</i> (sofern noch nicht geschehen).
-     */
-    private static void prepare(final AvDatabase db) {
-        if (ALL == null) {
-            final SpielerCharakterFactory spieler = new SpielerCharakterFactory(db);
-            final ObjectFactory object = new ObjectFactory(db);
-            final CreatureFactory creature = new CreatureFactory(db);
-            final InvisibleFactory invisible = new InvisibleFactory(db);
-            final RoomFactory room = new RoomFactory(db);
-            final SimpleConnectionCompFactory connection = new SimpleConnectionCompFactory(db);
-
-            ALL = new GameObjectIdMap();
-            ALL.putAll(
-                    spieler.create(SPIELER_CHARAKTER),
-                    room.create(SCHLOSS_VORHALLE, StoringPlaceType.EIN_TISCH,
-                            SCHLOSS_VORHALLE_DAUERHAFT_BELEUCHTET,
-                            new SchlossVorhalleConnectionComp(db)),
-                    room.create(SCHLOSS_VORHALLE_AM_TISCH_BEIM_FEST,
-                            StoringPlaceType.NEBEN_SC_AUF_BANK,
-                            SCHLOSS_VORHALLE_DAUERHAFT_BELEUCHTET,
-                            new SchlossVorhalleTischBeimFestConnectionComp(db)),
-                    room.create(DRAUSSEN_VOR_DEM_SCHLOSS,
-                            false,
-                            new DraussenVorDemSchlossConnectionComp(db)),
-                    room.create(IM_WALD_NAHE_DEM_SCHLOSS, StoringPlaceType.WALDWEG,
-                            false,
-                            new ImWaldNaheDemSchlossConnectionComp(db)),
-                    room.create(ABZWEIG_IM_WALD, StoringPlaceType.WALDWEG,
-                            false,
-                            connection.createAbzweigImWald()),
-                    room.create(VOR_DER_HUETTE_IM_WALD, StoringPlaceType.VOR_DER_HUETTE,
-                            false,
-                            connection.createVorDerHuetteImWald()),
-                    room.create(HUETTE_IM_WALD, StoringPlaceType.HOLZTISCH,
-                            false,
-                            connection.createHuetteImWald()),
-                    room.create(BETT_IN_DER_HUETTE_IM_WALD, StoringPlaceType.NEBEN_DIR_IM_BETT,
-                            false,
-                            connection.createBettInDerHuetteImWald()),
-                    room.create(HINTER_DER_HUETTE, StoringPlaceType.UNTER_DEM_BAUM,
-                            false,
-                            connection.createHinterDerHuette()),
-                    room.createImWaldBeimBrunnen(),
-                    room.create(UNTEN_IM_BRUNNEN, StoringPlaceType.AM_GRUNDE_DES_BRUNNENS,
-                            false,
-                            connection.createNoConnections(UNTEN_IM_BRUNNEN)),
-                    room.create(WALDWILDNIS_HINTER_DEM_BRUNNEN,
-                            StoringPlaceType.MATSCHIGER_WALDBODENN,
-                            false,
-                            connection.createWaldwildnisHinterDemBrunnen()),
-                    creature.createSchlosswache(),
-                    creature.createFroschprinz(),
-                    // STORY Anhand eines StatusDatums kann das Spiel ermitteln, wann der
-                    //  Frosch im Schloss ankommt.
-
-                    // STORY Wölfe (Creatures? Invisibles?) hetzen Spieler nachts
-                    //  Es könnte z.B. Räume neben dem Weg geben, die der Spieler in aller Regel
-                    //  nicht betreten, kann, wo aber die Wölfe laufen.
-                    //  Es könnte einen sicheren Platz geben - z.B. wäre der Weg sicher
-                    //  oder die Hütte.
-
-                    invisible.createSchlossfest(),
-                    invisible.createTageszeit(),
-                    object.create(EINE_TASCHE_DES_SPIELER_CHARAKTERS,
-                            np(F, "eine Tasche", "einer Tasche"),
-                            SPIELER_CHARAKTER, null,
-                            false, // Man kann nicht "eine Tasche hinlegen" o.Ä.
-                            EINE_TASCHE,
-                            false),
-                    object.create(HAENDE_DES_SPIELER_CHARAKTERS,
-                            np(PL_MFN, "die Hände", "den Händen"),
-                            SPIELER_CHARAKTER, null,
-                            false,
-                            HAENDE,
-                            false),
-                    object.create(GOLDENE_KUGEL,
-                            np(F, "eine goldene Kugel",
-                                    "einer goldenen Kugel"),
-                            np(F, "die goldene Kugel", "der goldenen Kugel"),
-                            np(F, "die Kugel", "der Kugel"),
-                            SCHLOSS_VORHALLE, DRAUSSEN_VOR_DEM_SCHLOSS,
-                            true),
-                    // STORY Die goldene Kugel kann verloren gehen, zum Beispiel wenn man sie im
-                    //  Sumpf ablegt. Dann gibt es eine art Reset und eine ähnliche goldene
-                    //  Kugel erscheint wieder im Schloss. Der Text dort sagt so dann etwas wie
-                    //  "eine goldene kugel wie du sie schon einmal gesehen hast, nur etwas
-                    //  kleiner".
-                    // STORY Wenn man die goldene Kugel auf den Weg legt oder beim Schlossfest
-                    //  auf den Tisch, verschwindet sie einfach, wenn man weggeht (sie wird
-                    //  gestohlen) - vorausgesetzt, man braucht sie nicht mehr.
-                    object.create(SCHLOSS_VORHALLE_LANGER_TISCH_BEIM_FEST,
-                            np(M, "ein langer, aus Brettern gezimmerter Tisch",
-                                    "einem langen, aus Brettern gezimmertem Tisch",
-                                    "einen langen, aus Brettern gezimmerten Tisch"),
-                            np(M, "der lange Brettertisch", "dem langen Brettertisch",
-                                    "den langen Brettertisch"),
-                            np(M, "der Tisch", "dem Tisch", "den Tisch"),
-                            SCHLOSS_VORHALLE_AM_TISCH_BEIM_FEST, SCHLOSS_VORHALLE,
-                            false,
-                            TISCH,
-                            SCHLOSS_VORHALLE_DAUERHAFT_BELEUCHTET)
-                    // STORY Spieler kauft Lampe (z.B. für Hütte) auf Schlossfest
-            );
-        }
-
-        if (LOCATION_SYSTEM == null) {
-            LOCATION_SYSTEM = new LocationSystem(db);
-        }
-
-        if (REACTIONS_COORDINATOR == null) {
-            REACTIONS_COORDINATOR = new GOReactionsCoordinator(db);
         }
     }
 
@@ -263,22 +267,20 @@ public class GameObjects {
 
     @Contract(pure = true)
     @NonNull
-    public static GOReactionsCoordinator narrateAndDoReactions() {
-        return REACTIONS_COORDINATOR;
+    public GOReactionsCoordinator narrateAndDoReactions() {
+        return reactionsCoordinator;
     }
 
-    static <R extends IReactions,
+    <R extends IReactions,
             G extends GameObject & IResponder>
     List<G>
-    loadResponders(final AvDatabase db, final Class<R> reactionsInterface) {
-        prepare(db);
-
+    loadResponders(final Class<R> reactionsInterface) {
         final ImmutableList<GameObject> res =
-                ALL.values().stream()
+                all.values().stream()
                         .filter(IResponder.class::isInstance)
                         .filter(resp -> IResponder.reactsTo(resp, reactionsInterface))
                         .collect(toImmutableList());
-        GameObjects.loadGameObjects(res);
+        loadGameObjects(res);
 
         return (ImmutableList<G>) (ImmutableList<?>) res;
     }
@@ -289,11 +291,10 @@ public class GameObjects {
      * und gibt sie zurück -
      * nur Gegenstände, die eine Beschreibung haben.
      */
-    public static <LOC_DESC extends ILocatableGO & IDescribableGO>
+    public <LOC_DESC extends ILocatableGO & IDescribableGO>
     ImmutableList<LOC_DESC> loadDescribableNonLivingRecursiveInventory(
-            final AvDatabase db,
             final ILocationGO location) {
-        return filterNoLivingBeing(loadDescribableRecursiveInventory(db, location));
+        return filterNoLivingBeing(loadDescribableRecursiveInventory(location));
     }
 
     /**
@@ -303,11 +304,10 @@ public class GameObjects {
      * und gibt sie zurück -
      * nur Gegenstände, die eine Beschreibung haben.
      */
-    public static <LOCATABLE_DESC_LOCATION extends ILocatableGO & IDescribableGO & ILocationGO>
+    public <LOCATABLE_DESC_LOCATION extends ILocatableGO & IDescribableGO & ILocationGO>
     ImmutableList<LOCATABLE_DESC_LOCATION> loadDescribableNonLivingLocationRecursiveInventory(
-            final AvDatabase db,
             final ILocationGO inventoryHolder) {
-        return loadDescribableNonLivingLocationRecursiveInventory(db, inventoryHolder.getId());
+        return loadDescribableNonLivingLocationRecursiveInventory(inventoryHolder.getId());
     }
 
     /**
@@ -317,12 +317,11 @@ public class GameObjects {
      * und gibt sie zurück -
      * nur Gegenstände, die eine Beschreibung haben.
      */
-    public static <LOCATABLE_DESC_LOCATION extends ILocatableGO & IDescribableGO & ILocationGO>
+    public <LOCATABLE_DESC_LOCATION extends ILocatableGO & IDescribableGO & ILocationGO>
     ImmutableList<LOCATABLE_DESC_LOCATION> loadDescribableNonLivingLocationRecursiveInventory(
-            final AvDatabase db,
             final GameObjectId inventoryHolderId) {
         return filterLocation(
-                loadDescribableNonLivingRecursiveInventory(db, inventoryHolderId));
+                loadDescribableNonLivingRecursiveInventory(inventoryHolderId));
     }
 
     /**
@@ -332,16 +331,15 @@ public class GameObjects {
      * und gibt sie zurück -
      * nur Gegenstände, die eine Beschreibung haben.
      */
-    public static <LOCATABLE_DESC_LOCATION extends ILocatableGO & IDescribableGO & ILocationGO>
+    public <LOCATABLE_DESC_LOCATION extends ILocatableGO & IDescribableGO & ILocationGO>
     ImmutableList<LOCATABLE_DESC_LOCATION> loadDescribableNonLivingLocationInventory(
-            final AvDatabase db,
+
             final ILocationGO inventoryHolder) {
         return filterLocation(
-                loadDescribableNonLivingInventory(db, inventoryHolder.getId()));
+                loadDescribableNonLivingInventory(inventoryHolder.getId()));
     }
 
-    private static <LOC_DESC extends ILocatableGO & IDescribableGO,
-            LOCATABLE_DESC_LOCATION extends ILocatableGO & IDescribableGO & ILocationGO>
+    private static <LOC_DESC extends ILocatableGO & IDescribableGO, LOCATABLE_DESC_LOCATION extends ILocatableGO & IDescribableGO & ILocationGO>
     ImmutableList<LOCATABLE_DESC_LOCATION> filterLocation(
             final List<LOC_DESC> gameObjects) {
         return (ImmutableList<LOCATABLE_DESC_LOCATION>) gameObjects.stream()
@@ -356,12 +354,12 @@ public class GameObjects {
      * lädt sie (sofern noch nicht geschehen) und gibt sie zurück -
      * nur Gegenstände, die eine Beschreibung haben.
      */
-    public static <LOC_DESC extends ILocatableGO & IDescribableGO>
+    public <LOC_DESC extends ILocatableGO & IDescribableGO>
     ImmutableList<LOC_DESC> loadDescribableNonLivingMovableRecursiveInventory(
-            final AvDatabase db,
+
             final GameObjectId locationId) {
         return filterMovable(
-                loadDescribableNonLivingRecursiveInventory(db, locationId));
+                loadDescribableNonLivingRecursiveInventory(locationId));
     }
 
     /**
@@ -372,12 +370,12 @@ public class GameObjects {
      * lädt sie (sofern noch nicht geschehen) und gibt sie zurück -
      * nur Gegenstände, die eine Beschreibung haben.
      */
-    public static <LOC_DESC extends ILocatableGO & IDescribableGO>
+    public <LOC_DESC extends ILocatableGO & IDescribableGO>
     ImmutableList<LOC_DESC> loadDescribableNonLivingMovableInventory(
-            final AvDatabase db,
+
             final GameObjectId locationId) {
         return filterMovable(
-                loadDescribableNonLivingInventory(db, locationId));
+                loadDescribableNonLivingInventory(locationId));
     }
 
     /**
@@ -388,11 +386,11 @@ public class GameObjects {
      * lädt sie (sofern noch nicht geschehen) und gibt sie zurück -
      * nur Gegenstände, die eine Beschreibung haben.
      */
-    public static <LOC_DESC extends ILocatableGO & IDescribableGO>
+    public <LOC_DESC extends ILocatableGO & IDescribableGO>
     ImmutableList<LOC_DESC> loadDescribableNonMovableInventory(
-            final AvDatabase db,
+
             final GameObjectId locationId) {
-        return filterNotMovable(loadDescribableInventory(db, locationId));
+        return filterNotMovable(loadDescribableInventory(locationId));
     }
 
     private static <GO extends ILocatableGO> ImmutableList<GO> filterMovable(
@@ -415,11 +413,11 @@ public class GameObjects {
      * und gibt sie zurück -
      * nur Gegenstände, die eine Beschreibung haben.
      */
-    public static <LOC_DESC extends ILocatableGO & IDescribableGO>
+    public <LOC_DESC extends ILocatableGO & IDescribableGO>
     ImmutableList<LOC_DESC> loadDescribableNonLivingRecursiveInventory(
-            final AvDatabase db,
+
             final GameObjectId locationId) {
-        return filterNoLivingBeing(loadDescribableRecursiveInventory(db, locationId));
+        return filterNoLivingBeing(loadDescribableRecursiveInventory(locationId));
     }
 
     /**
@@ -429,11 +427,11 @@ public class GameObjects {
      * und gibt sie zurück -
      * nur Gegenstände, die eine Beschreibung haben.
      */
-    private static <LOC_DESC extends ILocatableGO & IDescribableGO>
+    private <LOC_DESC extends ILocatableGO & IDescribableGO>
     ImmutableList<LOC_DESC> loadDescribableNonLivingInventory(
-            final AvDatabase db,
+
             final GameObjectId locationId) {
-        return filterNoLivingBeing(loadDescribableInventory(db, locationId));
+        return filterNoLivingBeing(loadDescribableInventory(locationId));
     }
 
     /**
@@ -442,10 +440,10 @@ public class GameObjects {
      * (also Kugel auf einem Tisch im Raum o.ä.) -
      * nur Gegenstände, die eine Beschreibung haben, nicht den Spieler-Charakter.
      */
-    public static <LIV extends ILocatableGO & IDescribableGO & ILivingBeingGO>
-    ImmutableList<LIV> loadDescribableLivingRecursiveInventory(final AvDatabase db,
-                                                               final GameObjectId locationId) {
-        return filterLivingBeing(loadDescribableRecursiveInventory(db, locationId));
+    public <LIV extends ILocatableGO & IDescribableGO & ILivingBeingGO>
+    ImmutableList<LIV> loadDescribableLivingRecursiveInventory(
+            final GameObjectId locationId) {
+        return filterLivingBeing(loadDescribableRecursiveInventory(locationId));
     }
 
     /**
@@ -454,10 +452,10 @@ public class GameObjects {
      * (also Kugel auf einem Tisch im Raum o.ä.) -
      * nur Game Objects, die eine Beschreibung haben, nicht den Spieler-Charakter.
      */
-    public static <LIV extends ILocatableGO & IDescribableGO & ILivingBeingGO>
-    ImmutableList<LIV> loadDescribableLivingRecursiveInventory(final AvDatabase db,
-                                                               final ILocationGO location) {
-        return filterLivingBeing(loadDescribableRecursiveInventory(db, location));
+    public <LIV extends ILocatableGO & IDescribableGO & ILivingBeingGO>
+    ImmutableList<LIV> loadDescribableLivingRecursiveInventory(
+            final ILocationGO location) {
+        return filterLivingBeing(loadDescribableRecursiveInventory(location));
     }
 
     /**
@@ -466,10 +464,10 @@ public class GameObjects {
      * und gibt sie zurück -
      * nur Gegenstände, die eine Beschreibung haben.
      */
-    private static <LOC_DESC extends ILocatableGO & IDescribableGO>
-    ImmutableList<LOC_DESC> loadDescribableRecursiveInventory(final AvDatabase db,
-                                                              final ILocationGO location) {
-        return loadDescribableRecursiveInventory(db, location.getId());
+    private <LOC_DESC extends ILocatableGO & IDescribableGO>
+    ImmutableList<LOC_DESC> loadDescribableRecursiveInventory(
+            final ILocationGO location) {
+        return loadDescribableRecursiveInventory(location.getId());
     }
 
     /**
@@ -478,18 +476,18 @@ public class GameObjects {
      * und gibt sie zurück - nur Game Objects, die eine Beschreibung haben,
      * nicht den Spieler-Charakter.
      */
-    public static <LOC_DESC extends ILocatableGO & IDescribableGO>
-    ImmutableList<LOC_DESC> loadDescribableRecursiveInventory(final AvDatabase db,
-                                                              final GameObjectId locationId) {
+    public <LOC_DESC extends ILocatableGO & IDescribableGO>
+    ImmutableList<LOC_DESC> loadDescribableRecursiveInventory(
+            final GameObjectId locationId) {
         final ImmutableList<LOC_DESC> directContainedList =
-                loadDescribableInventory(db, locationId);
+                loadDescribableInventory(locationId);
 
         final ImmutableList.Builder<LOC_DESC> res = ImmutableList.builder();
         res.addAll(directContainedList);
 
         for (final LOC_DESC directContained : directContainedList) {
             if (directContained instanceof ILocationGO) {
-                res.addAll(loadDescribableInventory(db, (ILocationGO) directContained));
+                res.addAll(loadDescribableInventory((ILocationGO) directContained));
             }
         }
 
@@ -503,10 +501,10 @@ public class GameObjects {
      * und gibt sie zurück - nur Game Objects, die eine Beschreibung haben,
      * nicht den Spieler-Charakter.
      */
-    private static <LOC_DESC extends ILocatableGO & IDescribableGO>
-    ImmutableList<LOC_DESC> loadDescribableInventory(final AvDatabase db,
-                                                     final ILocationGO location) {
-        return loadDescribableInventory(db, location.getId());
+    private <LOC_DESC extends ILocatableGO & IDescribableGO>
+    ImmutableList<LOC_DESC> loadDescribableInventory(
+            final ILocationGO location) {
+        return loadDescribableInventory(location.getId());
     }
 
     /**
@@ -516,19 +514,19 @@ public class GameObjects {
      * und gibt sie zurück - nur Game Objects, die eine Beschreibung haben,
      * nicht den Spieler-Charakter.
      */
-    private static <LOC_DESC extends ILocatableGO & IDescribableGO>
-    ImmutableList<LOC_DESC> loadDescribableInventory(final AvDatabase db,
-                                                     final GameObjectId locationId) {
-        prepare(db);
+    private <LOC_DESC extends ILocatableGO & IDescribableGO>
+    ImmutableList<LOC_DESC> loadDescribableInventory(
+            final GameObjectId locationId) {
+
 
         final ImmutableList<GameObject> res =
-                LOCATION_SYSTEM.findByLocation(locationId)
+                locationSystem.findByLocation(locationId)
                         .stream()
                         .filter(((Predicate<GameObjectId>) SPIELER_CHARAKTER::equals).negate())
-                        .map(id -> get(db, id))
+                        .map(id -> get(id))
                         .filter(IDescribableGO.class::isInstance)
                         .collect(toImmutableList());
-        GameObjects.loadGameObjects(res);
+        loadGameObjects(res);
 
         return (ImmutableList<LOC_DESC>) (ImmutableList<?>) res;
     }
@@ -541,8 +539,7 @@ public class GameObjects {
                 .collect(toImmutableList());
     }
 
-    private static <DESC_OBJ extends ILocatableGO & IDescribableGO,
-            LIV extends ILocatableGO & IDescribableGO & ILivingBeingGO>
+    private static <DESC_OBJ extends ILocatableGO & IDescribableGO, LIV extends ILocatableGO & IDescribableGO & ILivingBeingGO>
     ImmutableList<LIV> filterLivingBeing(final List<DESC_OBJ> gameObjects) {
         return (ImmutableList<LIV>) gameObjects.stream()
                 .filter(ILivingBeingGO.class::isInstance)
@@ -553,21 +550,21 @@ public class GameObjects {
      * Gibt eine beschreibende Nominalphrase zurück, die das <code>describable</code>
      * aus Sicht das Beobachters mit der <code>observerId</code> beschreibt, ggf. kurz.
      */
-    public static @NonNull
-    Nominalphrase getPOVDescription(final AvDatabase db, final GameObjectId observerId,
+    public @NonNull
+    Nominalphrase getPOVDescription(final GameObjectId observerId,
                                     final IDescribableGO describable,
                                     final boolean shortIfKnown) {
-        return getPOVDescription(load(db, observerId), describable, shortIfKnown);
+        return getPOVDescription(load(observerId), describable, shortIfKnown);
     }
 
     /**
      * Gibt eine beschreibende Nominalphrase zurück, die das <code>describable</code>
      * aus Sicht des <code>observer</code>s beschreibt, ggf. kurz-
      */
-    public static @NonNull
-    Nominalphrase getPOVDescription(final IGameObject observer,
-                                    final IDescribableGO describable,
-                                    final boolean shortIfKnown) {
+    public @NonNull
+    static Nominalphrase getPOVDescription(final IGameObject observer,
+                                           final IDescribableGO describable,
+                                           final boolean shortIfKnown) {
         if (observer instanceof IHasMemoryGO) {
             return getPOVDescription((IHasMemoryGO) observer, describable,
                     shortIfKnown);
@@ -586,9 +583,9 @@ public class GameObjects {
     /**
      * Lädt (sofern nicht schon geschehen) den Spieler-Charakter und gibt ihn zurück.
      */
-    public static @Nonnull
-    SpielerCharakter loadSC(final AvDatabase db) {
-        return (SpielerCharakter) load(db, SPIELER_CHARAKTER);
+    public @Nonnull
+    SpielerCharakter loadSC() {
+        return (SpielerCharakter) load(SPIELER_CHARAKTER);
     }
 
     /**
@@ -604,10 +601,10 @@ public class GameObjects {
      * Lädt (sofern nicht schon geschehen) dieses Game Object und gibt sie zurück.
      */
     @Nonnull
-    public static ImmutableList<GameObject> load(final AvDatabase db,
-                                                 final Collection<GameObjectId> ids) {
+    public ImmutableList<GameObject> load(
+            final Collection<GameObjectId> ids) {
         return ids.stream()
-                .map(id -> load(db, id))
+                .map(id -> load(id))
                 .collect(toImmutableList());
     }
 
@@ -615,8 +612,8 @@ public class GameObjects {
      * Lädt (sofern nicht schon geschehen) dieses Game Object und gibt es zurück.
      */
     @Nonnull
-    public static GameObject load(final AvDatabase db, final GameObjectId id) {
-        final GameObject gameObject = get(db, id);
+    public GameObject load(final GameObjectId id) {
+        final GameObject gameObject = get(id);
         gameObject.load();
         return gameObject;
     }
@@ -625,10 +622,8 @@ public class GameObjects {
      * Speichert für alle Game Objects ihre aktuellen Daten in die Datenbank - löscht
      * außerdem alle Daten aus alle geladenen Daten aus dem Speicher.
      */
-    public static void saveAll(final AvDatabase db) {
-        prepare(db);
-
-        for (final GameObject gameObject : ALL.values()) {
+    public void saveAll() {
+        for (final GameObject gameObject : all.values()) {
             gameObject.save();
         }
     }
@@ -640,18 +635,13 @@ public class GameObjects {
      * geladen.
      */
     @NonNull
-    private static GameObject get(final AvDatabase db, final GameObjectId id) {
-        prepare(db);
-
-        @Nullable final GameObject res = ALL.get(id);
+    private GameObject get(final GameObjectId id) {
+        @Nullable final GameObject res = all.get(id);
 
         if (res == null) {
             throw new IllegalArgumentException("No game object found for id " + id);
         }
 
         return res;
-    }
-
-    private GameObjects() {
     }
 }
