@@ -74,10 +74,6 @@ public class NehmenAction
                                                 final GO object) {
         final ImmutableList.Builder<NehmenAction> res = ImmutableList.builder();
 
-// STORY Hat man den Frosch in der HAND oder in der TASCHE und verlässt den
-//  Tisch beim Schlossfest, hüpft der Frosch weg / hinaus. Der Spieler
-//                >merkt gar nicht recht wohin.
-//
 // STORY Den Frosch auf den Tisch setzen
 //
 //  und setzt ihn auf den Tisch.
@@ -314,7 +310,43 @@ public class NehmenAction
     }
 
     private AvTimeSpan narrateAndDoFroschprinz_HatHochhebenGefordert() {
-        AvTimeSpan timeElapsed = n.addAlt(
+        AvTimeSpan timeElapsed = narrateFroschprinz_HatHochhebenGefordert();
+
+        timeElapsed = timeElapsed.plus(
+                gameObject.locationComp()
+                        .narrateAndSetLocation(
+                                targetLocation,
+                                () -> {
+                                    sc.memoryComp().upgradeKnown(gameObject, Known.getKnown(
+                                            gameObject.locationComp().getLocation()
+                                                    .storingPlaceComp()
+                                                    .getLichtverhaeltnisse()));
+                                    sc.feelingsComp().setMood(Mood.ANGESPANNT);
+
+                                    return noTime();
+                                })
+        );
+
+        sc.memoryComp().setLastAction(buildMemorizedAction());
+        return timeElapsed;
+    }
+
+    private AvTimeSpan narrateFroschprinz_HatHochhebenGefordert() {
+        if (sc.memoryComp().getLastAction().hasObject(gameObject) &&
+                sc.memoryComp().getLastAction().is(Action.Type.ABLEGEN) &&
+                initialStoryState.dann()) {
+            // Aber dann nimmst du ihn doch wieder
+            final SubstantivischePhrase froschDescOderAnapher =
+                    getAnaphPersPronWennMglSonstShortDescription(FROSCHPRINZ);
+
+            return n.add(neuerSatz(StructuralElement.PARAGRAPH,
+                    "Aber dann nimmst du " + froschDescOderAnapher.akk() +
+                            " doch wieder",
+                    secs(5))
+                    .undWartest()
+                    .phorikKandidat(froschDescOderAnapher, gameObject.getId()));
+        }
+        return n.addAlt(
                 du(PARAGRAPH,
                         "zauderst", "und dein Herz klopft gewaltig, als du endlich "
                                 + getDescription(gameObject, true).akk()
@@ -327,28 +359,11 @@ public class NehmenAction
                         "Dir wird ganz angst, aber was man "
                                 + "versprochen hat, das muss man auch halten! Du nimmst "
                                 + getDescription(gameObject, true).akk()
-                                + " in die Hand",
+                                + " in die Hände",
                         secs(15))
                         .phorikKandidat(getDescription(gameObject, true), FROSCHPRINZ)
                         .undWartest()
                         .dann());
-
-        timeElapsed = timeElapsed.plus(
-                gameObject.locationComp()
-                        .narrateAndSetLocation(
-                                targetLocation,
-                                () -> {
-                                    sc.memoryComp().upgradeKnown(gameObject, Known.getKnown(
-                                            gameObject.locationComp().getLocation()
-                                                    .storingPlaceComp().getLichtverhaeltnisse()));
-                                    sc.feelingsComp().setMood(Mood.ANGESPANNT);
-
-                                    return noTime();
-                                })
-        );
-
-        sc.memoryComp().setLastAction(buildMemorizedAction());
-        return timeElapsed;
     }
 
     private AvTimeSpan narrateAndDoObject() {
@@ -359,8 +374,7 @@ public class NehmenAction
         AvTimeSpan timeElapsed = narrateObject();
 
         timeElapsed = timeElapsed.plus(
-                gameObject.locationComp()
-                        .narrateAndSetLocation(targetLocation));
+                gameObject.locationComp().narrateAndSetLocation(targetLocation));
         sc.memoryComp().setLastAction(buildMemorizedAction());
 
         return timeElapsed;
@@ -473,6 +487,7 @@ public class NehmenAction
 
     @NonNull
     private Action buildMemorizedAction() {
-        return new Action(Action.Type.NEHMEN, gameObject, gameObject.locationComp().getLocation());
+        return new Action(Action.Type.NEHMEN, gameObject,
+                gameObject.locationComp().getLocation());
     }
 }

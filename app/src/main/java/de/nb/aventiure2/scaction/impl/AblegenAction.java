@@ -235,6 +235,7 @@ public class AblegenAction
                             + " und "
                             + "wendest dich demonstrativ ab",
                     secs(5))
+                    .dann()
                     .phorikKandidat(M, FROSCHPRINZ));
 
             AvTimeSpan timeElapsed = n.addAlt(alt);

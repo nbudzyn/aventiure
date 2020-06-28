@@ -416,12 +416,10 @@ public class BewegenAction<R extends ISpatiallyConnectedGO & ILocationGO,
         final AbstractDescription description = getNormalDescriptionAndDo(initialStoryState,
                 to.storingPlaceComp().getLichtverhaeltnisse());
 
-        if (description instanceof DuDescription && initialStoryState
-                .allowsAdditionalDuSatzreihengliedOhneSubjekt() && sc.memoryComp().getLastAction()
-                .is(BEWEGEN) &&
+        if (description instanceof DuDescription &&
+                initialStoryState.allowsAdditionalDuSatzreihengliedOhneSubjekt() &&
+                sc.memoryComp().getLastAction().is(BEWEGEN) &&
                 sc.locationComp().lastLocationWas(spatialConnection.getTo())) {
-
-
             return n.add(
                     satzanschluss(", besinnst dich aber und "
                                     + ((DuDescription) description)
@@ -438,12 +436,18 @@ public class BewegenAction<R extends ISpatiallyConnectedGO & ILocationGO,
         }
 
         if (sc.memoryComp().getLastAction().is(BEWEGEN)) {
-            if (sc.locationComp().lastLocationWas(spatialConnection.getTo()) &&
-                    numberOfPossibilities != ONLY_WAY) {
-                // FIXME Diese Prüfung ist Unfug - wurde ja eben schon geprüft?!
-                if (sc.memoryComp().getLastAction().is(BEWEGEN)) {
-                    final ImmutableList.Builder<AbstractDescription<?>> alt =
-                            builder();
+            if (sc.locationComp().lastLocationWas(spatialConnection.getTo())) {
+                final ImmutableList.Builder<AbstractDescription<?>> alt = builder();
+                if (numberOfPossibilities == ONLY_WAY) {
+                    alt.add(
+                            du("schaust", "dich nur kurz um, dann "
+                                            + uncapitalize(description.getDescriptionHauptsatz()),
+                                    description.getTimeElapsed())
+                                    .komma(description.isKommaStehtAus())
+                                    .undWartest(
+                                            description
+                                                    .isAllowsAdditionalDuSatzreihengliedOhneSubjekt()));
+                } else {
                     alt.add(neuerSatz(
                             "Was willst du hier eigentlich? "
                                     + description.getDescriptionHauptsatz(),
@@ -459,19 +463,8 @@ public class BewegenAction<R extends ISpatiallyConnectedGO & ILocationGO,
                     alt.add(neuerSatz("Aber dir kommt ein Gedanke und "
                                     + uncapitalize(description.getDescriptionHauptsatz()),
                             description.getTimeElapsed()));
-
-                    return n.addAlt(alt);
-                } else {
-                    // FIXME Wann ist dieser Fall gewünscht?
-                    return n.add(
-                            du("schaust", "dich nur kurz um, dann "
-                                            + uncapitalize(description.getDescriptionHauptsatz()),
-                                    description.getTimeElapsed())
-                                    .komma(description.isKommaStehtAus())
-                                    .undWartest(
-                                            description
-                                                    .isAllowsAdditionalDuSatzreihengliedOhneSubjekt()));
                 }
+                return n.addAlt(alt);
             } else if (initialStoryState.getEndsThis() == StructuralElement.WORD &&
                     initialStoryState.dann()) {
                 // "Du stehst wieder vor dem Schloss; dann gehst du wieder hinein in das Schloss."

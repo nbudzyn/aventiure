@@ -199,7 +199,7 @@ public class GameObjects {
                             EINE_TASCHE,
                             false),
                     object.create(HAENDE_DES_SPIELER_CHARAKTERS,
-                            np(PL_MFN, "deine Hände", "deinen Händen"),
+                            np(PL_MFN, "die Hände", "den Händen"),
                             SPIELER_CHARAKTER, null,
                             false,
                             HAENDE,
