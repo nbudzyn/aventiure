@@ -183,7 +183,6 @@ public abstract class AvDatabase extends RoomDatabase {
      */
     private static String buildObjectInRoomDescriptionPrefix(final int numberOfObjects) {
         if (numberOfObjects == 1) {
-            // TODO Not everything fits on a table
             return "Auf einem Tisch liegt";
         }
 

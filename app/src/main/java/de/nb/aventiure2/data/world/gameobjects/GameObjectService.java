@@ -144,6 +144,10 @@ public class GameObjectService {
 
             all = new GameObjectIdMap();
             all.putAll(
+                    // TODO Idee:
+                    //  RoomFactory roomFactory = new Assemblage(component1::new, component2::new);
+                    //  Room schloss = RoomFactory.create();
+
                     spieler.create(SPIELER_CHARAKTER),
                     room.create(SCHLOSS_VORHALLE, StoringPlaceType.EIN_TISCH,
                             SCHLOSS_VORHALLE_DAUERHAFT_BELEUCHTET,
@@ -256,10 +260,6 @@ public class GameObjectService {
             gameObject.saveInitialState();
         }
     }
-
-    // TODO  Idee:
-    //  RoomFactory roomFactory = new Assemblage(component1::new, component2::new);
-    //  Room schloss = RoomFactory.create();
 
     @Contract(pure = true)
     @NonNull

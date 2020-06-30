@@ -53,8 +53,7 @@ public class ScActionService {
         gos = GameObjectService.getInstance(db);
     }
 
-    // TODO Have a convention like "Never do this", better have typical combinations
-    //  available?
+    // TODO Better have typical combinations available at a central place?
     public <DESC_OBJ extends ILocatableGO & IDescribableGO,
             LIV extends ILocatableGO & IDescribableGO & ILivingBeingGO> List<AbstractScAction>
     getPlayerActions() {

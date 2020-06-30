@@ -271,10 +271,6 @@ public class LocationComp extends AbstractStatefulComponent<LocationPCD> {
             return null;
         }
 
-        // TODO Ist es gut, wenn die Komponente GameObjects aufruft?
-        //  Vielleicht wäre es besser, wenn sich die Komponente
-        //  nur ihr eigenes DAO merken würde und sich weder
-        //  um andere Komponente noch andere Game Objects kümmern würde?
         return (ILocationGO) gos.load(lastLocationId);
     }
 
