@@ -97,6 +97,7 @@ public class GameObjectService {
 
     private static volatile GameObjectService INSTANCE;
 
+    private final AvDatabase db;
 
     private GameObjectIdMap all;
 
@@ -118,13 +119,12 @@ public class GameObjectService {
 
     @VisibleForTesting
     @WorkerThread
-    public static void reset(final AvDatabase db) {
+    public static void reset() {
         INSTANCE = null;
-        GameObjectService.getInstance(db).init(db);
-        GameObjectService.getInstance(db).saveAllInitialState();
     }
 
     private GameObjectService(final AvDatabase db) {
+        this.db = db;
     }
 
     /**
@@ -132,140 +132,134 @@ public class GameObjectService {
      * werden die Daten der Objekte <i>noch nicht</i> aus der Datenbank geladen),
      * startet außerdem alle <i>Systems</i> (sofern noch nicht geschehen).
      */
-    public void init(final AvDatabase db) {
-        final SpielerCharakterFactory spieler = new SpielerCharakterFactory(db, this);
-        final ObjectFactory object = new ObjectFactory(db, this);
-        final CreatureFactory creature = new CreatureFactory(db, this);
-        final InvisibleFactory invisible = new InvisibleFactory(db, this);
-        final RoomFactory room = new RoomFactory(db, this);
-        final SimpleConnectionCompFactory connection = new SimpleConnectionCompFactory(db, this);
+    private void prepare() {
+        if (all == null) {
+            final SpielerCharakterFactory spieler = new SpielerCharakterFactory(db, this);
+            final ObjectFactory object = new ObjectFactory(db, this);
+            final CreatureFactory creature = new CreatureFactory(db, this);
+            final InvisibleFactory invisible = new InvisibleFactory(db, this);
+            final RoomFactory room = new RoomFactory(db, this);
+            final SimpleConnectionCompFactory connection =
+                    new SimpleConnectionCompFactory(db, this);
 
-        all = new GameObjectIdMap();
-        all.putAll(
-                spieler.create(SPIELER_CHARAKTER),
-                room.create(SCHLOSS_VORHALLE, StoringPlaceType.EIN_TISCH,
-                        SCHLOSS_VORHALLE_DAUERHAFT_BELEUCHTET,
-                        new SchlossVorhalleConnectionComp(db, this)),
-                room.create(SCHLOSS_VORHALLE_AM_TISCH_BEIM_FEST,
-                        StoringPlaceType.NEBEN_SC_AUF_BANK,
-                        SCHLOSS_VORHALLE_DAUERHAFT_BELEUCHTET,
-                        new SchlossVorhalleTischBeimFestConnectionComp(db, this)),
-                room.create(DRAUSSEN_VOR_DEM_SCHLOSS,
-                        false,
-                        new DraussenVorDemSchlossConnectionComp(db, this)),
-                room.create(IM_WALD_NAHE_DEM_SCHLOSS, StoringPlaceType.WALDWEG,
-                        false,
-                        new ImWaldNaheDemSchlossConnectionComp(db, this)),
-                room.create(ABZWEIG_IM_WALD, StoringPlaceType.WALDWEG,
-                        false,
-                        connection.createAbzweigImWald()),
-                room.create(VOR_DER_HUETTE_IM_WALD, StoringPlaceType.VOR_DER_HUETTE,
-                        false,
-                        connection.createVorDerHuetteImWald()),
-                room.create(HUETTE_IM_WALD, StoringPlaceType.HOLZTISCH,
-                        false,
-                        connection.createHuetteImWald()),
-                room.create(BETT_IN_DER_HUETTE_IM_WALD, StoringPlaceType.NEBEN_DIR_IM_BETT,
-                        false,
-                        connection.createBettInDerHuetteImWald()),
-                room.create(HINTER_DER_HUETTE, StoringPlaceType.UNTER_DEM_BAUM,
-                        false,
-                        connection.createHinterDerHuette()),
-                room.createImWaldBeimBrunnen(),
-                room.create(UNTEN_IM_BRUNNEN, StoringPlaceType.AM_GRUNDE_DES_BRUNNENS,
-                        false,
-                        connection.createNoConnections(UNTEN_IM_BRUNNEN)),
-                room.create(WALDWILDNIS_HINTER_DEM_BRUNNEN,
-                        StoringPlaceType.MATSCHIGER_WALDBODENN,
-                        false,
-                        connection.createWaldwildnisHinterDemBrunnen()),
-                creature.createSchlosswache(),
-                creature.createFroschprinz(),
-                // STORY Anhand eines StatusDatums kann das Spiel ermitteln, wann der
-                //  Frosch im Schloss ankommt.
+            all = new GameObjectIdMap();
+            all.putAll(
+                    spieler.create(SPIELER_CHARAKTER),
+                    room.create(SCHLOSS_VORHALLE, StoringPlaceType.EIN_TISCH,
+                            SCHLOSS_VORHALLE_DAUERHAFT_BELEUCHTET,
+                            new SchlossVorhalleConnectionComp(db, this)),
+                    room.create(SCHLOSS_VORHALLE_AM_TISCH_BEIM_FEST,
+                            StoringPlaceType.NEBEN_SC_AUF_BANK,
+                            SCHLOSS_VORHALLE_DAUERHAFT_BELEUCHTET,
+                            new SchlossVorhalleTischBeimFestConnectionComp(db, this)),
+                    room.create(DRAUSSEN_VOR_DEM_SCHLOSS,
+                            false,
+                            new DraussenVorDemSchlossConnectionComp(db, this)),
+                    room.create(IM_WALD_NAHE_DEM_SCHLOSS, StoringPlaceType.WALDWEG,
+                            false,
+                            new ImWaldNaheDemSchlossConnectionComp(db, this)),
+                    room.create(ABZWEIG_IM_WALD, StoringPlaceType.WALDWEG,
+                            false,
+                            connection.createAbzweigImWald()),
+                    room.create(VOR_DER_HUETTE_IM_WALD, StoringPlaceType.VOR_DER_HUETTE,
+                            false,
+                            connection.createVorDerHuetteImWald()),
+                    room.create(HUETTE_IM_WALD, StoringPlaceType.HOLZTISCH,
+                            false,
+                            connection.createHuetteImWald()),
+                    room.create(BETT_IN_DER_HUETTE_IM_WALD, StoringPlaceType.NEBEN_DIR_IM_BETT,
+                            false,
+                            connection.createBettInDerHuetteImWald()),
+                    room.create(HINTER_DER_HUETTE, StoringPlaceType.UNTER_DEM_BAUM,
+                            false,
+                            connection.createHinterDerHuette()),
+                    room.createImWaldBeimBrunnen(),
+                    room.create(UNTEN_IM_BRUNNEN, StoringPlaceType.AM_GRUNDE_DES_BRUNNENS,
+                            false,
+                            connection.createNoConnections(UNTEN_IM_BRUNNEN)),
+                    room.create(WALDWILDNIS_HINTER_DEM_BRUNNEN,
+                            StoringPlaceType.MATSCHIGER_WALDBODENN,
+                            false,
+                            connection.createWaldwildnisHinterDemBrunnen()),
+                    creature.createSchlosswache(),
+                    creature.createFroschprinz(),
+                    // STORY Anhand eines StatusDatums kann das Spiel ermitteln, wann der
+                    //  Frosch im Schloss ankommt.
 
-                // STORY Wölfe (Creatures? Invisibles?) hetzen Spieler nachts
-                //  Es könnte z.B. Räume neben dem Weg geben, die der Spieler in aller Regel
-                //  nicht betreten, kann, wo aber die Wölfe laufen.
-                //  Es könnte einen sicheren Platz geben - z.B. wäre der Weg sicher
-                //  oder die Hütte.
+                    // STORY Wölfe (Creatures? Invisibles?) hetzen Spieler nachts
+                    //  Es könnte z.B. Räume neben dem Weg geben, die der Spieler in aller Regel
+                    //  nicht betreten, kann, wo aber die Wölfe laufen.
+                    //  Es könnte einen sicheren Platz geben - z.B. wäre der Weg sicher
+                    //  oder die Hütte.
 
-                invisible.createSchlossfest(),
-                invisible.createTageszeit(),
-                object.create(EINE_TASCHE_DES_SPIELER_CHARAKTERS,
-                        np(F, "eine Tasche", "einer Tasche"),
-                        SPIELER_CHARAKTER, null,
-                        false, // Man kann nicht "eine Tasche hinlegen" o.Ä.
-                        EINE_TASCHE,
-                        false),
-                object.create(HAENDE_DES_SPIELER_CHARAKTERS,
-                        np(PL_MFN, "die Hände", "den Händen"),
-                        SPIELER_CHARAKTER, null,
-                        false,
-                        HAENDE,
-                        false),
-                object.create(GOLDENE_KUGEL,
-                        np(F, "eine goldene Kugel",
-                                "einer goldenen Kugel"),
-                        np(F, "die goldene Kugel", "der goldenen Kugel"),
-                        np(F, "die Kugel", "der Kugel"),
-                        SCHLOSS_VORHALLE, DRAUSSEN_VOR_DEM_SCHLOSS,
-                        true),
-                // STORY Die goldene Kugel kann verloren gehen, zum Beispiel wenn man sie im
-                //  Sumpf ablegt. Dann gibt es eine art Reset und eine ähnliche goldene
-                //  Kugel erscheint wieder im Schloss. Der Text dort sagt so dann etwas wie
-                //  "eine goldene kugel wie du sie schon einmal gesehen hast, nur etwas
-                //  kleiner".
-                // STORY Wenn man die goldene Kugel auf den Weg legt oder beim Schlossfest
-                //  auf den Tisch, verschwindet sie einfach, wenn man weggeht (sie wird
-                //  gestohlen) - vorausgesetzt, man braucht sie nicht mehr.
-                object.create(SCHLOSS_VORHALLE_LANGER_TISCH_BEIM_FEST,
-                        np(M, "ein langer, aus Brettern gezimmerter Tisch",
-                                "einem langen, aus Brettern gezimmertem Tisch",
-                                "einen langen, aus Brettern gezimmerten Tisch"),
-                        np(M, "der lange Brettertisch", "dem langen Brettertisch",
-                                "den langen Brettertisch"),
-                        np(M, "der Tisch", "dem Tisch", "den Tisch"),
-                        SCHLOSS_VORHALLE_AM_TISCH_BEIM_FEST, SCHLOSS_VORHALLE,
-                        false,
-                        TISCH,
-                        SCHLOSS_VORHALLE_DAUERHAFT_BELEUCHTET)
-                // STORY Spieler kauft Lampe (z.B. für Hütte) auf Schlossfest
-        );
+                    invisible.createSchlossfest(),
+                    invisible.createTageszeit(),
+                    object.create(EINE_TASCHE_DES_SPIELER_CHARAKTERS,
+                            np(F, "eine Tasche", "einer Tasche"),
+                            SPIELER_CHARAKTER, null,
+                            false, // Man kann nicht "eine Tasche hinlegen" o.Ä.
+                            EINE_TASCHE,
+                            false),
+                    object.create(HAENDE_DES_SPIELER_CHARAKTERS,
+                            np(PL_MFN, "die Hände", "den Händen"),
+                            SPIELER_CHARAKTER, null,
+                            false,
+                            HAENDE,
+                            false),
+                    object.create(GOLDENE_KUGEL,
+                            np(F, "eine goldene Kugel",
+                                    "einer goldenen Kugel"),
+                            np(F, "die goldene Kugel", "der goldenen Kugel"),
+                            np(F, "die Kugel", "der Kugel"),
+                            SCHLOSS_VORHALLE, DRAUSSEN_VOR_DEM_SCHLOSS,
+                            true),
+                    // STORY Die goldene Kugel kann verloren gehen, zum Beispiel wenn man sie im
+                    //  Sumpf ablegt. Dann gibt es eine art Reset und eine ähnliche goldene
+                    //  Kugel erscheint wieder im Schloss. Der Text dort sagt so dann etwas wie
+                    //  "eine goldene kugel wie du sie schon einmal gesehen hast, nur etwas
+                    //  kleiner".
+                    // STORY Wenn man die goldene Kugel auf den Weg legt oder beim Schlossfest
+                    //  auf den Tisch, verschwindet sie einfach, wenn man weggeht (sie wird
+                    //  gestohlen) - vorausgesetzt, man braucht sie nicht mehr.
+                    object.create(SCHLOSS_VORHALLE_LANGER_TISCH_BEIM_FEST,
+                            np(M, "ein langer, aus Brettern gezimmerter Tisch",
+                                    "einem langen, aus Brettern gezimmertem Tisch",
+                                    "einen langen, aus Brettern gezimmerten Tisch"),
+                            np(M, "der lange Brettertisch", "dem langen Brettertisch",
+                                    "den langen Brettertisch"),
+                            np(M, "der Tisch", "dem Tisch", "den Tisch"),
+                            SCHLOSS_VORHALLE_AM_TISCH_BEIM_FEST, SCHLOSS_VORHALLE,
+                            false,
+                            TISCH,
+                            SCHLOSS_VORHALLE_DAUERHAFT_BELEUCHTET)
+                    // STORY Spieler kauft Lampe (z.B. für Hütte) auf Schlossfest
+            );
+        }
 
-        locationSystem = new LocationSystem(db);
+        if (locationSystem == null) {
+            locationSystem = new LocationSystem(db);
+        }
 
-        reactionsCoordinator = new GOReactionsCoordinator(this);
+        if (reactionsCoordinator == null) {
+            reactionsCoordinator = new GOReactionsCoordinator(this);
+        }
     }
 
     /**
      * Speichert für alle Game Objects ihre initialen Daten in die Datenbank.
      * War die Datenbank vorher leer, ist hiermit das Spiel auf Anfang zurückgesetzt.
      */
-
     public void saveAllInitialState() {
+        prepare();
+
         for (final GameObject gameObject : all.values()) {
             gameObject.saveInitialState();
         }
     }
 
-    // TODO Aus dem, was in den Subklassen on AbstractGameObject noch ist,
-    //  components machen. Components werden mit der Game-Object-ID
-    //  verknüpft (Schlüssel gemeinsam mit dem Component-Typ)
-    //  und nur Components speichern ihren State (wenn sie einen haben).
-
-    // TODO ObjectData etc. zu Components umbauen, Gemeinsamkeiten zu separaten
-    //  Components zusammenfassen.
-    //  Interfaces für die Components verwenden?
-    //  Idee:
+    // TODO  Idee:
     //  RoomFactory roomFactory = new Assemblage(component1::new, component2::new);
     //  Room schloss = RoomFactory.create();
-
-    // TODO Dinge / Frösche etc. könnten collectible sein.
-
-    // TODO Vielleich ist eine Components ist das Inventory / ContainerComponent
-    //  (allerdings ist das quasi die Rückrichtung zur location....). Der Player
-    //  - aber vielleicht auch Räume oder bisherige AvObjects - könnten ein Inventory haben.
 
     @Contract(pure = true)
     @NonNull
@@ -277,6 +271,8 @@ public class GameObjectService {
             G extends GameObject & IResponder>
     List<G>
     loadResponders(final Class<R> reactionsInterface) {
+        prepare();
+
         final ImmutableList<GameObject> res =
                 all.values().stream()
                         .filter(IResponder.class::isInstance)
@@ -335,7 +331,6 @@ public class GameObjectService {
      */
     public <LOCATABLE_DESC_LOCATION extends ILocatableGO & IDescribableGO & ILocationGO>
     ImmutableList<LOCATABLE_DESC_LOCATION> loadDescribableNonLivingLocationInventory(
-
             final ILocationGO inventoryHolder) {
         return filterLocation(
                 loadDescribableNonLivingInventory(inventoryHolder.getId()));
@@ -358,7 +353,6 @@ public class GameObjectService {
      */
     public <LOC_DESC extends ILocatableGO & IDescribableGO>
     ImmutableList<LOC_DESC> loadDescribableNonLivingMovableRecursiveInventory(
-
             final GameObjectId locationId) {
         return filterMovable(
                 loadDescribableNonLivingRecursiveInventory(locationId));
@@ -374,7 +368,6 @@ public class GameObjectService {
      */
     public <LOC_DESC extends ILocatableGO & IDescribableGO>
     ImmutableList<LOC_DESC> loadDescribableNonLivingMovableInventory(
-
             final GameObjectId locationId) {
         return filterMovable(
                 loadDescribableNonLivingInventory(locationId));
@@ -390,7 +383,6 @@ public class GameObjectService {
      */
     public <LOC_DESC extends ILocatableGO & IDescribableGO>
     ImmutableList<LOC_DESC> loadDescribableNonMovableInventory(
-
             final GameObjectId locationId) {
         return filterNotMovable(loadDescribableInventory(locationId));
     }
@@ -417,7 +409,6 @@ public class GameObjectService {
      */
     public <LOC_DESC extends ILocatableGO & IDescribableGO>
     ImmutableList<LOC_DESC> loadDescribableNonLivingRecursiveInventory(
-
             final GameObjectId locationId) {
         return filterNoLivingBeing(loadDescribableRecursiveInventory(locationId));
     }
@@ -431,7 +422,6 @@ public class GameObjectService {
      */
     private <LOC_DESC extends ILocatableGO & IDescribableGO>
     ImmutableList<LOC_DESC> loadDescribableNonLivingInventory(
-
             final GameObjectId locationId) {
         return filterNoLivingBeing(loadDescribableInventory(locationId));
     }
@@ -519,7 +509,7 @@ public class GameObjectService {
     private <LOC_DESC extends ILocatableGO & IDescribableGO>
     ImmutableList<LOC_DESC> loadDescribableInventory(
             final GameObjectId locationId) {
-
+        prepare();
 
         final ImmutableList<GameObject> res =
                 locationSystem.findByLocation(locationId)
@@ -610,6 +600,8 @@ public class GameObjectService {
      */
     public @Nonnull
     SpielerCharakter loadSC() {
+        prepare();
+
         return (SpielerCharakter) load(SPIELER_CHARAKTER);
     }
 
@@ -648,6 +640,8 @@ public class GameObjectService {
      * außerdem alle Daten aus alle geladenen Daten aus dem Speicher.
      */
     public void saveAll() {
+        prepare();
+
         for (final GameObject gameObject : all.values()) {
             gameObject.save();
         }
@@ -661,6 +655,8 @@ public class GameObjectService {
      */
     @NonNull
     private GameObject get(final GameObjectId id) {
+        prepare();
+
         @Nullable final GameObject res = all.get(id);
 
         if (res == null) {

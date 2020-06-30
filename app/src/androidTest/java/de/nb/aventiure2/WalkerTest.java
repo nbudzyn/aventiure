@@ -63,10 +63,10 @@ public class WalkerTest {
     }
 
     private void resetDatabase() {
+        GameObjectService.reset();
         AvDatabase.resetDatabase();
 
         db = AvDatabase.getDatabase(appContext);
-        GameObjectService.reset(db);
 
         scActionService = new ScActionService(appContext);
     }

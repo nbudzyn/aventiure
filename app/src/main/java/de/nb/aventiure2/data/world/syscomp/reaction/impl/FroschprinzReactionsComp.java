@@ -291,7 +291,10 @@ public class FroschprinzReactionsComp
                 from == null ||
                         // oder der Froschprinz kam zumindest nicht vom Spieler, auch nicht aus
                         // einer Tasche o.Ä.
-                        !loadSC().storingPlaceComp().isOrHasInInventory(from)) {
+                        !loadSC().storingPlaceComp().isOrHasInInventory(from)
+            // FIXME DIESE PRÜFUNG funktioniert so nicht.
+            //  Irgendwas von den ...recursive...-Methoden verwenden?
+        ) {
             return noTime();
         }
 

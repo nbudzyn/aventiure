@@ -121,11 +121,11 @@ public abstract class AvDatabase extends RoomDatabase {
                         INSTANCE.nowDao().setNow(
                                 1, oClock(14, 30));
 
-                        // Save initial state for all game objects
-                        GameObjectService.getInstance(INSTANCE).init(INSTANCE);
-                        GameObjectService.getInstance(INSTANCE).saveAllInitialState();
+                        final GameObjectService gos = GameObjectService.getInstance(INSTANCE);
+                        gos.saveAllInitialState();
 
-                        INSTANCE.storyStateDao().add(buildInitialStoryState());
+                        // Save initial state for all game objects
+                        INSTANCE.storyStateDao().add(buildInitialStoryState(gos));
                     }));
         }
     };
@@ -148,7 +148,7 @@ public abstract class AvDatabase extends RoomDatabase {
     /**
      * @return Something similar to <code>Du befindest dich in einem Schloss. Hier liegt eine goldene Kugel.</code>
      */
-    private static StoryStateBuilder buildInitialStoryState() {
+    private static StoryStateBuilder buildInitialStoryState(final GameObjectService gos) {
         final StringBuilder res = new StringBuilder();
 
         res.append(
@@ -157,7 +157,7 @@ public abstract class AvDatabase extends RoomDatabase {
                         "Sie beginnt im königlichen Schloss, in einer prächtigen "
                         + "Vorhalle, Marmor und Brokat überall.\n");
         final List<IDescribableGO> objectsInRoom = ImmutableList.of(
-                (IDescribableGO) GameObjectService.getInstance(INSTANCE).load(GOLDENE_KUGEL));
+                (IDescribableGO) gos.load(GOLDENE_KUGEL));
         res.append(buildObjectsInRoomDescription(objectsInRoom));
 
         return t(StructuralElement.WORD, res.toString());
