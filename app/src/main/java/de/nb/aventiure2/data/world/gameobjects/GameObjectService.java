@@ -261,6 +261,112 @@ public class GameObjectService {
         }
     }
 
+    /**
+     * Gibt <code>true</code> zurück falls das Game Object eine dieser Locations ist oder
+     * sich (ggf. rekusiv) an einer dieser Locations befindet.
+     */
+    public static boolean isOrHasRecursiveLocation(
+            @Nullable final IGameObject gameObject, final ILocationGO... locationAlternatives) {
+        if (gameObject == null) {
+            return false;
+        }
+
+        for (final ILocationGO locationAlternative : locationAlternatives) {
+            if (isOrHasRecursiveLocation(gameObject, locationAlternative)) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    /**
+     * Gibt <code>true</code> zurück, falls das Game Object als ID eine dieser
+     * <code>locationIds</code> hat oder
+     * sich (ggf. rekusiv) an einer dieser Locations befindet.
+     */
+    public boolean isOrHasRecursiveLocation(
+            final GameObjectId gameObjectId, final GameObjectId... locationIds) {
+        for (final GameObjectId locationId : locationIds) {
+            if (isOrHasRecursiveLocation(gameObjectId, locationId)) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    /**
+     * Gibt <code>true</code> zurück, falls das Game Object als ID diese <code>locationId</code> hat
+     * oder sich (ggf. rekusiv) an dieser Location befindet.
+     */
+    public boolean isOrHasRecursiveLocation(final GameObjectId gameObjectId,
+                                            final GameObjectId locationId) {
+        return isOrHasRecursiveLocation(load(gameObjectId), locationId);
+    }
+
+    /**
+     * Gibt <code>true</code> zurück, falls das Game Object als ID diese <code>locationId</code> hat
+     * oder sich (ggf. rekusiv) an dieser Location befindet.
+     */
+    public boolean isOrHasRecursiveLocation(@Nullable final IGameObject gameObject,
+                                            final GameObjectId locationId) {
+        if (gameObject == null) {
+            return false;
+        }
+
+        if (gameObject.getId().equals(locationId)) {
+            return true;
+        }
+
+        final GameObject location = load(locationId);
+        if (!(location instanceof ILocationGO)) {
+            return false;
+        }
+
+        return isOrHasRecursiveLocation(gameObject, (ILocationGO) location);
+    }
+
+
+    /**
+     * Gibt <code>true</code> zurück, falls das Game Object als ID diese <code>locationId</code> hat
+     * oder sich (ggf. rekusiv) an dieser Location befindet.
+     */
+    public boolean isOrHasRecursiveLocation(final GameObjectId gameObjectId,
+                                            @Nullable final ILocationGO location) {
+        if (location == null) {
+            return false;
+        }
+
+        return isOrHasRecursiveLocation(load(gameObjectId), location);
+    }
+
+    /**
+     * Gibt <code>true</code> zurück falls das Game Object diese Location ist oder
+     * sich (ggf. rekusiv) an dieser Location befindet.
+     */
+    public static boolean isOrHasRecursiveLocation(@Nullable final IGameObject gameObject,
+                                                   @Nullable final ILocationGO location) {
+        if (gameObject == null) {
+            return location == null;
+        }
+
+        if (location == null) {
+            return false;
+        }
+
+        if (gameObject.equals(location)) {
+            return true;
+        }
+
+        if (!(gameObject instanceof ILocatableGO)) {
+            return false;
+        }
+
+        return ((ILocatableGO) gameObject).locationComp().hasRecursiveLocation(location);
+    }
+
+
     @Contract(pure = true)
     @NonNull
     public GOReactionsCoordinator narrateAndDoReactions() {

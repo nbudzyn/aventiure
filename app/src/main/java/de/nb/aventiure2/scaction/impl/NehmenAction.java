@@ -303,17 +303,29 @@ public class NehmenAction
     }
 
     private AvTimeSpan narrateFroschprinz_HatHochhebenGefordert() {
-        if (isDefinitivDiskontinuitaet() && initialStoryState.dann()) {
-            // Aber dann nimmst du ihn doch wieder
-            final SubstantivischePhrase froschDescOderAnapher =
-                    getAnaphPersPronWennMglSonstShortDescription(FROSCHPRINZ);
+        if (isDefinitivDiskontinuitaet()) {
+            if (initialStoryState.dann()) {
+                final SubstantivischePhrase froschDescOderAnapher =
+                        getAnaphPersPronWennMglSonstShortDescription(FROSCHPRINZ);
 
-            return n.add(neuerSatz(StructuralElement.PARAGRAPH,
-                    "Aber dann nimmst du " + froschDescOderAnapher.akk() +
-                            " doch wieder",
+                return n.add(neuerSatz(StructuralElement.PARAGRAPH,
+                        "Aber dann nimmst du " + froschDescOderAnapher.akk() +
+                                " doch wieder",
+                        secs(5))
+                        .undWartest()
+                        .phorikKandidat(froschDescOderAnapher, FROSCHPRINZ));
+            }
+
+            final Nominalphrase froschDesc = gos.getDescription(gameObject, false);
+
+            return n.add(du(StructuralElement.PARAGRAPH,
+                    "nimmst",
+                    froschDesc.akk() + " noch einmal",
+                    "noch einmal",
                     secs(5))
                     .undWartest()
-                    .phorikKandidat(froschDescOderAnapher, gameObject.getId()));
+                    .phorikKandidat(froschDesc, FROSCHPRINZ));
+
         }
         return n.addAlt(
                 du(PARAGRAPH,

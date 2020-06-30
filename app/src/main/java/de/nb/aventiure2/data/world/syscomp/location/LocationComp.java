@@ -138,6 +138,10 @@ public class LocationComp extends AbstractStatefulComponent<LocationPCD> {
         return otherUpperMostLocation.equals(getUpperMostLocation());
     }
 
+    /**
+     * Gibt <code>true</code> zurück, falls das Game Object
+     * sich (ggf. rekusiv) an dieser Location befindet.
+     */
     public boolean hasRecursiveLocation(final GameObjectId locationId) {
         final GameObject location = gos.load(locationId);
 
@@ -148,6 +152,10 @@ public class LocationComp extends AbstractStatefulComponent<LocationPCD> {
         return hasRecursiveLocation((ILocationGO) location);
     }
 
+    /**
+     * Gibt <code>true</code> zurück, falls das Game Object sich (ggf. rekusiv)
+     * an dieser Location befindet.
+     */
     public boolean hasRecursiveLocation(final ILocationGO location) {
         @Nullable final ILocationGO myLocation = getLocation();
         if (myLocation == null) {

@@ -575,7 +575,7 @@ public class FroschprinzTalkingComp extends AbstractTalkingComp {
                 du(
                         "hast", "gerade Luft geholt, da schneidet dir "
                                 + froschprinzDesc.nom()
-                                + " schon das Wort ab. „Was gibt es da noch zu besprechen?“, quakt "
+                                + " schon das Wort ab. „Was gibt es da noch zu diskutieren?“, quakt "
                                 + froschprinzDesc.persPron().nom()
                                 + " dich laut an",
                         "gerade",

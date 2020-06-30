@@ -239,7 +239,7 @@ public class FroschprinzReactionsComp
     @Contract("null, _ -> !null")
     private AvTimeSpan onGoldeneKugelEnter(@Nullable final ILocationGO from,
                                            final ILocationGO to) {
-        if (from == null || !loadSC().storingPlaceComp().isOrHasInInventory(from)) {
+        if (!gos.isOrHasRecursiveLocation(from, SPIELER_CHARAKTER)) {
             // auch nicht vom Spieler oder aus einer Tasche des Spielers o.Ä.
 
             return noTime();
@@ -291,10 +291,7 @@ public class FroschprinzReactionsComp
                 from == null ||
                         // oder der Froschprinz kam zumindest nicht vom Spieler, auch nicht aus
                         // einer Tasche o.Ä.
-                        !loadSC().storingPlaceComp().isOrHasInInventory(from)
-            // FIXME DIESE PRÜFUNG funktioniert so nicht.
-            //  Irgendwas von den ...recursive...-Methoden verwenden?
-        ) {
+                        !gos.isOrHasRecursiveLocation(from, SPIELER_CHARAKTER)) {
             return noTime();
         }
 
@@ -304,12 +301,14 @@ public class FroschprinzReactionsComp
         }
 
         final Nominalphrase froschprinzDesc = getFroschprinzDescription(true);
-        return n.add(neuerSatz(
-                capitalize(
-                        froschprinzDesc.nom()) +
-                        " quakt erbost",
-                secs(5))
-                .phorikKandidat(froschprinzDesc, FROSCHPRINZ));
+        return n.addAlt(
+                neuerSatz(capitalize(froschprinzDesc.nom()) + " quakt erbost",
+                        secs(5))
+                        .phorikKandidat(froschprinzDesc, FROSCHPRINZ),
+                neuerSatz("Entrüstet quakt " + froschprinzDesc.nom(),
+                        secs(5))
+                        .phorikKandidat(froschprinzDesc, FROSCHPRINZ)
+        );
     }
 
     private AvTimeSpan onFroschprinzEnterTischBeimSchlossfest() {
