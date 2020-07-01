@@ -11,8 +11,7 @@ import javax.annotation.Nullable;
 import de.nb.aventiure2.data.database.AvDatabase;
 import de.nb.aventiure2.data.world.gameobjects.GameObjectService;
 import de.nb.aventiure2.data.world.gameobjects.player.SpielerCharakter;
-import de.nb.aventiure2.data.world.syscomp.description.DescriptionComp;
-import de.nb.aventiure2.data.world.syscomp.feelings.Mood;
+import de.nb.aventiure2.data.world.syscomp.description.AbstractDescriptionComp;
 import de.nb.aventiure2.data.world.syscomp.location.ILocatableGO;
 import de.nb.aventiure2.data.world.syscomp.location.LocationComp;
 import de.nb.aventiure2.data.world.syscomp.memory.Action;
@@ -38,11 +37,11 @@ import static de.nb.aventiure2.data.world.gameobjects.GameObjectService.SCHLOSSF
 import static de.nb.aventiure2.data.world.gameobjects.GameObjectService.SCHLOSSWACHE;
 import static de.nb.aventiure2.data.world.gameobjects.GameObjectService.SCHLOSS_VORHALLE;
 import static de.nb.aventiure2.data.world.gameobjects.GameObjectService.SPIELER_CHARAKTER;
+import static de.nb.aventiure2.data.world.syscomp.feelings.Mood.ANGESPANNT;
 import static de.nb.aventiure2.data.world.syscomp.feelings.Mood.NEUTRAL;
 import static de.nb.aventiure2.data.world.syscomp.state.GameObjectState.AUFMERKSAM;
 import static de.nb.aventiure2.data.world.syscomp.state.GameObjectState.BEGONNEN;
 import static de.nb.aventiure2.data.world.syscomp.state.GameObjectState.UNAUFFAELLIG;
-import static de.nb.aventiure2.data.world.time.AvDateTime.isWithin;
 import static de.nb.aventiure2.data.world.time.AvTimeSpan.mins;
 import static de.nb.aventiure2.data.world.time.AvTimeSpan.noTime;
 import static de.nb.aventiure2.data.world.time.AvTimeSpan.secs;
@@ -60,13 +59,13 @@ public class SchlosswacheReactionsComp
         extends AbstractReactionsComp
         implements IMovementReactions, ITimePassedReactions {
 
-    private final DescriptionComp descriptionComp;
+    private final AbstractDescriptionComp descriptionComp;
     private final StateComp stateComp;
     private final LocationComp locationComp;
 
     public SchlosswacheReactionsComp(final AvDatabase db,
                                      final GameObjectService gos,
-                                     final DescriptionComp descriptionComp,
+                                     final AbstractDescriptionComp descriptionComp,
                                      final StateComp stateComp,
                                      final LocationComp locationComp) {
         super(SCHLOSSFEST, db, gos);
@@ -250,7 +249,7 @@ public class SchlosswacheReactionsComp
 
         sc.memoryComp().upgradeKnown(SCHLOSSWACHE,
                 Known.getKnown(getLichtverhaeltnisse(from)));
-        sc.feelingsComp().setMood(Mood.ANGESPANNT);
+        sc.feelingsComp().setMood(ANGESPANNT);
 
         return timeElapsed;
     }
@@ -297,7 +296,7 @@ public class SchlosswacheReactionsComp
         //  ablegen bzw. kommt ggf. in den Kerker
 
         final SpielerCharakter sc = loadSC();
-        sc.feelingsComp().setMood(Mood.ANGESPANNT);
+        sc.feelingsComp().setMood(ANGESPANNT);
 
         timeSpan = timeSpan.plus(n.add(du(PARAGRAPH,
                 "legst", "die schöne goldene Kugel eingeschüchtert wieder an ihren Platz",
@@ -417,7 +416,7 @@ public class SchlosswacheReactionsComp
                     .dann());
         }
 
-        loadSC().feelingsComp().setMood(Mood.ANGESPANNT);
+        loadSC().feelingsComp().setMood(ANGESPANNT);
         return n.addAlt(
                 neuerSatz(capitalize(getSchlosswacheDescription().nom())
                         + " beoabachtet dich dabei", secs(5))
@@ -433,7 +432,7 @@ public class SchlosswacheReactionsComp
     public AvTimeSpan onTimePassed(final AvDateTime lastTime, final AvDateTime now) {
         AvTimeSpan timeElapsed = noTime();
 
-        if (isWithin(SCHLOSSFEST_BEGINN_DATE_TIME, lastTime, now)) {
+        if (SCHLOSSFEST_BEGINN_DATE_TIME.isWithin(lastTime, now)) {
             timeElapsed = timeElapsed.plus(schlossfestBeginnt());
         }
 

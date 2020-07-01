@@ -23,13 +23,6 @@ public class AvDateTime {
     @PrimaryKey
     private final long secsSinceBeginning;
 
-    public static boolean isWithin(final AvDateTime dateTime,
-                                   @NonNull final AvDateTime lowerBoundExclusive,
-                                   final AvDateTime upperBoundInclusive) {
-        return lowerBoundExclusive.isBefore(dateTime) &&
-                upperBoundInclusive.isEqualOrAfter(dateTime);
-    }
-
     public AvDateTime(final int daySinceBeginning, @NonNull final AvTime time) {
         this(daySinceBeginning * SECS_IN_A_DAY + time.getSecsSinceMidnight());
     }
@@ -63,6 +56,12 @@ public class AvDateTime {
 
     public AvTimeSpan timeSpanUntil(final AvTime otherTime) {
         return getTime().timeSpanUntil(otherTime);
+    }
+
+    public boolean isWithin(@NonNull final AvDateTime lowerBoundExclusive,
+                            final AvDateTime upperBoundInclusive) {
+        return lowerBoundExclusive.isBefore(this) &&
+                upperBoundInclusive.isEqualOrAfter(this);
     }
 
     public boolean isEqualOrBefore(@NonNull final AvDateTime other) {

@@ -36,6 +36,8 @@ import static de.nb.aventiure2.data.world.gameobjects.GameObjectService.EINE_TAS
 import static de.nb.aventiure2.data.world.gameobjects.GameObjectService.FROSCHPRINZ;
 import static de.nb.aventiure2.data.world.gameobjects.GameObjectService.HAENDE_DES_SPIELER_CHARAKTERS;
 import static de.nb.aventiure2.data.world.gameobjects.GameObjectService.SPIELER_CHARAKTER;
+import static de.nb.aventiure2.data.world.syscomp.feelings.Mood.ANGESPANNT;
+import static de.nb.aventiure2.data.world.syscomp.feelings.Mood.NEUTRAL;
 import static de.nb.aventiure2.data.world.syscomp.state.GameObjectState.ERWARTET_VON_SC_EINLOESUNG_SEINES_VERSPRECHENS;
 import static de.nb.aventiure2.data.world.syscomp.state.GameObjectState.HAT_HOCHHEBEN_GEFORDERT;
 import static de.nb.aventiure2.data.world.time.AvTimeSpan.noTime;
@@ -231,7 +233,7 @@ public class NehmenAction
                                     sc.memoryComp().upgradeKnown(gameObject, Known.getKnown(
                                             gameObject.locationComp().getLocation()
                                                     .storingPlaceComp().getLichtverhaeltnisse()));
-                                    sc.feelingsComp().setMood(Mood.NEUTRAL);
+                                    sc.feelingsComp().setMood(NEUTRAL);
 
                                     final SubstantivischePhrase froschDescOderAnapher =
                                             getAnaphPersPronWennMglSonstShortDescription(
@@ -292,7 +294,7 @@ public class NehmenAction
                                             gameObject.locationComp().getLocation()
                                                     .storingPlaceComp()
                                                     .getLichtverhaeltnisse()));
-                                    sc.feelingsComp().setMood(Mood.ANGESPANNT);
+                                    sc.feelingsComp().setMood(ANGESPANNT);
 
                                     return noTime();
                                 })

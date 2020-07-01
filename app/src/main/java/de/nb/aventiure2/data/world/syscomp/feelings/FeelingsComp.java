@@ -78,6 +78,18 @@ public class FeelingsComp extends AbstractStatefulComponent<FeelingsPCD> {
         return getPcd().getMood();
     }
 
+    public void setMoodMin(final Mood mood) {
+        if (getMood().isTraurigerAls(mood)) {
+            getPcd().setMood(mood);
+        }
+    }
+
+    public void setMoodMax(final Mood mood) {
+        if (!getMood().isTraurigerAls(mood)) {
+            getPcd().setMood(mood);
+        }
+    }
+
     public void setMood(final Mood mood) {
         getPcd().setMood(mood);
     }

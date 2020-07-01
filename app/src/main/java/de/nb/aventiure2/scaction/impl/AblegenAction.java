@@ -14,7 +14,6 @@ import de.nb.aventiure2.data.storystate.StoryState;
 import de.nb.aventiure2.data.world.gameobjects.GameObjectService;
 import de.nb.aventiure2.data.world.syscomp.alive.ILivingBeingGO;
 import de.nb.aventiure2.data.world.syscomp.description.IDescribableGO;
-import de.nb.aventiure2.data.world.syscomp.feelings.Mood;
 import de.nb.aventiure2.data.world.syscomp.location.ILocatableGO;
 import de.nb.aventiure2.data.world.syscomp.memory.Action;
 import de.nb.aventiure2.data.world.syscomp.memory.Known;
@@ -32,6 +31,8 @@ import static com.google.common.base.Preconditions.checkState;
 import static de.nb.aventiure2.data.world.gameobjects.GameObjectService.FROSCHPRINZ;
 import static de.nb.aventiure2.data.world.gameobjects.GameObjectService.SCHLOSS_VORHALLE_AM_TISCH_BEIM_FEST;
 import static de.nb.aventiure2.data.world.gameobjects.GameObjectService.SCHLOSS_VORHALLE_LANGER_TISCH_BEIM_FEST;
+import static de.nb.aventiure2.data.world.syscomp.feelings.Mood.ANGESPANNT;
+import static de.nb.aventiure2.data.world.syscomp.feelings.Mood.NEUTRAL;
 import static de.nb.aventiure2.data.world.syscomp.memory.Action.Type.NEHMEN;
 import static de.nb.aventiure2.data.world.syscomp.state.GameObjectState.HAT_HOCHHEBEN_GEFORDERT;
 import static de.nb.aventiure2.data.world.time.AvTimeSpan.secs;
@@ -198,7 +199,7 @@ public class AblegenAction
         AvTimeSpan timeElapsed = n.addAlt(alt);
 
         timeElapsed = timeElapsed.plus(narrateUpgradeKnownAndSetLocationAndAction());
-        sc.feelingsComp().setMood(Mood.NEUTRAL);
+        sc.feelingsComp().setMood(NEUTRAL);
 
         return timeElapsed;
     }
@@ -207,7 +208,7 @@ public class AblegenAction
         if (!location.is(SCHLOSS_VORHALLE_LANGER_TISCH_BEIM_FEST)) {
             AvTimeSpan timeElapsed = narrateFroschprinz_HatHochhebenGefordert();
             timeElapsed = timeElapsed.plus(narrateUpgradeKnownAndSetLocationAndAction());
-            sc.feelingsComp().setMood(Mood.ANGESPANNT);
+            sc.feelingsComp().setMood(ANGESPANNT);
 
             return timeElapsed;
         }
@@ -225,7 +226,7 @@ public class AblegenAction
                         .phorikKandidat(M, FROSCHPRINZ));
 
         timeElapsed = timeElapsed.plus(narrateUpgradeKnownAndSetLocationAndAction());
-        sc.feelingsComp().setMood(Mood.ANGESPANNT);
+        sc.feelingsComp().setMood(ANGESPANNT);
 
         return timeElapsed;
     }

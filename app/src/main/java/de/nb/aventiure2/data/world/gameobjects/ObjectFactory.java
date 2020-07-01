@@ -8,8 +8,9 @@ import javax.annotation.Nullable;
 import de.nb.aventiure2.data.database.AvDatabase;
 import de.nb.aventiure2.data.world.base.GameObject;
 import de.nb.aventiure2.data.world.base.GameObjectId;
-import de.nb.aventiure2.data.world.syscomp.description.DescriptionComp;
+import de.nb.aventiure2.data.world.syscomp.description.AbstractDescriptionComp;
 import de.nb.aventiure2.data.world.syscomp.description.IDescribableGO;
+import de.nb.aventiure2.data.world.syscomp.description.impl.SimpleDescriptionComp;
 import de.nb.aventiure2.data.world.syscomp.location.ILocatableGO;
 import de.nb.aventiure2.data.world.syscomp.location.LocationComp;
 import de.nb.aventiure2.data.world.syscomp.storingplace.ILocationGO;
@@ -76,7 +77,7 @@ public class ObjectFactory {
                       @Nullable final GameObjectId initialLastLocationId,
                       final boolean movable) {
         return new SimpleObject(id,
-                new DescriptionComp(id, descriptionAtFirstSight, normalDescriptionWhenKnown,
+                new SimpleDescriptionComp(id, descriptionAtFirstSight, normalDescriptionWhenKnown,
                         shortDescriptionWhenKnown),
                 new LocationComp(id, db, gos, initialLocationId, initialLastLocationId, movable));
     }
@@ -106,7 +107,7 @@ public class ObjectFactory {
                       final StoringPlaceType locationMode,
                       final boolean dauerhaftBeleuchtet) {
         return new StoringPlaceObject(id,
-                new DescriptionComp(id, descriptionAtFirstSight, normalDescriptionWhenKnown,
+                new SimpleDescriptionComp(id, descriptionAtFirstSight, normalDescriptionWhenKnown,
                         shortDescriptionWhenKnown),
                 new LocationComp(id, db, gos, initialLocationId, initialLastLocationId, movable),
                 new StoringPlaceComp(id, db, gos, locationMode, dauerhaftBeleuchtet));
@@ -114,11 +115,11 @@ public class ObjectFactory {
 
     private static class SimpleObject extends GameObject
             implements IDescribableGO, ILocatableGO {
-        private final DescriptionComp descriptionComp;
+        private final AbstractDescriptionComp descriptionComp;
         private final LocationComp locationComp;
 
         SimpleObject(final GameObjectId id,
-                     final DescriptionComp descriptionComp,
+                     final AbstractDescriptionComp descriptionComp,
                      final LocationComp locationComp) {
             super(id);
             // Jede Komponente muss registiert werden!
@@ -128,7 +129,7 @@ public class ObjectFactory {
 
         @NonNull
         @Override
-        public DescriptionComp descriptionComp() {
+        public AbstractDescriptionComp descriptionComp() {
             return descriptionComp;
         }
 
@@ -144,7 +145,7 @@ public class ObjectFactory {
         private final StoringPlaceComp storingPlaceComp;
 
         public StoringPlaceObject(final GameObjectId id,
-                                  final DescriptionComp descriptionComp,
+                                  final AbstractDescriptionComp descriptionComp,
                                   final LocationComp locationComp,
                                   final StoringPlaceComp storingPlaceComp) {
             super(id, descriptionComp, locationComp);

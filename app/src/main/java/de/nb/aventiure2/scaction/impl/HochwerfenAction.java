@@ -179,9 +179,7 @@ public class HochwerfenAction<OBJ extends IDescribableGO & ILocatableGO>
             return timeElapsed;
         }
 
-        if (!sc.feelingsComp().getMood().isTraurigerAls(ETWAS_GEKNICKT)) {
-            sc.feelingsComp().setMood(ETWAS_GEKNICKT);
-        }
+        sc.feelingsComp().setMoodMax(ETWAS_GEKNICKT);
 
         final String praefix =
                 room.storingPlaceComp().getLichtverhaeltnisse() == HELL ? "Weit und breit" :
@@ -267,7 +265,7 @@ public class HochwerfenAction<OBJ extends IDescribableGO & ILocatableGO>
                     "noch einmal", secs(10))
                     .beendet(PARAGRAPH));
 
-            sc.feelingsComp().setMood(UNTROESTLICH);
+            sc.feelingsComp().setMoodMax(UNTROESTLICH);
 
             return timeSpan.plus(object.locationComp().narrateAndSetLocation(UNTEN_IM_BRUNNEN));
         }
@@ -283,9 +281,7 @@ public class HochwerfenAction<OBJ extends IDescribableGO & ILocatableGO>
                 "übermütig",
                 secs(5)));
 
-        if (!sc.feelingsComp().getMood().isTraurigerAls(ETWAS_GEKNICKT)) {
-            sc.feelingsComp().setMood(ETWAS_GEKNICKT);
-        }
+        sc.feelingsComp().setMoodMax(ETWAS_GEKNICKT);
 
         return timeSpan.plus(object.locationComp().narrateAndSetLocation(room));
     }

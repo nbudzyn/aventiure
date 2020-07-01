@@ -9,13 +9,13 @@ import java.util.Collection;
 import de.nb.aventiure2.data.database.AvDatabase;
 import de.nb.aventiure2.data.storystate.StoryState;
 import de.nb.aventiure2.data.world.gameobjects.GameObjectService;
-import de.nb.aventiure2.data.world.syscomp.feelings.Mood;
 import de.nb.aventiure2.data.world.syscomp.memory.Action;
 import de.nb.aventiure2.data.world.syscomp.storingplace.ILocationGO;
 import de.nb.aventiure2.data.world.time.AvTimeSpan;
 import de.nb.aventiure2.scaction.AbstractScAction;
 
 import static de.nb.aventiure2.data.world.gameobjects.GameObjectService.HINTER_DER_HUETTE;
+import static de.nb.aventiure2.data.world.syscomp.feelings.Mood.ERSCHOEPFT;
 import static de.nb.aventiure2.data.world.syscomp.storingplace.Lichtverhaeltnisse.DUNKEL;
 import static de.nb.aventiure2.data.world.time.AvTimeSpan.mins;
 import static de.nb.aventiure2.german.base.AllgDescription.neuerSatz;
@@ -96,7 +96,7 @@ public class KletternAction extends AbstractScAction {
                 room.storingPlaceComp().getLichtverhaeltnisse() == DUNKEL ?
                         " Und das alles im Dunkeln!" : "";
 
-        sc.feelingsComp().setMood(Mood.ERSCHOEPFT);
+        sc.feelingsComp().setMood(ERSCHOEPFT);
 
         return n.add(neuerSatz(PARAGRAPH,
                 "Vom Stamm geht in Hüfthöhe ein kräftiger Ast ab, den kannst du "
@@ -127,7 +127,7 @@ public class KletternAction extends AbstractScAction {
     }
 
     private AvTimeSpan narrateAndDoBaumHinterHuetteNtesMal() {
-        sc.feelingsComp().setMood(Mood.ERSCHOEPFT);
+        sc.feelingsComp().setMood(ERSCHOEPFT);
 
         final String erschoepftMuedeNachsatz =
                 room.storingPlaceComp().getLichtverhaeltnisse() == DUNKEL ?

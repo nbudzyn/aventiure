@@ -8,7 +8,7 @@ import de.nb.aventiure2.data.database.AvDatabase;
 import de.nb.aventiure2.data.world.base.IGameObject;
 import de.nb.aventiure2.data.world.gameobjects.GameObjectService;
 import de.nb.aventiure2.data.world.gameobjects.player.SpielerCharakter;
-import de.nb.aventiure2.data.world.syscomp.description.DescriptionComp;
+import de.nb.aventiure2.data.world.syscomp.description.impl.FroschprinzDescriptionComp;
 import de.nb.aventiure2.data.world.syscomp.location.ILocatableGO;
 import de.nb.aventiure2.data.world.syscomp.location.LocationComp;
 import de.nb.aventiure2.data.world.syscomp.reaction.AbstractReactionsComp;
@@ -25,11 +25,13 @@ import de.nb.aventiure2.german.base.Nominalphrase;
 import de.nb.aventiure2.german.base.StructuralElement;
 import de.nb.aventiure2.german.base.SubstantivischePhrase;
 
+import static de.nb.aventiure2.data.world.gameobjects.GameObjectService.DRAUSSEN_VOR_DEM_SCHLOSS;
 import static de.nb.aventiure2.data.world.gameobjects.GameObjectService.FROSCHPRINZ;
 import static de.nb.aventiure2.data.world.gameobjects.GameObjectService.GOLDENE_KUGEL;
 import static de.nb.aventiure2.data.world.gameobjects.GameObjectService.IM_WALD_BEIM_BRUNNEN;
 import static de.nb.aventiure2.data.world.gameobjects.GameObjectService.SCHLOSSFEST;
 import static de.nb.aventiure2.data.world.gameobjects.GameObjectService.SCHLOSSFEST_BEGINN_DATE_TIME;
+import static de.nb.aventiure2.data.world.gameobjects.GameObjectService.SCHLOSS_VORHALLE;
 import static de.nb.aventiure2.data.world.gameobjects.GameObjectService.SCHLOSS_VORHALLE_AM_TISCH_BEIM_FEST;
 import static de.nb.aventiure2.data.world.gameobjects.GameObjectService.SCHLOSS_VORHALLE_LANGER_TISCH_BEIM_FEST;
 import static de.nb.aventiure2.data.world.gameobjects.GameObjectService.SPIELER_CHARAKTER;
@@ -45,18 +47,25 @@ import static de.nb.aventiure2.data.world.syscomp.state.GameObjectState.HAT_NACH
 import static de.nb.aventiure2.data.world.syscomp.state.GameObjectState.HAT_SC_HILFSBEREIT_ANGESPROCHEN;
 import static de.nb.aventiure2.data.world.syscomp.state.GameObjectState.UNAUFFAELLIG;
 import static de.nb.aventiure2.data.world.syscomp.state.GameObjectState.WARTET_AUF_SC_BEIM_SCHLOSSFEST;
+import static de.nb.aventiure2.data.world.syscomp.state.GameObjectState.ZURUECKVERWANDELT_SCHLOSS_VORHALLE_VERLASSEN;
 import static de.nb.aventiure2.data.world.time.AvTimeSpan.hours;
+import static de.nb.aventiure2.data.world.time.AvTimeSpan.mins;
 import static de.nb.aventiure2.data.world.time.AvTimeSpan.noTime;
 import static de.nb.aventiure2.data.world.time.AvTimeSpan.secs;
 import static de.nb.aventiure2.german.base.AllgDescription.neuerSatz;
+import static de.nb.aventiure2.german.base.AllgDescription.satzanschluss;
 import static de.nb.aventiure2.german.base.DuDescription.du;
 import static de.nb.aventiure2.german.base.GermanUtil.capitalize;
+import static de.nb.aventiure2.german.base.NumerusGenus.M;
+import static de.nb.aventiure2.german.base.StructuralElement.CHAPTER;
 import static de.nb.aventiure2.german.base.StructuralElement.PARAGRAPH;
 
 public class FroschprinzReactionsComp
         extends AbstractReactionsComp
         implements IMovementReactions, IEssenReactions, ITimePassedReactions {
     private static final AvTimeSpan WEGZEIT_FROSCH_BRUNNEN_ZUM_SCHLOSSFEST = hours(6);
+    private static final AvTimeSpan WEGZEIT_PRINZ_TISCH_DURCH_VORHALLE = mins(1);
+    private static final AvTimeSpan ZEIT_FUER_ABFAHRT_PRINZ_MIT_WAGEN = mins(10);
 
     private static final AvDateTime FROSCH_LAEUFT_FRUEHESTENS_ZUM_SCHLOSSFEST =
             SCHLOSSFEST_BEGINN_DATE_TIME.minus(
@@ -64,14 +73,14 @@ public class FroschprinzReactionsComp
                             // Der Frosch plant etwas Sicherheit ein
                             .plus(hours(6)));
 
-    private final DescriptionComp descriptionComp;
+    private final FroschprinzDescriptionComp descriptionComp;
     private final FroschprinzTalkingComp talkingComp;
     private final StateComp stateComp;
     private final LocationComp locationComp;
 
     public FroschprinzReactionsComp(final AvDatabase db,
                                     final GameObjectService gos,
-                                    final DescriptionComp descriptionComp,
+                                    final FroschprinzDescriptionComp descriptionComp,
                                     final FroschprinzTalkingComp talkingComp,
                                     final StateComp stateComp,
                                     final LocationComp locationComp) {
@@ -170,10 +179,11 @@ public class FroschprinzReactionsComp
                                  final ILocationGO to) {
         if (locationComp.hasRecursiveLocation(SPIELER_CHARAKTER) ||
                 !locationComp.hasRecursiveLocation(to)) {
-            // Spieler hat nicht den Raum betreten, wo der Frosch sitzt.
+            // Spieler hat nicht den Raum betreten, in dem sich der Froschprinz befindet
             return noTime();
         }
 
+        final Nominalphrase froschprinzDesc = getFroschprinzDescription();
         switch (stateComp.getState()) {
             case UNAUFFAELLIG:
                 // STORY Bei einem Status dazwischen könnte der Froschprinz den SC ansprechen und auf
@@ -187,7 +197,7 @@ public class FroschprinzReactionsComp
                 //  dann hier prüfen und ggf. beschreiben (vgl. AblegenAction)
                 return n.addAlt(
                         neuerSatz(PARAGRAPH, "Plötzlich sitzt "
-                                        + getFroschprinzDescription().nom()
+                                        + froschprinzDesc.nom()
                                         + " neben dir auf der Bank. „Denk an dein "
                                         + "Versprechen“, quakt er dir zu, "
                                         + "„Lass uns aus einem Tellerlein essen!“ Du bist ganz "
@@ -204,7 +214,6 @@ public class FroschprinzReactionsComp
             case BEIM_SCHLOSSFEST_AUF_TISCH_WILL_ZUSAMMEN_ESSEN:
                 loadSC().feelingsComp().setMood(ANGESPANNT);
 
-                final Nominalphrase froschprinzDesc = getFroschprinzDescription();
                 return n.addAlt(
                         neuerSatz(PARAGRAPH, "Auf einmal sitzt "
                                         + froschprinzDesc.nom()
@@ -220,20 +229,77 @@ public class FroschprinzReactionsComp
                                         + "dir nicht in die Essensschale gehüpft ist. Dir läuft "
                                         + "ein Schauer über den Rücken, als "
                                         + froschprinzDesc.persPron().nom()
-                                        + " fodert: „Nicht länger gezögert – nun lass uns zusammen "
+                                        + " fordert: „Nicht länger gezögert – nun lass uns zusammen "
                                         + "essen!“",
                                 secs(10))
                                 .beendet(PARAGRAPH)
                 );
-
-
+            case ZURUECKVERWANDELT_IN_VORHALLE:
+            case ZURUECKVERWANDELT_SCHLOSS_VORHALLE_VERLASSEN:
+                return onSCEnterPrinzLocation(from, to);
             default:
                 // TODO Wenn der Frosch nur rekursiv enthalten ist (Frosch sitzt auf dem Tisch),
                 //  dann beschreiben (vgl. BewegenAction)
-
                 return n.add(neuerSatz("Hier sitzt "
-                        + getFroschprinzDescription().nom(), noTime()));
+                        + froschprinzDesc.nom(), noTime())
+                        .phorikKandidat(froschprinzDesc, FROSCHPRINZ));
         }
+    }
+
+    private AvTimeSpan onSCEnterPrinzLocation(
+            @Nullable final ILocationGO from, final ILocationGO toAndPrinzLocation) {
+        if (gos.isOrHasRecursiveLocation(from, SCHLOSS_VORHALLE_AM_TISCH_BEIM_FEST) &&
+                gos.isOrHasRecursiveLocation(toAndPrinzLocation, SCHLOSS_VORHALLE)) {
+            return prinzVerlaesstSchlossVorhalle();
+        }
+
+        if (gos.isOrHasRecursiveLocation(from, SCHLOSS_VORHALLE) &&
+                gos.isOrHasRecursiveLocation(toAndPrinzLocation, DRAUSSEN_VOR_DEM_SCHLOSS)) {
+            return prinzFaehrtMitWagenDavon();
+        }
+
+        final Nominalphrase froschprinzDesc = getFroschprinzDescription();
+
+        // TODO Wenn der Prinz nur rekursiv enthalten ist (Prinz sitzt auf einem Stuhl),
+        //  dann genauer beschreiben (vgl. BewegenAction)
+        return n.add(du("siehst "
+                + getFroschprinzDescription().akk(), noTime())
+                .phorikKandidat(froschprinzDesc, FROSCHPRINZ));
+    }
+
+    private AvTimeSpan prinzVerlaesstSchlossVorhalle() {
+        if (n.getStoryState().allowsAdditionalDuSatzreihengliedOhneSubjekt()) {
+            final AvTimeSpan timeSpan = n.add(
+                    satzanschluss(", aber die Menge hat dich schon von dem "
+                            + "jungen Königssohn getrennt", secs(15))
+                            .phorikKandidat(M, FROSCHPRINZ));
+
+            return timeSpan.plus(prinzDraussenVorDemSchlossAngekommen());
+        }
+
+        final AvTimeSpan timeSpan = n.add(
+                neuerSatz("In der Menge ist der junge Königssohn nicht mehr zu "
+                        + "erkennen", secs(15))
+                        .phorikKandidat(M, FROSCHPRINZ));
+
+        return timeSpan.plus(prinzDraussenVorDemSchlossAngekommen());
+    }
+
+    private AvTimeSpan prinzFaehrtMitWagenDavon() {
+        final AvTimeSpan timeSpan = n.add(
+                // TODO Danach stehst du vom Tisch auf und drängst dich durch das
+                //  Eingangstor. DANN siehst du noch einen Wagen davonfahren... - das DANN
+                //  ergibt keinen Sinn. Wie kann man das sinnvoll verhindern?
+                //  Du drängst dich durch das Eingangstor und siehst noch... ergibt
+                //  total Sinn. Muss man möglicherweise bei du-Sätzen festlegen,
+                //  Ob sie neue Handlung beginnen - und, falls nicht, dann verbieten?
+
+                du("siehst",
+                        "noch einen Wagen davonfahren, mit acht weißen Pferden bespannt, "
+                                + "jedes mit weißen Straußfedern auf dem Kopf", mins(2))
+                        .beendet(CHAPTER));
+
+        return timeSpan.plus(locationComp.narrateAndUnsetLocation());
     }
 
     @Contract("null, _ -> !null")
@@ -376,33 +442,6 @@ public class FroschprinzReactionsComp
             return froschprinzHatHochhebenGefordertUndWillMitessen();
         }
 
-// STORY BEIM_SCHLOSSFEST_AUF_TISCH_WILL_ZUSAMMEN_ESSEN: Eintopf essen
-//
-//  Was hatte deine Großmutter immer gesagt?
-//  »Wer dir geholfen in der Not, den sollst du hernach nicht verachten.«
-//  Du füllst deine Schale neu mit Eintopf, steckst deinen Holzlöffel
-//  hinein... aber was ist das? Auch ein goldener Löffel fährt mit in die
-//  Schale. Du schaust verwirrt auf - kein Frosch mehr auf dem Tisch, doch
-//                >neben dir auf der Bank sitzt ein junger Mann mit schönen freundlichen
-//                >Augen. In Samt und Seide ist er gekleidet, mit goldenen Ketten um den
-//  Hals. "Ihr habt mich erlöst", sagt er, "ich danke euch!" Eine böse Hexe
-//                >hätte ihn verwünscht. "Ich werde euch nicht vergessen!"
-//                >
-//  Am Tisch um euch herum entsteht Aufregung. Der schmucke Mann erhebt sich und schickt
-//                >sich an, die Halle zu verlassen.
-//                >
-// STORY Vom Tisch aufstehen.
-//                >
-//  Du stehst vom Tisch auf, aber die Menge hat dich schon von dem jungen
-//  Königssohn getrennt.
-//
-// STORY Das Schloss verlassen
-//                >
-//  Du drängst dich durch das Eingangstor und siehst  noch einen Wagen
-//                >davonfahren, mit acht weißen Pferden bespannt, jedes mit weißen
-//  Straußfedern auf dem Kopf.
-
-
         return noTime();
     }
 
@@ -485,6 +524,20 @@ public class FroschprinzReactionsComp
                     return froschprinzAufSchlossfestAngekommen();
                 }
                 return noTime();
+            case ZURUECKVERWANDELT_IN_VORHALLE:
+                if (now.isEqualOrAfter(stateComp.getStateDateTime()
+                        // als der Prinz aufgestanden ist
+                        .plus(WEGZEIT_PRINZ_TISCH_DURCH_VORHALLE))) {
+                    return prinzDraussenVorDemSchlossAngekommen();
+                }
+                return noTime();
+            case ZURUECKVERWANDELT_SCHLOSS_VORHALLE_VERLASSEN:
+                if (now.isEqualOrAfter(stateComp.getStateDateTime()
+                        // als der Prinz die Vorhalle verlassen hat
+                        .plus(ZEIT_FUER_ABFAHRT_PRINZ_MIT_WAGEN))) {
+                    return locationComp.narrateAndUnsetLocation();
+                }
+                return noTime();
         }
 
         return noTime();
@@ -520,6 +573,17 @@ public class FroschprinzReactionsComp
                 }
         );
     }
+
+    private AvTimeSpan prinzDraussenVorDemSchlossAngekommen() {
+        return locationComp.narrateAndSetLocation(
+                DRAUSSEN_VOR_DEM_SCHLOSS,
+                () -> {
+                    stateComp.setState(ZURUECKVERWANDELT_SCHLOSS_VORHALLE_VERLASSEN);
+                    return noTime();
+                }
+        );
+    }
+
 
     /**
      * Gibt eine Nominalphrase zurück, die den Froschprinzen beschreibt.

@@ -239,7 +239,7 @@ public class StoryState {
         // STORY Statt dann auch andere "Temporaladverbialia" verwenden,
         //  siehe "Grammatik der deutschen Sprache E2.3": darauf,
         //  kurz danach, sofort, bald etc. Vielleicht abhängig davon, wie lang
-        //  Das letzte Ereignis gedauert hat, oder wie lang das aktuelle Ereignis
+        //  Das letzte Ereignis gedauert hat oder wie lang das aktuelle Ereignis
         //  dauert? Wenn das aktuelle Ereignis 0sek dauert, geschieht es offenbar
         //  gleichzeitig?! Also etwas schreiben wie "zugleich"?!
 

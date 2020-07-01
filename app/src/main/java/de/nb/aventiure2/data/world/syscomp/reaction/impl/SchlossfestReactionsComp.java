@@ -6,7 +6,6 @@ import de.nb.aventiure2.data.database.AvDatabase;
 import de.nb.aventiure2.data.world.base.IGameObject;
 import de.nb.aventiure2.data.world.gameobjects.GameObjectService;
 import de.nb.aventiure2.data.world.gameobjects.player.SpielerCharakter;
-import de.nb.aventiure2.data.world.syscomp.feelings.Mood;
 import de.nb.aventiure2.data.world.syscomp.reaction.AbstractReactionsComp;
 import de.nb.aventiure2.data.world.syscomp.reaction.interfaces.ITimePassedReactions;
 import de.nb.aventiure2.data.world.syscomp.state.StateComp;
@@ -17,8 +16,8 @@ import static de.nb.aventiure2.data.world.gameobjects.GameObjectService.COUNTER_
 import static de.nb.aventiure2.data.world.gameobjects.GameObjectService.DRAUSSEN_VOR_DEM_SCHLOSS;
 import static de.nb.aventiure2.data.world.gameobjects.GameObjectService.SCHLOSSFEST;
 import static de.nb.aventiure2.data.world.gameobjects.GameObjectService.SCHLOSSFEST_BEGINN_DATE_TIME;
+import static de.nb.aventiure2.data.world.syscomp.feelings.Mood.NEUTRAL;
 import static de.nb.aventiure2.data.world.syscomp.state.GameObjectState.BEGONNEN;
-import static de.nb.aventiure2.data.world.time.AvDateTime.isWithin;
 import static de.nb.aventiure2.data.world.time.AvTimeSpan.mins;
 import static de.nb.aventiure2.data.world.time.AvTimeSpan.noTime;
 import static de.nb.aventiure2.german.base.AllgDescription.neuerSatz;
@@ -43,7 +42,7 @@ public class SchlossfestReactionsComp
     public AvTimeSpan onTimePassed(final AvDateTime lastTime, final AvDateTime now) {
         AvTimeSpan timeElapsed = noTime();
 
-        if (isWithin(SCHLOSSFEST_BEGINN_DATE_TIME, lastTime, now)) {
+        if (SCHLOSSFEST_BEGINN_DATE_TIME.isWithin(lastTime, now)) {
             timeElapsed = timeElapsed.plus(schlossfestBeginnt());
         }
 
@@ -59,7 +58,7 @@ public class SchlossfestReactionsComp
             return noTime();
         }
 
-        sc.feelingsComp().setMood(Mood.NEUTRAL);
+        sc.feelingsComp().setMood(NEUTRAL);
         stateComp.setState(BEGONNEN);
 
         if (!currentRoom.is(DRAUSSEN_VOR_DEM_SCHLOSS)) {

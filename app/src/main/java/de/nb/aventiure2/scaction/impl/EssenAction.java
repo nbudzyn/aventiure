@@ -19,13 +19,19 @@ import de.nb.aventiure2.scaction.AbstractScAction;
 
 import static de.nb.aventiure2.data.world.gameobjects.GameObjectService.FROSCHPRINZ;
 import static de.nb.aventiure2.data.world.gameobjects.GameObjectService.SCHLOSSFEST;
+import static de.nb.aventiure2.data.world.gameobjects.GameObjectService.SCHLOSS_VORHALLE;
 import static de.nb.aventiure2.data.world.gameobjects.GameObjectService.SCHLOSS_VORHALLE_AM_TISCH_BEIM_FEST;
+import static de.nb.aventiure2.data.world.gameobjects.GameObjectService.SCHLOSS_VORHALLE_LANGER_TISCH_BEIM_FEST;
 import static de.nb.aventiure2.data.world.gameobjects.GameObjectService.SPIELER_CHARAKTER;
 import static de.nb.aventiure2.data.world.gameobjects.GameObjectService.WALDWILDNIS_HINTER_DEM_BRUNNEN;
 import static de.nb.aventiure2.data.world.syscomp.feelings.Hunger.SATT;
+import static de.nb.aventiure2.data.world.syscomp.feelings.Mood.ZUFRIEDEN;
 import static de.nb.aventiure2.data.world.syscomp.state.GameObjectState.BEGONNEN;
+import static de.nb.aventiure2.data.world.syscomp.state.GameObjectState.BEIM_SCHLOSSFEST_AUF_TISCH_WILL_ZUSAMMEN_ESSEN;
 import static de.nb.aventiure2.data.world.syscomp.state.GameObjectState.HAT_HOCHHEBEN_GEFORDERT;
+import static de.nb.aventiure2.data.world.syscomp.state.GameObjectState.ZURUECKVERWANDELT_IN_VORHALLE;
 import static de.nb.aventiure2.data.world.time.AvTimeSpan.mins;
+import static de.nb.aventiure2.data.world.time.AvTimeSpan.secs;
 import static de.nb.aventiure2.german.base.AllgDescription.neuerSatz;
 import static de.nb.aventiure2.german.base.DuDescription.du;
 import static de.nb.aventiure2.german.base.StructuralElement.PARAGRAPH;
@@ -134,7 +140,13 @@ public class EssenAction extends AbstractScAction {
         return timeElapsed;
     }
 
-    private AvTimeSpan narrateAndDoSchlossfest() {
+    private <FROSCHPRINZ extends ILocatableGO & IHasStateGO> AvTimeSpan narrateAndDoSchlossfest() {
+        final FROSCHPRINZ froschprinz = (FROSCHPRINZ) gos.load(FROSCHPRINZ);
+        if (froschprinz.locationComp()
+                .hasRecursiveLocation(SCHLOSS_VORHALLE_LANGER_TISCH_BEIM_FEST) &&
+                froschprinz.stateComp().hasState(BEIM_SCHLOSSFEST_AUF_TISCH_WILL_ZUSAMMEN_ESSEN)) {
+            return narrateAndDoSchlossfestEssenMitFrosch(froschprinz);
+        }
         final Hunger hunger = getHunger();
 
         switch (hunger) {
@@ -147,11 +159,38 @@ public class EssenAction extends AbstractScAction {
         }
     }
 
+    private <FROSCHPRINZ extends ILocatableGO & IHasStateGO>
+    AvTimeSpan narrateAndDoSchlossfestEssenMitFrosch(final FROSCHPRINZ froschprinz) {
+        AvTimeSpan timeElapsed = n.add(neuerSatz(PARAGRAPH,
+                "Was hatte deine Großmutter immer gesagt? „Wer dir geholfen in der "
+                        + "Not, den sollst du hernach nicht verachten.” Du füllst deine Schale "
+                        + "neu mit Eintopf, steckst deinen Holzlöffel hinein... aber was ist das? "
+                        + "Auch ein goldener Löffel fährt mit in die Schale. Du schaust "
+                        + "verwirrt auf - kein Frosch mehr auf dem Tisch, doch neben dir auf der "
+                        + "Bank sitzt ein junger Mann mit schönen freundlichen Augen. In Samt und "
+                        + "Seide ist er gekleidet, mit goldenen Ketten um den Hals",
+                secs(10)));
+        timeElapsed = timeElapsed.plus(n.add(neuerSatz(PARAGRAPH,
+                "Er schaut an sich herab – „Ihr habt mich erlöst”, sagt er, „ich "
+                        + "danke euch!” Eine böse Hexe "
+                        + "habe ihn verwünscht. „Ich werde euch nicht vergessen!”",
+                secs(10))));
+        timeElapsed = timeElapsed.plus(n.add(neuerSatz(PARAGRAPH,
+                "Am Tisch um euch herum entsteht Aufregung. Der junge Mann erhebt "
+                        + "sich und schickt sich an, die Halle zu verlassen",
+                secs(10))));
+
+        gos.loadSC().feelingsComp().setMoodMin(ZUFRIEDEN);
+        froschprinz.stateComp().setState(ZURUECKVERWANDELT_IN_VORHALLE);
+        froschprinz.locationComp().narrateAndSetLocation(SCHLOSS_VORHALLE);
+
+        return timeElapsed;
+    }
+
     private AvTimeSpan narrateAndDoSchlossfestHungrig() {
         saveSatt();
 
-        // TODO Danach passt "Aus Langeweile wirfst du..." nicht mehr gut.
-        //  Laune verbessern zu "Aufgedreht" oder so?!
+        gos.loadSC().feelingsComp().setMoodMin(ZUFRIEDEN);
 
         return n.addAlt(
                 du(PARAGRAPH,

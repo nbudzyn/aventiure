@@ -10,8 +10,8 @@ import de.nb.aventiure2.data.database.AvDatabase;
 import de.nb.aventiure2.data.storystate.StoryState;
 import de.nb.aventiure2.data.world.base.GameObjectId;
 import de.nb.aventiure2.data.world.gameobjects.GameObjectService;
-import de.nb.aventiure2.data.world.syscomp.description.DescriptionComp;
 import de.nb.aventiure2.data.world.syscomp.description.IDescribableGO;
+import de.nb.aventiure2.data.world.syscomp.description.impl.FroschprinzDescriptionComp;
 import de.nb.aventiure2.data.world.syscomp.location.ILocatableGO;
 import de.nb.aventiure2.data.world.syscomp.memory.Action;
 import de.nb.aventiure2.data.world.syscomp.state.StateComp;
@@ -60,12 +60,12 @@ import static de.nb.aventiure2.german.praedikat.VerbSubjObj.REDEN;
  * Froschprinz dann jeweils reagiert).
  */
 public class FroschprinzTalkingComp extends AbstractTalkingComp {
-    private final DescriptionComp descriptionComp;
+    private final FroschprinzDescriptionComp descriptionComp;
     private final StateComp stateComp;
 
     public FroschprinzTalkingComp(final AvDatabase db,
                                   final GameObjectService gos,
-                                  final DescriptionComp descriptionComp,
+                                  final FroschprinzDescriptionComp descriptionComp,
                                   final StateComp stateComp) {
         super(FROSCHPRINZ, db, gos);
         this.descriptionComp = descriptionComp;
@@ -171,6 +171,9 @@ public class FroschprinzTalkingComp extends AbstractTalkingComp {
                 return ImmutableList.of(
                         entrySt(DISKUTIEREN, this::froschAufTischDraengelt)
                 );
+            case ZURUECKVERWANDELT_IN_VORHALLE:
+            case ZURUECKVERWANDELT_SCHLOSS_VORHALLE_VERLASSEN:
+                return ImmutableList.of();
             default:
                 throw new IllegalStateException("Unexpected Froschprinz state: "
                         + stateComp.getState());
@@ -475,7 +478,7 @@ public class FroschprinzTalkingComp extends AbstractTalkingComp {
 
         stateComp.setState(ERWARTET_VON_SC_EINLOESUNG_SEINES_VERSPRECHENS);
 
-        gos.loadSC().feelingsComp().setMood(VOLLER_FREUDE);
+        gos.loadSC().feelingsComp().setMoodMin(VOLLER_FREUDE);
 
         AvTimeSpan timeElapsed = n.add(satzanschluss("taucht seinen Kopf "
                         + "unter, sinkt hinab und über ein Weilchen kommt er wieder herauf gerudert, "

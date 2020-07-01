@@ -18,7 +18,7 @@ import de.nb.aventiure2.german.base.SubstantivischePhrase;
  * Component für ein {@link GameObject}: The game object might
  * react to certain events.
  */
-public class AbstractReactionsComp extends AbstractStatelessComponent {
+public abstract class AbstractReactionsComp extends AbstractStatelessComponent {
     protected final AvDatabase db;
     protected final GameObjectService gos;
 

@@ -9,8 +9,10 @@ import de.nb.aventiure2.data.world.base.GameObject;
 import de.nb.aventiure2.data.world.base.GameObjectId;
 import de.nb.aventiure2.data.world.syscomp.alive.AliveComp;
 import de.nb.aventiure2.data.world.syscomp.alive.ILivingBeingGO;
-import de.nb.aventiure2.data.world.syscomp.description.DescriptionComp;
+import de.nb.aventiure2.data.world.syscomp.description.AbstractDescriptionComp;
 import de.nb.aventiure2.data.world.syscomp.description.IDescribableGO;
+import de.nb.aventiure2.data.world.syscomp.description.impl.FroschprinzDescriptionComp;
+import de.nb.aventiure2.data.world.syscomp.description.impl.SimpleDescriptionComp;
 import de.nb.aventiure2.data.world.syscomp.location.ILocatableGO;
 import de.nb.aventiure2.data.world.syscomp.location.LocationComp;
 import de.nb.aventiure2.data.world.syscomp.reaction.AbstractReactionsComp;
@@ -40,10 +42,11 @@ import static de.nb.aventiure2.data.world.syscomp.state.GameObjectState.HAT_NACH
 import static de.nb.aventiure2.data.world.syscomp.state.GameObjectState.HAT_SC_HILFSBEREIT_ANGESPROCHEN;
 import static de.nb.aventiure2.data.world.syscomp.state.GameObjectState.UNAUFFAELLIG;
 import static de.nb.aventiure2.data.world.syscomp.state.GameObjectState.WARTET_AUF_SC_BEIM_SCHLOSSFEST;
+import static de.nb.aventiure2.data.world.syscomp.state.GameObjectState.ZURUECKVERWANDELT_IN_VORHALLE;
+import static de.nb.aventiure2.data.world.syscomp.state.GameObjectState.ZURUECKVERWANDELT_SCHLOSS_VORHALLE_VERLASSEN;
 import static de.nb.aventiure2.data.world.syscomp.state.GameObjectStateList.sl;
 import static de.nb.aventiure2.german.base.Nominalphrase.np;
 import static de.nb.aventiure2.german.base.NumerusGenus.F;
-import static de.nb.aventiure2.german.base.NumerusGenus.M;
 
 /**
  * A factory for special {@link GameObject}s: Creatures.
@@ -60,8 +63,8 @@ class CreatureFactory {
     GameObject createSchlosswache() {
         final StateComp stateComp =
                 new StateComp(SCHLOSSWACHE, db, sl(UNAUFFAELLIG, AUFMERKSAM));
-        final DescriptionComp descriptionComp =
-                new DescriptionComp(SCHLOSSWACHE,
+        final AbstractDescriptionComp descriptionComp =
+                new SimpleDescriptionComp(SCHLOSSWACHE,
                         np(F, "eine Schlosswache mit langer Hellebarde",
                                 "einer Schlosswache mit langer Hellebarde"),
                         np(F, "die Schlosswache mit ihrer langen Hellebarde",
@@ -86,16 +89,11 @@ class CreatureFactory {
                         AUF_DEM_WEG_ZUM_SCHLOSSFEST,
                         WARTET_AUF_SC_BEIM_SCHLOSSFEST,
                         HAT_HOCHHEBEN_GEFORDERT,
-                        BEIM_SCHLOSSFEST_AUF_TISCH_WILL_ZUSAMMEN_ESSEN));
-        final DescriptionComp descriptionComp =
-                new DescriptionComp(FROSCHPRINZ, np(M, "ein dicker, hässlicher Frosch",
-                        "einem dicken, hässlichen Frosch",
-                        "einen dicken, hässlichen Frosch"), np(M, "der hässliche Frosch",
-                        "dem hässlichen Frosch",
-                        "den hässlichen Frosch"),
-                        np(M, "der Frosch",
-                                "dem Frosch",
-                                "den Frosch"));
+                        BEIM_SCHLOSSFEST_AUF_TISCH_WILL_ZUSAMMEN_ESSEN,
+                        ZURUECKVERWANDELT_IN_VORHALLE,
+                        ZURUECKVERWANDELT_SCHLOSS_VORHALLE_VERLASSEN));
+        final FroschprinzDescriptionComp descriptionComp =
+                new FroschprinzDescriptionComp(FROSCHPRINZ, stateComp);
         final LocationComp locationComp =
                 new LocationComp(FROSCHPRINZ, db, gos, IM_WALD_BEIM_BRUNNEN, ABZWEIG_IM_WALD,
                         true);
@@ -112,13 +110,13 @@ class CreatureFactory {
 
     private static class BasicCreature extends GameObject
             implements IDescribableGO, IHasStateGO, ILocatableGO, ILivingBeingGO {
-        private final DescriptionComp descriptionComp;
+        private final AbstractDescriptionComp descriptionComp;
         private final LocationComp locationComp;
         private final StateComp stateComp;
         private final AliveComp alive;
 
         private BasicCreature(final GameObjectId id,
-                              final DescriptionComp descriptionComp,
+                              final AbstractDescriptionComp descriptionComp,
                               final LocationComp locationComp,
                               final StateComp stateComp) {
             super(id);
@@ -131,7 +129,7 @@ class CreatureFactory {
 
         @NonNull
         @Override
-        public DescriptionComp descriptionComp() {
+        public AbstractDescriptionComp descriptionComp() {
             return descriptionComp;
         }
 
@@ -159,7 +157,7 @@ class CreatureFactory {
         private final AbstractReactionsComp reactionsComp;
 
         private ReactionsCreature(final GameObjectId id,
-                                  final DescriptionComp descriptionComp,
+                                  final AbstractDescriptionComp descriptionComp,
                                   final LocationComp locationComp,
                                   final StateComp stateComp,
                                   final AbstractReactionsComp reactionsComp) {
@@ -180,7 +178,7 @@ class CreatureFactory {
         private final AbstractTalkingComp talkingComp;
 
         TalkingReactionsCreature(final GameObjectId id,
-                                 final DescriptionComp descriptionComp,
+                                 final AbstractDescriptionComp descriptionComp,
                                  final LocationComp locationComp,
                                  final StateComp stateComp,
                                  final AbstractTalkingComp talkingComp,

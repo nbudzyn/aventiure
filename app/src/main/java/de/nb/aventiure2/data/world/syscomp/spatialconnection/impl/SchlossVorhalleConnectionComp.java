@@ -18,12 +18,16 @@ import de.nb.aventiure2.data.world.syscomp.storingplace.Lichtverhaeltnisse;
 import de.nb.aventiure2.german.base.AbstractDescription;
 
 import static de.nb.aventiure2.data.world.gameobjects.GameObjectService.DRAUSSEN_VOR_DEM_SCHLOSS;
+import static de.nb.aventiure2.data.world.gameobjects.GameObjectService.FROSCHPRINZ;
 import static de.nb.aventiure2.data.world.gameobjects.GameObjectService.SCHLOSSFEST;
 import static de.nb.aventiure2.data.world.gameobjects.GameObjectService.SCHLOSS_VORHALLE;
 import static de.nb.aventiure2.data.world.gameobjects.GameObjectService.SCHLOSS_VORHALLE_AM_TISCH_BEIM_FEST;
+import static de.nb.aventiure2.data.world.syscomp.feelings.Mood.AUFGEDREHT;
 import static de.nb.aventiure2.data.world.syscomp.memory.Known.KNOWN_FROM_DARKNESS;
 import static de.nb.aventiure2.data.world.syscomp.memory.Known.UNKNOWN;
 import static de.nb.aventiure2.data.world.syscomp.state.GameObjectState.BEGONNEN;
+import static de.nb.aventiure2.data.world.syscomp.state.GameObjectState.ZURUECKVERWANDELT_IN_VORHALLE;
+import static de.nb.aventiure2.data.world.syscomp.state.GameObjectState.ZURUECKVERWANDELT_SCHLOSS_VORHALLE_VERLASSEN;
 import static de.nb.aventiure2.data.world.syscomp.storingplace.Lichtverhaeltnisse.HELL;
 import static de.nb.aventiure2.data.world.time.AvTimeSpan.mins;
 import static de.nb.aventiure2.german.base.DuDescription.du;
@@ -135,16 +139,24 @@ public class SchlossVorhalleConnectionComp extends AbstractSpatialConnectionComp
     }
 
     @NonNull
-    private static AbstractDescription
+    private AbstractDescription
     getDescTo_DraussenVorDemSchloss_FestBegonnen() {
-        // STORY: Nachts ist weniger Trubel? (Wäre das ein Statuswechsel beim
-        //  Schlossfest? Oder Zumindest auch eine Reaction wie der Auf- /
-        //  Abbau des Schlossfestes?)
+        if (((IHasStateGO) gos.load(FROSCHPRINZ)).stateComp()
+                .hasState(ZURUECKVERWANDELT_IN_VORHALLE,
+                        ZURUECKVERWANDELT_SCHLOSS_VORHALLE_VERLASSEN)) {
+            return du("drängst",
+                    "dich durch das Eingangstor",
+                    mins(2))
+                    .undWartest()
+                    .dann();
+        }
+
+        gos.loadSC().feelingsComp().setMoodMin(AUFGEDREHT);
+
+        // STORY: Nachts ist weniger Trubel?
         return du("gehst",
                 "über die Marmortreppe hinaus in den Trubel "
                         + "im Schlossgarten",
-                // TODO Nach dem "Trubel" funktioniert "Aus Langeweile..." nicht mehr.
-                //  Stimmung des Spielers verbessern? ("Aufgedreht"? "Aufgekratzt"?)
                 "über die Marmortreppe",
                 mins(3))
                 .dann();

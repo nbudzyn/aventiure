@@ -94,6 +94,7 @@ public class BewegenAction<R extends ISpatiallyConnectedGO & ILocationGO,
             @NonNull final R room) {
         final ImmutableList.Builder<AbstractScAction> res = builder();
 
+
         // STORY Spieler ist Rapunzels Königssohn: Rapunzel: Man muss eine Strickleiter
         //  besorgen - oder Seide kaufen und etwas zum Stricken??? Gold gabs vielleicht
         //  vom Froschprinzen?
@@ -196,7 +197,7 @@ public class BewegenAction<R extends ISpatiallyConnectedGO & ILocationGO,
             elapsedTime = elapsedTime.plus(narrateAndDoSCMitEssenKonfrontiert());
         }
 
-        updatePlayerStateOfMind();
+        updateMood();
 
         return elapsedTime.plus(sc.locationComp()
                 .narrateAndSetLocation(spatialConnection.getTo(),
@@ -399,7 +400,7 @@ public class BewegenAction<R extends ISpatiallyConnectedGO & ILocationGO,
      * Aktualisiert den Gemütszustand des Spielercharakters. "Zeit heilt alle Wunden" - oder so
      * ähnlich.
      */
-    private void updatePlayerStateOfMind() {
+    private void updateMood() {
         final Mood mood = sc.feelingsComp().getMood();
         if (oldRoom.is(SCHLOSS_VORHALLE)
                 && spatialConnection.getTo().equals(DRAUSSEN_VOR_DEM_SCHLOSS)
@@ -433,6 +434,16 @@ public class BewegenAction<R extends ISpatiallyConnectedGO & ILocationGO,
         }
 
         if (isDefinitivDiskontinuitaet()) {
+            // TODO Es ist - zumindest manchmal - keine Diskontinuität, wenn
+            //  dazwischen eine Reaction liegt. Z.B.: Spieler verlässt das Schloss,
+            //  sieht den Prinzen wegfahren und geht danach wieder in das Schloss.
+            //  Anderes fiktives Beispiel: Spieler nimmt der Frosch, der Frosch quakt hässlich,
+            //  der Spieler setzt den Frosch wieder ab.
+            //  Vielleicht kann man das irgendwie daran festmachen, ob die
+            //  Reaction "die Lage geändert" hat? Oder man geht erst mal immer
+            //  davon aus, dass eine Reaction die Lage ändert - man bräuchte also nur
+            //  mitzuschreiben (boolean), ob es nach der letzten Action eine Reaction gab?!
+
             final ImmutableList.Builder<AbstractDescription<?>> alt = builder();
             if (numberOfPossibilities == ONLY_WAY) {
                 alt.add(
