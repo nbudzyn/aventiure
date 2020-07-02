@@ -8,6 +8,9 @@
         android:id="@+id/walk_anfang_bis_schlossfest_schloss_betreten"
         android:title="Schlossfest: Schloss betreten"/>
     <item
+        android:id="@+id/walk_anfang_bis_prinzabfahrt"
+        android:title="Abfahrt des Prinzen"/>
+    <item
         android:id="@+id/walk_full"
         android:title="Alles"/>
 </menu>

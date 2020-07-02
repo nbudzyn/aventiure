@@ -34,6 +34,7 @@ import de.nb.aventiure2.data.world.syscomp.spatialconnection.impl.ImWaldNaheDemS
 import de.nb.aventiure2.data.world.syscomp.spatialconnection.impl.SchlossVorhalleConnectionComp;
 import de.nb.aventiure2.data.world.syscomp.spatialconnection.impl.SchlossVorhalleTischBeimFestConnectionComp;
 import de.nb.aventiure2.data.world.syscomp.spatialconnection.impl.SimpleConnectionCompFactory;
+import de.nb.aventiure2.data.world.syscomp.spatialconnection.impl.VorDemTurmConnectionComp;
 import de.nb.aventiure2.data.world.syscomp.storingplace.ILocationGO;
 import de.nb.aventiure2.data.world.syscomp.storingplace.StoringPlaceType;
 import de.nb.aventiure2.data.world.time.AvDateTime;
@@ -79,14 +80,15 @@ public class GameObjectService {
     public static final GameObjectId SCHLOSS_VORHALLE_AM_TISCH_BEIM_FEST = new GameObjectId(30_001);
     public static final GameObjectId DRAUSSEN_VOR_DEM_SCHLOSS = new GameObjectId(30_002);
     public static final GameObjectId IM_WALD_NAHE_DEM_SCHLOSS = new GameObjectId(30_003);
-    public static final GameObjectId ABZWEIG_IM_WALD = new GameObjectId(30_004);
-    public static final GameObjectId VOR_DER_HUETTE_IM_WALD = new GameObjectId(30_005);
-    public static final GameObjectId HUETTE_IM_WALD = new GameObjectId(30_006);
-    public static final GameObjectId BETT_IN_DER_HUETTE_IM_WALD = new GameObjectId(30_007);
-    public static final GameObjectId HINTER_DER_HUETTE = new GameObjectId(30_008);
-    public static final GameObjectId IM_WALD_BEIM_BRUNNEN = new GameObjectId(30_009);
-    public static final GameObjectId UNTEN_IM_BRUNNEN = new GameObjectId(30_010);
-    public static final GameObjectId WALDWILDNIS_HINTER_DEM_BRUNNEN = new GameObjectId(30_011);
+    public static final GameObjectId VOR_DEM_ALTEN_TURM = new GameObjectId(30_004);
+    public static final GameObjectId ABZWEIG_IM_WALD = new GameObjectId(30_010);
+    public static final GameObjectId VOR_DER_HUETTE_IM_WALD = new GameObjectId(30_011);
+    public static final GameObjectId HUETTE_IM_WALD = new GameObjectId(30_012);
+    public static final GameObjectId BETT_IN_DER_HUETTE_IM_WALD = new GameObjectId(30_013);
+    public static final GameObjectId HINTER_DER_HUETTE = new GameObjectId(30_014);
+    public static final GameObjectId IM_WALD_BEIM_BRUNNEN = new GameObjectId(30_015);
+    public static final GameObjectId UNTEN_IM_BRUNNEN = new GameObjectId(30_016);
+    public static final GameObjectId WALDWILDNIS_HINTER_DEM_BRUNNEN = new GameObjectId(30_017);
 
     // INVISIBLES
     public static final GameObjectId TAGESZEIT = new GameObjectId(40_001);
@@ -162,6 +164,9 @@ public class GameObjectService {
                     room.create(IM_WALD_NAHE_DEM_SCHLOSS, StoringPlaceType.WALDWEG,
                             false,
                             new ImWaldNaheDemSchlossConnectionComp(db, this)),
+                    room.create(VOR_DEM_ALTEN_TURM, StoringPlaceType.STEINIGER_GRUND_VOR_TURM,
+                            false,
+                            new VorDemTurmConnectionComp(db, this)),
                     room.create(ABZWEIG_IM_WALD, StoringPlaceType.WALDWEG,
                             false,
                             connection.createAbzweigImWald()),

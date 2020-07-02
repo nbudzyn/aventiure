@@ -38,9 +38,9 @@ public class SimpleConnectionCompFactory {
                 db,
                 gos,
                 con(ABZWEIG_IM_WALD,
-                        "Auf den Hauptpfad zurückkehren",
+                        "Auf den Waldweg zurückkehren",
                         neuerSatz("Durch Farn und Gestrüpp gehst du zurück zum "
-                                + "Hauptpfad", mins(2))
+                                + "Waldweg", mins(2))
                                 .undWartest()
                                 .dann()
                 ),
@@ -220,8 +220,8 @@ public class SimpleConnectionCompFactory {
                 ),
 
                 con(IM_WALD_BEIM_BRUNNEN,
-                        "Auf dem Hauptpfad tiefer in den Wald gehen",
-                        neuerSatz("Der breitere Pfad führt zu einer alten "
+                        "Auf dem Hauptweg tiefer in den Wald gehen",
+                        neuerSatz("Der breitere Weg führt zu einer alten "
                                 + "Linde, unter der ist ein Brunnen. "
                                 + "Hinter dem Brunnen endet der Weg und der "
                                 + "wilde Wald beginnt.\n"
@@ -232,7 +232,7 @@ public class SimpleConnectionCompFactory {
                                 .dann()
                                 .beendet(PARAGRAPH),
 
-                        du("gehst", "den breiteren Pfad weiter in "
+                        du("gehst", "den breiteren Weg weiter in "
                                 + "den Wald hinein. Wohl ist dir dabei nicht.\n"
                                 + "In der Ferne heult ein Wolf – oder hast du "
                                 + "dir das eingebildet?\nDann kommst du an einen "

@@ -33,7 +33,6 @@ import de.nb.aventiure2.german.base.DuDescription;
 import de.nb.aventiure2.german.base.StructuralElement;
 import de.nb.aventiure2.scaction.AbstractScAction;
 
-import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.collect.ImmutableList.builder;
 import static de.nb.aventiure2.data.world.gameobjects.GameObjectService.DRAUSSEN_VOR_DEM_SCHLOSS;
 import static de.nb.aventiure2.data.world.gameobjects.GameObjectService.SCHLOSSFEST;
@@ -157,9 +156,6 @@ public class BewegenAction<R extends ISpatiallyConnectedGO & ILocationGO,
                           final NumberOfPossibilities numberOfPossibilities) {
         super(db, gos, initialStoryState);
         this.numberOfPossibilities = numberOfPossibilities;
-
-        checkArgument(!oldRoom.is(spatialConnection.getTo()), "newRoom == oldRoom)");
-
         this.oldRoom = oldRoom;
         this.spatialConnection = spatialConnection;
     }

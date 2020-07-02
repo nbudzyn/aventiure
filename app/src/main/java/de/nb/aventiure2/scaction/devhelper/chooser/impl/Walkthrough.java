@@ -13,7 +13,7 @@ public class Walkthrough {
     public static final Walkthrough ANFANG_BIS_FROSCHVERSPRECHEN =
             new Walkthrough(
                     "Die Kugel nehmen", "Das Schloss verlassen", "In den Wald gehen",
-                    "Tiefer in den Wald hineingehen", "Auf dem Hauptpfad tiefer in den Wald gehen",
+                    "Tiefer in den Wald hineingehen", "Auf dem Hauptweg tiefer in den Wald gehen",
                     "Die goldene Kugel hochwerfen", "Die goldene Kugel hochwerfen",
                     "Die goldene Kugel hochwerfen", "Heulen", "Heulen",
                     "Mit dem Frosch reden", "Dem Frosch Angebote machen",
@@ -44,13 +44,13 @@ public class Walkthrough {
                     "Die Hütte betreten", "In das Bett legen", "Ein Nickerchen machen",
                     "Aufstehen",
                     "Die Hütte verlassen",
-                    "Auf den Hauptpfad zurückkehren",
+                    "Auf den Waldweg zurückkehren",
                     "In Richtung Schloss gehen",
                     "Den Wald verlassen",
                     "Das Schloss betreten");
 
 
-    public static final Walkthrough SCHLOSSFEST_SCHLOSS_BETRETEN_BIS_ENDE =
+    public static final Walkthrough SCHLOSSFEST_SCHLOSS_BETRETEN_BIS_PRINZABFAHRT =
             new Walkthrough("An einen Tisch setzen",
                     "Die Kugel auf den Tisch legen",
                     "Die Kugel nehmen",
@@ -62,14 +62,24 @@ public class Walkthrough {
                     "Vom Tisch aufstehen",
                     "Das Schloss verlassen");
 
+    public static final Walkthrough PRINZABFAHRT_BIS_ENDE =
+            new Walkthrough("In den Wald gehen",
+                    "Den schmalen Pfad aufwärts gehen",
+                    "Um den Turm herumgehen",
+                    "Den Weg zurückgehen");
+
     public static final Walkthrough ANFANG_BIS_SCHLOSSFEST_SCHLOSS_BETRETEN =
             ANFANG_BIS_FROSCHVERSPRECHEN
                     .append(FROSCHVERSPRECHEN_BIS_SCHLOSSFEST_SCHLOSS_BETRETEN);
 
+    public static final Walkthrough ANFANG_BIS_PRINZABFAHRT =
+            ANFANG_BIS_SCHLOSSFEST_SCHLOSS_BETRETEN
+                    .append(SCHLOSSFEST_SCHLOSS_BETRETEN_BIS_PRINZABFAHRT);
+
     public static final Walkthrough FULL =
             ANFANG_BIS_FROSCHVERSPRECHEN
-                    .append(FROSCHVERSPRECHEN_BIS_SCHLOSSFEST_SCHLOSS_BETRETEN)
-                    .append(SCHLOSSFEST_SCHLOSS_BETRETEN_BIS_ENDE);
+                    .append(ANFANG_BIS_PRINZABFAHRT)
+                    .append(PRINZABFAHRT_BIS_ENDE);
 
     private final ImmutableList<String> steps;
 

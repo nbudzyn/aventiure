@@ -330,9 +330,8 @@ public class FroschprinzTalkingComp extends AbstractTalkingComp {
         return timeSpan.plus(n.add(neuerSatz(PARAGRAPH,
                 "Der Frosch antwortet: „Deine Kleider, Perlen oder Edelsteine, die mag "
                         + "ich nicht. "
-                        + "Aber wenn ich am Tischlein neben dir sitzen soll, von deinem Tellerlein "
-                        + "essen und "
-                        + "aus deinem Becherlein trinken: Wenn du mir das versprichst, so will ich "
+                        + "Aber wenn ich am Tischlein bei dir sitzen soll und von deinem Tellerlein "
+                        + "essen: Wenn du mir das versprichst, so will ich "
                         + "hinuntersteigen und dir "
                         // die goldene Kugel / die Dinge
                         + getDescriptionSingleOrCollective(objectsInDenBrunnenGefallen).akk()

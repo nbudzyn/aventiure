@@ -125,6 +125,9 @@ public class MainActivity extends AppCompatActivity {
             case R.id.walk_anfang_bis_schlossfest_schloss_betreten:
                 mainViewModel.walkActions(Walkthrough.ANFANG_BIS_SCHLOSSFEST_SCHLOSS_BETRETEN);
                 return true;
+            case R.id.walk_anfang_bis_prinzabfahrt:
+                mainViewModel.walkActions(Walkthrough.ANFANG_BIS_PRINZABFAHRT);
+                return true;
             case R.id.walk_full:
                 mainViewModel.walkActions(Walkthrough.FULL);
                 return true;

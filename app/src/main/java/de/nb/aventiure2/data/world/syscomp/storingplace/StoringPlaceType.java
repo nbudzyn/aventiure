@@ -34,6 +34,8 @@ public enum StoringPlaceType {
     // STORY    WALDBODEN("zwischen Blättern und Gestrüpp", "auf den Waldboden",
     //         HERAUSKLAUBEN),
     WALDWEG("auf dem Weg", "auf den Weg"),
+    STEINIGER_GRUND_VOR_TURM("auf dem steinigen Grund vor dem Turm",
+            "auf den steinigen Grund vor dem Turm"),
     UNTER_DEM_BAUM("unter dem Baum", "unter den Baum", AUFHEBEN);
 
     private final String wo;

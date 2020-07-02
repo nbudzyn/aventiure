@@ -44,6 +44,10 @@ public class HeulenAction extends AbstractScAction {
             final StoryState initialStoryState,
             final SpielerCharakter sc, final List<? extends ILivingBeingGO> creaturesInRoom) {
         final ImmutableList.Builder<HeulenAction> res = ImmutableList.builder();
+        // STORY Verhindern, dass der Benutzer nicht mehr untröstlich ist, wenn er z.B. erst
+        //  schläft. Z.B. Benutzer traurig machen, wenn er den Brunnen sieht und sich an
+        //  seine goldene Kugel erinnert o.Ä.
+
         if (sc.feelingsComp().hasMood(UNTROESTLICH)) {
             res.add(new HeulenAction(db, gos, initialStoryState, creaturesInRoom));
         }

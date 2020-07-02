@@ -63,13 +63,6 @@ public class MainViewModel extends AndroidViewModel {
     }
 
     @UiThread
-    public void walkActions() {
-        final WalkthroughActionChooser actionChooser =
-                new WalkthroughActionChooser(Walkthrough.FULL);
-        walkActions(actionChooser);
-    }
-
-    @UiThread
     public void walkActions(final Walkthrough walkthrough) {
         walkActions(new WalkthroughActionChooser(walkthrough));
     }

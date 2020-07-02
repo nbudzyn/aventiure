@@ -66,22 +66,19 @@ public class DraussenVorDemSchlossConnectionComp extends AbstractSpatialConnecti
 
                 SpatialConnection.con(IM_WALD_NAHE_DEM_SCHLOSS,
                         "In den Wald gehen",
-                        du("folgst", "einem Pfad in den Wald", mins(10))
-                                .undWartest()
-                                .dann(),
-
+                        du("folgst", "einem Weg in den Wald. "
+                                + "Nach ein paar Schritten führt rechter Hand ein schmaler Pfad "
+                                + "einen Hügel hinauf", mins(10)),
                         neuerSatz("Jeder kennt die Geschichten, die man "
                                 + "sich über den Wald erzählt: Räuber sind noch "
                                 + "die kleinste Gefahr. Aber das schreckt dich ganz "
                                 + "offenbar nicht und du folgst dem erstbesten "
-                                + "Pfad hinein in den dunklen Wald", mins(12)),
-
+                                + "Weg hinein in den dunklen Wald. Schon nach ein paar Schritten "
+                                + "führt rechter Hand ein schmaler, dunkler Pfad einen Hügel "
+                                + "hinauf", mins(12)),
                         du("läufst", "wieder in den dunklen Wald", "wieder", mins(10))
-                                .undWartest()
                                 .dann(),
-
                         du("läufst", "wieder in den dunklen Wald", "wieder", mins(10))
-                                .undWartest()
                                 .dann()));
     }
 

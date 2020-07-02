@@ -23,7 +23,13 @@ import static de.nb.aventiure2.data.world.gameobjects.GameObjectService.COUNTER_
 import static de.nb.aventiure2.data.world.gameobjects.GameObjectService.DRAUSSEN_VOR_DEM_SCHLOSS;
 import static de.nb.aventiure2.data.world.gameobjects.GameObjectService.IM_WALD_NAHE_DEM_SCHLOSS;
 import static de.nb.aventiure2.data.world.gameobjects.GameObjectService.SCHLOSSFEST;
+import static de.nb.aventiure2.data.world.gameobjects.GameObjectService.VOR_DEM_ALTEN_TURM;
+import static de.nb.aventiure2.data.world.syscomp.feelings.Mood.ERSCHOEPFT;
+import static de.nb.aventiure2.data.world.syscomp.memory.Known.KNOWN_FROM_DARKNESS;
+import static de.nb.aventiure2.data.world.syscomp.memory.Known.UNKNOWN;
+import static de.nb.aventiure2.data.world.syscomp.spatialconnection.impl.SpatialConnection.con;
 import static de.nb.aventiure2.data.world.syscomp.state.GameObjectState.BEGONNEN;
+import static de.nb.aventiure2.data.world.syscomp.storingplace.Lichtverhaeltnisse.DUNKEL;
 import static de.nb.aventiure2.data.world.syscomp.storingplace.Lichtverhaeltnisse.HELL;
 import static de.nb.aventiure2.data.world.time.AvTimeSpan.mins;
 import static de.nb.aventiure2.german.base.AllgDescription.neuerSatz;
@@ -62,12 +68,16 @@ public class ImWaldNaheDemSchlossConnectionComp extends AbstractSpatialConnectio
     @Override
     public List<SpatialConnection> getConnections() {
         return ImmutableList.of(
-                SpatialConnection.con(DRAUSSEN_VOR_DEM_SCHLOSS,
+                con(DRAUSSEN_VOR_DEM_SCHLOSS,
                         "Den Wald verlassen",
                         this::getDescTo_DraussenVorDemSchloss),
-                SpatialConnection.con(ABZWEIG_IM_WALD,
+                con(VOR_DEM_ALTEN_TURM,
+                        "Den schmalen Pfad aufwärts gehen",
+                        this::getDescTo_VorDemAltenTurm),
+                con(ABZWEIG_IM_WALD,
                         "Tiefer in den Wald hineingehen",
-                        neuerSatz(PARAGRAPH, "Nicht lang, und zur Linken geht zwischen "
+                        du(SENTENCE, "gehst", "den Weg weiter in den Wald hinein. "
+                                + "Nicht lang, und es geht zur Linken zwischen "
                                 + "den Bäumen ein alter, düsterer Weg ab, über "
                                 + "den Farn wuchert", mins(5))
                                 .komma(),
@@ -138,5 +148,35 @@ public class ImWaldNaheDemSchlossConnectionComp extends AbstractSpatialConnectio
         }
 
         return neuerSatz("Das Schlossfest ist immer noch in vollem Gange", timeSpan);
+    }
+
+    private AbstractDescription getDescTo_VorDemAltenTurm(
+            final Known newRoomKnown, final Lichtverhaeltnisse lichtverhaeltnisse) {
+        if (newRoomKnown == UNKNOWN && lichtverhaeltnisse == HELL) {
+            return du("nimmst", "den schmalen Pfad, der sich lange durch "
+                    + "den Wald aufwärts windet. Ein Hase kreuzt den Weg, "
+                    + "aber keine Menschenseele begegnet dir. Ganz am Ende – "
+                    + "auf der Hügelkuppe – kommst du an einen alten Turm", mins(25))
+                    .beendet(PARAGRAPH);
+        }
+        if (newRoomKnown == UNKNOWN && lichtverhaeltnisse == DUNKEL) {
+            gos.loadSC().feelingsComp().setMood(ERSCHOEPFT);
+
+            return neuerSatz("Trotz der Dunkelheit nimmst du den schmalen Pfad, "
+                    + "der sich lange durch "
+                    + "den nächtlichen Wald aufwärts windet. "
+                    + "Du erschrickst, als eine Nachteule laut „uhu“ schreit, "
+                    + "auch, als es laut neben dir im Unterholz raschelt. "
+                    + "Endlich endet der Pfad an einen alten Turm", mins(40))
+                    .beendet(PARAGRAPH);
+        }
+        if (newRoomKnown == KNOWN_FROM_DARKNESS
+                && lichtverhaeltnisse == HELL) {
+            return neuerSatz("Der schmale Pfad den Hügel hinauf ist bei Tageslicht "
+                            + "auch nicht kürzer, aber endlich stehst du wieder vor dem alten Turm",
+                    mins(25));
+        }
+        return du("gehst", "den langen, schmalen Pfad den Hügel hinauf bis zum "
+                + "Turm", mins(25));
     }
 }
