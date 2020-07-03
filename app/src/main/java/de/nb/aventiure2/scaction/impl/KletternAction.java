@@ -28,6 +28,10 @@ import static de.nb.aventiure2.german.base.StructuralElement.PARAGRAPH;
 public class KletternAction extends AbstractScAction {
     private final ILocationGO room;
 
+    // TODO Klettern durch Bewegen-Action ersetzen
+
+    // TODO Hochklettern an Rapunzels Haaren als Bewegen-Action
+
     public static Collection<KletternAction> buildActions(
             final AvDatabase db,
             final GameObjectService gos,

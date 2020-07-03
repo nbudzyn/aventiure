@@ -266,6 +266,9 @@ public class GameObjectService {
         }
     }
 
+    // TODO Ein "System" (im Sinne von ECS) bietet Funktionalität für Objekte mit dieser
+    //  Component (oder mit einem bestimmten Set von Components)?
+
     /**
      * Gibt <code>true</code> zurück falls das Game Object eine dieser Locations ist oder
      * sich (ggf. rekusiv) an einer dieser Locations befindet.

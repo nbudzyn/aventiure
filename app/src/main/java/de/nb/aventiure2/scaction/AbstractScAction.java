@@ -71,6 +71,9 @@ public abstract class AbstractScAction implements IPlayerAction {
         //  Kann nicht die Zeit jeweils beim narraten upgedatet werden?
         //  Und man vergleich hier nur vorher-Zeit mit nachher-Zeit?
 
+        // STORY Wenn der Benutzer länger nicht weiterkommt, erzeugt eine Tippgenerator
+        //  (neues Game Object?) Sätze wie "Wann soll eigentlich das Schlossfest sein?" o.Ä.
+
         final AvDateTime start = db.nowDao().now();
 
         final AvTimeSpan timeElapsed = narrateAndDo();
