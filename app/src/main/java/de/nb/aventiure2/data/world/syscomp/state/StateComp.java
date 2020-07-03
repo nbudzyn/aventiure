@@ -35,16 +35,24 @@ public class StateComp extends AbstractStatefulComponent<StatePCD> {
     @Override
     @NonNull
     protected StatePCD createInitialState() {
-        return new StatePCD(getGameObjectId(), states.getInitial(),
+        return new StatePCD(
+                getGameObjectId(),
+                toString(states.getInitial()),
                 nowDao.now());
     }
 
     public boolean hasState(final GameObjectState... alternatives) {
-        return getPcd().hasState(alternatives);
+        for (final GameObjectState test : alternatives) {
+            if (getState().equals(test)) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     public GameObjectState getState() {
-        return getPcd().getState();
+        return fromString(getPcd().getState());
     }
 
     public void setState(final GameObjectState state) {
@@ -56,7 +64,7 @@ public class StateComp extends AbstractStatefulComponent<StatePCD> {
             return;
         }
 
-        getPcd().setState(state);
+        getPcd().setState(toString(state));
         getPcd().setStateDateTime(nowDao.now());
     }
 
@@ -66,5 +74,13 @@ public class StateComp extends AbstractStatefulComponent<StatePCD> {
 
     private boolean isStateAllowed(final GameObjectState state) {
         return states.contains(state);
+    }
+
+    private static GameObjectState fromString(@NonNull final String stateString) {
+        return GameObjectState.valueOf(stateString);
+    }
+
+    private static String toString(@NonNull final GameObjectState state) {
+        return state.name();
     }
 }

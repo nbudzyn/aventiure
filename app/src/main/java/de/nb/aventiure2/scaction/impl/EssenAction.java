@@ -338,7 +338,8 @@ public class EssenAction extends AbstractScAction {
         sc.feelingsComp().setHunger(SATT);
         // TODO NOW auch zu einem GameObject machen mit einer entsprechenden Stateful Component??
         // TODO Regel aufstellen: Die Aktionen dürfen nicht auf die DAOs zugreifen.
-        //  Z.B. von DB nur ein Interface definieren, das durchgereicht wird?!
+        //  Z.B. von DB nur ein Interface definieren, das durchgereicht wird?
+        //  Oder alles über die world machen?
         sc.feelingsComp().setZuletztGegessen(db.nowDao().now());
     }
 }

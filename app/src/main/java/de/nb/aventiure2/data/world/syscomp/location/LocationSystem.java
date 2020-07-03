@@ -41,5 +41,4 @@ public class LocationSystem {
                 .filter(go -> go.locationComp().isMovable() == movable)
                 .collect(toImmutableList());
     }
-
 }

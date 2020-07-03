@@ -38,7 +38,6 @@ import de.nb.aventiure2.data.world.syscomp.memory.KnownConverters;
 import de.nb.aventiure2.data.world.syscomp.memory.KnownInfo;
 import de.nb.aventiure2.data.world.syscomp.memory.MemoryDao;
 import de.nb.aventiure2.data.world.syscomp.memory.MemoryPCD;
-import de.nb.aventiure2.data.world.syscomp.state.GameObjectStateConverters;
 import de.nb.aventiure2.data.world.syscomp.state.StateDao;
 import de.nb.aventiure2.data.world.syscomp.state.StatePCD;
 import de.nb.aventiure2.data.world.syscomp.talking.TalkingDao;
@@ -70,7 +69,6 @@ import static de.nb.aventiure2.data.world.time.AvTime.oClock;
         AvStoryStateConverters.class,
         ActionTypeConverters.class,
         KnownConverters.class,
-        GameObjectStateConverters.class,
         GameObjectIdConverters.class,
         MoodConverters.class,
         HungerConverters.class})

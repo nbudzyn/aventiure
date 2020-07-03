@@ -149,12 +149,6 @@ public class World {
 
             all = new GameObjectIdMap();
             all.putAll(
-                    // TODO Idee:
-                    //  RoomFactory roomFactory =
-                    //   new Assemblage(StoringPlaceComp.class, AbstractSpatialConnectionComp.class);
-                    //  ILocationGO & ISpatiallyConnectedGO schloss = roomFactory.create();
-                    //  schloss
-
                     spieler.create(SPIELER_CHARAKTER),
                     room.create(SCHLOSS_VORHALLE, StoringPlaceType.EIN_TISCH,
                             SCHLOSS_VORHALLE_DAUERHAFT_BELEUCHTET,
@@ -197,9 +191,6 @@ public class World {
                             connection.createWaldwildnisHinterDemBrunnen()),
                     creature.createSchlosswache(),
                     creature.createFroschprinz(),
-                    // STORY Anhand eines StatusDatums kann das Spiel ermitteln, wann der
-                    //  Frosch im Schloss ankommt.
-
                     // STORY Wölfe (Creatures? Invisibles?) hetzen Spieler nachts
                     //  Es könnte z.B. Räume neben dem Weg geben, die der Spieler in aller Regel
                     //  nicht betreten, kann, wo aber die Wölfe laufen.

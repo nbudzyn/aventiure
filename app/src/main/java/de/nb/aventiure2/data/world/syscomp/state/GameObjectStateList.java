@@ -9,7 +9,7 @@ public class GameObjectStateList extends StateList<GameObjectState> {
         return new GameObjectStateList(states);
     }
 
-    public GameObjectStateList(final GameObjectState... states) {
+    private GameObjectStateList(final GameObjectState... states) {
         super(states);
     }
 }
