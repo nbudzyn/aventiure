@@ -1,5 +1,6 @@
 package de.nb.aventiure2.data.world.syscomp.talking.impl;
 
+import de.nb.aventiure2.data.world.syscomp.state.impl.SchlosswacheState;
 import de.nb.aventiure2.data.world.syscomp.talking.ITalkerGO;
 import de.nb.aventiure2.data.world.time.AvTimeSpan;
 import de.nb.aventiure2.german.base.Nominalphrase;
@@ -13,7 +14,7 @@ import de.nb.aventiure2.german.praedikat.VerbSubjObj;
  * (und auf den das {@link ITalkerGO} dann irgendwie reagiert).
  * <p>
  * Die Reaktion des {@link ITalkerGO}s auf den Redebeitrag führt oft von
- * einem {@link de.nb.aventiure2.data.world.syscomp.state.GameObjectState}
+ * einem {@link SchlosswacheState}
  * zu einem anderen.
  * <p>
  * Das Konzept ist ähnliche wie die

@@ -13,6 +13,8 @@ import de.nb.aventiure2.data.world.syscomp.feelings.Hunger;
 import de.nb.aventiure2.data.world.syscomp.location.ILocatableGO;
 import de.nb.aventiure2.data.world.syscomp.memory.Action;
 import de.nb.aventiure2.data.world.syscomp.state.IHasStateGO;
+import de.nb.aventiure2.data.world.syscomp.state.impl.FroschprinzState;
+import de.nb.aventiure2.data.world.syscomp.state.impl.SchlossfestState;
 import de.nb.aventiure2.data.world.syscomp.storingplace.ILocationGO;
 import de.nb.aventiure2.data.world.time.AvTimeSpan;
 import de.nb.aventiure2.scaction.AbstractScAction;
@@ -26,10 +28,10 @@ import static de.nb.aventiure2.data.world.gameobject.World.SPIELER_CHARAKTER;
 import static de.nb.aventiure2.data.world.gameobject.World.WALDWILDNIS_HINTER_DEM_BRUNNEN;
 import static de.nb.aventiure2.data.world.syscomp.feelings.Hunger.SATT;
 import static de.nb.aventiure2.data.world.syscomp.feelings.Mood.ZUFRIEDEN;
-import static de.nb.aventiure2.data.world.syscomp.state.GameObjectState.BEGONNEN;
-import static de.nb.aventiure2.data.world.syscomp.state.GameObjectState.BEIM_SCHLOSSFEST_AUF_TISCH_WILL_ZUSAMMEN_ESSEN;
-import static de.nb.aventiure2.data.world.syscomp.state.GameObjectState.HAT_HOCHHEBEN_GEFORDERT;
-import static de.nb.aventiure2.data.world.syscomp.state.GameObjectState.ZURUECKVERWANDELT_IN_VORHALLE;
+import static de.nb.aventiure2.data.world.syscomp.state.impl.FroschprinzState.BEIM_SCHLOSSFEST_AUF_TISCH_WILL_ZUSAMMEN_ESSEN;
+import static de.nb.aventiure2.data.world.syscomp.state.impl.FroschprinzState.HAT_HOCHHEBEN_GEFORDERT;
+import static de.nb.aventiure2.data.world.syscomp.state.impl.FroschprinzState.ZURUECKVERWANDELT_IN_VORHALLE;
+import static de.nb.aventiure2.data.world.syscomp.state.impl.SchlossfestState.BEGONNEN;
 import static de.nb.aventiure2.data.world.time.AvTimeSpan.mins;
 import static de.nb.aventiure2.data.world.time.AvTimeSpan.secs;
 import static de.nb.aventiure2.german.base.AllgDescription.neuerSatz;
@@ -56,7 +58,7 @@ public class EssenAction extends AbstractScAction {
         return res.build();
     }
 
-    private static <LOC_STAT extends ILocatableGO & IHasStateGO>
+    private static <F extends ILocatableGO & IHasStateGO<FroschprinzState>>
     boolean essenMoeglich(final AvDatabase db,
                           final World world,
                           final ILocationGO room) {
@@ -67,7 +69,7 @@ public class EssenAction extends AbstractScAction {
             return false;
         }
 
-        final LOC_STAT froschprinz = (LOC_STAT) world.load(FROSCHPRINZ);
+        final F froschprinz = (F) world.load(FROSCHPRINZ);
         if (room.is(SCHLOSS_VORHALLE_AM_TISCH_BEIM_FEST) &&
                 froschprinz.locationComp().hasRecursiveLocation(SPIELER_CHARAKTER) &&
                 froschprinz.stateComp().hasState(HAT_HOCHHEBEN_GEFORDERT)) {
@@ -81,7 +83,8 @@ public class EssenAction extends AbstractScAction {
     private static boolean raumEnthaeltEtwasEssbares(final World world,
                                                      final ILocationGO room) {
         if (room.is(SCHLOSS_VORHALLE_AM_TISCH_BEIM_FEST) &&
-                ((IHasStateGO) world.load(SCHLOSSFEST)).stateComp().hasState(BEGONNEN)) {
+                ((IHasStateGO<SchlossfestState>) world.load(SCHLOSSFEST)).stateComp()
+                        .hasState(BEGONNEN)) {
             return true;
         }
 
@@ -140,8 +143,9 @@ public class EssenAction extends AbstractScAction {
         return timeElapsed;
     }
 
-    private <FROSCHPRINZ extends ILocatableGO & IHasStateGO> AvTimeSpan narrateAndDoSchlossfest() {
-        final FROSCHPRINZ froschprinz = (FROSCHPRINZ) world.load(FROSCHPRINZ);
+    private <F extends ILocatableGO & IHasStateGO<FroschprinzState>>
+    AvTimeSpan narrateAndDoSchlossfest() {
+        final F froschprinz = (F) world.load(FROSCHPRINZ);
         if (froschprinz.locationComp()
                 .hasRecursiveLocation(SCHLOSS_VORHALLE_LANGER_TISCH_BEIM_FEST) &&
                 froschprinz.stateComp().hasState(BEIM_SCHLOSSFEST_AUF_TISCH_WILL_ZUSAMMEN_ESSEN)) {
@@ -159,8 +163,8 @@ public class EssenAction extends AbstractScAction {
         }
     }
 
-    private <FROSCHPRINZ extends ILocatableGO & IHasStateGO>
-    AvTimeSpan narrateAndDoSchlossfestEssenMitFrosch(final FROSCHPRINZ froschprinz) {
+    private <F extends ILocatableGO & IHasStateGO<FroschprinzState>>
+    AvTimeSpan narrateAndDoSchlossfestEssenMitFrosch(final F froschprinz) {
         AvTimeSpan timeElapsed = n.add(neuerSatz(PARAGRAPH,
                 "Was hatte deine Großmutter immer gesagt? „Wer dir geholfen in der "
                         + "Not, den sollst du hernach nicht verachten.” Du füllst deine Schale "

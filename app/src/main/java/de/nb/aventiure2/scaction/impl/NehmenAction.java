@@ -19,6 +19,7 @@ import de.nb.aventiure2.data.world.syscomp.location.ILocatableGO;
 import de.nb.aventiure2.data.world.syscomp.memory.Action;
 import de.nb.aventiure2.data.world.syscomp.memory.Known;
 import de.nb.aventiure2.data.world.syscomp.state.IHasStateGO;
+import de.nb.aventiure2.data.world.syscomp.state.impl.FroschprinzState;
 import de.nb.aventiure2.data.world.syscomp.storingplace.ILocationGO;
 import de.nb.aventiure2.data.world.time.AvTimeSpan;
 import de.nb.aventiure2.german.base.Nominalphrase;
@@ -38,8 +39,8 @@ import static de.nb.aventiure2.data.world.gameobject.World.HAENDE_DES_SPIELER_CH
 import static de.nb.aventiure2.data.world.gameobject.World.SPIELER_CHARAKTER;
 import static de.nb.aventiure2.data.world.syscomp.feelings.Mood.ANGESPANNT;
 import static de.nb.aventiure2.data.world.syscomp.feelings.Mood.NEUTRAL;
-import static de.nb.aventiure2.data.world.syscomp.state.GameObjectState.ERWARTET_VON_SC_EINLOESUNG_SEINES_VERSPRECHENS;
-import static de.nb.aventiure2.data.world.syscomp.state.GameObjectState.HAT_HOCHHEBEN_GEFORDERT;
+import static de.nb.aventiure2.data.world.syscomp.state.impl.FroschprinzState.ERWARTET_VON_SC_EINLOESUNG_SEINES_VERSPRECHENS;
+import static de.nb.aventiure2.data.world.syscomp.state.impl.FroschprinzState.HAT_HOCHHEBEN_GEFORDERT;
 import static de.nb.aventiure2.data.world.time.AvTimeSpan.noTime;
 import static de.nb.aventiure2.data.world.time.AvTimeSpan.secs;
 import static de.nb.aventiure2.german.base.AllgDescription.neuerSatz;
@@ -108,7 +109,8 @@ public class NehmenAction
                             froschprinz, EINE_TASCHE_DES_SPIELER_CHARAKTERS));
         }
 
-        if (((IHasStateGO) froschprinz).stateComp().hasState(HAT_HOCHHEBEN_GEFORDERT)) {
+        if (((IHasStateGO<FroschprinzState>) froschprinz).stateComp()
+                .hasState(HAT_HOCHHEBEN_GEFORDERT)) {
             return ImmutableList.of(
                     new NehmenAction<>(db, world, initialStoryState,
                             froschprinz, HAENDE_DES_SPIELER_CHARAKTERS));

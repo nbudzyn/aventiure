@@ -14,6 +14,7 @@ import de.nb.aventiure2.data.world.gameobject.World;
 import de.nb.aventiure2.data.world.syscomp.memory.Known;
 import de.nb.aventiure2.data.world.syscomp.spatialconnection.AbstractSpatialConnectionComp;
 import de.nb.aventiure2.data.world.syscomp.state.IHasStateGO;
+import de.nb.aventiure2.data.world.syscomp.state.impl.SchlossfestState;
 import de.nb.aventiure2.data.world.syscomp.storingplace.Lichtverhaeltnisse;
 import de.nb.aventiure2.data.world.time.AvTimeSpan;
 import de.nb.aventiure2.german.base.AbstractDescription;
@@ -28,7 +29,7 @@ import static de.nb.aventiure2.data.world.syscomp.feelings.Mood.ERSCHOEPFT;
 import static de.nb.aventiure2.data.world.syscomp.memory.Known.KNOWN_FROM_DARKNESS;
 import static de.nb.aventiure2.data.world.syscomp.memory.Known.UNKNOWN;
 import static de.nb.aventiure2.data.world.syscomp.spatialconnection.impl.SpatialConnection.con;
-import static de.nb.aventiure2.data.world.syscomp.state.GameObjectState.BEGONNEN;
+import static de.nb.aventiure2.data.world.syscomp.state.impl.SchlossfestState.BEGONNEN;
 import static de.nb.aventiure2.data.world.syscomp.storingplace.Lichtverhaeltnisse.DUNKEL;
 import static de.nb.aventiure2.data.world.syscomp.storingplace.Lichtverhaeltnisse.HELL;
 import static de.nb.aventiure2.data.world.time.AvTimeSpan.mins;
@@ -55,7 +56,7 @@ public class ImWaldNaheDemSchlossConnectionComp extends AbstractSpatialConnectio
                                                            final Known newRoomKnown,
                                                            final Lichtverhaeltnisse lichtverhaeltnisseInNewRoom) {
         if (to.equals(DRAUSSEN_VOR_DEM_SCHLOSS) &&
-                ((IHasStateGO) world.load(SCHLOSSFEST)).stateComp()
+                ((IHasStateGO<SchlossfestState>) world.load(SCHLOSSFEST)).stateComp()
                         .hasState(BEGONNEN) &&
                 db.counterDao().get(COUNTER_ID_VOR_DEM_SCHLOSS_SCHLOSSFEST_KNOWN) == 0) {
             return false;
@@ -90,7 +91,7 @@ public class ImWaldNaheDemSchlossConnectionComp extends AbstractSpatialConnectio
     private AbstractDescription getDescTo_DraussenVorDemSchloss(
             final Known newRoomKnown, final Lichtverhaeltnisse lichtverhaeltnisse) {
 
-        switch (((IHasStateGO) world.load(SCHLOSSFEST)).stateComp().getState()) {
+        switch (((IHasStateGO<SchlossfestState>) world.load(SCHLOSSFEST)).stateComp().getState()) {
             case BEGONNEN:
                 return getDescTo_DraussenVorDemSchloss_FestBegonnen(
                         mins(10));

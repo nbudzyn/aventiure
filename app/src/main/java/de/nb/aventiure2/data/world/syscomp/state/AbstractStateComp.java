@@ -13,21 +13,23 @@ import de.nb.aventiure2.data.world.time.AvNowDao;
  * Component für ein {@link GameObject}: Das Game Object hat einen Zustand (der sich
  * über die Zeit ändern kann).
  */
-public class StateComp extends AbstractStatefulComponent<StatePCD> {
-    private final GameObjectStateList states;
+public abstract class AbstractStateComp<S extends Enum<S>>
+        extends AbstractStatefulComponent<StatePCD> {
+    private final Class<S> stateEnumClass;
+    private final S initialState;
 
     private final AvNowDao nowDao;
 
     /**
-     * Constructor for a {@link StateComp}.
-     *
-     * @param states The first state is the initial state.
+     * Constructor for a {@link AbstractStateComp}.
      */
-    public StateComp(final GameObjectId gameObjectId,
-                     final AvDatabase db,
-                     final GameObjectStateList states) {
+    protected AbstractStateComp(final GameObjectId gameObjectId,
+                                final AvDatabase db,
+                                final Class<S> stateEnumClass,
+                                final S initialState) {
         super(gameObjectId, db.stateDao());
-        this.states = states;
+        this.stateEnumClass = stateEnumClass;
+        this.initialState = initialState;
 
         nowDao = db.nowDao();
     }
@@ -37,12 +39,12 @@ public class StateComp extends AbstractStatefulComponent<StatePCD> {
     protected StatePCD createInitialState() {
         return new StatePCD(
                 getGameObjectId(),
-                toString(states.getInitial()),
+                toString(initialState),
                 nowDao.now());
     }
 
-    public boolean hasState(final GameObjectState... alternatives) {
-        for (final GameObjectState test : alternatives) {
+    public boolean hasState(final S... alternatives) {
+        for (final S test : alternatives) {
             if (getState().equals(test)) {
                 return true;
             }
@@ -51,15 +53,11 @@ public class StateComp extends AbstractStatefulComponent<StatePCD> {
         return false;
     }
 
-    public GameObjectState getState() {
+    public S getState() {
         return fromString(getPcd().getState());
     }
 
-    public void setState(final GameObjectState state) {
-        if (!isStateAllowed(state)) {
-            throw new IllegalArgumentException("State not allowed: " + state);
-        }
-
+    public void setState(final S state) {
         if (state.equals(getState())) {
             return;
         }
@@ -72,15 +70,11 @@ public class StateComp extends AbstractStatefulComponent<StatePCD> {
         return getPcd().getStateDateTime();
     }
 
-    private boolean isStateAllowed(final GameObjectState state) {
-        return states.contains(state);
+    private S fromString(@NonNull final String stateString) {
+        return Enum.valueOf(stateEnumClass, stateString);
     }
 
-    private static GameObjectState fromString(@NonNull final String stateString) {
-        return GameObjectState.valueOf(stateString);
-    }
-
-    private static String toString(@NonNull final GameObjectState state) {
+    private static <S extends Enum<S>> String toString(@NonNull final S state) {
         return state.name();
     }
 }

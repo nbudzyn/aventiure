@@ -7,14 +7,13 @@ import de.nb.aventiure2.data.world.base.GameObject;
 import de.nb.aventiure2.data.world.syscomp.reaction.IResponder;
 import de.nb.aventiure2.data.world.syscomp.reaction.impl.SchlossfestReactionsComp;
 import de.nb.aventiure2.data.world.syscomp.reaction.impl.TageszeitReactionsComp;
+import de.nb.aventiure2.data.world.syscomp.state.AbstractStateComp;
 import de.nb.aventiure2.data.world.syscomp.state.IHasStateGO;
-import de.nb.aventiure2.data.world.syscomp.state.StateComp;
+import de.nb.aventiure2.data.world.syscomp.state.impl.SchlossfestState;
+import de.nb.aventiure2.data.world.syscomp.state.impl.SchlossfestStateComp;
 
 import static de.nb.aventiure2.data.world.gameobject.World.SCHLOSSFEST;
 import static de.nb.aventiure2.data.world.gameobject.World.TAGESZEIT;
-import static de.nb.aventiure2.data.world.syscomp.state.GameObjectState.BEGONNEN;
-import static de.nb.aventiure2.data.world.syscomp.state.GameObjectState.NOCH_NICHT_BEGONNEN;
-import static de.nb.aventiure2.data.world.syscomp.state.GameObjectStateList.sl;
 
 /**
  * A factory for special {@link GameObject}s: Invisible concepts, ideas, event or the like, that
@@ -55,22 +54,21 @@ public class InvisibleFactory {
     }
 
     private static class Schlossfest extends GameObject
-            implements IHasStateGO, IResponder {
-        private final StateComp stateComp;
+            implements IHasStateGO<SchlossfestState>, IResponder {
+        private final AbstractStateComp stateComp;
         private final SchlossfestReactionsComp reactionsComp;
 
         public Schlossfest(final AvDatabase db, final World world) {
             super(SCHLOSSFEST);
 
-            stateComp = addComponent(new StateComp(TAGESZEIT, db,
-                    sl(NOCH_NICHT_BEGONNEN, BEGONNEN)));
+            stateComp = addComponent(new SchlossfestStateComp(TAGESZEIT, db));
             reactionsComp = addComponent(
                     new SchlossfestReactionsComp(db, world, stateComp));
         }
 
         @Nonnull
         @Override
-        public StateComp stateComp() {
+        public AbstractStateComp<SchlossfestState> stateComp() {
             return stateComp;
         }
 

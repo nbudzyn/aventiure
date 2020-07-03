@@ -2,7 +2,7 @@ package de.nb.aventiure2.data.world.syscomp.description.impl;
 
 import de.nb.aventiure2.data.world.base.GameObjectId;
 import de.nb.aventiure2.data.world.syscomp.description.AbstractDescriptionComp;
-import de.nb.aventiure2.data.world.syscomp.state.StateComp;
+import de.nb.aventiure2.data.world.syscomp.state.impl.FroschprinzStateComp;
 import de.nb.aventiure2.german.base.Nominalphrase;
 
 import static de.nb.aventiure2.german.base.Nominalphrase.np;
@@ -13,13 +13,13 @@ import static de.nb.aventiure2.german.base.NumerusGenus.M;
  * Froschprinzen.
  */
 public class FroschprinzDescriptionComp extends AbstractDescriptionComp {
-    private final StateComp stateComp;
+    private final FroschprinzStateComp stateComp;
 
     private final DescriptionTriple froschDescriptionTriple;
     private final DescriptionTriple prinzDescriptionTriple;
 
     public FroschprinzDescriptionComp(final GameObjectId id,
-                                      final StateComp stateComp) {
+                                      final FroschprinzStateComp stateComp) {
         super(id);
         this.stateComp = stateComp;
         froschDescriptionTriple = new DescriptionTriple(

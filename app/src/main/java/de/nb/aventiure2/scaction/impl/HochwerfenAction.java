@@ -16,6 +16,7 @@ import de.nb.aventiure2.data.world.syscomp.description.IDescribableGO;
 import de.nb.aventiure2.data.world.syscomp.location.ILocatableGO;
 import de.nb.aventiure2.data.world.syscomp.memory.Action;
 import de.nb.aventiure2.data.world.syscomp.state.IHasStateGO;
+import de.nb.aventiure2.data.world.syscomp.state.impl.FroschprinzState;
 import de.nb.aventiure2.data.world.syscomp.storingplace.ILocationGO;
 import de.nb.aventiure2.data.world.time.AvTimeSpan;
 import de.nb.aventiure2.german.base.AbstractDescription;
@@ -31,10 +32,10 @@ import static de.nb.aventiure2.data.world.gameobject.World.SPIELER_CHARAKTER;
 import static de.nb.aventiure2.data.world.gameobject.World.UNTEN_IM_BRUNNEN;
 import static de.nb.aventiure2.data.world.syscomp.feelings.Mood.ETWAS_GEKNICKT;
 import static de.nb.aventiure2.data.world.syscomp.feelings.Mood.UNTROESTLICH;
-import static de.nb.aventiure2.data.world.syscomp.state.GameObjectState.HAT_FORDERUNG_GESTELLT;
-import static de.nb.aventiure2.data.world.syscomp.state.GameObjectState.HAT_NACH_BELOHNUNG_GEFRAGT;
-import static de.nb.aventiure2.data.world.syscomp.state.GameObjectState.HAT_SC_HILFSBEREIT_ANGESPROCHEN;
-import static de.nb.aventiure2.data.world.syscomp.state.GameObjectState.UNAUFFAELLIG;
+import static de.nb.aventiure2.data.world.syscomp.state.impl.FroschprinzState.HAT_FORDERUNG_GESTELLT;
+import static de.nb.aventiure2.data.world.syscomp.state.impl.FroschprinzState.HAT_NACH_BELOHNUNG_GEFRAGT;
+import static de.nb.aventiure2.data.world.syscomp.state.impl.FroschprinzState.HAT_SC_HILFSBEREIT_ANGESPROCHEN;
+import static de.nb.aventiure2.data.world.syscomp.state.impl.FroschprinzState.UNAUFFAELLIG;
 import static de.nb.aventiure2.data.world.syscomp.storingplace.Lichtverhaeltnisse.DUNKEL;
 import static de.nb.aventiure2.data.world.syscomp.storingplace.Lichtverhaeltnisse.HELL;
 import static de.nb.aventiure2.data.world.time.AvTimeSpan.noTime;
@@ -106,11 +107,13 @@ public class HochwerfenAction<OBJ extends IDescribableGO & ILocatableGO>
     }
 
     private AvTimeSpan narrateAndDoErstesMal() {
-        final IHasStateGO froschprinz = (IHasStateGO) world.load(FROSCHPRINZ);
+        final IHasStateGO<FroschprinzState> froschprinz =
+                (IHasStateGO<FroschprinzState>) world.load(FROSCHPRINZ);
 
         if (room.is(IM_WALD_BEIM_BRUNNEN) &&
-                !froschprinz.stateComp().hasState(UNAUFFAELLIG)) {
-            return narrateAndDoFroschBekannt((IHasStateGO & ILocatableGO) froschprinz);
+                !froschprinz.stateComp().hasState(FroschprinzState.UNAUFFAELLIG)) {
+            return narrateAndDoFroschBekannt(
+                    (IHasStateGO<FroschprinzState> & ILocatableGO) froschprinz);
         }
 
         final SubstantivischePhrase objectDesc =
@@ -145,7 +148,7 @@ public class HochwerfenAction<OBJ extends IDescribableGO & ILocatableGO>
         return sc.feelingsComp().getMood().getAdverbialeAngabe().getText();
     }
 
-    private <F extends IHasStateGO & ILocatableGO> AvTimeSpan narrateAndDoFroschBekannt(
+    private <F extends IHasStateGO<FroschprinzState> & ILocatableGO> AvTimeSpan narrateAndDoFroschBekannt(
             final F froschprinz) {
         // TODO Für jede State Machine ein eigenes State Enum. Nur im PCD
         //  sind es Strings.
@@ -231,7 +234,8 @@ public class HochwerfenAction<OBJ extends IDescribableGO & ILocatableGO>
 
     @NonNull
     private AvTimeSpan narrateAndDoWiederholung() {
-        final IHasStateGO froschprinz = (IHasStateGO) world.load(FROSCHPRINZ);
+        final IHasStateGO<FroschprinzState> froschprinz =
+                (IHasStateGO<FroschprinzState>) world.load(FROSCHPRINZ);
 
         if (db.counterDao()
                 .incAndGet("HochwerfenAction_Wiederholung") == 1 ||

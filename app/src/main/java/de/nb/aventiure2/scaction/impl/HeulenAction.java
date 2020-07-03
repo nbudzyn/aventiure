@@ -16,6 +16,7 @@ import de.nb.aventiure2.data.world.syscomp.description.IDescribableGO;
 import de.nb.aventiure2.data.world.syscomp.memory.Action;
 import de.nb.aventiure2.data.world.syscomp.memory.Known;
 import de.nb.aventiure2.data.world.syscomp.state.IHasStateGO;
+import de.nb.aventiure2.data.world.syscomp.state.impl.FroschprinzState;
 import de.nb.aventiure2.data.world.syscomp.talking.ITalkerGO;
 import de.nb.aventiure2.data.world.time.AvTimeSpan;
 import de.nb.aventiure2.german.base.AbstractDescription;
@@ -24,8 +25,8 @@ import de.nb.aventiure2.scaction.AbstractScAction;
 import static de.nb.aventiure2.data.world.gameobject.World.FROSCHPRINZ;
 import static de.nb.aventiure2.data.world.syscomp.feelings.Mood.NEUTRAL;
 import static de.nb.aventiure2.data.world.syscomp.feelings.Mood.UNTROESTLICH;
-import static de.nb.aventiure2.data.world.syscomp.state.GameObjectState.HAT_SC_HILFSBEREIT_ANGESPROCHEN;
-import static de.nb.aventiure2.data.world.syscomp.state.GameObjectState.UNAUFFAELLIG;
+import static de.nb.aventiure2.data.world.syscomp.state.impl.FroschprinzState.HAT_SC_HILFSBEREIT_ANGESPROCHEN;
+import static de.nb.aventiure2.data.world.syscomp.state.impl.FroschprinzState.UNAUFFAELLIG;
 import static de.nb.aventiure2.data.world.time.AvTimeSpan.mins;
 import static de.nb.aventiure2.data.world.time.AvTimeSpan.secs;
 import static de.nb.aventiure2.german.base.AllgDescription.neuerSatz;
@@ -83,7 +84,7 @@ public class HeulenAction extends AbstractScAction {
         return narrateAndDoErstesMal();
     }
 
-    private <F extends IDescribableGO & IHasStateGO & ITalkerGO & ILivingBeingGO>
+    private <F extends IDescribableGO & IHasStateGO<FroschprinzState> & ITalkerGO & ILivingBeingGO>
     AvTimeSpan narrateAndDoWiederholung() {
         final F froschprinz = (F) world.load(FROSCHPRINZ);
         if (creaturesInRoom.contains(froschprinz) &&
@@ -105,7 +106,7 @@ public class HeulenAction extends AbstractScAction {
         return n.addAlt(alt);
     }
 
-    private <F extends IDescribableGO & IHasStateGO & ITalkerGO>
+    private <F extends IDescribableGO & IHasStateGO<FroschprinzState> & ITalkerGO>
     AvTimeSpan narrateAndDoFroschprinzUnauffaellig(final F froschprinz) {
         // STORY Nachts schläft der Frosch?!
 

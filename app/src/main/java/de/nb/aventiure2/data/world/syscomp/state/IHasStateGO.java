@@ -8,7 +8,7 @@ import de.nb.aventiure2.data.world.base.IGameObject;
  * Game Object, das stets einen von mehreren Zuständen
  * hat.
  */
-public interface IHasStateGO extends IGameObject {
+public interface IHasStateGO<S extends Enum<S>> extends IGameObject {
     @Nonnull
-    public StateComp stateComp();
+    public AbstractStateComp<S> stateComp();
 }

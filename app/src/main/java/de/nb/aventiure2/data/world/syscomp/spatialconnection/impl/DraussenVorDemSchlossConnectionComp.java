@@ -14,6 +14,7 @@ import de.nb.aventiure2.data.world.gameobject.World;
 import de.nb.aventiure2.data.world.syscomp.memory.Known;
 import de.nb.aventiure2.data.world.syscomp.spatialconnection.AbstractSpatialConnectionComp;
 import de.nb.aventiure2.data.world.syscomp.state.IHasStateGO;
+import de.nb.aventiure2.data.world.syscomp.state.impl.SchlossfestState;
 import de.nb.aventiure2.data.world.syscomp.storingplace.Lichtverhaeltnisse;
 import de.nb.aventiure2.german.base.AbstractDescription;
 
@@ -21,7 +22,7 @@ import static de.nb.aventiure2.data.world.gameobject.World.DRAUSSEN_VOR_DEM_SCHL
 import static de.nb.aventiure2.data.world.gameobject.World.IM_WALD_NAHE_DEM_SCHLOSS;
 import static de.nb.aventiure2.data.world.gameobject.World.SCHLOSSFEST;
 import static de.nb.aventiure2.data.world.gameobject.World.SCHLOSS_VORHALLE;
-import static de.nb.aventiure2.data.world.syscomp.state.GameObjectState.BEGONNEN;
+import static de.nb.aventiure2.data.world.syscomp.state.impl.SchlossfestState.BEGONNEN;
 import static de.nb.aventiure2.data.world.time.AvTimeSpan.mins;
 import static de.nb.aventiure2.german.base.AllgDescription.neuerSatz;
 import static de.nb.aventiure2.german.base.DuDescription.du;
@@ -47,7 +48,7 @@ public class DraussenVorDemSchlossConnectionComp extends AbstractSpatialConnecti
                                                            final Known newRoomKnown,
                                                            final Lichtverhaeltnisse lichtverhaeltnisseInNewRoom) {
         if (to.equals(SCHLOSS_VORHALLE) &&
-                ((IHasStateGO) world.load(SCHLOSSFEST)).stateComp()
+                ((IHasStateGO<SchlossfestState>) world.load(SCHLOSSFEST)).stateComp()
                         .hasState(BEGONNEN) &&
                 db.counterDao().get(COUNTER_SCHLOSS_VORHALLE_FEST_BEGONNEN) == 0) {
             return false;
@@ -84,7 +85,7 @@ public class DraussenVorDemSchlossConnectionComp extends AbstractSpatialConnecti
 
     private AbstractDescription getDescTo_SchlossVorhalle(
             final Known newRoomKnown, final Lichtverhaeltnisse lichtverhaeltnisse) {
-        switch (((IHasStateGO) world.load(SCHLOSSFEST)).stateComp().getState()) {
+        switch (((IHasStateGO<SchlossfestState>) world.load(SCHLOSSFEST)).stateComp().getState()) {
             case BEGONNEN:
                 return getDescTo_SchlossVorhalle_FestBegonnen();
 

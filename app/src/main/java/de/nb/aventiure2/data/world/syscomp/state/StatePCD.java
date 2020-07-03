@@ -8,7 +8,7 @@ import de.nb.aventiure2.data.world.base.GameObjectId;
 import de.nb.aventiure2.data.world.time.AvDateTime;
 
 /**
- * Mutable - and therefore persistent - data of the {@link StateComp} component.
+ * Mutable - and therefore persistent - data of the {@link AbstractStateComp} component.
  */
 @Entity
 public class StatePCD extends AbstractPersistentComponentData {

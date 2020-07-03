@@ -9,7 +9,7 @@ import de.nb.aventiure2.data.world.base.GameObjectId;
 import de.nb.aventiure2.data.world.base.IComponentDao;
 
 /**
- * Android ROOM DAO for the {@link StateComp} component.
+ * Android ROOM DAO for the {@link AbstractStateComp} component.
  */
 @Dao
 public abstract class StateDao implements IComponentDao<StatePCD> {

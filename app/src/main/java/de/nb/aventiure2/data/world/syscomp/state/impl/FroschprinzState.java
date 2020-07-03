@@ -1,17 +1,10 @@
-package de.nb.aventiure2.data.world.syscomp.state;
+package de.nb.aventiure2.data.world.syscomp.state.impl;
 
 /**
- * A state a game object can be in.
+ * A state the Froschprinz can be in.
  */
-public enum GameObjectState {
-    // ALLGEMEIN
-    NORMAL,
+public enum FroschprinzState {
     UNAUFFAELLIG,
-
-    // SCHLOSSWACHE
-    AUFMERKSAM,
-
-    // FROSCHPRINZ
     HAT_SC_HILFSBEREIT_ANGESPROCHEN,
     HAT_NACH_BELOHNUNG_GEFRAGT,
     HAT_FORDERUNG_GESTELLT,
@@ -27,9 +20,5 @@ public enum GameObjectState {
     HAT_HOCHHEBEN_GEFORDERT,
     BEIM_SCHLOSSFEST_AUF_TISCH_WILL_ZUSAMMEN_ESSEN,
     ZURUECKVERWANDELT_IN_VORHALLE,
-    ZURUECKVERWANDELT_SCHLOSS_VORHALLE_VERLASSEN,
-
-    // SCHLOSSFEST
-    NOCH_NICHT_BEGONNEN,
-    BEGONNEN
+    ZURUECKVERWANDELT_SCHLOSS_VORHALLE_VERLASSEN
 }

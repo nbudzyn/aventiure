@@ -8,7 +8,8 @@ import de.nb.aventiure2.data.world.gameobject.World;
 import de.nb.aventiure2.data.world.gameobject.player.SpielerCharakter;
 import de.nb.aventiure2.data.world.syscomp.reaction.AbstractReactionsComp;
 import de.nb.aventiure2.data.world.syscomp.reaction.interfaces.ITimePassedReactions;
-import de.nb.aventiure2.data.world.syscomp.state.StateComp;
+import de.nb.aventiure2.data.world.syscomp.state.AbstractStateComp;
+import de.nb.aventiure2.data.world.syscomp.state.impl.SchlossfestState;
 import de.nb.aventiure2.data.world.time.AvDateTime;
 import de.nb.aventiure2.data.world.time.AvTimeSpan;
 
@@ -17,7 +18,7 @@ import static de.nb.aventiure2.data.world.gameobject.World.DRAUSSEN_VOR_DEM_SCHL
 import static de.nb.aventiure2.data.world.gameobject.World.SCHLOSSFEST;
 import static de.nb.aventiure2.data.world.gameobject.World.SCHLOSSFEST_BEGINN_DATE_TIME;
 import static de.nb.aventiure2.data.world.syscomp.feelings.Mood.NEUTRAL;
-import static de.nb.aventiure2.data.world.syscomp.state.GameObjectState.BEGONNEN;
+import static de.nb.aventiure2.data.world.syscomp.state.impl.SchlossfestState.BEGONNEN;
 import static de.nb.aventiure2.data.world.time.AvTimeSpan.mins;
 import static de.nb.aventiure2.data.world.time.AvTimeSpan.noTime;
 import static de.nb.aventiure2.german.base.AllgDescription.neuerSatz;
@@ -30,10 +31,10 @@ import static de.nb.aventiure2.german.base.StructuralElement.PARAGRAPH;
 public class SchlossfestReactionsComp
         extends AbstractReactionsComp
         implements ITimePassedReactions {
-    private final StateComp stateComp;
+    private final AbstractStateComp<SchlossfestState> stateComp;
 
     public SchlossfestReactionsComp(final AvDatabase db, final World world,
-                                    final StateComp stateComp) {
+                                    final AbstractStateComp stateComp) {
         super(SCHLOSSFEST, db, world);
         this.stateComp = stateComp;
     }

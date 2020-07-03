@@ -14,6 +14,8 @@ import de.nb.aventiure2.data.world.gameobject.World;
 import de.nb.aventiure2.data.world.syscomp.memory.Known;
 import de.nb.aventiure2.data.world.syscomp.spatialconnection.AbstractSpatialConnectionComp;
 import de.nb.aventiure2.data.world.syscomp.state.IHasStateGO;
+import de.nb.aventiure2.data.world.syscomp.state.impl.FroschprinzState;
+import de.nb.aventiure2.data.world.syscomp.state.impl.SchlossfestState;
 import de.nb.aventiure2.data.world.syscomp.storingplace.Lichtverhaeltnisse;
 import de.nb.aventiure2.german.base.AbstractDescription;
 
@@ -25,9 +27,9 @@ import static de.nb.aventiure2.data.world.gameobject.World.SCHLOSS_VORHALLE_AM_T
 import static de.nb.aventiure2.data.world.syscomp.feelings.Mood.AUFGEDREHT;
 import static de.nb.aventiure2.data.world.syscomp.memory.Known.KNOWN_FROM_DARKNESS;
 import static de.nb.aventiure2.data.world.syscomp.memory.Known.UNKNOWN;
-import static de.nb.aventiure2.data.world.syscomp.state.GameObjectState.BEGONNEN;
-import static de.nb.aventiure2.data.world.syscomp.state.GameObjectState.ZURUECKVERWANDELT_IN_VORHALLE;
-import static de.nb.aventiure2.data.world.syscomp.state.GameObjectState.ZURUECKVERWANDELT_SCHLOSS_VORHALLE_VERLASSEN;
+import static de.nb.aventiure2.data.world.syscomp.state.impl.FroschprinzState.ZURUECKVERWANDELT_IN_VORHALLE;
+import static de.nb.aventiure2.data.world.syscomp.state.impl.FroschprinzState.ZURUECKVERWANDELT_SCHLOSS_VORHALLE_VERLASSEN;
+import static de.nb.aventiure2.data.world.syscomp.state.impl.SchlossfestState.BEGONNEN;
 import static de.nb.aventiure2.data.world.syscomp.storingplace.Lichtverhaeltnisse.HELL;
 import static de.nb.aventiure2.data.world.time.AvTimeSpan.mins;
 import static de.nb.aventiure2.german.base.DuDescription.du;
@@ -52,7 +54,7 @@ public class SchlossVorhalleConnectionComp extends AbstractSpatialConnectionComp
                                                            final Known newRoomKnown,
                                                            final Lichtverhaeltnisse lichtverhaeltnisseInNewRoom) {
         if (to.equals(SCHLOSS_VORHALLE_AM_TISCH_BEIM_FEST) &&
-                ((IHasStateGO) world.load(SCHLOSSFEST)).stateComp()
+                ((IHasStateGO<SchlossfestState>) world.load(SCHLOSSFEST)).stateComp()
                         .hasState(BEGONNEN) &&
                 db.counterDao().get(COUNTER_TISCH_BEIM_FEST) == 0) {
             return false;
@@ -68,7 +70,7 @@ public class SchlossVorhalleConnectionComp extends AbstractSpatialConnectionComp
         res.add(SpatialConnection.con(DRAUSSEN_VOR_DEM_SCHLOSS,
                 "Das Schloss verlassen",
                 this::getDescTo_DraussenVorDemSchloss));
-        if (((IHasStateGO) world.load(SCHLOSSFEST)).stateComp()
+        if (((IHasStateGO<SchlossfestState>) world.load(SCHLOSSFEST)).stateComp()
                 .hasState(BEGONNEN)) {
             res.add(SpatialConnection.con(SCHLOSS_VORHALLE_AM_TISCH_BEIM_FEST,
                     "An einen Tisch setzen",
@@ -79,7 +81,7 @@ public class SchlossVorhalleConnectionComp extends AbstractSpatialConnectionComp
 
     private AbstractDescription getDescTo_DraussenVorDemSchloss(
             final Known newRoomKnown, final Lichtverhaeltnisse lichtverhaeltnisse) {
-        switch (((IHasStateGO) world.load(SCHLOSSFEST)).stateComp().getState()) {
+        switch (((IHasStateGO<SchlossfestState>) world.load(SCHLOSSFEST)).stateComp().getState()) {
             case BEGONNEN:
                 return getDescTo_DraussenVorDemSchloss_FestBegonnen();
 
@@ -141,7 +143,7 @@ public class SchlossVorhalleConnectionComp extends AbstractSpatialConnectionComp
     @NonNull
     private AbstractDescription
     getDescTo_DraussenVorDemSchloss_FestBegonnen() {
-        if (((IHasStateGO) world.load(FROSCHPRINZ)).stateComp()
+        if (((IHasStateGO<FroschprinzState>) world.load(FROSCHPRINZ)).stateComp()
                 .hasState(ZURUECKVERWANDELT_IN_VORHALLE,
                         ZURUECKVERWANDELT_SCHLOSS_VORHALLE_VERLASSEN)) {
             return du("drängst",
