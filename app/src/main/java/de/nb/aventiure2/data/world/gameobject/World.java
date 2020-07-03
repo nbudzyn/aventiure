@@ -73,8 +73,9 @@ public class World {
             new GameObjectId(10_101);
 
     // CREATURES
-    public static final GameObjectId FROSCHPRINZ = new GameObjectId(20_001);
     public static final GameObjectId SCHLOSSWACHE = new GameObjectId(20_000);
+    public static final GameObjectId FROSCHPRINZ = new GameObjectId(20_001);
+    public static final GameObjectId RAPUNZEL = new GameObjectId(20_002);
 
     // RÄUME
     public static final GameObjectId SCHLOSS_VORHALLE = new GameObjectId(30_000);
@@ -82,6 +83,7 @@ public class World {
     public static final GameObjectId DRAUSSEN_VOR_DEM_SCHLOSS = new GameObjectId(30_002);
     public static final GameObjectId IM_WALD_NAHE_DEM_SCHLOSS = new GameObjectId(30_003);
     public static final GameObjectId VOR_DEM_ALTEN_TURM = new GameObjectId(30_004);
+    public static final GameObjectId OBEN_IM_ALTEN_TURM = new GameObjectId(30_005);
     public static final GameObjectId ABZWEIG_IM_WALD = new GameObjectId(30_010);
     public static final GameObjectId VOR_DER_HUETTE_IM_WALD = new GameObjectId(30_011);
     public static final GameObjectId HUETTE_IM_WALD = new GameObjectId(30_012);
@@ -166,6 +168,9 @@ public class World {
                     room.create(VOR_DEM_ALTEN_TURM, StoringPlaceType.STEINIGER_GRUND_VOR_TURM,
                             false,
                             new VorDemTurmConnectionComp(db, this)),
+                    room.create(OBEN_IM_ALTEN_TURM,
+                            false,
+                            connection.createNoConnections(OBEN_IM_ALTEN_TURM)),
                     room.create(ABZWEIG_IM_WALD, StoringPlaceType.WALDWEG,
                             false,
                             connection.createAbzweigImWald()),
@@ -191,6 +196,7 @@ public class World {
                             connection.createWaldwildnisHinterDemBrunnen()),
                     creature.createSchlosswache(),
                     creature.createFroschprinz(),
+                    creature.createRapunzel(),
                     // STORY Wölfe (Creatures? Invisibles?) hetzen Spieler nachts
                     //  Es könnte z.B. Räume neben dem Weg geben, die der Spieler in aller Regel
                     //  nicht betreten, kann, wo aber die Wölfe laufen.

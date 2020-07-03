@@ -68,7 +68,7 @@ public class SchlosswacheReactionsComp
                                      final AbstractDescriptionComp descriptionComp,
                                      final SchlosswacheStateComp stateComp,
                                      final LocationComp locationComp) {
-        super(SCHLOSSFEST, db, world);
+        super(SCHLOSSWACHE, db, world);
         this.descriptionComp = descriptionComp;
         this.stateComp = stateComp;
         this.locationComp = locationComp;

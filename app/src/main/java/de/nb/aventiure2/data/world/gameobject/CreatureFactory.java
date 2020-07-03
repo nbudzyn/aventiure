@@ -18,22 +18,27 @@ import de.nb.aventiure2.data.world.syscomp.location.LocationComp;
 import de.nb.aventiure2.data.world.syscomp.reaction.AbstractReactionsComp;
 import de.nb.aventiure2.data.world.syscomp.reaction.IResponder;
 import de.nb.aventiure2.data.world.syscomp.reaction.impl.FroschprinzReactionsComp;
+import de.nb.aventiure2.data.world.syscomp.reaction.impl.RapunzelReactionsComp;
 import de.nb.aventiure2.data.world.syscomp.reaction.impl.SchlosswacheReactionsComp;
 import de.nb.aventiure2.data.world.syscomp.state.AbstractStateComp;
 import de.nb.aventiure2.data.world.syscomp.state.IHasStateGO;
 import de.nb.aventiure2.data.world.syscomp.state.impl.FroschprinzStateComp;
-import de.nb.aventiure2.data.world.syscomp.state.impl.SchlosswacheState;
+import de.nb.aventiure2.data.world.syscomp.state.impl.RapunzelStateComp;
 import de.nb.aventiure2.data.world.syscomp.state.impl.SchlosswacheStateComp;
 import de.nb.aventiure2.data.world.syscomp.talking.AbstractTalkingComp;
 import de.nb.aventiure2.data.world.syscomp.talking.ITalkerGO;
 import de.nb.aventiure2.data.world.syscomp.talking.impl.FroschprinzTalkingComp;
+import de.nb.aventiure2.data.world.syscomp.talking.impl.RapunzelTalkingComp;
 
 import static de.nb.aventiure2.data.world.gameobject.World.ABZWEIG_IM_WALD;
 import static de.nb.aventiure2.data.world.gameobject.World.DRAUSSEN_VOR_DEM_SCHLOSS;
 import static de.nb.aventiure2.data.world.gameobject.World.FROSCHPRINZ;
 import static de.nb.aventiure2.data.world.gameobject.World.IM_WALD_BEIM_BRUNNEN;
+import static de.nb.aventiure2.data.world.gameobject.World.OBEN_IM_ALTEN_TURM;
+import static de.nb.aventiure2.data.world.gameobject.World.RAPUNZEL;
 import static de.nb.aventiure2.data.world.gameobject.World.SCHLOSSWACHE;
 import static de.nb.aventiure2.data.world.gameobject.World.SCHLOSS_VORHALLE;
+import static de.nb.aventiure2.data.world.gameobject.World.VOR_DEM_ALTEN_TURM;
 import static de.nb.aventiure2.german.base.Nominalphrase.np;
 import static de.nb.aventiure2.german.base.NumerusGenus.F;
 
@@ -72,10 +77,9 @@ class CreatureFactory {
     }
 
     GameObject createFroschprinz() {
-        final FroschprinzStateComp stateComp =
-                new FroschprinzStateComp(FROSCHPRINZ, db);
+        final FroschprinzStateComp stateComp = new FroschprinzStateComp(db);
         final FroschprinzDescriptionComp descriptionComp =
-                new FroschprinzDescriptionComp(FROSCHPRINZ, stateComp);
+                new FroschprinzDescriptionComp(stateComp);
         final LocationComp locationComp =
                 new LocationComp(FROSCHPRINZ, db, world, IM_WALD_BEIM_BRUNNEN, ABZWEIG_IM_WALD,
                         true);
@@ -88,6 +92,30 @@ class CreatureFactory {
                 talkingComp,
                 new FroschprinzReactionsComp(db, world,
                         descriptionComp, talkingComp, stateComp, locationComp));
+    }
+
+    GameObject createRapunzel() {
+        final RapunzelStateComp stateComp = new RapunzelStateComp(db);
+        final AbstractDescriptionComp descriptionComp =
+                new SimpleDescriptionComp(RAPUNZEL,
+                        // STORY Beschreibung für Rapunzel
+                        np(F, "STORY",
+                                "STORY"),
+                        np(F, "STORY",
+                                "STORY"),
+                        np(F, "STORY",
+                                "STORY"));
+        final LocationComp locationComp =
+                new LocationComp(RAPUNZEL, db, world, OBEN_IM_ALTEN_TURM, VOR_DEM_ALTEN_TURM,
+                        false);
+        final RapunzelTalkingComp talkingComp =
+                new RapunzelTalkingComp(db, world, descriptionComp, stateComp);
+        return new TalkingReactionsCreature<>(RAPUNZEL,
+                descriptionComp,
+                locationComp,
+                stateComp,
+                talkingComp,
+                new RapunzelReactionsComp(db, world, descriptionComp, stateComp, locationComp));
     }
 
     private static class BasicCreature<S extends Enum<S>> extends GameObject

@@ -23,7 +23,6 @@ public class NoSCTalkActionsTalkingComp extends AbstractTalkingComp {
 
     @Override
     protected Iterable<? extends SCTalkAction> getSCTalkActionsWithoutCheckingConditions() {
-        // Der Spieler kann sich nicht mit sich selbst unterhalten.
         return ImmutableList.of();
     }
 }
