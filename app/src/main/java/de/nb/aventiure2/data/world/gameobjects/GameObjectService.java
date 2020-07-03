@@ -21,6 +21,7 @@ import de.nb.aventiure2.data.world.base.GameObjectId;
 import de.nb.aventiure2.data.world.base.IGameObject;
 import de.nb.aventiure2.data.world.gameobjects.player.SpielerCharakter;
 import de.nb.aventiure2.data.world.gameobjects.player.SpielerCharakterFactory;
+import de.nb.aventiure2.data.world.syscomp.alive.AliveSystem;
 import de.nb.aventiure2.data.world.syscomp.alive.ILivingBeingGO;
 import de.nb.aventiure2.data.world.syscomp.description.IDescribableGO;
 import de.nb.aventiure2.data.world.syscomp.location.ILocatableGO;
@@ -106,6 +107,8 @@ public class GameObjectService {
     private GOReactionsCoordinator reactionsCoordinator;
 
     // SYSTEMS
+    private AliveSystem aliveSystem;
+
     private LocationSystem locationSystem;
 
     public static GameObjectService getInstance(final AvDatabase db) {
@@ -245,6 +248,10 @@ public class GameObjectService {
             );
         }
 
+        if (aliveSystem == null) {
+            aliveSystem = new AliveSystem(db);
+        }
+
         if (locationSystem == null) {
             locationSystem = new LocationSystem(db);
         }
@@ -265,9 +272,6 @@ public class GameObjectService {
             gameObject.saveInitialState();
         }
     }
-
-    // TODO Ein "System" (im Sinne von ECS) bietet Funktionalität für Objekte mit dieser
-    //  Component (oder mit einem bestimmten Set von Components)?
 
     /**
      * Gibt <code>true</code> zurück falls das Game Object eine dieser Locations ist oder
@@ -381,10 +385,8 @@ public class GameObjectService {
         return reactionsCoordinator;
     }
 
-    <R extends IReactions,
-            G extends GameObject & IResponder>
-    List<G>
-    loadResponders(final Class<R> reactionsInterface) {
+    <R extends IReactions, G extends GameObject & IResponder>
+    List<G> loadResponders(final Class<R> reactionsInterface) {
         prepare();
 
         final ImmutableList<GameObject> res =
@@ -406,7 +408,7 @@ public class GameObjectService {
     public <LOC_DESC extends ILocatableGO & IDescribableGO>
     ImmutableList<LOC_DESC> loadDescribableNonLivingRecursiveInventory(
             final ILocationGO location) {
-        return filterNoLivingBeing(loadDescribableRecursiveInventory(location));
+        return AliveSystem.filterNoLivingBeing(loadDescribableRecursiveInventory(location));
     }
 
     /**
@@ -450,7 +452,8 @@ public class GameObjectService {
                 loadDescribableNonLivingInventory(inventoryHolder.getId()));
     }
 
-    private static <LOC_DESC extends ILocatableGO & IDescribableGO, LOCATABLE_DESC_LOCATION extends ILocatableGO & IDescribableGO & ILocationGO>
+    private static <LOC_DESC extends ILocatableGO & IDescribableGO,
+            LOCATABLE_DESC_LOCATION extends ILocatableGO & IDescribableGO & ILocationGO>
     ImmutableList<LOCATABLE_DESC_LOCATION> filterLocation(
             final List<LOC_DESC> gameObjects) {
         return (ImmutableList<LOCATABLE_DESC_LOCATION>) gameObjects.stream()
@@ -468,8 +471,7 @@ public class GameObjectService {
     public <LOC_DESC extends ILocatableGO & IDescribableGO>
     ImmutableList<LOC_DESC> loadDescribableNonLivingMovableRecursiveInventory(
             final GameObjectId locationId) {
-        return filterMovable(
-                loadDescribableNonLivingRecursiveInventory(locationId));
+        return LocationSystem.filterMovable(loadDescribableNonLivingRecursiveInventory(locationId));
     }
 
     /**
@@ -483,8 +485,7 @@ public class GameObjectService {
     public <LOC_DESC extends ILocatableGO & IDescribableGO>
     ImmutableList<LOC_DESC> loadDescribableNonLivingMovableInventory(
             final GameObjectId locationId) {
-        return filterMovable(
-                loadDescribableNonLivingInventory(locationId));
+        return LocationSystem.filterMovable(loadDescribableNonLivingInventory(locationId));
     }
 
     /**
@@ -498,21 +499,7 @@ public class GameObjectService {
     public <LOC_DESC extends ILocatableGO & IDescribableGO>
     ImmutableList<LOC_DESC> loadDescribableNonMovableInventory(
             final GameObjectId locationId) {
-        return filterNotMovable(loadDescribableInventory(locationId));
-    }
-
-    private static <GO extends ILocatableGO> ImmutableList<GO> filterMovable(
-            final List<GO> gameObjects) {
-        return gameObjects.stream()
-                .filter(go -> go.locationComp().isMovable())
-                .collect(toImmutableList());
-    }
-
-    private static <GO extends ILocatableGO> ImmutableList<GO> filterNotMovable(
-            final List<GO> gameObjects) {
-        return gameObjects.stream()
-                .filter(go -> !go.locationComp().isMovable())
-                .collect(toImmutableList());
+        return LocationSystem.filterNotMovable(loadDescribableInventory(locationId));
     }
 
     /**
@@ -524,7 +511,7 @@ public class GameObjectService {
     public <LOC_DESC extends ILocatableGO & IDescribableGO>
     ImmutableList<LOC_DESC> loadDescribableNonLivingRecursiveInventory(
             final GameObjectId locationId) {
-        return filterNoLivingBeing(loadDescribableRecursiveInventory(locationId));
+        return AliveSystem.filterNoLivingBeing(loadDescribableRecursiveInventory(locationId));
     }
 
     /**
@@ -537,7 +524,7 @@ public class GameObjectService {
     private <LOC_DESC extends ILocatableGO & IDescribableGO>
     ImmutableList<LOC_DESC> loadDescribableNonLivingInventory(
             final GameObjectId locationId) {
-        return filterNoLivingBeing(loadDescribableInventory(locationId));
+        return AliveSystem.filterNoLivingBeing(loadDescribableInventory(locationId));
     }
 
     /**
@@ -583,8 +570,7 @@ public class GameObjectService {
      * nicht den Spieler-Charakter.
      */
     public <LOC_DESC extends ILocatableGO & IDescribableGO>
-    ImmutableList<LOC_DESC> loadDescribableRecursiveInventory(
-            final GameObjectId locationId) {
+    ImmutableList<LOC_DESC> loadDescribableRecursiveInventory(final GameObjectId locationId) {
         final ImmutableList<LOC_DESC> directContainedList =
                 loadDescribableInventory(locationId);
 
@@ -608,8 +594,7 @@ public class GameObjectService {
      * nicht den Spieler-Charakter.
      */
     private <LOC_DESC extends ILocatableGO & IDescribableGO>
-    ImmutableList<LOC_DESC> loadDescribableInventory(
-            final ILocationGO location) {
+    ImmutableList<LOC_DESC> loadDescribableInventory(final ILocationGO location) {
         return loadDescribableInventory(location.getId());
     }
 
@@ -621,8 +606,7 @@ public class GameObjectService {
      * nicht den Spieler-Charakter.
      */
     private <LOC_DESC extends ILocatableGO & IDescribableGO>
-    ImmutableList<LOC_DESC> loadDescribableInventory(
-            final GameObjectId locationId) {
+    ImmutableList<LOC_DESC> loadDescribableInventory(final GameObjectId locationId) {
         prepare();
 
         final ImmutableList<GameObject> res =
@@ -637,15 +621,8 @@ public class GameObjectService {
         return (ImmutableList<LOC_DESC>) (ImmutableList<?>) res;
     }
 
-
-    private static <GO extends IGameObject> ImmutableList<GO> filterNoLivingBeing(
-            final List<GO> gameObjects) {
-        return gameObjects.stream()
-                .filter(((Predicate<GO>) ILivingBeingGO.class::isInstance).negate())
-                .collect(toImmutableList());
-    }
-
-    private static <DESC_OBJ extends ILocatableGO & IDescribableGO, LIV extends ILocatableGO & IDescribableGO & ILivingBeingGO>
+    private static <DESC_OBJ extends ILocatableGO & IDescribableGO,
+            LIV extends ILocatableGO & IDescribableGO & ILivingBeingGO>
     ImmutableList<LIV> filterLivingBeing(final List<DESC_OBJ> gameObjects) {
         return (ImmutableList<LIV>) gameObjects.stream()
                 .filter(ILivingBeingGO.class::isInstance)
@@ -732,8 +709,7 @@ public class GameObjectService {
      * Lädt (sofern nicht schon geschehen) dieses Game Object und gibt sie zurück.
      */
     @Nonnull
-    public ImmutableList<GameObject> load(
-            final Collection<GameObjectId> ids) {
+    public ImmutableList<GameObject> load(final Collection<GameObjectId> ids) {
         return ids.stream()
                 .map(id -> load(id))
                 .collect(toImmutableList());
