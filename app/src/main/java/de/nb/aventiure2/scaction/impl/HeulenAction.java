@@ -9,8 +9,8 @@ import java.util.List;
 
 import de.nb.aventiure2.data.database.AvDatabase;
 import de.nb.aventiure2.data.storystate.StoryState;
-import de.nb.aventiure2.data.world.gameobjects.GameObjectService;
-import de.nb.aventiure2.data.world.gameobjects.player.SpielerCharakter;
+import de.nb.aventiure2.data.world.gameobject.World;
+import de.nb.aventiure2.data.world.gameobject.player.SpielerCharakter;
 import de.nb.aventiure2.data.world.syscomp.alive.ILivingBeingGO;
 import de.nb.aventiure2.data.world.syscomp.description.IDescribableGO;
 import de.nb.aventiure2.data.world.syscomp.memory.Action;
@@ -21,7 +21,7 @@ import de.nb.aventiure2.data.world.time.AvTimeSpan;
 import de.nb.aventiure2.german.base.AbstractDescription;
 import de.nb.aventiure2.scaction.AbstractScAction;
 
-import static de.nb.aventiure2.data.world.gameobjects.GameObjectService.FROSCHPRINZ;
+import static de.nb.aventiure2.data.world.gameobject.World.FROSCHPRINZ;
 import static de.nb.aventiure2.data.world.syscomp.feelings.Mood.NEUTRAL;
 import static de.nb.aventiure2.data.world.syscomp.feelings.Mood.UNTROESTLICH;
 import static de.nb.aventiure2.data.world.syscomp.state.GameObjectState.HAT_SC_HILFSBEREIT_ANGESPROCHEN;
@@ -40,7 +40,7 @@ public class HeulenAction extends AbstractScAction {
 
     public static Collection<HeulenAction> buildActions(
             final AvDatabase db,
-            final GameObjectService gos,
+            final World world,
             final StoryState initialStoryState,
             final SpielerCharakter sc, final List<? extends ILivingBeingGO> creaturesInRoom) {
         final ImmutableList.Builder<HeulenAction> res = ImmutableList.builder();
@@ -49,17 +49,17 @@ public class HeulenAction extends AbstractScAction {
         //  seine goldene Kugel erinnert o.Ä.
 
         if (sc.feelingsComp().hasMood(UNTROESTLICH)) {
-            res.add(new HeulenAction(db, gos, initialStoryState, creaturesInRoom));
+            res.add(new HeulenAction(db, world, initialStoryState, creaturesInRoom));
         }
 
         return res.build();
     }
 
     private HeulenAction(final AvDatabase db,
-                         final GameObjectService gos,
+                         final World world,
                          final StoryState initialStoryState,
                          final List<? extends ILivingBeingGO> creaturesInRoom) {
-        super(db, gos, initialStoryState);
+        super(db, world, initialStoryState);
         this.creaturesInRoom = creaturesInRoom;
     }
 
@@ -85,7 +85,7 @@ public class HeulenAction extends AbstractScAction {
 
     private <F extends IDescribableGO & IHasStateGO & ITalkerGO & ILivingBeingGO>
     AvTimeSpan narrateAndDoWiederholung() {
-        final F froschprinz = (F) gos.load(FROSCHPRINZ);
+        final F froschprinz = (F) world.load(FROSCHPRINZ);
         if (creaturesInRoom.contains(froschprinz) &&
                 (froschprinz.stateComp().hasState(UNAUFFAELLIG))) {
             return narrateAndDoFroschprinzUnauffaellig(froschprinz);
@@ -117,7 +117,7 @@ public class HeulenAction extends AbstractScAction {
                         "du schreist ja, dass sich ein Stein erbarmen möchte.“ Du siehst " +
                         "dich um, woher " +
                         "die Stimme käme, da erblickst du " +
-                        gos.getDescription(froschprinz).akk(), "immer lauter", secs(30)));
+                        world.getDescription(froschprinz).akk(), "immer lauter", secs(30)));
 
         froschprinz.stateComp().setState(HAT_SC_HILFSBEREIT_ANGESPROCHEN);
         froschprinz.talkingComp().setTalkingTo(sc);

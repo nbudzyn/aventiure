@@ -8,8 +8,8 @@ import de.nb.aventiure2.data.storystate.StoryStateDao;
 import de.nb.aventiure2.data.world.base.AbstractStatelessComponent;
 import de.nb.aventiure2.data.world.base.GameObject;
 import de.nb.aventiure2.data.world.base.GameObjectId;
-import de.nb.aventiure2.data.world.gameobjects.GameObjectService;
-import de.nb.aventiure2.data.world.gameobjects.player.SpielerCharakter;
+import de.nb.aventiure2.data.world.gameobject.World;
+import de.nb.aventiure2.data.world.gameobject.player.SpielerCharakter;
 import de.nb.aventiure2.data.world.syscomp.description.IDescribableGO;
 import de.nb.aventiure2.german.base.Personalpronomen;
 import de.nb.aventiure2.german.base.SubstantivischePhrase;
@@ -20,7 +20,7 @@ import de.nb.aventiure2.german.base.SubstantivischePhrase;
  */
 public abstract class AbstractReactionsComp extends AbstractStatelessComponent {
     protected final AvDatabase db;
-    protected final GameObjectService gos;
+    protected final World world;
 
     protected final StoryStateDao n;
 
@@ -47,10 +47,10 @@ public abstract class AbstractReactionsComp extends AbstractStatelessComponent {
 
     public AbstractReactionsComp(final GameObjectId id,
                                  final AvDatabase db,
-                                 final GameObjectService gos) {
+                                 final World world) {
         super(id);
         this.db = db;
-        this.gos = gos;
+        this.world = world;
 
         n = db.storyStateDao();
     }
@@ -72,7 +72,7 @@ public abstract class AbstractReactionsComp extends AbstractStatelessComponent {
     protected SubstantivischePhrase getAnaphPersPronWennMglSonstShortDescription(
             final GameObjectId describableId) {
         return getAnaphPersPronWennMglSonstDescription(
-                (IDescribableGO) gos.load(describableId), true);
+                (IDescribableGO) world.load(describableId), true);
     }
 
     /**
@@ -114,11 +114,11 @@ public abstract class AbstractReactionsComp extends AbstractStatelessComponent {
             return anaphPersPron;
         }
 
-        return gos.getDescription(describableGO, descShortIfKnown);
+        return world.getDescription(describableGO, descShortIfKnown);
     }
 
     @NonNull
     protected SpielerCharakter loadSC() {
-        return gos.loadSC();
+        return world.loadSC();
     }
 }

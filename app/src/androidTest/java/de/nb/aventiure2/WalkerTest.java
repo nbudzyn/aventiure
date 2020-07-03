@@ -9,15 +9,17 @@ import androidx.test.ext.junit.runners.AndroidJUnit4;
 
 import org.junit.After;
 import org.junit.Before;
+import org.junit.FixMethodOrder;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.junit.runners.MethodSorters;
 
 import java.io.File;
 import java.util.List;
 
 import de.nb.aventiure2.data.database.AvDatabase;
-import de.nb.aventiure2.data.world.gameobjects.GameObjectService;
+import de.nb.aventiure2.data.world.gameobject.World;
 import de.nb.aventiure2.logger.Logger;
 import de.nb.aventiure2.scaction.AbstractScAction;
 import de.nb.aventiure2.scaction.ScActionService;
@@ -30,6 +32,7 @@ import de.nb.aventiure2.scaction.devhelper.chooser.impl.WalkthroughActionChooser
 import static junit.framework.TestCase.fail;
 
 @RunWith(AndroidJUnit4.class)
+@FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class WalkerTest {
     // See https://proandroiddev.com/testing-the-un-testable-and-beyond-with-android-architecture-components-part-1-testing-room-4d97dec0f451
     @Rule
@@ -50,7 +53,14 @@ public class WalkerTest {
     }
 
     @Test
-    public void walkActions() {
+    public void aaa_doStrictWalkthrough() {
+        // Will be executed first for a fast feedback whether
+        // the basic walkthrough still works
+        doWalkthrough(Walkthrough.FULL);
+    }
+
+    @Test
+    public void walkActionsWithRandomAdditions() {
         for (int maxSteps = 0;
              maxSteps < Walkthrough.FULL.numSteps(); maxSteps++) {
             LOGGER.d("--- Neuer Durchlauf: " + maxSteps + " Schritte ---");
@@ -63,7 +73,7 @@ public class WalkerTest {
     }
 
     private void resetDatabase() {
-        GameObjectService.reset();
+        World.reset();
         AvDatabase.resetDatabase();
 
         db = AvDatabase.getDatabase(appContext);

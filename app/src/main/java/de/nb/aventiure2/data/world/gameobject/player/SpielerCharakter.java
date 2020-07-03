@@ -1,4 +1,4 @@
-package de.nb.aventiure2.data.world.gameobjects.player;
+package de.nb.aventiure2.data.world.gameobject.player;
 
 import androidx.annotation.NonNull;
 

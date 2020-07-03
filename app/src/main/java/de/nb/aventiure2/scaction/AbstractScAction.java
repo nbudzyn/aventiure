@@ -8,8 +8,8 @@ import de.nb.aventiure2.data.storystate.IPlayerAction;
 import de.nb.aventiure2.data.storystate.StoryState;
 import de.nb.aventiure2.data.storystate.StoryStateDao;
 import de.nb.aventiure2.data.world.base.GameObjectId;
-import de.nb.aventiure2.data.world.gameobjects.GameObjectService;
-import de.nb.aventiure2.data.world.gameobjects.player.SpielerCharakter;
+import de.nb.aventiure2.data.world.gameobject.World;
+import de.nb.aventiure2.data.world.gameobject.player.SpielerCharakter;
 import de.nb.aventiure2.data.world.syscomp.description.IDescribableGO;
 import de.nb.aventiure2.data.world.time.AvDateTime;
 import de.nb.aventiure2.data.world.time.AvTimeSpan;
@@ -34,7 +34,7 @@ public abstract class AbstractScAction implements IPlayerAction {
     //    selbst in ihren eigenen Text ein.
 
     protected final AvDatabase db;
-    protected final GameObjectService gos;
+    protected final World world;
     protected final StoryStateDao n;
 
     protected final SpielerCharakter sc;
@@ -44,14 +44,14 @@ public abstract class AbstractScAction implements IPlayerAction {
      */
     protected final StoryState initialStoryState;
 
-    protected AbstractScAction(@NonNull final AvDatabase db, final GameObjectService gos,
+    protected AbstractScAction(@NonNull final AvDatabase db, final World world,
                                final StoryState initialStoryState) {
         this.db = db;
-        this.gos = gos;
+        this.world = world;
 
         n = db.storyStateDao();
 
-        sc = gos.loadSC();
+        sc = world.loadSC();
 
         this.initialStoryState = initialStoryState;
     }
@@ -87,7 +87,7 @@ public abstract class AbstractScAction implements IPlayerAction {
         db.nowDao().setNow(dateTimeAfterActionBeforeUpdateWorld
                 .plus(extraTimeElapsedDuringWorldUpdate));
 
-        gos.saveAll();
+        world.saveAll();
     }
 
     private AvTimeSpan updateWorld(final AvDateTime lastTime,
@@ -97,7 +97,7 @@ public abstract class AbstractScAction implements IPlayerAction {
         }
 
         AvTimeSpan additionalTimeElapsed =
-                gos.narrateAndDoReactions().onTimePassed(lastTime, now);
+                world.narrateAndDoReactions().onTimePassed(lastTime, now);
 
         // Falls jetzt noch etwas passiert ist,
         // was Zeit gebraucht hat, dann erneut
@@ -148,7 +148,7 @@ public abstract class AbstractScAction implements IPlayerAction {
     protected SubstantivischePhrase getAnaphPersPronWennMglSonstShortDescription(
             final GameObjectId describableId) {
         return getAnaphPersPronWennMglSonstDescription(
-                (IDescribableGO) gos.load(describableId), true);
+                (IDescribableGO) world.load(describableId), true);
     }
 
     /**
@@ -190,7 +190,7 @@ public abstract class AbstractScAction implements IPlayerAction {
             return anaphPersPron;
         }
 
-        return gos.getDescription(describableGO, descShortIfKnown);
+        return world.getDescription(describableGO, descShortIfKnown);
     }
 
     @NonNull

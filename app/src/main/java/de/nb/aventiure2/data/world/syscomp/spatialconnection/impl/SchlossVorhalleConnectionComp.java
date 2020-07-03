@@ -10,18 +10,18 @@ import javax.annotation.ParametersAreNonnullByDefault;
 
 import de.nb.aventiure2.data.database.AvDatabase;
 import de.nb.aventiure2.data.world.base.GameObjectId;
-import de.nb.aventiure2.data.world.gameobjects.GameObjectService;
+import de.nb.aventiure2.data.world.gameobject.World;
 import de.nb.aventiure2.data.world.syscomp.memory.Known;
 import de.nb.aventiure2.data.world.syscomp.spatialconnection.AbstractSpatialConnectionComp;
 import de.nb.aventiure2.data.world.syscomp.state.IHasStateGO;
 import de.nb.aventiure2.data.world.syscomp.storingplace.Lichtverhaeltnisse;
 import de.nb.aventiure2.german.base.AbstractDescription;
 
-import static de.nb.aventiure2.data.world.gameobjects.GameObjectService.DRAUSSEN_VOR_DEM_SCHLOSS;
-import static de.nb.aventiure2.data.world.gameobjects.GameObjectService.FROSCHPRINZ;
-import static de.nb.aventiure2.data.world.gameobjects.GameObjectService.SCHLOSSFEST;
-import static de.nb.aventiure2.data.world.gameobjects.GameObjectService.SCHLOSS_VORHALLE;
-import static de.nb.aventiure2.data.world.gameobjects.GameObjectService.SCHLOSS_VORHALLE_AM_TISCH_BEIM_FEST;
+import static de.nb.aventiure2.data.world.gameobject.World.DRAUSSEN_VOR_DEM_SCHLOSS;
+import static de.nb.aventiure2.data.world.gameobject.World.FROSCHPRINZ;
+import static de.nb.aventiure2.data.world.gameobject.World.SCHLOSSFEST;
+import static de.nb.aventiure2.data.world.gameobject.World.SCHLOSS_VORHALLE;
+import static de.nb.aventiure2.data.world.gameobject.World.SCHLOSS_VORHALLE_AM_TISCH_BEIM_FEST;
 import static de.nb.aventiure2.data.world.syscomp.feelings.Mood.AUFGEDREHT;
 import static de.nb.aventiure2.data.world.syscomp.memory.Known.KNOWN_FROM_DARKNESS;
 import static de.nb.aventiure2.data.world.syscomp.memory.Known.UNKNOWN;
@@ -34,7 +34,7 @@ import static de.nb.aventiure2.german.base.DuDescription.du;
 
 /**
  * An implementation of {@link AbstractSpatialConnectionComp}
- * for the {@link GameObjectService#SCHLOSS_VORHALLE}
+ * for the {@link World#SCHLOSS_VORHALLE}
  * room.
  */
 @ParametersAreNonnullByDefault
@@ -43,8 +43,8 @@ public class SchlossVorhalleConnectionComp extends AbstractSpatialConnectionComp
             "RoomConnectionBuilder_SchlossVorhalle_SchlossVorhalleTischBeimFest";
 
     public SchlossVorhalleConnectionComp(
-            final AvDatabase db, final GameObjectService gos) {
-        super(SCHLOSS_VORHALLE, db, gos);
+            final AvDatabase db, final World world) {
+        super(SCHLOSS_VORHALLE, db, world);
     }
 
     @Override
@@ -52,7 +52,7 @@ public class SchlossVorhalleConnectionComp extends AbstractSpatialConnectionComp
                                                            final Known newRoomKnown,
                                                            final Lichtverhaeltnisse lichtverhaeltnisseInNewRoom) {
         if (to.equals(SCHLOSS_VORHALLE_AM_TISCH_BEIM_FEST) &&
-                ((IHasStateGO) gos.load(SCHLOSSFEST)).stateComp()
+                ((IHasStateGO) world.load(SCHLOSSFEST)).stateComp()
                         .hasState(BEGONNEN) &&
                 db.counterDao().get(COUNTER_TISCH_BEIM_FEST) == 0) {
             return false;
@@ -68,7 +68,7 @@ public class SchlossVorhalleConnectionComp extends AbstractSpatialConnectionComp
         res.add(SpatialConnection.con(DRAUSSEN_VOR_DEM_SCHLOSS,
                 "Das Schloss verlassen",
                 this::getDescTo_DraussenVorDemSchloss));
-        if (((IHasStateGO) gos.load(SCHLOSSFEST)).stateComp()
+        if (((IHasStateGO) world.load(SCHLOSSFEST)).stateComp()
                 .hasState(BEGONNEN)) {
             res.add(SpatialConnection.con(SCHLOSS_VORHALLE_AM_TISCH_BEIM_FEST,
                     "An einen Tisch setzen",
@@ -79,7 +79,7 @@ public class SchlossVorhalleConnectionComp extends AbstractSpatialConnectionComp
 
     private AbstractDescription getDescTo_DraussenVorDemSchloss(
             final Known newRoomKnown, final Lichtverhaeltnisse lichtverhaeltnisse) {
-        switch (((IHasStateGO) gos.load(SCHLOSSFEST)).stateComp().getState()) {
+        switch (((IHasStateGO) world.load(SCHLOSSFEST)).stateComp().getState()) {
             case BEGONNEN:
                 return getDescTo_DraussenVorDemSchloss_FestBegonnen();
 
@@ -141,7 +141,7 @@ public class SchlossVorhalleConnectionComp extends AbstractSpatialConnectionComp
     @NonNull
     private AbstractDescription
     getDescTo_DraussenVorDemSchloss_FestBegonnen() {
-        if (((IHasStateGO) gos.load(FROSCHPRINZ)).stateComp()
+        if (((IHasStateGO) world.load(FROSCHPRINZ)).stateComp()
                 .hasState(ZURUECKVERWANDELT_IN_VORHALLE,
                         ZURUECKVERWANDELT_SCHLOSS_VORHALLE_VERLASSEN)) {
             return du("drängst",
@@ -151,7 +151,7 @@ public class SchlossVorhalleConnectionComp extends AbstractSpatialConnectionComp
                     .dann();
         }
 
-        gos.loadSC().feelingsComp().setMoodMin(AUFGEDREHT);
+        world.loadSC().feelingsComp().setMoodMin(AUFGEDREHT);
 
         // STORY: Nachts ist weniger Trubel?
         return du("gehst",

@@ -1,4 +1,4 @@
-package de.nb.aventiure2.data.world.gameobjects;
+package de.nb.aventiure2.data.world.gameobject;
 
 import androidx.annotation.NonNull;
 
@@ -25,12 +25,12 @@ import de.nb.aventiure2.data.world.syscomp.talking.AbstractTalkingComp;
 import de.nb.aventiure2.data.world.syscomp.talking.ITalkerGO;
 import de.nb.aventiure2.data.world.syscomp.talking.impl.FroschprinzTalkingComp;
 
-import static de.nb.aventiure2.data.world.gameobjects.GameObjectService.ABZWEIG_IM_WALD;
-import static de.nb.aventiure2.data.world.gameobjects.GameObjectService.DRAUSSEN_VOR_DEM_SCHLOSS;
-import static de.nb.aventiure2.data.world.gameobjects.GameObjectService.FROSCHPRINZ;
-import static de.nb.aventiure2.data.world.gameobjects.GameObjectService.IM_WALD_BEIM_BRUNNEN;
-import static de.nb.aventiure2.data.world.gameobjects.GameObjectService.SCHLOSSWACHE;
-import static de.nb.aventiure2.data.world.gameobjects.GameObjectService.SCHLOSS_VORHALLE;
+import static de.nb.aventiure2.data.world.gameobject.World.ABZWEIG_IM_WALD;
+import static de.nb.aventiure2.data.world.gameobject.World.DRAUSSEN_VOR_DEM_SCHLOSS;
+import static de.nb.aventiure2.data.world.gameobject.World.FROSCHPRINZ;
+import static de.nb.aventiure2.data.world.gameobject.World.IM_WALD_BEIM_BRUNNEN;
+import static de.nb.aventiure2.data.world.gameobject.World.SCHLOSSWACHE;
+import static de.nb.aventiure2.data.world.gameobject.World.SCHLOSS_VORHALLE;
 import static de.nb.aventiure2.data.world.syscomp.state.GameObjectState.AUFMERKSAM;
 import static de.nb.aventiure2.data.world.syscomp.state.GameObjectState.AUF_DEM_WEG_ZUM_BRUNNEN_UM_DINGE_HERAUSZUHOLEN;
 import static de.nb.aventiure2.data.world.syscomp.state.GameObjectState.AUF_DEM_WEG_ZUM_SCHLOSSFEST;
@@ -53,11 +53,11 @@ import static de.nb.aventiure2.german.base.NumerusGenus.F;
  */
 class CreatureFactory {
     private final AvDatabase db;
-    private final GameObjectService gos;
+    private final World world;
 
-    CreatureFactory(final AvDatabase db, final GameObjectService gos) {
+    CreatureFactory(final AvDatabase db, final World world) {
         this.db = db;
-        this.gos = gos;
+        this.world = world;
     }
 
     GameObject createSchlosswache() {
@@ -72,12 +72,13 @@ class CreatureFactory {
                         np(F, "die Schlosswache",
                                 "der Schlosswache"));
         final LocationComp locationComp =
-                new LocationComp(SCHLOSSWACHE, db, gos, SCHLOSS_VORHALLE, DRAUSSEN_VOR_DEM_SCHLOSS,
+                new LocationComp(SCHLOSSWACHE, db, world, SCHLOSS_VORHALLE,
+                        DRAUSSEN_VOR_DEM_SCHLOSS,
                         false);
 
         return new ReactionsCreature(SCHLOSSWACHE,
                 descriptionComp, locationComp, stateComp,
-                new SchlosswacheReactionsComp(db, gos, descriptionComp, stateComp, locationComp));
+                new SchlosswacheReactionsComp(db, world, descriptionComp, stateComp, locationComp));
     }
 
     GameObject createFroschprinz() {
@@ -95,16 +96,16 @@ class CreatureFactory {
         final FroschprinzDescriptionComp descriptionComp =
                 new FroschprinzDescriptionComp(FROSCHPRINZ, stateComp);
         final LocationComp locationComp =
-                new LocationComp(FROSCHPRINZ, db, gos, IM_WALD_BEIM_BRUNNEN, ABZWEIG_IM_WALD,
+                new LocationComp(FROSCHPRINZ, db, world, IM_WALD_BEIM_BRUNNEN, ABZWEIG_IM_WALD,
                         true);
         final FroschprinzTalkingComp talkingComp =
-                new FroschprinzTalkingComp(db, gos, descriptionComp, stateComp);
+                new FroschprinzTalkingComp(db, world, descriptionComp, stateComp);
         return new TalkingReactionsCreature(FROSCHPRINZ,
                 descriptionComp,
                 locationComp,
                 stateComp,
                 talkingComp,
-                new FroschprinzReactionsComp(db, gos,
+                new FroschprinzReactionsComp(db, world,
                         descriptionComp, talkingComp, stateComp, locationComp));
     }
 

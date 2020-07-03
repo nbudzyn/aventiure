@@ -6,8 +6,8 @@ import javax.annotation.Nullable;
 
 import de.nb.aventiure2.data.database.AvDatabase;
 import de.nb.aventiure2.data.world.base.IGameObject;
-import de.nb.aventiure2.data.world.gameobjects.GameObjectService;
-import de.nb.aventiure2.data.world.gameobjects.player.SpielerCharakter;
+import de.nb.aventiure2.data.world.gameobject.World;
+import de.nb.aventiure2.data.world.gameobject.player.SpielerCharakter;
 import de.nb.aventiure2.data.world.syscomp.description.impl.FroschprinzDescriptionComp;
 import de.nb.aventiure2.data.world.syscomp.location.ILocatableGO;
 import de.nb.aventiure2.data.world.syscomp.location.LocationComp;
@@ -25,17 +25,17 @@ import de.nb.aventiure2.german.base.Nominalphrase;
 import de.nb.aventiure2.german.base.StructuralElement;
 import de.nb.aventiure2.german.base.SubstantivischePhrase;
 
-import static de.nb.aventiure2.data.world.gameobjects.GameObjectService.DRAUSSEN_VOR_DEM_SCHLOSS;
-import static de.nb.aventiure2.data.world.gameobjects.GameObjectService.FROSCHPRINZ;
-import static de.nb.aventiure2.data.world.gameobjects.GameObjectService.GOLDENE_KUGEL;
-import static de.nb.aventiure2.data.world.gameobjects.GameObjectService.IM_WALD_BEIM_BRUNNEN;
-import static de.nb.aventiure2.data.world.gameobjects.GameObjectService.SCHLOSSFEST;
-import static de.nb.aventiure2.data.world.gameobjects.GameObjectService.SCHLOSSFEST_BEGINN_DATE_TIME;
-import static de.nb.aventiure2.data.world.gameobjects.GameObjectService.SCHLOSS_VORHALLE;
-import static de.nb.aventiure2.data.world.gameobjects.GameObjectService.SCHLOSS_VORHALLE_AM_TISCH_BEIM_FEST;
-import static de.nb.aventiure2.data.world.gameobjects.GameObjectService.SCHLOSS_VORHALLE_LANGER_TISCH_BEIM_FEST;
-import static de.nb.aventiure2.data.world.gameobjects.GameObjectService.SPIELER_CHARAKTER;
-import static de.nb.aventiure2.data.world.gameobjects.GameObjectService.UNTEN_IM_BRUNNEN;
+import static de.nb.aventiure2.data.world.gameobject.World.DRAUSSEN_VOR_DEM_SCHLOSS;
+import static de.nb.aventiure2.data.world.gameobject.World.FROSCHPRINZ;
+import static de.nb.aventiure2.data.world.gameobject.World.GOLDENE_KUGEL;
+import static de.nb.aventiure2.data.world.gameobject.World.IM_WALD_BEIM_BRUNNEN;
+import static de.nb.aventiure2.data.world.gameobject.World.SCHLOSSFEST;
+import static de.nb.aventiure2.data.world.gameobject.World.SCHLOSSFEST_BEGINN_DATE_TIME;
+import static de.nb.aventiure2.data.world.gameobject.World.SCHLOSS_VORHALLE;
+import static de.nb.aventiure2.data.world.gameobject.World.SCHLOSS_VORHALLE_AM_TISCH_BEIM_FEST;
+import static de.nb.aventiure2.data.world.gameobject.World.SCHLOSS_VORHALLE_LANGER_TISCH_BEIM_FEST;
+import static de.nb.aventiure2.data.world.gameobject.World.SPIELER_CHARAKTER;
+import static de.nb.aventiure2.data.world.gameobject.World.UNTEN_IM_BRUNNEN;
 import static de.nb.aventiure2.data.world.syscomp.feelings.Mood.ANGESPANNT;
 import static de.nb.aventiure2.data.world.syscomp.state.GameObjectState.AUF_DEM_WEG_ZUM_SCHLOSSFEST;
 import static de.nb.aventiure2.data.world.syscomp.state.GameObjectState.BEGONNEN;
@@ -79,12 +79,12 @@ public class FroschprinzReactionsComp
     private final LocationComp locationComp;
 
     public FroschprinzReactionsComp(final AvDatabase db,
-                                    final GameObjectService gos,
+                                    final World world,
                                     final FroschprinzDescriptionComp descriptionComp,
                                     final FroschprinzTalkingComp talkingComp,
                                     final StateComp stateComp,
                                     final LocationComp locationComp) {
-        super(FROSCHPRINZ, db, gos);
+        super(FROSCHPRINZ, db, world);
         this.descriptionComp = descriptionComp;
         this.talkingComp = talkingComp;
         this.stateComp = stateComp;
@@ -248,13 +248,13 @@ public class FroschprinzReactionsComp
 
     private AvTimeSpan onSCEnterPrinzLocation(
             @Nullable final ILocationGO from, final ILocationGO toAndPrinzLocation) {
-        if (gos.isOrHasRecursiveLocation(from, SCHLOSS_VORHALLE_AM_TISCH_BEIM_FEST) &&
-                gos.isOrHasRecursiveLocation(toAndPrinzLocation, SCHLOSS_VORHALLE)) {
+        if (world.isOrHasRecursiveLocation(from, SCHLOSS_VORHALLE_AM_TISCH_BEIM_FEST) &&
+                world.isOrHasRecursiveLocation(toAndPrinzLocation, SCHLOSS_VORHALLE)) {
             return prinzVerlaesstSchlossVorhalle();
         }
 
-        if (gos.isOrHasRecursiveLocation(from, SCHLOSS_VORHALLE) &&
-                gos.isOrHasRecursiveLocation(toAndPrinzLocation, DRAUSSEN_VOR_DEM_SCHLOSS)) {
+        if (world.isOrHasRecursiveLocation(from, SCHLOSS_VORHALLE) &&
+                world.isOrHasRecursiveLocation(toAndPrinzLocation, DRAUSSEN_VOR_DEM_SCHLOSS)) {
             return prinzFaehrtMitWagenDavon();
         }
 
@@ -305,7 +305,7 @@ public class FroschprinzReactionsComp
     @Contract("null, _ -> !null")
     private AvTimeSpan onGoldeneKugelEnter(@Nullable final ILocationGO from,
                                            final ILocationGO to) {
-        if (!gos.isOrHasRecursiveLocation(from, SPIELER_CHARAKTER)) {
+        if (!world.isOrHasRecursiveLocation(from, SPIELER_CHARAKTER)) {
             // auch nicht vom Spieler oder aus einer Tasche des Spielers o.Ä.
 
             return noTime();
@@ -357,7 +357,7 @@ public class FroschprinzReactionsComp
                 from == null ||
                         // oder der Froschprinz kam zumindest nicht vom Spieler, auch nicht aus
                         // einer Tasche o.Ä.
-                        !gos.isOrHasRecursiveLocation(from, SPIELER_CHARAKTER)) {
+                        !world.isOrHasRecursiveLocation(from, SPIELER_CHARAKTER)) {
             return noTime();
         }
 
@@ -609,7 +609,7 @@ public class FroschprinzReactionsComp
     }
 
     private boolean schlossfestHatBegonnen() {
-        return ((IHasStateGO) gos.load(SCHLOSSFEST))
+        return ((IHasStateGO) world.load(SCHLOSSFEST))
                 .stateComp().hasState(BEGONNEN);
     }
 }

@@ -5,7 +5,7 @@ import javax.annotation.Nonnull;
 import de.nb.aventiure2.data.database.AvDatabase;
 import de.nb.aventiure2.data.world.base.GameObject;
 import de.nb.aventiure2.data.world.base.GameObjectId;
-import de.nb.aventiure2.data.world.gameobjects.GameObjectService;
+import de.nb.aventiure2.data.world.gameobject.World;
 import de.nb.aventiure2.data.world.syscomp.spatialconnection.AbstractSpatialConnectionComp;
 import de.nb.aventiure2.data.world.syscomp.spatialconnection.ISpatiallyConnectedGO;
 import de.nb.aventiure2.data.world.syscomp.spatialconnection.impl.ImWaldBeimBrunnenConnectionComp;
@@ -13,29 +13,29 @@ import de.nb.aventiure2.data.world.syscomp.storingplace.ILocationGO;
 import de.nb.aventiure2.data.world.syscomp.storingplace.StoringPlaceComp;
 import de.nb.aventiure2.data.world.syscomp.storingplace.StoringPlaceType;
 
-import static de.nb.aventiure2.data.world.gameobjects.GameObjectService.IM_WALD_BEIM_BRUNNEN;
+import static de.nb.aventiure2.data.world.gameobject.World.IM_WALD_BEIM_BRUNNEN;
 
 /**
  * A factory for special {@link GameObject}s: Rooms in the world.
  */
 public class RoomFactory {
     private final AvDatabase db;
-    private final GameObjectService gos;
+    private final World world;
 
     public RoomFactory(final AvDatabase db,
-                       final GameObjectService gos) {
+                       final World world) {
         this.db = db;
-        this.gos = gos;
+        this.world = world;
     }
 
     public GameObject createImWaldBeimBrunnen() {
         final StoringPlaceComp storingPlaceComp = new StoringPlaceComp(IM_WALD_BEIM_BRUNNEN, db,
-                gos,
+                world,
                 StoringPlaceType.GRAS_NEBEN_DEM_BRUNNEN,
                 false);
 
         return new Room(IM_WALD_BEIM_BRUNNEN, storingPlaceComp,
-                new ImWaldBeimBrunnenConnectionComp(db, gos, storingPlaceComp));
+                new ImWaldBeimBrunnenConnectionComp(db, world, storingPlaceComp));
     }
 
     public GameObject create(final GameObjectId id,
@@ -47,7 +47,7 @@ public class RoomFactory {
     public GameObject create(final GameObjectId id, final StoringPlaceType locationMode,
                              final boolean dauerhaftBeleuchtet,
                              final AbstractSpatialConnectionComp spatialConnectionComp) {
-        return new Room(id, new StoringPlaceComp(id, db, gos, locationMode, dauerhaftBeleuchtet),
+        return new Room(id, new StoringPlaceComp(id, db, world, locationMode, dauerhaftBeleuchtet),
                 spatialConnectionComp);
     }
 

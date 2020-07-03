@@ -9,7 +9,7 @@ import java.util.List;
 import de.nb.aventiure2.data.database.AvDatabase;
 import de.nb.aventiure2.data.storystate.StoryState;
 import de.nb.aventiure2.data.world.base.GameObjectId;
-import de.nb.aventiure2.data.world.gameobjects.GameObjectService;
+import de.nb.aventiure2.data.world.gameobject.World;
 import de.nb.aventiure2.data.world.syscomp.description.IDescribableGO;
 import de.nb.aventiure2.data.world.syscomp.description.impl.FroschprinzDescriptionComp;
 import de.nb.aventiure2.data.world.syscomp.location.ILocatableGO;
@@ -21,9 +21,9 @@ import de.nb.aventiure2.german.base.Indefinitpronomen;
 import de.nb.aventiure2.german.base.Nominalphrase;
 import de.nb.aventiure2.german.base.SubstantivischePhrase;
 
-import static de.nb.aventiure2.data.world.gameobjects.GameObjectService.FROSCHPRINZ;
-import static de.nb.aventiure2.data.world.gameobjects.GameObjectService.IM_WALD_BEIM_BRUNNEN;
-import static de.nb.aventiure2.data.world.gameobjects.GameObjectService.UNTEN_IM_BRUNNEN;
+import static de.nb.aventiure2.data.world.gameobject.World.FROSCHPRINZ;
+import static de.nb.aventiure2.data.world.gameobject.World.IM_WALD_BEIM_BRUNNEN;
+import static de.nb.aventiure2.data.world.gameobject.World.UNTEN_IM_BRUNNEN;
 import static de.nb.aventiure2.data.world.syscomp.feelings.Mood.VOLLER_FREUDE;
 import static de.nb.aventiure2.data.world.syscomp.state.GameObjectState.AUF_DEM_WEG_ZUM_BRUNNEN_UM_DINGE_HERAUSZUHOLEN;
 import static de.nb.aventiure2.data.world.syscomp.state.GameObjectState.ERWARTET_VON_SC_EINLOESUNG_SEINES_VERSPRECHENS;
@@ -52,7 +52,7 @@ import static de.nb.aventiure2.german.praedikat.VerbSubjObj.IGNORIEREN;
 import static de.nb.aventiure2.german.praedikat.VerbSubjObj.REDEN;
 
 /**
- * Component for den {@link GameObjectService#FROSCHPRINZ}en: Der Spieler
+ * Component for den {@link World#FROSCHPRINZ}en: Der Spieler
  * kann mit dem Froschprinzen im Gespräch sein (dann auch umgekehrt).
  * <p>
  * Es gibt {@link SCTalkAction}s, also mögliche Redebeiträge, die der
@@ -64,10 +64,10 @@ public class FroschprinzTalkingComp extends AbstractTalkingComp {
     private final StateComp stateComp;
 
     public FroschprinzTalkingComp(final AvDatabase db,
-                                  final GameObjectService gos,
+                                  final World world,
                                   final FroschprinzDescriptionComp descriptionComp,
                                   final StateComp stateComp) {
-        super(FROSCHPRINZ, db, gos);
+        super(FROSCHPRINZ, db, world);
         this.descriptionComp = descriptionComp;
         this.stateComp = stateComp;
     }
@@ -238,7 +238,7 @@ public class FroschprinzTalkingComp extends AbstractTalkingComp {
                         .undWartest()
                         .dann());
 
-        gos.loadSC().talkingComp().setTalkingTo(FROSCHPRINZ);
+        world.loadSC().talkingComp().setTalkingTo(FROSCHPRINZ);
 
         timeElapsed = timeElapsed.plus(inDenBrunnenGefallenErklaerung());
         return timeElapsed.plus(herausholenAngebot());
@@ -248,7 +248,7 @@ public class FroschprinzTalkingComp extends AbstractTalkingComp {
         final ImmutableList<? extends IDescribableGO> objectsInDenBrunnenGefallen =
                 getObjectsInDenBrunnenGefallen();
 
-        if (gos.loadSC().memoryComp().getLastAction().is(Action.Type.HEULEN)) {
+        if (world.loadSC().memoryComp().getLastAction().is(Action.Type.HEULEN)) {
             final SubstantivischePhrase objectsDesc =
                     getDescriptionSingleOrCollective(objectsInDenBrunnenGefallen);
 
@@ -282,7 +282,7 @@ public class FroschprinzTalkingComp extends AbstractTalkingComp {
                 getAkkShort(objectsInDenBrunnenGefallen);
 
         final String ratschlag;
-        if (gos.loadSC().memoryComp().getLastAction().is(Action.Type.HEULEN)) {
+        if (world.loadSC().memoryComp().getLastAction().is(Action.Type.HEULEN)) {
             ratschlag = "weine nicht";
         } else {
             ratschlag = "sorge dich nicht";
@@ -316,7 +316,7 @@ public class FroschprinzTalkingComp extends AbstractTalkingComp {
     // -------------------------------------------------------------------------------
 
     private AvTimeSpan froschHatNachBelohnungGefragt_AngeboteMachen() {
-        gos.loadSC().talkingComp().setTalkingTo(FROSCHPRINZ);
+        world.loadSC().talkingComp().setTalkingTo(FROSCHPRINZ);
 
         final AvTimeSpan timeSpan = n.add(neuerSatz(SENTENCE,
                 "„Was du haben willst, lieber Frosch“, sagst du, „meine Kleider, "
@@ -347,7 +347,7 @@ public class FroschprinzTalkingComp extends AbstractTalkingComp {
     }
 
     private AvTimeSpan froschHatNachBelohnungGefragt_ReEntry() {
-        gos.loadSC().talkingComp().setTalkingTo(getGameObjectId());
+        world.loadSC().talkingComp().setTalkingTo(getGameObjectId());
 
         AvTimeSpan timeSpan = n.add(
                 neuerSatz(PARAGRAPH, "„Frosch“, sprichst du ihn an, „steht dein Angebot noch?“",
@@ -449,7 +449,7 @@ public class FroschprinzTalkingComp extends AbstractTalkingComp {
                 "Der Frosch, als er die Zusage erhalten hat,",
                 noTime()));
 
-        @Nullable final GameObjectId scLocationId = gos.loadSC().locationComp().getLocationId();
+        @Nullable final GameObjectId scLocationId = world.loadSC().locationComp().getLocationId();
         if (!IM_WALD_BEIM_BRUNNEN.equals(scLocationId)) {
             unsetTalkingTo();
 
@@ -477,7 +477,7 @@ public class FroschprinzTalkingComp extends AbstractTalkingComp {
 
         stateComp.setState(ERWARTET_VON_SC_EINLOESUNG_SEINES_VERSPRECHENS);
 
-        gos.loadSC().feelingsComp().setMoodMin(VOLLER_FREUDE);
+        world.loadSC().feelingsComp().setMoodMin(VOLLER_FREUDE);
 
         AvTimeSpan timeElapsed = n.add(satzanschluss("taucht seinen Kopf "
                         + "unter, sinkt hinab und über ein Weilchen kommt er wieder herauf gerudert, "
@@ -595,7 +595,7 @@ public class FroschprinzTalkingComp extends AbstractTalkingComp {
     ImmutableList<LOC_DESC> getObjectsInDenBrunnenGefallen() {
         // STORY Es könnten auch Gegenstände unten im Brunnen
         //  sein, von denen der Spieler gar nichts weiß - hier filtern nach Known durch den SC.
-        return gos.loadDescribableNonLivingMovableRecursiveInventory(UNTEN_IM_BRUNNEN);
+        return world.loadDescribableNonLivingMovableRecursiveInventory(UNTEN_IM_BRUNNEN);
     }
 
     /**
@@ -618,6 +618,6 @@ public class FroschprinzTalkingComp extends AbstractTalkingComp {
      */
     private Nominalphrase getFroschprinzDescription(final boolean shortIfKnown) {
         return descriptionComp.getDescription(
-                gos.loadSC().memoryComp().isKnown(FROSCHPRINZ), shortIfKnown);
+                world.loadSC().memoryComp().isKnown(FROSCHPRINZ), shortIfKnown);
     }
 }

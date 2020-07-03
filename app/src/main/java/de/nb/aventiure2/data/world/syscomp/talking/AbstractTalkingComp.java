@@ -13,12 +13,12 @@ import de.nb.aventiure2.data.storystate.StoryStateDao;
 import de.nb.aventiure2.data.world.base.AbstractStatefulComponent;
 import de.nb.aventiure2.data.world.base.GameObject;
 import de.nb.aventiure2.data.world.base.GameObjectId;
-import de.nb.aventiure2.data.world.gameobjects.GameObjectService;
+import de.nb.aventiure2.data.world.gameobject.World;
 import de.nb.aventiure2.data.world.syscomp.description.IDescribableGO;
 import de.nb.aventiure2.data.world.syscomp.talking.impl.SCTalkAction;
 import de.nb.aventiure2.german.base.Nominalphrase;
 
-import static de.nb.aventiure2.data.world.gameobjects.GameObjectService.SPIELER_CHARAKTER;
+import static de.nb.aventiure2.data.world.gameobject.World.SPIELER_CHARAKTER;
 
 /**
  * Component for a {@link GameObject}: Das Game Object kann mit einem anderen
@@ -30,7 +30,7 @@ import static de.nb.aventiure2.data.world.gameobjects.GameObjectService.SPIELER_
  */
 public abstract class AbstractTalkingComp extends AbstractStatefulComponent<TalkingPCD> {
     protected final AvDatabase db;
-    protected final GameObjectService gos;
+    protected final World world;
 
     protected final StoryStateDao n;
 
@@ -39,10 +39,10 @@ public abstract class AbstractTalkingComp extends AbstractStatefulComponent<Talk
      */
     public AbstractTalkingComp(final GameObjectId gameObjectId,
                                final AvDatabase db,
-                               final GameObjectService gos) {
+                               final World world) {
         super(gameObjectId, db.talkingDao());
         this.db = db;
-        this.gos = gos;
+        this.world = world;
 
         n = db.storyStateDao();
     }
@@ -75,7 +75,7 @@ public abstract class AbstractTalkingComp extends AbstractStatefulComponent<Talk
             return;
         }
 
-        setTalkingTo((ITalkerGO) gos.load(talkingToId));
+        setTalkingTo((ITalkerGO) world.load(talkingToId));
     }
 
     /**
@@ -98,7 +98,7 @@ public abstract class AbstractTalkingComp extends AbstractStatefulComponent<Talk
      */
     protected Nominalphrase getDescription(final IDescribableGO gameObject,
                                            final boolean shortIfKnown) {
-        return gos.getPOVDescription(
+        return world.getPOVDescription(
                 SPIELER_CHARAKTER, gameObject, shortIfKnown);
     }
 
@@ -151,7 +151,7 @@ public abstract class AbstractTalkingComp extends AbstractStatefulComponent<Talk
             return null;
         }
 
-        return (ITalkerGO) gos.load(talkingToId);
+        return (ITalkerGO) world.load(talkingToId);
     }
 
     @Nullable

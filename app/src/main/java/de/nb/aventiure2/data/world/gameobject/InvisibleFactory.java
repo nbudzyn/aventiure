@@ -1,4 +1,4 @@
-package de.nb.aventiure2.data.world.gameobjects;
+package de.nb.aventiure2.data.world.gameobject;
 
 import javax.annotation.Nonnull;
 
@@ -10,8 +10,8 @@ import de.nb.aventiure2.data.world.syscomp.reaction.impl.TageszeitReactionsComp;
 import de.nb.aventiure2.data.world.syscomp.state.IHasStateGO;
 import de.nb.aventiure2.data.world.syscomp.state.StateComp;
 
-import static de.nb.aventiure2.data.world.gameobjects.GameObjectService.SCHLOSSFEST;
-import static de.nb.aventiure2.data.world.gameobjects.GameObjectService.TAGESZEIT;
+import static de.nb.aventiure2.data.world.gameobject.World.SCHLOSSFEST;
+import static de.nb.aventiure2.data.world.gameobject.World.TAGESZEIT;
 import static de.nb.aventiure2.data.world.syscomp.state.GameObjectState.BEGONNEN;
 import static de.nb.aventiure2.data.world.syscomp.state.GameObjectState.NOCH_NICHT_BEGONNEN;
 import static de.nb.aventiure2.data.world.syscomp.state.GameObjectStateList.sl;
@@ -22,29 +22,29 @@ import static de.nb.aventiure2.data.world.syscomp.state.GameObjectStateList.sl;
  */
 public class InvisibleFactory {
     private final AvDatabase db;
-    private final GameObjectService gos;
+    private final World world;
 
     public InvisibleFactory(final AvDatabase db,
-                            final GameObjectService gos) {
+                            final World world) {
         this.db = db;
-        this.gos = gos;
+        this.world = world;
     }
 
     public GameObject createTageszeit() {
-        return new Tageszeit(db, gos);
+        return new Tageszeit(db, world);
     }
 
     public GameObject createSchlossfest() {
-        return new Schlossfest(db, gos);
+        return new Schlossfest(db, world);
     }
 
     private static class Tageszeit extends GameObject implements IResponder {
         private final TageszeitReactionsComp reactionsComp;
 
-        public Tageszeit(final AvDatabase db, final GameObjectService gos) {
+        public Tageszeit(final AvDatabase db, final World world) {
             super(TAGESZEIT);
             // Jede Komponente muss registiert werden!
-            reactionsComp = addComponent(new TageszeitReactionsComp(db, gos));
+            reactionsComp = addComponent(new TageszeitReactionsComp(db, world));
         }
 
         @Nonnull
@@ -59,13 +59,13 @@ public class InvisibleFactory {
         private final StateComp stateComp;
         private final SchlossfestReactionsComp reactionsComp;
 
-        public Schlossfest(final AvDatabase db, final GameObjectService gos) {
+        public Schlossfest(final AvDatabase db, final World world) {
             super(SCHLOSSFEST);
 
             stateComp = addComponent(new StateComp(TAGESZEIT, db,
                     sl(NOCH_NICHT_BEGONNEN, BEGONNEN)));
             reactionsComp = addComponent(
-                    new SchlossfestReactionsComp(db, gos, stateComp));
+                    new SchlossfestReactionsComp(db, world, stateComp));
         }
 
         @Nonnull

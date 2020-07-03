@@ -8,7 +8,7 @@ import java.util.Collection;
 
 import de.nb.aventiure2.data.database.AvDatabase;
 import de.nb.aventiure2.data.storystate.StoryState;
-import de.nb.aventiure2.data.world.gameobjects.GameObjectService;
+import de.nb.aventiure2.data.world.gameobject.World;
 import de.nb.aventiure2.data.world.syscomp.feelings.Hunger;
 import de.nb.aventiure2.data.world.syscomp.location.ILocatableGO;
 import de.nb.aventiure2.data.world.syscomp.memory.Action;
@@ -17,13 +17,13 @@ import de.nb.aventiure2.data.world.syscomp.storingplace.ILocationGO;
 import de.nb.aventiure2.data.world.time.AvTimeSpan;
 import de.nb.aventiure2.scaction.AbstractScAction;
 
-import static de.nb.aventiure2.data.world.gameobjects.GameObjectService.FROSCHPRINZ;
-import static de.nb.aventiure2.data.world.gameobjects.GameObjectService.SCHLOSSFEST;
-import static de.nb.aventiure2.data.world.gameobjects.GameObjectService.SCHLOSS_VORHALLE;
-import static de.nb.aventiure2.data.world.gameobjects.GameObjectService.SCHLOSS_VORHALLE_AM_TISCH_BEIM_FEST;
-import static de.nb.aventiure2.data.world.gameobjects.GameObjectService.SCHLOSS_VORHALLE_LANGER_TISCH_BEIM_FEST;
-import static de.nb.aventiure2.data.world.gameobjects.GameObjectService.SPIELER_CHARAKTER;
-import static de.nb.aventiure2.data.world.gameobjects.GameObjectService.WALDWILDNIS_HINTER_DEM_BRUNNEN;
+import static de.nb.aventiure2.data.world.gameobject.World.FROSCHPRINZ;
+import static de.nb.aventiure2.data.world.gameobject.World.SCHLOSSFEST;
+import static de.nb.aventiure2.data.world.gameobject.World.SCHLOSS_VORHALLE;
+import static de.nb.aventiure2.data.world.gameobject.World.SCHLOSS_VORHALLE_AM_TISCH_BEIM_FEST;
+import static de.nb.aventiure2.data.world.gameobject.World.SCHLOSS_VORHALLE_LANGER_TISCH_BEIM_FEST;
+import static de.nb.aventiure2.data.world.gameobject.World.SPIELER_CHARAKTER;
+import static de.nb.aventiure2.data.world.gameobject.World.WALDWILDNIS_HINTER_DEM_BRUNNEN;
 import static de.nb.aventiure2.data.world.syscomp.feelings.Hunger.SATT;
 import static de.nb.aventiure2.data.world.syscomp.feelings.Mood.ZUFRIEDEN;
 import static de.nb.aventiure2.data.world.syscomp.state.GameObjectState.BEGONNEN;
@@ -46,11 +46,11 @@ public class EssenAction extends AbstractScAction {
 
     public static Collection<EssenAction> buildActions(
             final AvDatabase db,
-            final GameObjectService gos,
+            final World world,
             final StoryState initialStoryState, final ILocationGO room) {
         final ImmutableList.Builder<EssenAction> res = ImmutableList.builder();
-        if (essenMoeglich(db, gos, room)) {
-            res.add(new EssenAction(db, gos, initialStoryState, room));
+        if (essenMoeglich(db, world, room)) {
+            res.add(new EssenAction(db, world, initialStoryState, room));
         }
 
         return res.build();
@@ -58,16 +58,16 @@ public class EssenAction extends AbstractScAction {
 
     private static <LOC_STAT extends ILocatableGO & IHasStateGO>
     boolean essenMoeglich(final AvDatabase db,
-                          final GameObjectService gos,
+                          final World world,
                           final ILocationGO room) {
-        if (gos.loadSC().memoryComp().getLastAction().is(Action.Type.ESSEN)) {
+        if (world.loadSC().memoryComp().getLastAction().is(Action.Type.ESSEN)) {
             // TODO Es könnten sich verschiedene essbare Dinge am selben Ort befinden!
             //  Das zweite sollte man durchaus essen können, wenn man schon das
             //  erste gegessen hat!
             return false;
         }
 
-        final LOC_STAT froschprinz = (LOC_STAT) gos.load(FROSCHPRINZ);
+        final LOC_STAT froschprinz = (LOC_STAT) world.load(FROSCHPRINZ);
         if (room.is(SCHLOSS_VORHALLE_AM_TISCH_BEIM_FEST) &&
                 froschprinz.locationComp().hasRecursiveLocation(SPIELER_CHARAKTER) &&
                 froschprinz.stateComp().hasState(HAT_HOCHHEBEN_GEFORDERT)) {
@@ -75,13 +75,13 @@ public class EssenAction extends AbstractScAction {
             return false;
         }
 
-        return raumEnthaeltEtwasEssbares(gos, room);
+        return raumEnthaeltEtwasEssbares(world, room);
     }
 
-    private static boolean raumEnthaeltEtwasEssbares(final GameObjectService gos,
+    private static boolean raumEnthaeltEtwasEssbares(final World world,
                                                      final ILocationGO room) {
         if (room.is(SCHLOSS_VORHALLE_AM_TISCH_BEIM_FEST) &&
-                ((IHasStateGO) gos.load(SCHLOSSFEST)).stateComp().hasState(BEGONNEN)) {
+                ((IHasStateGO) world.load(SCHLOSSFEST)).stateComp().hasState(BEGONNEN)) {
             return true;
         }
 
@@ -95,10 +95,10 @@ public class EssenAction extends AbstractScAction {
     }
 
     private EssenAction(final AvDatabase db,
-                        final GameObjectService gos,
+                        final World world,
                         final StoryState initialStoryState,
                         final ILocationGO room) {
-        super(db, gos, initialStoryState);
+        super(db, world, initialStoryState);
         this.room = room;
     }
 
@@ -134,14 +134,14 @@ public class EssenAction extends AbstractScAction {
 
         sc.memoryComp().setLastAction(buildMemorizedAction());
 
-        timeElapsed = timeElapsed.plus(gos.narrateAndDoReactions()
+        timeElapsed = timeElapsed.plus(world.narrateAndDoReactions()
                 .onEssen(sc));
 
         return timeElapsed;
     }
 
     private <FROSCHPRINZ extends ILocatableGO & IHasStateGO> AvTimeSpan narrateAndDoSchlossfest() {
-        final FROSCHPRINZ froschprinz = (FROSCHPRINZ) gos.load(FROSCHPRINZ);
+        final FROSCHPRINZ froschprinz = (FROSCHPRINZ) world.load(FROSCHPRINZ);
         if (froschprinz.locationComp()
                 .hasRecursiveLocation(SCHLOSS_VORHALLE_LANGER_TISCH_BEIM_FEST) &&
                 froschprinz.stateComp().hasState(BEIM_SCHLOSSFEST_AUF_TISCH_WILL_ZUSAMMEN_ESSEN)) {
@@ -180,7 +180,7 @@ public class EssenAction extends AbstractScAction {
                         + "sich und schickt sich an, die Halle zu verlassen",
                 secs(10))));
 
-        gos.loadSC().feelingsComp().setMoodMin(ZUFRIEDEN);
+        world.loadSC().feelingsComp().setMoodMin(ZUFRIEDEN);
         froschprinz.stateComp().setState(ZURUECKVERWANDELT_IN_VORHALLE);
         froschprinz.locationComp().narrateAndSetLocation(SCHLOSS_VORHALLE);
 
@@ -190,7 +190,7 @@ public class EssenAction extends AbstractScAction {
     private AvTimeSpan narrateAndDoSchlossfestHungrig() {
         saveSatt();
 
-        gos.loadSC().feelingsComp().setMoodMin(ZUFRIEDEN);
+        world.loadSC().feelingsComp().setMoodMin(ZUFRIEDEN);
 
         return n.addAlt(
                 du(PARAGRAPH,

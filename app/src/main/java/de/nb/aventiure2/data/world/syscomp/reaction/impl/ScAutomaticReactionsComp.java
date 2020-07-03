@@ -3,14 +3,14 @@ package de.nb.aventiure2.data.world.syscomp.reaction.impl;
 import androidx.annotation.NonNull;
 
 import de.nb.aventiure2.data.database.AvDatabase;
-import de.nb.aventiure2.data.world.gameobjects.GameObjectService;
+import de.nb.aventiure2.data.world.gameobject.World;
 import de.nb.aventiure2.data.world.syscomp.feelings.FeelingsComp;
 import de.nb.aventiure2.data.world.syscomp.reaction.AbstractReactionsComp;
 import de.nb.aventiure2.data.world.syscomp.reaction.interfaces.ITimePassedReactions;
 import de.nb.aventiure2.data.world.time.AvDateTime;
 import de.nb.aventiure2.data.world.time.AvTimeSpan;
 
-import static de.nb.aventiure2.data.world.gameobjects.GameObjectService.SPIELER_CHARAKTER;
+import static de.nb.aventiure2.data.world.gameobject.World.SPIELER_CHARAKTER;
 import static de.nb.aventiure2.data.world.syscomp.feelings.Hunger.HUNGRIG;
 import static de.nb.aventiure2.data.world.time.AvTimeSpan.noTime;
 import static de.nb.aventiure2.german.base.AllgDescription.neuerSatz;
@@ -27,9 +27,9 @@ public class ScAutomaticReactionsComp
         implements ITimePassedReactions {
     private final FeelingsComp feelingsComp;
 
-    public ScAutomaticReactionsComp(final AvDatabase db, final GameObjectService gos,
+    public ScAutomaticReactionsComp(final AvDatabase db, final World world,
                                     final FeelingsComp feelingsComp) {
-        super(SPIELER_CHARAKTER, db, gos);
+        super(SPIELER_CHARAKTER, db, world);
         this.feelingsComp = feelingsComp;
     }
 

@@ -8,14 +8,14 @@ import javax.annotation.ParametersAreNonnullByDefault;
 
 import de.nb.aventiure2.data.database.AvDatabase;
 import de.nb.aventiure2.data.world.base.GameObjectId;
-import de.nb.aventiure2.data.world.gameobjects.GameObjectService;
+import de.nb.aventiure2.data.world.gameobject.World;
 import de.nb.aventiure2.data.world.syscomp.memory.Known;
 import de.nb.aventiure2.data.world.syscomp.spatialconnection.AbstractSpatialConnectionComp;
 import de.nb.aventiure2.data.world.syscomp.storingplace.Lichtverhaeltnisse;
 
 /**
  * An implementation of {@link AbstractSpatialConnectionComp}
- * for the {@link GameObjectService#SCHLOSS_VORHALLE_AM_TISCH_BEIM_FEST}
+ * for the {@link World#SCHLOSS_VORHALLE_AM_TISCH_BEIM_FEST}
  * room.
  */
 @ParametersAreNonnullByDefault
@@ -25,17 +25,17 @@ class SimpleConnectionComp extends AbstractSpatialConnectionComp {
     SimpleConnectionComp(
             final GameObjectId gameObjectId,
             final AvDatabase db,
-            final GameObjectService gos,
+            final World world,
             final SpatialConnection... connections) {
-        this(gameObjectId, db, gos, ImmutableList.copyOf(connections));
+        this(gameObjectId, db, world, ImmutableList.copyOf(connections));
     }
 
     public SimpleConnectionComp(
             final GameObjectId gameObjectId,
             final AvDatabase db,
-            final GameObjectService gos,
+            final World world,
             final Iterable<SpatialConnection> connections) {
-        super(gameObjectId, db, gos);
+        super(gameObjectId, db, world);
         this.connections = ImmutableList.copyOf(connections);
     }
 

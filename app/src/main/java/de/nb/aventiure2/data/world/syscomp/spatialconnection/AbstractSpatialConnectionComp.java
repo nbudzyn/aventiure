@@ -10,7 +10,7 @@ import de.nb.aventiure2.data.database.AvDatabase;
 import de.nb.aventiure2.data.world.base.AbstractStatelessComponent;
 import de.nb.aventiure2.data.world.base.GameObject;
 import de.nb.aventiure2.data.world.base.GameObjectId;
-import de.nb.aventiure2.data.world.gameobjects.GameObjectService;
+import de.nb.aventiure2.data.world.gameobject.World;
 import de.nb.aventiure2.data.world.syscomp.memory.Known;
 import de.nb.aventiure2.data.world.syscomp.spatialconnection.impl.SpatialConnection;
 import de.nb.aventiure2.data.world.syscomp.storingplace.Lichtverhaeltnisse;
@@ -23,14 +23,14 @@ import de.nb.aventiure2.data.world.syscomp.storingplace.Lichtverhaeltnisse;
 @ParametersAreNonnullByDefault
 public abstract class AbstractSpatialConnectionComp extends AbstractStatelessComponent {
     protected final AvDatabase db;
-    protected final GameObjectService gos;
+    protected final World world;
 
     public AbstractSpatialConnectionComp(final GameObjectId id,
                                          final AvDatabase db,
-                                         final GameObjectService gos) {
+                                         final World world) {
         super(id);
         this.db = db;
-        this.gos = gos;
+        this.world = world;
     }
 
     @NonNull

@@ -4,18 +4,18 @@ import androidx.annotation.Nullable;
 
 import de.nb.aventiure2.data.database.AvDatabase;
 import de.nb.aventiure2.data.world.base.IGameObject;
-import de.nb.aventiure2.data.world.gameobjects.GameObjectService;
-import de.nb.aventiure2.data.world.gameobjects.player.SpielerCharakter;
+import de.nb.aventiure2.data.world.gameobject.World;
+import de.nb.aventiure2.data.world.gameobject.player.SpielerCharakter;
 import de.nb.aventiure2.data.world.syscomp.reaction.AbstractReactionsComp;
 import de.nb.aventiure2.data.world.syscomp.reaction.interfaces.ITimePassedReactions;
 import de.nb.aventiure2.data.world.syscomp.state.StateComp;
 import de.nb.aventiure2.data.world.time.AvDateTime;
 import de.nb.aventiure2.data.world.time.AvTimeSpan;
 
-import static de.nb.aventiure2.data.world.gameobjects.GameObjectService.COUNTER_ID_VOR_DEM_SCHLOSS_SCHLOSSFEST_KNOWN;
-import static de.nb.aventiure2.data.world.gameobjects.GameObjectService.DRAUSSEN_VOR_DEM_SCHLOSS;
-import static de.nb.aventiure2.data.world.gameobjects.GameObjectService.SCHLOSSFEST;
-import static de.nb.aventiure2.data.world.gameobjects.GameObjectService.SCHLOSSFEST_BEGINN_DATE_TIME;
+import static de.nb.aventiure2.data.world.gameobject.World.COUNTER_ID_VOR_DEM_SCHLOSS_SCHLOSSFEST_KNOWN;
+import static de.nb.aventiure2.data.world.gameobject.World.DRAUSSEN_VOR_DEM_SCHLOSS;
+import static de.nb.aventiure2.data.world.gameobject.World.SCHLOSSFEST;
+import static de.nb.aventiure2.data.world.gameobject.World.SCHLOSSFEST_BEGINN_DATE_TIME;
 import static de.nb.aventiure2.data.world.syscomp.feelings.Mood.NEUTRAL;
 import static de.nb.aventiure2.data.world.syscomp.state.GameObjectState.BEGONNEN;
 import static de.nb.aventiure2.data.world.time.AvTimeSpan.mins;
@@ -32,9 +32,9 @@ public class SchlossfestReactionsComp
         implements ITimePassedReactions {
     private final StateComp stateComp;
 
-    public SchlossfestReactionsComp(final AvDatabase db, final GameObjectService gos,
+    public SchlossfestReactionsComp(final AvDatabase db, final World world,
                                     final StateComp stateComp) {
-        super(SCHLOSSFEST, db, gos);
+        super(SCHLOSSFEST, db, world);
         this.stateComp = stateComp;
     }
 

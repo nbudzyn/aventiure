@@ -25,7 +25,7 @@ import de.nb.aventiure2.data.storystate.StoryStateDao;
 import de.nb.aventiure2.data.world.base.GameObjectIdConverters;
 import de.nb.aventiure2.data.world.counter.Counter;
 import de.nb.aventiure2.data.world.counter.CounterDao;
-import de.nb.aventiure2.data.world.gameobjects.GameObjectService;
+import de.nb.aventiure2.data.world.gameobject.World;
 import de.nb.aventiure2.data.world.syscomp.description.IDescribableGO;
 import de.nb.aventiure2.data.world.syscomp.feelings.FeelingsDao;
 import de.nb.aventiure2.data.world.syscomp.feelings.FeelingsPCD;
@@ -49,7 +49,7 @@ import de.nb.aventiure2.data.world.time.AvNowDao;
 import de.nb.aventiure2.german.base.StructuralElement;
 
 import static de.nb.aventiure2.data.storystate.StoryStateBuilder.t;
-import static de.nb.aventiure2.data.world.gameobjects.GameObjectService.GOLDENE_KUGEL;
+import static de.nb.aventiure2.data.world.gameobject.World.GOLDENE_KUGEL;
 import static de.nb.aventiure2.data.world.time.AvTime.oClock;
 
 @Database(entities = {
@@ -121,11 +121,11 @@ public abstract class AvDatabase extends RoomDatabase {
                         INSTANCE.nowDao().setNow(
                                 1, oClock(14, 30));
 
-                        final GameObjectService gos = GameObjectService.getInstance(INSTANCE);
-                        gos.saveAllInitialState();
+                        final World world = World.getInstance(INSTANCE);
+                        world.saveAllInitialState();
 
                         // Save initial state for all game objects
-                        INSTANCE.storyStateDao().add(buildInitialStoryState(gos));
+                        INSTANCE.storyStateDao().add(buildInitialStoryState(world));
                     }));
         }
     };
@@ -148,7 +148,7 @@ public abstract class AvDatabase extends RoomDatabase {
     /**
      * @return Something similar to <code>Du befindest dich in einem Schloss. Hier liegt eine goldene Kugel.</code>
      */
-    private static StoryStateBuilder buildInitialStoryState(final GameObjectService gos) {
+    private static StoryStateBuilder buildInitialStoryState(final World world) {
         final StringBuilder res = new StringBuilder();
 
         res.append(
@@ -157,7 +157,7 @@ public abstract class AvDatabase extends RoomDatabase {
                         "Sie beginnt im königlichen Schloss, in einer prächtigen "
                         + "Vorhalle, Marmor und Brokat überall.\n");
         final List<IDescribableGO> objectsInRoom = ImmutableList.of(
-                (IDescribableGO) gos.load(GOLDENE_KUGEL));
+                (IDescribableGO) world.load(GOLDENE_KUGEL));
         res.append(buildObjectsInRoomDescription(objectsInRoom));
 
         return t(StructuralElement.WORD, res.toString());

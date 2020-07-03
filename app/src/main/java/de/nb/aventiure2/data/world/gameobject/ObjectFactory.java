@@ -1,4 +1,4 @@
-package de.nb.aventiure2.data.world.gameobjects;
+package de.nb.aventiure2.data.world.gameobject;
 
 import androidx.annotation.NonNull;
 
@@ -26,12 +26,12 @@ import static de.nb.aventiure2.german.base.Nominalphrase.np;
  */
 public class ObjectFactory {
     private final AvDatabase db;
-    private final GameObjectService gos;
+    private final World world;
 
     ObjectFactory(final AvDatabase db,
-                  final GameObjectService gos) {
+                  final World world) {
         this.db = db;
-        this.gos = gos;
+        this.world = world;
     }
 
     /**
@@ -79,7 +79,7 @@ public class ObjectFactory {
         return new SimpleObject(id,
                 new SimpleDescriptionComp(id, descriptionAtFirstSight, normalDescriptionWhenKnown,
                         shortDescriptionWhenKnown),
-                new LocationComp(id, db, gos, initialLocationId, initialLastLocationId, movable));
+                new LocationComp(id, db, world, initialLocationId, initialLastLocationId, movable));
     }
 
     GameObject create(final GameObjectId id,
@@ -109,8 +109,8 @@ public class ObjectFactory {
         return new StoringPlaceObject(id,
                 new SimpleDescriptionComp(id, descriptionAtFirstSight, normalDescriptionWhenKnown,
                         shortDescriptionWhenKnown),
-                new LocationComp(id, db, gos, initialLocationId, initialLastLocationId, movable),
-                new StoringPlaceComp(id, db, gos, locationMode, dauerhaftBeleuchtet));
+                new LocationComp(id, db, world, initialLocationId, initialLastLocationId, movable),
+                new StoringPlaceComp(id, db, world, locationMode, dauerhaftBeleuchtet));
     }
 
     private static class SimpleObject extends GameObject

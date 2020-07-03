@@ -15,7 +15,7 @@ import de.nb.aventiure2.data.database.AvDatabase;
 import de.nb.aventiure2.data.storystate.StoryState;
 import de.nb.aventiure2.data.world.base.GameObject;
 import de.nb.aventiure2.data.world.base.IGameObject;
-import de.nb.aventiure2.data.world.gameobjects.GameObjectService;
+import de.nb.aventiure2.data.world.gameobject.World;
 import de.nb.aventiure2.data.world.syscomp.description.IDescribableGO;
 import de.nb.aventiure2.data.world.syscomp.feelings.Hunger;
 import de.nb.aventiure2.data.world.syscomp.feelings.Mood;
@@ -34,11 +34,11 @@ import de.nb.aventiure2.german.base.StructuralElement;
 import de.nb.aventiure2.scaction.AbstractScAction;
 
 import static com.google.common.collect.ImmutableList.builder;
-import static de.nb.aventiure2.data.world.gameobjects.GameObjectService.DRAUSSEN_VOR_DEM_SCHLOSS;
-import static de.nb.aventiure2.data.world.gameobjects.GameObjectService.SCHLOSSFEST;
-import static de.nb.aventiure2.data.world.gameobjects.GameObjectService.SCHLOSS_VORHALLE;
-import static de.nb.aventiure2.data.world.gameobjects.GameObjectService.SCHLOSS_VORHALLE_AM_TISCH_BEIM_FEST;
-import static de.nb.aventiure2.data.world.gameobjects.GameObjectService.WALDWILDNIS_HINTER_DEM_BRUNNEN;
+import static de.nb.aventiure2.data.world.gameobject.World.DRAUSSEN_VOR_DEM_SCHLOSS;
+import static de.nb.aventiure2.data.world.gameobject.World.SCHLOSSFEST;
+import static de.nb.aventiure2.data.world.gameobject.World.SCHLOSS_VORHALLE;
+import static de.nb.aventiure2.data.world.gameobject.World.SCHLOSS_VORHALLE_AM_TISCH_BEIM_FEST;
+import static de.nb.aventiure2.data.world.gameobject.World.WALDWILDNIS_HINTER_DEM_BRUNNEN;
 import static de.nb.aventiure2.data.world.syscomp.memory.Action.Type.BEWEGEN;
 import static de.nb.aventiure2.data.world.syscomp.state.GameObjectState.BEGONNEN;
 import static de.nb.aventiure2.data.world.syscomp.storingplace.Lichtverhaeltnisse.HELL;
@@ -88,7 +88,7 @@ public class BewegenAction<R extends ISpatiallyConnectedGO & ILocationGO,
     public static <R extends ISpatiallyConnectedGO & ILocationGO>
     ImmutableList<AbstractScAction> buildActions(
             final AvDatabase db,
-            final GameObjectService gos,
+            final World world,
             final StoryState currentStoryState,
             @NonNull final R room) {
         final ImmutableList.Builder<AbstractScAction> res = builder();
@@ -126,7 +126,7 @@ public class BewegenAction<R extends ISpatiallyConnectedGO & ILocationGO,
                 calcNumberOfPossibilities(spatialConnections.size());
 
         for (final SpatialConnection spatialConnection : spatialConnections) {
-            res.add(new BewegenAction<>(db, gos, currentStoryState, room,
+            res.add(new BewegenAction<>(db, world, currentStoryState, room,
                     spatialConnection, numberOfPossibilities));
         }
         return res.build();
@@ -149,12 +149,12 @@ public class BewegenAction<R extends ISpatiallyConnectedGO & ILocationGO,
      * Creates a new {@link BewegenAction}.
      */
     private BewegenAction(final AvDatabase db,
-                          final GameObjectService gos,
+                          final World world,
                           final StoryState initialStoryState,
                           @NonNull final R oldRoom,
                           @NonNull final SpatialConnection spatialConnection,
                           final NumberOfPossibilities numberOfPossibilities) {
-        super(db, gos, initialStoryState);
+        super(db, world, initialStoryState);
         this.numberOfPossibilities = numberOfPossibilities;
         this.oldRoom = oldRoom;
         this.spatialConnection = spatialConnection;
@@ -211,7 +211,7 @@ public class BewegenAction<R extends ISpatiallyConnectedGO & ILocationGO,
                 .getLichtverhaeltnisse());
 
         final ImmutableList<? extends IGameObject> directlyContainedNonMovables =
-                gos.loadDescribableNonMovableInventory(location.getId());
+                world.loadDescribableNonMovableInventory(location.getId());
         sc.memoryComp().upgradeKnown(directlyContainedNonMovables, minimalKnown);
 
         for (final IGameObject directlyContainedNonMovable : directlyContainedNonMovables) {
@@ -264,7 +264,7 @@ public class BewegenAction<R extends ISpatiallyConnectedGO & ILocationGO,
                         objectsDescription,
                         secs(numObjects * 2))
                         .phorikKandidat(
-                                gos.getDescription(lastObject,
+                                world.getDescription(lastObject,
                                         false),
                                 lastObject.getId()));
     }
@@ -295,7 +295,7 @@ public class BewegenAction<R extends ISpatiallyConnectedGO & ILocationGO,
 
     @NonNull
     private ILocationGO loadTo() {
-        return (ILocationGO) gos.load(spatialConnection.getTo());
+        return (ILocationGO) world.load(spatialConnection.getTo());
     }
 
     @NonNull
@@ -321,7 +321,7 @@ public class BewegenAction<R extends ISpatiallyConnectedGO & ILocationGO,
                 res = builder();
 
         final ImmutableList<LOC_DESC> movableObjectsInLocation =
-                gos.loadDescribableNonLivingMovableInventory(location.getId());
+                world.loadDescribableNonLivingMovableInventory(location.getId());
 
         if (!movableObjectsInLocation.isEmpty()) {
             res.add(new Pair<ILocationGO, List<LOC_DESC>>(
@@ -329,7 +329,7 @@ public class BewegenAction<R extends ISpatiallyConnectedGO & ILocationGO,
         }
 
         for (final ILocationGO directContainedLocations :
-                gos.loadDescribableNonLivingLocationInventory(location)) {
+                world.loadDescribableNonLivingLocationInventory(location)) {
             res.addAll(buildRecursiveLocationsAndDescribables(directContainedLocations));
         }
 
@@ -347,9 +347,9 @@ public class BewegenAction<R extends ISpatiallyConnectedGO & ILocationGO,
     }
 
     private boolean scWirdMitEssenKonfrontiert() {
-        final GameObject newRoom = gos.load(spatialConnection.getTo());
+        final GameObject newRoom = world.load(spatialConnection.getTo());
 
-        if (((IHasStateGO) gos.load(SCHLOSSFEST)).stateComp().hasState(BEGONNEN)) {
+        if (((IHasStateGO) world.load(SCHLOSSFEST)).stateComp().hasState(BEGONNEN)) {
             if (oldRoom.is(DRAUSSEN_VOR_DEM_SCHLOSS) &&
                     newRoom.is(SCHLOSS_VORHALLE)) {
                 return true;
@@ -583,7 +583,7 @@ public class BewegenAction<R extends ISpatiallyConnectedGO & ILocationGO,
     }
 
     private String getNom(final IDescribableGO d) {
-        return gos.getDescription(d, false).nom();
+        return world.getDescription(d, false).nom();
     }
 
     private void upgradeKnown(

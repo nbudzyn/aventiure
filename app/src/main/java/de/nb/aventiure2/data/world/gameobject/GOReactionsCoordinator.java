@@ -1,4 +1,4 @@
-package de.nb.aventiure2.data.world.gameobjects;
+package de.nb.aventiure2.data.world.gameobject;
 
 import java.util.List;
 import java.util.function.Function;
@@ -22,10 +22,10 @@ import de.nb.aventiure2.data.world.time.AvTimeSpan;
 import static de.nb.aventiure2.data.world.time.AvTimeSpan.noTime;
 
 public class GOReactionsCoordinator {
-    private final GameObjectService gos;
+    private final World world;
 
-    GOReactionsCoordinator(final GameObjectService gos) {
-        this.gos = gos;
+    GOReactionsCoordinator(final World world) {
+        this.world = world;
     }
 
     // IMovementReactions
@@ -38,7 +38,7 @@ public class GOReactionsCoordinator {
         //  Problem: Wenn der Dieb den Spieler bestiehlt o.Ä. kennt man den
         //  Aktor nicht. Aktor also separater Parameter?
         return onLeave(
-                (ILocatableGO) gos.load(locatableId),
+                (ILocatableGO) world.load(locatableId),
                 from, toId);
     }
 
@@ -49,7 +49,7 @@ public class GOReactionsCoordinator {
             return onLeave(locatable, from, (ILocationGO) null);
         }
 
-        final GameObject to = gos.load(toId);
+        final GameObject to = world.load(toId);
         if (!(to instanceof ILocationGO)) {
             return noTime();
         }
@@ -69,14 +69,14 @@ public class GOReactionsCoordinator {
                               @Nullable final ILocationGO from,
                               final GameObjectId toId) {
         return onEnter(
-                (ILocatableGO) gos.load(locatableId),
+                (ILocatableGO) world.load(locatableId),
                 from, toId);
     }
 
     public AvTimeSpan onEnter(final ILocatableGO locatable,
                               @Nullable final ILocationGO from,
                               final GameObjectId toId) {
-        final GameObject to = gos.load(toId);
+        final GameObject to = world.load(toId);
         if (!(to instanceof ILocationGO)) {
             return noTime();
         }
@@ -128,7 +128,7 @@ public class GOReactionsCoordinator {
             final Function<R, AvTimeSpan> narrateAndDoReaction) {
 
         final List<? extends IResponder> respondersToReaction =
-                gos.loadResponders(reactionsInterface);
+                world.loadResponders(reactionsInterface);
         // STORY: Natürlicher wäre "wachst erst nach einigen Stunden wieder auf" -
         //  Danach die Die Tageszeitreactions ("Es ist jetzt vollständig dunkel geworden"),
         //  dann die "Wann hast du eigentlich zuletzt etwas gegessen", dann

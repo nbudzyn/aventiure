@@ -11,7 +11,7 @@ import de.nb.aventiure2.data.world.base.AbstractStatefulComponent;
 import de.nb.aventiure2.data.world.base.GameObject;
 import de.nb.aventiure2.data.world.base.GameObjectId;
 import de.nb.aventiure2.data.world.base.IGameObject;
-import de.nb.aventiure2.data.world.gameobjects.GameObjectService;
+import de.nb.aventiure2.data.world.gameobject.World;
 import de.nb.aventiure2.data.world.syscomp.storingplace.ILocationGO;
 import de.nb.aventiure2.data.world.time.AvTimeSpan;
 
@@ -23,7 +23,7 @@ import static de.nb.aventiure2.data.world.time.AvTimeSpan.noTime;
  */
 public class LocationComp extends AbstractStatefulComponent<LocationPCD> {
     private final AvDatabase db;
-    private final GameObjectService gos;
+    private final World world;
     private final GameObjectId initialLocationId;
 
     @Nullable
@@ -41,13 +41,13 @@ public class LocationComp extends AbstractStatefulComponent<LocationPCD> {
      */
     public LocationComp(final GameObjectId gameObjectId,
                         final AvDatabase db,
-                        final GameObjectService gos,
+                        final World world,
                         final GameObjectId initialLocationId,
                         @Nullable final GameObjectId initialLastLocationId,
                         final boolean movable) {
         super(gameObjectId, db.locationDao());
         this.db = db;
-        this.gos = gos;
+        this.world = world;
         this.initialLocationId = initialLocationId;
         this.initialLastLocationId = initialLastLocationId;
         this.movable = movable;
@@ -97,7 +97,7 @@ public class LocationComp extends AbstractStatefulComponent<LocationPCD> {
             return noTime();
         }
 
-        return gos.narrateAndDoReactions()
+        return world.narrateAndDoReactions()
                 .onLeave(getGameObjectId(), from, newLocationId);
     }
 
@@ -105,7 +105,7 @@ public class LocationComp extends AbstractStatefulComponent<LocationPCD> {
         if (newLocationId == null) {
             return noTime();
         }
-        return gos.narrateAndDoReactions()
+        return world.narrateAndDoReactions()
                 .onEnter(getGameObjectId(), getLastLocation(), newLocationId);
     }
 
@@ -114,7 +114,7 @@ public class LocationComp extends AbstractStatefulComponent<LocationPCD> {
      * (z.B. denselben Raum).
      */
     public boolean hasSameUpperMostLocationAs(final @Nullable GameObjectId otherId) {
-        return hasSameUpperMostLocationAs(gos.load(otherId));
+        return hasSameUpperMostLocationAs(world.load(otherId));
     }
 
     /**
@@ -143,7 +143,7 @@ public class LocationComp extends AbstractStatefulComponent<LocationPCD> {
      * sich (ggf. rekusiv) an dieser Location befindet.
      */
     public boolean hasRecursiveLocation(final GameObjectId locationId) {
-        final GameObject location = gos.load(locationId);
+        final GameObject location = world.load(locationId);
 
         if (!(location instanceof ILocationGO)) {
             return false;
@@ -174,7 +174,7 @@ public class LocationComp extends AbstractStatefulComponent<LocationPCD> {
     }
 
     public boolean hasUpperMostLocation(final GameObjectId locationId) {
-        final GameObject location = gos.load(locationId);
+        final GameObject location = world.load(locationId);
 
         if (!(location instanceof ILocationGO)) {
             return false;
@@ -234,7 +234,7 @@ public class LocationComp extends AbstractStatefulComponent<LocationPCD> {
         //    Game Objects interagieren sowie deren LocationComps - aber nicht
         //    deren XYZComps).
         //  - Eine Komponente darf alles, was auch eine ScAction (z.B.) darf.
-        return (ILocationGO) gos.load(locationId);
+        return (ILocationGO) world.load(locationId);
     }
 
     @Nullable
@@ -279,7 +279,7 @@ public class LocationComp extends AbstractStatefulComponent<LocationPCD> {
             return null;
         }
 
-        return (ILocationGO) gos.load(lastLocationId);
+        return (ILocationGO) world.load(lastLocationId);
     }
 
     @Nullable

@@ -3,14 +3,14 @@ package de.nb.aventiure2.data.world.syscomp.reaction.impl;
 import androidx.annotation.NonNull;
 
 import de.nb.aventiure2.data.database.AvDatabase;
-import de.nb.aventiure2.data.world.gameobjects.GameObjectService;
+import de.nb.aventiure2.data.world.gameobject.World;
 import de.nb.aventiure2.data.world.syscomp.reaction.AbstractReactionsComp;
 import de.nb.aventiure2.data.world.syscomp.reaction.interfaces.ITimePassedReactions;
 import de.nb.aventiure2.data.world.time.AvDateTime;
 import de.nb.aventiure2.data.world.time.AvTimeSpan;
 import de.nb.aventiure2.data.world.time.Tageszeit;
 
-import static de.nb.aventiure2.data.world.gameobjects.GameObjectService.TAGESZEIT;
+import static de.nb.aventiure2.data.world.gameobject.World.TAGESZEIT;
 import static de.nb.aventiure2.data.world.time.AvTimeSpan.noTime;
 import static de.nb.aventiure2.german.base.AllgDescription.neuerSatz;
 import static de.nb.aventiure2.german.base.StructuralElement.PARAGRAPH;
@@ -22,8 +22,8 @@ import static de.nb.aventiure2.german.base.StructuralElement.SENTENCE;
 public class TageszeitReactionsComp
         extends AbstractReactionsComp
         implements ITimePassedReactions {
-    public TageszeitReactionsComp(final AvDatabase db, final GameObjectService gos) {
-        super(TAGESZEIT, db, gos);
+    public TageszeitReactionsComp(final AvDatabase db, final World world) {
+        super(TAGESZEIT, db, world);
     }
 
     @Override

@@ -11,7 +11,7 @@ import javax.annotation.ParametersAreNonnullByDefault;
 import de.nb.aventiure2.data.database.AvDatabase;
 import de.nb.aventiure2.data.storystate.StoryState;
 import de.nb.aventiure2.data.world.base.GameObjectId;
-import de.nb.aventiure2.data.world.gameobjects.GameObjectService;
+import de.nb.aventiure2.data.world.gameobject.World;
 import de.nb.aventiure2.data.world.syscomp.alive.ILivingBeingGO;
 import de.nb.aventiure2.data.world.syscomp.description.IDescribableGO;
 import de.nb.aventiure2.data.world.syscomp.feelings.Mood;
@@ -32,10 +32,10 @@ import de.nb.aventiure2.scaction.AbstractScAction;
 
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkState;
-import static de.nb.aventiure2.data.world.gameobjects.GameObjectService.EINE_TASCHE_DES_SPIELER_CHARAKTERS;
-import static de.nb.aventiure2.data.world.gameobjects.GameObjectService.FROSCHPRINZ;
-import static de.nb.aventiure2.data.world.gameobjects.GameObjectService.HAENDE_DES_SPIELER_CHARAKTERS;
-import static de.nb.aventiure2.data.world.gameobjects.GameObjectService.SPIELER_CHARAKTER;
+import static de.nb.aventiure2.data.world.gameobject.World.EINE_TASCHE_DES_SPIELER_CHARAKTERS;
+import static de.nb.aventiure2.data.world.gameobject.World.FROSCHPRINZ;
+import static de.nb.aventiure2.data.world.gameobject.World.HAENDE_DES_SPIELER_CHARAKTERS;
+import static de.nb.aventiure2.data.world.gameobject.World.SPIELER_CHARAKTER;
 import static de.nb.aventiure2.data.world.syscomp.feelings.Mood.ANGESPANNT;
 import static de.nb.aventiure2.data.world.syscomp.feelings.Mood.NEUTRAL;
 import static de.nb.aventiure2.data.world.syscomp.state.GameObjectState.ERWARTET_VON_SC_EINLOESUNG_SEINES_VERSPRECHENS;
@@ -72,12 +72,12 @@ public class NehmenAction
 
     public static <GO extends IDescribableGO & ILocatableGO>
     Collection<NehmenAction> buildObjectActions(final AvDatabase db,
-                                                final GameObjectService gos,
+                                                final World world,
                                                 final StoryState initialStoryState,
                                                 final GO object) {
         final ImmutableList.Builder<NehmenAction> res = ImmutableList.builder();
 
-        res.add(new NehmenAction<>(db, gos, initialStoryState,
+        res.add(new NehmenAction<>(db, world, initialStoryState,
                 object, EINE_TASCHE_DES_SPIELER_CHARAKTERS));
 
         return res.build();
@@ -86,11 +86,11 @@ public class NehmenAction
     public static <LIVGO extends IDescribableGO & ILocatableGO & ILivingBeingGO>
     Collection<NehmenAction> buildCreatureActions(
             final AvDatabase db,
-            final GameObjectService gos,
+            final World world,
             final StoryState initialStoryState,
             final LIVGO creature) {
         if (creature.is(FROSCHPRINZ)) {
-            return buildFroschprinzActions(db, gos, initialStoryState, creature);
+            return buildFroschprinzActions(db, world, initialStoryState, creature);
         }
         return ImmutableList.of();
     }
@@ -98,19 +98,19 @@ public class NehmenAction
     public static <LIVGO extends IDescribableGO & ILocatableGO & ILivingBeingGO>
     Collection<NehmenAction> buildFroschprinzActions(
             final AvDatabase db,
-            final GameObjectService gos,
+            final World world,
             final StoryState initialStoryState,
             final LIVGO froschprinz) {
         if (((IHasStateGO) froschprinz).stateComp()
                 .hasState(ERWARTET_VON_SC_EINLOESUNG_SEINES_VERSPRECHENS)) {
             return ImmutableList.of(
-                    new NehmenAction<>(db, gos, initialStoryState,
+                    new NehmenAction<>(db, world, initialStoryState,
                             froschprinz, EINE_TASCHE_DES_SPIELER_CHARAKTERS));
         }
 
         if (((IHasStateGO) froschprinz).stateComp().hasState(HAT_HOCHHEBEN_GEFORDERT)) {
             return ImmutableList.of(
-                    new NehmenAction<>(db, gos, initialStoryState,
+                    new NehmenAction<>(db, world, initialStoryState,
                             froschprinz, HAENDE_DES_SPIELER_CHARAKTERS));
         }
 
@@ -124,11 +124,11 @@ public class NehmenAction
      * @param targetLocationId der Ort am SC, wohin es genommen wird, z.B.
      *                         in die Hände o.Ä.
      */
-    private NehmenAction(final AvDatabase db, final GameObjectService gos,
+    private NehmenAction(final AvDatabase db, final World world,
                          final StoryState initialStoryState,
                          @NonNull final GO gameObject,
                          @NonNull final GameObjectId targetLocationId) {
-        this(db, gos, initialStoryState, gameObject, (TARGET_LOC) gos.load(targetLocationId));
+        this(db, world, initialStoryState, gameObject, (TARGET_LOC) world.load(targetLocationId));
     }
 
     /**
@@ -138,10 +138,10 @@ public class NehmenAction
      * @param targetLocation der Ort am SC, wohin es genommen wird, z.B.
      *                       in die Hände o.Ä.
      */
-    private NehmenAction(final AvDatabase db, final GameObjectService gos,
+    private NehmenAction(final AvDatabase db, final World world,
                          final StoryState initialStoryState,
                          @NonNull final GO gameObject, @NonNull final TARGET_LOC targetLocation) {
-        super(db, gos, initialStoryState);
+        super(db, world, initialStoryState);
 
         checkArgument(gameObject.locationComp().getLocation() != null);
         checkArgument(targetLocation.locationComp().getLocationId().equals(SPIELER_CHARAKTER),
@@ -161,7 +161,7 @@ public class NehmenAction
     public String getName() {
         final PraedikatMitEinerObjektleerstelle praedikat = getPraedikatFuerName();
 
-        return capitalize(praedikat.mitObj(gos.getDescription(gameObject, true))
+        return capitalize(praedikat.mitObj(world.getDescription(gameObject, true))
                 // Relevant für etwas wie "Die Schale an *mich* nehmen"
                 .getDescriptionInfinitiv(P1, SG));
     }
@@ -201,7 +201,7 @@ public class NehmenAction
             return narrateAndDoFroschprinz_HatHochhebenGefordert();
         }
 
-        final Nominalphrase froschDesc = gos.getDescription(gameObject, true);
+        final Nominalphrase froschDesc = world.getDescription(gameObject, true);
 
         AvTimeSpan timeElapsed = n.addAlt(
                 du(PARAGRAPH,
@@ -318,7 +318,7 @@ public class NehmenAction
                         .phorikKandidat(froschDescOderAnapher, FROSCHPRINZ));
             }
 
-            final Nominalphrase froschDesc = gos.getDescription(gameObject, false);
+            final Nominalphrase froschDesc = world.getDescription(gameObject, false);
 
             return n.add(du(StructuralElement.PARAGRAPH,
                     "nimmst",
@@ -332,19 +332,19 @@ public class NehmenAction
         return n.addAlt(
                 du(PARAGRAPH,
                         "zauderst", "und dein Herz klopft gewaltig, als du endlich "
-                                + gos.getDescription(gameObject, true).akk()
+                                + world.getDescription(gameObject, true).akk()
                                 + " greifst",
                         secs(5))
-                        .phorikKandidat(gos.getDescription(gameObject, true), FROSCHPRINZ)
+                        .phorikKandidat(world.getDescription(gameObject, true), FROSCHPRINZ)
                         .komma()
                         .dann(),
                 neuerSatz(SENTENCE,
                         "Dir wird ganz angst, aber was man "
                                 + "versprochen hat, das muss man auch halten! Du nimmst "
-                                + gos.getDescription(gameObject, true).akk()
+                                + world.getDescription(gameObject, true).akk()
                                 + " in die Hände",
                         secs(15))
-                        .phorikKandidat(gos.getDescription(gameObject, true), FROSCHPRINZ)
+                        .phorikKandidat(world.getDescription(gameObject, true), FROSCHPRINZ)
                         .undWartest()
                         .dann());
     }
@@ -375,7 +375,7 @@ public class NehmenAction
         }
 
         if (sc.memoryComp().getLastAction().is(Action.Type.ABLEGEN)) {
-            final Nominalphrase objectDesc = gos.getDescription(gameObject, true);
+            final Nominalphrase objectDesc = world.getDescription(gameObject, true);
             return n.add(neuerSatz(
                     "Dann nimmst du " + objectDesc.akk(),
                     secs(5))
@@ -393,7 +393,7 @@ public class NehmenAction
                 //  Oder wenn man vielleicht etwas ähliches wie eine DuDescription
                 //  erzeugen könnte, die intern das mitnehmenPraedikat enthält.
                 //  Leider müssen wir bis dahin eine AllgDescription bauen. :-(
-                final Nominalphrase objectDesc = gos.getDescription(gameObject, true);
+                final Nominalphrase objectDesc = world.getDescription(gameObject, true);
                 return n.add(neuerSatz(StructuralElement.PARAGRAPH,
                         mitnehmenPraedikat
                                 .getDescriptionDuHauptsatz(
@@ -411,7 +411,7 @@ public class NehmenAction
         return n.add(
                 neuerSatz(PARAGRAPH,
                         mitnehmenPraedikat
-                                .getDescriptionDuHauptsatz(gos.getDescription(gameObject, true)),
+                                .getDescriptionDuHauptsatz(world.getDescription(gameObject, true)),
                         secs(5))
                         .undWartest(
                                 mitnehmenPraedikat
@@ -422,7 +422,7 @@ public class NehmenAction
     private AvTimeSpan narrateObjectDiskontinuitaet(
             final PraedikatMitEinerObjektleerstelle nehmenPraedikat) {
         if (initialStoryState.dann()) {
-            final Nominalphrase objectDesc = gos.getDescription(gameObject);
+            final Nominalphrase objectDesc = world.getDescription(gameObject);
             return n.add(neuerSatz(StructuralElement.PARAGRAPH,
                     "Dann nimmst du " + objectDesc.akk() +
                             " erneut",
@@ -435,7 +435,7 @@ public class NehmenAction
             return n.add(satzanschluss(
                     ", nur um "
                             + nehmenPraedikat
-                            .mitObj(gos.getDescription(gameObject, true).persPron())
+                            .mitObj(world.getDescription(gameObject, true).persPron())
                             .getDescriptionZuInfinitiv(
                                     P2, SG,
                                     new AdverbialeAngabe(
@@ -446,7 +446,7 @@ public class NehmenAction
                     .dann());
         }
 
-        final Nominalphrase objectDesc = gos.getDescription(gameObject, true);
+        final Nominalphrase objectDesc = world.getDescription(gameObject, true);
         return n.add(neuerSatz(StructuralElement.PARAGRAPH,
                 "Ach nein, "
                         // du nimmst die Kugel besser doch

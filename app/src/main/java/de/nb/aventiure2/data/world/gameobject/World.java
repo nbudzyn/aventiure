@@ -1,4 +1,4 @@
-package de.nb.aventiure2.data.world.gameobjects;
+package de.nb.aventiure2.data.world.gameobject;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -19,8 +19,8 @@ import de.nb.aventiure2.data.database.AvDatabase;
 import de.nb.aventiure2.data.world.base.GameObject;
 import de.nb.aventiure2.data.world.base.GameObjectId;
 import de.nb.aventiure2.data.world.base.IGameObject;
-import de.nb.aventiure2.data.world.gameobjects.player.SpielerCharakter;
-import de.nb.aventiure2.data.world.gameobjects.player.SpielerCharakterFactory;
+import de.nb.aventiure2.data.world.gameobject.player.SpielerCharakter;
+import de.nb.aventiure2.data.world.gameobject.player.SpielerCharakterFactory;
 import de.nb.aventiure2.data.world.syscomp.alive.AliveSystem;
 import de.nb.aventiure2.data.world.syscomp.alive.ILivingBeingGO;
 import de.nb.aventiure2.data.world.syscomp.description.IDescribableGO;
@@ -52,9 +52,9 @@ import static de.nb.aventiure2.german.base.NumerusGenus.M;
 import static de.nb.aventiure2.german.base.NumerusGenus.PL_MFN;
 
 /**
- * Service managing all game objects.
+ * The world contains and manages all game objects.
  */
-public class GameObjectService {
+public class World {
     public static final AvDateTime SCHLOSSFEST_BEGINN_DATE_TIME =
             new AvDateTime(2,
                     oClock(5, 30));
@@ -98,7 +98,7 @@ public class GameObjectService {
     // Sonstige Konstanten
     private static final boolean SCHLOSS_VORHALLE_DAUERHAFT_BELEUCHTET = true;
 
-    private static volatile GameObjectService INSTANCE;
+    private static volatile World INSTANCE;
 
     private final AvDatabase db;
 
@@ -111,11 +111,11 @@ public class GameObjectService {
 
     private LocationSystem locationSystem;
 
-    public static GameObjectService getInstance(final AvDatabase db) {
+    public static World getInstance(final AvDatabase db) {
         if (INSTANCE == null) {
-            synchronized (GameObjectService.class) {
+            synchronized (World.class) {
                 if (INSTANCE == null) {
-                    INSTANCE = new GameObjectService(db);
+                    INSTANCE = new World(db);
                 }
             }
         }
@@ -128,7 +128,7 @@ public class GameObjectService {
         INSTANCE = null;
     }
 
-    private GameObjectService(final AvDatabase db) {
+    private World(final AvDatabase db) {
         this.db = db;
     }
 
@@ -150,8 +150,10 @@ public class GameObjectService {
             all = new GameObjectIdMap();
             all.putAll(
                     // TODO Idee:
-                    //  RoomFactory roomFactory = new Assemblage(component1::new, component2::new);
-                    //  Room schloss = RoomFactory.create();
+                    //  RoomFactory roomFactory =
+                    //   new Assemblage(StoringPlaceComp.class, AbstractSpatialConnectionComp.class);
+                    //  ILocationGO & ISpatiallyConnectedGO schloss = roomFactory.create();
+                    //  schloss
 
                     spieler.create(SPIELER_CHARAKTER),
                     room.create(SCHLOSS_VORHALLE, StoringPlaceType.EIN_TISCH,

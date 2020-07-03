@@ -10,15 +10,15 @@ import javax.annotation.ParametersAreNonnullByDefault;
 
 import de.nb.aventiure2.data.database.AvDatabase;
 import de.nb.aventiure2.data.world.base.GameObjectId;
-import de.nb.aventiure2.data.world.gameobjects.GameObjectService;
+import de.nb.aventiure2.data.world.gameobject.World;
 import de.nb.aventiure2.data.world.syscomp.memory.Known;
 import de.nb.aventiure2.data.world.syscomp.spatialconnection.AbstractSpatialConnectionComp;
 import de.nb.aventiure2.data.world.syscomp.storingplace.Lichtverhaeltnisse;
 import de.nb.aventiure2.german.base.AbstractDescription;
 
-import static de.nb.aventiure2.data.world.gameobjects.GameObjectService.DRAUSSEN_VOR_DEM_SCHLOSS;
-import static de.nb.aventiure2.data.world.gameobjects.GameObjectService.IM_WALD_NAHE_DEM_SCHLOSS;
-import static de.nb.aventiure2.data.world.gameobjects.GameObjectService.VOR_DEM_ALTEN_TURM;
+import static de.nb.aventiure2.data.world.gameobject.World.DRAUSSEN_VOR_DEM_SCHLOSS;
+import static de.nb.aventiure2.data.world.gameobject.World.IM_WALD_NAHE_DEM_SCHLOSS;
+import static de.nb.aventiure2.data.world.gameobject.World.VOR_DEM_ALTEN_TURM;
 import static de.nb.aventiure2.data.world.syscomp.spatialconnection.impl.SpatialConnection.con;
 import static de.nb.aventiure2.data.world.time.AvTimeSpan.mins;
 import static de.nb.aventiure2.german.base.DuDescription.du;
@@ -27,7 +27,7 @@ import static de.nb.aventiure2.german.base.StructuralElement.SENTENCE;
 
 /**
  * An implementation of {@link AbstractSpatialConnectionComp}
- * for the {@link GameObjectService#DRAUSSEN_VOR_DEM_SCHLOSS}
+ * for the {@link World#DRAUSSEN_VOR_DEM_SCHLOSS}
  * room.
  */
 @ParametersAreNonnullByDefault
@@ -37,8 +37,8 @@ public class VorDemTurmConnectionComp extends AbstractSpatialConnectionComp {
 
     public VorDemTurmConnectionComp(
             final AvDatabase db,
-            final GameObjectService gos) {
-        super(DRAUSSEN_VOR_DEM_SCHLOSS, db, gos);
+            final World world) {
+        super(DRAUSSEN_VOR_DEM_SCHLOSS, db, world);
     }
 
     @Override

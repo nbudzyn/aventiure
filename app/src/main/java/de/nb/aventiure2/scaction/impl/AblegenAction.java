@@ -11,7 +11,7 @@ import java.util.Collection;
 
 import de.nb.aventiure2.data.database.AvDatabase;
 import de.nb.aventiure2.data.storystate.StoryState;
-import de.nb.aventiure2.data.world.gameobjects.GameObjectService;
+import de.nb.aventiure2.data.world.gameobject.World;
 import de.nb.aventiure2.data.world.syscomp.alive.ILivingBeingGO;
 import de.nb.aventiure2.data.world.syscomp.description.IDescribableGO;
 import de.nb.aventiure2.data.world.syscomp.location.ILocatableGO;
@@ -28,9 +28,9 @@ import de.nb.aventiure2.german.praedikat.PraedikatMitEinerObjektleerstelle;
 import de.nb.aventiure2.scaction.AbstractScAction;
 
 import static com.google.common.base.Preconditions.checkState;
-import static de.nb.aventiure2.data.world.gameobjects.GameObjectService.FROSCHPRINZ;
-import static de.nb.aventiure2.data.world.gameobjects.GameObjectService.SCHLOSS_VORHALLE_AM_TISCH_BEIM_FEST;
-import static de.nb.aventiure2.data.world.gameobjects.GameObjectService.SCHLOSS_VORHALLE_LANGER_TISCH_BEIM_FEST;
+import static de.nb.aventiure2.data.world.gameobject.World.FROSCHPRINZ;
+import static de.nb.aventiure2.data.world.gameobject.World.SCHLOSS_VORHALLE_AM_TISCH_BEIM_FEST;
+import static de.nb.aventiure2.data.world.gameobject.World.SCHLOSS_VORHALLE_LANGER_TISCH_BEIM_FEST;
 import static de.nb.aventiure2.data.world.syscomp.feelings.Mood.ANGESPANNT;
 import static de.nb.aventiure2.data.world.syscomp.feelings.Mood.NEUTRAL;
 import static de.nb.aventiure2.data.world.syscomp.memory.Action.Type.NEHMEN;
@@ -78,7 +78,7 @@ public class AblegenAction
      */
     public static <GO extends IDescribableGO & ILocatableGO>
     Collection<AblegenAction<GO>> buildActions(
-            final AvDatabase db, final GameObjectService gos,
+            final AvDatabase db, final World world,
             final StoryState initialStoryState,
             final GO gameObject,
             final ILocationGO location) {
@@ -88,14 +88,14 @@ public class AblegenAction
 
         final ImmutableList.Builder<AblegenAction<GO>> res = ImmutableList.builder();
         res.add(new AblegenAction<>(
-                db, gos, initialStoryState, gameObject, location,
+                db, world, initialStoryState, gameObject, location,
                 true));
 
         for (final ILocationGO innerLocation :
-                gos.loadDescribableNonLivingLocationRecursiveInventory(location)) {
+                world.loadDescribableNonLivingLocationRecursiveInventory(location)) {
             // Z.B. "Auf dem Tisch absetzen"
             res.add(new AblegenAction<>(
-                    db, gos, initialStoryState, gameObject, innerLocation,
+                    db, world, initialStoryState, gameObject, innerLocation,
                     false));
         }
 
@@ -103,12 +103,12 @@ public class AblegenAction
     }
 
     private AblegenAction(final AvDatabase db,
-                          final GameObjectService gos,
+                          final World world,
                           final StoryState initialStoryState,
                           final @NonNull GO gameObject,
                           final ILocationGO location,
                           final boolean detailLocationNecessaryInDescription) {
-        super(db, gos, initialStoryState);
+        super(db, world, initialStoryState);
         this.location = location;
         this.gameObject = gameObject;
         this.detailLocationNecessaryInDescription = detailLocationNecessaryInDescription;
@@ -119,7 +119,7 @@ public class AblegenAction
     public String getName() {
         return capitalize(
                 getPraedikat()
-                        .mitObj(gos.getDescription(gameObject, true))
+                        .mitObj(world.getDescription(gameObject, true))
                         .getDescriptionInfinitiv(P1, SG, getWohinDetail()));
     }
 
@@ -336,7 +336,7 @@ public class AblegenAction
         if (isDefinitivDiskontinuitaet()) {
             return n.add(
                     du(PARAGRAPH, "legst",
-                            gos.getDescription(gameObject, false).akk() +
+                            world.getDescription(gameObject, false).akk() +
                                     " wieder "
                                     + (wohinDetail != null ? "dort" : "")
                                     + "hin",
@@ -347,7 +347,7 @@ public class AblegenAction
 
         return n.add(
                 du(PARAGRAPH, "legst",
-                        gos.getDescription(gameObject, false).akk()
+                        world.getDescription(gameObject, false).akk()
                                 + (wohinDetail == null ? " hin" : " " + wohinDetail),
                         secs(3))
                         .undWartest()

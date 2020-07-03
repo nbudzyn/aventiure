@@ -9,8 +9,8 @@ import org.jetbrains.annotations.Contract;
 import javax.annotation.Nullable;
 
 import de.nb.aventiure2.data.database.AvDatabase;
-import de.nb.aventiure2.data.world.gameobjects.GameObjectService;
-import de.nb.aventiure2.data.world.gameobjects.player.SpielerCharakter;
+import de.nb.aventiure2.data.world.gameobject.World;
+import de.nb.aventiure2.data.world.gameobject.player.SpielerCharakter;
 import de.nb.aventiure2.data.world.syscomp.description.AbstractDescriptionComp;
 import de.nb.aventiure2.data.world.syscomp.location.ILocatableGO;
 import de.nb.aventiure2.data.world.syscomp.location.LocationComp;
@@ -29,14 +29,14 @@ import de.nb.aventiure2.german.base.AbstractDescription;
 import de.nb.aventiure2.german.base.Nominalphrase;
 import de.nb.aventiure2.german.base.NumerusGenus;
 
-import static de.nb.aventiure2.data.world.gameobjects.GameObjectService.COUNTER_ID_VOR_DEM_SCHLOSS_SCHLOSSFEST_KNOWN;
-import static de.nb.aventiure2.data.world.gameobjects.GameObjectService.DRAUSSEN_VOR_DEM_SCHLOSS;
-import static de.nb.aventiure2.data.world.gameobjects.GameObjectService.GOLDENE_KUGEL;
-import static de.nb.aventiure2.data.world.gameobjects.GameObjectService.SCHLOSSFEST;
-import static de.nb.aventiure2.data.world.gameobjects.GameObjectService.SCHLOSSFEST_BEGINN_DATE_TIME;
-import static de.nb.aventiure2.data.world.gameobjects.GameObjectService.SCHLOSSWACHE;
-import static de.nb.aventiure2.data.world.gameobjects.GameObjectService.SCHLOSS_VORHALLE;
-import static de.nb.aventiure2.data.world.gameobjects.GameObjectService.SPIELER_CHARAKTER;
+import static de.nb.aventiure2.data.world.gameobject.World.COUNTER_ID_VOR_DEM_SCHLOSS_SCHLOSSFEST_KNOWN;
+import static de.nb.aventiure2.data.world.gameobject.World.DRAUSSEN_VOR_DEM_SCHLOSS;
+import static de.nb.aventiure2.data.world.gameobject.World.GOLDENE_KUGEL;
+import static de.nb.aventiure2.data.world.gameobject.World.SCHLOSSFEST;
+import static de.nb.aventiure2.data.world.gameobject.World.SCHLOSSFEST_BEGINN_DATE_TIME;
+import static de.nb.aventiure2.data.world.gameobject.World.SCHLOSSWACHE;
+import static de.nb.aventiure2.data.world.gameobject.World.SCHLOSS_VORHALLE;
+import static de.nb.aventiure2.data.world.gameobject.World.SPIELER_CHARAKTER;
 import static de.nb.aventiure2.data.world.syscomp.feelings.Mood.ANGESPANNT;
 import static de.nb.aventiure2.data.world.syscomp.feelings.Mood.NEUTRAL;
 import static de.nb.aventiure2.data.world.syscomp.state.GameObjectState.AUFMERKSAM;
@@ -64,11 +64,11 @@ public class SchlosswacheReactionsComp
     private final LocationComp locationComp;
 
     public SchlosswacheReactionsComp(final AvDatabase db,
-                                     final GameObjectService gos,
+                                     final World world,
                                      final AbstractDescriptionComp descriptionComp,
                                      final StateComp stateComp,
                                      final LocationComp locationComp) {
-        super(SCHLOSSFEST, db, gos);
+        super(SCHLOSSFEST, db, world);
         this.descriptionComp = descriptionComp;
         this.stateComp = stateComp;
         this.locationComp = locationComp;
@@ -89,11 +89,11 @@ public class SchlosswacheReactionsComp
             return onSCEnter(from, to);
         }
 
-        if (gos.isOrHasRecursiveLocation(to, SPIELER_CHARAKTER)) {
+        if (world.isOrHasRecursiveLocation(to, SPIELER_CHARAKTER)) {
             return onRelocationToSC(locatable, from);
         }
 
-        if (gos.isOrHasRecursiveLocation(from, SPIELER_CHARAKTER)) {
+        if (world.isOrHasRecursiveLocation(from, SPIELER_CHARAKTER)) {
             return onRelocationFromSC(to);
         }
 
@@ -115,7 +115,7 @@ public class SchlosswacheReactionsComp
             return noTime();
         }
 
-        final ILocatableGO goldeneKugel = (ILocatableGO) gos.load(GOLDENE_KUGEL);
+        final ILocatableGO goldeneKugel = (ILocatableGO) world.load(GOLDENE_KUGEL);
         if (!goldeneKugel.locationComp().hasRecursiveLocation(SPIELER_CHARAKTER)
                 && goldeneKugel.locationComp().hasRecursiveLocation(SCHLOSS_VORHALLE)) {
             if (db.counterDao().incAndGet(
@@ -175,7 +175,7 @@ public class SchlosswacheReactionsComp
     private String schlossVerlassenWohinDescription(
             final ILocationGO raumAusDemDerSCDasSchlossBetretenHat) {
         return schlossVerlassenWohinDescription(
-                ((ILocationGO) gos.load(SCHLOSS_VORHALLE)),
+                ((ILocationGO) world.load(SCHLOSS_VORHALLE)),
                 raumAusDemDerSCDasSchlossBetretenHat);
     }
 
@@ -209,12 +209,12 @@ public class SchlosswacheReactionsComp
             return noTime();
         }
 
-        if (!gos.isOrHasRecursiveLocation(from, SCHLOSS_VORHALLE)
-                && !gos.isOrHasRecursiveLocation(from, SPIELER_CHARAKTER)) {
+        if (!world.isOrHasRecursiveLocation(from, SCHLOSS_VORHALLE)
+                && !world.isOrHasRecursiveLocation(from, SPIELER_CHARAKTER)) {
             return noTime();
         }
 
-        if (((IHasStateGO) gos.load(SCHLOSSFEST)).stateComp().hasState(BEGONNEN)) {
+        if (((IHasStateGO) world.load(SCHLOSSFEST)).stateComp().hasState(BEGONNEN)) {
             // Schlosswache hat andere Dinge zu tun
             return noTime();
         }
@@ -269,7 +269,7 @@ public class SchlosswacheReactionsComp
     private AvTimeSpan scHatGoldeneKugelGenommenOderHochgeworfenUndAufgefangen_wacheIstAufmerksam(
             final ILocatableGO goldeneKugel,
             final ILocationGO fromSchlossVorhalleOderSC) {
-        if (gos.isOrHasRecursiveLocation(fromSchlossVorhalleOderSC, SPIELER_CHARAKTER)) {
+        if (world.isOrHasRecursiveLocation(fromSchlossVorhalleOderSC, SPIELER_CHARAKTER)) {
             return scHatGoldeneKugelHochgeworfenUndAufgefangen_wacheIstAufmerksam(goldeneKugel);
         }
 

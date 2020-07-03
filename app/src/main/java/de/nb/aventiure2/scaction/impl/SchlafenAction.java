@@ -10,14 +10,14 @@ import java.util.Collection;
 import de.nb.aventiure2.data.database.AvDatabase;
 import de.nb.aventiure2.data.storystate.StoryState;
 import de.nb.aventiure2.data.world.base.IGameObject;
-import de.nb.aventiure2.data.world.gameobjects.GameObjectService;
+import de.nb.aventiure2.data.world.gameobject.World;
 import de.nb.aventiure2.data.world.syscomp.memory.Action;
 import de.nb.aventiure2.data.world.time.AvDateTime;
 import de.nb.aventiure2.data.world.time.AvTimeSpan;
 import de.nb.aventiure2.german.base.AbstractDescription;
 import de.nb.aventiure2.scaction.AbstractScAction;
 
-import static de.nb.aventiure2.data.world.gameobjects.GameObjectService.BETT_IN_DER_HUETTE_IM_WALD;
+import static de.nb.aventiure2.data.world.gameobject.World.BETT_IN_DER_HUETTE_IM_WALD;
 import static de.nb.aventiure2.data.world.syscomp.feelings.Mood.ERSCHOEPFT;
 import static de.nb.aventiure2.data.world.syscomp.feelings.Mood.NEUTRAL;
 import static de.nb.aventiure2.data.world.time.AvTime.oClock;
@@ -35,21 +35,21 @@ import static de.nb.aventiure2.german.base.StructuralElement.SENTENCE;
 public class SchlafenAction extends AbstractScAction {
     public static Collection<SchlafenAction> buildActions(
             final AvDatabase db,
-            final GameObjectService gos,
+            final World world,
             final StoryState initialStoryState,
             @Nullable final IGameObject room) {
         final ImmutableList.Builder<SchlafenAction> res = ImmutableList.builder();
         if (room != null && room.is(BETT_IN_DER_HUETTE_IM_WALD)) {
-            res.add(new SchlafenAction(db, gos, initialStoryState));
+            res.add(new SchlafenAction(db, world, initialStoryState));
         }
 
         return res.build();
     }
 
     private SchlafenAction(final AvDatabase db,
-                           final GameObjectService gos,
+                           final World world,
                            final StoryState initialStoryState) {
-        super(db, gos, initialStoryState);
+        super(db, world, initialStoryState);
     }
 
     @Override
