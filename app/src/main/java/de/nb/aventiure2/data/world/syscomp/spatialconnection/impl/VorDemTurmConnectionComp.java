@@ -34,6 +34,8 @@ import static de.nb.aventiure2.german.base.StructuralElement.SENTENCE;
 public class VorDemTurmConnectionComp extends AbstractSpatialConnectionComp {
     private static final String COUNTER_ALTER_TURM_UMRUNDET =
             "VorDemTurmConnectionComp_AlterTurm_Umrundet";
+    public static final String COUNTER_SC_HOERT_RAPUNZELS_GESANG =
+            "VorDemTurmConnectionComp_SCHoertRapunzelsGesang";
 
     public VorDemTurmConnectionComp(
             final AvDatabase db,
@@ -79,6 +81,13 @@ public class VorDemTurmConnectionComp extends AbstractSpatialConnectionComp {
         final int count = db.counterDao().incAndGet("counter_alterTurm_umrundet");
         switch (count) {
             case 1:
+                if (db.counterDao().get(COUNTER_SC_HOERT_RAPUNZELS_GESANG) > 0) {
+                    return du("möchtest", "zu der süßen Stimme hinaufsteigen, "
+                            + "und suchst rundherum nach einer Türe des Turms, aber es ist keine "
+                            + "zu finden", mins(2))
+                            .dann();
+                }
+
                 return du("gehst", "einmal um den Turm herum. Es ist keine "
                         + "Türe zu sehen, nur ganz oben ein kleines Fensterchen", mins(2))
                         .dann();
