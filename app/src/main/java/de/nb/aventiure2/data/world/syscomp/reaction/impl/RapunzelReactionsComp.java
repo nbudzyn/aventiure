@@ -198,10 +198,12 @@ public class RapunzelReactionsComp
                 neuerSatz("Von oben aus dem Turm hörst du es singen",
                         noTime()),
                 du(PARAGRAPH, "hörst",
-                        "wieder Gesang von oben",
+                        "wieder Gesang von oben schallen",
                         "wieder",
                         noTime())
                         .beendet(PARAGRAPH),
+                neuerSatz(PARAGRAPH, "Plötzlich erschallt über dir wieder Gesang",
+                        noTime()),
                 du("hörst",
                         "den Gesang erneut",
                         "erneut",
