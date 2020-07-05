@@ -24,6 +24,8 @@ import static de.nb.aventiure2.data.world.time.AvTimeSpan.noTime;
 public class LocationComp extends AbstractStatefulComponent<LocationPCD> {
     private final AvDatabase db;
     private final World world;
+
+    @Nullable
     private final GameObjectId initialLocationId;
 
     @Nullable
@@ -42,7 +44,7 @@ public class LocationComp extends AbstractStatefulComponent<LocationPCD> {
     public LocationComp(final GameObjectId gameObjectId,
                         final AvDatabase db,
                         final World world,
-                        final GameObjectId initialLocationId,
+                        @Nullable final GameObjectId initialLocationId,
                         @Nullable final GameObjectId initialLastLocationId,
                         final boolean movable) {
         super(gameObjectId, db.locationDao());

@@ -76,6 +76,7 @@ public class World {
     public static final GameObjectId SCHLOSSWACHE = new GameObjectId(20_000);
     public static final GameObjectId FROSCHPRINZ = new GameObjectId(20_001);
     public static final GameObjectId RAPUNZEL = new GameObjectId(20_002);
+    public static final GameObjectId RAPUNZELS_ZAUBERIN = new GameObjectId(20_003);
 
     // RÄUME
     public static final GameObjectId SCHLOSS_VORHALLE = new GameObjectId(30_000);
@@ -197,6 +198,7 @@ public class World {
                     creature.createSchlosswache(),
                     creature.createFroschprinz(),
                     creature.createRapunzel(),
+                    creature.createRapunzelsZauberin(),
                     // STORY Wölfe (Creatures? Invisibles?) hetzen Spieler nachts
                     //  Es könnte z.B. Räume neben dem Weg geben, die der Spieler in aller Regel
                     //  nicht betreten, kann, wo aber die Wölfe laufen.

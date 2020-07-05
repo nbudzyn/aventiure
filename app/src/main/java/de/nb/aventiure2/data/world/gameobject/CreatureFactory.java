@@ -19,16 +19,19 @@ import de.nb.aventiure2.data.world.syscomp.reaction.AbstractReactionsComp;
 import de.nb.aventiure2.data.world.syscomp.reaction.IResponder;
 import de.nb.aventiure2.data.world.syscomp.reaction.impl.FroschprinzReactionsComp;
 import de.nb.aventiure2.data.world.syscomp.reaction.impl.RapunzelReactionsComp;
+import de.nb.aventiure2.data.world.syscomp.reaction.impl.RapunzelsZauberinReactionsComp;
 import de.nb.aventiure2.data.world.syscomp.reaction.impl.SchlosswacheReactionsComp;
 import de.nb.aventiure2.data.world.syscomp.state.AbstractStateComp;
 import de.nb.aventiure2.data.world.syscomp.state.IHasStateGO;
 import de.nb.aventiure2.data.world.syscomp.state.impl.FroschprinzStateComp;
 import de.nb.aventiure2.data.world.syscomp.state.impl.RapunzelStateComp;
+import de.nb.aventiure2.data.world.syscomp.state.impl.RapunzelsZauberinStateComp;
 import de.nb.aventiure2.data.world.syscomp.state.impl.SchlosswacheStateComp;
 import de.nb.aventiure2.data.world.syscomp.talking.AbstractTalkingComp;
 import de.nb.aventiure2.data.world.syscomp.talking.ITalkerGO;
 import de.nb.aventiure2.data.world.syscomp.talking.impl.FroschprinzTalkingComp;
 import de.nb.aventiure2.data.world.syscomp.talking.impl.RapunzelTalkingComp;
+import de.nb.aventiure2.data.world.syscomp.talking.impl.RapunzelsZauberinTalkingComp;
 
 import static de.nb.aventiure2.data.world.gameobject.World.ABZWEIG_IM_WALD;
 import static de.nb.aventiure2.data.world.gameobject.World.DRAUSSEN_VOR_DEM_SCHLOSS;
@@ -36,6 +39,7 @@ import static de.nb.aventiure2.data.world.gameobject.World.FROSCHPRINZ;
 import static de.nb.aventiure2.data.world.gameobject.World.IM_WALD_BEIM_BRUNNEN;
 import static de.nb.aventiure2.data.world.gameobject.World.OBEN_IM_ALTEN_TURM;
 import static de.nb.aventiure2.data.world.gameobject.World.RAPUNZEL;
+import static de.nb.aventiure2.data.world.gameobject.World.RAPUNZELS_ZAUBERIN;
 import static de.nb.aventiure2.data.world.gameobject.World.SCHLOSSWACHE;
 import static de.nb.aventiure2.data.world.gameobject.World.SCHLOSS_VORHALLE;
 import static de.nb.aventiure2.data.world.gameobject.World.VOR_DEM_ALTEN_TURM;
@@ -115,6 +119,32 @@ class CreatureFactory {
                 stateComp,
                 talkingComp,
                 new RapunzelReactionsComp(db, world, descriptionComp, stateComp, locationComp));
+    }
+
+    GameObject createRapunzelsZauberin() {
+        final RapunzelsZauberinStateComp stateComp = new RapunzelsZauberinStateComp(db);
+        final AbstractDescriptionComp descriptionComp =
+                new SimpleDescriptionComp(RAPUNZELS_ZAUBERIN,
+                        // STORY Beschreibung für Rapunzels Zauberin
+                        np(F, "STORY",
+                                "STORY"),
+                        np(F, "STORY",
+                                "STORY"),
+                        np(F, "STORY",
+                                "STORY"));
+        final LocationComp locationComp =
+                new LocationComp(RAPUNZELS_ZAUBERIN, db, world,
+                        null, VOR_DEM_ALTEN_TURM,
+                        false);
+        final RapunzelsZauberinTalkingComp talkingComp =
+                new RapunzelsZauberinTalkingComp(db, world, descriptionComp, stateComp);
+        return new TalkingReactionsCreature<>(RAPUNZELS_ZAUBERIN,
+                descriptionComp,
+                locationComp,
+                stateComp,
+                talkingComp,
+                new RapunzelsZauberinReactionsComp(db, world,
+                        descriptionComp, stateComp, locationComp));
     }
 
     private static class BasicCreature<S extends Enum<S>> extends GameObject
