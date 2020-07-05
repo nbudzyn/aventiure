@@ -76,7 +76,7 @@ public class VorDemTurmConnectionComp extends AbstractSpatialConnectionComp {
 
     private AbstractDescription getDescTo_VorDemTurm(
             final Known newRoomKnown, final Lichtverhaeltnisse lichtverhaeltnisse) {
-        final int count = db.counterDao().incAndGet("COUNTER_ALTER_TURM_UMRUNDET");
+        final int count = db.counterDao().incAndGet("counter_alterTurm_umrundet");
         switch (count) {
             case 1:
                 return du("gehst", "einmal um den Turm herum. Es ist keine "

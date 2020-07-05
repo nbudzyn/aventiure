@@ -15,6 +15,7 @@ public enum Mood {
 
     VOLLER_FREUDE(5, "fröhlich"),
     AUFGEDREHT(2, "aufgedreht"),
+    BEWEGT(2, "selbstvergessen"),
     ZUFRIEDEN(1, "spielerisch"),
     NEUTRAL(0, "aus Langeweile"),
     ANGESPANNT(0, "trotzig"),

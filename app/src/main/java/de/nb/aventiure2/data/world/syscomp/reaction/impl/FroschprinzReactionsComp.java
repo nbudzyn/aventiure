@@ -19,7 +19,6 @@ import de.nb.aventiure2.data.world.syscomp.state.IHasStateGO;
 import de.nb.aventiure2.data.world.syscomp.state.impl.FroschprinzStateComp;
 import de.nb.aventiure2.data.world.syscomp.state.impl.SchlossfestState;
 import de.nb.aventiure2.data.world.syscomp.storingplace.ILocationGO;
-import de.nb.aventiure2.data.world.syscomp.talking.impl.FroschprinzTalkingComp;
 import de.nb.aventiure2.data.world.time.AvDateTime;
 import de.nb.aventiure2.data.world.time.AvTimeSpan;
 import de.nb.aventiure2.german.base.Nominalphrase;
@@ -75,19 +74,16 @@ public class FroschprinzReactionsComp
                             .plus(hours(6)));
 
     private final FroschprinzDescriptionComp descriptionComp;
-    private final FroschprinzTalkingComp talkingComp;
     private final FroschprinzStateComp stateComp;
     private final LocationComp locationComp;
 
     public FroschprinzReactionsComp(final AvDatabase db,
                                     final World world,
                                     final FroschprinzDescriptionComp descriptionComp,
-                                    final FroschprinzTalkingComp talkingComp,
                                     final FroschprinzStateComp stateComp,
                                     final LocationComp locationComp) {
         super(FROSCHPRINZ, db, world);
         this.descriptionComp = descriptionComp;
-        this.talkingComp = talkingComp;
         this.stateComp = stateComp;
         this.locationComp = locationComp;
     }

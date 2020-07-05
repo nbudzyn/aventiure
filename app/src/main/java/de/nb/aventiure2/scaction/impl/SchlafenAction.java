@@ -124,16 +124,6 @@ public class SchlafenAction extends AbstractScAction {
 
         sc.memoryComp().setLastAction(buildMemorizedAction());
 
-        // TODO Frosch läuft während des Schlafs weg. Oder kommt ggf. Auch wieder. Oder läuft weg und kommt wieder.
-        //  Es sollte in der Zeit keine narrations geben (der Spieler bekommt ja nichts mit, es sei denn er wacht auf). Aber danach sollte etwas kommen wie... ist verschwunden.
-        //  Wie macht man das sinnvoll?
-        //  Für die Tageszeit haben wir ein gutes Konzept.
-        //  Für andere Dinge (Frosch weg, Kugel weg) scheint es nicht zu funktionieren? Wenn man die Zeit mittendrin weiterlaufen lässt, funktioniert das mit den Tageszeiten nicht mehr.
-        //  Man könnte sagen: Schlafen ist wie Bewegen: Es gibt eine neue Beschreibung der äußeren Umstände, zumindest soweit sie sich verändert haben. Dazu muss der Unterschied (vorher / nachher) ermittelt werden. Und die Zeit muss zwischendrin vergehen - allerdings ohne narration.
-        //  Andere Idee könnte sein: Beim Vergehen von Zeit gibt es DREI Parameter:
-        //  letzter Zeitpunkt, letzter WACHER Zeitpunkt und aktueller Zeitpunkt
-        //  Entsprechend kann dann der Text gestaltet werden, z.B. "Der Frosch ist verschwunden."
-
         // STORY Der Frosch läuft während des Schlafens davon - nicht beim Aufwachen.
 
         // TODO Zeit in kleinen Einheiten vergehen lassen:erst 5 Minuten, dann den verbliebenen Rest.

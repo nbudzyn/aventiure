@@ -90,8 +90,7 @@ class CreatureFactory {
                 locationComp,
                 stateComp,
                 talkingComp,
-                new FroschprinzReactionsComp(db, world,
-                        descriptionComp, talkingComp, stateComp, locationComp));
+                new FroschprinzReactionsComp(db, world, descriptionComp, stateComp, locationComp));
     }
 
     GameObject createRapunzel() {

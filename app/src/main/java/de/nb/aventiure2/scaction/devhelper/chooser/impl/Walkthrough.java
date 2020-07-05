@@ -70,43 +70,6 @@ public class Walkthrough {
     // STORY Man kann sich am Turm (tagsüber) ausruhen,
     //  den Vögeln lauschen etc.
 
-    // STORY tagsüber singt Rapinzel alle naselang: Rapunzel bekommt einen Status: STILL / SINGEND
-
-    // STORY Konzept entwickeln, dass diese "Statusübergänge" realisiert:
-    //  - Benutzer befindet sich sonstwo und Rapunzel beginnt zu singen
-    //  - Benutzer befindet sich sonstwo und Rapunzel hört auf zu singen
-    //  - Benutzer befindet sich wach an einem Ort und Rapunzel beginnt zu singen
-    //  - Benutzer befindet sich wach an einem Ort und Rapunzel hört auf zu singen
-    //  - Benutzer betritt einen Ort, wo Rapunzel bereits singt
-    //  - Benutzer schläft ein, während Rapunzel singt und wacht auf und Rapunzel hat
-    //    zwischenzeitlich aufgehört zu singen
-    //  - Benutzer schläft ein, während Rapunzel nicht singt und wacht auf und Rapunzel hat
-    //    zwischenzeitlich angefangen zu singen
-    //  - Benutzer verlässt den Ort, während Rapunzel singt und kehrt zurück, wenn Rapunzel nicht
-    //    mehr singt
-    //  - Benutzer verlässt Rapunzel gut gelaunt und kehrt niedergeschlage zu Rapunzel zurück,
-    //    Rapunzel reagiert auf den Wechsel
-
-    // TODO Idee: Jede Reaktion speichert den letzten Zustand (PCD), auf Basis dessen sie einen
-    //  Text gerendert hat sowie den Zeitpunkt dazu. Wenn wieder Gelegenheit ist, ein Text zu
-    //  rendern, wird geprüft, ob sich der Status gegenüber dem Zeitpunkt geändert hat,
-    //  außerdem wird geprüft, ob der Zeitpunkt Benutzer etwas versäumt hat oder die ganze
-    //  Zeit anwesend und aufnahmefähig war - entsprechend etwas wie "Plötzlich endet der Gesang"
-    //  oder "Es ist kein Gesang mehr zu hören" gerendert.
-
-    // STORY Zum Beispiel wäre der Benutzer über alle Statusänderungen zu unterrichten,
-    //  Die zwischenzeitlich passiert sind ("der Frosch ist verschwunden").
-
-    // STORY Man könnte auch, wenn der Benutzer erstmals wieder nach draußem kommt, etwas
-    //  schreiben wie "Inzwischen ist es dunkel geworden". Dazu müsste der "Tageszeit-Status"
-    //  (oder zumindest der Zeitpunkt) gespeichert werden, wenn der Benutzer REIN GEHT
-    //  und später beim RAUSTRETEN dieser Status mit dem aktuellen Tageszeitstatus verglichen
-    //  werden.
-    //  Man müsste also die Möglichkeit anbieten, jederzeit den Status eines bestimmten
-    //  Game Objects unter einem "Label" zu persistieren (inkl. Zeitpunkt), so dass
-    //  man ihn später wieder laden kann. Alternativ auch mehrere Game Objects,
-    //  denn nur so kann man prüfen, was sich nach dem Schlafen an einem Ort verändert hat.
-
     // STORY Seide auf Markt bei Frau für ein Goldstück kaufen, das man vom Prinzen bekommen hat
 
     public static final Walkthrough ANFANG_BIS_SCHLOSSFEST_SCHLOSS_BETRETEN =
