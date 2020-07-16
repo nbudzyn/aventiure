@@ -17,7 +17,6 @@ import de.nb.aventiure2.data.world.syscomp.description.IDescribableGO;
 import de.nb.aventiure2.data.world.syscomp.feelings.Mood;
 import de.nb.aventiure2.data.world.syscomp.location.ILocatableGO;
 import de.nb.aventiure2.data.world.syscomp.memory.Action;
-import de.nb.aventiure2.data.world.syscomp.memory.Known;
 import de.nb.aventiure2.data.world.syscomp.state.IHasStateGO;
 import de.nb.aventiure2.data.world.syscomp.state.impl.FroschprinzState;
 import de.nb.aventiure2.data.world.syscomp.storingplace.ILocationGO;
@@ -146,7 +145,7 @@ public class NehmenAction
         super(db, world, initialStoryState);
 
         checkArgument(gameObject.locationComp().getLocation() != null);
-        checkArgument(targetLocation.locationComp().getLocationId().equals(SPIELER_CHARAKTER),
+        checkArgument(targetLocation.locationComp().hasLocation(SPIELER_CHARAKTER),
                 "Nehmen bedeutet: Zum Spielercharakter");
 
         this.gameObject = gameObject;
@@ -232,9 +231,8 @@ public class NehmenAction
                 gameObject.locationComp()
                         .narrateAndSetLocation(targetLocation,
                                 () -> {
-                                    sc.memoryComp().upgradeKnown(gameObject, Known.getKnown(
-                                            gameObject.locationComp().getLocation()
-                                                    .storingPlaceComp().getLichtverhaeltnisse()));
+                                    world.upgradeKnownToSc(gameObject,
+                                            gameObject.locationComp().getLocation());
                                     sc.feelingsComp().setMood(NEUTRAL);
 
                                     final SubstantivischePhrase froschDescOderAnapher =
@@ -292,10 +290,8 @@ public class NehmenAction
                         .narrateAndSetLocation(
                                 targetLocation,
                                 () -> {
-                                    sc.memoryComp().upgradeKnown(gameObject, Known.getKnown(
-                                            gameObject.locationComp().getLocation()
-                                                    .storingPlaceComp()
-                                                    .getLichtverhaeltnisse()));
+                                    world.upgradeKnownToSc(gameObject,
+                                            gameObject.locationComp().getLocation());
                                     sc.feelingsComp().setMood(ANGESPANNT);
 
                                     return noTime();
@@ -352,9 +348,7 @@ public class NehmenAction
     }
 
     private AvTimeSpan narrateAndDoObject() {
-        sc.memoryComp().upgradeKnown(gameObject, Known.getKnown(
-                gameObject.locationComp().getLocation().storingPlaceComp()
-                        .getLichtverhaeltnisse()));
+        world.upgradeKnownToSc(gameObject, gameObject.locationComp().getLocation());
 
         AvTimeSpan timeElapsed = narrateObject();
 

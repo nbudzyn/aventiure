@@ -188,7 +188,10 @@ public class BewegenAction<R extends ISpatiallyConnectedGO & ILocationGO,
         // hätten wir zumindest bei den nicht-movablen Locations das Problem,
         // dass man z.B. den Tisch bei Dunkelheit nicht sieht, aber
         // trotzdem die Kugel, die drauf liegt?!
-        upgradeNonMovableRecursiveInventoryKnown(loadTo());
+
+        // Lebende Dinge, sind hier ausgeschlossen, sie müssen sich ggf. in einer
+        // ReactionsComp selbst beschreiben.
+        upgradeNonLivingNonMovableRecursiveInventoryKnown(loadTo());
 
         if (scWirdMitEssenKonfrontiert()) {
             elapsedTime = elapsedTime.plus(narrateAndDoSCMitEssenKonfrontiert());
@@ -198,31 +201,30 @@ public class BewegenAction<R extends ISpatiallyConnectedGO & ILocationGO,
 
         return elapsedTime.plus(sc.locationComp()
                 .narrateAndSetLocation(spatialConnection.getTo(),
-                        this::narrateMovableObjectsAndUpgradeKnown));
+                        this::narrateNonLivingMovableObjectsAndUpgradeKnown));
     }
 
     private void upgradeRoomOnlyKnown() {
-        final Known known = Known.getKnown(loadTo().storingPlaceComp()
-                .getLichtverhaeltnisse());
-        sc.memoryComp().upgradeKnown(spatialConnection.getTo(), known);
+        world.upgradeKnownToSc(spatialConnection.getTo(), spatialConnection.getTo());
     }
 
-    private void upgradeNonMovableRecursiveInventoryKnown(@NonNull final ILocationGO location) {
-        final Known minimalKnown = Known.getKnown(location.storingPlaceComp()
-                .getLichtverhaeltnisse());
+    private void upgradeNonLivingNonMovableRecursiveInventoryKnown(
+            @NonNull final ILocationGO location) {
+        final Known minimalKnown = World.getKnown(location);
 
-        final ImmutableList<? extends IGameObject> directlyContainedNonMovables =
-                world.loadDescribableNonMovableInventory(location.getId());
-        sc.memoryComp().upgradeKnown(directlyContainedNonMovables, minimalKnown);
+        final ImmutableList<? extends IGameObject> directlyContainedNonLivingNonMovables =
+                world.loadDescribableNonLivingNonMovableInventory(location.getId());
+        sc.memoryComp().upgradeKnown(directlyContainedNonLivingNonMovables, minimalKnown);
 
-        for (final IGameObject directlyContainedNonMovable : directlyContainedNonMovables) {
-            if (directlyContainedNonMovable instanceof ILocationGO) {
-                upgradeNonMovableRecursiveInventoryKnown((ILocationGO) directlyContainedNonMovable);
+        for (final IGameObject directlyContainedNonLivingNonMovable : directlyContainedNonLivingNonMovables) {
+            if (directlyContainedNonLivingNonMovable instanceof ILocationGO) {
+                upgradeNonLivingNonMovableRecursiveInventoryKnown(
+                        (ILocationGO) directlyContainedNonLivingNonMovable);
             }
         }
     }
 
-    private AvTimeSpan narrateMovableObjectsAndUpgradeKnown() {
+    private AvTimeSpan narrateNonLivingMovableObjectsAndUpgradeKnown() {
         // Unbewegliche Objekte sollen bereits in der Raumbeschreibung mitgenannt werden,
         // nicht hier! (Das betrifft auch indirekt enthaltene unbewegliche Objekte.)
 
@@ -289,7 +291,7 @@ public class BewegenAction<R extends ISpatiallyConnectedGO & ILocationGO,
                 // hätten wir zumindest bei den nicht-movablen Locations das Problem,
                 // dass man z.B. die schwere Vase bei Dunkelheit nicht sieht, aber
                 // trotzdem die Kugel, die drauf liegt?!
-                upgradeNonMovableRecursiveInventoryKnown((ILocationGO) gameObject);
+                upgradeNonLivingNonMovableRecursiveInventoryKnown((ILocationGO) gameObject);
             }
         }
     }

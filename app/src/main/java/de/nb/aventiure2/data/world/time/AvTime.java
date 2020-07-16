@@ -27,7 +27,7 @@ public class AvTime {
      * Sekunden seit Mitternacht
      */
     @PrimaryKey
-    private int secsSinceMidnight;
+    private final int secsSinceMidnight;
 
     public static AvTime oClock(final int hoursSinceMidnight) {
         return oClock(hoursSinceMidnight, 0);
@@ -75,8 +75,8 @@ public class AvTime {
                 SECS_IN_A_DAY + other.secsSinceMidnight - secsSinceMidnight);
     }
 
-    public void rotate(@NonNull final AvTimeSpan add) {
-        secsSinceMidnight = (int) ((secsSinceMidnight + add.getSecs()) % SECS_IN_A_DAY);
+    public AvTime rotate(@NonNull final AvTimeSpan add) {
+        return new AvTime((int) ((secsSinceMidnight + add.getSecs()) % SECS_IN_A_DAY));
     }
 
     int getSec() {
@@ -109,12 +109,20 @@ public class AvTime {
                 intervalDuration.getSecs();
     }
 
-    public boolean isBetweenIncl(final AvTime start, final AvTime end) {
-        return !isBefore(start) && !isAfter(end);
+    public boolean isWithin(final AvTime startExclusive, final AvTime endInclusive) {
+        return startExclusive.isBefore(this) && endInclusive.isEqualOrAfter(this);
     }
 
     public boolean isBefore(final AvTime other) {
         return secsSinceMidnight < other.secsSinceMidnight;
+    }
+
+    public boolean isEqualOrBefore(final AvTime other) {
+        return secsSinceMidnight <= other.secsSinceMidnight;
+    }
+
+    public boolean isEqualOrAfter(@NonNull final AvTime other) {
+        return secsSinceMidnight >= other.secsSinceMidnight;
     }
 
     public boolean isAfter(@NonNull final AvTime other) {

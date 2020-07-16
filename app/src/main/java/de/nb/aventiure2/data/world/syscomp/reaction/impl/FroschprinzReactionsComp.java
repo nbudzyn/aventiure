@@ -11,7 +11,7 @@ import de.nb.aventiure2.data.world.gameobject.player.SpielerCharakter;
 import de.nb.aventiure2.data.world.syscomp.description.impl.FroschprinzDescriptionComp;
 import de.nb.aventiure2.data.world.syscomp.location.ILocatableGO;
 import de.nb.aventiure2.data.world.syscomp.location.LocationComp;
-import de.nb.aventiure2.data.world.syscomp.reaction.AbstractReactionsComp;
+import de.nb.aventiure2.data.world.syscomp.reaction.AbstractDescribableReactionsComp;
 import de.nb.aventiure2.data.world.syscomp.reaction.interfaces.IEssenReactions;
 import de.nb.aventiure2.data.world.syscomp.reaction.interfaces.IMovementReactions;
 import de.nb.aventiure2.data.world.syscomp.reaction.interfaces.ITimePassedReactions;
@@ -61,7 +61,7 @@ import static de.nb.aventiure2.german.base.StructuralElement.CHAPTER;
 import static de.nb.aventiure2.german.base.StructuralElement.PARAGRAPH;
 
 public class FroschprinzReactionsComp
-        extends AbstractReactionsComp
+        extends AbstractDescribableReactionsComp
         implements IMovementReactions, IEssenReactions, ITimePassedReactions {
     private static final AvTimeSpan WEGZEIT_FROSCH_BRUNNEN_ZUM_SCHLOSSFEST = hours(6);
     private static final AvTimeSpan WEGZEIT_PRINZ_TISCH_DURCH_VORHALLE = mins(1);
@@ -73,7 +73,6 @@ public class FroschprinzReactionsComp
                             // Der Frosch plant etwas Sicherheit ein
                             .plus(hours(6)));
 
-    private final FroschprinzDescriptionComp descriptionComp;
     private final FroschprinzStateComp stateComp;
     private final LocationComp locationComp;
 
@@ -82,8 +81,7 @@ public class FroschprinzReactionsComp
                                     final FroschprinzDescriptionComp descriptionComp,
                                     final FroschprinzStateComp stateComp,
                                     final LocationComp locationComp) {
-        super(FROSCHPRINZ, db, world);
-        this.descriptionComp = descriptionComp;
+        super(FROSCHPRINZ, db, world, descriptionComp);
         this.stateComp = stateComp;
         this.locationComp = locationComp;
     }
@@ -180,7 +178,7 @@ public class FroschprinzReactionsComp
             return noTime();
         }
 
-        final Nominalphrase froschprinzDesc = getFroschprinzDescription();
+        final Nominalphrase froschprinzDesc = getDescription();
         switch (stateComp.getState()) {
             case UNAUFFAELLIG:
                 // STORY Bei einem Status dazwischen könnte der Froschprinz den SC ansprechen und auf
@@ -255,12 +253,12 @@ public class FroschprinzReactionsComp
             return prinzFaehrtMitWagenDavon();
         }
 
-        final Nominalphrase froschprinzDesc = getFroschprinzDescription();
+        final Nominalphrase froschprinzDesc = getDescription();
 
         // TODO Wenn der Prinz nur rekursiv enthalten ist (Prinz sitzt auf einem Stuhl),
         //  dann genauer beschreiben (vgl. BewegenAction)
         return n.add(du("siehst "
-                + getFroschprinzDescription().akk(), noTime())
+                + getDescription().akk(), noTime())
                 .phorikKandidat(froschprinzDesc, FROSCHPRINZ));
     }
 
@@ -334,7 +332,7 @@ public class FroschprinzReactionsComp
         // Der Spieler hat die goldene Kugel letztlich in den Brunnen
         // fallen lassen, NACHDEM der Frosch schon Dinge hochgeholt hat.
         // Dann ist die Kugel jetzt WEG - PECH.
-        final Nominalphrase froschprinzDesc = getFroschprinzDescription(true);
+        final Nominalphrase froschprinzDesc = getDescription(true);
         return n.add(neuerSatz(
                 capitalize(
                         froschprinzDesc.nom()) +
@@ -363,9 +361,9 @@ public class FroschprinzReactionsComp
             return noTime();
         }
 
-        final Nominalphrase froschprinzDesc = getFroschprinzDescription(true);
+        final Nominalphrase froschprinzDesc = getDescription(true);
         return n.addAlt(
-                neuerSatz(capitalize(froschprinzDesc.nom()) + " quakt erbost",
+                neuerSatz(froschprinzDesc.nom() + " quakt erbost",
                         secs(5))
                         .phorikKandidat(froschprinzDesc, FROSCHPRINZ),
                 neuerSatz("Entrüstet quakt " + froschprinzDesc.nom(),
@@ -384,7 +382,7 @@ public class FroschprinzReactionsComp
         }
 
         final SubstantivischePhrase froschDescOderAnapher =
-                getAnaphPersPronWennMglSonstShortDescription(FROSCHPRINZ);
+                getAnaphPersPronWennMglSonstShortDescription();
 
         stateComp.setState(BEIM_SCHLOSSFEST_AUF_TISCH_WILL_ZUSAMMEN_ESSEN);
 
@@ -581,29 +579,6 @@ public class FroschprinzReactionsComp
         );
     }
 
-
-    /**
-     * Gibt eine Nominalphrase zurück, die den Froschprinzen beschreibt.
-     * Die Phrase kann unterschiedlich sein, je nachdem,
-     * ob der Spieler den Froschprinzen schon kennt oder nicht.
-     */
-    private Nominalphrase getFroschprinzDescription() {
-        return getFroschprinzDescription(false);
-    }
-
-    /**
-     * Gibt eine Nominalphrase zurück, die den Froschprinzen beschreibt.
-     * Die Phrase kann unterschiedlich sein, je nachdem,
-     * ob der Spieler den Froschprinzen schon kennt oder nicht.
-     *
-     * @param shortIfKnown <i>Falls der Spieler(-charakter)</i> den
-     *                     Froschprinzen schon kennt, wird eher eine
-     *                     kürzere Beschreibung gewählt
-     */
-    private Nominalphrase getFroschprinzDescription(final boolean shortIfKnown) {
-        return descriptionComp.getDescription(
-                loadSC().memoryComp().isKnown(FROSCHPRINZ), shortIfKnown);
-    }
 
     private boolean schlossfestHatBegonnen() {
         return ((IHasStateGO<SchlossfestState>) world.load(SCHLOSSFEST))

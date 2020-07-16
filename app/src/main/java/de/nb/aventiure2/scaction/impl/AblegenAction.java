@@ -16,7 +16,6 @@ import de.nb.aventiure2.data.world.syscomp.alive.ILivingBeingGO;
 import de.nb.aventiure2.data.world.syscomp.description.IDescribableGO;
 import de.nb.aventiure2.data.world.syscomp.location.ILocatableGO;
 import de.nb.aventiure2.data.world.syscomp.memory.Action;
-import de.nb.aventiure2.data.world.syscomp.memory.Known;
 import de.nb.aventiure2.data.world.syscomp.state.IHasStateGO;
 import de.nb.aventiure2.data.world.syscomp.state.impl.FroschprinzState;
 import de.nb.aventiure2.data.world.syscomp.storingplace.ILocationGO;
@@ -276,10 +275,8 @@ public class AblegenAction
     }
 
     private AvTimeSpan narrateUpgradeKnownAndSetLocationAndAction() {
-        sc.memoryComp().upgradeKnown(gameObject,
-                Known.getKnown(location.storingPlaceComp().getLichtverhaeltnisse()));
-        final AvTimeSpan timeSpan = gameObject.locationComp().narrateAndSetLocation(
-                location);
+        world.upgradeKnownToSc(gameObject, location);
+        final AvTimeSpan timeSpan = gameObject.locationComp().narrateAndSetLocation(location);
         sc.memoryComp().setLastAction(buildMemorizedAction());
 
         return timeSpan;

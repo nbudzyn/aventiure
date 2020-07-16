@@ -2,6 +2,8 @@ package de.nb.aventiure2.german.base;
 
 import de.nb.aventiure2.data.world.time.AvTimeSpan;
 
+import static de.nb.aventiure2.german.base.GermanUtil.capitalize;
+
 /**
  * A general description. The subject may be anything.
  */
@@ -14,14 +16,15 @@ public class AllgDescription extends AbstractDescription<AllgDescription> {
     public static AllgDescription neuerSatz(
             final String description,
             final AvTimeSpan timeElapsed) {
-        return new AllgDescription(StructuralElement.SENTENCE, description, timeElapsed);
+        return new AllgDescription(StructuralElement.SENTENCE, capitalize(description),
+                timeElapsed);
     }
 
     public static AllgDescription neuerSatz(
             final StructuralElement startsNew,
             final String description,
             final AvTimeSpan timeElapsed) {
-        return new AllgDescription(startsNew, description, timeElapsed);
+        return new AllgDescription(startsNew, capitalize(description), timeElapsed);
     }
 
     public static AllgDescription satzanschluss(

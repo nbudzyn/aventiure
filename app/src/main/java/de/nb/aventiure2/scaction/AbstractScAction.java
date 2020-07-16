@@ -16,22 +16,14 @@ import de.nb.aventiure2.data.world.time.AvTimeSpan;
 import de.nb.aventiure2.german.base.Personalpronomen;
 import de.nb.aventiure2.german.base.SubstantivischePhrase;
 
+import static de.nb.aventiure2.data.world.time.AvTimeSpan.days;
 import static de.nb.aventiure2.data.world.time.AvTimeSpan.noTime;
 
 /**
  * An action the player could choose to advance the story.
  */
 public abstract class AbstractScAction implements IPlayerAction {
-    // TODO Vielleicht sollten die Aktionen (möglichst?) nicht die Creature-Reaktionen
-    //  entscheiden, sondern dazu der Creature-KI die Gelegenheit geben, eine
-    //  Entscheidung zu treffen. Denkbar wäre:
-    //  - Die Aktion fragt die Creature-KI nach einer Entscheidung - danach springt die
-    //    Aktion in den entsprechenden Zweig und schreibt einen entsprechenden Text.
-    //  - Die Aktion gibt der Creature-KI die Möglichkeit, einzuhaken und einen
-    //    entsprechenden Text zu erzeugen. Entweder schreibt die Creature-KI
-    //    selbst den Text, der Narrator baut den Text von Aktion und Creature-KI
-    //    zusammen oder die Aktion nimmt den Text der Creature-KI und baut ihn
-    //    selbst in ihren eigenen Text ein.
+    private static final AvTimeSpan MAX_WORLD_TICK = days(1);
 
     protected final AvDatabase db;
     protected final World world;
@@ -72,7 +64,8 @@ public abstract class AbstractScAction implements IPlayerAction {
         //  Und man vergleich hier nur vorher-Zeit mit nachher-Zeit?
 
         // STORY Wenn der Benutzer länger nicht weiterkommt, erzeugt eine Tippgenerator
-        //  (neues Game Object?) Sätze wie "Wann soll eigentlich das Schlossfest sein?" o.Ä.
+        //  (neues Game Object?) Sätze wie "Wann soll eigentlich das Schlossfest sein?",
+        //  "Vielleicht hättest du doch die Kugel mitnehmen sollen?" o.Ä.
 
         final AvDateTime start = db.nowDao().now();
 
@@ -94,6 +87,22 @@ public abstract class AbstractScAction implements IPlayerAction {
                                    @NonNull final AvDateTime now) {
         if (now.equals(lastTime)) {
             return noTime();
+        }
+
+        if (now.minus(lastTime).longerThan(MAX_WORLD_TICK)) {
+            final AvDateTime tickTime = lastTime.plus(MAX_WORLD_TICK);
+
+            final AvTimeSpan additionalTimeElapsedTick = updateWorld(lastTime, tickTime);
+
+            final AvTimeSpan remainingTime = now.minus(tickTime);
+            final AvTimeSpan extraTime;
+            if (additionalTimeElapsedTick.longerThan(remainingTime)) {
+                extraTime = additionalTimeElapsedTick.minus(remainingTime);
+            } else {
+                extraTime = noTime();
+            }
+
+            return updateWorld(tickTime, now.plus(extraTime));
         }
 
         AvTimeSpan additionalTimeElapsed =

@@ -10,6 +10,7 @@ import java.util.Objects;
 
 import javax.annotation.concurrent.Immutable;
 
+import static com.google.common.base.Preconditions.checkArgument;
 import static de.nb.aventiure2.data.world.time.AvTime.HOURS_IN_A_DAY;
 import static de.nb.aventiure2.data.world.time.AvTime.SECS_IN_AN_HOUR;
 
@@ -56,12 +57,37 @@ public class AvTimeSpan {
         return new AvTimeSpan(secs);
     }
 
+    @NonNull
+    public static AvTimeSpan max(@NonNull final AvTimeSpan one, @NonNull final AvTimeSpan other) {
+        if (one.longerThan(other)) {
+            return one;
+        }
+
+        return other;
+    }
+
+    @NonNull
+    public static AvTimeSpan min(@NonNull final AvTimeSpan one, @NonNull final AvTimeSpan other) {
+        if (one.shorterThan(other)) {
+            return one;
+        }
+
+        return other;
+    }
+
     AvTimeSpan(final long secs) {
         this.secs = secs;
     }
 
     public AvTimeSpan plus(@NonNull final AvTimeSpan add) {
         return new AvTimeSpan(secs + add.secs);
+    }
+
+    public AvTimeSpan minus(@NonNull final AvTimeSpan sub) {
+        checkArgument(!shorterThan(sub),
+                "Cannot subtract " + sub + " from " + this);
+
+        return new AvTimeSpan(secs - sub.secs);
     }
 
     private int getSecPart() {
@@ -82,7 +108,7 @@ public class AvTimeSpan {
         return (int) (secs - (getDays() * SECS_IN_AN_HOUR * HOURS_IN_A_DAY)) / SECS_IN_AN_HOUR;
     }
 
-    private long getDays() {
+    public long getDays() {
         return getSecs() / SECS_IN_AN_HOUR / HOURS_IN_A_DAY;
     }
 
@@ -102,7 +128,7 @@ public class AvTimeSpan {
         return secs > other.secs;
     }
 
-    public boolean smallerThan(@NonNull final AvTimeSpan other) {
+    public boolean shorterThan(@NonNull final AvTimeSpan other) {
         return secs < other.secs;
     }
 

@@ -7,6 +7,7 @@ import java.util.List;
 
 import de.nb.aventiure2.data.database.AvDatabase;
 import de.nb.aventiure2.data.world.base.GameObjectId;
+import de.nb.aventiure2.data.world.syscomp.description.IDescribableGO;
 
 import static com.google.common.collect.ImmutableList.toImmutableList;
 
@@ -25,18 +26,18 @@ public class LocationSystem {
         return dao.findByLocation(locationId);
     }
 
-    public static <GO extends ILocatableGO>
-    ImmutableList<GO> filterMovable(final Collection<GO> gameObjects) {
+    public static <DESC_OBJ extends ILocatableGO & IDescribableGO>
+    ImmutableList<DESC_OBJ> filterMovable(final Collection<DESC_OBJ> gameObjects) {
         return filterMovable(gameObjects, true);
     }
 
-    public static <GO extends ILocatableGO> ImmutableList<GO>
-    filterNotMovable(final Collection<GO> gameObjects) {
+    public static <DESC_OBJ extends ILocatableGO & IDescribableGO> ImmutableList<DESC_OBJ>
+    filterNotMovable(final Collection<DESC_OBJ> gameObjects) {
         return filterMovable(gameObjects, false);
     }
 
-    public static <GO extends ILocatableGO> ImmutableList<GO>
-    filterMovable(final Collection<GO> gameObjects, final boolean movable) {
+    public static <DESC_OBJ extends ILocatableGO & IDescribableGO> ImmutableList<DESC_OBJ>
+    filterMovable(final Collection<DESC_OBJ> gameObjects, final boolean movable) {
         return gameObjects.stream()
                 .filter(go -> go.locationComp().isMovable() == movable)
                 .collect(toImmutableList());

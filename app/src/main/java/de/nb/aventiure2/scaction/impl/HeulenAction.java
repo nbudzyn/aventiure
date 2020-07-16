@@ -14,7 +14,6 @@ import de.nb.aventiure2.data.world.gameobject.player.SpielerCharakter;
 import de.nb.aventiure2.data.world.syscomp.alive.ILivingBeingGO;
 import de.nb.aventiure2.data.world.syscomp.description.IDescribableGO;
 import de.nb.aventiure2.data.world.syscomp.memory.Action;
-import de.nb.aventiure2.data.world.syscomp.memory.Known;
 import de.nb.aventiure2.data.world.syscomp.state.IHasStateGO;
 import de.nb.aventiure2.data.world.syscomp.state.impl.FroschprinzState;
 import de.nb.aventiure2.data.world.syscomp.talking.ITalkerGO;
@@ -123,9 +122,7 @@ public class HeulenAction extends AbstractScAction {
         froschprinz.stateComp().setState(HAT_SC_HILFSBEREIT_ANGESPROCHEN);
         froschprinz.talkingComp().setTalkingTo(sc);
         sc.feelingsComp().setMood(NEUTRAL);
-        sc.memoryComp().upgradeKnown(FROSCHPRINZ, Known.getKnown(
-                sc.locationComp().getLocation().storingPlaceComp().getLichtverhaeltnisse()));
-
+        world.upgradeKnownToSc(FROSCHPRINZ, sc.locationComp().getLocation());
         return timeElapsed;
     }
 

@@ -15,8 +15,7 @@ import de.nb.aventiure2.data.world.syscomp.description.AbstractDescriptionComp;
 import de.nb.aventiure2.data.world.syscomp.location.ILocatableGO;
 import de.nb.aventiure2.data.world.syscomp.location.LocationComp;
 import de.nb.aventiure2.data.world.syscomp.memory.Action;
-import de.nb.aventiure2.data.world.syscomp.memory.Known;
-import de.nb.aventiure2.data.world.syscomp.reaction.AbstractReactionsComp;
+import de.nb.aventiure2.data.world.syscomp.reaction.AbstractDescribableReactionsComp;
 import de.nb.aventiure2.data.world.syscomp.reaction.interfaces.IMovementReactions;
 import de.nb.aventiure2.data.world.syscomp.reaction.interfaces.ITimePassedReactions;
 import de.nb.aventiure2.data.world.syscomp.state.IHasStateGO;
@@ -26,7 +25,6 @@ import de.nb.aventiure2.data.world.syscomp.storingplace.Lichtverhaeltnisse;
 import de.nb.aventiure2.data.world.time.AvDateTime;
 import de.nb.aventiure2.data.world.time.AvTimeSpan;
 import de.nb.aventiure2.german.base.AbstractDescription;
-import de.nb.aventiure2.german.base.Nominalphrase;
 import de.nb.aventiure2.german.base.NumerusGenus;
 
 import static de.nb.aventiure2.data.world.gameobject.World.COUNTER_ID_VOR_DEM_SCHLOSS_SCHLOSSFEST_KNOWN;
@@ -56,10 +54,9 @@ import static de.nb.aventiure2.german.base.StructuralElement.PARAGRAPH;
  * der Benutzer die Goldene Kugel mitnimmt o.Ä.
  */
 public class SchlosswacheReactionsComp
-        extends AbstractReactionsComp
+        extends AbstractDescribableReactionsComp
         implements IMovementReactions, ITimePassedReactions {
 
-    private final AbstractDescriptionComp descriptionComp;
     private final SchlosswacheStateComp stateComp;
     private final LocationComp locationComp;
 
@@ -68,8 +65,7 @@ public class SchlosswacheReactionsComp
                                      final AbstractDescriptionComp descriptionComp,
                                      final SchlosswacheStateComp stateComp,
                                      final LocationComp locationComp) {
-        super(SCHLOSSWACHE, db, world);
-        this.descriptionComp = descriptionComp;
+        super(SCHLOSSWACHE, db, world, descriptionComp);
         this.stateComp = stateComp;
         this.locationComp = locationComp;
     }
@@ -121,7 +117,7 @@ public class SchlosswacheReactionsComp
             if (db.counterDao().incAndGet(
                     "SchlosswacheReactions_onEnterRoom_SchlossVorhalle") > 1) {
                 return n.add(neuerSatz(
-                        capitalize(getSchlosswacheDescription(true).nom())
+                        capitalize(getDescription(true).nom())
                                 + " scheint dich nicht zu bemerken", secs(3)));
             }
         }
@@ -179,13 +175,13 @@ public class SchlosswacheReactionsComp
                 raumAusDemDerSCDasSchlossBetretenHat);
     }
 
-    private static String schlossVerlassenWohinDescription(
+    private String schlossVerlassenWohinDescription(
             final ILocationGO schlossRoom,
             final ILocationGO wohinRoom) {
         final Lichtverhaeltnisse lichtverhaeltnisseImSchloss =
-                getLichtverhaeltnisse(schlossRoom);
+                world.getLichtverhaeltnisse(schlossRoom);
         final Lichtverhaeltnisse lichtverhaeltnisseDraussen =
-                getLichtverhaeltnisse(wohinRoom);
+                world.getLichtverhaeltnisse(wohinRoom);
         if (lichtverhaeltnisseImSchloss  // Im Schloss ist es immer hell, wenn es also draußen
                 // auch hell ist...
                 == lichtverhaeltnisseDraussen) {
@@ -247,23 +243,10 @@ public class SchlosswacheReactionsComp
                                 + "Mit kräftiger Hand klopft die Wache auf ihre Hellebarde",
                         secs(20)));
 
-        sc.memoryComp().upgradeKnown(SCHLOSSWACHE,
-                Known.getKnown(getLichtverhaeltnisse(from)));
+        world.upgradeKnownToSc(SCHLOSSWACHE, from);
         sc.feelingsComp().setMood(ANGESPANNT);
 
         return timeElapsed;
-    }
-
-    /**
-     * Gibt die Lichtverhältnisse an diesem Ort zurück.
-     */
-    private static Lichtverhaeltnisse getLichtverhaeltnisse(
-            @Nullable final ILocationGO location) {
-        if (location == null) {
-            return Lichtverhaeltnisse.HELL;
-        }
-
-        return location.storingPlaceComp().getLichtverhaeltnisse();
     }
 
     private AvTimeSpan scHatGoldeneKugelGenommenOderHochgeworfenUndAufgefangen_wacheIstAufmerksam(
@@ -289,7 +272,7 @@ public class SchlosswacheReactionsComp
                 neuerSatz(PARAGRAPH, "„Was treibt Ihr für einen Unfug, legt sofort das "
                         + "Schmuckstück wieder hin!“, "
                         + "ruft dir "
-                        + getSchlosswacheDescription(true).nom()
+                        + getDescription(true).nom()
                         + " zu", secs(5)));
 
         // TODO Geschichte ausspinnen: Spieler muss die Kugel selbst
@@ -359,21 +342,21 @@ public class SchlosswacheReactionsComp
         if (n.getStoryState().allowsAdditionalDuSatzreihengliedOhneSubjekt()) {
             alt.add(satzanschluss(
                     ", während "
-                            + getSchlosswacheDescription().nom()
+                            + getDescription().nom()
                             + " gerade damit beschäftigt ist, ihre Waffen zu polieren",
                     secs(3))
                     .dann());
         } else {
             alt.add(du(
                     "hast", "großes Glück, denn "
-                            + getSchlosswacheDescription().nom()
+                            + getDescription().nom()
                             + " ist gerade damit beschäftigt, ihre Waffen zu polieren", secs(3))
                     .komma(true)
                     .dann());
         }
 
         alt.add(neuerSatz(
-                capitalize(getSchlosswacheDescription().dat())
+                capitalize(getDescription().dat())
                         + " ist anscheinend nichts aufgefallen",
                 secs(3))
                 .dann());
@@ -418,10 +401,10 @@ public class SchlosswacheReactionsComp
 
         loadSC().feelingsComp().setMood(ANGESPANNT);
         return n.addAlt(
-                neuerSatz(capitalize(getSchlosswacheDescription().nom())
+                neuerSatz(getDescription().nom()
                         + " beoabachtet dich dabei", secs(5))
                         .dann(),
-                neuerSatz(capitalize(getSchlosswacheDescription().nom())
+                neuerSatz(getDescription().nom()
                         + " sieht dir belustig dabei zu", secs(5))
                         .dann(),
                 // STORY Das hier nur, wenn die Kugel HOCHGEWORFEN wurde (und nicht aufgefangen)
@@ -486,28 +469,5 @@ public class SchlosswacheReactionsComp
 
                             return timeElapsedOnEnter;
                         }));
-    }
-
-    /**
-     * Gibt eine Nominalphrase zurück, die die Schlosswache beschreibt.
-     * Die Phrase kann unterschiedlich sein, je nachdem,
-     * ob der Spieler die Schlosswache schon kennt oder nicht.
-     */
-    private Nominalphrase getSchlosswacheDescription() {
-        return getSchlosswacheDescription(false);
-    }
-
-    /**
-     * Gibt eine Nominalphrase zurück, die die Schlosswache beschreibt.
-     * Die Phrase kann unterschiedlich sein, je nachdem,
-     * ob der Spieler die Schlosswache schon kennt oder nicht.
-     *
-     * @param shortIfKnown <i>Falls der Spieler(-charakter)</i> die
-     *                     Schlosswache schon kennt, wird eher eine
-     *                     kürzere Beschreibung gewählt
-     */
-    private Nominalphrase getSchlosswacheDescription(final boolean shortIfKnown) {
-        return descriptionComp.getDescription(
-                loadSC().memoryComp().isKnown(SCHLOSSWACHE), shortIfKnown);
     }
 }

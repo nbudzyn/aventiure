@@ -73,8 +73,8 @@ import static de.nb.aventiure2.data.world.time.AvTime.oClock;
         MoodConverters.class,
         HungerConverters.class})
 // TODO Database migrations, exportSchema = true?
-// "In a real app, you should consider setting a directory for Room to [...] export the
-// schema so you can check the current schema into your version control system."
+//  "In a real app, you should consider setting a directory for Room to [...] export the
+//  schema so you can check the current schema into your version control system."
 public abstract class AvDatabase extends RoomDatabase {
     private static final String DATABASE_NAME = "aventiureDatabase";
 

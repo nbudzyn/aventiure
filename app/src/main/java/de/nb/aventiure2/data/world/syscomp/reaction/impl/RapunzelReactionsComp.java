@@ -7,7 +7,7 @@ import de.nb.aventiure2.data.world.gameobject.World;
 import de.nb.aventiure2.data.world.syscomp.description.AbstractDescriptionComp;
 import de.nb.aventiure2.data.world.syscomp.location.ILocatableGO;
 import de.nb.aventiure2.data.world.syscomp.location.LocationComp;
-import de.nb.aventiure2.data.world.syscomp.reaction.AbstractReactionsComp;
+import de.nb.aventiure2.data.world.syscomp.reaction.AbstractDescribableReactionsComp;
 import de.nb.aventiure2.data.world.syscomp.reaction.interfaces.IMovementReactions;
 import de.nb.aventiure2.data.world.syscomp.reaction.interfaces.ITimePassedReactions;
 import de.nb.aventiure2.data.world.syscomp.spatialconnection.impl.VorDemTurmConnectionComp;
@@ -17,7 +17,9 @@ import de.nb.aventiure2.data.world.time.AvDateTime;
 import de.nb.aventiure2.data.world.time.AvTimeSpan;
 
 import static de.nb.aventiure2.data.world.gameobject.World.IM_WALD_NAHE_DEM_SCHLOSS;
+import static de.nb.aventiure2.data.world.gameobject.World.OBEN_IM_ALTEN_TURM;
 import static de.nb.aventiure2.data.world.gameobject.World.RAPUNZEL;
+import static de.nb.aventiure2.data.world.gameobject.World.RAPUNZELS_ZAUBERIN;
 import static de.nb.aventiure2.data.world.gameobject.World.SPIELER_CHARAKTER;
 import static de.nb.aventiure2.data.world.gameobject.World.VOR_DEM_ALTEN_TURM;
 import static de.nb.aventiure2.data.world.syscomp.feelings.Mood.BEWEGT;
@@ -36,10 +38,9 @@ import static de.nb.aventiure2.german.base.StructuralElement.PARAGRAPH;
  * "Reaktionen" von Rapunzel, z.B. darauf, dass Zeit vergeht
  */
 public class RapunzelReactionsComp
-        extends AbstractReactionsComp
+        extends AbstractDescribableReactionsComp
         implements IMovementReactions, ITimePassedReactions {
 
-    private final AbstractDescriptionComp descriptionComp;
     private final RapunzelStateComp stateComp;
     private final LocationComp locationComp;
 
@@ -48,8 +49,7 @@ public class RapunzelReactionsComp
                                  final AbstractDescriptionComp descriptionComp,
                                  final RapunzelStateComp stateComp,
                                  final LocationComp locationComp) {
-        super(RAPUNZEL, db, world);
-        this.descriptionComp = descriptionComp;
+        super(RAPUNZEL, db, world, descriptionComp);
         this.stateComp = stateComp;
         this.locationComp = locationComp;
     }
@@ -127,24 +127,31 @@ public class RapunzelReactionsComp
 
     @Override
     public AvTimeSpan onTimePassed(final AvDateTime lastTime, final AvDateTime now) {
-        if (isZeitZumSingen(now)) {
-            return onTimePassed_ZeitZumSingen(lastTime, now);
+        if (rapunzelMoechteSingen(now)) {
+            return onTimePassed_RapunzelMoechteSingen(lastTime, now);
         }
 
-        return onTimePassed_NichtZeitZumSingen(lastTime, now);
+        return onTimePassed_RapunzelMoechteNichtSingen(lastTime, now);
     }
 
     /**
      * Gibt zurück, ob es für Rapunzel eine gute Zeit ist zu singen
      */
-    private static boolean isZeitZumSingen(final AvDateTime now) {
+    private boolean rapunzelMoechteSingen(final AvDateTime now) {
+        if (((ILocatableGO) world.load(RAPUNZELS_ZAUBERIN)).locationComp()
+                .hasRecursiveLocation(OBEN_IM_ALTEN_TURM)) {
+            // Während Rapunzel von der Zauberin Besuch hat, singt sie nicht
+            return false;
+        }
+
+        // Ansonsten singt Rapunzel innerhalb gewisser Zeiten immer mal wieder
         return now.getTageszeit().getLichtverhaeltnisseDraussen() == HELL &&
-                !isZeitFuerMittagsschlaf(now) &&
+                !isZeitFuerMittagsruhe(now) &&
                 ab7_30Alle15MinutenFuer5Minuten(now);
     }
 
-    private static boolean isZeitFuerMittagsschlaf(final AvDateTime now) {
-        return now.getTime().isBetweenIncl(oClock(1), oClock(3));
+    private static boolean isZeitFuerMittagsruhe(final AvDateTime now) {
+        return now.getTime().isWithin(oClock(1), oClock(2, 30));
     }
 
     private static boolean ab7_30Alle15MinutenFuer5Minuten(final AvDateTime now) {
@@ -155,7 +162,8 @@ public class RapunzelReactionsComp
         );
     }
 
-    private AvTimeSpan onTimePassed_ZeitZumSingen(final AvDateTime lastTime, final AvDateTime now) {
+    private AvTimeSpan onTimePassed_RapunzelMoechteSingen(final AvDateTime lastTime,
+                                                          final AvDateTime now) {
         // STORY Konzept entwickeln, um dies zu realisieren:
         //  - Benutzer rastet für längere Zeit (wach) und Rapunzel beginnt mehrfach
         //    zu singen und hört wieder auf, letztlich singt Rapunzel
@@ -212,8 +220,8 @@ public class RapunzelReactionsComp
         );
     }
 
-    private AvTimeSpan onTimePassed_NichtZeitZumSingen(final AvDateTime lastTime,
-                                                       final AvDateTime now) {
+    private AvTimeSpan onTimePassed_RapunzelMoechteNichtSingen(final AvDateTime lastTime,
+                                                               final AvDateTime now) {
         // STORY Konzept entwickeln, um dies zu realisieren:
         //  - Benutzer rastet für längere Zeit (wach) und Rapunzel beginnt mehrfach
         //    zu singen und hört wieder auf, letztlich singt Rapunzel nicht mehr

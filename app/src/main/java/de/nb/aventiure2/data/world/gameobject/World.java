@@ -28,6 +28,7 @@ import de.nb.aventiure2.data.world.syscomp.location.ILocatableGO;
 import de.nb.aventiure2.data.world.syscomp.location.LocationSystem;
 import de.nb.aventiure2.data.world.syscomp.location.RoomFactory;
 import de.nb.aventiure2.data.world.syscomp.memory.IHasMemoryGO;
+import de.nb.aventiure2.data.world.syscomp.memory.Known;
 import de.nb.aventiure2.data.world.syscomp.reaction.IReactions;
 import de.nb.aventiure2.data.world.syscomp.reaction.IResponder;
 import de.nb.aventiure2.data.world.syscomp.spatialconnection.impl.DraussenVorDemSchlossConnectionComp;
@@ -37,6 +38,7 @@ import de.nb.aventiure2.data.world.syscomp.spatialconnection.impl.SchlossVorhall
 import de.nb.aventiure2.data.world.syscomp.spatialconnection.impl.SimpleConnectionCompFactory;
 import de.nb.aventiure2.data.world.syscomp.spatialconnection.impl.VorDemTurmConnectionComp;
 import de.nb.aventiure2.data.world.syscomp.storingplace.ILocationGO;
+import de.nb.aventiure2.data.world.syscomp.storingplace.Lichtverhaeltnisse;
 import de.nb.aventiure2.data.world.syscomp.storingplace.StoringPlaceType;
 import de.nb.aventiure2.data.world.time.AvDateTime;
 import de.nb.aventiure2.german.base.Nominalphrase;
@@ -274,6 +276,46 @@ public class World {
         }
     }
 
+    public void upgradeKnownToSc(
+            @Nullable final GameObjectId gameObjectId,
+            @Nullable final GameObjectId locationId) {
+        upgradeKnownToSc(gameObjectId,
+                locationId != null ? ((ILocationGO) load(locationId)) : null);
+    }
+
+    public void upgradeKnownToSc(
+            @Nullable final IGameObject gameObject,
+            @Nullable final ILocationGO location) {
+        upgradeKnownToSc(gameObject != null ? gameObject.getId() : null,
+                location);
+    }
+
+    public void upgradeKnownToSc(
+            @Nullable final GameObjectId gameObjectId,
+            @Nullable final ILocationGO location) {
+        loadSC().memoryComp().upgradeKnown(gameObjectId, getKnown(location));
+    }
+
+    public Known getKnown(@Nullable final GameObjectId locationId) {
+        return getKnown(locationId != null ? ((ILocationGO) load(locationId)) : null);
+    }
+
+    public static Known getKnown(@Nullable final ILocationGO location) {
+        return Known.getKnown(getLichtverhaeltnisse(location));
+    }
+
+    /**
+     * Gibt die Lichtverhältnisse an diesem Ort zurück.
+     */
+    public static Lichtverhaeltnisse getLichtverhaeltnisse(@Nullable final ILocationGO location) {
+        if (location == null) {
+            return Lichtverhaeltnisse.HELL;
+        }
+
+        return location.storingPlaceComp().getLichtverhaeltnisse();
+    }
+
+
     /**
      * Gibt <code>true</code> zurück falls das Game Object eine dieser Locations ist oder
      * sich (ggf. rekusiv) an einer dieser Locations befindet.
@@ -491,16 +533,19 @@ public class World {
 
     /**
      * Ermittelt die Game Objects,
-     * die <i>nicht movable</i> sind (also <i>nicht</i> bewegt werden könnten) an dieser
+     * die <i>nicht lebendig</i> und <i>nicht movable</i> sind (also <i>nicht</i> bewegt werden
+     * könnten) an dieser
      * <i>locationId</i> (aber <i>nicht</i> rekursiv enthaltene, z.B. eine
      * <i>nicht</i> die schwere Vase auf einem Tisch in einem Raum),
      * lädt sie (sofern noch nicht geschehen) und gibt sie zurück -
      * nur Gegenstände, die eine Beschreibung haben.
      */
     public <LOC_DESC extends ILocatableGO & IDescribableGO>
-    ImmutableList<LOC_DESC> loadDescribableNonMovableInventory(
+    ImmutableList<LOC_DESC> loadDescribableNonLivingNonMovableInventory(
             final GameObjectId locationId) {
-        return LocationSystem.filterNotMovable(loadDescribableInventory(locationId));
+        return filterNonLivingBeing(
+                LocationSystem.filterNotMovable(
+                        loadDescribableInventory(locationId)));
     }
 
     /**
@@ -620,6 +665,13 @@ public class World {
         loadGameObjects(res);
 
         return (ImmutableList<LOC_DESC>) (ImmutableList<?>) res;
+    }
+
+    private static <DESC_OBJ extends ILocatableGO & IDescribableGO>
+    ImmutableList<DESC_OBJ> filterNonLivingBeing(final List<DESC_OBJ> gameObjects) {
+        return gameObjects.stream()
+                .filter(go -> !(go instanceof ILivingBeingGO))
+                .collect(toImmutableList());
     }
 
     private static <DESC_OBJ extends ILocatableGO & IDescribableGO,

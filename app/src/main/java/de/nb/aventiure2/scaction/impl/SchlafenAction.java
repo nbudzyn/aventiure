@@ -40,6 +40,7 @@ public class SchlafenAction extends AbstractScAction {
             @Nullable final IGameObject room) {
         final ImmutableList.Builder<SchlafenAction> res = ImmutableList.builder();
         if (room != null && room.is(BETT_IN_DER_HUETTE_IM_WALD)) {
+            // STORY Schlafen könnte man auch im Schaukelstuhl
             res.add(new SchlafenAction(db, world, initialStoryState));
         }
 

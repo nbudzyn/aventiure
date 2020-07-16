@@ -37,6 +37,7 @@ import static de.nb.aventiure2.data.world.gameobject.World.ABZWEIG_IM_WALD;
 import static de.nb.aventiure2.data.world.gameobject.World.DRAUSSEN_VOR_DEM_SCHLOSS;
 import static de.nb.aventiure2.data.world.gameobject.World.FROSCHPRINZ;
 import static de.nb.aventiure2.data.world.gameobject.World.IM_WALD_BEIM_BRUNNEN;
+import static de.nb.aventiure2.data.world.gameobject.World.IM_WALD_NAHE_DEM_SCHLOSS;
 import static de.nb.aventiure2.data.world.gameobject.World.OBEN_IM_ALTEN_TURM;
 import static de.nb.aventiure2.data.world.gameobject.World.RAPUNZEL;
 import static de.nb.aventiure2.data.world.gameobject.World.RAPUNZELS_ZAUBERIN;
@@ -125,16 +126,17 @@ class CreatureFactory {
         final RapunzelsZauberinStateComp stateComp = new RapunzelsZauberinStateComp(db);
         final AbstractDescriptionComp descriptionComp =
                 new SimpleDescriptionComp(RAPUNZELS_ZAUBERIN,
-                        // STORY Beschreibung für Rapunzels Zauberin
-                        np(F, "STORY",
-                                "STORY"),
-                        np(F, "STORY",
-                                "STORY"),
-                        np(F, "STORY",
-                                "STORY"));
+                        np(F, "eine magere Frau mit krummer, bis zum Kinn "
+                                        + "reichender Nase",
+                                "einer mageren Frau mit krummer, bis zum Kinn "
+                                        + "reichender Nase"),
+                        np(F, "die magere Frau mit der krummen Nase",
+                                "der mageren Frau mit der krummen Nase"),
+                        np(F, "die Frau",
+                                "der Frau"));
         final LocationComp locationComp =
                 new LocationComp(RAPUNZELS_ZAUBERIN, db, world,
-                        null, VOR_DEM_ALTEN_TURM,
+                        VOR_DEM_ALTEN_TURM, IM_WALD_NAHE_DEM_SCHLOSS,
                         false);
         final RapunzelsZauberinTalkingComp talkingComp =
                 new RapunzelsZauberinTalkingComp(db, world, descriptionComp, stateComp);

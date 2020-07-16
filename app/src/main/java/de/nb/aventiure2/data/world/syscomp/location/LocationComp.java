@@ -62,25 +62,33 @@ public class LocationComp extends AbstractStatefulComponent<LocationPCD> {
     }
 
     public AvTimeSpan narrateAndUnsetLocation() {
-        return narrateAndSetLocation((GameObjectId) null);
+        return narrateAndUnsetLocation(() -> noTime());
     }
 
+    @NonNull
+    public AvTimeSpan narrateAndUnsetLocation(final Supplier<AvTimeSpan> onEnter) {
+        return narrateAndSetLocation((GameObjectId) null, onEnter);
+    }
+
+    @NonNull
     public AvTimeSpan narrateAndSetLocation(@Nullable final ILocationGO newLocation) {
         return narrateAndSetLocation(
                 newLocation != null ? newLocation.getId() : null);
     }
 
+    @NonNull
     public AvTimeSpan narrateAndSetLocation(@Nullable final GameObjectId newLocationId) {
         return narrateAndSetLocation(newLocationId, () -> noTime());
     }
 
-
+    @NonNull
     public AvTimeSpan narrateAndSetLocation(@Nullable final ILocationGO newLocation,
                                             final Supplier<AvTimeSpan> onEnter) {
         return narrateAndSetLocation(
                 newLocation != null ? newLocation.getId() : null, onEnter);
     }
 
+    @NonNull
     public AvTimeSpan narrateAndSetLocation(@Nullable final GameObjectId newLocationId,
                                             final Supplier<AvTimeSpan> onEnter) {
         AvTimeSpan timeElapsed = narrateAndDoLeaveReactions(newLocationId);
@@ -92,6 +100,7 @@ public class LocationComp extends AbstractStatefulComponent<LocationPCD> {
         return timeElapsed.plus(narrateAndDoEnterReactions(newLocationId));
     }
 
+    @NonNull
     public AvTimeSpan narrateAndDoLeaveReactions(
             @Nullable final GameObjectId newLocationId) {
         @Nullable final ILocationGO from = getLocation();
@@ -103,6 +112,7 @@ public class LocationComp extends AbstractStatefulComponent<LocationPCD> {
                 .onLeave(getGameObjectId(), from, newLocationId);
     }
 
+    @NonNull
     public AvTimeSpan narrateAndDoEnterReactions(@Nullable final GameObjectId newLocationId) {
         if (newLocationId == null) {
             return noTime();
@@ -200,6 +210,13 @@ public class LocationComp extends AbstractStatefulComponent<LocationPCD> {
     }
 
     /**
+     * Gibt zurück, ob sich das Game Object derzeit an <i>keiner</i> <code>location</code>.
+     */
+    public boolean hasNoLocation() {
+        return hasLocation((ILocationGO) null);
+    }
+
+    /**
      * Gibt zurück, ob sich das Game Object an dieser <code>location</code> befindet (<i>nicht</i>
      * rekursiv, also <i>nicht</i> auf einem Tisch in diesem Raum).
      */
@@ -252,14 +269,9 @@ public class LocationComp extends AbstractStatefulComponent<LocationPCD> {
     }
 
     private void setLocation(@Nullable final GameObjectId locationId) {
-        if (Objects.equals(getLocationId(), locationId)) {
-            return;
-        }
-
         if (getGameObjectId().equals(locationId)) {
             throw new IllegalStateException("A game object cannot contain itself.");
         }
-
 
         getPcd().setLastLocationId(getLocationId());
 
@@ -275,7 +287,7 @@ public class LocationComp extends AbstractStatefulComponent<LocationPCD> {
     }
 
     @Nullable
-    private ILocationGO getLastLocation() {
+    public ILocationGO getLastLocation() {
         @Nullable final GameObjectId lastLocationId = getLastLocationId();
         if (lastLocationId == null) {
             return null;
@@ -285,7 +297,7 @@ public class LocationComp extends AbstractStatefulComponent<LocationPCD> {
     }
 
     @Nullable
-    private GameObjectId getLastLocationId() {
+    public GameObjectId getLastLocationId() {
         return getPcd().getLastLocationId();
     }
 

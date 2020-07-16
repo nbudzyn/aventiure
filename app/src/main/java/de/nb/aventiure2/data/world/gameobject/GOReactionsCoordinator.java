@@ -19,6 +19,7 @@ import de.nb.aventiure2.data.world.syscomp.storingplace.ILocationGO;
 import de.nb.aventiure2.data.world.time.AvDateTime;
 import de.nb.aventiure2.data.world.time.AvTimeSpan;
 
+import static de.nb.aventiure2.data.world.time.AvTimeSpan.max;
 import static de.nb.aventiure2.data.world.time.AvTimeSpan.noTime;
 
 public class GOReactionsCoordinator {
@@ -140,7 +141,7 @@ public class GOReactionsCoordinator {
         for (final IResponder responder : respondersToReaction) {
             if (condition.test(responder)) {
                 final R reactionsComp = (R) responder.reactionsComp();
-                timeElapsed = timeElapsed.plus(narrateAndDoReaction.apply(reactionsComp));
+                timeElapsed = max(timeElapsed, narrateAndDoReaction.apply(reactionsComp));
             }
         }
 

@@ -4,6 +4,9 @@ package de.nb.aventiure2.data.world.syscomp.state.impl;
  * A state Rapunzels Zauberin can be in.
  */
 public enum RapunzelsZauberinState {
-    BESUCHT_RAPUNZEL_REGELMAESSIG
-    // STORY: HAT_BEMERKT_DASS_RAPUNZEL_VERSCHWUNDEN_IST
+    VOR_DEM_NAECHSTEN_RAPUNZEL_BESUCH,
+    AUF_DEM_WEG_ZU_RAPUNZEL,
+    IST_OBEN_IM_TURM_BEI_RAPUNZEL,
+    AUF_DEM_RUECKWEG_VON_RAPUNZEL,
+    WEISS_DASS_RAPUNZEL_BEFREIT_WURDE
 }
