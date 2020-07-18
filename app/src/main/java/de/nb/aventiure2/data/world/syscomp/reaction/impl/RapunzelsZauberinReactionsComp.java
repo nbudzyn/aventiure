@@ -92,17 +92,163 @@ public class RapunzelsZauberinReactionsComp
     }
 
     private AvTimeSpan onSCEnter(@Nullable final ILocationGO from, final ILocationGO to) {
-        if (world.isOrHasRecursiveLocation(to, IM_WALD_NAHE_DEM_SCHLOSS)) {
-            return onSCEnter_ImWaldNaheDemSchloss(from);
+        if (!world.loadSC().locationComp().hasRecursiveLocation(locationComp.getLocation())) {
+            // SC und Zauberin sind nich am gleichen Ort
+            return noTime();
         }
 
-        if (world.isOrHasRecursiveLocation(to, VOR_DEM_ALTEN_TURM)) {
-            return onSCEnter_VorDemAltenTurm(from);
+        return onSCTrifftZauberin(from, to);
+    }
+
+    private AvTimeSpan onSCTrifftZauberin(@Nullable final ILocationGO from,
+                                          final ILocationGO to) {
+        if (to.is(DRAUSSEN_VOR_DEM_SCHLOSS)) {
+            // Hier bemerkt der SC die Zauberin nicht
+            return noTime();
+        }
+
+        final Nominalphrase desc = getDescription();
+
+        final AvTimeSpan extraTime;
+
+        if (world.isOrHasRecursiveLocation(to, IM_WALD_NAHE_DEM_SCHLOSS)) {
+
+            // STORY Wenn die Zauberin WEISS_DASS_RAPUNZEL_BEFREIT_WURDE, sieht sie
+            //  den SC mit bösen und giftigen Blicken an?
+
+            if (!movementComp.isMoving()) {
+                extraTime = n.add(neuerSatz(SENTENCE,
+                        "Auf dem Weg steht " +
+                                desc.nom(), noTime())
+                        .phorikKandidat(desc, RAPUNZELS_ZAUBERIN)
+                        .beendet(PARAGRAPH));
+            } else if (world.isOrHasRecursiveLocation(from, DRAUSSEN_VOR_DEM_SCHLOSS) &&
+                    locationComp.lastLocationWas(VOR_DEM_ALTEN_TURM) &&
+                    movementComp.isEntering()) {
+
+                extraTime = n.add(neuerSatz(PARAGRAPH,
+                        "Von dem Pfad her kommt dir " +
+                                desc.nom() +
+                                " entgegen", noTime())
+                        .phorikKandidat(desc, RAPUNZELS_ZAUBERIN)
+                        .beendet(PARAGRAPH));
+            } else if (world.isOrHasRecursiveLocation(from, ABZWEIG_IM_WALD) &&
+                    locationComp.lastLocationWas(VOR_DEM_ALTEN_TURM) &&
+                    movementComp.isEntering()) {
+                extraTime = n.add(neuerSatz(PARAGRAPH,
+                        "Von dem Pfad her kommt " +
+                                desc.nom(), noTime())
+                        .phorikKandidat(desc, RAPUNZELS_ZAUBERIN)
+                        .beendet(PARAGRAPH));
+            } else {
+                extraTime = narrateScTrifftZauberin_Default(from, to);
+            }
+        } else if (world.isOrHasRecursiveLocation(to, VOR_DEM_ALTEN_TURM)) {
+            if (!movementComp.isMoving()) {
+                if (world.isOrHasRecursiveLocation(from, IM_WALD_NAHE_DEM_SCHLOSS)) {
+                    // STORY Wenn die Zauberin WEISS_DASS_RAPUNZEL_BEFREIT_WURDE, sieht sie
+                    //  den SC mit bösen und giftigen Blicken an?
+                    extraTime = n.add(neuerSatz(SENTENCE,
+                            "Vor dem Turm steht " +
+                                    desc.nom(), noTime())
+                            .phorikKandidat(desc, RAPUNZELS_ZAUBERIN)
+                            .beendet(PARAGRAPH));
+                } else if (world.isOrHasRecursiveLocation(from, VOR_DEM_ALTEN_TURM)) {
+                    final Nominalphrase descShort = getDescription(true);
+
+                    extraTime = n.add(neuerSatz(SENTENCE,
+                            "Vor dem Turm siehst du " +
+                                    descShort.nom() +
+                                    " stehen", noTime())
+                            .phorikKandidat(descShort, RAPUNZELS_ZAUBERIN)
+                            .beendet(PARAGRAPH));
+                } else if (world.isOrHasRecursiveLocation(from, OBEN_IM_ALTEN_TURM)) {
+                    // STORY "Unten vor dem Turm steht eine..."
+                    // STORY Reaktion der Zauberin: Sie zaubert einen Vergessenszauber?!
+                    //  Auch für Rapunzel??
+                    //  Sieht sie einen zornig an?
+                    extraTime = narrateScTrifftZauberin_Default(from, to);
+                } else {
+                    extraTime = narrateScTrifftZauberin_Default(from, to);
+                }
+            } else {
+                if (locationComp.lastLocationWas(IM_WALD_NAHE_DEM_SCHLOSS) &&
+                        !from.is(IM_WALD_NAHE_DEM_SCHLOSS) &&
+                        movementComp.isEntering()) {
+                    extraTime = n.add(neuerSatz("Den Pfad herauf kommt " +
+                                    desc.nom(),
+                            noTime()
+                            // TODO Etwas unklar: Hier automatisch DIE ZEIT ABWARTEN,
+                            //  die die Zauberin noch braucht?
+                            //  Oder bei späteren Aktionen ggf. die Zeit abwarten?
+                            //  Oder später den Zustand prüfen (z.B. wenn der Spieler
+                            //  vor der Zauberin fliehen möchte)?
+                    )
+                            .phorikKandidat(desc, RAPUNZELS_ZAUBERIN)
+                            .beendet(
+                                    SENTENCE));
+                } else {
+                    extraTime = narrateScTrifftZauberin_Default(from, to);
+                }
+            }
+        } else {
+            extraTime = narrateScTrifftZauberin_Default(from, to);
         }
 
         // STORY Reaktion der Zauberin, wenn SC die Zauberin oben im Turm antrifft
         //  (falls das sein kann).
-        return noTime();
+
+        world.upgradeKnownToSC(RAPUNZELS_ZAUBERIN);
+
+        return extraTime;
+    }
+
+    private AvTimeSpan narrateScTrifftZauberin_Default(@Nullable final ILocationGO from,
+                                                       final ILocationGO to) {
+        final Nominalphrase desc = getDescription();
+
+        if (!movementComp.isMoving()) {
+            return n.addAlt(
+                    neuerSatz(SENTENCE,
+                            "Hier steht " +
+                                    desc.nom(), noTime())
+                            .phorikKandidat(desc, RAPUNZELS_ZAUBERIN)
+                            .beendet(PARAGRAPH),
+                    neuerSatz(PARAGRAPH,
+                            "Du begegnest " + desc.dat(), noTime())
+                            .phorikKandidat(desc, RAPUNZELS_ZAUBERIN)
+                            .beendet(PARAGRAPH)
+            );
+        }
+
+        if (from != null && locationComp.lastLocationWas(from) &&
+                movementComp.isEntering()) {
+            // Zauberin in SC sind denselben Weg gegangen, die Zauberin ist eigentlich noch nicht
+            // ganz angekommen
+            return n.add(du("gehst an " +
+                    desc.dat() +
+                    " vorbei", noTime())
+                    .phorikKandidat(desc, RAPUNZELS_ZAUBERIN)
+                    .beendet(SENTENCE));
+        }
+
+        if (locationComp.getLastLocationId() != null &&
+                !world.isOrHasRecursiveLocation(from, locationComp.getLastLocationId()) &&
+                movementComp.isEntering()) {
+            return n.add(neuerSatz(PARAGRAPH,
+                    "Dir kommt " +
+                            desc.nom() +
+                            " entgegen", noTime())
+                    .phorikKandidat(desc, RAPUNZELS_ZAUBERIN)
+                    .beendet(PARAGRAPH));
+        }
+
+        return n.add(
+                neuerSatz(PARAGRAPH,
+                        "Dir begegnet " + desc.nom(), noTime())
+                        .phorikKandidat(desc, RAPUNZELS_ZAUBERIN)
+                        .beendet(PARAGRAPH)
+        );
     }
 
     @Override
