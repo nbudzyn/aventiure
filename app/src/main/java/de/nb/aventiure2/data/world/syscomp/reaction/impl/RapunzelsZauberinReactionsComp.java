@@ -219,10 +219,12 @@ public class RapunzelsZauberinReactionsComp
         return extraTime;
     }
 
-    // FIXME Alle Default-Sonderfälle für mit den für Einzelfälle vorgegbenen
+    // TODO Die Default-Sonderfälle an einen zentraleren Ort umziehen - z.B.
+    //  eine Default-Implementierung des IMovementNarrator-Interfaces,
+    //  von dem man dann bei Bedarf EINZELNE METHODEN implementieren kann
+    //  (so in der Art narrateKommtEntgegen() und ggf. super... aufrufen)!
+    // TODO Dann alle Default-Sonderfälle für mit den für Einzelfälle vorgegbenen
     //  Fällen vergleichen und ggf. die Einzelfälle ergänzen!
-    // TODO Die Default-Sonderfälle an einen zentraleren Ort umziehen!
-    //  MovingComp oder so.
     private AvTimeSpan narrateScTrifftZauberin_Default(@Nullable final ILocationGO from,
                                                        final ILocationGO to) {
         final Nominalphrase desc = getDescription();
