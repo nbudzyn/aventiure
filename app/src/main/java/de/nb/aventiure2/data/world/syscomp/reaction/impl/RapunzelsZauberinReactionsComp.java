@@ -394,12 +394,14 @@ public class RapunzelsZauberinReactionsComp
     private <FROM extends ILocationGO & ISpatiallyConnectedGO>
     AvTimeSpan narrateAndDoMovementAsExperiencedBySC_StartsLeaving_Default(
             final FROM from, final ILocationGO to) {
-        final Nominalphrase desc = getDescription();
+        final SubstantivischePhrase anaphOderDesc =
+                getAnaphPersPronWennMglSonstDescription(false);
+
         return n.add(neuerSatz(PARAGRAPH,
                 // STORY Andere / schönere Formulierungen
-                desc.nom() +
+                anaphOderDesc.nom() +
                         " geht von dannen", noTime())
-                .phorikKandidat(desc, RAPUNZELS_ZAUBERIN)
+                .phorikKandidat(anaphOderDesc, RAPUNZELS_ZAUBERIN)
                 .beendet(PARAGRAPH));
     }
 
