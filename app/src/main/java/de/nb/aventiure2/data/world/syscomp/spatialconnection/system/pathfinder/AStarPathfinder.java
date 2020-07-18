@@ -119,7 +119,7 @@ public class AStarPathfinder {
     private static SpatialStandardStep toSpatialStandardStep(final AStarNode secondNode) {
         return new SpatialStandardStep(
                 secondNode.getLocation().getId(),
-                secondNode.getTotalCost());
+                secondNode.getDist());
     }
 
     private static AvTimeSpan estimateDistToTarget(

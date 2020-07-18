@@ -6,5 +6,5 @@ import de.nb.aventiure2.data.world.time.AvTimeSpan;
 
 public interface ILeavingStartedNarrator {
     <FROM extends ILocationGO & ISpatiallyConnectedGO>
-    AvTimeSpan narrateAndDoMovementAsExperiencedBySCStartsLeaving(FROM from, ILocationGO to);
+    AvTimeSpan narrateAndDoMovementAsExperiencedBySC_StartsLeaving(FROM from, ILocationGO to);
 }

@@ -144,6 +144,7 @@ class CreatureFactory {
                 new MovementComp(RAPUNZELS_ZAUBERIN, db, world,
                         world.getSpatialConnectionSystem(),
                         locationComp,
+                        // Muss zum Zustand der Zauberin passen!
                         null);
         final RapunzelsZauberinTalkingComp talkingComp =
                 new RapunzelsZauberinTalkingComp(db, world, descriptionComp, stateComp);

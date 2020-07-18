@@ -3,7 +3,6 @@ package de.nb.aventiure2.data.world.syscomp.reaction.impl;
 import javax.annotation.Nullable;
 
 import de.nb.aventiure2.data.database.AvDatabase;
-import de.nb.aventiure2.data.world.base.GameObjectId;
 import de.nb.aventiure2.data.world.gameobject.World;
 import de.nb.aventiure2.data.world.syscomp.description.AbstractDescriptionComp;
 import de.nb.aventiure2.data.world.syscomp.location.ILocatableGO;
@@ -106,119 +105,9 @@ public class RapunzelsZauberinReactionsComp
         return noTime();
     }
 
-    private AvTimeSpan onSCEnter_ImWaldNaheDemSchloss(@Nullable final ILocationGO from) {
-        if (!locationComp.hasRecursiveLocation(IM_WALD_NAHE_DEM_SCHLOSS)) {
-            return noTime();
-        }
-
-        final AvTimeSpan extraTime = narrateScTrifftZauberin_ImWaldNaheDemSchloss(from);
-
-        world.upgradeKnownToSC(RAPUNZELS_ZAUBERIN);
-        return extraTime;
-    }
-
-    private AvTimeSpan narrateScTrifftZauberin_ImWaldNaheDemSchloss(
-            @Nullable final ILocationGO scFrom) {
-        return narrateZauberinUndScTreffenSich_ImWaldNaheDemSchloss(
-                scFrom,
-                locationComp.getLastLocationId() != null ?
-                        locationComp.getLastLocationId() :
-                        DRAUSSEN_VOR_DEM_SCHLOSS
-        );
-    }
-
     @Override
     protected Nominalphrase getDescription() {
         return super.getDescription();
-    }
-
-    private AvTimeSpan onSCEnter_VorDemAltenTurm(@Nullable final ILocationGO from) {
-        if (!locationComp.hasRecursiveLocation(VOR_DEM_ALTEN_TURM)) {
-            return noTime();
-        }
-
-        final AvTimeSpan extraTime = narrateScTrifftZauberin_VorDemAltenTurm(from);
-
-        world.upgradeKnownToSC(RAPUNZELS_ZAUBERIN);
-        return extraTime;
-    }
-
-    private AvTimeSpan narrateScTrifftZauberin_VorDemAltenTurm(@Nullable final ILocationGO scFrom) {
-        if (!movementComp.isMoving()) {
-            return narrateScTrifftZauberin_VorDemAltenTurm_Steht(scFrom);
-        }
-
-        return narrateScTrifftZauberin_VorDemAltenTurm_InBewegung(scFrom);
-    }
-
-    private AvTimeSpan narrateScTrifftZauberin_VorDemAltenTurm_Steht(
-            @Nullable final ILocationGO scFrom) {
-        if (world.isOrHasRecursiveLocation(scFrom, IM_WALD_NAHE_DEM_SCHLOSS)) {
-            // STORY Wenn die Zauberin WEISS_DASS_RAPUNZEL_BEFREIT_WURDE, sieht sie
-            //  den SC mit bösen und giftigen Blicken an?
-            final Nominalphrase desc = getDescription();
-
-            return n.add(neuerSatz(SENTENCE,
-                    "Vor dem Turm steht " +
-                            desc.nom(), noTime())
-                    .phorikKandidat(desc, RAPUNZELS_ZAUBERIN)
-                    .beendet(PARAGRAPH));
-        }
-
-        if (world.isOrHasRecursiveLocation(scFrom, VOR_DEM_ALTEN_TURM)) {
-            final Nominalphrase desc = getDescription(true);
-
-            return n.add(neuerSatz(SENTENCE,
-                    "Vor dem Turm siehst du " +
-                            desc.nom() +
-                            " stehen", noTime())
-                    .phorikKandidat(desc, RAPUNZELS_ZAUBERIN)
-                    .beendet(PARAGRAPH));
-        }
-
-        if (world.isOrHasRecursiveLocation(scFrom, OBEN_IM_ALTEN_TURM)) {
-            // STORY "Unten vor dem Turm steht eine..."
-            // STORY Reaktion der Zauberin: Sie zaubert einen Vergessenszauber?!
-            //  Auch für Rapunzel??
-            //  Sieht sie einen zornig an?
-            return noTime();
-        }
-
-        return noTime();
-    }
-
-    private AvTimeSpan narrateScTrifftZauberin_VorDemAltenTurm_InBewegung(
-            final @Nullable ILocationGO scFrom) {
-        final Nominalphrase desc = getDescription();
-
-        if (scFrom != null && locationComp.lastLocationWas(scFrom)) {
-            // Zauberin in SC sind denselben Weg gegangen, die Zauberin ist eigentlich noch nicht
-            // ganz angekommen
-            return n.add(du("begegnest " +
-                    desc.dat(), noTime())
-                    .phorikKandidat(desc, RAPUNZELS_ZAUBERIN)
-                    .beendet(SENTENCE));
-        }
-
-        // SC und Zauberin kommen aus unterschiedlichen Richtungen
-        if (locationComp.lastLocationWas(IM_WALD_NAHE_DEM_SCHLOSS)) {
-            return n.add(neuerSatz("Den Pfad herauf kommt " +
-                            desc.nom(),
-                    noTime()
-                    // TODO Etwas unklar: Hier automatisch DIE ZEIT ABWARTEN,
-                    //  die die Zauberin noch braucht?
-                    //  Oder bei späteren Aktionen ggf. die Zeit abwarten?
-                    //  Oder später den Zustand prüfen (z.B. wenn der Spieler
-                    //  vor der Zauberin fliehen möchte)?
-            )
-                    .phorikKandidat(desc, RAPUNZELS_ZAUBERIN)
-                    .beendet(SENTENCE));
-        }
-
-        return n.add(du("begegnest " +
-                desc.dat(), noTime())
-                .phorikKandidat(desc, RAPUNZELS_ZAUBERIN)
-                .beendet(SENTENCE));
     }
 
     @Override
@@ -287,49 +176,164 @@ public class RapunzelsZauberinReactionsComp
 
     @Override
     public <FROM extends ILocationGO & ISpatiallyConnectedGO>
-    AvTimeSpan narrateAndDoMovementAsExperiencedBySCStartsLeaving(
+    AvTimeSpan narrateAndDoMovementAsExperiencedBySC_StartsLeaving(
             final FROM from, final ILocationGO to) {
         if (from.is(DRAUSSEN_VOR_DEM_SCHLOSS)) {
             // Hier bemerkt der SC die Zauberin nicht
             return noTime();
         }
 
+        final AvTimeSpan extraTime;
+
+        // STORY Wenn die Zauberin WEISS_DASS_RAPUNZEL_BEFREIT_WURDE, sieht sie
+        //  den SC mit bösen und giftigen Blicken an?
+
+        @Nullable final ILocationGO scLastLocation = loadSC().locationComp().getLastLocation();
+
+        if (!world.isOrHasRecursiveLocation(scLastLocation, IM_WALD_NAHE_DEM_SCHLOSS) &&
+                from.is(VOR_DEM_ALTEN_TURM) && to.is(IM_WALD_NAHE_DEM_SCHLOSS)) {
+            final SubstantivischePhrase anaphOderDesc =
+                    getAnaphPersPronWennMglSonstDescription(false);
+
+            // TODO Wenn die Zauberin losgeht und der SC einmal um den Turm herumgeht, darf danach nicht
+            //  als Beschreibung kommen: "Vor dem Turm sieht du die Frau stehen" - Ist
+            //  das Problem gelöst?
+
+            // TODO Sinn all diese Fälle richtig berücksichtigt?
+            //  - SC geht den Weg von A nach B
+            //    - und X steht in A: (Kein Text)
+            //    - und X steht in B: "Hier steht X"
+            //    - und X geht in B (und kommt von C): "Auf dem Weg geht X", "Von dem C-Weg her
+            //       kommt X gegangen", eventuell "X geht von C nach D"?
+            //    - und X geht in B (und kommt auch von A): "X kommt daher", "Auch X geht..."
+            //    - und X steht oder ist am Gehen (Status) und befindet sich zurzeit in C: (Kein Text)
+            //  - SC steht in A
+            //    - und X geht von A über den Weg nach B: "X geht auf den Weg davon"
+            //    - und X kommt von B über den Weg nach A: "Über den Weg kommt X"
+            //  - In aller Regel bewegt sich immer nur EINER von beiden: SC oder X
+            //    - Wir brauchen also keine allgemeingültige Lösung für diese Fälle:
+            //      - SC geht von A nach B, gleichzeitig geht X von B nach A
+            //      - SC und B gehen gleichzeitig von A nach B
+
+            // TODO Movement-Componente
+            //  - Wenn X noch in Bewegung ist und die Zeit für den Schritt noch nicht
+            //    abegelaufen ist, kann SC mit X interagieren (z.B. mit X reden), aber
+            //    es wird die Restzeit noch abgewartet. Vielleicht Zusatztext in der Art
+            //    "Du wartest, bis ... herangekommen ist und"...
+            //    Außerdem wird möglicherweise die Bewegung "ausgesetzt" und (zumindest von der
+            //    Zeitmessung her) erst nach der Aktion forgesetzt. Z.B. auch erst
+            //    nach einem Dialog (sofern X auf den Dialog eingeht und ihn nicht von sich
+            //    aus beendet)
+
+            extraTime = n.add(neuerSatz(PARAGRAPH,
+                    // TODO Nicht schön: "Vor dem Turm siehst du die Frau stehen. Sie geht den
+                    //  Pfad hinab." Besser wäre "Dann geht sie den Pfad hinab."
+                    //  - Denkbar wäre, .dann() optional mit einem Akteur zu qualifizieren:
+                    //    .dann(RAPUNZELS_ZAUBERIN). Ein "Dann" würde nur dann
+                    //    erzeugt, wenn der Folgesatz denselben Akteur hat.
+                    anaphOderDesc.nom() +
+                            " geht den Pfad hinab", noTime())
+                    .phorikKandidat(anaphOderDesc, RAPUNZELS_ZAUBERIN)
+                    .beendet(PARAGRAPH));
+        } else {
+            // Default
+            extraTime = narrateAndDoMovementAsExperiencedBySC_StartsLeaving_Default(from, to);
+        }
+
         world.upgradeKnownToSC(RAPUNZELS_ZAUBERIN);
 
-        if (from.is(IM_WALD_NAHE_DEM_SCHLOSS)) {
-            return narrateZauberinTrifftSc_ImWaldNaheDemSchloss(locationComp.getLastLocationId());
-        }
+        return extraTime;
+    }
 
-        if (from.is(VOR_DEM_ALTEN_TURM)) {
-            return narrateZauberinVerlaesstSc_VorDemAltenTurm();
-        }
-
-        // Default
+    private <FROM extends ILocationGO & ISpatiallyConnectedGO>
+    AvTimeSpan narrateAndDoMovementAsExperiencedBySC_StartsLeaving_Default(
+            final FROM from, final ILocationGO to) {
         final Nominalphrase desc = getDescription();
         return n.add(neuerSatz(PARAGRAPH,
-                "Dir begegnet " + desc.nom(), noTime())
+                // STORY Andere / schönere Formulierungen
+                desc.nom() +
+                        " geht von dannen", noTime())
                 .phorikKandidat(desc, RAPUNZELS_ZAUBERIN)
                 .beendet(PARAGRAPH));
     }
 
     @Override
     public <FROM extends ILocationGO & ISpatiallyConnectedGO>
-    AvTimeSpan narrateAndDoMovementAsExperiencedBySCStartsEntering(
+    AvTimeSpan narrateAndDoMovementAsExperiencedBySC_StartsEntering(
             final FROM from, final ILocationGO to) {
         if (to.is(DRAUSSEN_VOR_DEM_SCHLOSS)) {
             // Hier bemerkt der SC die Zauberin nicht
             return noTime();
         }
 
+        @Nullable final ILocationGO scLastLocation = loadSC().locationComp().getLastLocation();
+        final Nominalphrase desc = getDescription();
+        final SubstantivischePhrase anaphOderDesc =
+                getAnaphPersPronWennMglSonstDescription(false);
+
+        final AvTimeSpan extraTime;
+        if (to.is(IM_WALD_NAHE_DEM_SCHLOSS)) {
+            // STORY Wenn die Zauberin WEISS_DASS_RAPUNZEL_BEFREIT_WURDE, sieht sie
+            //  den SC mit bösen und giftigen Blicken an?
+            if (world.isOrHasRecursiveLocation(scLastLocation, DRAUSSEN_VOR_DEM_SCHLOSS) &&
+                    from.is(VOR_DEM_ALTEN_TURM)) {
+                extraTime = n.add(neuerSatz(PARAGRAPH,
+                        "Von dem Pfad her kommt dir " +
+                                desc.nom() +
+                                " entgegen", noTime())
+                        .phorikKandidat(desc, RAPUNZELS_ZAUBERIN)
+                        .beendet(PARAGRAPH));
+            } else if (world.isOrHasRecursiveLocation(scLastLocation, ABZWEIG_IM_WALD) &&
+                    from.is(VOR_DEM_ALTEN_TURM)) {
+                extraTime = n.add(neuerSatz(PARAGRAPH,
+                        "Von dem Pfad her kommt " +
+                                desc.nom(), noTime())
+                        .phorikKandidat(desc, RAPUNZELS_ZAUBERIN)
+                        .beendet(PARAGRAPH));
+            } else {
+                extraTime = narrateMovementAsExperiencedBySC_StartsEntering_Default(from, to);
+            }
+        } else if (to.is(VOR_DEM_ALTEN_TURM)) {
+            // STORY Spieler sieht von unten, wie die Zauberin heruntersteigt?
+
+            // STORY Zauberin überrascht den Spieler vor dem Turm
+//                // Die Zauberin hat den Spieler so verzaubert, dass er sich nicht
+//                //  an sie erinnern kann.
+//                loadSC().memoryComp().upgradeKnown(RAPUNZELS_ZAUBERIN, UNKNOWN);
+//                return noTime();
+
+            if (loadSC().memoryComp().getLastAction().is(BEWEGEN) &&
+                    loadSC().locationComp().lastLocationWas(IM_WALD_NAHE_DEM_SCHLOSS) &&
+                    from.is(IM_WALD_NAHE_DEM_SCHLOSS)) {
+                extraTime = n.add(neuerSatz(PARAGRAPH,
+                        anaphOderDesc.nom() +
+                                " kommt hinter dir den Pfad herauf", noTime())
+                        .phorikKandidat(anaphOderDesc, RAPUNZELS_ZAUBERIN)
+                        .beendet(PARAGRAPH));
+            } else if (from.is(IM_WALD_NAHE_DEM_SCHLOSS)) {
+                extraTime = n.add(neuerSatz(PARAGRAPH,
+                        anaphOderDesc.nom() +
+                                " kommt den Pfad herauf", noTime())
+                        .phorikKandidat(anaphOderDesc, RAPUNZELS_ZAUBERIN)
+                        .beendet(PARAGRAPH));
+            } else {
+                extraTime = narrateMovementAsExperiencedBySC_StartsEntering_Default(from, to);
+            }
+        } else {
+            extraTime = narrateMovementAsExperiencedBySC_StartsEntering_Default(from, to);
+        }
+
         world.upgradeKnownToSC(RAPUNZELS_ZAUBERIN);
 
-        if (from.is(IM_WALD_NAHE_DEM_SCHLOSS)) {
-            return narrateZauberinTrifftSc_ImWaldNaheDemSchloss(locationComp.getLastLocationId());
-        }
+        return extraTime;
+    }
 
-        if (to.is(VOR_DEM_ALTEN_TURM)) {
-            return narrateZauberinTrifftSc_VorDemAltenTurm();
-        }
+    private <FROM extends ILocationGO & ISpatiallyConnectedGO>
+    AvTimeSpan narrateMovementAsExperiencedBySC_StartsEntering_Default(
+            final FROM from, final ILocationGO to) {
+        @Nullable final ILocationGO scLastLocation =
+                loadSC().locationComp().getLastLocation();
+        final Nominalphrase desc = getDescription();
 
         // TODO Wenn die Zauberin dabei ist, den Pfad hinunterzukommen,
         //  und der SC unten vor dem Pfad steht, müsste er die Zauberin treffen!
@@ -342,62 +346,7 @@ public class RapunzelsZauberinReactionsComp
         // TODO Wenn die Zauberin dabei ist, den Pfad hinunterzukommen,
         //  und der SC gerade den Pfad hinaufgegangen ist, müsste er die Zauberin treffen!
         //  Funktioniert das?
-
-        // Default
-        final Nominalphrase desc = getDescription();
-        return n.add(neuerSatz(PARAGRAPH,
-                "Dir begegnet " + desc.nom(), noTime())
-                .phorikKandidat(desc, RAPUNZELS_ZAUBERIN)
-                .beendet(PARAGRAPH));
-    }
-
-    private AvTimeSpan narrateZauberinTrifftSc_ImWaldNaheDemSchloss(
-            @Nullable final GameObjectId zauberinLastLocationId) {
-        @Nullable final ILocationGO scLastLocation =
-                loadSC().locationComp().getLastLocation();
-
-        return narrateZauberinUndScTreffenSich_ImWaldNaheDemSchloss(scLastLocation,
-                zauberinLastLocationId);
-    }
-
-    private AvTimeSpan narrateZauberinUndScTreffenSich_ImWaldNaheDemSchloss(
-            @Nullable final ILocationGO scLastLocation,
-            @Nullable final GameObjectId zauberinLastLocationId) {
-        final Nominalphrase desc = getDescription();
-
-        // STORY Wenn die Zauberin WEISS_DASS_RAPUNZEL_BEFREIT_WURDE, sieht sie
-        //  den SC mit bösen und giftigen Blicken an?
-
-        if (!movementComp.isMoving()) {
-            return n.add(neuerSatz(SENTENCE,
-                    "Auf dem Weg steht " +
-                            desc.nom(), noTime())
-                    .phorikKandidat(desc, RAPUNZELS_ZAUBERIN)
-                    .beendet(PARAGRAPH));
-        }
-
-        if (world.isOrHasRecursiveLocation(scLastLocation, DRAUSSEN_VOR_DEM_SCHLOSS) &&
-                zauberinLastLocationId == VOR_DEM_ALTEN_TURM) {
-
-            return n.add(neuerSatz(PARAGRAPH,
-                    "Von dem Pfad her kommt dir " +
-                            desc.nom() +
-                            " entgegen", noTime())
-                    .phorikKandidat(desc, RAPUNZELS_ZAUBERIN)
-                    .beendet(PARAGRAPH));
-        }
-
-        if (world.isOrHasRecursiveLocation(scLastLocation, ABZWEIG_IM_WALD) &&
-                zauberinLastLocationId == VOR_DEM_ALTEN_TURM) {
-            return n.add(neuerSatz(PARAGRAPH,
-                    "Von dem Pfad her kommt " +
-                            desc.nom(), noTime())
-                    .phorikKandidat(desc, RAPUNZELS_ZAUBERIN)
-                    .beendet(PARAGRAPH));
-        }
-
-        if (world.isOrHasRecursiveLocation(scLastLocation, VOR_DEM_ALTEN_TURM) &&
-                zauberinLastLocationId == DRAUSSEN_VOR_DEM_SCHLOSS) {
+        if (!world.isOrHasRecursiveLocation(scLastLocation, from)) {
             return n.add(neuerSatz(PARAGRAPH,
                     "Dir kommt " +
                             desc.nom() +
@@ -406,11 +355,34 @@ public class RapunzelsZauberinReactionsComp
                     .beendet(PARAGRAPH));
         }
 
-        return n.add(neuerSatz(PARAGRAPH,
-                "Dir begegnet " + desc.nom(), noTime())
-                .phorikKandidat(desc, RAPUNZELS_ZAUBERIN)
-                .beendet(PARAGRAPH));
+        // Default
+        final SubstantivischePhrase anaphOderDesc =
+                getAnaphPersPronWennMglSonstDescription(false);
+        return n.addAlt(
+                neuerSatz(PARAGRAPH,
+                        anaphOderDesc.nom() + " kommt herzu", noTime())
+                        .phorikKandidat(anaphOderDesc, RAPUNZELS_ZAUBERIN),
+                neuerSatz(PARAGRAPH,
+                        anaphOderDesc.nom() + " kommt gegangen", noTime())
+                        .phorikKandidat(anaphOderDesc, RAPUNZELS_ZAUBERIN),
+                neuerSatz(PARAGRAPH,
+                        "Es kommt " +
+                                desc.nom(), noTime())
+                        .phorikKandidat(desc, RAPUNZELS_ZAUBERIN)
+                        .beendet(PARAGRAPH),
+                neuerSatz(PARAGRAPH,
+                        desc.nom()
+                                + " kommt daher", noTime())
+                        .phorikKandidat(desc, RAPUNZELS_ZAUBERIN)
+                        .beendet(PARAGRAPH),
+                neuerSatz(PARAGRAPH,
+                        desc.nom()
+                                + " kommt gegangen", noTime())
+                        .phorikKandidat(desc, RAPUNZELS_ZAUBERIN)
+                        .beendet(PARAGRAPH)
+        );
     }
+
 
     private AvTimeSpan onTimePassed_fromAufDemWegZuRapunzel(final AvDateTime now) {
         final AvTimeSpan extraTime = movementComp.onTimePassed(now, this);
@@ -478,72 +450,4 @@ public class RapunzelsZauberinReactionsComp
     }
 
 
-    private AvTimeSpan narrateZauberinTrifftSc_VorDemAltenTurm() {
-        final SubstantivischePhrase desc =
-                getAnaphPersPronWennMglSonstDescription(false);
-
-        // STORY Spieler sieht von unten, wie die Zauberin heruntersteigt?
-
-        // STORY Zauberin überrascht den Spieler vor dem Turm
-//                // Die Zauberin hat den Spieler so verzaubert, dass er sich nicht
-//                //  an sie erinnern kann.
-//                loadSC().memoryComp().upgradeKnown(RAPUNZELS_ZAUBERIN, UNKNOWN);
-//                return noTime();
-
-        if (loadSC().memoryComp().getLastAction().is(BEWEGEN) &&
-                loadSC().locationComp().lastLocationWas(IM_WALD_NAHE_DEM_SCHLOSS)) {
-            return n.add(neuerSatz(PARAGRAPH,
-                    desc.nom() +
-                            " kommt hinter dir den Pfad herauf", noTime())
-                    .phorikKandidat(desc, RAPUNZELS_ZAUBERIN)
-                    .beendet(PARAGRAPH));
-        }
-
-        return n.add(neuerSatz(PARAGRAPH,
-                desc.nom() +
-                        " kommt den Pfad herauf", noTime())
-                .phorikKandidat(desc, RAPUNZELS_ZAUBERIN)
-                .beendet(PARAGRAPH));
-    }
-
-    private AvTimeSpan narrateZauberinVerlaesstSc_VorDemAltenTurm() {
-        final SubstantivischePhrase desc =
-                getAnaphPersPronWennMglSonstDescription(false);
-
-        // TODO Wenn die Zauberin losgeht und der SC einmal um den Turm herumgeht, darf danach nicht
-        //  als Beschreibung kommen: "Vor dem Turm sieht du die Frau stehen" - Ist
-        //  das Problem gelöst?
-
-        // TODO Sinn all diese Fälle richtig berücksichtigt?
-        //  - SC geht den Weg von A nach B
-        //    - und X steht in A: (Kein Text)
-        //    - und X steht in B: "Hier steht X"
-        //    - und X geht in B (und kommt von C): "Auf dem Weg geht X", "Von dem C-Weg her
-        //       kommt X gegangen", eventuell "X geht von C nach D"?
-        //    - und X geht in B (und kommt auch von A): "Du begegnest X", "Auch X geht..."
-        //    - und X steht oder ist am Gehen (Status) und befindet sich zurzeit in C: (Kein Text)
-        //  - SC steht in A
-        //    - und X geht von A über den Weg nach B: "X geht auf den Weg davon"
-        //    - und X kommt von B über den Weg nach A: "Über den Weg kommt X"
-        //  - In aller Regel bewegt sich immer nur EINER von beiden: SC oder X
-        //    - Wir brauchen also keine allgemeingültige Lösung für diese Fälle:
-        //      - SC geht von A nach B, gleichzeitig geht X von B nach A
-        //      - SC und B gehen gleichzeitig von A nach B
-
-        // TODO Movement-Componente
-        //  - Wenn X noch in Bewegung ist und die Zeit für den Schritt noch nicht
-        //    abegelaufen ist, kann SC mit X interagieren (z.B. mit X reden), aber
-        //    es wird die Restzeit noch abgewartet. Vielleicht Zusatztext in der Art
-        //    "Du wartest, bis ... herangekommen ist und"...
-        //    Außerdem wird möglicherweise die Bewegung "ausgesetzt" und (zumindest von der
-        //    Zeitmessung her) erst nach der Aktion forgesetzt. Z.B. auch erst
-        //    nach einem Dialog (sofern X auf den Dialog eingeht und ihn nicht von sich
-        //    aus beendet)
-
-        return n.add(neuerSatz(PARAGRAPH,
-                desc.nom() +
-                        " geht den Pfad hinab", noTime())
-                .phorikKandidat(desc, RAPUNZELS_ZAUBERIN)
-                .beendet(PARAGRAPH));
-    }
 }

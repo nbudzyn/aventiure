@@ -124,9 +124,9 @@ public class MovementComp extends AbstractStatefulComponent<MovementPCD> {
         }
 
         // Wurde das Game Object zwischenzeitlich versetzt?
-        if (currentStepHasPhase(FIRST_LEAVING) &&
+        if (isLeaving() &&
                 !locationComp.hasLocation(getCurrentStep().getFrom()) ||
-                currentStepHasPhase(SECOND_ENTERING) &&
+                isEntering() &&
                         !locationComp.hasLocation(getCurrentStep().getTo())) {
             setupNextStepIfNecessaryAndPossible(now);
         }
@@ -138,7 +138,10 @@ public class MovementComp extends AbstractStatefulComponent<MovementPCD> {
         AvTimeSpan extraTime = noTime();
 
         while (true) {
-            if (currentStepHasPhase(FIRST_LEAVING)) {
+            // STORY Leave und Enter ggf. zusammenzufassen! ("X geht vorbei",
+            //  "X geht vorüber")
+
+            if (isLeaving()) {
                 if (now.isEqualOrAfter(getCurrentStep().getExpLeaveDoneTime())) {
                     extraTime =
                             extraTime.plus(leaveAndEnterAndNarrateIfSCPresent(movementNarrator));
@@ -147,7 +150,7 @@ public class MovementComp extends AbstractStatefulComponent<MovementPCD> {
                 }
             }
 
-            if (currentStepHasPhase(SECOND_ENTERING)) {
+            if (isEntering()) {
                 // FIXME Solange dieser Zeitpunkt noch NICHT erreicht ist,
                 //  müsste die IMovingGO eigentlich für gewisse
                 //  Interaktionen mit dem Spieler (Reden, nehmen, geben...)
@@ -228,7 +231,7 @@ public class MovementComp extends AbstractStatefulComponent<MovementPCD> {
             return noTime();
         }
 
-        return leavingStartedNarrator.narrateAndDoMovementAsExperiencedBySCStartsLeaving(
+        return leavingStartedNarrator.narrateAndDoMovementAsExperiencedBySC_StartsLeaving(
                 (ILocationGO & ISpatiallyConnectedGO) locationComp.getLocation(),
                 (ILocationGO) world.load(getCurrentStep().getTo())
         );
@@ -251,11 +254,19 @@ public class MovementComp extends AbstractStatefulComponent<MovementPCD> {
                         return noTime();
                     }
 
-                    return movementNarrator.narrateAndDoMovementAsExperiencedBySCStartsEntering(
+                    return movementNarrator.narrateAndDoMovementAsExperiencedBySC_StartsEntering(
                             (ILocationGO & ISpatiallyConnectedGO)
                                     world.load(getCurrentStep().getFrom()),
                             (ILocationGO) world.load(getCurrentStep().getTo()));
                 });
+    }
+
+    public boolean isLeaving() {
+        return isMoving() && currentStepHasPhase(FIRST_LEAVING);
+    }
+
+    public boolean isEntering() {
+        return isMoving() && currentStepHasPhase(SECOND_ENTERING);
     }
 
     public boolean isMoving() {

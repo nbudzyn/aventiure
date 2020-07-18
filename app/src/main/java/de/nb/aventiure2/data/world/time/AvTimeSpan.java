@@ -125,7 +125,7 @@ public class AvTimeSpan {
     }
 
     public AvTimeSpan times(final double factor) {
-        return secs((long) factor * secs);
+        return secs((long) (factor * secs));
     }
 
     public boolean longerThan(@NonNull final AvTimeSpan other) {
