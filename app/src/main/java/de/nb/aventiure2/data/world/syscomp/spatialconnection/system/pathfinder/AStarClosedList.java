@@ -1,4 +1,4 @@
-package de.nb.aventiure2.data.world.syscomp.spatialconnection.impl;
+package de.nb.aventiure2.data.world.syscomp.spatialconnection.system.pathfinder;
 
 import androidx.annotation.Nullable;
 
@@ -6,8 +6,8 @@ import java.util.HashMap;
 
 import de.nb.aventiure2.data.world.base.GameObjectId;
 
-public class AStarClosedList {
-    final HashMap<GameObjectId, AStarNode> map = new HashMap<>();
+class AStarClosedList {
+    private final HashMap<GameObjectId, AStarNode> map = new HashMap<>();
 
     AStarClosedList() {
     }
@@ -21,7 +21,7 @@ public class AStarClosedList {
         return map.get(locationId);
     }
 
-    public void remove(final AStarNode nextNode) {
+    void remove(final AStarNode nextNode) {
         map.remove(nextNode.getLocation().getId());
     }
 }

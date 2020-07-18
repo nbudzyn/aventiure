@@ -514,11 +514,7 @@ public class RapunzelsZauberinReactionsComp
         //  als Beschreibung kommen: "Vor dem Turm sieht du die Frau stehen" - Ist
         //  das Problem gelöst?
 
-        // FIXME Idee:
-        //  - Wesen geht immer sofort auf den nächsten Ort
-        //  - und bleibt dann dort für die "Hinwegzeit".
-        //  - Erst danach geht es den nächsten Schritt.
-        //  Welche Fälle gibt es dann?
+        // TODO Sinn all diese Fälle richtig berücksichtigt?
         //  - SC geht den Weg von A nach B
         //    - und X steht in A: (Kein Text)
         //    - und X steht in B: "Hier steht X"

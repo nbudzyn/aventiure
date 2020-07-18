@@ -1,15 +1,15 @@
-package de.nb.aventiure2.data.world.syscomp.spatialconnection.impl;
+package de.nb.aventiure2.data.world.syscomp.spatialconnection.system.pathfinder;
 
 import androidx.annotation.Nullable;
 
 import com.google.common.collect.ImmutableList;
 
-import org.jetbrains.annotations.Contract;
-
 import de.nb.aventiure2.data.world.base.GameObjectId;
 import de.nb.aventiure2.data.world.base.IGameObject;
 import de.nb.aventiure2.data.world.gameobject.World;
 import de.nb.aventiure2.data.world.syscomp.spatialconnection.ISpatiallyConnectedGO;
+import de.nb.aventiure2.data.world.syscomp.spatialconnection.impl.SpatialConnection;
+import de.nb.aventiure2.data.world.syscomp.spatialconnection.impl.SpatialStandardStep;
 import de.nb.aventiure2.data.world.syscomp.storingplace.ILocationGO;
 import de.nb.aventiure2.data.world.time.AvTimeSpan;
 
@@ -17,38 +17,15 @@ import static de.nb.aventiure2.data.world.time.AvTimeSpan.mins;
 import static de.nb.aventiure2.data.world.time.AvTimeSpan.noTime;
 import static de.nb.aventiure2.data.world.time.AvTimeSpan.secs;
 
-/**
- * Functionality concerned with spatial connections that might span several game objects.
- */
-public class SpatialConnectionSystem {
+public class AStarPathfinder {
     private final World world;
 
-    public SpatialConnectionSystem(final World world) {
+    public AStarPathfinder(final World world) {
         this.world = world;
     }
 
-    @Contract("null, _ -> null; !null, null -> null")
     @Nullable
     public SpatialStandardStep findFirstStep(
-            @Nullable final ISpatiallyConnectedGO start,
-            @Nullable final ILocationGO target) {
-        if (start == null) {
-            return null;
-        }
-
-        if (target == null) {
-            return null;
-        }
-
-        if (start.is(target)) {
-            return null;
-        }
-
-        return findFirstStepUsingAStar(start, target);
-    }
-
-    @Nullable
-    private SpatialStandardStep findFirstStepUsingAStar(
             final ISpatiallyConnectedGO startGO,
             final ILocationGO targetGO) {
         // Based on Ahlquist / Novak: Game Artificial Intelligence
@@ -112,7 +89,7 @@ public class SpatialConnectionSystem {
 
         return
                 ((ISpatiallyConnectedGO) from).spatialConnectionComp().getConnections().stream()
-                        .map(SpatialConnectionSystem::toSpatialStandardStep)
+                        .map(AStarPathfinder::toSpatialStandardStep)
                         .collect(ImmutableList.toImmutableList());
     }
 
@@ -125,7 +102,13 @@ public class SpatialConnectionSystem {
         );
     }
 
+    @Nullable
     private static SpatialStandardStep getFirstStep(final AStarNode node) {
+        if (!node.hasParent()) {
+            return null;
+        }
+
+        assert node.getParent() != null;
         if (node.getParent().hasParent()) {
             return getFirstStep(node.getParent());
         }
@@ -161,4 +144,5 @@ public class SpatialConnectionSystem {
                                         startGOId.toLong() - targetGO.getId().toLong()
                                 ));
     }
+
 }

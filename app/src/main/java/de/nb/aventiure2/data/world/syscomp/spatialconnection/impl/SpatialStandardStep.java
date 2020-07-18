@@ -16,7 +16,7 @@ public class SpatialStandardStep {
     @NonNull
     private final AvTimeSpan standardDuration;
 
-    SpatialStandardStep(final GameObjectId to, final AvTimeSpan standardDuration) {
+    public SpatialStandardStep(final GameObjectId to, final AvTimeSpan standardDuration) {
         this.to = to;
         this.standardDuration = standardDuration;
     }

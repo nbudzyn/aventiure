@@ -1,4 +1,4 @@
-package de.nb.aventiure2.data.world.syscomp.spatialconnection.impl;
+package de.nb.aventiure2.data.world.syscomp.spatialconnection.system.pathfinder;
 
 import androidx.annotation.Nullable;
 
@@ -15,24 +15,20 @@ import static de.nb.aventiure2.data.world.time.AvTimeSpan.noTime;
  * We cannot use a JDK {@link java.util.PriorityQueue}, because the totalCost might be changing
  * after insertion, but the {@link java.util.PriorityQueue} does not re-sort.
  */
-public class AStarPriorityQueue {
+class AStarPriorityQueue {
     private final HashMap<GameObjectId, AStarNode> map = new HashMap<>();
 
-    public void add(final AStarNode node) {
+    void add(final AStarNode node) {
         map.put(node.getLocation().getId(), node);
     }
 
-    public boolean contains(final GameObjectId locationId) {
-        return map.containsKey(locationId);
-    }
-
     @Nullable
-    public AStarNode get(final GameObjectId locationId) {
+    AStarNode get(final GameObjectId locationId) {
         return map.get(locationId);
     }
 
     @Nullable
-    public AStarNode removeSmallest() {
+    AStarNode removeSmallest() {
         AStarNode smallestNode = null;
         AvTimeSpan smallestTotalCost = noTime();
 
@@ -44,7 +40,9 @@ public class AStarPriorityQueue {
             }
         }
 
-        map.remove(smallestNode.getLocation().getId());
+        if (smallestNode != null) {
+            map.remove(smallestNode.getLocation().getId());
+        }
 
         return smallestNode;
     }

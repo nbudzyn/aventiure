@@ -1,4 +1,4 @@
-package de.nb.aventiure2.data.world.syscomp.spatialconnection.impl;
+package de.nb.aventiure2.data.world.syscomp.spatialconnection.system.pathfinder;
 
 import androidx.annotation.Nullable;
 
@@ -22,8 +22,8 @@ class AStarNode {
     private AvTimeSpan dist;
 
     /**
-     * Extimated distance (measured in seconds for a standard movement) for the node
-     * the the target
+     * Estimated distance (measured in seconds for a standard movement) for the node
+     * to the target
      */
     private final AvTimeSpan estimate;
 
@@ -52,12 +52,12 @@ class AStarNode {
         return location;
     }
 
-    public void setDist(final AvTimeSpan dist) {
+    void setDist(final AvTimeSpan dist) {
         this.dist = dist;
         totalCost = dist.plus(estimate);
     }
 
-    public AvTimeSpan getDist() {
+    AvTimeSpan getDist() {
         return dist;
     }
 
@@ -65,16 +65,16 @@ class AStarNode {
         return totalCost;
     }
 
-    public void setParent(@Nullable final AStarNode parent) {
+    void setParent(@Nullable final AStarNode parent) {
         this.parent = parent;
     }
 
-    public boolean hasParent() {
+    boolean hasParent() {
         return getParent() != null;
     }
 
     @Nullable
-    public AStarNode getParent() {
+    AStarNode getParent() {
         return parent;
     }
 
