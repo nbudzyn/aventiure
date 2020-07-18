@@ -44,12 +44,12 @@ public class MovementPCD extends AbstractPersistentComponentData {
         this.targetLocationId = targetLocationId;
     }
 
-    public void setCurrentStep(@Nullable final MovementStep currentStep) {
+    void setCurrentStep(@Nullable final MovementStep currentStep) {
         this.currentStep = currentStep;
     }
 
     @Nullable
-    public MovementStep getCurrentStep() {
+    MovementStep getCurrentStep() {
         return currentStep;
     }
 }

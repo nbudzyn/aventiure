@@ -184,7 +184,6 @@ public class RapunzelsZauberinReactionsComp
             return noTime();
         }
 
-        // Wie kann das sein?!
         return noTime();
     }
 
@@ -240,8 +239,6 @@ public class RapunzelsZauberinReactionsComp
 //                //  an sie erinnern kann.
 //                loadSC().memoryComp().upgradeKnown(RAPUNZELS_ZAUBERIN, UNKNOWN);
 //                return noTime();
-//                // STORY Die Zauberin hat den Spieler (ggf. sogar mehrfach) oben im alten Turm
-//                //  überrascht - sollte da nicht mehr passieren?!
 //            }
             case AUF_DEM_RUECKWEG_VON_RAPUNZEL:
                 // STORY Lässt sich an den Haaren herunterhiefen und wandert zurück
@@ -513,9 +510,9 @@ public class RapunzelsZauberinReactionsComp
         final SubstantivischePhrase desc =
                 getAnaphPersPronWennMglSonstDescription(false);
 
-        // FIXME Das ist ein Problem, wenn der SC einmal um den Turm herumgeht -
-        //  Dann kommt als Beschreibung: "Vor dem Turm sieht du die Frau stehen"
-        //  Eigentlich ist sie aber schon einige Minuten den Pfad hinunter.
+        // TODO Wenn die Zauberin losgeht und der SC einmal um den Turm herumgeht, darf danach nicht
+        //  als Beschreibung kommen: "Vor dem Turm sieht du die Frau stehen" - Ist
+        //  das Problem gelöst?
 
         // FIXME Idee:
         //  - Wesen geht immer sofort auf den nächsten Ort

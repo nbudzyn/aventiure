@@ -78,6 +78,11 @@ public class GameObject implements IGameObject {
     }
 
     @Override
+    public boolean is(final IGameObject... someAlternatives) {
+        return Arrays.asList(someAlternatives).contains(this);
+    }
+
+    @Override
     public boolean is(final GameObjectId... someIdAlternatives) {
         return Arrays.asList(someIdAlternatives).contains(getId());
     }

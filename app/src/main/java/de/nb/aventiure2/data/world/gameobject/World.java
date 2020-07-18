@@ -36,6 +36,7 @@ import de.nb.aventiure2.data.world.syscomp.spatialconnection.impl.ImWaldNaheDemS
 import de.nb.aventiure2.data.world.syscomp.spatialconnection.impl.SchlossVorhalleConnectionComp;
 import de.nb.aventiure2.data.world.syscomp.spatialconnection.impl.SchlossVorhalleTischBeimFestConnectionComp;
 import de.nb.aventiure2.data.world.syscomp.spatialconnection.impl.SimpleConnectionCompFactory;
+import de.nb.aventiure2.data.world.syscomp.spatialconnection.impl.SpatialConnectionSystem;
 import de.nb.aventiure2.data.world.syscomp.spatialconnection.impl.VorDemTurmConnectionComp;
 import de.nb.aventiure2.data.world.syscomp.storingplace.ILocationGO;
 import de.nb.aventiure2.data.world.syscomp.storingplace.Lichtverhaeltnisse;
@@ -114,6 +115,8 @@ public class World {
     // SYSTEMS
     private AliveSystem aliveSystem;
 
+    private SpatialConnectionSystem spatialConnectionSystem;
+
     private LocationSystem locationSystem;
 
     public static World getInstance(final AvDatabase db) {
@@ -144,6 +147,22 @@ public class World {
      */
     private void prepare() {
         if (all == null) {
+            if (aliveSystem == null) {
+                aliveSystem = new AliveSystem(db);
+            }
+
+            if (locationSystem == null) {
+                locationSystem = new LocationSystem(db);
+            }
+
+            if (spatialConnectionSystem == null) {
+                spatialConnectionSystem = new SpatialConnectionSystem(this);
+            }
+
+            if (reactionsCoordinator == null) {
+                reactionsCoordinator = new GOReactionsCoordinator(this);
+            }
+
             final SpielerCharakterFactory spieler = new SpielerCharakterFactory(db, this);
             final ObjectFactory object = new ObjectFactory(db, this);
             final CreatureFactory creature = new CreatureFactory(db, this);
@@ -201,6 +220,10 @@ public class World {
                     creature.createFroschprinz(),
                     creature.createRapunzel(),
                     creature.createRapunzelsZauberin(),
+                    // STORY: Ein Wolf könnte nachts "unsichtbar" zufällig durch den
+                    //  Wald laufen (MovementComp) und immer mal heulen oder rascheln, wenn er direkt beim SC
+                    //  vorbeiläuft (onReachesCenter() o.Ä.).
+
                     // STORY Wölfe (Creatures? Invisibles?) hetzen Spieler nachts
                     //  Es könnte z.B. Räume neben dem Weg geben, die der Spieler in aller Regel
                     //  nicht betreten, kann, wo aber die Wölfe laufen.
@@ -250,19 +273,6 @@ public class World {
                     // STORY Spieler kauft Lampe (z.B. für Hütte) auf Schlossfest
             );
         }
-
-        if (aliveSystem == null) {
-            aliveSystem = new AliveSystem(db);
-        }
-
-        if (locationSystem == null) {
-
-            locationSystem = new LocationSystem(db);
-        }
-
-        if (reactionsCoordinator == null) {
-            reactionsCoordinator = new GOReactionsCoordinator(this);
-        }
     }
 
     /**
@@ -298,18 +308,13 @@ public class World {
     public void upgradeKnownToSC(
             final IGameObject gameObject,
             @Nullable final ILocationGO location) {
-        upgradeKnownToSC(gameObject != null ? gameObject.getId() : null,
-                location);
+        upgradeKnownToSC(gameObject.getId(), location);
     }
 
     public void upgradeKnownToSC(
             final GameObjectId gameObjectId,
             @Nullable final ILocationGO location) {
         loadSC().memoryComp().upgradeKnown(gameObjectId, getKnown(location));
-    }
-
-    public Known getKnown(@Nullable final GameObjectId locationId) {
-        return getKnown(locationId != null ? ((ILocationGO) load(locationId)) : null);
     }
 
     public static Known getKnown(@Nullable final ILocationGO location) {
@@ -671,7 +676,7 @@ public class World {
                 locationSystem.findByLocation(locationId)
                         .stream()
                         .filter(((Predicate<GameObjectId>) SPIELER_CHARAKTER::equals).negate())
-                        .map(id -> get(id))
+                        .map(this::get)
                         .filter(IDescribableGO.class::isInstance)
                         .collect(toImmutableList());
         loadGameObjects(res);
@@ -776,7 +781,7 @@ public class World {
     @Nonnull
     public ImmutableList<GameObject> load(final Collection<GameObjectId> ids) {
         return ids.stream()
-                .map(id -> load(id))
+                .map(this::load)
                 .collect(toImmutableList());
     }
 
@@ -819,5 +824,9 @@ public class World {
         }
 
         return res;
+    }
+
+    SpatialConnectionSystem getSpatialConnectionSystem() {
+        return spatialConnectionSystem;
     }
 }

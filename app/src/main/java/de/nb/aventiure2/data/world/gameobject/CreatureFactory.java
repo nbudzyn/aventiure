@@ -142,6 +142,7 @@ class CreatureFactory {
                         false);
         final MovementComp movementComp =
                 new MovementComp(RAPUNZELS_ZAUBERIN, db, world,
+                        world.getSpatialConnectionSystem(),
                         locationComp,
                         null);
         final RapunzelsZauberinTalkingComp talkingComp =

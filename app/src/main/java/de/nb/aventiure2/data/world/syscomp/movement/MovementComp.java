@@ -3,6 +3,8 @@ package de.nb.aventiure2.data.world.syscomp.movement;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
+import org.jetbrains.annotations.Contract;
+
 import de.nb.aventiure2.data.database.AvDatabase;
 import de.nb.aventiure2.data.world.base.AbstractStatefulComponent;
 import de.nb.aventiure2.data.world.base.GameObject;
@@ -10,29 +12,54 @@ import de.nb.aventiure2.data.world.base.GameObjectId;
 import de.nb.aventiure2.data.world.gameobject.World;
 import de.nb.aventiure2.data.world.syscomp.location.LocationComp;
 import de.nb.aventiure2.data.world.syscomp.spatialconnection.ISpatiallyConnectedGO;
+import de.nb.aventiure2.data.world.syscomp.spatialconnection.impl.SpatialConnectionSystem;
+import de.nb.aventiure2.data.world.syscomp.spatialconnection.impl.SpatialStandardStep;
 import de.nb.aventiure2.data.world.syscomp.storingplace.ILocationGO;
 import de.nb.aventiure2.data.world.time.AvDateTime;
 import de.nb.aventiure2.data.world.time.AvTimeSpan;
 
 import static com.google.common.base.Preconditions.checkNotNull;
-import static de.nb.aventiure2.data.world.gameobject.World.DRAUSSEN_VOR_DEM_SCHLOSS;
-import static de.nb.aventiure2.data.world.gameobject.World.IM_WALD_NAHE_DEM_SCHLOSS;
-import static de.nb.aventiure2.data.world.gameobject.World.VOR_DEM_ALTEN_TURM;
 import static de.nb.aventiure2.data.world.syscomp.movement.MovementStep.Phase.FIRST_LEAVING;
 import static de.nb.aventiure2.data.world.syscomp.movement.MovementStep.Phase.SECOND_ENTERING;
-import static de.nb.aventiure2.data.world.time.AvTimeSpan.mins;
 import static de.nb.aventiure2.data.world.time.AvTimeSpan.noTime;
 
 /**
  * Component for a {@link GameObject}: The game object
  * moves through the world autonomously.
+ * <p>
+ * Das Konzept ist in etwa so:
+ * <ul>
+ * <li>Game Objects (Wesen) mit einer MovementComp können eine <i>Target Location</i> haben -
+ * ein Ziel, auf dass sie sich zubewegen. Haben sie <i>keine</i> Target Location, stehen sie
+ * still.
+ * <li>Die Wesen gehen Schritt für Schritt in Richtung Target Location. Der aktuelle Schritt
+ * ist ein {@link MovementStep}.
+ * <li>Ein Schritt besteht aus zwei Phasen:
+ * <ul>
+ * <li>In der ersten Phase ist das Wesen noch an seinem Ausgangsort, aber schon in Bewegung auf
+ * den Folgeort zu
+ * <li>In der zweiten Phase ist das Wesen schon am Folgeort, aber es <i>ist noch in Bewegung</i>
+ * und damit noch nicht wirklich am "Zentrum" des Folgeorts angekommen.
+ * <li>Beide Phasen dauern gleich lang.
+ * <li>Die Interaktion des Benutzers mit einem Wesen <i>in Bewegung</i> könnte eingeschränkt sein
+ * <li>Ist das Wesen am "Zentrum" des Folgeorts angekommen (zweite Phase abgeschlossen),
+ * wird der nächste Schritt in Richtung Target Location ermittelt.
+ * <li>Ist das Wesen <i>am "Zentrum"</i> der Target Location angekommen, endet die Bewegung.
+ * </ul>
+ * <li>Der SC könnte sehen, wie das Wesen einen Raum verlässt (1. Phase), oder einen Folgeraum
+ * betritt (zweite Phase). Das Interface {@link IMovementNarrator} bietet Methoden,
+ * mit denen reagiert werden kann: Z.B. könnte eine Beschreibung erzeugt werden ("die Hexe geht
+ * den Weg hinab") oder gespeichert werden, dass der Benutzer das Wesen jetzt kennt
+ * (vgl. {@link de.nb.aventiure2.data.world.syscomp.memory.MemoryComp}.
+ * <li>Wird die Location eines Wesens während seiner Bewegung durch einen Dritten auf andere
+ * Weise verändert (Benutzer hebt das Wesen auf setzt es an anderer Stelle wieder ab o.Ä.),
+ * versucht das Wesen, seine Bewegung von seinem neuen Ort fortzusetzen.
+ * </ul>
  */
 public class MovementComp extends AbstractStatefulComponent<MovementPCD> {
-    // STORY: Ein Wolf könnte nachts "unsichtbar" zufällig durch den
-    //  Wald laufen und immer mal heulen oder rascheln, wenn er direkt beim SC
-    //  vorbeiläuft.
-
     private final World world;
+
+    private final SpatialConnectionSystem spatialConnectionSystem;
 
     private final LocationComp locationComp;
 
@@ -48,10 +75,12 @@ public class MovementComp extends AbstractStatefulComponent<MovementPCD> {
     public MovementComp(final GameObjectId gameObjectId,
                         final AvDatabase db,
                         final World world,
+                        final SpatialConnectionSystem spatialConnectionSystem,
                         final LocationComp locationComp,
                         @Nullable final GameObjectId initialTargetLocationId) {
         super(gameObjectId, db.movementDao());
         this.world = world;
+        this.spatialConnectionSystem = spatialConnectionSystem;
         this.locationComp = locationComp;
         this.initialTargetLocationId = initialTargetLocationId;
     }
@@ -75,7 +104,8 @@ public class MovementComp extends AbstractStatefulComponent<MovementPCD> {
         getPcd().setTargetLocationId(targetLocationId);
         setupNextStepIfNecessaryAndPossible(now);
 
-        return hasCurrentStep() ? narrateLeavingStartedIfSCIsPresent(leavingStartedNarrator) :
+        return hasCurrentStep() ?
+                narrateAndDoMovementIfExperiencedBySCStartsLeaving(leavingStartedNarrator) :
                 noTime();
     }
 
@@ -87,17 +117,17 @@ public class MovementComp extends AbstractStatefulComponent<MovementPCD> {
     /**
      * Supposed to be called regularly.
      */
-    public AvTimeSpan onTimePassed(final AvDateTime now, final IMovementNarrator movementNarrator) {
+    public AvTimeSpan onTimePassed(final AvDateTime now,
+                                   @Nullable final IMovementNarrator movementNarrator) {
         if (!isMoving()) {
             return noTime();
         }
 
         // Wurde das Game Object zwischenzeitlich versetzt?
-        if (!hasCurrentStep() ||
-                (getCurrentStep().hasPhase(FIRST_LEAVING) &&
-                        !locationComp.hasLocation(getCurrentStep().getFrom())) ||
-                (getCurrentStep().hasPhase(SECOND_ENTERING) &&
-                        !locationComp.hasLocation(getCurrentStep().getTo()))) {
+        if (currentStepHasPhase(FIRST_LEAVING) &&
+                !locationComp.hasLocation(getCurrentStep().getFrom()) ||
+                currentStepHasPhase(SECOND_ENTERING) &&
+                        !locationComp.hasLocation(getCurrentStep().getTo())) {
             setupNextStepIfNecessaryAndPossible(now);
         }
 
@@ -108,7 +138,7 @@ public class MovementComp extends AbstractStatefulComponent<MovementPCD> {
         AvTimeSpan extraTime = noTime();
 
         while (true) {
-            if (getCurrentStep().hasPhase(FIRST_LEAVING)) {
+            if (currentStepHasPhase(FIRST_LEAVING)) {
                 if (now.isEqualOrAfter(getCurrentStep().getExpLeaveDoneTime())) {
                     extraTime =
                             extraTime.plus(leaveAndEnterAndNarrateIfSCPresent(movementNarrator));
@@ -117,7 +147,7 @@ public class MovementComp extends AbstractStatefulComponent<MovementPCD> {
                 }
             }
 
-            if (getCurrentStep().hasPhase(SECOND_ENTERING)) {
+            if (currentStepHasPhase(SECOND_ENTERING)) {
                 // FIXME Solange dieser Zeitpunkt noch NICHT erreicht ist,
                 //  müsste die IMovingGO eigentlich für gewisse
                 //  Interaktionen mit dem Spieler (Reden, nehmen, geben...)
@@ -130,7 +160,8 @@ public class MovementComp extends AbstractStatefulComponent<MovementPCD> {
                     }
 
                     extraTime =
-                            extraTime.plus(narrateLeavingStartedIfSCIsPresent(movementNarrator));
+                            extraTime.plus(narrateAndDoMovementIfExperiencedBySCStartsLeaving(
+                                    movementNarrator));
                 } else {
                     break;
                 }
@@ -156,61 +187,44 @@ public class MovementComp extends AbstractStatefulComponent<MovementPCD> {
     }
 
     @Nullable
-    private MovementStep calculateStep(final AvDateTime start) {
-        if (locationComp.getLocation() == null) {
+    private MovementStep calculateStep(final AvDateTime startTime) {
+        final ILocationGO from = locationComp.getLocation();
+
+        if (!(from instanceof ISpatiallyConnectedGO)) {
             return null;
         }
 
-        if (getTargetLocation().is(VOR_DEM_ALTEN_TURM)) {
-            if (locationComp.getLocation().is(DRAUSSEN_VOR_DEM_SCHLOSS)) {
-                return new MovementStep(
-                        DRAUSSEN_VOR_DEM_SCHLOSS,
-                        IM_WALD_NAHE_DEM_SCHLOSS,
-                        start,
-                        mins(10));
-            }
+        @Nullable final SpatialStandardStep firstStep =
+                spatialConnectionSystem
+                        .findFirstStep((ISpatiallyConnectedGO) from, getTargetLocation());
 
-            if (locationComp.getLocation().is(IM_WALD_NAHE_DEM_SCHLOSS)) {
-                return new MovementStep(
-                        IM_WALD_NAHE_DEM_SCHLOSS,
-                        VOR_DEM_ALTEN_TURM,
-                        start,
-                        mins(30));
-            }
-
-            // STORY Andere Wege ermitteln (Pathfinding, X*...),
-            //  soweit es einen Weg gibt
-            return null;
-        }
-
-        if (getTargetLocation().is(DRAUSSEN_VOR_DEM_SCHLOSS)) {
-            if (locationComp.getLocation().is(VOR_DEM_ALTEN_TURM)) {
-                return new MovementStep(
-                        VOR_DEM_ALTEN_TURM,
-                        IM_WALD_NAHE_DEM_SCHLOSS,
-                        start,
-                        mins(30));
-            }
-
-            if (locationComp.getLocation().is(IM_WALD_NAHE_DEM_SCHLOSS)) {
-                return new MovementStep(
-                        IM_WALD_NAHE_DEM_SCHLOSS,
-                        DRAUSSEN_VOR_DEM_SCHLOSS,
-                        start,
-                        mins(10));
-            }
-
-            // STORY Andere Wege ermitteln (Pathfinding, X*...)
-            return null;
-        }
-
-        // STORY Wege für andere Ziele ermitteln (Pathfinding, X*...)
-        return null;
+        return toMovementStep(from, firstStep, startTime);
     }
 
-    private AvTimeSpan narrateLeavingStartedIfSCIsPresent(
-            final ILeavingStartedNarrator leavingStartedNarrator) {
+    @Contract("_, null, _ -> null; _, !null, _ -> new")
+    private static MovementStep toMovementStep(
+            final ILocationGO from,
+            @Nullable final SpatialStandardStep spatialStandardStep,
+            final AvDateTime startTime) {
+        if (spatialStandardStep == null) {
+            return null;
+        }
+
+        return new MovementStep(
+                from.getId(),
+                spatialStandardStep.getTo(),
+                startTime,
+                // STORY Allow for different velocities based on this standard duration
+                spatialStandardStep.getStandardDuration());
+    }
+
+    private AvTimeSpan narrateAndDoMovementIfExperiencedBySCStartsLeaving(
+            @Nullable final ILeavingStartedNarrator leavingStartedNarrator) {
         if (!world.loadSC().locationComp().hasRecursiveLocation(locationComp.getLocation())) {
+            return noTime();
+        }
+
+        if (leavingStartedNarrator == null) {
             return noTime();
         }
 
@@ -220,8 +234,9 @@ public class MovementComp extends AbstractStatefulComponent<MovementPCD> {
         );
     }
 
+    @NonNull
     private AvTimeSpan leaveAndEnterAndNarrateIfSCPresent(
-            final IMovementNarrator movementNarrator) {
+            @Nullable final IMovementNarrator movementNarrator) {
         return locationComp.narrateAndSetLocation(
                 getCurrentStep().getTo(),
                 () -> {
@@ -229,6 +244,10 @@ public class MovementComp extends AbstractStatefulComponent<MovementPCD> {
 
                     if (!world.loadSC().locationComp().hasRecursiveLocation(
                             getCurrentStep().getTo())) {
+                        return noTime();
+                    }
+
+                    if (movementNarrator == null) {
                         return noTime();
                     }
 
@@ -256,6 +275,14 @@ public class MovementComp extends AbstractStatefulComponent<MovementPCD> {
     @Nullable
     private GameObjectId getTargetLocationId() {
         return getPcd().getTargetLocationId();
+    }
+
+    public boolean currentStepHasPhase(final MovementStep.Phase phase) {
+        if (!hasCurrentStep()) {
+            return false;
+        }
+
+        return getCurrentStep().hasPhase(phase);
     }
 
     private boolean hasCurrentStep() {

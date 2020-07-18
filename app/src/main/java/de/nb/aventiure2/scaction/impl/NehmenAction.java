@@ -101,7 +101,7 @@ public class NehmenAction
             final World world,
             final StoryState initialStoryState,
             final LIVGO froschprinz) {
-        if (((IHasStateGO) froschprinz).stateComp()
+        if (((IHasStateGO<FroschprinzState>) froschprinz).stateComp()
                 .hasState(ERWARTET_VON_SC_EINLOESUNG_SEINES_VERSPRECHENS)) {
             return ImmutableList.of(
                     new NehmenAction<>(db, world, initialStoryState,
@@ -189,7 +189,7 @@ public class NehmenAction
     private AvTimeSpan narrateAndDoLivingBeing() {
         checkState(gameObject.is(FROSCHPRINZ),
                 "Unexpected creature: " + gameObject);
-        checkState(((IHasStateGO) gameObject).stateComp()
+        checkState(((IHasStateGO<FroschprinzState>) gameObject).stateComp()
                         .hasState(ERWARTET_VON_SC_EINLOESUNG_SEINES_VERSPRECHENS,
                                 HAT_HOCHHEBEN_GEFORDERT),
                 "Unexpected state: " + gameObject);
@@ -198,7 +198,8 @@ public class NehmenAction
     }
 
     private AvTimeSpan narrateAndDoFroschprinz() {
-        if (((IHasStateGO) gameObject).stateComp().hasState(HAT_HOCHHEBEN_GEFORDERT)) {
+        if (((IHasStateGO<FroschprinzState>) gameObject).stateComp()
+                .hasState(HAT_HOCHHEBEN_GEFORDERT)) {
             return narrateAndDoFroschprinz_HatHochhebenGefordert();
         }
 

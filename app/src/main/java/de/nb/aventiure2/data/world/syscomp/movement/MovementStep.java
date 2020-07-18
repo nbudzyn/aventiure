@@ -56,7 +56,7 @@ class MovementStep {
         return expDuration;
     }
 
-    public void setPhase(final Phase newPhase) {
+    void setPhase(final Phase newPhase) {
         checkState(
                 hasPhase(newPhase) ||
                         (hasPhase(FIRST_LEAVING) && newPhase == SECOND_ENTERING),
@@ -70,7 +70,7 @@ class MovementStep {
         return this.phase == phase;
     }
 
-    public Phase getPhase() {
+    Phase getPhase() {
         return phase;
     }
 }

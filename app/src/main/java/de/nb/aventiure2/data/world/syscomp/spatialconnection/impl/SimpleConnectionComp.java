@@ -30,7 +30,7 @@ class SimpleConnectionComp extends AbstractSpatialConnectionComp {
         this(gameObjectId, db, world, ImmutableList.copyOf(connections));
     }
 
-    public SimpleConnectionComp(
+    SimpleConnectionComp(
             final GameObjectId gameObjectId,
             final AvDatabase db,
             final World world,
