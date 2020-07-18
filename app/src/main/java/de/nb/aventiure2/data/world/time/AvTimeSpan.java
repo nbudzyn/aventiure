@@ -120,6 +120,10 @@ public class AvTimeSpan {
         return secs;
     }
 
+    public AvTimeSpan dividedBy(final double div) {
+        return times(1.0 / div);
+    }
+
     public AvTimeSpan times(final double factor) {
         return secs((long) factor * secs);
     }

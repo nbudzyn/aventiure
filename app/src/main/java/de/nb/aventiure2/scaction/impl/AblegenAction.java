@@ -275,7 +275,7 @@ public class AblegenAction
     }
 
     private AvTimeSpan narrateUpgradeKnownAndSetLocationAndAction() {
-        world.upgradeKnownToSc(gameObject, location);
+        world.upgradeKnownToSC(gameObject, location);
         final AvTimeSpan timeSpan = gameObject.locationComp().narrateAndSetLocation(location);
         sc.memoryComp().setLastAction(buildMemorizedAction());
 

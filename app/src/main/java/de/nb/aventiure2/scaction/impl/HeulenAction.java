@@ -122,7 +122,7 @@ public class HeulenAction extends AbstractScAction {
         froschprinz.stateComp().setState(HAT_SC_HILFSBEREIT_ANGESPROCHEN);
         froschprinz.talkingComp().setTalkingTo(sc);
         sc.feelingsComp().setMood(NEUTRAL);
-        world.upgradeKnownToSc(FROSCHPRINZ, sc.locationComp().getLocation());
+        world.upgradeKnownToSC(FROSCHPRINZ);
         return timeElapsed;
     }
 

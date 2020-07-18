@@ -51,17 +51,17 @@ public class Action {
     private final GameObjectId adverbial;
 
     @Ignore
-    public Action(@NonNull final Type type) {
+    public Action(final Type type) {
         this(type, (GameObjectId) null);
     }
 
     @Ignore
-    public Action(@NonNull final Type type,
+    public Action(final Type type,
                   @Nullable final IGameObject object) {
         this(type, object, (IGameObject) null);
     }
 
-    public Action(@NonNull final Type type,
+    public Action(final Type type,
                   @Nullable final IGameObject object,
                   @Nullable final IGameObject adverbial) {
         this(type,
@@ -69,7 +69,7 @@ public class Action {
                 adverbial != null ? adverbial.getId() : null);
     }
 
-    public Action(@NonNull final Type type,
+    public Action(final Type type,
                   @Nullable final IGameObject object,
                   @Nullable final GameObjectId adverbial) {
         this(type,
@@ -78,12 +78,12 @@ public class Action {
     }
 
     @Ignore
-    public Action(@NonNull final Type type,
+    public Action(final Type type,
                   @Nullable final GameObjectId object) {
         this(type, object, null);
     }
 
-    public Action(@NonNull final Type type,
+    public Action(final Type type,
                   @Nullable final GameObjectId object,
                   @Nullable final GameObjectId adverbial) {
         this.type = type;

@@ -38,6 +38,9 @@ import de.nb.aventiure2.data.world.syscomp.memory.KnownConverters;
 import de.nb.aventiure2.data.world.syscomp.memory.KnownInfo;
 import de.nb.aventiure2.data.world.syscomp.memory.MemoryDao;
 import de.nb.aventiure2.data.world.syscomp.memory.MemoryPCD;
+import de.nb.aventiure2.data.world.syscomp.movement.MovementDao;
+import de.nb.aventiure2.data.world.syscomp.movement.MovementPCD;
+import de.nb.aventiure2.data.world.syscomp.movement.MovementStepPhaseConverters;
 import de.nb.aventiure2.data.world.syscomp.state.StateDao;
 import de.nb.aventiure2.data.world.syscomp.state.StatePCD;
 import de.nb.aventiure2.data.world.syscomp.talking.TalkingDao;
@@ -45,6 +48,7 @@ import de.nb.aventiure2.data.world.syscomp.talking.TalkingPCD;
 import de.nb.aventiure2.data.world.time.AvDateTimeConverters;
 import de.nb.aventiure2.data.world.time.AvNow;
 import de.nb.aventiure2.data.world.time.AvNowDao;
+import de.nb.aventiure2.data.world.time.AvTimeSpanConverters;
 import de.nb.aventiure2.german.base.StructuralElement;
 
 import static de.nb.aventiure2.data.storystate.StoryStateBuilder.t;
@@ -56,6 +60,7 @@ import static de.nb.aventiure2.data.world.time.AvTime.oClock;
         StoryState.class,
         AvNow.class,
         StatePCD.class,
+        MovementPCD.class,
         LocationPCD.class,
         FeelingsPCD.class,
         MemoryPCD.class,
@@ -66,11 +71,13 @@ import static de.nb.aventiure2.data.world.time.AvTime.oClock;
 @TypeConverters({
         NumerusGenusConverters.class,
         AvDateTimeConverters.class,
+        AvTimeSpanConverters.class,
         AvStoryStateConverters.class,
         ActionTypeConverters.class,
         KnownConverters.class,
         GameObjectIdConverters.class,
         MoodConverters.class,
+        MovementStepPhaseConverters.class,
         HungerConverters.class})
 // TODO Database migrations, exportSchema = true?
 //  "In a real app, you should consider setting a directory for Room to [...] export the
@@ -90,6 +97,8 @@ public abstract class AvDatabase extends RoomDatabase {
     public abstract StoryStateDao storyStateDao();
 
     public abstract StateDao stateDao();
+
+    public abstract MovementDao movementDao();
 
     public abstract LocationDao locationDao();
 

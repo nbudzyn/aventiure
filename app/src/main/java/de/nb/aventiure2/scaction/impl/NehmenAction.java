@@ -231,8 +231,7 @@ public class NehmenAction
                 gameObject.locationComp()
                         .narrateAndSetLocation(targetLocation,
                                 () -> {
-                                    world.upgradeKnownToSc(gameObject,
-                                            gameObject.locationComp().getLocation());
+                                    world.upgradeKnownToSC(gameObject);
                                     sc.feelingsComp().setMood(NEUTRAL);
 
                                     final SubstantivischePhrase froschDescOderAnapher =
@@ -290,8 +289,7 @@ public class NehmenAction
                         .narrateAndSetLocation(
                                 targetLocation,
                                 () -> {
-                                    world.upgradeKnownToSc(gameObject,
-                                            gameObject.locationComp().getLocation());
+                                    world.upgradeKnownToSC(gameObject);
                                     sc.feelingsComp().setMood(ANGESPANNT);
 
                                     return noTime();
@@ -348,7 +346,7 @@ public class NehmenAction
     }
 
     private AvTimeSpan narrateAndDoObject() {
-        world.upgradeKnownToSc(gameObject, gameObject.locationComp().getLocation());
+        world.upgradeKnownToSC(gameObject, gameObject.locationComp().getLocation());
 
         AvTimeSpan timeElapsed = narrateObject();
 

@@ -15,8 +15,8 @@ public class KnownInfo {
 
     private Known known;
 
-    public KnownInfo(@NonNull final GameObjectId knower,
-                     @NonNull final GameObjectId knowee, @NonNull final Known known) {
+    public KnownInfo(final GameObjectId knower,
+                     final GameObjectId knowee, final Known known) {
         this.knower = knower;
         this.knowee = knowee;
         this.known = known;
@@ -27,7 +27,7 @@ public class KnownInfo {
         return knower;
     }
 
-    public void setKnower(@NonNull final GameObjectId knower) {
+    public void setKnower(final GameObjectId knower) {
         this.knower = knower;
     }
 
@@ -36,7 +36,7 @@ public class KnownInfo {
         return knowee;
     }
 
-    public void setKnowee(@NonNull final GameObjectId knowee) {
+    public void setKnowee(final GameObjectId knowee) {
         this.knowee = knowee;
     }
 

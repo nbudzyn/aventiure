@@ -256,6 +256,7 @@ public class World {
         }
 
         if (locationSystem == null) {
+
             locationSystem = new LocationSystem(db);
         }
 
@@ -276,22 +277,33 @@ public class World {
         }
     }
 
-    public void upgradeKnownToSc(
-            @Nullable final GameObjectId gameObjectId,
+    public void upgradeKnownToSC(
+            final IGameObject gameObject) {
+        upgradeKnownToSC(gameObject.getId());
+    }
+
+    public void upgradeKnownToSC(
+            final GameObjectId gameObjectId) {
+        upgradeKnownToSC(gameObjectId,
+                loadSC().locationComp().getLocationId());
+    }
+
+    public void upgradeKnownToSC(
+            final GameObjectId gameObjectId,
             @Nullable final GameObjectId locationId) {
-        upgradeKnownToSc(gameObjectId,
+        upgradeKnownToSC(gameObjectId,
                 locationId != null ? ((ILocationGO) load(locationId)) : null);
     }
 
-    public void upgradeKnownToSc(
-            @Nullable final IGameObject gameObject,
+    public void upgradeKnownToSC(
+            final IGameObject gameObject,
             @Nullable final ILocationGO location) {
-        upgradeKnownToSc(gameObject != null ? gameObject.getId() : null,
+        upgradeKnownToSC(gameObject != null ? gameObject.getId() : null,
                 location);
     }
 
-    public void upgradeKnownToSc(
-            @Nullable final GameObjectId gameObjectId,
+    public void upgradeKnownToSC(
+            final GameObjectId gameObjectId,
             @Nullable final ILocationGO location) {
         loadSC().memoryComp().upgradeKnown(gameObjectId, getKnown(location));
     }

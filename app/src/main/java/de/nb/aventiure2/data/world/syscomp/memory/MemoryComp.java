@@ -6,6 +6,7 @@ import java.util.Map;
 import java.util.Objects;
 
 import javax.annotation.Nullable;
+import javax.annotation.ParametersAreNonnullByDefault;
 
 import de.nb.aventiure2.data.database.AvDatabase;
 import de.nb.aventiure2.data.world.base.AbstractStatefulComponent;
@@ -19,6 +20,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
  * Component for a {@link GameObject}: The game object
  * remembers things.
  */
+@ParametersAreNonnullByDefault
 public class MemoryComp extends AbstractStatefulComponent<MemoryPCD> {
     @NonNull
     private final Map<GameObjectId, Known> initiallyKnown;
@@ -28,7 +30,7 @@ public class MemoryComp extends AbstractStatefulComponent<MemoryPCD> {
      */
     public MemoryComp(final GameObjectId gameObjectId,
                       final AvDatabase db,
-                      @NonNull final Map<GameObjectId, Known> initiallyKnown) {
+                      final Map<GameObjectId, Known> initiallyKnown) {
         super(gameObjectId, db.memoryDao());
         this.initiallyKnown = initiallyKnown;
     }
@@ -59,7 +61,7 @@ public class MemoryComp extends AbstractStatefulComponent<MemoryPCD> {
         return lastActionWas(new Action(actionType, gameObject, adverbial));
     }
 
-    public boolean lastActionWas(@NonNull final Action action) {
+    public boolean lastActionWas(final Action action) {
         return Objects.equals(getLastAction(), action);
     }
 
@@ -68,29 +70,29 @@ public class MemoryComp extends AbstractStatefulComponent<MemoryPCD> {
         return getPcd().getLastAction();
     }
 
-    public void setLastAction(@NonNull final Action.Type actionType,
+    public void setLastAction(final Action.Type actionType,
                               @Nullable final IGameObject object) {
         setLastAction(actionType, object, (IGameObject) null);
     }
 
-    public void setLastAction(@NonNull final Action.Type actionType,
+    public void setLastAction(final Action.Type actionType,
                               @Nullable final IGameObject object,
                               @Nullable final IGameObject adverbial) {
         setLastAction(new Action(actionType, object, adverbial));
     }
 
-    public void setLastAction(@NonNull final Action.Type actionType,
+    public void setLastAction(final Action.Type actionType,
                               @Nullable final IGameObject object,
                               @Nullable final GameObjectId adverbial) {
         setLastAction(new Action(actionType, object, adverbial));
     }
 
-    public void setLastAction(@NonNull final Action.Type actionType,
+    public void setLastAction(final Action.Type actionType,
                               @Nullable final GameObjectId gameObjectId) {
         setLastAction(new Action(actionType, gameObjectId));
     }
 
-    public void setLastAction(@NonNull final Action action) {
+    public void setLastAction(final Action action) {
         getPcd().setLastAction(checkNotNull(action, "action"));
     }
 
@@ -103,8 +105,8 @@ public class MemoryComp extends AbstractStatefulComponent<MemoryPCD> {
     }
 
     public void upgradeKnown(
-            @NonNull final Iterable<? extends IGameObject> objects,
-            @NonNull final Known minimalKnown) {
+            final Iterable<? extends IGameObject> objects,
+            final Known minimalKnown) {
         for (final IGameObject object : objects) {
             upgradeKnown(object, minimalKnown);
         }
@@ -114,7 +116,7 @@ public class MemoryComp extends AbstractStatefulComponent<MemoryPCD> {
      * Sets the known value, but does not make it worse than it is.
      */
     public void upgradeKnown(final IGameObject otherGameObject,
-                             @NonNull final Known minimalKnown) {
+                             final Known minimalKnown) {
         upgradeKnown(otherGameObject.getId(), minimalKnown);
     }
 
@@ -122,7 +124,7 @@ public class MemoryComp extends AbstractStatefulComponent<MemoryPCD> {
      * Sets the known value, but does not make it worse than it is.
      */
     public void upgradeKnown(final GameObjectId otherGameObjectId,
-                             @NonNull final Known minimalKnown) {
+                             final Known minimalKnown) {
         setKnown(otherGameObjectId, Known.max(
                 minimalKnown,
                 getKnown(otherGameObjectId) // old value
@@ -140,7 +142,7 @@ public class MemoryComp extends AbstractStatefulComponent<MemoryPCD> {
     }
 
     private void setKnown(final GameObjectId otherGameObjectId,
-                          @NonNull final Known known) {
+                          final Known known) {
         getPcd().setKnown(otherGameObjectId, known);
     }
 }

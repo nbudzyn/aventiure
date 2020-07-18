@@ -243,7 +243,7 @@ public class SchlosswacheReactionsComp
                                 + "Mit kräftiger Hand klopft die Wache auf ihre Hellebarde",
                         secs(20)));
 
-        world.upgradeKnownToSc(SCHLOSSWACHE, from);
+        world.upgradeKnownToSC(SCHLOSSWACHE);
         sc.feelingsComp().setMood(ANGESPANNT);
 
         return timeElapsed;

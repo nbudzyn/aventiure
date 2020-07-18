@@ -15,6 +15,8 @@ import de.nb.aventiure2.data.world.syscomp.description.impl.FroschprinzDescripti
 import de.nb.aventiure2.data.world.syscomp.description.impl.SimpleDescriptionComp;
 import de.nb.aventiure2.data.world.syscomp.location.ILocatableGO;
 import de.nb.aventiure2.data.world.syscomp.location.LocationComp;
+import de.nb.aventiure2.data.world.syscomp.movement.IMovingGO;
+import de.nb.aventiure2.data.world.syscomp.movement.MovementComp;
 import de.nb.aventiure2.data.world.syscomp.reaction.AbstractReactionsComp;
 import de.nb.aventiure2.data.world.syscomp.reaction.IResponder;
 import de.nb.aventiure2.data.world.syscomp.reaction.impl.FroschprinzReactionsComp;
@@ -138,22 +140,27 @@ class CreatureFactory {
                 new LocationComp(RAPUNZELS_ZAUBERIN, db, world,
                         VOR_DEM_ALTEN_TURM, IM_WALD_NAHE_DEM_SCHLOSS,
                         false);
+        final MovementComp movementComp =
+                new MovementComp(RAPUNZELS_ZAUBERIN, db, world,
+                        locationComp,
+                        null);
         final RapunzelsZauberinTalkingComp talkingComp =
                 new RapunzelsZauberinTalkingComp(db, world, descriptionComp, stateComp);
-        return new TalkingReactionsCreature<>(RAPUNZELS_ZAUBERIN,
+        return new MovingTalkingReactionsCreature<>(RAPUNZELS_ZAUBERIN,
                 descriptionComp,
                 locationComp,
+                movementComp,
                 stateComp,
                 talkingComp,
                 new RapunzelsZauberinReactionsComp(db, world,
-                        descriptionComp, stateComp, locationComp));
+                        descriptionComp, stateComp, locationComp, movementComp));
     }
 
     private static class BasicCreature<S extends Enum<S>> extends GameObject
             implements IDescribableGO, IHasStateGO<S>, ILocatableGO, ILivingBeingGO {
         private final AbstractDescriptionComp descriptionComp;
         private final LocationComp locationComp;
-        private final AbstractStateComp stateComp;
+        private final AbstractStateComp<S> stateComp;
         private final AliveComp alive;
 
         private BasicCreature(final GameObjectId id,
@@ -193,7 +200,8 @@ class CreatureFactory {
         }
     }
 
-    private static class ReactionsCreature<S extends Enum<S>> extends BasicCreature
+    private static class ReactionsCreature<S extends Enum<S>>
+            extends BasicCreature<S>
             implements IResponder {
         private final AbstractReactionsComp reactionsComp;
 
@@ -214,7 +222,8 @@ class CreatureFactory {
         }
     }
 
-    private static class TalkingReactionsCreature<S extends Enum<S>> extends ReactionsCreature
+    private static class TalkingReactionsCreature<S extends Enum<S>>
+            extends ReactionsCreature<S>
             implements ITalkerGO {
         private final AbstractTalkingComp talkingComp;
 
@@ -235,4 +244,29 @@ class CreatureFactory {
             return talkingComp;
         }
     }
+
+    private static class MovingTalkingReactionsCreature<S extends Enum<S>>
+            extends TalkingReactionsCreature<S>
+            implements IMovingGO {
+        private final MovementComp movementComp;
+
+        MovingTalkingReactionsCreature(final GameObjectId id,
+                                       final AbstractDescriptionComp descriptionComp,
+                                       final LocationComp locationComp,
+                                       final MovementComp movementComp,
+                                       final AbstractStateComp<S> stateComp,
+                                       final AbstractTalkingComp talkingComp,
+                                       final AbstractReactionsComp reactionsComp) {
+            super(id, descriptionComp, locationComp, stateComp, talkingComp, reactionsComp);
+            // Jede Komponente muss registiert werden!
+            this.movementComp = addComponent(movementComp);
+        }
+
+        @Nonnull
+        @Override
+        public MovementComp movementComp() {
+            return movementComp;
+        }
+    }
+
 }

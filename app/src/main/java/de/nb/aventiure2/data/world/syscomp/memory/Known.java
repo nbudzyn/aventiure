@@ -18,7 +18,7 @@ public enum Known {
 
     // TODO Die Lichtverhältnisse - gehören die nicht in eine eigene
     //  Component, so in der Art IstLichtverhaeltnissenAusgesetzt?
-    public static Known getKnown(@NonNull final Lichtverhaeltnisse lichtverhaeltnisse) {
+    public static Known getKnown(final Lichtverhaeltnisse lichtverhaeltnisse) {
         switch (lichtverhaeltnisse) {
             case DUNKEL:
                 return KNOWN_FROM_DARKNESS;
@@ -31,7 +31,7 @@ public enum Known {
     }
 
     @NonNull
-    public static Known max(@NonNull final Known one, @NonNull final Known other) {
+    public static Known max(final Known one, final Known other) {
         if (one.ordinal() > other.ordinal()) {
             return one;
         }

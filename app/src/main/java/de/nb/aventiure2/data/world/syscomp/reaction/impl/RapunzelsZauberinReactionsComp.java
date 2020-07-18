@@ -8,9 +8,12 @@ import de.nb.aventiure2.data.world.gameobject.World;
 import de.nb.aventiure2.data.world.syscomp.description.AbstractDescriptionComp;
 import de.nb.aventiure2.data.world.syscomp.location.ILocatableGO;
 import de.nb.aventiure2.data.world.syscomp.location.LocationComp;
+import de.nb.aventiure2.data.world.syscomp.movement.IMovementNarrator;
+import de.nb.aventiure2.data.world.syscomp.movement.MovementComp;
 import de.nb.aventiure2.data.world.syscomp.reaction.AbstractDescribableReactionsComp;
 import de.nb.aventiure2.data.world.syscomp.reaction.interfaces.IMovementReactions;
 import de.nb.aventiure2.data.world.syscomp.reaction.interfaces.ITimePassedReactions;
+import de.nb.aventiure2.data.world.syscomp.spatialconnection.ISpatiallyConnectedGO;
 import de.nb.aventiure2.data.world.syscomp.state.impl.RapunzelsZauberinStateComp;
 import de.nb.aventiure2.data.world.syscomp.storingplace.ILocationGO;
 import de.nb.aventiure2.data.world.time.AvDateTime;
@@ -30,13 +33,14 @@ import static de.nb.aventiure2.data.world.gameobject.World.VOR_DEM_ALTEN_TURM;
 import static de.nb.aventiure2.data.world.syscomp.memory.Action.Type.BEWEGEN;
 import static de.nb.aventiure2.data.world.syscomp.state.impl.RapunzelsZauberinState.AUF_DEM_RUECKWEG_VON_RAPUNZEL;
 import static de.nb.aventiure2.data.world.syscomp.state.impl.RapunzelsZauberinState.AUF_DEM_WEG_ZU_RAPUNZEL;
+import static de.nb.aventiure2.data.world.syscomp.state.impl.RapunzelsZauberinState.BESUCHT_RAPUNZEL;
 import static de.nb.aventiure2.data.world.syscomp.state.impl.RapunzelsZauberinState.VOR_DEM_NAECHSTEN_RAPUNZEL_BESUCH;
 import static de.nb.aventiure2.data.world.time.AvTime.oClock;
 import static de.nb.aventiure2.data.world.time.AvTimeSpan.days;
 import static de.nb.aventiure2.data.world.time.AvTimeSpan.hours;
-import static de.nb.aventiure2.data.world.time.AvTimeSpan.mins;
 import static de.nb.aventiure2.data.world.time.AvTimeSpan.noTime;
 import static de.nb.aventiure2.german.base.AllgDescription.neuerSatz;
+import static de.nb.aventiure2.german.base.DuDescription.du;
 import static de.nb.aventiure2.german.base.StructuralElement.PARAGRAPH;
 import static de.nb.aventiure2.german.base.StructuralElement.SENTENCE;
 
@@ -45,37 +49,29 @@ import static de.nb.aventiure2.german.base.StructuralElement.SENTENCE;
  */
 public class RapunzelsZauberinReactionsComp
         extends AbstractDescribableReactionsComp
-        implements IMovementReactions, ITimePassedReactions {
+        implements
+        // Reaktionen auf die Bewegungen des SC und anderes Game Objects
+        IMovementReactions, ITimePassedReactions,
+        // Beschreibt dem Spieler die Bewegung der Zauberin
+        IMovementNarrator {
     private static final AvTime LOSGEHZEIT_UNTEN_AM_PFAD_ZUM_ALTEN_TURM = oClock(14);
 
-    private static final AvTimeSpan WEGZEIT_WALD_NAHE_SCHLOSS_ZUM_ALTEN_TURM = mins(30);
-    private static final AvTime ANKUNFTSZEIT_UNTEN_AM_TURM =
-            LOSGEHZEIT_UNTEN_AM_PFAD_ZUM_ALTEN_TURM
-                    .rotate(WEGZEIT_WALD_NAHE_SCHLOSS_ZUM_ALTEN_TURM);
-
-    private static final AvTimeSpan RUF_UND_HOCHZIEHZEIT = mins(2);
-    private static final AvTime ANKUNFTSZEIT_OBEN_IM_TURM =
-            ANKUNFTSZEIT_UNTEN_AM_TURM
-                    .rotate(RUF_UND_HOCHZIEHZEIT);
-
     private static final AvTimeSpan BESUCHSDAUER = hours(1);
-    private static final AvTime BESUCHSZEITENDE =
-            ANKUNFTSZEIT_OBEN_IM_TURM.rotate(BESUCHSDAUER);
-
-    private static final AvTime RUEKKEHRZEIT_UNTEN_AM_PFAD_ZUM_ALTEN_TURM =
-            BESUCHSZEITENDE.rotate(WEGZEIT_WALD_NAHE_SCHLOSS_ZUM_ALTEN_TURM);
 
     private final RapunzelsZauberinStateComp stateComp;
     private final LocationComp locationComp;
+    private final MovementComp movementComp;
 
     public RapunzelsZauberinReactionsComp(final AvDatabase db,
                                           final World world,
                                           final AbstractDescriptionComp descriptionComp,
                                           final RapunzelsZauberinStateComp stateComp,
-                                          final LocationComp locationComp) {
+                                          final LocationComp locationComp,
+                                          final MovementComp movementComp) {
         super(RAPUNZELS_ZAUBERIN, db, world, descriptionComp);
         this.stateComp = stateComp;
         this.locationComp = locationComp;
+        this.movementComp = movementComp;
     }
 
     @Override
@@ -117,7 +113,7 @@ public class RapunzelsZauberinReactionsComp
 
         final AvTimeSpan extraTime = narrateScTrifftZauberin_ImWaldNaheDemSchloss(from);
 
-        world.upgradeKnownToSc(RAPUNZELS_ZAUBERIN, IM_WALD_NAHE_DEM_SCHLOSS);
+        world.upgradeKnownToSC(RAPUNZELS_ZAUBERIN);
         return extraTime;
     }
 
@@ -143,11 +139,20 @@ public class RapunzelsZauberinReactionsComp
 
         final AvTimeSpan extraTime = narrateScTrifftZauberin_VorDemAltenTurm(from);
 
-        world.upgradeKnownToSc(RAPUNZELS_ZAUBERIN, VOR_DEM_ALTEN_TURM);
+        world.upgradeKnownToSC(RAPUNZELS_ZAUBERIN);
         return extraTime;
     }
 
     private AvTimeSpan narrateScTrifftZauberin_VorDemAltenTurm(@Nullable final ILocationGO scFrom) {
+        if (!movementComp.isMoving()) {
+            return narrateScTrifftZauberin_VorDemAltenTurm_Steht(scFrom);
+        }
+
+        return narrateScTrifftZauberin_VorDemAltenTurm_InBewegung(scFrom);
+    }
+
+    private AvTimeSpan narrateScTrifftZauberin_VorDemAltenTurm_Steht(
+            @Nullable final ILocationGO scFrom) {
         if (world.isOrHasRecursiveLocation(scFrom, IM_WALD_NAHE_DEM_SCHLOSS)) {
             // STORY Wenn die Zauberin WEISS_DASS_RAPUNZEL_BEFREIT_WURDE, sieht sie
             //  den SC mit bösen und giftigen Blicken an?
@@ -183,6 +188,40 @@ public class RapunzelsZauberinReactionsComp
         return noTime();
     }
 
+    private AvTimeSpan narrateScTrifftZauberin_VorDemAltenTurm_InBewegung(
+            final @Nullable ILocationGO scFrom) {
+        final Nominalphrase desc = getDescription();
+
+        if (scFrom != null && locationComp.lastLocationWas(scFrom)) {
+            // Zauberin in SC sind denselben Weg gegangen, die Zauberin ist eigentlich noch nicht
+            // ganz angekommen
+            return n.add(du("begegnest " +
+                    desc.dat(), noTime())
+                    .phorikKandidat(desc, RAPUNZELS_ZAUBERIN)
+                    .beendet(SENTENCE));
+        }
+
+        // SC und Zauberin kommen aus unterschiedlichen Richtungen
+        if (locationComp.lastLocationWas(IM_WALD_NAHE_DEM_SCHLOSS)) {
+            return n.add(neuerSatz("Den Pfad herauf kommt " +
+                            desc.nom(),
+                    noTime()
+                    // TODO Etwas unklar: Hier automatisch DIE ZEIT ABWARTEN,
+                    //  die die Zauberin noch braucht?
+                    //  Oder bei späteren Aktionen ggf. die Zeit abwarten?
+                    //  Oder später den Zustand prüfen (z.B. wenn der Spieler
+                    //  vor der Zauberin fliehen möchte)?
+            )
+                    .phorikKandidat(desc, RAPUNZELS_ZAUBERIN)
+                    .beendet(SENTENCE));
+        }
+
+        return n.add(du("begegnest " +
+                desc.dat(), noTime())
+                .phorikKandidat(desc, RAPUNZELS_ZAUBERIN)
+                .beendet(SENTENCE));
+    }
+
     @Override
     public AvTimeSpan onTimePassed(final AvDateTime lastTime, final AvDateTime now) {
         checkArgument(!now.minus(lastTime).longerThan(days(1)),
@@ -190,15 +229,23 @@ public class RapunzelsZauberinReactionsComp
 
         switch (stateComp.getState()) {
             case VOR_DEM_NAECHSTEN_RAPUNZEL_BESUCH:
-                return onTimePassed_fromVorDemNaechstenRapunzelBesuch(lastTime, now);
+                return onTimePassed_fromVorDemNaechstenRapunzelBesuch(now);
             case AUF_DEM_WEG_ZU_RAPUNZEL:
-                return onTimePassed_fromAufDemWegZuRapunzel(lastTime, now);
-            case IST_OBEN_IM_TURM_BEI_RAPUNZEL:
-                // STORY Zauberin geht irgendwann wieder
-                return noTime();
+                return onTimePassed_fromAufDemWegZuRapunzel(now);
+            case BESUCHT_RAPUNZEL:
+                return onTimePassed_fromBesuchtRapunzel(now);
+            // STORY Zauberin überrascht den Spieler oben im Turm
+//            if (world.loadSC().locationComp().hasRecursiveLocation(OBEN_IM_ALTEN_TURM)) {
+//                // Die Zauberin hat den Spieler so verzaubert, dass er sich nicht
+//                //  an sie erinnern kann.
+//                loadSC().memoryComp().upgradeKnown(RAPUNZELS_ZAUBERIN, UNKNOWN);
+//                return noTime();
+//                // STORY Die Zauberin hat den Spieler (ggf. sogar mehrfach) oben im alten Turm
+//                //  überrascht - sollte da nicht mehr passieren?!
+//            }
             case AUF_DEM_RUECKWEG_VON_RAPUNZEL:
                 // STORY Lässt sich an den Haaren herunterhiefen und wandert zurück
-                return onTimePassed_fromAufDemRueckwegVonRapunzel(lastTime, now);
+                return onTimePassed_fromAufDemRueckwegVonRapunzel(now);
             case WEISS_DASS_RAPUNZEL_BEFREIT_WURDE:
                 // STORY Wandert zurück und kommt nie wieder
                 return noTime();
@@ -208,72 +255,107 @@ public class RapunzelsZauberinReactionsComp
     }
 
     private AvTimeSpan onTimePassed_fromVorDemNaechstenRapunzelBesuch(
-            final AvDateTime lastTime, final AvDateTime now) {
+            final AvDateTime now) {
         if (now.getTime().isBefore(LOSGEHZEIT_UNTEN_AM_PFAD_ZUM_ALTEN_TURM)) {
             // Kein Zustandswechsel. Die Zauberin soll noch warten, bevor sie losgeht.
             return noTime();
         }
 
-        if (now.getTime().isBefore(ANKUNFTSZEIT_UNTEN_AM_TURM)) {
-            // Zustandswechsel nötig! Die Zauberin sollte auf dem Hinweg sein!
-            return onTimePassed_fromVorDemNaechstenRapunzelBesuchToAufDemWegZuRapunzel();
-        }
+        // Zustandswechsel nötig! Die Zauberin geht zu Rapunzel los.
+        return onTimePassed_fromVorDemNaechstenRapunzelBesuchToAufDemWegZuRapunzel(now);
 
-        // TODO Ab hier sind die Sonderfälle, wo der World-Tick
-        //  ungewöhnlich lang war.
-
-        // STORY Zauberin ruft Rapunzel, lässt sich hochziehen (RUF_UND_HOCHZIEHZEIT!)
-        //  und besucht Raunzel -
-        //  oder wartet auf Rapunzel und erkennt, dass Rapunzel befreit wurde
-
-        if (now.getTime().isBefore(BESUCHSZEITENDE)) {
-            // Die Zauberin sollte schon wieder auf dem Rückweg sein (oder
-            // gemerkt habe, dass Rapunzel befreit wurde)
-
-            // STORY Zauberin geht ggf. den Pfad, ruft Rapunzel, lässt sich hochziehen,
-            //  und besucht Raunzel -
-            //  oder hat auf Rapunzel gewartet und erkannt, dass Rapunzel befreit wurde
-            return noTime();
-        }
-
-        if (now.getTime().isBefore(RUEKKEHRZEIT_UNTEN_AM_PFAD_ZUM_ALTEN_TURM)) {
-            // Die Zauberin sollte schon wieder auf dem Rückweg sein
-
-            // STORY Zauberin geht ggf. den Pfad, ruft Rapunzel, lässt sich hochziehen,
-            //  und besucht Raunzel, wird wieder herabgelassen und geht zurück -
-            //  oder hat auf Rapunzel gewartet und erkannt, dass Rapunzel befreit wurde
-            return noTime();
-        }
-
-        // Die Zauberin sollte schon wieder zurück sein
-
-        // STORY Zauberin macht ihren vollen Rapunzelbesuch -
-        //  merkt dabei ggf., dass Rapunzel befreit wurde
-        return noTime();
+        // TODO Wenn der World-Tick ungewöhnlich lang war, geht die Zauberin
+        //  erst jetzt (also zu spät) los. Ggf. sogar nachts o.Ä.
+        //  Am besten durch ein zentrales Konzept beheben!
     }
 
-    private AvTimeSpan onTimePassed_fromVorDemNaechstenRapunzelBesuchToAufDemWegZuRapunzel() {
-        return locationComp.narrateAndSetLocation(
-                // Zauberin geht in den Wald und den Pfad Richtung Turm
-                IM_WALD_NAHE_DEM_SCHLOSS,
+    private AvTimeSpan onTimePassed_fromVorDemNaechstenRapunzelBesuchToAufDemWegZuRapunzel(
+            final AvDateTime now) {
+        final AvTimeSpan extraTime = locationComp.narrateAndSetLocation(
+                // Zauberin ist auf einmal draußen vor dem Schloss
+                // (wer weiß, wo sie herkommt)
+                // Aber der Spieler bemerkt sie nicht.
+                DRAUSSEN_VOR_DEM_SCHLOSS,
                 () -> {
                     stateComp.setState(AUF_DEM_WEG_ZU_RAPUNZEL);
-
-                    if (loadSC().locationComp()
-                            .hasRecursiveLocation(IM_WALD_NAHE_DEM_SCHLOSS)) {
-                        final AvTimeSpan extraTime = narrateZauberinTrifftSc_ImWaldNaheDemSchloss(
-                                DRAUSSEN_VOR_DEM_SCHLOSS);
-                        world.upgradeKnownToSc(RAPUNZELS_ZAUBERIN, IM_WALD_NAHE_DEM_SCHLOSS);
-                        return extraTime;
-                    }
-
                     // Keine extra-Zeit
                     return noTime();
                 });
+
+        // Zauberin geht Richtung Turm
+        return extraTime.plus(
+                movementComp.startMovement(now, VOR_DEM_ALTEN_TURM, this)
+        );
+    }
+
+    @Override
+    public <FROM extends ILocationGO & ISpatiallyConnectedGO>
+    AvTimeSpan narrateAndDoMovementAsExperiencedBySCStartsLeaving(
+            final FROM from, final ILocationGO to) {
+        if (from.is(DRAUSSEN_VOR_DEM_SCHLOSS)) {
+            // Hier bemerkt der SC die Zauberin nicht
+            return noTime();
+        }
+
+        world.upgradeKnownToSC(RAPUNZELS_ZAUBERIN);
+
+        if (from.is(IM_WALD_NAHE_DEM_SCHLOSS)) {
+            return narrateZauberinTrifftSc_ImWaldNaheDemSchloss(locationComp.getLastLocationId());
+        }
+
+        if (from.is(VOR_DEM_ALTEN_TURM)) {
+            return narrateZauberinVerlaesstSc_VorDemAltenTurm();
+        }
+
+        // Default
+        final Nominalphrase desc = getDescription();
+        return n.add(neuerSatz(PARAGRAPH,
+                "Dir begegnet " + desc.nom(), noTime())
+                .phorikKandidat(desc, RAPUNZELS_ZAUBERIN)
+                .beendet(PARAGRAPH));
+    }
+
+    @Override
+    public <FROM extends ILocationGO & ISpatiallyConnectedGO>
+    AvTimeSpan narrateAndDoMovementAsExperiencedBySCStartsEntering(
+            final FROM from, final ILocationGO to) {
+        if (to.is(DRAUSSEN_VOR_DEM_SCHLOSS)) {
+            // Hier bemerkt der SC die Zauberin nicht
+            return noTime();
+        }
+
+        world.upgradeKnownToSC(RAPUNZELS_ZAUBERIN);
+
+        if (from.is(IM_WALD_NAHE_DEM_SCHLOSS)) {
+            return narrateZauberinTrifftSc_ImWaldNaheDemSchloss(locationComp.getLastLocationId());
+        }
+
+        if (to.is(VOR_DEM_ALTEN_TURM)) {
+            return narrateZauberinTrifftSc_VorDemAltenTurm();
+        }
+
+        // TODO Wenn die Zauberin dabei ist, den Pfad hinunterzukommen,
+        //  und der SC unten vor dem Pfad steht, müsste er die Zauberin treffen!
+        //  Funktioniert das?
+
+        // TODO Wenn der SC vom Wald den Pfad hinaufgeht und die Zauberin
+        //  gleichzeitig dabei ist, den Pfad hinunterzukommen, müsste der SC die Zauberin treffen! -
+        //  Funktioniert das?
+
+        // TODO Wenn die Zauberin dabei ist, den Pfad hinunterzukommen,
+        //  und der SC gerade den Pfad hinaufgegangen ist, müsste er die Zauberin treffen!
+        //  Funktioniert das?
+
+        // Default
+        final Nominalphrase desc = getDescription();
+        return n.add(neuerSatz(PARAGRAPH,
+                "Dir begegnet " + desc.nom(), noTime())
+                .phorikKandidat(desc, RAPUNZELS_ZAUBERIN)
+                .beendet(PARAGRAPH));
     }
 
     private AvTimeSpan narrateZauberinTrifftSc_ImWaldNaheDemSchloss(
-            final GameObjectId zauberinLastLocationId) {
+            @Nullable final GameObjectId zauberinLastLocationId) {
         @Nullable final ILocationGO scLastLocation =
                 loadSC().locationComp().getLastLocation();
 
@@ -282,12 +364,20 @@ public class RapunzelsZauberinReactionsComp
     }
 
     private AvTimeSpan narrateZauberinUndScTreffenSich_ImWaldNaheDemSchloss(
-            final ILocationGO scLastLocation,
-            final GameObjectId zauberinLastLocationId) {
+            @Nullable final ILocationGO scLastLocation,
+            @Nullable final GameObjectId zauberinLastLocationId) {
         final Nominalphrase desc = getDescription();
 
         // STORY Wenn die Zauberin WEISS_DASS_RAPUNZEL_BEFREIT_WURDE, sieht sie
         //  den SC mit bösen und giftigen Blicken an?
+
+        if (!movementComp.isMoving()) {
+            return n.add(neuerSatz(SENTENCE,
+                    "Auf dem Weg steht " +
+                            desc.nom(), noTime())
+                    .phorikKandidat(desc, RAPUNZELS_ZAUBERIN)
+                    .beendet(PARAGRAPH));
+        }
 
         if (world.isOrHasRecursiveLocation(scLastLocation, DRAUSSEN_VOR_DEM_SCHLOSS) &&
                 zauberinLastLocationId == VOR_DEM_ALTEN_TURM) {
@@ -325,167 +415,65 @@ public class RapunzelsZauberinReactionsComp
                 .beendet(PARAGRAPH));
     }
 
-    private AvTimeSpan onTimePassed_fromAufDemWegZuRapunzel(
-            final AvDateTime lastTime, final AvDateTime now) {
-        if (now.getTime().isBefore(LOSGEHZEIT_UNTEN_AM_PFAD_ZUM_ALTEN_TURM)) {
-            // Die Zauberin sollte schon wieder zurück sein
-            // TODO Zauberin macht ihren vollen Rapunzelbesuch -
-            //  merkt dabei ggf., dass Rapunzel befreit wurde
-            //  (Ein Sonderfall, nur relevant wenn die World-Tick-Zeit ungewöhnlich lang war)
-            return noTime();
-        }
+    private AvTimeSpan onTimePassed_fromAufDemWegZuRapunzel(final AvDateTime now) {
+        final AvTimeSpan extraTime = movementComp.onTimePassed(now, this);
 
-        if (now.getTime().isBefore(ANKUNFTSZEIT_UNTEN_AM_TURM)) {
-            // Kein Zustands- oder Ortswechsel. Die Zauberin geht weiter den
-            // Weg zum Turm.
-            return noTime();
-        }
-
-        if (now.getTime().isBefore(ANKUNFTSZEIT_OBEN_IM_TURM) &&
-                // TODO Die "Karte" wird hier quasi fix mit einprogrammiert.
-                //  Ungünstig für Änderungen der Karte...
-                //  Besser ein Pathfinding implementieren mit
-                //  Wegpunkten für die Zauberin!
-                locationComp.hasRecursiveLocation(IM_WALD_NAHE_DEM_SCHLOSS)
-        ) {
-            return locationComp.narrateAndSetLocation(
-                    VOR_DEM_ALTEN_TURM,
-                    () -> {
-                        if (world.loadSC().locationComp()
-                                .hasRecursiveLocation(VOR_DEM_ALTEN_TURM)) {
-                            final AvTimeSpan extraTime = narrateZauberinTrifftSc_VorDemAltenTurm();
-                            world.upgradeKnownToSc(RAPUNZELS_ZAUBERIN, VOR_DEM_ALTEN_TURM);
-                            return extraTime;
-                        }
-
-                        // STORY Zauberin ruft Rapunzel (wenn der Spieler nicht vor Ort ist) und
-                        //  lässt sich hochziehen
-
-                        // Keine extra-Zeit
-                        return noTime();
-                    });
-
-        }
-
-        if ((now.getTime().isBefore(
-                // TODO Richtige Zeit? Wie ist es mit dem Hochziehen oder dem
-                //  vergeblichen Warten?
-                ANKUNFTSZEIT_OBEN_IM_TURM) &&
-                locationComp.hasRecursiveLocation(VOR_DEM_ALTEN_TURM))) {
-            // STORY Zauberin ruft Rapunzel bzw. lässt sich hochziehen
-            // STORY vergebliches Warten
-
-            return noTime();
-        }
-
-        if ((now.getTime().isBefore(BESUCHSZEITENDE) &&
-                locationComp.hasRecursiveLocation(OBEN_IM_ALTEN_TURM))) {
-            // STORY Zauberin bleibt bei Rapunzel
-            return noTime();
-        }
-
-        if (now.getTime().isBefore(BESUCHSZEITENDE)) {
-            // TODO Das hier ist wohl ein Sonderfall, wo der World-Tick
-            //  ungewöhnlich lang war.
-
-            // STORY Zauberin geht ggf. den Pfad, ruft Rapunzel, lässt sich hochziehen,
-            //  und besucht Raunzel
-            return noTime();
-        }
-
-        if (now.getTime().isBefore(RUEKKEHRZEIT_UNTEN_AM_PFAD_ZUM_ALTEN_TURM) &&
-                locationComp.hasRecursiveLocation(OBEN_IM_ALTEN_TURM)) {
-            // Die Zauberin sollte schon wieder auf dem Rückweg sein
-            // STORY Zauberin wird wieder herabgelassen und geht zurück
-            return noTime();
-        }
-
-        if (now.getTime().isBefore(RUEKKEHRZEIT_UNTEN_AM_PFAD_ZUM_ALTEN_TURM) &&
-                locationComp.hasRecursiveLocation(OBEN_IM_ALTEN_TURM)) {
-            // Die Zauberin sollte schon wieder auf dem Rückweg sein (oder
-            // gemerkt habe, dass Rapunzel befreit wurde)
-            // STORY Zauberin geht ggf. den Pfad, ruft Rapunzel, lässt sich hochziehen,
-            //  und besucht Raunzel, wird wieder herabgelassen und geht zurück -
-            //  oder hat auf Rapunzel gewartet und erkannt, dass Rapunzel befreit wurde
-            return noTime();
-        }
-
-        if (now.getTime().isBefore(RUEKKEHRZEIT_UNTEN_AM_PFAD_ZUM_ALTEN_TURM) &&
-                locationComp.hasRecursiveLocation(VOR_DEM_ALTEN_TURM)) {
-            // Die Zauberin sollte schon wieder auf dem Rückweg sein (oder
-            // gemerkt habe, dass Rapunzel befreit wurde)
-
-            // STORY Zauberin merkt (ggf.), dass Rapunzel befreit wurde
-
-            return onTimePassed_fromAufDemWegZuRapunzelToAufDemRueckwegVonRapunzel();
-        }
-
-        if (now.getTime().isBefore(RUEKKEHRZEIT_UNTEN_AM_PFAD_ZUM_ALTEN_TURM)) {
-            // Die Zauberin sollte schon wieder auf dem Rückweg sein (oder
-            // gemerkt habe, dass Rapunzel befreit wurde)
-
-            // TODO Dies ist ein Sonderfall, wo der World-Tick
-            //  ungewöhnlich lang war.
-
-            // STORY Zauberin geht zurück
-
-            // STORY Zauberin merkt, dass Rapunzel befreit wurde
-            return noTime();
-        }
-
-
-        // Die Zauberin sollte schon wieder zurück sein
-        // STORY Zauberin macht ihren vollen Rapunzelbesuch -
-        //  merkt dabei ggf., dass Rapunzel befreit wurde
-        return noTime();
-    }
-
-    private AvTimeSpan onTimePassed_fromAufDemWegZuRapunzelToAufDemRueckwegVonRapunzel() {
-        stateComp.setState(AUF_DEM_RUECKWEG_VON_RAPUNZEL);
-
-        if (loadSC().locationComp()
-                .hasRecursiveLocation(VOR_DEM_ALTEN_TURM)) {
-            final AvTimeSpan extraTime = narrateZauberinVerlaesstSc_VorDemAltenTurm();
-            world.upgradeKnownToSc(RAPUNZELS_ZAUBERIN, VOR_DEM_ALTEN_TURM);
+        if (movementComp.isMoving()) {
+            // Zauberin ist noch auf dem Weg
             return extraTime;
         }
 
-        // Keine extra-Zeit
-        return noTime();
+        // Zauberin ist unten am alten Turm angekommen.
+
+        // STORY Zunächst sollte die Zauberin den Turm besuchen:
+        //  Zauberin ruft Rapunzel (wenn der Spieler nicht vor Ort ist) und
+        //  lässt sich hochziehen
+
+        stateComp.setState(BESUCHT_RAPUNZEL);
+
+        // TODO Wenn der World-Tick ungewöhnlich lang war, geht die Zauberin
+        //  erst jetzt (also zu spät) in den BESUCHT_RAPUNZEL-State.
+        //  Rapunzel wird also zu lange besucht.
+        //  Denkbare Lösungen:
+        //  - Durch ein zentrales Konzept beheben (World-Ticks nie zu lang)
+        //  - Zeit zwischen Ankunft und now von der Rapunzel-Besuchszeit abziehen
+        //    und irgendwo (wo? hier in der Reactions-Comp?) speichern, wann
+        //    der Besucht vorbei sein soll (besuchsEndeZeit = ankunft + BESUCH_DAUER)
+
+        // STORY Zauberin ruft Rapunzel, vergebliches Warten, Erkennen, dass Rapunzel befreit wurde
+
+        return extraTime;
     }
 
-    private AvTimeSpan onTimePassed_fromAufDemRueckwegVonRapunzel(final AvDateTime lastTime,
-                                                                  final AvDateTime now) {
-        if (now.getTime().isBefore(BESUCHSZEITENDE)) {
-            // TODO Das hier ist wohl ein Sonderfall, wo der World-Tick
-            //  ungewöhnlich lang war.
+    private AvTimeSpan onTimePassed_fromBesuchtRapunzel(final AvDateTime now) {
+        if (now.isBefore(
+                stateComp.getStateDateTime().plus(BESUCHSDAUER))) {
+            // Zauberin bleibt noch bei Rapunzel
             return noTime();
         }
 
-        if (now.getTime().isBefore(RUEKKEHRZEIT_UNTEN_AM_PFAD_ZUM_ALTEN_TURM)) {
-            // Kein Zustandswechsel. Die Zauberin ist auf dem Rückweg
-            return noTime();
+        // Zauberin verlässt Rapunzel
+        stateComp.setState(AUF_DEM_RUECKWEG_VON_RAPUNZEL);
+        return movementComp.startMovement(now, DRAUSSEN_VOR_DEM_SCHLOSS, this);
+    }
+
+    private AvTimeSpan onTimePassed_fromAufDemRueckwegVonRapunzel(final AvDateTime now) {
+        final AvTimeSpan extraTime = movementComp.onTimePassed(now, this);
+
+        if (movementComp.isMoving()) {
+            // Zauberin ist noch auf dem Rückweg
+            return extraTime;
         }
 
+        // Zauberin hat den Rückweg zurückgelegt.
         return onTimePassed_fromAufDemRueckwegVonRapunzelToVorDemNaechstenRapunzelBesuch();
     }
 
     private AvTimeSpan onTimePassed_fromAufDemRueckwegVonRapunzelToVorDemNaechstenRapunzelBesuch() {
         return locationComp.narrateAndUnsetLocation(
-                // Zauberin verlässt den Wald
+                // Zauberin "verschwindet" fürs erste
                 () -> {
                     stateComp.setState(VOR_DEM_NAECHSTEN_RAPUNZEL_BESUCH);
-
-                    if (loadSC().locationComp()
-                            .hasRecursiveLocation(IM_WALD_NAHE_DEM_SCHLOSS)) {
-                        final AvTimeSpan extraTime = narrateZauberinTrifftSc_ImWaldNaheDemSchloss(
-                                VOR_DEM_ALTEN_TURM);
-                        world.upgradeKnownToSc(RAPUNZELS_ZAUBERIN, IM_WALD_NAHE_DEM_SCHLOSS);
-                        return extraTime;
-                    }
-
-                    // FIXME Auch wenn man vom Wald den Pfad hinaufgeht und die Zauberin
-                    //   den Pfad hinunterkommt, müsste man die Zauberin treffen!
 
                     // Keine extra-Zeit
                     return noTime();
@@ -493,28 +481,17 @@ public class RapunzelsZauberinReactionsComp
     }
 
 
-// STORY Zauberin überrascht den Spieler
-//            if (world.loadSC().locationComp().hasRecursiveLocation(VOR_DEM_ALTEN_TURM)) {
-//                // Die Zauberin hat den Spieler so verzaubert, dass er sich nicht
-//                //  an sie erinnern kann.
-//                loadSC().memoryComp().upgradeKnown(RAPUNZELS_ZAUBERIN, UNKNOWN);
-//                return noTime();
-//            }
-//
-//            if (world.loadSC().locationComp().hasRecursiveLocation(OBEN_IM_ALTEN_TURM)) {
-//                // Die Zauberin hat den Spieler so verzaubert, dass er sich nicht
-//                //  an sie erinnern kann.
-//                loadSC().memoryComp().upgradeKnown(RAPUNZELS_ZAUBERIN, UNKNOWN);
-//                return noTime();
-//                // STORY Die Zauberin hat den Spieler (ggf. sogar mehrfach) oben im alten Turm
-//                //  überrascht - sollte da nicht mehr passieren?!
-//            }
-
     private AvTimeSpan narrateZauberinTrifftSc_VorDemAltenTurm() {
         final SubstantivischePhrase desc =
                 getAnaphPersPronWennMglSonstDescription(false);
 
         // STORY Spieler sieht von unten, wie die Zauberin heruntersteigt?
+
+        // STORY Zauberin überrascht den Spieler vor dem Turm
+//                // Die Zauberin hat den Spieler so verzaubert, dass er sich nicht
+//                //  an sie erinnern kann.
+//                loadSC().memoryComp().upgradeKnown(RAPUNZELS_ZAUBERIN, UNKNOWN);
+//                return noTime();
 
         if (loadSC().memoryComp().getLastAction().is(BEWEGEN) &&
                 loadSC().locationComp().lastLocationWas(IM_WALD_NAHE_DEM_SCHLOSS)) {
@@ -540,25 +517,7 @@ public class RapunzelsZauberinReactionsComp
         //  Dann kommt als Beschreibung: "Vor dem Turm sieht du die Frau stehen"
         //  Eigentlich ist sie aber schon einige Minuten den Pfad hinunter.
 
-        // FIXME Wie lässt sich das lösen?
-        //  Welche Fälle gibt es?
-        //  - SC geht den Weg von A nach B
-        //    - und X steht in A: (Kein Text)
-        //    - und X steht in B: "Hier steht X" oder "Auf dem Weg geht X" (Basis ein Status von X?)
-        //    - und X geht von B (ganz oder teilweise) nach C: (Kein Text)
-        //    - und X geht von C Richtung B, ist aber noch nicht angekommen: (Kein Text)
-        //    - und X geht von B nach A: "Auf dem Weg kommt dir X entgegen. Dann erreichst du B"
-        //      (PROBLEM: Keine Interaktion mit X möglich)
-        //    - und X auch geht von A nach B, aber X kommt früher in B an: "Hier steht X"
-        //    - und X auch geht von A nach B, aber SC kommt früher in B an: "Auf dem Weg kommst
-        //      du an X vorbei. Dann erreichst du B" (PROBLEM: Keine Interaktion mit X möglich)
-        //  - X geht von A über den Weg los in Richtung B
-        //    - und SC steht in A: "X geht auf den Weg davon"
-        //  - X kommt über den Weg in B an (von A)
-        //    - und SC steht in B: "Über den Weg kommt X"
-        //  DAS KLINGT ZU KOMPLIZIERT.
-
-        // FIXME Neue Idee:
+        // FIXME Idee:
         //  - Wesen geht immer sofort auf den nächsten Ort
         //  - und bleibt dann dort für die "Hinwegzeit".
         //  - Erst danach geht es den nächsten Schritt.
@@ -567,7 +526,8 @@ public class RapunzelsZauberinReactionsComp
         //    - und X steht in A: (Kein Text)
         //    - und X steht in B: "Hier steht X"
         //    - und X geht in B (und kommt von C): "Auf dem Weg geht X", "Von dem C-Weg her
-        //       kommt X gegangen" (Basis ein Status von X?), eventuell "X geht von C nach D"?
+        //       kommt X gegangen", eventuell "X geht von C nach D"?
+        //    - und X geht in B (und kommt auch von A): "Du begegnest X", "Auch X geht..."
         //    - und X steht oder ist am Gehen (Status) und befindet sich zurzeit in C: (Kein Text)
         //  - SC steht in A
         //    - und X geht von A über den Weg nach B: "X geht auf den Weg davon"
@@ -577,11 +537,15 @@ public class RapunzelsZauberinReactionsComp
         //      - SC geht von A nach B, gleichzeitig geht X von B nach A
         //      - SC und B gehen gleichzeitig von A nach B
 
-        // TODO Movement-Componente, die die Daten für eigenständige Bewegungen
-        //  hält.
-        //  - Weiß, wie lange ein Wesen warten muss, bis es den nächsten Schritt geht
-        //  - Weiß eine Schrittfolge oder das Ziel
-        //  - Weiß vielleicht, ob sich ein Wesen in Bewegung befindet?
+        // TODO Movement-Componente
+        //  - Wenn X noch in Bewegung ist und die Zeit für den Schritt noch nicht
+        //    abegelaufen ist, kann SC mit X interagieren (z.B. mit X reden), aber
+        //    es wird die Restzeit noch abgewartet. Vielleicht Zusatztext in der Art
+        //    "Du wartest, bis ... herangekommen ist und"...
+        //    Außerdem wird möglicherweise die Bewegung "ausgesetzt" und (zumindest von der
+        //    Zeitmessung her) erst nach der Aktion forgesetzt. Z.B. auch erst
+        //    nach einem Dialog (sofern X auf den Dialog eingeht und ihn nicht von sich
+        //    aus beendet)
 
         return n.add(neuerSatz(PARAGRAPH,
                 desc.nom() +

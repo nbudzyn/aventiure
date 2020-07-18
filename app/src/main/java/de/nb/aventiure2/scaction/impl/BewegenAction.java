@@ -205,7 +205,7 @@ public class BewegenAction<R extends ISpatiallyConnectedGO & ILocationGO,
     }
 
     private void upgradeRoomOnlyKnown() {
-        world.upgradeKnownToSc(spatialConnection.getTo(), spatialConnection.getTo());
+        world.upgradeKnownToSC(spatialConnection.getTo());
     }
 
     private void upgradeNonLivingNonMovableRecursiveInventoryKnown(
