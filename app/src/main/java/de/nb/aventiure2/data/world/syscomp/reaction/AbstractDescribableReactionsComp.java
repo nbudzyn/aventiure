@@ -62,14 +62,13 @@ public abstract class AbstractDescribableReactionsComp extends AbstractReactions
         final IDescribableGO describableGO = (IDescribableGO) world.load(getGameObjectId());
 
         @Nullable final Personalpronomen anaphPersPron =
-                db.storyStateDao().getStoryState().getAnaphPersPronWennMgl(describableGO);
+                n.getStoryState().getAnaphPersPronWennMgl(describableGO);
         if (anaphPersPron != null) {
             return anaphPersPron;
         }
 
         return world.getDescription(describableGO, descShortIfKnown);
     }
-
 
     /**
      * Gibt eine Nominalphrase zurück, die das Game Object beschreibt.
