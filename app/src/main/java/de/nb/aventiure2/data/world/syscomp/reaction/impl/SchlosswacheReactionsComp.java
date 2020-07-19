@@ -20,6 +20,7 @@ import de.nb.aventiure2.data.world.syscomp.reaction.AbstractDescribableReactions
 import de.nb.aventiure2.data.world.syscomp.reaction.interfaces.IMovementReactions;
 import de.nb.aventiure2.data.world.syscomp.reaction.interfaces.ITimePassedReactions;
 import de.nb.aventiure2.data.world.syscomp.state.IHasStateGO;
+import de.nb.aventiure2.data.world.syscomp.state.impl.SchlossfestState;
 import de.nb.aventiure2.data.world.syscomp.state.impl.SchlosswacheStateComp;
 import de.nb.aventiure2.data.world.syscomp.storingplace.ILocationGO;
 import de.nb.aventiure2.data.world.syscomp.storingplace.Lichtverhaeltnisse;
@@ -214,7 +215,8 @@ public class SchlosswacheReactionsComp
             return noTime();
         }
 
-        if (((IHasStateGO) world.load(SCHLOSSFEST)).stateComp().hasState(BEGONNEN)) {
+        if (((IHasStateGO<SchlossfestState>) world.load(SCHLOSSFEST)).stateComp()
+                .hasState(BEGONNEN)) {
             // Schlosswache hat andere Dinge zu tun
             return noTime();
         }
@@ -235,7 +237,6 @@ public class SchlosswacheReactionsComp
     private AvTimeSpan scHatEtwasGenommenOderHochgeworfenUndAufgefangen_wacheWirdAufmerksam() {
         stateComp.setState(AUFMERKSAM);
         final SpielerCharakter sc = loadSC();
-        @Nullable final ILocationGO from = sc.locationComp().getLocation();
 
         final AvTimeSpan timeElapsed = n.add(
                 neuerSatz(PARAGRAPH, "Da wird eine Wache auf dich aufmerksam. "
