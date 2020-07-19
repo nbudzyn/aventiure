@@ -81,7 +81,7 @@ public class FroschprinzReactionsComp
                                     final FroschprinzDescriptionComp descriptionComp,
                                     final FroschprinzStateComp stateComp,
                                     final LocationComp locationComp) {
-        super(FROSCHPRINZ, db, world, descriptionComp);
+        super(FROSCHPRINZ, db, world);
         this.stateComp = stateComp;
         this.locationComp = locationComp;
     }

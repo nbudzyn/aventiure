@@ -283,7 +283,7 @@ public class MovementComp
             return noTime();
         }
 
-        return leavingStartedNarrator.narrateAndDoMovementAsExperiencedBySC_StartsLeaving(
+        return leavingStartedNarrator.narrateAndDoStartsLeaving(
                 (ILocationGO & ISpatiallyConnectedGO) locationComp.getLocation(),
                 (ILocationGO) world.load(getCurrentStep().getTo())
         );
@@ -306,7 +306,7 @@ public class MovementComp
                         return noTime();
                     }
 
-                    return movementNarrator.narrateAndDoMovementAsExperiencedBySC_StartsEntering(
+                    return movementNarrator.narrateAndDoStartsEntering(
                             (ILocationGO & ISpatiallyConnectedGO)
                                     world.load(getCurrentStep().getFrom()),
                             (ILocationGO) world.load(getCurrentStep().getTo()));

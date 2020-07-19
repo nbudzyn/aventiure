@@ -49,7 +49,7 @@ public class RapunzelReactionsComp
                                  final AbstractDescriptionComp descriptionComp,
                                  final RapunzelStateComp stateComp,
                                  final LocationComp locationComp) {
-        super(RAPUNZEL, db, world, descriptionComp);
+        super(RAPUNZEL, db, world);
         this.stateComp = stateComp;
         this.locationComp = locationComp;
     }

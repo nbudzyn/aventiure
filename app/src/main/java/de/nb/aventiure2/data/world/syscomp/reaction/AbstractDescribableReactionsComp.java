@@ -5,7 +5,6 @@ import androidx.annotation.Nullable;
 import de.nb.aventiure2.data.database.AvDatabase;
 import de.nb.aventiure2.data.world.base.GameObjectId;
 import de.nb.aventiure2.data.world.gameobject.World;
-import de.nb.aventiure2.data.world.syscomp.description.AbstractDescriptionComp;
 import de.nb.aventiure2.data.world.syscomp.description.IDescribableGO;
 import de.nb.aventiure2.german.base.Nominalphrase;
 import de.nb.aventiure2.german.base.Personalpronomen;
@@ -16,14 +15,10 @@ import de.nb.aventiure2.german.base.SubstantivischePhrase;
  * react to certain events.
  */
 public abstract class AbstractDescribableReactionsComp extends AbstractReactionsComp {
-    protected final AbstractDescriptionComp descriptionComp;
-
     public AbstractDescribableReactionsComp(final GameObjectId id,
                                             final AvDatabase db,
-                                            final World world,
-                                            final AbstractDescriptionComp descriptionComp) {
+                                            final World world) {
         super(id, db, world);
-        this.descriptionComp = descriptionComp;
     }
 
     /**
@@ -89,7 +84,6 @@ public abstract class AbstractDescribableReactionsComp extends AbstractReactions
      *                     kürzere Beschreibung gewählt
      */
     protected Nominalphrase getDescription(final boolean shortIfKnown) {
-        return descriptionComp.getDescription(
-                loadSC().memoryComp().isKnown(getGameObjectId()), shortIfKnown);
+        return world.getDescription(getGameObjectId(), shortIfKnown);
     }
 }

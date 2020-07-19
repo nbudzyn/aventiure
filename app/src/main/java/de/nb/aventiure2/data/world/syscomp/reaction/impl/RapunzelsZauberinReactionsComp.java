@@ -69,13 +69,13 @@ public class RapunzelsZauberinReactionsComp
                                           final RapunzelsZauberinStateComp stateComp,
                                           final LocationComp locationComp,
                                           final MovementComp movementComp) {
-        super(RAPUNZELS_ZAUBERIN, db, world, descriptionComp);
+        super(RAPUNZELS_ZAUBERIN, db, world);
         this.stateComp = stateComp;
         this.locationComp = locationComp;
         this.movementComp = movementComp;
 
         movementNarrator = new RapunzelsZauberinMovementNarrator(
-                n, world, descriptionComp);
+                n, world);
     }
 
     @Override
@@ -102,6 +102,10 @@ public class RapunzelsZauberinReactionsComp
                 world.isOrHasRecursiveLocation(scFrom, locationComp.getLocationId())) {
             // SPEZIALFÄLLE, SC und die Zauberin treffen noch in scFrom zusammen:
 
+            // TODO Testen: Wenn der SC von A nach B geht und das IMovingGO
+            //  gleichzeitig dabei ist, von B nach A zu gehen und bereits in A ist,
+            //  müsste der SC das IMovingGO treffen! - Funktioniert das?
+
             if (movementComp.isLeaving() && movementComp.getTargetLocation().is(scTo)) {
                 // Zauberin verlässt gerade auch scFrom und will auch nach scTo
                 return narrateScUeberholtZauberin();
@@ -119,6 +123,10 @@ public class RapunzelsZauberinReactionsComp
             // SC und Zauberin sind nicht am gleichen Ort
             return noTime();
         }
+
+        // TODO Testen: Wenn der SC von A nach B geht und das IMovingGO
+        //  gleichzeitig dabei ist, von B nach A zu gehen, aber noch in B ist,
+        //  müsste der SC das IMovingGO treffen! - Funktioniert das?
 
         return onSCTrifftZauberinInTo(scFrom, scTo);
     }

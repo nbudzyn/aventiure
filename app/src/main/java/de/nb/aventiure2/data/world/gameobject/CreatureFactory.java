@@ -92,7 +92,7 @@ class CreatureFactory {
                 new LocationComp(FROSCHPRINZ, db, world, IM_WALD_BEIM_BRUNNEN, ABZWEIG_IM_WALD,
                         true);
         final FroschprinzTalkingComp talkingComp =
-                new FroschprinzTalkingComp(db, world, descriptionComp, stateComp);
+                new FroschprinzTalkingComp(db, world, stateComp);
         return new TalkingReactionsCreature<>(FROSCHPRINZ,
                 descriptionComp,
                 locationComp,

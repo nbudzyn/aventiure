@@ -699,8 +699,31 @@ public class World {
      * Die Phrase wird in der Regel unterschiedlich sein, je nachdem, ob
      * der Spieler das Game Object schon kennt oder nicht.
      */
+    public Nominalphrase getDescription(final GameObjectId gameObjectId) {
+        return getDescription((IDescribableGO) load(gameObjectId));
+    }
+
+    /**
+     * Gibt eine (evtl. auch etwas längere) Nominalphrase zurück, die das Game Object beschreibt.
+     * Die Phrase wird in der Regel unterschiedlich sein, je nachdem, ob
+     * der Spieler das Game Object schon kennt oder nicht.
+     */
     public Nominalphrase getDescription(final IDescribableGO gameObject) {
         return getDescription(gameObject, false);
+    }
+
+    /**
+     * Gibt eine Nominalphrase zurück, die das Game Object beschreibt.
+     * Die Phrase wird in der Regel unterschiedlich sein, je nachdem, ob
+     * ob der Spieler das Game Object schon kennt oder nicht.
+     *
+     * @param shortIfKnown <i>Falls der Spieler(-charakter)</i> das
+     *                     Game Object schon kennt, wird eher eine
+     *                     kürzere Beschreibung gewählt
+     */
+    public Nominalphrase getDescription(final GameObjectId gameObjectId,
+                                        final boolean shortIfKnown) {
+        return getDescription((IDescribableGO) load(gameObjectId), shortIfKnown);
     }
 
     /**

@@ -11,7 +11,6 @@ import de.nb.aventiure2.data.storystate.StoryState;
 import de.nb.aventiure2.data.world.base.GameObjectId;
 import de.nb.aventiure2.data.world.gameobject.World;
 import de.nb.aventiure2.data.world.syscomp.description.IDescribableGO;
-import de.nb.aventiure2.data.world.syscomp.description.impl.FroschprinzDescriptionComp;
 import de.nb.aventiure2.data.world.syscomp.location.ILocatableGO;
 import de.nb.aventiure2.data.world.syscomp.memory.Action;
 import de.nb.aventiure2.data.world.syscomp.state.impl.FroschprinzStateComp;
@@ -60,15 +59,12 @@ import static de.nb.aventiure2.german.praedikat.VerbSubjObj.REDEN;
  * Froschprinz dann jeweils reagiert).
  */
 public class FroschprinzTalkingComp extends AbstractTalkingComp {
-    private final FroschprinzDescriptionComp descriptionComp;
     private final FroschprinzStateComp stateComp;
 
     public FroschprinzTalkingComp(final AvDatabase db,
                                   final World world,
-                                  final FroschprinzDescriptionComp descriptionComp,
                                   final FroschprinzStateComp stateComp) {
         super(FROSCHPRINZ, db, world);
-        this.descriptionComp = descriptionComp;
         this.stateComp = stateComp;
     }
 
@@ -617,7 +613,6 @@ public class FroschprinzTalkingComp extends AbstractTalkingComp {
      *                     kürzere Beschreibung gewählt
      */
     private Nominalphrase getFroschprinzDescription(final boolean shortIfKnown) {
-        return descriptionComp.getDescription(
-                world.loadSC().memoryComp().isKnown(FROSCHPRINZ), shortIfKnown);
+        return world.getDescription(FROSCHPRINZ, shortIfKnown);
     }
 }
