@@ -80,7 +80,8 @@ class CreatureFactory {
         return new ReactionsCreature<>(SCHLOSSWACHE,
                 descriptionComp, locationComp, stateComp,
                 new SchlosswacheReactionsComp(
-                        db, world, descriptionComp, stateComp, locationComp));
+                        db, world, world.getLocationSystem(), descriptionComp, stateComp,
+                        locationComp));
     }
 
     GameObject createFroschprinz() {

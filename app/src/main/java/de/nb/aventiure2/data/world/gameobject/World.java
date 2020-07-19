@@ -39,7 +39,6 @@ import de.nb.aventiure2.data.world.syscomp.spatialconnection.impl.SimpleConnecti
 import de.nb.aventiure2.data.world.syscomp.spatialconnection.impl.VorDemTurmConnectionComp;
 import de.nb.aventiure2.data.world.syscomp.spatialconnection.system.SpatialConnectionSystem;
 import de.nb.aventiure2.data.world.syscomp.storingplace.ILocationGO;
-import de.nb.aventiure2.data.world.syscomp.storingplace.Lichtverhaeltnisse;
 import de.nb.aventiure2.data.world.syscomp.storingplace.StoringPlaceType;
 import de.nb.aventiure2.data.world.time.AvDateTime;
 import de.nb.aventiure2.german.base.Nominalphrase;
@@ -325,21 +324,9 @@ public class World {
         loadSC().memoryComp().upgradeKnown(gameObjectId, getKnown(location));
     }
 
-    public static Known getKnown(@Nullable final ILocationGO location) {
-        return Known.getKnown(getLichtverhaeltnisse(location));
+    public Known getKnown(@Nullable final ILocationGO location) {
+        return Known.getKnown(locationSystem.getLichtverhaeltnisse(location));
     }
-
-    /**
-     * Gibt die Lichtverhältnisse an diesem Ort zurück.
-     */
-    public static Lichtverhaeltnisse getLichtverhaeltnisse(@Nullable final ILocationGO location) {
-        if (location == null) {
-            return Lichtverhaeltnisse.HELL;
-        }
-
-        return location.storingPlaceComp().getLichtverhaeltnisse();
-    }
-
 
     /**
      * Gibt <code>true</code> zurück falls das Game Object eine dieser Locations ist oder
@@ -832,6 +819,11 @@ public class World {
         }
 
         return res;
+    }
+
+
+    public LocationSystem getLocationSystem() {
+        return locationSystem;
     }
 
     SpatialConnectionSystem getSpatialConnectionSystem() {

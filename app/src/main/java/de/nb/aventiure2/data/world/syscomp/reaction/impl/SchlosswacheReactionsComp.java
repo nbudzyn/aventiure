@@ -14,6 +14,7 @@ import de.nb.aventiure2.data.world.gameobject.player.SpielerCharakter;
 import de.nb.aventiure2.data.world.syscomp.description.AbstractDescriptionComp;
 import de.nb.aventiure2.data.world.syscomp.location.ILocatableGO;
 import de.nb.aventiure2.data.world.syscomp.location.LocationComp;
+import de.nb.aventiure2.data.world.syscomp.location.LocationSystem;
 import de.nb.aventiure2.data.world.syscomp.memory.Action;
 import de.nb.aventiure2.data.world.syscomp.reaction.AbstractDescribableReactionsComp;
 import de.nb.aventiure2.data.world.syscomp.reaction.interfaces.IMovementReactions;
@@ -57,15 +58,18 @@ public class SchlosswacheReactionsComp
         extends AbstractDescribableReactionsComp
         implements IMovementReactions, ITimePassedReactions {
 
+    private final LocationSystem locationSystem;
     private final SchlosswacheStateComp stateComp;
     private final LocationComp locationComp;
 
     public SchlosswacheReactionsComp(final AvDatabase db,
                                      final World world,
+                                     final LocationSystem locationSystem,
                                      final AbstractDescriptionComp descriptionComp,
                                      final SchlosswacheStateComp stateComp,
                                      final LocationComp locationComp) {
         super(SCHLOSSWACHE, db, world, descriptionComp);
+        this.locationSystem = locationSystem;
         this.stateComp = stateComp;
         this.locationComp = locationComp;
     }
@@ -179,9 +183,9 @@ public class SchlosswacheReactionsComp
             final ILocationGO schlossRoom,
             final ILocationGO wohinRoom) {
         final Lichtverhaeltnisse lichtverhaeltnisseImSchloss =
-                world.getLichtverhaeltnisse(schlossRoom);
+                locationSystem.getLichtverhaeltnisse(schlossRoom);
         final Lichtverhaeltnisse lichtverhaeltnisseDraussen =
-                world.getLichtverhaeltnisse(wohinRoom);
+                locationSystem.getLichtverhaeltnisse(wohinRoom);
         if (lichtverhaeltnisseImSchloss  // Im Schloss ist es immer hell, wenn es also draußen
                 // auch hell ist...
                 == lichtverhaeltnisseDraussen) {

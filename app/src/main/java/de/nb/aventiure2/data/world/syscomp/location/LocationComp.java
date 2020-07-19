@@ -22,7 +22,6 @@ import static de.nb.aventiure2.data.world.time.AvTimeSpan.noTime;
  * can be situated in a location in the world.
  */
 public class LocationComp extends AbstractStatefulComponent<LocationPCD> {
-    private final AvDatabase db;
     private final World world;
 
     @Nullable
@@ -48,7 +47,6 @@ public class LocationComp extends AbstractStatefulComponent<LocationPCD> {
                         @Nullable final GameObjectId initialLastLocationId,
                         final boolean movable) {
         super(gameObjectId, db.locationDao());
-        this.db = db;
         this.world = world;
         this.initialLocationId = initialLocationId;
         this.initialLastLocationId = initialLastLocationId;
@@ -62,7 +60,7 @@ public class LocationComp extends AbstractStatefulComponent<LocationPCD> {
     }
 
     public AvTimeSpan narrateAndUnsetLocation() {
-        return narrateAndUnsetLocation(() -> noTime());
+        return narrateAndUnsetLocation(AvTimeSpan::noTime);
     }
 
     @NonNull
@@ -78,7 +76,7 @@ public class LocationComp extends AbstractStatefulComponent<LocationPCD> {
 
     @NonNull
     public AvTimeSpan narrateAndSetLocation(@Nullable final GameObjectId newLocationId) {
-        return narrateAndSetLocation(newLocationId, () -> noTime());
+        return narrateAndSetLocation(newLocationId, AvTimeSpan::noTime);
     }
 
     @NonNull
@@ -125,7 +123,7 @@ public class LocationComp extends AbstractStatefulComponent<LocationPCD> {
      * Gibt zurück, ob sich diese beiden Game Objects dieselbe äußerste Location haben
      * (z.B. denselben Raum).
      */
-    public boolean hasSameUpperMostLocationAs(final @Nullable GameObjectId otherId) {
+    public boolean hasSameUpperMostLocationAs(final GameObjectId otherId) {
         return hasSameUpperMostLocationAs(world.load(otherId));
     }
 
@@ -133,7 +131,7 @@ public class LocationComp extends AbstractStatefulComponent<LocationPCD> {
      * Gibt zurück, ob sich diese beiden Game Objects dieselbe äußerste Location haben
      * (z.B. denselben Raum).
      */
-    public boolean hasSameUpperMostLocationAs(final @Nullable IGameObject other) {
+    public boolean hasSameUpperMostLocationAs(final IGameObject other) {
         ILocationGO otherUpperMostLocation = null;
         if (other instanceof ILocationGO) {
             otherUpperMostLocation = (ILocationGO) other;
@@ -265,7 +263,7 @@ public class LocationComp extends AbstractStatefulComponent<LocationPCD> {
      * Sets the location to <code>null</code>.
      */
     public void unsetLocation() {
-        setLocation((GameObjectId) null);
+        setLocation(null);
     }
 
     private void setLocation(@Nullable final GameObjectId locationId) {

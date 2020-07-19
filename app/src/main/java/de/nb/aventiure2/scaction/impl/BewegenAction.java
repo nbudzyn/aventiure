@@ -210,7 +210,7 @@ public class BewegenAction<R extends ISpatiallyConnectedGO & ILocationGO,
 
     private void upgradeNonLivingNonMovableRecursiveInventoryKnown(
             @NonNull final ILocationGO location) {
-        final Known minimalKnown = World.getKnown(location);
+        final Known minimalKnown = world.getKnown(location);
 
         final ImmutableList<? extends IGameObject> directlyContainedNonLivingNonMovables =
                 world.loadDescribableNonLivingNonMovableInventory(location.getId());
