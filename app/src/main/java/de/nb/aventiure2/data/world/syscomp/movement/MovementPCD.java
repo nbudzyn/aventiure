@@ -21,6 +21,11 @@ public class MovementPCD extends AbstractPersistentComponentData {
     @Nullable
     private MovementStep currentStep;
 
+    /**
+     * Ob die Bewegung einmalig pausiert wurde, damit der Benutzer eine Aktion durchführen kann
+     */
+    private boolean pausedForSCAction;
+
     @Ignore
     MovementPCD(@NonNull final GameObjectId gameObjectId,
                 @Nullable final GameObjectId targetLocationId) {
@@ -51,5 +56,13 @@ public class MovementPCD extends AbstractPersistentComponentData {
     @Nullable
     MovementStep getCurrentStep() {
         return currentStep;
+    }
+
+    void setPausedForSCAction(final boolean pausedForSCAction) {
+        this.pausedForSCAction = pausedForSCAction;
+    }
+
+    boolean isPausedForSCAction() {
+        return pausedForSCAction;
     }
 }

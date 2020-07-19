@@ -24,8 +24,7 @@ public class SpatialConnection {
 
     private final GameObjectId to;
     private final String actionName;
-    private final SCMoveDescriptionProvider
-            SCMoveDescriptionProvider;
+    private final SCMoveDescriptionProvider SCMoveDescriptionProvider;
 
     static SpatialConnection con(final GameObjectId to, final String actionDescription,
                                  final AbstractDescription newRoomDescription) {

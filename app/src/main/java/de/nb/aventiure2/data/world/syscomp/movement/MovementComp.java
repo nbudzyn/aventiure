@@ -9,6 +9,7 @@ import de.nb.aventiure2.data.database.AvDatabase;
 import de.nb.aventiure2.data.world.base.AbstractStatefulComponent;
 import de.nb.aventiure2.data.world.base.GameObject;
 import de.nb.aventiure2.data.world.base.GameObjectId;
+import de.nb.aventiure2.data.world.base.ISCActionDoneListenerComponent;
 import de.nb.aventiure2.data.world.gameobject.World;
 import de.nb.aventiure2.data.world.syscomp.location.LocationComp;
 import de.nb.aventiure2.data.world.syscomp.spatialconnection.ISpatiallyConnectedGO;
@@ -19,6 +20,7 @@ import de.nb.aventiure2.data.world.time.AvDateTime;
 import de.nb.aventiure2.data.world.time.AvTimeSpan;
 
 import static com.google.common.base.Preconditions.checkNotNull;
+import static de.nb.aventiure2.data.world.gameobject.World.SPIELER_CHARAKTER;
 import static de.nb.aventiure2.data.world.syscomp.movement.MovementStep.Phase.FIRST_LEAVING;
 import static de.nb.aventiure2.data.world.syscomp.movement.MovementStep.Phase.SECOND_ENTERING;
 import static de.nb.aventiure2.data.world.time.AvTimeSpan.noTime;
@@ -56,7 +58,9 @@ import static de.nb.aventiure2.data.world.time.AvTimeSpan.noTime;
  * versucht das Wesen, seine Bewegung von seinem neuen Ort fortzusetzen.
  * </ul>
  */
-public class MovementComp extends AbstractStatefulComponent<MovementPCD> {
+public class MovementComp
+        extends AbstractStatefulComponent<MovementPCD>
+        implements ISCActionDoneListenerComponent {
     private final World world;
 
     private final SpatialConnectionSystem spatialConnectionSystem;
@@ -112,6 +116,7 @@ public class MovementComp extends AbstractStatefulComponent<MovementPCD> {
     public void stopMovement() {
         getPcd().setTargetLocationId(null);
         getPcd().setCurrentStep(null);
+        getPcd().setPausedForSCAction(false);
     }
 
     /**
@@ -135,13 +140,26 @@ public class MovementComp extends AbstractStatefulComponent<MovementPCD> {
             return noTime();
         }
 
+        if (isPausedForSCAction()) {
+            return noTime();
+        }
+
         AvTimeSpan extraTime = noTime();
 
+        // Je nachdem, wie lang der World-Tick war, sollen das IMovingGO ggf. auch mehrere
+        // Halbschritte gehen
         while (true) {
             // STORY Leave und Enter ggf. zusammenzufassen! ("X geht vorbei",
             //  "X geht vorüber")
 
             if (isLeaving()) {
+                // TODO Wenn das IMovingGO schon leaving ist und der Benutzer möchte
+                //  gewisse Interaktionen durchführen (z.B. ihm etwas geben o.Ä.) -
+                //  sollte dann automatisch die Zeit aufgerechnet werden, bis
+                //  das GO wieder zum SC zurückgegangen ist?
+                //  Und danach? Sollte das GO dann wieder die volle Zeit für das
+                //  Leaving brauchen?
+
                 if (now.isEqualOrAfter(getCurrentStep().getExpLeaveDoneTime())) {
                     extraTime =
                             extraTime.plus(leaveAndEnterAndNarrateIfSCPresent(movementNarrator));
@@ -151,14 +169,32 @@ public class MovementComp extends AbstractStatefulComponent<MovementPCD> {
             }
 
             if (isEntering()) {
-                // FIXME Solange dieser Zeitpunkt noch NICHT erreicht ist,
+                // TODO Solange dieser Zeitpunkt noch NICHT erreicht ist,
                 //  müsste die IMovingGO eigentlich für gewisse
                 //  Interaktionen mit dem Spieler (Reden, nehmen, geben...)
                 //  gesperrt sein, und es könnte eine Aktion "Auf die Zauberin warten"
-                //  o.Ä. geben!
+                //  o.Ä. geben! Oder bei einer solchen Aktion wird
+                //  die Zeit, die das IMovingGO nach benötigt, bis es das "Zentrum" der
+                //  location erreicht hat, auf die Zeit der eigentlichen
+                //  Aktion aufgeschlagen?
                 if (now.isEqualOrAfter(getCurrentStep().getExpDoneTime())) {
                     setupNextStepIfNecessaryAndPossible(getCurrentStep().getExpDoneTime());
                     if (!hasCurrentStep()) {
+                        break;
+                    }
+
+                    // Befindet sich der SC an der Location, die das IMovingGO
+                    // jetzt gerade erreicht hat?
+                    if (world
+                            .isOrHasRecursiveLocation(SPIELER_CHARAKTER, locationComp.getLocation())
+                        // STORY Wenn der SC schläft, dann hingegen das Game Object einfach
+                        //  vorbeilaufen lassen (in diesem Fall sollte es ja aber auch keine
+                        //  Narration geben...)
+                    ) {
+                        // Dann soll das IMovingGO nicht sofort weiterlaufen - der Spieler soll
+                        // auf jeden Fall die Gelegenheit bekommen (einmalig) mit dem
+                        // IMovingGO zu interagieren!
+                        pauseForUserAction();
                         break;
                     }
 
@@ -174,19 +210,35 @@ public class MovementComp extends AbstractStatefulComponent<MovementPCD> {
         return extraTime;
     }
 
+    @Override
+    public void onSCActionDone() {
+        getPcd().setPausedForSCAction(false);
+    }
+
+    private void pauseForUserAction() {
+        getPcd().setPausedForSCAction(true);
+    }
+
+    private boolean isPausedForSCAction() {
+        return getPcd().isPausedForSCAction();
+    }
+
     private void setupNextStepIfNecessaryAndPossible(final AvDateTime startTime) {
         if (!isMoving()) {
             getPcd().setCurrentStep(null);
+            getPcd().setPausedForSCAction(false);
             return;
         }
 
         if (locationComp.hasLocation(getTargetLocationId())) {
             getPcd().setTargetLocationId(null);
             getPcd().setCurrentStep(null);
+            getPcd().setPausedForSCAction(false);
             return;
         }
 
         getPcd().setCurrentStep(calculateStep(startTime));
+        getPcd().setPausedForSCAction(false);
     }
 
     @Nullable

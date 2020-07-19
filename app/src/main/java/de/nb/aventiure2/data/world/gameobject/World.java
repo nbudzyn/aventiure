@@ -287,6 +287,14 @@ public class World {
         }
     }
 
+    public void scActionDone() {
+        prepare();
+
+        for (final GameObject gameObject : all.values()) {
+            gameObject.scActionDone();
+        }
+    }
+
     public void upgradeKnownToSC(
             final IGameObject gameObject) {
         upgradeKnownToSC(gameObject.getId());
@@ -360,7 +368,7 @@ public class World {
     public boolean isOrHasRecursiveLocation(
             final GameObjectId gameObjectId, final GameObjectId... locationIds) {
         for (final GameObjectId locationId : locationIds) {
-            if (isOrHasRecursiveLocation(gameObjectId, locationId)) {
+            if (isOrHasRecursiveLocation(load(gameObjectId), locationId)) {
                 return true;
             }
         }

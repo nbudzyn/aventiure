@@ -45,6 +45,16 @@ public class GameObject implements IGameObject {
         }
     }
 
+    public void scActionDone() {
+        for (final IComponent component : components) {
+            if (component instanceof ISCActionDoneListenerComponent) {
+                load();
+
+                ((ISCActionDoneListenerComponent) component).onSCActionDone();
+            }
+        }
+    }
+
     /**
      * Lädt alle Daten für dieses Game Object (d.h. die Daten aller seiner Komponenten)
      * aus der Datenbank - <i>es sei denn, sie wurden schon geladen</i>.

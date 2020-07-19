@@ -70,6 +70,7 @@ public abstract class AbstractScAction implements IPlayerAction {
         final AvDateTime start = db.nowDao().now();
 
         final AvTimeSpan timeElapsed = narrateAndDo();
+        fireScActionDone();
 
         final AvDateTime dateTimeAfterActionBeforeUpdateWorld = start.plus(timeElapsed);
         db.nowDao().setNow(dateTimeAfterActionBeforeUpdateWorld);
@@ -81,6 +82,10 @@ public abstract class AbstractScAction implements IPlayerAction {
                 .plus(extraTimeElapsedDuringWorldUpdate));
 
         world.saveAll();
+    }
+
+    private void fireScActionDone() {
+        world.scActionDone();
     }
 
     private AvTimeSpan updateWorld(final AvDateTime lastTime,
