@@ -1,5 +1,6 @@
 package de.nb.aventiure2.german.base;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import com.google.common.base.Joiner;
@@ -99,10 +100,10 @@ public class DuDescription extends AbstractDescription<DuDescription> {
 
         // Konjunktionaladverb ist nötig:
         // Du gehst in den Wald. Dann gehst du den Fluss entlang.
+
         return buildHauptsatz(konjunktionaladverb, // "dann"
                 verb, // "gehst"
-                Joiner.on(" ").skipNulls()
-                        .join("du", remainder)); // "du den Fluss entlang"
+                joinSatzzeichensensitiv("du", remainder)); // "du den Fluss entlang"
     }
 
     public String getDescriptionHauptsatzMitSpeziellemVorfeld() {
@@ -120,8 +121,7 @@ public class DuDescription extends AbstractDescription<DuDescription> {
 
         return buildHauptsatz(vorfeldSatzglied,
                 verb,
-                Joiner.on(" ").skipNulls()
-                        .join("du", remainderWithoutVorfeldSatzglied));
+                joinSatzzeichensensitiv("du", remainderWithoutVorfeldSatzglied));
     }
 
     @Override
@@ -189,15 +189,26 @@ public class DuDescription extends AbstractDescription<DuDescription> {
                                          @Nullable final String mittelfeldEtc) {
         return Joiner.on(" ").skipNulls().join(
                 capitalize(vorfeld),
-                verb,
-                mittelfeldEtc);
+                joinSatzzeichensensitiv(verb, mittelfeldEtc));
     }
 
     /**
      * Gibt etwas zurück wie "gehst weiter"
      */
     public String getDescriptionSatzanschlussOhneSubjekt() {
-        return verb + " " + remainder;
+        return joinSatzzeichensensitiv(verb, remainder);
     }
 
+    @NonNull
+    private static String joinSatzzeichensensitiv(
+            @Nullable final String first, @Nullable final String second) {
+        if (second != null &&
+                (second.startsWith(",") ||
+                        second.startsWith(";") ||
+                        second.startsWith(":"))) {
+            return Joiner.on("").skipNulls().join(first, second);
+        } else {
+            return Joiner.on(" ").skipNulls().join(first, second);
+        }
+    }
 }

@@ -62,10 +62,12 @@ public class DraussenVorDemSchlossConnectionComp extends AbstractSpatialConnecti
     public List<SpatialConnection> getConnections() {
         return ImmutableList.of(
                 SpatialConnection.con(SCHLOSS_VORHALLE,
+                        "auf der Treppe",
                         "Das Schloss betreten",
                         this::getDescTo_SchlossVorhalle),
 
                 SpatialConnection.con(IM_WALD_NAHE_DEM_SCHLOSS,
+                        "auf dem Weg",
                         "In den Wald gehen",
                         du("folgst", "einem Weg in den Wald. "
                                 + "Nach ein paar Schritten führt rechter Hand ein schmaler Pfad "

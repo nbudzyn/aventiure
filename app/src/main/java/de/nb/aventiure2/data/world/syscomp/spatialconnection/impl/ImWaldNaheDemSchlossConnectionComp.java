@@ -70,12 +70,15 @@ public class ImWaldNaheDemSchlossConnectionComp extends AbstractSpatialConnectio
     public List<SpatialConnection> getConnections() {
         return ImmutableList.of(
                 con(DRAUSSEN_VOR_DEM_SCHLOSS,
+                        "auf dem Weg aus dem Wald",
                         "Den Wald verlassen",
                         this::getDescTo_DraussenVorDemSchloss),
                 con(VOR_DEM_ALTEN_TURM,
+                        "auf dem Pfad",
                         "Den schmalen Pfad aufwärts gehen",
                         this::getDescTo_VorDemAltenTurm),
                 con(ABZWEIG_IM_WALD,
+                        "auf dem Weg in den Wald hinein",
                         "Tiefer in den Wald hineingehen",
                         du(SENTENCE, "gehst", "den Weg weiter in den Wald hinein. "
                                 + "Nicht lang, und es geht zur Linken zwischen "

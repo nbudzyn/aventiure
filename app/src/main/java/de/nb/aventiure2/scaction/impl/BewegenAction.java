@@ -23,6 +23,7 @@ import de.nb.aventiure2.data.world.syscomp.location.ILocatableGO;
 import de.nb.aventiure2.data.world.syscomp.memory.Action;
 import de.nb.aventiure2.data.world.syscomp.memory.Known;
 import de.nb.aventiure2.data.world.syscomp.spatialconnection.ISpatiallyConnectedGO;
+import de.nb.aventiure2.data.world.syscomp.spatialconnection.NumberOfWays;
 import de.nb.aventiure2.data.world.syscomp.spatialconnection.impl.SpatialConnection;
 import de.nb.aventiure2.data.world.syscomp.state.IHasStateGO;
 import de.nb.aventiure2.data.world.syscomp.state.impl.SchlossfestState;
@@ -41,6 +42,8 @@ import static de.nb.aventiure2.data.world.gameobject.World.SCHLOSS_VORHALLE;
 import static de.nb.aventiure2.data.world.gameobject.World.SCHLOSS_VORHALLE_AM_TISCH_BEIM_FEST;
 import static de.nb.aventiure2.data.world.gameobject.World.WALDWILDNIS_HINTER_DEM_BRUNNEN;
 import static de.nb.aventiure2.data.world.syscomp.memory.Action.Type.BEWEGEN;
+import static de.nb.aventiure2.data.world.syscomp.spatialconnection.NumberOfWays.ONE_IN_ONE_OUT;
+import static de.nb.aventiure2.data.world.syscomp.spatialconnection.NumberOfWays.ONLY_WAY;
 import static de.nb.aventiure2.data.world.syscomp.state.impl.SchlossfestState.BEGONNEN;
 import static de.nb.aventiure2.data.world.syscomp.storingplace.Lichtverhaeltnisse.HELL;
 import static de.nb.aventiure2.data.world.time.AvTimeSpan.noTime;
@@ -54,9 +57,6 @@ import static de.nb.aventiure2.german.base.GermanUtil.uncapitalize;
 import static de.nb.aventiure2.german.base.StructuralElement.PARAGRAPH;
 import static de.nb.aventiure2.german.base.StructuralElement.SENTENCE;
 import static de.nb.aventiure2.german.base.StructuralElement.WORD;
-import static de.nb.aventiure2.scaction.impl.BewegenAction.NumberOfPossibilities.ONE_IN_ONE_OUT;
-import static de.nb.aventiure2.scaction.impl.BewegenAction.NumberOfPossibilities.ONLY_WAY;
-import static de.nb.aventiure2.scaction.impl.BewegenAction.NumberOfPossibilities.SEVERAL_WAYS;
 import static java.util.stream.Collectors.toList;
 
 /**
@@ -65,26 +65,11 @@ import static java.util.stream.Collectors.toList;
 public class BewegenAction<R extends ISpatiallyConnectedGO & ILocationGO,
         LOC_DESC extends ILocatableGO & IDescribableGO>
         extends AbstractScAction {
-    enum NumberOfPossibilities {
-        /**
-         * Whether this is the only way the SC could take
-         */
-        ONLY_WAY,
-        /**
-         * There have been two movement possibilities for the player to choose
-         * from
-         */
-        ONE_IN_ONE_OUT,
-        /**
-         * There have been several ways
-         */
-        SEVERAL_WAYS
-    }
 
     private final R oldRoom;
 
     private final SpatialConnection spatialConnection;
-    private final NumberOfPossibilities numberOfPossibilities;
+    private final NumberOfWays numberOfWays;
 
     public static <R extends ISpatiallyConnectedGO & ILocationGO>
     ImmutableList<AbstractScAction> buildActions(
@@ -123,27 +108,13 @@ public class BewegenAction<R extends ISpatiallyConnectedGO & ILocationGO,
         final List<SpatialConnection> spatialConnections =
                 room.spatialConnectionComp().getConnections();
 
-        final NumberOfPossibilities numberOfPossibilities =
-                calcNumberOfPossibilities(spatialConnections.size());
+        final NumberOfWays numberOfWays = NumberOfWays.get(spatialConnections.size());
 
         for (final SpatialConnection spatialConnection : spatialConnections) {
             res.add(new BewegenAction<>(db, world, currentStoryState, room,
-                    spatialConnection, numberOfPossibilities));
+                    spatialConnection, numberOfWays));
         }
         return res.build();
-    }
-
-    @Contract(pure = true)
-    private static NumberOfPossibilities calcNumberOfPossibilities(
-            final int numericalNumber) {
-        switch (numericalNumber) {
-            case 1:
-                return ONLY_WAY;
-            case 2:
-                return ONE_IN_ONE_OUT;
-            default:
-                return SEVERAL_WAYS;
-        }
     }
 
     /**
@@ -154,9 +125,9 @@ public class BewegenAction<R extends ISpatiallyConnectedGO & ILocationGO,
                           final StoryState initialStoryState,
                           @NonNull final R oldRoom,
                           @NonNull final SpatialConnection spatialConnection,
-                          final NumberOfPossibilities numberOfPossibilities) {
+                          final NumberOfWays numberOfWays) {
         super(db, world, initialStoryState);
-        this.numberOfPossibilities = numberOfPossibilities;
+        this.numberOfWays = numberOfWays;
         this.oldRoom = oldRoom;
         this.spatialConnection = spatialConnection;
     }
@@ -445,7 +416,7 @@ public class BewegenAction<R extends ISpatiallyConnectedGO & ILocationGO,
             //  mitzuschreiben (boolean), ob es nach der letzten Action eine Reaction gab?!
 
             final ImmutableList.Builder<AbstractDescription<?>> alt = builder();
-            if (numberOfPossibilities == ONLY_WAY) {
+            if (numberOfWays == ONLY_WAY) {
                 alt.add(
                         du("schaust", "dich nur kurz um, dann "
                                         + uncapitalize(description.getDescriptionHauptsatz()),
@@ -527,7 +498,7 @@ public class BewegenAction<R extends ISpatiallyConnectedGO & ILocationGO,
         }
 
         if (newRoomKnown == Known.KNOWN_FROM_LIGHT) {
-            if (numberOfPossibilities == ONLY_WAY) {
+            if (numberOfWays == ONLY_WAY) {
                 if (sc.feelingsComp().hasMood(Mood.VOLLER_FREUDE) &&
                         lichtverhaeltnisseInNewRoom == HELL &&
                         currentStoryState.allowsAdditionalDuSatzreihengliedOhneSubjekt() &&
@@ -543,7 +514,7 @@ public class BewegenAction<R extends ISpatiallyConnectedGO & ILocationGO,
                             standardDescription.getTimeElapsed().times(2))
                             .undWartest();
                 }
-            } else if (numberOfPossibilities == ONE_IN_ONE_OUT
+            } else if (numberOfWays == ONE_IN_ONE_OUT
                     && sc.memoryComp().getLastAction().is(BEWEGEN) &&
                     !sc.locationComp().lastLocationWas(spatialConnection.getTo()) &&
                     sc.feelingsComp().hasMood(Mood.VOLLER_FREUDE) &&

@@ -68,11 +68,13 @@ public class SchlossVorhalleConnectionComp extends AbstractSpatialConnectionComp
     public List<SpatialConnection> getConnections() {
         final ImmutableList.Builder<SpatialConnection> res = ImmutableList.builder();
         res.add(SpatialConnection.con(DRAUSSEN_VOR_DEM_SCHLOSS,
+                "auf der Treppe",
                 "Das Schloss verlassen",
                 this::getDescTo_DraussenVorDemSchloss));
         if (((IHasStateGO<SchlossfestState>) world.load(SCHLOSSFEST)).stateComp()
                 .hasState(BEGONNEN)) {
             res.add(SpatialConnection.con(SCHLOSS_VORHALLE_AM_TISCH_BEIM_FEST,
+                    "während der Suche nach einem Platz",
                     "An einen Tisch setzen",
                     this::getDescTo_SchlossVorhalleTischBeimFest));
         }

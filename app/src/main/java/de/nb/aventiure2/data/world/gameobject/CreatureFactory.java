@@ -156,7 +156,7 @@ class CreatureFactory {
                 stateComp,
                 talkingComp,
                 new RapunzelsZauberinReactionsComp(db, world,
-                        descriptionComp, stateComp, locationComp, movementComp));
+                        stateComp, locationComp, movementComp));
     }
 
     private static class BasicCreature<S extends Enum<S>> extends GameObject

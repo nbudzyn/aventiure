@@ -4,13 +4,15 @@ import javax.annotation.Nullable;
 
 import de.nb.aventiure2.data.database.AvDatabase;
 import de.nb.aventiure2.data.world.gameobject.World;
-import de.nb.aventiure2.data.world.syscomp.description.AbstractDescriptionComp;
 import de.nb.aventiure2.data.world.syscomp.location.ILocatableGO;
 import de.nb.aventiure2.data.world.syscomp.location.LocationComp;
 import de.nb.aventiure2.data.world.syscomp.movement.MovementComp;
 import de.nb.aventiure2.data.world.syscomp.reaction.AbstractDescribableReactionsComp;
 import de.nb.aventiure2.data.world.syscomp.reaction.interfaces.IMovementReactions;
 import de.nb.aventiure2.data.world.syscomp.reaction.interfaces.ITimePassedReactions;
+import de.nb.aventiure2.data.world.syscomp.spatialconnection.ISpatiallyConnectedGO;
+import de.nb.aventiure2.data.world.syscomp.spatialconnection.NumberOfWays;
+import de.nb.aventiure2.data.world.syscomp.spatialconnection.impl.SpatialConnection;
 import de.nb.aventiure2.data.world.syscomp.state.impl.RapunzelsZauberinStateComp;
 import de.nb.aventiure2.data.world.syscomp.storingplace.ILocationGO;
 import de.nb.aventiure2.data.world.time.AvDateTime;
@@ -65,7 +67,6 @@ public class RapunzelsZauberinReactionsComp
 
     public RapunzelsZauberinReactionsComp(final AvDatabase db,
                                           final World world,
-                                          final AbstractDescriptionComp descriptionComp,
                                           final RapunzelsZauberinStateComp stateComp,
                                           final LocationComp locationComp,
                                           final MovementComp movementComp) {
@@ -97,15 +98,18 @@ public class RapunzelsZauberinReactionsComp
     }
 
     private AvTimeSpan onSCEnter(@Nullable final ILocationGO scFrom, final ILocationGO scTo) {
+        if (locationComp.getLocationId() == null) {
+            // Zauberin hat keinen Ort, kann also auch nicht getroffen werden
+            return noTime();
+        }
+
         if (scFrom != null &&
-                locationComp.getLocationId() != null &&
                 world.isOrHasRecursiveLocation(scFrom, locationComp.getLocationId())) {
             // SPEZIALFÄLLE, SC und die Zauberin treffen noch in scFrom zusammen:
 
             // TODO Testen: Wenn der SC von A nach B geht und das IMovingGO
             //  gleichzeitig dabei ist, von B nach A zu gehen und bereits in A ist,
             //  müsste der SC das IMovingGO treffen! - Funktioniert das?
-
             if (movementComp.isLeaving() && movementComp.getTargetLocation().is(scTo)) {
                 // Zauberin verlässt gerade auch scFrom und will auch nach scTo
                 return narrateScUeberholtZauberin();
@@ -118,8 +122,7 @@ public class RapunzelsZauberinReactionsComp
             }
         }
 
-        if (locationComp.getLocationId() != null &&
-                !world.loadSC().locationComp().hasRecursiveLocation(locationComp.getLocationId())) {
+        if (!world.loadSC().locationComp().hasRecursiveLocation(locationComp.getLocationId())) {
             // SC und Zauberin sind nicht am gleichen Ort
             return noTime();
         }
@@ -241,8 +244,9 @@ public class RapunzelsZauberinReactionsComp
     //  (so in der Art narrateKommtEntgegen() und ggf. super... aufrufen)!
     // TODO Dann alle Default-Sonderfälle für mit den für Einzelfälle vorgegbenen
     //  Fällen vergleichen und ggf. die Einzelfälle ergänzen!
-    private AvTimeSpan narrateScTrifftZauberin_Default(@Nullable final ILocationGO scFrom,
-                                                       final ILocationGO scTo) {
+    private <FROM extends ILocationGO & ISpatiallyConnectedGO>
+    AvTimeSpan narrateScTrifftZauberin_Default(@Nullable final ILocationGO scFrom,
+                                               final ILocationGO scTo) {
         final Nominalphrase desc = getDescription();
         final SubstantivischePhrase anaphOderDesc =
                 getAnaphPersPronWennMglSonstDescription(false);
@@ -277,12 +281,28 @@ public class RapunzelsZauberinReactionsComp
                 return narrateScUeberholtZauberin();
             }
 
-            return movementNarrator.narrateZauberinKommtScEntgegen();
+            final FROM lastLocation = (FROM) locationComp.getLastLocation();
+
+            @Nullable final SpatialConnection spatialConnection =
+                    lastLocation.spatialConnectionComp().getConnection(scFrom.getId());
+
+            final NumberOfWays numberOfWaysIn =
+                    scFrom instanceof ISpatiallyConnectedGO ?
+                            ((ISpatiallyConnectedGO) scFrom).spatialConnectionComp()
+                                    .getNumberOfWaysOut() :
+                            NumberOfWays.NO_WAY;
+
+            if (spatialConnection != null) {
+                return movementNarrator.narrateMovingGOKommtScEntgegen(
+                        lastLocation,
+                        scFrom,
+                        spatialConnection,
+                        numberOfWaysIn);
+            }
         }
 
         if (movementComp.isLeaving()) {
-            if (scFrom != null &&
-                    world.isOrHasRecursiveLocation(scFrom, movementComp.getTargetLocation())) {
+            if (world.isOrHasRecursiveLocation(scTo, locationComp.getLocation())) {
                 return narrateScGehtZauberinEntgegenUndLaesstSieHinterSich();
             }
 

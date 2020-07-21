@@ -60,10 +60,12 @@ public class VorDemTurmConnectionComp extends AbstractSpatialConnectionComp {
     public List<SpatialConnection> getConnections() {
         return ImmutableList.of(
                 con(VOR_DEM_ALTEN_TURM,
+                        "auf der anderen Seite des Turms",
                         "Um den Turm herumgehen",
                         this::getDescTo_VorDemTurm
                 ),
                 con(IM_WALD_NAHE_DEM_SCHLOSS,
+                        "auf dem Pfad",
                         "Den Weg zurückgehen",
                         du(SENTENCE, "gehst",
                                 "den langen Pfad wieder zurück, den Hügel hinab, bis "

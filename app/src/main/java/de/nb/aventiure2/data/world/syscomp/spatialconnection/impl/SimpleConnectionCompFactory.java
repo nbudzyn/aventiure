@@ -38,6 +38,7 @@ public class SimpleConnectionCompFactory {
                 db,
                 world,
                 con(ABZWEIG_IM_WALD,
+                        "auf dem Weg",
                         "Auf den Waldweg zurückkehren",
                         neuerSatz("Durch Farn und Gestrüpp gehst du zurück zum "
                                 + "Waldweg", mins(2))
@@ -45,6 +46,7 @@ public class SimpleConnectionCompFactory {
                                 .dann()
                 ),
                 con(HUETTE_IM_WALD,
+                        "in der Tür",
                         "Die Hütte betreten",
                         neuerSatz("Du schiebst die Tür zur Seite und "
                                 + "zwängst dich hinein. Durch Ritzen in den "
@@ -77,6 +79,7 @@ public class SimpleConnectionCompFactory {
                                 .komma()
                                 .undWartest()),
                 con(HINTER_DER_HUETTE,
+                        "im Garten",
                         "Um die Hütte herumgehen",
                         neuerSatz("Ein paar Schritte um die Hütte herum und "
                                 + "du kommst in einen kleinen, völlig "
@@ -107,6 +110,7 @@ public class SimpleConnectionCompFactory {
                 db,
                 world,
                 con(VOR_DER_HUETTE_IM_WALD,
+                        "in der Tür",
                         "Die Hütte verlassen",
                         du("zwängst", "dich wieder durch die Tür nach "
                                 + "draußen", secs(15))
@@ -115,6 +119,7 @@ public class SimpleConnectionCompFactory {
                 ),
 
                 con(BETT_IN_DER_HUETTE_IM_WALD,
+                        "beim Niederlegen",
                         "In das Bett legen",
                         du(PARAGRAPH, "legst", "dich in das hölzere Bettgestell. "
                                 + "Gemütlich ist etwas anderes, aber nach den "
@@ -134,6 +139,7 @@ public class SimpleConnectionCompFactory {
                 db,
                 world,
                 con(VOR_DER_HUETTE_IM_WALD,
+                        "auf dem Weg",
                         "Zur Vorderseite der Hütte gehen",
                         du("kehrst", "zurück zur Vorderseite der "
                                 + "Hütte", secs(15))
@@ -149,6 +155,7 @@ public class SimpleConnectionCompFactory {
                 db,
                 world,
                 con(HUETTE_IM_WALD,
+                        "beim Aufstehen",
                         "Aufstehen",
                         du(SENTENCE, "reckst", "dich noch einmal und stehst "
                                 + "wieder auf", secs(10))
@@ -162,6 +169,7 @@ public class SimpleConnectionCompFactory {
                 db,
                 world,
                 con(IM_WALD_BEIM_BRUNNEN,
+                        "mitten im wilden Wald",
                         "Zum Brunnen gehen",
                         du("suchst", "dir einen Weg "
                                         + "durch den wilden Wald zurück zum Brunnen",
@@ -180,11 +188,13 @@ public class SimpleConnectionCompFactory {
                 db,
                 world,
                 con(IM_WALD_NAHE_DEM_SCHLOSS,
+                        "auf dem Weg zum Schloss",
                         "In Richtung Schloss gehen",
                         neuerSatz("Von dort gehst du weiter in Richtung Schloss", mins(5))
                 ),
 
                 con(VOR_DER_HUETTE_IM_WALD,
+                        "in all dem Unkraut",
                         "Den überwachsenen Abzweig nehmen",
                         du(SENTENCE, "fasst",
                                 "dir ein Herz und stapfst zwischen "
@@ -220,6 +230,7 @@ public class SimpleConnectionCompFactory {
                 ),
 
                 con(IM_WALD_BEIM_BRUNNEN,
+                        "auf dem breiten Weg tiefer in den Wald",
                         "Auf dem Hauptweg tiefer in den Wald gehen",
                         neuerSatz("Der breitere Weg führt zu einer alten "
                                 + "Linde, unter der ist ein Brunnen. "

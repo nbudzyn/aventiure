@@ -257,8 +257,7 @@ public class FroschprinzReactionsComp
 
         // TODO Wenn der Prinz nur rekursiv enthalten ist (Prinz sitzt auf einem Stuhl),
         //  dann genauer beschreiben (vgl. BewegenAction)
-        return n.add(du("siehst "
-                + getDescription().akk(), noTime())
+        return n.add(du("siehst", getDescription().akk(), noTime())
                 .phorikKandidat(froschprinzDesc, FROSCHPRINZ));
     }
 

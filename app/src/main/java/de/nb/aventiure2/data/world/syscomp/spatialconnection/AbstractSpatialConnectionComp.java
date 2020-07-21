@@ -1,6 +1,7 @@
 package de.nb.aventiure2.data.world.syscomp.spatialconnection;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
 import java.util.List;
 
@@ -33,6 +34,28 @@ public abstract class AbstractSpatialConnectionComp extends AbstractStatelessCom
         this.world = world;
     }
 
+    @Nullable
+    public SpatialConnection getConnection(final GameObjectId to) {
+        final List<SpatialConnection> connections = getConnections();
+        return getConnection(connections, to);
+    }
+
+    public NumberOfWays getNumberOfWaysOut() {
+        return NumberOfWays.get(getConnections().size());
+    }
+
+    @Nullable
+    private static SpatialConnection getConnection(final List<SpatialConnection> connections,
+                                                   final GameObjectId to) {
+        for (final SpatialConnection spatialConnection : connections) {
+            if (spatialConnection.getTo().equals(to)) {
+                return spatialConnection;
+            }
+        }
+
+        return null;
+    }
+
     @NonNull
     public abstract List<SpatialConnection> getConnections();
 
@@ -57,4 +80,5 @@ public abstract class AbstractSpatialConnectionComp extends AbstractStatelessCom
     public abstract boolean isAlternativeMovementDescriptionAllowed(final GameObjectId to,
                                                                     Known newRoomKnown,
                                                                     Lichtverhaeltnisse lichtverhaeltnisseInNewRoom);
+
 }

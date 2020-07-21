@@ -45,6 +45,7 @@ public class SchlossVorhalleTischBeimFestConnectionComp extends AbstractSpatialC
     public List<SpatialConnection> getConnections() {
         return ImmutableList.of(
                 SpatialConnection.con(SCHLOSS_VORHALLE,
+                        "im Aufstehen",
                         "Vom Tisch aufstehen",
                         SchlossVorhalleTischBeimFestConnectionComp::getDescTo_SchlossVorhalle));
     }

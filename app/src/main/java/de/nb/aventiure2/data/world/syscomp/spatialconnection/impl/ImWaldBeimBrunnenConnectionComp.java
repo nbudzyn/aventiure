@@ -56,6 +56,7 @@ public class ImWaldBeimBrunnenConnectionComp extends AbstractSpatialConnectionCo
                 ImmutableList.builder();
 
         resImWaldBeimBrunnnen.add(con(ABZWEIG_IM_WALD,
+                "auf dem Weg",
                 "Den Weg Richtung Schloss gehen",
                 du(SENTENCE, "verlässt", "den Brunnen und erreichst bald "
                         + "die Stelle, wo der überwachsene Weg "
@@ -65,6 +66,7 @@ public class ImWaldBeimBrunnenConnectionComp extends AbstractSpatialConnectionCo
         if (storingPlaceComp.getLichtverhaeltnisse() == HELL ||
                 world.loadSC().memoryComp().isKnown(WALDWILDNIS_HINTER_DEM_BRUNNEN)) {
             resImWaldBeimBrunnnen.add(con(WALDWILDNIS_HINTER_DEM_BRUNNEN,
+                    "im Wald",
                     "Hinter dem Brunnen in die Wildnis schlagen",
                     du(SENTENCE, "verlässt", "den Brunnen und schlägst dich in die "
                             + "Wildnis "

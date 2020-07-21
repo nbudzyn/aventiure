@@ -286,11 +286,11 @@ public class World {
         }
     }
 
-    public void scActionDone() {
+    public void scActionDone(final AvDateTime startTimeOfUserAction) {
         prepare();
 
         for (final GameObject gameObject : all.values()) {
-            gameObject.scActionDone();
+            gameObject.scActionDone(startTimeOfUserAction);
         }
     }
 

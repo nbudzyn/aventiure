@@ -4,6 +4,7 @@ import de.nb.aventiure2.data.world.base.GameObjectId;
 import de.nb.aventiure2.data.world.syscomp.memory.Known;
 import de.nb.aventiure2.data.world.syscomp.storingplace.Lichtverhaeltnisse;
 import de.nb.aventiure2.german.base.AbstractDescription;
+import de.nb.aventiure2.german.praedikat.AdverbialeAngabe;
 
 import static de.nb.aventiure2.data.world.syscomp.memory.Known.KNOWN_FROM_DARKNESS;
 import static de.nb.aventiure2.data.world.syscomp.memory.Known.UNKNOWN;
@@ -23,32 +24,55 @@ public class SpatialConnection {
     }
 
     private final GameObjectId to;
+
+
+    /**
+     * Eine Adverbiale Angabe, die diese Verbinung
+     * räumlich beschreibt
+     * (aus Sicht des
+     * {@link de.nb.aventiure2.data.world.syscomp.spatialconnection.ISpatiallyConnectedGO},
+     * nicht unbedingt aus Sicht von {@link #to}!):
+     * "auf dem Weg" o.Ä.
+     * <p>
+     * Die Beschreibung sollte sich auf etwas beziehen, auf dem man sich eine längere Zeit
+     * bewegen kann (nicht "in der Tür", sondern "auf der Treppe").
+     * <p>
+     * Es ist außerdem gut, wenn dieselbe Beschreibung innerhalb des
+     * {@link de.nb.aventiure2.data.world.syscomp.spatialconnection.ISpatiallyConnectedGO}s
+     * nicht mehr als zweimal auftritt.
+     */
+    private final String wo;
+
     private final String actionName;
     private final SCMoveDescriptionProvider SCMoveDescriptionProvider;
 
-    static SpatialConnection con(final GameObjectId to, final String actionDescription,
+    static SpatialConnection con(final GameObjectId to,
+                                 final String wo,
+                                 final String actionDescription,
                                  final AbstractDescription newRoomDescription) {
-        return con(to, actionDescription,
+        return con(to, wo, actionDescription,
                 (isNewRoomKnown, lichtverhaeltnisseInNewRoom) -> newRoomDescription);
     }
 
     static SpatialConnection con(final GameObjectId to,
+                                 final String wo,
                                  final String actionDescription,
                                  final AbstractDescription newRoomDescriptionUnknown,
                                  final AbstractDescription newRoomDescriptionKnown) {
-        return con(to, actionDescription,
+        return con(to, wo, actionDescription,
                 (newRoomKnown, lichtverhaeltnisseInNewRoom) ->
                         newRoomKnown == UNKNOWN ?
                                 newRoomDescriptionUnknown : newRoomDescriptionKnown);
     }
 
     static SpatialConnection con(final GameObjectId to,
+                                 final String wo,
                                  final String actionDescription,
                                  final AbstractDescription newRoomDescriptionUnknownHell,
                                  final AbstractDescription newRoomDescriptionUnknownDunkel,
                                  final AbstractDescription newRoomDescriptionKnownFromDarknessHell,
                                  final AbstractDescription newRoomDescriptionOther) {
-        return con(to, actionDescription,
+        return con(to, wo, actionDescription,
                 (newRoomKnown, lichtverhaeltnisseInNewRoom) -> {
                     if (newRoomKnown == UNKNOWN && lichtverhaeltnisseInNewRoom == HELL) {
                         return newRoomDescriptionUnknownHell;
@@ -65,16 +89,19 @@ public class SpatialConnection {
     }
 
     static SpatialConnection con(final GameObjectId to,
+                                 final String wo,
                                  final String actionName,
                                  final SCMoveDescriptionProvider SCMoveDescriptionProvider) {
-        return new SpatialConnection(to, actionName,
+        return new SpatialConnection(to, wo, actionName,
                 SCMoveDescriptionProvider);
     }
 
     private SpatialConnection(final GameObjectId to,
+                              final String wo,
                               final String actionName,
                               final SCMoveDescriptionProvider SCMoveDescriptionProvider) {
         this.to = to;
+        this.wo = wo;
         this.actionName = actionName;
         this.SCMoveDescriptionProvider =
                 SCMoveDescriptionProvider;
@@ -86,6 +113,14 @@ public class SpatialConnection {
 
     public GameObjectId getTo() {
         return to;
+    }
+
+    public AdverbialeAngabe getWoAdvAngabe() {
+        return new AdverbialeAngabe(getWo());
+    }
+
+    public String getWo() {
+        return wo;
     }
 
     public AbstractDescription getSCMoveDescription(

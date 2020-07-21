@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Objects;
 
 import de.nb.aventiure2.data.world.syscomp.description.IDescribableGO;
+import de.nb.aventiure2.data.world.time.AvDateTime;
 
 /**
  * Base implementation for any object within in the game. An <i>entity</i> in the
@@ -45,12 +46,13 @@ public class GameObject implements IGameObject {
         }
     }
 
-    public void scActionDone() {
+    public void scActionDone(final AvDateTime startTimeOfUserAction) {
         for (final IComponent component : components) {
             if (component instanceof ISCActionDoneListenerComponent) {
                 load();
 
-                ((ISCActionDoneListenerComponent) component).onSCActionDone();
+                ((ISCActionDoneListenerComponent) component)
+                        .onSCActionDone(startTimeOfUserAction);
             }
         }
     }
