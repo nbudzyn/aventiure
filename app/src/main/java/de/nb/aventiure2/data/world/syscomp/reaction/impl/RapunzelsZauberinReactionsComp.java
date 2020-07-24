@@ -72,6 +72,15 @@ public class RapunzelsZauberinReactionsComp
     public AvTimeSpan onLeave(final ILocatableGO locatable,
                               final ILocationGO from,
                               @Nullable final ILocationGO to) {
+        if (locationComp.getLocationId() == null) {
+            // Zauberin hat keinen Ort, kann also auch nicht getroffen werden
+            return noTime();
+        }
+
+        if (locatable.is(SPIELER_CHARAKTER)) {
+            return onSCEnter(from, to);
+        }
+
         return noTime();
     }
 
@@ -80,7 +89,62 @@ public class RapunzelsZauberinReactionsComp
                               @Nullable final ILocationGO from,
                               final ILocationGO to) {
         if (locatable.is(SPIELER_CHARAKTER)) {
-            return onSCEnter(from, to);
+            return onSCLeave(from, to);
+        }
+
+        return noTime();
+    }
+
+    public AvTimeSpan onSCLeave(@Nullable final ILocationGO scFrom,
+                                final ILocationGO scTo) {
+        if (scFrom != null &&
+                locationComp.getLocationId() != null &&
+                world.isOrHasRecursiveLocation(scFrom, locationComp.getLocationId())) {
+            onSCTrifftZauberinInFrom(scFrom, scTo);
+        }
+
+        return noTime();
+    }
+
+    private AvTimeSpan onSCTrifftZauberinInFrom(final ILocationGO scFrom, final ILocationGO scTo) {
+        // TODO Am besten diese Spezialfälle und die Logik in die MovementComp
+        //  verallgemeinern
+
+        if (scFrom.is(DRAUSSEN_VOR_DEM_SCHLOSS)) {
+            // Hier bemerkt der SC die Zauberin nicht
+            return noTime();
+        }
+
+        // STORY Wenn die Zauberin WEISS_DASS_RAPUNZEL_BEFREIT_WURDE, sieht sie
+        //  den SC mit bösen und giftigen Blicken an?
+
+        // STORY Wenn der Spieler oben im Turm ist
+        //  "Unten vor dem Turm steht eine..."?
+
+        // STORY Reaktion der Zauberin, wenn SC die Zauberin oben im Turm antrifft
+        //  (falls das sein kann).
+
+        // Das hier sind sehr spezielle Spezialfälle, wo SC und die Zauberin treffen
+        // noch in scFrom zusammentreffen:
+        // TODO Am besten all diese Narrations in die MovementComp verallgemeinern
+        if (movementComp.isLeaving() && movementComp.getTargetLocation().is(scTo)) {
+            // Zauberin verlässt gerade auch scFrom und will auch nach scTo
+            final AvTimeSpan extraTime = movementNarrator.narrateScUeberholtMovingGO();
+
+            world.upgradeKnownToSC(RAPUNZELS_ZAUBERIN);
+
+            return extraTime;
+        }
+        if (movementComp.isEntering() &&
+                locationComp.getLastLocationId() != null &&
+                world.isOrHasRecursiveLocation(locationComp.getLastLocationId(), scTo)) {
+            // Zauberin kommt von scTo, hat aber schon scFrom betreten
+            final AvTimeSpan extraTime =
+                    movementNarrator.narrateScGehtMovingGOEntgegenUndLaesstEsHinterSich();
+
+            world.upgradeKnownToSC(RAPUNZELS_ZAUBERIN);
+
+            return extraTime;
         }
 
         return noTime();
@@ -91,26 +155,6 @@ public class RapunzelsZauberinReactionsComp
             // Zauberin hat keinen Ort, kann also auch nicht getroffen werden
             return noTime();
         }
-
-        if (scFrom != null &&
-                world.isOrHasRecursiveLocation(scFrom, locationComp.getLocationId())) {
-            // TODO Am besten diese Spezialfälle und die Logik in die MovementComp
-            //  verallgemeinern
-
-            // SPEZIALFÄLLE, SC und die Zauberin treffen noch in scFrom zusammen:
-
-            if (movementComp.isLeaving() && movementComp.getTargetLocation().is(scTo)) {
-                // Zauberin verlässt gerade auch scFrom und will auch nach scTo
-                return movementNarrator.narrateScUeberholtMovingGO();
-            }
-            if (movementComp.isEntering() &&
-                    locationComp.getLastLocationId() != null &&
-                    world.isOrHasRecursiveLocation(locationComp.getLastLocationId(), scTo)) {
-                // Zauberin hat scFrom schon betreten und kommt von scTo
-                return movementNarrator.narrateScGehtMovingGOEntgegenUndLaesstEsHinterSich();
-            }
-        }
-
         if (!world.loadSC().locationComp().hasRecursiveLocation(locationComp.getLocationId())) {
             // SC und Zauberin sind nicht am gleichen Ort
             return noTime();
@@ -128,7 +172,7 @@ public class RapunzelsZauberinReactionsComp
             return noTime();
         }
 
-        final AvTimeSpan extraTime = narrateScTrifftZauberin(scFrom, scTo);
+        final AvTimeSpan extraTime = narrateScTrifftZauberinInTo(scFrom, scTo);
 
         // STORY Reaktion der Zauberin, wenn SC die Zauberin oben im Turm antrifft
         //  (falls das sein kann).
@@ -140,8 +184,8 @@ public class RapunzelsZauberinReactionsComp
 
     // TODO Am besten all diese Narrations in die MovementComp verallgemeinern
     private <FROM extends ILocationGO & ISpatiallyConnectedGO>
-    AvTimeSpan narrateScTrifftZauberin(@Nullable final ILocationGO scFrom,
-                                       final ILocationGO scTo) {
+    AvTimeSpan narrateScTrifftZauberinInTo(@Nullable final ILocationGO scFrom,
+                                           final ILocationGO scTo) {
         // STORY Wenn die Zauberin WEISS_DASS_RAPUNZEL_BEFREIT_WURDE, sieht sie
         //  den SC mit bösen und giftigen Blicken an?
 
@@ -176,13 +220,11 @@ public class RapunzelsZauberinReactionsComp
                 return onTimePassed_fromAufDemWegZuRapunzel(now);
             case BESUCHT_RAPUNZEL:
                 return onTimePassed_fromBesuchtRapunzel(now);
-            // STORY Zauberin überrascht den Spieler oben im Turm
-            //            if (world.loadSC().locationComp().hasRecursiveLocation(OBEN_IM_ALTEN_TURM)) {
-            //                // Die Zauberin hat den Spieler so verzaubert, dass er sich nicht
-            //                //  an sie erinnern kann.
-            //                loadSC().memoryComp().upgradeKnown(RAPUNZELS_ZAUBERIN, UNKNOWN);
-            //                return noTime();
-            //            }
+            // STORY Wenn die Zauberinden Spieler oben im Turm
+            //  überrascht, könnte sie den Spieler so verzaubern, dass er sich nicht
+            //  mehr an sie erinnern kann - und auch nicht an Rapunzel und
+            //  an den Rapunzel-Spruch
+            // loadSC().memoryComp().upgradeKnown(RAPUNZELS_ZAUBERIN, UNKNOWN);
             case AUF_DEM_RUECKWEG_VON_RAPUNZEL:
                 // STORY Lässt sich an den Haaren herunterhiefen und wandert zurück
                 return onTimePassed_fromAufDemRueckwegVonRapunzel(now);
@@ -229,7 +271,6 @@ public class RapunzelsZauberinReactionsComp
                 movementComp.startMovement(now, VOR_DEM_ALTEN_TURM, movementNarrator)
         );
     }
-
 
     private AvTimeSpan onTimePassed_fromAufDemWegZuRapunzel(final AvDateTime now) {
         final AvTimeSpan extraTime = movementComp.onTimePassed(now, movementNarrator);
