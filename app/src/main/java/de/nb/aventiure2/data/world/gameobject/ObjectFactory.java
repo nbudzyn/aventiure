@@ -110,7 +110,7 @@ public class ObjectFactory {
                 new SimpleDescriptionComp(id, descriptionAtFirstSight, normalDescriptionWhenKnown,
                         shortDescriptionWhenKnown),
                 new LocationComp(id, db, world, initialLocationId, initialLastLocationId, movable),
-                new StoringPlaceComp(id, db, world, locationMode, dauerhaftBeleuchtet));
+                new StoringPlaceComp(id, db, locationMode, dauerhaftBeleuchtet));
     }
 
     private static class SimpleObject extends GameObject

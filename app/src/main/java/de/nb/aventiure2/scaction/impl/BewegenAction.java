@@ -533,7 +533,7 @@ public class BewegenAction<R extends ISpatiallyConnectedGO & ILocationGO,
     private static String buildObjectInLocationDescriptionPrefix(
             @NonNull final ILocationGO location,
             final int numberOfObjects) {
-        final String res = location.storingPlaceComp().getLocationMode().getWo();
+        final String res = location.storingPlaceComp().getLocationMode().getWo(false);
 
         if (numberOfObjects == 1) {
             return res + " liegt";

@@ -171,14 +171,25 @@ public class MovementComp
             }
 
             if (isEntering()) {
-                // TODO Solange dieser Zeitpunkt noch NICHT erreicht ist,
-                //  müsste die IMovingGO eigentlich für gewisse
-                //  Interaktionen mit dem Spieler (Reden, nehmen, geben...)
-                //  gesperrt sein, und es könnte eine Aktion "Auf die Zauberin warten"
-                //  o.Ä. geben! Oder bei einer solchen Aktion wird
-                //  die Zeit, die das IMovingGO nach benötigt, bis es das "Zentrum" der
-                //  location erreicht hat, auf die Zeit der eigentlichen
-                //  Aktion aufgeschlagen?
+                // STORY Wie damit umgehen, wenn dieser Zeitpunkt noch NICHT erreicht ist?
+                //  - Kann SC mit X uneingeschränkt interagieren (z.B. mit X reden)?
+                //  -- Sollte dann bei einer solchen Aktion die Zeit, die das IMovingGO noch
+                //     benötigt, bis es das "Zentrum" der location erreicht hat, auf die Zeit
+                //     der eigentlichen Aktion aufgeschlagen werden? (Der SC wartet
+                //     also implizit, bis X herangekommen ist?)
+                // -- Oder später den Zustand prüfen (z.B. wenn der Spieler
+                //  vor der Zauberin fliehen möchte)?
+                //  --- Sollte es dann einen Zusatztext in der Art "Du wartest, bis ...
+                //      herangekommen ist und..." geben?
+                //  - Oder sind nur manche Aktionen möglich? (nehmen, geben, ... gesperrt?)
+                //    Dann bräuchte es aber wohl eine Aktion "Auf die Zauberin warten" o.Ä.
+
+                //  STORY Zumindest manche Aktionen sollten wohl dazu führen,
+                //   dass die Bewegung beendet oder zumindest für eine Weile die Bewegung
+                //   "ausgesetzt" wird. Z.B. sollte er der Dialog beendet werden, bis
+                //   das IMovingGO wieder weitergeht (sofern X auf den Dialog eingeht und ihn
+                //   nicht von sich aus beendet)
+
                 if (now.isEqualOrAfter(getCurrentStep().getExpDoneTime())) {
                     // Befindet sich der SC an der Location, die das IMovingGO
                     // jetzt gerade erreicht hat?
@@ -207,6 +218,8 @@ public class MovementComp
                         break;
                     }
 
+                    // FIXME Die Frau geht auf dem Weg an dir vorbei (o.Ä.)
+                    //  wurde nicht ausgegeben?
                     extraTime =
                             extraTime.plus(narrateAndDoMovementIfExperiencedBySCStartsLeaving(
                                     movementNarrator));

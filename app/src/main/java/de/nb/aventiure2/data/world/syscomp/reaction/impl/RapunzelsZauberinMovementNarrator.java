@@ -22,7 +22,7 @@ class RapunzelsZauberinMovementNarrator extends SimpleMovementNarrator {
     RapunzelsZauberinMovementNarrator(
             final StoryStateDao storyStateDao,
             final World world) {
-        super(RAPUNZELS_ZAUBERIN, storyStateDao, world);
+        super(RAPUNZELS_ZAUBERIN, storyStateDao, world, true);
     }
 
     @Override
@@ -42,22 +42,7 @@ class RapunzelsZauberinMovementNarrator extends SimpleMovementNarrator {
     // STORY Wenn die Zauberin WEISS_DASS_RAPUNZEL_BEFREIT_WURDE, sieht sie
     //  den SC mit bösen und giftigen Blicken an?
 
-    // TODO Movement-Componente
-    //  - Wenn X noch in Bewegung ist und die Zeit für den Schritt noch nicht
-    //    abegelaufen ist, kann SC mit X interagieren (z.B. mit X reden), aber
-    //    es wird die Restzeit noch abgewartet. Vielleicht Zusatztext in der Art
-    //    "Du wartest, bis ... herangekommen ist und"...
-    //    Außerdem wird möglicherweise die Bewegung "ausgesetzt" und (zumindest von der
-    //    Zeitmessung her) erst nach der Aktion forgesetzt. Z.B. auch erst
-    //    nach einem Dialog (sofern X auf den Dialog eingeht und ihn nicht von sich
-    //    aus beendet)
-
-    // TODO Nicht schön: "Vor dem Turm siehst du die Frau stehen. Sie geht den
-    //  Pfad hinab." Besser wäre "Dann geht sie den Pfad hinab."
-    //  - Denkbar wäre, .dann() optional mit einem Akteur zu qualifizieren:
-    //    .dann(RAPUNZELS_ZAUBERIN). Ein "Dann" würde nur dann
-    //    erzeugt, wenn der Folgesatz denselben Akteur hat.
-    // TODO Nicht schön: "Vor dem Turm siehst du die Frau stehen. Sie geht den
+    // STORY Nicht so schön: "Vor dem Turm siehst du die Frau stehen. Sie geht den
     //  Pfad hinab." Besser wäre "Dann geht sie den Pfad hinab."
     //  - Denkbar wäre, .dann() optional mit einem Akteur zu qualifizieren:
     //    .dann(RAPUNZELS_ZAUBERIN). Ein "Dann" würde nur dann
@@ -65,10 +50,9 @@ class RapunzelsZauberinMovementNarrator extends SimpleMovementNarrator {
 
     @Override
     public <FROM extends ILocationGO & ISpatiallyConnectedGO>
-    AvTimeSpan narrateAndDoStartsEntering(
-            final FROM from, final ILocationGO to,
-            @Nullable final SpatialConnection spatialConnection,
-            final NumberOfWays numberOfWaysIn) {
+    AvTimeSpan narrateAndDoStartsEntering(final FROM from, final ILocationGO to,
+                                          @Nullable final SpatialConnection spatialConnection,
+                                          final NumberOfWays numberOfWaysIn) {
         if (to.is(DRAUSSEN_VOR_DEM_SCHLOSS)) {
             // Hier bemerkt der SC die Zauberin nicht
             return noTime();
@@ -84,9 +68,9 @@ class RapunzelsZauberinMovementNarrator extends SimpleMovementNarrator {
     //  if (to.is(VOR_DEM_ALTEN_TURM)) {
 
     // STORY Zauberin überrascht den Spieler vor dem Turm
-//                // Die Zauberin hat den Spieler so verzaubert, dass er sich nicht
-//                //  an sie erinnern kann.
-//                loadSC().memoryComp().upgradeKnown(RAPUNZELS_ZAUBERIN, UNKNOWN);
-//                return noTime();
+    //                // Die Zauberin hat den Spieler so verzaubert, dass er sich nicht
+    //                //  an sie erinnern kann.
+    //                loadSC().memoryComp().upgradeKnown(RAPUNZELS_ZAUBERIN, UNKNOWN);
+    //                return noTime();
 
 }

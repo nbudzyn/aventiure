@@ -136,7 +136,8 @@ public class AblegenAction
     private AdverbialeAngabe getWohinDetail() {
         return detailLocationNecessaryInDescription ?
                 null :
-                location.storingPlaceComp().getLocationMode().getWohinAdvAngabe();
+                location.storingPlaceComp().getLocationMode()
+                        .getWohinAdvAngabe(false);
     }
 
     @Override
@@ -173,7 +174,7 @@ public class AblegenAction
                 "wühlst", "in deiner Tasche und auf einmal "
                         + "schauert's dich und "
                         + "der nasse Frosch sitzt in deiner Hand. Schnell "
-                        + location.storingPlaceComp().getLocationMode().getWohin()
+                        + location.storingPlaceComp().getLocationMode().getWohin(false)
                         + " mit ihm!",
                 secs(7))
                 .dann()
@@ -183,7 +184,7 @@ public class AblegenAction
             // Wenn kein wohin-Detail nötig ist, dann ist es wohl kein Tisch o.Ä. und "fällt" passt.
             alt.add(du(PARAGRAPH,
                     "schüttest", "deine Tasche aus, bis der Frosch endlich " +
-                            location.storingPlaceComp().getLocationMode().getWohin() +
+                            location.storingPlaceComp().getLocationMode().getWohin(false) +
                             " fällt. Puh.",
                     secs(7))
                     .dann()
@@ -193,7 +194,7 @@ public class AblegenAction
         alt.add(du(PARAGRAPH,
                 "wühlst", "in deiner Tasche. Da quakt es erbost, auf einmal "
                         + "springt der Fosch heraus und direkt "
-                        + location.storingPlaceComp().getLocationMode().getWohin(),
+                        + location.storingPlaceComp().getLocationMode().getWohin(false),
                 secs(7)
         ));
 
@@ -220,7 +221,7 @@ public class AblegenAction
         AvTimeSpan timeElapsed = n.add(
                 du("setzt", gameObjectOrPersPron.akk() +
                                 " " +
-                                location.storingPlaceComp().getLocationMode().getWohin(),
+                                location.storingPlaceComp().getLocationMode().getWohin(false),
                         secs(2))
                         .undWartest()
                         .dann()
@@ -261,7 +262,7 @@ public class AblegenAction
                         + (location.is(SCHLOSS_VORHALLE_AM_TISCH_BEIM_FEST) ?
                         " wieder " :
                         " ")
-                        + location.storingPlaceComp().getLocationMode().getWohin()
+                        + location.storingPlaceComp().getLocationMode().getWohin(false)
                         + " und "
                         + "wendest dich demonstrativ ab",
                 secs(5))
@@ -305,7 +306,7 @@ public class AblegenAction
                             gameObjektPersPron.akk() +
                                     " " +
                                     location.storingPlaceComp().getLocationMode()
-                                            .getWohinAdvAngabe().getText(),
+                                            .getWohinAdvAngabe(false).getText(),
                             secs(3))
                             .dann()
                             .phorikKandidat(gameObjektPersPron, gameObject.getId()));

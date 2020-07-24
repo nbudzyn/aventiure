@@ -22,6 +22,7 @@ import static de.nb.aventiure2.data.world.syscomp.memory.Action.Type.BEWEGEN;
 import static de.nb.aventiure2.data.world.syscomp.spatialconnection.NumberOfWays.NO_WAY;
 import static de.nb.aventiure2.data.world.time.AvTimeSpan.noTime;
 import static de.nb.aventiure2.german.base.AllgDescription.neuerSatz;
+import static de.nb.aventiure2.german.base.DuDescription.du;
 import static de.nb.aventiure2.german.base.StructuralElement.PARAGRAPH;
 import static de.nb.aventiure2.german.base.StructuralElement.SENTENCE;
 
@@ -34,13 +35,236 @@ public class SimpleMovementNarrator implements IMovementNarrator {
     protected final StoryStateDao n;
     protected final World world;
 
+    /**
+     * Ob das Wesen, das sich bewegt, eher groß ist (z.B. ein Mensch, kein Frosch)
+     */
+    private final boolean eherGross;
+
     public SimpleMovementNarrator(
             final GameObjectId gameObjectId,
             final StoryStateDao storyStateDao,
-            final World world) {
+            final World world,
+            final boolean eherGross) {
         this.gameObjectId = gameObjectId;
         n = storyStateDao;
         this.world = world;
+        this.eherGross = eherGross;
+    }
+
+    public AvTimeSpan narrateScTrifftStehendesMovingGO(final ILocationGO location) {
+        final Nominalphrase desc = getDescription();
+        final Nominalphrase descShort = getDescription(true);
+
+        final String wo = location.storingPlaceComp().getLocationMode().getWo(eherGross);
+
+        return n.addAlt(
+                neuerSatz(SENTENCE,
+                        "Hier steht " +
+                                desc.nom(), noTime())
+                        .phorikKandidat(desc, gameObjectId),
+                neuerSatz(SENTENCE,
+                        wo +
+                                " steht " +
+                                desc.nom(), noTime())
+                        .phorikKandidat(desc, gameObjectId)
+                        .beendet(PARAGRAPH),
+                neuerSatz(SENTENCE,
+                        wo +
+                                " siehst du " +
+                                descShort.nom() +
+                                " stehen",
+                        noTime())
+                        .phorikKandidat(descShort, gameObjectId)
+                        .beendet(PARAGRAPH),
+                du("triffst",
+                        desc.akk(),
+                        noTime())
+                        .undWartest()
+                        .phorikKandidat(desc, gameObjectId),
+                du("triffst",
+                        desc.akk() + " " +
+                                wo,
+                        wo,
+                        noTime())
+                        .undWartest()
+                        .phorikKandidat(desc, gameObjectId),
+                du("triffst",
+                        wo +
+                                " " +
+                                "auf " +
+                                desc.akk(),
+                        wo,
+                        noTime())
+                        .undWartest()
+                        .phorikKandidat(desc, gameObjectId),
+                du("triffst",
+                        "auf " +
+                                desc.akk(), noTime())
+                        .undWartest()
+                        .phorikKandidat(desc, gameObjectId),
+                du(SENTENCE,
+                        "begegnest",
+                        wo + " " + desc.dat(),
+                        wo,
+                        noTime())
+                        .phorikKandidat(desc, gameObjectId)
+                        .beendet(PARAGRAPH),
+                du(SENTENCE,
+                        "begegnest",
+                        desc.dat(), noTime())
+                        .phorikKandidat(desc, gameObjectId)
+                        .beendet(PARAGRAPH)
+        );
+    }
+
+    public <FROM extends ILocationGO & ISpatiallyConnectedGO> AvTimeSpan
+    narrateScTrifftEnteringMovingGO(
+            @Nullable final ILocationGO scFrom, final FROM movingGOFrom) {
+        if (scFrom != null && movingGOFrom != null) {
+            if (world.isOrHasRecursiveLocation(scFrom, movingGOFrom)) {
+                // IMovingGO und SC sind denselben Weg gegangen, das IMovingGO ist noch nicht
+                // im "Zentrum" angekommen
+                return narrateScUeberholtMovingGO();
+            }
+
+            @Nullable final SpatialConnection spatialConnection =
+                    movingGOFrom.spatialConnectionComp().getConnection(scFrom.getId());
+
+            final NumberOfWays numberOfWaysIn =
+                    scFrom instanceof ISpatiallyConnectedGO ?
+                            ((ISpatiallyConnectedGO) scFrom).spatialConnectionComp()
+                                    .getNumberOfWaysOut() :
+                            NumberOfWays.NO_WAY;
+
+            if (spatialConnection != null) {
+                return narrateMovingGOKommtScEntgegen(
+                        movingGOFrom,
+                        scFrom,
+                        spatialConnection,
+                        numberOfWaysIn);
+            }
+        }
+
+        return narrateScTrifftEnteringMovingGO_ScOderMovingGOHabenKeinenVorigenOrt();
+    }
+
+    public AvTimeSpan narrateScUeberholtMovingGO() {
+        final Nominalphrase desc = getDescription();
+
+        return n.addAlt(
+                du("gehst",
+                        "an " +
+                                desc.dat() +
+                                " vorbei", noTime())
+                        .phorikKandidat(desc, gameObjectId)
+                        .beendet(SENTENCE),
+                du("gehst schnellen Schrittes an " +
+                        desc.dat() +
+                        " vorüber", noTime())
+                        .phorikKandidat(desc, gameObjectId)
+                        .beendet(SENTENCE),
+                du("gehst mit schnellen Schritten an " +
+                        desc.dat() +
+                        " vorüber", noTime())
+                        .phorikKandidat(desc, gameObjectId)
+                        .beendet(SENTENCE)
+        );
+    }
+
+    public AvTimeSpan narrateScTrifftEnteringMovingGO_ScOderMovingGOHabenKeinenVorigenOrt() {
+        final Nominalphrase desc = getDescription();
+
+        return n.addAlt(
+                neuerSatz(PARAGRAPH,
+                        "Dir begegnet " + desc.nom(), noTime())
+                        .phorikKandidat(desc, gameObjectId)
+                        .beendet(PARAGRAPH),
+                du("begegnest ",
+                        desc.dat(), noTime())
+                        .phorikKandidat(desc, gameObjectId)
+        );
+    }
+
+    public AvTimeSpan narrateScTrifftLeavingMovingGO(final ILocationGO scTo,
+                                                     final ILocationGO movingGOTo) {
+        if (world.isOrHasRecursiveLocation(scTo, movingGOTo)) {
+            return narrateScGehtMovingGOEntgegenUndLaesstEsHinterSich();
+        }
+
+        return narrateScSiehtMovingGOFortgehen();
+    }
+
+    public AvTimeSpan narrateScGehtMovingGOEntgegenUndLaesstEsHinterSich() {
+        final Nominalphrase desc = getDescription();
+        final SubstantivischePhrase anaphOderDesc =
+                getAnaphPersPronWennMglSonstDescription(false);
+
+        return n.addAlt(
+                du(SENTENCE,
+                        anaphOderDesc.nom() +
+                                " kommt dir entgegen und geht an dir vorbei", noTime())
+                        .phorikKandidat(desc, gameObjectId),
+                neuerSatz(PARAGRAPH,
+                        "Dir kommt " +
+                                desc.nom() +
+                                " entgegen und geht an dir vorbei", noTime())
+                        .phorikKandidat(desc, gameObjectId)
+                        .beendet(PARAGRAPH),
+                neuerSatz(PARAGRAPH,
+                        "Dir kommt " +
+                                desc.nom() +
+                                " entgegen und geht hinter dir davon", noTime())
+                        .phorikKandidat(desc, gameObjectId)
+                        .beendet(PARAGRAPH),
+                neuerSatz(PARAGRAPH,
+                        desc.nom() +
+                                " kommt auf dich zu und geht an dir vorbei", noTime())
+                        .phorikKandidat(desc, gameObjectId)
+                        .beendet(PARAGRAPH),
+                neuerSatz(PARAGRAPH,
+                        desc.nom() +
+                                " kommt auf dich zu und läuft vorbei", noTime())
+                        .phorikKandidat(desc, gameObjectId)
+                        .beendet(PARAGRAPH)
+        );
+    }
+
+    public AvTimeSpan narrateScSiehtMovingGOFortgehen() {
+        final Nominalphrase desc = getDescription();
+        final SubstantivischePhrase anaphOderDesc =
+                getAnaphPersPronWennMglSonstDescription(false);
+
+        return n.addAlt(
+                du(SENTENCE, "siehst",
+                        ", wie " +
+                                anaphOderDesc.nom() +
+                                " von dannen geht", noTime())
+                        .komma()
+                        .phorikKandidat(anaphOderDesc, gameObjectId),
+                du(SENTENCE, "siehst",
+                        anaphOderDesc.akk() +
+                                " davongehen", noTime())
+                        .komma()
+                        .phorikKandidat(anaphOderDesc, gameObjectId),
+                neuerSatz(SENTENCE,
+                        anaphOderDesc.nom() +
+                                " ist gerade dabei, davonzugehen", noTime())
+                        .phorikKandidat(anaphOderDesc, gameObjectId)
+                        .beendet(PARAGRAPH),
+                neuerSatz(SENTENCE,
+                        "Vor dir geht " +
+                                desc.nom(), noTime())
+                        .phorikKandidat(anaphOderDesc, gameObjectId),
+                neuerSatz(SENTENCE,
+                        "Ein Stück vor dir geht " +
+                                desc.nom(), noTime())
+                        .phorikKandidat(anaphOderDesc, gameObjectId),
+                neuerSatz(SENTENCE,
+                        desc.nom() +
+                                " geht gerade fort", noTime())
+                        .phorikKandidat(anaphOderDesc, gameObjectId)
+                        .beendet(PARAGRAPH)
+        );
     }
 
     @Override
@@ -67,7 +291,7 @@ public class SimpleMovementNarrator implements IMovementNarrator {
 
         if (world.isOrHasRecursiveLocation(scLastLocation, spatialConnection.getTo())) {
             return narrateMovingGOKommtSCEntgegenUndGehtAnSCVorbei(
-                    from, to, spatialConnection, numberOfWaysOut);
+                    from, to, spatialConnection);
         }
 
         return narrateGehtWeg(from, to, spatialConnection, numberOfWaysOut);
@@ -76,8 +300,7 @@ public class SimpleMovementNarrator implements IMovementNarrator {
     protected <FROM extends ILocationGO & ISpatiallyConnectedGO>
     AvTimeSpan narrateMovingGOKommtSCEntgegenUndGehtAnSCVorbei(
             final FROM from, final ILocationGO to,
-            @Nullable final SpatialConnection spatialConnection,
-            final NumberOfWays numberOfWaysOut) {
+            @Nullable final SpatialConnection spatialConnection) {
         final Nominalphrase desc = getDescription();
         final SubstantivischePhrase anaphOderDesc =
                 getAnaphPersPronWennMglSonstDescription(false);

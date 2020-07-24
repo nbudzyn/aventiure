@@ -49,7 +49,7 @@ public class SpielerCharakterFactory {
                 new LocationComp(id, db, world, SCHLOSS_VORHALLE, null,
                         // Ein NSC könnte den Spieler nicht so mir-nichts-dir-nichts mitnehmen.
                         false),
-                new StoringPlaceComp(id, db, world, EINE_TASCHE, false),
+                new StoringPlaceComp(id, db, EINE_TASCHE, false),
                 feelingsComp,
                 new MemoryComp(id, db, createKnownMap()),
                 new NoSCTalkActionsTalkingComp(SPIELER_CHARAKTER, db, world),

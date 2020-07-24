@@ -281,7 +281,7 @@ public class HochwerfenAction<OBJ extends IDescribableGO & ILocatableGO>
                         "dieses Mal nicht gelingen. " +
                         capitalize(world.getDescription(object, true).nom()) +
                         " landet " +
-                        room.storingPlaceComp().getLocationMode().getWo(),
+                        room.storingPlaceComp().getLocationMode().getWo(false),
                 "übermütig",
                 secs(5)));
 

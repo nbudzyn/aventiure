@@ -30,24 +30,17 @@ public class RoomFactory {
 
     public GameObject createImWaldBeimBrunnen() {
         final StoringPlaceComp storingPlaceComp = new StoringPlaceComp(IM_WALD_BEIM_BRUNNEN, db,
-                world,
-                StoringPlaceType.GRAS_NEBEN_DEM_BRUNNEN,
+                StoringPlaceType.NEBEN_DEM_BRUNNEN,
                 false);
 
         return new Room(IM_WALD_BEIM_BRUNNEN, storingPlaceComp,
                 new ImWaldBeimBrunnenConnectionComp(db, world, storingPlaceComp));
     }
 
-    public GameObject create(final GameObjectId id,
-                             final boolean dauerhaftBeleuchtet,
-                             final AbstractSpatialConnectionComp spatialConnectionComp) {
-        return create(id, StoringPlaceType.BODEN, dauerhaftBeleuchtet, spatialConnectionComp);
-    }
-
     public GameObject create(final GameObjectId id, final StoringPlaceType locationMode,
                              final boolean dauerhaftBeleuchtet,
                              final AbstractSpatialConnectionComp spatialConnectionComp) {
-        return new Room(id, new StoringPlaceComp(id, db, world, locationMode, dauerhaftBeleuchtet),
+        return new Room(id, new StoringPlaceComp(id, db, locationMode, dauerhaftBeleuchtet),
                 spatialConnectionComp);
     }
 
