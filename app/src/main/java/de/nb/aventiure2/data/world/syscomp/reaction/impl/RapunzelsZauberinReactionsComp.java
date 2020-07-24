@@ -16,12 +16,9 @@ import de.nb.aventiure2.data.world.syscomp.storingplace.ILocationGO;
 import de.nb.aventiure2.data.world.time.AvDateTime;
 import de.nb.aventiure2.data.world.time.AvTime;
 import de.nb.aventiure2.data.world.time.AvTimeSpan;
-import de.nb.aventiure2.german.base.Nominalphrase;
 
 import static com.google.common.base.Preconditions.checkArgument;
-import static de.nb.aventiure2.data.world.gameobject.World.ABZWEIG_IM_WALD;
 import static de.nb.aventiure2.data.world.gameobject.World.DRAUSSEN_VOR_DEM_SCHLOSS;
-import static de.nb.aventiure2.data.world.gameobject.World.IM_WALD_NAHE_DEM_SCHLOSS;
 import static de.nb.aventiure2.data.world.gameobject.World.RAPUNZELS_ZAUBERIN;
 import static de.nb.aventiure2.data.world.gameobject.World.SPIELER_CHARAKTER;
 import static de.nb.aventiure2.data.world.gameobject.World.VOR_DEM_ALTEN_TURM;
@@ -33,8 +30,6 @@ import static de.nb.aventiure2.data.world.time.AvTime.oClock;
 import static de.nb.aventiure2.data.world.time.AvTimeSpan.days;
 import static de.nb.aventiure2.data.world.time.AvTimeSpan.hours;
 import static de.nb.aventiure2.data.world.time.AvTimeSpan.noTime;
-import static de.nb.aventiure2.german.base.AllgDescription.neuerSatz;
-import static de.nb.aventiure2.german.base.StructuralElement.PARAGRAPH;
 
 /**
  * "Reaktionen" von Rapunzels Zauberin, z.B. darauf, dass Zeit vergeht
@@ -143,48 +138,16 @@ public class RapunzelsZauberinReactionsComp
         return extraTime;
     }
 
-    // TODO Diese Einzelfällt mit dem SimpleMovementNarrator vergleichen
-    //  und dort ergänzen oder in den RapunzelsZauberinMovementNarrator
-    //  umziehen
     // TODO Am besten all diese Narrations in die MovementComp verallgemeinern
-    private AvTimeSpan narrateScTrifftZauberin(@Nullable final ILocationGO scFrom,
-                                               final ILocationGO scTo) {
-        final Nominalphrase desc = getDescription();
-
-        if (world.isOrHasRecursiveLocation(scTo, IM_WALD_NAHE_DEM_SCHLOSS)) {
-            // STORY Wenn die Zauberin WEISS_DASS_RAPUNZEL_BEFREIT_WURDE, sieht sie
-            //  den SC mit bösen und giftigen Blicken an?
-            if (world.isOrHasRecursiveLocation(scFrom, DRAUSSEN_VOR_DEM_SCHLOSS) &&
-                    locationComp.lastLocationWas(VOR_DEM_ALTEN_TURM) &&
-                    movementComp.isEntering()) {
-                return n.add(neuerSatz(PARAGRAPH,
-                        "Von dem Pfad her kommt dir " +
-                                desc.nom() +
-                                " entgegen", noTime())
-                        .phorikKandidat(desc, RAPUNZELS_ZAUBERIN)
-                        .beendet(PARAGRAPH));
-            } else if (world.isOrHasRecursiveLocation(scFrom, ABZWEIG_IM_WALD) &&
-                    locationComp.lastLocationWas(VOR_DEM_ALTEN_TURM) &&
-                    movementComp.isEntering()) {
-                return n.add(neuerSatz(PARAGRAPH,
-                        "Von dem Pfad her kommt " +
-                                desc.nom(), noTime())
-                        .phorikKandidat(desc, RAPUNZELS_ZAUBERIN)
-                        .beendet(PARAGRAPH));
-            } else {
-                return narrateScTrifftMovingGO_Default(scFrom, scTo);
-            }
-        } else {
-            // STORY Wenn der Spieler oben im Turm ist
-            //  "Unten vor dem Turm steht eine..."?
-
-            return narrateScTrifftMovingGO_Default(scFrom, scTo);
-        }
-    }
-
     private <FROM extends ILocationGO & ISpatiallyConnectedGO>
-    AvTimeSpan narrateScTrifftMovingGO_Default(@Nullable final ILocationGO scFrom,
-                                               final ILocationGO scTo) {
+    AvTimeSpan narrateScTrifftZauberin(@Nullable final ILocationGO scFrom,
+                                       final ILocationGO scTo) {
+        // STORY Wenn die Zauberin WEISS_DASS_RAPUNZEL_BEFREIT_WURDE, sieht sie
+        //  den SC mit bösen und giftigen Blicken an?
+
+        // STORY Wenn der Spieler oben im Turm ist
+        //  "Unten vor dem Turm steht eine..."?
+
         if (!movementComp.isMoving()) {
             return movementNarrator.narrateScTrifftStehendesMovingGO(scTo);
         }
@@ -192,13 +155,13 @@ public class RapunzelsZauberinReactionsComp
         if (movementComp.isEntering()) {
             return movementNarrator.narrateScTrifftEnteringMovingGO(
                     scFrom,
+                    scTo,
                     (FROM) locationComp.getLastLocation());
         }
 
         // MovingGO ist leaving
         return movementNarrator.narrateScTrifftLeavingMovingGO(
-                scTo,
-                locationComp.getLocation());
+                scTo, locationComp.getLocation());
     }
 
     @Override

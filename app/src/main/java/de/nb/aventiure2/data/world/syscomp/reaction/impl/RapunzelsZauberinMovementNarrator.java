@@ -12,6 +12,7 @@ import de.nb.aventiure2.data.world.syscomp.storingplace.ILocationGO;
 import de.nb.aventiure2.data.world.time.AvTimeSpan;
 import de.nb.aventiure2.german.base.Nominalphrase;
 
+import static de.nb.aventiure2.data.world.gameobject.World.ABZWEIG_IM_WALD;
 import static de.nb.aventiure2.data.world.gameobject.World.DRAUSSEN_VOR_DEM_SCHLOSS;
 import static de.nb.aventiure2.data.world.gameobject.World.IM_WALD_NAHE_DEM_SCHLOSS;
 import static de.nb.aventiure2.data.world.gameobject.World.RAPUNZELS_ZAUBERIN;
@@ -34,10 +35,12 @@ class RapunzelsZauberinMovementNarrator extends SimpleMovementNarrator {
     @Override
     public <FROM extends ILocationGO & ISpatiallyConnectedGO> AvTimeSpan
     narrateMovingGOKommtScEntgegen_esVerstehtSichNichtVonSelbstVonWo(
-            final FROM movingGOFrom, final ILocationGO movingGOTo,
+            @Nullable final ILocationGO scFrom,
+            final ILocationGO to,
+            final FROM movingGOFrom,
             @Nullable final SpatialConnection spatialConnectionMovingGO) {
-        if (world.isOrHasRecursiveLocation(movingGOFrom, VOR_DEM_ALTEN_TURM) &&
-                movingGOTo.is(IM_WALD_NAHE_DEM_SCHLOSS)) {
+        if (world.isOrHasRecursiveLocation(movingGOFrom, IM_WALD_NAHE_DEM_SCHLOSS) &&
+                to.is(VOR_DEM_ALTEN_TURM)) {
             final Nominalphrase desc = getDescription();
 
             return n.addAlt(
@@ -55,9 +58,49 @@ class RapunzelsZauberinMovementNarrator extends SimpleMovementNarrator {
                             .beendet(SENTENCE));
         }
 
-        return super
-                .narrateMovingGOKommtScEntgegen_esVerstehtSichNichtVonSelbstVonWo(movingGOFrom,
-                        movingGOTo, spatialConnectionMovingGO);
+        if (world.isOrHasRecursiveLocation(movingGOFrom, VOR_DEM_ALTEN_TURM) &&
+                world.isOrHasRecursiveLocation(scFrom, DRAUSSEN_VOR_DEM_SCHLOSS) &&
+                to.is(IM_WALD_NAHE_DEM_SCHLOSS)) {
+            final Nominalphrase desc = getDescription();
+
+            return n.addAlt(
+                    neuerSatz(SENTENCE,
+                            spatialConnectionMovingGO.getWo() // "auf dem Pfad "
+                                    + " kommt " +
+                                    desc.nom() +
+                                    " gegangen", noTime())
+                            .phorikKandidat(desc, gameObjectId)
+                            .beendet(PARAGRAPH), //
+                    neuerSatz(PARAGRAPH,
+                            "Von dem Pfad her kommt dir " +
+                                    desc.nom() +
+                                    " entgegen", noTime())
+                            .phorikKandidat(desc, RAPUNZELS_ZAUBERIN)
+                            .beendet(SENTENCE));
+        }
+
+        if (world.isOrHasRecursiveLocation(movingGOFrom, VOR_DEM_ALTEN_TURM) &&
+                world.isOrHasRecursiveLocation(scFrom, ABZWEIG_IM_WALD) &&
+                to.is(IM_WALD_NAHE_DEM_SCHLOSS)) {
+            final Nominalphrase desc = getDescription();
+
+            return n.addAlt(
+                    neuerSatz(SENTENCE,
+                            spatialConnectionMovingGO.getWo() // "auf dem Pfad "
+                                    + " kommt " +
+                                    desc.nom() +
+                                    " gegangen", noTime())
+                            .phorikKandidat(desc, gameObjectId)
+                            .beendet(PARAGRAPH), //
+                    neuerSatz(PARAGRAPH,
+                            "Von dem Pfad her kommt " +
+                                    desc.nom(), noTime())
+                            .phorikKandidat(desc, RAPUNZELS_ZAUBERIN)
+                            .beendet(SENTENCE));
+        }
+
+        return super.narrateMovingGOKommtScEntgegen_esVerstehtSichNichtVonSelbstVonWo(
+                scFrom, to, movingGOFrom, spatialConnectionMovingGO);
     }
 
     @Override
@@ -107,5 +150,4 @@ class RapunzelsZauberinMovementNarrator extends SimpleMovementNarrator {
     //                //  an sie erinnern kann.
     //                loadSC().memoryComp().upgradeKnown(RAPUNZELS_ZAUBERIN, UNKNOWN);
     //                return noTime();
-
 }
