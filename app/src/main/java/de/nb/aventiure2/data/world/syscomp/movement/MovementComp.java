@@ -23,6 +23,9 @@ import de.nb.aventiure2.data.world.time.AvTimeSpan;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 import static de.nb.aventiure2.data.world.gameobject.World.SPIELER_CHARAKTER;
+import static de.nb.aventiure2.data.world.syscomp.movement.MovementPCD.PauseForSCAction.DO_START_LEAVING;
+import static de.nb.aventiure2.data.world.syscomp.movement.MovementPCD.PauseForSCAction.PAUSED;
+import static de.nb.aventiure2.data.world.syscomp.movement.MovementPCD.PauseForSCAction.UNPAUSED;
 import static de.nb.aventiure2.data.world.syscomp.movement.MovementStep.Phase.FIRST_LEAVING;
 import static de.nb.aventiure2.data.world.syscomp.movement.MovementStep.Phase.SECOND_ENTERING;
 import static de.nb.aventiure2.data.world.time.AvTimeSpan.noTime;
@@ -119,7 +122,7 @@ public class MovementComp
     public void stopMovement() {
         getPcd().setTargetLocationId(null);
         getPcd().setCurrentStep(null);
-        getPcd().setPausedForSCAction(false);
+        getPcd().setPauseForSCAction(UNPAUSED);
     }
 
     /**
@@ -142,18 +145,22 @@ public class MovementComp
             return noTime();
         }
 
-        if (isPausedForSCAction()) {
+        if (getPcd().getPauseForSCAction() == PAUSED) {
             return noTime();
         }
 
         AvTimeSpan extraTime = noTime();
 
+        if (getPcd().getPauseForSCAction() == DO_START_LEAVING) {
+            // FIXME Die Frau geht auf dem Weg an dir vorbei (o.Ä.)
+            //  wurde nicht ausgegeben? - Testen!
+            extraTime =
+                    extraTime.plus(narrateAndDoMovementIfExperiencedBySCStartsLeaving());
+        }
+
         // Je nachdem, wie lang der World-Tick war, sollen das IMovingGO ggf. auch mehrere
         // Halbschritte gehen
         while (true) {
-            // STORY Leave und Enter ggf. zusammenzufassen! ("X geht vorbei",
-            //  "X geht vorüber")
-
             if (isLeaving()) {
                 // TODO Wenn das IMovingGO schon leaving ist und der Benutzer möchte
                 //  gewisse Interaktionen durchführen (z.B. ihm etwas geben o.Ä.) -
@@ -202,14 +209,14 @@ public class MovementComp
                         if (locationComp.hasLocation(getTargetLocationId())) {
                             getPcd().setTargetLocationId(null);
                             getPcd().setCurrentStep(null);
-                            getPcd().setPausedForSCAction(false);
+                            getPcd().setPauseForSCAction(UNPAUSED);
                             break;
                         }
 
                         // Dann soll das IMovingGO nicht sofort weiterlaufen - der Spieler soll
                         // auf jeden Fall die Gelegenheit bekommen (einmalig) mit dem
                         // IMovingGO zu interagieren!
-                        pauseForUserAction();
+                        getPcd().setPauseForSCAction(PAUSED);
                         break;
                     }
 
@@ -218,8 +225,6 @@ public class MovementComp
                         break;
                     }
 
-                    // FIXME Die Frau geht auf dem Weg an dir vorbei (o.Ä.)
-                    //  wurde nicht ausgegeben?
                     extraTime =
                             extraTime.plus(narrateAndDoMovementIfExperiencedBySCStartsLeaving());
                 } else {
@@ -233,37 +238,27 @@ public class MovementComp
 
     @Override
     public void onSCActionDone(final AvDateTime startTimeOfUserAction) {
-        final boolean wasPausedForAction = isPausedForSCAction();
-        getPcd().setPausedForSCAction(false);
-        if (wasPausedForAction) {
+        if (getPcd().getPauseForSCAction() == PAUSED) {
             setupNextStepIfNecessaryAndPossible(startTimeOfUserAction);
         }
-    }
-
-    private void pauseForUserAction() {
-        getPcd().setPausedForSCAction(true);
-    }
-
-    private boolean isPausedForSCAction() {
-        return getPcd().isPausedForSCAction();
     }
 
     private void setupNextStepIfNecessaryAndPossible(final AvDateTime startTime) {
         if (!isMoving()) {
             getPcd().setCurrentStep(null);
-            getPcd().setPausedForSCAction(false);
+            getPcd().setPauseForSCAction(UNPAUSED);
             return;
         }
 
         if (locationComp.hasLocation(getTargetLocationId())) {
             getPcd().setTargetLocationId(null);
             getPcd().setCurrentStep(null);
-            getPcd().setPausedForSCAction(false);
+            getPcd().setPauseForSCAction(UNPAUSED);
             return;
         }
 
         getPcd().setCurrentStep(calculateStep(startTime));
-        getPcd().setPausedForSCAction(false);
+        getPcd().setPauseForSCAction(DO_START_LEAVING);
     }
 
     @Nullable
@@ -300,6 +295,8 @@ public class MovementComp
 
     private <FROM extends ILocationGO & ISpatiallyConnectedGO>
     AvTimeSpan narrateAndDoMovementIfExperiencedBySCStartsLeaving() {
+        getPcd().setPauseForSCAction(UNPAUSED);
+
         if (!world.loadSC().locationComp().hasRecursiveLocation(locationComp.getLocation())) {
             return noTime();
         }
@@ -350,8 +347,8 @@ public class MovementComp
                 });
     }
 
-    public AvTimeSpan narrateAndDoSCTrifftMovingGOEvtlInInFrom(final ILocationGO scFrom,
-                                                               final ILocationGO scTo) {
+    public AvTimeSpan narrateAndDoSCTrifftEvtlMovingGOInFrom(final ILocationGO scFrom,
+                                                             final ILocationGO scTo) {
         // Das hier sind sehr spezielle Spezialfälle, wo SC und die Zauberin treffen
         // noch in scFrom zusammentreffen:
         if (isLeaving() && getTargetLocation().is(scTo)) {

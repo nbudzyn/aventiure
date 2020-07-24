@@ -41,6 +41,7 @@ import de.nb.aventiure2.data.world.syscomp.memory.MemoryPCD;
 import de.nb.aventiure2.data.world.syscomp.movement.MovementDao;
 import de.nb.aventiure2.data.world.syscomp.movement.MovementPCD;
 import de.nb.aventiure2.data.world.syscomp.movement.MovementStepPhaseConverters;
+import de.nb.aventiure2.data.world.syscomp.movement.PauseForSCActionConverters;
 import de.nb.aventiure2.data.world.syscomp.state.StateDao;
 import de.nb.aventiure2.data.world.syscomp.state.StatePCD;
 import de.nb.aventiure2.data.world.syscomp.talking.TalkingDao;
@@ -75,6 +76,7 @@ import static de.nb.aventiure2.data.world.time.AvTime.oClock;
         AvStoryStateConverters.class,
         ActionTypeConverters.class,
         KnownConverters.class,
+        PauseForSCActionConverters.class,
         GameObjectIdConverters.class,
         MoodConverters.class,
         MovementStepPhaseConverters.class,

@@ -298,7 +298,8 @@ public class SimpleMovementNarrator implements IMovementNarrator {
             final NumberOfWays numberOfWaysOut) {
         @Nullable final ILocationGO scLastLocation = loadSC().locationComp().getLastLocation();
 
-        if (world.isOrHasRecursiveLocation(scLastLocation, spatialConnection.getTo())) {
+        if (spatialConnection != null &&
+                world.isOrHasRecursiveLocation(scLastLocation, spatialConnection.getTo())) {
             return narrateMovingGOKommtSCEntgegenUndGehtAnSCVorbei(
                     from, to, spatialConnection);
         }

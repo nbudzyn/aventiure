@@ -14,6 +14,26 @@ import de.nb.aventiure2.data.world.base.GameObjectId;
  */
 @Entity
 public class MovementPCD extends AbstractPersistentComponentData {
+    /**
+     * Ob eine Pause eingelegt wurde, damit der SC mit dem
+     * {@link IMovingGO} interagieren kann
+     */
+    enum PauseForSCAction {
+        /**
+         * Zurzeit ist keine Pause eingelegt
+         */
+        UNPAUSED,
+        /**
+         * Es wurde eine Pause eingelegt
+         */
+        PAUSED,
+        /**
+         * Die Pause ist beendet, das {@link IMovingGO} soll als nächstes
+         * beginnen, die aktuelle Location zu verlassen.
+         */
+        DO_START_LEAVING
+    }
+
     @Nullable
     private GameObjectId targetLocationId;
 
@@ -21,10 +41,7 @@ public class MovementPCD extends AbstractPersistentComponentData {
     @Nullable
     private MovementStep currentStep;
 
-    /**
-     * Ob die Bewegung einmalig pausiert wurde, damit der Benutzer eine Aktion durchführen kann
-     */
-    private boolean pausedForSCAction;
+    private PauseForSCAction pauseForSCAction;
 
     @Ignore
     MovementPCD(@NonNull final GameObjectId gameObjectId,
@@ -58,11 +75,11 @@ public class MovementPCD extends AbstractPersistentComponentData {
         return currentStep;
     }
 
-    void setPausedForSCAction(final boolean pausedForSCAction) {
-        this.pausedForSCAction = pausedForSCAction;
+    void setPauseForSCAction(final PauseForSCAction pauseForSCAction) {
+        this.pauseForSCAction = pauseForSCAction;
     }
 
-    boolean isPausedForSCAction() {
-        return pausedForSCAction;
+    PauseForSCAction getPauseForSCAction() {
+        return pauseForSCAction;
     }
 }

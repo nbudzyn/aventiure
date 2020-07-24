@@ -77,17 +77,6 @@ public class RapunzelsZauberinReactionsComp
         }
 
         if (locatable.is(SPIELER_CHARAKTER)) {
-            return onSCEnter(from, to);
-        }
-
-        return noTime();
-    }
-
-    @Override
-    public AvTimeSpan onEnter(final ILocatableGO locatable,
-                              @Nullable final ILocationGO from,
-                              final ILocationGO to) {
-        if (locatable.is(SPIELER_CHARAKTER)) {
             return onSCLeave(from, to);
         }
 
@@ -113,7 +102,18 @@ public class RapunzelsZauberinReactionsComp
             // STORY Reaktion der Zauberin, wenn SC die Zauberin oben im Turm antrifft
             //  (falls das sein kann).
 
-            movementComp.narrateAndDoSCTrifftMovingGOEvtlInInFrom(scFrom, scTo);
+            movementComp.narrateAndDoSCTrifftEvtlMovingGOInFrom(scFrom, scTo);
+        }
+
+        return noTime();
+    }
+
+    @Override
+    public AvTimeSpan onEnter(final ILocatableGO locatable,
+                              @Nullable final ILocationGO from,
+                              final ILocationGO to) {
+        if (locatable.is(SPIELER_CHARAKTER)) {
+            return onSCEnter(from, to);
         }
 
         return noTime();
