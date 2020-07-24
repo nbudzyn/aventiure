@@ -10,7 +10,6 @@ import de.nb.aventiure2.data.world.syscomp.movement.MovementComp;
 import de.nb.aventiure2.data.world.syscomp.reaction.AbstractDescribableReactionsComp;
 import de.nb.aventiure2.data.world.syscomp.reaction.interfaces.IMovementReactions;
 import de.nb.aventiure2.data.world.syscomp.reaction.interfaces.ITimePassedReactions;
-import de.nb.aventiure2.data.world.syscomp.spatialconnection.ISpatiallyConnectedGO;
 import de.nb.aventiure2.data.world.syscomp.state.impl.RapunzelsZauberinStateComp;
 import de.nb.aventiure2.data.world.syscomp.storingplace.ILocationGO;
 import de.nb.aventiure2.data.world.time.AvDateTime;
@@ -100,51 +99,21 @@ public class RapunzelsZauberinReactionsComp
         if (scFrom != null &&
                 locationComp.getLocationId() != null &&
                 world.isOrHasRecursiveLocation(scFrom, locationComp.getLocationId())) {
-            onSCTrifftZauberinInFrom(scFrom, scTo);
-        }
+            if (scFrom.is(DRAUSSEN_VOR_DEM_SCHLOSS)) {
+                // Hier bemerkt der SC die Zauberin nicht
+                return noTime();
+            }
 
-        return noTime();
-    }
+            // STORY Wenn die Zauberin WEISS_DASS_RAPUNZEL_BEFREIT_WURDE, sieht sie
+            //  den SC mit bösen und giftigen Blicken an?
 
-    private AvTimeSpan onSCTrifftZauberinInFrom(final ILocationGO scFrom, final ILocationGO scTo) {
-        // TODO Am besten diese Spezialfälle und die Logik in die MovementComp
-        //  verallgemeinern
+            // STORY Wenn der Spieler oben im Turm ist
+            //  "Unten vor dem Turm steht eine..."?
 
-        if (scFrom.is(DRAUSSEN_VOR_DEM_SCHLOSS)) {
-            // Hier bemerkt der SC die Zauberin nicht
-            return noTime();
-        }
+            // STORY Reaktion der Zauberin, wenn SC die Zauberin oben im Turm antrifft
+            //  (falls das sein kann).
 
-        // STORY Wenn die Zauberin WEISS_DASS_RAPUNZEL_BEFREIT_WURDE, sieht sie
-        //  den SC mit bösen und giftigen Blicken an?
-
-        // STORY Wenn der Spieler oben im Turm ist
-        //  "Unten vor dem Turm steht eine..."?
-
-        // STORY Reaktion der Zauberin, wenn SC die Zauberin oben im Turm antrifft
-        //  (falls das sein kann).
-
-        // Das hier sind sehr spezielle Spezialfälle, wo SC und die Zauberin treffen
-        // noch in scFrom zusammentreffen:
-        // TODO Am besten all diese Narrations in die MovementComp verallgemeinern
-        if (movementComp.isLeaving() && movementComp.getTargetLocation().is(scTo)) {
-            // Zauberin verlässt gerade auch scFrom und will auch nach scTo
-            final AvTimeSpan extraTime = movementNarrator.narrateScUeberholtMovingGO();
-
-            world.upgradeKnownToSC(RAPUNZELS_ZAUBERIN);
-
-            return extraTime;
-        }
-        if (movementComp.isEntering() &&
-                locationComp.getLastLocationId() != null &&
-                world.isOrHasRecursiveLocation(locationComp.getLastLocationId(), scTo)) {
-            // Zauberin kommt von scTo, hat aber schon scFrom betreten
-            final AvTimeSpan extraTime =
-                    movementNarrator.narrateScGehtMovingGOEntgegenUndLaesstEsHinterSich();
-
-            world.upgradeKnownToSC(RAPUNZELS_ZAUBERIN);
-
-            return extraTime;
+            movementComp.narrateAndDoSCTrifftMovingGOEvtlInInFrom(scFrom, scTo);
         }
 
         return noTime();
@@ -160,52 +129,21 @@ public class RapunzelsZauberinReactionsComp
             return noTime();
         }
 
-        return onSCTrifftZauberinInTo(scFrom, scTo);
-    }
-
-    // TODO Am besten all diese Narrations und die Logik in die MovementComp
-    //  verallgemeinern
-    private AvTimeSpan onSCTrifftZauberinInTo(@Nullable final ILocationGO scFrom,
-                                              final ILocationGO scTo) {
         if (scTo.is(DRAUSSEN_VOR_DEM_SCHLOSS)) {
             // Hier bemerkt der SC die Zauberin nicht
             return noTime();
         }
 
-        final AvTimeSpan extraTime = narrateScTrifftZauberinInTo(scFrom, scTo);
-
-        // STORY Reaktion der Zauberin, wenn SC die Zauberin oben im Turm antrifft
-        //  (falls das sein kann).
-
-        world.upgradeKnownToSC(RAPUNZELS_ZAUBERIN);
-
-        return extraTime;
-    }
-
-    // TODO Am besten all diese Narrations in die MovementComp verallgemeinern
-    private <FROM extends ILocationGO & ISpatiallyConnectedGO>
-    AvTimeSpan narrateScTrifftZauberinInTo(@Nullable final ILocationGO scFrom,
-                                           final ILocationGO scTo) {
         // STORY Wenn die Zauberin WEISS_DASS_RAPUNZEL_BEFREIT_WURDE, sieht sie
         //  den SC mit bösen und giftigen Blicken an?
 
         // STORY Wenn der Spieler oben im Turm ist
         //  "Unten vor dem Turm steht eine..."?
 
-        if (!movementComp.isMoving()) {
-            return movementNarrator.narrateScTrifftStehendesMovingGO(scTo);
-        }
+        // STORY Reaktion der Zauberin, wenn SC die Zauberin oben im Turm antrifft
+        //  (falls das sein kann).
 
-        if (movementComp.isEntering()) {
-            return movementNarrator.narrateScTrifftEnteringMovingGO(
-                    scFrom,
-                    scTo,
-                    (FROM) locationComp.getLastLocation());
-        }
-
-        // MovingGO ist leaving
-        return movementNarrator.narrateScTrifftLeavingMovingGO(
-                scTo, locationComp.getLocation());
+        return movementComp.narrateAndDoSCTrifftMovingGOInTo(scFrom, scTo);
     }
 
     @Override
@@ -268,12 +206,12 @@ public class RapunzelsZauberinReactionsComp
 
         // Zauberin geht Richtung Turm
         return extraTime.plus(
-                movementComp.startMovement(now, VOR_DEM_ALTEN_TURM, movementNarrator)
+                movementComp.startMovement(now, VOR_DEM_ALTEN_TURM)
         );
     }
 
     private AvTimeSpan onTimePassed_fromAufDemWegZuRapunzel(final AvDateTime now) {
-        final AvTimeSpan extraTime = movementComp.onTimePassed(now, movementNarrator);
+        final AvTimeSpan extraTime = movementComp.onTimePassed(now);
 
         if (movementComp.isMoving()) {
             // Zauberin ist noch auf dem Weg
@@ -312,11 +250,11 @@ public class RapunzelsZauberinReactionsComp
 
         // Zauberin verlässt Rapunzel
         stateComp.setState(AUF_DEM_RUECKWEG_VON_RAPUNZEL);
-        return movementComp.startMovement(now, DRAUSSEN_VOR_DEM_SCHLOSS, movementNarrator);
+        return movementComp.startMovement(now, DRAUSSEN_VOR_DEM_SCHLOSS);
     }
 
     private AvTimeSpan onTimePassed_fromAufDemRueckwegVonRapunzel(final AvDateTime now) {
-        final AvTimeSpan extraTime = movementComp.onTimePassed(now, movementNarrator);
+        final AvTimeSpan extraTime = movementComp.onTimePassed(now);
 
         if (movementComp.isMoving()) {
             // Zauberin ist noch auf dem Rückweg

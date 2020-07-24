@@ -21,6 +21,7 @@ import de.nb.aventiure2.data.world.syscomp.reaction.AbstractReactionsComp;
 import de.nb.aventiure2.data.world.syscomp.reaction.IResponder;
 import de.nb.aventiure2.data.world.syscomp.reaction.impl.FroschprinzReactionsComp;
 import de.nb.aventiure2.data.world.syscomp.reaction.impl.RapunzelReactionsComp;
+import de.nb.aventiure2.data.world.syscomp.reaction.impl.RapunzelsZauberinMovementNarrator;
 import de.nb.aventiure2.data.world.syscomp.reaction.impl.RapunzelsZauberinReactionsComp;
 import de.nb.aventiure2.data.world.syscomp.reaction.impl.SchlosswacheReactionsComp;
 import de.nb.aventiure2.data.world.syscomp.state.AbstractStateComp;
@@ -144,6 +145,7 @@ class CreatureFactory {
         final MovementComp movementComp =
                 new MovementComp(RAPUNZELS_ZAUBERIN, db, world,
                         world.getSpatialConnectionSystem(),
+                        new RapunzelsZauberinMovementNarrator(db.storyStateDao(), world),
                         locationComp,
                         // Muss zum Zustand der Zauberin passen!
                         null);

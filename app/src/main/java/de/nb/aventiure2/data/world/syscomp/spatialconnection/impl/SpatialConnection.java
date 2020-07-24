@@ -18,7 +18,7 @@ import static de.nb.aventiure2.data.world.syscomp.storingplace.Lichtverhaeltniss
  */
 public class SpatialConnection {
     @FunctionalInterface
-    interface SCMoveDescriptionProvider {
+    public interface SCMoveDescriptionProvider {
         AbstractDescription getSCMoveDescription(Known newRoomKnow,
                                                  Lichtverhaeltnisse lichtverhaeltnisseInNewRoom);
     }

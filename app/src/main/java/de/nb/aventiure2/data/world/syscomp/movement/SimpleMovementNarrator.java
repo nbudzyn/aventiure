@@ -52,6 +52,7 @@ public class SimpleMovementNarrator implements IMovementNarrator {
         this.eherGross = eherGross;
     }
 
+    @Override
     public AvTimeSpan narrateScTrifftStehendesMovingGO(final ILocationGO location) {
         final Nominalphrase desc = getDescription();
         final Nominalphrase descShort = getDescription(true);
@@ -118,6 +119,7 @@ public class SimpleMovementNarrator implements IMovementNarrator {
         );
     }
 
+    @Override
     public <FROM extends ILocationGO & ISpatiallyConnectedGO> AvTimeSpan
     narrateScTrifftEnteringMovingGO(
             @Nullable final ILocationGO scFrom,
@@ -152,6 +154,7 @@ public class SimpleMovementNarrator implements IMovementNarrator {
         return narrateScTrifftEnteringMovingGO_scHatKeinenVorigenOrt();
     }
 
+    @Override
     public AvTimeSpan narrateScUeberholtMovingGO() {
         final Nominalphrase desc = getDescription();
 
@@ -189,6 +192,7 @@ public class SimpleMovementNarrator implements IMovementNarrator {
         );
     }
 
+    @Override
     public AvTimeSpan narrateScTrifftLeavingMovingGO(final ILocationGO scTo,
                                                      final ILocationGO movingGOTo) {
         if (world.isOrHasRecursiveLocation(scTo, movingGOTo)) {
@@ -198,6 +202,7 @@ public class SimpleMovementNarrator implements IMovementNarrator {
         return narrateScSiehtMovingGOFortgehen();
     }
 
+    @Override
     public AvTimeSpan narrateScGehtMovingGOEntgegenUndLaesstEsHinterSich() {
         final Nominalphrase desc = getDescription();
         final SubstantivischePhrase anaphOderDesc =

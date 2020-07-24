@@ -25,8 +25,8 @@ import static de.nb.aventiure2.german.base.StructuralElement.SENTENCE;
 /**
  * Beschreibt dem Spieler die Bewegung der Zauberin
  */
-class RapunzelsZauberinMovementNarrator extends SimpleMovementNarrator {
-    RapunzelsZauberinMovementNarrator(
+public class RapunzelsZauberinMovementNarrator extends SimpleMovementNarrator {
+    public RapunzelsZauberinMovementNarrator(
             final StoryStateDao storyStateDao,
             final World world) {
         super(RAPUNZELS_ZAUBERIN, storyStateDao, world, true);
