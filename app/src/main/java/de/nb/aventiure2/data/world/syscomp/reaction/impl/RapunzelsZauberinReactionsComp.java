@@ -35,7 +35,6 @@ import static de.nb.aventiure2.data.world.time.AvTimeSpan.hours;
 import static de.nb.aventiure2.data.world.time.AvTimeSpan.noTime;
 import static de.nb.aventiure2.german.base.AllgDescription.neuerSatz;
 import static de.nb.aventiure2.german.base.StructuralElement.PARAGRAPH;
-import static de.nb.aventiure2.german.base.StructuralElement.SENTENCE;
 
 /**
  * "Reaktionen" von Rapunzels Zauberin, z.B. darauf, dass Zeit vergeht
@@ -175,23 +174,6 @@ public class RapunzelsZauberinReactionsComp
             } else {
                 return narrateScTrifftMovingGO_Default(scFrom, scTo);
             }
-        } else if (world.isOrHasRecursiveLocation(scTo, VOR_DEM_ALTEN_TURM)) {
-            if (!movementComp.isMoving()) {
-                return narrateScTrifftMovingGO_Default(scFrom, scTo);
-            } else {
-                if (scFrom != null &&
-                        locationComp.lastLocationWas(IM_WALD_NAHE_DEM_SCHLOSS) &&
-                        !scFrom.is(IM_WALD_NAHE_DEM_SCHLOSS) &&
-                        movementComp.isEntering()) {
-                    return n.add(neuerSatz("Den Pfad herauf kommt " +
-                                    desc.nom(),
-                            noTime())
-                            .phorikKandidat(desc, RAPUNZELS_ZAUBERIN)
-                            .beendet(SENTENCE));
-                } else {
-                    return narrateScTrifftMovingGO_Default(scFrom, scTo);
-                }
-            }
         } else {
             // STORY Wenn der Spieler oben im Turm ist
             //  "Unten vor dem Turm steht eine..."?
@@ -208,10 +190,9 @@ public class RapunzelsZauberinReactionsComp
         }
 
         if (movementComp.isEntering()) {
-            return movementNarrator
-                    .narrateScTrifftEnteringMovingGO(
-                            scFrom,
-                            (FROM) locationComp.getLastLocation());
+            return movementNarrator.narrateScTrifftEnteringMovingGO(
+                    scFrom,
+                    (FROM) locationComp.getLastLocation());
         }
 
         // MovingGO ist leaving

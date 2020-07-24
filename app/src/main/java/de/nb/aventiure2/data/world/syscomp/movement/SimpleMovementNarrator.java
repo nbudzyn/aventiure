@@ -20,6 +20,7 @@ import de.nb.aventiure2.german.base.SubstantivischePhrase;
 
 import static de.nb.aventiure2.data.world.syscomp.memory.Action.Type.BEWEGEN;
 import static de.nb.aventiure2.data.world.syscomp.spatialconnection.NumberOfWays.NO_WAY;
+import static de.nb.aventiure2.data.world.syscomp.spatialconnection.NumberOfWays.ONE_IN_ONE_OUT;
 import static de.nb.aventiure2.data.world.time.AvTimeSpan.noTime;
 import static de.nb.aventiure2.german.base.AllgDescription.neuerSatz;
 import static de.nb.aventiure2.german.base.DuDescription.du;
@@ -127,7 +128,7 @@ public class SimpleMovementNarrator implements IMovementNarrator {
                 return narrateScUeberholtMovingGO();
             }
 
-            @Nullable final SpatialConnection spatialConnection =
+            @Nullable final SpatialConnection spatialConnectionMovingGO =
                     movingGOFrom.spatialConnectionComp().getConnection(scFrom.getId());
 
             final NumberOfWays numberOfWaysIn =
@@ -136,11 +137,11 @@ public class SimpleMovementNarrator implements IMovementNarrator {
                                     .getNumberOfWaysOut() :
                             NumberOfWays.NO_WAY;
 
-            if (spatialConnection != null) {
+            if (spatialConnectionMovingGO != null) {
                 return narrateMovingGOKommtScEntgegen(
                         movingGOFrom,
                         scFrom,
-                        spatialConnection,
+                        spatialConnectionMovingGO,
                         numberOfWaysIn);
             }
         }
@@ -476,19 +477,36 @@ public class SimpleMovementNarrator implements IMovementNarrator {
 
     public <FROM extends ILocationGO & ISpatiallyConnectedGO>
     AvTimeSpan narrateMovingGOKommtScEntgegen(
-            final FROM from, final ILocationGO to,
-            @Nullable final SpatialConnection spatialConnection,
+            final FROM movingGOFrom, final ILocationGO movingGOTo,
+            @Nullable final SpatialConnection spatialConnectionMovingGO,
             final NumberOfWays numberOfWaysIn) {
-        final Nominalphrase desc = getDescription();
+        if (numberOfWaysIn == ONE_IN_ONE_OUT) {
+            return narrateMovingGOKommtScEntgegen_esVerstehtSichVonSelbstVonWo(
+                    movingGOFrom, movingGOTo,
+                    spatialConnectionMovingGO);
+        }
 
-        final String wo = calcWoIfNecessary(spatialConnection, numberOfWaysIn);
+        return narrateMovingGOKommtScEntgegen_esVerstehtSichNichtVonSelbstVonWo(
+                movingGOFrom, movingGOTo,
+                spatialConnectionMovingGO);
+    }
+
+    public <FROM extends ILocationGO & ISpatiallyConnectedGO>
+    AvTimeSpan narrateMovingGOKommtScEntgegen_esVerstehtSichVonSelbstVonWo(
+            final FROM movingGOFrom, final ILocationGO movingGOTo,
+            @Nullable final SpatialConnection spatialConnectionMovingGO) {
+        final Nominalphrase desc = getDescription();
 
         return n.addAlt(
                 neuerSatz(SENTENCE,
-                        (wo.equals("") ?
-                                "Es " :
-                                wo) // "auf dem Pfad "
-                                + "kommt dir " +
+                        spatialConnectionMovingGO.getWo() // "auf dem Pfad "
+                                + " kommt dir " +
+                                desc.nom() +
+                                " entgegen", noTime())
+                        .phorikKandidat(desc, gameObjectId)
+                        .beendet(PARAGRAPH),
+                neuerSatz(SENTENCE,
+                        "Es kommt dir " +
                                 desc.nom() +
                                 " entgegen", noTime())
                         .phorikKandidat(desc, gameObjectId)
@@ -496,17 +514,38 @@ public class SimpleMovementNarrator implements IMovementNarrator {
                 neuerSatz(PARAGRAPH,
                         "Dir kommt " +
                                 desc.nom() +
-                                " "
-                                + wo // "auf dem Weg "
-                                + "entgegen", noTime())
+                                " entgegen", noTime())
+                        .phorikKandidat(desc, gameObjectId)
+                        .beendet(PARAGRAPH),
+                neuerSatz(PARAGRAPH,
+                        "Dir kommt " +
+                                desc.nom() +
+                                " entgegengegangen", noTime())
                         .phorikKandidat(desc, gameObjectId)
                         .beendet(PARAGRAPH),
                 neuerSatz(PARAGRAPH,
                         "Dir kommt " +
                                 desc.nom() +
                                 " "
-                                + wo // "auf dem Weg "
-                                + "entgegengegangen", noTime())
+                                + spatialConnectionMovingGO.getWo() // "auf dem Pfad "
+                                + " entgegengegangen", noTime())
+                        .phorikKandidat(desc, gameObjectId)
+                        .beendet(PARAGRAPH)
+        );
+    }
+
+    public <FROM extends ILocationGO & ISpatiallyConnectedGO>
+    AvTimeSpan narrateMovingGOKommtScEntgegen_esVerstehtSichNichtVonSelbstVonWo(
+            final FROM movingGOFrom, final ILocationGO movingGOTo,
+            @Nullable final SpatialConnection spatialConnectionMovingGO) {
+        final Nominalphrase desc = getDescription();
+
+        return n.addAlt(
+                neuerSatz(SENTENCE,
+                        spatialConnectionMovingGO.getWo() // "auf dem Pfad "
+                                + " kommt " +
+                                desc.nom() +
+                                " gegangen", noTime())
                         .phorikKandidat(desc, gameObjectId)
                         .beendet(PARAGRAPH)
         );
@@ -564,10 +603,10 @@ public class SimpleMovementNarrator implements IMovementNarrator {
 
     @NonNull
     private static String calcWoIfNecessary(@Nullable final SpatialConnection spatialConnection,
-                                            final NumberOfWays numberOfWaysOut) {
+                                            final NumberOfWays numberOfWays) {
         if (spatialConnection != null &&
-                (numberOfWaysOut == NO_WAY ||
-                        numberOfWaysOut == NumberOfWays.SEVERAL_WAYS)) {
+                (numberOfWays == NO_WAY ||
+                        numberOfWays == NumberOfWays.SEVERAL_WAYS)) {
             return spatialConnection.getWo() + " ";
         }
 
