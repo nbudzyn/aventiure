@@ -128,7 +128,7 @@ public abstract class AvDatabase extends RoomDatabase {
 
                         // Set date and time in the game
                         INSTANCE.nowDao().setNow(
-                                1, oClock(14, 30));
+                                1, oClock(12, 30));
 
                         final World world = World.getInstance(INSTANCE);
                         world.saveAllInitialState();

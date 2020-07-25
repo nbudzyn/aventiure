@@ -152,8 +152,6 @@ public class MovementComp
         AvTimeSpan extraTime = noTime();
 
         if (getPcd().getPauseForSCAction() == DO_START_LEAVING) {
-            // FIXME Die Frau geht auf dem Weg an dir vorbei (o.Ä.)
-            //  wurde nicht ausgegeben? - Testen!
             extraTime =
                     extraTime.plus(narrateAndDoMovementIfExperiencedBySCStartsLeaving());
         }
@@ -348,11 +346,14 @@ public class MovementComp
     }
 
     public AvTimeSpan narrateAndDoSCTrifftEvtlMovingGOInFrom(final ILocationGO scFrom,
-                                                             final ILocationGO scTo) {
+                                                             @Nullable final ILocationGO scTo) {
         // Das hier sind sehr spezielle Spezialfälle, wo SC und die Zauberin treffen
         // noch in scFrom zusammentreffen:
-        if (isLeaving() && getTargetLocation().is(scTo)) {
+        if (isLeaving() &&
+                scTo != null &&
+                getCurrentStep().getTo().equals(scTo.getId())) {
             // Zauberin verlässt gerade auch scFrom und will auch nach scTo
+
             final AvTimeSpan extraTime = movementNarrator.narrateScUeberholtMovingGO();
 
             world.upgradeKnownToSC(getGameObjectId());
@@ -360,6 +361,7 @@ public class MovementComp
             return extraTime;
         }
         if (isEntering() &&
+                scTo != null &&
                 locationComp.getLastLocationId() != null &&
                 world.isOrHasRecursiveLocation(locationComp.getLastLocationId(), scTo)) {
             // Zauberin kommt von scTo, hat aber schon scFrom betreten
@@ -386,21 +388,21 @@ public class MovementComp
 
     public <FROM extends ILocationGO & ISpatiallyConnectedGO>
     AvTimeSpan narrateScTrifftMovingGOInTo(@Nullable final ILocationGO scFrom,
-                                           final ILocationGO scTo) {
+                                           final ILocationGO to) {
         if (!isMoving()) {
-            return movementNarrator.narrateScTrifftStehendesMovingGO(scTo);
+            return movementNarrator.narrateScTrifftStehendesMovingGO(to);
         }
 
         if (isEntering()) {
             return movementNarrator.narrateScTrifftEnteringMovingGO(
                     scFrom,
-                    scTo,
+                    to,
                     (FROM) locationComp.getLastLocation());
         }
 
         // MovingGO ist leaving
         return movementNarrator.narrateScTrifftLeavingMovingGO(
-                scTo, locationComp.getLocation());
+                to, locationComp.getLocation());
     }
 
     public boolean isLeaving() {
@@ -435,6 +437,7 @@ public class MovementComp
             return false;
         }
 
+        assert getCurrentStep() != null;
         return getCurrentStep().hasPhase(phase);
     }
 

@@ -27,7 +27,7 @@ import static de.nb.aventiure2.data.world.syscomp.state.impl.RapunzelsZauberinSt
 import static de.nb.aventiure2.data.world.syscomp.state.impl.RapunzelsZauberinState.VOR_DEM_NAECHSTEN_RAPUNZEL_BESUCH;
 import static de.nb.aventiure2.data.world.time.AvTime.oClock;
 import static de.nb.aventiure2.data.world.time.AvTimeSpan.days;
-import static de.nb.aventiure2.data.world.time.AvTimeSpan.hours;
+import static de.nb.aventiure2.data.world.time.AvTimeSpan.mins;
 import static de.nb.aventiure2.data.world.time.AvTimeSpan.noTime;
 
 /**
@@ -45,13 +45,11 @@ public class RapunzelsZauberinReactionsComp
     private static final AvTime SPAETESTE_LOSGEHZEIT_RAPUNZELBESUCH =
             oClock(15, 30);
 
-    private static final AvTimeSpan BESUCHSDAUER = hours(1);
+    private static final AvTimeSpan BESUCHSDAUER = mins(45);
 
     private final RapunzelsZauberinStateComp stateComp;
     private final LocationComp locationComp;
     private final MovementComp movementComp;
-
-    private final RapunzelsZauberinMovementNarrator movementNarrator;
 
     public RapunzelsZauberinReactionsComp(final AvDatabase db,
                                           final World world,
@@ -62,9 +60,6 @@ public class RapunzelsZauberinReactionsComp
         this.stateComp = stateComp;
         this.locationComp = locationComp;
         this.movementComp = movementComp;
-
-        movementNarrator = new RapunzelsZauberinMovementNarrator(
-                n, world);
     }
 
     @Override
@@ -83,10 +78,9 @@ public class RapunzelsZauberinReactionsComp
         return noTime();
     }
 
-    public AvTimeSpan onSCLeave(@Nullable final ILocationGO scFrom,
-                                final ILocationGO scTo) {
-        if (scFrom != null &&
-                locationComp.getLocationId() != null &&
+    public AvTimeSpan onSCLeave(final ILocationGO scFrom,
+                                @Nullable final ILocationGO scTo) {
+        if (locationComp.getLocationId() != null &&
                 world.isOrHasRecursiveLocation(scFrom, locationComp.getLocationId())) {
             if (scFrom.is(DRAUSSEN_VOR_DEM_SCHLOSS)) {
                 // Hier bemerkt der SC die Zauberin nicht

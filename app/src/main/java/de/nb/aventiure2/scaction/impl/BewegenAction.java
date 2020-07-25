@@ -405,11 +405,12 @@ public class BewegenAction<R extends ISpatiallyConnectedGO & ILocationGO,
         }
 
         if (isDefinitivDiskontinuitaet()) {
-            // TODO Es ist - zumindest manchmal - keine Diskontinuität, wenn
+            // TODO Es ist - häufig - keine Diskontinuität, wenn
             //  dazwischen eine Reaction liegt. Z.B.: Spieler verlässt das Schloss,
             //  sieht den Prinzen wegfahren und geht danach wieder in das Schloss.
             //  Anderes fiktives Beispiel: Spieler nimmt der Frosch, der Frosch quakt hässlich,
-            //  der Spieler setzt den Frosch wieder ab.
+            //  der Spieler setzt den Frosch wieder ab. Oder: Der Spieler geht
+            //  irgendwo hin, die Zauberin kommt ihm entgegen, er kehrt um und geht ihr nach.
             //  Vielleicht kann man das irgendwie daran festmachen, ob die
             //  Reaction "die Lage geändert" hat? Oder man geht erst mal immer
             //  davon aus, dass eine Reaction die Lage ändert - man bräuchte also nur
@@ -439,6 +440,9 @@ public class BewegenAction<R extends ISpatiallyConnectedGO & ILocationGO,
                 }
 
                 alt.add(neuerSatz("Aber dir kommt ein Gedanke und "
+                                + uncapitalize(description.getDescriptionHauptsatz()),
+                        description.getTimeElapsed()));
+                alt.add(neuerSatz("Dir kommt ein Gedanke – "
                                 + uncapitalize(description.getDescriptionHauptsatz()),
                         description.getTimeElapsed()));
             }

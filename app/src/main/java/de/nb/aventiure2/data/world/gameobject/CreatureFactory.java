@@ -134,13 +134,14 @@ class CreatureFactory {
                                         + "reichender Nase",
                                 "einer mageren Frau mit krummer, bis zum Kinn "
                                         + "reichender Nase"),
-                        np(F, "die magere Frau mit der krummen Nase",
-                                "der mageren Frau mit der krummen Nase"),
+                        np(F, "die magere Frau",
+                                "der mageren Frau"),
                         np(F, "die Frau",
                                 "der Frau"));
         final LocationComp locationComp =
                 new LocationComp(RAPUNZELS_ZAUBERIN, db, world,
-                        VOR_DEM_ALTEN_TURM, IM_WALD_NAHE_DEM_SCHLOSS,
+                        // Muss zum Zustand der Zauberin passen!
+                        null, IM_WALD_NAHE_DEM_SCHLOSS,
                         false);
         final MovementComp movementComp =
                 new MovementComp(RAPUNZELS_ZAUBERIN, db, world,

@@ -215,11 +215,35 @@ public class LocationComp extends AbstractStatefulComponent<LocationPCD> {
     }
 
     /**
+     * Gibt zurück, ob sich das Game Object an einer dieser <code>locations</code> befindet
+     * (<i>nicht</i> rekursiv, also <i>nicht</i> auf einem Tisch in diesem Raum).
+     */
+    public boolean hasLocation(final @Nullable ILocationGO... locations) {
+        for (@Nullable final ILocationGO location : locations) {
+            if (hasLocation(location)) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    /**
      * Gibt zurück, ob sich das Game Object an dieser <code>location</code> befindet (<i>nicht</i>
      * rekursiv, also <i>nicht</i> auf einem Tisch in diesem Raum).
      */
     public boolean hasLocation(final @Nullable ILocationGO location) {
         return hasLocation(location != null ? location.getId() : null);
+    }
+
+    public boolean hasLocation(final GameObjectId... locationIds) {
+        for (@Nullable final GameObjectId locationId : locationIds) {
+            if (hasLocation(locationId)) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     public boolean hasLocation(final @Nullable GameObjectId locationId) {

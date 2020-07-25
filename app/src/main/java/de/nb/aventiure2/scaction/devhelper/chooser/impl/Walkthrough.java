@@ -66,9 +66,9 @@ public class Walkthrough {
             new Walkthrough("In den Wald gehen",
                     "Den schmalen Pfad aufwärts gehen",
                     "Um den Turm herumgehen",
-                    "Den Weg zurückgehen");
+                    "Den Pfad zurückgehen");
     // STORY Man kann sich am Turm (tagsüber) ausruhen,
-    //  den Vögeln lauschen etc.
+    //  den Vögeln lauschen etc. Dafür singt Rapunzel seltener
 
     // STORY Seide auf Markt bei Frau für ein Goldstück kaufen, das man vom Prinzen bekommen hat
 

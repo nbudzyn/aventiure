@@ -97,14 +97,19 @@ public class AvTime {
      * Returns whether <code>this</code> lies within a regular time interval.
      */
     public boolean isInRegularTimeIntervalIncl(
-            final AvTime startFirstInterval,
+            final AvTime start,
             final AvTimeSpan intervalDuration,
-            final AvTimeSpan durationBetweenIntervals) {
-        if (isBefore(startFirstInterval)) {
+            final AvTimeSpan durationBetweenIntervals,
+            final AvTime end) {
+        if (isBefore(start)) {
             return false;
         }
 
-        return ((getSecsSinceMidnight() - startFirstInterval.getSecsSinceMidnight()) %
+        if (isAfter(end)) {
+            return false;
+        }
+
+        return ((getSecsSinceMidnight() - start.getSecsSinceMidnight()) %
                 intervalDuration.plus(durationBetweenIntervals).getSecs()) <=
                 intervalDuration.getSecs();
     }

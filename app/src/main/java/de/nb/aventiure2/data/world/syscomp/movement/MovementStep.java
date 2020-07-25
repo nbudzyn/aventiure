@@ -60,7 +60,7 @@ class MovementStep {
         checkState(
                 hasPhase(newPhase) ||
                         (hasPhase(FIRST_LEAVING) && newPhase == SECOND_ENTERING),
-                "Illegal phase shift: From " + getPhase() + " to " + newPhase
+                "Illegal phase transition: From " + getPhase() + " to " + newPhase
         );
 
         phase = newPhase;

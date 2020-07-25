@@ -107,7 +107,8 @@ public class RapunzelReactionsComp
                     "Wie du näher kommst, hörst du einen Gesang, so lieblich, dass es "
                             + "dir das Herz rührt. Du hältst still und horchst: Kommt die "
                             + "Stimme aus dem kleinen Fensterchen oben im Turm?",
-                    secs(20)));
+                    secs(20))
+                    .beendet(PARAGRAPH));
         }
         return n.addAlt(
                 du("hörst",
@@ -147,19 +148,35 @@ public class RapunzelReactionsComp
         // Ansonsten singt Rapunzel innerhalb gewisser Zeiten immer mal wieder
         return now.getTageszeit().getLichtverhaeltnisseDraussen() == HELL &&
                 !isZeitFuerMittagsruhe(now) &&
-                ab7_30Alle15MinutenFuer5Minuten(now);
+                abendsUndMorgensImmerMalWieder(now);
     }
 
     private static boolean isZeitFuerMittagsruhe(final AvDateTime now) {
         return now.getTime().isWithin(oClock(1), oClock(2, 30));
     }
 
-    private static boolean ab7_30Alle15MinutenFuer5Minuten(final AvDateTime now) {
-        return now.getTime().isInRegularTimeIntervalIncl(
-                oClock(7, 30),
+    private static boolean abendsUndMorgensImmerMalWieder(final AvDateTime now) {
+        if (now.getTime().isInRegularTimeIntervalIncl(
+                // Ab...
+                oClock(7),
+                // ... alle...
+                mins(15),
+                // ... Minuten für...
                 mins(5),
-                mins(15)
-        );
+                // ... Minuten - bis um
+                oClock(8, 30))) {
+            return true;
+        }
+
+        if (now.getTime().isInRegularTimeIntervalIncl(
+                oClock(17, 30),
+                mins(15),
+                mins(5),
+                oClock(19))) {
+            return true;
+        }
+
+        return false;
     }
 
     private AvTimeSpan onTimePassed_RapunzelMoechteSingen(final AvDateTime lastTime,

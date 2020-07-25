@@ -11,9 +11,11 @@ import javax.annotation.ParametersAreNonnullByDefault;
 import de.nb.aventiure2.data.database.AvDatabase;
 import de.nb.aventiure2.data.world.base.GameObjectId;
 import de.nb.aventiure2.data.world.gameobject.World;
+import de.nb.aventiure2.data.world.syscomp.location.ILocatableGO;
 import de.nb.aventiure2.data.world.syscomp.memory.Known;
 import de.nb.aventiure2.data.world.syscomp.spatialconnection.AbstractSpatialConnectionComp;
 import de.nb.aventiure2.data.world.syscomp.state.IHasStateGO;
+import de.nb.aventiure2.data.world.syscomp.state.impl.FroschprinzState;
 import de.nb.aventiure2.data.world.syscomp.state.impl.SchlossfestState;
 import de.nb.aventiure2.data.world.syscomp.storingplace.Lichtverhaeltnisse;
 import de.nb.aventiure2.data.world.time.AvTimeSpan;
@@ -22,7 +24,10 @@ import de.nb.aventiure2.german.base.AbstractDescription;
 import static de.nb.aventiure2.data.world.gameobject.World.ABZWEIG_IM_WALD;
 import static de.nb.aventiure2.data.world.gameobject.World.COUNTER_ID_VOR_DEM_SCHLOSS_SCHLOSSFEST_KNOWN;
 import static de.nb.aventiure2.data.world.gameobject.World.DRAUSSEN_VOR_DEM_SCHLOSS;
+import static de.nb.aventiure2.data.world.gameobject.World.FROSCHPRINZ;
 import static de.nb.aventiure2.data.world.gameobject.World.IM_WALD_NAHE_DEM_SCHLOSS;
+import static de.nb.aventiure2.data.world.gameobject.World.RAPUNZEL;
+import static de.nb.aventiure2.data.world.gameobject.World.RAPUNZELS_ZAUBERIN;
 import static de.nb.aventiure2.data.world.gameobject.World.SCHLOSSFEST;
 import static de.nb.aventiure2.data.world.gameobject.World.VOR_DEM_ALTEN_TURM;
 import static de.nb.aventiure2.data.world.syscomp.feelings.Mood.ERSCHOEPFT;
@@ -158,8 +163,9 @@ public class ImWaldNaheDemSchlossConnectionComp extends AbstractSpatialConnectio
             final Known newRoomKnown, final Lichtverhaeltnisse lichtverhaeltnisse) {
         if (newRoomKnown == UNKNOWN && lichtverhaeltnisse == HELL) {
             return du("nimmst", "den schmalen Pfad, der sich lange durch "
-                    + "den Wald aufwärts windet. Ein Hase kreuzt den Weg, "
-                    + "aber keine Menschenseele begegnet dir. Ganz am Ende – "
+                    + "den Wald aufwärts windet. Ein Hase kreuzt den Weg"
+                    + (alleinAufDemPfadZumTurm() ? ", aber keine Menschenseele begegnet dir" : "")
+                    + ". Ganz am Ende – "
                     + "auf der Hügelkuppe – kommst du an einen alten Turm", mins(25))
                     .beendet(PARAGRAPH);
         }
@@ -180,7 +186,29 @@ public class ImWaldNaheDemSchlossConnectionComp extends AbstractSpatialConnectio
                             + "auch nicht kürzer, aber endlich stehst du wieder vor dem alten Turm",
                     mins(25));
         }
-        return du("gehst", "den langen, schmalen Pfad den Hügel hinauf bis zum "
+        return du("gehst", "wieder den langen, schmalen Pfad den Hügel hinauf bis zum "
                 + "Turm", mins(25));
+    }
+
+    private <FROSCHPRINZ extends ILocatableGO & IHasStateGO<FroschprinzState>>
+    boolean alleinAufDemPfadZumTurm() {
+        if (((ILocatableGO) world.load(RAPUNZELS_ZAUBERIN)).locationComp()
+                .hasLocation(IM_WALD_NAHE_DEM_SCHLOSS, VOR_DEM_ALTEN_TURM)) {
+            return false;
+        }
+
+        if (((ILocatableGO) world.load(RAPUNZEL)).locationComp()
+                .hasLocation(IM_WALD_NAHE_DEM_SCHLOSS, VOR_DEM_ALTEN_TURM)) {
+            return false;
+        }
+
+        final FROSCHPRINZ froschprinz = (FROSCHPRINZ) world.load(FROSCHPRINZ);
+        if (froschprinz.stateComp().getState().hasGestalt(FroschprinzState.Gestalt.MENSCH) &&
+                froschprinz.locationComp()
+                        .hasLocation(IM_WALD_NAHE_DEM_SCHLOSS, VOR_DEM_ALTEN_TURM)) {
+            return false;
+        }
+
+        return true;
     }
 }

@@ -57,12 +57,14 @@ public class FroschprinzDescriptionComp extends AbstractDescriptionComp {
     }
 
     private DescriptionTriple chooseDescriptionTriple() {
-        switch (stateComp.getState()) {
-            case ZURUECKVERWANDELT_IN_VORHALLE:
-            case ZURUECKVERWANDELT_SCHLOSS_VORHALLE_VERLASSEN:
+        switch (stateComp.getState().getGestalt()) {
+            case FROSCH:
+                return froschDescriptionTriple;
+            case MENSCH:
                 return prinzDescriptionTriple;
             default:
-                return froschDescriptionTriple;
+                throw new IllegalStateException("Unerwartete Gestalt: " +
+                        stateComp.getState().getGestalt());
         }
     }
 }

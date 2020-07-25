@@ -66,7 +66,7 @@ public class VorDemTurmConnectionComp extends AbstractSpatialConnectionComp {
                 ),
                 con(IM_WALD_NAHE_DEM_SCHLOSS,
                         "auf dem Pfad",
-                        "Den Weg zurückgehen",
+                        "Den Pfad zurückgehen",
                         du(SENTENCE, "gehst",
                                 "den langen Pfad wieder zurück, den Hügel hinab, bis "
                                         + "zum Waldweg", mins(20))
