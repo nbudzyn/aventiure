@@ -81,7 +81,7 @@ public class RapunzelsZauberinReactionsComp
     public AvTimeSpan onSCLeave(final ILocationGO scFrom,
                                 @Nullable final ILocationGO scTo) {
         if (locationComp.getLocationId() != null &&
-                world.isOrHasRecursiveLocation(scFrom, locationComp.getLocationId())) {
+                locationComp.hasSameUpperMostLocationAs(scFrom)) {
             if (scFrom.is(DRAUSSEN_VOR_DEM_SCHLOSS)) {
                 // Hier bemerkt der SC die Zauberin nicht
                 return noTime();

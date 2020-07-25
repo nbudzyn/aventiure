@@ -198,8 +198,7 @@ public class MovementComp
                 if (now.isEqualOrAfter(getCurrentStep().getExpDoneTime())) {
                     // Befindet sich der SC an der Location, die das IMovingGO
                     // jetzt gerade erreicht hat?
-                    if (world
-                            .isOrHasRecursiveLocation(SPIELER_CHARAKTER, locationComp.getLocation())
+                    if (locationComp.hasSameUpperMostLocationAs(SPIELER_CHARAKTER)
                         // STORY Wenn der SC schläft, dann hingegen das Game Object einfach
                         //  vorbeilaufen lassen (in diesem Fall sollte es ja aber auch keine
                         //  Narration geben...)
@@ -402,7 +401,9 @@ public class MovementComp
 
         // MovingGO ist leaving
         return movementNarrator.narrateScTrifftLeavingMovingGO(
-                to, locationComp.getLocation());
+                scFrom,
+                (ILocationGO & ISpatiallyConnectedGO) to,
+                (ILocationGO) world.load(getCurrentStep().getTo()));
     }
 
     public boolean isLeaving() {

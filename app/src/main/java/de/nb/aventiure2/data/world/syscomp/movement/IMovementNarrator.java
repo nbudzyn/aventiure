@@ -23,8 +23,10 @@ public interface IMovementNarrator {
 
     AvTimeSpan narrateScUeberholtMovingGO();
 
-    AvTimeSpan narrateScTrifftLeavingMovingGO(ILocationGO scTo,
-                                              ILocationGO movingGOTo);
+    <SC_FROM extends ILocationGO & ISpatiallyConnectedGO>
+    AvTimeSpan narrateScTrifftLeavingMovingGO(@Nullable final ILocationGO scFrom,
+                                              final SC_FROM scToAndMovingGoFrom,
+                                              final ILocationGO movingGOTo);
 
     AvTimeSpan narrateScGehtMovingGOEntgegenUndLaesstEsHinterSich();
 

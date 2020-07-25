@@ -138,13 +138,15 @@ public class SimpleMovementNarrator implements IMovementNarrator {
                         noTime())
                         .phorikKandidat(desc, gameObjectId)
                         .beendet(SENTENCE),
-                du("gehst dabei schnellen Schrittes an " +
+                du("gehst",
+                        "dabei schnellen Schrittes an " +
                                 desc.dat() +
                                 " vorüber",
                         "dabei", noTime())
                         .phorikKandidat(desc, gameObjectId)
                         .beendet(SENTENCE),
-                du("gehst dabei mit schnellen Schritten an " +
+                du("gehst",
+                        "dabei mit schnellen Schritten an " +
                                 desc.dat() +
                                 " vorüber",
                         "dabei", noTime())
@@ -168,13 +170,21 @@ public class SimpleMovementNarrator implements IMovementNarrator {
     }
 
     @Override
-    public AvTimeSpan narrateScTrifftLeavingMovingGO(final ILocationGO scTo,
-                                                     final ILocationGO movingGOTo) {
-        if (world.isOrHasRecursiveLocation(scTo, movingGOTo)) {
+    public <SC_FROM extends ILocationGO & ISpatiallyConnectedGO>
+    AvTimeSpan narrateScTrifftLeavingMovingGO(@Nullable final ILocationGO scFrom,
+                                              final SC_FROM scToAndMovingGoFrom,
+                                              final ILocationGO movingGOTo) {
+        if (world.isOrHasRecursiveLocation(scFrom, movingGOTo)) {
             return narrateScGehtMovingGOEntgegenUndLaesstEsHinterSich();
         }
 
-        return narrateScSiehtMovingGOFortgehen();
+        @Nullable final SpatialConnection spatialConnectionMovingGO =
+                scToAndMovingGoFrom.spatialConnectionComp().getConnection(movingGOTo.getId());
+
+        final NumberOfWays numberOfWaysOut =
+                scToAndMovingGoFrom.spatialConnectionComp().getNumberOfWaysOut();
+
+        return narrateScSiehtMovingGOFortgehen(spatialConnectionMovingGO, numberOfWaysOut);
     }
 
     @Override
@@ -213,7 +223,13 @@ public class SimpleMovementNarrator implements IMovementNarrator {
         );
     }
 
-    public AvTimeSpan narrateScSiehtMovingGOFortgehen() {
+    public AvTimeSpan narrateScSiehtMovingGOFortgehen(
+            @Nullable final SpatialConnection spatialConnection,
+            final NumberOfWays numberOfWaysOut) {
+        final String wo = numberOfWaysOut != ONE_IN_ONE_OUT && spatialConnection != null ?
+                spatialConnection.getWo() + " " :
+                "";
+
         final Nominalphrase desc = getDescription();
         final SubstantivischePhrase anaphOderDesc =
                 getAnaphPersPronWennMglSonstDescription(false);
@@ -222,30 +238,42 @@ public class SimpleMovementNarrator implements IMovementNarrator {
                 du(SENTENCE, "siehst",
                         ", wie " +
                                 anaphOderDesc.nom() +
-                                " von dannen geht", noTime())
+                                " " +
+                                wo +
+                                "davongeht", noTime())
                         .komma()
                         .phorikKandidat(anaphOderDesc, gameObjectId),
                 du(SENTENCE, "siehst",
                         anaphOderDesc.akk() +
-                                " davongehen", noTime())
+                                " " +
+                                wo +
+                                "davongehen", noTime())
                         .komma()
                         .phorikKandidat(anaphOderDesc, gameObjectId),
                 neuerSatz(SENTENCE,
                         anaphOderDesc.nom() +
-                                " ist gerade dabei, davonzugehen", noTime())
+                                " ist gerade dabei, "
+                                + wo
+                                + "davonzugehen", noTime())
                         .phorikKandidat(anaphOderDesc, gameObjectId)
                         .beendet(PARAGRAPH),
                 neuerSatz(SENTENCE,
-                        "Vor dir geht " +
+                        "Vor dir " +
+                                wo
+                                + "geht " +
                                 desc.nom(), noTime())
                         .phorikKandidat(anaphOderDesc, gameObjectId),
                 neuerSatz(SENTENCE,
-                        "Ein Stück vor dir geht " +
+                        "Ein Stück vor dir "
+                                + wo
+                                + "geht " +
                                 desc.nom(), noTime())
                         .phorikKandidat(anaphOderDesc, gameObjectId),
                 neuerSatz(SENTENCE,
                         desc.nom() +
-                                " geht gerade fort", noTime())
+                                " geht gerade "
+                                + wo
+                                + "fort", noTime())
                         .phorikKandidat(anaphOderDesc, gameObjectId)
                         .beendet(PARAGRAPH)
         );

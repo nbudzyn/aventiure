@@ -39,8 +39,6 @@ public class RapunzelsZauberinMovementNarrator extends SimpleMovementNarrator {
             final ILocationGO to,
             final FROM movingGOFrom,
             @Nullable final SpatialConnection spatialConnectionMovingGO) {
-        // FIXME Wird anscheinend zu falschen Zeitpunkten aufgerufen
-
         if (world.isOrHasRecursiveLocation(movingGOFrom, IM_WALD_NAHE_DEM_SCHLOSS) &&
                 to.is(VOR_DEM_ALTEN_TURM)) {
             final Nominalphrase desc = getDescription();
