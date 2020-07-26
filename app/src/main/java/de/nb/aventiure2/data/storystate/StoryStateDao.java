@@ -110,7 +110,7 @@ public abstract class StoryStateDao {
         checkArgument(alternatives.size() > 0,
                 "No alternatives");
 
-        AbstractDescription bestDesc = null;
+        AbstractDescription<?> bestDesc = null;
         float bestScore = Float.NEGATIVE_INFINITY;
         StoryAddition bestStoryAddition = null;
         for (final AbstractDescription<?> descAlternative : alternatives) {

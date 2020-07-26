@@ -149,7 +149,7 @@ public class GOReactionsCoordinator {
                 }
             }
         } finally {
-            n.setNarrationSourceJustInCase(REACTIONS);
+            n.setNarrationSourceJustInCase(narrationSourceBefore);
         }
 
         return timeElapsed;

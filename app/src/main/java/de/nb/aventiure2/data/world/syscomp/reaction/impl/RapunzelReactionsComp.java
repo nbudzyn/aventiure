@@ -148,42 +148,30 @@ public class RapunzelReactionsComp
         // Ansonsten singt Rapunzel innerhalb gewisser Zeiten immer mal wieder
         return now.getTageszeit().getLichtverhaeltnisseDraussen() == HELL &&
                 !isZeitFuerMittagsruhe(now) &&
-                morgensMittagsUndAbendsImmerMalWieder(now);
+                immerMalWieder(now);
     }
 
     private static boolean isZeitFuerMittagsruhe(final AvDateTime now) {
         return now.getTime().isWithin(oClock(1), oClock(2, 30));
     }
 
-    private static boolean morgensMittagsUndAbendsImmerMalWieder(final AvDateTime now) {
+    private static boolean immerMalWieder(final AvDateTime now) {
         if (now.getTime().isInRegularTimeIntervalIncl(
                 // Ab...
                 oClock(7),
-                // ... alle...
-                mins(15),
-                // ... Minuten für...
-                mins(5),
-                // ... Minuten - bis um
-                oClock(8, 30))) {
+                // ... immer für ...
+                mins(10),
+                // ... Minuten mit
+                mins(25),
+                // ... Minuten Pause danach - bis um
+                oClock(12, 30))) {
             return true;
         }
 
         if (now.getTime().isInRegularTimeIntervalIncl(
-                // Ab...
-                oClock(12),
-                // ... alle...
-                mins(15),
-                // ... Minuten für...
-                mins(5),
-                // ... Minuten - bis um
-                oClock(13, 30))) {
-            return true;
-        }
-
-        if (now.getTime().isInRegularTimeIntervalIncl(
-                oClock(17, 30),
-                mins(15),
-                mins(5),
+                oClock(14, 30),
+                mins(10),
+                mins(25),
                 oClock(19))) {
             return true;
         }

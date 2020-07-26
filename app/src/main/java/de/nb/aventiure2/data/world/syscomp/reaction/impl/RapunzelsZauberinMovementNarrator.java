@@ -1,5 +1,8 @@
 package de.nb.aventiure2.data.world.syscomp.reaction.impl;
 
+import com.google.common.collect.ImmutableCollection;
+import com.google.common.collect.ImmutableList;
+
 import javax.annotation.Nullable;
 
 import de.nb.aventiure2.data.storystate.StoryStateDao;
@@ -10,7 +13,9 @@ import de.nb.aventiure2.data.world.syscomp.spatialconnection.NumberOfWays;
 import de.nb.aventiure2.data.world.syscomp.spatialconnection.impl.SpatialConnection;
 import de.nb.aventiure2.data.world.syscomp.storingplace.ILocationGO;
 import de.nb.aventiure2.data.world.time.AvTimeSpan;
+import de.nb.aventiure2.german.base.AbstractDescription;
 import de.nb.aventiure2.german.base.Nominalphrase;
+import de.nb.aventiure2.german.base.SubstantivischePhrase;
 
 import static de.nb.aventiure2.data.world.gameobject.World.ABZWEIG_IM_WALD;
 import static de.nb.aventiure2.data.world.gameobject.World.DRAUSSEN_VOR_DEM_SCHLOSS;
@@ -39,64 +44,93 @@ public class RapunzelsZauberinMovementNarrator extends SimpleMovementNarrator {
             final ILocationGO to,
             final FROM movingGOFrom,
             @Nullable final SpatialConnection spatialConnectionMovingGO) {
+        final Nominalphrase desc = getDescription();
+        final SubstantivischePhrase anaphOderDesc =
+                getAnaphPersPronWennMglSonstDescription(false);
+
+        final ImmutableCollection.Builder<AbstractDescription<?>> alt = ImmutableList.builder();
+
+        alt.add(neuerSatz(anaphOderDesc
+                + " kommt daher", noTime())
+                .phorikKandidat(desc, gameObjectId)
+                .beendet(PARAGRAPH));
+
+        if (spatialConnectionMovingGO != null) {
+            alt.add(neuerSatz(anaphOderDesc
+                    + " kommt "
+                    + spatialConnectionMovingGO.getWo() // "auf dem Pfad "
+                    + " daher", noTime())
+                    .phorikKandidat(desc, gameObjectId)
+                    .beendet(PARAGRAPH));
+        }
+
+        if (!n.requireStoryState().isThema(gameObjectId)) {
+            if (spatialConnectionMovingGO != null) {
+                alt.add(neuerSatz(spatialConnectionMovingGO.getWo() // "auf dem Pfad "
+                        + " kommt " +
+                        desc.nom() +
+                        " gegangen", noTime())
+                        .phorikKandidat(desc, gameObjectId)
+                        .beendet(PARAGRAPH));
+            }
+
+            alt.add(
+                    neuerSatz("Es kommt dir " +
+                            desc.nom() +
+                            " entgegen", noTime())
+                            .phorikKandidat(desc, gameObjectId)
+                            .beendet(PARAGRAPH));
+            alt.add(
+                    neuerSatz(PARAGRAPH,
+                            "Dir kommt " +
+                                    desc.nom() +
+                                    " entgegen", noTime())
+                            .phorikKandidat(desc, gameObjectId)
+                            .beendet(PARAGRAPH));
+        }
+
+
         if (world.isOrHasRecursiveLocation(movingGOFrom, IM_WALD_NAHE_DEM_SCHLOSS) &&
                 to.is(VOR_DEM_ALTEN_TURM)) {
-            final Nominalphrase desc = getDescription();
+            if (!n.requireStoryState().isThema(gameObjectId)) {
+                alt.add(neuerSatz("Den Pfad herauf kommt " +
+                                desc.nom(),
+                        noTime())
+                        .phorikKandidat(desc, RAPUNZELS_ZAUBERIN)
+                        .beendet(SENTENCE));
+            }
 
-            return n.addAlt(
-                    neuerSatz(SENTENCE,
-                            spatialConnectionMovingGO.getWo() // "auf dem Pfad "
-                                    + " kommt " +
-                                    desc.nom() +
-                                    " gegangen", noTime())
-                            .phorikKandidat(desc, gameObjectId)
-                            .beendet(PARAGRAPH), //
-                    neuerSatz("Den Pfad herauf kommt " +
-                                    desc.nom(),
-                            noTime())
-                            .phorikKandidat(desc, RAPUNZELS_ZAUBERIN)
-                            .beendet(SENTENCE));
+            return n.addAlt(alt);
         }
 
         if (world.isOrHasRecursiveLocation(movingGOFrom, VOR_DEM_ALTEN_TURM) &&
                 world.isOrHasRecursiveLocation(scFrom, DRAUSSEN_VOR_DEM_SCHLOSS) &&
                 to.is(IM_WALD_NAHE_DEM_SCHLOSS)) {
-            final Nominalphrase desc = getDescription();
+            if (!n.requireStoryState().isThema(gameObjectId)) {
+                alt.add(neuerSatz(PARAGRAPH,
+                        "Von dem Pfad her kommt dir " +
+                                desc.nom() +
+                                " entgegen", noTime())
+                        .phorikKandidat(desc, RAPUNZELS_ZAUBERIN)
+                        .beendet(SENTENCE));
+            }
 
-            return n.addAlt(
-                    neuerSatz(SENTENCE,
-                            spatialConnectionMovingGO.getWo() // "auf dem Pfad "
-                                    + " kommt " +
-                                    desc.nom() +
-                                    " gegangen", noTime())
-                            .phorikKandidat(desc, gameObjectId)
-                            .beendet(PARAGRAPH), //
-                    neuerSatz(PARAGRAPH,
-                            "Von dem Pfad her kommt dir " +
-                                    desc.nom() +
-                                    " entgegen", noTime())
-                            .phorikKandidat(desc, RAPUNZELS_ZAUBERIN)
-                            .beendet(SENTENCE));
+            return n.addAlt(alt);
         }
 
         if (world.isOrHasRecursiveLocation(movingGOFrom, VOR_DEM_ALTEN_TURM) &&
                 world.isOrHasRecursiveLocation(scFrom, ABZWEIG_IM_WALD) &&
                 to.is(IM_WALD_NAHE_DEM_SCHLOSS)) {
-            final Nominalphrase desc = getDescription();
 
-            return n.addAlt(
-                    neuerSatz(SENTENCE,
-                            spatialConnectionMovingGO.getWo() // "auf dem Pfad "
-                                    + " kommt " +
-                                    desc.nom() +
-                                    " gegangen", noTime())
-                            .phorikKandidat(desc, gameObjectId)
-                            .beendet(PARAGRAPH), //
-                    neuerSatz(PARAGRAPH,
-                            "Von dem Pfad her kommt " +
-                                    desc.nom(), noTime())
-                            .phorikKandidat(desc, RAPUNZELS_ZAUBERIN)
-                            .beendet(SENTENCE));
+            if (!n.requireStoryState().isThema(gameObjectId)) {
+                alt.add(neuerSatz(PARAGRAPH,
+                        "Von dem Pfad her kommt " +
+                                desc.nom(), noTime())
+                        .phorikKandidat(desc, RAPUNZELS_ZAUBERIN)
+                        .beendet(SENTENCE));
+            }
+
+            return n.addAlt(alt);
         }
 
         return super.narrateMovingGOKommtScEntgegen_esVerstehtSichNichtVonSelbstVonWo(
@@ -138,9 +172,6 @@ public class RapunzelsZauberinMovementNarrator extends SimpleMovementNarrator {
 
         return super.narrateAndDoStartsEntering(from, to, spatialConnection, numberOfWaysIn);
     }
-
-    // STORY Wenn die Zauberin WEISS_DASS_RAPUNZEL_BEFREIT_WURDE, sieht sie
-    //  den SC mit bösen und giftigen Blicken an?
 
     // STORY Spieler sieht von unten, wie die Zauberin heruntersteigt?
     //  if (to.is(VOR_DEM_ALTEN_TURM)) {

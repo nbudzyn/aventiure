@@ -561,14 +561,10 @@ public class SimpleMovementNarrator implements IMovementNarrator {
         final ImmutableCollection.Builder<AbstractDescription<?>> alt = ImmutableList.builder();
 
 
-        alt.add(neuerSatz(SENTENCE,
-                spatialConnectionMovingGO.getWo() // "auf dem Pfad "
-                        + " kommt dir " +
-                        desc.nom() +
-                        " entgegen", noTime())
+        alt.add(neuerSatz(desc.nom()
+                + " kommt dir entgegen", noTime())
                 .phorikKandidat(desc, gameObjectId)
                 .beendet(PARAGRAPH));
-
 
         return n.addAlt(alt);
     }
@@ -586,19 +582,28 @@ public class SimpleMovementNarrator implements IMovementNarrator {
         final ImmutableCollection.Builder<AbstractDescription<?>> alt = ImmutableList.builder();
 
         alt.add(neuerSatz(anaphOderDesc
-                + " kommt "
-                + spatialConnectionMovingGO.getWo() // "auf dem Pfad "
-                + " daher", noTime())
+                + " kommt daher", noTime())
                 .phorikKandidat(desc, gameObjectId)
                 .beendet(PARAGRAPH));
 
-        if (!n.requireStoryState().isThema(gameObjectId)) {
-            alt.add(neuerSatz(spatialConnectionMovingGO.getWo() // "auf dem Pfad "
-                    + " kommt " +
-                    desc.nom() +
-                    " gegangen", noTime())
+        if (spatialConnectionMovingGO != null) {
+            alt.add(neuerSatz(anaphOderDesc
+                    + " kommt "
+                    + spatialConnectionMovingGO.getWo() // "auf dem Pfad "
+                    + " daher", noTime())
                     .phorikKandidat(desc, gameObjectId)
                     .beendet(PARAGRAPH));
+        }
+
+        if (!n.requireStoryState().isThema(gameObjectId)) {
+            if (spatialConnectionMovingGO != null) {
+                alt.add(neuerSatz(spatialConnectionMovingGO.getWo() // "auf dem Pfad "
+                        + " kommt " +
+                        desc.nom() +
+                        " gegangen", noTime())
+                        .phorikKandidat(desc, gameObjectId)
+                        .beendet(PARAGRAPH));
+            }
 
             alt.add(
                     neuerSatz("Es kommt dir " +

@@ -87,9 +87,6 @@ public class RapunzelsZauberinReactionsComp
                 return noTime();
             }
 
-            // STORY Wenn die Zauberin WEISS_DASS_RAPUNZEL_BEFREIT_WURDE, sieht sie
-            //  den SC mit bösen und giftigen Blicken an?
-
             // STORY Wenn der Spieler oben im Turm ist
             //  "Unten vor dem Turm steht eine..."?
 
@@ -128,9 +125,6 @@ public class RapunzelsZauberinReactionsComp
             return noTime();
         }
 
-        // STORY Wenn die Zauberin WEISS_DASS_RAPUNZEL_BEFREIT_WURDE, sieht sie
-        //  den SC mit bösen und giftigen Blicken an?
-
         // STORY Wenn der Spieler oben im Turm ist
         //  "Unten vor dem Turm steht eine..."?
 
@@ -152,11 +146,6 @@ public class RapunzelsZauberinReactionsComp
                 return onTimePassed_fromAufDemWegZuRapunzel(now);
             case BESUCHT_RAPUNZEL:
                 return onTimePassed_fromBesuchtRapunzel(now);
-            // STORY Wenn die Zauberinden Spieler oben im Turm
-            //  überrascht, könnte sie den Spieler so verzaubern, dass er sich nicht
-            //  mehr an sie erinnern kann - und auch nicht an Rapunzel und
-            //  an den Rapunzel-Spruch
-            // loadSC().memoryComp().upgradeKnown(RAPUNZELS_ZAUBERIN, UNKNOWN);
             case AUF_DEM_RUECKWEG_VON_RAPUNZEL:
                 // STORY Lässt sich an den Haaren herunterhiefen und wandert zurück
                 return onTimePassed_fromAufDemRueckwegVonRapunzel(now);
@@ -214,8 +203,7 @@ public class RapunzelsZauberinReactionsComp
 
         // Zauberin ist unten am alten Turm angekommen.
 
-        // STORY Zunächst sollte die Zauberin den Turm besuchen:
-        //  Zauberin ruft Rapunzel (wenn der Spieler nicht vor Ort ist) und
+        // STORY Zauberin ruft Rapunzel (wenn der Spieler nicht vor Ort ist) und
         //  lässt sich hochziehen
 
         stateComp.setState(BESUCHT_RAPUNZEL);
