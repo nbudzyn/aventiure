@@ -32,6 +32,7 @@ import static de.nb.aventiure2.data.world.syscomp.state.impl.FroschprinzState.ZU
 import static de.nb.aventiure2.data.world.syscomp.state.impl.SchlossfestState.BEGONNEN;
 import static de.nb.aventiure2.data.world.syscomp.storingplace.Lichtverhaeltnisse.HELL;
 import static de.nb.aventiure2.data.world.time.AvTimeSpan.mins;
+import static de.nb.aventiure2.data.world.time.AvTimeSpan.secs;
 import static de.nb.aventiure2.german.base.DuDescription.du;
 
 /**
@@ -70,18 +71,20 @@ public class SchlossVorhalleConnectionComp extends AbstractSpatialConnectionComp
         res.add(SpatialConnection.con(DRAUSSEN_VOR_DEM_SCHLOSS,
                 "auf der Treppe",
                 "Das Schloss verlassen",
+                secs(90),
                 this::getDescTo_DraussenVorDemSchloss));
         if (((IHasStateGO<SchlossfestState>) world.load(SCHLOSSFEST)).stateComp()
                 .hasState(BEGONNEN)) {
             res.add(SpatialConnection.con(SCHLOSS_VORHALLE_AM_TISCH_BEIM_FEST,
                     "während der Suche nach einem Platz",
                     "An einen Tisch setzen",
+                    mins(3),
                     this::getDescTo_SchlossVorhalleTischBeimFest));
         }
         return res.build();
     }
 
-    private AbstractDescription getDescTo_DraussenVorDemSchloss(
+    private AbstractDescription<?> getDescTo_DraussenVorDemSchloss(
             final Known newRoomKnown, final Lichtverhaeltnisse lichtverhaeltnisse) {
         switch (((IHasStateGO<SchlossfestState>) world.load(SCHLOSSFEST)).stateComp().getState()) {
             case BEGONNEN:
@@ -93,7 +96,7 @@ public class SchlossVorhalleConnectionComp extends AbstractSpatialConnectionComp
         }
     }
 
-    private static AbstractDescription getDescTo_DraussenVorDemSchlosss_KeinFest(
+    private static AbstractDescription<?> getDescTo_DraussenVorDemSchlosss_KeinFest(
             final Known known, final Lichtverhaeltnisse lichtverhaeltnisse) {
         if (known == UNKNOWN) {
             return getDescTo_DraussenVorDemSchlosss_KeinFest_Unknown(
@@ -119,7 +122,7 @@ public class SchlossVorhalleConnectionComp extends AbstractSpatialConnectionComp
     }
 
     @NonNull
-    private static AbstractDescription
+    private static AbstractDescription<?>
     getDescTo_DraussenVorDemSchlosss_KeinFest_Unknown(
             final Lichtverhaeltnisse lichtverhaeltnisse) {
         if (lichtverhaeltnisse == HELL) {
@@ -143,7 +146,7 @@ public class SchlossVorhalleConnectionComp extends AbstractSpatialConnectionComp
     }
 
     @NonNull
-    private AbstractDescription
+    private AbstractDescription<?>
     getDescTo_DraussenVorDemSchloss_FestBegonnen() {
         if (((IHasStateGO<FroschprinzState>) world.load(FROSCHPRINZ)).stateComp()
                 .hasState(ZURUECKVERWANDELT_IN_VORHALLE,
@@ -166,7 +169,7 @@ public class SchlossVorhalleConnectionComp extends AbstractSpatialConnectionComp
                 .dann();
     }
 
-    private AbstractDescription getDescTo_SchlossVorhalleTischBeimFest(
+    private AbstractDescription<?> getDescTo_SchlossVorhalleTischBeimFest(
             final Known newRoomKnown, final Lichtverhaeltnisse lichtverhaeltnisse) {
         if (db.counterDao().incAndGet(
                 "RoomConnectionBuilder_SchlossVorhalle_SchlossVorhalleTischBeimFest")

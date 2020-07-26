@@ -21,6 +21,7 @@ import static de.nb.aventiure2.data.world.gameobject.World.IM_WALD_NAHE_DEM_SCHL
 import static de.nb.aventiure2.data.world.gameobject.World.VOR_DEM_ALTEN_TURM;
 import static de.nb.aventiure2.data.world.syscomp.spatialconnection.impl.SpatialConnection.con;
 import static de.nb.aventiure2.data.world.time.AvTimeSpan.mins;
+import static de.nb.aventiure2.data.world.time.AvTimeSpan.secs;
 import static de.nb.aventiure2.german.base.DuDescription.du;
 import static de.nb.aventiure2.german.base.StructuralElement.PARAGRAPH;
 import static de.nb.aventiure2.german.base.StructuralElement.SENTENCE;
@@ -62,11 +63,13 @@ public class VorDemTurmConnectionComp extends AbstractSpatialConnectionComp {
                 con(VOR_DEM_ALTEN_TURM,
                         "auf der anderen Seite des Turms",
                         "Um den Turm herumgehen",
+                        secs(90),
                         this::getDescTo_VorDemTurm
                 ),
                 con(IM_WALD_NAHE_DEM_SCHLOSS,
                         "auf dem Pfad",
                         "Den Pfad zurückgehen",
+                        mins(18),
                         du(SENTENCE, "gehst",
                                 "den langen Pfad wieder zurück, den Hügel hinab, bis "
                                         + "zum Waldweg", mins(20))
@@ -78,7 +81,7 @@ public class VorDemTurmConnectionComp extends AbstractSpatialConnectionComp {
                 ));
     }
 
-    private AbstractDescription getDescTo_VorDemTurm(
+    private AbstractDescription<?> getDescTo_VorDemTurm(
             final Known newRoomKnown, final Lichtverhaeltnisse lichtverhaeltnisse) {
         final int count = db.counterDao().incAndGet("counter_alterTurm_umrundet");
         switch (count) {

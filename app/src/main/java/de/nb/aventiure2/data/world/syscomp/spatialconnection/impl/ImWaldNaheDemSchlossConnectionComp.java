@@ -77,14 +77,17 @@ public class ImWaldNaheDemSchlossConnectionComp extends AbstractSpatialConnectio
                 con(DRAUSSEN_VOR_DEM_SCHLOSS,
                         "auf dem Weg aus dem Wald",
                         "Den Wald verlassen",
+                        mins(10),
                         this::getDescTo_DraussenVorDemSchloss),
                 con(VOR_DEM_ALTEN_TURM,
                         "auf dem Pfad",
                         "Den schmalen Pfad aufwärts gehen",
+                        mins(25),
                         this::getDescTo_VorDemAltenTurm),
                 con(ABZWEIG_IM_WALD,
                         "auf dem Weg in den Wald hinein",
                         "Tiefer in den Wald hineingehen",
+                        mins(5),
                         du(SENTENCE, "gehst", "den Weg weiter in den Wald hinein. "
                                 + "Nicht lang, und es geht zur Linken zwischen "
                                 + "den Bäumen ein alter, düsterer Weg ab, über "
@@ -96,22 +99,19 @@ public class ImWaldNaheDemSchlossConnectionComp extends AbstractSpatialConnectio
     }
 
 
-    private AbstractDescription getDescTo_DraussenVorDemSchloss(
+    private AbstractDescription<?> getDescTo_DraussenVorDemSchloss(
             final Known newRoomKnown, final Lichtverhaeltnisse lichtverhaeltnisse) {
 
         switch (((IHasStateGO<SchlossfestState>) world.load(SCHLOSSFEST)).stateComp().getState()) {
             case BEGONNEN:
-                return getDescTo_DraussenVorDemSchloss_FestBegonnen(
-                        mins(10));
-
+                return getDescTo_DraussenVorDemSchloss_FestBegonnen(mins(10));
             default:
-                return getDescTo_DraussenVorDemSchloss_KeinFest(
-                        lichtverhaeltnisse);
+                return getDescTo_DraussenVorDemSchloss_KeinFest(lichtverhaeltnisse);
         }
     }
 
     @NonNull
-    private static AbstractDescription
+    private static AbstractDescription<?>
     getDescTo_DraussenVorDemSchloss_KeinFest(
             final Lichtverhaeltnisse lichtverhaeltnisse) {
         if (lichtverhaeltnisse == HELL) {
@@ -142,7 +142,7 @@ public class ImWaldNaheDemSchlossConnectionComp extends AbstractSpatialConnectio
     }
 
     @NonNull
-    private AbstractDescription
+    private AbstractDescription<?>
     getDescTo_DraussenVorDemSchloss_FestBegonnen(
             final AvTimeSpan timeSpan) {
         if (db.counterDao().incAndGet(COUNTER_ID_VOR_DEM_SCHLOSS_SCHLOSSFEST_KNOWN) == 1) {
@@ -159,7 +159,7 @@ public class ImWaldNaheDemSchlossConnectionComp extends AbstractSpatialConnectio
         return neuerSatz("Das Schlossfest ist immer noch in vollem Gange", timeSpan);
     }
 
-    private AbstractDescription getDescTo_VorDemAltenTurm(
+    private AbstractDescription<?> getDescTo_VorDemAltenTurm(
             final Known newRoomKnown, final Lichtverhaeltnisse lichtverhaeltnisse) {
         if (newRoomKnown == UNKNOWN && lichtverhaeltnisse == HELL) {
             return du("nimmst", "den schmalen Pfad, der sich lange durch "

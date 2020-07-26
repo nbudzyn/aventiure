@@ -24,6 +24,7 @@ import static de.nb.aventiure2.data.world.gameobject.World.SCHLOSSFEST;
 import static de.nb.aventiure2.data.world.gameobject.World.SCHLOSS_VORHALLE;
 import static de.nb.aventiure2.data.world.syscomp.state.impl.SchlossfestState.BEGONNEN;
 import static de.nb.aventiure2.data.world.time.AvTimeSpan.mins;
+import static de.nb.aventiure2.data.world.time.AvTimeSpan.secs;
 import static de.nb.aventiure2.german.base.AllgDescription.neuerSatz;
 import static de.nb.aventiure2.german.base.DuDescription.du;
 
@@ -64,14 +65,19 @@ public class DraussenVorDemSchlossConnectionComp extends AbstractSpatialConnecti
                 SpatialConnection.con(SCHLOSS_VORHALLE,
                         "auf der Treppe",
                         "Das Schloss betreten",
+                        secs(90),
                         this::getDescTo_SchlossVorhalle),
 
                 SpatialConnection.con(IM_WALD_NAHE_DEM_SCHLOSS,
                         "auf dem Weg",
                         "In den Wald gehen",
+                        mins(10),
                         du("folgst", "einem Weg in den Wald. "
-                                + "Nach ein paar Schritten führt rechter Hand ein schmaler Pfad "
-                                + "einen Hügel hinauf", mins(10)),
+                                        + "Nach ein paar Schritten führt rechter Hand ein schmaler Pfad "
+                                        + "einen Hügel hinauf",
+                                // TODO Es wäre schön, wennn man die Standard-Duration hier
+                                //  nicht wiederholen müsste.
+                                mins(10)),
                         neuerSatz("Jeder kennt die Geschichten, die man "
                                 + "sich über den Wald erzählt: Räuber sind noch "
                                 + "die kleinste Gefahr. Aber das schreckt dich ganz "
@@ -85,7 +91,7 @@ public class DraussenVorDemSchlossConnectionComp extends AbstractSpatialConnecti
                                 .dann()));
     }
 
-    private AbstractDescription getDescTo_SchlossVorhalle(
+    private AbstractDescription<?> getDescTo_SchlossVorhalle(
             final Known newRoomKnown, final Lichtverhaeltnisse lichtverhaeltnisse) {
         switch (((IHasStateGO<SchlossfestState>) world.load(SCHLOSSFEST)).stateComp().getState()) {
             case BEGONNEN:
@@ -97,14 +103,14 @@ public class DraussenVorDemSchlossConnectionComp extends AbstractSpatialConnecti
     }
 
     @NonNull
-    private static AbstractDescription
+    private static AbstractDescription<?>
     getDescTo_SchlossVorhalle_KeinFest() {
         return du("gehst", "wieder hinein in das Schloss", mins(1))
                 .undWartest()
                 .dann();
     }
 
-    private AbstractDescription
+    private AbstractDescription<?>
     getDescTo_SchlossVorhalle_FestBegonnen() {
         if (db.counterDao().incAndGet(COUNTER_SCHLOSS_VORHALLE_FEST_BEGONNEN) == 1) {
             return neuerSatz("Vor dem Schloss gibt es ein großes Gedränge und es dauert "

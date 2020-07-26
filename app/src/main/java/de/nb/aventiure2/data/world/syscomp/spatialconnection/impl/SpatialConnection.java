@@ -1,8 +1,11 @@
 package de.nb.aventiure2.data.world.syscomp.spatialconnection.impl;
 
+import androidx.annotation.NonNull;
+
 import de.nb.aventiure2.data.world.base.GameObjectId;
 import de.nb.aventiure2.data.world.syscomp.memory.Known;
 import de.nb.aventiure2.data.world.syscomp.storingplace.Lichtverhaeltnisse;
+import de.nb.aventiure2.data.world.time.AvTimeSpan;
 import de.nb.aventiure2.german.base.AbstractDescription;
 import de.nb.aventiure2.german.praedikat.AdverbialeAngabe;
 
@@ -19,12 +22,11 @@ import static de.nb.aventiure2.data.world.syscomp.storingplace.Lichtverhaeltniss
 public class SpatialConnection {
     @FunctionalInterface
     public interface SCMoveDescriptionProvider {
-        AbstractDescription getSCMoveDescription(Known newRoomKnow,
-                                                 Lichtverhaeltnisse lichtverhaeltnisseInNewRoom);
+        AbstractDescription<?> getSCMoveDescription(Known newRoomKnow,
+                                                    Lichtverhaeltnisse lichtverhaeltnisseInNewRoom);
     }
 
     private final GameObjectId to;
-
 
     /**
      * Eine Adverbiale Angabe, die diese Verbinung
@@ -43,23 +45,31 @@ public class SpatialConnection {
      */
     private final String wo;
 
+    /**
+     * Standard-Dauer für die Bewegung: Bewegungszeit eines Menschen (wie des SC), der sich
+     * auskennt, tagsüber.
+     */
+    private final AvTimeSpan standardDuration;
+
     private final String actionName;
     private final SCMoveDescriptionProvider SCMoveDescriptionProvider;
 
     static SpatialConnection con(final GameObjectId to,
                                  final String wo,
                                  final String actionDescription,
+                                 final AvTimeSpan standardDuration,
                                  final AbstractDescription newRoomDescription) {
-        return con(to, wo, actionDescription,
+        return con(to, wo, actionDescription, standardDuration,
                 (isNewRoomKnown, lichtverhaeltnisseInNewRoom) -> newRoomDescription);
     }
 
     static SpatialConnection con(final GameObjectId to,
                                  final String wo,
                                  final String actionDescription,
+                                 final AvTimeSpan standardDuration,
                                  final AbstractDescription newRoomDescriptionUnknown,
                                  final AbstractDescription newRoomDescriptionKnown) {
-        return con(to, wo, actionDescription,
+        return con(to, wo, actionDescription, standardDuration,
                 (newRoomKnown, lichtverhaeltnisseInNewRoom) ->
                         newRoomKnown == UNKNOWN ?
                                 newRoomDescriptionUnknown : newRoomDescriptionKnown);
@@ -68,11 +78,12 @@ public class SpatialConnection {
     static SpatialConnection con(final GameObjectId to,
                                  final String wo,
                                  final String actionDescription,
+                                 final AvTimeSpan standardDuration,
                                  final AbstractDescription newRoomDescriptionUnknownHell,
                                  final AbstractDescription newRoomDescriptionUnknownDunkel,
                                  final AbstractDescription newRoomDescriptionKnownFromDarknessHell,
                                  final AbstractDescription newRoomDescriptionOther) {
-        return con(to, wo, actionDescription,
+        return con(to, wo, actionDescription, standardDuration,
                 (newRoomKnown, lichtverhaeltnisseInNewRoom) -> {
                     if (newRoomKnown == UNKNOWN && lichtverhaeltnisseInNewRoom == HELL) {
                         return newRoomDescriptionUnknownHell;
@@ -91,18 +102,21 @@ public class SpatialConnection {
     static SpatialConnection con(final GameObjectId to,
                                  final String wo,
                                  final String actionName,
+                                 final AvTimeSpan standardDuration,
                                  final SCMoveDescriptionProvider SCMoveDescriptionProvider) {
-        return new SpatialConnection(to, wo, actionName,
+        return new SpatialConnection(to, wo, actionName, standardDuration,
                 SCMoveDescriptionProvider);
     }
 
     private SpatialConnection(final GameObjectId to,
                               final String wo,
                               final String actionName,
+                              final AvTimeSpan standardDuration,
                               final SCMoveDescriptionProvider SCMoveDescriptionProvider) {
         this.to = to;
         this.wo = wo;
         this.actionName = actionName;
+        this.standardDuration = standardDuration;
         this.SCMoveDescriptionProvider =
                 SCMoveDescriptionProvider;
     }
@@ -115,6 +129,10 @@ public class SpatialConnection {
         return to;
     }
 
+    public AvTimeSpan getStandardDuration() {
+        return standardDuration;
+    }
+
     public AdverbialeAngabe getWoAdvAngabe() {
         return new AdverbialeAngabe(getWo());
     }
@@ -123,12 +141,13 @@ public class SpatialConnection {
         return wo;
     }
 
-    public AbstractDescription getSCMoveDescription(
+    public AbstractDescription<?> getSCMoveDescription(
             final Known newRoomKnown, final Lichtverhaeltnisse lichtverhaeltnisseInNewRoom) {
         return SCMoveDescriptionProvider
                 .getSCMoveDescription(newRoomKnown, lichtverhaeltnisseInNewRoom);
     }
 
+    @NonNull
     @Override
     public String toString() {
         return "SpatialConnection{" +

@@ -58,6 +58,7 @@ public class ImWaldBeimBrunnenConnectionComp extends AbstractSpatialConnectionCo
         resImWaldBeimBrunnnen.add(con(ABZWEIG_IM_WALD,
                 "auf dem Weg",
                 "Den Weg Richtung Schloss gehen",
+                mins(3),
                 du(SENTENCE, "verlässt", "den Brunnen und erreichst bald "
                         + "die Stelle, wo der überwachsene Weg "
                         + "abzweigt", mins(3))
@@ -68,6 +69,7 @@ public class ImWaldBeimBrunnenConnectionComp extends AbstractSpatialConnectionCo
             resImWaldBeimBrunnnen.add(con(WALDWILDNIS_HINTER_DEM_BRUNNEN,
                     "im Wald",
                     "Hinter dem Brunnen in die Wildnis schlagen",
+                    mins(4),
                     du(SENTENCE, "verlässt", "den Brunnen und schlägst dich in die "
                             + "Wildnis "
                             + "hinter dem "

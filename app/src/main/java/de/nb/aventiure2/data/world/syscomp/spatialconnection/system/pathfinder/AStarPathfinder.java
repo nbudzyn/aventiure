@@ -13,7 +13,6 @@ import de.nb.aventiure2.data.world.syscomp.spatialconnection.impl.SpatialStandar
 import de.nb.aventiure2.data.world.syscomp.storingplace.ILocationGO;
 import de.nb.aventiure2.data.world.time.AvTimeSpan;
 
-import static de.nb.aventiure2.data.world.time.AvTimeSpan.mins;
 import static de.nb.aventiure2.data.world.time.AvTimeSpan.noTime;
 import static de.nb.aventiure2.data.world.time.AvTimeSpan.secs;
 
@@ -97,8 +96,7 @@ public class AStarPathfinder {
             final SpatialConnection spatialConnection) {
         return new SpatialStandardStep(
                 spatialConnection.getTo(),
-                // TODO use a standard movement duration based on the SpatialConnections
-                mins(10)
+                spatialConnection.getStandardDuration()
         );
     }
 

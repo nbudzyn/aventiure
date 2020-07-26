@@ -148,6 +148,8 @@ class CreatureFactory {
                         world.getSpatialConnectionSystem(),
                         new RapunzelsZauberinMovementNarrator(db.storyStateDao(), world),
                         locationComp,
+                        // Die Zauberin ist älter und etwas langsamer als der SC
+                        1.2f,
                         // Muss zum Zustand der Zauberin passen!
                         null);
         final RapunzelsZauberinTalkingComp talkingComp =

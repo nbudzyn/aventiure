@@ -17,12 +17,12 @@ class AStarNode {
     private final IGameObject location;
 
     /**
-     * Distance from the start (measured in seconds for a standard movement)
+     * Distance from the start (measured in the time for a standard movement)
      */
     private AvTimeSpan dist;
 
     /**
-     * Estimated distance (measured in seconds for a standard movement) for the node
+     * Estimated distance (measured in the time for a standard movement) for the node
      * to the target
      */
     private final AvTimeSpan estimate;

@@ -80,6 +80,12 @@ public class MovementComp
     private final GameObjectId initialTargetLocationId;
 
     /**
+     * Relative Geschwindigkeit. 1 = Standard-Geschwindigkeit (Geschwindigkeit des SC, der
+     * sich aufkennt)
+     */
+    private final float relativeVelocity;
+
+    /**
      * Constructor for a {@link MovementComp}.
      */
     public MovementComp(final GameObjectId gameObjectId,
@@ -88,12 +94,14 @@ public class MovementComp
                         final SpatialConnectionSystem spatialConnectionSystem,
                         final IMovementNarrator movementNarrator,
                         final LocationComp locationComp,
+                        final float relativeVelocity,
                         @Nullable final GameObjectId initialTargetLocationId) {
         super(gameObjectId, db.movementDao());
         this.world = world;
         this.spatialConnectionSystem = spatialConnectionSystem;
         this.movementNarrator = movementNarrator;
         this.locationComp = locationComp;
+        this.relativeVelocity = relativeVelocity;
         this.initialTargetLocationId = initialTargetLocationId;
     }
 
@@ -274,7 +282,7 @@ public class MovementComp
     }
 
     @Contract("_, null, _ -> null; _, !null, _ -> new")
-    private static MovementStep toMovementStep(
+    private MovementStep toMovementStep(
             final ILocationGO from,
             @Nullable final SpatialStandardStep spatialStandardStep,
             final AvDateTime startTime) {
@@ -286,8 +294,7 @@ public class MovementComp
                 from.getId(),
                 spatialStandardStep.getTo(),
                 startTime,
-                // STORY Allow for different velocities based on this standard duration
-                spatialStandardStep.getStandardDuration());
+                spatialStandardStep.getStandardDuration().times(relativeVelocity));
     }
 
     private <FROM extends ILocationGO & ISpatiallyConnectedGO>

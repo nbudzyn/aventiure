@@ -40,6 +40,7 @@ public class SimpleConnectionCompFactory {
                 con(ABZWEIG_IM_WALD,
                         "auf dem Weg",
                         "Auf den Waldweg zurückkehren",
+                        mins(2),
                         neuerSatz("Durch Farn und Gestrüpp gehst du zurück zum "
                                 + "Waldweg", mins(2))
                                 .undWartest()
@@ -48,6 +49,7 @@ public class SimpleConnectionCompFactory {
                 con(HUETTE_IM_WALD,
                         "in der Tür",
                         "Die Hütte betreten",
+                        secs(15),
                         neuerSatz("Du schiebst die Tür zur Seite und "
                                 + "zwängst dich hinein. Durch Ritzen in den "
                                 + "Fensterläden fällt ein wenig Licht: "
@@ -81,6 +83,7 @@ public class SimpleConnectionCompFactory {
                 con(HINTER_DER_HUETTE,
                         "im Garten",
                         "Um die Hütte herumgehen",
+                        secs(30),
                         neuerSatz("Ein paar Schritte um die Hütte herum und "
                                 + "du kommst in einen kleinen, völlig "
                                 + "verwilderten Garten. In seiner Mitte "
@@ -112,6 +115,7 @@ public class SimpleConnectionCompFactory {
                 con(VOR_DER_HUETTE_IM_WALD,
                         "in der Tür",
                         "Die Hütte verlassen",
+                        secs(15),
                         du("zwängst", "dich wieder durch die Tür nach "
                                 + "draußen", secs(15))
                                 .undWartest()
@@ -121,6 +125,7 @@ public class SimpleConnectionCompFactory {
                 con(BETT_IN_DER_HUETTE_IM_WALD,
                         "beim Niederlegen",
                         "In das Bett legen",
+                        secs(15),
                         du(PARAGRAPH, "legst", "dich in das hölzere Bettgestell. "
                                 + "Gemütlich ist etwas anderes, aber nach den "
                                 + "vielen Schritten tut es sehr gut, sich "
@@ -141,8 +146,9 @@ public class SimpleConnectionCompFactory {
                 con(VOR_DER_HUETTE_IM_WALD,
                         "auf dem Weg",
                         "Zur Vorderseite der Hütte gehen",
+                        secs(30),
                         du("kehrst", "zurück zur Vorderseite der "
-                                + "Hütte", secs(15))
+                                + "Hütte", secs(30))
                                 .undWartest()
                                 .dann()
                 )
@@ -157,6 +163,7 @@ public class SimpleConnectionCompFactory {
                 con(HUETTE_IM_WALD,
                         "beim Aufstehen",
                         "Aufstehen",
+                        secs(10),
                         du(SENTENCE, "reckst", "dich noch einmal und stehst "
                                 + "wieder auf", secs(10))
                                 .dann()
@@ -171,6 +178,7 @@ public class SimpleConnectionCompFactory {
                 con(IM_WALD_BEIM_BRUNNEN,
                         "mitten im wilden Wald",
                         "Zum Brunnen gehen",
+                        mins(3),
                         du("suchst", "dir einen Weg "
                                         + "durch den wilden Wald zurück zum Brunnen",
                                 "durch den wilden Wald",
@@ -190,12 +198,14 @@ public class SimpleConnectionCompFactory {
                 con(IM_WALD_NAHE_DEM_SCHLOSS,
                         "auf dem Weg zum Schloss",
                         "In Richtung Schloss gehen",
+                        mins(5),
                         du("gehst", "weiter in Richtung Schloss", mins(5))
                 ),
 
                 con(VOR_DER_HUETTE_IM_WALD,
                         "in all dem Unkraut",
                         "Den überwachsenen Abzweig nehmen",
+                        mins(2),
                         du(SENTENCE, "fasst",
                                 "dir ein Herz und stapfst zwischen "
                                         + "dem Unkraut einen Weg entlang, "
@@ -232,6 +242,7 @@ public class SimpleConnectionCompFactory {
                 con(IM_WALD_BEIM_BRUNNEN,
                         "auf dem breiten Weg tiefer in den Wald",
                         "Auf dem Hauptweg tiefer in den Wald gehen",
+                        mins(3),
                         neuerSatz("Der breitere Weg führt zu einer alten "
                                 + "Linde, unter der ist ein Brunnen. "
                                 + "Hinter dem Brunnen endet der Weg und der "

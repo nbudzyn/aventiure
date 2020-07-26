@@ -47,10 +47,11 @@ public class SchlossVorhalleTischBeimFestConnectionComp extends AbstractSpatialC
                 SpatialConnection.con(SCHLOSS_VORHALLE,
                         "im Aufstehen",
                         "Vom Tisch aufstehen",
+                        mins(3),
                         SchlossVorhalleTischBeimFestConnectionComp::getDescTo_SchlossVorhalle));
     }
 
-    private static AbstractDescription getDescTo_SchlossVorhalle(
+    private static AbstractDescription<?> getDescTo_SchlossVorhalle(
             final Known newRoomKnown, final Lichtverhaeltnisse lichtverhaeltnisse) {
         return du("stehst", "vom Tisch auf", mins(3))
                 .undWartest()
