@@ -14,7 +14,6 @@ import static de.nb.aventiure2.data.world.gameobject.World.TAGESZEIT;
 import static de.nb.aventiure2.data.world.time.AvTimeSpan.noTime;
 import static de.nb.aventiure2.german.base.AllgDescription.neuerSatz;
 import static de.nb.aventiure2.german.base.StructuralElement.PARAGRAPH;
-import static de.nb.aventiure2.german.base.StructuralElement.SENTENCE;
 
 /**
  * Sorgt dafür, dass Sätze erzählt werden wie "Allmählich wird es Abend".
@@ -173,7 +172,7 @@ public class TageszeitReactionsComp
                                 noTime()),
                         neuerSatz(PARAGRAPH, "Unterdessen ist es schon wieder hell geworden",
                                 noTime()),
-                        neuerSatz(SENTENCE, "Die Sonne geht gerade auf",
+                        neuerSatz("Die Sonne geht gerade auf",
                                 noTime())
                 );
             default:

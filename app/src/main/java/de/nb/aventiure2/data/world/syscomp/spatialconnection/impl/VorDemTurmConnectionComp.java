@@ -71,8 +71,8 @@ public class VorDemTurmConnectionComp extends AbstractSpatialConnectionComp {
                                 "den langen Pfad wieder zurück, den Hügel hinab, bis "
                                         + "zum Waldweg", mins(20))
                                 .beendet(PARAGRAPH),
-                        du(SENTENCE, "gehst", "den gewundenen Pfad den Hügel hinab, "
-                                + "bis du wieder unten am Waldweg ankommst", mins(18))
+                        du(SENTENCE, "gehst", "den Hügel auf dem gewundenen Pfad wieder hinab, "
+                                + "bis du unten am Waldweg ankommst", mins(18))
                                 .komma()
                                 .undWartest()
                 ));

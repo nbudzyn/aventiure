@@ -50,7 +50,6 @@ import static de.nb.aventiure2.german.base.Numerus.SG;
 import static de.nb.aventiure2.german.base.Person.P1;
 import static de.nb.aventiure2.german.base.Person.P2;
 import static de.nb.aventiure2.german.base.StructuralElement.PARAGRAPH;
-import static de.nb.aventiure2.german.base.StructuralElement.SENTENCE;
 import static de.nb.aventiure2.german.praedikat.VerbSubjAkkPraep.NEHMEN_IN;
 import static de.nb.aventiure2.german.praedikat.VerbSubjObj.MITNEHMEN;
 import static de.nb.aventiure2.german.praedikat.VerbSubjObj.NEHMEN;
@@ -329,8 +328,7 @@ public class NehmenAction
                         .phorikKandidat(world.getDescription(gameObject, true), FROSCHPRINZ)
                         .komma()
                         .dann(),
-                neuerSatz(SENTENCE,
-                        "Dir wird ganz angst, aber was man "
+                neuerSatz("Dir wird ganz angst, aber was man "
                                 + "versprochen hat, das muss man auch halten! Du nimmst "
                                 + world.getDescription(gameObject, true).akk()
                                 + " in die Hände",

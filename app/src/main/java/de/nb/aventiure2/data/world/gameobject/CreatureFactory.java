@@ -130,12 +130,12 @@ class CreatureFactory {
         final RapunzelsZauberinStateComp stateComp = new RapunzelsZauberinStateComp(db);
         final AbstractDescriptionComp descriptionComp =
                 new SimpleDescriptionComp(RAPUNZELS_ZAUBERIN,
-                        np(F, "eine magere Frau mit krummer, bis zum Kinn "
+                        np(F, "eine hagere Frau mit krummer, bis zum Kinn "
                                         + "reichender Nase",
-                                "einer mageren Frau mit krummer, bis zum Kinn "
+                                "einer hageren Frau mit krummer, bis zum Kinn "
                                         + "reichender Nase"),
-                        np(F, "die magere Frau",
-                                "der mageren Frau"),
+                        np(F, "die hagere Frau",
+                                "der hageren Frau"),
                         np(F, "die Frau",
                                 "der Frau"));
         final LocationComp locationComp =

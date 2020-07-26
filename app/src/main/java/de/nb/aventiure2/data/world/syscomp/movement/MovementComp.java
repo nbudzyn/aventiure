@@ -182,8 +182,8 @@ public class MovementComp
                 //     benötigt, bis es das "Zentrum" der location erreicht hat, auf die Zeit
                 //     der eigentlichen Aktion aufgeschlagen werden? (Der SC wartet
                 //     also implizit, bis X herangekommen ist?)
-                // -- Oder später den Zustand prüfen (z.B. wenn der Spieler
-                //  vor der Zauberin fliehen möchte)?
+                //  -- Oder später den Zustand prüfen (z.B. wenn der Spieler
+                //   vor der Zauberin fliehen möchte)?
                 //  --- Sollte es dann einen Zusatztext in der Art "Du wartest, bis ...
                 //      herangekommen ist und..." geben?
                 //  - Oder sind nur manche Aktionen möglich? (nehmen, geben, ... gesperrt?)

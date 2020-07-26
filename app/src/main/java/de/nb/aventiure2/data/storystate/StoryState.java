@@ -138,6 +138,19 @@ public class StoryState {
     }
 
     /**
+     * Ob dieses Game Object zurzeit <i>Thema</i> ist (im Sinne von Thema - Rhema).
+     */
+    public boolean isThema(@NonNull final GameObjectId gameObjectId) {
+        if (gameObjectId.equals(phorikKandidatBezugsobjekt)) {
+            return true;
+        }
+
+        // STORY es gibt auch noch andere Fälle, wo das Game Object Thema sein könnte...
+
+        return false;
+    }
+
+    /**
      * Gibt das Personalpronomen zurück, mit dem ein
      * anaphorischer Bezug auf dieses
      * Game Object möglich ist.

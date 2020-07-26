@@ -16,7 +16,6 @@ import static de.nb.aventiure2.data.world.time.AvTimeSpan.noTime;
 import static de.nb.aventiure2.german.base.AllgDescription.neuerSatz;
 import static de.nb.aventiure2.german.base.DuDescription.du;
 import static de.nb.aventiure2.german.base.StructuralElement.PARAGRAPH;
-import static de.nb.aventiure2.german.base.StructuralElement.SENTENCE;
 
 /**
  * "Automatische" Reaktionen des Spielercharakters, z.B. darauf, dass Zeit vergeht.
@@ -66,7 +65,7 @@ public class ScAutomaticReactionsComp
                 neuerSatz(PARAGRAPH, "Allmählich regt sich wieder der Hunger",
                         noTime())
                         .undWartest(),
-                neuerSatz(SENTENCE, "Dir fällt auf, dass du Hunger hast",
+                neuerSatz("Dir fällt auf, dass du Hunger hast",
                         noTime())
                         .komma(),
                 du("empfindest", "wieder leichten Hunger",

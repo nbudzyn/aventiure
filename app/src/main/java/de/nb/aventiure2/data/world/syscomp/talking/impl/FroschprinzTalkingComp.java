@@ -314,7 +314,7 @@ public class FroschprinzTalkingComp extends AbstractTalkingComp {
     private AvTimeSpan froschHatNachBelohnungGefragt_AngeboteMachen() {
         world.loadSC().talkingComp().setTalkingTo(FROSCHPRINZ);
 
-        final AvTimeSpan timeSpan = n.add(neuerSatz(SENTENCE,
+        final AvTimeSpan timeSpan = n.add(neuerSatz(
                 "„Was du haben willst, lieber Frosch“, sagst du, „meine Kleider, "
                         + "Perlen oder Edelsteine?“", secs(5)));
 
