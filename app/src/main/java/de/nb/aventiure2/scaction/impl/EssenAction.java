@@ -7,7 +7,6 @@ import com.google.common.collect.ImmutableList;
 import java.util.Collection;
 
 import de.nb.aventiure2.data.database.AvDatabase;
-import de.nb.aventiure2.data.storystate.StoryState;
 import de.nb.aventiure2.data.world.gameobject.World;
 import de.nb.aventiure2.data.world.syscomp.feelings.Hunger;
 import de.nb.aventiure2.data.world.syscomp.location.ILocatableGO;
@@ -49,10 +48,10 @@ public class EssenAction extends AbstractScAction {
     public static Collection<EssenAction> buildActions(
             final AvDatabase db,
             final World world,
-            final StoryState initialStoryState, final ILocationGO room) {
+            final ILocationGO room) {
         final ImmutableList.Builder<EssenAction> res = ImmutableList.builder();
         if (essenMoeglich(db, world, room)) {
-            res.add(new EssenAction(db, world, initialStoryState, room));
+            res.add(new EssenAction(db, world, room));
         }
 
         return res.build();
@@ -99,9 +98,8 @@ public class EssenAction extends AbstractScAction {
 
     private EssenAction(final AvDatabase db,
                         final World world,
-                        final StoryState initialStoryState,
                         final ILocationGO room) {
-        super(db, world, initialStoryState);
+        super(db, world);
         this.room = room;
     }
 
@@ -294,7 +292,8 @@ public class EssenAction extends AbstractScAction {
     private AvTimeSpan narrateFelsenbirnenSatt() {
         if (db.counterDao().incAndGet(COUNTER_FELSENBIRNEN) == 1) {
             return n.add(
-                    du("nimmst", "eine von den Früchten und beißt hinein. "
+                    du(SENTENCE, "nimmst",
+                            "eine von den Früchten und beißt hinein. "
                                     + "Sie ist überraschend süß und saftig. Du isst die Frucht auf",
                             mins(3))
                             .undWartest()

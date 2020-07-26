@@ -113,13 +113,16 @@ public class FroschprinzReactionsComp
 
         if (stateComp.hasState(ERWARTET_VON_SC_EINLOESUNG_SEINES_VERSPRECHENS)
                 && !from.is(SCHLOSS_VORHALLE_AM_TISCH_BEIM_FEST)) {
-            return n.add(
+            return n.addAlt(
                     neuerSatz("„Warte, warte“, ruft dir der Frosch noch nach, „nimm mich mit, "
                             + "ich kann nicht so "
                             + "laufen wie du.“ Aber was hilft ihm, dass er "
                             + "sein „Quak, quak!“ so laut schreit, "
                             + "als er kann, du hörst nicht darauf", noTime())
-                            .undWartest());
+                            .undWartest(),
+                    neuerSatz("„Halt!“, ruft der Frosch dir nach, „nimm mich mit!“",
+                            noTime())
+            );
         }
         // STORY Der Frosch ruft bereits bei "schlägst dich in die Wildnis hinter dem Brunnen",
         //  nicht erst nach "wie zu klein geratene Äpfel"

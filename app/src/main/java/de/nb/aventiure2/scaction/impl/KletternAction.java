@@ -7,7 +7,6 @@ import com.google.common.collect.ImmutableList;
 import java.util.Collection;
 
 import de.nb.aventiure2.data.database.AvDatabase;
-import de.nb.aventiure2.data.storystate.StoryState;
 import de.nb.aventiure2.data.world.gameobject.World;
 import de.nb.aventiure2.data.world.syscomp.memory.Action;
 import de.nb.aventiure2.data.world.syscomp.storingplace.ILocationGO;
@@ -34,11 +33,10 @@ public class KletternAction extends AbstractScAction {
 
     public static Collection<KletternAction> buildActions(
             final AvDatabase db,
-            final World world,
-            final StoryState initialStoryState, final ILocationGO room) {
+            final World world, final ILocationGO room) {
         final ImmutableList.Builder<KletternAction> res = ImmutableList.builder();
         if (room.is(HINTER_DER_HUETTE)) {
-            res.add(new KletternAction(db, world, initialStoryState, room));
+            res.add(new KletternAction(db, world, room));
         }
 
         return res.build();
@@ -49,9 +47,8 @@ public class KletternAction extends AbstractScAction {
      */
     private KletternAction(final AvDatabase db,
                            final World world,
-                           final StoryState initialStoryState,
                            final ILocationGO room) {
-        super(db, world, initialStoryState);
+        super(db, world);
         this.room = room;
     }
 

@@ -36,6 +36,9 @@ import static java.util.Arrays.asList;
 public abstract class StoryStateDao {
     private NarrationSource narrationSourceJustInCase = NarrationSource.INITIALIZATION;
 
+    @Nullable
+    private StoryState storyStateCached;
+
     public void setNarrationSourceJustInCase(final NarrationSource narrationSourceJustInCase) {
         this.narrationSourceJustInCase = narrationSourceJustInCase;
     }
@@ -233,6 +236,7 @@ public abstract class StoryStateDao {
         checkArgument(lastNarrationSource != NarrationSource.INITIALIZATION);
         requireStoryState();
         setLastNarrationSourceInternal(lastNarrationSource);
+        requireStoryState(); // update cache
     }
 
     @Query("UPDATE StoryState SET lastNarrationSource = :lastNarrationSource")
@@ -250,11 +254,22 @@ public abstract class StoryStateDao {
         insert(res);
     }
 
+    private void delete(final StoryState storyState) {
+        storyStateCached = null;
+        deleteInternal(storyState);
+    }
+
     @Delete
-    abstract void delete(StoryState storyState);
+    abstract void deleteInternal(StoryState storyState);
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    public abstract void insert(StoryState playerLocation);
+    public void insert(final StoryState storyState) {
+        storyStateCached = storyState;
+        insertInternal(storyState);
+    }
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    abstract void insertInternal(StoryState storyState);
 
     /**
      * Wählt einen {@link StoryAddition} aus den Alternativen -
@@ -382,6 +397,14 @@ public abstract class StoryStateDao {
         return storyState;
     }
 
+    public StoryState getStoryState() {
+        if (storyStateCached != null) {
+            return storyStateCached;
+        }
+
+        return loadStoryState();
+    }
+
     @Query("SELECT * from StoryState")
-    public abstract StoryState getStoryState();
+    abstract StoryState loadStoryState();
 }

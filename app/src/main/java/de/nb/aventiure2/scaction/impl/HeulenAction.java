@@ -8,7 +8,6 @@ import java.util.Collection;
 import java.util.List;
 
 import de.nb.aventiure2.data.database.AvDatabase;
-import de.nb.aventiure2.data.storystate.StoryState;
 import de.nb.aventiure2.data.world.gameobject.World;
 import de.nb.aventiure2.data.world.gameobject.player.SpielerCharakter;
 import de.nb.aventiure2.data.world.syscomp.alive.ILivingBeingGO;
@@ -41,7 +40,6 @@ public class HeulenAction extends AbstractScAction {
     public static Collection<HeulenAction> buildActions(
             final AvDatabase db,
             final World world,
-            final StoryState initialStoryState,
             final SpielerCharakter sc, final List<? extends ILivingBeingGO> creaturesInRoom) {
         final ImmutableList.Builder<HeulenAction> res = ImmutableList.builder();
         // STORY Verhindern, dass der Benutzer nicht mehr untröstlich ist, wenn er z.B. erst
@@ -49,7 +47,7 @@ public class HeulenAction extends AbstractScAction {
         //  seine goldene Kugel erinnert o.Ä.
 
         if (sc.feelingsComp().hasMood(UNTROESTLICH)) {
-            res.add(new HeulenAction(db, world, initialStoryState, creaturesInRoom));
+            res.add(new HeulenAction(db, world, creaturesInRoom));
         }
 
         return res.build();
@@ -57,9 +55,8 @@ public class HeulenAction extends AbstractScAction {
 
     private HeulenAction(final AvDatabase db,
                          final World world,
-                         final StoryState initialStoryState,
                          final List<? extends ILivingBeingGO> creaturesInRoom) {
-        super(db, world, initialStoryState);
+        super(db, world);
         this.creaturesInRoom = creaturesInRoom;
     }
 
@@ -94,7 +91,7 @@ public class HeulenAction extends AbstractScAction {
         sc.memoryComp().setLastAction(buildMemorizedAction());
 
         final ImmutableList.Builder<AbstractDescription<?>> alt = ImmutableList.builder();
-        if (initialStoryState.allowsAdditionalDuSatzreihengliedOhneSubjekt()) {
+        if (n.requireStoryState().allowsAdditionalDuSatzreihengliedOhneSubjekt()) {
             alt.add(satzanschluss("und weinst", mins(1))
                     .undWartest());
             alt.add(satzanschluss(", so viele Tränen haben sich angestaut", mins(1)));
@@ -132,7 +129,7 @@ public class HeulenAction extends AbstractScAction {
         final ImmutableList.Builder<AbstractDescription<?>> alt = ImmutableList.builder();
         alt.add(neuerSatz("Dich überkommt ein Schluchzen", mins(1)));
 
-        if (initialStoryState.dann()) {
+        if (n.requireStoryState().dann()) {
             alt.add(neuerSatz("Dann bricht die Trauer aus dir heraus und du heulst los",
                     mins(1)));
         }

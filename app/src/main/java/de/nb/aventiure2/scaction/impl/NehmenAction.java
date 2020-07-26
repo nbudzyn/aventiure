@@ -9,7 +9,6 @@ import java.util.Collection;
 import javax.annotation.ParametersAreNonnullByDefault;
 
 import de.nb.aventiure2.data.database.AvDatabase;
-import de.nb.aventiure2.data.storystate.StoryState;
 import de.nb.aventiure2.data.world.base.GameObjectId;
 import de.nb.aventiure2.data.world.gameobject.World;
 import de.nb.aventiure2.data.world.syscomp.alive.ILivingBeingGO;
@@ -73,11 +72,10 @@ public class NehmenAction
     public static <GO extends IDescribableGO & ILocatableGO>
     Collection<NehmenAction> buildObjectActions(final AvDatabase db,
                                                 final World world,
-                                                final StoryState initialStoryState,
                                                 final GO object) {
         final ImmutableList.Builder<NehmenAction> res = ImmutableList.builder();
 
-        res.add(new NehmenAction<>(db, world, initialStoryState,
+        res.add(new NehmenAction<>(db, world,
                 object, EINE_TASCHE_DES_SPIELER_CHARAKTERS));
 
         return res.build();
@@ -87,10 +85,9 @@ public class NehmenAction
     Collection<NehmenAction> buildCreatureActions(
             final AvDatabase db,
             final World world,
-            final StoryState initialStoryState,
             final LIVGO creature) {
         if (creature.is(FROSCHPRINZ)) {
-            return buildFroschprinzActions(db, world, initialStoryState, creature);
+            return buildFroschprinzActions(db, world, creature);
         }
         return ImmutableList.of();
     }
@@ -99,19 +96,18 @@ public class NehmenAction
     Collection<NehmenAction> buildFroschprinzActions(
             final AvDatabase db,
             final World world,
-            final StoryState initialStoryState,
             final LIVGO froschprinz) {
         if (((IHasStateGO<FroschprinzState>) froschprinz).stateComp()
                 .hasState(ERWARTET_VON_SC_EINLOESUNG_SEINES_VERSPRECHENS)) {
             return ImmutableList.of(
-                    new NehmenAction<>(db, world, initialStoryState,
+                    new NehmenAction<>(db, world,
                             froschprinz, EINE_TASCHE_DES_SPIELER_CHARAKTERS));
         }
 
         if (((IHasStateGO<FroschprinzState>) froschprinz).stateComp()
                 .hasState(HAT_HOCHHEBEN_GEFORDERT)) {
             return ImmutableList.of(
-                    new NehmenAction<>(db, world, initialStoryState,
+                    new NehmenAction<>(db, world,
                             froschprinz, HAENDE_DES_SPIELER_CHARAKTERS));
         }
 
@@ -126,10 +122,9 @@ public class NehmenAction
      *                         in die Hände o.Ä.
      */
     private NehmenAction(final AvDatabase db, final World world,
-                         final StoryState initialStoryState,
                          @NonNull final GO gameObject,
                          @NonNull final GameObjectId targetLocationId) {
-        this(db, world, initialStoryState, gameObject, (TARGET_LOC) world.load(targetLocationId));
+        this(db, world, gameObject, (TARGET_LOC) world.load(targetLocationId));
     }
 
     /**
@@ -140,9 +135,8 @@ public class NehmenAction
      *                       in die Hände o.Ä.
      */
     private NehmenAction(final AvDatabase db, final World world,
-                         final StoryState initialStoryState,
                          @NonNull final GO gameObject, @NonNull final TARGET_LOC targetLocation) {
-        super(db, world, initialStoryState);
+        super(db, world);
 
         checkArgument(gameObject.locationComp().getLocation() != null);
         checkArgument(targetLocation.locationComp().hasLocation(SPIELER_CHARAKTER),
@@ -303,7 +297,7 @@ public class NehmenAction
 
     private AvTimeSpan narrateFroschprinz_HatHochhebenGefordert() {
         if (isDefinitivDiskontinuitaet()) {
-            if (initialStoryState.dann()) {
+            if (n.requireStoryState().dann()) {
                 final SubstantivischePhrase froschDescOderAnapher =
                         getAnaphPersPronWennMglSonstShortDescription(FROSCHPRINZ);
 
@@ -416,7 +410,7 @@ public class NehmenAction
 
     private AvTimeSpan narrateObjectDiskontinuitaet(
             final PraedikatMitEinerObjektleerstelle nehmenPraedikat) {
-        if (initialStoryState.dann()) {
+        if (n.requireStoryState().dann()) {
             final Nominalphrase objectDesc = world.getDescription(gameObject);
             return n.add(neuerSatz(StructuralElement.PARAGRAPH,
                     "Dann nimmst du " + objectDesc.akk() +
@@ -426,7 +420,7 @@ public class NehmenAction
                     .phorikKandidat(objectDesc, gameObject.getId()));
         }
 
-        if (initialStoryState.allowsAdditionalDuSatzreihengliedOhneSubjekt()) {
+        if (n.requireStoryState().allowsAdditionalDuSatzreihengliedOhneSubjekt()) {
             return n.add(satzanschluss(
                     ", nur um "
                             + nehmenPraedikat

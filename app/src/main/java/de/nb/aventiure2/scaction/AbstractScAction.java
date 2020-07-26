@@ -5,7 +5,6 @@ import androidx.annotation.Nullable;
 
 import de.nb.aventiure2.data.database.AvDatabase;
 import de.nb.aventiure2.data.storystate.IPlayerAction;
-import de.nb.aventiure2.data.storystate.StoryState;
 import de.nb.aventiure2.data.storystate.StoryStateDao;
 import de.nb.aventiure2.data.world.base.GameObjectId;
 import de.nb.aventiure2.data.world.gameobject.World;
@@ -33,21 +32,13 @@ public abstract class AbstractScAction implements IPlayerAction {
 
     protected final SpielerCharakter sc;
 
-    /**
-     * The {@link StoryState} at the beginning of the action.
-     */
-    protected final StoryState initialStoryState;
-
-    protected AbstractScAction(@NonNull final AvDatabase db, final World world,
-                               final StoryState initialStoryState) {
+    protected AbstractScAction(@NonNull final AvDatabase db, final World world) {
         this.db = db;
         this.world = world;
 
         n = db.storyStateDao();
 
         sc = world.loadSC();
-
-        this.initialStoryState = initialStoryState;
     }
 
     /**

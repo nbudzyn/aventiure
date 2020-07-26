@@ -190,7 +190,7 @@ public class SimpleConnectionCompFactory {
                 con(IM_WALD_NAHE_DEM_SCHLOSS,
                         "auf dem Weg zum Schloss",
                         "In Richtung Schloss gehen",
-                        neuerSatz("Von dort gehst du weiter in Richtung Schloss", mins(5))
+                        du("gehst", "weiter in Richtung Schloss", mins(5))
                 ),
 
                 con(VOR_DER_HUETTE_IM_WALD,

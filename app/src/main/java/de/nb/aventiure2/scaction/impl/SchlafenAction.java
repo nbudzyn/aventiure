@@ -8,7 +8,6 @@ import com.google.common.collect.ImmutableList;
 import java.util.Collection;
 
 import de.nb.aventiure2.data.database.AvDatabase;
-import de.nb.aventiure2.data.storystate.StoryState;
 import de.nb.aventiure2.data.world.base.IGameObject;
 import de.nb.aventiure2.data.world.gameobject.World;
 import de.nb.aventiure2.data.world.syscomp.memory.Action;
@@ -36,21 +35,19 @@ public class SchlafenAction extends AbstractScAction {
     public static Collection<SchlafenAction> buildActions(
             final AvDatabase db,
             final World world,
-            final StoryState initialStoryState,
             @Nullable final IGameObject room) {
         final ImmutableList.Builder<SchlafenAction> res = ImmutableList.builder();
         if (room != null && room.is(BETT_IN_DER_HUETTE_IM_WALD)) {
             // STORY Schlafen könnte man auch im Schaukelstuhl
-            res.add(new SchlafenAction(db, world, initialStoryState));
+            res.add(new SchlafenAction(db, world));
         }
 
         return res.build();
     }
 
     private SchlafenAction(final AvDatabase db,
-                           final World world,
-                           final StoryState initialStoryState) {
-        super(db, world, initialStoryState);
+                           final World world) {
+        super(db, world);
     }
 
     @Override

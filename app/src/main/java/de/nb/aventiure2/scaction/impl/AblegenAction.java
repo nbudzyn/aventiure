@@ -10,7 +10,6 @@ import org.jetbrains.annotations.Contract;
 import java.util.Collection;
 
 import de.nb.aventiure2.data.database.AvDatabase;
-import de.nb.aventiure2.data.storystate.StoryState;
 import de.nb.aventiure2.data.world.gameobject.World;
 import de.nb.aventiure2.data.world.syscomp.alive.ILivingBeingGO;
 import de.nb.aventiure2.data.world.syscomp.description.IDescribableGO;
@@ -79,7 +78,6 @@ public class AblegenAction
     public static <GO extends IDescribableGO & ILocatableGO>
     Collection<AblegenAction<GO>> buildActions(
             final AvDatabase db, final World world,
-            final StoryState initialStoryState,
             final GO gameObject,
             final ILocationGO location) {
         if ((gameObject instanceof ILivingBeingGO) && !gameObject.is(FROSCHPRINZ)) {
@@ -88,14 +86,14 @@ public class AblegenAction
 
         final ImmutableList.Builder<AblegenAction<GO>> res = ImmutableList.builder();
         res.add(new AblegenAction<>(
-                db, world, initialStoryState, gameObject, location,
+                db, world, gameObject, location,
                 true));
 
         for (final ILocationGO innerLocation :
                 world.loadDescribableNonLivingLocationRecursiveInventory(location)) {
             // Z.B. "Auf dem Tisch absetzen"
             res.add(new AblegenAction<>(
-                    db, world, initialStoryState, gameObject, innerLocation,
+                    db, world, gameObject, innerLocation,
                     false));
         }
 
@@ -104,11 +102,10 @@ public class AblegenAction
 
     private AblegenAction(final AvDatabase db,
                           final World world,
-                          final StoryState initialStoryState,
                           final @NonNull GO gameObject,
                           final ILocationGO location,
                           final boolean detailLocationNecessaryInDescription) {
-        super(db, world, initialStoryState);
+        super(db, world);
         this.location = location;
         this.gameObject = gameObject;
         this.detailLocationNecessaryInDescription = detailLocationNecessaryInDescription;
@@ -235,8 +232,8 @@ public class AblegenAction
 
     private AvTimeSpan narrateFroschprinz_HatHochhebenGefordert() {
         if (isDefinitivDiskontinuitaet() &&
-                initialStoryState.allowsAdditionalDuSatzreihengliedOhneSubjekt() &&
-                initialStoryState.dann()) {
+                n.requireStoryState().allowsAdditionalDuSatzreihengliedOhneSubjekt() &&
+                n.requireStoryState().dann()) {
 
             final ImmutableList.Builder<AbstractDescription<?>> alt =
                     ImmutableList.builder();
@@ -286,9 +283,9 @@ public class AblegenAction
     private AvTimeSpan narrateObject() {
         @Nullable final AdverbialeAngabe wohinDetail = getWohinDetail();
 
-        if (initialStoryState.allowsAdditionalDuSatzreihengliedOhneSubjekt()) {
+        if (n.requireStoryState().allowsAdditionalDuSatzreihengliedOhneSubjekt()) {
             @Nullable final Personalpronomen gameObjektPersPron =
-                    initialStoryState.getAnaphPersPronWennMgl(gameObject);
+                    n.requireStoryState().getAnaphPersPronWennMgl(gameObject);
 
             if (gameObjektPersPron != null) {
                 if (isDefinitivDiskontinuitaet()) {

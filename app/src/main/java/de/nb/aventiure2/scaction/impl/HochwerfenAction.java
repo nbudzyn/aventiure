@@ -9,7 +9,6 @@ import java.util.Collection;
 import javax.annotation.ParametersAreNonnullByDefault;
 
 import de.nb.aventiure2.data.database.AvDatabase;
-import de.nb.aventiure2.data.storystate.StoryState;
 import de.nb.aventiure2.data.world.gameobject.World;
 import de.nb.aventiure2.data.world.syscomp.alive.ILivingBeingGO;
 import de.nb.aventiure2.data.world.syscomp.description.IDescribableGO;
@@ -59,7 +58,7 @@ public class HochwerfenAction<OBJ extends IDescribableGO & ILocatableGO>
 
     public static <OBJ extends IDescribableGO & ILocatableGO>
     Collection<HochwerfenAction> buildActions(
-            final AvDatabase db, final World world, final StoryState initialStoryState,
+            final AvDatabase db, final World world,
             final ILocationGO room, @NonNull final OBJ gameObject) {
         if (gameObject instanceof ILivingBeingGO) {
             return ImmutableList.of();
@@ -67,15 +66,14 @@ public class HochwerfenAction<OBJ extends IDescribableGO & ILocatableGO>
 
         // STORY Nicht jedes Object lässt sich hochwerfen...
         return ImmutableList
-                .of(new HochwerfenAction<>(db, world, initialStoryState, gameObject, room));
+                .of(new HochwerfenAction<>(db, world, gameObject, room));
     }
 
     private HochwerfenAction(final AvDatabase db,
                              final World world,
-                             final StoryState initialStoryState,
                              @NonNull final OBJ object,
                              final ILocationGO room) {
-        super(db, world, initialStoryState);
+        super(db, world);
         this.object = object;
         this.room = room;
     }
@@ -119,7 +117,7 @@ public class HochwerfenAction<OBJ extends IDescribableGO & ILocatableGO>
         final SubstantivischePhrase objectDesc =
                 getAnaphPersPronWennMglSonstDescription(object, false);
 
-        if (initialStoryState.allowsAdditionalDuSatzreihengliedOhneSubjekt()) {
+        if (n.requireStoryState().allowsAdditionalDuSatzreihengliedOhneSubjekt()) {
             return narrateAndDoHochwerfenAuffangen(
                     satzanschluss(", wirfst " +
                             objectDesc.akk() +
@@ -225,7 +223,7 @@ public class HochwerfenAction<OBJ extends IDescribableGO & ILocatableGO>
                         SeinUtil.istSind(objectDesc.getNumerusGenus()) +
                         " " +
                         objectDesc.persPron().akk(), "nur ein einziges Mal", secs(10))
-                        .dann(!initialStoryState.dann())
+                        .dann(!n.requireStoryState().dann())
                         .beendet(PARAGRAPH));
 
         return timeSpan.plus(

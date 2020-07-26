@@ -128,4 +128,11 @@ public class SpatialConnection {
         return SCMoveDescriptionProvider
                 .getSCMoveDescription(newRoomKnown, lichtverhaeltnisseInNewRoom);
     }
+
+    @Override
+    public String toString() {
+        return "SpatialConnection{" +
+                "actionName='" + actionName + '\'' +
+                '}';
+    }
 }

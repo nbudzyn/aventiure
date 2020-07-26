@@ -8,7 +8,6 @@ import java.util.Collection;
 import java.util.List;
 
 import de.nb.aventiure2.data.database.AvDatabase;
-import de.nb.aventiure2.data.storystate.StoryState;
 import de.nb.aventiure2.data.world.gameobject.World;
 import de.nb.aventiure2.data.world.syscomp.alive.ILivingBeingGO;
 import de.nb.aventiure2.data.world.syscomp.description.IDescribableGO;
@@ -42,12 +41,12 @@ public class RedenAction<TALKER extends IDescribableGO & ITalkerGO>
     public static <TALKER extends IDescribableGO & ITalkerGO>
     Collection<RedenAction<TALKER>> buildActions(
             final AvDatabase db, final World world,
-            final StoryState initialStoryState, final ILocationGO room,
+            final ILocationGO room,
             final TALKER talker) {
         final List<SCTalkAction> talkSteps =
                 talker.talkingComp().getSCConversationSteps();
 
-        return buildActions(db, world, initialStoryState,
+        return buildActions(db, world,
                 talker,
                 talkSteps);
     }
@@ -55,7 +54,6 @@ public class RedenAction<TALKER extends IDescribableGO & ITalkerGO>
     private static <TALKER extends IDescribableGO & ITalkerGO>
     Collection<RedenAction<TALKER>> buildActions(final AvDatabase db,
                                                  final World world,
-                                                 final StoryState initialStoryState,
                                                  final TALKER talker,
                                                  final List<SCTalkAction> talkSteps) {
         final ImmutableList.Builder<RedenAction<TALKER>> res =
@@ -63,7 +61,7 @@ public class RedenAction<TALKER extends IDescribableGO & ITalkerGO>
 
         for (final SCTalkAction talkStep : talkSteps) {
             if (stepTypeFits(world, talker, talkStep.getStepType())) {
-                res.add(buildAction(db, world, initialStoryState,
+                res.add(buildAction(db, world,
                         talker,
                         // "Mit ... reden" /  "Den ... ignorieren" / "Das Gespräch beenden"
                         talkStep));
@@ -98,13 +96,12 @@ public class RedenAction<TALKER extends IDescribableGO & ITalkerGO>
     private static <TALKER extends IDescribableGO & ITalkerGO>
     RedenAction<TALKER> buildAction(final AvDatabase db,
                                     final World world,
-                                    final StoryState initialStoryState,
                                     final TALKER talker,
                                     final SCTalkAction talkStep) {
         final PraedikatOhneLeerstellen praedikatOhneLeerstellen =
                 fuelleGgfPraedikatLeerstelleMitCreature(world, talkStep.getName(), talker);
 
-        return buildAction(db, world, initialStoryState, talker,
+        return buildAction(db, world, talker,
                 talkStep,
                 praedikatOhneLeerstellen);
     }
@@ -136,11 +133,10 @@ public class RedenAction<TALKER extends IDescribableGO & ITalkerGO>
     private static <TALKER extends IDescribableGO & ITalkerGO>
     RedenAction<TALKER> buildAction(final AvDatabase db,
                                     final World world,
-                                    final StoryState initialStoryState,
                                     final TALKER talker,
                                     final SCTalkAction talkStep,
                                     final PraedikatOhneLeerstellen praedikatOhneLeerstellen) {
-        return new RedenAction<>(db, world, initialStoryState, talker,
+        return new RedenAction<>(db, world, talker,
                 talkStep,
                 // "Dem Frosch Angebote machen"
                 // "Das Angebot von *mir* weisen"
@@ -149,11 +145,10 @@ public class RedenAction<TALKER extends IDescribableGO & ITalkerGO>
 
     private RedenAction(final AvDatabase db,
                         final World world,
-                        final StoryState initialStoryState,
                         @NonNull final TALKER talker,
                         final SCTalkAction conversationStep,
                         @NonNull final String name) {
-        super(db, world, initialStoryState);
+        super(db, world);
         this.talker = talker;
         this.conversationStep = conversationStep;
         this.name = name;

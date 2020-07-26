@@ -12,7 +12,6 @@ import org.jetbrains.annotations.Contract;
 import java.util.List;
 
 import de.nb.aventiure2.data.database.AvDatabase;
-import de.nb.aventiure2.data.storystate.StoryState;
 import de.nb.aventiure2.data.world.base.GameObject;
 import de.nb.aventiure2.data.world.base.IGameObject;
 import de.nb.aventiure2.data.world.gameobject.World;
@@ -75,7 +74,6 @@ public class BewegenAction<R extends ISpatiallyConnectedGO & ILocationGO,
     ImmutableList<AbstractScAction> buildActions(
             final AvDatabase db,
             final World world,
-            final StoryState currentStoryState,
             @NonNull final R room) {
         final ImmutableList.Builder<AbstractScAction> res = builder();
 
@@ -111,7 +109,7 @@ public class BewegenAction<R extends ISpatiallyConnectedGO & ILocationGO,
         final NumberOfWays numberOfWays = NumberOfWays.get(spatialConnections.size());
 
         for (final SpatialConnection spatialConnection : spatialConnections) {
-            res.add(new BewegenAction<>(db, world, currentStoryState, room,
+            res.add(new BewegenAction<>(db, world, room,
                     spatialConnection, numberOfWays));
         }
         return res.build();
@@ -122,11 +120,10 @@ public class BewegenAction<R extends ISpatiallyConnectedGO & ILocationGO,
      */
     private BewegenAction(final AvDatabase db,
                           final World world,
-                          final StoryState initialStoryState,
                           @NonNull final R oldRoom,
                           @NonNull final SpatialConnection spatialConnection,
                           final NumberOfWays numberOfWays) {
-        super(db, world, initialStoryState);
+        super(db, world);
         this.numberOfWays = numberOfWays;
         this.oldRoom = oldRoom;
         this.spatialConnection = spatialConnection;
@@ -383,11 +380,11 @@ public class BewegenAction<R extends ISpatiallyConnectedGO & ILocationGO,
     }
 
     private AvTimeSpan narrateRoomOnly(@NonNull final ILocationGO to) {
-        final AbstractDescription description = getNormalDescription(initialStoryState,
+        final AbstractDescription description = getNormalDescription(
                 to.storingPlaceComp().getLichtverhaeltnisse());
 
         if (description instanceof DuDescription &&
-                initialStoryState.allowsAdditionalDuSatzreihengliedOhneSubjekt() &&
+                n.requireStoryState().allowsAdditionalDuSatzreihengliedOhneSubjekt() &&
                 isDefinitivDiskontinuitaet()) {
             return n.add(
                     satzanschluss(", besinnst dich aber und "
@@ -399,7 +396,7 @@ public class BewegenAction<R extends ISpatiallyConnectedGO & ILocationGO,
         }
 
         if (description.getStartsNew() == WORD &&
-                initialStoryState.allowsAdditionalDuSatzreihengliedOhneSubjekt() &&
+                n.requireStoryState().allowsAdditionalDuSatzreihengliedOhneSubjekt() &&
                 description instanceof DuDescription) {
             return n.add(description);
         }
@@ -439,8 +436,8 @@ public class BewegenAction<R extends ISpatiallyConnectedGO & ILocationGO,
         }
 
         if (sc.memoryComp().getLastAction().is(BEWEGEN)) {
-            if (initialStoryState.getEndsThis() == StructuralElement.WORD &&
-                    initialStoryState.dann()) {
+            if (n.requireStoryState().getEndsThis() == StructuralElement.WORD &&
+                    n.requireStoryState().dann()) {
                 // "Du stehst wieder vor dem Schloss; dann gehst du wieder hinein in das Schloss."
                 final String satzEvtlMitDann = description
                         .getDescriptionHauptsatzMitKonjunktionaladverbWennNoetig(
@@ -458,7 +455,7 @@ public class BewegenAction<R extends ISpatiallyConnectedGO & ILocationGO,
                 return n.add(description);
             }
         } else {
-            if (initialStoryState.dann()) {
+            if (n.requireStoryState().dann()) {
                 return n.add(
                         neuerSatz(PARAGRAPH, description
                                         .getDescriptionHauptsatzMitKonjunktionaladverbWennNoetig("danach"),
@@ -472,8 +469,7 @@ public class BewegenAction<R extends ISpatiallyConnectedGO & ILocationGO,
         }
     }
 
-    private AbstractDescription getNormalDescription(final StoryState currentStoryState,
-                                                     final Lichtverhaeltnisse
+    private AbstractDescription getNormalDescription(final Lichtverhaeltnisse
                                                              lichtverhaeltnisseInNewRoom) {
         final Known newRoomKnown = sc.memoryComp().getKnown(spatialConnection.getTo());
 
@@ -494,7 +490,7 @@ public class BewegenAction<R extends ISpatiallyConnectedGO & ILocationGO,
             if (numberOfWays == ONLY_WAY) {
                 if (sc.feelingsComp().hasMood(Mood.VOLLER_FREUDE) &&
                         lichtverhaeltnisseInNewRoom == HELL &&
-                        currentStoryState.allowsAdditionalDuSatzreihengliedOhneSubjekt() &&
+                        n.requireStoryState().allowsAdditionalDuSatzreihengliedOhneSubjekt() &&
                         sc.memoryComp().getLastAction().is(Action.Type.NEHMEN)) {
                     return du("springst", "damit fort", "damit",
                             standardDescription.getTimeElapsed().times(0.8))
@@ -513,7 +509,7 @@ public class BewegenAction<R extends ISpatiallyConnectedGO & ILocationGO,
                     sc.feelingsComp().hasMood(Mood.VOLLER_FREUDE) &&
                     lichtverhaeltnisseInNewRoom ==
                             HELL &&
-                    currentStoryState.allowsAdditionalDuSatzreihengliedOhneSubjekt()) {
+                    n.requireStoryState().allowsAdditionalDuSatzreihengliedOhneSubjekt()) {
                 return du("eilst", "weiter", standardDescription.getTimeElapsed().times(0.8))
                         .undWartest();
             }
