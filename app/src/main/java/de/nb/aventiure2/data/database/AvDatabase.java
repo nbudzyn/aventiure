@@ -17,11 +17,11 @@ import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-import de.nb.aventiure2.data.storystate.AvStoryStateConverters;
+import de.nb.aventiure2.data.storystate.NarrationSourceConverters;
 import de.nb.aventiure2.data.storystate.NumerusGenusConverters;
 import de.nb.aventiure2.data.storystate.StoryState;
-import de.nb.aventiure2.data.storystate.StoryStateBuilder;
 import de.nb.aventiure2.data.storystate.StoryStateDao;
+import de.nb.aventiure2.data.storystate.StructuralElementConverters;
 import de.nb.aventiure2.data.world.base.GameObjectIdConverters;
 import de.nb.aventiure2.data.world.counter.Counter;
 import de.nb.aventiure2.data.world.counter.CounterDao;
@@ -52,7 +52,6 @@ import de.nb.aventiure2.data.world.time.AvNowDao;
 import de.nb.aventiure2.data.world.time.AvTimeSpanConverters;
 import de.nb.aventiure2.german.base.StructuralElement;
 
-import static de.nb.aventiure2.data.storystate.StoryStateBuilder.t;
 import static de.nb.aventiure2.data.world.gameobject.World.GOLDENE_KUGEL;
 import static de.nb.aventiure2.data.world.time.AvTime.oClock;
 
@@ -73,7 +72,8 @@ import static de.nb.aventiure2.data.world.time.AvTime.oClock;
         NumerusGenusConverters.class,
         AvDateTimeConverters.class,
         AvTimeSpanConverters.class,
-        AvStoryStateConverters.class,
+        StructuralElementConverters.class,
+        NarrationSourceConverters.class,
         ActionTypeConverters.class,
         KnownConverters.class,
         PauseForSCActionConverters.class,
@@ -134,7 +134,7 @@ public abstract class AvDatabase extends RoomDatabase {
                         world.saveAllInitialState();
 
                         // Save initial state for all game objects
-                        INSTANCE.storyStateDao().add(buildInitialStoryState(world));
+                        INSTANCE.storyStateDao().insert(buildInitialStoryState(world));
                     }));
         }
     };
@@ -157,19 +157,22 @@ public abstract class AvDatabase extends RoomDatabase {
     /**
      * @return Something similar to <code>Du befindest dich in einem Schloss. Hier liegt eine goldene Kugel.</code>
      */
-    private static StoryStateBuilder buildInitialStoryState(final World world) {
-        final StringBuilder res = new StringBuilder();
+    private static StoryState buildInitialStoryState(final World world) {
+        final StringBuilder text = new StringBuilder();
 
-        res.append(
+        text.append(
                 "Diese Geschichte spielt in den alten Zeiten, wo das Wünschen noch geholfen hat. "
                         +
                         "Sie beginnt im königlichen Schloss, in einer prächtigen "
                         + "Vorhalle, Marmor und Brokat überall.\n");
         final List<IDescribableGO> objectsInRoom = ImmutableList.of(
                 (IDescribableGO) world.load(GOLDENE_KUGEL));
-        res.append(buildObjectsInRoomDescription(objectsInRoom));
+        text.append(buildObjectsInRoomDescription(objectsInRoom));
 
-        return t(StructuralElement.WORD, res.toString());
+        return new StoryState(StoryState.NarrationSource.INITIALIZATION,
+                StructuralElement.PARAGRAPH,
+                text.toString(), false, false, false,
+                null);
     }
 
     /**

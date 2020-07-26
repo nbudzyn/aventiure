@@ -297,6 +297,10 @@ public class HochwerfenAction<OBJ extends IDescribableGO & ILocatableGO>
 
     @Override
     protected boolean isDefinitivDiskontinuitaet() {
+        if (n.lastNarrationWasFromReaction()) {
+            return false;
+        }
+
         return false;
     }
 

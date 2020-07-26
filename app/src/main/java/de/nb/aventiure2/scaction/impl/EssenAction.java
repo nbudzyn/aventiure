@@ -329,6 +329,10 @@ public class EssenAction extends AbstractScAction {
 
     @Override
     protected boolean isDefinitivDiskontinuitaet() {
+        if (n.lastNarrationWasFromReaction()) {
+            return false;
+        }
+
         // Höchstens, wenn man sich gerade zuvor an etwas satt gegessen hat?
         return false;
     }

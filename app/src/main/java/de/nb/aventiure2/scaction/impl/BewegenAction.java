@@ -146,7 +146,7 @@ public class BewegenAction<R extends ISpatiallyConnectedGO & ILocationGO,
     @Override
     public AvTimeSpan narrateAndDo() {
 
-        AvTimeSpan elapsedTime = narrateAndDoRoomOnly(loadTo());
+        AvTimeSpan elapsedTime = narrateRoomOnly(loadTo());
 
         upgradeRoomOnlyKnown();
 
@@ -382,8 +382,8 @@ public class BewegenAction<R extends ISpatiallyConnectedGO & ILocationGO,
         }
     }
 
-    private AvTimeSpan narrateAndDoRoomOnly(@NonNull final ILocationGO to) {
-        final AbstractDescription description = getNormalDescriptionAndDo(initialStoryState,
+    private AvTimeSpan narrateRoomOnly(@NonNull final ILocationGO to) {
+        final AbstractDescription description = getNormalDescription(initialStoryState,
                 to.storingPlaceComp().getLichtverhaeltnisse());
 
         if (description instanceof DuDescription &&
@@ -405,17 +405,6 @@ public class BewegenAction<R extends ISpatiallyConnectedGO & ILocationGO,
         }
 
         if (isDefinitivDiskontinuitaet()) {
-            // TODO Es ist - häufig - keine Diskontinuität, wenn
-            //  dazwischen eine Reaction liegt. Z.B.: Spieler verlässt das Schloss,
-            //  sieht den Prinzen wegfahren und geht danach wieder in das Schloss.
-            //  Anderes fiktives Beispiel: Spieler nimmt der Frosch, der Frosch quakt hässlich,
-            //  der Spieler setzt den Frosch wieder ab. Oder: Der Spieler geht
-            //  irgendwo hin, die Zauberin kommt ihm entgegen, er kehrt um und geht ihr nach.
-            //  Vielleicht kann man das irgendwie daran festmachen, ob die
-            //  Reaction "die Lage geändert" hat? Oder man geht erst mal immer
-            //  davon aus, dass eine Reaction die Lage ändert - man bräuchte also nur
-            //  mitzuschreiben (boolean), ob es nach der letzten Action eine Reaction gab?!
-
             final ImmutableList.Builder<AbstractDescription<?>> alt = builder();
             if (numberOfWays == ONLY_WAY) {
                 alt.add(
@@ -483,9 +472,9 @@ public class BewegenAction<R extends ISpatiallyConnectedGO & ILocationGO,
         }
     }
 
-    private AbstractDescription getNormalDescriptionAndDo(final StoryState currentStoryState,
-                                                          final Lichtverhaeltnisse
-                                                                  lichtverhaeltnisseInNewRoom) {
+    private AbstractDescription getNormalDescription(final StoryState currentStoryState,
+                                                     final Lichtverhaeltnisse
+                                                             lichtverhaeltnisseInNewRoom) {
         final Known newRoomKnown = sc.memoryComp().getKnown(spatialConnection.getTo());
 
         final boolean alternativeDescriptionAllowed =
@@ -579,8 +568,16 @@ public class BewegenAction<R extends ISpatiallyConnectedGO & ILocationGO,
 
     @Override
     protected boolean isDefinitivDiskontinuitaet() {
-        return sc.memoryComp().getLastAction().is(BEWEGEN) &&
-                sc.locationComp().lastLocationWas(spatialConnection.getTo());
+        return
+                // Es ist oft keine Diskontinuität, wenn
+                // zwischen zwei Aktionen eine Reaction liegt. Z.B.: Spieler verlässt das Schloss,
+                // sieht den Prinzen wegfahren und geht danach wieder in das Schloss.
+                // Anderes fiktives Beispiel: Spieler nimmt der Frosch, der Frosch quakt hässlich,
+                //  der Spieler setzt den Frosch wieder ab. Oder: Der Spieler geht
+                // irgendwo hin, die Zauberin kommt ihm entgegen, er kehrt um und geht ihr nach.
+                !n.lastNarrationWasFromReaction() &&
+                        sc.memoryComp().getLastAction().is(BEWEGEN) &&
+                        sc.locationComp().lastLocationWas(spatialConnection.getTo());
     }
 
     @Contract(" -> new")

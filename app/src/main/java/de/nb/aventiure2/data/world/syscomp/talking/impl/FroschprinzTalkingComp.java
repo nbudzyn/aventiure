@@ -205,7 +205,7 @@ public class FroschprinzTalkingComp extends AbstractTalkingComp {
             return hallo_froschReagiertNicht();
         }
 
-        final StoryState initialStoryState = db.storyStateDao().getStoryState();
+        final StoryState initialStoryState = db.storyStateDao().requireStoryState();
 
         if (initialStoryState.dann()) {
             if (initialStoryState.allowsAdditionalDuSatzreihengliedOhneSubjekt()) {

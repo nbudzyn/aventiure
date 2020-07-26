@@ -50,8 +50,8 @@ public class MemoryComp extends AbstractStatefulComponent<MemoryPCD> {
                 gameObject != null ? gameObject.getId() : null);
     }
 
-    private boolean lastActionWas(final Action.Type actionType,
-                                  final GameObjectId gameObjectId) {
+    public boolean lastActionWas(final Action.Type actionType,
+                                 final GameObjectId gameObjectId) {
         return lastActionWas(new Action(actionType, gameObjectId));
     }
 

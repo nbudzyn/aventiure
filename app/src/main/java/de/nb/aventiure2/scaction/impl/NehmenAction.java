@@ -464,7 +464,8 @@ public class NehmenAction
 
     @Override
     protected boolean isDefinitivDiskontinuitaet() {
-        return sc.memoryComp().getLastAction().is(Action.Type.ABLEGEN) &&
+        return !n.lastNarrationWasFromReaction() &&
+                sc.memoryComp().getLastAction().is(Action.Type.ABLEGEN) &&
                 sc.memoryComp().getLastAction().hasObject(gameObject);
     }
 

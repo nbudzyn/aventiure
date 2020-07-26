@@ -16,6 +16,8 @@ import de.nb.aventiure2.data.world.time.AvTimeSpan;
 import de.nb.aventiure2.german.base.Personalpronomen;
 import de.nb.aventiure2.german.base.SubstantivischePhrase;
 
+import static de.nb.aventiure2.data.storystate.StoryState.NarrationSource.REACTIONS;
+import static de.nb.aventiure2.data.storystate.StoryState.NarrationSource.SC_ACTION;
 import static de.nb.aventiure2.data.world.time.AvTimeSpan.days;
 import static de.nb.aventiure2.data.world.time.AvTimeSpan.noTime;
 
@@ -69,6 +71,7 @@ public abstract class AbstractScAction implements IPlayerAction {
 
         final AvDateTime start = db.nowDao().now();
 
+        n.setNarrationSourceJustInCase(SC_ACTION);
         final AvTimeSpan timeElapsed = narrateAndDo();
 
         fireScActionDone(start);
@@ -76,6 +79,7 @@ public abstract class AbstractScAction implements IPlayerAction {
         final AvDateTime dateTimeAfterActionBeforeUpdateWorld = start.plus(timeElapsed);
         db.nowDao().setNow(dateTimeAfterActionBeforeUpdateWorld);
 
+        n.setNarrationSourceJustInCase(REACTIONS);
         final AvTimeSpan extraTimeElapsedDuringWorldUpdate =
                 updateWorld(start, dateTimeAfterActionBeforeUpdateWorld);
 
@@ -200,7 +204,7 @@ public abstract class AbstractScAction implements IPlayerAction {
             final IDescribableGO describableGO,
             final boolean descShortIfKnown) {
         @Nullable final Personalpronomen anaphPersPron =
-                db.storyStateDao().getStoryState().getAnaphPersPronWennMgl(describableGO);
+                db.storyStateDao().requireStoryState().getAnaphPersPronWennMgl(describableGO);
         if (anaphPersPron != null) {
             return anaphPersPron;
         }

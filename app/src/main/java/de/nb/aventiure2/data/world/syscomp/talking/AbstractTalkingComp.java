@@ -15,6 +15,7 @@ import de.nb.aventiure2.data.world.base.GameObject;
 import de.nb.aventiure2.data.world.base.GameObjectId;
 import de.nb.aventiure2.data.world.gameobject.World;
 import de.nb.aventiure2.data.world.syscomp.description.IDescribableGO;
+import de.nb.aventiure2.data.world.syscomp.memory.Action;
 import de.nb.aventiure2.data.world.syscomp.talking.impl.SCTalkAction;
 import de.nb.aventiure2.german.base.Nominalphrase;
 
@@ -76,6 +77,17 @@ public abstract class AbstractTalkingComp extends AbstractStatefulComponent<Talk
         }
 
         setTalkingTo((ITalkerGO) world.load(talkingToId));
+    }
+
+    public boolean isDefinitivDiskontinuitaet() {
+        // Der SC hat das Gespräch mit der Creature GERADE EBEN beendet
+        // und hat es sich ganz offenbar anders überlegt.
+        // Oder die Creature hat das Gespräch beendet und der Benutzer möchte
+        // sofort wieder ein Gespräch anknüpfen.
+
+        return n.lastNarrationWasFromReaction() &&
+                world.loadSC().memoryComp().lastActionWas(Action.Type.REDEN, getGameObjectId()) &&
+                !isTalkingTo(SPIELER_CHARAKTER);
     }
 
     /**

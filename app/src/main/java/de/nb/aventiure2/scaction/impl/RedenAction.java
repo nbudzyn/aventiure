@@ -82,7 +82,7 @@ public class RedenAction<TALKER extends IDescribableGO & ITalkerGO>
                     stepType == SCTalkAction.Type.EXIT;
         }
 
-        if (isDefinitivDiskontinuitaet(world, talker)) {
+        if (talker.talkingComp().isDefinitivDiskontinuitaet()) {
             return stepType == SCTalkAction.Type.IMMEDIATE_RE_ENTRY;
         }
 
@@ -186,18 +186,7 @@ public class RedenAction<TALKER extends IDescribableGO & ITalkerGO>
 
     @Override
     protected boolean isDefinitivDiskontinuitaet() {
-        return isDefinitivDiskontinuitaet(world, talker);
-    }
-
-    private static boolean isDefinitivDiskontinuitaet(final World worldervice,
-                                                      final ITalkerGO talker) {
-        // Der SC hat das Gespräch mit der Creature GERADE EBEN beendet
-        // und hat es sich ganz offenbar anders überlegt.
-        // Ider die Creature hat das Gespräch beendet und der Benutzer möchte
-        // sofort wieder ein Gespräch anknüpfen.
-
-        return worldervice.loadSC().memoryComp().lastActionWas(Action.Type.REDEN, talker) &&
-                !talker.talkingComp().isTalkingTo(SPIELER_CHARAKTER);
+        return talker.talkingComp().isDefinitivDiskontinuitaet();
     }
 
     @NonNull

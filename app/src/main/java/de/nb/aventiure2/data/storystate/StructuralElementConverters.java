@@ -4,7 +4,7 @@ import androidx.room.TypeConverter;
 
 import de.nb.aventiure2.german.base.StructuralElement;
 
-public class AvStoryStateConverters {
+public class StructuralElementConverters {
     @TypeConverter
     public static StructuralElement stringToStartsNew(final String string) {
         if (string == null) {

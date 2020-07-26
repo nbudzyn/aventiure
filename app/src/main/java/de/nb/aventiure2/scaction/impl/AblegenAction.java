@@ -361,9 +361,13 @@ public class AblegenAction
 
     @Override
     protected boolean isDefinitivDiskontinuitaet() {
-        return sc.memoryComp().getLastAction().is(NEHMEN) &&
-                sc.memoryComp().getLastAction().hasObject(gameObject) &&
-                gameObject.locationComp().lastLocationWas(location);
+        return
+                // Es ist oft keine Diskontinuität, wenn
+                // zwischen zwei Aktionen eine Reaction liegt.
+                !n.lastNarrationWasFromReaction() &&
+                        sc.memoryComp().getLastAction().is(NEHMEN) &&
+                        sc.memoryComp().getLastAction().hasObject(gameObject) &&
+                        gameObject.locationComp().lastLocationWas(location);
     }
 
     @Contract(" -> new")

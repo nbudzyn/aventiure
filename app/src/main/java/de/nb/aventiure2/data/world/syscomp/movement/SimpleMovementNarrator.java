@@ -667,7 +667,7 @@ public class SimpleMovementNarrator implements IMovementNarrator {
         final IDescribableGO describableGO = (IDescribableGO) world.load(getGameObjectId());
 
         @Nullable final Personalpronomen anaphPersPron =
-                n.getStoryState().getAnaphPersPronWennMgl(describableGO);
+                n.requireStoryState().getAnaphPersPronWennMgl(describableGO);
         if (anaphPersPron != null) {
             return anaphPersPron;
         }

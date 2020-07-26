@@ -6,6 +6,8 @@ import java.util.function.Predicate;
 
 import javax.annotation.Nullable;
 
+import de.nb.aventiure2.data.storystate.StoryState;
+import de.nb.aventiure2.data.storystate.StoryStateDao;
 import de.nb.aventiure2.data.world.base.GameObject;
 import de.nb.aventiure2.data.world.base.GameObjectId;
 import de.nb.aventiure2.data.world.base.IGameObject;
@@ -19,25 +21,23 @@ import de.nb.aventiure2.data.world.syscomp.storingplace.ILocationGO;
 import de.nb.aventiure2.data.world.time.AvDateTime;
 import de.nb.aventiure2.data.world.time.AvTimeSpan;
 
+import static de.nb.aventiure2.data.storystate.StoryState.NarrationSource.REACTIONS;
 import static de.nb.aventiure2.data.world.time.AvTimeSpan.max;
 import static de.nb.aventiure2.data.world.time.AvTimeSpan.noTime;
 
 public class GOReactionsCoordinator {
     private final World world;
+    private final StoryStateDao n;
 
-    GOReactionsCoordinator(final World world) {
+    GOReactionsCoordinator(final World world, final StoryStateDao storyStateDao) {
         this.world = world;
+        n = storyStateDao;
     }
 
     // IMovementReactions
     public AvTimeSpan onLeave(final GameObjectId locatableId,
                               final ILocationGO from,
                               @Nullable final GameObjectId toId) {
-        // FIXME Hier und überall: Nicht den Aktor, der
-        //  die Aktion durchgeführt hat, um eine Reaktion anfragen
-        //  (wenn das nicht eh schon geschieht?!).
-        //  Problem: Wenn der Dieb den Spieler bestiehlt o.Ä. kennt man den
-        //  Aktor nicht. Aktor also separater Parameter?
         return onLeave(
                 (ILocatableGO) world.load(locatableId),
                 from, toId);
@@ -138,11 +138,18 @@ public class GOReactionsCoordinator {
 
         AvTimeSpan timeElapsed = noTime();
 
-        for (final IResponder responder : respondersToReaction) {
-            if (condition.test(responder)) {
-                final R reactionsComp = (R) responder.reactionsComp();
-                timeElapsed = max(timeElapsed, narrateAndDoReaction.apply(reactionsComp));
+        final StoryState.NarrationSource narrationSourceBefore = n.getNarrationSourceJustInCase();
+        try {
+            n.setNarrationSourceJustInCase(REACTIONS);
+
+            for (final IResponder responder : respondersToReaction) {
+                if (condition.test(responder)) {
+                    final R reactionsComp = (R) responder.reactionsComp();
+                    timeElapsed = max(timeElapsed, narrateAndDoReaction.apply(reactionsComp));
+                }
             }
+        } finally {
+            n.setNarrationSourceJustInCase(REACTIONS);
         }
 
         return timeElapsed;

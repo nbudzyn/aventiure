@@ -22,7 +22,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
  * Builder for {@link StoryState}.
  */
 @ParametersAreNonnullByDefault
-public class StoryStateBuilder {
+public class StoryAddition {
     /**
      * This {@link StoryState} starts a new ... (paragraph, e.g.)
      */
@@ -77,56 +77,56 @@ public class StoryStateBuilder {
     @Nullable
     private PhorikKandidat phorikKandidat;
 
-    public static StoryStateBuilder t(
+    public static StoryAddition t(
             final StructuralElement startsNew,
             final String text) {
         checkArgument(!TextUtils.isEmpty(text), "text is null or empty");
         checkNotNull(startsNew, "startsNew is null");
 
-        return new StoryStateBuilder(startsNew, text);
+        return new StoryAddition(startsNew, text);
     }
 
 
-    private StoryStateBuilder(final StructuralElement startsNew,
-                              final String text) {
+    private StoryAddition(final StructuralElement startsNew,
+                          final String text) {
         this.startsNew = startsNew;
         this.text = text;
     }
 
-    public StoryStateBuilder phorikKandidat(final SubstantivischePhrase substantivischePhrase,
-                                            final IGameObject gameObject) {
+    public StoryAddition phorikKandidat(final SubstantivischePhrase substantivischePhrase,
+                                        final IGameObject gameObject) {
         phorikKandidat(substantivischePhrase.getNumerusGenus(), gameObject.getId());
         return this;
     }
 
-    public StoryStateBuilder phorikKandidat(final NumerusGenus numerusGenus,
-                                            final IGameObject gameObject) {
+    public StoryAddition phorikKandidat(final NumerusGenus numerusGenus,
+                                        final IGameObject gameObject) {
         phorikKandidat(numerusGenus, gameObject.getId());
         return this;
     }
 
-    public StoryStateBuilder phorikKandidat(final NumerusGenus numerusGenus,
-                                            final GameObjectId gameObjectId) {
+    public StoryAddition phorikKandidat(final NumerusGenus numerusGenus,
+                                        final GameObjectId gameObjectId) {
         phorikKandidat(new PhorikKandidat(numerusGenus, gameObjectId));
         return this;
     }
 
-    public StoryStateBuilder phorikKandidat(
+    public StoryAddition phorikKandidat(
             @Nullable final PhorikKandidat phorikKandidat) {
         this.phorikKandidat = phorikKandidat;
         return this;
     }
 
-    public StoryStateBuilder beendet(final StructuralElement structuralElement) {
+    public StoryAddition beendet(final StructuralElement structuralElement) {
         endsThis = structuralElement;
         return this;
     }
 
-    public StoryStateBuilder komma() {
+    public StoryAddition komma() {
         return komma(true);
     }
 
-    public StoryStateBuilder komma(final boolean kommaStehtAus) {
+    public StoryAddition komma(final boolean kommaStehtAus) {
         this.kommaStehtAus = kommaStehtAus;
         return this;
     }
@@ -135,34 +135,53 @@ public class StoryStateBuilder {
      * Sets a flag that the text can be continued by a Satzreihenglied without subject where
      * the player character is the implicit subject
      */
-    public StoryStateBuilder undWartest() {
+    public StoryAddition undWartest() {
         return undWartest(true);
     }
 
-    public StoryStateBuilder undWartest(
+    public StoryAddition undWartest(
             final boolean allowsAdditionalPlayerSatzreihengliedOhneSubjekt) {
         allowsAdditionalDuSatzreihengliedOhneSubjekt =
                 allowsAdditionalPlayerSatzreihengliedOhneSubjekt;
         return this;
     }
 
-    public StoryStateBuilder dann() {
+    public StoryAddition dann() {
         return dann(true);
     }
 
-    public StoryStateBuilder dann(final boolean dann) {
+    public StoryAddition dann(final boolean dann) {
         this.dann = dann;
         return this;
     }
 
-    public StoryState build() {
-        return new StoryState(
-                startsNew,
-                endsThis,
-                text,
-                kommaStehtAus,
-                allowsAdditionalDuSatzreihengliedOhneSubjekt,
-                dann,
-                phorikKandidat);
+    StructuralElement getStartsNew() {
+        return startsNew;
+    }
+
+    StructuralElement getEndsThis() {
+        return endsThis;
+    }
+
+    @NonNull
+    String getText() {
+        return text;
+    }
+
+    boolean isKommaStehtAus() {
+        return kommaStehtAus;
+    }
+
+    boolean isAllowsAdditionalDuSatzreihengliedOhneSubjekt() {
+        return allowsAdditionalDuSatzreihengliedOhneSubjekt;
+    }
+
+    boolean isDann() {
+        return dann;
+    }
+
+    @Nullable
+    PhorikKandidat getPhorikKandidat() {
+        return phorikKandidat;
     }
 }

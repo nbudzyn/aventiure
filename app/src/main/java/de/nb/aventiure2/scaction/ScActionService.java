@@ -57,7 +57,7 @@ public class ScActionService {
     public <DESC_OBJ extends ILocatableGO & IDescribableGO,
             LIV extends ILocatableGO & IDescribableGO & ILivingBeingGO> List<AbstractScAction>
     getPlayerActions() {
-        final StoryState currentStoryState = db.storyStateDao().getStoryState();
+        final StoryState currentStoryState = db.storyStateDao().requireStoryState();
 
         final SpielerCharakter spielerCharakter = world.loadSC();
 
