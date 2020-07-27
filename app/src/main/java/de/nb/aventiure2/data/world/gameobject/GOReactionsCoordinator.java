@@ -131,7 +131,7 @@ public class GOReactionsCoordinator {
         final List<? extends IResponder> respondersToReaction =
                 world.loadResponders(reactionsInterface);
         // STORY: Natürlicher wäre "wachst erst nach einigen Stunden wieder auf" -
-        //  Danach die Die Tageszeitreactions ("Es ist jetzt vollständig dunkel geworden"),
+        //  Danach die Tageszeitreactions ("Es ist jetzt vollständig dunkel geworden"),
         //  dann die "Wann hast du eigentlich zuletzt etwas gegessen", dann
         //  "Plitsch platsch" Frosch-Recations.
         //  Die verschiedeenen Responder könnten also eine "Initiative" o.Ä. haben.

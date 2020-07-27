@@ -13,6 +13,8 @@ import de.nb.aventiure2.german.base.SubstantivischePhrase;
  * einem Akkusativ-Objekt steht.
  */
 public enum VerbSubjAkkPraep implements Praedikat {
+    // "die Zauberin nach ihrem Ziel fragen"
+    FRAGEN_NACH("fragen", "fragst", PraepositionMitKasus.NACH),
     // "den Frosch in die Hände nehmen"
     NEHMEN_IN("nehmen", "nimmst", PraepositionMitKasus.IN_AKK);
 

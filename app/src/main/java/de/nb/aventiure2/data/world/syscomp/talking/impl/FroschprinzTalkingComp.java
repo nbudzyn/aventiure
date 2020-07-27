@@ -289,7 +289,7 @@ public class FroschprinzTalkingComp extends AbstractTalkingComp {
         return n.add(neuerSatz(PARAGRAPH, "„Sei still und "
                         + ratschlag
                         + "“, antwortet "
-                        + getFroschprinzDescription(true).nom()
+                        + getDescription(true).nom()
                         + ", „ich kann wohl Rat schaffen, aber was gibst du mir, wenn ich "
                         + objectsInDenBrunnenGefallenShortAkk
                         + " wieder heraufhole?“",
@@ -552,12 +552,12 @@ public class FroschprinzTalkingComp extends AbstractTalkingComp {
         return n.addAlt(
                 du(
                         "sprichst",
-                        getFroschprinzDescription(true).akk()
+                        getDescription(true).akk()
                                 + " an: „Wie läuft's, Frosch? Schönes Wetter heut.“ "
                                 + "„Vergiss dein Versprechen nicht“, sagt er nur",
                         secs(15)).beendet(PARAGRAPH),
                 du("holst", "Luft, aber da kommt dir "
-                                + getFroschprinzDescription().nom()
+                                + getDescription().nom()
                                 + " schon zuvor: „Wir sehen uns noch!“",
                         secs(15)).beendet(PARAGRAPH),
                 neuerSatz("„Und jetzt, Frosch?“ "
@@ -568,7 +568,7 @@ public class FroschprinzTalkingComp extends AbstractTalkingComp {
     private AvTimeSpan froschAufTischDraengelt() {
         unsetTalkingTo();
 
-        final Nominalphrase froschprinzDesc = getFroschprinzDescription(true);
+        final Nominalphrase froschprinzDesc = getDescription(true);
         return n.addAlt(
                 du(
                         "hast", "gerade Luft geholt, da schneidet dir "
@@ -592,27 +592,5 @@ public class FroschprinzTalkingComp extends AbstractTalkingComp {
         // STORY Es könnten auch Gegenstände unten im Brunnen
         //  sein, von denen der Spieler gar nichts weiß - hier filtern nach Known durch den SC.
         return world.loadDescribableNonLivingMovableRecursiveInventory(UNTEN_IM_BRUNNEN);
-    }
-
-    /**
-     * Gibt eine Nominalphrase zurück, die den Froschprinzen beschreibt.
-     * Die Phrase kann unterschiedlich sein, je nachdem, ob
-     * ob der Spieler den Froschprinzen schon kennt oder nicht.
-     */
-    private Nominalphrase getFroschprinzDescription() {
-        return getFroschprinzDescription(false);
-    }
-
-    /**
-     * Gibt eine Nominalphrase zurück, die den Froschprinzen beschreibt.
-     * Die Phrase kann unterschiedlich sein, je nachdem, ob
-     * ob der Spieler den Froschprinzen schon kennt oder nicht.
-     *
-     * @param shortIfKnown <i>Falls der Spieler(-charakter)</i> den
-     *                     Froschprinzen schon kennt, wird eher eine
-     *                     kürzere Beschreibung gewählt
-     */
-    private Nominalphrase getFroschprinzDescription(final boolean shortIfKnown) {
-        return world.getDescription(FROSCHPRINZ, shortIfKnown);
     }
 }

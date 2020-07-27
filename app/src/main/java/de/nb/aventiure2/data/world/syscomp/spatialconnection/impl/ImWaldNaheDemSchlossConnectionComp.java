@@ -38,6 +38,7 @@ import static de.nb.aventiure2.data.world.syscomp.state.impl.SchlossfestState.BE
 import static de.nb.aventiure2.data.world.syscomp.storingplace.Lichtverhaeltnisse.DUNKEL;
 import static de.nb.aventiure2.data.world.syscomp.storingplace.Lichtverhaeltnisse.HELL;
 import static de.nb.aventiure2.data.world.time.AvTimeSpan.mins;
+import static de.nb.aventiure2.data.world.time.Tageszeit.TAGSUEBER;
 import static de.nb.aventiure2.german.base.AllgDescription.neuerSatz;
 import static de.nb.aventiure2.german.base.DuDescription.du;
 import static de.nb.aventiure2.german.base.StructuralElement.PARAGRAPH;
@@ -111,13 +112,20 @@ public class ImWaldNaheDemSchlossConnectionComp extends AbstractSpatialConnectio
     }
 
     @NonNull
-    private static AbstractDescription<?>
+    private AbstractDescription<?>
     getDescTo_DraussenVorDemSchloss_KeinFest(
             final Lichtverhaeltnisse lichtverhaeltnisse) {
-        if (lichtverhaeltnisse == HELL) {
+        if (db.nowDao().now().getTageszeit() == TAGSUEBER) {
             return du("erreichst", "bald das helle "
                     + "Tageslicht, in dem der Schlossgarten "
                     + "liegt", "bald", mins(10))
+                    .undWartest()
+                    .komma();
+        }
+
+        if (lichtverhaeltnisse == HELL) {
+            return du("erreichst", "bald den Schlossgarten",
+                    "bald", mins(10))
                     .undWartest()
                     .komma();
         }

@@ -13,8 +13,8 @@ public enum PraepositionMitKasus implements KasusOderPraepositionalkasus {
     /**
      * "mit dem Frosch"
      */
-    MIT_DAT("mit", DAT);
-
+    MIT_DAT("mit", DAT),
+    NACH("nach", DAT);
 
     /**
      * Die Präposition (z.B. "mit")

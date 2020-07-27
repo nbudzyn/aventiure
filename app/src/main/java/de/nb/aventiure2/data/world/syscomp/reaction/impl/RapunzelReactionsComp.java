@@ -156,6 +156,10 @@ public class RapunzelReactionsComp
     }
 
     private static boolean immerMalWieder(final AvDateTime now) {
+        // STORY Rapunzel könnte immer nur dann singen, wenn sie sich unbeobachtet fühlt -
+        //  also wenn der Spieler höchstens unten vor dem Turm IM GEBÜSCH steht (vgl. Märchen,
+        //  er verbirgt sich...)
+
         if (now.getTime().isInRegularTimeIntervalIncl(
                 // Ab...
                 oClock(7),

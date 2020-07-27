@@ -199,7 +199,7 @@ public class SimpleMovementNarrator implements IMovementNarrator {
 
         final ImmutableCollection.Builder<AbstractDescription<?>> alt = ImmutableList.builder();
 
-        alt.add(du(SENTENCE,
+        alt.add(neuerSatz(SENTENCE,
                 anaphOderDesc.nom() +
                         " kommt dir entgegen und geht an dir vorbei", noTime())
                 .phorikKandidat(desc, gameObjectId));
