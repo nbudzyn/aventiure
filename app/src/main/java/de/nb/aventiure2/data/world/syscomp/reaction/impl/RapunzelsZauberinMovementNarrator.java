@@ -50,13 +50,13 @@ public class RapunzelsZauberinMovementNarrator extends SimpleMovementNarrator {
 
         final ImmutableCollection.Builder<AbstractDescription<?>> alt = ImmutableList.builder();
 
-        alt.add(neuerSatz(anaphOderDesc
+        alt.add(neuerSatz(anaphOderDesc.nom()
                 + " kommt daher", noTime())
                 .phorikKandidat(desc, gameObjectId)
                 .beendet(PARAGRAPH));
 
         if (spatialConnectionMovingGO != null) {
-            alt.add(neuerSatz(anaphOderDesc
+            alt.add(neuerSatz(anaphOderDesc.nom()
                     + " kommt "
                     + spatialConnectionMovingGO.getWo() // "auf dem Pfad "
                     + " daher", noTime())

@@ -46,6 +46,7 @@ import de.nb.aventiure2.german.base.Nominalphrase;
 import static com.google.common.collect.ImmutableList.toImmutableList;
 import static de.nb.aventiure2.data.world.syscomp.storingplace.StoringPlaceType.EINE_TASCHE;
 import static de.nb.aventiure2.data.world.syscomp.storingplace.StoringPlaceType.HAENDE;
+import static de.nb.aventiure2.data.world.syscomp.storingplace.StoringPlaceType.SCHATTEN_DER_BAEUME;
 import static de.nb.aventiure2.data.world.syscomp.storingplace.StoringPlaceType.TISCH;
 import static de.nb.aventiure2.data.world.time.AvTime.oClock;
 import static de.nb.aventiure2.german.base.Nominalphrase.np;
@@ -73,6 +74,9 @@ public class World {
     public static final GameObjectId GOLDENE_KUGEL = new GameObjectId(10_100);
     public static final GameObjectId SCHLOSS_VORHALLE_LANGER_TISCH_BEIM_FEST =
             new GameObjectId(10_101);
+    public static final GameObjectId VOR_DEM_ALTEN_TURM_BÄUME =
+            // (in deren Schatten man sich setzen kann)
+            new GameObjectId(10_102);
 
     // CREATURES
     public static final GameObjectId SCHLOSSWACHE = new GameObjectId(20_000);
@@ -270,8 +274,19 @@ public class World {
                             SCHLOSS_VORHALLE_AM_TISCH_BEIM_FEST, SCHLOSS_VORHALLE,
                             false,
                             TISCH,
-                            SCHLOSS_VORHALLE_DAUERHAFT_BELEUCHTET)
+                            SCHLOSS_VORHALLE_DAUERHAFT_BELEUCHTET),
                     // STORY Spieler kauft Lampe (z.B. für Hütte) auf Schlossfest
+                    object.create(VOR_DEM_ALTEN_TURM_BÄUME,
+                            np(M, "der Schatten der Bäume",
+                                    "dem Schatten der Bäume",
+                                    "den Schatten der Bäume"),
+                            np(M, "der Schatten",
+                                    "dem Schatten",
+                                    "den Schatten"),
+                            VOR_DEM_ALTEN_TURM, null,
+                            false,
+                            SCHATTEN_DER_BAEUME,
+                            false)
             );
         }
     }

@@ -181,7 +181,7 @@ public class FroschprinzReactionsComp
             return noTime();
         }
 
-        final Nominalphrase froschprinzDesc = getDescription();
+        final Nominalphrase desc = getDescription();
         switch (stateComp.getState()) {
             case UNAUFFAELLIG:
                 // STORY Bei einem Status dazwischen könnte der Froschprinz den SC ansprechen und auf
@@ -195,7 +195,7 @@ public class FroschprinzReactionsComp
                 //  dann hier prüfen und ggf. beschreiben (vgl. AblegenAction)
                 return n.addAlt(
                         neuerSatz(PARAGRAPH, "Plötzlich sitzt "
-                                        + froschprinzDesc.nom()
+                                        + desc.nom()
                                         + " neben dir auf der Bank. „Denk an dein "
                                         + "Versprechen“, quakt er dir zu, "
                                         + "„Lass uns aus einem Tellerlein essen!“ Du bist ganz "
@@ -214,19 +214,19 @@ public class FroschprinzReactionsComp
 
                 return n.addAlt(
                         neuerSatz(PARAGRAPH, "Auf einmal sitzt "
-                                        + froschprinzDesc.nom()
+                                        + desc.nom()
                                         + " bei dir auf dem Tisch. „Auf, füll deine "
                                         + "Schale, wir wollen zusammen essen“, quakt " +
-                                        froschprinzDesc.persPron().nom() +
+                                        desc.persPron().nom() +
                                         " dich an. Es schauert dich bei dem Gedanken",
                                 secs(10))
                                 .beendet(PARAGRAPH),
                         neuerSatz(PARAGRAPH, "Platsch – da springt auf einmal "
-                                        + froschprinzDesc.nom()
+                                        + desc.nom()
                                         + " vor dich auf den Tisch. Gerade noch, dass er "
                                         + "dir nicht in die Essensschale gehüpft ist. Dir läuft "
                                         + "ein Schauer über den Rücken, als "
-                                        + froschprinzDesc.persPron().nom()
+                                        + desc.persPron().nom()
                                         + " fordert: „Nicht länger gezögert – nun lass uns zusammen "
                                         + "essen!“",
                                 secs(10))
@@ -239,8 +239,8 @@ public class FroschprinzReactionsComp
                 // TODO Wenn der Frosch nur rekursiv enthalten ist (Frosch sitzt auf dem Tisch),
                 //  dann beschreiben (vgl. BewegenAction)
                 return n.add(neuerSatz("Hier sitzt "
-                        + froschprinzDesc.nom(), noTime())
-                        .phorikKandidat(froschprinzDesc, FROSCHPRINZ));
+                        + desc.nom(), noTime())
+                        .phorikKandidat(desc, FROSCHPRINZ));
         }
     }
 
@@ -256,12 +256,12 @@ public class FroschprinzReactionsComp
             return prinzFaehrtMitWagenDavon();
         }
 
-        final Nominalphrase froschprinzDesc = getDescription();
+        final Nominalphrase desc = getDescription();
 
         // TODO Wenn der Prinz nur rekursiv enthalten ist (Prinz sitzt auf einem Stuhl),
         //  dann genauer beschreiben (vgl. BewegenAction)
         return n.add(du("siehst", getDescription().akk(), noTime())
-                .phorikKandidat(froschprinzDesc, FROSCHPRINZ));
+                .phorikKandidat(desc, FROSCHPRINZ));
     }
 
     private AvTimeSpan prinzVerlaesstSchlossVorhalle() {

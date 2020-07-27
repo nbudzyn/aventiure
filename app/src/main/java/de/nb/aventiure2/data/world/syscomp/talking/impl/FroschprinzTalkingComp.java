@@ -568,20 +568,20 @@ public class FroschprinzTalkingComp extends AbstractTalkingComp {
     private AvTimeSpan froschAufTischDraengelt() {
         unsetTalkingTo();
 
-        final Nominalphrase froschprinzDesc = getDescription(true);
+        final Nominalphrase desc = getDescription(true);
         return n.addAlt(
                 du(
                         "hast", "gerade Luft geholt, da schneidet dir "
-                                + froschprinzDesc.nom()
+                                + desc.nom()
                                 + " schon das Wort ab. „Was gibt es da noch zu diskutieren?“, quakt "
-                                + froschprinzDesc.persPron().nom()
+                                + desc.persPron().nom()
                                 + " dich laut an",
                         "gerade",
                         secs(10))
-                        .phorikKandidat(froschprinzDesc, FROSCHPRINZ),
+                        .phorikKandidat(desc, FROSCHPRINZ),
                 du("druckst", "ein bisschen herum und faselst etwas von "
                                 + "hygienischen Gründen. "
-                                + capitalize(froschprinzDesc.nom())
+                                + capitalize(desc.nom())
                                 + " schaut dich nur… traurig? verächtlich?… an",
                         secs(15)).beendet(PARAGRAPH));
     }
