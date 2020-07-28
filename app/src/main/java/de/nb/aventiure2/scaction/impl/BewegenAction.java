@@ -83,8 +83,16 @@ public class BewegenAction<R extends ISpatiallyConnectedGO & ILocationGO,
         //  - Wie ergibt sich der Aktionstext? ("In den Schatten unter die Bäume setzen"? / "An einen Tisch setzen" / "In das Bett legen"?)
         //  - Wie ergibt sich der Beschreibungstext für den Übergang? ("Du setzt dich in den Schatten unter die Bäume"?)
         //  - Wie ergeben sich Aktionstext und Beschreibungstext für den Weg zurück?
+        //  - Das Konzept könnte so ähnlich (oder dasselbe?!) wie bei den SpatialConnections sein:
+        //   Eine SpatialConnection hinein in die Location, zweite wieder hinaus
 
-        // STORY Spieler ist Rapunzels Königssohn: Rapunzel: Man muss eine Strickleiter
+        // STORY Das Bett könnte ein Objekt sein, in das man sich legen kann (kein Raum mehr)
+
+        // STORY Der Tisch (oder die Bank) beim Schlossfest könnte ein Objekt sein, an den man sich setzen kann
+
+        // STORY Der Baum könnte ein Objekt sein, auf das man klettern kann (Keine extra-Klettern-Action)
+
+        // STORY Rapunzel: Man muss eine Strickleiter
         //  besorgen - oder Seide kaufen und etwas zum Stricken??? Gold gabs vielleicht
         //  vom Froschprinzen?
 
