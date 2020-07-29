@@ -26,7 +26,7 @@ import static de.nb.aventiure2.data.world.base.Lichtverhaeltnisse.DUNKEL;
 import static de.nb.aventiure2.data.world.base.SpatialConnection.con;
 import static de.nb.aventiure2.data.world.gameobject.World.VOR_DEM_ALTEN_TURM;
 import static de.nb.aventiure2.data.world.gameobject.World.VOR_DEM_ALTEN_TURM_SCHATTEN_DER_BAEUME;
-import static de.nb.aventiure2.data.world.syscomp.storingplace.StoringPlaceType.SCHATTEN_DER_BAEUME;
+import static de.nb.aventiure2.data.world.syscomp.storingplace.StoringPlaceType.STAMM_EINES_BAUMS;
 import static de.nb.aventiure2.data.world.time.AvTimeSpan.mins;
 import static de.nb.aventiure2.data.world.time.AvTimeSpan.secs;
 import static de.nb.aventiure2.german.base.DuDescription.du;
@@ -65,13 +65,13 @@ public class ObjectFactory {
                 null, false);
 
         final StoringPlaceComp storingPlaceComp = new StoringPlaceComp(
-                VOR_DEM_ALTEN_TURM_SCHATTEN_DER_BAEUME, db, SCHATTEN_DER_BAEUME,
+                VOR_DEM_ALTEN_TURM_SCHATTEN_DER_BAEUME, db, STAMM_EINES_BAUMS,
                 false,
                 con(VOR_DEM_ALTEN_TURM_SCHATTEN_DER_BAEUME,
                         "vor den Bäumen",
                         "In den Schatten der Bäume setzen",
                         secs(10),
-                        ObjectFactory::getDescTo_VorDemAltenTurmSchattenDerBaeume)
+                        this::getDescTo_VorDemAltenTurmSchattenDerBaeume)
                 // STORY Man kann aus VOR_DEM_ALTEN_TURM_BÄUME auch wieder aufstehen.
         );
 
@@ -81,7 +81,7 @@ public class ObjectFactory {
                 storingPlaceComp);
     }
 
-    private static AbstractDescription<?> getDescTo_VorDemAltenTurmSchattenDerBaeume(
+    private AbstractDescription<?> getDescTo_VorDemAltenTurmSchattenDerBaeume(
             final Known newLocationKnown, final Lichtverhaeltnisse lichtverhaeltnisse) {
         if (lichtverhaeltnisse == DUNKEL) {
             return du("setzt", "dich unter die Bäume. Die Bäume rauschen in "
@@ -94,10 +94,12 @@ public class ObjectFactory {
             //  - "Du setzt dich unter die Bäume. In den Ästen über dir knittert und rauscht es"
         }
 
-        if (!newLocationKnown.isKnown()) {
-            return du("lässt", "dich im Schatten der Bäume nieder. Es tut gut, "
+        if (db.counterDao().incAndGet(
+                "DescTo_VorDemAltenTurmSchattenDerBaeume__SCSetztSichTagsueberInDenSchattenDerBaeume")
+                == 1) {
+            return du("lässt", "dich im Schatten der umstehenden Bäume nieder. Es tut gut, "
                             + "eine Weile zu rasten",
-                    "im Schatten der Bäume",
+                    "im Schatten der umstehenden Bäume",
                     mins(5))
                     .komma()
                     .beendet(SENTENCE)
