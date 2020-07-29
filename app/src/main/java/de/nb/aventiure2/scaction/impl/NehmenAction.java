@@ -68,11 +68,12 @@ public class NehmenAction
 
     private final TARGET_LOC targetLocation;
 
-    public static <GO extends IDescribableGO & ILocatableGO>
-    Collection<NehmenAction> buildObjectActions(final AvDatabase db,
-                                                final World world,
-                                                final GO object) {
-        final ImmutableList.Builder<NehmenAction> res = ImmutableList.builder();
+    public static <GO extends IDescribableGO & ILocatableGO,
+            TARGET_LOC extends IDescribableGO & ILocationGO & ILocatableGO>
+    Collection<NehmenAction<GO, TARGET_LOC>> buildObjectActions(final AvDatabase db,
+                                                                final World world,
+                                                                final GO object) {
+        final ImmutableList.Builder<NehmenAction<GO, TARGET_LOC>> res = ImmutableList.builder();
 
         res.add(new NehmenAction<>(db, world,
                 object, EINE_TASCHE_DES_SPIELER_CHARAKTERS));
@@ -80,8 +81,9 @@ public class NehmenAction
         return res.build();
     }
 
-    public static <LIVGO extends IDescribableGO & ILocatableGO & ILivingBeingGO>
-    Collection<NehmenAction> buildCreatureActions(
+    public static <LIVGO extends IDescribableGO & ILocatableGO & ILivingBeingGO,
+            TARGET_LOC extends IDescribableGO & ILocationGO & ILocatableGO>
+    Collection<NehmenAction<LIVGO, TARGET_LOC>> buildCreatureActions(
             final AvDatabase db,
             final World world,
             final LIVGO creature) {
@@ -91,8 +93,9 @@ public class NehmenAction
         return ImmutableList.of();
     }
 
-    public static <LIVGO extends IDescribableGO & ILocatableGO & ILivingBeingGO>
-    Collection<NehmenAction> buildFroschprinzActions(
+    public static <LIVGO extends IDescribableGO & ILocatableGO & ILivingBeingGO,
+            TARGET_LOC extends IDescribableGO & ILocationGO & ILocatableGO>
+    Collection<NehmenAction<LIVGO, TARGET_LOC>> buildFroschprinzActions(
             final AvDatabase db,
             final World world,
             final LIVGO froschprinz) {

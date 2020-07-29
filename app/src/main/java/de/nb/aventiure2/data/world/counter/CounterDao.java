@@ -20,7 +20,7 @@ public abstract class CounterDao {
      * In diesem Fall ist es essenziell, dass diese Beschreibung dann auch dem Spieler
      * <i>wirklich angezeigt</i> wird (und nicht unterdrückt oder durch eine ganz andere
      * Beschreibung ersetzt). Oft ist es deshalb eine gute Idee,
-     * {@link #incAndGet(String)} in derselben Methode aufzurufen, in der auch
+     * <code>#incAndGet(String)</code> in derselben Methode aufzurufen, in der auch
      * {@link de.nb.aventiure2.data.storystate.StoryStateDao#add(AbstractDescription)}
      * aufgerufen wird.
      */

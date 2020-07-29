@@ -101,8 +101,7 @@ public class ScActionService {
         return res;
     }
 
-    private <DESC_OBJ extends ILocatableGO & IDescribableGO,
-            LIV extends IDescribableGO & ILocatableGO & ILivingBeingGO>
+    private <LIV extends IDescribableGO & ILocatableGO & ILivingBeingGO>
     ImmutableList<AbstractScAction> buildCreatureInLocationActions(
             final SpielerCharakter spielerCharakter,
             final List<? extends ILocatableGO> wasSCInDenHaendenHat,
@@ -126,8 +125,7 @@ public class ScActionService {
         return res.build();
     }
 
-    private <DESC_OBJ extends ILocatableGO & IDescribableGO>
-    ImmutableList<AbstractScAction> buildPlayerOnlyAction(
+    private ImmutableList<AbstractScAction> buildPlayerOnlyAction(
             final SpielerCharakter spielerCharakter,
             final List<? extends ILocatableGO> wasSCInDenHaendenHat,
             final @Nullable IGameObject location,

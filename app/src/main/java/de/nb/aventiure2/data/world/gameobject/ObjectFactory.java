@@ -20,7 +20,6 @@ import de.nb.aventiure2.data.world.syscomp.storingplace.StoringPlaceComp;
 import de.nb.aventiure2.data.world.syscomp.storingplace.StoringPlaceType;
 import de.nb.aventiure2.german.base.AbstractDescription;
 import de.nb.aventiure2.german.base.Nominalphrase;
-import de.nb.aventiure2.german.base.NumerusGenus;
 
 import static de.nb.aventiure2.data.world.base.Lichtverhaeltnisse.DUNKEL;
 import static de.nb.aventiure2.data.world.base.SpatialConnection.con;
@@ -111,41 +110,6 @@ public class ObjectFactory {
                 .dann();
     }
 
-    /**
-     * Erzeugt ein Objekt, das immer gleich beschrieben wird ("eine Tasche", niemals "die Tasche").
-     */
-    GameObject create(final GameObjectId id,
-                      final Nominalphrase descriptionAtFirstSightAndWhenKnown,
-                      @Nullable final GameObjectId initialLocationId,
-                      @Nullable final GameObjectId initialLastLocationId,
-                      final boolean movable) {
-        return create(id,
-                descriptionAtFirstSightAndWhenKnown,
-                descriptionAtFirstSightAndWhenKnown,
-                descriptionAtFirstSightAndWhenKnown,
-                initialLocationId,
-                initialLastLocationId,
-                movable);
-    }
-
-
-    public GameObject create(final GameObjectId id,
-                             final NumerusGenus numerusGenus,
-                             final String descriptionAtFirstSightNomDatAkk,
-                             final String normalDescriptionWhenKnownNomDatAkk,
-                             final String shortDescriptionWhenKnownNomDatAkk,
-                             @Nullable final GameObjectId initialLocationId,
-                             @Nullable final GameObjectId initialLastLocationId,
-                             final boolean movable) {
-        return create(id,
-                np(numerusGenus, descriptionAtFirstSightNomDatAkk),
-                np(numerusGenus, normalDescriptionWhenKnownNomDatAkk),
-                np(numerusGenus, shortDescriptionWhenKnownNomDatAkk),
-                initialLocationId,
-                initialLastLocationId,
-                movable);
-    }
-
     GameObject create(final GameObjectId id,
                       final Nominalphrase descriptionAtFirstSight,
                       final Nominalphrase normalDescriptionWhenKnown,
@@ -175,23 +139,6 @@ public class ObjectFactory {
                 initialLocationId, initialLastLocationId,
                 movable, locationMode, dauerhaftBeleuchtet);
     }
-
-    GameObject create(final GameObjectId id,
-                      final Nominalphrase descriptionAtFirstSightAndWhenKnown,
-                      final Nominalphrase shortDescriptionWhenKnown,
-                      @Nullable final GameObjectId initialLocationId,
-                      @Nullable final GameObjectId initialLastLocationId,
-                      final boolean movable,
-                      final StoringPlaceType locationMode,
-                      final boolean dauerhaftBeleuchtet) {
-        return create(id,
-                descriptionAtFirstSightAndWhenKnown,
-                descriptionAtFirstSightAndWhenKnown,
-                shortDescriptionWhenKnown,
-                initialLocationId, initialLastLocationId,
-                movable, locationMode, dauerhaftBeleuchtet);
-    }
-
 
     GameObject create(final GameObjectId id,
                       final Nominalphrase descriptionAtFirstSight,
@@ -251,6 +198,7 @@ public class ObjectFactory {
             this.storingPlaceComp = addComponent(storingPlaceComp);
         }
 
+        @NonNull
         @Override
         public StoringPlaceComp storingPlaceComp() {
             return storingPlaceComp;

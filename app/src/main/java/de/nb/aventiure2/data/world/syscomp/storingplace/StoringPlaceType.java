@@ -61,7 +61,7 @@ public enum StoringPlaceType {
      * matschigen Waldboden", sondern "Du triffst die Zauberin im Wald"
      */
     @Nullable
-    private final StoringPlaceType forBelebtUndEherGroß;
+    private final StoringPlaceType forBelebtUndEherGross;
 
     /**
      * Das Verb das beschreibt, das der Benutzer etwas von diesem Ort <i>mitnimmt</i>
@@ -78,38 +78,38 @@ public enum StoringPlaceType {
     }
 
     StoringPlaceType(final String wo, final String wohin,
-                     @Nullable final StoringPlaceType forBelebtUndEherGroß) {
-        this(wo, wohin, NEHMEN, forBelebtUndEherGroß);
+                     @Nullable final StoringPlaceType forBelebtUndEherGross) {
+        this(wo, wohin, NEHMEN, forBelebtUndEherGross);
     }
 
     StoringPlaceType(final String wo, final String wohin,
                      final PraedikatMitEinerObjektleerstelle mitnehmenPraedikat,
-                     @Nullable final StoringPlaceType forBelebtUndEherGroß) {
+                     @Nullable final StoringPlaceType forBelebtUndEherGross) {
         this.wo = wo;
         this.wohin = wohin;
         this.mitnehmenPraedikat = mitnehmenPraedikat;
-        this.forBelebtUndEherGroß = forBelebtUndEherGroß;
+        this.forBelebtUndEherGross = forBelebtUndEherGross;
     }
 
-    public AdverbialeAngabe getWoAdvAngabe(final boolean forBelebtUndEherGroß) {
-        return new AdverbialeAngabe(getWo(forBelebtUndEherGroß));
+    public AdverbialeAngabe getWoAdvAngabe(final boolean forBelebtUndEherGross) {
+        return new AdverbialeAngabe(getWo(forBelebtUndEherGross));
     }
 
-    public String getWo(final boolean forBelebtUndEherGroß) {
-        if (forBelebtUndEherGroß && this.forBelebtUndEherGroß != null) {
-            return this.forBelebtUndEherGroß.getWo(forBelebtUndEherGroß);
+    public String getWo(final boolean forBelebtUndEherGross) {
+        if (forBelebtUndEherGross && this.forBelebtUndEherGross != null) {
+            return this.forBelebtUndEherGross.getWo(forBelebtUndEherGross);
         }
 
         return wo;
     }
 
-    public AdverbialeAngabe getWohinAdvAngabe(final boolean forBelebtUndEherGroß) {
-        return new AdverbialeAngabe(getWohin(forBelebtUndEherGroß));
+    public AdverbialeAngabe getWohinAdvAngabe(final boolean forBelebtUndEherGross) {
+        return new AdverbialeAngabe(getWohin(forBelebtUndEherGross));
     }
 
-    public String getWohin(final boolean forBelebtUndEherGroß) {
-        if (forBelebtUndEherGroß && this.forBelebtUndEherGroß != null) {
-            return this.forBelebtUndEherGroß.getWohin(forBelebtUndEherGroß);
+    public String getWohin(final boolean forBelebtUndEherGross) {
+        if (forBelebtUndEherGross && this.forBelebtUndEherGross != null) {
+            return this.forBelebtUndEherGross.getWohin(forBelebtUndEherGross);
         }
 
         return wohin;

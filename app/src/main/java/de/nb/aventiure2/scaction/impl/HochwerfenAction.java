@@ -57,7 +57,7 @@ public class HochwerfenAction<OBJ extends IDescribableGO & ILocatableGO>
     private final ILocationGO location;
 
     public static <OBJ extends IDescribableGO & ILocatableGO>
-    Collection<HochwerfenAction> buildActions(
+    Collection<HochwerfenAction<OBJ>> buildActions(
             final AvDatabase db, final World world,
             final ILocationGO location, @NonNull final OBJ gameObject) {
         if (gameObject instanceof ILivingBeingGO) {
