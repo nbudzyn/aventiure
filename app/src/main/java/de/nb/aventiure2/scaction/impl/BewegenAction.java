@@ -173,7 +173,7 @@ public class BewegenAction<LOC_DESC extends ILocatableGO & IDescribableGO>
 
         return elapsedTime.plus(sc.locationComp()
                 .narrateAndSetLocation(spatialConnection.getTo(),
-                        this::narrateNonLivingMovableObjectsAndUpgradeKnown));
+                        this::narrateNonLivingMovableObjectsAndUpgradeKnownAndSetLastAction));
     }
 
     private void upgradeLocationOnlyKnown() {
@@ -196,10 +196,25 @@ public class BewegenAction<LOC_DESC extends ILocatableGO & IDescribableGO>
         }
     }
 
-    private AvTimeSpan narrateNonLivingMovableObjectsAndUpgradeKnown() {
+    private AvTimeSpan narrateNonLivingMovableObjectsAndUpgradeKnownAndSetLastAction() {
         // Unbewegliche Objekte sollen bereits in der Location-Beschreibung mitgenannt werden,
         // nicht hier! (Das betrifft auch indirekt enthaltene unbewegliche Objekte.)
 
+        AvTimeSpan elapsedTimeOnEnter = noTime();
+
+        if (!world.isOrHasRecursiveLocation(spatialConnection.getTo(), oldLocation)) {
+            // Wenn man z.B. in einem Zimmer auf einen Tisch steigt: Nicht noch einmal
+            // beschreiben, was sonst noch auf dem Tisch steht!
+            elapsedTimeOnEnter =
+                    elapsedTimeOnEnter.plus(narrateNonLivingMovableObjectsAndUpgradeKnown());
+        }
+
+        sc.memoryComp().setLastAction(buildMemorizedAction());
+
+        return elapsedTimeOnEnter;
+    }
+
+    private AvTimeSpan narrateNonLivingMovableObjectsAndUpgradeKnown() {
         final ImmutableList.Builder<String> descriptionsPerLocation = builder();
         int numMovableObjectsInLocation = 0;
         @Nullable IDescribableGO lastObjectInLocation = null;
@@ -216,20 +231,17 @@ public class BewegenAction<LOC_DESC extends ILocatableGO & IDescribableGO>
             upgradeKnown(locationAndDescribables);
         }
 
-        AvTimeSpan elapsedTimeOnEnter = noTime();
-        if (numMovableObjectsInLocation > 0) {
-            //  "Auf dem Boden liegen A und B und auf dem Tisch liegt C"
-            final String movableObjectsInLocationDescription =
-                    buildMovableObjectsInLocationDescription(descriptionsPerLocation.build());
-
-            elapsedTimeOnEnter = elapsedTimeOnEnter.plus(
-                    narrateObjects(movableObjectsInLocationDescription, numMovableObjectsInLocation,
-                            lastObjectInLocation));
+        if (numMovableObjectsInLocation == 0) {
+            return noTime();
         }
 
-        sc.memoryComp().setLastAction(buildMemorizedAction());
+        //  "Auf dem Boden liegen A und B und auf dem Tisch liegt C"
+        final String movableObjectsInLocationDescription =
+                buildMovableObjectsInLocationDescription(descriptionsPerLocation.build());
 
-        return elapsedTimeOnEnter;
+        return narrateObjects(movableObjectsInLocationDescription,
+                numMovableObjectsInLocation,
+                lastObjectInLocation);
     }
 
     private AvTimeSpan narrateObjects(final String objectsDescription, final int numObjects,
