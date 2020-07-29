@@ -2,6 +2,8 @@ package de.nb.aventiure2.data.world.syscomp.memory;
 
 import androidx.room.TypeConverter;
 
+import de.nb.aventiure2.data.world.base.Known;
+
 public class KnownConverters {
     @TypeConverter
     public static Known stringToEnum(final String string) {

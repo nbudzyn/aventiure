@@ -4,6 +4,7 @@ import androidx.annotation.NonNull;
 import androidx.room.Entity;
 
 import de.nb.aventiure2.data.world.base.GameObjectId;
+import de.nb.aventiure2.data.world.base.Known;
 
 @Entity(primaryKeys = {"knower", "knowee"})
 public class KnownInfo {

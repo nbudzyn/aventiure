@@ -1,10 +1,8 @@
-package de.nb.aventiure2.data.world.syscomp.memory;
+package de.nb.aventiure2.data.world.base;
 
 import androidx.annotation.NonNull;
 
 import org.jetbrains.annotations.Contract;
-
-import de.nb.aventiure2.data.world.syscomp.storingplace.Lichtverhaeltnisse;
 
 public enum Known {
     // Order is relevant, see #max()

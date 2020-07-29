@@ -6,24 +6,24 @@ import java.util.Map;
 
 import de.nb.aventiure2.data.database.AvDatabase;
 import de.nb.aventiure2.data.world.base.GameObjectId;
+import de.nb.aventiure2.data.world.base.Known;
 import de.nb.aventiure2.data.world.gameobject.World;
 import de.nb.aventiure2.data.world.syscomp.feelings.FeelingsComp;
 import de.nb.aventiure2.data.world.syscomp.feelings.Mood;
 import de.nb.aventiure2.data.world.syscomp.location.LocationComp;
-import de.nb.aventiure2.data.world.syscomp.memory.Known;
 import de.nb.aventiure2.data.world.syscomp.memory.MemoryComp;
 import de.nb.aventiure2.data.world.syscomp.reaction.impl.ScAutomaticReactionsComp;
 import de.nb.aventiure2.data.world.syscomp.storingplace.StoringPlaceComp;
 import de.nb.aventiure2.data.world.syscomp.talking.impl.NoSCTalkActionsTalkingComp;
 import de.nb.aventiure2.data.world.time.AvDateTime;
 
+import static de.nb.aventiure2.data.world.base.Known.KNOWN_FROM_LIGHT;
 import static de.nb.aventiure2.data.world.gameobject.World.EINE_TASCHE_DES_SPIELER_CHARAKTERS;
 import static de.nb.aventiure2.data.world.gameobject.World.GOLDENE_KUGEL;
 import static de.nb.aventiure2.data.world.gameobject.World.HAENDE_DES_SPIELER_CHARAKTERS;
 import static de.nb.aventiure2.data.world.gameobject.World.SCHLOSS_VORHALLE;
 import static de.nb.aventiure2.data.world.gameobject.World.SPIELER_CHARAKTER;
 import static de.nb.aventiure2.data.world.syscomp.feelings.Hunger.SATT;
-import static de.nb.aventiure2.data.world.syscomp.memory.Known.KNOWN_FROM_LIGHT;
 import static de.nb.aventiure2.data.world.syscomp.storingplace.StoringPlaceType.EINE_TASCHE;
 import static de.nb.aventiure2.data.world.time.AvTime.oClock;
 import static de.nb.aventiure2.data.world.time.AvTimeSpan.hours;

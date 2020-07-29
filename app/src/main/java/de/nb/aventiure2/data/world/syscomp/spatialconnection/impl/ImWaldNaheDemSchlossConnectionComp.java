@@ -10,17 +10,23 @@ import javax.annotation.ParametersAreNonnullByDefault;
 
 import de.nb.aventiure2.data.database.AvDatabase;
 import de.nb.aventiure2.data.world.base.GameObjectId;
+import de.nb.aventiure2.data.world.base.Known;
+import de.nb.aventiure2.data.world.base.Lichtverhaeltnisse;
+import de.nb.aventiure2.data.world.base.SpatialConnection;
 import de.nb.aventiure2.data.world.gameobject.World;
 import de.nb.aventiure2.data.world.syscomp.location.ILocatableGO;
-import de.nb.aventiure2.data.world.syscomp.memory.Known;
 import de.nb.aventiure2.data.world.syscomp.spatialconnection.AbstractSpatialConnectionComp;
 import de.nb.aventiure2.data.world.syscomp.state.IHasStateGO;
 import de.nb.aventiure2.data.world.syscomp.state.impl.FroschprinzState;
 import de.nb.aventiure2.data.world.syscomp.state.impl.SchlossfestState;
-import de.nb.aventiure2.data.world.syscomp.storingplace.Lichtverhaeltnisse;
 import de.nb.aventiure2.data.world.time.AvTimeSpan;
 import de.nb.aventiure2.german.base.AbstractDescription;
 
+import static de.nb.aventiure2.data.world.base.Known.KNOWN_FROM_DARKNESS;
+import static de.nb.aventiure2.data.world.base.Known.UNKNOWN;
+import static de.nb.aventiure2.data.world.base.Lichtverhaeltnisse.DUNKEL;
+import static de.nb.aventiure2.data.world.base.Lichtverhaeltnisse.HELL;
+import static de.nb.aventiure2.data.world.base.SpatialConnection.con;
 import static de.nb.aventiure2.data.world.gameobject.World.ABZWEIG_IM_WALD;
 import static de.nb.aventiure2.data.world.gameobject.World.COUNTER_ID_VOR_DEM_SCHLOSS_SCHLOSSFEST_KNOWN;
 import static de.nb.aventiure2.data.world.gameobject.World.DRAUSSEN_VOR_DEM_SCHLOSS;
@@ -31,12 +37,7 @@ import static de.nb.aventiure2.data.world.gameobject.World.RAPUNZELS_ZAUBERIN;
 import static de.nb.aventiure2.data.world.gameobject.World.SCHLOSSFEST;
 import static de.nb.aventiure2.data.world.gameobject.World.VOR_DEM_ALTEN_TURM;
 import static de.nb.aventiure2.data.world.syscomp.feelings.Mood.ERSCHOEPFT;
-import static de.nb.aventiure2.data.world.syscomp.memory.Known.KNOWN_FROM_DARKNESS;
-import static de.nb.aventiure2.data.world.syscomp.memory.Known.UNKNOWN;
-import static de.nb.aventiure2.data.world.syscomp.spatialconnection.impl.SpatialConnection.con;
 import static de.nb.aventiure2.data.world.syscomp.state.impl.SchlossfestState.BEGONNEN;
-import static de.nb.aventiure2.data.world.syscomp.storingplace.Lichtverhaeltnisse.DUNKEL;
-import static de.nb.aventiure2.data.world.syscomp.storingplace.Lichtverhaeltnisse.HELL;
 import static de.nb.aventiure2.data.world.time.AvTimeSpan.mins;
 import static de.nb.aventiure2.data.world.time.Tageszeit.TAGSUEBER;
 import static de.nb.aventiure2.german.base.AllgDescription.neuerSatz;
@@ -59,8 +60,8 @@ public class ImWaldNaheDemSchlossConnectionComp extends AbstractSpatialConnectio
 
     @Override
     public boolean isAlternativeMovementDescriptionAllowed(final GameObjectId to,
-                                                           final Known newRoomKnown,
-                                                           final Lichtverhaeltnisse lichtverhaeltnisseInNewRoom) {
+                                                           final Known newLocationKnown,
+                                                           final Lichtverhaeltnisse lichtverhaeltnisseInNewLocation) {
         if (to.equals(DRAUSSEN_VOR_DEM_SCHLOSS) &&
                 ((IHasStateGO<SchlossfestState>) world.load(SCHLOSSFEST)).stateComp()
                         .hasState(BEGONNEN) &&
@@ -101,7 +102,7 @@ public class ImWaldNaheDemSchlossConnectionComp extends AbstractSpatialConnectio
 
 
     private AbstractDescription<?> getDescTo_DraussenVorDemSchloss(
-            final Known newRoomKnown, final Lichtverhaeltnisse lichtverhaeltnisse) {
+            final Known newLocationKnown, final Lichtverhaeltnisse lichtverhaeltnisse) {
 
         switch (((IHasStateGO<SchlossfestState>) world.load(SCHLOSSFEST)).stateComp().getState()) {
             case BEGONNEN:
@@ -168,8 +169,8 @@ public class ImWaldNaheDemSchlossConnectionComp extends AbstractSpatialConnectio
     }
 
     private AbstractDescription<?> getDescTo_VorDemAltenTurm(
-            final Known newRoomKnown, final Lichtverhaeltnisse lichtverhaeltnisse) {
-        if (newRoomKnown == UNKNOWN && lichtverhaeltnisse == HELL) {
+            final Known newLocationKnown, final Lichtverhaeltnisse lichtverhaeltnisse) {
+        if (newLocationKnown == UNKNOWN && lichtverhaeltnisse == HELL) {
             return du("nimmst", "den schmalen Pfad, der sich lange durch "
                     + "den Wald aufwärts windet. Ein Hase kreuzt den Weg"
                     + (alleinAufDemPfadZumTurm() ? ", aber keine Menschenseele begegnet dir" : "")
@@ -177,7 +178,7 @@ public class ImWaldNaheDemSchlossConnectionComp extends AbstractSpatialConnectio
                     + "auf der Hügelkuppe – kommst du an einen alten Turm", mins(25))
                     .beendet(PARAGRAPH);
         }
-        if (newRoomKnown == UNKNOWN && lichtverhaeltnisse == DUNKEL) {
+        if (newLocationKnown == UNKNOWN && lichtverhaeltnisse == DUNKEL) {
             world.loadSC().feelingsComp().setMood(ERSCHOEPFT);
 
             return neuerSatz("Trotz der Dunkelheit nimmst du den schmalen Pfad, "
@@ -188,7 +189,7 @@ public class ImWaldNaheDemSchlossConnectionComp extends AbstractSpatialConnectio
                     + "Endlich endet der Pfad an einen alten Turm", mins(40))
                     .beendet(PARAGRAPH);
         }
-        if (newRoomKnown == KNOWN_FROM_DARKNESS
+        if (newLocationKnown == KNOWN_FROM_DARKNESS
                 && lichtverhaeltnisse == HELL) {
             return neuerSatz("Der schmale Pfad den Hügel hinauf ist bei Tageslicht "
                             + "auch nicht kürzer, aber endlich stehst du wieder vor dem alten Turm",

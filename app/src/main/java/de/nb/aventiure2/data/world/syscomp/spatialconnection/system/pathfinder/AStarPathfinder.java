@@ -6,9 +6,9 @@ import com.google.common.collect.ImmutableList;
 
 import de.nb.aventiure2.data.world.base.GameObjectId;
 import de.nb.aventiure2.data.world.base.IGameObject;
+import de.nb.aventiure2.data.world.base.SpatialConnection;
 import de.nb.aventiure2.data.world.gameobject.World;
 import de.nb.aventiure2.data.world.syscomp.spatialconnection.ISpatiallyConnectedGO;
-import de.nb.aventiure2.data.world.syscomp.spatialconnection.impl.SpatialConnection;
 import de.nb.aventiure2.data.world.syscomp.spatialconnection.impl.SpatialStandardStep;
 import de.nb.aventiure2.data.world.syscomp.storingplace.ILocationGO;
 import de.nb.aventiure2.data.world.time.AvTimeSpan;

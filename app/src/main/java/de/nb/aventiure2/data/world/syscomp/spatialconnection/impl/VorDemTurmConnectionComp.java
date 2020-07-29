@@ -10,16 +10,17 @@ import javax.annotation.ParametersAreNonnullByDefault;
 
 import de.nb.aventiure2.data.database.AvDatabase;
 import de.nb.aventiure2.data.world.base.GameObjectId;
+import de.nb.aventiure2.data.world.base.Known;
+import de.nb.aventiure2.data.world.base.Lichtverhaeltnisse;
+import de.nb.aventiure2.data.world.base.SpatialConnection;
 import de.nb.aventiure2.data.world.gameobject.World;
-import de.nb.aventiure2.data.world.syscomp.memory.Known;
 import de.nb.aventiure2.data.world.syscomp.spatialconnection.AbstractSpatialConnectionComp;
-import de.nb.aventiure2.data.world.syscomp.storingplace.Lichtverhaeltnisse;
 import de.nb.aventiure2.german.base.AbstractDescription;
 
+import static de.nb.aventiure2.data.world.base.SpatialConnection.con;
 import static de.nb.aventiure2.data.world.gameobject.World.DRAUSSEN_VOR_DEM_SCHLOSS;
 import static de.nb.aventiure2.data.world.gameobject.World.IM_WALD_NAHE_DEM_SCHLOSS;
 import static de.nb.aventiure2.data.world.gameobject.World.VOR_DEM_ALTEN_TURM;
-import static de.nb.aventiure2.data.world.syscomp.spatialconnection.impl.SpatialConnection.con;
 import static de.nb.aventiure2.data.world.time.AvTimeSpan.mins;
 import static de.nb.aventiure2.data.world.time.AvTimeSpan.secs;
 import static de.nb.aventiure2.german.base.DuDescription.du;
@@ -46,8 +47,8 @@ public class VorDemTurmConnectionComp extends AbstractSpatialConnectionComp {
 
     @Override
     public boolean isAlternativeMovementDescriptionAllowed(final GameObjectId to,
-                                                           final Known newRoomKnown,
-                                                           final Lichtverhaeltnisse lichtverhaeltnisseInNewRoom) {
+                                                           final Known newLocationKnown,
+                                                           final Lichtverhaeltnisse lichtverhaeltnisseInNewLocation) {
         if (to.equals(VOR_DEM_ALTEN_TURM) &&
                 db.counterDao().get(COUNTER_ALTER_TURM_UMRUNDET) == 0) {
             return false;
@@ -82,7 +83,7 @@ public class VorDemTurmConnectionComp extends AbstractSpatialConnectionComp {
     }
 
     private AbstractDescription<?> getDescTo_VorDemTurm(
-            final Known newRoomKnown, final Lichtverhaeltnisse lichtverhaeltnisse) {
+            final Known newLocationKnown, final Lichtverhaeltnisse lichtverhaeltnisse) {
         final int count = db.counterDao().incAndGet("counter_alterTurm_umrundet");
         switch (count) {
             case 1:

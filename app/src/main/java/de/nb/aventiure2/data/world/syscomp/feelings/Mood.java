@@ -21,7 +21,9 @@ public enum Mood {
     NEUTRAL(0, "aus Langeweile"),
     ANGESPANNT(0, "trotzig"),
     ERSCHOEPFT(0, "erschöpft"),
-    ETWAS_GEKNICKT(-2, "etwas geknickt"), // TODO Alternativen: betrübt, ...
+    ETWAS_GEKNICKT(-2, "etwas geknickt"),
+    // TODO Alternativen: betrübt, ...
+    VERUNSICHERT(-2, "verunsichert"),
     UNTROESTLICH(-5, "voller Trauer");
 
     private final int gradDerFreude;

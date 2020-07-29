@@ -11,6 +11,7 @@ import java.util.Map;
 
 import de.nb.aventiure2.data.world.base.GameObjectId;
 import de.nb.aventiure2.data.world.base.IComponentDao;
+import de.nb.aventiure2.data.world.base.Known;
 
 /**
  * Android ROOM DAO for the {@link MemoryComp} component.

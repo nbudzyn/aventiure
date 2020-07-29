@@ -8,10 +8,11 @@ import javax.annotation.ParametersAreNonnullByDefault;
 
 import de.nb.aventiure2.data.database.AvDatabase;
 import de.nb.aventiure2.data.world.base.GameObjectId;
+import de.nb.aventiure2.data.world.base.Known;
+import de.nb.aventiure2.data.world.base.Lichtverhaeltnisse;
+import de.nb.aventiure2.data.world.base.SpatialConnection;
 import de.nb.aventiure2.data.world.gameobject.World;
-import de.nb.aventiure2.data.world.syscomp.memory.Known;
 import de.nb.aventiure2.data.world.syscomp.spatialconnection.AbstractSpatialConnectionComp;
-import de.nb.aventiure2.data.world.syscomp.storingplace.Lichtverhaeltnisse;
 
 /**
  * An implementation of {@link AbstractSpatialConnectionComp}
@@ -41,8 +42,8 @@ class SimpleConnectionComp extends AbstractSpatialConnectionComp {
 
     @Override
     public boolean isAlternativeMovementDescriptionAllowed(final GameObjectId to,
-                                                           final Known newRoomKnown,
-                                                           final Lichtverhaeltnisse lichtverhaeltnisseInNewRoom) {
+                                                           final Known newLocationKnown,
+                                                           final Lichtverhaeltnisse lichtverhaeltnisseInNewLocation) {
         return true;
     }
 

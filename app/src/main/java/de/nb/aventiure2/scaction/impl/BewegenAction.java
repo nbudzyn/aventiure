@@ -14,20 +14,20 @@ import java.util.List;
 import de.nb.aventiure2.data.database.AvDatabase;
 import de.nb.aventiure2.data.world.base.GameObject;
 import de.nb.aventiure2.data.world.base.IGameObject;
+import de.nb.aventiure2.data.world.base.Known;
+import de.nb.aventiure2.data.world.base.Lichtverhaeltnisse;
+import de.nb.aventiure2.data.world.base.SpatialConnection;
 import de.nb.aventiure2.data.world.gameobject.World;
 import de.nb.aventiure2.data.world.syscomp.description.IDescribableGO;
 import de.nb.aventiure2.data.world.syscomp.feelings.Hunger;
 import de.nb.aventiure2.data.world.syscomp.feelings.Mood;
 import de.nb.aventiure2.data.world.syscomp.location.ILocatableGO;
 import de.nb.aventiure2.data.world.syscomp.memory.Action;
-import de.nb.aventiure2.data.world.syscomp.memory.Known;
 import de.nb.aventiure2.data.world.syscomp.spatialconnection.ISpatiallyConnectedGO;
 import de.nb.aventiure2.data.world.syscomp.spatialconnection.NumberOfWays;
-import de.nb.aventiure2.data.world.syscomp.spatialconnection.impl.SpatialConnection;
 import de.nb.aventiure2.data.world.syscomp.state.IHasStateGO;
 import de.nb.aventiure2.data.world.syscomp.state.impl.SchlossfestState;
 import de.nb.aventiure2.data.world.syscomp.storingplace.ILocationGO;
-import de.nb.aventiure2.data.world.syscomp.storingplace.Lichtverhaeltnisse;
 import de.nb.aventiure2.data.world.time.AvTimeSpan;
 import de.nb.aventiure2.german.base.AbstractDescription;
 import de.nb.aventiure2.german.base.DuDescription;
@@ -35,16 +35,17 @@ import de.nb.aventiure2.german.base.StructuralElement;
 import de.nb.aventiure2.scaction.AbstractScAction;
 
 import static com.google.common.collect.ImmutableList.builder;
+import static de.nb.aventiure2.data.world.base.Lichtverhaeltnisse.HELL;
 import static de.nb.aventiure2.data.world.gameobject.World.DRAUSSEN_VOR_DEM_SCHLOSS;
 import static de.nb.aventiure2.data.world.gameobject.World.SCHLOSSFEST;
 import static de.nb.aventiure2.data.world.gameobject.World.SCHLOSS_VORHALLE;
 import static de.nb.aventiure2.data.world.gameobject.World.SCHLOSS_VORHALLE_AM_TISCH_BEIM_FEST;
+import static de.nb.aventiure2.data.world.gameobject.World.VOR_DEM_ALTEN_TURM_SCHATTEN_DER_BAEUME;
 import static de.nb.aventiure2.data.world.gameobject.World.WALDWILDNIS_HINTER_DEM_BRUNNEN;
 import static de.nb.aventiure2.data.world.syscomp.memory.Action.Type.BEWEGEN;
 import static de.nb.aventiure2.data.world.syscomp.spatialconnection.NumberOfWays.ONE_IN_ONE_OUT;
 import static de.nb.aventiure2.data.world.syscomp.spatialconnection.NumberOfWays.ONLY_WAY;
 import static de.nb.aventiure2.data.world.syscomp.state.impl.SchlossfestState.BEGONNEN;
-import static de.nb.aventiure2.data.world.syscomp.storingplace.Lichtverhaeltnisse.HELL;
 import static de.nb.aventiure2.data.world.time.AvTimeSpan.noTime;
 import static de.nb.aventiure2.data.world.time.AvTimeSpan.secs;
 import static de.nb.aventiure2.german.base.AllgDescription.neuerSatz;
@@ -59,52 +60,63 @@ import static de.nb.aventiure2.german.base.StructuralElement.WORD;
 import static java.util.stream.Collectors.toList;
 
 /**
- * Der Spielercharakter bewegt sich in einen anderen Raum.
+ * Der Spielercharakter bewegt sich in einen anderen Raum oder in ein Objekt, das im
+ * aktuellen Raum (oder aktuellen Objekt) enthalten ist - oder aus einem solchen
+ * Objekt heraus.
  */
-public class BewegenAction<R extends ISpatiallyConnectedGO & ILocationGO,
-        LOC_DESC extends ILocatableGO & IDescribableGO>
+public class BewegenAction<LOC_DESC extends ILocatableGO & IDescribableGO>
         extends AbstractScAction {
 
-    private final R oldRoom;
+    private final ILocationGO oldLocation;
 
     private final SpatialConnection spatialConnection;
+
+    /**
+     * Hier werden "Wege" in untergeordnete Objekte (der Weg "auf den Tisch") oder aus
+     * untergeordneten Objekten heraus nicht mitgezählt.
+     */
     private final NumberOfWays numberOfWays;
 
-    public static <R extends ISpatiallyConnectedGO & ILocationGO>
-    ImmutableList<AbstractScAction> buildActions(
+    public static ImmutableList<AbstractScAction> buildActions(
             final AvDatabase db,
             final World world,
-            @NonNull final R room) {
+            @NonNull final ILocationGO location) {
         final ImmutableList.Builder<AbstractScAction> res = builder();
 
-        // STORY Man kann sich VOR_DEM_ALTEN_TURM_BÄUME setzen.
-        //  Erster Fall, wo der SC von etwas anderem enthalten wird als einem Raum.
-        //  - Woher weiß die App, in welche ILocations der SC wechseln kann?
-        //  - Wie ergibt sich der Aktionstext? ("In den Schatten unter die Bäume setzen"? / "An einen Tisch setzen" / "In das Bett legen"?)
-        //  - Wie ergibt sich der Beschreibungstext für den Übergang? ("Du setzt dich in den Schatten unter die Bäume"?)
-        //  - Wie ergeben sich Aktionstext und Beschreibungstext für den Weg zurück?
-        //  - Das Konzept könnte so ähnlich (oder dasselbe?!) wie bei den SpatialConnections sein:
-        //   Eine SpatialConnection hinein in die Location, zweite wieder hinaus
+        if (location instanceof ISpatiallyConnectedGO) {
+            res.addAll(buildSpatiallyConnectedActions(db, world,
+                    (ILocationGO & ISpatiallyConnectedGO) location));
+        }
 
-        // STORY Das Bett könnte ein Objekt sein, in das man sich legen kann (kein Raum mehr)
+        for (final ILocationGO inventoryGO :
+                world.loadDescribableNonLivingLocationInventory(location)) {
+            @Nullable final SpatialConnection spatialConnectionIn =
+                    inventoryGO.storingPlaceComp().getSpatialConnectionIn();
+            if (spatialConnectionIn != null) {
+                res.add(new BewegenAction<>(db, world, location, spatialConnectionIn,
+                        NumberOfWays.NO_WAY));
+            }
+        }
 
-        // STORY Der Tisch (oder die Bank) beim Schlossfest könnte ein Objekt sein, an den man sich setzen kann
+        return res.build();
+    }
 
-        // STORY Der Baum könnte ein Objekt sein, auf das man klettern kann (Keine extra-Klettern-Action)
-
-        // STORY Rapunzel: Man muss eine Strickleiter
-        //  besorgen - oder Seide kaufen und etwas zum Stricken??? Gold gabs vielleicht
-        //  vom Froschprinzen?
+    private static <LOC extends ILocationGO & ISpatiallyConnectedGO>
+    ImmutableList<AbstractScAction> buildSpatiallyConnectedActions(final AvDatabase db,
+                                                                   final World world,
+                                                                   @NonNull final LOC location) {
+        final ImmutableList.Builder<AbstractScAction> res = builder();
 
         final List<SpatialConnection> spatialConnections =
-                room.spatialConnectionComp().getConnections();
+                location.spatialConnectionComp().getConnections();
 
         final NumberOfWays numberOfWays = NumberOfWays.get(spatialConnections.size());
 
         for (final SpatialConnection spatialConnection : spatialConnections) {
-            res.add(new BewegenAction<>(db, world, room,
+            res.add(new BewegenAction<>(db, world, location,
                     spatialConnection, numberOfWays));
         }
+
         return res.build();
     }
 
@@ -113,12 +125,12 @@ public class BewegenAction<R extends ISpatiallyConnectedGO & ILocationGO,
      */
     private BewegenAction(final AvDatabase db,
                           final World world,
-                          @NonNull final R oldRoom,
+                          @NonNull final ILocationGO oldLocation,
                           @NonNull final SpatialConnection spatialConnection,
                           final NumberOfWays numberOfWays) {
         super(db, world);
         this.numberOfWays = numberOfWays;
-        this.oldRoom = oldRoom;
+        this.oldLocation = oldLocation;
         this.spatialConnection = spatialConnection;
     }
 
@@ -135,12 +147,11 @@ public class BewegenAction<R extends ISpatiallyConnectedGO & ILocationGO,
 
     @Override
     public AvTimeSpan narrateAndDo() {
+        AvTimeSpan elapsedTime = narrateLocationOnly(loadTo());
 
-        AvTimeSpan elapsedTime = narrateRoomOnly(loadTo());
+        upgradeLocationOnlyKnown();
 
-        upgradeRoomOnlyKnown();
-
-        // Die nicht-movable Objekte sollten in der Raumbeschreibung
+        // Die nicht-movable Objekte sollten in der Location-beschreibung
         // alle enthalten gewesen sein (mindestens implizit), auch rekursiv.
         // Sie müssen auf Known gesetzt werden, damit gleich etwas wie
         // "Auf dem Tisch liegt eine Kugel" geschrieben werden kann.
@@ -165,7 +176,7 @@ public class BewegenAction<R extends ISpatiallyConnectedGO & ILocationGO,
                         this::narrateNonLivingMovableObjectsAndUpgradeKnown));
     }
 
-    private void upgradeRoomOnlyKnown() {
+    private void upgradeLocationOnlyKnown() {
         world.upgradeKnownToSC(spatialConnection.getTo());
     }
 
@@ -186,34 +197,34 @@ public class BewegenAction<R extends ISpatiallyConnectedGO & ILocationGO,
     }
 
     private AvTimeSpan narrateNonLivingMovableObjectsAndUpgradeKnown() {
-        // Unbewegliche Objekte sollen bereits in der Raumbeschreibung mitgenannt werden,
+        // Unbewegliche Objekte sollen bereits in der Location-Beschreibung mitgenannt werden,
         // nicht hier! (Das betrifft auch indirekt enthaltene unbewegliche Objekte.)
 
         final ImmutableList.Builder<String> descriptionsPerLocation = builder();
-        int numMovableObjectsInRoom = 0;
-        @Nullable IDescribableGO lastObjectInRoom = null;
+        int numMovableObjectsInLocation = 0;
+        @Nullable IDescribableGO lastObjectInLocation = null;
         for (final Pair<ILocationGO, ? extends List<? extends IDescribableGO>> locationAndDescribables :
                 buildRecursiveLocationsAndDescribables(loadTo())) {
             descriptionsPerLocation.add(
                     //  "auf dem Boden liegen A und B"
                     buildObjectsInLocationDescription(locationAndDescribables));
 
-            numMovableObjectsInRoom += locationAndDescribables.second.size();
-            lastObjectInRoom = locationAndDescribables.second
+            numMovableObjectsInLocation += locationAndDescribables.second.size();
+            lastObjectInLocation = locationAndDescribables.second
                     .get(locationAndDescribables.second.size() - 1);
 
             upgradeKnown(locationAndDescribables);
         }
 
         AvTimeSpan elapsedTimeOnEnter = noTime();
-        if (numMovableObjectsInRoom > 0) {
+        if (numMovableObjectsInLocation > 0) {
             //  "Auf dem Boden liegen A und B und auf dem Tisch liegt C"
-            final String movableObjectsInRoomDescription =
-                    buildMovableObjectsInRoomDescription(descriptionsPerLocation.build());
+            final String movableObjectsInLocationDescription =
+                    buildMovableObjectsInLocationDescription(descriptionsPerLocation.build());
 
             elapsedTimeOnEnter = elapsedTimeOnEnter.plus(
-                    narrateObjects(movableObjectsInRoomDescription, numMovableObjectsInRoom,
-                            lastObjectInRoom));
+                    narrateObjects(movableObjectsInLocationDescription, numMovableObjectsInLocation,
+                            lastObjectInLocation));
         }
 
         sc.memoryComp().setLastAction(buildMemorizedAction());
@@ -272,7 +283,7 @@ public class BewegenAction<R extends ISpatiallyConnectedGO & ILocationGO,
     }
 
     @NonNull
-    private static String buildMovableObjectsInRoomDescription(
+    private static String buildMovableObjectsInLocationDescription(
             final ImmutableList<String> descriptionsPerLocation) {
         return capitalize(
                 buildAufzaehlung(descriptionsPerLocation));
@@ -311,20 +322,20 @@ public class BewegenAction<R extends ISpatiallyConnectedGO & ILocationGO,
     }
 
     private boolean scWirdMitEssenKonfrontiert() {
-        final GameObject newRoom = world.load(spatialConnection.getTo());
+        final GameObject newLocation = world.load(spatialConnection.getTo());
 
         if (((IHasStateGO<SchlossfestState>) world.load(SCHLOSSFEST)).stateComp()
                 .hasState(BEGONNEN)) {
-            if (oldRoom.is(DRAUSSEN_VOR_DEM_SCHLOSS) &&
-                    newRoom.is(SCHLOSS_VORHALLE)) {
+            if (oldLocation.is(DRAUSSEN_VOR_DEM_SCHLOSS) &&
+                    newLocation.is(SCHLOSS_VORHALLE)) {
                 return true;
             }
-            if (newRoom.is(SCHLOSS_VORHALLE_AM_TISCH_BEIM_FEST)) {
+            if (newLocation.is(SCHLOSS_VORHALLE_AM_TISCH_BEIM_FEST)) {
                 return true;
             }
         }
 
-        if (newRoom.is(WALDWILDNIS_HINTER_DEM_BRUNNEN)) {
+        if (newLocation.is(WALDWILDNIS_HINTER_DEM_BRUNNEN)) {
             // STORY Im Dunkeln kann man keine Früchte sehen
             return true;
         }
@@ -363,17 +374,23 @@ public class BewegenAction<R extends ISpatiallyConnectedGO & ILocationGO,
      */
     private void updateMood() {
         final Mood mood = sc.feelingsComp().getMood();
-        if (oldRoom.is(SCHLOSS_VORHALLE)
+        if (oldLocation.is(SCHLOSS_VORHALLE)
                 && spatialConnection.getTo().equals(DRAUSSEN_VOR_DEM_SCHLOSS)
                 && mood == Mood.ANGESPANNT) {
             sc.feelingsComp().setMood(Mood.NEUTRAL);
+        } else if (spatialConnection.getTo().equals(VOR_DEM_ALTEN_TURM_SCHATTEN_DER_BAEUME)) {
+            if (db.nowDao().now().getTageszeit().getLichtverhaeltnisseDraussen() == HELL) {
+                sc.feelingsComp().setMoodMin(Mood.ZUFRIEDEN);
+            } else {
+                sc.feelingsComp().setMoodMax(Mood.VERUNSICHERT);
+            }
         } else if (mood == Mood.ETWAS_GEKNICKT) {
             sc.feelingsComp().setMood(Mood.NEUTRAL);
         }
     }
 
-    private AvTimeSpan narrateRoomOnly(@NonNull final ILocationGO to) {
-        final AbstractDescription description = getNormalDescription(
+    private AvTimeSpan narrateLocationOnly(@NonNull final ILocationGO to) {
+        final AbstractDescription<?> description = getNormalDescription(
                 to.storingPlaceComp().getLichtverhaeltnisse());
 
         if (description instanceof DuDescription &&
@@ -462,27 +479,31 @@ public class BewegenAction<R extends ISpatiallyConnectedGO & ILocationGO,
         }
     }
 
-    private AbstractDescription getNormalDescription(final Lichtverhaeltnisse
-                                                             lichtverhaeltnisseInNewRoom) {
-        final Known newRoomKnown = sc.memoryComp().getKnown(spatialConnection.getTo());
+    private AbstractDescription<?> getNormalDescription(final Lichtverhaeltnisse
+                                                                lichtverhaeltnisseInNewLocation) {
+        final Known newLocationKnown = sc.memoryComp().getKnown(spatialConnection.getTo());
 
-        final boolean alternativeDescriptionAllowed =
-                oldRoom.spatialConnectionComp().isAlternativeMovementDescriptionAllowed(
-                        spatialConnection.getTo(),
-                        newRoomKnown, lichtverhaeltnisseInNewRoom);
+        boolean alternativeDescriptionAllowed = false;
+        if (oldLocation instanceof ISpatiallyConnectedGO) {
+            alternativeDescriptionAllowed =
+                    ((ISpatiallyConnectedGO) oldLocation).spatialConnectionComp()
+                            .isAlternativeMovementDescriptionAllowed(
+                                    spatialConnection.getTo(),
+                                    newLocationKnown, lichtverhaeltnisseInNewLocation);
+        }
 
-        final AbstractDescription standardDescription =
-                spatialConnection
-                        .getSCMoveDescription(newRoomKnown, lichtverhaeltnisseInNewRoom);
+        final AbstractDescription<?> standardDescription =
+                spatialConnection.getSCMoveDescriptionProvider()
+                        .getSCMoveDescription(newLocationKnown, lichtverhaeltnisseInNewLocation);
 
         if (!alternativeDescriptionAllowed) {
             return standardDescription;
         }
 
-        if (newRoomKnown == Known.KNOWN_FROM_LIGHT) {
+        if (newLocationKnown == Known.KNOWN_FROM_LIGHT) {
             if (numberOfWays == ONLY_WAY) {
                 if (sc.feelingsComp().hasMood(Mood.VOLLER_FREUDE) &&
-                        lichtverhaeltnisseInNewRoom == HELL &&
+                        lichtverhaeltnisseInNewLocation == HELL &&
                         n.requireStoryState().allowsAdditionalDuSatzreihengliedOhneSubjekt() &&
                         sc.memoryComp().getLastAction().is(Action.Type.NEHMEN)) {
                     return du("springst", "damit fort", "damit",
@@ -500,7 +521,7 @@ public class BewegenAction<R extends ISpatiallyConnectedGO & ILocationGO,
                     && sc.memoryComp().getLastAction().is(BEWEGEN) &&
                     !sc.locationComp().lastLocationWas(spatialConnection.getTo()) &&
                     sc.feelingsComp().hasMood(Mood.VOLLER_FREUDE) &&
-                    lichtverhaeltnisseInNewRoom ==
+                    lichtverhaeltnisseInNewLocation ==
                             HELL &&
                     n.requireStoryState().allowsAdditionalDuSatzreihengliedOhneSubjekt()) {
                 return du("eilst", "weiter", standardDescription.getTimeElapsed().times(0.8))

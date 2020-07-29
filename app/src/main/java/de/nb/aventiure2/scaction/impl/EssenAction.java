@@ -43,15 +43,15 @@ import static de.nb.aventiure2.german.base.StructuralElement.SENTENCE;
  */
 public class EssenAction extends AbstractScAction {
     private static final String COUNTER_FELSENBIRNEN = "EssenAction_Felsenbirnen";
-    private final ILocationGO room;
+    private final ILocationGO location;
 
     public static Collection<EssenAction> buildActions(
             final AvDatabase db,
             final World world,
-            final ILocationGO room) {
+            final ILocationGO location) {
         final ImmutableList.Builder<EssenAction> res = ImmutableList.builder();
-        if (essenMoeglich(db, world, room)) {
-            res.add(new EssenAction(db, world, room));
+        if (essenMoeglich(db, world, location)) {
+            res.add(new EssenAction(db, world, location));
         }
 
         return res.build();
@@ -60,7 +60,7 @@ public class EssenAction extends AbstractScAction {
     private static <F extends ILocatableGO & IHasStateGO<FroschprinzState>>
     boolean essenMoeglich(final AvDatabase db,
                           final World world,
-                          final ILocationGO room) {
+                          final ILocationGO location) {
         if (world.loadSC().memoryComp().getLastAction().is(Action.Type.ESSEN)) {
             // TODO Es könnten sich verschiedene essbare Dinge am selben Ort befinden!
             //  Das zweite sollte man durchaus essen können, wenn man schon das
@@ -69,25 +69,25 @@ public class EssenAction extends AbstractScAction {
         }
 
         final F froschprinz = (F) world.load(FROSCHPRINZ);
-        if (room.is(SCHLOSS_VORHALLE_AM_TISCH_BEIM_FEST) &&
+        if (location.is(SCHLOSS_VORHALLE_AM_TISCH_BEIM_FEST) &&
                 froschprinz.locationComp().hasRecursiveLocation(SPIELER_CHARAKTER) &&
                 froschprinz.stateComp().hasState(HAT_HOCHHEBEN_GEFORDERT)) {
             // SC hat gerade den Frosch in der Hand
             return false;
         }
 
-        return raumEnthaeltEtwasEssbares(world, room);
+        return locationEnthaeltEtwasEssbares(world, location);
     }
 
-    private static boolean raumEnthaeltEtwasEssbares(final World world,
-                                                     final ILocationGO room) {
-        if (room.is(SCHLOSS_VORHALLE_AM_TISCH_BEIM_FEST) &&
+    private static boolean locationEnthaeltEtwasEssbares(final World world,
+                                                         final ILocationGO location) {
+        if (location.is(SCHLOSS_VORHALLE_AM_TISCH_BEIM_FEST) &&
                 ((IHasStateGO<SchlossfestState>) world.load(SCHLOSSFEST)).stateComp()
                         .hasState(BEGONNEN)) {
             return true;
         }
 
-        if (room.is(WALDWILDNIS_HINTER_DEM_BRUNNEN)) {
+        if (location.is(WALDWILDNIS_HINTER_DEM_BRUNNEN)) {
             // STORY Früchte sind im Dunkeln kaum zu sehen, selbst wenn man den Weg
             //  schon kennt
             return true;
@@ -98,9 +98,9 @@ public class EssenAction extends AbstractScAction {
 
     private EssenAction(final AvDatabase db,
                         final World world,
-                        final ILocationGO room) {
+                        final ILocationGO location) {
         super(db, world);
-        this.room = room;
+        this.location = location;
     }
 
     @Override
@@ -111,26 +111,26 @@ public class EssenAction extends AbstractScAction {
     @Override
     @NonNull
     public String getName() {
-        if (room.is(SCHLOSS_VORHALLE_AM_TISCH_BEIM_FEST)) {
+        if (location.is(SCHLOSS_VORHALLE_AM_TISCH_BEIM_FEST)) {
             return "Eintopf essen";
         }
 
-        if (room.is(WALDWILDNIS_HINTER_DEM_BRUNNEN)) {
+        if (location.is(WALDWILDNIS_HINTER_DEM_BRUNNEN)) {
             return "Früchte essen";
         }
 
-        throw new IllegalStateException("Unexpected room: " + room);
+        throw new IllegalStateException("Unexpected location: " + location);
     }
 
     @Override
     public AvTimeSpan narrateAndDo() {
         AvTimeSpan timeElapsed;
-        if (room.is(SCHLOSS_VORHALLE_AM_TISCH_BEIM_FEST)) {
+        if (location.is(SCHLOSS_VORHALLE_AM_TISCH_BEIM_FEST)) {
             timeElapsed = narrateAndDoSchlossfest();
-        } else if (room.is(WALDWILDNIS_HINTER_DEM_BRUNNEN)) {
+        } else if (location.is(WALDWILDNIS_HINTER_DEM_BRUNNEN)) {
             timeElapsed = narrateAndDoFelsenbirnen();
         } else {
-            throw new IllegalStateException("Unexpected room: " + room);
+            throw new IllegalStateException("Unexpected location: " + location);
         }
 
         sc.memoryComp().setLastAction(buildMemorizedAction());

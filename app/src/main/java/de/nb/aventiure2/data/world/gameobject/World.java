@@ -19,6 +19,7 @@ import de.nb.aventiure2.data.database.AvDatabase;
 import de.nb.aventiure2.data.world.base.GameObject;
 import de.nb.aventiure2.data.world.base.GameObjectId;
 import de.nb.aventiure2.data.world.base.IGameObject;
+import de.nb.aventiure2.data.world.base.Known;
 import de.nb.aventiure2.data.world.gameobject.player.SpielerCharakter;
 import de.nb.aventiure2.data.world.gameobject.player.SpielerCharakterFactory;
 import de.nb.aventiure2.data.world.syscomp.alive.AliveSystem;
@@ -28,7 +29,6 @@ import de.nb.aventiure2.data.world.syscomp.location.ILocatableGO;
 import de.nb.aventiure2.data.world.syscomp.location.LocationSystem;
 import de.nb.aventiure2.data.world.syscomp.location.RoomFactory;
 import de.nb.aventiure2.data.world.syscomp.memory.IHasMemoryGO;
-import de.nb.aventiure2.data.world.syscomp.memory.Known;
 import de.nb.aventiure2.data.world.syscomp.reaction.IReactions;
 import de.nb.aventiure2.data.world.syscomp.reaction.IResponder;
 import de.nb.aventiure2.data.world.syscomp.spatialconnection.impl.DraussenVorDemSchlossConnectionComp;
@@ -46,7 +46,6 @@ import de.nb.aventiure2.german.base.Nominalphrase;
 import static com.google.common.collect.ImmutableList.toImmutableList;
 import static de.nb.aventiure2.data.world.syscomp.storingplace.StoringPlaceType.EINE_TASCHE;
 import static de.nb.aventiure2.data.world.syscomp.storingplace.StoringPlaceType.HAENDE;
-import static de.nb.aventiure2.data.world.syscomp.storingplace.StoringPlaceType.SCHATTEN_DER_BAEUME;
 import static de.nb.aventiure2.data.world.syscomp.storingplace.StoringPlaceType.TISCH;
 import static de.nb.aventiure2.data.world.time.AvTime.oClock;
 import static de.nb.aventiure2.german.base.Nominalphrase.np;
@@ -74,7 +73,7 @@ public class World {
     public static final GameObjectId GOLDENE_KUGEL = new GameObjectId(10_100);
     public static final GameObjectId SCHLOSS_VORHALLE_LANGER_TISCH_BEIM_FEST =
             new GameObjectId(10_101);
-    public static final GameObjectId VOR_DEM_ALTEN_TURM_BÄUME =
+    public static final GameObjectId VOR_DEM_ALTEN_TURM_SCHATTEN_DER_BAEUME =
             // (in deren Schatten man sich setzen kann)
             new GameObjectId(10_102);
 
@@ -276,17 +275,11 @@ public class World {
                             TISCH,
                             SCHLOSS_VORHALLE_DAUERHAFT_BELEUCHTET),
                     // STORY Spieler kauft Lampe (z.B. für Hütte) auf Schlossfest
-                    object.create(VOR_DEM_ALTEN_TURM_BÄUME,
-                            np(M, "der Schatten der Bäume",
-                                    "dem Schatten der Bäume",
-                                    "den Schatten der Bäume"),
-                            np(M, "der Schatten",
-                                    "dem Schatten",
-                                    "den Schatten"),
-                            VOR_DEM_ALTEN_TURM, null,
-                            false,
-                            SCHATTEN_DER_BAEUME,
-                            false)
+
+                    // STORY Rapunzel: Man muss eine Strickleiter
+                    //  besorgen - oder Seide kaufen und etwas zum Stricken??? Gold gabs vielleicht
+                    //  vom Froschprinzen?
+                    object.createVorDemAltenTurmSchattenDerBaeume()
             );
         }
     }
@@ -512,7 +505,7 @@ public class World {
 
     /**
      * Ermittelt die nicht-lebenden Game Objects,
-     * an denen etwas abgelegt werden kann an diesem Ort (<i>nicht</i>> rekursiv), lädt sie
+     * an denen etwas abgelegt werden kann (<i>nicht</i>> rekursiv), lädt sie
      * (sofern noch nicht geschehen)
      * und gibt sie zurück -
      * nur Gegenstände, die eine Beschreibung haben.

@@ -13,9 +13,9 @@ import de.nb.aventiure2.data.world.syscomp.storingplace.ILocationGO;
 import de.nb.aventiure2.data.world.time.AvTimeSpan;
 import de.nb.aventiure2.scaction.AbstractScAction;
 
+import static de.nb.aventiure2.data.world.base.Lichtverhaeltnisse.DUNKEL;
 import static de.nb.aventiure2.data.world.gameobject.World.HINTER_DER_HUETTE;
 import static de.nb.aventiure2.data.world.syscomp.feelings.Mood.ERSCHOEPFT;
-import static de.nb.aventiure2.data.world.syscomp.storingplace.Lichtverhaeltnisse.DUNKEL;
 import static de.nb.aventiure2.data.world.time.AvTimeSpan.mins;
 import static de.nb.aventiure2.german.base.AllgDescription.neuerSatz;
 import static de.nb.aventiure2.german.base.DuDescription.du;
@@ -33,10 +33,10 @@ public class KletternAction extends AbstractScAction {
 
     public static Collection<KletternAction> buildActions(
             final AvDatabase db,
-            final World world, final ILocationGO room) {
+            final World world, final ILocationGO location) {
         final ImmutableList.Builder<KletternAction> res = ImmutableList.builder();
-        if (room.is(HINTER_DER_HUETTE)) {
-            res.add(new KletternAction(db, world, room));
+        if (location.is(HINTER_DER_HUETTE)) {
+            res.add(new KletternAction(db, world, location));
         }
 
         return res.build();

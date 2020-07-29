@@ -35,19 +35,19 @@ import static de.nb.aventiure2.german.base.DuDescription.du;
  * Der Spielercharakter heult.
  */
 public class HeulenAction extends AbstractScAction {
-    private final List<? extends ILivingBeingGO> creaturesInRoom;
+    private final List<? extends ILivingBeingGO> creaturesInLocation;
 
     public static Collection<HeulenAction> buildActions(
             final AvDatabase db,
             final World world,
-            final SpielerCharakter sc, final List<? extends ILivingBeingGO> creaturesInRoom) {
+            final SpielerCharakter sc, final List<? extends ILivingBeingGO> creaturesInLocation) {
         final ImmutableList.Builder<HeulenAction> res = ImmutableList.builder();
         // STORY Verhindern, dass der Benutzer nicht mehr untröstlich ist, wenn er z.B. erst
         //  schläft. Z.B. Benutzer traurig machen, wenn er den Brunnen sieht und sich an
         //  seine goldene Kugel erinnert o.Ä.
 
         if (sc.feelingsComp().hasMood(UNTROESTLICH)) {
-            res.add(new HeulenAction(db, world, creaturesInRoom));
+            res.add(new HeulenAction(db, world, creaturesInLocation));
         }
 
         return res.build();
@@ -55,9 +55,9 @@ public class HeulenAction extends AbstractScAction {
 
     private HeulenAction(final AvDatabase db,
                          final World world,
-                         final List<? extends ILivingBeingGO> creaturesInRoom) {
+                         final List<? extends ILivingBeingGO> creaturesInLocation) {
         super(db, world);
-        this.creaturesInRoom = creaturesInRoom;
+        this.creaturesInLocation = creaturesInLocation;
     }
 
     @Override
@@ -83,7 +83,7 @@ public class HeulenAction extends AbstractScAction {
     private <F extends IDescribableGO & IHasStateGO<FroschprinzState> & ITalkerGO & ILivingBeingGO>
     AvTimeSpan narrateAndDoWiederholung() {
         final F froschprinz = (F) world.load(FROSCHPRINZ);
-        if (creaturesInRoom.contains(froschprinz) &&
+        if (creaturesInLocation.contains(froschprinz) &&
                 (froschprinz.stateComp().hasState(UNAUFFAELLIG))) {
             return narrateAndDoFroschprinzUnauffaellig(froschprinz);
         }

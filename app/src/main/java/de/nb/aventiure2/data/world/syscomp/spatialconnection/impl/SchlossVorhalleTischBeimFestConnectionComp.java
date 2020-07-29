@@ -10,10 +10,11 @@ import javax.annotation.ParametersAreNonnullByDefault;
 
 import de.nb.aventiure2.data.database.AvDatabase;
 import de.nb.aventiure2.data.world.base.GameObjectId;
+import de.nb.aventiure2.data.world.base.Known;
+import de.nb.aventiure2.data.world.base.Lichtverhaeltnisse;
+import de.nb.aventiure2.data.world.base.SpatialConnection;
 import de.nb.aventiure2.data.world.gameobject.World;
-import de.nb.aventiure2.data.world.syscomp.memory.Known;
 import de.nb.aventiure2.data.world.syscomp.spatialconnection.AbstractSpatialConnectionComp;
-import de.nb.aventiure2.data.world.syscomp.storingplace.Lichtverhaeltnisse;
 import de.nb.aventiure2.german.base.AbstractDescription;
 
 import static de.nb.aventiure2.data.world.gameobject.World.SCHLOSS_VORHALLE;
@@ -35,8 +36,8 @@ public class SchlossVorhalleTischBeimFestConnectionComp extends AbstractSpatialC
 
     @Override
     public boolean isAlternativeMovementDescriptionAllowed(final GameObjectId to,
-                                                           final Known newRoomKnown,
-                                                           final Lichtverhaeltnisse lichtverhaeltnisseInNewRoom) {
+                                                           final Known newLocationKnown,
+                                                           final Lichtverhaeltnisse lichtverhaeltnisseInNewLocation) {
         return true;
     }
 
@@ -45,14 +46,14 @@ public class SchlossVorhalleTischBeimFestConnectionComp extends AbstractSpatialC
     public List<SpatialConnection> getConnections() {
         return ImmutableList.of(
                 SpatialConnection.con(SCHLOSS_VORHALLE,
-                        "im Aufstehen",
+                        "auf der Bettkante",
                         "Vom Tisch aufstehen",
                         mins(3),
                         SchlossVorhalleTischBeimFestConnectionComp::getDescTo_SchlossVorhalle));
     }
 
     private static AbstractDescription<?> getDescTo_SchlossVorhalle(
-            final Known newRoomKnown, final Lichtverhaeltnisse lichtverhaeltnisse) {
+            final Known newLocationKnown, final Lichtverhaeltnisse lichtverhaeltnisse) {
         return du("stehst", "vom Tisch auf", mins(3))
                 .undWartest()
                 .dann();

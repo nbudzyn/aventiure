@@ -11,10 +11,10 @@ import de.nb.aventiure2.data.database.AvDatabase;
 import de.nb.aventiure2.data.world.base.AbstractStatelessComponent;
 import de.nb.aventiure2.data.world.base.GameObject;
 import de.nb.aventiure2.data.world.base.GameObjectId;
+import de.nb.aventiure2.data.world.base.Known;
+import de.nb.aventiure2.data.world.base.Lichtverhaeltnisse;
+import de.nb.aventiure2.data.world.base.SpatialConnection;
 import de.nb.aventiure2.data.world.gameobject.World;
-import de.nb.aventiure2.data.world.syscomp.memory.Known;
-import de.nb.aventiure2.data.world.syscomp.spatialconnection.impl.SpatialConnection;
-import de.nb.aventiure2.data.world.syscomp.storingplace.Lichtverhaeltnisse;
 
 /**
  * Component für ein {@link GameObject}: Das Game Object (z.B. ein Raum) ist räumlich mit
@@ -45,8 +45,9 @@ public abstract class AbstractSpatialConnectionComp extends AbstractStatelessCom
     }
 
     @Nullable
-    private static SpatialConnection getConnection(final List<SpatialConnection> connections,
-                                                   final GameObjectId to) {
+    private static SpatialConnection getConnection(
+            final List<SpatialConnection> connections,
+            final GameObjectId to) {
         for (final SpatialConnection spatialConnection : connections) {
             if (spatialConnection.getTo().equals(to)) {
                 return spatialConnection;
@@ -78,7 +79,7 @@ public abstract class AbstractSpatialConnectionComp extends AbstractStatelessCom
      * aufgerufen wird!
      */
     public abstract boolean isAlternativeMovementDescriptionAllowed(final GameObjectId to,
-                                                                    Known newRoomKnown,
-                                                                    Lichtverhaeltnisse lichtverhaeltnisseInNewRoom);
+                                                                    Known newLocationKnown,
+                                                                    Lichtverhaeltnisse lichtverhaeltnisseInNewLocation);
 
 }

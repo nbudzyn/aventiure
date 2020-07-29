@@ -10,17 +10,18 @@ import javax.annotation.ParametersAreNonnullByDefault;
 
 import de.nb.aventiure2.data.database.AvDatabase;
 import de.nb.aventiure2.data.world.base.GameObjectId;
+import de.nb.aventiure2.data.world.base.Known;
+import de.nb.aventiure2.data.world.base.Lichtverhaeltnisse;
+import de.nb.aventiure2.data.world.base.SpatialConnection;
 import de.nb.aventiure2.data.world.gameobject.World;
-import de.nb.aventiure2.data.world.syscomp.memory.Known;
 import de.nb.aventiure2.data.world.syscomp.spatialconnection.AbstractSpatialConnectionComp;
-import de.nb.aventiure2.data.world.syscomp.storingplace.Lichtverhaeltnisse;
 import de.nb.aventiure2.data.world.syscomp.storingplace.StoringPlaceComp;
 
+import static de.nb.aventiure2.data.world.base.Lichtverhaeltnisse.HELL;
+import static de.nb.aventiure2.data.world.base.SpatialConnection.con;
 import static de.nb.aventiure2.data.world.gameobject.World.ABZWEIG_IM_WALD;
 import static de.nb.aventiure2.data.world.gameobject.World.IM_WALD_BEIM_BRUNNEN;
 import static de.nb.aventiure2.data.world.gameobject.World.WALDWILDNIS_HINTER_DEM_BRUNNEN;
-import static de.nb.aventiure2.data.world.syscomp.spatialconnection.impl.SpatialConnection.con;
-import static de.nb.aventiure2.data.world.syscomp.storingplace.Lichtverhaeltnisse.HELL;
 import static de.nb.aventiure2.data.world.time.AvTimeSpan.mins;
 import static de.nb.aventiure2.german.base.DuDescription.du;
 import static de.nb.aventiure2.german.base.StructuralElement.SENTENCE;
@@ -44,8 +45,8 @@ public class ImWaldBeimBrunnenConnectionComp extends AbstractSpatialConnectionCo
 
     @Override
     public boolean isAlternativeMovementDescriptionAllowed(final GameObjectId to,
-                                                           final Known newRoomKnown,
-                                                           final Lichtverhaeltnisse lichtverhaeltnisseInNewRoom) {
+                                                           final Known newLocationKnown,
+                                                           final Lichtverhaeltnisse lichtverhaeltnisseInNewLocation) {
         return true;
     }
 

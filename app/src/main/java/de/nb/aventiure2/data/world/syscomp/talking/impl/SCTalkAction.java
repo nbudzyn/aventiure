@@ -1,5 +1,6 @@
 package de.nb.aventiure2.data.world.syscomp.talking.impl;
 
+import de.nb.aventiure2.data.world.base.SpatialConnection;
 import de.nb.aventiure2.data.world.syscomp.state.impl.SchlosswacheState;
 import de.nb.aventiure2.data.world.syscomp.talking.ITalkerGO;
 import de.nb.aventiure2.data.world.time.AvTimeSpan;
@@ -18,7 +19,7 @@ import de.nb.aventiure2.german.praedikat.VerbSubjObj;
  * zu einem anderen.
  * <p>
  * Das Konzept ist ähnliche wie die
- * {@link de.nb.aventiure2.data.world.syscomp.spatialconnection.impl.SpatialConnection},
+ * {@link SpatialConnection},
  * die von einem
  * {@link de.nb.aventiure2.data.world.syscomp.spatialconnection.ISpatiallyConnectedGO} zum
  * anderen führt, oft im Rahmen einer {@link de.nb.aventiure2.scaction.impl.BewegenAction}.

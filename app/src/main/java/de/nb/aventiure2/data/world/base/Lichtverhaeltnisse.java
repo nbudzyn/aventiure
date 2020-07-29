@@ -1,4 +1,4 @@
-package de.nb.aventiure2.data.world.syscomp.storingplace;
+package de.nb.aventiure2.data.world.base;
 
 public enum Lichtverhaeltnisse {
     HELL("ins Helle"), DUNKEL("in die Dunkelheit");

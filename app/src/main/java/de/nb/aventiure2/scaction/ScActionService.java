@@ -58,7 +58,7 @@ public class ScActionService {
     getPlayerActions() {
         final SpielerCharakter spielerCharakter = world.loadSC();
 
-        final @Nullable ILocationGO room = spielerCharakter.locationComp().getLocation();
+        final @Nullable ILocationGO location = spielerCharakter.locationComp().getLocation();
 
         final ImmutableList<DESC_OBJ> scInventoryObjects =
                 world.loadDescribableNonLivingRecursiveInventory(SPIELER_CHARAKTER);
@@ -67,35 +67,34 @@ public class ScActionService {
         final ImmutableList<? extends ILocatableGO> wasSCInDenHaendenHat =
                 world.loadDescribableRecursiveInventory(HAENDE_DES_SPIELER_CHARAKTERS);
 
-        final ImmutableList<DESC_OBJ> objectsInRoom =
-                room != null ? world.loadDescribableNonLivingRecursiveInventory(room) :
+        final ImmutableList<DESC_OBJ> objectsInLocation =
+                location != null ? world.loadDescribableNonLivingRecursiveInventory(location) :
                         ImmutableList.of();
-        final ImmutableList<LIV> livingBeingsInRoom =
-                room != null ? world.loadDescribableLivingRecursiveInventory(room) :
+        final ImmutableList<LIV> livingBeingsInLocation =
+                location != null ? world.loadDescribableLivingRecursiveInventory(location) :
                         ImmutableList.of();
 
         final List<AbstractScAction> res = new ArrayList<>();
 
-        if (room != null) {
-            res.addAll(buildCreatureInRoomActions(spielerCharakter,
-                    wasSCInDenHaendenHat, room, livingBeingsInRoom));
+        if (location != null) {
+            res.addAll(buildCreatureInLocationActions(spielerCharakter,
+                    wasSCInDenHaendenHat, livingBeingsInLocation));
         }
         if (!spielerCharakter.talkingComp().isInConversation()) {
             res.addAll(buildPlayerOnlyAction(
-                    spielerCharakter, wasSCInDenHaendenHat, room,
-                    livingBeingsInRoom));
-            if (room != null) {
-                res.addAll(buildObjectInRoomActions(
-                        wasSCInDenHaendenHat, room, objectsInRoom));
+                    spielerCharakter, wasSCInDenHaendenHat, location,
+                    livingBeingsInLocation));
+            if (location != null) {
+                res.addAll(buildObjectInLocationActions(
+                        wasSCInDenHaendenHat, location, objectsInLocation));
             }
-            res.addAll(buildInventoryActions(wasSCInDenHaendenHat, room,
+            res.addAll(buildInventoryActions(wasSCInDenHaendenHat, location,
                     scInventoryLivingBeings));
-            res.addAll(buildInventoryActions(wasSCInDenHaendenHat, room,
+            res.addAll(buildInventoryActions(wasSCInDenHaendenHat, location,
                     scInventoryObjects));
 
-            if (room instanceof ISpatiallyConnectedGO) {
-                res.addAll(buildRoomActions(
-                        (ILocationGO & ISpatiallyConnectedGO) room));
+            if (location instanceof ISpatiallyConnectedGO) {
+                res.addAll(buildLocationActions(location));
             }
         }
 
@@ -104,16 +103,15 @@ public class ScActionService {
 
     private <DESC_OBJ extends ILocatableGO & IDescribableGO,
             LIV extends IDescribableGO & ILocatableGO & ILivingBeingGO>
-    ImmutableList<AbstractScAction> buildCreatureInRoomActions(
+    ImmutableList<AbstractScAction> buildCreatureInLocationActions(
             final SpielerCharakter spielerCharakter,
             final List<? extends ILocatableGO> wasSCInDenHaendenHat,
-            final ILocationGO room,
-            final List<LIV> creaturesInRoom) {
+            final List<LIV> creaturesInLocation) {
         final ImmutableList.Builder<AbstractScAction> res = ImmutableList.builder();
 
-        for (final LIV creature : creaturesInRoom) {
+        for (final LIV creature : creaturesInLocation) {
             if (creature instanceof ITalkerGO) {
-                res.addAll(RedenAction.buildActions(db, world, room,
+                res.addAll(RedenAction.buildActions(db, world,
                         (IDescribableGO & ITalkerGO) creature));
             }
             if (wasSCInDenHaendenHat.isEmpty() &&
@@ -132,29 +130,29 @@ public class ScActionService {
     ImmutableList<AbstractScAction> buildPlayerOnlyAction(
             final SpielerCharakter spielerCharakter,
             final List<? extends ILocatableGO> wasSCInDenHaendenHat,
-            final @Nullable IGameObject room,
-            final List<? extends ILivingBeingGO> creaturesInRoom) {
+            final @Nullable IGameObject location,
+            final List<? extends ILivingBeingGO> creaturesInLocation) {
         final ImmutableList.Builder<AbstractScAction> res = ImmutableList.builder();
 
         res.addAll(HeulenAction
-                .buildActions(db, world, spielerCharakter, creaturesInRoom));
+                .buildActions(db, world, spielerCharakter, creaturesInLocation));
 
         if (wasSCInDenHaendenHat.isEmpty()) {
-            res.addAll(SchlafenAction.buildActions(db, world, room));
+            res.addAll(SchlafenAction.buildActions(db, world, location));
         }
 
         return res.build();
     }
 
     private <DESC_OBJ extends ILocatableGO & IDescribableGO>
-    ImmutableList<AbstractScAction> buildObjectInRoomActions(
+    ImmutableList<AbstractScAction> buildObjectInLocationActions(
             final List<? extends ILocatableGO> wasSCInDenHaendenHat,
-            final ILocationGO room,
-            final List<? extends DESC_OBJ> objectsInRoom) {
+            final ILocationGO location,
+            final List<? extends DESC_OBJ> objectsInLocation) {
         final ImmutableList.Builder<AbstractScAction> res = ImmutableList.builder();
-        for (final DESC_OBJ object : objectsInRoom) {
+        for (final DESC_OBJ object : objectsInLocation) {
             if (object instanceof ITalkerGO) {
-                res.addAll(RedenAction.buildActions(db, world, room,
+                res.addAll(RedenAction.buildActions(db, world,
                         (IDescribableGO & ITalkerGO) object));
             }
 
@@ -165,7 +163,7 @@ public class ScActionService {
         }
 
         if (wasSCInDenHaendenHat.isEmpty()) {
-            res.addAll(EssenAction.buildActions(db, world, room));
+            res.addAll(EssenAction.buildActions(db, world, location));
         }
 
         return res.build();
@@ -174,21 +172,21 @@ public class ScActionService {
     private <DESC_OBJ extends IDescribableGO & ILocatableGO>
     ImmutableList<AbstractScAction> buildInventoryActions(
             final List<? extends ILocatableGO> wasSCInDenHaendenHat,
-            final @Nullable ILocationGO room,
+            final @Nullable ILocationGO location,
             final List<DESC_OBJ> inventory) {
         final ImmutableList.Builder<AbstractScAction> res = ImmutableList.builder();
 
         for (final DESC_OBJ inventoryObject : inventory) {
-            if (room != null) {
+            if (location != null) {
                 if (scHatHoechstensInDenHaenden(wasSCInDenHaendenHat, inventoryObject) &&
                         inventoryObject.locationComp().isMovable()) {
                     // Das inventoryObject könnte auch ein ILivingBeing sein!
                     res.addAll(HochwerfenAction
                             .buildActions(
-                                    db, world, room, inventoryObject));
+                                    db, world, location, inventoryObject));
                     res.addAll(
                             AblegenAction.buildActions(
-                                    db, world, inventoryObject, room));
+                                    db, world, inventoryObject, location));
                 }
             }
         }
@@ -212,22 +210,20 @@ public class ScActionService {
         return wasSCInDenHaendenHat.iterator().next().equals(gameObject);
     }
 
-    private <R extends ISpatiallyConnectedGO & ILocationGO>
-    ImmutableList<AbstractScAction> buildRoomActions(
-            final R room) {
+    private ImmutableList<AbstractScAction> buildLocationActions(final ILocationGO location) {
         final ImmutableList.Builder<AbstractScAction> res = ImmutableList.builder();
 
-        res.addAll(buildRoomSpecificActions(room));
-        res.addAll(BewegenAction.buildActions(db, world, room));
+        res.addAll(buildLocationSpecificActions(location));
+        res.addAll(BewegenAction.buildActions(db, world, location));
 
         return res.build();
     }
 
-    private ImmutableList<AbstractScAction> buildRoomSpecificActions(
-            final ILocationGO room) {
+    private ImmutableList<AbstractScAction> buildLocationSpecificActions(
+            final ILocationGO location) {
         final ImmutableList.Builder<AbstractScAction> res = ImmutableList.builder();
 
-        res.addAll(KletternAction.buildActions(db, world, room));
+        res.addAll(KletternAction.buildActions(db, world, location));
 
         return res.build();
     }

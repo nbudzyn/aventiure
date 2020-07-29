@@ -1,11 +1,15 @@
 package de.nb.aventiure2.data.world.syscomp.storingplace;
 
+import javax.annotation.Nullable;
+
 import de.nb.aventiure2.data.database.AvDatabase;
 import de.nb.aventiure2.data.world.base.AbstractStatelessComponent;
 import de.nb.aventiure2.data.world.base.GameObject;
 import de.nb.aventiure2.data.world.base.GameObjectId;
+import de.nb.aventiure2.data.world.base.Lichtverhaeltnisse;
+import de.nb.aventiure2.data.world.base.SpatialConnection;
 
-import static de.nb.aventiure2.data.world.syscomp.storingplace.Lichtverhaeltnisse.HELL;
+import static de.nb.aventiure2.data.world.base.Lichtverhaeltnisse.HELL;
 
 /**
  * Component für ein {@link GameObject}: Das Game Object
@@ -17,6 +21,9 @@ public class StoringPlaceComp extends AbstractStatelessComponent {
 
     private final StoringPlaceType locationMode;
 
+    @Nullable
+    private final SpatialConnection spatialConnectionIn;
+
     /**
      * Ob dieses Game Object (z.B. dieser Raum) unabhängig von der
      * Tageszeit etc. beleuchtet ist.
@@ -27,10 +34,19 @@ public class StoringPlaceComp extends AbstractStatelessComponent {
                             final AvDatabase db,
                             final StoringPlaceType locationMode,
                             final boolean dauerhaftBeleuchtet) {
+        this(id, db, locationMode, dauerhaftBeleuchtet, null);
+    }
+
+    public StoringPlaceComp(final GameObjectId id,
+                            final AvDatabase db,
+                            final StoringPlaceType locationMode,
+                            final boolean dauerhaftBeleuchtet,
+                            @Nullable final SpatialConnection spatialConnectionIn) {
         super(id);
         this.db = db;
         this.locationMode = locationMode;
         this.dauerhaftBeleuchtet = dauerhaftBeleuchtet;
+        this.spatialConnectionIn = spatialConnectionIn;
     }
 
     public StoringPlaceType getLocationMode() {
@@ -60,5 +76,10 @@ public class StoringPlaceComp extends AbstractStatelessComponent {
 
     private boolean isDauerhaftBeleuchtet() {
         return dauerhaftBeleuchtet;
+    }
+
+    @Nullable
+    public SpatialConnection getSpatialConnectionIn() {
+        return spatialConnectionIn;
     }
 }

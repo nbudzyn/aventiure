@@ -9,9 +9,9 @@ import java.util.List;
 
 import de.nb.aventiure2.data.database.AvDatabase;
 import de.nb.aventiure2.data.world.base.GameObjectId;
+import de.nb.aventiure2.data.world.base.Lichtverhaeltnisse;
 import de.nb.aventiure2.data.world.syscomp.description.IDescribableGO;
 import de.nb.aventiure2.data.world.syscomp.storingplace.ILocationGO;
-import de.nb.aventiure2.data.world.syscomp.storingplace.Lichtverhaeltnisse;
 
 import static com.google.common.collect.ImmutableList.toImmutableList;
 

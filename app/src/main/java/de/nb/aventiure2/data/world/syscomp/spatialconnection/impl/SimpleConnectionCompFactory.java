@@ -6,6 +6,7 @@ import de.nb.aventiure2.data.database.AvDatabase;
 import de.nb.aventiure2.data.world.base.GameObjectId;
 import de.nb.aventiure2.data.world.gameobject.World;
 
+import static de.nb.aventiure2.data.world.base.SpatialConnection.con;
 import static de.nb.aventiure2.data.world.gameobject.World.ABZWEIG_IM_WALD;
 import static de.nb.aventiure2.data.world.gameobject.World.BETT_IN_DER_HUETTE_IM_WALD;
 import static de.nb.aventiure2.data.world.gameobject.World.HINTER_DER_HUETTE;
@@ -14,7 +15,6 @@ import static de.nb.aventiure2.data.world.gameobject.World.IM_WALD_BEIM_BRUNNEN;
 import static de.nb.aventiure2.data.world.gameobject.World.IM_WALD_NAHE_DEM_SCHLOSS;
 import static de.nb.aventiure2.data.world.gameobject.World.VOR_DER_HUETTE_IM_WALD;
 import static de.nb.aventiure2.data.world.gameobject.World.WALDWILDNIS_HINTER_DEM_BRUNNEN;
-import static de.nb.aventiure2.data.world.syscomp.spatialconnection.impl.SpatialConnection.con;
 import static de.nb.aventiure2.data.world.time.AvTimeSpan.mins;
 import static de.nb.aventiure2.data.world.time.AvTimeSpan.secs;
 import static de.nb.aventiure2.german.base.AllgDescription.neuerSatz;
@@ -123,7 +123,7 @@ public class SimpleConnectionCompFactory {
                 ),
 
                 con(BETT_IN_DER_HUETTE_IM_WALD,
-                        "beim Niederlegen",
+                        "auf der Bettkante",
                         "In das Bett legen",
                         secs(15),
                         du(PARAGRAPH, "legst", "dich in das hölzere Bettgestell. "
@@ -161,7 +161,7 @@ public class SimpleConnectionCompFactory {
                 db,
                 world,
                 con(HUETTE_IM_WALD,
-                        "beim Aufstehen",
+                        "auf der Bettkante",
                         "Aufstehen",
                         secs(10),
                         du(SENTENCE, "reckst", "dich noch einmal und stehst "

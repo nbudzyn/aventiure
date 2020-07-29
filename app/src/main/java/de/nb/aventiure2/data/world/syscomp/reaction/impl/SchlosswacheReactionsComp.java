@@ -9,6 +9,7 @@ import org.jetbrains.annotations.Contract;
 import javax.annotation.Nullable;
 
 import de.nb.aventiure2.data.database.AvDatabase;
+import de.nb.aventiure2.data.world.base.Lichtverhaeltnisse;
 import de.nb.aventiure2.data.world.gameobject.World;
 import de.nb.aventiure2.data.world.gameobject.player.SpielerCharakter;
 import de.nb.aventiure2.data.world.syscomp.description.AbstractDescriptionComp;
@@ -23,7 +24,6 @@ import de.nb.aventiure2.data.world.syscomp.state.IHasStateGO;
 import de.nb.aventiure2.data.world.syscomp.state.impl.SchlossfestState;
 import de.nb.aventiure2.data.world.syscomp.state.impl.SchlosswacheStateComp;
 import de.nb.aventiure2.data.world.syscomp.storingplace.ILocationGO;
-import de.nb.aventiure2.data.world.syscomp.storingplace.Lichtverhaeltnisse;
 import de.nb.aventiure2.data.world.time.AvDateTime;
 import de.nb.aventiure2.data.world.time.AvTimeSpan;
 import de.nb.aventiure2.german.base.AbstractDescription;

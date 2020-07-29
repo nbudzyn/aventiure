@@ -66,7 +66,9 @@ public class Walkthrough {
             new Walkthrough("In den Wald gehen",
                     "Den schmalen Pfad aufwärts gehen",
                     "Um den Turm herumgehen",
-                    "Den Pfad zurückgehen");
+                    "Den Pfad zurückgehen",
+                    "Den schmalen Pfad aufwärts gehen",
+                    "In den Schatten der Bäume setzen");
     // STORY Man kann sich am Turm (tagsüber) ausruhen,
     //  den Vögeln lauschen etc. Dafür singt Rapunzel seltener
 

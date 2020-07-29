@@ -9,12 +9,12 @@ import javax.annotation.Nullable;
 
 import de.nb.aventiure2.data.storystate.StoryStateDao;
 import de.nb.aventiure2.data.world.base.GameObjectId;
+import de.nb.aventiure2.data.world.base.SpatialConnection;
 import de.nb.aventiure2.data.world.gameobject.World;
 import de.nb.aventiure2.data.world.gameobject.player.SpielerCharakter;
 import de.nb.aventiure2.data.world.syscomp.description.IDescribableGO;
 import de.nb.aventiure2.data.world.syscomp.spatialconnection.ISpatiallyConnectedGO;
 import de.nb.aventiure2.data.world.syscomp.spatialconnection.NumberOfWays;
-import de.nb.aventiure2.data.world.syscomp.spatialconnection.impl.SpatialConnection;
 import de.nb.aventiure2.data.world.syscomp.storingplace.ILocationGO;
 import de.nb.aventiure2.data.world.time.AvTimeSpan;
 import de.nb.aventiure2.german.base.AbstractDescription;
@@ -674,8 +674,9 @@ public class SimpleMovementNarrator implements IMovementNarrator {
     }
 
     @NonNull
-    private static String calcWoIfNecessary(@Nullable final SpatialConnection spatialConnection,
-                                            final NumberOfWays numberOfWays) {
+    private static String calcWoIfNecessary(
+            @Nullable final SpatialConnection spatialConnection,
+            final NumberOfWays numberOfWays) {
         if (spatialConnection != null &&
                 (numberOfWays == NO_WAY ||
                         numberOfWays == NumberOfWays.SEVERAL_WAYS)) {

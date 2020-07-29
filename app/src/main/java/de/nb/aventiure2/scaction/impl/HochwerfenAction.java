@@ -24,6 +24,8 @@ import de.nb.aventiure2.german.base.SubstantivischePhrase;
 import de.nb.aventiure2.german.praedikat.SeinUtil;
 import de.nb.aventiure2.scaction.AbstractScAction;
 
+import static de.nb.aventiure2.data.world.base.Lichtverhaeltnisse.DUNKEL;
+import static de.nb.aventiure2.data.world.base.Lichtverhaeltnisse.HELL;
 import static de.nb.aventiure2.data.world.gameobject.World.FROSCHPRINZ;
 import static de.nb.aventiure2.data.world.gameobject.World.GOLDENE_KUGEL;
 import static de.nb.aventiure2.data.world.gameobject.World.IM_WALD_BEIM_BRUNNEN;
@@ -35,8 +37,6 @@ import static de.nb.aventiure2.data.world.syscomp.state.impl.FroschprinzState.HA
 import static de.nb.aventiure2.data.world.syscomp.state.impl.FroschprinzState.HAT_NACH_BELOHNUNG_GEFRAGT;
 import static de.nb.aventiure2.data.world.syscomp.state.impl.FroschprinzState.HAT_SC_HILFSBEREIT_ANGESPROCHEN;
 import static de.nb.aventiure2.data.world.syscomp.state.impl.FroschprinzState.UNAUFFAELLIG;
-import static de.nb.aventiure2.data.world.syscomp.storingplace.Lichtverhaeltnisse.DUNKEL;
-import static de.nb.aventiure2.data.world.syscomp.storingplace.Lichtverhaeltnisse.HELL;
 import static de.nb.aventiure2.data.world.time.AvTimeSpan.noTime;
 import static de.nb.aventiure2.data.world.time.AvTimeSpan.secs;
 import static de.nb.aventiure2.german.base.AllgDescription.neuerSatz;
@@ -54,28 +54,28 @@ public class HochwerfenAction<OBJ extends IDescribableGO & ILocatableGO>
     @NonNull
     private final OBJ object;
 
-    private final ILocationGO room;
+    private final ILocationGO location;
 
     public static <OBJ extends IDescribableGO & ILocatableGO>
     Collection<HochwerfenAction> buildActions(
             final AvDatabase db, final World world,
-            final ILocationGO room, @NonNull final OBJ gameObject) {
+            final ILocationGO location, @NonNull final OBJ gameObject) {
         if (gameObject instanceof ILivingBeingGO) {
             return ImmutableList.of();
         }
 
         // STORY Nicht jedes Object lässt sich hochwerfen...
         return ImmutableList
-                .of(new HochwerfenAction<>(db, world, gameObject, room));
+                .of(new HochwerfenAction<>(db, world, gameObject, location));
     }
 
     private HochwerfenAction(final AvDatabase db,
                              final World world,
                              @NonNull final OBJ object,
-                             final ILocationGO room) {
+                             final ILocationGO location) {
         super(db, world);
         this.object = object;
-        this.room = room;
+        this.location = location;
     }
 
     @Override
@@ -108,7 +108,7 @@ public class HochwerfenAction<OBJ extends IDescribableGO & ILocatableGO>
         final IHasStateGO<FroschprinzState> froschprinz =
                 (IHasStateGO<FroschprinzState>) world.load(FROSCHPRINZ);
 
-        if (room.is(IM_WALD_BEIM_BRUNNEN) &&
+        if (location.is(IM_WALD_BEIM_BRUNNEN) &&
                 !froschprinz.stateComp().hasState(FroschprinzState.UNAUFFAELLIG)) {
             return narrateAndDoFroschBekannt(
                     (IHasStateGO<FroschprinzState> & ILocatableGO) froschprinz);
@@ -176,14 +176,14 @@ public class HochwerfenAction<OBJ extends IDescribableGO & ILocatableGO>
         // fallen lassen, NACHDEM der Frosch schon Dinge hochgeholt hat.
         // Dann ist die Kugel jetzt WEG - PECH.
         final AvTimeSpan timeElapsed = narrateAndDoObjectFaelltSofortInDenBrunnen();
-        if (froschprinz.locationComp().hasRecursiveLocation(room)) {
+        if (froschprinz.locationComp().hasSameUpperMostLocationAs(SPIELER_CHARAKTER)) {
             return timeElapsed;
         }
 
         sc.feelingsComp().setMoodMax(ETWAS_GEKNICKT);
 
         final String praefix =
-                room.storingPlaceComp().getLichtverhaeltnisse() == HELL ? "Weit und breit" :
+                location.storingPlaceComp().getLichtverhaeltnisse() == HELL ? "Weit und breit" :
                         "Im Dunkeln ist";
 
         return n.add(
@@ -237,7 +237,7 @@ public class HochwerfenAction<OBJ extends IDescribableGO & ILocatableGO>
 
         if (db.counterDao()
                 .incAndGet("HochwerfenAction_Wiederholung") == 1 ||
-                (room.is(IM_WALD_BEIM_BRUNNEN) && !froschprinz.stateComp()
+                (location.is(IM_WALD_BEIM_BRUNNEN) && !froschprinz.stateComp()
                         .hasState(UNAUFFAELLIG))) {
             return n.addAlt(
                     neuerSatz("Und noch einmal – was ein schönes Spiel!", secs(3))
@@ -248,9 +248,9 @@ public class HochwerfenAction<OBJ extends IDescribableGO & ILocatableGO>
                             .dann());
         }
 
-        if (room.is(IM_WALD_BEIM_BRUNNEN)) {
+        if (location.is(IM_WALD_BEIM_BRUNNEN)) {
             final String dunkelheitNachsatz =
-                    room.storingPlaceComp().getLichtverhaeltnisse() == DUNKEL ?
+                    location.storingPlaceComp().getLichtverhaeltnisse() == DUNKEL ?
                             "– bei dieser Dunkelheit schon gar nicht" : "";
 
             final AvTimeSpan timeSpan = n.add(du("wirfst",
@@ -279,13 +279,13 @@ public class HochwerfenAction<OBJ extends IDescribableGO & ILocatableGO>
                         "dieses Mal nicht gelingen. " +
                         capitalize(world.getDescription(object, true).nom()) +
                         " landet " +
-                        room.storingPlaceComp().getLocationMode().getWo(false),
+                        location.storingPlaceComp().getLocationMode().getWo(false),
                 "übermütig",
                 secs(5)));
 
         sc.feelingsComp().setMoodMax(ETWAS_GEKNICKT);
 
-        return timeSpan.plus(object.locationComp().narrateAndSetLocation(room));
+        return timeSpan.plus(object.locationComp().narrateAndSetLocation(location));
     }
 
     @Override
