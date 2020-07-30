@@ -166,7 +166,9 @@ public class World {
             }
 
             final SpielerCharakterFactory spieler = new SpielerCharakterFactory(db, this);
-            final ObjectFactory object = new ObjectFactory(db, this);
+            final GeneralObjectFactory object = new GeneralObjectFactory(db, this);
+            final SchattenDerBaeumeFactory schattenDerBaeume =
+                    new SchattenDerBaeumeFactory(db, this);
             final CreatureFactory creature = new CreatureFactory(db, this);
             final InvisibleFactory invisible = new InvisibleFactory(db, this);
             final RoomFactory room = new RoomFactory(db, this);
@@ -279,7 +281,7 @@ public class World {
                     // STORY Rapunzel: Man muss eine Strickleiter
                     //  besorgen - oder Seide kaufen und etwas zum Stricken??? Gold gabs vielleicht
                     //  vom Froschprinzen?
-                    object.createVorDemAltenTurmSchattenDerBaeume()
+                    schattenDerBaeume.createVorDemAltenTurmSchattenDerBaeume()
             );
         }
     }
