@@ -28,6 +28,7 @@ class TalkingPCD extends AbstractPersistentComponentData {
     }
 
     void setTalkingToId(@Nullable final GameObjectId talkingTo) {
+        setChanged();
         talkingToId = talkingTo;
     }
 }

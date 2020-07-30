@@ -74,14 +74,7 @@ public class SchlossVorhalleConnectionComp extends AbstractSpatialConnectionComp
                 "Das Schloss verlassen",
                 secs(90),
                 this::getDescTo_DraussenVorDemSchloss));
-        if (((IHasStateGO<SchlossfestState>) world.load(SCHLOSSFEST)).stateComp()
-                .hasState(BEGONNEN)) {
-            res.add(SpatialConnection.con(SCHLOSS_VORHALLE_AM_TISCH_BEIM_FEST,
-                    "auf dem Weg zum Tisch",
-                    "An einen Tisch setzen",
-                    mins(3),
-                    this::getDescTo_SchlossVorhalleTischBeimFest));
-        }
+
         return res.build();
     }
 
@@ -105,8 +98,6 @@ public class SchlossVorhalleConnectionComp extends AbstractSpatialConnectionComp
         }
 
         if (known == KNOWN_FROM_DARKNESS && lichtverhaeltnisse == HELL) {
-            // STORY Vielleicht ist es nur tagsüber / mittags heiß und morgens
-            //  noch nicht?
             return du("verlässt", "das Schloss. Draußen scheint dir die " +
                     "Sonne ins Gesicht; "
                     // STORY Vielleicht ist es nur tagsüber / mittags heiß und morgens
@@ -127,8 +118,6 @@ public class SchlossVorhalleConnectionComp extends AbstractSpatialConnectionComp
     getDescTo_DraussenVorDemSchlosss_KeinFest_Unknown(
             final Lichtverhaeltnisse lichtverhaeltnisse) {
         if (lichtverhaeltnisse == HELL) {
-            // STORY Vielleicht ist es nur tagsüber / mittags heiß und morgens
-            //  noch nicht?
             return du("gehst", "über eine Marmortreppe hinaus in die Gärten vor dem Schloss.\n\n" +
                             "Draußen scheint dir die " +
                             "Sonne ins Gesicht; "
@@ -155,8 +144,7 @@ public class SchlossVorhalleConnectionComp extends AbstractSpatialConnectionComp
             return du("drängst",
                     "dich durch das Eingangstor",
                     mins(2))
-                    .undWartest()
-                    .dann();
+                    .undWartest();
         }
 
         world.loadSC().feelingsComp().setMoodMin(AUFGEDREHT);
@@ -168,24 +156,5 @@ public class SchlossVorhalleConnectionComp extends AbstractSpatialConnectionComp
                 "über die Marmortreppe",
                 mins(3))
                 .dann();
-    }
-
-    private AbstractDescription<?> getDescTo_SchlossVorhalleTischBeimFest(
-            final Known newLocationKnown, final Lichtverhaeltnisse lichtverhaeltnisse) {
-        if (db.counterDao().incAndGet(
-                "RoomConnectionBuilder_SchlossVorhalle_SchlossVorhalleTischBeimFest")
-                == 1) {
-            return du("ergatterst", "einen Platz auf einer Bank an einem langen,"
-                    + " aus Brettern gezimmerten Tisch.\n"
-                    + "Unter einem Baldachin sitzen – soweit du durch das Gedänge "
-                    + "erkennen kannst – "
-                    + "einige Hofleute an einer Tafel mit "
-                    + "goldenen Tellern vor Fasan und anderem Wildbret. "
-                    + "Immerhin stellt "
-                    + "dir ein eifriger Diener einen leeren Holzteller und einen "
-                    + "Löffel bereit", mins(3));
-        }
-
-        return du("suchst", "dir erneut im Gedränge einen Platz an einem Tisch", "erneut", mins(3));
     }
 }

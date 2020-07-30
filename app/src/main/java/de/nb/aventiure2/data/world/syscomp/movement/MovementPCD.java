@@ -63,10 +63,12 @@ public class MovementPCD extends AbstractPersistentComponentData {
     }
 
     void setTargetLocationId(@Nullable final GameObjectId targetLocationId) {
+        setChanged();
         this.targetLocationId = targetLocationId;
     }
 
     void setCurrentStep(@Nullable final MovementStep currentStep) {
+        setChanged();
         this.currentStep = currentStep;
     }
 
@@ -76,6 +78,7 @@ public class MovementPCD extends AbstractPersistentComponentData {
     }
 
     void setPauseForSCAction(final PauseForSCAction pauseForSCAction) {
+        setChanged();
         this.pauseForSCAction = pauseForSCAction;
     }
 

@@ -66,7 +66,8 @@ public class StoringPlaceComp extends AbstractStatelessComponent {
         //   dieser Location befindet, könnte eine Fackel dabei haben.
 
         if (isDauerhaftBeleuchtet()) {
-            // STORY Es könnte Räume oder Locations geben, die auch tagsüber dunkel sind, z.B.
+            // STORY Es könnte Räume oder Locations geben (die der Spieler betreten kann und)
+            //  die auch tagsüber dunkel sind, z.B.
             //  weil sie keine Fenster haben, oder Taschen etc.. Man bräuchte quasi
             //  drei Möglichkeiten:
             //  - dauerhaft beleuchtet

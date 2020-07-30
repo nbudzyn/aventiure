@@ -17,6 +17,10 @@ public abstract class TalkingDao implements IComponentDao<TalkingPCD> {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     public abstract void insert(TalkingPCD pcd);
 
+    /**
+     * Vor jedem Aufruf muss sichergestellt sein, dass alle Änderungen an dem Game Object
+     * gespeichert sind!
+     */
     @Override
     @Query("SELECT * from TalkingPCD where :gameObjectId = gameObjectId")
     public abstract TalkingPCD get(GameObjectId gameObjectId);

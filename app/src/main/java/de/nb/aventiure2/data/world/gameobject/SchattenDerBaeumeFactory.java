@@ -24,9 +24,6 @@ import static de.nb.aventiure2.german.base.Nominalphrase.np;
 import static de.nb.aventiure2.german.base.NumerusGenus.M;
 import static de.nb.aventiure2.german.base.StructuralElement.SENTENCE;
 
-/**
- * A factory for special {@link GameObject}s: Tangible objects, that might be found somewhere.
- */
 public class SchattenDerBaeumeFactory {
     private final AvDatabase db;
     private final World world;

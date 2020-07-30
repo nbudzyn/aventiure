@@ -34,7 +34,6 @@ import de.nb.aventiure2.data.world.syscomp.reaction.IResponder;
 import de.nb.aventiure2.data.world.syscomp.spatialconnection.impl.DraussenVorDemSchlossConnectionComp;
 import de.nb.aventiure2.data.world.syscomp.spatialconnection.impl.ImWaldNaheDemSchlossConnectionComp;
 import de.nb.aventiure2.data.world.syscomp.spatialconnection.impl.SchlossVorhalleConnectionComp;
-import de.nb.aventiure2.data.world.syscomp.spatialconnection.impl.SchlossVorhalleTischBeimFestConnectionComp;
 import de.nb.aventiure2.data.world.syscomp.spatialconnection.impl.SimpleConnectionCompFactory;
 import de.nb.aventiure2.data.world.syscomp.spatialconnection.impl.VorDemTurmConnectionComp;
 import de.nb.aventiure2.data.world.syscomp.spatialconnection.system.SpatialConnectionSystem;
@@ -71,11 +70,13 @@ public class World {
     public static final GameObjectId HAENDE_DES_SPIELER_CHARAKTERS = new GameObjectId(10_000);
     public static final GameObjectId EINE_TASCHE_DES_SPIELER_CHARAKTERS = new GameObjectId(10_001);
     public static final GameObjectId GOLDENE_KUGEL = new GameObjectId(10_100);
-    public static final GameObjectId SCHLOSS_VORHALLE_LANGER_TISCH_BEIM_FEST =
+    public static final GameObjectId SCHLOSS_VORHALLE_AM_TISCH_BEIM_FEST =
             new GameObjectId(10_101);
+    public static final GameObjectId SCHLOSS_VORHALLE_LANGER_TISCH_BEIM_FEST =
+            new GameObjectId(10_102);
     public static final GameObjectId VOR_DEM_ALTEN_TURM_SCHATTEN_DER_BAEUME =
             // (in deren Schatten man sich setzen kann)
-            new GameObjectId(10_102);
+            new GameObjectId(10_103);
 
     // CREATURES
     public static final GameObjectId SCHLOSSWACHE = new GameObjectId(20_000);
@@ -85,7 +86,6 @@ public class World {
 
     // RÄUME
     public static final GameObjectId SCHLOSS_VORHALLE = new GameObjectId(30_000);
-    public static final GameObjectId SCHLOSS_VORHALLE_AM_TISCH_BEIM_FEST = new GameObjectId(30_001);
     public static final GameObjectId DRAUSSEN_VOR_DEM_SCHLOSS = new GameObjectId(30_002);
     public static final GameObjectId IM_WALD_NAHE_DEM_SCHLOSS = new GameObjectId(30_003);
     public static final GameObjectId VOR_DEM_ALTEN_TURM = new GameObjectId(30_004);
@@ -167,6 +167,8 @@ public class World {
 
             final SpielerCharakterFactory spieler = new SpielerCharakterFactory(db, this);
             final GeneralObjectFactory object = new GeneralObjectFactory(db, this);
+            final BankAmTischBeimSchlossfestFactory bankAmTischBeimSchlossfest =
+                    new BankAmTischBeimSchlossfestFactory(db, this);
             final SchattenDerBaeumeFactory schattenDerBaeume =
                     new SchattenDerBaeumeFactory(db, this);
             final CreatureFactory creature = new CreatureFactory(db, this);
@@ -181,10 +183,6 @@ public class World {
                     room.create(SCHLOSS_VORHALLE, StoringPlaceType.EIN_TISCH,
                             SCHLOSS_VORHALLE_DAUERHAFT_BELEUCHTET,
                             new SchlossVorhalleConnectionComp(db, this)),
-                    room.create(SCHLOSS_VORHALLE_AM_TISCH_BEIM_FEST,
-                            StoringPlaceType.NEBEN_SC_AUF_BANK,
-                            SCHLOSS_VORHALLE_DAUERHAFT_BELEUCHTET,
-                            new SchlossVorhalleTischBeimFestConnectionComp(db, this)),
                     room.create(DRAUSSEN_VOR_DEM_SCHLOSS,
                             StoringPlaceType.BODEN_VOR_DEM_SCHLOSS,
                             false,
@@ -265,6 +263,7 @@ public class World {
                     // STORY Wenn man die goldene Kugel auf den Weg legt oder beim Schlossfest
                     //  auf den Tisch, verschwindet sie einfach, wenn man weggeht (sie wird
                     //  gestohlen) - vorausgesetzt, man braucht sie nicht mehr.
+                    bankAmTischBeimSchlossfest.create(SCHLOSS_VORHALLE_DAUERHAFT_BELEUCHTET),
                     object.create(SCHLOSS_VORHALLE_LANGER_TISCH_BEIM_FEST,
                             np(M, "ein langer, aus Brettern gezimmerter Tisch",
                                     "einem langen, aus Brettern gezimmertem Tisch",
@@ -272,7 +271,12 @@ public class World {
                             np(M, "der lange Brettertisch", "dem langen Brettertisch",
                                     "den langen Brettertisch"),
                             np(M, "der Tisch", "dem Tisch", "den Tisch"),
-                            SCHLOSS_VORHALLE_AM_TISCH_BEIM_FEST, SCHLOSS_VORHALLE,
+                            // Der Tisch wird erst spontan hinzugefügt, wenn
+                            // sich der Benutzer an einen Platz setzt.
+                            // Ansonsten bekommen wir vorher Aktionen wie
+                            // "Die Kugel auf den Tisch legen" angeboten. (Auf welchen der
+                            // vielen Tisch denn??)
+                            null, null,
                             false,
                             TISCH,
                             SCHLOSS_VORHALLE_DAUERHAFT_BELEUCHTET),
@@ -649,7 +653,7 @@ public class World {
 
         for (final LOC_DESC directContained : directContainedList) {
             if (directContained instanceof ILocationGO) {
-                res.addAll(loadDescribableInventory((ILocationGO) directContained));
+                res.addAll(loadDescribableRecursiveInventory((ILocationGO) directContained));
             }
         }
 
@@ -669,7 +673,7 @@ public class World {
     }
 
     /**
-     * Lädt (soweit noch nicht geschehen) die Game Objects an dieser
+     * (Speichert ggf. alle Änderungen und) lädt (soweit noch nicht geschehen) die Game Objects an dieser
      * <code>locationId</code> (<i>nicht</i> rekursiv, also <i>nicht</i> die Kugel
      * auf einem Tisch in einem Raum, sondern nur den Tisch)
      * und gibt sie zurück - nur Game Objects, die eine Beschreibung haben,
@@ -678,6 +682,7 @@ public class World {
     private <LOC_DESC extends ILocatableGO & IDescribableGO>
     ImmutableList<LOC_DESC> loadDescribableInventory(final GameObjectId locationId) {
         prepare();
+        saveAll(false);
 
         final ImmutableList<GameObject> res =
                 locationSystem.findByLocation(locationId)
@@ -829,11 +834,11 @@ public class World {
      * Speichert für alle Game Objects ihre aktuellen Daten in die Datenbank - löscht
      * außerdem alle Daten aus alle geladenen Daten aus dem Speicher.
      */
-    public void saveAll() {
+    public void saveAll(final boolean unload) {
         prepare();
 
         for (final GameObject gameObject : all.values()) {
-            gameObject.save();
+            gameObject.save(unload);
         }
     }
 

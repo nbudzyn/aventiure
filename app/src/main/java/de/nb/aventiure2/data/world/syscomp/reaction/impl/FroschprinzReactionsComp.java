@@ -176,23 +176,22 @@ public class FroschprinzReactionsComp
     private AvTimeSpan onSCEnter(@Nullable final ILocationGO from,
                                  final ILocationGO to) {
         if (locationComp.hasRecursiveLocation(SPIELER_CHARAKTER) ||
-                !locationComp.hasRecursiveLocation(to)) {
-            // Spieler hat nicht den Raum betreten, in dem sich der Froschprinz befindet
+                !locationComp.hasLocation(to)) {
+            // Spieler hat nicht die Location betreten, in dem sich der Froschprinz befindet
             return noTime();
         }
 
         final Nominalphrase desc = getDescription();
         switch (stateComp.getState()) {
             case UNAUFFAELLIG:
-                // STORY Bei einem Status dazwischen könnte der Froschprinz den SC ansprechen und auf
-                //  sein Versprechen hinweisen!
             case WARTET_AUF_SC_BEIM_SCHLOSSFEST:
                 return noTime();
             case HAT_HOCHHEBEN_GEFORDERT:
                 loadSC().feelingsComp().setMood(ANGESPANNT);
 
-                // TODO Wenn der Frosch nur rekursiv enthalten ist (Frosch sitzt auf dem Tisch),
-                //  dann hier prüfen und ggf. beschreiben (vgl. AblegenAction)
+                // TODO Wenn der Frosch nur rekursiv enthalten ist (Frosch sitzt auf
+                //  in einer Schale auf der Bank, dann hier prüfen und ggf. beschreiben
+                //  (vgl. AblegenAction)
                 return n.addAlt(
                         neuerSatz(PARAGRAPH, "Plötzlich sitzt "
                                         + desc.nom()
@@ -247,11 +246,11 @@ public class FroschprinzReactionsComp
     private AvTimeSpan onSCEnterPrinzLocation(
             @Nullable final ILocationGO from, final ILocationGO toAndPrinzLocation) {
         if (world.isOrHasRecursiveLocation(from, SCHLOSS_VORHALLE_AM_TISCH_BEIM_FEST) &&
-                world.isOrHasRecursiveLocation(toAndPrinzLocation, SCHLOSS_VORHALLE)) {
+                toAndPrinzLocation.is(SCHLOSS_VORHALLE)) {
             return prinzVerlaesstSchlossVorhalle();
         }
 
-        if (world.isOrHasRecursiveLocation(from, SCHLOSS_VORHALLE) &&
+        if (from.is(SCHLOSS_VORHALLE) &&
                 world.isOrHasRecursiveLocation(toAndPrinzLocation, DRAUSSEN_VOR_DEM_SCHLOSS)) {
             return prinzFaehrtMitWagenDavon();
         }

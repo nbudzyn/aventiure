@@ -20,7 +20,12 @@ public abstract class AbstractStatelessComponent extends AbstractComponent {
     }
 
     @Override
-    public void save() {
+    public boolean isChanged() {
+        return false;
+    }
+
+    @Override
+    public void save(final boolean unload) {
         // Component doesn't have any mutable state to be loaded.
     }
 }

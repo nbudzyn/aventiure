@@ -37,6 +37,7 @@ class FeelingsPCD extends AbstractPersistentComponentData {
     }
 
     public void setMood(@NonNull final Mood mood) {
+        setChanged();
         this.mood = mood;
     }
 
@@ -46,6 +47,7 @@ class FeelingsPCD extends AbstractPersistentComponentData {
     }
 
     public void setHunger(@NonNull final Hunger hunger) {
+        setChanged();
         this.hunger = hunger;
     }
 
@@ -55,6 +57,7 @@ class FeelingsPCD extends AbstractPersistentComponentData {
     }
 
     public void setZuletztGegessen(@NonNull final AvDateTime zuletztGegessen) {
+        setChanged();
         this.zuletztGegessen = zuletztGegessen;
     }
 }

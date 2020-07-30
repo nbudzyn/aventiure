@@ -21,10 +21,8 @@ import de.nb.aventiure2.german.base.Nominalphrase;
 import de.nb.aventiure2.german.base.SubstantivischePhrase;
 
 import static de.nb.aventiure2.data.world.gameobject.World.FROSCHPRINZ;
-import static de.nb.aventiure2.data.world.gameobject.World.IM_WALD_BEIM_BRUNNEN;
 import static de.nb.aventiure2.data.world.gameobject.World.UNTEN_IM_BRUNNEN;
 import static de.nb.aventiure2.data.world.syscomp.feelings.Mood.VOLLER_FREUDE;
-import static de.nb.aventiure2.data.world.syscomp.state.impl.FroschprinzState.AUF_DEM_WEG_ZUM_BRUNNEN_UM_DINGE_HERAUSZUHOLEN;
 import static de.nb.aventiure2.data.world.syscomp.state.impl.FroschprinzState.ERWARTET_VON_SC_EINLOESUNG_SEINES_VERSPRECHENS;
 import static de.nb.aventiure2.data.world.syscomp.state.impl.FroschprinzState.HAT_FORDERUNG_GESTELLT;
 import static de.nb.aventiure2.data.world.syscomp.state.impl.FroschprinzState.HAT_NACH_BELOHNUNG_GEFRAGT;
@@ -146,14 +144,6 @@ public class FroschprinzTalkingComp extends AbstractTalkingComp {
                                 this::froschHatForderungGestellt_reEntry),
                         reEntrySt(objectsInDenBrunnenGefallen::isEmpty,
                                 this::hallo_froschReagiertNicht)
-                );
-            case AUF_DEM_WEG_ZUM_BRUNNEN_UM_DINGE_HERAUSZUHOLEN:
-                return ImmutableList.of(
-                        entrySt(
-                                // STORY "Vertraue mir, bald hast du ...die goldene Kugel...
-                                //  wieder. Aber vergiss dein Versprechen nicht!"
-                                //  Bis dahin:
-                                this::hallo_froschErinnertAnVersprechen)
                 );
             case ERWARTET_VON_SC_EINLOESUNG_SEINES_VERSPRECHENS:
                 return ImmutableList.of(
@@ -446,22 +436,6 @@ public class FroschprinzTalkingComp extends AbstractTalkingComp {
                 noTime()));
 
         @Nullable final GameObjectId scLocationId = world.loadSC().locationComp().getLocationId();
-        if (!IM_WALD_BEIM_BRUNNEN.equals(scLocationId)) {
-            unsetTalkingTo();
-
-            stateComp.setState(AUF_DEM_WEG_ZUM_BRUNNEN_UM_DINGE_HERAUSZUHOLEN);
-            // STORY Der Froschprinz muss eine KI erhalten, dass er
-            //  nach einer Weile automatisch beim Brunnen
-            //  auftaucht und sich, die Dinge herausholt
-            //  und sie dem SC übergibt oder beim Brunnen bereitlegt
-            //  (dann sollte er das ankündigen).
-            //  Oder wir überspringen diesen Schritt, und der Frosch bewegt
-            //  sich nie vom Brunnen fort, solange er nichts herausgeholt hat
-            //  (IllegalState).
-
-            return n.add(satzanschluss("hüpft er sogleich davon", secs(5))
-                    .beendet(PARAGRAPH));
-        }
 
         final ImmutableList<LOC_DESC> objectsInDenBrunnenGefallen =
                 getObjectsInDenBrunnenGefallen();

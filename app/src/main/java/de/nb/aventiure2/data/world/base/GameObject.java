@@ -77,16 +77,20 @@ public class GameObject implements IGameObject {
      * Speichert alle Daten für dieses Game Obect (d.h. die Daten aller seiner Komponenten)
      * in die Datenbank. Wenn das Objekt gar nicht geladen wurde, passiert nichts.
      */
-    public void save() {
+    public void save(final boolean unload) {
         if (internalState == InternalState.NOT_LOADED) {
             return;
         }
 
         for (final IComponent component : components) {
-            component.save();
+            if (component.isChanged()) {
+                component.save(unload);
+            }
         }
 
-        internalState = InternalState.NOT_LOADED;
+        if (unload) {
+            internalState = InternalState.NOT_LOADED;
+        }
     }
 
     @Override

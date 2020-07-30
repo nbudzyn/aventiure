@@ -284,13 +284,19 @@ public class LocationComp extends AbstractStatefulComponent<LocationPCD> {
     }
 
     /**
-     * Sets the location to <code>null</code>.
+     * /**
+     * ACHTUNG! Diese Methode sollte nur in seltenen Ausnahmefällen verwendet werden!
+     * Die Reacktions werden hier nicht aufgerufen!
      */
     public void unsetLocation() {
         setLocation(null);
     }
 
-    private void setLocation(@Nullable final GameObjectId locationId) {
+    /**
+     * ACHTUNG! Diese Methode sollte nur in seltenen Ausnahmefällen verwendet werden!
+     * Die Reacktions werden hier nicht aufgerufen!
+     */
+    public void setLocation(@Nullable final GameObjectId locationId) {
         if (getGameObjectId().equals(locationId)) {
             throw new IllegalStateException("A game object cannot contain itself.");
         }

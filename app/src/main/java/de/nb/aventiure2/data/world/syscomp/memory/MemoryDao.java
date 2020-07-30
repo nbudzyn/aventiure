@@ -44,9 +44,16 @@ public abstract class MemoryDao implements IComponentDao<MemoryPCD> {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     public abstract void insert(KnownInfo knownInfo);
 
+    /**
+     * Wer das hier aufruft, muss auch lokale Informationen verwerfen!
+     */
     @Query("DELETE FROM KnownInfo WHERE :knower = knower")
     abstract void deleteAllHeKnows(GameObjectId knower);
 
+    /**
+     * Vor jedem Aufruf muss sichergestellt sein, dass alle Änderungen an dem Game Object
+     * gespeichert sind!
+     */
     @Override
     public MemoryPCD get(final GameObjectId knower) {
         final MemoryPCD res = getInternal(knower);
@@ -69,6 +76,10 @@ public abstract class MemoryDao implements IComponentDao<MemoryPCD> {
         return res;
     }
 
+    /**
+     * Vor jedem Aufruf muss sichergestellt sein, dass alle Änderungen an dem Game Object
+     * gespeichert sind!
+     */
     @Query("SELECT * from KnownInfo where :knower = knower")
     abstract List<KnownInfo> getKnownInfos(GameObjectId knower);
 }

@@ -26,6 +26,7 @@ public abstract class AbstractStatefulComponent<PCD extends AbstractPersistentCo
     public void saveInitialState() {
         pcd = createInitialState();
         doSave();
+        pcd = null;
     }
 
     protected abstract PCD createInitialState();
@@ -46,11 +47,23 @@ public abstract class AbstractStatefulComponent<PCD extends AbstractPersistentCo
     }
 
     @Override
-    public void save() {
+    public boolean isChanged() {
+        if (internalState == InternalState.NOT_LOADED) {
+            return false;
+        }
+
+        return pcd.isChanged();
+    }
+
+    @Override
+    public void save(final boolean unload) {
         if (internalState != InternalState.NOT_LOADED) {
             doSave();
         }
-        internalState = InternalState.NOT_LOADED;
+        if (unload) {
+            internalState = InternalState.NOT_LOADED;
+            pcd = null;
+        }
     }
 
     /**
@@ -59,7 +72,6 @@ public abstract class AbstractStatefulComponent<PCD extends AbstractPersistentCo
      */
     private void doSave() {
         dao.insert(pcd);
-        pcd = null;
     }
 
     public PCD getPcd() {

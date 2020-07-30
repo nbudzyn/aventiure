@@ -56,7 +56,7 @@ public abstract class AbstractScAction implements IPlayerAction {
         //  Kann nicht die Zeit jeweils beim narraten upgedatet werden?
         //  Und man vergleich hier nur vorher-Zeit mit nachher-Zeit?
 
-        // STORY Wenn der Benutzer länger nicht weiterkommt, erzeugt eine Tippgenerator
+        // STORY Wenn der Benutzer länger nicht weiterkommt, erzeugt ein Tippgenerator
         //  (neues Game Object?) Sätze wie "Wann soll eigentlich das Schlossfest sein?",
         //  "Vielleicht hättest du doch die Kugel mitnehmen sollen?" o.Ä.
 
@@ -77,7 +77,7 @@ public abstract class AbstractScAction implements IPlayerAction {
         db.nowDao().setNow(dateTimeAfterActionBeforeUpdateWorld
                 .plus(extraTimeElapsedDuringWorldUpdate));
 
-        world.saveAll();
+        world.saveAll(true);
     }
 
     private void fireScActionDone(final AvDateTime startTimeOfUserAction) {

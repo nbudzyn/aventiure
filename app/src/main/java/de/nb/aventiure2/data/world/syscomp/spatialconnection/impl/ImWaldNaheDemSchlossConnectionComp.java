@@ -139,14 +139,10 @@ public class ImWaldNaheDemSchlossConnectionComp extends AbstractSpatialConnectio
         //  "eine Fackel bringt auch nachts Licht" etc.)
         // STORY gegen Abend wird man müde und kann auf jeden Fall einschlafen
         // STORY Wenn man schläft, "verpasst" man Reactions, die man dann später
-        //  (beim Aufwachen) merkt ("Der Frosch ist verschwunden".) Man könnte alle
-        //  verpassten Reactions als Texte speichern (Problem, wenn der Frosch nur kurz
-        //  verschwundenn ist), inhaltlich speichern
-        //  (WasIstAllesPassiert.FroschIstVerschwunden = true), oder man speichert
-        //  den Stand VOR dem Einschlafen und vergleicht mit dem Stand NACH dem
+        //  (beim Aufwachen) merkt ("Der Frosch ist verschwunden".) Man speichert
+        //  am besten den Stand VOR dem Einschlafen und vergleicht mit dem Stand NACH dem
         //  Einschlafen.
         // STORY Nachts sieht man nicht so gut - sieht man alle Objects?
-        // STORY Nachts schlafen die Creatures?
         // STORY Nachts ist man hauptsächlich MUEDE / ERSCHOEPFT
     }
 

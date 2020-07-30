@@ -32,6 +32,7 @@ public class StatePCD extends AbstractPersistentComponentData {
     }
 
     void setState(@NonNull final String state) {
+        setChanged();
         this.state = state;
     }
 
@@ -41,6 +42,7 @@ public class StatePCD extends AbstractPersistentComponentData {
     }
 
     void setStateDateTime(@NonNull final AvDateTime stateDateTime) {
+        setChanged();
         this.stateDateTime = stateDateTime;
     }
 }

@@ -18,6 +18,10 @@ public abstract class MovementDao implements IComponentDao<MovementPCD> {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     public abstract void insert(MovementPCD pcd);
 
+    /**
+     * Vor jedem Aufruf muss sichergestellt sein, dass alle Änderungen an Game Objects
+     * gespeichert sind!
+     */
     @Override
     @Query("SELECT * from MovementPCD where :gameObjectId = gameObjectId")
     public abstract MovementPCD get(GameObjectId gameObjectId);

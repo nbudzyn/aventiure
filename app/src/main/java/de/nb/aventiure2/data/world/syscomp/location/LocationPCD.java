@@ -33,6 +33,7 @@ class LocationPCD extends AbstractPersistentComponentData {
     }
 
     void setLocationId(@Nullable final GameObjectId locationId) {
+        setChanged();
         this.locationId = locationId;
     }
 
@@ -42,6 +43,7 @@ class LocationPCD extends AbstractPersistentComponentData {
     }
 
     void setLastLocationId(@Nullable final GameObjectId lastLocationId) {
+        setChanged();
         this.lastLocationId = lastLocationId;
     }
 }

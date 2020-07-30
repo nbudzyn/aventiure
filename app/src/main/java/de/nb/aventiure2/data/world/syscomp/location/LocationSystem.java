@@ -37,6 +37,10 @@ public class LocationSystem {
         return location.storingPlaceComp().getLichtverhaeltnisse();
     }
 
+    /**
+     * Vor jedem Aufruf muss sichergestellt sein, dass alle Änderungen an Game Objects
+     * gespeichert sind!
+     */
     public List<GameObjectId> findByLocation(final GameObjectId locationId) {
         return dao.findByLocation(locationId);
     }

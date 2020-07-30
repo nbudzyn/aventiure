@@ -60,6 +60,7 @@ class MemoryPCD extends AbstractPersistentComponentData {
                 "Interaktion des Game Objects " + getGameObjectId()
                         + " mit sich selbst nicht erlaubt");
 
+        setChanged();
         this.lastAction = checkNotNull(lastAction, "lastAction");
     }
 
@@ -69,6 +70,7 @@ class MemoryPCD extends AbstractPersistentComponentData {
     }
 
     void setKnown(final Map<GameObjectId, Known> toMap) {
+        setChanged();
         knownMap.putAll(toMap);
     }
 
@@ -77,6 +79,8 @@ class MemoryPCD extends AbstractPersistentComponentData {
     }
 
     void setKnown(final GameObjectId otherGameObjectId, final Known known) {
+        setChanged();
+
         if (known == UNKNOWN) {
             knownMap.remove(otherGameObjectId);
         } else {

@@ -176,9 +176,8 @@ public class RapunzelsZauberinMovementNarrator extends SimpleMovementNarrator {
     // STORY Spieler sieht von unten, wie die Zauberin heruntersteigt?
     //  if (to.is(VOR_DEM_ALTEN_TURM)) {
 
-    // STORY Zauberin überrascht den Spieler vor dem Turm
-    //                // Die Zauberin hat den Spieler so verzaubert, dass er sich nicht
-    //                //  an sie erinnern kann.
-    //                loadSC().memoryComp().upgradeKnown(RAPUNZELS_ZAUBERIN, UNKNOWN);
-    //                return noTime();
+    // STORY Zauberin überrascht den Spieler vor dem Turm:
+    //  Die Zauberin verzaubert hat den Spieler, so dass er sich nicht
+    //  an sie erinnern kann:
+    //  loadSC().memoryComp().upgradeKnown(RAPUNZELS_ZAUBERIN, UNKNOWN);
 }

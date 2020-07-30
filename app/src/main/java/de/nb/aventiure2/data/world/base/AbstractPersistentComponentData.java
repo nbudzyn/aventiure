@@ -13,8 +13,22 @@ public class AbstractPersistentComponentData {
     @NonNull
     private final GameObjectId gameObjectId;
 
+    private boolean changed = false;
+
     public AbstractPersistentComponentData(@NonNull final GameObjectId gameObjectId) {
         this.gameObjectId = gameObjectId;
+    }
+
+    public boolean isChanged() {
+        return changed;
+    }
+
+    protected void setChanged() {
+        setChanged(true);
+    }
+
+    public void setChanged(final boolean changed) {
+        this.changed = changed;
     }
 
     @NonNull

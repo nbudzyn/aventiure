@@ -34,6 +34,7 @@ import static com.google.common.base.Preconditions.checkState;
 import static de.nb.aventiure2.data.world.gameobject.World.EINE_TASCHE_DES_SPIELER_CHARAKTERS;
 import static de.nb.aventiure2.data.world.gameobject.World.FROSCHPRINZ;
 import static de.nb.aventiure2.data.world.gameobject.World.HAENDE_DES_SPIELER_CHARAKTERS;
+import static de.nb.aventiure2.data.world.gameobject.World.SCHLOSS_VORHALLE_AM_TISCH_BEIM_FEST;
 import static de.nb.aventiure2.data.world.gameobject.World.SPIELER_CHARAKTER;
 import static de.nb.aventiure2.data.world.syscomp.feelings.Mood.ANGESPANNT;
 import static de.nb.aventiure2.data.world.syscomp.feelings.Mood.NEUTRAL;
@@ -108,9 +109,11 @@ public class NehmenAction
 
         if (((IHasStateGO<FroschprinzState>) froschprinz).stateComp()
                 .hasState(HAT_HOCHHEBEN_GEFORDERT)) {
-            return ImmutableList.of(
-                    new NehmenAction<>(db, world,
-                            froschprinz, HAENDE_DES_SPIELER_CHARAKTERS));
+            if (world.loadSC().locationComp().hasLocation(SCHLOSS_VORHALLE_AM_TISCH_BEIM_FEST)) {
+                return ImmutableList.of(
+                        new NehmenAction<>(db, world,
+                                froschprinz, HAENDE_DES_SPIELER_CHARAKTERS));
+            }
         }
 
         return ImmutableList.of();

@@ -11,12 +11,6 @@ public enum FroschprinzState {
     HAT_SC_HILFSBEREIT_ANGESPROCHEN(FROSCH),
     HAT_NACH_BELOHNUNG_GEFRAGT(FROSCH),
     HAT_FORDERUNG_GESTELLT(FROSCH),
-
-    // STORY Oder unnötig? Zurzeit verlässt der
-    //  Frosch den Brunnen nicht und lässt sich auch nicht mitnehmen,
-    //  bis er nicht die Dinge herausgeholt hat
-    AUF_DEM_WEG_ZUM_BRUNNEN_UM_DINGE_HERAUSZUHOLEN(FROSCH),
-
     ERWARTET_VON_SC_EINLOESUNG_SEINES_VERSPRECHENS(FROSCH),
     AUF_DEM_WEG_ZUM_SCHLOSSFEST(FROSCH),
     WARTET_AUF_SC_BEIM_SCHLOSSFEST(FROSCH),

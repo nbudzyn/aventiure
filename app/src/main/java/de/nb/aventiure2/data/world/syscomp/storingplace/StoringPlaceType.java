@@ -22,7 +22,7 @@ public enum StoringPlaceType {
     AM_GRUNDE_DES_BRUNNENS("am Grunde des Brunnens", "auf den Grund des Brunnens"),
     // TODO Not everything fits on a table
     EIN_TISCH("auf einem Tisch", "auf einen Tisch"),
-    NEBEN_SC_AUF_BANK("neben dir auf der Bank", "neben dich auf die Bank"),
+    NEBEN_SC_AUF_EINER_BANK("neben dir auf einer Bank", "neben dich auf eine Bank"),
     TISCH("auf dem Tisch", "auf den Tisch"),
     STAMM_EINES_BAUMS("am Stamm eines Baumes", "an den Stamm eines Baumes"),
     NEBEN_DEM_BRUNNEN("neben dem Brunnnen", "neben den Brunnen",

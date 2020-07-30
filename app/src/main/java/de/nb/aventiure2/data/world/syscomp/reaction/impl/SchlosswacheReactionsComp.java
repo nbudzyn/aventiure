@@ -241,8 +241,6 @@ public class SchlosswacheReactionsComp
         final AvTimeSpan timeElapsed = n.add(
                 neuerSatz(PARAGRAPH, "Da wird eine Wache auf dich aufmerksam. "
                                 + "„Wie seid Ihr hier hereingekommen?“, fährt sie dich "
-                                // STORY Ausspinnen: Auf dem Fest kriegt der Frosch beim Essen
-                                //  seinen Willen.
                                 + "scharf an. „Das Fest ist erst am Sonntag. Heute "
                                 + "ist Samstag und Ihr habt hier nichts zu suchen!“ "
                                 + "Mit kräftiger Hand klopft die Wache auf ihre Hellebarde",
@@ -412,7 +410,6 @@ public class SchlosswacheReactionsComp
                 neuerSatz(getDescription().nom()
                         + " sieht dir belustig dabei zu", secs(5))
                         .dann(),
-                // STORY Das hier nur, wenn die Kugel HOCHGEWORFEN wurde (und nicht aufgefangen)
                 neuerSatz(PARAGRAPH, "Die Wache sieht sehr missbilligend zu", secs(3)));
     }
 

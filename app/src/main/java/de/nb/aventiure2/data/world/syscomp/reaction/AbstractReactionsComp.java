@@ -31,7 +31,7 @@ public abstract class AbstractReactionsComp extends AbstractStatelessComponent
 
     // STORY Player should care about their character / stuff / achievements / reputation.
 
-    // STORY Es gibt Tasks. Gewisse Aktionen schalten ein neuen Task frei. Wenn ein
+    // STORY Es gibt Tasks. Gewisse Aktionen schalten einen neuen Task frei. Wenn ein
     //  Task-Ziel erreicht wird, wird eine neue (möglichst abstrakte) Überschrift gesetzt und
     //  damit ein Kapitel begonnen. Die Überschrift bezieht sich lose auf einen der
     //  Task, die der Spieler zuerst begonnen hat und die noch nicht abgeschlossen

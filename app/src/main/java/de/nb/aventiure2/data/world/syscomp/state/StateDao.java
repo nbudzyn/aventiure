@@ -17,6 +17,10 @@ public abstract class StateDao implements IComponentDao<StatePCD> {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     public abstract void insert(StatePCD data);
 
+    /**
+     * Vor jedem Aufruf muss sichergestellt sein, dass alle Änderungen an dem Game Object
+     * gespeichert sind!
+     */
     @Override
     @Query("SELECT * from StatePCD where :gameObjectId = gameObjectId")
     public abstract StatePCD get(GameObjectId gameObjectId);

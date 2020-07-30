@@ -6,5 +6,9 @@ package de.nb.aventiure2.data.world.base;
 public interface IComponentDao<PCD extends AbstractPersistentComponentData> {
     void insert(PCD pcd);
 
+    /**
+     * Vor jedem Aufruf muss sichergestellt sein, dass alle Änderungen an dem Game Object
+     * gespeichert sind!
+     */
     PCD get(GameObjectId gameObjectId);
 }

@@ -319,12 +319,16 @@ public class AblegenAction
                             .undWartest());
                 }
 
+                if (sc.memoryComp().getLastAction().is(Action.Type.BEWEGEN) &&
+                        wohinDetail == null) {
+                    return n.add(du("legst",
+                            gameObjektPersPron.akk() +
+                                    " zurück",
+                            secs(3)));
+                }
+
                 return n.add(du("legst",
                         gameObjektPersPron.akk() +
-                                ((sc.memoryComp().getLastAction().is(Action.Type.BEWEGEN) &&
-                                        wohinDetail == null) ?
-                                        " dort" :
-                                        "") +
                                 (wohinDetail == null ? " hin" : " " + wohinDetail),
                         secs(3)));
             }
@@ -333,10 +337,8 @@ public class AblegenAction
         if (isDefinitivDiskontinuitaet()) {
             return n.add(
                     du(PARAGRAPH, "legst",
-                            world.getDescription(gameObject, false).akk() +
-                                    " wieder "
-                                    + (wohinDetail != null ? "dort" : "")
-                                    + "hin",
+                            world.getDescription(gameObject, false).akk()
+                                    + (wohinDetail != null ? " zurück" : " wieder hin"),
                             secs(5))
                             .undWartest()
                             .dann());

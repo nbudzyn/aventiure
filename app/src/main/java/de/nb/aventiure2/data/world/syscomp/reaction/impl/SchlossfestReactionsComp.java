@@ -5,7 +5,7 @@ import androidx.annotation.Nullable;
 import de.nb.aventiure2.data.database.AvDatabase;
 import de.nb.aventiure2.data.world.base.IGameObject;
 import de.nb.aventiure2.data.world.gameobject.World;
-import de.nb.aventiure2.data.world.gameobject.player.SpielerCharakter;
+import de.nb.aventiure2.data.world.syscomp.location.ILocatableGO;
 import de.nb.aventiure2.data.world.syscomp.reaction.AbstractReactionsComp;
 import de.nb.aventiure2.data.world.syscomp.reaction.interfaces.ITimePassedReactions;
 import de.nb.aventiure2.data.world.syscomp.state.AbstractStateComp;
@@ -17,6 +17,8 @@ import static de.nb.aventiure2.data.world.gameobject.World.COUNTER_ID_VOR_DEM_SC
 import static de.nb.aventiure2.data.world.gameobject.World.DRAUSSEN_VOR_DEM_SCHLOSS;
 import static de.nb.aventiure2.data.world.gameobject.World.SCHLOSSFEST;
 import static de.nb.aventiure2.data.world.gameobject.World.SCHLOSSFEST_BEGINN_DATE_TIME;
+import static de.nb.aventiure2.data.world.gameobject.World.SCHLOSS_VORHALLE;
+import static de.nb.aventiure2.data.world.gameobject.World.SCHLOSS_VORHALLE_AM_TISCH_BEIM_FEST;
 import static de.nb.aventiure2.data.world.syscomp.feelings.Mood.NEUTRAL;
 import static de.nb.aventiure2.data.world.syscomp.state.impl.SchlossfestState.BEGONNEN;
 import static de.nb.aventiure2.data.world.time.AvTimeSpan.mins;
@@ -51,16 +53,17 @@ public class SchlossfestReactionsComp
     }
 
     private AvTimeSpan schlossfestBeginnt() {
-        final SpielerCharakter sc = loadSC();
+        stateComp.setState(BEGONNEN);
+        ((ILocatableGO) world.load(SCHLOSS_VORHALLE_AM_TISCH_BEIM_FEST))
+                .locationComp().narrateAndSetLocation(SCHLOSS_VORHALLE);
 
-        final @Nullable IGameObject currentRoom = sc.locationComp().getLocation();
+        final @Nullable IGameObject currentRoom = loadSC().locationComp().getLocation();
 
         if (currentRoom == null) {
             return noTime();
         }
 
-        sc.feelingsComp().setMood(NEUTRAL);
-        stateComp.setState(BEGONNEN);
+        loadSC().feelingsComp().setMood(NEUTRAL);
 
         if (!currentRoom.is(DRAUSSEN_VOR_DEM_SCHLOSS)) {
             return noTime();  // Passiert nebenher und braucht KEINE zusätzliche Zeit

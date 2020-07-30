@@ -17,6 +17,10 @@ public abstract class FeelingsDao implements IComponentDao<FeelingsPCD> {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     public abstract void insert(FeelingsPCD pcd);
 
+    /**
+     * Vor jedem Aufruf muss sichergestellt sein, dass alle Änderungen an dem Game Object
+     * gespeichert sind!
+     */
     @Override
     @Query("SELECT * from FeelingsPCD where :gameObjectId = gameObjectId")
     public abstract FeelingsPCD get(GameObjectId gameObjectId);

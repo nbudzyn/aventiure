@@ -394,7 +394,8 @@ public class BewegenAction<LOC_DESC extends ILocatableGO & IDescribableGO>
 
     private AvTimeSpan narrateAnDoSCMitEssenKonfrontiertReagiertHungrig() {
         return n.addAlt(
-                neuerSatz("Mmh!", noTime()),
+                neuerSatz("Mmh!", noTime())
+                        .beendet(PARAGRAPH),
                 neuerSatz("Dir läuft das Wasser im Munde zusammen", noTime()),
                 du(SENTENCE, "hast", "Hunger", noTime())
                         .undWartest(),

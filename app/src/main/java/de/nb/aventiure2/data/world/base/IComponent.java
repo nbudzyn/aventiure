@@ -16,9 +16,11 @@ interface IComponent {
      */
     void load();
 
+    boolean isChanged();
+
     /**
      * Speichert die Daten der Komponente in die Datenbank und löscht veränderliche Daten
      * aus dem Speicher. Wenn das Objekt gar nicht geladen wurde, passiert nichts.
      */
-    void save();
+    void save(boolean unload);
 }
