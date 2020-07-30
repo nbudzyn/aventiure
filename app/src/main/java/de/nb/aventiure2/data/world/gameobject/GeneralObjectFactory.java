@@ -69,6 +69,6 @@ public class GeneralObjectFactory {
                         shortDescriptionWhenKnown),
                 new LocationComp(id, db, world, initialLocationId, initialLastLocationId,
                         movable),
-                new StoringPlaceComp(id, db, locationMode, dauerhaftBeleuchtet, null));
+                new StoringPlaceComp(id, db, locationMode, dauerhaftBeleuchtet));
     }
 }

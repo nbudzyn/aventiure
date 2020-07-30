@@ -17,6 +17,7 @@ import de.nb.aventiure2.data.world.base.IGameObject;
 import de.nb.aventiure2.data.world.base.Known;
 import de.nb.aventiure2.data.world.base.Lichtverhaeltnisse;
 import de.nb.aventiure2.data.world.base.SpatialConnection;
+import de.nb.aventiure2.data.world.base.SpatialConnectionData;
 import de.nb.aventiure2.data.world.gameobject.World;
 import de.nb.aventiure2.data.world.syscomp.description.IDescribableGO;
 import de.nb.aventiure2.data.world.syscomp.feelings.Hunger;
@@ -36,6 +37,7 @@ import de.nb.aventiure2.scaction.AbstractScAction;
 
 import static com.google.common.collect.ImmutableList.builder;
 import static de.nb.aventiure2.data.world.base.Lichtverhaeltnisse.HELL;
+import static de.nb.aventiure2.data.world.base.SpatialConnection.con;
 import static de.nb.aventiure2.data.world.gameobject.World.DRAUSSEN_VOR_DEM_SCHLOSS;
 import static de.nb.aventiure2.data.world.gameobject.World.SCHLOSSFEST;
 import static de.nb.aventiure2.data.world.gameobject.World.SCHLOSS_VORHALLE;
@@ -90,10 +92,25 @@ public class BewegenAction<LOC_DESC extends ILocatableGO & IDescribableGO>
 
         for (final ILocationGO inventoryGO :
                 world.loadDescribableNonLivingLocationInventory(location)) {
-            @Nullable final SpatialConnection spatialConnectionIn =
-                    inventoryGO.storingPlaceComp().getSpatialConnectionIn();
-            if (spatialConnectionIn != null) {
-                res.add(new BewegenAction<>(db, world, location, spatialConnectionIn,
+            @Nullable final SpatialConnectionData inData =
+                    inventoryGO.storingPlaceComp().getSpatialConnectionInData();
+            if (inData != null) {
+                res.add(new BewegenAction<>(
+                        db, world, location,
+                        con(inventoryGO.getId(), inData),
+                        NumberOfWays.NO_WAY));
+            }
+        }
+
+        @Nullable final SpatialConnectionData outData =
+                location.storingPlaceComp().getSpatialConnectionOutData();
+        if (outData != null && location instanceof ILocatableGO) {
+            @Nullable final ILocationGO outerLocation =
+                    ((ILocatableGO) location).locationComp().getLocation();
+            if (outerLocation != null) {
+                res.add(new BewegenAction<>(
+                        db, world, location,
+                        con(outerLocation.getId(), outData),
                         NumberOfWays.NO_WAY));
             }
         }
@@ -149,7 +166,7 @@ public class BewegenAction<LOC_DESC extends ILocatableGO & IDescribableGO>
     public AvTimeSpan narrateAndDo() {
         AvTimeSpan elapsedTime = narrateLocationOnly(loadTo());
 
-        upgradeLocationOnlyKnown();
+        world.upgradeKnownToSC(spatialConnection.getTo());
 
         // Die nicht-movable Objekte sollten in der Location-beschreibung
         // alle enthalten gewesen sein (mindestens implizit), auch rekursiv.
@@ -174,10 +191,6 @@ public class BewegenAction<LOC_DESC extends ILocatableGO & IDescribableGO>
         return elapsedTime.plus(sc.locationComp()
                 .narrateAndSetLocation(spatialConnection.getTo(),
                         this::narrateNonLivingMovableObjectsAndUpgradeKnownAndSetLastAction));
-    }
-
-    private void upgradeLocationOnlyKnown() {
-        world.upgradeKnownToSC(spatialConnection.getTo());
     }
 
     private void upgradeNonLivingNonMovableRecursiveInventoryKnown(
@@ -205,8 +218,15 @@ public class BewegenAction<LOC_DESC extends ILocatableGO & IDescribableGO>
         if (!world.isOrHasRecursiveLocation(spatialConnection.getTo(), oldLocation)) {
             // Wenn man z.B. in einem Zimmer auf einen Tisch steigt: Nicht noch einmal
             // beschreiben, was sonst noch auf dem Tisch steht!
+
             elapsedTimeOnEnter =
-                    elapsedTimeOnEnter.plus(narrateNonLivingMovableObjectsAndUpgradeKnown());
+                    elapsedTimeOnEnter.plus(
+                            narrateNonLivingMovableObjectsAndUpgradeKnown(
+                                    // Wenn man z.B. von einem Tisch heruntersteigt oder
+                                    // einmal um einen Turm herumgeht, dann noch noch einmal
+                                    // beschreiben, was sich auf dem Tisch oder vor dem Turm
+                                    // befindet
+                                    oldLocation));
         }
 
         sc.memoryComp().setLastAction(buildMemorizedAction());
@@ -214,21 +234,26 @@ public class BewegenAction<LOC_DESC extends ILocatableGO & IDescribableGO>
         return elapsedTimeOnEnter;
     }
 
-    private AvTimeSpan narrateNonLivingMovableObjectsAndUpgradeKnown() {
+    private AvTimeSpan narrateNonLivingMovableObjectsAndUpgradeKnown(
+            @Nullable final ILocationGO excludedLocation) {
         final ImmutableList.Builder<String> descriptionsPerLocation = builder();
         int numMovableObjectsInLocation = 0;
         @Nullable IDescribableGO lastObjectInLocation = null;
         for (final Pair<ILocationGO, ? extends List<? extends IDescribableGO>> locationAndDescribables :
                 buildRecursiveLocationsAndDescribables(loadTo())) {
-            descriptionsPerLocation.add(
-                    //  "auf dem Boden liegen A und B"
-                    buildObjectsInLocationDescription(locationAndDescribables));
+            if (excludedLocation == null ||
+                    !world.isOrHasRecursiveLocation(
+                            locationAndDescribables.first, excludedLocation)) {
+                descriptionsPerLocation.add(
+                        //  "auf dem Boden liegen A und B"
+                        buildObjectsInLocationDescription(locationAndDescribables));
 
-            numMovableObjectsInLocation += locationAndDescribables.second.size();
-            lastObjectInLocation = locationAndDescribables.second
-                    .get(locationAndDescribables.second.size() - 1);
+                numMovableObjectsInLocation += locationAndDescribables.second.size();
+                lastObjectInLocation = locationAndDescribables.second
+                        .get(locationAndDescribables.second.size() - 1);
 
-            upgradeKnown(locationAndDescribables);
+                upgradeKnown(locationAndDescribables);
+            }
         }
 
         if (numMovableObjectsInLocation == 0) {

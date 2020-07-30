@@ -7,7 +7,7 @@ import de.nb.aventiure2.data.world.base.AbstractStatelessComponent;
 import de.nb.aventiure2.data.world.base.GameObject;
 import de.nb.aventiure2.data.world.base.GameObjectId;
 import de.nb.aventiure2.data.world.base.Lichtverhaeltnisse;
-import de.nb.aventiure2.data.world.base.SpatialConnection;
+import de.nb.aventiure2.data.world.base.SpatialConnectionData;
 
 import static de.nb.aventiure2.data.world.base.Lichtverhaeltnisse.HELL;
 
@@ -22,7 +22,9 @@ public class StoringPlaceComp extends AbstractStatelessComponent {
     private final StoringPlaceType locationMode;
 
     @Nullable
-    private final SpatialConnection spatialConnectionIn;
+    private final SpatialConnectionData spatialConnectionInData;
+    @Nullable
+    private final SpatialConnectionData spatialConnectionOutData;
 
     /**
      * Ob dieses Game Object (z.B. dieser Raum) unabhängig von der
@@ -34,19 +36,21 @@ public class StoringPlaceComp extends AbstractStatelessComponent {
                             final AvDatabase db,
                             final StoringPlaceType locationMode,
                             final boolean dauerhaftBeleuchtet) {
-        this(id, db, locationMode, dauerhaftBeleuchtet, null);
+        this(id, db, locationMode, dauerhaftBeleuchtet, null, null);
     }
 
     public StoringPlaceComp(final GameObjectId id,
                             final AvDatabase db,
                             final StoringPlaceType locationMode,
                             final boolean dauerhaftBeleuchtet,
-                            @Nullable final SpatialConnection spatialConnectionIn) {
+                            @Nullable final SpatialConnectionData spatialConnectionInData,
+                            @Nullable final SpatialConnectionData spatialConnectionOutData) {
         super(id);
         this.db = db;
         this.locationMode = locationMode;
         this.dauerhaftBeleuchtet = dauerhaftBeleuchtet;
-        this.spatialConnectionIn = spatialConnectionIn;
+        this.spatialConnectionInData = spatialConnectionInData;
+        this.spatialConnectionOutData = spatialConnectionOutData;
     }
 
     public StoringPlaceType getLocationMode() {
@@ -79,7 +83,12 @@ public class StoringPlaceComp extends AbstractStatelessComponent {
     }
 
     @Nullable
-    public SpatialConnection getSpatialConnectionIn() {
-        return spatialConnectionIn;
+    public SpatialConnectionData getSpatialConnectionInData() {
+        return spatialConnectionInData;
+    }
+
+    @Nullable
+    public SpatialConnectionData getSpatialConnectionOutData() {
+        return spatialConnectionOutData;
     }
 }

@@ -14,6 +14,7 @@ import de.nb.aventiure2.data.world.base.GameObjectId;
 import de.nb.aventiure2.data.world.base.Known;
 import de.nb.aventiure2.data.world.base.Lichtverhaeltnisse;
 import de.nb.aventiure2.data.world.base.SpatialConnection;
+import de.nb.aventiure2.data.world.base.SpatialConnectionData;
 import de.nb.aventiure2.data.world.gameobject.World;
 
 /**
@@ -75,7 +76,7 @@ public abstract class AbstractSpatialConnectionComp extends AbstractStatelessCom
      * Art "Du springst damit fort" oder "Du kehrst zurück".
      * <p>
      * Diese Methode muss aufgerufen werden, <i>bevor</i> die
-     * {@link SpatialConnection.SCMoveDescriptionProvider#getSCMoveDescription(Known, Lichtverhaeltnisse)}-Methode
+     * {@link SpatialConnectionData.SCMoveDescriptionProvider#getSCMoveDescription(Known, Lichtverhaeltnisse)}-Methode
      * aufgerufen wird!
      */
     public abstract boolean isAlternativeMovementDescriptionAllowed(final GameObjectId to,

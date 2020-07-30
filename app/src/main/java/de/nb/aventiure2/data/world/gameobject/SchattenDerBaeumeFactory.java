@@ -1,7 +1,10 @@
 package de.nb.aventiure2.data.world.gameobject;
 
+import androidx.annotation.NonNull;
+
 import de.nb.aventiure2.data.database.AvDatabase;
 import de.nb.aventiure2.data.world.base.GameObject;
+import de.nb.aventiure2.data.world.base.GameObjectId;
 import de.nb.aventiure2.data.world.base.Known;
 import de.nb.aventiure2.data.world.base.Lichtverhaeltnisse;
 import de.nb.aventiure2.data.world.syscomp.description.impl.SimpleDescriptionComp;
@@ -10,7 +13,7 @@ import de.nb.aventiure2.data.world.syscomp.storingplace.StoringPlaceComp;
 import de.nb.aventiure2.german.base.AbstractDescription;
 
 import static de.nb.aventiure2.data.world.base.Lichtverhaeltnisse.DUNKEL;
-import static de.nb.aventiure2.data.world.base.SpatialConnection.con;
+import static de.nb.aventiure2.data.world.base.SpatialConnectionData.conData;
 import static de.nb.aventiure2.data.world.gameobject.World.VOR_DEM_ALTEN_TURM;
 import static de.nb.aventiure2.data.world.gameobject.World.VOR_DEM_ALTEN_TURM_SCHATTEN_DER_BAEUME;
 import static de.nb.aventiure2.data.world.syscomp.storingplace.StoringPlaceType.STAMM_EINES_BAUMS;
@@ -34,9 +37,14 @@ public class SchattenDerBaeumeFactory {
         this.world = world;
     }
 
-    GameObject createVorDemAltenTurmSchattenDerBaeume() {
+    GameObject createVorDemAltenTurm() {
+        return create(VOR_DEM_ALTEN_TURM_SCHATTEN_DER_BAEUME, VOR_DEM_ALTEN_TURM);
+    }
+
+    @NonNull
+    private GameObject create(final GameObjectId id, final GameObjectId locationId) {
         final SimpleDescriptionComp descriptionComp =
-                new SimpleDescriptionComp(VOR_DEM_ALTEN_TURM_SCHATTEN_DER_BAEUME,
+                new SimpleDescriptionComp(id,
                         np(M, "der Schatten der Bäume",
                                 "dem Schatten der Bäume",
                                 "den Schatten der Bäume"),
@@ -48,27 +56,29 @@ public class SchattenDerBaeumeFactory {
                                 "den Schatten"));
 
         final LocationComp locationComp = new LocationComp(
-                VOR_DEM_ALTEN_TURM_SCHATTEN_DER_BAEUME, db, world, VOR_DEM_ALTEN_TURM,
+                id, db, world, locationId,
                 null, false);
 
         final StoringPlaceComp storingPlaceComp = new StoringPlaceComp(
-                VOR_DEM_ALTEN_TURM_SCHATTEN_DER_BAEUME, db, STAMM_EINES_BAUMS,
+                id, db, STAMM_EINES_BAUMS,
                 false,
-                con(VOR_DEM_ALTEN_TURM_SCHATTEN_DER_BAEUME,
-                        "vor den Bäumen",
+                conData("vor den Bäumen",
                         "In den Schatten der Bäume setzen",
                         secs(10),
-                        this::getDescTo_VorDemAltenTurmSchattenDerBaeume)
-                // STORY Man kann aus VOR_DEM_ALTEN_TURM_BÄUME auch wieder aufstehen.
+                        this::getDescIn),
+                conData("vor den Bäumen",
+                        "Aus dem Schatten der Bäume treten",
+                        secs(10),
+                        SchattenDerBaeumeFactory::getDescOut)
         );
 
-        return new StoringPlaceObject(VOR_DEM_ALTEN_TURM_SCHATTEN_DER_BAEUME,
+        return new StoringPlaceObject(id,
                 descriptionComp,
                 locationComp,
                 storingPlaceComp);
     }
 
-    private AbstractDescription<?> getDescTo_VorDemAltenTurmSchattenDerBaeume(
+    private AbstractDescription<?> getDescIn(
             final Known newLocationKnown, final Lichtverhaeltnisse lichtverhaeltnisse) {
         if (lichtverhaeltnisse == DUNKEL) {
             return du("setzt", "dich unter die Bäume. Die Bäume rauschen in "
@@ -82,7 +92,7 @@ public class SchattenDerBaeumeFactory {
         }
 
         if (db.counterDao().incAndGet(
-                "DescTo_VorDemAltenTurmSchattenDerBaeume__SCSetztSichTagsueberInDenSchattenDerBaeume")
+                "DescTo_SchattenDerBaeume__SCSetztSichTagsueberInDenSchattenDerBaeume")
                 == 1) {
             return du("lässt", "dich im Schatten der umstehenden Bäume nieder. Es tut gut, "
                             + "eine Weile zu rasten",
@@ -95,6 +105,21 @@ public class SchattenDerBaeumeFactory {
 
         return du("setzt", "dich wieder in den Schatten der Bäume", secs(30))
                 .undWartest()
+                .dann();
+    }
+
+    private static AbstractDescription<?> getDescOut(
+            final Known newLocationKnown, final Lichtverhaeltnisse lichtverhaeltnisse) {
+        if (lichtverhaeltnisse == DUNKEL) {
+            return du("stehst", "wieder auf", secs(10))
+                    .undWartest()
+                    .dann();
+        }
+
+        return du("erhebst",
+                "dich und trittst aus dem Schatten der Bäume hervor",
+                secs(10))
+                .beendet(SENTENCE)
                 .dann();
     }
 }

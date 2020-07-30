@@ -18,7 +18,6 @@ import de.nb.aventiure2.data.world.gameobject.player.SpielerCharakter;
 import de.nb.aventiure2.data.world.syscomp.alive.ILivingBeingGO;
 import de.nb.aventiure2.data.world.syscomp.description.IDescribableGO;
 import de.nb.aventiure2.data.world.syscomp.location.ILocatableGO;
-import de.nb.aventiure2.data.world.syscomp.spatialconnection.ISpatiallyConnectedGO;
 import de.nb.aventiure2.data.world.syscomp.storingplace.ILocationGO;
 import de.nb.aventiure2.data.world.syscomp.talking.ITalkerGO;
 import de.nb.aventiure2.scaction.impl.AblegenAction;
@@ -93,7 +92,7 @@ public class ScActionService {
             res.addAll(buildInventoryActions(wasSCInDenHaendenHat, location,
                     scInventoryObjects));
 
-            if (location instanceof ISpatiallyConnectedGO) {
+            if (location != null) {
                 res.addAll(buildLocationActions(location));
             }
         }

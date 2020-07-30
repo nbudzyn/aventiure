@@ -10,6 +10,7 @@ import static de.nb.aventiure2.data.world.base.Known.KNOWN_FROM_DARKNESS;
 import static de.nb.aventiure2.data.world.base.Known.UNKNOWN;
 import static de.nb.aventiure2.data.world.base.Lichtverhaeltnisse.DUNKEL;
 import static de.nb.aventiure2.data.world.base.Lichtverhaeltnisse.HELL;
+import static de.nb.aventiure2.data.world.base.SpatialConnectionData.conData;
 
 /**
  * Die Verbindung von einem {@link de.nb.aventiure2.data.world.syscomp.storingplace.ILocationGO}
@@ -17,40 +18,9 @@ import static de.nb.aventiure2.data.world.base.Lichtverhaeltnisse.HELL;
  * einschließlich ihrer Beschreibung, wie sie beim Bewegen angezeigt wird.
  */
 public class SpatialConnection {
-    @FunctionalInterface
-    public interface SCMoveDescriptionProvider {
-        AbstractDescription<?> getSCMoveDescription(
-                Known newLocationKnown,
-                Lichtverhaeltnisse lichtverhaeltnisseInNewLocation);
-    }
-
     private final GameObjectId to;
 
-    /**
-     * Eine Adverbiale Angabe, die diese Verbinung
-     * räumlich beschreibt
-     * (aus Sicht des
-     * {@link de.nb.aventiure2.data.world.syscomp.storingplace.ILocationGO},
-     * nicht unbedingt aus Sicht von {@link #to}!):
-     * "auf dem Weg" o.Ä.
-     * <p>
-     * Die Beschreibung sollte sich auf etwas beziehen, auf dem man sich eine längere Zeit
-     * bewegen kann (nicht "in der Tür", sondern "auf der Treppe").
-     * <p>
-     * Es ist außerdem gut, wenn dieselbe Beschreibung innerhalb eines
-     * {@link de.nb.aventiure2.data.world.syscomp.spatialconnection.ISpatiallyConnectedGO}s
-     * nicht mehr als zweimal auftritt.
-     */
-    private final String wo;
-
-    /**
-     * Standard-Dauer für die Bewegung: Bewegungszeit eines Menschen (wie des SC), der sich
-     * auskennt, tagsüber.
-     */
-    private final AvTimeSpan standardDuration;
-
-    private final String actionName;
-    private final SCMoveDescriptionProvider scMoveDescriptionProvider;
+    private final SpatialConnectionData data;
 
     public static SpatialConnection con(final GameObjectId to,
                                         final String wo,
@@ -101,25 +71,29 @@ public class SpatialConnection {
                                         final String wo,
                                         final String actionName,
                                         final AvTimeSpan standardDuration,
-                                        final SCMoveDescriptionProvider SCMoveDescriptionProvider) {
-        return new SpatialConnection(to, wo, actionName, standardDuration,
-                SCMoveDescriptionProvider);
+                                        final SpatialConnectionData.SCMoveDescriptionProvider scMoveDescriptionProvider) {
+        return con(to,
+                conData(
+                        wo,
+                        actionName,
+                        standardDuration,
+                        scMoveDescriptionProvider
+                ));
+    }
+
+    public static SpatialConnection con(final GameObjectId to,
+                                        final SpatialConnectionData data) {
+        return new SpatialConnection(to, data);
     }
 
     private SpatialConnection(final GameObjectId to,
-                              final String wo,
-                              final String actionName,
-                              final AvTimeSpan standardDuration,
-                              final SCMoveDescriptionProvider scMoveDescriptionProvider) {
+                              final SpatialConnectionData data) {
         this.to = to;
-        this.wo = wo;
-        this.actionName = actionName;
-        this.standardDuration = standardDuration;
-        this.scMoveDescriptionProvider = scMoveDescriptionProvider;
+        this.data = data;
     }
 
     public String getActionName() {
-        return actionName;
+        return data.getActionName();
     }
 
     public GameObjectId getTo() {
@@ -127,26 +101,26 @@ public class SpatialConnection {
     }
 
     public AvTimeSpan getStandardDuration() {
-        return standardDuration;
+        return data.getStandardDuration();
     }
 
     public AdverbialeAngabe getWoAdvAngabe() {
-        return new AdverbialeAngabe(getWo());
+        return data.getWoAdvAngabe();
     }
 
     public String getWo() {
-        return wo;
+        return data.getWo();
     }
 
-    public SCMoveDescriptionProvider getSCMoveDescriptionProvider() {
-        return scMoveDescriptionProvider;
+    public SpatialConnectionData.SCMoveDescriptionProvider getSCMoveDescriptionProvider() {
+        return data.getSCMoveDescriptionProvider();
     }
 
     @NonNull
     @Override
     public String toString() {
         return "SpatialConnection{" +
-                "actionName='" + actionName + '\'' +
+                "data='" + data + '\'' +
                 '}';
     }
 }

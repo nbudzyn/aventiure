@@ -281,7 +281,7 @@ public class World {
                     // STORY Rapunzel: Man muss eine Strickleiter
                     //  besorgen - oder Seide kaufen und etwas zum Stricken??? Gold gabs vielleicht
                     //  vom Froschprinzen?
-                    schattenDerBaeume.createVorDemAltenTurmSchattenDerBaeume()
+                    schattenDerBaeume.createVorDemAltenTurm()
             );
         }
     }
