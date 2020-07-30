@@ -86,8 +86,7 @@ public class Walkthrough {
                     .append(SCHLOSSFEST_SCHLOSS_BETRETEN_BIS_PRINZABFAHRT);
 
     public static final Walkthrough FULL =
-            ANFANG_BIS_PRINZABFAHRT
-                    .append(PRINZABFAHRT_BIS_ENDE);
+            ANFANG_BIS_PRINZABFAHRT.append(PRINZABFAHRT_BIS_ENDE);
 
     private final ImmutableList<String> steps;
 
