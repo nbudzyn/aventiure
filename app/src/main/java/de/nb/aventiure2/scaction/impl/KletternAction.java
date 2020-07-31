@@ -27,7 +27,8 @@ import static de.nb.aventiure2.german.base.StructuralElement.PARAGRAPH;
 public class KletternAction extends AbstractScAction {
     private final ILocationGO room;
 
-    // TODO Klettern durch Bewegen-Action ersetzen
+    // TODO Apfelbaum als non-movable Objekte modellieren, Klettern ist dann durch die
+    //  Bewegen-Action "in" den Baum abgedeckt. Ort: In einer Astgabel
 
     // TODO Hochklettern an Rapunzels Haaren als Bewegen-Action
 
