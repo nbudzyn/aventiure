@@ -29,6 +29,7 @@ public class KletternAction extends AbstractScAction {
 
     // TODO Apfelbaum als non-movable Objekte modellieren, Klettern ist dann durch die
     //  Bewegen-Action "in" den Baum abgedeckt. Ort: In einer Astgabel
+    //  (Bewegung in zwei Schritte aufteilen)
 
     // TODO Hochklettern an Rapunzels Haaren als Bewegen-Action
 
