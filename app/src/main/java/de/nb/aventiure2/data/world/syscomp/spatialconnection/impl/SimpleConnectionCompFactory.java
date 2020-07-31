@@ -8,7 +8,6 @@ import de.nb.aventiure2.data.world.gameobject.World;
 
 import static de.nb.aventiure2.data.world.base.SpatialConnection.con;
 import static de.nb.aventiure2.data.world.gameobject.World.ABZWEIG_IM_WALD;
-import static de.nb.aventiure2.data.world.gameobject.World.BETT_IN_DER_HUETTE_IM_WALD;
 import static de.nb.aventiure2.data.world.gameobject.World.HINTER_DER_HUETTE;
 import static de.nb.aventiure2.data.world.gameobject.World.HUETTE_IM_WALD;
 import static de.nb.aventiure2.data.world.gameobject.World.IM_WALD_BEIM_BRUNNEN;
@@ -120,21 +119,6 @@ public class SimpleConnectionCompFactory {
                                 + "draußen", secs(15))
                                 .undWartest()
                                 .dann()
-                ),
-
-                con(BETT_IN_DER_HUETTE_IM_WALD,
-                        "auf der Bettkante",
-                        "In das Bett legen",
-                        secs(15),
-                        du(PARAGRAPH, "legst", "dich in das hölzere Bettgestell. "
-                                + "Gemütlich ist etwas anderes, aber nach den "
-                                + "vielen Schritten tut es sehr gut, sich "
-                                + "einmal auszustrecken", secs(15)),
-
-                        du("legst", "dich noch einmal in das Holzbett",
-                                "noch einmal", secs(15))
-                                .undWartest()
-                                .dann()
                 ));
     }
 
@@ -153,21 +137,6 @@ public class SimpleConnectionCompFactory {
                                 .dann()
                 )
         );
-    }
-
-    @NonNull
-    public SimpleConnectionComp createBettInDerHuetteImWald() {
-        return new SimpleConnectionComp(BETT_IN_DER_HUETTE_IM_WALD,
-                db,
-                world,
-                con(HUETTE_IM_WALD,
-                        "auf der Bettkante",
-                        "Aufstehen",
-                        secs(10),
-                        du(SENTENCE, "reckst", "dich noch einmal und stehst "
-                                + "wieder auf", secs(10))
-                                .dann()
-                ));
     }
 
     @NonNull

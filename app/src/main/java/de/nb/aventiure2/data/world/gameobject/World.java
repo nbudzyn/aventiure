@@ -67,16 +67,21 @@ public class World {
     public static final GameObjectId SPIELER_CHARAKTER = new GameObjectId(1);
 
     // OBJECTS
+    // - On Player
     public static final GameObjectId HAENDE_DES_SPIELER_CHARAKTERS = new GameObjectId(10_000);
     public static final GameObjectId EINE_TASCHE_DES_SPIELER_CHARAKTERS = new GameObjectId(10_001);
-    public static final GameObjectId GOLDENE_KUGEL = new GameObjectId(10_100);
+    // - Non-Movable
     public static final GameObjectId SCHLOSS_VORHALLE_AM_TISCH_BEIM_FEST =
-            new GameObjectId(10_101);
+            new GameObjectId(10_100);
     public static final GameObjectId SCHLOSS_VORHALLE_LANGER_TISCH_BEIM_FEST =
-            new GameObjectId(10_102);
+            new GameObjectId(10_101);
     public static final GameObjectId VOR_DEM_ALTEN_TURM_SCHATTEN_DER_BAEUME =
             // (in deren Schatten man sich setzen kann)
-            new GameObjectId(10_103);
+            new GameObjectId(10_110);
+    public static final GameObjectId BETT_IN_DER_HUETTE_IM_WALD = new GameObjectId(10_120);
+    // - Movable
+    public static final GameObjectId GOLDENE_KUGEL = new GameObjectId(11_000);
+
 
     // CREATURES
     public static final GameObjectId SCHLOSSWACHE = new GameObjectId(20_000);
@@ -93,7 +98,6 @@ public class World {
     public static final GameObjectId ABZWEIG_IM_WALD = new GameObjectId(30_010);
     public static final GameObjectId VOR_DER_HUETTE_IM_WALD = new GameObjectId(30_011);
     public static final GameObjectId HUETTE_IM_WALD = new GameObjectId(30_012);
-    public static final GameObjectId BETT_IN_DER_HUETTE_IM_WALD = new GameObjectId(30_013);
     public static final GameObjectId HINTER_DER_HUETTE = new GameObjectId(30_014);
     public static final GameObjectId IM_WALD_BEIM_BRUNNEN = new GameObjectId(30_015);
     public static final GameObjectId UNTEN_IM_BRUNNEN = new GameObjectId(30_016);
@@ -171,6 +175,7 @@ public class World {
                     new BankAmTischBeimSchlossfestFactory(db, this);
             final SchattenDerBaeumeFactory schattenDerBaeume =
                     new SchattenDerBaeumeFactory(db, this);
+            final BettFactory bett = new BettFactory(db, this);
             final CreatureFactory creature = new CreatureFactory(db, this);
             final InvisibleFactory invisible = new InvisibleFactory(db, this);
             final RoomFactory room = new RoomFactory(db, this);
@@ -206,9 +211,6 @@ public class World {
                     room.create(HUETTE_IM_WALD, StoringPlaceType.HOLZTISCH,
                             false,
                             connection.createHuetteImWald()),
-                    room.create(BETT_IN_DER_HUETTE_IM_WALD, StoringPlaceType.NEBEN_DIR_IM_BETT,
-                            false,
-                            connection.createBettInDerHuetteImWald()),
                     room.create(HINTER_DER_HUETTE, StoringPlaceType.UNTER_DEM_BAUM,
                             false,
                             connection.createHinterDerHuette()),
@@ -276,6 +278,10 @@ public class World {
                             // Ansonsten bekommen wir vorher Aktionen wie
                             // "Die Kugel auf den Tisch legen" angeboten. (Auf welchen der
                             // vielen Tisch denn??)
+                            // TODO Man könnte ein Framework für diese "Instanziierung"
+                            //  anbieten, wo man eine "Tisch-Instanz" betritt und
+                            //  später wieder verlässt (worauf alles zurückgesetzt wird und
+                            //  der SC ggf. alle relevanten Gegenstände automatisch mitnimmt.)
                             null, null,
                             false,
                             TISCH,
@@ -285,7 +291,8 @@ public class World {
                     // STORY Rapunzel: Man muss eine Strickleiter
                     //  besorgen - oder Seide kaufen und etwas zum Stricken??? Gold gabs vielleicht
                     //  vom Froschprinzen?
-                    schattenDerBaeume.createVorDemAltenTurm()
+                    schattenDerBaeume.createVorDemAltenTurm(),
+                    bett.createInDerHuetteImWald()
             );
         }
     }

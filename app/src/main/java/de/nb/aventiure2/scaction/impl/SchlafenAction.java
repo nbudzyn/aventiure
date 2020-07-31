@@ -38,7 +38,6 @@ public class SchlafenAction extends AbstractScAction {
             @Nullable final IGameObject location) {
         final ImmutableList.Builder<SchlafenAction> res = ImmutableList.builder();
         if (location != null && location.is(BETT_IN_DER_HUETTE_IM_WALD)) {
-            // STORY Schlafen könnte man auch im Schaukelstuhl
             res.add(new SchlafenAction(db, world));
         }
 
@@ -86,7 +85,7 @@ public class SchlafenAction extends AbstractScAction {
                     mins(1)));
         }
 
-        alt.add(du("bist", "noch nicht müde",
+        alt.add(du(SENTENCE, "bist", "noch nicht müde",
                 "müde", mins(1))
                 .dann());
 

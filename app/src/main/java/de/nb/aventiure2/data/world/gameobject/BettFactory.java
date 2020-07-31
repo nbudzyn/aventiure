@@ -1,0 +1,95 @@
+package de.nb.aventiure2.data.world.gameobject;
+
+import androidx.annotation.NonNull;
+
+import de.nb.aventiure2.data.database.AvDatabase;
+import de.nb.aventiure2.data.world.base.GameObject;
+import de.nb.aventiure2.data.world.base.GameObjectId;
+import de.nb.aventiure2.data.world.base.Known;
+import de.nb.aventiure2.data.world.base.Lichtverhaeltnisse;
+import de.nb.aventiure2.data.world.syscomp.description.impl.SimpleDescriptionComp;
+import de.nb.aventiure2.data.world.syscomp.location.LocationComp;
+import de.nb.aventiure2.data.world.syscomp.storingplace.StoringPlaceComp;
+import de.nb.aventiure2.german.base.AbstractDescription;
+
+import static de.nb.aventiure2.data.world.base.SpatialConnectionData.conData;
+import static de.nb.aventiure2.data.world.gameobject.World.BETT_IN_DER_HUETTE_IM_WALD;
+import static de.nb.aventiure2.data.world.gameobject.World.HUETTE_IM_WALD;
+import static de.nb.aventiure2.data.world.syscomp.storingplace.StoringPlaceType.ECKE_IM_BETTGESTELL;
+import static de.nb.aventiure2.data.world.time.AvTimeSpan.secs;
+import static de.nb.aventiure2.german.base.DuDescription.du;
+import static de.nb.aventiure2.german.base.Nominalphrase.np;
+import static de.nb.aventiure2.german.base.NumerusGenus.N;
+import static de.nb.aventiure2.german.base.StructuralElement.PARAGRAPH;
+import static de.nb.aventiure2.german.base.StructuralElement.SENTENCE;
+
+public class BettFactory {
+    private final AvDatabase db;
+    private final World world;
+
+    BettFactory(final AvDatabase db,
+                final World world) {
+        this.db = db;
+        this.world = world;
+    }
+
+    GameObject createInDerHuetteImWald() {
+        return create(BETT_IN_DER_HUETTE_IM_WALD, HUETTE_IM_WALD);
+    }
+
+    @NonNull
+    private GameObject create(final GameObjectId id, final GameObjectId locationId) {
+        final SimpleDescriptionComp descriptionComp =
+                new SimpleDescriptionComp(id,
+                        np(N, "ein Bettgestell",
+                                "einem Bettgestell"),
+                        np(N, "das Bettgestell",
+                                "dem Bettgestell"),
+                        np(N, "das Bettgestell",
+                                "dem Bettgestell"));
+
+        final LocationComp locationComp = new LocationComp(
+                id, db, world, locationId,
+                null, false);
+
+        final StoringPlaceComp storingPlaceComp = new StoringPlaceComp(
+                id, db, ECKE_IM_BETTGESTELL,
+                false,
+                conData("auf der Bettkante",
+                        "In das Bett legen",
+                        secs(15),
+                        this::getDescIn),
+                conData("auf der Bettkante",
+                        "Aufstehen",
+                        secs(10),
+                        du(SENTENCE, "reckst", "dich noch einmal und stehst "
+                                + "wieder auf", secs(10))
+                                .dann())
+        );
+
+        return new StoringPlaceObject(id,
+                descriptionComp,
+                locationComp,
+                storingPlaceComp);
+    }
+
+
+    private AbstractDescription<?> getDescIn(
+            final Known newLocationKnown, final Lichtverhaeltnisse lichtverhaeltnisse) {
+        if (db.counterDao().incAndGet(
+                // TODO Wegen dieser ID, die für alle Betten gleich ist, kann man im Moment nicht
+                //  wirklich mehrere Betten haben...
+                "Bett__DescIn")
+                == 1) {
+            return du(PARAGRAPH, "legst", "dich in das hölzere Bettgestell. "
+                    + "Gemütlich ist etwas anderes, aber nach den "
+                    + "vielen Schritten tut es sehr gut, sich "
+                    + "einmal auszustrecken", secs(15));
+        }
+
+        return du("legst", "dich noch einmal in das Holzbett",
+                "noch einmal", secs(15))
+                .undWartest()
+                .dann();
+    }
+}
