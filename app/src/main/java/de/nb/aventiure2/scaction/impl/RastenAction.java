@@ -11,16 +11,18 @@ import de.nb.aventiure2.data.database.AvDatabase;
 import de.nb.aventiure2.data.world.gameobject.World;
 import de.nb.aventiure2.data.world.syscomp.feelings.Mood;
 import de.nb.aventiure2.data.world.syscomp.memory.Action;
+import de.nb.aventiure2.data.world.syscomp.state.IHasStateGO;
 import de.nb.aventiure2.data.world.syscomp.storingplace.ILocationGO;
 import de.nb.aventiure2.data.world.time.AvTimeSpan;
 import de.nb.aventiure2.scaction.AbstractScAction;
 
 import static de.nb.aventiure2.data.world.base.Lichtverhaeltnisse.DUNKEL;
+import static de.nb.aventiure2.data.world.gameobject.World.RAPUNZEL;
 import static de.nb.aventiure2.data.world.gameobject.World.VOR_DEM_ALTEN_TURM_SCHATTEN_DER_BAEUME;
+import static de.nb.aventiure2.data.world.syscomp.state.impl.RapunzelState.SINGEND;
 import static de.nb.aventiure2.data.world.time.AvTimeSpan.mins;
 import static de.nb.aventiure2.german.base.AllgDescription.neuerSatz;
 import static de.nb.aventiure2.german.base.DuDescription.du;
-import static de.nb.aventiure2.german.base.StructuralElement.PARAGRAPH;
 import static de.nb.aventiure2.german.base.StructuralElement.SENTENCE;
 
 /**
@@ -61,11 +63,39 @@ public class RastenAction extends AbstractScAction {
 
     @Override
     public AvTimeSpan narrateAndDo() {
-        if (location.storingPlaceComp().getLichtverhaeltnisse() == DUNKEL) {
-            return narrateAndDoDunkel();
+        final AvTimeSpan timeElapsed;
+
+        if (isDefinitivWiederholung() &&
+                ((IHasStateGO) world.load(RAPUNZEL)).stateComp()
+                        .hasState(SINGEND)) {
+            timeElapsed = narrateAndDoRapunzelZuhoeren();
+        } else if (location.storingPlaceComp().getLichtverhaeltnisse() == DUNKEL) {
+            timeElapsed = narrateAndDoDunkel();
+        } else {
+            timeElapsed = narrateAndDoHell();
         }
 
-        return narrateAndDoHell();
+        sc.memoryComp().setLastAction(buildMemorizedAction());
+
+        return timeElapsed;
+    }
+
+    private AvTimeSpan narrateAndDoRapunzelZuhoeren() {
+        sc.feelingsComp().setMoodMin(Mood.GLUECKLICH);
+
+        return n.addAlt(
+                du("bist", "ganz still",
+                        mins(4))
+                        .undWartest()
+                        .dann(),
+                du("genießt deine Rast",
+                        mins(4))
+                        .undWartest()
+                        .dann(),
+                neuerSatz("Was eine schöne Rast!", mins(4))
+                        .beendet(SENTENCE),
+                neuerSatz("Wer hätte das erwartet!", mins(4))
+                        .beendet(SENTENCE));
     }
 
     private AvTimeSpan narrateAndDoDunkel() {
@@ -91,23 +121,23 @@ public class RastenAction extends AbstractScAction {
                 neuerSatz("Es tut gut, eine Weile zu rasten. Über dir zwitschern die "
                                 + "Vögel und die Grillen zirpen",
                         mins(10))
-                        .beendet(PARAGRAPH)
+                        .beendet(SENTENCE)
                         .dann(),
-                du("streckst", "die Glieder und hörst auf das Rauschen in den "
+                neuerSatz("Du streckst die Glieder und hörst auf das Rauschen in den "
                                 + "Ästen über dir. Ein Rabe setzt "
                                 + "sich neben dich und fliegt nach einer Weile wieder fort",
                         mins(10))
-                        .beendet(PARAGRAPH)
+                        .beendet(SENTENCE)
                         .dann(),
-                du("ruhst", "eine Weile aus und lauscht, wie die Insekten "
+                neuerSatz("Du ruhst noch eine Weile aus und lauschst, wie die Insekten "
                         + "zirpen und der Wind saust", mins(10))
-                        .beendet(PARAGRAPH)
+                        .beendet(SENTENCE)
                         .dann(),
-                neuerSatz("Deine müden Glieder können sich erholen. Du bist ganz "
+                neuerSatz("Deine müden Glieder brauchen Erholung. Du bist ganz "
                         + "still und die Vögel setzen sich "
                         + "auf die Äste über dir "
                         + "und singen, was sie nur wissen", mins(10))
-                        .beendet(PARAGRAPH)
+                        .beendet(SENTENCE)
                         .dann());
     }
 
@@ -130,6 +160,4 @@ public class RastenAction extends AbstractScAction {
     private static Action buildMemorizedAction() {
         return new Action(Action.Type.RASTEN);
     }
-
-
 }

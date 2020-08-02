@@ -14,6 +14,7 @@ public enum Mood {
     //  Z.B. wird man nicht GEKNICKT, wenn man MUEDE ist.
 
     VOLLER_FREUDE(5, "fröhlich"),
+    GLUECKLICH(4, "glücklich"),
     AUFGEDREHT(2, "aufgedreht"),
     BEWEGT(2, "selbstvergessen"),
     ZUFRIEDEN(1, "spielerisch"),

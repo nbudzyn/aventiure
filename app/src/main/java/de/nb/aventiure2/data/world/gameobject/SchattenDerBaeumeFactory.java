@@ -22,6 +22,7 @@ import static de.nb.aventiure2.data.world.time.AvTimeSpan.secs;
 import static de.nb.aventiure2.german.base.DuDescription.du;
 import static de.nb.aventiure2.german.base.Nominalphrase.np;
 import static de.nb.aventiure2.german.base.NumerusGenus.M;
+import static de.nb.aventiure2.german.base.StructuralElement.PARAGRAPH;
 import static de.nb.aventiure2.german.base.StructuralElement.SENTENCE;
 
 public class SchattenDerBaeumeFactory {
@@ -100,13 +101,13 @@ public class SchattenDerBaeumeFactory {
     private static AbstractDescription<?> getDescOut(
             final Known newLocationKnown, final Lichtverhaeltnisse lichtverhaeltnisse) {
         if (lichtverhaeltnisse == DUNKEL) {
-            return du("stehst", "wieder auf", secs(10))
+            return du(PARAGRAPH, "stehst", "wieder auf", secs(10))
                     .undWartest()
                     .dann();
         }
 
-        return du("erhebst",
-                "dich und trittst aus dem Schatten der Bäume hervor",
+        return du(PARAGRAPH, "erhebst",
+                "dich wieder und trittst aus dem Schatten der Bäume hervor",
                 secs(10))
                 .beendet(SENTENCE)
                 .dann();

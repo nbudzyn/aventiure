@@ -435,11 +435,6 @@ public class BewegenAction<LOC_DESC extends ILocatableGO & IDescribableGO>
         final AbstractDescription<?> description = getNormalDescription(
                 to.storingPlaceComp().getLichtverhaeltnisse());
 
-        if (!(to instanceof ISpatiallyConnectedGO) ||
-                !(oldLocation instanceof ISpatiallyConnectedGO)) {
-            return n.add(description);
-        }
-
         if (description instanceof DuDescription &&
                 n.requireStoryState().allowsAdditionalDuSatzreihengliedOhneSubjekt() &&
                 isDefinitivDiskontinuitaet()) {
@@ -635,7 +630,11 @@ public class BewegenAction<LOC_DESC extends ILocatableGO & IDescribableGO>
                 // irgendwo hin, die Zauberin kommt ihm entgegen, er kehrt um und geht ihr nach.
                 !n.lastNarrationWasFromReaction() &&
                         sc.memoryComp().getLastAction().is(BEWEGEN) &&
-                        sc.locationComp().lastLocationWas(spatialConnection.getTo());
+                        sc.locationComp().lastLocationWas(spatialConnection.getTo()) &&
+                        // Wenn man aus einem Objekt zurückkehrt, ist es keine Diskontinuität,
+                        // wenn man aber aus einem Objekt gekommen ist und dann wieder in
+                        // das Objekt zurückkehrt, ist das eine Diskontinuität.
+                        oldLocation instanceof ISpatiallyConnectedGO;
     }
 
     @Contract(" -> new")
