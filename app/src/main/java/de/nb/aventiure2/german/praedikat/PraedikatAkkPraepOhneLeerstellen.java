@@ -38,8 +38,8 @@ public class PraedikatAkkPraepOhneLeerstellen implements PraedikatOhneLeerstelle
 
     public PraedikatAkkPraepOhneLeerstellen(final Verb verb,
                                             final PraepositionMitKasus praepositionMitKasus,
-                                            final SubstantivischePhrase describablePraep,
-                                            final SubstantivischePhrase describableAkk) {
+                                            final SubstantivischePhrase describableAkk,
+                                            final SubstantivischePhrase describablePraep) {
         this.verb = verb;
         this.praepositionMitKasus = praepositionMitKasus;
         this.describablePraep = describablePraep;
