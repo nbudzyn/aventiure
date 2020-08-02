@@ -203,10 +203,16 @@ public class RapunzelsZauberinReactionsComp
 
         // Zauberin ist unten am alten Turm angekommen.
 
-        // STORY Zauberin ruft Rapunzel (wenn der Spieler nicht vor Ort ist) und
-        //  lässt sich hochziehen
-
         stateComp.setState(BESUCHT_RAPUNZEL);
+
+        // STORY Zauberin ruft Rapunzel und steigt hinauf
+//        "Als die magere Frau unten am Turm steht, ruft sie auf einmal »Rapunzel, Rapunzel,\n"
+//                + "laß mir dein Haar herunter.«\n"
+//                + "Gleich darauf fallen aus dem kleinen Fenster "
+//                + "lange, goldene Haarzöpfe herab, sicher zwanzig Ellen tief herunter. "
+//                + "Du siehst die magere Frau daran hinaufsteigen";
+
+        // STORY Zauberin ruft Rapunzel nur, wenn der Spieler nicht vor Ort ist
 
         // TODO Wenn der World-Tick ungewöhnlich lang war, geht die Zauberin
         //  erst jetzt (also zu spät) in den BESUCHT_RAPUNZEL-State.
