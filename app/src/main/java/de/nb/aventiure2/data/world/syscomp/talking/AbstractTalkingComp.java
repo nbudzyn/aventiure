@@ -14,6 +14,7 @@ import de.nb.aventiure2.data.world.base.AbstractStatefulComponent;
 import de.nb.aventiure2.data.world.base.GameObject;
 import de.nb.aventiure2.data.world.base.GameObjectId;
 import de.nb.aventiure2.data.world.gameobject.World;
+import de.nb.aventiure2.data.world.gameobject.player.SpielerCharakter;
 import de.nb.aventiure2.data.world.syscomp.description.IDescribableGO;
 import de.nb.aventiure2.data.world.syscomp.memory.Action;
 import de.nb.aventiure2.data.world.syscomp.talking.impl.SCTalkAction;
@@ -237,5 +238,10 @@ public abstract class AbstractTalkingComp extends AbstractStatefulComponent<Talk
      */
     protected final Nominalphrase getDescription(final boolean shortIfKnown) {
         return world.getDescription(getGameObjectId(), shortIfKnown);
+    }
+
+    @NonNull
+    protected SpielerCharakter loadSC() {
+        return world.loadSC();
     }
 }

@@ -12,12 +12,17 @@ import de.nb.aventiure2.data.world.syscomp.reaction.interfaces.IMovementReaction
 import de.nb.aventiure2.data.world.syscomp.reaction.interfaces.ITimePassedReactions;
 import de.nb.aventiure2.data.world.syscomp.state.impl.RapunzelsZauberinStateComp;
 import de.nb.aventiure2.data.world.syscomp.storingplace.ILocationGO;
+import de.nb.aventiure2.data.world.syscomp.talking.ITalkerGO;
+import de.nb.aventiure2.data.world.syscomp.talking.impl.RapunzelTalkingComp;
 import de.nb.aventiure2.data.world.time.AvDateTime;
 import de.nb.aventiure2.data.world.time.AvTime;
 import de.nb.aventiure2.data.world.time.AvTimeSpan;
+import de.nb.aventiure2.german.base.Nominalphrase;
 
 import static com.google.common.base.Preconditions.checkArgument;
 import static de.nb.aventiure2.data.world.gameobject.World.DRAUSSEN_VOR_DEM_SCHLOSS;
+import static de.nb.aventiure2.data.world.gameobject.World.OBEN_IM_ALTEN_TURM;
+import static de.nb.aventiure2.data.world.gameobject.World.RAPUNZEL;
 import static de.nb.aventiure2.data.world.gameobject.World.RAPUNZELS_ZAUBERIN;
 import static de.nb.aventiure2.data.world.gameobject.World.SPIELER_CHARAKTER;
 import static de.nb.aventiure2.data.world.gameobject.World.VOR_DEM_ALTEN_TURM;
@@ -29,6 +34,8 @@ import static de.nb.aventiure2.data.world.time.AvTime.oClock;
 import static de.nb.aventiure2.data.world.time.AvTimeSpan.days;
 import static de.nb.aventiure2.data.world.time.AvTimeSpan.mins;
 import static de.nb.aventiure2.data.world.time.AvTimeSpan.noTime;
+import static de.nb.aventiure2.german.base.AllgDescription.neuerSatz;
+import static de.nb.aventiure2.german.base.StructuralElement.PARAGRAPH;
 
 /**
  * "Reaktionen" von Rapunzels Zauberin, z.B. darauf, dass Zeit vergeht
@@ -201,19 +208,6 @@ public class RapunzelsZauberinReactionsComp
             return extraTime;
         }
 
-        // Zauberin ist unten am alten Turm angekommen.
-
-        stateComp.setState(BESUCHT_RAPUNZEL);
-
-        // STORY Zauberin ruft Rapunzel und steigt hinauf
-//        "Als die magere Frau unten am Turm steht, ruft sie auf einmal »Rapunzel, Rapunzel,\n"
-//                + "laß mir dein Haar herunter.«\n"
-//                + "Gleich darauf fallen aus dem kleinen Fenster "
-//                + "lange, goldene Haarzöpfe herab, sicher zwanzig Ellen tief herunter. "
-//                + "Du siehst die magere Frau daran hinaufsteigen";
-
-        // STORY Zauberin ruft Rapunzel nur, wenn der Spieler nicht vor Ort ist
-
         // TODO Wenn der World-Tick ungewöhnlich lang war, geht die Zauberin
         //  erst jetzt (also zu spät) in den BESUCHT_RAPUNZEL-State.
         //  Rapunzel wird also zu lange besucht.
@@ -223,20 +217,65 @@ public class RapunzelsZauberinReactionsComp
         //    und irgendwo (wo? hier in der Reactions-Comp?) speichern, wann
         //    der Besucht vorbei sein soll (besuchsEndeZeit = ankunft + BESUCH_DAUER)
 
-        // STORY Zauberin ruft Rapunzel, vergebliches Warten, Erkennen, dass Rapunzel
-        //  befreit wurde
+        // Zauberin ist unten am alten Turm angekommen.
+        stateComp.setState(BESUCHT_RAPUNZEL);
 
+        if (loadSC().locationComp().hasLocation(VOR_DEM_ALTEN_TURM)) {
+            // Wenn der SC auch direkt vor dem Turm steht, dann wartet die Frau,
+            // bis der SC weggeht
+            // TODO Wenn der SC weggeht lässt sich die Zauberin (ohne dass der SC
+            //  es merkt, in den Turm hochziehen)
+            return extraTime;
+        }
+
+        return extraTime.plus(zauberinRuftRapunzelspruch());
+    }
+
+    private AvTimeSpan zauberinRuftRapunzelspruch() {
+        AvTimeSpan extraTime = noTime();
+
+        if (loadSC().locationComp().hasRecursiveLocation(VOR_DEM_ALTEN_TURM)) {
+            final Nominalphrase desc = getDescription(true);
+            extraTime = extraTime.plus(n.add(
+                    neuerSatz(PARAGRAPH, "Als "
+                            + desc.nom()
+                            + " unten am Turm steht, ruft "
+                            + desc.persPron().nom()
+                            + " laut: „Rapunzel, "
+                            + "Rapunzel, lass mir dein Haar herunter!”", mins(1))
+                            .phorikKandidat(desc, getGameObjectId())));
+        }
+
+        ((RapunzelTalkingComp) ((ITalkerGO) world.load(RAPUNZEL)).talkingComp()).
+                reactToRapunzelruf(getGameObjectId());
+
+        // if (Rapunzel hat die Haare heruntergelassen){
+        //                STORY "Du siehst die magere Frau daran hinaufsteigen";
+        locationComp.narrateAndSetLocation(OBEN_IM_ALTEN_TURM);
+        //} else{
+        // STORY Zauberin wartet und ruft noch ein paar Mal und erkennt am Ende, dass
+        //  Rapunzel befreit wurde
+        //}
         return extraTime;
     }
 
     private AvTimeSpan onTimePassed_fromBesuchtRapunzel(final AvDateTime now) {
-        if (now.isBefore(
-                stateComp.getStateDateTime().plus(BESUCHSDAUER))) {
+        if (now.isBefore(stateComp.getStateDateTime().plus(BESUCHSDAUER))) {
+            // Falls die Zauberin noch vor dem Turm wartet:
+            if (locationComp.hasLocation(VOR_DEM_ALTEN_TURM) &&
+                    !loadSC().locationComp().hasLocation(VOR_DEM_ALTEN_TURM)) {
+                // Wenn der SC auch direkt vor dem Turm steht, dann wartet die Zauberin,
+                // bis der SC weggeht
+                return zauberinRuftRapunzelspruch();
+            }
+
             // Zauberin bleibt noch bei Rapunzel
             return noTime();
         }
 
         // Zauberin verlässt Rapunzel
+        // STORY Zauberin wird wieder heruntergelassen
+
         stateComp.setState(AUF_DEM_RUECKWEG_VON_RAPUNZEL);
         return movementComp.startMovement(now, DRAUSSEN_VOR_DEM_SCHLOSS);
     }

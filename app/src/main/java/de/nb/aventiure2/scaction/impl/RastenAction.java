@@ -58,7 +58,7 @@ public class RastenAction extends AbstractScAction {
     @Override
     @NonNull
     public String getName() {
-        return "Eine Rast einlegen";
+        return "Rasten";
     }
 
     @Override
