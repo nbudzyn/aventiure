@@ -173,6 +173,16 @@ public class SchlafenAction extends AbstractScAction {
         // STORY Der Frosch läuft während des Schlafens davon - nicht beim Aufwachen.
 
         // STORY Man kann durch Ereignisse aufgeweckt werden! Der Status des spielers wäre dann auf wach gesetzt und würde immer wieder geprüft.
+
+        // STORY Konzept dafür entwickeln, dass der Benutzer einen  Ort verlässt, während XYZ
+        //  passiert und zurückkehrt, wenn XYZ nicht mehr passiert
+
+        // STORY Konzept entwickeln, dass diese "Statusübergänge" realisiert:
+        //  - Benutzer schläft an einem Ort, Rapunzel beginnt dort zu singen und hört wieder auf
+        //     (Benutzer merkt nichts)
+        //  - Benutzer schläft ein, während Rapunzel nicht singt und wacht auf und Rapunzel hat
+        //    zwischenzeitlich angefangen zu singen
+
         sc.feelingsComp().setMood(NEUTRAL);
 
         return timeElapsed.plus(n.addAlt(

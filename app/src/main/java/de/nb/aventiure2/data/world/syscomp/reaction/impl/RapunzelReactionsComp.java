@@ -85,11 +85,9 @@ public class RapunzelReactionsComp
             case SINGEND:
                 return onSCEnter_VorDemAltenTurm_Singend(from);
             default:
-                // STORY Konzept entwickeln, das diese "Statusübergänge" realisiert:
-                //  - Benutzer verlässt den Ort, während Rapunzel singt und kehrt zurück, wenn Rapunzel nicht
-                //    mehr singt
-                //  - Benutzer verlässt Rapunzel gut gelaunt und kehrt niedergeschlage zu Rapunzel zurück,
-                //    Rapunzel reagiert auf den Wechsel (Mental Model für Rapunzel?)
+                // STORY Konzept dafür entwickeln, dass der Benutzer Rapunzel gut gelaunt
+                //  verlässt niedergeschlagen zu Rapunzel zurückkehrt und
+                //  Rapunzel auf den Wechsel reagiert (Mental Model für Rapunzel?)
                 return noTime();
         }
     }
@@ -190,12 +188,6 @@ public class RapunzelReactionsComp
         if (!loadSC().locationComp().hasRecursiveLocation(VOR_DEM_ALTEN_TURM)) {
             return noTime();
         }
-
-        // STORY Konzept entwickeln, dass diese "Statusübergänge" realisiert:
-        //  - Benutzer schläft an einem Ort, Rapunzel beginnt dort zu singen und hört wieder auf
-        //     (Benutzer merkt nichts)
-        //  - Benutzer schläft ein, während Rapunzel nicht singt und wacht auf und Rapunzel hat
-        //    zwischenzeitlich angefangen zu singen
 
         loadSC().feelingsComp().setMoodMin(BEWEGT);
 
