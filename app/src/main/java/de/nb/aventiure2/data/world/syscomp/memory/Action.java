@@ -30,7 +30,7 @@ public class Action {
          * Spielercharakter geht irgendwo hin.
          */
         BEWEGEN, ESSEN, HEULEN, HOCHWERFEN, NEHMEN, REDEN,
-        SCHLAFEN_ODER_VERGEBLICHER_EINSCHLAF_VERSUCH
+        SCHLAFEN_ODER_VERGEBLICHER_EINSCHLAF_VERSUCH, RASTEN
     }
 
     @NonNull

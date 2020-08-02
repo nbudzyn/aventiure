@@ -85,9 +85,9 @@ public class PraedikatAkkPraepOhneLeerstellen implements PraedikatOhneLeerstelle
     public String getDescriptionInfinitiv(final Person person, final Numerus numerus,
                                           @Nullable final AdverbialeAngabe adverbialeAngabe) {
         return joinToNull(
-                describablePraep.akk(), // "das Teil"
+                describableAkk.akk(), // "das Teil"
                 adverbialeAngabe, // "erneut"
-                describableAkk.im(praepositionMitKasus), // "auf dem Boden"
+                describablePraep.im(praepositionMitKasus), // "auf dem Boden"
                 verb.getInfinitiv()); // "abstellen"
     }
 
@@ -100,9 +100,9 @@ public class PraedikatAkkPraepOhneLeerstellen implements PraedikatOhneLeerstelle
     public String getDescriptionZuInfinitiv(final Person person, final Numerus numerus,
                                             @Nullable final AdverbialeAngabe adverbialeAngabe) {
         return joinToNull(
-                describablePraep.akk(), // "das Teil"
+                describableAkk.akk(), // "das Teil"
                 adverbialeAngabe, // "erneut"
-                describableAkk.im(praepositionMitKasus), // "auf dem Boden"
+                describablePraep.im(praepositionMitKasus), // "auf dem Boden"
                 verb.getZuInfinitiv()); // "abzustellen"
     }
 }

@@ -44,7 +44,6 @@ import static de.nb.aventiure2.data.world.gameobject.World.DRAUSSEN_VOR_DEM_SCHL
 import static de.nb.aventiure2.data.world.gameobject.World.SCHLOSSFEST;
 import static de.nb.aventiure2.data.world.gameobject.World.SCHLOSS_VORHALLE;
 import static de.nb.aventiure2.data.world.gameobject.World.SCHLOSS_VORHALLE_AM_TISCH_BEIM_FEST;
-import static de.nb.aventiure2.data.world.gameobject.World.VOR_DEM_ALTEN_TURM_SCHATTEN_DER_BAEUME;
 import static de.nb.aventiure2.data.world.gameobject.World.WALDWILDNIS_HINTER_DEM_BRUNNEN;
 import static de.nb.aventiure2.data.world.syscomp.feelings.Mood.ERSCHOEPFT;
 import static de.nb.aventiure2.data.world.syscomp.memory.Action.Type.BEWEGEN;
@@ -421,12 +420,6 @@ public class BewegenAction<LOC_DESC extends ILocatableGO & IDescribableGO>
                 && spatialConnection.getTo().equals(DRAUSSEN_VOR_DEM_SCHLOSS)
                 && mood == Mood.ANGESPANNT) {
             sc.feelingsComp().setMood(Mood.NEUTRAL);
-        } else if (spatialConnection.getTo().equals(VOR_DEM_ALTEN_TURM_SCHATTEN_DER_BAEUME)) {
-            if (db.nowDao().now().getTageszeit().getLichtverhaeltnisseDraussen() == HELL) {
-                sc.feelingsComp().setMoodMin(Mood.ZUFRIEDEN);
-            } else {
-                sc.feelingsComp().setMoodMax(Mood.VERUNSICHERT);
-            }
         } else if (spatialConnection.getTo().equals(BAUM_IM_GARTEN_HINTER_DER_HUETTE_IM_WALD) &&
                 db.counterDao().get(BaumFactory.HOCHKLETTERN) > 2) {
             sc.feelingsComp().setMood(ERSCHOEPFT);

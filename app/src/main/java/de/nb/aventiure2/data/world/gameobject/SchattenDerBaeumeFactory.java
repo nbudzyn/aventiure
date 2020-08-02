@@ -78,24 +78,16 @@ public class SchattenDerBaeumeFactory {
     private AbstractDescription<?> getDescIn(
             final Known newLocationKnown, final Lichtverhaeltnisse lichtverhaeltnisse) {
         if (lichtverhaeltnisse == DUNKEL) {
-            return du("setzt", "dich unter die Bäume. Die Bäume rauschen in "
-                    + "der Dunkelheit, die Eulen schnarren, und "
-                    + "und es fängt an, dir angst zu werden", secs(30))
-                    .beendet(SENTENCE);
-            // STORY Alternativen:
-            //  - "Du setzt dich unter die Bäume, wo es dunkel und ungemütlich ist. Krabbelt da etwas auf "
-            //   + "deinem rechten Bein? Du schlägst mit der Hand zu, kannst aber nichts erkennen"
-            //  - "Du setzt dich unter die Bäume. In den Ästen über dir knittert und rauscht es"
+            return du("setzt", "dich unter die Bäume", secs(20))
+                    .dann();
         }
 
         if (db.counterDao().incAndGet(
                 "DescTo_SchattenDerBaeume__SCSetztSichTagsueberInDenSchattenDerBaeume")
                 == 1) {
-            return du("lässt", "dich im Schatten der umstehenden Bäume nieder. Es tut gut, "
-                            + "eine Weile zu rasten",
+            return du("lässt", "dich im Schatten der umstehenden Bäume nieder",
                     "im Schatten der umstehenden Bäume",
                     mins(5))
-                    .komma()
                     .beendet(SENTENCE)
                     .dann();
         }

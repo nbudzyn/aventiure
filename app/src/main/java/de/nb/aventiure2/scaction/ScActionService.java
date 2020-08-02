@@ -26,6 +26,7 @@ import de.nb.aventiure2.scaction.impl.EssenAction;
 import de.nb.aventiure2.scaction.impl.HeulenAction;
 import de.nb.aventiure2.scaction.impl.HochwerfenAction;
 import de.nb.aventiure2.scaction.impl.NehmenAction;
+import de.nb.aventiure2.scaction.impl.RastenAction;
 import de.nb.aventiure2.scaction.impl.RedenAction;
 import de.nb.aventiure2.scaction.impl.SchlafenAction;
 
@@ -126,7 +127,7 @@ public class ScActionService {
     private ImmutableList<AbstractScAction> buildPlayerOnlyAction(
             final SpielerCharakter spielerCharakter,
             final List<? extends ILocatableGO> wasSCInDenHaendenHat,
-            final @Nullable IGameObject location,
+            final @Nullable ILocationGO location,
             final List<? extends ILivingBeingGO> creaturesInLocation) {
         final ImmutableList.Builder<AbstractScAction> res = ImmutableList.builder();
 
@@ -134,6 +135,7 @@ public class ScActionService {
                 .buildActions(db, world, spielerCharakter, creaturesInLocation));
 
         if (wasSCInDenHaendenHat.isEmpty()) {
+            res.addAll(RastenAction.buildActions(db, world, location));
             res.addAll(SchlafenAction.buildActions(db, world, location));
         }
 

@@ -75,6 +75,7 @@ public class Walkthrough {
                     "Den Pfad zurückgehen",
                     "Den schmalen Pfad aufwärtsgehen",
                     "In den Schatten der Bäume setzen",
+                    "Eine Rast einlegen",
                     "Die Kugel nehmen",
                     "Aus dem Schatten der Bäume treten");
     // STORY Man kann sich am Turm (tagsüber) ausruhen,
