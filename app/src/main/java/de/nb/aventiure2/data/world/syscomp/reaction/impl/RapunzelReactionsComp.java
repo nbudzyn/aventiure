@@ -135,10 +135,17 @@ public class RapunzelReactionsComp
         return onTimePassed_RapunzelMoechteNichtSingen(lastTime, now);
     }
 
-    /**
-     * Gibt zurück, ob es für Rapunzel eine gute Zeit ist zu singen
-     */
     private boolean rapunzelMoechteSingen(final AvDateTime now) {
+        // Rapunzel singt nur, wenn es denkt, niemand wäre in der Gegend.
+        if (loadSC().locationComp().hasLocation(VOR_DEM_ALTEN_TURM)) {
+            return false;
+        }
+
+        if (((ILocatableGO) world.load(RAPUNZELS_ZAUBERIN))
+                .locationComp().hasLocation(VOR_DEM_ALTEN_TURM)) {
+            return false;
+        }
+
         if (((ILocatableGO) world.load(RAPUNZELS_ZAUBERIN)).locationComp()
                 .hasRecursiveLocation(OBEN_IM_ALTEN_TURM)) {
             // Während Rapunzel von der Zauberin Besuch hat, singt sie nicht
@@ -156,11 +163,7 @@ public class RapunzelReactionsComp
     }
 
     private static boolean immerMalWieder(final AvDateTime now) {
-        // STORY Rapunzel könnte immer nur dann singen, wenn sie sich unbeobachtet fühlt -
-        //  also wenn der Spieler höchstens im Schatten zwischen den Bäumen steht (vgl. Märchen,
-        //  er verbirgt sich...)
-
-        if (now.getTime().isInRegularTimeIntervalIncl(
+        return now.getTime().isInRegularTimeIntervalIncl(
                 // Ab...
                 oClock(7),
                 // ... immer für ...
@@ -168,39 +171,22 @@ public class RapunzelReactionsComp
                 // ... Minuten mit
                 mins(25),
                 // ... Minuten Pause danach - bis um
-                oClock(12, 30))) {
-            return true;
-        }
-
-        if (now.getTime().isInRegularTimeIntervalIncl(
-                oClock(14, 30),
-                mins(10),
-                mins(25),
-                oClock(19))) {
-            return true;
-        }
-
-        return false;
+                oClock(19));
     }
 
     private AvTimeSpan onTimePassed_RapunzelMoechteSingen(final AvDateTime lastTime,
                                                           final AvDateTime now) {
-        // STORY Konzept entwickeln, um dies zu realisieren:
-        //  - Benutzer rastet für längere Zeit (wach) und Rapunzel beginnt mehrfach
-        //    zu singen und hört wieder auf, letztlich singt Rapunzel
-
         if (stateComp.hasState(STILL)) {
             stateComp.setState(SINGEND);
 
-            return onTimePassed_ZeitZumSingen_bislangStill();
+            return onTimePassed_moechteSingen_bislangStill();
         }
 
         // Rapunzel hat schon die ganze Zeit gesungen
-
         return noTime();
     }
 
-    private AvTimeSpan onTimePassed_ZeitZumSingen_bislangStill() {
+    private AvTimeSpan onTimePassed_moechteSingen_bislangStill() {
         if (!loadSC().locationComp().hasRecursiveLocation(VOR_DEM_ALTEN_TURM)) {
             return noTime();
         }
@@ -243,14 +229,10 @@ public class RapunzelReactionsComp
 
     private AvTimeSpan onTimePassed_RapunzelMoechteNichtSingen(final AvDateTime lastTime,
                                                                final AvDateTime now) {
-        // STORY Konzept entwickeln, um dies zu realisieren:
-        //  - Benutzer rastet für längere Zeit (wach) und Rapunzel beginnt mehrfach
-        //    zu singen und hört wieder auf, letztlich singt Rapunzel nicht mehr
-
         if (stateComp.hasState(SINGEND)) {
             stateComp.setState(STILL);
 
-            return onTimePassed_NichtZeitZumSingen_bislangGesungen();
+            return onTimePassed_moechteNichtMehrSingen_bislangGesungen();
         }
 
         // Rapunzel hat schon die ganze Zeit nicht gesungen
@@ -259,59 +241,10 @@ public class RapunzelReactionsComp
 
     }
 
-    private AvTimeSpan onTimePassed_NichtZeitZumSingen_bislangGesungen() {
+    private AvTimeSpan onTimePassed_moechteNichtMehrSingen_bislangGesungen() {
         if (!loadSC().locationComp().hasRecursiveLocation(VOR_DEM_ALTEN_TURM)) {
             return noTime();
         }
-
-        // TODO Frosch läuft während des Schlafs weg. Oder kommt ggf. Auch wieder. Oder läuft
-        //  weg und kommt wieder.
-        //  Es sollte in der Zeit keine narrations geben (der Spieler bekommt ja nichts mit, es sei
-        //  denn er wacht auf). Aber danach sollte etwas kommen wie... ist verschwunden.
-        //  Wie macht man das sinnvoll?
-        //  Für die Tageszeit haben wir ein gutes Konzept.
-        //  Für andere Dinge (Frosch weg, Kugel weg) scheint es nicht zu funktionieren? Wenn
-        //  man die Zeit mittendrin weiterlaufen lässt, funktioniert das mit den Tageszeiten
-        //  nicht mehr!
-        //  Man könnte sagen: Schlafen ist wie Bewegen: Es gibt eine neue Beschreibung der
-        //  äußeren Umstände, zumindest soweit sie sich verändert haben. Dazu muss der Unterschied
-        //  (vorher / nachher) ermittelt werden. Und die Zeit muss zwischendrin vergehen -
-        //  allerdings ohne narration.
-        //  Andere Idee könnte sein: Beim Vergehen von Zeit gibt es DREI Parameter:
-        //  letzter Zeitpunkt, letzter WACHER Zeitpunkt und aktueller Zeitpunkt
-        //  Entsprechend kann dann der Text gestaltet werden, z.B. "Der Frosch ist verschwunden."
-
-        // STORY Konzept entwickeln, dass diese "Statusübergänge" realisiert:
-        //  - Benutzer rastet für längere Zeit (wach) und Rapunzel beginnt mehrfach
-        //    zu singen und hört wieder auf, letztlich hat Rapunzel aufgehört
-        //  - Benutzer schläft ein, während Rapunzel singt, aufhört und wieder anfängt
-        //  - Benutzer schläft ein, während Rapunzel singt und wacht auf und Rapunzel hat
-        //    zwischenzeitlich aufgehört zu singen
-
-        // TODO Idee: Jede Reaktion speichert den letzten Zustand (PCD), auf Basis dessen sie einen
-        //  Text gerendert hat sowie den Zeitpunkt dazu. Wenn wieder Gelegenheit ist, ein Text zu
-        //  rendern, wird geprüft, ob sich der Status gegenüber dem Zeitpunkt geändert hat,
-        //  außerdem wird geprüft, ob der Zeitpunkt Benutzer etwas versäumt hat oder die ganze
-        //  Zeit anwesend und aufnahmefähig war - entsprechend etwas wie "Plötzlich endet der Gesang"
-        //  oder "Es ist kein Gesang mehr zu hören" gerendert.
-
-        // STORY Zum Beispiel wäre der Benutzer über alle Statusänderungen zu unterrichten,
-        //  Die zwischenzeitlich passiert sind ("der Frosch ist verschwunden").
-
-        // STORY Man könnte auch, wenn der Benutzer erstmals wieder nach draußem kommt, etwas
-        //  schreiben wie "Inzwischen ist es dunkel geworden". Dazu müsste der "Tageszeit-Status"
-        //  (oder zumindest der Zeitpunkt) gespeichert werden, wenn der Benutzer REIN GEHT
-        //  und später beim RAUSTRETEN dieser Status mit dem aktuellen Tageszeitstatus verglichen
-        //  werden.
-        //  Man müsste also die Möglichkeit anbieten, jederzeit den Status eines bestimmten
-        //  Game Objects unter einem "Label" zu persistieren (inkl. Zeitpunkt), so dass
-        //  man ihn später wieder laden kann. Alternativ auch mehrere Game Objects,
-        //  denn nur so kann man prüfen, was sich nach dem Schlafen an einem Ort verändert hat.
-
-        // TODO Der Benutzer (oder auch andere Game Objects) könnte auch ein "mental Model" habe, wo
-        //  der Stand der Welt, wie der Benutzer ihn sich vorstellt, gespeichert ist
-        //  (z.B. wie ein Raum war als der Benutzer ihn verlassen hat...)
-        //  Dann könnte man beim Erzählen vergleich...
 
         loadSC().feelingsComp().setMoodMin(BEWEGT);
 

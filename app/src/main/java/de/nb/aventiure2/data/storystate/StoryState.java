@@ -228,12 +228,6 @@ public class StoryState {
     }
 
     public boolean dann() {
-        // TODO "Dann" nicht bei statischen Verben (du hast Glück, du hast Hunger) verwenden
-
-        // TODO "Dann" nur verwenden, wenn der es einen Aktor gibt und der Aktor im letzten
-        //  Satz gleich war. (Nach der Logik kann man dann auch für Beschreibungen in
-        //  der dritten Person verwenden!)
-
         // STORY Statt dann auch andere "Temporaladverbialia" verwenden,
         //  siehe "Grammatik der deutschen Sprache E2.3": darauf,
         //  kurz danach, sofort, bald etc. Vielleicht abhängig davon, wie lang

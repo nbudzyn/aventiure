@@ -121,9 +121,56 @@ public class SchlafenAction extends AbstractScAction {
 
         sc.memoryComp().setLastAction(buildMemorizedAction());
 
-        // STORY Der Frosch läuft während des Schlafens davon - nicht beim Aufwachen.
+        // TODO Frosch läuft während des Schlafs weg. Oder kommt ggf. Auch wieder. Oder läuft
+        //  weg und kommt wieder.
+        //  Es sollte in der Zeit keine narrations geben (der Spieler bekommt ja nichts mit, es sei
+        //  denn er wacht auf). Aber danach sollte etwas kommen wie... ist verschwunden.
+        //  Wie macht man das sinnvoll?
+        //  Für die Tageszeit haben wir ein gutes Konzept.
+        //  Für andere Dinge (Frosch weg, Kugel weg) scheint es nicht zu funktionieren? Wenn
+        //  man die Zeit mittendrin weiterlaufen lässt, funktioniert das mit den Tageszeiten
+        //  nicht mehr!
+        //  Man könnte sagen: Schlafen ist wie Bewegen: Es gibt eine neue Beschreibung der
+        //  äußeren Umstände, zumindest soweit sie sich verändert haben. Dazu muss der Unterschied
+        //  (vorher / nachher) ermittelt werden. Und die Zeit muss zwischendrin vergehen -
+        //  allerdings ohne narration.
+        //  Andere Idee könnte sein: Beim Vergehen von Zeit gibt es DREI Parameter:
+        //  letzter Zeitpunkt, letzter WACHER Zeitpunkt und aktueller Zeitpunkt
+        //  Entsprechend kann dann der Text gestaltet werden, z.B. "Der Frosch ist verschwunden."
 
-        // TODO Zeit in kleinen Einheiten vergehen lassen:erst 5 Minuten, dann den verbliebenen Rest.
+        // STORY Konzept entwickeln, dass diese "Statusübergänge" realisiert:
+        //  - Benutzer rastet für längere Zeit (wach) und Rapunzel beginnt mehrfach
+        //    zu singen und hört wieder auf, letztlich hat Rapunzel aufgehört
+        //  - Benutzer schläft ein, während Rapunzel singt, aufhört und wieder anfängt
+        //  - Benutzer schläft ein, während Rapunzel singt und wacht auf und Rapunzel hat
+        //    zwischenzeitlich aufgehört zu singen
+
+        // TODO Idee: Jede Reaktion speichert den letzten Zustand (PCD), auf Basis dessen sie einen
+        //  Text gerendert hat sowie den Zeitpunkt dazu. Wenn wieder Gelegenheit ist, ein Text zu
+        //  rendern, wird geprüft, ob sich der Status gegenüber dem Zeitpunkt geändert hat,
+        //  außerdem wird geprüft, ob der Zeitpunkt Benutzer etwas versäumt hat oder die ganze
+        //  Zeit anwesend und aufnahmefähig war - entsprechend etwas wie "Plötzlich endet der Gesang"
+        //  oder "Es ist kein Gesang mehr zu hören" gerendert.
+
+        // STORY Zum Beispiel wäre der Benutzer über alle Statusänderungen zu unterrichten,
+        //  Die zwischenzeitlich passiert sind ("der Frosch ist verschwunden").
+
+        // STORY Man könnte auch, wenn der Benutzer erstmals wieder nach draußem kommt, etwas
+        //  schreiben wie "Inzwischen ist es dunkel geworden". Dazu müsste der "Tageszeit-Status"
+        //  (oder zumindest der Zeitpunkt) gespeichert werden, wenn der Benutzer REIN GEHT
+        //  und später beim RAUSTRETEN dieser Status mit dem aktuellen Tageszeitstatus verglichen
+        //  werden.
+        //  Man müsste also die Möglichkeit anbieten, jederzeit den Status eines bestimmten
+        //  Game Objects unter einem "Label" zu persistieren (inkl. Zeitpunkt), so dass
+        //  man ihn später wieder laden kann. Alternativ auch mehrere Game Objects,
+        //  denn nur so kann man prüfen, was sich nach dem Schlafen an einem Ort verändert hat.
+
+        // TODO Der Benutzer (oder auch andere Game Objects) könnte auch ein "mental Model" habe, wo
+        //  der Stand der Welt, wie der Benutzer ihn sich vorstellt, gespeichert ist
+        //  (z.B. wie ein Raum war als der Benutzer ihn verlassen hat...)
+        //  Dann könnte man beim Erzählen vergleich...
+
+        // STORY Der Frosch läuft während des Schlafens davon - nicht beim Aufwachen.
 
         // STORY Man kann durch Ereignisse aufgeweckt werden! Der Status des spielers wäre dann auf wach gesetzt und würde immer wieder geprüft.
         sc.feelingsComp().setMood(NEUTRAL);

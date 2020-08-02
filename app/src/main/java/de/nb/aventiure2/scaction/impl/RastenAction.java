@@ -92,9 +92,9 @@ public class RastenAction extends AbstractScAction {
                         mins(4))
                         .undWartest()
                         .dann(),
-                neuerSatz("Was eine schöne Rast!", mins(4))
+                neuerSatz("Glücklich sitzt du da und genießt", mins(4))
                         .beendet(SENTENCE),
-                neuerSatz("Wer hätte das erwartet!", mins(4))
+                neuerSatz("Dein Herz wird ganz warm von dem Gesang", mins(4))
                         .beendet(SENTENCE));
     }
 
@@ -117,7 +117,23 @@ public class RastenAction extends AbstractScAction {
     private AvTimeSpan narrateAndDoHell() {
         sc.feelingsComp().setMoodMin(Mood.ZUFRIEDEN);
 
+        // STORY Hier ist sehr auffällig, dass die dann()-Logik nicht stimmt:
+        //  Ob "Dann..." sinnvoll ist, hängt wesentlich (auch) vom Folgesatz ab.
+        //  Rast -> Rast -> Rast: Kein "Dann..."
+        //  Rast -> Aufstehen: "Dann..."
+        //  Anscheinend setzt "Dann..." eine Art "Aktionsänderung" voraus.
+
+        // TODO "Dann" nicht bei statischen Verben (du hast Glück, du hast Hunger) verwenden
+
+        // TODO "Dann" nur verwenden, wenn der es einen Aktor gibt und der Aktor im letzten
+        //  Satz gleich war. (Nach der Logik kann man dann auch für Beschreibungen in
+        //  der dritten Person verwenden!)
+
         return n.addAlt(
+                neuerSatz("Verborgen unter den Bäumen hältst du noch eine Zeitlang Rast",
+                        mins(10))
+                        .beendet(SENTENCE)
+                        .dann(),
                 neuerSatz("Es tut gut, eine Weile zu rasten. Über dir zwitschern die "
                                 + "Vögel und die Grillen zirpen",
                         mins(10))
