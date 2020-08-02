@@ -8,6 +8,7 @@ import static de.nb.aventiure2.german.base.Kasus.DAT;
  */
 public enum PraepositionMitKasus implements KasusOderPraepositionalkasus {
     AN_AKK("an", AKK),
+    AUS("aus", DAT),
     IN_AKK("in", AKK),
 
     /**

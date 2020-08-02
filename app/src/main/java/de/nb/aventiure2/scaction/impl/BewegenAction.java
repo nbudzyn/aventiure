@@ -18,6 +18,7 @@ import de.nb.aventiure2.data.world.base.Known;
 import de.nb.aventiure2.data.world.base.Lichtverhaeltnisse;
 import de.nb.aventiure2.data.world.base.SpatialConnection;
 import de.nb.aventiure2.data.world.base.SpatialConnectionData;
+import de.nb.aventiure2.data.world.gameobject.BaumFactory;
 import de.nb.aventiure2.data.world.gameobject.World;
 import de.nb.aventiure2.data.world.syscomp.description.IDescribableGO;
 import de.nb.aventiure2.data.world.syscomp.feelings.Hunger;
@@ -38,12 +39,14 @@ import de.nb.aventiure2.scaction.AbstractScAction;
 import static com.google.common.collect.ImmutableList.builder;
 import static de.nb.aventiure2.data.world.base.Lichtverhaeltnisse.HELL;
 import static de.nb.aventiure2.data.world.base.SpatialConnection.con;
+import static de.nb.aventiure2.data.world.gameobject.World.BAUM_IM_GARTEN_HINTER_DER_HUETTE_IM_WALD;
 import static de.nb.aventiure2.data.world.gameobject.World.DRAUSSEN_VOR_DEM_SCHLOSS;
 import static de.nb.aventiure2.data.world.gameobject.World.SCHLOSSFEST;
 import static de.nb.aventiure2.data.world.gameobject.World.SCHLOSS_VORHALLE;
 import static de.nb.aventiure2.data.world.gameobject.World.SCHLOSS_VORHALLE_AM_TISCH_BEIM_FEST;
 import static de.nb.aventiure2.data.world.gameobject.World.VOR_DEM_ALTEN_TURM_SCHATTEN_DER_BAEUME;
 import static de.nb.aventiure2.data.world.gameobject.World.WALDWILDNIS_HINTER_DEM_BRUNNEN;
+import static de.nb.aventiure2.data.world.syscomp.feelings.Mood.ERSCHOEPFT;
 import static de.nb.aventiure2.data.world.syscomp.memory.Action.Type.BEWEGEN;
 import static de.nb.aventiure2.data.world.syscomp.spatialconnection.NumberOfWays.ONE_IN_ONE_OUT;
 import static de.nb.aventiure2.data.world.syscomp.spatialconnection.NumberOfWays.ONLY_WAY;
@@ -89,6 +92,8 @@ public class BewegenAction<LOC_DESC extends ILocatableGO & IDescribableGO>
             res.addAll(buildSpatiallyConnectedActions(db, world,
                     (ILocationGO & ISpatiallyConnectedGO) location));
         }
+
+        // TODO Hochklettern an Rapunzels Haaren als Bewegen-Action modellieren
 
         for (final ILocationGO inventoryGO :
                 world.loadDescribableNonLivingLocationInventory(location)) {
@@ -422,6 +427,12 @@ public class BewegenAction<LOC_DESC extends ILocatableGO & IDescribableGO>
             } else {
                 sc.feelingsComp().setMoodMax(Mood.VERUNSICHERT);
             }
+        } else if (spatialConnection.getTo().equals(BAUM_IM_GARTEN_HINTER_DER_HUETTE_IM_WALD) &&
+                db.counterDao().get(BaumFactory.HOCHKLETTERN) > 2) {
+            sc.feelingsComp().setMood(ERSCHOEPFT);
+        } else if (oldLocation.is(BAUM_IM_GARTEN_HINTER_DER_HUETTE_IM_WALD) &&
+                db.counterDao().get(BaumFactory.HINABKLETTERN) != 2) {
+            sc.feelingsComp().setMood(ERSCHOEPFT);
         } else if (mood == Mood.ETWAS_GEKNICKT) {
             sc.feelingsComp().setMood(Mood.NEUTRAL);
         }
@@ -430,6 +441,11 @@ public class BewegenAction<LOC_DESC extends ILocatableGO & IDescribableGO>
     private AvTimeSpan narrateLocationOnly(@NonNull final ILocationGO to) {
         final AbstractDescription<?> description = getNormalDescription(
                 to.storingPlaceComp().getLichtverhaeltnisse());
+
+        if (!(to instanceof ISpatiallyConnectedGO) ||
+                !(oldLocation instanceof ISpatiallyConnectedGO)) {
+            return n.add(description);
+        }
 
         if (description instanceof DuDescription &&
                 n.requireStoryState().allowsAdditionalDuSatzreihengliedOhneSubjekt() &&
@@ -522,7 +538,8 @@ public class BewegenAction<LOC_DESC extends ILocatableGO & IDescribableGO>
         final Known newLocationKnown = sc.memoryComp().getKnown(spatialConnection.getTo());
 
         boolean alternativeDescriptionAllowed = false;
-        if (oldLocation instanceof ISpatiallyConnectedGO) {
+        if (oldLocation instanceof ISpatiallyConnectedGO &&
+                world.load(spatialConnection.getTo()) instanceof ISpatiallyConnectedGO) {
             alternativeDescriptionAllowed =
                     ((ISpatiallyConnectedGO) oldLocation).spatialConnectionComp()
                             .isAlternativeMovementDescriptionAllowed(

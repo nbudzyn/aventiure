@@ -90,7 +90,7 @@ public class SimpleConnectionCompFactory {
                                 + "Apfelbaum sein. Früchte siehst du von "
                                 + "unten keine.", secs(30)),
                         neuerSatz("Vorsichtig gehst du im Dunkeln ein paar Schritte "
-                                + "um die Hütte herum. Du kannst die Silhuette "
+                                + "um die Hütte herum. Du kannst die Silhouette "
                                 + "eines einzelnen Baums erkennen, vielleicht – "
                                 + "ein Apfelbaum", mins(1)),
                         du("schaust", "noch einmal hinter die Hütte. "

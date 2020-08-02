@@ -1,5 +1,6 @@
 package de.nb.aventiure2.german.base;
 
+import static de.nb.aventiure2.german.base.NumerusGenus.F;
 import static de.nb.aventiure2.german.base.NumerusGenus.N;
 import static de.nb.aventiure2.german.base.NumerusGenus.PL_MFN;
 
@@ -11,6 +12,8 @@ public class Nominalphrase extends SubstantivischePhrase {
     // AvObject oder eine AbstractEntity beziehen.
     public static final Nominalphrase ANGEBOTE =
             np(PL_MFN, "Angebote", "Angeboten");
+    public static final Nominalphrase ASTGABEL =
+            np(F, "die Astgabel", "der Astgabel");
     public static final Nominalphrase DINGE =
             np(PL_MFN, "die Dinge", "den Dingen");
     public static final Nominalphrase GESPRAECH =

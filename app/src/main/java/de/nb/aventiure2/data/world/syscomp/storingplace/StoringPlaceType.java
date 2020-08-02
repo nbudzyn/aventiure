@@ -2,11 +2,13 @@ package de.nb.aventiure2.data.world.syscomp.storingplace;
 
 import androidx.annotation.Nullable;
 
+import de.nb.aventiure2.german.base.Nominalphrase;
 import de.nb.aventiure2.german.praedikat.AdverbialeAngabe;
 import de.nb.aventiure2.german.praedikat.PraedikatMitEinerObjektleerstelle;
 import de.nb.aventiure2.german.praedikat.ZweiVerbenSubjObj;
 
 import static de.nb.aventiure2.german.praedikat.ReflPraepositionalkasusVerbAkkObj.AN_SICH_NEHMEN;
+import static de.nb.aventiure2.german.praedikat.VerbSubjAkkPraep.HEBEN_AUS;
 import static de.nb.aventiure2.german.praedikat.VerbSubjObj.AUFHEBEN;
 import static de.nb.aventiure2.german.praedikat.VerbSubjObj.NEHMEN;
 import static de.nb.aventiure2.german.praedikat.VerbSubjObj.POLIEREN;
@@ -27,15 +29,21 @@ public enum StoringPlaceType {
     STAMM_EINES_BAUMS("am Stamm eines Baumes", "an den Stamm eines Baumes"),
     NEBEN_DEM_BRUNNEN("neben dem Brunnnen", "neben den Brunnen",
             AUFHEBEN),
+    BETTGESTELL("im Bettgestell", "ins Bettgestell"),
     ECKE_IM_BETTGESTELL("in einer Ecke des Bettgestells",
             "in eine unauffällige Ecke des Bettgestells",
-            AN_SICH_NEHMEN),
+            AN_SICH_NEHMEN, BETTGESTELL),
     HOLZTISCH("auf dem hölzernen Tisch", "auf den Holztisch"),
     VOR_DER_HUETTE("vor der Hütte", "vor die Hütte"),
     ERDBODEN_VOR_DER_HUETTE("auf dem Erdboden vor der Hütte",
             "auf den Erdboden vor der Hütte",
             AUFHEBEN,
             VOR_DER_HUETTE),
+    IM_GEAEST("im Geäst", "ins Geäst"),
+    ASTGABEL("in einer Astgabel",
+            "in eine Astgabel",
+            HEBEN_AUS.mitPraep(Nominalphrase.ASTGABEL),
+            IM_GEAEST),
     WALD("im Wald", "in den Wald"),
     MATSCHIGER_WALDBODEN("auf dem matschigen Waldboden",
             "auf den matschigen Waldboden",

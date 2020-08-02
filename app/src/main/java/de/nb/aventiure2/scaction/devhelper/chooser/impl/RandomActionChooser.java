@@ -12,7 +12,7 @@ import de.nb.aventiure2.scaction.devhelper.chooser.IActionChooser;
  * Wählt Aktionen zufällig aus
  */
 public class RandomActionChooser implements IActionChooser {
-    private final static int NUM_STEPS = 15;
+    private final static int NUM_STEPS = 10;
 
     private final Random rand;
     private int count = 0;

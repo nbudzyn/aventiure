@@ -46,6 +46,14 @@ public abstract class AbstractStatefulComponent<PCD extends AbstractPersistentCo
         pcd = dao.get(getGameObjectId());
     }
 
+    private void setUnchanged() {
+        if (internalState == InternalState.NOT_LOADED) {
+            return;
+        }
+
+        pcd.setChanged(false);
+    }
+
     @Override
     public boolean isChanged() {
         if (internalState == InternalState.NOT_LOADED) {
@@ -60,6 +68,9 @@ public abstract class AbstractStatefulComponent<PCD extends AbstractPersistentCo
         if (internalState != InternalState.NOT_LOADED) {
             doSave();
         }
+
+        setUnchanged();
+
         if (unload) {
             internalState = InternalState.NOT_LOADED;
             pcd = null;

@@ -25,7 +25,6 @@ import de.nb.aventiure2.scaction.impl.BewegenAction;
 import de.nb.aventiure2.scaction.impl.EssenAction;
 import de.nb.aventiure2.scaction.impl.HeulenAction;
 import de.nb.aventiure2.scaction.impl.HochwerfenAction;
-import de.nb.aventiure2.scaction.impl.KletternAction;
 import de.nb.aventiure2.scaction.impl.NehmenAction;
 import de.nb.aventiure2.scaction.impl.RedenAction;
 import de.nb.aventiure2.scaction.impl.SchlafenAction;
@@ -210,17 +209,8 @@ public class ScActionService {
     private ImmutableList<AbstractScAction> buildLocationActions(final ILocationGO location) {
         final ImmutableList.Builder<AbstractScAction> res = ImmutableList.builder();
 
-        res.addAll(buildLocationSpecificActions(location));
+        // Hiervor ggf. ortsspezifische Aktionen
         res.addAll(BewegenAction.buildActions(db, world, location));
-
-        return res.build();
-    }
-
-    private ImmutableList<AbstractScAction> buildLocationSpecificActions(
-            final ILocationGO location) {
-        final ImmutableList.Builder<AbstractScAction> res = ImmutableList.builder();
-
-        res.addAll(KletternAction.buildActions(db, world, location));
 
         return res.build();
     }

@@ -70,6 +70,7 @@ public class World {
     // - On Player
     public static final GameObjectId HAENDE_DES_SPIELER_CHARAKTERS = new GameObjectId(10_000);
     public static final GameObjectId EINE_TASCHE_DES_SPIELER_CHARAKTERS = new GameObjectId(10_001);
+
     // - Non-Movable
     public static final GameObjectId SCHLOSS_VORHALLE_AM_TISCH_BEIM_FEST =
             new GameObjectId(10_100);
@@ -79,6 +80,9 @@ public class World {
             // (in deren Schatten man sich setzen kann)
             new GameObjectId(10_110);
     public static final GameObjectId BETT_IN_DER_HUETTE_IM_WALD = new GameObjectId(10_120);
+    public static final GameObjectId BAUM_IM_GARTEN_HINTER_DER_HUETTE_IM_WALD =
+            new GameObjectId(10_130);
+
     // - Movable
     public static final GameObjectId GOLDENE_KUGEL = new GameObjectId(11_000);
 
@@ -176,6 +180,7 @@ public class World {
             final SchattenDerBaeumeFactory schattenDerBaeume =
                     new SchattenDerBaeumeFactory(db, this);
             final BettFactory bett = new BettFactory(db, this);
+            final BaumFactory baum = new BaumFactory(db, this);
             final CreatureFactory creature = new CreatureFactory(db, this);
             final InvisibleFactory invisible = new InvisibleFactory(db, this);
             final RoomFactory room = new RoomFactory(db, this);
@@ -292,7 +297,8 @@ public class World {
                     //  besorgen - oder Seide kaufen und etwas zum Stricken??? Gold gabs vielleicht
                     //  vom Froschprinzen?
                     schattenDerBaeume.createVorDemAltenTurm(),
-                    bett.createInDerHuetteImWald()
+                    bett.createInDerHuetteImWald(),
+                    baum.createImGartenHinterDerHuetteImWald()
             );
         }
     }
