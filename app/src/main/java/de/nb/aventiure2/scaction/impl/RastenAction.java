@@ -92,7 +92,9 @@ public class RastenAction extends AbstractScAction {
                         mins(4))
                         .undWartest()
                         .dann(),
-                neuerSatz("Glücklich sitzt du da und genießt", mins(4))
+                du(SENTENCE, "sitzt", "glücklich da und genießt",
+                        "glücklich",
+                        mins(4))
                         .beendet(SENTENCE),
                 neuerSatz("Dein Herz wird ganz warm von dem Gesang", mins(4))
                         .beendet(SENTENCE));
@@ -130,7 +132,9 @@ public class RastenAction extends AbstractScAction {
         //  der dritten Person verwenden!)
 
         return n.addAlt(
-                neuerSatz("Verborgen unter den Bäumen hältst du noch eine Zeitlang Rast",
+                du(SENTENCE, "hältst",
+                        "verborgen unter den Bäumen noch eine Zeitlang Rast",
+                        "verborgen unter den Bäumen",
                         mins(10))
                         .beendet(SENTENCE)
                         .dann(),
@@ -139,14 +143,18 @@ public class RastenAction extends AbstractScAction {
                         mins(10))
                         .beendet(SENTENCE)
                         .dann(),
-                neuerSatz("Du streckst die Glieder und hörst auf das Rauschen in den "
+                du(SENTENCE, "streckst", "die Glieder und hörst auf das Rauschen "
+                                + "in den "
                                 + "Ästen über dir. Ein Rabe setzt "
                                 + "sich neben dich und fliegt nach einer Weile wieder fort",
                         mins(10))
                         .beendet(SENTENCE)
                         .dann(),
-                neuerSatz("Du ruhst noch eine Weile aus und lauschst, wie die Insekten "
-                        + "zirpen und der Wind saust", mins(10))
+                du(SENTENCE, "ruhst", "noch eine Weile aus und lauschst, wie die "
+                                + "Insekten "
+                                + "zirpen und der Wind saust",
+                        "eine Weile",
+                        mins(10))
                         .beendet(SENTENCE)
                         .dann(),
                 neuerSatz("Deine müden Glieder brauchen Erholung. Du bist ganz "

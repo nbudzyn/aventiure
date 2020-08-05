@@ -79,7 +79,7 @@ public abstract class AbstractTalkingComp extends AbstractStatefulComponent<Talk
             return;
         }
 
-        setTalkingTo((ITalkerGO) world.load(talkingToId));
+        setTalkingTo((ITalkerGO<?>) world.load(talkingToId));
     }
 
     public boolean isDefinitivDiskontinuitaet() {
@@ -117,7 +117,7 @@ public abstract class AbstractTalkingComp extends AbstractStatefulComponent<Talk
                 SPIELER_CHARAKTER, gameObject, shortIfKnown);
     }
 
-    public void setTalkingTo(@Nullable final ITalkerGO otherTalker) {
+    public void setTalkingTo(@Nullable final ITalkerGO<?> otherTalker) {
         @Nullable final GameObjectId talkingToId = otherTalker != null ? otherTalker.getId() : null;
 
         if (getGameObjectId().equals(talkingToId)) {
@@ -138,7 +138,7 @@ public abstract class AbstractTalkingComp extends AbstractStatefulComponent<Talk
      * Setzt den Gesprächspartner auf <code>null</code>.
      */
     protected void unsetTalkingTo() {
-        @Nullable final ITalkerGO talkingTo = getTalkingTo();
+        @Nullable final ITalkerGO<?> talkingTo = getTalkingTo();
         if (talkingTo == null) {
             return;
         }
@@ -151,7 +151,7 @@ public abstract class AbstractTalkingComp extends AbstractStatefulComponent<Talk
         return getTalkingTo() != null;
     }
 
-    public boolean isTalkingTo(final @NonNull ITalkerGO other) {
+    public boolean isTalkingTo(final @NonNull ITalkerGO<?> other) {
         return isTalkingTo(other.getId());
     }
 
@@ -160,13 +160,13 @@ public abstract class AbstractTalkingComp extends AbstractStatefulComponent<Talk
     }
 
     @Nullable
-    private ITalkerGO getTalkingTo() {
+    private ITalkerGO<?> getTalkingTo() {
         @Nullable final GameObjectId talkingToId = getTalkingToId();
         if (talkingToId == null) {
             return null;
         }
 
-        return (ITalkerGO) world.load(talkingToId);
+        return (ITalkerGO<?>) world.load(talkingToId);
     }
 
     @Nullable

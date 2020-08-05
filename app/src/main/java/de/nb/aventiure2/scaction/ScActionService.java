@@ -110,7 +110,7 @@ public class ScActionService {
         for (final LIV creature : creaturesInLocation) {
             if (creature instanceof ITalkerGO) {
                 res.addAll(RedenAction.buildActions(db, world,
-                        (IDescribableGO & ITalkerGO) creature));
+                        (IDescribableGO & ITalkerGO<?>) creature));
             }
             if (wasSCInDenHaendenHat.isEmpty() &&
                     !spielerCharakter.talkingComp().isInConversation()) {
@@ -151,7 +151,7 @@ public class ScActionService {
         for (final DESC_OBJ object : objectsInLocation) {
             if (object instanceof ITalkerGO) {
                 res.addAll(RedenAction.buildActions(db, world,
-                        (IDescribableGO & ITalkerGO) object));
+                        (IDescribableGO & ITalkerGO<?>) object));
             }
 
             if (wasSCInDenHaendenHat.isEmpty() && object.locationComp().isMovable()) {

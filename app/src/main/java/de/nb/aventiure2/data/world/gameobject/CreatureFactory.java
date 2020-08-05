@@ -123,7 +123,7 @@ class CreatureFactory {
                 locationComp,
                 stateComp,
                 talkingComp,
-                new RapunzelReactionsComp(db, world, descriptionComp, stateComp, locationComp));
+                new RapunzelReactionsComp(db, world, stateComp, locationComp));
     }
 
     GameObject createRapunzelsZauberin() {
@@ -229,16 +229,17 @@ class CreatureFactory {
         }
     }
 
-    private static class TalkingReactionsCreature<S extends Enum<S>>
+    private static class TalkingReactionsCreature<S extends Enum<S>,
+            TALKING_COMP extends AbstractTalkingComp>
             extends ReactionsCreature<S>
-            implements ITalkerGO {
-        private final AbstractTalkingComp talkingComp;
+            implements ITalkerGO<TALKING_COMP> {
+        private final TALKING_COMP talkingComp;
 
         TalkingReactionsCreature(final GameObjectId id,
                                  final AbstractDescriptionComp descriptionComp,
                                  final LocationComp locationComp,
                                  final AbstractStateComp<S> stateComp,
-                                 final AbstractTalkingComp talkingComp,
+                                 final TALKING_COMP talkingComp,
                                  final AbstractReactionsComp reactionsComp) {
             super(id, descriptionComp, locationComp, stateComp, reactionsComp);
             // Jede Komponente muss registiert werden!
@@ -247,13 +248,14 @@ class CreatureFactory {
 
         @Nonnull
         @Override
-        public AbstractTalkingComp talkingComp() {
+        public TALKING_COMP talkingComp() {
             return talkingComp;
         }
     }
 
-    private static class MovingTalkingReactionsCreature<S extends Enum<S>>
-            extends TalkingReactionsCreature<S>
+    private static class MovingTalkingReactionsCreature<S extends Enum<S>,
+            TALKING_COMP extends AbstractTalkingComp>
+            extends TalkingReactionsCreature<S, TALKING_COMP>
             implements IMovingGO {
         private final MovementComp movementComp;
 
@@ -262,7 +264,7 @@ class CreatureFactory {
                                        final LocationComp locationComp,
                                        final MovementComp movementComp,
                                        final AbstractStateComp<S> stateComp,
-                                       final AbstractTalkingComp talkingComp,
+                                       final TALKING_COMP talkingComp,
                                        final AbstractReactionsComp reactionsComp) {
             super(id, descriptionComp, locationComp, stateComp, talkingComp, reactionsComp);
             // Jede Komponente muss registiert werden!
@@ -275,5 +277,4 @@ class CreatureFactory {
             return movementComp;
         }
     }
-
 }

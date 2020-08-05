@@ -29,7 +29,7 @@ import static de.nb.aventiure2.german.base.Person.P1;
 /**
  * Der Spieler(charakter) redet mit einem Wesen.
  */
-public class RedenAction<TALKER extends IDescribableGO & ITalkerGO>
+public class RedenAction<TALKER extends IDescribableGO & ITalkerGO<?>>
         extends AbstractScAction {
     @NonNull
     private final TALKER talker;
@@ -37,7 +37,7 @@ public class RedenAction<TALKER extends IDescribableGO & ITalkerGO>
     private final SCTalkAction conversationStep;
     private final String name;
 
-    public static <TALKER extends IDescribableGO & ITalkerGO>
+    public static <TALKER extends IDescribableGO & ITalkerGO<?>>
     Collection<RedenAction<TALKER>> buildActions(
             final AvDatabase db, final World world,
             final TALKER talker) {
@@ -49,7 +49,7 @@ public class RedenAction<TALKER extends IDescribableGO & ITalkerGO>
                 talkSteps);
     }
 
-    private static <TALKER extends IDescribableGO & ITalkerGO>
+    private static <TALKER extends IDescribableGO & ITalkerGO<?>>
     Collection<RedenAction<TALKER>> buildActions(final AvDatabase db,
                                                  final World world,
                                                  final TALKER talker,
@@ -70,7 +70,7 @@ public class RedenAction<TALKER extends IDescribableGO & ITalkerGO>
     }
 
     private static boolean stepTypeFits(final World world,
-                                        final ITalkerGO talker,
+                                        final ITalkerGO<?> talker,
                                         final SCTalkAction.Type stepType) {
         if (talker.talkingComp().isTalkingTo(SPIELER_CHARAKTER)) {
             // Der SC befindet sich gerade im Gespräch mit der Creature-
@@ -91,7 +91,7 @@ public class RedenAction<TALKER extends IDescribableGO & ITalkerGO>
      * Erzeugt eine <code>RedenAction</code> für dieses {@link ILivingBeingGO}.
      */
     @NonNull
-    private static <TALKER extends IDescribableGO & ITalkerGO>
+    private static <TALKER extends IDescribableGO & ITalkerGO<?>>
     RedenAction<TALKER> buildAction(final AvDatabase db,
                                     final World world,
                                     final TALKER talker,
@@ -128,7 +128,7 @@ public class RedenAction<TALKER extends IDescribableGO & ITalkerGO>
      * mit diesem {@link PraedikatOhneLeerstellen}.
      */
     @NonNull
-    private static <TALKER extends IDescribableGO & ITalkerGO>
+    private static <TALKER extends IDescribableGO & ITalkerGO<?>>
     RedenAction<TALKER> buildAction(final AvDatabase db,
                                     final World world,
                                     final TALKER talker,

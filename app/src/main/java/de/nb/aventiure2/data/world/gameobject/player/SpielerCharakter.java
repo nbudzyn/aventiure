@@ -18,16 +18,16 @@ import de.nb.aventiure2.data.world.syscomp.reaction.IResponder;
 import de.nb.aventiure2.data.world.syscomp.reaction.impl.ScAutomaticReactionsComp;
 import de.nb.aventiure2.data.world.syscomp.storingplace.ILocationGO;
 import de.nb.aventiure2.data.world.syscomp.storingplace.StoringPlaceComp;
-import de.nb.aventiure2.data.world.syscomp.talking.AbstractTalkingComp;
 import de.nb.aventiure2.data.world.syscomp.talking.ITalkerGO;
+import de.nb.aventiure2.data.world.syscomp.talking.impl.NoSCTalkActionsTalkingComp;
 
 public class SpielerCharakter extends GameObject
         implements ILocatableGO, ILocationGO, IFeelingBeingGO,
-        ITalkerGO, IHasMemoryGO, ILivingBeingGO, IResponder {
+        ITalkerGO<NoSCTalkActionsTalkingComp>, IHasMemoryGO, ILivingBeingGO, IResponder {
     private final LocationComp locationComp;
     private final StoringPlaceComp storingPlaceComp;
     private final FeelingsComp feelingsComp;
-    private final AbstractTalkingComp talkingComp;
+    private final NoSCTalkActionsTalkingComp talkingComp;
     private final MemoryComp memoryComp;
     private final AliveComp aliveComp;
     private final ScAutomaticReactionsComp reactionsComp;
@@ -37,7 +37,7 @@ public class SpielerCharakter extends GameObject
                      final StoringPlaceComp storingPlaceComp,
                      final FeelingsComp feelingsComp,
                      final MemoryComp memoryComp,
-                     final AbstractTalkingComp talkingComp,
+                     final NoSCTalkActionsTalkingComp talkingComp,
                      final ScAutomaticReactionsComp reactionsComp) {
         super(id);
         // Jede Komponente muss registiert werden!
@@ -70,7 +70,7 @@ public class SpielerCharakter extends GameObject
 
     @Nonnull
     @Override
-    public AbstractTalkingComp talkingComp() {
+    public NoSCTalkActionsTalkingComp talkingComp() {
         return talkingComp;
     }
 

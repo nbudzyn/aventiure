@@ -21,7 +21,7 @@ public enum Mood {
     // STORY (welche Emotion?) "versonnen"
     NEUTRAL(0, "aus Langeweile"),
     ANGESPANNT(0, "trotzig"),
-    ERSCHOEPFT(0, "erschöpft"),
+    ERSCHOEPFT(-1, "erschöpft"),
     ETWAS_GEKNICKT(-2, "etwas geknickt"),
     // TODO Alternativen: betrübt, ...
     VERUNSICHERT(-2, "verunsichert"),

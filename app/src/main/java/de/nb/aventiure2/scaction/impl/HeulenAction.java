@@ -16,6 +16,7 @@ import de.nb.aventiure2.data.world.syscomp.memory.Action;
 import de.nb.aventiure2.data.world.syscomp.state.IHasStateGO;
 import de.nb.aventiure2.data.world.syscomp.state.impl.FroschprinzState;
 import de.nb.aventiure2.data.world.syscomp.talking.ITalkerGO;
+import de.nb.aventiure2.data.world.syscomp.talking.impl.FroschprinzTalkingComp;
 import de.nb.aventiure2.data.world.time.AvTimeSpan;
 import de.nb.aventiure2.german.base.AbstractDescription;
 import de.nb.aventiure2.scaction.AbstractScAction;
@@ -80,7 +81,10 @@ public class HeulenAction extends AbstractScAction {
         return narrateAndDoErstesMal();
     }
 
-    private <F extends IDescribableGO & IHasStateGO<FroschprinzState> & ITalkerGO & ILivingBeingGO>
+    private <F extends IDescribableGO &
+            IHasStateGO<FroschprinzState> &
+            ITalkerGO<FroschprinzTalkingComp> &
+            ILivingBeingGO>
     AvTimeSpan narrateAndDoWiederholung() {
         final F froschprinz = (F) world.load(FROSCHPRINZ);
         if (creaturesInLocation.contains(froschprinz) &&
@@ -102,7 +106,9 @@ public class HeulenAction extends AbstractScAction {
         return n.addAlt(alt);
     }
 
-    private <F extends IDescribableGO & IHasStateGO<FroschprinzState> & ITalkerGO>
+    private <F extends IDescribableGO &
+            IHasStateGO<FroschprinzState> &
+            ITalkerGO<FroschprinzTalkingComp>>
     AvTimeSpan narrateAndDoFroschprinzUnauffaellig(final F froschprinz) {
         // STORY Nachts schläft der Frosch?!
 

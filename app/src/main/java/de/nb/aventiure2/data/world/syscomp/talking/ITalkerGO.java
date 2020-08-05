@@ -7,7 +7,7 @@ import de.nb.aventiure2.data.world.base.IGameObject;
 /**
  * Game Object, das mit einem anderen {@link ITalkerGO} im Gespräch sein kann
  */
-public interface ITalkerGO extends IGameObject {
+public interface ITalkerGO<C extends AbstractTalkingComp> extends IGameObject {
     @Nonnull
-    AbstractTalkingComp talkingComp();
+    C talkingComp();
 }

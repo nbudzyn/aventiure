@@ -637,38 +637,24 @@ public class SimpleMovementNarrator implements IMovementNarrator {
 
         return n.addAlt(
                 neuerSatz(PARAGRAPH,
-                        anaphOderDesc.nom() + " kommt herzu", noTime())
-                        .phorikKandidat(anaphOderDesc, gameObjectId),
-                neuerSatz(PARAGRAPH,
-                        anaphOderDesc.nom() + " kommt "
-                                + wo // "auf dem Weg "
-                                + "heran", noTime())
-                        .phorikKandidat(anaphOderDesc, gameObjectId),
-                neuerSatz(PARAGRAPH,
                         anaphOderDesc.nom() + " kommt "
                                 + wo // "auf dem Weg "
                                 + "gegangen", noTime())
+                        .beendet(PARAGRAPH)
                         .phorikKandidat(anaphOderDesc, gameObjectId),
-                neuerSatz(PARAGRAPH,
-                        "Es kommt " +
-                                desc.nom(), noTime())
-                        .phorikKandidat(desc, gameObjectId),
                 neuerSatz(PARAGRAPH,
                         desc.nom()
                                 + " kommt "
                                 + wo // "auf dem Weg "
                                 + "daher", noTime())
-                        .phorikKandidat(desc, gameObjectId)
-                        .beendet(PARAGRAPH),
+                        .beendet(PARAGRAPH)
+                        .phorikKandidat(desc, gameObjectId),
                 neuerSatz(PARAGRAPH,
                         desc.nom()
                                 + " kommt "
                                 + wo // "auf dem Weg "
                                 + "gegangen", noTime())
-                        .phorikKandidat(desc, gameObjectId),
-                neuerSatz(PARAGRAPH,
-                        desc.nom()
-                                + " kommt", noTime())
+                        .beendet(PARAGRAPH)
                         .phorikKandidat(desc, gameObjectId)
         );
     }

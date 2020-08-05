@@ -4,7 +4,6 @@ import javax.annotation.Nullable;
 
 import de.nb.aventiure2.data.database.AvDatabase;
 import de.nb.aventiure2.data.world.gameobject.World;
-import de.nb.aventiure2.data.world.syscomp.description.AbstractDescriptionComp;
 import de.nb.aventiure2.data.world.syscomp.location.ILocatableGO;
 import de.nb.aventiure2.data.world.syscomp.location.LocationComp;
 import de.nb.aventiure2.data.world.syscomp.reaction.AbstractDescribableReactionsComp;
@@ -24,6 +23,7 @@ import static de.nb.aventiure2.data.world.gameobject.World.RAPUNZELS_ZAUBERIN;
 import static de.nb.aventiure2.data.world.gameobject.World.SPIELER_CHARAKTER;
 import static de.nb.aventiure2.data.world.gameobject.World.VOR_DEM_ALTEN_TURM;
 import static de.nb.aventiure2.data.world.syscomp.feelings.Mood.BEWEGT;
+import static de.nb.aventiure2.data.world.syscomp.feelings.Mood.NEUTRAL;
 import static de.nb.aventiure2.data.world.syscomp.state.impl.RapunzelState.SINGEND;
 import static de.nb.aventiure2.data.world.syscomp.state.impl.RapunzelState.STILL;
 import static de.nb.aventiure2.data.world.time.AvTime.oClock;
@@ -33,6 +33,7 @@ import static de.nb.aventiure2.data.world.time.AvTimeSpan.secs;
 import static de.nb.aventiure2.german.base.AllgDescription.neuerSatz;
 import static de.nb.aventiure2.german.base.DuDescription.du;
 import static de.nb.aventiure2.german.base.StructuralElement.PARAGRAPH;
+import static de.nb.aventiure2.german.base.StructuralElement.SENTENCE;
 
 /**
  * "Reaktionen" von Rapunzel, z.B. darauf, dass Zeit vergeht
@@ -46,7 +47,6 @@ public class RapunzelReactionsComp
 
     public RapunzelReactionsComp(final AvDatabase db,
                                  final World world,
-                                 final AbstractDescriptionComp descriptionComp,
                                  final RapunzelStateComp stateComp,
                                  final LocationComp locationComp) {
         super(RAPUNZEL, db, world);
@@ -69,10 +69,14 @@ public class RapunzelReactionsComp
             return onSCEnter(from, to);
         }
 
+        if (locatable.is(RAPUNZELS_ZAUBERIN)) {
+            return onZauberinEnter(from, to);
+        }
+
         return noTime();
     }
 
-    private AvTimeSpan onSCEnter(final ILocationGO from, final ILocationGO to) {
+    private AvTimeSpan onSCEnter(@Nullable final ILocationGO from, final ILocationGO to) {
         if (loadSC().locationComp().hasRecursiveLocation(VOR_DEM_ALTEN_TURM)) {
             return onSCEnter_VorDemAltenTurm(from);
         }
@@ -80,19 +84,21 @@ public class RapunzelReactionsComp
         return noTime();
     }
 
-    private AvTimeSpan onSCEnter_VorDemAltenTurm(final ILocationGO from) {
+    private AvTimeSpan onSCEnter_VorDemAltenTurm(@Nullable final ILocationGO from) {
         switch (stateComp.getState()) {
             case SINGEND:
                 return onSCEnter_VorDemAltenTurm_Singend(from);
+            case HAARE_VOM_TURM_HERUNTERGELASSEN:
+                return onSCEnter_VorDemAltenTurm_HaareHeruntergelassen(from);
             default:
                 // STORY Konzept dafür entwickeln, dass der Benutzer Rapunzel gut gelaunt
-                //  verlässt niedergeschlagen zu Rapunzel zurückkehrt und
+                //  verlässt und niedergeschlagen zu Rapunzel zurückkehrt und
                 //  Rapunzel auf den Wechsel reagiert (Mental Model für Rapunzel?)
                 return noTime();
         }
     }
 
-    private AvTimeSpan onSCEnter_VorDemAltenTurm_Singend(final ILocationGO from) {
+    private AvTimeSpan onSCEnter_VorDemAltenTurm_Singend(@Nullable final ILocationGO from) {
         if (!world.isOrHasRecursiveLocation(from, IM_WALD_NAHE_DEM_SCHLOSS)) {
             return noTime();
         }
@@ -124,6 +130,48 @@ public class RapunzelReactionsComp
         );
     }
 
+    private AvTimeSpan onSCEnter_VorDemAltenTurm_HaareHeruntergelassen(
+            @Nullable final ILocationGO from) {
+        if (!world.isOrHasRecursiveLocation(from, IM_WALD_NAHE_DEM_SCHLOSS)) {
+            return noTime();
+        }
+
+        loadSC().feelingsComp().setMoodMin(NEUTRAL);
+        // STORY Andere und alternative Beschreibungen, wenn der SC
+        //  Rapunzel schon kennengelernt hat
+        return n.add(neuerSatz(SENTENCE, "Aus dem kleinen "
+                        + "Fenster oben im Turm hängen lange, goldene Haarzöpfe herab",
+                noTime()));
+    }
+
+    private AvTimeSpan onZauberinEnter(@Nullable final ILocationGO from, final ILocationGO to) {
+        if (locationComp.hasRecursiveLocation(OBEN_IM_ALTEN_TURM) &&
+                from != null && from.is(VOR_DEM_ALTEN_TURM) &&
+                to.is(OBEN_IM_ALTEN_TURM)) {
+            return zauberinBesuchtRapunzelImAltenTurm();
+        }
+
+        return noTime();
+    }
+
+    private AvTimeSpan zauberinBesuchtRapunzelImAltenTurm() {
+        stateComp.setState(STILL);
+
+        if (loadSC().locationComp().hasRecursiveLocation(VOR_DEM_ALTEN_TURM)) {
+            return n.add(neuerSatz(
+                    "Dann "
+                            // TODO Dies ist ein Beispiel für "dann", das nur Sinn ergibt, wenn
+                            //  die Zauberin vorher etwas getan hat - aber nicht, wenn der SC vorher
+                            //  etwas getan hat!
+                            + "verschwinden die prächtigen Haare wieder oben im Fenster. "
+                            + "„Das ist also die Leiter, auf welcher man hinaufkommt!“, denkst du "
+                            + "bei dir", secs(20))
+                    .undWartest());
+        }
+
+        return noTime();
+    }
+
     @Override
     public AvTimeSpan onTimePassed(final AvDateTime lastTime, final AvDateTime now) {
         if (rapunzelMoechteSingen(now)) {
@@ -134,6 +182,10 @@ public class RapunzelReactionsComp
     }
 
     private boolean rapunzelMoechteSingen(final AvDateTime now) {
+        if (!stateComp.hasState(STILL, SINGEND)) {
+            return false;
+        }
+
         // Rapunzel singt nur, wenn es denkt, niemand wäre in der Gegend.
         if (loadSC().locationComp().hasLocation(VOR_DEM_ALTEN_TURM)) {
             return false;
@@ -228,7 +280,6 @@ public class RapunzelReactionsComp
         }
 
         // Rapunzel hat schon die ganze Zeit nicht gesungen
-
         return noTime();
 
     }

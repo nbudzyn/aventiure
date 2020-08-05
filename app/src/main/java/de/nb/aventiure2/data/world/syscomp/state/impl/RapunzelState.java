@@ -6,4 +6,5 @@ package de.nb.aventiure2.data.world.syscomp.state.impl;
 public enum RapunzelState {
     STILL,
     SINGEND,
+    HAARE_VOM_TURM_HERUNTERGELASSEN
 }
