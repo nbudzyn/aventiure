@@ -77,6 +77,28 @@ public class Walkthrough {
                     "In den Schatten der Bäume setzen",
                     "Rasten",
                     "Die Kugel nehmen",
+                    "Aus dem Schatten der Bäume treten",
+                    "Den Pfad zurückgehen",
+                    "Den schmalen Pfad aufwärtsgehen",
+                    "Den Pfad zurückgehen",
+                    "Den schmalen Pfad aufwärtsgehen",
+                    "Den Pfad zurückgehen",
+                    "Den schmalen Pfad aufwärtsgehen",
+                    "Den Pfad zurückgehen",
+                    "Den schmalen Pfad aufwärtsgehen",
+                    "Den Pfad zurückgehen",
+                    "Den schmalen Pfad aufwärtsgehen",
+                    "Den Pfad zurückgehen",
+                    "Den schmalen Pfad aufwärtsgehen",
+                    "In den Schatten der Bäume setzen",
+                    "Rasten",
+                    "Rasten",
+                    "Rasten",
+                    "Rasten",
+                    "Rasten",
+                    "Rasten",
+                    "Rasten",
+                    "Rasten", // Zauberin steigt die Zöpfe hoch
                     "Aus dem Schatten der Bäume treten");
 
     // STORY Seide auf Markt bei Frau für ein Goldstück kaufen, das man vom Prinzen bekommen hat
