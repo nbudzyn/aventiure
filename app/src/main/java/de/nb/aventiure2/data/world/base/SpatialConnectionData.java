@@ -14,7 +14,7 @@ public class SpatialConnectionData {
      * räumlich beschreibt
      * (aus Sicht des
      * {@link ILocationGO},
-     * nicht unbedingt aus Sicht von {@link #to}!):
+     * nicht unbedingt aus Sicht von <code>to</code>:
      * "auf dem Weg" o.Ä.
      * <p>
      * Die Beschreibung sollte sich auf etwas beziehen, auf dem man sich eine längere Zeit

@@ -47,9 +47,8 @@ public interface PraedikatOhneLeerstellen extends Praedikat {
     String getDescriptionDuHauptsatz(@Nonnull AdverbialeAngabe adverbialeAngabe);
 
     /**
-     * Ob sich ein durch {@link #getDescriptionDuHauptsatz()} oder {
-     *
-     * @link #getDescriptionDuHauptsatz(AdverbialeAngabe)} mit einem weiteren Du-Hauptsatz
+     * Ob sich ein durch {@link #getDescriptionDuHauptsatz(Collection)} oder
+     * {@link #getDescriptionDuHauptsatz(AdverbialeAngabe)} mit einem weiteren Du-Hauptsatz
      * zusammenziehen lässt, wobei das zweite Subjekt ("du") entfiele.
      * <p>
      * Das ist im Regelfall möglich, sofern es nicht zu einem doppelten

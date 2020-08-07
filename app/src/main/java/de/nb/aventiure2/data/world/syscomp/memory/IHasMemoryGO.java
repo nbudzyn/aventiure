@@ -10,5 +10,5 @@ import de.nb.aventiure2.data.world.base.IGameObject;
  */
 public interface IHasMemoryGO extends IGameObject {
     @Nonnull
-    public MemoryComp memoryComp();
+    MemoryComp memoryComp();
 }

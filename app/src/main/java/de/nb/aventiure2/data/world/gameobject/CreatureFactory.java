@@ -121,7 +121,7 @@ class CreatureFactory {
                 new LocationComp(RAPUNZEL, db, world, OBEN_IM_ALTEN_TURM, VOR_DEM_ALTEN_TURM,
                         false);
         final RapunzelTalkingComp talkingComp =
-                new RapunzelTalkingComp(db, world, descriptionComp, stateComp);
+                new RapunzelTalkingComp(db, world, stateComp);
         return new TalkingReactionsCreature<>(RAPUNZEL,
                 descriptionComp,
                 locationComp,

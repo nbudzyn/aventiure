@@ -252,46 +252,47 @@ public class StoryState {
     }
 
     StoryState add(final NarrationSource narrationSource, final StoryAddition storyAddition) {
-        String resText = getText().trim();
+        final StringBuilder resText = new StringBuilder(getText().trim());
 
         final StructuralElement separation =
                 StructuralElement.max(endsThis, storyAddition.getStartsNew());
 
         switch (separation) {
             case WORD:
-                if (kommaNeeded(resText, storyAddition.getText())) {
-                    resText += ",";
+                if (kommaNeeded(resText.toString(), storyAddition.getText())) {
+                    resText.append(",");
                 }
 
-                if (spaceNeeded(resText, storyAddition.getText())) {
-                    resText += " ";
+                if (spaceNeeded(resText.toString(), storyAddition.getText())) {
+                    resText.append(" ");
                 }
                 break;
             case SENTENCE:
-                if (periodNeededToStartNewSentence(resText, storyAddition.getText())) {
-                    resText += ".";
+                if (periodNeededToStartNewSentence(resText.toString(), storyAddition.getText())) {
+                    resText.append(".");
                 }
-                if (spaceNeeded(resText, storyAddition.getText())) {
-                    resText += " ";
+                if (spaceNeeded(resText.toString(), storyAddition.getText())) {
+                    resText.append(" ");
                 }
                 break;
             case PARAGRAPH:
-                if (periodNeededToStartNewSentence(resText, storyAddition.getText())) {
-                    resText += ".";
+                if (periodNeededToStartNewSentence(resText.toString(), storyAddition.getText())) {
+                    resText.append(".");
                 }
-                if (newlineNeededToStartNewParagraph(resText, storyAddition.getText())) {
-                    resText += "\n";
+                if (newlineNeededToStartNewParagraph(resText.toString(), storyAddition.getText())) {
+                    resText.append("\n");
                 }
                 break;
             case CHAPTER:
-                if (periodNeededToStartNewSentence(resText, storyAddition.getText())) {
-                    resText += ".";
+                if (periodNeededToStartNewSentence(resText.toString(), storyAddition.getText())) {
+                    resText.append(".");
                 }
 
                 final int numNewlinesNeeded =
-                        howManyNewlinesNeedeToStartNewChapter(resText, storyAddition.getText());
+                        howManyNewlinesNeedeToStartNewChapter(resText.toString(),
+                                storyAddition.getText());
                 for (int i = 0; i < numNewlinesNeeded; i++) {
-                    resText += "\n";
+                    resText.append("\n");
                 }
                 break;
             default:
@@ -299,12 +300,12 @@ public class StoryState {
                         + separation);
         }
 
-        resText += storyAddition.getText();
+        resText.append(storyAddition.getText());
 
         return new StoryState(
                 narrationSource,
                 storyAddition.getEndsThis(),
-                resText,
+                resText.toString(),
                 storyAddition.isKommaStehtAus(),
                 storyAddition.isAllowsAdditionalDuSatzreihengliedOhneSubjekt(),
                 storyAddition.isDann(),

@@ -131,7 +131,7 @@ public class Walkthrough {
     }
 
     public Walkthrough truncate(final int numSteps) {
-        return new Walkthrough(steps.subList(0, numSteps()));
+        return new Walkthrough(steps.subList(0, numSteps));
     }
 
     public int numSteps() {

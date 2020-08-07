@@ -58,7 +58,7 @@ public class RedenAction<TALKER extends IDescribableGO & ITalkerGO<?>>
                 ImmutableList.builder();
 
         for (final SCTalkAction talkStep : talkSteps) {
-            if (stepTypeFits(world, talker, talkStep.getStepType())) {
+            if (stepTypeFits(talker, talkStep.getStepType())) {
                 res.add(buildAction(db, world,
                         talker,
                         // "Mit ... reden" /  "Den ... ignorieren" / "Das Gespräch beenden"
@@ -69,8 +69,7 @@ public class RedenAction<TALKER extends IDescribableGO & ITalkerGO<?>>
         return res.build();
     }
 
-    private static boolean stepTypeFits(final World world,
-                                        final ITalkerGO<?> talker,
+    private static boolean stepTypeFits(final ITalkerGO<?> talker,
                                         final SCTalkAction.Type stepType) {
         if (talker.talkingComp().isTalkingTo(SPIELER_CHARAKTER)) {
             // Der SC befindet sich gerade im Gespräch mit der Creature-

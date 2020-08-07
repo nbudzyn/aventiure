@@ -44,13 +44,13 @@ public class MemoryComp extends AbstractStatefulComponent<MemoryPCD> {
     }
 
     public boolean lastActionWas(final Action.Type actionType,
-                                 final IGameObject gameObject) {
+                                 @Nullable final IGameObject gameObject) {
         return lastActionWas(actionType,
                 gameObject != null ? gameObject.getId() : null);
     }
 
     public boolean lastActionWas(final Action.Type actionType,
-                                 final GameObjectId gameObjectId) {
+                                 @Nullable final GameObjectId gameObjectId) {
         return lastActionWas(new Action(actionType, gameObjectId));
     }
 

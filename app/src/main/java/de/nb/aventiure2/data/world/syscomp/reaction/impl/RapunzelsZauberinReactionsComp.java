@@ -134,7 +134,7 @@ public class RapunzelsZauberinReactionsComp
             // STORY Reaktion der Zauberin, wenn SC die Zauberin oben im Turm antrifft
             //  (falls das sein kann).
 
-            movementComp.narrateAndDoSCTrifftEvtlMovingGOInFrom(scFrom, scTo);
+            return movementComp.narrateAndDoSCTrifftEvtlMovingGOInFrom(scFrom, scTo);
         }
 
         return noTime();
@@ -298,7 +298,7 @@ public class RapunzelsZauberinReactionsComp
         }
 
         extraTime = extraTime.plus(
-                loadRapunzel().talkingComp().reactToRapunzelruf(getGameObjectId()));
+                loadRapunzel().talkingComp().reactToRapunzelruf());
 
         if (loadRapunzel().stateComp().hasState(HAARE_VOM_TURM_HERUNTERGELASSEN)) {
             if (loadSC().locationComp().hasRecursiveLocation(VOR_DEM_ALTEN_TURM)) {
