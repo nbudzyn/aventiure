@@ -14,6 +14,7 @@ public class KnownInfo {
     @NonNull
     private GameObjectId knowee;
 
+    @NonNull
     private Known known;
 
     public KnownInfo(final GameObjectId knower,
@@ -41,6 +42,7 @@ public class KnownInfo {
         this.knowee = knowee;
     }
 
+    @NonNull
     public Known getKnown() {
         return known;
     }

@@ -8,6 +8,7 @@ import de.nb.aventiure2.data.database.AvDatabase;
 import de.nb.aventiure2.data.world.gameobject.World;
 import de.nb.aventiure2.data.world.syscomp.location.ILocatableGO;
 import de.nb.aventiure2.data.world.syscomp.location.LocationComp;
+import de.nb.aventiure2.data.world.syscomp.mentalmodel.MentalModelComp;
 import de.nb.aventiure2.data.world.syscomp.movement.MovementComp;
 import de.nb.aventiure2.data.world.syscomp.reaction.AbstractDescribableReactionsComp;
 import de.nb.aventiure2.data.world.syscomp.reaction.interfaces.IMovementReactions;
@@ -30,6 +31,7 @@ import static de.nb.aventiure2.data.world.gameobject.World.RAPUNZEL;
 import static de.nb.aventiure2.data.world.gameobject.World.RAPUNZELS_ZAUBERIN;
 import static de.nb.aventiure2.data.world.gameobject.World.SPIELER_CHARAKTER;
 import static de.nb.aventiure2.data.world.gameobject.World.VOR_DEM_ALTEN_TURM;
+import static de.nb.aventiure2.data.world.gameobject.World.VOR_DEM_ALTEN_TURM_SCHATTEN_DER_BAEUME;
 import static de.nb.aventiure2.data.world.syscomp.state.impl.RapunzelState.HAARE_VOM_TURM_HERUNTERGELASSEN;
 import static de.nb.aventiure2.data.world.syscomp.state.impl.RapunzelsZauberinState.AUF_DEM_RUECKWEG_VON_RAPUNZEL;
 import static de.nb.aventiure2.data.world.syscomp.state.impl.RapunzelsZauberinState.AUF_DEM_WEG_ZU_RAPUNZEL;
@@ -47,9 +49,6 @@ import static de.nb.aventiure2.german.base.StructuralElement.PARAGRAPH;
  * "Reaktionen" von Rapunzels Zauberin, z.B. darauf, dass Zeit vergeht
  */
 public class RapunzelsZauberinReactionsComp
-        <R extends
-                IHasStateGO<RapunzelState> &
-                ITalkerGO<RapunzelTalkingComp>>
         extends AbstractDescribableReactionsComp
         implements
         // Reaktionen auf die Bewegungen des SC und anderes Game Objects
@@ -65,16 +64,19 @@ public class RapunzelsZauberinReactionsComp
 
     private final RapunzelsZauberinStateComp stateComp;
     private final LocationComp locationComp;
+    private final MentalModelComp mentalModelComp;
     private final MovementComp movementComp;
 
     public RapunzelsZauberinReactionsComp(final AvDatabase db,
                                           final World world,
                                           final RapunzelsZauberinStateComp stateComp,
                                           final LocationComp locationComp,
+                                          final MentalModelComp mentalModelComp,
                                           final MovementComp movementComp) {
         super(RAPUNZELS_ZAUBERIN, db, world);
         this.stateComp = stateComp;
         this.locationComp = locationComp;
+        this.mentalModelComp = mentalModelComp;
         this.movementComp = movementComp;
     }
 
@@ -82,6 +84,22 @@ public class RapunzelsZauberinReactionsComp
     public AvTimeSpan onLeave(final ILocatableGO locatable,
                               final ILocationGO from,
                               @Nullable final ILocationGO to) {
+        // Wenn die Zauberin den SC verlässt, ...
+        if (locatable.is(getGameObjectId())) {
+            // ...dann weiß sie nicht, wo das SC sich befindet.
+            // Einzige Ausnahme:
+            // Wenn die Zauberin den SC vor dem Turm verlassen hat, geht es erst einmal
+            // davon aus, dass er wohl dort noch ist, denn das ist eine Sackgasse.
+            if (!world.isOrHasRecursiveLocation(from, VOR_DEM_ALTEN_TURM) ||
+                    !mentalModelComp.assumesLocation(
+                            SPIELER_CHARAKTER,
+                            VOR_DEM_ALTEN_TURM,
+                            VOR_DEM_ALTEN_TURM_SCHATTEN_DER_BAEUME)
+            ) {
+                mentalModelComp.unassumeLocation(SPIELER_CHARAKTER);
+            }
+        }
+
         if (locationComp.getLocationId() == null) {
             // Zauberin hat keinen Ort, kann also auch nicht getroffen werden
             return noTime();
@@ -98,6 +116,13 @@ public class RapunzelsZauberinReactionsComp
                                 @Nullable final ILocationGO scTo) {
         if (locationComp.getLocationId() != null &&
                 locationComp.hasSameUpperMostLocationAs(scFrom)) {
+            // Wenn die Zauberin sieht, wie der Spieler weggeht,
+            // weiß sie nicht mehr, wo er ist.
+            if (scTo == null ||
+                    !locationComp.hasSameUpperMostLocationAs(scTo)) {
+                mentalModelComp.unassumeLocation(SPIELER_CHARAKTER);
+            }
+
             if (scFrom.is(DRAUSSEN_VOR_DEM_SCHLOSS)) {
                 // Hier bemerkt der SC die Zauberin nicht
                 return noTime();
@@ -127,6 +152,15 @@ public class RapunzelsZauberinReactionsComp
     }
 
     private AvTimeSpan onSCEnter(@Nullable final ILocationGO scFrom, final ILocationGO scTo) {
+        // Wenn die Zauberin sieht, wie sich der Spieler in den Schatten der
+        // Bäume setzt, weiß sie, dass er dort ist.
+        if (locationComp.hasSameUpperMostLocationAs(SPIELER_CHARAKTER) &&
+                scFrom != null &&
+                scFrom.is(VOR_DEM_ALTEN_TURM) &&
+                scTo.is(VOR_DEM_ALTEN_TURM_SCHATTEN_DER_BAEUME)) {
+            mentalModelComp.assumeLocation(SPIELER_CHARAKTER, scTo);
+        }
+
         if (locationComp.getLocationId() == null) {
             // Zauberin hat keinen Ort, kann also auch nicht getroffen werden
             return noTime();
@@ -146,6 +180,13 @@ public class RapunzelsZauberinReactionsComp
 
         // STORY Reaktion der Zauberin, wenn SC die Zauberin oben im Turm antrifft
         //  (falls das sein kann).
+
+        if (world.isOrHasRecursiveLocation(scTo, scFrom)) {
+            // Der Spieler ist nur im selben Raum auf einen Tisch gestiegen o.Ä.,
+            // die Zauberin wurde bereits beschrieben.
+            return noTime();
+        }
+
 
         return movementComp.narrateAndDoSCTrifftMovingGOInTo(scFrom, scTo);
     }
@@ -228,17 +269,14 @@ public class RapunzelsZauberinReactionsComp
         // Zauberin ist unten am alten Turm angekommen.
         stateComp.setState(BESUCHT_RAPUNZEL);
 
-        if (loadSC().locationComp().hasLocation(VOR_DEM_ALTEN_TURM)) {
-            // Wenn der SC auch direkt vor dem Turm steht, dann wartet die Frau,
-            // bis der SC weggeht
-            // STORY Wenn der SC weggeht lässt sich die Zauberin (ohne dass der SC
-            //  es merkt, in den Turm hochziehen).
-            // STORY Wenn die Zauberin jedoch gesehen hat, dass der Spieler sich zwischen die
-            //  Bäume gestellt hat, wird sie sich nicht hochziehen lassen!!
-            //  Ist das ein erstes Beispiel, wo das Mental Model der Zauberin relevant ist?
-            //  Das Mental Model der Zauberin könnte enthalten, wo sie der SC gerade aufhält...
-            //  ...es könte bei jedem onSCEnter(), bei dem die Zauberin anwesend ist, aktualisiert
-            //  werden...
+        if (loadSC().locationComp().hasLocation(VOR_DEM_ALTEN_TURM) ||
+                mentalModelComp.assumesLocation(SPIELER_CHARAKTER,
+                        VOR_DEM_ALTEN_TURM_SCHATTEN_DER_BAEUME)
+        ) {
+            // Wenn der SC auch in der Gegend ist, dann wartet die Zauberin,
+            // bis der SC weggeht.
+            // Dasselbe, wenn die Zauberin gesehen hat, dass der Spieler sich zwischen die
+            //  Bäume gestellt hat.
             return extraTime;
         }
 
@@ -285,7 +323,10 @@ public class RapunzelsZauberinReactionsComp
     }
 
     @NonNull
-    private R loadRapunzel() {
+    private <R extends
+            IHasStateGO<RapunzelState> &
+            ITalkerGO<RapunzelTalkingComp>>
+    R loadRapunzel() {
         return (R) world.load(RAPUNZEL);
     }
 
@@ -296,13 +337,15 @@ public class RapunzelsZauberinReactionsComp
 
             // Falls die Zauberin noch vor dem Turm wartet:
             if (locationComp.hasLocation(VOR_DEM_ALTEN_TURM) &&
-                    !loadSC().locationComp().hasLocation(VOR_DEM_ALTEN_TURM)) {
+                    !loadSC().locationComp().hasLocation(VOR_DEM_ALTEN_TURM) &&
+                    !mentalModelComp.assumesLocation(SPIELER_CHARAKTER,
+                            VOR_DEM_ALTEN_TURM_SCHATTEN_DER_BAEUME)) {
                 // Wenn der SC auch direkt vor dem Turm steht, dann wartet die Zauberin,
                 // bis der SC weggeht
                 return zauberinRuftRapunzelspruchUndRapunzelReagiert();
             }
 
-            // Zauberin bleibt noch bei Rapunzel
+            // Zauberin bleibt, wo sie ist (vor dem Turm oder bei Rapunzel)
             return noTime();
         }
 
@@ -310,7 +353,9 @@ public class RapunzelsZauberinReactionsComp
         stateComp.setState(AUF_DEM_RUECKWEG_VON_RAPUNZEL);
 
         // STORY Zauberin wird wieder heruntergelassen
-        locationComp.narrateAndSetLocation(VOR_DEM_ALTEN_TURM);
+        if (locationComp.hasRecursiveLocation(OBEN_IM_ALTEN_TURM)) {
+            locationComp.narrateAndSetLocation(VOR_DEM_ALTEN_TURM);
+        }
 
         return movementComp.startMovement(now, DRAUSSEN_VOR_DEM_SCHLOSS);
     }

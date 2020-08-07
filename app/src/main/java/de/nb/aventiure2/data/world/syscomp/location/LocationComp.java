@@ -247,7 +247,7 @@ public class LocationComp extends AbstractStatefulComponent<LocationPCD> {
     }
 
     public boolean hasLocation(final @Nullable GameObjectId locationId) {
-        return Objects.equals(getPcd().getLocationId(), locationId);
+        return Objects.equals(getLocationId(), locationId);
     }
 
     @Nullable

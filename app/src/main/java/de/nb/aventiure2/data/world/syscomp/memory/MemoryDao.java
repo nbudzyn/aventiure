@@ -67,7 +67,7 @@ public abstract class MemoryDao implements IComponentDao<MemoryPCD> {
 
     private static Map<GameObjectId, Known> toMap(final List<KnownInfo> knownInfos) {
         final HashMap<GameObjectId, Known> res =
-                new HashMap(knownInfos.size() + 10);
+                new HashMap<>(knownInfos.size() + 20);
 
         for (final KnownInfo knownInfo : knownInfos) {
             res.put(knownInfo.getKnowee(), knownInfo.getKnown());

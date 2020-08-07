@@ -2,6 +2,8 @@ package de.nb.aventiure2.data.world.gameobject;
 
 import androidx.annotation.NonNull;
 
+import com.google.common.collect.ImmutableMap;
+
 import javax.annotation.Nonnull;
 
 import de.nb.aventiure2.data.database.AvDatabase;
@@ -15,6 +17,8 @@ import de.nb.aventiure2.data.world.syscomp.description.impl.FroschprinzDescripti
 import de.nb.aventiure2.data.world.syscomp.description.impl.SimpleDescriptionComp;
 import de.nb.aventiure2.data.world.syscomp.location.ILocatableGO;
 import de.nb.aventiure2.data.world.syscomp.location.LocationComp;
+import de.nb.aventiure2.data.world.syscomp.mentalmodel.IHasMentalModelGO;
+import de.nb.aventiure2.data.world.syscomp.mentalmodel.MentalModelComp;
 import de.nb.aventiure2.data.world.syscomp.movement.IMovingGO;
 import de.nb.aventiure2.data.world.syscomp.movement.MovementComp;
 import de.nb.aventiure2.data.world.syscomp.reaction.AbstractReactionsComp;
@@ -143,6 +147,10 @@ class CreatureFactory {
                         // Muss zum Zustand der Zauberin passen!
                         null, IM_WALD_NAHE_DEM_SCHLOSS,
                         false);
+        final MentalModelComp mentalModelComp =
+                new MentalModelComp(RAPUNZELS_ZAUBERIN, db, world,
+                        // Muss zum Zustand der Zauberin passen!
+                        ImmutableMap.of());
         final MovementComp movementComp =
                 new MovementComp(RAPUNZELS_ZAUBERIN, db, world,
                         world.getSpatialConnectionSystem(),
@@ -153,14 +161,15 @@ class CreatureFactory {
                         null);
         final RapunzelsZauberinTalkingComp talkingComp =
                 new RapunzelsZauberinTalkingComp(db, world, stateComp);
-        return new MovingTalkingReactionsCreature<>(RAPUNZELS_ZAUBERIN,
+        return new MovingTalkingMentalModelReactionsCreature<>(RAPUNZELS_ZAUBERIN,
                 descriptionComp,
                 locationComp,
                 movementComp,
                 stateComp,
                 talkingComp,
+                mentalModelComp,
                 new RapunzelsZauberinReactionsComp(db, world,
-                        stateComp, locationComp, movementComp));
+                        stateComp, locationComp, mentalModelComp, movementComp));
     }
 
     private static class BasicCreature<S extends Enum<S>> extends GameObject
@@ -277,4 +286,32 @@ class CreatureFactory {
             return movementComp;
         }
     }
+
+    private static class MovingTalkingMentalModelReactionsCreature<S extends Enum<S>,
+            TALKING_COMP extends AbstractTalkingComp>
+            extends MovingTalkingReactionsCreature<S, TALKING_COMP>
+            implements IHasMentalModelGO {
+        private final MentalModelComp mentalModelComp;
+
+        MovingTalkingMentalModelReactionsCreature(final GameObjectId id,
+                                                  final AbstractDescriptionComp descriptionComp,
+                                                  final LocationComp locationComp,
+                                                  final MovementComp movementComp,
+                                                  final AbstractStateComp<S> stateComp,
+                                                  final TALKING_COMP talkingComp,
+                                                  final MentalModelComp mentalModelComp,
+                                                  final AbstractReactionsComp reactionsComp) {
+            super(id, descriptionComp, locationComp, movementComp, stateComp, talkingComp,
+                    reactionsComp);
+            // Jede Komponente muss registiert werden!
+            this.mentalModelComp = addComponent(mentalModelComp);
+        }
+
+        @Nonnull
+        @Override
+        public MentalModelComp mentalModelComp() {
+            return mentalModelComp;
+        }
+    }
+
 }

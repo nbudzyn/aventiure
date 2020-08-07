@@ -12,6 +12,7 @@ import de.nb.aventiure2.data.world.gameobject.World;
 import de.nb.aventiure2.data.world.syscomp.feelings.Mood;
 import de.nb.aventiure2.data.world.syscomp.memory.Action;
 import de.nb.aventiure2.data.world.syscomp.state.IHasStateGO;
+import de.nb.aventiure2.data.world.syscomp.state.impl.RapunzelState;
 import de.nb.aventiure2.data.world.syscomp.storingplace.ILocationGO;
 import de.nb.aventiure2.data.world.time.AvTimeSpan;
 import de.nb.aventiure2.scaction.AbstractScAction;
@@ -66,7 +67,7 @@ public class RastenAction extends AbstractScAction {
         final AvTimeSpan timeElapsed;
 
         if (isDefinitivWiederholung() &&
-                ((IHasStateGO) world.load(RAPUNZEL)).stateComp()
+                ((IHasStateGO<RapunzelState>) world.load(RAPUNZEL)).stateComp()
                         .hasState(SINGEND)) {
             timeElapsed = narrateAndDoRapunzelZuhoeren();
         } else if (location.storingPlaceComp().getLichtverhaeltnisse() == DUNKEL) {

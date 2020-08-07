@@ -78,8 +78,6 @@ public class Walkthrough {
                     "Rasten",
                     "Die Kugel nehmen",
                     "Aus dem Schatten der Bäume treten");
-    // STORY Man kann sich am Turm (tagsüber) ausruhen,
-    //  den Vögeln lauschen etc.
 
     // STORY Seide auf Markt bei Frau für ein Goldstück kaufen, das man vom Prinzen bekommen hat
 

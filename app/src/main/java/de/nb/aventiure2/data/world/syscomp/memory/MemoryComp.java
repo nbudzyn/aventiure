@@ -6,7 +6,6 @@ import java.util.Map;
 import java.util.Objects;
 
 import javax.annotation.Nullable;
-import javax.annotation.ParametersAreNonnullByDefault;
 
 import de.nb.aventiure2.data.database.AvDatabase;
 import de.nb.aventiure2.data.world.base.AbstractStatefulComponent;
@@ -21,7 +20,6 @@ import static com.google.common.base.Preconditions.checkNotNull;
  * Component for a {@link GameObject}: The game object
  * remembers things.
  */
-@ParametersAreNonnullByDefault
 public class MemoryComp extends AbstractStatefulComponent<MemoryPCD> {
     @NonNull
     private final Map<GameObjectId, Known> initiallyKnown;

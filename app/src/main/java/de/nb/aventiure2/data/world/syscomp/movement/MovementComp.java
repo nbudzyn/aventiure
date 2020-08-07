@@ -394,22 +394,25 @@ public class MovementComp
 
     public <FROM extends ILocationGO & ISpatiallyConnectedGO>
     AvTimeSpan narrateScTrifftMovingGOInTo(@Nullable final ILocationGO scFrom,
-                                           final ILocationGO to) {
+                                           final ILocationGO scTo) {
         if (!isMoving()) {
-            return movementNarrator.narrateScTrifftStehendesMovingGO(to);
+            return movementNarrator.narrateScTrifftStehendesMovingGO(
+                    locationComp.getLocation() != null ?
+                            locationComp.getLocation() :
+                            scTo);
         }
 
         if (isEntering()) {
             return movementNarrator.narrateScTrifftEnteringMovingGO(
                     scFrom,
-                    to,
+                    scTo,
                     (FROM) locationComp.getLastLocation());
         }
 
         // MovingGO ist leaving
         return movementNarrator.narrateScTrifftLeavingMovingGO(
                 scFrom,
-                (ILocationGO & ISpatiallyConnectedGO) to,
+                (ILocationGO & ISpatiallyConnectedGO) scTo,
                 (ILocationGO) world.load(getCurrentStep().getTo()));
     }
 

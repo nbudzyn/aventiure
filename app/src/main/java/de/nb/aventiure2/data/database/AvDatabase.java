@@ -38,6 +38,9 @@ import de.nb.aventiure2.data.world.syscomp.memory.KnownConverters;
 import de.nb.aventiure2.data.world.syscomp.memory.KnownInfo;
 import de.nb.aventiure2.data.world.syscomp.memory.MemoryDao;
 import de.nb.aventiure2.data.world.syscomp.memory.MemoryPCD;
+import de.nb.aventiure2.data.world.syscomp.mentalmodel.AssumedLocationInfo;
+import de.nb.aventiure2.data.world.syscomp.mentalmodel.MentalModelDao;
+import de.nb.aventiure2.data.world.syscomp.mentalmodel.MentalModelPCD;
 import de.nb.aventiure2.data.world.syscomp.movement.MovementDao;
 import de.nb.aventiure2.data.world.syscomp.movement.MovementPCD;
 import de.nb.aventiure2.data.world.syscomp.movement.MovementStepPhaseConverters;
@@ -64,8 +67,10 @@ import static de.nb.aventiure2.data.world.time.AvTime.oClock;
         LocationPCD.class,
         FeelingsPCD.class,
         MemoryPCD.class,
-        TalkingPCD.class,
-        KnownInfo.class},
+        KnownInfo.class,
+        MentalModelPCD.class,
+        AssumedLocationInfo.class,
+        TalkingPCD.class},
         version = 1,
         exportSchema = false)
 @TypeConverters({
@@ -107,6 +112,8 @@ public abstract class AvDatabase extends RoomDatabase {
     public abstract FeelingsDao feelingsDao();
 
     public abstract MemoryDao memoryDao();
+
+    public abstract MentalModelDao mentalModelDao();
 
     public abstract TalkingDao talkingDao();
 

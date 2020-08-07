@@ -57,11 +57,11 @@ public class SimpleMovementNarrator implements IMovementNarrator {
     }
 
     @Override
-    public AvTimeSpan narrateScTrifftStehendesMovingGO(final ILocationGO location) {
+    public AvTimeSpan narrateScTrifftStehendesMovingGO(final ILocationGO locationMovingGO) {
         final Nominalphrase desc = getDescription();
         final Nominalphrase descShort = getDescription(true);
 
-        final String wo = location.storingPlaceComp().getLocationMode().getWo(eherGross);
+        final String wo = locationMovingGO.storingPlaceComp().getLocationMode().getWo(eherGross);
 
         return n.addAlt(
                 neuerSatz(SENTENCE,
@@ -493,7 +493,7 @@ public class SimpleMovementNarrator implements IMovementNarrator {
                 anaphOderDesc.nom() +
                         " kommt dir "
                         + wo
-                        + " nach", noTime())
+                        + "nach", noTime())
                 .phorikKandidat(desc, gameObjectId)
                 .beendet(PARAGRAPH));
         alt.add(neuerSatz(PARAGRAPH,

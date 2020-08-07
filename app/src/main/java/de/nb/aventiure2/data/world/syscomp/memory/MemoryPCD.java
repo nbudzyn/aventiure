@@ -36,15 +36,15 @@ class MemoryPCD extends AbstractPersistentComponentData {
     @NonNull
     private Action lastAction;
 
-    MemoryPCD(@NonNull final GameObjectId gameObjectId,
-              @NonNull final Action lastAction) {
+    MemoryPCD(final GameObjectId gameObjectId,
+              final Action lastAction) {
         this(gameObjectId, lastAction, new HashMap<>());
     }
 
     @Ignore
-    MemoryPCD(@NonNull final GameObjectId gameObjectId,
-              @NonNull final Action lastAction,
-              @NonNull final Map<GameObjectId, Known> knownMap) {
+    MemoryPCD(final GameObjectId gameObjectId,
+              final Action lastAction,
+              final Map<GameObjectId, Known> knownMap) {
         super(gameObjectId);
         this.knownMap = new HashMap<>(knownMap);
         setLastAction(lastAction);
@@ -55,7 +55,7 @@ class MemoryPCD extends AbstractPersistentComponentData {
         return lastAction;
     }
 
-    void setLastAction(@NonNull final Action lastAction) {
+    void setLastAction(final Action lastAction) {
         checkArgument(!getGameObjectId().equals(lastAction.getObject()),
                 "Interaktion des Game Objects " + getGameObjectId()
                         + " mit sich selbst nicht erlaubt");
@@ -69,16 +69,16 @@ class MemoryPCD extends AbstractPersistentComponentData {
         return ImmutableMap.copyOf(knownMap);
     }
 
-    void setKnown(final Map<GameObjectId, Known> toMap) {
+    void setKnown(final Map<GameObjectId, Known> map) {
         setChanged();
-        knownMap.putAll(toMap);
-    }
-
-    public Known getKnown(final GameObjectId otherGameObjectId) {
-        return knownMap.getOrDefault(otherGameObjectId, UNKNOWN);
+        knownMap.putAll(map);
     }
 
     void setKnown(final GameObjectId otherGameObjectId, final Known known) {
+        if (getKnown(otherGameObjectId) == known) {
+            return;
+        }
+
         setChanged();
 
         if (known == UNKNOWN) {
@@ -86,5 +86,9 @@ class MemoryPCD extends AbstractPersistentComponentData {
         } else {
             knownMap.put(otherGameObjectId, known);
         }
+    }
+
+    public Known getKnown(final GameObjectId otherGameObjectId) {
+        return knownMap.getOrDefault(otherGameObjectId, UNKNOWN);
     }
 }
