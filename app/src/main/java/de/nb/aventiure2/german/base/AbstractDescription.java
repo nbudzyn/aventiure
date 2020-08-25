@@ -2,7 +2,7 @@ package de.nb.aventiure2.german.base;
 
 import androidx.annotation.Nullable;
 
-import de.nb.aventiure2.data.storystate.StoryState;
+import de.nb.aventiure2.data.narration.Narration;
 import de.nb.aventiure2.data.world.time.AvTimeSpan;
 
 /**
@@ -10,12 +10,12 @@ import de.nb.aventiure2.data.world.time.AvTimeSpan;
  */
 public abstract class AbstractDescription<SELF extends AbstractDescription<SELF>> {
     /**
-     * This {@link StoryState} starts a new ... (paragraph, e.g.)
+     * This {@link Narration} starts a new ... (paragraph, e.g.)
      */
     private final StructuralElement startsNew;
 
     /**
-     * This {@link StoryState} ends this ... (paragraph, e.g.)
+     * This {@link Narration} ends this ... (paragraph, e.g.)
      */
     private StructuralElement endsThis = StructuralElement.WORD;
 

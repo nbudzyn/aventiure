@@ -6,8 +6,8 @@ import java.util.function.Predicate;
 
 import javax.annotation.Nullable;
 
-import de.nb.aventiure2.data.storystate.StoryState;
-import de.nb.aventiure2.data.storystate.StoryStateDao;
+import de.nb.aventiure2.data.narration.Narration;
+import de.nb.aventiure2.data.narration.NarrationDao;
 import de.nb.aventiure2.data.world.base.GameObject;
 import de.nb.aventiure2.data.world.base.GameObjectId;
 import de.nb.aventiure2.data.world.base.IGameObject;
@@ -21,17 +21,17 @@ import de.nb.aventiure2.data.world.syscomp.storingplace.ILocationGO;
 import de.nb.aventiure2.data.world.time.AvDateTime;
 import de.nb.aventiure2.data.world.time.AvTimeSpan;
 
-import static de.nb.aventiure2.data.storystate.StoryState.NarrationSource.REACTIONS;
+import static de.nb.aventiure2.data.narration.Narration.NarrationSource.REACTIONS;
 import static de.nb.aventiure2.data.world.time.AvTimeSpan.max;
 import static de.nb.aventiure2.data.world.time.AvTimeSpan.noTime;
 
 public class GOReactionsCoordinator {
     private final World world;
-    private final StoryStateDao n;
+    private final NarrationDao n;
 
-    GOReactionsCoordinator(final World world, final StoryStateDao storyStateDao) {
+    GOReactionsCoordinator(final World world, final NarrationDao narrationDao) {
         this.world = world;
-        n = storyStateDao;
+        n = narrationDao;
     }
 
     // IMovementReactions
@@ -138,7 +138,7 @@ public class GOReactionsCoordinator {
 
         AvTimeSpan timeElapsed = noTime();
 
-        final StoryState.NarrationSource narrationSourceBefore = n.getNarrationSourceJustInCase();
+        final Narration.NarrationSource narrationSourceBefore = n.getNarrationSourceJustInCase();
         try {
             n.setNarrationSourceJustInCase(REACTIONS);
 

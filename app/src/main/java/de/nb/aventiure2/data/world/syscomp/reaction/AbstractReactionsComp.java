@@ -3,7 +3,7 @@ package de.nb.aventiure2.data.world.syscomp.reaction;
 import androidx.annotation.NonNull;
 
 import de.nb.aventiure2.data.database.AvDatabase;
-import de.nb.aventiure2.data.storystate.StoryStateDao;
+import de.nb.aventiure2.data.narration.NarrationDao;
 import de.nb.aventiure2.data.world.base.AbstractStatelessComponent;
 import de.nb.aventiure2.data.world.base.GameObject;
 import de.nb.aventiure2.data.world.base.GameObjectId;
@@ -19,7 +19,7 @@ public abstract class AbstractReactionsComp extends AbstractStatelessComponent
     protected final AvDatabase db;
     protected final World world;
 
-    protected final StoryStateDao n;
+    protected final NarrationDao n;
 
     // STORY Jeder Creature (jedem NPC) ein Ziel geben - oder in jedem NPC
     //  ein "Potenzial" anlegen (durch seine Werte oder Möglichkeiten),
@@ -68,7 +68,7 @@ public abstract class AbstractReactionsComp extends AbstractStatelessComponent
         this.db = db;
         this.world = world;
 
-        n = db.storyStateDao();
+        n = db.narrationDao();
     }
 
     @NonNull

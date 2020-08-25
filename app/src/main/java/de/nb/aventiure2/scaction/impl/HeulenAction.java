@@ -95,7 +95,7 @@ public class HeulenAction extends AbstractScAction {
         sc.memoryComp().setLastAction(buildMemorizedAction());
 
         final ImmutableList.Builder<AbstractDescription<?>> alt = ImmutableList.builder();
-        if (n.requireStoryState().allowsAdditionalDuSatzreihengliedOhneSubjekt()) {
+        if (n.requireNarration().allowsAdditionalDuSatzreihengliedOhneSubjekt()) {
             alt.add(satzanschluss("und weinst", mins(1))
                     .undWartest());
             alt.add(satzanschluss(", so viele Tränen haben sich angestaut", mins(1)));
@@ -135,7 +135,7 @@ public class HeulenAction extends AbstractScAction {
         final ImmutableList.Builder<AbstractDescription<?>> alt = ImmutableList.builder();
         alt.add(neuerSatz("Dich überkommt ein Schluchzen", mins(1)));
 
-        if (n.requireStoryState().dann()) {
+        if (n.requireNarration().dann()) {
             alt.add(neuerSatz("Dann bricht die Trauer aus dir heraus und du heulst los",
                     mins(1)));
         }

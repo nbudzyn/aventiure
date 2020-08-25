@@ -57,7 +57,7 @@ public abstract class AbstractDescribableReactionsComp extends AbstractReactions
         final IDescribableGO describableGO = (IDescribableGO) world.load(getGameObjectId());
 
         @Nullable final Personalpronomen anaphPersPron =
-                n.requireStoryState().getAnaphPersPronWennMgl(describableGO);
+                n.requireNarration().getAnaphPersPronWennMgl(describableGO);
         if (anaphPersPron != null) {
             return anaphPersPron;
         }

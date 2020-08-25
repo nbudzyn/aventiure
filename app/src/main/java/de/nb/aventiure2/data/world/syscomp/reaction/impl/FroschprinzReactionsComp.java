@@ -264,7 +264,7 @@ public class FroschprinzReactionsComp
     }
 
     private AvTimeSpan prinzVerlaesstSchlossVorhalle() {
-        if (n.requireStoryState().allowsAdditionalDuSatzreihengliedOhneSubjekt()) {
+        if (n.requireNarration().allowsAdditionalDuSatzreihengliedOhneSubjekt()) {
             final AvTimeSpan timeSpan = n.add(
                     satzanschluss(", aber die Menge hat dich schon von dem "
                             + "jungen Königssohn getrennt", secs(15))

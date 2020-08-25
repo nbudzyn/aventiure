@@ -1,8 +1,8 @@
-package de.nb.aventiure2.data.storystate;
+package de.nb.aventiure2.data.narration;
 
 import androidx.room.TypeConverter;
 
-import de.nb.aventiure2.data.storystate.StoryState.NarrationSource;
+import de.nb.aventiure2.data.narration.Narration.NarrationSource;
 
 public class NarrationSourceConverters {
     @TypeConverter

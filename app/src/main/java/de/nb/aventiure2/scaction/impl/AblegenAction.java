@@ -232,8 +232,8 @@ public class AblegenAction
 
     private AvTimeSpan narrateFroschprinz_HatHochhebenGefordert() {
         if (isDefinitivDiskontinuitaet() &&
-                n.requireStoryState().allowsAdditionalDuSatzreihengliedOhneSubjekt() &&
-                n.requireStoryState().dann()) {
+                n.requireNarration().allowsAdditionalDuSatzreihengliedOhneSubjekt() &&
+                n.requireNarration().dann()) {
 
             final ImmutableList.Builder<AbstractDescription<?>> alt =
                     ImmutableList.builder();
@@ -283,9 +283,9 @@ public class AblegenAction
     private AvTimeSpan narrateObject() {
         @Nullable final AdverbialeAngabe wohinDetail = getWohinDetail();
 
-        if (n.requireStoryState().allowsAdditionalDuSatzreihengliedOhneSubjekt()) {
+        if (n.requireNarration().allowsAdditionalDuSatzreihengliedOhneSubjekt()) {
             @Nullable final Personalpronomen gameObjektPersPron =
-                    n.requireStoryState().getAnaphPersPronWennMgl(gameObject);
+                    n.requireNarration().getAnaphPersPronWennMgl(gameObject);
 
             if (gameObjektPersPron != null) {
                 if (isDefinitivDiskontinuitaet()) {

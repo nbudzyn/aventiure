@@ -17,11 +17,10 @@ import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-import de.nb.aventiure2.data.storystate.NarrationSourceConverters;
-import de.nb.aventiure2.data.storystate.NumerusGenusConverters;
-import de.nb.aventiure2.data.storystate.StoryState;
-import de.nb.aventiure2.data.storystate.StoryStateDao;
-import de.nb.aventiure2.data.storystate.StructuralElementConverters;
+import de.nb.aventiure2.data.narration.Narration;
+import de.nb.aventiure2.data.narration.NarrationDao;
+import de.nb.aventiure2.data.narration.NarrationSourceConverters;
+import de.nb.aventiure2.data.narration.StructuralElementConverters;
 import de.nb.aventiure2.data.world.base.GameObjectIdConverters;
 import de.nb.aventiure2.data.world.counter.Counter;
 import de.nb.aventiure2.data.world.counter.CounterDao;
@@ -53,6 +52,7 @@ import de.nb.aventiure2.data.world.time.AvDateTimeConverters;
 import de.nb.aventiure2.data.world.time.AvNow;
 import de.nb.aventiure2.data.world.time.AvNowDao;
 import de.nb.aventiure2.data.world.time.AvTimeSpanConverters;
+import de.nb.aventiure2.german.base.NumerusGenusConverters;
 import de.nb.aventiure2.german.base.StructuralElement;
 
 import static de.nb.aventiure2.data.world.gameobject.World.GOLDENE_KUGEL;
@@ -60,7 +60,7 @@ import static de.nb.aventiure2.data.world.time.AvTime.oClock;
 
 @Database(entities = {
         Counter.class,
-        StoryState.class,
+        Narration.class,
         AvNow.class,
         StatePCD.class,
         MovementPCD.class,
@@ -101,7 +101,7 @@ public abstract class AvDatabase extends RoomDatabase {
 
     public abstract AvNowDao nowDao();
 
-    public abstract StoryStateDao storyStateDao();
+    public abstract NarrationDao narrationDao();
 
     public abstract StateDao stateDao();
 
@@ -141,7 +141,7 @@ public abstract class AvDatabase extends RoomDatabase {
                         world.saveAllInitialState();
 
                         // Save initial state for all game objects
-                        INSTANCE.storyStateDao().insert(buildInitialStoryState(world));
+                        INSTANCE.narrationDao().insert(buildInitialNarration(world));
                     }));
         }
     };
@@ -164,7 +164,7 @@ public abstract class AvDatabase extends RoomDatabase {
     /**
      * @return Something similar to <code>Du befindest dich in einem Schloss. Hier liegt eine goldene Kugel.</code>
      */
-    private static StoryState buildInitialStoryState(final World world) {
+    private static Narration buildInitialNarration(final World world) {
         final StringBuilder text = new StringBuilder();
 
         text.append(
@@ -176,7 +176,7 @@ public abstract class AvDatabase extends RoomDatabase {
                 (IDescribableGO) world.load(GOLDENE_KUGEL));
         text.append(buildObjectsInRoomDescription(objectsInRoom));
 
-        return new StoryState(StoryState.NarrationSource.INITIALIZATION,
+        return new Narration(Narration.NarrationSource.INITIALIZATION,
                 StructuralElement.PARAGRAPH,
                 text.toString(), false, false, false,
                 null);

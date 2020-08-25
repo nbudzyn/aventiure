@@ -1,4 +1,4 @@
-package de.nb.aventiure2.data.storystate;
+package de.nb.aventiure2.data.narration;
 
 import android.text.TextUtils;
 
@@ -19,17 +19,17 @@ import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 /**
- * Builder for {@link StoryState}.
+ * Builder for {@link Narration}.
  */
 @ParametersAreNonnullByDefault
-public class StoryAddition {
+public class NarrationAddition {
     /**
-     * This {@link StoryState} starts a new ... (paragraph, e.g.)
+     * This {@link Narration} starts a new ... (paragraph, e.g.)
      */
     private final StructuralElement startsNew;
 
     /**
-     * This {@link StoryState} ends this ... (paragraph, e.g.)
+     * This {@link Narration} ends this ... (paragraph, e.g.)
      */
     private StructuralElement endsThis = StructuralElement.WORD;
 
@@ -77,56 +77,56 @@ public class StoryAddition {
     @Nullable
     private PhorikKandidat phorikKandidat;
 
-    public static StoryAddition t(
+    public static NarrationAddition t(
             final StructuralElement startsNew,
             final String text) {
         checkArgument(!TextUtils.isEmpty(text), "text is null or empty");
         checkNotNull(startsNew, "startsNew is null");
 
-        return new StoryAddition(startsNew, text);
+        return new NarrationAddition(startsNew, text);
     }
 
 
-    private StoryAddition(final StructuralElement startsNew,
-                          final String text) {
+    private NarrationAddition(final StructuralElement startsNew,
+                              final String text) {
         this.startsNew = startsNew;
         this.text = text;
     }
 
-    public StoryAddition phorikKandidat(final SubstantivischePhrase substantivischePhrase,
-                                        final IGameObject gameObject) {
+    public NarrationAddition phorikKandidat(final SubstantivischePhrase substantivischePhrase,
+                                            final IGameObject gameObject) {
         phorikKandidat(substantivischePhrase.getNumerusGenus(), gameObject.getId());
         return this;
     }
 
-    public StoryAddition phorikKandidat(final NumerusGenus numerusGenus,
-                                        final IGameObject gameObject) {
+    public NarrationAddition phorikKandidat(final NumerusGenus numerusGenus,
+                                            final IGameObject gameObject) {
         phorikKandidat(numerusGenus, gameObject.getId());
         return this;
     }
 
-    public StoryAddition phorikKandidat(final NumerusGenus numerusGenus,
-                                        final GameObjectId gameObjectId) {
+    public NarrationAddition phorikKandidat(final NumerusGenus numerusGenus,
+                                            final GameObjectId gameObjectId) {
         phorikKandidat(new PhorikKandidat(numerusGenus, gameObjectId));
         return this;
     }
 
-    public StoryAddition phorikKandidat(
+    public NarrationAddition phorikKandidat(
             @Nullable final PhorikKandidat phorikKandidat) {
         this.phorikKandidat = phorikKandidat;
         return this;
     }
 
-    public StoryAddition beendet(final StructuralElement structuralElement) {
+    public NarrationAddition beendet(final StructuralElement structuralElement) {
         endsThis = structuralElement;
         return this;
     }
 
-    public StoryAddition komma() {
+    public NarrationAddition komma() {
         return komma(true);
     }
 
-    public StoryAddition komma(final boolean kommaStehtAus) {
+    public NarrationAddition komma(final boolean kommaStehtAus) {
         this.kommaStehtAus = kommaStehtAus;
         return this;
     }
@@ -135,22 +135,22 @@ public class StoryAddition {
      * Sets a flag that the text can be continued by a Satzreihenglied without subject where
      * the player character is the implicit subject
      */
-    public StoryAddition undWartest() {
+    public NarrationAddition undWartest() {
         return undWartest(true);
     }
 
-    public StoryAddition undWartest(
+    public NarrationAddition undWartest(
             final boolean allowsAdditionalPlayerSatzreihengliedOhneSubjekt) {
         allowsAdditionalDuSatzreihengliedOhneSubjekt =
                 allowsAdditionalPlayerSatzreihengliedOhneSubjekt;
         return this;
     }
 
-    public StoryAddition dann() {
+    public NarrationAddition dann() {
         return dann(true);
     }
 
-    public StoryAddition dann(final boolean dann) {
+    public NarrationAddition dann(final boolean dann) {
         this.dann = dann;
         return this;
     }

@@ -154,7 +154,7 @@ class CreatureFactory {
         final MovementComp movementComp =
                 new MovementComp(RAPUNZELS_ZAUBERIN, db, world,
                         world.getSpatialConnectionSystem(),
-                        new RapunzelsZauberinMovementNarrator(db.storyStateDao(), world),
+                        new RapunzelsZauberinMovementNarrator(db.narrationDao(), world),
                         locationComp,
                         1,
                         // Muss zum Zustand der Zauberin passen!

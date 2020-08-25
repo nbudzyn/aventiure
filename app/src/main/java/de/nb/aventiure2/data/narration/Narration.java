@@ -1,4 +1,4 @@
-package de.nb.aventiure2.data.storystate;
+package de.nb.aventiure2.data.narration;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -14,19 +14,19 @@ import de.nb.aventiure2.german.base.Personalpronomen;
 import de.nb.aventiure2.german.base.PhorikKandidat;
 import de.nb.aventiure2.german.base.StructuralElement;
 
-import static de.nb.aventiure2.data.storystate.StoryState.NarrationSource.REACTIONS;
+import static de.nb.aventiure2.data.narration.Narration.NarrationSource.REACTIONS;
 
 /**
- * The text of the story, together with state relevant for going on with the story. Only things that have already happened.
+ * The text of the narration, together with state relevant for going on with the story. Only things that have already happened.
  */
 @Entity
-public class StoryState {
+public class Narration {
     public enum NarrationSource {
         INITIALIZATION, SC_ACTION, REACTIONS,
     }
 
     /**
-     * This {@link StoryState} ends this ... (paragraph, e.g.)
+     * This {@link Narration} ends this ... (paragraph, e.g.)
      */
     private final StructuralElement endsThis;
 
@@ -82,13 +82,13 @@ public class StoryState {
 
     private final NarrationSource lastNarrationSource;
 
-    public StoryState(@NonNull final NarrationSource lastNarrationSource,
-                      @NonNull final StructuralElement endsThis,
-                      @NonNull final String text,
-                      final boolean kommaStehtAus,
-                      final boolean allowsAdditionalDuSatzreihengliedOhneSubjekt,
-                      final boolean dann,
-                      @Nullable final PhorikKandidat phorikKandidat) {
+    public Narration(@NonNull final NarrationSource lastNarrationSource,
+                     @NonNull final StructuralElement endsThis,
+                     @NonNull final String text,
+                     final boolean kommaStehtAus,
+                     final boolean allowsAdditionalDuSatzreihengliedOhneSubjekt,
+                     final boolean dann,
+                     @Nullable final PhorikKandidat phorikKandidat) {
         this(lastNarrationSource, endsThis, text, kommaStehtAus,
                 allowsAdditionalDuSatzreihengliedOhneSubjekt, dann,
                 phorikKandidat != null ?
@@ -97,14 +97,14 @@ public class StoryState {
                         phorikKandidat.getNumerusGenus() : null);
     }
 
-    StoryState(@NonNull final NarrationSource lastNarrationSource,
-               @NonNull final StructuralElement endsThis,
-               @NonNull final String text,
-               final boolean kommaStehtAus,
-               final boolean allowsAdditionalDuSatzreihengliedOhneSubjekt,
-               final boolean dann,
-               @Nullable final GameObjectId phorikKandidatBezugsobjekt,
-               @Nullable final NumerusGenus phorikKandidatNumerusGenus) {
+    Narration(@NonNull final NarrationSource lastNarrationSource,
+              @NonNull final StructuralElement endsThis,
+              @NonNull final String text,
+              final boolean kommaStehtAus,
+              final boolean allowsAdditionalDuSatzreihengliedOhneSubjekt,
+              final boolean dann,
+              @Nullable final GameObjectId phorikKandidatBezugsobjekt,
+              @Nullable final NumerusGenus phorikKandidatNumerusGenus) {
         Preconditions.checkArgument(!allowsAdditionalDuSatzreihengliedOhneSubjekt
                         || endsThis == StructuralElement.WORD,
                 "!allowsAdditionalDuSatzreihengliedOhneSubjekt "
@@ -251,46 +251,51 @@ public class StoryState {
         return phorikKandidatNumerusGenus;
     }
 
-    StoryState add(final NarrationSource narrationSource, final StoryAddition storyAddition) {
+    Narration add(final NarrationSource narrationSource,
+                  final NarrationAddition narrationAddition) {
         final StringBuilder resText = new StringBuilder(getText().trim());
 
         final StructuralElement separation =
-                StructuralElement.max(endsThis, storyAddition.getStartsNew());
+                StructuralElement.max(endsThis, narrationAddition.getStartsNew());
 
         switch (separation) {
             case WORD:
-                if (kommaNeeded(resText.toString(), storyAddition.getText())) {
+                if (kommaNeeded(resText.toString(), narrationAddition.getText())) {
                     resText.append(",");
                 }
 
-                if (spaceNeeded(resText.toString(), storyAddition.getText())) {
+                if (spaceNeeded(resText.toString(), narrationAddition.getText())) {
                     resText.append(" ");
                 }
                 break;
             case SENTENCE:
-                if (periodNeededToStartNewSentence(resText.toString(), storyAddition.getText())) {
+                if (periodNeededToStartNewSentence(resText.toString(),
+                        narrationAddition.getText())) {
                     resText.append(".");
                 }
-                if (spaceNeeded(resText.toString(), storyAddition.getText())) {
+                if (spaceNeeded(resText.toString(), narrationAddition.getText())) {
                     resText.append(" ");
                 }
                 break;
             case PARAGRAPH:
-                if (periodNeededToStartNewSentence(resText.toString(), storyAddition.getText())) {
+                if (periodNeededToStartNewSentence(resText.toString(),
+                        narrationAddition.getText())) {
                     resText.append(".");
                 }
-                if (newlineNeededToStartNewParagraph(resText.toString(), storyAddition.getText())) {
+                if (newlineNeededToStartNewParagraph(resText.toString(),
+                        narrationAddition.getText())) {
                     resText.append("\n");
                 }
                 break;
             case CHAPTER:
-                if (periodNeededToStartNewSentence(resText.toString(), storyAddition.getText())) {
+                if (periodNeededToStartNewSentence(resText.toString(),
+                        narrationAddition.getText())) {
                     resText.append(".");
                 }
 
                 final int numNewlinesNeeded =
                         howManyNewlinesNeedeToStartNewChapter(resText.toString(),
-                                storyAddition.getText());
+                                narrationAddition.getText());
                 for (int i = 0; i < numNewlinesNeeded; i++) {
                     resText.append("\n");
                 }
@@ -300,16 +305,16 @@ public class StoryState {
                         + separation);
         }
 
-        resText.append(storyAddition.getText());
+        resText.append(narrationAddition.getText());
 
-        return new StoryState(
+        return new Narration(
                 narrationSource,
-                storyAddition.getEndsThis(),
+                narrationAddition.getEndsThis(),
                 resText.toString(),
-                storyAddition.isKommaStehtAus(),
-                storyAddition.isAllowsAdditionalDuSatzreihengliedOhneSubjekt(),
-                storyAddition.isDann(),
-                storyAddition.getPhorikKandidat());
+                narrationAddition.isKommaStehtAus(),
+                narrationAddition.isAllowsAdditionalDuSatzreihengliedOhneSubjekt(),
+                narrationAddition.isDann(),
+                narrationAddition.getPhorikKandidat());
     }
 
     private static int howManyNewlinesNeedeToStartNewChapter(

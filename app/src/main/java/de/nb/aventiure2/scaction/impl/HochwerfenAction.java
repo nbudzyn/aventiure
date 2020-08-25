@@ -117,7 +117,7 @@ public class HochwerfenAction<OBJ extends IDescribableGO & ILocatableGO>
         final SubstantivischePhrase objectDesc =
                 getAnaphPersPronWennMglSonstDescription(object, false);
 
-        if (n.requireStoryState().allowsAdditionalDuSatzreihengliedOhneSubjekt()) {
+        if (n.requireNarration().allowsAdditionalDuSatzreihengliedOhneSubjekt()) {
             return narrateAndDoHochwerfenAuffangen(
                     satzanschluss(", wirfst " +
                             objectDesc.akk() +
@@ -223,7 +223,7 @@ public class HochwerfenAction<OBJ extends IDescribableGO & ILocatableGO>
                         SeinUtil.istSind(objectDesc.getNumerusGenus()) +
                         " " +
                         objectDesc.persPron().akk(), "nur ein einziges Mal", secs(10))
-                        .dann(!n.requireStoryState().dann())
+                        .dann(!n.requireNarration().dann())
                         .beendet(PARAGRAPH));
 
         return timeSpan.plus(

@@ -9,7 +9,7 @@ import java.util.List;
 import java.util.Objects;
 
 import de.nb.aventiure2.data.database.AvDatabase;
-import de.nb.aventiure2.data.storystate.StoryStateDao;
+import de.nb.aventiure2.data.narration.NarrationDao;
 import de.nb.aventiure2.data.world.base.AbstractStatefulComponent;
 import de.nb.aventiure2.data.world.base.GameObject;
 import de.nb.aventiure2.data.world.base.GameObjectId;
@@ -36,7 +36,7 @@ public abstract class AbstractTalkingComp extends AbstractStatefulComponent<Talk
     protected final AvDatabase db;
     protected final World world;
 
-    protected final StoryStateDao n;
+    protected final NarrationDao n;
 
     /**
      * Constructor for {@link AbstractTalkingComp}.
@@ -48,7 +48,7 @@ public abstract class AbstractTalkingComp extends AbstractStatefulComponent<Talk
         this.db = db;
         this.world = world;
 
-        n = db.storyStateDao();
+        n = db.narrationDao();
     }
 
     public List<SCTalkAction> getSCConversationSteps() {
@@ -210,7 +210,7 @@ public abstract class AbstractTalkingComp extends AbstractStatefulComponent<Talk
         final IDescribableGO describableGO = (IDescribableGO) world.load(getGameObjectId());
 
         @javax.annotation.Nullable final Personalpronomen anaphPersPron =
-                n.requireStoryState().getAnaphPersPronWennMgl(describableGO);
+                n.requireNarration().getAnaphPersPronWennMgl(describableGO);
         if (anaphPersPron != null) {
             return anaphPersPron;
         }

@@ -170,7 +170,7 @@ public class World {
             }
 
             if (reactionsCoordinator == null) {
-                reactionsCoordinator = new GOReactionsCoordinator(this, db.storyStateDao());
+                reactionsCoordinator = new GOReactionsCoordinator(this, db.narrationDao());
             }
 
             final SpielerCharakterFactory spieler = new SpielerCharakterFactory(db, this);

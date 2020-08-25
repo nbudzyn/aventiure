@@ -1,8 +1,6 @@
-package de.nb.aventiure2.data.storystate;
+package de.nb.aventiure2.german.base;
 
 import androidx.room.TypeConverter;
-
-import de.nb.aventiure2.german.base.NumerusGenus;
 
 public class NumerusGenusConverters {
     @TypeConverter

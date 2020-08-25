@@ -302,7 +302,7 @@ public class NehmenAction
 
     private AvTimeSpan narrateFroschprinz_HatHochhebenGefordert() {
         if (isDefinitivDiskontinuitaet()) {
-            if (n.requireStoryState().dann()) {
+            if (n.requireNarration().dann()) {
                 final SubstantivischePhrase froschDescOderAnapher =
                         getAnaphPersPronWennMglSonstShortDescription(FROSCHPRINZ);
 
@@ -414,7 +414,7 @@ public class NehmenAction
 
     private AvTimeSpan narrateObjectDiskontinuitaet(
             final PraedikatMitEinerObjektleerstelle nehmenPraedikat) {
-        if (n.requireStoryState().dann()) {
+        if (n.requireNarration().dann()) {
             final Nominalphrase objectDesc = world.getDescription(gameObject);
             return n.add(neuerSatz(StructuralElement.PARAGRAPH,
                     "Dann nimmst du " + objectDesc.akk() +
@@ -424,7 +424,7 @@ public class NehmenAction
                     .phorikKandidat(objectDesc, gameObject.getId()));
         }
 
-        if (n.requireStoryState().allowsAdditionalDuSatzreihengliedOhneSubjekt()) {
+        if (n.requireNarration().allowsAdditionalDuSatzreihengliedOhneSubjekt()) {
             return n.add(satzanschluss(
                     ", nur um "
                             + nehmenPraedikat

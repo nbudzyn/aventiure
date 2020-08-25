@@ -15,7 +15,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import de.nb.aventiure2.data.database.AvDatabase;
-import de.nb.aventiure2.data.storystate.StoryState;
+import de.nb.aventiure2.data.narration.Narration;
 import de.nb.aventiure2.logger.Logger;
 import de.nb.aventiure2.scaction.AbstractScAction;
 import de.nb.aventiure2.scaction.ScActionService;
@@ -158,13 +158,13 @@ public class MainViewModel extends AndroidViewModel {
 
     @WorkerThread
     private void postLiveDataUpdate() {
-        @Nullable final StoryState storyState = db.storyStateDao().getStoryState();
-        if (storyState == null) {
+        @Nullable final Narration narration = db.narrationDao().getNarration();
+        if (narration == null) {
             postLiveUpdateLater();
             return;
         }
 
-        storyText.postValue(storyState.getText());
+        storyText.postValue(narration.getText());
         playerActionHandlers.postValue(buildGuiActions());
     }
 

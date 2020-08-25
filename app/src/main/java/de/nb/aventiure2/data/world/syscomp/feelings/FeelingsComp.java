@@ -3,7 +3,7 @@ package de.nb.aventiure2.data.world.syscomp.feelings;
 import androidx.annotation.NonNull;
 
 import de.nb.aventiure2.data.database.AvDatabase;
-import de.nb.aventiure2.data.storystate.StoryStateDao;
+import de.nb.aventiure2.data.narration.NarrationDao;
 import de.nb.aventiure2.data.world.base.AbstractStatefulComponent;
 import de.nb.aventiure2.data.world.base.GameObject;
 import de.nb.aventiure2.data.world.base.GameObjectId;
@@ -16,7 +16,7 @@ import de.nb.aventiure2.data.world.time.AvTimeSpan;
  */
 public class FeelingsComp extends AbstractStatefulComponent<FeelingsPCD> {
 
-    protected final StoryStateDao n;
+    protected final NarrationDao n;
 
     // STORY Jedes FeelingBeing kann zu jedem anderen Feeling Being Gefühle verschiedener
     //  Stärke aufbauen. Default ist 0 (oder je ein anderer Wert für in-Group / out-Group,
@@ -59,7 +59,7 @@ public class FeelingsComp extends AbstractStatefulComponent<FeelingsPCD> {
         this.initialZuletztGegessen = initialZuletztGegessen;
         this.zeitspanneNachEssenBisWiederHungrig = zeitspanneNachEssenBisWiederHungrig;
 
-        n = db.storyStateDao();
+        n = db.narrationDao();
     }
 
     @Override

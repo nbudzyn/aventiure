@@ -4,8 +4,8 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import de.nb.aventiure2.data.database.AvDatabase;
-import de.nb.aventiure2.data.storystate.IPlayerAction;
-import de.nb.aventiure2.data.storystate.StoryStateDao;
+import de.nb.aventiure2.data.narration.IPlayerAction;
+import de.nb.aventiure2.data.narration.NarrationDao;
 import de.nb.aventiure2.data.world.base.GameObjectId;
 import de.nb.aventiure2.data.world.gameobject.World;
 import de.nb.aventiure2.data.world.gameobject.player.SpielerCharakter;
@@ -15,8 +15,8 @@ import de.nb.aventiure2.data.world.time.AvTimeSpan;
 import de.nb.aventiure2.german.base.Personalpronomen;
 import de.nb.aventiure2.german.base.SubstantivischePhrase;
 
-import static de.nb.aventiure2.data.storystate.StoryState.NarrationSource.REACTIONS;
-import static de.nb.aventiure2.data.storystate.StoryState.NarrationSource.SC_ACTION;
+import static de.nb.aventiure2.data.narration.Narration.NarrationSource.REACTIONS;
+import static de.nb.aventiure2.data.narration.Narration.NarrationSource.SC_ACTION;
 import static de.nb.aventiure2.data.world.time.AvTimeSpan.days;
 import static de.nb.aventiure2.data.world.time.AvTimeSpan.noTime;
 
@@ -28,7 +28,7 @@ public abstract class AbstractScAction implements IPlayerAction {
 
     protected final AvDatabase db;
     protected final World world;
-    protected final StoryStateDao n;
+    protected final NarrationDao n;
 
     protected final SpielerCharakter sc;
 
@@ -36,7 +36,7 @@ public abstract class AbstractScAction implements IPlayerAction {
         this.db = db;
         this.world = world;
 
-        n = db.storyStateDao();
+        n = db.narrationDao();
 
         sc = world.loadSC();
     }
@@ -210,7 +210,7 @@ public abstract class AbstractScAction implements IPlayerAction {
             final IDescribableGO describableGO,
             final boolean descShortIfKnown) {
         @Nullable final Personalpronomen anaphPersPron =
-                db.storyStateDao().requireStoryState().getAnaphPersPronWennMgl(describableGO);
+                db.narrationDao().requireNarration().getAnaphPersPronWennMgl(describableGO);
         if (anaphPersPron != null) {
             return anaphPersPron;
         }

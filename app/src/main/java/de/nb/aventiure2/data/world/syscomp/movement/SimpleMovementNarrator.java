@@ -7,7 +7,7 @@ import com.google.common.collect.ImmutableList;
 
 import javax.annotation.Nullable;
 
-import de.nb.aventiure2.data.storystate.StoryStateDao;
+import de.nb.aventiure2.data.narration.NarrationDao;
 import de.nb.aventiure2.data.world.base.GameObjectId;
 import de.nb.aventiure2.data.world.base.SpatialConnection;
 import de.nb.aventiure2.data.world.gameobject.World;
@@ -37,7 +37,7 @@ import static de.nb.aventiure2.german.base.StructuralElement.SENTENCE;
  */
 public class SimpleMovementNarrator implements IMovementNarrator {
     protected final GameObjectId gameObjectId;
-    protected final StoryStateDao n;
+    protected final NarrationDao n;
     protected final World world;
 
     /**
@@ -47,11 +47,11 @@ public class SimpleMovementNarrator implements IMovementNarrator {
 
     public SimpleMovementNarrator(
             final GameObjectId gameObjectId,
-            final StoryStateDao storyStateDao,
+            final NarrationDao narrationDao,
             final World world,
             final boolean eherGross) {
         this.gameObjectId = gameObjectId;
-        n = storyStateDao;
+        n = narrationDao;
         this.world = world;
         this.eherGross = eherGross;
     }
@@ -216,7 +216,7 @@ public class SimpleMovementNarrator implements IMovementNarrator {
                         .phorikKandidat(desc, gameObjectId)
                         .beendet(PARAGRAPH));
 
-        if (!n.requireStoryState().isThema(gameObjectId)) {
+        if (!n.requireNarration().isThema(gameObjectId)) {
             alt.add(
                     neuerSatz(PARAGRAPH,
                             "Dir kommt " +
@@ -266,7 +266,7 @@ public class SimpleMovementNarrator implements IMovementNarrator {
                         .phorikKandidat(anaphOderDesc, gameObjectId)
                         .beendet(PARAGRAPH));
 
-        if (!n.requireStoryState().isThema(gameObjectId)) {
+        if (!n.requireNarration().isThema(gameObjectId)) {
             alt.add(du(SENTENCE, "siehst",
                     ", wie " +
                             anaphOderDesc.nom() +
@@ -363,7 +363,7 @@ public class SimpleMovementNarrator implements IMovementNarrator {
                         .phorikKandidat(desc, gameObjectId)
                         .beendet(PARAGRAPH));
 
-        if (!n.requireStoryState().isThema(gameObjectId)) {
+        if (!n.requireNarration().isThema(gameObjectId)) {
             alt.add(
                     neuerSatz(PARAGRAPH,
                             "Dir kommt " +
@@ -520,7 +520,7 @@ public class SimpleMovementNarrator implements IMovementNarrator {
                         .phorikKandidat(desc, gameObjectId)
                         .beendet(PARAGRAPH));
 
-        if (!n.requireStoryState().isThema(gameObjectId)) {
+        if (!n.requireNarration().isThema(gameObjectId)) {
             alt.add(
                     neuerSatz(PARAGRAPH,
                             "Hinter dir kommt " +
@@ -595,7 +595,7 @@ public class SimpleMovementNarrator implements IMovementNarrator {
                     .beendet(PARAGRAPH));
         }
 
-        if (!n.requireStoryState().isThema(gameObjectId)) {
+        if (!n.requireNarration().isThema(gameObjectId)) {
             if (spatialConnectionMovingGO != null) {
                 alt.add(neuerSatz(spatialConnectionMovingGO.getWo() // "auf dem Pfad "
                         + " kommt " +
@@ -708,7 +708,7 @@ public class SimpleMovementNarrator implements IMovementNarrator {
         final IDescribableGO describableGO = (IDescribableGO) world.load(getGameObjectId());
 
         @Nullable final Personalpronomen anaphPersPron =
-                n.requireStoryState().getAnaphPersPronWennMgl(describableGO);
+                n.requireNarration().getAnaphPersPronWennMgl(describableGO);
         if (anaphPersPron != null) {
             return anaphPersPron;
         }

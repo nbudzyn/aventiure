@@ -1,4 +1,4 @@
-package de.nb.aventiure2.data.storystate;
+package de.nb.aventiure2.data.narration;
 
 import androidx.annotation.NonNull;
 

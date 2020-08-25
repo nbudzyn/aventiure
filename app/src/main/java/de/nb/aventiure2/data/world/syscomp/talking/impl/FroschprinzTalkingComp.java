@@ -7,7 +7,7 @@ import com.google.common.collect.ImmutableList;
 import java.util.List;
 
 import de.nb.aventiure2.data.database.AvDatabase;
-import de.nb.aventiure2.data.storystate.StoryState;
+import de.nb.aventiure2.data.narration.Narration;
 import de.nb.aventiure2.data.world.base.GameObjectId;
 import de.nb.aventiure2.data.world.gameobject.World;
 import de.nb.aventiure2.data.world.syscomp.description.IDescribableGO;
@@ -195,10 +195,10 @@ public class FroschprinzTalkingComp extends AbstractTalkingComp {
             return hallo_froschReagiertNicht();
         }
 
-        final StoryState initialStoryState = db.storyStateDao().requireStoryState();
+        final Narration initialNarration = db.narrationDao().requireNarration();
 
-        if (initialStoryState.dann()) {
-            if (initialStoryState.allowsAdditionalDuSatzreihengliedOhneSubjekt()) {
+        if (initialNarration.dann()) {
+            if (initialNarration.allowsAdditionalDuSatzreihengliedOhneSubjekt()) {
                 n.add(satzanschluss("– aber dann gibst du dir einen Ruck:",
                         noTime()));
             } else {

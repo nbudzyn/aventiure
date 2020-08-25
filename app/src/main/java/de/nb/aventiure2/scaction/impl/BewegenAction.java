@@ -447,7 +447,7 @@ public class BewegenAction<LOC_DESC extends ILocatableGO & IDescribableGO>
                 to.storingPlaceComp().getLichtverhaeltnisse());
 
         if (description instanceof DuDescription &&
-                n.requireStoryState().allowsAdditionalDuSatzreihengliedOhneSubjekt() &&
+                n.requireNarration().allowsAdditionalDuSatzreihengliedOhneSubjekt() &&
                 isDefinitivDiskontinuitaet()) {
             return n.add(
                     satzanschluss(", besinnst dich aber und "
@@ -459,7 +459,7 @@ public class BewegenAction<LOC_DESC extends ILocatableGO & IDescribableGO>
         }
 
         if (description.getStartsNew() == WORD &&
-                n.requireStoryState().allowsAdditionalDuSatzreihengliedOhneSubjekt() &&
+                n.requireNarration().allowsAdditionalDuSatzreihengliedOhneSubjekt() &&
                 description instanceof DuDescription) {
             return n.add(description);
         }
@@ -500,8 +500,8 @@ public class BewegenAction<LOC_DESC extends ILocatableGO & IDescribableGO>
         }
 
         if (sc.memoryComp().getLastAction().is(BEWEGEN)) {
-            if (n.requireStoryState().getEndsThis() == StructuralElement.WORD &&
-                    n.requireStoryState().dann()) {
+            if (n.requireNarration().getEndsThis() == StructuralElement.WORD &&
+                    n.requireNarration().dann()) {
                 // "Du stehst wieder vor dem Schloss; dann gehst du wieder hinein in das Schloss."
                 final String satzEvtlMitDann = description
                         .getDescriptionHauptsatzMitKonjunktionaladverbWennNoetig(
@@ -519,7 +519,7 @@ public class BewegenAction<LOC_DESC extends ILocatableGO & IDescribableGO>
                 return n.add(description);
             }
         } else {
-            if (n.requireStoryState().dann()) {
+            if (n.requireNarration().dann()) {
                 return n.add(
                         neuerSatz(PARAGRAPH, description
                                         .getDescriptionHauptsatzMitKonjunktionaladverbWennNoetig("danach"),
@@ -559,7 +559,7 @@ public class BewegenAction<LOC_DESC extends ILocatableGO & IDescribableGO>
             if (numberOfWays == ONLY_WAY) {
                 if (sc.feelingsComp().hasMood(Mood.VOLLER_FREUDE) &&
                         lichtverhaeltnisseInNewLocation == HELL &&
-                        n.requireStoryState().allowsAdditionalDuSatzreihengliedOhneSubjekt() &&
+                        n.requireNarration().allowsAdditionalDuSatzreihengliedOhneSubjekt() &&
                         sc.memoryComp().getLastAction().is(Action.Type.NEHMEN)) {
                     return du("springst", "damit fort", "damit",
                             standardDescription.getTimeElapsed().times(0.8))
@@ -578,7 +578,7 @@ public class BewegenAction<LOC_DESC extends ILocatableGO & IDescribableGO>
                     sc.feelingsComp().hasMood(Mood.VOLLER_FREUDE) &&
                     lichtverhaeltnisseInNewLocation ==
                             HELL &&
-                    n.requireStoryState().allowsAdditionalDuSatzreihengliedOhneSubjekt()) {
+                    n.requireNarration().allowsAdditionalDuSatzreihengliedOhneSubjekt()) {
                 return du("eilst", "weiter", standardDescription.getTimeElapsed().times(0.8))
                         .undWartest();
             }

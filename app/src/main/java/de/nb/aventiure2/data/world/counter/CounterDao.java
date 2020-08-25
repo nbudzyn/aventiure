@@ -5,6 +5,7 @@ import androidx.room.Insert;
 import androidx.room.OnConflictStrategy;
 import androidx.room.Query;
 
+import de.nb.aventiure2.data.narration.NarrationDao;
 import de.nb.aventiure2.german.base.AbstractDescription;
 
 /**
@@ -21,7 +22,7 @@ public abstract class CounterDao {
      * <i>wirklich angezeigt</i> wird (und nicht unterdrückt oder durch eine ganz andere
      * Beschreibung ersetzt). Oft ist es deshalb eine gute Idee,
      * <code>#incAndGet(String)</code> in derselben Methode aufzurufen, in der auch
-     * {@link de.nb.aventiure2.data.storystate.StoryStateDao#add(AbstractDescription)}
+     * {@link NarrationDao#add(AbstractDescription)}
      * aufgerufen wird.
      */
     public int incAndGet(final String id) {

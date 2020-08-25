@@ -1,4 +1,4 @@
-package de.nb.aventiure2.data.storystate;
+package de.nb.aventiure2.data.narration;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -15,7 +15,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
 
-import de.nb.aventiure2.data.storystate.StoryState.NarrationSource;
+import de.nb.aventiure2.data.narration.Narration.NarrationSource;
 import de.nb.aventiure2.data.world.time.AvTimeSpan;
 import de.nb.aventiure2.german.base.AbstractDescription;
 import de.nb.aventiure2.german.base.DuDescription;
@@ -23,21 +23,21 @@ import de.nb.aventiure2.german.base.StructuralElement;
 
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
-import static de.nb.aventiure2.data.storystate.StoryAddition.t;
+import static de.nb.aventiure2.data.narration.NarrationAddition.t;
 import static de.nb.aventiure2.german.base.StructuralElement.SENTENCE;
 import static de.nb.aventiure2.german.base.StructuralElement.WORD;
 import static de.nb.aventiure2.german.base.StructuralElement.max;
 import static java.util.Arrays.asList;
 
 /**
- * Android Room DAO for {@link StoryState}s.
+ * Android Room DAO for {@link Narration}s.
  */
 @Dao
-public abstract class StoryStateDao {
+public abstract class NarrationDao {
     private NarrationSource narrationSourceJustInCase = NarrationSource.INITIALIZATION;
 
     @Nullable
-    private StoryState storyStateCached;
+    private Narration narrationCached;
 
     public void setNarrationSourceJustInCase(final NarrationSource narrationSourceJustInCase) {
         this.narrationSourceJustInCase = narrationSourceJustInCase;
@@ -84,9 +84,9 @@ public abstract class StoryStateDao {
     }
 
     public AvTimeSpan addAlt(final AbstractDescription<?>... alternatives) {
-        final StoryState initialStoryState = requireStoryState();
+        final Narration initialNarration = requireNarration();
         return addAlt(
-                asList(alternatives), initialStoryState);
+                asList(alternatives), initialNarration);
     }
 
     public AvTimeSpan addAlt(
@@ -95,64 +95,64 @@ public abstract class StoryStateDao {
     }
 
     public AvTimeSpan addAlt(final Collection<AbstractDescription<?>> alternatives) {
-        final StoryState initialStoryState = requireStoryState();
+        final Narration initialNarration = requireNarration();
         return addAlt(
-                alternatives, initialStoryState);
+                alternatives, initialNarration);
     }
 
-    private AvTimeSpan addAlt(final StoryState initialStoryState,
+    private AvTimeSpan addAlt(final Narration initialNarration,
                               final AbstractDescription<?>... alternatives) {
-        return addAlt(asList(alternatives), initialStoryState);
+        return addAlt(asList(alternatives), initialNarration);
     }
 
     private AvTimeSpan addAlt(final Collection<AbstractDescription<?>> alternatives,
-                              final StoryState initialStoryState) {
+                              final Narration initialNarration) {
         checkArgument(alternatives.size() > 0,
                 "No alternatives");
 
         AbstractDescription<?> bestDesc = null;
         float bestScore = Float.NEGATIVE_INFINITY;
-        StoryAddition bestStoryAddition = null;
+        NarrationAddition bestNarrationAddition = null;
         for (final AbstractDescription<?> descAlternative : alternatives) {
-            final List<StoryAddition> storyStateBuildersForAlternative =
-                    toStoryStateBuilders(descAlternative,
-                            initialStoryState);
+            final List<NarrationAddition> narrationBuildersForAlternative =
+                    toNarrationAdditions(descAlternative,
+                            initialNarration);
             final IndexAndScore indexAndScore = chooseNextIndexAndScoreFrom(
-                    initialStoryState,
-                    storyStateBuildersForAlternative);
+                    initialNarration,
+                    narrationBuildersForAlternative);
             if (indexAndScore.getScore() > bestScore) {
                 bestScore = indexAndScore.getScore();
                 bestDesc = descAlternative;
-                bestStoryAddition =
-                        storyStateBuildersForAlternative.get(indexAndScore.getIndex());
+                bestNarrationAddition =
+                        narrationBuildersForAlternative.get(indexAndScore.getIndex());
             }
         }
 
-        add(bestStoryAddition);
+        add(bestNarrationAddition);
 
         return bestDesc.getTimeElapsed();
     }
 
     public AvTimeSpan add(final AbstractDescription<?> desc) {
-        final StoryState initialStoryState = requireStoryState();
-        return add(desc, initialStoryState);
+        final Narration initialNarration = requireNarration();
+        return add(desc, initialNarration);
     }
 
     private AvTimeSpan add(final AbstractDescription<?> desc,
-                           final StoryState initialStoryState) {
-        add(chooseNextFrom(initialStoryState,
-                toStoryStateBuilders(desc, initialStoryState)));
+                           final Narration initialNarration) {
+        add(chooseNextFrom(initialNarration,
+                toNarrationAdditions(desc, initialNarration)));
 
         return desc.getTimeElapsed();
     }
 
-    private static List<StoryAddition> toStoryStateBuilders(
+    private static List<NarrationAddition> toNarrationAdditions(
             final AbstractDescription<?> desc,
-            final StoryState initialStoryState) {
+            final Narration initialNarration) {
         // STORY Statt "und gehst nach Norden": ", bevor du nach Norden gehst"?
         //  (Allerdings sollte der Nebensatz dann eher eine Nebensache enthalten...)
 
-        if (initialStoryState
+        if (initialNarration
                 .allowsAdditionalDuSatzreihengliedOhneSubjekt() &&
                 desc.getStartsNew() == WORD &&
                 desc instanceof DuDescription) {
@@ -164,7 +164,7 @@ public abstract class StoryStateDao {
                     .dann(duDesc.isDann())
                     .phorikKandidat(duDesc.getPhorikKandidat())
                     .beendet(desc.getEndsThis()));
-        } else if (initialStoryState.dann()) {
+        } else if (initialNarration.dann()) {
             final String satzEvtlMitDann =
                     desc.getDescriptionHauptsatzMitKonjunktionaladverbWennNoetig("dann");
             return ImmutableList.of(t(
@@ -177,17 +177,17 @@ public abstract class StoryStateDao {
                     .phorikKandidat(desc.getPhorikKandidat())
                     .beendet(desc.getEndsThis()));
         } else {
-            final ImmutableList.Builder<StoryAddition> alternatives =
+            final ImmutableList.Builder<NarrationAddition> alternatives =
                     ImmutableList.builder();
 
             final StructuralElement startsNew = startsNewAtLeastSentenceForDuDescription(desc);
 
-            final StoryAddition standard = toHauptsatzStoryStateBuilder(startsNew, desc);
+            final NarrationAddition standard = toHauptsatzNarrationAddition(startsNew, desc);
             alternatives.add(standard);
 
             if (desc instanceof DuDescription) {
-                final StoryAddition speziellesVorfeld =
-                        toHauptsatzMitSpeziellemVorfeldStoryStateBuilder(
+                final NarrationAddition speziellesVorfeld =
+                        toHauptsatzMitSpeziellemVorfeldNarrationAddition(
                                 startsNewAtLeastSentenceForDuDescription(desc),
                                 (DuDescription) desc);
                 if (!speziellesVorfeld.getText().equals(
@@ -211,7 +211,7 @@ public abstract class StoryStateDao {
                 desc.getStartsNew();
     }
 
-    private static StoryAddition toHauptsatzStoryStateBuilder(
+    private static NarrationAddition toHauptsatzNarrationAddition(
             final StructuralElement startsNew,
             @NonNull final AbstractDescription desc) {
         return t(startsNew,
@@ -223,7 +223,7 @@ public abstract class StoryStateDao {
                 .beendet(desc.getEndsThis());
     }
 
-    private static StoryAddition toHauptsatzMitSpeziellemVorfeldStoryStateBuilder(
+    private static NarrationAddition toHauptsatzMitSpeziellemVorfeldNarrationAddition(
             final StructuralElement startsNew,
             @NonNull final DuDescription desc) {
         return t(startsNew,
@@ -237,144 +237,144 @@ public abstract class StoryStateDao {
 
     public void setLastNarrationSource(final NarrationSource lastNarrationSource) {
         checkArgument(lastNarrationSource != NarrationSource.INITIALIZATION);
-        requireStoryState();
+        requireNarration();
         setLastNarrationSourceInternal(lastNarrationSource);
-        requireStoryState(); // update cache
+        requireNarration(); // update cache
     }
 
-    @Query("UPDATE StoryState SET lastNarrationSource = :lastNarrationSource")
+    @Query("UPDATE Narration SET lastNarrationSource = :lastNarrationSource")
     protected abstract void setLastNarrationSourceInternal(NarrationSource lastNarrationSource);
 
-    public void add(@NonNull final StoryAddition storyAddition) {
-        checkNotNull(storyAddition, "storyAddition is null");
+    public void add(@NonNull final NarrationAddition narrationAddition) {
+        checkNotNull(narrationAddition, "narrationAddition is null");
 
-        @Nullable final StoryState currentStoryState = requireStoryState();
+        @Nullable final Narration currentNarration = requireNarration();
 
-        delete(currentStoryState);
+        delete(currentNarration);
 
-        final StoryState res = currentStoryState.add(narrationSourceJustInCase,
-                storyAddition);
+        final Narration res = currentNarration.add(narrationSourceJustInCase,
+                narrationAddition);
         insert(res);
     }
 
-    private void delete(final StoryState storyState) {
-        storyStateCached = null;
-        deleteInternal(storyState);
+    private void delete(final Narration narration) {
+        narrationCached = null;
+        deleteInternal(narration);
     }
 
     @Delete
-    abstract void deleteInternal(StoryState storyState);
+    abstract void deleteInternal(Narration narration);
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    public void insert(final StoryState storyState) {
-        storyStateCached = storyState;
-        insertInternal(storyState);
+    public void insert(final Narration narration) {
+        narrationCached = narration;
+        insertInternal(narration);
     }
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    abstract void insertInternal(StoryState storyState);
+    abstract void insertInternal(Narration narration);
 
     /**
-     * Wählt einen {@link StoryAddition} aus den Alternativen -
+     * Wählt einen {@link NarrationAddition} aus den Alternativen -
      * versucht dabei vor allem, Wiederholgungen mit dem unmittelbar zuvor geschriebenen
      * Story-Text zu vermeiden.
      */
-    private static StoryAddition
-    chooseNextFrom(final StoryState initialStoryState,
-                   final Collection<StoryAddition> alternatives) {
-        return chooseNextFrom(initialStoryState, alternatives.toArray(new StoryAddition[0]));
+    private static NarrationAddition
+    chooseNextFrom(final Narration initialNarration,
+                   final Collection<NarrationAddition> alternatives) {
+        return chooseNextFrom(initialNarration, alternatives.toArray(new NarrationAddition[0]));
     }
 
     /**
-     * Wählt einen {@link StoryAddition} aus den Alternativen -
+     * Wählt einen {@link NarrationAddition} aus den Alternativen -
      * versucht dabei vor allem, Wiederholgungen mit dem unmittelbar zuvor geschriebenen
      * Story-Text zu vermeiden.
      */
-    private static StoryAddition
-    chooseNextFrom(final StoryState initialStoryState, final StoryAddition... alternatives) {
-        return alternatives[chooseNextIndexFrom(initialStoryState, alternatives)];
+    private static NarrationAddition
+    chooseNextFrom(final Narration initialNarration, final NarrationAddition... alternatives) {
+        return alternatives[chooseNextIndexFrom(initialNarration, alternatives)];
     }
 
     /**
-     * Wählt einen {@link StoryAddition} aus den Alternativen -
+     * Wählt einen {@link NarrationAddition} aus den Alternativen -
      * versucht dabei vor allem, Wiederholgungen mit dem unmittelbar zuvor geschriebenen
      * Story-Text zu vermeiden.
      */
-    public StoryAddition
-    chooseNextFrom(final StoryAddition... alternatives) {
+    public NarrationAddition
+    chooseNextFrom(final NarrationAddition... alternatives) {
         return alternatives[chooseNextIndexFrom(alternatives)];
     }
 
     /**
-     * Wählt einen {@link StoryAddition} aus den Alternativen und gibt den Indes zurück -
+     * Wählt einen {@link NarrationAddition} aus den Alternativen und gibt den Indes zurück -
      * versucht dabei vor allem, Wiederholgungen mit dem unmittelbar zuvor geschriebenen
      * Story-Text zu vermeiden.
      */
-    private int chooseNextIndexFrom(final StoryAddition... alternatives) {
+    private int chooseNextIndexFrom(final NarrationAddition... alternatives) {
         if (alternatives.length == 1) {
             return 0;
         }
 
-        return chooseNextIndexFrom(requireStoryState(), alternatives);
+        return chooseNextIndexFrom(requireNarration(), alternatives);
     }
 
     /**
-     * Wählt einen {@link StoryAddition} aus den Alternativen und gibt den Indes zurück -
+     * Wählt einen {@link NarrationAddition} aus den Alternativen und gibt den Indes zurück -
      * versucht dabei vor allem, Wiederholgungen mit dem unmittelbar zuvor geschriebenen
      * Story-Text zu vermeiden.
      */
-    private static int chooseNextIndexFrom(final StoryState inititalStoryState,
-                                           final StoryAddition... alternatives) {
+    private static int chooseNextIndexFrom(final Narration inititalNarration,
+                                           final NarrationAddition... alternatives) {
         if (alternatives.length == 1) {
             return 0;
         }
 
-        return chooseNextIndexAndScoreFrom(inititalStoryState, alternatives).getIndex();
+        return chooseNextIndexAndScoreFrom(inititalNarration, alternatives).getIndex();
     }
 
     /**
-     * Wählt einen {@link StoryAddition} aus den Alternativen und gibt den Indes zurück -
+     * Wählt einen {@link NarrationAddition} aus den Alternativen und gibt den Indes zurück -
      * versucht dabei vor allem, Wiederholgungen mit dem unmittelbar zuvor geschriebenen
      * Story-Text zu vermeiden.
      */
     @NonNull
     private IndexAndScore chooseNextIndexAndScoreFrom(
-            final StoryAddition... alternatives) {
-        return chooseNextIndexAndScoreFrom(requireStoryState(), alternatives);
+            final NarrationAddition... alternatives) {
+        return chooseNextIndexAndScoreFrom(requireNarration(), alternatives);
     }
 
     /**
-     * Wählt einen {@link StoryAddition} aus den Alternativen und gibt den Indes zurück -
+     * Wählt einen {@link NarrationAddition} aus den Alternativen und gibt den Indes zurück -
      * versucht dabei vor allem, Wiederholgungen mit dem unmittelbar zuvor geschriebenen
      * Story-Text zu vermeiden.
      */
     @NonNull
     private static IndexAndScore chooseNextIndexAndScoreFrom(
-            final StoryState initialStoryState,
-            final Collection<StoryAddition> alternatives) {
-        return chooseNextIndexAndScoreFrom(initialStoryState,
-                alternatives.toArray(new StoryAddition[0]));
+            final Narration initialNarration,
+            final Collection<NarrationAddition> alternatives) {
+        return chooseNextIndexAndScoreFrom(initialNarration,
+                alternatives.toArray(new NarrationAddition[0]));
     }
 
     /**
-     * Wählt einen {@link StoryAddition} aus den Alternativen und gibt den Indes zurück -
+     * Wählt einen {@link NarrationAddition} aus den Alternativen und gibt den Indes zurück -
      * versucht dabei vor allem, Wiederholgungen mit dem unmittelbar zuvor geschriebenen
      * Story-Text zu vermeiden.
      */
     @NonNull
     private static IndexAndScore chooseNextIndexAndScoreFrom(
-            final StoryState initialStoryState,
-            final StoryAddition... alternatives) {
+            final Narration initialNarration,
+            final NarrationAddition... alternatives) {
         checkArgument(alternatives.length > 0,
                 "No alternatives");
 
-        final String currentText = initialStoryState.getText();
+        final String currentText = initialNarration.getText();
 
         int bestIndex = -1;
         float bestScore = Float.NEGATIVE_INFINITY;
 
         for (int i = 0; i < alternatives.length; i++) {
-            final StoryAddition alternative = alternatives[i];
+            final NarrationAddition alternative = alternatives[i];
             final float score =
                     TextAdditionEvaluator
                             .evaluateAddition(currentText, alternative.getText());
@@ -388,26 +388,26 @@ public abstract class StoryStateDao {
     }
 
     public boolean lastNarrationWasFromReaction() {
-        return requireStoryState().lastNarrationWasFomReaction();
+        return requireNarration().lastNarrationWasFomReaction();
     }
 
     @NonNull
-    public StoryState requireStoryState() {
-        @Nullable final StoryState storyState = getStoryState();
-        if (storyState == null) {
+    public Narration requireNarration() {
+        @Nullable final Narration narration = getNarration();
+        if (narration == null) {
             throw new IllegalStateException("No current story state to add to");
         }
-        return storyState;
+        return narration;
     }
 
-    public StoryState getStoryState() {
-        if (storyStateCached != null) {
-            return storyStateCached;
+    public Narration getNarration() {
+        if (narrationCached != null) {
+            return narrationCached;
         }
 
-        return loadStoryState();
+        return loadNarration();
     }
 
-    @Query("SELECT * from StoryState")
-    abstract StoryState loadStoryState();
+    @Query("SELECT * from Narration")
+    abstract Narration loadNarration();
 }
