@@ -6,6 +6,7 @@ import java.util.Objects;
 
 /**
  * Ein Kandidat, auf den sich ein Pronomen beziehen könnte, insbesondere ein Personalpronomen.
+ * Anders gesagt: Ein Referent.
  * <br>
  * Beispiel: In "Ich sehe das Mödchen." wäre "das Mödchen" ein solcher Kandidat.
  * <br>

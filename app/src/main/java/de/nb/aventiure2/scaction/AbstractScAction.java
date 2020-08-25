@@ -56,9 +56,21 @@ public abstract class AbstractScAction implements IPlayerAction {
         //  Kann nicht die Zeit jeweils beim narraten upgedatet werden?
         //  Und man vergleich hier nur vorher-Zeit mit nachher-Zeit?
 
-        // STORY Wenn der Benutzer länger nicht weiterkommt, erzeugt ein Tippgenerator
+        // STORY Wenn der Benutzer länger nicht weiterkommt (länger kein
+        //  neuer Geschichtsschritt erreicht), erzeugt ein Tippgenerator
         //  (neues Game Object?) Sätze wie "Wann soll eigentlich das Schlossfest sein?",
         //  "Vielleicht hättest du doch die Kugel mitnehmen sollen?" o.Ä.
+        //  Als Tipp für den Froschprinzen z.B. durch einen NSC ankündigen lassen: Im Königreich
+        //  nebenan ist der Prinz
+        //  verschwunden.
+        //  Tipp für Rapunzel: Mutter sammelt im Wald Holz und klagt ihr Leid.
+        //  Tipps könnten von den Geschichtsmeilensteinen generiert werden, die
+        //  noch nicht erreicht, deren Voraussetzungen jedoch bereits gegeben sind.
+        //  (Jeder Geschichtsmeilenstein könnte mehrere Hinweise erzeugen, aus denen
+        //  der Narrator auswählen könnte.)
+        //  Tipps sollten zum aktuellen (oder zu einem nahen) Raum passen (ein Geschichtsmeilenstein
+        //  könnte optional einen Lieblingsraum haben).
+        //  Statt eines Tipps könnte auch eine neue Geschichte / Task starten.
 
         final AvDateTime start = db.nowDao().now();
 
@@ -157,6 +169,9 @@ public abstract class AbstractScAction implements IPlayerAction {
      */
     protected SubstantivischePhrase getAnaphPersPronWennMglSonstShortDescription(
             final GameObjectId describableId) {
+        // TODO Anapher im weitesten Sinne verwenden. Auch Wiederholung und Katapher ist
+        //  Anapher. Perspron ist nur eine Form der Anapher.
+
         return getAnaphPersPronWennMglSonstDescription(
                 (IDescribableGO) world.load(describableId), true);
     }

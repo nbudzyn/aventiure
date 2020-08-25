@@ -133,6 +133,8 @@ public class EssenAction extends AbstractScAction {
             throw new IllegalStateException("Unexpected location: " + location);
         }
 
+        //    STORY Essen sollte stärkere Auswirkungen haben. Märchen mit Essen?
+
         sc.memoryComp().setLastAction(buildMemorizedAction());
 
         timeElapsed = timeElapsed.plus(world.narrateAndDoReactions()

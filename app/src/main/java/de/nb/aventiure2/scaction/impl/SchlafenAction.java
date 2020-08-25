@@ -62,8 +62,10 @@ public class SchlafenAction extends AbstractScAction {
 
     @Override
     public AvTimeSpan narrateAndDo() {
-        // STORY Nachts ist man immer müde oder nachts wird man leichter müde oder
-        //  nachts kann man immer einschlafen...
+        // STORY Wenn der Benutzer längere Zeit nicht geschlafen hat, wird er automatisch müde
+        //  und bleibt müde. Abends wird man eher müde oder ist von allein müde.
+        //  Oder Nachts ist man immer müde.
+
         // STORY "Vor Hunger kannst du nicht einschlafen"
         if (sc.feelingsComp().hasMood(ERSCHOEPFT)) {
             return narrateAndDoSchlaeftEin();
@@ -138,6 +140,7 @@ public class SchlafenAction extends AbstractScAction {
         //  letzter Zeitpunkt, letzter WACHER Zeitpunkt und aktueller Zeitpunkt
         //  Entsprechend kann dann der Text gestaltet werden, z.B. "Der Frosch ist verschwunden."
 
+
         // STORY Konzept entwickeln, dass diese "Statusübergänge" realisiert:
         //  - Benutzer rastet für längere Zeit (wach) und Rapunzel beginnt mehrfach
         //    zu singen und hört wieder auf, letztlich hat Rapunzel aufgehört
@@ -155,7 +158,7 @@ public class SchlafenAction extends AbstractScAction {
         // STORY Zum Beispiel wäre der Benutzer über alle Statusänderungen zu unterrichten,
         //  Die zwischenzeitlich passiert sind ("der Frosch ist verschwunden").
 
-        // STORY Man könnte auch, wenn der Benutzer erstmals wieder nach draußem kommt, etwas
+        // STORY Man könnte auch, wenn der Benutzer erstmals wieder nach draußen kommt, etwas
         //  schreiben wie "Inzwischen ist es dunkel geworden". Dazu müsste der "Tageszeit-Status"
         //  (oder zumindest der Zeitpunkt) gespeichert werden, wenn der Benutzer REIN GEHT
         //  und später beim RAUSTRETEN dieser Status mit dem aktuellen Tageszeitstatus verglichen

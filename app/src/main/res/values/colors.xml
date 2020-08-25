@@ -16,6 +16,8 @@
     <color name="actionRasten">#FF766F</color>
     <color name="actionReden">#FF9D98</color>
 
+    <!-- TODO Buttons nicht rot. -->
+    
     <!--
 .color-primary-0 { color: #3BC34C }	/* Main Primary color */
 .color-primary-1 { color: #87E393 }

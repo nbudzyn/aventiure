@@ -109,6 +109,8 @@ public class RapunzelsZauberinReactionsComp
             return onSCLeave(from, to);
         }
 
+        // STORY Kugel hinlegen: Kommentar von Hexe?
+
         return noTime();
     }
 
@@ -222,6 +224,9 @@ public class RapunzelsZauberinReactionsComp
             // Kein Zustandswechsel. Die Zauberin soll noch warten, bevor sie (wieder) losgeht.
             return noTime();
         }
+
+        //    STORY Die Hexe sollte 2x täglich kommen? Zb noch einmal zum Abend?
+        //     Oder dann, wenn es dramaturgisch sinnvoll ist?
 
         // Zustandswechsel nötig! Die Zauberin geht zu Rapunzel los.
         return onTimePassed_fromVorDemNaechstenRapunzelBesuchToAufDemWegZuRapunzel(now);

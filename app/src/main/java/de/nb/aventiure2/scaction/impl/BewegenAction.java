@@ -184,6 +184,11 @@ public class BewegenAction<LOC_DESC extends ILocatableGO & IDescribableGO>
         // dass man z.B. den Tisch bei Dunkelheit nicht sieht, aber
         // trotzdem die Kugel, die drauf liegt?!
 
+        // TODO "Der Frosch ist nicht mehr da" o.Ä !! Wenn man ihn irgendwo hingesetzt hat.
+        //  Aber nur, wenn Frosch (noch) bekannt ist und sein letzter Ort bekannt war
+        //  und es keine guten Gründe gibt, dass er nicht mehr da sein sollte. Und nur einmal,
+        //  dann assumeNoLocation() aufrufen!
+
         // Lebende Dinge, sind hier ausgeschlossen, sie müssen sich ggf. in einer
         // ReactionsComp selbst beschreiben.
         upgradeNonLivingNonMovableRecursiveInventoryKnown(loadTo());
@@ -434,6 +439,10 @@ public class BewegenAction<LOC_DESC extends ILocatableGO & IDescribableGO>
     }
 
     private AvTimeSpan narrateLocationOnly(@NonNull final ILocationGO to) {
+        // STORY Wenn Bewegung Wiederholung ist (z.B. Rund um den Turm): Zur Sicherheit...
+        //  noch einmal. Um sicher zu
+        //  gehen... noch einmal. Du gehst SOGAR noch einmal...
+
         final AbstractDescription<?> description = getNormalDescription(
                 to.storingPlaceComp().getLichtverhaeltnisse());
 
@@ -479,6 +488,7 @@ public class BewegenAction<LOC_DESC extends ILocatableGO & IDescribableGO>
                             description.getTimeElapsed()));
                 }
 
+                // TODO Aber dir kommt ein Gedanke nicht, wenn from = to?
                 alt.add(neuerSatz("Aber dir kommt ein Gedanke und "
                                 + uncapitalize(description.getDescriptionHauptsatz()),
                         description.getTimeElapsed()));

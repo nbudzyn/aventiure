@@ -148,6 +148,7 @@ public class RastenAction extends AbstractScAction {
                                 + "in den "
                                 + "Ästen über dir. Ein Rabe setzt "
                                 + "sich neben dich und fliegt nach einer Weile wieder fort",
+                        //    STORY Rabe mit Märchenbezug?
                         mins(10))
                         .beendet(SENTENCE)
                         .dann(),

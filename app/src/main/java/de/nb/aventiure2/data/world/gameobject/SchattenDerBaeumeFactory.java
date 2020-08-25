@@ -83,6 +83,8 @@ public class SchattenDerBaeumeFactory {
                     .dann();
         }
 
+        //    STORY Klarer machen, dass man unter den Bäumen versteckt ist. (Ggf. als Tipp.)
+
         if (db.counterDao().incAndGet(
                 "DescTo_SchattenDerBaeume__SCSetztSichTagsueberInDenSchattenDerBaeume")
                 == 1) {

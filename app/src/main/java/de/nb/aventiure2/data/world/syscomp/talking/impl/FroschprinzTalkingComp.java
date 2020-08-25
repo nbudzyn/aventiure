@@ -305,6 +305,7 @@ public class FroschprinzTalkingComp extends AbstractTalkingComp {
         world.loadSC().talkingComp().setTalkingTo(FROSCHPRINZ);
 
         final AvTimeSpan timeSpan = n.add(neuerSatz(
+                // TODO Geschlechtsneutral! Reichtümer o.Ä.
                 "„Was du haben willst, lieber Frosch“, sagst du, „meine Kleider, "
                         + "Perlen oder Edelsteine?“", secs(5)));
 
@@ -314,6 +315,7 @@ public class FroschprinzTalkingComp extends AbstractTalkingComp {
                 getObjectsInDenBrunnenGefallen();
 
         return timeSpan.plus(n.add(neuerSatz(PARAGRAPH,
+                // TODO Geschlechtsneutral! Reichtümer o.Ä.
                 "Der Frosch antwortet: „Deine Kleider, Perlen oder Edelsteine, die mag "
                         + "ich nicht. "
                         + "Aber wenn ich am Tischlein bei dir sitzen soll und von deinem Tellerlein "
@@ -343,6 +345,7 @@ public class FroschprinzTalkingComp extends AbstractTalkingComp {
                 neuerSatz(PARAGRAPH,
                         "„Sicher“, antwortet der Frosch, „ich kann dir alles aus dem Brunnen "
                                 + "holen, was hineingefallen ist. Was gibst du mir dafür?“ "
+                                // TODO Geschlechtsneutral! Reichtümer o.Ä.
                                 + "„Was du haben willst, lieber Frosch“, sagst du, „meine Kleider, "
                                 + "Perlen oder Edelsteine?“",
                         secs(10))));
@@ -354,6 +357,7 @@ public class FroschprinzTalkingComp extends AbstractTalkingComp {
                 getObjectsInDenBrunnenGefallen();
 
         return timeSpan.plus(n.add(neuerSatz(PARAGRAPH,
+                // TODO Geschlechtsneutral! Reichtümer o.Ä.
                 "Der Frosch antwortet: „Deine Kleider, Perlen oder Edelsteine, die mag "
                         + "ich nicht. "
                         + "Aber wenn ich am Tischlein neben dir sitzen soll, von deinem Tellerlein "

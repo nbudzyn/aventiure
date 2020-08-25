@@ -149,6 +149,9 @@ public abstract class StoryStateDao {
     private static List<StoryAddition> toStoryStateBuilders(
             final AbstractDescription<?> desc,
             final StoryState initialStoryState) {
+        // STORY Statt "und gehst nach Norden": ", bevor du nach Norden gehst"?
+        //  (Allerdings sollte der Nebensatz dann eher eine Nebensache enthalten...)
+
         if (initialStoryState
                 .allowsAdditionalDuSatzreihengliedOhneSubjekt() &&
                 desc.getStartsNew() == WORD &&
