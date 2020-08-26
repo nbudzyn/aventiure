@@ -56,9 +56,19 @@ public abstract class AbstractScAction implements IPlayerAction {
         //  Kann nicht die Zeit jeweils beim narraten upgedatet werden?
         //  Und man vergleich hier nur vorher-Zeit mit nachher-Zeit?
 
+        final AvDateTime start = db.nowDao().now();
+
+        n.setNarrationSourceJustInCase(SC_ACTION);
+        final AvTimeSpan timeElapsed = narrateAndDo();
+
+        // TODO Sollte das hier eine Reaction werden?
+        //  (onScActionDoneBeforeWorldUpdate() o.Ä.?)
+
         // STORY Wenn der Benutzer länger nicht weiterkommt (länger kein
         //  neuer Geschichtsschritt erreicht), erzeugt ein Tippgenerator
-        //  (neues Game Object?) Sätze wie "Wann soll eigentlich das Schlossfest sein?",
+        //  (neues Game Object mit einer speziellen Reaction mit
+        //  onScActionDoneAfterWorldUpdate())
+        //  Sätze wie "Wann soll eigentlich das Schlossfest sein?",
         //  "Vielleicht hättest du doch die Kugel mitnehmen sollen?" o.Ä.
         //  Als Tipp für den Froschprinzen z.B. durch einen NSC ankündigen lassen: Im Königreich
         //  nebenan ist der Prinz
@@ -74,12 +84,6 @@ public abstract class AbstractScAction implements IPlayerAction {
         //  Tipps sollten zum aktuellen (oder zu einem nahen) Raum passen (ein Geschichtsmeilenstein
         //  könnte optional einen Lieblingsraum haben).
         //  Statt eines Tipps könnte auch eine neue Geschichte / Task starten.
-
-        final AvDateTime start = db.nowDao().now();
-
-        n.setNarrationSourceJustInCase(SC_ACTION);
-        final AvTimeSpan timeElapsed = narrateAndDo();
-
         fireScActionDone(start);
 
         final AvDateTime dateTimeAfterActionBeforeUpdateWorld = start.plus(timeElapsed);
