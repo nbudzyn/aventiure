@@ -68,6 +68,9 @@ public abstract class AbstractScAction implements IPlayerAction {
         //  noch nicht erreicht, deren Voraussetzungen jedoch bereits gegeben sind.
         //  (Jeder Geschichtsmeilenstein könnte mehrere Hinweise erzeugen, aus denen
         //  der Narrator auswählen könnte.)
+        //  Jeder Geschichtsmeilenstein hat eine Anzahl von Schritten, in denen er
+        //  erreicht sein sollte. Ein Tipp würde nur generiert, wenn es Geschichtsmeilensteine
+        //  gibt, deren Voraussetzungen gegeben sind und deren Schrittzahl überschritten ist.
         //  Tipps sollten zum aktuellen (oder zu einem nahen) Raum passen (ein Geschichtsmeilenstein
         //  könnte optional einen Lieblingsraum haben).
         //  Statt eines Tipps könnte auch eine neue Geschichte / Task starten.
