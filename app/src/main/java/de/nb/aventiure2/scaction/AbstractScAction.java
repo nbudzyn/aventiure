@@ -22,8 +22,6 @@ import static de.nb.aventiure2.data.narration.Narration.NarrationSource.REACTION
 import static de.nb.aventiure2.data.narration.Narration.NarrationSource.SC_ACTION;
 import static de.nb.aventiure2.data.world.time.AvTimeSpan.days;
 import static de.nb.aventiure2.data.world.time.AvTimeSpan.noTime;
-import static de.nb.aventiure2.german.base.AllgDescription.neuerSatz;
-import static de.nb.aventiure2.german.base.StructuralElement.SENTENCE;
 
 /**
  * An action the player could choose.
@@ -76,38 +74,11 @@ public abstract class AbstractScAction implements IPlayerAction {
         final AvDateTime dateTimeBetweenMainWorldUpdateAndHints =
                 db.nowDao().passTime(updateWorld(start));
 
-        db.nowDao().passTime(doAndNarrateHints());
+        db.nowDao().passTime(fireAfterScActionAndFirstWorldUpdate());
 
         db.nowDao().passTime(updateWorld(dateTimeBetweenMainWorldUpdateAndHints));
 
         world.saveAll(true);
-    }
-
-    private AvTimeSpan doAndNarrateHints() {
-        // STORY Nur wenn der Benutzer länger nicht weiterkommt (länger kein
-        //  neuer Geschichtsschritt erreicht), erzeugt ein Tippgenerator
-        //  (neues Game Object mit einer speziellen Reaction mit
-        //  onScActionDoneAfterWorldUpdate())
-        //  Sätze wie "Wann soll eigentlich das Schlossfest sein?",
-        //  "Vielleicht hättest du doch die Kugel mitnehmen sollen?" o.Ä.
-        //  Als Tipp für den Froschprinzen z.B. durch einen NSC ankündigen lassen: Im Königreich
-        //  nebenan ist der Prinz
-        //  verschwunden.
-        //  Tipp für Rapunzel: Mutter sammelt im Wald Holz und klagt ihr Leid.
-        //  Tipps könnten von den Geschichtsmeilensteinen generiert werden, die
-        //  noch nicht erreicht, deren Voraussetzungen jedoch bereits gegeben sind.
-        //  (Jeder Geschichtsmeilenstein könnte mehrere Hinweise erzeugen, aus denen
-        //  der Narrator auswählen könnte.)
-        //  Jeder Geschichtsmeilenstein hat eine Anzahl von Schritten, in denen er
-        //  erreicht sein sollte. Ein Tipp würde nur generiert, wenn es Geschichtsmeilensteine
-        //  gibt, deren Voraussetzungen gegeben sind und deren Schrittzahl überschritten ist.
-        //  Tipps sollten zum aktuellen (oder zu einem nahen) Raum passen (ein Geschichtsmeilenstein
-        //  könnte optional einen Lieblingsraum haben).
-        //  Statt eines Tipps könnte auch eine neue Geschichte / Task starten.
-
-        return n.add(neuerSatz(SENTENCE,
-                "Du hast das Gefühl, es gibt noch viel zu erleben",
-                noTime()));
     }
 
     private void fireScActionDone(final AvDateTime startTimeOfScAction) {
@@ -154,6 +125,10 @@ public abstract class AbstractScAction implements IPlayerAction {
                 additionalTimeElapsed.plus(updateWorld(now, now.plus(additionalTimeElapsed)));
 
         return additionalTimeElapsed;
+    }
+
+    private AvTimeSpan fireAfterScActionAndFirstWorldUpdate() {
+        return world.narrateAndDoReactions().afterScActionAndFirstWorldUpdate();
     }
 
     abstract public AvTimeSpan narrateAndDo();

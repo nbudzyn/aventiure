@@ -16,6 +16,7 @@ import de.nb.aventiure2.data.world.syscomp.reaction.IReactions;
 import de.nb.aventiure2.data.world.syscomp.reaction.IResponder;
 import de.nb.aventiure2.data.world.syscomp.reaction.interfaces.IEssenReactions;
 import de.nb.aventiure2.data.world.syscomp.reaction.interfaces.IMovementReactions;
+import de.nb.aventiure2.data.world.syscomp.reaction.interfaces.ISCActionReactions;
 import de.nb.aventiure2.data.world.syscomp.reaction.interfaces.ITimePassedReactions;
 import de.nb.aventiure2.data.world.syscomp.storingplace.ILocationGO;
 import de.nb.aventiure2.data.world.time.AvDateTime;
@@ -103,6 +104,12 @@ public class GOReactionsCoordinator {
     public AvTimeSpan onTimePassed(final AvDateTime lastTime, final AvDateTime now) {
         return doReactions(ITimePassedReactions.class,
                 reactions -> reactions.onTimePassed(lastTime, now));
+    }
+
+    // ISCActionReactions
+    public AvTimeSpan afterScActionAndFirstWorldUpdate() {
+        return doReactions(ISCActionReactions.class,
+                reactions -> reactions.afterScActionAndFirstWorldUpdate());
     }
 
     /**

@@ -111,6 +111,9 @@ public class World {
     public static final GameObjectId TAGESZEIT = new GameObjectId(40_001);
     public static final GameObjectId SCHLOSSFEST = new GameObjectId(40_000);
 
+    // MEANING
+    public static final GameObjectId STORY_WEB = new GameObjectId(100_000);
+
     // Sonstige Konstanten
     private static final boolean SCHLOSS_VORHALLE_DAUERHAFT_BELEUCHTET = true;
 
@@ -183,6 +186,7 @@ public class World {
             final BaumFactory baum = new BaumFactory(db, this);
             final CreatureFactory creature = new CreatureFactory(db, this);
             final InvisibleFactory invisible = new InvisibleFactory(db, this);
+            final MeaningFactory meaning = new MeaningFactory(db, this);
             final RoomFactory room = new RoomFactory(db, this);
             final SimpleConnectionCompFactory connection =
                     new SimpleConnectionCompFactory(db, this);
@@ -240,6 +244,8 @@ public class World {
                     //  nicht betreten, kann, wo aber die Wölfe laufen.
                     //  Es könnte einen sicheren Platz geben - z.B. wäre der Weg sicher
                     //  oder die Hütte.
+
+                    meaning.createStoryWeb(),
 
                     invisible.createSchlossfest(),
                     invisible.createTageszeit(),
