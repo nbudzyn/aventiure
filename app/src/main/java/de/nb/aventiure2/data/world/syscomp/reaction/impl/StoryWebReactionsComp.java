@@ -29,6 +29,36 @@ public class StoryWebReactionsComp
 
     @Override
     public AvTimeSpan afterScActionAndFirstWorldUpdate() {
+        // STORY Es gibt Storys. Sie sind initial "nicht begonnen."
+        //  Gewisse Trigger schalten eine neue Storys (z.B. ein neues Märchen)
+        //  frei / starten sie: Gewisse Aktionen, sinnfreies
+        //  Umherlaufen des Spielers, bestimmte Zeit, bestimmte Schrittzahl ohne Zustand...
+        //  erreicht zu haben o.ä. Solche Triggerbedinungen werden in jedem Zug geprüft.
+        //  Storys könnten eigene Klassen oder Enum-Werte sein.
+        //  Jede Story besteht aus einzelnen Schritten / Steps / Geschichtsschritten /
+        //  Geschichtsmeilensteinen (jeder Geschichtsmeilenstein gehört zu einer Story).
+        //  Wenn ein Step erreicht wird, wird "markiert", dass der Schritt erreicht wurde,
+        //  mit Schrittzähler.
+        //  Jeder Geschichtsmeilenstein kann Voraussetzungen haben. Voraussetzungen sind andere
+        //  Geschichtsmeilensteine - oder alternativ (oder zusätzlich) könnten die Voraussetzungen für
+        //  Geschichtsmeilensteine auch beliebige Prüfungen sein.
+        //  Wenn ein
+        //  Story-Ziel erreicht wird, wird eine neue (möglichst abstrakte) Überschrift gesetzt und
+        //  damit ein Kapitel begonnen. Die Überschrift bezieht sich lose auf einen der
+        //  Storys, die der Spieler zuerst begonnen hat und die noch nicht abgeschlossen
+        //  wurden. Für jede Story stehen mehrere Überschriften bereit, die in Reihenfolge
+        //  gewählt werden.
+        //  Storys einschließlich der Geschichtsmeilensteine könnten auch generiert werden,
+        //  basierend auf Story-Telling-Theorien.
+
+        // TODO Es könnte einen extra Knopf geben, unter dem der benutzer in einem Baum (oder
+        //  einem Graphen) sieht,
+        //  welche Meilensteine er bisher erreicht hat. Die baumstruktur ordnet sich nach den
+        //  Voraussetzungen der meilensteine voneinander.
+        // STORY Wenn alle Storys abgeschlossen sind, ist das spiel beendet ("lebst glücklich...")
+        // TODO Das Programm kann oben in der leiste jederzeit einen prozentsatz anzeigen, wie
+        //  viele meilensteine der benutzer schon erreicht hat.
+
         // STORY Nur wenn der Benutzer länger nicht weiterkommt (länger kein
         //  neuer Geschichtsschritt erreicht) werden Sätze erzeugt wie
         //  "Wann soll eigentlich das Schlossfest sein?",
