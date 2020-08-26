@@ -34,14 +34,13 @@ import de.nb.aventiure2.scaction.devhelper.chooser.impl.Walkthrough;
 public class MainActivity extends AppCompatActivity {
     private static final Logger LOGGER = Logger.getLogger();
 
-    private TextView storyTextView;
+    private TextView narrationTextView;
 
-    private ScrollView storyTextScrollView;
+    private ScrollView narrationScrollView;
 
     @Nullable
-    private ObjectAnimator storyTextScrollViewAnimator;
+    private ObjectAnimator narrationScrollViewAnimator;
 
-    private RecyclerView actionsRecyclerView;
     private GuiActionsAdapter guiActionsAdapter;
 
     private MainViewModel mainViewModel;
@@ -52,16 +51,16 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         // TODO Use view binding
-        storyTextView = findViewById(R.id.storyTextView);
+        narrationTextView = findViewById(R.id.narrationView);
 
         // TODO Blocksatz?
         // TODO Automatische Trennung?!
-        storyTextScrollView = findViewById(R.id.storyTextScrollView);
-        storyTextView.setOnTouchListener(new View.OnTouchListener() {
+        narrationScrollView = findViewById(R.id.narrationScrollView);
+        narrationTextView.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(final View v, final MotionEvent event) {
-                if (storyTextScrollViewAnimator != null) {
-                    storyTextScrollViewAnimator.cancel();
+                if (narrationScrollViewAnimator != null) {
+                    narrationScrollViewAnimator.cancel();
                 }
 
                 return false;
@@ -74,25 +73,25 @@ public class MainActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
 
         mainViewModel = new ViewModelProvider(this).get(MainViewModel.class);
-        mainViewModel.getStoryText().observe(this,
-                this::setStoryTextAndScrollToBottom);
+        mainViewModel.getNarration().observe(this,
+                this::setNarrationAndScrollToBottom);
         mainViewModel.getGuiActions().observe(this,
                 g -> guiActionsAdapter.setGuiActions(
                         g == null ? ImmutableList.of() : g));
     }
 
-    private void setStoryTextAndScrollToBottom(final String newText) {
+    private void setNarrationAndScrollToBottom(final String newText) {
         final String oldText =
-                storyTextView.getText() == null ? "" :
-                        storyTextView.getText().toString();
+                narrationTextView.getText() == null ? "" :
+                        narrationTextView.getText().toString();
 
         final SpannableString ss = new SpannableString(newText);
 
         final ForegroundColorSpan fscOld = new ForegroundColorSpan(
-                getResources().getColor(R.color.colorOldStoryText, getTheme()));
+                getResources().getColor(R.color.colorOldNarration, getTheme()));
 
         final ForegroundColorSpan fscNew = new ForegroundColorSpan(
-                getResources().getColor(R.color.colorNewStoryText, getTheme()));
+                getResources().getColor(R.color.colorNewNarration, getTheme()));
 
         if (newText.startsWith(oldText)) {
             ss.setSpan(fscOld, 0, oldText.length(), Spanned.SPAN_INCLUSIVE_INCLUSIVE);
@@ -102,7 +101,7 @@ public class MainActivity extends AppCompatActivity {
             ss.setSpan(fscNew, 0, newText.length(), Spanned.SPAN_INCLUSIVE_INCLUSIVE);
         }
 
-        storyTextView.setText(ss);
+        narrationTextView.setText(ss);
         final int scrollDuration = calcScrollDuration(oldText, newText);
 
         scrollToBottom(scrollDuration);
@@ -146,25 +145,25 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void scrollToBottom(final int scrollDuration) {
-        storyTextScrollView.post(() -> {
-            final int top = storyTextView.getBottom() -
-                    storyTextScrollView.getHeight()
-                    + storyTextScrollView.getPaddingBottom();
+        narrationScrollView.post(() -> {
+            final int top = narrationTextView.getBottom() -
+                    narrationScrollView.getHeight()
+                    + narrationScrollView.getPaddingBottom();
 
             if (scrollDuration <= 0) {
-                storyTextScrollView.fullScroll(ScrollView.FOCUS_DOWN);
+                narrationScrollView.fullScroll(ScrollView.FOCUS_DOWN);
             } else {
-                storyTextScrollViewAnimator = ObjectAnimator
-                        .ofInt(storyTextScrollView, "scrollY", top)
+                narrationScrollViewAnimator = ObjectAnimator
+                        .ofInt(narrationScrollView, "scrollY", top)
                         .setDuration(scrollDuration);
-                storyTextScrollViewAnimator.setAutoCancel(true);
-                storyTextScrollViewAnimator.start();
+                narrationScrollViewAnimator.setAutoCancel(true);
+                narrationScrollViewAnimator.start();
             }
         });
     }
 
     private void createActionsRecyclerView() {
-        actionsRecyclerView = findViewById(R.id.recyclerView);
+        final RecyclerView actionsRecyclerView = findViewById(R.id.recyclerView);
         actionsRecyclerView.addItemDecoration(
                 new VerticalSpaceItemDecoration(convertDpToPixel(24)));
 

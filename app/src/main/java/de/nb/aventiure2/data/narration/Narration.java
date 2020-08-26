@@ -17,7 +17,8 @@ import de.nb.aventiure2.german.base.StructuralElement;
 import static de.nb.aventiure2.data.narration.Narration.NarrationSource.REACTIONS;
 
 /**
- * The text of the narration, together with state relevant for going on with the story. Only things that have already happened.
+ * The text of the narration, together with state relevant for going on with the narration.
+ * Only things that have already happened.
  */
 @Entity
 public class Narration {
@@ -41,7 +42,7 @@ public class Narration {
     private final boolean kommaStehtAus;
 
     /**
-     * Whether the story can be continued by a Satzreihenglied without subject where
+     * Whether the narration can be continued by a Satzreihenglied without subject where
      * the player character is the implicit subject (such as " und gehst durch die Tür.")
      */
     private final boolean allowsAdditionalDuSatzreihengliedOhneSubjekt;

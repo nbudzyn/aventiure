@@ -29,7 +29,7 @@ import static de.nb.aventiure2.data.database.AvDatabase.getDatabase;
 public class MainViewModel extends AndroidViewModel {
     private static final Logger LOGGER = Logger.getLogger();
 
-    private final MutableLiveData<String> storyText = new MutableLiveData<>();
+    private final MutableLiveData<String> narration = new MutableLiveData<>();
     private final MutableLiveData<List<GuiAction>> playerActionHandlers = new MutableLiveData<>();
 
     private final ScActionService scActionService;
@@ -45,7 +45,7 @@ public class MainViewModel extends AndroidViewModel {
 
         scActionService = new ScActionService(application);
 
-        storyText.setValue("");
+        narration.setValue("");
         playerActionHandlers.setValue(ImmutableList.of());
 
         postLiveUpdateLater();
@@ -164,13 +164,13 @@ public class MainViewModel extends AndroidViewModel {
             return;
         }
 
-        storyText.postValue(narration.getText());
+        this.narration.postValue(narration.getText());
         playerActionHandlers.postValue(buildGuiActions());
     }
 
     @UiThread
-    public LiveData<String> getStoryText() {
-        return storyText;
+    public LiveData<String> getNarration() {
+        return narration;
     }
 
     @UiThread

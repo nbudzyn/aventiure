@@ -3,8 +3,8 @@
     <color name="colorPrimary">#25509E</color>
     <color name="colorPrimaryDark">#143A81</color>
     <color name="colorAccent">#C2150C</color>
-    <color name="colorOldStoryText">#999999</color>
-    <color name="colorNewStoryText">#333333</color>
+    <color name="colorOldNarration">#999999</color>
+    <color name="colorNewNarration">#333333</color>
     <color name="actionBewegen">#3BC34C</color>
     <color name="actionKlettern">#1CB830</color>
     <color name="actionNehmen">#D9E924</color>
@@ -17,7 +17,7 @@
     <color name="actionReden">#FF9D98</color>
 
     <!-- TODO Buttons nicht rot. -->
-    
+
     <!--
 .color-primary-0 { color: #3BC34C }	/* Main Primary color */
 .color-primary-1 { color: #87E393 }

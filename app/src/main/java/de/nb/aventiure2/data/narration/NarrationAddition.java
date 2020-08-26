@@ -44,7 +44,7 @@ public class NarrationAddition {
     private boolean kommaStehtAus;
 
     /**
-     * Whether the story can be continued by a Satzreihenglied without subject where
+     * Whether the narration can be continued by a Satzreihenglied without subject where
      * the player character is the implicit subject (such as " und gehst durch die Tür.")
      */
     private boolean allowsAdditionalDuSatzreihengliedOhneSubjekt = false;

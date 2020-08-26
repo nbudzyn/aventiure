@@ -276,8 +276,8 @@ public abstract class NarrationDao {
 
     /**
      * Wählt einen {@link NarrationAddition} aus den Alternativen -
-     * versucht dabei vor allem, Wiederholgungen mit dem unmittelbar zuvor geschriebenen
-     * Story-Text zu vermeiden.
+     * versucht dabei vor allem, Wiederholgungen mit der unmittelbar zuvor geschriebenen
+     * Narration zu vermeiden.
      */
     private static NarrationAddition
     chooseNextFrom(final Narration initialNarration,
@@ -287,8 +287,8 @@ public abstract class NarrationDao {
 
     /**
      * Wählt einen {@link NarrationAddition} aus den Alternativen -
-     * versucht dabei vor allem, Wiederholgungen mit dem unmittelbar zuvor geschriebenen
-     * Story-Text zu vermeiden.
+     * versucht dabei vor allem, Wiederholgungen mit der unmittelbar zuvor geschriebenen
+     * Narration zu vermeiden.
      */
     private static NarrationAddition
     chooseNextFrom(final Narration initialNarration, final NarrationAddition... alternatives) {
@@ -297,8 +297,8 @@ public abstract class NarrationDao {
 
     /**
      * Wählt einen {@link NarrationAddition} aus den Alternativen -
-     * versucht dabei vor allem, Wiederholgungen mit dem unmittelbar zuvor geschriebenen
-     * Story-Text zu vermeiden.
+     * versucht dabei vor allem, Wiederholgungen mit der unmittelbar zuvor geschriebenen
+     * Narration zu vermeiden.
      */
     public NarrationAddition
     chooseNextFrom(final NarrationAddition... alternatives) {
@@ -307,8 +307,8 @@ public abstract class NarrationDao {
 
     /**
      * Wählt einen {@link NarrationAddition} aus den Alternativen und gibt den Indes zurück -
-     * versucht dabei vor allem, Wiederholgungen mit dem unmittelbar zuvor geschriebenen
-     * Story-Text zu vermeiden.
+     * versucht dabei vor allem, Wiederholgungen mit der unmittelbar zuvor geschriebenen
+     * Narration zu vermeiden.
      */
     private int chooseNextIndexFrom(final NarrationAddition... alternatives) {
         if (alternatives.length == 1) {
@@ -320,8 +320,8 @@ public abstract class NarrationDao {
 
     /**
      * Wählt einen {@link NarrationAddition} aus den Alternativen und gibt den Indes zurück -
-     * versucht dabei vor allem, Wiederholgungen mit dem unmittelbar zuvor geschriebenen
-     * Story-Text zu vermeiden.
+     * versucht dabei vor allem, Wiederholgungen mit der unmittelbar zuvor geschriebenen
+     * Narration zu vermeiden.
      */
     private static int chooseNextIndexFrom(final Narration inititalNarration,
                                            final NarrationAddition... alternatives) {
@@ -334,8 +334,8 @@ public abstract class NarrationDao {
 
     /**
      * Wählt einen {@link NarrationAddition} aus den Alternativen und gibt den Indes zurück -
-     * versucht dabei vor allem, Wiederholgungen mit dem unmittelbar zuvor geschriebenen
-     * Story-Text zu vermeiden.
+     * versucht dabei vor allem, Wiederholgungen mit der unmittelbar zuvor geschriebenen
+     * Narration zu vermeiden.
      */
     @NonNull
     private IndexAndScore chooseNextIndexAndScoreFrom(
@@ -345,8 +345,8 @@ public abstract class NarrationDao {
 
     /**
      * Wählt einen {@link NarrationAddition} aus den Alternativen und gibt den Indes zurück -
-     * versucht dabei vor allem, Wiederholgungen mit dem unmittelbar zuvor geschriebenen
-     * Story-Text zu vermeiden.
+     * versucht dabei vor allem, Wiederholgungen mit der unmittelbar zuvor geschriebenen
+     * Narration zu vermeiden.
      */
     @NonNull
     private static IndexAndScore chooseNextIndexAndScoreFrom(
@@ -358,8 +358,8 @@ public abstract class NarrationDao {
 
     /**
      * Wählt einen {@link NarrationAddition} aus den Alternativen und gibt den Indes zurück -
-     * versucht dabei vor allem, Wiederholgungen mit dem unmittelbar zuvor geschriebenen
-     * Story-Text zu vermeiden.
+     * versucht dabei vor allem, Wiederholgungen mit der unmittelbar zuvor geschriebenen
+     * Narration zu vermeiden.
      */
     @NonNull
     private static IndexAndScore chooseNextIndexAndScoreFrom(
@@ -395,7 +395,7 @@ public abstract class NarrationDao {
     public Narration requireNarration() {
         @Nullable final Narration narration = getNarration();
         if (narration == null) {
-            throw new IllegalStateException("No current story state to add to");
+            throw new IllegalStateException("No current narration to add to");
         }
         return narration;
     }

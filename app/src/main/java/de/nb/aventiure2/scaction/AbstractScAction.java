@@ -21,7 +21,7 @@ import static de.nb.aventiure2.data.world.time.AvTimeSpan.days;
 import static de.nb.aventiure2.data.world.time.AvTimeSpan.noTime;
 
 /**
- * An action the player could choose to advance the story.
+ * An action the player could choose.
  */
 public abstract class AbstractScAction implements IPlayerAction {
     private static final AvTimeSpan MAX_WORLD_TICK = days(1);

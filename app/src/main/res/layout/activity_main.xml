@@ -27,7 +27,7 @@
         app:layout_constraintGuide_percent="0.55" />
 
     <ScrollView
-        android:id="@+id/storyTextScrollView"
+        android:id="@+id/narrationScrollView"
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:fillViewport="true"
@@ -39,13 +39,13 @@
         app:layout_constraintTop_toBottomOf="@id/toolbar">
 
         <TextView
-            android:id="@+id/storyTextView"
+            android:id="@+id/narrationView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text=""
             tools:text="Eine lange Geschichte. Eine sehr lange Geschichte. Eine sehr, sehr lange Geschichte..."
             android:textAppearance="@style/TextAppearance.AppCompat.Medium"
-            android:textColor="@color/colorOldStoryText" />
+            android:textColor="@color/colorOldNarration" />
 
     </ScrollView>
 
