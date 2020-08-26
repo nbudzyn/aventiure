@@ -7,8 +7,10 @@ import org.jetbrains.annotations.Contract;
 
 import java.util.Objects;
 
+import javax.annotation.ParametersAreNonnullByDefault;
 import javax.annotation.concurrent.Immutable;
 
+import static com.google.common.base.Preconditions.checkNotNull;
 import static de.nb.aventiure2.data.world.time.AvTime.SECS_IN_AN_HOUR;
 import static de.nb.aventiure2.data.world.time.AvTime.SECS_IN_A_DAY;
 
@@ -16,6 +18,7 @@ import static de.nb.aventiure2.data.world.time.AvTime.SECS_IN_A_DAY;
  * Value Object für Datum und Zeitpunkt.
  */
 @Immutable
+@ParametersAreNonnullByDefault
 public class AvDateTime {
     /**
      * Sekunden seit einem Referenzzeitpunkt
@@ -23,7 +26,7 @@ public class AvDateTime {
     @PrimaryKey
     private final long secsSinceBeginning;
 
-    public AvDateTime(final int daySinceBeginning, @NonNull final AvTime time) {
+    public AvDateTime(final int daySinceBeginning, final AvTime time) {
         this(daySinceBeginning * SECS_IN_A_DAY + time.getSecsSinceMidnight());
     }
 
@@ -42,41 +45,60 @@ public class AvDateTime {
         return getTime().getTageszeit();
     }
 
-    public AvDateTime plus(@NonNull final AvTimeSpan add) {
+    public AvDateTime plus(final AvTimeSpan add) {
+        checkNotNull(add, "add is null");
+
         return new AvDateTime(secsSinceBeginning + add.getSecs());
     }
 
-    public AvDateTime minus(@NonNull final AvTimeSpan sub) {
+    public AvDateTime minus(final AvTimeSpan sub) {
+        checkNotNull(sub, "sub is null");
+
         return new AvDateTime(secsSinceBeginning - sub.getSecs());
     }
 
-    public AvTimeSpan minus(@NonNull final AvDateTime sub) {
+    public AvTimeSpan minus(final AvDateTime sub) {
+        checkNotNull(sub, "sub is null");
+
         return new AvTimeSpan(secsSinceBeginning - sub.secsSinceBeginning);
     }
 
     public AvTimeSpan timeSpanUntil(final AvTime otherTime) {
+        checkNotNull(otherTime, "otherTime is null");
+
         return getTime().timeSpanUntil(otherTime);
     }
 
-    public boolean isWithin(@NonNull final AvDateTime lowerBoundExclusive,
+    public boolean isWithin(final AvDateTime lowerBoundExclusive,
                             final AvDateTime upperBoundInclusive) {
+        checkNotNull(lowerBoundExclusive, "lowerBoundExclusive is null");
+        checkNotNull(upperBoundInclusive, "upperBoundInclusive is null");
+
         return lowerBoundExclusive.isBefore(this) &&
                 upperBoundInclusive.isEqualOrAfter(this);
     }
 
-    public boolean isEqualOrBefore(@NonNull final AvDateTime other) {
+    public boolean isEqualOrBefore(final AvDateTime other) {
+        checkNotNull(other, "other is null");
+
         return secsSinceBeginning <= other.secsSinceBeginning;
     }
 
-    public boolean isBefore(@NonNull final AvDateTime other) {
+    public boolean isBefore(final AvDateTime other) {
+        checkNotNull(other, "other is null");
+
         return secsSinceBeginning < other.secsSinceBeginning;
     }
 
-    public boolean isEqualOrAfter(@NonNull final AvDateTime other) {
+    public boolean isEqualOrAfter(final AvDateTime other) {
+        checkNotNull(other, "other is null");
+
         return secsSinceBeginning >= other.secsSinceBeginning;
     }
 
-    public boolean isAfter(@NonNull final AvDateTime other) {
+    public boolean isAfter(final AvDateTime other) {
+        checkNotNull(other, "other is null");
+
         return secsSinceBeginning > other.secsSinceBeginning;
     }
 

@@ -3,6 +3,8 @@ package de.nb.aventiure2.scaction;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
+import javax.annotation.ParametersAreNonnullByDefault;
+
 import de.nb.aventiure2.data.database.AvDatabase;
 import de.nb.aventiure2.data.narration.IPlayerAction;
 import de.nb.aventiure2.data.narration.NarrationDao;
@@ -15,14 +17,18 @@ import de.nb.aventiure2.data.world.time.AvTimeSpan;
 import de.nb.aventiure2.german.base.Personalpronomen;
 import de.nb.aventiure2.german.base.SubstantivischePhrase;
 
+import static com.google.common.base.Preconditions.checkNotNull;
 import static de.nb.aventiure2.data.narration.Narration.NarrationSource.REACTIONS;
 import static de.nb.aventiure2.data.narration.Narration.NarrationSource.SC_ACTION;
 import static de.nb.aventiure2.data.world.time.AvTimeSpan.days;
 import static de.nb.aventiure2.data.world.time.AvTimeSpan.noTime;
+import static de.nb.aventiure2.german.base.AllgDescription.neuerSatz;
+import static de.nb.aventiure2.german.base.StructuralElement.SENTENCE;
 
 /**
  * An action the player could choose.
  */
+@ParametersAreNonnullByDefault
 public abstract class AbstractScAction implements IPlayerAction {
     private static final AvTimeSpan MAX_WORLD_TICK = days(1);
 
@@ -32,7 +38,7 @@ public abstract class AbstractScAction implements IPlayerAction {
 
     protected final SpielerCharakter sc;
 
-    protected AbstractScAction(@NonNull final AvDatabase db, final World world) {
+    protected AbstractScAction(final AvDatabase db, final World world) {
         this.db = db;
         this.world = world;
 
@@ -51,20 +57,34 @@ public abstract class AbstractScAction implements IPlayerAction {
      * Aktualisiert dabei auch die Welt.
      */
     public final void doAndPassTime() {
+        final AvDateTime start = db.nowDao().now();
+
+        n.setNarrationSourceJustInCase(SC_ACTION);
         // TODO Möglichst dieses ewige Rumreichen der
         //  verflossenen Zeit ausbauen.
         //  Kann nicht die Zeit jeweils beim narraten upgedatet werden?
         //  Und man vergleich hier nur vorher-Zeit mit nachher-Zeit?
 
-        final AvDateTime start = db.nowDao().now();
-
-        n.setNarrationSourceJustInCase(SC_ACTION);
         final AvTimeSpan timeElapsed = narrateAndDo();
 
-        // TODO Sollte das hier eine Reaction werden?
-        //  (onScActionDoneBeforeWorldUpdate() o.Ä.?)
+        fireScActionDone(start);
 
-        // STORY Wenn der Benutzer länger nicht weiterkommt (länger kein
+        db.nowDao().passTime(timeElapsed);
+
+        n.setNarrationSourceJustInCase(REACTIONS);
+
+        final AvDateTime dateTimeBetweenMainWorldUpdateAndHints =
+                db.nowDao().passTime(updateWorld(start));
+
+        db.nowDao().passTime(doAndNarrateHints());
+
+        db.nowDao().passTime(updateWorld(dateTimeBetweenMainWorldUpdateAndHints));
+
+        world.saveAll(true);
+    }
+
+    private AvTimeSpan doAndNarrateHints() {
+        // STORY Nur wenn der Benutzer länger nicht weiterkommt (länger kein
         //  neuer Geschichtsschritt erreicht), erzeugt ein Tippgenerator
         //  (neues Game Object mit einer speziellen Reaction mit
         //  onScActionDoneAfterWorldUpdate())
@@ -84,27 +104,25 @@ public abstract class AbstractScAction implements IPlayerAction {
         //  Tipps sollten zum aktuellen (oder zu einem nahen) Raum passen (ein Geschichtsmeilenstein
         //  könnte optional einen Lieblingsraum haben).
         //  Statt eines Tipps könnte auch eine neue Geschichte / Task starten.
-        fireScActionDone(start);
 
-        final AvDateTime dateTimeAfterActionBeforeUpdateWorld = start.plus(timeElapsed);
-        db.nowDao().setNow(dateTimeAfterActionBeforeUpdateWorld);
-
-        n.setNarrationSourceJustInCase(REACTIONS);
-        final AvTimeSpan extraTimeElapsedDuringWorldUpdate =
-                updateWorld(start, dateTimeAfterActionBeforeUpdateWorld);
-
-        db.nowDao().setNow(dateTimeAfterActionBeforeUpdateWorld
-                .plus(extraTimeElapsedDuringWorldUpdate));
-
-        world.saveAll(true);
+        return n.add(neuerSatz(SENTENCE,
+                "Du hast das Gefühl, es gibt noch viel zu erleben",
+                noTime()));
     }
 
-    private void fireScActionDone(final AvDateTime startTimeOfUserAction) {
-        world.scActionDone(startTimeOfUserAction);
+    private void fireScActionDone(final AvDateTime startTimeOfScAction) {
+        world.scActionDone(startTimeOfScAction);
+    }
+
+    private AvTimeSpan updateWorld(final AvDateTime lastTime) {
+        return updateWorld(lastTime, db.nowDao().now());
     }
 
     private AvTimeSpan updateWorld(final AvDateTime lastTime,
-                                   @NonNull final AvDateTime now) {
+                                   final AvDateTime now) {
+        checkNotNull(lastTime, "lastTime is null");
+        checkNotNull(now, "now is null");
+
         if (now.equals(lastTime)) {
             return noTime();
         }
