@@ -111,6 +111,17 @@ class StoryData {
 
         if (storyNode.beendetStory()) {
             state = BEENDET;
+
+            // STORY Wenn eine Story beendet wurde, könnte der Narrator eine neue
+            //  (möglichst abstrakte) Überschrift setzen und damit ein neues Kapitel beginnen.
+            //  Die Überschrift bezöge sich lose auf eine der
+            //  jetzt noch verbleibenden und offenen Storys (sofern es überhaupt solche
+            //  gibt). Für jede Story stehen mehrere Überschriften
+            //  bereit, die in einer Reihenfolge gewählt werden.
+
+            // STORY Wenn alle Storys abgeschlossen sind, wird das Spiel
+            //  beendet, damit der Spieler weiß, dass es nichts mehr zu erleben
+            //  gibt. ("lebst glücklich...")
         }
 
         return true;

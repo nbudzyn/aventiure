@@ -188,14 +188,6 @@ public class StoryWebComp extends AbstractStatefulComponent<StoryWebPCD> {
 
         // STORY Statt eines Tipps könnte die storyNode auch eine neue Story starten
 
-        // STORY Wenn eine Story beendet wurde, eine neue (möglichst abstrakte) Überschrift
-        //  setzen und damit ein neues Kapitel beginnen.
-        //  Die Überschrift bezieht sich lose auf eine der
-        //  jetzt noch offenen Storys. Für jede Story stehen mehrere Überschriften
-        //  bereit, die in einer Reihenfolge gewählt werden.
-
-        // STORY Wenn alle Storys abgeschlossen sind, ist das spiel beendet ("lebst glücklich...")
-
         return n.addAlt(neuerSatz(PARAGRAPH,
                 "Du hast das Gefühl, es gibt noch viel zu erleben",
                 noTime())
