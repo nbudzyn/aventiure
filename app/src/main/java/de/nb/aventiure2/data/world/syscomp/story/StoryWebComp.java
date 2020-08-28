@@ -184,10 +184,10 @@ public class StoryWebComp extends AbstractStatefulComponent<StoryWebPCD> {
 
         // STORY Jede IStoryNode könnte mehrere Hinweise erzeugen, aus denen
         //  der Narrator auswählen könnte, ganz normal mit addAlt().
-        //  Oder auch Aktionen wie das Starten einer neuen Story...)
 
         // STORY Statt eines Tipps könnte die storyNode auch eine neue Story starten
-
+        //  oder die Welt anderweitig modifizieren, dass es für den Spieler
+        //  wieder mehr zu erleben gibt.
         return n.addAlt(neuerSatz(PARAGRAPH,
                 "Du hast das Gefühl, es gibt noch viel zu erleben",
                 noTime())
