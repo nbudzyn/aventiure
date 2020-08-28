@@ -1,10 +1,12 @@
 package de.nb.aventiure2.data.world.syscomp.memory;
 
+import androidx.annotation.Nullable;
 import androidx.room.TypeConverter;
 
 public class ActionTypeConverters {
     @TypeConverter
-    public static Action.Type stringToEnum(final String string) {
+    @Nullable
+    public static Action.Type stringToEnum(@Nullable final String string) {
         if (string == null) {
             return null;
         }
@@ -12,7 +14,8 @@ public class ActionTypeConverters {
     }
 
     @TypeConverter
-    public static String enumToString(final Action.Type type) {
+    @Nullable
+    public static String enumToString(@Nullable final Action.Type type) {
         if (type == null) {
             return null;
         }

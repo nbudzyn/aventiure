@@ -1,12 +1,14 @@
 package de.nb.aventiure2.data.world.syscomp.memory;
 
+import androidx.annotation.Nullable;
 import androidx.room.TypeConverter;
 
 import de.nb.aventiure2.data.world.base.Known;
 
 public class KnownConverters {
     @TypeConverter
-    public static Known stringToEnum(final String string) {
+    @Nullable
+    public static Known stringToEnum(@Nullable final String string) {
         if (string == null) {
             return null;
         }
@@ -14,7 +16,8 @@ public class KnownConverters {
     }
 
     @TypeConverter
-    public static String enumToString(final Known known) {
+    @Nullable
+    public static String enumToString(@Nullable final Known known) {
         if (known == null) {
             return null;
         }

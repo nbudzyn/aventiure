@@ -5,6 +5,7 @@ import androidx.room.Embedded;
 import androidx.room.Entity;
 import androidx.room.Ignore;
 
+import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableMap;
 
 import java.util.HashMap;
@@ -69,12 +70,17 @@ class MemoryPCD extends AbstractPersistentComponentData {
         return ImmutableMap.copyOf(knownMap);
     }
 
-    void setKnown(final Map<GameObjectId, Known> map) {
-        setChanged();
+    /**
+     * Darf nur zur Initialisierung aufgerufen werden, nicht zur Änderung!
+     */
+    void initKnown(final Map<GameObjectId, Known> map) {
+        Preconditions.checkState(knownMap.isEmpty(), "Already initialized!");
+
+        // Kein setChanged() !
         knownMap.putAll(map);
     }
 
-    void setKnown(final GameObjectId otherGameObjectId, final Known known) {
+    void initKnown(final GameObjectId otherGameObjectId, final Known known) {
         if (getKnown(otherGameObjectId) == known) {
             return;
         }

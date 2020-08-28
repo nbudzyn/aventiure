@@ -61,4 +61,12 @@ public class LocationSystem {
                 .filter(go -> go.locationComp().isMovable() == movable)
                 .collect(toImmutableList());
     }
+
+    public static ILocationGO getUpperMostLocation(final ILocationGO location) {
+        if (location instanceof ILocatableGO) {
+            return ((ILocatableGO) location).locationComp().getUpperMostLocation();
+        }
+
+        return location;
+    }
 }

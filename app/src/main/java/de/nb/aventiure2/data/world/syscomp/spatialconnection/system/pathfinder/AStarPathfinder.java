@@ -27,6 +27,32 @@ public class AStarPathfinder {
     public SpatialStandardStep findFirstStep(
             final ISpatiallyConnectedGO startGO,
             final ILocationGO targetGO) {
+        @Nullable final AStarNode pathTargetNode = findPath(startGO, targetGO);
+
+        if (pathTargetNode == null) {
+            return null;
+        }
+
+        return getFirstStep(pathTargetNode);
+    }
+
+    @Nullable
+    public AvTimeSpan findDistance(
+            final ISpatiallyConnectedGO startGO,
+            final ILocationGO targetGO) {
+        @Nullable final AStarNode pathTargetNode = findPath(startGO, targetGO);
+
+        if (pathTargetNode == null) {
+            return null;
+        }
+
+        return pathTargetNode.getDist();
+    }
+
+    @Nullable
+    public AStarNode findPath(
+            final ISpatiallyConnectedGO startGO,
+            final ILocationGO targetGO) {
         // Based on Ahlquist / Novak: Game Artificial Intelligence
         final AStarPriorityQueue priorityQueue = new AStarPriorityQueue();
         final AStarClosedList closedList = new AStarClosedList();
@@ -44,7 +70,7 @@ public class AStarPathfinder {
             closedList.add(currentNode);
 
             if (currentNode.getLocation().is(targetGO)) {
-                return getFirstStep(currentNode);
+                return currentNode;
             }
 
             for (final SpatialStandardStep nextStep : findNextSteps(currentNode)) {
@@ -142,5 +168,4 @@ public class AStarPathfinder {
                                         startGOId.toLong() - targetGO.getId().toLong()
                                 ));
     }
-
 }

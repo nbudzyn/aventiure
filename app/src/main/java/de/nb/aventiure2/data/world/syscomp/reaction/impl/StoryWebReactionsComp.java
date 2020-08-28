@@ -4,10 +4,17 @@ import androidx.annotation.Nullable;
 
 import de.nb.aventiure2.data.database.AvDatabase;
 import de.nb.aventiure2.data.world.gameobject.World;
+import de.nb.aventiure2.data.world.syscomp.location.ILocatableGO;
 import de.nb.aventiure2.data.world.syscomp.reaction.AbstractReactionsComp;
+import de.nb.aventiure2.data.world.syscomp.reaction.interfaces.IMovementReactions;
 import de.nb.aventiure2.data.world.syscomp.reaction.interfaces.ISCActionReactions;
+import de.nb.aventiure2.data.world.syscomp.storingplace.ILocationGO;
+import de.nb.aventiure2.data.world.syscomp.story.StoryWebComp;
+import de.nb.aventiure2.data.world.syscomp.story.impl.FroschkoenigStoryNode;
 import de.nb.aventiure2.data.world.time.AvTimeSpan;
 
+import static de.nb.aventiure2.data.world.gameobject.World.GOLDENE_KUGEL;
+import static de.nb.aventiure2.data.world.gameobject.World.SPIELER_CHARAKTER;
 import static de.nb.aventiure2.data.world.gameobject.World.STORY_WEB;
 import static de.nb.aventiure2.data.world.time.AvTimeSpan.noTime;
 
@@ -22,36 +29,52 @@ import static de.nb.aventiure2.data.world.time.AvTimeSpan.noTime;
  */
 public class StoryWebReactionsComp
         extends AbstractReactionsComp
-        implements ISCActionReactions {
-    public StoryWebReactionsComp(final AvDatabase db, final World world) {
+        implements IMovementReactions, ISCActionReactions {
+    private final StoryWebComp storyWebComp;
+
+    public StoryWebReactionsComp(final AvDatabase db, final World world,
+                                 final StoryWebComp storyWebComp) {
         super(STORY_WEB, db, world);
+        this.storyWebComp = storyWebComp;
+    }
+
+    @Override
+    public AvTimeSpan onLeave(final ILocatableGO locatable, final ILocationGO from,
+                              @Nullable final ILocationGO to) {
+        return noTime();
+    }
+
+    @Override
+    public AvTimeSpan onEnter(final ILocatableGO locatable, @Nullable final ILocationGO from,
+                              final ILocationGO to) {
+        if (locatable.is(SPIELER_CHARAKTER)) {
+            return onSCEnter(from, to);
+        }
+
+        if (locatable.is(GOLDENE_KUGEL)) {
+            return onGoldeneKugelEnter(from, to);
+        }
+
+
+        return noTime();
+    }
+
+    private static AvTimeSpan onSCEnter(@Nullable final ILocationGO from, final ILocationGO to) {
+        return noTime();
+    }
+
+    private AvTimeSpan onGoldeneKugelEnter(@javax.annotation.Nullable final ILocationGO from,
+                                           final ILocationGO to) {
+        if (world.isOrHasRecursiveLocation(to, SPIELER_CHARAKTER)) {
+            storyWebComp.reachStoryNode(FroschkoenigStoryNode.KUGEL_GENOMMEN);
+            return noTime();
+        }
+
+        return noTime();
     }
 
     @Override
     public AvTimeSpan afterScActionAndFirstWorldUpdate() {
-        // STORY Es gibt Storys. Sie sind initial "nicht begonnen."
-        //  Gewisse Trigger schalten eine neue Storys (z.B. ein neues Märchen)
-        //  frei / starten sie: Gewisse Aktionen, sinnfreies
-        //  Umherlaufen des Spielers, bestimmte Zeit, bestimmte Schrittzahl ohne Zustand...
-        //  erreicht zu haben o.ä. Solche Triggerbedinungen werden in jedem Zug geprüft.
-        //  Storys könnten eigene Klassen oder Enum-Werte sein.
-        // STORY Wenn ein
-        //  Story-Ziel erreicht wird, wird eine neue (möglichst abstrakte) Überschrift gesetzt und
-        //  damit ein Kapitel begonnen. Die Überschrift bezieht sich lose auf einen der
-        //  Storys, die der Spieler zuerst begonnen hat und die noch nicht abgeschlossen
-        //  wurden. Für jede Story stehen mehrere Überschriften bereit, die in Reihenfolge
-        //  gewählt werden.
-        //  Storys einschließlich der Story Nodes könnten auch generiert werden,
-        //  basierend auf Story-Telling-Theorien.
-
-        // STORY Wenn alle Storys abgeschlossen sind, ist das spiel beendet ("lebst glücklich...")
-
-        @Nullable final StoryNode openStoryNode = new StoryNode(db, world);
-
-        if (openStoryNode == null) {
-            return noTime();
-        }
-
-        return openStoryNode.narrateAndDoWhileOpen();
+        return storyWebComp.narrateAndDoHintActionIfAny();
     }
 }

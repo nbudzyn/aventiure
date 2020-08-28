@@ -1,12 +1,14 @@
 package de.nb.aventiure2.data.world.syscomp.movement;
 
+import androidx.annotation.Nullable;
 import androidx.room.TypeConverter;
 
 import de.nb.aventiure2.data.world.syscomp.movement.MovementStep.Phase;
 
 public class MovementStepPhaseConverters {
     @TypeConverter
-    public static Phase stringToEnum(final String string) {
+    @Nullable
+    public static Phase stringToEnum(@Nullable final String string) {
         if (string == null) {
             return null;
         }
@@ -14,7 +16,8 @@ public class MovementStepPhaseConverters {
     }
 
     @TypeConverter
-    public static String enumToString(final Phase phase) {
+    @Nullable
+    public static String enumToString(@Nullable final Phase phase) {
         if (phase == null) {
             return null;
         }

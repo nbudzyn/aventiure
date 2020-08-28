@@ -5,6 +5,7 @@ import androidx.room.TypeConverter;
 
 public class GameObjectIdConverters {
     @TypeConverter
+    @Nullable
     public static GameObjectId longToObject(final @Nullable Long aLong) {
         if (aLong == null) {
             return null;
@@ -13,8 +14,8 @@ public class GameObjectIdConverters {
     }
 
     @TypeConverter
-    public static @Nullable
-    Long objectToLong(final GameObjectId object) {
+    @Nullable
+    public static Long objectToLong(@Nullable final GameObjectId object) {
         if (object == null) {
             return null;
         }

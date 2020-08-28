@@ -186,7 +186,8 @@ public class World {
             final BaumFactory baum = new BaumFactory(db, this);
             final CreatureFactory creature = new CreatureFactory(db, this);
             final InvisibleFactory invisible = new InvisibleFactory(db, this);
-            final MeaningFactory meaning = new MeaningFactory(db, this);
+            final MeaningFactory meaning = new MeaningFactory(db, this, locationSystem,
+                    spatialConnectionSystem);
             final RoomFactory room = new RoomFactory(db, this);
             final SimpleConnectionCompFactory connection =
                     new SimpleConnectionCompFactory(db, this);

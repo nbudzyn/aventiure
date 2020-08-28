@@ -65,6 +65,7 @@ public abstract class AbstractScAction implements IPlayerAction {
 
         final AvTimeSpan timeElapsed = narrateAndDo();
 
+        db.scActionStepCountDao().inc();
         fireScActionDone(start);
 
         db.nowDao().passTime(timeElapsed);

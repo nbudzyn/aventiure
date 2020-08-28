@@ -46,6 +46,12 @@ import de.nb.aventiure2.data.world.syscomp.movement.MovementStepPhaseConverters;
 import de.nb.aventiure2.data.world.syscomp.movement.PauseForSCActionConverters;
 import de.nb.aventiure2.data.world.syscomp.state.StateDao;
 import de.nb.aventiure2.data.world.syscomp.state.StatePCD;
+import de.nb.aventiure2.data.world.syscomp.story.InternalReachedStoryNodeData;
+import de.nb.aventiure2.data.world.syscomp.story.InternalStoryData;
+import de.nb.aventiure2.data.world.syscomp.story.StoryConverters;
+import de.nb.aventiure2.data.world.syscomp.story.StoryStateConverters;
+import de.nb.aventiure2.data.world.syscomp.story.StoryWebDao;
+import de.nb.aventiure2.data.world.syscomp.story.StoryWebPCD;
 import de.nb.aventiure2.data.world.syscomp.talking.TalkingDao;
 import de.nb.aventiure2.data.world.syscomp.talking.TalkingPCD;
 import de.nb.aventiure2.data.world.time.AvDateTimeConverters;
@@ -54,6 +60,8 @@ import de.nb.aventiure2.data.world.time.AvNowDao;
 import de.nb.aventiure2.data.world.time.AvTimeSpanConverters;
 import de.nb.aventiure2.german.base.NumerusGenusConverters;
 import de.nb.aventiure2.german.base.StructuralElement;
+import de.nb.aventiure2.scaction.stepcount.SCActionStepCount;
+import de.nb.aventiure2.scaction.stepcount.SCActionStepCountDao;
 
 import static de.nb.aventiure2.data.world.gameobject.World.GOLDENE_KUGEL;
 import static de.nb.aventiure2.data.world.time.AvTime.oClock;
@@ -62,6 +70,7 @@ import static de.nb.aventiure2.data.world.time.AvTime.oClock;
         Counter.class,
         Narration.class,
         AvNow.class,
+        SCActionStepCount.class,
         StatePCD.class,
         MovementPCD.class,
         LocationPCD.class,
@@ -70,7 +79,10 @@ import static de.nb.aventiure2.data.world.time.AvTime.oClock;
         KnownInfo.class,
         MentalModelPCD.class,
         AssumedLocationInfo.class,
-        TalkingPCD.class},
+        TalkingPCD.class,
+        StoryWebPCD.class,
+        InternalStoryData.class,
+        InternalReachedStoryNodeData.class},
         version = 1,
         exportSchema = false)
 @TypeConverters({
@@ -85,7 +97,9 @@ import static de.nb.aventiure2.data.world.time.AvTime.oClock;
         GameObjectIdConverters.class,
         MoodConverters.class,
         MovementStepPhaseConverters.class,
-        HungerConverters.class})
+        HungerConverters.class,
+        StoryConverters.class,
+        StoryStateConverters.class})
 // TODO Database migrations, exportSchema = true?
 //  "In a real app, you should consider setting a directory for Room to [...] export the
 //  schema so you can check the current schema into your version control system."
@@ -101,6 +115,8 @@ public abstract class AvDatabase extends RoomDatabase {
 
     public abstract AvNowDao nowDao();
 
+    public abstract SCActionStepCountDao scActionStepCountDao();
+
     public abstract NarrationDao narrationDao();
 
     public abstract StateDao stateDao();
@@ -114,6 +130,8 @@ public abstract class AvDatabase extends RoomDatabase {
     public abstract MemoryDao memoryDao();
 
     public abstract MentalModelDao mentalModelDao();
+
+    public abstract StoryWebDao storyWebDao();
 
     public abstract TalkingDao talkingDao();
 
@@ -134,6 +152,7 @@ public abstract class AvDatabase extends RoomDatabase {
                         // Populate the database in the background:
 
                         // Set date and time in the game
+                        INSTANCE.scActionStepCountDao().resetStepCount();
                         INSTANCE.nowDao().setNow(
                                 1, oClock(12, 30));
 

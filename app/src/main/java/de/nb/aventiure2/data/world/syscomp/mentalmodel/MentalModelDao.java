@@ -57,7 +57,7 @@ public abstract class MentalModelDao implements IComponentDao<MentalModelPCD> {
     @Override
     public MentalModelPCD get(final GameObjectId assumer) {
         final MentalModelPCD res = getInternal(assumer);
-        res.assumeLocations(toMap(getAssumedLocationInfos(assumer)));
+        res.initAssumedLocations(toMap(getAssumedLocationInfos(assumer)));
 
         return res;
     }

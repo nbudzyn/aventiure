@@ -5,6 +5,7 @@ import androidx.annotation.Nullable;
 import androidx.room.Entity;
 import androidx.room.Ignore;
 
+import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableMap;
 
 import java.util.HashMap;
@@ -39,8 +40,13 @@ public class MentalModelPCD extends AbstractPersistentComponentData {
         return ImmutableMap.copyOf(assumedLocations);
     }
 
-    void assumeLocations(final Map<GameObjectId, GameObjectId> map) {
-        setChanged();
+    /**
+     * Darf nur zur Initialisierung aufgerufen werden, nicht zur Änderung!
+     */
+    void initAssumedLocations(final Map<GameObjectId, GameObjectId> map) {
+        Preconditions.checkState(assumedLocations.isEmpty(), "Already initialized!");
+
+        // Kein setChanged() !
         assumedLocations.putAll(map);
     }
 

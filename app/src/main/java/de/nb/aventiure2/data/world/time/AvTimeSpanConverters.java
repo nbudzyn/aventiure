@@ -1,10 +1,12 @@
 package de.nb.aventiure2.data.world.time;
 
+import androidx.annotation.Nullable;
 import androidx.room.TypeConverter;
 
 public class AvTimeSpanConverters {
     @TypeConverter
-    public static AvTimeSpan longToAvTimeSpan(final Long aLong) {
+    @Nullable
+    public static AvTimeSpan longToAvTimeSpan(@Nullable final Long aLong) {
         if (aLong == null) {
             return null;
         }
@@ -12,7 +14,8 @@ public class AvTimeSpanConverters {
     }
 
     @TypeConverter
-    public static Long avTimeSpanToLong(final AvTimeSpan timeSpan) {
+    @Nullable
+    public static Long avTimeSpanToLong(@Nullable final AvTimeSpan timeSpan) {
         if (timeSpan == null) {
             return null;
         }

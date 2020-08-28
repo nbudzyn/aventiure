@@ -57,7 +57,7 @@ public abstract class MemoryDao implements IComponentDao<MemoryPCD> {
     @Override
     public MemoryPCD get(final GameObjectId knower) {
         final MemoryPCD res = getInternal(knower);
-        res.setKnown(toMap(getKnownInfos(knower)));
+        res.initKnown(toMap(getKnownInfos(knower)));
 
         return res;
     }

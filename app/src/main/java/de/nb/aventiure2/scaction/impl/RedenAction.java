@@ -82,7 +82,7 @@ public class RedenAction<TALKER extends IDescribableGO & ITalkerGO<?>>
         }
 
         // Der SC befindet sich gerade nicht im Gespräch mit der Creature
-        // (und auch nicht GERADE EBEN so ein Gespräch beendet).
+        // (und hat auch nicht GERADE EBEN so ein Gespräch beendet).
         return stepType == SCTalkAction.Type.ENTRY_RE_ENTRY;
     }
 

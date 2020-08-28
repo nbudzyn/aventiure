@@ -1,12 +1,14 @@
 package de.nb.aventiure2.data.narration;
 
+import androidx.annotation.Nullable;
 import androidx.room.TypeConverter;
 
 import de.nb.aventiure2.data.narration.Narration.NarrationSource;
 
 public class NarrationSourceConverters {
     @TypeConverter
-    public static NarrationSource stringToEnum(final String string) {
+    @Nullable
+    public static NarrationSource stringToEnum(@Nullable final String string) {
         if (string == null) {
             return null;
         }
@@ -14,7 +16,8 @@ public class NarrationSourceConverters {
     }
 
     @TypeConverter
-    public static String enumToString(final NarrationSource eenum) {
+    @Nullable
+    public static String enumToString(@Nullable final NarrationSource eenum) {
         if (eenum == null) {
             return null;
         }

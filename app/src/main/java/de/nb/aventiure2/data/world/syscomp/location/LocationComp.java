@@ -197,7 +197,7 @@ public class LocationComp extends AbstractStatefulComponent<LocationPCD> {
         return location.equals(getUpperMostLocation());
     }
 
-    private @Nullable
+    public @Nullable
     ILocationGO getUpperMostLocation() {
         @Nullable final ILocationGO res = getLocation();
         if (res instanceof ILocatableGO) {

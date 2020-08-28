@@ -1,10 +1,12 @@
 package de.nb.aventiure2.data.world.syscomp.feelings;
 
+import androidx.annotation.Nullable;
 import androidx.room.TypeConverter;
 
 public class MoodConverters {
     @TypeConverter
-    public static Mood stringToEnum(final String string) {
+    @Nullable
+    public static Mood stringToEnum(@Nullable final String string) {
         if (string == null) {
             return null;
         }
@@ -12,7 +14,8 @@ public class MoodConverters {
     }
 
     @TypeConverter
-    public static String enumToString(final Mood mood) {
+    @Nullable
+    public static String enumToString(@Nullable final Mood mood) {
         if (mood == null) {
             return null;
         }

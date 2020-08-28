@@ -1,10 +1,12 @@
 package de.nb.aventiure2.data.world.time;
 
+import androidx.annotation.Nullable;
 import androidx.room.TypeConverter;
 
 public class AvDateTimeConverters {
     @TypeConverter
-    public static AvDateTime longToAvDateTime(final Long aLong) {
+    @Nullable
+    public static AvDateTime longToAvDateTime(@Nullable final Long aLong) {
         if (aLong == null) {
             return null;
         }
@@ -12,7 +14,8 @@ public class AvDateTimeConverters {
     }
 
     @TypeConverter
-    public static Long avDateTimeToLong(final AvDateTime dateTime) {
+    @Nullable
+    public static Long avDateTimeToLong(@Nullable final AvDateTime dateTime) {
         if (dateTime == null) {
             return null;
         }
