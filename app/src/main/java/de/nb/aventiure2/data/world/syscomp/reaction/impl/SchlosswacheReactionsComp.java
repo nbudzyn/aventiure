@@ -12,7 +12,6 @@ import de.nb.aventiure2.data.database.AvDatabase;
 import de.nb.aventiure2.data.world.base.Lichtverhaeltnisse;
 import de.nb.aventiure2.data.world.gameobject.World;
 import de.nb.aventiure2.data.world.gameobject.player.SpielerCharakter;
-import de.nb.aventiure2.data.world.syscomp.description.AbstractDescriptionComp;
 import de.nb.aventiure2.data.world.syscomp.location.ILocatableGO;
 import de.nb.aventiure2.data.world.syscomp.location.LocationComp;
 import de.nb.aventiure2.data.world.syscomp.location.LocationSystem;
@@ -66,7 +65,6 @@ public class SchlosswacheReactionsComp
     public SchlosswacheReactionsComp(final AvDatabase db,
                                      final World world,
                                      final LocationSystem locationSystem,
-                                     final AbstractDescriptionComp descriptionComp,
                                      final SchlosswacheStateComp stateComp,
                                      final LocationComp locationComp) {
         super(SCHLOSSWACHE, db, world);
@@ -235,16 +233,18 @@ public class SchlosswacheReactionsComp
     }
 
     private AvTimeSpan scHatEtwasGenommenOderHochgeworfenUndAufgefangen_wacheWirdAufmerksam() {
-        stateComp.setState(AUFMERKSAM);
         final SpielerCharakter sc = loadSC();
 
-        final AvTimeSpan timeElapsed = n.add(
+        AvTimeSpan timeElapsed = n.add(
                 neuerSatz(PARAGRAPH, "Da wird eine Wache auf dich aufmerksam. "
                                 + "„Wie seid Ihr hier hereingekommen?“, fährt sie dich "
                                 + "scharf an. „Das Fest ist erst am Sonntag. Heute "
                                 + "ist Samstag und Ihr habt hier nichts zu suchen!“ "
                                 + "Mit kräftiger Hand klopft die Wache auf ihre Hellebarde",
                         secs(20)));
+
+        timeElapsed = timeElapsed.plus(
+                stateComp.narrateAndSetState(AUFMERKSAM));
 
         world.upgradeKnownToSC(SCHLOSSWACHE);
         sc.feelingsComp().setMood(ANGESPANNT);
@@ -431,20 +431,22 @@ public class SchlosswacheReactionsComp
         }
 
         // Beim Fest ist die Schlosswache beschäftigt
-        stateComp.setState(UNAUFFAELLIG);
-        return noTime(); // Passiert nebenher und braucht KEINE zusätzliche Zeit
+        return stateComp.narrateAndSetState(UNAUFFAELLIG)
+                // Passiert nebenher und braucht KEINE zusätzliche Zeit
+                ;
     }
 
     @NonNull
     private AvTimeSpan schlossfestBeginnt_Vorhalle(final SpielerCharakter sc) {
         // Beim Fest ist die Schlosswache mit anderen Dingen beschäftigt
-        stateComp.setState(UNAUFFAELLIG);
-
-        final AvTimeSpan timeElapsed = n.add(neuerSatz(PARAGRAPH,
-                "Die Wache spricht dich an: „Wenn ich Euch dann "
-                        + "hinausbitten dürfte? Wer wollte "
-                        + "denn den Vorbereitungen für das große Fest im Wege stehen?“ – Nein, "
-                        + "das willst du sicher nicht.", secs(30)));
+        AvTimeSpan timeElapsed =
+                n.add(neuerSatz(PARAGRAPH,
+                        "Die Wache spricht dich an: „Wenn ich Euch dann "
+                                + "hinausbitten dürfte? Wer wollte "
+                                + "denn den Vorbereitungen für das große Fest im Wege stehen?“ – Nein, "
+                                + "das willst du sicher nicht.", secs(30)));
+        timeElapsed = timeElapsed.plus(
+                stateComp.narrateAndSetState(UNAUFFAELLIG));
 
         return timeElapsed.plus(
                 sc.locationComp().narrateAndSetLocation(DRAUSSEN_VOR_DEM_SCHLOSS,

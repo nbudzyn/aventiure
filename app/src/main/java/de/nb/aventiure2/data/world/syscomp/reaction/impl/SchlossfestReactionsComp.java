@@ -36,7 +36,7 @@ public class SchlossfestReactionsComp
     private final AbstractStateComp<SchlossfestState> stateComp;
 
     public SchlossfestReactionsComp(final AvDatabase db, final World world,
-                                    final AbstractStateComp stateComp) {
+                                    final AbstractStateComp<SchlossfestState> stateComp) {
         super(SCHLOSSFEST, db, world);
         this.stateComp = stateComp;
     }
@@ -53,30 +53,31 @@ public class SchlossfestReactionsComp
     }
 
     private AvTimeSpan schlossfestBeginnt() {
-        stateComp.setState(BEGONNEN);
+        final AvTimeSpan timeElapsed = stateComp.narrateAndSetState(BEGONNEN);
         ((ILocatableGO) world.load(SCHLOSS_VORHALLE_AM_TISCH_BEIM_FEST))
                 .locationComp().narrateAndSetLocation(SCHLOSS_VORHALLE);
 
         final @Nullable IGameObject currentRoom = loadSC().locationComp().getLocation();
 
         if (currentRoom == null) {
-            return noTime();
+            return timeElapsed;
         }
 
         loadSC().feelingsComp().setMood(NEUTRAL);
 
         if (!currentRoom.is(DRAUSSEN_VOR_DEM_SCHLOSS)) {
-            return noTime();  // Passiert nebenher und braucht KEINE zusätzliche Zeit
+            return timeElapsed;  // Passiert nebenher und braucht KEINE zusätzliche Zeit
         }
 
         // Der Spieler weiß jetzt, dass das Schlossfest läuft
         db.counterDao().incAndGet(COUNTER_ID_VOR_DEM_SCHLOSS_SCHLOSSFEST_KNOWN);
 
-        return n.add(
-                neuerSatz(PARAGRAPH, "Dir fällt auf, dass Handwerker dabei sind, überall "
-                                + "im Schlossgarten kleine bunte Pagoden aufzubauen. Du schaust eine Weile "
-                                + "zu, und wie es scheint, beginnen von überallher Menschen zu "
-                                + "strömen. Aus dem Schloss weht dich der Geruch von Gebratenem an.",
-                        mins(30)));
+        return timeElapsed.plus(
+                n.add(
+                        neuerSatz(PARAGRAPH, "Dir fällt auf, dass Handwerker dabei sind, überall "
+                                        + "im Schlossgarten kleine bunte Pagoden aufzubauen. Du schaust eine Weile "
+                                        + "zu, und wie es scheint, beginnen von überallher Menschen zu "
+                                        + "strömen. Aus dem Schloss weht dich der Geruch von Gebratenem an.",
+                                mins(30))));
     }
 }

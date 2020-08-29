@@ -17,7 +17,9 @@ import de.nb.aventiure2.data.world.syscomp.reaction.IResponder;
 import de.nb.aventiure2.data.world.syscomp.reaction.interfaces.IEssenReactions;
 import de.nb.aventiure2.data.world.syscomp.reaction.interfaces.IMovementReactions;
 import de.nb.aventiure2.data.world.syscomp.reaction.interfaces.ISCActionReactions;
+import de.nb.aventiure2.data.world.syscomp.reaction.interfaces.IStateChangedReactions;
 import de.nb.aventiure2.data.world.syscomp.reaction.interfaces.ITimePassedReactions;
+import de.nb.aventiure2.data.world.syscomp.state.IHasStateGO;
 import de.nb.aventiure2.data.world.syscomp.storingplace.ILocationGO;
 import de.nb.aventiure2.data.world.time.AvDateTime;
 import de.nb.aventiure2.data.world.time.AvTimeSpan;
@@ -26,7 +28,10 @@ import static de.nb.aventiure2.data.narration.Narration.NarrationSource.REACTION
 import static de.nb.aventiure2.data.world.time.AvTimeSpan.max;
 import static de.nb.aventiure2.data.world.time.AvTimeSpan.noTime;
 
-public class GOReactionsCoordinator {
+public class GOReactionsCoordinator
+        implements IMovementReactions, IEssenReactions, IStateChangedReactions,
+        ITimePassedReactions,
+        ISCActionReactions {
     private final World world;
     private final NarrationDao n;
 
@@ -59,9 +64,10 @@ public class GOReactionsCoordinator {
         return onLeave(locatable, from, (ILocationGO) to);
     }
 
-    private AvTimeSpan onLeave(final ILocatableGO locatable,
-                               final ILocationGO from,
-                               @Nullable final ILocationGO to) {
+    @Override
+    public AvTimeSpan onLeave(final ILocatableGO locatable,
+                              final ILocationGO from,
+                              @Nullable final ILocationGO to) {
         return doReactions(IMovementReactions.class,
                 ((Predicate<IResponder>) locatable::equals).negate(),
                 reactions -> reactions.onLeave(locatable, from, to));
@@ -86,30 +92,56 @@ public class GOReactionsCoordinator {
         return onEnter(locatable, from, (ILocationGO) to);
     }
 
-    private AvTimeSpan onEnter(final ILocatableGO locatable,
-                               @Nullable final ILocationGO from,
-                               final ILocationGO to) {
+    @Override
+    public AvTimeSpan onEnter(final ILocatableGO locatable,
+                              @Nullable final ILocationGO from,
+                              final ILocationGO to) {
         return doReactions(IMovementReactions.class,
                 reactions -> reactions.onEnter(locatable, from, to));
     }
 
     // IEssenReactions
+    @Override
     public AvTimeSpan onEssen(final IGameObject gameObject) {
         return doReactions(IEssenReactions.class,
                 ((Predicate<IResponder>) gameObject::equals).negate(),
                 reactions -> reactions.onEssen(gameObject));
     }
 
+    // IStateChangedReactions
+    public AvTimeSpan onStateChanged(final GameObjectId gameObjectId,
+                                     final Enum<?> oldState,
+                                     final Enum<?> newState) {
+        final IGameObject gameObject = world.load(gameObjectId);
+        if (!(gameObject instanceof IHasStateGO<?>)) {
+            return noTime();
+        }
+
+        return onStateChanged((IHasStateGO<?>) gameObject, oldState, newState);
+    }
+
+    @Override
+    public AvTimeSpan onStateChanged(final IHasStateGO<?> gameObject,
+                                     final Enum<?> oldState,
+                                     final Enum<?> newState) {
+        return doReactions(IStateChangedReactions.class,
+                ((Predicate<IResponder>) gameObject::equals).negate(),
+                reactions -> reactions.onStateChanged(
+                        gameObject, oldState, newState));
+    }
+
     // ITimePassedReactions
+    @Override
     public AvTimeSpan onTimePassed(final AvDateTime lastTime, final AvDateTime now) {
         return doReactions(ITimePassedReactions.class,
                 reactions -> reactions.onTimePassed(lastTime, now));
     }
 
     // ISCActionReactions
+    @Override
     public AvTimeSpan afterScActionAndFirstWorldUpdate() {
         return doReactions(ISCActionReactions.class,
-                reactions -> reactions.afterScActionAndFirstWorldUpdate());
+                ISCActionReactions::afterScActionAndFirstWorldUpdate);
     }
 
     /**

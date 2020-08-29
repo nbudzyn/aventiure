@@ -55,13 +55,13 @@ public class InvisibleFactory {
 
     private static class Schlossfest extends GameObject
             implements IHasStateGO<SchlossfestState>, IResponder {
-        private final AbstractStateComp stateComp;
+        private final AbstractStateComp<SchlossfestState> stateComp;
         private final SchlossfestReactionsComp reactionsComp;
 
         public Schlossfest(final AvDatabase db, final World world) {
             super(SCHLOSSFEST);
 
-            stateComp = addComponent(new SchlossfestStateComp(TAGESZEIT, db));
+            stateComp = addComponent(new SchlossfestStateComp(TAGESZEIT, db, world));
             reactionsComp = addComponent(
                     new SchlossfestReactionsComp(db, world, stateComp));
         }

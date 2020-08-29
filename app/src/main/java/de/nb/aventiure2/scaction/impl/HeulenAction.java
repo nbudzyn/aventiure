@@ -114,7 +114,7 @@ public class HeulenAction extends AbstractScAction {
 
         sc.memoryComp().setLastAction(buildMemorizedAction());
 
-        final AvTimeSpan timeElapsed =
+        AvTimeSpan timeElapsed =
                 n.add(du("weinst", "immer lauter und kannst dich gar nicht trösten. " +
                         "Und wie du so klagst, ruft dir jemand zu: „Was hast du vor, " +
                         "du schreist ja, dass sich ein Stein erbarmen möchte.“ Du siehst " +
@@ -122,7 +122,8 @@ public class HeulenAction extends AbstractScAction {
                         "die Stimme käme, da erblickst du " +
                         world.getDescription(froschprinz).akk(), "immer lauter", secs(30)));
 
-        froschprinz.stateComp().setState(HAT_SC_HILFSBEREIT_ANGESPROCHEN);
+        timeElapsed = timeElapsed.plus(
+                froschprinz.stateComp().narrateAndSetState(HAT_SC_HILFSBEREIT_ANGESPROCHEN));
         froschprinz.talkingComp().setTalkingTo(sc);
         sc.feelingsComp().setMood(NEUTRAL);
         world.upgradeKnownToSC(FROSCHPRINZ);

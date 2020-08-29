@@ -26,14 +26,14 @@ public enum FroschkoenigStoryNode implements IStoryNode {
     ETWAS_IM_BRUNNEN_VERLOREN(6, IM_WALD_BEIM_BRUNNEN,
             KUGEL_GENOMMEN // Ansonsten gibt es derzeit gar nichts zum Verlieren
     ),
-    DEM_FROSCH_ALLES_VERSPROCHEN(10, IM_WALD_BEIM_BRUNNEN,
+    FROSCH_HAT_ETWAS_AUS_BRUNNEN_GEHOLT(10, IM_WALD_BEIM_BRUNNEN,
             ETWAS_IM_BRUNNEN_VERLOREN
     ),
     ZUM_SCHLOSSFEST_GEGANGEN(30, // STORY Diese Zahl ermitteln!
             DRAUSSEN_VOR_DEM_SCHLOSS,
             KUGEL_GENOMMEN, // Ansonsten kann der Spieler nicht wissen, dass es ein Schlossfest
             // überhaupt gibt
-            DEM_FROSCH_ALLES_VERSPROCHEN // Ansonsten bringt einem das Schlossfest nichts
+            FROSCH_HAT_ETWAS_AUS_BRUNNEN_GEHOLT // Ansonsten bringt einem das Schlossfest nichts
     ),
     BEIM_SCHLOSSFEST_AN_DEN_TISCH_GESETZT(4, SCHLOSS_VORHALLE_AM_TISCH_BEIM_FEST,
             ZUM_SCHLOSSFEST_GEGANGEN

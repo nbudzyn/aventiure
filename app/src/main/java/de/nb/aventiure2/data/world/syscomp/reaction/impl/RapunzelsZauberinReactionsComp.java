@@ -244,9 +244,9 @@ public class RapunzelsZauberinReactionsComp
                 // Aber der Spieler bemerkt sie nicht.
                 DRAUSSEN_VOR_DEM_SCHLOSS,
                 () -> {
-                    stateComp.setState(AUF_DEM_WEG_ZU_RAPUNZEL);
-                    // Keine extra-Zeit
-                    return noTime();
+                    return stateComp.narrateAndSetState(AUF_DEM_WEG_ZU_RAPUNZEL)
+                            // Keine extra-Zeit
+                            ;
                 });
 
         // Zauberin geht Richtung Turm
@@ -256,7 +256,7 @@ public class RapunzelsZauberinReactionsComp
     }
 
     private AvTimeSpan onTimePassed_fromAufDemWegZuRapunzel(final AvDateTime now) {
-        final AvTimeSpan extraTime = movementComp.onTimePassed(now);
+        AvTimeSpan extraTime = movementComp.onTimePassed(now);
 
         if (movementComp.isMoving()) {
             // Zauberin ist noch auf dem Weg
@@ -272,7 +272,7 @@ public class RapunzelsZauberinReactionsComp
         //    der Besucht vorbei sein soll (besuchsEndeZeit = ankunft + BESUCH_DAUER)
 
         // Zauberin ist unten am alten Turm angekommen.
-        stateComp.setState(BESUCHT_RAPUNZEL);
+        extraTime = extraTime.plus(stateComp.narrateAndSetState(BESUCHT_RAPUNZEL));
 
         if (loadSC().locationComp().hasLocation(VOR_DEM_ALTEN_TURM) ||
                 mentalModelComp.assumesLocation(SPIELER_CHARAKTER,
@@ -315,7 +315,8 @@ public class RapunzelsZauberinReactionsComp
 
             }
 
-            locationComp.narrateAndSetLocation(OBEN_IM_ALTEN_TURM);
+            extraTime = extraTime.plus(
+                    locationComp.narrateAndSetLocation(OBEN_IM_ALTEN_TURM));
             // Als Reaction (siehe RapunzelReactionsComp!) wird Rapunzel ihre Haare wieder
             // heraufholen etc.
         } else {
@@ -355,14 +356,16 @@ public class RapunzelsZauberinReactionsComp
         }
 
         // Zauberin verlässt Rapunzel
-        stateComp.setState(AUF_DEM_RUECKWEG_VON_RAPUNZEL);
+        AvTimeSpan timeElapsed = stateComp.narrateAndSetState(AUF_DEM_RUECKWEG_VON_RAPUNZEL);
 
         // STORY Zauberin wird wieder heruntergelassen
         if (locationComp.hasRecursiveLocation(OBEN_IM_ALTEN_TURM)) {
-            locationComp.narrateAndSetLocation(VOR_DEM_ALTEN_TURM);
+            timeElapsed = timeElapsed.plus(
+                    locationComp.narrateAndSetLocation(VOR_DEM_ALTEN_TURM));
         }
 
-        return movementComp.startMovement(now, DRAUSSEN_VOR_DEM_SCHLOSS);
+        return timeElapsed.plus(
+                movementComp.startMovement(now, DRAUSSEN_VOR_DEM_SCHLOSS));
     }
 
     private AvTimeSpan onTimePassed_fromAufDemRueckwegVonRapunzel(final AvDateTime now) {
@@ -382,10 +385,9 @@ public class RapunzelsZauberinReactionsComp
         return locationComp.narrateAndUnsetLocation(
                 // Zauberin "verschwindet" fürs erste
                 () -> {
-                    stateComp.setState(VOR_DEM_NAECHSTEN_RAPUNZEL_BESUCH);
-
-                    // Keine extra-Zeit
-                    return noTime();
+                    return stateComp.narrateAndSetState(VOR_DEM_NAECHSTEN_RAPUNZEL_BESUCH)
+                            // Keine extra-Zeit
+                            ;
                 });
     }
 }

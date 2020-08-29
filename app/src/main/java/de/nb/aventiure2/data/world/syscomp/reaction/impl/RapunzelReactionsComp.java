@@ -155,21 +155,22 @@ public class RapunzelReactionsComp
     }
 
     private AvTimeSpan zauberinBesuchtRapunzelImAltenTurm() {
-        stateComp.setState(STILL);
+        final AvTimeSpan timeElapsed = stateComp.narrateAndSetState(STILL);
 
         if (loadSC().locationComp().hasRecursiveLocation(VOR_DEM_ALTEN_TURM)) {
-            return n.add(neuerSatz(
-                    "Dann "
-                            // TODO Dies ist ein Beispiel für "dann", das nur Sinn ergibt, wenn
-                            //  die Zauberin vorher etwas getan hat - aber nicht, wenn der SC vorher
-                            //  etwas getan hat!
-                            + "verschwinden die prächtigen Haare wieder oben im Fenster. "
-                            + "„Das ist also die Leiter, auf welcher man hinaufkommt!“, denkst du "
-                            + "bei dir", secs(20))
-                    .undWartest());
+            return timeElapsed.plus(
+                    n.add(neuerSatz(
+                            "Dann "
+                                    // TODO Dies ist ein Beispiel für "dann", das nur Sinn ergibt, wenn
+                                    //  die Zauberin vorher etwas getan hat - aber nicht, wenn der SC vorher
+                                    //  etwas getan hat!
+                                    + "verschwinden die prächtigen Haare wieder oben im Fenster. "
+                                    + "„Das ist also die Leiter, auf welcher man hinaufkommt!“, denkst du "
+                                    + "bei dir", secs(20))
+                            .undWartest()));
         }
 
-        return noTime();
+        return timeElapsed;
     }
 
     @Override
@@ -227,9 +228,8 @@ public class RapunzelReactionsComp
     private AvTimeSpan onTimePassed_RapunzelMoechteSingen(final AvDateTime lastTime,
                                                           final AvDateTime now) {
         if (stateComp.hasState(STILL)) {
-            stateComp.setState(SINGEND);
-
-            return onTimePassed_moechteSingen_bislangStill();
+            return stateComp.narrateAndSetState(SINGEND).plus(
+                    onTimePassed_moechteSingen_bislangStill());
         }
 
         // Rapunzel hat schon die ganze Zeit gesungen
@@ -274,9 +274,8 @@ public class RapunzelReactionsComp
     private AvTimeSpan onTimePassed_RapunzelMoechteNichtSingen(final AvDateTime lastTime,
                                                                final AvDateTime now) {
         if (stateComp.hasState(SINGEND)) {
-            stateComp.setState(STILL);
-
-            return onTimePassed_moechteNichtMehrSingen_bislangGesungen();
+            return stateComp.narrateAndSetState(STILL).plus(
+                    onTimePassed_moechteNichtMehrSingen_bislangGesungen());
         }
 
         // Rapunzel hat schon die ganze Zeit nicht gesungen

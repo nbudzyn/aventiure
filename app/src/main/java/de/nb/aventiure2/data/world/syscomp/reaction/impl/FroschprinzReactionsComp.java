@@ -8,7 +8,6 @@ import de.nb.aventiure2.data.database.AvDatabase;
 import de.nb.aventiure2.data.world.base.IGameObject;
 import de.nb.aventiure2.data.world.gameobject.World;
 import de.nb.aventiure2.data.world.gameobject.player.SpielerCharakter;
-import de.nb.aventiure2.data.world.syscomp.description.impl.FroschprinzDescriptionComp;
 import de.nb.aventiure2.data.world.syscomp.location.ILocatableGO;
 import de.nb.aventiure2.data.world.syscomp.location.LocationComp;
 import de.nb.aventiure2.data.world.syscomp.reaction.AbstractDescribableReactionsComp;
@@ -78,7 +77,6 @@ public class FroschprinzReactionsComp
 
     public FroschprinzReactionsComp(final AvDatabase db,
                                     final World world,
-                                    final FroschprinzDescriptionComp descriptionComp,
                                     final FroschprinzStateComp stateComp,
                                     final LocationComp locationComp) {
         super(FROSCHPRINZ, db, world);
@@ -253,7 +251,7 @@ public class FroschprinzReactionsComp
             return prinzVerlaesstSchlossVorhalle();
         }
 
-        if (from.is(SCHLOSS_VORHALLE) &&
+        if (from != null && from.is(SCHLOSS_VORHALLE) &&
                 world.isOrHasRecursiveLocation(toAndPrinzLocation, DRAUSSEN_VOR_DEM_SCHLOSS)) {
             return prinzFaehrtMitWagenDavon();
         }
@@ -383,25 +381,25 @@ public class FroschprinzReactionsComp
         // Ist der Spieler auch da?
         if (!loadSC().locationComp()
                 .hasRecursiveLocation(SCHLOSS_VORHALLE_AM_TISCH_BEIM_FEST)) {
-            stateComp.setState(BEIM_SCHLOSSFEST_AUF_TISCH_WILL_ZUSAMMEN_ESSEN);
-
-            return noTime();
+            return stateComp.narrateAndSetState(BEIM_SCHLOSSFEST_AUF_TISCH_WILL_ZUSAMMEN_ESSEN);
         }
 
         final SubstantivischePhrase froschDescOderAnapher =
                 getAnaphPersPronWennMglSonstShortDescription();
 
-        stateComp.setState(BEIM_SCHLOSSFEST_AUF_TISCH_WILL_ZUSAMMEN_ESSEN);
+        final AvTimeSpan timeElapsed =
+                stateComp.narrateAndSetState(BEIM_SCHLOSSFEST_AUF_TISCH_WILL_ZUSAMMEN_ESSEN);
 
-        return n.add(neuerSatz(
-                "Wie " +
-                        froschDescOderAnapher.nom() +
-                        " nun da sitzt, glotzt " +
-                        froschDescOderAnapher.nom() +
-                        " dich mit großen Glubschaugen an und spricht: „Nun füll deine "
-                        + "Holzschale auf, wir wollen zusammen essen.“",
-                secs(10))
-                .phorikKandidat(froschDescOderAnapher, FROSCHPRINZ));
+        return timeElapsed.plus(
+                n.add(neuerSatz(
+                        "Wie " +
+                                froschDescOderAnapher.nom() +
+                                " nun da sitzt, glotzt " +
+                                froschDescOderAnapher.nom() +
+                                " dich mit großen Glubschaugen an und spricht: „Nun füll deine "
+                                + "Holzschale auf, wir wollen zusammen essen.“",
+                        secs(10))
+                        .phorikKandidat(froschDescOderAnapher, FROSCHPRINZ)));
     }
 
     @Override
@@ -462,9 +460,8 @@ public class FroschprinzReactionsComp
                             secs(25))
                             .beendet(PARAGRAPH));
 
-                    setFroschHatHochhebenGefordert();
-
-                    return timeSpan;
+                    return timeSpan.plus(
+                            narrateAndDoFroschHatHochhebenGefordert());
                 }
         );
     }
@@ -479,14 +476,13 @@ public class FroschprinzReactionsComp
                 secs(20))
                 .beendet(PARAGRAPH));
 
-        setFroschHatHochhebenGefordert();
-
-        return timeSpan;
+        return timeSpan.plus(
+                narrateAndDoFroschHatHochhebenGefordert());
     }
 
-    private void setFroschHatHochhebenGefordert() {
+    private AvTimeSpan narrateAndDoFroschHatHochhebenGefordert() {
         loadSC().feelingsComp().setMood(ANGESPANNT);
-        stateComp.setState(HAT_HOCHHEBEN_GEFORDERT);
+        return stateComp.narrateAndSetState(HAT_HOCHHEBEN_GEFORDERT);
     }
 
     private AvTimeSpan froschprinzHatHochhebenGefordertUndWillMitessen() {
@@ -561,28 +557,22 @@ public class FroschprinzReactionsComp
 
         timeElapsed = timeElapsed.plus(locationComp.narrateAndUnsetLocation());
 
-        stateComp.setState(AUF_DEM_WEG_ZUM_SCHLOSSFEST);
-
-        return timeElapsed;
+        return timeElapsed.plus(
+                stateComp.narrateAndSetState(AUF_DEM_WEG_ZUM_SCHLOSSFEST));
     }
 
     private AvTimeSpan froschprinzAufSchlossfestAngekommen() {
         return locationComp.narrateAndSetLocation(
                 SCHLOSS_VORHALLE_AM_TISCH_BEIM_FEST,
-                () -> {
-                    stateComp.setState(WARTET_AUF_SC_BEIM_SCHLOSSFEST);
-                    return noTime();
-                }
+                () -> stateComp.narrateAndSetState(WARTET_AUF_SC_BEIM_SCHLOSSFEST)
         );
     }
 
     private AvTimeSpan prinzDraussenVorDemSchlossAngekommen() {
         return locationComp.narrateAndSetLocation(
                 DRAUSSEN_VOR_DEM_SCHLOSS,
-                () -> {
-                    stateComp.setState(ZURUECKVERWANDELT_SCHLOSS_VORHALLE_VERLASSEN);
-                    return noTime();
-                }
+                () -> stateComp
+                        .narrateAndSetState(ZURUECKVERWANDELT_SCHLOSS_VORHALLE_VERLASSEN)
         );
     }
 

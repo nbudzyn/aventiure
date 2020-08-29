@@ -150,6 +150,20 @@ public class LocationComp extends AbstractStatefulComponent<LocationPCD> {
 
     /**
      * Gibt <code>true</code> zurück, falls das Game Object
+     * sich (ggf. rekusiv) an einer dieser Locations befindet.
+     */
+    public boolean hasRecursiveLocation(final GameObjectId... locationIds) {
+        for (final GameObjectId locationId : locationIds) {
+            if (hasRecursiveLocation(locationId)) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    /**
+     * Gibt <code>true</code> zurück, falls das Game Object
      * sich (ggf. rekusiv) an dieser Location befindet.
      */
     public boolean hasRecursiveLocation(final GameObjectId locationId) {

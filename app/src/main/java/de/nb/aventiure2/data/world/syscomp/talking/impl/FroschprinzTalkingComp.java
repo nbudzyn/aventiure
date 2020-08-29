@@ -274,9 +274,7 @@ public class FroschprinzTalkingComp extends AbstractTalkingComp {
             ratschlag = "sorge dich nicht";
         }
 
-        stateComp.setState(HAT_NACH_BELOHNUNG_GEFRAGT);
-
-        return n.add(neuerSatz(PARAGRAPH, "„Sei still und "
+        final AvTimeSpan timeElapsed = n.add(neuerSatz(PARAGRAPH, "„Sei still und "
                         + ratschlag
                         + "“, antwortet "
                         + getDescription(true).nom()
@@ -285,6 +283,9 @@ public class FroschprinzTalkingComp extends AbstractTalkingComp {
                         + " wieder heraufhole?“",
                 secs(15))
                 .beendet(PARAGRAPH));
+
+        return timeElapsed.plus(
+                stateComp.narrateAndSetState(HAT_NACH_BELOHNUNG_GEFRAGT));
     }
 
     private AvTimeSpan froschHatAngesprochen_Exit() {
@@ -309,12 +310,10 @@ public class FroschprinzTalkingComp extends AbstractTalkingComp {
                 "„Was du haben willst, lieber Frosch“, sagst du, „meine Kleider, "
                         + "Perlen oder Edelsteine?“", secs(5)));
 
-        stateComp.setState(HAT_FORDERUNG_GESTELLT);
-
         final ImmutableList<? extends IDescribableGO> objectsInDenBrunnenGefallen =
                 getObjectsInDenBrunnenGefallen();
 
-        return timeSpan.plus(n.add(neuerSatz(PARAGRAPH,
+        final AvTimeSpan timeElapsed = timeSpan.plus(n.add(neuerSatz(PARAGRAPH,
                 // TODO Geschlechtsneutral! Reichtümer o.Ä.
                 "Der Frosch antwortet: „Deine Kleider, Perlen oder Edelsteine, die mag "
                         + "ich nicht. "
@@ -325,6 +324,9 @@ public class FroschprinzTalkingComp extends AbstractTalkingComp {
                         + getDescriptionSingleOrCollective(objectsInDenBrunnenGefallen).akk()
                         + " wieder heraufholen.“", secs(15))
                 .beendet(PARAGRAPH)));
+
+        return timeElapsed.plus(
+                stateComp.narrateAndSetState(HAT_FORDERUNG_GESTELLT));
     }
 
     private AvTimeSpan froschHatNachBelohnungGefragt_ImmReEntry() {
@@ -351,12 +353,10 @@ public class FroschprinzTalkingComp extends AbstractTalkingComp {
                         secs(10))));
 
 
-        stateComp.setState(HAT_FORDERUNG_GESTELLT);
-
         final ImmutableList<? extends IDescribableGO> objectsInDenBrunnenGefallen =
                 getObjectsInDenBrunnenGefallen();
 
-        return timeSpan.plus(n.add(neuerSatz(PARAGRAPH,
+        final AvTimeSpan timeElapsed = timeSpan.plus(n.add(neuerSatz(PARAGRAPH,
                 // TODO Geschlechtsneutral! Reichtümer o.Ä.
                 "Der Frosch antwortet: „Deine Kleider, Perlen oder Edelsteine, die mag "
                         + "ich nicht. "
@@ -369,6 +369,9 @@ public class FroschprinzTalkingComp extends AbstractTalkingComp {
                         + " wieder herauf holen.“",
                 secs(15))
                 .beendet(PARAGRAPH)));
+
+        return timeElapsed.plus(
+                stateComp.narrateAndSetState(HAT_FORDERUNG_GESTELLT));
     }
 
     private AvTimeSpan froschHatNachBelohnungGefragt_Exit() {
@@ -449,8 +452,6 @@ public class FroschprinzTalkingComp extends AbstractTalkingComp {
 
         unsetTalkingTo();
 
-        stateComp.setState(ERWARTET_VON_SC_EINLOESUNG_SEINES_VERSPRECHENS);
-
         world.loadSC().feelingsComp().setMoodMin(VOLLER_FREUDE);
 
         AvTimeSpan timeElapsed = n.add(satzanschluss("taucht seinen Kopf "
@@ -474,6 +475,9 @@ public class FroschprinzTalkingComp extends AbstractTalkingComp {
             timeElapsed = timeElapsed.plus(object.locationComp()
                     .narrateAndSetLocation(scLocationId));
         }
+
+        timeElapsed = timeElapsed.plus(
+                stateComp.narrateAndSetState(ERWARTET_VON_SC_EINLOESUNG_SEINES_VERSPRECHENS));
 
         return timeElapsed;
     }

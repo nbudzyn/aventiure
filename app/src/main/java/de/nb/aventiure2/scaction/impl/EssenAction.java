@@ -185,10 +185,10 @@ public class EssenAction extends AbstractScAction {
                 secs(10))));
 
         world.loadSC().feelingsComp().setMoodMin(ZUFRIEDEN);
-        froschprinz.stateComp().setState(ZURUECKVERWANDELT_IN_VORHALLE);
-        froschprinz.locationComp().narrateAndSetLocation(SCHLOSS_VORHALLE);
-
-        return timeElapsed;
+        timeElapsed = timeElapsed.plus(
+                froschprinz.stateComp().narrateAndSetState(ZURUECKVERWANDELT_IN_VORHALLE));
+        return timeElapsed.plus(
+                froschprinz.locationComp().narrateAndSetLocation(SCHLOSS_VORHALLE));
     }
 
     private AvTimeSpan narrateAndDoSchlossfestHungrig() {

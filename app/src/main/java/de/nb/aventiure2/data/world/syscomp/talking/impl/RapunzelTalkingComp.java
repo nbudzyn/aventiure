@@ -59,8 +59,7 @@ public class RapunzelTalkingComp extends AbstractTalkingComp {
             }
         }
 
-        stateComp.setState(HAARE_VOM_TURM_HERUNTERGELASSEN);
-
-        return extraTime;
+        return extraTime.plus(
+                stateComp.narrateAndSetState(HAARE_VOM_TURM_HERUNTERGELASSEN));
     }
 }

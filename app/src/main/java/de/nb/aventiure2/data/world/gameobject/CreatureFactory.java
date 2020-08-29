@@ -68,7 +68,7 @@ class CreatureFactory {
 
     GameObject createSchlosswache() {
         final SchlosswacheStateComp stateComp =
-                new SchlosswacheStateComp(SCHLOSSWACHE, db);
+                new SchlosswacheStateComp(SCHLOSSWACHE, db, world);
         final AbstractDescriptionComp descriptionComp =
                 new SimpleDescriptionComp(SCHLOSSWACHE,
                         np(F, "eine Schlosswache mit langer Hellebarde",
@@ -85,12 +85,12 @@ class CreatureFactory {
         return new ReactionsCreature<>(SCHLOSSWACHE,
                 descriptionComp, locationComp, stateComp,
                 new SchlosswacheReactionsComp(
-                        db, world, world.getLocationSystem(), descriptionComp, stateComp,
+                        db, world, world.getLocationSystem(), stateComp,
                         locationComp));
     }
 
     GameObject createFroschprinz() {
-        final FroschprinzStateComp stateComp = new FroschprinzStateComp(db);
+        final FroschprinzStateComp stateComp = new FroschprinzStateComp(db, world);
         final FroschprinzDescriptionComp descriptionComp =
                 new FroschprinzDescriptionComp(stateComp);
         final LocationComp locationComp =
@@ -103,11 +103,11 @@ class CreatureFactory {
                 locationComp,
                 stateComp,
                 talkingComp,
-                new FroschprinzReactionsComp(db, world, descriptionComp, stateComp, locationComp));
+                new FroschprinzReactionsComp(db, world, stateComp, locationComp));
     }
 
     GameObject createRapunzel() {
-        final RapunzelStateComp stateComp = new RapunzelStateComp(db);
+        final RapunzelStateComp stateComp = new RapunzelStateComp(db, world);
         final AbstractDescriptionComp descriptionComp =
                 new SimpleDescriptionComp(RAPUNZEL,
                         // STORY Beschreibung für Rapunzel
@@ -131,7 +131,7 @@ class CreatureFactory {
     }
 
     GameObject createRapunzelsZauberin() {
-        final RapunzelsZauberinStateComp stateComp = new RapunzelsZauberinStateComp(db);
+        final RapunzelsZauberinStateComp stateComp = new RapunzelsZauberinStateComp(db, world);
         final AbstractDescriptionComp descriptionComp =
                 new SimpleDescriptionComp(RAPUNZELS_ZAUBERIN,
                         np(F, "eine magere Frau mit krummer, bis zum Kinn "
