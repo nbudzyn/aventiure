@@ -73,8 +73,6 @@ public class WalkerTest {
             doWalkthrough(Walkthrough.FULL.truncate(maxSteps));
             walkRandomly();
 
-            assertEquals(100, scoreService.getScore());
-
             resetDatabase();
         }
     }
