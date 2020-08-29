@@ -28,7 +28,9 @@ import de.nb.aventiure2.scaction.devhelper.chooser.IActionChooser;
 import de.nb.aventiure2.scaction.devhelper.chooser.impl.RandomActionChooser;
 import de.nb.aventiure2.scaction.devhelper.chooser.impl.Walkthrough;
 import de.nb.aventiure2.scaction.devhelper.chooser.impl.WalkthroughActionChooser;
+import de.nb.aventiure2.score.ScoreService;
 
+import static junit.framework.TestCase.assertEquals;
 import static junit.framework.TestCase.fail;
 
 @RunWith(AndroidJUnit4.class)
@@ -41,6 +43,7 @@ public class WalkerTest {
     private static final Logger LOGGER = Logger.getLogger();
 
     private AvDatabase db;
+    private ScoreService scoreService;
     private ScActionService scActionService;
     private Context appContext;
 
@@ -57,6 +60,8 @@ public class WalkerTest {
         // Will be executed first for a fast feedback whether
         // the basic walkthrough still works
         doWalkthrough(Walkthrough.FULL);
+
+        assertEquals(100, scoreService.getScore());
     }
 
     @Test
@@ -68,6 +73,8 @@ public class WalkerTest {
             doWalkthrough(Walkthrough.FULL.truncate(maxSteps));
             walkRandomly();
 
+            assertEquals(100, scoreService.getScore());
+
             resetDatabase();
         }
     }
@@ -78,6 +85,7 @@ public class WalkerTest {
 
         db = AvDatabase.getDatabase(appContext);
 
+        scoreService = new ScoreService(appContext);
         scActionService = new ScActionService(appContext);
     }
 

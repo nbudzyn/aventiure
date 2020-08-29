@@ -96,6 +96,30 @@ public class StoryWebPCD extends AbstractPersistentComponentData {
         return res;
     }
 
+    int getScore() {
+        return 100 * getNumSuccessfulStoryNodes() / getNumStoryNodes();
+    }
+
+    private int getNumSuccessfulStoryNodes() {
+        int res = 0;
+
+        for (final StoryData storyData : storyDataMap.values()) {
+            res += storyData.getNumSuccessfulNodes();
+        }
+
+        return res;
+    }
+
+    private static int getNumStoryNodes() {
+        int res = 0;
+
+        for (final Story story : Story.values()) {
+            res += story.getNodes().size();
+        }
+
+        return res;
+    }
+
     private ImmutableSet<IStoryNode> getReachableStoryNodes() {
         final ImmutableSet.Builder<IStoryNode> res = ImmutableSet.builder();
 

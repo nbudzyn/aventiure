@@ -44,6 +44,7 @@ public class MainActivity extends AppCompatActivity {
     private GuiActionsAdapter guiActionsAdapter;
 
     private MainViewModel mainViewModel;
+    private Toolbar toolbar;
 
     @Override
     protected void onCreate(final Bundle savedInstanceState) {
@@ -69,15 +70,21 @@ public class MainActivity extends AppCompatActivity {
 
         createActionsRecyclerView();
 
-        final Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
         mainViewModel = new ViewModelProvider(this).get(MainViewModel.class);
+        mainViewModel.getScore().observe(this,
+                this::setScore);
         mainViewModel.getNarration().observe(this,
                 this::setNarrationAndScrollToBottom);
         mainViewModel.getGuiActions().observe(this,
                 g -> guiActionsAdapter.setGuiActions(
                         g == null ? ImmutableList.of() : g));
+    }
+
+    private void setScore(final int score) {
+        toolbar.setSubtitle(score + "%");
     }
 
     private void setNarrationAndScrollToBottom(final String newText) {

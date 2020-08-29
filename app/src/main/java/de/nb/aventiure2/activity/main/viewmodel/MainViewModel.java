@@ -23,15 +23,18 @@ import de.nb.aventiure2.scaction.devhelper.chooser.ExpectedActionNotFoundExcepti
 import de.nb.aventiure2.scaction.devhelper.chooser.IActionChooser;
 import de.nb.aventiure2.scaction.devhelper.chooser.impl.Walkthrough;
 import de.nb.aventiure2.scaction.devhelper.chooser.impl.WalkthroughActionChooser;
+import de.nb.aventiure2.score.ScoreService;
 
 import static de.nb.aventiure2.data.database.AvDatabase.getDatabase;
 
 public class MainViewModel extends AndroidViewModel {
     private static final Logger LOGGER = Logger.getLogger();
 
+    private final MutableLiveData<Integer> score = new MutableLiveData<>();
     private final MutableLiveData<String> narration = new MutableLiveData<>();
     private final MutableLiveData<List<GuiAction>> playerActionHandlers = new MutableLiveData<>();
 
+    private final ScoreService scoreService;
     private final ScActionService scActionService;
     private final AvDatabase db;
 
@@ -43,8 +46,10 @@ public class MainViewModel extends AndroidViewModel {
         // After installing the app, this call also initializes the game and fills the
         // database.
 
+        scoreService = new ScoreService(application);
         scActionService = new ScActionService(application);
 
+        score.setValue(0);
         narration.setValue("");
         playerActionHandlers.setValue(ImmutableList.of());
 
@@ -53,8 +58,7 @@ public class MainViewModel extends AndroidViewModel {
 
     @WorkerThread
     private List<GuiAction> buildGuiActions() {
-        final List<AbstractScAction> playerActions =
-                scActionService.getPlayerActions();
+        final List<AbstractScAction> playerActions = scActionService.getPlayerActions();
 
         return playerActions.stream()
                 .map(this::toGuiAction)
@@ -163,9 +167,16 @@ public class MainViewModel extends AndroidViewModel {
             postLiveUpdateLater();
             return;
         }
-
         this.narration.postValue(narration.getText());
+
+        score.postValue(scoreService.getScore());
+
         playerActionHandlers.postValue(buildGuiActions());
+    }
+
+    @UiThread
+    public MutableLiveData<Integer> getScore() {
+        return score;
     }
 
     @UiThread

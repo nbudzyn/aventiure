@@ -122,6 +122,10 @@ public class StoryWebComp extends AbstractStatefulComponent<StoryWebPCD> {
         return extraTimeElapsed;
     }
 
+    public int getScore() {
+        return getPcd().getScore();
+    }
+
     @Nullable
     private IStoryNode getStoryNodeForHintAction() {
         final ImmutableSet<IStoryNode> storyNodesForHintAction =

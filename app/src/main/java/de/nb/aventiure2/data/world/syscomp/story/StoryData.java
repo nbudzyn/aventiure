@@ -17,7 +17,7 @@ import static de.nb.aventiure2.data.world.syscomp.story.StoryData.State.NICHT_BE
  * Persistente Daten für eine {@link Story}.
  */
 class StoryData {
-    static enum State {
+    enum State {
         NICHT_BEGONNEN,
         AKTIV,
         BEENDET
@@ -42,10 +42,18 @@ class StoryData {
         this.reachedNodes = new HashMap<>(reachedNodes);
     }
 
-    public Iterable<? extends IStoryNode> getReachableNodes() {
+    int getNumSuccessfulNodes() {
+        if (state == BEENDET) {
+            return story.getNodes().size();
+        }
+
+        return reachedNodes.size();
+    }
+
+    Iterable<? extends IStoryNode> getReachableNodes() {
         final ImmutableSet.Builder<IStoryNode> res = ImmutableSet.builder();
         if (state == AKTIV) {
-            for (final IStoryNode node : getStory().getNodes()) {
+            for (final IStoryNode node : story.getNodes()) {
                 if (isReachable(node)) {
                     res.add(node);
                 }
@@ -55,7 +63,7 @@ class StoryData {
         return res.build();
     }
 
-    public boolean isReachable(final IStoryNode node) {
+    boolean isReachable(final IStoryNode node) {
         if (state == BEENDET || isReached(node) || !allNodesReachedRequiredFor(node)) {
             return false;
         }
@@ -92,7 +100,7 @@ class StoryData {
         return res;
     }
 
-    public boolean reachStoryNode(final IStoryNode storyNode, final int scActionStepCount) {
+    boolean reachStoryNode(final IStoryNode storyNode, final int scActionStepCount) {
         if (state == BEENDET) {
             return false;
         }
@@ -127,22 +135,17 @@ class StoryData {
         return true;
     }
 
-    public boolean isReached(final IStoryNode storyNode) {
+    boolean isReached(final IStoryNode storyNode) {
         return reachedNodes.containsKey(storyNode);
     }
 
     @NonNull
-    public Story getStory() {
-        return story;
-    }
-
-    @NonNull
-    public State getState() {
+    State getState() {
         return state;
     }
 
     @NonNull
-    public ImmutableMap<IStoryNode, Integer> getReachedNodes() {
+    ImmutableMap<IStoryNode, Integer> getReachedNodes() {
         return ImmutableMap.copyOf(reachedNodes);
     }
 
