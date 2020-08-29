@@ -3,8 +3,6 @@ package de.nb.aventiure2.data.world.syscomp.reaction.impl;
 import androidx.annotation.Nullable;
 
 import de.nb.aventiure2.data.database.AvDatabase;
-import de.nb.aventiure2.data.world.base.GameObjectId;
-import de.nb.aventiure2.data.world.base.IGameObject;
 import de.nb.aventiure2.data.world.gameobject.World;
 import de.nb.aventiure2.data.world.syscomp.location.ILocatableGO;
 import de.nb.aventiure2.data.world.syscomp.reaction.AbstractReactionsComp;
@@ -15,7 +13,6 @@ import de.nb.aventiure2.data.world.syscomp.story.StoryWebComp;
 import de.nb.aventiure2.data.world.syscomp.story.impl.FroschkoenigStoryNode;
 import de.nb.aventiure2.data.world.time.AvTimeSpan;
 
-import static com.google.common.base.Preconditions.checkNotNull;
 import static de.nb.aventiure2.data.world.gameobject.World.GOLDENE_KUGEL;
 import static de.nb.aventiure2.data.world.gameobject.World.SPIELER_CHARAKTER;
 import static de.nb.aventiure2.data.world.gameobject.World.STORY_WEB;
@@ -61,36 +58,7 @@ public class StoryWebReactionsComp
             return onGoldeneKugelRecEnter(from, to);
         }
 
-
         return noTime();
-    }
-
-    private boolean isOrContains(final GameObjectId oneId, @Nullable final GameObjectId otherId) {
-        checkNotNull(oneId, "oneId is null");
-
-        if (otherId == null) {
-            return false;
-        }
-
-        return isOrContains(world.load(oneId), world.load(otherId));
-    }
-
-    private static boolean isOrContains(final IGameObject one, @Nullable final IGameObject other) {
-        checkNotNull(one, "one is null");
-
-        if (other == null) {
-            return false;
-        }
-
-        if (one.is(other)) {
-            return true;
-        }
-
-        if (!(other instanceof ILocatableGO)) {
-            return false;
-        }
-
-        return isOrContains(one, ((ILocatableGO) other).locationComp().getLocation());
     }
 
     private static AvTimeSpan onSCEnter(@Nullable final ILocationGO from, final ILocationGO to) {
