@@ -39,9 +39,6 @@ public class StoryWebComp extends AbstractStatefulComponent<StoryWebPCD> {
     //  welche StoryNodes er bisher erreicht hat. Die baumstruktur ordnet sich nach den
     //  Voraussetzungen der StoryNodes voneinander.
 
-    // TODO Das Programm kann oben in der leiste jederzeit einen prozentsatz anzeigen, wie
-    //  viele StoryNodes der benutzer schon erreicht hat.
-
     private final World world;
     protected final NarrationDao n;
 
