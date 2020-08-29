@@ -161,8 +161,11 @@ public class FroschprinzReactionsComp
             return onSCEnter(from, to);
         }
 
-        if (locatable.is(GOLDENE_KUGEL)) {
-            return onGoldeneKugelEnter(from, to);
+        // Die Goldene Kugel hat einen anderen Ort erreicht -
+        // oder ein Container, der die Goldene Kugel (ggf. rekursiv) enthält,
+        // hat einen anderen Ort erreicht
+        if (world.isOrHasRecursiveLocation(GOLDENE_KUGEL, locatable)) {
+            return onGoldeneKugelRecEnter(from, to);
         }
 
         if (locatable.is(FROSCHPRINZ)) {
@@ -298,9 +301,13 @@ public class FroschprinzReactionsComp
         return timeSpan.plus(locationComp.narrateAndUnsetLocation());
     }
 
+    /**
+     * Die Goldene Kugel hat <code>to</code> erreicht - oder ein Container, der die
+     * Goldene Kugel (ggf. rekursiv) enthält, hat <code>to</code> erreicht.
+     */
     @Contract("null, _ -> !null")
-    private AvTimeSpan onGoldeneKugelEnter(@Nullable final ILocationGO from,
-                                           final ILocationGO to) {
+    private AvTimeSpan onGoldeneKugelRecEnter(@Nullable final ILocationGO from,
+                                              final ILocationGO to) {
         if (!world.isOrHasRecursiveLocation(from, SPIELER_CHARAKTER)) {
             // auch nicht vom Spieler oder aus einer Tasche des Spielers o.Ä.
 
@@ -313,7 +320,6 @@ public class FroschprinzReactionsComp
         }
 
         // Der SC hat die goldene Kugel hochgeworfen und in den Brunnen fallen lassen.
-
         if (!to.is(IM_WALD_BEIM_BRUNNEN) || stateComp.hasState(UNAUFFAELLIG)) {
             return noTime();
         }
