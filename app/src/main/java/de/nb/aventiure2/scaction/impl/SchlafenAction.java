@@ -63,7 +63,7 @@ public class SchlafenAction extends AbstractScAction {
     @Override
     public AvTimeSpan narrateAndDo() {
         // STORY Wenn der Benutzer längere Zeit nicht geschlafen hat, wird er automatisch müde
-        //  und bleibt müde. Abends wird man eher müde oder ist von allein müde.
+        //  und bleibt müde (analog Hunger!). Abends wird man eher müde oder ist von allein müde.
         //  Oder Nachts ist man immer müde.
 
         // STORY "Vor Hunger kannst du nicht einschlafen"

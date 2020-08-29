@@ -114,7 +114,6 @@ public class StoryWebComp extends AbstractStatefulComponent<StoryWebPCD> {
         final AvTimeSpan extraTimeElapsed = narrateAndDoHintAction(storyNode);
 
         getPcd().setLastHintActionStepCount(scActionStepCountDao.stepCount());
-        // STORY Speichern, dass eine Hint Action durchgeführt wurde (lastHintActionStepCount)
 
         return extraTimeElapsed;
     }
@@ -172,23 +171,25 @@ public class StoryWebComp extends AbstractStatefulComponent<StoryWebPCD> {
     private AvTimeSpan narrateAndDoHintAction(final IStoryNode storyNode) {
         // STORY Sinnvollen Tipp generieren o.Ä.
 
-        // STORY Als Tipp werden Sätze erzeugt wie
+        // STORY Als Tipp (könnten von der storyNode generiert werden)
+        //  werden Sätze erzeugt wie
         //  "Wann soll eigentlich das Schlossfest sein?",
         //  "Vielleicht hättest du doch die Kugel mitnehmen sollen?" o.Ä.
-        //  Als Tipp für den Froschprinzen z.B. durch einen NSC
-        //  ankündigen lassen: Im Königreich
-        //  nebenan ist der Prinz
-        //  verschwunden.
-        //  Tipp für Rapunzel: Mutter sammelt im Wald Holz und klagt ihr Leid.
-        //  Tipps könnten von der storyNode generiert werden, wenn ihre
-        //  Voraussetzungen bereits gegeben sind.
 
-        // STORY Jede IStoryNode könnte mehrere Hinweise erzeugen, aus denen
+        // STORY Die storyNode könnte mehrere Hinweise erzeugen, aus denen
         //  der Narrator auswählen könnte, ganz normal mit addAlt().
 
         // STORY Statt eines Tipps könnte die storyNode auch eine neue Story starten
         //  oder die Welt anderweitig modifizieren, dass es für den Spieler
         //  wieder mehr zu erleben gibt.
+
+        // STORY Als Tipp für den Froschprinzen z.B. durch einen NSC
+        //  ankündigen lassen: Im Königreich
+        //  nebenan ist der Prinz
+        //  verschwunden.
+
+        // STORY Tipp für Rapunzel: Mutter sammelt im Wald Holz und klagt ihr Leid.
+
         return n.addAlt(neuerSatz(PARAGRAPH,
                 "Du hast das Gefühl, es gibt noch viel zu erleben",
                 noTime())
