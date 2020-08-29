@@ -23,14 +23,9 @@ public enum RapunzelStoryNode implements IStoryNode {
     ),
     ZAUBERIN_HEIMLICH_BEIM_RUFEN_BEOBACHTET(20, VOR_DEM_ALTEN_TURM,
             TURM_GEFUNDEN
-    ),
+    )
     // STORY HOCHGEKLETTERT ETC.
-    RAPUNZELSTORY_BEENDET( // STORY Umbenennen?
-            20, // STORY gute Schrittzahl?
-            VOR_DEM_ALTEN_TURM, // STORY richtiger Ort?
-            // STORY Hier den vorletzten Zwischenschritt nennen
-            ZAUBERIN_HEIMLICH_BEIM_RUFEN_BEOBACHTET
-    );
+    ;
 
     private final ImmutableSet<RapunzelStoryNode> preconditions;
 
@@ -74,6 +69,6 @@ public enum RapunzelStoryNode implements IStoryNode {
 
     @Override
     public boolean beendetStory() {
-        return this == RAPUNZELSTORY_BEENDET;
+        return this == values()[values().length - 1];
     }
 }

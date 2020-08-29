@@ -19,7 +19,6 @@ import static java.util.Arrays.asList;
 public enum FroschkoenigStoryNode implements IStoryNode {
     // Idee für die Schritte: Das muss man machen, dann kommt man weiter (sonst nicht)
     KUGEL_GENOMMEN(20, SCHLOSS_VORHALLE),
-    // TODO Erreichen der folgenden Nodes erkennen und speichern
     MIT_KUGEL_ZUM_BRUNNEN_GEGANGEN(8, IM_WALD_BEIM_BRUNNEN,
             KUGEL_GENOMMEN
     ),

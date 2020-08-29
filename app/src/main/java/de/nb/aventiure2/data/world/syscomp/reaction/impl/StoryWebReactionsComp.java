@@ -12,23 +12,27 @@ import de.nb.aventiure2.data.world.syscomp.reaction.interfaces.ISCActionReaction
 import de.nb.aventiure2.data.world.syscomp.reaction.interfaces.IStateChangedReactions;
 import de.nb.aventiure2.data.world.syscomp.state.IHasStateGO;
 import de.nb.aventiure2.data.world.syscomp.state.impl.FroschprinzState;
+import de.nb.aventiure2.data.world.syscomp.state.impl.RapunzelState;
 import de.nb.aventiure2.data.world.syscomp.state.impl.SchlossfestState;
 import de.nb.aventiure2.data.world.syscomp.storingplace.ILocationGO;
 import de.nb.aventiure2.data.world.syscomp.story.IStoryNode;
 import de.nb.aventiure2.data.world.syscomp.story.StoryWebComp;
 import de.nb.aventiure2.data.world.syscomp.story.impl.FroschkoenigStoryNode;
+import de.nb.aventiure2.data.world.syscomp.story.impl.RapunzelStoryNode;
 import de.nb.aventiure2.data.world.time.AvTimeSpan;
 
 import static de.nb.aventiure2.data.world.gameobject.World.DRAUSSEN_VOR_DEM_SCHLOSS;
 import static de.nb.aventiure2.data.world.gameobject.World.FROSCHPRINZ;
 import static de.nb.aventiure2.data.world.gameobject.World.GOLDENE_KUGEL;
 import static de.nb.aventiure2.data.world.gameobject.World.IM_WALD_BEIM_BRUNNEN;
+import static de.nb.aventiure2.data.world.gameobject.World.RAPUNZEL;
 import static de.nb.aventiure2.data.world.gameobject.World.SCHLOSSFEST;
 import static de.nb.aventiure2.data.world.gameobject.World.SCHLOSS_VORHALLE;
 import static de.nb.aventiure2.data.world.gameobject.World.SCHLOSS_VORHALLE_AM_TISCH_BEIM_FEST;
 import static de.nb.aventiure2.data.world.gameobject.World.SPIELER_CHARAKTER;
 import static de.nb.aventiure2.data.world.gameobject.World.STORY_WEB;
 import static de.nb.aventiure2.data.world.gameobject.World.UNTEN_IM_BRUNNEN;
+import static de.nb.aventiure2.data.world.gameobject.World.VOR_DEM_ALTEN_TURM;
 import static de.nb.aventiure2.data.world.time.AvTimeSpan.noTime;
 
 /**
@@ -114,7 +118,10 @@ public class StoryWebReactionsComp
             return noTime();
         }
 
-        if (to.is(DRAUSSEN_VOR_DEM_SCHLOSS) &&
+        if (to.is(
+                DRAUSSEN_VOR_DEM_SCHLOSS,
+                SCHLOSS_VORHALLE,
+                SCHLOSS_VORHALLE_AM_TISCH_BEIM_FEST) &&
                 ((IHasStateGO<SchlossfestState>) world.load(SCHLOSSFEST)).stateComp()
                         .hasState(SchlossfestState.BEGONNEN)) {
             reachStoryNode(FroschkoenigStoryNode.ZUM_SCHLOSSFEST_GEGANGEN);
@@ -123,6 +130,17 @@ public class StoryWebReactionsComp
 
         if (to.is(SCHLOSS_VORHALLE_AM_TISCH_BEIM_FEST)) {
             reachStoryNode(FroschkoenigStoryNode.BEIM_SCHLOSSFEST_AN_DEN_TISCH_GESETZT);
+            return noTime();
+        }
+
+        if (world.isOrHasRecursiveLocation(to, VOR_DEM_ALTEN_TURM)) {
+            reachStoryNode(RapunzelStoryNode.TURM_GEFUNDEN);
+
+            if (((IHasStateGO<RapunzelState>) world.load(RAPUNZEL)).stateComp()
+                    .hasState(RapunzelState.SINGEND)) {
+                reachStoryNode(RapunzelStoryNode.RAPUNZEL_SINGEN_GEHOERT);
+            }
+
             return noTime();
         }
 
@@ -153,6 +171,12 @@ public class StoryWebReactionsComp
             );
         }
 
+        if (gameObject.is(RAPUNZEL)) {
+            return onRapunzelStateChanged(
+                    (RapunzelState) oldState, (RapunzelState) newState
+            );
+        }
+
         if (gameObject.is(SCHLOSSFEST)) {
             return onSchlossfestStateChanged(
                     (SchlossfestState) oldState, (SchlossfestState) newState);
@@ -165,6 +189,27 @@ public class StoryWebReactionsComp
                                                  final FroschprinzState newState) {
         if (newState == FroschprinzState.ZURUECKVERWANDELT_IN_VORHALLE) {
             reachStoryNode(FroschkoenigStoryNode.PRINZ_IST_ERLOEST);
+            return noTime();
+        }
+
+        return noTime();
+    }
+
+    private AvTimeSpan onRapunzelStateChanged(final RapunzelState oldState,
+                                              final RapunzelState newState) {
+        if (newState == RapunzelState.SINGEND &&
+                loadSC().locationComp().hasRecursiveLocation(VOR_DEM_ALTEN_TURM)
+            // STORY und der Spieler war wach oder ist rechtzeitig aufgewacht...
+        ) {
+            reachStoryNode(RapunzelStoryNode.RAPUNZEL_SINGEN_GEHOERT);
+            return noTime();
+        }
+
+        if (newState == RapunzelState.HAARE_VOM_TURM_HERUNTERGELASSEN &&
+                loadSC().locationComp().hasRecursiveLocation(VOR_DEM_ALTEN_TURM)
+            // STORY und der Spieler war wach oder ist rechtzeitig aufgewacht...
+        ) {
+            reachStoryNode(RapunzelStoryNode.ZAUBERIN_HEIMLICH_BEIM_RUFEN_BEOBACHTET);
             return noTime();
         }
 

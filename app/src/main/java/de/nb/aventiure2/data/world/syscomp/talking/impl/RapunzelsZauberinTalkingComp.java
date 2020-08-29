@@ -40,6 +40,8 @@ public class RapunzelsZauberinTalkingComp extends AbstractTalkingComp {
             case AUF_DEM_WEG_ZU_RAPUNZEL:
                 // fall-through
             case AUF_DEM_RUECKWEG_VON_RAPUNZEL:
+                // FIXME Das wird auch angeboten, wenn die Zauberin draußen vor dem
+                //  Schloss ist, der SC sie also eigentlich gar nicht sieht.
                 return ImmutableList.of(
                         entrySt(FRAGEN_NACH.mitPraep(
                                 np(N, "ihr Ziel",
