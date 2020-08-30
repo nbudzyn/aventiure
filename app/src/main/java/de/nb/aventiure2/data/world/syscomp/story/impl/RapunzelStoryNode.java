@@ -23,8 +23,7 @@ import static java.util.Arrays.asList;
 public enum RapunzelStoryNode implements IStoryNode {
     // Idee für die Schritte: Das muss man machen, dann kommt man weiter (sonst nicht)
 
-    // TODO Erreichen der Nodes erkennen und speichern
-    TURM_GEFUNDEN(20, VOR_DEM_ALTEN_TURM,
+    TURM_GEFUNDEN(10, VOR_DEM_ALTEN_TURM,
             RapunzelStoryNode::narrateAndDoHintAction_TurmGefunden),
     RAPUNZEL_SINGEN_GEHOERT(10, VOR_DEM_ALTEN_TURM,
             RapunzelStoryNode::narrateAndDoHintAction_RapunzelSingenGehoert,

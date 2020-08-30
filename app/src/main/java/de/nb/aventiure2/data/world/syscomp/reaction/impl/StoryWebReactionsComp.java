@@ -129,7 +129,6 @@ public class StoryWebReactionsComp
                 ((ILocatableGO) world.load(GOLDENE_KUGEL)).locationComp()
                         .hasRecursiveLocation(SPIELER_CHARAKTER)) {
             reachStoryNode(FroschkoenigStoryNode.MIT_KUGEL_ZUM_BRUNNEN_GEGANGEN);
-            return noTime();
         }
 
         if (to.is(
@@ -139,12 +138,10 @@ public class StoryWebReactionsComp
                 ((IHasStateGO<SchlossfestState>) world.load(SCHLOSSFEST)).stateComp()
                         .hasState(SchlossfestState.BEGONNEN)) {
             reachStoryNode(FroschkoenigStoryNode.ZUM_SCHLOSSFEST_GEGANGEN);
-            return noTime();
         }
 
         if (to.is(SCHLOSS_VORHALLE_AM_TISCH_BEIM_FEST)) {
             reachStoryNode(FroschkoenigStoryNode.BEIM_SCHLOSSFEST_AN_DEN_TISCH_GESETZT);
-            return noTime();
         }
 
         if (world.isOrHasRecursiveLocation(to, VOR_DEM_ALTEN_TURM)) {
@@ -154,8 +151,6 @@ public class StoryWebReactionsComp
                     .hasState(RapunzelState.SINGEND)) {
                 reachStoryNode(RapunzelStoryNode.RAPUNZEL_SINGEN_GEHOERT);
             }
-
-            return noTime();
         }
 
         return noTime();

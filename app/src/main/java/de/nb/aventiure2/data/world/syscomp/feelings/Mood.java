@@ -39,6 +39,10 @@ public enum Mood {
         this.adverbialeAngabe = adverbialeAngabe;
     }
 
+    public boolean isFroehlicherAls(final Mood other) {
+        return gradDerFreude > other.gradDerFreude;
+    }
+
     public boolean isTraurigerAls(final Mood other) {
         return gradDerFreude < other.gradDerFreude;
     }

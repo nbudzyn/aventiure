@@ -4,11 +4,13 @@ import com.google.common.collect.ImmutableList;
 
 import de.nb.aventiure2.data.database.AvDatabase;
 import de.nb.aventiure2.data.world.gameobject.World;
+import de.nb.aventiure2.data.world.syscomp.location.LocationComp;
 import de.nb.aventiure2.data.world.syscomp.state.impl.RapunzelsZauberinStateComp;
 import de.nb.aventiure2.data.world.syscomp.talking.AbstractTalkingComp;
 import de.nb.aventiure2.data.world.time.AvTimeSpan;
 import de.nb.aventiure2.german.base.SubstantivischePhrase;
 
+import static de.nb.aventiure2.data.world.gameobject.World.DRAUSSEN_VOR_DEM_SCHLOSS;
 import static de.nb.aventiure2.data.world.gameobject.World.RAPUNZELS_ZAUBERIN;
 import static de.nb.aventiure2.data.world.syscomp.talking.impl.SCTalkAction.entrySt;
 import static de.nb.aventiure2.data.world.time.AvTimeSpan.secs;
@@ -25,12 +27,15 @@ import static de.nb.aventiure2.german.praedikat.VerbSubjAkkPraep.FRAGEN_NACH;
  * kann versuchen, mit Rapunzels Zauberin ein Gespräch zu führen.
  */
 public class RapunzelsZauberinTalkingComp extends AbstractTalkingComp {
+    private final LocationComp locationComp;
     private final RapunzelsZauberinStateComp stateComp;
 
     public RapunzelsZauberinTalkingComp(final AvDatabase db,
                                         final World world,
+                                        final LocationComp locationComp,
                                         final RapunzelsZauberinStateComp stateComp) {
         super(RAPUNZELS_ZAUBERIN, db, world);
+        this.locationComp = locationComp;
         this.stateComp = stateComp;
     }
 
@@ -40,8 +45,11 @@ public class RapunzelsZauberinTalkingComp extends AbstractTalkingComp {
             case AUF_DEM_WEG_ZU_RAPUNZEL:
                 // fall-through
             case AUF_DEM_RUECKWEG_VON_RAPUNZEL:
-                // FIXME Das wird auch angeboten, wenn die Zauberin draußen vor dem
-                //  Schloss ist, der SC sie also eigentlich gar nicht sieht.
+                if (locationComp.hasRecursiveLocation(DRAUSSEN_VOR_DEM_SCHLOSS)) {
+                    // Hier bemerkt der SC die Zauberin nicht
+                    return ImmutableList.of();
+                }
+
                 return ImmutableList.of(
                         entrySt(FRAGEN_NACH.mitPraep(
                                 np(N, "ihr Ziel",

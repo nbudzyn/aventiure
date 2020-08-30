@@ -2,6 +2,7 @@ package de.nb.aventiure2.data.world.syscomp.story.impl;
 
 import androidx.annotation.Nullable;
 
+import com.google.common.collect.ImmutableCollection;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
 
@@ -11,6 +12,7 @@ import de.nb.aventiure2.data.database.AvDatabase;
 import de.nb.aventiure2.data.narration.NarrationDao;
 import de.nb.aventiure2.data.world.base.GameObjectId;
 import de.nb.aventiure2.data.world.gameobject.World;
+import de.nb.aventiure2.data.world.syscomp.location.ILocatableGO;
 import de.nb.aventiure2.data.world.syscomp.story.IStoryNode;
 import de.nb.aventiure2.data.world.syscomp.story.Story;
 import de.nb.aventiure2.data.world.time.AvTimeSpan;
@@ -19,11 +21,16 @@ import de.nb.aventiure2.german.base.AllgDescription;
 
 import static com.google.common.collect.ImmutableList.builder;
 import static de.nb.aventiure2.data.world.gameobject.World.DRAUSSEN_VOR_DEM_SCHLOSS;
+import static de.nb.aventiure2.data.world.gameobject.World.GOLDENE_KUGEL;
+import static de.nb.aventiure2.data.world.gameobject.World.HUETTE_IM_WALD;
 import static de.nb.aventiure2.data.world.gameobject.World.IM_WALD_BEIM_BRUNNEN;
 import static de.nb.aventiure2.data.world.gameobject.World.SCHLOSS_VORHALLE;
 import static de.nb.aventiure2.data.world.gameobject.World.SCHLOSS_VORHALLE_AM_TISCH_BEIM_FEST;
+import static de.nb.aventiure2.data.world.gameobject.World.SPIELER_CHARAKTER;
 import static de.nb.aventiure2.data.world.syscomp.feelings.Mood.ERSCHOEPFT;
+import static de.nb.aventiure2.data.world.syscomp.feelings.Mood.UNTROESTLICH;
 import static de.nb.aventiure2.data.world.time.AvTimeSpan.noTime;
+import static de.nb.aventiure2.data.world.time.Tageszeit.NACHTS;
 import static de.nb.aventiure2.german.base.AllgDescription.neuerSatz;
 import static de.nb.aventiure2.german.base.StructuralElement.PARAGRAPH;
 import static java.util.Arrays.asList;
@@ -38,7 +45,7 @@ public enum FroschkoenigStoryNode implements IStoryNode {
     ),
     ETWAS_IM_BRUNNEN_VERLOREN(6, IM_WALD_BEIM_BRUNNEN,
             FroschkoenigStoryNode::narrateAndDoHintAction_EtwasImBrunnenVerloren,
-            KUGEL_GENOMMEN // Ansonsten gibt es derzeit gar nichts zum Verlieren
+            KUGEL_GENOMMEN // STORY Es könnte auch andere Dinge zum Im-Brunnen-Verlieren geben
     ),
     FROSCH_HAT_ETWAS_AUS_BRUNNEN_GEHOLT(10, IM_WALD_BEIM_BRUNNEN,
             FroschkoenigStoryNode::narrateAndDoHintAction_FroschHatEtwasAusBrunnenGeholt,
@@ -51,7 +58,8 @@ public enum FroschkoenigStoryNode implements IStoryNode {
             // überhaupt gibt
             FROSCH_HAT_ETWAS_AUS_BRUNNEN_GEHOLT // Ansonsten bringt einem das Schlossfest nichts
     ),
-    BEIM_SCHLOSSFEST_AN_DEN_TISCH_GESETZT(4, SCHLOSS_VORHALLE_AM_TISCH_BEIM_FEST,
+    BEIM_SCHLOSSFEST_AN_DEN_TISCH_GESETZT(4,
+            SCHLOSS_VORHALLE_AM_TISCH_BEIM_FEST,
             FroschkoenigStoryNode::narrateAndDoHintAction_BeimSchlossfestAnDenTischGesetzt,
             ZUM_SCHLOSSFEST_GEGANGEN
     ),
@@ -132,7 +140,7 @@ public enum FroschkoenigStoryNode implements IStoryNode {
             alt.add(paragraph("Die goldene Kugel aus dem Schloss will dir nicht mehr aus dem "
                     + "Kopf"));
 
-            alt.add(paragraph("Auf einmal musst du an die goldene Kugel denken, die dich im "
+            alt.add(paragraph("Auf einmal musst du wieder an die goldene Kugel denken, die dich im "
                     + "Schloss so angelacht hat"));
 
             alt.add(paragraph("Du musst spontan denken: Bei den reichen Leuten liegen oft so "
@@ -153,62 +161,171 @@ public enum FroschkoenigStoryNode implements IStoryNode {
 
     public static AvTimeSpan narrateAndDoHintAction_MitKugelZumBrunnenGegangen(
             final AvDatabase db, final NarrationDao n, final World world) {
-        // STORY Man könnte mehrere Hinweise erzeugen, aus denen
-        //  der Narrator auswählen könnte, ganz normal mit addAlt().
+        final ImmutableList.Builder<AbstractDescription<?>> alt = builder();
 
-        // STORY
-        //  - Tagsüber: "Es ziemlich heiß heute - ein kühler Ort wäre schön"
+        final ILocatableGO goldeneKugel = (ILocatableGO) world.load(GOLDENE_KUGEL);
 
-        return n.addAlt(paragraph("Du hast das Gefühl, es gibt noch viel zu erleben"));
+        if (!world.loadSC().locationComp().hasRecursiveLocation(IM_WALD_BEIM_BRUNNEN)) {
+            if (db.nowDao().now().getTageszeit().equals(NACHTS)) {
+                alt.addAll(altNachtsSchlafen(world));
+            } else {
+                alt.addAll(altHeissHeutKuehlerOrtWaereSchoen());
+            }
+        }
+
+        if (!goldeneKugel.locationComp().hasSameUpperMostLocationAs(SPIELER_CHARAKTER)) {
+            alt.addAll(altKugelVermissen());
+        }
+
+        return n.addAlt(alt);
     }
 
     public static AvTimeSpan narrateAndDoHintAction_EtwasImBrunnenVerloren(
             final AvDatabase db, final NarrationDao n, final World world) {
         // STORY
         //  - (bis BEIM_SCHLOSSFEST_AN_DEN_TISCH_GESETZT) Eine verwirrte alte Frau
-        //   geht vorbei und jammert: Im Königreich nebenan
+        //   läuft zwiscchen vor dem Schloss und Wald hin und her und jammert: Im Königreich nebenan
         //   ist der Prinz verschwunden. Er soll verwünscht oder in ein Tier
-        //   verwandelt worden sein.
-        return n.addAlt(paragraph("Du hast das Gefühl, es gibt noch viel zu erleben"));
+        //   verwandelt worden sein und treibe sich jetzt im Wald herum. Keiner wisse, wo
+        //   er zu finden sei...
+
+        final ImmutableList.Builder<AbstractDescription<?>> alt = builder();
+
+        final ILocatableGO goldeneKugel = (ILocatableGO) world.load(GOLDENE_KUGEL);
+        if (goldeneKugel.locationComp().hasSameUpperMostLocationAs(SPIELER_CHARAKTER)) {
+            alt.add(paragraph("Du hast Lust, einmal wieder mit deiner goldenen Kugel "
+                    + "zu spielen"));
+            if (!world.loadSC().locationComp().hasRecursiveLocation(IM_WALD_BEIM_BRUNNEN)) {
+                alt.addAll(altHeissHeutKuehlerOrtWaereSchoen());
+            }
+        } else {
+            alt.addAll(altKugelVermissen());
+        }
+
+        return n.addAlt(alt);
     }
 
     public static AvTimeSpan narrateAndDoHintAction_FroschHatEtwasAusBrunnenGeholt(
             final AvDatabase db, final NarrationDao n, final World world) {
-        // STORY
-        //  (traurig) - Du bist.... Es fällt dir schwer, deine Gefühle zu unterdrücken.
-        return n.addAlt(paragraph("Du hast das Gefühl, es gibt noch viel zu erleben"));
+        final ImmutableList.Builder<AbstractDescription<?>> alt = builder();
+
+        alt.add(paragraph("Unvermittelt befällt dich ein Gedanke: Ist es wohl gut, seine "
+                + "Gefühle zu unterdrücken?"));
+
+        if (!world.loadSC().locationComp().hasRecursiveLocation(IM_WALD_BEIM_BRUNNEN)) {
+            if (world.loadSC().feelingsComp().getMood().isFroehlicherAls(UNTROESTLICH)) {
+                alt.add(paragraph(
+                        "Ob du wohl jemals zurückbekommst, was dir in den Brunnen gefallen "
+                                + "ist? – so fragst du dich auf einmal. Du wirst ganz traurig"));
+            } else {
+                alt.add(paragraph(
+                        "Ob du wohl jemals zurückbekommst, was dir in den Brunnen gefallen "
+                                + "ist? – so fragst du dich auf einmal"));
+            }
+        }
+
+        world.loadSC().feelingsComp().setMoodMax(UNTROESTLICH);
+
+        return n.addAlt(alt);
     }
 
     public static AvTimeSpan narrateAndDoHintAction_ZumSchlossfestGegangen(
             final AvDatabase db, final NarrationDao n, final World world) {
-        // STORY
-        //  - "Wann sollte eigentlich das Schlossfest sein? Da gibt es sicher etwas
-        //  Gutes zu essen",
-        return n.addAlt(paragraph("Du hast das Gefühl, es gibt noch viel zu erleben"));
+        final ImmutableList.Builder<AbstractDescription<?>> alt = builder();
+
+        if (db.nowDao().now().getTageszeit().equals(NACHTS)) {
+            alt.addAll(altNachtsSchlafen(world));
+        }
+
+        alt.add(paragraph("Wann sollte eigentlich das Schlossfest sein? Da gibt es sicher "
+                + "etwas Gutes zu essen!"));
+
+        alt.add(paragraph("Heute ist viel passiert"));
+
+        alt.add(paragraph("Plötzlich überkommt dich ein schlechtes Gewissen. Hättest du nicht "
+                + "mit dem Frosch gemeinsam essen wollen? Hattest du nicht etwas in der Art "
+                + "versprochen? Nur weil er eine hässliche, eklige und glibschige "
+                + "Kreatur ist, heißt das ja noch lange nicht… also…, es heißt "
+                + "nicht zwangsläufig…"));
+
+        return n.addAlt(alt);
     }
 
     public static AvTimeSpan narrateAndDoHintAction_BeimSchlossfestAnDenTischGesetzt(
             final AvDatabase db, final NarrationDao n, final World world) {
-        // STORY
-        //  - "Der leckere Duft aus dem Schloss geht dir nicht aus der Nase und aus dem
-        //  Sinn. Was hattest du dem Frosch am Brunnen noch versprochen? - "
-        return n.addAlt(paragraph("Du hast das Gefühl, es gibt noch viel zu erleben"));
+        final ImmutableList.Builder<AbstractDescription<?>> alt = builder();
+
+        alt.add(paragraph("Der leckere Duft aus dem Schloss geht dir nicht aus Nase und Sinn"));
+
+        alt.add(paragraph("Welches Versprechen hattest du dem Frosch noch gegeben? Du kannst "
+                + "dich kaum mehr erinnern"));
+
+        return n.addAlt(alt);
     }
 
     public static AvTimeSpan narrateAndDoHintAction_PrinzIstErloest(
             final AvDatabase db, final NarrationDao n, final World world) {
-        // STORY
-        //  - Plötzlich überkommt dich ein schlechtes Gewissen. Hättest du nicht
-        //   längst mit dem Frosch gemeinsam essen sollen? Hattest du das nicht
-        //   versprochen?
-        return n.addAlt(paragraph("Du hast das Gefühl, es gibt noch viel zu erleben"));
+        final ImmutableList.Builder<AbstractDescription<?>> alt = builder();
+
+        alt.add(paragraph("Kann es sein, dass du vor etwas davonläufst?"));
+
+        alt.add(paragraph("Ein schlechtes Gewissen ist kein gutes Ruhekissen – so geht es "
+                + "die ganze Zeit in deinem Kopf"));
+
+        return n.addAlt(alt);
     }
 
     public static AvTimeSpan narrateAndDoHintAction_PrinzIstWeggefahren(
             final AvDatabase db, final NarrationDao n, final World world) {
-        // STORY Du willst auch sehen, was vor dem Schloss geschieht
-        return n.addAlt(paragraph("Du hast das Gefühl, es gibt noch viel zu erleben"));
+        final ImmutableList.Builder<AbstractDescription<?>> alt = builder();
+
+        alt.add(paragraph("Du willst auch sehen, was vor dem Schloss geschieht!"));
+
+        return n.addAlt(alt);
     }
+
+    private static ImmutableCollection<AbstractDescription<?>> altNachtsSchlafen(
+            final World world) {
+        final ImmutableList.Builder<AbstractDescription<?>> alt = builder();
+
+        if (world.loadSC().locationComp().hasRecursiveLocation(HUETTE_IM_WALD)) {
+            if (world.loadSC().feelingsComp().hasMood(ERSCHOEPFT)) {
+                alt.add(paragraph("Du solltest etwas schlafen"));
+                alt.add(paragraph("Du kannst gewiss eine Mütze Schlaf gebrauchen!"));
+                alt.add(paragraph("Ein Bett!"));
+            } else {
+                alt.add(paragraph("Du bist vom Tag noch ganz aufgedreht"));
+            }
+        } else {
+            alt.add(paragraph("Vielleicht solltest du dir einen Platz zum Schlafen suchen?"));
+            alt.add(paragraph("Ob es sicher ist, nachts herumzulaufen? Wo könntest du "
+                    + "übernachten?"));
+        }
+
+        return alt.build();
+    }
+
+    private static ImmutableCollection<AbstractDescription<?>> altKugelVermissen() {
+        final ImmutableList.Builder<AbstractDescription<?>> alt = builder();
+
+        alt.add(paragraph("Wo ist eigentlich die schöne goldene Kugel, die du "
+                + "aus dem Schloss… die dir so gut Gesellschaft geleistet hatte?"));
+        alt.add(paragraph("Eigentlich schade – musst du plötzlich denken –, dass "
+                + "du deine goldene Kugel nicht mehr bei dir hast. Sie war doch ein "
+                + "sehr schönes Spielzeug"));
+
+        return alt.build();
+    }
+
+    private static ImmutableCollection<AbstractDescription<?>> altHeissHeutKuehlerOrtWaereSchoen() {
+        final ImmutableList.Builder<AbstractDescription<?>> alt = builder();
+
+        alt.add(paragraph("Heut ist ein heißer Tag!"));
+        alt.add(paragraph("Es ziemlich heiß heute – ein kühler Ort wäre schön"));
+
+        return alt.build();
+    }
+
 
     private static AllgDescription paragraph(final String paragraph) {
         return neuerSatz(PARAGRAPH,

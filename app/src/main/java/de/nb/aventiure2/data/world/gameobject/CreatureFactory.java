@@ -160,7 +160,7 @@ class CreatureFactory {
                         // Muss zum Zustand der Zauberin passen!
                         null);
         final RapunzelsZauberinTalkingComp talkingComp =
-                new RapunzelsZauberinTalkingComp(db, world, stateComp);
+                new RapunzelsZauberinTalkingComp(db, world, locationComp, stateComp);
         return new MovingTalkingMentalModelReactionsCreature<>(RAPUNZELS_ZAUBERIN,
                 descriptionComp,
                 locationComp,

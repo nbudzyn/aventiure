@@ -568,7 +568,6 @@ public class FroschprinzTalkingComp extends AbstractTalkingComp {
                         secs(15)).beendet(PARAGRAPH));
     }
 
-
     private <LOC_DESC extends ILocatableGO & IDescribableGO>
     ImmutableList<LOC_DESC> getObjectsInDenBrunnenGefallen() {
         // STORY Es könnten auch Gegenstände unten im Brunnen
