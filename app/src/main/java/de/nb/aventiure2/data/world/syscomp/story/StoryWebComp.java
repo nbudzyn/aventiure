@@ -24,8 +24,6 @@ import de.nb.aventiure2.scaction.stepcount.SCActionStepCountDao;
 import static com.google.common.base.Preconditions.checkArgument;
 import static de.nb.aventiure2.data.world.gameobject.World.STORY_WEB;
 import static de.nb.aventiure2.data.world.time.AvTimeSpan.noTime;
-import static de.nb.aventiure2.german.base.AllgDescription.neuerSatz;
-import static de.nb.aventiure2.german.base.StructuralElement.PARAGRAPH;
 import static java.util.Arrays.asList;
 
 /**
@@ -39,6 +37,7 @@ public class StoryWebComp extends AbstractStatefulComponent<StoryWebPCD> {
     //  welche StoryNodes er bisher erreicht hat. Die baumstruktur ordnet sich nach den
     //  Voraussetzungen der StoryNodes voneinander.
 
+    private final AvDatabase db;
     private final World world;
     protected final NarrationDao n;
 
@@ -85,6 +84,8 @@ public class StoryWebComp extends AbstractStatefulComponent<StoryWebPCD> {
                          final SpatialConnectionSystem spatialConnectionSystem,
                          final Map<Story, StoryData> initialStoryDataMap) {
         super(STORY_WEB, db.storyWebDao());
+        this.db = db;
+
         n = db.narrationDao();
 
         scActionStepCountDao = db.scActionStepCountDao();
@@ -111,7 +112,7 @@ public class StoryWebComp extends AbstractStatefulComponent<StoryWebPCD> {
             return noTime();
         }
 
-        final AvTimeSpan extraTimeElapsed = narrateAndDoHintAction(storyNode);
+        final AvTimeSpan extraTimeElapsed = storyNode.narrateAndDoHintAction(db, world);
 
         getPcd().setLastHintActionStepCount(scActionStepCountDao.stepCount());
 
@@ -168,34 +169,6 @@ public class StoryWebComp extends AbstractStatefulComponent<StoryWebPCD> {
         return res;
     }
 
-    private AvTimeSpan narrateAndDoHintAction(final IStoryNode storyNode) {
-        // STORY Sinnvollen Tipp generieren o.Ä.
-
-        // STORY Als Tipp (könnten von der storyNode generiert werden)
-        //  werden Sätze erzeugt wie
-        //  "Wann soll eigentlich das Schlossfest sein?",
-        //  "Vielleicht hättest du doch die Kugel mitnehmen sollen?" o.Ä.
-
-        // STORY Die storyNode könnte mehrere Hinweise erzeugen, aus denen
-        //  der Narrator auswählen könnte, ganz normal mit addAlt().
-
-        // STORY Statt eines Tipps könnte die storyNode auch eine neue Story starten
-        //  oder die Welt anderweitig modifizieren, dass es für den Spieler
-        //  wieder mehr zu erleben gibt.
-
-        // STORY Als Tipp für den Froschprinzen z.B. durch einen NSC
-        //  ankündigen lassen: Im Königreich
-        //  nebenan ist der Prinz
-        //  verschwunden.
-
-        // STORY Tipp für Rapunzel: Mutter sammelt im Wald Holz und klagt ihr Leid.
-
-        return n.addAlt(neuerSatz(PARAGRAPH,
-                "Du hast das Gefühl, es gibt noch viel zu erleben",
-                noTime())
-                .beendet(PARAGRAPH));
-    }
-
     @Nullable
     private AvTimeSpan movementTimeFromSCToNodeLocation(final IStoryNode storyNode) {
         @Nullable final GameObjectId storyNodeLocationId = storyNode.getLocationId();
@@ -225,5 +198,5 @@ public class StoryWebComp extends AbstractStatefulComponent<StoryWebPCD> {
                 (ISpatiallyConnectedGO) upperMostSCLocation,
                 upperMostStoryNodeLocation);
     }
-}
 
+}

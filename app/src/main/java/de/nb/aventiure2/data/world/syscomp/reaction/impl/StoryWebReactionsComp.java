@@ -26,6 +26,7 @@ import static de.nb.aventiure2.data.world.gameobject.World.FROSCHPRINZ;
 import static de.nb.aventiure2.data.world.gameobject.World.GOLDENE_KUGEL;
 import static de.nb.aventiure2.data.world.gameobject.World.IM_WALD_BEIM_BRUNNEN;
 import static de.nb.aventiure2.data.world.gameobject.World.RAPUNZEL;
+import static de.nb.aventiure2.data.world.gameobject.World.RAPUNZELS_ZAUBERIN;
 import static de.nb.aventiure2.data.world.gameobject.World.SCHLOSSFEST;
 import static de.nb.aventiure2.data.world.gameobject.World.SCHLOSS_VORHALLE;
 import static de.nb.aventiure2.data.world.gameobject.World.SCHLOSS_VORHALLE_AM_TISCH_BEIM_FEST;
@@ -100,7 +101,14 @@ public class StoryWebReactionsComp
             return noTime();
         }
 
-        // Die Goldene Kugel hat einen anderen Ort erreicht -
+        // Rapuzels Zauberin hat einen anderen Ort erreicht -
+        // oder ein Container, der sie (ggf. rekursiv) enthält,
+        // hat einen anderen Ort erreicht
+        if (world.isOrHasRecursiveLocation(RAPUNZELS_ZAUBERIN, locatable)) {
+            return onRapunzelsZauberinRecEnterAusserFromOrToUntenImBrunnen(from, to);
+        }
+
+        // Die goldene Kugel hat einen anderen Ort erreicht -
         // oder ein Container, der die Goldene Kugel (ggf. rekursiv) enthält,
         // hat einen anderen Ort erreicht
         if (world.isOrHasRecursiveLocation(GOLDENE_KUGEL, locatable)) {
@@ -111,6 +119,12 @@ public class StoryWebReactionsComp
     }
 
     private AvTimeSpan onSCEnter(@Nullable final ILocationGO from, final ILocationGO to) {
+        final ILocatableGO rapunzelsZauberin = (ILocatableGO) world.load(RAPUNZELS_ZAUBERIN);
+        if (rapunzelsZauberin.locationComp().hasSameUpperMostLocationAs(to) &&
+                !rapunzelsZauberin.locationComp().hasRecursiveLocation(DRAUSSEN_VOR_DEM_SCHLOSS)) {
+            reachStoryNode(RapunzelStoryNode.ZAUBERIN_AUF_TURM_WEG_GETROFFEN);
+        }
+
         if (to.is(IM_WALD_BEIM_BRUNNEN) &&
                 ((ILocatableGO) world.load(GOLDENE_KUGEL)).locationComp()
                         .hasRecursiveLocation(SPIELER_CHARAKTER)) {
@@ -142,6 +156,26 @@ public class StoryWebReactionsComp
             }
 
             return noTime();
+        }
+
+        return noTime();
+    }
+
+    /**
+     * Rapunzels Zauberin hat <code>to</code> erreicht - oder ein Container, der sie
+     * (ggf. rekursiv) enthält, hat <code>to</code> erreicht.
+     */
+    private AvTimeSpan onRapunzelsZauberinRecEnterAusserFromOrToUntenImBrunnen(
+            @Nullable final ILocationGO from,
+            final ILocationGO to) {
+        if (world.isOrHasRecursiveLocation(to, SPIELER_CHARAKTER)) {
+            reachStoryNode(FroschkoenigStoryNode.KUGEL_GENOMMEN);
+            return noTime();
+        }
+
+        if (loadSC().locationComp().hasSameUpperMostLocationAs(to) &&
+                !world.isOrHasRecursiveLocation(to, DRAUSSEN_VOR_DEM_SCHLOSS)) {
+            reachStoryNode(RapunzelStoryNode.ZAUBERIN_AUF_TURM_WEG_GETROFFEN);
         }
 
         return noTime();

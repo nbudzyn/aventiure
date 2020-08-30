@@ -95,7 +95,6 @@ public class BewegenAction<LOC_DESC extends ILocatableGO & IDescribableGO>
         // TODO Hochklettern an Rapunzels Haaren als Bewegen-Action modellieren:
         //  "Sogleich fallen die Haare herab und du steigst hinauf"
 
-
         for (final ILocationGO inventoryGO :
                 world.loadDescribableNonLivingLocationInventory(location)) {
             @Nullable final SpatialConnectionData inData =

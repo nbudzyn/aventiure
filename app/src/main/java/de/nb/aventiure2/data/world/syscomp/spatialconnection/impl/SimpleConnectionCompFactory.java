@@ -223,6 +223,11 @@ public class SimpleConnectionCompFactory {
                                 .dann()
                                 .beendet(PARAGRAPH),
 
+                        // STORY Wenn der Benutzer die Kugel im Brunnen (o.Ä.)
+                        //  im Brunnen verloren hat: Mood setzen zum Heulen
+                        //  (sofern der Frosch noch nicht aktiv geworden ist)
+                        //  - Dasselbe auch bei der umbekehrten Richtung
+
                         du("gehst", "den breiteren Weg weiter in "
                                 + "den Wald hinein. Wohl ist dir dabei nicht.\n"
                                 + "In der Ferne heult ein Wolf – oder hast du "
