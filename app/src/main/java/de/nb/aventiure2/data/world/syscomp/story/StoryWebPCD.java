@@ -24,7 +24,7 @@ import static de.nb.aventiure2.data.world.syscomp.story.StoryData.State.AKTIV;
 @Entity
 public class StoryWebPCD extends AbstractPersistentComponentData {
     // FIXME 10?
-    private static final int STEPS_BETWEEN_HINTS = 1;
+    private static final int STEPS_BETWEEN_HINTS = 4;
 
     @NonNull
     @Ignore
