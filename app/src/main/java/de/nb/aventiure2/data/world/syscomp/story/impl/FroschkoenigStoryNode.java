@@ -17,7 +17,6 @@ import de.nb.aventiure2.data.world.syscomp.story.IStoryNode;
 import de.nb.aventiure2.data.world.syscomp.story.Story;
 import de.nb.aventiure2.data.world.time.AvTimeSpan;
 import de.nb.aventiure2.german.base.AbstractDescription;
-import de.nb.aventiure2.german.base.AllgDescription;
 
 import static com.google.common.collect.ImmutableList.builder;
 import static de.nb.aventiure2.data.world.gameobject.World.DRAUSSEN_VOR_DEM_SCHLOSS;
@@ -30,10 +29,12 @@ import static de.nb.aventiure2.data.world.gameobject.World.SPIELER_CHARAKTER;
 import static de.nb.aventiure2.data.world.syscomp.feelings.Mood.ERSCHOEPFT;
 import static de.nb.aventiure2.data.world.syscomp.feelings.Mood.UNTROESTLICH;
 import static de.nb.aventiure2.data.world.time.Tageszeit.NACHTS;
+import static de.nb.aventiure2.german.base.AllgDescription.paragraph;
 import static java.util.Arrays.asList;
 
 public enum FroschkoenigStoryNode implements IStoryNode {
     // Idee für die Schritte: Das muss man machen, dann kommt man weiter (sonst nicht)
+
     KUGEL_GENOMMEN(20, SCHLOSS_VORHALLE,
             FroschkoenigStoryNode::narrateAndDoHintAction_KugelGenommen),
     MIT_KUGEL_ZUM_BRUNNEN_GEGANGEN(8, IM_WALD_BEIM_BRUNNEN,
@@ -124,39 +125,37 @@ public enum FroschkoenigStoryNode implements IStoryNode {
         return hinter;
     }
 
+    // STORY Alternativen für Tipp-Texte, bei denen Foreshadowing stärker im
+    //  Vordergrund steht
+
     private static AvTimeSpan narrateAndDoHintAction_KugelGenommen(
             final AvDatabase db, final NarrationDao n, final World world) {
         final ImmutableList.Builder<AbstractDescription<?>> alt = builder();
 
         if (world.loadSC().locationComp().hasRecursiveLocation(SCHLOSS_VORHALLE)) {
-            alt.add(AllgDescription
-                    .paragraph("Du fühlst dich von der goldenen Kugel magisch angezogen"));
+            alt.add(paragraph("Du fühlst dich von der goldenen Kugel magisch angezogen"));
         } else {
-            alt.add(AllgDescription.paragraph("Zusammenhanglos kommt dir ein Gedanke in den "
+            alt.add(paragraph("Zusammenhanglos kommt dir ein Gedanke in den "
                     + "Kopf: Hättest du vielleicht die goldene Kugel mitnehmen sollen?"));
 
-            alt.add(AllgDescription
-                    .paragraph("Die goldene Kugel aus dem Schloss will dir nicht mehr aus dem "
-                            + "Kopf"));
+            alt.add(paragraph("Die goldene Kugel aus dem Schloss will dir nicht mehr aus dem "
+                    + "Kopf"));
 
-            alt.add(AllgDescription.paragraph(
+            alt.add(paragraph(
                     "Auf einmal musst du wieder an die goldene Kugel denken, die dich im "
                             + "Schloss so angelacht hat"));
 
-            alt.add(AllgDescription
-                    .paragraph("Du musst spontan denken: Bei den reichen Leuten liegen oft so "
-                            + "viele Herrlichkeiten ungenutzt herum… – wie kommst du jetzt "
-                            + "bloß darauf?"));
+            alt.add(paragraph("Du musst spontan denken: Bei den reichen Leuten liegen oft so "
+                    + "viele Herrlichkeiten ungenutzt herum… – wie kommst du jetzt "
+                    + "bloß darauf?"));
 
-            alt.add(AllgDescription
-                    .paragraph("Deine Gedanken schweifen ab und du musst an die goldene Kugel "
-                            + "denken, die du im Schloss gelassen hast. Warum eigentlich?"));
+            alt.add(paragraph("Deine Gedanken schweifen ab und du musst an die goldene Kugel "
+                    + "denken, die du im Schloss gelassen hast. Warum eigentlich?"));
         }
 
         if (world.loadSC().feelingsComp().getMood().isTraurigerAls(ERSCHOEPFT)) {
-            alt.add(AllgDescription
-                    .paragraph("Dir kommt ein Gedanke: Ein glänzendes Spielzeug – das würde "
-                            + "dich wohl aufheitern! Aber woher nehmen und nicht stehlen?"));
+            alt.add(paragraph("Dir kommt ein Gedanke: Ein glänzendes Spielzeug – das würde "
+                    + "dich wohl aufheitern! Aber woher nehmen und nicht stehlen?"));
         }
 
         return n.addAlt(alt);
@@ -196,9 +195,8 @@ public enum FroschkoenigStoryNode implements IStoryNode {
 
         final ILocatableGO goldeneKugel = (ILocatableGO) world.load(GOLDENE_KUGEL);
         if (goldeneKugel.locationComp().hasSameUpperMostLocationAs(SPIELER_CHARAKTER)) {
-            alt.add(AllgDescription
-                    .paragraph("Du hast Lust, einmal wieder mit deiner goldenen Kugel "
-                            + "zu spielen"));
+            alt.add(paragraph("Du hast Lust, einmal wieder mit deiner goldenen Kugel "
+                    + "zu spielen"));
             if (!world.loadSC().locationComp().hasRecursiveLocation(IM_WALD_BEIM_BRUNNEN)) {
                 alt.addAll(altHeissHeutKuehlerOrtWaereSchoen());
             }
@@ -213,17 +211,16 @@ public enum FroschkoenigStoryNode implements IStoryNode {
             final AvDatabase db, final NarrationDao n, final World world) {
         final ImmutableList.Builder<AbstractDescription<?>> alt = builder();
 
-        alt.add(AllgDescription
-                .paragraph("Unvermittelt befällt dich ein Gedanke: Ist es wohl gut, seine "
-                        + "Gefühle zu unterdrücken?"));
+        alt.add(paragraph("Unvermittelt befällt dich ein Gedanke: Ist es wohl gut, seine "
+                + "Gefühle zu unterdrücken?"));
 
         if (!world.loadSC().locationComp().hasRecursiveLocation(IM_WALD_BEIM_BRUNNEN)) {
             if (world.loadSC().feelingsComp().getMood().isFroehlicherAls(UNTROESTLICH)) {
-                alt.add(AllgDescription.paragraph(
+                alt.add(paragraph(
                         "Ob du wohl jemals zurückbekommst, was dir in den Brunnen gefallen "
                                 + "ist? – so fragst du dich auf einmal. Du wirst ganz traurig"));
             } else {
-                alt.add(AllgDescription.paragraph(
+                alt.add(paragraph(
                         "Ob du wohl jemals zurückbekommst, was dir in den Brunnen gefallen "
                                 + "ist? – so fragst du dich auf einmal"));
             }
@@ -242,18 +239,16 @@ public enum FroschkoenigStoryNode implements IStoryNode {
             alt.addAll(altNachtsSchlafen(world));
         }
 
-        alt.add(AllgDescription
-                .paragraph("Wann sollte eigentlich das Schlossfest sein? Da gibt es sicher "
-                        + "etwas Gutes zu essen!"));
+        alt.add(paragraph("Wann sollte eigentlich das Schlossfest sein? Da gibt es sicher "
+                + "etwas Gutes zu essen!"));
 
-        alt.add(AllgDescription.paragraph("Heute ist viel passiert"));
+        alt.add(paragraph("Heute ist viel passiert"));
 
-        alt.add(AllgDescription
-                .paragraph("Plötzlich überkommt dich ein schlechtes Gewissen. Hättest du nicht "
-                        + "mit dem Frosch gemeinsam essen wollen? Hattest du nicht etwas in der Art "
-                        + "versprochen? Nur weil er eine hässliche, eklige und glibschige "
-                        + "Kreatur ist, heißt das ja noch lange nicht… also…, es heißt "
-                        + "nicht zwangsläufig…"));
+        alt.add(paragraph("Plötzlich überkommt dich ein schlechtes Gewissen. Hättest du nicht "
+                + "mit dem Frosch gemeinsam essen wollen? Hattest du nicht etwas in der Art "
+                + "versprochen? Nur weil er eine hässliche, eklige und glibschige "
+                + "Kreatur ist, heißt das ja noch lange nicht… also…, es heißt "
+                + "nicht zwangsläufig…"));
 
         return n.addAlt(alt);
     }
@@ -262,12 +257,10 @@ public enum FroschkoenigStoryNode implements IStoryNode {
             final AvDatabase db, final NarrationDao n, final World world) {
         final ImmutableList.Builder<AbstractDescription<?>> alt = builder();
 
-        alt.add(AllgDescription
-                .paragraph("Der leckere Duft aus dem Schloss geht dir nicht aus Nase und Sinn"));
+        alt.add(paragraph("Der leckere Duft aus dem Schloss geht dir nicht aus Nase und Sinn"));
 
-        alt.add(AllgDescription
-                .paragraph("Welches Versprechen hattest du dem Frosch noch gegeben? Du kannst "
-                        + "dich kaum mehr erinnern"));
+        alt.add(paragraph("Welches Versprechen hattest du dem Frosch noch gegeben? Du kannst "
+                + "dich kaum mehr erinnern"));
 
         return n.addAlt(alt);
     }
@@ -276,11 +269,10 @@ public enum FroschkoenigStoryNode implements IStoryNode {
             final AvDatabase db, final NarrationDao n, final World world) {
         final ImmutableList.Builder<AbstractDescription<?>> alt = builder();
 
-        alt.add(AllgDescription.paragraph("Kann es sein, dass du vor etwas davonläufst?"));
+        alt.add(paragraph("Kann es sein, dass du vor etwas davonläufst?"));
 
-        alt.add(AllgDescription
-                .paragraph("Ein schlechtes Gewissen ist kein gutes Ruhekissen – so geht es "
-                        + "die ganze Zeit in deinem Kopf"));
+        alt.add(paragraph("Ein schlechtes Gewissen ist kein gutes Ruhekissen – so geht es "
+                + "die ganze Zeit in deinem Kopf"));
 
         return n.addAlt(alt);
     }
@@ -289,7 +281,7 @@ public enum FroschkoenigStoryNode implements IStoryNode {
             final AvDatabase db, final NarrationDao n, final World world) {
         final ImmutableList.Builder<AbstractDescription<?>> alt = builder();
 
-        alt.add(AllgDescription.paragraph("Du willst auch sehen, was vor dem Schloss geschieht!"));
+        alt.add(paragraph("Du willst auch sehen, was vor dem Schloss geschieht!"));
 
         return n.addAlt(alt);
     }
@@ -300,19 +292,16 @@ public enum FroschkoenigStoryNode implements IStoryNode {
 
         if (world.loadSC().locationComp().hasRecursiveLocation(HUETTE_IM_WALD)) {
             if (world.loadSC().feelingsComp().hasMood(ERSCHOEPFT)) {
-                alt.add(AllgDescription.paragraph("Du solltest etwas schlafen"));
-                alt.add(AllgDescription
-                        .paragraph("Du kannst gewiss eine Mütze Schlaf gebrauchen!"));
-                alt.add(AllgDescription.paragraph("Ein Bett!"));
+                alt.add(paragraph("Du solltest etwas schlafen"));
+                alt.add(paragraph("Du kannst gewiss eine Mütze Schlaf gebrauchen!"));
+                alt.add(paragraph("Ein Bett!"));
             } else {
-                alt.add(AllgDescription.paragraph("Du bist vom Tag noch ganz aufgedreht"));
+                alt.add(paragraph("Du bist vom Tag noch ganz aufgedreht"));
             }
         } else {
-            alt.add(AllgDescription
-                    .paragraph("Vielleicht solltest du dir einen Platz zum Schlafen suchen?"));
-            alt.add(AllgDescription
-                    .paragraph("Ob es sicher ist, nachts herumzulaufen? Wo könntest du "
-                            + "übernachten?"));
+            alt.add(paragraph("Vielleicht solltest du dir einen Platz zum Schlafen suchen?"));
+            alt.add(paragraph("Ob es sicher ist, nachts herumzulaufen? Wo könntest du "
+                    + "übernachten?"));
         }
 
         return alt.build();
@@ -321,9 +310,9 @@ public enum FroschkoenigStoryNode implements IStoryNode {
     private static ImmutableCollection<AbstractDescription<?>> altKugelVermissen() {
         final ImmutableList.Builder<AbstractDescription<?>> alt = builder();
 
-        alt.add(AllgDescription.paragraph("Wo ist eigentlich die schöne goldene Kugel, die du "
+        alt.add(paragraph("Wo ist eigentlich die schöne goldene Kugel, die du "
                 + "aus dem Schloss… die dir so gut Gesellschaft geleistet hatte?"));
-        alt.add(AllgDescription.paragraph("Eigentlich schade – musst du plötzlich denken –, dass "
+        alt.add(paragraph("Eigentlich schade – musst du plötzlich denken –, dass "
                 + "du deine goldene Kugel nicht mehr bei dir hast. Sie war doch ein "
                 + "sehr schönes Spielzeug"));
 
@@ -333,9 +322,8 @@ public enum FroschkoenigStoryNode implements IStoryNode {
     private static ImmutableCollection<AbstractDescription<?>> altHeissHeutKuehlerOrtWaereSchoen() {
         final ImmutableList.Builder<AbstractDescription<?>> alt = builder();
 
-        alt.add(AllgDescription.paragraph("Heut ist ein heißer Tag!"));
-        alt.add(AllgDescription
-                .paragraph("Es ist ziemlich heiß heute – ein kühler Ort wäre schön"));
+        alt.add(paragraph("Heut ist ein heißer Tag!"));
+        alt.add(paragraph("Es ist ziemlich heiß heute – ein kühler Ort wäre schön"));
 
         return alt.build();
     }

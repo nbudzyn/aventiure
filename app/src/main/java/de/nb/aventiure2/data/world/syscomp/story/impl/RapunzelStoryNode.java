@@ -2,6 +2,7 @@ package de.nb.aventiure2.data.world.syscomp.story.impl;
 
 import androidx.annotation.Nullable;
 
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
 
 import java.util.Collection;
@@ -10,14 +11,18 @@ import de.nb.aventiure2.data.database.AvDatabase;
 import de.nb.aventiure2.data.narration.NarrationDao;
 import de.nb.aventiure2.data.world.base.GameObjectId;
 import de.nb.aventiure2.data.world.gameobject.World;
+import de.nb.aventiure2.data.world.syscomp.location.ILocatableGO;
 import de.nb.aventiure2.data.world.syscomp.story.IStoryNode;
 import de.nb.aventiure2.data.world.syscomp.story.Story;
 import de.nb.aventiure2.data.world.time.AvTimeSpan;
+import de.nb.aventiure2.german.base.AbstractDescription;
 
+import static com.google.common.collect.ImmutableList.builder;
+import static de.nb.aventiure2.data.world.gameobject.World.DRAUSSEN_VOR_DEM_SCHLOSS;
+import static de.nb.aventiure2.data.world.gameobject.World.RAPUNZELS_ZAUBERIN;
+import static de.nb.aventiure2.data.world.gameobject.World.SPIELER_CHARAKTER;
 import static de.nb.aventiure2.data.world.gameobject.World.VOR_DEM_ALTEN_TURM;
-import static de.nb.aventiure2.data.world.time.AvTimeSpan.noTime;
-import static de.nb.aventiure2.german.base.AllgDescription.neuerSatz;
-import static de.nb.aventiure2.german.base.StructuralElement.PARAGRAPH;
+import static de.nb.aventiure2.german.base.AllgDescription.paragraph;
 import static java.util.Arrays.asList;
 
 public enum RapunzelStoryNode implements IStoryNode {
@@ -94,70 +99,86 @@ public enum RapunzelStoryNode implements IStoryNode {
         return hinter;
     }
 
+    // STORY Alternativen für Tipp-Texte, bei denen Foreshadowing stärker im
+    //  Vordergrund steht
     private static AvTimeSpan narrateAndDoHintAction_TurmGefunden(
             final AvDatabase db, final NarrationDao n, final World world) {
-        // STORY Man könnte mehrere Hinweise erzeugen, aus denen
-        //  der Narrator auswählen könnte, ganz normal mit addAlt().
+        final ImmutableList.Builder<AbstractDescription<?>> alt = builder();
+        alt.add(paragraph("Hast du den Wald eigentlich schon überall erkundet?"));
+        alt.add(paragraph("Was gibt es wohl noch alles im Wald zu entdecken, fragst du dich"));
+        alt.add(paragraph("Dir kommt der geheimnisvolle Turm in den Sinn - du wirst sein "
+                + "Geheimnis bestimmt noch lüften!"));
 
-        // STORY
-        //  - "Hast du den Wald eigentlich schon überall erkundet?"
-        //  - "Was gibt es wohl noch alles im Wald zu entdecken, fragst du dich"
-        //  - (bis SC Rapunzel gefunden hat) Mutter sammelt im
+        // STORY (bis SC Rapunzel gefunden hat) Mutter sammelt im
         //  Wald Holz und klagt ihr Leid: Tochter an Zauberin verloren
-        //  - Dir kommt der geheimnisvolle Turm in den Sinn - du wirst sein
-        //   geheimnis bestimmt noch lüften!
-
-        return n.addAlt(neuerSatz(PARAGRAPH,
-                "Du hast das Gefühl, es gibt noch viel zu erleben",
-                noTime())
-                .beendet(PARAGRAPH));
+        return n.addAlt(alt);
     }
 
     private static AvTimeSpan narrateAndDoHintAction_RapunzelSingenGehoert(
             final AvDatabase db, final NarrationDao n, final World world) {
-        // STORY Man könnte mehrere Hinweise erzeugen, aus denen
-        //  der Narrator auswählen könnte, ganz normal mit addAlt().
+        final ImmutableList.Builder<AbstractDescription<?>> alt = builder();
 
-        // STORY
-        //  - "Ob der Turm wohl bewohnt ist"?
-        //  - (Außer direkt nach Schlafen:) Eine Rast würde dir sicher einmal gut tun.
+        if (world.loadSC().locationComp().hasRecursiveLocation(VOR_DEM_ALTEN_TURM)) {
+            alt.add(paragraph("Ob der Turm wohl bewohnt ist?"));
+            alt.add(paragraph("Eine Rast würde dir sicher guttun"));
+        } else {
+            alt.add(paragraph(
+                    "Dir kommt noch einmal der alte Turm auf der Hügelkuppe "
+                            + "in den Sinn. Ob der wohl bewohnt ist?"));
+        }
 
-        return n.addAlt(neuerSatz(PARAGRAPH,
-                "Du hast das Gefühl, es gibt noch viel zu erleben",
-                noTime())
-                .beendet(PARAGRAPH));
+        return n.addAlt(alt);
     }
 
     private static AvTimeSpan narrateAndDoHintAction_ZauberinAufTurmWegGefunden(
             final AvDatabase db, final NarrationDao n, final World world) {
-        // STORY Man könnte mehrere Hinweise erzeugen, aus denen
-        //  der Narrator auswählen könnte, ganz normal mit addAlt().
+        final ImmutableList.Builder<AbstractDescription<?>> alt = builder();
 
-        // STORY
-        //  - (bis ZAUBERIN_HEIMLICH_BEIM_RUFEN_BEOBACHTET) Wenn im Turm jemand
-        //  -  wohnt - wie kommt er herein oder hinaus?
-        //  - (bis ZAUBERIN_HEIMLICH_BEIM_RUFEN_BEOBACHTET) Ob jemand beim Turm ein und
-        //  aus geht?
+        alt.addAll(altTurmWohnenHineinHeraus(world));
 
-        return n.addAlt(neuerSatz(PARAGRAPH,
-                "Du hast das Gefühl, es gibt noch viel zu erleben",
-                noTime())
-                .beendet(PARAGRAPH));
+        return n.addAlt(alt);
     }
 
     private static AvTimeSpan narrateAndDoHintAction_ZauberinHeimlichBeimRufenBeobachtet(
             final AvDatabase db, final NarrationDao n, final World world) {
-        // STORY Man könnte mehrere Hinweise erzeugen, aus denen
-        //  der Narrator auswählen könnte, ganz normal mit addAlt().
+        final ImmutableList.Builder<AbstractDescription<?>> alt = builder();
 
-        // STORY
-        //  - Wohin will die magere Frau wohl?
-        //  - Was will die magere Frau wohl?
-        //  - Du wirst bestimmt noch in den Turm hinaufkommen!
+        alt.addAll(altTurmWohnenHineinHeraus(world));
 
-        return n.addAlt(neuerSatz(PARAGRAPH,
-                "Du hast das Gefühl, es gibt noch viel zu erleben",
-                noTime())
-                .beendet(PARAGRAPH));
+        if (world.loadSC().locationComp().hasRecursiveLocation(VOR_DEM_ALTEN_TURM)) {
+            alt.add(paragraph("Du wirst bestimmt noch den Turm hinaufkommen!"));
+        }
+
+        final ILocatableGO zauberin = (ILocatableGO) world.load(RAPUNZELS_ZAUBERIN);
+        if (zauberin.locationComp()
+                .hasSameUpperMostLocationAs(SPIELER_CHARAKTER) &&
+                // Vor dem Schloss fällt sie dem SC nicht auf
+                !zauberin.locationComp().hasRecursiveLocation(DRAUSSEN_VOR_DEM_SCHLOSS)) {
+            alt.add(paragraph("Was will die Frau bloß?"));
+            alt.add(paragraph("Was will die Frau wohl?"));
+            alt.add(paragraph("Was mag die Frau wollen?"));
+        }
+
+        return n.addAlt(alt);
+    }
+
+    private static ImmutableList<AbstractDescription<?>> altTurmWohnenHineinHeraus(
+            final World world) {
+        final ImmutableList.Builder<AbstractDescription<?>> alt = builder();
+
+        if (world.loadSC().locationComp().hasRecursiveLocation(VOR_DEM_ALTEN_TURM)) {
+            alt.add(paragraph("Wenn im Turm jemand wohnt – wie kommt er herein "
+                    + "oder hinaus?"));
+            alt.add(paragraph("Ob jemand im Turm ein und aus geht? Aber wie bloß?"));
+        } else {
+            alt.add(paragraph(
+                    "Du musst wieder an den alten Turm denken… wenn dort jemand wohnt, "
+                            + "wie kommt der bloß hinein oder heraus?"));
+            alt.add(paragraph(
+                    "Dir kommt auf einmal wieder der alte Turm in den Sinn: "
+                            + "Wer wird darinnen wohl wohnen?"));
+        }
+
+        return alt.build();
     }
 }
