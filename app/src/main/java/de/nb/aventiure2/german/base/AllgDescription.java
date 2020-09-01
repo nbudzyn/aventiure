@@ -2,7 +2,9 @@ package de.nb.aventiure2.german.base;
 
 import de.nb.aventiure2.data.world.time.AvTimeSpan;
 
+import static de.nb.aventiure2.data.world.time.AvTimeSpan.noTime;
 import static de.nb.aventiure2.german.base.GermanUtil.capitalize;
+import static de.nb.aventiure2.german.base.StructuralElement.PARAGRAPH;
 
 /**
  * A general description. The subject may be anything.
@@ -38,6 +40,13 @@ public class AllgDescription extends AbstractDescription<AllgDescription> {
                             final AvTimeSpan timeElapsed) {
         super(startsNew, timeElapsed);
         this.description = description;
+    }
+
+    public static AllgDescription paragraph(final String paragraph) {
+        return neuerSatz(PARAGRAPH,
+                paragraph,
+                noTime())
+                .beendet(PARAGRAPH);
     }
 
     @Override

@@ -13,6 +13,9 @@ import de.nb.aventiure2.data.world.time.AvTimeSpan;
  * auch die Bewegung des SC in Interaktion mit diesem <code>IMovingGO</code>.
  */
 public interface IMovementNarrator {
+    // STORY MovementSystem fasst alle Movement-Besxhreibungen
+    //  zusammen, auch bei mehreren NPCs am selben Ort. (VOR den Reactions.)
+
     AvTimeSpan narrateScTrifftStehendesMovingGO(ILocationGO location);
 
     <FROM extends ILocationGO & ISpatiallyConnectedGO> AvTimeSpan

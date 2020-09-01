@@ -36,6 +36,13 @@ public abstract class AbstractScAction implements IPlayerAction {
 
     protected final SpielerCharakter sc;
 
+    // TODO AbstractScAction so verallgemeinern (oder Inhalte extrahieren?),
+    //  so dass dieselben Actions auch von einer NPC-AI zurückgegeben werden könnten?
+    //  Das Framework nimmt dann die (User- oder NPC-) Action entgegen und führt sie aus?
+    //  Ziel wäre: Doppelten Code für USER- und NPC-Actions verhindern und
+    //  für den Action-Code einen guten Platz finden.
+    //  Idee dazu: Operationen ("Verbs") in eigene Klassen auslagern
+
     protected AbstractScAction(final AvDatabase db, final World world) {
         this.db = db;
         this.world = world;
