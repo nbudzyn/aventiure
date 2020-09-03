@@ -13,6 +13,7 @@ import de.nb.aventiure2.data.world.syscomp.alive.ILivingBeingGO;
 import de.nb.aventiure2.data.world.syscomp.description.IDescribableGO;
 import de.nb.aventiure2.data.world.syscomp.location.ILocatableGO;
 import de.nb.aventiure2.data.world.syscomp.memory.Action;
+import de.nb.aventiure2.data.world.syscomp.mentalmodel.IHasMentalModelGO;
 import de.nb.aventiure2.data.world.syscomp.talking.ITalkerGO;
 import de.nb.aventiure2.data.world.syscomp.talking.impl.SCTalkAction;
 import de.nb.aventiure2.data.world.time.AvTimeSpan;
@@ -175,7 +176,29 @@ public class RedenAction<TALKER extends IDescribableGO & ILocatableGO & ITalkerG
     public AvTimeSpan narrateAndDo() {
         sc.memoryComp().setLastAction(buildMemorizedAction());
 
+        updateTalkersMentalModel();
+
         return conversationStep.narrateAndDo();
+    }
+
+    private void updateTalkersMentalModel() {
+        if (!(talker instanceof IHasMentalModelGO)) {
+            return;
+        }
+
+        if (!talker.locationComp().hasSameUpperMostLocationAs(SPIELER_CHARAKTER)) {
+            return;
+        }
+
+        // Dies ist zumindest der Regelfall: Wenn der SC mit
+        // X spricht, weiß X danach auch, wo der SC sich befindet -
+        // zumindest, wenn SC und X im selben Raum sind.
+        // Es könnte Ausnahmen geben, aber für Rapunzels Zauberin
+        // reicht es so.
+        ((IHasMentalModelGO) talker).mentalModelComp()
+                .assumesLocation(
+                        SPIELER_CHARAKTER,
+                        world.loadSC().locationComp().getLocation());
     }
 
     @Override
