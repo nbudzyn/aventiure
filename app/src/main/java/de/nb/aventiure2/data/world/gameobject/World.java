@@ -110,7 +110,7 @@ public class World {
     // INVISIBLES
     public static final GameObjectId SCHLOSSFEST = new GameObjectId(40_000);
     public static final GameObjectId TAGESZEIT = new GameObjectId(40_001);
-    public static final GameObjectId RAPUNZEL_HAAR_TRICK = new GameObjectId(40_002);
+    public static final GameObjectId RAPUNZELRUF = new GameObjectId(40_002);
 
     // MEANING
     public static final GameObjectId STORY_WEB = new GameObjectId(100_000);
@@ -254,7 +254,7 @@ public class World {
 
                 invisible.createSchlossfest(),
                 invisible.createTageszeit(),
-                InvisibleFactory.createRapunzelHaarTrick(),
+                invisible.createRapunzelRuf(),
                 object.create(EINE_TASCHE_DES_SPIELER_CHARAKTERS,
                         np(F, "eine Tasche", "einer Tasche"),
                         SPIELER_CHARAKTER, null,

@@ -23,7 +23,10 @@ import de.nb.aventiure2.german.praedikat.PraedikatMitEinerObjektleerstelle;
 import de.nb.aventiure2.german.praedikat.PraedikatOhneLeerstellen;
 import de.nb.aventiure2.scaction.AbstractScAction;
 
+import static de.nb.aventiure2.data.world.gameobject.World.OBEN_IM_ALTEN_TURM;
+import static de.nb.aventiure2.data.world.gameobject.World.RAPUNZEL;
 import static de.nb.aventiure2.data.world.gameobject.World.SPIELER_CHARAKTER;
+import static de.nb.aventiure2.data.world.gameobject.World.VOR_DEM_ALTEN_TURM;
 import static de.nb.aventiure2.german.base.GermanUtil.capitalize;
 import static de.nb.aventiure2.german.base.Numerus.SG;
 import static de.nb.aventiure2.german.base.Person.P1;
@@ -48,15 +51,27 @@ public class RedenAction<TALKER extends IDescribableGO & ILocatableGO & ITalkerG
         }
 
         if (!talker.locationComp().hasRecursiveLocation(
-                world.loadSC().locationComp().getLocation())) {
+                world.loadSC().locationComp().getLocation())
+                &&
+                // Sonderfall: Spieler ruft Rapunzel
+                !rapunzelrufMoeglich(world)) {
             return ImmutableList.of();
         }
 
         final List<SCTalkAction> talkSteps = talker.talkingComp().getSCConversationSteps();
-
         return buildActions(db, world,
                 talker,
                 talkSteps);
+    }
+
+    private static boolean rapunzelrufMoeglich(final World world) {
+        final ILocatableGO rapunzel = (ILocatableGO) world.load(RAPUNZEL);
+
+        if (!world.loadSC().locationComp().hasRecursiveLocation(VOR_DEM_ALTEN_TURM)) {
+            return false;
+        }
+
+        return !rapunzel.locationComp().hasRecursiveLocation(OBEN_IM_ALTEN_TURM);
     }
 
     private static <TALKER extends IDescribableGO & ILocatableGO & ITalkerGO<?>>

@@ -12,7 +12,7 @@ import de.nb.aventiure2.data.world.syscomp.state.IHasStateGO;
 import de.nb.aventiure2.data.world.syscomp.state.impl.SchlossfestState;
 import de.nb.aventiure2.data.world.syscomp.state.impl.SchlossfestStateComp;
 
-import static de.nb.aventiure2.data.world.gameobject.World.RAPUNZEL_HAAR_TRICK;
+import static de.nb.aventiure2.data.world.gameobject.World.RAPUNZELRUF;
 import static de.nb.aventiure2.data.world.gameobject.World.SCHLOSSFEST;
 import static de.nb.aventiure2.data.world.gameobject.World.TAGESZEIT;
 
@@ -38,8 +38,8 @@ public class InvisibleFactory {
         return new Schlossfest(db, world);
     }
 
-    public static GameObject createRapunzelHaarTrick() {
-        return new GameObject(RAPUNZEL_HAAR_TRICK);
+    public static GameObject createRapunzelRuf() {
+        return new GameObject(RAPUNZELRUF);
     }
 
     private static class Tageszeit extends GameObject implements IResponder {

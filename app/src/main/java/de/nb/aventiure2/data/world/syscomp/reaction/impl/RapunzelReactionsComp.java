@@ -19,8 +19,8 @@ import static de.nb.aventiure2.data.world.base.Lichtverhaeltnisse.HELL;
 import static de.nb.aventiure2.data.world.gameobject.World.IM_WALD_NAHE_DEM_SCHLOSS;
 import static de.nb.aventiure2.data.world.gameobject.World.OBEN_IM_ALTEN_TURM;
 import static de.nb.aventiure2.data.world.gameobject.World.RAPUNZEL;
+import static de.nb.aventiure2.data.world.gameobject.World.RAPUNZELRUF;
 import static de.nb.aventiure2.data.world.gameobject.World.RAPUNZELS_ZAUBERIN;
-import static de.nb.aventiure2.data.world.gameobject.World.RAPUNZEL_HAAR_TRICK;
 import static de.nb.aventiure2.data.world.gameobject.World.SPIELER_CHARAKTER;
 import static de.nb.aventiure2.data.world.gameobject.World.VOR_DEM_ALTEN_TURM;
 import static de.nb.aventiure2.data.world.syscomp.feelings.Mood.BEWEGT;
@@ -169,7 +169,7 @@ public class RapunzelReactionsComp
                                     + "„Das ist also die Leiter, auf welcher man hinaufkommt!“, denkst du "
                                     + "bei dir", secs(20))
                             .undWartest()));
-            world.upgradeKnownToSC(RAPUNZEL_HAAR_TRICK);
+            world.upgradeKnownToSC(RAPUNZELRUF);
         }
 
         return timeElapsed;
