@@ -66,34 +66,6 @@ public class FroschprinzTalkingComp extends AbstractTalkingComp {
         this.stateComp = stateComp;
     }
 
-    /**
-     * Gibt eine Beschreibung dieses Objekts zurück - wenn es nur eines ist - sonst
-     * etwas wie "die Dinge".
-     */
-    private SubstantivischePhrase getDescriptionSingleOrCollective(
-            final List<? extends IDescribableGO> objects) {
-        if (objects.isEmpty()) {
-            return Indefinitpronomen.NICHTS;
-        }
-
-        if (objects.size() == 1) {
-            final IDescribableGO objectInDenBrunnenGefallen =
-                    objects.iterator().next();
-
-            return getDescription(objectInDenBrunnenGefallen, false);
-        }
-
-        return Nominalphrase.DINGE;
-    }
-
-    private String getAkkShort(final List<? extends IDescribableGO> objects) {
-        if (objects.size() == 1) {
-            return getDescription(objects.iterator().next(), true).akk();
-        }
-
-        return "sie";
-    }
-
     @Override
     protected Iterable<SCTalkAction> getSCTalkActionsWithoutCheckingConditions() {
         final ImmutableList<? extends IDescribableGO> objectsInDenBrunnenGefallen =
@@ -164,6 +136,34 @@ public class FroschprinzTalkingComp extends AbstractTalkingComp {
                 throw new IllegalStateException("Unexpected Froschprinz state: "
                         + stateComp.getState());
         }
+    }
+
+    /**
+     * Gibt eine Beschreibung dieses Objekts zurück - wenn es nur eines ist - sonst
+     * etwas wie "die Dinge".
+     */
+    private SubstantivischePhrase getDescriptionSingleOrCollective(
+            final List<? extends IDescribableGO> objects) {
+        if (objects.isEmpty()) {
+            return Indefinitpronomen.NICHTS;
+        }
+
+        if (objects.size() == 1) {
+            final IDescribableGO objectInDenBrunnenGefallen =
+                    objects.iterator().next();
+
+            return getDescription(objectInDenBrunnenGefallen, false);
+        }
+
+        return Nominalphrase.DINGE;
+    }
+
+    private String getAkkShort(final List<? extends IDescribableGO> objects) {
+        if (objects.size() == 1) {
+            return getDescription(objects.iterator().next(), true).akk();
+        }
+
+        return "sie";
     }
 
     // -------------------------------------------------------------------------------

@@ -172,7 +172,7 @@ public class RapunzelReactionsComp
             world.upgradeKnownToSC(RAPUNZEL_HAAR_TRICK);
         }
 
-        return timeElapsed
+        return timeElapsed;
     }
 
     @Override

@@ -5,13 +5,13 @@ import androidx.annotation.NonNull;
 import com.google.common.collect.ImmutableList;
 
 import java.util.Collection;
-import java.util.List;
 
 import de.nb.aventiure2.data.database.AvDatabase;
 import de.nb.aventiure2.data.world.gameobject.World;
 import de.nb.aventiure2.data.world.gameobject.player.SpielerCharakter;
 import de.nb.aventiure2.data.world.syscomp.alive.ILivingBeingGO;
 import de.nb.aventiure2.data.world.syscomp.description.IDescribableGO;
+import de.nb.aventiure2.data.world.syscomp.location.ILocatableGO;
 import de.nb.aventiure2.data.world.syscomp.memory.Action;
 import de.nb.aventiure2.data.world.syscomp.state.IHasStateGO;
 import de.nb.aventiure2.data.world.syscomp.state.impl.FroschprinzState;
@@ -36,29 +36,25 @@ import static de.nb.aventiure2.german.base.DuDescription.du;
  * Der Spielercharakter heult.
  */
 public class HeulenAction extends AbstractScAction {
-    private final List<? extends ILivingBeingGO> creaturesInLocation;
-
     public static Collection<HeulenAction> buildActions(
             final AvDatabase db,
             final World world,
-            final SpielerCharakter sc, final List<? extends ILivingBeingGO> creaturesInLocation) {
+            final SpielerCharakter sc) {
         final ImmutableList.Builder<HeulenAction> res = ImmutableList.builder();
         // STORY Verhindern, dass der Benutzer nicht mehr untröstlich ist, wenn er z.B. erst
         //  schläft. Z.B. Benutzer traurig machen, wenn er den Brunnen sieht und sich an
         //  seine goldene Kugel erinnert o.Ä.
 
         if (sc.feelingsComp().hasMood(UNTROESTLICH)) {
-            res.add(new HeulenAction(db, world, creaturesInLocation));
+            res.add(new HeulenAction(db, world));
         }
 
         return res.build();
     }
 
     private HeulenAction(final AvDatabase db,
-                         final World world,
-                         final List<? extends ILivingBeingGO> creaturesInLocation) {
+                         final World world) {
         super(db, world);
-        this.creaturesInLocation = creaturesInLocation;
     }
 
     @Override
@@ -82,12 +78,15 @@ public class HeulenAction extends AbstractScAction {
     }
 
     private <F extends IDescribableGO &
+            ILocatableGO &
             IHasStateGO<FroschprinzState> &
             ITalkerGO<FroschprinzTalkingComp> &
             ILivingBeingGO>
     AvTimeSpan narrateAndDoWiederholung() {
         final F froschprinz = (F) world.load(FROSCHPRINZ);
-        if (creaturesInLocation.contains(froschprinz) &&
+
+        if (froschprinz.locationComp().hasRecursiveLocation(
+                world.loadSC().locationComp().getLocation()) &&
                 (froschprinz.stateComp().hasState(UNAUFFAELLIG))) {
             return narrateAndDoFroschprinzUnauffaellig(froschprinz);
         }

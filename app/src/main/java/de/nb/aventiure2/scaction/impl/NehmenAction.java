@@ -88,9 +88,19 @@ public class NehmenAction
             final AvDatabase db,
             final World world,
             final LIVGO creature) {
+        if (world.isOrHasRecursiveLocation(creature, SPIELER_CHARAKTER)) {
+            return ImmutableList.of();
+        }
+
+        if (!creature.locationComp().hasRecursiveLocation(
+                world.loadSC().locationComp().getLocation())) {
+            return ImmutableList.of();
+        }
+
         if (creature.is(FROSCHPRINZ)) {
             return buildFroschprinzActions(db, world, creature);
         }
+
         return ImmutableList.of();
     }
 

@@ -160,156 +160,158 @@ public class World {
      * startet außerdem alle <i>Systems</i> (sofern noch nicht geschehen).
      */
     private void prepare() {
-        if (all == null) {
-            if (aliveSystem == null) {
-                aliveSystem = new AliveSystem(db);
-            }
-
-            if (locationSystem == null) {
-                locationSystem = new LocationSystem(db);
-            }
-
-            if (spatialConnectionSystem == null) {
-                spatialConnectionSystem = new SpatialConnectionSystem(this);
-            }
-
-            if (reactionsCoordinator == null) {
-                reactionsCoordinator = new GOReactionsCoordinator(this, db.narrationDao());
-            }
-
-            final SpielerCharakterFactory spieler = new SpielerCharakterFactory(db, this);
-            final GeneralObjectFactory object = new GeneralObjectFactory(db, this);
-            final BankAmTischBeimSchlossfestFactory bankAmTischBeimSchlossfest =
-                    new BankAmTischBeimSchlossfestFactory(db, this);
-            final SchattenDerBaeumeFactory schattenDerBaeume =
-                    new SchattenDerBaeumeFactory(db, this);
-            final BettFactory bett = new BettFactory(db, this);
-            final BaumFactory baum = new BaumFactory(db, this);
-            final CreatureFactory creature = new CreatureFactory(db, this);
-            final InvisibleFactory invisible = new InvisibleFactory(db, this);
-            final MeaningFactory meaning = new MeaningFactory(db, this, locationSystem,
-                    spatialConnectionSystem);
-            final RoomFactory room = new RoomFactory(db, this);
-            final SimpleConnectionCompFactory connection =
-                    new SimpleConnectionCompFactory(db, this);
-
-            all = new GameObjectIdMap();
-            all.putAll(
-                    spieler.create(SPIELER_CHARAKTER),
-                    room.create(SCHLOSS_VORHALLE, StoringPlaceType.EIN_TISCH,
-                            SCHLOSS_VORHALLE_DAUERHAFT_BELEUCHTET,
-                            new SchlossVorhalleConnectionComp(db, this)),
-                    room.create(DRAUSSEN_VOR_DEM_SCHLOSS,
-                            StoringPlaceType.BODEN_VOR_DEM_SCHLOSS,
-                            false,
-                            new DraussenVorDemSchlossConnectionComp(db, this)),
-                    room.create(IM_WALD_NAHE_DEM_SCHLOSS, StoringPlaceType.WEG,
-                            false,
-                            new ImWaldNaheDemSchlossConnectionComp(db, this)),
-                    room.create(VOR_DEM_ALTEN_TURM, StoringPlaceType.STEINIGER_GRUND_VOR_TURM,
-                            false,
-                            new VorDemTurmConnectionComp(db, this)),
-                    room.create(OBEN_IM_ALTEN_TURM,
-                            StoringPlaceType.TEPPICHBODEN_OBEN_IM_TURM,
-                            false,
-                            connection.createNoConnections(OBEN_IM_ALTEN_TURM)),
-                    room.create(ABZWEIG_IM_WALD, StoringPlaceType.WEG,
-                            false,
-                            connection.createAbzweigImWald()),
-                    room.create(VOR_DER_HUETTE_IM_WALD, StoringPlaceType.ERDBODEN_VOR_DER_HUETTE,
-                            false,
-                            connection.createVorDerHuetteImWald()),
-                    room.create(HUETTE_IM_WALD, StoringPlaceType.HOLZTISCH,
-                            false,
-                            connection.createHuetteImWald()),
-                    room.create(HINTER_DER_HUETTE, StoringPlaceType.UNTER_DEM_BAUM,
-                            false,
-                            connection.createHinterDerHuette()),
-                    room.createImWaldBeimBrunnen(),
-                    room.create(UNTEN_IM_BRUNNEN, StoringPlaceType.AM_GRUNDE_DES_BRUNNENS,
-                            false,
-                            connection.createNoConnections(UNTEN_IM_BRUNNEN)),
-                    room.create(WALDWILDNIS_HINTER_DEM_BRUNNEN,
-                            StoringPlaceType.MATSCHIGER_WALDBODEN,
-                            false,
-                            connection.createWaldwildnisHinterDemBrunnen()),
-                    creature.createSchlosswache(),
-                    creature.createFroschprinz(),
-                    creature.createRapunzel(),
-                    creature.createRapunzelsZauberin(),
-                    // STORY: Ein Wolf könnte nachts "unsichtbar" zufällig durch den
-                    //  Wald laufen (MovementComp) und immer mal heulen oder rascheln, wenn er direkt beim SC
-                    //  vorbeiläuft (onReachesCenter() o.Ä.).
-
-                    // STORY Wölfe (Creatures? Invisibles?) hetzen Spieler nachts
-                    //  Es könnte z.B. Räume neben dem Weg geben, die der Spieler in aller Regel
-                    //  nicht betreten, kann, wo aber die Wölfe laufen.
-                    //  Es könnte einen sicheren Platz geben - z.B. wäre der Weg sicher
-                    //  oder die Hütte.
-
-                    meaning.createStoryWeb(),
-
-                    invisible.createSchlossfest(),
-                    invisible.createTageszeit(),
-                    InvisibleFactory.createRapunzelHaarTrick(),
-                    object.create(EINE_TASCHE_DES_SPIELER_CHARAKTERS,
-                            np(F, "eine Tasche", "einer Tasche"),
-                            SPIELER_CHARAKTER, null,
-                            false, // Man kann nicht "eine Tasche hinlegen" o.Ä.
-                            EINE_TASCHE,
-                            false),
-                    object.create(HAENDE_DES_SPIELER_CHARAKTERS,
-                            np(PL_MFN, "die Hände", "den Händen"),
-                            SPIELER_CHARAKTER, null,
-                            false,
-                            HAENDE,
-                            false),
-                    object.create(GOLDENE_KUGEL,
-                            np(F, "eine goldene Kugel",
-                                    "einer goldenen Kugel"),
-                            np(F, "die goldene Kugel", "der goldenen Kugel"),
-                            np(F, "die Kugel", "der Kugel"),
-                            SCHLOSS_VORHALLE, DRAUSSEN_VOR_DEM_SCHLOSS,
-                            true),
-                    // STORY Die goldene Kugel kann verloren gehen, zum Beispiel wenn man sie im
-                    //  Sumpf ablegt. Dann gibt es eine art Reset und eine ähnliche goldene
-                    //  Kugel erscheint wieder im Schloss. Der Text dort sagt so dann etwas wie
-                    //  "eine goldene kugel wie du sie schon einmal gesehen hast, nur etwas
-                    //  kleiner".
-                    // STORY Wenn man die goldene Kugel auf den Weg legt oder beim Schlossfest
-                    //  auf den Tisch, verschwindet sie einfach, wenn man weggeht (sie wird
-                    //  gestohlen) - vorausgesetzt, man braucht sie nicht mehr.
-                    bankAmTischBeimSchlossfest.create(SCHLOSS_VORHALLE_DAUERHAFT_BELEUCHTET),
-                    object.create(SCHLOSS_VORHALLE_LANGER_TISCH_BEIM_FEST,
-                            np(M, "ein langer, aus Brettern gezimmerter Tisch",
-                                    "einem langen, aus Brettern gezimmertem Tisch",
-                                    "einen langen, aus Brettern gezimmerten Tisch"),
-                            np(M, "der lange Brettertisch", "dem langen Brettertisch",
-                                    "den langen Brettertisch"),
-                            np(M, "der Tisch", "dem Tisch", "den Tisch"),
-                            // Der Tisch wird erst spontan hinzugefügt, wenn
-                            // sich der Benutzer an einen Platz setzt.
-                            // Ansonsten bekommen wir vorher Aktionen wie
-                            // "Die Kugel auf den Tisch legen" angeboten. (Auf welchen der
-                            // vielen Tisch denn??)
-                            // TODO Man könnte ein Framework für diese "Instanziierung"
-                            //  anbieten, wo man eine "Tisch-Instanz" betritt und
-                            //  später wieder verlässt (worauf alles zurückgesetzt wird und
-                            //  der SC ggf. alle relevanten Gegenstände automatisch mitnimmt.)
-                            null, null,
-                            false,
-                            TISCH,
-                            SCHLOSS_VORHALLE_DAUERHAFT_BELEUCHTET),
-                    // STORY Spieler kauft Lampe (z.B. für Hütte) auf Schlossfest
-
-                    // STORY Rapunzel: Man muss eine Strickleiter
-                    //  besorgen - oder Seide kaufen und etwas zum Stricken??? Gold gabs vielleicht
-                    //  vom Froschprinzen?
-                    schattenDerBaeume.createVorDemAltenTurm(),
-                    bett.createInDerHuetteImWald(),
-                    baum.createImGartenHinterDerHuetteImWald()
-            );
+        if (all != null) {
+            return;
         }
+
+        if (aliveSystem == null) {
+            aliveSystem = new AliveSystem(db);
+        }
+
+        if (locationSystem == null) {
+            locationSystem = new LocationSystem(db);
+        }
+
+        if (spatialConnectionSystem == null) {
+            spatialConnectionSystem = new SpatialConnectionSystem(this);
+        }
+
+        if (reactionsCoordinator == null) {
+            reactionsCoordinator = new GOReactionsCoordinator(this, db.narrationDao());
+        }
+
+        final SpielerCharakterFactory spieler = new SpielerCharakterFactory(db, this);
+        final GeneralObjectFactory object = new GeneralObjectFactory(db, this);
+        final BankAmTischBeimSchlossfestFactory bankAmTischBeimSchlossfest =
+                new BankAmTischBeimSchlossfestFactory(db, this);
+        final SchattenDerBaeumeFactory schattenDerBaeume =
+                new SchattenDerBaeumeFactory(db, this);
+        final BettFactory bett = new BettFactory(db, this);
+        final BaumFactory baum = new BaumFactory(db, this);
+        final CreatureFactory creature = new CreatureFactory(db, this);
+        final InvisibleFactory invisible = new InvisibleFactory(db, this);
+        final MeaningFactory meaning = new MeaningFactory(db, this, locationSystem,
+                spatialConnectionSystem);
+        final RoomFactory room = new RoomFactory(db, this);
+        final SimpleConnectionCompFactory connection =
+                new SimpleConnectionCompFactory(db, this);
+
+        all = new GameObjectIdMap();
+        all.putAll(
+                spieler.create(SPIELER_CHARAKTER),
+                room.create(SCHLOSS_VORHALLE, StoringPlaceType.EIN_TISCH,
+                        SCHLOSS_VORHALLE_DAUERHAFT_BELEUCHTET,
+                        new SchlossVorhalleConnectionComp(db, this)),
+                room.create(DRAUSSEN_VOR_DEM_SCHLOSS,
+                        StoringPlaceType.BODEN_VOR_DEM_SCHLOSS,
+                        false,
+                        new DraussenVorDemSchlossConnectionComp(db, this)),
+                room.create(IM_WALD_NAHE_DEM_SCHLOSS, StoringPlaceType.WEG,
+                        false,
+                        new ImWaldNaheDemSchlossConnectionComp(db, this)),
+                room.create(VOR_DEM_ALTEN_TURM, StoringPlaceType.STEINIGER_GRUND_VOR_TURM,
+                        false,
+                        new VorDemTurmConnectionComp(db, this)),
+                room.create(OBEN_IM_ALTEN_TURM,
+                        StoringPlaceType.TEPPICHBODEN_OBEN_IM_TURM,
+                        false,
+                        connection.createNoConnections(OBEN_IM_ALTEN_TURM)),
+                room.create(ABZWEIG_IM_WALD, StoringPlaceType.WEG,
+                        false,
+                        connection.createAbzweigImWald()),
+                room.create(VOR_DER_HUETTE_IM_WALD, StoringPlaceType.ERDBODEN_VOR_DER_HUETTE,
+                        false,
+                        connection.createVorDerHuetteImWald()),
+                room.create(HUETTE_IM_WALD, StoringPlaceType.HOLZTISCH,
+                        false,
+                        connection.createHuetteImWald()),
+                room.create(HINTER_DER_HUETTE, StoringPlaceType.UNTER_DEM_BAUM,
+                        false,
+                        connection.createHinterDerHuette()),
+                room.createImWaldBeimBrunnen(),
+                room.create(UNTEN_IM_BRUNNEN, StoringPlaceType.AM_GRUNDE_DES_BRUNNENS,
+                        false,
+                        connection.createNoConnections(UNTEN_IM_BRUNNEN)),
+                room.create(WALDWILDNIS_HINTER_DEM_BRUNNEN,
+                        StoringPlaceType.MATSCHIGER_WALDBODEN,
+                        false,
+                        connection.createWaldwildnisHinterDemBrunnen()),
+                creature.createSchlosswache(),
+                creature.createFroschprinz(),
+                creature.createRapunzel(),
+                creature.createRapunzelsZauberin(),
+                // STORY: Ein Wolf könnte nachts "unsichtbar" zufällig durch den
+                //  Wald laufen (MovementComp) und immer mal heulen oder rascheln, wenn er direkt beim SC
+                //  vorbeiläuft (onReachesCenter() o.Ä.).
+
+                // STORY Wölfe (Creatures? Invisibles?) hetzen Spieler nachts
+                //  Es könnte z.B. Räume neben dem Weg geben, die der Spieler in aller Regel
+                //  nicht betreten, kann, wo aber die Wölfe laufen.
+                //  Es könnte einen sicheren Platz geben - z.B. wäre der Weg sicher
+                //  oder die Hütte.
+
+                meaning.createStoryWeb(),
+
+                invisible.createSchlossfest(),
+                invisible.createTageszeit(),
+                InvisibleFactory.createRapunzelHaarTrick(),
+                object.create(EINE_TASCHE_DES_SPIELER_CHARAKTERS,
+                        np(F, "eine Tasche", "einer Tasche"),
+                        SPIELER_CHARAKTER, null,
+                        false, // Man kann nicht "eine Tasche hinlegen" o.Ä.
+                        EINE_TASCHE,
+                        false),
+                object.create(HAENDE_DES_SPIELER_CHARAKTERS,
+                        np(PL_MFN, "die Hände", "den Händen"),
+                        SPIELER_CHARAKTER, null,
+                        false,
+                        HAENDE,
+                        false),
+                object.create(GOLDENE_KUGEL,
+                        np(F, "eine goldene Kugel",
+                                "einer goldenen Kugel"),
+                        np(F, "die goldene Kugel", "der goldenen Kugel"),
+                        np(F, "die Kugel", "der Kugel"),
+                        SCHLOSS_VORHALLE, DRAUSSEN_VOR_DEM_SCHLOSS,
+                        true),
+                // STORY Die goldene Kugel kann verloren gehen, zum Beispiel wenn man sie im
+                //  Sumpf ablegt. Dann gibt es eine art Reset und eine ähnliche goldene
+                //  Kugel erscheint wieder im Schloss. Der Text dort sagt so dann etwas wie
+                //  "eine goldene kugel wie du sie schon einmal gesehen hast, nur etwas
+                //  kleiner".
+                // STORY Wenn man die goldene Kugel auf den Weg legt oder beim Schlossfest
+                //  auf den Tisch, verschwindet sie einfach, wenn man weggeht (sie wird
+                //  gestohlen) - vorausgesetzt, man braucht sie nicht mehr.
+                bankAmTischBeimSchlossfest.create(SCHLOSS_VORHALLE_DAUERHAFT_BELEUCHTET),
+                object.create(SCHLOSS_VORHALLE_LANGER_TISCH_BEIM_FEST,
+                        np(M, "ein langer, aus Brettern gezimmerter Tisch",
+                                "einem langen, aus Brettern gezimmertem Tisch",
+                                "einen langen, aus Brettern gezimmerten Tisch"),
+                        np(M, "der lange Brettertisch", "dem langen Brettertisch",
+                                "den langen Brettertisch"),
+                        np(M, "der Tisch", "dem Tisch", "den Tisch"),
+                        // Der Tisch wird erst spontan hinzugefügt, wenn
+                        // sich der Benutzer an einen Platz setzt.
+                        // Ansonsten bekommen wir vorher Aktionen wie
+                        // "Die Kugel auf den Tisch legen" angeboten. (Auf welchen der
+                        // vielen Tisch denn??)
+                        // TODO Man könnte ein Framework für diese "Instanziierung"
+                        //  anbieten, wo man eine "Tisch-Instanz" betritt und
+                        //  später wieder verlässt (worauf alles zurückgesetzt wird und
+                        //  der SC ggf. alle relevanten Gegenstände automatisch mitnimmt.)
+                        null, null,
+                        false,
+                        TISCH,
+                        SCHLOSS_VORHALLE_DAUERHAFT_BELEUCHTET),
+                // STORY Spieler kauft Lampe (z.B. für Hütte) auf Schlossfest
+
+                // STORY Rapunzel: Man muss eine Strickleiter
+                //  besorgen - oder Seide kaufen und etwas zum Stricken??? Gold gabs vielleicht
+                //  vom Froschprinzen?
+                schattenDerBaeume.createVorDemAltenTurm(),
+                bett.createInDerHuetteImWald(),
+                baum.createImGartenHinterDerHuetteImWald()
+        );
     }
 
     /**
@@ -426,7 +428,7 @@ public class World {
 
         final GameObject location = load(locationId);
 
-        return isOrHasRecursiveLocation(gameObject, (ILocationGO) location);
+        return isOrHasRecursiveLocation(gameObject, location);
     }
 
 
@@ -657,6 +659,7 @@ public class World {
         return filterLivingBeing(loadDescribableRecursiveInventory(location));
     }
 
+
     /**
      * Lädt (soweit noch nicht geschehen) alle Game Objects an dieser
      * <code>location</code>s (auch rekursiv enthaltene, z.B. Kugel auf einem Tisch in einem Raum)
@@ -741,6 +744,39 @@ public class World {
         return (ImmutableList<LIV>) gameObjects.stream()
                 .filter(ILivingBeingGO.class::isInstance)
                 .collect(toImmutableList());
+    }
+
+
+    /**
+     * Lädt (soweit noch nicht geschehen) alle Living Beings, die sich an
+     * einem Ort befinden können und eine Beschreibung haben - nicht den Spieler-Charakter.
+     */
+    public <LIV extends ILocatableGO & IDescribableGO & ILivingBeingGO>
+    ImmutableList<LIV> loadDescribableLocatableLivingBeings() {
+        prepare();
+        saveAll(false);
+
+        final ImmutableList<GameObject> res =
+                findAlive()
+                        .stream()
+                        .filter(liv -> !liv.is(SPIELER_CHARAKTER))
+                        .filter(ILocatableGO.class::isInstance)
+                        .filter(IDescribableGO.class::isInstance)
+                        .collect(toImmutableList());
+        loadGameObjects(res);
+
+        return (ImmutableList<LIV>) (ImmutableList<?>) res;
+    }
+
+    /**
+     * Gibt alle Living Beings zurück - <i>aber lädt sie noch nicht</i>!
+     */
+    private <G extends GameObject & ILivingBeingGO>
+    Collection<G> findAlive() {
+        return (ImmutableList<G>) (ImmutableList<?>)
+                all.values().stream()
+                        .filter(ILivingBeingGO.class::isInstance)
+                        .collect(toImmutableList());
     }
 
     /**

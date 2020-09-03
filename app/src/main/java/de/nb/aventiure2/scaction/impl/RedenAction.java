@@ -11,6 +11,7 @@ import de.nb.aventiure2.data.database.AvDatabase;
 import de.nb.aventiure2.data.world.gameobject.World;
 import de.nb.aventiure2.data.world.syscomp.alive.ILivingBeingGO;
 import de.nb.aventiure2.data.world.syscomp.description.IDescribableGO;
+import de.nb.aventiure2.data.world.syscomp.location.ILocatableGO;
 import de.nb.aventiure2.data.world.syscomp.memory.Action;
 import de.nb.aventiure2.data.world.syscomp.talking.ITalkerGO;
 import de.nb.aventiure2.data.world.syscomp.talking.impl.SCTalkAction;
@@ -29,7 +30,7 @@ import static de.nb.aventiure2.german.base.Person.P1;
 /**
  * Der Spieler(charakter) redet mit einem Wesen.
  */
-public class RedenAction<TALKER extends IDescribableGO & ITalkerGO<?>>
+public class RedenAction<TALKER extends IDescribableGO & ILocatableGO & ITalkerGO<?>>
         extends AbstractScAction {
     @NonNull
     private final TALKER talker;
@@ -37,19 +38,27 @@ public class RedenAction<TALKER extends IDescribableGO & ITalkerGO<?>>
     private final SCTalkAction conversationStep;
     private final String name;
 
-    public static <TALKER extends IDescribableGO & ITalkerGO<?>>
+    public static <TALKER extends IDescribableGO & ILocatableGO & ITalkerGO<?>>
     Collection<RedenAction<TALKER>> buildActions(
             final AvDatabase db, final World world,
             final TALKER talker) {
-        final List<SCTalkAction> talkSteps =
-                talker.talkingComp().getSCConversationSteps();
+        if (world.isOrHasRecursiveLocation(talker, SPIELER_CHARAKTER)) {
+            return ImmutableList.of();
+        }
+
+        if (!talker.locationComp().hasRecursiveLocation(
+                world.loadSC().locationComp().getLocation())) {
+            return ImmutableList.of();
+        }
+
+        final List<SCTalkAction> talkSteps = talker.talkingComp().getSCConversationSteps();
 
         return buildActions(db, world,
                 talker,
                 talkSteps);
     }
 
-    private static <TALKER extends IDescribableGO & ITalkerGO<?>>
+    private static <TALKER extends IDescribableGO & ILocatableGO & ITalkerGO<?>>
     Collection<RedenAction<TALKER>> buildActions(final AvDatabase db,
                                                  final World world,
                                                  final TALKER talker,
@@ -90,7 +99,7 @@ public class RedenAction<TALKER extends IDescribableGO & ITalkerGO<?>>
      * Erzeugt eine <code>RedenAction</code> für dieses {@link ILivingBeingGO}.
      */
     @NonNull
-    private static <TALKER extends IDescribableGO & ITalkerGO<?>>
+    private static <TALKER extends IDescribableGO & ILocatableGO & ITalkerGO<?>>
     RedenAction<TALKER> buildAction(final AvDatabase db,
                                     final World world,
                                     final TALKER talker,
@@ -127,7 +136,7 @@ public class RedenAction<TALKER extends IDescribableGO & ITalkerGO<?>>
      * mit diesem {@link PraedikatOhneLeerstellen}.
      */
     @NonNull
-    private static <TALKER extends IDescribableGO & ITalkerGO<?>>
+    private static <TALKER extends IDescribableGO & ILocatableGO & ITalkerGO<?>>
     RedenAction<TALKER> buildAction(final AvDatabase db,
                                     final World world,
                                     final TALKER talker,
