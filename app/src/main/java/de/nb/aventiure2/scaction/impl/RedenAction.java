@@ -54,7 +54,7 @@ public class RedenAction<TALKER extends IDescribableGO & ILocatableGO & ITalkerG
                 world.loadSC().locationComp().getLocation())
                 &&
                 // Sonderfall: Spieler ruft Rapunzel
-                !rapunzelrufMoeglich(world)) {
+                !rapunzelrufMoeglich(world, talker)) {
             return ImmutableList.of();
         }
 
@@ -64,10 +64,15 @@ public class RedenAction<TALKER extends IDescribableGO & ILocatableGO & ITalkerG
                 talkSteps);
     }
 
-    private static boolean rapunzelrufMoeglich(final World world) {
+    private static <TALKER extends IDescribableGO & ILocatableGO & ITalkerGO<?>>
+    boolean rapunzelrufMoeglich(final World world, final TALKER talker) {
         final ILocatableGO rapunzel = (ILocatableGO) world.load(RAPUNZEL);
 
         if (!world.loadSC().locationComp().hasRecursiveLocation(VOR_DEM_ALTEN_TURM)) {
+            return false;
+        }
+
+        if (!talker.is(RAPUNZEL)) {
             return false;
         }
 
