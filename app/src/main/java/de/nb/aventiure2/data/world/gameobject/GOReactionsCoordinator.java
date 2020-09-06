@@ -16,9 +16,11 @@ import de.nb.aventiure2.data.world.syscomp.reaction.IReactions;
 import de.nb.aventiure2.data.world.syscomp.reaction.IResponder;
 import de.nb.aventiure2.data.world.syscomp.reaction.interfaces.IEssenReactions;
 import de.nb.aventiure2.data.world.syscomp.reaction.interfaces.IMovementReactions;
+import de.nb.aventiure2.data.world.syscomp.reaction.interfaces.IRufReactions;
 import de.nb.aventiure2.data.world.syscomp.reaction.interfaces.ISCActionReactions;
 import de.nb.aventiure2.data.world.syscomp.reaction.interfaces.IStateChangedReactions;
 import de.nb.aventiure2.data.world.syscomp.reaction.interfaces.ITimePassedReactions;
+import de.nb.aventiure2.data.world.syscomp.reaction.interfaces.Ruftyp;
 import de.nb.aventiure2.data.world.syscomp.state.IHasStateGO;
 import de.nb.aventiure2.data.world.syscomp.storingplace.ILocationGO;
 import de.nb.aventiure2.data.world.time.AvDateTime;
@@ -30,6 +32,7 @@ import static de.nb.aventiure2.data.world.time.AvTimeSpan.noTime;
 
 public class GOReactionsCoordinator
         implements IMovementReactions, IEssenReactions, IStateChangedReactions,
+        IRufReactions,
         ITimePassedReactions,
         ISCActionReactions {
     private final World world;
@@ -130,6 +133,25 @@ public class GOReactionsCoordinator
                 ((Predicate<IResponder>) gameObject::equals).negate(),
                 reactions -> reactions.onStateChanged(
                         gameObject, oldState, newState));
+    }
+
+    // IRufReactions
+    public AvTimeSpan onRuf(final GameObjectId ruferId, final Ruftyp ruftyp) {
+        final IGameObject rufer = world.load(ruferId);
+
+        if (!(rufer instanceof ILocatableGO)) {
+            return noTime();
+        }
+
+        return onRuf((ILocatableGO) rufer, ruftyp);
+    }
+
+    @Override
+    public AvTimeSpan onRuf(final ILocatableGO rufer, final Ruftyp ruftyp) {
+        return doReactions(IRufReactions.class,
+                ((Predicate<IResponder>) rufer::equals).negate(),
+                reactions -> reactions.onRuf(
+                        rufer, ruftyp));
     }
 
     // ITimePassedReactions

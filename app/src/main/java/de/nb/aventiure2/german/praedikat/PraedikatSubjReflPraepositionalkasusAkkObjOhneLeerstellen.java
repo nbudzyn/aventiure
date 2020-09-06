@@ -68,11 +68,6 @@ class PraedikatSubjReflPraepositionalkasusAkkObjOhneLeerstellen
     }
 
     @Override
-    public String getDescriptionInfinitiv(final Person person, final Numerus numerus) {
-        return getDescriptionInfinitiv(person, numerus, null);
-    }
-
-    @Override
     public String getDescriptionInfinitiv(final Person person, final Numerus numerus,
                                           @Nullable final AdverbialeAngabe adverbialeAngabe) {
         checkKeinPartikelVerb();
@@ -82,11 +77,6 @@ class PraedikatSubjReflPraepositionalkasusAkkObjOhneLeerstellen
                 Reflexivpronomen.get(person, numerus).im(reflPraepositionalkasusVerbAkkObj.
                         getPrapositionMitKasus()), // "an mich"
                 reflPraepositionalkasusVerbAkkObj.getVerb().getInfinitiv());// "nehmen"
-    }
-
-    @Override
-    public String getDescriptionZuInfinitiv(final Person person, final Numerus numerus) {
-        return getDescriptionZuInfinitiv(person, numerus, null);
     }
 
     @Override

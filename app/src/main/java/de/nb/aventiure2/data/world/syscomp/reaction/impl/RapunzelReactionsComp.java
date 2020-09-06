@@ -8,7 +8,9 @@ import de.nb.aventiure2.data.world.syscomp.location.ILocatableGO;
 import de.nb.aventiure2.data.world.syscomp.location.LocationComp;
 import de.nb.aventiure2.data.world.syscomp.reaction.AbstractDescribableReactionsComp;
 import de.nb.aventiure2.data.world.syscomp.reaction.interfaces.IMovementReactions;
+import de.nb.aventiure2.data.world.syscomp.reaction.interfaces.IRufReactions;
 import de.nb.aventiure2.data.world.syscomp.reaction.interfaces.ITimePassedReactions;
+import de.nb.aventiure2.data.world.syscomp.reaction.interfaces.Ruftyp;
 import de.nb.aventiure2.data.world.syscomp.spatialconnection.impl.VorDemTurmConnectionComp;
 import de.nb.aventiure2.data.world.syscomp.state.impl.RapunzelStateComp;
 import de.nb.aventiure2.data.world.syscomp.storingplace.ILocationGO;
@@ -25,6 +27,7 @@ import static de.nb.aventiure2.data.world.gameobject.World.SPIELER_CHARAKTER;
 import static de.nb.aventiure2.data.world.gameobject.World.VOR_DEM_ALTEN_TURM;
 import static de.nb.aventiure2.data.world.syscomp.feelings.Mood.BEWEGT;
 import static de.nb.aventiure2.data.world.syscomp.feelings.Mood.NEUTRAL;
+import static de.nb.aventiure2.data.world.syscomp.state.impl.RapunzelState.HAARE_VOM_TURM_HERUNTERGELASSEN;
 import static de.nb.aventiure2.data.world.syscomp.state.impl.RapunzelState.SINGEND;
 import static de.nb.aventiure2.data.world.syscomp.state.impl.RapunzelState.STILL;
 import static de.nb.aventiure2.data.world.time.AvTime.oClock;
@@ -41,7 +44,7 @@ import static de.nb.aventiure2.german.base.StructuralElement.SENTENCE;
  */
 public class RapunzelReactionsComp
         extends AbstractDescribableReactionsComp
-        implements IMovementReactions, ITimePassedReactions {
+        implements IMovementReactions, IRufReactions, ITimePassedReactions {
 
     private final RapunzelStateComp stateComp;
     private final LocationComp locationComp;
@@ -173,6 +176,52 @@ public class RapunzelReactionsComp
         }
 
         return timeElapsed;
+    }
+
+    @Override
+    public AvTimeSpan onRuf(final ILocatableGO rufer, final Ruftyp ruftyp) {
+        // Hört Rapunzel den Ruf?
+        if (!locationComp.hasSameUpperMostLocationAs(rufer) &&
+                (!rufer.locationComp().hasRecursiveLocation(VOR_DEM_ALTEN_TURM) ||
+                        !locationComp.hasRecursiveLocation(OBEN_IM_ALTEN_TURM))) {
+            return noTime();
+        }
+
+        if (ruftyp == Ruftyp.LASS_DEIN_HAAR_HERUNTER) {
+            return onRapunzelruf();
+        }
+
+        return noTime();
+    }
+
+    public AvTimeSpan onRapunzelruf() {
+        if (stateComp.hasState(HAARE_VOM_TURM_HERUNTERGELASSEN)) {
+            return noTime();
+        }
+
+        AvTimeSpan extraTime = noTime();
+
+        if (loadSC().locationComp().hasRecursiveLocation(VOR_DEM_ALTEN_TURM)) {
+            if (stateComp.hasState(SINGEND)) {
+                extraTime = extraTime.plus(n.add(
+                        neuerSatz(SENTENCE,
+                                "Sofort hört der Gesang auf – und gleich darauf fallen "
+                                        + "aus dem kleinen "
+                                        + "Fenster oben im Turm lange, goldene Haarzöpfe herab, "
+                                        + "sicher zwanzig Ellen tief bis auf den Boden. ",
+                                secs(30))));
+            } else {
+                extraTime = extraTime.plus(n.add(
+                        neuerSatz(SENTENCE, "Gleich darauf fallen aus dem kleinen "
+                                + "Fenster oben im Turm lange, goldene Haarzöpfe herab, sicher "
+                                + "zwanzig Ellen tief bis auf den Boden. ", secs(30))));
+            }
+        }
+
+        // STORY Der Spieler kann sich an den Haaren hochziehen!
+
+        return extraTime.plus(
+                stateComp.narrateAndSetState(HAARE_VOM_TURM_HERUNTERGELASSEN));
     }
 
     @Override

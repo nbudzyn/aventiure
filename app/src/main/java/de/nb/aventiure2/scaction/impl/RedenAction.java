@@ -23,10 +23,7 @@ import de.nb.aventiure2.german.praedikat.PraedikatMitEinerObjektleerstelle;
 import de.nb.aventiure2.german.praedikat.PraedikatOhneLeerstellen;
 import de.nb.aventiure2.scaction.AbstractScAction;
 
-import static de.nb.aventiure2.data.world.gameobject.World.OBEN_IM_ALTEN_TURM;
-import static de.nb.aventiure2.data.world.gameobject.World.RAPUNZEL;
 import static de.nb.aventiure2.data.world.gameobject.World.SPIELER_CHARAKTER;
-import static de.nb.aventiure2.data.world.gameobject.World.VOR_DEM_ALTEN_TURM;
 import static de.nb.aventiure2.german.base.GermanUtil.capitalize;
 import static de.nb.aventiure2.german.base.Numerus.SG;
 import static de.nb.aventiure2.german.base.Person.P1;
@@ -51,10 +48,7 @@ public class RedenAction<TALKER extends IDescribableGO & ILocatableGO & ITalkerG
         }
 
         if (!talker.locationComp().hasRecursiveLocation(
-                world.loadSC().locationComp().getLocation())
-                &&
-                // Sonderfall: Spieler ruft Rapunzel
-                !rapunzelrufMoeglich(world, talker)) {
+                world.loadSC().locationComp().getLocation())) {
             return ImmutableList.of();
         }
 
@@ -62,21 +56,6 @@ public class RedenAction<TALKER extends IDescribableGO & ILocatableGO & ITalkerG
         return buildActions(db, world,
                 talker,
                 talkSteps);
-    }
-
-    private static <TALKER extends IDescribableGO & ILocatableGO & ITalkerGO<?>>
-    boolean rapunzelrufMoeglich(final World world, final TALKER talker) {
-        final ILocatableGO rapunzel = (ILocatableGO) world.load(RAPUNZEL);
-
-        if (!world.loadSC().locationComp().hasRecursiveLocation(VOR_DEM_ALTEN_TURM)) {
-            return false;
-        }
-
-        if (!talker.is(RAPUNZEL)) {
-            return false;
-        }
-
-        return !rapunzel.locationComp().hasRecursiveLocation(OBEN_IM_ALTEN_TURM);
     }
 
     private static <TALKER extends IDescribableGO & ILocatableGO & ITalkerGO<?>>
@@ -183,7 +162,7 @@ public class RedenAction<TALKER extends IDescribableGO & ILocatableGO & ITalkerG
 
     @Override
     public String getType() {
-        return "actionReden";
+        return "actionRedenRufen";
     }
 
     @Override
@@ -213,8 +192,7 @@ public class RedenAction<TALKER extends IDescribableGO & ILocatableGO & ITalkerG
         // Dies ist zumindest der Regelfall: Wenn der SC mit
         // X spricht, weiß X danach auch, wo der SC sich befindet -
         // zumindest, wenn SC und X im selben Raum sind.
-        // Es könnte Ausnahmen geben, aber für Rapunzels Zauberin
-        // reicht es so.
+        // Es könnte Ausnahmen geben.
         ((IHasMentalModelGO) talker).mentalModelComp()
                 .assumesLocation(
                         SPIELER_CHARAKTER,

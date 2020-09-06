@@ -94,27 +94,12 @@ class PraedikatSubjObjOhneLeerstellen implements PraedikatOhneLeerstellen {
      */
     @Override
     public String getDescriptionDuHauptsatz(@NonNull final AdverbialeAngabe adverbialeAngabe) {
-        if (verb.getPartikel() == null) {
-            return capitalize(adverbialeAngabe.getText()) +
-                    " " + verb.getDuForm() +
-                    " du " +
-                    objekt.im(kasusOderPraepositionalkasus);
-        }
-
-        return capitalize(adverbialeAngabe.getText()) +
-                " " + verb.getDuForm() +
-                " du " +
-                objekt.im(kasusOderPraepositionalkasus) +
-                " " + verb.getPartikel();
-    }
-
-    /**
-     * Gibt eine Infinitivkonstruktion zurück mit Prädikat.
-     * ("den Frosch ignorieren", "das Leben genießen")
-     */
-    @Override
-    public String getDescriptionInfinitiv(final Person person, final Numerus numerus) {
-        return getDescriptionInfinitiv(person, numerus, null);
+        return joinToNull(
+                capitalize(adverbialeAngabe.getText()),
+                verb.getDuForm(),
+                "du",
+                objekt.im(kasusOderPraepositionalkasus),
+                verb.getPartikel());
     }
 
     /**
@@ -127,16 +112,6 @@ class PraedikatSubjObjOhneLeerstellen implements PraedikatOhneLeerstellen {
         return joinToNull(objekt.im(kasusOderPraepositionalkasus),
                 adverbialeAngabe,
                 verb.getInfinitiv());
-    }
-
-
-    /**
-     * Gibt eine Infinitivkonstruktion zurück mit Prädikat.
-     * ("den Frosch zu ignorieren", "das Leben zu genießen")
-     */
-    @Override
-    public String getDescriptionZuInfinitiv(final Person person, final Numerus numerus) {
-        return getDescriptionZuInfinitiv(person, numerus, null);
     }
 
     /**
@@ -154,9 +129,5 @@ class PraedikatSubjObjOhneLeerstellen implements PraedikatOhneLeerstellen {
     @NonNull
     public KasusOderPraepositionalkasus getKasusOderPraepositionalkasus() {
         return kasusOderPraepositionalkasus;
-    }
-
-    public SubstantivischePhrase getObjekt() {
-        return objekt;
     }
 }

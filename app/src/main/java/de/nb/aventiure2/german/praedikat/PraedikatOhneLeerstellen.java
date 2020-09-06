@@ -65,7 +65,9 @@ public interface PraedikatOhneLeerstellen extends Praedikat {
      * "[Ich möchte] die Kugel an mich nehmen"
      * (nicht *"[Ich möchte] die Kugel an sich nehmen")
      */
-    String getDescriptionInfinitiv(Person person, Numerus numerus);
+    default String getDescriptionInfinitiv(final Person person, final Numerus numerus) {
+        return getDescriptionInfinitiv(person, numerus, null);
+    }
 
     /**
      * Gibt eine Infinitivkonstruktion mit diesem
@@ -88,7 +90,9 @@ public interface PraedikatOhneLeerstellen extends Praedikat {
      * "[Ich gedenke,] die Kugel an mich zu nehmen"
      * (nicht *"[Ich gedenke,] die Kugel an sich zu nehmen")
      */
-    String getDescriptionZuInfinitiv(Person person, Numerus numerus);
+    default String getDescriptionZuInfinitiv(final Person person, final Numerus numerus) {
+        return getDescriptionZuInfinitiv(person, numerus, null);
+    }
 
     /**
      * Gibt eine Infinitivkonstruktion mit dem zu-Infinitiv mit diesem

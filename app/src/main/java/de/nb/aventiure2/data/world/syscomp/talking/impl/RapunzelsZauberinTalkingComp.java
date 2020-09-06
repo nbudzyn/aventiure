@@ -55,8 +55,8 @@ public class RapunzelsZauberinTalkingComp extends AbstractTalkingComp {
                                 np(N, null, "ihr Ziel",
                                         "ihrem Ziel")),
                                 this::frageNachZiel_zauberinReagiertAbweisend));
-            case BESUCHT_RAPUNZEL:
-                // STORY Kann man die Zauberin im Status BESUCHT_RAPUNZEL ansprechen? Wie reagiert
+            case BEI_RAPUNZEL_OBEN_IM_TURM:
+                // STORY Kann man die Zauberin oben im Turm ansprechen? Wie reagiert
                 //  sie?
                 return ImmutableList.of();
             case WEISS_DASS_RAPUNZEL_BEFREIT_WURDE:

@@ -14,6 +14,7 @@ import de.nb.aventiure2.data.world.syscomp.reaction.AbstractDescribableReactions
 import de.nb.aventiure2.data.world.syscomp.reaction.interfaces.IEssenReactions;
 import de.nb.aventiure2.data.world.syscomp.reaction.interfaces.IMovementReactions;
 import de.nb.aventiure2.data.world.syscomp.reaction.interfaces.ITimePassedReactions;
+import de.nb.aventiure2.data.world.syscomp.reaction.interfaces.Ruftyp;
 import de.nb.aventiure2.data.world.syscomp.state.IHasStateGO;
 import de.nb.aventiure2.data.world.syscomp.state.impl.FroschprinzStateComp;
 import de.nb.aventiure2.data.world.syscomp.state.impl.SchlossfestState;
@@ -111,7 +112,7 @@ public class FroschprinzReactionsComp
 
         if (stateComp.hasState(ERWARTET_VON_SC_EINLOESUNG_SEINES_VERSPRECHENS)
                 && !from.is(SCHLOSS_VORHALLE_AM_TISCH_BEIM_FEST)) {
-            return n.addAlt(
+            final AvTimeSpan timeElapsed = n.addAlt(
                     neuerSatz("„Warte, warte“, ruft dir der Frosch noch nach, „nimm mich mit, "
                             + "ich kann nicht so "
                             + "laufen wie du.“ Aber was hilft ihm, dass er "
@@ -121,6 +122,9 @@ public class FroschprinzReactionsComp
                     neuerSatz("„Halt!“, ruft der Frosch dir nach, „nimm mich mit!“",
                             noTime())
             );
+            return timeElapsed.plus(
+                    world.narrateAndDoReactions().onRuf(
+                            FROSCHPRINZ, Ruftyp.WARTE_NIMM_MICH_MIT));
         }
         // STORY Der Frosch ruft bereits bei "schlägst dich in die Wildnis hinter dem Brunnen",
         //  nicht erst nach "wie zu klein geratene Äpfel"

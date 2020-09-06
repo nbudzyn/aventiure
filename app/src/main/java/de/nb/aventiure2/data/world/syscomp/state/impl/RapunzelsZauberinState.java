@@ -6,7 +6,7 @@ package de.nb.aventiure2.data.world.syscomp.state.impl;
 public enum RapunzelsZauberinState {
     VOR_DEM_NAECHSTEN_RAPUNZEL_BESUCH,
     AUF_DEM_WEG_ZU_RAPUNZEL,
-    BESUCHT_RAPUNZEL,
+    BEI_RAPUNZEL_OBEN_IM_TURM,
     AUF_DEM_RUECKWEG_VON_RAPUNZEL,
     WEISS_DASS_RAPUNZEL_BEFREIT_WURDE
 }

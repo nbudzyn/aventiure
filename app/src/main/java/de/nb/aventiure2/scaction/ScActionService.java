@@ -28,6 +28,7 @@ import de.nb.aventiure2.scaction.impl.HochwerfenAction;
 import de.nb.aventiure2.scaction.impl.NehmenAction;
 import de.nb.aventiure2.scaction.impl.RastenAction;
 import de.nb.aventiure2.scaction.impl.RedenAction;
+import de.nb.aventiure2.scaction.impl.RufenAction;
 import de.nb.aventiure2.scaction.impl.SchlafenAction;
 
 import static de.nb.aventiure2.data.world.gameobject.World.HAENDE_DES_SPIELER_CHARAKTERS;
@@ -206,7 +207,7 @@ public class ScActionService {
     private ImmutableList<AbstractScAction> buildLocationActions(final ILocationGO location) {
         final ImmutableList.Builder<AbstractScAction> res = ImmutableList.builder();
 
-        // TODO RufenAction
+        res.addAll(RufenAction.buildActions(db, world, location));
         res.addAll(BewegenAction.buildActions(db, world, location));
 
         return res.build();

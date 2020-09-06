@@ -85,11 +85,6 @@ class ZweiPraedikateSubjObjOhneLeerstellen implements PraedikatOhneLeerstellen {
         return false;
     }
 
-    @Override
-    public String getDescriptionInfinitiv(final Person person, final Numerus numerus) {
-        return getDescriptionInfinitiv(person, numerus, null);
-    }
-
     /**
      * Gibt eine Infinitivkonstruktion mit dem Infinitiv mit diesem
      * Prädikat zurück. Die adverbiale Angabe wird im ersten
@@ -101,11 +96,6 @@ class ZweiPraedikateSubjObjOhneLeerstellen implements PraedikatOhneLeerstellen {
         return ersterSatz.getDescriptionInfinitiv(person, numerus, adverbialeAngabe)
                 + " und "
                 + zweiterSatz.getDescriptionInfinitiv(person, numerus);
-    }
-
-    @Override
-    public String getDescriptionZuInfinitiv(final Person person, final Numerus numerus) {
-        return getDescriptionZuInfinitiv(person, numerus, null);
     }
 
     /**
