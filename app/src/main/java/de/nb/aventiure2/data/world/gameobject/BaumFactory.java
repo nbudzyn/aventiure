@@ -19,6 +19,8 @@ import static de.nb.aventiure2.data.world.gameobject.World.HINTER_DER_HUETTE;
 import static de.nb.aventiure2.data.world.syscomp.storingplace.StoringPlaceType.ASTGABEL;
 import static de.nb.aventiure2.data.world.time.AvTimeSpan.mins;
 import static de.nb.aventiure2.german.base.AllgDescription.neuerSatz;
+import static de.nb.aventiure2.german.base.Artikel.Typ.DEF;
+import static de.nb.aventiure2.german.base.Artikel.Typ.INDEF;
 import static de.nb.aventiure2.german.base.Nominalphrase.np;
 import static de.nb.aventiure2.german.base.NumerusGenus.M;
 import static de.nb.aventiure2.german.base.StructuralElement.PARAGRAPH;
@@ -44,15 +46,13 @@ public class BaumFactory {
     private GameObject create(final GameObjectId id, final GameObjectId locationId) {
         final SimpleDescriptionComp descriptionComp =
                 new SimpleDescriptionComp(id,
-                        np(M, "ein einzelner Baum in der Mitte des Gartens",
-                                "einem einzelnen Baum in der Mitte des Gartens",
-                                "einen einzelnen Baum in der Mitte des Gartens"),
-                        np(M, "der einzelne Baum in der Mitte des Gartens",
-                                "dem einzelnen Baum in der Mitte des Gartens",
-                                "den einzelnen Baum in der Mitte des Gartens"),
-                        np(M, "der Baum",
-                                "dem Baum",
-                                "den Baum"));
+                        np(M, INDEF, "einzelner Baum in der Mitte des Gartens",
+                                "einzelnen Baum in der Mitte des Gartens",
+                                "einzelnen Baum in der Mitte des Gartens"),
+                        np(M, DEF, "einzelne Baum in der Mitte des Gartens",
+                                "einzelnen Baum in der Mitte des Gartens",
+                                "einzelnen Baum in der Mitte des Gartens"),
+                        np(M, DEF, "Baum"));
 
         final LocationComp locationComp = new LocationComp(
                 id, db, world, locationId,

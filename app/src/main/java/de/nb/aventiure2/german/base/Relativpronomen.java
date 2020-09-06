@@ -5,6 +5,7 @@ import com.google.common.collect.ImmutableMap;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
+import static de.nb.aventiure2.german.base.Flexionsreihe.fr;
 import static de.nb.aventiure2.german.base.NumerusGenus.F;
 import static de.nb.aventiure2.german.base.NumerusGenus.M;
 import static de.nb.aventiure2.german.base.NumerusGenus.N;
@@ -12,7 +13,7 @@ import static de.nb.aventiure2.german.base.NumerusGenus.PL_MFN;
 import static de.nb.aventiure2.german.base.Relativpronomen.Typ.REGEL;
 import static de.nb.aventiure2.german.base.Relativpronomen.Typ.WERWAS;
 
-public class Relativpronomen extends SubstantivischePhrase {
+public class Relativpronomen extends PronomenMitVollerFlexionsreihe {
     public enum Typ {
         // "das Kind, das"
         REGEL,
@@ -26,20 +27,26 @@ public class Relativpronomen extends SubstantivischePhrase {
     static {
         // "das Kind, das"
         ALL.put(REGEL, ImmutableMap.of(
-                M, new Relativpronomen(M, "der", "dem", "den"),
-                F, new Relativpronomen(F, "die", "der"),
-                N, new Relativpronomen(N, "das", "dem"),
-                PL_MFN, new Relativpronomen(PL_MFN, "die", "denen")));
+                M, new Relativpronomen(M,
+                        fr("der", "dem", "den")),
+                F, new Relativpronomen(F,
+                        fr("die", "der")),
+                N, new Relativpronomen(N,
+                        fr("das", "dem")),
+                PL_MFN, new Relativpronomen(PL_MFN,
+                        fr("die", "denen"))));
 
         // "alles, was"
         ALL.put(WERWAS, ImmutableMap.of(
-                M, new Relativpronomen(M, "wer", "wem", "wen"),
+                M, new Relativpronomen(M,
+                        fr("wer", "wem", "wen")),
                 F,
                 // Ersatz
                 ALL.get(REGEL).get(F),
-                N, new Relativpronomen(N, "was",
-                        // Ersatz
-                        ALL.get(REGEL).get(N).dat()),
+                N, new Relativpronomen(N,
+                        fr("was",
+                                // Ersatz
+                                ALL.get(REGEL).get(N).dat())),
                 PL_MFN, ALL.get(REGEL).get(PL_MFN)));
     }
 
@@ -56,13 +63,8 @@ public class Relativpronomen extends SubstantivischePhrase {
     }
 
     private Relativpronomen(final NumerusGenus numerusGenus,
-                            final String nominativAkkusativ, final String dativ) {
-        this(numerusGenus, nominativAkkusativ, dativ, nominativAkkusativ);
-    }
-
-    private Relativpronomen(final NumerusGenus numerusGenus,
-                            final String nominativ, final String dativ, final String akkusativ) {
-        super(numerusGenus, nominativ, dativ, akkusativ);
+                            final Flexionsreihe flexionsreihe) {
+        super(numerusGenus, flexionsreihe);
     }
 
     @Override

@@ -4,6 +4,7 @@ import com.google.common.collect.ImmutableMap;
 
 import java.util.Map;
 
+import static de.nb.aventiure2.german.base.Flexionsreihe.fr;
 import static de.nb.aventiure2.german.base.NumerusGenus.F;
 import static de.nb.aventiure2.german.base.NumerusGenus.M;
 import static de.nb.aventiure2.german.base.NumerusGenus.N;
@@ -53,25 +54,37 @@ public class Possessivartikel {
         return new FlexionsSpalte(stamm, numerusGenus);
     }
 
-    public static class FlexionsSpalte extends EinreihigDeklinierbarePhrase {
+    public static class FlexionsSpalte extends DeklinierbarePhrase {
         /**
          * Numerus und Genus des Nomens, <i>vor</i> dem der Possessivartikel
          * (attributiv) steht.
          */
         private final NumerusGenus numerusGenus;
+        private final Flexionsreihe flexionsreihe;
 
         FlexionsSpalte(final String stamm, final NumerusGenus numerusGenus) {
-            super(numerusGenus,
-                    stamm + getEndungen(numerusGenus).nominativ,
-                    stamm + getEndungen(numerusGenus).dativ,
-                    stamm + getEndungen(numerusGenus).akkusativ);
-
-            this.numerusGenus =
-                    getEndungen(numerusGenus).numerusGenus;
+            super(numerusGenus);
+            this.numerusGenus = getEndungen(numerusGenus).numerusGenus;
+            flexionsreihe = getEndungen(numerusGenus).buildFlexionsreihe(stamm);
         }
 
         private static Endungen getEndungen(final NumerusGenus numerusGenusBezugsnomen) {
             return Endungen.get(numerusGenusBezugsnomen);
+        }
+
+        @Override
+        public String nom() {
+            return flexionsreihe.nom();
+        }
+
+        @Override
+        public String dat() {
+            return flexionsreihe.dat();
+        }
+
+        @Override
+        public String akk() {
+            return flexionsreihe.akk();
         }
     }
 
@@ -103,6 +116,14 @@ public class Possessivartikel {
             this.nominativ = nominativ;
             this.dativ = dativ;
             this.akkusativ = akkusativ;
+        }
+
+        private Flexionsreihe buildFlexionsreihe(final String stamm) {
+            return fr(
+                    stamm + nominativ,
+                    stamm + dativ,
+                    stamm + akkusativ
+            );
         }
     }
 }

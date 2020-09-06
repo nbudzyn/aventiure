@@ -52,7 +52,7 @@ public class RapunzelsZauberinTalkingComp extends AbstractTalkingComp {
 
                 return ImmutableList.of(
                         entrySt(FRAGEN_NACH.mitPraep(
-                                np(N, "ihr Ziel",
+                                np(N, null, "ihr Ziel",
                                         "ihrem Ziel")),
                                 this::frageNachZiel_zauberinReagiertAbweisend));
             case BESUCHT_RAPUNZEL:

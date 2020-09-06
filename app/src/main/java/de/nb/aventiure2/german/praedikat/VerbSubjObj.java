@@ -8,6 +8,7 @@ import de.nb.aventiure2.german.base.SubstantivischePhrase;
 
 import static de.nb.aventiure2.german.base.Kasus.AKK;
 import static de.nb.aventiure2.german.base.PraepositionMitKasus.MIT_DAT;
+import static de.nb.aventiure2.german.base.PraepositionMitKasus.ZU;
 
 /**
  * Ein Verb (ggf. mit Präfix), das genau mit einem Subjekt und einem (Präpositional-) Objekt steht.
@@ -18,6 +19,7 @@ public enum VerbSubjObj implements PraedikatMitEinerObjektleerstelle {
     BEENDEN("beenden", AKK, "beendest"),
     DISKUTIEREN("diskutieren", MIT_DAT, "diskutierst"),
     HERAUSKLAUBEN("herausklauben", AKK, "klaubst", "heraus"),
+    HINAUFRUFEN("hinaufrufen", ZU, "rufst", "rufen"),
     HINLEGEN("hinlegen", AKK, "legst", "hin"),
     IGNORIEREN("ignorieren", AKK, "ignorierst"),
     LEGEN("legen", AKK, "legst"),

@@ -206,7 +206,7 @@ public class ScActionService {
     private ImmutableList<AbstractScAction> buildLocationActions(final ILocationGO location) {
         final ImmutableList.Builder<AbstractScAction> res = ImmutableList.builder();
 
-        // Hiervor ggf. ortsspezifische Aktionen
+        // TODO RufenAction
         res.addAll(BewegenAction.buildActions(db, world, location));
 
         return res.build();

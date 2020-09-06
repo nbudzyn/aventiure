@@ -5,6 +5,8 @@ import de.nb.aventiure2.data.world.syscomp.state.impl.FroschprinzStateComp;
 import de.nb.aventiure2.german.base.Nominalphrase;
 
 import static de.nb.aventiure2.data.world.gameobject.World.FROSCHPRINZ;
+import static de.nb.aventiure2.german.base.Artikel.Typ.DEF;
+import static de.nb.aventiure2.german.base.Artikel.Typ.INDEF;
 import static de.nb.aventiure2.german.base.Nominalphrase.np;
 import static de.nb.aventiure2.german.base.NumerusGenus.M;
 
@@ -22,23 +24,21 @@ public class FroschprinzDescriptionComp extends AbstractDescriptionComp {
         super(FROSCHPRINZ);
         this.stateComp = stateComp;
         froschDescriptionTriple = new DescriptionTriple(
-                np(M, "ein dicker, hässlicher Frosch",
-                        "einem dicken, hässlichen Frosch",
-                        "einen dicken, hässlichen Frosch"),
-                np(M, "der hässliche Frosch",
-                        "dem hässlichen Frosch",
-                        "den hässlichen Frosch"),
-                np(M, "der Frosch",
-                        "dem Frosch",
-                        "den Frosch"));
+                np(M, INDEF, "dicker, hässlicher Frosch",
+                        "dicken, hässlichen Frosch",
+                        "dicken, hässlichen Frosch"),
+                np(M, DEF, "hässliche Frosch",
+                        "hässlichen Frosch",
+                        "hässlichen Frosch"),
+                np(M, DEF, "Frosch"));
         prinzDescriptionTriple =
                 new DescriptionTriple(
-                        np(M, "ein junger Königssohn",
-                                "einem jungen Königssohn",
-                                "einen jungen Königssohn"),
-                        np(M, "der junge Königssohn",
-                                "dem jungen Königssohn",
-                                "den jungen Königssohn"));
+                        np(M, INDEF, "junger Königssohn",
+                                "jungen Königssohn",
+                                "jungen Königssohn"),
+                        np(M, DEF, "junge Königssohn",
+                                "jungen Königssohn",
+                                "jungen Königssohn"));
     }
 
     @Override

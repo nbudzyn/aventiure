@@ -4,24 +4,23 @@ package de.nb.aventiure2.german.base;
  * Eine Phrase, die substantivisch verwendet werden kann, also insbesonder ein Pronomen ("sie") oder
  * eine (andere) Nominalphrase ("die goldene Kugel").
  */
-public abstract class SubstantivischePhrase extends EinreihigDeklinierbarePhrase {
-
-    public SubstantivischePhrase(final NumerusGenus numerusGenus,
-                                 final String nominativDativUndAkkusativ) {
-        this(numerusGenus, nominativDativUndAkkusativ, nominativDativUndAkkusativ);
+public abstract class SubstantivischePhrase extends DeklinierbarePhrase {
+    public SubstantivischePhrase(final NumerusGenus numerusGenus) {
+        super(numerusGenus);
     }
 
+    /**
+     * Ob die substantivische Phase mit einem Artikel beginnt, der mit einer
+     * dazu geeigneten Präposition verschmolzen werden darf ("dem Haus" -> "zum Haus")
+     * oder nicht ("einem Haus", "dem Haus zugewandte Straßenlaternen")
+     */
+    public abstract boolean erlaubtVerschmelzungVonPraepositionMitArtikel();
 
-    public SubstantivischePhrase(final NumerusGenus numerusGenus,
-                                 final String nominativAkkusativ, final String dativ) {
-        this(numerusGenus, nominativAkkusativ, dativ, nominativAkkusativ);
-    }
-
-    public SubstantivischePhrase(final NumerusGenus numerusGenus,
-                                 final String nominativ, final String dativ,
-                                 final String akkusativ) {
-        super(numerusGenus, nominativ, dativ, akkusativ);
-    }
+    /**
+     * Die substantivische Phrase im Dativ, aber ohne Artikel
+     * ("(zum) Haus")
+     */
+    public abstract String artikellosDat();
 
     public String im(final KasusOderPraepositionalkasus kasusOderPraepositionalkasus) {
         if (kasusOderPraepositionalkasus instanceof Kasus) {
@@ -53,4 +52,5 @@ public abstract class SubstantivischePhrase extends EinreihigDeklinierbarePhrase
      * Gibt ein Relativpronomen für diese Phrase zurück.
      */
     public abstract Relativpronomen relPron();
+
 }

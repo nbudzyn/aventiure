@@ -18,6 +18,7 @@ import static de.nb.aventiure2.data.world.gameobject.World.SCHLOSS_VORHALLE_AM_T
 import static de.nb.aventiure2.data.world.gameobject.World.SCHLOSS_VORHALLE_LANGER_TISCH_BEIM_FEST;
 import static de.nb.aventiure2.data.world.syscomp.storingplace.StoringPlaceType.NEBEN_SC_AUF_EINER_BANK;
 import static de.nb.aventiure2.data.world.time.AvTimeSpan.mins;
+import static de.nb.aventiure2.german.base.Artikel.Typ.INDEF;
 import static de.nb.aventiure2.german.base.DuDescription.du;
 import static de.nb.aventiure2.german.base.Nominalphrase.np;
 import static de.nb.aventiure2.german.base.NumerusGenus.M;
@@ -43,15 +44,9 @@ public class BankAmTischBeimSchlossfestFactory {
 
         final SimpleDescriptionComp descriptionComp =
                 new SimpleDescriptionComp(id,
-                        np(M, "ein Platz auf einer Bank an einem Tisch",
-                                "einem Platz auf einer Bank an einem Tisch",
-                                "einen Platz auf einer Bank an einem Tisch"),
-                        np(M, "ein Platz auf einer Bank an einem Tisch",
-                                "einem Platz auf einer Bank an einem Tisch",
-                                "einen Platz auf einer Bank an einem Tisch"),
-                        np(M, "ein Platz an einem Tisch",
-                                "einem Platz an einem Tisch",
-                                "einen Platz an einem Tisch"));
+                        np(M, INDEF, "Platz auf einer Bank an einem Tisch"),
+                        np(M, INDEF, "Platz auf einer Bank an einem Tisch"),
+                        np(M, INDEF, "Platz an einem Tisch"));
 
         final LocationComp locationComp = new LocationComp(
                 id, db, world,

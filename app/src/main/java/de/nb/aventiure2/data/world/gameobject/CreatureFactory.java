@@ -51,6 +51,8 @@ import static de.nb.aventiure2.data.world.gameobject.World.RAPUNZELS_ZAUBERIN;
 import static de.nb.aventiure2.data.world.gameobject.World.SCHLOSSWACHE;
 import static de.nb.aventiure2.data.world.gameobject.World.SCHLOSS_VORHALLE;
 import static de.nb.aventiure2.data.world.gameobject.World.VOR_DEM_ALTEN_TURM;
+import static de.nb.aventiure2.german.base.Artikel.Typ.DEF;
+import static de.nb.aventiure2.german.base.Artikel.Typ.INDEF;
 import static de.nb.aventiure2.german.base.Nominalphrase.np;
 import static de.nb.aventiure2.german.base.NumerusGenus.F;
 
@@ -71,12 +73,11 @@ class CreatureFactory {
                 new SchlosswacheStateComp(SCHLOSSWACHE, db, world);
         final AbstractDescriptionComp descriptionComp =
                 new SimpleDescriptionComp(SCHLOSSWACHE,
-                        np(F, "eine Schlosswache mit langer Hellebarde",
-                                "einer Schlosswache mit langer Hellebarde"),
-                        np(F, "die Schlosswache mit ihrer langen Hellebarde",
-                                "der Schlosswache mit ihrer langen Hellebarde"),
-                        np(F, "die Schlosswache",
-                                "der Schlosswache"));
+                        np(F, INDEF,
+                                "Schlosswache mit langer Hellebarde"),
+                        np(F, DEF,
+                                "Schlosswache mit ihrer langen Hellebarde"),
+                        np(F, DEF, "Schlosswache"));
         final LocationComp locationComp =
                 new LocationComp(SCHLOSSWACHE, db, world, SCHLOSS_VORHALLE,
                         DRAUSSEN_VOR_DEM_SCHLOSS,
@@ -111,12 +112,9 @@ class CreatureFactory {
         final AbstractDescriptionComp descriptionComp =
                 new SimpleDescriptionComp(RAPUNZEL,
                         // STORY Beschreibung für Rapunzel
-                        np(F, "STORY",
-                                "STORY"),
-                        np(F, "STORY",
-                                "STORY"),
-                        np(F, "STORY",
-                                "STORY"));
+                        np(F, INDEF, "STORY"),
+                        np(F, DEF, "STORY"),
+                        np(F, DEF, "STORY"));
         final LocationComp locationComp =
                 new LocationComp(RAPUNZEL, db, world, OBEN_IM_ALTEN_TURM, VOR_DEM_ALTEN_TURM,
                         false);
@@ -134,14 +132,13 @@ class CreatureFactory {
         final RapunzelsZauberinStateComp stateComp = new RapunzelsZauberinStateComp(db, world);
         final AbstractDescriptionComp descriptionComp =
                 new SimpleDescriptionComp(RAPUNZELS_ZAUBERIN,
-                        np(F, "eine magere Frau mit krummer, bis zum Kinn "
+                        np(F, INDEF, "magere Frau mit krummer, bis zum Kinn "
                                         + "reichender Nase",
-                                "einer mageren Frau mit krummer, bis zum Kinn "
+                                "mageren Frau mit krummer, bis zum Kinn "
                                         + "reichender Nase"),
-                        np(F, "die magere Frau",
-                                "der mageren Frau"),
-                        np(F, "die Frau",
-                                "der Frau"));
+                        np(F, DEF, "magere Frau",
+                                "mageren Frau"),
+                        np(F, DEF, "Frau"));
         final LocationComp locationComp =
                 new LocationComp(RAPUNZELS_ZAUBERIN, db, world,
                         // Muss zum Zustand der Zauberin passen!

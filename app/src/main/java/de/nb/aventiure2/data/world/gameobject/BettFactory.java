@@ -17,6 +17,8 @@ import static de.nb.aventiure2.data.world.gameobject.World.BETT_IN_DER_HUETTE_IM
 import static de.nb.aventiure2.data.world.gameobject.World.HUETTE_IM_WALD;
 import static de.nb.aventiure2.data.world.syscomp.storingplace.StoringPlaceType.ECKE_IM_BETTGESTELL;
 import static de.nb.aventiure2.data.world.time.AvTimeSpan.secs;
+import static de.nb.aventiure2.german.base.Artikel.Typ.DEF;
+import static de.nb.aventiure2.german.base.Artikel.Typ.INDEF;
 import static de.nb.aventiure2.german.base.DuDescription.du;
 import static de.nb.aventiure2.german.base.Nominalphrase.np;
 import static de.nb.aventiure2.german.base.NumerusGenus.N;
@@ -41,12 +43,9 @@ public class BettFactory {
     private GameObject create(final GameObjectId id, final GameObjectId locationId) {
         final SimpleDescriptionComp descriptionComp =
                 new SimpleDescriptionComp(id,
-                        np(N, "ein Bettgestell",
-                                "einem Bettgestell"),
-                        np(N, "das Bettgestell",
-                                "dem Bettgestell"),
-                        np(N, "das Bettgestell",
-                                "dem Bettgestell"));
+                        np(N, INDEF, "Bettgestell"),
+                        np(N, DEF, "Bettgestell"),
+                        np(N, DEF, "Bettgestell"));
 
         final LocationComp locationComp = new LocationComp(
                 id, db, world, locationId,

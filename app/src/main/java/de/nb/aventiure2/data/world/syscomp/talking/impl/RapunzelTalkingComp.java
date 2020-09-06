@@ -9,7 +9,6 @@ import de.nb.aventiure2.data.world.syscomp.talking.AbstractTalkingComp;
 import de.nb.aventiure2.data.world.time.AvTimeSpan;
 
 import static de.nb.aventiure2.data.world.gameobject.World.RAPUNZEL;
-import static de.nb.aventiure2.data.world.gameobject.World.RAPUNZELRUF;
 import static de.nb.aventiure2.data.world.gameobject.World.VOR_DEM_ALTEN_TURM;
 import static de.nb.aventiure2.data.world.syscomp.state.impl.RapunzelState.HAARE_VOM_TURM_HERUNTERGELASSEN;
 import static de.nb.aventiure2.data.world.syscomp.state.impl.RapunzelState.SINGEND;
@@ -34,11 +33,12 @@ public class RapunzelTalkingComp extends AbstractTalkingComp {
 
     @Override
     protected Iterable<SCTalkAction> getSCTalkActionsWithoutCheckingConditions() {
-        if (!loadSC().memoryComp().isKnown(RAPUNZELRUF)) {
-            return ImmutableList.of();
-        }
-
         return ImmutableList.of(
+                // STORY entrySt(() -> loadSC().memoryComp().isKnown(RAPUNZELRUF)),
+                // Zum Turmfenster hinaufrufen
+                // TODO  entryName,
+                // TODO  this::hallo_froschErinnertAnVersprechen));
+
                 // STORY Von VOR_DEM_ALTEN_TURM kann der SC
                 //  nach OBEN_IM_ALTEN_TURM rufen.
                 //  Das ist sehr speziell: Eine RedenAction

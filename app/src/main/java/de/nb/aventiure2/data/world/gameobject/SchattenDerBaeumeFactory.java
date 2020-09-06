@@ -19,6 +19,7 @@ import static de.nb.aventiure2.data.world.gameobject.World.VOR_DEM_ALTEN_TURM_SC
 import static de.nb.aventiure2.data.world.syscomp.storingplace.StoringPlaceType.STAMM_EINES_BAUMS;
 import static de.nb.aventiure2.data.world.time.AvTimeSpan.mins;
 import static de.nb.aventiure2.data.world.time.AvTimeSpan.secs;
+import static de.nb.aventiure2.german.base.Artikel.Typ.DEF;
 import static de.nb.aventiure2.german.base.DuDescription.du;
 import static de.nb.aventiure2.german.base.Nominalphrase.np;
 import static de.nb.aventiure2.german.base.NumerusGenus.M;
@@ -43,15 +44,9 @@ public class SchattenDerBaeumeFactory {
     private GameObject create(final GameObjectId id, final GameObjectId locationId) {
         final SimpleDescriptionComp descriptionComp =
                 new SimpleDescriptionComp(id,
-                        np(M, "der Schatten der Bäume",
-                                "dem Schatten der Bäume",
-                                "den Schatten der Bäume"),
-                        np(M, "der Schatten der Bäume",
-                                "dem Schatten der Bäume",
-                                "den Schatten der Bäume"),
-                        np(M, "der Schatten",
-                                "dem Schatten",
-                                "den Schatten"));
+                        np(M, DEF, "Schatten der Bäume"),
+                        np(M, DEF, "Schatten der Bäume"),
+                        np(M, DEF, "Schatten"));
 
         final LocationComp locationComp = new LocationComp(
                 id, db, world, locationId,

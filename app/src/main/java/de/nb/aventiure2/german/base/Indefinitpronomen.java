@@ -4,18 +4,19 @@ import java.util.Objects;
 
 import javax.annotation.ParametersAreNonnullByDefault;
 
+import static de.nb.aventiure2.german.base.Flexionsreihe.fr;
 import static de.nb.aventiure2.german.base.NumerusGenus.N;
 
 /**
  * Ein Pronomen wie "alles", "nichts".
  */
 @ParametersAreNonnullByDefault
-public class Indefinitpronomen extends SubstantivischePhrase {
+public class Indefinitpronomen extends PronomenMitVollerFlexionsreihe {
     public static final Indefinitpronomen ALLES =
-            ip(N, Relativpronomen.Typ.WERWAS, "alles", "allem");
+            ip(N, Relativpronomen.Typ.WERWAS, fr("alles", "allem"));
     public static final Indefinitpronomen NICHTS =
             // Dativ: "Von NICHTS kommt nichts."
-            ip(N, Relativpronomen.Typ.WERWAS, "nichts");
+            ip(N, Relativpronomen.Typ.WERWAS, fr("nichts"));
 
     /**
      * Mit welchem Typ von Relativpronomen steht das Indefinitpronomen?
@@ -23,30 +24,16 @@ public class Indefinitpronomen extends SubstantivischePhrase {
      */
     private final Relativpronomen.Typ relPronTyp;
 
-    private static Indefinitpronomen ip(final NumerusGenus numerusGenus,
-                                        final Relativpronomen.Typ relPronTyp,
-                                        final String nominativDativUndAkkusativ) {
-        return ip(numerusGenus, relPronTyp, nominativDativUndAkkusativ, nominativDativUndAkkusativ);
-    }
-
-    public static final Indefinitpronomen ip(final NumerusGenus numerusGenus,
-                                             final Relativpronomen.Typ relPronTyp,
-                                             final String nominativUndAkkusativ,
-                                             final String dativ) {
-        return ip(numerusGenus, relPronTyp, nominativUndAkkusativ, dativ, nominativUndAkkusativ);
-    }
-
-    public static final Indefinitpronomen ip(final NumerusGenus numerusGenus,
-                                             final Relativpronomen.Typ relPronTyp,
-                                             final String nominativ, final String dativ,
-                                             final String akkusativ) {
-        return new Indefinitpronomen(numerusGenus, relPronTyp, nominativ, dativ, akkusativ);
+    public static Indefinitpronomen ip(final NumerusGenus numerusGenus,
+                                       final Relativpronomen.Typ relPronTyp,
+                                       final Flexionsreihe flextionsreihe) {
+        return new Indefinitpronomen(numerusGenus, relPronTyp, flextionsreihe);
     }
 
     public Indefinitpronomen(final NumerusGenus numerusGenus,
                              final Relativpronomen.Typ relPronTyp,
-                             final String nominativ, final String dativ, final String akkusativ) {
-        super(numerusGenus, nominativ, dativ, akkusativ);
+                             final Flexionsreihe flextionsreihe) {
+        super(numerusGenus, flextionsreihe);
         this.relPronTyp = relPronTyp;
     }
 
