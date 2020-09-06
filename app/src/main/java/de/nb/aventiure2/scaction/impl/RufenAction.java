@@ -91,8 +91,6 @@ public class RufenAction extends AbstractScAction {
         timeElapsed = timeElapsed.plus(
                 world.narrateAndDoReactions().onRuf(sc, Ruftyp.LASS_DEIN_HAAR_HERUNTER));
 
-        // STORY Rapunzel reagiert auf diesen Ruf! (Reations...)
-
         // STORY Reaktion der Zauberin auf den Ruf. Wenn der SC ruft
         //  und die Zauberin in der Nähe ist, weiß sie danach auch, wo
         //  der SC sich befindet.
