@@ -14,12 +14,12 @@ import static de.nb.aventiure2.data.world.gameobject.World.DRAUSSEN_VOR_DEM_SCHL
 import static de.nb.aventiure2.data.world.gameobject.World.RAPUNZELS_ZAUBERIN;
 import static de.nb.aventiure2.data.world.syscomp.talking.impl.SCTalkAction.entrySt;
 import static de.nb.aventiure2.data.world.time.AvTimeSpan.secs;
-import static de.nb.aventiure2.german.base.AllgDescription.neuerSatz;
 import static de.nb.aventiure2.german.base.Nominalphrase.np;
 import static de.nb.aventiure2.german.base.NumerusGenus.F;
 import static de.nb.aventiure2.german.base.NumerusGenus.N;
 import static de.nb.aventiure2.german.base.StructuralElement.PARAGRAPH;
 import static de.nb.aventiure2.german.base.StructuralElement.SENTENCE;
+import static de.nb.aventiure2.german.description.AllgDescription.neuerSatz;
 import static de.nb.aventiure2.german.praedikat.VerbSubjAkkPraep.FRAGEN_NACH;
 
 /**

@@ -17,19 +17,19 @@ import de.nb.aventiure2.data.world.syscomp.spatialconnection.ISpatiallyConnected
 import de.nb.aventiure2.data.world.syscomp.spatialconnection.NumberOfWays;
 import de.nb.aventiure2.data.world.syscomp.storingplace.ILocationGO;
 import de.nb.aventiure2.data.world.time.AvTimeSpan;
-import de.nb.aventiure2.german.base.AbstractDescription;
 import de.nb.aventiure2.german.base.Nominalphrase;
 import de.nb.aventiure2.german.base.Personalpronomen;
 import de.nb.aventiure2.german.base.SubstantivischePhrase;
+import de.nb.aventiure2.german.description.AbstractDescription;
 
 import static de.nb.aventiure2.data.world.syscomp.memory.Action.Type.BEWEGEN;
 import static de.nb.aventiure2.data.world.syscomp.spatialconnection.NumberOfWays.NO_WAY;
 import static de.nb.aventiure2.data.world.syscomp.spatialconnection.NumberOfWays.ONE_IN_ONE_OUT;
 import static de.nb.aventiure2.data.world.time.AvTimeSpan.noTime;
-import static de.nb.aventiure2.german.base.AllgDescription.neuerSatz;
-import static de.nb.aventiure2.german.base.DuDescription.du;
 import static de.nb.aventiure2.german.base.StructuralElement.PARAGRAPH;
 import static de.nb.aventiure2.german.base.StructuralElement.SENTENCE;
+import static de.nb.aventiure2.german.description.AllgDescription.neuerSatz;
+import static de.nb.aventiure2.german.description.DuDescription.du;
 
 /**
  * Grundlegende Implementierung, um dem Spieler die Bewegung

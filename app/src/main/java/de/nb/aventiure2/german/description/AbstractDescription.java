@@ -1,9 +1,14 @@
-package de.nb.aventiure2.german.base;
+package de.nb.aventiure2.german.description;
 
 import androidx.annotation.Nullable;
 
 import de.nb.aventiure2.data.narration.Narration;
 import de.nb.aventiure2.data.world.time.AvTimeSpan;
+import de.nb.aventiure2.german.base.IBezugsobjekt;
+import de.nb.aventiure2.german.base.NumerusGenus;
+import de.nb.aventiure2.german.base.PhorikKandidat;
+import de.nb.aventiure2.german.base.StructuralElement;
+import de.nb.aventiure2.german.base.SubstantivischePhrase;
 
 /**
  * Abstract superclass for a description.

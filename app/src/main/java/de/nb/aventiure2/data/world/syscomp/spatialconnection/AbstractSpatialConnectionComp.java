@@ -16,6 +16,7 @@ import de.nb.aventiure2.data.world.base.Lichtverhaeltnisse;
 import de.nb.aventiure2.data.world.base.SpatialConnection;
 import de.nb.aventiure2.data.world.base.SpatialConnectionData;
 import de.nb.aventiure2.data.world.gameobject.World;
+import de.nb.aventiure2.german.description.AbstractDescription;
 
 /**
  * Component für ein {@link GameObject}: Das Game Object (z.B. ein Raum) ist räumlich mit
@@ -67,7 +68,7 @@ public abstract class AbstractSpatialConnectionComp extends AbstractStatelessCom
      * {@link SpatialConnection} - oder ob die Beschreibung verpflichtend ist und nur
      * <i>ergänzt oder umformuliert</i> werden darf.
      * <p>
-     * Immer wenn beim Erzeugen einer {@link de.nb.aventiure2.german.base.AbstractDescription} ein
+     * Immer wenn beim Erzeugen einer {@link AbstractDescription} ein
      * {@link de.nb.aventiure2.data.world.counter.Counter} hochgezählt wurde, wird diese
      * Description wohl verpflichtend sein. Vermutlich enthält sie essentielle Informationen,
      * die der Spieler nicht verpassen soll.

@@ -31,9 +31,9 @@ import de.nb.aventiure2.data.world.syscomp.state.IHasStateGO;
 import de.nb.aventiure2.data.world.syscomp.state.impl.SchlossfestState;
 import de.nb.aventiure2.data.world.syscomp.storingplace.ILocationGO;
 import de.nb.aventiure2.data.world.time.AvTimeSpan;
-import de.nb.aventiure2.german.base.AbstractDescription;
-import de.nb.aventiure2.german.base.DuDescription;
 import de.nb.aventiure2.german.base.StructuralElement;
+import de.nb.aventiure2.german.description.AbstractDescription;
+import de.nb.aventiure2.german.description.DuDescription;
 import de.nb.aventiure2.scaction.AbstractScAction;
 
 import static com.google.common.collect.ImmutableList.builder;
@@ -52,15 +52,15 @@ import static de.nb.aventiure2.data.world.syscomp.spatialconnection.NumberOfWays
 import static de.nb.aventiure2.data.world.syscomp.state.impl.SchlossfestState.BEGONNEN;
 import static de.nb.aventiure2.data.world.time.AvTimeSpan.noTime;
 import static de.nb.aventiure2.data.world.time.AvTimeSpan.secs;
-import static de.nb.aventiure2.german.base.AllgDescription.neuerSatz;
-import static de.nb.aventiure2.german.base.AllgDescription.satzanschluss;
-import static de.nb.aventiure2.german.base.DuDescription.du;
 import static de.nb.aventiure2.german.base.GermanUtil.buildAufzaehlung;
 import static de.nb.aventiure2.german.base.GermanUtil.capitalize;
 import static de.nb.aventiure2.german.base.GermanUtil.uncapitalize;
 import static de.nb.aventiure2.german.base.StructuralElement.PARAGRAPH;
 import static de.nb.aventiure2.german.base.StructuralElement.SENTENCE;
 import static de.nb.aventiure2.german.base.StructuralElement.WORD;
+import static de.nb.aventiure2.german.description.AllgDescription.neuerSatz;
+import static de.nb.aventiure2.german.description.AllgDescription.satzanschluss;
+import static de.nb.aventiure2.german.description.DuDescription.du;
 import static java.util.stream.Collectors.toList;
 
 /**

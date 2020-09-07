@@ -6,7 +6,7 @@ import androidx.room.OnConflictStrategy;
 import androidx.room.Query;
 
 import de.nb.aventiure2.data.narration.NarrationDao;
-import de.nb.aventiure2.german.base.AbstractDescription;
+import de.nb.aventiure2.german.description.AbstractDescription;
 
 /**
  * Room DAO for {@link Counter}s.

@@ -3,7 +3,7 @@ package de.nb.aventiure2.data.world.base;
 import androidx.annotation.NonNull;
 
 import de.nb.aventiure2.data.world.time.AvTimeSpan;
-import de.nb.aventiure2.german.base.AbstractDescription;
+import de.nb.aventiure2.german.description.AbstractDescription;
 import de.nb.aventiure2.german.praedikat.AdverbialeAngabe;
 
 import static de.nb.aventiure2.data.world.base.Known.KNOWN_FROM_DARKNESS;

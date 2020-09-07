@@ -99,7 +99,7 @@ public class Walkthrough {
                     "Rasten",
                     "Rasten",
                     "Rasten", // Zauberin steigt die Zöpfe hoch
-                    "Aus dem Schatten der Bäume treten,",
+                    "Aus dem Schatten der Bäume treten",
                     "Rufen: „Lass dein Haar herunter.“");
 
     // STORY Seide auf Markt bei Frau für ein Goldstück kaufen, das man vom Prinzen bekommen hat.

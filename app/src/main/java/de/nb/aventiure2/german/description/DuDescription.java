@@ -1,8 +1,10 @@
-package de.nb.aventiure2.german.base;
+package de.nb.aventiure2.german.description;
 
 import androidx.annotation.Nullable;
 
 import de.nb.aventiure2.data.world.time.AvTimeSpan;
+import de.nb.aventiure2.german.base.GermanUtil;
+import de.nb.aventiure2.german.base.StructuralElement;
 
 import static com.google.common.base.Preconditions.checkArgument;
 import static de.nb.aventiure2.german.base.GermanUtil.capitalize;

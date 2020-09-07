@@ -18,7 +18,7 @@ import de.nb.aventiure2.data.world.syscomp.state.impl.FroschprinzState;
 import de.nb.aventiure2.data.world.syscomp.talking.ITalkerGO;
 import de.nb.aventiure2.data.world.syscomp.talking.impl.FroschprinzTalkingComp;
 import de.nb.aventiure2.data.world.time.AvTimeSpan;
-import de.nb.aventiure2.german.base.AbstractDescription;
+import de.nb.aventiure2.german.description.AbstractDescription;
 import de.nb.aventiure2.scaction.AbstractScAction;
 
 import static de.nb.aventiure2.data.world.gameobject.World.FROSCHPRINZ;
@@ -28,9 +28,9 @@ import static de.nb.aventiure2.data.world.syscomp.state.impl.FroschprinzState.HA
 import static de.nb.aventiure2.data.world.syscomp.state.impl.FroschprinzState.UNAUFFAELLIG;
 import static de.nb.aventiure2.data.world.time.AvTimeSpan.mins;
 import static de.nb.aventiure2.data.world.time.AvTimeSpan.secs;
-import static de.nb.aventiure2.german.base.AllgDescription.neuerSatz;
-import static de.nb.aventiure2.german.base.AllgDescription.satzanschluss;
-import static de.nb.aventiure2.german.base.DuDescription.du;
+import static de.nb.aventiure2.german.description.AllgDescription.neuerSatz;
+import static de.nb.aventiure2.german.description.AllgDescription.satzanschluss;
+import static de.nb.aventiure2.german.description.DuDescription.du;
 
 /**
  * Der Spielercharakter heult.

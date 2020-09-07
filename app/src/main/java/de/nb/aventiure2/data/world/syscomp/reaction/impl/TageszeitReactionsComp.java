@@ -12,8 +12,8 @@ import de.nb.aventiure2.data.world.time.Tageszeit;
 
 import static de.nb.aventiure2.data.world.gameobject.World.TAGESZEIT;
 import static de.nb.aventiure2.data.world.time.AvTimeSpan.noTime;
-import static de.nb.aventiure2.german.base.AllgDescription.neuerSatz;
 import static de.nb.aventiure2.german.base.StructuralElement.PARAGRAPH;
+import static de.nb.aventiure2.german.description.AllgDescription.neuerSatz;
 
 /**
  * Sorgt dafür, dass Sätze erzählt werden wie "Allmählich wird es Abend".

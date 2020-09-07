@@ -33,14 +33,14 @@ import static de.nb.aventiure2.data.world.syscomp.talking.impl.SCTalkAction.reEn
 import static de.nb.aventiure2.data.world.syscomp.talking.impl.SCTalkAction.st;
 import static de.nb.aventiure2.data.world.time.AvTimeSpan.noTime;
 import static de.nb.aventiure2.data.world.time.AvTimeSpan.secs;
-import static de.nb.aventiure2.german.base.AllgDescription.neuerSatz;
-import static de.nb.aventiure2.german.base.AllgDescription.satzanschluss;
-import static de.nb.aventiure2.german.base.DuDescription.du;
 import static de.nb.aventiure2.german.base.GermanUtil.capitalize;
 import static de.nb.aventiure2.german.base.Indefinitpronomen.ALLES;
 import static de.nb.aventiure2.german.base.Nominalphrase.ANGEBOTE;
 import static de.nb.aventiure2.german.base.StructuralElement.PARAGRAPH;
 import static de.nb.aventiure2.german.base.StructuralElement.SENTENCE;
+import static de.nb.aventiure2.german.description.AllgDescription.neuerSatz;
+import static de.nb.aventiure2.german.description.AllgDescription.satzanschluss;
+import static de.nb.aventiure2.german.description.DuDescription.du;
 import static de.nb.aventiure2.german.praedikat.SeinUtil.istSind;
 import static de.nb.aventiure2.german.praedikat.VerbSubjDatAkk.MACHEN;
 import static de.nb.aventiure2.german.praedikat.VerbSubjDatAkk.VERSPRECHEN;

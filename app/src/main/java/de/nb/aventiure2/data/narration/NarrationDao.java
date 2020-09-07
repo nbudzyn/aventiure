@@ -17,9 +17,9 @@ import java.util.Objects;
 
 import de.nb.aventiure2.data.narration.Narration.NarrationSource;
 import de.nb.aventiure2.data.world.time.AvTimeSpan;
-import de.nb.aventiure2.german.base.AbstractDescription;
-import de.nb.aventiure2.german.base.DuDescription;
 import de.nb.aventiure2.german.base.StructuralElement;
+import de.nb.aventiure2.german.description.AbstractDescription;
+import de.nb.aventiure2.german.description.DuDescription;
 
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;

@@ -1,6 +1,7 @@
-package de.nb.aventiure2.german.base;
+package de.nb.aventiure2.german.description;
 
 import de.nb.aventiure2.data.world.time.AvTimeSpan;
+import de.nb.aventiure2.german.base.StructuralElement;
 
 import static de.nb.aventiure2.data.world.time.AvTimeSpan.noTime;
 import static de.nb.aventiure2.german.base.GermanUtil.capitalize;
