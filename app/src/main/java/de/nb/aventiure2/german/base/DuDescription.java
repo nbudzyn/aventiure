@@ -1,18 +1,16 @@
 package de.nb.aventiure2.german.base;
 
-import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-
-import com.google.common.base.Joiner;
 
 import de.nb.aventiure2.data.world.time.AvTimeSpan;
 
 import static com.google.common.base.Preconditions.checkArgument;
 import static de.nb.aventiure2.german.base.GermanUtil.capitalize;
+import static de.nb.aventiure2.german.base.GermanUtil.joinToNull;
 
 /**
  * A description - assuming the player character is the (first) subject. Somehting like
- * "Du gehts in den Wald."
+ * "Du gehst in den Wald."
  */
 public class DuDescription extends AbstractDescription<DuDescription> {
     /**
@@ -103,7 +101,7 @@ public class DuDescription extends AbstractDescription<DuDescription> {
 
         return buildHauptsatz(konjunktionaladverb, // "dann"
                 verb, // "gehst"
-                joinSatzzeichensensitiv("du", remainder)); // "du den Fluss entlang"
+                GermanUtil.joinToNull("du", remainder)); // "du den Fluss entlang"
     }
 
     public String getDescriptionHauptsatzMitSpeziellemVorfeld() {
@@ -121,7 +119,7 @@ public class DuDescription extends AbstractDescription<DuDescription> {
 
         return buildHauptsatz(vorfeldSatzglied,
                 verb,
-                joinSatzzeichensensitiv("du", remainderWithoutVorfeldSatzglied));
+                joinToNull("du", remainderWithoutVorfeldSatzglied));
     }
 
     @Override
@@ -187,28 +185,16 @@ public class DuDescription extends AbstractDescription<DuDescription> {
 
     private static String buildHauptsatz(final String vorfeld, final String verb,
                                          @Nullable final String mittelfeldEtc) {
-        return Joiner.on(" ").skipNulls().join(
+        return joinToNull(
                 capitalize(vorfeld),
-                joinSatzzeichensensitiv(verb, mittelfeldEtc));
+                verb,
+                mittelfeldEtc);
     }
 
     /**
      * Gibt etwas zurück wie "gehst weiter"
      */
     public String getDescriptionSatzanschlussOhneSubjekt() {
-        return joinSatzzeichensensitiv(verb, remainder);
-    }
-
-    @NonNull
-    private static String joinSatzzeichensensitiv(
-            @Nullable final String first, @Nullable final String second) {
-        if (second != null &&
-                (second.startsWith(",") ||
-                        second.startsWith(";") ||
-                        second.startsWith(":"))) {
-            return Joiner.on("").skipNulls().join(first, second);
-        } else {
-            return Joiner.on(" ").skipNulls().join(first, second);
-        }
+        return GermanUtil.joinToNull(verb, remainder);
     }
 }

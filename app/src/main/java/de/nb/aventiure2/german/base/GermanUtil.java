@@ -3,9 +3,6 @@ package de.nb.aventiure2.german.base;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
-import com.google.common.base.Joiner;
-import com.google.common.base.Strings;
-
 import java.util.List;
 
 import static com.google.common.base.Preconditions.checkArgument;
@@ -42,9 +39,25 @@ public class GermanUtil {
 
     @Nullable
     public static String joinToNull(final Iterable<?> parts) {
-        return Strings.emptyToNull(
-                Joiner.on(" ").skipNulls().join(parts)
-        );
+        final StringBuilder res = new StringBuilder();
+        for (final Object part : parts) {
+            if (part == null) {
+                continue;
+            }
+
+            final String partString = part.toString();
+            if (spaceNeeded(res, partString)) {
+                res.append(" ");
+            }
+
+            res.append(partString);
+        }
+
+        if (res.length() == 0) {
+            return null;
+        }
+
+        return res.toString();
     }
 
     /**
@@ -69,5 +82,20 @@ public class GermanUtil {
         }
 
         return res.toString();
+    }
+
+    public static boolean spaceNeeded(final CharSequence base, final CharSequence addition) {
+        if (base == null || base.length() == 0 ||
+                addition == null || addition.length() == 0) {
+            return false;
+        }
+
+        final CharSequence lastCharBase = base.subSequence(0, base.length() - 1);
+        if (" „\n".contains(lastCharBase)) {
+            return false;
+        }
+
+        final CharSequence firstCharAdditional = addition.subSequence(0, 1);
+        return !" ,;.:!?“\n".contains(firstCharAdditional);
     }
 }

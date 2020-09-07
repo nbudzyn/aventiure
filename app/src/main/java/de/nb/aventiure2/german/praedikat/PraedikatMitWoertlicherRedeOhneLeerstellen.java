@@ -13,6 +13,7 @@ import de.nb.aventiure2.german.base.WoertlicheRede;
 
 import static de.nb.aventiure2.german.base.GermanUtil.capitalize;
 import static de.nb.aventiure2.german.base.GermanUtil.joinToNull;
+import static java.util.Arrays.asList;
 
 /**
  * Ein Prädikat mit wörtlicher Rede, in dem alle Leerstellen besetzt sind. Beispiele:
@@ -60,15 +61,41 @@ public class PraedikatMitWoertlicherRedeOhneLeerstellen
 
         return joinToNull(
                 "Du",
-                verb.getDuForm(), // rufst
-                joinToNull(modalpartikeln), // mal eben
-                verbPartikelUndDoppelpunkt, // aus:
-                woertlicheRede.amSatzende()); // "„Kommt alle her.“"
+                getDescriptionHauptsatzMitEingespartemVorfeldSubj(modalpartikeln)
+        ); // "rufst: „Kommt alle her.“"
     }
 
     @Override
     public boolean duHauptsatzLaesstSichMitNachfolgendemDuHauptsatzZusammenziehen() {
         return false;
+    }
+
+    /**
+     * Gibt einen Satz zurück mit diesem Prädikat, bei dem das Subjekt, das im Vorfeld
+     * stünde, eingespart ist ("rufst...")
+     */
+    public String getDescriptionHauptsatzMitEingespartemVorfeldSubj(
+            final Modalpartikel... modalpartikeln) {
+        return getDescriptionHauptsatzMitEingespartemVorfeldSubj(
+                asList(modalpartikeln)
+        );
+    }
+
+
+    /**
+     * Gibt einen Satz zurück mit diesem Prädikat, bei dem das Subjekt, das im Vorfeld
+     * stünde, eingespart ist ("rufst: ...")
+     */
+    public String getDescriptionHauptsatzMitEingespartemVorfeldSubj(
+            final Collection<Modalpartikel> modalpartikeln) {
+        final String verbPartikelUndDoppelpunkt =
+                joinToNull(verb.getPartikel(), ":");
+
+        return joinToNull(
+                verb.getDuForm(), // rufst
+                joinToNull(modalpartikeln), // mal eben
+                verbPartikelUndDoppelpunkt, // aus:
+                woertlicheRede.amSatzende()); // "„Kommt alle her.“"
     }
 
     /**

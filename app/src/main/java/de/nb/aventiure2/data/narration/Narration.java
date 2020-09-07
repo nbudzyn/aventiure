@@ -9,6 +9,7 @@ import com.google.common.base.Preconditions;
 
 import de.nb.aventiure2.data.world.base.GameObjectId;
 import de.nb.aventiure2.data.world.base.IGameObject;
+import de.nb.aventiure2.german.base.GermanUtil;
 import de.nb.aventiure2.german.base.NumerusGenus;
 import de.nb.aventiure2.german.base.Personalpronomen;
 import de.nb.aventiure2.german.base.PhorikKandidat;
@@ -265,7 +266,7 @@ public class Narration {
                     resText.append(",");
                 }
 
-                if (spaceNeeded(resText.toString(), narrationAddition.getText())) {
+                if (GermanUtil.spaceNeeded(resText.toString(), narrationAddition.getText())) {
                     resText.append(" ");
                 }
                 break;
@@ -274,7 +275,7 @@ public class Narration {
                         narrationAddition.getText())) {
                     resText.append(".");
                 }
-                if (spaceNeeded(resText.toString(), narrationAddition.getText())) {
+                if (GermanUtil.spaceNeeded(resText.toString(), narrationAddition.getText())) {
                     resText.append(" ");
                 }
                 break;
@@ -389,17 +390,6 @@ public class Narration {
         final String firstCharAdditional =
                 addition.trim().substring(0, 1);
         return !".!?".contains(firstCharAdditional);
-    }
-
-    private static boolean spaceNeeded(final String base, final String addition) {
-        final String lastCharBase =
-                base.substring(base.length() - 1);
-        if (" „\n".contains(lastCharBase)) {
-            return false;
-        }
-
-        final String firstCharAdditional = addition.substring(0, 1);
-        return !" .,;!?“\n".contains(firstCharAdditional);
     }
 
     public boolean lastNarrationWasFomReaction() {

@@ -1,7 +1,7 @@
 package de.nb.aventiure2.data.world.syscomp.reaction.interfaces;
 
 import de.nb.aventiure2.german.base.WoertlicheRede;
-import de.nb.aventiure2.german.praedikat.PraedikatOhneLeerstellen;
+import de.nb.aventiure2.german.praedikat.PraedikatMitWoertlicherRedeOhneLeerstellen;
 
 import static de.nb.aventiure2.german.praedikat.VerbSubjWoertlicheRede.RUFEN;
 
@@ -14,7 +14,7 @@ public enum Ruftyp {
     /**
      * Prädikat für den Namen des Rufts, z.B. ("Lass dein Haar herunter" rufen).
      */
-    private final PraedikatOhneLeerstellen name;
+    private final PraedikatMitWoertlicherRedeOhneLeerstellen name;
 
     Ruftyp(final String woertlicheRedeText) {
         this(new WoertlicheRede(woertlicheRedeText));
@@ -24,11 +24,11 @@ public enum Ruftyp {
         this(RUFEN.mitWoertlicherRede(woertlicheRede));
     }
 
-    Ruftyp(final PraedikatOhneLeerstellen name) {
+    Ruftyp(final PraedikatMitWoertlicherRedeOhneLeerstellen name) {
         this.name = name;
     }
 
-    public PraedikatOhneLeerstellen getName() {
+    public PraedikatMitWoertlicherRedeOhneLeerstellen getName() {
         return name;
     }
 }

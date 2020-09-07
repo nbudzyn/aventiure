@@ -42,6 +42,9 @@ public class MainActivity extends AppCompatActivity {
     private ObjectAnimator narrationScrollViewAnimator;
 
     private GuiActionsAdapter guiActionsAdapter;
+    // TODO Auffälliger anzeigen, dass es mehr Actions
+    //  gibt, als auf den Bildschirm passen.
+    // TODO Geschichte teilen?! exportieren! PDF?...
 
     private MainViewModel mainViewModel;
     private Toolbar toolbar;

@@ -13,6 +13,13 @@ public interface IResponder extends IGameObject {
     @Nonnull
     AbstractReactionsComp reactionsComp();
 
+    // STORY Reaktionen aller IResponders auf alle Aktionen, die sie wahrnehmen.
+    // STORY Aus dem Reaktionen der IResponders neue kleine
+    //  plotlines bauen, die bald danach wieder in einen StoryStep einmünden
+    //
+    // STORY Jede eigentlich nicht vergesehene Interaktion mit einem
+    //  NPC / Creature soll die Welt spürbar verändern.
+
     static <R extends IReactions> boolean reactsTo(
             final IGameObject gameObject,
             final Class<R> reactionsInterface) {

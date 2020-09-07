@@ -74,6 +74,8 @@ public class NehmenAction
     Collection<NehmenAction<GO, TARGET_LOC>> buildObjectActions(final AvDatabase db,
                                                                 final World world,
                                                                 final GO object) {
+        // STORY Gegenstände verloren gehen lassen, wenn nicht mehr nötig?
+
         final ImmutableList.Builder<NehmenAction<GO, TARGET_LOC>> res = ImmutableList.builder();
 
         res.add(new NehmenAction<>(db, world,
