@@ -69,9 +69,4 @@ public enum VerbSubjObj implements PraedikatMitEinerObjektleerstelle {
         return new PraedikatSubjObjOhneLeerstellen(verb,
                 kasusOderPraepositionalkasus, describable);
     }
-
-    @Override
-    public boolean duHauptsatzLaesstSichMitNachfolgendemDuHauptsatzZusammenziehen() {
-        return true;
-    }
 }

@@ -27,6 +27,7 @@ import de.nb.aventiure2.german.base.SubstantivischePhrase;
 import de.nb.aventiure2.german.praedikat.AdverbialeAngabe;
 import de.nb.aventiure2.german.praedikat.Modalpartikel;
 import de.nb.aventiure2.german.praedikat.PraedikatMitEinerObjektleerstelle;
+import de.nb.aventiure2.german.praedikat.PraedikatOhneLeerstellen;
 import de.nb.aventiure2.scaction.AbstractScAction;
 
 import static com.google.common.base.Preconditions.checkArgument;
@@ -175,7 +176,7 @@ public class NehmenAction
 
         return capitalize(praedikat.mitObj(world.getDescription(gameObject, true))
                 // Relevant für etwas wie "Die Schale an *mich* nehmen"
-                .getDescriptionInfinitiv(P1, SG));
+                .getInfinitiv(P1, SG));
     }
 
     @NonNull
@@ -399,27 +400,29 @@ public class NehmenAction
                 //  erzeugen könnte, die intern das mitnehmenPraedikat enthält.
                 //  Leider müssen wir bis dahin eine AllgDescription bauen. :-(
                 final Nominalphrase objectDesc = world.getDescription(gameObject, true);
+                final PraedikatOhneLeerstellen praedikatMitObjekt =
+                        mitnehmenPraedikat.mitObj(objectDesc);
                 return n.add(neuerSatz(StructuralElement.PARAGRAPH,
-                        mitnehmenPraedikat
-                                .getDescriptionDuHauptsatz(
-                                        objectDesc,
-                                        mood.getAdverbialeAngabe()),
+                        praedikatMitObjekt
+                                .getDuHauptsatz(mood.getAdverbialeAngabe()),
                         secs(5))
                         .undWartest(
-                                mitnehmenPraedikat
+                                praedikatMitObjekt
                                         .duHauptsatzLaesstSichMitNachfolgendemDuHauptsatzZusammenziehen())
                         .phorikKandidat(objectDesc, gameObject.getId())
                         .dann());
             }
         }
 
+        final PraedikatOhneLeerstellen praedikatMitObjekt =
+                mitnehmenPraedikat.mitObj(world.getDescription(gameObject, true));
         return n.add(
                 neuerSatz(PARAGRAPH,
-                        mitnehmenPraedikat
-                                .getDescriptionDuHauptsatz(world.getDescription(gameObject, true)),
+                        praedikatMitObjekt
+                                .getDuHauptsatz(),
                         secs(5))
                         .undWartest(
-                                mitnehmenPraedikat
+                                praedikatMitObjekt
                                         .duHauptsatzLaesstSichMitNachfolgendemDuHauptsatzZusammenziehen())
                         .dann());
     }
@@ -441,7 +444,7 @@ public class NehmenAction
                     ", nur um "
                             + nehmenPraedikat
                             .mitObj(world.getDescription(gameObject, true).persPron())
-                            .getDescriptionZuInfinitiv(
+                            .getZuInfinitiv(
                                     P2, SG,
                                     new AdverbialeAngabe(
                                             "gleich erneut")),
@@ -457,7 +460,7 @@ public class NehmenAction
                         // du nimmst die Kugel besser doch
                         + uncapitalize(nehmenPraedikat
                         .mitObj(objectDesc)
-                        .getDescriptionDuHauptsatz(
+                        .getDuHauptsatz(
                                 new Modalpartikel("besser"),
                                 new Modalpartikel("doch"))),
                 secs(5))

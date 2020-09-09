@@ -90,12 +90,87 @@ public class GermanUtil {
             return false;
         }
 
-        final CharSequence lastCharBase = base.subSequence(0, base.length() - 1);
+        final CharSequence lastCharBase = base.subSequence(base.length() - 1, base.length());
         if (" „\n".contains(lastCharBase)) {
             return false;
         }
 
-        final CharSequence firstCharAdditional = addition.subSequence(0, 1);
-        return !" ,;.:!?“\n".contains(firstCharAdditional);
+        final CharSequence firstCharAddition = addition.subSequence(0, 1);
+        return !" ,;.:!?“\n".contains(firstCharAddition);
+    }
+
+    public static @Nullable
+    String cutSatzglied(@Nullable final String text, @Nullable final String satzglied) {
+        if (text == null) {
+            if (satzglied != null) {
+                throw new IllegalArgumentException(
+                        "Text null, but Satzglied was \"" + satzglied + "\".");
+            }
+
+            return null;
+        }
+
+        if (satzglied == null) {
+            return text;
+        }
+
+        final int startIndex = text.indexOf(satzglied);
+        if (startIndex < 0) {
+            throw new IllegalArgumentException("Satzglied \"" + satzglied + "\" not contained "
+                    + "in \"" + text + "\"");
+        }
+
+        @Nullable final String charBefore = startIndex == 0 ?
+                null :
+                text.substring(startIndex - 1, startIndex);
+
+        final int endIndex = startIndex + satzglied.length();
+        @Nullable final String charAfter = endIndex >= text.length() ?
+                null :
+                text.substring(endIndex, startIndex + satzglied.length() + 1);
+
+        if (charBefore == null) {
+            if (charAfter == null) {
+                return null;
+            }
+
+            if (charAfter.equals(" ")) {
+                return text.substring(endIndex + 1);
+            }
+
+            return text.substring(endIndex);
+        }
+
+        // charBefore != null
+        if (charBefore.equals(" ")) {
+            if (charAfter == null) {
+                return text.substring(0, startIndex - 1);
+            }
+
+            if (charAfter.equals(" ")) {
+                return text.substring(0, startIndex - 1) + text.substring(endIndex);
+            }
+
+            return text.substring(0, startIndex - 1) + " " + text.substring(endIndex);
+        }
+
+        // charBefore != null, !charBefore.equals(" ")
+        if (charAfter == null) {
+            return text.substring(0, startIndex);
+        }
+
+        if (charAfter.equals(" ")) {
+            return text.substring(0, startIndex) + text.substring(endIndex + 1);
+        }
+
+        return text.substring(0, startIndex) + " " + text.substring(endIndex);
+    }
+
+    public static String buildHauptsatz(final String vorfeld, final String verb,
+                                        @Nullable final String mittelfeldEtc) {
+        return joinToNull(
+                capitalize(vorfeld),
+                verb,
+                mittelfeldEtc);
     }
 }

@@ -71,7 +71,7 @@ public class RufenAction extends AbstractScAction {
     @Override
     @NonNull
     public String getName() {
-        return capitalize(ruftyp.getName().getDescriptionInfinitiv(P1, SG));
+        return capitalize(ruftyp.getName().getInfinitiv(P1, SG));
     }
 
     @Override
@@ -88,12 +88,12 @@ public class RufenAction extends AbstractScAction {
                     n.add(satzanschluss(
                             "und " +
                                     ruftyp.getName()
-                                            .getDescriptionHauptsatzMitEingespartemVorfeldSubj(),
+                                            .getDuSatzanschlussOhneSubjekt(),
                             secs(30)));
         } else if (adverbialeAngabe != null) {
             timeElapsed =
                     n.add(neuerSatz(
-                            ruftyp.getName().getDescriptionDuHauptsatz(adverbialeAngabe),
+                            ruftyp.getName().getDuHauptsatz(adverbialeAngabe),
                             secs(30)));
         } else {
             timeElapsed =
@@ -101,7 +101,7 @@ public class RufenAction extends AbstractScAction {
                             "Und " +
                                     uncapitalize(
                                             ruftyp.getName()
-                                                    .getDescriptionDuHauptsatz()),
+                                                    .getDuHauptsatz()),
                             secs(30)));
         }
 

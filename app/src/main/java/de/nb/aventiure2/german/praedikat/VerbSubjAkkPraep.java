@@ -49,7 +49,7 @@ public enum VerbSubjAkkPraep implements Praedikat {
     public String getDescriptionHauptsatz(
             final SubstantivischePhrase describableAkk,
             final SubstantivischePhrase describablePraep) {
-        return mitPraep(describablePraep).getDescriptionDuHauptsatz(describableAkk);
+        return mitPraep(describablePraep).mitObj(describableAkk).getDuHauptsatz();
     }
 
     /**
@@ -59,8 +59,7 @@ public enum VerbSubjAkkPraep implements Praedikat {
     public String getDescriptionInfinitiv(final Person person, final Numerus numerus,
                                           final SubstantivischePhrase describableAkk,
                                           final SubstantivischePhrase describablePraep) {
-        return mitPraep(describablePraep).getDescriptionInfinitiv(
-                person, numerus, describableAkk);
+        return mitPraep(describablePraep).mitObj(describableAkk).getInfinitiv(person, numerus);
     }
 
     /**
@@ -70,8 +69,7 @@ public enum VerbSubjAkkPraep implements Praedikat {
     public String getDescriptionZuInfinitiv(final Person person, final Numerus numerus,
                                             final SubstantivischePhrase describableAkk,
                                             final SubstantivischePhrase describablePraep) {
-        return mitPraep(describablePraep).getDescriptionZuInfinitiv(
-                person, numerus, describableAkk);
+        return mitPraep(describablePraep).mitObj(describableAkk).getInfinitiv(person, numerus);
     }
 
     public PraedikatMitEinerObjektleerstelle mitPraep(

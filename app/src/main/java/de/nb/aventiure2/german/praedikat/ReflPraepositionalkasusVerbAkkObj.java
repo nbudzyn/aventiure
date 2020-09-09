@@ -35,14 +35,9 @@ public enum ReflPraepositionalkasusVerbAkkObj implements PraedikatMitEinerObjekt
     }
 
     @Override
-    public PraedikatOhneLeerstellen mitObj(final SubstantivischePhrase describable) {
+    public AbstractPraedikatOhneLeerstellen mitObj(final SubstantivischePhrase describable) {
         return new PraedikatSubjReflPraepositionalkasusAkkObjOhneLeerstellen(
                 this, describable);
-    }
-
-    @Override
-    public boolean duHauptsatzLaesstSichMitNachfolgendemDuHauptsatzZusammenziehen() {
-        return true;
     }
 
     @NonNull

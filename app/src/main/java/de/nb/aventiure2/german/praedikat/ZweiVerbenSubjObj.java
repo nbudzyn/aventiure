@@ -21,7 +21,8 @@ public class ZweiVerbenSubjObj implements PraedikatMitEinerObjektleerstelle {
     }
 
     @Override
-    public PraedikatOhneLeerstellen mitObj(final SubstantivischePhrase substantivischePhrase) {
+    public PraedikatOhneLeerstellen mitObj(
+            final SubstantivischePhrase substantivischePhrase) {
         // "die goldene Kugel"
         final SubstantivischePhrase erstesObj = substantivischePhrase;
 
@@ -32,18 +33,13 @@ public class ZweiVerbenSubjObj implements PraedikatMitEinerObjektleerstelle {
                 erstesObj.persPron());
     }
 
-    public PraedikatOhneLeerstellen mitObj(final SubstantivischePhrase ersteSubstantivischePhrase,
-                                           final SubstantivischePhrase zweiteSubstantivischePhrase) {
-        return new ZweiPraedikateSubjObjOhneLeerstellen(
+    public PraedikatOhneLeerstellen mitObj(
+            final SubstantivischePhrase ersteSubstantivischePhrase,
+            final SubstantivischePhrase zweiteSubstantivischePhrase) {
+        return new ZweiPraedikateOhneLeerstellen(
                 // "die goldene Kugel"
                 erstesVerb.mitObj(ersteSubstantivischePhrase),
                 // "sie"
                 zweitesVerb.mitObj(zweiteSubstantivischePhrase));
-    }
-
-    @Override
-    public boolean duHauptsatzLaesstSichMitNachfolgendemDuHauptsatzZusammenziehen() {
-        // Etwas vemeiden wie "Du hebst die Kugel auf und polierst sie und..."
-        return false;
     }
 }

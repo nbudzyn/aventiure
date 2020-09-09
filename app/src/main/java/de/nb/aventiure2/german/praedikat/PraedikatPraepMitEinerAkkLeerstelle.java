@@ -38,17 +38,12 @@ class PraedikatPraepMitEinerAkkLeerstelle
     }
 
     @Override
-    public PraedikatOhneLeerstellen mitObj(final SubstantivischePhrase describable) {
+    public AbstractPraedikatOhneLeerstellen mitObj(final SubstantivischePhrase describable) {
         return mitAkk(describable);
     }
 
-    public PraedikatOhneLeerstellen mitAkk(final SubstantivischePhrase describableAkk) {
+    public AbstractPraedikatOhneLeerstellen mitAkk(final SubstantivischePhrase describableAkk) {
         return new PraedikatAkkPraepOhneLeerstellen(
                 verb, praepositionMitKasus, describableAkk, describablePraep);
-    }
-
-    @Override
-    public boolean duHauptsatzLaesstSichMitNachfolgendemDuHauptsatzZusammenziehen() {
-        return true;
     }
 }

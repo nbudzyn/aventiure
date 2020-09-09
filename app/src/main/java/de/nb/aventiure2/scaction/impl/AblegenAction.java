@@ -117,7 +117,7 @@ public class AblegenAction
         return capitalize(
                 getPraedikat()
                         .mitObj(world.getDescription(gameObject, true))
-                        .getDescriptionInfinitiv(P1, SG, getWohinDetail()));
+                        .getInfinitiv(P1, SG, getWohinDetail()));
     }
 
     @NonNull

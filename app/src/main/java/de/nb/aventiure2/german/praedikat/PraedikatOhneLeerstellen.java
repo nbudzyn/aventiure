@@ -1,8 +1,9 @@
 package de.nb.aventiure2.german.praedikat;
 
+import androidx.annotation.NonNull;
+
 import java.util.Collection;
 
-import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import de.nb.aventiure2.german.base.Numerus;
@@ -10,25 +11,15 @@ import de.nb.aventiure2.german.base.Person;
 
 import static java.util.Arrays.asList;
 
-/**
- * Ein Prädikat, in dem alle Leerstellen besetzt sind. Beispiele:
- * <ul>
- *     <li>"das Buch nehmen"
- *     <li>"dem Frosch Angebote machen
- * </ul>
- * <p>
- * Adverbiale Angaben ("aus Langeweile") können immer noch eingefügt werden.
- */
-public interface PraedikatOhneLeerstellen extends Praedikat {
-    /**
-     * Gibt einen Satz zurück mit diesem Prädikat
-     * ("Du nimmst den Ast")
-     * und ggf. diesen Modalpartikeln, die sich <i>auf das gesamte
-     * Prädikat beziehen</i>
-     * ("Du nimmst den Ast besser doch")
-     */
-    default String getDescriptionDuHauptsatz(final Modalpartikel... modalpartikeln) {
-        return getDescriptionDuHauptsatz(asList(modalpartikeln));
+public interface PraedikatOhneLeerstellen extends Praedikat, DuTextPart {
+    String getDuHauptsatz(@NonNull final AdverbialeAngabe adverbialeAngabe);
+
+    // TODO Modalpartikeln oder adverbiale Angaben führen zu einem
+    //  neuen  AbstractPraedikat führen, dass man dann auch speichern
+    //  und weiterreichen kann!
+    @Override
+    default String getDuHauptsatz() {
+        return getDuHauptsatz(new Modalpartikel[0]);
     }
 
     /**
@@ -38,23 +29,44 @@ public interface PraedikatOhneLeerstellen extends Praedikat {
      * Prädikat beziehen</i>
      * ("Du nimmst den Ast besser doch")
      */
-    String getDescriptionDuHauptsatz(Collection<Modalpartikel> modalpartikeln);
+    default String getDuHauptsatz(final Modalpartikel... modalpartikeln) {
+        return getDuHauptsatz(asList(modalpartikeln));
+    }
+
+    default String getDuHauptsatz(final Collection<Modalpartikel> modalpartikeln) {
+        return "Du " + getDuSatzanschlussOhneSubjekt(modalpartikeln);
+    }
 
     /**
-     * Gibt einen Satz zurück mit diesem Prädikat und
-     * diesem Text im Vorfeld ("Aus Langeweile nimmst du den Ast")
+     * Gibt einen Satz zurück mit diesem Prädikat, bei dem das Subjekt, das im Vorfeld
+     * stünde, eingespart ist ("nimmst den Ast")
      */
-    String getDescriptionDuHauptsatz(@Nonnull AdverbialeAngabe adverbialeAngabe);
+    @Override
+    default String getDuSatzanschlussOhneSubjekt() {
+        return getDuSatzanschlussOhneSubjekt(new Modalpartikel[0]);
+    }
 
     /**
-     * Ob sich ein durch {@link #getDescriptionDuHauptsatz(Collection)} oder
-     * {@link #getDescriptionDuHauptsatz(AdverbialeAngabe)} mit einem weiteren Du-Hauptsatz
-     * zusammenziehen lässt, wobei das zweite Subjekt ("du") entfiele.
-     * <p>
-     * Das ist im Regelfall möglich, sofern es nicht zu einem doppelten
-     * "und" kommt ("Du... und ... und...").
+     * Gibt einen Satz zurück mit diesem Prädikat, bei dem das Subjekt, das im Vorfeld
+     * stünde, eingespart ist ("nimmst den Ast")
      */
+    default String getDuSatzanschlussOhneSubjekt(
+            final Modalpartikel... modalpartikeln) {
+        return getDuSatzanschlussOhneSubjekt(asList(modalpartikeln)
+        );
+    }
+
+    /**
+     * Gibt einen Satz zurück mit diesem Prädikat, bei dem das Subjekt, das im Vorfeld
+     * stünde, eingespart ist ("nimmst den Ast"), sowie ggf. diesen
+     * Modalpartikeln ("nimmst den Ast eben doch").
+     */
+    String getDuSatzanschlussOhneSubjekt(
+            final Collection<Modalpartikel> modalpartikeln);
+
+
     boolean duHauptsatzLaesstSichMitNachfolgendemDuHauptsatzZusammenziehen();
+
 
     /**
      * Gibt eine Infinitivkonstruktion mit diesem
@@ -65,21 +77,12 @@ public interface PraedikatOhneLeerstellen extends Praedikat {
      * "[Ich möchte] die Kugel an mich nehmen"
      * (nicht *"[Ich möchte] die Kugel an sich nehmen")
      */
-    default String getDescriptionInfinitiv(final Person person, final Numerus numerus) {
-        return getDescriptionInfinitiv(person, numerus, null);
+    default String getInfinitiv(final Person person, final Numerus numerus) {
+        return getInfinitiv(person, numerus, null);
     }
 
-    /**
-     * Gibt eine Infinitivkonstruktion mit diesem
-     * Prädikat zurück ("das Schwert erneut nehmen")
-     * <p>
-     * Implizit (oder bei reflexiven Verben auch explizit) hat der
-     * Infinitiv eine Person und einen Numerus - Beispiel:
-     * "[Ich möchte] die Kugel erneut an mich nehmen"
-     * (nicht *"[Ich möchte] die Kugel erneut an sich nehmen")
-     */
-    String getDescriptionInfinitiv(Person person, Numerus numerus,
-                                   @Nullable AdverbialeAngabe adverbialeAngabe);
+    String getInfinitiv(final Person person, final Numerus numerus,
+                        @Nullable final AdverbialeAngabe adverbialeAngabe);
 
     /**
      * Gibt eine Infinitivkonstruktion mit dem zu-Infinitiv mit diesem
@@ -90,19 +93,10 @@ public interface PraedikatOhneLeerstellen extends Praedikat {
      * "[Ich gedenke,] die Kugel an mich zu nehmen"
      * (nicht *"[Ich gedenke,] die Kugel an sich zu nehmen")
      */
-    default String getDescriptionZuInfinitiv(final Person person, final Numerus numerus) {
-        return getDescriptionZuInfinitiv(person, numerus, null);
+    default String getZuInfinitiv(final Person person, final Numerus numerus) {
+        return getZuInfinitiv(person, numerus, null);
     }
 
-    /**
-     * Gibt eine Infinitivkonstruktion mit dem zu-Infinitiv mit diesem
-     * Prädikat zurück ("das Schwert erneut zu nehmen")
-     * <p>
-     * Implizit (oder bei reflexiven Verben auch explizit) hat der
-     * zu-Infinitiv eine Person und einen Numerus - Beispiel:
-     * "[Ich gedenke,] die Kugel erneut an mich zu nehmen"
-     * (nicht *"[Ich gedenke,] die Kugel erneut an sich zu nehmen")
-     */
-    String getDescriptionZuInfinitiv(Person person, Numerus numerus,
-                                     @Nullable AdverbialeAngabe adverbialeAngabe);
+    public String getZuInfinitiv(final Person person, final Numerus numerus,
+                                 @Nullable final AdverbialeAngabe adverbialeAngabe);
 }

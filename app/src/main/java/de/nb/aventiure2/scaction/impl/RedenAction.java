@@ -146,7 +146,7 @@ public class RedenAction<TALKER extends IDescribableGO & ILocatableGO & ITalkerG
                 talkStep,
                 // "Dem Frosch Angebote machen"
                 // "Das Angebot von *mir* weisen"
-                capitalize(praedikatOhneLeerstellen.getDescriptionInfinitiv(P1, SG)));
+                capitalize(praedikatOhneLeerstellen.getInfinitiv(P1, SG)));
     }
 
     private RedenAction(final AvDatabase db,

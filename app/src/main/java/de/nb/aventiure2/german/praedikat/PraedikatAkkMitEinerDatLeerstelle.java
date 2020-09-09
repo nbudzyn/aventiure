@@ -30,18 +30,13 @@ class PraedikatAkkMitEinerDatLeerstelle implements PraedikatMitEinerObjektleerst
     }
 
     @Override
-    public PraedikatOhneLeerstellen mitObj(final SubstantivischePhrase describable) {
+    public AbstractPraedikatOhneLeerstellen mitObj(final SubstantivischePhrase describable) {
         return mitDat(describable);
     }
 
-    public PraedikatOhneLeerstellen mitDat(
+    public AbstractPraedikatOhneLeerstellen mitDat(
             final SubstantivischePhrase describableDat) {
         return new PraedikatDatAkkOhneLeerstellen(verb,
                 describableDat, describableAkk);
-    }
-
-    @Override
-    public boolean duHauptsatzLaesstSichMitNachfolgendemDuHauptsatzZusammenziehen() {
-        return true;
     }
 }
