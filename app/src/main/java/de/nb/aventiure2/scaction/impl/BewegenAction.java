@@ -282,12 +282,9 @@ public class BewegenAction<LOC_DESC extends ILocatableGO & IDescribableGO>
     private AvTimeSpan narrateObjects(final String objectsDescription, final int numObjects,
                                       final IDescribableGO lastObject) {
         return n.add(
-                neuerSatz(
-                        objectsDescription,
-                        secs(numObjects * 2))
+                neuerSatz(objectsDescription, secs(numObjects * 2))
                         .phorikKandidat(
-                                world.getDescription(lastObject,
-                                        false),
+                                world.getDescription(lastObject, false),
                                 lastObject.getId()));
     }
 
@@ -507,9 +504,7 @@ public class BewegenAction<LOC_DESC extends ILocatableGO & IDescribableGO>
                                 "dann");
                 return n.add(
                         satzanschluss(
-                                "; " +
-                                        uncapitalize(
-                                                satzEvtlMitDann),
+                                "; " + uncapitalize(satzEvtlMitDann),
                                 description.getTimeElapsed())
                                 .komma(description.isKommaStehtAus())
                                 .dann(description.isDann()

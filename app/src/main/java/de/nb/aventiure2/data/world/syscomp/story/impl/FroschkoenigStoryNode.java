@@ -28,8 +28,11 @@ import static de.nb.aventiure2.data.world.gameobject.World.SCHLOSS_VORHALLE_AM_T
 import static de.nb.aventiure2.data.world.gameobject.World.SPIELER_CHARAKTER;
 import static de.nb.aventiure2.data.world.syscomp.feelings.Mood.ERSCHOEPFT;
 import static de.nb.aventiure2.data.world.syscomp.feelings.Mood.UNTROESTLICH;
+import static de.nb.aventiure2.data.world.time.AvTimeSpan.noTime;
 import static de.nb.aventiure2.data.world.time.Tageszeit.NACHTS;
+import static de.nb.aventiure2.german.base.StructuralElement.PARAGRAPH;
 import static de.nb.aventiure2.german.description.AllgDescription.paragraph;
+import static de.nb.aventiure2.german.description.DuDescription.du;
 import static java.util.Arrays.asList;
 
 public enum FroschkoenigStoryNode implements IStoryNode {
@@ -133,7 +136,11 @@ public enum FroschkoenigStoryNode implements IStoryNode {
         final ImmutableList.Builder<AbstractDescription<?>> alt = builder();
 
         if (world.loadSC().locationComp().hasRecursiveLocation(SCHLOSS_VORHALLE)) {
-            alt.add(paragraph("Du fühlst dich von der goldenen Kugel magisch angezogen"));
+            alt.add(du(PARAGRAPH,
+                    "fühlst", "dich von der goldenen Kugel magisch angezogen",
+                    "von der goldenen Kugel",
+                    noTime())
+                    .beendet(PARAGRAPH));
         } else {
             alt.add(paragraph("Zusammenhanglos kommt dir ein Gedanke in den "
                     + "Kopf: Hättest du vielleicht die goldene Kugel mitnehmen sollen?"));
@@ -141,13 +148,22 @@ public enum FroschkoenigStoryNode implements IStoryNode {
             alt.add(paragraph("Die goldene Kugel aus dem Schloss will dir nicht mehr aus dem "
                     + "Kopf"));
 
-            alt.add(paragraph(
-                    "Auf einmal musst du wieder an die goldene Kugel denken, die dich im "
-                            + "Schloss so angelacht hat"));
+            alt.add(du(PARAGRAPH,
+                    "musst",
+                    "auf einmal wieder an die goldene Kugel denken, die dich im "
+                            + "Schloss so angelacht hat",
+                    "auf einmal",
+                    noTime())
+                    .beendet(PARAGRAPH));
 
-            alt.add(paragraph("Du musst spontan denken: Bei den reichen Leuten liegen oft so "
-                    + "viele Herrlichkeiten ungenutzt herum… – wie kommst du jetzt "
-                    + "bloß darauf?"));
+            alt.add(du(PARAGRAPH,
+                    "musst",
+                    "spontan denken: Bei den reichen Leuten liegen oft so "
+                            + "viele Herrlichkeiten ungenutzt herum… – wie kommst du jetzt "
+                            + "bloß darauf?",
+                    "spontan",
+                    noTime())
+                    .beendet(PARAGRAPH));
 
             alt.add(paragraph("Deine Gedanken schweifen ab und du musst an die goldene Kugel "
                     + "denken, die du im Schloss gelassen hast. Warum eigentlich?"));
@@ -195,8 +211,12 @@ public enum FroschkoenigStoryNode implements IStoryNode {
 
         final ILocatableGO goldeneKugel = (ILocatableGO) world.load(GOLDENE_KUGEL);
         if (goldeneKugel.locationComp().hasSameUpperMostLocationAs(SPIELER_CHARAKTER)) {
-            alt.add(paragraph("Du hast Lust, einmal wieder mit deiner goldenen Kugel "
-                    + "zu spielen"));
+            alt.add(du(PARAGRAPH,
+                    "hast",
+                    "Lust, einmal wieder mit deiner goldenen Kugel "
+                            + "zu spielen",
+                    noTime())
+                    .beendet(PARAGRAPH));
             if (!world.loadSC().locationComp().hasRecursiveLocation(IM_WALD_BEIM_BRUNNEN)) {
                 alt.addAll(altHeissHeutKuehlerOrtWaereSchoen());
             }
@@ -281,7 +301,11 @@ public enum FroschkoenigStoryNode implements IStoryNode {
             final AvDatabase db, final NarrationDao n, final World world) {
         final ImmutableList.Builder<AbstractDescription<?>> alt = builder();
 
-        alt.add(paragraph("Du willst auch sehen, was vor dem Schloss geschieht!"));
+        alt.add(du(PARAGRAPH,
+                "willst",
+                "auch sehen, was vor dem Schloss geschieht!",
+                noTime())
+                .beendet(PARAGRAPH));
 
         return n.addAlt(alt);
     }
@@ -292,11 +316,20 @@ public enum FroschkoenigStoryNode implements IStoryNode {
 
         if (world.loadSC().locationComp().hasRecursiveLocation(HUETTE_IM_WALD)) {
             if (world.loadSC().feelingsComp().hasMood(ERSCHOEPFT)) {
-                alt.add(paragraph("Du solltest etwas schlafen"));
-                alt.add(paragraph("Du kannst gewiss eine Mütze Schlaf gebrauchen!"));
+                alt.add(du(PARAGRAPH,
+                        "solltest", "etwas schlafen",
+                        noTime())
+                        .beendet(PARAGRAPH));
+                alt.add(du(PARAGRAPH,
+                        "kannst", "gewiss eine Mütze Schlaf gebrauchen!",
+                        noTime())
+                        .beendet(PARAGRAPH));
                 alt.add(paragraph("Ein Bett!"));
             } else {
-                alt.add(paragraph("Du bist vom Tag noch ganz aufgedreht"));
+                alt.add(du(PARAGRAPH,
+                        "bist", "vom Tag noch ganz aufgedreht",
+                        noTime())
+                        .beendet(PARAGRAPH));
             }
         } else {
             alt.add(paragraph("Vielleicht solltest du dir einen Platz zum Schlafen suchen?"));

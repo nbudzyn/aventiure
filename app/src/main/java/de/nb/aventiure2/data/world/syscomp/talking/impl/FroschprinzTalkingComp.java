@@ -379,7 +379,8 @@ public class FroschprinzTalkingComp extends AbstractTalkingComp {
 
         return n.add(
                 neuerSatz(
-                        "„Denkst du etwa, ich überschütte dich mit Gold und Juwelen? – Vergiss es!“",
+                        "„Denkst du etwa, ich überschütte dich mit Gold "
+                                + "und Juwelen? – Vergiss es!“",
                         secs(5)));
     }
 
@@ -523,8 +524,7 @@ public class FroschprinzTalkingComp extends AbstractTalkingComp {
     private AvTimeSpan froschReagiertNicht() {
         unsetTalkingTo();
 
-        return n.add(neuerSatz("Der Frosch reagiert nicht",
-                secs(3))
+        return n.add(neuerSatz("Der Frosch reagiert nicht", secs(3))
                 .beendet(PARAGRAPH));
     }
 

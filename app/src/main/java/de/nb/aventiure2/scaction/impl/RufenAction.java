@@ -24,7 +24,7 @@ import static de.nb.aventiure2.german.base.GermanUtil.uncapitalize;
 import static de.nb.aventiure2.german.base.Numerus.SG;
 import static de.nb.aventiure2.german.base.Person.P1;
 import static de.nb.aventiure2.german.description.AllgDescription.neuerSatz;
-import static de.nb.aventiure2.german.description.AllgDescription.satzanschluss;
+import static de.nb.aventiure2.german.description.DuDescription.du;
 
 /**
  * Der Spielercharakter ruft / stößt einen Ruf aus.
@@ -84,24 +84,18 @@ public class RufenAction extends AbstractScAction {
         AvTimeSpan timeElapsed;
         if (n.requireNarration().allowsAdditionalDuSatzreihengliedOhneSubjekt()
                 && adverbialeAngabe == null) {
-            timeElapsed =
-                    n.add(satzanschluss(
-                            "und " +
-                                    ruftyp.getName()
-                                            .getDuSatzanschlussOhneSubjekt(),
-                            secs(30)));
+            timeElapsed = n.add(du(ruftyp.getName(), secs(30)));
         } else if (adverbialeAngabe != null) {
             timeElapsed =
                     n.add(neuerSatz(
+                            // TODO Adverbiale Angabe in Hauptsatz integrieren, dann
+                            //  du (neuesPraedikat)
                             ruftyp.getName().getDuHauptsatz(adverbialeAngabe),
                             secs(30)));
         } else {
             timeElapsed =
                     n.add(neuerSatz(
-                            "Und " +
-                                    uncapitalize(
-                                            ruftyp.getName()
-                                                    .getDuHauptsatz()),
+                            "Und " + uncapitalize(ruftyp.getName().getDuHauptsatz()),
                             secs(30)));
         }
 

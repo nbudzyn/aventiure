@@ -172,8 +172,7 @@ public class TageszeitReactionsComp
                                 noTime()),
                         neuerSatz(PARAGRAPH, "Unterdessen ist es schon wieder hell geworden",
                                 noTime()),
-                        neuerSatz("Die Sonne geht gerade auf",
-                                noTime())
+                        neuerSatz("Die Sonne geht gerade auf", noTime())
                 );
             default:
                 throw new IllegalStateException("Unerwartete Tageszeit: " + currentTageszeit);

@@ -95,7 +95,7 @@ public class HeulenAction extends AbstractScAction {
 
         final ImmutableList.Builder<AbstractDescription<?>> alt = ImmutableList.builder();
         if (n.requireNarration().allowsAdditionalDuSatzreihengliedOhneSubjekt()) {
-            alt.add(satzanschluss("und weinst", mins(1))
+            alt.add(du("weinst", mins(1))
                     .undWartest());
             alt.add(satzanschluss(", so viele Tränen haben sich angestaut", mins(1)));
         }

@@ -22,7 +22,6 @@ import de.nb.aventiure2.data.world.syscomp.storingplace.ILocationGO;
 import de.nb.aventiure2.data.world.time.AvTimeSpan;
 import de.nb.aventiure2.german.base.Nominalphrase;
 import de.nb.aventiure2.german.base.NumerusGenus;
-import de.nb.aventiure2.german.base.StructuralElement;
 import de.nb.aventiure2.german.base.SubstantivischePhrase;
 import de.nb.aventiure2.german.praedikat.AdverbialeAngabe;
 import de.nb.aventiure2.german.praedikat.Modalpartikel;
@@ -319,7 +318,7 @@ public class NehmenAction
                 final SubstantivischePhrase froschDescOderAnapher =
                         getAnaphPersPronWennMglSonstShortDescription(FROSCHPRINZ);
 
-                return n.add(neuerSatz(StructuralElement.PARAGRAPH,
+                return n.add(neuerSatz(PARAGRAPH,
                         "Aber dann nimmst du " + froschDescOderAnapher.akk() +
                                 " doch wieder",
                         secs(5))
@@ -329,7 +328,7 @@ public class NehmenAction
 
             final Nominalphrase froschDesc = world.getDescription(gameObject, false);
 
-            return n.add(du(StructuralElement.PARAGRAPH,
+            return n.add(du(PARAGRAPH,
                     "nimmst",
                     froschDesc.akk() + " noch einmal",
                     "noch einmal",
@@ -402,9 +401,10 @@ public class NehmenAction
                 final Nominalphrase objectDesc = world.getDescription(gameObject, true);
                 final PraedikatOhneLeerstellen praedikatMitObjekt =
                         mitnehmenPraedikat.mitObj(objectDesc);
-                return n.add(neuerSatz(StructuralElement.PARAGRAPH,
-                        praedikatMitObjekt
-                                .getDuHauptsatz(mood.getAdverbialeAngabe()),
+                // STORY Neues Praedikat mit integrierter adverbialer Angabe in
+                //  du(...) übergegben
+                return n.add(neuerSatz(PARAGRAPH,
+                        praedikatMitObjekt.getDuHauptsatz(mood.getAdverbialeAngabe()),
                         secs(5))
                         .undWartest(
                                 praedikatMitObjekt
@@ -417,10 +417,8 @@ public class NehmenAction
         final PraedikatOhneLeerstellen praedikatMitObjekt =
                 mitnehmenPraedikat.mitObj(world.getDescription(gameObject, true));
         return n.add(
-                neuerSatz(PARAGRAPH,
-                        praedikatMitObjekt
-                                .getDuHauptsatz(),
-                        secs(5))
+                du(PARAGRAPH, praedikatMitObjekt, secs(5))
+                        // TODO Kann das .undWartest() bei Prädikat automatisch gesetzt werden?
                         .undWartest(
                                 praedikatMitObjekt
                                         .duHauptsatzLaesstSichMitNachfolgendemDuHauptsatzZusammenziehen())
@@ -431,7 +429,7 @@ public class NehmenAction
             final PraedikatMitEinerObjektleerstelle nehmenPraedikat) {
         if (n.requireNarration().dann()) {
             final Nominalphrase objectDesc = world.getDescription(gameObject);
-            return n.add(neuerSatz(StructuralElement.PARAGRAPH,
+            return n.add(neuerSatz(PARAGRAPH,
                     "Dann nimmst du " + objectDesc.akk() +
                             " erneut",
                     secs(5))
@@ -455,12 +453,10 @@ public class NehmenAction
         }
 
         final Nominalphrase objectDesc = world.getDescription(gameObject, true);
-        return n.add(neuerSatz(StructuralElement.PARAGRAPH,
-                "Ach nein, "
+        return n.add(neuerSatz(PARAGRAPH,
+                "Ach nein, " +
                         // du nimmst die Kugel besser doch
-                        + uncapitalize(nehmenPraedikat
-                        .mitObj(objectDesc)
-                        .getDuHauptsatz(
+                        uncapitalize(nehmenPraedikat.mitObj(objectDesc).getDuHauptsatz(
                                 new Modalpartikel("besser"),
                                 new Modalpartikel("doch"))),
                 secs(5))

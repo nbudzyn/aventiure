@@ -25,6 +25,7 @@ import static de.nb.aventiure2.german.base.NumerusGenus.M;
 import static de.nb.aventiure2.german.base.StructuralElement.PARAGRAPH;
 import static de.nb.aventiure2.german.base.StructuralElement.SENTENCE;
 import static de.nb.aventiure2.german.description.AllgDescription.neuerSatz;
+import static de.nb.aventiure2.german.description.DuDescription.du;
 
 public class BaumFactory {
     public static final String HOCHKLETTERN = "BaumFactory_HOCHKLETTERN";
@@ -107,9 +108,12 @@ public class BaumFactory {
     }
 
     private static AbstractDescription<?> getDescInZweitesMal() {
-        return neuerSatz(PARAGRAPH,
-                "Noch einmal kletterst du eine, zwei Etagen den Baum hinauf. "
-                        + "Du schaust ins Blattwerk und bist stolz auf dich", mins(6))
+        return du(PARAGRAPH,
+                "kletterst",
+                "noch einmal eine, zwei Etagen den Baum hinauf. "
+                        + "Du schaust ins Blattwerk und bist stolz auf dich",
+                "noch einmal",
+                mins(6))
                 .dann();
     }
 
@@ -153,8 +157,7 @@ public class BaumFactory {
 
     private static AbstractDescription<?> getDescOutZweitesMal() {
         return neuerSatz(SENTENCE,
-                "Dann geht es vorsichtig "
-                        + "wieder hinunter", mins(4))
+                "Dann geht es vorsichtig wieder hinunter", mins(4))
                 .beendet(PARAGRAPH);
     }
 

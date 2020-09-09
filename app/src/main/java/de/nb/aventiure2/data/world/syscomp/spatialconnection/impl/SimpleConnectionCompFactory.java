@@ -49,20 +49,22 @@ public class SimpleConnectionCompFactory {
                         "in der Tür",
                         "Die Hütte betreten",
                         secs(15),
-                        neuerSatz("Du schiebst die Tür zur Seite und "
-                                + "zwängst dich hinein. Durch Ritzen in den "
-                                + "Fensterläden fällt ein wenig Licht: "
-                                + "Die Hütte ist "
-                                + "anscheinend trocken und, wie es aussieht, "
-                                + "bis auf einige "
-                                + "Tausendfüßler "
-                                + "unbewohnt. Du siehst ein Bettgestell, "
-                                + "einen Tisch, aber sonst keine Einrichtung", mins(1)),
-                        neuerSatz("Du schiebst die Tür zur Seite und "
-                                + "zwängst dich hinein. Erst ist alles "
-                                + "stockdunkel, aber dann kannst du doch mit "
-                                + "Mühe ein Bettgestell und einen Tisch "
-                                + "ausmachen", secs(90)),
+                        du("schiebst",
+                                "die Tür zur Seite und "
+                                        + "zwängst dich hinein. Durch Ritzen in den "
+                                        + "Fensterläden fällt ein wenig Licht: "
+                                        + "Die Hütte ist "
+                                        + "anscheinend trocken und, wie es aussieht, "
+                                        + "bis auf einige "
+                                        + "Tausendfüßler "
+                                        + "unbewohnt. Du siehst ein Bettgestell, "
+                                        + "einen Tisch, aber sonst keine Einrichtung", mins(1)),
+                        du("schiebst",
+                                "die Tür zur Seite und "
+                                        + "zwängst dich hinein. Erst ist alles "
+                                        + "stockdunkel, aber dann kannst du doch mit "
+                                        + "Mühe ein Bettgestell und einen Tisch "
+                                        + "ausmachen", secs(90)),
                         du("schiebst", "dich noch einmal in die "
                                 + "kleine Hütte. Durch Ritzen in den "
                                 + "Fensterläden fällt ein wenig Licht: "
@@ -89,10 +91,13 @@ public class SimpleConnectionCompFactory {
                                 + "steht einzeln… es könnte ein "
                                 + "Apfelbaum sein. Früchte siehst du von "
                                 + "unten keine.", secs(30)),
-                        neuerSatz("Vorsichtig gehst du im Dunkeln ein paar Schritte "
-                                + "um die Hütte herum. Du kannst die Silhouette "
-                                + "eines einzelnen Baums erkennen, vielleicht – "
-                                + "ein Apfelbaum", mins(1)),
+                        du("gehst",
+                                "im Dunkeln vorsichtig ein paar Schritte "
+                                        + "um die Hütte herum. Du kannst die Silhouette "
+                                        + "eines einzelnen Baums erkennen, vielleicht – "
+                                        + "ein Apfelbaum",
+                                "vorsichtig",
+                                mins(1)),
                         du("schaust", "noch einmal hinter die Hütte. "
                                 + "Im Licht erkennst du dort einen kleinen, völlig "
                                 + "verwilderten Garten mit dem einzelnen Baum in "

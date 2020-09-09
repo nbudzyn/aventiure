@@ -561,8 +561,7 @@ public class SimpleMovementNarrator implements IMovementNarrator {
         final ImmutableCollection.Builder<AbstractDescription<?>> alt = ImmutableList.builder();
 
 
-        alt.add(neuerSatz(desc.nom()
-                + " kommt dir entgegen", noTime())
+        alt.add(neuerSatz(desc.nom() + " kommt dir entgegen", noTime())
                 .phorikKandidat(desc, gameObjectId)
                 .beendet(PARAGRAPH));
 
@@ -637,11 +636,11 @@ public class SimpleMovementNarrator implements IMovementNarrator {
 
         return n.addAlt(
                 neuerSatz(PARAGRAPH,
-                        anaphOderDesc.nom() + " kommt "
-                                + wo // "auf dem Weg "
-                                + "gegangen", noTime())
+                        wo // "auf dem Weg "
+                                + " kommt " +
+                                desc.nom(), noTime())
                         .beendet(PARAGRAPH)
-                        .phorikKandidat(anaphOderDesc, gameObjectId),
+                        .phorikKandidat(desc, gameObjectId),
                 neuerSatz(PARAGRAPH,
                         desc.nom()
                                 + " kommt "

@@ -22,7 +22,10 @@ import static de.nb.aventiure2.data.world.gameobject.World.DRAUSSEN_VOR_DEM_SCHL
 import static de.nb.aventiure2.data.world.gameobject.World.RAPUNZELS_ZAUBERIN;
 import static de.nb.aventiure2.data.world.gameobject.World.SPIELER_CHARAKTER;
 import static de.nb.aventiure2.data.world.gameobject.World.VOR_DEM_ALTEN_TURM;
+import static de.nb.aventiure2.data.world.time.AvTimeSpan.noTime;
+import static de.nb.aventiure2.german.base.StructuralElement.PARAGRAPH;
 import static de.nb.aventiure2.german.description.AllgDescription.paragraph;
+import static de.nb.aventiure2.german.description.DuDescription.du;
 import static java.util.Arrays.asList;
 
 public enum RapunzelStoryNode implements IStoryNode {
@@ -146,7 +149,12 @@ public enum RapunzelStoryNode implements IStoryNode {
         alt.addAll(altTurmWohnenHineinHeraus(world));
 
         if (world.loadSC().locationComp().hasRecursiveLocation(VOR_DEM_ALTEN_TURM)) {
-            alt.add(paragraph("Du wirst bestimmt noch den Turm hinaufkommen!"));
+            alt.add(du(PARAGRAPH,
+                    "wirst",
+                    "bestimmt noch den Turm hinaufkommen!",
+                    "bestimmt",
+                    noTime())
+                    .beendet(PARAGRAPH));
         }
 
         final ILocatableGO zauberin = (ILocatableGO) world.load(RAPUNZELS_ZAUBERIN);
@@ -171,9 +179,13 @@ public enum RapunzelStoryNode implements IStoryNode {
                     + "oder hinaus?"));
             alt.add(paragraph("Ob jemand im Turm ein und aus geht? Aber wie bloß?"));
         } else {
-            alt.add(paragraph(
-                    "Du musst wieder an den alten Turm denken… wenn dort jemand wohnt, "
-                            + "wie kommt der bloß hinein oder heraus?"));
+            alt.add(du(PARAGRAPH,
+                    "musst",
+                    "wieder an den alten Turm denken… wenn dort jemand wohnt, "
+                            + "wie kommt der bloß hinein oder heraus?",
+                    "wieder",
+                    noTime())
+                    .beendet(PARAGRAPH));
             alt.add(paragraph(
                     "Dir kommt auf einmal wieder der alte Turm in den Sinn: "
                             + "Wer wird darinnen wohl wohnen?"));
