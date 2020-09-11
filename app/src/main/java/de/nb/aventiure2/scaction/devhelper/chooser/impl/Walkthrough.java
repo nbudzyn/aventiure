@@ -67,7 +67,7 @@ public class Walkthrough {
                     "Vom Tisch aufstehen",
                     "Das Schloss verlassen");
 
-    public static final Walkthrough PRINZABFAHRT_BIS_ENDE =
+    public static final Walkthrough PRINZABFAHRT_BIS_ERSTE_RAPUNZELRUF_BEOBACHTUNG =
             new Walkthrough("In den Wald gehen",
                     "Den schmalen Pfad aufwärtsgehen",
                     "Um den Turm herumgehen",
@@ -98,8 +98,10 @@ public class Walkthrough {
                     "Rasten",
                     "Rasten",
                     "Rasten",
-                    "Rasten", // Zauberin steigt die Zöpfe hoch
-                    "Aus dem Schatten der Bäume treten",
+                    "Rasten"); // Zauberin steigt die Zöpfe hoch
+
+    public static final Walkthrough ERSTE_RAPUNZELRUF_BEOBACHTUNG_BIS_ENDE =
+            new Walkthrough("Aus dem Schatten der Bäume treten",
                     "Rufen: „Lass dein Haar herunter.“", // Zauberin verzaubert SC
                     "Um den Turm herumgehen",
                     "Den Pfad zurückgehen",
@@ -196,8 +198,13 @@ public class Walkthrough {
             ANFANG_BIS_SCHLOSSFEST_SCHLOSS_BETRETEN
                     .append(SCHLOSSFEST_SCHLOSS_BETRETEN_BIS_PRINZABFAHRT);
 
+    public static final Walkthrough ANFANG_BIS_ERSTE_RAPUNZELRUF_BEOBACHTUNG =
+            ANFANG_BIS_PRINZABFAHRT
+                    .append(PRINZABFAHRT_BIS_ERSTE_RAPUNZELRUF_BEOBACHTUNG);
+
     public static final Walkthrough FULL =
-            ANFANG_BIS_PRINZABFAHRT.append(PRINZABFAHRT_BIS_ENDE);
+            ANFANG_BIS_ERSTE_RAPUNZELRUF_BEOBACHTUNG
+                    .append(PRINZABFAHRT_BIS_ERSTE_RAPUNZELRUF_BEOBACHTUNG);
 
     private final ImmutableList<String> steps;
 

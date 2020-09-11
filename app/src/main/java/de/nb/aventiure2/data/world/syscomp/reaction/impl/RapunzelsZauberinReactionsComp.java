@@ -38,6 +38,7 @@ import static de.nb.aventiure2.data.world.gameobject.World.RAPUNZELS_ZAUBERIN;
 import static de.nb.aventiure2.data.world.gameobject.World.SPIELER_CHARAKTER;
 import static de.nb.aventiure2.data.world.gameobject.World.VOR_DEM_ALTEN_TURM;
 import static de.nb.aventiure2.data.world.gameobject.World.VOR_DEM_ALTEN_TURM_SCHATTEN_DER_BAEUME;
+import static de.nb.aventiure2.data.world.syscomp.feelings.Mood.ERSCHOEPFT;
 import static de.nb.aventiure2.data.world.syscomp.state.impl.RapunzelsZauberinState.AUF_DEM_RUECKWEG_VON_RAPUNZEL;
 import static de.nb.aventiure2.data.world.syscomp.state.impl.RapunzelsZauberinState.AUF_DEM_WEG_ZU_RAPUNZEL;
 import static de.nb.aventiure2.data.world.syscomp.state.impl.RapunzelsZauberinState.BEI_RAPUNZEL_OBEN_IM_TURM;
@@ -246,6 +247,7 @@ public class RapunzelsZauberinReactionsComp
 
         // Spieler wird verzaubert und vergisst alles.
         loadSC().memoryComp().forget(RAPUNZEL, RAPUNZELS_ZAUBERIN, RAPUNZELRUF);
+        loadSC().feelingsComp().setMood(ERSCHOEPFT);
         db.counterDao().reset(VorDemTurmConnectionComp.COUNTER_ALTER_TURM_UMRUNDET);
         db.counterDao().reset(VorDemTurmConnectionComp.COUNTER_SC_HOERT_RAPUNZELS_GESANG);
 
