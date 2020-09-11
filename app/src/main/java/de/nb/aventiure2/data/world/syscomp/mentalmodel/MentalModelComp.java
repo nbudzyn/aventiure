@@ -10,6 +10,7 @@ import de.nb.aventiure2.data.database.AvDatabase;
 import de.nb.aventiure2.data.world.base.AbstractStatefulComponent;
 import de.nb.aventiure2.data.world.base.GameObjectId;
 import de.nb.aventiure2.data.world.gameobject.World;
+import de.nb.aventiure2.data.world.syscomp.location.ILocatableGO;
 import de.nb.aventiure2.data.world.syscomp.storingplace.ILocationGO;
 
 /**
@@ -48,7 +49,7 @@ public class MentalModelComp extends AbstractStatefulComponent<MentalModelPCD> {
                                    final ILocationGO... locations) {
         for (@Nullable final ILocationGO location : locations) {
             if (location == null) {
-                throw new IllegalArgumentException("location was null: " + location);
+                throw new NullPointerException("location was null");
             }
             if (assumesLocation(locatableId, location)) {
                 return true;
@@ -115,6 +116,11 @@ public class MentalModelComp extends AbstractStatefulComponent<MentalModelPCD> {
 
     public void unassumeLocation(final GameObjectId locatableId) {
         assumeLocation(locatableId, (GameObjectId) null);
+    }
+
+    public void assumeLocation(final ILocatableGO locatable,
+                               @Nullable final ILocationGO location) {
+        assumeLocation(locatable.getId(), location);
     }
 
     public void assumeLocation(final GameObjectId locatableId,

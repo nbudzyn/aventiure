@@ -12,9 +12,11 @@ import de.nb.aventiure2.data.world.syscomp.mentalmodel.MentalModelComp;
 import de.nb.aventiure2.data.world.syscomp.movement.MovementComp;
 import de.nb.aventiure2.data.world.syscomp.reaction.AbstractDescribableReactionsComp;
 import de.nb.aventiure2.data.world.syscomp.reaction.interfaces.IMovementReactions;
+import de.nb.aventiure2.data.world.syscomp.reaction.interfaces.IRufReactions;
 import de.nb.aventiure2.data.world.syscomp.reaction.interfaces.IStateChangedReactions;
 import de.nb.aventiure2.data.world.syscomp.reaction.interfaces.ITimePassedReactions;
 import de.nb.aventiure2.data.world.syscomp.reaction.interfaces.Ruftyp;
+import de.nb.aventiure2.data.world.syscomp.spatialconnection.impl.VorDemTurmConnectionComp;
 import de.nb.aventiure2.data.world.syscomp.state.IHasStateGO;
 import de.nb.aventiure2.data.world.syscomp.state.impl.RapunzelState;
 import de.nb.aventiure2.data.world.syscomp.state.impl.RapunzelsZauberinStateComp;
@@ -28,8 +30,10 @@ import de.nb.aventiure2.german.base.Nominalphrase;
 
 import static com.google.common.base.Preconditions.checkArgument;
 import static de.nb.aventiure2.data.world.gameobject.World.DRAUSSEN_VOR_DEM_SCHLOSS;
+import static de.nb.aventiure2.data.world.gameobject.World.IM_WALD_NAHE_DEM_SCHLOSS;
 import static de.nb.aventiure2.data.world.gameobject.World.OBEN_IM_ALTEN_TURM;
 import static de.nb.aventiure2.data.world.gameobject.World.RAPUNZEL;
+import static de.nb.aventiure2.data.world.gameobject.World.RAPUNZELRUF;
 import static de.nb.aventiure2.data.world.gameobject.World.RAPUNZELS_ZAUBERIN;
 import static de.nb.aventiure2.data.world.gameobject.World.SPIELER_CHARAKTER;
 import static de.nb.aventiure2.data.world.gameobject.World.VOR_DEM_ALTEN_TURM;
@@ -42,6 +46,8 @@ import static de.nb.aventiure2.data.world.time.AvTime.oClock;
 import static de.nb.aventiure2.data.world.time.AvTimeSpan.days;
 import static de.nb.aventiure2.data.world.time.AvTimeSpan.mins;
 import static de.nb.aventiure2.data.world.time.AvTimeSpan.noTime;
+import static de.nb.aventiure2.data.world.time.AvTimeSpan.secs;
+import static de.nb.aventiure2.german.base.StructuralElement.CHAPTER;
 import static de.nb.aventiure2.german.base.StructuralElement.PARAGRAPH;
 import static de.nb.aventiure2.german.description.AllgDescription.neuerSatz;
 import static de.nb.aventiure2.german.description.DuDescription.du;
@@ -53,14 +59,14 @@ public class RapunzelsZauberinReactionsComp
         extends AbstractDescribableReactionsComp
         implements
         // Reaktionen auf die Bewegungen des SC und anderes Game Objects
-        IMovementReactions, IStateChangedReactions,
+        IMovementReactions, IRufReactions, IStateChangedReactions,
         ITimePassedReactions {
     // Vorher ist es der Zauberin für einen Rapunzelbesuch zu früh
     private static final AvTime FRUEHESTE_LOSGEHZEIT_RAPUNZELBESUCH = oClock(14);
 
     // Danach wird es der Zauberin für einen Rapunzelbesuch zu spät
     private static final AvTime SPAETESTE_LOSGEHZEIT_RAPUNZELBESUCH =
-            oClock(15, 30);
+            oClock(14, 30);
 
     private static final AvTimeSpan BESUCHSDAUER = mins(45);
 
@@ -144,9 +150,6 @@ public class RapunzelsZauberinReactionsComp
             // STORY Wenn der Spieler oben im Turm ist
             //  "Unten vor dem Turm steht eine..."?
 
-            // STORY Reaktion der Zauberin, wenn SC die Zauberin oben im Turm antrifft
-            //  (falls das sein kann).
-
             return movementComp.narrateAndDoSCTrifftEvtlMovingGOInFrom(scFrom, scTo);
         }
 
@@ -191,9 +194,6 @@ public class RapunzelsZauberinReactionsComp
         // STORY Wenn der Spieler oben im Turm ist
         //  "Unten vor dem Turm steht eine..."?
 
-        // STORY Reaktion der Zauberin, wenn SC die Zauberin oben im Turm antrifft
-        //  (falls das sein kann).
-
         if (world.isOrHasRecursiveLocation(scTo, scFrom)) {
             // Der Spieler ist nur im selben Raum auf einen Tisch gestiegen o.Ä.,
             // die Zauberin wurde bereits beschrieben.
@@ -202,6 +202,81 @@ public class RapunzelsZauberinReactionsComp
 
 
         return movementComp.narrateAndDoSCTrifftMovingGOInTo(scFrom, scTo);
+    }
+
+    @Override
+    public AvTimeSpan onRuf(final ILocatableGO rufer, final Ruftyp ruftyp) {
+        // Hört die Zauberin den Ruf?
+        if (!locationComp.hasSameUpperMostLocationAs(rufer) &&
+                (!rufer.locationComp().hasRecursiveLocation(VOR_DEM_ALTEN_TURM) ||
+                        !locationComp.hasRecursiveLocation(OBEN_IM_ALTEN_TURM))) {
+            return noTime();
+        }
+
+        if (ruftyp == Ruftyp.LASS_DEIN_HAAR_HERUNTER) {
+            return onRapunzelruf(rufer);
+        }
+
+        return noTime();
+    }
+
+    private AvTimeSpan onRapunzelruf(final ILocatableGO rufer) {
+        // Zauberin weiß jetzt, wo der Rufer ist
+        mentalModelComp.assumeLocation(rufer, world.loadSC().locationComp().getLocation());
+
+        if (!rufer.is(SPIELER_CHARAKTER)) {
+            return noTime();
+        }
+
+        AvTimeSpan timeElapsed = noTime();
+        if (locationComp.hasRecursiveLocation(OBEN_IM_ALTEN_TURM)) {
+            timeElapsed = timeElapsed.plus(
+                    n.add(neuerSatz("Jetzt schaut oben aus dem Turmfenster die "
+                                    + "magere Frau heraus. "
+                                    + "Kurz sucht ihr Blick umher, dann sieht sie dich direkt an. "
+                                    + "Ihr Augen sind - du kannst deinen Blick gar nicht abwenden…",
+                            mins(5))));
+        } else {
+            timeElapsed = timeElapsed.plus(
+                    n.add(neuerSatz(PARAGRAPH, "Die magere Frau sieht dich mit einem Mal "
+                                    + "direkt an. Ihr Augen sind - du kannst deinen Blick "
+                                    + "gar nicht abwenden…",
+                            mins(5))));
+        }
+
+        // Spieler wird verzaubert und vergisst alles.
+        loadSC().memoryComp().forget(RAPUNZEL, RAPUNZELS_ZAUBERIN, RAPUNZELRUF);
+        db.counterDao().reset(VorDemTurmConnectionComp.COUNTER_ALTER_TURM_UMRUNDET);
+        db.counterDao().reset(VorDemTurmConnectionComp.COUNTER_SC_HOERT_RAPUNZELS_GESANG);
+
+        // Die Zauberin ist schon weit auf dem Rückweg
+        timeElapsed = timeElapsed.plus(stateComp.narrateAndSetState(AUF_DEM_RUECKWEG_VON_RAPUNZEL));
+        timeElapsed = timeElapsed.plus(
+                locationComp.narrateAndSetLocation(IM_WALD_NAHE_DEM_SCHLOSS));
+        timeElapsed.plus(
+                movementComp.startMovement(
+                        db.nowDao().now().plus(timeElapsed), DRAUSSEN_VOR_DEM_SCHLOSS));
+
+        // Rapunzel ist still
+        timeElapsed = timeElapsed.plus(
+                loadRapunzel().stateComp().narrateAndSetState(RapunzelState.STILL));
+
+        final String ortsbeschreibung;
+        if (loadSC().locationComp().hasLocation(VOR_DEM_ALTEN_TURM_SCHATTEN_DER_BAEUME)) {
+            ortsbeschreibung = "sitzt im Unterholz vor dem alten Turm";
+        } else {
+            ortsbeschreibung = "stehst ganz allein vor dem alten Turm";
+        }
+
+        return timeElapsed.plus(
+                n.add(neuerSatz(CHAPTER,
+                        "Du " +
+                                ortsbeschreibung +
+                                " und "
+                                + "fühlst dich etwas verwirrt: Was hattest du "
+                                + "eigentlich gerade vor? Ob der Turm wohl "
+                                + "bewohnt ist? Niemand ist zu sehen",
+                        secs(15))));
     }
 
     @Override
@@ -245,8 +320,7 @@ public class RapunzelsZauberinReactionsComp
         }
     }
 
-    private AvTimeSpan onTimePassed_fromVorDemNaechstenRapunzelBesuch(
-            final AvDateTime now) {
+    private AvTimeSpan onTimePassed_fromVorDemNaechstenRapunzelBesuch(final AvDateTime now) {
         if (!now.getTime().isWithin(
                 FRUEHESTE_LOSGEHZEIT_RAPUNZELBESUCH,
                 SPAETESTE_LOSGEHZEIT_RAPUNZELBESUCH)) {

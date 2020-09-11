@@ -9,15 +9,20 @@ import de.nb.aventiure2.data.database.AvDatabase;
 import de.nb.aventiure2.data.world.gameobject.World;
 import de.nb.aventiure2.data.world.syscomp.memory.Action;
 import de.nb.aventiure2.data.world.syscomp.reaction.interfaces.Ruftyp;
+import de.nb.aventiure2.data.world.syscomp.state.IHasStateGO;
+import de.nb.aventiure2.data.world.syscomp.state.impl.RapunzelState;
 import de.nb.aventiure2.data.world.syscomp.storingplace.ILocationGO;
 import de.nb.aventiure2.data.world.time.AvTimeSpan;
 import de.nb.aventiure2.german.praedikat.AdverbialeAngabeSkopusSatz;
 import de.nb.aventiure2.scaction.AbstractScAction;
 
 import static com.google.common.collect.ImmutableList.builder;
+import static de.nb.aventiure2.data.world.gameobject.World.RAPUNZEL;
 import static de.nb.aventiure2.data.world.gameobject.World.RAPUNZELRUF;
 import static de.nb.aventiure2.data.world.gameobject.World.VOR_DEM_ALTEN_TURM;
 import static de.nb.aventiure2.data.world.syscomp.reaction.interfaces.Ruftyp.LASS_DEIN_HAAR_HERUNTER;
+import static de.nb.aventiure2.data.world.syscomp.state.impl.RapunzelState.SINGEND;
+import static de.nb.aventiure2.data.world.syscomp.state.impl.RapunzelState.STILL;
 import static de.nb.aventiure2.data.world.time.AvTimeSpan.secs;
 import static de.nb.aventiure2.german.base.GermanUtil.capitalize;
 import static de.nb.aventiure2.german.base.GermanUtil.uncapitalize;
@@ -46,9 +51,9 @@ public class RufenAction extends AbstractScAction {
         final ImmutableList.Builder<AbstractScAction> res = builder();
 
         if (world.loadSC().memoryComp().isKnown(RAPUNZELRUF)) {
-            if (world.isOrHasRecursiveLocation(location, VOR_DEM_ALTEN_TURM)
-                // STORY && rapunzelIstNochNichtBefreit()
-            ) {
+            if (world.isOrHasRecursiveLocation(location, VOR_DEM_ALTEN_TURM) &&
+                    ((IHasStateGO<RapunzelState>) world.load(RAPUNZEL)).stateComp()
+                            .hasState(STILL, SINGEND)) {
                 res.add(new RufenAction(db, world, location, LASS_DEIN_HAAR_HERUNTER));
             }
         }
@@ -97,14 +102,6 @@ public class RufenAction extends AbstractScAction {
 
         timeElapsed = timeElapsed.plus(
                 world.narrateAndDoReactions().onRuf(sc, Ruftyp.LASS_DEIN_HAAR_HERUNTER));
-
-        // STORY Reaktion der Zauberin auf den Ruf. Wenn der SC ruft
-        //  und die Zauberin in der Nähe ist, weiß sie danach auch, wo
-        //  der SC sich befindet.
-        //  ((IHasMentalModelGO) talker).mentalModelComp()
-        //        .assumesLocation(
-        //                SPIELER_CHARAKTER,
-        //                world.loadSC().locationComp().getLocation());
 
         sc.memoryComp().setLastAction(buildMemorizedAction());
 

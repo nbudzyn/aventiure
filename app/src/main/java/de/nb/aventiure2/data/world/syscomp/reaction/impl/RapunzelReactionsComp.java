@@ -1,5 +1,7 @@
 package de.nb.aventiure2.data.world.syscomp.reaction.impl;
 
+import androidx.annotation.NonNull;
+
 import javax.annotation.Nullable;
 
 import de.nb.aventiure2.data.database.AvDatabase;
@@ -197,7 +199,11 @@ public class RapunzelReactionsComp
     }
 
     public AvTimeSpan onRapunzelruf() {
-        if (stateComp.hasState(HAARE_VOM_TURM_HERUNTERGELASSEN)) {
+        if (!stateComp.hasState(SINGEND, STILL)) {
+            return noTime();
+        }
+
+        if (loadZauberin().locationComp().hasRecursiveLocation(OBEN_IM_ALTEN_TURM)) {
             return noTime();
         }
 
@@ -372,5 +378,10 @@ public class RapunzelReactionsComp
                         "Jetzt hat der süße Gesang aufgehört",
                         noTime())
         );
+    }
+
+    @NonNull
+    private ILocatableGO loadZauberin() {
+        return (ILocatableGO) world.load(RAPUNZELS_ZAUBERIN);
     }
 }

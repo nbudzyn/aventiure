@@ -103,6 +103,18 @@ public class MemoryComp extends AbstractStatefulComponent<MemoryPCD> {
         return getKnown(otherGameObjectId).isKnown();
     }
 
+    public void forget(final IGameObject... otherGameObjects) {
+        for (final IGameObject otherGameObject : otherGameObjects) {
+            forget(otherGameObject.getId());
+        }
+    }
+
+    public void forget(final GameObjectId... otherGameObjectIds) {
+        for (final GameObjectId otherGameObjectId : otherGameObjectIds) {
+            setKnown(otherGameObjectId, Known.UNKNOWN);
+        }
+    }
+
     public void upgradeKnown(
             final Iterable<? extends IGameObject> objects,
             final Known minimalKnown) {

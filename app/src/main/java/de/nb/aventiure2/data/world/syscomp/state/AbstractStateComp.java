@@ -81,7 +81,7 @@ public abstract class AbstractStateComp<S extends Enum<S>>
                 .onStateChanged(getGameObjectId(), oldState, state);
     }
 
-    private void setState(final S state) {
+    public void setState(final S state) {
         if (state.equals(getState())) {
             return;
         }

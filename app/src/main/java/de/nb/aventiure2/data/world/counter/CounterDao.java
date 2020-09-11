@@ -36,6 +36,11 @@ public abstract class CounterDao {
         return newValue;
     }
 
+    public void reset(final String id) {
+        insert(new Counter(id, 0)); // ignore, if row already exists
+        set(id, 0);
+    }
+
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     abstract void insert(Counter counter);
 

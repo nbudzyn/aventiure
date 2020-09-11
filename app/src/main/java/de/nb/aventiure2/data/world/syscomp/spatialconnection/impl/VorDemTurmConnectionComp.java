@@ -34,7 +34,7 @@ import static de.nb.aventiure2.german.description.DuDescription.du;
  */
 @ParametersAreNonnullByDefault
 public class VorDemTurmConnectionComp extends AbstractSpatialConnectionComp {
-    private static final String COUNTER_ALTER_TURM_UMRUNDET =
+    public static final String COUNTER_ALTER_TURM_UMRUNDET =
             "VorDemTurmConnectionComp_AlterTurm_Umrundet";
     public static final String COUNTER_SC_HOERT_RAPUNZELS_GESANG =
             "VorDemTurmConnectionComp_SCHoertRapunzelsGesang";
@@ -84,7 +84,8 @@ public class VorDemTurmConnectionComp extends AbstractSpatialConnectionComp {
 
     private AbstractDescription<?> getDescTo_VorDemTurm(
             final Known newLocationKnown, final Lichtverhaeltnisse lichtverhaeltnisse) {
-        final int count = db.counterDao().incAndGet("counter_alterTurm_umrundet");
+        final int count = db.counterDao().incAndGet(
+                VorDemTurmConnectionComp.COUNTER_ALTER_TURM_UMRUNDET);
         switch (count) {
             case 1:
                 if (db.counterDao().get(COUNTER_SC_HOERT_RAPUNZELS_GESANG) > 0) {
