@@ -6,8 +6,6 @@ import java.util.Collection;
 
 import javax.annotation.Nullable;
 
-import de.nb.aventiure2.german.base.Numerus;
-import de.nb.aventiure2.german.base.Person;
 import de.nb.aventiure2.german.base.SubstantivischePhrase;
 
 import static de.nb.aventiure2.german.base.GermanUtil.joinToNull;
@@ -29,12 +27,80 @@ public class PraedikatDatAkkOhneLeerstellen extends AbstractPraedikatOhneLeerste
     @NonNull
     private final SubstantivischePhrase describableAkk;
 
-    public PraedikatDatAkkOhneLeerstellen(final Verb verb,
-                                          final SubstantivischePhrase describableDat,
-                                          final SubstantivischePhrase describableAkk) {
-        super(verb);
+    public PraedikatDatAkkOhneLeerstellen(
+            final Verb verb,
+            final SubstantivischePhrase describableDat,
+            final SubstantivischePhrase describableAkk) {
+        this(verb, describableDat, describableAkk,
+                null, null,
+                null);
+    }
+
+    private PraedikatDatAkkOhneLeerstellen(
+            final Verb verb,
+            final SubstantivischePhrase describableDat,
+            final SubstantivischePhrase describableAkk,
+            @Nullable final AdverbialeAngabeSkopusSatz adverbialeAngabeSkopusSatz,
+            @Nullable final AdverbialeAngabeSkopusVerbAllg adverbialeAngabeSkopusVerbAllg,
+            @Nullable
+            final AdverbialeAngabeSkopusVerbWohinWoher adverbialeAngabeSkopusVerbWohinWoher) {
+        super(verb, adverbialeAngabeSkopusSatz,
+                adverbialeAngabeSkopusVerbAllg, adverbialeAngabeSkopusVerbWohinWoher);
         this.describableDat = describableDat;
         this.describableAkk = describableAkk;
+    }
+
+    @Override
+    public PraedikatDatAkkOhneLeerstellen mitAdverbialerAngabe(
+            @Nullable final AdverbialeAngabeSkopusSatz adverbialeAngabe) {
+        if (adverbialeAngabe == null) {
+            return this;
+        }
+
+        // TODO Mehrere adverbiale Angaben zulassen, damit die bestehende nicht
+        //  einfach überschrieben wird!
+        return new PraedikatDatAkkOhneLeerstellen(
+                getVerb(),
+                describableDat, describableAkk,
+                adverbialeAngabe, getAdverbialeAngabeSkopusVerbAllg(),
+                getAdverbialeAngabeSkopusVerbWohinWoher()
+        );
+    }
+
+    @Override
+    public PraedikatDatAkkOhneLeerstellen mitAdverbialerAngabe(
+            @Nullable final AdverbialeAngabeSkopusVerbAllg adverbialeAngabe) {
+        if (adverbialeAngabe == null) {
+            return this;
+        }
+
+        // TODO Mehrere adverbiale Angaben zulassen, damit die bestehende nicht
+        //  einfach überschrieben wird!
+        return new PraedikatDatAkkOhneLeerstellen(
+                getVerb(),
+                describableDat, describableAkk,
+                getAdverbialeAngabeSkopusSatz(), adverbialeAngabe,
+                getAdverbialeAngabeSkopusVerbWohinWoher()
+        );
+    }
+
+
+    @Override
+    public PraedikatDatAkkOhneLeerstellen mitAdverbialerAngabe(
+            @Nullable final AdverbialeAngabeSkopusVerbWohinWoher adverbialeAngabe) {
+        if (adverbialeAngabe == null) {
+            return this;
+        }
+
+        // TODO Mehrere adverbiale Angaben zulassen, damit die bestehende nicht
+        //  einfach überschrieben wird!
+        return new PraedikatDatAkkOhneLeerstellen(
+                getVerb(),
+                describableDat, describableAkk,
+                getAdverbialeAngabeSkopusSatz(),
+                getAdverbialeAngabeSkopusVerbAllg(),
+                adverbialeAngabe
+        );
     }
 
     @Override
@@ -45,35 +111,22 @@ public class PraedikatDatAkkOhneLeerstellen extends AbstractPraedikatOhneLeerste
     @Override
     public @Nullable
     String getSpeziellesVorfeld() {
+        final String speziellesVorfeldFromSuper = super.getSpeziellesVorfeld();
+        if (speziellesVorfeldFromSuper != null) {
+            return speziellesVorfeldFromSuper;
+        }
+
         return null; // "Die Kugel gibst du dem Frosch" - nicht schön
     }
 
     @Override
     public String getMittelfeld(final Collection<Modalpartikel> modalpartikeln) {
         return joinToNull(
-                describableDat.dat(),
-                joinToNull(modalpartikeln),
-                describableAkk.akk());
-    }
-
-    @Override
-    public String getInfinitiv(final Person person, final Numerus numerus,
-                               @Nullable final AdverbialeAngabe adverbialeAngabe) {
-        return joinToNull(
+                getAdverbialeAngabeSkopusSatz(), // "aus einer Laune heraus"
                 describableDat.dat(), // "dem Frosch"
-                adverbialeAngabe, // "erneut"
-                describableAkk.akk(), // "das Gold"
-                getVerb().getInfinitiv()); // "anbieten"
-    }
-
-    @Override
-    public String getZuInfinitiv(final Person person, final Numerus numerus,
-                                 @Nullable final AdverbialeAngabe adverbialeAngabe) {
-        return joinToNull(
-                describableDat.dat(), // "dem Frosch"
-                adverbialeAngabe, // "erneut"
-                describableAkk.akk(), // "das Gold"
-                getVerb().getZuInfinitiv()); // "anzubieten"
+                joinToNull(modalpartikeln), // "halt"
+                getAdverbialeAngabeSkopusVerbAllg(), // "auf deiner Flöte"
+                describableAkk.akk()); // "ein Lied"
     }
 
     @Override

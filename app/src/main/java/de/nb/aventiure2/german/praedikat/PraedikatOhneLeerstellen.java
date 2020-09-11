@@ -1,10 +1,8 @@
 package de.nb.aventiure2.german.praedikat;
 
-import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
 import java.util.Collection;
-
-import javax.annotation.Nullable;
 
 import de.nb.aventiure2.german.base.Numerus;
 import de.nb.aventiure2.german.base.Person;
@@ -12,10 +10,17 @@ import de.nb.aventiure2.german.base.Person;
 import static java.util.Arrays.asList;
 
 public interface PraedikatOhneLeerstellen extends Praedikat, DuTextPart {
-    String getDuHauptsatz(@NonNull final AdverbialeAngabe adverbialeAngabe);
+    PraedikatOhneLeerstellen mitAdverbialerAngabe(
+            @Nullable final AdverbialeAngabeSkopusSatz adverbialeAngabe);
 
-    // TODO Modalpartikeln oder adverbiale Angaben führen zu einem
-    //  neuen  AbstractPraedikat führen, dass man dann auch speichern
+    PraedikatOhneLeerstellen mitAdverbialerAngabe(
+            @Nullable final AdverbialeAngabeSkopusVerbAllg adverbialeAngabe);
+
+    PraedikatOhneLeerstellen mitAdverbialerAngabe(
+            @Nullable final AdverbialeAngabeSkopusVerbWohinWoher adverbialeAngabe);
+
+    // TODO Modalpartikeln führen zu einem
+    //  neuen AbstractPraedikat führen, dass man dann auch speichern
     //  und weiterreichen kann!
     @Override
     default String getDuHauptsatz() {
@@ -50,8 +55,7 @@ public interface PraedikatOhneLeerstellen extends Praedikat, DuTextPart {
      * Gibt einen Satz zurück mit diesem Prädikat, bei dem das Subjekt, das im Vorfeld
      * stünde, eingespart ist ("nimmst den Ast")
      */
-    default String getDuSatzanschlussOhneSubjekt(
-            final Modalpartikel... modalpartikeln) {
+    default String getDuSatzanschlussOhneSubjekt(final Modalpartikel... modalpartikeln) {
         return getDuSatzanschlussOhneSubjekt(asList(modalpartikeln)
         );
     }
@@ -61,12 +65,9 @@ public interface PraedikatOhneLeerstellen extends Praedikat, DuTextPart {
      * stünde, eingespart ist ("nimmst den Ast"), sowie ggf. diesen
      * Modalpartikeln ("nimmst den Ast eben doch").
      */
-    String getDuSatzanschlussOhneSubjekt(
-            final Collection<Modalpartikel> modalpartikeln);
-
+    String getDuSatzanschlussOhneSubjekt(final Collection<Modalpartikel> modalpartikeln);
 
     boolean duHauptsatzLaesstSichMitNachfolgendemDuHauptsatzZusammenziehen();
-
 
     /**
      * Gibt eine Infinitivkonstruktion mit diesem
@@ -77,12 +78,7 @@ public interface PraedikatOhneLeerstellen extends Praedikat, DuTextPart {
      * "[Ich möchte] die Kugel an mich nehmen"
      * (nicht *"[Ich möchte] die Kugel an sich nehmen")
      */
-    default String getInfinitiv(final Person person, final Numerus numerus) {
-        return getInfinitiv(person, numerus, null);
-    }
-
-    String getInfinitiv(final Person person, final Numerus numerus,
-                        @Nullable final AdverbialeAngabe adverbialeAngabe);
+    String getInfinitiv(final Person person, final Numerus numerus);
 
     /**
      * Gibt eine Infinitivkonstruktion mit dem zu-Infinitiv mit diesem
@@ -93,10 +89,5 @@ public interface PraedikatOhneLeerstellen extends Praedikat, DuTextPart {
      * "[Ich gedenke,] die Kugel an mich zu nehmen"
      * (nicht *"[Ich gedenke,] die Kugel an sich zu nehmen")
      */
-    default String getZuInfinitiv(final Person person, final Numerus numerus) {
-        return getZuInfinitiv(person, numerus, null);
-    }
-
-    public String getZuInfinitiv(final Person person, final Numerus numerus,
-                                 @Nullable final AdverbialeAngabe adverbialeAngabe);
+    String getZuInfinitiv(final Person person, final Numerus numerus);
 }

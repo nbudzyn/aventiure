@@ -4,7 +4,7 @@ import androidx.annotation.NonNull;
 
 import de.nb.aventiure2.data.world.time.AvTimeSpan;
 import de.nb.aventiure2.german.description.AbstractDescription;
-import de.nb.aventiure2.german.praedikat.AdverbialeAngabe;
+import de.nb.aventiure2.german.praedikat.AbstractAdverbialeAngabe;
 
 import static de.nb.aventiure2.data.world.base.Known.KNOWN_FROM_DARKNESS;
 import static de.nb.aventiure2.data.world.base.Known.UNKNOWN;
@@ -104,7 +104,7 @@ public class SpatialConnection {
         return data.getStandardDuration();
     }
 
-    public AdverbialeAngabe getWoAdvAngabe() {
+    public AbstractAdverbialeAngabe getWoAdvAngabe() {
         return data.getWoAdvAngabe();
     }
 

@@ -4,8 +4,6 @@ import java.util.Collection;
 
 import javax.annotation.Nullable;
 
-import de.nb.aventiure2.german.base.Numerus;
-import de.nb.aventiure2.german.base.Person;
 import de.nb.aventiure2.german.base.Reflexivpronomen;
 import de.nb.aventiure2.german.base.SubstantivischePhrase;
 
@@ -27,10 +25,74 @@ class PraedikatSubjReflPraepositionalkasusAkkObjOhneLeerstellen
     PraedikatSubjReflPraepositionalkasusAkkObjOhneLeerstellen(
             final ReflPraepositionalkasusVerbAkkObj reflPraepositionalkasusVerbAkkObj,
             final SubstantivischePhrase akkObj) {
-        super(reflPraepositionalkasusVerbAkkObj.getVerb());
+        this(reflPraepositionalkasusVerbAkkObj, akkObj,
+                null, null,
+                null);
+    }
+
+    private PraedikatSubjReflPraepositionalkasusAkkObjOhneLeerstellen(
+            final ReflPraepositionalkasusVerbAkkObj reflPraepositionalkasusVerbAkkObj,
+            final SubstantivischePhrase akkObj,
+            @Nullable final AdverbialeAngabeSkopusSatz adverbialeAngabeSkopusSatz,
+            @Nullable final AdverbialeAngabeSkopusVerbAllg adverbialeAngabeSkopusVerbAllg,
+            @Nullable
+            final AdverbialeAngabeSkopusVerbWohinWoher adverbialeAngabeSkopusVerbWohinWoher) {
+        super(reflPraepositionalkasusVerbAkkObj.getVerb(),
+                adverbialeAngabeSkopusSatz, adverbialeAngabeSkopusVerbAllg,
+                adverbialeAngabeSkopusVerbWohinWoher);
         this.reflPraepositionalkasusVerbAkkObj = reflPraepositionalkasusVerbAkkObj;
         this.akkObj = akkObj;
     }
+
+    @Override
+    public PraedikatSubjReflPraepositionalkasusAkkObjOhneLeerstellen mitAdverbialerAngabe(
+            @Nullable final AdverbialeAngabeSkopusSatz adverbialeAngabe) {
+        if (adverbialeAngabe == null) {
+            return this;
+        }
+
+        // TODO Mehrere adverbiale Angaben zulassen, damit die bestehende nicht
+        //  einfach überschrieben wird!
+        return new PraedikatSubjReflPraepositionalkasusAkkObjOhneLeerstellen(
+                reflPraepositionalkasusVerbAkkObj, akkObj,
+                adverbialeAngabe, getAdverbialeAngabeSkopusVerbAllg(),
+                getAdverbialeAngabeSkopusVerbWohinWoher()
+        );
+    }
+
+    @Override
+    public PraedikatSubjReflPraepositionalkasusAkkObjOhneLeerstellen mitAdverbialerAngabe(
+            @Nullable final AdverbialeAngabeSkopusVerbAllg adverbialeAngabe) {
+        if (adverbialeAngabe == null) {
+            return this;
+        }
+
+        // TODO Mehrere adverbiale Angaben zulassen, damit die bestehende nicht
+        //  einfach überschrieben wird!
+        return new PraedikatSubjReflPraepositionalkasusAkkObjOhneLeerstellen(
+                reflPraepositionalkasusVerbAkkObj, akkObj,
+                getAdverbialeAngabeSkopusSatz(), adverbialeAngabe,
+                getAdverbialeAngabeSkopusVerbWohinWoher()
+        );
+    }
+
+    @Override
+    public PraedikatSubjReflPraepositionalkasusAkkObjOhneLeerstellen mitAdverbialerAngabe(
+            @Nullable final AdverbialeAngabeSkopusVerbWohinWoher adverbialeAngabe) {
+        if (adverbialeAngabe == null) {
+            return this;
+        }
+
+        // TODO Mehrere adverbiale Angaben zulassen, damit die bestehende nicht
+        //  einfach überschrieben wird!
+        return new PraedikatSubjReflPraepositionalkasusAkkObjOhneLeerstellen(
+                reflPraepositionalkasusVerbAkkObj, akkObj,
+                getAdverbialeAngabeSkopusSatz(),
+                getAdverbialeAngabeSkopusVerbAllg(),
+                adverbialeAngabe
+        );
+    }
+
 
     @Override
     public boolean duHauptsatzLaesstSichMitNachfolgendemDuHauptsatzZusammenziehen() {
@@ -40,47 +102,28 @@ class PraedikatSubjReflPraepositionalkasusAkkObjOhneLeerstellen
     @Nullable
     @Override
     public String getSpeziellesVorfeld() {
+        final String speziellesVorfeldFromSuper = super.getSpeziellesVorfeld();
+        if (speziellesVorfeldFromSuper != null) {
+            return speziellesVorfeldFromSuper;
+        }
+
         return akkObj.akk();
     }
 
     @Override
-    public String getMittelfeld(
-            final Collection<Modalpartikel> modalpartikeln) {
+    public String getMittelfeld(final Collection<Modalpartikel> modalpartikeln) {
         checkKeinPartikelVerb();
 
         return joinToNull(
+                getAdverbialeAngabeSkopusSatz(), // "aus einer Laune heraus"
                 akkObj.akk(), // "die goldene Kugel"
                 joinToNull(modalpartikeln), // "besser doch"
+                getAdverbialeAngabeSkopusVerbAllg(), // "erneut"
                 Reflexivpronomen.get(P2, SG).im(reflPraepositionalkasusVerbAkkObj.
-                        getPrapositionMitKasus())// "an dich"
+                        getPrapositionMitKasus()), // "an dich",
+                getAdverbialeAngabeSkopusVerbWohinWoher() // "in deine Jackentasche"
         );
     }
-
-
-    @Override
-    public String getInfinitiv(final Person person, final Numerus numerus,
-                               @Nullable final AdverbialeAngabe adverbialeAngabe) {
-        checkKeinPartikelVerb();
-
-        return joinToNull(akkObj.akk(), // "die goldene Kugel"
-                adverbialeAngabe, // "erneut"
-                Reflexivpronomen.get(person, numerus).im(reflPraepositionalkasusVerbAkkObj.
-                        getPrapositionMitKasus()), // "an mich"
-                reflPraepositionalkasusVerbAkkObj.getVerb().getInfinitiv());// "nehmen"
-    }
-
-    @Override
-    public String getZuInfinitiv(final Person person, final Numerus numerus,
-                                 @Nullable final AdverbialeAngabe adverbialeAngabe) {
-        checkKeinPartikelVerb();
-
-        return joinToNull(akkObj.akk(), // "die goldene Kugel"
-                adverbialeAngabe, // "erneut"
-                Reflexivpronomen.get(person, numerus).im(reflPraepositionalkasusVerbAkkObj.
-                        getPrapositionMitKasus()), // "an mich"
-                reflPraepositionalkasusVerbAkkObj.getVerb().getZuInfinitiv());// "zu nehmen"
-    }
-
 
     @Override
     public String getNachfeld() {

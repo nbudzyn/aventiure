@@ -2,14 +2,14 @@ package de.nb.aventiure2.data.world.syscomp.storingplace;
 
 import androidx.annotation.Nullable;
 
-import de.nb.aventiure2.german.base.Nominalphrase;
-import de.nb.aventiure2.german.praedikat.AdverbialeAngabe;
+import de.nb.aventiure2.german.praedikat.AdverbialeAngabeSkopusVerbAllg;
+import de.nb.aventiure2.german.praedikat.AdverbialeAngabeSkopusVerbWohinWoher;
 import de.nb.aventiure2.german.praedikat.PraedikatMitEinerObjektleerstelle;
 import de.nb.aventiure2.german.praedikat.ZweiVerbenSubjObj;
 
 import static de.nb.aventiure2.german.praedikat.ReflPraepositionalkasusVerbAkkObj.AN_SICH_NEHMEN;
-import static de.nb.aventiure2.german.praedikat.VerbSubjAkkPraep.HEBEN_AUS;
 import static de.nb.aventiure2.german.praedikat.VerbSubjObj.AUFHEBEN;
+import static de.nb.aventiure2.german.praedikat.VerbSubjObj.HEBEN;
 import static de.nb.aventiure2.german.praedikat.VerbSubjObj.NEHMEN;
 import static de.nb.aventiure2.german.praedikat.VerbSubjObj.POLIEREN;
 
@@ -42,7 +42,8 @@ public enum StoringPlaceType {
     IM_GEAEST("im Geäst", "ins Geäst"),
     ASTGABEL("in einer Astgabel",
             "in eine Astgabel",
-            HEBEN_AUS.mitPraep(Nominalphrase.ASTGABEL),
+            HEBEN.mitAdverbialerAngabe(
+                    new AdverbialeAngabeSkopusVerbWohinWoher("aus der Ausgabel")),
             IM_GEAEST),
     WALD("im Wald", "in den Wald"),
     MATSCHIGER_WALDBODEN("auf dem matschigen Waldboden",
@@ -100,8 +101,9 @@ public enum StoringPlaceType {
         this.forBelebtUndEherGross = forBelebtUndEherGross;
     }
 
-    public AdverbialeAngabe getWoAdvAngabe(final boolean forBelebtUndEherGross) {
-        return new AdverbialeAngabe(getWo(forBelebtUndEherGross));
+    public AdverbialeAngabeSkopusVerbAllg getWoAdvAngabe(final boolean forBelebtUndEherGross) {
+        // "Peter singt dem Frosch auf dem Flur ein Lied."
+        return new AdverbialeAngabeSkopusVerbAllg(getWo(forBelebtUndEherGross));
     }
 
     public String getWo(final boolean forBelebtUndEherGross) {
@@ -112,8 +114,10 @@ public enum StoringPlaceType {
         return wo;
     }
 
-    public AdverbialeAngabe getWohinAdvAngabe(final boolean forBelebtUndEherGross) {
-        return new AdverbialeAngabe(getWohin(forBelebtUndEherGross));
+    public AdverbialeAngabeSkopusVerbWohinWoher getWohinAdvAngabe(
+            final boolean forBelebtUndEherGross) {
+        // "Du setzt den Frosch auf den Tisch"
+        return new AdverbialeAngabeSkopusVerbWohinWoher(getWohin(forBelebtUndEherGross));
     }
 
     public String getWohin(final boolean forBelebtUndEherGross) {

@@ -22,7 +22,8 @@ import de.nb.aventiure2.data.world.time.AvTimeSpan;
 import de.nb.aventiure2.german.base.Personalpronomen;
 import de.nb.aventiure2.german.base.SubstantivischePhrase;
 import de.nb.aventiure2.german.description.AbstractDescription;
-import de.nb.aventiure2.german.praedikat.AdverbialeAngabe;
+import de.nb.aventiure2.german.praedikat.AbstractAdverbialeAngabe;
+import de.nb.aventiure2.german.praedikat.AdverbialeAngabeSkopusVerbWohinWoher;
 import de.nb.aventiure2.german.praedikat.PraedikatMitEinerObjektleerstelle;
 import de.nb.aventiure2.scaction.AbstractScAction;
 
@@ -117,7 +118,8 @@ public class AblegenAction
         return capitalize(
                 getPraedikat()
                         .mitObj(world.getDescription(gameObject, true))
-                        .getInfinitiv(P1, SG, getWohinDetail()));
+                        .mitAdverbialerAngabe(getWohinDetail())
+                        .getInfinitiv(P1, SG));
     }
 
     @NonNull
@@ -130,7 +132,7 @@ public class AblegenAction
     }
 
     @Nullable
-    private AdverbialeAngabe getWohinDetail() {
+    private AdverbialeAngabeSkopusVerbWohinWoher getWohinDetail() {
         return detailLocationNecessaryInDescription ?
                 null :
                 location.storingPlaceComp().getLocationMode()
@@ -281,7 +283,7 @@ public class AblegenAction
     }
 
     private AvTimeSpan narrateObject() {
-        @Nullable final AdverbialeAngabe wohinDetail = getWohinDetail();
+        @Nullable final AbstractAdverbialeAngabe wohinDetail = getWohinDetail();
 
         if (n.requireNarration().allowsAdditionalDuSatzreihengliedOhneSubjekt()) {
             @Nullable final Personalpronomen gameObjektPersPron =

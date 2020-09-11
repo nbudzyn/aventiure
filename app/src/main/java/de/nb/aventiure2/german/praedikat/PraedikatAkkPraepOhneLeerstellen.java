@@ -6,8 +6,6 @@ import java.util.Collection;
 
 import javax.annotation.Nullable;
 
-import de.nb.aventiure2.german.base.Numerus;
-import de.nb.aventiure2.german.base.Person;
 import de.nb.aventiure2.german.base.PraepositionMitKasus;
 import de.nb.aventiure2.german.base.SubstantivischePhrase;
 
@@ -27,15 +25,84 @@ public class PraedikatAkkPraepOhneLeerstellen extends AbstractPraedikatOhneLeers
     @NonNull
     private final SubstantivischePhrase describableAkk;
 
-    public PraedikatAkkPraepOhneLeerstellen(final Verb verb,
-                                            final PraepositionMitKasus praepositionMitKasus,
-                                            final SubstantivischePhrase describableAkk,
-                                            final SubstantivischePhrase describablePraep) {
-        super(verb);
+    public PraedikatAkkPraepOhneLeerstellen(
+            final Verb verb,
+            final PraepositionMitKasus praepositionMitKasus,
+            final SubstantivischePhrase describableAkk,
+            final SubstantivischePhrase describablePraep) {
+        this(verb, praepositionMitKasus, describableAkk, describablePraep,
+                null, null,
+                null);
+    }
+
+    private PraedikatAkkPraepOhneLeerstellen(
+            final Verb verb,
+            final PraepositionMitKasus praepositionMitKasus,
+            final SubstantivischePhrase describableAkk,
+            final SubstantivischePhrase describablePraep,
+            @Nullable final AdverbialeAngabeSkopusSatz adverbialeAngabeSkopusSatz,
+            @Nullable final AdverbialeAngabeSkopusVerbAllg adverbialeAngabeSkopusVerbAllg,
+            @Nullable
+            final AdverbialeAngabeSkopusVerbWohinWoher adverbialeAngabeSkopusVerbWohinWoher) {
+        super(verb, adverbialeAngabeSkopusSatz,
+                adverbialeAngabeSkopusVerbAllg, adverbialeAngabeSkopusVerbWohinWoher);
         this.praepositionMitKasus = praepositionMitKasus;
         this.describablePraep = describablePraep;
         this.describableAkk = describableAkk;
     }
+
+    @Override
+    public PraedikatAkkPraepOhneLeerstellen mitAdverbialerAngabe(
+            @Nullable final AdverbialeAngabeSkopusSatz adverbialeAngabe) {
+        if (adverbialeAngabe == null) {
+            return this;
+        }
+
+        // TODO Mehrere adverbiale Angaben zulassen, damit die bestehende nicht
+        //  einfach überschrieben wird!
+        return new PraedikatAkkPraepOhneLeerstellen(
+                getVerb(),
+                praepositionMitKasus, describableAkk, describablePraep,
+                adverbialeAngabe, getAdverbialeAngabeSkopusVerbAllg(),
+                getAdverbialeAngabeSkopusVerbWohinWoher()
+        );
+    }
+
+    @Override
+    public PraedikatAkkPraepOhneLeerstellen mitAdverbialerAngabe(
+            @Nullable final AdverbialeAngabeSkopusVerbAllg adverbialeAngabe) {
+        if (adverbialeAngabe == null) {
+            return this;
+        }
+
+        // TODO Mehrere adverbiale Angaben zulassen, damit die bestehende nicht
+        //  einfach überschrieben wird!
+        return new PraedikatAkkPraepOhneLeerstellen(
+                getVerb(),
+                praepositionMitKasus, describableAkk, describablePraep,
+                getAdverbialeAngabeSkopusSatz(), adverbialeAngabe,
+                getAdverbialeAngabeSkopusVerbWohinWoher()
+        );
+    }
+
+    @Override
+    public PraedikatAkkPraepOhneLeerstellen mitAdverbialerAngabe(
+            @Nullable final AdverbialeAngabeSkopusVerbWohinWoher adverbialeAngabe) {
+        if (adverbialeAngabe == null) {
+            return this;
+        }
+
+        // TODO Mehrere adverbiale Angaben zulassen, damit die bestehende nicht
+        //  einfach überschrieben wird!
+        return new PraedikatAkkPraepOhneLeerstellen(
+                getVerb(),
+                praepositionMitKasus, describableAkk, describablePraep,
+                getAdverbialeAngabeSkopusSatz(),
+                getAdverbialeAngabeSkopusVerbAllg(),
+                adverbialeAngabe
+        );
+    }
+
 
     @Override
     public boolean duHauptsatzLaesstSichMitNachfolgendemDuHauptsatzZusammenziehen() {
@@ -45,35 +112,23 @@ public class PraedikatAkkPraepOhneLeerstellen extends AbstractPraedikatOhneLeers
     @Override
     public @Nullable
     String getSpeziellesVorfeld() {
+        final String speziellesVorfeldFromSuper = super.getSpeziellesVorfeld();
+        if (speziellesVorfeldFromSuper != null) {
+            return speziellesVorfeldFromSuper;
+        }
+
         return describableAkk.akk(); // "das Teil"
     }
 
     @Override
     public String getMittelfeld(final Collection<Modalpartikel> modalpartikeln) {
         return joinToNull(
+                getAdverbialeAngabeSkopusSatz(), // "aus einer Laune heraus"
                 describableAkk.akk(), // "das Teil"
                 joinToNull(modalpartikeln), // "besser doch"
-                describablePraep.im(praepositionMitKasus)); // "auf dem Boden"
-    }
-
-    @Override
-    public String getInfinitiv(final Person person, final Numerus numerus,
-                               @Nullable final AdverbialeAngabe adverbialeAngabe) {
-        return joinToNull(
-                describableAkk.akk(), // "das Teil"
-                adverbialeAngabe, // "erneut"
-                describablePraep.im(praepositionMitKasus), // "auf dem Boden"
-                getVerb().getInfinitiv()); // "abstellen"
-    }
-
-    @Override
-    public String getZuInfinitiv(final Person person, final Numerus numerus,
-                                 @Nullable final AdverbialeAngabe adverbialeAngabe) {
-        return joinToNull(
-                describableAkk.akk(), // "das Teil"
-                adverbialeAngabe, // "erneut"
-                describablePraep.im(praepositionMitKasus), // "auf dem Boden"
-                getVerb().getZuInfinitiv()); // "abzustellen"
+                getAdverbialeAngabeSkopusVerbAllg(), // "erneut"
+                getAdverbialeAngabeSkopusVerbWohinWoher(), // "anch dem Weg"
+                describablePraep.im(praepositionMitKasus)); // "aus der La main"
     }
 
     @Override

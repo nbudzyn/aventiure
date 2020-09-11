@@ -29,15 +29,79 @@ class PraedikatSubjObjOhneLeerstellen
      */
     private final SubstantivischePhrase objekt;
 
-
     public PraedikatSubjObjOhneLeerstellen(final Verb verb,
                                            final KasusOderPraepositionalkasus kasusOderPraepositionalkasus,
                                            final SubstantivischePhrase objekt) {
-        super(verb);
+        this(verb, kasusOderPraepositionalkasus, objekt,
+                null, null,
+                null);
+    }
+
+    PraedikatSubjObjOhneLeerstellen(
+            final Verb verb,
+            final KasusOderPraepositionalkasus kasusOderPraepositionalkasus,
+            final SubstantivischePhrase objekt,
+            @Nullable final AdverbialeAngabeSkopusSatz adverbialeAngabeSkopusSatz,
+            @Nullable final AdverbialeAngabeSkopusVerbAllg adverbialeAngabeSkopusVerbAllg,
+            @Nullable
+            final AdverbialeAngabeSkopusVerbWohinWoher adverbialeAngabeSkopusVerbWohinWoher) {
+        super(verb, adverbialeAngabeSkopusSatz,
+                adverbialeAngabeSkopusVerbAllg, adverbialeAngabeSkopusVerbWohinWoher);
         this.kasusOderPraepositionalkasus = kasusOderPraepositionalkasus;
         this.objekt = objekt;
     }
 
+    @Override
+    public PraedikatSubjObjOhneLeerstellen mitAdverbialerAngabe(
+            @Nullable final AdverbialeAngabeSkopusSatz adverbialeAngabe) {
+        if (adverbialeAngabe == null) {
+            return this;
+        }
+
+        // TODO Mehrere adverbiale Angaben zulassen, damit die bestehende nicht
+        //  einfach überschrieben wird!
+        return new PraedikatSubjObjOhneLeerstellen(
+                getVerb(),
+                kasusOderPraepositionalkasus, objekt,
+                adverbialeAngabe, getAdverbialeAngabeSkopusVerbAllg(),
+                getAdverbialeAngabeSkopusVerbWohinWoher()
+        );
+    }
+
+    @Override
+    public PraedikatSubjObjOhneLeerstellen mitAdverbialerAngabe(
+            @Nullable final AdverbialeAngabeSkopusVerbAllg adverbialeAngabe) {
+        if (adverbialeAngabe == null) {
+            return this;
+        }
+
+        // TODO Mehrere adverbiale Angaben zulassen, damit die bestehende nicht
+        //  einfach überschrieben wird!
+        return new PraedikatSubjObjOhneLeerstellen(
+                getVerb(),
+                kasusOderPraepositionalkasus, objekt,
+                getAdverbialeAngabeSkopusSatz(), adverbialeAngabe,
+                getAdverbialeAngabeSkopusVerbWohinWoher()
+        );
+    }
+
+    @Override
+    public PraedikatSubjObjOhneLeerstellen mitAdverbialerAngabe(
+            @Nullable final AdverbialeAngabeSkopusVerbWohinWoher adverbialeAngabe) {
+        if (adverbialeAngabe == null) {
+            return this;
+        }
+
+        // TODO Mehrere adverbiale Angaben zulassen, damit die bestehende nicht
+        //  einfach überschrieben wird!
+        return new PraedikatSubjObjOhneLeerstellen(
+                getVerb(),
+                kasusOderPraepositionalkasus, objekt,
+                getAdverbialeAngabeSkopusSatz(),
+                getAdverbialeAngabeSkopusVerbAllg(),
+                adverbialeAngabe
+        );
+    }
 
     @Override
     public boolean duHauptsatzLaesstSichMitNachfolgendemDuHauptsatzZusammenziehen() {
@@ -47,14 +111,23 @@ class PraedikatSubjObjOhneLeerstellen
     @Override
     public @Nullable
     String getSpeziellesVorfeld() {
+        final String speziellesVorfeldFromSuper = super.getSpeziellesVorfeld();
+        if (speziellesVorfeldFromSuper != null) {
+            return speziellesVorfeldFromSuper;
+        }
+
         return objekt.im(kasusOderPraepositionalkasus); // "den Frosch"
     }
 
     @Override
     public String getMittelfeld(final Collection<Modalpartikel> modalpartikeln) {
         return joinToNull(
+                getAdverbialeAngabeSkopusSatz(), // "aus einer Laune heraus"
+                joinToNull(modalpartikeln), // "mal eben"
+                getAdverbialeAngabeSkopusVerbAllg(), // "erneut"
                 objekt.im(kasusOderPraepositionalkasus),
-                joinToNull(modalpartikeln));
+                getAdverbialeAngabeSkopusVerbWohinWoher() // "auf den Tisch"
+        );
     }
 
     @Override

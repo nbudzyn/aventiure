@@ -32,8 +32,29 @@ public abstract class AbstractPraedikatOhneLeerstellen
     @NonNull
     private final Verb verb;
 
+    @Nullable
+    private final AdverbialeAngabeSkopusSatz adverbialeAngabeSkopusSatz;
+
+    @Nullable
+    private final AdverbialeAngabeSkopusVerbAllg adverbialeAngabeSkopusVerbAllg;
+
+    @Nullable
+    private final AdverbialeAngabeSkopusVerbWohinWoher adverbialeAngabeSkopusVerbWohinWoher;
+
     public AbstractPraedikatOhneLeerstellen(final Verb verb) {
+        this(verb, null, null, null);
+    }
+
+    AbstractPraedikatOhneLeerstellen(
+            final Verb verb,
+            @Nullable final AdverbialeAngabeSkopusSatz adverbialeAngabeSkopusSatz,
+            @Nullable final AdverbialeAngabeSkopusVerbAllg adverbialeAngabeSkopusVerbAllg,
+            @Nullable
+            final AdverbialeAngabeSkopusVerbWohinWoher adverbialeAngabeSkopusVerbWohinWoher) {
         this.verb = verb;
+        this.adverbialeAngabeSkopusSatz = adverbialeAngabeSkopusSatz;
+        this.adverbialeAngabeSkopusVerbAllg = adverbialeAngabeSkopusVerbAllg;
+        this.adverbialeAngabeSkopusVerbWohinWoher = adverbialeAngabeSkopusVerbWohinWoher;
     }
 
     @Override
@@ -65,26 +86,25 @@ public abstract class AbstractPraedikatOhneLeerstellen
     }
 
     @Override
-    public String getDuSatzanschlussOhneSubjekt(
-            final Collection<Modalpartikel> modalpartikeln) {
+    public String getDuHauptsatz(final Collection<Modalpartikel> modalpartikeln) {
+        if (adverbialeAngabeSkopusSatz != null) {
+            return joinToNull(
+                    capitalize(adverbialeAngabeSkopusSatz.getText()),
+                    verb.getDuForm(),
+                    "du",
+                    GermanUtil.cutSatzglied(getMittelfeld(), adverbialeAngabeSkopusSatz.getText()),
+                    verb.getPartikel(),
+                    getNachfeld());
+        }
+
+        return "Du " + getDuSatzanschlussOhneSubjekt(modalpartikeln);
+    }
+
+    @Override
+    public String getDuSatzanschlussOhneSubjekt(final Collection<Modalpartikel> modalpartikeln) {
         return joinToNull(
                 verb.getDuForm(),
                 getMittelfeld(modalpartikeln),
-                verb.getPartikel(),
-                getNachfeld());
-    }
-
-    /**
-     * Gibt einen Satz zurück mit diesem Prädikat und dieser adverbialen Angabe.
-     * ("Aus Langeweile nimmst du den Ast")
-     */
-    @Override
-    public String getDuHauptsatz(@NonNull final AdverbialeAngabe adverbialeAngabe) {
-        return joinToNull(
-                capitalize(adverbialeAngabe.getText()),
-                verb.getDuForm(),
-                "du",
-                getMittelfeld(),
                 verb.getPartikel(),
                 getNachfeld());
     }
@@ -99,10 +119,8 @@ public abstract class AbstractPraedikatOhneLeerstellen
      * ("den Frosch ignorieren", "das Leben genießen")
      */
     @Override
-    public String getInfinitiv(final Person person, final Numerus numerus,
-                               @Nullable final AdverbialeAngabe adverbialeAngabe) {
+    public String getInfinitiv(final Person person, final Numerus numerus) {
         return joinToNull(getMittelfeld(),
-                adverbialeAngabe,
                 verb.getInfinitiv(),
                 getNachfeld());
     }
@@ -112,16 +130,24 @@ public abstract class AbstractPraedikatOhneLeerstellen
      * ("den Frosch erneut zu ignorieren", "das Leben zu genießen")
      */
     @Override
-    public String getZuInfinitiv(final Person person, final Numerus numerus,
-                                 @Nullable final AdverbialeAngabe adverbialeAngabe) {
+    public String getZuInfinitiv(final Person person, final Numerus numerus) {
         return joinToNull(getMittelfeld(),
-                adverbialeAngabe,
                 verb.getZuInfinitiv(),
                 getNachfeld());
     }
 
     @Nullable
-    public abstract String getSpeziellesVorfeld();
+    public String getSpeziellesVorfeld() {
+        if (adverbialeAngabeSkopusSatz != null) {
+            return adverbialeAngabeSkopusSatz.getText();
+        }
+
+        if (adverbialeAngabeSkopusVerbAllg != null) {
+            return adverbialeAngabeSkopusVerbAllg.getText();
+        }
+
+        return null;
+    }
 
     public @Nullable
     String getMittelfeld() {
@@ -144,5 +170,20 @@ public abstract class AbstractPraedikatOhneLeerstellen
     @NonNull
     protected Verb getVerb() {
         return verb;
+    }
+
+    @Nullable
+    public AdverbialeAngabeSkopusSatz getAdverbialeAngabeSkopusSatz() {
+        return adverbialeAngabeSkopusSatz;
+    }
+
+    @Nullable
+    public AdverbialeAngabeSkopusVerbAllg getAdverbialeAngabeSkopusVerbAllg() {
+        return adverbialeAngabeSkopusVerbAllg;
+    }
+
+    @Nullable
+    public AdverbialeAngabeSkopusVerbWohinWoher getAdverbialeAngabeSkopusVerbWohinWoher() {
+        return adverbialeAngabeSkopusVerbWohinWoher;
     }
 }

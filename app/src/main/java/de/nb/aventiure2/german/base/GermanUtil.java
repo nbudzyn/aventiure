@@ -45,12 +45,21 @@ public class GermanUtil {
                 continue;
             }
 
-            final String partString = part.toString();
+            final String partString;
+            if (part.getClass().isArray()) {
+                partString = joinToNull((Object[]) part);
+            } else if (part instanceof Iterable<?>) {
+                partString = joinToNull((Iterable<?>) part);
+            } else {
+                partString = part.toString();
+            }
             if (spaceNeeded(res, partString)) {
                 res.append(" ");
             }
 
-            res.append(partString);
+            if (partString != null) {
+                res.append(partString);
+            }
         }
 
         if (res.length() == 0) {

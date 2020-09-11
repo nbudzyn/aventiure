@@ -23,7 +23,8 @@ import de.nb.aventiure2.data.world.time.AvTimeSpan;
 import de.nb.aventiure2.german.base.Nominalphrase;
 import de.nb.aventiure2.german.base.NumerusGenus;
 import de.nb.aventiure2.german.base.SubstantivischePhrase;
-import de.nb.aventiure2.german.praedikat.AdverbialeAngabe;
+import de.nb.aventiure2.german.praedikat.AdverbialeAngabeSkopusSatz;
+import de.nb.aventiure2.german.praedikat.AdverbialeAngabeSkopusVerbWohinWoher;
 import de.nb.aventiure2.german.praedikat.Modalpartikel;
 import de.nb.aventiure2.german.praedikat.PraedikatMitEinerObjektleerstelle;
 import de.nb.aventiure2.german.praedikat.PraedikatOhneLeerstellen;
@@ -44,6 +45,7 @@ import static de.nb.aventiure2.data.world.time.AvTimeSpan.noTime;
 import static de.nb.aventiure2.data.world.time.AvTimeSpan.secs;
 import static de.nb.aventiure2.german.base.GermanUtil.capitalize;
 import static de.nb.aventiure2.german.base.GermanUtil.uncapitalize;
+import static de.nb.aventiure2.german.base.Kasus.AKK;
 import static de.nb.aventiure2.german.base.Numerus.SG;
 import static de.nb.aventiure2.german.base.Person.P1;
 import static de.nb.aventiure2.german.base.Person.P2;
@@ -51,7 +53,6 @@ import static de.nb.aventiure2.german.base.StructuralElement.PARAGRAPH;
 import static de.nb.aventiure2.german.description.AllgDescription.neuerSatz;
 import static de.nb.aventiure2.german.description.AllgDescription.satzanschluss;
 import static de.nb.aventiure2.german.description.DuDescription.du;
-import static de.nb.aventiure2.german.praedikat.VerbSubjAkkPraep.NEHMEN_IN;
 import static de.nb.aventiure2.german.praedikat.VerbSubjObj.MITNEHMEN;
 import static de.nb.aventiure2.german.praedikat.VerbSubjObj.NEHMEN;
 
@@ -181,9 +182,14 @@ public class NehmenAction
     @NonNull
     private PraedikatMitEinerObjektleerstelle getPraedikatFuerName() {
         if (targetLocation.is(HAENDE_DES_SPIELER_CHARAKTERS)) {
-            return NEHMEN_IN.mitPraep(
-                    targetLocation.descriptionComp()
-                            .getDescription(true, true)); // "in die Hände nehmen"
+            return NEHMEN
+                    .mitAdverbialerAngabe(
+                            new AdverbialeAngabeSkopusVerbWohinWoher(
+                                    "in " +
+                                            targetLocation.descriptionComp()
+                                                    .getDescription(true, true)
+                                                    .im(AKK)
+                            )); // "in die Hände nehmen"
         }
 
         return gameObject instanceof ILivingBeingGO ? MITNEHMEN : NEHMEN;
@@ -403,8 +409,8 @@ public class NehmenAction
                         mitnehmenPraedikat.mitObj(objectDesc);
                 // STORY Neues Praedikat mit integrierter adverbialer Angabe in
                 //  du(...) übergegben
-                return n.add(neuerSatz(PARAGRAPH,
-                        praedikatMitObjekt.getDuHauptsatz(mood.getAdverbialeAngabe()),
+                return n.add(du(PARAGRAPH,
+                        praedikatMitObjekt.mitAdverbialerAngabe(mood.getAdverbialeAngabe()),
                         secs(5))
                         .undWartest(
                                 praedikatMitObjekt
@@ -442,10 +448,9 @@ public class NehmenAction
                     ", nur um "
                             + nehmenPraedikat
                             .mitObj(world.getDescription(gameObject, true).persPron())
-                            .getZuInfinitiv(
-                                    P2, SG,
-                                    new AdverbialeAngabe(
-                                            "gleich erneut")),
+                            .mitAdverbialerAngabe(
+                                    new AdverbialeAngabeSkopusSatz("gleich erneut"))
+                            .getZuInfinitiv(P2, SG),
                     secs(5))
                     // "zu nehmen", "an dich zu nehmen", "aufzuheben"
                     .komma()

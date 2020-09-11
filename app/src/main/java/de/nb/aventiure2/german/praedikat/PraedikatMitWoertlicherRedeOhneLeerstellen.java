@@ -33,8 +33,71 @@ public class PraedikatMitWoertlicherRedeOhneLeerstellen
 
     public PraedikatMitWoertlicherRedeOhneLeerstellen(
             final Verb verb, final WoertlicheRede woertlicheRede) {
-        super(verb);
+        this(verb, woertlicheRede, null,
+                null, null);
+    }
+
+    private PraedikatMitWoertlicherRedeOhneLeerstellen(
+            final Verb verb, final WoertlicheRede woertlicheRede,
+            @Nullable final AdverbialeAngabeSkopusSatz adverbialeAngabeSkopusSatz,
+            @Nullable final AdverbialeAngabeSkopusVerbAllg adverbialeAngabeSkopusVerbAllg,
+            @Nullable
+            final AdverbialeAngabeSkopusVerbWohinWoher adverbialeAngabeSkopusVerbWohinWoher) {
+        super(verb, adverbialeAngabeSkopusSatz,
+                adverbialeAngabeSkopusVerbAllg, adverbialeAngabeSkopusVerbWohinWoher);
         this.woertlicheRede = woertlicheRede;
+    }
+
+    @Override
+    public PraedikatMitWoertlicherRedeOhneLeerstellen mitAdverbialerAngabe(
+            @Nullable final AdverbialeAngabeSkopusSatz adverbialeAngabe) {
+        if (adverbialeAngabe == null) {
+            return this;
+        }
+
+        // TODO Mehrere adverbiale Angaben zulassen, damit die bestehende nicht
+        //  einfach überschrieben wird!
+        return new PraedikatMitWoertlicherRedeOhneLeerstellen(
+                getVerb(),
+                woertlicheRede,
+                adverbialeAngabe, getAdverbialeAngabeSkopusVerbAllg(),
+                getAdverbialeAngabeSkopusVerbWohinWoher()
+        );
+    }
+
+    @Override
+    public PraedikatMitWoertlicherRedeOhneLeerstellen mitAdverbialerAngabe(
+            @Nullable final AdverbialeAngabeSkopusVerbAllg adverbialeAngabe) {
+        if (adverbialeAngabe == null) {
+            return this;
+        }
+
+        // TODO Mehrere adverbiale Angaben zulassen, damit die bestehende nicht
+        //  einfach überschrieben wird!
+        return new PraedikatMitWoertlicherRedeOhneLeerstellen(
+                getVerb(),
+                woertlicheRede,
+                getAdverbialeAngabeSkopusSatz(), adverbialeAngabe,
+                getAdverbialeAngabeSkopusVerbWohinWoher()
+        );
+    }
+
+    @Override
+    public PraedikatMitWoertlicherRedeOhneLeerstellen mitAdverbialerAngabe(
+            @Nullable final AdverbialeAngabeSkopusVerbWohinWoher adverbialeAngabe) {
+        if (adverbialeAngabe == null) {
+            return this;
+        }
+
+        // TODO Mehrere adverbiale Angaben zulassen, damit die bestehende nicht
+        //  einfach überschrieben wird!
+        return new PraedikatMitWoertlicherRedeOhneLeerstellen(
+                getVerb(),
+                woertlicheRede,
+                getAdverbialeAngabeSkopusSatz(),
+                getAdverbialeAngabeSkopusVerbAllg(),
+                adverbialeAngabe
+        );
     }
 
     @Override
@@ -45,18 +108,24 @@ public class PraedikatMitWoertlicherRedeOhneLeerstellen
     @Nullable
     @Override
     public String getSpeziellesVorfeld() {
+        final String speziellesVorfeldFromSuper = super.getSpeziellesVorfeld();
+        if (speziellesVorfeldFromSuper != null) {
+            return speziellesVorfeldFromSuper;
+        }
+
         return null;
     }
 
     @Override
     public String getMittelfeld(final Collection<Modalpartikel> modalpartikeln) {
-        return joinToNull(modalpartikeln); // mal eben
+        return joinToNull(
+                getAdverbialeAngabeSkopusSatz(), // "aus einer Laune heraus"
+                modalpartikeln,  // "mal eben"
+                getAdverbialeAngabeSkopusVerbAllg(), // "erneut"
+                getAdverbialeAngabeSkopusVerbWohinWoher() // "in ein Kissen"
+        );
     }
 
-    /**
-     * Gibt einen Satz zurück mit diesem Prädikat, bei dem das Subjekt, das im Vorfeld
-     * stünde, eingespart ist ("rufst: ...")
-     */
     @Override
     public String getNachfeld() {
         return joinToNull(

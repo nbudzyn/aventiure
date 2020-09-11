@@ -1,6 +1,6 @@
 package de.nb.aventiure2.data.world.syscomp.feelings;
 
-import de.nb.aventiure2.german.praedikat.AdverbialeAngabe;
+import de.nb.aventiure2.german.praedikat.AdverbialeAngabeSkopusSatz;
 
 /**
  * Gemütszustand
@@ -28,13 +28,13 @@ public enum Mood {
     UNTROESTLICH(-5, "voller Trauer");
 
     private final int gradDerFreude;
-    private final AdverbialeAngabe adverbialeAngabe;
+    private final AdverbialeAngabeSkopusSatz adverbialeAngabe;
 
     Mood(final int gradDerFreude, final String adverbialeAngabeText) {
-        this(gradDerFreude, new AdverbialeAngabe(adverbialeAngabeText));
+        this(gradDerFreude, new AdverbialeAngabeSkopusSatz(adverbialeAngabeText));
     }
 
-    Mood(final int gradDerFreude, final AdverbialeAngabe adverbialeAngabe) {
+    Mood(final int gradDerFreude, final AdverbialeAngabeSkopusSatz adverbialeAngabe) {
         this.gradDerFreude = gradDerFreude;
         this.adverbialeAngabe = adverbialeAngabe;
     }
@@ -47,7 +47,7 @@ public enum Mood {
         return gradDerFreude < other.gradDerFreude;
     }
 
-    public AdverbialeAngabe getAdverbialeAngabe() {
+    public AdverbialeAngabeSkopusSatz getAdverbialeAngabe() {
         return adverbialeAngabe;
     }
 

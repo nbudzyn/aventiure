@@ -18,6 +18,7 @@ public enum VerbSubjObj implements PraedikatMitEinerObjektleerstelle {
     AUFHEBEN("aufheben", AKK, "hebst", "auf"),
     BEENDEN("beenden", AKK, "beendest"),
     DISKUTIEREN("diskutieren", MIT_DAT, "diskutierst"),
+    HEBEN("heben", AKK, "hebst"),
     HERAUSKLAUBEN("herausklauben", AKK, "klaubst", "heraus"),
     HINAUFRUFEN("hinaufrufen", ZU, "rufst", "rufen"),
     HINLEGEN("hinlegen", AKK, "legst", "hin"),
@@ -61,6 +62,13 @@ public enum VerbSubjObj implements PraedikatMitEinerObjektleerstelle {
                 @NonNull final KasusOderPraepositionalkasus kasusOderPraepositionalkasus) {
         this.verb = verb;
         this.kasusOderPraepositionalkasus = kasusOderPraepositionalkasus;
+    }
+
+    public PraedikatMitEinerObjLeerstelle mitAdverbialerAngabe(
+            @Nullable final AdverbialeAngabeSkopusVerbWohinWoher adverbialeAngabe) {
+        return new PraedikatMitEinerObjLeerstelle(
+                verb, kasusOderPraepositionalkasus, adverbialeAngabe
+        );
     }
 
     @Override

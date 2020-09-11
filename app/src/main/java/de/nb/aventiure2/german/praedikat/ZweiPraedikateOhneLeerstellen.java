@@ -1,7 +1,5 @@
 package de.nb.aventiure2.german.praedikat;
 
-import androidx.annotation.NonNull;
-
 import java.util.Collection;
 
 import javax.annotation.Nullable;
@@ -19,8 +17,8 @@ class ZweiPraedikateOhneLeerstellen implements PraedikatOhneLeerstellen {
     private final PraedikatOhneLeerstellen zweiterSatz;
 
     public ZweiPraedikateOhneLeerstellen(
-            final PraedikatSubjObjOhneLeerstellen ersterSatz,
-            final PraedikatSubjObjOhneLeerstellen zweiterSatz) {
+            final PraedikatOhneLeerstellen ersterSatz,
+            final PraedikatOhneLeerstellen zweiterSatz) {
         this.ersterSatz = ersterSatz;
         this.zweiterSatz = zweiterSatz;
     }
@@ -74,30 +72,31 @@ class ZweiPraedikateOhneLeerstellen implements PraedikatOhneLeerstellen {
     }
 
 
-    /**
-     * Gibt den <i>zusammengezogenen Satz</i> zurück mit dem Subjekt "du", das im
-     * zweiten Teilsatz <i>eingespart</i> ist, und dieser adverbialen Angabe im Vorfeld, die
-     * ebenfalls im zweiten Teilsatz <i>eingespart</i> ist (oder sich nur auf den ersten
-     * Teilsatz bezieht). ("Widerwillig hebst du die goldene Kugel auf und nimmst ein Bad")
-     * <p>
-     * Sollte das nicht erlaubt sein, gibt die Methode eine Satzverbindung zurück, wobei
-     * die adverbiale Angabe nur im ersten Teilsatz verwendet wird.
-     */
     @Override
-    public String getDuHauptsatz(@NonNull final AdverbialeAngabe adverbialeAngabe) {
-        if (ersterSatz.duHauptsatzLaesstSichMitNachfolgendemDuHauptsatzZusammenziehen()) {
-            return ersterSatz.getDuHauptsatz(adverbialeAngabe)
-                    // "Widerwillig hebst du die goldene Kugel auf"
-                    + " und "
-                    + zweiterSatz
-                    .getDuSatzanschlussOhneSubjekt();
-            // "nimmst ein Bad"
-        }
+    public ZweiPraedikateOhneLeerstellen mitAdverbialerAngabe(
+            @Nullable final AdverbialeAngabeSkopusSatz adverbialeAngabe) {
+        return new ZweiPraedikateOhneLeerstellen(
+                ersterSatz.mitAdverbialerAngabe(adverbialeAngabe),
+                zweiterSatz
+        );
+    }
 
-        return ersterSatz.getDuHauptsatz(adverbialeAngabe)
-                // "Widerwillig hebst du die goldene Kugel auf"
-                + "; "
-                + zweiterSatz.getDuHauptsatz(); // "du nimmst ein Bad"
+    @Override
+    public ZweiPraedikateOhneLeerstellen mitAdverbialerAngabe(
+            @Nullable final AdverbialeAngabeSkopusVerbAllg adverbialeAngabe) {
+        return new ZweiPraedikateOhneLeerstellen(
+                ersterSatz.mitAdverbialerAngabe(adverbialeAngabe),
+                zweiterSatz
+        );
+    }
+
+    @Override
+    public ZweiPraedikateOhneLeerstellen mitAdverbialerAngabe(
+            @Nullable final AdverbialeAngabeSkopusVerbWohinWoher adverbialeAngabe) {
+        return new ZweiPraedikateOhneLeerstellen(
+                ersterSatz.mitAdverbialerAngabe(adverbialeAngabe),
+                zweiterSatz
+        );
     }
 
     @Override
@@ -113,9 +112,8 @@ class ZweiPraedikateOhneLeerstellen implements PraedikatOhneLeerstellen {
      * Teilsatz verwendet.
      */
     @Override
-    public String getInfinitiv(final Person person, final Numerus numerus,
-                               @Nullable final AdverbialeAngabe adverbialeAngabe) {
-        return ersterSatz.getInfinitiv(person, numerus, adverbialeAngabe)
+    public String getInfinitiv(final Person person, final Numerus numerus) {
+        return ersterSatz.getInfinitiv(person, numerus)
                 + " und "
                 + zweiterSatz.getInfinitiv(person, numerus);
     }
@@ -126,9 +124,8 @@ class ZweiPraedikateOhneLeerstellen implements PraedikatOhneLeerstellen {
      * Teilsatz verwendet.
      */
     @Override
-    public String getZuInfinitiv(final Person person, final Numerus numerus,
-                                 @Nullable final AdverbialeAngabe adverbialeAngabe) {
-        return ersterSatz.getZuInfinitiv(person, numerus, adverbialeAngabe)
+    public String getZuInfinitiv(final Person person, final Numerus numerus) {
+        return ersterSatz.getZuInfinitiv(person, numerus)
                 + " und "
                 + zweiterSatz.getZuInfinitiv(person, numerus);
     }

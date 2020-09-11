@@ -6,7 +6,8 @@ import de.nb.aventiure2.data.world.syscomp.spatialconnection.ISpatiallyConnected
 import de.nb.aventiure2.data.world.syscomp.storingplace.ILocationGO;
 import de.nb.aventiure2.data.world.time.AvTimeSpan;
 import de.nb.aventiure2.german.description.AbstractDescription;
-import de.nb.aventiure2.german.praedikat.AdverbialeAngabe;
+import de.nb.aventiure2.german.praedikat.AbstractAdverbialeAngabe;
+import de.nb.aventiure2.german.praedikat.AdverbialeAngabeSkopusVerbAllg;
 
 public class SpatialConnectionData {
     /**
@@ -74,8 +75,8 @@ public class SpatialConnectionData {
         return standardDuration;
     }
 
-    public AdverbialeAngabe getWoAdvAngabe() {
-        return new AdverbialeAngabe(getWo());
+    public AbstractAdverbialeAngabe getWoAdvAngabe() {
+        return new AdverbialeAngabeSkopusVerbAllg(getWo());
     }
 
     public String getWo() {

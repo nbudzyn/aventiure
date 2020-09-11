@@ -11,7 +11,7 @@ import de.nb.aventiure2.data.world.syscomp.memory.Action;
 import de.nb.aventiure2.data.world.syscomp.reaction.interfaces.Ruftyp;
 import de.nb.aventiure2.data.world.syscomp.storingplace.ILocationGO;
 import de.nb.aventiure2.data.world.time.AvTimeSpan;
-import de.nb.aventiure2.german.praedikat.AdverbialeAngabe;
+import de.nb.aventiure2.german.praedikat.AdverbialeAngabeSkopusSatz;
 import de.nb.aventiure2.scaction.AbstractScAction;
 
 import static com.google.common.collect.ImmutableList.builder;
@@ -76,9 +76,9 @@ public class RufenAction extends AbstractScAction {
 
     @Override
     public AvTimeSpan narrateAndDo() {
-        @Nullable AdverbialeAngabe adverbialeAngabe = null;
+        @Nullable AdverbialeAngabeSkopusSatz adverbialeAngabe = null;
         if (sc.memoryComp().getLastAction().is(Action.Type.RUFEN)) {
-            adverbialeAngabe = new AdverbialeAngabe("noch einmal");
+            adverbialeAngabe = new AdverbialeAngabeSkopusSatz("noch einmal");
         }
 
         AvTimeSpan timeElapsed;
@@ -87,11 +87,7 @@ public class RufenAction extends AbstractScAction {
             timeElapsed = n.add(du(ruftyp.getName(), secs(30)));
         } else if (adverbialeAngabe != null) {
             timeElapsed =
-                    n.add(neuerSatz(
-                            // TODO Adverbiale Angabe in Hauptsatz integrieren, dann
-                            //  du (neuesPraedikat)
-                            ruftyp.getName().getDuHauptsatz(adverbialeAngabe),
-                            secs(30)));
+                    n.add(du(ruftyp.getName().mitAdverbialerAngabe(adverbialeAngabe), secs(30)));
         } else {
             timeElapsed =
                     n.add(neuerSatz(
