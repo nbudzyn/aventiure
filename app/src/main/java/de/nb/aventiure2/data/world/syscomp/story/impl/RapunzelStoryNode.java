@@ -37,6 +37,11 @@ public enum RapunzelStoryNode implements IStoryNode {
             RapunzelStoryNode::narrateAndDoHintAction_RapunzelSingenGehoert,
             TURM_GEFUNDEN
     ),
+    // STORY Zauberin erst loslaufen lassen, wenn der Spieler bei anderen Dingen
+    //  nicht weiter kommt. Vorher logischerweise auch keine Tipps für Zauberin!!
+    //  (10000 Schritte o.ä.??)
+    //  Dann häufiger loslaufen lassen, wenn Spieler nicht
+    //  weiterkommt, nicht nur 1x täglich!
     ZAUBERIN_AUF_TURM_WEG_GETROFFEN(10, VOR_DEM_ALTEN_TURM,
             RapunzelStoryNode::narrateAndDoHintAction_ZauberinAufTurmWegGefunden,
             TURM_GEFUNDEN),

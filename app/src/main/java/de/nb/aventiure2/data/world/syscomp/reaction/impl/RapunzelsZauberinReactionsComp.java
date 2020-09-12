@@ -312,7 +312,6 @@ public class RapunzelsZauberinReactionsComp
             case BEI_RAPUNZEL_OBEN_IM_TURM:
                 return onTimePassed_BeiRapunzelObenImTurm(now);
             case AUF_DEM_RUECKWEG_VON_RAPUNZEL:
-                // STORY Lässt sich an den Haaren herunterhiefen und wandert zurück
                 return onTimePassed_fromAufDemRueckwegVonRapunzel(now);
             case WEISS_DASS_RAPUNZEL_BEFREIT_WURDE:
                 // STORY Wandert zurück und kommt nie wieder
@@ -432,17 +431,6 @@ public class RapunzelsZauberinReactionsComp
                 locationComp.narrateAndSetLocation(OBEN_IM_ALTEN_TURM));
 
         return timeElapsed.plus(stateComp.narrateAndSetState(BEI_RAPUNZEL_OBEN_IM_TURM));
-
-        // Als Reaction (siehe RapunzelReactionsComp!) wird Rapunzel ihre Haare wieder
-        // heraufholen etc. (Gibt es das schon?)
-    }
-
-    @NonNull
-    private <R extends
-            IHasStateGO<RapunzelState> &
-            ITalkerGO<RapunzelTalkingComp>>
-    R loadRapunzel() {
-        return (R) world.load(RAPUNZEL);
     }
 
     private AvTimeSpan onTimePassed_BeiRapunzelObenImTurm(final AvDateTime now) {
@@ -454,8 +442,11 @@ public class RapunzelsZauberinReactionsComp
         // Zauberin verlässt Rapunzel
         AvTimeSpan timeElapsed = stateComp.narrateAndSetState(AUF_DEM_RUECKWEG_VON_RAPUNZEL);
 
-        // STORY Zauberin wird wieder heruntergelassen
         if (locationComp.hasRecursiveLocation(OBEN_IM_ALTEN_TURM)) {
+            // STORY Rapunzel lässt die Haare wieder
+            //  herunter. Als Reaktion steigt die Zauberin an den Haaren wieder herunter und
+            //  beginnt wegzugehen. Rapunzel zieht die Haare wieder hoch.
+
             timeElapsed = timeElapsed.plus(
                     locationComp.narrateAndSetLocation(VOR_DEM_ALTEN_TURM));
         }
@@ -485,5 +476,13 @@ public class RapunzelsZauberinReactionsComp
                             // Keine extra-Zeit
                             ;
                 });
+    }
+
+    @NonNull
+    private <R extends
+            IHasStateGO<RapunzelState> &
+            ITalkerGO<RapunzelTalkingComp>>
+    R loadRapunzel() {
+        return (R) world.load(RAPUNZEL);
     }
 }
