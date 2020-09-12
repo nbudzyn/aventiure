@@ -48,69 +48,69 @@ public enum RapunzelStoryNode implements IStoryNode {
     ZAUBERIN_HEIMLICH_BEIM_RUFEN_BEOBACHTET(10, VOR_DEM_ALTEN_TURM,
             RapunzelStoryNode::narrateAndDoHintAction_ZauberinHeimlichBeimRufenBeobachtet,
             TURM_GEFUNDEN
-    )
-    // STORY "und der Königssohn stieg hinauf.
-    //  Anfangs erschrak Rapunzel gewaltig, als ein Mann zu ihr
-    //  hereinkam, wie ihre Augen noch nie einen erblickt hatten,
-    //  doch der Königssohn fing an ganz freundlich mit ihr zu reden
-    //  und erzählte ihr, daß von ihrem Gesang sein Herz so sehr sei
-    //  bewegt worden, daß es ihm keine Ruhe gelassen und er sie
-    //  selbst habe sehen müssen. Da verlor Rapunzel ihre Angst, und
-    //  als er sie fragte, ob sie ihn zum Mann nehmen wollte, und sie
-    //  sah, daß er jung und schön war, so dachte sie »der wird mich
-    //  lieber haben als die alte Frau Gotel,« und sagte ja, und legte
-    //  ihre Hand in seine Hand. Sie sprach »ich will gerne mit dir
-    //  gehen, aber ich weiß nicht, wie ich herabkommen kann. Wenn
-    //  du kommst, so bringe jedesmal einen Strang Seide mit, daraus
+    );
+    // STORY "und du steigst hinauf.
+    //  Durch das Fensterchen kletterst du in eine kleine Kammer:
+    //  Tisch, Stuhl, ein Bett.
+    //  Am Fester sitzt eine junge Frau, so schön als
+    //  du unter der Sonne noch keine gesehen hast.
+    //  Ihre Haare, fein wie gesponnen
+    //  Gold, hat sie um einen Fensterhaken gewickelt, so konntest du
+    //  daran heraufsteigen.
+    //  Die junge Frau erschrickt gewaltig, als du zu ihr
+    //  hereinkommst. Schnell bindet sie ihre Haare wieder zusammen,
+    //  dann starrt sie dich an.
+    //  Doch du fängst an ganz freundlich mit ihr zu reden
+    //  und erzählst ihr, dass von ihrem Gesang dein Herz so sehr sei
+    //  bewegt worden, dass es dir keine Ruhe gelassen und du sie
+    //  selbst habest sehen müssen.
+    //  Da verliert die junge Frau ihre Angst und es bricht aus ihr heraus.
+    //  Eine alte Zauberin hötte sie ihren Eltern fortgenommen, seit ihrem
+    //  zwölften Jahre sei sie in diesen Turm geschlossen.
+    //  Du fragst sie nach ihrem Namen, aber der ist so ungewöhnlich, dass
+    //  du ihn dir nicht merken kannst. Es ist dir zu ungegenehm, noch einmal zu fragen.
+    //  Wie kannst du ihr helfen, so fragst du sie.
+    //  Bring mir einen Ballen Seide, sagt sie,
+    //  Daraus
     //  will ich eine Leiter flechten, und wenn die fertig ist, so steige
-    //  ich herunter und du nimmst mich auf dein Pferd.« Sie verabredeten,
-    //  daß er bis dahin alle Abend zu ihr kommen sollte,
-    //  denn bei Tag kam die Alte. Die Zauberin merkte auch nichts
-    //  davon, bis einmal Rapunzel anfing und zu ihr sagte »sag sie
-    //  mir doch, Frau Gotel, wie kommt es nur, sie wird mir viel
-    //  schwerer heraufzuziehen als der junge Königssohn, der ist in
-    //  67
-    //  einem Augenblick bei mir.« »Ach du gottloses Kind,« rief die
-    //  Zauberin, »was muß ich von dir hören, ich dachte, ich hätte
-    //  dich von aller Welt geschieden, und du hast mich doch betrogen
-    //  !« In ihrem Zorne packte sie die schönen Haare der Rapunzel,
-    //  schlug sie ein paarmal um ihre linke Hand, griff eine
-    //  Schere mit der rechten, und ritsch, ratsch waren sie abgeschnitten,
-    //  und die schönen Flechten lagen auf der Erde. Und
-    //  sie war so unbarmherzig, daß sie die arme Rapunzel in eine
-    //  Wüstenei brachte, wo sie in großem Jammer und Elend leben
-    //  mußte.
-    //  Denselben Tag aber, wo sie Rapunzel verstoßen hatte, machte
-    //  abends die Zauberin die abgeschnittenen Flechten oben am
-    //  Fensterhaken fest, und als der Königssohn kam und rief
-    //  »Rapunzel, Rapunzel,
-    //  laß dein Haar herunter,«
-    //  so ließ sie die Haare hinab. Der Königssohn stieg hinauf, aber
-    //  er fand oben nicht seine liebste Rapunzel, sondern die Zauberin,
-    //  die ihn mit bösen und giftigen Blicken ansah. »Aha,« rief
-    //  sie höhnisch, »du willst die Frau Liebste holen, aber der
-    //  schöne Vogel sitzt nicht mehr im Nest und singt nicht mehr,
-    //  die Katze hat ihn geholt und wird dir auch noch die Augen
-    //  auskratzen. Für dich ist Rapunzel verloren, du wirst sie nie
-    //  wieder erblicken.« Der Königssohn geriet außer sich vor
-    //  Schmerzen, und in der Verzweiflung sprang er den Turm herab
-    //  : das Leben brachte er davon, aber die Dornen, in die er fiel,
-    //  zerstachen ihm die Augen. Da irrte er blind im Walde umher,
-    //  aß nichts als Wurzeln und Beeren, und tat nichts als jammern
-    //  und weinen über den Verlust seiner liebsten Frau. So wanderte
-    //  er einige Jahre im Elend umher und geriet endlich in die Wüstenei,
-    //  wo Rapunzel mit den Zwillingen, die sie geboren hatte,
-    //  einem Knaben und Mädchen, kümmerlich lebte. Er vernahm
-    //  eine Stimme, und sie deuchte ihn so bekannt : da ging er darauf
-    //  zu, und wie er herankam, erkannte ihn Rapunzel und fiel
-    //  ihm um den Hals und weinte. Zwei von ihren Tränen aber benetzten
-    //  seine Augen, da wurden sie wieder klar, und er konnte
-    //  damit sehen wie sonst. Er führte sie in sein Reich, wo er mit
-    //  68
-    //  Freude empfangen ward, und sie lebten noch lange glücklich
-    //  und vergnügt."
-    ;
+    //  ich herunter.
+    //  So verabredet ihr es.
+    //  „Aber komm nicht, wenn die Alte bei mir ist, sagt sie noch,
+    //  sonst sind wir beide verloren"
 
+    // STORY Extra: Zauberin ruft von unten nach Rapunzel: "Schnell versteckt euch unter dem Bett"
+
+    // STORY
+    //  "du steigst wieder herab" /  "Schnell kommst du wieder herab"
+
+    // STORY fremdländisch aussehender Händler auf Schlossfest vor einem Zelt
+
+    // STORY Seide für großen Klumpen Gold (goldene Kugel verkaufen)
+    //  "kaufst ihm ... ab"
+
+    // STORY Wieder hinaufsteigen mit schwerem Ballen Seide
+    //  "du warst mich heute schwer heraufzuziehen"
+    //  Unter dem Bett verstecken
+    //  "wie deine Augen noch nie eine erblickt hatten"
+
+
+    // STORY Rapunzel: Will sich vom Spieler aus dem Wald führen lassen
+
+    // STORY?! Zauberin, wenn man sie trifft  "sieht dich mit bösen und giftigen Blicken an"
+
+    // STORY Rapunzel flicht die Leiter
+
+    // STORY SC steigt erneut hinauf.
+    //  "in einem Augenblick bist du oben"
+    //  "Oben findest du..."
+    //  "Die Alte hat nichts gemerkt"
+
+    //  STORY Die Leiter ist fertig.
+    //  STORY Leiter oben am Fensterhaken fest
+    //   lässt sie herab
+    //   Beide steigen hinunter, die Leiter bleibt hängen (Raum bleibt zugänglich)
+
+    // STORY Spieler führt Rapunzel aus dem Wald hinaus - ENDE
 
     private final ImmutableSet<RapunzelStoryNode> preconditions;
 

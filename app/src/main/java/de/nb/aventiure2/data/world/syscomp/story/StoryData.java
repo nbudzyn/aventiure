@@ -128,7 +128,7 @@ class StoryData {
             //  bereit, die in einer Reihenfolge gewählt werden.
 
             // STORY Wenn alle Storys abgeschlossen sind, wird das Spiel
-            //  beendet. ("lebst glücklich...")
+            //  beendet. ("Du lebst noch lange glücklich und vergnügt.")
         }
 
         return true;
