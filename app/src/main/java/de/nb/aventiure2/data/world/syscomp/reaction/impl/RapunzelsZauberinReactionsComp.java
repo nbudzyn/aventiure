@@ -315,8 +315,8 @@ public class RapunzelsZauberinReactionsComp
                             VOR_DEM_ALTEN_TURM_SCHATTEN_DER_BAEUME)) {
                 extraTime = extraTime.plus(n.add(
                         neuerSatz(getAnaphPersPronWennMglSonstDescription(
-                                true)
-                                + " scheint dich nicht zu bemerken", noTime())));
+                                true).nom()
+                                + " hat dich nicht bemerkt", noTime())));
                 return extraTime.plus(
                         locationComp.narrateAndSetLocation(VOR_DEM_ALTEN_TURM));
             }

@@ -37,7 +37,7 @@ import static junit.framework.TestCase.fail;
 @RunWith(AndroidJUnit4.class)
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class WalkerTest {
-    private static final int STEP_SIZE = 10;
+    private static final int STEP_SIZE = 3;
     // See https://proandroiddev.com/testing-the-un-testable-and-beyond-with-android-architecture-components-part-1-testing-room-4d97dec0f451
     @Rule
     public InstantTaskExecutorRule instantTaskExecutorRule = new InstantTaskExecutorRule();
