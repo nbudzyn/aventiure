@@ -48,8 +48,9 @@ public class Logger {
             sb.append(className.substring(className.lastIndexOf(".") + 1));
             sb.append("[");
             sb.append(Thread.currentThread().getStackTrace()[depth.getValue()].getMethodName());
-            sb.append("] - ");
-            sb.append(Thread.currentThread().getStackTrace()[depth.getValue()].getLineNumber());
+            sb.append("]");
+            // sb.append(" - ");
+            // sb.append(Thread.currentThread().getStackTrace()[depth.getValue()].getLineNumber());
             return sb.toString();
         } catch (final Exception ex) {
             ex.printStackTrace();

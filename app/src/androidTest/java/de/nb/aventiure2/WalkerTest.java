@@ -36,6 +36,7 @@ import static junit.framework.TestCase.fail;
 @RunWith(AndroidJUnit4.class)
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class WalkerTest {
+    private static final int STEP_SIZE = 10;
     // See https://proandroiddev.com/testing-the-un-testable-and-beyond-with-android-architecture-components-part-1-testing-room-4d97dec0f451
     @Rule
     public InstantTaskExecutorRule instantTaskExecutorRule = new InstantTaskExecutorRule();
@@ -67,7 +68,8 @@ public class WalkerTest {
     @Test
     public void walkActionsWithRandomAdditions() {
         for (int maxSteps = 0;
-             maxSteps < Walkthrough.FULL.numSteps(); maxSteps++) {
+             maxSteps < Walkthrough.FULL.numSteps();
+             maxSteps = Math.min(maxSteps + STEP_SIZE, Walkthrough.FULL.numSteps() - 1)) {
             LOGGER.d("--- Neuer Durchlauf: " + maxSteps + " Schritte ---");
 
             doWalkthrough(Walkthrough.FULL.truncate(maxSteps));

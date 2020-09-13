@@ -25,6 +25,7 @@ import static de.nb.aventiure2.data.world.gameobject.World.DRAUSSEN_VOR_DEM_SCHL
 import static de.nb.aventiure2.data.world.gameobject.World.FROSCHPRINZ;
 import static de.nb.aventiure2.data.world.gameobject.World.GOLDENE_KUGEL;
 import static de.nb.aventiure2.data.world.gameobject.World.IM_WALD_BEIM_BRUNNEN;
+import static de.nb.aventiure2.data.world.gameobject.World.OBEN_IM_ALTEN_TURM;
 import static de.nb.aventiure2.data.world.gameobject.World.RAPUNZEL;
 import static de.nb.aventiure2.data.world.gameobject.World.RAPUNZELS_ZAUBERIN;
 import static de.nb.aventiure2.data.world.gameobject.World.SCHLOSSFEST;
@@ -151,6 +152,10 @@ public class StoryWebReactionsComp
                     .hasState(RapunzelState.SINGEND)) {
                 reachStoryNode(RapunzelStoryNode.RAPUNZEL_SINGEN_GEHOERT);
             }
+        }
+
+        if (world.isOrHasRecursiveLocation(to, OBEN_IM_ALTEN_TURM)) {
+            reachStoryNode(RapunzelStoryNode.ZU_RAPUNZEL_HINAUFGESTIEGEN);
         }
 
         return noTime();

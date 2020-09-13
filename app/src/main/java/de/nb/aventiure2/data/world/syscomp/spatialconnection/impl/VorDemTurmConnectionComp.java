@@ -15,11 +15,15 @@ import de.nb.aventiure2.data.world.base.Lichtverhaeltnisse;
 import de.nb.aventiure2.data.world.base.SpatialConnection;
 import de.nb.aventiure2.data.world.gameobject.World;
 import de.nb.aventiure2.data.world.syscomp.spatialconnection.AbstractSpatialConnectionComp;
+import de.nb.aventiure2.data.world.syscomp.state.IHasStateGO;
+import de.nb.aventiure2.data.world.syscomp.state.impl.RapunzelState;
 import de.nb.aventiure2.german.description.AbstractDescription;
 
 import static de.nb.aventiure2.data.world.base.SpatialConnection.con;
 import static de.nb.aventiure2.data.world.gameobject.World.DRAUSSEN_VOR_DEM_SCHLOSS;
 import static de.nb.aventiure2.data.world.gameobject.World.IM_WALD_NAHE_DEM_SCHLOSS;
+import static de.nb.aventiure2.data.world.gameobject.World.OBEN_IM_ALTEN_TURM;
+import static de.nb.aventiure2.data.world.gameobject.World.RAPUNZEL;
 import static de.nb.aventiure2.data.world.gameobject.World.VOR_DEM_ALTEN_TURM;
 import static de.nb.aventiure2.data.world.time.AvTimeSpan.mins;
 import static de.nb.aventiure2.data.world.time.AvTimeSpan.secs;
@@ -60,26 +64,38 @@ public class VorDemTurmConnectionComp extends AbstractSpatialConnectionComp {
     @Override
     @NonNull
     public List<SpatialConnection> getConnections() {
-        return ImmutableList.of(
-                con(VOR_DEM_ALTEN_TURM,
-                        "auf der anderen Seite des Turms",
-                        "Um den Turm herumgehen",
-                        secs(90),
-                        this::getDescTo_VorDemTurm
-                ),
-                con(IM_WALD_NAHE_DEM_SCHLOSS,
-                        "auf dem Pfad",
-                        "Den Pfad zurückgehen",
-                        mins(18),
-                        du(SENTENCE, "gehst",
-                                "den langen Pfad wieder zurück, den Hügel hinab, bis "
-                                        + "zum Waldweg", mins(20))
-                                .beendet(PARAGRAPH),
-                        du(SENTENCE, "gehst", "den Hügel auf dem gewundenen Pfad wieder hinab, "
-                                + "bis du unten am Waldweg ankommst", mins(18))
-                                .komma()
-                                .undWartest()
-                ));
+        final ImmutableList.Builder<SpatialConnection> res = ImmutableList.builder();
+
+        res.add(con(VOR_DEM_ALTEN_TURM,
+                "auf der anderen Seite des Turms",
+                "Um den Turm herumgehen",
+                secs(90),
+                this::getDescTo_VorDemTurm
+        ));
+        res.add(con(IM_WALD_NAHE_DEM_SCHLOSS,
+                "auf dem Pfad",
+                "Den Pfad zurückgehen",
+                mins(18),
+                du(SENTENCE, "gehst",
+                        "den langen Pfad wieder zurück, den Hügel hinab, bis "
+                                + "zum Waldweg", mins(20))
+                        .beendet(PARAGRAPH),
+                du(SENTENCE, "gehst", "den Hügel auf dem gewundenen Pfad wieder hinab, "
+                        + "bis du unten am Waldweg ankommst", mins(18))
+                        .komma()
+                        .undWartest()
+        ));
+
+        if (((IHasStateGO<RapunzelState>) world.load(RAPUNZEL)).stateComp()
+                .hasState(RapunzelState.HAARE_VOM_TURM_HERUNTERGELASSEN)) {
+            res.add(con(OBEN_IM_ALTEN_TURM,
+                    "an den Zöpfen",
+                    "An den Haaren hinaufsteigen",
+                    mins(1),
+                    VorDemTurmConnectionComp::getDescTo_ObenImTurm));
+        }
+
+        return res.build();
     }
 
     private AbstractDescription<?> getDescTo_VorDemTurm(
@@ -106,5 +122,22 @@ public class VorDemTurmConnectionComp extends AbstractSpatialConnectionComp {
                 return du("gehst", "noch einmal um den Turm herum", mins(1))
                         .dann();
         }
+    }
+
+    private static AbstractDescription<?> getDescTo_ObenImTurm(
+            final Known newLocationKnown, final Lichtverhaeltnisse lichtverhaeltnisse) {
+        if (!newLocationKnown.isKnown()) {
+            return du("steigst",
+                    "hinauf.\n"
+                            + "Durch das Fensterchen kletterst du in eine kleine Kammer: "
+                            + "Tisch, Stuhl, ein Bett",
+                    mins(1));
+        }
+
+        return du("steigst",
+                "wieder hinauf",
+                "wieder",
+                mins(1));
+
     }
 }

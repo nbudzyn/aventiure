@@ -111,10 +111,12 @@ class CreatureFactory {
         final RapunzelStateComp stateComp = new RapunzelStateComp(db, world);
         final AbstractDescriptionComp descriptionComp =
                 new SimpleDescriptionComp(RAPUNZEL,
-                        // STORY Beschreibung für Rapunzel
-                        np(F, INDEF, "STORY"),
-                        np(F, DEF, "STORY"),
-                        np(F, DEF, "STORY"));
+                        np(F, INDEF, "wunderschöne junge Frau",
+                                "wunderschönen jungen Frau"),
+                        np(F, DEF, "schöne junge Frau",
+                                "schönen junge Frau"),
+                        np(F, DEF, "junge Frau",
+                                "jungen Frau"));
         final LocationComp locationComp =
                 new LocationComp(RAPUNZEL, db, world, OBEN_IM_ALTEN_TURM, VOR_DEM_ALTEN_TURM,
                         false);

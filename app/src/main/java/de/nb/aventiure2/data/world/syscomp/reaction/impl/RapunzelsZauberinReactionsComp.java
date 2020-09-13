@@ -50,6 +50,7 @@ import static de.nb.aventiure2.data.world.time.AvTimeSpan.noTime;
 import static de.nb.aventiure2.data.world.time.AvTimeSpan.secs;
 import static de.nb.aventiure2.german.base.StructuralElement.CHAPTER;
 import static de.nb.aventiure2.german.base.StructuralElement.PARAGRAPH;
+import static de.nb.aventiure2.german.base.StructuralElement.SENTENCE;
 import static de.nb.aventiure2.german.description.AllgDescription.neuerSatz;
 import static de.nb.aventiure2.german.description.DuDescription.du;
 
@@ -198,9 +199,15 @@ public class RapunzelsZauberinReactionsComp
         if (world.isOrHasRecursiveLocation(scTo, scFrom)) {
             // Der Spieler ist nur im selben Raum auf einen Tisch gestiegen o.Ä.,
             // die Zauberin wurde bereits beschrieben.
+            if (world.isOrHasRecursiveLocation(scTo, VOR_DEM_ALTEN_TURM) &&
+                    stateComp.hasState(AUF_DEM_RUECKWEG_VON_RAPUNZEL)) {
+                // Die Zauberin merkt, dass der SC unter den Bäumen verborgen war.
+                // Sie ahnt, dass er sie wohl beobachtet hat.
+                return zauberinZaubertVergessenszauber();
+            }
+
             return noTime();
         }
-
 
         return movementComp.narrateAndDoSCTrifftMovingGOInTo(scFrom, scTo);
     }
@@ -229,20 +236,112 @@ public class RapunzelsZauberinReactionsComp
             return noTime();
         }
 
+        return zauberinZaubertVergessenszauber();
+    }
+
+    @Override
+    public AvTimeSpan onStateChanged(final IHasStateGO<?> gameObject, final Enum<?> oldState,
+                                     final Enum<?> newState) {
+        if (!gameObject.is(RAPUNZEL)) {
+            return noTime();
+        }
+
+        if (stateComp.hasState(AUF_DEM_WEG_ZU_RAPUNZEL)) {
+            return onRapunzelStateChangedAufDemWegZuRapunzel();
+        }
+
+        if (stateComp.hasState(AUF_DEM_RUECKWEG_VON_RAPUNZEL)) {
+            return onRapunzelStateChangedAufDemRueckwegVonRapunzel();
+        }
+
+        return noTime();
+    }
+
+    private AvTimeSpan onRapunzelStateChangedAufDemWegZuRapunzel() {
+        if (!locationComp.hasLocation(VOR_DEM_ALTEN_TURM)) {
+            return noTime();
+        }
+
+        return zauberinSteigtAnDenHaarenZuRapunzelHinauf();
+    }
+
+    private AvTimeSpan zauberinSteigtAnDenHaarenZuRapunzelHinauf() {
         AvTimeSpan timeElapsed = noTime();
+        if (loadSC().locationComp().hasRecursiveLocation(VOR_DEM_ALTEN_TURM)) {
+            final Nominalphrase desc = getDescription(true);
+            timeElapsed = timeElapsed.plus(n.add(
+                    du("siehst",
+                            desc.akk()
+                                    + " an den Haarflechten hinaufsteigen", mins(4))));
+
+        }
+
+        timeElapsed = timeElapsed.plus(
+                locationComp.narrateAndSetLocation(OBEN_IM_ALTEN_TURM));
+
+        return timeElapsed.plus(stateComp.narrateAndSetState(BEI_RAPUNZEL_OBEN_IM_TURM));
+    }
+
+    private AvTimeSpan onRapunzelStateChangedAufDemRueckwegVonRapunzel() {
+        if (!locationComp.hasLocation(OBEN_IM_ALTEN_TURM)) {
+            return noTime();
+        }
+
+        return zauberinSteigtAnDenHaarenHerab();
+    }
+
+    private AvTimeSpan zauberinSteigtAnDenHaarenHerab() {
+        AvTimeSpan extraTime = noTime();
+
+        if (loadSC().locationComp().hasRecursiveLocation(VOR_DEM_ALTEN_TURM)) {
+            final Nominalphrase desc = getDescription();
+            extraTime = extraTime.plus(n.add(
+                    du("siehst",
+                            ", wie "
+                                    + desc.nom()
+                                    + " an den Haaren herabsteigt",
+                            mins(1))
+                            .komma()
+                            .beendet(SENTENCE)
+                            .phorikKandidat(desc, RAPUNZELS_ZAUBERIN)));
+            if (loadSC().locationComp().hasRecursiveLocation(
+                    VOR_DEM_ALTEN_TURM_SCHATTEN_DER_BAEUME) &&
+                    !mentalModelComp.assumesLocation(SPIELER_CHARAKTER,
+                            VOR_DEM_ALTEN_TURM_SCHATTEN_DER_BAEUME)) {
+                extraTime = extraTime.plus(n.add(
+                        neuerSatz(getAnaphPersPronWennMglSonstDescription(
+                                true)
+                                + " scheint dich nicht zu bemerken", noTime())));
+                return extraTime.plus(
+                        locationComp.narrateAndSetLocation(VOR_DEM_ALTEN_TURM));
+            }
+
+            extraTime = extraTime.plus(locationComp.narrateAndSetLocation(VOR_DEM_ALTEN_TURM));
+
+            extraTime = zauberinZaubertVergessenszauber();
+        }
+
+        return extraTime.plus(movementComp.startMovement(
+                db.nowDao().now().plus(extraTime),
+                DRAUSSEN_VOR_DEM_SCHLOSS));
+    }
+
+    private AvTimeSpan zauberinZaubertVergessenszauber() {
+        AvTimeSpan timeElapsed;
         if (locationComp.hasRecursiveLocation(OBEN_IM_ALTEN_TURM)) {
-            timeElapsed = timeElapsed.plus(
+            timeElapsed =
                     n.add(neuerSatz("Jetzt schaut oben aus dem Turmfenster die "
                                     + "magere Frau heraus. "
                                     + "Kurz sucht ihr Blick umher, dann sieht sie dich direkt an. "
-                                    + "Ihr Augen sind - du kannst deinen Blick gar nicht abwenden…",
-                            mins(5))));
+                                    + "Ihre Augen sind - du kannst deinen Blick gar nicht abwenden…",
+                            mins(5)));
         } else {
-            timeElapsed = timeElapsed.plus(
-                    n.add(neuerSatz(PARAGRAPH, "Die magere Frau sieht dich mit einem Mal "
-                                    + "direkt an. Ihr Augen sind - du kannst deinen Blick "
+            timeElapsed =
+                    n.add(neuerSatz(PARAGRAPH,
+                            "Die magere Frau sieht dich mit einem Mal "
+                                    + "direkt an. Ihre Augen sind - du kannst deinen Blick "
                                     + "gar nicht abwenden…",
-                            mins(5))));
+                            mins(5)));
         }
 
         // Spieler wird verzaubert und vergisst alles.
@@ -252,7 +351,8 @@ public class RapunzelsZauberinReactionsComp
         db.counterDao().reset(VorDemTurmConnectionComp.COUNTER_SC_HOERT_RAPUNZELS_GESANG);
 
         // Die Zauberin ist schon weit auf dem Rückweg
-        timeElapsed = timeElapsed.plus(stateComp.narrateAndSetState(AUF_DEM_RUECKWEG_VON_RAPUNZEL));
+        timeElapsed = timeElapsed.plus(
+                stateComp.narrateAndSetState(AUF_DEM_RUECKWEG_VON_RAPUNZEL));
         timeElapsed = timeElapsed.plus(
                 locationComp.narrateAndSetLocation(IM_WALD_NAHE_DEM_SCHLOSS));
         timeElapsed.plus(
@@ -279,24 +379,6 @@ public class RapunzelsZauberinReactionsComp
                                 + "eigentlich gerade vor? Ob der Turm wohl "
                                 + "bewohnt ist? Niemand ist zu sehen",
                         secs(15))));
-    }
-
-    @Override
-    public AvTimeSpan onStateChanged(final IHasStateGO<?> gameObject, final Enum<?> oldState,
-                                     final Enum<?> newState) {
-        if (!gameObject.is(RAPUNZEL)) {
-            return noTime();
-        }
-
-        if (!stateComp.hasState(AUF_DEM_WEG_ZU_RAPUNZEL)) {
-            return noTime();
-        }
-
-        if (!locationComp.hasLocation(VOR_DEM_ALTEN_TURM)) {
-            return noTime();
-        }
-
-        return zauberinSteigtAnDenHaarenZuRapunzelHinauf();
     }
 
     @Override
@@ -416,43 +498,16 @@ public class RapunzelsZauberinReactionsComp
         //  noch ein paar Mal und geht am Ende davon aus, dass Rapunzel befreit wurde.
     }
 
-    private AvTimeSpan zauberinSteigtAnDenHaarenZuRapunzelHinauf() {
-        AvTimeSpan timeElapsed = noTime();
-        if (loadSC().locationComp().hasRecursiveLocation(VOR_DEM_ALTEN_TURM)) {
-            final Nominalphrase desc = getDescription(true);
-            timeElapsed = timeElapsed.plus(n.add(
-                    du("siehst",
-                            desc.akk()
-                                    + " an den Haarflechten hinaufsteigen", mins(4))));
-
-        }
-
-        timeElapsed = timeElapsed.plus(
-                locationComp.narrateAndSetLocation(OBEN_IM_ALTEN_TURM));
-
-        return timeElapsed.plus(stateComp.narrateAndSetState(BEI_RAPUNZEL_OBEN_IM_TURM));
-    }
-
     private AvTimeSpan onTimePassed_BeiRapunzelObenImTurm(final AvDateTime now) {
         if (now.isBefore(stateComp.getStateDateTime().plus(BESUCHSDAUER))) {
             // Zauberin bleibt oben im Turm
             return noTime();
         }
 
-        // Zauberin verlässt Rapunzel
-        AvTimeSpan timeElapsed = stateComp.narrateAndSetState(AUF_DEM_RUECKWEG_VON_RAPUNZEL);
-
-        if (locationComp.hasRecursiveLocation(OBEN_IM_ALTEN_TURM)) {
-            // STORY Rapunzel lässt die Haare wieder
-            //  herunter. Als Reaktion steigt die Zauberin an den Haaren wieder herunter und
-            //  beginnt wegzugehen. Rapunzel zieht die Haare wieder hoch.
-
-            timeElapsed = timeElapsed.plus(
-                    locationComp.narrateAndSetLocation(VOR_DEM_ALTEN_TURM));
-        }
-
-        return timeElapsed.plus(
-                movementComp.startMovement(now, DRAUSSEN_VOR_DEM_SCHLOSS));
+        // Zauberin macht Anstalten, Rapunzel zu verlassen.
+        // Als Reaktion (!) darauf lässt Rapunzel ihr Haar zum Abstieg hinunter,
+        // Die Zauberin klettert daran herunter etc.
+        return stateComp.narrateAndSetState(AUF_DEM_RUECKWEG_VON_RAPUNZEL);
     }
 
     private AvTimeSpan onTimePassed_fromAufDemRueckwegVonRapunzel(final AvDateTime now) {

@@ -56,7 +56,7 @@ public enum StoringPlaceType {
     STEINIGER_GRUND_VOR_TURM("auf dem steinigen Grund vor dem Turm",
             "auf den steinigen Grund vor dem Turm", VOR_TURM),
     TURMZIMMER("im Turmzimmer", "in das Turmzimmer"),
-    TEPPICHBODEN_OBEN_IM_TURM("auf den Teppich", "auf dem Teppich", TURMZIMMER),
+    TEPPICHBODEN_OBEN_IM_TURM("auf dem Teppich", "auf den Teppich", TURMZIMMER),
     UNTER_DEM_BAUM("unter dem Baum", "unter den Baum", AUFHEBEN);
 
     private final String wo;

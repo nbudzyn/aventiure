@@ -182,7 +182,9 @@ public class Walkthrough {
                     "Rasten",
                     "Rasten", // Zauberin geht
                     "Rasten",
-                    "Rufen: „Lass dein Haar herunter.“"
+                    "Aus dem Schatten der Bäume treten",
+                    "Rufen: „Lass dein Haar herunter.“",
+                    "An den Haaren hinaufsteigen"
             );
 
 
@@ -204,7 +206,7 @@ public class Walkthrough {
 
     public static final Walkthrough FULL =
             ANFANG_BIS_ERSTE_RAPUNZELRUF_BEOBACHTUNG
-                    .append(PRINZABFAHRT_BIS_ERSTE_RAPUNZELRUF_BEOBACHTUNG);
+                    .append(ERSTE_RAPUNZELRUF_BEOBACHTUNG_BIS_ENDE);
 
     private final ImmutableList<String> steps;
 

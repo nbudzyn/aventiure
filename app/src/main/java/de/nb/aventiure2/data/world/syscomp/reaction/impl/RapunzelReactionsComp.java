@@ -11,13 +11,17 @@ import de.nb.aventiure2.data.world.syscomp.location.LocationComp;
 import de.nb.aventiure2.data.world.syscomp.reaction.AbstractDescribableReactionsComp;
 import de.nb.aventiure2.data.world.syscomp.reaction.interfaces.IMovementReactions;
 import de.nb.aventiure2.data.world.syscomp.reaction.interfaces.IRufReactions;
+import de.nb.aventiure2.data.world.syscomp.reaction.interfaces.IStateChangedReactions;
 import de.nb.aventiure2.data.world.syscomp.reaction.interfaces.ITimePassedReactions;
 import de.nb.aventiure2.data.world.syscomp.reaction.interfaces.Ruftyp;
 import de.nb.aventiure2.data.world.syscomp.spatialconnection.impl.VorDemTurmConnectionComp;
+import de.nb.aventiure2.data.world.syscomp.state.IHasStateGO;
 import de.nb.aventiure2.data.world.syscomp.state.impl.RapunzelStateComp;
+import de.nb.aventiure2.data.world.syscomp.state.impl.RapunzelsZauberinState;
 import de.nb.aventiure2.data.world.syscomp.storingplace.ILocationGO;
 import de.nb.aventiure2.data.world.time.AvDateTime;
 import de.nb.aventiure2.data.world.time.AvTimeSpan;
+import de.nb.aventiure2.german.base.Nominalphrase;
 
 import static de.nb.aventiure2.data.world.base.Lichtverhaeltnisse.HELL;
 import static de.nb.aventiure2.data.world.gameobject.World.IM_WALD_NAHE_DEM_SCHLOSS;
@@ -36,6 +40,7 @@ import static de.nb.aventiure2.data.world.time.AvTime.oClock;
 import static de.nb.aventiure2.data.world.time.AvTimeSpan.mins;
 import static de.nb.aventiure2.data.world.time.AvTimeSpan.noTime;
 import static de.nb.aventiure2.data.world.time.AvTimeSpan.secs;
+import static de.nb.aventiure2.german.base.NumerusGenus.PL_MFN;
 import static de.nb.aventiure2.german.base.StructuralElement.PARAGRAPH;
 import static de.nb.aventiure2.german.base.StructuralElement.SENTENCE;
 import static de.nb.aventiure2.german.description.AllgDescription.neuerSatz;
@@ -46,7 +51,9 @@ import static de.nb.aventiure2.german.description.DuDescription.du;
  */
 public class RapunzelReactionsComp
         extends AbstractDescribableReactionsComp
-        implements IMovementReactions, IRufReactions, ITimePassedReactions {
+        implements IMovementReactions, IRufReactions,
+        IStateChangedReactions, ITimePassedReactions {
+    private static final AvTimeSpan DAUER_WIE_LANGE_DIE_HAARE_MAX_UNTEN_BLEIBEN = mins(3);
 
     private final RapunzelStateComp stateComp;
     private final LocationComp locationComp;
@@ -156,27 +163,55 @@ public class RapunzelReactionsComp
         if (locationComp.hasRecursiveLocation(OBEN_IM_ALTEN_TURM) &&
                 from != null && from.is(VOR_DEM_ALTEN_TURM) &&
                 to.is(OBEN_IM_ALTEN_TURM)) {
-            return zauberinBesuchtRapunzelImAltenTurm();
+            AvTimeSpan timeElapsed = rapunzelZiehtHaareWiederHoch();
+
+            if (!world.loadSC().memoryComp().isKnown(RAPUNZELRUF)) {
+                timeElapsed = timeElapsed.plus(
+                        n.add(neuerSatz(
+                                "„Das ist also die Leiter, auf welcher man hinaufkommt!“, denkst du "
+                                        + "bei dir", secs(5))
+                                .undWartest()));
+
+                world.upgradeKnownToSC(RAPUNZELRUF);
+            }
+
+            return timeElapsed;
+        }
+
+        if (stateComp.hasState(HAARE_VOM_TURM_HERUNTERGELASSEN) &&
+                from != null && from.is(OBEN_IM_ALTEN_TURM) &&
+                to.is(VOR_DEM_ALTEN_TURM)) {
+            return rapunzelZiehtHaareWiederHoch();
         }
 
         return noTime();
     }
 
-    private AvTimeSpan zauberinBesuchtRapunzelImAltenTurm() {
+    private AvTimeSpan rapunzelZiehtHaareWiederHoch() {
         AvTimeSpan timeElapsed = stateComp.narrateAndSetState(STILL);
 
+        // TODO SC erlebt das von OBEN_IM_TURM mit.
         if (loadSC().locationComp().hasRecursiveLocation(VOR_DEM_ALTEN_TURM)) {
             timeElapsed = timeElapsed.plus(
-                    n.add(neuerSatz(
+                    n.addAlt(neuerSatz(
                             "Dann "
-                                    // TODO Dies ist ein Beispiel für "dann", das nur Sinn ergibt, wenn
-                                    //  die Zauberin vorher etwas getan hat - aber nicht, wenn der SC vorher
+                                    // TODO Dies ist ein Beispiel für "dann", das nur Sinn
+                                    //  ergibt, wenn
+                                    //  die Zauberin vorher etwas getan hat - aber nicht, wenn
+                                    //  der SC vorher
                                     //  etwas getan hat!
-                                    + "verschwinden die prächtigen Haare wieder oben im Fenster. "
-                                    + "„Das ist also die Leiter, auf welcher man hinaufkommt!“, denkst du "
-                                    + "bei dir", secs(20))
-                            .undWartest()));
-            world.upgradeKnownToSC(RAPUNZELRUF);
+                                    + "verschwinden die prächtigen Haare wieder oben im Fenster.",
+                            secs(15)),
+                            du("schaust",
+                                    "fasziniert zu, wie die langen Haare wieder in "
+                                            + "das Turmfenster "
+                                            + "zurückgezogen werden",
+                                    "fasziniert",
+                                    secs(15)),
+                            neuerSatz("Nur ein paar Augenblicke, dann sind die Haare "
+                                            + "wieder oben im Fenster verschwunden",
+                                    secs(10))
+                    ));
         }
 
         return timeElapsed;
@@ -226,14 +261,76 @@ public class RapunzelReactionsComp
             }
         }
 
-        // STORY Der Spieler kann sich an den Haaren hochziehen!
-
         return extraTime.plus(
                 stateComp.narrateAndSetState(HAARE_VOM_TURM_HERUNTERGELASSEN));
     }
 
     @Override
+    public AvTimeSpan onStateChanged(final IHasStateGO<?> gameObject, final Enum<?> oldState,
+                                     final Enum<?> newState) {
+        if (gameObject.is(RAPUNZELS_ZAUBERIN)) {
+            return onZauberinStateChanged(
+                    (RapunzelsZauberinState) oldState, (RapunzelsZauberinState) newState);
+        }
+
+        return noTime();
+    }
+
+    private AvTimeSpan onZauberinStateChanged(
+            final RapunzelsZauberinState oldState, final RapunzelsZauberinState newState) {
+        if (newState == RapunzelsZauberinState.AUF_DEM_RUECKWEG_VON_RAPUNZEL) {
+            return onZauberinStateChangedToAufDemRueckwegVonRapunzel();
+        }
+
+        return noTime();
+    }
+
+    private AvTimeSpan onZauberinStateChangedToAufDemRueckwegVonRapunzel() {
+        if (loadZauberin().locationComp()
+                .hasRecursiveLocation(OBEN_IM_ALTEN_TURM) &&
+                locationComp.hasRecursiveLocation(OBEN_IM_ALTEN_TURM) &&
+                stateComp.hasState(SINGEND, STILL)) {
+            return rapunzelLaesstHaareZumAbstiegHerunter();
+        }
+
+        return noTime();
+    }
+
+    private AvTimeSpan rapunzelLaesstHaareZumAbstiegHerunter() {
+        AvTimeSpan extraTime = noTime();
+
+        if (loadSC().locationComp().hasRecursiveLocation(VOR_DEM_ALTEN_TURM)) {
+            extraTime = extraTime.plus(n.add(
+                    du(PARAGRAPH, "siehst", " über dir eine Bewegung: "
+                                    + "Aus dem Turmfenster fallen wieder die "
+                                    + "langen, golden glänzenden Haare bis zum Boden herab",
+                            secs(10))
+                            .dann()));
+        } else if (loadSC().locationComp().hasRecursiveLocation(OBEN_IM_ALTEN_TURM)) {
+            final Nominalphrase rapunzelDesc = getDescription(true);
+            extraTime = extraTime.plus(n.add(
+                    neuerSatz(rapunzelDesc.nom() +
+                                    " wickelt "
+                                    + rapunzelDesc.possArt().vor(PL_MFN) // "ihre"
+                                    + " Haare wieder um den Haken am Fenster",
+                            secs(10))
+                            .phorikKandidat(rapunzelDesc, RAPUNZEL)));
+        }
+
+        return extraTime.plus(
+                stateComp.narrateAndSetState(HAARE_VOM_TURM_HERUNTERGELASSEN));
+        // Ggf. steigt die Zauberin als Reaktion daran herunter
+    }
+
+    @Override
     public AvTimeSpan onTimePassed(final AvDateTime lastTime, final AvDateTime now) {
+        if (stateComp.hasState(HAARE_VOM_TURM_HERUNTERGELASSEN) &&
+                now.isAfter(
+                        stateComp.getStateDateTime().plus(
+                                DAUER_WIE_LANGE_DIE_HAARE_MAX_UNTEN_BLEIBEN))) {
+            return rapunzelZiehtHaareWiederHoch();
+        }
+
         if (rapunzelMoechteSingen(now)) {
             return onTimePassed_RapunzelMoechteSingen(lastTime, now);
         }

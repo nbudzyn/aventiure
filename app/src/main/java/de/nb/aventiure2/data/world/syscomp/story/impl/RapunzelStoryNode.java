@@ -1,5 +1,6 @@
 package de.nb.aventiure2.data.world.syscomp.story.impl;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import com.google.common.collect.ImmutableList;
@@ -12,6 +13,8 @@ import de.nb.aventiure2.data.narration.NarrationDao;
 import de.nb.aventiure2.data.world.base.GameObjectId;
 import de.nb.aventiure2.data.world.gameobject.World;
 import de.nb.aventiure2.data.world.syscomp.location.ILocatableGO;
+import de.nb.aventiure2.data.world.syscomp.state.IHasStateGO;
+import de.nb.aventiure2.data.world.syscomp.state.impl.RapunzelState;
 import de.nb.aventiure2.data.world.syscomp.story.IStoryNode;
 import de.nb.aventiure2.data.world.syscomp.story.Story;
 import de.nb.aventiure2.data.world.time.AvTimeSpan;
@@ -19,9 +22,12 @@ import de.nb.aventiure2.german.description.AbstractDescription;
 
 import static com.google.common.collect.ImmutableList.builder;
 import static de.nb.aventiure2.data.world.gameobject.World.DRAUSSEN_VOR_DEM_SCHLOSS;
+import static de.nb.aventiure2.data.world.gameobject.World.RAPUNZEL;
+import static de.nb.aventiure2.data.world.gameobject.World.RAPUNZELRUF;
 import static de.nb.aventiure2.data.world.gameobject.World.RAPUNZELS_ZAUBERIN;
 import static de.nb.aventiure2.data.world.gameobject.World.SPIELER_CHARAKTER;
 import static de.nb.aventiure2.data.world.gameobject.World.VOR_DEM_ALTEN_TURM;
+import static de.nb.aventiure2.data.world.syscomp.state.impl.RapunzelState.HAARE_VOM_TURM_HERUNTERGELASSEN;
 import static de.nb.aventiure2.data.world.time.AvTimeSpan.noTime;
 import static de.nb.aventiure2.german.base.StructuralElement.PARAGRAPH;
 import static de.nb.aventiure2.german.description.AllgDescription.paragraph;
@@ -48,11 +54,12 @@ public enum RapunzelStoryNode implements IStoryNode {
     ZAUBERIN_HEIMLICH_BEIM_RUFEN_BEOBACHTET(10, VOR_DEM_ALTEN_TURM,
             RapunzelStoryNode::narrateAndDoHintAction_ZauberinHeimlichBeimRufenBeobachtet,
             TURM_GEFUNDEN
-    );
-    // STORY "und du steigst hinauf.
-    //  Durch das Fensterchen kletterst du in eine kleine Kammer:
-    //  Tisch, Stuhl, ein Bett.
-    //  Am Fester sitzt eine junge Frau, so schön als
+    ),
+    ZU_RAPUNZEL_HINAUFGESTIEGEN(10, VOR_DEM_ALTEN_TURM,
+            RapunzelStoryNode::narrateAndDoHintAction_ZuRapunzelHinaufgestiegen,
+            ZAUBERIN_HEIMLICH_BEIM_RUFEN_BEOBACHTET);
+
+    // STORY "Am Fenster sitzt eine junge Frau, so schön als
     //  du unter der Sonne noch keine gesehen hast.
     //  Ihre Haare, fein wie gesponnen
     //  Gold, hat sie um einen Fensterhaken gewickelt, so konntest du
@@ -92,7 +99,6 @@ public enum RapunzelStoryNode implements IStoryNode {
     //  "du warst mich heute schwer heraufzuziehen"
     //  Unter dem Bett verstecken
     //  "wie deine Augen noch nie eine erblickt hatten"
-
 
     // STORY Rapunzel: Will sich vom Spieler aus dem Wald führen lassen
 
@@ -172,10 +178,11 @@ public enum RapunzelStoryNode implements IStoryNode {
     private static AvTimeSpan narrateAndDoHintAction_TurmGefunden(
             final AvDatabase db, final NarrationDao n, final World world) {
         final ImmutableList.Builder<AbstractDescription<?>> alt = builder();
-        alt.add(paragraph("Hast du den Wald eigentlich schon überall erkundet?"));
-        alt.add(paragraph("Was gibt es wohl noch alles im Wald zu entdecken, fragst du dich"));
-        alt.add(paragraph("Dir kommt der geheimnisvolle Turm in den Sinn - du wirst sein "
-                + "Geheimnis bestimmt noch lüften!"));
+        alt.add(
+                paragraph("Hast du den Wald eigentlich schon überall erkundet?"),
+                paragraph("Was gibt es wohl noch alles im Wald zu entdecken, fragst du dich"),
+                paragraph("Dir kommt der geheimnisvolle Turm in den Sinn - du wirst sein "
+                        + "Geheimnis bestimmt noch lüften!"));
 
         // STORY (bis SC Rapunzel gefunden hat) Mutter sammelt im
         //  Wald Holz und klagt ihr Leid: Tochter an Zauberin verloren
@@ -187,8 +194,8 @@ public enum RapunzelStoryNode implements IStoryNode {
         final ImmutableList.Builder<AbstractDescription<?>> alt = builder();
 
         if (world.loadSC().locationComp().hasRecursiveLocation(VOR_DEM_ALTEN_TURM)) {
-            alt.add(paragraph("Ob der Turm wohl bewohnt ist?"));
-            alt.add(paragraph("Eine Rast würde dir sicher guttun"));
+            alt.add(paragraph("Ob der Turm wohl bewohnt ist?"),
+                    paragraph("Eine Rast würde dir sicher guttun"));
         } else {
             alt.add(paragraph(
                     "Dir kommt noch einmal der alte Turm auf der Hügelkuppe "
@@ -222,14 +229,47 @@ public enum RapunzelStoryNode implements IStoryNode {
                     .beendet(PARAGRAPH));
         }
 
-        final ILocatableGO zauberin = (ILocatableGO) world.load(RAPUNZELS_ZAUBERIN);
-        if (zauberin.locationComp()
-                .hasSameUpperMostLocationAs(SPIELER_CHARAKTER) &&
+        if (loadZauberin(world).locationComp().hasSameUpperMostLocationAs(SPIELER_CHARAKTER) &&
                 // Vor dem Schloss fällt sie dem SC nicht auf
-                !zauberin.locationComp().hasRecursiveLocation(DRAUSSEN_VOR_DEM_SCHLOSS)) {
-            alt.add(paragraph("Was will die Frau bloß?"));
-            alt.add(paragraph("Was will die Frau wohl?"));
-            alt.add(paragraph("Was mag die Frau wollen?"));
+                !loadZauberin(world).locationComp()
+                        .hasRecursiveLocation(DRAUSSEN_VOR_DEM_SCHLOSS)) {
+            alt.add(paragraph("Was will die Frau bloß?"),
+                    paragraph("Was will die Frau wohl?"),
+                    paragraph("Was mag die Frau wollen?"));
+        }
+
+        return n.addAlt(alt);
+    }
+
+    private static AvTimeSpan narrateAndDoHintAction_ZuRapunzelHinaufgestiegen(
+            final AvDatabase db, final NarrationDao n, final World world) {
+        final ImmutableList.Builder<AbstractDescription<?>> alt = builder();
+        final IHasStateGO<RapunzelState> rapunzel = loadRapunzel(world);
+
+        if (world.loadSC().locationComp().hasRecursiveLocation(VOR_DEM_ALTEN_TURM) &&
+                rapunzel.stateComp().hasState(HAARE_VOM_TURM_HERUNTERGELASSEN)) {
+            alt.add(paragraph("Warum nicht auch die Haare hinaufsteigen?"));
+        } else if (world.loadSC().memoryComp().isKnown(RAPUNZELRUF)) {
+            alt.add(paragraph(
+                    "Du bist dir plötzlich sicher: Wenn dich jemand in dieser Welt braucht, "
+                            + "wartet er – wartet sie! – oben im Turm auf dich!"),
+                    paragraph(
+                            "Plötzlich steht es dir klar vor Augen: Du musst in den Turm steigen – "
+                                    +
+                                    "du weißt doch, was du zu rufen hast! Du wirst doch keine Angst "
+                                    + "vor der dürren Frau haben?"));
+
+        } else {
+            // SC hat alles vergessen
+            alt.add(paragraph(
+                    "Hin und wieder musst du an den alten Turm denken. Du hast das Gefühl, etwas "
+                            + "Wichtiges vergessen zu haben, aber es will dir partout nicht "
+                            + "einfallen"),
+                    paragraph(
+                            "Manachmal hast du das Gefühl: Du hast noch eine wichtige Rolle "
+                                    + "zu spielen. Aber wenn du genauer darüber nachdenkst, weißt "
+                                    + "du plötzlich nicht weiter. Es ist wie verhext"));
+            alt.addAll(altTurmWohnenHineinHeraus(world));
         }
 
         return n.addAlt(alt);
@@ -257,5 +297,15 @@ public enum RapunzelStoryNode implements IStoryNode {
         }
 
         return alt.build();
+    }
+
+    @NonNull
+    private static IHasStateGO<RapunzelState> loadRapunzel(final World world) {
+        return (IHasStateGO<RapunzelState>) world.load(RAPUNZEL);
+    }
+
+    @NonNull
+    private static ILocatableGO loadZauberin(final World world) {
+        return (ILocatableGO) world.load(RAPUNZELS_ZAUBERIN);
     }
 }
