@@ -10,6 +10,8 @@ import de.nb.aventiure2.data.world.base.GameObjectId;
 import de.nb.aventiure2.data.world.gameobject.World;
 import de.nb.aventiure2.data.world.time.AvTimeSpan;
 
+import static de.nb.aventiure2.data.world.time.AvTimeSpan.noTime;
+
 /**
  * Ein einzelner Schritt, der im Rahmen einer Story (d.h. eines Mörchens o.Ä.)
  * erreicht werden kann.
@@ -17,17 +19,21 @@ import de.nb.aventiure2.data.world.time.AvTimeSpan;
  * Alle Implementierungen sollen {@link Enum}s sein.
  */
 public interface IStoryNode {
+    @FunctionalInterface
     interface IHinter {
         AvTimeSpan narrateAndDoHintAction(final AvDatabase db,
                                           NarrationDao n,
                                           final World world);
     }
 
-    static int calcExpAchievementSteps(final Iterable<? extends IStoryNode> reachableStoryNodes) {
+    static int calcExpAchievementSteps(final Iterable<? extends IStoryNode> storyNodes) {
         int res = 0;
 
-        for (final IStoryNode node : reachableStoryNodes) {
-            res = Math.max(res, node.getExpAchievementSteps());
+        for (final IStoryNode node : storyNodes) {
+            @Nullable final Integer expAchievementSteps = node.getExpAchievementSteps();
+            if (expAchievementSteps != null) {
+                res = Math.max(res, expAchievementSteps);
+            }
         }
 
         return res;
@@ -56,7 +62,8 @@ public interface IStoryNode {
      * Aktion neue Möglichkeiten in der Welt auftun)
      * </ul>
      */
-    int getExpAchievementSteps();
+    @Nullable
+    Integer getExpAchievementSteps();
 
     boolean beendetStory();
 
@@ -95,12 +102,17 @@ public interface IStoryNode {
         // - Andeutung für den Lösungsansatz
 
         // Allgemeinere Ideen:
-        // - Die Welt wird modifiziert, so dass eine andere Geschichte gestartet wird oder
+        // - Die Welt wird modifiziert, sodass eine andere Geschichte gestartet wird oder
         // weiterläuft, dass es also mehr zu erleben gibt
         // STORY Alternativ: Nichts tun, vielleicht passt es im nächsten Schritt besser
 
-        return getHinter().narrateAndDoHintAction(db, db.narrationDao(), world);
+        @Nullable final IHinter hinter = getHinter();
+        if (hinter == null) {
+            return noTime();
+        }
+        return hinter.narrateAndDoHintAction(db, db.narrationDao(), world);
     }
 
+    @Nullable
     IHinter getHinter();
 }

@@ -64,7 +64,9 @@ class StoryData {
     }
 
     boolean isReachable(final IStoryNode node) {
-        if (state == BEENDET || isReached(node) || !allNodesReachedRequiredFor(node)) {
+        if (state == BEENDET || isReached(node) || !allNodesReachedRequiredFor(node) ||
+                // oder der Node wird automatisch freigeschaltet
+                node.getExpAchievementSteps() == null) {
             return false;
         }
 

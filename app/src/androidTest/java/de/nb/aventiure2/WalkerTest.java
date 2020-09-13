@@ -31,6 +31,7 @@ import de.nb.aventiure2.scaction.devhelper.chooser.impl.WalkthroughActionChooser
 import de.nb.aventiure2.score.ScoreService;
 
 import static junit.framework.TestCase.assertEquals;
+import static junit.framework.TestCase.assertFalse;
 import static junit.framework.TestCase.fail;
 
 @RunWith(AndroidJUnit4.class)
@@ -63,6 +64,7 @@ public class WalkerTest {
         doWalkthrough(Walkthrough.FULL);
 
         assertEquals(100, scoreService.getScore());
+        assertFalse(db.narrationDao().requireNarration().getText().contains("@"));
     }
 
     @Test

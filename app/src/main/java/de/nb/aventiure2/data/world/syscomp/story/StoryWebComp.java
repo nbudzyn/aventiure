@@ -112,7 +112,18 @@ public class StoryWebComp extends AbstractStatefulComponent<StoryWebPCD> {
             return noTime();
         }
 
-        final AvTimeSpan extraTimeElapsed = storyNode.narrateAndDoHintAction(db, world);
+        // Nicht alle Geschichten sind von Anfang an "verfügbar", und manchmal
+        // kann der Spieler sie auch nur bis zu einem bestimmten Punkt spielen.
+        // Wenn aber häufig Tipps notwendig waren, der Spieler also trotz Tipps
+        // nicht oder nur langsam weiterkommt, versuchen wir, eine solche Geschichte
+        // "weiterzusetzen" (z.B. zu starten).
+        // (Das wird wohl eher selten der Fall sein.)
+        @Nullable AvTimeSpan extraTimeElapsed =
+                Story.checkAndAdvanceAStoryIfAppropriate(db, n, world);
+        if (extraTimeElapsed == null) {
+            // Das hier ist der Regelfall!
+            extraTimeElapsed = storyNode.narrateAndDoHintAction(db, world);
+        }
 
         getPcd().setLastHintActionStepCount(scActionStepCountDao.stepCount());
 

@@ -13,6 +13,7 @@ import de.nb.aventiure2.data.world.syscomp.reaction.interfaces.IStateChangedReac
 import de.nb.aventiure2.data.world.syscomp.state.IHasStateGO;
 import de.nb.aventiure2.data.world.syscomp.state.impl.FroschprinzState;
 import de.nb.aventiure2.data.world.syscomp.state.impl.RapunzelState;
+import de.nb.aventiure2.data.world.syscomp.state.impl.RapunzelsZauberinState;
 import de.nb.aventiure2.data.world.syscomp.state.impl.SchlossfestState;
 import de.nb.aventiure2.data.world.syscomp.storingplace.ILocationGO;
 import de.nb.aventiure2.data.world.syscomp.story.IStoryNode;
@@ -99,7 +100,11 @@ public class StoryWebReactionsComp
                 world.isOrHasRecursiveLocation(from, UNTEN_IM_BRUNNEN) &&
                 world.isOrHasRecursiveLocation(to, IM_WALD_BEIM_BRUNNEN)) {
             reachStoryNode(FroschkoenigStoryNode.FROSCH_HAT_ETWAS_AUS_BRUNNEN_GEHOLT);
-            return noTime();
+            // Für den nächsten Schritt in der Geschichte muss man die Nacht durchbringen
+            // und das kann eine Zeitlang dauern. Daher "advancen" wir hier die
+            // Rapunzel-Story (sofern nicht ohnehin schon geschehen).
+            return
+                    RapunzelStoryNode.ensureAdvancedToZauberinMachtRapunzelbesuche(db, world);
         }
 
         // Rapuzels Zauberin hat einen anderen Ort erreicht -
@@ -205,15 +210,21 @@ public class StoryWebReactionsComp
             );
         }
 
+        if (gameObject.is(SCHLOSSFEST)) {
+            return onSchlossfestStateChanged(
+                    (SchlossfestState) oldState, (SchlossfestState) newState);
+        }
+
         if (gameObject.is(RAPUNZEL)) {
             return onRapunzelStateChanged(
                     (RapunzelState) oldState, (RapunzelState) newState
             );
         }
 
-        if (gameObject.is(SCHLOSSFEST)) {
-            return onSchlossfestStateChanged(
-                    (SchlossfestState) oldState, (SchlossfestState) newState);
+        if (gameObject.is(RAPUNZELS_ZAUBERIN)) {
+            return onRapunzelsZauberinStateChanged(
+                    (RapunzelsZauberinState) oldState, (RapunzelsZauberinState) newState
+            );
         }
 
         return noTime();
@@ -244,6 +255,16 @@ public class StoryWebReactionsComp
             // STORY und der Spieler war wach oder ist rechtzeitig aufgewacht...
         ) {
             reachStoryNode(RapunzelStoryNode.ZAUBERIN_HEIMLICH_BEIM_RUFEN_BEOBACHTET);
+            return noTime();
+        }
+
+        return noTime();
+    }
+
+    private AvTimeSpan onRapunzelsZauberinStateChanged(
+            final RapunzelsZauberinState oldState, final RapunzelsZauberinState newState) {
+        if (newState == RapunzelsZauberinState.VOR_DEM_NAECHSTEN_RAPUNZEL_BESUCH) {
+            reachStoryNode(RapunzelStoryNode.ZAUBERIN_MACHT_RAPUNZELBESUCHE);
             return noTime();
         }
 

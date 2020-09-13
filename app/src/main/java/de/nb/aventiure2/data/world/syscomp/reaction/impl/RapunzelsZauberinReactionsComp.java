@@ -64,13 +64,18 @@ public class RapunzelsZauberinReactionsComp
         IMovementReactions, IRufReactions, IStateChangedReactions,
         ITimePassedReactions {
     // Vorher ist es der Zauberin für einen Rapunzelbesuch zu früh
-    private static final AvTime FRUEHESTE_LOSGEHZEIT_RAPUNZELBESUCH = oClock(14);
+    private static final AvTime FRUEHESTE_LOSGEHZEIT_RAPUNZELBESUCH =
+            oClock(6, 30);
 
     // Danach wird es der Zauberin für einen Rapunzelbesuch zu spät
     private static final AvTime SPAETESTE_LOSGEHZEIT_RAPUNZELBESUCH =
-            oClock(14, 30);
+            oClock(17);
 
-    private static final AvTimeSpan BESUCHSDAUER = mins(45);
+    private static final AvTimeSpan BESUCHSDAUER = mins(31);
+
+    // Wenn die Zauberin zu Hause angekommen ist, dann geht sie nach dieser Zeit
+    //  wieder los. Sie sieht ziemlich oft bei Rapunzel vorbei.
+    private static final AvTimeSpan MIN_ZEIT_VOR_DEM_NAECHSTEN_LOSGEHEN = mins(47);
 
     private final RapunzelsZauberinStateComp stateComp;
     private final LocationComp locationComp;
@@ -387,14 +392,16 @@ public class RapunzelsZauberinReactionsComp
                 "World tick time too long - see AbstractScAction.");
 
         switch (stateComp.getState()) {
+            case MACHT_ZURZEIT_KEINE_RAPUNZELBESUCHE:
+                return onTimePassed_MachtZurzeitKeineRapunzelbesuche(now);
             case VOR_DEM_NAECHSTEN_RAPUNZEL_BESUCH:
-                return onTimePassed_fromVorDemNaechstenRapunzelBesuch(now);
+                return onTimePassed_VorDemNaechstenRapunzelBesuch(now);
             case AUF_DEM_WEG_ZU_RAPUNZEL:
-                return onTimePassed_fromAufDemWegZuRapunzel(now);
+                return onTimePassed_AufDemWegZuRapunzel(now);
             case BEI_RAPUNZEL_OBEN_IM_TURM:
                 return onTimePassed_BeiRapunzelObenImTurm(now);
             case AUF_DEM_RUECKWEG_VON_RAPUNZEL:
-                return onTimePassed_fromAufDemRueckwegVonRapunzel(now);
+                return onTimePassed_AufDemRueckwegVonRapunzel(now);
             case WEISS_DASS_RAPUNZEL_BEFREIT_WURDE:
                 // STORY Wandert zurück und kommt nie wieder
                 return noTime();
@@ -403,16 +410,19 @@ public class RapunzelsZauberinReactionsComp
         }
     }
 
-    private AvTimeSpan onTimePassed_fromVorDemNaechstenRapunzelBesuch(final AvDateTime now) {
-        if (!now.getTime().isWithin(
-                FRUEHESTE_LOSGEHZEIT_RAPUNZELBESUCH,
-                SPAETESTE_LOSGEHZEIT_RAPUNZELBESUCH)) {
+    private static AvTimeSpan onTimePassed_MachtZurzeitKeineRapunzelbesuche(final AvDateTime now) {
+        return noTime();
+    }
+
+    private AvTimeSpan onTimePassed_VorDemNaechstenRapunzelBesuch(final AvDateTime now) {
+        if (!liegtImZeitfensterFuerRapunzelbesuch(now)) {
             // Kein Zustandswechsel. Die Zauberin soll noch warten, bevor sie (wieder) losgeht.
             return noTime();
         }
 
-        //    STORY Die Hexe sollte 2x täglich kommen? Zb noch einmal zum Abend?
-        //     Oder dann, wenn es dramaturgisch sinnvoll ist?
+        if (now.isBefore(stateComp.getStateDateTime().plus(MIN_ZEIT_VOR_DEM_NAECHSTEN_LOSGEHEN))) {
+            return noTime();
+        }
 
         // Zustandswechsel nötig! Die Zauberin geht zu Rapunzel los.
         return onTimePassed_fromVorDemNaechstenRapunzelBesuchToAufDemWegZuRapunzel(now);
@@ -420,6 +430,12 @@ public class RapunzelsZauberinReactionsComp
         // TODO Wenn der World-Tick ungewöhnlich lang war, geht die Zauberin
         //  recht spät oder gar nicht mehr los.
         //  Am besten durch ein zentrales Konzept beheben!
+    }
+
+    public static boolean liegtImZeitfensterFuerRapunzelbesuch(final AvDateTime now) {
+        return now.getTime().isWithin(
+                FRUEHESTE_LOSGEHZEIT_RAPUNZELBESUCH,
+                SPAETESTE_LOSGEHZEIT_RAPUNZELBESUCH);
     }
 
     private AvTimeSpan onTimePassed_fromVorDemNaechstenRapunzelBesuchToAufDemWegZuRapunzel(
@@ -441,7 +457,7 @@ public class RapunzelsZauberinReactionsComp
         );
     }
 
-    private AvTimeSpan onTimePassed_fromAufDemWegZuRapunzel(final AvDateTime now) {
+    private AvTimeSpan onTimePassed_AufDemWegZuRapunzel(final AvDateTime now) {
         final AvTimeSpan extraTime = movementComp.onTimePassed(now);
 
         if (movementComp.isMoving()) {
@@ -510,7 +526,7 @@ public class RapunzelsZauberinReactionsComp
         return stateComp.narrateAndSetState(AUF_DEM_RUECKWEG_VON_RAPUNZEL);
     }
 
-    private AvTimeSpan onTimePassed_fromAufDemRueckwegVonRapunzel(final AvDateTime now) {
+    private AvTimeSpan onTimePassed_AufDemRueckwegVonRapunzel(final AvDateTime now) {
         final AvTimeSpan extraTime = movementComp.onTimePassed(now);
 
         if (movementComp.isMoving()) {

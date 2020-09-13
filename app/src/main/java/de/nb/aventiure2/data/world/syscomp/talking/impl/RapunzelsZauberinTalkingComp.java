@@ -42,6 +42,7 @@ public class RapunzelsZauberinTalkingComp extends AbstractTalkingComp {
     @Override
     protected Iterable<SCTalkAction> getSCTalkActionsWithoutCheckingConditions() {
         switch (stateComp.getState()) {
+            case MACHT_ZURZEIT_KEINE_RAPUNZELBESUCHE:
             case AUF_DEM_WEG_ZU_RAPUNZEL:
                 // fall-through
             case AUF_DEM_RUECKWEG_VON_RAPUNZEL:

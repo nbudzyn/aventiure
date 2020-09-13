@@ -108,7 +108,7 @@ public enum FroschkoenigStoryNode implements IStoryNode {
     }
 
     @Override
-    public int getExpAchievementSteps() {
+    public Integer getExpAchievementSteps() {
         return expAchievementSteps;
     }
 
@@ -126,6 +126,15 @@ public enum FroschkoenigStoryNode implements IStoryNode {
     @Override
     public IHinter getHinter() {
         return hinter;
+    }
+
+    @Nullable
+    public static AvTimeSpan checkAndAdvanceIfAppropriate(
+            final AvDatabase db,
+            final NarrationDao n,
+            final World world) {
+        // Diese Story kann von Anfang an durchgespielt werden.
+        return null;
     }
 
     // STORY Alternativen für Tipp-Texte, bei denen Foreshadowing stärker im

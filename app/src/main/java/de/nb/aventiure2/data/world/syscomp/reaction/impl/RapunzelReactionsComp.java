@@ -165,7 +165,8 @@ public class RapunzelReactionsComp
                 to.is(OBEN_IM_ALTEN_TURM)) {
             AvTimeSpan timeElapsed = rapunzelZiehtHaareWiederHoch();
 
-            if (!world.loadSC().memoryComp().isKnown(RAPUNZELRUF)) {
+            if (loadSC().locationComp().hasRecursiveLocation(VOR_DEM_ALTEN_TURM) &&
+                    !world.loadSC().memoryComp().isKnown(RAPUNZELRUF)) {
                 timeElapsed = timeElapsed.plus(
                         n.add(neuerSatz(
                                 "„Das ist also die Leiter, auf welcher man hinaufkommt!“, denkst du "
@@ -311,7 +312,7 @@ public class RapunzelReactionsComp
             extraTime = extraTime.plus(n.add(
                     neuerSatz(rapunzelDesc.nom() +
                                     " wickelt "
-                                    + rapunzelDesc.possArt().vor(PL_MFN) // "ihre"
+                                    + rapunzelDesc.possArt().vor(PL_MFN).akk() // "ihre"
                                     + " Haare wieder um den Haken am Fenster",
                             secs(10))
                             .phorikKandidat(rapunzelDesc, RAPUNZEL)));

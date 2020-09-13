@@ -13,8 +13,10 @@ import de.nb.aventiure2.data.narration.NarrationDao;
 import de.nb.aventiure2.data.world.base.GameObjectId;
 import de.nb.aventiure2.data.world.gameobject.World;
 import de.nb.aventiure2.data.world.syscomp.location.ILocatableGO;
+import de.nb.aventiure2.data.world.syscomp.reaction.impl.RapunzelsZauberinReactionsComp;
 import de.nb.aventiure2.data.world.syscomp.state.IHasStateGO;
 import de.nb.aventiure2.data.world.syscomp.state.impl.RapunzelState;
+import de.nb.aventiure2.data.world.syscomp.state.impl.RapunzelsZauberinState;
 import de.nb.aventiure2.data.world.syscomp.story.IStoryNode;
 import de.nb.aventiure2.data.world.syscomp.story.Story;
 import de.nb.aventiure2.data.world.time.AvTimeSpan;
@@ -22,12 +24,15 @@ import de.nb.aventiure2.german.description.AbstractDescription;
 
 import static com.google.common.collect.ImmutableList.builder;
 import static de.nb.aventiure2.data.world.gameobject.World.DRAUSSEN_VOR_DEM_SCHLOSS;
+import static de.nb.aventiure2.data.world.gameobject.World.IM_WALD_NAHE_DEM_SCHLOSS;
 import static de.nb.aventiure2.data.world.gameobject.World.RAPUNZEL;
 import static de.nb.aventiure2.data.world.gameobject.World.RAPUNZELRUF;
 import static de.nb.aventiure2.data.world.gameobject.World.RAPUNZELS_ZAUBERIN;
 import static de.nb.aventiure2.data.world.gameobject.World.SPIELER_CHARAKTER;
 import static de.nb.aventiure2.data.world.gameobject.World.VOR_DEM_ALTEN_TURM;
 import static de.nb.aventiure2.data.world.syscomp.state.impl.RapunzelState.HAARE_VOM_TURM_HERUNTERGELASSEN;
+import static de.nb.aventiure2.data.world.syscomp.state.impl.RapunzelsZauberinState.MACHT_ZURZEIT_KEINE_RAPUNZELBESUCHE;
+import static de.nb.aventiure2.data.world.syscomp.state.impl.RapunzelsZauberinState.VOR_DEM_NAECHSTEN_RAPUNZEL_BESUCH;
 import static de.nb.aventiure2.data.world.time.AvTimeSpan.noTime;
 import static de.nb.aventiure2.german.base.StructuralElement.PARAGRAPH;
 import static de.nb.aventiure2.german.description.AllgDescription.paragraph;
@@ -43,11 +48,9 @@ public enum RapunzelStoryNode implements IStoryNode {
             RapunzelStoryNode::narrateAndDoHintAction_RapunzelSingenGehoert,
             TURM_GEFUNDEN
     ),
-    // STORY Zauberin erst loslaufen lassen, wenn der Spieler bei anderen Dingen
-    //  nicht weiter kommt. Vorher logischerweise auch keine Tipps für Zauberin!!
-    //  (10000 Schritte o.ä.??)
-    //  Dann häufiger loslaufen lassen, wenn Spieler nicht
-    //  weiterkommt, nicht nur 1x täglich!
+    // Dies wird durch checkAndAdvanceIfAppropriate() automatisch freigeschaltet.
+    // Tipps dafür wäre sinnvoll
+    ZAUBERIN_MACHT_RAPUNZELBESUCHE(),
     ZAUBERIN_AUF_TURM_WEG_GETROFFEN(10, VOR_DEM_ALTEN_TURM,
             RapunzelStoryNode::narrateAndDoHintAction_ZauberinAufTurmWegGefunden,
             TURM_GEFUNDEN),
@@ -118,24 +121,39 @@ public enum RapunzelStoryNode implements IStoryNode {
 
     // STORY Spieler führt Rapunzel aus dem Wald hinaus - ENDE
 
+    private static final String STORY_ADVANCE_COUNTER =
+            "RapunzelStoryNode_STORY_ADVANCE_COUNTER";
+
     private final ImmutableSet<RapunzelStoryNode> preconditions;
 
-    private final int expAchievementSteps;
+    @Nullable
+    private final Integer expAchievementSteps;
 
     @Nullable
     private final GameObjectId locationId;
 
+    @Nullable
     private final IHinter hinter;
 
-    RapunzelStoryNode(final int expAchievementSteps, @Nullable final GameObjectId locationId,
-                      final IHinter hinter,
+    /**
+     * Konstruktor für einen Story Node, der nur automatisch freigeschaltet wird, für den
+     * es also keine Tipps geben soll.
+     */
+    RapunzelStoryNode() {
+        this(null, null, null);
+    }
+
+    RapunzelStoryNode(@Nullable final Integer expAchievementSteps,
+                      @Nullable final GameObjectId locationId,
+                      @Nullable final IHinter hinter,
                       final RapunzelStoryNode... preconditions) {
         this(asList(preconditions), expAchievementSteps, locationId, hinter);
     }
 
     RapunzelStoryNode(final Collection<RapunzelStoryNode> preconditions,
-                      final int expAchievementSteps, @Nullable final GameObjectId locationId,
-                      final IHinter hinter) {
+                      @Nullable final Integer expAchievementSteps,
+                      @Nullable final GameObjectId locationId,
+                      @Nullable final IHinter hinter) {
         this.preconditions = ImmutableSet.copyOf(preconditions);
         this.locationId = locationId;
         this.expAchievementSteps = expAchievementSteps;
@@ -153,7 +171,7 @@ public enum RapunzelStoryNode implements IStoryNode {
     }
 
     @Override
-    public int getExpAchievementSteps() {
+    public Integer getExpAchievementSteps() {
         return expAchievementSteps;
     }
 
@@ -171,6 +189,39 @@ public enum RapunzelStoryNode implements IStoryNode {
     @Override
     public IHinter getHinter() {
         return hinter;
+    }
+
+    @Nullable
+    public static AvTimeSpan checkAndAdvanceIfAppropriate(
+            final AvDatabase db,
+            final NarrationDao n,
+            final World world) {
+        final IHasStateGO<RapunzelsZauberinState> zauberin = loadZauberin(world);
+
+        if (db.counterDao().incAndGet(STORY_ADVANCE_COUNTER) > 5) {
+            if (zauberin.stateComp().hasState(MACHT_ZURZEIT_KEINE_RAPUNZELBESUCHE) &&
+                    world.loadSC().locationComp()
+                            .hasRecursiveLocation(IM_WALD_NAHE_DEM_SCHLOSS, VOR_DEM_ALTEN_TURM) &&
+                    RapunzelsZauberinReactionsComp.
+                            liegtImZeitfensterFuerRapunzelbesuch(db.nowDao().now())) {
+                return ensureAdvancedToZauberinMachtRapunzelbesuche(db, world);
+            }
+        }
+
+        return null;
+    }
+
+    @NonNull
+    public static AvTimeSpan ensureAdvancedToZauberinMachtRapunzelbesuche(
+            final AvDatabase db, final World world) {
+        final IHasStateGO<RapunzelsZauberinState> zauberin = loadZauberin(world);
+
+        if (zauberin.stateComp().hasState(MACHT_ZURZEIT_KEINE_RAPUNZELBESUCHE)) {
+            db.counterDao().reset(STORY_ADVANCE_COUNTER);
+            return zauberin.stateComp().narrateAndSetState(VOR_DEM_NAECHSTEN_RAPUNZEL_BESUCH);
+        }
+
+        return noTime();
     }
 
     // STORY Alternativen für Tipp-Texte, bei denen Foreshadowing stärker im
@@ -305,7 +356,8 @@ public enum RapunzelStoryNode implements IStoryNode {
     }
 
     @NonNull
-    private static ILocatableGO loadZauberin(final World world) {
-        return (ILocatableGO) world.load(RAPUNZELS_ZAUBERIN);
+    private static <Z extends IHasStateGO<RapunzelsZauberinState> & ILocatableGO>
+    Z loadZauberin(final World world) {
+        return (Z) world.load(RAPUNZELS_ZAUBERIN);
     }
 }
