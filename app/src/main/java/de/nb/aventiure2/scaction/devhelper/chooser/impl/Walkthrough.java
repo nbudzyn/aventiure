@@ -85,11 +85,11 @@ public class Walkthrough {
                     "Rasten",
                     "Rasten",
                     "Rasten",
+                    "Rasten",
                     "Rasten"); // Zauberin steigt die Zöpfe hoch
 
     public static final Walkthrough ERSTE_RAPUNZELRUF_BEOBACHTUNG_BIS_ENDE =
             new Walkthrough(
-                    "Rasten",
                     "Rasten",
                     "Rasten",
                     "Rasten",

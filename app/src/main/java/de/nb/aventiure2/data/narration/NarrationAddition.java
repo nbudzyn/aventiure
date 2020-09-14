@@ -48,6 +48,14 @@ public class NarrationAddition {
      * the player character is the implicit subject (such as " und gehst durch die Tür.")
      */
     private boolean allowsAdditionalDuSatzreihengliedOhneSubjekt = false;
+    // STORY Das Konzept könnte man verallgemeinern: Die NarrationAddition könnte am Ende
+    //  Koordination (d.h. und-Verbindungen) auf verschiedenen Ebenen erlauben:
+    //  - Du nimmst die Lampe UND DAS GLAS: Koordination im AkkObj des NEHMEN-Prädikat
+    //  - Den Weg hinunter kommen eine Frau UND EIN MANN: Koordination im Subj des KOMMEN-Prädikats
+    //  - Du hast gute Laune und GEHST WEITER: Koordination zweier Verben zum selben Subj (P2)
+    //  - Die Frau hat gute Laune und GEHT WEITER: Koordination zweier Verben zum selben Subj (P3)
+    //  - Die Frau geht den Weg hinunten UND DU GEHST HINTERHER: Koordination zweier Hauptsätze
+    //  Dazu bräuchte man wohl eine Kontextinfo in der Art "Womit endet die NarrationAddition?"
 
     private boolean dann = false;
 

@@ -252,22 +252,30 @@ public class RapunzelsZauberinReactionsComp
         }
 
         if (stateComp.hasState(AUF_DEM_WEG_ZU_RAPUNZEL)) {
-            return onRapunzelStateChangedAufDemWegZuRapunzel();
+            return onRapunzelStateChangedAufDemWegZuRapunzel(
+                    (RapunzelState) oldState, (RapunzelState) newState);
         }
 
         if (stateComp.hasState(AUF_DEM_RUECKWEG_VON_RAPUNZEL)) {
-            return onRapunzelStateChangedAufDemRueckwegVonRapunzel();
+            return onRapunzelStateChangedAufDemRueckwegVonRapunzel(
+                    (RapunzelState) oldState, (RapunzelState) newState);
         }
 
         return noTime();
     }
 
-    private AvTimeSpan onRapunzelStateChangedAufDemWegZuRapunzel() {
+    private AvTimeSpan onRapunzelStateChangedAufDemWegZuRapunzel(
+            final RapunzelState oldState, final RapunzelState newState
+    ) {
         if (!locationComp.hasLocation(VOR_DEM_ALTEN_TURM)) {
             return noTime();
         }
 
-        return zauberinSteigtAnDenHaarenZuRapunzelHinauf();
+        if (newState == RapunzelState.HAARE_VOM_TURM_HERUNTERGELASSEN) {
+            return zauberinSteigtAnDenHaarenZuRapunzelHinauf();
+        }
+
+        return noTime();
     }
 
     private AvTimeSpan zauberinSteigtAnDenHaarenZuRapunzelHinauf() {
@@ -287,12 +295,19 @@ public class RapunzelsZauberinReactionsComp
         return timeElapsed.plus(stateComp.narrateAndSetState(BEI_RAPUNZEL_OBEN_IM_TURM));
     }
 
-    private AvTimeSpan onRapunzelStateChangedAufDemRueckwegVonRapunzel() {
+    private AvTimeSpan onRapunzelStateChangedAufDemRueckwegVonRapunzel(
+            final RapunzelState oldState, final RapunzelState newState
+    ) {
         if (!locationComp.hasLocation(OBEN_IM_ALTEN_TURM)) {
             return noTime();
         }
 
-        return zauberinSteigtAnDenHaarenHerab();
+        if (newState == RapunzelState.HAARE_VOM_TURM_HERUNTERGELASSEN) {
+            return zauberinSteigtAnDenHaarenHerab();
+        }
+
+        return noTime();
+
     }
 
     private AvTimeSpan zauberinSteigtAnDenHaarenHerab() {
