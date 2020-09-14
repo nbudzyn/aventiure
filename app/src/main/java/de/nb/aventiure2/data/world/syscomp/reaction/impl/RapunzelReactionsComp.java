@@ -2,6 +2,8 @@ package de.nb.aventiure2.data.world.syscomp.reaction.impl;
 
 import androidx.annotation.NonNull;
 
+import com.google.common.collect.ImmutableList;
+
 import javax.annotation.Nullable;
 
 import de.nb.aventiure2.data.database.AvDatabase;
@@ -22,7 +24,11 @@ import de.nb.aventiure2.data.world.syscomp.storingplace.ILocationGO;
 import de.nb.aventiure2.data.world.time.AvDateTime;
 import de.nb.aventiure2.data.world.time.AvTimeSpan;
 import de.nb.aventiure2.german.base.Nominalphrase;
+import de.nb.aventiure2.german.base.PraepositionMitKasus;
+import de.nb.aventiure2.german.description.AbstractDescription;
 
+import static de.nb.aventiure2.data.world.base.Known.KNOWN_FROM_DARKNESS;
+import static de.nb.aventiure2.data.world.base.Known.KNOWN_FROM_LIGHT;
 import static de.nb.aventiure2.data.world.base.Lichtverhaeltnisse.HELL;
 import static de.nb.aventiure2.data.world.gameobject.World.IM_WALD_NAHE_DEM_SCHLOSS;
 import static de.nb.aventiure2.data.world.gameobject.World.OBEN_IM_ALTEN_TURM;
@@ -31,6 +37,8 @@ import static de.nb.aventiure2.data.world.gameobject.World.RAPUNZELRUF;
 import static de.nb.aventiure2.data.world.gameobject.World.RAPUNZELS_ZAUBERIN;
 import static de.nb.aventiure2.data.world.gameobject.World.SPIELER_CHARAKTER;
 import static de.nb.aventiure2.data.world.gameobject.World.VOR_DEM_ALTEN_TURM;
+import static de.nb.aventiure2.data.world.syscomp.feelings.Mood.ANGESPANNT;
+import static de.nb.aventiure2.data.world.syscomp.feelings.Mood.AUFGEDREHT;
 import static de.nb.aventiure2.data.world.syscomp.feelings.Mood.BEWEGT;
 import static de.nb.aventiure2.data.world.syscomp.feelings.Mood.NEUTRAL;
 import static de.nb.aventiure2.data.world.syscomp.state.impl.RapunzelState.HAARE_VOM_TURM_HERUNTERGELASSEN;
@@ -40,6 +48,9 @@ import static de.nb.aventiure2.data.world.time.AvTime.oClock;
 import static de.nb.aventiure2.data.world.time.AvTimeSpan.mins;
 import static de.nb.aventiure2.data.world.time.AvTimeSpan.noTime;
 import static de.nb.aventiure2.data.world.time.AvTimeSpan.secs;
+import static de.nb.aventiure2.data.world.time.Tageszeit.NACHTS;
+import static de.nb.aventiure2.german.base.GermanUtil.capitalize;
+import static de.nb.aventiure2.german.base.NumerusGenus.F;
 import static de.nb.aventiure2.german.base.NumerusGenus.PL_MFN;
 import static de.nb.aventiure2.german.base.StructuralElement.PARAGRAPH;
 import static de.nb.aventiure2.german.base.StructuralElement.SENTENCE;
@@ -92,6 +103,10 @@ public class RapunzelReactionsComp
     private AvTimeSpan onSCEnter(@Nullable final ILocationGO from, final ILocationGO to) {
         if (loadSC().locationComp().hasRecursiveLocation(VOR_DEM_ALTEN_TURM)) {
             return onSCEnter_VorDemAltenTurm(from);
+        }
+
+        if (loadSC().locationComp().hasRecursiveLocation(OBEN_IM_ALTEN_TURM)) {
+            return onSCEnter_ObenImAltenTurm();
         }
 
         return noTime();
@@ -228,13 +243,13 @@ public class RapunzelReactionsComp
         }
 
         if (ruftyp == Ruftyp.LASS_DEIN_HAAR_HERUNTER) {
-            return onRapunzelruf();
+            return onRapunzelruf(rufer);
         }
 
         return noTime();
     }
 
-    public AvTimeSpan onRapunzelruf() {
+    public AvTimeSpan onRapunzelruf(final ILocatableGO rufer) {
         if (!stateComp.hasState(SINGEND, STILL)) {
             return noTime();
         }
@@ -243,9 +258,8 @@ public class RapunzelReactionsComp
             return noTime();
         }
 
-        AvTimeSpan extraTime = noTime();
-
         if (loadSC().locationComp().hasRecursiveLocation(VOR_DEM_ALTEN_TURM)) {
+            AvTimeSpan extraTime = noTime();
             if (stateComp.hasState(SINGEND)) {
                 extraTime = extraTime.plus(n.add(
                         neuerSatz(SENTENCE,
@@ -260,10 +274,35 @@ public class RapunzelReactionsComp
                                 + "Fenster oben im Turm lange, goldene Haarzöpfe herab, sicher "
                                 + "zwanzig Ellen tief bis auf den Boden. ", secs(30))));
             }
+
+            return extraTime.plus(
+                    stateComp.narrateAndSetState(HAARE_VOM_TURM_HERUNTERGELASSEN));
+
         }
 
-        return extraTime.plus(
-                stateComp.narrateAndSetState(HAARE_VOM_TURM_HERUNTERGELASSEN));
+        // Sonderfall: Rapunzel verzögert das Haare-Herunterlassen
+        if (loadSC().locationComp().hasLocation(OBEN_IM_ALTEN_TURM)) {
+            return n.addAlt(
+                    neuerSatz(
+                            "„O weh, die Alte kommt!”, entfährt es der jungen "
+                                    + "Frau. „Du musst dich verstecken! Sie "
+                                    + "ist eine mächtige Zauberin!”",
+                            secs(10)),
+                    neuerSatz(
+                            "„O nein, die Alte kommt schon wieder!”, sagt "
+                                    + "die junge Frau entsetzt. „Versteck dich "
+                                    + "schnell!”",
+                            secs(15)),
+                    neuerSatz("Alarmiert schaut die junge Frau dich an. Dann wandert "
+                                    + "ihr Blick "
+                                    + "auf das Bett",
+                            secs(20))
+                            .phorikKandidat(F, RAPUNZEL)
+                    // Hier wäre "dann" nur sinnvoll, wenn Rapunzel etwas tut, nicht der SC
+            );
+        }
+
+        return stateComp.narrateAndSetState(HAARE_VOM_TURM_HERUNTERGELASSEN);
     }
 
     @Override
@@ -345,7 +384,8 @@ public class RapunzelReactionsComp
         }
 
         // Rapunzel singt nur, wenn es denkt, niemand wäre in der Gegend.
-        if (loadSC().locationComp().hasLocation(VOR_DEM_ALTEN_TURM)) {
+        if (loadSC().locationComp().hasLocation(VOR_DEM_ALTEN_TURM) ||
+                loadSC().locationComp().hasRecursiveLocation(OBEN_IM_ALTEN_TURM)) {
             return false;
         }
 
@@ -408,23 +448,49 @@ public class RapunzelReactionsComp
                             + "dem kleinen Fensterchen oben im Turm?",
                     secs(20)));
         }
+
+        if (!loadSC().memoryComp().isKnown(RAPUNZEL)) {
+            return n.addAlt(
+                    du("hörst",
+                            "erneut die süße Stimme aus dem Turmfenster singen",
+                            "erneut", secs(10)),
+                    du("hörst",
+                            "es von oben aus dem Turm singen",
+                            "von oben aus dem Turm",
+                            noTime()),
+                    du(PARAGRAPH, "hörst",
+                            "wieder Gesang von oben schallen",
+                            "wieder",
+                            noTime())
+                            .beendet(PARAGRAPH),
+                    neuerSatz(PARAGRAPH, "Plötzlich erschallt über dir wieder Gesang",
+                            noTime()),
+                    du("hörst",
+                            "den Gesang erneut",
+                            "erneut",
+                            noTime())
+            );
+        }
+
         return n.addAlt(
-                du("hörst",
-                        "erneut die süße Stimme aus dem Turmfenster singen",
-                        "erneut", secs(10)),
-                du("hörst",
-                        "es von oben aus dem Turm singen",
-                        "von oben aus dem Turm",
-                        noTime()),
-                du(PARAGRAPH, "hörst",
-                        "wieder Gesang von oben schallen",
-                        "wieder",
+                du(SENTENCE, "hörst",
+                        "aus dem Turmfenster die junge Frau singen. Dir wird ganz "
+                                + "warm beim Zuhören",
+                        "aus dem Turmfenster", secs(10))
+                        .undWartest()
+                        .phorikKandidat(F, RAPUNZEL),
+                du(SENTENCE, "hörst",
+                        "plötzlich wieder Gesang aus dem Turmfenster. Wann wirst du "
+                                + "die junge Frau "
+                                + "endlich retten können?",
+                        "plötzlich",
                         noTime())
-                        .beendet(PARAGRAPH),
-                neuerSatz(PARAGRAPH, "Plötzlich erschallt über dir wieder Gesang",
-                        noTime()),
+                        .beendet(PARAGRAPH)
+                        .phorikKandidat(F, RAPUNZEL),
                 du("hörst",
-                        "den Gesang erneut",
+                        "erneut die süße Stimme aus dem Turmfenster singen. Jetzt "
+                                + "weißt du "
+                                + "endlich, wer dort singt – und sein Vertrauen in dich setzt",
                         "erneut",
                         noTime())
         );
@@ -449,7 +515,9 @@ public class RapunzelReactionsComp
 
         loadSC().feelingsComp().setMoodMin(BEWEGT);
 
-        return n.addAlt(
+        final ImmutableList.Builder<AbstractDescription<?>> alt = ImmutableList.builder();
+
+        alt.add(
                 neuerSatz("Plötzlich endet der Gesang",
                         noTime())
                         .beendet(PARAGRAPH),
@@ -461,21 +529,25 @@ public class RapunzelReactionsComp
                         noTime())
                         .beendet(PARAGRAPH),
                 neuerSatz(PARAGRAPH,
-                        "Jetzt ist es wieder still. Dein Herz ist noch ganz bewegt",
-                        noTime())
-                        .beendet(PARAGRAPH),
-                neuerSatz(PARAGRAPH,
-                        "Auf einmal ist nichts mehr zu hören. Es lässt dir keine Ruhe: "
-                                + "Wer mag dort oben so lieblich singen?",
-                        noTime())
-                        .beendet(PARAGRAPH),
-                neuerSatz(PARAGRAPH,
                         "Nun ist es wieder still",
                         noTime()),
                 neuerSatz(PARAGRAPH,
                         "Jetzt hat der süße Gesang aufgehört",
+                        noTime()),
+                neuerSatz(PARAGRAPH,
+                        "Jetzt ist es wieder still. Dein Herz ist noch ganz bewegt",
                         noTime())
-        );
+                        .beendet(PARAGRAPH));
+        if (!loadSC().memoryComp().isKnown(RAPUNZEL)) {
+            alt.add(
+                    neuerSatz(PARAGRAPH,
+                            "Auf einmal ist nichts mehr zu hören. Es lässt dir keine Ruhe: "
+                                    + "Wer mag dort oben so lieblich singen?",
+                            noTime())
+                            .beendet(PARAGRAPH));
+        }
+
+        return n.addAlt(alt);
     }
 
     @NonNull

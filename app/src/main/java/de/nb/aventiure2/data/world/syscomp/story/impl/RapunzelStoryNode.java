@@ -61,16 +61,7 @@ public enum RapunzelStoryNode implements IStoryNode {
     ZU_RAPUNZEL_HINAUFGESTIEGEN(10, VOR_DEM_ALTEN_TURM,
             RapunzelStoryNode::narrateAndDoHintAction_ZuRapunzelHinaufgestiegen,
             ZAUBERIN_HEIMLICH_BEIM_RUFEN_BEOBACHTET);
-
-    // STORY "Am Fenster sitzt eine junge Frau, so schön als
-    //  du unter der Sonne noch keine gesehen hast.
-    //  Ihre Haare, fein wie gesponnen
-    //  Gold, hat sie um einen Fensterhaken gewickelt, so konntest du
-    //  daran heraufsteigen.
-    //  Die junge Frau erschrickt gewaltig, als du zu ihr
-    //  hereinkommst. Schnell bindet sie ihre Haare wieder zusammen,
-    //  dann starrt sie dich an.
-    //  Doch du fängst an ganz freundlich mit ihr zu reden
+    // STORY "Doch du fängst an ganz freundlich mit ihr zu reden
     //  und erzählst ihr, dass von ihrem Gesang dein Herz so sehr sei
     //  bewegt worden, dass es dir keine Ruhe gelassen und du sie
     //  selbst habest sehen müssen.
@@ -97,6 +88,9 @@ public enum RapunzelStoryNode implements IStoryNode {
 
     // STORY Seide für großen Klumpen Gold (goldene Kugel verkaufen)
     //  "kaufst ihm ... ab"
+    //  Oder für ein Goldstück, das man vom Prinzen bekommen hat?
+    //  Oder Sterntaler / Münzen in Lichtung im Wald, die man brauchen kann, um Seide
+    //  für Rapunzel zu kaufen.
 
     // STORY Wieder hinaufsteigen mit schwerem Ballen Seide
     //  "du warst mich heute schwer heraufzuziehen"
@@ -110,8 +104,6 @@ public enum RapunzelStoryNode implements IStoryNode {
     // STORY Rapunzel flicht die Leiter
 
     // STORY SC steigt erneut hinauf.
-    //  "in einem Augenblick bist du oben"
-    //  "Oben findest du..."
     //  "Die Alte hat nichts gemerkt"
 
     //  STORY Die Leiter ist fertig.

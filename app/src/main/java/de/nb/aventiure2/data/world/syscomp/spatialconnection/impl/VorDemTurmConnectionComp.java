@@ -29,6 +29,7 @@ import static de.nb.aventiure2.data.world.time.AvTimeSpan.mins;
 import static de.nb.aventiure2.data.world.time.AvTimeSpan.secs;
 import static de.nb.aventiure2.german.base.StructuralElement.PARAGRAPH;
 import static de.nb.aventiure2.german.base.StructuralElement.SENTENCE;
+import static de.nb.aventiure2.german.description.AllgDescription.neuerSatz;
 import static de.nb.aventiure2.german.description.DuDescription.du;
 
 /**
@@ -92,7 +93,24 @@ public class VorDemTurmConnectionComp extends AbstractSpatialConnectionComp {
                     "an den Zöpfen",
                     "An den Haaren hinaufsteigen",
                     mins(1),
-                    VorDemTurmConnectionComp::getDescTo_ObenImTurm));
+                    du("steigst",
+                            "hinauf.\n"
+                                    + "Durch das Fensterchen kletterst du in eine kleine Kammer: "
+                                    + "Tisch, Stuhl, ein Bett",
+                            mins(1)),
+                    du(SENTENCE, "steigst",
+                            "vorsichtig hinauf und klettest durch das Fensterchen "
+                                    + "in eine kleine Kammer. Alles ist dunkel, ein Bett kannst "
+                                    + "du wohl erkennen",
+                            "vorsichtig",
+                            mins(2)),
+                    du("steigst",
+                            "wieder hinauf. Im Hellen siehst du, dass die Kammer nur "
+                                    + "sehr einfach eingerichtet ist: Ein Tisch, ein Stuhl, "
+                                    + "ein Bett",
+                            mins(1)),
+                    neuerSatz("In einem Augenblick bist du oben",
+                            secs(45))));
         }
 
         return res.build();
@@ -122,22 +140,5 @@ public class VorDemTurmConnectionComp extends AbstractSpatialConnectionComp {
                 return du("gehst", "noch einmal um den Turm herum", mins(1))
                         .dann();
         }
-    }
-
-    private static AbstractDescription<?> getDescTo_ObenImTurm(
-            final Known newLocationKnown, final Lichtverhaeltnisse lichtverhaeltnisse) {
-        if (!newLocationKnown.isKnown()) {
-            return du("steigst",
-                    "hinauf.\n"
-                            + "Durch das Fensterchen kletterst du in eine kleine Kammer: "
-                            + "Tisch, Stuhl, ein Bett",
-                    mins(1));
-        }
-
-        return du("steigst",
-                "wieder hinauf",
-                "wieder",
-                mins(1));
-
     }
 }

@@ -53,11 +53,28 @@ public abstract class AbstractDescribableReactionsComp extends AbstractReactions
      */
     protected SubstantivischePhrase getAnaphPersPronWennMglSonstDescription(
             final boolean descShortIfKnown) {
-
         final IDescribableGO describableGO = (IDescribableGO) world.load(getGameObjectId());
 
+        return getAnaphPersPronWennMglSonstDescription(describableGO, descShortIfKnown);
+    }
+
+    /**
+     * Gibt das Personalpronomen zurück, mit dem ein
+     * anaphorischer Bezug auf dieses
+     * Game Object möglich ist - wenn das nicht möglich ist, dann eine
+     * Beschreibung des Game Objects.
+     * <br/>
+     * Beispiel 1: "Du hebst die Lampe auf..." - jetzt ist ein anaphorischer Bezug
+     * auf die Lampe möglich und diese Methode gibt "sie" zurück.
+     * <br/>
+     * Beispiel 2: "Du zündest das Feuer an..." - jetzt ist <i>kein</i> anaphorischer Bezug
+     * auf die Lampe möglich und diese Methode gibt "die mysteriöse Lampe" zurück.
+     */
+    protected SubstantivischePhrase getAnaphPersPronWennMglSonstDescription(
+            final IDescribableGO describableGO,
+            final boolean descShortIfKnown) {
         @Nullable final Personalpronomen anaphPersPron =
-                n.requireNarration().getAnaphPersPronWennMgl(describableGO);
+                db.narrationDao().requireNarration().getAnaphPersPronWennMgl(describableGO);
         if (anaphPersPron != null) {
             return anaphPersPron;
         }

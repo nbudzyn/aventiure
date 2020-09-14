@@ -135,8 +135,7 @@ public class RapunzelsZauberinReactionsComp
                 locationComp.hasSameUpperMostLocationAs(scFrom)) {
             // Wenn die Zauberin sieht, wie der Spieler weggeht,
             // weiß sie nicht mehr, wo er ist.
-            if (scTo == null ||
-                    !locationComp.hasSameUpperMostLocationAs(scTo)) {
+            if (scTo == null || !locationComp.hasSameUpperMostLocationAs(scTo)) {
                 mentalModelComp.unassumeLocation(SPIELER_CHARAKTER);
             }
 
@@ -156,6 +155,9 @@ public class RapunzelsZauberinReactionsComp
 
             // STORY Wenn der Spieler oben im Turm ist
             //  "Unten vor dem Turm steht eine..."?
+            //  Zumindest, wenn der Spieler aus dem Fenster schaut?!
+            //  Oder schaut vielleicht Rapunzel aus dem Fenster, bevor sie die
+            //  Haare herunterlässt?
 
             return movementComp.narrateAndDoSCTrifftEvtlMovingGOInFrom(scFrom, scTo);
         }
@@ -198,9 +200,6 @@ public class RapunzelsZauberinReactionsComp
             return noTime();
         }
 
-        // STORY Wenn der Spieler oben im Turm ist
-        //  "Unten vor dem Turm steht eine..."?
-
         if (world.isOrHasRecursiveLocation(scTo, scFrom)) {
             // Der Spieler ist nur im selben Raum auf einen Tisch gestiegen o.Ä.,
             // die Zauberin wurde bereits beschrieben.
@@ -208,6 +207,12 @@ public class RapunzelsZauberinReactionsComp
                     stateComp.hasState(AUF_DEM_RUECKWEG_VON_RAPUNZEL)) {
                 // Die Zauberin merkt, dass der SC unter den Bäumen verborgen war.
                 // Sie ahnt, dass er sie wohl beobachtet hat.
+                return zauberinZaubertVergessenszauber();
+            }
+
+            if (world.isOrHasRecursiveLocation(scTo, OBEN_IM_ALTEN_TURM)) {
+                // Der Spieler war unter dem Bett verborgen und kommt
+                // hervor, während die Zauberin noch da ist.
                 return zauberinZaubertVergessenszauber();
             }
 
@@ -280,6 +285,13 @@ public class RapunzelsZauberinReactionsComp
 
     private AvTimeSpan zauberinSteigtAnDenHaarenZuRapunzelHinauf() {
         AvTimeSpan timeElapsed = noTime();
+
+        // Sonderfall: Zauberin steigt hoch, während der SC oben im Turm
+        // ist und sich nicht versteckt hat
+        if (loadSC().locationComp().hasLocation(OBEN_IM_ALTEN_TURM)) {
+            return zauberinZaubertVergessenszauber();
+        }
+
         if (loadSC().locationComp().hasRecursiveLocation(VOR_DEM_ALTEN_TURM)) {
             final Nominalphrase desc = getDescription(true);
             timeElapsed = timeElapsed.plus(n.add(
@@ -288,9 +300,16 @@ public class RapunzelsZauberinReactionsComp
                                     + " an den Haarflechten hinaufsteigen", mins(4))));
 
         }
+        // STORY UNTER_DEM_BETT_OBEN_IM_ALTEN_TURM
+//        else if (loadSC().locationComp().hasRecursiveLocation(UNTER_DEM_BETT_OBEN_IM_ALTEN_TURM)) {
+//            final Nominalphrase desc = getDescription(true);
+//            timeElapsed = timeElapsed.plus(n.add(
+//                    du("hörst", ", "wie ...."
+// , mins(4))));
+//
+//        }
 
-        timeElapsed = timeElapsed.plus(
-                locationComp.narrateAndSetLocation(OBEN_IM_ALTEN_TURM));
+        timeElapsed = timeElapsed.plus(locationComp.narrateAndSetLocation(OBEN_IM_ALTEN_TURM));
 
         return timeElapsed.plus(stateComp.narrateAndSetState(BEI_RAPUNZEL_OBEN_IM_TURM));
     }
@@ -340,6 +359,7 @@ public class RapunzelsZauberinReactionsComp
 
             extraTime = zauberinZaubertVergessenszauber();
         }
+        // STORY UNTER_DEM_BETT_OBEN_IM_ALTEN_TURM
 
         return extraTime.plus(movementComp.startMovement(
                 db.nowDao().now().plus(extraTime),
@@ -348,7 +368,16 @@ public class RapunzelsZauberinReactionsComp
 
     private AvTimeSpan zauberinZaubertVergessenszauber() {
         AvTimeSpan timeElapsed;
-        if (locationComp.hasRecursiveLocation(OBEN_IM_ALTEN_TURM)) {
+        if (loadSC().locationComp().hasRecursiveLocation(OBEN_IM_ALTEN_TURM)) {
+            timeElapsed =
+                    n.add(neuerSatz(SENTENCE,
+                            "Jetzt geht alles ganz schnell. Die magere Frau schaut "
+                                    + "zum Fenster "
+                                    + "herein. Ihr Blick fällt auf dich – und mit einem Mal "
+                                    + "sieht sie direkt in die Augen. Du bist wie gebannt und"
+                                    + " kannst deinen Blick gar nicht abwenden…",
+                            mins(5)));
+        } else if (locationComp.hasRecursiveLocation(OBEN_IM_ALTEN_TURM)) {
             timeElapsed =
                     n.add(neuerSatz("Jetzt schaut oben aus dem Turmfenster die "
                                     + "magere Frau heraus. "
@@ -379,9 +408,14 @@ public class RapunzelsZauberinReactionsComp
                 movementComp.startMovement(
                         db.nowDao().now().plus(timeElapsed), DRAUSSEN_VOR_DEM_SCHLOSS));
 
-        // Rapunzel ist still
+        // Rapunzel ist still (Rapunzel hat auch alles vergessen!)
         timeElapsed = timeElapsed.plus(
                 loadRapunzel().stateComp().narrateAndSetState(RapunzelState.STILL));
+
+        if (loadSC().locationComp().hasRecursiveLocation(OBEN_IM_ALTEN_TURM)) {
+            // Ohne Reactions - der Spieler bekommt ja nichts davon mit.
+            loadSC().locationComp().setLocation(VOR_DEM_ALTEN_TURM_SCHATTEN_DER_BAEUME);
+        }
 
         final String ortsbeschreibung;
         if (loadSC().locationComp().hasLocation(VOR_DEM_ALTEN_TURM_SCHATTEN_DER_BAEUME)) {
@@ -515,6 +549,14 @@ public class RapunzelsZauberinReactionsComp
                             + desc.persPron().nom()
                             + " etwas. Du kannst nicht alles verstehen, aber du hörst etwas wie: "
                             + "„…lass dein Haar herunter!”", mins(1))));
+        } else if (loadSC().locationComp().hasRecursiveLocation(OBEN_IM_ALTEN_TURM)) {
+            extraTime = extraTime.plus(n.addAlt(
+                    neuerSatz(PARAGRAPH,
+                            "Auf einmal hörst du von unten etwas rufen",
+                            secs(10)),
+                    neuerSatz(PARAGRAPH,
+                            "Plötzlich hörst du, wie unten jemand etwas ruft",
+                            secs(10))));
         }
 
         return extraTime.plus(

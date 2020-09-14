@@ -219,7 +219,7 @@ public class World {
                         false,
                         new VorDemTurmConnectionComp(db, this)),
                 room.create(OBEN_IM_ALTEN_TURM,
-                        StoringPlaceType.TEPPICHBODEN_OBEN_IM_TURM,
+                        StoringPlaceType.HOLZDIELEN_OBEN_IM_TURM,
                         false,
                         connection.createNoConnections(OBEN_IM_ALTEN_TURM)),
                 room.create(ABZWEIG_IM_WALD, StoringPlaceType.WEG,
