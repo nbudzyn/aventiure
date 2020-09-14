@@ -73,6 +73,10 @@ public class World {
     public static final GameObjectId HAENDE_DES_SPIELER_CHARAKTERS = new GameObjectId(10_000);
     public static final GameObjectId EINE_TASCHE_DES_SPIELER_CHARAKTERS = new GameObjectId(10_001);
 
+    // STORY Alles im Spiel sollte eine Hintergrundgeschichte haben ("Lore").
+    //  Die sollte in konsistenten Details durchscheinen. Also wissen, wer in XYZ
+    //  gewohnt hat o.Ä. und durchblicken lassen.
+
     // - Non-Movable
     public static final GameObjectId SCHLOSS_VORHALLE_AM_TISCH_BEIM_FEST =
             new GameObjectId(10_100);

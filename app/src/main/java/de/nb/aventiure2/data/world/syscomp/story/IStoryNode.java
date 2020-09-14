@@ -19,6 +19,8 @@ import static de.nb.aventiure2.data.world.time.AvTimeSpan.noTime;
  * Alle Implementierungen sollen {@link Enum}s sein.
  */
 public interface IStoryNode {
+    // STORY Story 'Beats" in Twine modellieren, dann neue Branches in Twine entwickeln
+
     @FunctionalInterface
     interface IHinter {
         AvTimeSpan narrateAndDoHintAction(final AvDatabase db,

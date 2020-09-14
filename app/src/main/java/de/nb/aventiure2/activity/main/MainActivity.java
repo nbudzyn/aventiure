@@ -32,6 +32,8 @@ import de.nb.aventiure2.logger.Logger;
 import de.nb.aventiure2.scaction.devhelper.chooser.impl.Walkthrough;
 
 public class MainActivity extends AppCompatActivity {
+    // TODO "Mein Märchen" "Schneepunzel"? -> Appstore?
+
     private static final Logger LOGGER = Logger.getLogger();
 
     private TextView narrationTextView;
