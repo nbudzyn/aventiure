@@ -174,6 +174,129 @@ public class RapunzelReactionsComp
                 noTime()));
     }
 
+    private AvTimeSpan onSCEnter_ObenImAltenTurm() {
+
+        if (!loadSC().memoryComp().isKnown(RAPUNZEL)) {
+            return onSCEnter_ObenImAltenTurm_RapunzelUnbekannt();
+        }
+
+        return onSCEnter_ObenImAltenTurm_RapunzelBekannt();
+    }
+
+    private AvTimeSpan onSCEnter_ObenImAltenTurm_RapunzelUnbekannt() {
+        world.upgradeKnownToSC(RAPUNZEL);
+        final Nominalphrase desc = getDescription();
+
+        if (db.nowDao().now().getTageszeit() == NACHTS) {
+            final AvTimeSpan timeElapsed = n.add(neuerSatz(SENTENCE,
+                    "Am Fenster sitzt eine junge Frau "
+                            + "und schaut dich entsetzt an. Du hast sie wohl gerade aus tiefem "
+                            + "Nachtschlaf geweckt. "
+                            + capitalize(desc.nom())
+                            + " ist in ein paar Decken gewickelt, "
+                            + desc.possArt().vor(PL_MFN).akk() // "ihre"
+                            + " langen Haare hat sie um einen Fensterhaken gewickelt, so "
+                            + "konntest du "
+                            + "daran heraufsteigen. Mit fahrigen Handbewegungen rafft "
+                            + desc.persPron().nom() // "sie"
+                            + " jetzt "
+                            + desc.possArt().vor(PL_MFN).akk() // "ihre"
+                            + " Haare zusammen, dann weicht "
+                            + desc.persPron().nom() // "sie"
+                            + " vor dir in das dunkle Zimmer zurück",
+                    secs(25))
+                    .phorikKandidat(desc, RAPUNZEL));
+
+            stateComp.setState(STILL);
+            loadSC().feelingsComp().setMoodMin(ANGESPANNT);
+
+            return timeElapsed;
+        }
+        // Tagsüber
+        final AvTimeSpan timeElapsed = n.add(neuerSatz(SENTENCE,
+                "Am Fenster sitzt eine junge Frau, so schön als "
+                        + "du unter der Sonne noch keine gesehen hast. "
+                        + "Ihre Haare, fein wie gesponnen "
+                        + "Gold, hat sie um einen Fensterhaken gewickelt, so konntest du "
+                        + "daran heraufsteigen. "
+                        + capitalize(desc.nom())
+                        + " erschrickt gewaltig, als du "
+                        + PraepositionMitKasus.ZU.getDescription(desc.persPron()) // "zu ihr"
+                        + " hereinkommst. Schnell bindet "
+                        + desc.persPron().nom() // "sie"
+                        + " "
+                        + desc.possArt().vor(PL_MFN).akk() // "ihre"
+                        + " Haare wieder zusammen, dann starrt "
+                        + desc.persPron().nom() // "sie"
+                        + " dich an",
+                secs(20))
+                .phorikKandidat(desc, RAPUNZEL));
+
+        stateComp.setState(STILL);
+        loadSC().feelingsComp().setMoodMin(AUFGEDREHT);
+
+        return timeElapsed;
+    }
+
+    private AvTimeSpan onSCEnter_ObenImAltenTurm_RapunzelBekannt() {
+        loadSC().feelingsComp().setMoodMin(AUFGEDREHT);
+        stateComp.setState(STILL);
+
+        final ImmutableList.Builder<AbstractDescription<?>> alt = ImmutableList.builder();
+
+        if (db.nowDao().now().getTageszeit() == NACHTS) {
+            alt.add(du(SENTENCE, "hast", "die junge Frau offenbar aus dem Bett "
+                            + "geholt. Sie "
+                            + "sieht sehr zerknittert "
+                            + "aus, freut sich aber, dich zu sehen",
+                    "offenbar",
+                    secs(30))
+                            .phorikKandidat(F, RAPUNZEL),
+                    neuerSatz("Oben im dunklen Zimmer heißt dich die junge Frau "
+                                    + "etwas überrascht willkommen",
+                            secs(15))
+                            .phorikKandidat(F, RAPUNZEL));
+            if (loadSC().memoryComp().getKnown(RAPUNZEL) == KNOWN_FROM_LIGHT) {
+                alt.add(neuerSatz("Sie ist auch nachts wunderschön – allerdings ist die "
+                                + "junge, verschlafene "
+                                + "Frau in ihren Decken auch sichtlich überrascht, dass zu "
+                                + "dieser Nachtzeit noch einmal bei ihr vorbeischaust",
+                        secs(15))
+                        .phorikKandidat(F, RAPUNZEL));
+            }
+        } else {
+            alt.add(du("findest",
+                    "die junge Frau ganz aufgeregt vor: „Du bist schon wieder "
+                            + "da!”, sagt "
+                            + "sie, „Kannst du mir nun helfen?”",
+                    "oben", secs(20))
+                            .phorikKandidat(F, RAPUNZEL),
+                    neuerSatz("Die junge Frau ist gespannt, was du ihr zu berichten hast",
+                            secs(40))
+                            .phorikKandidat(F, RAPUNZEL),
+                    neuerSatz(
+                            "„Die Alte hat nichts bemerkt”, sprudelt die "
+                                    + "wunderschöne junge Frau los, „aber lange werden wir uns "
+                                    + "nicht treffen können. Sie ist so neugierig!”",
+                            secs(40))
+                            .phorikKandidat(F, RAPUNZEL)
+            );
+
+            if (loadSC().memoryComp().getKnown(RAPUNZEL) == KNOWN_FROM_DARKNESS) {
+                alt.add(neuerSatz("Am Fenster sitzt die junge Frau, schön als "
+                        + "du unter der Sonne noch keine gesehen hast. "
+                        + "Ihre Haare glänzen fein wie gesponnen Gold. Sie ist "
+                        + "glücklich, dich zu sehen", secs(30))
+                        .phorikKandidat(F, RAPUNZEL));
+            }
+        }
+
+        world.upgradeKnownToSC(RAPUNZEL);
+
+        return n.addAlt(alt);
+    }
+
+
     private AvTimeSpan onZauberinEnter(@Nullable final ILocationGO from, final ILocationGO to) {
         if (locationComp.hasRecursiveLocation(OBEN_IM_ALTEN_TURM) &&
                 from != null && from.is(VOR_DEM_ALTEN_TURM) &&
