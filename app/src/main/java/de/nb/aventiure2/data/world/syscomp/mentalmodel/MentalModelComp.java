@@ -90,6 +90,8 @@ public class MentalModelComp extends AbstractStatefulComponent<MentalModelPCD> {
      * <i>Locatable</i> an dieser <i>Location</i> befindet
      * (<i>nicht</i> rekursiv, also <i>nicht</i> auf einem Tisch in diesem Raum).
      */
+    // TODO Es gibt Verwirrung mit assume / assumes. Besser
+    //  getAssumedLocation(), setAssumedLocation()
     public boolean assumesLocation(final GameObjectId locatableId,
                                    final @Nullable GameObjectId locationId) {
         return Objects.equals(getAssumedLocationId(locatableId), locationId);

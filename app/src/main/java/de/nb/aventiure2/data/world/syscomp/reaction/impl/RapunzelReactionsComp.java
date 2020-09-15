@@ -341,6 +341,7 @@ public class RapunzelReactionsComp
 
         if (loadSC().locationComp().hasRecursiveLocation(VOR_DEM_ALTEN_TURM)) {
             extraTime = extraTime.plus(n.add(
+                    // FIXME Haaren könnten dem SC unbekannt sein!
                     du(PARAGRAPH, "siehst", " über dir eine Bewegung: "
                                     + "Aus dem Turmfenster fallen wieder die "
                                     + "langen, golden glänzenden Haare bis zum Boden herab",

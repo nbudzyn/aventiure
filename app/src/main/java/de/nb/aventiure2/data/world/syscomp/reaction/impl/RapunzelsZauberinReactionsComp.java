@@ -200,8 +200,10 @@ public class RapunzelsZauberinReactionsComp
             return noTime();
         }
 
-        if (world.isOrHasRecursiveLocation(scTo, scFrom)) {
-            // Der Spieler ist nur im selben Raum auf einen Tisch gestiegen o.Ä.,
+        if (world.isOrHasRecursiveLocation(scTo, scFrom) ||
+                world.isOrHasRecursiveLocation(scFrom, scTo)) {
+            // Der Spieler ist nur im selben Raum auf einen Tisch gestiegen,
+            // wieder vom Tisch herabgestiegen o.Ä.,
             // die Zauberin wurde bereits beschrieben.
             if (world.isOrHasRecursiveLocation(scTo, VOR_DEM_ALTEN_TURM) &&
                     stateComp.hasState(AUF_DEM_RUECKWEG_VON_RAPUNZEL)) {
@@ -343,23 +345,25 @@ public class RapunzelsZauberinReactionsComp
                             .komma()
                             .beendet(SENTENCE)
                             .phorikKandidat(desc, RAPUNZELS_ZAUBERIN)));
-            if (loadSC().locationComp().hasRecursiveLocation(
-                    VOR_DEM_ALTEN_TURM_SCHATTEN_DER_BAEUME) &&
-                    !mentalModelComp.assumesLocation(SPIELER_CHARAKTER,
+
+            if (!loadSC().locationComp().hasRecursiveLocation(
+                    VOR_DEM_ALTEN_TURM_SCHATTEN_DER_BAEUME) ||
+                    mentalModelComp.assumesLocation(SPIELER_CHARAKTER,
                             VOR_DEM_ALTEN_TURM_SCHATTEN_DER_BAEUME)) {
-                extraTime = extraTime.plus(n.add(
-                        neuerSatz(getAnaphPersPronWennMglSonstDescription(
-                                true).nom()
-                                + " hat dich nicht bemerkt", noTime())));
-                return extraTime.plus(
-                        locationComp.narrateAndSetLocation(VOR_DEM_ALTEN_TURM));
+                extraTime = extraTime.plus(locationComp.narrateAndSetLocation(VOR_DEM_ALTEN_TURM));
+
+                return extraTime.plus(zauberinZaubertVergessenszauber());
             }
 
-            extraTime = extraTime.plus(locationComp.narrateAndSetLocation(VOR_DEM_ALTEN_TURM));
-
-            extraTime = zauberinZaubertVergessenszauber();
+            extraTime = extraTime.plus(n.add(
+                    neuerSatz(getAnaphPersPronWennMglSonstDescription(
+                            true).nom()
+                            + " hat dich nicht bemerkt", noTime())));
         }
         // STORY UNTER_DEM_BETT_OBEN_IM_ALTEN_TURM
+
+        extraTime = extraTime.plus(
+                locationComp.narrateAndSetLocation(VOR_DEM_ALTEN_TURM));
 
         return extraTime.plus(movementComp.startMovement(
                 db.nowDao().now().plus(extraTime),
