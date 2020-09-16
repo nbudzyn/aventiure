@@ -9,9 +9,6 @@ import de.nb.aventiure2.data.world.base.GameObjectId;
 import de.nb.aventiure2.data.world.gameobject.World;
 import de.nb.aventiure2.data.world.time.AvDateTime;
 import de.nb.aventiure2.data.world.time.AvNowDao;
-import de.nb.aventiure2.data.world.time.AvTimeSpan;
-
-import static de.nb.aventiure2.data.world.time.AvTimeSpan.noTime;
 
 /**
  * Component für ein {@link GameObject}: Das Game Object hat einen Zustand (der sich
@@ -67,17 +64,16 @@ public abstract class AbstractStateComp<S extends Enum<S>>
     }
 
 
-    @NonNull
-    public AvTimeSpan narrateAndSetState(final S state) {
+    public void narrateAndSetState(final S state) {
         if (state.equals(getState())) {
-            return noTime();
+            return;
         }
 
         final S oldState = getState();
 
         setState(state);
 
-        return world.narrateAndDoReactions()
+        world.narrateAndDoReactions()
                 .onStateChanged(getGameObjectId(), oldState, state);
     }
 

@@ -8,6 +8,8 @@ import com.google.common.collect.ImmutableSet;
 
 import java.util.Collection;
 
+import javax.annotation.CheckReturnValue;
+
 import de.nb.aventiure2.data.database.AvDatabase;
 import de.nb.aventiure2.data.narration.NarrationDao;
 import de.nb.aventiure2.data.world.base.GameObjectId;
@@ -15,7 +17,6 @@ import de.nb.aventiure2.data.world.gameobject.World;
 import de.nb.aventiure2.data.world.syscomp.location.ILocatableGO;
 import de.nb.aventiure2.data.world.syscomp.story.IStoryNode;
 import de.nb.aventiure2.data.world.syscomp.story.Story;
-import de.nb.aventiure2.data.world.time.AvTimeSpan;
 import de.nb.aventiure2.german.description.AbstractDescription;
 
 import static com.google.common.collect.ImmutableList.builder;
@@ -128,19 +129,18 @@ public enum FroschkoenigStoryNode implements IStoryNode {
         return hinter;
     }
 
-    @Nullable
-    public static AvTimeSpan checkAndAdvanceIfAppropriate(
+    public static boolean checkAndAdvanceIfAppropriate(
             final AvDatabase db,
             final NarrationDao n,
             final World world) {
         // Diese Story kann von Anfang an durchgespielt werden.
-        return null;
+        return false;
     }
 
     // STORY Alternativen für Tipp-Texte, bei denen Foreshadowing stärker im
     //  Vordergrund steht
 
-    private static AvTimeSpan narrateAndDoHintAction_KugelGenommen(
+    private static void narrateAndDoHintAction_KugelGenommen(
             final AvDatabase db, final NarrationDao n, final World world) {
         final ImmutableList.Builder<AbstractDescription<?>> alt = builder();
 
@@ -183,10 +183,10 @@ public enum FroschkoenigStoryNode implements IStoryNode {
                     + "dich wohl aufheitern! Aber woher nehmen und nicht stehlen?"));
         }
 
-        return n.addAlt(alt);
+        n.addAlt(alt);
     }
 
-    public static AvTimeSpan narrateAndDoHintAction_MitKugelZumBrunnenGegangen(
+    public static void narrateAndDoHintAction_MitKugelZumBrunnenGegangen(
             final AvDatabase db, final NarrationDao n, final World world) {
         final ImmutableList.Builder<AbstractDescription<?>> alt = builder();
 
@@ -204,10 +204,10 @@ public enum FroschkoenigStoryNode implements IStoryNode {
             alt.addAll(altKugelVermissen());
         }
 
-        return n.addAlt(alt);
+        n.addAlt(alt);
     }
 
-    public static AvTimeSpan narrateAndDoHintAction_EtwasImBrunnenVerloren(
+    public static void narrateAndDoHintAction_EtwasImBrunnenVerloren(
             final AvDatabase db, final NarrationDao n, final World world) {
         // STORY
         //  - (bis BEIM_SCHLOSSFEST_AN_DEN_TISCH_GESETZT) Eine verwirrte alte Frau
@@ -233,10 +233,10 @@ public enum FroschkoenigStoryNode implements IStoryNode {
             alt.addAll(altKugelVermissen());
         }
 
-        return n.addAlt(alt);
+        n.addAlt(alt);
     }
 
-    public static AvTimeSpan narrateAndDoHintAction_FroschHatEtwasAusBrunnenGeholt(
+    public static void narrateAndDoHintAction_FroschHatEtwasAusBrunnenGeholt(
             final AvDatabase db, final NarrationDao n, final World world) {
         final ImmutableList.Builder<AbstractDescription<?>> alt = builder();
 
@@ -257,10 +257,10 @@ public enum FroschkoenigStoryNode implements IStoryNode {
 
         world.loadSC().feelingsComp().setMoodMax(UNTROESTLICH);
 
-        return n.addAlt(alt);
+        n.addAlt(alt);
     }
 
-    public static AvTimeSpan narrateAndDoHintAction_ZumSchlossfestGegangen(
+    public static void narrateAndDoHintAction_ZumSchlossfestGegangen(
             final AvDatabase db, final NarrationDao n, final World world) {
         final ImmutableList.Builder<AbstractDescription<?>> alt = builder();
 
@@ -279,10 +279,10 @@ public enum FroschkoenigStoryNode implements IStoryNode {
                 + "Kreatur ist, heißt das ja noch lange nicht… also…, es heißt "
                 + "nicht zwangsläufig…"));
 
-        return n.addAlt(alt);
+        n.addAlt(alt);
     }
 
-    public static AvTimeSpan narrateAndDoHintAction_BeimSchlossfestAnDenTischGesetzt(
+    public static void narrateAndDoHintAction_BeimSchlossfestAnDenTischGesetzt(
             final AvDatabase db, final NarrationDao n, final World world) {
         final ImmutableList.Builder<AbstractDescription<?>> alt = builder();
 
@@ -291,10 +291,10 @@ public enum FroschkoenigStoryNode implements IStoryNode {
         alt.add(paragraph("Welches Versprechen hattest du dem Frosch noch gegeben? Du kannst "
                 + "dich kaum mehr erinnern"));
 
-        return n.addAlt(alt);
+        n.addAlt(alt);
     }
 
-    public static AvTimeSpan narrateAndDoHintAction_PrinzIstErloest(
+    public static void narrateAndDoHintAction_PrinzIstErloest(
             final AvDatabase db, final NarrationDao n, final World world) {
         final ImmutableList.Builder<AbstractDescription<?>> alt = builder();
 
@@ -303,10 +303,10 @@ public enum FroschkoenigStoryNode implements IStoryNode {
         alt.add(paragraph("Ein schlechtes Gewissen ist kein gutes Ruhekissen – so geht es "
                 + "die ganze Zeit in deinem Kopf"));
 
-        return n.addAlt(alt);
+        n.addAlt(alt);
     }
 
-    public static AvTimeSpan narrateAndDoHintAction_PrinzIstWeggefahren(
+    public static void narrateAndDoHintAction_PrinzIstWeggefahren(
             final AvDatabase db, final NarrationDao n, final World world) {
         final ImmutableList.Builder<AbstractDescription<?>> alt = builder();
 
@@ -316,9 +316,10 @@ public enum FroschkoenigStoryNode implements IStoryNode {
                 noTime())
                 .beendet(PARAGRAPH));
 
-        return n.addAlt(alt);
+        n.addAlt(alt);
     }
 
+    @CheckReturnValue
     private static ImmutableCollection<AbstractDescription<?>> altNachtsSchlafen(
             final World world) {
         final ImmutableList.Builder<AbstractDescription<?>> alt = builder();
@@ -349,6 +350,7 @@ public enum FroschkoenigStoryNode implements IStoryNode {
         return alt.build();
     }
 
+    @CheckReturnValue
     private static ImmutableCollection<AbstractDescription<?>> altKugelVermissen() {
         final ImmutableList.Builder<AbstractDescription<?>> alt = builder();
 
@@ -361,6 +363,7 @@ public enum FroschkoenigStoryNode implements IStoryNode {
         return alt.build();
     }
 
+    @CheckReturnValue
     private static ImmutableCollection<AbstractDescription<?>> altHeissHeutKuehlerOrtWaereSchoen() {
         final ImmutableList.Builder<AbstractDescription<?>> alt = builder();
 

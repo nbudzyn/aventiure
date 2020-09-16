@@ -5,7 +5,6 @@ import androidx.annotation.Nullable;
 import de.nb.aventiure2.data.world.syscomp.location.ILocatableGO;
 import de.nb.aventiure2.data.world.syscomp.reaction.IReactions;
 import de.nb.aventiure2.data.world.syscomp.storingplace.ILocationGO;
-import de.nb.aventiure2.data.world.time.AvTimeSpan;
 
 /**
  * Reactions to a game object moving from one place to another (normally).
@@ -26,13 +25,13 @@ public interface IMovementReactions extends IReactions {
      * The <code>locatable</code> leaves a place for some other place.
      * (This is called at the beginning of the movement.)
      */
-    AvTimeSpan onLeave(ILocatableGO locatable,
-                       ILocationGO from, @Nullable ILocationGO to);
+    void onLeave(ILocatableGO locatable,
+                 ILocationGO from, @Nullable ILocationGO to);
 
     /**
      * The <code>locatable</code> enters a place (after having left some other place).
      * (This is called at the end of the movement.)
      */
-    AvTimeSpan onEnter(ILocatableGO locatable,
-                       @Nullable ILocationGO from, ILocationGO to);
+    void onEnter(ILocatableGO locatable,
+                 @Nullable ILocationGO from, ILocationGO to);
 }

@@ -1,5 +1,7 @@
 package de.nb.aventiure2.german.description;
 
+import javax.annotation.CheckReturnValue;
+
 import de.nb.aventiure2.data.world.time.AvTimeSpan;
 import de.nb.aventiure2.german.base.StructuralElement;
 
@@ -16,6 +18,7 @@ public class AllgDescription extends AbstractDescription<AllgDescription> {
      */
     private final String description;
 
+    @CheckReturnValue
     public static AllgDescription neuerSatz(
             final String description,
             final AvTimeSpan timeElapsed) {
@@ -23,6 +26,7 @@ public class AllgDescription extends AbstractDescription<AllgDescription> {
                 timeElapsed);
     }
 
+    @CheckReturnValue
     public static AllgDescription neuerSatz(
             final StructuralElement startsNew,
             final String description,
@@ -30,6 +34,7 @@ public class AllgDescription extends AbstractDescription<AllgDescription> {
         return new AllgDescription(startsNew, capitalize(description), timeElapsed);
     }
 
+    @CheckReturnValue
     public static AllgDescription satzanschluss(
             final String description,
             final AvTimeSpan timeElapsed) {
@@ -43,6 +48,7 @@ public class AllgDescription extends AbstractDescription<AllgDescription> {
         this.description = description;
     }
 
+    @CheckReturnValue
     public static AllgDescription paragraph(final String paragraph) {
         return neuerSatz(PARAGRAPH,
                 paragraph,

@@ -17,7 +17,6 @@ import de.nb.aventiure2.data.world.syscomp.state.IHasStateGO;
 import de.nb.aventiure2.data.world.syscomp.state.impl.FroschprinzState;
 import de.nb.aventiure2.data.world.syscomp.talking.ITalkerGO;
 import de.nb.aventiure2.data.world.syscomp.talking.impl.FroschprinzTalkingComp;
-import de.nb.aventiure2.data.world.time.AvTimeSpan;
 import de.nb.aventiure2.german.description.AbstractDescription;
 import de.nb.aventiure2.scaction.AbstractScAction;
 
@@ -69,12 +68,13 @@ public class HeulenAction extends AbstractScAction {
     }
 
     @Override
-    public AvTimeSpan narrateAndDo() {
+    public void narrateAndDo() {
         if (isDefinitivWiederholung()) {
-            return narrateAndDoWiederholung();
+            narrateAndDoWiederholung();
+            return;
         }
 
-        return narrateAndDoErstesMal();
+        narrateAndDoErstesMal();
     }
 
     private <F extends IDescribableGO &
@@ -82,13 +82,14 @@ public class HeulenAction extends AbstractScAction {
             IHasStateGO<FroschprinzState> &
             ITalkerGO<FroschprinzTalkingComp> &
             ILivingBeingGO>
-    AvTimeSpan narrateAndDoWiederholung() {
+    void narrateAndDoWiederholung() {
         final F froschprinz = (F) world.load(FROSCHPRINZ);
 
         if (froschprinz.locationComp().hasRecursiveLocation(
                 world.loadSC().locationComp().getLocation()) &&
                 (froschprinz.stateComp().hasState(UNAUFFAELLIG))) {
-            return narrateAndDoFroschprinzUnauffaellig(froschprinz);
+            narrateAndDoFroschprinzUnauffaellig(froschprinz);
+            return;
         }
 
         sc.memoryComp().setLastAction(buildMemorizedAction());
@@ -102,34 +103,31 @@ public class HeulenAction extends AbstractScAction {
 
         alt.add(du("kannst", "dich gar nicht mehr beruhigen", mins(1))
                 .undWartest());
-        return n.addAlt(alt);
+        n.addAlt(alt);
     }
 
     private <F extends IDescribableGO &
             IHasStateGO<FroschprinzState> &
             ITalkerGO<FroschprinzTalkingComp>>
-    AvTimeSpan narrateAndDoFroschprinzUnauffaellig(final F froschprinz) {
+    void narrateAndDoFroschprinzUnauffaellig(final F froschprinz) {
         // STORY Nachts schläft der Frosch?!
 
         sc.memoryComp().setLastAction(buildMemorizedAction());
 
-        AvTimeSpan timeElapsed =
-                n.add(du("weinst", "immer lauter und kannst dich gar nicht trösten. " +
-                        "Und wie du so klagst, ruft dir jemand zu: „Was hast du vor, " +
-                        "du schreist ja, dass sich ein Stein erbarmen möchte.“ Du siehst " +
-                        "dich um, woher " +
-                        "die Stimme käme, da erblickst du " +
-                        world.getDescription(froschprinz).akk(), "immer lauter", secs(30)));
+        n.add(du("weinst", "immer lauter und kannst dich gar nicht trösten. " +
+                "Und wie du so klagst, ruft dir jemand zu: „Was hast du vor, " +
+                "du schreist ja, dass sich ein Stein erbarmen möchte.“ Du siehst " +
+                "dich um, woher " +
+                "die Stimme käme, da erblickst du " +
+                world.getDescription(froschprinz).akk(), "immer lauter", secs(30)));
 
-        timeElapsed = timeElapsed.plus(
-                froschprinz.stateComp().narrateAndSetState(HAT_SC_HILFSBEREIT_ANGESPROCHEN));
+        froschprinz.stateComp().narrateAndSetState(HAT_SC_HILFSBEREIT_ANGESPROCHEN);
         froschprinz.talkingComp().setTalkingTo(sc);
         sc.feelingsComp().setMood(NEUTRAL);
         world.upgradeKnownToSC(FROSCHPRINZ);
-        return timeElapsed;
     }
 
-    private AvTimeSpan narrateAndDoErstesMal() {
+    private void narrateAndDoErstesMal() {
         sc.memoryComp().setLastAction(buildMemorizedAction());
 
         final ImmutableList.Builder<AbstractDescription<?>> alt = ImmutableList.builder();
@@ -143,7 +141,7 @@ public class HeulenAction extends AbstractScAction {
         alt.add(du("weinst", mins(1))
                 .undWartest()
                 .dann());
-        return n.addAlt(alt);
+        n.addAlt(alt);
     }
 
     @Override

@@ -1,10 +1,6 @@
 package de.nb.aventiure2.data.world.syscomp.reaction.impl;
 
-import androidx.annotation.NonNull;
-
 import com.google.common.collect.ImmutableList;
-
-import org.jetbrains.annotations.Contract;
 
 import javax.annotation.Nullable;
 
@@ -24,7 +20,6 @@ import de.nb.aventiure2.data.world.syscomp.state.impl.SchlossfestState;
 import de.nb.aventiure2.data.world.syscomp.state.impl.SchlosswacheStateComp;
 import de.nb.aventiure2.data.world.syscomp.storingplace.ILocationGO;
 import de.nb.aventiure2.data.world.time.AvDateTime;
-import de.nb.aventiure2.data.world.time.AvTimeSpan;
 import de.nb.aventiure2.german.base.NumerusGenus;
 import de.nb.aventiure2.german.description.AbstractDescription;
 
@@ -42,7 +37,6 @@ import static de.nb.aventiure2.data.world.syscomp.state.impl.SchlossfestState.BE
 import static de.nb.aventiure2.data.world.syscomp.state.impl.SchlosswacheState.AUFMERKSAM;
 import static de.nb.aventiure2.data.world.syscomp.state.impl.SchlosswacheState.UNAUFFAELLIG;
 import static de.nb.aventiure2.data.world.time.AvTimeSpan.mins;
-import static de.nb.aventiure2.data.world.time.AvTimeSpan.noTime;
 import static de.nb.aventiure2.data.world.time.AvTimeSpan.secs;
 import static de.nb.aventiure2.german.base.GermanUtil.capitalize;
 import static de.nb.aventiure2.german.base.StructuralElement.PARAGRAPH;
@@ -74,44 +68,44 @@ public class SchlosswacheReactionsComp
     }
 
     @Override
-    public AvTimeSpan onLeave(final ILocatableGO locatable,
-                              final ILocationGO from,
-                              @Nullable final ILocationGO to) {
-        return noTime();
+    public void onLeave(final ILocatableGO locatable,
+                        final ILocationGO from,
+                        @Nullable final ILocationGO to) {
     }
 
     @Override
-    public AvTimeSpan onEnter(final ILocatableGO locatable,
-                              @Nullable final ILocationGO from,
-                              final ILocationGO to) {
+    public void onEnter(final ILocatableGO locatable,
+                        @Nullable final ILocationGO from,
+                        final ILocationGO to) {
         if (locatable.is(SPIELER_CHARAKTER)) {
-            return onSCEnter(from, to);
+            onSCEnter(from, to);
+            return;
         }
 
         if (world.isOrHasRecursiveLocation(to, SPIELER_CHARAKTER)) {
-            return onRelocationToSC(locatable, from);
+            onRelocationToSC(locatable, from);
+            return;
         }
 
         if (world.isOrHasRecursiveLocation(from, SPIELER_CHARAKTER)) {
-            return onRelocationFromSC(to);
+            onRelocationFromSC(to);
+            return;
         }
-
-        return noTime();
     }
 
-    private AvTimeSpan onSCEnter(@Nullable final ILocationGO from,
-                                 final ILocationGO to) {
+    private void onSCEnter(@Nullable final ILocationGO from,
+                           final ILocationGO to) {
         if (!to.is(SCHLOSS_VORHALLE)) {
-            return noTime();
+            return;
         }
 
         if (to.equals(from)) {
             // (Der Spieler wurde durch ein Erdbeben in der Schloss-Vorhalle hochgeworfen??)
-            return noTime();
+            return;
         }
 
         if (stateComp.hasState(UNAUFFAELLIG)) {
-            return noTime();
+            return;
         }
 
         final ILocatableGO goldeneKugel = (ILocatableGO) world.load(GOLDENE_KUGEL);
@@ -119,27 +113,28 @@ public class SchlosswacheReactionsComp
                 && goldeneKugel.locationComp().hasRecursiveLocation(SCHLOSS_VORHALLE)) {
             if (db.counterDao().incAndGet(
                     "SchlosswacheReactions_onEnterRoom_SchlossVorhalle") > 1) {
-                return n.add(neuerSatz(
+                n.add(neuerSatz(
                         capitalize(getDescription(true).nom())
                                 + " scheint dich nicht zu bemerken", secs(3)));
+                return;
             }
         }
 
         if (from == null) {
-            return noTime();
+            return;
         }
 
-        return scMussDasSchlossWiederVerlassen(from);
+        scMussDasSchlossWiederVerlassen(from);
     }
 
-    private AvTimeSpan scMussDasSchlossWiederVerlassen(
+    private void scMussDasSchlossWiederVerlassen(
             final ILocationGO raumAusDemDerSCDasSchlossBetretenHat) {
         // STORY Ausspinnen: Der Spieler sollte selbst entscheiden,
         //  ob der das Schloss wieder verlässt - oder ggf. im Kerker landet.
 
         final SpielerCharakter sc = loadSC();
 
-        AvTimeSpan timeSpan = n.addAlt(
+        n.addAlt(
                 neuerSatz("Die Wache spricht dich sofort an und macht dir unmissverständlich "
                                 + "klar, dass du hier "
                                 + "vor dem großen Fest nicht erwünscht bist. Du bist "
@@ -162,13 +157,10 @@ public class SchlosswacheReactionsComp
                         .beendet(PARAGRAPH)
         );
 
-        timeSpan = timeSpan.plus(
-                sc.locationComp().narrateAndSetLocation(raumAusDemDerSCDasSchlossBetretenHat));
+        sc.locationComp().narrateAndSetLocation(raumAusDemDerSCDasSchlossBetretenHat);
 
         sc.memoryComp().setLastAction(
                 new Action(Action.Type.BEWEGEN, raumAusDemDerSCDasSchlossBetretenHat));
-
-        return timeSpan;
     }
 
     private String schlossVerlassenWohinDescription(
@@ -200,42 +192,43 @@ public class SchlosswacheReactionsComp
      * Gegenstand also genommen, als Geschenk erhalten, heimlich zugesteckt bekommen,
      * in seiner Hand materialisiert o.Ä.
      */
-    @Contract("_, null -> !null")
-    private AvTimeSpan onRelocationToSC(final ILocatableGO locatable,
-                                        @Nullable final ILocationGO from) {
+    private void onRelocationToSC(final ILocatableGO locatable,
+                                  @Nullable final ILocationGO from) {
         if (from == null || !locationComp.hasRecursiveLocation(from)) {
             // The Schlosswache does not notice.
-            return noTime();
+            return;
         }
 
         if (!world.isOrHasRecursiveLocation(from, SCHLOSS_VORHALLE)
                 && !world.isOrHasRecursiveLocation(from, SPIELER_CHARAKTER)) {
-            return noTime();
+            return;
         }
 
         if (((IHasStateGO<SchlossfestState>) world.load(SCHLOSSFEST)).stateComp()
                 .hasState(BEGONNEN)) {
             // Schlosswache hat andere Dinge zu tun
-            return noTime();
+            return;
         }
 
         switch (stateComp.getState()) {
             case UNAUFFAELLIG:
-                return scHatEtwasGenommenOderHochgeworfenUndAufgefangen_wacheWirdAufmerksam();
+                scHatEtwasGenommenOderHochgeworfenUndAufgefangen_wacheWirdAufmerksam();
+                return;
             case AUFMERKSAM:
                 if (locatable.is(GOLDENE_KUGEL)) {
-                    return scHatGoldeneKugelGenommenOderHochgeworfenUndAufgefangen_wacheIstAufmerksam(
+                    scHatGoldeneKugelGenommenOderHochgeworfenUndAufgefangen_wacheIstAufmerksam(
                             locatable, from);
+                    return;
                 }
             default:
-                return noTime();
+                return;
         }
     }
 
-    private AvTimeSpan scHatEtwasGenommenOderHochgeworfenUndAufgefangen_wacheWirdAufmerksam() {
+    private void scHatEtwasGenommenOderHochgeworfenUndAufgefangen_wacheWirdAufmerksam() {
         final SpielerCharakter sc = loadSC();
 
-        AvTimeSpan timeElapsed = n.add(
+        n.add(
                 neuerSatz(PARAGRAPH, "Da wird eine Wache auf dich aufmerksam. "
                                 + "„Wie seid Ihr hier hereingekommen?“, fährt sie dich "
                                 + "scharf an. „Das Fest ist erst am Sonntag. Heute "
@@ -243,35 +236,34 @@ public class SchlosswacheReactionsComp
                                 + "Mit kräftiger Hand klopft die Wache auf ihre Hellebarde",
                         secs(20)));
 
-        timeElapsed = timeElapsed.plus(
-                stateComp.narrateAndSetState(AUFMERKSAM));
+        stateComp.narrateAndSetState(AUFMERKSAM);
 
         world.upgradeKnownToSC(SCHLOSSWACHE);
         sc.feelingsComp().setMood(ANGESPANNT);
-
-        return timeElapsed;
     }
 
-    private AvTimeSpan scHatGoldeneKugelGenommenOderHochgeworfenUndAufgefangen_wacheIstAufmerksam(
+    private void scHatGoldeneKugelGenommenOderHochgeworfenUndAufgefangen_wacheIstAufmerksam(
             final ILocatableGO goldeneKugel,
             final ILocationGO fromSchlossVorhalleOderSC) {
         if (world.isOrHasRecursiveLocation(fromSchlossVorhalleOderSC, SPIELER_CHARAKTER)) {
-            return scHatGoldeneKugelHochgeworfenUndAufgefangen_wacheIstAufmerksam(goldeneKugel);
+            scHatGoldeneKugelHochgeworfenUndAufgefangen_wacheIstAufmerksam(goldeneKugel);
+            return;
         }
 
         // Spieler hat goldene Kugel in SCHLOSS_VORHALLE genommen
 
         if (db.counterDao().incAndGet(
                 "SchlosswacheReactions_nehmenGoldeneKugel_wacheIstAufmerksam") == 1) {
-            return scHatGoldeneKugelGenommen_wacheIstAufmerksam_erwischt(goldeneKugel);
+            scHatGoldeneKugelGenommen_wacheIstAufmerksam_erwischt(goldeneKugel);
+            return;
         }
 
-        return scHatGoldeneKugelGenommen_wacheIstAufmerksam_nichtErwischt();
+        scHatGoldeneKugelGenommen_wacheIstAufmerksam_nichtErwischt();
     }
 
-    private AvTimeSpan scHatGoldeneKugelHochgeworfenUndAufgefangen_wacheIstAufmerksam(
+    private void scHatGoldeneKugelHochgeworfenUndAufgefangen_wacheIstAufmerksam(
             final ILocatableGO goldeneKugel) {
-        AvTimeSpan timeSpan = n.add(
+        n.add(
                 neuerSatz(PARAGRAPH, "„Was treibt Ihr für einen Unfug, legt sofort das "
                         + "Schmuckstück wieder hin!“, "
                         + "ruft dir "
@@ -284,25 +276,22 @@ public class SchlosswacheReactionsComp
         final SpielerCharakter sc = loadSC();
         sc.feelingsComp().setMood(ANGESPANNT);
 
-        timeSpan = timeSpan.plus(n.add(du(PARAGRAPH,
+        n.add(du(PARAGRAPH,
                 "legst", "die schöne goldene Kugel eingeschüchtert wieder an ihren Platz",
                 "eingeschüchtert",
                 secs(5))
                 .undWartest()
-                .phorikKandidat(NumerusGenus.F, goldeneKugel.getId())));
+                .phorikKandidat(NumerusGenus.F, goldeneKugel.getId()));
 
-        timeSpan = timeSpan.plus(
-                goldeneKugel.locationComp().narrateAndSetLocation(
-                        sc.locationComp().getLocation()
-                ));
+        goldeneKugel.locationComp().narrateAndSetLocation(
+                sc.locationComp().getLocation()
+        );
 
         sc.memoryComp()
                 .setLastAction(Action.Type.ABLEGEN, goldeneKugel, sc.locationComp().getLocation());
-
-        return timeSpan;
     }
 
-    private AvTimeSpan scHatGoldeneKugelGenommen_wacheIstAufmerksam_erwischt(
+    private void scHatGoldeneKugelGenommen_wacheIstAufmerksam_erwischt(
             final ILocatableGO goldeneKugel) {
         final ImmutableList.Builder<AbstractDescription<?>> alt = ImmutableList.builder();
 
@@ -319,27 +308,24 @@ public class SchlosswacheReactionsComp
                         + "wirst du von hinten angesprochen.",
                 secs(15)));
 
-        AvTimeSpan timeElapsed = n.addAlt(alt);
+        n.addAlt(alt);
 
-        timeElapsed = timeElapsed.plus(n.add(neuerSatz(PARAGRAPH,
+        n.add(neuerSatz(PARAGRAPH,
                 "Da legst du doch besser die schöne goldene Kugel "
                         + "wieder an ihren Platz",
                 secs(5))
                 .undWartest()
-                .phorikKandidat(NumerusGenus.F, goldeneKugel.getId())));
+                .phorikKandidat(NumerusGenus.F, goldeneKugel.getId()));
 
         // STORY Geschichte ausspinnen: Spieler muss die Kugel selbst
         //  ablegen bzw. kommt ggf. in den Kerker
 
-        timeElapsed = timeElapsed.plus(
-                goldeneKugel.locationComp().narrateAndSetLocation(SCHLOSS_VORHALLE));
+        goldeneKugel.locationComp().narrateAndSetLocation(SCHLOSS_VORHALLE);
 
         loadSC().memoryComp().setLastAction(Action.Type.ABLEGEN, goldeneKugel, SCHLOSS_VORHALLE);
-
-        return timeElapsed;
     }
 
-    private AvTimeSpan scHatGoldeneKugelGenommen_wacheIstAufmerksam_nichtErwischt() {
+    private void scHatGoldeneKugelGenommen_wacheIstAufmerksam_nichtErwischt() {
         final ImmutableList.Builder<AbstractDescription<?>> alt = ImmutableList.builder();
 
         if (n.requireNarration().allowsAdditionalDuSatzreihengliedOhneSubjekt()) {
@@ -364,7 +350,7 @@ public class SchlosswacheReactionsComp
                 secs(3))
                 .dann());
 
-        return n.addAlt(alt);
+        n.addAlt(alt);
     }
 
     /**
@@ -372,38 +358,40 @@ public class SchlosswacheReactionsComp
      * Gegenstand also abgelegt, an jemand anderen weitergegeben, gestohlen bekommen,
      * der Gegenstand hat sich aufgelöst o.Ä.
      */
-    private AvTimeSpan onRelocationFromSC(final ILocationGO to) {
+    private void onRelocationFromSC(final ILocationGO to) {
         if (!locationComp.hasSameUpperMostLocationAs(to)) {
             // The Schlosswache does not notice.
-            return noTime();
+            return;
         }
 
         if (!to.is(SCHLOSS_VORHALLE)) {
-            return noTime();
+            return;
         }
 
         switch (stateComp.getState()) {
             case AUFMERKSAM:
-                return scHatEtwasInSchlosVorhalleHingelegt_wacheIstAufmerksam();
+                scHatEtwasInSchlosVorhalleHingelegt_wacheIstAufmerksam();
+                return;
             default:
-                return noTime();
+                return;
         }
     }
 
-    private AvTimeSpan scHatEtwasInSchlosVorhalleHingelegt_wacheIstAufmerksam() {
+    private void scHatEtwasInSchlosVorhalleHingelegt_wacheIstAufmerksam() {
         if (db.counterDao()
                 .incAndGet("SchlosswacheReactions_ablegen_wacheIstAufmerksam") > 2) {
-            return noTime();
+            return;
         }
 
         if (n.requireNarration().allowsAdditionalDuSatzreihengliedOhneSubjekt()) {
-            return n.add(satzanschluss(", von der kopfschüttelnden Wache beobachtet",
+            n.add(satzanschluss(", von der kopfschüttelnden Wache beobachtet",
                     secs(5))
                     .dann());
+            return;
         }
 
         loadSC().feelingsComp().setMood(ANGESPANNT);
-        return n.addAlt(
+        n.addAlt(
                 neuerSatz(getDescription().nom()
                         + " beoabachtet dich dabei", secs(5))
                         .dann(),
@@ -414,64 +402,53 @@ public class SchlosswacheReactionsComp
     }
 
     @Override
-    public AvTimeSpan onTimePassed(final AvDateTime lastTime, final AvDateTime now) {
-        AvTimeSpan timeElapsed = noTime();
-
+    public void onTimePassed(final AvDateTime lastTime, final AvDateTime now) {
         if (SCHLOSSFEST_BEGINN_DATE_TIME.isWithin(lastTime, now)) {
-            timeElapsed = timeElapsed.plus(schlossfestBeginnt());
+            schlossfestBeginnt();
         }
-
-        return timeElapsed;
     }
 
-    private AvTimeSpan schlossfestBeginnt() {
+    private void schlossfestBeginnt() {
         final SpielerCharakter sc = loadSC();
         if (sc.locationComp().hasRecursiveLocation(SCHLOSS_VORHALLE)) {
-            return schlossfestBeginnt_Vorhalle(sc);
+            schlossfestBeginnt_Vorhalle(sc);
+            return;
         }
 
         // Beim Fest ist die Schlosswache beschäftigt
-        return stateComp.narrateAndSetState(UNAUFFAELLIG)
-                // Passiert nebenher und braucht KEINE zusätzliche Zeit
-                ;
+        stateComp.narrateAndSetState(UNAUFFAELLIG);
+        // Passiert nebenher und braucht KEINE zusätzliche Zeit
     }
 
-    @NonNull
-    private AvTimeSpan schlossfestBeginnt_Vorhalle(final SpielerCharakter sc) {
+    private void schlossfestBeginnt_Vorhalle(final SpielerCharakter sc) {
         // Beim Fest ist die Schlosswache mit anderen Dingen beschäftigt
-        AvTimeSpan timeElapsed =
-                n.add(neuerSatz(PARAGRAPH,
-                        "Die Wache spricht dich an: „Wenn ich Euch dann "
-                                + "hinausbitten dürfte? Wer wollte "
-                                + "denn den Vorbereitungen für das große Fest im Wege stehen?“ – Nein, "
-                                + "das willst du sicher nicht.", secs(30)));
-        timeElapsed = timeElapsed.plus(
-                stateComp.narrateAndSetState(UNAUFFAELLIG));
+        n.add(neuerSatz(PARAGRAPH,
+                "Die Wache spricht dich an: „Wenn ich Euch dann "
+                        + "hinausbitten dürfte? Wer wollte "
+                        + "denn den Vorbereitungen für das große Fest im Wege stehen?“ – Nein, "
+                        + "das willst du sicher nicht.", secs(30)));
+        stateComp.narrateAndSetState(UNAUFFAELLIG);
 
-        return timeElapsed.plus(
-                sc.locationComp().narrateAndSetLocation(DRAUSSEN_VOR_DEM_SCHLOSS,
-                        () -> {
-                            final AvTimeSpan timeElapsedOnEnter =
-                                    n.add(neuerSatz(PARAGRAPH,
-                                            "Draußen sind Handwerker dabei, im "
-                                                    + "ganzen Schlossgarten kleine bunte "
-                                                    + "Pagoden aufzubauen. Du schaust eine "
-                                                    + "Zeitlang zu.\n"
-                                                    + "Zunehmend strömen von allen Seiten "
-                                                    + "Menschen herzu und wie es scheint, "
-                                                    + "ist auch "
-                                                    + "der Zugang zum Schloss jetzt für alle "
-                                                    + "geöffnet. Aus dem Schloss "
-                                                    + "weht dich der "
-                                                    + "Geruch von Gebratenem an.", mins(44))
-                                            .beendet(PARAGRAPH));
+        sc.locationComp().narrateAndSetLocation(DRAUSSEN_VOR_DEM_SCHLOSS,
+                () -> {
+                    n.add(neuerSatz(PARAGRAPH,
+                            "Draußen sind Handwerker dabei, im "
+                                    + "ganzen Schlossgarten kleine bunte "
+                                    + "Pagoden aufzubauen. Du schaust eine "
+                                    + "Zeitlang zu.\n"
+                                    + "Zunehmend strömen von allen Seiten "
+                                    + "Menschen herzu und wie es scheint, "
+                                    + "ist auch "
+                                    + "der Zugang zum Schloss jetzt für alle "
+                                    + "geöffnet. Aus dem Schloss "
+                                    + "weht dich der "
+                                    + "Geruch von Gebratenem an.", mins(44))
+                            .beendet(PARAGRAPH));
 
-                            sc.feelingsComp().setMood(NEUTRAL);
+                    sc.feelingsComp().setMood(NEUTRAL);
 
-                            // Der Spieler weiß jetzt, dass das Schlossfest läuft
-                            db.counterDao().incAndGet(COUNTER_ID_VOR_DEM_SCHLOSS_SCHLOSSFEST_KNOWN);
-
-                            return timeElapsedOnEnter;
-                        }));
+                    // Der Spieler weiß jetzt, dass das Schlossfest läuft
+                    db.counterDao().incAndGet(COUNTER_ID_VOR_DEM_SCHLOSS_SCHLOSSFEST_KNOWN);
+                });
     }
 }

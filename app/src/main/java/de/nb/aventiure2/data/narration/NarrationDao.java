@@ -15,8 +15,9 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
 
+import de.nb.aventiure2.data.database.AvDatabase;
 import de.nb.aventiure2.data.narration.Narration.NarrationSource;
-import de.nb.aventiure2.data.world.time.AvTimeSpan;
+import de.nb.aventiure2.data.world.time.AvNowDao;
 import de.nb.aventiure2.german.base.StructuralElement;
 import de.nb.aventiure2.german.description.AbstractDescription;
 import de.nb.aventiure2.german.description.DuDescription;
@@ -36,8 +37,14 @@ import static java.util.Arrays.asList;
 public abstract class NarrationDao {
     private NarrationSource narrationSourceJustInCase = NarrationSource.INITIALIZATION;
 
+    private final AvNowDao nowDao;
+
     @Nullable
     private Narration narrationCached;
+
+    public NarrationDao(final AvDatabase db) {
+        nowDao = db.nowDao();
+    }
 
     public void setNarrationSourceJustInCase(final NarrationSource narrationSourceJustInCase) {
         this.narrationSourceJustInCase = narrationSourceJustInCase;
@@ -83,30 +90,28 @@ public abstract class NarrationDao {
         }
     }
 
-    public AvTimeSpan addAlt(final AbstractDescription<?>... alternatives) {
+    public void addAlt(final AbstractDescription<?>... alternatives) {
         final Narration initialNarration = requireNarration();
-        return addAlt(
-                asList(alternatives), initialNarration);
+        addAlt(asList(alternatives), initialNarration);
     }
 
-    public AvTimeSpan addAlt(
+    public void addAlt(
             final ImmutableCollection.Builder<AbstractDescription<?>> alternatives) {
-        return addAlt(alternatives.build());
+        addAlt(alternatives.build());
     }
 
-    public AvTimeSpan addAlt(final Collection<AbstractDescription<?>> alternatives) {
+    public void addAlt(final Collection<AbstractDescription<?>> alternatives) {
         final Narration initialNarration = requireNarration();
-        return addAlt(
-                alternatives, initialNarration);
+        addAlt(alternatives, initialNarration);
     }
 
-    private AvTimeSpan addAlt(final Narration initialNarration,
-                              final AbstractDescription<?>... alternatives) {
-        return addAlt(asList(alternatives), initialNarration);
+    private void addAlt(final Narration initialNarration,
+                        final AbstractDescription<?>... alternatives) {
+        addAlt(asList(alternatives), initialNarration);
     }
 
-    private AvTimeSpan addAlt(final Collection<AbstractDescription<?>> alternatives,
-                              final Narration initialNarration) {
+    private void addAlt(final Collection<AbstractDescription<?>> alternatives,
+                        final Narration initialNarration) {
         checkArgument(alternatives.size() > 0,
                 "No alternatives");
 
@@ -130,20 +135,28 @@ public abstract class NarrationDao {
 
         add(bestNarrationAddition);
 
-        return bestDesc.getTimeElapsed();
+        nowDao.passTime(bestDesc.getTimeElapsed());
     }
 
-    public AvTimeSpan add(final AbstractDescription<?> desc) {
+    public void add(final AbstractDescription<?> desc) {
         final Narration initialNarration = requireNarration();
-        return add(desc, initialNarration);
+        add(desc, initialNarration);
     }
 
-    private AvTimeSpan add(final AbstractDescription<?> desc,
-                           final Narration initialNarration) {
+    // TODO Hier eine eingebettete Sprache verwenden:
+    //  - {RAPUNZEL.std.nom) immer die Langform?
+    //  - {RAPUNZEL.short.nom) immer die Langform?
+    //  - {RAPUNZEL.persPron.nom) Personalprononem (kontextabhängig von dem was zuvor stand!)
+    //  - {persPron.nom} (Kurzform)
+    //  - {RAPUNZEL.ana.nom) Nimmt möglichst eine Anapher
+    //  - {RAPUNZEL.nom): Wählt automatisch richtig (kontextabhängig!)
+    //  - .phorik(..) automatisch oder heuristisch setzen?!
+    private void add(final AbstractDescription<?> desc,
+                     final Narration initialNarration) {
         add(chooseNextFrom(initialNarration,
                 toNarrationAdditions(desc, initialNarration)));
 
-        return desc.getTimeElapsed();
+        nowDao.passTime(desc.getTimeElapsed());
     }
 
     private static List<NarrationAddition> toNarrationAdditions(
@@ -213,7 +226,7 @@ public abstract class NarrationDao {
 
     private static NarrationAddition toHauptsatzNarrationAddition(
             final StructuralElement startsNew,
-            @NonNull final AbstractDescription desc) {
+            @NonNull final AbstractDescription<?> desc) {
         return t(startsNew,
                 desc.getDescriptionHauptsatz())
                 .komma(desc.isKommaStehtAus())

@@ -11,7 +11,6 @@ import de.nb.aventiure2.data.world.syscomp.reaction.interfaces.ITimePassedReacti
 import de.nb.aventiure2.data.world.syscomp.state.AbstractStateComp;
 import de.nb.aventiure2.data.world.syscomp.state.impl.SchlossfestState;
 import de.nb.aventiure2.data.world.time.AvDateTime;
-import de.nb.aventiure2.data.world.time.AvTimeSpan;
 
 import static de.nb.aventiure2.data.world.gameobject.World.COUNTER_ID_VOR_DEM_SCHLOSS_SCHLOSSFEST_KNOWN;
 import static de.nb.aventiure2.data.world.gameobject.World.DRAUSSEN_VOR_DEM_SCHLOSS;
@@ -22,7 +21,6 @@ import static de.nb.aventiure2.data.world.gameobject.World.SCHLOSS_VORHALLE_AM_T
 import static de.nb.aventiure2.data.world.syscomp.feelings.Mood.NEUTRAL;
 import static de.nb.aventiure2.data.world.syscomp.state.impl.SchlossfestState.BEGONNEN;
 import static de.nb.aventiure2.data.world.time.AvTimeSpan.mins;
-import static de.nb.aventiure2.data.world.time.AvTimeSpan.noTime;
 import static de.nb.aventiure2.german.base.StructuralElement.PARAGRAPH;
 import static de.nb.aventiure2.german.description.AllgDescription.neuerSatz;
 
@@ -42,42 +40,37 @@ public class SchlossfestReactionsComp
     }
 
     @Override
-    public AvTimeSpan onTimePassed(final AvDateTime lastTime, final AvDateTime now) {
-        AvTimeSpan timeElapsed = noTime();
-
+    public void onTimePassed(final AvDateTime lastTime, final AvDateTime now) {
         if (SCHLOSSFEST_BEGINN_DATE_TIME.isWithin(lastTime, now)) {
-            timeElapsed = timeElapsed.plus(schlossfestBeginnt());
+            schlossfestBeginnt();
         }
-
-        return timeElapsed;
     }
 
-    private AvTimeSpan schlossfestBeginnt() {
-        final AvTimeSpan timeElapsed = stateComp.narrateAndSetState(BEGONNEN);
+    private void schlossfestBeginnt() {
+        stateComp.narrateAndSetState(BEGONNEN);
         ((ILocatableGO) world.load(SCHLOSS_VORHALLE_AM_TISCH_BEIM_FEST))
                 .locationComp().narrateAndSetLocation(SCHLOSS_VORHALLE);
 
         final @Nullable IGameObject currentRoom = loadSC().locationComp().getLocation();
 
         if (currentRoom == null) {
-            return timeElapsed;
+            return;
         }
 
         loadSC().feelingsComp().setMood(NEUTRAL);
 
         if (!currentRoom.is(DRAUSSEN_VOR_DEM_SCHLOSS)) {
-            return timeElapsed;  // Passiert nebenher und braucht KEINE zusätzliche Zeit
+            return;  // Passiert nebenher und braucht KEINE zusätzliche Zeit
         }
 
         // Der Spieler weiß jetzt, dass das Schlossfest läuft
         db.counterDao().incAndGet(COUNTER_ID_VOR_DEM_SCHLOSS_SCHLOSSFEST_KNOWN);
 
-        return timeElapsed.plus(
-                n.add(
-                        neuerSatz(PARAGRAPH, "Dir fällt auf, dass Handwerker dabei sind, überall "
-                                        + "im Schlossgarten kleine bunte Pagoden aufzubauen. Du schaust eine Weile "
-                                        + "zu, und wie es scheint, beginnen von überallher Menschen zu "
-                                        + "strömen. Aus dem Schloss weht dich der Geruch von Gebratenem an.",
-                                mins(30))));
+        n.add(
+                neuerSatz(PARAGRAPH, "Dir fällt auf, dass Handwerker dabei sind, überall "
+                                + "im Schlossgarten kleine bunte Pagoden aufzubauen. Du schaust eine Weile "
+                                + "zu, und wie es scheint, beginnen von überallher Menschen zu "
+                                + "strömen. Aus dem Schloss weht dich der Geruch von Gebratenem an.",
+                        mins(30)));
     }
 }

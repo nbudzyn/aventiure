@@ -1,7 +1,5 @@
 package de.nb.aventiure2.data.world.syscomp.story;
 
-import androidx.annotation.Nullable;
-
 import java.util.EnumSet;
 
 import de.nb.aventiure2.data.database.AvDatabase;
@@ -9,7 +7,6 @@ import de.nb.aventiure2.data.narration.NarrationDao;
 import de.nb.aventiure2.data.world.gameobject.World;
 import de.nb.aventiure2.data.world.syscomp.story.impl.FroschkoenigStoryNode;
 import de.nb.aventiure2.data.world.syscomp.story.impl.RapunzelStoryNode;
-import de.nb.aventiure2.data.world.time.AvTimeSpan;
 
 /**
  * Eine Teil-Geschichte (z.B. ein einzelnes Märchen). Besteht aus einzelnen
@@ -27,8 +24,7 @@ public enum Story {
 
     @FunctionalInterface
     interface IStoryAdvancer {
-        @Nullable
-        AvTimeSpan checkAndAdvanceIfAppropriate(
+        boolean checkAndAdvanceIfAppropriate(
                 final AvDatabase db,
                 NarrationDao n,
                 final World world);
@@ -55,24 +51,21 @@ public enum Story {
      * Geschichte wieder Aktionsmöglichkeiten hat.
      * </ul>
      */
-    @Nullable
-    public static AvTimeSpan checkAndAdvanceAStoryIfAppropriate(
+    public static boolean checkAndAdvanceAStoryIfAppropriate(
             final AvDatabase db,
             final NarrationDao n,
             final World world
     ) {
         for (final Story story : values()) {
-            @Nullable final AvTimeSpan timeElapsedIfAppropriate =
-                    story.checkAndAdvanceIfAppropriate(db, n, world);
-            if (timeElapsedIfAppropriate != null) {
-                return timeElapsedIfAppropriate;
+            if (story.checkAndAdvanceIfAppropriate(db, n, world)) {
+                return true;
             }
         }
 
-        return null;
+        return false;
     }
 
-    private AvTimeSpan checkAndAdvanceIfAppropriate(
+    private boolean checkAndAdvanceIfAppropriate(
             final AvDatabase db,
             final NarrationDao n,
             final World world) {

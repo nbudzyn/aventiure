@@ -21,7 +21,6 @@ import static com.google.common.base.Preconditions.checkNotNull;
 import static de.nb.aventiure2.data.narration.Narration.NarrationSource.REACTIONS;
 import static de.nb.aventiure2.data.narration.Narration.NarrationSource.SC_ACTION;
 import static de.nb.aventiure2.data.world.time.AvTimeSpan.days;
-import static de.nb.aventiure2.data.world.time.AvTimeSpan.noTime;
 
 /**
  * An action the player could choose.
@@ -73,21 +72,26 @@ public abstract class AbstractScAction implements IPlayerAction {
         //  Kann nicht die Zeit jeweils beim narraten upgedatet werden?
         //  Und man vergleich hier nur vorher-Zeit mit nachher-Zeit?
 
-        final AvTimeSpan timeElapsed = narrateAndDo();
+        narrateAndDo();
 
         db.scActionStepCountDao().inc();
         fireScActionDone(start);
 
-        db.nowDao().passTime(timeElapsed);
-
         n.setNarrationSourceJustInCase(REACTIONS);
 
-        final AvDateTime dateTimeBetweenMainWorldUpdateAndHints =
-                db.nowDao().passTime(updateWorld(start));
+        // Jetzt die Zeit zurücksetzen und in der Welt das nachholen,
+        // was passiert ist, während der Benutzer gehandelt hat!
+        final AvDateTime until = db.nowDao().now();
+        db.nowDao().setNow(start);
+        updateWorld(until);
 
-        db.nowDao().passTime(fireAfterScActionAndFirstWorldUpdate());
+        final AvDateTime dateTimeBetweenMainWorldUpdateAndHints = db.nowDao().now();
 
-        db.nowDao().passTime(updateWorld(dateTimeBetweenMainWorldUpdateAndHints));
+        fireAfterScActionAndFirstWorldUpdate();
+
+        if (db.nowDao().now().isAfter(dateTimeBetweenMainWorldUpdateAndHints)) {
+            updateWorld(db.nowDao().now());
+        }
 
         world.saveAll(true);
     }
@@ -96,53 +100,39 @@ public abstract class AbstractScAction implements IPlayerAction {
         world.scActionDone(startTimeOfScAction);
     }
 
-    private AvTimeSpan updateWorld(final AvDateTime lastTime) {
-        return updateWorld(lastTime, db.nowDao().now());
-    }
+    private void updateWorld(final AvDateTime until) {
+        checkNotNull(until, "now is null");
 
-    private AvTimeSpan updateWorld(final AvDateTime lastTime,
-                                   final AvDateTime now) {
-        checkNotNull(lastTime, "lastTime is null");
-        checkNotNull(now, "now is null");
-
-        if (now.equals(lastTime)) {
-            return noTime();
+        if (db.nowDao().now().isEqualOrAfter(until)) {
+            return;
         }
 
-        if (now.minus(lastTime).longerThan(MAX_WORLD_TICK)) {
-            final AvDateTime tickTime = lastTime.plus(MAX_WORLD_TICK);
+        while (until.minus(db.nowDao().now()).longerThan(MAX_WORLD_TICK)) {
+            final AvDateTime endOfTick = db.nowDao().now().plus(MAX_WORLD_TICK);
+            world.narrateAndDoReactions().onTimePassed(db.nowDao().now(), endOfTick);
 
-            final AvTimeSpan additionalTimeElapsedTick = updateWorld(lastTime, tickTime);
-
-            final AvTimeSpan remainingTime = now.minus(tickTime);
-            final AvTimeSpan extraTime;
-            if (additionalTimeElapsedTick.longerThan(remainingTime)) {
-                extraTime = additionalTimeElapsedTick.minus(remainingTime);
-            } else {
-                extraTime = noTime();
-            }
-
-            return updateWorld(tickTime, now.plus(extraTime));
+            db.nowDao().setNow(endOfTick);
         }
 
-        AvTimeSpan additionalTimeElapsed =
-                world.narrateAndDoReactions().onTimePassed(lastTime, now);
+        world.narrateAndDoReactions().onTimePassed(db.nowDao().now(), until);
 
-        // Falls jetzt noch etwas passiert ist,
-        // was Zeit gebraucht hat, dann erneut
-        // allen die Zeit geben, in dieser Zeit etwas
-        // getan zu haben.
-        additionalTimeElapsed =
-                additionalTimeElapsed.plus(updateWorld(now, now.plus(additionalTimeElapsed)));
-
-        return additionalTimeElapsed;
+        if (db.nowDao().now().isAfter(until)) {
+            // Sonderfall! Einzelne Game Objects haben Aktionen begonnen, die
+            // Zusatzzeit gebraucht haben.
+            // Dann lassen wir diese "Zusatzzeit" auch offiziell hier vergehen, so dass
+            // jedes Game Object darauf reagieren kann.
+            // (Rekursiv möglich.)
+            updateWorld(db.nowDao().now());
+        } else {
+            db.nowDao().setNow(until);
+        }
     }
 
-    private AvTimeSpan fireAfterScActionAndFirstWorldUpdate() {
-        return world.narrateAndDoReactions().afterScActionAndFirstWorldUpdate();
+    private void fireAfterScActionAndFirstWorldUpdate() {
+        world.narrateAndDoReactions().afterScActionAndFirstWorldUpdate();
     }
 
-    abstract public AvTimeSpan narrateAndDo();
+    abstract public void narrateAndDo();
 
     /**
      * Gibt zurück, ob der Benutzer dasselbe definitiv schon einmal getan und zwischendrin nichts

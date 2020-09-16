@@ -15,7 +15,6 @@ import de.nb.aventiure2.data.world.syscomp.location.ILocatableGO;
 import de.nb.aventiure2.data.world.syscomp.memory.Action;
 import de.nb.aventiure2.data.world.syscomp.state.impl.FroschprinzStateComp;
 import de.nb.aventiure2.data.world.syscomp.talking.AbstractTalkingComp;
-import de.nb.aventiure2.data.world.time.AvTimeSpan;
 import de.nb.aventiure2.german.base.Indefinitpronomen;
 import de.nb.aventiure2.german.base.Nominalphrase;
 import de.nb.aventiure2.german.base.SubstantivischePhrase;
@@ -169,30 +168,31 @@ public class FroschprinzTalkingComp extends AbstractTalkingComp {
     // -------------------------------------------------------------------------------
     // .. HAT_SC_HILFSBEREIT_ANGESPROCHEN
     // -------------------------------------------------------------------------------
-    private AvTimeSpan froschHatAngesprochen_antworten() {
+    private void froschHatAngesprochen_antworten() {
         final ImmutableList<? extends IDescribableGO> objectsInDenBrunnenGefallen =
                 getObjectsInDenBrunnenGefallen();
 
         if (objectsInDenBrunnenGefallen.isEmpty()) {
             unsetTalkingTo();
 
-            return n.add(neuerSatz("„Ach, du bist's, alter Wasserpatscher“, sagst du",
+            n.add(neuerSatz("„Ach, du bist's, alter Wasserpatscher“, sagst du",
                     secs(5))
                     .undWartest()
                     .dann());
+            return;
         }
 
-        AvTimeSpan timeElapsed = noTime();
-        timeElapsed = timeElapsed.plus(inDenBrunnenGefallenErklaerung());
-        return timeElapsed.plus(herausholenAngebot());
+        inDenBrunnenGefallenErklaerung();
+        herausholenAngebot();
     }
 
-    private AvTimeSpan froschHatAngesprochen_ImmReEntry() {
+    private void froschHatAngesprochen_ImmReEntry() {
         final ImmutableList<? extends IDescribableGO> objectsInDenBrunnenGefallen =
                 getObjectsInDenBrunnenGefallen();
 
         if (objectsInDenBrunnenGefallen.isEmpty()) {
-            return hallo_froschReagiertNicht();
+            hallo_froschReagiertNicht();
+            return;
         }
 
         final Narration initialNarration = db.narrationDao().requireNarration();
@@ -208,59 +208,61 @@ public class FroschprinzTalkingComp extends AbstractTalkingComp {
             n.add(du("gibst", "dir einen Ruck:", noTime()));
         }
 
-        return froschHatAngesprochen_ReEntry();
+        froschHatAngesprochen_ReEntry();
     }
 
-    private AvTimeSpan froschHatAngesprochen_ReEntry() {
+    private void froschHatAngesprochen_ReEntry() {
         final ImmutableList<? extends IDescribableGO> objectsInDenBrunnenGefallen =
                 getObjectsInDenBrunnenGefallen();
 
         if (objectsInDenBrunnenGefallen.isEmpty()) {
-            return hallo_froschReagiertNicht();
+            hallo_froschReagiertNicht();
+            return;
         }
 
-        AvTimeSpan timeElapsed = n.add(
-                neuerSatz("„Hallo, du hässlicher Frosch!“, redest du ihn an", noTime())
-                        .undWartest()
-                        .dann());
+        n.add(neuerSatz("„Hallo, du hässlicher Frosch!“, redest du ihn an", noTime())
+                .undWartest()
+                .dann());
 
         world.loadSC().talkingComp().setTalkingTo(FROSCHPRINZ);
 
-        timeElapsed = timeElapsed.plus(inDenBrunnenGefallenErklaerung());
-        return timeElapsed.plus(herausholenAngebot());
+        inDenBrunnenGefallenErklaerung();
+        herausholenAngebot();
     }
 
-    private AvTimeSpan inDenBrunnenGefallenErklaerung() {
+    private void inDenBrunnenGefallenErklaerung() {
         final ImmutableList<? extends IDescribableGO> objectsInDenBrunnenGefallen =
                 getObjectsInDenBrunnenGefallen();
 
         if (world.loadSC().memoryComp().getLastAction().is(Action.Type.HEULEN)) {
             final SubstantivischePhrase objectsDesc =
                     getDescriptionSingleOrCollective(objectsInDenBrunnenGefallen);
-
-            return n.add(
-                    neuerSatz("„Ich weine über "
-                            + objectsDesc.akk() // die goldene Kugel
-                            + ", "
-                            + objectsDesc.relPron().akk() // die
-                            + " mir in den Brunnen hinabgefallen " +
-                            istSind(objectsDesc.getNumerusGenus()) +
-                            ".“", secs(10)));
+            // die goldene Kugel
+            // die
+            n.add(neuerSatz("„Ich weine über "
+                    + objectsDesc.akk() // die goldene Kugel
+                    + ", "
+                    + objectsDesc.relPron().akk() // die
+                    + " mir in den Brunnen hinabgefallen " +
+                    istSind(objectsDesc.getNumerusGenus()) +
+                    ".“", secs(10)));
+            return;
         }
 
         if (objectsInDenBrunnenGefallen.size() == 1) {
             final IDescribableGO objectInDenBrunnenGefallen =
                     objectsInDenBrunnenGefallen.iterator().next();
 
-            return n.add(neuerSatz("„"
+            n.add(neuerSatz("„"
                     + capitalize(getDescription(objectInDenBrunnenGefallen).nom())
                     + " ist mir in den Brunnen hinabgefallen.“", secs(10)));
+            return;
         }
 
-        return n.add(neuerSatz("„Mir sind Dinge in den Brunnen hinabgefallen.“", secs(5)));
+        n.add(neuerSatz("„Mir sind Dinge in den Brunnen hinabgefallen.“", secs(5)));
     }
 
-    private AvTimeSpan herausholenAngebot() {
+    private void herausholenAngebot() {
         final ImmutableList<? extends IDescribableGO> objectsInDenBrunnenGefallen =
                 getObjectsInDenBrunnenGefallen();
 
@@ -274,7 +276,7 @@ public class FroschprinzTalkingComp extends AbstractTalkingComp {
             ratschlag = "sorge dich nicht";
         }
 
-        final AvTimeSpan timeElapsed = n.add(neuerSatz(PARAGRAPH, "„Sei still und "
+        n.add(neuerSatz(PARAGRAPH, "„Sei still und "
                         + ratschlag
                         + "“, antwortet "
                         + getDescription(true).nom()
@@ -284,14 +286,13 @@ public class FroschprinzTalkingComp extends AbstractTalkingComp {
                 secs(15))
                 .beendet(PARAGRAPH));
 
-        return timeElapsed.plus(
-                stateComp.narrateAndSetState(HAT_NACH_BELOHNUNG_GEFRAGT));
+        stateComp.narrateAndSetState(HAT_NACH_BELOHNUNG_GEFRAGT);
     }
 
-    private AvTimeSpan froschHatAngesprochen_Exit() {
+    private void froschHatAngesprochen_Exit() {
         unsetTalkingTo();
 
-        return n.add(du(SENTENCE, "tust", ", als hättest du nichts gehört",
+        n.add(du(SENTENCE, "tust", ", als hättest du nichts gehört",
                 secs(3))
                 .komma()
                 .undWartest()
@@ -302,10 +303,10 @@ public class FroschprinzTalkingComp extends AbstractTalkingComp {
     // .. HAT_NACH_BELOHNUNG_GEFRAGT
     // -------------------------------------------------------------------------------
 
-    private AvTimeSpan froschHatNachBelohnungGefragt_AngeboteMachen() {
+    private void froschHatNachBelohnungGefragt_AngeboteMachen() {
         world.loadSC().talkingComp().setTalkingTo(FROSCHPRINZ);
 
-        final AvTimeSpan timeSpan = n.add(neuerSatz(
+        n.add(neuerSatz(
                 // TODO Geschlechtsneutral! Reichtümer o.Ä.
                 "„Was du haben willst, lieber Frosch“, sagst du, „meine Kleider, "
                         + "Perlen oder Edelsteine?“", secs(5)));
@@ -313,7 +314,7 @@ public class FroschprinzTalkingComp extends AbstractTalkingComp {
         final ImmutableList<? extends IDescribableGO> objectsInDenBrunnenGefallen =
                 getObjectsInDenBrunnenGefallen();
 
-        final AvTimeSpan timeElapsed = timeSpan.plus(n.add(neuerSatz(PARAGRAPH,
+        n.add(neuerSatz(PARAGRAPH,
                 // TODO Geschlechtsneutral! Reichtümer o.Ä.
                 "Der Frosch antwortet: „Deine Kleider, Perlen oder Edelsteine, die mag "
                         + "ich nicht. "
@@ -323,40 +324,38 @@ public class FroschprinzTalkingComp extends AbstractTalkingComp {
                         // die goldene Kugel / die Dinge
                         + getDescriptionSingleOrCollective(objectsInDenBrunnenGefallen).akk()
                         + " wieder heraufholen.“", secs(15))
-                .beendet(PARAGRAPH)));
+                .beendet(PARAGRAPH));
 
-        return timeElapsed.plus(
-                stateComp.narrateAndSetState(HAT_FORDERUNG_GESTELLT));
+        stateComp.narrateAndSetState(HAT_FORDERUNG_GESTELLT);
     }
 
-    private AvTimeSpan froschHatNachBelohnungGefragt_ImmReEntry() {
-        return
-                n.add(du(SENTENCE, "gehst", "kurz in dich…", secs(5)))
-                        .plus(
-                                froschHatNachBelohnungGefragt_ReEntry());
+    private void froschHatNachBelohnungGefragt_ImmReEntry() {
+        n.add(du(SENTENCE, "gehst", "kurz in dich…", secs(5)));
+
+        froschHatNachBelohnungGefragt_ReEntry();
     }
 
-    private AvTimeSpan froschHatNachBelohnungGefragt_ReEntry() {
+    private void froschHatNachBelohnungGefragt_ReEntry() {
         world.loadSC().talkingComp().setTalkingTo(getGameObjectId());
 
-        AvTimeSpan timeSpan = n.add(
+        n.add(
                 neuerSatz(PARAGRAPH, "„Frosch“, sprichst du ihn an, „steht dein Angebot noch?“",
                         secs(5)));
 
-        timeSpan = timeSpan.plus(n.add(
+        n.add(
                 neuerSatz(PARAGRAPH,
                         "„Sicher“, antwortet der Frosch, „ich kann dir alles aus dem Brunnen "
                                 + "holen, was hineingefallen ist. Was gibst du mir dafür?“ "
                                 // TODO Geschlechtsneutral! Reichtümer o.Ä.
                                 + "„Was du haben willst, lieber Frosch“, sagst du, „meine Kleider, "
                                 + "Perlen oder Edelsteine?“",
-                        secs(10))));
+                        secs(10)));
 
 
         final ImmutableList<? extends IDescribableGO> objectsInDenBrunnenGefallen =
                 getObjectsInDenBrunnenGefallen();
 
-        final AvTimeSpan timeElapsed = timeSpan.plus(n.add(neuerSatz(PARAGRAPH,
+        n.add(neuerSatz(PARAGRAPH,
                 // TODO Geschlechtsneutral! Reichtümer o.Ä.
                 "Der Frosch antwortet: „Deine Kleider, Perlen oder Edelsteine, die mag "
                         + "ich nicht. "
@@ -368,16 +367,15 @@ public class FroschprinzTalkingComp extends AbstractTalkingComp {
                         + getDescriptionSingleOrCollective(objectsInDenBrunnenGefallen).akk()
                         + " wieder herauf holen.“",
                 secs(15))
-                .beendet(PARAGRAPH)));
+                .beendet(PARAGRAPH));
 
-        return timeElapsed.plus(
-                stateComp.narrateAndSetState(HAT_FORDERUNG_GESTELLT));
+        stateComp.narrateAndSetState(HAT_FORDERUNG_GESTELLT);
     }
 
-    private AvTimeSpan froschHatNachBelohnungGefragt_Exit() {
+    private void froschHatNachBelohnungGefragt_Exit() {
         unsetTalkingTo();
 
-        return n.add(
+        n.add(
                 neuerSatz(
                         "„Denkst du etwa, ich überschütte dich mit Gold "
                                 + "und Juwelen? – Vergiss es!“",
@@ -387,12 +385,12 @@ public class FroschprinzTalkingComp extends AbstractTalkingComp {
     // -------------------------------------------------------------------------------
     // .. HAT_NACH_BELOHNUNG_GEFRAGT
     // -------------------------------------------------------------------------------
-    private AvTimeSpan froschHatForderungGestellt_AllesVersprechen() {
+    private void froschHatForderungGestellt_AllesVersprechen() {
         final ImmutableList<? extends IDescribableGO> objectsInDenBrunnenGefallen =
                 getObjectsInDenBrunnenGefallen();
 
         // die goldene Kugel / die Dinge
-        final AvTimeSpan timeSpan = n.add(
+        n.add(
                 neuerSatz(PARAGRAPH, "„Ach ja“, sagst du, „ich verspreche dir alles, was du "
                                 + "willst, wenn du mir nur "
                                 + getDescriptionSingleOrCollective(objectsInDenBrunnenGefallen).akk()
@@ -401,14 +399,14 @@ public class FroschprinzTalkingComp extends AbstractTalkingComp {
                                 + "seinesgleichen und quakt und kann keines Menschen Geselle sein.“",
                         secs(20)));
 
-        return timeSpan.plus(froschReagiertAufVersprechen());
+        froschReagiertAufVersprechen();
     }
 
-    private AvTimeSpan froschHatForderungGestellt_ImmReEntry() {
+    private void froschHatForderungGestellt_ImmReEntry() {
         final ImmutableList<? extends IDescribableGO> objectsInDenBrunnenGefallen =
                 getObjectsInDenBrunnenGefallen();
 
-        final AvTimeSpan timeSpan = n.add(neuerSatz(
+        neuerSatz(
                 "Aber im nächsten Moment entschuldigst du dich schon: "
                         + "„Nichts für ungut! Wenn du mir wirklich "
                         + getDescriptionSingleOrCollective(objectsInDenBrunnenGefallen).akk()
@@ -416,16 +414,16 @@ public class FroschprinzTalkingComp extends AbstractTalkingComp {
                         + " Bei dir selbst denkst du: "
                         + "„Was der einfältige Frosch schwätzt, der sitzt im Wasser bei "
                         + "seinesgleichen und quakt und kann keines Menschen Geselle sein.“",
-                secs(20)));
+                secs(20));
 
-        return timeSpan.plus(froschReagiertAufVersprechen());
+        froschReagiertAufVersprechen();
     }
 
-    private AvTimeSpan froschHatForderungGestellt_reEntry() {
+    private void froschHatForderungGestellt_reEntry() {
         final ImmutableList<? extends IDescribableGO> objectsInDenBrunnenGefallen =
                 getObjectsInDenBrunnenGefallen();
 
-        final AvTimeSpan timeSpan = n.add(neuerSatz(
+        n.add(neuerSatz(
                 "„Lieber Frosch“, sagst du, „ich habe es mir überlegt. Ich verspreche dir alles, "
                         + "was du "
                         + "willst, wenn du mir nur "
@@ -435,10 +433,10 @@ public class FroschprinzTalkingComp extends AbstractTalkingComp {
                         + " Wasser bei seinesgleichen und quakt und kann keines Menschen "
                         + "Geselle sein.“", secs(20)));
 
-        return timeSpan.plus(froschReagiertAufVersprechen());
+        froschReagiertAufVersprechen();
     }
 
-    private <LOC_DESC extends ILocatableGO & IDescribableGO> AvTimeSpan froschReagiertAufVersprechen() {
+    private <LOC_DESC extends ILocatableGO & IDescribableGO> void froschReagiertAufVersprechen() {
         n.add(neuerSatz(PARAGRAPH,
                 "Der Frosch, als er die Zusage erhalten hat,",
                 noTime()));
@@ -455,7 +453,7 @@ public class FroschprinzTalkingComp extends AbstractTalkingComp {
 
         world.loadSC().feelingsComp().setMoodMin(VOLLER_FREUDE);
 
-        AvTimeSpan timeElapsed = n.add(satzanschluss("taucht seinen Kopf "
+        n.add(satzanschluss("taucht seinen Kopf "
                         + "unter, sinkt hinab und über ein Weilchen kommt er wieder herauf gerudert, "
                         + "hat "
                         // die goldene Kugel / die Dinge
@@ -473,20 +471,17 @@ public class FroschprinzTalkingComp extends AbstractTalkingComp {
                 secs(30)));
 
         for (final LOC_DESC object : objectsInDenBrunnenGefallen) {
-            timeElapsed = timeElapsed.plus(object.locationComp()
-                    .narrateAndSetLocation(scLocationId));
+            object.locationComp()
+                    .narrateAndSetLocation(scLocationId);
         }
 
-        timeElapsed = timeElapsed.plus(
-                stateComp.narrateAndSetState(ERWARTET_VON_SC_EINLOESUNG_SEINES_VERSPRECHENS));
-
-        return timeElapsed;
+        stateComp.narrateAndSetState(ERWARTET_VON_SC_EINLOESUNG_SEINES_VERSPRECHENS);
     }
 
-    private AvTimeSpan froschHatForderungGestellt_Exit() {
+    private void froschHatForderungGestellt_Exit() {
         unsetTalkingTo();
 
-        return n.addAlt(
+        n.addAlt(
                 neuerSatz("„Na, bei dir piept's wohl!“ – Entrüstet wendest du dich ab",
                         secs(10))
                         .undWartest(),
@@ -510,28 +505,26 @@ public class FroschprinzTalkingComp extends AbstractTalkingComp {
     // .. ALLGEMEINES
     // -------------------------------------------------------------------------------
 
-    private AvTimeSpan hallo_froschReagiertNicht() {
-        final AvTimeSpan timeSpan = n.addAlt(
-                neuerSatz("„Hallo, Kollege Frosch!“", secs(3)),
+    private void hallo_froschReagiertNicht() {
+        n.addAlt(neuerSatz("„Hallo, Kollege Frosch!“", secs(3)),
                 neuerSatz("„Hallo, du hässlicher Frosch!“, redest du ihn an", secs(3))
                         .undWartest()
-                        .dann(),
-                neuerSatz("„Hallo nochmal, Meister Frosch!“", secs(3)));
+                        .dann(), neuerSatz("„Hallo nochmal, Meister Frosch!“", secs(3)));
 
-        return timeSpan.plus(froschReagiertNicht());
+        froschReagiertNicht();
     }
 
-    private AvTimeSpan froschReagiertNicht() {
+    private void froschReagiertNicht() {
         unsetTalkingTo();
 
-        return n.add(neuerSatz("Der Frosch reagiert nicht", secs(3))
+        n.add(neuerSatz("Der Frosch reagiert nicht", secs(3))
                 .beendet(PARAGRAPH));
     }
 
-    private AvTimeSpan hallo_froschErinnertAnVersprechen() {
+    private void hallo_froschErinnertAnVersprechen() {
         unsetTalkingTo();
 
-        return n.addAlt(
+        n.addAlt(
                 du(
                         "sprichst",
                         getDescription(true).akk()
@@ -547,11 +540,11 @@ public class FroschprinzTalkingComp extends AbstractTalkingComp {
                         secs(15)));
     }
 
-    private AvTimeSpan froschAufTischDraengelt() {
+    private void froschAufTischDraengelt() {
         unsetTalkingTo();
 
         final Nominalphrase desc = getDescription(true);
-        return n.addAlt(
+        n.addAlt(
                 du(
                         "hast", "gerade Luft geholt, da schneidet dir "
                                 + desc.nom()

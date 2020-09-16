@@ -15,7 +15,6 @@ import de.nb.aventiure2.data.world.syscomp.state.IHasStateGO;
 import de.nb.aventiure2.data.world.syscomp.state.impl.FroschprinzState;
 import de.nb.aventiure2.data.world.syscomp.state.impl.SchlossfestState;
 import de.nb.aventiure2.data.world.syscomp.storingplace.ILocationGO;
-import de.nb.aventiure2.data.world.time.AvTimeSpan;
 import de.nb.aventiure2.scaction.AbstractScAction;
 
 import static de.nb.aventiure2.data.world.gameobject.World.FROSCHPRINZ;
@@ -123,12 +122,11 @@ public class EssenAction extends AbstractScAction {
     }
 
     @Override
-    public AvTimeSpan narrateAndDo() {
-        AvTimeSpan timeElapsed;
+    public void narrateAndDo() {
         if (location.is(SCHLOSS_VORHALLE_AM_TISCH_BEIM_FEST)) {
-            timeElapsed = narrateAndDoSchlossfest();
+            narrateAndDoSchlossfest();
         } else if (location.is(WALDWILDNIS_HINTER_DEM_BRUNNEN)) {
-            timeElapsed = narrateAndDoFelsenbirnen();
+            narrateAndDoFelsenbirnen();
         } else {
             throw new IllegalStateException("Unexpected location: " + location);
         }
@@ -137,35 +135,35 @@ public class EssenAction extends AbstractScAction {
 
         sc.memoryComp().setLastAction(buildMemorizedAction());
 
-        timeElapsed = timeElapsed.plus(world.narrateAndDoReactions()
-                .onEssen(sc));
-
-        return timeElapsed;
+        world.narrateAndDoReactions().onEssen(sc);
     }
 
     private <F extends ILocatableGO & IHasStateGO<FroschprinzState>>
-    AvTimeSpan narrateAndDoSchlossfest() {
+    void narrateAndDoSchlossfest() {
         final F froschprinz = (F) world.load(FROSCHPRINZ);
         if (froschprinz.locationComp()
                 .hasRecursiveLocation(SCHLOSS_VORHALLE_LANGER_TISCH_BEIM_FEST) &&
                 froschprinz.stateComp().hasState(BEIM_SCHLOSSFEST_AUF_TISCH_WILL_ZUSAMMEN_ESSEN)) {
-            return narrateAndDoSchlossfestEssenMitFrosch(froschprinz);
+            narrateAndDoSchlossfestEssenMitFrosch(froschprinz);
+            return;
         }
         final Hunger hunger = getHunger();
 
         switch (hunger) {
             case HUNGRIG:
-                return narrateAndDoSchlossfestHungrig();
+                narrateAndDoSchlossfestHungrig();
+                return;
             case SATT:
-                return narrateAndDoSchlossfestSatt();
+                narrateAndDoSchlossfestSatt();
+                return;
             default:
                 throw new IllegalStateException("Unerwarteter Hunger-Wert: " + hunger);
         }
     }
 
     private <F extends ILocatableGO & IHasStateGO<FroschprinzState>>
-    AvTimeSpan narrateAndDoSchlossfestEssenMitFrosch(final F froschprinz) {
-        AvTimeSpan timeElapsed = n.add(neuerSatz(PARAGRAPH,
+    void narrateAndDoSchlossfestEssenMitFrosch(final F froschprinz) {
+        n.add(neuerSatz(PARAGRAPH,
                 "Was hatte deine Großmutter immer gesagt? „Wer dir geholfen in der "
                         + "Not, den sollst du hernach nicht verachten.” Du füllst deine Schale "
                         + "neu mit Eintopf, steckst deinen Holzlöffel hinein... aber was ist das? "
@@ -174,29 +172,27 @@ public class EssenAction extends AbstractScAction {
                         + "Bank sitzt ein junger Mann mit schönen freundlichen Augen. In Samt und "
                         + "Seide ist er gekleidet, mit goldenen Ketten um den Hals",
                 secs(10)));
-        timeElapsed = timeElapsed.plus(n.add(neuerSatz(PARAGRAPH,
+        n.add(neuerSatz(PARAGRAPH,
                 "Er schaut an sich herab – „Ihr habt mich erlöst”, sagt er, „ich "
                         + "danke euch!” Eine böse Hexe "
                         + "habe ihn verwünscht. „Ich werde euch nicht vergessen!”",
-                secs(10))));
-        timeElapsed = timeElapsed.plus(n.add(neuerSatz(PARAGRAPH,
+                secs(10)));
+        n.add(neuerSatz(PARAGRAPH,
                 "Am Tisch um euch herum entsteht Aufregung. Der junge Mann erhebt "
                         + "sich und schickt sich an, die Halle zu verlassen",
-                secs(10))));
+                secs(10)));
 
         world.loadSC().feelingsComp().setMoodMin(ZUFRIEDEN);
-        timeElapsed = timeElapsed.plus(
-                froschprinz.stateComp().narrateAndSetState(ZURUECKVERWANDELT_IN_VORHALLE));
-        return timeElapsed.plus(
-                froschprinz.locationComp().narrateAndSetLocation(SCHLOSS_VORHALLE));
+        froschprinz.stateComp().narrateAndSetState(ZURUECKVERWANDELT_IN_VORHALLE);
+        froschprinz.locationComp().narrateAndSetLocation(SCHLOSS_VORHALLE);
     }
 
-    private AvTimeSpan narrateAndDoSchlossfestHungrig() {
+    private void narrateAndDoSchlossfestHungrig() {
         saveSatt();
 
         world.loadSC().feelingsComp().setMoodMin(ZUFRIEDEN);
 
-        return n.addAlt(
+        n.addAlt(
                 du(PARAGRAPH,
                         "füllst", "dir von dem Eintopf ein und langst kräftig zu",
                         mins(10))
@@ -229,8 +225,8 @@ public class EssenAction extends AbstractScAction {
         );
     }
 
-    private AvTimeSpan narrateAndDoSchlossfestSatt() {
-        return n.addAlt(
+    private void narrateAndDoSchlossfestSatt() {
+        n.addAlt(
                 neuerSatz("Hunger hast du zwar keinen mehr, aber eine Kleinigkeit… – du "
                         + "nimmst dir "
                         + "eine halbe Kelle "
@@ -245,39 +241,40 @@ public class EssenAction extends AbstractScAction {
                         .dann());
     }
 
-    private AvTimeSpan narrateAndDoFelsenbirnen() {
+    private void narrateAndDoFelsenbirnen() {
         final Hunger hunger = getHunger();
 
-        final AvTimeSpan timeElapsed = narrateFelsenbirnen(hunger);
+        narrateFelsenbirnen(hunger);
 
         saveSatt();
-
-        return timeElapsed;
     }
 
-    private AvTimeSpan narrateFelsenbirnen(final Hunger hunger) {
+    private void narrateFelsenbirnen(final Hunger hunger) {
         switch (hunger) {
             case HUNGRIG:
-                return narrateFelsenbirnenHungrig();
+                narrateFelsenbirnenHungrig();
+                return;
             case SATT:
-                return narrateFelsenbirnenSatt();
+                narrateFelsenbirnenSatt();
+                return;
             default:
                 throw new IllegalStateException("Unerwarteter Hunger-Wert: " + hunger);
         }
     }
 
-    private AvTimeSpan narrateFelsenbirnenHungrig() {
+    private void narrateFelsenbirnenHungrig() {
         if (db.counterDao().incAndGet(COUNTER_FELSENBIRNEN) == 1) {
-            return n.add(du(SENTENCE, "nimmst", "eine von den Früchten, "
+            n.add(du(SENTENCE, "nimmst", "eine von den Früchten, "
                     + "schaust sie kurz an, dann "
                     + "beißt du hinein… – "
                     + "Mmh! Die Frucht ist saftig und schmeckt süß wie Marzipan!\n"
                     + "Du isst dich an den Früchten satt", mins(10))
                     .undWartest()
                     .dann());
+            return;
         }
 
-        return n.addAlt(
+        n.addAlt(
                 du("isst", "dich an den süßen Früchten satt", mins(10))
                         .undWartest()
                         .dann(),
@@ -291,18 +288,19 @@ public class EssenAction extends AbstractScAction {
         );
     }
 
-    private AvTimeSpan narrateFelsenbirnenSatt() {
+    private void narrateFelsenbirnenSatt() {
         if (db.counterDao().incAndGet(COUNTER_FELSENBIRNEN) == 1) {
-            return n.add(
+            n.add(
                     du(SENTENCE, "nimmst",
                             "eine von den Früchten und beißt hinein. "
                                     + "Sie ist überraschend süß und saftig. Du isst die Frucht auf",
                             mins(3))
                             .undWartest()
                             .dann());
+            return;
         }
 
-        return n.addAlt(
+        n.addAlt(
                 du(SENTENCE, "hast", "nur wenig Hunger und beißt lustlos in eine der Früchte",
                         "Hunger",
                         mins(3))

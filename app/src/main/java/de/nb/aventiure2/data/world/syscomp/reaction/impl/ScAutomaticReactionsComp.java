@@ -1,14 +1,11 @@
 package de.nb.aventiure2.data.world.syscomp.reaction.impl;
 
-import androidx.annotation.NonNull;
-
 import de.nb.aventiure2.data.database.AvDatabase;
 import de.nb.aventiure2.data.world.gameobject.World;
 import de.nb.aventiure2.data.world.syscomp.feelings.FeelingsComp;
 import de.nb.aventiure2.data.world.syscomp.reaction.AbstractReactionsComp;
 import de.nb.aventiure2.data.world.syscomp.reaction.interfaces.ITimePassedReactions;
 import de.nb.aventiure2.data.world.time.AvDateTime;
-import de.nb.aventiure2.data.world.time.AvTimeSpan;
 
 import static de.nb.aventiure2.data.world.gameobject.World.SPIELER_CHARAKTER;
 import static de.nb.aventiure2.data.world.syscomp.feelings.Hunger.HUNGRIG;
@@ -33,24 +30,19 @@ public class ScAutomaticReactionsComp
     }
 
     @Override
-    public AvTimeSpan onTimePassed(final AvDateTime lastTime, final AvDateTime now) {
-        AvTimeSpan timeElapsed = noTime();
-
+    public void onTimePassed(final AvDateTime lastTime, final AvDateTime now) {
         final AvDateTime wiederHungrigAb = feelingsComp.getWiederHungrigAb();
         if (now.isEqualOrAfter(wiederHungrigAb)) {
             feelingsComp.setHunger(HUNGRIG);
 
             if (lastTime.isBefore(wiederHungrigAb)) {
-                timeElapsed = timeElapsed.plus(scWirdHungrig());
+                scWirdHungrig();
             }
         }
-
-        return timeElapsed;
     }
 
-    @NonNull
-    private AvTimeSpan scWirdHungrig() {
-        return n.addAlt(
+    private void scWirdHungrig() {
+        n.addAlt(
                 du(PARAGRAPH, "fühlst", "dich allmählich etwas hungrig",
                         noTime())
                         .undWartest(),

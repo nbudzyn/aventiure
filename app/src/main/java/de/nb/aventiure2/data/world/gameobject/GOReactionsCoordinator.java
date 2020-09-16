@@ -1,7 +1,7 @@
 package de.nb.aventiure2.data.world.gameobject;
 
 import java.util.List;
-import java.util.function.Function;
+import java.util.function.Consumer;
 import java.util.function.Predicate;
 
 import javax.annotation.Nullable;
@@ -24,11 +24,10 @@ import de.nb.aventiure2.data.world.syscomp.reaction.interfaces.Ruftyp;
 import de.nb.aventiure2.data.world.syscomp.state.IHasStateGO;
 import de.nb.aventiure2.data.world.syscomp.storingplace.ILocationGO;
 import de.nb.aventiure2.data.world.time.AvDateTime;
-import de.nb.aventiure2.data.world.time.AvTimeSpan;
+import de.nb.aventiure2.data.world.time.AvNowDao;
 
 import static de.nb.aventiure2.data.narration.Narration.NarrationSource.REACTIONS;
-import static de.nb.aventiure2.data.world.time.AvTimeSpan.max;
-import static de.nb.aventiure2.data.world.time.AvTimeSpan.noTime;
+import static de.nb.aventiure2.data.world.time.AvDateTime.latest;
 
 public class GOReactionsCoordinator
         implements IMovementReactions, IEssenReactions, IStateChangedReactions,
@@ -36,119 +35,123 @@ public class GOReactionsCoordinator
         ITimePassedReactions,
         ISCActionReactions {
     private final World world;
+    private final AvNowDao nowDao;
     private final NarrationDao n;
 
     // TODO ReactionCoordinaror zum zentralen Teil eines ReactionSystems machen?
 
-    GOReactionsCoordinator(final World world, final NarrationDao narrationDao) {
+    GOReactionsCoordinator(final World world, final AvNowDao nowDao,
+                           final NarrationDao narrationDao) {
         this.world = world;
+        this.nowDao = nowDao;
         n = narrationDao;
     }
 
     // IMovementReactions
-    public AvTimeSpan onLeave(final GameObjectId locatableId,
-                              final ILocationGO from,
-                              @Nullable final GameObjectId toId) {
-        return onLeave(
+    public void onLeave(final GameObjectId locatableId,
+                        final ILocationGO from,
+                        @Nullable final GameObjectId toId) {
+        onLeave(
                 (ILocatableGO) world.load(locatableId),
                 from, toId);
     }
 
-    private AvTimeSpan onLeave(final ILocatableGO locatable,
-                               final ILocationGO from,
-                               @Nullable final GameObjectId toId) {
+    private void onLeave(final ILocatableGO locatable,
+                         final ILocationGO from,
+                         @Nullable final GameObjectId toId) {
         if (toId == null) {
-            return onLeave(locatable, from, (ILocationGO) null);
+            onLeave(locatable, from, (ILocationGO) null);
+            return;
         }
 
         final GameObject to = world.load(toId);
         if (!(to instanceof ILocationGO)) {
-            return noTime();
+            return;
         }
 
-        return onLeave(locatable, from, (ILocationGO) to);
+        onLeave(locatable, from, (ILocationGO) to);
     }
 
     @Override
-    public AvTimeSpan onLeave(final ILocatableGO locatable,
-                              final ILocationGO from,
-                              @Nullable final ILocationGO to) {
-        return doReactions(IMovementReactions.class,
+    public void onLeave(final ILocatableGO locatable,
+                        final ILocationGO from,
+                        @Nullable final ILocationGO to) {
+        doReactions(IMovementReactions.class,
                 ((Predicate<IResponder>) locatable::equals).negate(),
                 reactions -> reactions.onLeave(locatable, from, to));
     }
 
-    public AvTimeSpan onEnter(final GameObjectId locatableId,
-                              @Nullable final ILocationGO from,
-                              final GameObjectId toId) {
-        return onEnter(
+    public void onEnter(final GameObjectId locatableId,
+                        @Nullable final ILocationGO from,
+                        final GameObjectId toId) {
+        onEnter(
                 (ILocatableGO) world.load(locatableId),
                 from, toId);
     }
 
-    public AvTimeSpan onEnter(final ILocatableGO locatable,
-                              @Nullable final ILocationGO from,
-                              final GameObjectId toId) {
+    public void onEnter(final ILocatableGO locatable,
+                        @Nullable final ILocationGO from,
+                        final GameObjectId toId) {
         final GameObject to = world.load(toId);
         if (!(to instanceof ILocationGO)) {
-            return noTime();
+            return;
         }
 
-        return onEnter(locatable, from, (ILocationGO) to);
+        onEnter(locatable, from, (ILocationGO) to);
     }
 
     @Override
-    public AvTimeSpan onEnter(final ILocatableGO locatable,
-                              @Nullable final ILocationGO from,
-                              final ILocationGO to) {
-        return doReactions(IMovementReactions.class,
+    public void onEnter(final ILocatableGO locatable,
+                        @Nullable final ILocationGO from,
+                        final ILocationGO to) {
+        doReactions(IMovementReactions.class,
                 reactions -> reactions.onEnter(locatable, from, to));
     }
 
     // IEssenReactions
     @Override
-    public AvTimeSpan onEssen(final IGameObject gameObject) {
-        return doReactions(IEssenReactions.class,
+    public void onEssen(final IGameObject gameObject) {
+        doReactions(IEssenReactions.class,
                 ((Predicate<IResponder>) gameObject::equals).negate(),
                 reactions -> reactions.onEssen(gameObject));
     }
 
     // IStateChangedReactions
-    public AvTimeSpan onStateChanged(final GameObjectId gameObjectId,
-                                     final Enum<?> oldState,
-                                     final Enum<?> newState) {
+    public void onStateChanged(final GameObjectId gameObjectId,
+                               final Enum<?> oldState,
+                               final Enum<?> newState) {
         final IGameObject gameObject = world.load(gameObjectId);
         if (!(gameObject instanceof IHasStateGO<?>)) {
-            return noTime();
+            return;
         }
 
-        return onStateChanged((IHasStateGO<?>) gameObject, oldState, newState);
+        onStateChanged((IHasStateGO<?>) gameObject, oldState, newState);
     }
 
     @Override
-    public AvTimeSpan onStateChanged(final IHasStateGO<?> gameObject,
-                                     final Enum<?> oldState,
-                                     final Enum<?> newState) {
-        return doReactions(IStateChangedReactions.class,
+    public void onStateChanged(final IHasStateGO<?> gameObject,
+                               final Enum<?> oldState,
+                               final Enum<?> newState) {
+        doReactions(IStateChangedReactions.class,
                 ((Predicate<IResponder>) gameObject::equals).negate(),
                 reactions -> reactions.onStateChanged(
                         gameObject, oldState, newState));
     }
 
     // IRufReactions
-    public AvTimeSpan onRuf(final GameObjectId ruferId, final Ruftyp ruftyp) {
+    public void onRuf(final GameObjectId ruferId, final Ruftyp ruftyp) {
         final IGameObject rufer = world.load(ruferId);
 
         if (!(rufer instanceof ILocatableGO)) {
-            return noTime();
+            return;
         }
 
-        return onRuf((ILocatableGO) rufer, ruftyp);
+        onRuf((ILocatableGO) rufer, ruftyp);
     }
 
     @Override
-    public AvTimeSpan onRuf(final ILocatableGO rufer, final Ruftyp ruftyp) {
-        return doReactions(IRufReactions.class,
+    public void onRuf(final ILocatableGO rufer, final Ruftyp ruftyp) {
+        doReactions(IRufReactions.class,
                 ((Predicate<IResponder>) rufer::equals).negate(),
                 reactions -> reactions.onRuf(
                         rufer, ruftyp));
@@ -156,15 +159,15 @@ public class GOReactionsCoordinator
 
     // ITimePassedReactions
     @Override
-    public AvTimeSpan onTimePassed(final AvDateTime lastTime, final AvDateTime now) {
-        return doReactions(ITimePassedReactions.class,
+    public void onTimePassed(final AvDateTime lastTime, final AvDateTime now) {
+        doReactions(ITimePassedReactions.class,
                 reactions -> reactions.onTimePassed(lastTime, now));
     }
 
     // ISCActionReactions
     @Override
-    public AvTimeSpan afterScActionAndFirstWorldUpdate() {
-        return doReactions(ISCActionReactions.class,
+    public void afterScActionAndFirstWorldUpdate() {
+        doReactions(ISCActionReactions.class,
                 ISCActionReactions::afterScActionAndFirstWorldUpdate);
     }
 
@@ -172,10 +175,10 @@ public class GOReactionsCoordinator
      * Have all game objects that implement this <code>reactionInterface</code>
      * react.
      */
-    private <R extends IReactions> AvTimeSpan doReactions(
+    private <R extends IReactions> void doReactions(
             final Class<R> reactionsInterface,
-            final Function<R, AvTimeSpan> narrateAndDoReaction) {
-        return doReactions(reactionsInterface, responder -> true,
+            final Consumer<R> narrateAndDoReaction) {
+        doReactions(reactionsInterface, responder -> true,
                 narrateAndDoReaction);
     }
 
@@ -186,10 +189,10 @@ public class GOReactionsCoordinator
      *     <li>and fulfil this <code>condition</code>.
      * </ul>
      */
-    private <R extends IReactions> AvTimeSpan doReactions(
+    private <R extends IReactions> void doReactions(
             final Class<R> reactionsInterface,
             final Predicate<IResponder> condition,
-            final Function<R, AvTimeSpan> narrateAndDoReaction) {
+            final Consumer<R> narrateAndDoReaction) {
 
         final List<? extends IResponder> respondersToReaction =
                 world.loadResponders(reactionsInterface);
@@ -199,22 +202,27 @@ public class GOReactionsCoordinator
         //  "Plitsch platsch" Frosch-Recations.
         //  Die verschiedeenen Responder könnten also eine "Initiative" o.Ä. haben.
 
-        AvTimeSpan timeElapsed = noTime();
+        final AvDateTime reactionsStartTime = nowDao.now();
+        AvDateTime timeAfterAllReactions = reactionsStartTime;
 
         final Narration.NarrationSource narrationSourceBefore = n.getNarrationSourceJustInCase();
         try {
             n.setNarrationSourceJustInCase(REACTIONS);
 
             for (final IResponder responder : respondersToReaction) {
+                // All reactions start at the same time.
+                nowDao.setNow(reactionsStartTime);
+
                 if (condition.test(responder)) {
                     final R reactionsComp = (R) responder.reactionsComp();
-                    timeElapsed = max(timeElapsed, narrateAndDoReaction.apply(reactionsComp));
+                    narrateAndDoReaction.accept(reactionsComp);
+                    timeAfterAllReactions = latest(timeAfterAllReactions, nowDao.now());
                 }
             }
         } finally {
             n.setNarrationSourceJustInCase(narrationSourceBefore);
-        }
 
-        return timeElapsed;
+            nowDao.setNow(timeAfterAllReactions);
+        }
     }
 }

@@ -12,7 +12,6 @@ import de.nb.aventiure2.data.world.syscomp.reaction.interfaces.Ruftyp;
 import de.nb.aventiure2.data.world.syscomp.state.IHasStateGO;
 import de.nb.aventiure2.data.world.syscomp.state.impl.RapunzelState;
 import de.nb.aventiure2.data.world.syscomp.storingplace.ILocationGO;
-import de.nb.aventiure2.data.world.time.AvTimeSpan;
 import de.nb.aventiure2.german.praedikat.AdverbialeAngabeSkopusSatz;
 import de.nb.aventiure2.scaction.AbstractScAction;
 
@@ -80,32 +79,26 @@ public class RufenAction extends AbstractScAction {
     }
 
     @Override
-    public AvTimeSpan narrateAndDo() {
+    public void narrateAndDo() {
         @Nullable AdverbialeAngabeSkopusSatz adverbialeAngabe = null;
         if (sc.memoryComp().getLastAction().is(Action.Type.RUFEN)) {
             adverbialeAngabe = new AdverbialeAngabeSkopusSatz("noch einmal");
         }
 
-        AvTimeSpan timeElapsed;
         if (n.requireNarration().allowsAdditionalDuSatzreihengliedOhneSubjekt()
                 && adverbialeAngabe == null) {
-            timeElapsed = n.add(du(ruftyp.getName(), secs(30)));
+            n.add(du(ruftyp.getName(), secs(30)));
         } else if (adverbialeAngabe != null) {
-            timeElapsed =
-                    n.add(du(ruftyp.getName().mitAdverbialerAngabe(adverbialeAngabe), secs(30)));
+            n.add(du(ruftyp.getName().mitAdverbialerAngabe(adverbialeAngabe), secs(30)));
         } else {
-            timeElapsed =
-                    n.add(neuerSatz(
-                            "Und " + uncapitalize(ruftyp.getName().getDuHauptsatz()),
-                            secs(30)));
+            n.add(neuerSatz(
+                    "Und " + uncapitalize(ruftyp.getName().getDuHauptsatz()),
+                    secs(30)));
         }
 
-        timeElapsed = timeElapsed.plus(
-                world.narrateAndDoReactions().onRuf(sc, Ruftyp.LASS_DEIN_HAAR_HERUNTER));
+        world.narrateAndDoReactions().onRuf(sc, Ruftyp.LASS_DEIN_HAAR_HERUNTER);
 
         sc.memoryComp().setLastAction(buildMemorizedAction());
-
-        return timeElapsed;
     }
 
     @Override

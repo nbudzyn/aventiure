@@ -14,7 +14,6 @@ import de.nb.aventiure2.data.world.syscomp.memory.Action;
 import de.nb.aventiure2.data.world.syscomp.state.IHasStateGO;
 import de.nb.aventiure2.data.world.syscomp.state.impl.RapunzelState;
 import de.nb.aventiure2.data.world.syscomp.storingplace.ILocationGO;
-import de.nb.aventiure2.data.world.time.AvTimeSpan;
 import de.nb.aventiure2.scaction.AbstractScAction;
 
 import static de.nb.aventiure2.data.world.base.Lichtverhaeltnisse.DUNKEL;
@@ -63,28 +62,24 @@ public class RastenAction extends AbstractScAction {
     }
 
     @Override
-    public AvTimeSpan narrateAndDo() {
-        final AvTimeSpan timeElapsed;
-
+    public void narrateAndDo() {
         if (isDefinitivWiederholung() &&
                 ((IHasStateGO<RapunzelState>) world.load(RAPUNZEL)).stateComp()
                         .hasState(SINGEND)) {
-            timeElapsed = narrateAndDoRapunzelZuhoeren();
+            narrateAndDoRapunzelZuhoeren();
         } else if (location.storingPlaceComp().getLichtverhaeltnisse() == DUNKEL) {
-            timeElapsed = narrateAndDoDunkel();
+            narrateAndDoDunkel();
         } else {
-            timeElapsed = narrateAndDoHell();
+            narrateAndDoHell();
         }
 
         sc.memoryComp().setLastAction(buildMemorizedAction());
-
-        return timeElapsed;
     }
 
-    private AvTimeSpan narrateAndDoRapunzelZuhoeren() {
+    private void narrateAndDoRapunzelZuhoeren() {
         sc.feelingsComp().setMoodMin(Mood.GLUECKLICH);
 
-        return n.addAlt(
+        n.addAlt(
                 du("bist", "ganz still",
                         mins(4))
                         .undWartest()
@@ -101,10 +96,10 @@ public class RastenAction extends AbstractScAction {
                         .beendet(SENTENCE));
     }
 
-    private AvTimeSpan narrateAndDoDunkel() {
+    private void narrateAndDoDunkel() {
         sc.feelingsComp().setMoodMax(Mood.VERUNSICHERT);
 
-        return n.addAlt(
+        n.addAlt(
                 neuerSatz("Die Bäume rauschen in "
                         + "der Dunkelheit, die Eulen schnarren, und "
                         + "und es fängt an, dir angst zu werden", mins(3))
@@ -117,7 +112,7 @@ public class RastenAction extends AbstractScAction {
                         mins(3)));
     }
 
-    private AvTimeSpan narrateAndDoHell() {
+    private void narrateAndDoHell() {
         sc.feelingsComp().setMoodMin(Mood.ZUFRIEDEN);
 
         // STORY Hier ist sehr auffällig, dass die dann()-Logik nicht stimmt:
@@ -132,7 +127,7 @@ public class RastenAction extends AbstractScAction {
         //  Satz gleich war. (Nach der Logik kann man dann auch für Beschreibungen in
         //  der dritten Person verwenden!)
 
-        return n.addAlt(
+        n.addAlt(
                 du(SENTENCE, "hältst",
                         "verborgen unter den Bäumen noch eine Zeitlang Rast",
                         "verborgen unter den Bäumen",

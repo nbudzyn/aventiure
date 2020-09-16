@@ -6,7 +6,6 @@ import de.nb.aventiure2.data.world.base.SpatialConnection;
 import de.nb.aventiure2.data.world.syscomp.spatialconnection.ISpatiallyConnectedGO;
 import de.nb.aventiure2.data.world.syscomp.spatialconnection.NumberOfWays;
 import de.nb.aventiure2.data.world.syscomp.storingplace.ILocationGO;
-import de.nb.aventiure2.data.world.time.AvTimeSpan;
 
 /**
  * Beschreibt dem Spieler die Bewegung eines {@link IMovingGO}. Beschreibt
@@ -16,22 +15,23 @@ public interface IMovementNarrator {
     // STORY MovementSystem fasst alle Movement-Besxhreibungen
     //  zusammen, auch bei mehreren NPCs am selben Ort. (VOR den Reactions.)
 
-    AvTimeSpan narrateScTrifftStehendesMovingGO(ILocationGO location);
+    void narrateScTrifftStehendesMovingGO(ILocationGO location);
 
-    <FROM extends ILocationGO & ISpatiallyConnectedGO> AvTimeSpan
+    <FROM extends ILocationGO & ISpatiallyConnectedGO>
+    void
     narrateScTrifftEnteringMovingGO(
             @Nullable ILocationGO scFrom,
             ILocationGO to,
             FROM movingGOFrom);
 
-    AvTimeSpan narrateScUeberholtMovingGO();
+    void narrateScUeberholtMovingGO();
 
     <SC_FROM extends ILocationGO & ISpatiallyConnectedGO>
-    AvTimeSpan narrateScTrifftLeavingMovingGO(@Nullable final ILocationGO scFrom,
-                                              final SC_FROM scToAndMovingGoFrom,
-                                              final ILocationGO movingGOTo);
+    void narrateScTrifftLeavingMovingGO(@Nullable final ILocationGO scFrom,
+                                        final SC_FROM scToAndMovingGoFrom,
+                                        final ILocationGO movingGOTo);
 
-    AvTimeSpan narrateScGehtMovingGOEntgegenUndLaesstEsHinterSich();
+    void narrateScGehtMovingGOEntgegenUndLaesstEsHinterSich();
 
     /**
      * @param spatialConnection Die {@link SpatialConnection}, über die das
@@ -41,10 +41,10 @@ public interface IMovementNarrator {
      *                          nicht (mehr) erkennen kann o.Ä.
      */
     <FROM extends ILocationGO & ISpatiallyConnectedGO>
-    AvTimeSpan narrateAndDoStartsEntering(FROM from,
-                                          ILocationGO to,
-                                          SpatialConnection spatialConnection,
-                                          NumberOfWays numberOfWaysIn);
+    void narrateAndDoStartsEntering(FROM from,
+                                    ILocationGO to,
+                                    SpatialConnection spatialConnection,
+                                    NumberOfWays numberOfWaysIn);
 
     /**
      * @param spatialConnection Die {@link SpatialConnection}, über die das
@@ -54,7 +54,7 @@ public interface IMovementNarrator {
      *                          nicht (mehr) erkennen kann o.Ä.
      */
     <FROM extends ILocationGO & ISpatiallyConnectedGO>
-    AvTimeSpan narrateAndDoStartsLeaving(FROM from, ILocationGO to,
-                                         @Nullable SpatialConnection spatialConnection,
-                                         NumberOfWays numberOfPossibleWaysToLeave);
+    void narrateAndDoStartsLeaving(FROM from, ILocationGO to,
+                                   @Nullable SpatialConnection spatialConnection,
+                                   NumberOfWays numberOfPossibleWaysToLeave);
 }

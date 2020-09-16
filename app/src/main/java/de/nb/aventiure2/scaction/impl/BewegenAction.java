@@ -30,7 +30,6 @@ import de.nb.aventiure2.data.world.syscomp.spatialconnection.NumberOfWays;
 import de.nb.aventiure2.data.world.syscomp.state.IHasStateGO;
 import de.nb.aventiure2.data.world.syscomp.state.impl.SchlossfestState;
 import de.nb.aventiure2.data.world.syscomp.storingplace.ILocationGO;
-import de.nb.aventiure2.data.world.time.AvTimeSpan;
 import de.nb.aventiure2.german.base.StructuralElement;
 import de.nb.aventiure2.german.description.AbstractDescription;
 import de.nb.aventiure2.german.description.DuDescription;
@@ -168,8 +167,8 @@ public class BewegenAction<LOC_DESC extends ILocatableGO & IDescribableGO>
     }
 
     @Override
-    public AvTimeSpan narrateAndDo() {
-        AvTimeSpan elapsedTime = narrateLocationOnly(loadTo());
+    public void narrateAndDo() {
+        narrateLocationOnly(loadTo());
 
         world.upgradeKnownToSC(spatialConnection.getTo());
 
@@ -193,14 +192,13 @@ public class BewegenAction<LOC_DESC extends ILocatableGO & IDescribableGO>
         upgradeNonLivingNonMovableRecursiveInventoryKnown(loadTo());
 
         if (scWirdMitEssenKonfrontiert()) {
-            elapsedTime = elapsedTime.plus(narrateAndDoSCMitEssenKonfrontiert());
+            narrateAndDoSCMitEssenKonfrontiert();
         }
 
         updateMood();
 
-        return elapsedTime.plus(sc.locationComp()
-                .narrateAndSetLocation(spatialConnection.getTo(),
-                        this::narrateNonLivingMovableObjectsAndUpgradeKnownAndSetLastAction));
+        sc.locationComp().narrateAndSetLocation(spatialConnection.getTo(),
+                this::narrateNonLivingMovableObjectsAndUpgradeKnownAndSetLastAction);
     }
 
     private void upgradeNonLivingNonMovableRecursiveInventoryKnown(
@@ -219,32 +217,26 @@ public class BewegenAction<LOC_DESC extends ILocatableGO & IDescribableGO>
         }
     }
 
-    private AvTimeSpan narrateNonLivingMovableObjectsAndUpgradeKnownAndSetLastAction() {
+    private void narrateNonLivingMovableObjectsAndUpgradeKnownAndSetLastAction() {
         // Unbewegliche Objekte sollen bereits in der Location-Beschreibung mitgenannt werden,
         // nicht hier! (Das betrifft auch indirekt enthaltene unbewegliche Objekte.)
-
-        AvTimeSpan elapsedTimeOnEnter = noTime();
 
         if (!world.isOrHasRecursiveLocation(spatialConnection.getTo(), oldLocation)) {
             // Wenn man z.B. in einem Zimmer auf einen Tisch steigt: Nicht noch einmal
             // beschreiben, was sonst noch auf dem Tisch steht!
 
-            elapsedTimeOnEnter =
-                    elapsedTimeOnEnter.plus(
-                            narrateNonLivingMovableObjectsAndUpgradeKnown(
-                                    // Wenn man z.B. von einem Tisch heruntersteigt oder
-                                    // einmal um einen Turm herumgeht, dann noch noch einmal
-                                    // beschreiben, was sich auf dem Tisch oder vor dem Turm
-                                    // befindet
-                                    oldLocation));
+            narrateNonLivingMovableObjectsAndUpgradeKnown(
+                    // Wenn man z.B. von einem Tisch heruntersteigt oder
+                    // einmal um einen Turm herumgeht, dann noch noch einmal
+                    // beschreiben, was sich auf dem Tisch oder vor dem Turm
+                    // befindet
+                    oldLocation);
         }
 
         sc.memoryComp().setLastAction(buildMemorizedAction());
-
-        return elapsedTimeOnEnter;
     }
 
-    private AvTimeSpan narrateNonLivingMovableObjectsAndUpgradeKnown(
+    private void narrateNonLivingMovableObjectsAndUpgradeKnown(
             @Nullable final ILocationGO excludedLocation) {
         final ImmutableList.Builder<String> descriptionsPerLocation = builder();
         int numMovableObjectsInLocation = 0;
@@ -267,21 +259,21 @@ public class BewegenAction<LOC_DESC extends ILocatableGO & IDescribableGO>
         }
 
         if (numMovableObjectsInLocation == 0) {
-            return noTime();
+            return;
         }
 
         //  "Auf dem Boden liegen A und B und auf dem Tisch liegt C"
         final String movableObjectsInLocationDescription =
                 buildMovableObjectsInLocationDescription(descriptionsPerLocation.build());
 
-        return narrateObjects(movableObjectsInLocationDescription,
+        narrateObjects(movableObjectsInLocationDescription,
                 numMovableObjectsInLocation,
                 lastObjectInLocation);
     }
 
-    private AvTimeSpan narrateObjects(final String objectsDescription, final int numObjects,
-                                      final IDescribableGO lastObject) {
-        return n.add(
+    private void narrateObjects(final String objectsDescription, final int numObjects,
+                                final IDescribableGO lastObject) {
+        n.add(
                 neuerSatz(objectsDescription, secs(numObjects * 2))
                         .phorikKandidat(
                                 world.getDescription(lastObject, false),
@@ -387,20 +379,21 @@ public class BewegenAction<LOC_DESC extends ILocatableGO & IDescribableGO>
         return false;
     }
 
-    private AvTimeSpan narrateAndDoSCMitEssenKonfrontiert() {
+    private void narrateAndDoSCMitEssenKonfrontiert() {
         final Hunger hunger = sc.feelingsComp().getHunger();
         switch (hunger) {
             case SATT:
-                return noTime();
+                return;
             case HUNGRIG:
-                return narrateAnDoSCMitEssenKonfrontiertReagiertHungrig();
+                narrateAnDoSCMitEssenKonfrontiertReagiertHungrig();
+                return;
             default:
                 throw new IllegalStateException("Unerwarteter Hunger-Wert: " + hunger);
         }
     }
 
-    private AvTimeSpan narrateAnDoSCMitEssenKonfrontiertReagiertHungrig() {
-        return n.addAlt(
+    private void narrateAnDoSCMitEssenKonfrontiertReagiertHungrig() {
+        n.addAlt(
                 neuerSatz("Mmh!", noTime())
                         .beendet(PARAGRAPH),
                 neuerSatz("Dir läuft das Wasser im Munde zusammen", noTime()),
@@ -434,7 +427,7 @@ public class BewegenAction<LOC_DESC extends ILocatableGO & IDescribableGO>
         }
     }
 
-    private AvTimeSpan narrateLocationOnly(@NonNull final ILocationGO to) {
+    private void narrateLocationOnly(@NonNull final ILocationGO to) {
         // STORY Wenn Bewegung Wiederholung ist (z.B. Rund um den Turm): Zur Sicherheit...
         //  noch einmal. Um sicher zu
         //  gehen... noch einmal. Du gehst SOGAR noch einmal...
@@ -445,19 +438,20 @@ public class BewegenAction<LOC_DESC extends ILocatableGO & IDescribableGO>
         if (description instanceof DuDescription &&
                 n.requireNarration().allowsAdditionalDuSatzreihengliedOhneSubjekt() &&
                 isDefinitivDiskontinuitaet()) {
-            return n.add(
-                    satzanschluss(", besinnst dich aber und "
-                                    + ((DuDescription) description)
-                                    .getDescriptionSatzanschlussOhneSubjekt(),
-                            description.getTimeElapsed())
-                            .dann(description.isDann())
-                            .komma(description.isKommaStehtAus()));
+            n.add(satzanschluss(", besinnst dich aber und "
+                            + ((DuDescription) description)
+                            .getDescriptionSatzanschlussOhneSubjekt(),
+                    description.getTimeElapsed())
+                    .dann(description.isDann())
+                    .komma(description.isKommaStehtAus()));
+            return;
         }
 
         if (description.getStartsNew() == WORD &&
                 n.requireNarration().allowsAdditionalDuSatzreihengliedOhneSubjekt() &&
                 description instanceof DuDescription) {
-            return n.add(description);
+            n.add(description);
+            return;
         }
 
         if (isDefinitivDiskontinuitaet()) {
@@ -492,7 +486,8 @@ public class BewegenAction<LOC_DESC extends ILocatableGO & IDescribableGO>
                                 + uncapitalize(description.getDescriptionHauptsatz()),
                         description.getTimeElapsed()));
             }
-            return n.addAlt(alt);
+            n.addAlt(alt);
+            return;
         }
 
         if (sc.memoryComp().getLastAction().is(BEWEGEN)) {
@@ -502,28 +497,32 @@ public class BewegenAction<LOC_DESC extends ILocatableGO & IDescribableGO>
                 final String satzEvtlMitDann = description
                         .getDescriptionHauptsatzMitKonjunktionaladverbWennNoetig(
                                 "dann");
-                return n.add(
+                n.add(
                         satzanschluss(
                                 "; " + uncapitalize(satzEvtlMitDann),
                                 description.getTimeElapsed())
                                 .komma(description.isKommaStehtAus())
                                 .dann(description.isDann()
                                         && !satzEvtlMitDann.startsWith("Dann")));
+                return;
             } else {
-                return n.add(description);
+                n.add(description);
+                return;
             }
         } else {
             if (n.requireNarration().dann()) {
-                return n.add(
+                n.add(
                         neuerSatz(PARAGRAPH, description
                                         .getDescriptionHauptsatzMitKonjunktionaladverbWennNoetig("danach"),
                                 description.getTimeElapsed())
                                 .komma(description.isKommaStehtAus())
                                 .undWartest(description
                                         .isAllowsAdditionalDuSatzreihengliedOhneSubjekt()));
+                return;
             }
 
-            return n.add(description);
+            n.add(description);
+            return;
         }
     }
 

@@ -19,7 +19,6 @@ import de.nb.aventiure2.data.world.syscomp.spatialconnection.impl.SpatialStandar
 import de.nb.aventiure2.data.world.syscomp.spatialconnection.system.SpatialConnectionSystem;
 import de.nb.aventiure2.data.world.syscomp.storingplace.ILocationGO;
 import de.nb.aventiure2.data.world.time.AvDateTime;
-import de.nb.aventiure2.data.world.time.AvTimeSpan;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 import static de.nb.aventiure2.data.world.gameobject.World.SPIELER_CHARAKTER;
@@ -28,7 +27,6 @@ import static de.nb.aventiure2.data.world.syscomp.movement.MovementPCD.PauseForS
 import static de.nb.aventiure2.data.world.syscomp.movement.MovementPCD.PauseForSCAction.UNPAUSED;
 import static de.nb.aventiure2.data.world.syscomp.movement.MovementStep.Phase.FIRST_LEAVING;
 import static de.nb.aventiure2.data.world.syscomp.movement.MovementStep.Phase.SECOND_ENTERING;
-import static de.nb.aventiure2.data.world.time.AvTimeSpan.noTime;
 
 /**
  * Component for a {@link GameObject}: The game object
@@ -111,8 +109,8 @@ public class MovementComp
         return new MovementPCD(getGameObjectId(), initialTargetLocationId);
     }
 
-    public AvTimeSpan startMovement(final AvDateTime now,
-                                    final GameObjectId targetLocationId) {
+    public void startMovement(final AvDateTime now,
+                              final GameObjectId targetLocationId) {
         checkNotNull(targetLocationId, "targetLocationId is null");
 
         if (getGameObjectId().equals(targetLocationId)) {
@@ -122,9 +120,9 @@ public class MovementComp
         getPcd().setTargetLocationId(targetLocationId);
         setupNextStepIfNecessaryAndPossible(now);
 
-        return hasCurrentStep() ?
-                narrateAndDoMovementIfExperiencedBySCStartsLeaving() :
-                noTime();
+        if (hasCurrentStep()) {
+            narrateAndDoMovementIfExperiencedBySCStartsLeaving();
+        }
     }
 
     public void stopMovement() {
@@ -136,9 +134,9 @@ public class MovementComp
     /**
      * Supposed to be called regularly.
      */
-    public AvTimeSpan onTimePassed(final AvDateTime now) {
+    public void onTimePassed(final AvDateTime now) {
         if (!isMoving()) {
-            return noTime();
+            return;
         }
 
         // Wurde das Game Object zwischenzeitlich versetzt?
@@ -150,18 +148,15 @@ public class MovementComp
         }
 
         if (!hasCurrentStep()) {
-            return noTime();
+            return;
         }
 
         if (getPcd().getPauseForSCAction() == PAUSED) {
-            return noTime();
+            return;
         }
 
-        AvTimeSpan extraTime = noTime();
-
         if (getPcd().getPauseForSCAction() == DO_START_LEAVING) {
-            extraTime =
-                    extraTime.plus(narrateAndDoMovementIfExperiencedBySCStartsLeaving());
+            narrateAndDoMovementIfExperiencedBySCStartsLeaving();
         }
 
         // Je nachdem, wie lang der World-Tick war, sollen das IMovingGO ggf. auch mehrere
@@ -176,8 +171,7 @@ public class MovementComp
                 //  Leaving brauchen?
 
                 if (now.isEqualOrAfter(getCurrentStep().getExpLeaveDoneTime())) {
-                    extraTime =
-                            extraTime.plus(leaveAndEnterAndNarrateIfSCPresent());
+                    leaveAndEnterAndNarrateIfSCPresent();
                 } else {
                     break;
                 }
@@ -230,15 +224,12 @@ public class MovementComp
                         break;
                     }
 
-                    extraTime =
-                            extraTime.plus(narrateAndDoMovementIfExperiencedBySCStartsLeaving());
+                    narrateAndDoMovementIfExperiencedBySCStartsLeaving();
                 } else {
                     break;
                 }
             }
         }
-
-        return extraTime;
     }
 
     @Override
@@ -298,11 +289,11 @@ public class MovementComp
     }
 
     private <FROM extends ILocationGO & ISpatiallyConnectedGO>
-    AvTimeSpan narrateAndDoMovementIfExperiencedBySCStartsLeaving() {
+    void narrateAndDoMovementIfExperiencedBySCStartsLeaving() {
         getPcd().setPauseForSCAction(UNPAUSED);
 
         if (!world.loadSC().locationComp().hasRecursiveLocation(locationComp.getLocation())) {
-            return noTime();
+            return;
         }
 
         final FROM from = (FROM) locationComp.getLocation();
@@ -310,24 +301,23 @@ public class MovementComp
         @Nullable final SpatialConnection spatialConnection =
                 from.spatialConnectionComp().getConnection(getCurrentStep().getTo());
 
-        return movementNarrator.narrateAndDoStartsLeaving(
+        movementNarrator.narrateAndDoStartsLeaving(
                 from,
                 (ILocationGO) world.load(getCurrentStep().getTo()),
                 spatialConnection,
                 from.spatialConnectionComp().getNumberOfWaysOut());
     }
 
-    @NonNull
     private <FROM extends ILocationGO & ISpatiallyConnectedGO>
-    AvTimeSpan leaveAndEnterAndNarrateIfSCPresent() {
-        return locationComp.narrateAndSetLocation(
+    void leaveAndEnterAndNarrateIfSCPresent() {
+        locationComp.narrateAndSetLocation(
                 getCurrentStep().getTo(),
                 () -> {
                     getCurrentStep().setPhase(SECOND_ENTERING);
 
                     if (!world.loadSC().locationComp().hasRecursiveLocation(
                             getCurrentStep().getTo())) {
-                        return noTime();
+                        return;
                     }
 
                     final FROM from = (FROM) world.load(getCurrentStep().getFrom());
@@ -343,7 +333,7 @@ public class MovementComp
                                             .getNumberOfWaysOut() :
                                     NumberOfWays.NO_WAY;
 
-                    return movementNarrator.narrateAndDoStartsEntering(
+                    movementNarrator.narrateAndDoStartsEntering(
                             from,
                             to,
                             spatialConnection,
@@ -351,8 +341,8 @@ public class MovementComp
                 });
     }
 
-    public AvTimeSpan narrateAndDoSCTrifftEvtlMovingGOInFrom(final ILocationGO scFrom,
-                                                             @Nullable final ILocationGO scTo) {
+    public void narrateAndDoSCTrifftEvtlMovingGOInFrom(final ILocationGO scFrom,
+                                                       @Nullable final ILocationGO scTo) {
         // Das hier sind sehr spezielle Spezialfälle, wo SC und die Zauberin treffen
         // noch in scFrom zusammentreffen:
         if (isLeaving() &&
@@ -360,57 +350,54 @@ public class MovementComp
                 getCurrentStep().getTo().equals(scTo.getId())) {
             // Zauberin verlässt gerade auch scFrom und will auch nach scTo
 
-            final AvTimeSpan extraTime = movementNarrator.narrateScUeberholtMovingGO();
+            movementNarrator.narrateScUeberholtMovingGO();
 
             world.upgradeKnownToSC(getGameObjectId());
 
-            return extraTime;
+            return;
         }
         if (isEntering() &&
                 scTo != null &&
                 locationComp.getLastLocationId() != null &&
                 world.isOrHasRecursiveLocation(locationComp.getLastLocationId(), scTo)) {
             // Zauberin kommt von scTo, hat aber schon scFrom betreten
-            final AvTimeSpan extraTime =
-                    movementNarrator.narrateScGehtMovingGOEntgegenUndLaesstEsHinterSich();
+            movementNarrator.narrateScGehtMovingGOEntgegenUndLaesstEsHinterSich();
 
             world.upgradeKnownToSC(getGameObjectId());
 
-            return extraTime;
+            return;
         }
-
-        return noTime();
     }
 
-    public AvTimeSpan narrateAndDoSCTrifftMovingGOInTo(
+    public void narrateAndDoSCTrifftMovingGOInTo(
             @Nullable final ILocationGO scFrom,
             final ILocationGO scTo) {
-        final AvTimeSpan extraTime = narrateScTrifftMovingGOInTo(scFrom, scTo);
+        narrateScTrifftMovingGOInTo(scFrom, scTo);
 
         world.upgradeKnownToSC(getGameObjectId());
-
-        return extraTime;
     }
 
     public <FROM extends ILocationGO & ISpatiallyConnectedGO>
-    AvTimeSpan narrateScTrifftMovingGOInTo(@Nullable final ILocationGO scFrom,
-                                           final ILocationGO scTo) {
+    void narrateScTrifftMovingGOInTo(@Nullable final ILocationGO scFrom,
+                                     final ILocationGO scTo) {
         if (!isMoving()) {
-            return movementNarrator.narrateScTrifftStehendesMovingGO(
+            movementNarrator.narrateScTrifftStehendesMovingGO(
                     locationComp.getLocation() != null ?
                             locationComp.getLocation() :
                             scTo);
+            return;
         }
 
         if (isEntering()) {
-            return movementNarrator.narrateScTrifftEnteringMovingGO(
+            movementNarrator.narrateScTrifftEnteringMovingGO(
                     scFrom,
                     scTo,
                     (FROM) locationComp.getLastLocation());
+            return;
         }
 
         // MovingGO ist leaving
-        return movementNarrator.narrateScTrifftLeavingMovingGO(
+        movementNarrator.narrateScTrifftLeavingMovingGO(
                 scFrom,
                 (ILocationGO & ISpatiallyConnectedGO) scTo,
                 (ILocationGO) world.load(getCurrentStep().getTo()));

@@ -19,7 +19,6 @@ import de.nb.aventiure2.data.world.syscomp.memory.Action;
 import de.nb.aventiure2.data.world.syscomp.state.IHasStateGO;
 import de.nb.aventiure2.data.world.syscomp.state.impl.FroschprinzState;
 import de.nb.aventiure2.data.world.syscomp.storingplace.ILocationGO;
-import de.nb.aventiure2.data.world.time.AvTimeSpan;
 import de.nb.aventiure2.german.base.Nominalphrase;
 import de.nb.aventiure2.german.base.NumerusGenus;
 import de.nb.aventiure2.german.base.SubstantivischePhrase;
@@ -41,7 +40,6 @@ import static de.nb.aventiure2.data.world.syscomp.feelings.Mood.ANGESPANNT;
 import static de.nb.aventiure2.data.world.syscomp.feelings.Mood.NEUTRAL;
 import static de.nb.aventiure2.data.world.syscomp.state.impl.FroschprinzState.ERWARTET_VON_SC_EINLOESUNG_SEINES_VERSPRECHENS;
 import static de.nb.aventiure2.data.world.syscomp.state.impl.FroschprinzState.HAT_HOCHHEBEN_GEFORDERT;
-import static de.nb.aventiure2.data.world.time.AvTimeSpan.noTime;
 import static de.nb.aventiure2.data.world.time.AvTimeSpan.secs;
 import static de.nb.aventiure2.german.base.GermanUtil.capitalize;
 import static de.nb.aventiure2.german.base.GermanUtil.uncapitalize;
@@ -196,14 +194,15 @@ public class NehmenAction
     }
 
     @Override
-    public AvTimeSpan narrateAndDo() {
+    public void narrateAndDo() {
         if (gameObject instanceof ILivingBeingGO) {
-            return narrateAndDoLivingBeing();
+            narrateAndDoLivingBeing();
+            return;
         }
-        return narrateAndDoObject();
+        narrateAndDoObject();
     }
 
-    private AvTimeSpan narrateAndDoLivingBeing() {
+    private void narrateAndDoLivingBeing() {
         checkState(gameObject.is(FROSCHPRINZ),
                 "Unexpected creature: " + gameObject);
         checkState(((IHasStateGO<FroschprinzState>) gameObject).stateComp()
@@ -211,18 +210,19 @@ public class NehmenAction
                                 HAT_HOCHHEBEN_GEFORDERT),
                 "Unexpected state: " + gameObject);
 
-        return narrateAndDoFroschprinz();
+        narrateAndDoFroschprinz();
     }
 
-    private AvTimeSpan narrateAndDoFroschprinz() {
+    private void narrateAndDoFroschprinz() {
         if (((IHasStateGO<FroschprinzState>) gameObject).stateComp()
                 .hasState(HAT_HOCHHEBEN_GEFORDERT)) {
-            return narrateAndDoFroschprinz_HatHochhebenGefordert();
+            narrateAndDoFroschprinz_HatHochhebenGefordert();
+            return;
         }
 
         final Nominalphrase froschDesc = world.getDescription(gameObject, true);
 
-        AvTimeSpan timeElapsed = n.addAlt(
+        n.addAlt(
                 du(PARAGRAPH,
                         "ekelst",
                         "dich sehr, aber mit einiger Überwindung nimmst du "
@@ -245,105 +245,101 @@ public class NehmenAction
                         .undWartest()
         );
 
-        timeElapsed = timeElapsed.plus(
-                gameObject.locationComp()
-                        .narrateAndSetLocation(targetLocation,
-                                () -> {
-                                    world.upgradeKnownToSC(gameObject);
-                                    sc.feelingsComp().setMood(NEUTRAL);
+        gameObject.locationComp()
+                .narrateAndSetLocation(targetLocation,
+                        () -> {
+                            world.upgradeKnownToSC(gameObject);
+                            sc.feelingsComp().setMood(NEUTRAL);
 
-                                    final SubstantivischePhrase froschDescOderAnapher =
-                                            getAnaphPersPronWennMglSonstShortDescription(
-                                                    FROSCHPRINZ);
+                            final SubstantivischePhrase froschDescOderAnapher =
+                                    getAnaphPersPronWennMglSonstShortDescription(
+                                            FROSCHPRINZ);
 
-                                    return n.addAlt(
-                                            neuerSatz(
-                                                    capitalize(
-                                                            froschDescOderAnapher.nom()) // "er"
-                                                            + " ist glibschig und "
-                                                            + "schleimig – pfui-bäh! – schnell lässt du "
-                                                            + froschDescOderAnapher.persPron().akk()
-                                                            + " in "
-                                                            + "eine Tasche gleiten. "
-                                                            + capitalize(
-                                                            froschDescOderAnapher.possArt()
-                                                                    .vor(NumerusGenus.N).nom())
-                                                            + " gedämpftes Quaken könnte "
-                                                            + "wohlig sein oder "
-                                                            + "genauso gut vorwurfsvoll", secs(10))
-                                                    .beendet(PARAGRAPH),
-                                            du("versenkst",
-                                                    froschDescOderAnapher.akk() // "ihn"
-                                                            + " tief in deine Tasche. Du "
-                                                            + "versuchst, deine Hand an der "
-                                                            + "Kleidung zu reinigen, aber der "
-                                                            + "Schleim verteilt sich nur "
-                                                            + "überall – igitt!",
-                                                    "tief in deine Tasche", secs(10))
-                                                    .beendet(PARAGRAPH),
-                                            du("packst",
-                                                    froschDescOderAnapher.akk() // "ihn"
-                                                            + " in deine Tasche. "
-                                                            + capitalize(
-                                                            froschDesc.persPron().nom())
-                                                            + " fasst "
-                                                            + "sich sehr eklig an und du bist "
-                                                            + "glücklich, als die Prozedur "
-                                                            + "vorbei ist.", secs(10))
-                                                    .dann()
-                                    );
-                                })
-        );
-
-        sc.memoryComp().setLastAction(buildMemorizedAction());
-        return timeElapsed;
-    }
-
-    private AvTimeSpan narrateAndDoFroschprinz_HatHochhebenGefordert() {
-        AvTimeSpan timeElapsed = narrateFroschprinz_HatHochhebenGefordert();
-
-        timeElapsed = timeElapsed.plus(
-                gameObject.locationComp()
-                        .narrateAndSetLocation(
-                                targetLocation,
-                                () -> {
-                                    world.upgradeKnownToSC(gameObject);
-                                    sc.feelingsComp().setMood(ANGESPANNT);
-
-                                    return noTime();
-                                })
-        );
+                            n.addAlt(
+                                    neuerSatz(
+                                            capitalize(
+                                                    froschDescOderAnapher.nom()) // "er"
+                                                    + " ist glibschig und "
+                                                    + "schleimig – pfui-bäh! – schnell lässt du "
+                                                    + froschDescOderAnapher.persPron().akk()
+                                                    + " in "
+                                                    + "eine Tasche gleiten. "
+                                                    + capitalize(
+                                                    froschDescOderAnapher.possArt()
+                                                            .vor(NumerusGenus.N).nom())
+                                                    + " gedämpftes Quaken könnte "
+                                                    + "wohlig sein oder "
+                                                    + "genauso gut vorwurfsvoll", secs(10))
+                                            .beendet(PARAGRAPH),
+                                    du("versenkst",
+                                            froschDescOderAnapher.akk() // "ihn"
+                                                    + " tief in deine Tasche. Du "
+                                                    + "versuchst, deine Hand an der "
+                                                    + "Kleidung zu reinigen, aber der "
+                                                    + "Schleim verteilt sich nur "
+                                                    + "überall – igitt!",
+                                            "tief in deine Tasche", secs(10))
+                                            .beendet(PARAGRAPH),
+                                    du("packst",
+                                            froschDescOderAnapher.akk() // "ihn"
+                                                    + " in deine Tasche. "
+                                                    + capitalize(
+                                                    froschDesc.persPron().nom())
+                                                    + " fasst "
+                                                    + "sich sehr eklig an und du bist "
+                                                    + "glücklich, als die Prozedur "
+                                                    + "vorbei ist.", secs(10))
+                                            .dann()
+                            );
+                        }
+                );
 
         sc.memoryComp().setLastAction(buildMemorizedAction());
-        return timeElapsed;
     }
 
-    private AvTimeSpan narrateFroschprinz_HatHochhebenGefordert() {
+    private void narrateAndDoFroschprinz_HatHochhebenGefordert() {
+        narrateFroschprinz_HatHochhebenGefordert();
+
+        gameObject.locationComp()
+                .narrateAndSetLocation(
+                        targetLocation,
+                        () -> {
+                            world.upgradeKnownToSC(gameObject);
+                            sc.feelingsComp().setMood(ANGESPANNT);
+                        }
+                );
+
+        sc.memoryComp().setLastAction(buildMemorizedAction());
+    }
+
+    private void narrateFroschprinz_HatHochhebenGefordert() {
         if (isDefinitivDiskontinuitaet()) {
             if (n.requireNarration().dann()) {
                 final SubstantivischePhrase froschDescOderAnapher =
                         getAnaphPersPronWennMglSonstShortDescription(FROSCHPRINZ);
 
-                return n.add(neuerSatz(PARAGRAPH,
+                n.add(neuerSatz(PARAGRAPH,
                         "Aber dann nimmst du " + froschDescOderAnapher.akk() +
                                 " doch wieder",
                         secs(5))
                         .undWartest()
                         .phorikKandidat(froschDescOderAnapher, FROSCHPRINZ));
+                return;
             }
 
             final Nominalphrase froschDesc = world.getDescription(gameObject, false);
 
-            return n.add(du(PARAGRAPH,
+            n.add(du(PARAGRAPH,
                     "nimmst",
                     froschDesc.akk() + " noch einmal",
                     "noch einmal",
                     secs(5))
                     .undWartest()
                     .phorikKandidat(froschDesc, FROSCHPRINZ));
+            return;
 
         }
-        return n.addAlt(
+        n.addAlt(
                 du(PARAGRAPH,
                         "zauderst", "und dein Herz klopft gewaltig, als du endlich "
                                 + world.getDescription(gameObject, true).akk()
@@ -362,36 +358,34 @@ public class NehmenAction
                         .dann());
     }
 
-    private AvTimeSpan narrateAndDoObject() {
+    private void narrateAndDoObject() {
         world.upgradeKnownToSC(gameObject, gameObject.locationComp().getLocation());
 
-        AvTimeSpan timeElapsed = narrateObject();
+        narrateObject();
 
-        timeElapsed = timeElapsed.plus(
-                gameObject.locationComp().narrateAndSetLocation(targetLocation));
+        gameObject.locationComp().narrateAndSetLocation(targetLocation);
         sc.memoryComp().setLastAction(buildMemorizedAction());
-
-        return timeElapsed;
     }
 
 
-    @NonNull
-    private AvTimeSpan narrateObject() {
+    private void narrateObject() {
         final PraedikatMitEinerObjektleerstelle mitnehmenPraedikat =
                 gameObject.locationComp().getLocation()
                         .storingPlaceComp().getLocationMode().getMitnehmenPraedikat();
 
         if (isDefinitivDiskontinuitaet()) {
-            return narrateObjectDiskontinuitaet(mitnehmenPraedikat);
+            narrateObjectDiskontinuitaet(mitnehmenPraedikat);
+            return;
         }
 
         if (sc.memoryComp().getLastAction().is(Action.Type.ABLEGEN)) {
             final Nominalphrase objectDesc = world.getDescription(gameObject, true);
-            return n.add(neuerSatz(
+            n.add(neuerSatz(
                     "Dann nimmst du " + objectDesc.akk(),
                     secs(5))
                     .undWartest()
                     .phorikKandidat(objectDesc.getNumerusGenus(), gameObject.getId()));
+            return;
         }
 
         if (sc.memoryComp().getLastAction().hasObject(gameObject)) {
@@ -409,7 +403,7 @@ public class NehmenAction
                         mitnehmenPraedikat.mitObj(objectDesc);
                 // STORY Neues Praedikat mit integrierter adverbialer Angabe in
                 //  du(...) übergegben
-                return n.add(du(PARAGRAPH,
+                n.add(du(PARAGRAPH,
                         praedikatMitObjekt.mitAdverbialerAngabe(mood.getAdverbialeAngabe()),
                         secs(5))
                         .undWartest(
@@ -417,12 +411,13 @@ public class NehmenAction
                                         .duHauptsatzLaesstSichMitNachfolgendemDuHauptsatzZusammenziehen())
                         .phorikKandidat(objectDesc, gameObject.getId())
                         .dann());
+                return;
             }
         }
 
         final PraedikatOhneLeerstellen praedikatMitObjekt =
                 mitnehmenPraedikat.mitObj(world.getDescription(gameObject, true));
-        return n.add(
+        n.add(
                 du(PARAGRAPH, praedikatMitObjekt, secs(5))
                         // TODO Kann das .undWartest() bei Prädikat automatisch gesetzt werden?
                         .undWartest(
@@ -431,20 +426,21 @@ public class NehmenAction
                         .dann());
     }
 
-    private AvTimeSpan narrateObjectDiskontinuitaet(
+    private void narrateObjectDiskontinuitaet(
             final PraedikatMitEinerObjektleerstelle nehmenPraedikat) {
         if (n.requireNarration().dann()) {
             final Nominalphrase objectDesc = world.getDescription(gameObject);
-            return n.add(neuerSatz(PARAGRAPH,
+            n.add(neuerSatz(PARAGRAPH,
                     "Dann nimmst du " + objectDesc.akk() +
                             " erneut",
                     secs(5))
                     .undWartest()
                     .phorikKandidat(objectDesc, gameObject.getId()));
+            return;
         }
 
         if (n.requireNarration().allowsAdditionalDuSatzreihengliedOhneSubjekt()) {
-            return n.add(satzanschluss(
+            n.add(satzanschluss(
                     ", nur um "
                             + nehmenPraedikat
                             .mitObj(world.getDescription(gameObject, true).persPron())
@@ -455,10 +451,11 @@ public class NehmenAction
                     // "zu nehmen", "an dich zu nehmen", "aufzuheben"
                     .komma()
                     .dann());
+            return;
         }
 
         final Nominalphrase objectDesc = world.getDescription(gameObject, true);
-        return n.add(neuerSatz(PARAGRAPH,
+        n.add(neuerSatz(PARAGRAPH,
                 "Ach nein, " +
                         // du nimmst die Kugel besser doch
                         uncapitalize(nehmenPraedikat.mitObj(objectDesc).getDuHauptsatz(

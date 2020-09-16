@@ -41,6 +41,22 @@ public class AvDateTime {
         this.secsSinceBeginning = secsSinceBeginning;
     }
 
+    public static AvDateTime earliest(final AvDateTime one, final AvDateTime other) {
+        if (one.isBefore(other)) {
+            return one;
+        }
+
+        return other;
+    }
+
+    public static AvDateTime latest(final AvDateTime one, final AvDateTime other) {
+        if (one.isAfter(other)) {
+            return one;
+        }
+
+        return other;
+    }
+
     public Tageszeit getTageszeit() {
         return getTime().getTageszeit();
     }

@@ -12,7 +12,6 @@ import de.nb.aventiure2.data.world.syscomp.movement.SimpleMovementNarrator;
 import de.nb.aventiure2.data.world.syscomp.spatialconnection.ISpatiallyConnectedGO;
 import de.nb.aventiure2.data.world.syscomp.spatialconnection.NumberOfWays;
 import de.nb.aventiure2.data.world.syscomp.storingplace.ILocationGO;
-import de.nb.aventiure2.data.world.time.AvTimeSpan;
 import de.nb.aventiure2.german.base.Nominalphrase;
 import de.nb.aventiure2.german.base.SubstantivischePhrase;
 import de.nb.aventiure2.german.description.AbstractDescription;
@@ -38,7 +37,8 @@ public class RapunzelsZauberinMovementNarrator extends SimpleMovementNarrator {
     }
 
     @Override
-    public <FROM extends ILocationGO & ISpatiallyConnectedGO> AvTimeSpan
+    public <FROM extends ILocationGO & ISpatiallyConnectedGO>
+    void
     narrateMovingGOKommtScEntgegen_esVerstehtSichNichtVonSelbstVonWo(
             @Nullable final ILocationGO scFrom,
             final ILocationGO to,
@@ -100,7 +100,8 @@ public class RapunzelsZauberinMovementNarrator extends SimpleMovementNarrator {
                         .beendet(SENTENCE));
             }
 
-            return n.addAlt(alt);
+            n.addAlt(alt);
+            return;
         }
 
         if (world.isOrHasRecursiveLocation(movingGOFrom, VOR_DEM_ALTEN_TURM) &&
@@ -115,7 +116,8 @@ public class RapunzelsZauberinMovementNarrator extends SimpleMovementNarrator {
                         .beendet(SENTENCE));
             }
 
-            return n.addAlt(alt);
+            n.addAlt(alt);
+            return;
         }
 
         if (world.isOrHasRecursiveLocation(movingGOFrom, VOR_DEM_ALTEN_TURM) &&
@@ -130,25 +132,26 @@ public class RapunzelsZauberinMovementNarrator extends SimpleMovementNarrator {
                         .beendet(SENTENCE));
             }
 
-            return n.addAlt(alt);
+            n.addAlt(alt);
+            return;
         }
 
-        return super.narrateMovingGOKommtScEntgegen_esVerstehtSichNichtVonSelbstVonWo(
+        super.narrateMovingGOKommtScEntgegen_esVerstehtSichNichtVonSelbstVonWo(
                 scFrom, to, movingGOFrom, spatialConnectionMovingGO);
     }
 
     @Override
     public <FROM extends ILocationGO & ISpatiallyConnectedGO>
-    AvTimeSpan narrateAndDoStartsLeaving(
+    void narrateAndDoStartsLeaving(
             final FROM from, final ILocationGO to,
             @Nullable final SpatialConnection spatialConnection,
             final NumberOfWays numberOfWaysOut) {
         if (from.is(DRAUSSEN_VOR_DEM_SCHLOSS)) {
             // Hier bemerkt der SC die Zauberin nicht
-            return noTime();
+            return;
         }
 
-        return super.narrateAndDoStartsLeaving(from, to, spatialConnection, numberOfWaysOut);
+        super.narrateAndDoStartsLeaving(from, to, spatialConnection, numberOfWaysOut);
     }
 
     // STORY Wenn die Zauberin WEISS_DASS_RAPUNZEL_BEFREIT_WURDE, sieht sie
@@ -162,15 +165,15 @@ public class RapunzelsZauberinMovementNarrator extends SimpleMovementNarrator {
 
     @Override
     public <FROM extends ILocationGO & ISpatiallyConnectedGO>
-    AvTimeSpan narrateAndDoStartsEntering(final FROM from, final ILocationGO to,
-                                          @Nullable final SpatialConnection spatialConnection,
-                                          final NumberOfWays numberOfWaysIn) {
+    void narrateAndDoStartsEntering(final FROM from, final ILocationGO to,
+                                    @Nullable final SpatialConnection spatialConnection,
+                                    final NumberOfWays numberOfWaysIn) {
         if (to.is(DRAUSSEN_VOR_DEM_SCHLOSS)) {
             // Hier bemerkt der SC die Zauberin nicht
-            return noTime();
+            return;
         }
 
-        return super.narrateAndDoStartsEntering(from, to, spatialConnection, numberOfWaysIn);
+        super.narrateAndDoStartsEntering(from, to, spatialConnection, numberOfWaysIn);
     }
 
     // STORY Spieler sieht von unten, wie die Zauberin heruntersteigt?

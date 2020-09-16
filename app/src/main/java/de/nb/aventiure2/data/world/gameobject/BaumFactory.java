@@ -2,6 +2,8 @@ package de.nb.aventiure2.data.world.gameobject;
 
 import androidx.annotation.NonNull;
 
+import javax.annotation.CheckReturnValue;
+
 import de.nb.aventiure2.data.database.AvDatabase;
 import de.nb.aventiure2.data.world.base.GameObject;
 import de.nb.aventiure2.data.world.base.GameObjectId;
@@ -91,6 +93,7 @@ public class BaumFactory {
         }
     }
 
+    @CheckReturnValue
     private static AbstractDescription<?> getDescInErstesMal() {
         return neuerSatz(PARAGRAPH,
                 "Vom Stamm geht in Hüfthöhe ein kräftiger Ast ab, den kannst du "

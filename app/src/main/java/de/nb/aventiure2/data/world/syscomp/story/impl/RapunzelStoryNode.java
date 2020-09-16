@@ -8,6 +8,8 @@ import com.google.common.collect.ImmutableSet;
 
 import java.util.Collection;
 
+import javax.annotation.CheckReturnValue;
+
 import de.nb.aventiure2.data.database.AvDatabase;
 import de.nb.aventiure2.data.narration.NarrationDao;
 import de.nb.aventiure2.data.world.base.GameObjectId;
@@ -19,7 +21,6 @@ import de.nb.aventiure2.data.world.syscomp.state.impl.RapunzelState;
 import de.nb.aventiure2.data.world.syscomp.state.impl.RapunzelsZauberinState;
 import de.nb.aventiure2.data.world.syscomp.story.IStoryNode;
 import de.nb.aventiure2.data.world.syscomp.story.Story;
-import de.nb.aventiure2.data.world.time.AvTimeSpan;
 import de.nb.aventiure2.german.description.AbstractDescription;
 
 import static com.google.common.collect.ImmutableList.builder;
@@ -78,6 +79,8 @@ public enum RapunzelStoryNode implements IStoryNode {
     //  So verabredet ihr es.
     //  „Aber komm nicht, wenn die Alte bei mir ist, sagt sie noch,
     //  sonst sind wir beide verloren"
+
+    // STORY Seide: "Ein Vermögen wert"
 
     // STORY Extra: Zauberin ruft von unten nach Rapunzel: "Schnell versteckt euch unter dem Bett"
 
@@ -163,6 +166,7 @@ public enum RapunzelStoryNode implements IStoryNode {
     }
 
     @Override
+    @Nullable
     public Integer getExpAchievementSteps() {
         return expAchievementSteps;
     }
@@ -179,12 +183,12 @@ public enum RapunzelStoryNode implements IStoryNode {
     }
 
     @Override
+    @Nullable
     public IHinter getHinter() {
         return hinter;
     }
 
-    @Nullable
-    public static AvTimeSpan checkAndAdvanceIfAppropriate(
+    public static boolean checkAndAdvanceIfAppropriate(
             final AvDatabase db,
             final NarrationDao n,
             final World world) {
@@ -196,29 +200,28 @@ public enum RapunzelStoryNode implements IStoryNode {
                             .hasRecursiveLocation(IM_WALD_NAHE_DEM_SCHLOSS, VOR_DEM_ALTEN_TURM) &&
                     RapunzelsZauberinReactionsComp.
                             liegtImZeitfensterFuerRapunzelbesuch(db.nowDao().now())) {
-                return ensureAdvancedToZauberinMachtRapunzelbesuche(db, world);
+                ensureAdvancedToZauberinMachtRapunzelbesuche(db, world);
+                return true;
             }
         }
 
-        return null;
+        return false;
     }
 
-    @NonNull
-    public static AvTimeSpan ensureAdvancedToZauberinMachtRapunzelbesuche(
+    public static void ensureAdvancedToZauberinMachtRapunzelbesuche(
             final AvDatabase db, final World world) {
         final IHasStateGO<RapunzelsZauberinState> zauberin = loadZauberin(world);
 
         if (zauberin.stateComp().hasState(MACHT_ZURZEIT_KEINE_RAPUNZELBESUCHE)) {
             db.counterDao().reset(STORY_ADVANCE_COUNTER);
-            return zauberin.stateComp().narrateAndSetState(VOR_DEM_NAECHSTEN_RAPUNZEL_BESUCH);
+            zauberin.stateComp().narrateAndSetState(VOR_DEM_NAECHSTEN_RAPUNZEL_BESUCH);
+            return;
         }
-
-        return noTime();
     }
 
     // STORY Alternativen für Tipp-Texte, bei denen Foreshadowing stärker im
     //  Vordergrund steht
-    private static AvTimeSpan narrateAndDoHintAction_TurmGefunden(
+    private static void narrateAndDoHintAction_TurmGefunden(
             final AvDatabase db, final NarrationDao n, final World world) {
         final ImmutableList.Builder<AbstractDescription<?>> alt = builder();
         alt.add(
@@ -229,10 +232,10 @@ public enum RapunzelStoryNode implements IStoryNode {
 
         // STORY (bis SC Rapunzel gefunden hat) Mutter sammelt im
         //  Wald Holz und klagt ihr Leid: Tochter an Zauberin verloren
-        return n.addAlt(alt);
+        n.addAlt(alt);
     }
 
-    private static AvTimeSpan narrateAndDoHintAction_RapunzelSingenGehoert(
+    private static void narrateAndDoHintAction_RapunzelSingenGehoert(
             final AvDatabase db, final NarrationDao n, final World world) {
         final ImmutableList.Builder<AbstractDescription<?>> alt = builder();
 
@@ -245,19 +248,19 @@ public enum RapunzelStoryNode implements IStoryNode {
                             + "in den Sinn. Ob der wohl bewohnt ist?"));
         }
 
-        return n.addAlt(alt);
+        n.addAlt(alt);
     }
 
-    private static AvTimeSpan narrateAndDoHintAction_ZauberinAufTurmWegGefunden(
+    private static void narrateAndDoHintAction_ZauberinAufTurmWegGefunden(
             final AvDatabase db, final NarrationDao n, final World world) {
         final ImmutableList.Builder<AbstractDescription<?>> alt = builder();
 
         alt.addAll(altTurmWohnenHineinHeraus(world));
 
-        return n.addAlt(alt);
+        n.addAlt(alt);
     }
 
-    private static AvTimeSpan narrateAndDoHintAction_ZauberinHeimlichBeimRufenBeobachtet(
+    private static void narrateAndDoHintAction_ZauberinHeimlichBeimRufenBeobachtet(
             final AvDatabase db, final NarrationDao n, final World world) {
         final ImmutableList.Builder<AbstractDescription<?>> alt = builder();
 
@@ -281,10 +284,10 @@ public enum RapunzelStoryNode implements IStoryNode {
                     paragraph("Was mag die Frau wollen?"));
         }
 
-        return n.addAlt(alt);
+        n.addAlt(alt);
     }
 
-    private static AvTimeSpan narrateAndDoHintAction_ZuRapunzelHinaufgestiegen(
+    private static void narrateAndDoHintAction_ZuRapunzelHinaufgestiegen(
             final AvDatabase db, final NarrationDao n, final World world) {
         final ImmutableList.Builder<AbstractDescription<?>> alt = builder();
         final IHasStateGO<RapunzelState> rapunzel = loadRapunzel(world);
@@ -315,9 +318,10 @@ public enum RapunzelStoryNode implements IStoryNode {
             alt.addAll(altTurmWohnenHineinHeraus(world));
         }
 
-        return n.addAlt(alt);
+        n.addAlt(alt);
     }
 
+    @CheckReturnValue
     private static ImmutableList<AbstractDescription<?>> altTurmWohnenHineinHeraus(
             final World world) {
         final ImmutableList.Builder<AbstractDescription<?>> alt = builder();

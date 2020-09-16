@@ -6,6 +6,7 @@ import com.google.common.collect.ImmutableList;
 
 import java.util.List;
 
+import javax.annotation.CheckReturnValue;
 import javax.annotation.ParametersAreNonnullByDefault;
 
 import de.nb.aventiure2.data.database.AvDatabase;
@@ -61,6 +62,7 @@ public class DraussenVorDemSchlossConnectionComp extends AbstractSpatialConnecti
 
     @Override
     @NonNull
+    @CheckReturnValue
     public List<SpatialConnection> getConnections() {
         return ImmutableList.of(
                 SpatialConnection.con(SCHLOSS_VORHALLE,

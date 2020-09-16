@@ -61,21 +61,21 @@ public class SchlafenAction extends AbstractScAction {
     }
 
     @Override
-    public AvTimeSpan narrateAndDo() {
+    public void narrateAndDo() {
         // STORY Wenn der Benutzer längere Zeit nicht geschlafen hat, wird er automatisch müde
         //  und bleibt müde (analog Hunger!). Abends wird man eher müde oder ist von allein müde.
         //  Oder Nachts ist man immer müde.
 
         // STORY "Vor Hunger kannst du nicht einschlafen"
         if (sc.feelingsComp().hasMood(ERSCHOEPFT)) {
-            return narrateAndDoSchlaeftEin();
+            narrateAndDoSchlaeftEin();
+            return;
         }
 
-        return narrateAndDoSchlaeftNichtEin();
+        narrateAndDoSchlaeftNichtEin();
     }
 
-    @NonNull
-    private AvTimeSpan narrateAndDoSchlaeftNichtEin() {
+    private void narrateAndDoSchlaeftNichtEin() {
         sc.memoryComp().setLastAction(buildMemorizedAction());
 
         final ImmutableList.Builder<AbstractDescription<?>> alt = ImmutableList.builder();
@@ -96,11 +96,11 @@ public class SchlafenAction extends AbstractScAction {
         alt.add(du("drehst", "dich von einer Seite auf die andere",
                 "von einer Seite", mins(1)));
 
-        return n.addAlt(alt);
+        n.addAlt(alt);
     }
 
-    private AvTimeSpan narrateAndDoSchlaeftEin() {
-        final AvTimeSpan timeElapsed = n.addAlt(
+    private void narrateAndDoSchlaeftEin() {
+        n.addAlt(
                 // TODO Irgendwie wird immer nur dieser Text gewählt, nicht die anderen
                 //  beiden...
                 du(SENTENCE,
@@ -139,7 +139,6 @@ public class SchlafenAction extends AbstractScAction {
         //  Andere Idee könnte sein: Beim Vergehen von Zeit gibt es DREI Parameter:
         //  letzter Zeitpunkt, letzter WACHER Zeitpunkt und aktueller Zeitpunkt
         //  Entsprechend kann dann der Text gestaltet werden, z.B. "Der Frosch ist verschwunden."
-
 
         // STORY Konzept entwickeln, dass diese "Statusübergänge" realisiert:
         //  - Benutzer rastet für längere Zeit (wach) und Rapunzel beginnt mehrfach
@@ -188,7 +187,7 @@ public class SchlafenAction extends AbstractScAction {
 
         sc.feelingsComp().setMood(NEUTRAL);
 
-        return timeElapsed.plus(n.addAlt(
+        n.addAlt(
                 du(CHAPTER,
                         "wachst", "nach einem langen Schlaf gut erholt wieder auf",
                         "nach einem langen Schlaf", noTime()),
@@ -196,7 +195,7 @@ public class SchlafenAction extends AbstractScAction {
                         "schläfst", "tief und fest und wachst erst nach einigen "
                                 + "Stunden wieder auf",
                         "tief",
-                        noTime())));
+                        noTime()));
     }
 
     @Override

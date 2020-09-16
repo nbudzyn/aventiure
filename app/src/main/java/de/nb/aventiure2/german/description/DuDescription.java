@@ -2,6 +2,8 @@ package de.nb.aventiure2.german.description;
 
 import androidx.annotation.Nullable;
 
+import javax.annotation.CheckReturnValue;
+
 import de.nb.aventiure2.data.world.time.AvTimeSpan;
 import de.nb.aventiure2.german.base.StructuralElement;
 import de.nb.aventiure2.german.praedikat.DuTextPart;
@@ -13,28 +15,33 @@ import de.nb.aventiure2.german.praedikat.DuTextPart;
 public class DuDescription extends AbstractDescription<DuDescription> {
     private final DuTextPart duTextPart;
 
+    @CheckReturnValue
     public static DuDescription du(final String verb,
                                    final AvTimeSpan timeElapsed) {
         return du(verb, null, timeElapsed);
     }
 
+    @CheckReturnValue
     public static DuDescription du(final DuTextPart duTextPart,
                                    final AvTimeSpan timeElapsed) {
         return du(StructuralElement.WORD, duTextPart, timeElapsed);
     }
 
+    @CheckReturnValue
     public static DuDescription du(final StructuralElement startsNew,
                                    final String verb,
                                    final AvTimeSpan timeElapsed) {
         return du(startsNew, verb, null, timeElapsed);
     }
 
+    @CheckReturnValue
     public static DuDescription du(final String verb,
                                    @Nullable final String remainder,
                                    final AvTimeSpan timeElapsed) {
         return du(verb, remainder, null, timeElapsed);
     }
 
+    @CheckReturnValue
     public static DuDescription du(final StructuralElement startsNew,
                                    final String verb,
                                    @Nullable final String remainder,
@@ -42,6 +49,7 @@ public class DuDescription extends AbstractDescription<DuDescription> {
         return du(startsNew, verb, remainder, null, timeElapsed);
     }
 
+    @CheckReturnValue
     public static DuDescription du(final String verb,
                                    @Nullable final String remainder,
                                    @Nullable final String vorfeldSatzglied,
@@ -49,6 +57,7 @@ public class DuDescription extends AbstractDescription<DuDescription> {
         return du(StructuralElement.WORD, verb, remainder, vorfeldSatzglied, timeElapsed);
     }
 
+    @CheckReturnValue
     public static DuDescription du(final StructuralElement startsNew,
                                    final String verb,
                                    @Nullable final String remainder,
@@ -57,6 +66,7 @@ public class DuDescription extends AbstractDescription<DuDescription> {
         return du(startsNew, new SimpleDuTextPart(verb, remainder, vorfeldSatzglied), timeElapsed);
     }
 
+    @CheckReturnValue
     public static DuDescription du(final StructuralElement startsNew,
                                    final DuTextPart duTextPart,
                                    final AvTimeSpan timeElapsed) {

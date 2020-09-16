@@ -17,7 +17,6 @@ import de.nb.aventiure2.data.world.syscomp.memory.Action;
 import de.nb.aventiure2.data.world.syscomp.state.IHasStateGO;
 import de.nb.aventiure2.data.world.syscomp.state.impl.FroschprinzState;
 import de.nb.aventiure2.data.world.syscomp.storingplace.ILocationGO;
-import de.nb.aventiure2.data.world.time.AvTimeSpan;
 import de.nb.aventiure2.german.base.Nominalphrase;
 import de.nb.aventiure2.german.base.SubstantivischePhrase;
 import de.nb.aventiure2.german.description.AbstractDescription;
@@ -90,46 +89,44 @@ public class HochwerfenAction<OBJ extends IDescribableGO & ILocatableGO>
     }
 
     @Override
-    public AvTimeSpan narrateAndDo() {
-        AvTimeSpan timeElapsed = noTime();
-
+    public void narrateAndDo() {
         if (!isDefinitivWiederholung()) {
-            timeElapsed = timeElapsed.plus(narrateAndDoErstesMal());
+            narrateAndDoErstesMal();
         } else {
-            timeElapsed = timeElapsed.plus(narrateAndDoWiederholung());
+            narrateAndDoWiederholung();
         }
 
         sc.memoryComp().setLastAction(buildMemorizedAction());
-
-        return timeElapsed;
     }
 
-    private AvTimeSpan narrateAndDoErstesMal() {
+    private void narrateAndDoErstesMal() {
         final IHasStateGO<FroschprinzState> froschprinz =
                 (IHasStateGO<FroschprinzState>) world.load(FROSCHPRINZ);
 
         if (location.is(IM_WALD_BEIM_BRUNNEN) &&
                 !froschprinz.stateComp().hasState(FroschprinzState.UNAUFFAELLIG)) {
-            return narrateAndDoFroschBekannt(
+            narrateAndDoFroschBekannt(
                     (IHasStateGO<FroschprinzState> & ILocatableGO) froschprinz);
+            return;
         }
 
         final SubstantivischePhrase objectDesc =
                 getAnaphPersPronWennMglSonstDescription(object, false);
 
         if (n.requireNarration().allowsAdditionalDuSatzreihengliedOhneSubjekt()) {
-            return narrateAndDoHochwerfenAuffangen(
+            narrateAndDoHochwerfenAuffangen(
                     satzanschluss(", wirfst " +
                             objectDesc.akk() +
                             " in die Höhe und fängst " +
                             objectDesc.persPron().akk() +
                             " wieder auf", secs(3))
                             .dann());
+            return;
         }
 
         final String emotionSatzglied = emotionSatzgliedFuersHochwerfen();
 
-        return narrateAndDoHochwerfenAuffangen(
+        narrateAndDoHochwerfenAuffangen(
                 du(PARAGRAPH, "wirfst",
                         objectDesc.akk()
                                 + " "
@@ -146,8 +143,8 @@ public class HochwerfenAction<OBJ extends IDescribableGO & ILocatableGO>
         return sc.feelingsComp().getMood().getAdverbialeAngabe().getText();
     }
 
-    private <F extends IHasStateGO<FroschprinzState> & ILocatableGO> AvTimeSpan narrateAndDoFroschBekannt(
-            final F froschprinz) {
+    private <F extends IHasStateGO<FroschprinzState> & ILocatableGO> void
+    narrateAndDoFroschBekannt(final F froschprinz) {
         // TODO Für jede State Machine ein eigenes State Enum. Nur im PCD
         //  sind es Strings.
 
@@ -155,7 +152,8 @@ public class HochwerfenAction<OBJ extends IDescribableGO & ILocatableGO>
                 HAT_NACH_BELOHNUNG_GEFRAGT,
                 HAT_FORDERUNG_GESTELLT)) {
 
-            return narrateAndDoObjectFaelltSofortInDenBrunnen();
+            narrateAndDoObjectFaelltSofortInDenBrunnen();
+            return;
             // Der Spieler hat ein weiteres Objekt in den Brunnen fallen
             // lassen, obwohl er noch mit dem Frosch verhandelt.
         }
@@ -164,20 +162,21 @@ public class HochwerfenAction<OBJ extends IDescribableGO & ILocatableGO>
         if (object.is(GOLDENE_KUGEL)) {
             final Nominalphrase objectDesc = world.getDescription(object);
 
-            return narrateAndDoHochwerfenAuffangen(
+            narrateAndDoHochwerfenAuffangen(
                     du(PARAGRAPH, "wirfst", objectDesc.akk() +
                             " hoch in die Luft und fängst " +
                             objectDesc.persPron().akk() +
                             " geschickt wieder auf", secs(3))
                             .dann());
+            return;
         }
 
         // Der Spieler hat die goldene Kugel letztlich in den Brunnen
         // fallen lassen, NACHDEM der Frosch schon Dinge hochgeholt hat.
         // Dann ist die Kugel jetzt WEG - PECH.
-        final AvTimeSpan timeElapsed = narrateAndDoObjectFaelltSofortInDenBrunnen();
+        narrateAndDoObjectFaelltSofortInDenBrunnen();
         if (froschprinz.locationComp().hasSameUpperMostLocationAs(SPIELER_CHARAKTER)) {
-            return timeElapsed;
+            return;
         }
 
         sc.feelingsComp().setMoodMax(ETWAS_GEKNICKT);
@@ -186,19 +185,17 @@ public class HochwerfenAction<OBJ extends IDescribableGO & ILocatableGO>
                 location.storingPlaceComp().getLichtverhaeltnisse() == HELL ? "Weit und breit" :
                         "Im Dunkeln ist";
 
-        return n.add(
+        n.add(
                 neuerSatz(praefix + " kein Frosch zu sehen… Das war vielleicht etwas "
-                        + "ungeschickt, oder?", timeElapsed));
+                        + "ungeschickt, oder?", noTime()));
     }
 
-    private AvTimeSpan narrateAndDoHochwerfenAuffangen(final AbstractDescription<?> desc) {
-        AvTimeSpan timeElapsed = n.add(desc);
+    private void narrateAndDoHochwerfenAuffangen(final AbstractDescription<?> desc) {
+        n.add(desc);
 
-        timeElapsed = timeElapsed.plus(
-                object.locationComp().narrateAndDoLeaveReactions(SPIELER_CHARAKTER)
-        );
+        object.locationComp().narrateAndDoLeaveReactions(SPIELER_CHARAKTER);
 
-        return timeElapsed.plus(world.narrateAndDoReactions()
+        world.narrateAndDoReactions()
                 // Hier wird das onLeave() und onEnter() etwas missbraucht, um Reaktionen auf
                 // das Hochwerfen zu provozieren. Da from und to gleich sind, müssen wir
                 // from explizit angebeben, es darf nicht die lastLocation verwendet werden,
@@ -207,13 +204,13 @@ public class HochwerfenAction<OBJ extends IDescribableGO & ILocatableGO>
                         // from
                         world.loadSC(),
                         // to
-                        SPIELER_CHARAKTER));
+                        SPIELER_CHARAKTER);
     }
 
-    private AvTimeSpan narrateAndDoObjectFaelltSofortInDenBrunnen() {
+    private void narrateAndDoObjectFaelltSofortInDenBrunnen() {
         final Nominalphrase objectDesc = world.getDescription(object, false);
 
-        final AvTimeSpan timeSpan = n.add(
+        n.add(
                 du(PARAGRAPH, "wirfst", objectDesc.akk() +
                         " nur ein einziges Mal in die Höhe, " +
                         "aber wie das Unglück es will, fällt " +
@@ -226,26 +223,24 @@ public class HochwerfenAction<OBJ extends IDescribableGO & ILocatableGO>
                         .dann(!n.requireNarration().dann())
                         .beendet(PARAGRAPH));
 
-        return timeSpan.plus(
-                object.locationComp().narrateAndSetLocation(UNTEN_IM_BRUNNEN));
+        object.locationComp().narrateAndSetLocation(UNTEN_IM_BRUNNEN);
     }
 
-    @NonNull
-    private AvTimeSpan narrateAndDoWiederholung() {
+    private void narrateAndDoWiederholung() {
         final IHasStateGO<FroschprinzState> froschprinz =
                 (IHasStateGO<FroschprinzState>) world.load(FROSCHPRINZ);
 
-        if (db.counterDao()
-                .incAndGet("HochwerfenAction_Wiederholung") == 1 ||
+        if (db.counterDao().incAndGet("HochwerfenAction_Wiederholung") == 1 ||
                 (location.is(IM_WALD_BEIM_BRUNNEN) && !froschprinz.stateComp()
                         .hasState(UNAUFFAELLIG))) {
-            return n.addAlt(
+            n.addAlt(
                     neuerSatz("Und noch einmal – was ein schönes Spiel!", secs(3))
                             .dann(),
                     neuerSatz("So ein Spaß!", secs(3))
                             .dann(),
                     neuerSatz("Und in die Höhe damit – juchei!", secs(3))
                             .dann());
+            return;
         }
 
         if (location.is(IM_WALD_BEIM_BRUNNEN)) {
@@ -253,7 +248,7 @@ public class HochwerfenAction<OBJ extends IDescribableGO & ILocatableGO>
                     location.storingPlaceComp().getLichtverhaeltnisse() == DUNKEL ?
                             "– bei dieser Dunkelheit schon gar nicht" : "";
 
-            final AvTimeSpan timeSpan = n.add(du("wirfst",
+            n.add(du("wirfst",
                     world.getDescription(object).akk() +
                             " noch einmal in die Höhe… doch oh nein, " +
                             world.getDescription(object, true).nom() +
@@ -269,10 +264,11 @@ public class HochwerfenAction<OBJ extends IDescribableGO & ILocatableGO>
 
             sc.feelingsComp().setMoodMax(UNTROESTLICH);
 
-            return timeSpan.plus(object.locationComp().narrateAndSetLocation(UNTEN_IM_BRUNNEN));
+            object.locationComp().narrateAndSetLocation(UNTEN_IM_BRUNNEN);
+            return;
         }
 
-        final AvTimeSpan timeSpan = n.add(du("schleuderst",
+        n.add(du("schleuderst",
                 world.getDescription(object).akk() +
                         " übermütig noch einmal in die Luft, aber sie wieder aufzufangen will dir "
                         +
@@ -285,7 +281,7 @@ public class HochwerfenAction<OBJ extends IDescribableGO & ILocatableGO>
 
         sc.feelingsComp().setMoodMax(ETWAS_GEKNICKT);
 
-        return timeSpan.plus(object.locationComp().narrateAndSetLocation(location));
+        object.locationComp().narrateAndSetLocation(location);
     }
 
     @Override

@@ -18,7 +18,6 @@ import de.nb.aventiure2.data.world.syscomp.memory.Action;
 import de.nb.aventiure2.data.world.syscomp.state.IHasStateGO;
 import de.nb.aventiure2.data.world.syscomp.state.impl.FroschprinzState;
 import de.nb.aventiure2.data.world.syscomp.storingplace.ILocationGO;
-import de.nb.aventiure2.data.world.time.AvTimeSpan;
 import de.nb.aventiure2.german.base.Personalpronomen;
 import de.nb.aventiure2.german.base.SubstantivischePhrase;
 import de.nb.aventiure2.german.description.AbstractDescription;
@@ -145,25 +144,27 @@ public class AblegenAction
     }
 
     @Override
-    public AvTimeSpan narrateAndDo() {
+    public void narrateAndDo() {
         if (gameObject instanceof ILivingBeingGO) {
-            return narrateAndDoLivingBeing();
+            narrateAndDoLivingBeing();
+            return;
         }
 
-        return narrateAndDoObject();
+        narrateAndDoObject();
     }
 
-    private AvTimeSpan narrateAndDoLivingBeing() {
+    private void narrateAndDoLivingBeing() {
         checkState(gameObject.is(FROSCHPRINZ),
                 "Unexpected creature data: " + gameObject);
 
-        return narrateAndDoFroschprinz();
+        narrateAndDoFroschprinz();
     }
 
-    private AvTimeSpan narrateAndDoFroschprinz() {
+    private void narrateAndDoFroschprinz() {
         if (((IHasStateGO<FroschprinzState>) gameObject).stateComp()
                 .hasState(HAT_HOCHHEBEN_GEFORDERT)) {
-            return narrateAndDoFroschprinz_HatHochhebenGefordert();
+            narrateAndDoFroschprinz_HatHochhebenGefordert();
+            return;
         }
 
         final ImmutableList.Builder<AbstractDescription<?>> alt =
@@ -197,27 +198,25 @@ public class AblegenAction
                 secs(7)
         ));
 
-        AvTimeSpan timeElapsed = n.addAlt(alt);
+        n.addAlt(alt);
 
-        timeElapsed = timeElapsed.plus(narrateUpgradeKnownAndSetLocationAndAction());
+        narrateUpgradeKnownAndSetLocationAndAction();
         sc.feelingsComp().setMood(NEUTRAL);
-
-        return timeElapsed;
     }
 
-    private AvTimeSpan narrateAndDoFroschprinz_HatHochhebenGefordert() {
+    private void narrateAndDoFroschprinz_HatHochhebenGefordert() {
         if (!location.is(SCHLOSS_VORHALLE_LANGER_TISCH_BEIM_FEST)) {
-            AvTimeSpan timeElapsed = narrateFroschprinz_HatHochhebenGefordert();
-            timeElapsed = timeElapsed.plus(narrateUpgradeKnownAndSetLocationAndAction());
+            narrateFroschprinz_HatHochhebenGefordert();
+            narrateUpgradeKnownAndSetLocationAndAction();
             sc.feelingsComp().setMood(ANGESPANNT);
 
-            return timeElapsed;
+            return;
         }
 
         final SubstantivischePhrase gameObjectOrPersPron =
                 getAnaphPersPronWennMglSonstDescription(gameObject, true);
 
-        AvTimeSpan timeElapsed = n.add(
+        n.add(
                 du("setzt", gameObjectOrPersPron.akk() +
                                 " " +
                                 location.storingPlaceComp().getLocationMode().getWohin(false),
@@ -226,13 +225,11 @@ public class AblegenAction
                         .dann()
                         .phorikKandidat(M, FROSCHPRINZ));
 
-        timeElapsed = timeElapsed.plus(narrateUpgradeKnownAndSetLocationAndAction());
+        narrateUpgradeKnownAndSetLocationAndAction();
         sc.feelingsComp().setMood(ANGESPANNT);
-
-        return timeElapsed;
     }
 
-    private AvTimeSpan narrateFroschprinz_HatHochhebenGefordert() {
+    private void narrateFroschprinz_HatHochhebenGefordert() {
         if (isDefinitivDiskontinuitaet() &&
                 n.requireNarration().allowsAdditionalDuSatzreihengliedOhneSubjekt() &&
                 n.requireNarration().dann()) {
@@ -253,10 +250,11 @@ public class AblegenAction
                     secs(5))
                     .dann()
                     .phorikKandidat(M, FROSCHPRINZ));
-            return n.addAlt(alt);
+            n.addAlt(alt);
+            return;
         }
 
-        return n.add(neuerSatz(
+        n.add(neuerSatz(
                 "Der Frosch will auf den Tisch, aber du setzt den Frosch"
                         + (location.is(SCHLOSS_VORHALLE_AM_TISCH_BEIM_FEST) ?
                         " wieder " :
@@ -269,20 +267,18 @@ public class AblegenAction
                 .phorikKandidat(M, FROSCHPRINZ));
     }
 
-    private AvTimeSpan narrateAndDoObject() {
-        final AvTimeSpan timeElapsed = narrateObject();
-        return timeElapsed.plus(narrateUpgradeKnownAndSetLocationAndAction());
+    private void narrateAndDoObject() {
+        narrateObject();
+        narrateUpgradeKnownAndSetLocationAndAction();
     }
 
-    private AvTimeSpan narrateUpgradeKnownAndSetLocationAndAction() {
+    private void narrateUpgradeKnownAndSetLocationAndAction() {
         world.upgradeKnownToSC(gameObject, location);
-        final AvTimeSpan timeSpan = gameObject.locationComp().narrateAndSetLocation(location);
+        gameObject.locationComp().narrateAndSetLocation(location);
         sc.memoryComp().setLastAction(buildMemorizedAction());
-
-        return timeSpan;
     }
 
-    private AvTimeSpan narrateObject() {
+    private void narrateObject() {
         @Nullable final AbstractAdverbialeAngabe wohinDetail = getWohinDetail();
 
         if (n.requireNarration().allowsAdditionalDuSatzreihengliedOhneSubjekt()) {
@@ -291,17 +287,18 @@ public class AblegenAction
 
             if (gameObjektPersPron != null) {
                 if (isDefinitivDiskontinuitaet()) {
-                    return n.add(satzanschluss(
+                    n.add(satzanschluss(
                             "– und legst "
                                     + gameObjektPersPron.akk()
                                     + " sogleich wieder "
                                     + (wohinDetail != null ? "dort" : "")
                                     + "hin", secs(3)));
+                    return;
                 }
 
                 if (sc.memoryComp().getLastAction().is(NEHMEN) &&
                         sc.memoryComp().getLastAction().hasObject(gameObject)) {
-                    return n.add(du("legst",
+                    n.add(du("legst",
                             gameObjektPersPron.akk() +
                                     " " +
                                     location.storingPlaceComp().getLocationMode()
@@ -309,44 +306,49 @@ public class AblegenAction
                             secs(3))
                             .dann()
                             .phorikKandidat(gameObjektPersPron, gameObject.getId()));
+                    return;
                 }
 
                 if (sc.memoryComp().getLastAction().hasObject(gameObject)) {
-                    return n.add(satzanschluss(", dann legst du "
+                    n.add(satzanschluss(", dann legst du "
                                     + gameObjektPersPron.akk()
                                     + (wohinDetail == null ?
                                     " hin" :
                                     " " + wohinDetail), // "auf den Tisch"
                             secs(5))
                             .undWartest());
+                    return;
                 }
 
                 if (sc.memoryComp().getLastAction().is(Action.Type.BEWEGEN) &&
                         wohinDetail == null) {
-                    return n.add(du("legst",
+                    n.add(du("legst",
                             gameObjektPersPron.akk() +
                                     " zurück",
                             secs(3)));
+                    return;
                 }
 
-                return n.add(du("legst",
+                n.add(du("legst",
                         gameObjektPersPron.akk() +
                                 (wohinDetail == null ? " hin" : " " + wohinDetail),
                         secs(3)));
+                return;
             }
         }
 
         if (isDefinitivDiskontinuitaet()) {
-            return n.add(
+            n.add(
                     du(PARAGRAPH, "legst",
                             world.getDescription(gameObject, false).akk()
                                     + (wohinDetail != null ? " zurück" : " wieder hin"),
                             secs(5))
                             .undWartest()
                             .dann());
+            return;
         }
 
-        return n.add(
+        n.add(
                 du(PARAGRAPH, "legst",
                         world.getDescription(gameObject, false).akk()
                                 + (wohinDetail == null ? " hin" : " " + wohinDetail),

@@ -6,6 +6,7 @@ import com.google.common.collect.ImmutableList;
 
 import java.util.List;
 
+import javax.annotation.CheckReturnValue;
 import javax.annotation.ParametersAreNonnullByDefault;
 
 import de.nb.aventiure2.data.database.AvDatabase;
@@ -64,6 +65,7 @@ public class VorDemTurmConnectionComp extends AbstractSpatialConnectionComp {
 
     @Override
     @NonNull
+    @CheckReturnValue
     public List<SpatialConnection> getConnections() {
         final ImmutableList.Builder<SpatialConnection> res = ImmutableList.builder();
 

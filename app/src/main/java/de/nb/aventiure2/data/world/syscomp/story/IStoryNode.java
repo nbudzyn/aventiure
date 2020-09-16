@@ -8,9 +8,6 @@ import de.nb.aventiure2.data.database.AvDatabase;
 import de.nb.aventiure2.data.narration.NarrationDao;
 import de.nb.aventiure2.data.world.base.GameObjectId;
 import de.nb.aventiure2.data.world.gameobject.World;
-import de.nb.aventiure2.data.world.time.AvTimeSpan;
-
-import static de.nb.aventiure2.data.world.time.AvTimeSpan.noTime;
 
 /**
  * Ein einzelner Schritt, der im Rahmen einer Story (d.h. eines Mörchens o.Ä.)
@@ -23,9 +20,9 @@ public interface IStoryNode {
 
     @FunctionalInterface
     interface IHinter {
-        AvTimeSpan narrateAndDoHintAction(final AvDatabase db,
-                                          NarrationDao n,
-                                          final World world);
+        void narrateAndDoHintAction(final AvDatabase db,
+                                    NarrationDao n,
+                                    final World world);
     }
 
     static int calcExpAchievementSteps(final Iterable<? extends IStoryNode> storyNodes) {
@@ -69,7 +66,7 @@ public interface IStoryNode {
 
     boolean beendetStory();
 
-    default AvTimeSpan narrateAndDoHintAction(final AvDatabase db, final World world) {
+    default void narrateAndDoHintAction(final AvDatabase db, final World world) {
         // Ziele:
         // - Spieler soll Interesse behalten
         // - Spieler soll einen Tipp fürs weitere Vorgehen gekommen
@@ -110,9 +107,9 @@ public interface IStoryNode {
 
         @Nullable final IHinter hinter = getHinter();
         if (hinter == null) {
-            return noTime();
+            return;
         }
-        return hinter.narrateAndDoHintAction(db, db.narrationDao(), world);
+        hinter.narrateAndDoHintAction(db, db.narrationDao(), world);
     }
 
     @Nullable

@@ -4,7 +4,6 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import java.util.Objects;
-import java.util.function.Supplier;
 
 import de.nb.aventiure2.data.database.AvDatabase;
 import de.nb.aventiure2.data.world.base.AbstractStatefulComponent;
@@ -13,9 +12,6 @@ import de.nb.aventiure2.data.world.base.GameObjectId;
 import de.nb.aventiure2.data.world.base.IGameObject;
 import de.nb.aventiure2.data.world.gameobject.World;
 import de.nb.aventiure2.data.world.syscomp.storingplace.ILocationGO;
-import de.nb.aventiure2.data.world.time.AvTimeSpan;
-
-import static de.nb.aventiure2.data.world.time.AvTimeSpan.noTime;
 
 /**
  * Component for a {@link GameObject}: The game object
@@ -59,63 +55,56 @@ public class LocationComp extends AbstractStatefulComponent<LocationPCD> {
         return new LocationPCD(getGameObjectId(), initialLocationId, initialLastLocationId);
     }
 
-    public AvTimeSpan narrateAndUnsetLocation() {
-        return narrateAndUnsetLocation(AvTimeSpan::noTime);
+    public void narrateAndUnsetLocation() {
+        narrateAndUnsetLocation(() -> {});
     }
 
-    @NonNull
-    public AvTimeSpan narrateAndUnsetLocation(final Supplier<AvTimeSpan> onEnter) {
-        return narrateAndSetLocation((GameObjectId) null, onEnter);
+    public void narrateAndUnsetLocation(final Runnable onEnter) {
+        narrateAndSetLocation((GameObjectId) null, onEnter);
     }
 
-    @NonNull
-    public AvTimeSpan narrateAndSetLocation(@Nullable final ILocationGO newLocation) {
-        return narrateAndSetLocation(
+    public void narrateAndSetLocation(@Nullable final ILocationGO newLocation) {
+        narrateAndSetLocation(
                 newLocation != null ? newLocation.getId() : null);
     }
 
-    @NonNull
-    public AvTimeSpan narrateAndSetLocation(@Nullable final GameObjectId newLocationId) {
-        return narrateAndSetLocation(newLocationId, AvTimeSpan::noTime);
+    public void narrateAndSetLocation(@Nullable final GameObjectId newLocationId) {
+        narrateAndSetLocation(newLocationId, () -> {});
     }
 
-    @NonNull
-    public AvTimeSpan narrateAndSetLocation(@Nullable final ILocationGO newLocation,
-                                            final Supplier<AvTimeSpan> onEnter) {
-        return narrateAndSetLocation(
+    public void narrateAndSetLocation(@Nullable final ILocationGO newLocation,
+                                      final Runnable onEnter) {
+        narrateAndSetLocation(
                 newLocation != null ? newLocation.getId() : null, onEnter);
     }
 
-    @NonNull
-    public AvTimeSpan narrateAndSetLocation(@Nullable final GameObjectId newLocationId,
-                                            final Supplier<AvTimeSpan> onEnter) {
-        AvTimeSpan timeElapsed = narrateAndDoLeaveReactions(newLocationId);
+    public void narrateAndSetLocation(@Nullable final GameObjectId newLocationId,
+                                      final Runnable onEnter) {
+        narrateAndDoLeaveReactions(newLocationId);
 
         setLocation(newLocationId);
 
-        timeElapsed = timeElapsed.plus(onEnter.get());
+        onEnter.run();
 
-        return timeElapsed.plus(narrateAndDoEnterReactions(newLocationId));
+        narrateAndDoEnterReactions(newLocationId);
     }
 
-    @NonNull
-    public AvTimeSpan narrateAndDoLeaveReactions(
+    public void narrateAndDoLeaveReactions(
             @Nullable final GameObjectId newLocationId) {
         @Nullable final ILocationGO from = getLocation();
         if (from == null) {
-            return noTime();
+            return;
         }
 
-        return world.narrateAndDoReactions()
+        world.narrateAndDoReactions()
                 .onLeave(getGameObjectId(), from, newLocationId);
     }
 
-    @NonNull
-    public AvTimeSpan narrateAndDoEnterReactions(@Nullable final GameObjectId newLocationId) {
+    public void narrateAndDoEnterReactions(@Nullable final GameObjectId newLocationId) {
         if (newLocationId == null) {
-            return noTime();
+            return;
         }
-        return world.narrateAndDoReactions()
+        world.narrateAndDoReactions()
                 .onEnter(getGameObjectId(), getLastLocation(), newLocationId);
     }
 

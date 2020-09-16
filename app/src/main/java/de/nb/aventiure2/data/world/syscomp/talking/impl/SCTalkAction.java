@@ -3,7 +3,6 @@ package de.nb.aventiure2.data.world.syscomp.talking.impl;
 import de.nb.aventiure2.data.world.base.SpatialConnection;
 import de.nb.aventiure2.data.world.syscomp.state.impl.SchlosswacheState;
 import de.nb.aventiure2.data.world.syscomp.talking.ITalkerGO;
-import de.nb.aventiure2.data.world.time.AvTimeSpan;
 import de.nb.aventiure2.german.base.Nominalphrase;
 import de.nb.aventiure2.german.praedikat.AbstractPraedikatOhneLeerstellen;
 import de.nb.aventiure2.german.praedikat.Praedikat;
@@ -74,10 +73,8 @@ public class SCTalkAction {
         /**
          * Führt den {@link SCTalkAction} aus - erzählt die Geschichte weiter
          * und verändert ggf. die Welt.
-         *
-         * @return Zeitspanne die das alles dauert
          */
-        AvTimeSpan narrateAndDo();
+        void narrateAndDo();
     }
 
     final static Condition ALWAYS_POSSIBLE = () -> true;
@@ -251,6 +248,7 @@ public class SCTalkAction {
      *                  (there won't be an action for this step).
      */
     SCTalkAction(
+
             final Type stepType,
             final Condition condition,
             final Praedikat name,
@@ -282,7 +280,7 @@ public class SCTalkAction {
     /**
      * Den Schritt ausführen.
      */
-    public AvTimeSpan narrateAndDo() {
-        return narrationAndAction.narrateAndDo();
+    public void narrateAndDo() {
+        narrationAndAction.narrateAndDo();
     }
 }

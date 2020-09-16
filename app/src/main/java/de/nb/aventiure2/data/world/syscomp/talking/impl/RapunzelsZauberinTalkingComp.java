@@ -7,7 +7,6 @@ import de.nb.aventiure2.data.world.gameobject.World;
 import de.nb.aventiure2.data.world.syscomp.location.LocationComp;
 import de.nb.aventiure2.data.world.syscomp.state.impl.RapunzelsZauberinStateComp;
 import de.nb.aventiure2.data.world.syscomp.talking.AbstractTalkingComp;
-import de.nb.aventiure2.data.world.time.AvTimeSpan;
 import de.nb.aventiure2.german.base.SubstantivischePhrase;
 
 import static de.nb.aventiure2.data.world.gameobject.World.DRAUSSEN_VOR_DEM_SCHLOSS;
@@ -68,13 +67,13 @@ public class RapunzelsZauberinTalkingComp extends AbstractTalkingComp {
         }
     }
 
-    private AvTimeSpan frageNachZiel_zauberinReagiertAbweisend() {
+    private void frageNachZiel_zauberinReagiertAbweisend() {
         unsetTalkingTo();
 
         final SubstantivischePhrase anaphOderDesc =
                 getAnaphPersPronWennMglSonstDescription(false);
 
-        return n.addAlt(
+        n.addAlt(
                 neuerSatz(PARAGRAPH, "„Wohin des Wegs, gute Frau“, sprichst du " +
                                 anaphOderDesc.akk() +
                                 " an. „Was geht es dich an?“, ist "

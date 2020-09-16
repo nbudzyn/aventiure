@@ -105,11 +105,11 @@ public class StoryWebComp extends AbstractStatefulComponent<StoryWebPCD> {
         getPcd().reachStoryNode(storyNode, scActionStepCountDao.stepCount());
     }
 
-    public AvTimeSpan narrateAndDoHintActionIfAny() {
+    public void narrateAndDoHintActionIfAny() {
         @Nullable final IStoryNode storyNode = getStoryNodeForHintAction();
 
         if (storyNode == null) {
-            return noTime();
+            return;
         }
 
         // Nicht alle Geschichten sind von Anfang an "verfügbar", und manchmal
@@ -118,16 +118,12 @@ public class StoryWebComp extends AbstractStatefulComponent<StoryWebPCD> {
         // nicht oder nur langsam weiterkommt, versuchen wir, eine solche Geschichte
         // "weiterzusetzen" (z.B. zu starten).
         // (Das wird wohl eher selten der Fall sein.)
-        @Nullable AvTimeSpan extraTimeElapsed =
-                Story.checkAndAdvanceAStoryIfAppropriate(db, n, world);
-        if (extraTimeElapsed == null) {
+        if (Story.checkAndAdvanceAStoryIfAppropriate(db, n, world)) {
             // Das hier ist der Regelfall!
-            extraTimeElapsed = storyNode.narrateAndDoHintAction(db, world);
+            storyNode.narrateAndDoHintAction(db, world);
         }
 
         getPcd().setLastHintActionStepCount(scActionStepCountDao.stepCount());
-
-        return extraTimeElapsed;
     }
 
     public int getScore() {

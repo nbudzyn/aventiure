@@ -56,6 +56,13 @@ public class AvTime {
             return MORGENS;
         }
 
+        // STORY
+        //  TAGSÜBER ersetzen durch: VORMITTAGS, MITTAGS, NACHMITTAGS
+        //  MITTAGS (z.B. 11 - 13)
+        //  VORMITTAGS -> MITTAGS: "Inzwischen steht die Sonne schon sehr hoch"
+        //  "Inzwischen steht die Sonne hoch am Firmament"
+        //  Mittags -> "Die Sonne rutscht..."
+
         if (isBefore(oClock(17))) {
             return TAGSUEBER;
         }
@@ -65,6 +72,9 @@ public class AvTime {
         }
 
         return NACHTS;
+
+        // STORY MITTERNACHT?
+        //  "Mitternacht", "mitten in der Nacht", "Geisterstunde"
     }
 
     AvTimeSpan timeSpanUntil(@NonNull final AvTime other) {

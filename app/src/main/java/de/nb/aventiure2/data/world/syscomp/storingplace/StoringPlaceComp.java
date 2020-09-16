@@ -32,6 +32,8 @@ public class StoringPlaceComp extends AbstractStatelessComponent {
      */
     private final boolean dauerhaftBeleuchtet;
 
+    // STORY: Ob der Raum "drau0en" ist (-> Tageszeiten / Wetterphönomene...)
+
     public StoringPlaceComp(final GameObjectId id,
                             final AvDatabase db,
                             final StoringPlaceType locationMode,

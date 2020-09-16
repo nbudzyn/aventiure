@@ -16,7 +16,6 @@ import de.nb.aventiure2.data.world.syscomp.memory.Action;
 import de.nb.aventiure2.data.world.syscomp.mentalmodel.IHasMentalModelGO;
 import de.nb.aventiure2.data.world.syscomp.talking.ITalkerGO;
 import de.nb.aventiure2.data.world.syscomp.talking.impl.SCTalkAction;
-import de.nb.aventiure2.data.world.time.AvTimeSpan;
 import de.nb.aventiure2.german.base.Nominalphrase;
 import de.nb.aventiure2.german.praedikat.Praedikat;
 import de.nb.aventiure2.german.praedikat.PraedikatMitEinerObjektleerstelle;
@@ -172,12 +171,12 @@ public class RedenAction<TALKER extends IDescribableGO & ILocatableGO & ITalkerG
     }
 
     @Override
-    public AvTimeSpan narrateAndDo() {
+    public void narrateAndDo() {
         sc.memoryComp().setLastAction(buildMemorizedAction());
 
         updateTalkersMentalModel();
 
-        return conversationStep.narrateAndDo();
+        conversationStep.narrateAndDo();
     }
 
     private void updateTalkersMentalModel() {

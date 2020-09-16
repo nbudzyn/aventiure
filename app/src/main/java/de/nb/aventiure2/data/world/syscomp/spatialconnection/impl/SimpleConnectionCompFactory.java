@@ -2,6 +2,8 @@ package de.nb.aventiure2.data.world.syscomp.spatialconnection.impl;
 
 import androidx.annotation.NonNull;
 
+import javax.annotation.CheckReturnValue;
+
 import de.nb.aventiure2.data.database.AvDatabase;
 import de.nb.aventiure2.data.world.base.GameObjectId;
 import de.nb.aventiure2.data.world.gameobject.World;
@@ -32,6 +34,7 @@ public class SimpleConnectionCompFactory {
     }
 
     @NonNull
+    @CheckReturnValue
     public SimpleConnectionComp createVorDerHuetteImWald() {
         return new SimpleConnectionComp(VOR_DER_HUETTE_IM_WALD,
                 db,
@@ -145,6 +148,7 @@ public class SimpleConnectionCompFactory {
     }
 
     @NonNull
+    @CheckReturnValue
     public SimpleConnectionComp createWaldwildnisHinterDemBrunnen() {
         return new SimpleConnectionComp(WALDWILDNIS_HINTER_DEM_BRUNNEN,
                 db,
