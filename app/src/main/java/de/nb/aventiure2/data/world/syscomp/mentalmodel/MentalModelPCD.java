@@ -12,6 +12,8 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 
+import javax.annotation.CheckReturnValue;
+
 import de.nb.aventiure2.data.world.base.AbstractPersistentComponentData;
 import de.nb.aventiure2.data.world.base.GameObjectId;
 
@@ -51,12 +53,13 @@ public class MentalModelPCD extends AbstractPersistentComponentData {
     }
 
     @Nullable
+    @CheckReturnValue
     public GameObjectId getAssumedLocation(final GameObjectId locatableId) {
         return assumedLocations.get(locatableId);
     }
 
-    public void assumeLocation(final GameObjectId locatableId,
-                               @Nullable final GameObjectId locationId) {
+    public void setAssumedLocation(final GameObjectId locatableId,
+                                   @Nullable final GameObjectId locationId) {
         if (Objects.equals(
                 getAssumedLocation(locatableId),
                 locationId)) {

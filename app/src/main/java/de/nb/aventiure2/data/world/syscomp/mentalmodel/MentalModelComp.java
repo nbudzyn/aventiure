@@ -6,6 +6,8 @@ import androidx.annotation.Nullable;
 import java.util.Map;
 import java.util.Objects;
 
+import javax.annotation.CheckReturnValue;
+
 import de.nb.aventiure2.data.database.AvDatabase;
 import de.nb.aventiure2.data.world.base.AbstractStatefulComponent;
 import de.nb.aventiure2.data.world.base.GameObjectId;
@@ -45,13 +47,14 @@ public class MentalModelComp extends AbstractStatefulComponent<MentalModelPCD> {
      * <i>Locatable</i> an einer dieser <code>locations</code> befindet
      * (<i>nicht</i> rekursiv, also <i>nicht</i> auf einem Tisch in diesem Raum).
      */
-    public boolean assumesLocation(final GameObjectId locatableId,
-                                   final ILocationGO... locations) {
+    @CheckReturnValue
+    public boolean hasAssumedLocation(final GameObjectId locatableId,
+                                      final ILocationGO... locations) {
         for (@Nullable final ILocationGO location : locations) {
             if (location == null) {
                 throw new NullPointerException("location was null");
             }
-            if (assumesLocation(locatableId, location)) {
+            if (hasAssumedLocation(locatableId, location)) {
                 return true;
             }
         }
@@ -64,9 +67,10 @@ public class MentalModelComp extends AbstractStatefulComponent<MentalModelPCD> {
      * sich das Game Object an dieser <code>location</code> befindet (<i>nicht</i>
      * rekursiv, also <i>nicht</i> auf einem Tisch in diesem Raum).
      */
-    public boolean assumesLocation(final GameObjectId locatableId,
-                                   final ILocationGO location) {
-        return assumesLocation(locatableId, location.getId());
+    @CheckReturnValue
+    public boolean hasAssumedLocation(final GameObjectId locatableId,
+                                      final ILocationGO location) {
+        return hasAssumedLocation(locatableId, location.getId());
     }
 
     /**
@@ -74,10 +78,11 @@ public class MentalModelComp extends AbstractStatefulComponent<MentalModelPCD> {
      * <i>Locatable</i> an einer dieser <i>Locations</i> befindet
      * (<i>nicht</i> rekursiv, also <i>nicht</i> auf einem Tisch in diesem Raum).
      */
-    public boolean assumesLocation(final GameObjectId locatableId,
-                                   final GameObjectId... locationIds) {
+    @CheckReturnValue
+    public boolean hasAssumedLocation(final GameObjectId locatableId,
+                                      final GameObjectId... locationIds) {
         for (@Nullable final GameObjectId locationId : locationIds) {
-            if (assumesLocation(locatableId, locationId)) {
+            if (hasAssumedLocation(locatableId, locationId)) {
                 return true;
             }
         }
@@ -92,12 +97,14 @@ public class MentalModelComp extends AbstractStatefulComponent<MentalModelPCD> {
      */
     // TODO Es gibt Verwirrung mit assume / assumes. Besser
     //  getAssumedLocation(), setAssumedLocation()
-    public boolean assumesLocation(final GameObjectId locatableId,
-                                   final @Nullable GameObjectId locationId) {
+    @CheckReturnValue
+    public boolean hasAssumedLocation(final GameObjectId locatableId,
+                                      final @Nullable GameObjectId locationId) {
         return Objects.equals(getAssumedLocationId(locatableId), locationId);
     }
 
     @Nullable
+    @CheckReturnValue
     public ILocationGO getAssumedLocation(final GameObjectId locatableId) {
         @Nullable final GameObjectId locationId = getAssumedLocationId(locatableId);
         if (locationId == null) {
@@ -108,6 +115,7 @@ public class MentalModelComp extends AbstractStatefulComponent<MentalModelPCD> {
     }
 
     @Nullable
+    @CheckReturnValue
     public GameObjectId getAssumedLocationId(final GameObjectId locatableId) {
         if (getGameObjectId().equals(locatableId)) {
             throw new IllegalArgumentException("No assumptions about yourself!");
@@ -116,23 +124,23 @@ public class MentalModelComp extends AbstractStatefulComponent<MentalModelPCD> {
         return getPcd().getAssumedLocation(locatableId);
     }
 
-    public void unassumeLocation(final GameObjectId locatableId) {
-        assumeLocation(locatableId, (GameObjectId) null);
+    public void unsetAssumedLocation(final GameObjectId locatableId) {
+        setAssumedLocation(locatableId, (GameObjectId) null);
     }
 
-    public void assumeLocation(final ILocatableGO locatable,
-                               @Nullable final ILocationGO location) {
-        assumeLocation(locatable.getId(), location);
+    public void setAssumedLocation(final ILocatableGO locatable,
+                                   @Nullable final ILocationGO location) {
+        setAssumedLocation(locatable.getId(), location);
     }
 
-    public void assumeLocation(final GameObjectId locatableId,
-                               @Nullable final ILocationGO location) {
-        assumeLocation(locatableId,
+    public void setAssumedLocation(final GameObjectId locatableId,
+                                   @Nullable final ILocationGO location) {
+        setAssumedLocation(locatableId,
                 location != null ? location.getId() : null);
     }
 
-    public void assumeLocation(final GameObjectId locatableId,
-                               @Nullable final GameObjectId locationId) {
+    public void setAssumedLocation(final GameObjectId locatableId,
+                                   @Nullable final GameObjectId locationId) {
         if (getGameObjectId().equals(locatableId)) {
             throw new IllegalArgumentException("No assumptions about yourself!");
         }
@@ -141,7 +149,7 @@ public class MentalModelComp extends AbstractStatefulComponent<MentalModelPCD> {
             throw new IllegalStateException("A game object cannot contain itself.");
         }
 
-        getPcd().assumeLocation(locatableId, locationId);
+        getPcd().setAssumedLocation(locatableId, locationId);
     }
 }
 

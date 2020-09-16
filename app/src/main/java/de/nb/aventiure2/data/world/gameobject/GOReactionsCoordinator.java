@@ -77,16 +77,13 @@ public class GOReactionsCoordinator
                         final ILocationGO from,
                         @Nullable final ILocationGO to) {
         doReactions(IMovementReactions.class,
-                ((Predicate<IResponder>) locatable::equals).negate(),
                 reactions -> reactions.onLeave(locatable, from, to));
     }
 
     public void onEnter(final GameObjectId locatableId,
                         @Nullable final ILocationGO from,
                         final GameObjectId toId) {
-        onEnter(
-                (ILocatableGO) world.load(locatableId),
-                from, toId);
+        onEnter((ILocatableGO) world.load(locatableId), from, toId);
     }
 
     public void onEnter(final ILocatableGO locatable,

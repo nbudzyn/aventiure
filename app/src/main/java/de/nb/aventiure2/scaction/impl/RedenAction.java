@@ -193,7 +193,7 @@ public class RedenAction<TALKER extends IDescribableGO & ILocatableGO & ITalkerG
         // zumindest, wenn SC und X im selben Raum sind.
         // Es könnte Ausnahmen geben.
         ((IHasMentalModelGO) talker).mentalModelComp()
-                .assumeLocation(
+                .setAssumedLocation(
                         SPIELER_CHARAKTER,
                         world.loadSC().locationComp().getLocation());
     }
