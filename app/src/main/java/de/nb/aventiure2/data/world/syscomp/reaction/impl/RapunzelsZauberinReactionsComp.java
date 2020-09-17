@@ -34,6 +34,7 @@ import static de.nb.aventiure2.data.world.gameobject.World.IM_WALD_NAHE_DEM_SCHL
 import static de.nb.aventiure2.data.world.gameobject.World.OBEN_IM_ALTEN_TURM;
 import static de.nb.aventiure2.data.world.gameobject.World.RAPUNZEL;
 import static de.nb.aventiure2.data.world.gameobject.World.RAPUNZELRUF;
+import static de.nb.aventiure2.data.world.gameobject.World.RAPUNZELS_HAARE;
 import static de.nb.aventiure2.data.world.gameobject.World.RAPUNZELS_ZAUBERIN;
 import static de.nb.aventiure2.data.world.gameobject.World.SPIELER_CHARAKTER;
 import static de.nb.aventiure2.data.world.gameobject.World.VOR_DEM_ALTEN_TURM;
@@ -367,7 +368,7 @@ public class RapunzelsZauberinReactionsComp
                             + " kannst deinen Blick gar nicht abwenden…",
                     mins(5)));
         } else if (locationComp.hasRecursiveLocation(OBEN_IM_ALTEN_TURM)) {
-            n.add(neuerSatz("Jetzt schaut oben aus dem Turmfenster die "
+            n.add(neuerSatz(PARAGRAPH, "Jetzt schaut oben aus dem Turmfenster die "
                             + "magere Frau heraus. "
                             + "Kurz sucht ihr Blick umher, dann sieht sie dich direkt an. "
                             + "Ihre Augen sind - du kannst deinen Blick gar nicht abwenden…",
@@ -381,7 +382,7 @@ public class RapunzelsZauberinReactionsComp
         }
 
         // Spieler wird verzaubert und vergisst alles.
-        loadSC().memoryComp().forget(RAPUNZEL, RAPUNZELS_ZAUBERIN, RAPUNZELRUF);
+        loadSC().memoryComp().forget(RAPUNZEL, RAPUNZELS_ZAUBERIN, RAPUNZELS_HAARE, RAPUNZELRUF);
         loadSC().feelingsComp().setMood(ERSCHOEPFT);
         db.counterDao().reset(VorDemTurmConnectionComp.COUNTER_ALTER_TURM_UMRUNDET);
         db.counterDao().reset(VorDemTurmConnectionComp.COUNTER_SC_HOERT_RAPUNZELS_GESANG);

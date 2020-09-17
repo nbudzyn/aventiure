@@ -34,6 +34,7 @@ import static de.nb.aventiure2.data.world.gameobject.World.IM_WALD_NAHE_DEM_SCHL
 import static de.nb.aventiure2.data.world.gameobject.World.OBEN_IM_ALTEN_TURM;
 import static de.nb.aventiure2.data.world.gameobject.World.RAPUNZEL;
 import static de.nb.aventiure2.data.world.gameobject.World.RAPUNZELRUF;
+import static de.nb.aventiure2.data.world.gameobject.World.RAPUNZELS_HAARE;
 import static de.nb.aventiure2.data.world.gameobject.World.RAPUNZELS_ZAUBERIN;
 import static de.nb.aventiure2.data.world.gameobject.World.SPIELER_CHARAKTER;
 import static de.nb.aventiure2.data.world.gameobject.World.VOR_DEM_ALTEN_TURM;
@@ -176,6 +177,8 @@ public class RapunzelReactionsComp
         n.add(neuerSatz(SENTENCE, "Aus dem kleinen "
                         + "Fenster oben im Turm hängen lange, goldene Haarzöpfe herab",
                 noTime()));
+
+        world.upgradeKnownToSC(RAPUNZELS_HAARE);
     }
 
     private void onSCEnter_ObenImAltenTurm() {
@@ -394,6 +397,7 @@ public class RapunzelReactionsComp
                                 + "zwanzig Ellen tief bis auf den Boden. ", secs(30)));
             }
 
+            world.upgradeKnownToSC(RAPUNZELS_HAARE);
             stateComp.narrateAndSetState(HAARE_VOM_TURM_HERUNTERGELASSEN);
             return;
         }
@@ -454,12 +458,20 @@ public class RapunzelReactionsComp
 
     private void rapunzelLaesstHaareZumAbstiegHerunter() {
         if (loadSC().locationComp().hasRecursiveLocation(VOR_DEM_ALTEN_TURM)) {
-            // FIXME Haaren könnten dem SC unbekannt sein!
-            n.add(du(PARAGRAPH, "siehst", " über dir eine Bewegung: "
-                            + "Aus dem Turmfenster fallen wieder die "
-                            + "langen, golden glänzenden Haare bis zum Boden herab",
-                    secs(10))
-                    .dann());
+            if (!loadSC().memoryComp().isKnown(RAPUNZELS_HAARE)) {
+                n.add(du(PARAGRAPH, "siehst", " über dir eine Bewegung: "
+                                + "Aus dem Turmfenster fallen auf einmal lange, golden "
+                                + "glänzende Haare bis zum Boden herab",
+                        secs(10))
+                        .dann());
+            } else {
+                n.add(du(PARAGRAPH, "siehst", " über dir eine Bewegung: "
+                                + "Aus dem Turmfenster fallen wieder die "
+                                + "langen, golden glänzenden Haare bis zum Boden herab",
+                        secs(10))
+                        .dann());
+            }
+            world.upgradeKnownToSC(RAPUNZELS_HAARE);
         } else if (loadSC().locationComp().hasRecursiveLocation(OBEN_IM_ALTEN_TURM)) {
             final Nominalphrase rapunzelDesc = getDescription(true);
             // "ihre"

@@ -13,6 +13,7 @@ import de.nb.aventiure2.data.world.syscomp.state.impl.SchlossfestState;
 import de.nb.aventiure2.data.world.syscomp.state.impl.SchlossfestStateComp;
 
 import static de.nb.aventiure2.data.world.gameobject.World.RAPUNZELRUF;
+import static de.nb.aventiure2.data.world.gameobject.World.RAPUNZELS_HAARE;
 import static de.nb.aventiure2.data.world.gameobject.World.SCHLOSSFEST;
 import static de.nb.aventiure2.data.world.gameobject.World.TAGESZEIT;
 
@@ -36,6 +37,10 @@ public class InvisibleFactory {
 
     public GameObject createSchlossfest() {
         return new Schlossfest(db, world);
+    }
+
+    public static GameObject createRapunzelsHaare() {
+        return new GameObject(RAPUNZELS_HAARE);
     }
 
     public static GameObject createRapunzelRuf() {
