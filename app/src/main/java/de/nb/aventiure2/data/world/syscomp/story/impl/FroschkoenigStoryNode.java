@@ -15,6 +15,8 @@ import de.nb.aventiure2.data.narration.NarrationDao;
 import de.nb.aventiure2.data.world.base.GameObjectId;
 import de.nb.aventiure2.data.world.gameobject.World;
 import de.nb.aventiure2.data.world.syscomp.location.ILocatableGO;
+import de.nb.aventiure2.data.world.syscomp.state.IHasStateGO;
+import de.nb.aventiure2.data.world.syscomp.state.impl.SchlossfestState;
 import de.nb.aventiure2.data.world.syscomp.story.IStoryNode;
 import de.nb.aventiure2.data.world.syscomp.story.Story;
 import de.nb.aventiure2.german.description.AbstractDescription;
@@ -24,6 +26,7 @@ import static de.nb.aventiure2.data.world.gameobject.World.DRAUSSEN_VOR_DEM_SCHL
 import static de.nb.aventiure2.data.world.gameobject.World.GOLDENE_KUGEL;
 import static de.nb.aventiure2.data.world.gameobject.World.HUETTE_IM_WALD;
 import static de.nb.aventiure2.data.world.gameobject.World.IM_WALD_BEIM_BRUNNEN;
+import static de.nb.aventiure2.data.world.gameobject.World.SCHLOSSFEST;
 import static de.nb.aventiure2.data.world.gameobject.World.SCHLOSS_VORHALLE;
 import static de.nb.aventiure2.data.world.gameobject.World.SCHLOSS_VORHALLE_AM_TISCH_BEIM_FEST;
 import static de.nb.aventiure2.data.world.gameobject.World.SPIELER_CHARAKTER;
@@ -273,11 +276,14 @@ public enum FroschkoenigStoryNode implements IStoryNode {
 
         alt.add(paragraph("Heute ist viel passiert"));
 
-        alt.add(paragraph("Plötzlich überkommt dich ein schlechtes Gewissen. Hättest du nicht "
-                + "mit dem Frosch gemeinsam essen wollen? Hattest du nicht etwas in der Art "
-                + "versprochen? Nur weil er eine hässliche, eklige und glibschige "
-                + "Kreatur ist, heißt das ja noch lange nicht… also…, es heißt "
-                + "nicht zwangsläufig…"));
+        if (((IHasStateGO<SchlossfestState>) world.load(SCHLOSSFEST)).stateComp()
+                .hasState(SchlossfestState.BEGONNEN)) {
+            alt.add(paragraph("Plötzlich überkommt dich ein schlechtes Gewissen. Hättest du nicht "
+                    + "mit dem Frosch gemeinsam essen wollen? Hattest du nicht etwas in der Art "
+                    + "versprochen? Nur weil er eine hässliche, eklige und glibschige "
+                    + "Kreatur ist, heißt das ja noch lange nicht… also…, es heißt "
+                    + "nicht zwangsläufig…"));
+        }
 
         n.addAlt(alt);
     }
