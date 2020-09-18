@@ -13,7 +13,7 @@ import javax.annotation.CheckReturnValue;
 import de.nb.aventiure2.data.database.AvDatabase;
 import de.nb.aventiure2.data.narration.NarrationDao;
 import de.nb.aventiure2.data.world.base.GameObjectId;
-import de.nb.aventiure2.data.world.gameobject.World;
+import de.nb.aventiure2.data.world.gameobject.*;
 import de.nb.aventiure2.data.world.syscomp.location.ILocatableGO;
 import de.nb.aventiure2.data.world.syscomp.reaction.impl.RapunzelsZauberinReactionsComp;
 import de.nb.aventiure2.data.world.syscomp.state.IHasStateGO;
@@ -24,17 +24,11 @@ import de.nb.aventiure2.data.world.syscomp.story.Story;
 import de.nb.aventiure2.german.description.AbstractDescription;
 
 import static com.google.common.collect.ImmutableList.builder;
-import static de.nb.aventiure2.data.world.gameobject.World.DRAUSSEN_VOR_DEM_SCHLOSS;
-import static de.nb.aventiure2.data.world.gameobject.World.IM_WALD_NAHE_DEM_SCHLOSS;
-import static de.nb.aventiure2.data.world.gameobject.World.RAPUNZEL;
-import static de.nb.aventiure2.data.world.gameobject.World.RAPUNZELRUF;
-import static de.nb.aventiure2.data.world.gameobject.World.RAPUNZELS_ZAUBERIN;
-import static de.nb.aventiure2.data.world.gameobject.World.SPIELER_CHARAKTER;
-import static de.nb.aventiure2.data.world.gameobject.World.VOR_DEM_ALTEN_TURM;
+import static de.nb.aventiure2.data.world.gameobject.World.*;
 import static de.nb.aventiure2.data.world.syscomp.state.impl.RapunzelState.HAARE_VOM_TURM_HERUNTERGELASSEN;
 import static de.nb.aventiure2.data.world.syscomp.state.impl.RapunzelsZauberinState.MACHT_ZURZEIT_KEINE_RAPUNZELBESUCHE;
 import static de.nb.aventiure2.data.world.syscomp.state.impl.RapunzelsZauberinState.VOR_DEM_NAECHSTEN_RAPUNZEL_BESUCH;
-import static de.nb.aventiure2.data.world.time.AvTimeSpan.noTime;
+import static de.nb.aventiure2.data.world.time.AvTimeSpan.*;
 import static de.nb.aventiure2.german.base.StructuralElement.PARAGRAPH;
 import static de.nb.aventiure2.german.description.AllgDescription.paragraph;
 import static de.nb.aventiure2.german.description.DuDescription.du;
@@ -62,12 +56,6 @@ public enum RapunzelStoryNode implements IStoryNode {
     ZU_RAPUNZEL_HINAUFGESTIEGEN(10, VOR_DEM_ALTEN_TURM,
             RapunzelStoryNode::narrateAndDoHintAction_ZuRapunzelHinaufgestiegen,
             ZAUBERIN_HEIMLICH_BEIM_RUFEN_BEOBACHTET);
-    // STORY "Ich wollte euch nicht belästigen", sprichst du sie an,
-    //  lasst mich wieder herunter und ich lasse euch euren Frieden"
-    //  - "Die junge Frau schaut dich verschüchtert an, dann bindet sie ihre Haare
-    //    wieder an den Fensterhaken."
-    //  - "O bleibt doch noch einen Moment! antwortet RAPUNZEL"
-
     // STORY Beim Hochwerfen / Auffangen der Kugel:
     //  "Die junge Frau sieht interessiert zu"
     //  "Darf ich dieses Glitzerding auch einmal haben?, fragt RAPUNZEL"
@@ -102,7 +90,6 @@ public enum RapunzelStoryNode implements IStoryNode {
     //    ich könnte mir eine Leiter flechten und steige daran herunter. Aber ein Ballen Seide -
     //    der wäre ein Vermögen wert! (Meldung muss beim 3. Mal auch jeden Fall kommen ->
     //    Status anpassen?! Kombinierter Status (X /Y)?)
-    // STORY „Aber komm nicht, wenn die Alte bei mir ist, ruft sie dir noch nach"
 
     // STORY Wenn Zauberin kommt: "Du kriechst unter das Bett. Es ist eng und staubig"
 
@@ -119,9 +106,6 @@ public enum RapunzelStoryNode implements IStoryNode {
     // STORY WARTEN "Du liegst lange Zeit ganz still. Der Staub kribbelt in deiner Nase."
     //  "Endlich verabschiedet sich die ZAUBERIN und steigt herab"
     //  "Du kannst wieder herauskommen - hörst du es lieblich sagen"
-
-    // STORY
-    //  "du steigst wieder herab" /  "Schnell kommst du wieder herab"
 
     // STORY fremdländisch aussehender Händler auf Schlossfest vor einem Zelt
 

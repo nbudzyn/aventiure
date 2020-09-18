@@ -195,27 +195,13 @@ public class Narration {
      * auf die Lampe mittels des Personalpronomens "sie" möglich:
      * "... und nimmst sie mit."
      */
-    public boolean isAnaphorischerBezugMoeglich(final NumerusGenus numerusGenus,
-                                                final IGameObject gameObject) {
-        return isAnaphorischerBezugMoeglich(numerusGenus, gameObject.getId());
-    }
-
-    /**
-     * Ob ein anaphorischer Bezug (z.B. mit einem Personalpronomen) auf dieses
-     * Game Object möglich ist.
-     * <br/>
-     * Beispiel: "Du hebst du Lampe auf..." - jetzt ist ein anaphorischer Bezug
-     * auf die Lampe mittels des Personalpronomens "sie" möglich:
-     * "... und nimmst sie mit."
-     */
-    public boolean isAnaphorischerBezugMoeglich(final NumerusGenus numerusGenus,
-                                                final GameObjectId gameObjectId) {
+    public boolean isAnaphorischerBezugMoeglich(final GameObjectId gameObjectId) {
         @Nullable final PhorikKandidat phorikKandidat = getPhorikKandidat();
         if (phorikKandidat == null) {
             return false;
         }
 
-        return phorikKandidat.isBezugMoeglich(numerusGenus, gameObjectId);
+        return phorikKandidat.getBezugsobjekt().equals(gameObjectId);
     }
 
     @Nullable

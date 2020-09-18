@@ -7,7 +7,7 @@ import com.google.common.collect.ImmutableList;
 import javax.annotation.Nullable;
 
 import de.nb.aventiure2.data.database.AvDatabase;
-import de.nb.aventiure2.data.world.gameobject.World;
+import de.nb.aventiure2.data.world.gameobject.*;
 import de.nb.aventiure2.data.world.syscomp.location.ILocatableGO;
 import de.nb.aventiure2.data.world.syscomp.location.LocationComp;
 import de.nb.aventiure2.data.world.syscomp.reaction.AbstractDescribableReactionsComp;
@@ -21,8 +21,7 @@ import de.nb.aventiure2.data.world.syscomp.state.IHasStateGO;
 import de.nb.aventiure2.data.world.syscomp.state.impl.RapunzelStateComp;
 import de.nb.aventiure2.data.world.syscomp.state.impl.RapunzelsZauberinState;
 import de.nb.aventiure2.data.world.syscomp.storingplace.ILocationGO;
-import de.nb.aventiure2.data.world.time.AvDateTime;
-import de.nb.aventiure2.data.world.time.AvTimeSpan;
+import de.nb.aventiure2.data.world.time.*;
 import de.nb.aventiure2.german.base.Nominalphrase;
 import de.nb.aventiure2.german.base.PraepositionMitKasus;
 import de.nb.aventiure2.german.description.AbstractDescription;
@@ -30,14 +29,7 @@ import de.nb.aventiure2.german.description.AbstractDescription;
 import static de.nb.aventiure2.data.world.base.Known.KNOWN_FROM_DARKNESS;
 import static de.nb.aventiure2.data.world.base.Known.KNOWN_FROM_LIGHT;
 import static de.nb.aventiure2.data.world.base.Lichtverhaeltnisse.HELL;
-import static de.nb.aventiure2.data.world.gameobject.World.IM_WALD_NAHE_DEM_SCHLOSS;
-import static de.nb.aventiure2.data.world.gameobject.World.OBEN_IM_ALTEN_TURM;
-import static de.nb.aventiure2.data.world.gameobject.World.RAPUNZEL;
-import static de.nb.aventiure2.data.world.gameobject.World.RAPUNZELRUF;
-import static de.nb.aventiure2.data.world.gameobject.World.RAPUNZELS_HAARE;
-import static de.nb.aventiure2.data.world.gameobject.World.RAPUNZELS_ZAUBERIN;
-import static de.nb.aventiure2.data.world.gameobject.World.SPIELER_CHARAKTER;
-import static de.nb.aventiure2.data.world.gameobject.World.VOR_DEM_ALTEN_TURM;
+import static de.nb.aventiure2.data.world.gameobject.World.*;
 import static de.nb.aventiure2.data.world.syscomp.feelings.Mood.ANGESPANNT;
 import static de.nb.aventiure2.data.world.syscomp.feelings.Mood.AUFGEDREHT;
 import static de.nb.aventiure2.data.world.syscomp.feelings.Mood.BEWEGT;
@@ -45,11 +37,9 @@ import static de.nb.aventiure2.data.world.syscomp.feelings.Mood.NEUTRAL;
 import static de.nb.aventiure2.data.world.syscomp.state.impl.RapunzelState.HAARE_VOM_TURM_HERUNTERGELASSEN;
 import static de.nb.aventiure2.data.world.syscomp.state.impl.RapunzelState.SINGEND;
 import static de.nb.aventiure2.data.world.syscomp.state.impl.RapunzelState.STILL;
-import static de.nb.aventiure2.data.world.time.AvTime.oClock;
-import static de.nb.aventiure2.data.world.time.AvTimeSpan.mins;
-import static de.nb.aventiure2.data.world.time.AvTimeSpan.noTime;
-import static de.nb.aventiure2.data.world.time.AvTimeSpan.secs;
-import static de.nb.aventiure2.data.world.time.Tageszeit.NACHTS;
+import static de.nb.aventiure2.data.world.time.AvTime.*;
+import static de.nb.aventiure2.data.world.time.AvTimeSpan.*;
+import static de.nb.aventiure2.data.world.time.Tageszeit.*;
 import static de.nb.aventiure2.german.base.GermanUtil.capitalize;
 import static de.nb.aventiure2.german.base.NumerusGenus.F;
 import static de.nb.aventiure2.german.base.NumerusGenus.PL_MFN;
@@ -167,18 +157,37 @@ public class RapunzelReactionsComp
 
     private void onSCEnter_VorDemAltenTurm_HaareHeruntergelassen(
             @Nullable final ILocationGO from) {
-        if (!world.isOrHasRecursiveLocation(from, IM_WALD_NAHE_DEM_SCHLOSS)) {
+        if (world.isOrHasRecursiveLocation(from, OBEN_IM_ALTEN_TURM)) {
+            stateComp.narrateAndSetState(STILL);
+
+            final ImmutableList.Builder<AbstractDescription<?>> alt = ImmutableList.builder();
+            alt.addAll(altRapunzelZiehtHaareWiederHoch_VorDemAltenTurm());
+            // STORY Wenn Rapunzel das mit der Zauberin erzählt hat (aber auch dann nur
+            //  einmal): „Aber komm nicht, wenn die Alte bei mir ist, ruft sie dir noch nach"
+            //  (Die ist ein neuer RufTyp!)
+
+            alt.add(neuerSatz(
+                    "Als du unten bist, verschwinden die goldenen Haare "
+                            + "wieder oben im Fenster",
+                    secs(15))
+                    .beendet(PARAGRAPH));
+
+            n.addAlt(alt);
+
             return;
         }
 
-        loadSC().feelingsComp().setMoodMin(NEUTRAL);
-        // STORY Andere und alternative Beschreibungen, wenn der SC
-        //  Rapunzel schon kennengelernt hat
-        n.add(neuerSatz(SENTENCE, "Aus dem kleinen "
-                        + "Fenster oben im Turm hängen lange, goldene Haarzöpfe herab",
-                noTime()));
+        if (world.isOrHasRecursiveLocation(from, IM_WALD_NAHE_DEM_SCHLOSS)) {
+            loadSC().feelingsComp().setMoodMin(NEUTRAL);
+            // STORY Andere und alternative Beschreibungen, wenn der SC
+            //  Rapunzel schon kennengelernt hat
+            n.add(neuerSatz(SENTENCE, "Aus dem kleinen "
+                            + "Fenster oben im Turm hängen lange, goldene Haarzöpfe herab",
+                    noTime()));
 
-        world.upgradeKnownToSC(RAPUNZELS_HAARE);
+            world.upgradeKnownToSC(RAPUNZELS_HAARE);
+            return;
+        }
     }
 
     private void onSCEnter_ObenImAltenTurm() {
@@ -271,21 +280,30 @@ public class RapunzelReactionsComp
                         .phorikKandidat(F, RAPUNZEL));
             }
         } else {
-            alt.add(du("findest",
-                    "die junge Frau ganz aufgeregt vor: „Du bist schon wieder "
-                            + "da!”, sagt "
-                            + "sie, „Kannst du mir nun helfen?”",
-                    "oben", secs(20))
-                            .phorikKandidat(F, RAPUNZEL),
-                    neuerSatz("Die junge Frau ist gespannt, was du ihr zu berichten hast",
-                            secs(40))
-                            .phorikKandidat(F, RAPUNZEL),
-                    neuerSatz(
-                            "„Die Alte hat nichts bemerkt”, sprudelt die "
-                                    + "wunderschöne junge Frau los, „aber lange werden wir uns "
-                                    + "nicht treffen können. Sie ist so neugierig!”",
+            alt.add(
+                    // STORY Wenn man sich noch nicht so kennt:
+                    neuerSatz("Die junge Frau schaut dich überrascht und etwas "
+                                    + "verwirrt an",
                             secs(40))
                             .phorikKandidat(F, RAPUNZEL)
+//                    // STORY Dies nur, wenn man sich schon "duzt"
+//                    du("findest",
+//                            "oben die junge Frau ganz aufgeregt vor: „Du bist schon wieder "
+//                                    + "da!”, sagt "
+//                                    + "sie, „Kannst du mir nun helfen?”",
+//                            "oben", secs(20))
+//                            .phorikKandidat(F, RAPUNZEL),
+//                    // STORY Dies nur, wenn man sich schon kennt
+//                    neuerSatz("Die junge Frau ist gespannt, was du ihr zu berichten hast",
+//                            secs(40))
+//                            .phorikKandidat(F, RAPUNZEL),
+//                    // STORY Dies nur, wenn Rapunzel schon von der Zauberin erzählt hat
+//                    neuerSatz(
+//                            "„Die Alte hat nichts bemerkt”, sprudelt die "
+//                                    + "wunderschöne junge Frau los, „aber lange werden wir uns "
+//                                    + "nicht treffen können. Sie ist so neugierig!”",
+//                            secs(40))
+//                            .phorikKandidat(F, RAPUNZEL)
             );
 
             if (loadSC().memoryComp().getKnown(RAPUNZEL) == KNOWN_FROM_DARKNESS) {
@@ -335,26 +353,30 @@ public class RapunzelReactionsComp
 
         // TODO SC erlebt das von OBEN_IM_TURM mit.
         if (loadSC().locationComp().hasRecursiveLocation(VOR_DEM_ALTEN_TURM)) {
-            n.addAlt(neuerSatz(
-                    "Dann "
-                            // TODO Dies ist ein Beispiel für "dann", das nur Sinn
-                            //  ergibt, wenn
-                            //  die Zauberin vorher etwas getan hat - aber nicht, wenn
-                            //  der SC vorher
-                            //  etwas getan hat!
-                            + "verschwinden die prächtigen Haare wieder oben im Fenster.",
-                    secs(15)),
-                    du("schaust",
-                            "fasziniert zu, wie die langen Haare wieder in "
-                                    + "das Turmfenster "
-                                    + "zurückgezogen werden",
-                            "fasziniert",
-                            secs(15)),
-                    neuerSatz("Nur ein paar Augenblicke, dann sind die Haare "
-                                    + "wieder oben im Fenster verschwunden",
-                            secs(10))
-            );
+            n.addAlt(altRapunzelZiehtHaareWiederHoch_VorDemAltenTurm());
         }
+    }
+
+    @NonNull
+    private static ImmutableList<AbstractDescription<?>>
+    altRapunzelZiehtHaareWiederHoch_VorDemAltenTurm() {
+        return ImmutableList.of(
+                neuerSatz(
+                        "Dann verschwinden die prächtigen Haare wieder oben im Fenster",
+                        secs(15))
+                        .beendet(PARAGRAPH),
+                du("schaust",
+                        "fasziniert zu, wie die langen Haare wieder in "
+                                + "das Turmfenster "
+                                + "zurückgezogen werden",
+                        "fasziniert",
+                        secs(15))
+                        .beendet(PARAGRAPH),
+                neuerSatz("Nur ein paar Augenblicke, dann sind die Haare "
+                                + "wieder oben im Fenster verschwunden",
+                        secs(10))
+                        .beendet(PARAGRAPH)
+        );
     }
 
     @Override
@@ -456,7 +478,7 @@ public class RapunzelReactionsComp
         }
     }
 
-    private void rapunzelLaesstHaareZumAbstiegHerunter() {
+    public void rapunzelLaesstHaareZumAbstiegHerunter() {
         if (loadSC().locationComp().hasRecursiveLocation(VOR_DEM_ALTEN_TURM)) {
             if (!loadSC().memoryComp().isKnown(RAPUNZELS_HAARE)) {
                 n.add(du(PARAGRAPH, "siehst", " über dir eine Bewegung: "
@@ -474,13 +496,34 @@ public class RapunzelReactionsComp
             world.upgradeKnownToSC(RAPUNZELS_HAARE);
         } else if (loadSC().locationComp().hasRecursiveLocation(OBEN_IM_ALTEN_TURM)) {
             final Nominalphrase rapunzelDesc = getDescription(true);
-            // "ihre"
-            n.add(neuerSatz(rapunzelDesc.nom() +
-                            " wickelt "
-                            + rapunzelDesc.possArt().vor(PL_MFN).akk() // "ihre"
-                            + " Haare wieder um den Haken am Fenster",
-                    secs(10))
-                    .phorikKandidat(rapunzelDesc, RAPUNZEL));
+            n.addAlt(
+                    neuerSatz(rapunzelDesc.nom() +
+                                    // STORY nur verschüchtert, wenn man sich noch nicht gut kennt
+                                    " schaut dich verschüchtert an, dann bindet "
+                                    + rapunzelDesc.persPron().nom() //"sie"
+                                    + " "
+                                    + rapunzelDesc.possArt().vor(PL_MFN).akk() // "ihre"
+                                    + " Haare wieder um den Haken am Fenster",
+                            secs(10))
+                            .phorikKandidat(PL_MFN, RAPUNZELS_HAARE),
+                    neuerSatz(rapunzelDesc.nom() +
+                                    " schaut dich an, dann knotet "
+                                    + rapunzelDesc.persPron().nom() //"sie"
+                                    + " "
+                                    + rapunzelDesc.possArt().vor(PL_MFN).akk() // "ihre"
+                                    + " Haare wieder um den Fensterhaken",
+                            secs(10))
+                            .phorikKandidat(PL_MFN, RAPUNZELS_HAARE),
+                    //  STORY "Oh, ich wünschte, ihr könntet noch einen Moment bleiben!" antwortet RAPUNZEL.
+                    //    Aber sie knotet doch ihrer Haare wieder über den Haken am Fenster"
+                    neuerSatz(rapunzelDesc.nom() +
+                                    " wickelt "
+                                    + rapunzelDesc.possArt().vor(PL_MFN).akk() // "ihre"
+                                    + " Haare wieder an den Fensterhaken",
+                            secs(10))
+                            .phorikKandidat(PL_MFN, RAPUNZELS_HAARE)
+            );
+
         }
 
         stateComp.narrateAndSetState(HAARE_VOM_TURM_HERUNTERGELASSEN);

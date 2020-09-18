@@ -9,7 +9,7 @@ import java.util.List;
 import de.nb.aventiure2.data.database.AvDatabase;
 import de.nb.aventiure2.data.narration.Narration;
 import de.nb.aventiure2.data.world.base.GameObjectId;
-import de.nb.aventiure2.data.world.gameobject.World;
+import de.nb.aventiure2.data.world.gameobject.*;
 import de.nb.aventiure2.data.world.syscomp.description.IDescribableGO;
 import de.nb.aventiure2.data.world.syscomp.location.ILocatableGO;
 import de.nb.aventiure2.data.world.syscomp.memory.Action;
@@ -19,8 +19,7 @@ import de.nb.aventiure2.german.base.Indefinitpronomen;
 import de.nb.aventiure2.german.base.Nominalphrase;
 import de.nb.aventiure2.german.base.SubstantivischePhrase;
 
-import static de.nb.aventiure2.data.world.gameobject.World.FROSCHPRINZ;
-import static de.nb.aventiure2.data.world.gameobject.World.UNTEN_IM_BRUNNEN;
+import static de.nb.aventiure2.data.world.gameobject.World.*;
 import static de.nb.aventiure2.data.world.syscomp.feelings.Mood.VOLLER_FREUDE;
 import static de.nb.aventiure2.data.world.syscomp.state.impl.FroschprinzState.ERWARTET_VON_SC_EINLOESUNG_SEINES_VERSPRECHENS;
 import static de.nb.aventiure2.data.world.syscomp.state.impl.FroschprinzState.HAT_FORDERUNG_GESTELLT;
@@ -30,8 +29,7 @@ import static de.nb.aventiure2.data.world.syscomp.talking.impl.SCTalkAction.exit
 import static de.nb.aventiure2.data.world.syscomp.talking.impl.SCTalkAction.immReEntrySt;
 import static de.nb.aventiure2.data.world.syscomp.talking.impl.SCTalkAction.reEntrySt;
 import static de.nb.aventiure2.data.world.syscomp.talking.impl.SCTalkAction.st;
-import static de.nb.aventiure2.data.world.time.AvTimeSpan.noTime;
-import static de.nb.aventiure2.data.world.time.AvTimeSpan.secs;
+import static de.nb.aventiure2.data.world.time.AvTimeSpan.*;
 import static de.nb.aventiure2.german.base.GermanUtil.capitalize;
 import static de.nb.aventiure2.german.base.Indefinitpronomen.ALLES;
 import static de.nb.aventiure2.german.base.Nominalphrase.ANGEBOTE;
@@ -173,12 +171,12 @@ public class FroschprinzTalkingComp extends AbstractTalkingComp {
                 getObjectsInDenBrunnenGefallen();
 
         if (objectsInDenBrunnenGefallen.isEmpty()) {
-            unsetTalkingTo();
-
             n.add(neuerSatz("„Ach, du bist's, alter Wasserpatscher“, sagst du",
                     secs(5))
                     .undWartest()
                     .dann());
+
+            unsetTalkingTo();
             return;
         }
 
@@ -290,13 +288,13 @@ public class FroschprinzTalkingComp extends AbstractTalkingComp {
     }
 
     private void froschHatAngesprochen_Exit() {
-        unsetTalkingTo();
-
         n.add(du(SENTENCE, "tust", ", als hättest du nichts gehört",
                 secs(3))
                 .komma()
                 .undWartest()
                 .dann());
+
+        unsetTalkingTo();
     }
 
     // -------------------------------------------------------------------------------
@@ -373,13 +371,13 @@ public class FroschprinzTalkingComp extends AbstractTalkingComp {
     }
 
     private void froschHatNachBelohnungGefragt_Exit() {
-        unsetTalkingTo();
-
         n.add(
                 neuerSatz(
                         "„Denkst du etwa, ich überschütte dich mit Gold "
                                 + "und Juwelen? – Vergiss es!“",
                         secs(5)));
+
+        unsetTalkingTo();
     }
 
     // -------------------------------------------------------------------------------
@@ -449,8 +447,6 @@ public class FroschprinzTalkingComp extends AbstractTalkingComp {
         final SubstantivischePhrase descObjectsInDenBrunnenGefallen =
                 getDescriptionSingleOrCollective(objectsInDenBrunnenGefallen);
 
-        unsetTalkingTo();
-
         world.loadSC().feelingsComp().setMoodMin(VOLLER_FREUDE);
 
         n.add(satzanschluss("taucht seinen Kopf "
@@ -476,11 +472,11 @@ public class FroschprinzTalkingComp extends AbstractTalkingComp {
         }
 
         stateComp.narrateAndSetState(ERWARTET_VON_SC_EINLOESUNG_SEINES_VERSPRECHENS);
+
+        unsetTalkingTo();
     }
 
     private void froschHatForderungGestellt_Exit() {
-        unsetTalkingTo();
-
         n.addAlt(
                 neuerSatz("„Na, bei dir piept's wohl!“ – Entrüstet wendest du dich ab",
                         secs(10))
@@ -491,6 +487,8 @@ public class FroschprinzTalkingComp extends AbstractTalkingComp {
                                 + "Frosch!“",
                         secs(10))
                         .beendet(PARAGRAPH));
+
+        unsetTalkingTo();
     }
 
     // -------------------------------------------------------------------------------
@@ -515,15 +513,13 @@ public class FroschprinzTalkingComp extends AbstractTalkingComp {
     }
 
     private void froschReagiertNicht() {
-        unsetTalkingTo();
-
         n.add(neuerSatz("Der Frosch reagiert nicht", secs(3))
                 .beendet(PARAGRAPH));
+
+        unsetTalkingTo();
     }
 
     private void hallo_froschErinnertAnVersprechen() {
-        unsetTalkingTo();
-
         n.addAlt(
                 du(
                         "sprichst",
@@ -538,11 +534,11 @@ public class FroschprinzTalkingComp extends AbstractTalkingComp {
                 neuerSatz("„Und jetzt, Frosch?“ "
                                 + " „Du weißt, was du versprochen hast“, gibt er zurück",
                         secs(15)));
+
+        unsetTalkingTo();
     }
 
     private void froschAufTischDraengelt() {
-        unsetTalkingTo();
-
         final Nominalphrase desc = getDescription(true);
         n.addAlt(
                 du(
@@ -559,6 +555,8 @@ public class FroschprinzTalkingComp extends AbstractTalkingComp {
                                 + capitalize(desc.nom())
                                 + " schaut dich nur… traurig? verächtlich?… an",
                         secs(15)).beendet(PARAGRAPH));
+
+        unsetTalkingTo();
     }
 
     private <LOC_DESC extends ILocatableGO & IDescribableGO>

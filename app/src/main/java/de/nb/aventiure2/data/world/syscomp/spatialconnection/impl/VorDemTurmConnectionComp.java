@@ -14,20 +14,15 @@ import de.nb.aventiure2.data.world.base.GameObjectId;
 import de.nb.aventiure2.data.world.base.Known;
 import de.nb.aventiure2.data.world.base.Lichtverhaeltnisse;
 import de.nb.aventiure2.data.world.base.SpatialConnection;
-import de.nb.aventiure2.data.world.gameobject.World;
+import de.nb.aventiure2.data.world.gameobject.*;
 import de.nb.aventiure2.data.world.syscomp.spatialconnection.AbstractSpatialConnectionComp;
 import de.nb.aventiure2.data.world.syscomp.state.IHasStateGO;
 import de.nb.aventiure2.data.world.syscomp.state.impl.RapunzelState;
 import de.nb.aventiure2.german.description.AbstractDescription;
 
 import static de.nb.aventiure2.data.world.base.SpatialConnection.con;
-import static de.nb.aventiure2.data.world.gameobject.World.DRAUSSEN_VOR_DEM_SCHLOSS;
-import static de.nb.aventiure2.data.world.gameobject.World.IM_WALD_NAHE_DEM_SCHLOSS;
-import static de.nb.aventiure2.data.world.gameobject.World.OBEN_IM_ALTEN_TURM;
-import static de.nb.aventiure2.data.world.gameobject.World.RAPUNZEL;
-import static de.nb.aventiure2.data.world.gameobject.World.VOR_DEM_ALTEN_TURM;
-import static de.nb.aventiure2.data.world.time.AvTimeSpan.mins;
-import static de.nb.aventiure2.data.world.time.AvTimeSpan.secs;
+import static de.nb.aventiure2.data.world.gameobject.World.*;
+import static de.nb.aventiure2.data.world.time.AvTimeSpan.*;
 import static de.nb.aventiure2.german.base.StructuralElement.PARAGRAPH;
 import static de.nb.aventiure2.german.base.StructuralElement.SENTENCE;
 import static de.nb.aventiure2.german.description.AllgDescription.neuerSatz;
@@ -35,7 +30,7 @@ import static de.nb.aventiure2.german.description.DuDescription.du;
 
 /**
  * An implementation of {@link AbstractSpatialConnectionComp}
- * for the {@link World#DRAUSSEN_VOR_DEM_SCHLOSS}
+ * for the {@link World#VOR_DEM_ALTEN_TURM}
  * room.
  */
 @ParametersAreNonnullByDefault
@@ -48,7 +43,7 @@ public class VorDemTurmConnectionComp extends AbstractSpatialConnectionComp {
     public VorDemTurmConnectionComp(
             final AvDatabase db,
             final World world) {
-        super(DRAUSSEN_VOR_DEM_SCHLOSS, db, world);
+        super(VOR_DEM_ALTEN_TURM, db, world);
     }
 
     @Override

@@ -40,17 +40,7 @@ import de.nb.aventiure2.data.world.syscomp.talking.impl.FroschprinzTalkingComp;
 import de.nb.aventiure2.data.world.syscomp.talking.impl.RapunzelTalkingComp;
 import de.nb.aventiure2.data.world.syscomp.talking.impl.RapunzelsZauberinTalkingComp;
 
-import static de.nb.aventiure2.data.world.gameobject.World.ABZWEIG_IM_WALD;
-import static de.nb.aventiure2.data.world.gameobject.World.DRAUSSEN_VOR_DEM_SCHLOSS;
-import static de.nb.aventiure2.data.world.gameobject.World.FROSCHPRINZ;
-import static de.nb.aventiure2.data.world.gameobject.World.IM_WALD_BEIM_BRUNNEN;
-import static de.nb.aventiure2.data.world.gameobject.World.IM_WALD_NAHE_DEM_SCHLOSS;
-import static de.nb.aventiure2.data.world.gameobject.World.OBEN_IM_ALTEN_TURM;
-import static de.nb.aventiure2.data.world.gameobject.World.RAPUNZEL;
-import static de.nb.aventiure2.data.world.gameobject.World.RAPUNZELS_ZAUBERIN;
-import static de.nb.aventiure2.data.world.gameobject.World.SCHLOSSWACHE;
-import static de.nb.aventiure2.data.world.gameobject.World.SCHLOSS_VORHALLE;
-import static de.nb.aventiure2.data.world.gameobject.World.VOR_DEM_ALTEN_TURM;
+import static de.nb.aventiure2.data.world.gameobject.World.*;
 import static de.nb.aventiure2.german.base.Artikel.Typ.DEF;
 import static de.nb.aventiure2.german.base.Artikel.Typ.INDEF;
 import static de.nb.aventiure2.german.base.Nominalphrase.np;
@@ -120,14 +110,16 @@ class CreatureFactory {
         final LocationComp locationComp =
                 new LocationComp(RAPUNZEL, db, world, OBEN_IM_ALTEN_TURM, VOR_DEM_ALTEN_TURM,
                         false);
+        final RapunzelReactionsComp reactionsComp =
+                new RapunzelReactionsComp(db, world, stateComp, locationComp);
         final RapunzelTalkingComp talkingComp =
-                new RapunzelTalkingComp(db, world, stateComp);
+                new RapunzelTalkingComp(db, world, stateComp, reactionsComp);
         return new TalkingReactionsCreature<>(RAPUNZEL,
                 descriptionComp,
                 locationComp,
                 stateComp,
                 talkingComp,
-                new RapunzelReactionsComp(db, world, stateComp, locationComp));
+                reactionsComp);
     }
 
     GameObject createRapunzelsZauberin() {

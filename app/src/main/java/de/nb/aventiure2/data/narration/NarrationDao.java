@@ -17,7 +17,7 @@ import java.util.Objects;
 
 import de.nb.aventiure2.data.database.AvDatabase;
 import de.nb.aventiure2.data.narration.Narration.NarrationSource;
-import de.nb.aventiure2.data.world.time.AvNowDao;
+import de.nb.aventiure2.data.world.time.*;
 import de.nb.aventiure2.german.base.StructuralElement;
 import de.nb.aventiure2.german.description.AbstractDescription;
 import de.nb.aventiure2.german.description.DuDescription;
@@ -95,8 +95,7 @@ public abstract class NarrationDao {
         addAlt(asList(alternatives), initialNarration);
     }
 
-    public void addAlt(
-            final ImmutableCollection.Builder<AbstractDescription<?>> alternatives) {
+    public void addAlt(final ImmutableCollection.Builder<AbstractDescription<?>> alternatives) {
         addAlt(alternatives.build());
     }
 

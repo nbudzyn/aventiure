@@ -20,8 +20,7 @@ import de.nb.aventiure2.data.world.base.GameObject;
 import de.nb.aventiure2.data.world.base.GameObjectId;
 import de.nb.aventiure2.data.world.base.IGameObject;
 import de.nb.aventiure2.data.world.base.Known;
-import de.nb.aventiure2.data.world.gameobject.player.SpielerCharakter;
-import de.nb.aventiure2.data.world.gameobject.player.SpielerCharakterFactory;
+import de.nb.aventiure2.data.world.gameobject.player.*;
 import de.nb.aventiure2.data.world.syscomp.alive.AliveSystem;
 import de.nb.aventiure2.data.world.syscomp.alive.ILivingBeingGO;
 import de.nb.aventiure2.data.world.syscomp.description.IDescribableGO;
@@ -33,20 +32,21 @@ import de.nb.aventiure2.data.world.syscomp.reaction.IReactions;
 import de.nb.aventiure2.data.world.syscomp.reaction.IResponder;
 import de.nb.aventiure2.data.world.syscomp.spatialconnection.impl.DraussenVorDemSchlossConnectionComp;
 import de.nb.aventiure2.data.world.syscomp.spatialconnection.impl.ImWaldNaheDemSchlossConnectionComp;
+import de.nb.aventiure2.data.world.syscomp.spatialconnection.impl.ObenImTurmConnectionComp;
 import de.nb.aventiure2.data.world.syscomp.spatialconnection.impl.SchlossVorhalleConnectionComp;
 import de.nb.aventiure2.data.world.syscomp.spatialconnection.impl.SimpleConnectionCompFactory;
 import de.nb.aventiure2.data.world.syscomp.spatialconnection.impl.VorDemTurmConnectionComp;
 import de.nb.aventiure2.data.world.syscomp.spatialconnection.system.SpatialConnectionSystem;
 import de.nb.aventiure2.data.world.syscomp.storingplace.ILocationGO;
 import de.nb.aventiure2.data.world.syscomp.storingplace.StoringPlaceType;
-import de.nb.aventiure2.data.world.time.AvDateTime;
+import de.nb.aventiure2.data.world.time.*;
 import de.nb.aventiure2.german.base.Nominalphrase;
 
 import static com.google.common.collect.ImmutableList.toImmutableList;
 import static de.nb.aventiure2.data.world.syscomp.storingplace.StoringPlaceType.EINE_TASCHE;
 import static de.nb.aventiure2.data.world.syscomp.storingplace.StoringPlaceType.HAENDE;
 import static de.nb.aventiure2.data.world.syscomp.storingplace.StoringPlaceType.TISCH;
-import static de.nb.aventiure2.data.world.time.AvTime.oClock;
+import static de.nb.aventiure2.data.world.time.AvTime.*;
 import static de.nb.aventiure2.german.base.Artikel.Typ.DEF;
 import static de.nb.aventiure2.german.base.Artikel.Typ.INDEF;
 import static de.nb.aventiure2.german.base.Nominalphrase.np;
@@ -223,7 +223,7 @@ public class World {
                 room.create(OBEN_IM_ALTEN_TURM,
                         StoringPlaceType.HOLZDIELEN_OBEN_IM_TURM,
                         false,
-                        connection.createNoConnections(OBEN_IM_ALTEN_TURM)),
+                        new ObenImTurmConnectionComp(db, this)),
                 room.create(ABZWEIG_IM_WALD, StoringPlaceType.WEG,
                         false,
                         connection.createAbzweigImWald()),

@@ -3,16 +3,15 @@ package de.nb.aventiure2.data.world.syscomp.talking.impl;
 import com.google.common.collect.ImmutableList;
 
 import de.nb.aventiure2.data.database.AvDatabase;
-import de.nb.aventiure2.data.world.gameobject.World;
+import de.nb.aventiure2.data.world.gameobject.*;
 import de.nb.aventiure2.data.world.syscomp.location.LocationComp;
 import de.nb.aventiure2.data.world.syscomp.state.impl.RapunzelsZauberinStateComp;
 import de.nb.aventiure2.data.world.syscomp.talking.AbstractTalkingComp;
 import de.nb.aventiure2.german.base.SubstantivischePhrase;
 
-import static de.nb.aventiure2.data.world.gameobject.World.DRAUSSEN_VOR_DEM_SCHLOSS;
-import static de.nb.aventiure2.data.world.gameobject.World.RAPUNZELS_ZAUBERIN;
+import static de.nb.aventiure2.data.world.gameobject.World.*;
 import static de.nb.aventiure2.data.world.syscomp.talking.impl.SCTalkAction.entrySt;
-import static de.nb.aventiure2.data.world.time.AvTimeSpan.secs;
+import static de.nb.aventiure2.data.world.time.AvTimeSpan.*;
 import static de.nb.aventiure2.german.base.Nominalphrase.np;
 import static de.nb.aventiure2.german.base.NumerusGenus.F;
 import static de.nb.aventiure2.german.base.NumerusGenus.N;
@@ -68,8 +67,6 @@ public class RapunzelsZauberinTalkingComp extends AbstractTalkingComp {
     }
 
     private void frageNachZiel_zauberinReagiertAbweisend() {
-        unsetTalkingTo();
-
         final SubstantivischePhrase anaphOderDesc =
                 getAnaphPersPronWennMglSonstDescription(false);
 
@@ -89,6 +86,8 @@ public class RapunzelsZauberinTalkingComp extends AbstractTalkingComp {
                         secs(10))
                         .phorikKandidat(anaphOderDesc, getGameObjectId())
         );
+
+        unsetTalkingTo();
     }
 
 }
