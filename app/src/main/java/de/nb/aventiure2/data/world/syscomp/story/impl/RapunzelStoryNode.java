@@ -62,27 +62,63 @@ public enum RapunzelStoryNode implements IStoryNode {
     ZU_RAPUNZEL_HINAUFGESTIEGEN(10, VOR_DEM_ALTEN_TURM,
             RapunzelStoryNode::narrateAndDoHintAction_ZuRapunzelHinaufgestiegen,
             ZAUBERIN_HEIMLICH_BEIM_RUFEN_BEOBACHTET);
-    // STORY "Doch du fängst an ganz freundlich mit ihr zu reden
-    //  und erzählst ihr, dass von ihrem Gesang dein Herz so sehr sei
-    //  bewegt worden, dass es dir keine Ruhe gelassen und du sie
-    //  selbst habest sehen müssen.
-    //  Da verliert die junge Frau ihre Angst und es bricht aus ihr heraus.
-    //  Eine alte Zauberin hötte sie ihren Eltern fortgenommen, seit ihrem
-    //  zwölften Jahre sei sie in diesen Turm geschlossen.
-    //  Du fragst sie nach ihrem Namen, aber der ist so ungewöhnlich, dass
-    //  du ihn dir nicht merken kannst. Es ist dir zu ungegenehm, noch einmal zu fragen.
-    //  Wie kannst du ihr helfen, so fragst du sie.
-    //  Bring mir einen Ballen Seide, sagt sie,
-    //  Daraus
-    //  will ich eine Leiter flechten, und wenn die fertig ist, so steige
-    //  ich herunter.
-    //  So verabredet ihr es.
-    //  „Aber komm nicht, wenn die Alte bei mir ist, sagt sie noch,
-    //  sonst sind wir beide verloren"
+    // STORY "Ich wollte euch nicht belästigen", sprichst du sie an,
+    //  lasst mich wieder herunter und ich lasse euch euren Frieden"
+    //  - "Die junge Frau schaut dich verschüchtert an, dann bindet sie ihre Haare
+    //    wieder an den Fensterhaken."
+    //  - "O bleibt doch noch einen Moment! antwortet RAPUNZEL"
 
-    // STORY Seide: "Ein Vermögen wert"
+    // STORY Beim Hochwerfen / Auffangen der Kugel:
+    //  "Die junge Frau sieht interessiert zu"
+    //  "Darf ich dieses Glitzerding auch einmal haben?, fragt RAPUNZEL"
 
-    // STORY Extra: Zauberin ruft von unten nach Rapunzel: "Schnell versteckt euch unter dem Bett"
+    // STORY "Du gibst der jungen Frau DIE KUGEL"
+    //  "RAPUNZEL dreht sie in den Händen und wirft sie sanft in die Höhe - dann
+    //  gibt sie dir DIE KUGEL zurück"
+
+    // STORY "Mit RAPUNZEL unterhalten"
+    //  - "Doch (nur wenn der SC gerade erst in den Raum gekommen ist) du fängst an
+    //    ganz freundlich mit ihr zu reden
+    //   und erzählst ihr, dass von ihrem Gesang dein Herz so sehr sei
+    //   bewegt worden (O.Ä.), dass es dir keine Ruhe gelassen und du sie
+    //   selbst habest sehen müssen.
+    //   Da verliert die junge Frau ihre Angst und es bricht aus ihr heraus.
+    //   Eine alte Zauberin hötte sie ihren Eltern fortgenommen, seit ihrem
+    //   zwölften Jahre sei sie in diesen Turm geschlossen."
+    //  - "Du fragst sie nach ihrem Namen, aber der ist so ungewöhnlich, dass
+    //   du ihn dir nicht merken kannst. Es ist dir zu ungegenehm, noch einmal zu fragen."
+    //  - Ihr plaudert eine Weile - ihr versteht euch sehr gut.
+    //  - (Dann...) RAPUNZEL schwärmt vom Sonnenaufgang über dem Blätterdach. Ihre Augen leuchten.
+    //  - GGF Du erzählst IHR von dieser seltsamen Sache, die du mit dem Frosch erlebt hast. Sie
+    //    schaut dich nachdenklich an.
+    //  - "Welche Jahreszeit riechst du am liebsten?" fragt sie dich. Du entscheidest dich für
+    //    den Sommer. "Bei mir ist es der Frühling" sagt sie und strahlt bei dem Gedanken
+    //    "Ich wache auf und sofort weiß ich - die Krokusse sind aufgeblüht. Dann freue
+    //    ich mich schon auf die Schwalben, die in der Mauer über mir brüten"
+    //  - "Die Frau mit dieser... Nase - das ist deine..."  - ja, sie hält mich gefangen.
+    //    Aber sie ist gut zu mir. -> memoryComp: Spieler weiß, dass es die Zauberin ist,
+    //    DESCRIPTION ANPASSEN?!
+    //  - Wie kannst du ihr helfen, so fragst du sie. Wenn ich einen Ballen Seide hätte, sagt sie,
+    //    ich könnte mir eine Leiter flechten und steige daran herunter. Aber ein Ballen Seide -
+    //    der wäre ein Vermögen wert! (Meldung muss beim 3. Mal auch jeden Fall kommen ->
+    //    Status anpassen?! Kombinierter Status (X /Y)?)
+    // STORY „Aber komm nicht, wenn die Alte bei mir ist, ruft sie dir noch nach"
+
+    // STORY Wenn Zauberin kommt: "Du kriechst unter das Bett. Es ist eng und staubig"
+
+    // STORY "Die Zauberin und RAPUNZEL unterhalten sich, aber eigentlich haben sie
+    //  einander nichts zu sagen."
+    //  - Die ZAUBERIN erzählt von ihren täglichen Verrichtungen und RAPUNZEL hört
+    //    artig zu.
+    //  - Die Zauberin begrüßt RAPUNZEL, dann ist sie auf einmal still.
+    //    "Wonach riecht es hier?" fragt die Zauberin mit scharfer Stimme
+    //    "Oh, das... müssen wieder die Fledermäuse sein, sagt die junge Frau und stellt sich vor
+    //    das Bett. Dir pocht das Herz"
+    //  - Die Zauberin hat Essen und Trinken mitgebracht und du hörst den beiden bei der
+    //   Mahlzeit zu. BEI HUNGER: Dein Magen knurrt, aber es scheint niemand zu bemerken.
+    // STORY WARTEN "Du liegst lange Zeit ganz still. Der Staub kribbelt in deiner Nase."
+    //  "Endlich verabschiedet sich die ZAUBERIN und steigt herab"
+    //  "Du kannst wieder herauskommen - hörst du es lieblich sagen"
 
     // STORY
     //  "du steigst wieder herab" /  "Schnell kommst du wieder herab"
