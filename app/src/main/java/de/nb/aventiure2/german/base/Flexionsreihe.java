@@ -26,6 +26,12 @@ class Flexionsreihe {
     private final String dativ;
     private final String akkusativ;
 
+    public boolean hasWortform(final String string) {
+        return string.equals(nominativ) ||
+                string.equals(dativ) ||
+                string.equals(akkusativ);
+    }
+
     public String nom() {
         return nominativ;
     }

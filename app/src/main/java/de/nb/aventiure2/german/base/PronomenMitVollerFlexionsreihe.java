@@ -17,6 +17,10 @@ public abstract class PronomenMitVollerFlexionsreihe
         return false;
     }
 
+    protected boolean isWortform(final String string) {
+        return flexionsreihe.hasWortform(string);
+    }
+
     @Override
     public String artikellosDat() {
         return dat();

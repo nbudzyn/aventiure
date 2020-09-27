@@ -26,6 +26,16 @@ public class Reflexivpronomen {
     private final String dativ;
     private final String akkusativ;
 
+    public static boolean isReflexivpronomen(final String string) {
+        return ALL.values().stream()
+                .flatMap(m -> m.values().stream())
+                .anyMatch(p -> p.isWortform(string));
+    }
+
+    private boolean isWortform(final String string) {
+        return dativ.equals(string) || akkusativ.equals(string);
+    }
+
     public static Reflexivpronomen get(final Person person, final Numerus numerus) {
         return ALL.get(numerus).get(person);
     }

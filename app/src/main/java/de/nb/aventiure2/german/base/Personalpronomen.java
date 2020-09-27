@@ -21,6 +21,11 @@ public class Personalpronomen extends PronomenMitVollerFlexionsreihe {
             PL_MFN, new Personalpronomen(PL_MFN,
                     fr("sie", "ihnen")));
 
+    public static boolean isPersonalpronomen(final String string) {
+        return ALL.values().stream()
+                .anyMatch(p -> p.isWortform(string));
+    }
+
     public static Personalpronomen get(final NumerusGenus numerusGenus) {
         return ALL.get(numerusGenus);
     }

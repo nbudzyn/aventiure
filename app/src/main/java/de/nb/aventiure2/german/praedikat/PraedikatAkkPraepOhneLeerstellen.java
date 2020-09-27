@@ -117,7 +117,14 @@ public class PraedikatAkkPraepOhneLeerstellen extends AbstractPraedikatOhneLeers
             return speziellesVorfeldFromSuper;
         }
 
-        return describableAkk.akk(); // "das Teil"
+        final String akk = describableAkk.akk();
+        if (!"es".equals(akk)) {
+            // Wenn "es" ein Objekt ist, darf es nicht im Vorfeld stehen.
+            // (Eisenberg Der Satz 5.4.2)
+            return akk; // "das Teil"
+        }
+
+        return null;
     }
 
     @Override

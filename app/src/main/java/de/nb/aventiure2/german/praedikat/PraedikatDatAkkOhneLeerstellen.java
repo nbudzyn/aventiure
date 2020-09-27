@@ -6,6 +6,8 @@ import java.util.Collection;
 
 import javax.annotation.Nullable;
 
+import de.nb.aventiure2.german.base.Personalpronomen;
+import de.nb.aventiure2.german.base.Reflexivpronomen;
 import de.nb.aventiure2.german.base.SubstantivischePhrase;
 
 import static de.nb.aventiure2.german.base.GermanUtil.joinToNull;
@@ -121,12 +123,49 @@ public class PraedikatDatAkkOhneLeerstellen extends AbstractPraedikatOhneLeerste
 
     @Override
     public String getMittelfeld(final Collection<Modalpartikel> modalpartikeln) {
+        // Duden 1356: "Schwach betonte Personal- und Reflexivpronomen stehen
+        // unmittelbar nach der linken Satzklammer [...] Wackernagel-Position"
+
+        final String akk = describableAkk.akk();
+        final String dat = describableDat.dat();
+        if (Personalpronomen.isPersonalpronomen(akk) ||
+                Reflexivpronomen.isReflexivpronomen(akk)) {
+
+            if (Personalpronomen.isPersonalpronomen(dat) ||
+                    Reflexivpronomen.isReflexivpronomen(dat)) {
+                // Duden 1357: "Akkusativ > Dativ"
+                return joinToNull(
+                        akk, // "sie", Wackernagel-Position 1
+                        dat, // "ihm", Wackernagel-Position 2
+                        getAdverbialeAngabeSkopusSatz(), // "aus einer Laune heraus"
+                        joinToNull(modalpartikeln), // "halt"
+                        getAdverbialeAngabeSkopusVerbAllg()); // "auf deiner Flöte"
+            }
+
+            return joinToNull(
+                    akk, // "sie", Wackernagel-Position
+                    getAdverbialeAngabeSkopusSatz(), // "aus einer Laune heraus"
+                    dat, // "dem Frosch"
+                    joinToNull(modalpartikeln), // "halt"
+                    getAdverbialeAngabeSkopusVerbAllg()); // "auf deiner Flöte"
+        }
+
+        if (Personalpronomen.isPersonalpronomen(dat) ||
+                Reflexivpronomen.isReflexivpronomen(dat)) {
+            return joinToNull(
+                    dat, // "ihm", Wackernagel-Position
+                    getAdverbialeAngabeSkopusSatz(), // "aus einer Laune heraus"
+                    akk, // "die Melodie"
+                    joinToNull(modalpartikeln), // "halt"
+                    getAdverbialeAngabeSkopusVerbAllg()); // "auf deiner Flöte"
+        }
+
         return joinToNull(
                 getAdverbialeAngabeSkopusSatz(), // "aus einer Laune heraus"
-                describableDat.dat(), // "dem Frosch"
+                dat, // "dem Frosch"
                 joinToNull(modalpartikeln), // "halt"
                 getAdverbialeAngabeSkopusVerbAllg(), // "auf deiner Flöte"
-                describableAkk.akk()); // "ein Lied"
+                akk); // "ein Lied"
     }
 
     @Override

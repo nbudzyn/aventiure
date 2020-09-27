@@ -107,7 +107,14 @@ class PraedikatSubjReflPraepositionalkasusAkkObjOhneLeerstellen
             return speziellesVorfeldFromSuper;
         }
 
-        return akkObj.akk();
+        final String akk = akkObj.akk();
+        if (!"es".equals(akk)) {
+            // Wenn "es" ein Objekt ist, darf es nicht im Vorfeld stehen.
+            // (Eisenberg Der Satz 5.4.2)
+            return akk;  // "den Frosch"
+        }
+
+        return null;
     }
 
     @Override

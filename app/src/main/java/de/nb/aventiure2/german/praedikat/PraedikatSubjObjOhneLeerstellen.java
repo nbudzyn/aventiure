@@ -116,7 +116,14 @@ public class PraedikatSubjObjOhneLeerstellen
             return speziellesVorfeldFromSuper;
         }
 
-        return objekt.im(kasusOderPraepositionalkasus); // "den Frosch"
+        final String objektImKasusOderPraepkasus = objekt.im(kasusOderPraepositionalkasus);
+        if (!"es".equals(objektImKasusOderPraepkasus)) {
+            // Wenn "es" ein Objekt ist, darf es nicht im Vorfeld stehen.
+            // (Eisenberg Der Satz 5.4.2)
+            return objektImKasusOderPraepkasus;  // "den Frosch"
+        }
+
+        return null;
     }
 
     @Override

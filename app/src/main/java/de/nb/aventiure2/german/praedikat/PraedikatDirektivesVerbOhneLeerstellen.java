@@ -133,7 +133,14 @@ public class PraedikatDirektivesVerbOhneLeerstellen extends AbstractPraedikatOhn
             return speziellesVorfeldFromSuper;
         }
 
-        return objekt.im(kasus); // "Die junge Frau (bittest du ...)"
+        final String objektImKasus = objekt.im(kasus);
+        if (!"es".equals(objektImKasus)) {
+            // Wenn "es" ein Objekt ist, darf es nicht im Vorfeld stehen.
+            // (Eisenberg Der Satz 5.4.2)
+            return objektImKasus;  // "Die junge Frau (bittest du ...)"
+        }
+
+        return null;
     }
 
     @Override
