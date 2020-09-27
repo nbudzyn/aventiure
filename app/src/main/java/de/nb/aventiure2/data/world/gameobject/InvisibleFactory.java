@@ -1,9 +1,12 @@
 package de.nb.aventiure2.data.world.gameobject;
 
+import androidx.annotation.NonNull;
+
 import javax.annotation.Nonnull;
 
 import de.nb.aventiure2.data.database.AvDatabase;
 import de.nb.aventiure2.data.world.base.GameObject;
+import de.nb.aventiure2.data.world.base.GameObjectId;
 import de.nb.aventiure2.data.world.syscomp.reaction.IResponder;
 import de.nb.aventiure2.data.world.syscomp.reaction.impl.SchlossfestReactionsComp;
 import de.nb.aventiure2.data.world.syscomp.reaction.impl.TageszeitReactionsComp;
@@ -12,10 +15,7 @@ import de.nb.aventiure2.data.world.syscomp.state.IHasStateGO;
 import de.nb.aventiure2.data.world.syscomp.state.impl.SchlossfestState;
 import de.nb.aventiure2.data.world.syscomp.state.impl.SchlossfestStateComp;
 
-import static de.nb.aventiure2.data.world.gameobject.World.RAPUNZELRUF;
-import static de.nb.aventiure2.data.world.gameobject.World.RAPUNZELS_HAARE;
-import static de.nb.aventiure2.data.world.gameobject.World.SCHLOSSFEST;
-import static de.nb.aventiure2.data.world.gameobject.World.TAGESZEIT;
+import static de.nb.aventiure2.data.world.gameobject.World.*;
 
 /**
  * A factory for special {@link GameObject}s: Invisible concepts, ideas, event or the like, that
@@ -39,12 +39,9 @@ public class InvisibleFactory {
         return new Schlossfest(db, world);
     }
 
-    public static GameObject createRapunzelsHaare() {
-        return new GameObject(RAPUNZELS_HAARE);
-    }
-
-    public static GameObject createRapunzelRuf() {
-        return new GameObject(RAPUNZELRUF);
+    @NonNull
+    public static GameObject create(final GameObjectId id) {
+        return new GameObject(id);
     }
 
     private static class Tageszeit extends GameObject implements IResponder {

@@ -16,7 +16,6 @@ import de.nb.aventiure2.data.world.syscomp.reaction.interfaces.IRufReactions;
 import de.nb.aventiure2.data.world.syscomp.reaction.interfaces.IStateChangedReactions;
 import de.nb.aventiure2.data.world.syscomp.reaction.interfaces.ITimePassedReactions;
 import de.nb.aventiure2.data.world.syscomp.reaction.interfaces.Ruftyp;
-import de.nb.aventiure2.data.world.syscomp.spatialconnection.impl.VorDemTurmConnectionComp;
 import de.nb.aventiure2.data.world.syscomp.state.IHasStateGO;
 import de.nb.aventiure2.data.world.syscomp.state.impl.RapunzelStateComp;
 import de.nb.aventiure2.data.world.syscomp.state.impl.RapunzelsZauberinState;
@@ -127,14 +126,15 @@ public class RapunzelReactionsComp
 
         loadSC().feelingsComp().setMoodMin(BEWEGT);
 
-        if (db.counterDao().incAndGet(VorDemTurmConnectionComp.COUNTER_SC_HOERT_RAPUNZELS_GESANG)
-                == 1) {
+        if (!loadSC().memoryComp().isKnown(RAPUNZELS_GESANG)) {
             n.add(neuerSatz(PARAGRAPH,
                     "Wie du näher kommst, hörst du einen Gesang, so lieblich, dass es "
                             + "dir das Herz rührt. Du hältst still und horchst: Kommt die "
                             + "Stimme aus dem kleinen Fensterchen oben im Turm?",
                     secs(20))
                     .beendet(PARAGRAPH));
+
+            world.upgradeKnownToSC(RAPUNZELS_GESANG);
             return;
         }
         n.addAlt(
@@ -153,6 +153,8 @@ public class RapunzelReactionsComp
                 neuerSatz("Erneut hörst du den Gesang aus dem Turmfenster",
                         noTime())
         );
+
+        world.upgradeKnownToSC(RAPUNZELS_GESANG);
     }
 
     private void onSCEnter_VorDemAltenTurm_HaareHeruntergelassen(
@@ -423,6 +425,8 @@ public class RapunzelReactionsComp
                                     secs(30))
                                     .phorikKandidat(PL_MFN, RAPUNZELS_HAARE));
                 }
+
+                world.upgradeKnownToSC(RAPUNZELS_GESANG);
             } else {
                 if (world.loadSC().memoryComp().isKnown(RAPUNZELS_HAARE)) {
                     n.add(
@@ -630,13 +634,14 @@ public class RapunzelReactionsComp
 
         loadSC().feelingsComp().setMoodMin(BEWEGT);
 
-        if (db.counterDao().incAndGet(VorDemTurmConnectionComp.COUNTER_SC_HOERT_RAPUNZELS_GESANG)
-                == 1) {
+        if (!loadSC().memoryComp().isKnown(RAPUNZELS_GESANG)) {
             n.add(neuerSatz(PARAGRAPH,
                     "Auf einmal hebt ein Gesang an, so lieblich, dass es dir das "
                             + "Herz rührt. Du hältst still und horchst: Kommt die Stimme aus "
                             + "dem kleinen Fensterchen oben im Turm?",
                     secs(20)));
+
+            world.upgradeKnownToSC(RAPUNZELS_GESANG);
             return;
         }
 
@@ -661,6 +666,9 @@ public class RapunzelReactionsComp
                             "erneut",
                             noTime())
             );
+
+            world.upgradeKnownToSC(RAPUNZELS_GESANG);
+
             return;
         }
 
@@ -686,6 +694,8 @@ public class RapunzelReactionsComp
                         "erneut",
                         noTime())
         );
+
+        world.upgradeKnownToSC(RAPUNZELS_GESANG);
     }
 
     private void onTimePassed_RapunzelMoechteNichtSingen(final AvDateTime lastTime,
@@ -739,6 +749,8 @@ public class RapunzelReactionsComp
         }
 
         n.addAlt(alt);
+
+        world.upgradeKnownToSC(RAPUNZELS_GESANG);
     }
 
     @NonNull

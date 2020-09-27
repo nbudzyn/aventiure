@@ -88,7 +88,7 @@ public class Walkthrough {
                     "Rasten",
                     "Rasten"); // Zauberin steigt die Zöpfe hoch
 
-    public static final Walkthrough ERSTE_RAPUNZELRUF_BEOBACHTUNG_BIS_ENDE =
+    public static final Walkthrough ERSTE_RAPUNZELRUF_BEOBACHTUNG_BIS_OBEN_BEI_RAPUNZEL =
             new Walkthrough(
                     "Rasten",
                     "Rasten",
@@ -97,7 +97,11 @@ public class Walkthrough {
                     "Rasten",
                     "Rufen: „Lass dein Haar herunter.“",
                     "Aus dem Schatten der Bäume treten",
-                    "An den Haaren hinaufsteigen",
+                    "An den Haaren hinaufsteigen"
+            );
+
+    public static final Walkthrough OBEN_BEI_RAPUNZEL_BIS_ENDE =
+            new Walkthrough(
                     "Die junge Frau bitten ihre Haare wieder hinunterzulassen",
                     "An den Haaren hinabsteigen"
             );
@@ -115,9 +119,13 @@ public class Walkthrough {
             ANFANG_BIS_PRINZABFAHRT
                     .append(PRINZABFAHRT_BIS_ERSTE_RAPUNZELRUF_BEOBACHTUNG);
 
-    public static final Walkthrough FULL =
+    public static final Walkthrough ANFANG_BIS_OBEN_BEI_RAPUNZEL =
             ANFANG_BIS_ERSTE_RAPUNZELRUF_BEOBACHTUNG
-                    .append(ERSTE_RAPUNZELRUF_BEOBACHTUNG_BIS_ENDE);
+                    .append(ERSTE_RAPUNZELRUF_BEOBACHTUNG_BIS_OBEN_BEI_RAPUNZEL);
+
+    public static final Walkthrough FULL =
+            ANFANG_BIS_OBEN_BEI_RAPUNZEL
+                    .append(OBEN_BEI_RAPUNZEL_BIS_ENDE);
 
     private final ImmutableList<String> steps;
 

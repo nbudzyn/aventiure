@@ -142,6 +142,9 @@ public class MainActivity extends AppCompatActivity {
             case R.id.walk_anfang_bis_rapunzelruf:
                 mainViewModel.walkActions(Walkthrough.ANFANG_BIS_ERSTE_RAPUNZELRUF_BEOBACHTUNG);
                 return true;
+            case R.id.walk_anfang_bis_oben_bei_rapunzel:
+                mainViewModel.walkActions(Walkthrough.ANFANG_BIS_OBEN_BEI_RAPUNZEL);
+                return true;
             case R.id.walk_full:
                 mainViewModel.walkActions(Walkthrough.FULL);
                 return true;

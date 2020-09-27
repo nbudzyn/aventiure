@@ -368,10 +368,10 @@ public class RapunzelsZauberinReactionsComp
         }
 
         // Spieler wird verzaubert und vergisst alles.
-        loadSC().memoryComp().forget(RAPUNZEL, RAPUNZELS_ZAUBERIN, RAPUNZELS_HAARE, RAPUNZELRUF);
+        loadSC().memoryComp().forget(RAPUNZEL, RAPUNZELS_ZAUBERIN, RAPUNZELS_GESANG,
+                RAPUNZELS_HAARE, RAPUNZELRUF);
         loadSC().feelingsComp().setMood(ERSCHOEPFT);
         db.counterDao().reset(VorDemTurmConnectionComp.COUNTER_ALTER_TURM_UMRUNDET);
-        db.counterDao().reset(VorDemTurmConnectionComp.COUNTER_SC_HOERT_RAPUNZELS_GESANG);
 
         // Die Zauberin ist schon weit auf dem Rückweg
         stateComp.narrateAndSetState(AUF_DEM_RUECKWEG_VON_RAPUNZEL);
