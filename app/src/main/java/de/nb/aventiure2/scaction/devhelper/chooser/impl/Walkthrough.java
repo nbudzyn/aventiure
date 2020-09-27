@@ -98,7 +98,8 @@ public class Walkthrough {
                     "Rufen: „Lass dein Haar herunter.“",
                     "Aus dem Schatten der Bäume treten",
                     "An den Haaren hinaufsteigen",
-                    "Die junge Frau bitten ihre Haare wieder hinunterzulassen"
+                    "Die junge Frau bitten ihre Haare wieder hinunterzulassen",
+                    "An den Haaren hinabsteigen"
             );
     // STORY "Die Frau ist jetzt nicht mehr zu sehen".
 

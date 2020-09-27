@@ -405,18 +405,38 @@ public class RapunzelReactionsComp
 
         if (loadSC().locationComp().hasRecursiveLocation(VOR_DEM_ALTEN_TURM)) {
             if (stateComp.hasState(SINGEND)) {
-                n.add(
-                        neuerSatz(SENTENCE,
-                                "Sofort hört der Gesang auf – und gleich darauf fallen "
-                                        + "aus dem kleinen "
-                                        + "Fenster oben im Turm lange, goldene Haarzöpfe herab, "
-                                        + "sicher zwanzig Ellen tief bis auf den Boden. ",
-                                secs(30)));
+                if (world.loadSC().memoryComp().isKnown(RAPUNZELS_HAARE)) {
+                    n.add(
+                            neuerSatz(SENTENCE,
+                                    "Sofort hört der Gesang auf – und gleich darauf fallen "
+                                            + "aus dem kleinen "
+                                            + "Fenster oben im Turm lange, goldene Haarzöpfe herab, "
+                                            + "sicher zwanzig Ellen tief bis auf den Boden",
+                                    secs(30))
+                                    .phorikKandidat(PL_MFN, RAPUNZELS_HAARE));
+                } else {
+                    n.add(
+                            neuerSatz(SENTENCE,
+                                    "Der Gesang hört auf, und wieder fallen "
+                                            + "die wunderschönen goldenen Haare aus dem Fenster "
+                                            + "bis ganz auf den Boden",
+                                    secs(30))
+                                    .phorikKandidat(PL_MFN, RAPUNZELS_HAARE));
+                }
             } else {
-                n.add(
-                        neuerSatz(SENTENCE, "Gleich darauf fallen aus dem kleinen "
-                                + "Fenster oben im Turm lange, goldene Haarzöpfe herab, sicher "
-                                + "zwanzig Ellen tief bis auf den Boden. ", secs(30)));
+                if (world.loadSC().memoryComp().isKnown(RAPUNZELS_HAARE)) {
+                    n.add(
+                            neuerSatz(SENTENCE, "Wieder fallen die langen, golden "
+                                    + "glänzenden Zöpfe aus dem "
+                                    + "Fenster bis zum Boden herab", secs(30))
+                                    .phorikKandidat(PL_MFN, RAPUNZELS_HAARE));
+                } else {
+                    n.add(
+                            neuerSatz(SENTENCE, "Gleich darauf fallen aus dem kleinen "
+                                    + "Fenster oben im Turm lange, goldene Haarzöpfe herab, sicher "
+                                    + "zwanzig Ellen tief bis auf den Boden", secs(30))
+                                    .phorikKandidat(PL_MFN, RAPUNZELS_HAARE));
+                }
             }
 
             world.upgradeKnownToSC(RAPUNZELS_HAARE);
