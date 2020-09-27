@@ -10,7 +10,7 @@ import javax.annotation.ParametersAreNonnullByDefault;
 
 import de.nb.aventiure2.data.database.AvDatabase;
 import de.nb.aventiure2.data.world.base.GameObjectId;
-import de.nb.aventiure2.data.world.gameobject.World;
+import de.nb.aventiure2.data.world.gameobject.*;
 import de.nb.aventiure2.data.world.syscomp.alive.ILivingBeingGO;
 import de.nb.aventiure2.data.world.syscomp.description.IDescribableGO;
 import de.nb.aventiure2.data.world.syscomp.feelings.Mood;
@@ -31,16 +31,12 @@ import de.nb.aventiure2.scaction.AbstractScAction;
 
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkState;
-import static de.nb.aventiure2.data.world.gameobject.World.EINE_TASCHE_DES_SPIELER_CHARAKTERS;
-import static de.nb.aventiure2.data.world.gameobject.World.FROSCHPRINZ;
-import static de.nb.aventiure2.data.world.gameobject.World.HAENDE_DES_SPIELER_CHARAKTERS;
-import static de.nb.aventiure2.data.world.gameobject.World.SCHLOSS_VORHALLE_AM_TISCH_BEIM_FEST;
-import static de.nb.aventiure2.data.world.gameobject.World.SPIELER_CHARAKTER;
+import static de.nb.aventiure2.data.world.gameobject.World.*;
 import static de.nb.aventiure2.data.world.syscomp.feelings.Mood.ANGESPANNT;
 import static de.nb.aventiure2.data.world.syscomp.feelings.Mood.NEUTRAL;
 import static de.nb.aventiure2.data.world.syscomp.state.impl.FroschprinzState.ERWARTET_VON_SC_EINLOESUNG_SEINES_VERSPRECHENS;
 import static de.nb.aventiure2.data.world.syscomp.state.impl.FroschprinzState.HAT_HOCHHEBEN_GEFORDERT;
-import static de.nb.aventiure2.data.world.time.AvTimeSpan.secs;
+import static de.nb.aventiure2.data.world.time.AvTimeSpan.*;
 import static de.nb.aventiure2.german.base.GermanUtil.capitalize;
 import static de.nb.aventiure2.german.base.GermanUtil.uncapitalize;
 import static de.nb.aventiure2.german.base.Kasus.AKK;
@@ -466,7 +462,6 @@ public class NehmenAction
                 .dann()
                 .phorikKandidat(objectDesc.getNumerusGenus(), gameObject.getId()));
     }
-
 
     @Override
     protected boolean isDefinitivWiederholung() {

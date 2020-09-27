@@ -8,7 +8,7 @@ import androidx.room.Query;
 import de.nb.aventiure2.logger.Logger;
 import de.nb.aventiure2.scaction.AbstractScAction;
 
-import static de.nb.aventiure2.data.world.time.AvTimeSpan.noTime;
+import static de.nb.aventiure2.data.world.time.AvTimeSpan.*;
 
 /**
  * Room DAO for {@link AvNow}.
@@ -49,7 +49,7 @@ public abstract class AvNowDao {
         deleteAll();
 
         insert(new AvNow(now));
-        LOGGER.d("Zeitpunkt: " + now);
+        // LOGGER.d("Zeitpunkt: " + now);
     }
 
     @Query("DELETE FROM AvNow")

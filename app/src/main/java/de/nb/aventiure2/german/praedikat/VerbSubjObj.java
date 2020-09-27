@@ -22,6 +22,7 @@ public enum VerbSubjObj implements PraedikatMitEinerObjektleerstelle {
     HERAUSKLAUBEN("herausklauben", AKK, "klaubst", "heraus"),
     HINAUFRUFEN("hinaufrufen", ZU, "rufst", "rufen"),
     HINLEGEN("hinlegen", AKK, "legst", "hin"),
+    HINUNTERLASSEN("hinunterlassen", AKK, "lässt", "hinunter"),
     IGNORIEREN("ignorieren", AKK, "ignorierst"),
     LEGEN("legen", AKK, "legst"),
     MITNEHMEN("mitnehmen", AKK, "nimmst", "mit"),

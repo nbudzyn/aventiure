@@ -8,11 +8,15 @@ import de.nb.aventiure2.data.world.syscomp.reaction.impl.RapunzelReactionsComp;
 import de.nb.aventiure2.data.world.syscomp.state.impl.RapunzelState;
 import de.nb.aventiure2.data.world.syscomp.state.impl.RapunzelStateComp;
 import de.nb.aventiure2.data.world.syscomp.talking.AbstractTalkingComp;
+import de.nb.aventiure2.german.praedikat.AdverbialeAngabeSkopusVerbWohinWoher;
 
 import static de.nb.aventiure2.data.world.gameobject.World.*;
 import static de.nb.aventiure2.data.world.time.AvTimeSpan.*;
+import static de.nb.aventiure2.german.base.Nominalphrase.IHRE_HAARE;
 import static de.nb.aventiure2.german.base.StructuralElement.PARAGRAPH;
 import static de.nb.aventiure2.german.description.AllgDescription.neuerSatz;
+import static de.nb.aventiure2.german.praedikat.DirektivesVerb.BITTEN;
+import static de.nb.aventiure2.german.praedikat.VerbSubjObj.HINUNTERLASSEN;
 
 /**
  * Component for {@link World#RAPUNZEL}: Der Spieler
@@ -35,12 +39,22 @@ public class RapunzelTalkingComp extends AbstractTalkingComp {
     protected Iterable<SCTalkAction> getSCTalkActionsWithoutCheckingConditions() {
         return ImmutableList.of(
                 SCTalkAction.entrySt(
-                        () -> !haareSindHeruntergelassen(),
+                        () -> !haareSindHinuntergelassen(),
+                        // "Die junge Frau bitten ihre Haare wieder hinunterzulassen"
+                        BITTEN
+                                .mitObj(getDescription(true))
+                                .mitLexikalischemKern(HINUNTERLASSEN
+                                        .mitObj(IHRE_HAARE)
+                                        .mitAdverbialerAngabe(
+                                                // "wieder hinunterlassen": Das "wieder" gehört
+                                                // quasi zu "hinunter".
+                                                new AdverbialeAngabeSkopusVerbWohinWoher(
+                                                        "wieder"))),
                         this::haareHerunterlassenBitte)
         );
     }
 
-    private boolean haareSindHeruntergelassen() {
+    private boolean haareSindHinuntergelassen() {
         return stateComp.hasState(RapunzelState.HAARE_VOM_TURM_HERUNTERGELASSEN);
     }
 

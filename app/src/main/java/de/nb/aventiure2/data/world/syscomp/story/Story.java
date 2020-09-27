@@ -4,7 +4,7 @@ import java.util.EnumSet;
 
 import de.nb.aventiure2.data.database.AvDatabase;
 import de.nb.aventiure2.data.narration.NarrationDao;
-import de.nb.aventiure2.data.world.gameobject.World;
+import de.nb.aventiure2.data.world.gameobject.*;
 import de.nb.aventiure2.data.world.syscomp.story.impl.FroschkoenigStoryNode;
 import de.nb.aventiure2.data.world.syscomp.story.impl.RapunzelStoryNode;
 
@@ -21,6 +21,33 @@ public enum Story {
             FroschkoenigStoryNode::checkAndAdvanceIfAppropriate),
     RAPUNZEL(RapunzelStoryNode.class,
             RapunzelStoryNode::checkAndAdvanceIfAppropriate);
+
+    // STORY Märchen zu 3 Act Structures adaptieren? (1. Akt nötig?)
+    //  Inciting incident? Spieler bedrohen, dass "seine Welt" gefährdet
+    //  sein könnte?
+    //  Idee: Märchenelemente für ein neues Märchen in eine Plotstruktur
+    //  (Plot Mountain, 8 Point Story Arc, Monomyth, ... beat Structure)
+    //  verteilen, dann die Lücken finden und gemäß Plotstruktur füllen.
+    //  Plotelemente stärker hervorheben, zb durch "sonst du wirklich" oder
+    //  "aber sei gewarnt..."
+    //  Am Anfang und dann regelmäßig "Mysteries" aufbringen, insbesondere dann,
+    //  wenn eines gelöst wird. Der Spieler soll interessiert bleiben.
+    //  Bewusst machen: was soll der Spieler letztlich aus der
+    //  Geschichte mitnehmen? Call to action in der Welt??
+
+    // STORY Wie kommt man von einer Geschichte zu weiteren - ohne dass es langweilig wird?
+    //  Wie kann man eine Geschichte verallgemeinern? Wie kann man eine
+    //  Geschichte erzeugen?
+    //  Sollte man eine Geschichte parametrisieren? Das Gemeinsame aus zwei Geschichten
+    //  finden und A oder B oder etwas dazwischen wählen?
+    //  Stories mit Storytelling Theorien in Bezug setzen (Schritt X = Phase Y). Wie
+    //  könnte man eine Story aus einer Storytellingtheorie erzeugen? Was müsste man tun, um andere - ausreichend verschiedene Stories zu erzeugen?
+    //  Zunächst so programmieren, dass neue Stories immer schneller programmiert
+    //  sind (Blöcke / Wiederverwendung?)
+    //  In Stories wichtige Punkte manuell austauschen (anderer NPC, amderer Ort,
+    //  anderes Tier, andere Hintergrundgeschichte, andere Erlösung...). Dann
+    //  automatisch wählen lassen?
+
 
     @FunctionalInterface
     interface IStoryAdvancer {

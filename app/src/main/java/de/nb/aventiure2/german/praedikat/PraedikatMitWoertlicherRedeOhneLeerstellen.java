@@ -105,17 +105,6 @@ public class PraedikatMitWoertlicherRedeOhneLeerstellen
         return false;
     }
 
-    @Nullable
-    @Override
-    public String getSpeziellesVorfeld() {
-        final String speziellesVorfeldFromSuper = super.getSpeziellesVorfeld();
-        if (speziellesVorfeldFromSuper != null) {
-            return speziellesVorfeldFromSuper;
-        }
-
-        return null;
-    }
-
     @Override
     public String getMittelfeld(final Collection<Modalpartikel> modalpartikeln) {
         return joinToNull(

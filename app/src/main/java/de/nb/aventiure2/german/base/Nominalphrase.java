@@ -29,6 +29,9 @@ public class Nominalphrase extends SubstantivischePhrase {
             np(PL_MFN, DEF, "Dinge", "Dingen");
     public static final Nominalphrase GESPRAECH =
             np(N, DEF, "Gespräch");
+    public static final Nominalphrase IHRE_HAARE =
+            np(PL_MFN, null, "ihre Haare",
+                    "ihren Haaren");
 
     public static Nominalphrase np(final NumerusGenus numerusGenus,
                                    @Nullable final Artikel.Typ artikelTyp,

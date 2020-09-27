@@ -15,7 +15,7 @@ import static de.nb.aventiure2.german.base.GermanUtil.joinToNull;
  * Ein Prädikat (Verb ggf. mit Präfix) bei dem das Verb mit einem Subjekt und einem
  * (Präpositional-) Objekt steht - alle Leerstellen sind besetzt.
  */
-class PraedikatSubjObjOhneLeerstellen
+public class PraedikatSubjObjOhneLeerstellen
         extends AbstractPraedikatOhneLeerstellen {
     /**
      * Der Kasus (z.B. Akkusativ, "die Kugel nehmen") oder Präpositionalkasus

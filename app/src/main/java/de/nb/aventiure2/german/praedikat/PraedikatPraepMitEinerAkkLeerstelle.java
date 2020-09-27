@@ -42,7 +42,8 @@ class PraedikatPraepMitEinerAkkLeerstelle
         return mitAkk(describable);
     }
 
-    public AbstractPraedikatOhneLeerstellen mitAkk(final SubstantivischePhrase describableAkk) {
+    public AbstractPraedikatOhneLeerstellen mitAkk(
+            final SubstantivischePhrase describableAkk) {
         return new PraedikatAkkPraepOhneLeerstellen(
                 verb, praepositionMitKasus, describableAkk, describablePraep);
     }

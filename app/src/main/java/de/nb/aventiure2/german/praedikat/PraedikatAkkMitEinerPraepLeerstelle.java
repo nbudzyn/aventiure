@@ -6,7 +6,7 @@ import de.nb.aventiure2.german.base.PraepositionMitKasus;
 import de.nb.aventiure2.german.base.SubstantivischePhrase;
 
 /**
- * Ein Prädikat, in dem ein Akkusativ schon gesetzt ist und genau nur noch für
+ * Ein Prädikat, in dem ein Akkusativ schon gesetzt ist und in dem genau nur noch für
  * ein Präpositionalobjekt eine Leerstelle besteht.
  */
 class PraedikatAkkMitEinerPraepLeerstelle implements PraedikatMitEinerObjektleerstelle {
