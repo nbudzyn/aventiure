@@ -130,7 +130,7 @@ public class RapunzelTakingComp extends AbstractTakingComp {
                                 + " "
                                 + givenDescShort.akk()
                                 + " und versucht, "
-                                + rapunzelAnaph.reflPron() // sich
+                                + rapunzelAnaph.reflPron().akk() // sich
                                 + " darin zu spiegeln. "
                                 + capitalize(rapunzelAnaph.persPron().nom())
                                 + " streicht eine Locke zurecht, dann gibt "
