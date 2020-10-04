@@ -12,6 +12,7 @@ import de.nb.aventiure2.german.base.Nominalphrase;
 import de.nb.aventiure2.german.base.SubstantivischePhrase;
 
 import static de.nb.aventiure2.data.world.gameobject.World.*;
+import static de.nb.aventiure2.data.world.syscomp.feelings.Mood.GLUECKLICH;
 import static de.nb.aventiure2.data.world.time.AvTimeSpan.*;
 import static de.nb.aventiure2.german.base.GermanUtil.capitalize;
 import static de.nb.aventiure2.german.base.NumerusGenus.F;
@@ -96,6 +97,7 @@ public class RapunzelTakingComp extends AbstractTakingComp {
                 getAnaphPersPronWennMglSonstShortDescription(given);
 
         final Nominalphrase givenDesc = world.getDescription(given);
+        final Nominalphrase givenDescShort = world.getDescription(given, true);
         final Nominalphrase givenDescAtFirstSight =
                 // "eine goldene Kugel"
                 given.descriptionComp().getDescriptionAtFirstSight();
@@ -111,10 +113,37 @@ public class RapunzelTakingComp extends AbstractTakingComp {
                         + rapunzelAnaph.persPron().nom()
                         + " dir "
                         + givenDesc.akk()
-                        + " zurück", secs(30))
-                // STORY Alternative Texte
+                        + " zurück", secs(30)),
+                neuerSatz(rapunzelAnaph.nom()
+                        + " schaut dich glücklich an und nimmt "
+                        + givenDescShort.akk()
+                        + ". "
+                        + capitalize(rapunzelAnaph.persPron().nom())
+                        + " spielt "
+                        + "eine Weile damit herum, dann gibt "
+                        + rapunzelAnaph.persPron().nom()
+                        + " "
+                        + givenDescShort.persPron().akk()
+                        + " dir zurück", secs(30)),
+                neuerSatz("Gespannt nimmt "
+                                + rapunzelAnaph.nom()
+                                + " "
+                                + givenDescShort.akk()
+                                + " und versucht, "
+                                + rapunzelAnaph.reflPron() // sich
+                                + " darin zu spiegeln. "
+                                + capitalize(rapunzelAnaph.persPron().nom())
+                                + " streicht eine Locke zurecht, dann gibt "
+                                + rapunzelAnaph.persPron().nom()
+                                + " dir "
+                                + givenDescShort.persPron().akk()
+                                + " zurück",
+                        secs(30))
         );
+
         memoryComp.upgradeKnown(given);
+
+        world.loadSC().feelingsComp().setMoodMin(GLUECKLICH);
 
         // Das Gespräch wird nicht beendet!
     }
