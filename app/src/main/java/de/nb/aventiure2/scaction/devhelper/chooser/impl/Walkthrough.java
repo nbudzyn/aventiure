@@ -129,6 +129,30 @@ public class Walkthrough {
             ANFANG_BIS_OBEN_BEI_RAPUNZEL
                     .append(OBEN_BEI_RAPUNZEL_BIS_ENDE);
 
+    //  -- separate Walkthroughs --
+    public static final Walkthrough SEP_ANFANG_BIS_MIT_FROSCH_BEI_RAPUNZEL =
+            ANFANG_BIS_FROSCHVERSPRECHEN.append(new Walkthrough(
+                    "Den Frosch mitnehmen", "Die Kugel nehmen",
+                    "Den Weg Richtung Schloss gehen",
+                    "In Richtung Schloss gehen",
+                    "Den schmalen Pfad aufwärtsgehen",
+                    "In den Schatten der Bäume setzen",
+                    "Rasten",
+                    "Rasten",
+                    "Rasten",
+                    "Rasten", // Frau kommt
+                    "Rasten",
+                    "Rasten",
+                    "Rasten",
+                    "Rasten",
+                    "Rasten",
+                    "Rasten",
+                    "Aus dem Schatten der Bäume treten",
+                    "Rufen: „Lass dein Haar herunter.“",
+                    "An den Haaren hinaufsteigen",
+                    "Die goldene Kugel hochwerfen"
+            ));
+
     private final ImmutableList<String> steps;
 
     public Walkthrough(final String... steps) {

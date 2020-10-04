@@ -68,6 +68,13 @@ public class WalkerTest {
     }
 
     @Test
+    public void baa_doStrictWalkthrough_separat_bis_mit_frosch_bei_rapunzel() {
+        doWalkthrough(Walkthrough.SEP_ANFANG_BIS_MIT_FROSCH_BEI_RAPUNZEL);
+
+        assertFalse(db.narrationDao().requireNarration().getText().contains("@"));
+    }
+
+    @Test
     public void walkActionsWithRandomAdditions() {
         int maxSteps = 0;
         while (maxSteps < Walkthrough.FULL.numSteps()) {

@@ -47,7 +47,8 @@ public class GebenAction<
         extends AbstractScAction {
 
     // STORY Man könnte auch der Zauberin Dinge zu geben versuchen.
-    //  Sie identifiziert die Goldene Kugel sofort als Diebesgut - "lasst euch nicht erwischen".
+    //  Sie identifiziert die Goldene Kugel sofort als Diebesgut - "lasst euch nicht erwischen" oder
+    //  "so einer seit ihr also"
 
     @NonNull
     private final TAKER taker;

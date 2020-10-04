@@ -29,12 +29,11 @@ public class RapunzelTakingComp extends AbstractTakingComp {
     @Override
     public <GIVEN extends IDescribableGO & ILocatableGO>
     SCTakeAction<GIVEN> getAction(final GIVEN given) {
-        // STORY "RAPUNZEL dreht SIE in den Händen und wirft SIE sanft in die Höhe - dann
-        //  gibt sie dir DIE KUGEL zurück"
-//        if (given.is(GOLDENE_KUGEL)) {
-//            narrateTakerAndDo_GoldeneKugel();
-//            return;
-//        }
+        if (given.is(GOLDENE_KUGEL)) {
+            return SCTakeAction.zunaechstAngenommen(
+                    given,
+                    this::narrateTakerAndDo_GoldeneKugel);
+        }
 
         return SCTakeAction.sofortAbgelehnt(
                 given,
@@ -83,6 +82,37 @@ public class RapunzelTakingComp extends AbstractTakingComp {
                         + " bekommen kann.“ "
                         + capitalize(rapunzelAnaph.persPron().nom())
                         + " lächelt dich liebenswürdig an", secs(10))
+        );
+        memoryComp.upgradeKnown(given);
+
+        // Das Gespräch wird nicht beendet!
+    }
+
+    private <GIVEN extends IDescribableGO & ILocatableGO> void narrateTakerAndDo_GoldeneKugel(
+            final GIVEN given) {
+        final SubstantivischePhrase rapunzelAnaph =
+                getAnaphPersPronWennMglSonstShortDescription(RAPUNZEL);
+        final SubstantivischePhrase givenAnaph =
+                getAnaphPersPronWennMglSonstShortDescription(given);
+
+        final Nominalphrase givenDesc = world.getDescription(given);
+        final Nominalphrase givenDescAtFirstSight =
+                // "eine goldene Kugel"
+                given.descriptionComp().getDescriptionAtFirstSight();
+
+        n.addAlt(
+                neuerSatz(rapunzelAnaph.nom()
+                        + " dreht "
+                        + givenAnaph.akk()
+                        + " in den Händen und wirft "
+                        + givenAnaph.persPron().akk()
+                        + " sanft "
+                        + "in die Höhe - dann gibt "
+                        + rapunzelAnaph.persPron().nom()
+                        + " dir "
+                        + givenDesc.akk()
+                        + " zurück", secs(30))
+                // STORY Alternative Texte
         );
         memoryComp.upgradeKnown(given);
 

@@ -269,7 +269,7 @@ public class RapunzelReactionsComp
         stateComp.setState(STILL);
         memoryComp.upgradeKnown(SPIELER_CHARAKTER);
 
-        loadSC().feelingsComp().setMoodMin(AUFGEDREHT);
+        loadSC().feelingsComp().setMood(AUFGEDREHT);
     }
 
     private void onSCEnter_ObenImAltenTurm_RapunzelBekannt() {

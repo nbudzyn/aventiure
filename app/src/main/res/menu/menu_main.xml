@@ -1,22 +1,24 @@
 <?xml version="1.0" encoding="utf-8"?>
-<menu xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
     <item
         android:id="@+id/walk_anfang_bis_froschversprechen"
-        android:title="Frosch alles versprechen"/>
+        android:title="Frosch alles versprechen" />
     <item
         android:id="@+id/walk_anfang_bis_schlossfest_schloss_betreten"
-        android:title="Schlossfest: Schloss betreten"/>
+        android:title="Schlossfest: Schloss betreten" />
     <item
         android:id="@+id/walk_anfang_bis_prinzabfahrt"
-        android:title="Abfahrt des Prinzen"/>
+        android:title="Abfahrt des Prinzen" />
     <item
         android:id="@+id/walk_anfang_bis_rapunzelruf"
-        android:title="Rapunzelruf"/>
+        android:title="Rapunzelruf" />
     <item
         android:id="@+id/walk_anfang_bis_oben_bei_rapunzel"
-        android:title="Oben bei Rapunzel"/>
+        android:title="Oben bei Rapunzel" />
     <item
         android:id="@+id/walk_full"
-        android:title="Alles"/>
+        android:title="Alles" />
+    <item
+        android:id="@+id/walk_sep_anfang_bis_mit_frosch_bei_rapunzel"
+        android:title="Separat: Anfang bis mit Frosch bei Rapunzel" />
 </menu>
