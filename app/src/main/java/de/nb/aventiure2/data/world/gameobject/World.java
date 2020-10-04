@@ -19,7 +19,6 @@ import de.nb.aventiure2.data.database.AvDatabase;
 import de.nb.aventiure2.data.world.base.GameObject;
 import de.nb.aventiure2.data.world.base.GameObjectId;
 import de.nb.aventiure2.data.world.base.IGameObject;
-import de.nb.aventiure2.data.world.base.Known;
 import de.nb.aventiure2.data.world.gameobject.player.*;
 import de.nb.aventiure2.data.world.syscomp.alive.AliveSystem;
 import de.nb.aventiure2.data.world.syscomp.alive.ILivingBeingGO;
@@ -347,40 +346,6 @@ public class World {
         for (final GameObject gameObject : all.values()) {
             gameObject.scActionDone(startTimeOfUserAction);
         }
-    }
-
-    public void upgradeKnownToSC(
-            final IGameObject gameObject) {
-        upgradeKnownToSC(gameObject.getId());
-    }
-
-    public void upgradeKnownToSC(
-            final GameObjectId gameObjectId) {
-        upgradeKnownToSC(gameObjectId,
-                loadSC().locationComp().getLocationId());
-    }
-
-    public void upgradeKnownToSC(
-            final GameObjectId gameObjectId,
-            @Nullable final GameObjectId locationId) {
-        upgradeKnownToSC(gameObjectId,
-                locationId != null ? ((ILocationGO) load(locationId)) : null);
-    }
-
-    public void upgradeKnownToSC(
-            final IGameObject gameObject,
-            @Nullable final ILocationGO location) {
-        upgradeKnownToSC(gameObject.getId(), location);
-    }
-
-    public void upgradeKnownToSC(
-            final GameObjectId gameObjectId,
-            @Nullable final ILocationGO location) {
-        loadSC().memoryComp().upgradeKnown(gameObjectId, getKnown(location));
-    }
-
-    public Known getKnown(@Nullable final ILocationGO location) {
-        return Known.getKnown(locationSystem.getLichtverhaeltnisse(location));
     }
 
     /**

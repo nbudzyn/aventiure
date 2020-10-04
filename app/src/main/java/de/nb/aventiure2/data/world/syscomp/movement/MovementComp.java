@@ -11,17 +11,17 @@ import de.nb.aventiure2.data.world.base.GameObject;
 import de.nb.aventiure2.data.world.base.GameObjectId;
 import de.nb.aventiure2.data.world.base.ISCActionDoneListenerComponent;
 import de.nb.aventiure2.data.world.base.SpatialConnection;
-import de.nb.aventiure2.data.world.gameobject.World;
+import de.nb.aventiure2.data.world.gameobject.*;
 import de.nb.aventiure2.data.world.syscomp.location.LocationComp;
 import de.nb.aventiure2.data.world.syscomp.spatialconnection.ISpatiallyConnectedGO;
 import de.nb.aventiure2.data.world.syscomp.spatialconnection.NumberOfWays;
 import de.nb.aventiure2.data.world.syscomp.spatialconnection.impl.SpatialStandardStep;
 import de.nb.aventiure2.data.world.syscomp.spatialconnection.system.SpatialConnectionSystem;
 import de.nb.aventiure2.data.world.syscomp.storingplace.ILocationGO;
-import de.nb.aventiure2.data.world.time.AvDateTime;
+import de.nb.aventiure2.data.world.time.*;
 
 import static com.google.common.base.Preconditions.checkNotNull;
-import static de.nb.aventiure2.data.world.gameobject.World.SPIELER_CHARAKTER;
+import static de.nb.aventiure2.data.world.gameobject.World.*;
 import static de.nb.aventiure2.data.world.syscomp.movement.MovementPCD.PauseForSCAction.DO_START_LEAVING;
 import static de.nb.aventiure2.data.world.syscomp.movement.MovementPCD.PauseForSCAction.PAUSED;
 import static de.nb.aventiure2.data.world.syscomp.movement.MovementPCD.PauseForSCAction.UNPAUSED;
@@ -352,7 +352,7 @@ public class MovementComp
 
             movementNarrator.narrateScUeberholtMovingGO();
 
-            world.upgradeKnownToSC(getGameObjectId());
+            world.loadSC().memoryComp().upgradeKnown(getGameObjectId());
 
             return;
         }
@@ -363,7 +363,7 @@ public class MovementComp
             // Zauberin kommt von scTo, hat aber schon scFrom betreten
             movementNarrator.narrateScGehtMovingGOEntgegenUndLaesstEsHinterSich();
 
-            world.upgradeKnownToSC(getGameObjectId());
+            world.loadSC().memoryComp().upgradeKnown(getGameObjectId());
 
             return;
         }
@@ -374,7 +374,7 @@ public class MovementComp
             final ILocationGO scTo) {
         narrateScTrifftMovingGOInTo(scFrom, scTo);
 
-        world.upgradeKnownToSC(getGameObjectId());
+        world.loadSC().memoryComp().upgradeKnown(getGameObjectId());
     }
 
     public <FROM extends ILocationGO & ISpatiallyConnectedGO>

@@ -26,7 +26,7 @@ import static de.nb.aventiure2.data.world.time.AvTimeSpan.*;
 import static de.nb.aventiure2.german.base.StructuralElement.PARAGRAPH;
 import static de.nb.aventiure2.german.base.StructuralElement.SENTENCE;
 import static de.nb.aventiure2.german.description.AllgDescription.neuerSatz;
-import static de.nb.aventiure2.german.description.DuDescription.du;
+import static de.nb.aventiure2.german.description.DuDescriptionBuilder.du;
 
 /**
  * An implementation of {@link AbstractSpatialConnectionComp}

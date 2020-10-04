@@ -24,15 +24,15 @@ class ZweiPraedikateOhneLeerstellen implements PraedikatOhneLeerstellen {
     }
 
     @Override
-    public String getDuHauptsatzMitKonjunktionaladverb(final String konjunktionaladverb) {
+    public String getDuHauptsatzMitVorfeld(final String vorfeld) {
         if (ersterSatz.duHauptsatzLaesstSichMitNachfolgendemDuHauptsatzZusammenziehen()) {
-            return ersterSatz.getDuHauptsatzMitKonjunktionaladverb(konjunktionaladverb)
+            return ersterSatz.getDuHauptsatzMitVorfeld(vorfeld)
                     // "Dann hebst du die goldene Kugel auf"
                     + " und "
                     + zweiterSatz.getDuSatzanschlussOhneSubjekt(); // "nimmst ein Bad"
         }
 
-        return ersterSatz.getDuHauptsatzMitKonjunktionaladverb(konjunktionaladverb)
+        return ersterSatz.getDuHauptsatzMitVorfeld(vorfeld)
                 // "Dann hebst du die goldene Kugel auf"
                 + "; "
                 + zweiterSatz.getDuHauptsatz(); // "du nimmst ein Bad"
@@ -128,5 +128,11 @@ class ZweiPraedikateOhneLeerstellen implements PraedikatOhneLeerstellen {
         return ersterSatz.getZuInfinitiv(person, numerus)
                 + " und "
                 + zweiterSatz.getZuInfinitiv(person, numerus);
+    }
+
+    @Nullable
+    @Override
+    public String getSpeziellesVorfeld() {
+        return ersterSatz.getSpeziellesVorfeld();
     }
 }

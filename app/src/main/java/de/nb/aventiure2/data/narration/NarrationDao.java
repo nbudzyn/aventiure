@@ -20,7 +20,7 @@ import de.nb.aventiure2.data.narration.Narration.NarrationSource;
 import de.nb.aventiure2.data.world.time.*;
 import de.nb.aventiure2.german.base.StructuralElement;
 import de.nb.aventiure2.german.description.AbstractDescription;
-import de.nb.aventiure2.german.description.DuDescription;
+import de.nb.aventiure2.german.description.AbstractDuDescription;
 
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
@@ -111,6 +111,7 @@ public abstract class NarrationDao {
 
     private void addAlt(final Collection<AbstractDescription<?>> alternatives,
                         final Narration initialNarration) {
+
         checkArgument(alternatives.size() > 0,
                 "No alternatives");
 
@@ -152,8 +153,7 @@ public abstract class NarrationDao {
     //  - .phorik(..) automatisch oder heuristisch setzen?!
     private void add(final AbstractDescription<?> desc,
                      final Narration initialNarration) {
-        add(chooseNextFrom(initialNarration,
-                toNarrationAdditions(desc, initialNarration)));
+        add(chooseNextFrom(initialNarration, toNarrationAdditions(desc, initialNarration)));
 
         nowDao.passTime(desc.getTimeElapsed());
     }
@@ -164,11 +164,10 @@ public abstract class NarrationDao {
         // STORY Statt "und gehst nach Norden": ", bevor du nach Norden gehst"?
         //  (Allerdings sollte der Nebensatz dann eher eine Nebensache enthalten...)
 
-        if (initialNarration
-                .allowsAdditionalDuSatzreihengliedOhneSubjekt() &&
+        if (initialNarration.allowsAdditionalDuSatzreihengliedOhneSubjekt() &&
                 desc.getStartsNew() == WORD &&
-                desc instanceof DuDescription) {
-            final DuDescription duDesc = (DuDescription) desc;
+                desc instanceof AbstractDuDescription) {
+            final AbstractDuDescription duDesc = (AbstractDuDescription) desc;
             return ImmutableList.of(t(desc.getStartsNew(),
                     "und " +
                             duDesc.getDescriptionSatzanschlussOhneSubjekt())
@@ -189,21 +188,19 @@ public abstract class NarrationDao {
                     .phorikKandidat(desc.getPhorikKandidat())
                     .beendet(desc.getEndsThis()));
         } else {
-            final ImmutableList.Builder<NarrationAddition> alternatives =
-                    ImmutableList.builder();
+            final ImmutableList.Builder<NarrationAddition> alternatives = ImmutableList.builder();
 
             final StructuralElement startsNew = startsNewAtLeastSentenceForDuDescription(desc);
 
             final NarrationAddition standard = toHauptsatzNarrationAddition(startsNew, desc);
             alternatives.add(standard);
 
-            if (desc instanceof DuDescription) {
+            if (desc instanceof AbstractDuDescription) {
                 final NarrationAddition speziellesVorfeld =
                         toHauptsatzMitSpeziellemVorfeldNarrationAddition(
                                 startsNewAtLeastSentenceForDuDescription(desc),
-                                (DuDescription) desc);
-                if (!speziellesVorfeld.getText().equals(
-                        standard.getText())) {
+                                (AbstractDuDescription) desc);
+                if (!speziellesVorfeld.getText().equals(standard.getText())) {
                     alternatives.add(speziellesVorfeld);
                 }
             }
@@ -214,8 +211,8 @@ public abstract class NarrationDao {
 
     private static StructuralElement startsNewAtLeastSentenceForDuDescription(
             final AbstractDescription<?> desc) {
-        return (desc instanceof DuDescription) ?
-                // Bei einer DuDescription ist der Hauptsatz ein echter
+        return (desc instanceof AbstractDuDescription) ?
+                // Bei einer AbstractDuDescription ist der Hauptsatz ein echter
                 // Hauptsatz. Daher muss ein neuer Satz begonnen werden.
                 max(desc.getStartsNew(), SENTENCE) :
                 // Ansonsten könnte der "Hauptsatz" auch einfach ein paar Wörter sein,
@@ -237,7 +234,7 @@ public abstract class NarrationDao {
 
     private static NarrationAddition toHauptsatzMitSpeziellemVorfeldNarrationAddition(
             final StructuralElement startsNew,
-            @NonNull final DuDescription desc) {
+            @NonNull final AbstractDuDescription desc) {
         return t(startsNew,
                 desc.getDescriptionHauptsatzMitSpeziellemVorfeld())
                 .komma(desc.isKommaStehtAus())

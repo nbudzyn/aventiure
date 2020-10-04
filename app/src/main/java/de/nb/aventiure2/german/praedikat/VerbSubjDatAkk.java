@@ -12,9 +12,14 @@ import de.nb.aventiure2.german.base.SubstantivischePhrase;
  * einem Akkusativ-Objekt steht.
  */
 public enum VerbSubjDatAkk implements Praedikat {
+    ANBIETEN("anbieten", "bietest", "an"),
+    GEBEN("geben", "gibst"),
+    HINHALTEN("hinhalten", "hältst", "in"),
     // "dem Frosch Angebote machen"
     MACHEN("machen", "machst"),
+    REICHEN("reichen", "reichst"),
     VERSPRECHEN("versprechen", "versprichst"),
+    ZEIGEN("zeigen", "zeigst"),
     ;
 
     /**

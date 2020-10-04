@@ -4,12 +4,12 @@ import java.util.Collection;
 
 import javax.annotation.Nullable;
 
+import de.nb.aventiure2.german.base.Numerus;
+import de.nb.aventiure2.german.base.Person;
 import de.nb.aventiure2.german.base.Reflexivpronomen;
 import de.nb.aventiure2.german.base.SubstantivischePhrase;
 
 import static de.nb.aventiure2.german.base.GermanUtil.joinToNull;
-import static de.nb.aventiure2.german.base.Numerus.SG;
-import static de.nb.aventiure2.german.base.Person.P2;
 
 /**
  * Ein Prädikat wie "die Kugel an sich nehmen", das mit einer
@@ -102,7 +102,7 @@ class PraedikatSubjReflPraepositionalkasusAkkObjOhneLeerstellen
     @Nullable
     @Override
     public String getSpeziellesVorfeld() {
-        final String speziellesVorfeldFromSuper = super.getSpeziellesVorfeld();
+        @Nullable final String speziellesVorfeldFromSuper = super.getSpeziellesVorfeld();
         if (speziellesVorfeldFromSuper != null) {
             return speziellesVorfeldFromSuper;
         }
@@ -118,7 +118,9 @@ class PraedikatSubjReflPraepositionalkasusAkkObjOhneLeerstellen
     }
 
     @Override
-    public String getMittelfeld(final Collection<Modalpartikel> modalpartikeln) {
+    public String getMittelfeld(final Collection<Modalpartikel> modalpartikeln,
+                                final Person personSubjekt,
+                                final Numerus numerusSubjekt) {
         checkKeinPartikelVerb();
 
         return joinToNull(
@@ -126,14 +128,16 @@ class PraedikatSubjReflPraepositionalkasusAkkObjOhneLeerstellen
                 akkObj.akk(), // "die goldene Kugel"
                 joinToNull(modalpartikeln), // "besser doch"
                 getAdverbialeAngabeSkopusVerbAllg(), // "erneut"
-                Reflexivpronomen.get(P2, SG).im(reflPraepositionalkasusVerbAkkObj.
-                        getPrapositionMitKasus()), // "an dich",
+                Reflexivpronomen.get(personSubjekt, numerusSubjekt)
+                        .im(reflPraepositionalkasusVerbAkkObj
+                                .getPrapositionMitKasus()), // "an dich",
                 getAdverbialeAngabeSkopusVerbWohinWoher() // "in deine Jackentasche"
         );
     }
 
     @Override
-    public String getNachfeld() {
+    public String getNachfeld(final Person personSubjekt,
+                              final Numerus numerusSubjekt) {
         return null;
     }
 

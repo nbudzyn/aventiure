@@ -6,6 +6,8 @@ import java.util.Collection;
 
 import javax.annotation.Nullable;
 
+import de.nb.aventiure2.german.base.Numerus;
+import de.nb.aventiure2.german.base.Person;
 import de.nb.aventiure2.german.base.WoertlicheRede;
 
 import static de.nb.aventiure2.german.base.GermanUtil.joinToNull;
@@ -106,7 +108,9 @@ public class PraedikatMitWoertlicherRedeOhneLeerstellen
     }
 
     @Override
-    public String getMittelfeld(final Collection<Modalpartikel> modalpartikeln) {
+    public String getMittelfeld(final Collection<Modalpartikel> modalpartikeln,
+                                final Person personSubjekt,
+                                final Numerus numerusSubjekt) {
         return joinToNull(
                 getAdverbialeAngabeSkopusSatz(), // "aus einer Laune heraus"
                 modalpartikeln,  // "mal eben"
@@ -116,7 +120,8 @@ public class PraedikatMitWoertlicherRedeOhneLeerstellen
     }
 
     @Override
-    public String getNachfeld() {
+    public String getNachfeld(final Person personSubjekt,
+                              final Numerus numerusSubjekt) {
         return joinToNull(
                 ":",
                 woertlicheRede.amSatzende()); // "„Kommt alle her.“"

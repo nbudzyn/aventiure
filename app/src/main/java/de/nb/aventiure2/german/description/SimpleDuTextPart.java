@@ -3,12 +3,12 @@ package de.nb.aventiure2.german.description;
 import androidx.annotation.Nullable;
 
 import de.nb.aventiure2.german.base.GermanUtil;
-import de.nb.aventiure2.german.praedikat.DuTextPart;
+import de.nb.aventiure2.german.praedikat.AbstractDuTextPart;
 
 import static com.google.common.base.Preconditions.checkArgument;
 import static de.nb.aventiure2.german.base.GermanUtil.joinToNull;
 
-public class SimpleDuTextPart implements DuTextPart {
+public class SimpleDuTextPart implements AbstractDuTextPart {
     /**
      * Something like "gehst"
      */
@@ -51,8 +51,8 @@ public class SimpleDuTextPart implements DuTextPart {
     }
 
     @Override
-    public String getDuHauptsatzMitKonjunktionaladverb(final String konjunktionaladverb) {
-        return GermanUtil.buildHauptsatz(konjunktionaladverb, // "dann"
+    public String getDuHauptsatzMitVorfeld(final String vorfeld) {
+        return GermanUtil.buildHauptsatz(vorfeld, // "dann"
                 verb, // "gehst"
                 GermanUtil.joinToNull("du", remainder)); // "du den Fluss entlang"
     }

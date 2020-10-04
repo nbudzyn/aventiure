@@ -37,7 +37,7 @@ import static de.nb.aventiure2.german.base.StructuralElement.PARAGRAPH;
 import static de.nb.aventiure2.german.base.StructuralElement.SENTENCE;
 import static de.nb.aventiure2.german.description.AllgDescription.neuerSatz;
 import static de.nb.aventiure2.german.description.AllgDescription.satzanschluss;
-import static de.nb.aventiure2.german.description.DuDescription.du;
+import static de.nb.aventiure2.german.description.DuDescriptionBuilder.du;
 import static de.nb.aventiure2.german.praedikat.SeinUtil.istSind;
 import static de.nb.aventiure2.german.praedikat.VerbSubjDatAkk.MACHEN;
 import static de.nb.aventiure2.german.praedikat.VerbSubjDatAkk.VERSPRECHEN;

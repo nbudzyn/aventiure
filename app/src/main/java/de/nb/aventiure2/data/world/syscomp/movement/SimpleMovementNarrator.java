@@ -10,8 +10,8 @@ import javax.annotation.Nullable;
 import de.nb.aventiure2.data.narration.NarrationDao;
 import de.nb.aventiure2.data.world.base.GameObjectId;
 import de.nb.aventiure2.data.world.base.SpatialConnection;
-import de.nb.aventiure2.data.world.gameobject.World;
-import de.nb.aventiure2.data.world.gameobject.player.SpielerCharakter;
+import de.nb.aventiure2.data.world.gameobject.*;
+import de.nb.aventiure2.data.world.gameobject.player.*;
 import de.nb.aventiure2.data.world.syscomp.description.IDescribableGO;
 import de.nb.aventiure2.data.world.syscomp.spatialconnection.ISpatiallyConnectedGO;
 import de.nb.aventiure2.data.world.syscomp.spatialconnection.NumberOfWays;
@@ -24,11 +24,11 @@ import de.nb.aventiure2.german.description.AbstractDescription;
 import static de.nb.aventiure2.data.world.syscomp.memory.Action.Type.BEWEGEN;
 import static de.nb.aventiure2.data.world.syscomp.spatialconnection.NumberOfWays.NO_WAY;
 import static de.nb.aventiure2.data.world.syscomp.spatialconnection.NumberOfWays.ONE_IN_ONE_OUT;
-import static de.nb.aventiure2.data.world.time.AvTimeSpan.noTime;
+import static de.nb.aventiure2.data.world.time.AvTimeSpan.*;
 import static de.nb.aventiure2.german.base.StructuralElement.PARAGRAPH;
 import static de.nb.aventiure2.german.base.StructuralElement.SENTENCE;
 import static de.nb.aventiure2.german.description.AllgDescription.neuerSatz;
-import static de.nb.aventiure2.german.description.DuDescription.du;
+import static de.nb.aventiure2.german.description.DuDescriptionBuilder.du;
 
 /**
  * Grundlegende Implementierung, um dem Spieler die Bewegung
@@ -63,14 +63,12 @@ public class SimpleMovementNarrator implements IMovementNarrator {
         final String wo = locationMovingGO.storingPlaceComp().getLocationMode().getWo(eherGross);
 
         n.addAlt(
-                neuerSatz(SENTENCE,
-                        wo +
-                                " steht " +
-                                desc.nom(), noTime())
+                neuerSatz(wo +
+                        " steht " +
+                        desc.nom(), noTime())
                         .phorikKandidat(desc, gameObjectId)
                         .beendet(PARAGRAPH),
-                neuerSatz(SENTENCE,
-                        wo +
+                neuerSatz(wo +
                                 " siehst du " +
                                 descShort.nom() +
                                 " stehen",
@@ -201,9 +199,8 @@ public class SimpleMovementNarrator implements IMovementNarrator {
 
         final ImmutableCollection.Builder<AbstractDescription<?>> alt = ImmutableList.builder();
 
-        alt.add(neuerSatz(SENTENCE,
-                anaphOderDesc.nom() +
-                        " kommt dir entgegen und geht an dir vorbei", noTime())
+        alt.add(neuerSatz(anaphOderDesc.nom() +
+                " kommt dir entgegen und geht an dir vorbei", noTime())
                 .phorikKandidat(desc, gameObjectId));
         alt.add(
                 neuerSatz(PARAGRAPH,
@@ -252,15 +249,14 @@ public class SimpleMovementNarrator implements IMovementNarrator {
         final ImmutableCollection.Builder<AbstractDescription<?>> alt = ImmutableList.builder();
 
         alt.add(
-                neuerSatz(SENTENCE,
-                        anaphOderDesc.nom() +
-                                " ist gerade dabei, "
-                                + wo
-                                + "davonzugehen", noTime())
+                neuerSatz(anaphOderDesc.nom() +
+                        " ist gerade dabei, "
+                        + wo
+                        + "davonzugehen", noTime())
                         .phorikKandidat(anaphOderDesc, gameObjectId)
                         .beendet(PARAGRAPH));
         alt.add(
-                neuerSatz(SENTENCE,
+                neuerSatz(
                         anaphOderDesc.nom() +
                                 " geht gerade "
                                 + wo
@@ -311,7 +307,7 @@ public class SimpleMovementNarrator implements IMovementNarrator {
             final NumberOfWays numberOfWaysOut) {
         narrateStartsLeaving(from, to, spatialConnection, numberOfWaysOut);
 
-        world.upgradeKnownToSC(gameObjectId);
+        world.loadSC().memoryComp().upgradeKnown(gameObjectId);
     }
 
     private <FROM extends ILocationGO & ISpatiallyConnectedGO>
@@ -442,7 +438,7 @@ public class SimpleMovementNarrator implements IMovementNarrator {
             final NumberOfWays numberOfWaysIn) {
         narrateStartsEntering(from, to, spatialConnection, numberOfWaysIn);
 
-        world.upgradeKnownToSC(gameObjectId);
+        world.loadSC().memoryComp().upgradeKnown(gameObjectId);
     }
 
     final protected <FROM extends ILocationGO & ISpatiallyConnectedGO>

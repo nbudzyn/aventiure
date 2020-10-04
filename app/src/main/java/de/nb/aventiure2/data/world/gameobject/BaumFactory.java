@@ -16,18 +16,16 @@ import de.nb.aventiure2.german.description.AbstractDescription;
 
 import static de.nb.aventiure2.data.world.base.Lichtverhaeltnisse.DUNKEL;
 import static de.nb.aventiure2.data.world.base.SpatialConnectionData.conData;
-import static de.nb.aventiure2.data.world.gameobject.World.BAUM_IM_GARTEN_HINTER_DER_HUETTE_IM_WALD;
-import static de.nb.aventiure2.data.world.gameobject.World.HINTER_DER_HUETTE;
+import static de.nb.aventiure2.data.world.gameobject.World.*;
 import static de.nb.aventiure2.data.world.syscomp.storingplace.StoringPlaceType.ASTGABEL;
-import static de.nb.aventiure2.data.world.time.AvTimeSpan.mins;
+import static de.nb.aventiure2.data.world.time.AvTimeSpan.*;
 import static de.nb.aventiure2.german.base.Artikel.Typ.DEF;
 import static de.nb.aventiure2.german.base.Artikel.Typ.INDEF;
 import static de.nb.aventiure2.german.base.Nominalphrase.np;
 import static de.nb.aventiure2.german.base.NumerusGenus.M;
 import static de.nb.aventiure2.german.base.StructuralElement.PARAGRAPH;
-import static de.nb.aventiure2.german.base.StructuralElement.SENTENCE;
 import static de.nb.aventiure2.german.description.AllgDescription.neuerSatz;
-import static de.nb.aventiure2.german.description.DuDescription.du;
+import static de.nb.aventiure2.german.description.DuDescriptionBuilder.du;
 
 public class BaumFactory {
     public static final String HOCHKLETTERN = "BaumFactory_HOCHKLETTERN";
@@ -159,7 +157,7 @@ public class BaumFactory {
     }
 
     private static AbstractDescription<?> getDescOutZweitesMal() {
-        return neuerSatz(SENTENCE,
+        return neuerSatz(
                 "Dann geht es vorsichtig wieder hinunter", mins(4))
                 .beendet(PARAGRAPH);
     }

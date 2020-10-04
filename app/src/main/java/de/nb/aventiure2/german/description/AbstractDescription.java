@@ -3,7 +3,7 @@ package de.nb.aventiure2.german.description;
 import androidx.annotation.Nullable;
 
 import de.nb.aventiure2.data.narration.Narration;
-import de.nb.aventiure2.data.world.time.AvTimeSpan;
+import de.nb.aventiure2.data.world.time.*;
 import de.nb.aventiure2.german.base.IBezugsobjekt;
 import de.nb.aventiure2.german.base.NumerusGenus;
 import de.nb.aventiure2.german.base.PhorikKandidat;
@@ -23,6 +23,7 @@ public abstract class AbstractDescription<SELF extends AbstractDescription<SELF>
      * This {@link Narration} ends this ... (paragraph, e.g.)
      */
     private StructuralElement endsThis = StructuralElement.WORD;
+
 
     /**
      * Ob ein Komma aussteht. Wenn ein Komma aussteht, muss als Nächstes ein Komma folgen -
@@ -67,6 +68,7 @@ public abstract class AbstractDescription<SELF extends AbstractDescription<SELF>
         this.startsNew = startsNew;
         this.timeElapsed = timeElapsed;
     }
+
 
     public StructuralElement getStartsNew() {
         return startsNew;
@@ -147,7 +149,6 @@ public abstract class AbstractDescription<SELF extends AbstractDescription<SELF>
                                final IBezugsobjekt bezugsobjekt) {
         return phorikKandidat(new PhorikKandidat(numerusGenus, bezugsobjekt));
     }
-
 
     public SELF phorikKandidat(@Nullable final PhorikKandidat phorikKandidat) {
         this.phorikKandidat = phorikKandidat;

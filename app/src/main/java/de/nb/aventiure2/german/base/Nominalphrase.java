@@ -9,6 +9,7 @@ import static de.nb.aventiure2.german.base.GermanUtil.joinToNull;
 import static de.nb.aventiure2.german.base.NumerusGenus.F;
 import static de.nb.aventiure2.german.base.NumerusGenus.N;
 import static de.nb.aventiure2.german.base.NumerusGenus.PL_MFN;
+import static de.nb.aventiure2.german.base.Person.P3;
 
 /**
  * Eine Nominalphrase, z.B. "ein dicker, hässlicher Frosch".
@@ -129,6 +130,11 @@ public class Nominalphrase extends SubstantivischePhrase {
     }
 
     @Override
+    public Reflexivpronomen reflPron() {
+        return Reflexivpronomen.get(P3, getNumerusGenus().getNumerus());
+    }
+
+    @Override
     public Possessivartikel possArt() {
         return Possessivartikel.get(getNumerusGenus());
     }
@@ -136,5 +142,10 @@ public class Nominalphrase extends SubstantivischePhrase {
     @Override
     public Relativpronomen relPron() {
         return Relativpronomen.get(getNumerusGenus());
+    }
+
+    @Override
+    public Person getPerson() {
+        return P3;
     }
 }

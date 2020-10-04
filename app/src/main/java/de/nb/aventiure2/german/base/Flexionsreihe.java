@@ -1,6 +1,23 @@
 package de.nb.aventiure2.german.base;
 
+import java.util.Map;
+import java.util.Objects;
+
+import static de.nb.aventiure2.german.base.Kasus.AKK;
+import static de.nb.aventiure2.german.base.Kasus.DAT;
+import static de.nb.aventiure2.german.base.Kasus.NOM;
+
 class Flexionsreihe {
+    /**
+     * Erzeugt eine Flexionsriehe - Nominativ, Dativ und Akkusativ müssen
+     * angegeben sein.
+     */
+    static Flexionsreihe fr(final Map<Kasus, String> wortformen) {
+        return fr(wortformen.get(NOM),
+                wortformen.get(DAT),
+                wortformen.get(AKK));
+    }
+
     static Flexionsreihe fr(
             final String nominativDativUndAkkusativ) {
         return fr(nominativDativUndAkkusativ, nominativDativUndAkkusativ);
@@ -17,9 +34,9 @@ class Flexionsreihe {
     }
 
     private Flexionsreihe(final String nominativ, final String dativ, final String akkusativ) {
-        this.nominativ = nominativ;
-        this.dativ = dativ;
-        this.akkusativ = akkusativ;
+        this.nominativ = Objects.requireNonNull(nominativ, "nominativ");
+        this.dativ = Objects.requireNonNull(dativ, "dativ");
+        this.akkusativ = Objects.requireNonNull(akkusativ, "akkusativ");
     }
 
     private final String nominativ;

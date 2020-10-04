@@ -13,16 +13,18 @@ import javax.annotation.ParametersAreNonnullByDefault;
 
 import de.nb.aventiure2.data.database.AvDatabase;
 import de.nb.aventiure2.data.world.base.IGameObject;
-import de.nb.aventiure2.data.world.gameobject.World;
-import de.nb.aventiure2.data.world.gameobject.player.SpielerCharakter;
+import de.nb.aventiure2.data.world.gameobject.*;
+import de.nb.aventiure2.data.world.gameobject.player.*;
 import de.nb.aventiure2.data.world.syscomp.alive.ILivingBeingGO;
 import de.nb.aventiure2.data.world.syscomp.description.IDescribableGO;
 import de.nb.aventiure2.data.world.syscomp.location.ILocatableGO;
 import de.nb.aventiure2.data.world.syscomp.storingplace.ILocationGO;
+import de.nb.aventiure2.data.world.syscomp.taking.ITakerGO;
 import de.nb.aventiure2.data.world.syscomp.talking.ITalkerGO;
 import de.nb.aventiure2.scaction.impl.AblegenAction;
 import de.nb.aventiure2.scaction.impl.BewegenAction;
 import de.nb.aventiure2.scaction.impl.EssenAction;
+import de.nb.aventiure2.scaction.impl.GebenAction;
 import de.nb.aventiure2.scaction.impl.HeulenAction;
 import de.nb.aventiure2.scaction.impl.HochwerfenAction;
 import de.nb.aventiure2.scaction.impl.NehmenAction;
@@ -31,8 +33,7 @@ import de.nb.aventiure2.scaction.impl.RedenAction;
 import de.nb.aventiure2.scaction.impl.RufenAction;
 import de.nb.aventiure2.scaction.impl.SchlafenAction;
 
-import static de.nb.aventiure2.data.world.gameobject.World.HAENDE_DES_SPIELER_CHARAKTERS;
-import static de.nb.aventiure2.data.world.gameobject.World.SPIELER_CHARAKTER;
+import static de.nb.aventiure2.data.world.gameobject.World.*;
 
 /**
  * Repository for the actions the player can choose from.
@@ -60,11 +61,11 @@ public class ScActionService {
 
         final @Nullable ILocationGO location = spielerCharakter.locationComp().getLocation();
 
-        final ImmutableList<DESC_OBJ> scInventoryObjects =
-                world.loadDescribableNonLivingRecursiveInventory(SPIELER_CHARAKTER);
         final ImmutableList<LIV> scInventoryLivingBeings =
                 world.loadDescribableLivingRecursiveInventory(SPIELER_CHARAKTER);
-        final ImmutableList<? extends ILocatableGO> wasSCInDenHaendenHat =
+        final ImmutableList<DESC_OBJ> scInventoryObjects =
+                world.loadDescribableNonLivingRecursiveInventory(SPIELER_CHARAKTER);
+        final ImmutableList<DESC_OBJ> wasSCInDenHaendenHat =
                 world.loadDescribableRecursiveInventory(HAENDE_DES_SPIELER_CHARAKTERS);
 
         final ImmutableList<DESC_OBJ> objectsInLocation =
@@ -76,17 +77,20 @@ public class ScActionService {
         final List<AbstractScAction> res = new ArrayList<>();
 
         if (location != null) {
-            // TODO Hier alle Creatures übergeben - unabhängig von ihrer location!
             res.addAll(buildLivingBeingsActions(spielerCharakter,
-                    wasSCInDenHaendenHat, livingBeings));
+                    wasSCInDenHaendenHat, livingBeings,
+                    scInventoryLivingBeings, scInventoryObjects));
         }
+        res.addAll(buildPlayerOnlyAction(
+                spielerCharakter, wasSCInDenHaendenHat, location));
+        if (location != null) {
+            res.addAll(buildObjectInLocationActions(
+                    spielerCharakter,
+                    wasSCInDenHaendenHat, location, objectsInLocation,
+                    scInventoryLivingBeings, scInventoryObjects));
+        }
+
         if (!spielerCharakter.talkingComp().isInConversation()) {
-            res.addAll(buildPlayerOnlyAction(
-                    spielerCharakter, wasSCInDenHaendenHat, location));
-            if (location != null) {
-                res.addAll(buildObjectInLocationActions(
-                        wasSCInDenHaendenHat, location, objectsInLocation));
-            }
             res.addAll(buildInventoryActions(wasSCInDenHaendenHat, location,
                     scInventoryLivingBeings));
             res.addAll(buildInventoryActions(wasSCInDenHaendenHat, location,
@@ -100,18 +104,35 @@ public class ScActionService {
         return res;
     }
 
-    private <LIV extends IDescribableGO & ILocatableGO & ILivingBeingGO,
-            TALKER extends IDescribableGO & ILocatableGO & ITalkerGO<?>>
+    private <DESC_OBJ extends ILocatableGO & IDescribableGO,
+            LIV extends IDescribableGO & ILocatableGO & ILivingBeingGO,
+            TALKER extends IDescribableGO & ILocatableGO & ITalkerGO<?>,
+            TAKER extends IDescribableGO & ILocatableGO & ITakerGO<?>>
     ImmutableList<AbstractScAction> buildLivingBeingsActions(
             final SpielerCharakter spielerCharakter,
-            final List<? extends ILocatableGO> wasSCInDenHaendenHat,
-            final List<LIV> creatures) {
+            final List<DESC_OBJ> wasSCInDenHaendenHat,
+            final List<LIV> creatures,
+            final List<LIV> scInventoryLivingBeings,
+            final ImmutableList<DESC_OBJ> scInventoryObjects) {
         final ImmutableList.Builder<AbstractScAction> res = ImmutableList.builder();
 
         for (final LIV creature : creatures) {
             if (creature instanceof ITalkerGO) {
                 res.addAll(RedenAction.buildActions(db, world, (TALKER) creature));
             }
+
+            if (scCanGiveSomthingTo(creature)) {
+                if (!wasSCInDenHaendenHat.isEmpty()) {
+                    res.addAll(GebenAction.buildActions(
+                            db, world, (TAKER) creature, wasSCInDenHaendenHat));
+                } else {
+                    res.addAll(GebenAction.buildActions(db, world, (TAKER) creature,
+                            scInventoryLivingBeings));
+                    res.addAll(GebenAction.buildActions(db, world, (TAKER) creature,
+                            scInventoryObjects));
+                }
+            }
+
             if (wasSCInDenHaendenHat.isEmpty() &&
                     !spielerCharakter.talkingComp().isInConversation()) {
                 if (creature.locationComp().isMovable()) {
@@ -129,38 +150,84 @@ public class ScActionService {
             final @Nullable ILocationGO location) {
         final ImmutableList.Builder<AbstractScAction> res = ImmutableList.builder();
 
-        res.addAll(HeulenAction.buildActions(db, world, spielerCharakter));
+        if (!spielerCharakter.talkingComp().isInConversation()) {
+            res.addAll(HeulenAction.buildActions(db, world, spielerCharakter));
 
-        if (wasSCInDenHaendenHat.isEmpty()) {
-            res.addAll(RastenAction.buildActions(db, world, location));
-            res.addAll(SchlafenAction.buildActions(db, world, location));
+            if (wasSCInDenHaendenHat.isEmpty()) {
+                res.addAll(RastenAction.buildActions(db, world, location));
+                res.addAll(SchlafenAction.buildActions(db, world, location));
+            }
         }
 
         return res.build();
     }
 
     private <DESC_OBJ extends ILocatableGO & IDescribableGO,
-            TALKER extends IDescribableGO & ILocatableGO & ITalkerGO<?>>
+            LIV extends IDescribableGO & ILocatableGO & ILivingBeingGO,
+            TALKER extends IDescribableGO & ILocatableGO & ITalkerGO<?>,
+            TAKER extends IDescribableGO & ILocatableGO & ITakerGO<?>>
     ImmutableList<AbstractScAction> buildObjectInLocationActions(
-            final List<? extends ILocatableGO> wasSCInDenHaendenHat,
+            final SpielerCharakter spielerCharakter,
+            final List<DESC_OBJ> wasSCInDenHaendenHat,
             final ILocationGO location,
-            final List<? extends DESC_OBJ> objectsInLocation) {
+            final List<? extends DESC_OBJ> objectsInLocation,
+            final List<LIV> scInventoryLivingBeings,
+            final ImmutableList<DESC_OBJ> scInventoryObjects) {
         final ImmutableList.Builder<AbstractScAction> res = ImmutableList.builder();
         for (final DESC_OBJ object : objectsInLocation) {
             if (object instanceof ITalkerGO) {
-                res.addAll(RedenAction.buildActions(db, world, (TALKER) object));
+                if (spielerCharakter.talkingComp().isTalkingTo((TALKER) object) ||
+                        !spielerCharakter.talkingComp().isInConversation()) {
+                    res.addAll(RedenAction.buildActions(db, world, (TALKER) object));
+                }
             }
 
-            if (wasSCInDenHaendenHat.isEmpty() && object.locationComp().isMovable()) {
-                res.addAll(NehmenAction.buildObjectActions(db, world, object));
+            if (scCanGiveSomthingTo(object)) {
+                if (!wasSCInDenHaendenHat.isEmpty()) {
+                    res.addAll(GebenAction.buildActions(
+                            db, world, (TAKER) object, wasSCInDenHaendenHat));
+                } else {
+                    res.addAll(GebenAction.buildActions(db, world, (TAKER) object,
+                            scInventoryLivingBeings));
+                    res.addAll(GebenAction.buildActions(db, world, (TAKER) object,
+                            scInventoryObjects));
+                }
+            }
+
+            if (!spielerCharakter.talkingComp().isInConversation()) {
+                if (wasSCInDenHaendenHat.isEmpty() && object.locationComp().isMovable()) {
+                    res.addAll(NehmenAction.buildObjectActions(db, world, object));
+                }
             }
         }
 
-        if (wasSCInDenHaendenHat.isEmpty()) {
-            res.addAll(EssenAction.buildActions(db, world, location));
+        if (!spielerCharakter.talkingComp().isInConversation()) {
+            if (wasSCInDenHaendenHat.isEmpty()) {
+                res.addAll(EssenAction.buildActions(db, world, location));
+            }
         }
 
         return res.build();
+    }
+
+    private static <DESC_OBJ extends ILocatableGO & IDescribableGO> boolean scCanGiveSomthingTo(
+            final DESC_OBJ potentialTaker) {
+        if (!(potentialTaker instanceof ITakerGO<?>)) {
+            return false;
+        }
+
+        if (!(potentialTaker instanceof ITalkerGO<?>)) {
+            // Wer kein Talker ist, dem kann man potenziell immer etwas geben
+            return true;
+        }
+
+        if (((ITalkerGO<?>) potentialTaker).talkingComp().isTalkingTo(SPIELER_CHARAKTER)) {
+            // Wer Talker ist, mit dem muss man im Gespräch sein, um ihm etwas geben zu
+            // können. (Einfach so den Leuten was unter die Nase zu halten wäre extremely
+            // creapy.)
+            return true;
+        }
+        return false;
     }
 
     private <DESC_OBJ extends IDescribableGO & ILocatableGO>
@@ -178,9 +245,8 @@ public class ScActionService {
                     res.addAll(HochwerfenAction
                             .buildActions(
                                     db, world, location, inventoryObject));
-                    res.addAll(
-                            AblegenAction.buildActions(
-                                    db, world, inventoryObject, location));
+                    res.addAll(AblegenAction.buildActions(
+                            db, world, inventoryObject, location));
                 }
             }
         }

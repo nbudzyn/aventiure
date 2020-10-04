@@ -10,10 +10,11 @@ import static de.nb.aventiure2.german.base.NumerusGenus.F;
 import static de.nb.aventiure2.german.base.NumerusGenus.M;
 import static de.nb.aventiure2.german.base.NumerusGenus.N;
 import static de.nb.aventiure2.german.base.NumerusGenus.PL_MFN;
+import static de.nb.aventiure2.german.base.Person.P3;
 import static de.nb.aventiure2.german.base.Relativpronomen.Typ.REGEL;
 import static de.nb.aventiure2.german.base.Relativpronomen.Typ.WERWAS;
 
-public class Relativpronomen extends PronomenMitVollerFlexionsreihe {
+public class Relativpronomen extends SubstantivischesPronomenMitVollerFlexionsreihe {
     public enum Typ {
         // "das Kind, das"
         REGEL,
@@ -74,6 +75,13 @@ public class Relativpronomen extends PronomenMitVollerFlexionsreihe {
     }
 
     @Override
+    public Reflexivpronomen reflPron() {
+        // "Die Sache, die ich erlebt habe, - sie fühlt sich für mich im Nachhinein immer
+        // noch seltsam an."
+        return Reflexivpronomen.get(P3, getNumerusGenus().getNumerus());
+    }
+
+    @Override
     public Possessivartikel possArt() {
         return Possessivartikel.get(getNumerusGenus());
     }
@@ -83,4 +91,11 @@ public class Relativpronomen extends PronomenMitVollerFlexionsreihe {
         // "das Haus, das ich gesehen habe, DAS mir gleich aufgefallen ist"
         return this;
     }
+
+    @Override
+    public Person getPerson() {
+        // P1 und P2 ("der ich", "die du"...) sind noch nicht vorgesehen
+        return P3;
+    }
+
 }

@@ -13,6 +13,9 @@ import de.nb.aventiure2.data.world.base.GameObject;
 import de.nb.aventiure2.data.world.base.GameObjectId;
 import de.nb.aventiure2.data.world.base.IGameObject;
 import de.nb.aventiure2.data.world.base.Known;
+import de.nb.aventiure2.data.world.gameobject.*;
+import de.nb.aventiure2.data.world.syscomp.location.ILocatableGO;
+import de.nb.aventiure2.data.world.syscomp.location.LocationSystem;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
@@ -24,13 +27,20 @@ public class MemoryComp extends AbstractStatefulComponent<MemoryPCD> {
     @NonNull
     private final Map<GameObjectId, Known> initiallyKnown;
 
+    private final World world;
+    private final LocationSystem locationSystem;
+
     /**
      * Constructor for {@link MemoryComp}.
      */
     public MemoryComp(final GameObjectId gameObjectId,
                       final AvDatabase db,
+                      final World world,
+                      final LocationSystem locationSystem,
                       final Map<GameObjectId, Known> initiallyKnown) {
         super(gameObjectId, db.memoryDao());
+        this.world = world;
+        this.locationSystem = locationSystem;
         this.initiallyKnown = initiallyKnown;
     }
 
@@ -115,6 +125,37 @@ public class MemoryComp extends AbstractStatefulComponent<MemoryPCD> {
         }
     }
 
+    public void upgradeKnown(final Iterable<? extends IGameObject> objects) {
+        for (final IGameObject object : objects) {
+            upgradeKnown(object);
+        }
+    }
+
+    /**
+     * Sets the known value (based on the game object's location, but does not make
+     * it worse than it is.
+     */
+    public void upgradeKnown(final IGameObject otherGameObject) {
+        upgradeKnown(otherGameObject.getId());
+    }
+
+    public void upgradeKnown(final GameObjectId otherGameObjectId) {
+        upgradeKnown(otherGameObjectId, getKnownForLocation(otherGameObjectId));
+    }
+
+    private Known getKnownForLocation(final GameObjectId otherGameObjectId) {
+        final GameObject otherGameObject = world.load(otherGameObjectId);
+        if (!(otherGameObject instanceof ILocatableGO)) {
+            // Anscheinend ist andere Game Object ein nichtmaterielles Ding, das keinen wirklichen
+            // Aufenthaltsort in der Welt hat.
+            return Known.KNOWN_FROM_LIGHT;
+        }
+
+        return Known.getKnown(
+                locationSystem.getLichtverhaeltnisse(
+                        ((ILocatableGO) otherGameObject).locationComp().getLocation()));
+    }
+
     public void upgradeKnown(
             final Iterable<? extends IGameObject> objects,
             final Known minimalKnown) {
@@ -154,6 +195,6 @@ public class MemoryComp extends AbstractStatefulComponent<MemoryPCD> {
 
     private void setKnown(final GameObjectId otherGameObjectId,
                           final Known known) {
-        getPcd().initKnown(otherGameObjectId, known);
+        getPcd().setKnown(otherGameObjectId, known);
     }
 }

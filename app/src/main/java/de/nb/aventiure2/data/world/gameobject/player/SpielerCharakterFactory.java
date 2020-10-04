@@ -7,7 +7,7 @@ import java.util.Map;
 import de.nb.aventiure2.data.database.AvDatabase;
 import de.nb.aventiure2.data.world.base.GameObjectId;
 import de.nb.aventiure2.data.world.base.Known;
-import de.nb.aventiure2.data.world.gameobject.World;
+import de.nb.aventiure2.data.world.gameobject.*;
 import de.nb.aventiure2.data.world.syscomp.feelings.FeelingsComp;
 import de.nb.aventiure2.data.world.syscomp.feelings.Mood;
 import de.nb.aventiure2.data.world.syscomp.location.LocationComp;
@@ -15,18 +15,14 @@ import de.nb.aventiure2.data.world.syscomp.memory.MemoryComp;
 import de.nb.aventiure2.data.world.syscomp.reaction.impl.ScAutomaticReactionsComp;
 import de.nb.aventiure2.data.world.syscomp.storingplace.StoringPlaceComp;
 import de.nb.aventiure2.data.world.syscomp.talking.impl.NoSCTalkActionsTalkingComp;
-import de.nb.aventiure2.data.world.time.AvDateTime;
+import de.nb.aventiure2.data.world.time.*;
 
 import static de.nb.aventiure2.data.world.base.Known.KNOWN_FROM_LIGHT;
-import static de.nb.aventiure2.data.world.gameobject.World.EINE_TASCHE_DES_SPIELER_CHARAKTERS;
-import static de.nb.aventiure2.data.world.gameobject.World.GOLDENE_KUGEL;
-import static de.nb.aventiure2.data.world.gameobject.World.HAENDE_DES_SPIELER_CHARAKTERS;
-import static de.nb.aventiure2.data.world.gameobject.World.SCHLOSS_VORHALLE;
-import static de.nb.aventiure2.data.world.gameobject.World.SPIELER_CHARAKTER;
+import static de.nb.aventiure2.data.world.gameobject.World.*;
 import static de.nb.aventiure2.data.world.syscomp.feelings.Hunger.SATT;
 import static de.nb.aventiure2.data.world.syscomp.storingplace.StoringPlaceType.EINE_TASCHE;
-import static de.nb.aventiure2.data.world.time.AvTime.oClock;
-import static de.nb.aventiure2.data.world.time.AvTimeSpan.hours;
+import static de.nb.aventiure2.data.world.time.AvTime.*;
+import static de.nb.aventiure2.data.world.time.AvTimeSpan.*;
 
 /**
  * Der vom Spieler gesteuerte Charakter.
@@ -45,13 +41,14 @@ public class SpielerCharakterFactory {
         final FeelingsComp feelingsComp = new FeelingsComp(id, db, Mood.NEUTRAL, SATT,
                 new AvDateTime(1, oClock(8)),
                 hours(6));
+        final LocationComp locationComp = new LocationComp(id, db, world, SCHLOSS_VORHALLE, null,
+                // Ein NSC könnte den Spieler nicht so mir-nichts-dir-nichts mitnehmen.
+                false);
         return new SpielerCharakter(id,
-                new LocationComp(id, db, world, SCHLOSS_VORHALLE, null,
-                        // Ein NSC könnte den Spieler nicht so mir-nichts-dir-nichts mitnehmen.
-                        false),
+                locationComp,
                 new StoringPlaceComp(id, db, EINE_TASCHE, false),
                 feelingsComp,
-                new MemoryComp(id, db, createKnownMap()),
+                new MemoryComp(id, db, world, world.getLocationSystem(), createKnownMap()),
                 new NoSCTalkActionsTalkingComp(SPIELER_CHARAKTER, db, world),
                 new ScAutomaticReactionsComp(db, world, feelingsComp));
     }
@@ -63,6 +60,7 @@ public class SpielerCharakterFactory {
                 .put(HAENDE_DES_SPIELER_CHARAKTERS, KNOWN_FROM_LIGHT)
                 .put(EINE_TASCHE_DES_SPIELER_CHARAKTERS, KNOWN_FROM_LIGHT)
                 .put(GOLDENE_KUGEL, KNOWN_FROM_LIGHT)
+                .put(TAGESZEIT, KNOWN_FROM_LIGHT)
                 .build();
     }
 }

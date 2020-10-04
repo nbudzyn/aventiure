@@ -7,6 +7,8 @@ import java.util.Collection;
 import javax.annotation.Nullable;
 
 import de.nb.aventiure2.german.base.KasusOderPraepositionalkasus;
+import de.nb.aventiure2.german.base.Numerus;
+import de.nb.aventiure2.german.base.Person;
 import de.nb.aventiure2.german.base.SubstantivischePhrase;
 
 import static de.nb.aventiure2.german.base.GermanUtil.joinToNull;
@@ -111,7 +113,7 @@ public class PraedikatSubjObjOhneLeerstellen
     @Override
     public @Nullable
     String getSpeziellesVorfeld() {
-        final String speziellesVorfeldFromSuper = super.getSpeziellesVorfeld();
+        @Nullable final String speziellesVorfeldFromSuper = super.getSpeziellesVorfeld();
         if (speziellesVorfeldFromSuper != null) {
             return speziellesVorfeldFromSuper;
         }
@@ -127,7 +129,9 @@ public class PraedikatSubjObjOhneLeerstellen
     }
 
     @Override
-    public String getMittelfeld(final Collection<Modalpartikel> modalpartikeln) {
+    public String getMittelfeld(final Collection<Modalpartikel> modalpartikeln,
+                                final Person personSubjekt,
+                                final Numerus numerusSubjekt) {
         return joinToNull(
                 getAdverbialeAngabeSkopusSatz(), // "aus einer Laune heraus"
                 joinToNull(modalpartikeln), // "mal eben"
@@ -138,7 +142,8 @@ public class PraedikatSubjObjOhneLeerstellen
     }
 
     @Override
-    public String getNachfeld() {
+    public String getNachfeld(final Person personSubjekt,
+                              final Numerus numerusSubjekt) {
         return null;
     }
 }

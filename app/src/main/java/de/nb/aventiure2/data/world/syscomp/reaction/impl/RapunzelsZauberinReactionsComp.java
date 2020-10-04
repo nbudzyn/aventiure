@@ -8,6 +8,7 @@ import de.nb.aventiure2.data.database.AvDatabase;
 import de.nb.aventiure2.data.world.gameobject.*;
 import de.nb.aventiure2.data.world.syscomp.location.ILocatableGO;
 import de.nb.aventiure2.data.world.syscomp.location.LocationComp;
+import de.nb.aventiure2.data.world.syscomp.memory.IHasMemoryGO;
 import de.nb.aventiure2.data.world.syscomp.mentalmodel.MentalModelComp;
 import de.nb.aventiure2.data.world.syscomp.movement.MovementComp;
 import de.nb.aventiure2.data.world.syscomp.reaction.AbstractDescribableReactionsComp;
@@ -39,7 +40,7 @@ import static de.nb.aventiure2.german.base.StructuralElement.CHAPTER;
 import static de.nb.aventiure2.german.base.StructuralElement.PARAGRAPH;
 import static de.nb.aventiure2.german.base.StructuralElement.SENTENCE;
 import static de.nb.aventiure2.german.description.AllgDescription.neuerSatz;
-import static de.nb.aventiure2.german.description.DuDescription.du;
+import static de.nb.aventiure2.german.description.DuDescriptionBuilder.du;
 
 /**
  * "Reaktionen" von Rapunzels Zauberin, z.B. darauf, dass Zeit vergeht
@@ -91,7 +92,7 @@ public class RapunzelsZauberinReactionsComp
         if (locatable.is(getGameObjectId())) {
             // ...dann weiß sie nicht, wo das SC sich befindet.
             // Einzige Ausnahme:
-            // Wenn die Zauberin den SC vor dem Turm verlassen hat, geht es erst einmal
+            // Wenn die Zauberin den SC vor dem Turm verlassen hat, geht sie erst einmal
             // davon aus, dass er wohl dort noch ist, denn das ist eine Sackgasse.
             if (!world.isOrHasRecursiveLocation(from, VOR_DEM_ALTEN_TURM) ||
                     !mentalModelComp.hasAssumedLocation(
@@ -346,7 +347,7 @@ public class RapunzelsZauberinReactionsComp
 
     private void zauberinZaubertVergessenszauber() {
         if (loadSC().locationComp().hasRecursiveLocation(OBEN_IM_ALTEN_TURM)) {
-            n.add(neuerSatz(SENTENCE,
+            n.add(neuerSatz(
                     "Jetzt geht alles ganz schnell. Die magere Frau schaut "
                             + "zum Fenster "
                             + "herein. Ihr Blick fällt auf dich – und mit einem Mal "
@@ -372,6 +373,9 @@ public class RapunzelsZauberinReactionsComp
                 RAPUNZELS_HAARE, RAPUNZELRUF);
         loadSC().feelingsComp().setMood(ERSCHOEPFT);
         db.counterDao().reset(VorDemTurmConnectionComp.COUNTER_ALTER_TURM_UMRUNDET);
+
+        // Auch Rapunzel wird verzaubert und vergisst den Spieler!
+        loadRapunzel().memoryComp().forget(SPIELER_CHARAKTER, GOLDENE_KUGEL);
 
         // Die Zauberin ist schon weit auf dem Rückweg
         stateComp.narrateAndSetState(AUF_DEM_RUECKWEG_VON_RAPUNZEL);
@@ -579,6 +583,7 @@ public class RapunzelsZauberinReactionsComp
 
     @NonNull
     private <R extends
+            IHasMemoryGO &
             IHasStateGO<RapunzelState> &
             ITalkerGO<RapunzelTalkingComp>>
     R loadRapunzel() {

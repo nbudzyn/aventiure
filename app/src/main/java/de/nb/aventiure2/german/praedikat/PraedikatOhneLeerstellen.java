@@ -1,15 +1,15 @@
 package de.nb.aventiure2.german.praedikat;
 
-import androidx.annotation.Nullable;
-
 import java.util.Collection;
+
+import javax.annotation.Nullable;
 
 import de.nb.aventiure2.german.base.Numerus;
 import de.nb.aventiure2.german.base.Person;
 
 import static java.util.Arrays.asList;
 
-public interface PraedikatOhneLeerstellen extends Praedikat, DuTextPart {
+public interface PraedikatOhneLeerstellen extends Praedikat, AbstractDuTextPart {
     PraedikatOhneLeerstellen mitAdverbialerAngabe(
             @Nullable final AdverbialeAngabeSkopusSatz adverbialeAngabe);
 
@@ -90,4 +90,7 @@ public interface PraedikatOhneLeerstellen extends Praedikat, DuTextPart {
      * (nicht *"[Ich gedenke,] die Kugel an sich zu nehmen")
      */
     String getZuInfinitiv(final Person person, final Numerus numerus);
+
+    @Nullable
+    String getSpeziellesVorfeld();
 }

@@ -10,6 +10,18 @@ import java.util.Objects;
  * Informationen zur Valenz</i>.
  */
 public class Verb {
+    // STORY Kernklassen / Kerninterfaces für
+    //  - lexikalisches Wort (Lexem)?
+    //  - Wortform??
+    //  - Konstituente?
+    //  - Konstituente der Kategorie X
+    //  Klassen / Interfaces für Konstituenten gewisser Kategorien
+    //    Kategorie(instanze)n oder Subkategorien
+    //  Methoden für sytaktische Relationen (mitAdvAngabe(Präpostionalphrase)), die
+    //  eine neue KatXKonsituente erzeugen, in der die zrsprügliche
+    //  Konstituenten (oder Wörter? Wortformen?) In dieser Relation
+    //  stehen.
+
     /**
      * Infinitiv des Verbs ("aufheben")
      */

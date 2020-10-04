@@ -22,7 +22,7 @@ import static de.nb.aventiure2.data.world.syscomp.state.impl.RapunzelState.SINGE
 import static de.nb.aventiure2.data.world.time.AvTimeSpan.*;
 import static de.nb.aventiure2.german.base.StructuralElement.SENTENCE;
 import static de.nb.aventiure2.german.description.AllgDescription.neuerSatz;
-import static de.nb.aventiure2.german.description.DuDescription.du;
+import static de.nb.aventiure2.german.description.DuDescriptionBuilder.du;
 
 /**
  * Der Spielercharakter legt (wach!) eine Rast ein.
@@ -94,7 +94,7 @@ public class RastenAction extends AbstractScAction {
                 neuerSatz("Dein Herz wird ganz warm von dem Gesang", mins(4))
                         .beendet(SENTENCE));
 
-        world.upgradeKnownToSC(RAPUNZELS_GESANG);
+        world.loadSC().memoryComp().upgradeKnown(RAPUNZELS_GESANG);
     }
 
     private void narrateAndDoDunkel() {

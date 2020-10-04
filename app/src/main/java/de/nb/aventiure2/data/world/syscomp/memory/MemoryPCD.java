@@ -80,7 +80,7 @@ class MemoryPCD extends AbstractPersistentComponentData {
         knownMap.putAll(map);
     }
 
-    void initKnown(final GameObjectId otherGameObjectId, final Known known) {
+    void setKnown(final GameObjectId otherGameObjectId, final Known known) {
         if (getKnown(otherGameObjectId) == known) {
             return;
         }

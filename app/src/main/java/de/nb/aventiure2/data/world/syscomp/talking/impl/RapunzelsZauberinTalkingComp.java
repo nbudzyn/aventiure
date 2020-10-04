@@ -16,7 +16,6 @@ import static de.nb.aventiure2.german.base.Nominalphrase.np;
 import static de.nb.aventiure2.german.base.NumerusGenus.F;
 import static de.nb.aventiure2.german.base.NumerusGenus.N;
 import static de.nb.aventiure2.german.base.StructuralElement.PARAGRAPH;
-import static de.nb.aventiure2.german.base.StructuralElement.SENTENCE;
 import static de.nb.aventiure2.german.description.AllgDescription.neuerSatz;
 import static de.nb.aventiure2.german.praedikat.VerbSubjAkkPraep.FRAGEN_NACH;
 
@@ -78,7 +77,7 @@ public class RapunzelsZauberinTalkingComp extends AbstractTalkingComp {
                                 + " abweisende Antwort",
                         secs(10))
                         .phorikKandidat(anaphOderDesc, getGameObjectId()),
-                neuerSatz(SENTENCE, "„Ihr habt es wohl eilig?“, sprichst du " +
+                neuerSatz("„Ihr habt es wohl eilig?“, sprichst du " +
                                 anaphOderDesc.akk() +
                                 " an. „So ist es“, antwortet "
                                 + anaphOderDesc.persPron().nom()

@@ -4,7 +4,6 @@ import com.google.common.collect.ImmutableList;
 
 import de.nb.aventiure2.data.database.AvDatabase;
 import de.nb.aventiure2.data.world.gameobject.*;
-import de.nb.aventiure2.data.world.syscomp.reaction.impl.RapunzelReactionsComp;
 import de.nb.aventiure2.data.world.syscomp.state.impl.RapunzelState;
 import de.nb.aventiure2.data.world.syscomp.state.impl.RapunzelStateComp;
 import de.nb.aventiure2.data.world.syscomp.talking.AbstractTalkingComp;
@@ -24,15 +23,12 @@ import static de.nb.aventiure2.german.praedikat.VerbSubjObj.HINUNTERLASSEN;
  */
 public class RapunzelTalkingComp extends AbstractTalkingComp {
     private final RapunzelStateComp stateComp;
-    private final RapunzelReactionsComp reactionsComp;
 
     public RapunzelTalkingComp(final AvDatabase db,
                                final World world,
-                               final RapunzelStateComp stateComp,
-                               final RapunzelReactionsComp reactionsComp) {
+                               final RapunzelStateComp stateComp) {
         super(RAPUNZEL, db, world);
         this.stateComp = stateComp;
-        this.reactionsComp = reactionsComp;
     }
 
     @Override
@@ -76,7 +72,7 @@ public class RapunzelTalkingComp extends AbstractTalkingComp {
     }
 
     private void haareHerunterlassen() {
-        reactionsComp.rapunzelLaesstHaareZumAbstiegHerunter();
+        stateComp.rapunzelLaesstHaareZumAbstiegHerunter();
 
         unsetTalkingTo();
     }

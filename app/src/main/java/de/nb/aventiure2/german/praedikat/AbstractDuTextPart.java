@@ -2,7 +2,7 @@ package de.nb.aventiure2.german.praedikat;
 
 import de.nb.aventiure2.german.base.GermanUtil;
 
-public interface DuTextPart {
+public interface AbstractDuTextPart {
     default String getDuHauptsatzMitKonjunktionaladverbWennNoetig(
             final String konjunktionaladverb) {
         final String duHauptsatz = getDuHauptsatz();
@@ -14,10 +14,10 @@ public interface DuTextPart {
             return duHauptsatzMitSpeziellemVorfeld;
         }
 
-        return getDuHauptsatzMitKonjunktionaladverb(konjunktionaladverb);
+        return getDuHauptsatzMitVorfeld(konjunktionaladverb);
     }
 
-    String getDuHauptsatzMitKonjunktionaladverb(String konjunktionaladverb);
+    String getDuHauptsatzMitVorfeld(String vorfeld);
 
     String getDuHauptsatzMitSpeziellemVorfeld();
 

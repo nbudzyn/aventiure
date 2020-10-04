@@ -9,8 +9,9 @@ import static de.nb.aventiure2.german.base.NumerusGenus.F;
 import static de.nb.aventiure2.german.base.NumerusGenus.M;
 import static de.nb.aventiure2.german.base.NumerusGenus.N;
 import static de.nb.aventiure2.german.base.NumerusGenus.PL_MFN;
+import static de.nb.aventiure2.german.base.Person.P3;
 
-public class Personalpronomen extends PronomenMitVollerFlexionsreihe {
+public class Personalpronomen extends SubstantivischesPronomenMitVollerFlexionsreihe {
     private static final Map<NumerusGenus, Personalpronomen> ALL = ImmutableMap.of(
             M, new Personalpronomen(M,
                     fr("er", "ihm", "ihn")),
@@ -40,6 +41,12 @@ public class Personalpronomen extends PronomenMitVollerFlexionsreihe {
         return this;
     }
 
+    @Override
+    public Reflexivpronomen reflPron() {
+        // P1 und P2 sind hier noch nicht vorgesehen
+        return Reflexivpronomen.get(P3, getNumerusGenus().getNumerus());
+    }
+
     /**
      * "er, der..."
      */
@@ -54,5 +61,11 @@ public class Personalpronomen extends PronomenMitVollerFlexionsreihe {
     @Override
     public Possessivartikel possArt() {
         return Possessivartikel.get(getNumerusGenus());
+    }
+
+    @Override
+    public Person getPerson() {
+        // P1 und P2 sind hier noch nicht vorgesehen
+        return P3;
     }
 }

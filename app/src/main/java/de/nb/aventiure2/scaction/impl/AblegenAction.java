@@ -10,7 +10,7 @@ import org.jetbrains.annotations.Contract;
 import java.util.Collection;
 
 import de.nb.aventiure2.data.database.AvDatabase;
-import de.nb.aventiure2.data.world.gameobject.World;
+import de.nb.aventiure2.data.world.gameobject.*;
 import de.nb.aventiure2.data.world.syscomp.alive.ILivingBeingGO;
 import de.nb.aventiure2.data.world.syscomp.description.IDescribableGO;
 import de.nb.aventiure2.data.world.syscomp.location.ILocatableGO;
@@ -27,14 +27,12 @@ import de.nb.aventiure2.german.praedikat.PraedikatMitEinerObjektleerstelle;
 import de.nb.aventiure2.scaction.AbstractScAction;
 
 import static com.google.common.base.Preconditions.checkState;
-import static de.nb.aventiure2.data.world.gameobject.World.FROSCHPRINZ;
-import static de.nb.aventiure2.data.world.gameobject.World.SCHLOSS_VORHALLE_AM_TISCH_BEIM_FEST;
-import static de.nb.aventiure2.data.world.gameobject.World.SCHLOSS_VORHALLE_LANGER_TISCH_BEIM_FEST;
+import static de.nb.aventiure2.data.world.gameobject.World.*;
 import static de.nb.aventiure2.data.world.syscomp.feelings.Mood.ANGESPANNT;
 import static de.nb.aventiure2.data.world.syscomp.feelings.Mood.NEUTRAL;
 import static de.nb.aventiure2.data.world.syscomp.memory.Action.Type.NEHMEN;
 import static de.nb.aventiure2.data.world.syscomp.state.impl.FroschprinzState.HAT_HOCHHEBEN_GEFORDERT;
-import static de.nb.aventiure2.data.world.time.AvTimeSpan.secs;
+import static de.nb.aventiure2.data.world.time.AvTimeSpan.*;
 import static de.nb.aventiure2.german.base.GermanUtil.capitalize;
 import static de.nb.aventiure2.german.base.Numerus.SG;
 import static de.nb.aventiure2.german.base.NumerusGenus.M;
@@ -42,7 +40,7 @@ import static de.nb.aventiure2.german.base.Person.P1;
 import static de.nb.aventiure2.german.base.StructuralElement.PARAGRAPH;
 import static de.nb.aventiure2.german.description.AllgDescription.neuerSatz;
 import static de.nb.aventiure2.german.description.AllgDescription.satzanschluss;
-import static de.nb.aventiure2.german.description.DuDescription.du;
+import static de.nb.aventiure2.german.description.DuDescriptionBuilder.du;
 import static de.nb.aventiure2.german.praedikat.VerbSubjObj.ABSETZEN;
 import static de.nb.aventiure2.german.praedikat.VerbSubjObj.HINLEGEN;
 import static de.nb.aventiure2.german.praedikat.VerbSubjObj.LEGEN;
@@ -273,7 +271,7 @@ public class AblegenAction
     }
 
     private void narrateUpgradeKnownAndSetLocationAndAction() {
-        world.upgradeKnownToSC(gameObject, location);
+        world.loadSC().memoryComp().upgradeKnown(gameObject);
         gameObject.locationComp().narrateAndSetLocation(location);
         sc.memoryComp().setLastAction(buildMemorizedAction());
     }
@@ -288,6 +286,9 @@ public class AblegenAction
             if (gameObjektPersPron != null) {
                 if (isDefinitivDiskontinuitaet()) {
                     n.add(satzanschluss(
+                            // STORY Element: Satzanschluss mit "– und"
+                            //  bei Diskontinuität - kann man das dem Narrator
+                            //  beibringen?
                             "– und legst "
                                     + gameObjektPersPron.akk()
                                     + " sogleich wieder "
@@ -310,6 +311,8 @@ public class AblegenAction
                 }
 
                 if (sc.memoryComp().getLastAction().hasObject(gameObject)) {
+                    // STORY Element: Satzanschluss mit ", dann"
+                    //  - kann man das dem Narrator beibringen?
                     n.add(satzanschluss(", dann legst du "
                                     + gameObjektPersPron.akk()
                                     + (wohinDetail == null ?

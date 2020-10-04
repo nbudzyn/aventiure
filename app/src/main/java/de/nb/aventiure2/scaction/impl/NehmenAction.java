@@ -22,15 +22,16 @@ import de.nb.aventiure2.data.world.syscomp.storingplace.ILocationGO;
 import de.nb.aventiure2.german.base.Nominalphrase;
 import de.nb.aventiure2.german.base.NumerusGenus;
 import de.nb.aventiure2.german.base.SubstantivischePhrase;
+import de.nb.aventiure2.german.description.AbstractDescription;
 import de.nb.aventiure2.german.praedikat.AdverbialeAngabeSkopusSatz;
 import de.nb.aventiure2.german.praedikat.AdverbialeAngabeSkopusVerbWohinWoher;
-import de.nb.aventiure2.german.praedikat.Modalpartikel;
 import de.nb.aventiure2.german.praedikat.PraedikatMitEinerObjektleerstelle;
 import de.nb.aventiure2.german.praedikat.PraedikatOhneLeerstellen;
 import de.nb.aventiure2.scaction.AbstractScAction;
 
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkState;
+import static com.google.common.collect.ImmutableList.builder;
 import static de.nb.aventiure2.data.world.gameobject.World.*;
 import static de.nb.aventiure2.data.world.syscomp.feelings.Mood.ANGESPANNT;
 import static de.nb.aventiure2.data.world.syscomp.feelings.Mood.NEUTRAL;
@@ -38,7 +39,6 @@ import static de.nb.aventiure2.data.world.syscomp.state.impl.FroschprinzState.ER
 import static de.nb.aventiure2.data.world.syscomp.state.impl.FroschprinzState.HAT_HOCHHEBEN_GEFORDERT;
 import static de.nb.aventiure2.data.world.time.AvTimeSpan.*;
 import static de.nb.aventiure2.german.base.GermanUtil.capitalize;
-import static de.nb.aventiure2.german.base.GermanUtil.uncapitalize;
 import static de.nb.aventiure2.german.base.Kasus.AKK;
 import static de.nb.aventiure2.german.base.Numerus.SG;
 import static de.nb.aventiure2.german.base.Person.P1;
@@ -46,7 +46,9 @@ import static de.nb.aventiure2.german.base.Person.P2;
 import static de.nb.aventiure2.german.base.StructuralElement.PARAGRAPH;
 import static de.nb.aventiure2.german.description.AllgDescription.neuerSatz;
 import static de.nb.aventiure2.german.description.AllgDescription.satzanschluss;
-import static de.nb.aventiure2.german.description.DuDescription.du;
+import static de.nb.aventiure2.german.description.DescriptionUmformulierer.drueckeAus;
+import static de.nb.aventiure2.german.description.DuDescriptionBuilder.du;
+import static de.nb.aventiure2.german.description.Kohaerenzrelation.DISKONTINUITAET;
 import static de.nb.aventiure2.german.praedikat.VerbSubjObj.MITNEHMEN;
 import static de.nb.aventiure2.german.praedikat.VerbSubjObj.NEHMEN;
 
@@ -244,7 +246,7 @@ public class NehmenAction
         gameObject.locationComp()
                 .narrateAndSetLocation(targetLocation,
                         () -> {
-                            world.upgradeKnownToSC(gameObject);
+                            world.loadSC().memoryComp().upgradeKnown(gameObject);
                             sc.feelingsComp().setMood(NEUTRAL);
 
                             final SubstantivischePhrase froschDescOderAnapher =
@@ -300,7 +302,7 @@ public class NehmenAction
                 .narrateAndSetLocation(
                         targetLocation,
                         () -> {
-                            world.upgradeKnownToSC(gameObject);
+                            world.loadSC().memoryComp().upgradeKnown(gameObject);
                             sc.feelingsComp().setMood(ANGESPANNT);
                         }
                 );
@@ -325,13 +327,21 @@ public class NehmenAction
 
             final Nominalphrase froschDesc = world.getDescription(gameObject, false);
 
-            n.add(du(PARAGRAPH,
-                    "nimmst",
-                    froschDesc.akk() + " noch einmal",
-                    "noch einmal",
-                    secs(5))
-                    .undWartest()
-                    .phorikKandidat(froschDesc, FROSCHPRINZ));
+            final ImmutableList.Builder<AbstractDescription<?>> alt = builder();
+            alt.addAll(drueckeAus(DISKONTINUITAET,
+                    du(PARAGRAPH,
+                            "nimmst",
+                            froschDesc.akk(),
+                            secs(5))
+                            .undWartest()
+                            .phorikKandidat(froschDesc, FROSCHPRINZ),
+                    du(PARAGRAPH,
+                            NEHMEN.mitObj(froschDesc),
+                            secs(5))
+                            .undWartest()
+                            .phorikKandidat(froschDesc, FROSCHPRINZ)));
+
+            n.addAlt(alt);
             return;
 
         }
@@ -355,7 +365,7 @@ public class NehmenAction
     }
 
     private void narrateAndDoObject() {
-        world.upgradeKnownToSC(gameObject, gameObject.locationComp().getLocation());
+        world.loadSC().memoryComp().upgradeKnown(gameObject);
 
         narrateObject();
 
@@ -390,8 +400,8 @@ public class NehmenAction
             if (sc.memoryComp().getLastAction().is(Action.Type.HOCHWERFEN) &&
                     mood.isEmotional()) {
                 // TODO Es wäre gut, wenn das mitnehmenPraedikat direkt
-                //  eine DuDescription erzeugen könnte, gleich mit dann etc.
-                //  Oder wenn man vielleicht etwas ähliches wie eine DuDescription
+                //  eine AbstractDuDescription erzeugen könnte, gleich mit dann etc.
+                //  Oder wenn man vielleicht etwas ähliches wie eine AbstractDuDescription
                 //  erzeugen könnte, die intern das mitnehmenPraedikat enthält.
                 //  Leider müssen wir bis dahin eine AllgDescription bauen. :-(
                 final Nominalphrase objectDesc = world.getDescription(gameObject, true);
@@ -424,19 +434,26 @@ public class NehmenAction
 
     private void narrateObjectDiskontinuitaet(
             final PraedikatMitEinerObjektleerstelle nehmenPraedikat) {
-        if (n.requireNarration().dann()) {
-            final Nominalphrase objectDesc = world.getDescription(gameObject);
-            n.add(neuerSatz(PARAGRAPH,
-                    "Dann nimmst du " + objectDesc.akk() +
-                            " erneut",
-                    secs(5))
-                    .undWartest()
-                    .phorikKandidat(objectDesc, gameObject.getId()));
-            return;
-        }
+        final Nominalphrase objectDesc = world.getDescription(gameObject);
+        final Nominalphrase objectDescShort = world.getDescription(gameObject, true);
+
+        final ImmutableList.Builder<AbstractDescription<?>> alt = ImmutableList.builder();
+
+        alt.addAll(drueckeAus(DISKONTINUITAET,
+                du(PARAGRAPH,
+                        nehmenPraedikat.mitObj(objectDesc),
+                        secs(5))
+                        .undWartest()
+                        .phorikKandidat(objectDesc, gameObject.getId()),
+                du(PARAGRAPH,
+                        nehmenPraedikat.mitObj(objectDescShort),
+                        secs(5))
+                        .undWartest()
+                        .phorikKandidat(objectDescShort, gameObject.getId()))
+        );
 
         if (n.requireNarration().allowsAdditionalDuSatzreihengliedOhneSubjekt()) {
-            n.add(satzanschluss(
+            alt.add(satzanschluss(
                     ", nur um "
                             + nehmenPraedikat
                             .mitObj(world.getDescription(gameObject, true).persPron())
@@ -447,20 +464,9 @@ public class NehmenAction
                     // "zu nehmen", "an dich zu nehmen", "aufzuheben"
                     .komma()
                     .dann());
-            return;
         }
 
-        final Nominalphrase objectDesc = world.getDescription(gameObject, true);
-        n.add(neuerSatz(PARAGRAPH,
-                "Ach nein, " +
-                        // du nimmst die Kugel besser doch
-                        uncapitalize(nehmenPraedikat.mitObj(objectDesc).getDuHauptsatz(
-                                new Modalpartikel("besser"),
-                                new Modalpartikel("doch"))),
-                secs(5))
-                .undWartest()
-                .dann()
-                .phorikKandidat(objectDesc.getNumerusGenus(), gameObject.getId()));
+        n.addAlt(alt);
     }
 
     @Override

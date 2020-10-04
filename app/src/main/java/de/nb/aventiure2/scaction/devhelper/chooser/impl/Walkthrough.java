@@ -95,6 +95,7 @@ public class Walkthrough {
                     "Rasten",
                     "Rasten",
                     "Rasten",
+                    // STORY "Die Frau ist jetzt nicht mehr zu sehen".
                     "Rufen: „Lass dein Haar herunter.“",
                     "Aus dem Schatten der Bäume treten",
                     "An den Haaren hinaufsteigen"
@@ -103,9 +104,10 @@ public class Walkthrough {
     public static final Walkthrough OBEN_BEI_RAPUNZEL_BIS_ENDE =
             new Walkthrough(
                     "Die junge Frau bitten ihre Haare wieder hinunterzulassen",
-                    "An den Haaren hinabsteigen"
-            );
-    // STORY "Die Frau ist jetzt nicht mehr zu sehen".
+                    "An den Haaren hinabsteigen",
+                    "Rufen: „Lass dein Haar herunter.“",
+                    "An den Haaren hinaufsteigen",
+                    "Die goldene Kugel hochwerfen");
 
     public static final Walkthrough ANFANG_BIS_SCHLOSSFEST_SCHLOSS_BETRETEN =
             ANFANG_BIS_FROSCHVERSPRECHEN

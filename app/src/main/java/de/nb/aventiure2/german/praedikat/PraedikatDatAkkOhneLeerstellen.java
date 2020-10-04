@@ -6,6 +6,8 @@ import java.util.Collection;
 
 import javax.annotation.Nullable;
 
+import de.nb.aventiure2.german.base.Numerus;
+import de.nb.aventiure2.german.base.Person;
 import de.nb.aventiure2.german.base.Personalpronomen;
 import de.nb.aventiure2.german.base.Reflexivpronomen;
 import de.nb.aventiure2.german.base.SubstantivischePhrase;
@@ -113,16 +115,19 @@ public class PraedikatDatAkkOhneLeerstellen extends AbstractPraedikatOhneLeerste
     @Override
     public @Nullable
     String getSpeziellesVorfeld() {
-        final String speziellesVorfeldFromSuper = super.getSpeziellesVorfeld();
+        @Nullable final String speziellesVorfeldFromSuper = super.getSpeziellesVorfeld();
         if (speziellesVorfeldFromSuper != null) {
             return speziellesVorfeldFromSuper;
         }
 
-        return null; // "Die Kugel gibst du dem Frosch" - nicht schön
+        return null; // "Die Kugel gibst du dem Frosch" - nicht schön, da meist "der
+        // Frosch" das Thema ist und "die Kugel" das Rhema.
     }
 
     @Override
-    public String getMittelfeld(final Collection<Modalpartikel> modalpartikeln) {
+    public String getMittelfeld(final Collection<Modalpartikel> modalpartikeln,
+                                final Person personSubjekt,
+                                final Numerus numerusSubjekt) {
         // Duden 1356: "Schwach betonte Personal- und Reflexivpronomen stehen
         // unmittelbar nach der linken Satzklammer [...] Wackernagel-Position"
 
@@ -169,7 +174,8 @@ public class PraedikatDatAkkOhneLeerstellen extends AbstractPraedikatOhneLeerste
     }
 
     @Override
-    public String getNachfeld() {
+    public String getNachfeld(final Person personSubjekt,
+                              final Numerus numerusSubjekt) {
         return null;
     }
 }

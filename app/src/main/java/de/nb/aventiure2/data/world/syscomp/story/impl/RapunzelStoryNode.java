@@ -31,7 +31,7 @@ import static de.nb.aventiure2.data.world.syscomp.state.impl.RapunzelsZauberinSt
 import static de.nb.aventiure2.data.world.time.AvTimeSpan.*;
 import static de.nb.aventiure2.german.base.StructuralElement.PARAGRAPH;
 import static de.nb.aventiure2.german.description.AllgDescription.paragraph;
-import static de.nb.aventiure2.german.description.DuDescription.du;
+import static de.nb.aventiure2.german.description.DuDescriptionBuilder.du;
 import static java.util.Arrays.asList;
 
 public enum RapunzelStoryNode implements IStoryNode {
@@ -56,14 +56,6 @@ public enum RapunzelStoryNode implements IStoryNode {
     ZU_RAPUNZEL_HINAUFGESTIEGEN(10, VOR_DEM_ALTEN_TURM,
             RapunzelStoryNode::narrateAndDoHintAction_ZuRapunzelHinaufgestiegen,
             ZAUBERIN_HEIMLICH_BEIM_RUFEN_BEOBACHTET);
-    // STORY Beim Hochwerfen / Auffangen der Kugel:
-    //  "Die junge Frau sieht interessiert zu"
-    //  "Darf ich dieses Glitzerding auch einmal haben?, fragt RAPUNZEL"
-
-    // STORY "Du gibst der jungen Frau DIE KUGEL"
-    //  "RAPUNZEL dreht sie in den Händen und wirft sie sanft in die Höhe - dann
-    //  gibt sie dir DIE KUGEL zurück"
-
     // STORY "Mit RAPUNZEL unterhalten"
     //  - "Doch (nur wenn der SC gerade erst in den Raum gekommen ist) du fängst an
     //    ganz freundlich mit ihr zu reden

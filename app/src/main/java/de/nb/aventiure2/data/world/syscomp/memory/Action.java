@@ -29,7 +29,7 @@ public class Action {
          * Das {@link de.nb.aventiure2.data.world.syscomp.memory.IHasMemoryGO} bewegt sich, z.B. der
          * Spielercharakter geht irgendwo hin.
          */
-        BEWEGEN, ESSEN, HEULEN, HOCHWERFEN, NEHMEN, REDEN, RUFEN,
+        BEWEGEN, ESSEN, GEBEN, HEULEN, HOCHWERFEN, NEHMEN, REDEN, RUFEN,
         SCHLAFEN_ODER_VERGEBLICHER_EINSCHLAF_VERSUCH, RASTEN
     }
 

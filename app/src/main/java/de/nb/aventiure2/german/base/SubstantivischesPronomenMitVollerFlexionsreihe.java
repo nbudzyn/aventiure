@@ -2,12 +2,12 @@ package de.nb.aventiure2.german.base;
 
 import java.util.Objects;
 
-public abstract class PronomenMitVollerFlexionsreihe
+public abstract class SubstantivischesPronomenMitVollerFlexionsreihe
         extends SubstantivischePhrase {
     private final Flexionsreihe flexionsreihe;
 
-    public PronomenMitVollerFlexionsreihe(final NumerusGenus numerusGenus,
-                                          final Flexionsreihe flexionsreihe) {
+    public SubstantivischesPronomenMitVollerFlexionsreihe(final NumerusGenus numerusGenus,
+                                                          final Flexionsreihe flexionsreihe) {
         super(numerusGenus);
         this.flexionsreihe = flexionsreihe;
     }
@@ -52,7 +52,8 @@ public abstract class PronomenMitVollerFlexionsreihe
         if (!super.equals(o)) {
             return false;
         }
-        final PronomenMitVollerFlexionsreihe that = (PronomenMitVollerFlexionsreihe) o;
+        final SubstantivischesPronomenMitVollerFlexionsreihe
+                that = (SubstantivischesPronomenMitVollerFlexionsreihe) o;
         return flexionsreihe.equals(that.flexionsreihe);
     }
 

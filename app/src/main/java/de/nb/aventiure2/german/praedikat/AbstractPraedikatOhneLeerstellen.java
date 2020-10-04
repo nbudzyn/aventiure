@@ -12,6 +12,8 @@ import de.nb.aventiure2.german.base.Person;
 
 import static de.nb.aventiure2.german.base.GermanUtil.capitalize;
 import static de.nb.aventiure2.german.base.GermanUtil.joinToNull;
+import static de.nb.aventiure2.german.base.Numerus.SG;
+import static de.nb.aventiure2.german.base.Person.P2;
 import static java.util.Arrays.asList;
 
 /**
@@ -58,26 +60,31 @@ public abstract class AbstractPraedikatOhneLeerstellen
     }
 
     @Override
-    public String getDuHauptsatzMitKonjunktionaladverb(final String konjunktionaladverb) {
+    public String getDuHauptsatzMitVorfeld(final String vorfeld) {
         return joinToNull(
-                capitalize(konjunktionaladverb), // "dann"
+                capitalize(vorfeld), // "dann"
                 verb.getDuForm(), // "nimmst"
                 "du",
-                getMittelfeld(), // "den Frosch"
+                getMittelfeld(P2, SG), // "den Frosch" / "dich"
                 verb.getPartikel(), // "mit"
-                getNachfeld()); // "deswegen"
+                getNachfeld(P2, SG)); // "deswegen"
     }
 
     @Override
     public String getDuHauptsatzMitSpeziellemVorfeld() {
+        @Nullable final String speziellesVorfeld = getSpeziellesVorfeld();
+        if (speziellesVorfeld == null) {
+            return getDuHauptsatz();
+        }
+
         return capitalize(
                 joinToNull(
-                        getSpeziellesVorfeld(), // "Den Frosch"
+                        speziellesVorfeld, // "Den Frosch"
                         verb.getDuForm(), // "nimmst"
                         "du",
-                        getMittelfeldOhneSpeziellesVorfeld(),
+                        getMittelfeldOhneSpeziellesVorfeld(P2, SG),
                         verb.getPartikel(), // "mit"
-                        getNachfeld())); // "deswegen"
+                        getNachfeld(P2, SG))); // "deswegen"
     }
 
     @Override
@@ -92,9 +99,10 @@ public abstract class AbstractPraedikatOhneLeerstellen
                     capitalize(adverbialeAngabeSkopusSatz.getText()),
                     verb.getDuForm(),
                     "du",
-                    GermanUtil.cutSatzglied(getMittelfeld(), adverbialeAngabeSkopusSatz.getText()),
+                    GermanUtil.cutSatzglied(
+                            getMittelfeld(P2, SG), adverbialeAngabeSkopusSatz.getText()),
                     verb.getPartikel(),
-                    getNachfeld());
+                    getNachfeld(P2, SG));
         }
 
         return "Du " + getDuSatzanschlussOhneSubjekt(modalpartikeln);
@@ -104,9 +112,9 @@ public abstract class AbstractPraedikatOhneLeerstellen
     public String getDuSatzanschlussOhneSubjekt(final Collection<Modalpartikel> modalpartikeln) {
         return joinToNull(
                 verb.getDuForm(),
-                getMittelfeld(modalpartikeln),
+                getMittelfeld(modalpartikeln, P2, SG),
                 verb.getPartikel(),
-                getNachfeld());
+                getNachfeld(P2, SG));
     }
 
     @Override
@@ -120,9 +128,9 @@ public abstract class AbstractPraedikatOhneLeerstellen
      */
     @Override
     public String getInfinitiv(final Person person, final Numerus numerus) {
-        return joinToNull(getMittelfeld(),
+        return joinToNull(getMittelfeld(person, numerus),
                 verb.getInfinitiv(),
-                getNachfeld());
+                getNachfeld(person, numerus));
     }
 
     /**
@@ -131,11 +139,12 @@ public abstract class AbstractPraedikatOhneLeerstellen
      */
     @Override
     public String getZuInfinitiv(final Person person, final Numerus numerus) {
-        return joinToNull(getMittelfeld(),
+        return joinToNull(getMittelfeld(person, numerus),
                 verb.getZuInfinitiv(),
-                getNachfeld());
+                getNachfeld(person, numerus));
     }
 
+    @Override
     @Nullable
     public String getSpeziellesVorfeld() {
         if (adverbialeAngabeSkopusSatz != null) {
@@ -150,22 +159,32 @@ public abstract class AbstractPraedikatOhneLeerstellen
     }
 
     public @Nullable
-    String getMittelfeld() {
-        return getMittelfeld(new Modalpartikel[0]); // "den Frosch"
+    String getMittelfeld(final Person personSubjekt,
+                         final Numerus numerusSubjekt) {
+        return getMittelfeld(personSubjekt, numerusSubjekt, new Modalpartikel[0]);
+        // "den Frosch" oder "sich" / "mich"
     }
 
-    public String getMittelfeld(final Modalpartikel... modalpartikeln) {
-        return getMittelfeld(asList(modalpartikeln));
+    public String getMittelfeld(final Person personSubjekt,
+                                final Numerus numerusSubjekt,
+                                final Modalpartikel... modalpartikeln) {
+        return getMittelfeld(asList(modalpartikeln), personSubjekt, numerusSubjekt);
     }
 
-    public abstract String getMittelfeld(final Collection<Modalpartikel> modalpartikeln);
+    public abstract String getMittelfeld(final Collection<Modalpartikel> modalpartikeln,
+                                         Person personSubjekt,
+                                         Numerus numerusSubjekt);
 
     @Nullable
-    public String getMittelfeldOhneSpeziellesVorfeld() {
-        return GermanUtil.cutSatzglied(getMittelfeld(), getSpeziellesVorfeld());
+    public String getMittelfeldOhneSpeziellesVorfeld(
+            final Person personSubjekt, final Numerus numerusSubjekt) {
+        return GermanUtil.cutSatzglied(
+                getMittelfeld(personSubjekt, numerusSubjekt),
+                getSpeziellesVorfeld());
     }
 
-    public abstract String getNachfeld();
+    public abstract String getNachfeld(Person personSubjekt,
+                                       Numerus numerusSubjekt);
 
     @NonNull
     protected Verb getVerb() {

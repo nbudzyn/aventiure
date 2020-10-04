@@ -1,7 +1,7 @@
 package de.nb.aventiure2.german.base;
 
 /**
- * Eine Phrase, die substantivisch verwendet werden kann, also insbesonder ein Pronomen ("sie") oder
+ * Eine Phrase, die substantivisch verwendet werden kann, also insbesondere ein Pronomen ("sie") oder
  * eine (andere) Nominalphrase ("die goldene Kugel").
  */
 public abstract class SubstantivischePhrase extends DeklinierbarePhrase {
@@ -44,6 +44,11 @@ public abstract class SubstantivischePhrase extends DeklinierbarePhrase {
     public abstract Personalpronomen persPron();
 
     /**
+     * Gibt ein {@link Reflexivpronomen} für diese Phrase zurück.
+     */
+    public abstract Reflexivpronomen reflPron();
+
+    /**
      * Gibt einen Possessivartikel für diese Phrase zurück.
      */
     public abstract Possessivartikel possArt();
@@ -53,4 +58,5 @@ public abstract class SubstantivischePhrase extends DeklinierbarePhrase {
      */
     public abstract Relativpronomen relPron();
 
+    public abstract Person getPerson();
 }

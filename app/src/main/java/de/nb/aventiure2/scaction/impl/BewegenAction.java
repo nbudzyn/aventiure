@@ -18,8 +18,7 @@ import de.nb.aventiure2.data.world.base.Known;
 import de.nb.aventiure2.data.world.base.Lichtverhaeltnisse;
 import de.nb.aventiure2.data.world.base.SpatialConnection;
 import de.nb.aventiure2.data.world.base.SpatialConnectionData;
-import de.nb.aventiure2.data.world.gameobject.BaumFactory;
-import de.nb.aventiure2.data.world.gameobject.World;
+import de.nb.aventiure2.data.world.gameobject.*;
 import de.nb.aventiure2.data.world.syscomp.description.IDescribableGO;
 import de.nb.aventiure2.data.world.syscomp.feelings.Hunger;
 import de.nb.aventiure2.data.world.syscomp.feelings.Mood;
@@ -32,25 +31,19 @@ import de.nb.aventiure2.data.world.syscomp.state.impl.SchlossfestState;
 import de.nb.aventiure2.data.world.syscomp.storingplace.ILocationGO;
 import de.nb.aventiure2.german.base.StructuralElement;
 import de.nb.aventiure2.german.description.AbstractDescription;
-import de.nb.aventiure2.german.description.DuDescription;
+import de.nb.aventiure2.german.description.AbstractDuDescription;
 import de.nb.aventiure2.scaction.AbstractScAction;
 
 import static com.google.common.collect.ImmutableList.builder;
 import static de.nb.aventiure2.data.world.base.Lichtverhaeltnisse.HELL;
 import static de.nb.aventiure2.data.world.base.SpatialConnection.con;
-import static de.nb.aventiure2.data.world.gameobject.World.BAUM_IM_GARTEN_HINTER_DER_HUETTE_IM_WALD;
-import static de.nb.aventiure2.data.world.gameobject.World.DRAUSSEN_VOR_DEM_SCHLOSS;
-import static de.nb.aventiure2.data.world.gameobject.World.SCHLOSSFEST;
-import static de.nb.aventiure2.data.world.gameobject.World.SCHLOSS_VORHALLE;
-import static de.nb.aventiure2.data.world.gameobject.World.SCHLOSS_VORHALLE_AM_TISCH_BEIM_FEST;
-import static de.nb.aventiure2.data.world.gameobject.World.WALDWILDNIS_HINTER_DEM_BRUNNEN;
+import static de.nb.aventiure2.data.world.gameobject.World.*;
 import static de.nb.aventiure2.data.world.syscomp.feelings.Mood.ERSCHOEPFT;
 import static de.nb.aventiure2.data.world.syscomp.memory.Action.Type.BEWEGEN;
 import static de.nb.aventiure2.data.world.syscomp.spatialconnection.NumberOfWays.ONE_IN_ONE_OUT;
 import static de.nb.aventiure2.data.world.syscomp.spatialconnection.NumberOfWays.ONLY_WAY;
 import static de.nb.aventiure2.data.world.syscomp.state.impl.SchlossfestState.BEGONNEN;
-import static de.nb.aventiure2.data.world.time.AvTimeSpan.noTime;
-import static de.nb.aventiure2.data.world.time.AvTimeSpan.secs;
+import static de.nb.aventiure2.data.world.time.AvTimeSpan.*;
 import static de.nb.aventiure2.german.base.GermanUtil.buildAufzaehlung;
 import static de.nb.aventiure2.german.base.GermanUtil.capitalize;
 import static de.nb.aventiure2.german.base.GermanUtil.uncapitalize;
@@ -59,7 +52,9 @@ import static de.nb.aventiure2.german.base.StructuralElement.SENTENCE;
 import static de.nb.aventiure2.german.base.StructuralElement.WORD;
 import static de.nb.aventiure2.german.description.AllgDescription.neuerSatz;
 import static de.nb.aventiure2.german.description.AllgDescription.satzanschluss;
-import static de.nb.aventiure2.german.description.DuDescription.du;
+import static de.nb.aventiure2.german.description.DescriptionUmformulierer.drueckeAus;
+import static de.nb.aventiure2.german.description.DuDescriptionBuilder.du;
+import static de.nb.aventiure2.german.description.Kohaerenzrelation.DISKONTINUITAET;
 import static java.util.stream.Collectors.toList;
 
 /**
@@ -170,7 +165,7 @@ public class BewegenAction<LOC_DESC extends ILocatableGO & IDescribableGO>
     public void narrateAndDo() {
         narrateLocationOnly(loadTo());
 
-        world.upgradeKnownToSC(spatialConnection.getTo());
+        world.loadSC().memoryComp().upgradeKnown(spatialConnection.getTo());
 
         // Die nicht-movable Objekte sollten in der Location-beschreibung
         // alle enthalten gewesen sein (mindestens implizit), auch rekursiv.
@@ -203,11 +198,9 @@ public class BewegenAction<LOC_DESC extends ILocatableGO & IDescribableGO>
 
     private void upgradeNonLivingNonMovableRecursiveInventoryKnown(
             @NonNull final ILocationGO location) {
-        final Known minimalKnown = world.getKnown(location);
-
         final ImmutableList<? extends IGameObject> directlyContainedNonLivingNonMovables =
                 world.loadDescribableNonLivingNonMovableInventory(location.getId());
-        sc.memoryComp().upgradeKnown(directlyContainedNonLivingNonMovables, minimalKnown);
+        sc.memoryComp().upgradeKnown(directlyContainedNonLivingNonMovables);
 
         for (final IGameObject directlyContainedNonLivingNonMovable : directlyContainedNonLivingNonMovables) {
             if (directlyContainedNonLivingNonMovable instanceof ILocationGO) {
@@ -283,9 +276,7 @@ public class BewegenAction<LOC_DESC extends ILocatableGO & IDescribableGO>
     private void upgradeKnown(
             @NonNull
             final Pair<ILocationGO, ? extends List<? extends IDescribableGO>> locationAndDescribables) {
-        upgradeKnown(locationAndDescribables.second,
-                locationAndDescribables.first.storingPlaceComp()
-                        .getLichtverhaeltnisse());
+        sc.memoryComp().upgradeKnown(locationAndDescribables.second);
 
         for (final IGameObject gameObject : locationAndDescribables.second) {
             if (gameObject instanceof ILocationGO) {
@@ -435,21 +426,26 @@ public class BewegenAction<LOC_DESC extends ILocatableGO & IDescribableGO>
         final AbstractDescription<?> description = getNormalDescription(
                 to.storingPlaceComp().getLichtverhaeltnisse());
 
-        if (description instanceof DuDescription &&
+        if (description instanceof AbstractDuDescription &&
                 n.requireNarration().allowsAdditionalDuSatzreihengliedOhneSubjekt() &&
                 isDefinitivDiskontinuitaet()) {
-            n.add(satzanschluss(", besinnst dich aber und "
-                            + ((DuDescription) description)
+            final ImmutableList.Builder<AbstractDescription<?>> alt = builder();
+
+            alt.add(satzanschluss(", besinnst dich aber und "
+                            + ((AbstractDuDescription) description)
                             .getDescriptionSatzanschlussOhneSubjekt(),
                     description.getTimeElapsed())
                     .dann(description.isDann())
                     .komma(description.isKommaStehtAus()));
+
+            alt.addAll(drueckeAus(DISKONTINUITAET, description));
+            n.addAlt(alt);
             return;
         }
 
         if (description.getStartsNew() == WORD &&
                 n.requireNarration().allowsAdditionalDuSatzreihengliedOhneSubjekt() &&
-                description instanceof DuDescription) {
+                description instanceof AbstractDuDescription) {
             n.add(description);
             return;
         }
@@ -470,21 +466,15 @@ public class BewegenAction<LOC_DESC extends ILocatableGO & IDescribableGO>
                         "Was willst du hier eigentlich? "
                                 + description.getDescriptionHauptsatz(),
                         description.getTimeElapsed()));
-                if (description instanceof DuDescription) {
+                if (description instanceof AbstractDuDescription<?, ?>) {
                     alt.add(neuerSatz(
                             "Was willst du hier eigentlich? "
-                                    + ((DuDescription) description)
+                                    + ((AbstractDuDescription<?, ?>) description)
                                     .getDescriptionHauptsatzMitSpeziellemVorfeld(),
                             description.getTimeElapsed()));
                 }
 
-                // TODO Aber dir kommt ein Gedanke nicht, wenn from = to?
-                alt.add(neuerSatz("Aber dir kommt ein Gedanke und "
-                                + uncapitalize(description.getDescriptionHauptsatz()),
-                        description.getTimeElapsed()));
-                alt.add(neuerSatz("Dir kommt ein Gedanke – "
-                                + uncapitalize(description.getDescriptionHauptsatz()),
-                        description.getTimeElapsed()));
+                alt.addAll(drueckeAus(DISKONTINUITAET, description));
             }
             n.addAlt(alt);
             return;
@@ -612,13 +602,6 @@ public class BewegenAction<LOC_DESC extends ILocatableGO & IDescribableGO>
         return world.getDescription(d, false).nom();
     }
 
-    private void upgradeKnown(
-            @NonNull final List<? extends IGameObject> objects,
-            final Lichtverhaeltnisse lichtverhaeltnisse) {
-        final Known known = Known.getKnown(lichtverhaeltnisse);
-        sc.memoryComp().upgradeKnown(objects, known);
-    }
-
     @Override
     protected boolean isDefinitivWiederholung() {
         return buildMemorizedAction().equals(sc.memoryComp().getLastAction());
@@ -635,6 +618,7 @@ public class BewegenAction<LOC_DESC extends ILocatableGO & IDescribableGO>
                 // irgendwo hin, die Zauberin kommt ihm entgegen, er kehrt um und geht ihr nach.
                 !n.lastNarrationWasFromReaction() &&
                         sc.memoryComp().getLastAction().is(BEWEGEN) &&
+                        !oldLocation.is(spatialConnection.getTo()) &&
                         sc.locationComp().lastLocationWas(spatialConnection.getTo()) &&
                         // Wenn man aus einem Objekt zurückkehrt, ist es keine Diskontinuität,
                         // wenn man aber aus einem Objekt gekommen ist und dann wieder in

@@ -21,7 +21,7 @@ public enum DirektivesVerb implements Praedikat {
     BITTEN("bitten", AKK, "bittest");
     // Weitere direktive Verben sind anregen, warnen, zwingen,
     // hindern, beschwören, auffordern, überreden, beauftragen,
-    // raten, erlauben, empfehlen, verbieten, gesattten
+    // raten, erlauben, empfehlen, verbieten, gestatten
 
     /**
      * Das Verb an sich, ohne Informationen zur Valenz, ohne Ergänzungen, ohne
