@@ -353,7 +353,6 @@ public class RapunzelReactionsComp
                 n.add(neuerSatz(
                         "„Das ist also die Leiter, auf welcher man hinaufkommt!“, denkst du "
                                 + "bei dir", secs(5))
-                        .undWartest()
                         .beendet(PARAGRAPH));
 
                 world.loadSC().memoryComp().upgradeKnown(RAPUNZELRUF);
