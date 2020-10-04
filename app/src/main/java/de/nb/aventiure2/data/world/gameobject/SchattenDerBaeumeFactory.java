@@ -81,7 +81,8 @@ public class SchattenDerBaeumeFactory {
         if (db.counterDao().incAndGet(
                 "DescTo_SchattenDerBaeume__SCSetztSichTagsueberInDenSchattenDerBaeume")
                 == 1) {
-            return du("lässt", "dich im Schatten der umstehenden Bäume nieder",
+            return du(PARAGRAPH,
+                    "lässt", "dich im Schatten der umstehenden Bäume nieder",
                     "im Schatten der umstehenden Bäume",
                     mins(5))
                     .beendet(SENTENCE)

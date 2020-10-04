@@ -60,9 +60,6 @@ public class DescriptionUmformulierer {
             final AbstractDescription<?> desc) {
         final ImmutableList.Builder<AbstractDescription<?>> alt = builder();
 
-        alt.add(mitPraefix("Aber dir kommt ein Gedanke und", desc));
-        alt.add(mitPraefix("Dir kommt ein Gedanke –", desc));
-
         if (desc instanceof AbstractDuDescription) {
             final AbstractDuDescription<?, ?> duDesc = (AbstractDuDescription<?, ?>) desc;
 
@@ -97,6 +94,9 @@ public class DescriptionUmformulierer {
                         .dann(duDesc.isDann())
                         .phorikKandidat(duDesc.getPhorikKandidat()));
             }
+        } else {
+            alt.add(mitPraefix("Aber dir kommt ein Gedanke und", desc));
+            alt.add(mitPraefix("Dir kommt ein Gedanke –", desc));
         }
 
         return alt.build();
@@ -232,7 +232,7 @@ public class DescriptionUmformulierer {
             final String praefixRemainder,
             final AbstractDescription<?> desc,
             final String descSatzanschluss) {
-        return du(max(desc.getStartsNew(), SENTENCE),
+        return du(max(desc.getStartsNew(), PARAGRAPH),
                 praefixVerb,
                 praefixRemainder
                         + " und "
@@ -244,9 +244,9 @@ public class DescriptionUmformulierer {
                 .beendet(desc.getEndsThis());
     }
 
-    private static AbstractDuDescription<?, ?> duMitVorfeld(final String vorfeld,
-                                                            final AbstractDuDescription<?, ?> duDesc) {
-        return du(max(duDesc.getStartsNew(), PARAGRAPH),
+    private static AllgDescription duMitVorfeld(final String vorfeld,
+                                                final AbstractDuDescription<?, ?> duDesc) {
+        return neuerSatz(max(duDesc.getStartsNew(), PARAGRAPH),
                 duDesc.getDescriptionHauptsatzMitVorfeld(vorfeld),
                 duDesc.getTimeElapsed())
                 .komma(duDesc.isKommaStehtAus())

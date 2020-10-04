@@ -252,7 +252,7 @@ public class RapunzelReactionsComp
                         + "du unter der Sonne noch keine gesehen hast. "
                         + "Ihre Haare, fein wie gesponnen "
                         + "Gold, hat sie um einen Fensterhaken gewickelt, so konntest du "
-                        + "daran heraufsteigen. "
+                        + "daran heraufsteigen.\n"
                         + capitalize(desc.nom())
                         + " erschrickt gewaltig, als du "
                         + PraepositionMitKasus.ZU.getDescription(desc.persPron()) // "zu ihr"
@@ -353,7 +353,8 @@ public class RapunzelReactionsComp
                 n.add(neuerSatz(
                         "„Das ist also die Leiter, auf welcher man hinaufkommt!“, denkst du "
                                 + "bei dir", secs(5))
-                        .undWartest());
+                        .undWartest()
+                        .beendet(PARAGRAPH));
 
                 world.loadSC().memoryComp().upgradeKnown(RAPUNZELRUF);
             }
