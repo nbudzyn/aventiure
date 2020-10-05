@@ -135,9 +135,9 @@ public class RapunzelTakingComp extends AbstractTakingComp {
                                 + capitalize(rapunzelAnaph.persPron().nom())
                                 + " streicht eine Locke zurecht, dann gibt "
                                 + rapunzelAnaph.persPron().nom()
-                                + " dir "
+                                + " "
                                 + givenDescShort.persPron().akk()
-                                + " zurück",
+                                + " dir zurück",
                         secs(30))
         );
 

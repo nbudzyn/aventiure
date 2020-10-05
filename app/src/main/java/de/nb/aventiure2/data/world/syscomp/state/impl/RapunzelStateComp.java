@@ -41,6 +41,15 @@ public class RapunzelStateComp extends AbstractStateComp<RapunzelState> {
         } else if (loadSC().locationComp().hasRecursiveLocation(OBEN_IM_ALTEN_TURM)) {
             final Nominalphrase rapunzelDesc = getDescription(true);
             n.addAlt(
+                    // STORY Nur wenn man sich schon etwas kennt:
+//                    neuerSatz(rapunzelDesc.nom() +
+//                                    " schaut auf einmal etwas enttäuscht drein. Dann bindet "
+//                                    + rapunzelDesc.persPron().nom() //"sie"
+//                                    + " "
+//                                    + rapunzelDesc.possArt().vor(PL_MFN).akk() // "ihre"
+//                                    + " Haare wieder beim Fenster fest",
+//                            secs(10))
+//                            .phorikKandidat(PL_MFN, RAPUNZELS_HAARE),
                     neuerSatz(rapunzelDesc.nom() +
                                     // STORY nur verschüchtert, wenn man sich noch nicht gut kennt
                                     " schaut dich verschüchtert an, dann bindet "
