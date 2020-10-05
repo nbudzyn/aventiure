@@ -7,8 +7,7 @@ import de.nb.aventiure2.data.narration.NarrationDao;
 import de.nb.aventiure2.data.world.base.AbstractStatefulComponent;
 import de.nb.aventiure2.data.world.base.GameObject;
 import de.nb.aventiure2.data.world.base.GameObjectId;
-import de.nb.aventiure2.data.world.time.AvDateTime;
-import de.nb.aventiure2.data.world.time.AvTimeSpan;
+import de.nb.aventiure2.data.world.time.*;
 
 /**
  * Component for a {@link GameObject}: The game object
@@ -20,7 +19,7 @@ public class FeelingsComp extends AbstractStatefulComponent<FeelingsPCD> {
 
     // STORY Jedes FeelingBeing kann zu jedem anderen Feeling Being Gefühle verschiedener
     //  Stärke aufbauen. Default ist 0 (oder je ein anderer Wert für in-Group / out-Group,
-    //  die letzlich den Persönlichkeit des Beings wieder geben. Es gibt eine Methode, die
+    //  die letzlich die Persönlichkeit des Beings wieder geben. Es gibt eine Methode, die
     //  ermittelt, wer in-group ist)
     //  Bei Interaktionen werden die Gefühle aktualisiert, entweder durch eine dauerhafte
     //  Verstärkung oder durch einen Reset (Enttäuschung oder "ich habe mich in ihm getäuscht").

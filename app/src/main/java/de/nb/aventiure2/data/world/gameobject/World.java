@@ -266,24 +266,24 @@ public class World {
                 InvisibleFactory.create(RAPUNZELS_HAARE),
                 InvisibleFactory.create(RAPUNZELRUF),
                 object.create(EINE_TASCHE_DES_SPIELER_CHARAKTERS,
-                        np(F, INDEF, "Tasche"),
+                        np(F, INDEF, "Tasche" ),
                         SPIELER_CHARAKTER, null,
                         false, // Man kann nicht "eine Tasche hinlegen" o.Ä.
                         EINE_TASCHE,
                         false),
                 object.create(HAENDE_DES_SPIELER_CHARAKTERS,
-                        np(PL_MFN, DEF, "Hände", "Händen"),
+                        np(PL_MFN, DEF, "Hände", "Händen" ),
                         SPIELER_CHARAKTER, null,
                         false,
                         HAENDE,
                         false),
                 object.create(GOLDENE_KUGEL,
                         np(F, INDEF, "goldene Kugel",
-                                "goldenen Kugel"),
+                                "goldenen Kugel" ),
                         np(F, DEF,
                                 "goldene Kugel",
-                                "goldenen Kugel"),
-                        np(F, DEF, "Kugel"),
+                                "goldenen Kugel" ),
+                        np(F, DEF, "Kugel" ),
                         SCHLOSS_VORHALLE, DRAUSSEN_VOR_DEM_SCHLOSS,
                         true),
                 // STORY Die goldene Kugel kann verloren gehen, zum Beispiel wenn man sie im
@@ -298,12 +298,12 @@ public class World {
                 object.create(SCHLOSS_VORHALLE_LANGER_TISCH_BEIM_FEST,
                         np(M, INDEF, "langer, aus Brettern gezimmerter Tisch",
                                 "langen, aus Brettern gezimmertem Tisch",
-                                "langen, aus Brettern gezimmerten Tisch"),
+                                "langen, aus Brettern gezimmerten Tisch" ),
                         np(M, DEF,
                                 "lange Brettertisch",
                                 "langen Brettertisch",
-                                "langen Brettertisch"),
-                        np(M, DEF, "Tisch"),
+                                "langen Brettertisch" ),
+                        np(M, DEF, "Tisch" ),
                         // Der Tisch wird erst spontan hinzugefügt, wenn
                         // sich der Benutzer an einen Platz setzt.
                         // Ansonsten bekommen wir vorher Aktionen wie
@@ -319,9 +319,6 @@ public class World {
                         SCHLOSS_VORHALLE_DAUERHAFT_BELEUCHTET),
                 // STORY Spieler kauft Lampe (z.B. für Hütte) auf Schlossfest
 
-                // STORY Rapunzel: Man muss eine Strickleiter
-                //  besorgen - oder Seide kaufen und etwas zum Stricken??? Gold gabs vielleicht
-                //  vom Froschprinzen?
                 schattenDerBaeume.createVorDemAltenTurm(),
                 bett.createInDerHuetteImWald(),
                 baum.createImGartenHinterDerHuetteImWald()

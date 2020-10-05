@@ -91,6 +91,10 @@ public enum RapunzelStoryNode implements IStoryNode {
     //  "Endlich verabschiedet sich die ZAUBERIN und steigt herab"
     //  "Du kannst wieder herauskommen - hörst du es lieblich sagen"
 
+    // STORY Oder: Man muss eine Strickleiter
+    //  besorgen - oder Seide kaufen und etwas zum Stricken??? Gold gabs vielleicht
+    //  vom Froschprinzen?
+
     // STORY fremdländisch aussehender Händler auf Schlossfest vor einem Zelt
 
     // STORY Seide für großen Klumpen Gold (goldene Kugel verkaufen)
