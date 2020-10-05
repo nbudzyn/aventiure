@@ -137,7 +137,7 @@ public class RapunzelTakingComp extends AbstractTakingComp {
                                 + rapunzelAnaph.persPron().nom()
                                 + " "
                                 + givenDescShort.persPron().akk()
-                                + " dir zurück",
+                                + " dir zurück und lächelt dich an",
                         secs(30))
         );
 

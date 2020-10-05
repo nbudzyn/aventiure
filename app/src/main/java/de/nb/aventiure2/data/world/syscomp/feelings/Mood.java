@@ -13,19 +13,20 @@ public enum Mood {
     //  kommt drauf an, ob welche Emotion die STAERKERE ist
     //  Z.B. wird man nicht GEKNICKT, wenn man MUEDE ist.
 
-    VOLLER_FREUDE(5, "fröhlich"),
-    GLUECKLICH(4, "glücklich"),
-    AUFGEDREHT(2, "aufgedreht"),
-    BEWEGT(2, "selbstvergessen"),
-    ZUFRIEDEN(1, "spielerisch"),
+    VOLLER_FREUDE(5, "fröhlich" ),
+    GLUECKLICH(4, "glücklich" ),
+    BEGEISTERT(3, "begeistert" ),
+    AUFGEDREHT(2, "aufgedreht" ),
+    BEWEGT(2, "selbstvergessen" ),
+    ZUFRIEDEN(1, "spielerisch" ),
     // STORY (welche Emotion?) "versonnen"
-    NEUTRAL(0, "aus Langeweile"),
-    ANGESPANNT(0, "trotzig"),
-    ERSCHOEPFT(-1, "erschöpft"),
-    ETWAS_GEKNICKT(-2, "etwas geknickt"),
+    NEUTRAL(0, "aus Langeweile" ),
+    ANGESPANNT(0, "trotzig" ),
+    ERSCHOEPFT(-1, "erschöpft" ),
+    ETWAS_GEKNICKT(-2, "etwas geknickt" ),
     // TODO Alternativen: betrübt, ...
-    VERUNSICHERT(-2, "verunsichert"),
-    UNTROESTLICH(-5, "voller Trauer");
+    VERUNSICHERT(-2, "verunsichert" ),
+    UNTROESTLICH(-5, "voller Trauer" );
 
     private final int gradDerFreude;
     private final AdverbialeAngabeSkopusSatz adverbialeAngabe;

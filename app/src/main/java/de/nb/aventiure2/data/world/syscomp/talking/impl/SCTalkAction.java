@@ -236,7 +236,15 @@ public class SCTalkAction {
 
     static SCTalkAction exitSt(final Praedikat exitName,
                                final SCTalkAction.NarrationAndAction narrationAndAction) {
-        return new SCTalkAction(SCTalkAction.Type.EXIT, ALWAYS_POSSIBLE,
+        return exitSt(ALWAYS_POSSIBLE,
+                exitName,
+                narrationAndAction);
+    }
+
+    static SCTalkAction exitSt(final SCTalkAction.Condition condition,
+                               final Praedikat exitName,
+                               final SCTalkAction.NarrationAndAction narrationAndAction) {
+        return new SCTalkAction(SCTalkAction.Type.EXIT, condition,
                 exitName,
                 narrationAndAction);
     }

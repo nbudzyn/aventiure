@@ -14,12 +14,18 @@ import de.nb.aventiure2.german.praedikat.PraedikatOhneLeerstellen;
 import static de.nb.aventiure2.data.world.gameobject.World.*;
 import static de.nb.aventiure2.data.world.syscomp.feelings.Mood.AUFGEDREHT;
 import static de.nb.aventiure2.data.world.time.AvTimeSpan.*;
+import static de.nb.aventiure2.german.base.Nominalphrase.DEIN_HERZ;
 import static de.nb.aventiure2.german.base.Nominalphrase.IHRE_HAARE;
+import static de.nb.aventiure2.german.base.NumerusGenus.M;
+import static de.nb.aventiure2.german.base.NumerusGenus.N;
+import static de.nb.aventiure2.german.base.NumerusGenus.PL_MFN;
 import static de.nb.aventiure2.german.base.PraepositionMitKasus.ZU;
 import static de.nb.aventiure2.german.base.StructuralElement.PARAGRAPH;
 import static de.nb.aventiure2.german.base.StructuralElement.SENTENCE;
 import static de.nb.aventiure2.german.description.AllgDescription.neuerSatz;
+import static de.nb.aventiure2.german.description.DuDescriptionBuilder.du;
 import static de.nb.aventiure2.german.praedikat.DirektivesVerb.BITTEN;
+import static de.nb.aventiure2.german.praedikat.VerbSubjDatAkk.AUSSCHUETTEN;
 import static de.nb.aventiure2.german.praedikat.VerbSubjObj.HINUNTERLASSEN;
 
 /**
@@ -54,6 +60,12 @@ public class RapunzelTalkingComp extends AbstractTalkingComp {
                         bittenHaareHerunterzulassen,
                         this::haareHerunterlassenBitte_EntryReEntry),
                 SCTalkAction.st(
+                        // "Der jungen Frau dein Herz ausschütten"
+                        AUSSCHUETTEN
+                                .mitDat(getDescription(true))
+                                .mitObj(DEIN_HERZ),
+                        this::herzAusschuetten),
+                SCTalkAction.exitSt(
                         () -> !haareSindHinuntergelassen(),
                         bittenHaareHerunterzulassen,
                         this::haareHerunterlassenBitte_ExitImmReEntry)
@@ -62,6 +74,54 @@ public class RapunzelTalkingComp extends AbstractTalkingComp {
 
     private boolean haareSindHinuntergelassen() {
         return stateComp.hasState(RapunzelState.HAARE_VOM_TURM_HERUNTERGELASSEN);
+    }
+
+    private void herzAusschuetten() {
+        final SubstantivischePhrase anaph = getAnaphPersPronWennMglSonstShortDescription();
+
+        final SubstantivischePhrase desc = getDescription();
+
+        final String wovonHerzBewegtDat;
+        if (loadSC().memoryComp().isKnown(RAPUNZELS_GESANG)) {
+            wovonHerzBewegtDat = anaph.possArt().vor(M).dat() // "ihrem"
+                    + " Gesang";
+        } else {
+            wovonHerzBewegtDat = anaph.possArt().vor(PL_MFN).dat() // "ihrem"
+                    // STORY UND WENN GESANG UNBEKANNT?
+                    + " glänzenden Locken";
+        }
+
+        // STORY Wenn man sich schon kennt und der SC gerade erst in den Raum gekommen ist und
+        //  Rapunzel aufgeschreckt hat? - "Doch du....?"
+        // STORY Das hier sollte nur gehen, wenn der Spieler ausreichend Vertrauen zu
+        //  Rapunzel gefasst hat.
+        // STORY Das hier sollte nur einmal gehen.
+        n.add(du("fängst", "an ganz freundlich mit "
+                        + anaph.dat()
+                        + " zu reden. Du erzählst, dass von "
+                        + wovonHerzBewegtDat
+                        + " dein Herz so sehr sei bewegt worden, dass es dir "
+                        + "keine Ruhe gelassen und du "
+                        + anaph.persPron().akk()
+                        + " selbst habest sehen müssen."
+                        + " Da verliert "
+                        + desc.nom()
+                        + " ihre Angst und es bricht aus "
+                        + desc.persPron().dat()
+                        + " heraus."
+                        + " Eine alte Zauberin hätte "
+                        + desc.persPron().akk()
+                        + " "
+                        + desc.possArt().vor(PL_MFN).dat()  // "ihren"
+                        + " Eltern fortgenommen, seit "
+                        + desc.possArt().vor(N).dat()  // "ihrem"
+                        + " zwölften Jahre sei "
+                        + desc.persPron().nom() // "sie"
+                        + " in diesen Turm geschlossen",
+                "ganz freundlich",
+                mins(1)));
+
+        loadSC().feelingsComp().setMoodMin(AUFGEDREHT);
     }
 
     private void haareHerunterlassenBitte_EntryReEntry() {

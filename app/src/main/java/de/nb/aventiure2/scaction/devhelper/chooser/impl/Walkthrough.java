@@ -109,6 +109,7 @@ public class Walkthrough {
                     "An den Haaren hinaufsteigen",
                     "Die goldene Kugel hochwerfen",
                     "Der jungen Frau die goldene Kugel geben",
+                    "Der jungen Frau dein Herz ausschütten",
                     "Die junge Frau bitten ihre Haare wieder hinunterzulassen" );
 
     public static final Walkthrough ANFANG_BIS_SCHLOSSFEST_SCHLOSS_BETRETEN =

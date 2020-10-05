@@ -57,14 +57,6 @@ public enum RapunzelStoryNode implements IStoryNode {
             RapunzelStoryNode::narrateAndDoHintAction_ZuRapunzelHinaufgestiegen,
             ZAUBERIN_HEIMLICH_BEIM_RUFEN_BEOBACHTET);
     // STORY "Mit RAPUNZEL unterhalten"
-    //  - "Doch (nur wenn der SC gerade erst in den Raum gekommen ist) du fängst an
-    //    ganz freundlich mit ihr zu reden
-    //   und erzählst ihr, dass von ihrem Gesang dein Herz so sehr sei
-    //   bewegt worden (O.Ä.), dass es dir keine Ruhe gelassen und du sie
-    //   selbst habest sehen müssen.
-    //   Da verliert die junge Frau ihre Angst und es bricht aus ihr heraus.
-    //   Eine alte Zauberin hötte sie ihren Eltern fortgenommen, seit ihrem
-    //   zwölften Jahre sei sie in diesen Turm geschlossen."
     //  - "Du fragst sie nach ihrem Namen, aber der ist so ungewöhnlich, dass
     //   du ihn dir nicht merken kannst. Es ist dir zu ungegenehm, noch einmal zu fragen."
     //  - Ihr plaudert eine Weile - ihr versteht euch sehr gut.
@@ -237,10 +229,10 @@ public enum RapunzelStoryNode implements IStoryNode {
             final AvDatabase db, final NarrationDao n, final World world) {
         final ImmutableList.Builder<AbstractDescription<?>> alt = builder();
         alt.add(
-                paragraph("Hast du den Wald eigentlich schon überall erkundet?"),
-                paragraph("Was gibt es wohl noch alles im Wald zu entdecken, fragst du dich"),
+                paragraph("Hast du den Wald eigentlich schon überall erkundet?" ),
+                paragraph("Was gibt es wohl noch alles im Wald zu entdecken, fragst du dich" ),
                 paragraph("Dir kommt der geheimnisvolle Turm in den Sinn - du wirst sein "
-                        + "Geheimnis bestimmt noch lüften!"));
+                        + "Geheimnis bestimmt noch lüften!" ));
 
         // STORY (bis SC Rapunzel gefunden hat) Mutter sammelt im
         //  Wald Holz und klagt ihr Leid: Tochter an Zauberin verloren
@@ -252,12 +244,12 @@ public enum RapunzelStoryNode implements IStoryNode {
         final ImmutableList.Builder<AbstractDescription<?>> alt = builder();
 
         if (world.loadSC().locationComp().hasRecursiveLocation(VOR_DEM_ALTEN_TURM)) {
-            alt.add(paragraph("Ob der Turm wohl bewohnt ist?"),
-                    paragraph("Eine Rast würde dir sicher guttun"));
+            alt.add(paragraph("Ob der Turm wohl bewohnt ist?" ),
+                    paragraph("Eine Rast würde dir sicher guttun" ));
         } else {
             alt.add(paragraph(
                     "Dir kommt noch einmal der alte Turm auf der Hügelkuppe "
-                            + "in den Sinn. Ob der wohl bewohnt ist?"));
+                            + "in den Sinn. Ob der wohl bewohnt ist?" ));
         }
 
         n.addAlt(alt);
@@ -291,9 +283,9 @@ public enum RapunzelStoryNode implements IStoryNode {
                 // Vor dem Schloss fällt sie dem SC nicht auf
                 !loadZauberin(world).locationComp()
                         .hasRecursiveLocation(DRAUSSEN_VOR_DEM_SCHLOSS)) {
-            alt.add(paragraph("Was will die Frau bloß?"),
-                    paragraph("Was will die Frau wohl?"),
-                    paragraph("Was mag die Frau wollen?"));
+            alt.add(paragraph("Was will die Frau bloß?" ),
+                    paragraph("Was will die Frau wohl?" ),
+                    paragraph("Was mag die Frau wollen?" ));
         }
 
         n.addAlt(alt);
@@ -306,27 +298,27 @@ public enum RapunzelStoryNode implements IStoryNode {
 
         if (world.loadSC().locationComp().hasRecursiveLocation(VOR_DEM_ALTEN_TURM) &&
                 rapunzel.stateComp().hasState(HAARE_VOM_TURM_HERUNTERGELASSEN)) {
-            alt.add(paragraph("Warum nicht auch die Haare hinaufsteigen?"));
+            alt.add(paragraph("Warum nicht auch die Haare hinaufsteigen?" ));
         } else if (world.loadSC().memoryComp().isKnown(RAPUNZELRUF)) {
             alt.add(paragraph(
                     "Du bist dir plötzlich sicher: Wenn dich jemand in dieser Welt braucht, "
-                            + "wartet er – wartet sie! – oben im Turm auf dich!"),
+                            + "wartet er – wartet sie! – oben im Turm auf dich!" ),
                     paragraph(
                             "Plötzlich steht es dir klar vor Augen: Du musst in den Turm steigen – "
                                     +
                                     "du weißt doch, was du zu rufen hast! Du wirst doch keine Angst "
-                                    + "vor der dürren Frau haben?"));
+                                    + "vor der dürren Frau haben?" ));
 
         } else {
             // SC hat alles vergessen
             alt.add(paragraph(
                     "Hin und wieder musst du an den alten Turm denken. Du hast das Gefühl, etwas "
                             + "Wichtiges vergessen zu haben, aber es will dir partout nicht "
-                            + "einfallen"),
+                            + "einfallen" ),
                     paragraph(
                             "Manachmal hast du das Gefühl: Du hast noch eine wichtige Rolle "
                                     + "zu spielen. Aber wenn du genauer darüber nachdenkst, weißt "
-                                    + "du plötzlich nicht weiter. Es ist wie verhext"));
+                                    + "du plötzlich nicht weiter. Es ist wie verhext" ));
             alt.addAll(altTurmWohnenHineinHeraus(world));
         }
 
@@ -340,8 +332,8 @@ public enum RapunzelStoryNode implements IStoryNode {
 
         if (world.loadSC().locationComp().hasRecursiveLocation(VOR_DEM_ALTEN_TURM)) {
             alt.add(paragraph("Wenn im Turm jemand wohnt – wie kommt er herein "
-                    + "oder hinaus?"));
-            alt.add(paragraph("Ob jemand im Turm ein und aus geht? Aber wie bloß?"));
+                    + "oder hinaus?" ));
+            alt.add(paragraph("Ob jemand im Turm ein und aus geht? Aber wie bloß?" ));
         } else {
             alt.add(du(PARAGRAPH,
                     "musst",
@@ -352,7 +344,7 @@ public enum RapunzelStoryNode implements IStoryNode {
                     .beendet(PARAGRAPH));
             alt.add(paragraph(
                     "Dir kommt auf einmal wieder der alte Turm in den Sinn: "
-                            + "Wer wird darinnen wohl wohnen?"));
+                            + "Wer wird darinnen wohl wohnen?" ));
         }
 
         return alt.build();

@@ -23,16 +23,19 @@ public class Nominalphrase extends SubstantivischePhrase {
     // Allgemeine Nominalphrasen, die sich nicht auf ein
     // AvObject oder eine AbstractEntity beziehen.
     public static final Nominalphrase ANGEBOTE =
-            np(PL_MFN, INDEF, "Angebote", "Angeboten");
+            np(PL_MFN, INDEF, "Angebote", "Angeboten" );
     public static final Nominalphrase ASTGABEL =
-            np(F, DEF, "Astgabel");
+            np(F, DEF, "Astgabel" );
+    public static final Nominalphrase DEIN_HERZ =
+            np(N, null, "dein Herz",
+                    "deinem Herzen" );
     public static final Nominalphrase DINGE =
-            np(PL_MFN, DEF, "Dinge", "Dingen");
+            np(PL_MFN, DEF, "Dinge", "Dingen" );
     public static final Nominalphrase GESPRAECH =
-            np(N, DEF, "Gespräch");
+            np(N, DEF, "Gespräch" );
     public static final Nominalphrase IHRE_HAARE =
             np(PL_MFN, null, "ihre Haare",
-                    "ihren Haaren");
+                    "ihren Haaren" );
 
     public static Nominalphrase np(final NumerusGenus numerusGenus,
                                    @Nullable final Artikel.Typ artikelTyp,
