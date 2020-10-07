@@ -47,7 +47,7 @@ public class SpielerCharakter extends GameObject
         this.memoryComp = addComponent(memoryComp);
         aliveComp = addComponent(new AliveComp(id));
         this.talkingComp = addComponent(talkingComp);
-        this.reactionsComp = reactionsComp;
+        this.reactionsComp = addComponent(reactionsComp);
     }
 
     @Nonnull

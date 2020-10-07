@@ -24,10 +24,12 @@ import de.nb.aventiure2.data.narration.StructuralElementConverters;
 import de.nb.aventiure2.data.world.base.GameObjectIdConverters;
 import de.nb.aventiure2.data.world.counter.Counter;
 import de.nb.aventiure2.data.world.counter.CounterDao;
-import de.nb.aventiure2.data.world.gameobject.World;
+import de.nb.aventiure2.data.world.gameobject.*;
 import de.nb.aventiure2.data.world.syscomp.description.IDescribableGO;
 import de.nb.aventiure2.data.world.syscomp.feelings.FeelingsDao;
 import de.nb.aventiure2.data.world.syscomp.feelings.FeelingsPCD;
+import de.nb.aventiure2.data.world.syscomp.feelings.FeelingsTowardsInfo;
+import de.nb.aventiure2.data.world.syscomp.feelings.FeelingsTowardsTypeConverters;
 import de.nb.aventiure2.data.world.syscomp.feelings.HungerConverters;
 import de.nb.aventiure2.data.world.syscomp.feelings.MoodConverters;
 import de.nb.aventiure2.data.world.syscomp.location.LocationDao;
@@ -54,17 +56,14 @@ import de.nb.aventiure2.data.world.syscomp.story.StoryWebDao;
 import de.nb.aventiure2.data.world.syscomp.story.StoryWebPCD;
 import de.nb.aventiure2.data.world.syscomp.talking.TalkingDao;
 import de.nb.aventiure2.data.world.syscomp.talking.TalkingPCD;
-import de.nb.aventiure2.data.world.time.AvDateTimeConverters;
-import de.nb.aventiure2.data.world.time.AvNow;
-import de.nb.aventiure2.data.world.time.AvNowDao;
-import de.nb.aventiure2.data.world.time.AvTimeSpanConverters;
+import de.nb.aventiure2.data.world.time.*;
 import de.nb.aventiure2.german.base.NumerusGenusConverters;
 import de.nb.aventiure2.german.base.StructuralElement;
 import de.nb.aventiure2.scaction.stepcount.SCActionStepCount;
 import de.nb.aventiure2.scaction.stepcount.SCActionStepCountDao;
 
-import static de.nb.aventiure2.data.world.gameobject.World.GOLDENE_KUGEL;
-import static de.nb.aventiure2.data.world.time.AvTime.oClock;
+import static de.nb.aventiure2.data.world.gameobject.World.*;
+import static de.nb.aventiure2.data.world.time.AvTime.*;
 
 @Database(entities = {
         Counter.class,
@@ -75,6 +74,7 @@ import static de.nb.aventiure2.data.world.time.AvTime.oClock;
         MovementPCD.class,
         LocationPCD.class,
         FeelingsPCD.class,
+        FeelingsTowardsInfo.class,
         MemoryPCD.class,
         KnownInfo.class,
         MentalModelPCD.class,
@@ -96,6 +96,7 @@ import static de.nb.aventiure2.data.world.time.AvTime.oClock;
         PauseForSCActionConverters.class,
         GameObjectIdConverters.class,
         MoodConverters.class,
+        FeelingsTowardsTypeConverters.class,
         MovementStepPhaseConverters.class,
         HungerConverters.class,
         StoryConverters.class,
@@ -190,7 +191,7 @@ public abstract class AvDatabase extends RoomDatabase {
                 "Diese Geschichte spielt in den alten Zeiten, wo das Wünschen noch geholfen hat. "
                         +
                         "Sie beginnt im königlichen Schloss, in einer prächtigen "
-                        + "Vorhalle, Marmor und Brokat überall.\n");
+                        + "Vorhalle, Marmor und Brokat überall.\n" );
         final List<IDescribableGO> objectsInRoom = ImmutableList.of(
                 (IDescribableGO) world.load(GOLDENE_KUGEL));
         text.append(buildObjectsInRoomDescription(objectsInRoom));
@@ -237,11 +238,11 @@ public abstract class AvDatabase extends RoomDatabase {
             res.append(objectsInRoom.get(i).descriptionComp().getDescriptionAtFirstSight().nom());
             if (i == objectsInRoom.size() - 2) {
                 // one before the last
-                res.append(" und ");
+                res.append(" und " );
             }
             if (i < objectsInRoom.size() - 2) {
                 // more than one after this
-                res.append(", ");
+                res.append(", " );
             }
         }
 
@@ -265,7 +266,7 @@ public abstract class AvDatabase extends RoomDatabase {
                             }
 
                             if (INSTANCE.nowDao().now() == null) {
-                                throw new IllegalStateException("roomDatabaseCallback not called");
+                                throw new IllegalStateException("roomDatabaseCallback not called" );
                             }
                         }
 

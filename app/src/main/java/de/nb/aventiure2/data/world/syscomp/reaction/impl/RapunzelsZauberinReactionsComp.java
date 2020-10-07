@@ -371,6 +371,7 @@ public class RapunzelsZauberinReactionsComp
         // Spieler wird verzaubert und vergisst alles.
         loadSC().memoryComp().forget(RAPUNZEL, RAPUNZELS_ZAUBERIN, RAPUNZELS_GESANG,
                 RAPUNZELS_HAARE, RAPUNZELRUF);
+        loadSC().feelingsComp().resetFeelingsTowards(RAPUNZEL);
         loadSC().feelingsComp().setMood(ERSCHOEPFT);
         db.counterDao().reset(VorDemTurmConnectionComp.COUNTER_ALTER_TURM_UMRUNDET);
 

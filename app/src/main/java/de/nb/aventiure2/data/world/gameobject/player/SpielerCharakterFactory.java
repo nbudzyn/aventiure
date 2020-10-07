@@ -8,6 +8,7 @@ import de.nb.aventiure2.data.database.AvDatabase;
 import de.nb.aventiure2.data.world.base.GameObjectId;
 import de.nb.aventiure2.data.world.base.Known;
 import de.nb.aventiure2.data.world.gameobject.*;
+import de.nb.aventiure2.data.world.syscomp.feelings.FeelingTowardsType;
 import de.nb.aventiure2.data.world.syscomp.feelings.FeelingsComp;
 import de.nb.aventiure2.data.world.syscomp.feelings.Mood;
 import de.nb.aventiure2.data.world.syscomp.location.LocationComp;
@@ -40,7 +41,9 @@ public class SpielerCharakterFactory {
     public SpielerCharakter create(final GameObjectId id) {
         final FeelingsComp feelingsComp = new FeelingsComp(id, db, Mood.NEUTRAL, SATT,
                 new AvDateTime(1, oClock(8)),
-                hours(6));
+                hours(6),
+                createDefaultFeelingsTowards(),
+                createInitialFeelingsTowards());
         final LocationComp locationComp = new LocationComp(id, db, world, SCHLOSS_VORHALLE, null,
                 // Ein NSC könnte den Spieler nicht so mir-nichts-dir-nichts mitnehmen.
                 false);
@@ -51,6 +54,14 @@ public class SpielerCharakterFactory {
                 new MemoryComp(id, db, world, world.getLocationSystem(), createKnownMap()),
                 new NoSCTalkActionsTalkingComp(SPIELER_CHARAKTER, db, world),
                 new ScAutomaticReactionsComp(db, world, feelingsComp));
+    }
+
+    private static Map<FeelingTowardsType, Float> createDefaultFeelingsTowards() {
+        return ImmutableMap.of(FeelingTowardsType.ZUNEIGUNG_ABNEIGUNG, 0f);
+    }
+
+    private static Map<GameObjectId, Map<FeelingTowardsType, Float>> createInitialFeelingsTowards() {
+        return ImmutableMap.of();
     }
 
     private static Map<GameObjectId, Known> createKnownMap() {

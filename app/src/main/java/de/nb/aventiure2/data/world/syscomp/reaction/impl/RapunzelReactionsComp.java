@@ -8,6 +8,7 @@ import javax.annotation.Nullable;
 
 import de.nb.aventiure2.data.database.AvDatabase;
 import de.nb.aventiure2.data.world.gameobject.*;
+import de.nb.aventiure2.data.world.syscomp.feelings.FeelingIntensity;
 import de.nb.aventiure2.data.world.syscomp.location.ILocatableGO;
 import de.nb.aventiure2.data.world.syscomp.location.LocationComp;
 import de.nb.aventiure2.data.world.syscomp.memory.MemoryComp;
@@ -32,6 +33,7 @@ import static de.nb.aventiure2.data.world.base.Known.KNOWN_FROM_DARKNESS;
 import static de.nb.aventiure2.data.world.base.Known.KNOWN_FROM_LIGHT;
 import static de.nb.aventiure2.data.world.base.Lichtverhaeltnisse.HELL;
 import static de.nb.aventiure2.data.world.gameobject.World.*;
+import static de.nb.aventiure2.data.world.syscomp.feelings.FeelingTowardsType.ZUNEIGUNG_ABNEIGUNG;
 import static de.nb.aventiure2.data.world.syscomp.feelings.Mood.ANGESPANNT;
 import static de.nb.aventiure2.data.world.syscomp.feelings.Mood.AUFGEDREHT;
 import static de.nb.aventiure2.data.world.syscomp.feelings.Mood.BEWEGT;
@@ -169,6 +171,9 @@ public class RapunzelReactionsComp
         );
 
         world.loadSC().memoryComp().upgradeKnown(RAPUNZELS_GESANG);
+
+        loadSC().feelingsComp().upgradeFeelingsTowards(RAPUNZEL,
+                ZUNEIGUNG_ABNEIGUNG, 1, FeelingIntensity.DEUTLICH);
     }
 
     private void onSCEnter_VorDemAltenTurm_HaareHeruntergelassen(
@@ -242,6 +247,12 @@ public class RapunzelReactionsComp
             stateComp.setState(STILL);
             memoryComp.upgradeKnown(SPIELER_CHARAKTER);
 
+            if (loadSC().memoryComp().isKnown(RAPUNZELS_GESANG)) {
+                // Jetzt weiß der SC, wer so schön gesungen hat!
+                loadSC().feelingsComp().upgradeFeelingsTowards(RAPUNZEL,
+                        ZUNEIGUNG_ABNEIGUNG, 1, FeelingIntensity.DEUTLICH);
+            }
+
             loadSC().feelingsComp().setMoodMin(ANGESPANNT);
 
             return;
@@ -269,7 +280,14 @@ public class RapunzelReactionsComp
         stateComp.setState(STILL);
         memoryComp.upgradeKnown(SPIELER_CHARAKTER);
 
-        loadSC().feelingsComp().setMood(AUFGEDREHT);
+        if (loadSC().memoryComp().isKnown(RAPUNZELS_GESANG)) {
+            // Jetzt weiß der SC, wer so schön gesungen hat! Und schön ist
+            // sie obendrein noch!
+            loadSC().feelingsComp().upgradeFeelingsTowards(RAPUNZEL,
+                    ZUNEIGUNG_ABNEIGUNG, 2, FeelingIntensity.STARK);
+        }
+
+        loadSC().feelingsComp().setMood(BEWEGT);
     }
 
     private void onSCEnter_ObenImAltenTurm_RapunzelBekannt() {
@@ -336,6 +354,9 @@ public class RapunzelReactionsComp
 
         memoryComp.upgradeKnown(SPIELER_CHARAKTER);
 
+        loadSC().feelingsComp().upgradeFeelingsTowards(RAPUNZEL,
+                ZUNEIGUNG_ABNEIGUNG, 0.75f, FeelingIntensity.DEUTLICH);
+
         world.loadSC().memoryComp().upgradeKnown(RAPUNZEL);
 
         n.addAlt(alt);
@@ -382,9 +403,6 @@ public class RapunzelReactionsComp
             rapunzelMoechteGoldeneKugelHaben();
             return;
         }
-
-        // STORY Was, wenn die Kugel zu Boden fällt oder der SC sie hinlegt?
-        //  "(Die junge Frau) hebt (die goldene Kugel) auf und..."
     }
 
     private void rapunzelMoechteGoldeneKugelHaben() {
@@ -521,6 +539,10 @@ public class RapunzelReactionsComp
                             .phorikKandidat(F, RAPUNZEL)
                     // Hier wäre "dann" nur sinnvoll, wenn Rapunzel etwas tut, nicht der SC
             );
+
+            loadSC().feelingsComp().upgradeFeelingsTowards(RAPUNZEL,
+                    ZUNEIGUNG_ABNEIGUNG, 0.5f, FeelingIntensity.DEUTLICH);
+
             return;
         }
 
@@ -697,6 +719,8 @@ public class RapunzelReactionsComp
         );
 
         world.loadSC().memoryComp().upgradeKnown(RAPUNZELS_GESANG);
+        loadSC().feelingsComp().upgradeFeelingsTowards(RAPUNZEL,
+                ZUNEIGUNG_ABNEIGUNG, 1, FeelingIntensity.DEUTLICH);
     }
 
     private void onTimePassed_RapunzelMoechteNichtSingen(final AvDateTime lastTime,

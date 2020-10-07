@@ -3,6 +3,7 @@ package de.nb.aventiure2.data.world.syscomp.taking.impl;
 import de.nb.aventiure2.data.database.AvDatabase;
 import de.nb.aventiure2.data.world.gameobject.*;
 import de.nb.aventiure2.data.world.syscomp.description.IDescribableGO;
+import de.nb.aventiure2.data.world.syscomp.feelings.FeelingIntensity;
 import de.nb.aventiure2.data.world.syscomp.location.ILocatableGO;
 import de.nb.aventiure2.data.world.syscomp.memory.MemoryComp;
 import de.nb.aventiure2.data.world.syscomp.taking.AbstractTakingComp;
@@ -12,6 +13,7 @@ import de.nb.aventiure2.german.base.Nominalphrase;
 import de.nb.aventiure2.german.base.SubstantivischePhrase;
 
 import static de.nb.aventiure2.data.world.gameobject.World.*;
+import static de.nb.aventiure2.data.world.syscomp.feelings.FeelingTowardsType.ZUNEIGUNG_ABNEIGUNG;
 import static de.nb.aventiure2.data.world.syscomp.feelings.Mood.GLUECKLICH;
 import static de.nb.aventiure2.data.world.time.AvTimeSpan.*;
 import static de.nb.aventiure2.german.base.GermanUtil.capitalize;
@@ -143,6 +145,8 @@ public class RapunzelTakingComp extends AbstractTakingComp {
 
         memoryComp.upgradeKnown(given);
 
+        world.loadSC().feelingsComp().upgradeFeelingsTowards(
+                RAPUNZEL, ZUNEIGUNG_ABNEIGUNG, 1, FeelingIntensity.DEUTLICH);
         world.loadSC().feelingsComp().setMoodMin(GLUECKLICH);
 
         // Das Gespräch wird nicht beendet!

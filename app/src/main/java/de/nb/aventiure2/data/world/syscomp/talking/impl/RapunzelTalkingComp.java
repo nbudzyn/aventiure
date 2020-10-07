@@ -4,15 +4,19 @@ import com.google.common.collect.ImmutableList;
 
 import de.nb.aventiure2.data.database.AvDatabase;
 import de.nb.aventiure2.data.world.gameobject.*;
+import de.nb.aventiure2.data.world.syscomp.feelings.FeelingIntensity;
 import de.nb.aventiure2.data.world.syscomp.state.impl.RapunzelState;
 import de.nb.aventiure2.data.world.syscomp.state.impl.RapunzelStateComp;
 import de.nb.aventiure2.data.world.syscomp.talking.AbstractTalkingComp;
 import de.nb.aventiure2.german.base.SubstantivischePhrase;
+import de.nb.aventiure2.german.description.AbstractDescription;
 import de.nb.aventiure2.german.praedikat.AdverbialeAngabeSkopusVerbWohinWoher;
 import de.nb.aventiure2.german.praedikat.PraedikatOhneLeerstellen;
 
 import static de.nb.aventiure2.data.world.gameobject.World.*;
+import static de.nb.aventiure2.data.world.syscomp.feelings.FeelingTowardsType.ZUNEIGUNG_ABNEIGUNG;
 import static de.nb.aventiure2.data.world.syscomp.feelings.Mood.AUFGEDREHT;
+import static de.nb.aventiure2.data.world.syscomp.feelings.Mood.BEWEGT;
 import static de.nb.aventiure2.data.world.time.AvTimeSpan.*;
 import static de.nb.aventiure2.german.base.Nominalphrase.DEIN_HERZ;
 import static de.nb.aventiure2.german.base.Nominalphrase.IHRE_HAARE;
@@ -53,13 +57,14 @@ public class RapunzelTalkingComp extends AbstractTalkingComp {
                                 // "wieder hinunterlassen": Das "wieder" gehört
                                 // quasi zu "hinunter".
                                 new AdverbialeAngabeSkopusVerbWohinWoher(
-                                        "wieder" )));
+                                        "wieder")));
         return ImmutableList.of(
                 SCTalkAction.entrySt(
                         () -> !haareSindHinuntergelassen(),
                         bittenHaareHerunterzulassen,
                         this::haareHerunterlassenBitte_EntryReEntry),
                 SCTalkAction.st(
+                        this::zuneigungDesSCZuRapunzelDeutlich,
                         // "Der jungen Frau dein Herz ausschütten"
                         AUSSCHUETTEN
                                 .mitDat(getDescription(true))
@@ -74,6 +79,11 @@ public class RapunzelTalkingComp extends AbstractTalkingComp {
 
     private boolean haareSindHinuntergelassen() {
         return stateComp.hasState(RapunzelState.HAARE_VOM_TURM_HERUNTERGELASSEN);
+    }
+
+    private boolean zuneigungDesSCZuRapunzelDeutlich() {
+        return loadSC().feelingsComp().getFeelingTowards(RAPUNZEL,
+                ZUNEIGUNG_ABNEIGUNG) >= FeelingIntensity.DEUTLICH;
     }
 
     private void herzAusschuetten() {
@@ -91,12 +101,8 @@ public class RapunzelTalkingComp extends AbstractTalkingComp {
                     + " glänzenden Locken";
         }
 
-        // STORY Wenn man sich schon kennt und der SC gerade erst in den Raum gekommen ist und
-        //  Rapunzel aufgeschreckt hat? - "Doch du....?"
-        // STORY Das hier sollte nur gehen, wenn der Spieler ausreichend Vertrauen zu
-        //  Rapunzel gefasst hat.
         // STORY Das hier sollte nur einmal gehen.
-        n.add(du("fängst", "an ganz freundlich mit "
+        n.add(du(PARAGRAPH, "fängst", "an ganz freundlich mit "
                         + anaph.dat()
                         + " zu reden. Du erzählst, dass von "
                         + wovonHerzBewegtDat
@@ -121,7 +127,7 @@ public class RapunzelTalkingComp extends AbstractTalkingComp {
                 "ganz freundlich",
                 mins(1)));
 
-        loadSC().feelingsComp().setMoodMin(AUFGEDREHT);
+        loadSC().feelingsComp().setMoodMin(BEWEGT);
     }
 
     private void haareHerunterlassenBitte_EntryReEntry() {
@@ -134,8 +140,6 @@ public class RapunzelTalkingComp extends AbstractTalkingComp {
                                 + "„lasst mich wieder hinunter und ich lasse euch euren Frieden.“",
                         secs(10))
                         .beendet(PARAGRAPH)
-                //  STORY "Oh, ich wünschte, ihr könntet / du könntest noch einen Moment bleiben!"
-                //   antwortet RAPUNZEL.
         );
 
         haareHerunterlassen();
@@ -144,7 +148,10 @@ public class RapunzelTalkingComp extends AbstractTalkingComp {
     private void haareHerunterlassenBitte_ExitImmReEntry() {
         final SubstantivischePhrase rapunzelAnaph =
                 getAnaphPersPronWennMglSonstDescription(true);
-        n.addAlt(
+        final ImmutableList.Builder<AbstractDescription<?>> alt =
+                ImmutableList.builder();
+
+        alt.add(
                 neuerSatz(PARAGRAPH,
                         "„Jetzt muss ich aber gehen“, sagst du unvermittelt und "
                                 + "blickst "
@@ -154,16 +161,41 @@ public class RapunzelTalkingComp extends AbstractTalkingComp {
                 neuerSatz(SENTENCE, "„Ich muss wieder hinaus in die Welt!“, "
                                 + "sagst du",
                         secs(10)),
-                // STORY Nur, wenn man sich schon duzt.
-                //  - "Lässt du mich wieder hinunter, fragst du in die Stille hinein"
-                //  - "Plötzlich spürst du neuen Tatendrang in dir. Lass mich gehen, sagst du, "
-                //        + "bald bin ich wieder zurück"
+
+
                 neuerSatz(PARAGRAPH, "„Dann will ich wieder ins "
                                 + "Abenteuer hinaus“, sagst du "
                                 + ZU.getDescription(rapunzelAnaph),
                         secs(15))
                         .phorikKandidat(rapunzelAnaph, RAPUNZEL)
         );
+
+        if (loadSC().feelingsComp().getFeelingTowards(RAPUNZEL, ZUNEIGUNG_ABNEIGUNG) >=
+                FeelingIntensity.DEUTLICH) {
+            alt.add(
+                    neuerSatz(PARAGRAPH,
+                            "„Lässt du mich wieder hinunter?“, fragst du in die "
+                                    + "Stille hinein",
+                            secs(15))
+                            .beendet(PARAGRAPH)
+            );
+        }
+
+        if (loadSC().feelingsComp().getFeelingTowards(RAPUNZEL, ZUNEIGUNG_ABNEIGUNG) >=
+                FeelingIntensity.STARK) {
+            alt.add(
+                    du(PARAGRAPH,
+                            "spürst", "plötzlich neuen Tatendrang in dir. „Lass "
+                                    + "mich gehen“, "
+                                    + "sagst du, "
+                                    + "„bald bin ich wieder zurück!“",
+                            "plötzlich",
+                            secs(15))
+                            .beendet(PARAGRAPH)
+            );
+        }
+
+        n.addAlt(alt);
 
         loadSC().feelingsComp().setMoodMin(AUFGEDREHT);
 

@@ -13,20 +13,22 @@ public enum Mood {
     //  kommt drauf an, ob welche Emotion die STAERKERE ist
     //  Z.B. wird man nicht GEKNICKT, wenn man MUEDE ist.
 
-    VOLLER_FREUDE(5, "fröhlich" ),
-    GLUECKLICH(4, "glücklich" ),
-    BEGEISTERT(3, "begeistert" ),
-    AUFGEDREHT(2, "aufgedreht" ),
-    BEWEGT(2, "selbstvergessen" ),
-    ZUFRIEDEN(1, "spielerisch" ),
+    // 6 / -6 wäre pathologisch
+
+    VOLLER_FREUDE(FeelingIntensity.SEHR_STARK, "fröhlich" ),
+    GLUECKLICH(FeelingIntensity.STARK, "glücklich" ),
+    BEGEISTERT(FeelingIntensity.DEUTLICH, "begeistert" ),
+    AUFGEDREHT(FeelingIntensity.MERKLICH, "aufgedreht" ),
+    BEWEGT(FeelingIntensity.MERKLICH, "selbstvergessen" ),
+    ZUFRIEDEN(FeelingIntensity.NUR_LEICHT, "spielerisch" ),
     // STORY (welche Emotion?) "versonnen"
-    NEUTRAL(0, "aus Langeweile" ),
-    ANGESPANNT(0, "trotzig" ),
-    ERSCHOEPFT(-1, "erschöpft" ),
-    ETWAS_GEKNICKT(-2, "etwas geknickt" ),
+    NEUTRAL(FeelingIntensity.NEUTRAL, "aus Langeweile" ),
+    ANGESPANNT(FeelingIntensity.NEUTRAL, "trotzig" ),
+    ERSCHOEPFT(-FeelingIntensity.NUR_LEICHT, "erschöpft" ),
+    ETWAS_GEKNICKT(-FeelingIntensity.MERKLICH, "etwas geknickt" ),
     // TODO Alternativen: betrübt, ...
-    VERUNSICHERT(-2, "verunsichert" ),
-    UNTROESTLICH(-5, "voller Trauer" );
+    VERUNSICHERT(-FeelingIntensity.MERKLICH, "verunsichert" ),
+    UNTROESTLICH(-FeelingIntensity.SEHR_STARK, "voller Trauer" );
 
     private final int gradDerFreude;
     private final AdverbialeAngabeSkopusSatz adverbialeAngabe;

@@ -46,16 +46,10 @@ public class MentalModelPCD extends AbstractPersistentComponentData {
      * Darf nur zur Initialisierung aufgerufen werden, nicht zur Änderung!
      */
     void initAssumedLocations(final Map<GameObjectId, GameObjectId> map) {
-        Preconditions.checkState(assumedLocations.isEmpty(), "Already initialized!");
+        Preconditions.checkState(assumedLocations.isEmpty(), "Already initialized!" );
 
         // Kein setChanged() !
         assumedLocations.putAll(map);
-    }
-
-    @Nullable
-    @CheckReturnValue
-    public GameObjectId getAssumedLocation(final GameObjectId locatableId) {
-        return assumedLocations.get(locatableId);
     }
 
     public void setAssumedLocation(final GameObjectId locatableId,
@@ -74,5 +68,11 @@ public class MentalModelPCD extends AbstractPersistentComponentData {
         }
 
         assumedLocations.put(locatableId, locationId);
+    }
+
+    @Nullable
+    @CheckReturnValue
+    public GameObjectId getAssumedLocation(final GameObjectId locatableId) {
+        return assumedLocations.get(locatableId);
     }
 }

@@ -27,6 +27,9 @@ public abstract class MentalModelDao implements IComponentDao<MentalModelPCD> {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     public abstract void insertInternal(MentalModelPCD pcd);
 
+    /**
+     * Wer das hier aufruft, muss auch lokale Informationen verwerfen!
+     */
     private void insertAssumedLocations(final MentalModelPCD pcd) {
         deleteAllLocationsHeAssumes(pcd.getGameObjectId());
 
@@ -47,7 +50,7 @@ public abstract class MentalModelDao implements IComponentDao<MentalModelPCD> {
     /**
      * Wer das hier aufruft, muss auch lokale Informationen verwerfen!
      */
-    @Query("DELETE FROM AssumedLocationInfo WHERE :assumer = assumer")
+    @Query("DELETE FROM AssumedLocationInfo WHERE :assumer = assumer" )
     abstract void deleteAllLocationsHeAssumes(GameObjectId assumer);
 
     /**
@@ -62,13 +65,13 @@ public abstract class MentalModelDao implements IComponentDao<MentalModelPCD> {
         return res;
     }
 
-    @Query("SELECT * from MentalModelPCD where :assumer = gameObjectId")
+    @Query("SELECT * from MentalModelPCD where :assumer = gameObjectId" )
     public abstract MentalModelPCD getInternal(final GameObjectId assumer);
 
     private static Map<GameObjectId, GameObjectId> toMap(
             final List<AssumedLocationInfo> assumedLocationInfos) {
         final HashMap<GameObjectId, GameObjectId> res =
-                new HashMap<>(assumedLocationInfos.size() + 20);
+                new HashMap<>(assumedLocationInfos.size());
 
         for (final AssumedLocationInfo assumedLocationInfo : assumedLocationInfos) {
             res.put(assumedLocationInfo.getAssumee(), assumedLocationInfo.getAssumedLocationId());
@@ -81,6 +84,6 @@ public abstract class MentalModelDao implements IComponentDao<MentalModelPCD> {
      * Vor jedem Aufruf muss sichergestellt sein, dass alle Änderungen an dem Game Object
      * gespeichert sind!
      */
-    @Query("SELECT * from AssumedLocationInfo where :assumer = assumer")
+    @Query("SELECT * from AssumedLocationInfo where :assumer = assumer" )
     abstract List<AssumedLocationInfo> getAssumedLocationInfos(GameObjectId assumer);
 }
