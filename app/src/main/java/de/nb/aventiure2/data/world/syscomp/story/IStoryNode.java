@@ -7,7 +7,7 @@ import java.util.Set;
 import de.nb.aventiure2.data.database.AvDatabase;
 import de.nb.aventiure2.data.narration.NarrationDao;
 import de.nb.aventiure2.data.world.base.GameObjectId;
-import de.nb.aventiure2.data.world.gameobject.World;
+import de.nb.aventiure2.data.world.gameobject.*;
 
 /**
  * Ein einzelner Schritt, der im Rahmen einer Story (d.h. eines Mörchens o.Ä.)
@@ -16,7 +16,24 @@ import de.nb.aventiure2.data.world.gameobject.World;
  * Alle Implementierungen sollen {@link Enum}s sein.
  */
 public interface IStoryNode {
+    // STORY Mein Herz hängt an der Erzählung durch die Maschine. Das sollte in jedem Schritt
+    //  des Spiels enforcet werden. Es sollte also in jedem Schritt die Erzählung meaningful
+    //   weitergehen. Der Benutzer sollte immer etwas tun können, was eine
+    //   meaningful Erzählung fortsetzt (oder beginnt / beendet). (Das ist die Belohnung an den
+    //   Spieler fürs Spielen.)
+    //  Anschlussfragen:
+    //  - Wie wird die Erzählung meaningful?
+    //    - Braucht man einfach eine reiche Fülle von immer neuen Dingen, die geschehen?
+    //    - Oder sollte der Spieler bei jedem neuen Erzählschritt immer mit den
+    //      beschriebenen Elementen interagieren können? Und zwar so, dass die Interaktionen
+    //      die Welt ändern? Oder spürbar Auswirkungen auf später haben?
+
     // STORY Story 'Beats" in Twine modellieren, dann neue Branches in Twine entwickeln
+
+    // STORY Wie kann man eine meaningful Erzählung automatisch erzeugen?
+
+    // STORY "Fronten" ("Fronts") angelehnt an Dungeon World: Wenn der Spieler nicht
+    //  interagiert, kommt es mehrstufig zu Eskalationen
 
     @FunctionalInterface
     interface IHinter {
