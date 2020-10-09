@@ -78,7 +78,7 @@ public class WalkerTest {
     public void walkActionsWithRandomAdditions() {
         int maxSteps = 0;
         while (maxSteps < Walkthrough.FULL.numSteps()) {
-            LOGGER.d("--- Neuer Durchlauf: " + maxSteps + " Schritte ---");
+            LOGGER.d("--- Neuer Durchlauf: " + maxSteps + " vorgegebene Schritte ---");
 
             doWalkthrough(Walkthrough.FULL.truncate(maxSteps));
             walkRandomly();
