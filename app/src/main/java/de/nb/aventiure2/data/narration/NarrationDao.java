@@ -118,6 +118,13 @@ public abstract class NarrationDao {
         AbstractDescription<?> bestDesc = null;
         float bestScore = Float.NEGATIVE_INFINITY;
         NarrationAddition bestNarrationAddition = null;
+
+        // TODO Hier könnte es textuelle Duplikate geben - sowohl zwischen den
+        //  NarrationAdditions einer AbstractDescriptions also auch zwischen den NarrationAdditions
+        //  verschiedener AbstractDescriptions. Die Duplikate kosten vermutlich viel Zeit -
+        //  also sollte man sie herausfiltern. Da nach den ganzen NarrationAddition-Prüfungen
+        //  am Ende wieder die bestDesc relevant ist, ist das nicht trivial.
+
         for (final AbstractDescription<?> descAlternative : alternatives) {
             final List<NarrationAddition> narrationBuildersForAlternative =
                     toNarrationAdditions(descAlternative,

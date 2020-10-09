@@ -254,7 +254,7 @@ public enum RapunzelStoryNode implements IStoryNode {
 
         if (world.loadSC().locationComp().hasRecursiveLocation(VOR_DEM_ALTEN_TURM)) {
             alt.add(paragraph("Ob der Turm wohl bewohnt ist?"),
-                    paragraph("Eine Rast würde dir sicher guttun"));
+                    paragraph("Eine längere Rast würde dir sicher guttun"));
         } else {
             alt.add(paragraph(
                     "Dir kommt noch einmal der alte Turm auf der Hügelkuppe "
@@ -283,6 +283,14 @@ public enum RapunzelStoryNode implements IStoryNode {
             alt.add(du(PARAGRAPH,
                     "wirst",
                     "bestimmt noch den Turm hinaufkommen!",
+                    "bestimmt",
+                    noTime())
+                    .beendet(PARAGRAPH));
+            alt.add(du(PARAGRAPH,
+                    "wirst",
+                    "bestimmt noch den Turm hinaufkommen – vielleicht musst du dich "
+                            + "nur einmal auf die Lauer legen und beobachten, ob jemand "
+                            + "hineinkommt?",
                     "bestimmt",
                     noTime())
                     .beendet(PARAGRAPH));
@@ -320,14 +328,17 @@ public enum RapunzelStoryNode implements IStoryNode {
 
         } else {
             // SC hat alles vergessen
+            if (!world.loadSC().locationComp().hasRecursiveLocation(VOR_DEM_ALTEN_TURM)) {
+                alt.add(paragraph(
+                        "Hin und wieder musst du an den alten Turm denken. Du hast das Gefühl, etwas "
+                                + "Wichtiges vergessen zu haben, aber es will dir partout nicht "
+                                + "einfallen"));
+            }
+
             alt.add(paragraph(
-                    "Hin und wieder musst du an den alten Turm denken. Du hast das Gefühl, etwas "
-                            + "Wichtiges vergessen zu haben, aber es will dir partout nicht "
-                            + "einfallen"),
-                    paragraph(
-                            "Manachmal hast du das Gefühl: Du hast noch eine wichtige Rolle "
-                                    + "zu spielen. Aber wenn du genauer darüber nachdenkst, weißt "
-                                    + "du plötzlich nicht weiter. Es ist wie verhext"));
+                    "Manchmal hast du das Gefühl: Du hast noch eine wichtige Rolle "
+                            + "zu spielen. Aber wenn du genauer darüber nachdenkst, weißt "
+                            + "du plötzlich nicht weiter. Es ist wie verhext"));
             alt.addAll(altTurmWohnenHineinHeraus(world));
         }
 

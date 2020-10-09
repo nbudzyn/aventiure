@@ -13,17 +13,17 @@ import de.nb.aventiure2.data.database.AvDatabase;
 import de.nb.aventiure2.data.narration.NarrationDao;
 import de.nb.aventiure2.data.world.base.AbstractStatefulComponent;
 import de.nb.aventiure2.data.world.base.GameObjectId;
-import de.nb.aventiure2.data.world.gameobject.World;
+import de.nb.aventiure2.data.world.gameobject.*;
 import de.nb.aventiure2.data.world.syscomp.location.LocationSystem;
 import de.nb.aventiure2.data.world.syscomp.spatialconnection.ISpatiallyConnectedGO;
 import de.nb.aventiure2.data.world.syscomp.spatialconnection.system.SpatialConnectionSystem;
 import de.nb.aventiure2.data.world.syscomp.storingplace.ILocationGO;
-import de.nb.aventiure2.data.world.time.AvTimeSpan;
+import de.nb.aventiure2.data.world.time.*;
 import de.nb.aventiure2.scaction.stepcount.SCActionStepCountDao;
 
 import static com.google.common.base.Preconditions.checkArgument;
-import static de.nb.aventiure2.data.world.gameobject.World.STORY_WEB;
-import static de.nb.aventiure2.data.world.time.AvTimeSpan.noTime;
+import static de.nb.aventiure2.data.world.gameobject.World.*;
+import static de.nb.aventiure2.data.world.time.AvTimeSpan.*;
 import static java.util.Arrays.asList;
 
 /**
@@ -118,7 +118,7 @@ public class StoryWebComp extends AbstractStatefulComponent<StoryWebPCD> {
         // nicht oder nur langsam weiterkommt, versuchen wir, eine solche Geschichte
         // "weiterzusetzen" (z.B. zu starten).
         // (Das wird wohl eher selten der Fall sein.)
-        if (Story.checkAndAdvanceAStoryIfAppropriate(db, n, world)) {
+        if (!Story.checkAndAdvanceAStoryIfAppropriate(db, n, world)) {
             // Das hier ist der Regelfall!
             storyNode.narrateAndDoHintAction(db, world);
         }

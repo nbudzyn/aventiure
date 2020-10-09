@@ -180,7 +180,10 @@ public class GebenAction<
             final PraedikatOhneLeerstellen anbietenGebenPraedikat) {
         return du(anbietenGebenPraedikat, AvTimeSpan.secs(20))
                 .undWartest()
-                .dann();
+                .dann()
+                // STORY Hier wäre es etwas schöner wenn die im anbietenGebenPraedikat
+                //  verwendete Description für den Taker als phorikKandidat gesetzt würde.
+                ;
     }
 
     private Kohaerenzrelation getKohaerenzrelationFuerUmformulierung() {

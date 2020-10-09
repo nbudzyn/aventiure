@@ -188,16 +188,14 @@ public enum FroschkoenigStoryNode implements IStoryNode {
 
         final ILocatableGO goldeneKugel = (ILocatableGO) world.load(GOLDENE_KUGEL);
 
-        if (!world.loadSC().locationComp().hasRecursiveLocation(IM_WALD_BEIM_BRUNNEN)) {
+        if (!goldeneKugel.locationComp().hasSameUpperMostLocationAs(SPIELER_CHARAKTER)) {
+            alt.addAll(altKugelVermissen());
+        } else {
             if (db.nowDao().now().getTageszeit().equals(NACHTS)) {
                 alt.addAll(altNachtsSchlafen(world));
             } else {
                 alt.addAll(altHeissHeutKuehlerOrtWaereSchoen());
             }
-        }
-
-        if (!goldeneKugel.locationComp().hasSameUpperMostLocationAs(SPIELER_CHARAKTER)) {
-            alt.addAll(altKugelVermissen());
         }
 
         n.narrateAlt(alt);

@@ -127,8 +127,7 @@ public class VorDemTurmConnectionComp extends AbstractSpatialConnectionComp {
 
                 if (!world.loadSC().memoryComp().isKnown(RAPUNZELS_HAARE)) {
                     return du("gehst", "einmal um den Turm herum. Es ist keine "
-                            + "Türe zu sehen, nur ganz oben ein kleines Fensterchen", mins(2))
-                            .dann();
+                            + "Türe zu sehen, nur ganz oben ein kleines Fensterchen", mins(2));
                 }
 
                 return du("gehst", "einmal um den Turm herum, findest "
