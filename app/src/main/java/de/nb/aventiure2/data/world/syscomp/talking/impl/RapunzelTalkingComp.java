@@ -11,6 +11,7 @@ import de.nb.aventiure2.german.base.SubstantivischePhrase;
 import de.nb.aventiure2.german.description.AbstractDescription;
 import de.nb.aventiure2.german.praedikat.AdverbialeAngabeSkopusVerbWohinWoher;
 import de.nb.aventiure2.german.praedikat.PraedikatOhneLeerstellen;
+import de.nb.aventiure2.german.praedikat.VerbSubjAkkPraep;
 
 import static de.nb.aventiure2.data.world.gameobject.World.*;
 import static de.nb.aventiure2.data.world.syscomp.feelings.FeelingTowardsType.ZUNEIGUNG_ABNEIGUNG;
@@ -18,7 +19,9 @@ import static de.nb.aventiure2.data.world.syscomp.feelings.Mood.AUFGEDREHT;
 import static de.nb.aventiure2.data.world.syscomp.feelings.Mood.BEWEGT;
 import static de.nb.aventiure2.data.world.time.AvTimeSpan.*;
 import static de.nb.aventiure2.german.base.Nominalphrase.DEIN_HERZ;
+import static de.nb.aventiure2.german.base.Nominalphrase.EIN_GESPRAECH;
 import static de.nb.aventiure2.german.base.Nominalphrase.IHRE_HAARE;
+import static de.nb.aventiure2.german.base.NumerusGenus.F;
 import static de.nb.aventiure2.german.base.NumerusGenus.M;
 import static de.nb.aventiure2.german.base.NumerusGenus.N;
 import static de.nb.aventiure2.german.base.NumerusGenus.PL_MFN;
@@ -40,8 +43,9 @@ public class RapunzelTalkingComp extends AbstractTalkingComp {
 
     public RapunzelTalkingComp(final AvDatabase db,
                                final World world,
-                               final RapunzelStateComp stateComp) {
-        super(RAPUNZEL, db, world);
+                               final RapunzelStateComp stateComp,
+                               final boolean initialSchonBegruesstMitSC) {
+        super(RAPUNZEL, db, world, initialSchonBegruesstMitSC);
         this.stateComp = stateComp;
     }
 
@@ -51,6 +55,11 @@ public class RapunzelTalkingComp extends AbstractTalkingComp {
             case STILL:
                 // "Die junge Frau bitten ihre Haare wieder hinunterzulassen"
                 return ImmutableList.of(
+                        SCTalkAction.entrySt(
+                                VerbSubjAkkPraep.BEGINNEN
+                                        .mitAkk(EIN_GESPRAECH)
+                                        .mitObj(getDescription()),
+                                this::gespraechBeginnen_EntryReEntry),
                         SCTalkAction.entrySt(
                                 bittenHaareHerunterzulassenPraedikat(),
                                 this::haareHerunterlassenBitte_EntryReEntry),
@@ -106,6 +115,71 @@ public class RapunzelTalkingComp extends AbstractTalkingComp {
                 ZUNEIGUNG_ABNEIGUNG) >= FeelingIntensity.DEUTLICH;
     }
 
+    private void gespraechBeginnen_EntryReEntry() {
+        if (!isSchonBegruesstMitSC()) {
+            begruessen_EntryReEntry();
+            return;
+        }
+
+        n.narrateAlt(
+                neuerSatz(
+                        // STORY Nur, wenn SC und Rapunzel sich noch nicht gut kennen
+                        "„Die letzen Tage waren ziemlich warm“, sagst du",
+                        secs(15))
+                        .beendet(PARAGRAPH),
+                neuerSatz(
+                        // STORY Nur, wenn SC und Rapunzel sich noch nicht gut kennen
+                        "„Nachts war es in letzter Zeit ziemlich kalt“, wirfst du "
+                                + "in den Raum",
+                        secs(15))
+                        .beendet(PARAGRAPH)
+        );
+
+        setTalkingTo(SPIELER_CHARAKTER);
+    }
+
+    private void begruessen_EntryReEntry() {
+        final SubstantivischePhrase anaph = getAnaphPersPronWennMglSonstShortDescription();
+
+        if (db.counterDao().incAndGet("RapunzelTalkingComp_begruessen_EntryReEntry") == 1) {
+            n.narrate(
+                    neuerSatz(
+                            // STORY Nur, wenn SC und Rapunzel sich noch nicht gut kennen.
+                            //  Ansonsten freut sie sich vermutlich!
+                            "„Hallihallo!“, sagst du und lächelst breit. – Schweigen",
+                            secs(5))
+                            .beendet(PARAGRAPH));
+            setSchonBegruesstMitSC(true);
+            return;
+        }
+
+        n.narrateAlt(
+                // STORY Nur, wenn SC und Rapunzel sich noch nicht gut kennen
+                neuerSatz(
+                        "„Hallo, da bin ich wieder!“ sprichst du "
+                                + anaph.akk()
+                                + " an. „Ja…“, gibt "
+                                + anaph.persPron().nom()
+                                + " zurück",
+                        secs(10))
+                        .beendet(PARAGRAPH)
+                        .phorikKandidat(anaph, RAPUNZEL),
+                neuerSatz(
+                        "Du schaust "
+                                + anaph.akk()
+                                + " an. „Schön, euch wiederzusehen, sagst du. „Ja…“, "
+                                + "ist "
+                                + anaph.possArt().vor(F).dat()
+                                + " "
+                                + "Antwort",
+                        secs(10))
+                        .phorikKandidat(anaph, RAPUNZEL)
+                        .beendet(PARAGRAPH)
+        );
+
+        setTalkingTo(SPIELER_CHARAKTER);
+    }
+
     private void herzAusschuetten() {
         final SubstantivischePhrase anaph = getAnaphPersPronWennMglSonstShortDescription();
 
@@ -147,6 +221,7 @@ public class RapunzelTalkingComp extends AbstractTalkingComp {
                 "ganz freundlich",
                 mins(1)));
 
+        setSchonBegruesstMitSC(true);
         loadSC().feelingsComp().setMoodMin(BEWEGT);
     }
 
@@ -162,6 +237,7 @@ public class RapunzelTalkingComp extends AbstractTalkingComp {
                         .beendet(PARAGRAPH)
         );
 
+        setSchonBegruesstMitSC(true);
         haareHerunterlassen();
     }
 
@@ -181,8 +257,6 @@ public class RapunzelTalkingComp extends AbstractTalkingComp {
                 neuerSatz(SENTENCE, "„Ich muss wieder hinaus in die Welt!“, "
                                 + "sagst du",
                         secs(10)),
-
-
                 neuerSatz(PARAGRAPH, "„Dann will ich wieder ins "
                                 + "Abenteuer hinaus“, sagst du "
                                 + ZU.getDescription(rapunzelAnaph),
@@ -217,6 +291,8 @@ public class RapunzelTalkingComp extends AbstractTalkingComp {
 
         n.narrateAlt(alt);
 
+        setSchonBegruesstMitSC(true);
+
         loadSC().feelingsComp().setMoodMin(AUFGEDREHT);
 
         haareHerunterlassen();
@@ -227,7 +303,6 @@ public class RapunzelTalkingComp extends AbstractTalkingComp {
                 getAnaphPersPronWennMglSonstDescription(true);
         final ImmutableList.Builder<AbstractDescription<?>> alt =
                 ImmutableList.builder();
-
 
         alt.add(neuerSatz(
                 "Doch du reagierst gar nicht darauf, sondern forderst "
@@ -250,6 +325,7 @@ public class RapunzelTalkingComp extends AbstractTalkingComp {
 
         n.narrateAlt(alt);
 
+        setSchonBegruesstMitSC(true);
         haareHerunterlassen();
     }
 

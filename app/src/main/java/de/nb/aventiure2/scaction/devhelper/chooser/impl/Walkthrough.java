@@ -19,7 +19,7 @@ public class Walkthrough {
                     "Die goldene Kugel hochwerfen", "Die goldene Kugel hochwerfen",
                     "Die goldene Kugel hochwerfen", "Heulen", "Heulen",
                     "Mit dem Frosch reden", "Dem Frosch Angebote machen",
-                    "Dem Frosch alles versprechen" );
+                    "Dem Frosch alles versprechen");
 
     public static final Walkthrough FROSCHVERSPRECHEN_BIS_SCHLOSSFEST_SCHLOSS_BETRETEN =
             new Walkthrough(
@@ -56,7 +56,7 @@ public class Walkthrough {
                     "Auf den Waldweg zurückkehren",
                     "In Richtung Schloss gehen",
                     "Den Wald verlassen",
-                    "Das Schloss betreten" );
+                    "Das Schloss betreten");
 
 
     public static final Walkthrough SCHLOSSFEST_SCHLOSS_BETRETEN_BIS_PRINZABFAHRT =
@@ -69,7 +69,7 @@ public class Walkthrough {
                     "Mit dem Frosch diskutieren",
                     "Eintopf essen",
                     "Vom Tisch aufstehen",
-                    "Das Schloss verlassen" );
+                    "Das Schloss verlassen");
 
     public static final Walkthrough PRINZABFAHRT_BIS_ERSTE_RAPUNZELRUF_BEOBACHTUNG =
             new Walkthrough("In den Wald gehen",
@@ -86,7 +86,7 @@ public class Walkthrough {
                     "Rasten",
                     "Rasten",
                     "Rasten",
-                    "Rasten" ); // Zauberin steigt die Zöpfe hoch
+                    "Rasten"); // Zauberin steigt die Zöpfe hoch
 
     public static final Walkthrough ERSTE_RAPUNZELRUF_BEOBACHTUNG_BIS_OBEN_BEI_RAPUNZEL =
             new Walkthrough(
@@ -110,7 +110,7 @@ public class Walkthrough {
                     "Die goldene Kugel hochwerfen",
                     "Der jungen Frau die goldene Kugel geben",
                     "Der jungen Frau dein Herz ausschütten",
-                    "Die junge Frau bitten ihre Haare wieder hinunterzulassen" );
+                    "Die junge Frau bitten ihre Haare wieder hinunterzulassen");
 
     public static final Walkthrough ANFANG_BIS_SCHLOSSFEST_SCHLOSS_BETRETEN =
             ANFANG_BIS_FROSCHVERSPRECHEN
@@ -152,8 +152,7 @@ public class Walkthrough {
                     "Rasten",
                     "Aus dem Schatten der Bäume treten",
                     "Rufen: „Lass dein Haar herunter.“",
-                    "An den Haaren hinaufsteigen",
-                    "Die goldene Kugel hochwerfen"
+                    "An den Haaren hinaufsteigen"
             ));
 
     private final ImmutableList<String> steps;

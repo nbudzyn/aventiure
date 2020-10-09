@@ -127,7 +127,9 @@ public class RapunzelTakingComp extends AbstractTakingComp {
                         + givenDesc.akk()
                         + " zurück", secs(30)),
                 neuerSatz(rapunzelAnaph.nom()
-                        + " schaut dich glücklich an und nimmt "
+                        + " schaut dich "
+                        + (stateComp.hasState(HAT_NACH_KUGEL_GEFRAGT) ? "glücklich" : "überrascht")
+                        + " an und nimmt "
                         + givenDescShort.akk()
                         + ". "
                         + capitalize(rapunzelAnaph.persPron().nom())
@@ -137,7 +139,9 @@ public class RapunzelTakingComp extends AbstractTakingComp {
                         + " "
                         + givenDescShort.persPron().akk()
                         + " dir zurück", secs(30)),
-                neuerSatz("Gespannt nimmt "
+                neuerSatz((stateComp.hasState(HAT_NACH_KUGEL_GEFRAGT) ?
+                                "Gespannt" : "Überrascht")
+                                + " nimmt "
                                 + rapunzelAnaph.nom()
                                 + " "
                                 + givenDescShort.akk()

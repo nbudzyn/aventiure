@@ -97,13 +97,14 @@ class CreatureFactory {
                 new LocationComp(FROSCHPRINZ, db, world, IM_WALD_BEIM_BRUNNEN, ABZWEIG_IM_WALD,
                         true);
         final FroschprinzTalkingComp talkingComp =
-                new FroschprinzTalkingComp(db, world, stateComp);
+                new FroschprinzTalkingComp(db, world,
+                        stateComp, false);
         return new TalkingReactionsCreature<>(FROSCHPRINZ,
                 descriptionComp,
                 locationComp,
                 stateComp,
                 talkingComp,
-                new FroschprinzReactionsComp(db, world, stateComp, locationComp));
+                new FroschprinzReactionsComp(db, world, stateComp, locationComp, talkingComp));
     }
 
     GameObject createRapunzel() {
@@ -123,9 +124,10 @@ class CreatureFactory {
                 new MemoryComp(RAPUNZEL, db, world, world.getLocationSystem(),
                         createKnownMapForRapunzel());
         final RapunzelTalkingComp talkingComp =
-                new RapunzelTalkingComp(db, world, stateComp);
+                new RapunzelTalkingComp(db, world, stateComp, false);
         final RapunzelReactionsComp reactionsComp =
-                new RapunzelReactionsComp(db, world, memoryComp, stateComp, locationComp,
+                new RapunzelReactionsComp(db, world, memoryComp, stateComp,
+                        world.getLocationSystem(), locationComp,
                         talkingComp);
         final RapunzelTakingComp takingComp =
                 new RapunzelTakingComp(db, world, stateComp, memoryComp);
@@ -180,7 +182,7 @@ class CreatureFactory {
                         // Muss zum Zustand der Zauberin passen!
                         null);
         final RapunzelsZauberinTalkingComp talkingComp =
-                new RapunzelsZauberinTalkingComp(db, world, locationComp, stateComp);
+                new RapunzelsZauberinTalkingComp(db, world, locationComp, stateComp, false);
         return new MovingTalkingMentalModelReactionsCreature<>(RAPUNZELS_ZAUBERIN,
                 descriptionComp,
                 locationComp,
@@ -189,7 +191,7 @@ class CreatureFactory {
                 talkingComp,
                 mentalModelComp,
                 new RapunzelsZauberinReactionsComp(db, world,
-                        stateComp, locationComp, mentalModelComp, movementComp));
+                        stateComp, locationComp, mentalModelComp, movementComp, talkingComp));
     }
 
     private static class BasicCreature<S extends Enum<S>> extends GameObject

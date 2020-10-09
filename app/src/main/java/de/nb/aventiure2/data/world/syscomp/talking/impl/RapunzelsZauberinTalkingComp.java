@@ -30,8 +30,9 @@ public class RapunzelsZauberinTalkingComp extends AbstractTalkingComp {
     public RapunzelsZauberinTalkingComp(final AvDatabase db,
                                         final World world,
                                         final LocationComp locationComp,
-                                        final RapunzelsZauberinStateComp stateComp) {
-        super(RAPUNZELS_ZAUBERIN, db, world);
+                                        final RapunzelsZauberinStateComp stateComp,
+                                        final boolean initialSchonBegruesstMitSC) {
+        super(RAPUNZELS_ZAUBERIN, db, world, initialSchonBegruesstMitSC);
         this.locationComp = locationComp;
         this.stateComp = stateComp;
     }
@@ -86,7 +87,7 @@ public class RapunzelsZauberinTalkingComp extends AbstractTalkingComp {
                         .phorikKandidat(anaphOderDesc, getGameObjectId())
         );
 
+        setSchonBegruesstMitSC(true);
         unsetTalkingTo();
     }
-
 }

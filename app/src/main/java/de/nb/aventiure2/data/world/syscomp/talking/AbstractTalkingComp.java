@@ -13,16 +13,18 @@ import de.nb.aventiure2.data.narration.NarrationDao;
 import de.nb.aventiure2.data.world.base.AbstractStatefulComponent;
 import de.nb.aventiure2.data.world.base.GameObject;
 import de.nb.aventiure2.data.world.base.GameObjectId;
-import de.nb.aventiure2.data.world.gameobject.World;
-import de.nb.aventiure2.data.world.gameobject.player.SpielerCharakter;
+import de.nb.aventiure2.data.world.gameobject.*;
+import de.nb.aventiure2.data.world.gameobject.player.*;
 import de.nb.aventiure2.data.world.syscomp.description.IDescribableGO;
+import de.nb.aventiure2.data.world.syscomp.location.ILocatableGO;
 import de.nb.aventiure2.data.world.syscomp.memory.Action;
+import de.nb.aventiure2.data.world.syscomp.storingplace.ILocationGO;
 import de.nb.aventiure2.data.world.syscomp.talking.impl.SCTalkAction;
 import de.nb.aventiure2.german.base.Nominalphrase;
 import de.nb.aventiure2.german.base.Personalpronomen;
 import de.nb.aventiure2.german.base.SubstantivischePhrase;
 
-import static de.nb.aventiure2.data.world.gameobject.World.SPIELER_CHARAKTER;
+import static de.nb.aventiure2.data.world.gameobject.World.*;
 
 /**
  * Component for a {@link GameObject}: Das Game Object kann mit einem anderen
@@ -38,17 +40,21 @@ public abstract class AbstractTalkingComp extends AbstractStatefulComponent<Talk
 
     protected final NarrationDao n;
 
+    private final boolean initialSchonBegruesstMitSC;
+
     /**
      * Constructor for {@link AbstractTalkingComp}.
      */
     public AbstractTalkingComp(final GameObjectId gameObjectId,
                                final AvDatabase db,
-                               final World world) {
+                               final World world,
+                               final boolean initialSchonBegruesstMitSC) {
         super(gameObjectId, db.talkingDao());
         this.db = db;
         this.world = world;
 
         n = db.narrationDao();
+        this.initialSchonBegruesstMitSC = initialSchonBegruesstMitSC;
     }
 
     public List<SCTalkAction> getSCConversationSteps() {
@@ -70,7 +76,20 @@ public abstract class AbstractTalkingComp extends AbstractStatefulComponent<Talk
     @Override
     @NonNull
     protected TalkingPCD createInitialState() {
-        return new TalkingPCD(getGameObjectId(), null);
+        return new TalkingPCD(getGameObjectId(), null, initialSchonBegruesstMitSC);
+    }
+
+    public void updateSchonBegruesstMitSCOnLeave(
+            final ILocatableGO locatable, final ILocationGO from,
+            @Nullable final ILocationGO to) {
+        if (!world.getLocationSystem().haveSameUpperMostLocation(from, to) &&
+                (locatable.is(SPIELER_CHARAKTER) ||
+                        locatable.is(getGameObjectId())) &&
+                !isTalkingTo(SPIELER_CHARAKTER)) {
+            // SC und Rapunzel verlassen einander. Ab jetzt können sie
+            // einander wieder begrüßen.
+            setSchonBegruesstMitSC(false);
+        }
     }
 
     public void setTalkingTo(@Nullable final GameObjectId talkingToId) {
@@ -129,6 +148,13 @@ public abstract class AbstractTalkingComp extends AbstractStatefulComponent<Talk
         }
 
         getPcd().setTalkingToId(talkingToId);
+
+        if (otherTalker != null &&
+                otherTalker.is(SPIELER_CHARAKTER) &&
+                !getGameObjectId().equals(SPIELER_CHARAKTER)) {
+            setSchonBegruesstMitSC(true);
+        }
+
         if (otherTalker != null) {
             otherTalker.talkingComp().setTalkingTo(getGameObjectId());
         }
@@ -172,6 +198,19 @@ public abstract class AbstractTalkingComp extends AbstractStatefulComponent<Talk
     @Nullable
     private GameObjectId getTalkingToId() {
         return getPcd().getTalkingToId();
+    }
+
+    public void setSchonBegruesstMitSC(final boolean schonBegruesstMitSC) {
+        if (getGameObjectId() == SPIELER_CHARAKTER) {
+            throw new IllegalStateException("setSchonBegruesstMitSC() für SPIELER_CHARAKTER - "
+                    + "ergibt keinen Sinn");
+        }
+
+        getPcd().setSchonBegruesstMitSC(schonBegruesstMitSC);
+    }
+
+    public boolean isSchonBegruesstMitSC() {
+        return getPcd().isSchonBegruesstMitSC();
     }
 
     /**

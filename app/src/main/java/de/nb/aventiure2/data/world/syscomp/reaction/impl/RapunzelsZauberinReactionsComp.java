@@ -24,6 +24,7 @@ import de.nb.aventiure2.data.world.syscomp.state.impl.RapunzelsZauberinStateComp
 import de.nb.aventiure2.data.world.syscomp.storingplace.ILocationGO;
 import de.nb.aventiure2.data.world.syscomp.talking.ITalkerGO;
 import de.nb.aventiure2.data.world.syscomp.talking.impl.RapunzelTalkingComp;
+import de.nb.aventiure2.data.world.syscomp.talking.impl.RapunzelsZauberinTalkingComp;
 import de.nb.aventiure2.data.world.time.*;
 import de.nb.aventiure2.german.base.Nominalphrase;
 
@@ -70,24 +71,29 @@ public class RapunzelsZauberinReactionsComp
     private final LocationComp locationComp;
     private final MentalModelComp mentalModelComp;
     private final MovementComp movementComp;
+    private final RapunzelsZauberinTalkingComp talkingComp;
 
     public RapunzelsZauberinReactionsComp(final AvDatabase db,
                                           final World world,
                                           final RapunzelsZauberinStateComp stateComp,
                                           final LocationComp locationComp,
                                           final MentalModelComp mentalModelComp,
-                                          final MovementComp movementComp) {
+                                          final MovementComp movementComp,
+                                          final RapunzelsZauberinTalkingComp talkingComp) {
         super(RAPUNZELS_ZAUBERIN, db, world);
         this.stateComp = stateComp;
         this.locationComp = locationComp;
         this.mentalModelComp = mentalModelComp;
         this.movementComp = movementComp;
+        this.talkingComp = talkingComp;
     }
 
     @Override
     public void onLeave(final ILocatableGO locatable,
                         final ILocationGO from,
                         @Nullable final ILocationGO to) {
+        talkingComp.updateSchonBegruesstMitSCOnLeave(locatable, from, to);
+
         // Wenn die Zauberin den SC verlässt, ...
         if (locatable.is(getGameObjectId())) {
             // ...dann weiß sie nicht, wo das SC sich befindet.

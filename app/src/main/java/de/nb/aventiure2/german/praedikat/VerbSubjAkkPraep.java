@@ -13,6 +13,9 @@ import de.nb.aventiure2.german.base.SubstantivischePhrase;
  * einem Akkusativ-Objekt steht.
  */
 public enum VerbSubjAkkPraep implements Praedikat {
+    // "ein Gespräch mit Rapunzel beginnen"
+    BEGINNEN("beginnen", "beginnst", PraepositionMitKasus.MIT_DAT),
+
     // "die Zauberin nach ihrem Ziel fragen"
     FRAGEN_NACH("fragen", "fragst", PraepositionMitKasus.NACH);
 

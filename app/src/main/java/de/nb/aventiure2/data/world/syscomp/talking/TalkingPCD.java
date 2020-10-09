@@ -16,10 +16,14 @@ class TalkingPCD extends AbstractPersistentComponentData {
     @Nullable
     private GameObjectId talkingToId;
 
+    private boolean schonBegruesstMitSC;
+
     TalkingPCD(@NonNull final GameObjectId gameObjectId,
-               @Nullable final GameObjectId talkingToId) {
+               @Nullable final GameObjectId talkingToId,
+               final boolean schonBegruesstMitSC) {
         super(gameObjectId);
         this.talkingToId = talkingToId;
+        this.schonBegruesstMitSC = schonBegruesstMitSC;
     }
 
     @Nullable
@@ -30,5 +34,13 @@ class TalkingPCD extends AbstractPersistentComponentData {
     void setTalkingToId(@Nullable final GameObjectId talkingTo) {
         setChanged();
         talkingToId = talkingTo;
+    }
+
+    void setSchonBegruesstMitSC(final boolean schonBegruesstMitSC) {
+        this.schonBegruesstMitSC = schonBegruesstMitSC;
+    }
+
+    boolean isSchonBegruesstMitSC() {
+        return schonBegruesstMitSC;
     }
 }

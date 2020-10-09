@@ -11,6 +11,7 @@ import de.nb.aventiure2.data.world.gameobject.*;
 import de.nb.aventiure2.data.world.syscomp.feelings.FeelingIntensity;
 import de.nb.aventiure2.data.world.syscomp.location.ILocatableGO;
 import de.nb.aventiure2.data.world.syscomp.location.LocationComp;
+import de.nb.aventiure2.data.world.syscomp.location.LocationSystem;
 import de.nb.aventiure2.data.world.syscomp.memory.MemoryComp;
 import de.nb.aventiure2.data.world.syscomp.reaction.AbstractDescribableReactionsComp;
 import de.nb.aventiure2.data.world.syscomp.reaction.interfaces.IMovementReactions;
@@ -64,6 +65,7 @@ public class RapunzelReactionsComp
 
     private final MemoryComp memoryComp;
     private final RapunzelStateComp stateComp;
+    private final LocationSystem locationSystem;
     private final LocationComp locationComp;
     private final RapunzelTalkingComp talkingComp;
 
@@ -71,11 +73,13 @@ public class RapunzelReactionsComp
                                  final World world,
                                  final MemoryComp memoryComp,
                                  final RapunzelStateComp stateComp,
+                                 final LocationSystem locationSystem,
                                  final LocationComp locationComp,
                                  final RapunzelTalkingComp talkingComp) {
         super(RAPUNZEL, db, world);
         this.memoryComp = memoryComp;
         this.stateComp = stateComp;
+        this.locationSystem = locationSystem;
         this.locationComp = locationComp;
         this.talkingComp = talkingComp;
     }
@@ -84,6 +88,7 @@ public class RapunzelReactionsComp
     public void onLeave(final ILocatableGO locatable,
                         final ILocationGO from,
                         @Nullable final ILocationGO to) {
+        talkingComp.updateSchonBegruesstMitSCOnLeave(locatable, from, to);
     }
 
     @Override
@@ -417,6 +422,7 @@ public class RapunzelReactionsComp
                         .phorikKandidat(F, RAPUNZEL));
 
         memoryComp.upgradeKnown(GOLDENE_KUGEL);
+
         talkingComp.setTalkingTo(SPIELER_CHARAKTER);
         stateComp.narrateAndSetState(HAT_NACH_KUGEL_GEFRAGT);
     }

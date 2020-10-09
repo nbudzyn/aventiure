@@ -17,6 +17,7 @@ import de.nb.aventiure2.data.world.syscomp.state.IHasStateGO;
 import de.nb.aventiure2.data.world.syscomp.state.impl.FroschprinzStateComp;
 import de.nb.aventiure2.data.world.syscomp.state.impl.SchlossfestState;
 import de.nb.aventiure2.data.world.syscomp.storingplace.ILocationGO;
+import de.nb.aventiure2.data.world.syscomp.talking.impl.FroschprinzTalkingComp;
 import de.nb.aventiure2.data.world.time.*;
 import de.nb.aventiure2.german.base.Nominalphrase;
 import de.nb.aventiure2.german.base.StructuralElement;
@@ -59,20 +60,25 @@ public class FroschprinzReactionsComp
 
     private final FroschprinzStateComp stateComp;
     private final LocationComp locationComp;
+    private final FroschprinzTalkingComp talkingComp;
 
     public FroschprinzReactionsComp(final AvDatabase db,
                                     final World world,
                                     final FroschprinzStateComp stateComp,
-                                    final LocationComp locationComp) {
+                                    final LocationComp locationComp,
+                                    final FroschprinzTalkingComp talkingComp) {
         super(FROSCHPRINZ, db, world);
         this.stateComp = stateComp;
         this.locationComp = locationComp;
+        this.talkingComp = talkingComp;
     }
 
     @Override
     public void onLeave(final ILocatableGO locatable,
                         final ILocationGO from,
                         @Nullable final ILocationGO to) {
+        talkingComp.updateSchonBegruesstMitSCOnLeave(locatable, from, to);
+
         if (locatable.is(SPIELER_CHARAKTER)) {
             onSCLeave(from, to);
             return;

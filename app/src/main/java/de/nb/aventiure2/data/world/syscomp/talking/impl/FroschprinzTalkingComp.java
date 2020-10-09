@@ -58,8 +58,9 @@ public class FroschprinzTalkingComp extends AbstractTalkingComp {
 
     public FroschprinzTalkingComp(final AvDatabase db,
                                   final World world,
-                                  final FroschprinzStateComp stateComp) {
-        super(FROSCHPRINZ, db, world);
+                                  final FroschprinzStateComp stateComp,
+                                  final boolean initialSchonBegruesstMitSC) {
+        super(FROSCHPRINZ, db, world, initialSchonBegruesstMitSC);
         this.stateComp = stateComp;
     }
 
@@ -90,12 +91,12 @@ public class FroschprinzTalkingComp extends AbstractTalkingComp {
                                 MACHEN.mitAkk(ANGEBOTE),
                                 this::froschHatNachBelohnungGefragt_ImmReEntry),
                         immReEntrySt(objectsInDenBrunnenGefallen::isEmpty,
-                                this::hallo_froschReagiertNicht),
+                                this::ansprechen_froschReagiertNicht),
                         reEntrySt(() -> !objectsInDenBrunnenGefallen.isEmpty(),
                                 MACHEN.mitAkk(ANGEBOTE),
                                 this::froschHatNachBelohnungGefragt_ReEntry),
                         reEntrySt(objectsInDenBrunnenGefallen::isEmpty,
-                                this::hallo_froschReagiertNicht)
+                                this::ansprechen_froschReagiertNicht)
                 );
             case HAT_FORDERUNG_GESTELLT:
                 return ImmutableList.of(
@@ -107,16 +108,16 @@ public class FroschprinzTalkingComp extends AbstractTalkingComp {
                                 VERSPRECHEN.mitAkk(ALLES),
                                 this::froschHatForderungGestellt_ImmReEntry),
                         immReEntrySt(objectsInDenBrunnenGefallen::isEmpty,
-                                this::hallo_froschReagiertNicht),
+                                this::ansprechen_froschReagiertNicht),
                         reEntrySt(() -> !objectsInDenBrunnenGefallen.isEmpty(),
                                 VERSPRECHEN.mitAkk(ALLES),
                                 this::froschHatForderungGestellt_reEntry),
                         reEntrySt(objectsInDenBrunnenGefallen::isEmpty,
-                                this::hallo_froschReagiertNicht)
+                                this::ansprechen_froschReagiertNicht)
                 );
             case ERWARTET_VON_SC_EINLOESUNG_SEINES_VERSPRECHENS:
                 return ImmutableList.of(
-                        entrySt(this::hallo_froschErinnertAnVersprechen)
+                        entrySt(this::ansprechen_froschErinnertAnVersprechen)
                 );
             case WARTET_AUF_SC_BEIM_SCHLOSSFEST:
             case AUF_DEM_WEG_ZUM_SCHLOSSFEST:
@@ -176,6 +177,7 @@ public class FroschprinzTalkingComp extends AbstractTalkingComp {
                     .undWartest()
                     .dann());
 
+            setSchonBegruesstMitSC(true);
             unsetTalkingTo();
             return;
         }
@@ -189,7 +191,7 @@ public class FroschprinzTalkingComp extends AbstractTalkingComp {
                 getObjectsInDenBrunnenGefallen();
 
         if (objectsInDenBrunnenGefallen.isEmpty()) {
-            hallo_froschReagiertNicht();
+            ansprechen_froschReagiertNicht();
             return;
         }
 
@@ -214,7 +216,7 @@ public class FroschprinzTalkingComp extends AbstractTalkingComp {
                 getObjectsInDenBrunnenGefallen();
 
         if (objectsInDenBrunnenGefallen.isEmpty()) {
-            hallo_froschReagiertNicht();
+            ansprechen_froschReagiertNicht();
             return;
         }
 
@@ -244,6 +246,7 @@ public class FroschprinzTalkingComp extends AbstractTalkingComp {
                     + " mir in den Brunnen hinabgefallen " +
                     istSind(objectsDesc.getNumerusGenus()) +
                     ".“", secs(10)));
+            setSchonBegruesstMitSC(true);
             return;
         }
 
@@ -254,9 +257,11 @@ public class FroschprinzTalkingComp extends AbstractTalkingComp {
             n.narrate(neuerSatz("„"
                     + capitalize(getDescription(objectInDenBrunnenGefallen).nom())
                     + " ist mir in den Brunnen hinabgefallen.“", secs(10)));
+            setSchonBegruesstMitSC(true);
             return;
         }
 
+        setSchonBegruesstMitSC(true);
         n.narrate(neuerSatz("„Mir sind Dinge in den Brunnen hinabgefallen.“", secs(5)));
     }
 
@@ -284,6 +289,7 @@ public class FroschprinzTalkingComp extends AbstractTalkingComp {
                 secs(15))
                 .beendet(PARAGRAPH));
 
+        setSchonBegruesstMitSC(true);
         stateComp.narrateAndSetState(HAT_NACH_BELOHNUNG_GEFRAGT);
     }
 
@@ -322,6 +328,7 @@ public class FroschprinzTalkingComp extends AbstractTalkingComp {
                         + " wieder heraufholen.“", secs(15))
                 .beendet(PARAGRAPH));
 
+        setSchonBegruesstMitSC(true);
         stateComp.narrateAndSetState(HAT_FORDERUNG_GESTELLT);
     }
 
@@ -337,6 +344,8 @@ public class FroschprinzTalkingComp extends AbstractTalkingComp {
         n.narrate(
                 neuerSatz(PARAGRAPH, "„Frosch“, sprichst du ihn an, „steht dein Angebot noch?“",
                         secs(5)));
+
+        setSchonBegruesstMitSC(true);
 
         n.narrate(
                 neuerSatz(PARAGRAPH,
@@ -373,6 +382,7 @@ public class FroschprinzTalkingComp extends AbstractTalkingComp {
                                 + "und Juwelen? – Vergiss es!“",
                         secs(5)));
 
+        setSchonBegruesstMitSC(true);
         unsetTalkingTo();
     }
 
@@ -400,7 +410,7 @@ public class FroschprinzTalkingComp extends AbstractTalkingComp {
         final ImmutableList<? extends IDescribableGO> objectsInDenBrunnenGefallen =
                 getObjectsInDenBrunnenGefallen();
 
-        neuerSatz(
+        n.narrate(neuerSatz(
                 "Aber im nächsten Moment entschuldigst du dich schon: "
                         + "„Nichts für ungut! Wenn du mir wirklich "
                         + getDescriptionSingleOrCollective(objectsInDenBrunnenGefallen).akk()
@@ -408,7 +418,7 @@ public class FroschprinzTalkingComp extends AbstractTalkingComp {
                         + " Bei dir selbst denkst du: "
                         + "„Was der einfältige Frosch schwätzt, der sitzt im Wasser bei "
                         + "seinesgleichen und quakt und kann keines Menschen Geselle sein.“",
-                secs(20));
+                secs(20)));
 
         froschReagiertAufVersprechen();
     }
@@ -469,6 +479,7 @@ public class FroschprinzTalkingComp extends AbstractTalkingComp {
 
         stateComp.narrateAndSetState(ERWARTET_VON_SC_EINLOESUNG_SEINES_VERSPRECHENS);
 
+        setSchonBegruesstMitSC(true);
         unsetTalkingTo();
     }
 
@@ -484,6 +495,7 @@ public class FroschprinzTalkingComp extends AbstractTalkingComp {
                         secs(10))
                         .beendet(PARAGRAPH));
 
+        setSchonBegruesstMitSC(true);
         unsetTalkingTo();
     }
 
@@ -499,11 +511,28 @@ public class FroschprinzTalkingComp extends AbstractTalkingComp {
     // .. ALLGEMEINES
     // -------------------------------------------------------------------------------
 
-    private void hallo_froschReagiertNicht() {
-        n.narrateAlt(neuerSatz("„Hallo, Kollege Frosch!“", secs(3)),
-                neuerSatz("„Hallo, du hässlicher Frosch!“, redest du ihn an", secs(3))
-                        .undWartest()
-                        .dann(), neuerSatz("„Hallo nochmal, Meister Frosch!“", secs(3)));
+    private void ansprechen_froschReagiertNicht() {
+        if (!isSchonBegruesstMitSC()) {
+            n.narrateAlt(neuerSatz("„Hallo, Kollege Frosch!“", secs(3)),
+                    neuerSatz("„Hallo, du hässlicher Frosch!“, redest du ihn an",
+                            secs(3))
+                            .undWartest()
+                            .dann(), neuerSatz("„Hallo nochmal, Meister Frosch!“",
+                            secs(3)));
+            setSchonBegruesstMitSC(true);
+        } else {
+            n.narrateAlt(
+                    neuerSatz(
+                            "„Schön grün seht ihr heute aus!“, sagst du - etwas "
+                                    + "Gescheiteres will "
+                                    + "dir partout nicht einfallen", secs(3)),
+                    neuerSatz(
+                            "„Und sonst so?“, fragst du "
+                                    + getDescription(true)
+                                    + " etwas hilflos", secs(3))
+            );
+        }
+
 
         froschReagiertNicht();
     }
@@ -515,7 +544,7 @@ public class FroschprinzTalkingComp extends AbstractTalkingComp {
         unsetTalkingTo();
     }
 
-    private void hallo_froschErinnertAnVersprechen() {
+    private void ansprechen_froschErinnertAnVersprechen() {
         n.narrateAlt(
                 du(
                         "sprichst",
@@ -531,6 +560,7 @@ public class FroschprinzTalkingComp extends AbstractTalkingComp {
                                 + " „Du weißt, was du versprochen hast“, gibt er zurück",
                         secs(15)).beendet(PARAGRAPH));
 
+        setSchonBegruesstMitSC(true);
         unsetTalkingTo();
     }
 
@@ -552,6 +582,7 @@ public class FroschprinzTalkingComp extends AbstractTalkingComp {
                                 + " schaut dich nur… traurig? verächtlich?… an",
                         secs(15)).beendet(PARAGRAPH));
 
+        setSchonBegruesstMitSC(true);
         unsetTalkingTo();
     }
 
