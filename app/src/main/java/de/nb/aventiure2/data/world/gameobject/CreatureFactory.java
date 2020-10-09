@@ -128,7 +128,7 @@ class CreatureFactory {
                 new RapunzelReactionsComp(db, world, memoryComp, stateComp, locationComp,
                         talkingComp);
         final RapunzelTakingComp takingComp =
-                new RapunzelTakingComp(db, world, memoryComp);
+                new RapunzelTakingComp(db, world, stateComp, memoryComp);
         return new TalkingMemoryTakingReactionsCreature<>(RAPUNZEL,
                 descriptionComp,
                 locationComp,

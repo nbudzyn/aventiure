@@ -39,6 +39,7 @@ import static de.nb.aventiure2.data.world.syscomp.feelings.Mood.AUFGEDREHT;
 import static de.nb.aventiure2.data.world.syscomp.feelings.Mood.BEWEGT;
 import static de.nb.aventiure2.data.world.syscomp.feelings.Mood.NEUTRAL;
 import static de.nb.aventiure2.data.world.syscomp.state.impl.RapunzelState.HAARE_VOM_TURM_HERUNTERGELASSEN;
+import static de.nb.aventiure2.data.world.syscomp.state.impl.RapunzelState.HAT_NACH_KUGEL_GEFRAGT;
 import static de.nb.aventiure2.data.world.syscomp.state.impl.RapunzelState.SINGEND;
 import static de.nb.aventiure2.data.world.syscomp.state.impl.RapunzelState.STILL;
 import static de.nb.aventiure2.data.world.time.AvTime.*;
@@ -416,18 +417,18 @@ public class RapunzelReactionsComp
                         .phorikKandidat(F, RAPUNZEL));
 
         memoryComp.upgradeKnown(GOLDENE_KUGEL);
-
         talkingComp.setTalkingTo(SPIELER_CHARAKTER);
-        loadSC().talkingComp().setTalkingTo(RAPUNZEL);
+        stateComp.narrateAndSetState(HAT_NACH_KUGEL_GEFRAGT);
     }
 
     private void rapunzelZiehtHaareWiederHoch() {
-        stateComp.narrateAndSetState(STILL);
-
-        // TODO SC erlebt das von OBEN_IM_TURM mit.
         if (loadSC().locationComp().hasRecursiveLocation(VOR_DEM_ALTEN_TURM)) {
             n.addAlt(altRapunzelZiehtHaareWiederHoch_VorDemAltenTurm());
+        } else if (loadSC().locationComp().hasRecursiveLocation(OBEN_IM_ALTEN_TURM)) {
+            n.addAlt(altRapunzelZiehtHaareWiederHoch_ObenImAltenTurm());
         }
+
+        stateComp.narrateAndSetState(STILL);
     }
 
     @NonNull
@@ -448,6 +449,28 @@ public class RapunzelReactionsComp
                 neuerSatz("Nur ein paar Augenblicke, dann sind die Haare "
                                 + "wieder oben im Fenster verschwunden",
                         secs(10))
+                        .beendet(PARAGRAPH)
+        );
+    }
+
+    private ImmutableList<AbstractDescription<?>> altRapunzelZiehtHaareWiederHoch_ObenImAltenTurm() {
+        final SubstantivischePhrase anaph =
+                getAnaphPersPronWennMglSonstDescription(false);
+
+        return ImmutableList.of(
+                neuerSatz(
+                        "Jetzt zieht "
+                                + anaph.nom() // "die junge Frau"
+                                + " "
+                                + anaph.possArt().vor(PL_MFN).akk() // "ihre"
+                                + " Haare wieder hoch",
+                        secs(15))
+                        .beendet(PARAGRAPH),
+                neuerSatz(
+                        "Die Haare zieht "
+                                + anaph.nom()
+                                + " wieder hoch",
+                        secs(15))
                         .beendet(PARAGRAPH)
         );
     }
@@ -571,7 +594,7 @@ public class RapunzelReactionsComp
         if (loadZauberin().locationComp()
                 .hasRecursiveLocation(OBEN_IM_ALTEN_TURM) &&
                 locationComp.hasRecursiveLocation(OBEN_IM_ALTEN_TURM) &&
-                stateComp.hasState(SINGEND, STILL)) {
+                !stateComp.hasState(HAARE_VOM_TURM_HERUNTERGELASSEN)) {
             stateComp.rapunzelLaesstHaareZumAbstiegHerunter();
             return;
         }

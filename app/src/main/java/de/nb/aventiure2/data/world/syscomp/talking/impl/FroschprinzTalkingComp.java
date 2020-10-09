@@ -529,7 +529,7 @@ public class FroschprinzTalkingComp extends AbstractTalkingComp {
                         secs(15)).beendet(PARAGRAPH),
                 neuerSatz("„Und jetzt, Frosch?“ "
                                 + " „Du weißt, was du versprochen hast“, gibt er zurück",
-                        secs(15)));
+                        secs(15)).beendet(PARAGRAPH));
 
         unsetTalkingTo();
     }

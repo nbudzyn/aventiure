@@ -5,7 +5,6 @@ import com.google.common.collect.ImmutableList;
 import de.nb.aventiure2.data.database.AvDatabase;
 import de.nb.aventiure2.data.world.gameobject.*;
 import de.nb.aventiure2.data.world.syscomp.feelings.FeelingIntensity;
-import de.nb.aventiure2.data.world.syscomp.state.impl.RapunzelState;
 import de.nb.aventiure2.data.world.syscomp.state.impl.RapunzelStateComp;
 import de.nb.aventiure2.data.world.syscomp.talking.AbstractTalkingComp;
 import de.nb.aventiure2.german.base.SubstantivischePhrase;
@@ -48,8 +47,50 @@ public class RapunzelTalkingComp extends AbstractTalkingComp {
 
     @Override
     protected Iterable<SCTalkAction> getSCTalkActionsWithoutCheckingConditions() {
-        // "Die junge Frau bitten ihre Haare wieder hinunterzulassen"
-        final PraedikatOhneLeerstellen bittenHaareHerunterzulassen = BITTEN
+        switch (stateComp.getState()) {
+            case STILL:
+                // "Die junge Frau bitten ihre Haare wieder hinunterzulassen"
+                return ImmutableList.of(
+                        SCTalkAction.entrySt(
+                                bittenHaareHerunterzulassenPraedikat(),
+                                this::haareHerunterlassenBitte_EntryReEntry),
+                        SCTalkAction.st(
+                                this::zuneigungDesSCZuRapunzelDeutlich,
+                                // "Der jungen Frau dein Herz ausschütten"
+                                AUSSCHUETTEN
+                                        .mitDat(getDescription(true))
+                                        .mitObj(DEIN_HERZ),
+                                this::herzAusschuetten),
+                        SCTalkAction.exitSt(
+                                bittenHaareHerunterzulassenPraedikat(),
+                                this::still_haareHerunterlassenBitte_ExitImmReEntry),
+                        SCTalkAction.immReEntrySt(
+                                bittenHaareHerunterzulassenPraedikat(),
+                                this::still_haareHerunterlassenBitte_ExitImmReEntry)
+                );
+            case SINGEND:
+                // FALL-THROUGH
+            case HAARE_VOM_TURM_HERUNTERGELASSEN:
+                return ImmutableList.of();
+            case HAT_NACH_KUGEL_GEFRAGT:
+                return ImmutableList.of(
+                        SCTalkAction.entrySt(
+                                bittenHaareHerunterzulassenPraedikat(),
+                                this::haareHerunterlassenBitte_EntryReEntry),
+                        SCTalkAction.exitSt(
+                                bittenHaareHerunterzulassenPraedikat(),
+                                this::hatNachKugelGefragt_haareHerunterlassenBitte_ExitImmReEntry),
+                        SCTalkAction.immReEntrySt(
+                                bittenHaareHerunterzulassenPraedikat(),
+                                this::hatNachKugelGefragt_haareHerunterlassenBitte_ExitImmReEntry)
+                );
+            default:
+                throw new IllegalStateException("Unexpected state: " + stateComp.getState());
+        }
+    }
+
+    private PraedikatOhneLeerstellen bittenHaareHerunterzulassenPraedikat() {
+        return BITTEN
                 .mitObj(getDescription(true))
                 .mitLexikalischemKern(HINUNTERLASSEN
                         .mitObj(IHRE_HAARE)
@@ -58,27 +99,6 @@ public class RapunzelTalkingComp extends AbstractTalkingComp {
                                 // quasi zu "hinunter".
                                 new AdverbialeAngabeSkopusVerbWohinWoher(
                                         "wieder")));
-        return ImmutableList.of(
-                SCTalkAction.entrySt(
-                        () -> !haareSindHinuntergelassen(),
-                        bittenHaareHerunterzulassen,
-                        this::haareHerunterlassenBitte_EntryReEntry),
-                SCTalkAction.st(
-                        this::zuneigungDesSCZuRapunzelDeutlich,
-                        // "Der jungen Frau dein Herz ausschütten"
-                        AUSSCHUETTEN
-                                .mitDat(getDescription(true))
-                                .mitObj(DEIN_HERZ),
-                        this::herzAusschuetten),
-                SCTalkAction.exitSt(
-                        () -> !haareSindHinuntergelassen(),
-                        bittenHaareHerunterzulassen,
-                        this::haareHerunterlassenBitte_ExitImmReEntry)
-        );
-    }
-
-    private boolean haareSindHinuntergelassen() {
-        return stateComp.hasState(RapunzelState.HAARE_VOM_TURM_HERUNTERGELASSEN);
     }
 
     private boolean zuneigungDesSCZuRapunzelDeutlich() {
@@ -145,7 +165,7 @@ public class RapunzelTalkingComp extends AbstractTalkingComp {
         haareHerunterlassen();
     }
 
-    private void haareHerunterlassenBitte_ExitImmReEntry() {
+    private void still_haareHerunterlassenBitte_ExitImmReEntry() {
         final SubstantivischePhrase rapunzelAnaph =
                 getAnaphPersPronWennMglSonstDescription(true);
         final ImmutableList.Builder<AbstractDescription<?>> alt =
@@ -198,6 +218,37 @@ public class RapunzelTalkingComp extends AbstractTalkingComp {
         n.addAlt(alt);
 
         loadSC().feelingsComp().setMoodMin(AUFGEDREHT);
+
+        haareHerunterlassen();
+    }
+
+    private void hatNachKugelGefragt_haareHerunterlassenBitte_ExitImmReEntry() {
+        final SubstantivischePhrase rapunzelAnaph =
+                getAnaphPersPronWennMglSonstDescription(true);
+        final ImmutableList.Builder<AbstractDescription<?>> alt =
+                ImmutableList.builder();
+
+
+        alt.add(neuerSatz(
+                "Doch du reagierst gar nicht darauf, sondern forderst "
+                        + rapunzelAnaph.akk()
+                        + " nur auf, die Haare "
+                        + "wieder heruterzulassen, dass du wieder gehen kannst",
+                secs(15))
+                .beendet(PARAGRAPH)
+        );
+
+        if (loadSC().feelingsComp().getFeelingTowards(RAPUNZEL, ZUNEIGUNG_ABNEIGUNG) >=
+                FeelingIntensity.DEUTLICH) {
+            alt.add(
+                    neuerSatz(PARAGRAPH,
+                            "„Lass mich wieder gehen!“, gibst du zurück",
+                            secs(15))
+                            .beendet(PARAGRAPH)
+            );
+        }
+
+        n.addAlt(alt);
 
         haareHerunterlassen();
     }

@@ -232,7 +232,7 @@ public class NehmenAction
                         .dann(),
                 neuerSatz(PARAGRAPH,
                         capitalize(froschDesc.akk())
-                                + " in die Hand nehmen?? – Wer hat dir bloß solche Flausen "
+                                + " in die Hand nehmen? – Wer hat dir bloß solche Flausen "
                                 + "in den Kopf gesetzt! Kräftig packst du "
                                 + froschDesc.akk(), secs(10))
                         .phorikKandidat(froschDesc, FROSCHPRINZ)

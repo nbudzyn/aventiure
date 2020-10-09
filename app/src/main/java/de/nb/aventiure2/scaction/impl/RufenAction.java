@@ -17,8 +17,7 @@ import de.nb.aventiure2.scaction.AbstractScAction;
 import static com.google.common.collect.ImmutableList.builder;
 import static de.nb.aventiure2.data.world.gameobject.World.*;
 import static de.nb.aventiure2.data.world.syscomp.reaction.interfaces.Ruftyp.LASS_DEIN_HAAR_HERUNTER;
-import static de.nb.aventiure2.data.world.syscomp.state.impl.RapunzelState.SINGEND;
-import static de.nb.aventiure2.data.world.syscomp.state.impl.RapunzelState.STILL;
+import static de.nb.aventiure2.data.world.syscomp.state.impl.RapunzelState.HAARE_VOM_TURM_HERUNTERGELASSEN;
 import static de.nb.aventiure2.data.world.time.AvTimeSpan.*;
 import static de.nb.aventiure2.german.base.GermanUtil.capitalize;
 import static de.nb.aventiure2.german.base.GermanUtil.uncapitalize;
@@ -51,8 +50,8 @@ public class RufenAction extends AbstractScAction {
 
         if (world.loadSC().memoryComp().isKnown(RAPUNZELRUF)) {
             if (world.isOrHasRecursiveLocation(location, VOR_DEM_ALTEN_TURM) &&
-                    ((IHasStateGO<RapunzelState>) world.load(RAPUNZEL)).stateComp()
-                            .hasState(STILL, SINGEND)) {
+                    !((IHasStateGO<RapunzelState>) world.load(RAPUNZEL)).stateComp()
+                            .hasState(HAARE_VOM_TURM_HERUNTERGELASSEN)) {
                 res.add(new RufenAction(db, world, location, LASS_DEIN_HAAR_HERUNTER));
             }
         }

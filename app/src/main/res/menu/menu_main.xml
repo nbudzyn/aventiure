@@ -23,6 +23,6 @@
     <group android:id="@+id/menu_main_group_alternativer_durchlauf_1">
         <item
             android:id="@+id/walk_sep_anfang_bis_mit_frosch_bei_rapunzel"
-            android:title="Separat: Anfang bis mit Frosch bei Rapunzel" />
+            android:title="Anfang bis mit Frosch bei Rapunzel" />
     </group>
 </menu>

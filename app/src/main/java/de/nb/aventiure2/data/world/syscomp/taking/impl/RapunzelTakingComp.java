@@ -6,6 +6,7 @@ import de.nb.aventiure2.data.world.syscomp.description.IDescribableGO;
 import de.nb.aventiure2.data.world.syscomp.feelings.FeelingIntensity;
 import de.nb.aventiure2.data.world.syscomp.location.ILocatableGO;
 import de.nb.aventiure2.data.world.syscomp.memory.MemoryComp;
+import de.nb.aventiure2.data.world.syscomp.state.impl.RapunzelStateComp;
 import de.nb.aventiure2.data.world.syscomp.taking.AbstractTakingComp;
 import de.nb.aventiure2.data.world.syscomp.taking.SCTakeAction;
 import de.nb.aventiure2.german.base.DeklinierbarePhraseUtil;
@@ -15,23 +16,32 @@ import de.nb.aventiure2.german.base.SubstantivischePhrase;
 import static de.nb.aventiure2.data.world.gameobject.World.*;
 import static de.nb.aventiure2.data.world.syscomp.feelings.FeelingTowardsType.ZUNEIGUNG_ABNEIGUNG;
 import static de.nb.aventiure2.data.world.syscomp.feelings.Mood.GLUECKLICH;
+import static de.nb.aventiure2.data.world.syscomp.state.impl.RapunzelState.HAT_NACH_KUGEL_GEFRAGT;
+import static de.nb.aventiure2.data.world.syscomp.state.impl.RapunzelState.STILL;
 import static de.nb.aventiure2.data.world.time.AvTimeSpan.*;
 import static de.nb.aventiure2.german.base.GermanUtil.capitalize;
 import static de.nb.aventiure2.german.base.NumerusGenus.F;
 import static de.nb.aventiure2.german.description.AllgDescription.neuerSatz;
 
 public class RapunzelTakingComp extends AbstractTakingComp {
+    private final RapunzelStateComp stateComp;
     private final MemoryComp memoryComp;
 
     public RapunzelTakingComp(final AvDatabase db, final World world,
+                              final RapunzelStateComp stateComp,
                               final MemoryComp memoryComp) {
         super(RAPUNZEL, db, world);
+        this.stateComp = stateComp;
         this.memoryComp = memoryComp;
     }
 
     @Override
     public <GIVEN extends IDescribableGO & ILocatableGO>
     SCTakeAction<GIVEN> getAction(final GIVEN given) {
+        if (stateComp.hasState(HAT_NACH_KUGEL_GEFRAGT)) {
+            stateComp.narrateAndSetState(STILL);
+        }
+
         if (given.is(GOLDENE_KUGEL)) {
             return SCTakeAction.zunaechstAngenommen(
                     given,
