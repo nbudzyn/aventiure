@@ -63,7 +63,7 @@ public class RapunzelTakingComp extends AbstractTakingComp {
                 // "eine goldene Kugel"
                 given.descriptionComp().getDescriptionAtFirstSight();
 
-        n.addAlt(
+        n.narrateAlt(
                 neuerSatz(rapunzelAnaph.nom()
                         + " sieht dich verwundert an", secs(10)),
                 neuerSatz("„Ähm, was soll ich damit?“, "
@@ -114,7 +114,7 @@ public class RapunzelTakingComp extends AbstractTakingComp {
                 // "eine goldene Kugel"
                 given.descriptionComp().getDescriptionAtFirstSight();
 
-        n.addAlt(
+        n.narrateAlt(
                 neuerSatz(rapunzelAnaph.nom()
                         + " dreht "
                         + givenAnaph.akk()

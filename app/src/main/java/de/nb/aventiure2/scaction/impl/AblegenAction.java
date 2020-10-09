@@ -196,7 +196,7 @@ public class AblegenAction
                 secs(7)
         ));
 
-        n.addAlt(alt);
+        n.narrateAlt(alt);
 
         narrateUpgradeKnownAndSetLocationAndAction();
         sc.feelingsComp().setMood(NEUTRAL);
@@ -214,7 +214,7 @@ public class AblegenAction
         final SubstantivischePhrase gameObjectOrPersPron =
                 getAnaphPersPronWennMglSonstDescription(gameObject, true);
 
-        n.add(
+        n.narrate(
                 du("setzt", gameObjectOrPersPron.akk() +
                                 " " +
                                 location.storingPlaceComp().getLocationMode().getWohin(false),
@@ -248,11 +248,11 @@ public class AblegenAction
                     secs(5))
                     .dann()
                     .phorikKandidat(M, FROSCHPRINZ));
-            n.addAlt(alt);
+            n.narrateAlt(alt);
             return;
         }
 
-        n.add(neuerSatz(
+        n.narrate(neuerSatz(
                 "Der Frosch will auf den Tisch, aber du setzt den Frosch"
                         + (location.is(SCHLOSS_VORHALLE_AM_TISCH_BEIM_FEST) ?
                         " wieder " :
@@ -285,7 +285,7 @@ public class AblegenAction
 
             if (gameObjektPersPron != null) {
                 if (isDefinitivDiskontinuitaet()) {
-                    n.add(satzanschluss(
+                    n.narrate(satzanschluss(
                             // STORY Element: Satzanschluss mit "– und"
                             //  bei Diskontinuität - kann man das dem Narrator
                             //  beibringen?
@@ -299,7 +299,7 @@ public class AblegenAction
 
                 if (sc.memoryComp().getLastAction().is(NEHMEN) &&
                         sc.memoryComp().getLastAction().hasObject(gameObject)) {
-                    n.add(du("legst",
+                    n.narrate(du("legst",
                             gameObjektPersPron.akk() +
                                     " " +
                                     location.storingPlaceComp().getLocationMode()
@@ -313,7 +313,7 @@ public class AblegenAction
                 if (sc.memoryComp().getLastAction().hasObject(gameObject)) {
                     // STORY Element: Satzanschluss mit ", dann"
                     //  - kann man das dem Narrator beibringen?
-                    n.add(satzanschluss(", dann legst du "
+                    n.narrate(satzanschluss(", dann legst du "
                                     + gameObjektPersPron.akk()
                                     + (wohinDetail == null ?
                                     " hin" :
@@ -325,14 +325,14 @@ public class AblegenAction
 
                 if (sc.memoryComp().getLastAction().is(Action.Type.BEWEGEN) &&
                         wohinDetail == null) {
-                    n.add(du("legst",
+                    n.narrate(du("legst",
                             gameObjektPersPron.akk() +
                                     " zurück",
                             secs(3)));
                     return;
                 }
 
-                n.add(du("legst",
+                n.narrate(du("legst",
                         gameObjektPersPron.akk() +
                                 (wohinDetail == null ? " hin" : " " + wohinDetail),
                         secs(3)));
@@ -341,7 +341,7 @@ public class AblegenAction
         }
 
         if (isDefinitivDiskontinuitaet()) {
-            n.add(
+            n.narrate(
                     du(PARAGRAPH, "legst",
                             world.getDescription(gameObject, false).akk()
                                     + (wohinDetail != null ? " zurück" : " wieder hin"),
@@ -351,7 +351,7 @@ public class AblegenAction
             return;
         }
 
-        n.add(
+        n.narrate(
                 du(PARAGRAPH, "legst",
                         world.getDescription(gameObject, false).akk()
                                 + (wohinDetail == null ? " hin" : " " + wohinDetail),

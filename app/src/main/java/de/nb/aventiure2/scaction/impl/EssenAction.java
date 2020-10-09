@@ -156,7 +156,7 @@ public class EssenAction extends AbstractScAction {
 
     private <F extends ILocatableGO & IHasStateGO<FroschprinzState>>
     void narrateAndDoSchlossfestEssenMitFrosch(final F froschprinz) {
-        n.add(neuerSatz(PARAGRAPH,
+        n.narrate(neuerSatz(PARAGRAPH,
                 "Was hatte deine Großmutter immer gesagt? „Wer dir geholfen in der "
                         + "Not, den sollst du hernach nicht verachten.” Du füllst deine Schale "
                         + "neu mit Eintopf, steckst deinen Holzlöffel hinein... aber was ist das? "
@@ -165,12 +165,12 @@ public class EssenAction extends AbstractScAction {
                         + "Bank sitzt ein junger Mann mit schönen freundlichen Augen. In Samt und "
                         + "Seide ist er gekleidet, mit goldenen Ketten um den Hals",
                 secs(10)));
-        n.add(neuerSatz(PARAGRAPH,
+        n.narrate(neuerSatz(PARAGRAPH,
                 "Er schaut an sich herab – „Ihr habt mich erlöst”, sagt er, „ich "
                         + "danke euch!” Eine böse Hexe "
                         + "habe ihn verwünscht. „Ich werde euch nicht vergessen!”",
                 secs(10)));
-        n.add(neuerSatz(PARAGRAPH,
+        n.narrate(neuerSatz(PARAGRAPH,
                 "Am Tisch um euch herum entsteht Aufregung. Der junge Mann erhebt "
                         + "sich und schickt sich an, die Halle zu verlassen",
                 secs(10)));
@@ -185,7 +185,7 @@ public class EssenAction extends AbstractScAction {
 
         world.loadSC().feelingsComp().setMoodMin(ZUFRIEDEN);
 
-        n.addAlt(
+        n.narrateAlt(
                 du(PARAGRAPH,
                         "füllst", "dir von dem Eintopf ein und langst kräftig zu",
                         mins(10))
@@ -219,7 +219,7 @@ public class EssenAction extends AbstractScAction {
     }
 
     private void narrateAndDoSchlossfestSatt() {
-        n.addAlt(
+        n.narrateAlt(
                 neuerSatz("Hunger hast du zwar keinen mehr, aber eine Kleinigkeit… – du "
                         + "nimmst dir "
                         + "eine halbe Kelle "
@@ -257,7 +257,7 @@ public class EssenAction extends AbstractScAction {
 
     private void narrateFelsenbirnenHungrig() {
         if (db.counterDao().incAndGet(COUNTER_FELSENBIRNEN) == 1) {
-            n.add(du(SENTENCE, "nimmst", "eine von den Früchten, "
+            n.narrate(du(SENTENCE, "nimmst", "eine von den Früchten, "
                     + "schaust sie kurz an, dann "
                     + "beißt du hinein… – "
                     + "Mmh! Die Frucht ist saftig und schmeckt süß wie Marzipan!\n"
@@ -267,7 +267,7 @@ public class EssenAction extends AbstractScAction {
             return;
         }
 
-        n.addAlt(
+        n.narrateAlt(
                 du("isst", "dich an den süßen Früchten satt", mins(10))
                         .undWartest()
                         .dann(),
@@ -283,7 +283,7 @@ public class EssenAction extends AbstractScAction {
 
     private void narrateFelsenbirnenSatt() {
         if (db.counterDao().incAndGet(COUNTER_FELSENBIRNEN) == 1) {
-            n.add(
+            n.narrate(
                     du(SENTENCE, "nimmst",
                             "eine von den Früchten und beißt hinein. "
                                     + "Sie ist überraschend süß und saftig. Du isst die Frucht auf",
@@ -293,7 +293,7 @@ public class EssenAction extends AbstractScAction {
             return;
         }
 
-        n.addAlt(
+        n.narrateAlt(
                 du(SENTENCE, "hast", "nur wenig Hunger und beißt lustlos in eine der Früchte",
                         "Hunger",
                         mins(3))

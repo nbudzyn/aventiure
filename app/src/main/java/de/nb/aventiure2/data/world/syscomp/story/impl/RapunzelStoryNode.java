@@ -245,7 +245,7 @@ public enum RapunzelStoryNode implements IStoryNode {
 
         // STORY (bis SC Rapunzel gefunden hat) Mutter sammelt im
         //  Wald Holz und klagt ihr Leid: Tochter an Zauberin verloren
-        n.addAlt(alt);
+        n.narrateAlt(alt);
     }
 
     private static void narrateAndDoHintAction_RapunzelSingenGehoert(
@@ -261,7 +261,7 @@ public enum RapunzelStoryNode implements IStoryNode {
                             + "in den Sinn. Ob der wohl bewohnt ist?"));
         }
 
-        n.addAlt(alt);
+        n.narrateAlt(alt);
     }
 
     private static void narrateAndDoHintAction_ZauberinAufTurmWegGefunden(
@@ -270,7 +270,7 @@ public enum RapunzelStoryNode implements IStoryNode {
 
         alt.addAll(altTurmWohnenHineinHeraus(world));
 
-        n.addAlt(alt);
+        n.narrateAlt(alt);
     }
 
     private static void narrateAndDoHintAction_ZauberinHeimlichBeimRufenBeobachtet(
@@ -297,7 +297,7 @@ public enum RapunzelStoryNode implements IStoryNode {
                     paragraph("Was mag die Frau wollen?"));
         }
 
-        n.addAlt(alt);
+        n.narrateAlt(alt);
     }
 
     private static void narrateAndDoHintAction_ZuRapunzelHinaufgestiegen(
@@ -331,7 +331,7 @@ public enum RapunzelStoryNode implements IStoryNode {
             alt.addAll(altTurmWohnenHineinHeraus(world));
         }
 
-        n.addAlt(alt);
+        n.narrateAlt(alt);
     }
 
     @CheckReturnValue

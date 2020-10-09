@@ -124,7 +124,7 @@ public class GebenAction<
                 praedikatAlt.stream().map(GebenAction::toAnbietenGebenDuDescription)
                         .collect(ImmutableList.toImmutableList());
 
-        n.addAlt(drueckeAus(getKohaerenzrelationFuerUmformulierung(), descAlt));
+        n.narrateAlt(drueckeAus(getKohaerenzrelationFuerUmformulierung(), descAlt));
     }
 
     private ImmutableList<PraedikatOhneLeerstellen> getAnbietenPraedikatAlt() {

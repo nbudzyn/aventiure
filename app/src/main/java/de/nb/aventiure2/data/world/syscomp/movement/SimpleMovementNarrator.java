@@ -62,7 +62,7 @@ public class SimpleMovementNarrator implements IMovementNarrator {
 
         final String wo = locationMovingGO.storingPlaceComp().getLocationMode().getWo(eherGross);
 
-        n.addAlt(
+        n.narrateAlt(
                 neuerSatz(wo +
                         " steht " +
                         desc.nom(), noTime())
@@ -132,7 +132,7 @@ public class SimpleMovementNarrator implements IMovementNarrator {
     public void narrateScUeberholtMovingGO() {
         final Nominalphrase desc = getDescription();
 
-        n.addAlt(
+        n.narrateAlt(
                 du("gehst",
                         "dabei an " +
                                 desc.dat() +
@@ -161,7 +161,7 @@ public class SimpleMovementNarrator implements IMovementNarrator {
     public void narrateScTrifftEnteringMovingGO_scHatKeinenVorigenOrt() {
         final Nominalphrase desc = getDescription();
 
-        n.addAlt(
+        n.narrateAlt(
                 neuerSatz(PARAGRAPH,
                         "Dir begegnet " + desc.nom(), noTime())
                         .phorikKandidat(desc, gameObjectId)
@@ -232,7 +232,7 @@ public class SimpleMovementNarrator implements IMovementNarrator {
                             .beendet(PARAGRAPH));
         }
 
-        n.addAlt(alt);
+        n.narrateAlt(alt);
     }
 
     public void narrateScSiehtMovingGOFortgehen(
@@ -295,7 +295,7 @@ public class SimpleMovementNarrator implements IMovementNarrator {
                             .phorikKandidat(anaphOderDesc, gameObjectId));
         }
 
-        n.addAlt(alt);
+        n.narrateAlt(alt);
     }
 
     @Override
@@ -377,7 +377,7 @@ public class SimpleMovementNarrator implements IMovementNarrator {
                             .beendet(PARAGRAPH));
         }
 
-        n.addAlt(alt);
+        n.narrateAlt(alt);
     }
 
     protected <FROM extends ILocationGO & ISpatiallyConnectedGO>
@@ -390,7 +390,7 @@ public class SimpleMovementNarrator implements IMovementNarrator {
 
         final String wo = calcWoIfNecessary(spatialConnection, numberOfWaysOut);
 
-        n.addAlt(
+        n.narrateAlt(
                 neuerSatz(PARAGRAPH,
                         anaphOderDesc.nom() +
                                 " geht "
@@ -525,7 +525,7 @@ public class SimpleMovementNarrator implements IMovementNarrator {
                             .beendet(PARAGRAPH));
         }
 
-        n.addAlt(alt);
+        n.narrateAlt(alt);
     }
 
     public <FROM extends ILocationGO & ISpatiallyConnectedGO>
@@ -561,7 +561,7 @@ public class SimpleMovementNarrator implements IMovementNarrator {
                 .phorikKandidat(desc, gameObjectId)
                 .beendet(PARAGRAPH));
 
-        n.addAlt(alt);
+        n.narrateAlt(alt);
     }
 
     public <FROM extends ILocationGO & ISpatiallyConnectedGO>
@@ -615,7 +615,7 @@ public class SimpleMovementNarrator implements IMovementNarrator {
                             .beendet(PARAGRAPH));
         }
 
-        n.addAlt(alt);
+        n.narrateAlt(alt);
     }
 
     protected <FROM extends ILocationGO & ISpatiallyConnectedGO>
@@ -629,7 +629,7 @@ public class SimpleMovementNarrator implements IMovementNarrator {
 
         final String wo = calcWoIfNecessary(spatialConnection, numberOfWaysIn);
 
-        n.addAlt(
+        n.narrateAlt(
                 neuerSatz(PARAGRAPH,
                         wo // "auf dem Weg "
                                 + " kommt " +

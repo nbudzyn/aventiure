@@ -96,7 +96,7 @@ public class FroschprinzReactionsComp
 
         if (stateComp.hasState(ERWARTET_VON_SC_EINLOESUNG_SEINES_VERSPRECHENS)
                 && !from.is(SCHLOSS_VORHALLE_AM_TISCH_BEIM_FEST)) {
-            n.addAlt(
+            n.narrateAlt(
                     neuerSatz("„Warte, warte“, ruft dir der Frosch noch nach, „nimm mich mit, "
                             + "ich kann nicht so "
                             + "laufen wie du.“ Aber was hilft ihm, dass er "
@@ -130,7 +130,7 @@ public class FroschprinzReactionsComp
 
         locationComp.narrateAndSetLocation(SCHLOSS_VORHALLE_AM_TISCH_BEIM_FEST);
 
-        n.add(
+        n.narrate(
                 neuerSatz("Da springt dir der Frosch "
                         + "aus der Hand – weg ist er!", secs(3))
                         .beendet(PARAGRAPH));
@@ -178,7 +178,7 @@ public class FroschprinzReactionsComp
                 // TODO Wenn der Frosch nur rekursiv enthalten ist (Frosch sitzt auf
                 //  in einer Schale auf der Bank, dann hier prüfen und ggf. beschreiben
                 //  (vgl. AblegenAction)
-                n.addAlt(
+                n.narrateAlt(
                         neuerSatz(PARAGRAPH, "Plötzlich sitzt "
                                         + desc.nom()
                                         + " neben dir auf der Bank. „Denk an dein "
@@ -198,7 +198,7 @@ public class FroschprinzReactionsComp
             case BEIM_SCHLOSSFEST_AUF_TISCH_WILL_ZUSAMMEN_ESSEN:
                 loadSC().feelingsComp().setMood(ANGESPANNT);
 
-                n.addAlt(
+                n.narrateAlt(
                         neuerSatz(PARAGRAPH, "Auf einmal sitzt "
                                         + desc.nom()
                                         + " bei dir auf dem Tisch. „Auf, füll deine "
@@ -226,7 +226,7 @@ public class FroschprinzReactionsComp
             default:
                 // TODO Wenn der Frosch nur rekursiv enthalten ist (Frosch sitzt auf dem Tisch),
                 //  dann beschreiben (vgl. BewegenAction)
-                n.add(neuerSatz("Hier sitzt " + desc.nom(), noTime())
+                n.narrate(neuerSatz("Hier sitzt " + desc.nom(), noTime())
                         .phorikKandidat(desc, FROSCHPRINZ));
                 return;
         }
@@ -250,13 +250,13 @@ public class FroschprinzReactionsComp
 
         // TODO Wenn der Prinz nur rekursiv enthalten ist (Prinz sitzt auf einem Stuhl),
         //  dann genauer beschreiben (vgl. BewegenAction)
-        n.add(du("siehst", getDescription().akk(), noTime())
+        n.narrate(du("siehst", getDescription().akk(), noTime())
                 .phorikKandidat(desc, FROSCHPRINZ));
     }
 
     private void prinzVerlaesstSchlossVorhalle() {
         if (n.requireNarration().allowsAdditionalDuSatzreihengliedOhneSubjekt()) {
-            n.add(
+            n.narrate(
                     satzanschluss(", aber die Menge hat dich schon von dem "
                             + "jungen Königssohn getrennt", secs(15))
                             .phorikKandidat(M, FROSCHPRINZ));
@@ -265,7 +265,7 @@ public class FroschprinzReactionsComp
             return;
         }
 
-        n.add(
+        n.narrate(
                 neuerSatz("In der Menge ist der junge Königssohn nicht mehr zu "
                         + "erkennen", secs(15))
                         .phorikKandidat(M, FROSCHPRINZ));
@@ -274,7 +274,7 @@ public class FroschprinzReactionsComp
     }
 
     private void prinzFaehrtMitWagenDavon() {
-        n.add(
+        n.narrate(
                 // TODO Danach stehst du vom Tisch auf und drängst dich durch das
                 //  Eingangstor. DANN siehst du noch einen Wagen davonfahren... - das DANN
                 //  ergibt keinen Sinn. Wie kann man das sinnvoll verhindern?
@@ -317,7 +317,7 @@ public class FroschprinzReactionsComp
                 HAT_FORDERUNG_GESTELLT)) {
             // Der Spieler hat die goldene Kugel in den Brunnen fallen
             // lassen, obwohl er noch mit dem Frosch verhandelt.
-            n.add(neuerSatz(StructuralElement.PARAGRAPH,
+            n.narrate(neuerSatz(StructuralElement.PARAGRAPH,
                     "Ob der Frosch gerade seine glitschige Nase gerümpft hat?",
                     secs(3))
                     .beendet(PARAGRAPH)
@@ -329,7 +329,7 @@ public class FroschprinzReactionsComp
         // fallen lassen, NACHDEM der Frosch schon Dinge hochgeholt hat.
         // Dann ist die Kugel jetzt WEG - PECH.
         final Nominalphrase froschprinzDesc = getDescription(true);
-        n.add(neuerSatz(
+        n.narrate(neuerSatz(
                 capitalize(
                         froschprinzDesc.nom()) +
                         " schaut dich vorwurfsvoll und etwas hochnäsig an",
@@ -359,7 +359,7 @@ public class FroschprinzReactionsComp
         }
 
         final Nominalphrase froschprinzDesc = getDescription(true);
-        n.addAlt(
+        n.narrateAlt(
                 neuerSatz(froschprinzDesc.nom() + " quakt erbost",
                         secs(5))
                         .phorikKandidat(froschprinzDesc, FROSCHPRINZ),
@@ -382,7 +382,7 @@ public class FroschprinzReactionsComp
 
         stateComp.narrateAndSetState(BEIM_SCHLOSSFEST_AUF_TISCH_WILL_ZUSAMMEN_ESSEN);
 
-        n.add(neuerSatz(
+        n.narrate(neuerSatz(
                 "Wie " +
                         froschDescOderAnapher.nom() +
                         " nun da sitzt, glotzt " +
@@ -440,7 +440,7 @@ public class FroschprinzReactionsComp
     private void froschprinzHuepftAusTascheUndWillMitessen() {
         locationComp.narrateAndSetLocation(SCHLOSS_VORHALLE_AM_TISCH_BEIM_FEST,
                 () -> {
-                    n.add(neuerSatz(
+                    n.narrate(neuerSatz(
                             "Auf einmal ruckelt es unangenehm in deiner Tasche, und eh "
                                     + "du dich's versiehst "
                                     + "hüpft der garstige Frosch heraus. Patsch! – sitzt er neben "
@@ -458,7 +458,7 @@ public class FroschprinzReactionsComp
     }
 
     private void froschprinzSitztAufEinmalAufDerBankUndWillMitessen() {
-        n.add(du(
+        n.narrate(du(
                 "spürst", "auf einmal etwas Feuchtes an deinem rechten Bein – oh "
                         + "nein, der "
                         + "garstige Frosch! „Heb mich herauf!“, ruft er, „weißt du nicht, was du "
@@ -479,7 +479,7 @@ public class FroschprinzReactionsComp
         final SpielerCharakter sc = loadSC();
         sc.feelingsComp().setMood(ANGESPANNT);
 
-        n.addAlt(
+        n.narrateAlt(
                 neuerSatz(PARAGRAPH,
                         "„Heb mich auf den Tisch“, ruft der Frosch, „wie sollen wir "
                                 + "zwei sonst zusammmen essen?“ Dir klopft das Herz",
@@ -539,7 +539,7 @@ public class FroschprinzReactionsComp
         @Nullable final ILocationGO scLocation = loadSC().locationComp().getLocation();
 
         if ((scLocation != null && locationComp.hasSameUpperMostLocationAs(SPIELER_CHARAKTER))) {
-            n.add(neuerSatz(PARAGRAPH,
+            n.narrate(neuerSatz(PARAGRAPH,
                     "Plitsch platsch, plitsch platsch hüpft der Frosch davon",
                     secs(5))
                     .beendet(PARAGRAPH));

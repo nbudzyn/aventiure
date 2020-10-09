@@ -102,7 +102,7 @@ public class HeulenAction extends AbstractScAction {
 
         alt.add(du("kannst", "dich gar nicht mehr beruhigen", mins(1))
                 .undWartest());
-        n.addAlt(alt);
+        n.narrateAlt(alt);
     }
 
     private <F extends IDescribableGO &
@@ -113,7 +113,7 @@ public class HeulenAction extends AbstractScAction {
 
         sc.memoryComp().setLastAction(buildMemorizedAction());
 
-        n.add(du("weinst", "immer lauter und kannst dich gar nicht trösten. " +
+        n.narrate(du("weinst", "immer lauter und kannst dich gar nicht trösten. " +
                 "Und wie du so klagst, ruft dir jemand zu: „Was hast du vor, " +
                 "du schreist ja, dass sich ein Stein erbarmen möchte.“ Du siehst " +
                 "dich um, woher " +
@@ -140,7 +140,7 @@ public class HeulenAction extends AbstractScAction {
         alt.add(du("weinst", mins(1))
                 .undWartest()
                 .dann());
-        n.addAlt(alt);
+        n.narrateAlt(alt);
     }
 
     @Override

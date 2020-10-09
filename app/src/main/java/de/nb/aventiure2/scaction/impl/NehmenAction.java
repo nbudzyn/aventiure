@@ -220,7 +220,7 @@ public class NehmenAction
 
         final Nominalphrase froschDesc = world.getDescription(gameObject, true);
 
-        n.addAlt(
+        n.narrateAlt(
                 du(PARAGRAPH,
                         "ekelst",
                         "dich sehr, aber mit einiger Überwindung nimmst du "
@@ -253,7 +253,7 @@ public class NehmenAction
                                     getAnaphPersPronWennMglSonstShortDescription(
                                             FROSCHPRINZ);
 
-                            n.addAlt(
+                            n.narrateAlt(
                                     neuerSatz(
                                             capitalize(
                                                     froschDescOderAnapher.nom()) // "er"
@@ -316,7 +316,7 @@ public class NehmenAction
                 final SubstantivischePhrase froschDescOderAnapher =
                         getAnaphPersPronWennMglSonstShortDescription(FROSCHPRINZ);
 
-                n.add(neuerSatz(PARAGRAPH,
+                n.narrate(neuerSatz(PARAGRAPH,
                         "Aber dann nimmst du " + froschDescOderAnapher.akk() +
                                 " doch wieder",
                         secs(5))
@@ -341,11 +341,11 @@ public class NehmenAction
                             .undWartest()
                             .phorikKandidat(froschDesc, FROSCHPRINZ)));
 
-            n.addAlt(alt);
+            n.narrateAlt(alt);
             return;
 
         }
-        n.addAlt(
+        n.narrateAlt(
                 du(PARAGRAPH,
                         "zauderst", "und dein Herz klopft gewaltig, als du endlich "
                                 + world.getDescription(gameObject, true).akk()
@@ -386,7 +386,7 @@ public class NehmenAction
 
         if (sc.memoryComp().getLastAction().is(Action.Type.ABLEGEN)) {
             final Nominalphrase objectDesc = world.getDescription(gameObject, true);
-            n.add(neuerSatz(
+            n.narrate(neuerSatz(
                     "Dann nimmst du " + objectDesc.akk(),
                     secs(5))
                     .undWartest()
@@ -409,7 +409,7 @@ public class NehmenAction
                         mitnehmenPraedikat.mitObj(objectDesc);
                 // STORY Neues Praedikat mit integrierter adverbialer Angabe in
                 //  du(...) übergegben
-                n.add(du(PARAGRAPH,
+                n.narrate(du(PARAGRAPH,
                         praedikatMitObjekt.mitAdverbialerAngabe(mood.getAdverbialeAngabe()),
                         secs(5))
                         .undWartest(
@@ -423,7 +423,7 @@ public class NehmenAction
 
         final PraedikatOhneLeerstellen praedikatMitObjekt =
                 mitnehmenPraedikat.mitObj(world.getDescription(gameObject, true));
-        n.add(
+        n.narrate(
                 du(PARAGRAPH, praedikatMitObjekt, secs(5))
                         // TODO Kann das .undWartest() bei Prädikat automatisch gesetzt werden?
                         .undWartest(
@@ -466,7 +466,7 @@ public class NehmenAction
                     .dann());
         }
 
-        n.addAlt(alt);
+        n.narrateAlt(alt);
     }
 
     @Override

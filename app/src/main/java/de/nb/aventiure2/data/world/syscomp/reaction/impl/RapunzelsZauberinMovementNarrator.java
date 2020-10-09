@@ -7,7 +7,7 @@ import javax.annotation.Nullable;
 
 import de.nb.aventiure2.data.narration.NarrationDao;
 import de.nb.aventiure2.data.world.base.SpatialConnection;
-import de.nb.aventiure2.data.world.gameobject.World;
+import de.nb.aventiure2.data.world.gameobject.*;
 import de.nb.aventiure2.data.world.syscomp.movement.SimpleMovementNarrator;
 import de.nb.aventiure2.data.world.syscomp.spatialconnection.ISpatiallyConnectedGO;
 import de.nb.aventiure2.data.world.syscomp.spatialconnection.NumberOfWays;
@@ -16,12 +16,8 @@ import de.nb.aventiure2.german.base.Nominalphrase;
 import de.nb.aventiure2.german.base.SubstantivischePhrase;
 import de.nb.aventiure2.german.description.AbstractDescription;
 
-import static de.nb.aventiure2.data.world.gameobject.World.ABZWEIG_IM_WALD;
-import static de.nb.aventiure2.data.world.gameobject.World.DRAUSSEN_VOR_DEM_SCHLOSS;
-import static de.nb.aventiure2.data.world.gameobject.World.IM_WALD_NAHE_DEM_SCHLOSS;
-import static de.nb.aventiure2.data.world.gameobject.World.RAPUNZELS_ZAUBERIN;
-import static de.nb.aventiure2.data.world.gameobject.World.VOR_DEM_ALTEN_TURM;
-import static de.nb.aventiure2.data.world.time.AvTimeSpan.noTime;
+import static de.nb.aventiure2.data.world.gameobject.World.*;
+import static de.nb.aventiure2.data.world.time.AvTimeSpan.*;
 import static de.nb.aventiure2.german.base.StructuralElement.PARAGRAPH;
 import static de.nb.aventiure2.german.base.StructuralElement.SENTENCE;
 import static de.nb.aventiure2.german.description.AllgDescription.neuerSatz;
@@ -100,7 +96,7 @@ public class RapunzelsZauberinMovementNarrator extends SimpleMovementNarrator {
                         .beendet(SENTENCE));
             }
 
-            n.addAlt(alt);
+            n.narrateAlt(alt);
             return;
         }
 
@@ -116,7 +112,7 @@ public class RapunzelsZauberinMovementNarrator extends SimpleMovementNarrator {
                         .beendet(SENTENCE));
             }
 
-            n.addAlt(alt);
+            n.narrateAlt(alt);
             return;
         }
 
@@ -132,7 +128,7 @@ public class RapunzelsZauberinMovementNarrator extends SimpleMovementNarrator {
                         .beendet(SENTENCE));
             }
 
-            n.addAlt(alt);
+            n.narrateAlt(alt);
             return;
         }
 

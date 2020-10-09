@@ -179,7 +179,7 @@ public enum FroschkoenigStoryNode implements IStoryNode {
                     + "dich wohl aufheitern! Aber woher nehmen und nicht stehlen?"));
         }
 
-        n.addAlt(alt);
+        n.narrateAlt(alt);
     }
 
     public static void narrateAndDoHintAction_MitKugelZumBrunnenGegangen(
@@ -200,7 +200,7 @@ public enum FroschkoenigStoryNode implements IStoryNode {
             alt.addAll(altKugelVermissen());
         }
 
-        n.addAlt(alt);
+        n.narrateAlt(alt);
     }
 
     public static void narrateAndDoHintAction_EtwasImBrunnenVerloren(
@@ -229,7 +229,7 @@ public enum FroschkoenigStoryNode implements IStoryNode {
             alt.addAll(altKugelVermissen());
         }
 
-        n.addAlt(alt);
+        n.narrateAlt(alt);
     }
 
     public static void narrateAndDoHintAction_FroschHatEtwasAusBrunnenGeholt(
@@ -253,7 +253,7 @@ public enum FroschkoenigStoryNode implements IStoryNode {
 
         world.loadSC().feelingsComp().setMoodMax(UNTROESTLICH);
 
-        n.addAlt(alt);
+        n.narrateAlt(alt);
     }
 
     public static void narrateAndDoHintAction_ZumSchlossfestGegangen(
@@ -278,7 +278,7 @@ public enum FroschkoenigStoryNode implements IStoryNode {
                     + "nicht zwangsläufig…"));
         }
 
-        n.addAlt(alt);
+        n.narrateAlt(alt);
     }
 
     public static void narrateAndDoHintAction_BeimSchlossfestAnDenTischGesetzt(
@@ -290,7 +290,7 @@ public enum FroschkoenigStoryNode implements IStoryNode {
         alt.add(paragraph("Welches Versprechen hattest du dem Frosch noch gegeben? Du kannst "
                 + "dich kaum mehr erinnern"));
 
-        n.addAlt(alt);
+        n.narrateAlt(alt);
     }
 
     public static void narrateAndDoHintAction_PrinzIstErloest(
@@ -302,7 +302,7 @@ public enum FroschkoenigStoryNode implements IStoryNode {
         alt.add(paragraph("Ein schlechtes Gewissen ist kein gutes Ruhekissen – so geht es "
                 + "die ganze Zeit in deinem Kopf"));
 
-        n.addAlt(alt);
+        n.narrateAlt(alt);
     }
 
     public static void narrateAndDoHintAction_PrinzIstWeggefahren(
@@ -315,7 +315,7 @@ public enum FroschkoenigStoryNode implements IStoryNode {
                 noTime())
                 .beendet(PARAGRAPH));
 
-        n.addAlt(alt);
+        n.narrateAlt(alt);
     }
 
     @CheckReturnValue

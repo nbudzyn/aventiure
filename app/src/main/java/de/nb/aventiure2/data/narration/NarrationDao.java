@@ -90,27 +90,27 @@ public abstract class NarrationDao {
         }
     }
 
-    public void addAlt(final AbstractDescription<?>... alternatives) {
+    public void narrateAlt(final AbstractDescription<?>... alternatives) {
         final Narration initialNarration = requireNarration();
-        addAlt(asList(alternatives), initialNarration);
+        narrateAlt(asList(alternatives), initialNarration);
     }
 
-    public void addAlt(final ImmutableCollection.Builder<AbstractDescription<?>> alternatives) {
-        addAlt(alternatives.build());
+    public void narrateAlt(final ImmutableCollection.Builder<AbstractDescription<?>> alternatives) {
+        narrateAlt(alternatives.build());
     }
 
-    public void addAlt(final Collection<AbstractDescription<?>> alternatives) {
+    public void narrateAlt(final Collection<AbstractDescription<?>> alternatives) {
         final Narration initialNarration = requireNarration();
-        addAlt(alternatives, initialNarration);
+        narrateAlt(alternatives, initialNarration);
     }
 
-    private void addAlt(final Narration initialNarration,
-                        final AbstractDescription<?>... alternatives) {
-        addAlt(asList(alternatives), initialNarration);
+    private void narrateAlt(final Narration initialNarration,
+                            final AbstractDescription<?>... alternatives) {
+        narrateAlt(asList(alternatives), initialNarration);
     }
 
-    private void addAlt(final Collection<AbstractDescription<?>> alternatives,
-                        final Narration initialNarration) {
+    private void narrateAlt(final Collection<AbstractDescription<?>> alternatives,
+                            final Narration initialNarration) {
 
         checkArgument(alternatives.size() > 0,
                 "No alternatives");
@@ -133,14 +133,14 @@ public abstract class NarrationDao {
             }
         }
 
-        add(bestNarrationAddition);
+        narrate(bestNarrationAddition);
 
         nowDao.passTime(bestDesc.getTimeElapsed());
     }
 
-    public void add(final AbstractDescription<?> desc) {
+    public void narrate(final AbstractDescription<?> desc) {
         final Narration initialNarration = requireNarration();
-        add(desc, initialNarration);
+        narrate(desc, initialNarration);
     }
 
     // TODO Hier eine eingebettete Sprache verwenden:
@@ -151,9 +151,9 @@ public abstract class NarrationDao {
     //  - {RAPUNZEL.ana.nom) Nimmt möglichst eine Anapher
     //  - {RAPUNZEL.nom): Wählt automatisch richtig (kontextabhängig!)
     //  - .phorik(..) automatisch oder heuristisch setzen?!
-    private void add(final AbstractDescription<?> desc,
-                     final Narration initialNarration) {
-        add(chooseNextFrom(initialNarration, toNarrationAdditions(desc, initialNarration)));
+    private void narrate(final AbstractDescription<?> desc,
+                         final Narration initialNarration) {
+        narrate(chooseNextFrom(initialNarration, toNarrationAdditions(desc, initialNarration)));
 
         nowDao.passTime(desc.getTimeElapsed());
     }
@@ -254,7 +254,7 @@ public abstract class NarrationDao {
     @Query("UPDATE Narration SET lastNarrationSource = :lastNarrationSource")
     protected abstract void setLastNarrationSourceInternal(NarrationSource lastNarrationSource);
 
-    public void add(@NonNull final NarrationAddition narrationAddition) {
+    public void narrate(@NonNull final NarrationAddition narrationAddition) {
         checkNotNull(narrationAddition, "narrationAddition is null");
 
         @Nullable final Narration currentNarration = requireNarration();

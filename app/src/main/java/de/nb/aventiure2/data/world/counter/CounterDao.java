@@ -22,7 +22,7 @@ public abstract class CounterDao {
      * <i>wirklich angezeigt</i> wird (und nicht unterdrückt oder durch eine ganz andere
      * Beschreibung ersetzt). Oft ist es deshalb eine gute Idee,
      * <code>#incAndGet(String)</code> in derselben Methode aufzurufen, in der auch
-     * {@link NarrationDao#add(AbstractDescription)}
+     * {@link NarrationDao#narrate(AbstractDescription)}
      * aufgerufen wird.
      */
     public int incAndGet(final String id) {

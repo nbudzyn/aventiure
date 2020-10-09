@@ -105,7 +105,7 @@ public class SchlosswacheReactionsComp
                 && goldeneKugel.locationComp().hasRecursiveLocation(SCHLOSS_VORHALLE)) {
             if (db.counterDao().incAndGet(
                     "SchlosswacheReactions_onEnterRoom_SchlossVorhalle") > 1) {
-                n.add(neuerSatz(
+                n.narrate(neuerSatz(
                         capitalize(getDescription(true).nom())
                                 + " scheint dich nicht zu bemerken", secs(3)));
                 return;
@@ -126,7 +126,7 @@ public class SchlosswacheReactionsComp
 
         final SpielerCharakter sc = loadSC();
 
-        n.addAlt(
+        n.narrateAlt(
                 neuerSatz("Die Wache spricht dich sofort an und macht dir unmissverständlich "
                                 + "klar, dass du hier "
                                 + "vor dem großen Fest nicht erwünscht bist. Du bist "
@@ -220,7 +220,7 @@ public class SchlosswacheReactionsComp
     private void scHatEtwasGenommenOderHochgeworfenUndAufgefangen_wacheWirdAufmerksam() {
         final SpielerCharakter sc = loadSC();
 
-        n.add(
+        n.narrate(
                 neuerSatz(PARAGRAPH, "Da wird eine Wache auf dich aufmerksam. "
                                 + "„Wie seid Ihr hier hereingekommen?“, fährt sie dich "
                                 + "scharf an. „Das Fest ist erst am Sonntag. Heute "
@@ -255,7 +255,7 @@ public class SchlosswacheReactionsComp
 
     private void scHatGoldeneKugelHochgeworfenUndAufgefangen_wacheIstAufmerksam(
             final ILocatableGO goldeneKugel) {
-        n.add(
+        n.narrate(
                 neuerSatz(PARAGRAPH, "„Was treibt Ihr für einen Unfug, legt sofort das "
                         + "Schmuckstück wieder hin!“, "
                         + "ruft dir "
@@ -268,7 +268,7 @@ public class SchlosswacheReactionsComp
         final SpielerCharakter sc = loadSC();
         sc.feelingsComp().setMood(ANGESPANNT);
 
-        n.add(du(PARAGRAPH,
+        n.narrate(du(PARAGRAPH,
                 "legst", "die schöne goldene Kugel eingeschüchtert wieder an ihren Platz",
                 "eingeschüchtert",
                 secs(5))
@@ -300,9 +300,9 @@ public class SchlosswacheReactionsComp
                         + "wirst du von hinten angesprochen.",
                 secs(15)));
 
-        n.addAlt(alt);
+        n.narrateAlt(alt);
 
-        n.add(neuerSatz(PARAGRAPH,
+        n.narrate(neuerSatz(PARAGRAPH,
                 "Da legst du doch besser die schöne goldene Kugel "
                         + "wieder an ihren Platz",
                 secs(5))
@@ -342,7 +342,7 @@ public class SchlosswacheReactionsComp
                 secs(3))
                 .dann());
 
-        n.addAlt(alt);
+        n.narrateAlt(alt);
     }
 
     /**
@@ -376,14 +376,14 @@ public class SchlosswacheReactionsComp
         }
 
         if (n.requireNarration().allowsAdditionalDuSatzreihengliedOhneSubjekt()) {
-            n.add(satzanschluss(", von der kopfschüttelnden Wache beobachtet",
+            n.narrate(satzanschluss(", von der kopfschüttelnden Wache beobachtet",
                     secs(5))
                     .dann());
             return;
         }
 
         loadSC().feelingsComp().setMood(ANGESPANNT);
-        n.addAlt(
+        n.narrateAlt(
                 neuerSatz(getDescription().nom()
                         + " beoabachtet dich dabei", secs(5))
                         .dann(),
@@ -414,7 +414,7 @@ public class SchlosswacheReactionsComp
 
     private void schlossfestBeginnt_Vorhalle(final SpielerCharakter sc) {
         // Beim Fest ist die Schlosswache mit anderen Dingen beschäftigt
-        n.add(neuerSatz(PARAGRAPH,
+        n.narrate(neuerSatz(PARAGRAPH,
                 "Die Wache spricht dich an: „Wenn ich Euch dann "
                         + "hinausbitten dürfte? Wer wollte "
                         + "denn den Vorbereitungen für das große Fest im Wege stehen?“ – Nein, "
@@ -423,7 +423,7 @@ public class SchlosswacheReactionsComp
 
         sc.locationComp().narrateAndSetLocation(DRAUSSEN_VOR_DEM_SCHLOSS,
                 () -> {
-                    n.add(neuerSatz(PARAGRAPH,
+                    n.narrate(neuerSatz(PARAGRAPH,
                             "Draußen sind Handwerker dabei, im "
                                     + "ganzen Schlossgarten kleine bunte "
                                     + "Pagoden aufzubauen. Du schaust eine "

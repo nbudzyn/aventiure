@@ -180,13 +180,13 @@ public class HochwerfenAction<OBJ extends IDescribableGO & ILocatableGO>
                 location.storingPlaceComp().getLichtverhaeltnisse() == HELL ? "Weit und breit" :
                         "Im Dunkeln ist";
 
-        n.add(
+        n.narrate(
                 neuerSatz(praefix + " kein Frosch zu sehen… Das war vielleicht etwas "
                         + "ungeschickt, oder?", noTime()));
     }
 
     private void narrateAndDoHochwerfenAuffangen(final AbstractDescription<?> desc) {
-        n.add(desc);
+        n.narrate(desc);
 
         object.locationComp().narrateAndDoLeaveReactions(SPIELER_CHARAKTER);
 
@@ -205,7 +205,7 @@ public class HochwerfenAction<OBJ extends IDescribableGO & ILocatableGO>
     private void narrateAndDoObjectFaelltSofortInDenBrunnen() {
         final Nominalphrase objectDesc = world.getDescription(object, false);
 
-        n.add(
+        n.narrate(
                 du(PARAGRAPH, "wirfst", objectDesc.akk() +
                         " nur ein einziges Mal in die Höhe, " +
                         "aber wie das Unglück es will, fällt " +
@@ -228,7 +228,7 @@ public class HochwerfenAction<OBJ extends IDescribableGO & ILocatableGO>
         if (db.counterDao().incAndGet("HochwerfenAction_Wiederholung") == 1 ||
                 (location.is(IM_WALD_BEIM_BRUNNEN) && !froschprinz.stateComp()
                         .hasState(UNAUFFAELLIG))) {
-            n.addAlt(
+            n.narrateAlt(
                     neuerSatz("Und noch einmal – was ein schönes Spiel!", secs(3))
                             .dann(),
                     neuerSatz("So ein Spaß!", secs(3))
@@ -243,7 +243,7 @@ public class HochwerfenAction<OBJ extends IDescribableGO & ILocatableGO>
                     location.storingPlaceComp().getLichtverhaeltnisse() == DUNKEL ?
                             "– bei dieser Dunkelheit schon gar nicht" : "";
 
-            n.add(du("wirfst",
+            n.narrate(du("wirfst",
                     world.getDescription(object).akk() +
                             " noch einmal in die Höhe… doch oh nein, " +
                             world.getDescription(object, true).nom() +
@@ -263,7 +263,7 @@ public class HochwerfenAction<OBJ extends IDescribableGO & ILocatableGO>
             return;
         }
 
-        n.add(du("schleuderst",
+        n.narrate(du("schleuderst",
                 world.getDescription(object).akk() +
                         " übermütig noch einmal in die Luft, aber sie wieder aufzufangen will dir "
                         +

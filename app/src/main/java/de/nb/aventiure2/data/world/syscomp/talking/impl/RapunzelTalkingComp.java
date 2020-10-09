@@ -122,7 +122,7 @@ public class RapunzelTalkingComp extends AbstractTalkingComp {
         }
 
         // STORY Das hier sollte nur einmal gehen.
-        n.add(du(PARAGRAPH, "fängst", "an ganz freundlich mit "
+        n.narrate(du(PARAGRAPH, "fängst", "an ganz freundlich mit "
                         + anaph.dat()
                         + " zu reden. Du erzählst, dass von "
                         + wovonHerzBewegtDat
@@ -151,7 +151,7 @@ public class RapunzelTalkingComp extends AbstractTalkingComp {
     }
 
     private void haareHerunterlassenBitte_EntryReEntry() {
-        n.addAlt(
+        n.narrateAlt(
                 // STORY Nur, wenn SC und Rapunzel sich noch nicht gut kennen
                 neuerSatz(PARAGRAPH,
                         "„Ich wollte euch nicht belästigen“, sprichst du "
@@ -215,7 +215,7 @@ public class RapunzelTalkingComp extends AbstractTalkingComp {
             );
         }
 
-        n.addAlt(alt);
+        n.narrateAlt(alt);
 
         loadSC().feelingsComp().setMoodMin(AUFGEDREHT);
 
@@ -248,7 +248,7 @@ public class RapunzelTalkingComp extends AbstractTalkingComp {
             );
         }
 
-        n.addAlt(alt);
+        n.narrateAlt(alt);
 
         haareHerunterlassen();
     }

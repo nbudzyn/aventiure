@@ -93,11 +93,11 @@ public class SchlafenAction extends AbstractScAction {
         alt.add(du("drehst", "dich von einer Seite auf die andere",
                 "von einer Seite", mins(1)));
 
-        n.addAlt(alt);
+        n.narrateAlt(alt);
     }
 
     private void narrateAndDoSchlaeftEin() {
-        n.addAlt(
+        n.narrateAlt(
                 // TODO Irgendwie wird immer nur dieser Text gewählt, nicht die anderen
                 //  beiden...
                 du(SENTENCE,
@@ -184,7 +184,7 @@ public class SchlafenAction extends AbstractScAction {
 
         sc.feelingsComp().setMood(NEUTRAL);
 
-        n.addAlt(
+        n.narrateAlt(
                 du(CHAPTER,
                         "wachst", "nach einem langen Schlaf gut erholt wieder auf",
                         "nach einem langen Schlaf", noTime()),

@@ -85,10 +85,10 @@ public class RufenAction extends AbstractScAction {
 
         if (kohaerenzrelation != VERSTEHT_SICH_VON_SELBST ||
                 n.requireNarration().allowsAdditionalDuSatzreihengliedOhneSubjekt()) {
-            n.addAlt(drueckeAus(kohaerenzrelation,
+            n.narrateAlt(drueckeAus(kohaerenzrelation,
                     du(ruftyp.getName(), secs(30))));
         } else {
-            n.add(neuerSatz(
+            n.narrate(neuerSatz(
                     "Und " + uncapitalize(ruftyp.getName().getDuHauptsatz()),
                     secs(30)));
         }

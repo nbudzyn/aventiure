@@ -28,13 +28,13 @@ public class RapunzelStateComp extends AbstractStateComp<RapunzelState> {
     public void rapunzelLaesstHaareZumAbstiegHerunter() {
         if (loadSC().locationComp().hasRecursiveLocation(VOR_DEM_ALTEN_TURM)) {
             if (!loadSC().memoryComp().isKnown(RAPUNZELS_HAARE)) {
-                n.add(du(PARAGRAPH, "siehst", " über dir eine Bewegung: "
+                n.narrate(du(PARAGRAPH, "siehst", " über dir eine Bewegung: "
                                 + "Aus dem Turmfenster fallen auf einmal lange, golden "
                                 + "glänzende Haare bis zum Boden herab",
                         secs(10))
                         .dann());
             } else {
-                n.add(du(PARAGRAPH, "siehst", " über dir eine Bewegung: "
+                n.narrate(du(PARAGRAPH, "siehst", " über dir eine Bewegung: "
                                 + "Aus dem Turmfenster fallen wieder die "
                                 + "langen, golden glänzenden Haare bis zum Boden herab",
                         secs(10))
@@ -87,7 +87,7 @@ public class RapunzelStateComp extends AbstractStateComp<RapunzelState> {
             //  STORY "Oh, ich wünschte, ihr könntet noch einen Moment bleiben!" antwortet RAPUNZEL.
             //    Aber sie knotet doch ihrer Haare wieder über den Haken am Fenster"
 
-            n.addAlt(alt);
+            n.narrateAlt(alt);
         }
 
         narrateAndSetState(HAARE_VOM_TURM_HERUNTERGELASSEN);

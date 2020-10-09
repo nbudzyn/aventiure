@@ -266,7 +266,7 @@ public class BewegenAction<LOC_DESC extends ILocatableGO & IDescribableGO>
 
     private void narrateObjects(final String objectsDescription, final int numObjects,
                                 final IDescribableGO lastObject) {
-        n.add(
+        n.narrate(
                 neuerSatz(objectsDescription, secs(numObjects * 2))
                         .phorikKandidat(
                                 world.getDescription(lastObject, false),
@@ -384,7 +384,7 @@ public class BewegenAction<LOC_DESC extends ILocatableGO & IDescribableGO>
     }
 
     private void narrateAnDoSCMitEssenKonfrontiertReagiertHungrig() {
-        n.addAlt(
+        n.narrateAlt(
                 neuerSatz("Mmh!", noTime())
                         .beendet(PARAGRAPH),
                 neuerSatz("Dir läuft das Wasser im Munde zusammen", noTime()),
@@ -439,14 +439,14 @@ public class BewegenAction<LOC_DESC extends ILocatableGO & IDescribableGO>
                     .komma(description.isKommaStehtAus()));
 
             alt.addAll(drueckeAus(DISKONTINUITAET, description));
-            n.addAlt(alt);
+            n.narrateAlt(alt);
             return;
         }
 
         if (description.getStartsNew() == WORD &&
                 n.requireNarration().allowsAdditionalDuSatzreihengliedOhneSubjekt() &&
                 description instanceof AbstractDuDescription) {
-            n.add(description);
+            n.narrate(description);
             return;
         }
 
@@ -476,7 +476,7 @@ public class BewegenAction<LOC_DESC extends ILocatableGO & IDescribableGO>
 
                 alt.addAll(drueckeAus(DISKONTINUITAET, description));
             }
-            n.addAlt(alt);
+            n.narrateAlt(alt);
             return;
         }
 
@@ -487,7 +487,7 @@ public class BewegenAction<LOC_DESC extends ILocatableGO & IDescribableGO>
                 final String satzEvtlMitDann = description
                         .getDescriptionHauptsatzMitKonjunktionaladverbWennNoetig(
                                 "dann");
-                n.add(
+                n.narrate(
                         satzanschluss(
                                 "; " + uncapitalize(satzEvtlMitDann),
                                 description.getTimeElapsed())
@@ -496,12 +496,12 @@ public class BewegenAction<LOC_DESC extends ILocatableGO & IDescribableGO>
                                         && !satzEvtlMitDann.startsWith("Dann")));
                 return;
             } else {
-                n.add(description);
+                n.narrate(description);
                 return;
             }
         } else {
             if (n.requireNarration().dann()) {
-                n.add(
+                n.narrate(
                         neuerSatz(PARAGRAPH, description
                                         .getDescriptionHauptsatzMitKonjunktionaladverbWennNoetig("danach"),
                                 description.getTimeElapsed())
@@ -511,7 +511,7 @@ public class BewegenAction<LOC_DESC extends ILocatableGO & IDescribableGO>
                 return;
             }
 
-            n.add(description);
+            n.narrate(description);
             return;
         }
     }

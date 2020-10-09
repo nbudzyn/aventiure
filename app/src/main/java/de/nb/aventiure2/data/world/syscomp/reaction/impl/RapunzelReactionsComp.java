@@ -144,7 +144,7 @@ public class RapunzelReactionsComp
         loadSC().feelingsComp().setMoodMin(BEWEGT);
 
         if (!loadSC().memoryComp().isKnown(RAPUNZELS_GESANG)) {
-            n.add(neuerSatz(PARAGRAPH,
+            n.narrate(neuerSatz(PARAGRAPH,
                     "Wie du näher kommst, hörst du einen Gesang, so lieblich, dass es "
                             + "dir das Herz rührt. Du hältst still und horchst: Kommt die "
                             + "Stimme aus dem kleinen Fensterchen oben im Turm?",
@@ -154,7 +154,7 @@ public class RapunzelReactionsComp
             world.loadSC().memoryComp().upgradeKnown(RAPUNZELS_GESANG);
             return;
         }
-        n.addAlt(
+        n.narrateAlt(
                 du("hörst",
                         "erneut die süße Stimme aus dem Turmfenster singen",
                         "erneut", secs(10)),
@@ -194,7 +194,7 @@ public class RapunzelReactionsComp
                     secs(15))
                     .beendet(PARAGRAPH));
 
-            n.addAlt(alt);
+            n.narrateAlt(alt);
 
             return;
         }
@@ -203,7 +203,7 @@ public class RapunzelReactionsComp
             loadSC().feelingsComp().setMoodMin(NEUTRAL);
             // STORY Andere und alternative Beschreibungen, wenn der SC
             //  Rapunzel schon kennengelernt hat
-            n.add(neuerSatz("Aus dem kleinen "
+            n.narrate(neuerSatz("Aus dem kleinen "
                             + "Fenster oben im Turm hängen lange, goldene Haarzöpfe herab",
                     noTime()));
 
@@ -226,7 +226,7 @@ public class RapunzelReactionsComp
         final Nominalphrase desc = getDescription();
 
         if (db.nowDao().now().getTageszeit() == NACHTS) {
-            n.add(neuerSatz(
+            n.narrate(neuerSatz(
                     "Am Fenster sitzt eine junge Frau "
                             + "und schaut dich entsetzt an. Du hast sie wohl gerade aus tiefem "
                             + "Nachtschlaf geweckt. "
@@ -259,7 +259,7 @@ public class RapunzelReactionsComp
             return;
         }
         // Tagsüber
-        n.add(neuerSatz(
+        n.narrate(neuerSatz(
                 "Am Fenster sitzt eine junge Frau, so schön als "
                         + "du unter der Sonne noch keine gesehen hast. "
                         + "Ihre Haare, fein wie gesponnen "
@@ -360,7 +360,7 @@ public class RapunzelReactionsComp
 
         world.loadSC().memoryComp().upgradeKnown(RAPUNZEL);
 
-        n.addAlt(alt);
+        n.narrateAlt(alt);
     }
 
 
@@ -372,7 +372,7 @@ public class RapunzelReactionsComp
 
             if (loadSC().locationComp().hasRecursiveLocation(VOR_DEM_ALTEN_TURM) &&
                     !world.loadSC().memoryComp().isKnown(RAPUNZELRUF)) {
-                n.add(neuerSatz(
+                n.narrate(neuerSatz(
                         "„Das ist also die Leiter, auf welcher man hinaufkommt!“, denkst du "
                                 + "bei dir", secs(5))
                         .beendet(PARAGRAPH));
@@ -409,7 +409,7 @@ public class RapunzelReactionsComp
     private void rapunzelMoechteGoldeneKugelHaben() {
         final SubstantivischePhrase desc =
                 getAnaphPersPronWennMglSonstShortDescription();
-        n.add(
+        n.narrate(
                 neuerSatz(desc.nom() +
                                 " sieht interessiert zu. „Darf ich auch "
                                 + "einmal?“, fragt " + desc.persPron().nom() + " dich",
@@ -423,9 +423,9 @@ public class RapunzelReactionsComp
 
     private void rapunzelZiehtHaareWiederHoch() {
         if (loadSC().locationComp().hasRecursiveLocation(VOR_DEM_ALTEN_TURM)) {
-            n.addAlt(altRapunzelZiehtHaareWiederHoch_VorDemAltenTurm());
+            n.narrateAlt(altRapunzelZiehtHaareWiederHoch_VorDemAltenTurm());
         } else if (loadSC().locationComp().hasRecursiveLocation(OBEN_IM_ALTEN_TURM)) {
-            n.addAlt(altRapunzelZiehtHaareWiederHoch_ObenImAltenTurm());
+            n.narrateAlt(altRapunzelZiehtHaareWiederHoch_ObenImAltenTurm());
         }
 
         stateComp.narrateAndSetState(STILL);
@@ -502,7 +502,7 @@ public class RapunzelReactionsComp
         if (loadSC().locationComp().hasRecursiveLocation(VOR_DEM_ALTEN_TURM)) {
             if (stateComp.hasState(SINGEND)) {
                 if (world.loadSC().memoryComp().isKnown(RAPUNZELS_HAARE)) {
-                    n.add(
+                    n.narrate(
                             neuerSatz(
                                     "Sofort hört der Gesang auf – und gleich darauf fallen "
                                             + "aus dem kleinen "
@@ -511,7 +511,7 @@ public class RapunzelReactionsComp
                                     secs(30))
                                     .phorikKandidat(PL_MFN, RAPUNZELS_HAARE));
                 } else {
-                    n.add(
+                    n.narrate(
                             neuerSatz(
                                     "Der Gesang hört auf, und wieder fallen "
                                             + "die wunderschönen goldenen Haare aus dem Fenster "
@@ -523,13 +523,13 @@ public class RapunzelReactionsComp
                 world.loadSC().memoryComp().upgradeKnown(RAPUNZELS_GESANG);
             } else {
                 if (world.loadSC().memoryComp().isKnown(RAPUNZELS_HAARE)) {
-                    n.add(
+                    n.narrate(
                             neuerSatz("Wieder fallen die langen, golden "
                                     + "glänzenden Zöpfe aus dem "
                                     + "Fenster bis zum Boden herab", secs(30))
                                     .phorikKandidat(PL_MFN, RAPUNZELS_HAARE));
                 } else {
-                    n.add(
+                    n.narrate(
                             neuerSatz("Gleich darauf fallen aus dem kleinen "
                                     + "Fenster oben im Turm lange, goldene Haarzöpfe herab, sicher "
                                     + "zwanzig Ellen tief bis auf den Boden", secs(30))
@@ -544,7 +544,7 @@ public class RapunzelReactionsComp
 
         // Sonderfall: Rapunzel verzögert das Haare-Herunterlassen
         if (loadSC().locationComp().hasLocation(OBEN_IM_ALTEN_TURM)) {
-            n.addAlt(
+            n.narrateAlt(
                     neuerSatz(
                             "„O weh, die Alte kommt!”, entfährt es der jungen "
                                     + "Frau. „Du musst dich verstecken! Sie "
@@ -681,7 +681,7 @@ public class RapunzelReactionsComp
         loadSC().feelingsComp().setMoodMin(BEWEGT);
 
         if (!loadSC().memoryComp().isKnown(RAPUNZELS_GESANG)) {
-            n.add(neuerSatz(PARAGRAPH,
+            n.narrate(neuerSatz(PARAGRAPH,
                     "Auf einmal hebt ein Gesang an, so lieblich, dass es dir das "
                             + "Herz rührt. Du hältst still und horchst: Kommt die Stimme aus "
                             + "dem kleinen Fensterchen oben im Turm?",
@@ -692,7 +692,7 @@ public class RapunzelReactionsComp
         }
 
         if (!loadSC().memoryComp().isKnown(RAPUNZEL)) {
-            n.addAlt(
+            n.narrateAlt(
                     du("hörst",
                             "erneut die süße Stimme aus dem Turmfenster singen",
                             "erneut", secs(10)),
@@ -718,7 +718,7 @@ public class RapunzelReactionsComp
             return;
         }
 
-        n.addAlt(
+        n.narrateAlt(
                 du(SENTENCE, "hörst",
                         "aus dem Turmfenster die junge Frau singen. Dir wird ganz "
                                 + "warm beim Zuhören",
@@ -796,7 +796,7 @@ public class RapunzelReactionsComp
                             .beendet(PARAGRAPH));
         }
 
-        n.addAlt(alt);
+        n.narrateAlt(alt);
 
         world.loadSC().memoryComp().upgradeKnown(RAPUNZELS_GESANG);
     }

@@ -69,7 +69,7 @@ public class RapunzelsZauberinTalkingComp extends AbstractTalkingComp {
         final SubstantivischePhrase anaphOderDesc =
                 getAnaphPersPronWennMglSonstDescription(false);
 
-        n.addAlt(
+        n.narrateAlt(
                 neuerSatz(PARAGRAPH, "„Wohin des Wegs, gute Frau“, sprichst du " +
                                 anaphOderDesc.akk() +
                                 " an. „Was geht es dich an?“, ist "

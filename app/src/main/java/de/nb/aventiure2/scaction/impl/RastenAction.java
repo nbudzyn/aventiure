@@ -78,7 +78,7 @@ public class RastenAction extends AbstractScAction {
     private void narrateAndDoRapunzelZuhoeren() {
         sc.feelingsComp().setMoodMin(Mood.GLUECKLICH);
 
-        n.addAlt(
+        n.narrateAlt(
                 du("bist", "ganz still",
                         mins(4))
                         .undWartest()
@@ -100,7 +100,7 @@ public class RastenAction extends AbstractScAction {
     private void narrateAndDoDunkel() {
         sc.feelingsComp().setMoodMax(Mood.VERUNSICHERT);
 
-        n.addAlt(
+        n.narrateAlt(
                 neuerSatz("Die Bäume rauschen in "
                         + "der Dunkelheit, die Eulen schnarren, und "
                         + "und es fängt an, dir angst zu werden", mins(3))
@@ -128,7 +128,7 @@ public class RastenAction extends AbstractScAction {
         //  Satz gleich war. (Nach der Logik kann man dann auch für Beschreibungen in
         //  der dritten Person verwenden!)
 
-        n.addAlt(
+        n.narrateAlt(
                 du(SENTENCE, "hältst",
                         "verborgen unter den Bäumen noch eine Zeitlang Rast",
                         "verborgen unter den Bäumen",

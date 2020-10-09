@@ -42,7 +42,7 @@ public class ScAutomaticReactionsComp
     }
 
     private void scWirdHungrig() {
-        n.addAlt(
+        n.narrateAlt(
                 du(PARAGRAPH, "fühlst", "dich allmählich etwas hungrig",
                         noTime())
                         .undWartest(),

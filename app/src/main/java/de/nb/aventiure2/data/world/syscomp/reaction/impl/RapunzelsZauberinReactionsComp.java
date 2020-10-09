@@ -275,7 +275,7 @@ public class RapunzelsZauberinReactionsComp
 
         if (loadSC().locationComp().hasRecursiveLocation(VOR_DEM_ALTEN_TURM)) {
             final Nominalphrase desc = getDescription(true);
-            n.add(
+            n.narrate(
                     du("siehst",
                             desc.akk()
                                     + " an den Haarflechten hinaufsteigen", mins(4)));
@@ -311,7 +311,7 @@ public class RapunzelsZauberinReactionsComp
     private void zauberinSteigtAnDenHaarenHerab() {
         if (loadSC().locationComp().hasRecursiveLocation(VOR_DEM_ALTEN_TURM)) {
             final Nominalphrase desc = getDescription();
-            n.add(
+            n.narrate(
                     du("siehst",
                             ", wie "
                                     + desc.nom()
@@ -331,7 +331,7 @@ public class RapunzelsZauberinReactionsComp
                 return;
             }
 
-            n.add(
+            n.narrate(
                     neuerSatz(getAnaphPersPronWennMglSonstDescription(
                             true).nom()
                             + " hat dich nicht bemerkt", noTime()));
@@ -347,7 +347,7 @@ public class RapunzelsZauberinReactionsComp
 
     private void zauberinZaubertVergessenszauber() {
         if (loadSC().locationComp().hasRecursiveLocation(OBEN_IM_ALTEN_TURM)) {
-            n.add(neuerSatz(
+            n.narrate(neuerSatz(
                     "Jetzt geht alles ganz schnell. Die magere Frau schaut "
                             + "zum Fenster "
                             + "herein. Ihr Blick fällt auf dich – und mit einem Mal "
@@ -355,13 +355,13 @@ public class RapunzelsZauberinReactionsComp
                             + " kannst deinen Blick gar nicht abwenden…",
                     mins(5)));
         } else if (locationComp.hasRecursiveLocation(OBEN_IM_ALTEN_TURM)) {
-            n.add(neuerSatz(PARAGRAPH, "Jetzt schaut oben aus dem Turmfenster die "
+            n.narrate(neuerSatz(PARAGRAPH, "Jetzt schaut oben aus dem Turmfenster die "
                             + "magere Frau heraus. "
                             + "Kurz sucht ihr Blick umher, dann sieht sie dich direkt an. "
                             + "Ihre Augen sind - du kannst deinen Blick gar nicht abwenden…",
                     mins(5)));
         } else {
-            n.add(neuerSatz(PARAGRAPH,
+            n.narrate(neuerSatz(PARAGRAPH,
                     "Die magere Frau sieht dich mit einem Mal "
                             + "direkt an. Ihre Augen sind - du kannst deinen Blick "
                             + "gar nicht abwenden…",
@@ -399,7 +399,7 @@ public class RapunzelsZauberinReactionsComp
             ortsbeschreibung = "stehst ganz allein vor dem alten Turm";
         }
 
-        n.add(neuerSatz(CHAPTER,
+        n.narrate(neuerSatz(CHAPTER,
                 "Du " +
                         ortsbeschreibung +
                         " und "
@@ -519,7 +519,7 @@ public class RapunzelsZauberinReactionsComp
     private void zauberinRuftRapunzelspruchUndRapunzelReagiert() {
         if (loadSC().locationComp().hasRecursiveLocation(VOR_DEM_ALTEN_TURM)) {
             final Nominalphrase desc = getDescription(true);
-            n.add(
+            n.narrate(
                     neuerSatz(PARAGRAPH, "Als "
                             + desc.nom()
                             + " unten am Turm steht, ruft "
@@ -527,7 +527,7 @@ public class RapunzelsZauberinReactionsComp
                             + " etwas. Du kannst nicht alles verstehen, aber du hörst etwas wie: "
                             + "„…lass dein Haar herunter!”", mins(1)));
         } else if (loadSC().locationComp().hasRecursiveLocation(OBEN_IM_ALTEN_TURM)) {
-            n.addAlt(
+            n.narrateAlt(
                     neuerSatz(PARAGRAPH,
                             "Auf einmal hörst du von unten etwas rufen",
                             secs(10)),

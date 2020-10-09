@@ -171,7 +171,7 @@ public class FroschprinzTalkingComp extends AbstractTalkingComp {
                 getObjectsInDenBrunnenGefallen();
 
         if (objectsInDenBrunnenGefallen.isEmpty()) {
-            n.add(neuerSatz("„Ach, du bist's, alter Wasserpatscher“, sagst du",
+            n.narrate(neuerSatz("„Ach, du bist's, alter Wasserpatscher“, sagst du",
                     secs(5))
                     .undWartest()
                     .dann());
@@ -197,13 +197,13 @@ public class FroschprinzTalkingComp extends AbstractTalkingComp {
 
         if (initialNarration.dann()) {
             if (initialNarration.allowsAdditionalDuSatzreihengliedOhneSubjekt()) {
-                n.add(satzanschluss("– aber dann gibst du dir einen Ruck:",
+                n.narrate(satzanschluss("– aber dann gibst du dir einen Ruck:",
                         noTime()));
             } else {
-                n.add(neuerSatz("Aber dann gibst du dir einen Ruck:", noTime()));
+                n.narrate(neuerSatz("Aber dann gibst du dir einen Ruck:", noTime()));
             }
         } else {
-            n.add(du("gibst", "dir einen Ruck:", noTime()));
+            n.narrate(du("gibst", "dir einen Ruck:", noTime()));
         }
 
         froschHatAngesprochen_ReEntry();
@@ -218,7 +218,7 @@ public class FroschprinzTalkingComp extends AbstractTalkingComp {
             return;
         }
 
-        n.add(neuerSatz("„Hallo, du hässlicher Frosch!“, redest du ihn an", noTime())
+        n.narrate(neuerSatz("„Hallo, du hässlicher Frosch!“, redest du ihn an", noTime())
                 .undWartest()
                 .dann());
 
@@ -237,7 +237,7 @@ public class FroschprinzTalkingComp extends AbstractTalkingComp {
                     getDescriptionSingleOrCollective(objectsInDenBrunnenGefallen);
             // die goldene Kugel
             // die
-            n.add(neuerSatz("„Ich weine über "
+            n.narrate(neuerSatz("„Ich weine über "
                     + objectsDesc.akk() // die goldene Kugel
                     + ", "
                     + objectsDesc.relPron().akk() // die
@@ -251,13 +251,13 @@ public class FroschprinzTalkingComp extends AbstractTalkingComp {
             final IDescribableGO objectInDenBrunnenGefallen =
                     objectsInDenBrunnenGefallen.iterator().next();
 
-            n.add(neuerSatz("„"
+            n.narrate(neuerSatz("„"
                     + capitalize(getDescription(objectInDenBrunnenGefallen).nom())
                     + " ist mir in den Brunnen hinabgefallen.“", secs(10)));
             return;
         }
 
-        n.add(neuerSatz("„Mir sind Dinge in den Brunnen hinabgefallen.“", secs(5)));
+        n.narrate(neuerSatz("„Mir sind Dinge in den Brunnen hinabgefallen.“", secs(5)));
     }
 
     private void herausholenAngebot() {
@@ -274,7 +274,7 @@ public class FroschprinzTalkingComp extends AbstractTalkingComp {
             ratschlag = "sorge dich nicht";
         }
 
-        n.add(neuerSatz(PARAGRAPH, "„Sei still und "
+        n.narrate(neuerSatz(PARAGRAPH, "„Sei still und "
                         + ratschlag
                         + "“, antwortet "
                         + getDescription(true).nom()
@@ -288,7 +288,7 @@ public class FroschprinzTalkingComp extends AbstractTalkingComp {
     }
 
     private void froschHatAngesprochen_Exit() {
-        n.add(du(SENTENCE, "tust", ", als hättest du nichts gehört",
+        n.narrate(du(SENTENCE, "tust", ", als hättest du nichts gehört",
                 secs(3))
                 .komma()
                 .undWartest()
@@ -304,14 +304,14 @@ public class FroschprinzTalkingComp extends AbstractTalkingComp {
     private void froschHatNachBelohnungGefragt_AngeboteMachen() {
         world.loadSC().talkingComp().setTalkingTo(FROSCHPRINZ);
 
-        n.add(neuerSatz(
+        n.narrate(neuerSatz(
                 "„Was du haben willst, lieber Frosch“, sagst du, „meine Kleider, "
                         + "Reichtümer oder Edelsteine?“", secs(5)));
 
         final ImmutableList<? extends IDescribableGO> objectsInDenBrunnenGefallen =
                 getObjectsInDenBrunnenGefallen();
 
-        n.add(neuerSatz(PARAGRAPH,
+        n.narrate(neuerSatz(PARAGRAPH,
                 "Der Frosch antwortet: „Deine Kleider, Reichtümer oder Edelsteine, die mag "
                         + "ich nicht. "
                         + "Aber wenn ich am Tischlein bei dir sitzen soll und von deinem Tellerlein "
@@ -326,7 +326,7 @@ public class FroschprinzTalkingComp extends AbstractTalkingComp {
     }
 
     private void froschHatNachBelohnungGefragt_ImmReEntry() {
-        n.add(du(SENTENCE, "gehst", "kurz in dich…", secs(5)));
+        n.narrate(du(SENTENCE, "gehst", "kurz in dich…", secs(5)));
 
         froschHatNachBelohnungGefragt_ReEntry();
     }
@@ -334,11 +334,11 @@ public class FroschprinzTalkingComp extends AbstractTalkingComp {
     private void froschHatNachBelohnungGefragt_ReEntry() {
         world.loadSC().talkingComp().setTalkingTo(getGameObjectId());
 
-        n.add(
+        n.narrate(
                 neuerSatz(PARAGRAPH, "„Frosch“, sprichst du ihn an, „steht dein Angebot noch?“",
                         secs(5)));
 
-        n.add(
+        n.narrate(
                 neuerSatz(PARAGRAPH,
                         "„Sicher“, antwortet der Frosch, „ich kann dir alles aus dem Brunnen "
                                 + "holen, was hineingefallen ist. Was gibst du mir dafür?“ "
@@ -350,7 +350,7 @@ public class FroschprinzTalkingComp extends AbstractTalkingComp {
         final ImmutableList<? extends IDescribableGO> objectsInDenBrunnenGefallen =
                 getObjectsInDenBrunnenGefallen();
 
-        n.add(neuerSatz(PARAGRAPH,
+        n.narrate(neuerSatz(PARAGRAPH,
                 "Der Frosch antwortet: „Deine Kleider, Reichtümer oder Edelsteine, die mag "
                         + "ich nicht. "
                         + "Aber wenn ich am Tischlein neben dir sitzen soll, von deinem Tellerlein "
@@ -367,7 +367,7 @@ public class FroschprinzTalkingComp extends AbstractTalkingComp {
     }
 
     private void froschHatNachBelohnungGefragt_Exit() {
-        n.add(
+        n.narrate(
                 neuerSatz(
                         "„Denkst du etwa, ich überschütte dich mit Gold "
                                 + "und Juwelen? – Vergiss es!“",
@@ -384,7 +384,7 @@ public class FroschprinzTalkingComp extends AbstractTalkingComp {
                 getObjectsInDenBrunnenGefallen();
 
         // die goldene Kugel / die Dinge
-        n.add(
+        n.narrate(
                 neuerSatz(PARAGRAPH, "„Ach ja“, sagst du, „ich verspreche dir alles, was du "
                                 + "willst, wenn du mir nur "
                                 + getDescriptionSingleOrCollective(objectsInDenBrunnenGefallen).akk()
@@ -417,7 +417,7 @@ public class FroschprinzTalkingComp extends AbstractTalkingComp {
         final ImmutableList<? extends IDescribableGO> objectsInDenBrunnenGefallen =
                 getObjectsInDenBrunnenGefallen();
 
-        n.add(neuerSatz(
+        n.narrate(neuerSatz(
                 "„Lieber Frosch“, sagst du, „ich habe es mir überlegt. Ich verspreche dir alles, "
                         + "was du "
                         + "willst, wenn du mir nur "
@@ -431,7 +431,7 @@ public class FroschprinzTalkingComp extends AbstractTalkingComp {
     }
 
     private <LOC_DESC extends ILocatableGO & IDescribableGO> void froschReagiertAufVersprechen() {
-        n.add(neuerSatz(PARAGRAPH,
+        n.narrate(neuerSatz(PARAGRAPH,
                 "Der Frosch, als er die Zusage erhalten hat,",
                 noTime()));
 
@@ -445,7 +445,7 @@ public class FroschprinzTalkingComp extends AbstractTalkingComp {
 
         world.loadSC().feelingsComp().setMoodMin(VOLLER_FREUDE);
 
-        n.add(satzanschluss("taucht seinen Kopf "
+        n.narrate(satzanschluss("taucht seinen Kopf "
                         + "unter, sinkt hinab und über ein Weilchen kommt er wieder herauf gerudert, "
                         + "hat "
                         // die goldene Kugel / die Dinge
@@ -473,7 +473,7 @@ public class FroschprinzTalkingComp extends AbstractTalkingComp {
     }
 
     private void froschHatForderungGestellt_Exit() {
-        n.addAlt(
+        n.narrateAlt(
                 neuerSatz("„Na, bei dir piept's wohl!“ – Entrüstet wendest du dich ab",
                         secs(10))
                         .undWartest(),
@@ -500,7 +500,7 @@ public class FroschprinzTalkingComp extends AbstractTalkingComp {
     // -------------------------------------------------------------------------------
 
     private void hallo_froschReagiertNicht() {
-        n.addAlt(neuerSatz("„Hallo, Kollege Frosch!“", secs(3)),
+        n.narrateAlt(neuerSatz("„Hallo, Kollege Frosch!“", secs(3)),
                 neuerSatz("„Hallo, du hässlicher Frosch!“, redest du ihn an", secs(3))
                         .undWartest()
                         .dann(), neuerSatz("„Hallo nochmal, Meister Frosch!“", secs(3)));
@@ -509,14 +509,14 @@ public class FroschprinzTalkingComp extends AbstractTalkingComp {
     }
 
     private void froschReagiertNicht() {
-        n.add(neuerSatz("Der Frosch reagiert nicht", secs(3))
+        n.narrate(neuerSatz("Der Frosch reagiert nicht", secs(3))
                 .beendet(PARAGRAPH));
 
         unsetTalkingTo();
     }
 
     private void hallo_froschErinnertAnVersprechen() {
-        n.addAlt(
+        n.narrateAlt(
                 du(
                         "sprichst",
                         getDescription(true).akk()
@@ -536,7 +536,7 @@ public class FroschprinzTalkingComp extends AbstractTalkingComp {
 
     private void froschAufTischDraengelt() {
         final Nominalphrase desc = getDescription(true);
-        n.addAlt(
+        n.narrateAlt(
                 du(
                         "hast", "gerade Luft geholt, da schneidet dir "
                                 + desc.nom()
