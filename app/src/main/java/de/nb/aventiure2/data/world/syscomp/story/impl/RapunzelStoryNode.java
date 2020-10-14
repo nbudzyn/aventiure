@@ -232,7 +232,7 @@ public enum RapunzelStoryNode implements IStoryNode {
         }
     }
 
-    // STORY Alternativen für Tipp-Texte, bei denen Foreshadowing stärker im
+    // FIXME Alternativen für Tipp-Texte, bei denen Foreshadowing stärker im
     //  Vordergrund steht
     private static void narrateAndDoHintAction_TurmGefunden(
             final AvDatabase db, final NarrationDao n, final World world) {
@@ -252,14 +252,14 @@ public enum RapunzelStoryNode implements IStoryNode {
             final AvDatabase db, final NarrationDao n, final World world) {
         final ImmutableList.Builder<AbstractDescription<?>> alt = builder();
 
-        // STORY Kein Tipp für Rapunzel, wenn Hexe noch nicht losgegangen ist (schließlich
+        // FIXME Kein Tipp für Rapunzel, wenn Hexe noch nicht losgegangen ist (schließlich
         //  kann der Spieler nichts tun)
 
         if (world.loadSC().locationComp().hasRecursiveLocation(VOR_DEM_ALTEN_TURM)) {
             alt.add(paragraph("Ob der Turm wohl bewohnt ist?"),
                     paragraph("Eine längere Rast würde dir sicher guttun"));
 
-            // STORY ab dem zb 3. Mal deutlichere Hinweise länger Rasten
+            // FIXME ab dem zb 3. Mal deutlichere Hinweise länger Rasten
         } else {
             alt.add(paragraph(
                     "Dir kommt noch einmal der alte Turm auf der Hügelkuppe "
@@ -284,7 +284,7 @@ public enum RapunzelStoryNode implements IStoryNode {
 
         alt.addAll(altTurmWohnenHineinHeraus(world));
 
-        // STORY Mehr sätze für RAPUNZELbeobachtentipps
+        // FIXME Mehr sätze für RAPUNZELbeobachtentipps
 
         if (world.loadSC().locationComp().hasRecursiveLocation(VOR_DEM_ALTEN_TURM)) {
             alt.add(du(PARAGRAPH,

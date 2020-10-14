@@ -363,7 +363,7 @@ public class BewegenAction<LOC_DESC extends ILocatableGO & IDescribableGO>
         }
 
         if (newLocation.is(WALDWILDNIS_HINTER_DEM_BRUNNEN)) {
-            // STORY Im Dunkeln kann man keine Früchte sehen
+            // FIXME Im Dunkeln kann man keine Früchte sehen
             return true;
         }
 
@@ -384,7 +384,7 @@ public class BewegenAction<LOC_DESC extends ILocatableGO & IDescribableGO>
     }
 
     private void narrateAnDoSCMitEssenKonfrontiertReagiertHungrig() {
-        // STORY Hunger - sinnvoll machen... -- vollgefressen -> müde?
+        // FIXME Hunger - sinnvoll machen... -- vollgefressen -> müde?
 
         n.narrateAlt(
                 neuerSatz("Mmh!", noTime())
@@ -421,7 +421,7 @@ public class BewegenAction<LOC_DESC extends ILocatableGO & IDescribableGO>
     }
 
     private void narrateLocationOnly(@NonNull final ILocationGO to) {
-        // STORY Texte ab dem xten Mal deutlich verkürzen? Z.B. auch mit Zusammenfassungen in der
+        // FIXME Texte ab dem xten Mal deutlich verkürzen? Z.B. auch mit Zusammenfassungen in der
         //  Art "und weiter in Richtung Schloss"
 
         // STORY Wenn Bewegung Wiederholung ist (z.B. Rund um den Turm): Zur Sicherheit...

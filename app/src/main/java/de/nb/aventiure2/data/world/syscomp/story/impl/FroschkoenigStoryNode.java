@@ -49,7 +49,7 @@ public enum FroschkoenigStoryNode implements IStoryNode {
             FroschkoenigStoryNode::narrateAndDoHintAction_FroschHatEtwasAusBrunnenGeholt,
             ETWAS_IM_BRUNNEN_VERLOREN
     ),
-    ZUM_SCHLOSSFEST_GEGANGEN(30, // STORY Diese Zahl ermitteln!
+    ZUM_SCHLOSSFEST_GEGANGEN(30, // FIXME Diese Zahl ermitteln!
             DRAUSSEN_VOR_DEM_SCHLOSS,
             FroschkoenigStoryNode::narrateAndDoHintAction_ZumSchlossfestGegangen,
             KUGEL_GENOMMEN, // Ansonsten kann der Spieler nicht wissen, dass es ein Schlossfest
@@ -133,7 +133,7 @@ public enum FroschkoenigStoryNode implements IStoryNode {
         return false;
     }
 
-    // STORY Alternativen für Tipp-Texte, bei denen Foreshadowing stärker im
+    // FIXME Alternativen für Tipp-Texte, bei denen Foreshadowing stärker im
     //  Vordergrund steht
 
     private static void narrateAndDoHintAction_KugelGenommen(
@@ -367,7 +367,7 @@ public enum FroschkoenigStoryNode implements IStoryNode {
         alt.add(paragraph("Heut ist ein heißer Tag!"));
         alt.add(paragraph("Es ist ziemlich heiß heute – ein kühler Ort wäre schön"));
 
-        // STORY ab dem zb 3. Mal deutlichere Hinweise, noch zum Brunnen zu gehen:
+        // FIXME ab dem zb 3. Mal deutlichere Hinweise, noch zum Brunnen zu gehen:
         //  Heiß vielleicht irhendwo am wasser...
 
         return alt.build();

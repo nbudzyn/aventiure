@@ -32,7 +32,7 @@ public class StoringPlaceComp extends AbstractStatelessComponent {
      */
     private final boolean dauerhaftBeleuchtet;
 
-    // STORY: Ob der Raum "drau0en" ist (-> Tageszeiten / Wetterphönomene...)
+    // FIXME: Ob der Raum "drau0en" ist (-> Tageszeiten / Wetterphönomene...)
 
     public StoringPlaceComp(final GameObjectId id,
                             final AvDatabase db,
@@ -68,7 +68,7 @@ public class StoringPlaceComp extends AbstractStatelessComponent {
         //   dieser Location befindet, könnte eine Fackel dabei haben.
 
         if (isDauerhaftBeleuchtet()) {
-            // STORY Es könnte Räume oder Locations geben (die der Spieler betreten kann und)
+            // FIXME Es könnte Räume oder Locations geben (die der Spieler betreten kann und)
             //  die auch tagsüber dunkel sind, z.B.
             //  weil sie keine Fenster haben, oder Taschen etc.. Man bräuchte quasi
             //  drei Möglichkeiten:

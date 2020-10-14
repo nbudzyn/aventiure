@@ -13,7 +13,7 @@ public enum FroschprinzState {
     HAT_FORDERUNG_GESTELLT(FROSCH),
     ERWARTET_VON_SC_EINLOESUNG_SEINES_VERSPRECHENS(FROSCH),
 
-    // STORY Frosch braucht zu lange bis zu schloss. Vereinfachen: Frosch ist immer rechtzeitig da,
+    // FIXME Frosch braucht zu lange bis zu schloss. Vereinfachen: Frosch ist immer rechtzeitig da,
     //  nachdem er losgeplatscht ist?
     AUF_DEM_WEG_ZUM_SCHLOSSFEST(FROSCH),
 

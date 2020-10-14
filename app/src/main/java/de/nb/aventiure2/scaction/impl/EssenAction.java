@@ -80,7 +80,7 @@ public class EssenAction extends AbstractScAction {
         }
 
         if (location.is(WALDWILDNIS_HINTER_DEM_BRUNNEN)) {
-            // STORY Früchte sind im Dunkeln kaum zu sehen, selbst wenn man den Weg
+            // FIXME Früchte sind im Dunkeln kaum zu sehen, selbst wenn man den Weg
             //  schon kennt
             return true;
         }
@@ -166,7 +166,7 @@ public class EssenAction extends AbstractScAction {
                         + "verwirrt auf - kein Frosch mehr auf dem Tisch, doch neben dir auf der "
                         + "Bank sitzt ein junger Mann mit schönen freundlichen Augen. In Samt und "
                         + "Seide ist er gekleidet, mit goldenen Ketten um den Hals",
-                // STORY klarer formulieren. Der Prinz ist nicht gefesselt!
+                // FIXME klarer formulieren. Der Prinz ist nicht gefesselt!
                 secs(10)));
         n.narrate(neuerSatz(PARAGRAPH,
                 "Er schaut an sich herab – „Ihr habt mich erlöst”, sagt er, „ich "

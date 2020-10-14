@@ -30,11 +30,11 @@ public class TageszeitReactionsComp
             return;
         }
 
-        // STORY Über den Tag verteilen: die Sonne steht schon hoch.. weit nach Mittag....
+        // FIXME Über den Tag verteilen: die Sonne steht schon hoch.. weit nach Mittag....
         //  Generell nicht nur an den "Tageszeitengrenzen" Texte erzeugen, sondern abhängig von
         //  der Uhrzeit?
 
-        // STORY Je nach Ort unterscheiden:
+        // FIXME Je nach Ort unterscheiden:
         //  - Dunkelheit ist abhängig von Tageszeit (Raum nicht beleuchtet)
         //  - SC ist draußen / drinnen (z.B. im Wald)
         //  - SC ist unter offener Himmel (z.B. vor dem Schloss)
@@ -42,7 +42,7 @@ public class TageszeitReactionsComp
         //  hat („Du trittst aus dem Wald hinaus. Rotes Abendrot erstreckt sich über den
         //  Horizont....“)
 
-        // STORY Nacht wie eine Front ("Die Nacht verbringen") oder Gefahr (analog Dungean World)
+        // FIXME Nacht wie eine Front ("Die Nacht verbringen") oder Gefahr (analog Dungean World)
         //  behandeln:
         //  - Düstere Vorzeichen
         //  - Hinweise, dass die Nacht allmählich naht.
@@ -91,7 +91,7 @@ public class TageszeitReactionsComp
                         neuerSatz("Unterdessen ist es hell geworden", noTime()),
                         neuerSatz("Die Sonne geht auf", noTime())
 
-                        // STORY So etwas ermöglichen, wenn der Spieler sich
+                        // FIXME So etwas ermöglichen, wenn der Spieler sich
                         //  DRAUSSEN aufhält
                         //  allg("Im Osten kündigt sich der neue Tag an", noTime())
                         //  "Die Sterne verblassen und die Sonne ist am Horizont zu sehen"
@@ -176,7 +176,7 @@ public class TageszeitReactionsComp
                         neuerSatz(PARAGRAPH, "Die Abenddämmerung beginnt", noTime()),
                         neuerSatz(PARAGRAPH, "Inzwischen steht die Sonne schon tief", noTime())
                         // STORY Noch ein paar Texte!
-                        // STORY WENN DER SPIELER DRAUSSEN IST "Heute ist ein schönes Abendrot zu sehen"
+                        // FIXME WENN DER SPIELER DRAUSSEN IST "Heute ist ein schönes Abendrot zu sehen"
                 );
                 return;
             case NACHTS:
@@ -218,7 +218,7 @@ public class TageszeitReactionsComp
     private void onTimePassedFromAbendsTo(@NonNull final Tageszeit currentTageszeit) {
         switch (currentTageszeit) {
             case NACHTS:
-                // STORY Der Spieler könnte abends MÜDE werden (und morgens oder nach dem
+                // FIXME Der Spieler könnte abends MÜDE werden (und morgens oder nach dem
                 //  Schlafen wieder wach / NEUTRAL)
 
                 n.narrateAlt(
@@ -234,7 +234,7 @@ public class TageszeitReactionsComp
                                 "Es ist Nacht geworden und man sieht nicht "
                                         + "mehr so gut",
                                 noTime())
-                        // STORY, wenn der SC draußen ist:
+                        // FIXME wenn der SC draußen ist:
                         //  "Jetzt sind am Himmel die Sterne zu sehen. Es ist dunkel und in der Ferne "
                         //  + "ruft ein Käuzchen"
                 );

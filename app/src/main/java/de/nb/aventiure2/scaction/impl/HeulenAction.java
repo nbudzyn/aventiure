@@ -109,7 +109,7 @@ public class HeulenAction extends AbstractScAction {
             IHasStateGO<FroschprinzState> &
             ITalkerGO<FroschprinzTalkingComp>>
     void narrateAndDoFroschprinzUnauffaellig(final F froschprinz) {
-        // STORY Nachts schläft der Frosch?!
+        // FIXME Nachts schläft der Frosch?!
 
         sc.memoryComp().setLastAction(buildMemorizedAction());
 

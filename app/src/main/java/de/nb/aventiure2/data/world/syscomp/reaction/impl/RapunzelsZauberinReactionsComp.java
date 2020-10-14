@@ -427,8 +427,10 @@ public class RapunzelsZauberinReactionsComp
         checkArgument(!now.minus(lastTime).longerThan(days(1)),
                 "World tick time too long - see AbstractScAction.");
 
-        // STORY Bei Bewegung der Zauberin machen, dass sie noch nicht ganz weg ist / wann sie da
+        // FIXME Bei Bewegung der Zauberin machen, dass sie noch nicht ganz weg ist / wann sie da
         //  ist!
+        //  (Wie geht das allgemeine Konzept? In wieweit kann der SC noch mit einem
+        //  Objekt interagieren, das den Raum schon fast verlassen hat?)
 
         switch (stateComp.getState()) {
             case MACHT_ZURZEIT_KEINE_RAPUNZELBESUCHE:

@@ -126,16 +126,16 @@ public class ImWaldNaheDemSchlossConnectionComp extends AbstractSpatialConnectio
         return du(SENTENCE, "gehst", "noch eine Weile vorsichtig durch den dunklen "
                 + "Wald, dann öffnet sich der Weg wieder und du stehst im Schlossgarten "
                 + "unter dem Sternenhimmel", "noch eine Weile", mins(15));
-        // STORY Lichtverhältnisse auch bei den anderen Aktionen berücksichtigen,
+        // FIXME Lichtverhältnisse auch bei den anderen Aktionen berücksichtigen,
         //  insbesondere nach derselben Logik (z.B. "im Schloss ist es immer hell",
         //  "eine Fackel bringt auch nachts Licht" etc.)
-        // STORY gegen Abend wird man müde und kann auf jeden Fall einschlafen
+        // FIXME gegen Abend wird man müde und kann auf jeden Fall einschlafen
         // STORY Wenn man schläft, "verpasst" man Reactions, die man dann später
         //  (beim Aufwachen) merkt ("Der Frosch ist verschwunden".) Man speichert
         //  am besten den Stand VOR dem Einschlafen und vergleicht mit dem Stand NACH dem
         //  Einschlafen.
         // STORY Nachts sieht man nicht so gut - sieht man alle Objects?
-        // STORY Nachts ist man hauptsächlich MUEDE / ERSCHOEPFT
+        // FIXME Nachts ist man hauptsächlich MUEDE / ERSCHOEPFT
     }
 
     @NonNull

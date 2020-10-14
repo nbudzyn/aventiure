@@ -59,11 +59,11 @@ public class SchlafenAction extends AbstractScAction {
 
     @Override
     public void narrateAndDo() {
-        // STORY Wenn der Benutzer längere Zeit nicht geschlafen hat, wird er automatisch müde
+        // FIXME Wenn der Benutzer längere Zeit nicht geschlafen hat, wird er automatisch müde
         //  und bleibt müde (analog Hunger!). Abends wird man eher müde oder ist von allein müde.
         //  Oder Nachts ist man immer müde.
 
-        // STORY "Vor Hunger kannst du nicht einschlafen"
+        // FIXME "Vor Hunger kannst du nicht einschlafen"
         if (sc.feelingsComp().hasMood(ERSCHOEPFT)) {
             narrateAndDoSchlaeftEin();
             return;
@@ -154,7 +154,7 @@ public class SchlafenAction extends AbstractScAction {
         // STORY Zum Beispiel wäre der Benutzer über alle Statusänderungen zu unterrichten,
         //  Die zwischenzeitlich passiert sind ("der Frosch ist verschwunden").
 
-        // STORY Man könnte auch, wenn der Benutzer erstmals wieder nach draußen kommt, etwas
+        // FIXME Man könnte auch, wenn der Benutzer erstmals wieder nach draußen kommt, etwas
         //  schreiben wie "Inzwischen ist es dunkel geworden". Dazu müsste der "Tageszeit-Status"
         //  (oder zumindest der Zeitpunkt) gespeichert werden, wenn der Benutzer REIN GEHT
         //  und später beim RAUSTRETEN dieser Status mit dem aktuellen Tageszeitstatus verglichen

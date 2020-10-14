@@ -95,7 +95,7 @@ public class Walkthrough {
                     "Rasten",
                     "Rasten",
                     "Rasten",
-                    // STORY "Die Frau ist jetzt nicht mehr zu sehen".
+                    // FIXME "Die Frau ist jetzt nicht mehr zu sehen".
                     "Rufen: „Lass dein Haar herunter.“",
                     "Aus dem Schatten der Bäume treten",
                     "An den Haaren hinaufsteigen"

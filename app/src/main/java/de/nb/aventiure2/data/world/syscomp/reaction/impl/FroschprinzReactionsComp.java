@@ -293,8 +293,8 @@ public class FroschprinzReactionsComp
                                 + "jedes mit weißen Straußfedern auf dem Kopf", mins(2))
                         .beendet(CHAPTER));
 
-        // STORY Nach der Prinzabfahrt. Klares Lob, aber auch Hinweis auf einsame Stimme
-        //  auf Turm oder so.
+        // FIXME Nach der Prinzabfahrt. Klares Lob, aber auch Hinweis auf einsame Stimme
+        //  auf Turm oder so (wenn man sie schon kennt und Rapunzel noch im Turm ist....)
 
         // STORY Nach jedem Kapitelende eine kleine Pause (Wartezeit) einlegen?
 
@@ -552,7 +552,7 @@ public class FroschprinzReactionsComp
         if ((scLocation != null && locationComp.hasSameUpperMostLocationAs(SPIELER_CHARAKTER))) {
             n.narrate(neuerSatz(PARAGRAPH,
                     "Plitsch platsch, plitsch platsch hüpft der Frosch davon",
-                    // STORY "Wir sehen uns noch!"
+                    // FIXME "Wir sehen uns noch!"
                     secs(5))
                     .beendet(PARAGRAPH));
         }

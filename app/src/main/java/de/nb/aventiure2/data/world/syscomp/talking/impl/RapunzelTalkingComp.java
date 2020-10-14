@@ -191,7 +191,6 @@ public class RapunzelTalkingComp extends AbstractTalkingComp {
                     + " Gesang";
         } else {
             wovonHerzBewegtDat = anaph.possArt().vor(PL_MFN).dat() // "ihrem"
-                    // STORY UND WENN GESANG UNBEKANNT?
                     + " glänzenden Locken";
         }
 

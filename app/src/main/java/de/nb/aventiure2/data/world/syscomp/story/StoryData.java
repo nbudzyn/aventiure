@@ -70,7 +70,7 @@ class StoryData {
             return false;
         }
 
-        // STORY Zusätzlich könnte die node auch noch
+        // FIXME Zusätzlich könnte die node auch noch
         //  beliebige Prüfungen auf der world als Voraussetzung(en) haben
         //  (Prüfung = Interface, in das die world hineingereicht wird, das Story Data würde
         //  die world übergeben bekommen).

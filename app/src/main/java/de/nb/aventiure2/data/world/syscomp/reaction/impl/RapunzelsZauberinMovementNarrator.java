@@ -172,11 +172,12 @@ public class RapunzelsZauberinMovementNarrator extends SimpleMovementNarrator {
         super.narrateAndDoStartsEntering(from, to, spatialConnection, numberOfWaysIn);
     }
 
-    // STORY Spieler sieht von unten, wie die Zauberin heruntersteigt?
-    //  if (to.is(VOR_DEM_ALTEN_TURM)) {
-
     // STORY Zauberin überrascht den Spieler vor dem Turm:
     //  Die Zauberin verzaubert hat den Spieler, so dass er sich nicht
     //  an sie erinnern kann:
     //  loadSC().memoryComp().upgradeKnown(RAPUNZELS_ZAUBERIN, UNKNOWN);
+    //  (Ist das nicht schon implementiert?)
+
+    // FIXME Es gibt einen Bug, wo die Zauberin vom Turm aus den SPieler verzaubert,
+    //  dann - für den Spieler erlebbar hinuntersteigt und ihn noch einmal verzaubert.
 }
