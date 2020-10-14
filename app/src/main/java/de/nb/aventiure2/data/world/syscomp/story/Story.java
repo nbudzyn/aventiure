@@ -17,6 +17,8 @@ public enum Story {
     //  basierend auf Story-Telling-Theorien.
     //  Aber dann können es natürlich keine Enums mehr sein!
 
+    // STORY Meine Story als "Front" (analog Dungeon World) betrachten?
+
     FROSCHKOENIG(FroschkoenigStoryNode.class,
             FroschkoenigStoryNode::checkAndAdvanceIfAppropriate),
     RAPUNZEL(RapunzelStoryNode.class,

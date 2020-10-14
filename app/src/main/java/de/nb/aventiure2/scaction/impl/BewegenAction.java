@@ -384,6 +384,8 @@ public class BewegenAction<LOC_DESC extends ILocatableGO & IDescribableGO>
     }
 
     private void narrateAnDoSCMitEssenKonfrontiertReagiertHungrig() {
+        // STORY Hunger - sinnvoll machen... -- vollgefressen -> müde?
+
         n.narrateAlt(
                 neuerSatz("Mmh!", noTime())
                         .beendet(PARAGRAPH),
@@ -419,6 +421,9 @@ public class BewegenAction<LOC_DESC extends ILocatableGO & IDescribableGO>
     }
 
     private void narrateLocationOnly(@NonNull final ILocationGO to) {
+        // STORY Texte ab dem xten Mal deutlich verkürzen? Z.B. auch mit Zusammenfassungen in der
+        //  Art "und weiter in Richtung Schloss"
+
         // STORY Wenn Bewegung Wiederholung ist (z.B. Rund um den Turm): Zur Sicherheit...
         //  noch einmal. Um sicher zu
         //  gehen... noch einmal. Du gehst SOGAR noch einmal...

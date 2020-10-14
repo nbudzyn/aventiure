@@ -35,7 +35,6 @@ import static de.nb.aventiure2.german.description.DuDescriptionBuilder.du;
 import static java.util.Arrays.asList;
 
 public enum RapunzelStoryNode implements IStoryNode {
-    // Idee für die Schritte: Das muss man machen, dann kommt man weiter (sonst nicht)
 
     TURM_GEFUNDEN(10, VOR_DEM_ALTEN_TURM,
             RapunzelStoryNode::narrateAndDoHintAction_TurmGefunden),
@@ -102,7 +101,8 @@ public enum RapunzelStoryNode implements IStoryNode {
 
     // STORY fremdländisch aussehender Händler auf Schlossfest vor einem Zelt
 
-    // STORY Seide für großen Klumpen Gold (goldene Kugel verkaufen)
+    // STORY Seide für großen Klumpen Gold (goldene Kugel,
+    //  dabei stressen, das man sie lieb gewonnen hat)
     //  "kaufst ihm ... ab"
     //  Oder für ein Goldstück, das man vom Prinzen bekommen hat?
     //  Oder Sterntaler / Münzen in Lichtung im Wald, die man brauchen kann, um Seide
@@ -252,9 +252,14 @@ public enum RapunzelStoryNode implements IStoryNode {
             final AvDatabase db, final NarrationDao n, final World world) {
         final ImmutableList.Builder<AbstractDescription<?>> alt = builder();
 
+        // STORY Kein Tipp für Rapunzel, wenn Hexe noch nicht losgegangen ist (schließlich
+        //  kann der Spieler nichts tun)
+
         if (world.loadSC().locationComp().hasRecursiveLocation(VOR_DEM_ALTEN_TURM)) {
             alt.add(paragraph("Ob der Turm wohl bewohnt ist?"),
                     paragraph("Eine längere Rast würde dir sicher guttun"));
+
+            // STORY ab dem zb 3. Mal deutlichere Hinweise länger Rasten
         } else {
             alt.add(paragraph(
                     "Dir kommt noch einmal der alte Turm auf der Hügelkuppe "
@@ -278,6 +283,8 @@ public enum RapunzelStoryNode implements IStoryNode {
         final ImmutableList.Builder<AbstractDescription<?>> alt = builder();
 
         alt.addAll(altTurmWohnenHineinHeraus(world));
+
+        // STORY Mehr sätze für RAPUNZELbeobachtentipps
 
         if (world.loadSC().locationComp().hasRecursiveLocation(VOR_DEM_ALTEN_TURM)) {
             alt.add(du(PARAGRAPH,

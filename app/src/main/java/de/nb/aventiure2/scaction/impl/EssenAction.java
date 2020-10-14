@@ -142,6 +142,8 @@ public class EssenAction extends AbstractScAction {
         }
         final Hunger hunger = getHunger();
 
+        // STORY Eintopf NEHMEN als separate Aktion?!
+
         switch (hunger) {
             case HUNGRIG:
                 narrateAndDoSchlossfestHungrig();
@@ -164,6 +166,7 @@ public class EssenAction extends AbstractScAction {
                         + "verwirrt auf - kein Frosch mehr auf dem Tisch, doch neben dir auf der "
                         + "Bank sitzt ein junger Mann mit schönen freundlichen Augen. In Samt und "
                         + "Seide ist er gekleidet, mit goldenen Ketten um den Hals",
+                // STORY klarer formulieren. Der Prinz ist nicht gefesselt!
                 secs(10)));
         n.narrate(neuerSatz(PARAGRAPH,
                 "Er schaut an sich herab – „Ihr habt mich erlöst”, sagt er, „ich "

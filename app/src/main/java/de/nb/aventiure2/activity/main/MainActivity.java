@@ -35,6 +35,14 @@ import de.nb.aventiure2.scaction.devhelper.chooser.impl.Walkthrough;
 public class MainActivity extends AppCompatActivity {
     // TODO "Mein Märchen" "Schneepunzel"? -> Appstore?
 
+    // TODO Was sollte man in den AppStore schreiben?
+    //  - Choose your own Adventure?
+    //  - Abenteuer-Spielbuch?
+    //  - In den (Grimmschen) Märchen
+    //  - Märchen deiner Kindheit?
+    //  - Rollenspiel
+    //  - Nostalgie
+
     private static final Logger LOGGER = Logger.getLogger();
 
     private TextView narrationTextView;

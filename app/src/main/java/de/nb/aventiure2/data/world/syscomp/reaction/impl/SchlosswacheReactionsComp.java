@@ -147,6 +147,8 @@ public class SchlosswacheReactionsComp
                                 + "Du bleibst besser draußen",
                         secs(10))
                         .beendet(PARAGRAPH)
+
+                // STORY Eine Nacht im Kerker! (Ist auch ein Übernachten!)
         );
 
         sc.locationComp().narrateAndSetLocation(raumAusDemDerSCDasSchlossBetretenHat);

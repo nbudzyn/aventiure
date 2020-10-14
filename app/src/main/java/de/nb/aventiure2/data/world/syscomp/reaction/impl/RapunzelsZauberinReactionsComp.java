@@ -88,10 +88,17 @@ public class RapunzelsZauberinReactionsComp
         this.talkingComp = talkingComp;
     }
 
+    // STORY Rapunzels Zauberin zu einer kleinen "Gefahr" (angelehnt an Dungeon World) ausbauen?
+    //  (Nicht nur ein
+    //  "Hindernis", sondern "kann immer noch schlimmer werden?). Gefahrentyp?
+    //  Antrieb? Düstere Vorzeichen? Drohendes Unheil?
+
     @Override
     public void onLeave(final ILocatableGO locatable,
                         final ILocationGO from,
                         @Nullable final ILocationGO to) {
+        //  STORY Hexe reagiert auf Kugel hinlegen, werfen.
+
         talkingComp.updateSchonBegruesstMitSCOnLeave(locatable, from, to);
 
         // Wenn die Zauberin den SC verlässt, ...
@@ -419,6 +426,9 @@ public class RapunzelsZauberinReactionsComp
     public void onTimePassed(final AvDateTime lastTime, final AvDateTime now) {
         checkArgument(!now.minus(lastTime).longerThan(days(1)),
                 "World tick time too long - see AbstractScAction.");
+
+        // STORY Bei Bewegung der Zauberin machen, dass sie noch nicht ganz weg ist / wann sie da
+        //  ist!
 
         switch (stateComp.getState()) {
             case MACHT_ZURZEIT_KEINE_RAPUNZELBESUCHE:

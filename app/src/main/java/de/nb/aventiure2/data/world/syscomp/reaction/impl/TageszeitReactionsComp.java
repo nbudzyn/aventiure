@@ -30,6 +30,23 @@ public class TageszeitReactionsComp
             return;
         }
 
+        // STORY Über den Tag verteilen: die Sonne steht schon hoch.. weit nach Mittag....
+        //  Generell nicht nur an den "Tageszeitengrenzen" Texte erzeugen, sondern abhängig von
+        //  der Uhrzeit?
+
+        // STORY Je nach Ort unterscheiden:
+        //  - Dunkelheit ist abhängig von Tageszeit (Raum nicht beleuchtet)
+        //  - SC ist draußen / drinnen (z.B. im Wald)
+        //  - SC ist unter offener Himmel (z.B. vor dem Schloss)
+        //  Merken, wann der Benutzer den jeweiligen Status schon aktualisiert bekommen
+        //  hat („Du trittst aus dem Wald hinaus. Rotes Abendrot erstreckt sich über den
+        //  Horizont....“)
+
+        // STORY Nacht wie eine Front ("Die Nacht verbringen") oder Gefahr (analog Dungean World)
+        //  behandeln:
+        //  - Düstere Vorzeichen
+        //  - Hinweise, dass die Nacht allmählich naht.
+
         // Es gab also einen (oder mehrere) Tageszeitenwechsel während einer Zeit von
         // weniger als einem Tag
         onTimePassed(lastTime.getTageszeit(), now.getTageszeit());

@@ -750,6 +750,8 @@ public class RapunzelReactionsComp
         world.loadSC().memoryComp().upgradeKnown(RAPUNZELS_GESANG);
         loadSC().feelingsComp().upgradeFeelingsTowards(RAPUNZEL,
                 ZUNEIGUNG_ABNEIGUNG, 1, FeelingIntensity.DEUTLICH);
+
+        // FIXME Wird Rapunzels Gesang doppelt eingerechbet - vorher und wenn der Sc sie trifft?
     }
 
     private void onTimePassed_RapunzelMoechteNichtSingen(final AvDateTime lastTime,

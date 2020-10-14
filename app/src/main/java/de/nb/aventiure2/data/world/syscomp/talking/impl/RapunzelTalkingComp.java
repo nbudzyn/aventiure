@@ -204,6 +204,10 @@ public class RapunzelTalkingComp extends AbstractTalkingComp {
                         + "keine Ruhe gelassen und du "
                         + anaph.persPron().akk()
                         + " selbst habest sehen müssen."
+
+                        // STORY Rapunzel die Kugel geben - ansonsten "taut sie nicht auf" und
+                        //  Dieser zweite Teil kommt nicht?
+
                         + " Da verliert "
                         + desc.nom()
                         + " ihre Angst und es bricht aus "

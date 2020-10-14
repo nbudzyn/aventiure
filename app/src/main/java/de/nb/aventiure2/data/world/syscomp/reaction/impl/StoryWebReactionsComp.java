@@ -3,7 +3,7 @@ package de.nb.aventiure2.data.world.syscomp.reaction.impl;
 import androidx.annotation.Nullable;
 
 import de.nb.aventiure2.data.database.AvDatabase;
-import de.nb.aventiure2.data.world.gameobject.World;
+import de.nb.aventiure2.data.world.gameobject.*;
 import de.nb.aventiure2.data.world.syscomp.alive.ILivingBeingGO;
 import de.nb.aventiure2.data.world.syscomp.location.ILocatableGO;
 import de.nb.aventiure2.data.world.syscomp.reaction.AbstractReactionsComp;
@@ -21,20 +21,7 @@ import de.nb.aventiure2.data.world.syscomp.story.StoryWebComp;
 import de.nb.aventiure2.data.world.syscomp.story.impl.FroschkoenigStoryNode;
 import de.nb.aventiure2.data.world.syscomp.story.impl.RapunzelStoryNode;
 
-import static de.nb.aventiure2.data.world.gameobject.World.DRAUSSEN_VOR_DEM_SCHLOSS;
-import static de.nb.aventiure2.data.world.gameobject.World.FROSCHPRINZ;
-import static de.nb.aventiure2.data.world.gameobject.World.GOLDENE_KUGEL;
-import static de.nb.aventiure2.data.world.gameobject.World.IM_WALD_BEIM_BRUNNEN;
-import static de.nb.aventiure2.data.world.gameobject.World.OBEN_IM_ALTEN_TURM;
-import static de.nb.aventiure2.data.world.gameobject.World.RAPUNZEL;
-import static de.nb.aventiure2.data.world.gameobject.World.RAPUNZELS_ZAUBERIN;
-import static de.nb.aventiure2.data.world.gameobject.World.SCHLOSSFEST;
-import static de.nb.aventiure2.data.world.gameobject.World.SCHLOSS_VORHALLE;
-import static de.nb.aventiure2.data.world.gameobject.World.SCHLOSS_VORHALLE_AM_TISCH_BEIM_FEST;
-import static de.nb.aventiure2.data.world.gameobject.World.SPIELER_CHARAKTER;
-import static de.nb.aventiure2.data.world.gameobject.World.STORY_WEB;
-import static de.nb.aventiure2.data.world.gameobject.World.UNTEN_IM_BRUNNEN;
-import static de.nb.aventiure2.data.world.gameobject.World.VOR_DEM_ALTEN_TURM;
+import static de.nb.aventiure2.data.world.gameobject.World.*;
 
 /**
  * Reagiert auf die Aktionen des SCs und managet dabei die Stories, d.h. die kleinen
@@ -275,5 +262,10 @@ public class StoryWebReactionsComp
     @Override
     public void afterScActionAndFirstWorldUpdate() {
         storyWebComp.narrateAndDoHintActionIfAny();
+
+        // STORY stilisierte Zeichnungen?! Eintopf mit Holzlöffel etc. Evtl. Lisi?
+        //  Am besten statt einer HintAction merken, dass bald mal eine
+        //  Zeichnung schön wäre (als Belohnung fürs Durchhalten), dann Zeichnung einblenden,
+        //  wenn wieder ein zur Verfügung steht? Jede Zeichnung nur 1x.
     }
 }

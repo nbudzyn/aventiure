@@ -169,6 +169,9 @@ public class BaumFactory {
                         "Ein Nickerchen täte dir gut" :
                         "Und müde";
 
+        // STORY Nach längerer Zeit wird man automatisch müde (inkl. Hinweis). Nachts schneller.
+        //  Wenn man müde ist, erhält man hin und wieder einen Hinweis.
+
         return
                 // STORY Alternative:
                 //                "Ein zurückschwingender "
