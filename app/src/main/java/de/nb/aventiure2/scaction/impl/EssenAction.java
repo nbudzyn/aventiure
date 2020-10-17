@@ -18,7 +18,6 @@ import de.nb.aventiure2.data.world.syscomp.storingplace.ILocationGO;
 import de.nb.aventiure2.scaction.AbstractScAction;
 
 import static de.nb.aventiure2.data.world.gameobject.World.*;
-import static de.nb.aventiure2.data.world.syscomp.feelings.Hunger.SATT;
 import static de.nb.aventiure2.data.world.syscomp.feelings.Mood.ZUFRIEDEN;
 import static de.nb.aventiure2.data.world.syscomp.state.impl.FroschprinzState.BEIM_SCHLOSSFEST_AUF_TISCH_WILL_ZUSAMMEN_ESSEN;
 import static de.nb.aventiure2.data.world.syscomp.state.impl.FroschprinzState.HAT_HOCHHEBEN_GEFORDERT;
@@ -338,11 +337,11 @@ public class EssenAction extends AbstractScAction {
     }
 
     private void saveSatt() {
-        sc.feelingsComp().setHunger(SATT);
         // TODO NOW auch zu einem GameObject machen mit einer entsprechenden Stateful Component??
         // TODO Regel aufstellen: Die Aktionen dürfen nicht auf die DAOs zugreifen.
         //  Z.B. von DB nur ein Interface definieren, das durchgereicht wird?
         //  Oder alles über die world machen?
-        sc.feelingsComp().setZuletztGegessen(db.nowDao().now());
+
+        sc.feelingsComp().saveSatt();
     }
 }

@@ -8,9 +8,14 @@ import de.nb.aventiure2.data.database.AvDatabase;
 import de.nb.aventiure2.data.world.base.GameObjectId;
 import de.nb.aventiure2.data.world.base.Known;
 import de.nb.aventiure2.data.world.gameobject.*;
+import de.nb.aventiure2.data.world.syscomp.feelings.Biorhythmus;
+import de.nb.aventiure2.data.world.syscomp.feelings.FeelingIntensity;
 import de.nb.aventiure2.data.world.syscomp.feelings.FeelingTowardsType;
 import de.nb.aventiure2.data.world.syscomp.feelings.FeelingsComp;
+import de.nb.aventiure2.data.world.syscomp.feelings.Hunger;
+import de.nb.aventiure2.data.world.syscomp.feelings.HungerData;
 import de.nb.aventiure2.data.world.syscomp.feelings.Mood;
+import de.nb.aventiure2.data.world.syscomp.feelings.MuedigkeitsData;
 import de.nb.aventiure2.data.world.syscomp.location.LocationComp;
 import de.nb.aventiure2.data.world.syscomp.memory.MemoryComp;
 import de.nb.aventiure2.data.world.syscomp.reaction.impl.ScAutomaticReactionsComp;
@@ -20,7 +25,6 @@ import de.nb.aventiure2.data.world.time.*;
 
 import static de.nb.aventiure2.data.world.base.Known.KNOWN_FROM_LIGHT;
 import static de.nb.aventiure2.data.world.gameobject.World.*;
-import static de.nb.aventiure2.data.world.syscomp.feelings.Hunger.SATT;
 import static de.nb.aventiure2.data.world.syscomp.storingplace.StoringPlaceType.EINE_TASCHE;
 import static de.nb.aventiure2.data.world.time.AvTime.*;
 import static de.nb.aventiure2.data.world.time.AvTimeSpan.*;
@@ -39,12 +43,15 @@ public class SpielerCharakterFactory {
     }
 
     public SpielerCharakter create(final GameObjectId id) {
-        final FeelingsComp feelingsComp = new FeelingsComp(id, db, Mood.NEUTRAL, SATT,
-                new AvDateTime(1, oClock(8)),
+        final FeelingsComp feelingsComp = new FeelingsComp(id, db, Mood.NEUTRAL,
+                createMuedigkeitsBiorhythmus(),
+                createInitialMuedigkeitsData(),
+                createInitialHungerData(),
                 hours(6),
                 createDefaultFeelingsTowards(),
                 createInitialFeelingsTowards());
-        final LocationComp locationComp = new LocationComp(id, db, world, SCHLOSS_VORHALLE, null,
+        final LocationComp locationComp = new LocationComp(id, db, world, SCHLOSS_VORHALLE,
+                null,
                 // Ein NSC könnte den Spieler nicht so mir-nichts-dir-nichts mitnehmen.
                 false);
         return new SpielerCharakter(id,
@@ -54,6 +61,36 @@ public class SpielerCharakterFactory {
                 new MemoryComp(id, db, world, world.getLocationSystem(), createKnownMap()),
                 new NoSCTalkActionsTalkingComp(SPIELER_CHARAKTER, db, world),
                 new ScAutomaticReactionsComp(db, world, feelingsComp));
+    }
+
+    private static Biorhythmus createMuedigkeitsBiorhythmus() {
+        return new Biorhythmus(
+                oClock(0, 30), FeelingIntensity.STARK,
+                oClock(2, 30), FeelingIntensity.SEHR_STARK,
+                oClock(5), FeelingIntensity.STARK,
+                oClock(7), FeelingIntensity.NUR_LEICHT,
+                oClock(7, 30), FeelingIntensity.NEUTRAL,
+                // Mittagstief
+                oClock(12, 30), FeelingIntensity.MERKLICH,
+                oClock(14, 0), FeelingIntensity.NEUTRAL,
+                oClock(17, 30), FeelingIntensity.NUR_LEICHT,
+                oClock(18, 30), FeelingIntensity.MERKLICH,
+                oClock(21), FeelingIntensity.DEUTLICH
+        );
+    }
+
+    private static MuedigkeitsData createInitialMuedigkeitsData() {
+        return new MuedigkeitsData(
+                new AvDateTime(1, oClock(7)),
+                new AvDateTime(1, oClock(11)),
+                new AvDateTime(0, oClock(13,
+                        30)),
+                FeelingIntensity.NUR_LEICHT);
+    }
+
+    private static HungerData createInitialHungerData() {
+        return new HungerData(Hunger.SATT,
+                new AvDateTime(1, oClock(14)));
     }
 
     private static Map<FeelingTowardsType, Float> createDefaultFeelingsTowards() {

@@ -423,8 +423,8 @@ public class RapunzelsZauberinReactionsComp
     }
 
     @Override
-    public void onTimePassed(final AvDateTime lastTime, final AvDateTime now) {
-        checkArgument(!now.minus(lastTime).longerThan(days(1)),
+    public void onTimePassed(final AvDateTime startTime, final AvDateTime endTime) {
+        checkArgument(!endTime.minus(startTime).longerThan(days(1)),
                 "World tick time too long - see AbstractScAction.");
 
         // FIXME Bei Bewegung der Zauberin machen, dass sie noch nicht ganz weg ist / wann sie da
@@ -434,20 +434,20 @@ public class RapunzelsZauberinReactionsComp
 
         switch (stateComp.getState()) {
             case MACHT_ZURZEIT_KEINE_RAPUNZELBESUCHE:
-                onTimePassed_MachtZurzeitKeineRapunzelbesuche(now);
+                onTimePassed_MachtZurzeitKeineRapunzelbesuche(endTime);
                 return;
             case VOR_DEM_NAECHSTEN_RAPUNZEL_BESUCH:
-                onTimePassed_VorDemNaechstenRapunzelBesuch(now);
+                onTimePassed_VorDemNaechstenRapunzelBesuch(endTime);
                 return;
             case AUF_DEM_WEG_ZU_RAPUNZEL:
 
-                onTimePassed_AufDemWegZuRapunzel(now);
+                onTimePassed_AufDemWegZuRapunzel(endTime);
                 return;
             case BEI_RAPUNZEL_OBEN_IM_TURM:
-                onTimePassed_BeiRapunzelObenImTurm(now);
+                onTimePassed_BeiRapunzelObenImTurm(endTime);
                 return;
             case AUF_DEM_RUECKWEG_VON_RAPUNZEL:
-                onTimePassed_AufDemRueckwegVonRapunzel(now);
+                onTimePassed_AufDemRueckwegVonRapunzel(endTime);
                 return;
             case WEISS_DASS_RAPUNZEL_BEFREIT_WURDE:
                 // STORY Wandert zurück und kommt nie wieder

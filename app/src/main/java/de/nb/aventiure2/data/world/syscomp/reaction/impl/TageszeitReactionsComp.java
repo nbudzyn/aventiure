@@ -24,8 +24,8 @@ public class TageszeitReactionsComp
     }
 
     @Override
-    public void onTimePassed(final AvDateTime lastTime, @NonNull final AvDateTime now) {
-        if (now.minus(lastTime).longerThan(AvTimeSpan.ONE_DAY)) {
+    public void onTimePassed(final AvDateTime startTime, @NonNull final AvDateTime endTime) {
+        if (endTime.minus(startTime).longerThan(AvTimeSpan.ONE_DAY)) {
             // Die Action hat ohnehin erzählt, was passiert ist.
             return;
         }
@@ -49,7 +49,7 @@ public class TageszeitReactionsComp
 
         // Es gab also einen (oder mehrere) Tageszeitenwechsel während einer Zeit von
         // weniger als einem Tag
-        onTimePassed(lastTime.getTageszeit(), now.getTageszeit());
+        onTimePassed(startTime.getTageszeit(), endTime.getTageszeit());
     }
 
     private void onTimePassed(final Tageszeit lastTageszeit,

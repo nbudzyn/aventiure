@@ -35,8 +35,8 @@ public class SchlossfestReactionsComp
     }
 
     @Override
-    public void onTimePassed(final AvDateTime lastTime, final AvDateTime now) {
-        if (SCHLOSSFEST_BEGINN_DATE_TIME.isWithin(lastTime, now)) {
+    public void onTimePassed(final AvDateTime startTime, final AvDateTime endTime) {
+        if (SCHLOSSFEST_BEGINN_DATE_TIME.isWithin(startTime, endTime)) {
             schlossfestBeginnt();
         }
     }

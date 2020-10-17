@@ -3,12 +3,13 @@ package de.nb.aventiure2.data.world.syscomp.reaction.impl;
 import de.nb.aventiure2.data.database.AvDatabase;
 import de.nb.aventiure2.data.world.gameobject.*;
 import de.nb.aventiure2.data.world.syscomp.feelings.FeelingsComp;
+import de.nb.aventiure2.data.world.syscomp.feelings.Hunger;
 import de.nb.aventiure2.data.world.syscomp.reaction.AbstractReactionsComp;
 import de.nb.aventiure2.data.world.syscomp.reaction.interfaces.ITimePassedReactions;
 import de.nb.aventiure2.data.world.time.*;
 
 import static de.nb.aventiure2.data.world.gameobject.World.*;
-import static de.nb.aventiure2.data.world.syscomp.feelings.Hunger.HUNGRIG;
+import static de.nb.aventiure2.data.world.syscomp.feelings.Hunger.SATT;
 import static de.nb.aventiure2.data.world.time.AvTimeSpan.*;
 import static de.nb.aventiure2.german.base.StructuralElement.PARAGRAPH;
 import static de.nb.aventiure2.german.description.AllgDescription.neuerSatz;
@@ -30,14 +31,15 @@ public class ScAutomaticReactionsComp
     }
 
     @Override
-    public void onTimePassed(final AvDateTime lastTime, final AvDateTime now) {
-        final AvDateTime wiederHungrigAb = feelingsComp.getWiederHungrigAb();
-        if (now.isEqualOrAfter(wiederHungrigAb)) {
-            feelingsComp.setHunger(HUNGRIG);
+    public void onTimePassed(final AvDateTime startTime, final AvDateTime endTime) {
+        final Hunger hungerBisher = feelingsComp.getHunger();
 
-            if (lastTime.isBefore(wiederHungrigAb)) {
-                scWirdHungrig();
-            }
+        db.nowDao().setNow(endTime);
+
+        feelingsComp.updateHunger();
+
+        if (hungerBisher == SATT && feelingsComp.getHunger() != SATT) {
+            scWirdHungrig();
         }
     }
 

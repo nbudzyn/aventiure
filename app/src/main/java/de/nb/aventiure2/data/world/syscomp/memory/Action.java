@@ -10,6 +10,8 @@ import org.jetbrains.annotations.Contract;
 
 import java.util.Objects;
 
+import javax.annotation.concurrent.Immutable;
+
 import de.nb.aventiure2.data.world.base.GameObjectId;
 import de.nb.aventiure2.data.world.base.IGameObject;
 
@@ -19,6 +21,7 @@ import static java.util.Arrays.asList;
  * Eine Aktion des {@link IHasMemoryGO} - oft eine Interaktion mit einem konkreten anderen
  * Game Object.
  */
+@Immutable
 public class Action {
     public enum Type {
         // Diese Typ-Konstante steht dafür, dass das Spiel zuvor begonnen hat und es also

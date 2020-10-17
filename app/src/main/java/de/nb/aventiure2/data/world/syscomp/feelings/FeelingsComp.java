@@ -18,21 +18,28 @@ import de.nb.aventiure2.data.world.time.*;
  * has needs and feelings.
  */
 public class FeelingsComp extends AbstractStatefulComponent<FeelingsPCD> {
+    protected AvNowDao nowDao;
+
     protected final NarrationDao n;
 
     @NonNull
     private final Mood initialMood;
+
     @NonNull
-    private final Hunger initialHunger;
+    private final Biorhythmus muedigkeitsBiorythmus;
+
     @NonNull
-    private final AvDateTime initialZuletztGegessen;
-    /**
-     * Zeit, die es braucht, bis das FeelingBeing nach dem Essen wieder hungrig wird
-     */
+    private final MuedigkeitsData initialMuedigkeitsData;
+
+    @NonNull
+    private final HungerData initialHungerData;
+
+    @NonNull
     private final AvTimeSpan zeitspanneNachEssenBisWiederHungrig;
 
     // STORY Je ein Default für in-Group (die Kumpels) und für out-Group (alle anderen). Es gibt
     //  eine Methode, die ermittelt, wer in-group ist.
+    @NonNull
     private final Map<FeelingTowardsType, Float> defaultFeelingsTowards;
 
     @NonNull
@@ -43,37 +50,40 @@ public class FeelingsComp extends AbstractStatefulComponent<FeelingsPCD> {
      */
     public FeelingsComp(final GameObjectId gameObjectId,
                         final AvDatabase db,
-                        @NonNull final Mood initialMood,
-                        @NonNull final Hunger initialHunger,
-                        @NonNull final AvDateTime initialZuletztGegessen,
+                        final Mood initialMood,
+                        final Biorhythmus muedigkeitsBiorythmus,
+                        final MuedigkeitsData initialMuedigkeitsData,
+                        final HungerData initialHungerData,
                         final AvTimeSpan zeitspanneNachEssenBisWiederHungrig,
                         final Map<FeelingTowardsType, Float> defaultFeelingsTowards,
                         final Map<GameObjectId, Map<FeelingTowardsType, Float>>
                                 initialFeelingsTowards) {
         super(gameObjectId, db.feelingsDao());
 
+        nowDao = db.nowDao();
         n = db.narrationDao();
 
         this.initialMood = initialMood;
-        this.initialHunger = initialHunger;
-        this.initialZuletztGegessen = initialZuletztGegessen;
+        this.muedigkeitsBiorythmus = muedigkeitsBiorythmus;
+        this.initialMuedigkeitsData = initialMuedigkeitsData;
+        this.initialHungerData = initialHungerData;
         this.zeitspanneNachEssenBisWiederHungrig = zeitspanneNachEssenBisWiederHungrig;
         this.defaultFeelingsTowards = defaultFeelingsTowards;
         this.initialFeelingsTowards = initialFeelingsTowards;
     }
 
     @Override
-    @NonNull
     protected FeelingsPCD createInitialState() {
-        return new FeelingsPCD(getGameObjectId(), initialMood, initialHunger,
-                initialZuletztGegessen, initialFeelingsTowards);
+        return new FeelingsPCD(getGameObjectId(), initialMood,
+                initialMuedigkeitsData,
+                initialHungerData,
+                initialFeelingsTowards);
     }
 
     public boolean hasMood(final Mood mood) {
         return getMood() == mood;
     }
 
-    @NonNull
     public Mood getMood() {
         return getPcd().getMood();
     }
@@ -94,31 +104,44 @@ public class FeelingsComp extends AbstractStatefulComponent<FeelingsPCD> {
         getPcd().setMood(mood);
     }
 
-    @NonNull
     public Hunger getHunger() {
         return getPcd().getHunger();
     }
 
-    public void setHunger(final Hunger hunger) {
-        getPcd().setHunger(hunger);
+    // FIXME getMuedigkeit()  verwenden, z.B. für die Hütte
+
+    // FIXME Z.B ausschlafenEffektHaeltVorBis 2 Stunden nach dem Schlafen
+    //  (Je nachdem, wie lange man geschlafen hat. Aber irgendwann
+    //  siegt der Biorythmus! Vermutlich nie mehr als 4 Stunden)
+
+    /**
+     * Gibt die Müdigkeit als positiver {@link FeelingIntensity}-Wert zurück.
+     * {@link FeelingIntensity#NEUTRAL} meint <i>wach</i>.
+     */
+    public int getMuedigkeit() {
+        int res = getPcd().getMuedigkeit(nowDao.now());
+
+        if (!geradeAusgeschlafen()) {
+            res = Math.min(res, muedigkeitsBiorythmus.get(nowDao.now().getTime()));
+        }
+
+        return res;
     }
 
-    public AvDateTime getWiederHungrigAb() {
-        return getZuletztGegessen()
-                .plus(getZeitspanneNachEssenBisWiederHungrig());
+    /**
+     * Gibt zurück, ob das Feeling Being gerade ausgeschlafen hat. In dieser Zeit
+     * greifen weder biorythmische noch temporäre Müdigkeit.
+     */
+    private boolean geradeAusgeschlafen() {
+        return nowDao.now().isBefore(getPcd().getAusschlafenEffektHaeltVorBis());
     }
 
-    @NonNull
-    private AvDateTime getZuletztGegessen() {
-        return getPcd().getZuletztGegessen();
+    public void updateHunger() {
+        getPcd().updateHunger(nowDao.now());
     }
 
-    public void setZuletztGegessen(final AvDateTime zuletztGegessen) {
-        getPcd().setZuletztGegessen(zuletztGegessen);
-    }
-
-    private AvTimeSpan getZeitspanneNachEssenBisWiederHungrig() {
-        return zeitspanneNachEssenBisWiederHungrig;
+    public void saveSatt() {
+        getPcd().saveSatt(nowDao.now(), zeitspanneNachEssenBisWiederHungrig);
     }
 
     /**
@@ -152,7 +175,8 @@ public class FeelingsComp extends AbstractStatefulComponent<FeelingsPCD> {
      *                  10.000x Staub saugt. Also wäre <code>bound</code> für das Mitbringen von
      *                  Rosen höher.
      */
-    public void upgradeFeelingsTowards(final GameObjectId target, final FeelingTowardsType type,
+    public void upgradeFeelingsTowards(final GameObjectId target,
+                                       final FeelingTowardsType type,
                                        final float increment, final int bound) {
         if (increment == 0) {
             return;

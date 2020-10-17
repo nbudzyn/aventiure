@@ -191,7 +191,7 @@ public abstract class AvDatabase extends RoomDatabase {
                 "Diese Geschichte spielt in den alten Zeiten, wo das Wünschen noch geholfen hat. "
                         +
                         "Sie beginnt im königlichen Schloss, in einer prächtigen "
-                        + "Vorhalle, Marmor und Brokat überall.\n" );
+                        + "Vorhalle, Marmor und Brokat überall.\n");
         final List<IDescribableGO> objectsInRoom = ImmutableList.of(
                 (IDescribableGO) world.load(GOLDENE_KUGEL));
         text.append(buildObjectsInRoomDescription(objectsInRoom));
@@ -238,11 +238,11 @@ public abstract class AvDatabase extends RoomDatabase {
             res.append(objectsInRoom.get(i).descriptionComp().getDescriptionAtFirstSight().nom());
             if (i == objectsInRoom.size() - 2) {
                 // one before the last
-                res.append(" und " );
+                res.append(" und ");
             }
             if (i < objectsInRoom.size() - 2) {
                 // more than one after this
-                res.append(", " );
+                res.append(", ");
             }
         }
 
@@ -266,7 +266,7 @@ public abstract class AvDatabase extends RoomDatabase {
                             }
 
                             if (INSTANCE.nowDao().now() == null) {
-                                throw new IllegalStateException("roomDatabaseCallback not called" );
+                                throw new IllegalStateException("roomDatabaseCallback not called");
                             }
                         }
 

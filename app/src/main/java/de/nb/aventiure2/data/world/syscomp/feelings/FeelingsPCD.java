@@ -1,6 +1,7 @@
 package de.nb.aventiure2.data.world.syscomp.feelings;
 
 import androidx.annotation.NonNull;
+import androidx.room.Embedded;
 import androidx.room.Entity;
 import androidx.room.Ignore;
 
@@ -11,11 +12,15 @@ import java.util.HashMap;
 import java.util.Map;
 
 import javax.annotation.CheckReturnValue;
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import de.nb.aventiure2.data.world.base.AbstractPersistentComponentData;
 import de.nb.aventiure2.data.world.base.GameObjectId;
 import de.nb.aventiure2.data.world.time.*;
+
+import static de.nb.aventiure2.data.world.syscomp.feelings.Hunger.HUNGRIG;
+import static de.nb.aventiure2.data.world.syscomp.feelings.Hunger.SATT;
 
 /**
  * Mutable - and therefore persistent - data of the {@link FeelingsComp} component.
@@ -26,31 +31,35 @@ class FeelingsPCD extends AbstractPersistentComponentData {
     @NonNull
     private Mood mood;
 
+    @Embedded
     @NonNull
-    private Hunger hunger;
+    private MuedigkeitsData muedigkeitsData;
 
+    @Embedded
     @NonNull
-    private AvDateTime zuletztGegessen;
+    private HungerData hungerData;
 
     @NonNull
     @Ignore
     Map<GameObjectId, Map<FeelingTowardsType, Float>> feelingsTowards;
 
-    FeelingsPCD(@NonNull final GameObjectId gameObjectId,
-                @NonNull final Mood mood, @NonNull final Hunger hunger,
-                @NonNull final AvDateTime zuletztGegessen) {
-        this(gameObjectId, mood, hunger, zuletztGegessen, new HashMap<>());
+    FeelingsPCD(final GameObjectId gameObjectId,
+                final Mood mood,
+                final MuedigkeitsData muedigkeitsData,
+                final HungerData hungerData) {
+        this(gameObjectId, mood, muedigkeitsData, hungerData, new HashMap<>());
     }
 
     @Ignore
-    FeelingsPCD(@NonNull final GameObjectId gameObjectId,
-                @NonNull final Mood mood, @NonNull final Hunger hunger,
-                @NonNull final AvDateTime zuletztGegessen,
+    FeelingsPCD(final GameObjectId gameObjectId,
+                final Mood mood,
+                final MuedigkeitsData muedigkeitsData,
+                final HungerData hungerData,
                 final Map<GameObjectId, Map<FeelingTowardsType, Float>> feelingsTowards) {
         super(gameObjectId);
         this.mood = mood;
-        this.hunger = hunger;
-        this.zuletztGegessen = zuletztGegessen;
+        this.muedigkeitsData = muedigkeitsData;
+        this.hungerData = hungerData;
         this.feelingsTowards = feelingsTowards;
     }
 
@@ -121,23 +130,61 @@ class FeelingsPCD extends AbstractPersistentComponentData {
         this.mood = mood;
     }
 
+    /**
+     * Gibt die Müdigkeit zu diesem Zeitpunkt
+     * als positiven {@link FeelingIntensity}-Wert zurück.
+     * {@link FeelingIntensity#NEUTRAL} meint <i>wach</i>.
+     */
+    public int getMuedigkeit(final AvDateTime dateTime) {
+        return muedigkeitsData.getMuedigkeit(dateTime);
+    }
+
+    public AvDateTime getAusschlafenEffektHaeltVorBis() {
+        return muedigkeitsData.getAusschlafenEffektHaeltVorBis();
+    }
+
+    // FIXME Sind diese Getter und Setter nötig für ROOM?
+    //  Sonst kann sie löschen...
+    @Nonnull
+    public MuedigkeitsData getMuedigkeitsData() {
+        return muedigkeitsData;
+    }
+
+    public void setMuedigkeitsData(final MuedigkeitsData muedigkeitsData) {
+        this.muedigkeitsData = muedigkeitsData;
+
+        setChanged();
+    }
+
+    public void updateHunger(final AvDateTime now) {
+        if (now.isEqualOrAfter(hungerData.getEssenHaeltVorBis())) {
+            if (hungerData.getHunger() != HUNGRIG) {
+                hungerData = hungerData.withHunger(HUNGRIG);
+                setChanged();
+            }
+        }
+    }
+
+    public void saveSatt(final AvDateTime now,
+                         final AvTimeSpan zeitspanneBisWiederHungrig) {
+        hungerData = new HungerData(SATT, now.plus(zeitspanneBisWiederHungrig));
+
+        setChanged();
+    }
+
+    @NonNull
+    public HungerData getHungerData() {
+        return hungerData;
+    }
+
+    public void setHungerData(final HungerData hungerData) {
+        this.hungerData = hungerData;
+
+        setChanged();
+    }
+
     @NonNull
     public Hunger getHunger() {
-        return hunger;
-    }
-
-    public void setHunger(@NonNull final Hunger hunger) {
-        setChanged();
-        this.hunger = hunger;
-    }
-
-    @NonNull
-    public AvDateTime getZuletztGegessen() {
-        return zuletztGegessen;
-    }
-
-    public void setZuletztGegessen(@NonNull final AvDateTime zuletztGegessen) {
-        setChanged();
-        this.zuletztGegessen = zuletztGegessen;
+        return hungerData.getHunger();
     }
 }

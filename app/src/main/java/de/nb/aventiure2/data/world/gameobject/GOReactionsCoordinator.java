@@ -23,11 +23,10 @@ import de.nb.aventiure2.data.world.syscomp.reaction.interfaces.ITimePassedReacti
 import de.nb.aventiure2.data.world.syscomp.reaction.interfaces.Ruftyp;
 import de.nb.aventiure2.data.world.syscomp.state.IHasStateGO;
 import de.nb.aventiure2.data.world.syscomp.storingplace.ILocationGO;
-import de.nb.aventiure2.data.world.time.AvDateTime;
-import de.nb.aventiure2.data.world.time.AvNowDao;
+import de.nb.aventiure2.data.world.time.*;
 
 import static de.nb.aventiure2.data.narration.Narration.NarrationSource.REACTIONS;
-import static de.nb.aventiure2.data.world.time.AvDateTime.latest;
+import static de.nb.aventiure2.data.world.time.AvDateTime.*;
 
 public class GOReactionsCoordinator
         implements IMovementReactions, IEssenReactions, IStateChangedReactions,
@@ -156,9 +155,9 @@ public class GOReactionsCoordinator
 
     // ITimePassedReactions
     @Override
-    public void onTimePassed(final AvDateTime lastTime, final AvDateTime now) {
+    public void onTimePassed(final AvDateTime startTime, final AvDateTime endTime) {
         doReactions(ITimePassedReactions.class,
-                reactions -> reactions.onTimePassed(lastTime, now));
+                reactions -> reactions.onTimePassed(startTime, endTime));
     }
 
     // ISCActionReactions

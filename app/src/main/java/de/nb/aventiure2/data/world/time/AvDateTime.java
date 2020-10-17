@@ -11,8 +11,7 @@ import javax.annotation.ParametersAreNonnullByDefault;
 import javax.annotation.concurrent.Immutable;
 
 import static com.google.common.base.Preconditions.checkNotNull;
-import static de.nb.aventiure2.data.world.time.AvTime.SECS_IN_AN_HOUR;
-import static de.nb.aventiure2.data.world.time.AvTime.SECS_IN_A_DAY;
+import static de.nb.aventiure2.data.world.time.AvTime.*;
 
 /**
  * Value Object für Datum und Zeitpunkt.

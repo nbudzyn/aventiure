@@ -508,17 +508,17 @@ public class FroschprinzReactionsComp
     }
 
     @Override
-    public void onTimePassed(final AvDateTime lastTime, final AvDateTime now) {
+    public void onTimePassed(final AvDateTime startTime, final AvDateTime endTime) {
         switch (stateComp.getState()) {
             case ERWARTET_VON_SC_EINLOESUNG_SEINES_VERSPRECHENS:
-                if (now.isEqualOrAfter(FROSCH_LAEUFT_FRUEHESTENS_ZUM_SCHLOSSFEST)) {
+                if (endTime.isEqualOrAfter(FROSCH_LAEUFT_FRUEHESTENS_ZUM_SCHLOSSFEST)) {
                     froschprinzLaueftZumSchlossfestLos();
                     return;
                 }
                 return;
             case AUF_DEM_WEG_ZUM_SCHLOSSFEST:
                 if (schlossfestHatBegonnen() &&
-                        now.isEqualOrAfter(
+                        endTime.isEqualOrAfter(
                                 stateComp.getStateDateTime() // Als der Frosch losgelaufen ist
                                         .plus(WEGZEIT_FROSCH_BRUNNEN_ZUM_SCHLOSSFEST))) {
                     froschprinzAufSchlossfestAngekommen();
@@ -526,7 +526,7 @@ public class FroschprinzReactionsComp
                 }
                 return;
             case ZURUECKVERWANDELT_IN_VORHALLE:
-                if (now.isEqualOrAfter(stateComp.getStateDateTime()
+                if (endTime.isEqualOrAfter(stateComp.getStateDateTime()
                         // als der Prinz aufgestanden ist
                         .plus(WEGZEIT_PRINZ_TISCH_DURCH_VORHALLE))) {
                     prinzDraussenVorDemSchlossAngekommen();
@@ -534,7 +534,7 @@ public class FroschprinzReactionsComp
                 }
                 return;
             case ZURUECKVERWANDELT_SCHLOSS_VORHALLE_VERLASSEN:
-                if (now.isEqualOrAfter(stateComp.getStateDateTime()
+                if (endTime.isEqualOrAfter(stateComp.getStateDateTime()
                         // als der Prinz die Vorhalle verlassen hat
                         .plus(ZEIT_FUER_ABFAHRT_PRINZ_MIT_WAGEN))) {
                     locationComp.narrateAndUnsetLocation();

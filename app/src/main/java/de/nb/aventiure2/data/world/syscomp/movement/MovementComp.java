@@ -313,7 +313,7 @@ public class MovementComp
         locationComp.narrateAndSetLocation(
                 getCurrentStep().getTo(),
                 () -> {
-                    getCurrentStep().setPhase(SECOND_ENTERING);
+                    getPcd().setCurrentStep(getCurrentStep().withPhase(SECOND_ENTERING));
 
                     if (!world.loadSC().locationComp().hasRecursiveLocation(
                             getCurrentStep().getTo())) {

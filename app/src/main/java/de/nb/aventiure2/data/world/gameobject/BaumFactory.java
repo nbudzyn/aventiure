@@ -170,7 +170,8 @@ public class BaumFactory {
                         "Und müde";
 
         // FIXME Nach längerer Zeit wird man automatisch müde (inkl. Hinweis). Nachts schneller.
-        //  Wenn man müde ist, erhält man hin und wieder einen Hinweis.
+
+        // FIXME Wenn man müde ist, erhält man hin und wieder einen Hinweis.
 
         return
                 // STORY Alternative:

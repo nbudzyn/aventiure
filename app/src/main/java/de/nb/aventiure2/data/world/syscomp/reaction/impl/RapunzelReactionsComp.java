@@ -607,21 +607,21 @@ public class RapunzelReactionsComp
     }
 
     @Override
-    public void onTimePassed(final AvDateTime lastTime, final AvDateTime now) {
+    public void onTimePassed(final AvDateTime startTime, final AvDateTime endTime) {
         if (stateComp.hasState(HAARE_VOM_TURM_HERUNTERGELASSEN) &&
-                now.isAfter(
+                endTime.isAfter(
                         stateComp.getStateDateTime().plus(
                                 DAUER_WIE_LANGE_DIE_HAARE_MAX_UNTEN_BLEIBEN))) {
             rapunzelZiehtHaareWiederHoch();
             return;
         }
 
-        if (rapunzelMoechteSingen(now)) {
-            onTimePassed_RapunzelMoechteSingen(lastTime, now);
+        if (rapunzelMoechteSingen(endTime)) {
+            onTimePassed_RapunzelMoechteSingen(startTime, endTime);
             return;
         }
 
-        onTimePassed_RapunzelMoechteNichtSingen(lastTime, now);
+        onTimePassed_RapunzelMoechteNichtSingen(startTime, endTime);
     }
 
     private boolean rapunzelMoechteSingen(final AvDateTime now) {
