@@ -225,7 +225,7 @@ public class RapunzelTalkingComp extends AbstractTalkingComp {
                 mins(1)));
 
         setSchonBegruesstMitSC(true);
-        loadSC().feelingsComp().setMoodMin(BEWEGT);
+        loadSC().feelingsComp().requestMoodMin(BEWEGT);
     }
 
     private void haareHerunterlassenBitte_EntryReEntry() {
@@ -296,7 +296,7 @@ public class RapunzelTalkingComp extends AbstractTalkingComp {
 
         setSchonBegruesstMitSC(true);
 
-        loadSC().feelingsComp().setMoodMin(AUFGEDREHT);
+        loadSC().feelingsComp().requestMoodMin(AUFGEDREHT);
 
         haareHerunterlassen();
     }

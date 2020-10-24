@@ -179,7 +179,7 @@ public class FroschprinzReactionsComp
             case WARTET_AUF_SC_BEIM_SCHLOSSFEST:
                 return;
             case HAT_HOCHHEBEN_GEFORDERT:
-                loadSC().feelingsComp().setMood(ANGESPANNT);
+                loadSC().feelingsComp().requestMood(ANGESPANNT);
 
                 // TODO Wenn der Frosch nur rekursiv enthalten ist (Frosch sitzt auf
                 //  in einer Schale auf der Bank, dann hier prüfen und ggf. beschreiben
@@ -202,7 +202,7 @@ public class FroschprinzReactionsComp
                                 .beendet(PARAGRAPH));
                 return;
             case BEIM_SCHLOSSFEST_AUF_TISCH_WILL_ZUSAMMEN_ESSEN:
-                loadSC().feelingsComp().setMood(ANGESPANNT);
+                loadSC().feelingsComp().requestMood(ANGESPANNT);
 
                 n.narrateAlt(
                         neuerSatz(PARAGRAPH, "Auf einmal sitzt "
@@ -482,13 +482,13 @@ public class FroschprinzReactionsComp
     }
 
     private void narrateAndDoFroschHatHochhebenGefordert() {
-        loadSC().feelingsComp().setMood(ANGESPANNT);
+        loadSC().feelingsComp().requestMood(ANGESPANNT);
         stateComp.narrateAndSetState(HAT_HOCHHEBEN_GEFORDERT);
     }
 
     private void froschprinzHatHochhebenGefordertUndWillMitessen() {
         final SpielerCharakter sc = loadSC();
-        sc.feelingsComp().setMood(ANGESPANNT);
+        sc.feelingsComp().requestMood(ANGESPANNT);
 
         n.narrateAlt(
                 neuerSatz(PARAGRAPH,

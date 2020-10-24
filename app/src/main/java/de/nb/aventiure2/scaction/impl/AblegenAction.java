@@ -199,14 +199,14 @@ public class AblegenAction
         n.narrateAlt(alt);
 
         narrateUpgradeKnownAndSetLocationAndAction();
-        sc.feelingsComp().setMood(NEUTRAL);
+        sc.feelingsComp().requestMood(NEUTRAL);
     }
 
     private void narrateAndDoFroschprinz_HatHochhebenGefordert() {
         if (!location.is(SCHLOSS_VORHALLE_LANGER_TISCH_BEIM_FEST)) {
             narrateFroschprinz_HatHochhebenGefordert();
             narrateUpgradeKnownAndSetLocationAndAction();
-            sc.feelingsComp().setMood(ANGESPANNT);
+            sc.feelingsComp().requestMood(ANGESPANNT);
 
             return;
         }
@@ -224,7 +224,7 @@ public class AblegenAction
                         .phorikKandidat(M, FROSCHPRINZ));
 
         narrateUpgradeKnownAndSetLocationAndAction();
-        sc.feelingsComp().setMood(ANGESPANNT);
+        sc.feelingsComp().requestMood(ANGESPANNT);
     }
 
     private void narrateFroschprinz_HatHochhebenGefordert() {

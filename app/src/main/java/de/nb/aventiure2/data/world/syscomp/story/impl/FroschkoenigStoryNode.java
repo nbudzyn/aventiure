@@ -14,6 +14,7 @@ import de.nb.aventiure2.data.database.AvDatabase;
 import de.nb.aventiure2.data.narration.NarrationDao;
 import de.nb.aventiure2.data.world.base.GameObjectId;
 import de.nb.aventiure2.data.world.gameobject.*;
+import de.nb.aventiure2.data.world.syscomp.feelings.FeelingIntensity;
 import de.nb.aventiure2.data.world.syscomp.location.ILocatableGO;
 import de.nb.aventiure2.data.world.syscomp.state.IHasStateGO;
 import de.nb.aventiure2.data.world.syscomp.state.impl.SchlossfestState;
@@ -23,7 +24,7 @@ import de.nb.aventiure2.german.description.AbstractDescription;
 
 import static com.google.common.collect.ImmutableList.builder;
 import static de.nb.aventiure2.data.world.gameobject.World.*;
-import static de.nb.aventiure2.data.world.syscomp.feelings.Mood.ERSCHOEPFT;
+import static de.nb.aventiure2.data.world.syscomp.feelings.Mood.ETWAS_GEKNICKT;
 import static de.nb.aventiure2.data.world.syscomp.feelings.Mood.UNTROESTLICH;
 import static de.nb.aventiure2.data.world.time.AvTimeSpan.*;
 import static de.nb.aventiure2.data.world.time.Tageszeit.*;
@@ -174,7 +175,7 @@ public enum FroschkoenigStoryNode implements IStoryNode {
                     + "denken, die du im Schloss gelassen hast. Warum eigentlich?"));
         }
 
-        if (world.loadSC().feelingsComp().getMood().isTraurigerAls(ERSCHOEPFT)) {
+        if (world.loadSC().feelingsComp().isTraurigerAls(ETWAS_GEKNICKT)) {
             alt.add(paragraph("Dir kommt ein Gedanke: Ein glänzendes Spielzeug – das würde "
                     + "dich wohl aufheitern! Aber woher nehmen und nicht stehlen?"));
         }
@@ -238,7 +239,7 @@ public enum FroschkoenigStoryNode implements IStoryNode {
                 + "Gefühle zu unterdrücken?"));
 
         if (!world.loadSC().locationComp().hasRecursiveLocation(IM_WALD_BEIM_BRUNNEN)) {
-            if (world.loadSC().feelingsComp().getMood().isFroehlicherAls(UNTROESTLICH)) {
+            if (world.loadSC().feelingsComp().isFroehlicherAls(UNTROESTLICH)) {
                 alt.add(paragraph(
                         "Ob du wohl jemals zurückbekommst, was dir in den Brunnen gefallen "
                                 + "ist? – so fragst du dich auf einmal. Du wirst ganz traurig"));
@@ -249,7 +250,7 @@ public enum FroschkoenigStoryNode implements IStoryNode {
             }
         }
 
-        world.loadSC().feelingsComp().setMoodMax(UNTROESTLICH);
+        world.loadSC().feelingsComp().requestMoodMax(UNTROESTLICH);
 
         n.narrateAlt(alt);
     }
@@ -322,7 +323,7 @@ public enum FroschkoenigStoryNode implements IStoryNode {
         final ImmutableList.Builder<AbstractDescription<?>> alt = builder();
 
         if (world.loadSC().locationComp().hasRecursiveLocation(HUETTE_IM_WALD)) {
-            if (world.loadSC().feelingsComp().hasMood(ERSCHOEPFT)) {
+            if (world.loadSC().feelingsComp().getMuedigkeit() >= FeelingIntensity.MERKLICH) {
                 alt.add(du(PARAGRAPH,
                         "solltest", "etwas schlafen",
                         noTime())

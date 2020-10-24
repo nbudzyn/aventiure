@@ -13,7 +13,6 @@ import de.nb.aventiure2.data.world.base.GameObjectId;
 import de.nb.aventiure2.data.world.gameobject.*;
 import de.nb.aventiure2.data.world.syscomp.alive.ILivingBeingGO;
 import de.nb.aventiure2.data.world.syscomp.description.IDescribableGO;
-import de.nb.aventiure2.data.world.syscomp.feelings.Mood;
 import de.nb.aventiure2.data.world.syscomp.location.ILocatableGO;
 import de.nb.aventiure2.data.world.syscomp.memory.Action;
 import de.nb.aventiure2.data.world.syscomp.state.IHasStateGO;
@@ -247,7 +246,7 @@ public class NehmenAction
                 .narrateAndSetLocation(targetLocation,
                         () -> {
                             world.loadSC().memoryComp().upgradeKnown(gameObject);
-                            sc.feelingsComp().setMood(NEUTRAL);
+                            sc.feelingsComp().requestMood(NEUTRAL);
 
                             final SubstantivischePhrase froschDescOderAnapher =
                                     getAnaphPersPronWennMglSonstShortDescription(
@@ -303,7 +302,7 @@ public class NehmenAction
                         targetLocation,
                         () -> {
                             world.loadSC().memoryComp().upgradeKnown(gameObject);
-                            sc.feelingsComp().setMood(ANGESPANNT);
+                            sc.feelingsComp().requestMood(ANGESPANNT);
                         }
                 );
 
@@ -395,22 +394,15 @@ public class NehmenAction
         }
 
         if (sc.memoryComp().getLastAction().hasObject(gameObject)) {
-            final Mood mood = sc.feelingsComp().getMood();
 
             if (sc.memoryComp().getLastAction().is(Action.Type.HOCHWERFEN) &&
-                    mood.isEmotional()) {
-                // TODO Es wäre gut, wenn das mitnehmenPraedikat direkt
-                //  eine AbstractDuDescription erzeugen könnte, gleich mit dann etc.
-                //  Oder wenn man vielleicht etwas ähliches wie eine AbstractDuDescription
-                //  erzeugen könnte, die intern das mitnehmenPraedikat enthält.
-                //  Leider müssen wir bis dahin eine AllgDescription bauen. :-(
+                    sc.feelingsComp().isEmotional()) {
                 final Nominalphrase objectDesc = world.getDescription(gameObject, true);
                 final PraedikatOhneLeerstellen praedikatMitObjekt =
                         mitnehmenPraedikat.mitObj(objectDesc);
-                // STORY Neues Praedikat mit integrierter adverbialer Angabe in
-                //  du(...) übergegben
                 n.narrate(du(PARAGRAPH,
-                        praedikatMitObjekt.mitAdverbialerAngabe(mood.getAdverbialeAngabe()),
+                        praedikatMitObjekt.mitAdverbialerAngabe(
+                                sc.feelingsComp().getAdverbialeAngabe()),
                         secs(5))
                         .undWartest(
                                 praedikatMitObjekt

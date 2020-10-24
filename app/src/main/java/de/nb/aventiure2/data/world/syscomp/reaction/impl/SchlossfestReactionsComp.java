@@ -52,7 +52,7 @@ public class SchlossfestReactionsComp
             return;
         }
 
-        loadSC().feelingsComp().setMood(NEUTRAL);
+        loadSC().feelingsComp().requestMood(NEUTRAL);
 
         if (!currentRoom.is(DRAUSSEN_VOR_DEM_SCHLOSS)) {
             return;  // Passiert nebenher und braucht KEINE zusätzliche Zeit

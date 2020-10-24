@@ -5,56 +5,101 @@ import androidx.annotation.NonNull;
 import javax.annotation.concurrent.Immutable;
 
 import de.nb.aventiure2.data.world.time.*;
-
-import static de.nb.aventiure2.data.world.time.AvTimeSpan.*;
+import de.nb.aventiure2.german.praedikat.AdverbialeAngabeSkopusSatz;
 
 @Immutable
 public class MuedigkeitsData {
+    private final int muedigkeit;
+
     @NonNull
     private final AvDateTime zuletztAusgeschlafen;
 
     @NonNull
     private final AvDateTime ausschlafenEffektHaeltVorBis;
-    // FIXME Z.B 2 Stunden (Je nachdem, wie lange man geschlafen hat. Aber irgendwann
-    //  siegt der Biorythmus! Vermutlich nie mehr als 4 Stunden)
 
     @NonNull
     private final AvDateTime temporaerMuedeBis;
 
     private final int temporaereMinimalmuedigkeit;
 
-    public MuedigkeitsData(final AvDateTime zuletztAusgeschlafen,
+    public MuedigkeitsData(final int muedigkeit,
+                           final AvDateTime zuletztAusgeschlafen,
                            final AvDateTime ausschlafenEffektHaeltVorBis,
                            final AvDateTime temporaerMuedeBis,
                            final int temporaereMinimalmuedigkeit) {
+        FeelingIntensity.checkValue(muedigkeit);
+
+        this.muedigkeit = muedigkeit;
         this.zuletztAusgeschlafen = zuletztAusgeschlafen;
         this.ausschlafenEffektHaeltVorBis = ausschlafenEffektHaeltVorBis;
         this.temporaerMuedeBis = temporaerMuedeBis;
         this.temporaereMinimalmuedigkeit = temporaereMinimalmuedigkeit;
     }
 
+    public AdverbialeAngabeSkopusSatz getAdverbialeAngabe() {
+        return new AdverbialeAngabeSkopusSatz(getAdverbialeAngabeString());
+    }
+
+    private String getAdverbialeAngabeString() {
+        switch (muedigkeit) {
+            case FeelingIntensity.NEUTRAL:
+                return "mit voller Konzentration";
+            case FeelingIntensity.NUR_LEICHT:
+                return "leicht erschöpft";
+            case FeelingIntensity.MERKLICH:
+                return "erschöpft";
+            case FeelingIntensity.DEUTLICH:
+                return "müde";
+            case FeelingIntensity.STARK:
+                return "völlig übermüdet";
+            case FeelingIntensity.SEHR_STARK:
+                // STORY Alternative: hundemüde
+                return "todmüde";
+            case FeelingIntensity.PATHOLOGISCH:
+                return "benommen";
+            default:
+                throw new IllegalStateException("Müdigkeit: " + muedigkeit);
+        }
+    }
+
+    MuedigkeitsData withMuedigkeit(final int muedigkeit) {
+        return new MuedigkeitsData(muedigkeit,
+                zuletztAusgeschlafen, ausschlafenEffektHaeltVorBis,
+                temporaerMuedeBis, temporaereMinimalmuedigkeit);
+    }
+
+    MuedigkeitsData withZuletztAusgeschlafen(final AvDateTime zuletztAusgeschlafen) {
+        return new MuedigkeitsData(muedigkeit,
+                zuletztAusgeschlafen, ausschlafenEffektHaeltVorBis,
+                temporaerMuedeBis, temporaereMinimalmuedigkeit);
+    }
+
+    MuedigkeitsData withAusschlafenEffektHaeltVorBis(
+            final AvDateTime ausschlafenEffektHaeltVorBis) {
+        return new MuedigkeitsData(muedigkeit,
+                zuletztAusgeschlafen, ausschlafenEffektHaeltVorBis,
+                temporaerMuedeBis, temporaereMinimalmuedigkeit);
+    }
+
+    MuedigkeitsData withTemporaerMuedeBis(final AvDateTime temporaerMuedeBis) {
+        return new MuedigkeitsData(muedigkeit,
+                zuletztAusgeschlafen, ausschlafenEffektHaeltVorBis,
+                temporaerMuedeBis, temporaereMinimalmuedigkeit);
+    }
+
+    MuedigkeitsData withTemporaereMinimalmuedigkeit(final int temporaereMinimalmuedigkeit) {
+        return new MuedigkeitsData(muedigkeit,
+                zuletztAusgeschlafen, ausschlafenEffektHaeltVorBis,
+                temporaerMuedeBis, temporaereMinimalmuedigkeit);
+    }
+
     /**
-     * Gibt die Müdigkeit zu diesem Zeitpunkt
+     * Gibt die aktuelle Müdigkeit
      * als positiven {@link FeelingIntensity}-Wert zurück.
      * {@link FeelingIntensity#NEUTRAL} meint <i>wach</i>.
      */
-    public int getMuedigkeit(final AvDateTime dateTime) {
-        int res;
-
-        if (dateTime.isEqualOrAfter(zuletztAusgeschlafen.plus(hours(28)))) {
-            res = FeelingIntensity.SEHR_STARK;
-        } else if (dateTime.isEqualOrAfter(zuletztAusgeschlafen.plus(hours(14)))) {
-            res = FeelingIntensity.DEUTLICH;
-        } else {
-            res = FeelingIntensity.NEUTRAL;
-        }
-
-        res = Math.max(res, getTemporaereMinimalmuedigkeitSofernRelevant(dateTime));
-        // FIXME "Temporäre Müdigkeit": Der SC wird
-        //  z.B. nach dem Essen etwas müde. Endet aber
-        //  nach z.B. 90 Minuten.
-
-        return res;
+    public int getMuedigkeit() {
+        return muedigkeit;
     }
 
     /**
@@ -63,7 +108,7 @@ public class MuedigkeitsData {
      * sie zu diesem Zeitpunkt relevant ist.
      * {@link FeelingIntensity#NEUTRAL} meint <i>wach</i>.
      */
-    private int getTemporaereMinimalmuedigkeitSofernRelevant(final AvDateTime dateTime) {
+    int getTemporaereMinimalmuedigkeitSofernRelevant(final AvDateTime dateTime) {
         if (dateTime.isEqualOrAfter(getTemporaerMuedeBis())) {
             // Temporäre Müdigkeit nicht mehr relevant
             return FeelingIntensity.NEUTRAL;

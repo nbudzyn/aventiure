@@ -76,7 +76,7 @@ public class RastenAction extends AbstractScAction {
     }
 
     private void narrateAndDoRapunzelZuhoeren() {
-        sc.feelingsComp().setMoodMin(Mood.GLUECKLICH);
+        sc.feelingsComp().requestMoodMin(Mood.GLUECKLICH);
 
         n.narrateAlt(
                 du("bist", "ganz still",
@@ -98,7 +98,7 @@ public class RastenAction extends AbstractScAction {
     }
 
     private void narrateAndDoDunkel() {
-        sc.feelingsComp().setMoodMax(Mood.VERUNSICHERT);
+        sc.feelingsComp().requestMoodMax(Mood.VERUNSICHERT);
 
         n.narrateAlt(
                 neuerSatz("Die Bäume rauschen in "
@@ -114,7 +114,7 @@ public class RastenAction extends AbstractScAction {
     }
 
     private void narrateAndDoHell() {
-        sc.feelingsComp().setMoodMin(Mood.ZUFRIEDEN);
+        sc.feelingsComp().requestMoodMin(Mood.ZUFRIEDEN);
 
         // STORY Hier ist sehr auffällig, dass die dann()-Logik nicht stimmt:
         //  Ob "Dann..." sinnvoll ist, hängt wesentlich (auch) vom Folgesatz ab.

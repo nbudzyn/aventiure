@@ -100,7 +100,7 @@ public class MainViewModel extends AndroidViewModel {
                     break;
                 }
 
-                LOGGER.d("Action: " + playerAction.getName());
+                LOGGER.d("Action: " + playerAction.getName() + " [" + db.nowDao().now() + "]");
                 db.runInTransaction(playerAction::doAndPassTime);
             } catch (final ExpectedActionNotFoundException e) {
                 LOGGER.i(e.getMessage());
@@ -140,7 +140,8 @@ public class MainViewModel extends AndroidViewModel {
                             @WorkerThread
                             @Override
                             public void run() {
-                                LOGGER.d("Action: " + playerAction.getName());
+                                LOGGER.d("Action: " + playerAction.getName() + " [" + db.nowDao()
+                                        .now() + "]");
                                 db.runInTransaction(playerAction::doAndPassTime);
                                 postLiveDataUpdate();
                             }

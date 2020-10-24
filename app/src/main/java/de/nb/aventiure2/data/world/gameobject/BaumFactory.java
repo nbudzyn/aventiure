@@ -169,7 +169,7 @@ public class BaumFactory {
                         "Ein Nickerchen täte dir gut" :
                         "Und müde";
 
-        // FIXME Nach längerer Zeit wird man automatisch müde (inkl. Hinweis). Nachts schneller.
+        // FIXME Hinweise, wenn man müde wird.
 
         // FIXME Wenn man müde ist, erhält man hin und wieder einen Hinweis.
 

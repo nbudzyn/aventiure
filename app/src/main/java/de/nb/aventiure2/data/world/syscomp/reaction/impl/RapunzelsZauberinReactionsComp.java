@@ -6,6 +6,7 @@ import javax.annotation.Nullable;
 
 import de.nb.aventiure2.data.database.AvDatabase;
 import de.nb.aventiure2.data.world.gameobject.*;
+import de.nb.aventiure2.data.world.syscomp.feelings.FeelingIntensity;
 import de.nb.aventiure2.data.world.syscomp.location.ILocatableGO;
 import de.nb.aventiure2.data.world.syscomp.location.LocationComp;
 import de.nb.aventiure2.data.world.syscomp.memory.IHasMemoryGO;
@@ -30,7 +31,6 @@ import de.nb.aventiure2.german.base.Nominalphrase;
 
 import static com.google.common.base.Preconditions.checkArgument;
 import static de.nb.aventiure2.data.world.gameobject.World.*;
-import static de.nb.aventiure2.data.world.syscomp.feelings.Mood.ERSCHOEPFT;
 import static de.nb.aventiure2.data.world.syscomp.state.impl.RapunzelsZauberinState.AUF_DEM_RUECKWEG_VON_RAPUNZEL;
 import static de.nb.aventiure2.data.world.syscomp.state.impl.RapunzelsZauberinState.AUF_DEM_WEG_ZU_RAPUNZEL;
 import static de.nb.aventiure2.data.world.syscomp.state.impl.RapunzelsZauberinState.BEI_RAPUNZEL_OBEN_IM_TURM;
@@ -385,7 +385,9 @@ public class RapunzelsZauberinReactionsComp
         loadSC().memoryComp().forget(RAPUNZEL, RAPUNZELS_ZAUBERIN, RAPUNZELS_GESANG,
                 RAPUNZELS_HAARE, RAPUNZELRUF);
         loadSC().feelingsComp().resetFeelingsTowards(RAPUNZEL);
-        loadSC().feelingsComp().setMood(ERSCHOEPFT);
+        loadSC().feelingsComp().upgradeTemporaereMinimalmuedigkeit(
+                FeelingIntensity.NUR_LEICHT, hours(1)
+        );
         db.counterDao().reset(VorDemTurmConnectionComp.COUNTER_ALTER_TURM_UMRUNDET);
 
         // Auch Rapunzel wird verzaubert und vergisst den Spieler!

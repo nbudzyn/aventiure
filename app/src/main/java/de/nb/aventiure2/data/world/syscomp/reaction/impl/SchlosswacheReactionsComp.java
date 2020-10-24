@@ -233,7 +233,7 @@ public class SchlosswacheReactionsComp
         stateComp.narrateAndSetState(AUFMERKSAM);
 
         world.loadSC().memoryComp().upgradeKnown(SCHLOSSWACHE);
-        sc.feelingsComp().setMood(ANGESPANNT);
+        sc.feelingsComp().requestMood(ANGESPANNT);
     }
 
     private void scHatGoldeneKugelGenommenOderHochgeworfenUndAufgefangen_wacheIstAufmerksam(
@@ -268,7 +268,7 @@ public class SchlosswacheReactionsComp
         //  ablegen bzw. kommt ggf. in den Kerker
 
         final SpielerCharakter sc = loadSC();
-        sc.feelingsComp().setMood(ANGESPANNT);
+        sc.feelingsComp().requestMood(ANGESPANNT);
 
         n.narrate(du(PARAGRAPH,
                 "legst", "die schöne goldene Kugel eingeschüchtert wieder an ihren Platz",
@@ -384,7 +384,7 @@ public class SchlosswacheReactionsComp
             return;
         }
 
-        loadSC().feelingsComp().setMood(ANGESPANNT);
+        loadSC().feelingsComp().requestMood(ANGESPANNT);
         n.narrateAlt(
                 neuerSatz(getDescription().nom()
                         + " beoabachtet dich dabei", secs(5))
@@ -439,7 +439,7 @@ public class SchlosswacheReactionsComp
                                     + "Geruch von Gebratenem an.", mins(44))
                             .beendet(PARAGRAPH));
 
-                    sc.feelingsComp().setMood(NEUTRAL);
+                    sc.feelingsComp().requestMood(NEUTRAL);
 
                     // Der Spieler weiß jetzt, dass das Schlossfest läuft
                     db.counterDao().incAndGet(COUNTER_ID_VOR_DEM_SCHLOSS_SCHLOSSFEST_KNOWN);

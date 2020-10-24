@@ -453,7 +453,7 @@ public class FroschprinzTalkingComp extends AbstractTalkingComp {
         final SubstantivischePhrase descObjectsInDenBrunnenGefallen =
                 getDescriptionSingleOrCollective(objectsInDenBrunnenGefallen);
 
-        world.loadSC().feelingsComp().setMoodMin(VOLLER_FREUDE);
+        world.loadSC().feelingsComp().requestMoodMin(VOLLER_FREUDE);
 
         n.narrate(satzanschluss("taucht seinen Kopf "
                         + "unter, sinkt hinab und über ein Weilchen kommt er wieder herauf gerudert, "

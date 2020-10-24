@@ -146,7 +146,7 @@ public class RapunzelReactionsComp
             return;
         }
 
-        loadSC().feelingsComp().setMoodMin(BEWEGT);
+        loadSC().feelingsComp().requestMoodMin(BEWEGT);
 
         if (!loadSC().memoryComp().isKnown(RAPUNZELS_GESANG)) {
             n.narrate(neuerSatz(PARAGRAPH,
@@ -205,7 +205,7 @@ public class RapunzelReactionsComp
         }
 
         if (world.isOrHasRecursiveLocation(from, IM_WALD_NAHE_DEM_SCHLOSS)) {
-            loadSC().feelingsComp().setMoodMin(NEUTRAL);
+            loadSC().feelingsComp().requestMoodMin(NEUTRAL);
             // STORY Andere und alternative Beschreibungen, wenn der SC
             //  Rapunzel schon kennengelernt hat
             n.narrate(neuerSatz("Aus dem kleinen "
@@ -259,7 +259,7 @@ public class RapunzelReactionsComp
                         ZUNEIGUNG_ABNEIGUNG, 1, FeelingIntensity.DEUTLICH);
             }
 
-            loadSC().feelingsComp().setMoodMin(ANGESPANNT);
+            loadSC().feelingsComp().requestMoodMin(ANGESPANNT);
 
             return;
         }
@@ -293,11 +293,11 @@ public class RapunzelReactionsComp
                     ZUNEIGUNG_ABNEIGUNG, 2, FeelingIntensity.STARK);
         }
 
-        loadSC().feelingsComp().setMood(BEWEGT);
+        loadSC().feelingsComp().requestMood(BEWEGT);
     }
 
     private void onSCEnter_ObenImAltenTurm_RapunzelBekannt() {
-        loadSC().feelingsComp().setMoodMin(AUFGEDREHT);
+        loadSC().feelingsComp().requestMoodMin(AUFGEDREHT);
         stateComp.setState(STILL);
 
         final ImmutableList.Builder<AbstractDescription<?>> alt = ImmutableList.builder();
@@ -684,7 +684,7 @@ public class RapunzelReactionsComp
             return;
         }
 
-        loadSC().feelingsComp().setMoodMin(BEWEGT);
+        loadSC().feelingsComp().requestMoodMin(BEWEGT);
 
         if (!loadSC().memoryComp().isKnown(RAPUNZELS_GESANG)) {
             n.narrate(neuerSatz(PARAGRAPH,
@@ -770,7 +770,7 @@ public class RapunzelReactionsComp
             return;
         }
 
-        loadSC().feelingsComp().setMoodMin(BEWEGT);
+        loadSC().feelingsComp().requestMoodMin(BEWEGT);
 
         final ImmutableList.Builder<AbstractDescription<?>> alt = ImmutableList.builder();
 

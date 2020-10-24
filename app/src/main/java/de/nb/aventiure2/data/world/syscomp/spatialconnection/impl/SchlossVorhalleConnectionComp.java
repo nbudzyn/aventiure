@@ -142,7 +142,7 @@ public class SchlossVorhalleConnectionComp extends AbstractSpatialConnectionComp
                     .undWartest();
         }
 
-        world.loadSC().feelingsComp().setMoodMin(AUFGEDREHT);
+        world.loadSC().feelingsComp().requestMoodMin(AUFGEDREHT);
 
         // FIXME: Nachts ist weniger Trubel?
         return du("gehst",

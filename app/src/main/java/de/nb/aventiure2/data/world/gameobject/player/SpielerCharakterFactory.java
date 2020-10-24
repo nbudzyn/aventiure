@@ -65,7 +65,6 @@ public class SpielerCharakterFactory {
 
     private static Biorhythmus createMuedigkeitsBiorhythmus() {
         return new Biorhythmus(
-                oClock(0, 30), FeelingIntensity.STARK,
                 oClock(2, 30), FeelingIntensity.SEHR_STARK,
                 oClock(5), FeelingIntensity.STARK,
                 oClock(7), FeelingIntensity.NUR_LEICHT,
@@ -74,13 +73,14 @@ public class SpielerCharakterFactory {
                 oClock(12, 30), FeelingIntensity.MERKLICH,
                 oClock(14, 0), FeelingIntensity.NEUTRAL,
                 oClock(17, 30), FeelingIntensity.NUR_LEICHT,
-                oClock(18, 30), FeelingIntensity.MERKLICH,
-                oClock(21), FeelingIntensity.DEUTLICH
+                oClock(18, 30), FeelingIntensity.DEUTLICH,
+                oClock(22), FeelingIntensity.STARK
         );
     }
 
     private static MuedigkeitsData createInitialMuedigkeitsData() {
         return new MuedigkeitsData(
+                FeelingIntensity.NEUTRAL,
                 new AvDateTime(1, oClock(7)),
                 new AvDateTime(1, oClock(11)),
                 new AvDateTime(0, oClock(13,

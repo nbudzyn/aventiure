@@ -20,7 +20,7 @@ import de.nb.aventiure2.data.world.base.SpatialConnection;
 import de.nb.aventiure2.data.world.base.SpatialConnectionData;
 import de.nb.aventiure2.data.world.gameobject.*;
 import de.nb.aventiure2.data.world.syscomp.description.IDescribableGO;
-import de.nb.aventiure2.data.world.syscomp.feelings.Hunger;
+import de.nb.aventiure2.data.world.syscomp.feelings.FeelingIntensity;
 import de.nb.aventiure2.data.world.syscomp.feelings.Mood;
 import de.nb.aventiure2.data.world.syscomp.location.ILocatableGO;
 import de.nb.aventiure2.data.world.syscomp.memory.Action;
@@ -38,7 +38,6 @@ import static com.google.common.collect.ImmutableList.builder;
 import static de.nb.aventiure2.data.world.base.Lichtverhaeltnisse.HELL;
 import static de.nb.aventiure2.data.world.base.SpatialConnection.con;
 import static de.nb.aventiure2.data.world.gameobject.World.*;
-import static de.nb.aventiure2.data.world.syscomp.feelings.Mood.ERSCHOEPFT;
 import static de.nb.aventiure2.data.world.syscomp.memory.Action.Type.BEWEGEN;
 import static de.nb.aventiure2.data.world.syscomp.spatialconnection.NumberOfWays.ONE_IN_ONE_OUT;
 import static de.nb.aventiure2.data.world.syscomp.spatialconnection.NumberOfWays.ONLY_WAY;
@@ -48,7 +47,6 @@ import static de.nb.aventiure2.german.base.GermanUtil.buildAufzaehlung;
 import static de.nb.aventiure2.german.base.GermanUtil.capitalize;
 import static de.nb.aventiure2.german.base.GermanUtil.uncapitalize;
 import static de.nb.aventiure2.german.base.StructuralElement.PARAGRAPH;
-import static de.nb.aventiure2.german.base.StructuralElement.SENTENCE;
 import static de.nb.aventiure2.german.base.StructuralElement.WORD;
 import static de.nb.aventiure2.german.description.AllgDescription.neuerSatz;
 import static de.nb.aventiure2.german.description.AllgDescription.satzanschluss;
@@ -187,10 +185,10 @@ public class BewegenAction<LOC_DESC extends ILocatableGO & IDescribableGO>
         upgradeNonLivingNonMovableRecursiveInventoryKnown(loadTo());
 
         if (scWirdMitEssenKonfrontiert()) {
-            narrateAndDoSCMitEssenKonfrontiert();
+            sc.feelingsComp().narrateAndDoSCMitEssenKonfrontiert();
         }
 
-        updateMood();
+        updateFeelings();
 
         sc.locationComp().narrateAndSetLocation(spatialConnection.getTo(),
                 this::narrateNonLivingMovableObjectsAndUpgradeKnownAndSetLastAction);
@@ -370,53 +368,27 @@ public class BewegenAction<LOC_DESC extends ILocatableGO & IDescribableGO>
         return false;
     }
 
-    private void narrateAndDoSCMitEssenKonfrontiert() {
-        final Hunger hunger = sc.feelingsComp().getHunger();
-        switch (hunger) {
-            case SATT:
-                return;
-            case HUNGRIG:
-                narrateAnDoSCMitEssenKonfrontiertReagiertHungrig();
-                return;
-            default:
-                throw new IllegalStateException("Unerwarteter Hunger-Wert: " + hunger);
-        }
-    }
-
-    private void narrateAnDoSCMitEssenKonfrontiertReagiertHungrig() {
-        // FIXME Hunger - sinnvoll machen... -- vollgefressen -> müde?
-
-        n.narrateAlt(
-                neuerSatz("Mmh!", noTime())
-                        .beendet(PARAGRAPH),
-                neuerSatz("Dir läuft das Wasser im Munde zusammen", noTime()),
-                du(SENTENCE, "hast", "Hunger", noTime())
-                        .undWartest(),
-                du(SENTENCE, "bist", "hungrig", noTime())
-                        .undWartest(),
-                neuerSatz("Dir fällt auf, wie hungrig du bist", noTime())
-                        .komma()
-        );
-    }
-
     /**
      * Aktualisiert den Gemütszustand des Spielercharakters. "Zeit heilt alle Wunden" - oder so
      * ähnlich.
      */
-    private void updateMood() {
-        final Mood mood = sc.feelingsComp().getMood();
+    private void updateFeelings() {
         if (oldLocation.is(SCHLOSS_VORHALLE)
                 && spatialConnection.getTo().equals(DRAUSSEN_VOR_DEM_SCHLOSS)
-                && mood == Mood.ANGESPANNT) {
-            sc.feelingsComp().setMood(Mood.NEUTRAL);
+                && sc.feelingsComp().hasMood(Mood.ANGESPANNT)) {
+            sc.feelingsComp().requestMood(Mood.NEUTRAL);
         } else if (spatialConnection.getTo().equals(BAUM_IM_GARTEN_HINTER_DER_HUETTE_IM_WALD) &&
                 db.counterDao().get(BaumFactory.HOCHKLETTERN) > 2) {
-            sc.feelingsComp().setMood(ERSCHOEPFT);
+            sc.feelingsComp().upgradeTemporaereMinimalmuedigkeit(
+                    FeelingIntensity.MERKLICH, mins(45)
+            );
         } else if (oldLocation.is(BAUM_IM_GARTEN_HINTER_DER_HUETTE_IM_WALD) &&
                 db.counterDao().get(BaumFactory.HINABKLETTERN) != 2) {
-            sc.feelingsComp().setMood(ERSCHOEPFT);
-        } else if (mood == Mood.ETWAS_GEKNICKT) {
-            sc.feelingsComp().setMood(Mood.NEUTRAL);
+            sc.feelingsComp().upgradeTemporaereMinimalmuedigkeit(
+                    FeelingIntensity.MERKLICH, mins(45)
+            );
+        } else if (sc.feelingsComp().hasMood(Mood.ETWAS_GEKNICKT)) {
+            sc.feelingsComp().requestMood(Mood.NEUTRAL);
         }
     }
 

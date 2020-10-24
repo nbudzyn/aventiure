@@ -147,7 +147,7 @@ public class WalkerTest {
     }
 
     private void doAction(final AbstractScAction playerAction) {
-        LOGGER.d("Action: " + playerAction.getName());
+        LOGGER.d("Action: " + playerAction.getName() + " [" + db.nowDao().now() + "]");
         db.runInTransaction(playerAction::doAndPassTime);
     }
 

@@ -23,6 +23,7 @@ public class Walkthrough {
 
     public static final Walkthrough FROSCHVERSPRECHEN_BIS_SCHLOSSFEST_SCHLOSS_BETRETEN =
             new Walkthrough(
+                    "Mit dem Frosch reden",
                     "Den Frosch mitnehmen",
                     "Die Kugel nehmen",
                     "Hinter dem Brunnen in die Wildnis schlagen",
@@ -31,7 +32,30 @@ public class Walkthrough {
                     "Den Frosch mitnehmen", "Die Kugel nehmen",
                     "Zum Brunnen gehen",
                     "Den Weg Richtung Schloss gehen",
+                    "In Richtung Schloss gehen",
+                    "Den schmalen Pfad aufwärtsgehen",
+                    "Um den Turm herumgehen",
+                    "Die Kugel an den Stamm eines Baumes legen",
+                    "Den Pfad zurückgehen", // Frau!
+                    "Die Frau nach ihrem Ziel fragen",
+                    "Tiefer in den Wald hineingehen",
+                    "In Richtung Schloss gehen", // Frau
+                    "Die Frau nach ihrem Ziel fragen",
+                    "Den schmalen Pfad aufwärtsgehen",
+                    "Den Pfad zurückgehen",
+                    "Den schmalen Pfad aufwärtsgehen",
+                    "In den Schatten der Bäume setzen",
+                    "Rasten",
+                    "Rasten",
+                    "Rasten",
+                    "Rasten",
+                    "Rasten",
+                    "Die Kugel nehmen",
+                    "Aus dem Schatten der Bäume treten",
+                    "Den Pfad zurückgehen",
+                    "Tiefer in den Wald hineingehen",
                     "Den überwachsenen Abzweig nehmen",
+                    "Die Kugel hinlegen", "Die Kugel nehmen",
                     "Auf den Waldweg zurückkehren",
                     "Den überwachsenen Abzweig nehmen",
                     "Um die Hütte herumgehen",
@@ -42,15 +66,6 @@ public class Walkthrough {
                     "Zur Vorderseite der Hütte gehen",
                     "Die Hütte betreten", "In das Bett legen", "Ein Nickerchen machen",
                     "Ein Nickerchen machen",
-                    "Aufstehen",
-                    "Die Hütte verlassen",
-                    "Um die Hütte herumgehen",
-                    "Auf den Baum klettern",
-                    "Zum Boden hinabklettern",
-                    "Auf den Baum klettern",
-                    "Zum Boden hinabklettern",
-                    "Zur Vorderseite der Hütte gehen",
-                    "Die Hütte betreten", "In das Bett legen", "Ein Nickerchen machen",
                     "Aufstehen",
                     "Die Hütte verlassen",
                     "Auf den Waldweg zurückkehren",
@@ -73,11 +88,11 @@ public class Walkthrough {
 
     public static final Walkthrough PRINZABFAHRT_BIS_ERSTE_RAPUNZELRUF_BEOBACHTUNG =
             new Walkthrough("In den Wald gehen",
-                    "Den schmalen Pfad aufwärtsgehen", // Zauberin spricht Vergessenszauberg
+                    "Den schmalen Pfad aufwärtsgehen",
                     "Um den Turm herumgehen",
                     "Die Kugel an den Stamm eines Baumes legen",
                     "Den Pfad zurückgehen",
-                    "Den schmalen Pfad aufwärtsgehen", // Rapunzel singt
+                    "Den schmalen Pfad aufwärtsgehen",
                     "In den Schatten der Bäume setzen",
                     "Rasten",
                     "Die Kugel nehmen",

@@ -135,7 +135,7 @@ public class HochwerfenAction<OBJ extends IDescribableGO & ILocatableGO>
 
     @NonNull
     private String emotionSatzgliedFuersHochwerfen() {
-        return sc.feelingsComp().getMood().getAdverbialeAngabe().getText();
+        return sc.feelingsComp().getAdverbialeAngabe().getText();
     }
 
     private <F extends IHasStateGO<FroschprinzState> & ILocatableGO> void
@@ -174,7 +174,7 @@ public class HochwerfenAction<OBJ extends IDescribableGO & ILocatableGO>
             return;
         }
 
-        sc.feelingsComp().setMoodMax(ETWAS_GEKNICKT);
+        sc.feelingsComp().requestMoodMax(ETWAS_GEKNICKT);
 
         final String praefix =
                 location.storingPlaceComp().getLichtverhaeltnisse() == HELL ? "Weit und breit" :
@@ -257,7 +257,7 @@ public class HochwerfenAction<OBJ extends IDescribableGO & ILocatableGO>
                     "noch einmal", secs(10))
                     .beendet(PARAGRAPH));
 
-            sc.feelingsComp().setMoodMax(UNTROESTLICH);
+            sc.feelingsComp().requestMoodMax(UNTROESTLICH);
 
             object.locationComp().narrateAndSetLocation(UNTEN_IM_BRUNNEN);
             return;
@@ -274,7 +274,7 @@ public class HochwerfenAction<OBJ extends IDescribableGO & ILocatableGO>
                 "übermütig",
                 secs(5)));
 
-        sc.feelingsComp().setMoodMax(ETWAS_GEKNICKT);
+        sc.feelingsComp().requestMoodMax(ETWAS_GEKNICKT);
 
         object.locationComp().narrateAndSetLocation(location);
     }

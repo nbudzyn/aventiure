@@ -177,7 +177,7 @@ public class EssenAction extends AbstractScAction {
                         + "sich und schickt sich an, die Halle zu verlassen",
                 secs(10)));
 
-        world.loadSC().feelingsComp().setMoodMin(ZUFRIEDEN);
+        world.loadSC().feelingsComp().requestMoodMin(ZUFRIEDEN);
         froschprinz.stateComp().narrateAndSetState(ZURUECKVERWANDELT_IN_VORHALLE);
         froschprinz.locationComp().narrateAndSetLocation(SCHLOSS_VORHALLE);
     }
@@ -185,7 +185,7 @@ public class EssenAction extends AbstractScAction {
     private void narrateAndDoSchlossfestHungrig() {
         saveSatt();
 
-        world.loadSC().feelingsComp().setMoodMin(ZUFRIEDEN);
+        world.loadSC().feelingsComp().requestMoodMin(ZUFRIEDEN);
 
         n.narrateAlt(
                 du(PARAGRAPH,

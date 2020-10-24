@@ -180,4 +180,6 @@ public class RapunzelsZauberinMovementNarrator extends SimpleMovementNarrator {
 
     // FIXME Es gibt einen Bug, wo die Zauberin vom Turm aus den SPieler verzaubert,
     //  dann - für den Spieler erlebbar hinuntersteigt und ihn noch einmal verzaubert.
+    //  Idee: Ein LivingBeing kann schlafen - wenn der SC schläft, bekommt er nichts mit.
+    //  Das _könnte_ der Narrator zentral regeln - Problem: Dann stimmen die Zähler nicht!!
 }

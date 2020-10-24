@@ -11,8 +11,7 @@ import java.util.Objects;
 import javax.annotation.concurrent.Immutable;
 
 import static com.google.common.base.Preconditions.checkArgument;
-import static de.nb.aventiure2.data.world.time.AvTime.HOURS_IN_A_DAY;
-import static de.nb.aventiure2.data.world.time.AvTime.SECS_IN_AN_HOUR;
+import static de.nb.aventiure2.data.world.time.AvTime.*;
 
 /**
  * Eine Zeitspanne, immutable
@@ -128,12 +127,37 @@ public class AvTimeSpan {
         return secs((long) (factor * secs));
     }
 
+    public boolean isBetween(@NonNull final AvTimeSpan one, @NonNull final AvTimeSpan other) {
+        if (one.longerThan(other)) {
+            return isBetween(other, one);
+        }
+
+        return longerThan(one) && shorterThan(other);
+    }
+
+    public boolean isBetweenIncluding(@NonNull final AvTimeSpan one,
+                                      @NonNull final AvTimeSpan other) {
+        if (one.longerThan(other)) {
+            return isBetween(other, one);
+        }
+
+        return longerThanOrEqual(one) && shorterThanOrEqual(other);
+    }
+
     public boolean longerThan(@NonNull final AvTimeSpan other) {
         return secs > other.secs;
     }
 
+    public boolean longerThanOrEqual(@NonNull final AvTimeSpan other) {
+        return secs >= other.secs;
+    }
+
     public boolean shorterThan(@NonNull final AvTimeSpan other) {
         return secs < other.secs;
+    }
+
+    public boolean shorterThanOrEqual(@NonNull final AvTimeSpan other) {
+        return secs <= other.secs;
     }
 
     public boolean isNoTime() {

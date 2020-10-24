@@ -6,15 +6,6 @@ import de.nb.aventiure2.german.praedikat.AdverbialeAngabeSkopusSatz;
  * Gemütszustand
  */
 public enum Mood {
-    // FIXME Abends wird man MUEDE (neuer Status, ähnlich
-    //  wie ERSCHOEPFT. Wer MUEDE ist, kann ebenfalls einschlafen).
-
-    // FIXME Man BLEIBT in aller Regel MUEDE, solange man nicht schläft -
-    //  kommt drauf an, ob welche Emotion die STAERKERE ist
-    //  Z.B. wird man nicht GEKNICKT, wenn man MUEDE ist.
-
-    // 6 / -6 wäre pathologisch
-
     VOLLER_FREUDE(FeelingIntensity.SEHR_STARK, "fröhlich"),
     GLUECKLICH(FeelingIntensity.STARK, "glücklich"),
     BEGEISTERT(FeelingIntensity.DEUTLICH, "begeistert"),
@@ -24,10 +15,10 @@ public enum Mood {
     // STORY (welche Emotion?) "versonnen"
     NEUTRAL(FeelingIntensity.NEUTRAL, "aus Langeweile"),
     ANGESPANNT(FeelingIntensity.NEUTRAL, "trotzig"),
-    ERSCHOEPFT(-FeelingIntensity.NUR_LEICHT, "erschöpft"),
     ETWAS_GEKNICKT(-FeelingIntensity.MERKLICH, "etwas geknickt"),
-    // TODO Alternativen: betrübt, ...
     VERUNSICHERT(-FeelingIntensity.MERKLICH, "verunsichert"),
+    BETRUEBT(-FeelingIntensity.DEUTLICH, "betrübt"),
+    TRAURIG(-FeelingIntensity.STARK, "traurig"),
     UNTROESTLICH(-FeelingIntensity.SEHR_STARK, "voller Trauer");
 
     private final int gradDerFreude;
@@ -38,6 +29,8 @@ public enum Mood {
     }
 
     Mood(final int gradDerFreude, final AdverbialeAngabeSkopusSatz adverbialeAngabe) {
+        FeelingIntensity.checkValue(Math.abs(gradDerFreude));
+
         this.gradDerFreude = gradDerFreude;
         this.adverbialeAngabe = adverbialeAngabe;
     }
@@ -59,5 +52,16 @@ public enum Mood {
      */
     public boolean isEmotional() {
         return Math.abs(gradDerFreude) > 1;
+    }
+
+    /**
+     * Ob der Spielercharakter gerade "sehr emotional" ist.
+     */
+    public boolean isSehrEmotional() {
+        return Math.abs(gradDerFreude) > 3;
+    }
+
+    int getGradDerFreude() {
+        return gradDerFreude;
     }
 }

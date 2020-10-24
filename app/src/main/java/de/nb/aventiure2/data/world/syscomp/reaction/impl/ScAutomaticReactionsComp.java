@@ -3,17 +3,11 @@ package de.nb.aventiure2.data.world.syscomp.reaction.impl;
 import de.nb.aventiure2.data.database.AvDatabase;
 import de.nb.aventiure2.data.world.gameobject.*;
 import de.nb.aventiure2.data.world.syscomp.feelings.FeelingsComp;
-import de.nb.aventiure2.data.world.syscomp.feelings.Hunger;
 import de.nb.aventiure2.data.world.syscomp.reaction.AbstractReactionsComp;
 import de.nb.aventiure2.data.world.syscomp.reaction.interfaces.ITimePassedReactions;
 import de.nb.aventiure2.data.world.time.*;
 
 import static de.nb.aventiure2.data.world.gameobject.World.*;
-import static de.nb.aventiure2.data.world.syscomp.feelings.Hunger.SATT;
-import static de.nb.aventiure2.data.world.time.AvTimeSpan.*;
-import static de.nb.aventiure2.german.base.StructuralElement.PARAGRAPH;
-import static de.nb.aventiure2.german.description.AllgDescription.neuerSatz;
-import static de.nb.aventiure2.german.description.DuDescriptionBuilder.du;
 
 /**
  * "Automatische" Reaktionen des Spielercharakters, z.B. darauf, dass Zeit vergeht.
@@ -32,39 +26,6 @@ public class ScAutomaticReactionsComp
 
     @Override
     public void onTimePassed(final AvDateTime startTime, final AvDateTime endTime) {
-        final Hunger hungerBisher = feelingsComp.getHunger();
-
-        db.nowDao().setNow(endTime);
-
-        feelingsComp.updateHunger();
-
-        if (hungerBisher == SATT && feelingsComp.getHunger() != SATT) {
-            scWirdHungrig();
-        }
-    }
-
-    private void scWirdHungrig() {
-        n.narrateAlt(
-                du(PARAGRAPH, "fühlst", "dich allmählich etwas hungrig",
-                        noTime())
-                        .undWartest(),
-                neuerSatz("Wann hast du eigentlich zuletzt etwas gegessen? Das "
-                                + "muss schon eine Weile her sein.",
-                        noTime()),
-                du(PARAGRAPH, "bekommst", "so langsam Hunger",
-                        "so langsam",
-                        noTime()),
-                neuerSatz(PARAGRAPH, "Allmählich überkommt dich der Hunger",
-                        noTime()),
-                neuerSatz(PARAGRAPH, "Allmählich regt sich wieder der Hunger",
-                        noTime())
-                        .undWartest(),
-                neuerSatz("Dir fällt auf, dass du Hunger hast",
-                        noTime())
-                        .komma(),
-                du("empfindest", "wieder leichten Hunger",
-                        noTime())
-                        .undWartest()
-        );
+        feelingsComp.onTimePassed(startTime, endTime);
     }
 }

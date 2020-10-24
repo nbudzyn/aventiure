@@ -12,6 +12,15 @@ import de.nb.aventiure2.data.world.base.AbstractStatefulComponent;
 import de.nb.aventiure2.data.world.base.GameObject;
 import de.nb.aventiure2.data.world.base.GameObjectId;
 import de.nb.aventiure2.data.world.time.*;
+import de.nb.aventiure2.german.praedikat.AdverbialeAngabeSkopusSatz;
+
+import static de.nb.aventiure2.data.world.gameobject.World.*;
+import static de.nb.aventiure2.data.world.syscomp.feelings.Hunger.SATT;
+import static de.nb.aventiure2.data.world.time.AvTimeSpan.*;
+import static de.nb.aventiure2.german.base.StructuralElement.PARAGRAPH;
+import static de.nb.aventiure2.german.base.StructuralElement.SENTENCE;
+import static de.nb.aventiure2.german.description.AllgDescription.neuerSatz;
+import static de.nb.aventiure2.german.description.DuDescriptionBuilder.du;
 
 /**
  * Component for a {@link GameObject}: The game object
@@ -80,63 +89,85 @@ public class FeelingsComp extends AbstractStatefulComponent<FeelingsPCD> {
                 initialFeelingsTowards);
     }
 
+    public AdverbialeAngabeSkopusSatz getAdverbialeAngabe() {
+        if (getMuedigkeit() > Math.abs(getMood().getGradDerFreude())) {
+            return getPcd().getMuedigkeitsData().getAdverbialeAngabe();
+        }
+
+        return getMood().getAdverbialeAngabe();
+    }
+
     public boolean hasMood(final Mood mood) {
         return getMood() == mood;
     }
 
-    public Mood getMood() {
+    public boolean isEmotional() {
+        return getMood().isEmotional();
+    }
+
+    public boolean isSehrEmotional() {
+        return getMood().isSehrEmotional();
+    }
+
+    public boolean isFroehlicherAls(final Mood other) {
+        return getMood().isFroehlicherAls(other);
+    }
+
+    public boolean isTraurigerAls(final Mood other) {
+        return getMood().isTraurigerAls(other);
+    }
+
+    private Mood getMood() {
         return getPcd().getMood();
     }
 
-    public void setMoodMin(final Mood mood) {
-        if (getMood().isTraurigerAls(mood)) {
-            getPcd().setMood(mood);
-        }
+    public void requestMoodMin(final Mood mood) {
+        getPcd().requestMoodMin(mood);
     }
 
-    public void setMoodMax(final Mood mood) {
-        if (!getMood().isTraurigerAls(mood)) {
-            getPcd().setMood(mood);
-        }
+    public void requestMoodMax(final Mood mood) {
+        getPcd().requestMoodMax(mood);
     }
 
-    public void setMood(final Mood mood) {
-        getPcd().setMood(mood);
+    public void requestMood(final Mood mood) {
+        getPcd().requestMood(mood);
     }
 
     public Hunger getHunger() {
         return getPcd().getHunger();
     }
 
-    // FIXME getMuedigkeit()  verwenden, z.B. für die Hütte
+    public void ausgeschlafen(final AvTimeSpan ausschlafenEffektHaeltVorFuer) {
+        final AvDateTime now = nowDao.now();
+        final int muedigkeitGemaessBiorhythmus = muedigkeitsBiorythmus.get(now.getTime());
 
-    // FIXME Z.B ausschlafenEffektHaeltVorBis 2 Stunden nach dem Schlafen
-    //  (Je nachdem, wie lange man geschlafen hat. Aber irgendwann
-    //  siegt der Biorythmus! Vermutlich nie mehr als 4 Stunden)
+        getPcd().ausgeschlafen(now, ausschlafenEffektHaeltVorFuer, muedigkeitGemaessBiorhythmus);
+    }
+
+    public void upgradeTemporaereMinimalmuedigkeit(
+            final int temporaereMinimalmuedigkeit, final AvTimeSpan duration) {
+        final AvDateTime now = nowDao.now();
+        final int muedigkeitGemaessBiorhythmus = muedigkeitsBiorythmus.get(now.getTime());
+
+        getPcd().upgradeTemporaereMinimalmuedigkeit(
+                now, temporaereMinimalmuedigkeit, duration, muedigkeitGemaessBiorhythmus);
+    }
 
     /**
      * Gibt die Müdigkeit als positiver {@link FeelingIntensity}-Wert zurück.
      * {@link FeelingIntensity#NEUTRAL} meint <i>wach</i>.
      */
     public int getMuedigkeit() {
-        int res = getPcd().getMuedigkeit(nowDao.now());
-
-        if (!geradeAusgeschlafen()) {
-            res = Math.min(res, muedigkeitsBiorythmus.get(nowDao.now().getTime()));
-        }
-
-        return res;
+        return getPcd().getMuedigkeit();
     }
 
-    /**
-     * Gibt zurück, ob das Feeling Being gerade ausgeschlafen hat. In dieser Zeit
-     * greifen weder biorythmische noch temporäre Müdigkeit.
-     */
-    private boolean geradeAusgeschlafen() {
-        return nowDao.now().isBefore(getPcd().getAusschlafenEffektHaeltVorBis());
+    private void updateMuedigkeit() {
+        final int muedigkeitGemaeßBiorhythmus = muedigkeitsBiorythmus.get(nowDao.now().getTime());
+
+        getPcd().updateMuedigkeit(nowDao.now(), muedigkeitGemaeßBiorhythmus);
     }
 
-    public void updateHunger() {
+    private void updateHunger() {
         getPcd().updateHunger(nowDao.now());
     }
 
@@ -218,5 +249,79 @@ public class FeelingsComp extends AbstractStatefulComponent<FeelingsPCD> {
         }
 
         return defaultFeelingsTowards.get(type);
+    }
+
+    /**
+     * Diese Methode muss für jedes Feeling Being aufgerufen werden, wenn Zeit vergeht!
+     */
+    public void onTimePassed(final AvDateTime startTime,
+                             final AvDateTime endTime) {
+        nowDao.setNow(endTime);
+
+        final Hunger hungerBisher = getHunger();
+
+        updateHunger();
+
+        if (getGameObjectId() == SPIELER_CHARAKTER &&
+                hungerBisher == SATT && getHunger() != SATT) {
+            narrateScWirdHungrig();
+        }
+
+        updateMuedigkeit();
+        // FIXME Hier Texte zur Müdigkeit erzeugen (retrofitten!)
+    }
+
+    private void narrateScWirdHungrig() {
+        n.narrateAlt(
+                du(PARAGRAPH, "fühlst", "dich allmählich etwas hungrig",
+                        noTime())
+                        .undWartest(),
+                neuerSatz("Wann hast du eigentlich zuletzt etwas gegessen? Das "
+                                + "muss schon eine Weile her sein.",
+                        noTime()),
+                du(PARAGRAPH, "bekommst", "so langsam Hunger",
+                        "so langsam",
+                        noTime()),
+                neuerSatz(PARAGRAPH, "Allmählich überkommt dich der Hunger",
+                        noTime()),
+                neuerSatz(PARAGRAPH, "Allmählich regt sich wieder der Hunger",
+                        noTime())
+                        .undWartest(),
+                neuerSatz("Dir fällt auf, dass du Hunger hast",
+                        noTime())
+                        .komma(),
+                du("empfindest", "wieder leichten Hunger",
+                        noTime())
+                        .undWartest()
+        );
+    }
+
+    public void narrateAndDoSCMitEssenKonfrontiert() {
+        final Hunger hunger = getHunger();
+        switch (hunger) {
+            case SATT:
+                return;
+            case HUNGRIG:
+                narrateAnDoSCMitEssenKonfrontiertReagiertHungrig();
+                return;
+            default:
+                throw new IllegalStateException("Unerwarteter Hunger-Wert: " + hunger);
+        }
+    }
+
+    private void narrateAnDoSCMitEssenKonfrontiertReagiertHungrig() {
+        // FIXME Hunger - sinnvoll machen... -- vollgefressen -> müde?
+
+        n.narrateAlt(
+                neuerSatz("Mmh!", noTime())
+                        .beendet(PARAGRAPH),
+                neuerSatz("Dir läuft das Wasser im Munde zusammen", noTime()),
+                du(SENTENCE, "hast", "Hunger", noTime())
+                        .undWartest(),
+                du(SENTENCE, "bist", "hungrig", noTime())
+                        .undWartest(),
+                neuerSatz("Dir fällt auf, wie hungrig du bist", noTime())
+                        .komma()
+        );
     }
 }

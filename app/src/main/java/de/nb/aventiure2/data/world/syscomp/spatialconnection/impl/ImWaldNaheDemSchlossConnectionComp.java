@@ -28,7 +28,6 @@ import static de.nb.aventiure2.data.world.base.Lichtverhaeltnisse.DUNKEL;
 import static de.nb.aventiure2.data.world.base.Lichtverhaeltnisse.HELL;
 import static de.nb.aventiure2.data.world.base.SpatialConnection.con;
 import static de.nb.aventiure2.data.world.gameobject.World.*;
-import static de.nb.aventiure2.data.world.syscomp.feelings.Mood.ERSCHOEPFT;
 import static de.nb.aventiure2.data.world.syscomp.state.impl.SchlossfestState.BEGONNEN;
 import static de.nb.aventiure2.data.world.time.AvTimeSpan.*;
 import static de.nb.aventiure2.data.world.time.Tageszeit.*;
@@ -129,13 +128,11 @@ public class ImWaldNaheDemSchlossConnectionComp extends AbstractSpatialConnectio
         // FIXME Lichtverhältnisse auch bei den anderen Aktionen berücksichtigen,
         //  insbesondere nach derselben Logik (z.B. "im Schloss ist es immer hell",
         //  "eine Fackel bringt auch nachts Licht" etc.)
-        // FIXME gegen Abend wird man müde und kann auf jeden Fall einschlafen
-        // STORY Wenn man schläft, "verpasst" man Reactions, die man dann später
+        // FIXME Wenn man schläft, "verpasst" man Reactions, die man dann später
         //  (beim Aufwachen) merkt ("Der Frosch ist verschwunden".) Man speichert
         //  am besten den Stand VOR dem Einschlafen und vergleicht mit dem Stand NACH dem
         //  Einschlafen.
         // STORY Nachts sieht man nicht so gut - sieht man alle Objects?
-        // FIXME Nachts ist man hauptsächlich MUEDE / ERSCHOEPFT
     }
 
     @NonNull
@@ -167,8 +164,6 @@ public class ImWaldNaheDemSchlossConnectionComp extends AbstractSpatialConnectio
                     .beendet(PARAGRAPH);
         }
         if (newLocationKnown == UNKNOWN && lichtverhaeltnisse == DUNKEL) {
-            world.loadSC().feelingsComp().setMood(ERSCHOEPFT);
-
             return neuerSatz("Trotz der Dunkelheit nimmst du den schmalen Pfad, "
                     + "der sich lange durch "
                     + "den nächtlichen Wald aufwärts windet. "
