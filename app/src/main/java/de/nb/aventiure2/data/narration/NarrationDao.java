@@ -87,8 +87,7 @@ public abstract class NarrationDao {
         // TODO Hier könnte es textuelle Duplikate geben - sowohl zwischen den
         //  NarrationAdditions einer AbstractDescriptions also auch zwischen den NarrationAdditions
         //  verschiedener AbstractDescriptions. Die Duplikate kosten vermutlich viel Zeit -
-        //  also sollte man sie herausfiltern. Da nach den ganzen NarrationAddition-Prüfungen
-        //  am Ende wieder die bestDesc relevant ist, ist das nicht trivial.
+        //  also sollte man sie herausfiltern.
 
         for (final AbstractDescription<?> descAlternative : alternatives) {
             final List<NarrationAddition> narrationBuildersForAlternative =
@@ -104,6 +103,36 @@ public abstract class NarrationDao {
         }
 
         narrate(narrationSource, bestNarrationAddition);
+    }
+
+    TimedDescription chooseBest(final Collection<TimedDescription> alternatives) {
+        checkArgument(alternatives.size() > 0, "No alternatives");
+
+        final Narration initialNarration = requireNarration();
+
+        TimedDescription bestDesc = null;
+        float bestScore = Float.NEGATIVE_INFINITY;
+
+        // TODO Hier könnte es textuelle Duplikate geben - sowohl zwischen den
+        //  NarrationAdditions einer AbstractDescriptions also auch zwischen den NarrationAdditions
+        //  verschiedener AbstractDescriptions. Die Duplikate kosten vermutlich viel Zeit -
+        //  also sollte man sie herausfiltern. Da nach den ganzen NarrationAddition-Prüfungen
+        //  am Ende wieder die bestDesc relevant ist, ist das nicht trivial.
+
+        for (final TimedDescription descAlternative : alternatives) {
+            final List<NarrationAddition> narrationBuildersForAlternative =
+                    toNarrationAdditions(descAlternative.getDescription(),
+                            initialNarration);
+            final IndexAndScore indexAndScore = chooseNextIndexAndScoreFrom(
+                    initialNarration,
+                    narrationBuildersForAlternative);
+            if (indexAndScore.getScore() > bestScore) {
+                bestScore = indexAndScore.getScore();
+                bestDesc = descAlternative;
+            }
+        }
+
+        return bestDesc;
     }
 
     // TODO Bei narrate() eine eingebettete Sprache erlauben:

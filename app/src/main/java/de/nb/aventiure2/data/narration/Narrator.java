@@ -98,29 +98,31 @@ public class Narrator {
     }
 
     public void narrateAlt(final Collection<TimedDescription> alternatives) {
+        doTemporaryNarration();
+
         // FIXME Den vorherigen Satz manchmal für die Textausgabe
         //  berücksichtigen. Z.B. "Unten angekommen..." oder
         //  "Du kommst, siehst und siegst"
 
         // STORY "Als du unten angekommen bist..."
 
+        // Wenn nicht:
+
         final Set<AvTimeSpan> timesElapsed = alternatives.stream()
                 .map(TimedDescription::getTimeElapsed)
                 .collect(Collectors.toSet());
+
+        final Collection<TimedDescription> bestAlternatives;
         if (timesElapsed.size() != 1) {
-            // Die Alternativen dauern unterschiedlich lange! Leider müssen wir sofort
+            // Die Alternativen dauern unterschiedlich lange! Dann müssen wir leider sofort
             // eine Alternative auswählen - ansonsten ist nicht klar, wieviel Zeit
             // vergehen muss!
-            doTemporaryNarration();
-
-            final AvTimeSpan timeElapsed = dao.narrateAltTimedDescriptions(
-                    narrationSourceJustInCase,
-                    alternatives);
-            nowDao.passTime(timeElapsed);
-            return;
+            final TimedDescription bestDescription = dao.chooseBest(alternatives);
+            bestAlternatives = ImmutableList.of(bestDescription);
+        } else {
+            // Wir können alle Alternativen temporär behalten!
+            bestAlternatives = alternatives;
         }
-
-        doTemporaryNarration();
 
         temporaryNarration = new TemporaryNarration(narrationSourceJustInCase,
                 alternatives.stream()
