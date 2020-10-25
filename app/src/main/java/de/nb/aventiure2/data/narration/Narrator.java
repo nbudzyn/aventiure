@@ -26,6 +26,7 @@ import de.nb.aventiure2.german.description.AbstractDescription;
 import de.nb.aventiure2.german.description.TimedDescription;
 
 import static de.nb.aventiure2.data.narration.Narration.NarrationSource.REACTIONS;
+import static de.nb.aventiure2.data.world.time.AvTimeSpan.*;
 import static java.util.Arrays.asList;
 
 public class Narrator {
@@ -98,15 +99,47 @@ public class Narrator {
     }
 
     public void narrateAlt(final Collection<TimedDescription> alternatives) {
-        doTemporaryNarration();
+        if (temporaryNarration != null) {
+            // Hier gibt es zwei Möglichkeiten:
+            // 1. Die temporary Narration (wenn es eine gibt) und die (neuen) alternatives werden
+            //  gemeinsam in einen Text gegossen, etwa in der Art
+            //  "Als du weiter durch den Wald gehst, kommt dir eine Frau entgegen"
+            //  (Das geht nicht immer.)
+            // 2.Oder es wird nur die temporary Narration erzählt und die alternatives
+            //  werden temporär gespeichert:
+            //  "Du gehst weiter durch den Wald".
 
-        // FIXME Den vorherigen Satz manchmal für die Textausgabe
-        //  berücksichtigen. Z.B. "Unten angekommen..." oder
-        //  "Du kommst, siehst und siegst"
+            final NarrationAdditionWithScoreAndElapsedTime bestTemporaryNarrationAlone =
+                    dao.chooseBest(
+                            // Zeit spielt hier keine Rolle
+                            temporaryNarration.getDescriptionAlternatives().stream()
+                                    .map(d -> new TimedDescription(d, noTime()))
+                                    .collect(ImmutableList.toImmutableList())
+                    );
 
-        // STORY "Als du unten angekommen bist..."
+            // FIXME Den vorherigen Satz manchmal für die Textausgabe
+            //  berücksichtigen. Z.B. "Unten angekommen..." oder
+            //  "Du kommst, siehst und siegst"
 
-        // Wenn nicht:
+            // STORY "Als du unten angekommen bist..."
+            @Nullable final NarrationAdditionWithScoreAndElapsedTime bestCombined
+                    = null; // FIXME
+
+            if (bestCombined != null &&
+                    bestCombined.score > bestTemporaryNarrationAlone.score) {
+                // Time of temporaryNarration has already been accounted for.
+                dao.narrate(narrationSourceJustInCase, bestCombined.narrationAddition);
+                temporaryNarration = null;
+                nowDao.passTime(bestTemporaryNarrationAlone.timeElapsed);
+                return;
+            }
+
+            // Wenn scoreCombinedDescription <= scoreTemporaryNarrationAlone:
+
+            // Time of temporaryNarration has already been accounted for.
+            dao.narrate(temporaryNarration.getNarrationSource(),
+                    bestTemporaryNarrationAlone.narrationAddition);
+        }
 
         final Set<AvTimeSpan> timesElapsed = alternatives.stream()
                 .map(TimedDescription::getTimeElapsed)
@@ -114,11 +147,16 @@ public class Narrator {
 
         final Collection<TimedDescription> bestAlternatives;
         if (timesElapsed.size() != 1) {
-            // Die Alternativen dauern unterschiedlich lange! Dann müssen wir leider sofort
-            // eine Alternative auswählen - ansonsten ist nicht klar, wieviel Zeit
-            // vergehen muss!
-            final TimedDescription bestDescription = dao.chooseBest(alternatives);
-            bestAlternatives = ImmutableList.of(bestDescription);
+            // Die Alternativen dauern möglicherweise unterschiedlich lange! Dann müssen wir leider sofort
+            // auf Alternativen mit gleicher Dauer beschränken - ansonsten ist
+            // nicht klar, wieviel Zeit jetzt (!) vergehen muss!
+            final NarrationAdditionWithScoreAndElapsedTime best =
+                    dao.chooseBest(alternatives);
+
+            bestAlternatives =
+                    alternatives.stream()
+                            .filter(d -> d.getTimeElapsed().equals(best.timeElapsed))
+                            .collect(Collectors.toSet());
         } else {
             // Wir können alle Alternativen temporär behalten!
             bestAlternatives = alternatives;

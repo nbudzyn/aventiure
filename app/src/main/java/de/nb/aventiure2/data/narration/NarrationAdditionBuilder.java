@@ -4,7 +4,12 @@ import androidx.annotation.NonNull;
 
 import com.google.common.collect.ImmutableList;
 
+import java.util.Collection;
 import java.util.List;
+import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.function.Function;
+import java.util.function.Predicate;
 
 import de.nb.aventiure2.german.base.StructuralElement;
 import de.nb.aventiure2.german.description.AbstractDescription;
@@ -19,6 +24,23 @@ import static de.nb.aventiure2.german.base.StructuralElement.max;
  * Builds {@link NarrationAddition}s from {@link AbstractDescription}s.
  */
 class NarrationAdditionBuilder {
+    /**
+     * Builds alternative narration additions from these alternative
+     * {@link AbstractDescription}s, always based on the given initial narration.
+     */
+    static List<NarrationAddition> toNarrationAdditions(
+            final Collection<? extends AbstractDescription<?>> altDescriptions,
+            final Narration initialNarration) {
+        return altDescriptions.stream()
+                .flatMap(d -> toNarrationAdditions(d, initialNarration).stream())
+                .filter(distinctByKey(NarrationAddition::getText))
+                .collect(ImmutableList.toImmutableList());
+    }
+
+    /**
+     * Builds alternative narration additions from an {@link AbstractDescription}, based
+     * on the given initial narration.
+     */
     static List<NarrationAddition> toNarrationAdditions(
             final AbstractDescription<?> desc,
             final Narration initialNarration) {
@@ -87,7 +109,7 @@ class NarrationAdditionBuilder {
         return alternatives.build();
     }
 
-    static NarrationAddition toHauptsatzNarrationAddition(
+    private static NarrationAddition toHauptsatzNarrationAddition(
             final StructuralElement startsNew,
             @NonNull final AbstractDescription<?> desc) {
         final DescriptionParams params = desc.copyParams();
@@ -97,7 +119,7 @@ class NarrationAdditionBuilder {
                 params, desc.getDescriptionHauptsatz());
     }
 
-    static NarrationAddition toHauptsatzMitSpeziellemVorfeldNarrationAddition(
+    private static NarrationAddition toHauptsatzMitSpeziellemVorfeldNarrationAddition(
             final StructuralElement startsNew,
             @NonNull final AbstractDuDescription<?, ?> desc) {
         final DescriptionParams params = desc.copyParams();
@@ -117,4 +139,10 @@ class NarrationAdditionBuilder {
                 // die Vorgabe WORD soll dann erhalten bleiben
                 desc.getStartsNew();
     }
+
+    private static <T> Predicate<T> distinctByKey(final Function<? super T, ?> keyExtractor) {
+        final Set<Object> seen = ConcurrentHashMap.newKeySet();
+        return t -> seen.add(keyExtractor.apply(t));
+    }
+
 }

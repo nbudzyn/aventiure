@@ -12,6 +12,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
 
+import de.nb.aventiure2.data.world.time.*;
 import de.nb.aventiure2.german.description.AbstractDescription;
 import de.nb.aventiure2.german.description.TimedDescription;
 
@@ -31,43 +32,58 @@ public abstract class NarrationDao {
 
     void narrateAltDescriptions(final Narration.NarrationSource narrationSource,
                                 final Collection<AbstractDescription<?>> alternatives) {
-        checkArgument(alternatives.size() > 0,
-                "No alternatives");
-
-        final Narration initialNarration = requireNarration();
-
-        float bestScore = Float.NEGATIVE_INFINITY;
-        NarrationAddition bestNarrationAddition = null;
-
-        // TODO Hier könnte es textuelle Duplikate geben - sowohl zwischen den
-        //  NarrationAdditions einer AbstractDescriptions also auch zwischen den NarrationAdditions
-        //  verschiedener AbstractDescriptions. Die Duplikate kosten vermutlich viel Zeit -
-        //  also sollte man sie herausfiltern.
-
-        for (final AbstractDescription<?> descAlternative : alternatives) {
-            final List<NarrationAddition> narrationBuildersForAlternative =
-                    NarrationAdditionBuilder.toNarrationAdditions(
-                            descAlternative, initialNarration);
-            final IndexAndScore indexAndScore = chooseNextIndexAndScoreFrom(
-                    initialNarration,
-                    narrationBuildersForAlternative);
-            if (indexAndScore.getScore() > bestScore) {
-                bestScore = indexAndScore.getScore();
-                bestNarrationAddition =
-                        narrationBuildersForAlternative.get(indexAndScore.getIndex());
-            }
-        }
-
-        narrate(narrationSource, bestNarrationAddition);
-    }
-
-    TimedDescription chooseBest(final Collection<TimedDescription> alternatives) {
         checkArgument(alternatives.size() > 0, "No alternatives");
 
         final Narration initialNarration = requireNarration();
 
-        TimedDescription bestDesc = null;
+        final List<NarrationAddition> narrationAdditionAlternatives =
+                NarrationAdditionBuilder.toNarrationAdditions(
+                        alternatives, initialNarration);
+
+        narrateAltNarrationAdditions(narrationSource, narrationAdditionAlternatives,
+                initialNarration);
+    }
+
+    private void narrateAltNarrationAdditions(final Narration.NarrationSource narrationSource,
+                                              final List<NarrationAddition> alternatives,
+                                              final Narration initialNarration) {
+        checkArgument(alternatives.size() > 0, "No alternatives");
+
+        final NarrationAddition bestNarrationAddition =
+                getBestNarrationAddition(alternatives, initialNarration);
+
+        narrate(narrationSource, bestNarrationAddition);
+    }
+
+    @Nullable
+    private static NarrationAddition getBestNarrationAddition(
+            final List<NarrationAddition> alternatives,
+            final Narration initialNarration) {
         float bestScore = Float.NEGATIVE_INFINITY;
+        NarrationAddition bestNarrationAddition = null;
+
+        for (final NarrationAddition narrationAdditionAlternative : alternatives) {
+            final float score = TextAdditionEvaluator.evaluateAddition(
+                    initialNarration.getText(),
+                    narrationAdditionAlternative.getText());
+
+            if (score > bestScore) {
+                bestScore = score;
+                bestNarrationAddition = narrationAdditionAlternative;
+            }
+        }
+        return bestNarrationAddition;
+    }
+
+    NarrationAdditionWithScoreAndElapsedTime chooseBest(
+            final Collection<TimedDescription> alternatives) {
+        checkArgument(alternatives.size() > 0, "No alternatives");
+
+        final Narration initialNarration = requireNarration();
+
+        NarrationAddition bestNarrationAddition = null;
+        float bestScore = Float.NEGATIVE_INFINITY;
+        AvTimeSpan bestTimeElapsed = null;
 
         // TODO Hier könnte es textuelle Duplikate geben - sowohl zwischen den
         //  NarrationAdditions einer AbstractDescriptions also auch zwischen den NarrationAdditions
@@ -76,20 +92,23 @@ public abstract class NarrationDao {
         //  am Ende wieder die bestDesc relevant ist, ist das nicht trivial.
 
         for (final TimedDescription descAlternative : alternatives) {
-            final List<NarrationAddition> narrationBuildersForAlternative =
+            final List<NarrationAddition> narrationAdditions =
                     NarrationAdditionBuilder.toNarrationAdditions(
                             descAlternative.getDescription(),
                             initialNarration);
-            final IndexAndScore indexAndScore = chooseNextIndexAndScoreFrom(
+            final IndexAndScore indexAndScore = calcBest(
                     initialNarration,
-                    narrationBuildersForAlternative);
-            if (indexAndScore.getScore() > bestScore) {
-                bestScore = indexAndScore.getScore();
-                bestDesc = descAlternative;
+                    narrationAdditions);
+            if (indexAndScore.score > bestScore) {
+                bestScore = indexAndScore.score;
+                bestNarrationAddition = narrationAdditions.get(indexAndScore.index);
+                bestTimeElapsed = descAlternative.getTimeElapsed();
             }
         }
 
-        return bestDesc;
+        return new NarrationAdditionWithScoreAndElapsedTime(
+                bestNarrationAddition, bestScore, bestTimeElapsed
+        );
     }
 
     // TODO Bei narrate() eine eingebettete Sprache erlauben:
@@ -139,25 +158,21 @@ public abstract class NarrationDao {
     }
 
     /**
-     * Wählt einen {@link NarrationAddition} aus den Alternativen und gibt den Indes zurück -
+     * Wählt einen {@link NarrationAddition} aus den Alternativen und gibt den Score zurück -
      * versucht dabei vor allem, Wiederholgungen mit der unmittelbar zuvor geschriebenen
      * Narration zu vermeiden.
      */
-    @NonNull
-    private static IndexAndScore chooseNextIndexAndScoreFrom(
+    private static IndexAndScore calcBest(
             final Narration initialNarration,
             final Collection<NarrationAddition> alternatives) {
-        return chooseNextIndexAndScoreFrom(initialNarration,
+        return calcBest(initialNarration,
                 alternatives.toArray(new NarrationAddition[0]));
     }
 
     /**
-     * Wählt einen {@link NarrationAddition} aus den Alternativen und gibt den Indes zurück -
-     * versucht dabei vor allem, Wiederholgungen mit der unmittelbar zuvor geschriebenen
-     * Narration zu vermeiden.
+     * Wählt einen {@link NarrationAddition} aus den Alternativen und gibt den Score zurück.
      */
-    @NonNull
-    private static IndexAndScore chooseNextIndexAndScoreFrom(
+    private static IndexAndScore calcBest(
             final Narration initialNarration,
             final NarrationAddition... alternatives) {
         checkArgument(alternatives.length > 0,
