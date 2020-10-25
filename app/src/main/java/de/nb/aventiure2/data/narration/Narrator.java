@@ -21,6 +21,7 @@ import de.nb.aventiure2.german.base.PhorikKandidat;
 import de.nb.aventiure2.german.base.StructuralElement;
 import de.nb.aventiure2.german.description.AbstractDescription;
 
+import static de.nb.aventiure2.data.narration.Narration.NarrationSource.REACTIONS;
 import static java.util.Arrays.asList;
 
 public class Narrator {
@@ -90,7 +91,15 @@ public class Narrator {
     }
 
     public boolean lastNarrationWasFromReaction() {
-        return dao.requireNarration().lastNarrationWasFomReaction();
+        return getLastNarrationSource() == REACTIONS;
+    }
+
+    private Narration.NarrationSource getLastNarrationSource() {
+        if (temporaryNarration != null) {
+            return temporaryNarration.getNarrationSource();
+        }
+
+        return dao.requireNarration().getLastNarrationSource();
     }
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
@@ -215,7 +224,8 @@ public class Narrator {
     private void pushTempDescription() {
         if (temporaryNarration != null) {
             final Narration initialNarration = dao.requireNarration();
-            dao.narrateAlt(narrationSourceJustInCase,
+            dao.narrateAlt(
+                    temporaryNarration.getNarrationSource(),
                     temporaryNarration.getDescriptionAlternatives(),
                     initialNarration);
             temporaryNarration = null;

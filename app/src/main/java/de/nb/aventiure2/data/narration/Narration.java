@@ -15,8 +15,6 @@ import de.nb.aventiure2.german.base.Personalpronomen;
 import de.nb.aventiure2.german.base.PhorikKandidat;
 import de.nb.aventiure2.german.base.StructuralElement;
 
-import static de.nb.aventiure2.data.narration.Narration.NarrationSource.REACTIONS;
-
 /**
  * The text of the narration, together with state relevant for going on with the narration.
  * Only things that have already happened.
@@ -363,14 +361,6 @@ public class Narration {
         final String firstCharAdditional =
                 addition.trim().substring(0, 1);
         return !".!?".contains(firstCharAdditional);
-    }
-
-    boolean lastNarrationWasFomReaction() {
-        return isLastNarrationSource(REACTIONS);
-    }
-
-    private boolean isLastNarrationSource(final NarrationSource narrationSource) {
-        return getLastNarrationSource() == narrationSource;
     }
 
     NarrationSource getLastNarrationSource() {

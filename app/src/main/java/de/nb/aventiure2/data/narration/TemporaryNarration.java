@@ -16,11 +16,19 @@ import de.nb.aventiure2.german.description.AbstractDescription;
  */
 @Immutable
 public class TemporaryNarration {
+    private final Narration.NarrationSource narrationSource;
     @Nonnull
     private final Collection<AbstractDescription<?>> descriptionAlternatives;
 
-    public TemporaryNarration(final Collection<AbstractDescription<?>> descriptionAlternatives) {
+    public TemporaryNarration(
+            final Narration.NarrationSource narrationSource,
+            final Collection<AbstractDescription<?>> descriptionAlternatives) {
+        this.narrationSource = narrationSource;
         this.descriptionAlternatives = descriptionAlternatives;
+    }
+
+    public Narration.NarrationSource getNarrationSource() {
+        return narrationSource;
     }
 
     @Nullable

@@ -41,7 +41,7 @@ public abstract class NarrationDao {
         nowDao = db.nowDao();
     }
 
-    void narrateAlt(final Narration.NarrationSource narrationSourceJustInCase,
+    void narrateAlt(final Narration.NarrationSource narrationSource,
                     final Collection<AbstractDescription<?>> alternatives,
                     final Narration initialNarration) {
         checkArgument(alternatives.size() > 0,
@@ -72,7 +72,7 @@ public abstract class NarrationDao {
             }
         }
 
-        narrate(narrationSourceJustInCase, bestNarrationAddition);
+        narrate(narrationSource, bestNarrationAddition);
 
         nowDao.passTime(bestDesc.getTimeElapsed());
     }
@@ -85,10 +85,10 @@ public abstract class NarrationDao {
     //  - {RAPUNZEL.ana.nom) Nimmt möglichst eine Anapher
     //  - {RAPUNZEL.nom): Wählt automatisch richtig (kontextabhängig!)
     //  - .phorik(..) automatisch oder heuristisch setzen?!
-    void narrate(final Narration.NarrationSource narrationSourceJustInCase,
+    void narrate(final Narration.NarrationSource narrationSource,
                  final AbstractDescription<?> desc,
                  final Narration initialNarration) {
-        narrate(narrationSourceJustInCase,
+        narrate(narrationSource,
                 chooseNextFrom(initialNarration, toNarrationAdditions(desc, initialNarration)));
 
         nowDao.passTime(desc.getTimeElapsed());
@@ -181,7 +181,7 @@ public abstract class NarrationDao {
     }
 
     void narrate(
-            final Narration.NarrationSource narrationSourceJustInCase,
+            final Narration.NarrationSource narrationSource,
             @NonNull final NarrationAddition narrationAddition) {
         checkNotNull(narrationAddition, "narrationAddition is null");
 
@@ -189,7 +189,7 @@ public abstract class NarrationDao {
 
         delete(currentNarration);
 
-        final Narration res = currentNarration.add(narrationSourceJustInCase,
+        final Narration res = currentNarration.add(narrationSource,
                 narrationAddition);
         insert(res);
     }
