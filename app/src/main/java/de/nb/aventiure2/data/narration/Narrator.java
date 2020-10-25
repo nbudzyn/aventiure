@@ -8,14 +8,16 @@ import androidx.room.Insert;
 import androidx.room.OnConflictStrategy;
 
 import com.google.common.collect.ImmutableCollection;
-import com.google.common.collect.ImmutableSet;
 
 import java.util.Collection;
+import java.util.Set;
 import java.util.function.Function;
+import java.util.stream.Collectors;
 
 import de.nb.aventiure2.data.database.AvDatabase;
 import de.nb.aventiure2.data.world.base.GameObjectId;
 import de.nb.aventiure2.data.world.base.IGameObject;
+import de.nb.aventiure2.data.world.time.*;
 import de.nb.aventiure2.german.base.Personalpronomen;
 import de.nb.aventiure2.german.base.PhorikKandidat;
 import de.nb.aventiure2.german.base.StructuralElement;
@@ -31,6 +33,8 @@ public class Narrator {
 
     private Narration.NarrationSource narrationSourceJustInCase =
             Narration.NarrationSource.INITIALIZATION;
+
+    private final AvNowDao nowDao;
 
     private final NarrationDao dao;
 
@@ -53,6 +57,7 @@ public class Narrator {
 
     private Narrator(final AvDatabase db) {
         dao = db.narrationDao();
+        nowDao = db.nowDao();
     }
 
     public void setNarrationSourceJustInCase(
@@ -64,30 +69,48 @@ public class Narrator {
         return narrationSourceJustInCase;
     }
 
-    public void narrateAlt(final AbstractDescription<?>... alternatives) {
-        final Narration initialNarration = dao.requireNarration();
-        dao.narrateAlt(narrationSourceJustInCase, asList(alternatives), initialNarration);
 
-        // FIXME Damit Dinge wie "Unten angekommen..." möglich werden: Der Narrator merkt sich
-        //  immer einen Satz, bevor er ihn
-        //  ausgibt ("rendert"). Erst mit dem nächsten Satz wird der letzte Satz "gerendert".
-        //  Bevor der Benutzer handeln kann, wird aber dieser "temporäre Satz" ausgegeben.
-
-        // STORY "Als du unten angekommen bist..."
+    public void narrate(final AbstractDescription<?> desc) {
+        narrateAlt(desc);
     }
 
     public void narrateAlt(final ImmutableCollection.Builder<AbstractDescription<?>> alternatives) {
         narrateAlt(alternatives.build());
     }
 
-    public void narrateAlt(final Collection<AbstractDescription<?>> alternatives) {
-        final Narration initialNarration = dao.requireNarration();
-        dao.narrateAlt(narrationSourceJustInCase, alternatives, initialNarration);
+    public void narrateAlt(final AbstractDescription<?>... alternatives) {
+        narrateAlt(asList(alternatives));
     }
 
-    public void narrate(final AbstractDescription<?> desc) {
-        final Narration initialNarration = dao.requireNarration();
-        dao.narrate(narrationSourceJustInCase, desc, initialNarration);
+    public void narrateAlt(final Collection<AbstractDescription<?>> alternatives) {
+        // FIXME Den vorherigen Satz manchmal für die Textausgabe
+        //  berücksichtigen. Z.B. "Unten angekommen..." oder
+        //  "Du kommst, siehst und siegst"
+
+        // STORY "Als du unten angekommen bist..."
+
+        final Set<AvTimeSpan> timesElapsed = alternatives.stream()
+                .map(AbstractDescription::getTimeElapsed)
+                .collect(Collectors.toSet());
+        if (timesElapsed.size() != 1) {
+            // Die Alternativen dauern unterschiedlich lange! Leider müssen wir sofort
+            // eine Alternative auswählen - ansonsten ist nicht klar, wieviel Zeit
+            // vergehen muss!
+            doTemporaryNarration();
+
+            final AvTimeSpan timeElapsed = dao.narrateAlt(
+                    narrationSourceJustInCase,
+                    alternatives);
+            nowDao.passTime(timeElapsed);
+            return;
+        }
+
+        doTemporaryNarration();
+
+        temporaryNarration = new TemporaryNarration(narrationSourceJustInCase,
+                alternatives);
+
+        nowDao.passTime(timesElapsed.iterator().next());
     }
 
     public boolean lastNarrationWasFromReaction() {
@@ -169,13 +192,13 @@ public class Narrator {
 
         // Idee: Wenn alle temp-Alternativen zum selben Ergebnis führen, können alle
         // Alternativen möglich bleiben. Wenn nicht - dann jetzt für eine entscheiden!
-        final ImmutableSet<R> alt =
+        final Set<R> alt =
                 temporaryNarration.getDescriptionAlternatives().stream()
                         .map(descriptionFunction)
-                        .collect(ImmutableSet.toImmutableSet());
+                        .collect(Collectors.toSet());
 
         if (alt.size() != 1) {
-            pushTempDescription();
+            doTemporaryNarration();
             return applyToNarration(descriptionFunction, narrationFunction);
         }
 
@@ -189,14 +212,14 @@ public class Narrator {
 
         // Idee: Wenn alle temp-Alternativen zum selben Ergebnis führen, können alle
         // Alternativen möglich bleiben. Wenn nicht - dann jetzt für eine entscheiden!
-        final ImmutableSet<R> alt =
+        final Set<R> alt =
                 temporaryNarration.getDescriptionAlternatives().stream()
                         .map(AbstractDescription::getPhorikKandidat)
                         .map(function)
-                        .collect(ImmutableSet.toImmutableSet());
+                        .collect(Collectors.toSet());
 
         if (alt.size() != 1) {
-            pushTempDescription();
+            doTemporaryNarration();
             return applyToPhorikKandidat(function);
         }
 
@@ -205,7 +228,7 @@ public class Narrator {
 
     @Nullable
     public String getNarrationText() {
-        pushTempDescription();
+        doTemporaryNarration();
         final Narration narration = dao.getNarration();
         if (narration == null) {
             return null;
@@ -218,17 +241,17 @@ public class Narrator {
      * Saves all temporary data.
      */
     public void saveAll() {
-        pushTempDescription();
+        doTemporaryNarration();
     }
 
-    private void pushTempDescription() {
+    private void doTemporaryNarration() {
         if (temporaryNarration != null) {
-            final Narration initialNarration = dao.requireNarration();
+            // Time has already been accounted for
             dao.narrateAlt(
                     temporaryNarration.getNarrationSource(),
-                    temporaryNarration.getDescriptionAlternatives(),
-                    initialNarration);
+                    temporaryNarration.getDescriptionAlternatives());
             temporaryNarration = null;
         }
     }
+
 }

@@ -14,7 +14,6 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
 
-import de.nb.aventiure2.data.database.AvDatabase;
 import de.nb.aventiure2.data.world.time.*;
 import de.nb.aventiure2.german.base.StructuralElement;
 import de.nb.aventiure2.german.description.AbstractDescription;
@@ -32,20 +31,18 @@ import static de.nb.aventiure2.german.base.StructuralElement.max;
  */
 @Dao
 public abstract class NarrationDao {
-    private final AvNowDao nowDao;
-
     @Nullable
     private Narration narrationCached;
 
-    public NarrationDao(final AvDatabase db) {
-        nowDao = db.nowDao();
+    public NarrationDao() {
     }
 
-    void narrateAlt(final Narration.NarrationSource narrationSource,
-                    final Collection<AbstractDescription<?>> alternatives,
-                    final Narration initialNarration) {
+    AvTimeSpan narrateAlt(final Narration.NarrationSource narrationSource,
+                          final Collection<AbstractDescription<?>> alternatives) {
         checkArgument(alternatives.size() > 0,
                 "No alternatives");
+
+        final Narration initialNarration = requireNarration();
 
         AbstractDescription<?> bestDesc = null;
         float bestScore = Float.NEGATIVE_INFINITY;
@@ -73,11 +70,10 @@ public abstract class NarrationDao {
         }
 
         narrate(narrationSource, bestNarrationAddition);
-
-        nowDao.passTime(bestDesc.getTimeElapsed());
+        return bestDesc.getTimeElapsed();
     }
 
-    // TODO Hier eine eingebettete Sprache verwenden:
+    // TODO Bei narrate() eine eingebettete Sprache erlauben:
     //  - {RAPUNZEL.std.nom) immer die Langform?
     //  - {RAPUNZEL.short.nom) immer die Langform?
     //  - {RAPUNZEL.persPron.nom) Personalprononem (kontextabhängig von dem was zuvor stand!)
@@ -85,14 +81,6 @@ public abstract class NarrationDao {
     //  - {RAPUNZEL.ana.nom) Nimmt möglichst eine Anapher
     //  - {RAPUNZEL.nom): Wählt automatisch richtig (kontextabhängig!)
     //  - .phorik(..) automatisch oder heuristisch setzen?!
-    void narrate(final Narration.NarrationSource narrationSource,
-                 final AbstractDescription<?> desc,
-                 final Narration initialNarration) {
-        narrate(narrationSource,
-                chooseNextFrom(initialNarration, toNarrationAdditions(desc, initialNarration)));
-
-        nowDao.passTime(desc.getTimeElapsed());
-    }
 
     private static List<NarrationAddition> toNarrationAdditions(
             final AbstractDescription<?> desc,
@@ -215,41 +203,6 @@ public abstract class NarrationDao {
         }
 
         return loadNarration();
-    }
-
-    /**
-     * Wählt einen {@link NarrationAddition} aus den Alternativen -
-     * versucht dabei vor allem, Wiederholgungen mit der unmittelbar zuvor geschriebenen
-     * Narration zu vermeiden.
-     */
-    private static NarrationAddition
-    chooseNextFrom(final Narration initialNarration,
-                   final Collection<NarrationAddition> alternatives) {
-        return chooseNextFrom(initialNarration, alternatives.toArray(new NarrationAddition[0]));
-    }
-
-    /**
-     * Wählt einen {@link NarrationAddition} aus den Alternativen -
-     * versucht dabei vor allem, Wiederholgungen mit der unmittelbar zuvor geschriebenen
-     * Narration zu vermeiden.
-     */
-    private static NarrationAddition
-    chooseNextFrom(final Narration initialNarration, final NarrationAddition... alternatives) {
-        return alternatives[chooseNextIndexFrom(initialNarration, alternatives)];
-    }
-
-    /**
-     * Wählt einen {@link NarrationAddition} aus den Alternativen und gibt den Indes zurück -
-     * versucht dabei vor allem, Wiederholgungen mit der unmittelbar zuvor geschriebenen
-     * Narration zu vermeiden.
-     */
-    private static int chooseNextIndexFrom(final Narration inititalNarration,
-                                           final NarrationAddition... alternatives) {
-        if (alternatives.length == 1) {
-            return 0;
-        }
-
-        return chooseNextIndexAndScoreFrom(inititalNarration, alternatives).getIndex();
     }
 
     /**

@@ -1,10 +1,9 @@
 package de.nb.aventiure2.data.narration;
 
-import androidx.annotation.Nullable;
-
 import java.util.Collection;
 
 import javax.annotation.Nonnull;
+import javax.annotation.ParametersAreNonnullByDefault;
 import javax.annotation.concurrent.Immutable;
 
 import de.nb.aventiure2.german.description.AbstractDescription;
@@ -15,8 +14,11 @@ import de.nb.aventiure2.german.description.AbstractDescription;
  * Freiheit, wie er dies hier genau erzählen möchte.
  */
 @Immutable
+@ParametersAreNonnullByDefault
 public class TemporaryNarration {
+    @Nonnull
     private final Narration.NarrationSource narrationSource;
+
     @Nonnull
     private final Collection<AbstractDescription<?>> descriptionAlternatives;
 
@@ -27,11 +29,12 @@ public class TemporaryNarration {
         this.descriptionAlternatives = descriptionAlternatives;
     }
 
+    @Nonnull
     public Narration.NarrationSource getNarrationSource() {
         return narrationSource;
     }
 
-    @Nullable
+    @Nonnull
     public Collection<AbstractDescription<?>> getDescriptionAlternatives() {
         return descriptionAlternatives;
     }
