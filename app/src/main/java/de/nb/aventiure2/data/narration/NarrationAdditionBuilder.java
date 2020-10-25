@@ -50,7 +50,8 @@ class NarrationAdditionBuilder {
         if (initialNarration.allowsAdditionalDuSatzreihengliedOhneSubjekt() &&
                 desc.getStartsNew() == WORD &&
                 desc instanceof AbstractDuDescription) {
-            return toNarrationAdditionsDuSatzanschlussMitUnd(desc);
+            return toNarrationAdditionsDuSatzanschlussMitUnd(
+                    (AbstractDuDescription<?, ?>) desc);
         } else if (initialNarration.dann()) {
             return toNarrationAdditionsImDannFall(desc);
         } else {
@@ -60,10 +61,8 @@ class NarrationAdditionBuilder {
 
     @NonNull
     private static List<NarrationAddition> toNarrationAdditionsDuSatzanschlussMitUnd(
-            final AbstractDescription<?> desc) {
-        final AbstractDuDescription<?, ?> duDesc = (AbstractDuDescription<?, ?>) desc;
-
-        final DescriptionParams params = desc.copyParams();
+            final AbstractDuDescription<?, ?> duDesc) {
+        final DescriptionParams params = duDesc.copyParams();
         params.undWartest(false);
 
         return ImmutableList.of(

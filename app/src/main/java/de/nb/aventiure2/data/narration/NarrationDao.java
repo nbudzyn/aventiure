@@ -8,6 +8,9 @@ import androidx.room.Insert;
 import androidx.room.OnConflictStrategy;
 import androidx.room.Query;
 
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.Lists;
+
 import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
@@ -47,12 +50,45 @@ public abstract class NarrationDao {
     private void narrateAltNarrationAdditions(final Narration.NarrationSource narrationSource,
                                               final List<NarrationAddition> alternatives,
                                               final Narration initialNarration) {
-        checkArgument(alternatives.size() > 0, "No alternatives");
+        checkArgument(!alternatives.isEmpty(), "No alternatives");
 
         final NarrationAddition bestNarrationAddition =
                 getBestNarrationAddition(alternatives, initialNarration);
 
         narrate(narrationSource, bestNarrationAddition);
+    }
+
+    @Nullable
+    public NarrationAdditionWithScoreAndElapsedTime chooseBestCombination(
+            final Collection<AbstractDescription<?>> firstAlternatives,
+            final Collection<TimedDescription> secondAlternatives) {
+        checkArgument(!firstAlternatives.isEmpty(), "No first alternatives");
+        checkArgument(!secondAlternatives.isEmpty(), "No second alternatives");
+
+        final Narration initialNarration = requireNarration();
+
+        // FIXME Wozu braucht man noch NarrationAdditions?
+        //  Gingen nicht AllgDescriptions genauso gut?
+        final List<TimedDescription> combinations = Lists.newArrayList();
+
+        for (final AbstractDescription<?> first : firstAlternatives) {
+            for (final TimedDescription second : secondAlternatives) {
+                combinations.addAll(
+                        DescriptionCombiner.combine(
+                                first,
+                                second.getDescription(),
+                                initialNarration).stream()
+                                .map(na -> new TimedDescription(na, second.getTimeElapsed()))
+                                .collect(ImmutableList.toImmutableList())
+                );
+            }
+        }
+
+        if (combinations.isEmpty()) {
+            return null;
+        }
+
+        return chooseBest(combinations);
     }
 
     @Nullable
@@ -77,7 +113,7 @@ public abstract class NarrationDao {
 
     NarrationAdditionWithScoreAndElapsedTime chooseBest(
             final Collection<TimedDescription> alternatives) {
-        checkArgument(alternatives.size() > 0, "No alternatives");
+        checkArgument(!alternatives.isEmpty(), "No alternatives");
 
         final Narration initialNarration = requireNarration();
 
@@ -219,14 +255,6 @@ public abstract class NarrationDao {
         private IndexAndScore(final int index, final float score) {
             this.index = index;
             this.score = score;
-        }
-
-        private int getIndex() {
-            return index;
-        }
-
-        private float getScore() {
-            return score;
         }
 
         @Override

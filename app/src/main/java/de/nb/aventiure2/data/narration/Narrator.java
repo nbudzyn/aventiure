@@ -116,14 +116,10 @@ public class Narrator {
                                     .map(d -> new TimedDescription(d, noTime()))
                                     .collect(ImmutableList.toImmutableList())
                     );
-
-            // FIXME Den vorherigen Satz manchmal für die Textausgabe
-            //  berücksichtigen. Z.B. "Unten angekommen..." oder
-            //  "Du kommst, siehst und siegst"
-
-            // STORY "Als du unten angekommen bist..."
             @Nullable final NarrationAdditionWithScoreAndElapsedTime bestCombined
-                    = null; // FIXME
+                    = dao.chooseBestCombination(
+                    temporaryNarration.getDescriptionAlternatives(),
+                    alternatives);
 
             if (bestCombined != null &&
                     bestCombined.score > bestTemporaryNarrationAlone.score) {
