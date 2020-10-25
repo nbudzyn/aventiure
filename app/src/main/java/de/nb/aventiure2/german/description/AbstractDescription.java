@@ -2,7 +2,6 @@ package de.nb.aventiure2.german.description;
 
 import androidx.annotation.Nullable;
 
-import de.nb.aventiure2.data.narration.Narration;
 import de.nb.aventiure2.data.world.time.*;
 import de.nb.aventiure2.german.base.IBezugsobjekt;
 import de.nb.aventiure2.german.base.NumerusGenus;
@@ -14,63 +13,19 @@ import de.nb.aventiure2.german.base.SubstantivischePhrase;
  * Abstract superclass for a description.
  */
 public abstract class AbstractDescription<SELF extends AbstractDescription<SELF>> {
-    /**
-     * This {@link Narration} starts a new ... (paragraph, e.g.)
-     */
-    private final StructuralElement startsNew;
-
-    /**
-     * This {@link Narration} ends this ... (paragraph, e.g.)
-     */
-    private StructuralElement endsThis = StructuralElement.WORD;
-
-    /**
-     * Ob ein Komma aussteht. Wenn ein Komma aussteht, muss als Nächstes ein Komma folgen -
-     * oder das Satzende.
-     */
-    private boolean kommaStehtAus = false;
-
-    private boolean allowsAdditionalDuSatzreihengliedOhneSubjekt = false;
-
-    private boolean dann = false;
-
-    /**
-     * Hierauf könnte sich ein Pronomen (z.B. ein Personalpronomen) unmittelbar
-     * danach (<i>anaphorisch</i>) beziehen. Dazu müssen (in aller Regel) die grammatischen
-     * Merkmale übereinstimmen und es muss mit dem Pronomen dieses Bezugsobjekt
-     * gemeint sein.
-     * <p>
-     * Dieses Feld nur gesetzt werden wenn man sich sicher ist, wenn es also keine
-     * Fehlreferenzierungen, Doppeldeutigkeiten
-     * oder unerwünschten Wiederholungen geben kann. Typische Fälle wären "Du nimmst die Lampe und
-     * zündest sie an." oder "Du stellst die Lampe auf den Tisch und zündest sie an."
-     * <p>
-     * Negatitvbeispiele wäre:
-     * <ul>
-     *     <li>"Du stellst die Lampe auf die Theke und zündest sie an." (Fehlreferenzierung)
-     *     <li>"Du nimmst den Ball und den Schuh und wirfst ihn in die Luft." (Doppeldeutigkeit)
-     *     <li>"Du nimmst die Lampe und zündest sie an. Dann stellst du sie wieder ab,
-     *     schaust sie dir aber dann noch einmal genauer an: Sie ... sie ... sie" (Unerwünschte
-     *     Wiederholung)
-     *     <li>"Du stellst die Lampe auf den Tisch. Der Tisch ist aus Holz und hat viele
-     *     schöne Gravuren - er muss sehr wertvoll sein. Dann nimmst du sie wieder in die Hand."
-     *     (Referenziertes Objekt zu weit entfernt.)
-     * </ul>
-     */
-    @Nullable
-    private PhorikKandidat phorikKandidat;
+    private final DescriptionParams params;
 
     private final AvTimeSpan timeElapsed;
 
     public AbstractDescription(final StructuralElement startsNew,
                                final AvTimeSpan timeElapsed) {
-        this.startsNew = startsNew;
+        params = new DescriptionParams(startsNew);
+
         this.timeElapsed = timeElapsed;
     }
 
-
     public StructuralElement getStartsNew() {
-        return startsNew;
+        return params.getStartsNew();
     }
 
     /**
@@ -90,12 +45,12 @@ public abstract class AbstractDescription<SELF extends AbstractDescription<SELF>
     }
 
     public SELF komma(final boolean kommaStehtAus) {
-        this.kommaStehtAus = kommaStehtAus;
+        params.komma(kommaStehtAus);
         return (SELF) this;
     }
 
     public boolean isKommaStehtAus() {
-        return kommaStehtAus;
+        return params.isKommaStehtAus();
     }
 
     /**
@@ -108,13 +63,13 @@ public abstract class AbstractDescription<SELF extends AbstractDescription<SELF>
 
     public SELF undWartest(
             final boolean allowsAdditionalPlayerSatzreihengliedOhneSubjekt) {
-        allowsAdditionalDuSatzreihengliedOhneSubjekt =
-                allowsAdditionalPlayerSatzreihengliedOhneSubjekt;
+        params.undWartest(
+                allowsAdditionalPlayerSatzreihengliedOhneSubjekt);
         return (SELF) this;
     }
 
     public boolean isAllowsAdditionalDuSatzreihengliedOhneSubjekt() {
-        return allowsAdditionalDuSatzreihengliedOhneSubjekt;
+        return params.isAllowsAdditionalDuSatzreihengliedOhneSubjekt();
     }
 
     public SELF dann() {
@@ -122,21 +77,21 @@ public abstract class AbstractDescription<SELF extends AbstractDescription<SELF>
     }
 
     public SELF dann(final boolean dann) {
-        this.dann = dann;
+        params.dann(dann);
         return (SELF) this;
     }
 
     public boolean isDann() {
-        return dann;
+        return params.isDann();
     }
 
     public SELF beendet(final StructuralElement structuralElement) {
-        endsThis = structuralElement;
+        params.beendet(structuralElement);
         return (SELF) this;
     }
 
     public StructuralElement getEndsThis() {
-        return endsThis;
+        return params.getEndsThis();
     }
 
     public SELF phorikKandidat(final SubstantivischePhrase substantivischePhrase,
@@ -150,13 +105,13 @@ public abstract class AbstractDescription<SELF extends AbstractDescription<SELF>
     }
 
     public SELF phorikKandidat(@Nullable final PhorikKandidat phorikKandidat) {
-        this.phorikKandidat = phorikKandidat;
+        params.phorikKandidat(phorikKandidat);
         return (SELF) this;
     }
 
     @Nullable
     public PhorikKandidat getPhorikKandidat() {
-        return phorikKandidat;
+        return params.getPhorikKandidat();
     }
 
     /**
