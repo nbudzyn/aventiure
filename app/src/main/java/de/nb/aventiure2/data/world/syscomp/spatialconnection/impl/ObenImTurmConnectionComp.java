@@ -19,12 +19,12 @@ import de.nb.aventiure2.data.world.gameobject.*;
 import de.nb.aventiure2.data.world.syscomp.spatialconnection.AbstractSpatialConnectionComp;
 import de.nb.aventiure2.data.world.syscomp.state.IHasStateGO;
 import de.nb.aventiure2.data.world.syscomp.state.impl.RapunzelState;
-import de.nb.aventiure2.german.description.AbstractDescription;
+import de.nb.aventiure2.german.description.TimedDescription;
 
 import static de.nb.aventiure2.data.world.base.SpatialConnection.con;
 import static de.nb.aventiure2.data.world.gameobject.World.*;
 import static de.nb.aventiure2.data.world.time.AvTimeSpan.*;
-import static de.nb.aventiure2.german.description.DuDescriptionBuilder.du;
+import static de.nb.aventiure2.german.description.DescriptionBuilder.du;
 
 /**
  * An implementation of {@link AbstractSpatialConnectionComp}
@@ -68,7 +68,7 @@ public class ObenImTurmConnectionComp extends AbstractSpatialConnectionComp {
         return res.build();
     }
 
-    private AbstractDescription<?> getDescTo_VorDemTurm(
+    private TimedDescription getDescTo_VorDemTurm(
             final Known newLocationKnown, final Lichtverhaeltnisse lichtverhaeltnisse) {
         if (db.counterDao().incAndGet(COUNTER_HERABGESTIEGEN) % 2 == 0) {
             // 2.Mal, 4. Mal, ...

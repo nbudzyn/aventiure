@@ -15,14 +15,32 @@ import static de.nb.aventiure2.german.base.GermanUtil.uncapitalize;
 import static de.nb.aventiure2.german.base.StructuralElement.PARAGRAPH;
 import static de.nb.aventiure2.german.base.StructuralElement.SENTENCE;
 import static de.nb.aventiure2.german.base.StructuralElement.max;
-import static de.nb.aventiure2.german.description.AllgDescription.neuerSatz;
-import static de.nb.aventiure2.german.description.DuDescriptionBuilder.du;
+import static de.nb.aventiure2.german.description.DescriptionBuilder.du;
+import static de.nb.aventiure2.german.description.DescriptionBuilder.neuerSatz;
 
 /**
  * Statische Methoden, die {@link AbstractDescription}s umformulieren.
  */
 public class DescriptionUmformulierer {
     private DescriptionUmformulierer() {
+    }
+
+    public static ImmutableCollection<TimedDescription> drueckeAusTimed(
+            final Kohaerenzrelation kohaerenzrelation,
+            final TimedDescription... desc) {
+        return drueckeAusTimed(kohaerenzrelation,
+                Arrays.asList(desc));
+    }
+
+    public static ImmutableCollection<TimedDescription> drueckeAusTimed(
+            final Kohaerenzrelation kohaerenzrelation,
+            final Collection<? extends TimedDescription> descriptions) {
+        return descriptions.stream()
+                .flatMap(d ->
+                        drueckeAus(kohaerenzrelation, d.getDescription()).stream()
+                                .map(r -> new TimedDescription(r, d.getTimeElapsed()))
+                )
+                .collect(ImmutableList.toImmutableList());
     }
 
     public static ImmutableCollection<AbstractDescription<?>> drueckeAus(
@@ -61,7 +79,8 @@ public class DescriptionUmformulierer {
         final ImmutableList.Builder<AbstractDescription<?>> alt = builder();
 
         if (desc instanceof AbstractDuDescription) {
-            final AbstractDuDescription<?, ?> duDesc = (AbstractDuDescription<?, ?>) desc;
+            final AbstractDuDescription<?, ?> duDesc =
+                    (AbstractDuDescription<?, ?>) desc;
 
             alt.add(duMitPraefixUndSatzanschluss(
                     "besinnst", "dich aber",
@@ -69,7 +88,7 @@ public class DescriptionUmformulierer {
 
             alt.add(duMitVorfeld("noch einmal", duDesc));
 
-            if (desc instanceof PraedikatDuDescription) {
+            if (duDesc instanceof PraedikatDuDescription) {
                 final PraedikatDuDescription pDuDesc = (PraedikatDuDescription) duDesc;
 
                 alt.add(mitAdvAngabe(pDuDesc,
@@ -82,13 +101,12 @@ public class DescriptionUmformulierer {
                         new AdverbialeAngabeSkopusVerbAllg("sogleich wieder")));
 
                 alt.add(neuerSatz(
-                        max(desc.getStartsNew(), SENTENCE),
+                        max(duDesc.getStartsNew(), SENTENCE),
                         "Ach nein, " +
                                 // du nimmst die Kugel besser doch
                                 uncapitalize(pDuDesc.getPraedikat().getDuHauptsatz(
                                         new Modalpartikel("besser"),
-                                        new Modalpartikel("doch"))),
-                        pDuDesc.getTimeElapsed())
+                                        new Modalpartikel("doch"))))
                         .komma(desc.isKommaStehtAus())
                         .undWartest(duDesc.isAllowsAdditionalDuSatzreihengliedOhneSubjekt())
                         .dann(duDesc.isDann())
@@ -184,8 +202,7 @@ public class DescriptionUmformulierer {
                 max(desc.getStartsNew(), SENTENCE),
                 praefix
                         + " "
-                        + hauptsatz,
-                desc.getTimeElapsed())
+                        + hauptsatz)
                 .komma(desc.isKommaStehtAus())
                 .phorikKandidat(desc.getPhorikKandidat())
                 .beendet(desc.getEndsThis());
@@ -212,8 +229,7 @@ public class DescriptionUmformulierer {
                 max(desc.getStartsNew(), SENTENCE),
                 praefixVerb,
                 praefixRemainder + " "
-                        + hauptsatz,
-                desc.getTimeElapsed())
+                        + hauptsatz)
                 .komma(desc.isKommaStehtAus())
                 .phorikKandidat(desc.getPhorikKandidat())
                 .beendet(desc.getEndsThis());
@@ -236,8 +252,7 @@ public class DescriptionUmformulierer {
                 praefixVerb,
                 praefixRemainder
                         + " und "
-                        + descSatzanschluss,
-                desc.getTimeElapsed())
+                        + descSatzanschluss)
                 .dann(desc.isDann())
                 .komma(desc.isKommaStehtAus())
                 .phorikKandidat(desc.getPhorikKandidat())
@@ -247,8 +262,7 @@ public class DescriptionUmformulierer {
     private static AllgDescription duMitVorfeld(final String vorfeld,
                                                 final AbstractDuDescription<?, ?> duDesc) {
         return neuerSatz(max(duDesc.getStartsNew(), PARAGRAPH),
-                duDesc.getDescriptionHauptsatzMitVorfeld(vorfeld),
-                duDesc.getTimeElapsed())
+                duDesc.getDescriptionHauptsatzMitVorfeld(vorfeld))
                 .komma(duDesc.isKommaStehtAus())
                 .undWartest(duDesc.isAllowsAdditionalDuSatzreihengliedOhneSubjekt())
                 .dann(duDesc.isDann())
@@ -264,8 +278,7 @@ public class DescriptionUmformulierer {
                 desc.getPraedikat().mitAdverbialerAngabe(
                         // "Erneut gibst du der Frau die Kugel"
                         // "Du gibst erneut der Frau die Kugel"
-                        advAngabe),
-                desc.getTimeElapsed())
+                        advAngabe))
                 .komma(desc.isKommaStehtAus())
                 .undWartest(desc.isAllowsAdditionalDuSatzreihengliedOhneSubjekt())
                 .dann(desc.isDann())
@@ -280,8 +293,7 @@ public class DescriptionUmformulierer {
                 max(desc.getStartsNew(), PARAGRAPH),
                 desc.getPraedikat().mitAdverbialerAngabe(
                         // "gibst der Frau die Kugel noch einmal"
-                        advAngabe),
-                desc.getTimeElapsed())
+                        advAngabe))
                 .komma(desc.isKommaStehtAus())
                 .undWartest(desc.isAllowsAdditionalDuSatzreihengliedOhneSubjekt())
                 .dann(desc.isDann())

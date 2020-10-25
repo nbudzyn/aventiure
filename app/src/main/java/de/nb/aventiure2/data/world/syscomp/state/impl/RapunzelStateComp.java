@@ -18,8 +18,8 @@ import static de.nb.aventiure2.data.world.syscomp.state.impl.RapunzelState.STILL
 import static de.nb.aventiure2.data.world.time.AvTimeSpan.*;
 import static de.nb.aventiure2.german.base.NumerusGenus.PL_MFN;
 import static de.nb.aventiure2.german.base.StructuralElement.PARAGRAPH;
-import static de.nb.aventiure2.german.description.AllgDescription.neuerSatz;
-import static de.nb.aventiure2.german.description.DuDescriptionBuilder.du;
+import static de.nb.aventiure2.german.description.DescriptionBuilder.du;
+import static de.nb.aventiure2.german.description.DescriptionBuilder.neuerSatz;
 
 public class RapunzelStateComp extends AbstractStateComp<RapunzelState> {
     public RapunzelStateComp(final AvDatabase db, final Narrator n, final World world) {
@@ -50,28 +50,25 @@ public class RapunzelStateComp extends AbstractStateComp<RapunzelState> {
 
             alt.add(
                     neuerSatz(rapunzelDesc.nom() +
-                                    // STORY nur verschüchtert, wenn man Rapunzel noch nicht
-                                    //  viel Zuneigung entwickelt hat
-                                    " schaut dich verschüchtert an, dann bindet "
-                                    + rapunzelDesc.persPron().nom() //"sie"
-                                    + " "
-                                    + rapunzelDesc.possArt().vor(PL_MFN).akk() // "ihre"
-                                    + " Haare wieder um den Haken am Fenster",
-                            secs(10))
+                            // STORY nur verschüchtert, wenn man Rapunzel noch nicht
+                            //  viel Zuneigung entwickelt hat
+                            " schaut dich verschüchtert an, dann bindet "
+                            + rapunzelDesc.persPron().nom() //"sie"
+                            + " "
+                            + rapunzelDesc.possArt().vor(PL_MFN).akk() // "ihre"
+                            + " Haare wieder um den Haken am Fenster")
                             .phorikKandidat(PL_MFN, RAPUNZELS_HAARE),
                     neuerSatz(rapunzelDesc.nom() +
-                                    " schaut dich an, dann knotet "
-                                    + rapunzelDesc.persPron().nom() //"sie"
-                                    + " "
-                                    + rapunzelDesc.possArt().vor(PL_MFN).akk() // "ihre"
-                                    + " Haare wieder um den Fensterhaken",
-                            secs(10))
+                            " schaut dich an, dann knotet "
+                            + rapunzelDesc.persPron().nom() //"sie"
+                            + " "
+                            + rapunzelDesc.possArt().vor(PL_MFN).akk() // "ihre"
+                            + " Haare wieder um den Fensterhaken")
                             .phorikKandidat(PL_MFN, RAPUNZELS_HAARE),
                     neuerSatz(rapunzelDesc.nom() +
-                                    " wickelt "
-                                    + rapunzelDesc.possArt().vor(PL_MFN).akk() // "ihre"
-                                    + " Haare wieder an den Fensterhaken",
-                            secs(10))
+                            " wickelt "
+                            + rapunzelDesc.possArt().vor(PL_MFN).akk() // "ihre"
+                            + " Haare wieder an den Fensterhaken")
                             .phorikKandidat(PL_MFN, RAPUNZELS_HAARE)
             );
 
@@ -88,7 +85,7 @@ public class RapunzelStateComp extends AbstractStateComp<RapunzelState> {
             //  STORY "Oh, ich wünschte, ihr könntet noch einen Moment bleiben!" antwortet RAPUNZEL.
             //    Aber sie knotet doch ihrer Haare wieder über den Haken am Fenster"
 
-            n.narrateAlt(alt);
+            n.narrateAlt(alt, secs(10));
         }
 
         narrateAndSetState(HAARE_VOM_TURM_HERUNTERGELASSEN);

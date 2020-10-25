@@ -9,7 +9,7 @@ import de.nb.aventiure2.data.world.syscomp.feelings.FeelingIntensity;
 import de.nb.aventiure2.data.world.syscomp.state.impl.RapunzelStateComp;
 import de.nb.aventiure2.data.world.syscomp.talking.AbstractTalkingComp;
 import de.nb.aventiure2.german.base.SubstantivischePhrase;
-import de.nb.aventiure2.german.description.AbstractDescription;
+import de.nb.aventiure2.german.description.TimedDescription;
 import de.nb.aventiure2.german.praedikat.AdverbialeAngabeSkopusVerbWohinWoher;
 import de.nb.aventiure2.german.praedikat.PraedikatOhneLeerstellen;
 import de.nb.aventiure2.german.praedikat.VerbSubjAkkPraep;
@@ -29,8 +29,8 @@ import static de.nb.aventiure2.german.base.NumerusGenus.PL_MFN;
 import static de.nb.aventiure2.german.base.PraepositionMitKasus.ZU;
 import static de.nb.aventiure2.german.base.StructuralElement.PARAGRAPH;
 import static de.nb.aventiure2.german.base.StructuralElement.SENTENCE;
-import static de.nb.aventiure2.german.description.AllgDescription.neuerSatz;
-import static de.nb.aventiure2.german.description.DuDescriptionBuilder.du;
+import static de.nb.aventiure2.german.description.DescriptionBuilder.du;
+import static de.nb.aventiure2.german.description.DescriptionBuilder.neuerSatz;
 import static de.nb.aventiure2.german.praedikat.DirektivesVerb.BITTEN;
 import static de.nb.aventiure2.german.praedikat.VerbSubjDatAkk.AUSSCHUETTEN;
 import static de.nb.aventiure2.german.praedikat.VerbSubjObj.HINUNTERLASSEN;
@@ -249,7 +249,7 @@ public class RapunzelTalkingComp extends AbstractTalkingComp {
     private void still_haareHerunterlassenBitte_ExitImmReEntry() {
         final SubstantivischePhrase rapunzelAnaph =
                 getAnaphPersPronWennMglSonstDescription(true);
-        final ImmutableList.Builder<AbstractDescription<?>> alt =
+        final ImmutableList.Builder<TimedDescription> alt =
                 ImmutableList.builder();
 
         alt.add(
@@ -306,7 +306,7 @@ public class RapunzelTalkingComp extends AbstractTalkingComp {
     private void hatNachKugelGefragt_haareHerunterlassenBitte_ExitImmReEntry() {
         final SubstantivischePhrase rapunzelAnaph =
                 getAnaphPersPronWennMglSonstDescription(true);
-        final ImmutableList.Builder<AbstractDescription<?>> alt =
+        final ImmutableList.Builder<TimedDescription> alt =
                 ImmutableList.builder();
 
         alt.add(neuerSatz(

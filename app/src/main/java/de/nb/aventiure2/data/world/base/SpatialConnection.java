@@ -2,8 +2,8 @@ package de.nb.aventiure2.data.world.base;
 
 import androidx.annotation.NonNull;
 
-import de.nb.aventiure2.data.world.time.AvTimeSpan;
-import de.nb.aventiure2.german.description.AbstractDescription;
+import de.nb.aventiure2.data.world.time.*;
+import de.nb.aventiure2.german.description.TimedDescription;
 import de.nb.aventiure2.german.praedikat.AbstractAdverbialeAngabe;
 
 import static de.nb.aventiure2.data.world.base.Known.KNOWN_FROM_DARKNESS;
@@ -26,7 +26,7 @@ public class SpatialConnection {
                                         final String wo,
                                         final String actionDescription,
                                         final AvTimeSpan standardDuration,
-                                        final AbstractDescription<?> newLocationDescription) {
+                                        final TimedDescription newLocationDescription) {
         return con(to, wo, actionDescription, standardDuration,
                 (isnewLocationKnown, lichtverhaeltnisseInNewLocation) -> newLocationDescription);
     }
@@ -35,8 +35,8 @@ public class SpatialConnection {
                                         final String wo,
                                         final String actionDescription,
                                         final AvTimeSpan standardDuration,
-                                        final AbstractDescription<?> newLocationDescriptionUnknown,
-                                        final AbstractDescription<?> newLocationDescriptionKnown) {
+                                        final TimedDescription newLocationDescriptionUnknown,
+                                        final TimedDescription newLocationDescriptionKnown) {
         return con(to, wo, actionDescription, standardDuration,
                 (newLocationKnown, lichtverhaeltnisseInNewLocation) ->
                         newLocationKnown == UNKNOWN ?
@@ -47,10 +47,10 @@ public class SpatialConnection {
                                         final String wo,
                                         final String actionDescription,
                                         final AvTimeSpan standardDuration,
-                                        final AbstractDescription<?> newLocationDescriptionUnknownHell,
-                                        final AbstractDescription<?> newLocationDescriptionUnknownDunkel,
-                                        final AbstractDescription<?> newLocationDescriptionKnownFromDarknessHell,
-                                        final AbstractDescription<?> newLocationDescriptionOther) {
+                                        final TimedDescription newLocationDescriptionUnknownHell,
+                                        final TimedDescription newLocationDescriptionUnknownDunkel,
+                                        final TimedDescription newLocationDescriptionKnownFromDarknessHell,
+                                        final TimedDescription newLocationDescriptionOther) {
         return con(to, wo, actionDescription, standardDuration,
                 (newLocationKnown, lichtverhaeltnisseInNewLocation) -> {
                     if (newLocationKnown == UNKNOWN && lichtverhaeltnisseInNewLocation == HELL) {

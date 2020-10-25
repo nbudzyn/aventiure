@@ -4,8 +4,8 @@ import androidx.annotation.NonNull;
 
 import de.nb.aventiure2.data.world.syscomp.spatialconnection.ISpatiallyConnectedGO;
 import de.nb.aventiure2.data.world.syscomp.storingplace.ILocationGO;
-import de.nb.aventiure2.data.world.time.AvTimeSpan;
-import de.nb.aventiure2.german.description.AbstractDescription;
+import de.nb.aventiure2.data.world.time.*;
+import de.nb.aventiure2.german.description.TimedDescription;
 import de.nb.aventiure2.german.praedikat.AbstractAdverbialeAngabe;
 import de.nb.aventiure2.german.praedikat.AdverbialeAngabeSkopusVerbAllg;
 
@@ -38,7 +38,7 @@ public class SpatialConnectionData {
             final String wo,
             final String actionDescription,
             final AvTimeSpan standardDuration,
-            final AbstractDescription<?> newLocationDescription) {
+            final TimedDescription newLocationDescription) {
         return conData(wo, actionDescription, standardDuration,
                 (isnewLocationKnown, lichtverhaeltnisseInNewLocation) -> newLocationDescription);
     }
@@ -89,7 +89,7 @@ public class SpatialConnectionData {
 
     @FunctionalInterface
     public interface SCMoveDescriptionProvider {
-        AbstractDescription<?> getSCMoveDescription(
+        TimedDescription getSCMoveDescription(
                 Known newLocationKnown,
                 Lichtverhaeltnisse lichtverhaeltnisseInNewLocation);
     }

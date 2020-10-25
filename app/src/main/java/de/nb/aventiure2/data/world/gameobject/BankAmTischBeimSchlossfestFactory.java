@@ -11,7 +11,7 @@ import de.nb.aventiure2.data.world.syscomp.description.impl.SimpleDescriptionCom
 import de.nb.aventiure2.data.world.syscomp.location.ILocatableGO;
 import de.nb.aventiure2.data.world.syscomp.location.LocationComp;
 import de.nb.aventiure2.data.world.syscomp.storingplace.StoringPlaceComp;
-import de.nb.aventiure2.german.description.AbstractDescription;
+import de.nb.aventiure2.german.description.TimedDescription;
 
 import static de.nb.aventiure2.data.world.base.SpatialConnectionData.conData;
 import static de.nb.aventiure2.data.world.gameobject.World.*;
@@ -20,7 +20,7 @@ import static de.nb.aventiure2.data.world.time.AvTimeSpan.*;
 import static de.nb.aventiure2.german.base.Artikel.Typ.INDEF;
 import static de.nb.aventiure2.german.base.Nominalphrase.np;
 import static de.nb.aventiure2.german.base.NumerusGenus.M;
-import static de.nb.aventiure2.german.description.DuDescriptionBuilder.du;
+import static de.nb.aventiure2.german.description.DescriptionBuilder.du;
 
 public class BankAmTischBeimSchlossfestFactory {
     private final AvDatabase db;
@@ -72,7 +72,7 @@ public class BankAmTischBeimSchlossfestFactory {
                 storingPlaceComp);
     }
 
-    private AbstractDescription<?> getDescIn(
+    private TimedDescription getDescIn(
             final Known newLocationKnown, final Lichtverhaeltnisse lichtverhaeltnisse) {
         // Der Tisch wird erst jetzt hinzugefügt, damit nicht vorher
         // "Die Kugel auf den Tisch legen" o.Ä. angeboten wird (wenn noch gar kein
@@ -99,7 +99,7 @@ public class BankAmTischBeimSchlossfestFactory {
         return du("suchst", "dir erneut im Gedränge einen Platz an einem Tisch", "erneut", mins(3));
     }
 
-    private AbstractDescription<?> getDescOut(
+    private TimedDescription getDescOut(
             final Known newLocationKnown, final Lichtverhaeltnisse lichtverhaeltnisse) {
         // Der Tisch wird wieder entfernt, s.o.
         ((ILocatableGO) world.load(SCHLOSS_VORHALLE_LANGER_TISCH_BEIM_FEST))

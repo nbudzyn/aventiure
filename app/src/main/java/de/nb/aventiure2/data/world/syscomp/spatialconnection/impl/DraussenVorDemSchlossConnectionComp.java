@@ -19,13 +19,13 @@ import de.nb.aventiure2.data.world.gameobject.*;
 import de.nb.aventiure2.data.world.syscomp.spatialconnection.AbstractSpatialConnectionComp;
 import de.nb.aventiure2.data.world.syscomp.state.IHasStateGO;
 import de.nb.aventiure2.data.world.syscomp.state.impl.SchlossfestState;
-import de.nb.aventiure2.german.description.AbstractDescription;
+import de.nb.aventiure2.german.description.TimedDescription;
 
 import static de.nb.aventiure2.data.world.gameobject.World.*;
 import static de.nb.aventiure2.data.world.syscomp.state.impl.SchlossfestState.BEGONNEN;
 import static de.nb.aventiure2.data.world.time.AvTimeSpan.*;
-import static de.nb.aventiure2.german.description.AllgDescription.neuerSatz;
-import static de.nb.aventiure2.german.description.DuDescriptionBuilder.du;
+import static de.nb.aventiure2.german.description.DescriptionBuilder.du;
+import static de.nb.aventiure2.german.description.DescriptionBuilder.neuerSatz;
 
 /**
  * An implementation of {@link AbstractSpatialConnectionComp}
@@ -91,7 +91,7 @@ public class DraussenVorDemSchlossConnectionComp extends AbstractSpatialConnecti
                                 .dann()));
     }
 
-    private AbstractDescription<?> getDescTo_SchlossVorhalle(
+    private TimedDescription getDescTo_SchlossVorhalle(
             final Known newLocationKnown, final Lichtverhaeltnisse lichtverhaeltnisse) {
         switch (((IHasStateGO<SchlossfestState>) world.load(SCHLOSSFEST)).stateComp().getState()) {
             case BEGONNEN:
@@ -103,14 +103,14 @@ public class DraussenVorDemSchlossConnectionComp extends AbstractSpatialConnecti
     }
 
     @NonNull
-    private static AbstractDescription<?>
+    private static TimedDescription
     getDescTo_SchlossVorhalle_KeinFest() {
         return du("gehst", "wieder hinein in das Schloss", mins(1))
                 .undWartest()
                 .dann();
     }
 
-    private AbstractDescription<?>
+    private TimedDescription
     getDescTo_SchlossVorhalle_FestBegonnen() {
         if (db.counterDao().incAndGet(COUNTER_SCHLOSS_VORHALLE_FEST_BEGONNEN) == 1) {
             return neuerSatz("Vor dem Schloss gibt es ein großes Gedränge und es dauert "

@@ -22,7 +22,7 @@ import static de.nb.aventiure2.data.world.syscomp.state.impl.RapunzelState.STILL
 import static de.nb.aventiure2.data.world.time.AvTimeSpan.*;
 import static de.nb.aventiure2.german.base.GermanUtil.capitalize;
 import static de.nb.aventiure2.german.base.NumerusGenus.F;
-import static de.nb.aventiure2.german.description.AllgDescription.neuerSatz;
+import static de.nb.aventiure2.german.description.DescriptionBuilder.neuerSatz;
 
 public class RapunzelTakingComp extends AbstractTakingComp {
     private final RapunzelStateComp stateComp;

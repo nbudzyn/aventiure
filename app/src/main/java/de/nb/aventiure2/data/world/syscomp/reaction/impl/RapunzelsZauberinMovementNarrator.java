@@ -20,7 +20,7 @@ import static de.nb.aventiure2.data.world.gameobject.World.*;
 import static de.nb.aventiure2.data.world.time.AvTimeSpan.*;
 import static de.nb.aventiure2.german.base.StructuralElement.PARAGRAPH;
 import static de.nb.aventiure2.german.base.StructuralElement.SENTENCE;
-import static de.nb.aventiure2.german.description.AllgDescription.neuerSatz;
+import static de.nb.aventiure2.german.description.DescriptionBuilder.neuerSatz;
 
 /**
  * Beschreibt dem Spieler die Bewegung der Zauberin
@@ -47,7 +47,7 @@ public class RapunzelsZauberinMovementNarrator extends SimpleMovementNarrator {
         final ImmutableCollection.Builder<AbstractDescription<?>> alt = ImmutableList.builder();
 
         alt.add(neuerSatz(anaphOderDesc.nom()
-                + " kommt daher", noTime())
+                + " kommt daher")
                 .phorikKandidat(desc, gameObjectId)
                 .beendet(PARAGRAPH));
 
@@ -55,7 +55,7 @@ public class RapunzelsZauberinMovementNarrator extends SimpleMovementNarrator {
             alt.add(neuerSatz(anaphOderDesc.nom()
                     + " kommt "
                     + spatialConnectionMovingGO.getWo() // "auf dem Pfad "
-                    + " daher", noTime())
+                    + " daher")
                     .phorikKandidat(desc, gameObjectId)
                     .beendet(PARAGRAPH));
         }
@@ -65,7 +65,7 @@ public class RapunzelsZauberinMovementNarrator extends SimpleMovementNarrator {
                 alt.add(neuerSatz(spatialConnectionMovingGO.getWo() // "auf dem Pfad "
                         + " kommt " +
                         desc.nom() +
-                        " gegangen", noTime())
+                        " gegangen")
                         .phorikKandidat(desc, gameObjectId)
                         .beendet(PARAGRAPH));
             }
@@ -73,14 +73,14 @@ public class RapunzelsZauberinMovementNarrator extends SimpleMovementNarrator {
             alt.add(
                     neuerSatz("Es kommt dir " +
                             desc.nom() +
-                            " entgegen", noTime())
+                            " entgegen")
                             .phorikKandidat(desc, gameObjectId)
                             .beendet(PARAGRAPH));
             alt.add(
                     neuerSatz(PARAGRAPH,
                             "Dir kommt " +
                                     desc.nom() +
-                                    " entgegen", noTime())
+                                    " entgegen")
                             .phorikKandidat(desc, gameObjectId)
                             .beendet(PARAGRAPH));
         }
@@ -90,13 +90,12 @@ public class RapunzelsZauberinMovementNarrator extends SimpleMovementNarrator {
                 to.is(VOR_DEM_ALTEN_TURM)) {
             if (!n.isThema(gameObjectId)) {
                 alt.add(neuerSatz("Den Pfad herauf kommt " +
-                                desc.nom(),
-                        noTime())
+                        desc.nom())
                         .phorikKandidat(desc, RAPUNZELS_ZAUBERIN)
                         .beendet(SENTENCE));
             }
 
-            n.narrateAlt(alt);
+            n.narrateAlt(alt, noTime());
             return;
         }
 
@@ -107,12 +106,12 @@ public class RapunzelsZauberinMovementNarrator extends SimpleMovementNarrator {
                 alt.add(neuerSatz(PARAGRAPH,
                         "Von dem Pfad her kommt dir " +
                                 desc.nom() +
-                                " entgegen", noTime())
+                                " entgegen")
                         .phorikKandidat(desc, RAPUNZELS_ZAUBERIN)
                         .beendet(SENTENCE));
             }
 
-            n.narrateAlt(alt);
+            n.narrateAlt(alt, noTime());
             return;
         }
 
@@ -123,12 +122,12 @@ public class RapunzelsZauberinMovementNarrator extends SimpleMovementNarrator {
             if (!n.isThema(gameObjectId)) {
                 alt.add(neuerSatz(PARAGRAPH,
                         "Von dem Pfad her kommt " +
-                                desc.nom(), noTime())
+                                desc.nom())
                         .phorikKandidat(desc, RAPUNZELS_ZAUBERIN)
                         .beendet(SENTENCE));
             }
 
-            n.narrateAlt(alt);
+            n.narrateAlt(alt, noTime());
             return;
         }
 

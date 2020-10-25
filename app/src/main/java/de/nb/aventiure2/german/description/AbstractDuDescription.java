@@ -1,6 +1,5 @@
 package de.nb.aventiure2.german.description;
 
-import de.nb.aventiure2.data.world.time.*;
 import de.nb.aventiure2.german.base.StructuralElement;
 import de.nb.aventiure2.german.praedikat.AbstractDuTextPart;
 
@@ -15,10 +14,9 @@ public abstract class AbstractDuDescription<
     final P duTextPart;
 
     AbstractDuDescription(final StructuralElement startsNew,
-                          final P duTextPart,
-                          final AvTimeSpan timeElapsed) {
+                          final P duTextPart) {
         // TODO Alle du()-Aufrufe prüfen, ggf. auf SENTENCE setzen
-        super(startsNew, timeElapsed);
+        super(startsNew);
         this.duTextPart = duTextPart;
     }
 

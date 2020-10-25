@@ -2,7 +2,6 @@ package de.nb.aventiure2.german.description;
 
 import androidx.annotation.Nullable;
 
-import de.nb.aventiure2.data.world.time.*;
 import de.nb.aventiure2.german.base.StructuralElement;
 import de.nb.aventiure2.german.praedikat.AdverbialeAngabeSkopusSatz;
 import de.nb.aventiure2.german.praedikat.AdverbialeAngabeSkopusVerbAllg;
@@ -16,9 +15,8 @@ import de.nb.aventiure2.german.praedikat.PraedikatOhneLeerstellen;
 public class PraedikatDuDescription
         extends AbstractDuDescription<PraedikatOhneLeerstellen, PraedikatDuDescription> {
     PraedikatDuDescription(final StructuralElement startsNew,
-                           final PraedikatOhneLeerstellen praedikat,
-                           final AvTimeSpan timeElapsed) {
-        super(startsNew, praedikat, timeElapsed);
+                           final PraedikatOhneLeerstellen praedikat) {
+        super(startsNew, praedikat);
     }
 
     public PraedikatDuDescription mitAdverbialerAngabe(
@@ -38,8 +36,7 @@ public class PraedikatDuDescription
 
     private PraedikatDuDescription copy(final PraedikatOhneLeerstellen praedikat) {
         return new PraedikatDuDescription(getStartsNew(),
-                praedikat,
-                getTimeElapsed());
+                praedikat);
     }
 
     public PraedikatOhneLeerstellen getPraedikat() {

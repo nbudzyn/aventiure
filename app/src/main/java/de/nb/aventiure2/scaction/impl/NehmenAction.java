@@ -22,7 +22,7 @@ import de.nb.aventiure2.data.world.syscomp.storingplace.ILocationGO;
 import de.nb.aventiure2.german.base.Nominalphrase;
 import de.nb.aventiure2.german.base.NumerusGenus;
 import de.nb.aventiure2.german.base.SubstantivischePhrase;
-import de.nb.aventiure2.german.description.AbstractDescription;
+import de.nb.aventiure2.german.description.TimedDescription;
 import de.nb.aventiure2.german.praedikat.AdverbialeAngabeSkopusSatz;
 import de.nb.aventiure2.german.praedikat.AdverbialeAngabeSkopusVerbWohinWoher;
 import de.nb.aventiure2.german.praedikat.PraedikatMitEinerObjektleerstelle;
@@ -44,10 +44,10 @@ import static de.nb.aventiure2.german.base.Numerus.SG;
 import static de.nb.aventiure2.german.base.Person.P1;
 import static de.nb.aventiure2.german.base.Person.P2;
 import static de.nb.aventiure2.german.base.StructuralElement.PARAGRAPH;
-import static de.nb.aventiure2.german.description.AllgDescription.neuerSatz;
-import static de.nb.aventiure2.german.description.AllgDescription.satzanschluss;
-import static de.nb.aventiure2.german.description.DescriptionUmformulierer.drueckeAus;
-import static de.nb.aventiure2.german.description.DuDescriptionBuilder.du;
+import static de.nb.aventiure2.german.description.DescriptionBuilder.du;
+import static de.nb.aventiure2.german.description.DescriptionBuilder.neuerSatz;
+import static de.nb.aventiure2.german.description.DescriptionBuilder.satzanschluss;
+import static de.nb.aventiure2.german.description.DescriptionUmformulierer.drueckeAusTimed;
 import static de.nb.aventiure2.german.description.Kohaerenzrelation.DISKONTINUITAET;
 import static de.nb.aventiure2.german.praedikat.VerbSubjObj.MITNEHMEN;
 import static de.nb.aventiure2.german.praedikat.VerbSubjObj.NEHMEN;
@@ -329,8 +329,8 @@ public class NehmenAction
 
             final Nominalphrase froschDesc = world.getDescription(gameObject, false);
 
-            final ImmutableList.Builder<AbstractDescription<?>> alt = builder();
-            alt.addAll(drueckeAus(DISKONTINUITAET,
+            final ImmutableList.Builder<TimedDescription> alt = builder();
+            alt.addAll(drueckeAusTimed(DISKONTINUITAET,
                     du(PARAGRAPH,
                             "nimmst",
                             froschDesc.akk(),
@@ -432,9 +432,9 @@ public class NehmenAction
         final Nominalphrase objectDesc = world.getDescription(gameObject);
         final Nominalphrase objectDescShort = world.getDescription(gameObject, true);
 
-        final ImmutableList.Builder<AbstractDescription<?>> alt = ImmutableList.builder();
+        final ImmutableList.Builder<TimedDescription> alt = ImmutableList.builder();
 
-        alt.addAll(drueckeAus(DISKONTINUITAET,
+        alt.addAll(drueckeAusTimed(DISKONTINUITAET,
                 du(PARAGRAPH,
                         nehmenPraedikat.mitObj(objectDesc),
                         secs(5))

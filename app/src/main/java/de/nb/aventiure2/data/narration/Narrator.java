@@ -8,6 +8,7 @@ import androidx.room.Insert;
 import androidx.room.OnConflictStrategy;
 
 import com.google.common.collect.ImmutableCollection;
+import com.google.common.collect.ImmutableList;
 
 import java.util.Collection;
 import java.util.Set;
@@ -22,6 +23,7 @@ import de.nb.aventiure2.german.base.Personalpronomen;
 import de.nb.aventiure2.german.base.PhorikKandidat;
 import de.nb.aventiure2.german.base.StructuralElement;
 import de.nb.aventiure2.german.description.AbstractDescription;
+import de.nb.aventiure2.german.description.TimedDescription;
 
 import static de.nb.aventiure2.data.narration.Narration.NarrationSource.REACTIONS;
 import static java.util.Arrays.asList;
@@ -69,20 +71,33 @@ public class Narrator {
         return narrationSourceJustInCase;
     }
 
-
-    public void narrate(final AbstractDescription<?> desc) {
+    public void narrate(final TimedDescription desc) {
         narrateAlt(desc);
     }
 
-    public void narrateAlt(final ImmutableCollection.Builder<AbstractDescription<?>> alternatives) {
+    public void narrateAlt(final ImmutableCollection.Builder<AbstractDescription<?>> alternatives,
+                           final AvTimeSpan timeElapsed) {
+        narrateAlt(alternatives.build(), timeElapsed);
+    }
+
+    public void narrateAlt(final ImmutableCollection.Builder<TimedDescription> alternatives) {
         narrateAlt(alternatives.build());
     }
 
-    public void narrateAlt(final AbstractDescription<?>... alternatives) {
+    public void narrateAlt(final TimedDescription... alternatives) {
         narrateAlt(asList(alternatives));
     }
 
-    public void narrateAlt(final Collection<AbstractDescription<?>> alternatives) {
+    public void narrateAlt(final Collection<AbstractDescription<?>> alternatives,
+                           final AvTimeSpan timeElapsed) {
+        narrateAlt(
+                alternatives.stream()
+                        .map(d -> new TimedDescription(d, timeElapsed))
+                        .collect(ImmutableList.toImmutableList())
+        );
+    }
+
+    public void narrateAlt(final Collection<TimedDescription> alternatives) {
         // FIXME Den vorherigen Satz manchmal für die Textausgabe
         //  berücksichtigen. Z.B. "Unten angekommen..." oder
         //  "Du kommst, siehst und siegst"
@@ -90,7 +105,7 @@ public class Narrator {
         // STORY "Als du unten angekommen bist..."
 
         final Set<AvTimeSpan> timesElapsed = alternatives.stream()
-                .map(AbstractDescription::getTimeElapsed)
+                .map(TimedDescription::getTimeElapsed)
                 .collect(Collectors.toSet());
         if (timesElapsed.size() != 1) {
             // Die Alternativen dauern unterschiedlich lange! Leider müssen wir sofort
@@ -98,7 +113,7 @@ public class Narrator {
             // vergehen muss!
             doTemporaryNarration();
 
-            final AvTimeSpan timeElapsed = dao.narrateAlt(
+            final AvTimeSpan timeElapsed = dao.narrateAltTimedDescriptions(
                     narrationSourceJustInCase,
                     alternatives);
             nowDao.passTime(timeElapsed);
@@ -108,7 +123,9 @@ public class Narrator {
         doTemporaryNarration();
 
         temporaryNarration = new TemporaryNarration(narrationSourceJustInCase,
-                alternatives);
+                alternatives.stream()
+                        .map(TimedDescription::getDescription)
+                        .collect(ImmutableList.toImmutableList()));
 
         nowDao.passTime(timesElapsed.iterator().next());
     }
@@ -247,7 +264,7 @@ public class Narrator {
     private void doTemporaryNarration() {
         if (temporaryNarration != null) {
             // Time has already been accounted for
-            dao.narrateAlt(
+            dao.narrateAltDescriptions(
                     temporaryNarration.getNarrationSource(),
                     temporaryNarration.getDescriptionAlternatives());
             temporaryNarration = null;

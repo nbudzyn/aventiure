@@ -21,7 +21,7 @@ import de.nb.aventiure2.data.world.syscomp.state.impl.FroschprinzState;
 import de.nb.aventiure2.data.world.syscomp.storingplace.ILocationGO;
 import de.nb.aventiure2.german.base.Personalpronomen;
 import de.nb.aventiure2.german.base.SubstantivischePhrase;
-import de.nb.aventiure2.german.description.AbstractDescription;
+import de.nb.aventiure2.german.description.TimedDescription;
 import de.nb.aventiure2.german.praedikat.AbstractAdverbialeAngabe;
 import de.nb.aventiure2.german.praedikat.AdverbialeAngabeSkopusVerbWohinWoher;
 import de.nb.aventiure2.german.praedikat.PraedikatMitEinerObjektleerstelle;
@@ -39,9 +39,9 @@ import static de.nb.aventiure2.german.base.Numerus.SG;
 import static de.nb.aventiure2.german.base.NumerusGenus.M;
 import static de.nb.aventiure2.german.base.Person.P1;
 import static de.nb.aventiure2.german.base.StructuralElement.PARAGRAPH;
-import static de.nb.aventiure2.german.description.AllgDescription.neuerSatz;
-import static de.nb.aventiure2.german.description.AllgDescription.satzanschluss;
-import static de.nb.aventiure2.german.description.DuDescriptionBuilder.du;
+import static de.nb.aventiure2.german.description.DescriptionBuilder.du;
+import static de.nb.aventiure2.german.description.DescriptionBuilder.neuerSatz;
+import static de.nb.aventiure2.german.description.DescriptionBuilder.satzanschluss;
 import static de.nb.aventiure2.german.praedikat.VerbSubjObj.ABSETZEN;
 import static de.nb.aventiure2.german.praedikat.VerbSubjObj.HINLEGEN;
 import static de.nb.aventiure2.german.praedikat.VerbSubjObj.LEGEN;
@@ -167,7 +167,7 @@ public class AblegenAction
             return;
         }
 
-        final ImmutableList.Builder<AbstractDescription<?>> alt =
+        final ImmutableList.Builder<TimedDescription> alt =
                 ImmutableList.builder();
 
         alt.add(du(PARAGRAPH,
@@ -234,7 +234,7 @@ public class AblegenAction
                 n.allowsAdditionalDuSatzreihengliedOhneSubjekt() &&
                 n.dann()) {
 
-            final ImmutableList.Builder<AbstractDescription<?>> alt =
+            final ImmutableList.Builder<TimedDescription> alt =
                     ImmutableList.builder();
             alt.add(satzanschluss(
                     ", aber dann denkst du dir: „So ein Ekeltier hat auf "

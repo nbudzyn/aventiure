@@ -24,9 +24,9 @@ import static de.nb.aventiure2.german.base.GermanUtil.capitalize;
 import static de.nb.aventiure2.german.base.GermanUtil.uncapitalize;
 import static de.nb.aventiure2.german.base.Numerus.SG;
 import static de.nb.aventiure2.german.base.Person.P1;
-import static de.nb.aventiure2.german.description.AllgDescription.neuerSatz;
+import static de.nb.aventiure2.german.description.DescriptionBuilder.du;
+import static de.nb.aventiure2.german.description.DescriptionBuilder.neuerSatz;
 import static de.nb.aventiure2.german.description.DescriptionUmformulierer.drueckeAus;
-import static de.nb.aventiure2.german.description.DuDescriptionBuilder.du;
 import static de.nb.aventiure2.german.description.Kohaerenzrelation.VERSTEHT_SICH_VON_SELBST;
 import static de.nb.aventiure2.german.description.Kohaerenzrelation.WIEDERHOLUNG;
 
@@ -87,8 +87,8 @@ public class RufenAction extends AbstractScAction {
 
         if (kohaerenzrelation != VERSTEHT_SICH_VON_SELBST ||
                 n.allowsAdditionalDuSatzreihengliedOhneSubjekt()) {
-            n.narrateAlt(drueckeAus(kohaerenzrelation,
-                    du(ruftyp.getName(), secs(30))));
+            n.narrateAlt(drueckeAus(kohaerenzrelation, du(ruftyp.getName())),
+                    secs(30));
         } else {
             n.narrate(neuerSatz(
                     "Und " + uncapitalize(ruftyp.getName().getDuHauptsatz()),

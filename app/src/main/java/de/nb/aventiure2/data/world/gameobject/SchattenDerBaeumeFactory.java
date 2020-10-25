@@ -10,7 +10,7 @@ import de.nb.aventiure2.data.world.base.Lichtverhaeltnisse;
 import de.nb.aventiure2.data.world.syscomp.description.impl.SimpleDescriptionComp;
 import de.nb.aventiure2.data.world.syscomp.location.LocationComp;
 import de.nb.aventiure2.data.world.syscomp.storingplace.StoringPlaceComp;
-import de.nb.aventiure2.german.description.AbstractDescription;
+import de.nb.aventiure2.german.description.TimedDescription;
 
 import static de.nb.aventiure2.data.world.base.Lichtverhaeltnisse.DUNKEL;
 import static de.nb.aventiure2.data.world.base.SpatialConnectionData.conData;
@@ -22,7 +22,7 @@ import static de.nb.aventiure2.german.base.Nominalphrase.np;
 import static de.nb.aventiure2.german.base.NumerusGenus.M;
 import static de.nb.aventiure2.german.base.StructuralElement.PARAGRAPH;
 import static de.nb.aventiure2.german.base.StructuralElement.SENTENCE;
-import static de.nb.aventiure2.german.description.DuDescriptionBuilder.du;
+import static de.nb.aventiure2.german.description.DescriptionBuilder.du;
 
 public class SchattenDerBaeumeFactory {
     private final AvDatabase db;
@@ -69,7 +69,7 @@ public class SchattenDerBaeumeFactory {
                 storingPlaceComp);
     }
 
-    private AbstractDescription<?> getDescIn(
+    private TimedDescription getDescIn(
             final Known newLocationKnown, final Lichtverhaeltnisse lichtverhaeltnisse) {
         if (lichtverhaeltnisse == DUNKEL) {
             return du("setzt", "dich unter die Bäume", secs(20))
@@ -94,7 +94,7 @@ public class SchattenDerBaeumeFactory {
                 .dann();
     }
 
-    private static AbstractDescription<?> getDescOut(
+    private static TimedDescription getDescOut(
             final Known newLocationKnown, final Lichtverhaeltnisse lichtverhaeltnisse) {
         if (lichtverhaeltnisse == DUNKEL) {
             return du(PARAGRAPH, "stehst", "wieder auf", secs(10))

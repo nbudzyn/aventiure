@@ -21,7 +21,7 @@ import de.nb.aventiure2.data.world.syscomp.state.IHasStateGO;
 import de.nb.aventiure2.data.world.syscomp.state.impl.FroschprinzState;
 import de.nb.aventiure2.data.world.syscomp.state.impl.SchlossfestState;
 import de.nb.aventiure2.data.world.time.*;
-import de.nb.aventiure2.german.description.AbstractDescription;
+import de.nb.aventiure2.german.description.TimedDescription;
 
 import static de.nb.aventiure2.data.world.base.Known.KNOWN_FROM_DARKNESS;
 import static de.nb.aventiure2.data.world.base.Known.UNKNOWN;
@@ -34,8 +34,8 @@ import static de.nb.aventiure2.data.world.time.AvTimeSpan.*;
 import static de.nb.aventiure2.data.world.time.Tageszeit.*;
 import static de.nb.aventiure2.german.base.StructuralElement.PARAGRAPH;
 import static de.nb.aventiure2.german.base.StructuralElement.SENTENCE;
-import static de.nb.aventiure2.german.description.AllgDescription.neuerSatz;
-import static de.nb.aventiure2.german.description.DuDescriptionBuilder.du;
+import static de.nb.aventiure2.german.description.DescriptionBuilder.du;
+import static de.nb.aventiure2.german.description.DescriptionBuilder.neuerSatz;
 
 /**
  * An implementation of {@link AbstractSpatialConnectionComp}
@@ -93,7 +93,7 @@ public class ImWaldNaheDemSchlossConnectionComp extends AbstractSpatialConnectio
     }
 
 
-    private AbstractDescription<?> getDescTo_DraussenVorDemSchloss(
+    private TimedDescription getDescTo_DraussenVorDemSchloss(
             final Known newLocationKnown, final Lichtverhaeltnisse lichtverhaeltnisse) {
 
         switch (((IHasStateGO<SchlossfestState>) world.load(SCHLOSSFEST)).stateComp().getState()) {
@@ -105,7 +105,7 @@ public class ImWaldNaheDemSchlossConnectionComp extends AbstractSpatialConnectio
     }
 
     @NonNull
-    private AbstractDescription<?>
+    private TimedDescription
     getDescTo_DraussenVorDemSchloss_KeinFest(
             final Lichtverhaeltnisse lichtverhaeltnisse) {
         if (db.nowDao().now().getTageszeit() == TAGSUEBER) {
@@ -137,7 +137,7 @@ public class ImWaldNaheDemSchlossConnectionComp extends AbstractSpatialConnectio
     }
 
     @NonNull
-    private AbstractDescription<?>
+    private TimedDescription
     getDescTo_DraussenVorDemSchloss_FestBegonnen(
             final AvTimeSpan timeSpan) {
         if (db.counterDao().incAndGet(COUNTER_ID_VOR_DEM_SCHLOSS_SCHLOSSFEST_KNOWN) == 1) {
@@ -154,7 +154,7 @@ public class ImWaldNaheDemSchlossConnectionComp extends AbstractSpatialConnectio
         return neuerSatz("Das Schlossfest ist immer noch in vollem Gange", timeSpan);
     }
 
-    private AbstractDescription<?> getDescTo_VorDemAltenTurm(
+    private TimedDescription getDescTo_VorDemAltenTurm(
             final Known newLocationKnown, final Lichtverhaeltnisse lichtverhaeltnisse) {
         if (newLocationKnown == UNKNOWN && lichtverhaeltnisse == HELL) {
             return du("nimmst", "den schmalen Pfad, der sich lange durch "

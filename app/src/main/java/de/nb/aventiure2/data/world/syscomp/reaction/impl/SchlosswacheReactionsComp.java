@@ -22,7 +22,7 @@ import de.nb.aventiure2.data.world.syscomp.state.impl.SchlosswacheStateComp;
 import de.nb.aventiure2.data.world.syscomp.storingplace.ILocationGO;
 import de.nb.aventiure2.data.world.time.*;
 import de.nb.aventiure2.german.base.NumerusGenus;
-import de.nb.aventiure2.german.description.AbstractDescription;
+import de.nb.aventiure2.german.description.TimedDescription;
 
 import static de.nb.aventiure2.data.world.gameobject.World.*;
 import static de.nb.aventiure2.data.world.syscomp.feelings.Mood.ANGESPANNT;
@@ -33,9 +33,9 @@ import static de.nb.aventiure2.data.world.syscomp.state.impl.SchlosswacheState.U
 import static de.nb.aventiure2.data.world.time.AvTimeSpan.*;
 import static de.nb.aventiure2.german.base.GermanUtil.capitalize;
 import static de.nb.aventiure2.german.base.StructuralElement.PARAGRAPH;
-import static de.nb.aventiure2.german.description.AllgDescription.neuerSatz;
-import static de.nb.aventiure2.german.description.AllgDescription.satzanschluss;
-import static de.nb.aventiure2.german.description.DuDescriptionBuilder.du;
+import static de.nb.aventiure2.german.description.DescriptionBuilder.du;
+import static de.nb.aventiure2.german.description.DescriptionBuilder.neuerSatz;
+import static de.nb.aventiure2.german.description.DescriptionBuilder.satzanschluss;
 
 /**
  * "Reaktionen" der Schlosswache, z.B. darauf, dass Zeit vergeht,
@@ -288,7 +288,7 @@ public class SchlosswacheReactionsComp
 
     private void scHatGoldeneKugelGenommen_wacheIstAufmerksam_erwischt(
             final ILocatableGO goldeneKugel) {
-        final ImmutableList.Builder<AbstractDescription<?>> alt = ImmutableList.builder();
+        final ImmutableList.Builder<TimedDescription> alt = ImmutableList.builder();
 
         if (n.allowsAdditionalDuSatzreihengliedOhneSubjekt()) {
             alt.add(satzanschluss(", doch keine Sekunde später baut sich die "
@@ -321,7 +321,7 @@ public class SchlosswacheReactionsComp
     }
 
     private void scHatGoldeneKugelGenommen_wacheIstAufmerksam_nichtErwischt() {
-        final ImmutableList.Builder<AbstractDescription<?>> alt = ImmutableList.builder();
+        final ImmutableList.Builder<TimedDescription> alt = ImmutableList.builder();
 
         if (n.allowsAdditionalDuSatzreihengliedOhneSubjekt()) {
             alt.add(satzanschluss(

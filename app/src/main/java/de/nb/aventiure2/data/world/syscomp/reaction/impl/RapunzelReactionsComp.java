@@ -30,6 +30,7 @@ import de.nb.aventiure2.german.base.Nominalphrase;
 import de.nb.aventiure2.german.base.PraepositionMitKasus;
 import de.nb.aventiure2.german.base.SubstantivischePhrase;
 import de.nb.aventiure2.german.description.AbstractDescription;
+import de.nb.aventiure2.german.description.TimedDescription;
 
 import static de.nb.aventiure2.data.world.base.Known.KNOWN_FROM_DARKNESS;
 import static de.nb.aventiure2.data.world.base.Known.KNOWN_FROM_LIGHT;
@@ -52,8 +53,8 @@ import static de.nb.aventiure2.german.base.NumerusGenus.F;
 import static de.nb.aventiure2.german.base.NumerusGenus.PL_MFN;
 import static de.nb.aventiure2.german.base.StructuralElement.PARAGRAPH;
 import static de.nb.aventiure2.german.base.StructuralElement.SENTENCE;
-import static de.nb.aventiure2.german.description.AllgDescription.neuerSatz;
-import static de.nb.aventiure2.german.description.DuDescriptionBuilder.du;
+import static de.nb.aventiure2.german.description.DescriptionBuilder.du;
+import static de.nb.aventiure2.german.description.DescriptionBuilder.neuerSatz;
 
 /**
  * "Reaktionen" von Rapunzel, z.B. darauf, dass Zeit vergeht
@@ -189,7 +190,7 @@ public class RapunzelReactionsComp
         if (world.isOrHasRecursiveLocation(from, OBEN_IM_ALTEN_TURM)) {
             stateComp.narrateAndSetState(STILL);
 
-            final ImmutableList.Builder<AbstractDescription<?>> alt = ImmutableList.builder();
+            final ImmutableList.Builder<TimedDescription> alt = ImmutableList.builder();
             alt.addAll(altRapunzelZiehtHaareWiederHoch_VorDemAltenTurm());
             // STORY Wenn Rapunzel das mit der Zauberin erzählt hat (aber auch dann nur
             //  einmal): „Aber komm nicht, wenn die Alte bei mir ist, ruft sie dir noch nach"
@@ -197,8 +198,8 @@ public class RapunzelReactionsComp
 
             alt.add(neuerSatz(
                     "Als du unten bist, verschwinden die goldenen Haare "
-                            + "wieder oben im Fenster",
-                    secs(15))
+                            + "wieder oben im Fenster", secs(15)
+            )
                     .beendet(PARAGRAPH));
 
             n.narrateAlt(alt);
@@ -302,7 +303,7 @@ public class RapunzelReactionsComp
         loadSC().feelingsComp().requestMoodMin(AUFGEDREHT);
         stateComp.setState(STILL);
 
-        final ImmutableList.Builder<AbstractDescription<?>> alt = ImmutableList.builder();
+        final ImmutableList.Builder<TimedDescription> alt = ImmutableList.builder();
 
         if (db.nowDao().now().getTageszeit() == NACHTS) {
             alt.add(du(SENTENCE, "hast", "die junge Frau offenbar aus dem Bett "
@@ -440,7 +441,7 @@ public class RapunzelReactionsComp
     }
 
     @NonNull
-    private static ImmutableList<AbstractDescription<?>>
+    private static ImmutableList<TimedDescription>
     altRapunzelZiehtHaareWiederHoch_VorDemAltenTurm() {
         return ImmutableList.of(
                 neuerSatz(
@@ -461,7 +462,7 @@ public class RapunzelReactionsComp
         );
     }
 
-    private ImmutableList<AbstractDescription<?>> altRapunzelZiehtHaareWiederHoch_ObenImAltenTurm() {
+    private ImmutableList<TimedDescription> altRapunzelZiehtHaareWiederHoch_ObenImAltenTurm() {
         final SubstantivischePhrase anaph =
                 getAnaphPersPronWennMglSonstDescription(false);
 
@@ -777,36 +778,29 @@ public class RapunzelReactionsComp
         final ImmutableList.Builder<AbstractDescription<?>> alt = ImmutableList.builder();
 
         alt.add(
-                neuerSatz("Plötzlich endet der Gesang",
-                        noTime())
+                neuerSatz("Plötzlich endet der Gesang")
                         .beendet(PARAGRAPH),
-                neuerSatz("Plötzlich wird es still",
-                        noTime()),
+                neuerSatz("Plötzlich wird es still"),
                 neuerSatz(PARAGRAPH,
                         "Nun hat der Gesang geendet - wie gern würdest noch länger "
-                                + "zuhören!",
-                        noTime())
+                                + "zuhören!")
                         .beendet(PARAGRAPH),
                 neuerSatz(PARAGRAPH,
-                        "Nun ist es wieder still",
-                        noTime()),
+                        "Nun ist es wieder still"),
                 neuerSatz(PARAGRAPH,
-                        "Jetzt hat der süße Gesang aufgehört",
-                        noTime()),
+                        "Jetzt hat der süße Gesang aufgehört"),
                 neuerSatz(PARAGRAPH,
-                        "Jetzt ist es wieder still. Dein Herz ist noch ganz bewegt",
-                        noTime())
+                        "Jetzt ist es wieder still. Dein Herz ist noch ganz bewegt")
                         .beendet(PARAGRAPH));
         if (!loadSC().memoryComp().isKnown(RAPUNZEL)) {
             alt.add(
                     neuerSatz(PARAGRAPH,
                             "Auf einmal ist nichts mehr zu hören. Es lässt dir keine Ruhe: "
-                                    + "Wer mag dort oben so lieblich singen?",
-                            noTime())
+                                    + "Wer mag dort oben so lieblich singen?")
                             .beendet(PARAGRAPH));
         }
 
-        n.narrateAlt(alt);
+        n.narrateAlt(alt, noTime());
 
         world.loadSC().memoryComp().upgradeKnown(RAPUNZELS_GESANG);
     }

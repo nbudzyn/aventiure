@@ -18,7 +18,7 @@ import de.nb.aventiure2.data.world.syscomp.state.IHasStateGO;
 import de.nb.aventiure2.data.world.syscomp.state.impl.FroschprinzState;
 import de.nb.aventiure2.data.world.syscomp.talking.ITalkerGO;
 import de.nb.aventiure2.data.world.syscomp.talking.impl.FroschprinzTalkingComp;
-import de.nb.aventiure2.german.description.AbstractDescription;
+import de.nb.aventiure2.german.description.TimedDescription;
 import de.nb.aventiure2.scaction.AbstractScAction;
 
 import static de.nb.aventiure2.data.world.gameobject.World.*;
@@ -27,9 +27,9 @@ import static de.nb.aventiure2.data.world.syscomp.feelings.Mood.UNTROESTLICH;
 import static de.nb.aventiure2.data.world.syscomp.state.impl.FroschprinzState.HAT_SC_HILFSBEREIT_ANGESPROCHEN;
 import static de.nb.aventiure2.data.world.syscomp.state.impl.FroschprinzState.UNAUFFAELLIG;
 import static de.nb.aventiure2.data.world.time.AvTimeSpan.*;
-import static de.nb.aventiure2.german.description.AllgDescription.neuerSatz;
-import static de.nb.aventiure2.german.description.AllgDescription.satzanschluss;
-import static de.nb.aventiure2.german.description.DuDescriptionBuilder.du;
+import static de.nb.aventiure2.german.description.DescriptionBuilder.du;
+import static de.nb.aventiure2.german.description.DescriptionBuilder.neuerSatz;
+import static de.nb.aventiure2.german.description.DescriptionBuilder.satzanschluss;
 
 /**
  * Der Spielercharakter heult.
@@ -95,7 +95,7 @@ public class HeulenAction extends AbstractScAction {
 
         sc.memoryComp().setLastAction(buildMemorizedAction());
 
-        final ImmutableList.Builder<AbstractDescription<?>> alt = ImmutableList.builder();
+        final ImmutableList.Builder<TimedDescription> alt = ImmutableList.builder();
         if (n.allowsAdditionalDuSatzreihengliedOhneSubjekt()) {
             alt.add(du("weinst", mins(1))
                     .undWartest());
@@ -131,7 +131,7 @@ public class HeulenAction extends AbstractScAction {
     private void narrateAndDoErstesMal() {
         sc.memoryComp().setLastAction(buildMemorizedAction());
 
-        final ImmutableList.Builder<AbstractDescription<?>> alt = ImmutableList.builder();
+        final ImmutableList.Builder<TimedDescription> alt = ImmutableList.builder();
         alt.add(neuerSatz("Dich überkommt ein Schluchzen", mins(1)));
 
         if (n.dann()) {

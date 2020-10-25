@@ -20,7 +20,7 @@ import de.nb.aventiure2.data.world.syscomp.state.impl.FroschprinzState;
 import de.nb.aventiure2.data.world.syscomp.storingplace.ILocationGO;
 import de.nb.aventiure2.german.base.Nominalphrase;
 import de.nb.aventiure2.german.base.SubstantivischePhrase;
-import de.nb.aventiure2.german.description.AbstractDescription;
+import de.nb.aventiure2.german.description.TimedDescription;
 import de.nb.aventiure2.german.praedikat.SeinUtil;
 import de.nb.aventiure2.scaction.AbstractScAction;
 
@@ -36,9 +36,9 @@ import static de.nb.aventiure2.data.world.syscomp.state.impl.FroschprinzState.UN
 import static de.nb.aventiure2.data.world.time.AvTimeSpan.*;
 import static de.nb.aventiure2.german.base.GermanUtil.capitalize;
 import static de.nb.aventiure2.german.base.StructuralElement.PARAGRAPH;
-import static de.nb.aventiure2.german.description.AllgDescription.neuerSatz;
-import static de.nb.aventiure2.german.description.AllgDescription.satzanschluss;
-import static de.nb.aventiure2.german.description.DuDescriptionBuilder.du;
+import static de.nb.aventiure2.german.description.DescriptionBuilder.du;
+import static de.nb.aventiure2.german.description.DescriptionBuilder.neuerSatz;
+import static de.nb.aventiure2.german.description.DescriptionBuilder.satzanschluss;
 
 /**
  * Der Spieler(charakter) wirft einen Gegenstand hoch.
@@ -187,7 +187,7 @@ public class HochwerfenAction<OBJ extends IDescribableGO & ILocatableGO>
                         + "ungeschickt, oder?", noTime()));
     }
 
-    private void narrateAndDoHochwerfenAuffangen(final AbstractDescription<?> desc) {
+    private void narrateAndDoHochwerfenAuffangen(final TimedDescription desc) {
         n.narrate(desc);
 
         object.locationComp().narrateAndDoLeaveReactions(SPIELER_CHARAKTER);

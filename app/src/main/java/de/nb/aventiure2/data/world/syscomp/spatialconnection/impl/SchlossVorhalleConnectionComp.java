@@ -19,7 +19,7 @@ import de.nb.aventiure2.data.world.syscomp.spatialconnection.AbstractSpatialConn
 import de.nb.aventiure2.data.world.syscomp.state.IHasStateGO;
 import de.nb.aventiure2.data.world.syscomp.state.impl.FroschprinzState;
 import de.nb.aventiure2.data.world.syscomp.state.impl.SchlossfestState;
-import de.nb.aventiure2.german.description.AbstractDescription;
+import de.nb.aventiure2.german.description.TimedDescription;
 
 import static de.nb.aventiure2.data.world.base.Known.KNOWN_FROM_DARKNESS;
 import static de.nb.aventiure2.data.world.base.Known.UNKNOWN;
@@ -30,7 +30,7 @@ import static de.nb.aventiure2.data.world.syscomp.state.impl.FroschprinzState.ZU
 import static de.nb.aventiure2.data.world.syscomp.state.impl.FroschprinzState.ZURUECKVERWANDELT_SCHLOSS_VORHALLE_VERLASSEN;
 import static de.nb.aventiure2.data.world.syscomp.state.impl.SchlossfestState.BEGONNEN;
 import static de.nb.aventiure2.data.world.time.AvTimeSpan.*;
-import static de.nb.aventiure2.german.description.DuDescriptionBuilder.du;
+import static de.nb.aventiure2.german.description.DescriptionBuilder.du;
 
 /**
  * An implementation of {@link AbstractSpatialConnectionComp}
@@ -74,7 +74,7 @@ public class SchlossVorhalleConnectionComp extends AbstractSpatialConnectionComp
         return res.build();
     }
 
-    private AbstractDescription<?> getDescTo_DraussenVorDemSchloss(
+    private TimedDescription getDescTo_DraussenVorDemSchloss(
             final Known newLocationKnown, final Lichtverhaeltnisse lichtverhaeltnisse) {
         switch (((IHasStateGO<SchlossfestState>) world.load(SCHLOSSFEST)).stateComp().getState()) {
             case BEGONNEN:
@@ -86,7 +86,7 @@ public class SchlossVorhalleConnectionComp extends AbstractSpatialConnectionComp
         }
     }
 
-    private static AbstractDescription<?> getDescTo_DraussenVorDemSchlosss_KeinFest(
+    private static TimedDescription getDescTo_DraussenVorDemSchlosss_KeinFest(
             final Known known, final Lichtverhaeltnisse lichtverhaeltnisse) {
         if (known == UNKNOWN) {
             return getDescTo_DraussenVorDemSchlosss_KeinFest_Unknown(
@@ -110,7 +110,7 @@ public class SchlossVorhalleConnectionComp extends AbstractSpatialConnectionComp
     }
 
     @NonNull
-    private static AbstractDescription<?>
+    private static TimedDescription
     getDescTo_DraussenVorDemSchlosss_KeinFest_Unknown(
             final Lichtverhaeltnisse lichtverhaeltnisse) {
         if (lichtverhaeltnisse == HELL) {
@@ -132,7 +132,7 @@ public class SchlossVorhalleConnectionComp extends AbstractSpatialConnectionComp
     }
 
     @NonNull
-    private AbstractDescription<?>
+    private TimedDescription
     getDescTo_DraussenVorDemSchloss_FestBegonnen() {
         if (((IHasStateGO<FroschprinzState>) world.load(FROSCHPRINZ)).stateComp()
                 .hasState(ZURUECKVERWANDELT_IN_VORHALLE,

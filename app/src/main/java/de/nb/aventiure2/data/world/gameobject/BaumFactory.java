@@ -12,7 +12,7 @@ import de.nb.aventiure2.data.world.base.Lichtverhaeltnisse;
 import de.nb.aventiure2.data.world.syscomp.description.impl.SimpleDescriptionComp;
 import de.nb.aventiure2.data.world.syscomp.location.LocationComp;
 import de.nb.aventiure2.data.world.syscomp.storingplace.StoringPlaceComp;
-import de.nb.aventiure2.german.description.AbstractDescription;
+import de.nb.aventiure2.german.description.TimedDescription;
 
 import static de.nb.aventiure2.data.world.base.Lichtverhaeltnisse.DUNKEL;
 import static de.nb.aventiure2.data.world.base.SpatialConnectionData.conData;
@@ -24,8 +24,8 @@ import static de.nb.aventiure2.german.base.Artikel.Typ.INDEF;
 import static de.nb.aventiure2.german.base.Nominalphrase.np;
 import static de.nb.aventiure2.german.base.NumerusGenus.M;
 import static de.nb.aventiure2.german.base.StructuralElement.PARAGRAPH;
-import static de.nb.aventiure2.german.description.AllgDescription.neuerSatz;
-import static de.nb.aventiure2.german.description.DuDescriptionBuilder.du;
+import static de.nb.aventiure2.german.description.DescriptionBuilder.du;
+import static de.nb.aventiure2.german.description.DescriptionBuilder.neuerSatz;
 
 public class BaumFactory {
     public static final String HOCHKLETTERN = "BaumFactory_HOCHKLETTERN";
@@ -78,7 +78,7 @@ public class BaumFactory {
                 storingPlaceComp);
     }
 
-    private AbstractDescription<?> getDescIn(
+    private TimedDescription getDescIn(
             final Known newLocationKnown, final Lichtverhaeltnisse lichtverhaeltnisse) {
         final int count = db.counterDao().incAndGet(HOCHKLETTERN);
         switch (count) {
@@ -92,7 +92,7 @@ public class BaumFactory {
     }
 
     @CheckReturnValue
-    private static AbstractDescription<?> getDescInErstesMal() {
+    private static TimedDescription getDescInErstesMal() {
         return neuerSatz(PARAGRAPH,
                 "Vom Stamm geht in Hüfthöhe ein kräftiger Ast ab, den kannst du "
                         + "ohne Mühe "
@@ -108,7 +108,7 @@ public class BaumFactory {
                         + "Apfelbaum", mins(6));
     }
 
-    private static AbstractDescription<?> getDescInZweitesMal() {
+    private static TimedDescription getDescInZweitesMal() {
         return du(PARAGRAPH,
                 "kletterst",
                 "noch einmal eine, zwei Etagen den Baum hinauf. "
@@ -118,7 +118,7 @@ public class BaumFactory {
                 .dann();
     }
 
-    private static AbstractDescription<?> getDescInNtesMal(
+    private static TimedDescription getDescInNtesMal(
             final Lichtverhaeltnisse lichtverhaeltnisse) {
         return
                 // STORY Alternative:
@@ -130,7 +130,7 @@ public class BaumFactory {
                         mins(7));
     }
 
-    private AbstractDescription<?> getDescOut(
+    private TimedDescription getDescOut(
             final Known newLocationKnown, final Lichtverhaeltnisse lichtverhaeltnisse) {
         final int count = db.counterDao().incAndGet(HINABKLETTERN);
         switch (count) {
@@ -143,7 +143,7 @@ public class BaumFactory {
         }
     }
 
-    private static AbstractDescription<?> getDescOutErstesMal(
+    private static TimedDescription getDescOutErstesMal(
             final Lichtverhaeltnisse lichtverhaeltnisse) {
         final String dunkelNachsatz =
                 lichtverhaeltnisse == DUNKEL ?
@@ -156,13 +156,13 @@ public class BaumFactory {
                 .beendet(PARAGRAPH);
     }
 
-    private static AbstractDescription<?> getDescOutZweitesMal() {
+    private static TimedDescription getDescOutZweitesMal() {
         return neuerSatz(
                 "Dann geht es vorsichtig wieder hinunter", mins(4))
                 .beendet(PARAGRAPH);
     }
 
-    private static AbstractDescription<?> getDescOutNtesMal(
+    private static TimedDescription getDescOutNtesMal(
             final Lichtverhaeltnisse lichtverhaeltnisse) {
         final String erschoepftMuedeNachsatz =
                 lichtverhaeltnisse == DUNKEL ?

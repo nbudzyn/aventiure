@@ -1,13 +1,6 @@
 package de.nb.aventiure2.german.description;
 
-import javax.annotation.CheckReturnValue;
-
-import de.nb.aventiure2.data.world.time.*;
 import de.nb.aventiure2.german.base.StructuralElement;
-
-import static de.nb.aventiure2.data.world.time.AvTimeSpan.*;
-import static de.nb.aventiure2.german.base.GermanUtil.capitalize;
-import static de.nb.aventiure2.german.base.StructuralElement.PARAGRAPH;
 
 /**
  * A general description. The subject may be anything.
@@ -19,42 +12,10 @@ public class AllgDescription extends AbstractDescription<AllgDescription> {
     private final String description;
 
 
-    @CheckReturnValue
-    public static AllgDescription neuerSatz(
-            final String description,
-            final AvTimeSpan timeElapsed) {
-        return new AllgDescription(StructuralElement.SENTENCE, capitalize(description),
-                timeElapsed);
-    }
-
-    @CheckReturnValue
-    public static AllgDescription neuerSatz(
-            final StructuralElement startsNew,
-            final String description,
-            final AvTimeSpan timeElapsed) {
-        return new AllgDescription(startsNew, capitalize(description), timeElapsed);
-    }
-
-    @CheckReturnValue
-    public static AllgDescription satzanschluss(
-            final String description,
-            final AvTimeSpan timeElapsed) {
-        return new AllgDescription(StructuralElement.WORD, description, timeElapsed);
-    }
-
-    private AllgDescription(final StructuralElement startsNew,
-                            final String description,
-                            final AvTimeSpan timeElapsed) {
-        super(startsNew, timeElapsed);
+    AllgDescription(final StructuralElement startsNew,
+                    final String description) {
+        super(startsNew);
         this.description = description;
-    }
-
-    @CheckReturnValue
-    public static AllgDescription paragraph(final String paragraph) {
-        return neuerSatz(PARAGRAPH,
-                paragraph,
-                noTime())
-                .beendet(PARAGRAPH);
     }
 
     @Override

@@ -2,7 +2,6 @@ package de.nb.aventiure2.german.description;
 
 import androidx.annotation.Nullable;
 
-import de.nb.aventiure2.data.world.time.*;
 import de.nb.aventiure2.german.base.IBezugsobjekt;
 import de.nb.aventiure2.german.base.NumerusGenus;
 import de.nb.aventiure2.german.base.PhorikKandidat;
@@ -15,13 +14,8 @@ import de.nb.aventiure2.german.base.SubstantivischePhrase;
 public abstract class AbstractDescription<SELF extends AbstractDescription<SELF>> {
     private final DescriptionParams params;
 
-    private final AvTimeSpan timeElapsed;
-
-    public AbstractDescription(final StructuralElement startsNew,
-                               final AvTimeSpan timeElapsed) {
+    public AbstractDescription(final StructuralElement startsNew) {
         params = new DescriptionParams(startsNew);
-
-        this.timeElapsed = timeElapsed;
     }
 
     public StructuralElement getStartsNew() {
@@ -112,12 +106,5 @@ public abstract class AbstractDescription<SELF extends AbstractDescription<SELF>
     @Nullable
     public PhorikKandidat getPhorikKandidat() {
         return params.getPhorikKandidat();
-    }
-
-    /**
-     * Zeit, die vergangen ist, während das das beschriebene geschehen ist
-     */
-    public AvTimeSpan getTimeElapsed() {
-        return timeElapsed;
     }
 }

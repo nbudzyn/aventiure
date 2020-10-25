@@ -18,6 +18,7 @@ import de.nb.aventiure2.data.world.time.*;
 import de.nb.aventiure2.german.base.StructuralElement;
 import de.nb.aventiure2.german.description.AbstractDescription;
 import de.nb.aventiure2.german.description.AbstractDuDescription;
+import de.nb.aventiure2.german.description.TimedDescription;
 
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
@@ -37,14 +38,14 @@ public abstract class NarrationDao {
     public NarrationDao() {
     }
 
-    AvTimeSpan narrateAlt(final Narration.NarrationSource narrationSource,
-                          final Collection<AbstractDescription<?>> alternatives) {
+    AvTimeSpan narrateAltTimedDescriptions(final Narration.NarrationSource narrationSource,
+                                           final Collection<TimedDescription> alternatives) {
         checkArgument(alternatives.size() > 0,
                 "No alternatives");
 
         final Narration initialNarration = requireNarration();
 
-        AbstractDescription<?> bestDesc = null;
+        TimedDescription bestDesc = null;
         float bestScore = Float.NEGATIVE_INFINITY;
         NarrationAddition bestNarrationAddition = null;
 
@@ -54,9 +55,9 @@ public abstract class NarrationDao {
         //  also sollte man sie herausfiltern. Da nach den ganzen NarrationAddition-Prüfungen
         //  am Ende wieder die bestDesc relevant ist, ist das nicht trivial.
 
-        for (final AbstractDescription<?> descAlternative : alternatives) {
+        for (final TimedDescription descAlternative : alternatives) {
             final List<NarrationAddition> narrationBuildersForAlternative =
-                    toNarrationAdditions(descAlternative,
+                    toNarrationAdditions(descAlternative.getDescription(),
                             initialNarration);
             final IndexAndScore indexAndScore = chooseNextIndexAndScoreFrom(
                     initialNarration,
@@ -71,6 +72,38 @@ public abstract class NarrationDao {
 
         narrate(narrationSource, bestNarrationAddition);
         return bestDesc.getTimeElapsed();
+    }
+
+    void narrateAltDescriptions(final Narration.NarrationSource narrationSource,
+                                final Collection<AbstractDescription<?>> alternatives) {
+        checkArgument(alternatives.size() > 0,
+                "No alternatives");
+
+        final Narration initialNarration = requireNarration();
+
+        float bestScore = Float.NEGATIVE_INFINITY;
+        NarrationAddition bestNarrationAddition = null;
+
+        // TODO Hier könnte es textuelle Duplikate geben - sowohl zwischen den
+        //  NarrationAdditions einer AbstractDescriptions also auch zwischen den NarrationAdditions
+        //  verschiedener AbstractDescriptions. Die Duplikate kosten vermutlich viel Zeit -
+        //  also sollte man sie herausfiltern. Da nach den ganzen NarrationAddition-Prüfungen
+        //  am Ende wieder die bestDesc relevant ist, ist das nicht trivial.
+
+        for (final AbstractDescription<?> descAlternative : alternatives) {
+            final List<NarrationAddition> narrationBuildersForAlternative =
+                    toNarrationAdditions(descAlternative, initialNarration);
+            final IndexAndScore indexAndScore = chooseNextIndexAndScoreFrom(
+                    initialNarration,
+                    narrationBuildersForAlternative);
+            if (indexAndScore.getScore() > bestScore) {
+                bestScore = indexAndScore.getScore();
+                bestNarrationAddition =
+                        narrationBuildersForAlternative.get(indexAndScore.getIndex());
+            }
+        }
+
+        narrate(narrationSource, bestNarrationAddition);
     }
 
     // TODO Bei narrate() eine eingebettete Sprache erlauben:

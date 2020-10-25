@@ -16,7 +16,6 @@ import de.nb.aventiure2.data.world.syscomp.location.ILocatableGO;
 import de.nb.aventiure2.data.world.syscomp.memory.Action;
 import de.nb.aventiure2.data.world.syscomp.taking.ITakerGO;
 import de.nb.aventiure2.data.world.syscomp.taking.SCTakeAction;
-import de.nb.aventiure2.data.world.time.*;
 import de.nb.aventiure2.german.base.Nominalphrase;
 import de.nb.aventiure2.german.base.SubstantivischePhrase;
 import de.nb.aventiure2.german.description.Kohaerenzrelation;
@@ -25,11 +24,12 @@ import de.nb.aventiure2.german.praedikat.PraedikatOhneLeerstellen;
 import de.nb.aventiure2.scaction.AbstractScAction;
 
 import static de.nb.aventiure2.data.world.gameobject.World.*;
+import static de.nb.aventiure2.data.world.time.AvTimeSpan.*;
 import static de.nb.aventiure2.german.base.GermanUtil.capitalize;
 import static de.nb.aventiure2.german.base.Numerus.SG;
 import static de.nb.aventiure2.german.base.Person.P1;
+import static de.nb.aventiure2.german.description.DescriptionBuilder.du;
 import static de.nb.aventiure2.german.description.DescriptionUmformulierer.drueckeAus;
-import static de.nb.aventiure2.german.description.DuDescriptionBuilder.du;
 import static de.nb.aventiure2.german.description.Kohaerenzrelation.DISKONTINUITAET;
 import static de.nb.aventiure2.german.description.Kohaerenzrelation.WIEDERHOLUNG;
 import static de.nb.aventiure2.german.praedikat.IntentionalesVerb.VERSUCHEN;
@@ -125,7 +125,8 @@ public class GebenAction<
                 praedikatAlt.stream().map(GebenAction::toAnbietenGebenDuDescription)
                         .collect(ImmutableList.toImmutableList());
 
-        n.narrateAlt(drueckeAus(getKohaerenzrelationFuerUmformulierung(), descAlt));
+        n.narrateAlt(drueckeAus(getKohaerenzrelationFuerUmformulierung(), descAlt),
+                secs(20));
     }
 
     private ImmutableList<PraedikatOhneLeerstellen> getAnbietenPraedikatAlt() {
@@ -179,7 +180,7 @@ public class GebenAction<
 
     private static PraedikatDuDescription toAnbietenGebenDuDescription(
             final PraedikatOhneLeerstellen anbietenGebenPraedikat) {
-        return du(anbietenGebenPraedikat, AvTimeSpan.secs(20))
+        return du(anbietenGebenPraedikat)
                 .undWartest()
                 .dann()
                 // STORY Hier wäre es etwas schöner wenn die im anbietenGebenPraedikat

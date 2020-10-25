@@ -29,8 +29,8 @@ import static de.nb.aventiure2.data.world.syscomp.feelings.Mood.UNTROESTLICH;
 import static de.nb.aventiure2.data.world.time.AvTimeSpan.*;
 import static de.nb.aventiure2.data.world.time.Tageszeit.*;
 import static de.nb.aventiure2.german.base.StructuralElement.PARAGRAPH;
-import static de.nb.aventiure2.german.description.AllgDescription.paragraph;
-import static de.nb.aventiure2.german.description.DuDescriptionBuilder.du;
+import static de.nb.aventiure2.german.description.DescriptionBuilder.du;
+import static de.nb.aventiure2.german.description.DescriptionBuilder.paragraph;
 import static java.util.Arrays.asList;
 
 public enum FroschkoenigStoryNode implements IStoryNode {
@@ -144,8 +144,7 @@ public enum FroschkoenigStoryNode implements IStoryNode {
         if (world.loadSC().locationComp().hasRecursiveLocation(SCHLOSS_VORHALLE)) {
             alt.add(du(PARAGRAPH,
                     "fühlst", "dich von der goldenen Kugel magisch angezogen",
-                    "von der goldenen Kugel",
-                    noTime())
+                    "von der goldenen Kugel")
                     .beendet(PARAGRAPH));
         } else {
             alt.add(paragraph("Zusammenhanglos kommt dir ein Gedanke in den "
@@ -158,8 +157,7 @@ public enum FroschkoenigStoryNode implements IStoryNode {
                     "musst",
                     "auf einmal wieder an die goldene Kugel denken, die dich im "
                             + "Schloss so angelacht hat",
-                    "auf einmal",
-                    noTime())
+                    "auf einmal")
                     .beendet(PARAGRAPH));
 
             alt.add(du(PARAGRAPH,
@@ -167,8 +165,7 @@ public enum FroschkoenigStoryNode implements IStoryNode {
                     "spontan denken: Bei den reichen Leuten liegen oft so "
                             + "viele Herrlichkeiten ungenutzt herum… – wie kommst du jetzt "
                             + "bloß darauf?",
-                    "spontan",
-                    noTime())
+                    "spontan")
                     .beendet(PARAGRAPH));
 
             alt.add(paragraph("Deine Gedanken schweifen ab und du musst an die goldene Kugel "
@@ -180,7 +177,7 @@ public enum FroschkoenigStoryNode implements IStoryNode {
                     + "dich wohl aufheitern! Aber woher nehmen und nicht stehlen?"));
         }
 
-        n.narrateAlt(alt);
+        n.narrateAlt(alt, noTime());
     }
 
     public static void narrateAndDoHintAction_MitKugelZumBrunnenGegangen(
@@ -199,7 +196,7 @@ public enum FroschkoenigStoryNode implements IStoryNode {
             }
         }
 
-        n.narrateAlt(alt);
+        n.narrateAlt(alt, noTime());
     }
 
     public static void narrateAndDoHintAction_EtwasImBrunnenVerloren(
@@ -218,8 +215,7 @@ public enum FroschkoenigStoryNode implements IStoryNode {
             alt.add(du(PARAGRAPH,
                     "hast",
                     "Lust, einmal wieder mit deiner goldenen Kugel "
-                            + "zu spielen",
-                    noTime())
+                            + "zu spielen")
                     .beendet(PARAGRAPH));
             if (!world.loadSC().locationComp().hasRecursiveLocation(IM_WALD_BEIM_BRUNNEN)) {
                 alt.addAll(altHeissHeutKuehlerOrtWaereSchoen());
@@ -228,7 +224,7 @@ public enum FroschkoenigStoryNode implements IStoryNode {
             alt.addAll(altKugelVermissen());
         }
 
-        n.narrateAlt(alt);
+        n.narrateAlt(alt, noTime());
     }
 
     public static void narrateAndDoHintAction_FroschHatEtwasAusBrunnenGeholt(
@@ -252,7 +248,7 @@ public enum FroschkoenigStoryNode implements IStoryNode {
 
         world.loadSC().feelingsComp().requestMoodMax(UNTROESTLICH);
 
-        n.narrateAlt(alt);
+        n.narrateAlt(alt, noTime());
     }
 
     public static void narrateAndDoHintAction_ZumSchlossfestGegangen(
@@ -277,7 +273,7 @@ public enum FroschkoenigStoryNode implements IStoryNode {
                     + "nicht zwangsläufig…"));
         }
 
-        n.narrateAlt(alt);
+        n.narrateAlt(alt, noTime());
     }
 
     public static void narrateAndDoHintAction_BeimSchlossfestAnDenTischGesetzt(
@@ -289,7 +285,7 @@ public enum FroschkoenigStoryNode implements IStoryNode {
         alt.add(paragraph("Welches Versprechen hattest du dem Frosch noch gegeben? Du kannst "
                 + "dich kaum mehr erinnern"));
 
-        n.narrateAlt(alt);
+        n.narrateAlt(alt, noTime());
     }
 
     public static void narrateAndDoHintAction_PrinzIstErloest(
@@ -301,7 +297,7 @@ public enum FroschkoenigStoryNode implements IStoryNode {
         alt.add(paragraph("Ein schlechtes Gewissen ist kein gutes Ruhekissen – so geht es "
                 + "die ganze Zeit in deinem Kopf"));
 
-        n.narrateAlt(alt);
+        n.narrateAlt(alt, noTime());
     }
 
     public static void narrateAndDoHintAction_PrinzIstWeggefahren(
@@ -310,11 +306,10 @@ public enum FroschkoenigStoryNode implements IStoryNode {
 
         alt.add(du(PARAGRAPH,
                 "willst",
-                "auch sehen, was vor dem Schloss geschieht!",
-                noTime())
+                "auch sehen, was vor dem Schloss geschieht!")
                 .beendet(PARAGRAPH));
 
-        n.narrateAlt(alt);
+        n.narrateAlt(alt, noTime());
     }
 
     @CheckReturnValue
@@ -325,18 +320,15 @@ public enum FroschkoenigStoryNode implements IStoryNode {
         if (world.loadSC().locationComp().hasRecursiveLocation(HUETTE_IM_WALD)) {
             if (world.loadSC().feelingsComp().getMuedigkeit() >= FeelingIntensity.MERKLICH) {
                 alt.add(du(PARAGRAPH,
-                        "solltest", "etwas schlafen",
-                        noTime())
+                        "solltest", "etwas schlafen")
                         .beendet(PARAGRAPH));
                 alt.add(du(PARAGRAPH,
-                        "kannst", "gewiss eine Mütze Schlaf gebrauchen!",
-                        noTime())
+                        "kannst", "gewiss eine Mütze Schlaf gebrauchen!")
                         .beendet(PARAGRAPH));
                 alt.add(paragraph("Ein Bett!"));
             } else {
                 alt.add(du(PARAGRAPH,
-                        "bist", "vom Tag noch ganz aufgedreht",
-                        noTime())
+                        "bist", "vom Tag noch ganz aufgedreht")
                         .beendet(PARAGRAPH));
             }
         } else {

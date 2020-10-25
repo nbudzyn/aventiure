@@ -30,8 +30,8 @@ import static de.nb.aventiure2.data.world.syscomp.state.impl.RapunzelsZauberinSt
 import static de.nb.aventiure2.data.world.syscomp.state.impl.RapunzelsZauberinState.VOR_DEM_NAECHSTEN_RAPUNZEL_BESUCH;
 import static de.nb.aventiure2.data.world.time.AvTimeSpan.*;
 import static de.nb.aventiure2.german.base.StructuralElement.PARAGRAPH;
-import static de.nb.aventiure2.german.description.AllgDescription.paragraph;
-import static de.nb.aventiure2.german.description.DuDescriptionBuilder.du;
+import static de.nb.aventiure2.german.description.DescriptionBuilder.du;
+import static de.nb.aventiure2.german.description.DescriptionBuilder.paragraph;
 import static java.util.Arrays.asList;
 
 public enum RapunzelStoryNode implements IStoryNode {
@@ -245,7 +245,7 @@ public enum RapunzelStoryNode implements IStoryNode {
 
         // STORY (bis SC Rapunzel gefunden hat) Mutter sammelt im
         //  Wald Holz und klagt ihr Leid: Tochter an Zauberin verloren
-        n.narrateAlt(alt);
+        n.narrateAlt(alt, noTime());
     }
 
     private static void narrateAndDoHintAction_RapunzelSingenGehoert(
@@ -266,7 +266,7 @@ public enum RapunzelStoryNode implements IStoryNode {
                             + "in den Sinn. Ob der wohl bewohnt ist?"));
         }
 
-        n.narrateAlt(alt);
+        n.narrateAlt(alt, noTime());
     }
 
     private static void narrateAndDoHintAction_ZauberinAufTurmWegGefunden(
@@ -275,7 +275,7 @@ public enum RapunzelStoryNode implements IStoryNode {
 
         alt.addAll(altTurmWohnenHineinHeraus(world));
 
-        n.narrateAlt(alt);
+        n.narrateAlt(alt, noTime());
     }
 
     private static void narrateAndDoHintAction_ZauberinHeimlichBeimRufenBeobachtet(
@@ -290,16 +290,14 @@ public enum RapunzelStoryNode implements IStoryNode {
             alt.add(du(PARAGRAPH,
                     "wirst",
                     "bestimmt noch den Turm hinaufkommen!",
-                    "bestimmt",
-                    noTime())
+                    "bestimmt")
                     .beendet(PARAGRAPH));
             alt.add(du(PARAGRAPH,
                     "wirst",
                     "bestimmt noch den Turm hinaufkommen – vielleicht musst du dich "
                             + "nur einmal auf die Lauer legen und beobachten, ob jemand "
                             + "hineinkommt?",
-                    "bestimmt",
-                    noTime())
+                    "bestimmt")
                     .beendet(PARAGRAPH));
         }
 
@@ -312,7 +310,7 @@ public enum RapunzelStoryNode implements IStoryNode {
                     paragraph("Was mag die Frau wollen?"));
         }
 
-        n.narrateAlt(alt);
+        n.narrateAlt(alt, noTime());
     }
 
     private static void narrateAndDoHintAction_ZuRapunzelHinaufgestiegen(
@@ -349,7 +347,7 @@ public enum RapunzelStoryNode implements IStoryNode {
             alt.addAll(altTurmWohnenHineinHeraus(world));
         }
 
-        n.narrateAlt(alt);
+        n.narrateAlt(alt, noTime());
     }
 
     @CheckReturnValue
@@ -366,8 +364,7 @@ public enum RapunzelStoryNode implements IStoryNode {
                     "musst",
                     "wieder an den alten Turm denken… wenn dort jemand wohnt, "
                             + "wie kommt der bloß hinein oder heraus?",
-                    "wieder",
-                    noTime())
+                    "wieder")
                     .beendet(PARAGRAPH));
             alt.add(paragraph(
                     "Dir kommt auf einmal wieder der alte Turm in den Sinn: "

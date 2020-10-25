@@ -16,6 +16,7 @@ import de.nb.aventiure2.data.world.syscomp.feelings.FeelingIntensity;
 import de.nb.aventiure2.data.world.syscomp.memory.Action;
 import de.nb.aventiure2.data.world.time.*;
 import de.nb.aventiure2.german.description.AbstractDescription;
+import de.nb.aventiure2.german.description.TimedDescription;
 import de.nb.aventiure2.scaction.AbstractScAction;
 
 import static de.nb.aventiure2.data.world.gameobject.World.*;
@@ -25,8 +26,8 @@ import static de.nb.aventiure2.data.world.time.AvTime.*;
 import static de.nb.aventiure2.data.world.time.AvTimeSpan.*;
 import static de.nb.aventiure2.german.base.StructuralElement.CHAPTER;
 import static de.nb.aventiure2.german.base.StructuralElement.SENTENCE;
-import static de.nb.aventiure2.german.description.AllgDescription.neuerSatz;
-import static de.nb.aventiure2.german.description.DuDescriptionBuilder.du;
+import static de.nb.aventiure2.german.description.DescriptionBuilder.du;
+import static de.nb.aventiure2.german.description.DescriptionBuilder.neuerSatz;
 
 /**
  * Der Spielercharakter legt sich schlafen.
@@ -76,7 +77,7 @@ public class SchlafenAction extends AbstractScAction {
     private void narrateAndDoSchlaeftNichtEin() {
         sc.memoryComp().setLastAction(buildMemorizedAction());
 
-        final ImmutableList.Builder<AbstractDescription<?>> alt = ImmutableList.builder();
+        final ImmutableList.Builder<TimedDescription> alt = ImmutableList.builder();
         if (!isDefinitivWiederholung()) {
             alt.add(du("schließt", "kurz die Augen. Die Aufregung der letzten Stunden "
                             + "steckt dir noch in den Knochen – an Einschlafen ist "
@@ -202,53 +203,46 @@ public class SchlafenAction extends AbstractScAction {
         if (schlafdauer.longerThanOrEqual(hours(7))) {
             alt.add(du(CHAPTER,
                     "wachst", "nach einem langen Schlaf gut erholt wieder auf",
-                    "nach einem langen Schlaf", noTime()));
+                    "nach einem langen Schlaf"));
         }
 
         if (schlafdauer.longerThanOrEqual(hours(4))) {
             alt.add(du(CHAPTER,
                     "schläfst", "tief und fest und wachst erst nach einigen "
                             + "Stunden wieder auf",
-                    "tief",
-                    noTime()));
+                    "tief"));
         }
 
         if (schlafdauer.isBetween(hours(3), hours(6))) {
             alt.add(neuerSatz(CHAPTER,
-                    "Als du die Augen wieder aufschlägst, sind einige Stunden vergangen",
-                    noTime()));
+                    "Als du die Augen wieder aufschlägst, sind einige Stunden vergangen"));
         }
 
 
         if (schlafdauer.shorterThanOrEqual(hours(1))) {
             alt.add(du(CHAPTER,
                     "schläfst", "vielleicht eine Stunde und wachst "
-                            + "gekräftigt wieder auf",
-                    noTime()));
+                            + "gekräftigt wieder auf"));
         }
 
         if (schlafdauer.shorterThan(hours(1))) {
             alt.add(neuerSatz(CHAPTER,
-                    "Keine Stunde und du erwachst wieder",
-                    noTime()),
+                    "Keine Stunde und du erwachst wieder"),
                     du(CHAPTER,
                             "bist", "nach einem kurzen Nickerchen wieder wach",
-                            "nach einem kurzen Nickerchen",
-                            noTime()),
+                            "nach einem kurzen Nickerchen"),
                     du(CHAPTER,
                             "bist", "nach knapp einer Stunde wieder wach",
-                            "nach knapp einer Stunde",
-                            noTime()));
+                            "nach knapp einer Stunde"));
         }
 
         if (schlafdauer.shorterThanOrEqual(mins(20))) {
             alt.add(neuerSatz(CHAPTER,
                     "Als du wieder aufwachst, hast du den Eindruck, dich gerade erst "
-                            + "hingelegt zu haben",
-                    noTime()));
+                            + "hingelegt zu haben"));
         }
 
-        n.narrateAlt(alt);
+        n.narrateAlt(alt, noTime());
     }
 
     private static AvTimeSpan calcAusschlafenEffektHaeltVorFuer(final AvTimeSpan schlafdauer) {

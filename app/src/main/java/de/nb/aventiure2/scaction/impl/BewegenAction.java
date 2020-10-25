@@ -31,8 +31,8 @@ import de.nb.aventiure2.data.world.syscomp.state.IHasStateGO;
 import de.nb.aventiure2.data.world.syscomp.state.impl.SchlossfestState;
 import de.nb.aventiure2.data.world.syscomp.storingplace.ILocationGO;
 import de.nb.aventiure2.german.base.StructuralElement;
-import de.nb.aventiure2.german.description.AbstractDescription;
 import de.nb.aventiure2.german.description.AbstractDuDescription;
+import de.nb.aventiure2.german.description.TimedDescription;
 import de.nb.aventiure2.scaction.AbstractScAction;
 
 import static com.google.common.collect.ImmutableList.builder;
@@ -49,10 +49,10 @@ import static de.nb.aventiure2.german.base.GermanUtil.capitalize;
 import static de.nb.aventiure2.german.base.GermanUtil.uncapitalize;
 import static de.nb.aventiure2.german.base.StructuralElement.PARAGRAPH;
 import static de.nb.aventiure2.german.base.StructuralElement.WORD;
-import static de.nb.aventiure2.german.description.AllgDescription.neuerSatz;
-import static de.nb.aventiure2.german.description.AllgDescription.satzanschluss;
-import static de.nb.aventiure2.german.description.DescriptionUmformulierer.drueckeAus;
-import static de.nb.aventiure2.german.description.DuDescriptionBuilder.du;
+import static de.nb.aventiure2.german.description.DescriptionBuilder.du;
+import static de.nb.aventiure2.german.description.DescriptionBuilder.neuerSatz;
+import static de.nb.aventiure2.german.description.DescriptionBuilder.satzanschluss;
+import static de.nb.aventiure2.german.description.DescriptionUmformulierer.drueckeAusTimed;
 import static de.nb.aventiure2.german.description.Kohaerenzrelation.DISKONTINUITAET;
 import static java.util.stream.Collectors.toList;
 
@@ -404,39 +404,42 @@ public class BewegenAction<LOC_DESC extends ILocatableGO & IDescribableGO>
         //  noch einmal. Um sicher zu
         //  gehen... noch einmal. Du gehst SOGAR noch einmal...
 
-        final AbstractDescription<?> description = getNormalDescription(
+        final TimedDescription description = getNormalDescription(
                 to.storingPlaceComp().getLichtverhaeltnisse());
 
-        if (description instanceof AbstractDuDescription &&
+        if (description.getDescription() instanceof AbstractDuDescription &&
                 n.allowsAdditionalDuSatzreihengliedOhneSubjekt() &&
                 isDefinitivDiskontinuitaet()) {
-            final ImmutableList.Builder<AbstractDescription<?>> alt = builder();
+            final ImmutableList.Builder<TimedDescription> alt = builder();
 
             alt.add(satzanschluss(", besinnst dich aber und "
-                            + ((AbstractDuDescription) description)
+                            + ((AbstractDuDescription<?, ?>) description.getDescription())
                             .getDescriptionSatzanschlussOhneSubjekt(),
                     description.getTimeElapsed())
                     .dann(description.isDann())
                     .komma(description.isKommaStehtAus()));
 
-            alt.addAll(drueckeAus(DISKONTINUITAET, description));
+            alt.addAll(
+                    drueckeAusTimed(DISKONTINUITAET, description));
             n.narrateAlt(alt);
             return;
         }
 
         if (description.getStartsNew() == WORD &&
                 n.allowsAdditionalDuSatzreihengliedOhneSubjekt() &&
-                description instanceof AbstractDuDescription) {
+                description.getDescription() instanceof AbstractDuDescription) {
             n.narrate(description);
             return;
         }
 
         if (isDefinitivDiskontinuitaet()) {
-            final ImmutableList.Builder<AbstractDescription<?>> alt = builder();
+            final ImmutableList.Builder<TimedDescription> alt = builder();
             if (numberOfWays == ONLY_WAY) {
                 alt.add(
                         du("schaust", "dich nur kurz um, dann "
-                                        + uncapitalize(description.getDescriptionHauptsatz()),
+                                        + uncapitalize(
+                                description.getDescription().
+                                        getDescriptionHauptsatz()),
                                 description.getTimeElapsed())
                                 .komma(description.isKommaStehtAus())
                                 .undWartest(
@@ -445,17 +448,17 @@ public class BewegenAction<LOC_DESC extends ILocatableGO & IDescribableGO>
             } else {
                 alt.add(neuerSatz(
                         "Was willst du hier eigentlich? "
-                                + description.getDescriptionHauptsatz(),
+                                + description.getDescription().getDescriptionHauptsatz(),
                         description.getTimeElapsed()));
-                if (description instanceof AbstractDuDescription<?, ?>) {
+                if (description.getDescription() instanceof AbstractDuDescription<?, ?>) {
                     alt.add(neuerSatz(
                             "Was willst du hier eigentlich? "
-                                    + ((AbstractDuDescription<?, ?>) description)
+                                    + ((AbstractDuDescription<?, ?>) description.getDescription())
                                     .getDescriptionHauptsatzMitSpeziellemVorfeld(),
                             description.getTimeElapsed()));
                 }
 
-                alt.addAll(drueckeAus(DISKONTINUITAET, description));
+                alt.addAll(drueckeAusTimed(DISKONTINUITAET, description));
             }
             n.narrateAlt(alt);
             return;
@@ -464,7 +467,7 @@ public class BewegenAction<LOC_DESC extends ILocatableGO & IDescribableGO>
         if (sc.memoryComp().getLastAction().is(BEWEGEN)) {
             if (n.endsThisIsExactly(StructuralElement.WORD) && n.dann()) {
                 // "Du stehst wieder vor dem Schloss; dann gehst du wieder hinein in das Schloss."
-                final String satzEvtlMitDann = description
+                final String satzEvtlMitDann = description.getDescription()
                         .getDescriptionHauptsatzMitKonjunktionaladverbWennNoetig(
                                 "dann");
                 n.narrate(
@@ -482,7 +485,7 @@ public class BewegenAction<LOC_DESC extends ILocatableGO & IDescribableGO>
         } else {
             if (n.dann()) {
                 n.narrate(
-                        neuerSatz(PARAGRAPH, description
+                        neuerSatz(PARAGRAPH, description.getDescription()
                                         .getDescriptionHauptsatzMitKonjunktionaladverbWennNoetig("danach"),
                                 description.getTimeElapsed())
                                 .komma(description.isKommaStehtAus())
@@ -496,8 +499,8 @@ public class BewegenAction<LOC_DESC extends ILocatableGO & IDescribableGO>
         }
     }
 
-    private AbstractDescription<?> getNormalDescription(final Lichtverhaeltnisse
-                                                                lichtverhaeltnisseInNewLocation) {
+    private TimedDescription getNormalDescription(final Lichtverhaeltnisse
+                                                          lichtverhaeltnisseInNewLocation) {
         final Known newLocationKnown = sc.memoryComp().getKnown(spatialConnection.getTo());
 
         boolean alternativeDescriptionAllowed = false;
@@ -510,7 +513,7 @@ public class BewegenAction<LOC_DESC extends ILocatableGO & IDescribableGO>
                                     newLocationKnown, lichtverhaeltnisseInNewLocation);
         }
 
-        final AbstractDescription<?> standardDescription =
+        final TimedDescription standardDescription =
                 spatialConnection.getSCMoveDescriptionProvider()
                         .getSCMoveDescription(newLocationKnown, lichtverhaeltnisseInNewLocation);
 
