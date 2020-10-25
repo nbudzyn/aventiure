@@ -14,6 +14,7 @@ import de.nb.aventiure2.german.base.NumerusGenus;
 import de.nb.aventiure2.german.base.Personalpronomen;
 import de.nb.aventiure2.german.base.PhorikKandidat;
 import de.nb.aventiure2.german.base.StructuralElement;
+import de.nb.aventiure2.german.description.AllgDescription;
 
 /**
  * The text of the narration, together with state relevant for going on with the narration.
@@ -225,50 +226,54 @@ public class Narration {
     }
 
     Narration add(final NarrationSource narrationSource,
-                  final NarrationAddition narrationAddition) {
+                  final AllgDescription allgDescription) {
         final StringBuilder resText = new StringBuilder(getText().trim());
 
         final StructuralElement separation =
-                StructuralElement.max(endsThis, narrationAddition.getStartsNew());
+                StructuralElement.max(endsThis, allgDescription.getStartsNew());
 
         switch (separation) {
             case WORD:
-                if (kommaNeeded(resText.toString(), narrationAddition.getText())) {
+                if (kommaNeeded(resText.toString(), allgDescription.getDescriptionHauptsatz())) {
                     resText.append(",");
                 }
 
-                if (GermanUtil.spaceNeeded(resText.toString(), narrationAddition.getText())) {
+                if (GermanUtil
+                        .spaceNeeded(resText.toString(),
+                                allgDescription.getDescriptionHauptsatz())) {
                     resText.append(" ");
                 }
                 break;
             case SENTENCE:
                 if (periodNeededToStartNewSentence(resText.toString(),
-                        narrationAddition.getText())) {
+                        allgDescription.getDescriptionHauptsatz())) {
                     resText.append(".");
                 }
-                if (GermanUtil.spaceNeeded(resText.toString(), narrationAddition.getText())) {
+                if (GermanUtil
+                        .spaceNeeded(resText.toString(),
+                                allgDescription.getDescriptionHauptsatz())) {
                     resText.append(" ");
                 }
                 break;
             case PARAGRAPH:
                 if (periodNeededToStartNewSentence(resText.toString(),
-                        narrationAddition.getText())) {
+                        allgDescription.getDescriptionHauptsatz())) {
                     resText.append(".");
                 }
                 if (newlineNeededToStartNewParagraph(resText.toString(),
-                        narrationAddition.getText())) {
+                        allgDescription.getDescriptionHauptsatz())) {
                     resText.append("\n");
                 }
                 break;
             case CHAPTER:
                 if (periodNeededToStartNewSentence(resText.toString(),
-                        narrationAddition.getText())) {
+                        allgDescription.getDescriptionHauptsatz())) {
                     resText.append(".");
                 }
 
                 final int numNewlinesNeeded =
                         howManyNewlinesNeedeToStartNewChapter(resText.toString(),
-                                narrationAddition.getText());
+                                allgDescription.getDescriptionHauptsatz());
                 for (int i = 0; i < numNewlinesNeeded; i++) {
                     resText.append("\n");
                 }
@@ -278,16 +283,16 @@ public class Narration {
                         + separation);
         }
 
-        resText.append(narrationAddition.getText());
+        resText.append(allgDescription.getDescriptionHauptsatz());
 
         return new Narration(
                 narrationSource,
-                narrationAddition.getEndsThis(),
+                allgDescription.getEndsThis(),
                 resText.toString(),
-                narrationAddition.isKommaStehtAus(),
-                narrationAddition.isAllowsAdditionalDuSatzreihengliedOhneSubjekt(),
-                narrationAddition.isDann(),
-                narrationAddition.getPhorikKandidat());
+                allgDescription.isKommaStehtAus(),
+                allgDescription.isAllowsAdditionalDuSatzreihengliedOhneSubjekt(),
+                allgDescription.isDann(),
+                allgDescription.getPhorikKandidat());
     }
 
     private static int howManyNewlinesNeedeToStartNewChapter(

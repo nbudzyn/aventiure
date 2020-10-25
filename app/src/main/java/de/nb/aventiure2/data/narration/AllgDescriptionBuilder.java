@@ -14,6 +14,7 @@ import java.util.function.Predicate;
 import de.nb.aventiure2.german.base.StructuralElement;
 import de.nb.aventiure2.german.description.AbstractDescription;
 import de.nb.aventiure2.german.description.AbstractDuDescription;
+import de.nb.aventiure2.german.description.AllgDescription;
 import de.nb.aventiure2.german.description.DescriptionParams;
 
 import static de.nb.aventiure2.german.base.StructuralElement.SENTENCE;
@@ -21,19 +22,19 @@ import static de.nb.aventiure2.german.base.StructuralElement.WORD;
 import static de.nb.aventiure2.german.base.StructuralElement.max;
 
 /**
- * Builds {@link NarrationAddition}s from {@link AbstractDescription}s.
+ * Builds {@link AllgDescription}s from {@link AbstractDescription}s.
  */
-class NarrationAdditionBuilder {
+class AllgDescriptionBuilder {
     /**
      * Builds alternative narration additions from these alternative
      * {@link AbstractDescription}s, always based on the given initial narration.
      */
-    static List<NarrationAddition> toNarrationAdditions(
+    static List<AllgDescription> toAllgDescriptions(
             final Collection<? extends AbstractDescription<?>> altDescriptions,
             final Narration initialNarration) {
         return altDescriptions.stream()
-                .flatMap(d -> toNarrationAdditions(d, initialNarration).stream())
-                .filter(distinctByKey(NarrationAddition::getText))
+                .flatMap(d -> toAllgDescriptions(d, initialNarration).stream())
+                .filter(distinctByKey(AllgDescription::getDescriptionHauptsatz))
                 .collect(ImmutableList.toImmutableList());
     }
 
@@ -41,7 +42,7 @@ class NarrationAdditionBuilder {
      * Builds alternative narration additions from an {@link AbstractDescription}, based
      * on the given initial narration.
      */
-    static List<NarrationAddition> toNarrationAdditions(
+    static List<AllgDescription> toAllgDescriptions(
             final AbstractDescription<?> desc,
             final Narration initialNarration) {
         // STORY Statt "und gehst nach Norden": ", bevor du nach Norden gehst"?
@@ -50,30 +51,30 @@ class NarrationAdditionBuilder {
         if (initialNarration.allowsAdditionalDuSatzreihengliedOhneSubjekt() &&
                 desc.getStartsNew() == WORD &&
                 desc instanceof AbstractDuDescription) {
-            return toNarrationAdditionsDuSatzanschlussMitUnd(
+            return toAllgDescriptionsDuSatzanschlussMitUnd(
                     (AbstractDuDescription<?, ?>) desc);
         } else if (initialNarration.dann()) {
-            return toNarrationAdditionsImDannFall(desc);
+            return toAllgDescriptionsImDannFall(desc);
         } else {
-            return toDefaultNarrationAdditions(desc);
+            return toDefaultAllgDescriptions(desc);
         }
     }
 
     @NonNull
-    private static List<NarrationAddition> toNarrationAdditionsDuSatzanschlussMitUnd(
+    private static List<AllgDescription> toAllgDescriptionsDuSatzanschlussMitUnd(
             final AbstractDuDescription<?, ?> duDesc) {
         final DescriptionParams params = duDesc.copyParams();
         params.undWartest(false);
 
         return ImmutableList.of(
-                new NarrationAddition(
+                new AllgDescription(
                         params,
                         "und " +
                                 duDesc.getDescriptionSatzanschlussOhneSubjekt()));
     }
 
     @NonNull
-    private static List<NarrationAddition> toNarrationAdditionsImDannFall(
+    private static List<AllgDescription> toAllgDescriptionsImDannFall(
             final AbstractDescription<?> desc) {
         final String satzEvtlMitDann =
                 desc.getDescriptionHauptsatzMitKonjunktionaladverbWennNoetig("dann");
@@ -82,25 +83,26 @@ class NarrationAdditionBuilder {
         params.dann(desc.isDann() && !satzEvtlMitDann.startsWith("Dann"));
 
         return ImmutableList.of(
-                new NarrationAddition(
+                new AllgDescription(
                         params,
                         satzEvtlMitDann));
     }
 
-    private static List<NarrationAddition> toDefaultNarrationAdditions(
+    private static List<AllgDescription> toDefaultAllgDescriptions(
             final AbstractDescription<?> desc) {
-        final ImmutableList.Builder<NarrationAddition> alternatives = ImmutableList.builder();
+        final ImmutableList.Builder<AllgDescription> alternatives = ImmutableList.builder();
 
-        final NarrationAddition standard = toHauptsatzNarrationAddition(
+        final AllgDescription standard = toHauptsatzAllgDescription(
                 startsNewAtLeastSentenceForDuDescription(desc), desc);
         alternatives.add(standard);
 
         if (desc instanceof AbstractDuDescription) {
-            final NarrationAddition speziellesVorfeld =
-                    toHauptsatzMitSpeziellemVorfeldNarrationAddition(
+            final AllgDescription speziellesVorfeld =
+                    toHauptsatzMitSpeziellemVorfeldAllgDescription(
                             startsNewAtLeastSentenceForDuDescription(desc),
                             (AbstractDuDescription<?, ?>) desc);
-            if (!speziellesVorfeld.getText().equals(standard.getText())) {
+            if (!speziellesVorfeld.getDescriptionHauptsatz().equals(
+                    standard.getDescriptionHauptsatz())) {
                 alternatives.add(speziellesVorfeld);
             }
         }
@@ -108,23 +110,23 @@ class NarrationAdditionBuilder {
         return alternatives.build();
     }
 
-    private static NarrationAddition toHauptsatzNarrationAddition(
+    private static AllgDescription toHauptsatzAllgDescription(
             final StructuralElement startsNew,
             @NonNull final AbstractDescription<?> desc) {
         final DescriptionParams params = desc.copyParams();
         params.setStartsNew(startsNew);
 
-        return new NarrationAddition(
+        return new AllgDescription(
                 params, desc.getDescriptionHauptsatz());
     }
 
-    private static NarrationAddition toHauptsatzMitSpeziellemVorfeldNarrationAddition(
+    private static AllgDescription toHauptsatzMitSpeziellemVorfeldAllgDescription(
             final StructuralElement startsNew,
             @NonNull final AbstractDuDescription<?, ?> desc) {
         final DescriptionParams params = desc.copyParams();
         params.setStartsNew(startsNew);
 
-        return new NarrationAddition(
+        return new AllgDescription(
                 params, desc.getDescriptionHauptsatzMitSpeziellemVorfeld());
     }
 

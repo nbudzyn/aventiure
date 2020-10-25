@@ -3,16 +3,17 @@ package de.nb.aventiure2.data.narration;
 import java.util.Objects;
 
 import de.nb.aventiure2.data.world.time.*;
+import de.nb.aventiure2.german.description.AllgDescription;
 
-class NarrationAdditionWithScoreAndElapsedTime {
-    final NarrationAddition narrationAddition;
+class AllgDescriptionWithScoreAndElapsedTime {
+    final AllgDescription allgDescription;
     final float score;
     final AvTimeSpan timeElapsed;
 
-    NarrationAdditionWithScoreAndElapsedTime(final NarrationAddition narrationAddition,
-                                             final float score,
-                                             final AvTimeSpan timeElapsed) {
-        this.narrationAddition = narrationAddition;
+    AllgDescriptionWithScoreAndElapsedTime(final AllgDescription allgDescription,
+                                           final float score,
+                                           final AvTimeSpan timeElapsed) {
+        this.allgDescription = allgDescription;
         this.score = score;
         this.timeElapsed = timeElapsed;
     }
@@ -25,22 +26,22 @@ class NarrationAdditionWithScoreAndElapsedTime {
         if (o == null || getClass() != o.getClass()) {
             return false;
         }
-        final NarrationAdditionWithScoreAndElapsedTime that =
-                (NarrationAdditionWithScoreAndElapsedTime) o;
+        final AllgDescriptionWithScoreAndElapsedTime that =
+                (AllgDescriptionWithScoreAndElapsedTime) o;
         return Float.compare(that.score, score) == 0 &&
-                narrationAddition.equals(that.narrationAddition) &&
+                allgDescription.equals(that.allgDescription) &&
                 timeElapsed.equals(that.timeElapsed);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(narrationAddition, score, timeElapsed);
+        return Objects.hash(allgDescription, score, timeElapsed);
     }
 
     @Override
     public String toString() {
-        return "NarrationAdditionWithScoreAndElapsedTime{" +
-                "narrationAddition=" + narrationAddition +
+        return "AllgDescriptionWithScoreAndElapsedTime{" +
+                "allgDescription=" + allgDescription +
                 ", score=" + score +
                 ", elapsedTime=" + timeElapsed +
                 '}';

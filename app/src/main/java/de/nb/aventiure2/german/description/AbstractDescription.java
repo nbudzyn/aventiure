@@ -12,10 +12,14 @@ import de.nb.aventiure2.german.base.SubstantivischePhrase;
  * Abstract superclass for a description.
  */
 public abstract class AbstractDescription<SELF extends AbstractDescription<SELF>> {
-    private final DescriptionParams params;
+    protected final DescriptionParams params;
 
     public AbstractDescription(final StructuralElement startsNew) {
-        params = new DescriptionParams(startsNew);
+        this(new DescriptionParams(startsNew));
+    }
+
+    protected AbstractDescription(final DescriptionParams params) {
+        this.params = params;
     }
 
     public DescriptionParams copyParams() {

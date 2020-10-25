@@ -16,11 +16,11 @@ class DescriptionCombiner {
     private DescriptionCombiner() {
     }
 
-    public static Collection<AbstractDescription<?>> combine(
+    public static Collection<AllgDescription> combine(
             final AbstractDescription<?> first,
             final AbstractDescription<?> second,
             final Narration initialNarration) {
-        final ImmutableList.Builder<AbstractDescription<?>>
+        final ImmutableList.Builder<AllgDescription>
                 res = ImmutableList.builder();
 
         if (initialNarration.allowsAdditionalDuSatzreihengliedOhneSubjekt() &&

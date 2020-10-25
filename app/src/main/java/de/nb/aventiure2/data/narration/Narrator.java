@@ -109,14 +109,14 @@ public class Narrator {
             //  werden temporär gespeichert:
             //  "Du gehst weiter durch den Wald".
 
-            final NarrationAdditionWithScoreAndElapsedTime bestTemporaryNarrationAlone =
+            final AllgDescriptionWithScoreAndElapsedTime bestTemporaryNarrationAlone =
                     dao.chooseBest(
                             // Zeit spielt hier keine Rolle
                             temporaryNarration.getDescriptionAlternatives().stream()
                                     .map(d -> new TimedDescription(d, noTime()))
                                     .collect(ImmutableList.toImmutableList())
                     );
-            @Nullable final NarrationAdditionWithScoreAndElapsedTime bestCombined
+            @Nullable final AllgDescriptionWithScoreAndElapsedTime bestCombined
                     = dao.chooseBestCombination(
                     temporaryNarration.getDescriptionAlternatives(),
                     alternatives);
@@ -124,7 +124,7 @@ public class Narrator {
             if (bestCombined != null &&
                     bestCombined.score > bestTemporaryNarrationAlone.score) {
                 // Time of temporaryNarration has already been accounted for.
-                dao.narrate(narrationSourceJustInCase, bestCombined.narrationAddition);
+                dao.narrate(narrationSourceJustInCase, bestCombined.allgDescription);
                 temporaryNarration = null;
                 nowDao.passTime(bestTemporaryNarrationAlone.timeElapsed);
                 return;
@@ -134,7 +134,7 @@ public class Narrator {
 
             // Time of temporaryNarration has already been accounted for.
             dao.narrate(temporaryNarration.getNarrationSource(),
-                    bestTemporaryNarrationAlone.narrationAddition);
+                    bestTemporaryNarrationAlone.allgDescription);
         }
 
         final Set<AvTimeSpan> timesElapsed = alternatives.stream()
@@ -146,7 +146,7 @@ public class Narrator {
             // Die Alternativen dauern möglicherweise unterschiedlich lange! Dann müssen wir leider sofort
             // auf Alternativen mit gleicher Dauer beschränken - ansonsten ist
             // nicht klar, wieviel Zeit jetzt (!) vergehen muss!
-            final NarrationAdditionWithScoreAndElapsedTime best =
+            final AllgDescriptionWithScoreAndElapsedTime best =
                     dao.chooseBest(alternatives);
 
             bestAlternatives =
