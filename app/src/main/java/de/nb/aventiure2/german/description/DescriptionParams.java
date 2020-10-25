@@ -3,37 +3,33 @@ package de.nb.aventiure2.german.description;
 import androidx.annotation.Nullable;
 
 import de.nb.aventiure2.data.narration.Narration;
-import de.nb.aventiure2.data.world.time.*;
-import de.nb.aventiure2.german.base.IBezugsobjekt;
+import de.nb.aventiure2.data.world.base.GameObjectId;
+import de.nb.aventiure2.data.world.base.IGameObject;
 import de.nb.aventiure2.german.base.NumerusGenus;
 import de.nb.aventiure2.german.base.PhorikKandidat;
 import de.nb.aventiure2.german.base.StructuralElement;
 import de.nb.aventiure2.german.base.SubstantivischePhrase;
 
-/**
- * Abstract superclass for a description.
- */
-public abstract class AbstractDescription<SELF extends AbstractDescription<SELF>> {
+public class DescriptionParams {
     /**
      * This {@link Narration} starts a new ... (paragraph, e.g.)
      */
     private final StructuralElement startsNew;
-
     /**
      * This {@link Narration} ends this ... (paragraph, e.g.)
      */
-    private StructuralElement endsThis = StructuralElement.WORD;
-
+    private StructuralElement endsThis;
     /**
-     * Ob ein Komma aussteht. Wenn ein Komma aussteht, muss als Nächstes ein Komma folgen -
+     * Ob ein Komma aussteht. Wenn ein Komma aussteht, muss als nächstes ein Komma folgen -
      * oder das Satzende.
      */
-    private boolean kommaStehtAus = false;
-
+    private boolean kommaStehtAus;
+    /**
+     * Whether the narration can be continued by a Satzreihenglied without subject where
+     * the player character is the implicit subject (such as " und gehst durch die Tür.")
+     */
     private boolean allowsAdditionalDuSatzreihengliedOhneSubjekt = false;
-
     private boolean dann = false;
-
     /**
      * Hierauf könnte sich ein Pronomen (z.B. ein Personalpronomen) unmittelbar
      * danach (<i>anaphorisch</i>) beziehen. Dazu müssen (in aller Regel) die grammatischen
@@ -60,109 +56,87 @@ public abstract class AbstractDescription<SELF extends AbstractDescription<SELF>
     @Nullable
     private PhorikKandidat phorikKandidat;
 
-    private final AvTimeSpan timeElapsed;
-
-    public AbstractDescription(final StructuralElement startsNew,
-                               final AvTimeSpan timeElapsed) {
+    public DescriptionParams(final StructuralElement startsNew) {
         this.startsNew = startsNew;
-        this.timeElapsed = timeElapsed;
+        endsThis = StructuralElement.WORD;
     }
 
-
-    public StructuralElement getStartsNew() {
-        return startsNew;
+    public void phorikKandidat(final SubstantivischePhrase substantivischePhrase,
+                               final IGameObject gameObject) {
+        phorikKandidat(substantivischePhrase.getNumerusGenus(), gameObject.getId());
     }
 
-    /**
-     * Gibt die Beschreibung zurück, beginnend mit einem Hauptsatz
-     */
-    public abstract String getDescriptionHauptsatz();
-
-    /**
-     * Gibt die Beschreibung als Hauptsatz zurück, wenn nötig mit dem angegebenen
-     * <code>konjunktionaladverb</code> ("dann", "darauf") im Vorfeld.
-     */
-    public abstract String
-    getDescriptionHauptsatzMitKonjunktionaladverbWennNoetig(String konjunktionaladverb);
-
-    public SELF komma() {
-        return komma(true);
+    public void phorikKandidat(final NumerusGenus numerusGenus,
+                               final IGameObject gameObject) {
+        phorikKandidat(numerusGenus, gameObject.getId());
     }
 
-    public SELF komma(final boolean kommaStehtAus) {
+    public void phorikKandidat(final NumerusGenus numerusGenus,
+                               final GameObjectId gameObjectId) {
+        phorikKandidat(new PhorikKandidat(numerusGenus, gameObjectId));
+    }
+
+    public void phorikKandidat(
+            @Nullable final PhorikKandidat phorikKandidat) {
+        this.phorikKandidat = phorikKandidat;
+    }
+
+    public void beendet(final StructuralElement structuralElement) {
+        endsThis = structuralElement;
+    }
+
+    public void komma() {
+        komma(true);
+    }
+
+    public void komma(final boolean kommaStehtAus) {
         this.kommaStehtAus = kommaStehtAus;
-        return (SELF) this;
-    }
-
-    public boolean isKommaStehtAus() {
-        return kommaStehtAus;
     }
 
     /**
      * Sets a flag that the text can be continued by a Satzreihenglied without subject where
      * the player character is the implicit subject
      */
-    public SELF undWartest() {
-        return undWartest(true);
+    public void undWartest() {
+        undWartest(true);
     }
 
-    public SELF undWartest(
+    public void undWartest(
             final boolean allowsAdditionalPlayerSatzreihengliedOhneSubjekt) {
         allowsAdditionalDuSatzreihengliedOhneSubjekt =
                 allowsAdditionalPlayerSatzreihengliedOhneSubjekt;
-        return (SELF) this;
     }
 
-    public boolean isAllowsAdditionalDuSatzreihengliedOhneSubjekt() {
-        return allowsAdditionalDuSatzreihengliedOhneSubjekt;
+    public void dann() {
+        dann(true);
     }
 
-    public SELF dann() {
-        return dann(true);
-    }
-
-    public SELF dann(final boolean dann) {
+    public void dann(final boolean dann) {
         this.dann = dann;
-        return (SELF) this;
     }
 
-    public boolean isDann() {
-        return dann;
-    }
-
-    public SELF beendet(final StructuralElement structuralElement) {
-        endsThis = structuralElement;
-        return (SELF) this;
+    public StructuralElement getStartsNew() {
+        return startsNew;
     }
 
     public StructuralElement getEndsThis() {
         return endsThis;
     }
 
-    public SELF phorikKandidat(final SubstantivischePhrase substantivischePhrase,
-                               final IBezugsobjekt bezugsobjekt) {
-        return phorikKandidat(substantivischePhrase.getNumerusGenus(), bezugsobjekt);
+    public boolean isKommaStehtAus() {
+        return kommaStehtAus;
     }
 
-    public SELF phorikKandidat(final NumerusGenus numerusGenus,
-                               final IBezugsobjekt bezugsobjekt) {
-        return phorikKandidat(new PhorikKandidat(numerusGenus, bezugsobjekt));
+    public boolean isAllowsAdditionalDuSatzreihengliedOhneSubjekt() {
+        return allowsAdditionalDuSatzreihengliedOhneSubjekt;
     }
 
-    public SELF phorikKandidat(@Nullable final PhorikKandidat phorikKandidat) {
-        this.phorikKandidat = phorikKandidat;
-        return (SELF) this;
+    public boolean isDann() {
+        return dann;
     }
 
     @Nullable
     public PhorikKandidat getPhorikKandidat() {
         return phorikKandidat;
-    }
-
-    /**
-     * Zeit, die vergangen ist, während das das beschriebene geschehen ist
-     */
-    public AvTimeSpan getTimeElapsed() {
-        return timeElapsed;
     }
 }
