@@ -1,7 +1,5 @@
 package de.nb.aventiure2.data.narration;
 
-import android.text.TextUtils;
-
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.room.PrimaryKey;
@@ -15,9 +13,6 @@ import de.nb.aventiure2.german.base.PhorikKandidat;
 import de.nb.aventiure2.german.base.StructuralElement;
 import de.nb.aventiure2.german.base.SubstantivischePhrase;
 import de.nb.aventiure2.german.description.DescriptionParams;
-
-import static com.google.common.base.Preconditions.checkArgument;
-import static com.google.common.base.Preconditions.checkNotNull;
 
 /**
  * Builder for {@link Narration}.
@@ -39,18 +34,14 @@ public class NarrationAddition {
     //  - Die Frau geht den Weg hinunten UND DU GEHST HINTERHER: Koordination zweier Hauptsätze
     //  Dazu bräuchte man wohl eine Kontextinfo in der Art "Womit endet die NarrationAddition?"
 
-    public static NarrationAddition t(
-            final StructuralElement startsNew,
-            final String text) {
-        checkArgument(!TextUtils.isEmpty(text), "text is null or empty");
-        checkNotNull(startsNew, "startsNew is null");
-
-        return new NarrationAddition(startsNew, text);
+    NarrationAddition(final StructuralElement startsNew,
+                      final String text) {
+        this(new DescriptionParams(startsNew), text);
     }
 
-    private NarrationAddition(final StructuralElement startsNew,
-                              final String text) {
-        descriptionParams = new DescriptionParams(startsNew);
+    NarrationAddition(final DescriptionParams descriptionParams,
+                      final String text) {
+        this.descriptionParams = descriptionParams;
         this.text = text;
     }
 

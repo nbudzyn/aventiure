@@ -10,11 +10,14 @@ import de.nb.aventiure2.german.base.PhorikKandidat;
 import de.nb.aventiure2.german.base.StructuralElement;
 import de.nb.aventiure2.german.base.SubstantivischePhrase;
 
+/**
+ * Parameter einer {@link AbstractDescription} - mutable!
+ */
 public class DescriptionParams {
     /**
      * This {@link Narration} starts a new ... (paragraph, e.g.)
      */
-    private final StructuralElement startsNew;
+    private StructuralElement startsNew;
     /**
      * This {@link Narration} ends this ... (paragraph, e.g.)
      */
@@ -56,9 +59,31 @@ public class DescriptionParams {
     @Nullable
     private PhorikKandidat phorikKandidat;
 
+    public DescriptionParams copy() {
+        return new DescriptionParams(startsNew, endsThis, kommaStehtAus,
+                allowsAdditionalDuSatzreihengliedOhneSubjekt, dann, phorikKandidat);
+    }
+
+    private DescriptionParams(final StructuralElement startsNew, final StructuralElement endsThis,
+                              final boolean kommaStehtAus,
+                              final boolean allowsAdditionalDuSatzreihengliedOhneSubjekt,
+                              final boolean dann, final PhorikKandidat phorikKandidat) {
+        this.startsNew = startsNew;
+        this.endsThis = endsThis;
+        this.kommaStehtAus = kommaStehtAus;
+        this.allowsAdditionalDuSatzreihengliedOhneSubjekt =
+                allowsAdditionalDuSatzreihengliedOhneSubjekt;
+        this.dann = dann;
+        this.phorikKandidat = phorikKandidat;
+    }
+
     public DescriptionParams(final StructuralElement startsNew) {
         this.startsNew = startsNew;
         endsThis = StructuralElement.WORD;
+    }
+
+    public void setStartsNew(final StructuralElement startsNew) {
+        this.startsNew = startsNew;
     }
 
     public void phorikKandidat(final SubstantivischePhrase substantivischePhrase,

@@ -18,6 +18,10 @@ public abstract class AbstractDescription<SELF extends AbstractDescription<SELF>
         params = new DescriptionParams(startsNew);
     }
 
+    public DescriptionParams copyParams() {
+        return params.copy();
+    }
+
     public StructuralElement getStartsNew() {
         return params.getStartsNew();
     }
