@@ -25,14 +25,13 @@ import static java.util.Arrays.asList;
 
 public class Narrator {
     private static volatile Narrator INSTANCE;
+    @Nullable
+    private TemporaryNarration temporaryNarration = null;
 
     private Narration.NarrationSource narrationSourceJustInCase =
             Narration.NarrationSource.INITIALIZATION;
 
     private final NarrationDao dao;
-
-    @Nullable
-    private Collection<AbstractDescription<?>> tempDescriptionAlternatives;
 
     public static Narrator getInstance(final AvDatabase db) {
         if (INSTANCE == null) {
@@ -153,16 +152,16 @@ public class Narrator {
         );
     }
 
-    public <R> R applyToNarration(final Function<AbstractDescription<?>, R> descriptionFunction,
-                                  final Function<Narration, R> narrationFunction) {
-        if (tempDescriptionAlternatives == null) {
+    private <R> R applyToNarration(final Function<AbstractDescription<?>, R> descriptionFunction,
+                                   final Function<Narration, R> narrationFunction) {
+        if (temporaryNarration == null) {
             return narrationFunction.apply(dao.requireNarration());
         }
 
         // Idee: Wenn alle temp-Alternativen zum selben Ergebnis führen, können alle
         // Alternativen möglich bleiben. Wenn nicht - dann jetzt für eine entscheiden!
         final ImmutableSet<R> alt =
-                tempDescriptionAlternatives.stream()
+                temporaryNarration.getDescriptionAlternatives().stream()
                         .map(descriptionFunction)
                         .collect(ImmutableSet.toImmutableSet());
 
@@ -174,15 +173,15 @@ public class Narrator {
         return alt.iterator().next();
     }
 
-    public <R> R applyToPhorikKandidat(final Function<PhorikKandidat, R> function) {
-        if (tempDescriptionAlternatives == null) {
+    private <R> R applyToPhorikKandidat(final Function<PhorikKandidat, R> function) {
+        if (temporaryNarration == null) {
             return function.apply(dao.requireNarration().getPhorikKandidat());
         }
 
         // Idee: Wenn alle temp-Alternativen zum selben Ergebnis führen, können alle
         // Alternativen möglich bleiben. Wenn nicht - dann jetzt für eine entscheiden!
         final ImmutableSet<R> alt =
-                tempDescriptionAlternatives.stream()
+                temporaryNarration.getDescriptionAlternatives().stream()
                         .map(AbstractDescription::getPhorikKandidat)
                         .map(function)
                         .collect(ImmutableSet.toImmutableSet());
@@ -214,11 +213,12 @@ public class Narrator {
     }
 
     private void pushTempDescription() {
-        if (tempDescriptionAlternatives != null) {
+        if (temporaryNarration != null) {
             final Narration initialNarration = dao.requireNarration();
-            dao.narrateAlt(narrationSourceJustInCase, tempDescriptionAlternatives,
+            dao.narrateAlt(narrationSourceJustInCase,
+                    temporaryNarration.getDescriptionAlternatives(),
                     initialNarration);
-            tempDescriptionAlternatives = null;
+            temporaryNarration = null;
         }
     }
 }
