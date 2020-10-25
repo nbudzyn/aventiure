@@ -7,7 +7,6 @@ import com.google.common.collect.ImmutableList;
 import java.util.List;
 
 import de.nb.aventiure2.data.database.AvDatabase;
-import de.nb.aventiure2.data.narration.Narration;
 import de.nb.aventiure2.data.narration.Narrator;
 import de.nb.aventiure2.data.world.base.GameObjectId;
 import de.nb.aventiure2.data.world.gameobject.*;
@@ -196,10 +195,8 @@ public class FroschprinzTalkingComp extends AbstractTalkingComp {
             return;
         }
 
-        final Narration initialNarration = n.requireNarration();
-
-        if (initialNarration.dann()) {
-            if (initialNarration.allowsAdditionalDuSatzreihengliedOhneSubjekt()) {
+        if (n.dann()) {
+            if (n.allowsAdditionalDuSatzreihengliedOhneSubjekt()) {
                 n.narrate(satzanschluss("– aber dann gibst du dir einen Ruck:",
                         noTime()));
             } else {

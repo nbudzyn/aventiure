@@ -215,7 +215,7 @@ public class SimpleMovementNarrator implements IMovementNarrator {
                         .phorikKandidat(desc, gameObjectId)
                         .beendet(PARAGRAPH));
 
-        if (!n.requireNarration().isThema(gameObjectId)) {
+        if (!n.isThema(gameObjectId)) {
             alt.add(
                     neuerSatz(PARAGRAPH,
                             "Dir kommt " +
@@ -264,7 +264,7 @@ public class SimpleMovementNarrator implements IMovementNarrator {
                         .phorikKandidat(anaphOderDesc, gameObjectId)
                         .beendet(PARAGRAPH));
 
-        if (!n.requireNarration().isThema(gameObjectId)) {
+        if (!n.isThema(gameObjectId)) {
             alt.add(du(SENTENCE, "siehst",
                     ", wie " +
                             anaphOderDesc.nom() +
@@ -359,7 +359,7 @@ public class SimpleMovementNarrator implements IMovementNarrator {
                         .phorikKandidat(desc, gameObjectId)
                         .beendet(PARAGRAPH));
 
-        if (!n.requireNarration().isThema(gameObjectId)) {
+        if (!n.isThema(gameObjectId)) {
             alt.add(
                     neuerSatz(PARAGRAPH,
                             "Dir kommt " +
@@ -515,7 +515,7 @@ public class SimpleMovementNarrator implements IMovementNarrator {
                         .phorikKandidat(desc, gameObjectId)
                         .beendet(PARAGRAPH));
 
-        if (!n.requireNarration().isThema(gameObjectId)) {
+        if (!n.isThema(gameObjectId)) {
             alt.add(
                     neuerSatz(PARAGRAPH,
                             "Hinter dir kommt " +
@@ -590,7 +590,7 @@ public class SimpleMovementNarrator implements IMovementNarrator {
                     .beendet(PARAGRAPH));
         }
 
-        if (!n.requireNarration().isThema(gameObjectId)) {
+        if (!n.isThema(gameObjectId)) {
             if (spatialConnectionMovingGO != null) {
                 alt.add(neuerSatz(spatialConnectionMovingGO.getWo() // "auf dem Pfad "
                         + " kommt " +
@@ -702,7 +702,7 @@ public class SimpleMovementNarrator implements IMovementNarrator {
         final IDescribableGO describableGO = (IDescribableGO) world.load(getGameObjectId());
 
         @Nullable final Personalpronomen anaphPersPron =
-                n.requireNarration().getAnaphPersPronWennMgl(describableGO);
+                n.getAnaphPersPronWennMgl(describableGO);
         if (anaphPersPron != null) {
             return anaphPersPron;
         }

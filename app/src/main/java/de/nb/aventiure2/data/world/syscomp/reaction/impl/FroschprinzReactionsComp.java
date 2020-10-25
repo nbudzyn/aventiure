@@ -263,7 +263,7 @@ public class FroschprinzReactionsComp
     }
 
     private void prinzVerlaesstSchlossVorhalle() {
-        if (n.requireNarration().allowsAdditionalDuSatzreihengliedOhneSubjekt()) {
+        if (n.allowsAdditionalDuSatzreihengliedOhneSubjekt()) {
             n.narrate(
                     satzanschluss(", aber die Menge hat dich schon von dem "
                             + "jungen Königssohn getrennt", secs(15))

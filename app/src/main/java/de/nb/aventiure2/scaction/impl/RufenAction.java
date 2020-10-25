@@ -86,7 +86,7 @@ public class RufenAction extends AbstractScAction {
                         WIEDERHOLUNG : VERSTEHT_SICH_VON_SELBST;
 
         if (kohaerenzrelation != VERSTEHT_SICH_VON_SELBST ||
-                n.requireNarration().allowsAdditionalDuSatzreihengliedOhneSubjekt()) {
+                n.allowsAdditionalDuSatzreihengliedOhneSubjekt()) {
             n.narrateAlt(drueckeAus(kohaerenzrelation,
                     du(ruftyp.getName(), secs(30))));
         } else {

@@ -60,7 +60,7 @@ public class RapunzelsZauberinMovementNarrator extends SimpleMovementNarrator {
                     .beendet(PARAGRAPH));
         }
 
-        if (!n.requireNarration().isThema(gameObjectId)) {
+        if (!n.isThema(gameObjectId)) {
             if (spatialConnectionMovingGO != null) {
                 alt.add(neuerSatz(spatialConnectionMovingGO.getWo() // "auf dem Pfad "
                         + " kommt " +
@@ -88,7 +88,7 @@ public class RapunzelsZauberinMovementNarrator extends SimpleMovementNarrator {
 
         if (world.isOrHasRecursiveLocation(movingGOFrom, IM_WALD_NAHE_DEM_SCHLOSS) &&
                 to.is(VOR_DEM_ALTEN_TURM)) {
-            if (!n.requireNarration().isThema(gameObjectId)) {
+            if (!n.isThema(gameObjectId)) {
                 alt.add(neuerSatz("Den Pfad herauf kommt " +
                                 desc.nom(),
                         noTime())
@@ -103,7 +103,7 @@ public class RapunzelsZauberinMovementNarrator extends SimpleMovementNarrator {
         if (world.isOrHasRecursiveLocation(movingGOFrom, VOR_DEM_ALTEN_TURM) &&
                 world.isOrHasRecursiveLocation(scFrom, DRAUSSEN_VOR_DEM_SCHLOSS) &&
                 to.is(IM_WALD_NAHE_DEM_SCHLOSS)) {
-            if (!n.requireNarration().isThema(gameObjectId)) {
+            if (!n.isThema(gameObjectId)) {
                 alt.add(neuerSatz(PARAGRAPH,
                         "Von dem Pfad her kommt dir " +
                                 desc.nom() +
@@ -120,7 +120,7 @@ public class RapunzelsZauberinMovementNarrator extends SimpleMovementNarrator {
                 world.isOrHasRecursiveLocation(scFrom, ABZWEIG_IM_WALD) &&
                 to.is(IM_WALD_NAHE_DEM_SCHLOSS)) {
 
-            if (!n.requireNarration().isThema(gameObjectId)) {
+            if (!n.isThema(gameObjectId)) {
                 alt.add(neuerSatz(PARAGRAPH,
                         "Von dem Pfad her kommt " +
                                 desc.nom(), noTime())

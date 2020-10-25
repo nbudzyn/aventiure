@@ -1,15 +1,24 @@
 package de.nb.aventiure2.data.narration;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.annotation.VisibleForTesting;
 import androidx.annotation.WorkerThread;
 import androidx.room.Insert;
 import androidx.room.OnConflictStrategy;
 
 import com.google.common.collect.ImmutableCollection;
+import com.google.common.collect.ImmutableSet;
 
 import java.util.Collection;
+import java.util.function.Function;
 
 import de.nb.aventiure2.data.database.AvDatabase;
+import de.nb.aventiure2.data.world.base.GameObjectId;
+import de.nb.aventiure2.data.world.base.IGameObject;
+import de.nb.aventiure2.german.base.Personalpronomen;
+import de.nb.aventiure2.german.base.PhorikKandidat;
+import de.nb.aventiure2.german.base.StructuralElement;
 import de.nb.aventiure2.german.description.AbstractDescription;
 
 import static java.util.Arrays.asList;
@@ -21,6 +30,9 @@ public class Narrator {
             Narration.NarrationSource.INITIALIZATION;
 
     private final NarrationDao dao;
+
+    @Nullable
+    private Collection<AbstractDescription<?>> tempDescriptionAlternatives;
 
     public static Narrator getInstance(final AvDatabase db) {
         if (INSTANCE == null) {
@@ -38,7 +50,6 @@ public class Narrator {
     public static void reset() {
         INSTANCE = null;
     }
-
 
     private Narrator(final AvDatabase db) {
         dao = db.narrationDao();
@@ -79,14 +90,6 @@ public class Narrator {
         dao.narrate(narrationSourceJustInCase, desc, initialNarration);
     }
 
-
-    /**
-     * Saves all All temporary data.
-     */
-    public void saveAll() {
-        // FIXME Save all temporary data
-    }
-
     public boolean lastNarrationWasFromReaction() {
         return dao.requireNarration().lastNarrationWasFomReaction();
     }
@@ -96,11 +99,126 @@ public class Narrator {
         dao.insert(narration);
     }
 
-    public Narration getNarration() {
-        return dao.getNarration();
+    /**
+     * Ob dieses Game Object zurzeit <i>Thema</i> ist (im Sinne von Thema - Rhema).
+     */
+    public boolean isThema(@NonNull final GameObjectId gameObjectId) {
+        // STORY es gibt auch noch andere Fälle, wo das Game Object Thema sein könnte...
+        //  (Auch im NarrationDao anpassen!)
+
+        return applyToPhorikKandidat(pk ->
+                pk != null && pk.getBezugsobjekt().equals(gameObjectId));
     }
 
-    public Narration requireNarration() {
-        return dao.requireNarration();
+    public Personalpronomen getAnaphPersPronWennMgl(final IGameObject gameObject) {
+        return applyToPhorikKandidat(pk ->
+                PhorikKandidat.getAnaphPersPronWennMgl(pk, gameObject.getId()));
+    }
+
+    /**
+     * Ob ein anaphorischer Bezug (z.B. mit einem Personalpronomen) auf dieses
+     * Game Objekt möglich ist.
+     * <br/>
+     * Beispiel: "Du hebst du Lampe auf..." - jetzt ist ein anaphorischer Bezug
+     * auf die Lampe mittels des Personalpronomens "sie" möglich:
+     * "... und nimmst sie mit."
+     */
+    public boolean isAnaphorischerBezugMoeglich(final GameObjectId gameObjectId) {
+        return applyToPhorikKandidat(pk -> PhorikKandidat
+                .isAnaphorischerBezugMoeglich(pk, gameObjectId));
+    }
+
+    public boolean endsThisIsExactly(final StructuralElement structuralElement) {
+        return applyToNarration(
+                d -> d.getEndsThis() == structuralElement,
+                n -> n.getEndsThis() == structuralElement
+        );
+    }
+
+    /**
+     * Whether the narration can be continued by a Satzreihenglied without subject where
+     * the player character is the implicit subject (such as " und gehst durch die Tür.")
+     */
+    public boolean allowsAdditionalDuSatzreihengliedOhneSubjekt() {
+        return applyToNarration(
+                AbstractDescription::isAllowsAdditionalDuSatzreihengliedOhneSubjekt,
+                Narration::allowsAdditionalDuSatzreihengliedOhneSubjekt
+        );
+    }
+
+    public boolean dann() {
+        return applyToNarration(
+                AbstractDescription::isDann,
+                Narration::dann
+        );
+    }
+
+    public <R> R applyToNarration(final Function<AbstractDescription<?>, R> descriptionFunction,
+                                  final Function<Narration, R> narrationFunction) {
+        if (tempDescriptionAlternatives == null) {
+            return narrationFunction.apply(dao.requireNarration());
+        }
+
+        // Idee: Wenn alle temp-Alternativen zum selben Ergebnis führen, können alle
+        // Alternativen möglich bleiben. Wenn nicht - dann jetzt für eine entscheiden!
+        final ImmutableSet<R> alt =
+                tempDescriptionAlternatives.stream()
+                        .map(descriptionFunction)
+                        .collect(ImmutableSet.toImmutableSet());
+
+        if (alt.size() != 1) {
+            pushTempDescription();
+            return applyToNarration(descriptionFunction, narrationFunction);
+        }
+
+        return alt.iterator().next();
+    }
+
+    public <R> R applyToPhorikKandidat(final Function<PhorikKandidat, R> function) {
+        if (tempDescriptionAlternatives == null) {
+            return function.apply(dao.requireNarration().getPhorikKandidat());
+        }
+
+        // Idee: Wenn alle temp-Alternativen zum selben Ergebnis führen, können alle
+        // Alternativen möglich bleiben. Wenn nicht - dann jetzt für eine entscheiden!
+        final ImmutableSet<R> alt =
+                tempDescriptionAlternatives.stream()
+                        .map(AbstractDescription::getPhorikKandidat)
+                        .map(function)
+                        .collect(ImmutableSet.toImmutableSet());
+
+        if (alt.size() != 1) {
+            pushTempDescription();
+            return applyToPhorikKandidat(function);
+        }
+
+        return alt.iterator().next();
+    }
+
+    @Nullable
+    public String getNarrationText() {
+        pushTempDescription();
+        final Narration narration = dao.getNarration();
+        if (narration == null) {
+            return null;
+        }
+
+        return narration.getText();
+    }
+
+    /**
+     * Saves all temporary data.
+     */
+    public void saveAll() {
+        pushTempDescription();
+    }
+
+    private void pushTempDescription() {
+        if (tempDescriptionAlternatives != null) {
+            final Narration initialNarration = dao.requireNarration();
+            dao.narrateAlt(narrationSourceJustInCase, tempDescriptionAlternatives,
+                    initialNarration);
+            tempDescriptionAlternatives = null;
+        }
     }
 }

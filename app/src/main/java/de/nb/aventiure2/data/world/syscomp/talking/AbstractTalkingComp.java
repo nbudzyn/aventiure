@@ -249,7 +249,7 @@ public abstract class AbstractTalkingComp extends AbstractStatefulComponent<Talk
         final IDescribableGO describableGO = (IDescribableGO) world.load(getGameObjectId());
 
         @javax.annotation.Nullable final Personalpronomen anaphPersPron =
-                n.requireNarration().getAnaphPersPronWennMgl(describableGO);
+                n.getAnaphPersPronWennMgl(describableGO);
         if (anaphPersPron != null) {
             return anaphPersPron;
         }

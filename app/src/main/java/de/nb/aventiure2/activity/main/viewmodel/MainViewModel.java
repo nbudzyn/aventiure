@@ -15,7 +15,6 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import de.nb.aventiure2.data.database.AvDatabase;
-import de.nb.aventiure2.data.narration.Narration;
 import de.nb.aventiure2.data.narration.Narrator;
 import de.nb.aventiure2.logger.Logger;
 import de.nb.aventiure2.scaction.AbstractScAction;
@@ -167,12 +166,12 @@ public class MainViewModel extends AndroidViewModel {
 
     @WorkerThread
     private void postLiveDataUpdate() {
-        @Nullable final Narration narration = n.getNarration();
-        if (narration == null) {
+        @Nullable final String narrationText = n.getNarrationText();
+        if (narrationText == null) {
             postLiveUpdateLater();
             return;
         }
-        this.narration.postValue(narration.getText());
+        narration.postValue(narrationText);
 
         score.postValue(scoreService.getScore());
 

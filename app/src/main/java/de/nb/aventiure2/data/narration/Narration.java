@@ -122,7 +122,7 @@ public class Narration {
         this.phorikKandidatNumerusGenus = phorikKandidatNumerusGenus;
     }
 
-    public StructuralElement getEndsThis() {
+    StructuralElement getEndsThis() {
         return endsThis;
     }
 
@@ -135,19 +135,20 @@ public class Narration {
         return kommaStehtAus;
     }
 
-    public boolean allowsAdditionalDuSatzreihengliedOhneSubjekt() {
+    boolean allowsAdditionalDuSatzreihengliedOhneSubjekt() {
         return allowsAdditionalDuSatzreihengliedOhneSubjekt;
     }
 
     /**
      * Ob dieses Game Object zurzeit <i>Thema</i> ist (im Sinne von Thema - Rhema).
      */
-    public boolean isThema(@NonNull final GameObjectId gameObjectId) {
+    boolean isThema(@NonNull final GameObjectId gameObjectId) {
         if (gameObjectId.equals(phorikKandidatBezugsobjekt)) {
             return true;
         }
 
         // STORY es gibt auch noch andere Fälle, wo das Game Object Thema sein könnte...
+        //  (Auch im Narrator anpassen!)
 
         return false;
     }
@@ -161,7 +162,7 @@ public class Narration {
      * auf die Lampe möglich und diese Methode gibt "sie" zurück.
      */
     @Nullable
-    public Personalpronomen getAnaphPersPronWennMgl(final IGameObject gameObject) {
+    Personalpronomen getAnaphPersPronWennMgl(final IGameObject gameObject) {
         return getAnaphPersPronWennMgl(gameObject.getId());
     }
 
@@ -174,17 +175,8 @@ public class Narration {
      * auf die Lampe möglich und diese Methode gibt "sie" zurück.
      */
     @Nullable
-    public Personalpronomen getAnaphPersPronWennMgl(final GameObjectId gameObjectId) {
-        @Nullable final PhorikKandidat phorikKandidat = getPhorikKandidat();
-        if (phorikKandidat == null) {
-            return null;
-        }
-
-        if (!phorikKandidat.getBezugsobjekt().equals(gameObjectId)) {
-            return null;
-        }
-
-        return Personalpronomen.get(phorikKandidat.getNumerusGenus());
+    Personalpronomen getAnaphPersPronWennMgl(final GameObjectId gameObjectId) {
+        return PhorikKandidat.getAnaphPersPronWennMgl(getPhorikKandidat(), gameObjectId);
     }
 
     /**
@@ -195,13 +187,8 @@ public class Narration {
      * auf die Lampe mittels des Personalpronomens "sie" möglich:
      * "... und nimmst sie mit."
      */
-    public boolean isAnaphorischerBezugMoeglich(final GameObjectId gameObjectId) {
-        @Nullable final PhorikKandidat phorikKandidat = getPhorikKandidat();
-        if (phorikKandidat == null) {
-            return false;
-        }
-
-        return phorikKandidat.getBezugsobjekt().equals(gameObjectId);
+    boolean isAnaphorischerBezugMoeglich(final GameObjectId gameObjectId) {
+        return PhorikKandidat.isAnaphorischerBezugMoeglich(getPhorikKandidat(), gameObjectId);
     }
 
     @Nullable
@@ -215,7 +202,7 @@ public class Narration {
                 phorikKandidatBezugsobjekt);
     }
 
-    public boolean dann() {
+    boolean dann() {
         // STORY Statt dann auch andere "Temporaladverbialia" verwenden,
         //  siehe "Grammatik der deutschen Sprache E2.3": darauf, danach,
         //  kurz danach, sofort, bald etc. Vielleicht abhängig davon, wie lang
@@ -362,7 +349,7 @@ public class Narration {
         return true;
     }
 
-    public static boolean periodNeededToStartNewSentence(
+    static boolean periodNeededToStartNewSentence(
             final String base, final String addition) {
         final String baseTrimmed =
                 base.trim();
@@ -378,7 +365,7 @@ public class Narration {
         return !".!?".contains(firstCharAdditional);
     }
 
-    public boolean lastNarrationWasFomReaction() {
+    boolean lastNarrationWasFomReaction() {
         return isLastNarrationSource(REACTIONS);
     }
 

@@ -100,7 +100,7 @@ public abstract class AbstractTakingComp extends AbstractStatelessComponent {
             final IDescribableGO describableGO,
             final boolean descShortIfKnown) {
         @Nullable final Personalpronomen anaphPersPron =
-                n.requireNarration().getAnaphPersPronWennMgl(describableGO);
+                n.getAnaphPersPronWennMgl(describableGO);
         if (anaphPersPron != null) {
             return anaphPersPron;
         }

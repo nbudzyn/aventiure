@@ -80,7 +80,7 @@ public class ObenImTurmConnectionComp extends AbstractSpatialConnectionComp {
                     .dann();
         }
 
-        if (n.requireNarration().isAnaphorischerBezugMoeglich(RAPUNZELS_HAARE)) {
+        if (n.isAnaphorischerBezugMoeglich(RAPUNZELS_HAARE)) {
             return du("steigst",
                     "daran hinab",
                     mins(1))

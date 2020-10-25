@@ -408,7 +408,7 @@ public class BewegenAction<LOC_DESC extends ILocatableGO & IDescribableGO>
                 to.storingPlaceComp().getLichtverhaeltnisse());
 
         if (description instanceof AbstractDuDescription &&
-                n.requireNarration().allowsAdditionalDuSatzreihengliedOhneSubjekt() &&
+                n.allowsAdditionalDuSatzreihengliedOhneSubjekt() &&
                 isDefinitivDiskontinuitaet()) {
             final ImmutableList.Builder<AbstractDescription<?>> alt = builder();
 
@@ -425,7 +425,7 @@ public class BewegenAction<LOC_DESC extends ILocatableGO & IDescribableGO>
         }
 
         if (description.getStartsNew() == WORD &&
-                n.requireNarration().allowsAdditionalDuSatzreihengliedOhneSubjekt() &&
+                n.allowsAdditionalDuSatzreihengliedOhneSubjekt() &&
                 description instanceof AbstractDuDescription) {
             n.narrate(description);
             return;
@@ -462,8 +462,7 @@ public class BewegenAction<LOC_DESC extends ILocatableGO & IDescribableGO>
         }
 
         if (sc.memoryComp().getLastAction().is(BEWEGEN)) {
-            if (n.requireNarration().getEndsThis() == StructuralElement.WORD &&
-                    n.requireNarration().dann()) {
+            if (n.endsThisIsExactly(StructuralElement.WORD) && n.dann()) {
                 // "Du stehst wieder vor dem Schloss; dann gehst du wieder hinein in das Schloss."
                 final String satzEvtlMitDann = description
                         .getDescriptionHauptsatzMitKonjunktionaladverbWennNoetig(
@@ -481,7 +480,7 @@ public class BewegenAction<LOC_DESC extends ILocatableGO & IDescribableGO>
                 return;
             }
         } else {
-            if (n.requireNarration().dann()) {
+            if (n.dann()) {
                 n.narrate(
                         neuerSatz(PARAGRAPH, description
                                         .getDescriptionHauptsatzMitKonjunktionaladverbWennNoetig("danach"),
@@ -523,7 +522,7 @@ public class BewegenAction<LOC_DESC extends ILocatableGO & IDescribableGO>
             if (numberOfWays == ONLY_WAY) {
                 if (sc.feelingsComp().hasMood(Mood.VOLLER_FREUDE) &&
                         lichtverhaeltnisseInNewLocation == HELL &&
-                        n.requireNarration().allowsAdditionalDuSatzreihengliedOhneSubjekt() &&
+                        n.allowsAdditionalDuSatzreihengliedOhneSubjekt() &&
                         sc.memoryComp().getLastAction().is(Action.Type.NEHMEN)) {
                     return du("springst", "damit fort", "damit",
                             standardDescription.getTimeElapsed().times(0.8))
@@ -542,7 +541,7 @@ public class BewegenAction<LOC_DESC extends ILocatableGO & IDescribableGO>
                     sc.feelingsComp().hasMood(Mood.VOLLER_FREUDE) &&
                     lichtverhaeltnisseInNewLocation ==
                             HELL &&
-                    n.requireNarration().allowsAdditionalDuSatzreihengliedOhneSubjekt()) {
+                    n.allowsAdditionalDuSatzreihengliedOhneSubjekt()) {
                 return du("eilst", "weiter", standardDescription.getTimeElapsed().times(0.8))
                         .undWartest();
             }

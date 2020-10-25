@@ -290,7 +290,7 @@ public class SchlosswacheReactionsComp
             final ILocatableGO goldeneKugel) {
         final ImmutableList.Builder<AbstractDescription<?>> alt = ImmutableList.builder();
 
-        if (n.requireNarration().allowsAdditionalDuSatzreihengliedOhneSubjekt()) {
+        if (n.allowsAdditionalDuSatzreihengliedOhneSubjekt()) {
             alt.add(satzanschluss(", doch keine Sekunde später baut sich die "
                             + "Wache vor dir auf. "
                             + "„Wir haben hier sehr gute Verliese, Ihr dürftet "
@@ -323,7 +323,7 @@ public class SchlosswacheReactionsComp
     private void scHatGoldeneKugelGenommen_wacheIstAufmerksam_nichtErwischt() {
         final ImmutableList.Builder<AbstractDescription<?>> alt = ImmutableList.builder();
 
-        if (n.requireNarration().allowsAdditionalDuSatzreihengliedOhneSubjekt()) {
+        if (n.allowsAdditionalDuSatzreihengliedOhneSubjekt()) {
             alt.add(satzanschluss(
                     ", während "
                             + getDescription().nom()
@@ -378,7 +378,7 @@ public class SchlosswacheReactionsComp
             return;
         }
 
-        if (n.requireNarration().allowsAdditionalDuSatzreihengliedOhneSubjekt()) {
+        if (n.allowsAdditionalDuSatzreihengliedOhneSubjekt()) {
             n.narrate(satzanschluss(", von der kopfschüttelnden Wache beobachtet",
                     secs(5))
                     .dann());

@@ -314,7 +314,7 @@ public class NehmenAction
 
     private void narrateFroschprinz_HatHochhebenGefordert() {
         if (isDefinitivDiskontinuitaet()) {
-            if (n.requireNarration().dann()) {
+            if (n.dann()) {
                 final SubstantivischePhrase froschDescOderAnapher =
                         getAnaphPersPronWennMglSonstShortDescription(FROSCHPRINZ);
 
@@ -447,7 +447,7 @@ public class NehmenAction
                         .phorikKandidat(objectDescShort, gameObject.getId()))
         );
 
-        if (n.requireNarration().allowsAdditionalDuSatzreihengliedOhneSubjekt()) {
+        if (n.allowsAdditionalDuSatzreihengliedOhneSubjekt()) {
             alt.add(satzanschluss(
                     ", nur um "
                             + nehmenPraedikat

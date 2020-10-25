@@ -1,6 +1,7 @@
 package de.nb.aventiure2.german.base;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
 import java.util.Objects;
 
@@ -25,6 +26,70 @@ public class PhorikKandidat {
                           final IBezugsobjekt bezugsobjekt) {
         this.numerusGenus = numerusGenus;
         this.bezugsobjekt = bezugsobjekt;
+    }
+
+    /**
+     * Gibt das Personalpronomen zurück, mit dem ein
+     * anaphorischer (rückgreifender) Bezug auf dieses
+     * andere Objekt möglich ist.
+     * <br/>
+     * Beispiel: "Du hebst du Lampe auf..." - jetzt ist ein anaphorischer Bezug
+     * auf die Lampe möglich und diese Methode gibt "sie" zurück.
+     */
+    @Nullable
+    public static Personalpronomen getAnaphPersPronWennMgl(
+            @Nullable final PhorikKandidat phorikKandidat, final IBezugsobjekt other) {
+        if (phorikKandidat == null) {
+            return null;
+        }
+
+        return phorikKandidat.getAnaphPersPronWennMgl(other);
+    }
+
+    /**
+     * Gibt das Personalpronomen zurück, mit dem ein
+     * anaphorischer (rückgreifender) Bezug auf dieses
+     * andere Objekt möglich ist.
+     * <br/>
+     * Beispiel: "Du hebst du Lampe auf..." - jetzt ist ein anaphorischer Bezug
+     * auf die Lampe möglich und diese Methode gibt "sie" zurück.
+     */
+    @Nullable
+    private Personalpronomen getAnaphPersPronWennMgl(final IBezugsobjekt other) {
+        if (!getBezugsobjekt().equals(other)) {
+            return null;
+        }
+
+        return Personalpronomen.get(getNumerusGenus());
+    }
+
+    /**
+     * Ob ein anaphorischer Bezug (z.B. mit einem Personalpronomen) auf dieses
+     * andere Objekt möglich ist.
+     * <br/>
+     * Beispiel: "Du hebst du Lampe auf..." - jetzt ist ein anaphorischer Bezug
+     * auf die Lampe mittels des Personalpronomens "sie" möglich:
+     * "... und nimmst sie mit."
+     */
+    public static boolean isAnaphorischerBezugMoeglich(
+            @Nullable final PhorikKandidat phorikKandidat, final IBezugsobjekt other) {
+        if (phorikKandidat == null) {
+            return false;
+        }
+
+        return phorikKandidat.getBezugsobjekt().equals(other);
+    }
+
+    /**
+     * Ob ein anaphorischer Bezug (z.B. mit einem Personalpronomen) auf dieses
+     * andere Objekt möglich ist.
+     * <br/>
+     * Beispiel: "Du hebst du Lampe auf..." - jetzt ist ein anaphorischer Bezug
+     * auf die Lampe mittels des Personalpronomens "sie" möglich:
+     * "... und nimmst sie mit."
+     */
+    private boolean isAnaphorischerBezugMoeglich(final IBezugsobjekt other) {
+        return getBezugsobjekt().equals(other);
     }
 
     /**
