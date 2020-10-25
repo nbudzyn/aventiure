@@ -9,6 +9,7 @@ import java.util.Collection;
 import javax.annotation.ParametersAreNonnullByDefault;
 
 import de.nb.aventiure2.data.database.AvDatabase;
+import de.nb.aventiure2.data.narration.Narrator;
 import de.nb.aventiure2.data.world.gameobject.*;
 import de.nb.aventiure2.data.world.syscomp.alive.ILivingBeingGO;
 import de.nb.aventiure2.data.world.syscomp.description.IDescribableGO;
@@ -52,7 +53,7 @@ public class HochwerfenAction<OBJ extends IDescribableGO & ILocatableGO>
 
     public static <OBJ extends IDescribableGO & ILocatableGO>
     Collection<HochwerfenAction<OBJ>> buildActions(
-            final AvDatabase db, final World world,
+            final AvDatabase db, final Narrator n, final World world,
             final ILocationGO location, @NonNull final OBJ gameObject) {
         if (gameObject instanceof ILivingBeingGO) {
             return ImmutableList.of();
@@ -60,14 +61,15 @@ public class HochwerfenAction<OBJ extends IDescribableGO & ILocatableGO>
 
         // STORY Nicht jedes Object lässt sich hochwerfen...
         return ImmutableList
-                .of(new HochwerfenAction<>(db, world, gameObject, location));
+                .of(new HochwerfenAction<>(db, n, world, gameObject, location));
     }
 
     private HochwerfenAction(final AvDatabase db,
+                             final Narrator n,
                              final World world,
                              @NonNull final OBJ object,
                              final ILocationGO location) {
-        super(db, world);
+        super(db, n, world);
         this.object = object;
         this.location = location;
     }

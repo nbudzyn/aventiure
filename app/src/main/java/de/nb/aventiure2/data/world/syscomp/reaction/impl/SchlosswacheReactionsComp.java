@@ -5,6 +5,7 @@ import com.google.common.collect.ImmutableList;
 import javax.annotation.Nullable;
 
 import de.nb.aventiure2.data.database.AvDatabase;
+import de.nb.aventiure2.data.narration.Narrator;
 import de.nb.aventiure2.data.world.base.Lichtverhaeltnisse;
 import de.nb.aventiure2.data.world.gameobject.*;
 import de.nb.aventiure2.data.world.gameobject.player.*;
@@ -49,11 +50,11 @@ public class SchlosswacheReactionsComp
     private final LocationComp locationComp;
 
     public SchlosswacheReactionsComp(final AvDatabase db,
-                                     final World world,
+                                     final Narrator n, final World world,
                                      final LocationSystem locationSystem,
                                      final SchlosswacheStateComp stateComp,
                                      final LocationComp locationComp) {
-        super(SCHLOSSWACHE, db, world);
+        super(SCHLOSSWACHE, db, n, world);
         this.locationSystem = locationSystem;
         this.stateComp = stateComp;
         this.locationComp = locationComp;

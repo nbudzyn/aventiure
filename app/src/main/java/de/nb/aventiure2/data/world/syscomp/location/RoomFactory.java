@@ -3,9 +3,10 @@ package de.nb.aventiure2.data.world.syscomp.location;
 import javax.annotation.Nonnull;
 
 import de.nb.aventiure2.data.database.AvDatabase;
+import de.nb.aventiure2.data.narration.Narrator;
 import de.nb.aventiure2.data.world.base.GameObject;
 import de.nb.aventiure2.data.world.base.GameObjectId;
-import de.nb.aventiure2.data.world.gameobject.World;
+import de.nb.aventiure2.data.world.gameobject.*;
 import de.nb.aventiure2.data.world.syscomp.spatialconnection.AbstractSpatialConnectionComp;
 import de.nb.aventiure2.data.world.syscomp.spatialconnection.ISpatiallyConnectedGO;
 import de.nb.aventiure2.data.world.syscomp.spatialconnection.impl.ImWaldBeimBrunnenConnectionComp;
@@ -13,18 +14,21 @@ import de.nb.aventiure2.data.world.syscomp.storingplace.ILocationGO;
 import de.nb.aventiure2.data.world.syscomp.storingplace.StoringPlaceComp;
 import de.nb.aventiure2.data.world.syscomp.storingplace.StoringPlaceType;
 
-import static de.nb.aventiure2.data.world.gameobject.World.IM_WALD_BEIM_BRUNNEN;
+import static de.nb.aventiure2.data.world.gameobject.World.*;
 
 /**
  * A factory for special {@link GameObject}s: Rooms in the world.
  */
 public class RoomFactory {
     private final AvDatabase db;
+    private final Narrator n;
     private final World world;
 
     public RoomFactory(final AvDatabase db,
+                       final Narrator n,
                        final World world) {
         this.db = db;
+        this.n = n;
         this.world = world;
     }
 
@@ -34,7 +38,7 @@ public class RoomFactory {
                 false);
 
         return new Room(IM_WALD_BEIM_BRUNNEN, storingPlaceComp,
-                new ImWaldBeimBrunnenConnectionComp(db, world, storingPlaceComp));
+                new ImWaldBeimBrunnenConnectionComp(db, n, world, storingPlaceComp));
     }
 
     public GameObject create(final GameObjectId id, final StoringPlaceType locationMode,

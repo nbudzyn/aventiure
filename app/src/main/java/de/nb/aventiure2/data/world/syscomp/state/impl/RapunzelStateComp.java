@@ -5,6 +5,7 @@ import androidx.annotation.NonNull;
 import com.google.common.collect.ImmutableList;
 
 import de.nb.aventiure2.data.database.AvDatabase;
+import de.nb.aventiure2.data.narration.Narrator;
 import de.nb.aventiure2.data.world.gameobject.*;
 import de.nb.aventiure2.data.world.gameobject.player.*;
 import de.nb.aventiure2.data.world.syscomp.state.AbstractStateComp;
@@ -21,8 +22,8 @@ import static de.nb.aventiure2.german.description.AllgDescription.neuerSatz;
 import static de.nb.aventiure2.german.description.DuDescriptionBuilder.du;
 
 public class RapunzelStateComp extends AbstractStateComp<RapunzelState> {
-    public RapunzelStateComp(final AvDatabase db, final World world) {
-        super(RAPUNZEL, db, world, RapunzelState.class, STILL);
+    public RapunzelStateComp(final AvDatabase db, final Narrator n, final World world) {
+        super(RAPUNZEL, db, n, world, RapunzelState.class, STILL);
     }
 
     public void rapunzelLaesstHaareZumAbstiegHerunter() {

@@ -5,6 +5,7 @@ import androidx.annotation.NonNull;
 import javax.annotation.Nullable;
 
 import de.nb.aventiure2.data.database.AvDatabase;
+import de.nb.aventiure2.data.narration.Narrator;
 import de.nb.aventiure2.data.world.gameobject.*;
 import de.nb.aventiure2.data.world.syscomp.feelings.FeelingIntensity;
 import de.nb.aventiure2.data.world.syscomp.location.ILocatableGO;
@@ -74,13 +75,13 @@ public class RapunzelsZauberinReactionsComp
     private final RapunzelsZauberinTalkingComp talkingComp;
 
     public RapunzelsZauberinReactionsComp(final AvDatabase db,
-                                          final World world,
+                                          final Narrator n, final World world,
                                           final RapunzelsZauberinStateComp stateComp,
                                           final LocationComp locationComp,
                                           final MentalModelComp mentalModelComp,
                                           final MovementComp movementComp,
                                           final RapunzelsZauberinTalkingComp talkingComp) {
-        super(RAPUNZELS_ZAUBERIN, db, world);
+        super(RAPUNZELS_ZAUBERIN, db, n, world);
         this.stateComp = stateComp;
         this.locationComp = locationComp;
         this.mentalModelComp = mentalModelComp;

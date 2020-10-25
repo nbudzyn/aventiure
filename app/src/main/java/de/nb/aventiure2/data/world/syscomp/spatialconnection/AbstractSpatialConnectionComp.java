@@ -8,6 +8,7 @@ import java.util.List;
 import javax.annotation.ParametersAreNonnullByDefault;
 
 import de.nb.aventiure2.data.database.AvDatabase;
+import de.nb.aventiure2.data.narration.Narrator;
 import de.nb.aventiure2.data.world.base.AbstractStatelessComponent;
 import de.nb.aventiure2.data.world.base.GameObject;
 import de.nb.aventiure2.data.world.base.GameObjectId;
@@ -15,7 +16,7 @@ import de.nb.aventiure2.data.world.base.Known;
 import de.nb.aventiure2.data.world.base.Lichtverhaeltnisse;
 import de.nb.aventiure2.data.world.base.SpatialConnection;
 import de.nb.aventiure2.data.world.base.SpatialConnectionData;
-import de.nb.aventiure2.data.world.gameobject.World;
+import de.nb.aventiure2.data.world.gameobject.*;
 import de.nb.aventiure2.german.description.AbstractDescription;
 
 /**
@@ -26,13 +27,16 @@ import de.nb.aventiure2.german.description.AbstractDescription;
 @ParametersAreNonnullByDefault
 public abstract class AbstractSpatialConnectionComp extends AbstractStatelessComponent {
     protected final AvDatabase db;
+    protected final Narrator n;
     protected final World world;
 
     public AbstractSpatialConnectionComp(final GameObjectId id,
                                          final AvDatabase db,
+                                         final Narrator n,
                                          final World world) {
         super(id);
         this.db = db;
+        this.n = n;
         this.world = world;
     }
 

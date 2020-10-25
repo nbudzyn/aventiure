@@ -16,6 +16,7 @@ import java.util.stream.Collectors;
 
 import de.nb.aventiure2.data.database.AvDatabase;
 import de.nb.aventiure2.data.narration.Narration;
+import de.nb.aventiure2.data.narration.Narrator;
 import de.nb.aventiure2.logger.Logger;
 import de.nb.aventiure2.scaction.AbstractScAction;
 import de.nb.aventiure2.scaction.ScActionService;
@@ -36,6 +37,7 @@ public class MainViewModel extends AndroidViewModel {
 
     private final ScoreService scoreService;
     private final ScActionService scActionService;
+    private final Narrator n;
     private final AvDatabase db;
 
     @UiThread
@@ -45,6 +47,8 @@ public class MainViewModel extends AndroidViewModel {
         db = getDatabase(application);
         // After installing the app, this call also initializes the game and fills the
         // database.
+
+        n = Narrator.getInstance(db);
 
         scoreService = new ScoreService(application);
         scActionService = new ScActionService(application);
@@ -163,7 +167,7 @@ public class MainViewModel extends AndroidViewModel {
 
     @WorkerThread
     private void postLiveDataUpdate() {
-        @Nullable final Narration narration = db.narrationDao().getNarration();
+        @Nullable final Narration narration = n.getNarration();
         if (narration == null) {
             postLiveUpdateLater();
             return;

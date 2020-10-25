@@ -3,7 +3,7 @@ package de.nb.aventiure2.data.world.syscomp.story;
 import java.util.EnumSet;
 
 import de.nb.aventiure2.data.database.AvDatabase;
-import de.nb.aventiure2.data.narration.NarrationDao;
+import de.nb.aventiure2.data.narration.Narrator;
 import de.nb.aventiure2.data.world.gameobject.*;
 import de.nb.aventiure2.data.world.syscomp.story.impl.FroschkoenigStoryNode;
 import de.nb.aventiure2.data.world.syscomp.story.impl.RapunzelStoryNode;
@@ -55,7 +55,7 @@ public enum Story {
     interface IStoryAdvancer {
         boolean checkAndAdvanceIfAppropriate(
                 final AvDatabase db,
-                NarrationDao n,
+                Narrator n,
                 final World world);
     }
 
@@ -82,7 +82,7 @@ public enum Story {
      */
     public static boolean checkAndAdvanceAStoryIfAppropriate(
             final AvDatabase db,
-            final NarrationDao n,
+            final Narrator n,
             final World world
     ) {
         for (final Story story : values()) {
@@ -96,7 +96,7 @@ public enum Story {
 
     private boolean checkAndAdvanceIfAppropriate(
             final AvDatabase db,
-            final NarrationDao n,
+            final Narrator n,
             final World world) {
         return advancer.checkAndAdvanceIfAppropriate(db, n, world);
     }

@@ -9,6 +9,7 @@ import com.google.common.collect.ImmutableList;
 import java.util.Collection;
 
 import de.nb.aventiure2.data.database.AvDatabase;
+import de.nb.aventiure2.data.narration.Narrator;
 import de.nb.aventiure2.data.world.base.IGameObject;
 import de.nb.aventiure2.data.world.gameobject.*;
 import de.nb.aventiure2.data.world.syscomp.feelings.FeelingIntensity;
@@ -33,19 +34,19 @@ import static de.nb.aventiure2.german.description.DuDescriptionBuilder.du;
 public class SchlafenAction extends AbstractScAction {
     public static Collection<SchlafenAction> buildActions(
             final AvDatabase db,
-            final World world,
+            final Narrator n, final World world,
             @Nullable final IGameObject location) {
         final ImmutableList.Builder<SchlafenAction> res = ImmutableList.builder();
         if (location != null && location.is(BETT_IN_DER_HUETTE_IM_WALD)) {
-            res.add(new SchlafenAction(db, world));
+            res.add(new SchlafenAction(db, n, world));
         }
 
         return res.build();
     }
 
-    private SchlafenAction(final AvDatabase db,
+    private SchlafenAction(final AvDatabase db, final Narrator n,
                            final World world) {
-        super(db, world);
+        super(db, n, world);
     }
 
     @Override

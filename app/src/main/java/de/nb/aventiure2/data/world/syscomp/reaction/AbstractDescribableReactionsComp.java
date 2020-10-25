@@ -3,8 +3,9 @@ package de.nb.aventiure2.data.world.syscomp.reaction;
 import androidx.annotation.Nullable;
 
 import de.nb.aventiure2.data.database.AvDatabase;
+import de.nb.aventiure2.data.narration.Narrator;
 import de.nb.aventiure2.data.world.base.GameObjectId;
-import de.nb.aventiure2.data.world.gameobject.World;
+import de.nb.aventiure2.data.world.gameobject.*;
 import de.nb.aventiure2.data.world.syscomp.description.IDescribableGO;
 import de.nb.aventiure2.german.base.Nominalphrase;
 import de.nb.aventiure2.german.base.Personalpronomen;
@@ -17,8 +18,8 @@ import de.nb.aventiure2.german.base.SubstantivischePhrase;
 public abstract class AbstractDescribableReactionsComp extends AbstractReactionsComp {
     public AbstractDescribableReactionsComp(final GameObjectId id,
                                             final AvDatabase db,
-                                            final World world) {
-        super(id, db, world);
+                                            final Narrator n, final World world) {
+        super(id, db, n, world);
     }
 
     /**
@@ -74,7 +75,7 @@ public abstract class AbstractDescribableReactionsComp extends AbstractReactions
             final IDescribableGO describableGO,
             final boolean descShortIfKnown) {
         @Nullable final Personalpronomen anaphPersPron =
-                db.narrationDao().requireNarration().getAnaphPersPronWennMgl(describableGO);
+                n.requireNarration().getAnaphPersPronWennMgl(describableGO);
         if (anaphPersPron != null) {
             return anaphPersPron;
         }

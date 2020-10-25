@@ -3,6 +3,7 @@ package de.nb.aventiure2.data.world.syscomp.reaction.impl;
 import androidx.annotation.Nullable;
 
 import de.nb.aventiure2.data.database.AvDatabase;
+import de.nb.aventiure2.data.narration.Narrator;
 import de.nb.aventiure2.data.world.gameobject.*;
 import de.nb.aventiure2.data.world.syscomp.alive.ILivingBeingGO;
 import de.nb.aventiure2.data.world.syscomp.location.ILocatableGO;
@@ -37,9 +38,10 @@ public class StoryWebReactionsComp
         implements IMovementReactions, IStateChangedReactions, ISCActionReactions {
     private final StoryWebComp storyWebComp;
 
-    public StoryWebReactionsComp(final AvDatabase db, final World world,
+    public StoryWebReactionsComp(final AvDatabase db, final Narrator n,
+                                 final World world,
                                  final StoryWebComp storyWebComp) {
-        super(STORY_WEB, db, world);
+        super(STORY_WEB, db, n, world);
         this.storyWebComp = storyWebComp;
     }
 

@@ -10,6 +10,7 @@ import org.jetbrains.annotations.Contract;
 import java.util.Collection;
 
 import de.nb.aventiure2.data.database.AvDatabase;
+import de.nb.aventiure2.data.narration.Narrator;
 import de.nb.aventiure2.data.world.gameobject.*;
 import de.nb.aventiure2.data.world.syscomp.alive.ILivingBeingGO;
 import de.nb.aventiure2.data.world.syscomp.description.IDescribableGO;
@@ -75,7 +76,7 @@ public class AblegenAction
      */
     public static <GO extends IDescribableGO & ILocatableGO>
     Collection<AblegenAction<GO>> buildActions(
-            final AvDatabase db, final World world,
+            final AvDatabase db, final Narrator n, final World world,
             final GO gameObject,
             final ILocationGO location) {
         if ((gameObject instanceof ILivingBeingGO) && !gameObject.is(FROSCHPRINZ)) {
@@ -84,14 +85,14 @@ public class AblegenAction
 
         final ImmutableList.Builder<AblegenAction<GO>> res = ImmutableList.builder();
         res.add(new AblegenAction<>(
-                db, world, gameObject, location,
+                db, n, world, gameObject, location,
                 true));
 
         for (final ILocationGO innerLocation :
                 world.loadDescribableNonLivingLocationRecursiveInventory(location)) {
             // Z.B. "Auf dem Tisch absetzen"
             res.add(new AblegenAction<>(
-                    db, world, gameObject, innerLocation,
+                    db, n, world, gameObject, innerLocation,
                     false));
         }
 
@@ -99,11 +100,12 @@ public class AblegenAction
     }
 
     private AblegenAction(final AvDatabase db,
+                          final Narrator n,
                           final World world,
                           final @NonNull GO gameObject,
                           final ILocationGO location,
                           final boolean detailLocationNecessaryInDescription) {
-        super(db, world);
+        super(db, n, world);
         this.location = location;
         this.gameObject = gameObject;
         this.detailLocationNecessaryInDescription = detailLocationNecessaryInDescription;

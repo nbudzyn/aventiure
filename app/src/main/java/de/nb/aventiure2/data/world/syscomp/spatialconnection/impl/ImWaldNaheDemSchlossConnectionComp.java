@@ -9,6 +9,7 @@ import java.util.List;
 import javax.annotation.ParametersAreNonnullByDefault;
 
 import de.nb.aventiure2.data.database.AvDatabase;
+import de.nb.aventiure2.data.narration.Narrator;
 import de.nb.aventiure2.data.world.base.GameObjectId;
 import de.nb.aventiure2.data.world.base.Known;
 import de.nb.aventiure2.data.world.base.Lichtverhaeltnisse;
@@ -45,8 +46,8 @@ import static de.nb.aventiure2.german.description.DuDescriptionBuilder.du;
 public class ImWaldNaheDemSchlossConnectionComp extends AbstractSpatialConnectionComp {
     public ImWaldNaheDemSchlossConnectionComp(
             final AvDatabase db,
-            final World world) {
-        super(IM_WALD_NAHE_DEM_SCHLOSS, db, world);
+            final Narrator n, final World world) {
+        super(IM_WALD_NAHE_DEM_SCHLOSS, db, n, world);
     }
 
     @Override

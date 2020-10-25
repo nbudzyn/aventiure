@@ -9,6 +9,7 @@ import java.util.List;
 import javax.annotation.ParametersAreNonnullByDefault;
 
 import de.nb.aventiure2.data.database.AvDatabase;
+import de.nb.aventiure2.data.narration.Narrator;
 import de.nb.aventiure2.data.world.base.GameObjectId;
 import de.nb.aventiure2.data.world.base.Known;
 import de.nb.aventiure2.data.world.base.Lichtverhaeltnisse;
@@ -35,9 +36,9 @@ public class ImWaldBeimBrunnenConnectionComp extends AbstractSpatialConnectionCo
 
     public ImWaldBeimBrunnenConnectionComp(
             final AvDatabase db,
-            final World world,
+            final Narrator n, final World world,
             final StoringPlaceComp storingPlaceComp) {
-        super(IM_WALD_BEIM_BRUNNEN, db, world);
+        super(IM_WALD_BEIM_BRUNNEN, db, n, world);
         this.storingPlaceComp = storingPlaceComp;
     }
 

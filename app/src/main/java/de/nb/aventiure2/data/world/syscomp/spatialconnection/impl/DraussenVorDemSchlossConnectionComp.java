@@ -10,6 +10,7 @@ import javax.annotation.CheckReturnValue;
 import javax.annotation.ParametersAreNonnullByDefault;
 
 import de.nb.aventiure2.data.database.AvDatabase;
+import de.nb.aventiure2.data.narration.Narrator;
 import de.nb.aventiure2.data.world.base.GameObjectId;
 import de.nb.aventiure2.data.world.base.Known;
 import de.nb.aventiure2.data.world.base.Lichtverhaeltnisse;
@@ -38,8 +39,8 @@ public class DraussenVorDemSchlossConnectionComp extends AbstractSpatialConnecti
 
     public DraussenVorDemSchlossConnectionComp(
             final AvDatabase db,
-            final World world) {
-        super(DRAUSSEN_VOR_DEM_SCHLOSS, db, world);
+            final Narrator n, final World world) {
+        super(DRAUSSEN_VOR_DEM_SCHLOSS, db, n, world);
     }
 
     @Override

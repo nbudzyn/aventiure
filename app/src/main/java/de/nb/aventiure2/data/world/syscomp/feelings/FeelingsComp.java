@@ -7,7 +7,7 @@ import java.util.Map;
 import javax.annotation.CheckReturnValue;
 
 import de.nb.aventiure2.data.database.AvDatabase;
-import de.nb.aventiure2.data.narration.NarrationDao;
+import de.nb.aventiure2.data.narration.Narrator;
 import de.nb.aventiure2.data.world.base.AbstractStatefulComponent;
 import de.nb.aventiure2.data.world.base.GameObject;
 import de.nb.aventiure2.data.world.base.GameObjectId;
@@ -29,7 +29,7 @@ import static de.nb.aventiure2.german.description.DuDescriptionBuilder.du;
 public class FeelingsComp extends AbstractStatefulComponent<FeelingsPCD> {
     protected AvNowDao nowDao;
 
-    protected final NarrationDao n;
+    protected final Narrator n;
 
     @NonNull
     private final Mood initialMood;
@@ -59,6 +59,7 @@ public class FeelingsComp extends AbstractStatefulComponent<FeelingsPCD> {
      */
     public FeelingsComp(final GameObjectId gameObjectId,
                         final AvDatabase db,
+                        final Narrator n,
                         final Mood initialMood,
                         final Biorhythmus muedigkeitsBiorythmus,
                         final MuedigkeitsData initialMuedigkeitsData,
@@ -70,8 +71,7 @@ public class FeelingsComp extends AbstractStatefulComponent<FeelingsPCD> {
         super(gameObjectId, db.feelingsDao());
 
         nowDao = db.nowDao();
-        n = db.narrationDao();
-
+        this.n = n;
         this.initialMood = initialMood;
         this.muedigkeitsBiorythmus = muedigkeitsBiorythmus;
         this.initialMuedigkeitsData = initialMuedigkeitsData;

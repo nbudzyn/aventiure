@@ -20,6 +20,7 @@ import java.util.concurrent.Executors;
 import de.nb.aventiure2.data.narration.Narration;
 import de.nb.aventiure2.data.narration.NarrationDao;
 import de.nb.aventiure2.data.narration.NarrationSourceConverters;
+import de.nb.aventiure2.data.narration.Narrator;
 import de.nb.aventiure2.data.narration.StructuralElementConverters;
 import de.nb.aventiure2.data.world.base.GameObjectIdConverters;
 import de.nb.aventiure2.data.world.counter.Counter;
@@ -157,11 +158,12 @@ public abstract class AvDatabase extends RoomDatabase {
                         INSTANCE.nowDao().setNow(
                                 1, oClock(14, 30));
 
-                        final World world = World.getInstance(INSTANCE);
+                        final Narrator narrator = Narrator.getInstance(INSTANCE);
+
+                        final World world = World.getInstance(INSTANCE, narrator);
                         world.saveAllInitialState();
 
-                        // Save initial state for all game objects
-                        INSTANCE.narrationDao().insert(buildInitialNarration(world));
+                        narrator.saveInitialNarration(buildInitialNarration(world));
                     }));
         }
     };

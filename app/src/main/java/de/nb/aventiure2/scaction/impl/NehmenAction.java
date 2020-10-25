@@ -9,6 +9,7 @@ import java.util.Collection;
 import javax.annotation.ParametersAreNonnullByDefault;
 
 import de.nb.aventiure2.data.database.AvDatabase;
+import de.nb.aventiure2.data.narration.Narrator;
 import de.nb.aventiure2.data.world.base.GameObjectId;
 import de.nb.aventiure2.data.world.gameobject.*;
 import de.nb.aventiure2.data.world.syscomp.alive.ILivingBeingGO;
@@ -68,13 +69,14 @@ public class NehmenAction
     public static <GO extends IDescribableGO & ILocatableGO,
             TARGET_LOC extends IDescribableGO & ILocationGO & ILocatableGO>
     Collection<NehmenAction<GO, TARGET_LOC>> buildObjectActions(final AvDatabase db,
+                                                                final Narrator n,
                                                                 final World world,
                                                                 final GO object) {
         // STORY Gegenstände verloren gehen lassen, wenn nicht mehr nötig?
 
         final ImmutableList.Builder<NehmenAction<GO, TARGET_LOC>> res = ImmutableList.builder();
 
-        res.add(new NehmenAction<>(db, world,
+        res.add(new NehmenAction<>(db, n, world,
                 object, EINE_TASCHE_DES_SPIELER_CHARAKTERS));
 
         return res.build();
@@ -84,7 +86,7 @@ public class NehmenAction
             TARGET_LOC extends IDescribableGO & ILocationGO & ILocatableGO>
     Collection<NehmenAction<LIVGO, TARGET_LOC>> buildCreatureActions(
             final AvDatabase db,
-            final World world,
+            final Narrator n, final World world,
             final LIVGO creature) {
         if (world.isOrHasRecursiveLocation(creature, SPIELER_CHARAKTER)) {
             return ImmutableList.of();
@@ -96,7 +98,7 @@ public class NehmenAction
         }
 
         if (creature.is(FROSCHPRINZ)) {
-            return buildFroschprinzActions(db, world, creature);
+            return buildFroschprinzActions(db, n, world, creature);
         }
 
         return ImmutableList.of();
@@ -106,12 +108,13 @@ public class NehmenAction
             TARGET_LOC extends IDescribableGO & ILocationGO & ILocatableGO>
     Collection<NehmenAction<LIVGO, TARGET_LOC>> buildFroschprinzActions(
             final AvDatabase db,
+            final Narrator n,
             final World world,
             final LIVGO froschprinz) {
         if (((IHasStateGO<FroschprinzState>) froschprinz).stateComp()
                 .hasState(ERWARTET_VON_SC_EINLOESUNG_SEINES_VERSPRECHENS)) {
             return ImmutableList.of(
-                    new NehmenAction<>(db, world,
+                    new NehmenAction<>(db, n, world,
                             froschprinz, EINE_TASCHE_DES_SPIELER_CHARAKTERS));
         }
 
@@ -119,7 +122,7 @@ public class NehmenAction
                 .hasState(HAT_HOCHHEBEN_GEFORDERT)) {
             if (world.loadSC().locationComp().hasLocation(SCHLOSS_VORHALLE_AM_TISCH_BEIM_FEST)) {
                 return ImmutableList.of(
-                        new NehmenAction<>(db, world,
+                        new NehmenAction<>(db, n, world,
                                 froschprinz, HAENDE_DES_SPIELER_CHARAKTERS));
             }
         }
@@ -134,10 +137,10 @@ public class NehmenAction
      * @param targetLocationId der Ort am SC, wohin es genommen wird, z.B.
      *                         in die Hände o.Ä.
      */
-    private NehmenAction(final AvDatabase db, final World world,
+    private NehmenAction(final AvDatabase db, final Narrator n, final World world,
                          @NonNull final GO gameObject,
                          @NonNull final GameObjectId targetLocationId) {
-        this(db, world, gameObject, (TARGET_LOC) world.load(targetLocationId));
+        this(db, n, world, gameObject, (TARGET_LOC) world.load(targetLocationId));
     }
 
     /**
@@ -147,9 +150,9 @@ public class NehmenAction
      * @param targetLocation der Ort am SC, wohin es genommen wird, z.B.
      *                       in die Hände o.Ä.
      */
-    private NehmenAction(final AvDatabase db, final World world,
+    private NehmenAction(final AvDatabase db, final Narrator n, final World world,
                          @NonNull final GO gameObject, @NonNull final TARGET_LOC targetLocation) {
-        super(db, world);
+        super(db, n, world);
 
         checkArgument(gameObject.locationComp().getLocation() != null);
         checkArgument(targetLocation.locationComp().hasLocation(SPIELER_CHARAKTER),

@@ -7,7 +7,7 @@ import com.google.common.collect.ImmutableList;
 
 import javax.annotation.Nullable;
 
-import de.nb.aventiure2.data.narration.NarrationDao;
+import de.nb.aventiure2.data.narration.Narrator;
 import de.nb.aventiure2.data.world.base.GameObjectId;
 import de.nb.aventiure2.data.world.base.SpatialConnection;
 import de.nb.aventiure2.data.world.gameobject.*;
@@ -36,7 +36,7 @@ import static de.nb.aventiure2.german.description.DuDescriptionBuilder.du;
  */
 public class SimpleMovementNarrator implements IMovementNarrator {
     protected final GameObjectId gameObjectId;
-    protected final NarrationDao n;
+    protected final Narrator n;
     protected final World world;
 
     /**
@@ -46,11 +46,11 @@ public class SimpleMovementNarrator implements IMovementNarrator {
 
     public SimpleMovementNarrator(
             final GameObjectId gameObjectId,
-            final NarrationDao narrationDao,
+            final Narrator n,
             final World world,
             final boolean eherGross) {
         this.gameObjectId = gameObjectId;
-        n = narrationDao;
+        this.n = n;
         this.world = world;
         this.eherGross = eherGross;
     }

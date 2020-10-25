@@ -10,6 +10,7 @@ import javax.annotation.CheckReturnValue;
 import javax.annotation.ParametersAreNonnullByDefault;
 
 import de.nb.aventiure2.data.database.AvDatabase;
+import de.nb.aventiure2.data.narration.Narrator;
 import de.nb.aventiure2.data.world.base.GameObjectId;
 import de.nb.aventiure2.data.world.base.Known;
 import de.nb.aventiure2.data.world.base.Lichtverhaeltnisse;
@@ -37,8 +38,9 @@ public class ObenImTurmConnectionComp extends AbstractSpatialConnectionComp {
 
     public ObenImTurmConnectionComp(
             final AvDatabase db,
+            final Narrator n,
             final World world) {
-        super(OBEN_IM_ALTEN_TURM, db, world);
+        super(OBEN_IM_ALTEN_TURM, db, n, world);
     }
 
     @Override
@@ -78,7 +80,7 @@ public class ObenImTurmConnectionComp extends AbstractSpatialConnectionComp {
                     .dann();
         }
 
-        if (db.narrationDao().requireNarration().isAnaphorischerBezugMoeglich(RAPUNZELS_HAARE)) {
+        if (n.requireNarration().isAnaphorischerBezugMoeglich(RAPUNZELS_HAARE)) {
             return du("steigst",
                     "daran hinab",
                     mins(1))

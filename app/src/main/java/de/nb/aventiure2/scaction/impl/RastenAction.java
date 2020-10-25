@@ -8,6 +8,7 @@ import com.google.common.collect.ImmutableList;
 import java.util.Collection;
 
 import de.nb.aventiure2.data.database.AvDatabase;
+import de.nb.aventiure2.data.narration.Narrator;
 import de.nb.aventiure2.data.world.gameobject.*;
 import de.nb.aventiure2.data.world.syscomp.feelings.Mood;
 import de.nb.aventiure2.data.world.syscomp.memory.Action;
@@ -32,20 +33,21 @@ public class RastenAction extends AbstractScAction {
 
     public static Collection<RastenAction> buildActions(
             final AvDatabase db,
-            final World world,
+            final Narrator n, final World world,
             @Nullable final ILocationGO location) {
         final ImmutableList.Builder<RastenAction> res = ImmutableList.builder();
         if (location != null && location.is(VOR_DEM_ALTEN_TURM_SCHATTEN_DER_BAEUME)) {
-            res.add(new RastenAction(db, world, location));
+            res.add(new RastenAction(db, n, world, location));
         }
 
         return res.build();
     }
 
     private RastenAction(final AvDatabase db,
+                         final Narrator n,
                          final World world,
                          final ILocationGO location) {
-        super(db, world);
+        super(db, n, world);
         this.location = location;
     }
 

@@ -10,7 +10,7 @@ import java.util.Collection;
 import java.util.Map;
 
 import de.nb.aventiure2.data.database.AvDatabase;
-import de.nb.aventiure2.data.narration.NarrationDao;
+import de.nb.aventiure2.data.narration.Narrator;
 import de.nb.aventiure2.data.world.base.AbstractStatefulComponent;
 import de.nb.aventiure2.data.world.base.GameObjectId;
 import de.nb.aventiure2.data.world.gameobject.*;
@@ -39,7 +39,7 @@ public class StoryWebComp extends AbstractStatefulComponent<StoryWebPCD> {
 
     private final AvDatabase db;
     private final World world;
-    protected final NarrationDao n;
+    protected final Narrator n;
 
     private final LocationSystem locationSystem;
     private final SpatialConnectionSystem spatialConnectionSystem;
@@ -50,19 +50,20 @@ public class StoryWebComp extends AbstractStatefulComponent<StoryWebPCD> {
     private final Map<Story, StoryData> initialStoryDataMap;
 
     public StoryWebComp(final AvDatabase db,
+                        final Narrator n,
                         final World world,
                         final LocationSystem locationSystem,
                         final SpatialConnectionSystem spatialConnectionSystem,
                         final Story... initialAktiveStories) {
-        this(db, world, locationSystem, spatialConnectionSystem, asList(initialAktiveStories));
+        this(db, n, world, locationSystem, spatialConnectionSystem, asList(initialAktiveStories));
     }
 
     public StoryWebComp(final AvDatabase db,
-                        final World world,
+                        final Narrator n, final World world,
                         final LocationSystem locationSystem,
                         final SpatialConnectionSystem spatialConnectionSystem,
                         final Collection<Story> initialAktiveStories) {
-        this(db, world, locationSystem, spatialConnectionSystem,
+        this(db, n, world, locationSystem, spatialConnectionSystem,
                 toEmptyStoryDataMap(initialAktiveStories));
     }
 
@@ -79,14 +80,14 @@ public class StoryWebComp extends AbstractStatefulComponent<StoryWebPCD> {
     }
 
     private StoryWebComp(final AvDatabase db,
-                         final World world,
+                         final Narrator n, final World world,
                          final LocationSystem locationSystem,
                          final SpatialConnectionSystem spatialConnectionSystem,
                          final Map<Story, StoryData> initialStoryDataMap) {
         super(STORY_WEB, db.storyWebDao());
         this.db = db;
 
-        n = db.narrationDao();
+        this.n = n;
 
         scActionStepCountDao = db.scActionStepCountDao();
         this.world = world;
@@ -127,7 +128,7 @@ public class StoryWebComp extends AbstractStatefulComponent<StoryWebPCD> {
         // (Das wird wohl eher selten der Fall sein.)
         if (!Story.checkAndAdvanceAStoryIfAppropriate(db, n, world)) {
             // Das hier ist der Regelfall!
-            storyNode.narrateAndDoHintAction(db, world);
+            storyNode.narrateAndDoHintAction(db, n, world);
         }
 
         getPcd().setLastHintActionStepCount(scActionStepCountDao.stepCount());

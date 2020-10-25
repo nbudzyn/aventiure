@@ -19,6 +19,7 @@ import java.io.File;
 import java.util.List;
 
 import de.nb.aventiure2.data.database.AvDatabase;
+import de.nb.aventiure2.data.narration.Narrator;
 import de.nb.aventiure2.data.world.gameobject.*;
 import de.nb.aventiure2.logger.Logger;
 import de.nb.aventiure2.scaction.AbstractScAction;
@@ -92,6 +93,7 @@ public class WalkerTest {
 
     private void resetDatabase() {
         World.reset();
+        Narrator.reset();
         AvDatabase.resetDatabase();
 
         db = AvDatabase.getDatabase(appContext);

@@ -5,6 +5,7 @@ import androidx.annotation.NonNull;
 import com.google.common.collect.ImmutableList;
 
 import de.nb.aventiure2.data.database.AvDatabase;
+import de.nb.aventiure2.data.narration.Narrator;
 import de.nb.aventiure2.data.world.gameobject.*;
 import de.nb.aventiure2.data.world.syscomp.memory.Action;
 import de.nb.aventiure2.data.world.syscomp.reaction.interfaces.Ruftyp;
@@ -38,7 +39,7 @@ public class RufenAction extends AbstractScAction {
 
     public static ImmutableList<AbstractScAction> buildActions(
             final AvDatabase db,
-            final World world,
+            final Narrator n, final World world,
             @NonNull final ILocationGO location) {
         // STORY Alle Aktionen mit allen Gegenständen überall erlauben
 
@@ -52,16 +53,17 @@ public class RufenAction extends AbstractScAction {
             if (world.isOrHasRecursiveLocation(location, VOR_DEM_ALTEN_TURM) &&
                     !((IHasStateGO<RapunzelState>) world.load(RAPUNZEL)).stateComp()
                             .hasState(HAARE_VOM_TURM_HERUNTERGELASSEN)) {
-                res.add(new RufenAction(db, world, location, LASS_DEIN_HAAR_HERUNTER));
+                res.add(new RufenAction(db, n, world, location, LASS_DEIN_HAAR_HERUNTER));
             }
         }
 
         return res.build();
     }
 
-    public RufenAction(final AvDatabase db, final World world, final ILocationGO location,
+    public RufenAction(final AvDatabase db, final Narrator n, final World world,
+                       final ILocationGO location,
                        final Ruftyp ruftyp) {
-        super(db, world);
+        super(db, n, world);
         this.location = location;
         this.ruftyp = ruftyp;
     }

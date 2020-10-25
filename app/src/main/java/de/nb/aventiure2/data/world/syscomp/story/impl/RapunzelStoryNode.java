@@ -11,7 +11,7 @@ import java.util.Collection;
 import javax.annotation.CheckReturnValue;
 
 import de.nb.aventiure2.data.database.AvDatabase;
-import de.nb.aventiure2.data.narration.NarrationDao;
+import de.nb.aventiure2.data.narration.Narrator;
 import de.nb.aventiure2.data.world.base.GameObjectId;
 import de.nb.aventiure2.data.world.gameobject.*;
 import de.nb.aventiure2.data.world.syscomp.location.ILocatableGO;
@@ -203,7 +203,7 @@ public enum RapunzelStoryNode implements IStoryNode {
 
     public static boolean checkAndAdvanceIfAppropriate(
             final AvDatabase db,
-            final NarrationDao n,
+            final Narrator n,
             final World world) {
         final IHasStateGO<RapunzelsZauberinState> zauberin = loadZauberin(world);
 
@@ -235,7 +235,7 @@ public enum RapunzelStoryNode implements IStoryNode {
     // FIXME Alternativen für Tipp-Texte, bei denen Foreshadowing stärker im
     //  Vordergrund steht
     private static void narrateAndDoHintAction_TurmGefunden(
-            final AvDatabase db, final NarrationDao n, final World world) {
+            final AvDatabase db, final Narrator n, final World world) {
         final ImmutableList.Builder<AbstractDescription<?>> alt = builder();
         alt.add(
                 paragraph("Hast du den Wald eigentlich schon überall erkundet?"),
@@ -249,7 +249,7 @@ public enum RapunzelStoryNode implements IStoryNode {
     }
 
     private static void narrateAndDoHintAction_RapunzelSingenGehoert(
-            final AvDatabase db, final NarrationDao n, final World world) {
+            final AvDatabase db, final Narrator n, final World world) {
         final ImmutableList.Builder<AbstractDescription<?>> alt = builder();
 
         // FIXME Kein Tipp für Rapunzel, wenn Hexe noch nicht losgegangen ist (schließlich
@@ -270,7 +270,7 @@ public enum RapunzelStoryNode implements IStoryNode {
     }
 
     private static void narrateAndDoHintAction_ZauberinAufTurmWegGefunden(
-            final AvDatabase db, final NarrationDao n, final World world) {
+            final AvDatabase db, final Narrator n, final World world) {
         final ImmutableList.Builder<AbstractDescription<?>> alt = builder();
 
         alt.addAll(altTurmWohnenHineinHeraus(world));
@@ -279,7 +279,7 @@ public enum RapunzelStoryNode implements IStoryNode {
     }
 
     private static void narrateAndDoHintAction_ZauberinHeimlichBeimRufenBeobachtet(
-            final AvDatabase db, final NarrationDao n, final World world) {
+            final AvDatabase db, final Narrator n, final World world) {
         final ImmutableList.Builder<AbstractDescription<?>> alt = builder();
 
         alt.addAll(altTurmWohnenHineinHeraus(world));
@@ -316,7 +316,7 @@ public enum RapunzelStoryNode implements IStoryNode {
     }
 
     private static void narrateAndDoHintAction_ZuRapunzelHinaufgestiegen(
-            final AvDatabase db, final NarrationDao n, final World world) {
+            final AvDatabase db, final Narrator n, final World world) {
         final ImmutableList.Builder<AbstractDescription<?>> alt = builder();
         final IHasStateGO<RapunzelState> rapunzel = loadRapunzel(world);
 

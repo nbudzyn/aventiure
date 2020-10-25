@@ -3,6 +3,7 @@ package de.nb.aventiure2.data.world.syscomp.talking.impl;
 import com.google.common.collect.ImmutableList;
 
 import de.nb.aventiure2.data.database.AvDatabase;
+import de.nb.aventiure2.data.narration.Narrator;
 import de.nb.aventiure2.data.world.gameobject.*;
 import de.nb.aventiure2.data.world.syscomp.location.LocationComp;
 import de.nb.aventiure2.data.world.syscomp.state.impl.RapunzelsZauberinStateComp;
@@ -28,11 +29,12 @@ public class RapunzelsZauberinTalkingComp extends AbstractTalkingComp {
     private final RapunzelsZauberinStateComp stateComp;
 
     public RapunzelsZauberinTalkingComp(final AvDatabase db,
+                                        final Narrator n,
                                         final World world,
                                         final LocationComp locationComp,
                                         final RapunzelsZauberinStateComp stateComp,
                                         final boolean initialSchonBegruesstMitSC) {
-        super(RAPUNZELS_ZAUBERIN, db, world, initialSchonBegruesstMitSC);
+        super(RAPUNZELS_ZAUBERIN, db, n, world, initialSchonBegruesstMitSC);
         this.locationComp = locationComp;
         this.stateComp = stateComp;
     }

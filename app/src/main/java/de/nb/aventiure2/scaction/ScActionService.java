@@ -12,6 +12,7 @@ import java.util.List;
 import javax.annotation.ParametersAreNonnullByDefault;
 
 import de.nb.aventiure2.data.database.AvDatabase;
+import de.nb.aventiure2.data.narration.Narrator;
 import de.nb.aventiure2.data.world.base.IGameObject;
 import de.nb.aventiure2.data.world.gameobject.*;
 import de.nb.aventiure2.data.world.gameobject.player.*;
@@ -41,6 +42,7 @@ import static de.nb.aventiure2.data.world.gameobject.World.*;
 @ParametersAreNonnullByDefault
 public class ScActionService {
     private final AvDatabase db;
+    private final Narrator n;
     private final World world;
 
     // Note that in order to unit test the repository, you have to remove the Application
@@ -49,8 +51,8 @@ public class ScActionService {
     // https://github.com/googlesamples
     public ScActionService(final Context context) {
         db = AvDatabase.getDatabase(context);
-
-        world = World.getInstance(db);
+        n = Narrator.getInstance(db);
+        world = World.getInstance(db, n);
     }
 
     // TODO Better have typical combinations available at a central place?
@@ -118,17 +120,17 @@ public class ScActionService {
 
         for (final LIV creature : creatures) {
             if (creature instanceof ITalkerGO) {
-                res.addAll(RedenAction.buildActions(db, world, (TALKER) creature));
+                res.addAll(RedenAction.buildActions(db, n, world, (TALKER) creature));
             }
 
             if (scCanGiveSomthingTo(creature)) {
                 if (!wasSCInDenHaendenHat.isEmpty()) {
                     res.addAll(GebenAction.buildActions(
-                            db, world, (TAKER) creature, wasSCInDenHaendenHat));
+                            db, n, world, (TAKER) creature, wasSCInDenHaendenHat));
                 } else {
-                    res.addAll(GebenAction.buildActions(db, world, (TAKER) creature,
+                    res.addAll(GebenAction.buildActions(db, n, world, (TAKER) creature,
                             scInventoryLivingBeings));
-                    res.addAll(GebenAction.buildActions(db, world, (TAKER) creature,
+                    res.addAll(GebenAction.buildActions(db, n, world, (TAKER) creature,
                             scInventoryObjects));
                 }
             }
@@ -136,7 +138,7 @@ public class ScActionService {
             if (wasSCInDenHaendenHat.isEmpty() &&
                     !spielerCharakter.talkingComp().isInConversation()) {
                 if (creature.locationComp().isMovable()) {
-                    res.addAll(NehmenAction.buildCreatureActions(db, world, creature));
+                    res.addAll(NehmenAction.buildCreatureActions(db, n, world, creature));
                 }
             }
         }
@@ -151,11 +153,11 @@ public class ScActionService {
         final ImmutableList.Builder<AbstractScAction> res = ImmutableList.builder();
 
         if (!spielerCharakter.talkingComp().isInConversation()) {
-            res.addAll(HeulenAction.buildActions(db, world, spielerCharakter));
+            res.addAll(HeulenAction.buildActions(db, n, world, spielerCharakter));
 
             if (wasSCInDenHaendenHat.isEmpty()) {
-                res.addAll(RastenAction.buildActions(db, world, location));
-                res.addAll(SchlafenAction.buildActions(db, world, location));
+                res.addAll(RastenAction.buildActions(db, n, world, location));
+                res.addAll(SchlafenAction.buildActions(db, n, world, location));
             }
         }
 
@@ -178,32 +180,32 @@ public class ScActionService {
             if (object instanceof ITalkerGO) {
                 if (spielerCharakter.talkingComp().isTalkingTo((TALKER) object) ||
                         !spielerCharakter.talkingComp().isInConversation()) {
-                    res.addAll(RedenAction.buildActions(db, world, (TALKER) object));
+                    res.addAll(RedenAction.buildActions(db, n, world, (TALKER) object));
                 }
             }
 
             if (scCanGiveSomthingTo(object)) {
                 if (!wasSCInDenHaendenHat.isEmpty()) {
                     res.addAll(GebenAction.buildActions(
-                            db, world, (TAKER) object, wasSCInDenHaendenHat));
+                            db, n, world, (TAKER) object, wasSCInDenHaendenHat));
                 } else {
-                    res.addAll(GebenAction.buildActions(db, world, (TAKER) object,
+                    res.addAll(GebenAction.buildActions(db, n, world, (TAKER) object,
                             scInventoryLivingBeings));
-                    res.addAll(GebenAction.buildActions(db, world, (TAKER) object,
+                    res.addAll(GebenAction.buildActions(db, n, world, (TAKER) object,
                             scInventoryObjects));
                 }
             }
 
             if (!spielerCharakter.talkingComp().isInConversation()) {
                 if (wasSCInDenHaendenHat.isEmpty() && object.locationComp().isMovable()) {
-                    res.addAll(NehmenAction.buildObjectActions(db, world, object));
+                    res.addAll(NehmenAction.buildObjectActions(db, n, world, object));
                 }
             }
         }
 
         if (!spielerCharakter.talkingComp().isInConversation()) {
             if (wasSCInDenHaendenHat.isEmpty()) {
-                res.addAll(EssenAction.buildActions(db, world, location));
+                res.addAll(EssenAction.buildActions(db, n, world, location));
             }
         }
 
@@ -244,9 +246,9 @@ public class ScActionService {
                     // Das inventoryObject könnte auch ein ILivingBeing sein!
                     res.addAll(HochwerfenAction
                             .buildActions(
-                                    db, world, location, inventoryObject));
+                                    db, n, world, location, inventoryObject));
                     res.addAll(AblegenAction.buildActions(
-                            db, world, inventoryObject, location));
+                            db, n, world, inventoryObject, location));
                 }
             }
         }
@@ -273,8 +275,8 @@ public class ScActionService {
     private ImmutableList<AbstractScAction> buildLocationActions(final ILocationGO location) {
         final ImmutableList.Builder<AbstractScAction> res = ImmutableList.builder();
 
-        res.addAll(RufenAction.buildActions(db, world, location));
-        res.addAll(BewegenAction.buildActions(db, world, location));
+        res.addAll(RufenAction.buildActions(db, n, world, location));
+        res.addAll(BewegenAction.buildActions(db, n, world, location));
 
         return res.build();
     }

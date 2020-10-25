@@ -3,6 +3,7 @@ package de.nb.aventiure2.data.world.syscomp.reaction.impl;
 import androidx.annotation.Nullable;
 
 import de.nb.aventiure2.data.database.AvDatabase;
+import de.nb.aventiure2.data.narration.Narrator;
 import de.nb.aventiure2.data.world.base.IGameObject;
 import de.nb.aventiure2.data.world.gameobject.*;
 import de.nb.aventiure2.data.world.syscomp.location.ILocatableGO;
@@ -28,9 +29,10 @@ public class SchlossfestReactionsComp
         implements ITimePassedReactions {
     private final AbstractStateComp<SchlossfestState> stateComp;
 
-    public SchlossfestReactionsComp(final AvDatabase db, final World world,
+    public SchlossfestReactionsComp(final AvDatabase db, final Narrator n,
+                                    final World world,
                                     final AbstractStateComp<SchlossfestState> stateComp) {
-        super(SCHLOSSFEST, db, world);
+        super(SCHLOSSFEST, db, n, world);
         this.stateComp = stateComp;
     }
 

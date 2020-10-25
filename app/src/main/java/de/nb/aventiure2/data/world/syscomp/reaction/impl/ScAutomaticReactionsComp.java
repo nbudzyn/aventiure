@@ -1,6 +1,7 @@
 package de.nb.aventiure2.data.world.syscomp.reaction.impl;
 
 import de.nb.aventiure2.data.database.AvDatabase;
+import de.nb.aventiure2.data.narration.Narrator;
 import de.nb.aventiure2.data.world.gameobject.*;
 import de.nb.aventiure2.data.world.syscomp.feelings.FeelingsComp;
 import de.nb.aventiure2.data.world.syscomp.reaction.AbstractReactionsComp;
@@ -18,9 +19,11 @@ public class ScAutomaticReactionsComp
         implements ITimePassedReactions {
     private final FeelingsComp feelingsComp;
 
-    public ScAutomaticReactionsComp(final AvDatabase db, final World world,
+    public ScAutomaticReactionsComp(final AvDatabase db,
+                                    final Narrator n,
+                                    final World world,
                                     final FeelingsComp feelingsComp) {
-        super(SPIELER_CHARAKTER, db, world);
+        super(SPIELER_CHARAKTER, db, n, world);
         this.feelingsComp = feelingsComp;
     }
 

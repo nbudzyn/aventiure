@@ -11,7 +11,7 @@ import java.util.Collection;
 import javax.annotation.CheckReturnValue;
 
 import de.nb.aventiure2.data.database.AvDatabase;
-import de.nb.aventiure2.data.narration.NarrationDao;
+import de.nb.aventiure2.data.narration.Narrator;
 import de.nb.aventiure2.data.world.base.GameObjectId;
 import de.nb.aventiure2.data.world.gameobject.*;
 import de.nb.aventiure2.data.world.syscomp.feelings.FeelingIntensity;
@@ -128,7 +128,7 @@ public enum FroschkoenigStoryNode implements IStoryNode {
 
     public static boolean checkAndAdvanceIfAppropriate(
             final AvDatabase db,
-            final NarrationDao n,
+            final Narrator n,
             final World world) {
         // Diese Story kann von Anfang an durchgespielt werden.
         return false;
@@ -138,7 +138,7 @@ public enum FroschkoenigStoryNode implements IStoryNode {
     //  Vordergrund steht
 
     private static void narrateAndDoHintAction_KugelGenommen(
-            final AvDatabase db, final NarrationDao n, final World world) {
+            final AvDatabase db, final Narrator n, final World world) {
         final ImmutableList.Builder<AbstractDescription<?>> alt = builder();
 
         if (world.loadSC().locationComp().hasRecursiveLocation(SCHLOSS_VORHALLE)) {
@@ -184,7 +184,7 @@ public enum FroschkoenigStoryNode implements IStoryNode {
     }
 
     public static void narrateAndDoHintAction_MitKugelZumBrunnenGegangen(
-            final AvDatabase db, final NarrationDao n, final World world) {
+            final AvDatabase db, final Narrator n, final World world) {
         final ImmutableList.Builder<AbstractDescription<?>> alt = builder();
 
         final ILocatableGO goldeneKugel = (ILocatableGO) world.load(GOLDENE_KUGEL);
@@ -203,7 +203,7 @@ public enum FroschkoenigStoryNode implements IStoryNode {
     }
 
     public static void narrateAndDoHintAction_EtwasImBrunnenVerloren(
-            final AvDatabase db, final NarrationDao n, final World world) {
+            final AvDatabase db, final Narrator n, final World world) {
         // STORY
         //  - (bis BEIM_SCHLOSSFEST_AN_DEN_TISCH_GESETZT) Eine verwirrte alte Frau
         //   läuft zwiscchen vor dem Schloss und Wald hin und her und jammert: Im Königreich nebenan
@@ -232,7 +232,7 @@ public enum FroschkoenigStoryNode implements IStoryNode {
     }
 
     public static void narrateAndDoHintAction_FroschHatEtwasAusBrunnenGeholt(
-            final AvDatabase db, final NarrationDao n, final World world) {
+            final AvDatabase db, final Narrator n, final World world) {
         final ImmutableList.Builder<AbstractDescription<?>> alt = builder();
 
         alt.add(paragraph("Unvermittelt befällt dich ein Gedanke: Ist es wohl gut, seine "
@@ -256,7 +256,7 @@ public enum FroschkoenigStoryNode implements IStoryNode {
     }
 
     public static void narrateAndDoHintAction_ZumSchlossfestGegangen(
-            final AvDatabase db, final NarrationDao n, final World world) {
+            final AvDatabase db, final Narrator n, final World world) {
         final ImmutableList.Builder<AbstractDescription<?>> alt = builder();
 
         if (db.nowDao().now().getTageszeit().equals(NACHTS)) {
@@ -281,7 +281,7 @@ public enum FroschkoenigStoryNode implements IStoryNode {
     }
 
     public static void narrateAndDoHintAction_BeimSchlossfestAnDenTischGesetzt(
-            final AvDatabase db, final NarrationDao n, final World world) {
+            final AvDatabase db, final Narrator n, final World world) {
         final ImmutableList.Builder<AbstractDescription<?>> alt = builder();
 
         alt.add(paragraph("Der leckere Duft aus dem Schloss geht dir nicht aus Nase und Sinn"));
@@ -293,7 +293,7 @@ public enum FroschkoenigStoryNode implements IStoryNode {
     }
 
     public static void narrateAndDoHintAction_PrinzIstErloest(
-            final AvDatabase db, final NarrationDao n, final World world) {
+            final AvDatabase db, final Narrator n, final World world) {
         final ImmutableList.Builder<AbstractDescription<?>> alt = builder();
 
         alt.add(paragraph("Kann es sein, dass du vor etwas davonläufst?"));
@@ -305,7 +305,7 @@ public enum FroschkoenigStoryNode implements IStoryNode {
     }
 
     public static void narrateAndDoHintAction_PrinzIstWeggefahren(
-            final AvDatabase db, final NarrationDao n, final World world) {
+            final AvDatabase db, final Narrator n, final World world) {
         final ImmutableList.Builder<AbstractDescription<?>> alt = builder();
 
         alt.add(du(PARAGRAPH,

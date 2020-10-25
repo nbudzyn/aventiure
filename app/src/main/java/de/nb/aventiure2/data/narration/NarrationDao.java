@@ -8,7 +8,6 @@ import androidx.room.Insert;
 import androidx.room.OnConflictStrategy;
 import androidx.room.Query;
 
-import com.google.common.collect.ImmutableCollection;
 import com.google.common.collect.ImmutableList;
 
 import java.util.Collection;
@@ -16,7 +15,6 @@ import java.util.List;
 import java.util.Objects;
 
 import de.nb.aventiure2.data.database.AvDatabase;
-import de.nb.aventiure2.data.narration.Narration.NarrationSource;
 import de.nb.aventiure2.data.world.time.*;
 import de.nb.aventiure2.german.base.StructuralElement;
 import de.nb.aventiure2.german.description.AbstractDescription;
@@ -28,15 +26,12 @@ import static de.nb.aventiure2.data.narration.NarrationAddition.t;
 import static de.nb.aventiure2.german.base.StructuralElement.SENTENCE;
 import static de.nb.aventiure2.german.base.StructuralElement.WORD;
 import static de.nb.aventiure2.german.base.StructuralElement.max;
-import static java.util.Arrays.asList;
 
 /**
  * Android Room DAO for {@link Narration}s.
  */
 @Dao
 public abstract class NarrationDao {
-    private NarrationSource narrationSourceJustInCase = NarrationSource.INITIALIZATION;
-
     private final AvNowDao nowDao;
 
     @Nullable
@@ -46,72 +41,9 @@ public abstract class NarrationDao {
         nowDao = db.nowDao();
     }
 
-    public void setNarrationSourceJustInCase(final NarrationSource narrationSourceJustInCase) {
-        this.narrationSourceJustInCase = narrationSourceJustInCase;
-    }
-
-    public NarrationSource getNarrationSourceJustInCase() {
-        return narrationSourceJustInCase;
-    }
-
-    private static class IndexAndScore {
-        private final int index;
-        private final float score;
-
-        private IndexAndScore(final int index, final float score) {
-            this.index = index;
-            this.score = score;
-        }
-
-        private int getIndex() {
-            return index;
-        }
-
-        private float getScore() {
-            return score;
-        }
-
-        @Override
-        public boolean equals(final Object o) {
-            if (this == o) {
-                return true;
-            }
-            if (o == null || getClass() != o.getClass()) {
-                return false;
-            }
-            final IndexAndScore that = (IndexAndScore) o;
-            return index == that.index &&
-                    Float.compare(that.score, score) == 0;
-        }
-
-        @Override
-        public int hashCode() {
-            return Objects.hash(index, score);
-        }
-    }
-
-    public void narrateAlt(final AbstractDescription<?>... alternatives) {
-        final Narration initialNarration = requireNarration();
-        narrateAlt(asList(alternatives), initialNarration);
-    }
-
-    public void narrateAlt(final ImmutableCollection.Builder<AbstractDescription<?>> alternatives) {
-        narrateAlt(alternatives.build());
-    }
-
-    public void narrateAlt(final Collection<AbstractDescription<?>> alternatives) {
-        final Narration initialNarration = requireNarration();
-        narrateAlt(alternatives, initialNarration);
-    }
-
-    private void narrateAlt(final Narration initialNarration,
-                            final AbstractDescription<?>... alternatives) {
-        narrateAlt(asList(alternatives), initialNarration);
-    }
-
-    private void narrateAlt(final Collection<AbstractDescription<?>> alternatives,
-                            final Narration initialNarration) {
-
+    void narrateAlt(final Narration.NarrationSource narrationSourceJustInCase,
+                    final Collection<AbstractDescription<?>> alternatives,
+                    final Narration initialNarration) {
         checkArgument(alternatives.size() > 0,
                 "No alternatives");
 
@@ -140,14 +72,9 @@ public abstract class NarrationDao {
             }
         }
 
-        narrate(bestNarrationAddition);
+        narrate(narrationSourceJustInCase, bestNarrationAddition);
 
         nowDao.passTime(bestDesc.getTimeElapsed());
-    }
-
-    public void narrate(final AbstractDescription<?> desc) {
-        final Narration initialNarration = requireNarration();
-        narrate(desc, initialNarration);
     }
 
     // TODO Hier eine eingebettete Sprache verwenden:
@@ -158,9 +85,11 @@ public abstract class NarrationDao {
     //  - {RAPUNZEL.ana.nom) Nimmt möglichst eine Anapher
     //  - {RAPUNZEL.nom): Wählt automatisch richtig (kontextabhängig!)
     //  - .phorik(..) automatisch oder heuristisch setzen?!
-    private void narrate(final AbstractDescription<?> desc,
-                         final Narration initialNarration) {
-        narrate(chooseNextFrom(initialNarration, toNarrationAdditions(desc, initialNarration)));
+    void narrate(final Narration.NarrationSource narrationSourceJustInCase,
+                 final AbstractDescription<?> desc,
+                 final Narration initialNarration) {
+        narrate(narrationSourceJustInCase,
+                chooseNextFrom(initialNarration, toNarrationAdditions(desc, initialNarration)));
 
         nowDao.passTime(desc.getTimeElapsed());
     }
@@ -174,7 +103,7 @@ public abstract class NarrationDao {
         if (initialNarration.allowsAdditionalDuSatzreihengliedOhneSubjekt() &&
                 desc.getStartsNew() == WORD &&
                 desc instanceof AbstractDuDescription) {
-            final AbstractDuDescription duDesc = (AbstractDuDescription) desc;
+            final AbstractDuDescription<?, ?> duDesc = (AbstractDuDescription<?, ?>) desc;
             return ImmutableList.of(t(desc.getStartsNew(),
                     "und " +
                             duDesc.getDescriptionSatzanschlussOhneSubjekt())
@@ -206,7 +135,7 @@ public abstract class NarrationDao {
                 final NarrationAddition speziellesVorfeld =
                         toHauptsatzMitSpeziellemVorfeldNarrationAddition(
                                 startsNewAtLeastSentenceForDuDescription(desc),
-                                (AbstractDuDescription) desc);
+                                (AbstractDuDescription<?, ?>) desc);
                 if (!speziellesVorfeld.getText().equals(standard.getText())) {
                     alternatives.add(speziellesVorfeld);
                 }
@@ -241,7 +170,7 @@ public abstract class NarrationDao {
 
     private static NarrationAddition toHauptsatzMitSpeziellemVorfeldNarrationAddition(
             final StructuralElement startsNew,
-            @NonNull final AbstractDuDescription desc) {
+            @NonNull final AbstractDuDescription<?, ?> desc) {
         return t(startsNew,
                 desc.getDescriptionHauptsatzMitSpeziellemVorfeld())
                 .komma(desc.isKommaStehtAus())
@@ -251,17 +180,9 @@ public abstract class NarrationDao {
                 .beendet(desc.getEndsThis());
     }
 
-    public void setLastNarrationSource(final NarrationSource lastNarrationSource) {
-        checkArgument(lastNarrationSource != NarrationSource.INITIALIZATION);
-        requireNarration();
-        setLastNarrationSourceInternal(lastNarrationSource);
-        requireNarration(); // update cache
-    }
-
-    @Query("UPDATE Narration SET lastNarrationSource = :lastNarrationSource")
-    protected abstract void setLastNarrationSourceInternal(NarrationSource lastNarrationSource);
-
-    public void narrate(@NonNull final NarrationAddition narrationAddition) {
+    void narrate(
+            final Narration.NarrationSource narrationSourceJustInCase,
+            @NonNull final NarrationAddition narrationAddition) {
         checkNotNull(narrationAddition, "narrationAddition is null");
 
         @Nullable final Narration currentNarration = requireNarration();
@@ -278,17 +199,23 @@ public abstract class NarrationDao {
         deleteInternal(narration);
     }
 
-    @Delete
-    abstract void deleteInternal(Narration narration);
-
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
-    public void insert(final Narration narration) {
-        narrationCached = narration;
-        insertInternal(narration);
+    @NonNull
+    public Narration requireNarration() {
+        @Nullable final Narration narration = getNarration();
+        if (narration == null) {
+            throw new IllegalStateException("No current narration to add to");
+        }
+        return narration;
     }
 
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
-    abstract void insertInternal(Narration narration);
+    @Nullable
+    public Narration getNarration() {
+        if (narrationCached != null) {
+            return narrationCached;
+        }
+
+        return loadNarration();
+    }
 
     /**
      * Wählt einen {@link NarrationAddition} aus den Alternativen -
@@ -312,29 +239,6 @@ public abstract class NarrationDao {
     }
 
     /**
-     * Wählt einen {@link NarrationAddition} aus den Alternativen -
-     * versucht dabei vor allem, Wiederholgungen mit der unmittelbar zuvor geschriebenen
-     * Narration zu vermeiden.
-     */
-    public NarrationAddition
-    chooseNextFrom(final NarrationAddition... alternatives) {
-        return alternatives[chooseNextIndexFrom(alternatives)];
-    }
-
-    /**
-     * Wählt einen {@link NarrationAddition} aus den Alternativen und gibt den Indes zurück -
-     * versucht dabei vor allem, Wiederholgungen mit der unmittelbar zuvor geschriebenen
-     * Narration zu vermeiden.
-     */
-    private int chooseNextIndexFrom(final NarrationAddition... alternatives) {
-        if (alternatives.length == 1) {
-            return 0;
-        }
-
-        return chooseNextIndexFrom(requireNarration(), alternatives);
-    }
-
-    /**
      * Wählt einen {@link NarrationAddition} aus den Alternativen und gibt den Indes zurück -
      * versucht dabei vor allem, Wiederholgungen mit der unmittelbar zuvor geschriebenen
      * Narration zu vermeiden.
@@ -346,17 +250,6 @@ public abstract class NarrationDao {
         }
 
         return chooseNextIndexAndScoreFrom(inititalNarration, alternatives).getIndex();
-    }
-
-    /**
-     * Wählt einen {@link NarrationAddition} aus den Alternativen und gibt den Indes zurück -
-     * versucht dabei vor allem, Wiederholgungen mit der unmittelbar zuvor geschriebenen
-     * Narration zu vermeiden.
-     */
-    @NonNull
-    private IndexAndScore chooseNextIndexAndScoreFrom(
-            final NarrationAddition... alternatives) {
-        return chooseNextIndexAndScoreFrom(requireNarration(), alternatives);
     }
 
     /**
@@ -403,27 +296,54 @@ public abstract class NarrationDao {
         return new IndexAndScore(bestIndex, bestScore);
     }
 
-    public boolean lastNarrationWasFromReaction() {
-        return requireNarration().lastNarrationWasFomReaction();
-    }
-
-    @NonNull
-    public Narration requireNarration() {
-        @Nullable final Narration narration = getNarration();
-        if (narration == null) {
-            throw new IllegalStateException("No current narration to add to");
-        }
-        return narration;
-    }
-
-    public Narration getNarration() {
-        if (narrationCached != null) {
-            return narrationCached;
-        }
-
-        return loadNarration();
-    }
-
     @Query("SELECT * from Narration")
     abstract Narration loadNarration();
+
+    @Delete
+    abstract void deleteInternal(Narration narration);
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    void insert(final Narration narration) {
+        narrationCached = narration;
+        insertInternal(narration);
+    }
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    abstract void insertInternal(Narration narration);
+
+    private static class IndexAndScore {
+        private final int index;
+        private final float score;
+
+        private IndexAndScore(final int index, final float score) {
+            this.index = index;
+            this.score = score;
+        }
+
+        private int getIndex() {
+            return index;
+        }
+
+        private float getScore() {
+            return score;
+        }
+
+        @Override
+        public boolean equals(final Object o) {
+            if (this == o) {
+                return true;
+            }
+            if (o == null || getClass() != o.getClass()) {
+                return false;
+            }
+            final IndexAndScore that = (IndexAndScore) o;
+            return index == that.index &&
+                    Float.compare(that.score, score) == 0;
+        }
+
+        @Override
+        public int hashCode() {
+            return Objects.hash(index, score);
+        }
+    }
 }

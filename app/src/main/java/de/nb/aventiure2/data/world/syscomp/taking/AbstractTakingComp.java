@@ -3,7 +3,7 @@ package de.nb.aventiure2.data.world.syscomp.taking;
 import androidx.annotation.Nullable;
 
 import de.nb.aventiure2.data.database.AvDatabase;
-import de.nb.aventiure2.data.narration.NarrationDao;
+import de.nb.aventiure2.data.narration.Narrator;
 import de.nb.aventiure2.data.world.base.AbstractStatelessComponent;
 import de.nb.aventiure2.data.world.base.GameObject;
 import de.nb.aventiure2.data.world.base.GameObjectId;
@@ -19,19 +19,17 @@ import de.nb.aventiure2.german.base.SubstantivischePhrase;
  */
 public abstract class AbstractTakingComp extends AbstractStatelessComponent {
     protected final AvDatabase db;
+    protected Narrator n;
     protected final World world;
-
-    protected final NarrationDao n;
 
     public AbstractTakingComp(
             final GameObjectId id,
-            final AvDatabase db, final World world) {
+            final AvDatabase db, final Narrator n, final World world) {
         super(id);
 
         this.db = db;
+        this.n = n;
         this.world = world;
-
-        n = db.narrationDao();
     }
 
     /**
@@ -102,7 +100,7 @@ public abstract class AbstractTakingComp extends AbstractStatelessComponent {
             final IDescribableGO describableGO,
             final boolean descShortIfKnown) {
         @Nullable final Personalpronomen anaphPersPron =
-                db.narrationDao().requireNarration().getAnaphPersPronWennMgl(describableGO);
+                n.requireNarration().getAnaphPersPronWennMgl(describableGO);
         if (anaphPersPron != null) {
             return anaphPersPron;
         }

@@ -9,6 +9,7 @@ import java.util.Map;
 import javax.annotation.Nonnull;
 
 import de.nb.aventiure2.data.database.AvDatabase;
+import de.nb.aventiure2.data.narration.Narrator;
 import de.nb.aventiure2.data.world.base.GameObject;
 import de.nb.aventiure2.data.world.base.GameObjectId;
 import de.nb.aventiure2.data.world.base.Known;
@@ -60,16 +61,18 @@ import static de.nb.aventiure2.german.base.NumerusGenus.F;
  */
 class CreatureFactory {
     private final AvDatabase db;
+    private final Narrator n;
     private final World world;
 
-    CreatureFactory(final AvDatabase db, final World world) {
+    CreatureFactory(final AvDatabase db, final Narrator n, final World world) {
         this.db = db;
+        this.n = n;
         this.world = world;
     }
 
     GameObject createSchlosswache() {
         final SchlosswacheStateComp stateComp =
-                new SchlosswacheStateComp(SCHLOSSWACHE, db, world);
+                new SchlosswacheStateComp(SCHLOSSWACHE, db, n, world);
         final AbstractDescriptionComp descriptionComp =
                 new SimpleDescriptionComp(SCHLOSSWACHE,
                         np(F, INDEF,
@@ -85,30 +88,30 @@ class CreatureFactory {
         return new ReactionsCreature<>(SCHLOSSWACHE,
                 descriptionComp, locationComp, stateComp,
                 new SchlosswacheReactionsComp(
-                        db, world, world.getLocationSystem(), stateComp,
+                        db, n, world, world.getLocationSystem(), stateComp,
                         locationComp));
     }
 
     GameObject createFroschprinz() {
-        final FroschprinzStateComp stateComp = new FroschprinzStateComp(db, world);
+        final FroschprinzStateComp stateComp = new FroschprinzStateComp(db, n, world);
         final FroschprinzDescriptionComp descriptionComp =
                 new FroschprinzDescriptionComp(stateComp);
         final LocationComp locationComp =
                 new LocationComp(FROSCHPRINZ, db, world, IM_WALD_BEIM_BRUNNEN, ABZWEIG_IM_WALD,
                         true);
         final FroschprinzTalkingComp talkingComp =
-                new FroschprinzTalkingComp(db, world,
+                new FroschprinzTalkingComp(db, n, world,
                         stateComp, false);
         return new TalkingReactionsCreature<>(FROSCHPRINZ,
                 descriptionComp,
                 locationComp,
                 stateComp,
                 talkingComp,
-                new FroschprinzReactionsComp(db, world, stateComp, locationComp, talkingComp));
+                new FroschprinzReactionsComp(db, n, world, stateComp, locationComp, talkingComp));
     }
 
     GameObject createRapunzel() {
-        final RapunzelStateComp stateComp = new RapunzelStateComp(db, world);
+        final RapunzelStateComp stateComp = new RapunzelStateComp(db, n, world);
         final AbstractDescriptionComp descriptionComp =
                 new SimpleDescriptionComp(RAPUNZEL,
                         np(F, INDEF, "wunderschöne junge Frau",
@@ -124,13 +127,13 @@ class CreatureFactory {
                 new MemoryComp(RAPUNZEL, db, world, world.getLocationSystem(),
                         createKnownMapForRapunzel());
         final RapunzelTalkingComp talkingComp =
-                new RapunzelTalkingComp(db, world, stateComp, false);
+                new RapunzelTalkingComp(db, n, world, stateComp, false);
         final RapunzelReactionsComp reactionsComp =
-                new RapunzelReactionsComp(db, world, memoryComp, stateComp,
+                new RapunzelReactionsComp(db, n, world, memoryComp, stateComp,
                         world.getLocationSystem(), locationComp,
                         talkingComp);
         final RapunzelTakingComp takingComp =
-                new RapunzelTakingComp(db, world, stateComp, memoryComp);
+                new RapunzelTakingComp(db, n, world, stateComp, memoryComp);
         return new TalkingMemoryTakingReactionsCreature<>(RAPUNZEL,
                 descriptionComp,
                 locationComp,
@@ -154,7 +157,7 @@ class CreatureFactory {
     }
 
     GameObject createRapunzelsZauberin() {
-        final RapunzelsZauberinStateComp stateComp = new RapunzelsZauberinStateComp(db, world);
+        final RapunzelsZauberinStateComp stateComp = new RapunzelsZauberinStateComp(db, n, world);
         final AbstractDescriptionComp descriptionComp =
                 new SimpleDescriptionComp(RAPUNZELS_ZAUBERIN,
                         np(F, INDEF, "magere Frau mit krummer, bis zum Kinn "
@@ -176,13 +179,13 @@ class CreatureFactory {
         final MovementComp movementComp =
                 new MovementComp(RAPUNZELS_ZAUBERIN, db, world,
                         world.getSpatialConnectionSystem(),
-                        new RapunzelsZauberinMovementNarrator(db.narrationDao(), world),
+                        new RapunzelsZauberinMovementNarrator(n, world),
                         locationComp,
                         1,
                         // Muss zum Zustand der Zauberin passen!
                         null);
         final RapunzelsZauberinTalkingComp talkingComp =
-                new RapunzelsZauberinTalkingComp(db, world, locationComp, stateComp, false);
+                new RapunzelsZauberinTalkingComp(db, n, world, locationComp, stateComp, false);
         return new MovingTalkingMentalModelReactionsCreature<>(RAPUNZELS_ZAUBERIN,
                 descriptionComp,
                 locationComp,
@@ -190,7 +193,7 @@ class CreatureFactory {
                 stateComp,
                 talkingComp,
                 mentalModelComp,
-                new RapunzelsZauberinReactionsComp(db, world,
+                new RapunzelsZauberinReactionsComp(db, n, world,
                         stateComp, locationComp, mentalModelComp, movementComp, talkingComp));
     }
 

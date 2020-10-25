@@ -5,7 +5,7 @@ import com.google.common.collect.ImmutableList;
 
 import javax.annotation.Nullable;
 
-import de.nb.aventiure2.data.narration.NarrationDao;
+import de.nb.aventiure2.data.narration.Narrator;
 import de.nb.aventiure2.data.world.base.SpatialConnection;
 import de.nb.aventiure2.data.world.gameobject.*;
 import de.nb.aventiure2.data.world.syscomp.movement.SimpleMovementNarrator;
@@ -27,9 +27,9 @@ import static de.nb.aventiure2.german.description.AllgDescription.neuerSatz;
  */
 public class RapunzelsZauberinMovementNarrator extends SimpleMovementNarrator {
     public RapunzelsZauberinMovementNarrator(
-            final NarrationDao narrationDao,
+            final Narrator n,
             final World world) {
-        super(RAPUNZELS_ZAUBERIN, narrationDao, world, true);
+        super(RAPUNZELS_ZAUBERIN, n, world, true);
     }
 
     @Override

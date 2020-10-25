@@ -9,7 +9,7 @@ import java.util.List;
 import java.util.Objects;
 
 import de.nb.aventiure2.data.database.AvDatabase;
-import de.nb.aventiure2.data.narration.NarrationDao;
+import de.nb.aventiure2.data.narration.Narrator;
 import de.nb.aventiure2.data.world.base.AbstractStatefulComponent;
 import de.nb.aventiure2.data.world.base.GameObject;
 import de.nb.aventiure2.data.world.base.GameObjectId;
@@ -38,7 +38,7 @@ public abstract class AbstractTalkingComp extends AbstractStatefulComponent<Talk
     protected final AvDatabase db;
     protected final World world;
 
-    protected final NarrationDao n;
+    protected final Narrator n;
 
     private final boolean initialSchonBegruesstMitSC;
 
@@ -47,13 +47,13 @@ public abstract class AbstractTalkingComp extends AbstractStatefulComponent<Talk
      */
     public AbstractTalkingComp(final GameObjectId gameObjectId,
                                final AvDatabase db,
+                               final Narrator n,
                                final World world,
                                final boolean initialSchonBegruesstMitSC) {
         super(gameObjectId, db.talkingDao());
         this.db = db;
+        this.n = n;
         this.world = world;
-
-        n = db.narrationDao();
         this.initialSchonBegruesstMitSC = initialSchonBegruesstMitSC;
     }
 

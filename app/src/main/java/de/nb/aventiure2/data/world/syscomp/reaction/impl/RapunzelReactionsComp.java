@@ -7,6 +7,7 @@ import com.google.common.collect.ImmutableList;
 import javax.annotation.Nullable;
 
 import de.nb.aventiure2.data.database.AvDatabase;
+import de.nb.aventiure2.data.narration.Narrator;
 import de.nb.aventiure2.data.world.gameobject.*;
 import de.nb.aventiure2.data.world.syscomp.feelings.FeelingIntensity;
 import de.nb.aventiure2.data.world.syscomp.location.ILocatableGO;
@@ -70,13 +71,14 @@ public class RapunzelReactionsComp
     private final RapunzelTalkingComp talkingComp;
 
     public RapunzelReactionsComp(final AvDatabase db,
+                                 final Narrator n,
                                  final World world,
                                  final MemoryComp memoryComp,
                                  final RapunzelStateComp stateComp,
                                  final LocationSystem locationSystem,
                                  final LocationComp locationComp,
                                  final RapunzelTalkingComp talkingComp) {
-        super(RAPUNZEL, db, world);
+        super(RAPUNZEL, db, n, world);
         this.memoryComp = memoryComp;
         this.stateComp = stateComp;
         this.locationSystem = locationSystem;

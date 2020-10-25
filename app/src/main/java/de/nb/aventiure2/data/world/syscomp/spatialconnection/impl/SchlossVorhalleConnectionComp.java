@@ -9,6 +9,7 @@ import java.util.List;
 import javax.annotation.ParametersAreNonnullByDefault;
 
 import de.nb.aventiure2.data.database.AvDatabase;
+import de.nb.aventiure2.data.narration.Narrator;
 import de.nb.aventiure2.data.world.base.GameObjectId;
 import de.nb.aventiure2.data.world.base.Known;
 import de.nb.aventiure2.data.world.base.Lichtverhaeltnisse;
@@ -42,8 +43,8 @@ public class SchlossVorhalleConnectionComp extends AbstractSpatialConnectionComp
             "RoomConnectionBuilder_SchlossVorhalle_SchlossVorhalleTischBeimFest";
 
     public SchlossVorhalleConnectionComp(
-            final AvDatabase db, final World world) {
-        super(SCHLOSS_VORHALLE, db, world);
+            final AvDatabase db, final Narrator n, final World world) {
+        super(SCHLOSS_VORHALLE, db, n, world);
     }
 
     @Override

@@ -181,5 +181,10 @@ public class BaumFactory {
                 neuerSatz("Unten angekommen bist du ziemlich erschöpft. " +
                         erschoepftMuedeNachsatz, mins(8)
                 );
+
+        // FIXME "unten angekommen": Bei Partikelverben mit sein-Perfekt ohne Akkusativobjekt,
+        //  bei denen das Subjekt gleich ist ("du") und bei denen mindestens ein weiteres
+        //  Satzglied dabei ist (z.B. eine adverbiale Bestimmung: "du") kann der Satz
+        //  in dieser Form zusammengezogen werden.
     }
 }

@@ -3,6 +3,7 @@ package de.nb.aventiure2.data.world.syscomp.reaction.impl;
 import javax.annotation.Nullable;
 
 import de.nb.aventiure2.data.database.AvDatabase;
+import de.nb.aventiure2.data.narration.Narrator;
 import de.nb.aventiure2.data.world.base.IGameObject;
 import de.nb.aventiure2.data.world.gameobject.*;
 import de.nb.aventiure2.data.world.gameobject.player.*;
@@ -63,11 +64,12 @@ public class FroschprinzReactionsComp
     private final FroschprinzTalkingComp talkingComp;
 
     public FroschprinzReactionsComp(final AvDatabase db,
+                                    final Narrator n,
                                     final World world,
                                     final FroschprinzStateComp stateComp,
                                     final LocationComp locationComp,
                                     final FroschprinzTalkingComp talkingComp) {
-        super(FROSCHPRINZ, db, world);
+        super(FROSCHPRINZ, db, n, world);
         this.stateComp = stateComp;
         this.locationComp = locationComp;
         this.talkingComp = talkingComp;

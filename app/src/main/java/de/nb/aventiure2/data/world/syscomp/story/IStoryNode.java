@@ -5,7 +5,7 @@ import androidx.annotation.Nullable;
 import java.util.Set;
 
 import de.nb.aventiure2.data.database.AvDatabase;
-import de.nb.aventiure2.data.narration.NarrationDao;
+import de.nb.aventiure2.data.narration.Narrator;
 import de.nb.aventiure2.data.world.base.GameObjectId;
 import de.nb.aventiure2.data.world.gameobject.*;
 
@@ -38,7 +38,7 @@ public interface IStoryNode {
     @FunctionalInterface
     interface IHinter {
         void narrateAndDoHintAction(final AvDatabase db,
-                                    NarrationDao n,
+                                    Narrator n,
                                     final World world);
     }
 
@@ -83,7 +83,7 @@ public interface IStoryNode {
 
     boolean beendetStory();
 
-    default void narrateAndDoHintAction(final AvDatabase db, final World world) {
+    default void narrateAndDoHintAction(final AvDatabase db, final Narrator n, final World world) {
         // Ziele:
         // - Spieler soll Interesse behalten
         // - Spieler soll einen Tipp fürs weitere Vorgehen gekommen
@@ -126,7 +126,7 @@ public interface IStoryNode {
         if (hinter == null) {
             return;
         }
-        hinter.narrateAndDoHintAction(db, db.narrationDao(), world);
+        hinter.narrateAndDoHintAction(db, n, world);
     }
 
     @Nullable

@@ -3,7 +3,7 @@ package de.nb.aventiure2.data.world.syscomp.state;
 import androidx.annotation.NonNull;
 
 import de.nb.aventiure2.data.database.AvDatabase;
-import de.nb.aventiure2.data.narration.NarrationDao;
+import de.nb.aventiure2.data.narration.Narrator;
 import de.nb.aventiure2.data.world.base.AbstractStatefulComponent;
 import de.nb.aventiure2.data.world.base.GameObject;
 import de.nb.aventiure2.data.world.base.GameObjectId;
@@ -16,7 +16,7 @@ import de.nb.aventiure2.data.world.time.*;
  */
 public abstract class AbstractStateComp<S extends Enum<S>>
         extends AbstractStatefulComponent<StatePCD> {
-    protected final NarrationDao n;
+    protected final Narrator n;
 
     protected final World world;
 
@@ -30,11 +30,12 @@ public abstract class AbstractStateComp<S extends Enum<S>>
      */
     protected AbstractStateComp(final GameObjectId gameObjectId,
                                 final AvDatabase db,
+                                final Narrator n,
                                 final World world,
                                 final Class<S> stateEnumClass,
                                 final S initialState) {
         super(gameObjectId, db.stateDao());
-        n = db.narrationDao();
+        this.n = n;
         this.world = world;
         this.stateEnumClass = stateEnumClass;
         this.initialState = initialState;

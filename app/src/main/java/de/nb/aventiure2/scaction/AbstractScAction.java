@@ -7,20 +7,19 @@ import javax.annotation.ParametersAreNonnullByDefault;
 
 import de.nb.aventiure2.data.database.AvDatabase;
 import de.nb.aventiure2.data.narration.IPlayerAction;
-import de.nb.aventiure2.data.narration.NarrationDao;
+import de.nb.aventiure2.data.narration.Narrator;
 import de.nb.aventiure2.data.world.base.GameObjectId;
-import de.nb.aventiure2.data.world.gameobject.World;
-import de.nb.aventiure2.data.world.gameobject.player.SpielerCharakter;
+import de.nb.aventiure2.data.world.gameobject.*;
+import de.nb.aventiure2.data.world.gameobject.player.*;
 import de.nb.aventiure2.data.world.syscomp.description.IDescribableGO;
-import de.nb.aventiure2.data.world.time.AvDateTime;
-import de.nb.aventiure2.data.world.time.AvTimeSpan;
+import de.nb.aventiure2.data.world.time.*;
 import de.nb.aventiure2.german.base.Personalpronomen;
 import de.nb.aventiure2.german.base.SubstantivischePhrase;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 import static de.nb.aventiure2.data.narration.Narration.NarrationSource.REACTIONS;
 import static de.nb.aventiure2.data.narration.Narration.NarrationSource.SC_ACTION;
-import static de.nb.aventiure2.data.world.time.AvTimeSpan.days;
+import static de.nb.aventiure2.data.world.time.AvTimeSpan.*;
 
 /**
  * An action the player could choose.
@@ -34,7 +33,7 @@ public abstract class AbstractScAction implements IPlayerAction {
 
     protected final AvDatabase db;
     protected final World world;
-    protected final NarrationDao n;
+    protected final Narrator n;
 
     protected final SpielerCharakter sc;
 
@@ -45,11 +44,11 @@ public abstract class AbstractScAction implements IPlayerAction {
     //  für den Action-Code einen guten Platz finden.
     //  Idee dazu: Operationen ("Verbs") in eigene Klassen auslagern
 
-    protected AbstractScAction(final AvDatabase db, final World world) {
+    protected AbstractScAction(final AvDatabase db, final Narrator n, final World world) {
         this.db = db;
         this.world = world;
 
-        n = db.narrationDao();
+        this.n = n;
 
         sc = world.loadSC();
     }
@@ -94,6 +93,7 @@ public abstract class AbstractScAction implements IPlayerAction {
         }
 
         world.saveAll(true);
+        n.saveAll();
     }
 
     private void fireScActionDone(final AvDateTime startTimeOfScAction) {
@@ -211,7 +211,7 @@ public abstract class AbstractScAction implements IPlayerAction {
             final IDescribableGO describableGO,
             final boolean descShortIfKnown) {
         @Nullable final Personalpronomen anaphPersPron =
-                db.narrationDao().requireNarration().getAnaphPersPronWennMgl(describableGO);
+                n.requireNarration().getAnaphPersPronWennMgl(describableGO);
         if (anaphPersPron != null) {
             return anaphPersPron;
         }

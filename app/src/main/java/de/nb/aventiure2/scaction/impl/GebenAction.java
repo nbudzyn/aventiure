@@ -9,6 +9,7 @@ import org.jetbrains.annotations.Contract;
 import java.util.Collection;
 
 import de.nb.aventiure2.data.database.AvDatabase;
+import de.nb.aventiure2.data.narration.Narrator;
 import de.nb.aventiure2.data.world.gameobject.*;
 import de.nb.aventiure2.data.world.syscomp.description.IDescribableGO;
 import de.nb.aventiure2.data.world.syscomp.location.ILocatableGO;
@@ -58,7 +59,7 @@ public class GebenAction<
             TAKER extends IDescribableGO & ILocatableGO & ITakerGO<?>,
             GIVEN extends IDescribableGO & ILocatableGO>
     Collection<GebenAction<TAKER, GIVEN>> buildActions(
-            final AvDatabase db, final World world,
+            final AvDatabase db, final Narrator n, final World world,
             final TAKER taker,
             final Collection<GIVEN> givenCandidates) {
         if (world.isOrHasRecursiveLocation(taker, SPIELER_CHARAKTER)) {
@@ -77,16 +78,16 @@ public class GebenAction<
             if (givenCandidate.locationComp().isMovable() &&
                     !givenCandidate.is(taker)) {
                 res.add(
-                        new GebenAction<>(db, world, taker, givenCandidate));
+                        new GebenAction<>(db, n, world, taker, givenCandidate));
             }
         }
 
         return res.build();
     }
 
-    public GebenAction(final AvDatabase db, final World world, final TAKER taker,
+    public GebenAction(final AvDatabase db, final Narrator n, final World world, final TAKER taker,
                        final GIVEN given) {
-        super(db, world);
+        super(db, n, world);
         this.taker = taker;
         this.given = given;
     }

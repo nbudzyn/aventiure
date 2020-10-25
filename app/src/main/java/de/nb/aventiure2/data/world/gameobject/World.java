@@ -16,6 +16,7 @@ import java.util.function.Predicate;
 import javax.annotation.Nonnull;
 
 import de.nb.aventiure2.data.database.AvDatabase;
+import de.nb.aventiure2.data.narration.Narrator;
 import de.nb.aventiure2.data.world.base.GameObject;
 import de.nb.aventiure2.data.world.base.GameObjectId;
 import de.nb.aventiure2.data.world.base.IGameObject;
@@ -129,6 +130,8 @@ public class World {
 
     private final AvDatabase db;
 
+    private final Narrator n;
+
     private GameObjectIdMap all;
 
     private GOReactionsCoordinator reactionsCoordinator;
@@ -140,11 +143,11 @@ public class World {
 
     private LocationSystem locationSystem;
 
-    public static World getInstance(final AvDatabase db) {
+    public static World getInstance(final AvDatabase db, final Narrator n) {
         if (INSTANCE == null) {
             synchronized (World.class) {
                 if (INSTANCE == null) {
-                    INSTANCE = new World(db);
+                    INSTANCE = new World(db, n);
                 }
             }
         }
@@ -157,8 +160,9 @@ public class World {
         INSTANCE = null;
     }
 
-    private World(final AvDatabase db) {
+    private World(final AvDatabase db, final Narrator n) {
         this.db = db;
+        this.n = n;
     }
 
     /**
@@ -185,10 +189,10 @@ public class World {
 
         if (reactionsCoordinator == null) {
             reactionsCoordinator = new GOReactionsCoordinator
-                    (this, db.nowDao(), db.narrationDao());
+                    (n, this, db.nowDao());
         }
 
-        final SpielerCharakterFactory spieler = new SpielerCharakterFactory(db, this);
+        final SpielerCharakterFactory spieler = new SpielerCharakterFactory(db, n, this);
         final GeneralObjectFactory object = new GeneralObjectFactory(db, this);
         final BankAmTischBeimSchlossfestFactory bankAmTischBeimSchlossfest =
                 new BankAmTischBeimSchlossfestFactory(db, this);
@@ -196,34 +200,34 @@ public class World {
                 new SchattenDerBaeumeFactory(db, this);
         final BettFactory bett = new BettFactory(db, this);
         final BaumFactory baum = new BaumFactory(db, this);
-        final CreatureFactory creature = new CreatureFactory(db, this);
-        final InvisibleFactory invisible = new InvisibleFactory(db, this);
-        final MeaningFactory meaning = new MeaningFactory(db, this, locationSystem,
+        final CreatureFactory creature = new CreatureFactory(db, n, this);
+        final InvisibleFactory invisible = new InvisibleFactory(db, n, this);
+        final MeaningFactory meaning = new MeaningFactory(db, n, this, locationSystem,
                 spatialConnectionSystem);
-        final RoomFactory room = new RoomFactory(db, this);
+        final RoomFactory room = new RoomFactory(db, n, this);
         final SimpleConnectionCompFactory connection =
-                new SimpleConnectionCompFactory(db, this);
+                new SimpleConnectionCompFactory(db, n, this);
 
         all = new GameObjectIdMap();
         all.putAll(
                 spieler.create(SPIELER_CHARAKTER),
                 room.create(SCHLOSS_VORHALLE, StoringPlaceType.EIN_TISCH,
                         SCHLOSS_VORHALLE_DAUERHAFT_BELEUCHTET,
-                        new SchlossVorhalleConnectionComp(db, this)),
+                        new SchlossVorhalleConnectionComp(db, n, this)),
                 room.create(DRAUSSEN_VOR_DEM_SCHLOSS,
                         StoringPlaceType.BODEN_VOR_DEM_SCHLOSS,
                         false,
-                        new DraussenVorDemSchlossConnectionComp(db, this)),
+                        new DraussenVorDemSchlossConnectionComp(db, n, this)),
                 room.create(IM_WALD_NAHE_DEM_SCHLOSS, StoringPlaceType.WEG,
                         false,
-                        new ImWaldNaheDemSchlossConnectionComp(db, this)),
+                        new ImWaldNaheDemSchlossConnectionComp(db, n, this)),
                 room.create(VOR_DEM_ALTEN_TURM, StoringPlaceType.STEINIGER_GRUND_VOR_TURM,
                         false,
-                        new VorDemTurmConnectionComp(db, this)),
+                        new VorDemTurmConnectionComp(db, n, this)),
                 room.create(OBEN_IM_ALTEN_TURM,
                         StoringPlaceType.HOLZDIELEN_OBEN_IM_TURM,
                         false,
-                        new ObenImTurmConnectionComp(db, this)),
+                        new ObenImTurmConnectionComp(db, n, this)),
                 room.create(ABZWEIG_IM_WALD, StoringPlaceType.WEG,
                         false,
                         connection.createAbzweigImWald()),

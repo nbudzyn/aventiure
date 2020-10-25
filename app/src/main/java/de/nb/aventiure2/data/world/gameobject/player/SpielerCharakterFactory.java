@@ -5,6 +5,7 @@ import com.google.common.collect.ImmutableMap;
 import java.util.Map;
 
 import de.nb.aventiure2.data.database.AvDatabase;
+import de.nb.aventiure2.data.narration.Narrator;
 import de.nb.aventiure2.data.world.base.GameObjectId;
 import de.nb.aventiure2.data.world.base.Known;
 import de.nb.aventiure2.data.world.gameobject.*;
@@ -34,16 +35,19 @@ import static de.nb.aventiure2.data.world.time.AvTimeSpan.*;
  */
 public class SpielerCharakterFactory {
     private final AvDatabase db;
+    private final Narrator n;
     private final World world;
 
     public SpielerCharakterFactory(final AvDatabase db,
+                                   final Narrator n,
                                    final World world) {
         this.db = db;
+        this.n = n;
         this.world = world;
     }
 
     public SpielerCharakter create(final GameObjectId id) {
-        final FeelingsComp feelingsComp = new FeelingsComp(id, db, Mood.NEUTRAL,
+        final FeelingsComp feelingsComp = new FeelingsComp(id, db, n, Mood.NEUTRAL,
                 createMuedigkeitsBiorhythmus(),
                 createInitialMuedigkeitsData(),
                 createInitialHungerData(),
@@ -59,8 +63,8 @@ public class SpielerCharakterFactory {
                 new StoringPlaceComp(id, db, EINE_TASCHE, false),
                 feelingsComp,
                 new MemoryComp(id, db, world, world.getLocationSystem(), createKnownMap()),
-                new NoSCTalkActionsTalkingComp(SPIELER_CHARAKTER, db, world),
-                new ScAutomaticReactionsComp(db, world, feelingsComp));
+                new NoSCTalkActionsTalkingComp(SPIELER_CHARAKTER, db, n, world),
+                new ScAutomaticReactionsComp(db, n, world, feelingsComp));
     }
 
     private static Biorhythmus createMuedigkeitsBiorhythmus() {

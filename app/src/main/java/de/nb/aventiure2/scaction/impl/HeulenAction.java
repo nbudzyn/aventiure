@@ -7,6 +7,7 @@ import com.google.common.collect.ImmutableList;
 import java.util.Collection;
 
 import de.nb.aventiure2.data.database.AvDatabase;
+import de.nb.aventiure2.data.narration.Narrator;
 import de.nb.aventiure2.data.world.gameobject.*;
 import de.nb.aventiure2.data.world.gameobject.player.*;
 import de.nb.aventiure2.data.world.syscomp.alive.ILivingBeingGO;
@@ -36,7 +37,7 @@ import static de.nb.aventiure2.german.description.DuDescriptionBuilder.du;
 public class HeulenAction extends AbstractScAction {
     public static Collection<HeulenAction> buildActions(
             final AvDatabase db,
-            final World world,
+            final Narrator n, final World world,
             final SpielerCharakter sc) {
         final ImmutableList.Builder<HeulenAction> res = ImmutableList.builder();
         // STORY Verhindern, dass der Benutzer nicht mehr untröstlich ist, wenn er z.B. erst
@@ -44,15 +45,16 @@ public class HeulenAction extends AbstractScAction {
         //  seine goldene Kugel erinnert o.Ä.
 
         if (sc.feelingsComp().hasMood(UNTROESTLICH)) {
-            res.add(new HeulenAction(db, world));
+            res.add(new HeulenAction(db, n, world));
         }
 
         return res.build();
     }
 
     private HeulenAction(final AvDatabase db,
+                         final Narrator n,
                          final World world) {
-        super(db, world);
+        super(db, n, world);
     }
 
     @Override

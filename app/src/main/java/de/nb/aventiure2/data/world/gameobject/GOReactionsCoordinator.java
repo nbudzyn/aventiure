@@ -7,7 +7,7 @@ import java.util.function.Predicate;
 import javax.annotation.Nullable;
 
 import de.nb.aventiure2.data.narration.Narration;
-import de.nb.aventiure2.data.narration.NarrationDao;
+import de.nb.aventiure2.data.narration.Narrator;
 import de.nb.aventiure2.data.world.base.GameObject;
 import de.nb.aventiure2.data.world.base.GameObjectId;
 import de.nb.aventiure2.data.world.base.IGameObject;
@@ -35,15 +35,15 @@ public class GOReactionsCoordinator
         ISCActionReactions {
     private final World world;
     private final AvNowDao nowDao;
-    private final NarrationDao n;
+    private final Narrator n;
 
     // TODO ReactionCoordinaror zum zentralen Teil eines ReactionSystems machen?
 
-    GOReactionsCoordinator(final World world, final AvNowDao nowDao,
-                           final NarrationDao narrationDao) {
+    GOReactionsCoordinator(final Narrator n,
+                           final World world, final AvNowDao nowDao) {
         this.world = world;
         this.nowDao = nowDao;
-        n = narrationDao;
+        this.n = n;
     }
 
     // IMovementReactions

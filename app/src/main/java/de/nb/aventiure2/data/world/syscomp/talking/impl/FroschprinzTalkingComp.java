@@ -8,6 +8,7 @@ import java.util.List;
 
 import de.nb.aventiure2.data.database.AvDatabase;
 import de.nb.aventiure2.data.narration.Narration;
+import de.nb.aventiure2.data.narration.Narrator;
 import de.nb.aventiure2.data.world.base.GameObjectId;
 import de.nb.aventiure2.data.world.gameobject.*;
 import de.nb.aventiure2.data.world.syscomp.description.IDescribableGO;
@@ -57,10 +58,10 @@ public class FroschprinzTalkingComp extends AbstractTalkingComp {
     private final FroschprinzStateComp stateComp;
 
     public FroschprinzTalkingComp(final AvDatabase db,
-                                  final World world,
+                                  final Narrator n, final World world,
                                   final FroschprinzStateComp stateComp,
                                   final boolean initialSchonBegruesstMitSC) {
-        super(FROSCHPRINZ, db, world, initialSchonBegruesstMitSC);
+        super(FROSCHPRINZ, db, n, world, initialSchonBegruesstMitSC);
         this.stateComp = stateComp;
     }
 
@@ -195,7 +196,7 @@ public class FroschprinzTalkingComp extends AbstractTalkingComp {
             return;
         }
 
-        final Narration initialNarration = db.narrationDao().requireNarration();
+        final Narration initialNarration = n.requireNarration();
 
         if (initialNarration.dann()) {
             if (initialNarration.allowsAdditionalDuSatzreihengliedOhneSubjekt()) {

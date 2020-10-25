@@ -3,6 +3,7 @@ package de.nb.aventiure2.data.world.syscomp.talking.impl;
 import com.google.common.collect.ImmutableList;
 
 import de.nb.aventiure2.data.database.AvDatabase;
+import de.nb.aventiure2.data.narration.Narrator;
 import de.nb.aventiure2.data.world.base.GameObject;
 import de.nb.aventiure2.data.world.base.GameObjectId;
 import de.nb.aventiure2.data.world.gameobject.*;
@@ -17,8 +18,9 @@ import de.nb.aventiure2.data.world.syscomp.talking.ITalkerGO;
 public class NoSCTalkActionsTalkingComp extends AbstractTalkingComp {
     public NoSCTalkActionsTalkingComp(final GameObjectId gameObjectId,
                                       final AvDatabase db,
+                                      final Narrator n,
                                       final World world) {
-        super(gameObjectId, db, world, false);
+        super(gameObjectId, db, n, world, false);
     }
 
     @Override

@@ -1,6 +1,7 @@
 package de.nb.aventiure2.data.world.syscomp.taking.impl;
 
 import de.nb.aventiure2.data.database.AvDatabase;
+import de.nb.aventiure2.data.narration.Narrator;
 import de.nb.aventiure2.data.world.gameobject.*;
 import de.nb.aventiure2.data.world.syscomp.description.IDescribableGO;
 import de.nb.aventiure2.data.world.syscomp.feelings.FeelingIntensity;
@@ -27,10 +28,10 @@ public class RapunzelTakingComp extends AbstractTakingComp {
     private final RapunzelStateComp stateComp;
     private final MemoryComp memoryComp;
 
-    public RapunzelTakingComp(final AvDatabase db, final World world,
+    public RapunzelTakingComp(final AvDatabase db, final Narrator n, final World world,
                               final RapunzelStateComp stateComp,
                               final MemoryComp memoryComp) {
-        super(RAPUNZEL, db, world);
+        super(RAPUNZEL, db, n, world);
         this.stateComp = stateComp;
         this.memoryComp = memoryComp;
     }

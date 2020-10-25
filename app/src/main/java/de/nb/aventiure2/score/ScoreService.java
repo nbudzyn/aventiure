@@ -5,10 +5,11 @@ import android.content.Context;
 import javax.annotation.ParametersAreNonnullByDefault;
 
 import de.nb.aventiure2.data.database.AvDatabase;
-import de.nb.aventiure2.data.world.gameobject.World;
+import de.nb.aventiure2.data.narration.Narrator;
+import de.nb.aventiure2.data.world.gameobject.*;
 import de.nb.aventiure2.data.world.syscomp.story.IStoryWebGO;
 
-import static de.nb.aventiure2.data.world.gameobject.World.STORY_WEB;
+import static de.nb.aventiure2.data.world.gameobject.World.*;
 
 /**
  * Repository for score (percentage of story nodes) the player has
@@ -16,15 +17,14 @@ import static de.nb.aventiure2.data.world.gameobject.World.STORY_WEB;
  */
 @ParametersAreNonnullByDefault
 public class ScoreService {
-    private final AvDatabase db;
     private final World world;
 
     // Note that in order to unit test the repository, you have to remove the Application
     // dependency. See ScActionService.
     public ScoreService(final Context context) {
-        db = AvDatabase.getDatabase(context);
-
-        world = World.getInstance(db);
+        final AvDatabase db = AvDatabase.getDatabase(context);
+        final Narrator n = Narrator.getInstance(db);
+        world = World.getInstance(db, n);
     }
 
     public int getScore() {

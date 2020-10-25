@@ -12,6 +12,7 @@ import org.jetbrains.annotations.Contract;
 import java.util.List;
 
 import de.nb.aventiure2.data.database.AvDatabase;
+import de.nb.aventiure2.data.narration.Narrator;
 import de.nb.aventiure2.data.world.base.GameObject;
 import de.nb.aventiure2.data.world.base.IGameObject;
 import de.nb.aventiure2.data.world.base.Known;
@@ -75,12 +76,13 @@ public class BewegenAction<LOC_DESC extends ILocatableGO & IDescribableGO>
 
     public static ImmutableList<AbstractScAction> buildActions(
             final AvDatabase db,
+            final Narrator n,
             final World world,
             @NonNull final ILocationGO location) {
         final ImmutableList.Builder<AbstractScAction> res = builder();
 
         if (location instanceof ISpatiallyConnectedGO) {
-            res.addAll(buildSpatiallyConnectedActions(db, world,
+            res.addAll(buildSpatiallyConnectedActions(db, n, world,
                     (ILocationGO & ISpatiallyConnectedGO) location));
         }
 
@@ -93,7 +95,7 @@ public class BewegenAction<LOC_DESC extends ILocatableGO & IDescribableGO>
                     inventoryGO.storingPlaceComp().getSpatialConnectionInData();
             if (inData != null) {
                 res.add(new BewegenAction<>(
-                        db, world, location,
+                        db, n, world, location,
                         con(inventoryGO.getId(), inData),
                         NumberOfWays.NO_WAY));
             }
@@ -106,7 +108,7 @@ public class BewegenAction<LOC_DESC extends ILocatableGO & IDescribableGO>
                     ((ILocatableGO) location).locationComp().getLocation();
             if (outerLocation != null) {
                 res.add(new BewegenAction<>(
-                        db, world, location,
+                        db, n, world, location,
                         con(outerLocation.getId(), outData),
                         NumberOfWays.NO_WAY));
             }
@@ -117,6 +119,7 @@ public class BewegenAction<LOC_DESC extends ILocatableGO & IDescribableGO>
 
     private static <LOC extends ILocationGO & ISpatiallyConnectedGO>
     ImmutableList<AbstractScAction> buildSpatiallyConnectedActions(final AvDatabase db,
+                                                                   final Narrator n,
                                                                    final World world,
                                                                    @NonNull final LOC location) {
         final ImmutableList.Builder<AbstractScAction> res = builder();
@@ -127,7 +130,7 @@ public class BewegenAction<LOC_DESC extends ILocatableGO & IDescribableGO>
         final NumberOfWays numberOfWays = NumberOfWays.get(spatialConnections.size());
 
         for (final SpatialConnection spatialConnection : spatialConnections) {
-            res.add(new BewegenAction<>(db, world, location,
+            res.add(new BewegenAction<>(db, n, world, location,
                     spatialConnection, numberOfWays));
         }
 
@@ -138,11 +141,12 @@ public class BewegenAction<LOC_DESC extends ILocatableGO & IDescribableGO>
      * Creates a new {@link BewegenAction}.
      */
     private BewegenAction(final AvDatabase db,
+                          final Narrator n,
                           final World world,
                           @NonNull final ILocationGO oldLocation,
                           @NonNull final SpatialConnection spatialConnection,
                           final NumberOfWays numberOfWays) {
-        super(db, world);
+        super(db, n, world);
         this.numberOfWays = numberOfWays;
         this.oldLocation = oldLocation;
         this.spatialConnection = spatialConnection;

@@ -7,6 +7,7 @@ import com.google.common.collect.ImmutableList;
 import java.util.Collection;
 
 import de.nb.aventiure2.data.database.AvDatabase;
+import de.nb.aventiure2.data.narration.Narrator;
 import de.nb.aventiure2.data.world.gameobject.*;
 import de.nb.aventiure2.data.world.syscomp.feelings.Hunger;
 import de.nb.aventiure2.data.world.syscomp.location.ILocatableGO;
@@ -38,11 +39,11 @@ public class EssenAction extends AbstractScAction {
 
     public static Collection<EssenAction> buildActions(
             final AvDatabase db,
-            final World world,
+            final Narrator n, final World world,
             final ILocationGO location) {
         final ImmutableList.Builder<EssenAction> res = ImmutableList.builder();
         if (essenMoeglich(db, world, location)) {
-            res.add(new EssenAction(db, world, location));
+            res.add(new EssenAction(db, n, world, location));
         }
 
         return res.build();
@@ -88,9 +89,10 @@ public class EssenAction extends AbstractScAction {
     }
 
     private EssenAction(final AvDatabase db,
+                        final Narrator n,
                         final World world,
                         final ILocationGO location) {
-        super(db, world);
+        super(db, n, world);
         this.location = location;
     }
 

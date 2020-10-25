@@ -3,12 +3,12 @@ package de.nb.aventiure2.data.world.syscomp.reaction;
 import androidx.annotation.NonNull;
 
 import de.nb.aventiure2.data.database.AvDatabase;
-import de.nb.aventiure2.data.narration.NarrationDao;
+import de.nb.aventiure2.data.narration.Narrator;
 import de.nb.aventiure2.data.world.base.AbstractStatelessComponent;
 import de.nb.aventiure2.data.world.base.GameObject;
 import de.nb.aventiure2.data.world.base.GameObjectId;
-import de.nb.aventiure2.data.world.gameobject.World;
-import de.nb.aventiure2.data.world.gameobject.player.SpielerCharakter;
+import de.nb.aventiure2.data.world.gameobject.*;
+import de.nb.aventiure2.data.world.gameobject.player.*;
 
 /**
  * Component für ein {@link GameObject}: The game object might
@@ -19,7 +19,7 @@ public abstract class AbstractReactionsComp extends AbstractStatelessComponent
     protected final AvDatabase db;
     protected final World world;
 
-    protected final NarrationDao n;
+    protected final Narrator n;
 
     // STORY Jeder Creature (jedem NPC) ein Ziel geben - oder in jedem NPC
     //  ein "Potenzial" anlegen (durch seine Werte oder Möglichkeiten),
@@ -33,12 +33,12 @@ public abstract class AbstractReactionsComp extends AbstractStatelessComponent
 
     public AbstractReactionsComp(final GameObjectId id,
                                  final AvDatabase db,
+                                 final Narrator n,
                                  final World world) {
         super(id);
         this.db = db;
+        this.n = n;
         this.world = world;
-
-        n = db.narrationDao();
     }
 
     @NonNull
