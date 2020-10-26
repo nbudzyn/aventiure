@@ -210,5 +210,9 @@ public class BaumFactory {
         );
 
         // FIXME Wenn man müde ist, erhält man hin und wieder einen Hinweis.
+
+        // FIXME Nach müde, erschöpft etc. in den Grimms-Märchen suchen. Dabei auch schauen,
+        //  wie die Sätze verknüpft sind und ggf. neue Verknüpfungen in den
+        //  Combiner einbauen.
     }
 }
