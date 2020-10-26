@@ -15,21 +15,14 @@ import de.nb.aventiure2.german.base.Person;
 public enum VerbSubj implements PraedikatOhneLeerstellen {
     ANKOMMEN("ankommen", "kommst", "an",
             Perfektbildung.SEIN, "angekommen"),
-    // FIXME Suchen, ersetzen durch Praedikats-DuDesc, Anschluss testen
     AUFSTEHEN("aufstehen", "stehst", "auf",
             Perfektbildung.SEIN, "aufgestanden"),
-    // FIXME Suchen, ersetzen durch Praedikats-DuDesc, Anschluss testen
     AUFWACHEN("aufwachen", "wachst", "auf",
             Perfektbildung.SEIN, "aufgewacht"),
-    // FIXME Suchen, ersetzen durch Praedikats-DuDesc, Anschluss testen
     EINTRETEN("eintreten", "trittst", "ein",
             Perfektbildung.SEIN, "eingetreten"),
-    // FIXME Suchen, ersetzen durch Praedikats-DuDesc, Anschluss testen
     HEREINKOMMEN("hereinkommen", "kommst", "herein",
             Perfektbildung.SEIN, "hereingekommen");
-
-    // FIXME Suchen nach "hinauf", "hinab", "herauf", "herab", "hinein", "hinaus"
-    //  "aus", "in"
 
     /**
      * Das Verb an sich, ohne Informationen zur Valenz, ohne Ergänzungen, ohne

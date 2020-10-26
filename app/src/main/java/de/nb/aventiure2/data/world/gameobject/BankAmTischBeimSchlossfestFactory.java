@@ -12,6 +12,7 @@ import de.nb.aventiure2.data.world.syscomp.location.ILocatableGO;
 import de.nb.aventiure2.data.world.syscomp.location.LocationComp;
 import de.nb.aventiure2.data.world.syscomp.storingplace.StoringPlaceComp;
 import de.nb.aventiure2.german.description.TimedDescription;
+import de.nb.aventiure2.german.praedikat.VerbSubjObj;
 
 import static de.nb.aventiure2.data.world.base.SpatialConnectionData.conData;
 import static de.nb.aventiure2.data.world.gameobject.World.*;
@@ -105,7 +106,11 @@ public class BankAmTischBeimSchlossfestFactory {
         ((ILocatableGO) world.load(SCHLOSS_VORHALLE_LANGER_TISCH_BEIM_FEST))
                 .locationComp().unsetLocation();
 
-        return du("stehst", "vom Tisch auf", mins(3))
+        // "du stehst vom Tisch auf"
+        return du(VerbSubjObj.AUFSTEHEN_VON
+                        .mitObj(world.getDescription(
+                                SCHLOSS_VORHALLE_LANGER_TISCH_BEIM_FEST, true)),
+                mins(3))
                 .undWartest()
                 .dann();
     }

@@ -88,6 +88,7 @@ public class ObenImTurmConnectionComp extends AbstractSpatialConnectionComp {
                     .dann();
         }
 
+        // FIXME Wrsetzen durch Praedikats-DuDesc
         return du("steigst",
                 "wieder hinab",
                 mins(1))

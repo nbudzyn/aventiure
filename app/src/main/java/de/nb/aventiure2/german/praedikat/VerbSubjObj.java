@@ -8,6 +8,7 @@ import de.nb.aventiure2.german.base.SubstantivischePhrase;
 
 import static de.nb.aventiure2.german.base.Kasus.AKK;
 import static de.nb.aventiure2.german.base.PraepositionMitKasus.MIT_DAT;
+import static de.nb.aventiure2.german.base.PraepositionMitKasus.VON;
 import static de.nb.aventiure2.german.base.PraepositionMitKasus.ZU;
 
 /**
@@ -18,6 +19,8 @@ public enum VerbSubjObj implements PraedikatMitEinerObjektleerstelle {
             Perfektbildung.HABEN, "abgesetzt"),
     AUFHEBEN("aufheben", AKK, "hebst", "auf",
             Perfektbildung.HABEN, "aufgehoben"),
+    AUFSTEHEN_VON("aufstehen", VON, "stehst", "auf",
+            Perfektbildung.SEIN, "aufgestanden"),
     BEENDEN("beenden", AKK, "beendest", Perfektbildung.HABEN, "beendet"),
     BEGRUESSEN("begrüßen", AKK, "begrüßt", Perfektbildung.HABEN, "begrüßt"),
     DISKUTIEREN("diskutieren", MIT_DAT, "diskutierst",

@@ -11,6 +11,8 @@ import de.nb.aventiure2.data.world.syscomp.description.impl.SimpleDescriptionCom
 import de.nb.aventiure2.data.world.syscomp.location.LocationComp;
 import de.nb.aventiure2.data.world.syscomp.storingplace.StoringPlaceComp;
 import de.nb.aventiure2.german.description.TimedDescription;
+import de.nb.aventiure2.german.praedikat.AdverbialeAngabeSkopusVerbAllg;
+import de.nb.aventiure2.german.praedikat.VerbSubj;
 
 import static de.nb.aventiure2.data.world.base.Lichtverhaeltnisse.DUNKEL;
 import static de.nb.aventiure2.data.world.base.SpatialConnectionData.conData;
@@ -97,7 +99,12 @@ public class SchattenDerBaeumeFactory {
     private static TimedDescription getDescOut(
             final Known newLocationKnown, final Lichtverhaeltnisse lichtverhaeltnisse) {
         if (lichtverhaeltnisse == DUNKEL) {
-            return du(PARAGRAPH, "stehst", "wieder auf", secs(10))
+
+            // "du stehst wieder auf"
+            return du(VerbSubj.AUFSTEHEN
+                            .mitAdverbialerAngabe(
+                                    new AdverbialeAngabeSkopusVerbAllg("wieder")),
+                    secs(10))
                     .undWartest()
                     .dann();
         }
