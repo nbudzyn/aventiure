@@ -126,6 +126,12 @@ public class DescriptionBuilder {
     }
 
     @CheckReturnValue
+    public static SimpleDuDescription du(final String verb,
+                                         @Nullable final String remainder) {
+        return du(verb, remainder, (String) null);
+    }
+
+    @CheckReturnValue
     public static SimpleDuDescription du(final StructuralElement startsNew,
                                          final String verb,
                                          @Nullable final String remainder) {

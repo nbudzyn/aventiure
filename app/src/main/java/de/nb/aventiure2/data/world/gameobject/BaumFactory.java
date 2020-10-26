@@ -2,9 +2,12 @@ package de.nb.aventiure2.data.world.gameobject;
 
 import androidx.annotation.NonNull;
 
+import com.google.common.collect.ImmutableList;
+
 import javax.annotation.CheckReturnValue;
 
 import de.nb.aventiure2.data.database.AvDatabase;
+import de.nb.aventiure2.data.narration.DescriptionCombiner;
 import de.nb.aventiure2.data.world.base.GameObject;
 import de.nb.aventiure2.data.world.base.GameObjectId;
 import de.nb.aventiure2.data.world.base.Known;
@@ -12,7 +15,11 @@ import de.nb.aventiure2.data.world.base.Lichtverhaeltnisse;
 import de.nb.aventiure2.data.world.syscomp.description.impl.SimpleDescriptionComp;
 import de.nb.aventiure2.data.world.syscomp.location.LocationComp;
 import de.nb.aventiure2.data.world.syscomp.storingplace.StoringPlaceComp;
+import de.nb.aventiure2.german.description.AbstractDuDescription;
+import de.nb.aventiure2.german.description.AllgDescription;
+import de.nb.aventiure2.german.description.PraedikatDuDescription;
 import de.nb.aventiure2.german.description.TimedDescription;
+import de.nb.aventiure2.german.praedikat.AdverbialeAngabeSkopusVerbAllg;
 
 import static de.nb.aventiure2.data.world.base.Lichtverhaeltnisse.DUNKEL;
 import static de.nb.aventiure2.data.world.base.SpatialConnectionData.conData;
@@ -24,8 +31,10 @@ import static de.nb.aventiure2.german.base.Artikel.Typ.INDEF;
 import static de.nb.aventiure2.german.base.Nominalphrase.np;
 import static de.nb.aventiure2.german.base.NumerusGenus.M;
 import static de.nb.aventiure2.german.base.StructuralElement.PARAGRAPH;
+import static de.nb.aventiure2.german.base.StructuralElement.SENTENCE;
 import static de.nb.aventiure2.german.description.DescriptionBuilder.du;
 import static de.nb.aventiure2.german.description.DescriptionBuilder.neuerSatz;
+import static de.nb.aventiure2.german.praedikat.VerbSubj.ANKOMMEN;
 
 public class BaumFactory {
     public static final String HOCHKLETTERN = "BaumFactory_HOCHKLETTERN";
@@ -169,22 +178,37 @@ public class BaumFactory {
                         "Ein Nickerchen täte dir gut" :
                         "Und müde";
 
-        // FIXME Hinweise, wenn man müde wird.
+        // FIXME Das nicht hier machen, sondern die muedeDesc an zentraler Stelle
+        //  erzeugen (allgemein: Hinweise, wenn man müde wird), so dass der Narrator die
+        //  Kombination automatisch durchführt.
+        final PraedikatDuDescription bewegungDesc =
+                // "Du kommst unten an"
+                du(SENTENCE,
+                        ANKOMMEN
+                                .mitAdverbialerAngabe(
+                                        new AdverbialeAngabeSkopusVerbAllg("unten")))
+                        .dann();
+
+        // STORY Alternative:
+        //                "Ein zurückschwingender "
+        //                                + "Ast verpasst dir beim Abstieg ein Schramme",
+        //                        .dann(),
+
+        // "Du bist ziemlich erschöpft..."
+        final AbstractDuDescription<?, ?> muedeDesc =
+                du("bist", "ziemlich erschöpft. " + erschoepftMuedeNachsatz);
+
+
+        // Wird kombiniert zu:
+        final ImmutableList<AllgDescription> combinedAlternatives =
+                DescriptionCombiner.combinePraedikatDuDescUndDuDesc(bewegungDesc, muedeDesc);
+
+        // "Unten angekommen bist du ziemlich erschöpft..."
+
+        return new TimedDescription(
+                combinedAlternatives.get(0), mins(8)
+        );
 
         // FIXME Wenn man müde ist, erhält man hin und wieder einen Hinweis.
-
-        return
-                // STORY Alternative:
-                //                "Ein zurückschwingender "
-                //                                + "Ast verpasst dir beim Abstieg ein Schramme",
-                //                        .dann(),
-                neuerSatz("Unten angekommen bist du ziemlich erschöpft. " +
-                        erschoepftMuedeNachsatz, mins(8)
-                );
-
-        // FIXME "unten angekommen": Bei Partikelverben mit sein-Perfekt ohne Akkusativobjekt,
-        //  bei denen das Subjekt gleich ist ("du") und bei denen mindestens ein weiteres
-        //  Satzglied dabei ist (z.B. eine adverbiale Bestimmung: "du") kann der Satz
-        //  in dieser Form zusammengezogen werden.
     }
 }

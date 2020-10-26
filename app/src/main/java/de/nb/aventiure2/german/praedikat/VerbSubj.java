@@ -13,12 +13,19 @@ import de.nb.aventiure2.german.base.Person;
  * Ein Verb (ggf. mit Präfix), das genau mit einem Subjekt steht (ohne Objekte).
  */
 public enum VerbSubj implements PraedikatOhneLeerstellen {
-    // FIXME Suchen, ersetzen durch Praedikats-DuDesc, Anschluss testen
     ANKOMMEN("ankommen", "kommst", "an",
             Perfektbildung.SEIN, "angekommen"),
     // FIXME Suchen, ersetzen durch Praedikats-DuDesc, Anschluss testen
+    AUFWACHEN("aufwachen", "wachst", "auf",
+            Perfektbildung.SEIN, "aufgewacht"),
+    // FIXME Suchen, ersetzen durch Praedikats-DuDesc, Anschluss testen
     EINTRETEN("eintreten", "trittst", "ein",
-            Perfektbildung.SEIN, "eingetreten");
+            Perfektbildung.SEIN, "eingetreten"),
+    // FIXME Suchen, ersetzen durch Praedikats-DuDesc, Anschluss testen
+    HEREINKOMMEN("hereinkommen", "kommst", "herein",
+            Perfektbildung.SEIN, "hereingekommen"),
+
+    ;
 
     /**
      * Das Verb an sich, ohne Informationen zur Valenz, ohne Ergänzungen, ohne

@@ -16,7 +16,7 @@ import static de.nb.aventiure2.german.base.StructuralElement.SENTENCE;
 import static de.nb.aventiure2.german.base.StructuralElement.WORD;
 import static de.nb.aventiure2.german.base.StructuralElement.max;
 
-class DescriptionCombiner {
+public class DescriptionCombiner {
     private DescriptionCombiner() {
     }
 
@@ -74,7 +74,7 @@ class DescriptionCombiner {
                                 second.getDescriptionSatzanschlussOhneSubjekt()));
     }
 
-    private static ImmutableList<AllgDescription> combinePraedikatDuDescUndDuDesc(
+    public static ImmutableList<AllgDescription> combinePraedikatDuDescUndDuDesc(
             final PraedikatDuDescription first, final AbstractDuDescription<?, ?> second) {
         final ImmutableList.Builder<AllgDescription> res = ImmutableList.builder();
 
@@ -87,7 +87,8 @@ class DescriptionCombiner {
 
         if (first.kannPartizipIIPhraseAmAnfangOderMittenImSatzVerwendetWerden() &&
                 first.getPraedikat().isPartikelverbMitSeinPerfektOhneAkkusativobjekt() &&
-                first.getPraedikat().umfasstSatzglieder()) {
+                first.getPraedikat().umfasstSatzglieder() &&
+                second.getStartsNew() == WORD) {
             final DescriptionParams params = second.copyParams();
             params.setStartsNew(max(first.getStartsNew(), SENTENCE));
 
