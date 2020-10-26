@@ -126,6 +126,11 @@ public class PraedikatDirektivesVerbOhneLeerstellen extends AbstractPraedikatOhn
         return true;
     }
 
+    @Override
+    public boolean kannPartizipIIPhraseAmAnfangOderMittenImSatzVerwendetWerden() {
+        return true;
+    }
+
     @Nullable
     @Override
     public String getSpeziellesVorfeld() {
@@ -173,5 +178,19 @@ public class PraedikatDirektivesVerbOhneLeerstellen extends AbstractPraedikatOhn
         ); // "sich zu waschen"
         // Wir lassen die Kommata weg - das ist erlaubt und dann
         // kann man auch mehrere solche Sätze hintereinanderhängen
+    }
+
+    @Override
+    public boolean umfasstSatzglieder() {
+        return true;
+    }
+
+    @Override
+    public boolean isPartikelverbMitSeinPerfektOhneAkkusativobjekt() {
+        if (kasus == Kasus.AKK) {
+            return false;
+        }
+
+        return getVerb().isPartikelverbMitSeinPerfekt();
     }
 }

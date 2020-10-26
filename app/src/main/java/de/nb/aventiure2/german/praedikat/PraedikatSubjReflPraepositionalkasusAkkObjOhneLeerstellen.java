@@ -18,29 +18,29 @@ import static de.nb.aventiure2.german.base.GermanUtil.joinToNull;
  */
 class PraedikatSubjReflPraepositionalkasusAkkObjOhneLeerstellen
         extends AbstractPraedikatOhneLeerstellen {
-    private final ReflPraepositionalkasusVerbAkkObj reflPraepositionalkasusVerbAkkObj;
+    private final VerbReflPraepositionalkasusAkkObj verbReflPraepositionalkasusAkkObj;
 
     private final SubstantivischePhrase akkObj;
 
     PraedikatSubjReflPraepositionalkasusAkkObjOhneLeerstellen(
-            final ReflPraepositionalkasusVerbAkkObj reflPraepositionalkasusVerbAkkObj,
+            final VerbReflPraepositionalkasusAkkObj verbReflPraepositionalkasusAkkObj,
             final SubstantivischePhrase akkObj) {
-        this(reflPraepositionalkasusVerbAkkObj, akkObj,
+        this(verbReflPraepositionalkasusAkkObj, akkObj,
                 null, null,
                 null);
     }
 
     private PraedikatSubjReflPraepositionalkasusAkkObjOhneLeerstellen(
-            final ReflPraepositionalkasusVerbAkkObj reflPraepositionalkasusVerbAkkObj,
+            final VerbReflPraepositionalkasusAkkObj verbReflPraepositionalkasusAkkObj,
             final SubstantivischePhrase akkObj,
             @Nullable final AdverbialeAngabeSkopusSatz adverbialeAngabeSkopusSatz,
             @Nullable final AdverbialeAngabeSkopusVerbAllg adverbialeAngabeSkopusVerbAllg,
             @Nullable
             final AdverbialeAngabeSkopusVerbWohinWoher adverbialeAngabeSkopusVerbWohinWoher) {
-        super(reflPraepositionalkasusVerbAkkObj.getVerb(),
+        super(verbReflPraepositionalkasusAkkObj.getVerb(),
                 adverbialeAngabeSkopusSatz, adverbialeAngabeSkopusVerbAllg,
                 adverbialeAngabeSkopusVerbWohinWoher);
-        this.reflPraepositionalkasusVerbAkkObj = reflPraepositionalkasusVerbAkkObj;
+        this.verbReflPraepositionalkasusAkkObj = verbReflPraepositionalkasusAkkObj;
         this.akkObj = akkObj;
     }
 
@@ -54,7 +54,7 @@ class PraedikatSubjReflPraepositionalkasusAkkObjOhneLeerstellen
         // TODO Mehrere adverbiale Angaben zulassen, damit die bestehende nicht
         //  einfach überschrieben wird!
         return new PraedikatSubjReflPraepositionalkasusAkkObjOhneLeerstellen(
-                reflPraepositionalkasusVerbAkkObj, akkObj,
+                verbReflPraepositionalkasusAkkObj, akkObj,
                 adverbialeAngabe, getAdverbialeAngabeSkopusVerbAllg(),
                 getAdverbialeAngabeSkopusVerbWohinWoher()
         );
@@ -70,7 +70,7 @@ class PraedikatSubjReflPraepositionalkasusAkkObjOhneLeerstellen
         // TODO Mehrere adverbiale Angaben zulassen, damit die bestehende nicht
         //  einfach überschrieben wird!
         return new PraedikatSubjReflPraepositionalkasusAkkObjOhneLeerstellen(
-                reflPraepositionalkasusVerbAkkObj, akkObj,
+                verbReflPraepositionalkasusAkkObj, akkObj,
                 getAdverbialeAngabeSkopusSatz(), adverbialeAngabe,
                 getAdverbialeAngabeSkopusVerbWohinWoher()
         );
@@ -86,16 +86,20 @@ class PraedikatSubjReflPraepositionalkasusAkkObjOhneLeerstellen
         // TODO Mehrere adverbiale Angaben zulassen, damit die bestehende nicht
         //  einfach überschrieben wird!
         return new PraedikatSubjReflPraepositionalkasusAkkObjOhneLeerstellen(
-                reflPraepositionalkasusVerbAkkObj, akkObj,
+                verbReflPraepositionalkasusAkkObj, akkObj,
                 getAdverbialeAngabeSkopusSatz(),
                 getAdverbialeAngabeSkopusVerbAllg(),
                 adverbialeAngabe
         );
     }
 
-
     @Override
     public boolean duHauptsatzLaesstSichMitNachfolgendemDuHauptsatzZusammenziehen() {
+        return true;
+    }
+
+    @Override
+    public boolean kannPartizipIIPhraseAmAnfangOderMittenImSatzVerwendetWerden() {
         return true;
     }
 
@@ -129,7 +133,7 @@ class PraedikatSubjReflPraepositionalkasusAkkObjOhneLeerstellen
                 joinToNull(modalpartikeln), // "besser doch"
                 getAdverbialeAngabeSkopusVerbAllg(), // "erneut"
                 Reflexivpronomen.get(personSubjekt, numerusSubjekt)
-                        .im(reflPraepositionalkasusVerbAkkObj
+                        .im(verbReflPraepositionalkasusAkkObj
                                 .getPrapositionMitKasus()), // "an dich",
                 getAdverbialeAngabeSkopusVerbWohinWoher() // "in deine Jackentasche"
         );
@@ -142,9 +146,19 @@ class PraedikatSubjReflPraepositionalkasusAkkObjOhneLeerstellen
     }
 
     private void checkKeinPartikelVerb() {
-        if (reflPraepositionalkasusVerbAkkObj.getVerb().getPartikel() != null) {
+        if (verbReflPraepositionalkasusAkkObj.getVerb().getPartikel() != null) {
             throw new IllegalStateException("Reflexives Partikel Verb mit Präpositionalkasus? "
                     + "Unerwartet!");
         }
+    }
+
+    @Override
+    public boolean umfasstSatzglieder() {
+        return true;
+    }
+
+    @Override
+    public boolean isPartikelverbMitSeinPerfektOhneAkkusativobjekt() {
+        return false;
     }
 }

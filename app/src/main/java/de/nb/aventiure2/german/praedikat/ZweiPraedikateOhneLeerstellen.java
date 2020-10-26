@@ -106,11 +106,18 @@ class ZweiPraedikateOhneLeerstellen implements PraedikatOhneLeerstellen {
         return false;
     }
 
-    /**
-     * Gibt eine Infinitivkonstruktion mit dem Infinitiv mit diesem
-     * Prädikat zurück. Die adverbiale Angabe wird im ersten
-     * Teilsatz verwendet.
-     */
+    @Override
+    public String getPartizipIIPhrase(final Person person, final Numerus numerus) {
+        return ersterSatz.getPartizipIIPhrase(person, numerus)
+                + " und "
+                + zweiterSatz.getPartizipIIPhrase(person, numerus);
+    }
+
+    @Override
+    public boolean kannPartizipIIPhraseAmAnfangOderMittenImSatzVerwendetWerden() {
+        return true;
+    }
+
     @Override
     public String getInfinitiv(final Person person, final Numerus numerus) {
         return ersterSatz.getInfinitiv(person, numerus)
@@ -118,11 +125,6 @@ class ZweiPraedikateOhneLeerstellen implements PraedikatOhneLeerstellen {
                 + zweiterSatz.getInfinitiv(person, numerus);
     }
 
-    /**
-     * Gibt eine Infinitivkonstruktion mit dem zu-Infinitiv mit diesem
-     * Prädikat zurück. Die adverbiale Angabe wird im ersten
-     * Teilsatz verwendet.
-     */
     @Override
     public String getZuInfinitiv(final Person person, final Numerus numerus) {
         return ersterSatz.getZuInfinitiv(person, numerus)
@@ -134,5 +136,16 @@ class ZweiPraedikateOhneLeerstellen implements PraedikatOhneLeerstellen {
     @Override
     public String getSpeziellesVorfeld() {
         return ersterSatz.getSpeziellesVorfeld();
+    }
+
+    @Override
+    public boolean umfasstSatzglieder() {
+        return ersterSatz.umfasstSatzglieder() || zweiterSatz.umfasstSatzglieder();
+    }
+
+    @Override
+    public boolean isPartikelverbMitSeinPerfektOhneAkkusativobjekt() {
+        return ersterSatz.isPartikelverbMitSeinPerfektOhneAkkusativobjekt() &&
+                zweiterSatz.isPartikelverbMitSeinPerfektOhneAkkusativobjekt();
     }
 }

@@ -108,6 +108,11 @@ public class PraedikatMitWoertlicherRedeOhneLeerstellen
     }
 
     @Override
+    public boolean kannPartizipIIPhraseAmAnfangOderMittenImSatzVerwendetWerden() {
+        return false;
+    }
+
+    @Override
     public String getMittelfeld(final Collection<Modalpartikel> modalpartikeln,
                                 final Person personSubjekt,
                                 final Numerus numerusSubjekt) {
@@ -125,5 +130,15 @@ public class PraedikatMitWoertlicherRedeOhneLeerstellen
         return joinToNull(
                 ":",
                 woertlicheRede.amSatzende()); // "„Kommt alle her.“"
+    }
+
+    @Override
+    public boolean umfasstSatzglieder() {
+        return true;
+    }
+
+    @Override
+    public boolean isPartikelverbMitSeinPerfektOhneAkkusativobjekt() {
+        return getVerb().isPartikelverbMitSeinPerfekt();
     }
 }

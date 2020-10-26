@@ -68,8 +68,6 @@ public abstract class NarrationDao {
 
         final Narration initialNarration = requireNarration();
 
-        // FIXME Wozu braucht man noch AllgDescriptions?
-        //  Gingen nicht AllgDescriptions genauso gut?
         final List<TimedDescription> combinations = Lists.newArrayList();
 
         for (final AbstractDescription<?> first : firstAlternatives) {

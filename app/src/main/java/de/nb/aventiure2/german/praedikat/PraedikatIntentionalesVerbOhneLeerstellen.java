@@ -102,6 +102,12 @@ public class PraedikatIntentionalesVerbOhneLeerstellen extends AbstractPraedikat
         return true;
     }
 
+    @Override
+    public boolean kannPartizipIIPhraseAmAnfangOderMittenImSatzVerwendetWerden() {
+        // "Gebeten dich zu waschen [gehst du ins Bad]"
+        return true;
+    }
+
     @Nullable
     @Override
     public String getSpeziellesVorfeld() {
@@ -138,5 +144,15 @@ public class PraedikatIntentionalesVerbOhneLeerstellen extends AbstractPraedikat
         ); // "(Du versuchst) dich zu waschen"
         // Wir lassen die Kommata weg - das ist erlaubt und dann
         // kann man auch mehrere solche Sätze hintereinanderhängen
+    }
+
+    @Override
+    public boolean umfasstSatzglieder() {
+        return super.umfasstSatzglieder() || lexikalischerKern.umfasstSatzglieder();
+    }
+
+    @Override
+    public boolean isPartikelverbMitSeinPerfektOhneAkkusativobjekt() {
+        return getVerb().isPartikelverbMitSeinPerfekt();
     }
 }

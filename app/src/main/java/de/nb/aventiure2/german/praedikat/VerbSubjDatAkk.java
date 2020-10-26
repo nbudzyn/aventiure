@@ -12,15 +12,19 @@ import de.nb.aventiure2.german.base.SubstantivischePhrase;
  * einem Akkusativ-Objekt steht.
  */
 public enum VerbSubjDatAkk implements Praedikat {
-    ANBIETEN("anbieten", "bietest", "an" ),
-    AUSSCHUETTEN("ausschütten", "schüttest", "aus" ),
-    GEBEN("geben", "gibst" ),
-    HINHALTEN("hinhalten", "hältst", "in" ),
+    ANBIETEN("anbieten", "bietest", "an",
+            Perfektbildung.HABEN, "angeboten"),
+    AUSSCHUETTEN("ausschütten", "schüttest", "aus",
+            Perfektbildung.HABEN, "ausgeschüttet"),
+    GEBEN("geben", "gibst", Perfektbildung.HABEN, "gegeben"),
+    HINHALTEN("hinhalten", "hältst", "in",
+            Perfektbildung.HABEN, "hingehalten"),
     // "dem Frosch Angebote machen"
-    MACHEN("machen", "machst" ),
-    REICHEN("reichen", "reichst" ),
-    VERSPRECHEN("versprechen", "versprichst" ),
-    ZEIGEN("zeigen", "zeigst" ),
+    MACHEN("machen", "machst", Perfektbildung.HABEN, "gemacht"),
+    REICHEN("reichen", "reichst", Perfektbildung.HABEN, "gereicht"),
+    VERSPRECHEN("versprechen", "versprichst",
+            Perfektbildung.HABEN, "versprochen"),
+    ZEIGEN("zeigen", "zeigst", Perfektbildung.HABEN, "gezeigt"),
     ;
 
     /**
@@ -31,14 +35,16 @@ public enum VerbSubjDatAkk implements Praedikat {
     private final Verb verb;
 
     VerbSubjDatAkk(@NonNull final String infinitiv,
-                   @NonNull final String duForm) {
-        this(new Verb(infinitiv, duForm));
+                   @NonNull final String duForm,
+                   final Perfektbildung perfektbildung, final String partizipII) {
+        this(new Verb(infinitiv, duForm, perfektbildung, partizipII));
     }
 
     VerbSubjDatAkk(@NonNull final String infinitiv,
                    @NonNull final String duForm,
-                   @Nullable final String partikel) {
-        this(new Verb(infinitiv, duForm, partikel));
+                   @Nullable final String partikel,
+                   final Perfektbildung perfektbildung, final String partizipII) {
+        this(new Verb(infinitiv, duForm, partikel, perfektbildung, partizipII));
     }
 
     VerbSubjDatAkk(final Verb verb) {

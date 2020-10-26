@@ -70,6 +70,31 @@ public interface PraedikatOhneLeerstellen extends Praedikat, AbstractDuTextPart 
     boolean duHauptsatzLaesstSichMitNachfolgendemDuHauptsatzZusammenziehen();
 
     /**
+     * Gibt eine unflektierte Phrase mit Partizip II zurück: "unten angekommen",
+     * "die Kugel genommen"
+     * <p>
+     * Implizit (oder bei reflexiven Verben auch explizit) hat Phrase
+     * eine Person und einen Numerus - Beispiel:
+     * "[Ich habe] die Kugel an mich genommen"
+     * (nicht *"[Ich habe] die Kugel an sich genommen")
+     */
+    String getPartizipIIPhrase(final Person person, final Numerus numerus);
+
+    /**
+     * Gibt zurück, ob die Partizip-II-Phrase
+     * (vgl. {@link #getPartizipIIPhrase(Person, Numerus)})
+     * am Anfang oder mitten im Satz möglich ist (<code>true</code>) oder nur am Ende
+     * (<code>false</code>).
+     * <ul>
+     * <li>Diese Partizip-II-Phrasen sind am Anfang oder mitten im Satz  möglich: "unten angekommen
+     * [bist du erschöpft]". "gut gefüttert [ist der Fisch zufrieden]"
+     * <li>Diese Partizip-II-Phrase kann <i>nicht</i>satzwertig verwendet werden: gerufen:
+     * "Kommt alle her."
+     * </ul>
+     */
+    boolean kannPartizipIIPhraseAmAnfangOderMittenImSatzVerwendetWerden();
+
+    /**
      * Gibt eine Infinitivkonstruktion mit diesem
      * Prädikat zurück ("das Schwert nehmen")
      * <p>
@@ -93,4 +118,14 @@ public interface PraedikatOhneLeerstellen extends Praedikat, AbstractDuTextPart 
 
     @Nullable
     String getSpeziellesVorfeld();
+
+    /**
+     * Gibt zurück, ob dieses Prädikat Satzglieder enthält (nicht nur Verbbestandteile).
+     * "läuft los" enthält keine Satzgliederk, "läuft schnell los" oder
+     * "hebt die Kugel hoch" hingegen schon.
+     */
+    boolean umfasstSatzglieder();
+
+    boolean isPartikelverbMitSeinPerfektOhneAkkusativobjekt();
+
 }

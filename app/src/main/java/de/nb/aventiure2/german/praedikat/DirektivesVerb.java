@@ -18,7 +18,7 @@ import static de.nb.aventiure2.german.base.Kasus.DAT;
  */
 public enum DirektivesVerb implements Praedikat {
     // "Rapunzel bitten, die Haare herunterzulassen"
-    BITTEN("bitten", AKK, "bittest");
+    BITTEN("bitten", AKK, "bittest", Perfektbildung.HABEN, "gebeten");
     // Weitere direktive Verben sind anregen, warnen, zwingen,
     // hindern, beschwören, auffordern, überreden, beauftragen,
     // raten, erlauben, empfehlen, verbieten, gestatten
@@ -38,15 +38,17 @@ public enum DirektivesVerb implements Praedikat {
 
     DirektivesVerb(@NonNull final String infinitiv,
                    @NonNull final Kasus kasus,
-                   @NonNull final String duForm) {
-        this(new Verb(infinitiv, duForm), kasus);
+                   @NonNull final String duForm,
+                   final Perfektbildung perfektbildung, final String partizipII) {
+        this(new Verb(infinitiv, duForm, perfektbildung, partizipII), kasus);
     }
 
     DirektivesVerb(@NonNull final String infinitiv,
                    @NonNull final Kasus kasus,
                    @NonNull final String duForm,
-                   @Nullable final String partikel) {
-        this(new Verb(infinitiv, duForm, partikel), kasus);
+                   @Nullable final String partikel,
+                   final Perfektbildung perfektbildung, final String partizipII) {
+        this(new Verb(infinitiv, duForm, partikel, perfektbildung, partizipII), kasus);
     }
 
     DirektivesVerb(@NonNull final Verb verb,

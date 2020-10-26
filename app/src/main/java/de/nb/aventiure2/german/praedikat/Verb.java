@@ -44,20 +44,33 @@ public class Verb {
     @Nullable
     private final String partikel;
 
+    @NonNull
+    private final Perfektbildung perfektbildung;
+
+    /**
+     * Der unflektierte Partizip II des Verbs ("gehoben", "angenommen", "zerbrochen")
+     */
+    @NonNull
+    private final String partizipII;
+
     /**
      * Erzeugt ein Verb, das <i>kein</i> Partikelverb ist, also ein Verb
      * <i>ohne Partikel</i>. Von dem Verb wird also (anders als z.B.
      * bei "er steht auf") bei der Formenbildung nichts abgetrennt.
      */
-    public Verb(@NonNull final String infinitiv, @NonNull final String duForm) {
-        this(infinitiv, duForm, null);
+    public Verb(final String infinitiv, final String duForm,
+                final Perfektbildung perfektbildung, final String partizipII) {
+        this(infinitiv, duForm, null, perfektbildung, partizipII);
     }
 
-    public Verb(@NonNull final String infinitiv, @NonNull final String duForm,
-                @Nullable final String partikel) {
+    public Verb(final String infinitiv, final String duForm,
+                @Nullable final String partikel, final Perfektbildung perfektbildung,
+                final String partizipII) {
         this.infinitiv = infinitiv;
         this.duForm = duForm;
         this.partikel = partikel;
+        this.perfektbildung = perfektbildung;
+        this.partizipII = partizipII;
     }
 
     public String getZuInfinitiv() {
@@ -91,6 +104,19 @@ public class Verb {
         return partikel;
     }
 
+    public boolean isPartikelverbMitSeinPerfekt() {
+        if (partikel == null) {
+            return false;
+        }
+
+        return perfektbildung == Perfektbildung.SEIN;
+    }
+
+    @NonNull
+    public String getPartizipII() {
+        return partizipII;
+    }
+
     @Override
     public boolean equals(final Object o) {
         if (this == o) {
@@ -102,11 +128,21 @@ public class Verb {
         final Verb verb = (Verb) o;
         return infinitiv.equals(verb.infinitiv) &&
                 duForm.equals(verb.duForm) &&
-                Objects.equals(partikel, verb.partikel);
+                Objects.equals(partikel, verb.partikel) &&
+                perfektbildung == verb.perfektbildung &&
+                partizipII.equals(verb.partizipII);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(infinitiv, duForm, partikel);
+        return Objects.hash(infinitiv, duForm, partikel, perfektbildung, partizipII);
+    }
+
+    @NonNull
+    @Override
+    public String toString() {
+        return "Verb{" +
+                "infinitiv='" + infinitiv + '\'' +
+                '}';
     }
 }

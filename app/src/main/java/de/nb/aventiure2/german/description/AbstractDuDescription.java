@@ -23,7 +23,6 @@ public abstract class AbstractDuDescription<
     @Override
     public String getDescriptionHauptsatzMitKonjunktionaladverbWennNoetig(
             final String konjunktionaladverb) {
-
         return duTextPart.getDuHauptsatzMitKonjunktionaladverbWennNoetig(konjunktionaladverb);
     }
 
@@ -37,7 +36,6 @@ public abstract class AbstractDuDescription<
 
     @Override
     public String getDescriptionHauptsatz() {
-
         return duTextPart.getDuHauptsatz();
     }
 
@@ -45,7 +43,6 @@ public abstract class AbstractDuDescription<
      * Gibt etwas zurück wie "gehst weiter"
      */
     public String getDescriptionSatzanschlussOhneSubjekt() {
-
         return duTextPart.getDuSatzanschlussOhneSubjekt();
     }
 }

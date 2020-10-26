@@ -101,11 +101,11 @@ public class Narrator {
     public void narrateAlt(final Collection<TimedDescription> alternatives) {
         if (temporaryNarration != null) {
             // Hier gibt es zwei Möglichkeiten:
-            // 1. Die temporary Narration (wenn es eine gibt) und die (neuen) alternatives werden
+            // 1. Die temporary Narration und die (neuen) Alternatives werden
             //  gemeinsam in einen Text gegossen, etwa in der Art
             //  "Als du weiter durch den Wald gehst, kommt dir eine Frau entgegen"
             //  (Das geht nicht immer.)
-            // 2.Oder es wird nur die temporary Narration erzählt und die alternatives
+            // 2.Oder es wird nur die temporary Narration erzählt und die Alternatives
             //  werden temporär gespeichert:
             //  "Du gehst weiter durch den Wald".
 

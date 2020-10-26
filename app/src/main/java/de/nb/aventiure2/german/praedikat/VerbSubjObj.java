@@ -14,24 +14,33 @@ import static de.nb.aventiure2.german.base.PraepositionMitKasus.ZU;
  * Ein Verb (ggf. mit Präfix), das genau mit einem Subjekt und einem (Präpositional-) Objekt steht.
  */
 public enum VerbSubjObj implements PraedikatMitEinerObjektleerstelle {
-    ABSETZEN("absetzen", AKK, "setzt", "ab"),
-    AUFHEBEN("aufheben", AKK, "hebst", "auf"),
-    BEENDEN("beenden", AKK, "beendest"),
-    BEGRUESSEN("begrüßen", AKK, "begrüßt"),
-    DISKUTIEREN("diskutieren", MIT_DAT, "diskutierst"),
-    HEBEN("heben", AKK, "hebst"),
-    HERAUSKLAUBEN("herausklauben", AKK, "klaubst", "heraus"),
-    HINAUFRUFEN("hinaufrufen", ZU, "rufst", "rufen"),
-    HINLEGEN("hinlegen", AKK, "legst", "hin"),
-    HINUNTERLASSEN("hinunterlassen", AKK, "lässt", "hinunter"),
-    IGNORIEREN("ignorieren", AKK, "ignorierst"),
-    LEGEN("legen", AKK, "legst"),
-    MITNEHMEN("mitnehmen", AKK, "nimmst", "mit"),
-    NEHMEN("nehmen", AKK, "nimmst"),
-    POLIEREN("polieren", AKK, "polierst"),
-    REDEN("reden", MIT_DAT, "redest"),
-    RUFEN("rufen", AKK, "rufst"),
-    SETZEN("setzen", AKK, "setzt");
+    ABSETZEN("absetzen", AKK, "setzt", "ab",
+            Perfektbildung.HABEN, "abgesetzt"),
+    AUFHEBEN("aufheben", AKK, "hebst", "auf",
+            Perfektbildung.HABEN, "aufgehoben"),
+    BEENDEN("beenden", AKK, "beendest", Perfektbildung.HABEN, "beendet"),
+    BEGRUESSEN("begrüßen", AKK, "begrüßt", Perfektbildung.HABEN, "begrüßt"),
+    DISKUTIEREN("diskutieren", MIT_DAT, "diskutierst",
+            Perfektbildung.HABEN, "diskutiert"),
+    HEBEN("heben", AKK, "hebst", Perfektbildung.HABEN, "gehoben"),
+    HERAUSKLAUBEN("herausklauben", AKK, "klaubst", "heraus",
+            Perfektbildung.HABEN, "herausgeklaubt"),
+    HINAUFRUFEN("hinaufrufen", ZU, "rufst", "rufen",
+            Perfektbildung.HABEN, "hinaufgerufen"),
+    HINLEGEN("hinlegen", AKK, "legst", "hin",
+            Perfektbildung.HABEN, "hingelegt"),
+    HINUNTERLASSEN("hinunterlassen", AKK, "lässt", "hinunter",
+            Perfektbildung.HABEN, "hinuntergelassen"),
+    IGNORIEREN("ignorieren", AKK, "ignorierst",
+            Perfektbildung.HABEN, "ignoriert"),
+    LEGEN("legen", AKK, "legst", Perfektbildung.HABEN, "gelegt"),
+    MITNEHMEN("mitnehmen", AKK, "nimmst", "mit",
+            Perfektbildung.HABEN, "mitgenommen"),
+    NEHMEN("nehmen", AKK, "nimmst", Perfektbildung.HABEN, "genommen"),
+    POLIEREN("polieren", AKK, "polierst", Perfektbildung.HABEN, "poliert"),
+    REDEN("reden", MIT_DAT, "redest", Perfektbildung.HABEN, "geredet"),
+    RUFEN("rufen", AKK, "rufst", Perfektbildung.HABEN, "gerufen"),
+    SETZEN("setzen", AKK, "setzt", Perfektbildung.HABEN, "gesetzt");
 
     /**
      * Das Verb an sich, ohne Informationen zur Valenz, ohne Ergänzungen, ohne
@@ -49,15 +58,18 @@ public enum VerbSubjObj implements PraedikatMitEinerObjektleerstelle {
 
     VerbSubjObj(@NonNull final String infinitiv,
                 @NonNull final KasusOderPraepositionalkasus kasusOderPraepositionalkasus,
-                @NonNull final String duForm) {
-        this(new Verb(infinitiv, duForm), kasusOderPraepositionalkasus);
+                @NonNull final String duForm,
+                @NonNull final Perfektbildung perfektbildung, final String partizipII) {
+        this(new Verb(infinitiv, duForm, perfektbildung, partizipII), kasusOderPraepositionalkasus);
     }
 
     VerbSubjObj(@NonNull final String infinitiv,
                 @NonNull final KasusOderPraepositionalkasus kasusOderPraepositionalkasus,
                 @NonNull final String duForm,
-                @Nullable final String partikel) {
-        this(new Verb(infinitiv, duForm, partikel), kasusOderPraepositionalkasus);
+                @Nullable final String partikel,
+                @NonNull final Perfektbildung perfektbildung, final String partizipII) {
+        this(new Verb(infinitiv, duForm, partikel, perfektbildung, partizipII),
+                kasusOderPraepositionalkasus);
     }
 
     VerbSubjObj(@NonNull final Verb verb,

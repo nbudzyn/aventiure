@@ -1,7 +1,6 @@
 package de.nb.aventiure2.german.praedikat;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 
 import de.nb.aventiure2.german.base.Numerus;
 import de.nb.aventiure2.german.base.Person;
@@ -14,10 +13,12 @@ import de.nb.aventiure2.german.base.SubstantivischePhrase;
  */
 public enum VerbSubjAkkPraep implements Praedikat {
     // "ein Gespräch mit Rapunzel beginnen"
-    BEGINNEN("beginnen", "beginnst", PraepositionMitKasus.MIT_DAT),
+    BEGINNEN("beginnen", "beginnst", PraepositionMitKasus.MIT_DAT,
+            Perfektbildung.HABEN, "begonnen"),
 
     // "die Zauberin nach ihrem Ziel fragen"
-    FRAGEN_NACH("fragen", "fragst", PraepositionMitKasus.NACH);
+    FRAGEN_NACH("fragen", "fragst", PraepositionMitKasus.NACH,
+            Perfektbildung.HABEN, "gefragt");
 
     /**
      * Das Verb an sich, ohne Informationen zur Valenz, ohne Ergänzungen, ohne
@@ -29,10 +30,11 @@ public enum VerbSubjAkkPraep implements Praedikat {
     @NonNull
     private final PraepositionMitKasus praepositionMitKasus;
 
-    VerbSubjAkkPraep(@NonNull final String infinitiv,
-                     @NonNull final String duForm,
-                     @Nullable final PraepositionMitKasus praepositionMitKasus) {
-        this(new Verb(infinitiv, duForm), praepositionMitKasus);
+    VerbSubjAkkPraep(final String infinitiv,
+                     final String duForm,
+                     final PraepositionMitKasus praepositionMitKasus,
+                     final Perfektbildung perfektbildung, final String partizipII) {
+        this(new Verb(infinitiv, duForm, perfektbildung, partizipII), praepositionMitKasus);
     }
 
     VerbSubjAkkPraep(final Verb verb,

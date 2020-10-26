@@ -9,7 +9,7 @@ import de.nb.aventiure2.german.base.WoertlicheRede;
  * Ein Verb (ggf. mit Präfix), das genau mit einem Subjekt und wörtlicher Rede steht.
  */
 public enum VerbSubjWoertlicheRede implements PraedikatMitEinerLeerstelleFuerWoertlicheRede {
-    RUFEN("rufen", "rufst");
+    RUFEN("rufen", "rufst", Perfektbildung.HABEN, "gerufen");
 
     /**
      * Das Verb an sich, ohne Ergänzungen, ohne Angaben
@@ -17,18 +17,20 @@ public enum VerbSubjWoertlicheRede implements PraedikatMitEinerLeerstelleFuerWoe
     @NonNull
     private final Verb verb;
 
-    VerbSubjWoertlicheRede(@NonNull final String infinitiv,
-                           @NonNull final String duForm) {
-        this(new Verb(infinitiv, duForm));
+    VerbSubjWoertlicheRede(final String infinitiv,
+                           final String duForm,
+                           final Perfektbildung perfektbildung, final String partizipII) {
+        this(new Verb(infinitiv, duForm, perfektbildung, partizipII));
     }
 
-    VerbSubjWoertlicheRede(@NonNull final String infinitiv,
-                           @NonNull final String duForm,
-                           @Nullable final String partikel) {
-        this(new Verb(infinitiv, duForm, partikel));
+    VerbSubjWoertlicheRede(final String infinitiv,
+                           final String duForm,
+                           @Nullable final String partikel,
+                           final Perfektbildung perfektbildung, final String partizipII) {
+        this(new Verb(infinitiv, duForm, partikel, perfektbildung, partizipII));
     }
 
-    VerbSubjWoertlicheRede(@NonNull final Verb verb) {
+    VerbSubjWoertlicheRede(final Verb verb) {
         this.verb = verb;
     }
 

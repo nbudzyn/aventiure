@@ -122,8 +122,15 @@ public abstract class AbstractPraedikatOhneLeerstellen
         return PraedikatOhneLeerstellen.super.getDuSatzanschlussOhneSubjekt();
     }
 
+    @Override
+    public String getPartizipIIPhrase(final Person person, final Numerus numerus) {
+        return joinToNull(getMittelfeld(person, numerus),
+                verb.getPartizipII(),
+                getNachfeld(person, numerus));
+    }
+
     /**
-     * Gibt eine Infinitivkonstruktion zurück mit Prädikat.
+     * Gibt eine Infinitivkonstruktion zurück mit Prädikat
      * ("den Frosch ignorieren", "das Leben genießen")
      */
     @Override
@@ -134,7 +141,7 @@ public abstract class AbstractPraedikatOhneLeerstellen
     }
 
     /**
-     * Gibt eine Infinitivkonstruktion zurück mit Prädikat.
+     * Gibt eine Infinitivkonstruktion zurück mit Prädikat
      * ("den Frosch erneut zu ignorieren", "das Leben zu genießen")
      */
     @Override
@@ -204,5 +211,12 @@ public abstract class AbstractPraedikatOhneLeerstellen
     @Nullable
     public AdverbialeAngabeSkopusVerbWohinWoher getAdverbialeAngabeSkopusVerbWohinWoher() {
         return adverbialeAngabeSkopusVerbWohinWoher;
+    }
+
+    @Override
+    public boolean umfasstSatzglieder() {
+        return adverbialeAngabeSkopusSatz != null ||
+                adverbialeAngabeSkopusVerbAllg != null ||
+                adverbialeAngabeSkopusVerbWohinWoher != null;
     }
 }

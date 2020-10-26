@@ -1,61 +1,39 @@
 package de.nb.aventiure2.german.praedikat;
 
-import androidx.annotation.NonNull;
-
 import java.util.Collection;
 
 import javax.annotation.Nullable;
 
-import de.nb.aventiure2.german.base.Kasus;
-import de.nb.aventiure2.german.base.KasusOderPraepositionalkasus;
 import de.nb.aventiure2.german.base.Numerus;
 import de.nb.aventiure2.german.base.Person;
-import de.nb.aventiure2.german.base.SubstantivischePhrase;
 
 import static de.nb.aventiure2.german.base.GermanUtil.joinToNull;
 
 /**
- * Ein Prädikat (Verb ggf. mit Präfix) bei dem das Verb mit einem Subjekt und einem
- * (Präpositional-) Objekt steht - alle Leerstellen sind besetzt.
+ * Ein Prädikat (Verb ggf. mit Präfix) bei dem das Verb mit einem Subjekt steht und keine
+ * Leerstellen hat.
  */
-public class PraedikatSubjObjOhneLeerstellen
+public class PraedikatSubOhneLeerstellen
         extends AbstractPraedikatOhneLeerstellen {
-    /**
-     * Der Kasus (z.B. Akkusativ, "die Kugel nehmen") oder Präpositionalkasus
-     * (z.B. "mit dem Frosch reden"), mit dem dieses Verb steht (den dieses Verb regiert).
-     */
-    @NonNull
-    private final KasusOderPraepositionalkasus kasusOderPraepositionalkasus;
 
-    /**
-     * Das Objekt (z.B. ein Ding, Wesen, Konzept oder deklinierbare Phrase)
-     */
-    private final SubstantivischePhrase objekt;
-
-    public PraedikatSubjObjOhneLeerstellen(final Verb verb,
-                                           final KasusOderPraepositionalkasus kasusOderPraepositionalkasus,
-                                           final SubstantivischePhrase objekt) {
-        this(verb, kasusOderPraepositionalkasus, objekt,
+    PraedikatSubOhneLeerstellen(final Verb verb) {
+        this(verb,
                 null, null,
                 null);
     }
 
-    PraedikatSubjObjOhneLeerstellen(
+    PraedikatSubOhneLeerstellen(
             final Verb verb,
-            final KasusOderPraepositionalkasus kasusOderPraepositionalkasus,
-            final SubstantivischePhrase objekt,
             @Nullable final AdverbialeAngabeSkopusSatz adverbialeAngabeSkopusSatz,
             @Nullable final AdverbialeAngabeSkopusVerbAllg adverbialeAngabeSkopusVerbAllg,
             @Nullable
             final AdverbialeAngabeSkopusVerbWohinWoher adverbialeAngabeSkopusVerbWohinWoher) {
         super(verb, adverbialeAngabeSkopusSatz,
                 adverbialeAngabeSkopusVerbAllg, adverbialeAngabeSkopusVerbWohinWoher);
-        this.kasusOderPraepositionalkasus = kasusOderPraepositionalkasus;
-        this.objekt = objekt;
     }
 
     @Override
-    public PraedikatSubjObjOhneLeerstellen mitAdverbialerAngabe(
+    public PraedikatSubOhneLeerstellen mitAdverbialerAngabe(
             @Nullable final AdverbialeAngabeSkopusSatz adverbialeAngabe) {
         if (adverbialeAngabe == null) {
             return this;
@@ -63,16 +41,15 @@ public class PraedikatSubjObjOhneLeerstellen
 
         // TODO Mehrere adverbiale Angaben zulassen, damit die bestehende nicht
         //  einfach überschrieben wird!
-        return new PraedikatSubjObjOhneLeerstellen(
+        return new PraedikatSubOhneLeerstellen(
                 getVerb(),
-                kasusOderPraepositionalkasus, objekt,
                 adverbialeAngabe, getAdverbialeAngabeSkopusVerbAllg(),
                 getAdverbialeAngabeSkopusVerbWohinWoher()
         );
     }
 
     @Override
-    public PraedikatSubjObjOhneLeerstellen mitAdverbialerAngabe(
+    public PraedikatSubOhneLeerstellen mitAdverbialerAngabe(
             @Nullable final AdverbialeAngabeSkopusVerbAllg adverbialeAngabe) {
         if (adverbialeAngabe == null) {
             return this;
@@ -80,16 +57,15 @@ public class PraedikatSubjObjOhneLeerstellen
 
         // TODO Mehrere adverbiale Angaben zulassen, damit die bestehende nicht
         //  einfach überschrieben wird!
-        return new PraedikatSubjObjOhneLeerstellen(
+        return new PraedikatSubOhneLeerstellen(
                 getVerb(),
-                kasusOderPraepositionalkasus, objekt,
                 getAdverbialeAngabeSkopusSatz(), adverbialeAngabe,
                 getAdverbialeAngabeSkopusVerbWohinWoher()
         );
     }
 
     @Override
-    public PraedikatSubjObjOhneLeerstellen mitAdverbialerAngabe(
+    public PraedikatSubOhneLeerstellen mitAdverbialerAngabe(
             @Nullable final AdverbialeAngabeSkopusVerbWohinWoher adverbialeAngabe) {
         if (adverbialeAngabe == null) {
             return this;
@@ -97,9 +73,8 @@ public class PraedikatSubjObjOhneLeerstellen
 
         // TODO Mehrere adverbiale Angaben zulassen, damit die bestehende nicht
         //  einfach überschrieben wird!
-        return new PraedikatSubjObjOhneLeerstellen(
+        return new PraedikatSubOhneLeerstellen(
                 getVerb(),
-                kasusOderPraepositionalkasus, objekt,
                 getAdverbialeAngabeSkopusSatz(),
                 getAdverbialeAngabeSkopusVerbAllg(),
                 adverbialeAngabe
@@ -117,24 +92,6 @@ public class PraedikatSubjObjOhneLeerstellen
     }
 
     @Override
-    public @Nullable
-    String getSpeziellesVorfeld() {
-        @Nullable final String speziellesVorfeldFromSuper = super.getSpeziellesVorfeld();
-        if (speziellesVorfeldFromSuper != null) {
-            return speziellesVorfeldFromSuper;
-        }
-
-        final String objektImKasusOderPraepkasus = objekt.im(kasusOderPraepositionalkasus);
-        if (!"es".equals(objektImKasusOderPraepkasus)) {
-            // Wenn "es" ein Objekt ist, darf es nicht im Vorfeld stehen.
-            // (Eisenberg Der Satz 5.4.2)
-            return objektImKasusOderPraepkasus;  // "den Frosch"
-        }
-
-        return null;
-    }
-
-    @Override
     public String getMittelfeld(final Collection<Modalpartikel> modalpartikeln,
                                 final Person personSubjekt,
                                 final Numerus numerusSubjekt) {
@@ -142,8 +99,7 @@ public class PraedikatSubjObjOhneLeerstellen
                 getAdverbialeAngabeSkopusSatz(), // "aus einer Laune heraus"
                 joinToNull(modalpartikeln), // "mal eben"
                 getAdverbialeAngabeSkopusVerbAllg(), // "erneut"
-                objekt.im(kasusOderPraepositionalkasus),
-                getAdverbialeAngabeSkopusVerbWohinWoher() // "auf den Tisch"
+                getAdverbialeAngabeSkopusVerbWohinWoher() // "in den Wald"
         );
     }
 
@@ -154,16 +110,7 @@ public class PraedikatSubjObjOhneLeerstellen
     }
 
     @Override
-    public boolean umfasstSatzglieder() {
-        return true;
-    }
-
-    @Override
     public boolean isPartikelverbMitSeinPerfektOhneAkkusativobjekt() {
-        if (kasusOderPraepositionalkasus == Kasus.AKK) {
-            return false;
-        }
-
         return getVerb().isPartikelverbMitSeinPerfekt();
     }
 }

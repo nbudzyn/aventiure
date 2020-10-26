@@ -113,6 +113,11 @@ public class PraedikatDatAkkOhneLeerstellen extends AbstractPraedikatOhneLeerste
     }
 
     @Override
+    public boolean kannPartizipIIPhraseAmAnfangOderMittenImSatzVerwendetWerden() {
+        return true;
+    }
+
+    @Override
     public @Nullable
     String getSpeziellesVorfeld() {
         @Nullable final String speziellesVorfeldFromSuper = super.getSpeziellesVorfeld();
@@ -177,5 +182,15 @@ public class PraedikatDatAkkOhneLeerstellen extends AbstractPraedikatOhneLeerste
     public String getNachfeld(final Person personSubjekt,
                               final Numerus numerusSubjekt) {
         return null;
+    }
+
+    @Override
+    public boolean umfasstSatzglieder() {
+        return true;
+    }
+
+    @Override
+    public boolean isPartikelverbMitSeinPerfektOhneAkkusativobjekt() {
+        return false;
     }
 }
