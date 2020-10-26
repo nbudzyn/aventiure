@@ -159,11 +159,7 @@ public class PraedikatSubjObjOhneLeerstellen
     }
 
     @Override
-    public boolean isPartikelverbMitSeinPerfektOhneAkkusativobjekt() {
-        if (kasusOderPraepositionalkasus == Kasus.AKK) {
-            return false;
-        }
-
-        return getVerb().isPartikelverbMitSeinPerfekt();
+    public boolean hatAkkusativobjekt() {
+        return kasusOderPraepositionalkasus == Kasus.AKK;
     }
 }

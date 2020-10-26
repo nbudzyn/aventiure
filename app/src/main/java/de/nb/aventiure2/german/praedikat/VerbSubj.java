@@ -16,6 +16,9 @@ public enum VerbSubj implements PraedikatOhneLeerstellen {
     ANKOMMEN("ankommen", "kommst", "an",
             Perfektbildung.SEIN, "angekommen"),
     // FIXME Suchen, ersetzen durch Praedikats-DuDesc, Anschluss testen
+    AUFSTEHEN("aufstehen", "stehst", "auf",
+            Perfektbildung.SEIN, "aufgestanden"),
+    // FIXME Suchen, ersetzen durch Praedikats-DuDesc, Anschluss testen
     AUFWACHEN("aufwachen", "wachst", "auf",
             Perfektbildung.SEIN, "aufgewacht"),
     // FIXME Suchen, ersetzen durch Praedikats-DuDesc, Anschluss testen
@@ -23,9 +26,7 @@ public enum VerbSubj implements PraedikatOhneLeerstellen {
             Perfektbildung.SEIN, "eingetreten"),
     // FIXME Suchen, ersetzen durch Praedikats-DuDesc, Anschluss testen
     HEREINKOMMEN("hereinkommen", "kommst", "herein",
-            Perfektbildung.SEIN, "hereingekommen"),
-
-    ;
+            Perfektbildung.SEIN, "hereingekommen");
 
     /**
      * Das Verb an sich, ohne Informationen zur Valenz, ohne Ergänzungen, ohne
@@ -121,8 +122,20 @@ public enum VerbSubj implements PraedikatOhneLeerstellen {
     }
 
     @Override
-    public boolean isPartikelverbMitSeinPerfektOhneAkkusativobjekt() {
-        return verb.isPartikelverbMitSeinPerfekt();
+    public boolean bildetPerfektMitSein() {
+        return verb.getPerfektbildung() == Perfektbildung.SEIN;
+    }
+
+    @Override
+    public boolean hatAkkusativobjekt() {
+        return false;
+    }
+
+    @Override
+    public boolean isBezugAufNachzustandDesAktantenGegeben() {
+        // Bei "weggehen" ist ein Bezug auf den Nachzustand des Aktanten gegeben, bei
+        // "gehen" nicht
+        return verb.isPartikelverb();
     }
 
     private PraedikatSubOhneLeerstellen toPraedikatSubj() {

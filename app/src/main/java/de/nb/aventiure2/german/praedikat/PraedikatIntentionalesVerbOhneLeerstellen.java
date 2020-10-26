@@ -152,7 +152,7 @@ public class PraedikatIntentionalesVerbOhneLeerstellen extends AbstractPraedikat
     }
 
     @Override
-    public boolean isPartikelverbMitSeinPerfektOhneAkkusativobjekt() {
-        return getVerb().isPartikelverbMitSeinPerfekt();
+    public boolean hatAkkusativobjekt() {
+        return false;
     }
 }

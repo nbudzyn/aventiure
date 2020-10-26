@@ -104,12 +104,12 @@ public class Verb {
         return partikel;
     }
 
-    public boolean isPartikelverbMitSeinPerfekt() {
-        if (partikel == null) {
-            return false;
-        }
+    public Perfektbildung getPerfektbildung() {
+        return perfektbildung;
+    }
 
-        return perfektbildung == Perfektbildung.SEIN;
+    public boolean isPartikelverb() {
+        return partikel != null;
     }
 
     @NonNull
@@ -145,4 +145,5 @@ public class Verb {
                 "infinitiv='" + infinitiv + '\'' +
                 '}';
     }
+
 }

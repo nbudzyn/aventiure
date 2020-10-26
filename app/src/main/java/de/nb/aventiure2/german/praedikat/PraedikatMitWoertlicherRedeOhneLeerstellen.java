@@ -138,7 +138,7 @@ public class PraedikatMitWoertlicherRedeOhneLeerstellen
     }
 
     @Override
-    public boolean isPartikelverbMitSeinPerfektOhneAkkusativobjekt() {
-        return getVerb().isPartikelverbMitSeinPerfekt();
+    public boolean hatAkkusativobjekt() {
+        return false;
     }
 }

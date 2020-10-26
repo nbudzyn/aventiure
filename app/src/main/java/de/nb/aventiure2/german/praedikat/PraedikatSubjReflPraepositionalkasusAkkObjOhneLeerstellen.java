@@ -158,7 +158,12 @@ class PraedikatSubjReflPraepositionalkasusAkkObjOhneLeerstellen
     }
 
     @Override
-    public boolean isPartikelverbMitSeinPerfektOhneAkkusativobjekt() {
-        return false;
+    public boolean hatAkkusativobjekt() {
+        return true;
+    }
+
+    @Override
+    public boolean isBezugAufNachzustandDesAktantenGegeben() {
+        return true;
     }
 }

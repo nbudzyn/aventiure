@@ -126,6 +126,15 @@ public interface PraedikatOhneLeerstellen extends Praedikat, AbstractDuTextPart 
      */
     boolean umfasstSatzglieder();
 
-    boolean isPartikelverbMitSeinPerfektOhneAkkusativobjekt();
+    boolean bildetPerfektMitSein();
 
+    boolean hatAkkusativobjekt();
+
+    /**
+     * Gibt zurück, ob durch das Prädikat ein Bezug auf den Nachzustand gegeben ist.
+     * Z.B. ist bei "nach Berlin gehen" ein Bezug auf den Nachzustand gegeben (Aktant ist
+     * in Berlin) - bei "gehen" jedoch nicht. Auch bei "hinausgehen" oder "weggehen" ist ein
+     * Bezug auf den Nachzustand gegeben.
+     */
+    boolean isBezugAufNachzustandDesAktantenGegeben();
 }

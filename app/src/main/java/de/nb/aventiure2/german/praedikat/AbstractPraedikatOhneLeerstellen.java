@@ -193,6 +193,11 @@ public abstract class AbstractPraedikatOhneLeerstellen
     public abstract String getNachfeld(Person personSubjekt,
                                        Numerus numerusSubjekt);
 
+    @Override
+    public boolean bildetPerfektMitSein() {
+        return verb.getPerfektbildung() == Perfektbildung.SEIN;
+    }
+
     @NonNull
     protected Verb getVerb() {
         return verb;
@@ -219,4 +224,16 @@ public abstract class AbstractPraedikatOhneLeerstellen
                 adverbialeAngabeSkopusVerbAllg != null ||
                 adverbialeAngabeSkopusVerbWohinWoher != null;
     }
+
+    @Override
+    public boolean isBezugAufNachzustandDesAktantenGegeben() {
+        // Bei "weggehen" ist ein Bezug auf den Nachzustand des Aktanten gegeben.
+        return verb.isPartikelverb() ||
+                // Auch bei "nach Berlin gehen" ist ein Bezug auf den Nachzustand des
+                // Aktanten gegeben.
+                adverbialeAngabeSkopusVerbWohinWoher != null;
+
+        // Sonst ("gehen", "endlich gehen") eher nicht.
+    }
+
 }

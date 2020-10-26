@@ -190,7 +190,7 @@ public class PraedikatDatAkkOhneLeerstellen extends AbstractPraedikatOhneLeerste
     }
 
     @Override
-    public boolean isPartikelverbMitSeinPerfektOhneAkkusativobjekt() {
-        return false;
+    public boolean hatAkkusativobjekt() {
+        return true;
     }
 }

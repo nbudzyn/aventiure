@@ -186,11 +186,7 @@ public class PraedikatDirektivesVerbOhneLeerstellen extends AbstractPraedikatOhn
     }
 
     @Override
-    public boolean isPartikelverbMitSeinPerfektOhneAkkusativobjekt() {
-        if (kasus == Kasus.AKK) {
-            return false;
-        }
-
-        return getVerb().isPartikelverbMitSeinPerfekt();
+    public boolean hatAkkusativobjekt() {
+        return kasus == Kasus.AKK;
     }
 }

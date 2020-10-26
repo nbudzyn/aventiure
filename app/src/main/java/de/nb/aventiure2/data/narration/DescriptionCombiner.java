@@ -86,7 +86,9 @@ public class DescriptionCombiner {
         //  "Unten angekommen bist du ziemlich erschöpft"
 
         if (first.kannPartizipIIPhraseAmAnfangOderMittenImSatzVerwendetWerden() &&
-                first.getPraedikat().isPartikelverbMitSeinPerfektOhneAkkusativobjekt() &&
+                first.getPraedikat().bildetPerfektMitSein() &&
+                !first.getPraedikat().hatAkkusativobjekt() &&
+                first.getPraedikat().isBezugAufNachzustandDesAktantenGegeben() &&
                 first.getPraedikat().umfasstSatzglieder() &&
                 second.getStartsNew() == WORD) {
             final DescriptionParams params = second.copyParams();

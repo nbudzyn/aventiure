@@ -144,8 +144,18 @@ class ZweiPraedikateOhneLeerstellen implements PraedikatOhneLeerstellen {
     }
 
     @Override
-    public boolean isPartikelverbMitSeinPerfektOhneAkkusativobjekt() {
-        return ersterSatz.isPartikelverbMitSeinPerfektOhneAkkusativobjekt() &&
-                zweiterSatz.isPartikelverbMitSeinPerfektOhneAkkusativobjekt();
+    public boolean bildetPerfektMitSein() {
+        return ersterSatz.bildetPerfektMitSein() && zweiterSatz.bildetPerfektMitSein();
+    }
+
+    @Override
+    public boolean hatAkkusativobjekt() {
+        return ersterSatz.hatAkkusativobjekt() || zweiterSatz.hatAkkusativobjekt();
+    }
+
+    @Override
+    public boolean isBezugAufNachzustandDesAktantenGegeben() {
+        return ersterSatz.isBezugAufNachzustandDesAktantenGegeben() &&
+                zweiterSatz.isBezugAufNachzustandDesAktantenGegeben();
     }
 }
