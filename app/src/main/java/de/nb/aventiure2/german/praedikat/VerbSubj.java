@@ -28,6 +28,9 @@ public enum VerbSubj implements PraedikatOhneLeerstellen {
     HEREINKOMMEN("hereinkommen", "kommst", "herein",
             Perfektbildung.SEIN, "hereingekommen");
 
+    // FIXME Suchen nach "hinauf", "hinab", "herauf", "herab", "hinein", "hinaus"
+    //  "aus", "in"
+
     /**
      * Das Verb an sich, ohne Informationen zur Valenz, ohne Ergänzungen, ohne
      * Angaben

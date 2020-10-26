@@ -104,6 +104,7 @@ public class Verb {
         return partikel;
     }
 
+    @NonNull
     public Perfektbildung getPerfektbildung() {
         return perfektbildung;
     }
