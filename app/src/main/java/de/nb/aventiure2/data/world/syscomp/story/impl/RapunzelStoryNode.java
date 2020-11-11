@@ -299,6 +299,7 @@ public enum RapunzelStoryNode implements IStoryNode {
                             + "hineinkommt?",
                     "bestimmt")
                     .beendet(PARAGRAPH));
+            // FIXME Mehr Hinweise, dass man die magere Frau heimlich beobachten sollte
         }
 
         if (loadZauberin(world).locationComp().hasSameUpperMostLocationAs(SPIELER_CHARAKTER) &&
@@ -330,7 +331,8 @@ public enum RapunzelStoryNode implements IStoryNode {
                                     +
                                     "du weißt doch, was du zu rufen hast! Du wirst doch keine Angst "
                                     + "vor der dürren Frau haben?"));
-
+            //  FIXME Dies hier nicht, wenn die Zauberin oben im Turm ist?
+            //   Es ist ja ein irreführender Tipp!
         } else {
             // SC hat alles vergessen
             if (!world.loadSC().locationComp().hasRecursiveLocation(VOR_DEM_ALTEN_TURM)) {
@@ -344,6 +346,7 @@ public enum RapunzelStoryNode implements IStoryNode {
                     "Manchmal hast du das Gefühl: Du hast noch eine wichtige Rolle "
                             + "zu spielen. Aber wenn du genauer darüber nachdenkst, weißt "
                             + "du plötzlich nicht weiter. Es ist wie verhext"));
+            // FIXME Mehr Texte für diesen Fall!
             alt.addAll(altTurmWohnenHineinHeraus(world));
         }
 

@@ -65,6 +65,7 @@ public class SchattenDerBaeumeFactory {
                         SchattenDerBaeumeFactory::getDescOut)
         );
 
+        // STORY Aus dem Schatten der Bäume: Auf einen Baum klettern?!
         return new StoringPlaceObject(id,
                 descriptionComp,
                 locationComp,

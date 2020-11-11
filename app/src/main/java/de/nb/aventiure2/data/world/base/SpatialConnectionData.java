@@ -46,6 +46,9 @@ public class SpatialConnectionData {
     public static SpatialConnectionData conData(
             final String wo,
             final String actionName,
+            // FIXME Für eine Connection, bei der man schon weiß, wohin sie führt (wo man schon
+            //  war), eine konkretere Aktionsbeschreibung verwenden:
+            //  "Zum Turm gehen", "Zum Brunnen gehen".
             final AvTimeSpan standardDuration,
             final SCMoveDescriptionProvider scMoveDescriptionProvider) {
         return new SpatialConnectionData(

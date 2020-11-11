@@ -106,10 +106,14 @@ public class FroschprinzReactionsComp
                 && !from.is(SCHLOSS_VORHALLE_AM_TISCH_BEIM_FEST)) {
             n.narrateAlt(
                     neuerSatz("„Warte, warte“, ruft dir der Frosch noch nach, „nimm mich mit, "
-                            + "ich kann nicht so "
-                            + "laufen wie du.“ Aber was hilft ihm, dass er "
-                            + "sein „Quak, quak!“ so laut schreit, "
-                            + "als er kann, du hörst nicht darauf", noTime())
+                                    + "ich kann nicht so "
+                                    + "laufen wie du.“ Aber was hilft ihm, dass er "
+                                    + "sein „Quak, quak!“ so laut schreit, "
+                                    + "als er kann, du hörst nicht darauf",
+                            // FIXME "Du hörst ihn gar nicht mehr" statt "Du hörst nicht darauf"?
+                            //  Möglichst keine Bevormundung, sondern dem Benutzer Freiheit
+                            //  suggerieren.
+                            noTime())
                             .undWartest(),
                     neuerSatz("„Halt!“, ruft der Frosch dir nach, „nimm mich mit!“",
                             noTime())
@@ -558,7 +562,9 @@ public class FroschprinzReactionsComp
                     secs(5))
                     .beendet(PARAGRAPH));
         }
-
+        // FIXME Wenn man nicht erlebt, wie der Frosch weghüpft: "Der Frosch ist verschwunden"
+        //  oder ähnlich, wenn man wieder an den Ort zurückkommt, wo man den Frosch
+        //  abgesetzt (oder zuletzt gesehen) hat. (Assumed Locations verwenden?)
         locationComp.narrateAndUnsetLocation();
 
         stateComp.narrateAndSetState(AUF_DEM_WEG_ZUM_SCHLOSSFEST);

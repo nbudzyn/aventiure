@@ -71,6 +71,8 @@ public class ImWaldNaheDemSchlossConnectionComp extends AbstractSpatialConnectio
                 con(DRAUSSEN_VOR_DEM_SCHLOSS,
                         "auf dem Weg aus dem Wald",
                         "Den Wald verlassen",
+                        // FIXME Statt "den Wald verlassen" klarer "Den Schlossgarten betreten"
+                        //  (wenn "Schlossgarten" o.Ä. schon erwähnt wurde).
                         mins(10),
                         this::getDescTo_DraussenVorDemSchloss),
                 con(VOR_DEM_ALTEN_TURM,

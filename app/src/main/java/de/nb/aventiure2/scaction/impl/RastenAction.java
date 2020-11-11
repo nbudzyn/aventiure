@@ -64,6 +64,18 @@ public class RastenAction extends AbstractScAction {
 
     @Override
     public void narrateAndDo() {
+        // FIXME "Auf die magere Frau warten" als Aktion?
+        //  - Nur unter gewissen Umständen?
+        //  - Oder als allgemeines Konzept?
+
+        // FIXME Ab einem Punkt, wo man davon ausgehen kann, dass der Spieler
+        //  bewusst rastet, um die Frau zu beobachten, sollte die Frau nach 4x Rasten gekommen
+        //  sein.
+        //  - Die Frau könnte umkehren.
+        //  - Oder die Rast-Zeit wird entsprechend angepasst.
+
+        //  FIXME Mehrere verschiedenen bestätigende Texte, dass sich das Rasten lohnt
+        //   (damit der Spieler nicht zu bald aufgibt).
         if (isDefinitivWiederholung() &&
                 ((IHasStateGO<RapunzelState>) world.load(RAPUNZEL)).stateComp()
                         .hasState(SINGEND)) {
@@ -157,6 +169,7 @@ public class RastenAction extends AbstractScAction {
                         mins(10))
                         .beendet(SENTENCE)
                         .dann(),
+                // FIXME Nur, wenn man ausreichend müde (erschöpft) ist
                 neuerSatz("Deine müden Glieder brauchen Erholung. Du bist ganz "
                         + "still und die Vögel setzen sich "
                         + "auf die Äste über dir "

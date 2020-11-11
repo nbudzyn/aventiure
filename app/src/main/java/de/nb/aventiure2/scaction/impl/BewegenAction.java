@@ -81,6 +81,9 @@ public class BewegenAction<LOC_DESC extends ILocatableGO & IDescribableGO>
             @NonNull final ILocationGO location) {
         final ImmutableList.Builder<AbstractScAction> res = builder();
 
+        //  FIXME Man könnte "Der mageren Frau heimlich folgen", wenn sie gerade in eine
+        //   Richtung gegangen ist? Dann würde man sie heimlich beobachten (nicht überholen!),
+        //   wie sie den Turm hinaufsteigt.
         if (location instanceof ISpatiallyConnectedGO) {
             res.addAll(buildSpatiallyConnectedActions(db, n, world,
                     (ILocationGO & ISpatiallyConnectedGO) location));

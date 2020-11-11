@@ -319,6 +319,10 @@ public enum FroschkoenigStoryNode implements IStoryNode {
 
         if (world.loadSC().locationComp().hasRecursiveLocation(HUETTE_IM_WALD)) {
             if (world.loadSC().feelingsComp().getMuedigkeit() >= FeelingIntensity.MERKLICH) {
+                // FIXME Hier entfernen / reduzieren und an eine zentrale Stelle verschieben,
+                //  die Müdigkeit beschreibt? Oder duplizieren?
+                //  Evtl. auch ein Konzept wie "wird mit Schlafgelegenheit konfrontiert"
+                //  (ähnlich Hunger)?
                 alt.add(du(PARAGRAPH,
                         "solltest", "etwas schlafen")
                         .beendet(PARAGRAPH));

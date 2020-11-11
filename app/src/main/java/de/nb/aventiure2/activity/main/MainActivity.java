@@ -125,6 +125,7 @@ public class MainActivity extends AppCompatActivity {
         narrationTextView.setText(ss);
         final int scrollDuration = calcScrollDuration(oldText, newText);
 
+        // FIXME Neuen Text nicht rausscrollen lassen
         scrollToBottom(scrollDuration);
     }
 

@@ -82,6 +82,8 @@ public class SimpleConnectionCompFactory {
                                 + "Bett wenig zu sehen gibt", secs(15))
                                 .komma()
                                 .undWartest()),
+                // FIXME Klar machen, dass die Hütte kein kühler Ort ist! "Die hütte ist
+                //  ordentlich aufgeheizt" oder ähnlich
                 con(HINTER_DER_HUETTE,
                         "im Garten",
                         "Um die Hütte herumgehen",
@@ -178,6 +180,8 @@ public class SimpleConnectionCompFactory {
                         "In Richtung Schloss gehen",
                         mins(5),
                         du("gehst", "weiter in Richtung Schloss", mins(5))
+                        // FIXME Besser etwas wie "Du kommst wieder an die Abzweigung
+                        //  in zum Turm" o.Ä. - wenn man den Turm schon kennt.
                 ),
 
                 con(VOR_DER_HUETTE_IM_WALD,

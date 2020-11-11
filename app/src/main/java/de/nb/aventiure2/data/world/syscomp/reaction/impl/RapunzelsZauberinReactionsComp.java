@@ -100,6 +100,8 @@ public class RapunzelsZauberinReactionsComp
                         @Nullable final ILocationGO to) {
         //  STORY Hexe reagiert auf Kugel hinlegen, werfen.
 
+        // FIXME Wenn der SC sich ins Unterholz setzt und die  Zauberin zusieht:
+        //  "Die Frau hat dich gesehen", "Die Frau schickt dir böse Blicke hinterher" o.Ä.
         talkingComp.updateSchonBegruesstMitSCOnLeave(locatable, from, to);
 
         // Wenn die Zauberin den SC verlässt, ...
@@ -415,6 +417,8 @@ public class RapunzelsZauberinReactionsComp
             ortsbeschreibung = "stehst ganz allein vor dem alten Turm";
         }
 
+        // FIXME Im Text klarer machen, dass der SC verzaubert wurde:
+        //  "Du füllst dich wie verhext", "auf einmal ist alles wie weggeblasen" o.Ä.
         n.narrate(neuerSatz(CHAPTER,
                 "Du " +
                         ortsbeschreibung +
