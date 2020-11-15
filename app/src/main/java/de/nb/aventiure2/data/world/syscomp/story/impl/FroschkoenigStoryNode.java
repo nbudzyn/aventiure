@@ -319,17 +319,10 @@ public enum FroschkoenigStoryNode implements IStoryNode {
 
         if (world.loadSC().locationComp().hasRecursiveLocation(HUETTE_IM_WALD)) {
             if (world.loadSC().feelingsComp().getMuedigkeit() >= FeelingIntensity.MERKLICH) {
-                // FIXME Hier entfernen / reduzieren und an eine zentrale Stelle verschieben,
-                //  die Müdigkeit beschreibt? Oder duplizieren?
-                //  Evtl. auch ein Konzept wie "wird mit Schlafgelegenheit konfrontiert"
-                //  (ähnlich Hunger)?
                 alt.add(du(PARAGRAPH,
-                        "solltest", "etwas schlafen")
+                        "wirst", "ausgeschlafen mehr ausrichten können",
+                        "ausgeschlafen")
                         .beendet(PARAGRAPH));
-                alt.add(du(PARAGRAPH,
-                        "kannst", "gewiss eine Mütze Schlaf gebrauchen!")
-                        .beendet(PARAGRAPH));
-                alt.add(paragraph("Ein Bett!"));
             } else {
                 alt.add(du(PARAGRAPH,
                         "bist", "vom Tag noch ganz aufgedreht")

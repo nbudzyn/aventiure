@@ -218,12 +218,6 @@ class FeelingsPCD extends AbstractPersistentComponentData {
         }
 
         muedigkeit = Math.max(muedigkeit, getTemporaereMinimalmuedigkeitSofernRelevant(now));
-        // FIXME "Temporäre Müdigkeit": Der SC wird
-        //  z.B. nach dem Essen etwas müde. Endet aber
-        //  nach z.B. 90 Minuten.
-
-        // FIXME alle "erschöpft / müde / schlaf / Nacht..." Texte finden - retrofitten auf das neue
-        //  Konzept!
 
         setMuedigkeit(muedigkeit);
     }

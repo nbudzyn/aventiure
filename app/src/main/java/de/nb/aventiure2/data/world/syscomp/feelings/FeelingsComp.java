@@ -26,6 +26,7 @@ import static de.nb.aventiure2.german.base.StructuralElement.PARAGRAPH;
 import static de.nb.aventiure2.german.base.StructuralElement.SENTENCE;
 import static de.nb.aventiure2.german.description.DescriptionBuilder.du;
 import static de.nb.aventiure2.german.description.DescriptionBuilder.neuerSatz;
+import static de.nb.aventiure2.german.description.DescriptionBuilder.paragraph;
 
 /**
  * Component for a {@link GameObject}: The game object
@@ -292,8 +293,52 @@ public class FeelingsComp extends AbstractStatefulComponent<FeelingsPCD> {
         }
     }
 
+    public void narrateAndDoSCMitSchlafgelegenheitKonfrontiert() {
+        final int muedigkeit = getMuedigkeit();
+        switch (muedigkeit) {
+            case FeelingIntensity.NEUTRAL:
+                // fall-through
+            case FeelingIntensity.NUR_LEICHT:
+                return;
+
+            case FeelingIntensity.MERKLICH:
+            case FeelingIntensity.DEUTLICH:
+                n.narrateAlt(noTime(),
+                        du(PARAGRAPH,
+                                "solltest", "etwas schlafen")
+                                .beendet(PARAGRAPH),
+                        du(PARAGRAPH,
+                                "kannst", "gewiss eine Mütze Schlaf gebrauchen!")
+                                .beendet(PARAGRAPH),
+                        paragraph("Ein Bett!"));
+                return;
+            case FeelingIntensity.STARK:
+                n.narrateAlt(noTime(),
+                        du(PARAGRAPH,
+                                "solltest", "etwas schlafen")
+                                .beendet(PARAGRAPH),
+                        neuerSatz(PARAGRAPH,
+                                "es ist Zeit, schlafen zu gehen!")
+                                .beendet(PARAGRAPH),
+                        neuerSatz(PARAGRAPH,
+                                "Zeit, sich schlafen zu legen.")
+                                .beendet(PARAGRAPH)
+                );
+
+            case FeelingIntensity.SEHR_STARK:
+            case FeelingIntensity.PATHOLOGISCH:
+                n.narrateAlt(noTime(),
+                        neuerSatz(PARAGRAPH,
+                                "Höchste Zeit, schlafen zu gehen!")
+                                .beendet(PARAGRAPH)
+                );
+            default:
+                throw new IllegalStateException("Unerwartete Müdigkeit: " + muedigkeit);
+        }
+    }
+
     private void narrateAnDoSCMitEssenKonfrontiertReagiertHungrig() {
-        // FIXME Hunger - sinnvoll machen... -- vollgefressen -> müde?
+        // FIXME Hunger - sinnvoll machen... -- vollgefressen -> müde? (z.B. für 90 Minuten)
 
         n.narrateAlt(noTime(),
                 neuerSatz("Mmh!")
@@ -329,25 +374,26 @@ public class FeelingsComp extends AbstractStatefulComponent<FeelingsPCD> {
         switch (muedigkeitNeu) {
             case FeelingIntensity.NUR_LEICHT:
                 return ImmutableList.of(
-                        // "Dann spürst du die Anstrengung" verhindern!
-                        neuerSatz("Du spürst die Anstrengung")
+                        du(PARAGRAPH, "fühlst", "dich ein wenig erschöpft")
+                                .beendet(PARAGRAPH),
+                        du(PARAGRAPH, "spürst", "die Anstrengung")
                                 .beendet(PARAGRAPH)
-                        // FIXME Hier weitere Texte zur Müdigkeit erzeugen (Bestehende Texte
-                        //  retrofitten!)
+                        // FIXME Hier weitere Texte zur Müdigkeit erzeugen
                 );
             case FeelingIntensity.DEUTLICH:
-                // FIXME Hier andere Texte zur Müdigkeit erzeugen (Bestehende Texte retrofitten!)
+                // FIXME Hier andere Texte zur Müdigkeit erzeugen
             case FeelingIntensity.STARK:
-                // FIXME Hier andere Texte zur Müdigkeit erzeugen (Bestehende Texte retrofitten!)
+                // FIXME Hier andere Texte zur Müdigkeit erzeugen
             case FeelingIntensity.SEHR_STARK:
-                // FIXME Hier andere Texte zur Müdigkeit erzeugen (Bestehende Texte retrofitten!)
+                // FIXME Hier andere Texte zur Müdigkeit erzeugen
             case FeelingIntensity.PATHOLOGISCH:
-                // FIXME Hier andere Texte zur Müdigkeit erzeugen (Bestehende Texte retrofitten!)
+                // FIXME Hier andere Texte zur Müdigkeit erzeugen
             case FeelingIntensity.MERKLICH:
                 return ImmutableList.of(
                         // Kann z.B. mit dem Vorsatz kombiniert werden zu etwas wie
                         // "Unten angekommen bist du ziemlich erschöpft..."
-                        du("bist", "ziemlich erschöpft. Ein Nickerchen täte dir gut")
+                        du("bist", "ziemlich erschöpft; ein Nickerchen täte dir "
+                                + "gut")
                                 .beendet(PARAGRAPH),
                         du("bist", "ziemlich erschöpft. Und müde")
                                 .beendet(PARAGRAPH),

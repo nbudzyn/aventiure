@@ -37,7 +37,7 @@ public class GOReactionsCoordinator
     private final AvNowDao nowDao;
     private final Narrator n;
 
-    // TODO ReactionCoordinaror zum zentralen Teil eines ReactionSystems machen?
+    // TODO ReactionCoordinator zum zentralen Teil eines ReactionSystems machen?
 
     GOReactionsCoordinator(final Narrator n,
                            final World world, final AvNowDao nowDao) {

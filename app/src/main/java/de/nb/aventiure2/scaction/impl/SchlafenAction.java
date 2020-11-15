@@ -182,6 +182,7 @@ public class SchlafenAction extends AbstractScAction {
                         "nur kurz"
                 )
                         .beendet(CHAPTER),
+                // FIXME Das hier nur, wenn die Müdigkeit nicht zu hoch ist
                 neuerSatz("Jetzt, da du liegst, fällt dir erst auf, wir erschöpft du "
                         + "eigentlich bist. Nur ganz kurz die Augen schließen…")
                         .beendet(CHAPTER),
