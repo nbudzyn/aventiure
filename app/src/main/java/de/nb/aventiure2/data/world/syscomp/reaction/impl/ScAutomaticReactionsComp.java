@@ -5,6 +5,7 @@ import de.nb.aventiure2.data.narration.Narrator;
 import de.nb.aventiure2.data.world.gameobject.*;
 import de.nb.aventiure2.data.world.syscomp.feelings.FeelingsComp;
 import de.nb.aventiure2.data.world.syscomp.reaction.AbstractReactionsComp;
+import de.nb.aventiure2.data.world.syscomp.reaction.interfaces.ISCActionReactions;
 import de.nb.aventiure2.data.world.syscomp.reaction.interfaces.ITimePassedReactions;
 import de.nb.aventiure2.data.world.time.*;
 
@@ -16,7 +17,7 @@ import static de.nb.aventiure2.data.world.gameobject.World.*;
  */
 public class ScAutomaticReactionsComp
         extends AbstractReactionsComp
-        implements ITimePassedReactions {
+        implements ITimePassedReactions, ISCActionReactions {
     private final FeelingsComp feelingsComp;
 
     public ScAutomaticReactionsComp(final AvDatabase db,
@@ -30,5 +31,10 @@ public class ScAutomaticReactionsComp
     @Override
     public void onTimePassed(final AvDateTime startTime, final AvDateTime endTime) {
         feelingsComp.onTimePassed(startTime, endTime);
+    }
+
+    @Override
+    public void afterScActionAndFirstWorldUpdate() {
+        feelingsComp.narrateScMuedigkeitIfNecessary();
     }
 }

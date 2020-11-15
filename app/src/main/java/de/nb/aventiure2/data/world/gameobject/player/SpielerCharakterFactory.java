@@ -85,6 +85,7 @@ public class SpielerCharakterFactory {
     private static MuedigkeitsData createInitialMuedigkeitsData() {
         return new MuedigkeitsData(
                 FeelingIntensity.NEUTRAL,
+                Integer.MAX_VALUE,
                 new AvDateTime(1, oClock(7)),
                 new AvDateTime(1, oClock(11)),
                 new AvDateTime(0, oClock(13,

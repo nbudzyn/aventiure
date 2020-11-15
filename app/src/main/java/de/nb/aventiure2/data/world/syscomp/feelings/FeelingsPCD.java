@@ -164,6 +164,7 @@ class FeelingsPCD extends AbstractPersistentComponentData {
 
     void ausgeschlafen(
             final AvDateTime now,
+            final int scActionStepCount,
             final AvTimeSpan ausschlafenEffektHaeltVorFuer,
             final int muedigkeitGemaessBiorhythmus) {
         setChanged();
@@ -176,11 +177,12 @@ class FeelingsPCD extends AbstractPersistentComponentData {
                                 now.plus(ausschlafenEffektHaeltVorFuer)
                         );
 
-        updateMuedigkeit(now, muedigkeitGemaessBiorhythmus);
+        updateMuedigkeit(now, scActionStepCount, muedigkeitGemaessBiorhythmus);
     }
 
     void upgradeTemporaereMinimalmuedigkeit(
             final AvDateTime now,
+            final int scActionStepCount,
             final int temporaereMinimalmuedigkeit, final AvTimeSpan duration,
             final int muedigkeitGemaessBiorhythmus) {
         setChanged();
@@ -193,7 +195,7 @@ class FeelingsPCD extends AbstractPersistentComponentData {
                                         temporaereMinimalmuedigkeit))
                         .withTemporaerMuedeBis(now.plus(duration));
 
-        updateMuedigkeit(now, muedigkeitGemaessBiorhythmus);
+        updateMuedigkeit(now, scActionStepCount, muedigkeitGemaessBiorhythmus);
     }
 
     public int getMuedigkeit() {
@@ -205,7 +207,8 @@ class FeelingsPCD extends AbstractPersistentComponentData {
      * als positiven {@link FeelingIntensity}-Wert zurück.
      * {@link FeelingIntensity#NEUTRAL} meint <i>wach</i>.
      */
-    void updateMuedigkeit(final AvDateTime now, final int muedigkeitGemaessBiorhythmus) {
+    void updateMuedigkeit(final AvDateTime now, final int scActionStepCount,
+                          final int muedigkeitGemaessBiorhythmus) {
         int muedigkeit = FeelingIntensity.NEUTRAL;
         if (!geradeAusgeschlafen(now)) {
             muedigkeit = muedigkeitGemaessBiorhythmus;
@@ -219,7 +222,7 @@ class FeelingsPCD extends AbstractPersistentComponentData {
 
         muedigkeit = Math.max(muedigkeit, getTemporaereMinimalmuedigkeitSofernRelevant(now));
 
-        setMuedigkeit(muedigkeit);
+        setMuedigkeit(scActionStepCount, muedigkeit);
     }
 
     private int getTemporaereMinimalmuedigkeitSofernRelevant(final AvDateTime dateTime) {
@@ -242,16 +245,30 @@ class FeelingsPCD extends AbstractPersistentComponentData {
         return muedigkeitsData.getAusschlafenEffektHaeltVorBis();
     }
 
-    private void setMuedigkeit(final int muedigkeit) {
+    private void setMuedigkeit(final int scActionStepCount, final int muedigkeit) {
         if (getMuedigkeit() == muedigkeit) {
             return;
         }
 
-        muedigkeitsData = muedigkeitsData.withMuedigkeit(muedigkeit);
+        muedigkeitsData =
+                muedigkeitsData.withMuedigkeit(muedigkeit,
+                        MuedigkeitsData.calcNextHinweisActionStepCount(
+                                scActionStepCount, muedigkeit));
 
         restrictMood();
 
         setChanged();
+    }
+
+    public void resetNextMuedigkeitshinweisActionStepCount(final int scActionStepCount) {
+        muedigkeitsData =
+                muedigkeitsData.withNextHinweisActionStepCount(
+                        MuedigkeitsData.calcNextHinweisActionStepCount(
+                                scActionStepCount, getMuedigkeit()));
+    }
+
+    boolean muedigkeitshinweisNoetig(final int scActionStepCount) {
+        return muedigkeitsData.hinweisNoetig(scActionStepCount);
     }
 
     /**

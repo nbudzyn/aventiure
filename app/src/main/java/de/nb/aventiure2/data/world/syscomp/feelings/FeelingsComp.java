@@ -17,6 +17,7 @@ import de.nb.aventiure2.data.world.base.GameObjectId;
 import de.nb.aventiure2.data.world.time.*;
 import de.nb.aventiure2.german.description.AbstractDescription;
 import de.nb.aventiure2.german.praedikat.AdverbialeAngabeSkopusSatz;
+import de.nb.aventiure2.scaction.stepcount.SCActionStepCountDao;
 
 import static com.google.common.base.Preconditions.checkArgument;
 import static de.nb.aventiure2.data.world.gameobject.World.*;
@@ -34,6 +35,8 @@ import static de.nb.aventiure2.german.description.DescriptionBuilder.paragraph;
  */
 public class FeelingsComp extends AbstractStatefulComponent<FeelingsPCD> {
     protected AvNowDao nowDao;
+
+    private final SCActionStepCountDao scActionStepCountDao;
 
     protected final Narrator n;
 
@@ -78,6 +81,7 @@ public class FeelingsComp extends AbstractStatefulComponent<FeelingsPCD> {
 
         nowDao = db.nowDao();
         this.n = n;
+        scActionStepCountDao = db.scActionStepCountDao();
         this.initialMood = initialMood;
         this.muedigkeitsBiorythmus = muedigkeitsBiorythmus;
         this.initialMuedigkeitsData = initialMuedigkeitsData;
@@ -144,7 +148,9 @@ public class FeelingsComp extends AbstractStatefulComponent<FeelingsPCD> {
     }
 
     public void ausgeschlafen(final AvTimeSpan ausschlafenEffektHaeltVorFuer) {
-        getPcd().ausgeschlafen(nowDao.now(), ausschlafenEffektHaeltVorFuer,
+        getPcd().ausgeschlafen(nowDao.now(),
+                scActionStepCountDao.stepCount(),
+                ausschlafenEffektHaeltVorFuer,
                 getMuedigkeitGemaessBiorhythmus());
     }
 
@@ -315,7 +321,10 @@ public class FeelingsComp extends AbstractStatefulComponent<FeelingsPCD> {
             case FeelingIntensity.STARK:
                 n.narrateAlt(noTime(),
                         du(PARAGRAPH,
-                                "solltest", "etwas schlafen")
+                                "musst", "schlafen")
+                                .beendet(PARAGRAPH),
+                        du(PARAGRAPH,
+                                "willst", "schlafen")
                                 .beendet(PARAGRAPH),
                         neuerSatz(PARAGRAPH,
                                 "es ist Zeit, schlafen zu gehen!")
@@ -356,56 +365,68 @@ public class FeelingsComp extends AbstractStatefulComponent<FeelingsPCD> {
     private void narrateAndUpdateMuedigkeit() {
         final int muedigkeitBisher = getMuedigkeit();
 
-        getPcd().updateMuedigkeit(nowDao.now(), getMuedigkeitGemaessBiorhythmus());
+        getPcd().updateMuedigkeit(
+                nowDao.now(),
+                scActionStepCountDao.stepCount(),
+                getMuedigkeitGemaessBiorhythmus());
 
         narrateMuedigkeitEvtlGeaendert(muedigkeitBisher);
     }
 
-    private void narrateScWirdMuede(final int muedigkeitAlt, final int muedigkeitNeu) {
-        n.narrateAlt(altScWirdMuede(muedigkeitNeu), noTime());
+    private void narrateScWirdMuede() {
+        n.narrateAlt(altScWirdMuede(), noTime());
     }
 
-    private static Collection<AbstractDescription<?>> altScWirdMuede(final int muedigkeitNeu) {
+    private Collection<AbstractDescription<?>> altScWirdMuede() {
         checkArgument(
-                muedigkeitNeu > FeelingIntensity.NEUTRAL,
+                getMuedigkeit() > FeelingIntensity.NEUTRAL,
                 "Wird müde, aber FeelingIntensity ist NEUTRAL?"
         );
 
-        switch (muedigkeitNeu) {
-            case FeelingIntensity.NUR_LEICHT:
-                return ImmutableList.of(
-                        du(PARAGRAPH, "fühlst", "dich ein wenig erschöpft")
-                                .beendet(PARAGRAPH),
-                        du(PARAGRAPH, "spürst", "die Anstrengung")
-                                .beendet(PARAGRAPH)
-                        // FIXME Hier weitere Texte zur Müdigkeit erzeugen
-                );
-            case FeelingIntensity.DEUTLICH:
-                // FIXME Hier andere Texte zur Müdigkeit erzeugen
-            case FeelingIntensity.STARK:
-                // FIXME Hier andere Texte zur Müdigkeit erzeugen
-            case FeelingIntensity.SEHR_STARK:
-                // FIXME Hier andere Texte zur Müdigkeit erzeugen
-            case FeelingIntensity.PATHOLOGISCH:
-                // FIXME Hier andere Texte zur Müdigkeit erzeugen
-            case FeelingIntensity.MERKLICH:
-                return ImmutableList.of(
-                        // Kann z.B. mit dem Vorsatz kombiniert werden zu etwas wie
-                        // "Unten angekommen bist du ziemlich erschöpft..."
-                        du("bist", "ziemlich erschöpft; ein Nickerchen täte dir "
-                                + "gut")
-                                .beendet(PARAGRAPH),
-                        du("bist", "ziemlich erschöpft. Und müde")
-                                .beendet(PARAGRAPH),
-                        // FIXME "Das war anstrengend" nur, wenn
-                        //  die Müdikeit NICHT durch den Biorhythmus kam!
-                        neuerSatz("Das war anstrengend!")
-                                .beendet(PARAGRAPH)
-                );
+        final ImmutableList.Builder<AbstractDescription<?>> res = ImmutableList.builder();
 
-            default:
-                throw new IllegalStateException("Unexpected value: " + muedigkeitNeu);
+        res.add(
+                du(PARAGRAPH, "wirst",
+                        getPcd().getMuedigkeitsData().getAdjektivphrasePraedikativ()),
+                du(PARAGRAPH, "bist",
+                        getPcd().getMuedigkeitsData().getAdjektivphrasePraedikativ()),
+                du(PARAGRAPH, "bist",
+                        "auf einmal " +
+                                getPcd().getMuedigkeitsData().getAdjektivphrasePraedikativ()),
+                du(PARAGRAPH, "bist",
+                        "mit einem Mal " +
+                                getPcd().getMuedigkeitsData().getAdjektivphrasePraedikativ())
+        );
+
+        if (getMuedigkeit() == FeelingIntensity.NUR_LEICHT) {
+            res.add(
+                    du(PARAGRAPH, "fühlst", "dich ein wenig erschöpft")
+                            .beendet(PARAGRAPH),
+                    du(PARAGRAPH, "spürst", "die Anstrengung")
+                            .beendet(PARAGRAPH)
+                    // FIXME Hier weitere Texte zur leichten Müdigkeit erzeugen
+            );
         }
+
+        // FIXME Hier andere Texte zur Müdigkeit erzeugen
+
+        if (getMuedigkeit() == FeelingIntensity.MERKLICH) {
+            res.add(
+                    // Kann z.B. mit dem Vorsatz kombiniert werden zu etwas wie
+                    // "Unten angekommen bist du ziemlich erschöpft..."
+                    du("bist", "ziemlich erschöpft; ein Nickerchen täte dir "
+                            + "gut")
+                            .beendet(PARAGRAPH),
+                    du("bist", "ziemlich erschöpft. Und müde")
+                            .beendet(PARAGRAPH),
+                    // FIXME "Das war anstrengend" nur, wenn
+                    //  die Müdikeit NICHT durch den Biorhythmus kam!
+                    neuerSatz("Das war anstrengend!")
+                            .beendet(PARAGRAPH)
+            );
+        }
+
+        return res.build();
     }
 
     public void narrateAndUpgradeTemporaereMinimalmuedigkeit(
@@ -413,7 +434,8 @@ public class FeelingsComp extends AbstractStatefulComponent<FeelingsPCD> {
         final int muedigkeitBisher = getMuedigkeit();
 
         getPcd().upgradeTemporaereMinimalmuedigkeit(
-                nowDao.now(), temporaereMinimalmuedigkeit, duration,
+                nowDao.now(), scActionStepCountDao.stepCount(),
+                temporaereMinimalmuedigkeit, duration,
                 getMuedigkeitGemaessBiorhythmus());
 
         narrateMuedigkeitEvtlGeaendert(muedigkeitBisher);
@@ -422,8 +444,38 @@ public class FeelingsComp extends AbstractStatefulComponent<FeelingsPCD> {
     private void narrateMuedigkeitEvtlGeaendert(final int muedigkeitBisher) {
         if (getGameObjectId() == SPIELER_CHARAKTER &&
                 muedigkeitBisher < getMuedigkeit()) {
-            narrateScWirdMuede(muedigkeitBisher, getMuedigkeit());
+            narrateScWirdMuede();
         }
+    }
+
+    /**
+     * Beschreibt - sofern nötig - die aktuelle Müdigkeit des SC.
+     * (Dies ist eine Erinnerung an den Spieler.)
+     */
+    public void narrateScMuedigkeitIfNecessary() {
+        if (getGameObjectId() != SPIELER_CHARAKTER) {
+            return;
+        }
+
+        if (getMuedigkeit() == FeelingIntensity.NEUTRAL) {
+            return;
+        }
+
+        final int scActionStepCount = scActionStepCountDao.stepCount();
+        if (!getPcd().muedigkeitshinweisNoetig(scActionStepCount)) {
+            return;
+        }
+
+        narrateScMuedigkeitshinweis();
+
+        getPcd().resetNextMuedigkeitshinweisActionStepCount(
+                scActionStepCount
+        );
+    }
+
+    private void narrateScMuedigkeitshinweis() {
+        // FIXME "Du bist "(todmüde, ...) siehe MüdigkeitsData
+        //  "du bist so müde (von allem)" / "dass du auf der Stelle einschlafen könntest"
     }
 
     private int getMuedigkeitGemaessBiorhythmus() {
