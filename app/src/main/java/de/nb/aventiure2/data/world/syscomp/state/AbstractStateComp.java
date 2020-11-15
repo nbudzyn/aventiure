@@ -67,7 +67,6 @@ public abstract class AbstractStateComp<S extends Enum<S>>
         return fromString(getPcd().getState());
     }
 
-
     public void narrateAndSetState(final S state) {
         if (state.equals(getState())) {
             return;

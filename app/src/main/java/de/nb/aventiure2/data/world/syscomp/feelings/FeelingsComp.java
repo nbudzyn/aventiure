@@ -2,6 +2,9 @@ package de.nb.aventiure2.data.world.syscomp.feelings;
 
 import androidx.annotation.NonNull;
 
+import com.google.common.collect.ImmutableList;
+
+import java.util.Collection;
 import java.util.Map;
 
 import javax.annotation.CheckReturnValue;
@@ -12,8 +15,10 @@ import de.nb.aventiure2.data.world.base.AbstractStatefulComponent;
 import de.nb.aventiure2.data.world.base.GameObject;
 import de.nb.aventiure2.data.world.base.GameObjectId;
 import de.nb.aventiure2.data.world.time.*;
+import de.nb.aventiure2.german.description.AbstractDescription;
 import de.nb.aventiure2.german.praedikat.AdverbialeAngabeSkopusSatz;
 
+import static com.google.common.base.Preconditions.checkArgument;
 import static de.nb.aventiure2.data.world.gameobject.World.*;
 import static de.nb.aventiure2.data.world.syscomp.feelings.Hunger.SATT;
 import static de.nb.aventiure2.data.world.time.AvTimeSpan.*;
@@ -138,19 +143,8 @@ public class FeelingsComp extends AbstractStatefulComponent<FeelingsPCD> {
     }
 
     public void ausgeschlafen(final AvTimeSpan ausschlafenEffektHaeltVorFuer) {
-        final AvDateTime now = nowDao.now();
-        final int muedigkeitGemaessBiorhythmus = muedigkeitsBiorythmus.get(now.getTime());
-
-        getPcd().ausgeschlafen(now, ausschlafenEffektHaeltVorFuer, muedigkeitGemaessBiorhythmus);
-    }
-
-    public void upgradeTemporaereMinimalmuedigkeit(
-            final int temporaereMinimalmuedigkeit, final AvTimeSpan duration) {
-        final AvDateTime now = nowDao.now();
-        final int muedigkeitGemaessBiorhythmus = muedigkeitsBiorythmus.get(now.getTime());
-
-        getPcd().upgradeTemporaereMinimalmuedigkeit(
-                now, temporaereMinimalmuedigkeit, duration, muedigkeitGemaessBiorhythmus);
+        getPcd().ausgeschlafen(nowDao.now(), ausschlafenEffektHaeltVorFuer,
+                getMuedigkeitGemaessBiorhythmus());
     }
 
     /**
@@ -159,12 +153,6 @@ public class FeelingsComp extends AbstractStatefulComponent<FeelingsPCD> {
      */
     public int getMuedigkeit() {
         return getPcd().getMuedigkeit();
-    }
-
-    private void updateMuedigkeit() {
-        final int muedigkeitGemaeßBiorhythmus = muedigkeitsBiorythmus.get(nowDao.now().getTime());
-
-        getPcd().updateMuedigkeit(nowDao.now(), muedigkeitGemaeßBiorhythmus);
     }
 
     private void updateHunger() {
@@ -258,6 +246,11 @@ public class FeelingsComp extends AbstractStatefulComponent<FeelingsPCD> {
                              final AvDateTime endTime) {
         nowDao.setNow(endTime);
 
+        narrateAndUpdateHunger();
+        narrateAndUpdateMuedigkeit();
+    }
+
+    private void narrateAndUpdateHunger() {
         final Hunger hungerBisher = getHunger();
 
         updateHunger();
@@ -266,32 +259,22 @@ public class FeelingsComp extends AbstractStatefulComponent<FeelingsPCD> {
                 hungerBisher == SATT && getHunger() != SATT) {
             narrateScWirdHungrig();
         }
-
-        updateMuedigkeit();
-        // FIXME Hier Texte zur Müdigkeit erzeugen (retrofitten!)
     }
 
     private void narrateScWirdHungrig() {
-        n.narrateAlt(
-                du(PARAGRAPH, "fühlst", "dich allmählich etwas hungrig",
-                        noTime())
+        n.narrateAlt(noTime(),
+                du(PARAGRAPH, "fühlst", "dich allmählich etwas hungrig")
                         .undWartest(),
                 neuerSatz("Wann hast du eigentlich zuletzt etwas gegessen? Das "
-                                + "muss schon eine Weile her sein.",
-                        noTime()),
+                        + "muss schon eine Weile her sein."),
                 du(PARAGRAPH, "bekommst", "so langsam Hunger",
-                        "so langsam",
-                        noTime()),
-                neuerSatz(PARAGRAPH, "Allmählich überkommt dich der Hunger",
-                        noTime()),
-                neuerSatz(PARAGRAPH, "Allmählich regt sich wieder der Hunger",
-                        noTime())
+                        "so langsam"),
+                neuerSatz(PARAGRAPH, "Allmählich überkommt dich der Hunger"),
+                neuerSatz(PARAGRAPH, "Allmählich regt sich wieder der Hunger")
                         .undWartest(),
-                neuerSatz("Dir fällt auf, dass du Hunger hast",
-                        noTime())
+                neuerSatz("Dir fällt auf, dass du Hunger hast")
                         .komma(),
-                du("empfindest", "wieder leichten Hunger",
-                        noTime())
+                du("empfindest", "wieder leichten Hunger")
                         .undWartest()
         );
     }
@@ -312,16 +295,92 @@ public class FeelingsComp extends AbstractStatefulComponent<FeelingsPCD> {
     private void narrateAnDoSCMitEssenKonfrontiertReagiertHungrig() {
         // FIXME Hunger - sinnvoll machen... -- vollgefressen -> müde?
 
-        n.narrateAlt(
-                neuerSatz("Mmh!", noTime())
+        n.narrateAlt(noTime(),
+                neuerSatz("Mmh!")
                         .beendet(PARAGRAPH),
-                neuerSatz("Dir läuft das Wasser im Munde zusammen", noTime()),
-                du(SENTENCE, "hast", "Hunger", noTime())
+                neuerSatz("Dir läuft das Wasser im Munde zusammen"),
+                du(SENTENCE, "hast", "Hunger")
                         .undWartest(),
-                du(SENTENCE, "bist", "hungrig", noTime())
+                du(SENTENCE, "bist", "hungrig")
                         .undWartest(),
-                neuerSatz("Dir fällt auf, wie hungrig du bist", noTime())
+                neuerSatz("Dir fällt auf, wie hungrig du bist")
                         .komma()
         );
+    }
+
+    private void narrateAndUpdateMuedigkeit() {
+        final int muedigkeitBisher = getMuedigkeit();
+
+        getPcd().updateMuedigkeit(nowDao.now(), getMuedigkeitGemaessBiorhythmus());
+
+        narrateMuedigkeitEvtlGeaendert(muedigkeitBisher);
+    }
+
+    private void narrateScWirdMuede(final int muedigkeitAlt, final int muedigkeitNeu) {
+        n.narrateAlt(altScWirdMuede(muedigkeitNeu), noTime());
+    }
+
+    private static Collection<AbstractDescription<?>> altScWirdMuede(final int muedigkeitNeu) {
+        checkArgument(
+                muedigkeitNeu > FeelingIntensity.NEUTRAL,
+                "Wird müde, aber FeelingIntensity ist NEUTRAL?"
+        );
+
+        switch (muedigkeitNeu) {
+            case FeelingIntensity.NUR_LEICHT:
+                return ImmutableList.of(
+                        // "Dann spürst du die Anstrengung" verhindern!
+                        neuerSatz("Du spürst die Anstrengung")
+                                .beendet(PARAGRAPH)
+                        // FIXME Hier weitere Texte zur Müdigkeit erzeugen (Bestehende Texte
+                        //  retrofitten!)
+                );
+            case FeelingIntensity.DEUTLICH:
+                // FIXME Hier andere Texte zur Müdigkeit erzeugen (Bestehende Texte retrofitten!)
+            case FeelingIntensity.STARK:
+                // FIXME Hier andere Texte zur Müdigkeit erzeugen (Bestehende Texte retrofitten!)
+            case FeelingIntensity.SEHR_STARK:
+                // FIXME Hier andere Texte zur Müdigkeit erzeugen (Bestehende Texte retrofitten!)
+            case FeelingIntensity.PATHOLOGISCH:
+                // FIXME Hier andere Texte zur Müdigkeit erzeugen (Bestehende Texte retrofitten!)
+            case FeelingIntensity.MERKLICH:
+                return ImmutableList.of(
+                        // Kann z.B. mit dem Vorsatz kombiniert werden zu etwas wie
+                        // "Unten angekommen bist du ziemlich erschöpft..."
+                        du("bist", "ziemlich erschöpft. Ein Nickerchen täte dir gut")
+                                .beendet(PARAGRAPH),
+                        du("bist", "ziemlich erschöpft. Und müde")
+                                .beendet(PARAGRAPH),
+                        // FIXME "Das war anstrengend" nur, wenn
+                        //  die Müdikeit NICHT durch den Biorhythmus kam!
+                        neuerSatz("Das war anstrengend!")
+                                .beendet(PARAGRAPH)
+                );
+
+            default:
+                throw new IllegalStateException("Unexpected value: " + muedigkeitNeu);
+        }
+    }
+
+    public void narrateAndUpgradeTemporaereMinimalmuedigkeit(
+            final int temporaereMinimalmuedigkeit, final AvTimeSpan duration) {
+        final int muedigkeitBisher = getMuedigkeit();
+
+        getPcd().upgradeTemporaereMinimalmuedigkeit(
+                nowDao.now(), temporaereMinimalmuedigkeit, duration,
+                getMuedigkeitGemaessBiorhythmus());
+
+        narrateMuedigkeitEvtlGeaendert(muedigkeitBisher);
+    }
+
+    private void narrateMuedigkeitEvtlGeaendert(final int muedigkeitBisher) {
+        if (getGameObjectId() == SPIELER_CHARAKTER &&
+                muedigkeitBisher < getMuedigkeit()) {
+            narrateScWirdMuede(muedigkeitBisher, getMuedigkeit());
+        }
+    }
+
+    private int getMuedigkeitGemaessBiorhythmus() {
+        return muedigkeitsBiorythmus.get(nowDao.now().getTime());
     }
 }

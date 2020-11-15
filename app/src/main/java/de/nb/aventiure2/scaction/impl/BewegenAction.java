@@ -195,7 +195,7 @@ public class BewegenAction<LOC_DESC extends ILocatableGO & IDescribableGO>
             sc.feelingsComp().narrateAndDoSCMitEssenKonfrontiert();
         }
 
-        updateFeelings();
+        narrateAndUpdateFeelings();
 
         sc.locationComp().narrateAndSetLocation(spatialConnection.getTo(),
                 this::narrateNonLivingMovableObjectsAndUpgradeKnownAndSetLastAction);
@@ -379,19 +379,19 @@ public class BewegenAction<LOC_DESC extends ILocatableGO & IDescribableGO>
      * Aktualisiert den Gemütszustand des Spielercharakters. "Zeit heilt alle Wunden" - oder so
      * ähnlich.
      */
-    private void updateFeelings() {
+    private void narrateAndUpdateFeelings() {
         if (oldLocation.is(SCHLOSS_VORHALLE)
                 && spatialConnection.getTo().equals(DRAUSSEN_VOR_DEM_SCHLOSS)
                 && sc.feelingsComp().hasMood(Mood.ANGESPANNT)) {
             sc.feelingsComp().requestMood(Mood.NEUTRAL);
         } else if (spatialConnection.getTo().equals(BAUM_IM_GARTEN_HINTER_DER_HUETTE_IM_WALD) &&
                 db.counterDao().get(BaumFactory.HOCHKLETTERN) > 2) {
-            sc.feelingsComp().upgradeTemporaereMinimalmuedigkeit(
-                    FeelingIntensity.MERKLICH, mins(45)
+            sc.feelingsComp().narrateAndUpgradeTemporaereMinimalmuedigkeit(
+                    FeelingIntensity.NUR_LEICHT, mins(15)
             );
         } else if (oldLocation.is(BAUM_IM_GARTEN_HINTER_DER_HUETTE_IM_WALD) &&
                 db.counterDao().get(BaumFactory.HINABKLETTERN) != 2) {
-            sc.feelingsComp().upgradeTemporaereMinimalmuedigkeit(
+            sc.feelingsComp().narrateAndUpgradeTemporaereMinimalmuedigkeit(
                     FeelingIntensity.MERKLICH, mins(45)
             );
         } else if (sc.feelingsComp().hasMood(Mood.ETWAS_GEKNICKT)) {

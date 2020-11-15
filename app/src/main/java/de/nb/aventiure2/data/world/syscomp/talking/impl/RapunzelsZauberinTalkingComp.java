@@ -72,20 +72,18 @@ public class RapunzelsZauberinTalkingComp extends AbstractTalkingComp {
         final SubstantivischePhrase anaphOderDesc =
                 getAnaphPersPronWennMglSonstDescription(false);
 
-        n.narrateAlt(
+        n.narrateAlt(secs(10),
                 neuerSatz(PARAGRAPH, "„Wohin des Wegs, gute Frau“, sprichst du " +
-                                anaphOderDesc.akk() +
-                                " an. „Was geht es dich an?“, ist "
-                                + anaphOderDesc.possArt().vor(F).nom() // "ihre"
-                                + " abweisende Antwort",
-                        secs(10))
+                        anaphOderDesc.akk() +
+                        " an. „Was geht es dich an?“, ist "
+                        + anaphOderDesc.possArt().vor(F).nom() // "ihre"
+                        + " abweisende Antwort")
                         .phorikKandidat(anaphOderDesc, getGameObjectId()),
                 neuerSatz("„Ihr habt es wohl eilig?“, sprichst du " +
-                                anaphOderDesc.akk() +
-                                " an. „So ist es“, antwortet "
-                                + anaphOderDesc.persPron().nom()
-                                + " dir",
-                        secs(10))
+                        anaphOderDesc.akk() +
+                        " an. „So ist es“, antwortet "
+                        + anaphOderDesc.persPron().nom()
+                        + " dir")
                         .phorikKandidat(anaphOderDesc, getGameObjectId())
         );
 

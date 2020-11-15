@@ -123,17 +123,15 @@ public class RapunzelTalkingComp extends AbstractTalkingComp {
             return;
         }
 
-        n.narrateAlt(
+        n.narrateAlt(secs(15),
                 neuerSatz(
                         // STORY Nur, wenn SC und Rapunzel sich noch nicht gut kennen
-                        "„Die letzen Tage waren ziemlich warm“, sagst du",
-                        secs(15))
+                        "„Die letzen Tage waren ziemlich warm“, sagst du")
                         .beendet(PARAGRAPH),
                 neuerSatz(
                         // STORY Nur, wenn SC und Rapunzel sich noch nicht gut kennen
                         "„Nachts war es in letzter Zeit ziemlich kalt“, wirfst du "
-                                + "in den Raum",
-                        secs(15))
+                                + "in den Raum")
                         .beendet(PARAGRAPH)
         );
 
@@ -155,15 +153,15 @@ public class RapunzelTalkingComp extends AbstractTalkingComp {
             return;
         }
 
-        n.narrateAlt(
+        n.narrateAlt(secs(10),
                 // STORY Nur, wenn SC und Rapunzel sich noch nicht gut kennen
                 neuerSatz(
                         "„Hallo, da bin ich wieder!“ sprichst du "
                                 + anaph.akk()
                                 + " an. „Ja…“, gibt "
                                 + anaph.persPron().nom()
-                                + " zurück",
-                        secs(10))
+                                + " zurück"
+                )
                         .beendet(PARAGRAPH)
                         .phorikKandidat(anaph, RAPUNZEL),
                 neuerSatz(
@@ -173,8 +171,7 @@ public class RapunzelTalkingComp extends AbstractTalkingComp {
                                 + "ist "
                                 + anaph.possArt().vor(F).dat()
                                 + " "
-                                + "Antwort",
-                        secs(10))
+                                + "Antwort")
                         .phorikKandidat(anaph, RAPUNZEL)
                         .beendet(PARAGRAPH)
         );
@@ -231,14 +228,13 @@ public class RapunzelTalkingComp extends AbstractTalkingComp {
     }
 
     private void haareHerunterlassenBitte_EntryReEntry() {
-        n.narrateAlt(
+        n.narrateAlt(secs(10),
                 // STORY Nur, wenn SC und Rapunzel sich noch nicht gut kennen
                 neuerSatz(PARAGRAPH,
                         "„Ich wollte euch nicht belästigen“, sprichst du "
                                 + getAnaphPersPronWennMglSonstShortDescription().akk()
                                 + " an, "
-                                + "„lasst mich wieder hinunter und ich lasse euch euren Frieden.“",
-                        secs(10))
+                                + "„lasst mich wieder hinunter und ich lasse euch euren Frieden.“")
                         .beendet(PARAGRAPH)
         );
 

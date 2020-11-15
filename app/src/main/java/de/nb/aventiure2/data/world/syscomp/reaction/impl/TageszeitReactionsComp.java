@@ -83,35 +83,35 @@ public class TageszeitReactionsComp
     private void onTimePassedFromNachtsTo(@NonNull final Tageszeit currentTageszeit) {
         switch (currentTageszeit) {
             case MORGENS:
-                n.narrateAlt(
-                        neuerSatz("Allmählich ist es Morgen geworden",
+                n.narrateAlt(noTime(),
+                        neuerSatz("Allmählich ist es Morgen geworden"
                                 // Der Tageszeitenwechsel ist parallel passiert.
-                                noTime()),
-                        neuerSatz("Der nächste Tag ist angebrochen", noTime()),
-                        neuerSatz("Langsam graut der Morgen", noTime()),
-                        neuerSatz("Langsam wird es hell", noTime()),
-                        neuerSatz("Unterdessen ist es hell geworden", noTime()),
-                        neuerSatz("Die Sonne geht auf", noTime())
+                        ),
+                        neuerSatz("Der nächste Tag ist angebrochen"),
+                        neuerSatz("Langsam graut der Morgen"),
+                        neuerSatz("Langsam wird es hell"),
+                        neuerSatz("Unterdessen ist es hell geworden"),
+                        neuerSatz("Die Sonne geht auf")
 
                         // FIXME So etwas ermöglichen, wenn der Spieler sich
                         //  DRAUSSEN aufhält
-                        //  allg("Im Osten kündigt sich der neue Tag an", noTime())
+                        //  allg("Im Osten kündigt sich der neue Tag an")
                         //  "Die Sterne verblassen und die Sonne ist am Horizont zu sehen"
                 );
                 return;
             case TAGSUEBER:
-                n.narrateAlt(
-                        neuerSatz("Inzwischen ist es hellichter Tag", noTime()),
-                        neuerSatz("Der andere Tag hat begonnen", noTime()),
-                        neuerSatz("Zwischenzeitlich ist die Sonne aufgegangen", noTime())
+                n.narrateAlt(noTime(),
+                        neuerSatz("Inzwischen ist es hellichter Tag"),
+                        neuerSatz("Der andere Tag hat begonnen"),
+                        neuerSatz("Zwischenzeitlich ist die Sonne aufgegangen")
                 );
                 return;
             case ABENDS:
-                n.narrateAlt(
-                        neuerSatz("Inzwischen ist beinahe der ganze Tag vergangen", noTime()),
-                        neuerSatz("Inzwischen wird es schon wieder dunkel", noTime()),
-                        neuerSatz("Der Tag ist schon fast vorüber", noTime()),
-                        neuerSatz("Die Sonne ist schon wieder am Untergehen", noTime())
+                n.narrateAlt(noTime(),
+                        neuerSatz("Inzwischen ist beinahe der ganze Tag vergangen"),
+                        neuerSatz("Inzwischen wird es schon wieder dunkel"),
+                        neuerSatz("Der Tag ist schon fast vorüber"),
+                        neuerSatz("Die Sonne ist schon wieder am Untergehen")
                 );
                 return;
             default:
@@ -122,44 +122,37 @@ public class TageszeitReactionsComp
     private void onTimePassedFromMorgensTo(@NonNull final Tageszeit currentTageszeit) {
         switch (currentTageszeit) {
             case TAGSUEBER:
-                n.narrateAlt(
+                n.narrateAlt(noTime(),
                         neuerSatz("Die Sonne steigt langsam am Firmament "
-                                + "empor", noTime()),
-                        neuerSatz("Die Sonne ist aufgegangen und beginnt ihren Lauf",
-                                noTime())
+                                + "empor"),
+                        neuerSatz("Die Sonne ist aufgegangen und beginnt ihren Lauf")
                 );
                 return;
             case ABENDS:
-                n.narrateAlt(
+                n.narrateAlt(noTime(),
                         neuerSatz("Währenddessen ist der Tag vergangen und die Sonne steht "
-                                + "schon tief am Himmel", noTime()),
-                        neuerSatz("Inzwischen ist beinahe der ganze Tag vergangen", noTime()),
-                        neuerSatz("Inzwischen wird es schon wieder dunkel", noTime()),
-                        neuerSatz("Der Tag ist schon fast vorüber", noTime()),
-                        neuerSatz("Die Sonne ist schon wieder am Untergehen", noTime())
+                                + "schon tief am Himmel"),
+                        neuerSatz("Inzwischen ist beinahe der ganze Tag vergangen"),
+                        neuerSatz("Inzwischen wird es schon wieder dunkel"),
+                        neuerSatz("Der Tag ist schon fast vorüber"),
+                        neuerSatz("Die Sonne ist schon wieder am Untergehen")
                 );
                 return;
             case NACHTS:
                 // TODO Der Spieler könnte abends MÜDE werden (und morgens oder nach dem
                 // Schlafen wieder wach / NEUTRAL)
 
-                n.narrateAlt(
-                        neuerSatz("Die Sonne ist über die Zeit untergegangen",
-                                noTime()),
-                        neuerSatz("Jetzt ist es dunkel",
-                                noTime()),
-                        neuerSatz("Jetzt ist es Nacht und man sieht nur noch wenig",
-                                noTime()),
-                        neuerSatz("Die Sonne ist jetzt untergegangen",
-                                noTime()),
-                        neuerSatz(PARAGRAPH, "Darüber ist es vollständig dunkel geworden. Nur noch "
-                                        + "die Sterne und der Mond spenden ein wenig Licht",
-                                noTime()),
-                        neuerSatz(PARAGRAPH, "Inzwischen ist es dunkel geworden",
-                                noTime()),
+                n.narrateAlt(noTime(),
+                        neuerSatz("Die Sonne ist über die Zeit untergegangen"),
+                        neuerSatz("Jetzt ist es dunkel"),
+                        neuerSatz("Jetzt ist es Nacht und man sieht nur noch wenig"),
+                        neuerSatz("Die Sonne ist jetzt untergegangen"),
+                        neuerSatz(PARAGRAPH, "Darüber ist es vollständig dunkel "
+                                + "geworden. Nur noch "
+                                + "die Sterne und der Mond spenden ein wenig Licht"),
+                        neuerSatz(PARAGRAPH, "Inzwischen ist es dunkel geworden"),
                         neuerSatz(PARAGRAPH, "Es ist Nacht geworden und man sieht nicht mehr "
-                                        + "so gut",
-                                noTime()));
+                                + "so gut"));
                 return;
             default:
                 throw new IllegalStateException("Unerwartete Tageszeit: " + currentTageszeit);
@@ -169,14 +162,13 @@ public class TageszeitReactionsComp
     private void onTimePassedFromTagsueberTo(@NonNull final Tageszeit currentTageszeit) {
         switch (currentTageszeit) {
             case ABENDS:
-                n.narrateAlt(
+                n.narrateAlt(noTime(),
                         neuerSatz(PARAGRAPH, "Allmählich wird es "
-                                + "abendlich dunkel", noTime()),
-                        neuerSatz(PARAGRAPH, "Der Tag neigt sich und der Abend beginnt", noTime()),
-                        neuerSatz(PARAGRAPH, "Der Tag neigt sich und der Abend bricht an",
-                                noTime()),
-                        neuerSatz(PARAGRAPH, "Die Abenddämmerung beginnt", noTime()),
-                        neuerSatz(PARAGRAPH, "Inzwischen steht die Sonne schon tief", noTime())
+                                + "abendlich dunkel"),
+                        neuerSatz(PARAGRAPH, "Der Tag neigt sich und der Abend beginnt"),
+                        neuerSatz(PARAGRAPH, "Der Tag neigt sich und der Abend bricht an"),
+                        neuerSatz(PARAGRAPH, "Die Abenddämmerung beginnt"),
+                        neuerSatz(PARAGRAPH, "Inzwischen steht die Sonne schon tief")
                         // STORY Noch ein paar Texte!
                         // FIXME WENN DER SPIELER DRAUSSEN IST "Heute ist ein schönes Abendrot zu sehen"
                 );
@@ -184,32 +176,28 @@ public class TageszeitReactionsComp
             case NACHTS:
                 // TODO Der Spieler könnte abends MÜDE werden (und morgens oder nach dem
                 // Schlafen wieder wach / NEUTRAL)
-                n.narrateAlt(
-                        neuerSatz(PARAGRAPH, "Die Sonne ist jetzt untergegangen", noTime()),
-                        neuerSatz(PARAGRAPH, "Es ist dunkel geworden", noTime()),
-                        neuerSatz(PARAGRAPH, "Die Sonne ist untergegangen", noTime()),
+                n.narrateAlt(noTime(),
+                        neuerSatz(PARAGRAPH, "Die Sonne ist jetzt untergegangen"),
+                        neuerSatz(PARAGRAPH, "Es ist dunkel geworden"),
+                        neuerSatz(PARAGRAPH, "Die Sonne ist untergegangen"),
                         neuerSatz(PARAGRAPH, "Inzwischen ist es Nacht und man sieht nicht "
-                                + "mehr so gut", noTime()),
+                                + "mehr so gut"),
                         neuerSatz(PARAGRAPH, "Es ist jetzt vollständig dunkel geworden. Nur noch "
-                                + "die Sterne und der Mond geben etwas Licht", noTime()),
-                        neuerSatz(PARAGRAPH, "Inzwischen ist es dunkel geworden", noTime()),
+                                + "die Sterne und der Mond geben etwas Licht"),
+                        neuerSatz(PARAGRAPH, "Inzwischen ist es dunkel geworden"),
                         neuerSatz(PARAGRAPH, "Es ist Nacht geworden und man sieht nicht mehr "
-                                + "so gut", noTime())
+                                + "so gut")
                 );
                 return;
             case MORGENS:
-                n.narrateAlt(
-                        neuerSatz(PARAGRAPH, "Unterdessen hat der neue Tag begonnen",
-                                noTime())
+                n.narrateAlt(noTime(),
+                        neuerSatz(PARAGRAPH, "Unterdessen hat der neue Tag begonnen")
                                 .beendet(PARAGRAPH),
-                        neuerSatz(PARAGRAPH, "Es ist schon der nächste Morgen",
-                                noTime()),
+                        neuerSatz(PARAGRAPH, "Es ist schon der nächste Morgen"),
                         neuerSatz(PARAGRAPH, "Die Nacht ist vorbei und es wird schon "
-                                        + "wieder hell",
-                                noTime()),
-                        neuerSatz(PARAGRAPH, "Unterdessen ist es schon wieder hell geworden",
-                                noTime()),
-                        neuerSatz("Die Sonne geht gerade auf", noTime())
+                                + "wieder hell"),
+                        neuerSatz(PARAGRAPH, "Unterdessen ist es schon wieder hell geworden"),
+                        neuerSatz("Die Sonne geht gerade auf")
                 );
                 return;
             default:
@@ -223,42 +211,36 @@ public class TageszeitReactionsComp
                 // FIXME Der Spieler könnte abends MÜDE werden (und morgens oder nach dem
                 //  Schlafen wieder wach / NEUTRAL)
 
-                n.narrateAlt(
-                        neuerSatz("Die Sonne ist jetzt untergegangen",
-                                noTime()),
+                n.narrateAlt(noTime(),
+                        neuerSatz("Die Sonne ist jetzt untergegangen"),
                         neuerSatz(PARAGRAPH,
                                 "Es ist jetzt vollständig dunkel geworden. Nur noch "
-                                        + "die Sterne und der Mond spenden ein wenig Licht",
-                                noTime()),
-                        neuerSatz(PARAGRAPH, "Inzwischen ist die Nacht hereingebrochen",
-                                noTime()),
+                                        + "die Sterne und der Mond spenden ein wenig Licht"),
+                        neuerSatz(PARAGRAPH, "Inzwischen ist die Nacht hereingebrochen"),
                         neuerSatz(PARAGRAPH,
                                 "Es ist Nacht geworden und man sieht nicht "
-                                        + "mehr so gut",
-                                noTime())
+                                        + "mehr so gut")
                         // FIXME wenn der SC draußen ist:
                         //  "Jetzt sind am Himmel die Sterne zu sehen. Es ist dunkel und in der Ferne "
                         //  + "ruft ein Käuzchen"
                 );
                 return;
             case MORGENS:
-                n.narrateAlt(
-                        neuerSatz("Unterdessen hat der neue Tag begonnen",
-                                noTime())
+                n.narrateAlt(noTime(),
+                        neuerSatz("Unterdessen hat der neue Tag begonnen")
                                 .beendet(PARAGRAPH),
-                        neuerSatz("Es ist schon der nächste Morgen",
-                                noTime()),
+                        neuerSatz("Es ist schon der nächste Morgen"),
                         neuerSatz("Die Nacht ist vorbei und es wird schon "
-                                + "wieder hell", noTime()),
+                                + "wieder hell"),
                         neuerSatz(PARAGRAPH, "Unterdessen ist es schon wieder "
-                                + "hell geworden", noTime()),
-                        neuerSatz("Die Sonne geht gerade auf", noTime())
+                                + "hell geworden"),
+                        neuerSatz("Die Sonne geht gerade auf")
                 );
                 return;
             case TAGSUEBER:
-                n.narrateAlt(
-                        neuerSatz("Es ist schon wieder heller Tag", noTime()),
-                        neuerSatz("Die Sonne ist schon wieder aufgegangen", noTime())
+                n.narrateAlt(noTime(),
+                        neuerSatz("Es ist schon wieder heller Tag"),
+                        neuerSatz("Die Sonne ist schon wieder aufgegangen")
                 );
                 return;
             default:

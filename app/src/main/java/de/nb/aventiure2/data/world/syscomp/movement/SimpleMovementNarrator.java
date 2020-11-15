@@ -62,30 +62,27 @@ public class SimpleMovementNarrator implements IMovementNarrator {
 
         final String wo = locationMovingGO.storingPlaceComp().getLocationMode().getWo(eherGross);
 
-        n.narrateAlt(
+        n.narrateAlt(noTime(),
                 neuerSatz(wo +
                         " steht " +
-                        desc.nom(), noTime())
+                        desc.nom())
                         .phorikKandidat(desc, gameObjectId)
                         .beendet(PARAGRAPH),
                 neuerSatz(wo +
-                                " siehst du " +
-                                descShort.nom() +
-                                " stehen",
-                        noTime())
+                        " siehst du " +
+                        descShort.nom() +
+                        " stehen")
                         .phorikKandidat(descShort, gameObjectId)
                         .beendet(PARAGRAPH),
                 neuerSatz(wo +
-                                " begegnest du " +
-                                desc.dat(),
-                        noTime())
+                        " begegnest du " +
+                        desc.dat())
                         .phorikKandidat(desc, gameObjectId)
                         .beendet(PARAGRAPH),
                 neuerSatz(wo +
-                                " scheint " +
-                                desc.nom() +
-                                " geradezu auf dich zu warten",
-                        noTime())
+                        " scheint " +
+                        desc.nom() +
+                        " geradezu auf dich zu warten")
                         .phorikKandidat(desc, gameObjectId)
                         .beendet(PARAGRAPH)
         );
@@ -132,27 +129,26 @@ public class SimpleMovementNarrator implements IMovementNarrator {
     public void narrateScUeberholtMovingGO() {
         final Nominalphrase desc = getDescription();
 
-        n.narrateAlt(
+        n.narrateAlt(noTime(),
                 du("gehst",
                         "dabei an " +
                                 desc.dat() +
                                 " vorbei",
-                        "dabei",
-                        noTime())
+                        "dabei")
                         .phorikKandidat(desc, gameObjectId)
                         .beendet(SENTENCE),
                 du("gehst",
                         "dabei schnellen Schrittes an " +
                                 desc.dat() +
                                 " vorüber",
-                        "dabei", noTime())
+                        "dabei")
                         .phorikKandidat(desc, gameObjectId)
                         .beendet(SENTENCE),
                 du("gehst",
                         "dabei mit schnellen Schritten an " +
                                 desc.dat() +
                                 " vorüber",
-                        "dabei", noTime())
+                        "dabei")
                         .phorikKandidat(desc, gameObjectId)
                         .beendet(SENTENCE)
         );
@@ -161,13 +157,13 @@ public class SimpleMovementNarrator implements IMovementNarrator {
     public void narrateScTrifftEnteringMovingGO_scHatKeinenVorigenOrt() {
         final Nominalphrase desc = getDescription();
 
-        n.narrateAlt(
+        n.narrateAlt(noTime(),
                 neuerSatz(PARAGRAPH,
-                        "Dir begegnet " + desc.nom(), noTime())
+                        "Dir begegnet " + desc.nom())
                         .phorikKandidat(desc, gameObjectId)
                         .beendet(PARAGRAPH),
                 du("begegnest ",
-                        desc.dat(), noTime())
+                        desc.dat())
                         .phorikKandidat(desc, gameObjectId)
         );
     }
@@ -390,41 +386,41 @@ public class SimpleMovementNarrator implements IMovementNarrator {
 
         final String wo = calcWoIfNecessary(spatialConnection, numberOfWaysOut);
 
-        n.narrateAlt(
+        n.narrateAlt(noTime(),
                 neuerSatz(PARAGRAPH,
                         anaphOderDesc.nom() +
                                 " geht "
                                 + wo // "auf dem Weg "
-                                + "davon", noTime())
+                                + "davon")
                         .phorikKandidat(anaphOderDesc, gameObjectId)
                         .beendet(PARAGRAPH),
                 neuerSatz(PARAGRAPH,
                         anaphOderDesc.nom() +
                                 " geht "
                                 + wo // "auf dem Weg "
-                                + "weiter", noTime())
+                                + "weiter")
                         .phorikKandidat(anaphOderDesc, gameObjectId)
                         .beendet(PARAGRAPH),
                 neuerSatz(PARAGRAPH,
                         anaphOderDesc.nom() +
-                                " geht weg", noTime())
+                                " geht weg")
                         .phorikKandidat(anaphOderDesc, gameObjectId)
                         .beendet(PARAGRAPH),
                 // STORY: "X geht seines / ihres Wegs" - Possessivartikel vor Genitiv!
                 // STORY: "X geht seiner / ihrer Wege" - Possessivartikel vor Genitiv!
                 neuerSatz(PARAGRAPH,
                         anaphOderDesc.nom() +
-                                " geht fort", noTime())
+                                " geht fort")
                         .phorikKandidat(anaphOderDesc, gameObjectId)
                         .beendet(PARAGRAPH),
                 neuerSatz(PARAGRAPH,
                         anaphOderDesc.nom() +
-                                " läuft vorbei", noTime())
+                                " läuft vorbei")
                         .phorikKandidat(anaphOderDesc, gameObjectId)
                         .beendet(PARAGRAPH),
                 neuerSatz(PARAGRAPH,
                         anaphOderDesc.nom() +
-                                " läuft weiter", noTime())
+                                " läuft weiter")
                         .phorikKandidat(anaphOderDesc, gameObjectId)
                         .beendet(PARAGRAPH)
         );
@@ -630,25 +626,25 @@ public class SimpleMovementNarrator implements IMovementNarrator {
 
         final String wo = calcWoIfNecessary(spatialConnection, numberOfWaysIn);
 
-        n.narrateAlt(
+        n.narrateAlt(noTime(),
                 neuerSatz(PARAGRAPH,
                         wo // "auf dem Weg "
                                 + " kommt " +
-                                desc.nom(), noTime())
+                                desc.nom())
                         .beendet(PARAGRAPH)
                         .phorikKandidat(desc, gameObjectId),
                 neuerSatz(PARAGRAPH,
                         desc.nom()
                                 + " kommt "
                                 + wo // "auf dem Weg "
-                                + "daher", noTime())
+                                + "daher")
                         .beendet(PARAGRAPH)
                         .phorikKandidat(desc, gameObjectId),
                 neuerSatz(PARAGRAPH,
                         desc.nom()
                                 + " kommt "
                                 + wo // "auf dem Weg "
-                                + "gegangen", noTime())
+                                + "gegangen")
                         .beendet(PARAGRAPH)
                         .phorikKandidat(desc, gameObjectId)
         );

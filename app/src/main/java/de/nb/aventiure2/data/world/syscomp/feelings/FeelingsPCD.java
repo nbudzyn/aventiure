@@ -79,8 +79,8 @@ class FeelingsPCD extends AbstractPersistentComponentData {
         feelingsTowards.putAll(map);
     }
 
-    public void setFeelingTowards(final GameObjectId target,
-                                  final FeelingTowardsType type, final float intensity) {
+    void setFeelingTowards(final GameObjectId target,
+                           final FeelingTowardsType type, final float intensity) {
         FeelingIntensity.checkValue(intensity);
 
         final Float oldValue = getFeelingTowards(target, type);
@@ -110,7 +110,7 @@ class FeelingsPCD extends AbstractPersistentComponentData {
         setChanged();
     }
 
-    public void removeFeelingsTowards(final GameObjectId target) {
+    void removeFeelingsTowards(final GameObjectId target) {
         @Nullable final Map<FeelingTowardsType, Float> oldFeelings =
                 feelingsTowards.remove(target);
 
@@ -123,7 +123,7 @@ class FeelingsPCD extends AbstractPersistentComponentData {
 
     @CheckReturnValue
     @Nullable
-    public Float getFeelingTowards(final GameObjectId target, final FeelingTowardsType type) {
+    Float getFeelingTowards(final GameObjectId target, final FeelingTowardsType type) {
         @Nullable final Map<FeelingTowardsType, Float> feelings = feelingsTowards.get(target);
 
         if (feelings == null) {
@@ -133,24 +133,24 @@ class FeelingsPCD extends AbstractPersistentComponentData {
         return feelings.get(type);
     }
 
-    public void requestMoodMin(final Mood mood) {
+    void requestMoodMin(final Mood mood) {
         if (getMood().isTraurigerAls(mood)) {
             requestMood(mood);
         }
     }
 
-    public void requestMoodMax(final Mood mood) {
+    void requestMoodMax(final Mood mood) {
         if (!getMood().isTraurigerAls(mood)) {
             requestMood(mood);
         }
     }
 
     @NonNull
-    public Mood getMood() {
+    Mood getMood() {
         return mood;
     }
 
-    public void requestMood(@NonNull final Mood mood) {
+    void requestMood(@NonNull final Mood mood) {
         if (this.mood == mood) {
             return;
         }
@@ -170,6 +170,7 @@ class FeelingsPCD extends AbstractPersistentComponentData {
 
         muedigkeitsData =
                 muedigkeitsData
+                        .withTemporaerMuedeBis(now.minus(secs(1)))
                         .withZuletztAusgeschlafen(now)
                         .withAusschlafenEffektHaeltVorBis(
                                 now.plus(ausschlafenEffektHaeltVorFuer)
@@ -188,7 +189,7 @@ class FeelingsPCD extends AbstractPersistentComponentData {
                 muedigkeitsData
                         .withTemporaereMinimalmuedigkeit(
                                 Math.max(
-                                        muedigkeitsData.getTemporaereMinimalmuedigkeit(),
+                                        getTemporaereMinimalmuedigkeitSofernRelevant(now),
                                         temporaereMinimalmuedigkeit))
                         .withTemporaerMuedeBis(now.plus(duration));
 
@@ -204,7 +205,7 @@ class FeelingsPCD extends AbstractPersistentComponentData {
      * als positiven {@link FeelingIntensity}-Wert zurück.
      * {@link FeelingIntensity#NEUTRAL} meint <i>wach</i>.
      */
-    public void updateMuedigkeit(final AvDateTime now, final int muedigkeitGemaessBiorhythmus) {
+    void updateMuedigkeit(final AvDateTime now, final int muedigkeitGemaessBiorhythmus) {
         int muedigkeit = FeelingIntensity.NEUTRAL;
         if (!geradeAusgeschlafen(now)) {
             muedigkeit = muedigkeitGemaessBiorhythmus;
@@ -247,7 +248,7 @@ class FeelingsPCD extends AbstractPersistentComponentData {
         return muedigkeitsData.getAusschlafenEffektHaeltVorBis();
     }
 
-    void setMuedigkeit(final int muedigkeit) {
+    private void setMuedigkeit(final int muedigkeit) {
         if (getMuedigkeit() == muedigkeit) {
             return;
         }
@@ -287,7 +288,7 @@ class FeelingsPCD extends AbstractPersistentComponentData {
         return muedigkeitsData;
     }
 
-    public void updateHunger(final AvDateTime now) {
+    void updateHunger(final AvDateTime now) {
         if (now.isEqualOrAfter(hungerData.getEssenHaeltVorBis())) {
             if (hungerData.getHunger() != HUNGRIG) {
                 hungerData = hungerData.withHunger(HUNGRIG);
@@ -299,8 +300,8 @@ class FeelingsPCD extends AbstractPersistentComponentData {
         }
     }
 
-    public void saveSatt(final AvDateTime now,
-                         final AvTimeSpan zeitspanneBisWiederHungrig) {
+    void saveSatt(final AvDateTime now,
+                  final AvTimeSpan zeitspanneBisWiederHungrig) {
         final Hunger vorher = getHunger();
 
         hungerData = new HungerData(SATT, now.plus(zeitspanneBisWiederHungrig));
@@ -319,7 +320,7 @@ class FeelingsPCD extends AbstractPersistentComponentData {
     }
 
     @NonNull
-    public Hunger getHunger() {
+    Hunger getHunger() {
         return hungerData.getHunger();
     }
 }

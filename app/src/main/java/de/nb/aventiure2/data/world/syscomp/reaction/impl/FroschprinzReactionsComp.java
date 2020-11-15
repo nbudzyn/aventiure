@@ -104,19 +104,18 @@ public class FroschprinzReactionsComp
 
         if (stateComp.hasState(ERWARTET_VON_SC_EINLOESUNG_SEINES_VERSPRECHENS)
                 && !from.is(SCHLOSS_VORHALLE_AM_TISCH_BEIM_FEST)) {
-            n.narrateAlt(
+            n.narrateAlt(noTime(),
                     neuerSatz("„Warte, warte“, ruft dir der Frosch noch nach, „nimm mich mit, "
                                     + "ich kann nicht so "
                                     + "laufen wie du.“ Aber was hilft ihm, dass er "
                                     + "sein „Quak, quak!“ so laut schreit, "
-                                    + "als er kann, du hörst nicht darauf",
+                                    + "als er kann, du hörst nicht darauf"
                             // FIXME "Du hörst ihn gar nicht mehr" statt "Du hörst nicht darauf"?
                             //  Möglichst keine Bevormundung, sondern dem Benutzer Freiheit
                             //  suggerieren.
-                            noTime())
+                    )
                             .undWartest(),
-                    neuerSatz("„Halt!“, ruft der Frosch dir nach, „nimm mich mit!“",
-                            noTime())
+                    neuerSatz("„Halt!“, ruft der Frosch dir nach, „nimm mich mit!“")
             );
             world.narrateAndDoReactions().onRuf(
                     FROSCHPRINZ, Ruftyp.WARTE_NIMM_MICH_MIT);
@@ -376,12 +375,10 @@ public class FroschprinzReactionsComp
         }
 
         final Nominalphrase froschprinzDesc = getDescription(true);
-        n.narrateAlt(
-                neuerSatz(froschprinzDesc.nom() + " quakt erbost",
-                        secs(5))
+        n.narrateAlt(secs(5),
+                neuerSatz(froschprinzDesc.nom() + " quakt erbost")
                         .phorikKandidat(froschprinzDesc, FROSCHPRINZ),
-                neuerSatz("Entrüstet quakt " + froschprinzDesc.nom(),
-                        secs(5))
+                neuerSatz("Entrüstet quakt " + froschprinzDesc.nom())
                         .phorikKandidat(froschprinzDesc, FROSCHPRINZ)
         );
     }
@@ -496,20 +493,17 @@ public class FroschprinzReactionsComp
         final SpielerCharakter sc = loadSC();
         sc.feelingsComp().requestMood(ANGESPANNT);
 
-        n.narrateAlt(
+        n.narrateAlt(secs(15),
                 neuerSatz(PARAGRAPH,
                         "„Heb mich auf den Tisch“, ruft der Frosch, „wie sollen wir "
-                                + "zwei sonst zusammmen essen?“ Dir klopft das Herz",
-                        secs(15))
+                                + "zwei sonst zusammmen essen?“ Dir klopft das Herz")
                         .undWartest()
                         .dann(),
-                neuerSatz("„Versprechen muss man halten!“, ruft der Frosch",
-                        secs(15))
+                neuerSatz("„Versprechen muss man halten!“, ruft der Frosch")
                         .beendet(PARAGRAPH),
                 neuerSatz(PARAGRAPH,
                         "Der Frosch lässt seine lange, schleimige Zunge vorschnellen. "
-                                + "Hat er „Mitessen!“ gequakt?",
-                        secs(15))
+                                + "Hat er „Mitessen!“ gequakt?")
                         .beendet(PARAGRAPH));
     }
 

@@ -189,52 +189,45 @@ public class EssenAction extends AbstractScAction {
 
         world.loadSC().feelingsComp().requestMoodMin(ZUFRIEDEN);
 
-        n.narrateAlt(
+        n.narrateAlt(mins(10),
                 du(PARAGRAPH,
-                        "füllst", "dir von dem Eintopf ein und langst kräftig zu",
-                        mins(10))
+                        "füllst", "dir von dem Eintopf ein und langst kräftig zu")
                         .beendet(PARAGRAPH),
-                du(PARAGRAPH, "nimmst", "dir eine gute Kelle von dem Eintopf und isst",
-                        mins(10))
+                du(PARAGRAPH, "nimmst", "dir eine gute Kelle von dem Eintopf und isst")
                         .dann(),
                 du(PARAGRAPH, "nimmst", "dir vom Eintopf und isst, als wenn du vier Wochen "
-                                + "hungern solltest",
-                        mins(10))
+                        + "hungern solltest")
                         .komma()
                         .dann(),
                 du(PARAGRAPH, "greifst", "zu und isst mit Lust, bis du "
-                                + "deinen Hunger gestillt hast",
-                        mins(10))
+                        + "deinen Hunger gestillt hast")
                         .komma()
                         .dann(),
-                du(PARAGRAPH, "isst", "vom Eintopf, bis dein Hunger gestillt ist",
-                        mins(10))
+                du(PARAGRAPH, "isst", "vom Eintopf, bis dein Hunger gestillt ist")
                         .komma()
                         .undWartest()
                         .dann(),
-                du(PARAGRAPH, "bedienst", "dich am Eintopf und löffelst los",
-                        mins(10))
+                du(PARAGRAPH, "bedienst", "dich am Eintopf und löffelst los")
                         .beendet(PARAGRAPH)
                         .dann(),
-                du(PARAGRAPH, "isst", "vom Eintopf und stillst deinen Hunger",
-                        mins(10))
+                du(PARAGRAPH, "isst", "vom Eintopf und stillst deinen Hunger")
                         .dann()
         );
     }
 
     private void narrateAndDoSchlossfestSatt() {
-        n.narrateAlt(
+        n.narrateAlt(mins(2),
                 neuerSatz("Hunger hast du zwar keinen mehr, aber eine Kleinigkeit… – du "
                         + "nimmst dir "
                         + "eine halbe Kelle "
-                        + "von dem Eintopf und isst", mins(2))
+                        + "von dem Eintopf und isst")
                         .dann(),
-                du("isst", "ein paar Löffel vom Eintopf", mins(2))
+                du("isst", "ein paar Löffel vom Eintopf")
                         .undWartest()
                         .dann(),
                 du(SENTENCE, "bist", "eigentlich satt, aber einen oder zwei Löffel Eintopf "
                         + "lässt du "
-                        + "dir trotzdem schmecken", "eigentlich", mins(2))
+                        + "dir trotzdem schmecken", "eigentlich")
                         .dann());
     }
 
@@ -271,16 +264,16 @@ public class EssenAction extends AbstractScAction {
             return;
         }
 
-        n.narrateAlt(
-                du("isst", "dich an den süßen Früchten satt", mins(10))
+        n.narrateAlt(mins(10),
+                du("isst", "dich an den süßen Früchten satt")
                         .undWartest()
                         .dann(),
                 du("bedienst", "dich an den süßen Früchten, als ob es kein Morgen "
-                        + "gäbe. Schließlich bist du vollkommen satt", mins(10))
+                        + "gäbe. Schließlich bist du vollkommen satt")
                         .undWartest()
                         .dann(),
                 du("isst", "so lange von den Früchten, bis dein Hunger gestillt "
-                        + "ist", mins(10))
+                        + "ist")
                         .dann()
         );
     }
@@ -297,17 +290,16 @@ public class EssenAction extends AbstractScAction {
             return;
         }
 
-        n.narrateAlt(
+        n.narrateAlt(mins(3),
                 du(SENTENCE, "hast", "nur wenig Hunger und beißt lustlos in eine der Früchte",
-                        "Hunger",
-                        mins(3))
+                        "Hunger")
                         .dann(),
                 // TODO Das mit dem "entgehen lassen" macht keinen Sinn, wenn man sich gerade erst
                 //  satt gegessen hat. Umformulieren? Nur beim ersten Mal, wenn man
                 //  außerdem satt ist?
                 du(SENTENCE, "lässt",
                         "dir die süßen Früchte nicht entgehen, auch wenn du kaum Hunger "
-                                + "hast", "die süßen Früchte", mins(3))
+                                + "hast", "die süßen Früchte")
                         .komma()
                         .undWartest()
                         .dann()

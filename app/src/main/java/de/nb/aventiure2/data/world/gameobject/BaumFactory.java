@@ -2,12 +2,9 @@ package de.nb.aventiure2.data.world.gameobject;
 
 import androidx.annotation.NonNull;
 
-import com.google.common.collect.ImmutableList;
-
 import javax.annotation.CheckReturnValue;
 
 import de.nb.aventiure2.data.database.AvDatabase;
-import de.nb.aventiure2.data.narration.DescriptionCombiner;
 import de.nb.aventiure2.data.world.base.GameObject;
 import de.nb.aventiure2.data.world.base.GameObjectId;
 import de.nb.aventiure2.data.world.base.Known;
@@ -15,9 +12,6 @@ import de.nb.aventiure2.data.world.base.Lichtverhaeltnisse;
 import de.nb.aventiure2.data.world.syscomp.description.impl.SimpleDescriptionComp;
 import de.nb.aventiure2.data.world.syscomp.location.LocationComp;
 import de.nb.aventiure2.data.world.syscomp.storingplace.StoringPlaceComp;
-import de.nb.aventiure2.german.description.AbstractDuDescription;
-import de.nb.aventiure2.german.description.AllgDescription;
-import de.nb.aventiure2.german.description.PraedikatDuDescription;
 import de.nb.aventiure2.german.description.TimedDescription;
 import de.nb.aventiure2.german.praedikat.AdverbialeAngabeSkopusVerbAllg;
 
@@ -133,10 +127,12 @@ public class BaumFactory {
                 // STORY Alternative:
                 //                du(PARAGRAPH, "kletterst",
                 //                        "ein weiteres Mal auf den Baum")
-                neuerSatz(PARAGRAPH,
-                        "Es ist anstrengend, aber du kletterst noch einmal "
+                du(PARAGRAPH,
+                        "kletterst", "noch einmal "
                                 + "auf den Baum. Neues gibt es hier oben nicht zu erleben",
-                        mins(7));
+                        "noch einmal",
+                        mins(7))
+                        .dann();
     }
 
     private TimedDescription getDescOut(
@@ -156,13 +152,12 @@ public class BaumFactory {
             final Lichtverhaeltnisse lichtverhaeltnisse) {
         final String dunkelNachsatz =
                 lichtverhaeltnisse == DUNKEL ?
-                        " Und das alles im Dunkeln!" :
-                        "";
+                        ". Und das alles im Dunkeln!" :
+                        ".";
         return neuerSatz("Mit einiger Mühe drehst du auf dem Ast um und hangelst dich "
                 + "vorsichtig "
-                + "wieder herab auf den Boden. Das war anstrengend!"
-                + dunkelNachsatz, mins(4))
-                .beendet(PARAGRAPH);
+                + "wieder herab auf den Boden"
+                + dunkelNachsatz, mins(4));
     }
 
     private static TimedDescription getDescOutZweitesMal() {
@@ -173,15 +168,7 @@ public class BaumFactory {
 
     private static TimedDescription getDescOutNtesMal(
             final Lichtverhaeltnisse lichtverhaeltnisse) {
-        final String erschoepftMuedeNachsatz =
-                lichtverhaeltnisse == DUNKEL ?
-                        "Ein Nickerchen täte dir gut" :
-                        "Und müde";
-
-        // FIXME Das nicht hier machen, sondern die muedeDesc an zentraler Stelle
-        //  erzeugen (allgemein: Hinweise, wenn man müde wird), so dass der Narrator die
-        //  Kombination automatisch durchführt.
-        //  Die folgenden Konstruktionen möchte ich ebenfalls automatisch erzeugen (Nach
+        // FIXME Die folgenden Konstruktionen möchte ich ebenfalls automatisch erzeugen (Nach
         //  Möglichkeit Beispiele einbauen):
         //  - Endlich angekommen bist du sehr erschöpft.
         //  - Gut ausgeschlafen bist du voller Tatendrang.
@@ -199,12 +186,15 @@ public class BaumFactory {
         //  - "Du bist ganz zerknirscht. Du gehst ...." ->  "Ganz zerknirscht gehst du..."??
         //  - Oder so? "Du wirst ganz zerknirscht. Du gehst ...." ->  "Ganz zerknirscht gehst
         //  du..."??
-        final PraedikatDuDescription bewegungDesc =
-                // "Du kommst unten an"
+        return
+                // "Dann kommst du wieder unten an"
+                // Kann mit Müdigkeit kombiniert werden zu:
+                // "Unten angekommen bist du ziemlich erschöpft..."
                 du(SENTENCE,
                         ANKOMMEN
                                 .mitAdverbialerAngabe(
-                                        new AdverbialeAngabeSkopusVerbAllg("unten")))
+                                        new AdverbialeAngabeSkopusVerbAllg("wieder unten")),
+                        mins(8))
                         .dann();
 
         // STORY Alternative:
@@ -212,25 +202,10 @@ public class BaumFactory {
         //                                + "Ast verpasst dir beim Abstieg ein Schramme",
         //                        .dann(),
 
-        // "Du bist ziemlich erschöpft..."
-        final AbstractDuDescription<?, ?> muedeDesc =
-                du("bist", "ziemlich erschöpft. " + erschoepftMuedeNachsatz);
+        // FIXME Wenn man bereits müde ist, erhält man hin und wieder einen Hinweis.
 
-
-        // Wird kombiniert zu:
-        final ImmutableList<AllgDescription> combinedAlternatives =
-                DescriptionCombiner.combinePraedikatDuDescUndDuDesc(bewegungDesc, muedeDesc);
-
-        // "Unten angekommen bist du ziemlich erschöpft..."
-
-        return new TimedDescription(
-                combinedAlternatives.get(0), mins(8)
-        );
-
-        // FIXME Wenn man müde ist, erhält man hin und wieder einen Hinweis.
-
-        // FIXME Nach müde, erschöpft etc. in den Grimms-Märchen suchen. Dabei auch schauen,
-        //  wie die Sätze verknüpft sind und ggf. neue Verknüpfungen in den
+        // FIXME Nach müde, erschöpft, anstreng etc. in den Grimms-Märchen suchen. Dabei auch
+        //  schauen, wie die Sätze verknüpft sind und ggf. neue Verknüpfungen in den
         //  Combiner einbauen.
     }
 }

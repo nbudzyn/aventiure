@@ -64,24 +64,23 @@ public class RapunzelTakingComp extends AbstractTakingComp {
                 // "eine goldene Kugel"
                 given.descriptionComp().getDescriptionAtFirstSight();
 
-        n.narrateAlt(
+        n.narrateAlt(secs(10),
                 neuerSatz(rapunzelAnaph.nom()
-                        + " sieht dich verwundert an", secs(10)),
+                        + " sieht dich verwundert an"),
                 neuerSatz("„Ähm, was soll ich damit?“, "
                         + "ist "
                         + rapunzelAnaph.possArt().vor(F).nom()
-                        + " Reaktion", secs(10)),
+                        + " Reaktion"),
                 neuerSatz("„Das ist nett“, sagt "
-                                + rapunzelAnaph.nom()
-                                + ", "
-                                + "„aber was mache ich damit?“ Du steckst "
-                                + givenDesc.akk()
-                                + " wieder ein",
-                        secs(10)),
+                        + rapunzelAnaph.nom()
+                        + ", "
+                        + "„aber was mache ich damit?“ Du steckst "
+                        + givenDesc.akk()
+                        + " wieder ein"),
                 neuerSatz(rapunzelAnaph.nom()
                         + " schaut kurz, aber dann scheint "
                         + rapunzelAnaph.persPron().nom() // "sie"
-                        + " das Interesse zu verlieren", secs(10)),
+                        + " das Interesse zu verlieren"),
                 neuerSatz("„Verstehe“, sagt "
                         + rapunzelAnaph.nom()
                         + ", „wenn ich einmal "
@@ -95,7 +94,7 @@ public class RapunzelTakingComp extends AbstractTakingComp {
                         givenDesc.getNumerusGenus()).akk() // "eine" / "welche"
                         + " bekommen kann.“ "
                         + capitalize(rapunzelAnaph.persPron().nom())
-                        + " lächelt dich liebenswürdig an", secs(10))
+                        + " lächelt dich liebenswürdig an")
         );
         memoryComp.upgradeKnown(given);
 
@@ -115,7 +114,7 @@ public class RapunzelTakingComp extends AbstractTakingComp {
                 // "eine goldene Kugel"
                 given.descriptionComp().getDescriptionAtFirstSight();
 
-        n.narrateAlt(
+        n.narrateAlt(secs(30),
                 neuerSatz(rapunzelAnaph.nom()
                         + " dreht "
                         + givenAnaph.akk()
@@ -126,7 +125,7 @@ public class RapunzelTakingComp extends AbstractTakingComp {
                         + rapunzelAnaph.persPron().nom()
                         + " dir "
                         + givenDesc.akk()
-                        + " zurück", secs(30)),
+                        + " zurück"),
                 neuerSatz(rapunzelAnaph.nom()
                         + " schaut dich "
                         + (stateComp.hasState(HAT_NACH_KUGEL_GEFRAGT) ? "glücklich" : "überrascht")
@@ -139,23 +138,22 @@ public class RapunzelTakingComp extends AbstractTakingComp {
                         + rapunzelAnaph.persPron().nom()
                         + " "
                         + givenDescShort.persPron().akk()
-                        + " dir zurück", secs(30)),
+                        + " dir zurück"),
                 neuerSatz((stateComp.hasState(HAT_NACH_KUGEL_GEFRAGT) ?
-                                "Gespannt" : "Überrascht")
-                                + " nimmt "
-                                + rapunzelAnaph.nom()
-                                + " "
-                                + givenDescShort.akk()
-                                + " und versucht, "
-                                + rapunzelAnaph.reflPron().akk() // sich
-                                + " darin zu spiegeln. "
-                                + capitalize(rapunzelAnaph.persPron().nom())
-                                + " streicht eine Locke zurecht, dann gibt "
-                                + rapunzelAnaph.persPron().nom()
-                                + " "
-                                + givenDescShort.persPron().akk()
-                                + " dir zurück und lächelt dich an",
-                        secs(30))
+                        "Gespannt" : "Überrascht")
+                        + " nimmt "
+                        + rapunzelAnaph.nom()
+                        + " "
+                        + givenDescShort.akk()
+                        + " und versucht, "
+                        + rapunzelAnaph.reflPron().akk() // sich
+                        + " darin zu spiegeln. "
+                        + capitalize(rapunzelAnaph.persPron().nom())
+                        + " streicht eine Locke zurecht, dann gibt "
+                        + rapunzelAnaph.persPron().nom()
+                        + " "
+                        + givenDescShort.persPron().akk()
+                        + " dir zurück und lächelt dich an")
         );
 
         memoryComp.upgradeKnown(given);

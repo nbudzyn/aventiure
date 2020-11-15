@@ -388,7 +388,7 @@ public class RapunzelsZauberinReactionsComp
         loadSC().memoryComp().forget(RAPUNZEL, RAPUNZELS_ZAUBERIN, RAPUNZELS_GESANG,
                 RAPUNZELS_HAARE, RAPUNZELRUF);
         loadSC().feelingsComp().resetFeelingsTowards(RAPUNZEL);
-        loadSC().feelingsComp().upgradeTemporaereMinimalmuedigkeit(
+        loadSC().feelingsComp().narrateAndUpgradeTemporaereMinimalmuedigkeit(
                 FeelingIntensity.NUR_LEICHT, hours(1)
         );
         db.counterDao().reset(VorDemTurmConnectionComp.COUNTER_ALTER_TURM_UMRUNDET);
@@ -552,13 +552,11 @@ public class RapunzelsZauberinReactionsComp
                             + " etwas. Du kannst nicht alles verstehen, aber du hörst etwas wie: "
                             + "„…lass dein Haar herunter!”", mins(1)));
         } else if (loadSC().locationComp().hasRecursiveLocation(OBEN_IM_ALTEN_TURM)) {
-            n.narrateAlt(
+            n.narrateAlt(secs(10),
                     neuerSatz(PARAGRAPH,
-                            "Auf einmal hörst du von unten etwas rufen",
-                            secs(10)),
+                            "Auf einmal hörst du von unten etwas rufen"),
                     neuerSatz(PARAGRAPH,
-                            "Plötzlich hörst du, wie unten jemand etwas ruft",
-                            secs(10)));
+                            "Plötzlich hörst du, wie unten jemand etwas ruft"));
         }
 
         world.narrateAndDoReactions().onRuf(

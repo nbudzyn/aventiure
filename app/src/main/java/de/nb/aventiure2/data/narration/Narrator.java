@@ -89,6 +89,11 @@ public class Narrator {
         narrateAlt(asList(alternatives));
     }
 
+    public void narrateAlt(final AvTimeSpan timeElapsed,
+                           final AbstractDescription<?>... alternatives) {
+        narrateAlt(asList(alternatives), timeElapsed);
+    }
+
     public void narrateAlt(final Collection<AbstractDescription<?>> alternatives,
                            final AvTimeSpan timeElapsed) {
         narrateAlt(

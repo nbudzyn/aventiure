@@ -127,17 +127,16 @@ public class SchlosswacheReactionsComp
 
         final SpielerCharakter sc = loadSC();
 
-        n.narrateAlt(
+        n.narrateAlt(secs(10),
                 neuerSatz("Die Wache spricht dich sofort an und macht dir unmissverständlich "
-                                + "klar, dass du hier "
-                                + "vor dem großen Fest nicht erwünscht bist. Du bist "
-                                + "leicht zu "
-                                + "überzeugen und trittst wieder "
-                                + schlossVerlassenWohinDescription(
+                        + "klar, dass du hier "
+                        + "vor dem großen Fest nicht erwünscht bist. Du bist "
+                        + "leicht zu "
+                        + "überzeugen und trittst wieder "
+                        + schlossVerlassenWohinDescription(
                         raumAusDemDerSCDasSchlossBetretenHat)
-                                // "in den Sonnenschein"
-                                + " hinaus",
-                        secs(10))
+                        // "in den Sonnenschein"
+                        + " hinaus")
                         .beendet(PARAGRAPH),
                 neuerSatz(PARAGRAPH,
                         "„Heho, was wird das?“, tönt dir eine laute Stimme entgegen. "
@@ -145,8 +144,7 @@ public class SchlosswacheReactionsComp
                                 + "nach Belieben hereinspazieren könnt. Das würde dem König so "
                                 + "passen. Und "
                                 + "seinem Kerkermeister auch.“ "
-                                + "Du bleibst besser draußen",
-                        secs(10))
+                                + "Du bleibst besser draußen")
                         .beendet(PARAGRAPH)
 
                 // STORY Eine Nacht im Kerker! (Ist auch ein Übernachten!)

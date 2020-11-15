@@ -171,7 +171,7 @@ public class SchlafenAction extends AbstractScAction {
     }
 
     private void narrateAndDoEinschlafen(final AvTimeSpan schlafdauer) {
-        n.narrateAlt(
+        n.narrateAlt(schlafdauer,
                 // TODO Irgendwie wird immer nur dieser Text gewählt, nicht die anderen
                 //  beiden...
                 du(SENTENCE,
@@ -179,17 +179,15 @@ public class SchlafenAction extends AbstractScAction {
                                 + "gehen dir durch den Kopf. Was wäre wohl passiert, wenn du…\n"
                                 + "Kaum hast du die Augen geschlossen, bist du auch schon "
                                 + "eingeschlafen",
-                        "nur kurz",
-                        schlafdauer)
+                        "nur kurz"
+                )
                         .beendet(CHAPTER),
                 neuerSatz("Jetzt, da du liegst, fällt dir erst auf, wir erschöpft du "
-                                + "eigentlich bist. Nur ganz kurz die Augen schließen…",
-                        schlafdauer)
+                        + "eigentlich bist. Nur ganz kurz die Augen schließen…")
                         .beendet(CHAPTER),
                 du("fühlst", "dich auf einmal warm und schwer. Du kuschelst dich an "
                                 + "das harte Holz und schon bist du eingeschlafen",
-                        "warm und schwer",
-                        schlafdauer)
+                        "warm und schwer")
                         .beendet(CHAPTER));
     }
 

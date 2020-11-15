@@ -482,15 +482,12 @@ public class FroschprinzTalkingComp extends AbstractTalkingComp {
     }
 
     private void froschHatForderungGestellt_Exit() {
-        n.narrateAlt(
-                neuerSatz("„Na, bei dir piept's wohl!“ – Entrüstet wendest du dich ab",
-                        secs(10))
+        n.narrateAlt(secs(10),
+                neuerSatz("„Na, bei dir piept's wohl!“ – Entrüstet wendest du dich ab")
                         .undWartest(),
-                neuerSatz("„Wenn ich darüber nachdenke… – nein!“",
-                        secs(10)),
+                neuerSatz("„Wenn ich darüber nachdenke… – nein!“"),
                 neuerSatz("„Am Ende willst du noch in meinem Bettchen schlafen! Schäm dich, "
-                                + "Frosch!“",
-                        secs(10))
+                        + "Frosch!“")
                         .beendet(PARAGRAPH));
 
         setSchonBegruesstMitSC(true);
@@ -511,26 +508,23 @@ public class FroschprinzTalkingComp extends AbstractTalkingComp {
 
     private void ansprechen_froschReagiertNicht() {
         if (!isSchonBegruesstMitSC()) {
-            n.narrateAlt(neuerSatz("„Hallo, Kollege Frosch!“", secs(3)),
-                    neuerSatz("„Hallo, du hässlicher Frosch!“, redest du ihn an",
-                            secs(3))
+            n.narrateAlt(secs(3),
+                    neuerSatz("„Hallo, Kollege Frosch!“"),
+                    neuerSatz("„Hallo, du hässlicher Frosch!“, redest du ihn an")
                             .undWartest()
-                            .dann(), neuerSatz("„Hallo nochmal, Meister Frosch!“",
-                            secs(3)));
+                            .dann(), neuerSatz("„Hallo nochmal, Meister Frosch!“"));
             setSchonBegruesstMitSC(true);
         } else {
-            n.narrateAlt(
-                    neuerSatz(
-                            "„Schön grün seht ihr heute aus!“, sagst du - etwas "
-                                    + "Gescheiteres will "
-                                    + "dir partout nicht einfallen", secs(3)),
+            n.narrateAlt(secs(3),
+                    neuerSatz("„Schön grün seht Ihr heute aus!“, sagst du - etwas "
+                            + "Gescheiteres will "
+                            + "dir partout nicht einfallen"),
                     neuerSatz(
                             "„Und sonst so?“, fragst du "
                                     + getDescription(true)
-                                    + " etwas hilflos", secs(3))
+                                    + " etwas hilflos")
             );
         }
-
 
         froschReagiertNicht();
     }
@@ -543,20 +537,18 @@ public class FroschprinzTalkingComp extends AbstractTalkingComp {
     }
 
     private void ansprechen_froschErinnertAnVersprechen() {
-        n.narrateAlt(
-                du(
-                        "sprichst",
+        n.narrateAlt(secs(15),
+                du("sprichst",
                         getDescription(true).akk()
                                 + " an: „Wie läuft's, Frosch? Schönes Wetter heut.“ "
-                                + "„Vergiss dein Versprechen nicht“, sagt er nur",
-                        secs(15)).beendet(PARAGRAPH),
+                                + "„Vergiss dein Versprechen nicht“, sagt er nur")
+                        .beendet(PARAGRAPH),
                 du("holst", "Luft, aber da kommt dir "
-                                + getDescription().nom()
-                                + " schon zuvor: „Wir sehen uns noch!“",
-                        secs(15)).beendet(PARAGRAPH),
+                        + getDescription().nom()
+                        + " schon zuvor: „Wir sehen uns noch!“").beendet(PARAGRAPH),
                 neuerSatz("„Und jetzt, Frosch?“ "
-                                + " „Du weißt, was du versprochen hast“, gibt er zurück",
-                        secs(15)).beendet(PARAGRAPH));
+                        + " „Du weißt, was du versprochen hast“, gibt er zurück"
+                ).beendet(PARAGRAPH));
 
         setSchonBegruesstMitSC(true);
         unsetTalkingTo();

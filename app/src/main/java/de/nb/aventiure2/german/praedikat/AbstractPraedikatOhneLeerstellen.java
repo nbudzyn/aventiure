@@ -158,10 +158,6 @@ public abstract class AbstractPraedikatOhneLeerstellen
             return adverbialeAngabeSkopusSatz.getText();
         }
 
-        if (adverbialeAngabeSkopusVerbAllg != null) {
-            return adverbialeAngabeSkopusVerbAllg.getText();
-        }
-
         return null;
     }
 

@@ -92,20 +92,17 @@ public class RastenAction extends AbstractScAction {
     private void narrateAndDoRapunzelZuhoeren() {
         sc.feelingsComp().requestMoodMin(Mood.GLUECKLICH);
 
-        n.narrateAlt(
-                du("bist", "ganz still",
-                        mins(4))
+        n.narrateAlt(mins(4),
+                du("bist", "ganz still")
                         .undWartest()
                         .dann(),
-                du("genießt deine Rast",
-                        mins(4))
+                du("genießt deine Rast")
                         .undWartest()
                         .dann(),
                 du(SENTENCE, "sitzt", "glücklich da und genießt",
-                        "glücklich",
-                        mins(4))
+                        "glücklich")
                         .beendet(SENTENCE),
-                neuerSatz("Dein Herz wird ganz warm von dem Gesang", mins(4))
+                neuerSatz("Dein Herz wird ganz warm von dem Gesang")
                         .beendet(SENTENCE));
 
         world.loadSC().memoryComp().upgradeKnown(RAPUNZELS_GESANG);
@@ -114,17 +111,15 @@ public class RastenAction extends AbstractScAction {
     private void narrateAndDoDunkel() {
         sc.feelingsComp().requestMoodMax(Mood.VERUNSICHERT);
 
-        n.narrateAlt(
+        n.narrateAlt(mins(3),
                 neuerSatz("Die Bäume rauschen in "
                         + "der Dunkelheit, die Eulen schnarren, und "
-                        + "und es fängt an, dir angst zu werden", mins(3))
+                        + "und es fängt an, dir angst zu werden")
                         .beendet(SENTENCE),
                 neuerSatz("Es ist dunkel und ungemütlich. Krabbelt da etwas auf "
-                                + "deinem rechten Bein? Du schlägst mit der Hand zu, kannst aber nichts erkennen",
-                        mins(3))
+                        + "deinem rechten Bein? Du schlägst mit der Hand zu, kannst aber nichts erkennen")
                         .beendet(SENTENCE),
-                neuerSatz("In den Ästen über dir knittert und rauscht es. Dich friert",
-                        mins(3)));
+                neuerSatz("In den Ästen über dir knittert und rauscht es. Dich friert"));
     }
 
     private void narrateAndDoHell() {
@@ -142,38 +137,36 @@ public class RastenAction extends AbstractScAction {
         //  Satz gleich war. (Nach der Logik kann man dann auch für Beschreibungen in
         //  der dritten Person verwenden!)
 
-        n.narrateAlt(
+        n.narrateAlt(mins(10),
                 du(SENTENCE, "hältst",
                         "verborgen unter den Bäumen noch eine Zeitlang Rast",
-                        "verborgen unter den Bäumen",
-                        mins(10))
+                        "verborgen unter den Bäumen")
                         .beendet(SENTENCE)
                         .dann(),
                 neuerSatz("Es tut gut, eine Weile zu rasten. Über dir zwitschern die "
-                                + "Vögel und die Grillen zirpen",
-                        mins(10))
+                        + "Vögel und die Grillen zirpen")
                         .beendet(SENTENCE)
                         .dann(),
                 du(SENTENCE, "streckst", "die Glieder und hörst auf das Rauschen "
                                 + "in den "
                                 + "Ästen über dir. Ein Rabe setzt "
-                                + "sich neben dich und fliegt nach einer Weile wieder fort",
+                                + "sich neben dich und fliegt nach einer Weile wieder fort"
                         //    STORY Rabe mit Märchenbezug?
-                        mins(10))
+                )
                         .beendet(SENTENCE)
                         .dann(),
                 du(SENTENCE, "ruhst", "noch eine Weile aus und lauschst, wie die "
                                 + "Insekten "
                                 + "zirpen und der Wind saust",
-                        "eine Weile",
-                        mins(10))
+                        "eine Weile"
+                )
                         .beendet(SENTENCE)
                         .dann(),
                 // FIXME Nur, wenn man ausreichend müde (erschöpft) ist
                 neuerSatz("Deine müden Glieder brauchen Erholung. Du bist ganz "
                         + "still und die Vögel setzen sich "
                         + "auf die Äste über dir "
-                        + "und singen, was sie nur wissen", mins(10))
+                        + "und singen, was sie nur wissen")
                         .beendet(SENTENCE)
                         .dann());
     }

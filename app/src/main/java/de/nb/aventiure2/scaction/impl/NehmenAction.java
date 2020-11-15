@@ -222,13 +222,13 @@ public class NehmenAction
 
         final Nominalphrase froschDesc = world.getDescription(gameObject, true);
 
-        n.narrateAlt(
+        n.narrateAlt(secs(10),
                 du(PARAGRAPH,
                         "ekelst",
                         "dich sehr, aber mit einiger Überwindung nimmst du "
                                 + froschDesc.akk()
                                 + " in "
-                                + "die Hand", secs(10))
+                                + "die Hand")
                         .phorikKandidat(froschDesc, FROSCHPRINZ)
                         .undWartest()
                         .dann(),
@@ -236,12 +236,12 @@ public class NehmenAction
                         capitalize(froschDesc.akk())
                                 + " in die Hand nehmen? – Wer hat dir bloß solche Flausen "
                                 + "in den Kopf gesetzt! Kräftig packst du "
-                                + froschDesc.akk(), secs(10))
+                                + froschDesc.akk())
                         .phorikKandidat(froschDesc, FROSCHPRINZ)
                         .undWartest()
                         .dann(),
                 du(PARAGRAPH,
-                        "erbarmst", "dich", secs(10))
+                        "erbarmst", "dich")
                         .undWartest()
         );
 

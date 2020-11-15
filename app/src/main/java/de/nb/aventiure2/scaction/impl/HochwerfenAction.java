@@ -230,12 +230,12 @@ public class HochwerfenAction<OBJ extends IDescribableGO & ILocatableGO>
         if (db.counterDao().incAndGet("HochwerfenAction_Wiederholung") == 1 ||
                 (location.is(IM_WALD_BEIM_BRUNNEN) && !froschprinz.stateComp()
                         .hasState(UNAUFFAELLIG))) {
-            n.narrateAlt(
-                    neuerSatz("Und noch einmal – was ein schönes Spiel!", secs(3))
+            n.narrateAlt(secs(3),
+                    neuerSatz("Und noch einmal – was ein schönes Spiel!")
                             .dann(),
-                    neuerSatz("So ein Spaß!", secs(3))
+                    neuerSatz("So ein Spaß!")
                             .dann(),
-                    neuerSatz("Und in die Höhe damit – juchei!", secs(3))
+                    neuerSatz("Und in die Höhe damit – juchei!")
                             .dann());
             return;
         }
