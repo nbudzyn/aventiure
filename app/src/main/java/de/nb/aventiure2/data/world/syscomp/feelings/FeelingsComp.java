@@ -101,6 +101,11 @@ public class FeelingsComp extends AbstractStatefulComponent<FeelingsPCD> {
 
     public AdverbialeAngabeSkopusSatz getAdverbialeAngabe() {
         if (getMuedigkeit() > Math.abs(getMood().getGradDerFreude())) {
+            // Häufig wird die adverbiale Angabe wohl verwendet werden - daher setzen
+            // wir den Counter neu.
+            getPcd().resetNextMuedigkeitshinweisActionStepCount(
+                    scActionStepCountDao.stepCount()
+            );
             return getPcd().getMuedigkeitsData().getAdverbialeAngabe();
         }
 
@@ -390,6 +395,9 @@ public class FeelingsComp extends AbstractStatefulComponent<FeelingsPCD> {
                         getPcd().getMuedigkeitsData().getAdjektivphrasePraedikativ()),
                 du(PARAGRAPH, "bist",
                         getPcd().getMuedigkeitsData().getAdjektivphrasePraedikativ()),
+                du(PARAGRAPH, "fühlst", "dich auf einmal " +
+                                getPcd().getMuedigkeitsData().getAdjektivphrasePraedikativ(),
+                        "auf einmal"),
                 du(PARAGRAPH, "bist",
                         "auf einmal " +
                                 getPcd().getMuedigkeitsData().getAdjektivphrasePraedikativ()),
@@ -399,6 +407,8 @@ public class FeelingsComp extends AbstractStatefulComponent<FeelingsPCD> {
         );
 
         if (getMuedigkeit() == FeelingIntensity.NUR_LEICHT) {
+            // NUR_LEICHT: "leicht erschöpft"
+
             res.add(
                     du(PARAGRAPH, "fühlst", "dich ein wenig erschöpft")
                             .beendet(PARAGRAPH),
@@ -408,9 +418,8 @@ public class FeelingsComp extends AbstractStatefulComponent<FeelingsPCD> {
             );
         }
 
-        // FIXME Hier andere Texte zur Müdigkeit erzeugen
-
         if (getMuedigkeit() == FeelingIntensity.MERKLICH) {
+            // MERKLICH: "erschöpft"
             res.add(
                     // Kann z.B. mit dem Vorsatz kombiniert werden zu etwas wie
                     // "Unten angekommen bist du ziemlich erschöpft..."
@@ -425,6 +434,38 @@ public class FeelingsComp extends AbstractStatefulComponent<FeelingsPCD> {
                             .beendet(PARAGRAPH)
             );
         }
+
+        if (getMuedigkeit() == FeelingIntensity.DEUTLICH) {
+            //  DEUTLICH: "müde"
+            res.add(
+                    du("beginnst", "müde zu werden")
+                            .beendet(SENTENCE)
+                    // FIXME Hier andere Texte zur Müdigkeit DEUTLICH erzeugen
+            );
+        }
+
+        if (getMuedigkeit() == FeelingIntensity.STARK) {
+            //  STARK: "völlig übermüdet"
+            // FIXME Hier andere Texte zur Müdigkeit STARK erzeugen
+            res.add(
+                    du("bist", "ganz müde")
+                            .beendet(SENTENCE)
+            );
+        }
+
+        if (getMuedigkeit() == FeelingIntensity.SEHR_STARK) {
+            // SEHR_STARK: "todmüde"
+            res.add(
+                    du("bist", "hundemüde")
+                            .beendet(PARAGRAPH),
+                    neuerSatz("auf einmal beginnen dir die Augen zuzufallen")
+            );
+
+            // FIXME Hier andere Texte zur Müdigkeit SEHR STAKR erzeugen
+        }
+
+        // FIXME Hier andere Texte zur Müdigkeit PATHOLOGISCH erzeugen
+        // PATHOLOGISCH: "benommen"
 
         return res.build();
     }
@@ -466,16 +507,122 @@ public class FeelingsComp extends AbstractStatefulComponent<FeelingsPCD> {
             return;
         }
 
-        narrateScMuedigkeitshinweis();
+        n.narrateAlt(altScIstMuede(), noTime());
 
-        getPcd().resetNextMuedigkeitshinweisActionStepCount(
-                scActionStepCount
-        );
+        getPcd().resetNextMuedigkeitshinweisActionStepCount(scActionStepCount);
     }
 
-    private void narrateScMuedigkeitshinweis() {
-        // FIXME "Du bist "(todmüde, ...) siehe MüdigkeitsData
-        //  "du bist so müde (von allem)" / "dass du auf der Stelle einschlafen könntest"
+    private Collection<AbstractDescription<?>> altScIstMuede() {
+        checkArgument(
+                getMuedigkeit() > FeelingIntensity.NEUTRAL,
+                "Ist müde, aber FeelingIntensity ist NEUTRAL?"
+        );
+
+        final ImmutableList.Builder<AbstractDescription<?>> res = ImmutableList.builder();
+
+        res.add(
+                du(PARAGRAPH, "bist",
+                        getPcd().getMuedigkeitsData().getAdjektivphrasePraedikativ())
+                        .beendet(PARAGRAPH),
+                du(PARAGRAPH, "fühlst", "dich " +
+                        getPcd().getMuedigkeitsData().getAdjektivphrasePraedikativ())
+                        .beendet(PARAGRAPH)
+        );
+
+        // FIXME Nach müd, erschöpf, anstreng, Nacht, schlaf etc. in den Grimms-Märchen suchen
+        //  und hier oder oben einbauen.
+        //  Dabei auch schauen, wie die Sätze verknüpft sind und ggf. neue Verknüpfungen in den
+        //  Combiner einbauen.
+
+        if (getMuedigkeit() == FeelingIntensity.NUR_LEICHT) {
+            // NUR_LEICHT: "leicht erschöpft"
+
+            res.add(
+                    du(PARAGRAPH, "fühlst", "dich ein wenig erschöpft")
+                            .beendet(PARAGRAPH)
+                    // FIXME Hier weitere Texte zur leichten Müdigkeit erzeugen
+            );
+        }
+
+        if (getMuedigkeit() == FeelingIntensity.MERKLICH) {
+            // MERKLICH: "erschöpft"
+            res.add(
+                    // Kann z.B. mit dem Vorsatz kombiniert werden zu etwas wie
+                    // "Unten angekommen bist du ziemlich erschöpft..."
+                    du(PARAGRAPH, "bist", "ziemlich erschöpft; ein "
+                            + "Nickerchen täte dir gut")
+                            .beendet(PARAGRAPH),
+                    du(PARAGRAPH, "solltest", "etwas ruhen")
+                            .beendet(PARAGRAPH)
+            );
+            // FIXME Hier andere Texte zur MERKLICHen Müdigkeit erzeugen
+        }
+
+        if (getMuedigkeit() == FeelingIntensity.DEUTLICH) {
+            //  DEUTLICH: "müde"
+            res.add(
+                    du(PARAGRAPH, "würdest", "gern ein wenig schlafen")
+                            .beendet(SENTENCE),
+                    du(PARAGRAPH, "möchtest", "dich schlafen legen")
+                            .beendet(PARAGRAPH),
+                    du(PARAGRAPH, "bist", "müde und möchtest gern schlafen")
+                            .beendet(PARAGRAPH),
+                    du(PARAGRAPH, "bist", "matt und müde", "matt")
+                            .beendet(SENTENCE),
+                    du(PARAGRAPH, "bist", "jetzt müde", "jetzt")
+                            .beendet(SENTENCE),
+                    neuerSatz(PARAGRAPH, "all die Erlebnisse haben dich müde gemacht")
+            );
+
+            // FIXME Hier andere Texte zur Müdigkeit DEUTLICH erzeugen
+
+        }
+
+        if (getMuedigkeit() == FeelingIntensity.STARK) {
+            //  STARK: "völlig übermüdet"
+
+            res.add(
+                    paragraph("wenn du dich doch schlafen legen könntest!"),
+                    paragraph("könntest du dich doch in ein Bett legen!"),
+                    du(SENTENCE, "bist",
+                            "so müde, du kannst kaum mehr weiter")
+                            .beendet(SENTENCE)
+            );
+
+            // FIXME Hier andere Texte zur Müdigkeit STARK erzeugen
+        }
+
+        if (getMuedigkeit() == FeelingIntensity.SEHR_STARK) {
+            //  SEHR_STARK: "todmüde"
+            res.add(
+                    du(PARAGRAPH, "bist",
+                            "so müde, dass du auf der Stelle einschlafen könntest")
+                            .komma()
+                            .beendet(PARAGRAPH),
+                    du(PARAGRAPH, "bist",
+                            "so müde von allem, dass du auf der Stelle einschlafen "
+                                    + "könntest",
+                            "von allem")
+                            .komma()
+                            .beendet(PARAGRAPH),
+                    neuerSatz("immer wieder fallen dir die Augen zu")
+                            .beendet(SENTENCE)
+            );
+        }
+
+        if (getMuedigkeit() == FeelingIntensity.PATHOLOGISCH) {
+            //  PATHOLOGISCH: "benommen"
+            res.add(
+                    du("empfindest",
+                            "so große Müdigkeit, dass dich deine Glieder "
+                                    + "kaum halten")
+                            .komma()
+                            .beendet(SENTENCE)
+            );
+            // FIXME Hier weitere Texte zur Müdigkeit PATHOLOGISCH erzeugen
+        }
+
+        return res.build();
     }
 
     private int getMuedigkeitGemaessBiorhythmus() {

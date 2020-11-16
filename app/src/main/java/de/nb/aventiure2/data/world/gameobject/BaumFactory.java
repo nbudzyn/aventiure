@@ -201,11 +201,5 @@ public class BaumFactory {
         //                "Ein zurückschwingender "
         //                                + "Ast verpasst dir beim Abstieg ein Schramme",
         //                        .dann(),
-
-        // FIXME Wenn man bereits müde ist, erhält man hin und wieder einen Hinweis.
-
-        // FIXME Nach müd, erschöpf, anstreng, Nacht, schlaf etc. in den Grimms-Märchen suchen. Dabei auch
-        //  schauen, wie die Sätze verknüpft sind und ggf. neue Verknüpfungen in den
-        //  Combiner einbauen.
     }
 }
