@@ -439,6 +439,11 @@ public class FeelingsComp extends AbstractStatefulComponent<FeelingsPCD> {
             //  DEUTLICH: "müde"
             res.add(
                     du("beginnst", "müde zu werden")
+                            .beendet(SENTENCE),
+                    du(PARAGRAPH, "bist", "jetzt müde", "jetzt")
+                            .beendet(SENTENCE),
+                    du(PARAGRAPH, "bist", "indessen müde geworden",
+                            "indessen")
                             .beendet(SENTENCE)
                     // FIXME Hier andere Texte zur Müdigkeit DEUTLICH erzeugen
             );
@@ -529,7 +534,7 @@ public class FeelingsComp extends AbstractStatefulComponent<FeelingsPCD> {
                         .beendet(PARAGRAPH)
         );
 
-        // FIXME Nach müd, erschöpf, anstreng, Nacht, schlaf etc. in den Grimms-Märchen suchen
+        // FIXME Nach erschöpf, anstreng, Nacht, schlaf etc. in den Grimms-Märchen suchen
         //  und hier oder oben einbauen.
         //  Dabei auch schauen, wie die Sätze verknüpft sind und ggf. neue Verknüpfungen in den
         //  Combiner einbauen.
@@ -569,13 +574,14 @@ public class FeelingsComp extends AbstractStatefulComponent<FeelingsPCD> {
                             .beendet(PARAGRAPH),
                     // FIXME besser Gedankenstrich statt ; !
                     du(PARAGRAPH, "bist", "müde; wo ist ein Bett, in dass du dich "
-                            + "schlafen legen kannst?")
+                            + "legen und schlafen kannst?")
                             .beendet(PARAGRAPH),
                     du(PARAGRAPH, "bist", "matt und müde", "matt")
                             .beendet(SENTENCE),
-                    du(PARAGRAPH, "bist", "jetzt müde", "jetzt")
-                            .beendet(SENTENCE),
-                    neuerSatz(PARAGRAPH, "all die Erlebnisse haben dich müde gemacht")
+                    neuerSatz(PARAGRAPH, "all die Erlebnisse haben dich müde gemacht"),
+                    du(PARAGRAPH, "möchtest", "gern ein Auge zutun",
+                            "gern")
+                            .beendet(PARAGRAPH)
             );
 
             // FIXME Hier andere Texte zur Müdigkeit DEUTLICH erzeugen
@@ -610,6 +616,8 @@ public class FeelingsComp extends AbstractStatefulComponent<FeelingsPCD> {
                             .komma()
                             .beendet(PARAGRAPH),
                     neuerSatz("immer wieder fallen dir die Augen zu")
+                            .beendet(SENTENCE),
+                    du("bist", "so müde, dass du die Augen kaum aufhalten magst")
                             .beendet(SENTENCE),
                     neuerSatz(SENTENCE, "dir ist, als könntest du vor Müdigkeit kaum mehr "
                             + "ein Glied regen")
