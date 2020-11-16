@@ -567,6 +567,10 @@ public class FeelingsComp extends AbstractStatefulComponent<FeelingsPCD> {
                             .beendet(PARAGRAPH),
                     du(PARAGRAPH, "bist", "müde und möchtest gern schlafen")
                             .beendet(PARAGRAPH),
+                    // FIXME besser Gedankenstrich statt ; !
+                    du(PARAGRAPH, "bist", "müde; wo ist ein Bett, in dass du dich "
+                            + "schlafen legen kannst?")
+                            .beendet(PARAGRAPH),
                     du(PARAGRAPH, "bist", "matt und müde", "matt")
                             .beendet(SENTENCE),
                     du(PARAGRAPH, "bist", "jetzt müde", "jetzt")
@@ -606,6 +610,9 @@ public class FeelingsComp extends AbstractStatefulComponent<FeelingsPCD> {
                             .komma()
                             .beendet(PARAGRAPH),
                     neuerSatz("immer wieder fallen dir die Augen zu")
+                            .beendet(SENTENCE),
+                    neuerSatz(SENTENCE, "dir ist, als könntest du vor Müdigkeit kaum mehr "
+                            + "ein Glied regen")
                             .beendet(SENTENCE)
             );
         }
