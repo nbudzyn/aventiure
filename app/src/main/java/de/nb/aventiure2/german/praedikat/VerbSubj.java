@@ -22,7 +22,9 @@ public enum VerbSubj implements PraedikatOhneLeerstellen {
     EINTRETEN("eintreten", "trittst", "ein",
             Perfektbildung.SEIN, "eingetreten"),
     HEREINKOMMEN("hereinkommen", "kommst", "herein",
-            Perfektbildung.SEIN, "hereingekommen");
+            Perfektbildung.SEIN, "hereingekommen"),
+    HINABSTEIGEN("hinabsteigen", "steigst", "hinab",
+            Perfektbildung.SEIN, "hinabgestiegen");
 
     /**
      * Das Verb an sich, ohne Informationen zur Valenz, ohne Ergänzungen, ohne

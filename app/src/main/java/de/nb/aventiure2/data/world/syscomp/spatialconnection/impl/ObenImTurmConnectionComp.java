@@ -20,6 +20,8 @@ import de.nb.aventiure2.data.world.syscomp.spatialconnection.AbstractSpatialConn
 import de.nb.aventiure2.data.world.syscomp.state.IHasStateGO;
 import de.nb.aventiure2.data.world.syscomp.state.impl.RapunzelState;
 import de.nb.aventiure2.german.description.TimedDescription;
+import de.nb.aventiure2.german.praedikat.AdverbialeAngabeSkopusVerbAllg;
+import de.nb.aventiure2.german.praedikat.VerbSubj;
 
 import static de.nb.aventiure2.data.world.base.SpatialConnection.con;
 import static de.nb.aventiure2.data.world.gameobject.World.*;
@@ -88,9 +90,9 @@ public class ObenImTurmConnectionComp extends AbstractSpatialConnectionComp {
                     .dann();
         }
 
-        // FIXME Wrsetzen durch Praedikats-DuDesc
-        return du("steigst",
-                "wieder hinab",
+        return du(VerbSubj.HINABSTEIGEN
+                        .mitAdverbialerAngabe(
+                                new AdverbialeAngabeSkopusVerbAllg("wieder")),
                 mins(1))
                 .undWartest()
                 .dann();

@@ -88,14 +88,14 @@ public class SpielerCharakterFactory {
                 Integer.MAX_VALUE,
                 new AvDateTime(1, oClock(7)),
                 new AvDateTime(1, oClock(11)),
-                new AvDateTime(0, oClock(13,
+                new AvDateTime(1, oClock(13,
                         30)),
                 FeelingIntensity.NUR_LEICHT);
     }
 
     private static HungerData createInitialHungerData() {
         return new HungerData(Hunger.SATT,
-                new AvDateTime(1, oClock(14)));
+                new AvDateTime(1, oClock(17)));
     }
 
     private static Map<FeelingTowardsType, Float> createDefaultFeelingsTowards() {
