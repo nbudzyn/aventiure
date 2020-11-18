@@ -12,7 +12,7 @@ import static de.nb.aventiure2.data.world.time.AvTimeSpan.*;
 
 public class FeelingsPCDTest {
     @Test
-    public void vorherHungrig_EsssenMachtMuede() {
+    public void saveSatt__vorherHungrig_EsssenMachtMuede() {
         // GIVEN
         final FeelingsPCD feelingsPCD = feelingsPCDNichtMuedeAberHungrig();
 
@@ -28,7 +28,7 @@ public class FeelingsPCDTest {
     }
 
     @Test
-    public void vorherSatt_EsssenMachtNichtMuede() {
+    public void saveSatt__vorherSatt_EsssenMachtNichtMuede() {
         // GIVEN
         final FeelingsPCD feelingsPCD = feelingsPCDWederMuedeNochHungrig();
 

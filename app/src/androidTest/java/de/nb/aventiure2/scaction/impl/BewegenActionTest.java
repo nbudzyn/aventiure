@@ -26,7 +26,7 @@ import static de.nb.aventiure2.data.world.time.AvTimeSpan.*;
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class BewegenActionTest extends AndroidTestBase {
     @Test
-    public void scMuede_scGehtLangsamer() {
+    public void getStandardDescription_scMuede__scGehtLangsamer() {
         // GIVEN
 
         // WHEN

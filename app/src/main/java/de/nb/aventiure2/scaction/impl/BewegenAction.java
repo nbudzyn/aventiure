@@ -571,11 +571,14 @@ public class BewegenAction<LOC_DESC extends ILocatableGO & IDescribableGO>
     @VisibleForTesting
     TimedDescription getStandardDescription(final Known newLocationKnown,
                                             final Lichtverhaeltnisse lichtverhaeltnisseInNewLocation) {
-        final double speedFactor = world.loadSC().feelingsComp().getMovementSpeedFactor();
 
         return spatialConnection.getSCMoveDescriptionProvider()
                 .getSCMoveDescription(newLocationKnown, lichtverhaeltnisseInNewLocation)
-                .multiplyTimeElapsedWith(speedFactor);
+                .multiplyTimeElapsedWith(calcSpeedFactor());
+    }
+
+    private double calcSpeedFactor() {
+        return world.loadSC().feelingsComp().getMovementSpeedFactor();
     }
 
     @NonNull
