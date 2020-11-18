@@ -187,13 +187,18 @@ class FeelingsPCD extends AbstractPersistentComponentData {
             final int muedigkeitGemaessBiorhythmus) {
         setChanged();
 
+        final int maxTemporaereMinimalmuedigkeit = Math.max(
+                getTemporaereMinimalmuedigkeitSofernRelevant(now),
+                temporaereMinimalmuedigkeit);
+        final AvDateTime maxTemporaerMuedeBis =
+                AvDateTime.latest(
+                        now.plus(duration),
+                        muedigkeitsData.getTemporaerMuedeBis());
         muedigkeitsData =
                 muedigkeitsData
                         .withTemporaereMinimalmuedigkeit(
-                                Math.max(
-                                        getTemporaereMinimalmuedigkeitSofernRelevant(now),
-                                        temporaereMinimalmuedigkeit))
-                        .withTemporaerMuedeBis(now.plus(duration));
+                                maxTemporaereMinimalmuedigkeit)
+                        .withTemporaerMuedeBis(maxTemporaerMuedeBis);
 
         updateMuedigkeit(now, scActionStepCount, muedigkeitGemaessBiorhythmus);
     }
@@ -311,8 +316,14 @@ class FeelingsPCD extends AbstractPersistentComponentData {
         }
     }
 
+    /**
+     * Speichert, dass das {@link IFeelingBeingGO} satt ist. Hat ggf. auch Auswirkungen
+     * auf Laune und Müdigkeit.
+     */
     void saveSatt(final AvDateTime now,
-                  final AvTimeSpan zeitspanneBisWiederHungrig) {
+                  final AvTimeSpan zeitspanneBisWiederHungrig,
+                  final int scActionStepCount,
+                  final int muedigkeitGemaessBiorhythmus) {
         final Hunger vorher = getHunger();
 
         hungerData = new HungerData(SATT, now.plus(zeitspanneBisWiederHungrig));
@@ -320,6 +331,9 @@ class FeelingsPCD extends AbstractPersistentComponentData {
         if (vorher != SATT) {
             // Sich satt essen ist (für den Moment) gut für die Stimmung!
             requestMoodMin(Mood.BETRUEBT);
+            // Aber man wird etwas müde
+            upgradeTemporaereMinimalmuedigkeit(now, scActionStepCount,
+                    FeelingIntensity.NUR_LEICHT, mins(90), muedigkeitGemaessBiorhythmus);
         }
 
         setChanged();

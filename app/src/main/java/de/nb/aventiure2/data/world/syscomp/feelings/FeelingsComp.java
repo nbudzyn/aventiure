@@ -171,8 +171,14 @@ public class FeelingsComp extends AbstractStatefulComponent<FeelingsPCD> {
         getPcd().updateHunger(nowDao.now());
     }
 
+    /**
+     * Speichert, dass das {@link IFeelingBeingGO} satt ist. Hat ggf. auch Auswirkungen
+     * auf Laune und Müdigkeit.
+     */
     public void saveSatt() {
-        getPcd().saveSatt(nowDao.now(), zeitspanneNachEssenBisWiederHungrig);
+        getPcd().saveSatt(nowDao.now(), zeitspanneNachEssenBisWiederHungrig,
+                scActionStepCountDao.stepCount(),
+                getMuedigkeitGemaessBiorhythmus());
     }
 
     /**
@@ -342,6 +348,11 @@ public class FeelingsComp extends AbstractStatefulComponent<FeelingsPCD> {
             case FeelingIntensity.SEHR_STARK:
             case FeelingIntensity.PATHOLOGISCH:
                 n.narrateAlt(noTime(),
+                        neuerSatz(SENTENCE,
+                                "„So legt dich doch endlich schlafen!”, "
+                                        + "denkst du bei dir"),
+                        neuerSatz(SENTENCE,
+                                "vielleicht könntest du hier ungestört schlafen?"),
                         neuerSatz(PARAGRAPH,
                                 "Höchste Zeit, schlafen zu gehen!")
                                 .beendet(PARAGRAPH)
@@ -352,7 +363,7 @@ public class FeelingsComp extends AbstractStatefulComponent<FeelingsPCD> {
     }
 
     private void narrateAnDoSCMitEssenKonfrontiertReagiertHungrig() {
-        // FIXME Hunger - sinnvoll machen... -- vollgefressen -> müde? (z.B. für 90 Minuten)
+        // FIXME Sehr müde geht man langsamer?!
 
         n.narrateAlt(noTime(),
                 neuerSatz("Mmh!")
@@ -413,8 +424,12 @@ public class FeelingsComp extends AbstractStatefulComponent<FeelingsPCD> {
                     du(PARAGRAPH, "fühlst", "dich ein wenig erschöpft")
                             .beendet(PARAGRAPH),
                     du(PARAGRAPH, "spürst", "die Anstrengung")
-                            .beendet(PARAGRAPH)
-                    // FIXME Hier weitere Texte zur leichten Müdigkeit erzeugen
+                            .beendet(PARAGRAPH),
+                    du("wirst", "etwas schläfrig")
+                            .beendet(PARAGRAPH),
+                    du(SENTENCE, "bist", "darüber etwas schläfrig geworden",
+                            "darüber")
+                            .beendet(SENTENCE)
             );
         }
 
@@ -444,14 +459,15 @@ public class FeelingsComp extends AbstractStatefulComponent<FeelingsPCD> {
                             .beendet(SENTENCE),
                     du(PARAGRAPH, "bist", "indessen müde geworden",
                             "indessen")
+                            .beendet(SENTENCE),
+                    neuerSatz("da wollen dir deine Augen nicht länger offen bleiben "
+                            + "und du bekommst Lust zu schlafen")
                             .beendet(SENTENCE)
-                    // FIXME Hier andere Texte zur Müdigkeit DEUTLICH erzeugen
             );
         }
 
         if (getMuedigkeit() == FeelingIntensity.STARK) {
             //  STARK: "völlig übermüdet"
-            // FIXME Hier andere Texte zur Müdigkeit STARK erzeugen
             res.add(
                     du("bist", "ganz müde")
                             .beendet(SENTENCE)
@@ -465,12 +481,17 @@ public class FeelingsComp extends AbstractStatefulComponent<FeelingsPCD> {
                             .beendet(PARAGRAPH),
                     neuerSatz("auf einmal beginnen dir die Augen zuzufallen")
             );
-
-            // FIXME Hier andere Texte zur Müdigkeit SEHR STAKR erzeugen
         }
 
-        // FIXME Hier andere Texte zur Müdigkeit PATHOLOGISCH erzeugen
-        // PATHOLOGISCH: "benommen"
+        if (getMuedigkeit() == FeelingIntensity.PATHOLOGISCH) {
+            // PATHOLOGISCH: "benommen"
+            res.add(
+                    neuerSatz("auf einmal ist dir, als hättest du einen "
+                            + "Schlaftrunk genommen")
+                            .komma()
+            );
+        }
+
 
         return res.build();
     }
@@ -534,18 +555,17 @@ public class FeelingsComp extends AbstractStatefulComponent<FeelingsPCD> {
                         .beendet(PARAGRAPH)
         );
 
-        // FIXME Nach erschöpf, anstreng, Nacht, schlaf etc. in den Grimms-Märchen suchen
-        //  und hier oder oben einbauen.
-        //  Dabei auch schauen, wie die Sätze verknüpft sind und ggf. neue Verknüpfungen in den
-        //  Combiner einbauen.
+        // FIXME In den Grimms-Märchen schauen, wie solche Sätze verknüpft sind und ggf. neue
+        //  Verknüpfungen in den Combiner einbauen.
 
         if (getMuedigkeit() == FeelingIntensity.NUR_LEICHT) {
             // NUR_LEICHT: "leicht erschöpft"
 
             res.add(
                     du(PARAGRAPH, "fühlst", "dich ein wenig erschöpft")
+                            .beendet(PARAGRAPH),
+                    du(PARAGRAPH, "bist", "etwas erschöpft")
                             .beendet(PARAGRAPH)
-                    // FIXME Hier weitere Texte zur leichten Müdigkeit erzeugen
             );
         }
 
@@ -558,22 +578,24 @@ public class FeelingsComp extends AbstractStatefulComponent<FeelingsPCD> {
                             + "Nickerchen täte dir gut")
                             .beendet(PARAGRAPH),
                     du(PARAGRAPH, "solltest", "etwas ruhen")
+                            .beendet(PARAGRAPH),
+                    du(SENTENCE, "möchtest", "ein wenig ruhen")
                             .beendet(PARAGRAPH)
             );
-            // FIXME Hier andere Texte zur MERKLICHen Müdigkeit erzeugen
         }
 
         if (getMuedigkeit() == FeelingIntensity.DEUTLICH) {
             //  DEUTLICH: "müde"
             res.add(
+                    du(PARAGRAPH, "musst", "ein wenig schlafen")
+                            .beendet(SENTENCE),
                     du(PARAGRAPH, "würdest", "gern ein wenig schlafen")
                             .beendet(SENTENCE),
                     du(PARAGRAPH, "möchtest", "dich schlafen legen")
                             .beendet(PARAGRAPH),
                     du(PARAGRAPH, "bist", "müde und möchtest gern schlafen")
                             .beendet(PARAGRAPH),
-                    // FIXME besser Gedankenstrich statt ; !
-                    du(PARAGRAPH, "bist", "müde; wo ist ein Bett, in dass du dich "
+                    du(PARAGRAPH, "bist", "müde – wo ist ein Bett, in dass du dich "
                             + "legen und schlafen kannst?")
                             .beendet(PARAGRAPH),
                     du(PARAGRAPH, "bist", "matt und müde", "matt")
@@ -584,22 +606,26 @@ public class FeelingsComp extends AbstractStatefulComponent<FeelingsPCD> {
                             .beendet(PARAGRAPH)
             );
 
-            // FIXME Hier andere Texte zur Müdigkeit DEUTLICH erzeugen
-
+            if (nowDao.now().getTageszeit() == Tageszeit.NACHTS) {
+                res.add(
+                        neuerSatz("es ist Schlafenszeit")
+                                .beendet(SENTENCE)
+                );
+            }
         }
 
         if (getMuedigkeit() == FeelingIntensity.STARK) {
             //  STARK: "völlig übermüdet"
 
             res.add(
+                    du(SENTENCE, "kannst", "kaum mehr die Augen offenhalten"),
+                    du(PARAGRAPH, "musst", "endlich wieder einmal ausschlafen!"),
                     paragraph("wenn du dich doch schlafen legen könntest!"),
                     paragraph("könntest du dich doch in ein Bett legen!"),
                     du(SENTENCE, "bist",
                             "so müde, du kannst kaum mehr weiter")
                             .beendet(SENTENCE)
             );
-
-            // FIXME Hier andere Texte zur Müdigkeit STARK erzeugen
         }
 
         if (getMuedigkeit() == FeelingIntensity.SEHR_STARK) {
@@ -621,7 +647,10 @@ public class FeelingsComp extends AbstractStatefulComponent<FeelingsPCD> {
                             .beendet(SENTENCE),
                     neuerSatz(SENTENCE, "dir ist, als könntest du vor Müdigkeit kaum mehr "
                             + "ein Glied regen")
-                            .beendet(SENTENCE)
+                            .beendet(SENTENCE),
+                    du("kannst",
+                            "dich des Schlafes kaum wehren")
+                            .beendet(PARAGRAPH)
             );
         }
 
@@ -632,9 +661,13 @@ public class FeelingsComp extends AbstractStatefulComponent<FeelingsPCD> {
                             "so große Müdigkeit, dass dich deine Glieder "
                                     + "kaum halten")
                             .komma()
-                            .beendet(SENTENCE)
+                            .beendet(SENTENCE),
+                    du("kannst",
+                            "dich des Schlafes kaum wehren")
+                            .beendet(PARAGRAPH),
+                    du(PARAGRAPH, "fühlst",
+                            "dich wie eingeschläfert")
             );
-            // FIXME Hier weitere Texte zur Müdigkeit PATHOLOGISCH erzeugen
         }
 
         return res.build();
