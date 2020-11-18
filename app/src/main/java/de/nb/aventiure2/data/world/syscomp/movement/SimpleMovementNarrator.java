@@ -484,8 +484,7 @@ public class SimpleMovementNarrator implements IMovementNarrator {
                 anaphOderDesc.nom() +
                         " kommt dir "
                         + wo
-                        + "nach")
-                // FIXME Komisches Deutsch? Statt "nach": "hinterher"?
+                        + "hinterher")
                 .phorikKandidat(desc, gameObjectId)
                 .beendet(PARAGRAPH));
         alt.add(neuerSatz(PARAGRAPH,

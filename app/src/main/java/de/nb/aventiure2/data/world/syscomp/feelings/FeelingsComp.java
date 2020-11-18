@@ -370,8 +370,6 @@ public class FeelingsComp extends AbstractStatefulComponent<FeelingsPCD> {
     }
 
     private void narrateAnDoSCMitEssenKonfrontiertReagiertHungrig() {
-        // FIXME Sehr müde geht man langsamer?!
-
         n.narrateAlt(noTime(),
                 neuerSatz("Mmh!")
                         .beendet(PARAGRAPH),
@@ -450,9 +448,7 @@ public class FeelingsComp extends AbstractStatefulComponent<FeelingsPCD> {
                             .beendet(PARAGRAPH),
                     du("bist", "ziemlich erschöpft. Und müde")
                             .beendet(PARAGRAPH),
-                    // FIXME "Das war anstrengend" nur, wenn
-                    //  die Müdikeit NICHT durch den Biorhythmus kam!
-                    neuerSatz("Das war anstrengend!")
+                    neuerSatz("Das war alles anstrengend!")
                             .beendet(PARAGRAPH)
             );
         }
@@ -562,7 +558,7 @@ public class FeelingsComp extends AbstractStatefulComponent<FeelingsPCD> {
                         .beendet(PARAGRAPH)
         );
 
-        // FIXME In den Grimms-Märchen schauen, wie solche Sätze verknüpft sind und ggf. neue
+        // STORY In den Grimms-Märchen schauen, wie solche Sätze verknüpft sind und ggf. neue
         //  Verknüpfungen in den Combiner einbauen.
 
         if (getMuedigkeit() == FeelingIntensity.NUR_LEICHT) {

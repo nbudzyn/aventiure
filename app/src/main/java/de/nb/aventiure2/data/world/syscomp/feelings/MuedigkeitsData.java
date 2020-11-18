@@ -78,19 +78,19 @@ public class MuedigkeitsData {
             case FeelingIntensity.NUR_LEICHT:
                 return Integer.MAX_VALUE;
             case FeelingIntensity.MERKLICH:
-                // FIXME Guter Wert?
+                // STORY Guter Wert?
                 return scActionStepCount + 12;
             case FeelingIntensity.DEUTLICH:
-                // FIXME Guter Wert?
+                // STORY Guter Wert?
                 return scActionStepCount + 10;
             case FeelingIntensity.STARK:
-                // FIXME Guter Wert?
+                // STORY Guter Wert?
                 return scActionStepCount + 8;
             case FeelingIntensity.SEHR_STARK:
-                // FIXME Guter Wert?
+                // STORY  uter Wert?
                 return scActionStepCount + 7;
             case FeelingIntensity.PATHOLOGISCH:
-                // FIXME Guter Wert?
+                // STORY Guter Wert?
                 return scActionStepCount + 3;
             default:
                 throw new IllegalStateException("Unexpected value: " + muedigkeit);
