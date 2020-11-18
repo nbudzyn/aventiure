@@ -70,7 +70,7 @@ public class Walkthrough {
                     "Die Hütte verlassen",
                     "Auf den Waldweg zurückkehren",
                     "In Richtung Schloss gehen",
-                    "Den Wald verlassen",
+                    "Den Wald verlassen und in den Schloßgarten gehen",
                     "Das Schloss betreten");
 
 

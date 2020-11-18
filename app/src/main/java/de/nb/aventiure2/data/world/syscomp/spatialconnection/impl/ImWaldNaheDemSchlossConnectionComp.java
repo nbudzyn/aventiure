@@ -70,9 +70,7 @@ public class ImWaldNaheDemSchlossConnectionComp extends AbstractSpatialConnectio
         return ImmutableList.of(
                 con(DRAUSSEN_VOR_DEM_SCHLOSS,
                         "auf dem Weg aus dem Wald",
-                        "Den Wald verlassen",
-                        // FIXME Statt "den Wald verlassen" klarer "Den Schlossgarten betreten"
-                        //  (wenn "Schlossgarten" o.Ä. schon erwähnt wurde).
+                        "Den Wald verlassen und in den Schloßgarten gehen",
                         mins(10),
                         this::getDescTo_DraussenVorDemSchloss),
                 con(VOR_DEM_ALTEN_TURM,
