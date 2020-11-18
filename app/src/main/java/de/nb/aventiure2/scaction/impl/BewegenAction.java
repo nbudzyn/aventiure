@@ -5,6 +5,7 @@ import android.util.Pair;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
+import com.google.common.annotations.VisibleForTesting;
 import com.google.common.collect.ImmutableList;
 
 import org.jetbrains.annotations.Contract;
@@ -143,12 +144,13 @@ public class BewegenAction<LOC_DESC extends ILocatableGO & IDescribableGO>
     /**
      * Creates a new {@link BewegenAction}.
      */
-    private BewegenAction(final AvDatabase db,
-                          final Narrator n,
-                          final World world,
-                          @NonNull final ILocationGO oldLocation,
-                          @NonNull final SpatialConnection spatialConnection,
-                          final NumberOfWays numberOfWays) {
+    @VisibleForTesting
+    BewegenAction(final AvDatabase db,
+                  final Narrator n,
+                  final World world,
+                  @NonNull final ILocationGO oldLocation,
+                  @NonNull final SpatialConnection spatialConnection,
+                  final NumberOfWays numberOfWays) {
         super(db, n, world);
         this.numberOfWays = numberOfWays;
         this.oldLocation = oldLocation;
@@ -528,8 +530,7 @@ public class BewegenAction<LOC_DESC extends ILocatableGO & IDescribableGO>
         }
 
         final TimedDescription standardDescription =
-                spatialConnection.getSCMoveDescriptionProvider()
-                        .getSCMoveDescription(newLocationKnown, lichtverhaeltnisseInNewLocation);
+                getStandardDescription(newLocationKnown, lichtverhaeltnisseInNewLocation);
 
         if (!alternativeDescriptionAllowed) {
             return standardDescription;
@@ -565,6 +566,16 @@ public class BewegenAction<LOC_DESC extends ILocatableGO & IDescribableGO>
         }
 
         return standardDescription;
+    }
+
+    @VisibleForTesting
+    TimedDescription getStandardDescription(final Known newLocationKnown,
+                                            final Lichtverhaeltnisse lichtverhaeltnisseInNewLocation) {
+        final double speedFactor = world.loadSC().feelingsComp().getMovementSpeedFactor();
+
+        return spatialConnection.getSCMoveDescriptionProvider()
+                .getSCMoveDescription(newLocationKnown, lichtverhaeltnisseInNewLocation)
+                .multiplyTimeElapsedWith(speedFactor);
     }
 
     @NonNull

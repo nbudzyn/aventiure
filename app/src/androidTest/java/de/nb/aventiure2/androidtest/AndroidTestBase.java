@@ -1,0 +1,51 @@
+package de.nb.aventiure2.androidtest;
+
+import android.content.Context;
+
+import androidx.arch.core.executor.testing.InstantTaskExecutorRule;
+import androidx.test.core.app.ApplicationProvider;
+
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Rule;
+
+import de.nb.aventiure2.data.database.AvDatabase;
+import de.nb.aventiure2.data.narration.Narrator;
+import de.nb.aventiure2.data.world.gameobject.*;
+import de.nb.aventiure2.logger.Logger;
+
+public abstract class AndroidTestBase {
+    // See https://proandroiddev.com/testing-the-un-testable-and-beyond-with-android-architecture-components-part-1-testing-room-4d97dec0f451
+    @Rule
+    public InstantTaskExecutorRule instantTaskExecutorRule = new InstantTaskExecutorRule();
+
+    protected static final Logger LOGGER = Logger.getLogger();
+
+    protected Context appContext;
+    protected AvDatabase db;
+    protected Narrator n;
+    protected World world;
+
+    @Before
+    public void createDb() {
+        appContext = ApplicationProvider.getApplicationContext();
+
+        AvDatabase.setInMemory(true);
+        resetDatabase();
+    }
+
+    protected void resetDatabase() {
+        World.reset();
+        Narrator.reset();
+        AvDatabase.resetDatabase();
+
+        db = AvDatabase.getDatabase(appContext);
+        n = Narrator.getInstance(db);
+        world = World.getInstance(db, n);
+    }
+
+    @After
+    public void closeDatabase() {
+        db.close();
+    }
+}

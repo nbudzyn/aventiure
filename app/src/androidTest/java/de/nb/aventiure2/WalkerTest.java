@@ -3,14 +3,9 @@ package de.nb.aventiure2;
 import android.content.Context;
 
 import androidx.annotation.Nullable;
-import androidx.arch.core.executor.testing.InstantTaskExecutorRule;
-import androidx.test.core.app.ApplicationProvider;
 import androidx.test.ext.junit.runners.AndroidJUnit4;
 
-import org.junit.After;
-import org.junit.Before;
 import org.junit.FixMethodOrder;
-import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.MethodSorters;
@@ -18,9 +13,7 @@ import org.junit.runners.MethodSorters;
 import java.io.File;
 import java.util.List;
 
-import de.nb.aventiure2.data.database.AvDatabase;
-import de.nb.aventiure2.data.narration.Narrator;
-import de.nb.aventiure2.data.world.gameobject.*;
+import de.nb.aventiure2.androidtest.AndroidTestBase;
 import de.nb.aventiure2.logger.Logger;
 import de.nb.aventiure2.scaction.AbstractScAction;
 import de.nb.aventiure2.scaction.ScActionService;
@@ -31,32 +24,18 @@ import de.nb.aventiure2.scaction.devhelper.chooser.impl.Walkthrough;
 import de.nb.aventiure2.scaction.devhelper.chooser.impl.WalkthroughActionChooser;
 import de.nb.aventiure2.score.ScoreService;
 
-import static junit.framework.TestCase.assertEquals;
-import static junit.framework.TestCase.assertFalse;
+import static com.google.common.truth.Truth.assertThat;
 import static junit.framework.TestCase.fail;
 
 @RunWith(AndroidJUnit4.class)
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
-public class WalkerTest {
+public class WalkerTest extends AndroidTestBase {
     private static final int STEP_SIZE = 5;
-    // See https://proandroiddev.com/testing-the-un-testable-and-beyond-with-android-architecture-components-part-1-testing-room-4d97dec0f451
-    @Rule
-    public InstantTaskExecutorRule instantTaskExecutorRule = new InstantTaskExecutorRule();
 
     private static final Logger LOGGER = Logger.getLogger();
 
-    private AvDatabase db;
     private ScoreService scoreService;
     private ScActionService scActionService;
-    private Context appContext;
-
-    @Before
-    public void createDb() {
-        appContext = ApplicationProvider.getApplicationContext();
-
-        AvDatabase.setInMemory(true);
-        resetDatabase();
-    }
 
     @Test
     public void aaa_doStrictWalkthrough() {
@@ -64,15 +43,17 @@ public class WalkerTest {
         // the basic walkthrough still works
         doWalkthrough(Walkthrough.FULL);
 
-        assertEquals(100, scoreService.getScore());
-        assertFalse(db.narrationDao().requireNarration().getText().contains("@"));
+        assertThat(scoreService.getScore()).isEqualTo(100);
+        assertThat(db.narrationDao().requireNarration().getText())
+                .doesNotContain("@");
     }
 
     @Test
     public void baa_doStrictWalkthrough_separat_bis_mit_frosch_bei_rapunzel() {
         doWalkthrough(Walkthrough.SEP_ANFANG_BIS_MIT_FROSCH_BEI_RAPUNZEL);
 
-        assertFalse(db.narrationDao().requireNarration().getText().contains("@"));
+        assertThat(db.narrationDao().requireNarration().getText())
+                .doesNotContain("@");
     }
 
     @Test
@@ -83,7 +64,8 @@ public class WalkerTest {
 
             doWalkthrough(Walkthrough.FULL.truncate(maxSteps));
             walkRandomly();
-            assertFalse(db.narrationDao().requireNarration().getText().contains("@"));
+            assertThat(db.narrationDao().requireNarration().getText())
+                    .doesNotContain("@");
 
             resetDatabase();
 
@@ -91,20 +73,12 @@ public class WalkerTest {
         }
     }
 
-    private void resetDatabase() {
-        World.reset();
-        Narrator.reset();
-        AvDatabase.resetDatabase();
-
-        db = AvDatabase.getDatabase(appContext);
+    @Override
+    protected void resetDatabase() {
+        super.resetDatabase();
 
         scoreService = new ScoreService(appContext);
         scActionService = new ScActionService(appContext);
-    }
-
-    @After
-    public void closeDatabase() {
-        db.close();
     }
 
     private void walkRandomly() {

@@ -2,6 +2,8 @@ package de.nb.aventiure2.german.description;
 
 import androidx.annotation.Nullable;
 
+import javax.annotation.CheckReturnValue;
+
 import de.nb.aventiure2.data.world.time.*;
 import de.nb.aventiure2.german.base.IBezugsobjekt;
 import de.nb.aventiure2.german.base.NumerusGenus;
@@ -24,6 +26,12 @@ public class TimedDescription {
                             final AvTimeSpan timeElapsed) {
         this.description = description;
         this.timeElapsed = timeElapsed;
+    }
+
+    @CheckReturnValue
+    public TimedDescription multiplyTimeElapsedWith(final double speedFactor) {
+        return new TimedDescription(description,
+                timeElapsed.times(speedFactor));
     }
 
     public StructuralElement getStartsNew() {
@@ -107,5 +115,4 @@ public class TimedDescription {
     public AvTimeSpan getTimeElapsed() {
         return timeElapsed;
     }
-
 }

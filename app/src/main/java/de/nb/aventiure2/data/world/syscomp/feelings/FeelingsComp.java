@@ -152,6 +152,13 @@ public class FeelingsComp extends AbstractStatefulComponent<FeelingsPCD> {
         return getPcd().getHunger();
     }
 
+    /**
+     * Gibt zurück, wie stark man durch die Müdigkeit im Gehen verlangsamt wird.
+     */
+    public double getMovementSpeedFactor() {
+        return getPcd().getMovementSpeedFactor();
+    }
+
     public void ausgeschlafen(final AvTimeSpan ausschlafenEffektHaeltVorFuer) {
         getPcd().ausgeschlafen(nowDao.now(),
                 scActionStepCountDao.stepCount(),

@@ -162,6 +162,13 @@ class FeelingsPCD extends AbstractPersistentComponentData {
         setChanged();
     }
 
+    /**
+     * Gibt zurück, wie stark man durch die aktuelle Müdigkeit im Gehen verlangsamt wird.
+     */
+    double getMovementSpeedFactor() {
+        return muedigkeitsData.getMovementSpeedFactor();
+    }
+
     void ausgeschlafen(
             final AvDateTime now,
             final int scActionStepCount,

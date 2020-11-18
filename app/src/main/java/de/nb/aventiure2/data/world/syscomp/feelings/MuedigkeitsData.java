@@ -46,6 +46,30 @@ public class MuedigkeitsData {
         this.temporaereMinimalmuedigkeit = temporaereMinimalmuedigkeit;
     }
 
+    /**
+     * Gibt zurück, wie stark man durch die Müdigkeit im Gehen verlangsamt wird.
+     */
+    double getMovementSpeedFactor() {
+        switch (muedigkeit) {
+            case FeelingIntensity.NEUTRAL:
+                // fall-through
+            case FeelingIntensity.NUR_LEICHT:
+                return 1;
+            case FeelingIntensity.MERKLICH:
+                return 1.1;
+            case FeelingIntensity.DEUTLICH:
+                return 1.2;
+            case FeelingIntensity.STARK:
+                return 1.3;
+            case FeelingIntensity.SEHR_STARK:
+                return 1.5;
+            case FeelingIntensity.PATHOLOGISCH:
+                return 2;
+            default:
+                throw new IllegalStateException("Unexpected value: " + muedigkeit);
+        }
+    }
+
     public static int calcNextHinweisActionStepCount(
             final int scActionStepCount, final int muedigkeit) {
         switch (muedigkeit) {
@@ -55,19 +79,19 @@ public class MuedigkeitsData {
                 return Integer.MAX_VALUE;
             case FeelingIntensity.MERKLICH:
                 // FIXME Guter Wert?
-                return 12;
+                return scActionStepCount + 12;
             case FeelingIntensity.DEUTLICH:
                 // FIXME Guter Wert?
-                return 10;
+                return scActionStepCount + 10;
             case FeelingIntensity.STARK:
                 // FIXME Guter Wert?
-                return 8;
+                return scActionStepCount + 8;
             case FeelingIntensity.SEHR_STARK:
                 // FIXME Guter Wert?
-                return 7;
+                return scActionStepCount + 7;
             case FeelingIntensity.PATHOLOGISCH:
                 // FIXME Guter Wert?
-                return 3;
+                return scActionStepCount + 3;
             default:
                 throw new IllegalStateException("Unexpected value: " + muedigkeit);
         }
