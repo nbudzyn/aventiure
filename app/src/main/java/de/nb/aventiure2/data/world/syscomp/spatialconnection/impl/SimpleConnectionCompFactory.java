@@ -180,13 +180,18 @@ public class SimpleConnectionCompFactory {
                         "In Richtung Schloss gehen",
                         mins(5),
                         du("gehst", "weiter in Richtung Schloss", mins(5))
-                        // FIXME Besser etwas wie "Du kommst wieder an die Abzweigung
-                        //  in zum Turm" o.Ä. - wenn man den Turm schon kennt.
                 ),
 
                 con(VOR_DER_HUETTE_IM_WALD,
                         "in all dem Unkraut",
                         "Den überwachsenen Abzweig nehmen",
+                        // FIXME Besser etwas wie "Du kommst wieder an die Abzweigung
+                        //  zum Turm" o.Ä. - wenn man den Turm schon kennt.
+                        //  Die Grundidee könnte sein: Statt "Abzweig" oder so
+                        //  das wichtigste, dem Spieler schon bekannte Ziel nennen,
+                        //  zu dem dieser Abzweig führt. Also wohl eine Methodenreferenz
+                        //  erlauben, die diesen Text ermittelt - auf Basis dessen, was
+                        //  der Spieler schon kennt!
                         mins(2),
                         du(SENTENCE, "fasst",
                                 "dir ein Herz und stapfst zwischen "
