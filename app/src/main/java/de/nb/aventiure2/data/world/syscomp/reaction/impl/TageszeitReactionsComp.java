@@ -208,9 +208,6 @@ public class TageszeitReactionsComp
     private void onTimePassedFromAbendsTo(@NonNull final Tageszeit currentTageszeit) {
         switch (currentTageszeit) {
             case NACHTS:
-                // FIXME Der Spieler könnte abends MÜDE werden (und morgens oder nach dem
-                //  Schlafen wieder wach / NEUTRAL)
-
                 n.narrateAlt(noTime(),
                         neuerSatz("Die Sonne ist jetzt untergegangen"),
                         neuerSatz(PARAGRAPH,

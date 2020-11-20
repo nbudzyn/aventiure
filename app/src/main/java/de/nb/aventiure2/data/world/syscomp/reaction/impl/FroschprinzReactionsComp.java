@@ -1,5 +1,7 @@
 package de.nb.aventiure2.data.world.syscomp.reaction.impl;
 
+import com.google.common.annotations.VisibleForTesting;
+
 import javax.annotation.Nullable;
 
 import de.nb.aventiure2.data.database.AvDatabase;
@@ -26,7 +28,6 @@ import de.nb.aventiure2.german.base.SubstantivischePhrase;
 
 import static de.nb.aventiure2.data.world.gameobject.World.*;
 import static de.nb.aventiure2.data.world.syscomp.feelings.Mood.ANGESPANNT;
-import static de.nb.aventiure2.data.world.syscomp.state.impl.FroschprinzState.AUF_DEM_WEG_ZUM_SCHLOSSFEST;
 import static de.nb.aventiure2.data.world.syscomp.state.impl.FroschprinzState.BEIM_SCHLOSSFEST_AUF_TISCH_WILL_ZUSAMMEN_ESSEN;
 import static de.nb.aventiure2.data.world.syscomp.state.impl.FroschprinzState.ERWARTET_VON_SC_EINLOESUNG_SEINES_VERSPRECHENS;
 import static de.nb.aventiure2.data.world.syscomp.state.impl.FroschprinzState.HAT_FORDERUNG_GESTELLT;
@@ -49,15 +50,8 @@ import static de.nb.aventiure2.german.description.DescriptionBuilder.satzanschlu
 public class FroschprinzReactionsComp
         extends AbstractDescribableReactionsComp
         implements IMovementReactions, IEssenReactions, ITimePassedReactions {
-    private static final AvTimeSpan WEGZEIT_FROSCH_BRUNNEN_ZUM_SCHLOSSFEST = hours(6);
     private static final AvTimeSpan WEGZEIT_PRINZ_TISCH_DURCH_VORHALLE = mins(1);
     private static final AvTimeSpan ZEIT_FUER_ABFAHRT_PRINZ_MIT_WAGEN = mins(10);
-
-    private static final AvDateTime FROSCH_LAEUFT_FRUEHESTENS_ZUM_SCHLOSSFEST =
-            SCHLOSSFEST_BEGINN_DATE_TIME.minus(
-                    WEGZEIT_FROSCH_BRUNNEN_ZUM_SCHLOSSFEST
-                            // Der Frosch plant etwas Sicherheit ein
-                            .plus(hours(6)));
 
     private final FroschprinzStateComp stateComp;
     private final LocationComp locationComp;
@@ -511,17 +505,9 @@ public class FroschprinzReactionsComp
     public void onTimePassed(final AvDateTime startTime, final AvDateTime endTime) {
         switch (stateComp.getState()) {
             case ERWARTET_VON_SC_EINLOESUNG_SEINES_VERSPRECHENS:
-                if (endTime.isEqualOrAfter(FROSCH_LAEUFT_FRUEHESTENS_ZUM_SCHLOSSFEST)) {
+                if (((IHasStateGO<SchlossfestState>) world.load(SCHLOSSFEST))
+                        .stateComp().hasState(BEGONNEN)) {
                     froschprinzLaueftZumSchlossfestLos();
-                    return;
-                }
-                return;
-            case AUF_DEM_WEG_ZUM_SCHLOSSFEST:
-                if (schlossfestHatBegonnen() &&
-                        endTime.isEqualOrAfter(
-                                stateComp.getStateDateTime() // Als der Frosch losgelaufen ist
-                                        .plus(WEGZEIT_FROSCH_BRUNNEN_ZUM_SCHLOSSFEST))) {
-                    froschprinzAufSchlossfestAngekommen();
                     return;
                 }
                 return;
@@ -544,12 +530,11 @@ public class FroschprinzReactionsComp
         }
     }
 
-    private void froschprinzLaueftZumSchlossfestLos() {
+    @VisibleForTesting
+    void froschprinzLaueftZumSchlossfestLos() {
         // TODO Find all equals() warnings and fix the code.
 
-        @Nullable final ILocationGO scLocation = loadSC().locationComp().getLocation();
-
-        if ((scLocation != null && locationComp.hasSameUpperMostLocationAs(SPIELER_CHARAKTER))) {
+        if (locationComp.hasSameUpperMostLocationAs(SPIELER_CHARAKTER)) {
             n.narrate(neuerSatz(PARAGRAPH,
                     "Plitsch platsch, plitsch platsch hüpft der Frosch davon",
                     // FIXME "Wir sehen uns noch!"
@@ -559,12 +544,6 @@ public class FroschprinzReactionsComp
         // FIXME Wenn man nicht erlebt, wie der Frosch weghüpft: "Der Frosch ist verschwunden"
         //  oder ähnlich, wenn man wieder an den Ort zurückkommt, wo man den Frosch
         //  abgesetzt (oder zuletzt gesehen) hat. (Assumed Locations verwenden?)
-        locationComp.narrateAndUnsetLocation();
-
-        stateComp.narrateAndSetState(AUF_DEM_WEG_ZUM_SCHLOSSFEST);
-    }
-
-    private void froschprinzAufSchlossfestAngekommen() {
         locationComp.narrateAndSetLocation(
                 SCHLOSS_VORHALLE_AM_TISCH_BEIM_FEST,
                 () -> stateComp.narrateAndSetState(WARTET_AUF_SC_BEIM_SCHLOSSFEST)

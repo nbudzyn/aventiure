@@ -120,7 +120,6 @@ public class FroschprinzTalkingComp extends AbstractTalkingComp {
                         entrySt(this::ansprechen_froschErinnertAnVersprechen)
                 );
             case WARTET_AUF_SC_BEIM_SCHLOSSFEST:
-            case AUF_DEM_WEG_ZUM_SCHLOSSFEST:
             case HAT_HOCHHEBEN_GEFORDERT:
                 return ImmutableList.of();
             case BEIM_SCHLOSSFEST_AUF_TISCH_WILL_ZUSAMMEN_ESSEN:
