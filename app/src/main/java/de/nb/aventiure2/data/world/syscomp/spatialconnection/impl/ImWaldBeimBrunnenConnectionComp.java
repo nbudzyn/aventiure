@@ -68,7 +68,7 @@ public class ImWaldBeimBrunnenConnectionComp extends AbstractSpatialConnectionCo
                 world.loadSC().memoryComp().isKnown(WALDWILDNIS_HINTER_DEM_BRUNNEN)) {
             resImWaldBeimBrunnnen.add(con(WALDWILDNIS_HINTER_DEM_BRUNNEN,
                     "im Wald",
-                    "Hinter dem Brunnen in die Wildnis schlagen",
+                    this::getActionNameTo_WildnisHinterDemBrunnen,
                     mins(4),
                     du(SENTENCE, "verlässt", "den Brunnen und schlägst dich in die "
                             + "Wildnis "
@@ -93,5 +93,16 @@ public class ImWaldBeimBrunnenConnectionComp extends AbstractSpatialConnectionCo
         }
 
         return resImWaldBeimBrunnnen.build();
+    }
+
+    private String getActionNameTo_WildnisHinterDemBrunnen() {
+        if (world.loadSC().memoryComp()
+                // Etwas unklar, ob die Früchte bei Nacht zu sehen sind...
+                // bleiben wir konservativ!
+                .isKnownFromLight(WALDWILDNIS_HINTER_DEM_BRUNNEN)) {
+            return "In die Wildnis schlagen, wo die Früchte wachsen";
+        }
+
+        return "Hinter dem Brunnen in die Wildnis schlagen";
     }
 }
