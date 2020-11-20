@@ -9,9 +9,14 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Rule;
 
+import javax.annotation.Nullable;
+
 import de.nb.aventiure2.data.database.AvDatabase;
 import de.nb.aventiure2.data.narration.Narrator;
+import de.nb.aventiure2.data.world.base.GameObjectId;
+import de.nb.aventiure2.data.world.base.SpatialConnection;
 import de.nb.aventiure2.data.world.gameobject.*;
+import de.nb.aventiure2.data.world.syscomp.spatialconnection.ISpatiallyConnectedGO;
 import de.nb.aventiure2.logger.Logger;
 
 public abstract class AndroidTestBase {
@@ -47,5 +52,13 @@ public abstract class AndroidTestBase {
     @After
     public void closeDatabase() {
         db.close();
+    }
+
+
+    @Nullable
+    protected SpatialConnection loadCon(final GameObjectId fromId, final GameObjectId toId) {
+        final ISpatiallyConnectedGO from =
+                (ISpatiallyConnectedGO) world.load(fromId);
+        return from.spatialConnectionComp().getConnection(toId);
     }
 }

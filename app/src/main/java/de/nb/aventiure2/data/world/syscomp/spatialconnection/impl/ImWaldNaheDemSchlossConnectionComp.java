@@ -74,8 +74,8 @@ public class ImWaldNaheDemSchlossConnectionComp extends AbstractSpatialConnectio
                         mins(10),
                         this::getDescTo_DraussenVorDemSchloss),
                 con(VOR_DEM_ALTEN_TURM,
-                        "auf dem Pfad",
-                        "Den schmalen Pfad aufwärtsgehen",
+"auf dem Pfad",
+  this::getActionNameTo_VorDemAltenTurm,
                         mins(25),
                         this::getDescTo_VorDemAltenTurm),
                 con(ABZWEIG_IM_WALD,
@@ -152,6 +152,14 @@ public class ImWaldNaheDemSchlossConnectionComp extends AbstractSpatialConnectio
         }
 
         return neuerSatz("Das Schlossfest ist immer noch in vollem Gange", timeSpan);
+    }
+
+    private String getActionNameTo_VorDemAltenTurm() {
+        if (world.loadSC().memoryComp().isKnown(VOR_DEM_ALTEN_TURM)) {
+            return "Den langen schmalen Pfad zum Turm aufwärtsgehen";
+        }
+
+        return "Den schmalen Pfad aufwärtsgehen";
     }
 
     private TimedDescription getDescTo_VorDemAltenTurm(

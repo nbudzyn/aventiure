@@ -2,6 +2,8 @@ package de.nb.aventiure2.data.world.base;
 
 import androidx.annotation.NonNull;
 
+import java.util.function.Supplier;
+
 import de.nb.aventiure2.data.world.syscomp.spatialconnection.ISpatiallyConnectedGO;
 import de.nb.aventiure2.data.world.syscomp.storingplace.ILocationGO;
 import de.nb.aventiure2.data.world.time.*;
@@ -31,7 +33,7 @@ public class SpatialConnectionData {
      * auskennt, tagsüber.
      */
     final AvTimeSpan standardDuration;
-    final String actionName;
+    final Supplier<String> actionNameProvider;
     final SCMoveDescriptionProvider scMoveDescriptionProvider;
 
     public static SpatialConnectionData conData(
@@ -46,14 +48,23 @@ public class SpatialConnectionData {
     public static SpatialConnectionData conData(
             final String wo,
             final String actionName,
-            // FIXME Für eine Connection, bei der man schon weiß, wohin sie führt (wo man schon
+            final AvTimeSpan standardDuration,
+            final SCMoveDescriptionProvider scMoveDescriptionProvider) {
+        return conData(wo, () -> actionName, standardDuration, scMoveDescriptionProvider);
+    }
+
+    public static SpatialConnectionData conData(
+            final String wo,
+            final Supplier<String> actionNameProvider,
+            // FIXME Alle Coonections prüfen. Für Connections, bei denen man schon weiß, wohin sie
+            //  führen (wo man schon
             //  war), eine konkretere Aktionsbeschreibung verwenden:
             //  "Zum Turm gehen", "Zum Brunnen gehen".
             final AvTimeSpan standardDuration,
             final SCMoveDescriptionProvider scMoveDescriptionProvider) {
         return new SpatialConnectionData(
                 wo,
-                actionName,
+                actionNameProvider,
                 standardDuration,
                 scMoveDescriptionProvider
         );
@@ -61,17 +72,17 @@ public class SpatialConnectionData {
 
     SpatialConnectionData(
             final String wo,
-            final String actionName,
+            final Supplier<String> actionNameProvider,
             final AvTimeSpan standardDuration,
             final SpatialConnectionData.SCMoveDescriptionProvider scMoveDescriptionProvider) {
         this.wo = wo;
-        this.actionName = actionName;
+        this.actionNameProvider = actionNameProvider;
         this.standardDuration = standardDuration;
         this.scMoveDescriptionProvider = scMoveDescriptionProvider;
     }
 
     public String getActionName() {
-        return actionName;
+        return actionNameProvider.get();
     }
 
     public AvTimeSpan getStandardDuration() {
@@ -100,8 +111,6 @@ public class SpatialConnectionData {
     @NonNull
     @Override
     public String toString() {
-        return "SpatialConnectionData{" +
-                "actionName='" + actionName + '\'' +
-                '}';
+        return "SpatialConnectionData";
     }
 }

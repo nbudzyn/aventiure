@@ -41,9 +41,9 @@ public class Walkthrough {
                     "Tiefer in den Wald hineingehen",
                     "In Richtung Schloss gehen", // Frau
                     "Die Frau nach ihrem Ziel fragen",
-                    "Den schmalen Pfad aufwärtsgehen",
+                    "Den langen schmalen Pfad zum Turm aufwärtsgehen",
                     "Den Pfad zurückgehen",
-                    "Den schmalen Pfad aufwärtsgehen",
+                    "Den langen schmalen Pfad zum Turm aufwärtsgehen",
                     "In den Schatten der Bäume setzen",
                     "Rasten",
                     "Rasten",
@@ -88,11 +88,11 @@ public class Walkthrough {
 
     public static final Walkthrough PRINZABFAHRT_BIS_ERSTE_RAPUNZELRUF_BEOBACHTUNG =
             new Walkthrough("In den Wald gehen",
-                    "Den schmalen Pfad aufwärtsgehen",
+                    "Den langen schmalen Pfad zum Turm aufwärtsgehen",
                     "Um den Turm herumgehen",
                     "Die Kugel an den Stamm eines Baumes legen",
                     "Den Pfad zurückgehen",
-                    "Den schmalen Pfad aufwärtsgehen",
+                    "Den langen schmalen Pfad zum Turm aufwärtsgehen",
                     "In den Schatten der Bäume setzen",
                     "Rasten",
                     "Die Kugel nehmen",

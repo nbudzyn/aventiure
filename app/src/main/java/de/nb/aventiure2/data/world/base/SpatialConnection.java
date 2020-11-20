@@ -2,6 +2,8 @@ package de.nb.aventiure2.data.world.base;
 
 import androidx.annotation.NonNull;
 
+import java.util.function.Supplier;
+
 import de.nb.aventiure2.data.world.time.*;
 import de.nb.aventiure2.german.description.TimedDescription;
 import de.nb.aventiure2.german.praedikat.AbstractAdverbialeAngabe;
@@ -24,20 +26,38 @@ public class SpatialConnection {
 
     public static SpatialConnection con(final GameObjectId to,
                                         final String wo,
-                                        final String actionDescription,
+                                        final String actionName,
                                         final AvTimeSpan standardDuration,
                                         final TimedDescription newLocationDescription) {
-        return con(to, wo, actionDescription, standardDuration,
+        return con(to, wo, () -> actionName, standardDuration, newLocationDescription);
+    }
+
+    public static SpatialConnection con(final GameObjectId to,
+                                        final String wo,
+                                        final Supplier<String> actionNameProvider,
+                                        final AvTimeSpan standardDuration,
+                                        final TimedDescription newLocationDescription) {
+        return con(to, wo, actionNameProvider, standardDuration,
                 (isnewLocationKnown, lichtverhaeltnisseInNewLocation) -> newLocationDescription);
     }
 
     public static SpatialConnection con(final GameObjectId to,
                                         final String wo,
-                                        final String actionDescription,
+                                        final String actionName,
                                         final AvTimeSpan standardDuration,
                                         final TimedDescription newLocationDescriptionUnknown,
                                         final TimedDescription newLocationDescriptionKnown) {
-        return con(to, wo, actionDescription, standardDuration,
+        return con(to, wo, () -> actionName, standardDuration,
+                newLocationDescriptionUnknown, newLocationDescriptionKnown);
+    }
+
+    public static SpatialConnection con(final GameObjectId to,
+                                        final String wo,
+                                        final Supplier<String> actionNameSupplier,
+                                        final AvTimeSpan standardDuration,
+                                        final TimedDescription newLocationDescriptionUnknown,
+                                        final TimedDescription newLocationDescriptionKnown) {
+        return con(to, wo, actionNameSupplier, standardDuration,
                 (newLocationKnown, lichtverhaeltnisseInNewLocation) ->
                         newLocationKnown == UNKNOWN ?
                                 newLocationDescriptionUnknown : newLocationDescriptionKnown);
@@ -45,13 +65,27 @@ public class SpatialConnection {
 
     public static SpatialConnection con(final GameObjectId to,
                                         final String wo,
-                                        final String actionDescription,
+                                        final String actionName,
                                         final AvTimeSpan standardDuration,
                                         final TimedDescription newLocationDescriptionUnknownHell,
                                         final TimedDescription newLocationDescriptionUnknownDunkel,
                                         final TimedDescription newLocationDescriptionKnownFromDarknessHell,
                                         final TimedDescription newLocationDescriptionOther) {
-        return con(to, wo, actionDescription, standardDuration,
+        return con(to, wo, () -> actionName, standardDuration,
+                newLocationDescriptionUnknownHell,
+                newLocationDescriptionUnknownDunkel, newLocationDescriptionKnownFromDarknessHell,
+                newLocationDescriptionOther);
+    }
+
+    public static SpatialConnection con(final GameObjectId to,
+                                        final String wo,
+                                        final Supplier<String> actionNameProvider,
+                                        final AvTimeSpan standardDuration,
+                                        final TimedDescription newLocationDescriptionUnknownHell,
+                                        final TimedDescription newLocationDescriptionUnknownDunkel,
+                                        final TimedDescription newLocationDescriptionKnownFromDarknessHell,
+                                        final TimedDescription newLocationDescriptionOther) {
+        return con(to, wo, actionNameProvider, standardDuration,
                 (newLocationKnown, lichtverhaeltnisseInNewLocation) -> {
                     if (newLocationKnown == UNKNOWN && lichtverhaeltnisseInNewLocation == HELL) {
                         return newLocationDescriptionUnknownHell;
@@ -72,14 +106,23 @@ public class SpatialConnection {
                                         final String actionName,
                                         final AvTimeSpan standardDuration,
                                         final SpatialConnectionData.SCMoveDescriptionProvider scMoveDescriptionProvider) {
+        return con(to, wo, () -> actionName, standardDuration, scMoveDescriptionProvider);
+    }
+
+    public static SpatialConnection con(final GameObjectId to,
+                                        final String wo,
+                                        final Supplier<String> actionNameSupplier,
+                                        final AvTimeSpan standardDuration,
+                                        final SpatialConnectionData.SCMoveDescriptionProvider scMoveDescriptionProvider) {
         return con(to,
                 conData(
                         wo,
-                        actionName,
+                        actionNameSupplier,
                         standardDuration,
                         scMoveDescriptionProvider
                 ));
     }
+
 
     public static SpatialConnection con(final GameObjectId to,
                                         final SpatialConnectionData data) {

@@ -31,90 +31,6 @@ public class SimpleConnectionCompFactory {
     }
 
     @NonNull
-    @CheckReturnValue
-    public SimpleConnectionComp createVorDerHuetteImWald() {
-        return new SimpleConnectionComp(VOR_DER_HUETTE_IM_WALD,
-                db,
-                n,
-                world,
-                con(ABZWEIG_IM_WALD,
-                        "auf dem Weg",
-                        "Auf den Waldweg zurückkehren",
-                        mins(2),
-                        neuerSatz("Durch Farn und Gestrüpp gehst du zurück zum "
-                                + "Waldweg", mins(2))
-                                .undWartest()
-                                .dann()
-                ),
-                con(HUETTE_IM_WALD,
-                        "in der Tür",
-                        "Die Hütte betreten",
-                        secs(15),
-                        du("schiebst",
-                                "die Tür zur Seite und "
-                                        + "zwängst dich hinein. Durch Ritzen in den "
-                                        + "Fensterläden fällt ein wenig Licht: "
-                                        + "Die Hütte ist "
-                                        + "anscheinend trocken und, wie es aussieht, "
-                                        + "bis auf einige "
-                                        + "Tausendfüßler "
-                                        + "unbewohnt. Du siehst ein Bettgestell, "
-                                        + "einen Tisch, aber sonst keine Einrichtung", mins(1)),
-                        du("schiebst",
-                                "die Tür zur Seite und "
-                                        + "zwängst dich hinein. Erst ist alles "
-                                        + "stockdunkel, aber dann kannst du doch mit "
-                                        + "Mühe ein Bettgestell und einen Tisch "
-                                        + "ausmachen", secs(90)),
-                        du("schiebst", "dich noch einmal in die "
-                                + "kleine Hütte. Durch Ritzen in den "
-                                + "Fensterläden fällt ein wenig Licht: "
-                                + "Die Hütte ist "
-                                + "anscheinend trocken und, wie es aussieht, "
-                                + "bis auf einige "
-                                + "Tausendfüßler "
-                                + "unbewohnt. Du siehst ein Bettgestell, "
-                                + "einen Tisch, aber sonst keine Einrichtung", mins(1))
-                                .komma()
-                                .undWartest(),
-                        du("schiebst", "dich noch einmal in die "
-                                + "kleine Hütte, in der es außer Tisch und "
-                                + "Bett wenig zu sehen gibt", secs(15))
-                                .komma()
-                                .undWartest()),
-                // FIXME Klar machen, dass die Hütte kein kühler Ort ist! "Die hütte ist
-                //  ordentlich aufgeheizt" oder ähnlich
-                con(HINTER_DER_HUETTE,
-                        "im Garten",
-                        "Um die Hütte herumgehen",
-                        secs(30),
-                        neuerSatz("Ein paar Schritte um die Hütte herum und "
-                                + "du kommst in einen kleinen, völlig "
-                                + "verwilderten Garten. In seiner Mitte "
-                                + "steht einzeln… es könnte ein "
-                                + "Apfelbaum sein. Früchte siehst du von "
-                                + "unten keine.", secs(30)),
-                        du("gehst",
-                                "im Dunkeln vorsichtig ein paar Schritte "
-                                        + "um die Hütte herum. Du kannst die Silhouette "
-                                        + "eines einzelnen Baums erkennen, vielleicht – "
-                                        + "ein Apfelbaum",
-                                "vorsichtig",
-                                mins(1)),
-                        du("schaust", "noch einmal hinter die Hütte. "
-                                + "Im Licht erkennst du dort einen kleinen, völlig "
-                                + "verwilderten Garten mit dem einzelnen Baum in "
-                                + "der Mitte", secs(30)),
-                        du("schaust", "noch einmal in den alten "
-                                + "Garten hinter der Hütte, wo der "
-                                + "Baum wächst", secs(30))
-                                .komma()
-                                .undWartest()
-                                .dann()
-                ));
-    }
-
-    @NonNull
     public SimpleConnectionComp createHuetteImWald() {
         return new SimpleConnectionComp(HUETTE_IM_WALD,
                 db,
@@ -185,8 +101,8 @@ public class SimpleConnectionCompFactory {
                 con(VOR_DER_HUETTE_IM_WALD,
                         "in all dem Unkraut",
                         "Den überwachsenen Abzweig nehmen",
-                        // FIXME Besser etwas wie "Du kommst wieder an die Abzweigung
-                        //  zum Turm" o.Ä. - wenn man den Turm schon kennt.
+                        // FIXME Besser etwas wie "Den Abzweig zur Hütte nehmen" o.Ä. -
+                        //  wenn man den Turm schon kennt.
                         //  Die Grundidee könnte sein: Statt "Abzweig" oder so
                         //  das wichtigste, dem Spieler schon bekannte Ziel nennen,
                         //  zu dem dieser Abzweig führt. Also wohl eine Methodenreferenz
