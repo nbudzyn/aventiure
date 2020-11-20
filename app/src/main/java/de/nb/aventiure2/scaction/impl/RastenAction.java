@@ -10,11 +10,13 @@ import java.util.Collection;
 import de.nb.aventiure2.data.database.AvDatabase;
 import de.nb.aventiure2.data.narration.Narrator;
 import de.nb.aventiure2.data.world.gameobject.*;
+import de.nb.aventiure2.data.world.syscomp.feelings.FeelingIntensity;
 import de.nb.aventiure2.data.world.syscomp.feelings.Mood;
 import de.nb.aventiure2.data.world.syscomp.memory.Action;
 import de.nb.aventiure2.data.world.syscomp.state.IHasStateGO;
 import de.nb.aventiure2.data.world.syscomp.state.impl.RapunzelState;
 import de.nb.aventiure2.data.world.syscomp.storingplace.ILocationGO;
+import de.nb.aventiure2.german.description.AbstractDescription;
 import de.nb.aventiure2.scaction.AbstractScAction;
 
 import static de.nb.aventiure2.data.world.base.Lichtverhaeltnisse.DUNKEL;
@@ -137,7 +139,9 @@ public class RastenAction extends AbstractScAction {
         //  Satz gleich war. (Nach der Logik kann man dann auch für Beschreibungen in
         //  der dritten Person verwenden!)
 
-        n.narrateAlt(mins(10),
+        final ImmutableList.Builder<AbstractDescription<?>> alt =                ImmutableList.builder();
+
+        alt.add(
                 du(SENTENCE, "hältst",
                         "verborgen unter den Bäumen noch eine Zeitlang Rast",
                         "verborgen unter den Bäumen")
@@ -161,14 +165,19 @@ public class RastenAction extends AbstractScAction {
                         "eine Weile"
                 )
                         .beendet(SENTENCE)
-                        .dann(),
-                // FIXME Nur, wenn man ausreichend müde (erschöpft) ist
-                neuerSatz("Deine müden Glieder brauchen Erholung. Du bist ganz "
-                        + "still und die Vögel setzen sich "
-                        + "auf die Äste über dir "
-                        + "und singen, was sie nur wissen")
-                        .beendet(SENTENCE)
-                        .dann());
+                        .dann()
+        );
+
+        if (world.loadSC().feelingsComp().getMuedigkeit() >= FeelingIntensity.MERKLICH) {
+            neuerSatz("Deine müden Glieder brauchen Erholung. Du bist ganz "
+                    + "still und die Vögel setzen sich "
+                    + "auf die Äste über dir "
+                    + "und singen, was sie nur wissen")
+                    .beendet(SENTENCE)
+                    .dann();
+        }
+
+        n.narrateAlt(alt, mins(10));
     }
 
     @Override

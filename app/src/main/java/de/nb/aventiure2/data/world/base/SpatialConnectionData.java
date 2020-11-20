@@ -56,10 +56,6 @@ public class SpatialConnectionData {
     public static SpatialConnectionData conData(
             final String wo,
             final Supplier<String> actionNameProvider,
-            // FIXME Alle Coonections prüfen. Für Connections, bei denen man schon weiß, wohin sie
-            //  führen (wo man schon
-            //  war), eine konkretere Aktionsbeschreibung verwenden:
-            //  "Zum Turm gehen", "Zum Brunnen gehen".
             final AvTimeSpan standardDuration,
             final SCMoveDescriptionProvider scMoveDescriptionProvider) {
         return new SpatialConnectionData(

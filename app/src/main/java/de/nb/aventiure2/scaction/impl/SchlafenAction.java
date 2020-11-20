@@ -171,7 +171,9 @@ public class SchlafenAction extends AbstractScAction {
     }
 
     private void narrateAndDoEinschlafen(final AvTimeSpan schlafdauer) {
-        n.narrateAlt(schlafdauer,
+        final ImmutableList.Builder<AbstractDescription<?>> alt = ImmutableList.builder();
+
+        alt.add(
                 // TODO Irgendwie wird immer nur dieser Text gewählt, nicht die anderen
                 //  beiden...
                 du(SENTENCE,
@@ -182,14 +184,19 @@ public class SchlafenAction extends AbstractScAction {
                         "nur kurz"
                 )
                         .beendet(CHAPTER),
-                // FIXME Das hier nur, wenn die Müdigkeit nicht zu hoch ist
-                neuerSatz("Jetzt, da du liegst, fällt dir erst auf, wir erschöpft du "
-                        + "eigentlich bist. Nur ganz kurz die Augen schließen…")
-                        .beendet(CHAPTER),
                 du("fühlst", "dich auf einmal warm und schwer. Du kuschelst dich an "
                                 + "das harte Holz und schon bist du eingeschlafen",
                         "warm und schwer")
-                        .beendet(CHAPTER));
+                        .beendet(CHAPTER)
+        );
+
+        if (world.loadSC().feelingsComp().getMuedigkeit() < FeelingIntensity.STARK) {
+            alt.add(neuerSatz("Jetzt, da du liegst, fällt dir erst auf, wir erschöpft du "
+                    + "eigentlich bist. Nur ganz kurz die Augen schließen…")
+                    .beendet(CHAPTER));
+        }
+
+        n.narrateAlt(alt, schlafdauer);
     }
 
     private void narrateAndDoAufwachen(final AvTimeSpan schlafdauer) {
