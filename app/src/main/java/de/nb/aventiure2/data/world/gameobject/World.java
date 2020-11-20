@@ -30,6 +30,7 @@ import de.nb.aventiure2.data.world.syscomp.location.RoomFactory;
 import de.nb.aventiure2.data.world.syscomp.memory.IHasMemoryGO;
 import de.nb.aventiure2.data.world.syscomp.reaction.IReactions;
 import de.nb.aventiure2.data.world.syscomp.reaction.IResponder;
+import de.nb.aventiure2.data.world.syscomp.spatialconnection.impl.AbzweigImWaldConnectionComp;
 import de.nb.aventiure2.data.world.syscomp.spatialconnection.impl.DraussenVorDemSchlossConnectionComp;
 import de.nb.aventiure2.data.world.syscomp.spatialconnection.impl.ImWaldNaheDemSchlossConnectionComp;
 import de.nb.aventiure2.data.world.syscomp.spatialconnection.impl.ObenImTurmConnectionComp;
@@ -231,7 +232,7 @@ public class World {
                         new ObenImTurmConnectionComp(db, n, this)),
                 room.create(ABZWEIG_IM_WALD, StoringPlaceType.WEG,
                         false,
-                        connection.createAbzweigImWald()),
+                        new AbzweigImWaldConnectionComp(db, n, this)),
                 room.create(VOR_DER_HUETTE_IM_WALD, StoringPlaceType.ERDBODEN_VOR_DER_HUETTE,
                         false,
                         new VorDerHuetteImWaldConnectionComp(db, n, this)),

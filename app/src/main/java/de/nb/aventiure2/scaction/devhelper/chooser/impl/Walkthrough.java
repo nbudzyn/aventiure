@@ -57,7 +57,7 @@ public class Walkthrough {
                     "Den überwachsenen Abzweig nehmen",
                     "Die Kugel hinlegen", "Die Kugel nehmen",
                     "Auf den Waldweg zurückkehren",
-                    "Den überwachsenen Abzweig nehmen",
+                    "Den überwachsenen Abzweig zur Hütte nehmen",
                     "Um die Hütte herumgehen",
                     "Auf den Baum klettern",
                     "Zum Boden hinabklettern",
