@@ -84,7 +84,7 @@ public class Walkthrough {
                     "Mit dem Frosch diskutieren",
                     "Eintopf essen",
                     "Vom Tisch aufstehen",
-                    "Das Schloss verlassen");
+                    "Das Schloss verlassen und in den Schlossgarten gehen");
 
     public static final Walkthrough PRINZABFAHRT_BIS_ERSTE_RAPUNZELRUF_BEOBACHTUNG =
             new Walkthrough("In den Wald gehen",

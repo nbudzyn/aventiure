@@ -67,11 +67,18 @@ public class SchlossVorhalleConnectionComp extends AbstractSpatialConnectionComp
         final ImmutableList.Builder<SpatialConnection> res = ImmutableList.builder();
         res.add(SpatialConnection.con(DRAUSSEN_VOR_DEM_SCHLOSS,
                 "auf der Treppe",
-                "Das Schloss verlassen",
+                this::getActionNameTo_DraussenVorDemSchloss,
                 secs(90),
                 this::getDescTo_DraussenVorDemSchloss));
 
         return res.build();
+    }
+
+    private String getActionNameTo_DraussenVorDemSchloss() {
+        if (world.loadSC().memoryComp().isKnown(DRAUSSEN_VOR_DEM_SCHLOSS)) {
+            return "Das Schloss verlassen und in den Schlossgarten gehen";
+        }
+        return "Das Schloss verlassen";
     }
 
     private TimedDescription getDescTo_DraussenVorDemSchloss(
