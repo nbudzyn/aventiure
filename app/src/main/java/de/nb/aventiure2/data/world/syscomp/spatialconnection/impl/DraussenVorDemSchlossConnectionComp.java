@@ -118,6 +118,8 @@ public class DraussenVorDemSchlossConnectionComp extends AbstractSpatialConnecti
                     + "die Menge dich hineinschiebt. Die prächtige Vorhalle steht voller "
                     + "Tische, auf denen in großen Schüsseln Eintöpfe dampfen", mins(7))
                     .komma();
+            // FIXME COUNTER_SCHLOSS_VORHALLE_FEST_BEGONNEN sollte nur dann
+            //  erhöht werden, wenn die Description auch wirklich gedruckt wurde.
         }
 
         return du("betrittst", "wieder das Schloss", "wieder", mins(2))

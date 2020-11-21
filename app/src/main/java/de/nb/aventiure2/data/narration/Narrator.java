@@ -15,6 +15,8 @@ import java.util.Set;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
+import javax.annotation.ParametersAreNonnullByDefault;
+
 import de.nb.aventiure2.data.database.AvDatabase;
 import de.nb.aventiure2.data.world.base.GameObjectId;
 import de.nb.aventiure2.data.world.base.IGameObject;
@@ -29,6 +31,7 @@ import static de.nb.aventiure2.data.narration.Narration.NarrationSource.REACTION
 import static de.nb.aventiure2.data.world.time.AvTimeSpan.*;
 import static java.util.Arrays.asList;
 
+@ParametersAreNonnullByDefault
 public class Narrator {
     private static volatile Narrator INSTANCE;
     @Nullable
@@ -105,70 +108,119 @@ public class Narrator {
 
     public void narrateAlt(final Collection<TimedDescription> alternatives) {
         if (temporaryNarration != null) {
-            // Hier gibt es zwei Möglichkeiten:
-            // 1. Die temporary Narration und die (neuen) Alternatives werden
-            //  gemeinsam in einen Text gegossen, etwa in der Art
-            //  "Als du weiter durch den Wald gehst, kommt dir eine Frau entgegen"
-            //  (Das geht nicht immer.)
-            // 2.Oder es wird nur die temporary Narration erzählt und die Alternatives
-            //  werden temporär gespeichert:
-            //  "Du gehst weiter durch den Wald".
-
-            final AllgDescriptionWithScoreAndElapsedTime bestTemporaryNarrationAlone =
-                    dao.chooseBest(
-                            // Zeit spielt hier keine Rolle
-                            temporaryNarration.getDescriptionAlternatives().stream()
-                                    .map(d -> new TimedDescription(d, noTime()))
-                                    .collect(ImmutableList.toImmutableList())
-                    );
-            @Nullable final AllgDescriptionWithScoreAndElapsedTime bestCombined
-                    = dao.chooseBestCombination(
-                    temporaryNarration.getDescriptionAlternatives(),
-                    alternatives);
-
-            if (bestCombined != null &&
-                    bestCombined.score > bestTemporaryNarrationAlone.score) {
-                // Time of temporaryNarration has already been accounted for.
-                dao.narrate(narrationSourceJustInCase, bestCombined.allgDescription);
-                temporaryNarration = null;
-                nowDao.passTime(bestTemporaryNarrationAlone.timeElapsed);
+            if (narrateTemporaryNarrationAndTryCombiningWithAlternative(alternatives)) {
                 return;
             }
-
-            // Wenn scoreCombinedDescription <= scoreTemporaryNarrationAlone:
-
-            // Time of temporaryNarration has already been accounted for.
-            dao.narrate(temporaryNarration.getNarrationSource(),
-                    bestTemporaryNarrationAlone.allgDescription);
         }
 
-        final Set<AvTimeSpan> timesElapsed = alternatives.stream()
-                .map(TimedDescription::getTimeElapsed)
-                .collect(Collectors.toSet());
-
-        final Collection<TimedDescription> bestAlternatives;
-        if (timesElapsed.size() != 1) {
-            // Die Alternativen dauern möglicherweise unterschiedlich lange! Dann müssen wir leider sofort
-            // auf Alternativen mit gleicher Dauer beschränken - ansonsten ist
-            // nicht klar, wieviel Zeit jetzt (!) vergehen muss!
-            final AllgDescriptionWithScoreAndElapsedTime best =
-                    dao.chooseBest(alternatives);
-
-            bestAlternatives =
-                    alternatives.stream()
-                            .filter(d -> d.getTimeElapsed().equals(best.timeElapsed))
-                            .collect(Collectors.toSet());
-        } else {
-            // Wir können alle Alternativen temporär behalten!
-            bestAlternatives = alternatives;
-        }
+        // Die Alternativen dauern möglicherweise unterschiedlich lange! Dann müssen wir uns leider
+        // sofort auf Alternativen mit gleicher Dauer beschränken - ansonsten ist
+        // nicht klar, wieviel Zeit jetzt (!) vergehen muss!
+        final Collection<TimedDescription> bestAlternatives =
+                chooseBestAlternativesWithSameElapsedTime(alternatives);
 
         temporaryNarration = new TemporaryNarration(narrationSourceJustInCase,
-                alternatives.stream()
+                bestAlternatives.stream()
                         .map(TimedDescription::getDescription)
                         .collect(ImmutableList.toImmutableList()));
 
-        nowDao.passTime(timesElapsed.iterator().next());
+        nowDao.passTime(bestAlternatives.iterator().next().getTimeElapsed());
+    }
+
+    /**
+     * Wählt aus den Alternativen die beste aus. Gibt es zusätzlich noch andere Alternativen
+     * <i>mit derselben Dauer wie diese Beste</i>, werden sie auch mit zurückgegeben.
+     */
+    @NonNull
+    private Collection<TimedDescription> chooseBestAlternativesWithSameElapsedTime(
+            final Collection<TimedDescription> alternatives) {
+        final long numberTimesElapsed = alternatives.stream()
+                .map(TimedDescription::getTimeElapsed)
+                .distinct()
+                .count();
+
+        if (numberTimesElapsed == 1) {
+            // Wir können alle Alternativen temporär behalten!
+            return alternatives;
+        }
+
+        // Die Alternativen dauern unterschiedlich lange! Dann müssen wir leider sofort
+        // auf Alternativen mit gleicher Dauer beschränken - ansonsten ist
+        // nicht klar, wieviel Zeit jetzt (!) vergehen muss!
+        final AllgDescriptionWithScoreAndElapsedTime best = dao.chooseBest(alternatives);
+
+        return alternatives.stream()
+                .filter(d -> d.getTimeElapsed().equals(best.timeElapsed))
+                .collect(Collectors.toSet());
+    }
+
+    /**
+     * Versucht, die {@link #temporaryNarration} mit einer der Alternativen
+     * in einen möglichst guten Text zu gießen und diese zu erzählen.
+     * <ul>
+     *     <li>Wenn das gelingt, gibt diese Methode <code>true</code> zurück. Die
+     *     Alternativen wurden also erzählt.
+     *     <li>Wenn das nicht gelingt, erzählt diese Methode nur die
+     *     {@link #temporaryNarration} und gibt <code>false</code> zurück. Die
+     *     Alternativen wurden also <i>noch nicht</i> erzählt und müssen noch
+     *     gespeichert werden.
+     * </ul>
+     */
+    private boolean narrateTemporaryNarrationAndTryCombiningWithAlternative(
+            final Collection<TimedDescription> alternatives) {
+        // Hier gibt es zwei Möglichkeiten:
+        // 1. Die temporary Narration und die (neuen) Alternatives werden
+        //  gemeinsam in einen Text gegossen, etwa in der Art
+        //  "Als du weiter durch den Wald gehst, kommt dir eine Frau entgegen"
+        //  (Das geht nicht immer - oder ist nicht immer optimal.)
+        // 2.Oder es wird nur die temporary Narration erzählt und die Alternatives
+        //  werden temporär gespeichert:
+        //  "Du gehst weiter durch den Wald".
+
+        final AllgDescriptionWithScoreAndElapsedTime bestTemporaryNarrationAlone =
+                chooseBestTemporaryNarration();
+        @Nullable final AllgDescriptionWithScoreAndElapsedTime bestCombined
+                = dao.chooseBestCombination(
+                temporaryNarration.getDescriptionAlternatives(), alternatives);
+
+        if (bestCombined != null && bestCombined.score >= bestTemporaryNarrationAlone.score) {
+            // Die temporary Narration und die (neuen) Alternatives werden
+            //  gemeinsam in einen optimalen Text gegossen, etwa in der Art
+            //  "Als du weiter durch den Wald gehst, kommt dir eine Frau entgegen"
+            temporaryNarration = null;
+            narrateAndPassTime(bestCombined);
+            return true;
+        }
+
+        // Wenn scoreCombinedDescription < scoreTemporaryNarrationAlone:
+        // Es wird nur die temporary Narration erzählt:
+        //  "Du gehst weiter durch den Wald".
+
+        // Time of temporaryNarration has already been accounted for.
+        dao.narrate(temporaryNarration.getNarrationSource(),
+                bestTemporaryNarrationAlone.allgDescription);
+
+        // Die  Alternatives müssen noch temporär gespeichert werden
+        return false;
+    }
+
+    /**
+     * Wählt die beste Alternative der {@link #temporaryNarration} aus.
+     */
+    private AllgDescriptionWithScoreAndElapsedTime chooseBestTemporaryNarration() {
+        return dao.chooseBest(
+                // Zeit spielt hier keine Rolle - die Zeit für die
+                // temporaryNarration ist ja schon vergangen!
+                temporaryNarration.getDescriptionAlternatives().stream()
+                        .map(d -> new TimedDescription(d, noTime()))
+                        .collect(ImmutableList.toImmutableList())
+        );
+    }
+
+    private void narrateAndPassTime(final AllgDescriptionWithScoreAndElapsedTime bestCombined) {
+        // Time of temporaryNarration has already been accounted for.
+        dao.narrate(narrationSourceJustInCase, bestCombined.allgDescription);
+        nowDao.passTime(bestCombined.timeElapsed);
     }
 
     public boolean lastNarrationWasFromReaction() {
@@ -311,5 +363,4 @@ public class Narrator {
             temporaryNarration = null;
         }
     }
-
 }

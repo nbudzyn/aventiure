@@ -66,15 +66,37 @@ public class RastenAction extends AbstractScAction {
 
     @Override
     public void narrateAndDo() {
-        // FIXME "Auf die magere Frau warten" als Aktion?
-        //  - Nur unter gewissen Umständen?
-        //  - Oder als allgemeines Konzept?
-
         // FIXME Ab einem Punkt, wo man davon ausgehen kann, dass der Spieler
         //  bewusst rastet, um die Frau zu beobachten, sollte die Frau nach 4x Rasten gekommen
-        //  sein.
-        //  - Die Frau könnte umkehren.
-        //  - Oder die Rast-Zeit wird entsprechend angepasst.
+        //  sein. Oder es gibt eine Aktion wie "auf die magere Frau warten".
+        //  - Natürlich kann man nur auf die alte Frau warten, wenn sie nicht da ist.
+        //  - Dazu müsste die Aktion irgendwie erkennen, dass die Frau gekommen ist.
+        //  - Man muss allerdings vermeiden, dass sehr viele kurze Texte gedruckt werden!
+        //  - Entweder Pollen (immer wieder prüfen, ob die Frau jetzt da ist)
+        //  - Oder die Action registriert sich als Listener für das Event "Frau ist da"??
+        //    Dazu müsste der SC in eine Art "Wartezustand" versetzt werden. Erst der Listener
+        //    "weckt" den Spieler wieder auf.
+        //    Der Text ("Du wartest sehr lange. Die Vägel singen über dir, und allmählich wirst du
+        //    hungrig. Endlich kommt...") sollte dann erst am Ende erzeugt werden. Er müsste aber
+        //    aLles berücksichtigen, was zwischenzeitlich passiert ist.
+        //    Eventuell braucht es auch eine Möglichkeit, dass das Warten abgebrochen wird, z.B.
+        //    wenn ein Drache vorbei kommt oder der Spieler müder oder hungriger wird. Außerdem
+        //    sollte das Warten nach einger gewissen Zeit abgebrochen werden.
+        //  - Man könnte das Warten beim Narrator registrieren. Dann werden in der Wartezeit
+        //    keine Texte geschrieben.
+        //  - Eine natürliche Stelle für Reactions wäre ein Reactions-Component des SC.
+        //    Das liefe auf ein Pollen hinaus:
+        //  1. Dem Narrator erzählen: Nichts schreiben! ("Wartemodus")
+        //  2. Reactions-Componente anweisen: Unterbrich den Wartemodus, wenn die Zauberin kommt
+        //    (und wenn der Spieler hungriger wird, müder, ein Drache kommt, die Maximalzeit
+        //    um ist, ein Tageszeitenwechsel geschieht o.Ä.)
+        //  3. Dann hier die Zeit in kleiner Schritten weiterdrehen - danach immer prüfen, ob
+        //    der Wartemodus ausgeschaltet wurde.
+        //  4. Wenn der Wartemodus ausgeschaltet wurde die letzten Texte schreiben (hoffentlich
+        //    etwas wie "Endlich kommt die alte Frau" oder so).
+
+        // FIXME Vorarbeit: Counter für Text dürfen nur hochgezählt werden, wenn der Text auch wirklich
+        //  angezeigt wurde. Counter in lambdas? Counter als Parameter übergeben?
 
         //  FIXME Mehrere verschiedenen bestätigende Texte, dass sich das Rasten lohnt
         //   (damit der Spieler nicht zu bald aufgibt).
