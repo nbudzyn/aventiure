@@ -20,7 +20,7 @@ import static de.nb.aventiure2.data.world.gameobject.World.*;
 public class AbzweigImWaldConnectionCompTest extends AndroidTestBase {
     @Test
     public void huetteUnbekannt_nichtInActionName() {
-        // GIVENE
+        // GIVEN
         final SpatialConnection con = loadCon(ABZWEIG_IM_WALD, VOR_DER_HUETTE_IM_WALD);
         // Hütte unbekannt
 
@@ -46,7 +46,7 @@ public class AbzweigImWaldConnectionCompTest extends AndroidTestBase {
 
     @Test
     public void brunnenUnbekannt_nichtInActionName() {
-        // GIVENE
+        // GIVEN
         final SpatialConnection con = loadCon(ABZWEIG_IM_WALD, IM_WALD_BEIM_BRUNNEN);
         // Hütte unbekannt
 

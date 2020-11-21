@@ -5,7 +5,7 @@ import androidx.annotation.Nullable;
 
 import com.google.common.collect.ImmutableList;
 
-import java.util.Collection;
+import java.util.List;
 
 import de.nb.aventiure2.data.database.AvDatabase;
 import de.nb.aventiure2.data.narration.Narrator;
@@ -33,7 +33,7 @@ import static de.nb.aventiure2.german.description.DescriptionBuilder.neuerSatz;
 public class RastenAction extends AbstractScAction {
     private final ILocationGO location;
 
-    public static Collection<RastenAction> buildActions(
+    public static List<RastenAction> buildActions(
             final AvDatabase db,
             final Narrator n, final World world,
             @Nullable final ILocationGO location) {
@@ -69,7 +69,7 @@ public class RastenAction extends AbstractScAction {
         // FIXME Ab einem Punkt, wo man davon ausgehen kann, dass der Spieler
         //  bewusst rastet, um die Frau zu beobachten, sollte die Frau nach 4x Rasten gekommen
         //  sein. Oder es gibt eine Aktion wie "auf die magere Frau warten".
-        //  - Natürlich kann man nur auf die alte Frau warten, wenn sie nicht da ist.
+        //  - Natürlich kann man nur auf die magere Frau warten, wenn sie nicht da ist.
         //  - Dazu müsste die Aktion irgendwie erkennen, dass die Frau gekommen ist.
         //  - Man muss allerdings vermeiden, dass sehr viele kurze Texte gedruckt werden!
         //  - Entweder Pollen (immer wieder prüfen, ob die Frau jetzt da ist)
@@ -79,14 +79,14 @@ public class RastenAction extends AbstractScAction {
         //    Der Text ("Du wartest sehr lange. Die Vägel singen über dir, und allmählich wirst du
         //    hungrig. Endlich kommt...") sollte dann erst am Ende erzeugt werden. Er müsste aber
         //    aLles berücksichtigen, was zwischenzeitlich passiert ist.
-        //    Eventuell braucht es auch eine Möglichkeit, dass das Warten abgebrochen wird, z.B.
+        //    Vermutlich braucht man auch eine Möglichkeit, dass das Warten abgebrochen wird, z.B.
         //    wenn ein Drache vorbei kommt oder der Spieler müder oder hungriger wird. Außerdem
         //    sollte das Warten nach einger gewissen Zeit abgebrochen werden.
         //  - Man könnte das Warten beim Narrator registrieren. Dann werden in der Wartezeit
         //    keine Texte geschrieben.
         //  - Eine natürliche Stelle für Reactions wäre ein Reactions-Component des SC.
         //    Das liefe auf ein Pollen hinaus:
-        //  1. Dem Narrator erzählen: Nichts schreiben! ("Wartemodus")
+        //  1. Dem Narrator vorschreiben: Nichts schreiben! ("Wartemodus")
         //  2. Reactions-Componente anweisen: Unterbrich den Wartemodus, wenn die Zauberin kommt
         //    (und wenn der Spieler hungriger wird, müder, ein Drache kommt, die Maximalzeit
         //    um ist, ein Tageszeitenwechsel geschieht o.Ä.). In diesem Fällen muss der Spieler
@@ -94,10 +94,10 @@ public class RastenAction extends AbstractScAction {
         //    hungrig."
         //  3. Dann hier die Zeit in kleiner Schritten weiterdrehen - danach immer prüfen, ob
         //    der Wartemodus ausgeschaltet wurde.
-        //  4. Wenn der Wartemodus ausgeschaltet wurde die letzten Texte schreiben (hoffentlich
+        //  4. Wenn der Wartemodus ausgeschaltet wurde, die letzten Texte schreiben (hoffentlich
         //    etwas wie "Endlich kommt die alte Frau" oder so).
 
-        //  FIXME Mehrere verschiedenen bestätigende Texte, dass sich das Rasten lohnt
+        //  FIXME (Alternatv) mehrere verschiedenen bestätigende Texte, dass sich das Rasten lohnt
         //   (damit der Spieler nicht zu bald aufgibt).
         if (isDefinitivWiederholung() &&
                 ((IHasStateGO<RapunzelState>) world.load(RAPUNZEL)).stateComp()
