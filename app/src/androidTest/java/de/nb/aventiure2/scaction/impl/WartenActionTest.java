@@ -56,6 +56,22 @@ public class WartenActionTest extends AndroidTestBase {
                 .doesNotContain("Frau");
     }
 
+    @Test
+    public <LIVGO extends IDescribableGO & ILocatableGO & ILivingBeingGO>
+    void zauberinBekanntUndNichtDa_WartenMoeglich() {
+        // GIVEN
+        world.loadSC().memoryComp().upgradeKnown(RAPUNZELS_ZAUBERIN);
+        ((ILocatableGO) world.load(RAPUNZELS_ZAUBERIN)).locationComp()
+                .setLocation(IM_WALD_NAHE_DEM_SCHLOSS);
+
+        // WHEN
+        final List<WartenAction<LIVGO>> actions = buildWartenActionImSchattenDerBaeume();
+        // THEN
+        assertThat(actions)
+                .comparingElementsUsing(actionNameContains())
+                .contains("Auf die magere Frau warten");
+    }
+
     private <LIVGO extends IDescribableGO & ILocatableGO & ILivingBeingGO>
     List<WartenAction<LIVGO>> buildWartenActionImSchattenDerBaeume() {
         return WartenAction.buildActions(
