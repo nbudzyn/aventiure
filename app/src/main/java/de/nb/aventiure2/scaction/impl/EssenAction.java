@@ -279,14 +279,13 @@ public class EssenAction extends AbstractScAction {
     }
 
     private void narrateFelsenbirnenSatt() {
-        if (db.counterDao().get(COUNTER_FELSENBIRNEN) == 0) {
-            n.narrate(
+        if (n.narrateIfCounterIs(0,
                     du(SENTENCE, "nimmst",
                             "eine von den Früchten und beißt hinein. "
                                     + "Sie ist überraschend süß und saftig. Du isst die Frucht auf",
                             mins(3), COUNTER_FELSENBIRNEN)
                             .undWartest()
-                            .dann());
+                            .dann())) {
             return;
         }
 

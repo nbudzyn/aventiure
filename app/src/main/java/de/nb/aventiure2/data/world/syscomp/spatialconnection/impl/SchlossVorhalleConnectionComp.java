@@ -39,9 +39,6 @@ import static de.nb.aventiure2.german.description.DescriptionBuilder.du;
  */
 @ParametersAreNonnullByDefault
 public class SchlossVorhalleConnectionComp extends AbstractSpatialConnectionComp {
-    private static final String COUNTER_TISCH_BEIM_FEST =
-            "RoomConnectionBuilder_SchlossVorhalle_SchlossVorhalleTischBeimFest";
-
     public SchlossVorhalleConnectionComp(
             final AvDatabase db, final Narrator n, final World world) {
         super(SCHLOSS_VORHALLE, db, n, world);
@@ -54,7 +51,9 @@ public class SchlossVorhalleConnectionComp extends AbstractSpatialConnectionComp
         if (to.equals(SCHLOSS_VORHALLE_AM_TISCH_BEIM_FEST) &&
                 ((IHasStateGO<SchlossfestState>) world.load(SCHLOSSFEST)).stateComp()
                         .hasState(BEGONNEN) &&
-                db.counterDao().get(COUNTER_TISCH_BEIM_FEST) == 0) {
+        ((IHasStateGO<FroschprinzState>) world.load(FROSCHPRINZ)).stateComp()
+                .hasState(ZURUECKVERWANDELT_IN_VORHALLE,
+                        ZURUECKVERWANDELT_SCHLOSS_VORHALLE_VERLASSEN)) {
             return false;
         }
 

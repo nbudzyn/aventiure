@@ -533,6 +533,7 @@ public class BewegenAction<LOC_DESC extends ILocatableGO & IDescribableGO>
                 getStandardDescription(newLocationKnown, lichtverhaeltnisseInNewLocation);
 
         if (!alternativeDescriptionAllowed ||
+                oldLocation.is(spatialConnection.getTo()) ||
                 // Immer, wenn ein Counter hochgezählt werden soll, wird es sinnvoll sein,
                 // die standardDescription anzuzeigen!
                 standardDescription.getCounterIdIncrementedIfTextIsNarrated() != null) {

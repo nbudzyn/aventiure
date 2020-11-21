@@ -8,6 +8,7 @@ import androidx.room.Insert;
 import androidx.room.OnConflictStrategy;
 
 import com.google.common.base.Objects;
+import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableCollection;
 import com.google.common.collect.ImmutableList;
 
@@ -81,6 +82,23 @@ public class Narrator {
     public Narration.NarrationSource getNarrationSourceJustInCase() {
         return narrationSourceJustInCase;
     }
+
+    public
+    <D extends AbstractDescription<?>>
+    boolean narrateIfCounterIs(final int counterValue,
+                               final TimedDescription<D> desc) {
+        Preconditions.checkArgument(
+                desc.getCounterIdIncrementedIfTextIsNarrated() != null,
+                "No counter given in TimedDescription " + desc);
+
+        if (counterDao.get(desc.getCounterIdIncrementedIfTextIsNarrated()) == counterValue) {
+            narrate(desc);
+            return true;
+        }
+
+        return false;
+    }
+
 
     public
     <D extends AbstractDescription<?>>

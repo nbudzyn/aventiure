@@ -49,11 +49,6 @@ public class VorDemTurmConnectionComp extends AbstractSpatialConnectionComp {
     public boolean isAlternativeMovementDescriptionAllowed(final GameObjectId to,
                                                            final Known newLocationKnown,
                                                            final Lichtverhaeltnisse lichtverhaeltnisseInNewLocation) {
-        if (to.equals(VOR_DEM_ALTEN_TURM) &&
-                db.counterDao().get(COUNTER_ALTER_TURM_UMRUNDET) == 0) {
-            return false;
-        }
-
         return true;
     }
 
