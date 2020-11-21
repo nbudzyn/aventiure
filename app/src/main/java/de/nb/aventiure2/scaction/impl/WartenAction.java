@@ -1,7 +1,6 @@
 package de.nb.aventiure2.scaction.impl;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 
 import com.google.common.collect.ImmutableList;
 
@@ -10,8 +9,11 @@ import java.util.List;
 import de.nb.aventiure2.data.database.AvDatabase;
 import de.nb.aventiure2.data.narration.Narrator;
 import de.nb.aventiure2.data.world.gameobject.*;
+import de.nb.aventiure2.data.world.syscomp.alive.ILivingBeingGO;
+import de.nb.aventiure2.data.world.syscomp.description.IDescribableGO;
 import de.nb.aventiure2.data.world.syscomp.feelings.FeelingIntensity;
 import de.nb.aventiure2.data.world.syscomp.feelings.Mood;
+import de.nb.aventiure2.data.world.syscomp.location.ILocatableGO;
 import de.nb.aventiure2.data.world.syscomp.memory.Action;
 import de.nb.aventiure2.data.world.syscomp.state.IHasStateGO;
 import de.nb.aventiure2.data.world.syscomp.state.impl.RapunzelState;
@@ -23,33 +25,46 @@ import static de.nb.aventiure2.data.world.base.Lichtverhaeltnisse.DUNKEL;
 import static de.nb.aventiure2.data.world.gameobject.World.*;
 import static de.nb.aventiure2.data.world.syscomp.state.impl.RapunzelState.SINGEND;
 import static de.nb.aventiure2.data.world.time.AvTimeSpan.*;
+import static de.nb.aventiure2.german.base.GermanUtil.capitalize;
+import static de.nb.aventiure2.german.base.Numerus.SG;
+import static de.nb.aventiure2.german.base.Person.P2;
 import static de.nb.aventiure2.german.base.StructuralElement.SENTENCE;
 import static de.nb.aventiure2.german.description.DescriptionBuilder.du;
 import static de.nb.aventiure2.german.description.DescriptionBuilder.neuerSatz;
+import static de.nb.aventiure2.german.praedikat.VerbSubjObj.WARTEN;
 
 /**
  * Der Spielercharakter legt (wach!) eine Rast ein.
  */
-public class RastenAction extends AbstractScAction {
+public class WartenAction<LIVGO extends IDescribableGO & ILocatableGO & ILivingBeingGO>
+        extends AbstractScAction {
+    private final LIVGO erwartet;
     private final ILocationGO location;
 
-    public static List<RastenAction> buildActions(
+    public static <LIVGO extends IDescribableGO & ILocatableGO & ILivingBeingGO>
+    List<WartenAction<LIVGO>> buildActions(
             final AvDatabase db,
             final Narrator n, final World world,
-            @Nullable final ILocationGO location) {
-        final ImmutableList.Builder<RastenAction> res = ImmutableList.builder();
-        if (location != null && location.is(VOR_DEM_ALTEN_TURM_SCHATTEN_DER_BAEUME)) {
-            res.add(new RastenAction(db, n, world, location));
+            final LIVGO erwartet,
+            final ILocationGO location) {
+        final ImmutableList.Builder<WartenAction<LIVGO>> res = ImmutableList.builder();
+        if (location.is(VOR_DEM_ALTEN_TURM_SCHATTEN_DER_BAEUME) &&
+                erwartet.is(RAPUNZELS_ZAUBERIN) &&
+                world.loadSC().memoryComp().isKnown(RAPUNZELS_ZAUBERIN) &&
+                !erwartet.locationComp().hasSameUpperMostLocationAs(location)) {
+            res.add(new WartenAction<>(db, n, world, erwartet, location));
         }
 
         return res.build();
     }
 
-    private RastenAction(final AvDatabase db,
+    private WartenAction(final AvDatabase db,
                          final Narrator n,
                          final World world,
+                         final LIVGO erwartet,
                          final ILocationGO location) {
         super(db, n, world);
+        this.erwartet = erwartet;
         this.location = location;
     }
 
@@ -61,16 +76,45 @@ public class RastenAction extends AbstractScAction {
     @Override
     @NonNull
     public String getName() {
-        return "Rasten";
+        // "Auf die magere Frau warten"
+        return capitalize(
+                WARTEN
+                        .mitObj(world.getDescription(erwartet))
+                        .getInfinitiv(P2, SG)
+        );
     }
 
     @Override
     public void narrateAndDo() {
-        // FIXME (Alternative zum Warten) Ab einem Punkt, wo man davon ausgehen kann, dass der Spieler
-        //  bewusst rastet, um die Frau zu beobachten, sollte die Frau nach 4x Rasten gekommen
+        // FIXME Aktion
+        //  - Die Aktion muss irgendwie erkennen, dass die Frau gekommen ist.
+        //  - Man muss allerdings vermeiden, dass sehr viele kurze Texte gedruckt werden!
+        //  - Entweder Pollen (immer wieder prüfen, ob die Frau jetzt da ist)
+        //  - Oder die Action registriert sich als Listener für das Event "Frau ist da"??
+        //    Dazu müsste der SC in eine Art "Wartezustand" versetzt werden. Erst der Listener
+        //    "weckt" den Spieler wieder auf.
+        //    Der Text ("Du wartest sehr lange. Die Vägel singen über dir, und allmählich wirst du
+        //    hungrig. Endlich kommt...") sollte dann erst am Ende erzeugt werden. Er müsste aber
+        //    aLles berücksichtigen, was zwischenzeitlich passiert ist.
+        //    Vermutlich braucht man auch eine Möglichkeit, dass das Warten abgebrochen wird, z.B.
+        //    wenn ein Drache vorbei kommt oder der Spieler müder oder hungriger wird. Außerdem
+        //    sollte das Warten nach einger gewissen Zeit abgebrochen werden.
+        //  - Man könnte das Warten beim Narrator registrieren. Dann werden in der Wartezeit
+        //    keine Texte geschrieben.
+        //  - Rapunzels Gesang sollte das Warten abbrechen - wenn man ihn noch nicht kennt.
+        //  - Eine natürliche Stelle für Reactions wäre ein Reactions-Component des SC.
+        //    Das liefe auf ein Pollen hinaus:
+        //  1. Dem Narrator vorschreiben: Nichts schreiben! ("Wartemodus")
+        //  2. Reactions-Componente anweisen: Unterbrich den Wartemodus, wenn die Zauberin kommt
+        //    (und wenn der Spieler hungriger wird, müder, ein Drache kommt, die Maximalzeit
+        //    um ist, ein Tageszeitenwechsel geschieht o.Ä.). In diesem Fällen muss der Spieler
+        //    einen Hinweistext bekommen in der Art "Du wartest lange. Allmählich wirst du
+        //    hungrig."
+        //  3. Dann hier die Zeit in kleiner Schritten weiterdrehen - danach immer prüfen, ob
+        //    der Wartemodus ausgeschaltet wurde.
+        //  4. Wenn der Wartemodus ausgeschaltet wurde, die letzten Texte schreiben (hoffentlich
+        //    etwas wie "Endlich kommt die alte Frau" oder so).
 
-        //  FIXME (Alternative zum Warten)  mehrere verschiedenen bestätigende Texte, dass sich das Rasten lohnt
-        //   (damit der Spieler nicht zu bald aufgibt).
         if (isDefinitivWiederholung() &&
                 ((IHasStateGO<RapunzelState>) world.load(RAPUNZEL)).stateComp()
                         .hasState(SINGEND)) {
@@ -132,7 +176,7 @@ public class RastenAction extends AbstractScAction {
         //  Satz gleich war. (Nach der Logik kann man dann auch für Beschreibungen in
         //  der dritten Person verwenden!)
 
-        final ImmutableList.Builder<AbstractDescription<?>> alt =                ImmutableList.builder();
+        final ImmutableList.Builder<AbstractDescription<?>> alt = ImmutableList.builder();
 
         alt.add(
                 du(SENTENCE, "hältst",
@@ -181,7 +225,7 @@ public class RastenAction extends AbstractScAction {
     @Override
     protected boolean isDefinitivDiskontinuitaet() {
         if (n.lastNarrationWasFromReaction()) {
-            // Der Spieler rastet weiter, obwohl andere Dinge passiert sind...
+            // Der Spieler wartet weiter, obwohl andere Dinge passiert sind...
             return true;
         }
 
@@ -190,6 +234,6 @@ public class RastenAction extends AbstractScAction {
 
     @NonNull
     private static Action buildMemorizedAction() {
-        return new Action(Action.Type.RASTEN);
+        return new Action(Action.Type.WARTEN);
     }
 }

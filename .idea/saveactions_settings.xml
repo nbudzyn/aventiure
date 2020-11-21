@@ -5,6 +5,8 @@
       <set>
         <option value="activate" />
         <option value="organizeImports" />
+        <option value="reformat" />
+        <option value="reload" />
         <option value="fieldCanBeFinal" />
         <option value="localCanBeFinalExceptImplicit" />
         <option value="methodMayBeStatic" />
@@ -13,6 +15,7 @@
         <option value="unnecessaryThis" />
         <option value="finalPrivateMethod" />
         <option value="explicitTypeCanBeDiamond" />
+        <option value="accessCanBeTightened" />
       </set>
     </option>
     <option name="configurationPath" value="" />

@@ -7,6 +7,7 @@ import de.nb.aventiure2.german.base.KasusOderPraepositionalkasus;
 import de.nb.aventiure2.german.base.SubstantivischePhrase;
 
 import static de.nb.aventiure2.german.base.Kasus.AKK;
+import static de.nb.aventiure2.german.base.PraepositionMitKasus.AUF_AKK;
 import static de.nb.aventiure2.german.base.PraepositionMitKasus.MIT_DAT;
 import static de.nb.aventiure2.german.base.PraepositionMitKasus.VON;
 import static de.nb.aventiure2.german.base.PraepositionMitKasus.ZU;
@@ -43,7 +44,8 @@ public enum VerbSubjObj implements PraedikatMitEinerObjektleerstelle {
     POLIEREN("polieren", AKK, "polierst", Perfektbildung.HABEN, "poliert"),
     REDEN("reden", MIT_DAT, "redest", Perfektbildung.HABEN, "geredet"),
     RUFEN("rufen", AKK, "rufst", Perfektbildung.HABEN, "gerufen"),
-    SETZEN("setzen", AKK, "setzt", Perfektbildung.HABEN, "gesetzt");
+    SETZEN("setzen", AKK, "setzt", Perfektbildung.HABEN, "gesetzt"),
+    WARTEN("warten", AUF_AKK, "wartest",Perfektbildung.HABEN, "gewartet");
 
     /**
      * Das Verb an sich, ohne Informationen zur Valenz, ohne Ergänzungen, ohne

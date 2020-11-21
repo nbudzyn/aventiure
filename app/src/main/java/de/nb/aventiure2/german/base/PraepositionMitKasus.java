@@ -16,6 +16,8 @@ public enum PraepositionMitKasus implements KasusOderPraepositionalkasus {
     AN_DAT("an", DAT, "am"),
     AN_AKK("an", AKK),
     AUS("aus", DAT),
+    AUF_DAT("auf", DAT),
+    AUF_AKK("auf", AKK),
     IN_DAT("in", DAT, "im"),
     IN_AKK("in", AKK),
 

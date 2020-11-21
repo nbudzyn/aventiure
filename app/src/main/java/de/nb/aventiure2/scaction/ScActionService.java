@@ -33,6 +33,7 @@ import de.nb.aventiure2.scaction.impl.RastenAction;
 import de.nb.aventiure2.scaction.impl.RedenAction;
 import de.nb.aventiure2.scaction.impl.RufenAction;
 import de.nb.aventiure2.scaction.impl.SchlafenAction;
+import de.nb.aventiure2.scaction.impl.WartenAction;
 
 import static de.nb.aventiure2.data.world.gameobject.World.*;
 
@@ -81,7 +82,8 @@ public class ScActionService {
         if (location != null) {
             res.addAll(buildLivingBeingsActions(spielerCharakter,
                     wasSCInDenHaendenHat, livingBeings,
-                    scInventoryLivingBeings, scInventoryObjects));
+                    scInventoryLivingBeings, scInventoryObjects,
+                    location));
         }
         res.addAll(buildPlayerOnlyAction(
                 spielerCharakter, wasSCInDenHaendenHat, location));
@@ -115,7 +117,8 @@ public class ScActionService {
             final List<DESC_OBJ> wasSCInDenHaendenHat,
             final List<LIV> creatures,
             final List<LIV> scInventoryLivingBeings,
-            final ImmutableList<DESC_OBJ> scInventoryObjects) {
+            final ImmutableList<DESC_OBJ> scInventoryObjects,
+            final @Nullable ILocationGO location) {
         final ImmutableList.Builder<AbstractScAction> res = ImmutableList.builder();
 
         for (final LIV creature : creatures) {
@@ -140,6 +143,10 @@ public class ScActionService {
                 if (creature.locationComp().isMovable()) {
                     res.addAll(NehmenAction.buildCreatureActions(db, n, world, creature));
                 }
+            }
+
+            if (location != null) {
+                res.addAll(WartenAction.buildActions(db, n, world, creature, location));
             }
         }
 
