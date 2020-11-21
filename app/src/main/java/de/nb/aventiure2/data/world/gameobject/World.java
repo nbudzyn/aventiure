@@ -64,9 +64,6 @@ public class World {
             new AvDateTime(2,
                     oClock(5, 30));
 
-    public static final String COUNTER_ID_VOR_DEM_SCHLOSS_SCHLOSSFEST_KNOWN =
-            "Invisibles_VOR_DEM_SCHLOSS_SCHLOSSFEST_KNOWN";
-
     // SPIELER-CHARAKTER
     public static final GameObjectId SPIELER_CHARAKTER = new GameObjectId(1);
 

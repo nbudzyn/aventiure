@@ -22,7 +22,6 @@ import de.nb.aventiure2.data.world.syscomp.state.impl.SchlossfestState;
 import de.nb.aventiure2.german.description.TimedDescription;
 
 import static de.nb.aventiure2.data.world.gameobject.World.*;
-import static de.nb.aventiure2.data.world.syscomp.state.impl.SchlossfestState.BEGONNEN;
 import static de.nb.aventiure2.data.world.time.AvTimeSpan.*;
 import static de.nb.aventiure2.german.description.DescriptionBuilder.du;
 import static de.nb.aventiure2.german.description.DescriptionBuilder.neuerSatz;
@@ -47,13 +46,6 @@ public class DraussenVorDemSchlossConnectionComp extends AbstractSpatialConnecti
     public boolean isAlternativeMovementDescriptionAllowed(final GameObjectId to,
                                                            final Known newLocationKnown,
                                                            final Lichtverhaeltnisse lichtverhaeltnisseInNewLocation) {
-        if (to.equals(SCHLOSS_VORHALLE) &&
-                ((IHasStateGO<SchlossfestState>) world.load(SCHLOSSFEST)).stateComp()
-                        .hasState(BEGONNEN) &&
-                db.counterDao().get(COUNTER_SCHLOSS_VORHALLE_FEST_BEGONNEN) == 0) {
-            return false;
-        }
-
         return true;
     }
 
@@ -91,7 +83,7 @@ public class DraussenVorDemSchlossConnectionComp extends AbstractSpatialConnecti
                                 .dann()));
     }
 
-    private TimedDescription getDescTo_SchlossVorhalle(
+    private TimedDescription<?> getDescTo_SchlossVorhalle(
             final Known newLocationKnown, final Lichtverhaeltnisse lichtverhaeltnisse) {
         switch (((IHasStateGO<SchlossfestState>) world.load(SCHLOSSFEST)).stateComp().getState()) {
             case BEGONNEN:
@@ -103,23 +95,22 @@ public class DraussenVorDemSchlossConnectionComp extends AbstractSpatialConnecti
     }
 
     @NonNull
-    private static TimedDescription
+    private static TimedDescription<?>
     getDescTo_SchlossVorhalle_KeinFest() {
         return du("gehst", "wieder hinein in das Schloss", mins(1))
                 .undWartest()
                 .dann();
     }
 
-    private TimedDescription
+    private TimedDescription<?>
     getDescTo_SchlossVorhalle_FestBegonnen() {
-        if (db.counterDao().incAndGet(COUNTER_SCHLOSS_VORHALLE_FEST_BEGONNEN) == 1) {
+        if (db.counterDao().get(COUNTER_SCHLOSS_VORHALLE_FEST_BEGONNEN) == 0) {
             return neuerSatz("Vor dem Schloss gibt es ein großes Gedränge und es dauert "
                     + "eine Weile, bis "
                     + "die Menge dich hineinschiebt. Die prächtige Vorhalle steht voller "
-                    + "Tische, auf denen in großen Schüsseln Eintöpfe dampfen", mins(7))
+                    + "Tische, auf denen in großen Schüsseln Eintöpfe dampfen", mins(7),
+                    COUNTER_SCHLOSS_VORHALLE_FEST_BEGONNEN)
                     .komma();
-            // FIXME COUNTER_SCHLOSS_VORHALLE_FEST_BEGONNEN sollte nur dann
-            //  erhöht werden, wenn die Description auch wirklich gedruckt wurde.
         }
 
         return du("betrittst", "wieder das Schloss", "wieder", mins(2))

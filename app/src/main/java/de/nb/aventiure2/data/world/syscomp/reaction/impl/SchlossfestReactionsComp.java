@@ -61,7 +61,7 @@ public class SchlossfestReactionsComp
         }
 
         // Der Spieler weiß jetzt, dass das Schlossfest läuft
-        db.counterDao().incAndGet(COUNTER_ID_VOR_DEM_SCHLOSS_SCHLOSSFEST_KNOWN);
+        world.loadSC().memoryComp().upgradeKnown(SCHLOSSFEST);
 
         n.narrate(
                 neuerSatz(PARAGRAPH, "Dir fällt auf, dass Handwerker dabei sind, überall "

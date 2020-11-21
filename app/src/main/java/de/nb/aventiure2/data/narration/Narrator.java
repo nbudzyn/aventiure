@@ -7,9 +7,11 @@ import androidx.annotation.WorkerThread;
 import androidx.room.Insert;
 import androidx.room.OnConflictStrategy;
 
+import com.google.common.base.Objects;
 import com.google.common.collect.ImmutableCollection;
 import com.google.common.collect.ImmutableList;
 
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Set;
 import java.util.function.Function;
@@ -20,11 +22,13 @@ import javax.annotation.ParametersAreNonnullByDefault;
 import de.nb.aventiure2.data.database.AvDatabase;
 import de.nb.aventiure2.data.world.base.GameObjectId;
 import de.nb.aventiure2.data.world.base.IGameObject;
+import de.nb.aventiure2.data.world.counter.CounterDao;
 import de.nb.aventiure2.data.world.time.*;
 import de.nb.aventiure2.german.base.Personalpronomen;
 import de.nb.aventiure2.german.base.PhorikKandidat;
 import de.nb.aventiure2.german.base.StructuralElement;
 import de.nb.aventiure2.german.description.AbstractDescription;
+import de.nb.aventiure2.german.description.AllgDescription;
 import de.nb.aventiure2.german.description.TimedDescription;
 
 import static de.nb.aventiure2.data.narration.Narration.NarrationSource.REACTIONS;
@@ -41,6 +45,8 @@ public class Narrator {
             Narration.NarrationSource.INITIALIZATION;
 
     private final AvNowDao nowDao;
+
+    private final CounterDao counterDao;
 
     private final NarrationDao dao;
 
@@ -64,6 +70,7 @@ public class Narrator {
     private Narrator(final AvDatabase db) {
         dao = db.narrationDao();
         nowDao = db.nowDao();
+        counterDao = db.counterDao();
     }
 
     public void setNarrationSourceJustInCase(
@@ -75,82 +82,127 @@ public class Narrator {
         return narrationSourceJustInCase;
     }
 
-    public void narrate(final TimedDescription desc) {
+    public
+    <D extends AbstractDescription<?>>
+    void narrate(final TimedDescription<D> desc) {
         narrateAlt(desc);
     }
 
-    public void narrateAlt(final ImmutableCollection.Builder<AbstractDescription<?>> alternatives,
+    public
+    <D extends AbstractDescription<?>>
+    void narrateAlt(final ImmutableCollection.Builder<D> alternatives,
                            final AvTimeSpan timeElapsed) {
         narrateAlt(alternatives.build(), timeElapsed);
     }
 
-    public void narrateAlt(final ImmutableCollection.Builder<TimedDescription> alternatives) {
+    public
+    void narrateAlt(final ImmutableCollection.Builder<TimedDescription<?>> alternatives) {
         narrateAlt(alternatives.build());
     }
 
-    public void narrateAlt(final TimedDescription... alternatives) {
-        narrateAlt(asList(alternatives));
+    public <D extends AbstractDescription<?>>
+    void narrateAlt(final TimedDescription<?>... alternatives) {
+        narrateAlt(Arrays.asList(alternatives));
     }
 
-    public void narrateAlt(final AvTimeSpan timeElapsed,
-                           final AbstractDescription<?>... alternatives) {
+    public
+    <D extends AbstractDescription<?>>
+    void narrateAlt(final AvTimeSpan timeElapsed,
+                           final D... alternatives) {
         narrateAlt(asList(alternatives), timeElapsed);
     }
 
-    public void narrateAlt(final Collection<AbstractDescription<?>> alternatives,
+    public
+    <D extends AbstractDescription<?>>
+    void narrateAlt(final AvTimeSpan timeElapsed,
+                    final String counterIdIncrementedIfTextIsNarrated,
+                    final D... alternatives) {
+        narrateAlt(asList(alternatives), timeElapsed, counterIdIncrementedIfTextIsNarrated);
+    }
+
+    public <D extends AbstractDescription<?>>
+    void narrateAlt(final Collection<D> alternatives,
                            final AvTimeSpan timeElapsed) {
+        narrateAlt(alternatives, timeElapsed, null);
+    }
+
+    public <D extends AbstractDescription<?>>
+    void narrateAlt(final Collection<D> alternatives,
+                    final AvTimeSpan timeElapsed,
+                    @Nullable final String counterIdIncrementedIfTextIs) {
         narrateAlt(
                 alternatives.stream()
-                        .map(d -> new TimedDescription(d, timeElapsed))
+                        .map(d -> new TimedDescription<>(d, timeElapsed,
+                                counterIdIncrementedIfTextIs))
                         .collect(ImmutableList.toImmutableList())
         );
     }
 
-    public void narrateAlt(final Collection<TimedDescription> alternatives) {
+    public void narrateAlt(final Collection<? extends TimedDescription<?>> alternatives) {
         if (temporaryNarration != null) {
             if (narrateTemporaryNarrationAndTryCombiningWithAlternative(alternatives)) {
                 return;
             }
         }
 
-        // Die Alternativen dauern möglicherweise unterschiedlich lange! Dann müssen wir uns leider
-        // sofort auf Alternativen mit gleicher Dauer beschränken - ansonsten ist
-        // nicht klar, wieviel Zeit jetzt (!) vergehen muss!
-        final Collection<TimedDescription> bestAlternatives =
-                chooseBestAlternativesWithSameElapsedTime(alternatives);
+        // Die Alternativen dauern möglicherweise unterschiedlich oder haben
+        // unterschiedliche Counter! Dann müssten wir uns sofort auf die
+        // "gleichen" Alternativen beschränken - ansonsten ist
+        // nicht klar, wieviel Zeit jetzt (!) vergehen muss oder welcher Counter
+        // jetzt (!) hochgezählt werden muss!
+        final Collection<? extends TimedDescription<?>> bestAlternatives =
+                chooseBestAlternativesWithSameElapsedTimeAndCounterId(alternatives);
 
         temporaryNarration = new TemporaryNarration(narrationSourceJustInCase,
                 bestAlternatives.stream()
-                        .map(TimedDescription::getDescription)
+                        .map(d -> d.getDescription())
                         .collect(ImmutableList.toImmutableList()));
 
-        nowDao.passTime(bestAlternatives.iterator().next().getTimeElapsed());
+        passTimeAndIncCounter(bestAlternatives.iterator().next());
+    }
+
+    private void passTimeAndIncCounter(final TimedDescription<?> timedDescription) {
+        nowDao.passTime(timedDescription.getTimeElapsed());
+        if (timedDescription.getCounterIdIncrementedIfTextIsNarrated() != null) {
+            counterDao.inc(timedDescription.getCounterIdIncrementedIfTextIsNarrated());
+        }
     }
 
     /**
      * Wählt aus den Alternativen die beste aus. Gibt es zusätzlich noch andere Alternativen
-     * <i>mit derselben Dauer wie diese Beste</i>, werden sie auch mit zurückgegeben.
+     * <i>mit derselben Dauer und Counter-ID wie diese Beste</i>, werden sie auch mit zurückgegeben.
      */
     @NonNull
-    private Collection<TimedDescription> chooseBestAlternativesWithSameElapsedTime(
-            final Collection<TimedDescription> alternatives) {
+    private
+    Collection<? extends TimedDescription<?>> chooseBestAlternativesWithSameElapsedTimeAndCounterId(
+            final Collection<? extends TimedDescription<?>> alternatives) {
         final long numberTimesElapsed = alternatives.stream()
                 .map(TimedDescription::getTimeElapsed)
                 .distinct()
                 .count();
 
-        if (numberTimesElapsed == 1) {
+        final long numberCounters = alternatives.stream()
+                .map(TimedDescription::getCounterIdIncrementedIfTextIsNarrated)
+                .distinct()
+                .count();
+
+        if (numberTimesElapsed == 1 && numberCounters == 1) {
             // Wir können alle Alternativen temporär behalten!
             return alternatives;
         }
 
-        // Die Alternativen dauern unterschiedlich lange! Dann müssen wir leider sofort
-        // auf Alternativen mit gleicher Dauer beschränken - ansonsten ist
-        // nicht klar, wieviel Zeit jetzt (!) vergehen muss!
-        final AllgDescriptionWithScoreAndElapsedTime best = dao.chooseBest(alternatives);
+        // Die Alternativen dauern unterschiedlich lang oder haben verschiedene
+        // Counter, die hochgezählt werden sollen! Dann müssen wir uns leider sofort
+        // auf "gleiche" Alternativen beschränken - ansonsten ist
+        // nicht klar, wieviel Zeit jetzt (!) vergehen muss oder welcher
+        // Counter hochgezählt werden muss!
+        final AllgTimedDescriptionWithScore best = dao.chooseBest(alternatives);
 
         return alternatives.stream()
-                .filter(d -> d.getTimeElapsed().equals(best.timeElapsed))
+                .filter(d -> d.getTimeElapsed().equals(best.allgTimedDescription.getTimeElapsed()))
+                .filter(d -> Objects.equal(
+                        d.getCounterIdIncrementedIfTextIsNarrated(),
+                        best.allgTimedDescription.getCounterIdIncrementedIfTextIsNarrated()))
                 .collect(Collectors.toSet());
     }
 
@@ -167,7 +219,7 @@ public class Narrator {
      * </ul>
      */
     private boolean narrateTemporaryNarrationAndTryCombiningWithAlternative(
-            final Collection<TimedDescription> alternatives) {
+            final Collection<? extends TimedDescription<?>> alternatives) {
         // Hier gibt es zwei Möglichkeiten:
         // 1. Die temporary Narration und die (neuen) Alternatives werden
         //  gemeinsam in einen Text gegossen, etwa in der Art
@@ -177,9 +229,9 @@ public class Narrator {
         //  werden temporär gespeichert:
         //  "Du gehst weiter durch den Wald".
 
-        final AllgDescriptionWithScoreAndElapsedTime bestTemporaryNarrationAlone =
+        final AllgTimedDescriptionWithScore bestTemporaryNarrationAlone =
                 chooseBestTemporaryNarration();
-        @Nullable final AllgDescriptionWithScoreAndElapsedTime bestCombined
+        @Nullable final AllgTimedDescriptionWithScore bestCombined
                 = dao.chooseBestCombination(
                 temporaryNarration.getDescriptionAlternatives(), alternatives);
 
@@ -188,7 +240,7 @@ public class Narrator {
             //  gemeinsam in einen optimalen Text gegossen, etwa in der Art
             //  "Als du weiter durch den Wald gehst, kommt dir eine Frau entgegen"
             temporaryNarration = null;
-            narrateAndPassTime(bestCombined);
+            narratePassTimeAndIncrementCounter( bestCombined.allgTimedDescription);
             return true;
         }
 
@@ -198,7 +250,7 @@ public class Narrator {
 
         // Time of temporaryNarration has already been accounted for.
         dao.narrate(temporaryNarration.getNarrationSource(),
-                bestTemporaryNarrationAlone.allgDescription);
+                bestTemporaryNarrationAlone.allgTimedDescription.getDescription());
 
         // Die  Alternatives müssen noch temporär gespeichert werden
         return false;
@@ -207,20 +259,32 @@ public class Narrator {
     /**
      * Wählt die beste Alternative der {@link #temporaryNarration} aus.
      */
-    private AllgDescriptionWithScoreAndElapsedTime chooseBestTemporaryNarration() {
+    private AllgTimedDescriptionWithScore chooseBestTemporaryNarration() {
         return dao.chooseBest(
                 // Zeit spielt hier keine Rolle - die Zeit für die
                 // temporaryNarration ist ja schon vergangen!
                 temporaryNarration.getDescriptionAlternatives().stream()
-                        .map(d -> new TimedDescription(d, noTime()))
+                        .map(d -> new TimedDescription<>(d, noTime(),
+                                null))
                         .collect(ImmutableList.toImmutableList())
         );
     }
 
-    private void narrateAndPassTime(final AllgDescriptionWithScoreAndElapsedTime bestCombined) {
+    private void narratePassTimeAndIncrementCounter(
+            final TimedDescription<AllgDescription> allgTimedDescription) {
         // Time of temporaryNarration has already been accounted for.
-        dao.narrate(narrationSourceJustInCase, bestCombined.allgDescription);
-        nowDao.passTime(bestCombined.timeElapsed);
+        dao.narrate(narrationSourceJustInCase, allgTimedDescription.getDescription());
+        passTimeAndIncCounter(allgTimedDescription);
+    }
+
+    private void doTemporaryNarration() {
+        if (temporaryNarration != null) {
+            // Time has already been accounted for
+            dao.narrateAltDescriptions(
+                    temporaryNarration.getNarrationSource(),
+                    temporaryNarration.getDescriptionAlternatives());
+            temporaryNarration = null;
+        }
     }
 
     public boolean lastNarrationWasFromReaction() {
@@ -352,15 +416,5 @@ public class Narrator {
      */
     public void saveAll() {
         doTemporaryNarration();
-    }
-
-    private void doTemporaryNarration() {
-        if (temporaryNarration != null) {
-            // Time has already been accounted for
-            dao.narrateAltDescriptions(
-                    temporaryNarration.getNarrationSource(),
-                    temporaryNarration.getDescriptionAlternatives());
-            temporaryNarration = null;
-        }
     }
 }

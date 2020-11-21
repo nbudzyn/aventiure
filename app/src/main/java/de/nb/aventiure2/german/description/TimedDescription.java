@@ -1,8 +1,7 @@
 package de.nb.aventiure2.german.description;
 
-import androidx.annotation.Nullable;
-
 import javax.annotation.CheckReturnValue;
+import javax.annotation.Nullable;
 
 import de.nb.aventiure2.data.world.time.*;
 import de.nb.aventiure2.german.base.IBezugsobjekt;
@@ -14,36 +13,48 @@ import de.nb.aventiure2.german.base.SubstantivischePhrase;
 /**
  * A description of something and the time it takes.
  */
-public class TimedDescription {
-    private final AbstractDescription<?> description;
+public class TimedDescription<D extends AbstractDescription<?>> {
+    private final D description;
 
     /**
      * Zeit, die vergangen ist, während das Beschriebene geschehen ist
      */
     private final AvTimeSpan timeElapsed;
 
-    public TimedDescription(final AbstractDescription<?> description,
+    /**
+     * Wenn der Text sicher erzählt wird, wird dieser Counter hochgezählt.
+     */
+    @Nullable
+    private final String counterIdIncrementedIfTextIsNarrated;
+
+    public TimedDescription(final D description,
                             final AvTimeSpan timeElapsed) {
+        this(description, timeElapsed, null);
+    }
+    public TimedDescription(final  D description,
+                            final AvTimeSpan timeElapsed,
+                            @Nullable final String counterIdIncrementedIfTextIsNarrated) {
         this.description = description;
         this.timeElapsed = timeElapsed;
+        this.counterIdIncrementedIfTextIsNarrated = counterIdIncrementedIfTextIsNarrated;
     }
 
     @CheckReturnValue
-    public TimedDescription multiplyTimeElapsedWith(final double speedFactor) {
-        return new TimedDescription(description,
-                timeElapsed.times(speedFactor));
+    public TimedDescription<D> multiplyTimeElapsedWith(final double speedFactor) {
+        return new TimedDescription<>(description,
+                timeElapsed.times(speedFactor), counterIdIncrementedIfTextIsNarrated);
     }
 
     public StructuralElement getStartsNew() {
         return getDescription().getStartsNew();
     }
 
-    public TimedDescription komma() {
+    public TimedDescription<D> komma() {
         getDescription().komma(true);
         return this;
     }
 
-    public TimedDescription komma(final boolean kommaStehtAus) {
+    public TimedDescription<D> komma(final boolean kommaStehtAus) {
         getDescription().komma(kommaStehtAus);
         return this;
     }
@@ -56,12 +67,12 @@ public class TimedDescription {
      * Sets a flag that the text can be continued by a Satzreihenglied without subject where
      * the player character is the implicit subject
      */
-    public TimedDescription undWartest() {
+    public TimedDescription<D> undWartest() {
         getDescription().undWartest(true);
         return this;
     }
 
-    public TimedDescription undWartest(
+    public TimedDescription<D> undWartest(
             final boolean allowsAdditionalPlayerSatzreihengliedOhneSubjekt) {
         getDescription().undWartest(
                 allowsAdditionalPlayerSatzreihengliedOhneSubjekt);
@@ -72,12 +83,12 @@ public class TimedDescription {
         return getDescription().isAllowsAdditionalDuSatzreihengliedOhneSubjekt();
     }
 
-    public TimedDescription dann() {
+    public TimedDescription<D> dann() {
         getDescription().dann(true);
         return this;
     }
 
-    public TimedDescription dann(final boolean dann) {
+    public TimedDescription<D> dann(final boolean dann) {
         getDescription().dann(dann);
         return this;
     }
@@ -86,33 +97,38 @@ public class TimedDescription {
         return getDescription().isDann();
     }
 
-    public TimedDescription beendet(final StructuralElement structuralElement) {
+    public TimedDescription<D> beendet(final StructuralElement structuralElement) {
         getDescription().beendet(structuralElement);
         return this;
     }
 
-    public TimedDescription phorikKandidat(final SubstantivischePhrase substantivischePhrase,
+    public TimedDescription<D> phorikKandidat(final SubstantivischePhrase substantivischePhrase,
                                            final IBezugsobjekt bezugsobjekt) {
         getDescription().phorikKandidat(substantivischePhrase.getNumerusGenus(), bezugsobjekt);
         return this;
     }
 
-    public TimedDescription phorikKandidat(final NumerusGenus numerusGenus,
+    public TimedDescription<D> phorikKandidat(final NumerusGenus numerusGenus,
                                            final IBezugsobjekt bezugsobjekt) {
         getDescription().phorikKandidat(new PhorikKandidat(numerusGenus, bezugsobjekt));
         return this;
     }
 
-    public TimedDescription phorikKandidat(@Nullable final PhorikKandidat phorikKandidat) {
+    public TimedDescription<D> phorikKandidat(@Nullable final PhorikKandidat phorikKandidat) {
         getDescription().phorikKandidat(phorikKandidat);
         return this;
     }
 
-    public AbstractDescription<?> getDescription() {
+    public D getDescription() {
         return description;
     }
 
     public AvTimeSpan getTimeElapsed() {
         return timeElapsed;
+    }
+
+    @Nullable
+    public String getCounterIdIncrementedIfTextIsNarrated() {
+        return counterIdIncrementedIfTextIsNarrated;
     }
 }

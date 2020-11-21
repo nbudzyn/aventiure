@@ -420,13 +420,13 @@ public class BewegenAction<LOC_DESC extends ILocatableGO & IDescribableGO>
         //  noch einmal. Um sicher zu
         //  gehen... noch einmal. Du gehst SOGAR noch einmal...
 
-        final TimedDescription description = getNormalDescription(
+        final TimedDescription<?> description = getNormalDescription(
                 to.storingPlaceComp().getLichtverhaeltnisse());
 
         if (description.getDescription() instanceof AbstractDuDescription &&
                 n.allowsAdditionalDuSatzreihengliedOhneSubjekt() &&
                 isDefinitivDiskontinuitaet()) {
-            final ImmutableList.Builder<TimedDescription> alt = builder();
+            final ImmutableList.Builder<TimedDescription<?>> alt = builder();
 
             alt.add(satzanschluss(", besinnst dich aber und "
                             + ((AbstractDuDescription<?, ?>) description.getDescription())
@@ -449,7 +449,7 @@ public class BewegenAction<LOC_DESC extends ILocatableGO & IDescribableGO>
         }
 
         if (isDefinitivDiskontinuitaet()) {
-            final ImmutableList.Builder<TimedDescription> alt = builder();
+            final ImmutableList.Builder<TimedDescription<?>> alt = builder();
             if (numberOfWays == ONLY_WAY) {
                 alt.add(
                         du("schaust", "dich nur kurz um, dann "
@@ -515,7 +515,7 @@ public class BewegenAction<LOC_DESC extends ILocatableGO & IDescribableGO>
         }
     }
 
-    private TimedDescription getNormalDescription(final Lichtverhaeltnisse
+    private TimedDescription<?> getNormalDescription(final Lichtverhaeltnisse
                                                           lichtverhaeltnisseInNewLocation) {
         final Known newLocationKnown = sc.memoryComp().getKnown(spatialConnection.getTo());
 
@@ -529,10 +529,13 @@ public class BewegenAction<LOC_DESC extends ILocatableGO & IDescribableGO>
                                     newLocationKnown, lichtverhaeltnisseInNewLocation);
         }
 
-        final TimedDescription standardDescription =
+        final TimedDescription<?> standardDescription =
                 getStandardDescription(newLocationKnown, lichtverhaeltnisseInNewLocation);
 
-        if (!alternativeDescriptionAllowed) {
+        if (!alternativeDescriptionAllowed ||
+                // Immer, wenn ein Counter hochgezählt werden soll, wird es sinnvoll sein,
+                // die standardDescription anzuzeigen!
+                standardDescription.getCounterIdIncrementedIfTextIsNarrated() != null) {
             return standardDescription;
         }
 
@@ -569,7 +572,7 @@ public class BewegenAction<LOC_DESC extends ILocatableGO & IDescribableGO>
     }
 
     @VisibleForTesting
-    TimedDescription getStandardDescription(final Known newLocationKnown,
+    TimedDescription<?> getStandardDescription(final Known newLocationKnown,
                                             final Lichtverhaeltnisse lichtverhaeltnisseInNewLocation) {
 
         return spatialConnection.getSCMoveDescriptionProvider()

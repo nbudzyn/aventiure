@@ -329,7 +329,7 @@ public class NehmenAction
 
             final Nominalphrase froschDesc = world.getDescription(gameObject, false);
 
-            final ImmutableList.Builder<TimedDescription> alt = builder();
+            final ImmutableList.Builder<TimedDescription<?>> alt = builder();
             alt.addAll(drueckeAusTimed(DISKONTINUITAET,
                     du(PARAGRAPH,
                             "nimmst",
@@ -432,7 +432,7 @@ public class NehmenAction
         final Nominalphrase objectDesc = world.getDescription(gameObject);
         final Nominalphrase objectDescShort = world.getDescription(gameObject, true);
 
-        final ImmutableList.Builder<TimedDescription> alt = ImmutableList.builder();
+        final ImmutableList.Builder<TimedDescription<?>> alt = ImmutableList.builder();
 
         alt.addAll(drueckeAusTimed(DISKONTINUITAET,
                 du(PARAGRAPH,

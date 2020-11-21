@@ -25,6 +25,7 @@ import static de.nb.aventiure2.german.base.StructuralElement.SENTENCE;
 import static de.nb.aventiure2.german.description.DescriptionBuilder.du;
 
 public class BettFactory {
+    private static final String BETT__DESC_IN = "Bett__DescIn";
     private final AvDatabase db;
     private final World world;
 
@@ -72,19 +73,18 @@ public class BettFactory {
     }
 
 
-    private TimedDescription getDescIn(
+    private TimedDescription<?> getDescIn(
             final Known newLocationKnown, final Lichtverhaeltnisse lichtverhaeltnisse) {
-        if (db.counterDao().incAndGet(
-                // TODO Wegen dieser ID, die für alle Betten gleich ist, kann man im Moment nicht
-                //  wirklich mehrere Betten haben...
-                "Bett__DescIn")
-                == 1) {
+        if (db.counterDao().get(BETT__DESC_IN) == 0) {
             return du(PARAGRAPH, "legst", "dich in das hölzere Bettgestell. "
                     + "Gemütlich ist etwas anderes, aber nach den "
                     + "vielen Schritten tut es sehr gut, sich "
-                    + "einmal auszustrecken", secs(15));
+                    + "einmal auszustrecken", secs(15), BETT__DESC_IN);
         }
 
+        // STORY "noch einmal" wäre ein Problem, wenn man mehrere Betten hätte.
+        //  Dann müsste man wissen, in welchem Bett der SC schon gelegen hat.
+        //  Z.B. separater Counter je Bett o.Ä.
         return du("legst", "dich noch einmal in das Holzbett",
                 "noch einmal", secs(15))
                 .undWartest()

@@ -40,7 +40,7 @@ public class SpatialConnectionData {
             final String wo,
             final String actionDescription,
             final AvTimeSpan standardDuration,
-            final TimedDescription newLocationDescription) {
+            final TimedDescription<?> newLocationDescription) {
         return conData(wo, actionDescription, standardDuration,
                 (isnewLocationKnown, lichtverhaeltnisseInNewLocation) -> newLocationDescription);
     }
@@ -99,7 +99,7 @@ public class SpatialConnectionData {
 
     @FunctionalInterface
     public interface SCMoveDescriptionProvider {
-        TimedDescription getSCMoveDescription(
+        TimedDescription<?> getSCMoveDescription(
                 Known newLocationKnown,
                 Lichtverhaeltnisse lichtverhaeltnisseInNewLocation);
     }

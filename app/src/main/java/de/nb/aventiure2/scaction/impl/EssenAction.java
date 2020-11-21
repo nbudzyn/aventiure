@@ -253,12 +253,12 @@ public class EssenAction extends AbstractScAction {
     }
 
     private void narrateFelsenbirnenHungrig() {
-        if (db.counterDao().incAndGet(COUNTER_FELSENBIRNEN) == 1) {
+        if (db.counterDao().get(COUNTER_FELSENBIRNEN) == 0) {
             n.narrate(du(SENTENCE, "nimmst", "eine von den Früchten, "
                     + "schaust sie kurz an, dann "
                     + "beißt du hinein… – "
                     + "Mmh! Die Frucht ist saftig und schmeckt süß wie Marzipan!\n"
-                    + "Du isst dich an den Früchten satt", mins(10))
+                    + "Du isst dich an den Früchten satt", mins(10), COUNTER_FELSENBIRNEN)
                     .undWartest()
                     .dann());
             return;
@@ -279,12 +279,12 @@ public class EssenAction extends AbstractScAction {
     }
 
     private void narrateFelsenbirnenSatt() {
-        if (db.counterDao().incAndGet(COUNTER_FELSENBIRNEN) == 1) {
+        if (db.counterDao().get(COUNTER_FELSENBIRNEN) == 0) {
             n.narrate(
                     du(SENTENCE, "nimmst",
                             "eine von den Früchten und beißt hinein. "
                                     + "Sie ist überraschend süß und saftig. Du isst die Frucht auf",
-                            mins(3))
+                            mins(3), COUNTER_FELSENBIRNEN)
                             .undWartest()
                             .dann());
             return;

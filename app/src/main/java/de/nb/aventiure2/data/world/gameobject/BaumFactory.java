@@ -81,13 +81,13 @@ public class BaumFactory {
                 storingPlaceComp);
     }
 
-    private TimedDescription getDescIn(
+    private TimedDescription<?> getDescIn(
             final Known newLocationKnown, final Lichtverhaeltnisse lichtverhaeltnisse) {
-        final int count = db.counterDao().incAndGet(HOCHKLETTERN);
+        final int count = db.counterDao().get(HOCHKLETTERN);
         switch (count) {
-            case 1:
+            case 0:
                 return getDescInErstesMal();
-            case 2:
+            case 1:
                 return getDescInZweitesMal();
             default:
                 return getDescInNtesMal(lichtverhaeltnisse);
@@ -95,7 +95,7 @@ public class BaumFactory {
     }
 
     @CheckReturnValue
-    private static TimedDescription getDescInErstesMal() {
+    private static TimedDescription<?> getDescInErstesMal() {
         return neuerSatz(PARAGRAPH,
                 "Vom Stamm geht in Hüfthöhe ein kräftiger Ast ab, den kannst du "
                         + "ohne Mühe "
@@ -108,20 +108,20 @@ public class BaumFactory {
                         + "der immer dünner wird und gefährlich schwankt. Irgendeine "
                         + "Aussicht hast du "
                         + "nicht, und Äpfel sind auch keine zu finden. Vielleicht doch kein "
-                        + "Apfelbaum", mins(6));
+                        + "Apfelbaum", mins(6), HOCHKLETTERN);
     }
 
-    private static TimedDescription getDescInZweitesMal() {
+    private static TimedDescription<?> getDescInZweitesMal() {
         return du(PARAGRAPH,
                 "kletterst",
                 "noch einmal eine, zwei Etagen den Baum hinauf. "
                         + "Du schaust ins Blattwerk und bist stolz auf dich",
                 "noch einmal",
-                mins(6))
+                mins(6), HOCHKLETTERN)
                 .dann();
     }
 
-    private static TimedDescription getDescInNtesMal(
+    private static TimedDescription<?> getDescInNtesMal(
             final Lichtverhaeltnisse lichtverhaeltnisse) {
         return
                 // STORY Alternative:
@@ -131,24 +131,24 @@ public class BaumFactory {
                         "kletterst", "noch einmal "
                                 + "auf den Baum. Neues gibt es hier oben nicht zu erleben",
                         "noch einmal",
-                        mins(7))
+                        mins(7), HOCHKLETTERN)
                         .dann();
     }
 
-    private TimedDescription getDescOut(
+    private TimedDescription<?> getDescOut(
             final Known newLocationKnown, final Lichtverhaeltnisse lichtverhaeltnisse) {
-        final int count = db.counterDao().incAndGet(HINABKLETTERN);
+        final int count = db.counterDao().get(HINABKLETTERN);
         switch (count) {
-            case 1:
+            case 0:
                 return getDescOutErstesMal(lichtverhaeltnisse);
-            case 2:
+            case 1:
                 return getDescOutZweitesMal();
             default:
                 return getDescOutNtesMal(lichtverhaeltnisse);
         }
     }
 
-    private static TimedDescription getDescOutErstesMal(
+    private static TimedDescription<?> getDescOutErstesMal(
             final Lichtverhaeltnisse lichtverhaeltnisse) {
         final String dunkelNachsatz =
                 lichtverhaeltnisse == DUNKEL ?
@@ -157,16 +157,16 @@ public class BaumFactory {
         return neuerSatz("Mit einiger Mühe drehst du auf dem Ast um und hangelst dich "
                 + "vorsichtig "
                 + "wieder herab auf den Boden"
-                + dunkelNachsatz, mins(4));
+                + dunkelNachsatz, mins(4), HINABKLETTERN);
     }
 
-    private static TimedDescription getDescOutZweitesMal() {
+    private static TimedDescription<?> getDescOutZweitesMal() {
         return neuerSatz(
-                "Dann geht es vorsichtig wieder hinunter", mins(4))
+                "Dann geht es vorsichtig wieder hinunter", mins(4), HINABKLETTERN)
                 .beendet(PARAGRAPH);
     }
 
-    private static TimedDescription getDescOutNtesMal(
+    private static TimedDescription<?> getDescOutNtesMal(
             final Lichtverhaeltnisse lichtverhaeltnisse) {
         // FIXME Die folgenden Konstruktionen möchte ich ebenfalls automatisch erzeugen (Nach
         //  Möglichkeit Beispiele einbauen):
@@ -194,7 +194,7 @@ public class BaumFactory {
                         ANKOMMEN
                                 .mitAdverbialerAngabe(
                                         new AdverbialeAngabeSkopusVerbAllg("wieder unten")),
-                        mins(8))
+                        mins(8), HINABKLETTERN)
                         .dann();
 
         // STORY Alternative:

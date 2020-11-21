@@ -25,6 +25,9 @@ public abstract class CounterDao {
      * {@link NarrationDao#narrate(AbstractDescription)}
      * aufgerufen wird.
      */
+    // FIXME Alle Verwendungen prüfen - besser auf ein neues Konzept umstellen,
+    //  wo erst der Narrator den Counter erhöht (wenn der Text mit Sicherheit
+    //  wirklich geschrieben wird).
     public int incAndGet(final String id) {
         insert(new Counter(id, 0)); // ignore, if row already exists
 
@@ -34,6 +37,18 @@ public abstract class CounterDao {
         set(id, newValue);
 
         return newValue;
+    }
+
+    /**
+     * Erhöht diesen {@link Counter}.
+     */
+    public void inc(final String id) {
+        insert(new Counter(id, 0)); // ignore, if row already exists
+
+        final int value = get(id);
+        final int newValue = value + 1;
+
+        set(id, newValue);
     }
 
     public void reset(final String id) {

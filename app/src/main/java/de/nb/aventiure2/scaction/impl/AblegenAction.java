@@ -167,7 +167,7 @@ public class AblegenAction
             return;
         }
 
-        final ImmutableList.Builder<TimedDescription> alt =
+        final ImmutableList.Builder<TimedDescription<?>> alt =
                 ImmutableList.builder();
 
         alt.add(du(PARAGRAPH,
@@ -234,7 +234,7 @@ public class AblegenAction
                 n.allowsAdditionalDuSatzreihengliedOhneSubjekt() &&
                 n.dann()) {
 
-            final ImmutableList.Builder<TimedDescription> alt =
+            final ImmutableList.Builder<TimedDescription<?>> alt =
                     ImmutableList.builder();
             alt.add(satzanschluss(
                     ", aber dann denkst du dir: „So ein Ekeltier hat auf "

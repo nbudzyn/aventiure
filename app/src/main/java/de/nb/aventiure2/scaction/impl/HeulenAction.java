@@ -95,7 +95,7 @@ public class HeulenAction extends AbstractScAction {
 
         sc.memoryComp().setLastAction(buildMemorizedAction());
 
-        final ImmutableList.Builder<TimedDescription> alt = ImmutableList.builder();
+        final ImmutableList.Builder<TimedDescription<?>> alt = ImmutableList.builder();
         if (n.allowsAdditionalDuSatzreihengliedOhneSubjekt()) {
             alt.add(du("weinst", mins(1))
                     .undWartest());
@@ -131,7 +131,7 @@ public class HeulenAction extends AbstractScAction {
     private void narrateAndDoErstesMal() {
         sc.memoryComp().setLastAction(buildMemorizedAction());
 
-        final ImmutableList.Builder<TimedDescription> alt = ImmutableList.builder();
+        final ImmutableList.Builder<TimedDescription<?>> alt = ImmutableList.builder();
         alt.add(neuerSatz("Dich überkommt ein Schluchzen", mins(1)));
 
         if (n.dann()) {

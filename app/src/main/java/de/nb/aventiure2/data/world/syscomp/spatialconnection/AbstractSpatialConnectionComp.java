@@ -72,10 +72,12 @@ public abstract class AbstractSpatialConnectionComp extends AbstractStatelessCom
      * {@link SpatialConnection} - oder ob die Beschreibung verpflichtend ist und nur
      * <i>ergänzt oder umformuliert</i> werden darf.
      * <p>
-     * Immer wenn beim Erzeugen einer {@link AbstractDescription} ein
+     * Immer wenn beim Erzeugen einer {@link AbstractDescription} direkt ein
      * {@link de.nb.aventiure2.data.world.counter.Counter} hochgezählt wurde, wird diese
      * Description wohl verpflichtend sein. Vermutlich enthält sie essentielle Informationen,
-     * die der Spieler nicht verpassen soll.
+     * die der Spieler nicht verpassen soll. (Allerdings sollte man einen Counter ohnehin
+     * eher in die {@link de.nb.aventiure2.german.description.TimedDescription} einbetten
+     * und <i>nicht</i> in der {@link AbstractSpatialConnectionComp} hochzählen!
      * <p>
      * Bei den übrigen Descriptions kann auch ein ganz anderer Text gewählt werden, in der
      * Art "Du springst damit fort" oder "Du kehrst zurück".
@@ -84,6 +86,8 @@ public abstract class AbstractSpatialConnectionComp extends AbstractStatelessCom
      * {@link SpatialConnectionData.SCMoveDescriptionProvider#getSCMoveDescription(Known, Lichtverhaeltnisse)}-Methode
      * aufgerufen wird!
      */
+    // FIXME Alle Counter-Verwendungen überprüfen, ggf. kann man diese Methode
+    //  entfernen?
     public abstract boolean isAlternativeMovementDescriptionAllowed(final GameObjectId to,
                                                                     Known newLocationKnown,
                                                                     Lichtverhaeltnisse lichtverhaeltnisseInNewLocation);

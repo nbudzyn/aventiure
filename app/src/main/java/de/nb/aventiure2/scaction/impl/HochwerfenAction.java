@@ -46,6 +46,7 @@ import static de.nb.aventiure2.german.description.DescriptionBuilder.satzanschlu
 @ParametersAreNonnullByDefault
 public class HochwerfenAction<OBJ extends IDescribableGO & ILocatableGO>
         extends AbstractScAction {
+    private  static final String HOCHWERFEN_ACTION_WIEDERHOLUNG = "HochwerfenAction_Wiederholung";
     @NonNull
     private final OBJ object;
 
@@ -187,7 +188,7 @@ public class HochwerfenAction<OBJ extends IDescribableGO & ILocatableGO>
                         + "ungeschickt, oder?", noTime()));
     }
 
-    private void narrateAndDoHochwerfenAuffangen(final TimedDescription desc) {
+    private void narrateAndDoHochwerfenAuffangen(final TimedDescription<?> desc) {
         n.narrate(desc);
 
         object.locationComp().narrateAndDoLeaveReactions(SPIELER_CHARAKTER);
@@ -227,10 +228,10 @@ public class HochwerfenAction<OBJ extends IDescribableGO & ILocatableGO>
         final IHasStateGO<FroschprinzState> froschprinz =
                 (IHasStateGO<FroschprinzState>) world.load(FROSCHPRINZ);
 
-        if (db.counterDao().incAndGet("HochwerfenAction_Wiederholung") == 1 ||
+        if (db.counterDao().get(HOCHWERFEN_ACTION_WIEDERHOLUNG) == 0 ||
                 (location.is(IM_WALD_BEIM_BRUNNEN) && !froschprinz.stateComp()
                         .hasState(UNAUFFAELLIG))) {
-            n.narrateAlt(secs(3),
+            n.narrateAlt(secs(3), HOCHWERFEN_ACTION_WIEDERHOLUNG,
                     neuerSatz("Und noch einmal – was ein schönes Spiel!")
                             .dann(),
                     neuerSatz("So ein Spaß!")

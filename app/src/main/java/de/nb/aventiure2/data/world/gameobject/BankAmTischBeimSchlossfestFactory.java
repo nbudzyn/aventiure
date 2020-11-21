@@ -24,6 +24,8 @@ import static de.nb.aventiure2.german.base.NumerusGenus.M;
 import static de.nb.aventiure2.german.description.DescriptionBuilder.du;
 
 public class BankAmTischBeimSchlossfestFactory {
+    public static final String BANK_AM_TISCH_BEIM_SCHLOSSFEST_FACTORY_IN =
+            "BankAmTischBeimSchlossfestFactory_In";
     private final AvDatabase db;
     private final World world;
 
@@ -40,8 +42,6 @@ public class BankAmTischBeimSchlossfestFactory {
     @NonNull
     private GameObject create(final GameObjectId id,
                               final boolean dauerhaftBeleuchtet) {
-
-
         final SimpleDescriptionComp descriptionComp =
                 new SimpleDescriptionComp(id,
                         np(M, INDEF, "Platz auf einer Bank an einem Tisch"),
@@ -73,7 +73,7 @@ public class BankAmTischBeimSchlossfestFactory {
                 storingPlaceComp);
     }
 
-    private TimedDescription getDescIn(
+    private TimedDescription<?> getDescIn(
             final Known newLocationKnown, final Lichtverhaeltnisse lichtverhaeltnisse) {
         // Der Tisch wird erst jetzt hinzugefügt, damit nicht vorher
         // "Die Kugel auf den Tisch legen" o.Ä. angeboten wird (wenn noch gar kein
@@ -83,9 +83,7 @@ public class BankAmTischBeimSchlossfestFactory {
         ((ILocatableGO) world.load(SCHLOSS_VORHALLE_LANGER_TISCH_BEIM_FEST))
                 .locationComp().setLocation(SCHLOSS_VORHALLE_AM_TISCH_BEIM_FEST);
 
-        if (db.counterDao().incAndGet(
-                "BankAmTischBeimSchlossfestFactory_In")
-                == 1) {
+        if (db.counterDao().get(BANK_AM_TISCH_BEIM_SCHLOSSFEST_FACTORY_IN) == 0) {
             return du("ergatterst", "einen Platz auf einer Bank an einem langen,"
                     + " aus Brettern gezimmerten Tisch.\n"
                     + "Unter einem Baldachin sitzen – soweit du durch das Gedänge "
@@ -94,13 +92,13 @@ public class BankAmTischBeimSchlossfestFactory {
                     + "goldenen Tellern vor Fasan und anderem Wildbret. "
                     + "Immerhin stellt "
                     + "dir ein eifriger Diener einen leeren Holzteller und einen "
-                    + "Löffel bereit", mins(3));
+                    + "Löffel bereit", mins(3), BANK_AM_TISCH_BEIM_SCHLOSSFEST_FACTORY_IN);
         }
 
         return du("suchst", "dir erneut im Gedränge einen Platz an einem Tisch", "erneut", mins(3));
     }
 
-    private TimedDescription getDescOut(
+    private TimedDescription<?> getDescOut(
             final Known newLocationKnown, final Lichtverhaeltnisse lichtverhaeltnisse) {
         // Der Tisch wird wieder entfernt, s.o.
         ((ILocatableGO) world.load(SCHLOSS_VORHALLE_LANGER_TISCH_BEIM_FEST))

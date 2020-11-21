@@ -77,7 +77,7 @@ public class SchlafenAction extends AbstractScAction {
     private void narrateAndDoSchlaeftNichtEin() {
         sc.memoryComp().setLastAction(buildMemorizedAction());
 
-        final ImmutableList.Builder<TimedDescription> alt = ImmutableList.builder();
+        final ImmutableList.Builder<TimedDescription<?>> alt = ImmutableList.builder();
         if (!isDefinitivWiederholung()) {
             alt.add(du("schließt", "kurz die Augen. Die Aufregung der letzten Stunden "
                             + "steckt dir noch in den Knochen – an Einschlafen ist "

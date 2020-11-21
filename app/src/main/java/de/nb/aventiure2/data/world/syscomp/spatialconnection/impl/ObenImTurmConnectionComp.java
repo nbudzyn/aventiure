@@ -70,14 +70,14 @@ public class ObenImTurmConnectionComp extends AbstractSpatialConnectionComp {
         return res.build();
     }
 
-    private TimedDescription getDescTo_VorDemTurm(
+    private TimedDescription<?> getDescTo_VorDemTurm(
             final Known newLocationKnown, final Lichtverhaeltnisse lichtverhaeltnisse) {
-        if (db.counterDao().incAndGet(COUNTER_HERABGESTIEGEN) % 2 == 0) {
+        if (db.counterDao().get(COUNTER_HERABGESTIEGEN) % 2 == 1) {
             // 2.Mal, 4. Mal, ...
             return du("bist",
                     "schnell wieder hinab",
                     "schnell",
-                    secs(30))
+                    secs(30), COUNTER_HERABGESTIEGEN)
                     .undWartest()
                     .dann();
         }
@@ -85,7 +85,7 @@ public class ObenImTurmConnectionComp extends AbstractSpatialConnectionComp {
         if (n.isAnaphorischerBezugMoeglich(RAPUNZELS_HAARE)) {
             return du("steigst",
                     "daran hinab",
-                    mins(1))
+                    mins(1), COUNTER_HERABGESTIEGEN)
                     .undWartest()
                     .dann();
         }
@@ -93,7 +93,7 @@ public class ObenImTurmConnectionComp extends AbstractSpatialConnectionComp {
         return du(VerbSubj.HINABSTEIGEN
                         .mitAdverbialerAngabe(
                                 new AdverbialeAngabeSkopusVerbAllg("wieder")),
-                mins(1))
+                mins(1), COUNTER_HERABGESTIEGEN)
                 .undWartest()
                 .dann();
     }

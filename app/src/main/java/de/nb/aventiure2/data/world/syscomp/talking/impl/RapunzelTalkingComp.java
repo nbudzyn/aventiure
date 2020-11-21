@@ -245,7 +245,7 @@ public class RapunzelTalkingComp extends AbstractTalkingComp {
     private void still_haareHerunterlassenBitte_ExitImmReEntry() {
         final SubstantivischePhrase rapunzelAnaph =
                 getAnaphPersPronWennMglSonstDescription(true);
-        final ImmutableList.Builder<TimedDescription> alt =
+        final ImmutableList.Builder<TimedDescription<?>> alt =
                 ImmutableList.builder();
 
         alt.add(
@@ -302,7 +302,7 @@ public class RapunzelTalkingComp extends AbstractTalkingComp {
     private void hatNachKugelGefragt_haareHerunterlassenBitte_ExitImmReEntry() {
         final SubstantivischePhrase rapunzelAnaph =
                 getAnaphPersPronWennMglSonstDescription(true);
-        final ImmutableList.Builder<TimedDescription> alt =
+        final ImmutableList.Builder<TimedDescription<?>> alt =
                 ImmutableList.builder();
 
         alt.add(neuerSatz(

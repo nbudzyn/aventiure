@@ -25,20 +25,21 @@ public class DescriptionUmformulierer {
     private DescriptionUmformulierer() {
     }
 
-    public static ImmutableCollection<TimedDescription> drueckeAusTimed(
+    public static ImmutableCollection<TimedDescription<?>> drueckeAusTimed(
             final Kohaerenzrelation kohaerenzrelation,
-            final TimedDescription... desc) {
+            final TimedDescription<?>... desc) {
         return drueckeAusTimed(kohaerenzrelation,
                 Arrays.asList(desc));
     }
 
-    public static ImmutableCollection<TimedDescription> drueckeAusTimed(
+    public static ImmutableCollection<TimedDescription<?>> drueckeAusTimed(
             final Kohaerenzrelation kohaerenzrelation,
-            final Collection<? extends TimedDescription> descriptions) {
+            final Collection<? extends TimedDescription<?>> descriptions) {
         return descriptions.stream()
                 .flatMap(d ->
                         drueckeAus(kohaerenzrelation, d.getDescription()).stream()
-                                .map(r -> new TimedDescription(r, d.getTimeElapsed()))
+                                .map(r -> new TimedDescription<>(r, d.getTimeElapsed(),
+                                        d.getCounterIdIncrementedIfTextIsNarrated()))
                 )
                 .collect(ImmutableList.toImmutableList());
     }

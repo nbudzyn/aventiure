@@ -57,7 +57,7 @@ public class ImWaldNaheDemSchlossConnectionComp extends AbstractSpatialConnectio
         if (to.equals(DRAUSSEN_VOR_DEM_SCHLOSS) &&
                 ((IHasStateGO<SchlossfestState>) world.load(SCHLOSSFEST)).stateComp()
                         .hasState(BEGONNEN) &&
-                db.counterDao().get(COUNTER_ID_VOR_DEM_SCHLOSS_SCHLOSSFEST_KNOWN) == 0) {
+                !world.loadSC().memoryComp().isKnown(SCHLOSSFEST)) {
             return false;
         }
 
@@ -93,7 +93,7 @@ public class ImWaldNaheDemSchlossConnectionComp extends AbstractSpatialConnectio
     }
 
 
-    private TimedDescription getDescTo_DraussenVorDemSchloss(
+    private TimedDescription<?> getDescTo_DraussenVorDemSchloss(
             final Known newLocationKnown, final Lichtverhaeltnisse lichtverhaeltnisse) {
 
         switch (((IHasStateGO<SchlossfestState>) world.load(SCHLOSSFEST)).stateComp().getState()) {
@@ -105,7 +105,7 @@ public class ImWaldNaheDemSchlossConnectionComp extends AbstractSpatialConnectio
     }
 
     @NonNull
-    private TimedDescription
+    private TimedDescription<?>
     getDescTo_DraussenVorDemSchloss_KeinFest(
             final Lichtverhaeltnisse lichtverhaeltnisse) {
         if (db.nowDao().now().getTageszeit() == TAGSUEBER) {
@@ -137,10 +137,11 @@ public class ImWaldNaheDemSchlossConnectionComp extends AbstractSpatialConnectio
     }
 
     @NonNull
-    private TimedDescription
+    private TimedDescription<?>
     getDescTo_DraussenVorDemSchloss_FestBegonnen(
             final AvTimeSpan timeSpan) {
-        if (db.counterDao().incAndGet(COUNTER_ID_VOR_DEM_SCHLOSS_SCHLOSSFEST_KNOWN) == 1) {
+        if (!world.loadSC().memoryComp().isKnown(SCHLOSSFEST)) {
+            world.loadSC().memoryComp().upgradeKnown(SCHLOSSFEST);
             return du("bist", "von dem Lärm überrascht, der dir "
                     + "schon von weitem "
                     + "entgegenschallt. Als du aus dem Wald heraustrittst, "
@@ -162,7 +163,7 @@ public class ImWaldNaheDemSchlossConnectionComp extends AbstractSpatialConnectio
         return "Den schmalen Pfad aufwärtsgehen";
     }
 
-    private TimedDescription getDescTo_VorDemAltenTurm(
+    private TimedDescription<?> getDescTo_VorDemAltenTurm(
             final Known newLocationKnown, final Lichtverhaeltnisse lichtverhaeltnisse) {
         if (newLocationKnown == UNKNOWN && lichtverhaeltnisse == HELL) {
             return du("nimmst", "den schmalen Pfad, der sich lange durch "

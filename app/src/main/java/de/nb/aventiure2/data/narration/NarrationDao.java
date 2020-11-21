@@ -15,7 +15,6 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
 
-import de.nb.aventiure2.data.world.time.*;
 import de.nb.aventiure2.german.description.AbstractDescription;
 import de.nb.aventiure2.german.description.AllgDescription;
 import de.nb.aventiure2.german.description.TimedDescription;
@@ -60,24 +59,27 @@ public abstract class NarrationDao {
     }
 
     @Nullable
-    public AllgDescriptionWithScoreAndElapsedTime chooseBestCombination(
+    public
+    AllgTimedDescriptionWithScore chooseBestCombination(
             final Collection<AbstractDescription<?>> firstAlternatives,
-            final Collection<TimedDescription> secondAlternatives) {
+            final Collection<? extends TimedDescription<?>> secondAlternatives) {
         checkArgument(!firstAlternatives.isEmpty(), "No first alternatives");
         checkArgument(!secondAlternatives.isEmpty(), "No second alternatives");
 
         final Narration initialNarration = requireNarration();
 
-        final List<TimedDescription> combinations = Lists.newArrayList();
+        final List<TimedDescription<AllgDescription>> combinations = Lists.newArrayList();
 
         for (final AbstractDescription<?> first : firstAlternatives) {
-            for (final TimedDescription second : secondAlternatives) {
+            for (final TimedDescription<?> second : secondAlternatives) {
                 combinations.addAll(
                         DescriptionCombiner.combine(
                                 first,
                                 second.getDescription(),
                                 initialNarration).stream()
-                                .map(na -> new TimedDescription(na, second.getTimeElapsed()))
+                                .map(na -> new TimedDescription<>
+                                        (na, second.getTimeElapsed(),
+                                                second.getCounterIdIncrementedIfTextIsNarrated()))
                                 .collect(ImmutableList.toImmutableList())
                 );
             }
@@ -110,15 +112,14 @@ public abstract class NarrationDao {
         return bestAllgDescription;
     }
 
-    AllgDescriptionWithScoreAndElapsedTime chooseBest(
-            final Collection<TimedDescription> alternatives) {
+    AllgTimedDescriptionWithScore chooseBest(
+            final  Collection<? extends TimedDescription<?>> alternatives) {
         checkArgument(!alternatives.isEmpty(), "No alternatives");
 
         final Narration initialNarration = requireNarration();
 
-        AllgDescription bestAllgDescription = null;
+        TimedDescription<AllgDescription> bestAllgTimedDescription = null;
         float bestScore = Float.NEGATIVE_INFINITY;
-        AvTimeSpan bestTimeElapsed = null;
 
         // TODO Hier könnte es textuelle Duplikate geben - sowohl zwischen den
         //  AllgDescriptions einer AbstractDescriptions also auch zwischen den AllgDescriptions
@@ -126,7 +127,7 @@ public abstract class NarrationDao {
         //  also sollte man sie herausfiltern. Da nach den ganzen AllgDescription-Prüfungen
         //  am Ende wieder die bestDesc relevant ist, ist das nicht trivial.
 
-        for (final TimedDescription descAlternative : alternatives) {
+        for (final TimedDescription<?> descAlternative : alternatives) {
             final List<AllgDescription> allgDescriptions =
                     AllgDescriptionBuilder.toAllgDescriptions(
                             descAlternative.getDescription(),
@@ -136,13 +137,15 @@ public abstract class NarrationDao {
                     allgDescriptions);
             if (indexAndScore.score > bestScore) {
                 bestScore = indexAndScore.score;
-                bestAllgDescription = allgDescriptions.get(indexAndScore.index);
-                bestTimeElapsed = descAlternative.getTimeElapsed();
+                bestAllgTimedDescription =
+                        new TimedDescription<>(
+                                allgDescriptions.get(indexAndScore.index),
+                                descAlternative.getTimeElapsed());
             }
         }
 
-        return new AllgDescriptionWithScoreAndElapsedTime(
-                bestAllgDescription, bestScore, bestTimeElapsed
+        return new AllgTimedDescriptionWithScore(
+                bestAllgTimedDescription, bestScore
         );
     }
 

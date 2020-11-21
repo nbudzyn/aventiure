@@ -81,7 +81,7 @@ public class SchlossVorhalleConnectionComp extends AbstractSpatialConnectionComp
         return "Das Schloss verlassen";
     }
 
-    private TimedDescription getDescTo_DraussenVorDemSchloss(
+    private TimedDescription<?> getDescTo_DraussenVorDemSchloss(
             final Known newLocationKnown, final Lichtverhaeltnisse lichtverhaeltnisse) {
         switch (((IHasStateGO<SchlossfestState>) world.load(SCHLOSSFEST)).stateComp().getState()) {
             case BEGONNEN:
@@ -93,7 +93,7 @@ public class SchlossVorhalleConnectionComp extends AbstractSpatialConnectionComp
         }
     }
 
-    private static TimedDescription getDescTo_DraussenVorDemSchlosss_KeinFest(
+    private static TimedDescription<?> getDescTo_DraussenVorDemSchlosss_KeinFest(
             final Known known, final Lichtverhaeltnisse lichtverhaeltnisse) {
         if (known == UNKNOWN) {
             return getDescTo_DraussenVorDemSchlosss_KeinFest_Unknown(
@@ -117,7 +117,7 @@ public class SchlossVorhalleConnectionComp extends AbstractSpatialConnectionComp
     }
 
     @NonNull
-    private static TimedDescription
+    private static TimedDescription<?>
     getDescTo_DraussenVorDemSchlosss_KeinFest_Unknown(
             final Lichtverhaeltnisse lichtverhaeltnisse) {
         if (lichtverhaeltnisse == HELL) {
@@ -139,7 +139,7 @@ public class SchlossVorhalleConnectionComp extends AbstractSpatialConnectionComp
     }
 
     @NonNull
-    private TimedDescription
+    private TimedDescription<?>
     getDescTo_DraussenVorDemSchloss_FestBegonnen() {
         if (((IHasStateGO<FroschprinzState>) world.load(FROSCHPRINZ)).stateComp()
                 .hasState(ZURUECKVERWANDELT_IN_VORHALLE,

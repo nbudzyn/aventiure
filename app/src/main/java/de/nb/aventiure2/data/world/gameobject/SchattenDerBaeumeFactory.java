@@ -27,6 +27,9 @@ import static de.nb.aventiure2.german.base.StructuralElement.SENTENCE;
 import static de.nb.aventiure2.german.description.DescriptionBuilder.du;
 
 public class SchattenDerBaeumeFactory {
+    private static final String
+            DESC_TO_SCHATTEN_DER_BAEUME__SC_SETZT_SICH_TAGSUEBER_IN_DEN_SCHATTEN_DER_BAEUME =
+            "DescTo_SchattenDerBaeume__SCSetztSichTagsueberInDenSchattenDerBaeume";
     private final AvDatabase db;
     private final World world;
 
@@ -72,7 +75,7 @@ public class SchattenDerBaeumeFactory {
                 storingPlaceComp);
     }
 
-    private TimedDescription getDescIn(
+    private TimedDescription<?> getDescIn(
             final Known newLocationKnown, final Lichtverhaeltnisse lichtverhaeltnisse) {
         if (lichtverhaeltnisse == DUNKEL) {
             return du("setzt", "dich unter die Bäume", secs(20))
@@ -81,13 +84,15 @@ public class SchattenDerBaeumeFactory {
 
         // FIXME Klarer machen, dass man unter den Bäumen versteckt ist. (Ggf. als Tipp.)
 
-        if (db.counterDao().incAndGet(
-                "DescTo_SchattenDerBaeume__SCSetztSichTagsueberInDenSchattenDerBaeume")
-                == 1) {
-            return du(PARAGRAPH,
+        if (db.counterDao().get(
+                DESC_TO_SCHATTEN_DER_BAEUME__SC_SETZT_SICH_TAGSUEBER_IN_DEN_SCHATTEN_DER_BAEUME)
+                == 0) {
+            return du(
+                    PARAGRAPH,
                     "lässt", "dich im Schatten der umstehenden Bäume nieder",
                     "im Schatten der umstehenden Bäume",
-                    mins(5))
+                    mins(5),
+                    DESC_TO_SCHATTEN_DER_BAEUME__SC_SETZT_SICH_TAGSUEBER_IN_DEN_SCHATTEN_DER_BAEUME)
                     .beendet(SENTENCE)
                     .dann();
         }
@@ -97,7 +102,7 @@ public class SchattenDerBaeumeFactory {
                 .dann();
     }
 
-    private static TimedDescription getDescOut(
+    private static TimedDescription<?> getDescOut(
             final Known newLocationKnown, final Lichtverhaeltnisse lichtverhaeltnisse) {
         if (lichtverhaeltnisse == DUNKEL) {
 

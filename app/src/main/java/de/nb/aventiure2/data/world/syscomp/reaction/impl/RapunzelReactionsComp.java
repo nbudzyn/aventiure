@@ -190,7 +190,7 @@ public class RapunzelReactionsComp
         if (world.isOrHasRecursiveLocation(from, OBEN_IM_ALTEN_TURM)) {
             stateComp.narrateAndSetState(STILL);
 
-            final ImmutableList.Builder<TimedDescription> alt = ImmutableList.builder();
+            final ImmutableList.Builder<TimedDescription<?>> alt = ImmutableList.builder();
             alt.addAll(altRapunzelZiehtHaareWiederHoch_VorDemAltenTurm());
             // STORY Wenn Rapunzel das mit der Zauberin erzählt hat (aber auch dann nur
             //  einmal): „Aber komm nicht, wenn die Alte bei mir ist, ruft sie dir noch nach"
@@ -303,7 +303,7 @@ public class RapunzelReactionsComp
         loadSC().feelingsComp().requestMoodMin(AUFGEDREHT);
         stateComp.setState(STILL);
 
-        final ImmutableList.Builder<TimedDescription> alt = ImmutableList.builder();
+        final ImmutableList.Builder<TimedDescription<?>> alt = ImmutableList.builder();
 
         if (db.nowDao().now().getTageszeit() == NACHTS) {
             alt.add(du(SENTENCE, "hast", "die junge Frau offenbar aus dem Bett "
@@ -441,7 +441,7 @@ public class RapunzelReactionsComp
     }
 
     @NonNull
-    private static ImmutableList<TimedDescription>
+    private static ImmutableList<TimedDescription<?>>
     altRapunzelZiehtHaareWiederHoch_VorDemAltenTurm() {
         return ImmutableList.of(
                 neuerSatz(
@@ -462,7 +462,7 @@ public class RapunzelReactionsComp
         );
     }
 
-    private ImmutableList<TimedDescription> altRapunzelZiehtHaareWiederHoch_ObenImAltenTurm() {
+    private ImmutableList<TimedDescription<?>> altRapunzelZiehtHaareWiederHoch_ObenImAltenTurm() {
         final SubstantivischePhrase anaph =
                 getAnaphPersPronWennMglSonstDescription(false);
 

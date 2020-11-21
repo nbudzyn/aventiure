@@ -28,7 +28,7 @@ public class SpatialConnection {
                                         final String wo,
                                         final String actionName,
                                         final AvTimeSpan standardDuration,
-                                        final TimedDescription newLocationDescription) {
+                                        final TimedDescription<?> newLocationDescription) {
         return con(to, wo, () -> actionName, standardDuration, newLocationDescription);
     }
 
@@ -36,7 +36,7 @@ public class SpatialConnection {
                                         final String wo,
                                         final Supplier<String> actionNameProvider,
                                         final AvTimeSpan standardDuration,
-                                        final TimedDescription newLocationDescription) {
+                                        final TimedDescription<?> newLocationDescription) {
         return con(to, wo, actionNameProvider, standardDuration,
                 (isnewLocationKnown, lichtverhaeltnisseInNewLocation) -> newLocationDescription);
     }
@@ -45,8 +45,8 @@ public class SpatialConnection {
                                         final String wo,
                                         final String actionName,
                                         final AvTimeSpan standardDuration,
-                                        final TimedDescription newLocationDescriptionUnknown,
-                                        final TimedDescription newLocationDescriptionKnown) {
+                                        final TimedDescription<?> newLocationDescriptionUnknown,
+                                        final TimedDescription<?> newLocationDescriptionKnown) {
         return con(to, wo, () -> actionName, standardDuration,
                 newLocationDescriptionUnknown, newLocationDescriptionKnown);
     }
@@ -55,8 +55,8 @@ public class SpatialConnection {
                                         final String wo,
                                         final Supplier<String> actionNameSupplier,
                                         final AvTimeSpan standardDuration,
-                                        final TimedDescription newLocationDescriptionUnknown,
-                                        final TimedDescription newLocationDescriptionKnown) {
+                                        final TimedDescription<?> newLocationDescriptionUnknown,
+                                        final TimedDescription<?> newLocationDescriptionKnown) {
         return con(to, wo, actionNameSupplier, standardDuration,
                 (newLocationKnown, lichtverhaeltnisseInNewLocation) ->
                         newLocationKnown == UNKNOWN ?
@@ -67,10 +67,10 @@ public class SpatialConnection {
                                         final String wo,
                                         final String actionName,
                                         final AvTimeSpan standardDuration,
-                                        final TimedDescription newLocationDescriptionUnknownHell,
-                                        final TimedDescription newLocationDescriptionUnknownDunkel,
-                                        final TimedDescription newLocationDescriptionKnownFromDarknessHell,
-                                        final TimedDescription newLocationDescriptionOther) {
+                                        final TimedDescription<?> newLocationDescriptionUnknownHell,
+                                        final TimedDescription<?> newLocationDescriptionUnknownDunkel,
+                                        final TimedDescription<?> newLocationDescriptionKnownFromDarknessHell,
+                                        final TimedDescription<?> newLocationDescriptionOther) {
         return con(to, wo, () -> actionName, standardDuration,
                 newLocationDescriptionUnknownHell,
                 newLocationDescriptionUnknownDunkel, newLocationDescriptionKnownFromDarknessHell,
@@ -81,10 +81,10 @@ public class SpatialConnection {
                                         final String wo,
                                         final Supplier<String> actionNameProvider,
                                         final AvTimeSpan standardDuration,
-                                        final TimedDescription newLocationDescriptionUnknownHell,
-                                        final TimedDescription newLocationDescriptionUnknownDunkel,
-                                        final TimedDescription newLocationDescriptionKnownFromDarknessHell,
-                                        final TimedDescription newLocationDescriptionOther) {
+                                        final TimedDescription<?> newLocationDescriptionUnknownHell,
+                                        final TimedDescription<?> newLocationDescriptionUnknownDunkel,
+                                        final TimedDescription<?> newLocationDescriptionKnownFromDarknessHell,
+                                        final TimedDescription<?> newLocationDescriptionOther) {
         return con(to, wo, actionNameProvider, standardDuration,
                 (newLocationKnown, lichtverhaeltnisseInNewLocation) -> {
                     if (newLocationKnown == UNKNOWN && lichtverhaeltnisseInNewLocation == HELL) {

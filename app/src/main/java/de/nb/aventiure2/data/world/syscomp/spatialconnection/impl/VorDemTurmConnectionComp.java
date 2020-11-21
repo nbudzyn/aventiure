@@ -112,34 +112,36 @@ public class VorDemTurmConnectionComp extends AbstractSpatialConnectionComp {
         return res.build();
     }
 
-    private TimedDescription getDescTo_VorDemTurm(
+    private TimedDescription<?> getDescTo_VorDemTurm(
             final Known newLocationKnown, final Lichtverhaeltnisse lichtverhaeltnisse) {
-        final int count = db.counterDao().incAndGet(
+        final int count = db.counterDao().get(
                 VorDemTurmConnectionComp.COUNTER_ALTER_TURM_UMRUNDET);
         switch (count) {
-            case 1:
+            case 0:
                 if (world.loadSC().memoryComp().isKnown(RAPUNZELS_GESANG) &&
                         !world.loadSC().memoryComp().isKnown(RAPUNZEL)) {
                     return du("möchtest", "zu der süßen Stimme hinaufsteigen, "
                             + "und suchst rundherum nach einer Türe des Turms, aber es ist keine "
-                            + "zu finden", mins(2))
+                            + "zu finden", mins(2), COUNTER_ALTER_TURM_UMRUNDET)
                             .dann();
                 }
 
                 if (!world.loadSC().memoryComp().isKnown(RAPUNZELS_HAARE)) {
                     return du("gehst", "einmal um den Turm herum. Es ist keine "
-                            + "Türe zu sehen, nur ganz oben ein kleines Fensterchen", mins(2));
+                            + "Türe zu sehen, nur ganz oben ein kleines Fensterchen",
+                            mins(2), COUNTER_ALTER_TURM_UMRUNDET);
                 }
 
                 return du("gehst", "einmal um den Turm herum, findest "
-                        + "aber nicht die kleinste Tür", secs(90))
+                        + "aber nicht die kleinste Tür", secs(90), COUNTER_ALTER_TURM_UMRUNDET)
                         .dann();
-            case 2:
+            case 1:
                 return du("schaust", "noch einmal um den Turm, ob dir vielleicht "
-                        + "eine Tür entgangen wäre – nichts", mins(2))
+                        + "eine Tür entgangen wäre – nichts", mins(2), COUNTER_ALTER_TURM_UMRUNDET)
                         .dann();
             default:
-                return du("gehst", "noch einmal um den Turm herum", mins(1))
+                return du("gehst", "noch einmal um den Turm herum",
+                        mins(1), COUNTER_ALTER_TURM_UMRUNDET)
                         .dann();
         }
     }

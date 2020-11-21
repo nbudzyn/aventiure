@@ -89,14 +89,13 @@ public class RastenAction extends AbstractScAction {
         //  1. Dem Narrator erzählen: Nichts schreiben! ("Wartemodus")
         //  2. Reactions-Componente anweisen: Unterbrich den Wartemodus, wenn die Zauberin kommt
         //    (und wenn der Spieler hungriger wird, müder, ein Drache kommt, die Maximalzeit
-        //    um ist, ein Tageszeitenwechsel geschieht o.Ä.)
+        //    um ist, ein Tageszeitenwechsel geschieht o.Ä.). In diesem Fällen muss der Spieler
+        //    einen Hinweistext bekommen in der Art "Du wartest lange. Allmählich wirst du
+        //    hungrig."
         //  3. Dann hier die Zeit in kleiner Schritten weiterdrehen - danach immer prüfen, ob
         //    der Wartemodus ausgeschaltet wurde.
         //  4. Wenn der Wartemodus ausgeschaltet wurde die letzten Texte schreiben (hoffentlich
         //    etwas wie "Endlich kommt die alte Frau" oder so).
-
-        // FIXME Vorarbeit: Counter für Text dürfen nur hochgezählt werden, wenn der Text auch wirklich
-        //  angezeigt wurde. Counter in lambdas? Counter als Parameter übergeben?
 
         //  FIXME Mehrere verschiedenen bestätigende Texte, dass sich das Rasten lohnt
         //   (damit der Spieler nicht zu bald aufgibt).

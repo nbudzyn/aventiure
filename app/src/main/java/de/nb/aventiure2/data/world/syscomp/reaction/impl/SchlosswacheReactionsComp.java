@@ -45,6 +45,8 @@ public class SchlosswacheReactionsComp
         extends AbstractDescribableReactionsComp
         implements IMovementReactions, ITimePassedReactions {
 
+    public static final String SCHLOSSWACHE_REACTIONS_ABLEGEN_WACHE_IST_AUFMERKSAM =
+            "SchlosswacheReactions_ablegen_wacheIstAufmerksam";
     private final LocationSystem locationSystem;
     private final SchlosswacheStateComp stateComp;
     private final LocationComp locationComp;
@@ -286,7 +288,7 @@ public class SchlosswacheReactionsComp
 
     private void scHatGoldeneKugelGenommen_wacheIstAufmerksam_erwischt(
             final ILocatableGO goldeneKugel) {
-        final ImmutableList.Builder<TimedDescription> alt = ImmutableList.builder();
+        final ImmutableList.Builder<TimedDescription<?>> alt = ImmutableList.builder();
 
         if (n.allowsAdditionalDuSatzreihengliedOhneSubjekt()) {
             alt.add(satzanschluss(", doch keine Sekunde später baut sich die "
@@ -319,7 +321,7 @@ public class SchlosswacheReactionsComp
     }
 
     private void scHatGoldeneKugelGenommen_wacheIstAufmerksam_nichtErwischt() {
-        final ImmutableList.Builder<TimedDescription> alt = ImmutableList.builder();
+        final ImmutableList.Builder<TimedDescription<?>> alt = ImmutableList.builder();
 
         if (n.allowsAdditionalDuSatzreihengliedOhneSubjekt()) {
             alt.add(satzanschluss(
@@ -372,13 +374,13 @@ public class SchlosswacheReactionsComp
 
     private void scHatEtwasInSchlosVorhalleHingelegt_wacheIstAufmerksam() {
         if (db.counterDao()
-                .incAndGet("SchlosswacheReactions_ablegen_wacheIstAufmerksam") > 2) {
+                .get(SCHLOSSWACHE_REACTIONS_ABLEGEN_WACHE_IST_AUFMERKSAM) > 1) {
             return;
         }
 
         if (n.allowsAdditionalDuSatzreihengliedOhneSubjekt()) {
             n.narrate(satzanschluss(", von der kopfschüttelnden Wache beobachtet",
-                    secs(5))
+                    secs(5), SCHLOSSWACHE_REACTIONS_ABLEGEN_WACHE_IST_AUFMERKSAM)
                     .dann());
             return;
         }
@@ -441,7 +443,17 @@ public class SchlosswacheReactionsComp
                     sc.feelingsComp().requestMood(NEUTRAL);
 
                     // Der Spieler weiß jetzt, dass das Schlossfest läuft
-                    db.counterDao().incAndGet(COUNTER_ID_VOR_DEM_SCHLOSS_SCHLOSSFEST_KNOWN);
+                    // FIXME Dies hier ist ein Problem, wenn der Spieler z.B. vor dem
+                    //  Schloss auf die magere Frau warten würde.
+                    //  Man muss verhindern, dass der Narrator den Text nicht ausgibt,
+                    //  später davon ausgeht, dass der Spieler das Schlossfest kennt.
+                    //  Dieses Problem besteht an allen stellen, wo nach einem
+                    //  Text oder einer Aktion KNOWN geändert wird.
+                    //  (Hier ist es nur ein theoretisches Problem.)
+                    //  Lösungsansätze könnten sein:
+                    //  - Den Spieler gerade noch rechtzeitig (VOR DEM TEXT!) aufwecken
+                    //  - upgradeKnown() nur aufrufen, wenn der Text sicher gedruckt wird.
+                    sc.memoryComp().upgradeKnown(SCHLOSSFEST);
                 });
     }
 }
