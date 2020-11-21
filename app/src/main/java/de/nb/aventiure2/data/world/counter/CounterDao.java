@@ -23,11 +23,10 @@ public abstract class CounterDao {
      * Beschreibung ersetzt). Oft ist es deshalb eine gute Idee,
      * <code>#incAndGet(String)</code> in derselben Methode aufzurufen, in der auch
      * {@link NarrationDao#narrate(AbstractDescription)}
-     * aufgerufen wird.
+     * aufgerufen wird. Oft ist es sogar noch besser,  {@link #get(String)} aufzurufen und
+     * den Counter außerdem in der {@link de.nb.aventiure2.german.description.TimedDescription}
+     * zu übergeben.
      */
-    // FIXME Alle Verwendungen prüfen - besser auf ein neues Konzept umstellen,
-    //  wo erst der Narrator den Counter erhöht (wenn der Text mit Sicherheit
-    //  wirklich geschrieben wird).
     public int incAndGet(final String id) {
         insert(new Counter(id, 0)); // ignore, if row already exists
 
