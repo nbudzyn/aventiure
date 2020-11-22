@@ -87,24 +87,20 @@ public class WartenAction<LIVGO extends IDescribableGO & ILocatableGO & ILivingB
         // FIXME Aktion
         //  - Die Aktion muss irgendwie erkennen, dass die Frau gekommen ist.
         //  - Man muss allerdings vermeiden, dass sehr viele kurze Texte gedruckt werden!
-        //  - Entweder Pollen (immer wieder prüfen, ob die Frau jetzt da ist)
-        //  - Oder die Action registriert sich als Listener für das Event "Frau ist da"??
-        //    Erst der Listener "weckt" den Spieler wieder auf.
-        //    Der Text ("Du wartest sehr lange. Die Vägel singen über dir, und allmählich wirst du
-        //    hungrig. Endlich kommt...") sollte dann erst am Ende erzeugt werden. Er müsste aber
-        //    aLles berücksichtigen, was zwischenzeitlich passiert ist.
-        //    Vermutlich braucht man weitere Möglichkeiten, bei denen das Warten abgebrochen wird, z.B.
-        //    wenn ein Drache vorbei kommt oder der Spieler müder oder hungriger wird.
+        //  - Der Text ("Du wartest sehr lange. Die Vägel singen über dir, und allmählich wirst du
+        //    hungrig. Endlich kommt...") sollte vielleicht erst am Ende erzeugt werden. Er müsste
+        //    dann aber aLles berücksichtigen, was zwischenzeitlich passiert ist.
+        //    Vermutlich braucht man weitere Möglichkeiten, bei denen das Warten abgebrochen wird,
+        //    z.B. wenn der Spieler müder oder hungriger wird?
         //  - Man könnte das Warten beim Narrator registrieren. Dann werden in der Wartezeit
         //    keine Texte geschrieben.
         //  - Rapunzels Gesang sollte das Warten abbrechen - wenn man ihn noch nicht kennt.
         //  Konzept könnte sein
         //  1. Dem Narrator vorschreiben: Nichts schreiben! ("Wartemodus")
-        //  2. Reactions-Componente anweisen: Unterbrich den Wartemodus, wenn die Zauberin kommt
-        //    (und wenn der Spieler hungriger wird, müder, ein Drache kommt,
-        //    ein Tageszeitenwechsel geschieht o.Ä.). In diesem Fällen muss der Spieler
-        //    einen Hinweistext bekommen in der Art "Du wartest lange. Allmählich wirst du
-        //    hungrig."
+        //  2. Reactions-Componente anweisen: Unterbrich den Wartemodus, auch wenn
+        //    der Spieler hungriger wird oder müder oder ein Tageszeitenwechsel geschieht o.Ä.).
+        //    In diesem Fällen muss der Spieler einen Hinweistext bekommen in der Art "Du wartest
+        //    lange. Allmählich wirst du hungrig."
         //  3. Wenn der Wartemodus ausgeschaltet wurde, die letzten Texte schreiben (hoffentlich
         //    etwas wie "Endlich kommt die alte Frau" oder so).
 
@@ -113,8 +109,8 @@ public class WartenAction<LIVGO extends IDescribableGO & ILocatableGO & ILivingB
 
         // Erst einmal vergeht fast keine Zeit. Die ScAutomaticReactionsComp sorgt
         // im onTimePassed() im Zusammenspiel mit der WaitingComp dafür, dass die
-        // Zeit vergeht (maximal 2 Stunden).
-        world.loadSC().waitingComp().startWaiting(db.nowDao().now().plus(hours(2)));
+        // Zeit vergeht (maximal 3 Stunden).
+        world.loadSC().waitingComp().startWaiting(db.nowDao().now().plus(hours(3)));
 
         sc.memoryComp().setLastAction(buildMemorizedAction());
     }
@@ -140,6 +136,11 @@ public class WartenAction<LIVGO extends IDescribableGO & ILocatableGO & ILivingB
                     getAnaphPersPronWennMglSonstDescription(erwartet, true);
             n.narrateAlt(
                     DescriptionUmformulierer.drueckeAus(
+                            // FIXME Das führt zu ein paar unschönen Formulieren wie
+                            //  "Ein weiteres Mal wartest du auf...".
+                            //  Vielleicht sollte man zwischen WIEDERHOLUNG und
+                            //  FORTSETZUNG unterscheiden? Oder zwischen
+                            //  zählbaren und unzählbaren Aktionen?
                             kohaerenzrelation,
                             du(WARTEN
                                     .mitObj(anaph)
@@ -149,7 +150,6 @@ public class WartenAction<LIVGO extends IDescribableGO & ILocatableGO & ILivingB
                             )
                                     .dann()
                                     .phorikKandidat(anaph, erwartet.getId())
-
                     ), secs(5));
         }
     }

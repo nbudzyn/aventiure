@@ -16,6 +16,9 @@ import de.nb.aventiure2.androidtest.AndroidTestBase;
 import de.nb.aventiure2.data.world.syscomp.alive.ILivingBeingGO;
 import de.nb.aventiure2.data.world.syscomp.description.IDescribableGO;
 import de.nb.aventiure2.data.world.syscomp.location.ILocatableGO;
+import de.nb.aventiure2.data.world.syscomp.movement.IMovingGO;
+import de.nb.aventiure2.data.world.syscomp.state.IHasStateGO;
+import de.nb.aventiure2.data.world.syscomp.state.impl.RapunzelsZauberinState;
 import de.nb.aventiure2.data.world.syscomp.storingplace.ILocationGO;
 import de.nb.aventiure2.data.world.time.*;
 import de.nb.aventiure2.scaction.AbstractScAction;
@@ -86,8 +89,30 @@ public class WartenActionTest extends AndroidTestBase {
         final AvDateTime timeAfter = db.nowDao().now();
         // THEN
 
-        assertThat(timeAfter.minus(timeBefore).getAsHours())
-                .isAtLeast(2);
+        assertThat(timeAfter.minus(timeBefore).getAsHours()).isAtLeast(3);
+    }
+
+    @Test
+    public <Z extends ILocatableGO & IHasStateGO<RapunzelsZauberinState> & IMovingGO>
+    void zauberinKommt_WartenWirdAbgebrochen() {
+        // GIVEN
+        world.loadSC().memoryComp().upgradeKnown(RAPUNZELS_ZAUBERIN);
+        Z zauberin = (Z) world.load(RAPUNZELS_ZAUBERIN);
+        zauberin.locationComp().setLocation(IM_WALD_NAHE_DEM_SCHLOSS);
+        zauberin.stateComp().setState(RapunzelsZauberinState.AUF_DEM_WEG_ZU_RAPUNZEL);
+        zauberin.movementComp().startMovement(db.nowDao().now(), VOR_DEM_ALTEN_TURM);
+
+        // WHEN
+        final AvDateTime timeBefore = db.nowDao().now();
+
+        doAction(buildWartenActionAufZauberinImSchattenDerBaume());
+
+        final AvDateTime timeAfter = db.nowDao().now();
+
+        // THEN
+        zauberin = (Z) world.load(RAPUNZELS_ZAUBERIN);
+        assertThat(zauberin.locationComp().getLocationId()).isEqualTo(VOR_DEM_ALTEN_TURM);
+        assertThat(timeAfter.minus(timeBefore).getAsHours()).isLessThan(3);
     }
 
     @NonNull

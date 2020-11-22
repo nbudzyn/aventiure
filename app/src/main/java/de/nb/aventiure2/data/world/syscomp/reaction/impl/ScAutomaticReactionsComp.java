@@ -1,12 +1,17 @@
 package de.nb.aventiure2.data.world.syscomp.reaction.impl;
 
+import androidx.annotation.Nullable;
+
 import de.nb.aventiure2.data.database.AvDatabase;
 import de.nb.aventiure2.data.narration.Narrator;
 import de.nb.aventiure2.data.world.gameobject.*;
 import de.nb.aventiure2.data.world.syscomp.feelings.FeelingsComp;
+import de.nb.aventiure2.data.world.syscomp.location.ILocatableGO;
 import de.nb.aventiure2.data.world.syscomp.reaction.AbstractReactionsComp;
+import de.nb.aventiure2.data.world.syscomp.reaction.interfaces.IMovementReactions;
 import de.nb.aventiure2.data.world.syscomp.reaction.interfaces.ISCActionReactions;
 import de.nb.aventiure2.data.world.syscomp.reaction.interfaces.ITimePassedReactions;
+import de.nb.aventiure2.data.world.syscomp.storingplace.ILocationGO;
 import de.nb.aventiure2.data.world.syscomp.waiting.WaitingComp;
 import de.nb.aventiure2.data.world.time.*;
 
@@ -19,7 +24,7 @@ import static de.nb.aventiure2.data.world.time.AvTimeSpan.*;
  */
 public class ScAutomaticReactionsComp
         extends AbstractReactionsComp
-        implements ITimePassedReactions, ISCActionReactions {
+        implements IMovementReactions, ITimePassedReactions, ISCActionReactions {
     private final WaitingComp waitingComp;
     private final FeelingsComp feelingsComp;
 
@@ -31,6 +36,21 @@ public class ScAutomaticReactionsComp
         super(SPIELER_CHARAKTER, db, n, world);
         this.waitingComp = waitingComp;
         this.feelingsComp = feelingsComp;
+    }
+
+    @Override
+    public void onLeave(final ILocatableGO locatable, final ILocationGO from, @Nullable
+    final ILocationGO to) {
+        waitingComp.stopWaiting();
+        // FIXME Problem: Die Beschreibung wurde bereits geschrieben? Wenn
+        //  sie ausgeblendet wäre, ist sie wohl verloren?
+    }
+
+    @Override
+    public void onEnter(final ILocatableGO locatable, @Nullable final ILocationGO from, final ILocationGO to) {
+        waitingComp.stopWaiting();
+        // FIXME Problem: Die Beschreibung wurde bereits geschrieben? Wenn
+        //  sie ausgeblendet wäre, ist sie wohl verloren?
     }
 
     @Override
