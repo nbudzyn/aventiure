@@ -104,6 +104,9 @@ public class WartenAction<LIVGO extends IDescribableGO & ILocatableGO & ILivingB
         //  3. Wenn der Wartemodus ausgeschaltet wurde, die letzten Texte schreiben (hoffentlich
         //    etwas wie "Endlich kommt die alte Frau" oder so).
 
+        // FIXME Irgendwie geht die Frau nicht weg, wenn sie am Turm ist! Eigentlich sollte
+        //  sie nur kurze Zeit warten...
+
         // Der SC wartet
         narrate();
 

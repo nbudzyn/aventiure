@@ -61,6 +61,7 @@ import static de.nb.aventiure2.data.world.syscomp.movement.MovementStep.Phase.SE
  * versucht das Wesen, seine Bewegung von seinem neuen Ort fortzusetzen.
  * </ul>
  */
+// FIXME Diese Konzeptbeschreibung stimmt nicht mehr!
 public class MovementComp
         extends AbstractStatefulComponent<MovementPCD>
         implements ISCActionDoneListenerComponent {
@@ -377,7 +378,7 @@ public class MovementComp
         world.loadSC().memoryComp().upgradeKnown(getGameObjectId());
     }
 
-    public <FROM extends ILocationGO & ISpatiallyConnectedGO>
+    private <FROM extends ILocationGO & ISpatiallyConnectedGO>
     void narrateScTrifftMovingGOInTo(@Nullable final ILocationGO scFrom,
                                      final ILocationGO scTo) {
         if (!isMoving()) {
@@ -403,11 +404,11 @@ public class MovementComp
                 (ILocationGO) world.load(getCurrentStep().getTo()));
     }
 
-    public boolean isLeaving() {
+    private boolean isLeaving() {
         return isMoving() && currentStepHasPhase(FIRST_LEAVING);
     }
 
-    public boolean isEntering() {
+    private boolean isEntering() {
         return isMoving() && currentStepHasPhase(SECOND_ENTERING);
     }
 
@@ -416,7 +417,7 @@ public class MovementComp
     }
 
     @Nullable
-    public ILocationGO getTargetLocation() {
+    private ILocationGO getTargetLocation() {
         @Nullable final GameObjectId targetLocationId = getTargetLocationId();
         if (targetLocationId == null) {
             return null;
@@ -430,7 +431,7 @@ public class MovementComp
         return getPcd().getTargetLocationId();
     }
 
-    public boolean currentStepHasPhase(final MovementStep.Phase phase) {
+    private boolean currentStepHasPhase(final MovementStep.Phase phase) {
         if (!hasCurrentStep()) {
             return false;
         }
