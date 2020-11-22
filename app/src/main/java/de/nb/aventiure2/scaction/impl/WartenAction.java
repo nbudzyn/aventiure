@@ -1,6 +1,7 @@
 package de.nb.aventiure2.scaction.impl;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.VisibleForTesting;
 
 import com.google.common.collect.ImmutableList;
 
@@ -11,26 +12,22 @@ import de.nb.aventiure2.data.narration.Narrator;
 import de.nb.aventiure2.data.world.gameobject.*;
 import de.nb.aventiure2.data.world.syscomp.alive.ILivingBeingGO;
 import de.nb.aventiure2.data.world.syscomp.description.IDescribableGO;
-import de.nb.aventiure2.data.world.syscomp.feelings.FeelingIntensity;
-import de.nb.aventiure2.data.world.syscomp.feelings.Mood;
 import de.nb.aventiure2.data.world.syscomp.location.ILocatableGO;
 import de.nb.aventiure2.data.world.syscomp.memory.Action;
-import de.nb.aventiure2.data.world.syscomp.state.IHasStateGO;
-import de.nb.aventiure2.data.world.syscomp.state.impl.RapunzelState;
 import de.nb.aventiure2.data.world.syscomp.storingplace.ILocationGO;
-import de.nb.aventiure2.german.description.AbstractDescription;
+import de.nb.aventiure2.german.base.SubstantivischePhrase;
+import de.nb.aventiure2.german.description.DescriptionUmformulierer;
+import de.nb.aventiure2.german.description.Kohaerenzrelation;
+import de.nb.aventiure2.german.praedikat.AdverbialeAngabeSkopusSatz;
 import de.nb.aventiure2.scaction.AbstractScAction;
 
-import static de.nb.aventiure2.data.world.base.Lichtverhaeltnisse.DUNKEL;
 import static de.nb.aventiure2.data.world.gameobject.World.*;
-import static de.nb.aventiure2.data.world.syscomp.state.impl.RapunzelState.SINGEND;
 import static de.nb.aventiure2.data.world.time.AvTimeSpan.*;
 import static de.nb.aventiure2.german.base.GermanUtil.capitalize;
 import static de.nb.aventiure2.german.base.Numerus.SG;
 import static de.nb.aventiure2.german.base.Person.P2;
-import static de.nb.aventiure2.german.base.StructuralElement.SENTENCE;
 import static de.nb.aventiure2.german.description.DescriptionBuilder.du;
-import static de.nb.aventiure2.german.description.DescriptionBuilder.neuerSatz;
+import static de.nb.aventiure2.german.description.Kohaerenzrelation.VERSTEHT_SICH_VON_SELBST;
 import static de.nb.aventiure2.german.praedikat.VerbSubjObj.WARTEN;
 
 /**
@@ -58,11 +55,12 @@ public class WartenAction<LIVGO extends IDescribableGO & ILocatableGO & ILivingB
         return res.build();
     }
 
-    private WartenAction(final AvDatabase db,
-                         final Narrator n,
-                         final World world,
-                         final LIVGO erwartet,
-                         final ILocationGO location) {
+    @VisibleForTesting
+    WartenAction(final AvDatabase db,
+                 final Narrator n,
+                 final World world,
+                 final LIVGO erwartet,
+                 final ILocationGO location) {
         super(db, n, world);
         this.erwartet = erwartet;
         this.location = location;
@@ -91,130 +89,69 @@ public class WartenAction<LIVGO extends IDescribableGO & ILocatableGO & ILivingB
         //  - Man muss allerdings vermeiden, dass sehr viele kurze Texte gedruckt werden!
         //  - Entweder Pollen (immer wieder prüfen, ob die Frau jetzt da ist)
         //  - Oder die Action registriert sich als Listener für das Event "Frau ist da"??
-        //    Dazu müsste der SC in eine Art "Wartezustand" versetzt werden. Erst der Listener
-        //    "weckt" den Spieler wieder auf.
+        //    Erst der Listener "weckt" den Spieler wieder auf.
         //    Der Text ("Du wartest sehr lange. Die Vägel singen über dir, und allmählich wirst du
         //    hungrig. Endlich kommt...") sollte dann erst am Ende erzeugt werden. Er müsste aber
         //    aLles berücksichtigen, was zwischenzeitlich passiert ist.
-        //    Vermutlich braucht man auch eine Möglichkeit, dass das Warten abgebrochen wird, z.B.
-        //    wenn ein Drache vorbei kommt oder der Spieler müder oder hungriger wird. Außerdem
-        //    sollte das Warten nach einger gewissen Zeit abgebrochen werden.
+        //    Vermutlich braucht man weitere Möglichkeiten, bei denen das Warten abgebrochen wird, z.B.
+        //    wenn ein Drache vorbei kommt oder der Spieler müder oder hungriger wird.
         //  - Man könnte das Warten beim Narrator registrieren. Dann werden in der Wartezeit
         //    keine Texte geschrieben.
         //  - Rapunzels Gesang sollte das Warten abbrechen - wenn man ihn noch nicht kennt.
-        //  - Eine natürliche Stelle für Reactions wäre ein Reactions-Component des SC.
-        //    Das liefe auf ein Pollen hinaus:
+        //  Konzept könnte sein
         //  1. Dem Narrator vorschreiben: Nichts schreiben! ("Wartemodus")
         //  2. Reactions-Componente anweisen: Unterbrich den Wartemodus, wenn die Zauberin kommt
-        //    (und wenn der Spieler hungriger wird, müder, ein Drache kommt, die Maximalzeit
-        //    um ist, ein Tageszeitenwechsel geschieht o.Ä.). In diesem Fällen muss der Spieler
+        //    (und wenn der Spieler hungriger wird, müder, ein Drache kommt,
+        //    ein Tageszeitenwechsel geschieht o.Ä.). In diesem Fällen muss der Spieler
         //    einen Hinweistext bekommen in der Art "Du wartest lange. Allmählich wirst du
         //    hungrig."
-        //  3. Dann hier die Zeit in kleiner Schritten weiterdrehen - danach immer prüfen, ob
-        //    der Wartemodus ausgeschaltet wurde.
-        //  4. Wenn der Wartemodus ausgeschaltet wurde, die letzten Texte schreiben (hoffentlich
+        //  3. Wenn der Wartemodus ausgeschaltet wurde, die letzten Texte schreiben (hoffentlich
         //    etwas wie "Endlich kommt die alte Frau" oder so).
 
-        if (isDefinitivWiederholung() &&
-                ((IHasStateGO<RapunzelState>) world.load(RAPUNZEL)).stateComp()
-                        .hasState(SINGEND)) {
-            narrateAndDoRapunzelZuhoeren();
-        } else if (location.storingPlaceComp().getLichtverhaeltnisse() == DUNKEL) {
-            narrateAndDoDunkel();
-        } else {
-            narrateAndDoHell();
-        }
+        // Der SC wartet
+        narrate();
+
+        // Erst einmal vergeht fast keine Zeit. Die ScAutomaticReactionsComp sorgt
+        // im onTimePassed() im Zusammenspiel mit der WaitingComp dafür, dass die
+        // Zeit vergeht (maximal 2 Stunden).
+        world.loadSC().waitingComp().startWaiting(db.nowDao().now().plus(hours(2)));
 
         sc.memoryComp().setLastAction(buildMemorizedAction());
     }
 
-    private void narrateAndDoRapunzelZuhoeren() {
-        sc.feelingsComp().requestMoodMin(Mood.GLUECKLICH);
+    private void narrate() {
+        final Kohaerenzrelation kohaerenzrelation = getKohaerenzrelationFuerUmformulierung();
 
-        n.narrateAlt(mins(4),
-                du("bist", "ganz still")
-                        .undWartest()
-                        .dann(),
-                du("genießt deine Rast")
-                        .undWartest()
-                        .dann(),
-                du(SENTENCE, "sitzt", "glücklich da und genießt",
-                        "glücklich")
-                        .beendet(SENTENCE),
-                neuerSatz("Dein Herz wird ganz warm von dem Gesang")
-                        .beendet(SENTENCE));
+        if (kohaerenzrelation == VERSTEHT_SICH_VON_SELBST) {
+            final SubstantivischePhrase anaph =
+                    getAnaphPersPronWennMglSonstDescription(erwartet, false);
+            n.narrateAlt(secs(5),
+                    du(WARTEN.mitObj(anaph))
+                            .dann()
+                            .phorikKandidat(anaph, erwartet.getId()),
+                    du("beginnst",
+                            "auf "
+                                    + anaph.akk()
+                                    + " zu warten")
+                            .dann()
+                            .phorikKandidat(anaph, erwartet.getId()));
+        } else {
+            final SubstantivischePhrase anaph =
+                    getAnaphPersPronWennMglSonstDescription(erwartet, true);
+            n.narrateAlt(
+                    DescriptionUmformulierer.drueckeAus(
+                            kohaerenzrelation,
+                            du(WARTEN
+                                    .mitObj(anaph)
+                                    .mitAdverbialerAngabe(
+                                            new AdverbialeAngabeSkopusSatz("weiter")
+                                    )
+                            )
+                                    .dann()
+                                    .phorikKandidat(anaph, erwartet.getId())
 
-        world.loadSC().memoryComp().upgradeKnown(RAPUNZELS_GESANG);
-    }
-
-    private void narrateAndDoDunkel() {
-        sc.feelingsComp().requestMoodMax(Mood.VERUNSICHERT);
-
-        n.narrateAlt(mins(3),
-                neuerSatz("Die Bäume rauschen in "
-                        + "der Dunkelheit, die Eulen schnarren, und "
-                        + "und es fängt an, dir angst zu werden")
-                        .beendet(SENTENCE),
-                neuerSatz("Es ist dunkel und ungemütlich. Krabbelt da etwas auf "
-                        + "deinem rechten Bein? Du schlägst mit der Hand zu, kannst aber nichts erkennen")
-                        .beendet(SENTENCE),
-                neuerSatz("In den Ästen über dir knittert und rauscht es. Dich friert"));
-    }
-
-    private void narrateAndDoHell() {
-        sc.feelingsComp().requestMoodMin(Mood.ZUFRIEDEN);
-
-        // STORY Hier ist sehr auffällig, dass die dann()-Logik nicht stimmt:
-        //  Ob "Dann..." sinnvoll ist, hängt wesentlich (auch) vom Folgesatz ab.
-        //  Rast -> Rast -> Rast: Kein "Dann..."
-        //  Rast -> Aufstehen: "Dann..."
-        //  Anscheinend setzt "Dann..." eine Art "Aktionsänderung" voraus.
-
-        // TODO "Dann" nicht bei statischen Verben (du hast Glück, du hast Hunger) verwenden
-
-        // TODO "Dann" nur verwenden, wenn der es einen Aktor gibt und der Aktor im letzten
-        //  Satz gleich war. (Nach der Logik kann man dann auch für Beschreibungen in
-        //  der dritten Person verwenden!)
-
-        final ImmutableList.Builder<AbstractDescription<?>> alt = ImmutableList.builder();
-
-        alt.add(
-                du(SENTENCE, "hältst",
-                        "verborgen unter den Bäumen noch eine Zeitlang Rast",
-                        "verborgen unter den Bäumen")
-                        .beendet(SENTENCE)
-                        .dann(),
-                neuerSatz("Es tut gut, eine Weile zu rasten. Über dir zwitschern die "
-                        + "Vögel und die Grillen zirpen")
-                        .beendet(SENTENCE)
-                        .dann(),
-                du(SENTENCE, "streckst", "die Glieder und hörst auf das Rauschen "
-                                + "in den "
-                                + "Ästen über dir. Ein Rabe setzt "
-                                + "sich neben dich und fliegt nach einer Weile wieder fort"
-                        //    STORY Rabe mit Märchenbezug?
-                )
-                        .beendet(SENTENCE)
-                        .dann(),
-                du(SENTENCE, "ruhst", "noch eine Weile aus und lauschst, wie die "
-                                + "Insekten "
-                                + "zirpen und der Wind saust",
-                        "eine Weile"
-                )
-                        .beendet(SENTENCE)
-                        .dann()
-        );
-
-        if (world.loadSC().feelingsComp().getMuedigkeit() >= FeelingIntensity.MERKLICH) {
-            neuerSatz("Deine müden Glieder brauchen Erholung. Du bist ganz "
-                    + "still und die Vögel setzen sich "
-                    + "auf die Äste über dir "
-                    + "und singen, was sie nur wissen")
-                    .beendet(SENTENCE)
-                    .dann();
+                    ), secs(5));
         }
-
-        n.narrateAlt(alt, mins(10));
     }
 
     @Override
@@ -224,7 +161,7 @@ public class WartenAction<LIVGO extends IDescribableGO & ILocatableGO & ILivingB
 
     @Override
     protected boolean isDefinitivDiskontinuitaet() {
-        if (n.lastNarrationWasFromReaction()) {
+        if (isDefinitivWiederholung() && n.lastNarrationWasFromReaction()) {
             // Der Spieler wartet weiter, obwohl andere Dinge passiert sind...
             return true;
         }
@@ -233,7 +170,7 @@ public class WartenAction<LIVGO extends IDescribableGO & ILocatableGO & ILivingB
     }
 
     @NonNull
-    private static Action buildMemorizedAction() {
-        return new Action(Action.Type.WARTEN);
+    private Action buildMemorizedAction() {
+        return new Action(Action.Type.WARTEN, erwartet);
     }
 }

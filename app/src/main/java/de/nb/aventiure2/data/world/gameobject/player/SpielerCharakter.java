@@ -20,12 +20,15 @@ import de.nb.aventiure2.data.world.syscomp.storingplace.ILocationGO;
 import de.nb.aventiure2.data.world.syscomp.storingplace.StoringPlaceComp;
 import de.nb.aventiure2.data.world.syscomp.talking.ITalkerGO;
 import de.nb.aventiure2.data.world.syscomp.talking.impl.NoSCTalkActionsTalkingComp;
+import de.nb.aventiure2.data.world.syscomp.waiting.IWaitingGO;
+import de.nb.aventiure2.data.world.syscomp.waiting.WaitingComp;
 
 public class SpielerCharakter extends GameObject
-        implements ILocatableGO, ILocationGO, IFeelingBeingGO,
+        implements ILocatableGO, ILocationGO, IWaitingGO, IFeelingBeingGO,
         ITalkerGO<NoSCTalkActionsTalkingComp>, IHasMemoryGO, ILivingBeingGO, IResponder {
     private final LocationComp locationComp;
     private final StoringPlaceComp storingPlaceComp;
+    private final WaitingComp waitingComp;
     private final FeelingsComp feelingsComp;
     private final NoSCTalkActionsTalkingComp talkingComp;
     private final MemoryComp memoryComp;
@@ -35,6 +38,7 @@ public class SpielerCharakter extends GameObject
     SpielerCharakter(final GameObjectId id,
                      final LocationComp locationComp,
                      final StoringPlaceComp storingPlaceComp,
+                     final WaitingComp waitingComp,
                      final FeelingsComp feelingsComp,
                      final MemoryComp memoryComp,
                      final NoSCTalkActionsTalkingComp talkingComp,
@@ -43,6 +47,7 @@ public class SpielerCharakter extends GameObject
         // Jede Komponente muss registiert werden!
         this.locationComp = addComponent(locationComp);
         this.storingPlaceComp = addComponent(storingPlaceComp);
+        this.waitingComp = addComponent(waitingComp);
         this.feelingsComp = addComponent(feelingsComp);
         this.memoryComp = addComponent(memoryComp);
         aliveComp = addComponent(new AliveComp(id));
@@ -60,6 +65,12 @@ public class SpielerCharakter extends GameObject
     @Override
     public StoringPlaceComp storingPlaceComp() {
         return storingPlaceComp;
+    }
+
+    @Nonnull
+    @Override
+    public WaitingComp waitingComp() {
+        return waitingComp;
     }
 
     @Nonnull

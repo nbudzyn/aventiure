@@ -435,8 +435,7 @@ public class BewegenAction<LOC_DESC extends ILocatableGO & IDescribableGO>
                     .dann(description.isDann())
                     .komma(description.isKommaStehtAus()));
 
-            alt.addAll(
-                    drueckeAusTimed(DISKONTINUITAET, description));
+            alt.addAll(drueckeAusTimed(DISKONTINUITAET, description));
             n.narrateAlt(alt);
             return;
         }
@@ -516,7 +515,7 @@ public class BewegenAction<LOC_DESC extends ILocatableGO & IDescribableGO>
     }
 
     private TimedDescription<?> getNormalDescription(final Lichtverhaeltnisse
-                                                          lichtverhaeltnisseInNewLocation) {
+                                                             lichtverhaeltnisseInNewLocation) {
         final Known newLocationKnown = sc.memoryComp().getKnown(spatialConnection.getTo());
 
         boolean alternativeDescriptionAllowed = false;
@@ -574,7 +573,7 @@ public class BewegenAction<LOC_DESC extends ILocatableGO & IDescribableGO>
 
     @VisibleForTesting
     TimedDescription<?> getStandardDescription(final Known newLocationKnown,
-                                            final Lichtverhaeltnisse lichtverhaeltnisseInNewLocation) {
+                                               final Lichtverhaeltnisse lichtverhaeltnisseInNewLocation) {
 
         return spatialConnection.getSCMoveDescriptionProvider()
                 .getSCMoveDescription(newLocationKnown, lichtverhaeltnisseInNewLocation)

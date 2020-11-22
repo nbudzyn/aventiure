@@ -18,7 +18,6 @@ import de.nb.aventiure2.data.world.syscomp.taking.ITakerGO;
 import de.nb.aventiure2.data.world.syscomp.taking.SCTakeAction;
 import de.nb.aventiure2.german.base.Nominalphrase;
 import de.nb.aventiure2.german.base.SubstantivischePhrase;
-import de.nb.aventiure2.german.description.Kohaerenzrelation;
 import de.nb.aventiure2.german.description.PraedikatDuDescription;
 import de.nb.aventiure2.german.praedikat.PraedikatOhneLeerstellen;
 import de.nb.aventiure2.scaction.AbstractScAction;
@@ -30,8 +29,6 @@ import static de.nb.aventiure2.german.base.Numerus.SG;
 import static de.nb.aventiure2.german.base.Person.P1;
 import static de.nb.aventiure2.german.description.DescriptionBuilder.du;
 import static de.nb.aventiure2.german.description.DescriptionUmformulierer.drueckeAus;
-import static de.nb.aventiure2.german.description.Kohaerenzrelation.DISKONTINUITAET;
-import static de.nb.aventiure2.german.description.Kohaerenzrelation.WIEDERHOLUNG;
 import static de.nb.aventiure2.german.praedikat.IntentionalesVerb.VERSUCHEN;
 import static de.nb.aventiure2.german.praedikat.VerbSubjDatAkk.ANBIETEN;
 import static de.nb.aventiure2.german.praedikat.VerbSubjDatAkk.GEBEN;
@@ -85,8 +82,8 @@ public class GebenAction<
         return res.build();
     }
 
-    public GebenAction(final AvDatabase db, final Narrator n, final World world, final TAKER taker,
-                       final GIVEN given) {
+    private GebenAction(final AvDatabase db, final Narrator n, final World world, final TAKER taker,
+                        final GIVEN given) {
         super(db, n, world);
         this.taker = taker;
         this.given = given;
@@ -186,18 +183,6 @@ public class GebenAction<
                 // STORY Hier wäre es etwas schöner wenn die im anbietenGebenPraedikat
                 //  verwendete Description für den Taker als phorikKandidat gesetzt würde.
                 ;
-    }
-
-    private Kohaerenzrelation getKohaerenzrelationFuerUmformulierung() {
-        if (isDefinitivDiskontinuitaet()) {
-            return DISKONTINUITAET;
-        }
-
-        if (isDefinitivWiederholung()) {
-            return WIEDERHOLUNG;
-        }
-
-        return Kohaerenzrelation.VERSTEHT_SICH_VON_SELBST;
     }
 
     @Override

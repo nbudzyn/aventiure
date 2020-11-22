@@ -18,13 +18,14 @@ import de.nb.aventiure2.data.world.base.SpatialConnection;
 import de.nb.aventiure2.data.world.gameobject.*;
 import de.nb.aventiure2.data.world.syscomp.spatialconnection.ISpatiallyConnectedGO;
 import de.nb.aventiure2.logger.Logger;
+import de.nb.aventiure2.scaction.AbstractScAction;
 
 public abstract class AndroidTestBase {
     // See https://proandroiddev.com/testing-the-un-testable-and-beyond-with-android-architecture-components-part-1-testing-room-4d97dec0f451
     @Rule
     public InstantTaskExecutorRule instantTaskExecutorRule = new InstantTaskExecutorRule();
 
-    protected static final Logger LOGGER = Logger.getLogger();
+    private static final Logger LOGGER = Logger.getLogger();
 
     protected Context appContext;
     protected AvDatabase db;
@@ -54,11 +55,15 @@ public abstract class AndroidTestBase {
         db.close();
     }
 
-
     @Nullable
     protected SpatialConnection loadCon(final GameObjectId fromId, final GameObjectId toId) {
         final ISpatiallyConnectedGO from =
                 (ISpatiallyConnectedGO) world.load(fromId);
         return from.spatialConnectionComp().getConnection(toId);
+    }
+
+    protected void doAction(final AbstractScAction playerAction) {
+        LOGGER.d("Action: " + playerAction.getName() + " [" + db.nowDao().now() + "]");
+        db.runInTransaction(playerAction::doAndPassTime);
     }
 }

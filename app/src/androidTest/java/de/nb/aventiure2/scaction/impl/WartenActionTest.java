@@ -17,6 +17,7 @@ import de.nb.aventiure2.data.world.syscomp.alive.ILivingBeingGO;
 import de.nb.aventiure2.data.world.syscomp.description.IDescribableGO;
 import de.nb.aventiure2.data.world.syscomp.location.ILocatableGO;
 import de.nb.aventiure2.data.world.syscomp.storingplace.ILocationGO;
+import de.nb.aventiure2.data.world.time.*;
 import de.nb.aventiure2.scaction.AbstractScAction;
 
 import static com.google.common.truth.Truth.assertThat;
@@ -33,7 +34,7 @@ public class WartenActionTest extends AndroidTestBase {
         // Zauberin unbekannt
 
         // WHEN
-        final List<WartenAction<LIVGO>> actions = buildWartenActionImSchattenDerBaeume();
+        final List<WartenAction<LIVGO>> actions = buildWartenActionsImSchattenDerBaeume();
         // THEN
         assertThat(actions)
                 .comparingElementsUsing(actionNameContains())
@@ -49,7 +50,7 @@ public class WartenActionTest extends AndroidTestBase {
                 .setLocation(VOR_DEM_ALTEN_TURM);
 
         // WHEN
-        final List<WartenAction<LIVGO>> actions = buildWartenActionImSchattenDerBaeume();
+        final List<WartenAction<LIVGO>> actions = buildWartenActionsImSchattenDerBaeume();
         // THEN
         assertThat(actions)
                 .comparingElementsUsing(actionNameContains())
@@ -65,15 +66,40 @@ public class WartenActionTest extends AndroidTestBase {
                 .setLocation(IM_WALD_NAHE_DEM_SCHLOSS);
 
         // WHEN
-        final List<WartenAction<LIVGO>> actions = buildWartenActionImSchattenDerBaeume();
+        final List<WartenAction<LIVGO>> actions = buildWartenActionsImSchattenDerBaeume();
         // THEN
         assertThat(actions)
                 .comparingElementsUsing(actionNameContains())
                 .contains("Auf die magere Frau warten");
     }
 
+    @Test
+    public void zauberinKommtNicht_tagsueber_WartenFuerMindestensZweiStunden() {
+        // GIVEN
+        world.loadSC().memoryComp().upgradeKnown(RAPUNZELS_ZAUBERIN);
+
+        // WHEN
+        final AvDateTime timeBefore = db.nowDao().now();
+
+        doAction(buildWartenActionAufZauberinImSchattenDerBaume());
+
+        final AvDateTime timeAfter = db.nowDao().now();
+        // THEN
+
+        assertThat(timeAfter.minus(timeBefore).getAsHours())
+                .isAtLeast(2);
+    }
+
+    @NonNull
+    private <LIVGO extends IDescribableGO & ILocatableGO & ILivingBeingGO> WartenAction<LIVGO>
+    buildWartenActionAufZauberinImSchattenDerBaume() {
+        return new WartenAction<>(db, n, world,
+                ((LIVGO) world.load(RAPUNZELS_ZAUBERIN)),
+                ((ILocationGO) world.load(VOR_DEM_ALTEN_TURM_SCHATTEN_DER_BAEUME)));
+    }
+
     private <LIVGO extends IDescribableGO & ILocatableGO & ILivingBeingGO>
-    List<WartenAction<LIVGO>> buildWartenActionImSchattenDerBaeume() {
+    List<WartenAction<LIVGO>> buildWartenActionsImSchattenDerBaeume() {
         return WartenAction.buildActions(
                 db, n, world,
                 (LIVGO) world.load(RAPUNZELS_ZAUBERIN),

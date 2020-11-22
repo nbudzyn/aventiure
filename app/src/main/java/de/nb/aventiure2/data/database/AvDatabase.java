@@ -57,6 +57,8 @@ import de.nb.aventiure2.data.world.syscomp.story.StoryWebDao;
 import de.nb.aventiure2.data.world.syscomp.story.StoryWebPCD;
 import de.nb.aventiure2.data.world.syscomp.talking.TalkingDao;
 import de.nb.aventiure2.data.world.syscomp.talking.TalkingPCD;
+import de.nb.aventiure2.data.world.syscomp.waiting.WaitingDao;
+import de.nb.aventiure2.data.world.syscomp.waiting.WaitingPCD;
 import de.nb.aventiure2.data.world.time.*;
 import de.nb.aventiure2.german.base.NumerusGenusConverters;
 import de.nb.aventiure2.german.base.StructuralElement;
@@ -72,6 +74,7 @@ import static de.nb.aventiure2.data.world.time.AvTime.*;
         AvNow.class,
         SCActionStepCount.class,
         StatePCD.class,
+        WaitingPCD.class,
         MovementPCD.class,
         LocationPCD.class,
         FeelingsPCD.class,
@@ -122,6 +125,8 @@ public abstract class AvDatabase extends RoomDatabase {
     public abstract NarrationDao narrationDao();
 
     public abstract StateDao stateDao();
+
+    public abstract WaitingDao waitingDao();
 
     public abstract MovementDao movementDao();
 

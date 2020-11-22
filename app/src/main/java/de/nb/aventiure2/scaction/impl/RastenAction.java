@@ -132,7 +132,7 @@ public class RastenAction extends AbstractScAction {
         //  Satz gleich war. (Nach der Logik kann man dann auch für Beschreibungen in
         //  der dritten Person verwenden!)
 
-        final ImmutableList.Builder<AbstractDescription<?>> alt =                ImmutableList.builder();
+        final ImmutableList.Builder<AbstractDescription<?>> alt = ImmutableList.builder();
 
         alt.add(
                 du(SENTENCE, "hältst",
@@ -180,7 +180,7 @@ public class RastenAction extends AbstractScAction {
 
     @Override
     protected boolean isDefinitivDiskontinuitaet() {
-        if (n.lastNarrationWasFromReaction()) {
+        if (isDefinitivWiederholung() && n.lastNarrationWasFromReaction()) {
             // Der Spieler rastet weiter, obwohl andere Dinge passiert sind...
             return true;
         }

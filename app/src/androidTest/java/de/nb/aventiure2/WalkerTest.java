@@ -122,11 +122,6 @@ public class WalkerTest extends AndroidTestBase {
         }
     }
 
-    private void doAction(final AbstractScAction playerAction) {
-        LOGGER.d("Action: " + playerAction.getName() + " [" + db.nowDao().now() + "]");
-        db.runInTransaction(playerAction::doAndPassTime);
-    }
-
     public static void deleteDatabaseFile(final Context context, final String databaseName) {
         final File databases = new File(context.getApplicationInfo().dataDir + "/databases");
         final File db = new File(databases, databaseName);

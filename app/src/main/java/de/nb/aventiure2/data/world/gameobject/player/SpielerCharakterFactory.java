@@ -22,6 +22,7 @@ import de.nb.aventiure2.data.world.syscomp.memory.MemoryComp;
 import de.nb.aventiure2.data.world.syscomp.reaction.impl.ScAutomaticReactionsComp;
 import de.nb.aventiure2.data.world.syscomp.storingplace.StoringPlaceComp;
 import de.nb.aventiure2.data.world.syscomp.talking.impl.NoSCTalkActionsTalkingComp;
+import de.nb.aventiure2.data.world.syscomp.waiting.WaitingComp;
 import de.nb.aventiure2.data.world.time.*;
 
 import static de.nb.aventiure2.data.world.base.Known.KNOWN_FROM_LIGHT;
@@ -47,6 +48,7 @@ public class SpielerCharakterFactory {
     }
 
     public SpielerCharakter create(final GameObjectId id) {
+        final WaitingComp waitingComp = new WaitingComp(id, db);
         final FeelingsComp feelingsComp = new FeelingsComp(id, db, n, Mood.NEUTRAL,
                 createMuedigkeitsBiorhythmus(),
                 createInitialMuedigkeitsData(),
@@ -61,10 +63,11 @@ public class SpielerCharakterFactory {
         return new SpielerCharakter(id,
                 locationComp,
                 new StoringPlaceComp(id, db, EINE_TASCHE, false),
+                waitingComp,
                 feelingsComp,
                 new MemoryComp(id, db, world, world.getLocationSystem(), createKnownMap()),
                 new NoSCTalkActionsTalkingComp(SPIELER_CHARAKTER, db, n, world),
-                new ScAutomaticReactionsComp(db, n, world, feelingsComp));
+                new ScAutomaticReactionsComp(db, n, world, waitingComp, feelingsComp));
     }
 
     private static Biorhythmus createMuedigkeitsBiorhythmus() {

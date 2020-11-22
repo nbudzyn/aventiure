@@ -15,11 +15,14 @@ import de.nb.aventiure2.data.world.syscomp.description.IDescribableGO;
 import de.nb.aventiure2.data.world.time.*;
 import de.nb.aventiure2.german.base.Personalpronomen;
 import de.nb.aventiure2.german.base.SubstantivischePhrase;
+import de.nb.aventiure2.german.description.Kohaerenzrelation;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 import static de.nb.aventiure2.data.narration.Narration.NarrationSource.REACTIONS;
 import static de.nb.aventiure2.data.narration.Narration.NarrationSource.SC_ACTION;
 import static de.nb.aventiure2.data.world.time.AvTimeSpan.*;
+import static de.nb.aventiure2.german.description.Kohaerenzrelation.DISKONTINUITAET;
+import static de.nb.aventiure2.german.description.Kohaerenzrelation.WIEDERHOLUNG;
 
 /**
  * An action the player could choose.
@@ -66,10 +69,6 @@ public abstract class AbstractScAction implements IPlayerAction {
         final AvDateTime start = db.nowDao().now();
 
         n.setNarrationSourceJustInCase(SC_ACTION);
-        // TODO Möglichst dieses ewige Rumreichen der
-        //  verflossenen Zeit ausbauen.
-        //  Kann nicht die Zeit jeweils beim narraten upgedatet werden?
-        //  Und man vergleich hier nur vorher-Zeit mit nachher-Zeit?
 
         narrateAndDo();
 
@@ -116,13 +115,16 @@ public abstract class AbstractScAction implements IPlayerAction {
 
         world.narrateAndDoReactions().onTimePassed(db.nowDao().now(), until);
 
-        if (db.nowDao().now().isAfter(until)) {
+        final AvDateTime timeAfterReactions = db.nowDao().now();
+        if (timeAfterReactions.isAfter(until)) {
             // Sonderfall! Einzelne Game Objects haben Aktionen begonnen, die
             // Zusatzzeit gebraucht haben.
             // Dann lassen wir diese "Zusatzzeit" auch offiziell hier vergehen, so dass
             // jedes Game Object darauf reagieren kann.
             // (Rekursiv möglich.)
-            updateWorld(db.nowDao().now());
+            db.nowDao().setNow(until);
+
+            updateWorld(timeAfterReactions);
         } else {
             db.nowDao().setNow(until);
         }
@@ -133,6 +135,18 @@ public abstract class AbstractScAction implements IPlayerAction {
     }
 
     abstract public void narrateAndDo();
+
+    protected Kohaerenzrelation getKohaerenzrelationFuerUmformulierung() {
+        if (isDefinitivDiskontinuitaet()) {
+            return DISKONTINUITAET;
+        }
+
+        if (isDefinitivWiederholung()) {
+            return WIEDERHOLUNG;
+        }
+
+        return Kohaerenzrelation.VERSTEHT_SICH_VON_SELBST;
+    }
 
     /**
      * Gibt zurück, ob der Benutzer dasselbe definitiv schon einmal getan und zwischendrin nichts
