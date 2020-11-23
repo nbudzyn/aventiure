@@ -243,6 +243,9 @@ public class RapunzelsZauberinReactionsComp
             return;
         }
 
+        // FIXME Es wäre besser, das onSCLeave() zu machen - nicht onEnter!
+        //  Denn dann werden die Gegenstandsbeschreibungen des neuen Raums erst
+        //  danach gedruckt!
         movementComp.narrateAndDoSCTrifftMovingGOInToOderImDazwischen(scFrom, scTo);
     }
 
