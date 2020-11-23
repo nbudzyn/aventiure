@@ -90,39 +90,23 @@ public class SimpleMovementNarrator implements IMovementNarrator {
 
     @Override
     public <FROM extends ILocationGO & ISpatiallyConnectedGO>
-    void narrateScTrifftEnteringMovingGO(
+    void narrateScTrifftMovingGOImDazwischen(
             @Nullable final ILocationGO scFrom,
             final ILocationGO to,
             final FROM movingGOFrom) {
         if (scFrom != null) {
             if (world.isOrHasRecursiveLocation(scFrom, movingGOFrom)) {
-                // IMovingGO und SC sind denselben Weg gegangen, das IMovingGO ist noch nicht
-                // im "Zentrum" angekommen
+                // IMovingGO und SC gehen denselben Weg, das IMovingGO ist noch nicht
+                // angekommen
                 narrateScUeberholtMovingGO();
                 return;
             }
 
-            @Nullable final SpatialConnection spatialConnectionMovingGO =
-                    movingGOFrom.spatialConnectionComp().getConnection(to.getId());
-
-            final NumberOfWays numberOfWaysIn =
-                    to instanceof ISpatiallyConnectedGO ?
-                            ((ISpatiallyConnectedGO) to).spatialConnectionComp()
-                                    .getNumberOfWaysOut() :
-                            NumberOfWays.NO_WAY;
-
-            if (spatialConnectionMovingGO != null) {
-                narrateMovingGOUndSCKommenEinanderEntgegen(
-                        scFrom,
-                        to,
-                        movingGOFrom,
-                        spatialConnectionMovingGO,
-                        numberOfWaysIn);
-                return;
-            }
+            narrateScGehtMovingGOEntgegenUndLaesstEsHinterSich();
+            return;
         }
 
-        narrateScTrifftEnteringMovingGO_scHatKeinenVorigenOrt();
+        narrateScTrifftMovingGOImDazwischen_scHatKeinenVorigenOrt();
     }
 
     @Override
@@ -154,7 +138,7 @@ public class SimpleMovementNarrator implements IMovementNarrator {
         );
     }
 
-    public void narrateScTrifftEnteringMovingGO_scHatKeinenVorigenOrt() {
+    private void narrateScTrifftMovingGOImDazwischen_scHatKeinenVorigenOrt() {
         final Nominalphrase desc = getDescription();
 
         n.narrateAlt(noTime(),
@@ -166,25 +150,6 @@ public class SimpleMovementNarrator implements IMovementNarrator {
                         desc.dat())
                         .phorikKandidat(desc, gameObjectId)
         );
-    }
-
-    @Override
-    public <SC_FROM extends ILocationGO & ISpatiallyConnectedGO>
-    void narrateScTrifftLeavingMovingGO(@Nullable final ILocationGO scFrom,
-                                        final SC_FROM scToAndMovingGoFrom,
-                                        final ILocationGO movingGOTo) {
-        if (world.isOrHasRecursiveLocation(scFrom, movingGOTo)) {
-            narrateScGehtMovingGOEntgegenUndLaesstEsHinterSich();
-            return;
-        }
-
-        @Nullable final SpatialConnection spatialConnectionMovingGO =
-                scToAndMovingGoFrom.spatialConnectionComp().getConnection(movingGOTo.getId());
-
-        final NumberOfWays numberOfWaysOut =
-                scToAndMovingGoFrom.spatialConnectionComp().getNumberOfWaysOut();
-
-        narrateScSiehtMovingGOFortgehen(spatialConnectionMovingGO, numberOfWaysOut);
     }
 
     @Override
@@ -231,83 +196,20 @@ public class SimpleMovementNarrator implements IMovementNarrator {
         n.narrateAlt(alt, noTime());
     }
 
-    public void narrateScSiehtMovingGOFortgehen(
-            @Nullable final SpatialConnection spatialConnection,
-            final NumberOfWays numberOfWaysOut) {
-        final String wo = numberOfWaysOut != ONE_IN_ONE_OUT && spatialConnection != null ?
-                spatialConnection.getWo() + " " :
-                "";
-
-        final Nominalphrase desc = getDescription();
-        final SubstantivischePhrase anaphOderDesc =
-                getAnaphPersPronWennMglSonstDescription(false);
-
-        final ImmutableCollection.Builder<AbstractDescription<?>> alt = ImmutableList.builder();
-
-        alt.add(
-                neuerSatz(anaphOderDesc.nom() +
-                        " ist gerade dabei, "
-                        + wo
-                        + "davonzugehen")
-                        .phorikKandidat(anaphOderDesc, gameObjectId)
-                        .beendet(PARAGRAPH));
-        alt.add(
-                neuerSatz(
-                        anaphOderDesc.nom() +
-                                " geht gerade "
-                                + wo
-                                + "fort")
-                        .phorikKandidat(anaphOderDesc, gameObjectId)
-                        .beendet(PARAGRAPH));
-
-        if (!n.isThema(gameObjectId)) {
-            alt.add(du(SENTENCE, "siehst",
-                    ", wie " +
-                            anaphOderDesc.nom() +
-                            " " +
-                            wo +
-                            "davongeht")
-                    .komma()
-                    .phorikKandidat(anaphOderDesc, gameObjectId));
-            alt.add(
-                    du(SENTENCE, "siehst",
-                            anaphOderDesc.akk() +
-                                    " " +
-                                    wo +
-                                    "davongehen")
-                            .komma()
-                            .phorikKandidat(anaphOderDesc, gameObjectId));
-            alt.add(
-                    neuerSatz("Vor dir " +
-                            wo
-                            + "geht " +
-                            desc.nom())
-                            .phorikKandidat(anaphOderDesc, gameObjectId));
-            alt.add(
-                    neuerSatz("Ein Stück vor dir "
-                            + wo
-                            + "geht " +
-                            desc.nom())
-                            .phorikKandidat(anaphOderDesc, gameObjectId));
-        }
-
-        n.narrateAlt(alt, noTime());
-    }
-
     @Override
     public <FROM extends ILocationGO & ISpatiallyConnectedGO>
-    void narrateAndDoStartsLeaving(
+    void narrateAndDoLeaves(
             final FROM from,
             final ILocationGO to,
             @Nullable final SpatialConnection spatialConnection,
             final NumberOfWays numberOfWaysOut) {
-        narrateStartsLeaving(from, to, spatialConnection, numberOfWaysOut);
+        narrateLeaves(from, to, spatialConnection, numberOfWaysOut);
 
         world.loadSC().memoryComp().upgradeKnown(gameObjectId);
     }
 
     private <FROM extends ILocationGO & ISpatiallyConnectedGO>
-    void narrateStartsLeaving(
+    void narrateLeaves(
             final FROM from, final ILocationGO to,
             @Nullable final SpatialConnection spatialConnection,
             final NumberOfWays numberOfWaysOut) {
@@ -323,7 +225,7 @@ public class SimpleMovementNarrator implements IMovementNarrator {
         narrateGehtWeg(from, to, spatialConnection, numberOfWaysOut);
     }
 
-    protected <FROM extends ILocationGO & ISpatiallyConnectedGO>
+    private <FROM extends ILocationGO & ISpatiallyConnectedGO>
     void narrateMovingGOKommtSCEntgegenUndGehtAnSCVorbei(
             final FROM from, final ILocationGO to,
             @Nullable final SpatialConnection spatialConnection) {
@@ -376,7 +278,7 @@ public class SimpleMovementNarrator implements IMovementNarrator {
         n.narrateAlt(alt, noTime());
     }
 
-    protected <FROM extends ILocationGO & ISpatiallyConnectedGO>
+    private <FROM extends ILocationGO & ISpatiallyConnectedGO>
     void narrateGehtWeg(
             final FROM from, final ILocationGO to,
             @Nullable final SpatialConnection spatialConnection,
@@ -428,20 +330,25 @@ public class SimpleMovementNarrator implements IMovementNarrator {
 
     @Override
     public <FROM extends ILocationGO & ISpatiallyConnectedGO>
-    void narrateAndDoStartsEntering(
+    void narrateAndDoEnters(
             final FROM from, final ILocationGO to,
             @Nullable final SpatialConnection spatialConnection,
             final NumberOfWays numberOfWaysIn) {
-        narrateStartsEntering(from, to, spatialConnection, numberOfWaysIn);
+        narrateEnters(from, to, spatialConnection, numberOfWaysIn);
 
         world.loadSC().memoryComp().upgradeKnown(gameObjectId);
     }
 
-    final protected <FROM extends ILocationGO & ISpatiallyConnectedGO>
-    void narrateStartsEntering(
+    private <FROM extends ILocationGO & ISpatiallyConnectedGO>
+    void narrateEnters(
             final FROM from, final ILocationGO to,
             @Nullable final SpatialConnection spatialConnection,
             final NumberOfWays numberOfWaysIn) {
+        // FIXME Hier gibt es einen Bug: SC setzt sich in den Schatten der Bäume
+        //  (Teil von VOR DEM TURM), Zauberin kommt ->
+        //  "Die Zauberin kommt dir entgegen". Naja... Nein, man ist ja im gleichen
+        //  Hauptraum geblieben!
+
         if (loadSC().memoryComp().getLastAction().is(BEWEGEN)) {
             @Nullable final ILocationGO scLastLocation =
                     loadSC().locationComp().getLastLocation();
@@ -467,7 +374,7 @@ public class SimpleMovementNarrator implements IMovementNarrator {
         narrateKommtGegangen(from, to, spatialConnection, numberOfWaysIn);
     }
 
-    protected <FROM extends ILocationGO & ISpatiallyConnectedGO>
+    private <FROM extends ILocationGO & ISpatiallyConnectedGO>
     void narrateMovingGOKommtSCNach(
             final FROM from, final ILocationGO to,
             @Nullable final SpatialConnection spatialConnection,
@@ -524,7 +431,7 @@ public class SimpleMovementNarrator implements IMovementNarrator {
         n.narrateAlt(alt, noTime());
     }
 
-    public <FROM extends ILocationGO & ISpatiallyConnectedGO>
+    private <FROM extends ILocationGO & ISpatiallyConnectedGO>
     void narrateMovingGOUndSCKommenEinanderEntgegen(
             @Nullable final ILocationGO scFrom,
             final ILocationGO to,
@@ -542,7 +449,7 @@ public class SimpleMovementNarrator implements IMovementNarrator {
                 scFrom, to, movingGOFrom, spatialConnectionMovingGO);
     }
 
-    public <FROM extends ILocationGO & ISpatiallyConnectedGO>
+    private <FROM extends ILocationGO & ISpatiallyConnectedGO>
     void narrateMovingGOKommtScEntgegen_esVerstehtSichVonSelbstVonWo(
             @Nullable final ILocationGO scFrom,
             final ILocationGO to,
@@ -614,14 +521,12 @@ public class SimpleMovementNarrator implements IMovementNarrator {
         n.narrateAlt(alt, noTime());
     }
 
-    protected <FROM extends ILocationGO & ISpatiallyConnectedGO>
+    private <FROM extends ILocationGO & ISpatiallyConnectedGO>
     void narrateKommtGegangen(
             final FROM from, final ILocationGO to,
             @Nullable final SpatialConnection spatialConnection,
             final NumberOfWays numberOfWaysIn) {
         final Nominalphrase desc = getDescription();
-        final SubstantivischePhrase anaphOderDesc =
-                getAnaphPersPronWennMglSonstDescription(false);
 
         final String wo = calcWoIfNecessary(spatialConnection, numberOfWaysIn);
 

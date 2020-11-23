@@ -16,7 +16,6 @@ import static de.nb.aventiure2.data.world.gameobject.World.*;
 
 @RunWith(AndroidJUnit4.class)
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
-@SuppressWarnings("ConstantConditions")
 public class VorDerHuetteImWaldConnectionCompTest extends AndroidTestBase {
     @Test
     public void turmUnbekannt_nichtInActionName() {

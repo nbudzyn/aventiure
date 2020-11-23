@@ -25,8 +25,6 @@ import static de.nb.aventiure2.data.world.gameobject.World.*;
 import static de.nb.aventiure2.data.world.syscomp.movement.MovementPCD.PauseForSCAction.DO_START_LEAVING;
 import static de.nb.aventiure2.data.world.syscomp.movement.MovementPCD.PauseForSCAction.PAUSED;
 import static de.nb.aventiure2.data.world.syscomp.movement.MovementPCD.PauseForSCAction.UNPAUSED;
-import static de.nb.aventiure2.data.world.syscomp.movement.MovementStep.Phase.FIRST_LEAVING;
-import static de.nb.aventiure2.data.world.syscomp.movement.MovementStep.Phase.SECOND_ENTERING;
 
 /**
  * Component for a {@link GameObject}: The game object
@@ -39,29 +37,25 @@ import static de.nb.aventiure2.data.world.syscomp.movement.MovementStep.Phase.SE
  * still.
  * <li>Die Wesen gehen Schritt für Schritt in Richtung Target Location. Der aktuelle Schritt
  * ist ein {@link MovementStep}.
- * <li>Ein Schritt besteht aus zwei Phasen:
- * <ul>
- * <li>In der ersten Phase ist das Wesen noch an seinem Ausgangsort, aber schon in Bewegung auf
- * den Folgeort zu
- * <li>In der zweiten Phase ist das Wesen schon am Folgeort, aber es <i>ist noch in Bewegung</i>
- * und damit noch nicht wirklich am "Zentrum" des Folgeorts angekommen.
- * <li>Beide Phasen dauern gleich lang.
- * <li>Die Interaktion des Benutzers mit einem Wesen <i>in Bewegung</i> könnte eingeschränkt sein
- * <li>Ist das Wesen am "Zentrum" des Folgeorts angekommen (zweite Phase abgeschlossen),
- * wird der nächste Schritt in Richtung Target Location ermittelt.
- * <li>Ist das Wesen <i>am "Zentrum"</i> der Target Location angekommen, endet die Bewegung.
+ * <li>Zu Beginn eines Schritts könnte die Bewegung PAUSED werden - wenn der SC die Chance
+ * bekommen soll, mit dem IMovingGO zu interagieren.
+ * <li>Ein eigentliche Schritt beginnt dann damit, dass das IMovingGO seine Location verliert.
+ * Es befindet sich nun im "Dawzischen" zwischen from und to.
+ * <li>Am Ende des Schritts kommt das Wesen auf dem Folgeort an. Die Movement-Listener erhalten die
+ * Information, das Wesen sei von from nach to gewechselt.
+ * <li>Nach dem Schritt wird der nächste Schritt in Richtung Target Location ermittelt.
+ * <li>Ist das Wesen an seiner Target Location angekommen, endet die Bewegung.
  * </ul>
- * <li>Der SC könnte sehen, wie das Wesen einen Raum verlässt (1. Phase), oder einen Folgeraum
- * betritt (zweite Phase). Das Interface {@link IMovementNarrator} bietet Methoden,
+ * <li>Der SC könnte sehen, wie das Wesen einen Raum verlässt (Beginn des Schritts), oder einen
+ * Folgeraum betritt (Ende des SChritts). Das Interface {@link IMovementNarrator} bietet Methoden,
  * mit denen reagiert werden kann: Z.B. könnte eine Beschreibung erzeugt werden ("die Hexe geht
  * den Weg hinab") oder gespeichert werden, dass der Benutzer das Wesen jetzt kennt
  * (vgl. {@link de.nb.aventiure2.data.world.syscomp.memory.MemoryComp}.
  * <li>Wird die Location eines Wesens während seiner Bewegung durch einen Dritten auf andere
- * Weise verändert (Benutzer hebt das Wesen auf setzt es an anderer Stelle wieder ab o.Ä.),
+ * Weise verändert (Benutzer hebt das Wesen auf, setzt es an anderer Stelle wieder ab o.Ä.),
  * versucht das Wesen, seine Bewegung von seinem neuen Ort fortzusetzen.
  * </ul>
  */
-// FIXME Diese Konzeptbeschreibung stimmt nicht mehr!
 public class MovementComp
         extends AbstractStatefulComponent<MovementPCD>
         implements ISCActionDoneListenerComponent {
@@ -122,7 +116,7 @@ public class MovementComp
         setupNextStepIfNecessaryAndPossible(now);
 
         if (hasCurrentStep()) {
-            narrateAndDoMovementIfExperiencedBySCStartsLeaving();
+            narrateAndDoMovementLeaves();
         }
     }
 
@@ -135,17 +129,31 @@ public class MovementComp
     /**
      * Supposed to be called regularly.
      */
-    public void onTimePassed(final AvDateTime now) {
+    public <FROM extends ILocationGO & ISpatiallyConnectedGO>
+    void onTimePassed(final AvDateTime now) {
         if (!isMoving()) {
             return;
         }
 
         // Wurde das Game Object zwischenzeitlich versetzt?
-        if (isLeaving() &&
-                !locationComp.hasLocation(getCurrentStep().getFrom()) ||
-                isEntering() &&
-                        !locationComp.hasLocation(getCurrentStep().getTo())) {
+        if (getPcd().getPauseForSCAction() == UNPAUSED &&
+                locationComp.getLocation() != null &&
+                !locationComp.hasLocation(getCurrentStep().getTo())) {
+            // FIXME Ist die Logik korrekt?! Bei DO_START_LEAVING muss man eigentlich
+            //  nicht noch einmal rechnen, es sei denn...?!
             setupNextStepIfNecessaryAndPossible(now);
+
+            if (locationComp.hasSameUpperMostLocationAs(SPIELER_CHARAKTER)
+                // STORY Wenn der SC schläft, dann hingegen das Game Object einfach
+                //  vorbeilaufen lassen (in diesem Fall sollte es ja aber auch keine
+                //  Narration geben...)
+            ) {
+                getPcd().setPauseForSCAction(PAUSED);
+
+                // Dann soll das IMovingGO nicht sofort weiterlaufen - der Spieler soll
+                // auf jeden Fall die Gelegenheit bekommen (einmalig) mit dem
+                // IMovingGO zu interagieren!
+            }
         }
 
         if (!hasCurrentStep()) {
@@ -157,80 +165,84 @@ public class MovementComp
         }
 
         if (getPcd().getPauseForSCAction() == DO_START_LEAVING) {
-            narrateAndDoMovementIfExperiencedBySCStartsLeaving();
+            narrateAndDoMovementLeaves();
         }
 
-        // Je nachdem, wie lang der World-Tick war, sollen das IMovingGO ggf. auch mehrere
+        // Je nachdem, wie lang der World-Tick war, soll das IMovingGO ggf. auch mehrere
         // Halbschritte gehen
         while (true) {
-            if (isLeaving()) {
-                // TODO Wenn das IMovingGO schon leaving ist und der Benutzer möchte
-                //  gewisse Interaktionen durchführen (z.B. ihm etwas geben o.Ä.) -
-                //  sollte dann automatisch die Zeit aufgerechnet werden, bis
-                //  das GO wieder zum SC zurückgegangen ist?
-                //  Und danach? Sollte das GO dann wieder die volle Zeit für das
-                //  Leaving brauchen?
+            //  STORY Zumindest manche Aktionen sollten wohl dazu führen,
+            //   dass die Bewegung beendet oder zumindest für eine Weile die Bewegung
+            //   "ausgesetzt" wird. Z.B. sollte ein Dialog beendet werden, bis
+            //   das IMovingGO wieder weitergeht (sofern das IMovingGO auf den Dialog eingeht und
+            //   ihn nicht von sich aus beendet)
 
-                if (now.isEqualOrAfter(getCurrentStep().getExpLeaveDoneTime())) {
-                    leaveAndEnterAndNarrateIfSCPresent();
-                } else {
-                    break;
+            if (now.isEqualOrAfter(getCurrentStep().getExpDoneTime())) {
+                locationComp.setLocation(getCurrentStep().getTo());
+
+                if (world.loadSC().locationComp().hasRecursiveLocation(
+                        getCurrentStep().getTo())) {
+                    narrateAndDoEnters();
                 }
-            }
 
-            if (isEntering()) {
-                // STORY Wie damit umgehen, wenn dieser Zeitpunkt noch NICHT erreicht ist?
-                //  - Kann SC mit X uneingeschränkt interagieren (z.B. mit X reden)?
-                //  -- Sollte dann bei einer solchen Aktion die Zeit, die das IMovingGO noch
-                //     benötigt, bis es das "Zentrum" der location erreicht hat, auf die Zeit
-                //     der eigentlichen Aktion aufgeschlagen werden? (Der SC wartet
-                //     also implizit, bis X herangekommen ist?)
-                //  -- Oder später den Zustand prüfen (z.B. wenn der Spieler
-                //   vor der Zauberin fliehen möchte)?
-                //  --- Sollte es dann einen Zusatztext in der Art "Du wartest, bis ...
-                //      herangekommen ist und..." geben?
-                //  - Oder sind nur manche Aktionen möglich? (nehmen, geben, ... gesperrt?)
-                //    Dann bräuchte es aber wohl eine Aktion "Auf die Zauberin warten" o.Ä.
+                locationComp.narrateAndDoEnterReactions(
+                        getCurrentStep().getFrom(), getCurrentStep().getTo()
+                );
 
-                //  STORY Zumindest manche Aktionen sollten wohl dazu führen,
-                //   dass die Bewegung beendet oder zumindest für eine Weile die Bewegung
-                //   "ausgesetzt" wird. Z.B. sollte er der Dialog beendet werden, bis
-                //   das IMovingGO wieder weitergeht (sofern X auf den Dialog eingeht und ihn
-                //   nicht von sich aus beendet)
-
-                if (now.isEqualOrAfter(getCurrentStep().getExpDoneTime())) {
-                    // Befindet sich der SC an der Location, die das IMovingGO
-                    // jetzt gerade erreicht hat?
-                    if (locationComp.hasSameUpperMostLocationAs(SPIELER_CHARAKTER)
-                        // STORY Wenn der SC schläft, dann hingegen das Game Object einfach
-                        //  vorbeilaufen lassen (in diesem Fall sollte es ja aber auch keine
-                        //  Narration geben...)
-                    ) {
-                        if (locationComp.hasLocation(getTargetLocationId())) {
-                            getPcd().setTargetLocationId(null);
-                            getPcd().setCurrentStep(null);
-                            getPcd().setPauseForSCAction(UNPAUSED);
-                            break;
-                        }
-
-                        // Dann soll das IMovingGO nicht sofort weiterlaufen - der Spieler soll
-                        // auf jeden Fall die Gelegenheit bekommen (einmalig) mit dem
-                        // IMovingGO zu interagieren!
-                        getPcd().setPauseForSCAction(PAUSED);
+                // Befindet sich der SC an der Location, die das IMovingGO
+                // jetzt gerade erreicht hat?
+                if (locationComp.hasSameUpperMostLocationAs(SPIELER_CHARAKTER)
+                    // STORY Wenn der SC schläft, dann hingegen das Game Object einfach
+                    //  vorbeilaufen lassen (in diesem Fall sollte es ja aber auch keine
+                    //  Narration geben...)
+                ) {
+                    if (locationComp.hasLocation(getTargetLocationId())) {
+                        getPcd().setTargetLocationId(null);
+                        getPcd().setCurrentStep(null);
+                        getPcd().setPauseForSCAction(UNPAUSED);
                         break;
                     }
 
-                    setupNextStepIfNecessaryAndPossible(getCurrentStep().getExpDoneTime());
-                    if (!hasCurrentStep()) {
-                        break;
-                    }
-
-                    narrateAndDoMovementIfExperiencedBySCStartsLeaving();
-                } else {
+                    // Dann soll das IMovingGO nicht sofort weiterlaufen - der Spieler soll
+                    // auf jeden Fall die Gelegenheit bekommen (einmalig) mit dem
+                    // IMovingGO zu interagieren!
+                    getPcd().setPauseForSCAction(PAUSED);
                     break;
                 }
+
+                setupNextStepIfNecessaryAndPossible(getCurrentStep().getExpDoneTime());
+                if (!hasCurrentStep()) {
+                    break;
+                }
+
+                narrateAndDoMovementLeaves();
+            } else {
+                break;
             }
         }
+    }
+
+    private <FROM extends ILocationGO & ISpatiallyConnectedGO> void narrateAndDoEnters() {
+        final FROM from = (FROM) world.load(getCurrentStep().getFrom());
+
+        @Nullable final SpatialConnection spatialConnection =
+                from.spatialConnectionComp()
+                        .getConnection(getCurrentStep().getTo());
+
+        final ILocationGO to =
+                (ILocationGO) world.load(getCurrentStep().getTo());
+
+        final NumberOfWays numberOfWaysIn =
+                to instanceof ISpatiallyConnectedGO ?
+                        ((ISpatiallyConnectedGO) to).spatialConnectionComp()
+                                .getNumberOfWaysOut() :
+                        NumberOfWays.NO_WAY;
+
+        movementNarrator.narrateAndDoEnters(
+                from,
+                to,
+                spatialConnection,
+                numberOfWaysIn);
     }
 
     @Override
@@ -255,6 +267,15 @@ public class MovementComp
         }
 
         getPcd().setCurrentStep(calculateStep(startTime));
+
+        // FIXME Idee: Wenn der SC ein IMovingBeing überholt: Hinterher einfach
+        //  so lange warten, bis es hinterhergekommen ist (damit Interakttion
+        //  möglich wird?)
+
+        // FIXME Idee: Wenn ein MovingBeing auf dem Weg zu dem Ort ist, zu dem sich
+        //  der SC bewegt hat: Sollte der SC einfach so lange warten, bis das
+        //  MovingBeing da ist?? Also kein "kommt dir entgegen" mehr??
+
         getPcd().setPauseForSCAction(DO_START_LEAVING);
     }
 
@@ -290,97 +311,43 @@ public class MovementComp
     }
 
     private <FROM extends ILocationGO & ISpatiallyConnectedGO>
-    void narrateAndDoMovementIfExperiencedBySCStartsLeaving() {
+    void narrateAndDoMovementLeaves() {
         getPcd().setPauseForSCAction(UNPAUSED);
 
-        if (!world.loadSC().locationComp().hasRecursiveLocation(locationComp.getLocation())) {
-            return;
+        if (world.loadSC().locationComp().hasRecursiveLocation(getCurrentStep().getFrom())) {
+            narrateAndDoLeaves();
         }
 
-        final FROM from = (FROM) locationComp.getLocation();
+        locationComp.narrateAndDoLeaveReactions(getCurrentStep().getTo());
+        locationComp.unsetLocation();
+        // Ab jetzt befindet sich das IMovingBeing im "Dazwischen" zwischen
+        // from und to.
+    }
+
+    private <FROM extends ILocationGO & ISpatiallyConnectedGO> void narrateAndDoLeaves() {
+        final FROM from = (FROM) world.load(getCurrentStep().getFrom());
 
         @Nullable final SpatialConnection spatialConnection =
                 from.spatialConnectionComp().getConnection(getCurrentStep().getTo());
 
-        movementNarrator.narrateAndDoStartsLeaving(
+        movementNarrator.narrateAndDoLeaves(
                 from,
                 (ILocationGO) world.load(getCurrentStep().getTo()),
                 spatialConnection,
                 from.spatialConnectionComp().getNumberOfWaysOut());
     }
 
-    private <FROM extends ILocationGO & ISpatiallyConnectedGO>
-    void leaveAndEnterAndNarrateIfSCPresent() {
-        locationComp.narrateAndSetLocation(
-                getCurrentStep().getTo(),
-                () -> {
-                    getPcd().setCurrentStep(getCurrentStep().withPhase(SECOND_ENTERING));
-
-                    if (!world.loadSC().locationComp().hasRecursiveLocation(
-                            getCurrentStep().getTo())) {
-                        return;
-                    }
-
-                    final FROM from = (FROM) world.load(getCurrentStep().getFrom());
-
-                    @Nullable final SpatialConnection spatialConnection =
-                            from.spatialConnectionComp().getConnection(getCurrentStep().getTo());
-
-                    final ILocationGO to = (ILocationGO) world.load(getCurrentStep().getTo());
-
-                    final NumberOfWays numberOfWaysIn =
-                            to instanceof ISpatiallyConnectedGO ?
-                                    ((ISpatiallyConnectedGO) to).spatialConnectionComp()
-                                            .getNumberOfWaysOut() :
-                                    NumberOfWays.NO_WAY;
-
-                    movementNarrator.narrateAndDoStartsEntering(
-                            from,
-                            to,
-                            spatialConnection,
-                            numberOfWaysIn);
-                });
-    }
-
-    public void narrateAndDoSCTrifftEvtlMovingGOInFrom(final ILocationGO scFrom,
-                                                       @Nullable final ILocationGO scTo) {
-        // Das hier sind sehr spezielle Spezialfälle, wo SC und die Zauberin treffen
-        // noch in scFrom zusammentreffen:
-        if (isLeaving() &&
-                scTo != null &&
-                getCurrentStep().getTo().equals(scTo.getId())) {
-            // Zauberin verlässt gerade auch scFrom und will auch nach scTo
-
-            movementNarrator.narrateScUeberholtMovingGO();
-
-            world.loadSC().memoryComp().upgradeKnown(getGameObjectId());
-
-            return;
-        }
-        if (isEntering() &&
-                scTo != null &&
-                locationComp.getLastLocationId() != null &&
-                world.isOrHasRecursiveLocation(locationComp.getLastLocationId(), scTo)) {
-            // Zauberin kommt von scTo, hat aber schon scFrom betreten
-            movementNarrator.narrateScGehtMovingGOEntgegenUndLaesstEsHinterSich();
-
-            world.loadSC().memoryComp().upgradeKnown(getGameObjectId());
-
-            return;
-        }
-    }
-
-    public void narrateAndDoSCTrifftMovingGOInTo(
+    public void narrateAndDoSCTrifftMovingGOInToOderImDazwischen(
             @Nullable final ILocationGO scFrom,
             final ILocationGO scTo) {
-        narrateScTrifftMovingGOInTo(scFrom, scTo);
+        narrateScTrifftMovingGOInToOderImDazwischen(scFrom, scTo);
 
         world.loadSC().memoryComp().upgradeKnown(getGameObjectId());
     }
 
     private <FROM extends ILocationGO & ISpatiallyConnectedGO>
-    void narrateScTrifftMovingGOInTo(@Nullable final ILocationGO scFrom,
-                                     final ILocationGO scTo) {
+    void narrateScTrifftMovingGOInToOderImDazwischen(@Nullable final ILocationGO scFrom,
+                                                     final ILocationGO scTo) {
         if (!isMoving()) {
             movementNarrator.narrateScTrifftStehendesMovingGO(
                     locationComp.getLocation() != null ?
@@ -389,27 +356,10 @@ public class MovementComp
             return;
         }
 
-        if (isEntering()) {
-            movementNarrator.narrateScTrifftEnteringMovingGO(
-                    scFrom,
-                    scTo,
-                    (FROM) locationComp.getLastLocation());
-            return;
-        }
-
-        // MovingGO ist leaving
-        movementNarrator.narrateScTrifftLeavingMovingGO(
+        movementNarrator.narrateScTrifftMovingGOImDazwischen(
                 scFrom,
-                (ILocationGO & ISpatiallyConnectedGO) scTo,
-                (ILocationGO) world.load(getCurrentStep().getTo()));
-    }
-
-    private boolean isLeaving() {
-        return isMoving() && currentStepHasPhase(FIRST_LEAVING);
-    }
-
-    private boolean isEntering() {
-        return isMoving() && currentStepHasPhase(SECOND_ENTERING);
+                scTo,
+                (FROM) world.load(getCurrentStep().getFrom()));
     }
 
     public boolean isMoving() {
@@ -431,17 +381,22 @@ public class MovementComp
         return getPcd().getTargetLocationId();
     }
 
-    private boolean currentStepHasPhase(final MovementStep.Phase phase) {
-        if (!hasCurrentStep()) {
-            return false;
-        }
-
-        assert getCurrentStep() != null;
-        return getCurrentStep().hasPhase(phase);
-    }
-
     private boolean hasCurrentStep() {
         return getCurrentStep() != null;
+    }
+
+    @Nullable
+    public GameObjectId getCurrentStepFrom() {
+        @Nullable final MovementStep currentStep = getCurrentStep();
+
+        return currentStep != null ? currentStep.getFrom() : null;
+    }
+
+    @Nullable
+    public GameObjectId getCurrentStepTo() {
+        @Nullable final MovementStep currentStep = getCurrentStep();
+
+        return currentStep != null ? currentStep.getTo() : null;
     }
 
     @Nullable

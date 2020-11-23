@@ -55,7 +55,7 @@ public class LocationSystem {
         return filterMovable(gameObjects, false);
     }
 
-    public static <DESC_OBJ extends ILocatableGO & IDescribableGO> ImmutableList<DESC_OBJ>
+    private static <DESC_OBJ extends ILocatableGO & IDescribableGO> ImmutableList<DESC_OBJ>
     filterMovable(final Collection<DESC_OBJ> gameObjects, final boolean movable) {
         return gameObjects.stream()
                 .filter(go -> go.locationComp().isMovable() == movable)

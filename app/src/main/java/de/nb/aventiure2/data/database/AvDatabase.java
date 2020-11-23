@@ -45,7 +45,6 @@ import de.nb.aventiure2.data.world.syscomp.mentalmodel.MentalModelDao;
 import de.nb.aventiure2.data.world.syscomp.mentalmodel.MentalModelPCD;
 import de.nb.aventiure2.data.world.syscomp.movement.MovementDao;
 import de.nb.aventiure2.data.world.syscomp.movement.MovementPCD;
-import de.nb.aventiure2.data.world.syscomp.movement.MovementStepPhaseConverters;
 import de.nb.aventiure2.data.world.syscomp.movement.PauseForSCActionConverters;
 import de.nb.aventiure2.data.world.syscomp.state.StateDao;
 import de.nb.aventiure2.data.world.syscomp.state.StatePCD;
@@ -101,7 +100,6 @@ import static de.nb.aventiure2.data.world.time.AvTime.*;
         GameObjectIdConverters.class,
         MoodConverters.class,
         FeelingsTowardsTypeConverters.class,
-        MovementStepPhaseConverters.class,
         HungerConverters.class,
         StoryConverters.class,
         StoryStateConverters.class})

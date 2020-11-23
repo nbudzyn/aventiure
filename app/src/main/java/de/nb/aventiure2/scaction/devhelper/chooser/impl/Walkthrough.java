@@ -21,7 +21,7 @@ public class Walkthrough {
                     "Mit dem Frosch reden", "Dem Frosch Angebote machen",
                     "Dem Frosch alles versprechen");
 
-    public static final Walkthrough FROSCHVERSPRECHEN_BIS_SCHLOSSFEST_SCHLOSS_BETRETEN =
+    private static final Walkthrough FROSCHVERSPRECHEN_BIS_SCHLOSSFEST_SCHLOSS_BETRETEN =
             new Walkthrough(
                     "Mit dem Frosch reden",
                     "Den Frosch mitnehmen",
@@ -33,15 +33,14 @@ public class Walkthrough {
                     "Zum Brunnen gehen",
                     "Den Weg Richtung Schloss gehen",
                     "In Richtung Schloss gehen",
-                    "Den schmalen Pfad aufwärtsgehen",
+                    "Den schmalen Pfad aufwärtsgehen", // Frau!
+                    "Die Frau nach ihrem Ziel fragen",
                     "Um den Turm herumgehen",
                     "Die Kugel an den Stamm eines Baumes legen",
-                    "Den Pfad zurückgehen", // Frau!
-                    "Die Frau nach ihrem Ziel fragen",
+                    "Den Pfad zurückgehen",
                     "Tiefer in den Wald hineingehen",
-                    "In Richtung Schloss gehen", // Frau
-                    "Die Frau nach ihrem Ziel fragen",
-                    "Den langen schmalen Pfad zum Turm aufwärtsgehen",
+                    "In Richtung Schloss gehen",
+                    "Den langen schmalen Pfad zum Turm aufwärtsgehen", // Frau
                     "Den Pfad zurückgehen",
                     "Den langen schmalen Pfad zum Turm aufwärtsgehen",
                     "In den Schatten der Bäume setzen",
@@ -74,7 +73,7 @@ public class Walkthrough {
                     "Das Schloss betreten");
 
 
-    public static final Walkthrough SCHLOSSFEST_SCHLOSS_BETRETEN_BIS_PRINZABFAHRT =
+    private static final Walkthrough SCHLOSSFEST_SCHLOSS_BETRETEN_BIS_PRINZABFAHRT =
             new Walkthrough("An einen Tisch setzen",
                     "Die Kugel auf den Tisch legen",
                     "Die Kugel nehmen",
@@ -86,7 +85,7 @@ public class Walkthrough {
                     "Vom Tisch aufstehen",
                     "Das Schloss verlassen und in den Schlossgarten gehen");
 
-    public static final Walkthrough PRINZABFAHRT_BIS_ERSTE_RAPUNZELRUF_BEOBACHTUNG =
+    private static final Walkthrough PRINZABFAHRT_BIS_ERSTE_RAPUNZELRUF_BEOBACHTUNG =
             new Walkthrough("In den Wald gehen",
                     "Den langen schmalen Pfad zum Turm aufwärtsgehen",
                     "Um den Turm herumgehen",
@@ -99,24 +98,19 @@ public class Walkthrough {
                     "Rasten",
                     "Rasten",
                     "Rasten",
-                    "Rasten",
-                    "Rasten",
-                    "Rasten"); // Zauberin steigt die Zöpfe hoch
+                    "Rasten");
 
-    public static final Walkthrough ERSTE_RAPUNZELRUF_BEOBACHTUNG_BIS_OBEN_BEI_RAPUNZEL =
+    private static final Walkthrough ERSTE_RAPUNZELRUF_BEOBACHTUNG_BIS_OBEN_BEI_RAPUNZEL =
             new Walkthrough(
                     "Rasten",
-                    "Rasten",
-                    "Rasten",
-                    "Rasten",
-                    "Rasten",
-                    // FIXME "Die Frau ist jetzt nicht mehr zu sehen".
+                    // Zauberin steigt die Zöpfe hoch
+                    "Auf die magere Frau warten",
                     "Rufen: „Lass dein Haar herunter.“",
                     "Aus dem Schatten der Bäume treten",
                     "An den Haaren hinaufsteigen"
             );
 
-    public static final Walkthrough OBEN_BEI_RAPUNZEL_BIS_ENDE =
+    private static final Walkthrough OBEN_BEI_RAPUNZEL_BIS_ENDE =
             new Walkthrough(
                     "Die junge Frau bitten ihre Haare wieder hinunterzulassen",
                     "An den Haaren hinabsteigen",
@@ -125,7 +119,8 @@ public class Walkthrough {
                     "Die goldene Kugel hochwerfen",
                     "Der jungen Frau die goldene Kugel geben",
                     "Der jungen Frau dein Herz ausschütten",
-                    "Die junge Frau bitten ihre Haare wieder hinunterzulassen");
+                    "Die junge Frau bitten ihre Haare wieder hinunterzulassen",
+                    "An den Haaren hinabsteigen");
 
     public static final Walkthrough ANFANG_BIS_SCHLOSSFEST_SCHLOSS_BETRETEN =
             ANFANG_BIS_FROSCHVERSPRECHEN
@@ -172,15 +167,15 @@ public class Walkthrough {
 
     private final ImmutableList<String> steps;
 
-    public Walkthrough(final String... steps) {
+    private Walkthrough(final String... steps) {
         this(asList(steps));
     }
 
-    public Walkthrough(final List<String> steps) {
+    private Walkthrough(final List<String> steps) {
         this.steps = ImmutableList.copyOf(steps);
     }
 
-    public Walkthrough append(final Walkthrough other) {
+    private Walkthrough append(final Walkthrough other) {
         return new Walkthrough(
                 ImmutableList.<String>builder().addAll(steps).addAll(other.steps).build()
         );
@@ -194,7 +189,7 @@ public class Walkthrough {
         return steps.size();
     }
 
-    public String getStep(final int index) {
+    String getStep(final int index) {
         return steps.get(index);
     }
 }

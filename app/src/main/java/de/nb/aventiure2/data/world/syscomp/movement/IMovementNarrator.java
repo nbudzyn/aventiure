@@ -19,17 +19,12 @@ public interface IMovementNarrator {
 
     <FROM extends ILocationGO & ISpatiallyConnectedGO>
     void
-    narrateScTrifftEnteringMovingGO(
+    narrateScTrifftMovingGOImDazwischen(
             @Nullable ILocationGO scFrom,
             ILocationGO to,
             FROM movingGOFrom);
 
     void narrateScUeberholtMovingGO();
-
-    <SC_FROM extends ILocationGO & ISpatiallyConnectedGO>
-    void narrateScTrifftLeavingMovingGO(@Nullable final ILocationGO scFrom,
-                                        final SC_FROM scToAndMovingGoFrom,
-                                        final ILocationGO movingGOTo);
 
     void narrateScGehtMovingGOEntgegenUndLaesstEsHinterSich();
 
@@ -41,10 +36,10 @@ public interface IMovementNarrator {
      *                          nicht (mehr) erkennen kann o.Ä.
      */
     <FROM extends ILocationGO & ISpatiallyConnectedGO>
-    void narrateAndDoStartsEntering(FROM from,
-                                    ILocationGO to,
-                                    SpatialConnection spatialConnection,
-                                    NumberOfWays numberOfWaysIn);
+    void narrateAndDoEnters(FROM from,
+                            ILocationGO to,
+                            SpatialConnection spatialConnection,
+                            NumberOfWays numberOfWaysIn);
 
     /**
      * @param spatialConnection Die {@link SpatialConnection}, über die das
@@ -54,7 +49,7 @@ public interface IMovementNarrator {
      *                          nicht (mehr) erkennen kann o.Ä.
      */
     <FROM extends ILocationGO & ISpatiallyConnectedGO>
-    void narrateAndDoStartsLeaving(FROM from, ILocationGO to,
-                                   @Nullable SpatialConnection spatialConnection,
-                                   NumberOfWays numberOfPossibleWaysToLeave);
+    void narrateAndDoLeaves(FROM from, ILocationGO to,
+                            @Nullable SpatialConnection spatialConnection,
+                            NumberOfWays numberOfPossibleWaysToLeave);
 }

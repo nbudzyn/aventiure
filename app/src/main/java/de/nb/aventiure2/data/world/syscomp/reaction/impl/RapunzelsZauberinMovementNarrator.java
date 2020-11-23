@@ -137,16 +137,19 @@ public class RapunzelsZauberinMovementNarrator extends SimpleMovementNarrator {
 
     @Override
     public <FROM extends ILocationGO & ISpatiallyConnectedGO>
-    void narrateAndDoStartsLeaving(
+    void narrateAndDoLeaves(
             final FROM from, final ILocationGO to,
             @Nullable final SpatialConnection spatialConnection,
             final NumberOfWays numberOfWaysOut) {
         if (from.is(DRAUSSEN_VOR_DEM_SCHLOSS)) {
             // Hier bemerkt der SC die Zauberin nicht
+
+            // FIXME Kann man das Thema besser fassen? Die Zauberin wäre ohnehin
+            //  nur einen Moment da?!
             return;
         }
 
-        super.narrateAndDoStartsLeaving(from, to, spatialConnection, numberOfWaysOut);
+        super.narrateAndDoLeaves(from, to, spatialConnection, numberOfWaysOut);
     }
 
     // STORY Wenn die Zauberin WEISS_DASS_RAPUNZEL_BEFREIT_WURDE, sieht sie
@@ -160,15 +163,17 @@ public class RapunzelsZauberinMovementNarrator extends SimpleMovementNarrator {
 
     @Override
     public <FROM extends ILocationGO & ISpatiallyConnectedGO>
-    void narrateAndDoStartsEntering(final FROM from, final ILocationGO to,
-                                    @Nullable final SpatialConnection spatialConnection,
-                                    final NumberOfWays numberOfWaysIn) {
+    void narrateAndDoEnters(final FROM from, final ILocationGO to,
+                            @Nullable final SpatialConnection spatialConnection,
+                            final NumberOfWays numberOfWaysIn) {
         if (to.is(DRAUSSEN_VOR_DEM_SCHLOSS)) {
+            // FIXME Gutes Konzept? Zauberin sollte am besten einfach "verschwinden", wenn
+            //  sie vor dem Schloss ankommt?
             // Hier bemerkt der SC die Zauberin nicht
             return;
         }
 
-        super.narrateAndDoStartsEntering(from, to, spatialConnection, numberOfWaysIn);
+        super.narrateAndDoEnters(from, to, spatialConnection, numberOfWaysIn);
     }
 
     // STORY Zauberin überrascht den Spieler vor dem Turm:

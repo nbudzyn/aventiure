@@ -331,7 +331,7 @@ public enum FroschkoenigStoryNode implements IStoryNode {
         } else {
             alt.add(paragraph("Vielleicht solltest du dir einen Platz zum Schlafen suchen?"));
             alt.add(paragraph("Ob es sicher ist, nachts herumzulaufen? Wo könntest du "
-                    + "übernachten?"));
+                    + "übernachten?")); // FIXME Übernachten nicht, wenn man nicht müde ist?!
         }
 
         return alt.build();

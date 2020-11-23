@@ -96,6 +96,9 @@ public class WartenActionTest extends AndroidTestBase {
     public <Z extends ILocatableGO & IHasStateGO<RapunzelsZauberinState> & IMovingGO>
     void zauberinKommt_WartenWirdAbgebrochen() {
         // GIVEN
+        // Verhindern, dass Rapunzel die Zauberin noch oben in den Turm hilft!
+        ((ILocatableGO) world.load(RAPUNZEL)).locationComp().setLocation(HUETTE_IM_WALD);
+
         world.loadSC().memoryComp().upgradeKnown(RAPUNZELS_ZAUBERIN);
         Z zauberin = (Z) world.load(RAPUNZELS_ZAUBERIN);
         zauberin.locationComp().setLocation(IM_WALD_NAHE_DEM_SCHLOSS);
@@ -111,8 +114,8 @@ public class WartenActionTest extends AndroidTestBase {
 
         // THEN
         zauberin = (Z) world.load(RAPUNZELS_ZAUBERIN);
-        assertThat(zauberin.locationComp().getLocationId()).isEqualTo(VOR_DEM_ALTEN_TURM);
         assertThat(timeAfter.minus(timeBefore).getAsHours()).isLessThan(3);
+        assertThat(zauberin.locationComp().getLocationId()).isEqualTo(VOR_DEM_ALTEN_TURM);
     }
 
     @NonNull

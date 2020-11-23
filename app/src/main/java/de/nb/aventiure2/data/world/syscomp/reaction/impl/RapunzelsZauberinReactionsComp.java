@@ -35,7 +35,7 @@ import static de.nb.aventiure2.data.world.gameobject.World.*;
 import static de.nb.aventiure2.data.world.syscomp.state.impl.RapunzelsZauberinState.AUF_DEM_RUECKWEG_VON_RAPUNZEL;
 import static de.nb.aventiure2.data.world.syscomp.state.impl.RapunzelsZauberinState.AUF_DEM_WEG_ZU_RAPUNZEL;
 import static de.nb.aventiure2.data.world.syscomp.state.impl.RapunzelsZauberinState.BEI_RAPUNZEL_OBEN_IM_TURM;
-import static de.nb.aventiure2.data.world.syscomp.state.impl.RapunzelsZauberinState.VOR_DEM_NAECHSTEN_RAPUNZEL_BESUCH;
+import static de.nb.aventiure2.data.world.syscomp.state.impl.RapunzelsZauberinState.WARTEZEIT_NACH_RAPUNZEL_BESUCH;
 import static de.nb.aventiure2.data.world.time.AvTime.*;
 import static de.nb.aventiure2.data.world.time.AvTimeSpan.*;
 import static de.nb.aventiure2.german.base.StructuralElement.CHAPTER;
@@ -126,10 +126,9 @@ public class RapunzelsZauberinReactionsComp
         // STORY Kugel hinlegen: Kommentar von Hexe?
     }
 
-    public void onSCLeave(final ILocationGO scFrom,
-                          @Nullable final ILocationGO scTo) {
-        if (locationComp.getLocationId() != null &&
-                locationComp.hasSameUpperMostLocationAs(scFrom)) {
+    private void onSCLeave(final ILocationGO scFrom,
+                           @Nullable final ILocationGO scTo) {
+        if (locationComp.hasSameUpperMostLocationAs(scFrom)) {
             // Wenn die Zauberin sieht, wie der Spieler weggeht,
             // weiß sie nicht mehr, wo er ist.
             if (scTo == null || !locationComp.hasSameUpperMostLocationAs(scTo)) {
@@ -156,8 +155,6 @@ public class RapunzelsZauberinReactionsComp
             //  Zumindest, wenn der Spieler aus dem Fenster schaut?!
             //  Oder schaut vielleicht Rapunzel aus dem Fenster, bevor sie die
             //  Haare herunterlässt?
-
-            movementComp.narrateAndDoSCTrifftEvtlMovingGOInFrom(scFrom, scTo);
             return;
         }
     }
@@ -182,16 +179,43 @@ public class RapunzelsZauberinReactionsComp
             mentalModelComp.setAssumedLocation(SPIELER_CHARAKTER, scTo);
         }
 
-        if (locationComp.getLocationId() == null) {
-            // Zauberin hat keinen Ort, kann also auch nicht getroffen werden
-            return;
-        }
-        if (!world.loadSC().locationComp().hasRecursiveLocation(locationComp.getLocationId())) {
-            // SC und Zauberin sind nicht am gleichen Ort
+        if (locationComp.getLocationId() == null && !movementComp.isMoving()) {
+            // Zauberin hat keinen Ort und ist auch nirgendwo "dazwischen", kann also auch nicht
+            // getroffen werden
             return;
         }
 
-        if (scTo.is(DRAUSSEN_VOR_DEM_SCHLOSS)) {
+        @Nullable final ILocationGO currentMovementStepFrom =
+                movementComp.isMoving() ?
+                        (ILocationGO) world.load(movementComp.getCurrentStepFrom()) :
+                        null;
+
+        @Nullable final ILocationGO currentMovementStepTo =
+                movementComp.isMoving() ?
+                        (ILocationGO) world.load(movementComp.getCurrentStepTo()) :
+                        null;
+
+        final boolean spielerHatZauberinUeberholt =
+                world.getLocationSystem().haveSameUpperMostLocation(
+                        scFrom, currentMovementStepFrom) &&
+                        world.getLocationSystem().haveSameUpperMostLocation(
+                                scTo, currentMovementStepTo);
+
+        final boolean spielerUndZauberinKommenEinanderEntgegen =
+                world.getLocationSystem().haveSameUpperMostLocation(
+                        scFrom, currentMovementStepTo) &&
+                        world.getLocationSystem().haveSameUpperMostLocation(
+                                scTo, currentMovementStepFrom);
+
+        if (!world.loadSC().locationComp().hasRecursiveLocation(locationComp.getLocationId()) &&
+                !spielerHatZauberinUeberholt &&
+                !spielerUndZauberinKommenEinanderEntgegen) {
+            // SC und Zauberin sind nicht am gleichen Ort und haben sich auch nicht
+            // "dazwischen" getroffen
+            return;
+        }
+
+        if (scTo.is(DRAUSSEN_VOR_DEM_SCHLOSS) && locationComp.getLocationId() != null) {
             // Hier bemerkt der SC die Zauberin nicht
             return;
         }
@@ -219,7 +243,7 @@ public class RapunzelsZauberinReactionsComp
             return;
         }
 
-        movementComp.narrateAndDoSCTrifftMovingGOInTo(scFrom, scTo);
+        movementComp.narrateAndDoSCTrifftMovingGOInToOderImDazwischen(scFrom, scTo);
     }
 
     @Override
@@ -434,11 +458,6 @@ public class RapunzelsZauberinReactionsComp
         checkArgument(!endTime.minus(startTime).longerThan(days(1)),
                 "World tick time too long - see AbstractScAction.");
 
-        // FIXME Bei Bewegung der Zauberin machen, dass sie noch nicht ganz weg ist / wann sie da
-        //  ist!
-        //  (Wie geht das allgemeine Konzept? In wieweit kann der SC noch mit einem
-        //  Objekt interagieren, das den Raum schon fast verlassen hat?)
-
         switch (stateComp.getState()) {
             case MACHT_ZURZEIT_KEINE_RAPUNZELBESUCHE:
                 onTimePassed_MachtZurzeitKeineRapunzelbesuche(endTime);
@@ -447,7 +466,6 @@ public class RapunzelsZauberinReactionsComp
                 onTimePassed_VorDemNaechstenRapunzelBesuch(endTime);
                 return;
             case AUF_DEM_WEG_ZU_RAPUNZEL:
-
                 onTimePassed_AufDemWegZuRapunzel(endTime);
                 return;
             case BEI_RAPUNZEL_OBEN_IM_TURM:
@@ -455,6 +473,9 @@ public class RapunzelsZauberinReactionsComp
                 return;
             case AUF_DEM_RUECKWEG_VON_RAPUNZEL:
                 onTimePassed_AufDemRueckwegVonRapunzel(endTime);
+                return;
+            case WARTEZEIT_NACH_RAPUNZEL_BESUCH:
+                onTimePassed_WartezeitNachRapunzelBesuch(endTime);
                 return;
             case WEISS_DASS_RAPUNZEL_BEFREIT_WURDE:
                 // STORY Wandert zurück und kommt nie wieder
@@ -473,12 +494,8 @@ public class RapunzelsZauberinReactionsComp
             return;
         }
 
-        if (now.isBefore(stateComp.getStateDateTime().plus(MIN_ZEIT_VOR_DEM_NAECHSTEN_LOSGEHEN))) {
-            return;
-        }
-
         // Zustandswechsel nötig! Die Zauberin geht zu Rapunzel los.
-        onTimePassed_fromVorDemNaechstenRapunzelBesuchToAufDemWegZuRapunzel(now);
+        onTimePassed_ToAufDemWegZuRapunzel(now);
 
         // TODO Wenn der World-Tick ungewöhnlich lang war, geht die Zauberin
         //  recht spät oder gar nicht mehr los.
@@ -491,7 +508,7 @@ public class RapunzelsZauberinReactionsComp
                 SPAETESTE_LOSGEHZEIT_RAPUNZELBESUCH);
     }
 
-    private void onTimePassed_fromVorDemNaechstenRapunzelBesuchToAufDemWegZuRapunzel(
+    private void onTimePassed_ToAufDemWegZuRapunzel(
             final AvDateTime now) {
         locationComp.narrateAndSetLocation(
                 // Zauberin ist auf einmal draußen vor dem Schloss
@@ -591,15 +608,33 @@ public class RapunzelsZauberinReactionsComp
         }
 
         // Zauberin hat den Rückweg zurückgelegt.
-        onTimePassed_fromAufDemRueckwegVonRapunzelToVorDemNaechstenRapunzelBesuch();
+        onTimePassed_fromAufDemRueckwegVonRapunzelToWartezeitNachRapunzelBesuch();
     }
 
-    private void onTimePassed_fromAufDemRueckwegVonRapunzelToVorDemNaechstenRapunzelBesuch
+    private void onTimePassed_WartezeitNachRapunzelBesuch(final AvDateTime now) {
+        if (now.isBefore(stateComp.getStateDateTime().plus(MIN_ZEIT_VOR_DEM_NAECHSTEN_LOSGEHEN))) {
+            return;
+        }
+
+        if (!liegtImZeitfensterFuerRapunzelbesuch(now)) {
+            // Kein Zustandswechsel. Die Zauberin soll noch warten, bevor sie (wieder) losgeht.
+            return;
+        }
+
+        // Zustandswechsel nötig! Die Zauberin geht zu Rapunzel los.
+        onTimePassed_ToAufDemWegZuRapunzel(now);
+
+        // TODO Wenn der World-Tick ungewöhnlich lang war, geht die Zauberin
+        //  recht spät oder gar nicht mehr los.
+        //  Am besten durch ein zentrales Konzept beheben!
+    }
+
+    private void onTimePassed_fromAufDemRueckwegVonRapunzelToWartezeitNachRapunzelBesuch
             () {
         locationComp.narrateAndUnsetLocation(
                 // Zauberin "verschwindet" fürs erste
                 () -> {
-                    stateComp.narrateAndSetState(VOR_DEM_NAECHSTEN_RAPUNZEL_BESUCH)
+                    stateComp.narrateAndSetState(WARTEZEIT_NACH_RAPUNZEL_BESUCH)
                     // Keine extra-Zeit
                     ;
                 });

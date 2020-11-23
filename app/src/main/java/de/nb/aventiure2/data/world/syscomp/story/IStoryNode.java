@@ -35,6 +35,10 @@ public interface IStoryNode {
     // STORY "Fronten" ("Fronts") angelehnt an Dungeon World: Wenn der Spieler nicht
     //  interagiert, kommt es mehrstufig zu Eskalationen
 
+    // STORY mehrer Märchen in Abschnitte aufteilen und diese großräumig als "Bubbles"
+    //  planen (grafisch). Dann die Wege dazwischen festlegen (also die Zusammenhänge) und
+    //  ausprogrammieren.
+
     @FunctionalInterface
     interface IHinter {
         void narrateAndDoHintAction(final AvDatabase db,

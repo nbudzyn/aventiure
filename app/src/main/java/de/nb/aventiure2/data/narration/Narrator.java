@@ -83,8 +83,7 @@ public class Narrator {
         return narrationSourceJustInCase;
     }
 
-    public
-    <D extends AbstractDescription<?>>
+    public <D extends AbstractDescription<?>>
     boolean narrateIfCounterIs(final int counterValue,
                                final TimedDescription<D> desc) {
         Preconditions.checkArgument(
@@ -100,21 +99,18 @@ public class Narrator {
     }
 
 
-    public
-    <D extends AbstractDescription<?>>
+    public <D extends AbstractDescription<?>>
     void narrate(final TimedDescription<D> desc) {
         narrateAlt(desc);
     }
 
-    public
-    <D extends AbstractDescription<?>>
+    public <D extends AbstractDescription<?>>
     void narrateAlt(final ImmutableCollection.Builder<D> alternatives,
-                           final AvTimeSpan timeElapsed) {
+                    final AvTimeSpan timeElapsed) {
         narrateAlt(alternatives.build(), timeElapsed);
     }
 
-    public
-    void narrateAlt(final ImmutableCollection.Builder<TimedDescription<?>> alternatives) {
+    public void narrateAlt(final ImmutableCollection.Builder<TimedDescription<?>> alternatives) {
         narrateAlt(alternatives.build());
     }
 
@@ -123,15 +119,13 @@ public class Narrator {
         narrateAlt(Arrays.asList(alternatives));
     }
 
-    public
-    <D extends AbstractDescription<?>>
+    public <D extends AbstractDescription<?>>
     void narrateAlt(final AvTimeSpan timeElapsed,
-                           final D... alternatives) {
+                    final D... alternatives) {
         narrateAlt(asList(alternatives), timeElapsed);
     }
 
-    public
-    <D extends AbstractDescription<?>>
+    public <D extends AbstractDescription<?>>
     void narrateAlt(final AvTimeSpan timeElapsed,
                     final String counterIdIncrementedIfTextIsNarrated,
                     final D... alternatives) {
@@ -140,7 +134,7 @@ public class Narrator {
 
     public <D extends AbstractDescription<?>>
     void narrateAlt(final Collection<D> alternatives,
-                           final AvTimeSpan timeElapsed) {
+                    final AvTimeSpan timeElapsed) {
         narrateAlt(alternatives, timeElapsed, null);
     }
 
@@ -157,6 +151,8 @@ public class Narrator {
     }
 
     public void narrateAlt(final Collection<? extends TimedDescription<?>> alternatives) {
+        // FIXME Adressatenmodell entscheidet, ob SC wartet / SC schläft?
+
         if (temporaryNarration != null) {
             if (narrateTemporaryNarrationAndTryCombiningWithAlternative(alternatives)) {
                 return;
@@ -191,8 +187,7 @@ public class Narrator {
      * <i>mit derselben Dauer und Counter-ID wie diese Beste</i>, werden sie auch mit zurückgegeben.
      */
     @NonNull
-    private
-    Collection<? extends TimedDescription<?>> chooseBestAlternativesWithSameElapsedTimeAndCounterId(
+    private Collection<? extends TimedDescription<?>> chooseBestAlternativesWithSameElapsedTimeAndCounterId(
             final Collection<? extends TimedDescription<?>> alternatives) {
         final long numberTimesElapsed = alternatives.stream()
                 .map(TimedDescription::getTimeElapsed)
@@ -258,7 +253,7 @@ public class Narrator {
             //  gemeinsam in einen optimalen Text gegossen, etwa in der Art
             //  "Als du weiter durch den Wald gehst, kommt dir eine Frau entgegen"
             temporaryNarration = null;
-            narratePassTimeAndIncrementCounter( bestCombined.allgTimedDescription);
+            narratePassTimeAndIncrementCounter(bestCombined.allgTimedDescription);
             return true;
         }
 

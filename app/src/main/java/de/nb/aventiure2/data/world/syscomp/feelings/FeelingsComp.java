@@ -160,6 +160,8 @@ public class FeelingsComp extends AbstractStatefulComponent<FeelingsPCD> {
     }
 
     public void ausgeschlafen(final AvTimeSpan ausschlafenEffektHaeltVorFuer) {
+        // FIXME Der ausgeschlafen-Effekt sollte entfernt werden, wenn man
+        //  temporär müde wird!
         getPcd().ausgeschlafen(nowDao.now(),
                 scActionStepCountDao.stepCount(),
                 ausschlafenEffektHaeltVorFuer,

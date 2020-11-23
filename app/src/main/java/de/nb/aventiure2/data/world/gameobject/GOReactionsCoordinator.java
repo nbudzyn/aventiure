@@ -80,6 +80,14 @@ public class GOReactionsCoordinator
     }
 
     public void onEnter(final GameObjectId locatableId,
+                        @Nullable final GameObjectId fromId,
+                        final GameObjectId toId) {
+        onEnter(locatableId,
+                fromId != null ? (ILocationGO) world.load(fromId) : null,
+                toId);
+    }
+
+    public void onEnter(final GameObjectId locatableId,
                         @Nullable final ILocationGO from,
                         final GameObjectId toId) {
         onEnter((ILocatableGO) world.load(locatableId), from, toId);

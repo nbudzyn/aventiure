@@ -10,7 +10,7 @@ import de.nb.aventiure2.data.world.base.AbstractStatefulComponent;
 import de.nb.aventiure2.data.world.base.GameObject;
 import de.nb.aventiure2.data.world.base.GameObjectId;
 import de.nb.aventiure2.data.world.base.IGameObject;
-import de.nb.aventiure2.data.world.gameobject.World;
+import de.nb.aventiure2.data.world.gameobject.*;
 import de.nb.aventiure2.data.world.syscomp.storingplace.ILocationGO;
 
 /**
@@ -100,12 +100,18 @@ public class LocationComp extends AbstractStatefulComponent<LocationPCD> {
                 .onLeave(getGameObjectId(), from, newLocationId);
     }
 
-    public void narrateAndDoEnterReactions(@Nullable final GameObjectId newLocationId) {
+    private void narrateAndDoEnterReactions(@Nullable final GameObjectId newLocationId) {
+        narrateAndDoEnterReactions(getLastLocationId(), newLocationId);
+    }
+
+    public void narrateAndDoEnterReactions(
+            @Nullable final GameObjectId conceptualLastLocationId,
+            @Nullable final GameObjectId newLocationId) {
         if (newLocationId == null) {
             return;
         }
         world.narrateAndDoReactions()
-                .onEnter(getGameObjectId(), getLastLocation(), newLocationId);
+                .onEnter(getGameObjectId(), conceptualLastLocationId, newLocationId);
     }
 
     /**
@@ -204,7 +210,7 @@ public class LocationComp extends AbstractStatefulComponent<LocationPCD> {
         return hasUpperMostLocation((ILocationGO) location);
     }
 
-    public boolean hasUpperMostLocation(final ILocationGO location) {
+    private boolean hasUpperMostLocation(final ILocationGO location) {
         return location.equals(getUpperMostLocation());
     }
 
@@ -305,7 +311,7 @@ public class LocationComp extends AbstractStatefulComponent<LocationPCD> {
 
     /**
      * ACHTUNG! Diese Methode sollte nur in seltenen Ausnahmefällen verwendet werden!
-     * Die Reacktions werden hier nicht aufgerufen!
+     * Die Reactions werden hier nicht aufgerufen!
      */
     public void setLocation(@Nullable final GameObjectId locationId) {
         if (getGameObjectId().equals(locationId)) {
@@ -336,7 +342,7 @@ public class LocationComp extends AbstractStatefulComponent<LocationPCD> {
     }
 
     @Nullable
-    public GameObjectId getLastLocationId() {
+    private GameObjectId getLastLocationId() {
         return getPcd().getLastLocationId();
     }
 
