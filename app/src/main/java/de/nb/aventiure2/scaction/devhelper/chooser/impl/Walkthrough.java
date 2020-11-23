@@ -95,14 +95,12 @@ public class Walkthrough {
                     "In den Schatten der Bäume setzen",
                     "Rasten",
                     "Die Kugel nehmen",
-                    "Rasten",
-                    "Rasten",
-                    "Rasten",
-                    "Rasten");
+                    "Auf die magere Frau warten",
+                    "Auf die magere Frau warten");
 
     private static final Walkthrough ERSTE_RAPUNZELRUF_BEOBACHTUNG_BIS_OBEN_BEI_RAPUNZEL =
             new Walkthrough(
-                    "Rasten",
+                    "Auf die magere Frau warten",
                     // Zauberin steigt die Zöpfe hoch
                     "Auf die magere Frau warten",
                     "Rufen: „Lass dein Haar herunter.“",

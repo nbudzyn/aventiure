@@ -175,15 +175,4 @@ public class RapunzelsZauberinMovementNarrator extends SimpleMovementNarrator {
 
         super.narrateAndDoEnters(from, to, spatialConnection, numberOfWaysIn);
     }
-
-    // STORY Zauberin überrascht den Spieler vor dem Turm:
-    //  Die Zauberin verzaubert hat den Spieler, so dass er sich nicht
-    //  an sie erinnern kann:
-    //  loadSC().memoryComp().upgradeKnown(RAPUNZELS_ZAUBERIN, UNKNOWN);
-    //  (Ist das nicht schon implementiert?)
-
-    // FIXME Es gibt einen Bug, wo die Zauberin vom Turm aus den SPieler verzaubert,
-    //  dann - für den Spieler erlebbar hinuntersteigt und ihn noch einmal verzaubert.
-    //  Idee: Ein LivingBeing kann schlafen - wenn der SC schläft, bekommt er nichts mit.
-    //  Das _könnte_ der Narrator zentral regeln - Problem: Dann stimmen die Zähler nicht!!
 }

@@ -593,6 +593,25 @@ public class RapunzelsZauberinReactionsComp
             return;
         }
 
+        if (
+            // Ist der SC ist noch irgendwo vor dem Turm?
+                loadSC().locationComp().hasRecursiveLocation(
+                        VOR_DEM_ALTEN_TURM)
+                        // (Wobei die Zauberin nur im Schatten der Bäume schaut, wenn sie den
+                        // SC dort vermutet)
+                        &&
+                        (
+                                !loadSC().locationComp().hasRecursiveLocation(
+                                        VOR_DEM_ALTEN_TURM_SCHATTEN_DER_BAEUME)
+                                        ||
+                                        mentalModelComp.hasAssumedLocation(SPIELER_CHARAKTER,
+                                                VOR_DEM_ALTEN_TURM_SCHATTEN_DER_BAEUME)
+                        )
+        ) {
+            // Dann warten sie noch!
+            return;
+        }
+
         // Zauberin macht Anstalten, Rapunzel zu verlassen.
         // Als Reaktion (!) darauf lässt Rapunzel ihr Haar zum Abstieg hinunter,
         // Die Zauberin klettert daran herunter etc.

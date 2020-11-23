@@ -103,10 +103,14 @@ public class SchlafenAction extends AbstractScAction {
 
         narrateAndDoEinschlafen(schlafdauer);
 
+        // FIXME  Idee: Ein LivingBeing kann schlafen - wenn der SC schläft, bekommt er nichts mit.
+        //  Das _könnte_ der Narrator zentral regeln
+
         // TODO Frosch läuft während des Schlafs weg. Oder kommt ggf. Auch wieder. Oder läuft
         //  weg und kommt wieder.
         //  Es sollte in der Zeit keine narrations geben (der Spieler bekommt ja nichts mit, es sei
-        //  denn er wacht auf). Aber danach sollte etwas kommen wie... ist verschwunden.
+        //  denn man lässt ihn dann aufwachen...). Nach dem (regulären) Aufwachen sollte etwas
+        //  kommen wie... ist verschwunden.
         //  Wie macht man das sinnvoll?
         //  Für die Tageszeit haben wir ein gutes Konzept.
         //  Für andere Dinge (Frosch weg, Kugel weg) scheint es nicht zu funktionieren? Wenn
@@ -154,7 +158,8 @@ public class SchlafenAction extends AbstractScAction {
 
         // STORY Der Frosch läuft während des Schlafens davon - nicht beim Aufwachen.
 
-        // STORY Man kann durch Ereignisse aufgeweckt werden! Der Status des spielers wäre dann auf wach gesetzt und würde immer wieder geprüft.
+        // STORY Man kann durch Ereignisse aufgeweckt werden! Der Status des spielers
+        //  wäre dann auf wach gesetzt und würde immer wieder geprüft.
 
         // STORY Konzept dafür entwickeln, dass der Benutzer einen  Ort verlässt, während XYZ
         //  passiert und zurückkehrt, wenn XYZ nicht mehr passiert
