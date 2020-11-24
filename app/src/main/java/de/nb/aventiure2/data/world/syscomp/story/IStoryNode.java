@@ -16,6 +16,15 @@ import de.nb.aventiure2.data.world.gameobject.*;
  * Alle Implementierungen sollen {@link Enum}s sein.
  */
 public interface IStoryNode {
+    // STORY Story 'Beats" in Twine modellieren, dann neue Branches in Twine entwickeln
+
+    // STORY Twine einbinden, einzelne Schritte in Twine modellieren,
+    //  insbesondere mit dem Ziel, immer "neue Enden zu finden".
+    //  Dazu Teile aus den bestehenden Märchen ausschneiden als Twine-Knoten.
+    //  Zusammenbinden der Knoten über die Charaktere: Was ist mit der Zauberin vorher
+    //  passiert? Was passiert ihr nachher?
+    //  Erst nur sehr grob, verfeinern / konsistent machen später.
+
     // STORY Mein Herz hängt an der Erzählung durch die Maschine. Das sollte in jedem Schritt
     //  des Spiels enforcet werden. Es sollte also in jedem Schritt die Erzählung meaningful
     //   weitergehen. Der Benutzer sollte immer etwas tun können, was eine
@@ -27,8 +36,6 @@ public interface IStoryNode {
     //    - Oder sollte der Spieler bei jedem neuen Erzählschritt immer mit den
     //      beschriebenen Elementen interagieren können? Und zwar so, dass die Interaktionen
     //      die Welt ändern? Oder spürbar Auswirkungen auf später haben?
-
-    // STORY Story 'Beats" in Twine modellieren, dann neue Branches in Twine entwickeln
 
     // STORY Wie kann man eine meaningful Erzählung automatisch erzeugen?
 
