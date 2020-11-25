@@ -16,12 +16,12 @@ import de.nb.aventiure2.data.world.gameobject.*;
  * Alle Implementierungen sollen {@link Enum}s sein.
  */
 public interface IStoryNode {
-    // STORY Story 'Beats" in Twine modellieren, dann neue Branches in Twine entwickeln
+    // STORY Neue Branches in Twine entwickeln
 
-    // STORY Twine einbinden, einzelne Schritte in Twine modellieren,
-    //  insbesondere mit dem Ziel, immer "neue Enden zu finden".
-    //  Dazu Teile aus den bestehenden Märchen ausschneiden als Twine-Knoten.
-    //  Zusammenbinden der Knoten über die Charaktere: Was ist mit der Zauberin vorher
+    // STORY Weitere Schritte in Twine modellieren, insbesondere mit dem Ziel, immer
+    //  "neue Enden zu finden".
+    //  Dazu weitere Teile aus den bestehenden Märchen ausschneiden als Twine-Knoten.
+    //  Zusammenbinden der Knoten z.B. über die Charaktere: Was ist mit der Zauberin vorher
     //  passiert? Was passiert ihr nachher?
     //  Erst nur sehr grob, verfeinern / konsistent machen später.
 
@@ -41,10 +41,6 @@ public interface IStoryNode {
 
     // STORY "Fronten" ("Fronts") angelehnt an Dungeon World: Wenn der Spieler nicht
     //  interagiert, kommt es mehrstufig zu Eskalationen
-
-    // STORY mehrer Märchen in Abschnitte aufteilen und diese großräumig als "Bubbles"
-    //  planen (grafisch). Dann die Wege dazwischen festlegen (also die Zusammenhänge) und
-    //  ausprogrammieren.
 
     @FunctionalInterface
     interface IHinter {
