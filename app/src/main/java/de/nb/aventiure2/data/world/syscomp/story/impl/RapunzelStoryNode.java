@@ -42,8 +42,10 @@ public enum RapunzelStoryNode implements IStoryNode {
             RapunzelStoryNode::narrateAndDoHintAction_RapunzelSingenGehoert,
             TURM_GEFUNDEN
     ),
+    // STORY Automatisch dann freischalten, wenn der SC vom Brunnen erstmals zurückkehrt und es
+    //  Tag ist etc., so dass der SC der Zauberin auf jeden Fall einmal im Wald begegnet
     // Dies wird durch checkAndAdvanceIfAppropriate() automatisch freigeschaltet.
-    // Tipps dafür wäre sinnvoll
+    // Tipps dafür wäre nicht sinnvoll
     ZAUBERIN_MACHT_RAPUNZELBESUCHE(),
     ZAUBERIN_AUF_TURM_WEG_GETROFFEN(10, VOR_DEM_ALTEN_TURM,
             RapunzelStoryNode::narrateAndDoHintAction_ZauberinAufTurmWegGefunden,
