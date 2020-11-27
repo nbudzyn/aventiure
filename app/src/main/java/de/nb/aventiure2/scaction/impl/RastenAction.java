@@ -66,8 +66,9 @@ public class RastenAction extends AbstractScAction {
 
     @Override
     public void narrateAndDo() {
-        // FIXME (Alternative zum Warten) Ab einem Punkt, wo man davon ausgehen kann, dass der Spieler
-        //  bewusst rastet, um die Frau zu beobachten, sollte die Frau nach 4x Rasten gekommen
+        // FIXME Ab einem Punkt, wo man davon ausgehen kann, dass der Spieler
+        //  bewusst rastet, um die Frau zu beobachten, sollte die Frau nach 4x Rasten
+        //  oder 4x Warten gekommen
 
         //  FIXME (Alternative zum Warten)  mehrere verschiedenen bestätigende Texte, dass sich das Rasten lohnt
         //   (damit der Spieler nicht zu bald aufgibt).

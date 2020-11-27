@@ -85,8 +85,8 @@ public class WartenAction<LIVGO extends IDescribableGO & ILocatableGO & ILivingB
     @Override
     public void narrateAndDo() {
         // FIXME Aktion
-        //  - Die Aktion muss irgendwie erkennen, dass die Frau gekommen ist.
-        //  - Man muss allerdings vermeiden, dass sehr viele kurze Texte gedruckt werden!
+        //  - Vielleicht wollen wir vermeiden, dass sehr viele kurze Texte gedruckt werden?
+        //    (Ist das überhaupt ein Problem?)
         //  - Der Text ("Du wartest sehr lange. Die Vägel singen über dir, und allmählich wirst du
         //    hungrig. Endlich kommt...") sollte vielleicht erst am Ende erzeugt werden. Er müsste
         //    dann aber aLles berücksichtigen, was zwischenzeitlich passiert ist.

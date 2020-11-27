@@ -261,7 +261,8 @@ public enum RapunzelStoryNode implements IStoryNode {
             alt.add(paragraph("Ob der Turm wohl bewohnt ist?"),
                     paragraph("Eine längere Rast würde dir sicher guttun"));
 
-            // FIXME ab dem zb 3. Mal deutlichere Hinweise länger Rasten
+            // FIXME ab dem zb 3. Mal deutlichere Hinweise länger Rasten - sofern das
+            //  Warten nicht ohnehin lang genug ist.
         } else {
             alt.add(paragraph(
                     "Dir kommt noch einmal der alte Turm auf der Hügelkuppe "
