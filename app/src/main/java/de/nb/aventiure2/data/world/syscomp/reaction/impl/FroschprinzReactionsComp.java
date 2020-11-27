@@ -83,15 +83,16 @@ public class FroschprinzReactionsComp
 
     private void onSCLeave(final ILocationGO from,
                            @Nullable final ILocationGO to) {
-        if (locationComp.hasRecursiveLocation(SPIELER_CHARAKTER) ||
-                !locationComp.hasRecursiveLocation(from)) {
-            // Spieler lässt den Frosch nicht zurück
+        if (locationComp.hasRecursiveLocation(SPIELER_CHARAKTER)) {
+            // Spieler nimmt den Frosch mit
+            onSCLeaveMitFroschprinz(from, to);
+            return;
+        }
 
-            if (locationComp.hasRecursiveLocation(SPIELER_CHARAKTER)) {
-                // Spieler nimmt den Frosch mit
-                onSCLeaveMitFroschprinz(from, to);
-                return;
-            }
+        if (!locationComp.hasSameUpperMostLocationAs(from)
+                || to == null
+                || locationComp.hasSameUpperMostLocationAs(to)) {
+            // Spieler lässt den Frosch nicht zurück
 
             return;
         }

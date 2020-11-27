@@ -146,8 +146,13 @@ public class MainActivity extends AppCompatActivity {
             }
 
             if (scrollAmount > 0) {
-                final int scrollDuration = calcScrollDuration(
-                        scrollAmount / narrationScrollView.getPaddingBottom());
+                final int scrollDuration;
+                if (narrationTextViewWasScrolledToBottom) {
+                    scrollDuration = calcScrollDuration(
+                            scrollAmount / narrationScrollView.getPaddingBottom());
+                } else {
+                    scrollDuration = 300;
+                }
 
                 narrationScrollViewAnimator = ObjectAnimator
                         .ofInt(narrationScrollView, "scrollY", targetScrollY)
