@@ -107,7 +107,7 @@ public class FroschprinzReactionsComp
                                     + "als er kann, du hörst nicht darauf"
                             // FIXME "Du hörst ihn gar nicht mehr" statt "Du hörst nicht darauf"?
                             //  Möglichst keine Bevormundung, sondern dem Benutzer Freiheit
-                            //  suggerieren. - Außerdem FIXME hasSameUppermost...() verwenden! Sonst Problem beim ins-Bett-legen!
+                            //  suggerieren.
                     )
                             .undWartest(),
                     neuerSatz("„Halt!“, ruft der Frosch dir nach, „nimm mich mit!“")
