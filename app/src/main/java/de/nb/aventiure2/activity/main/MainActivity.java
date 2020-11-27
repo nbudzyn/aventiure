@@ -16,6 +16,7 @@ import android.view.WindowManager;
 import android.widget.ScrollView;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
@@ -106,13 +107,72 @@ public class MainActivity extends AppCompatActivity {
                 narrationTextView.getText() == null ? "" :
                         narrationTextView.getText().toString();
 
+        final int oldNarrationTextViewBottom = narrationTextView.getBottom();
+        final int oldScrollY = narrationScrollView.getScrollY();
+        final int oldTextHeight =
+                Math.max(
+                        narrationTextView.getLineHeight() * narrationTextView.getLineCount(),
+                        0);
+        final boolean narrationTextViewWasScrolledToBottom =
+                !narrationScrollView.canScrollVertically(1);
+
+        narrationTextView.setText(buildNarrationSpannableString(newText, oldText));
+
+        narrationScrollView.post(() -> {
+            int scrollAmount;
+            final int targetScrollY;
+            if (narrationTextViewWasScrolledToBottom) {
+                scrollAmount =
+                        narrationTextView.getBottom() - oldNarrationTextViewBottom;
+                final int maxScroll =
+                        Math.min(narrationScrollView.getHeight()
+                                        - 2 * narrationScrollView.getPaddingBottom(),
+                                oldTextHeight)
+                                // weil noch Text der aktuellen Zeile hinzugefügt werden könnte
+                                - narrationTextView.getLineHeight();
+
+                if (scrollAmount > maxScroll) {
+                    scrollAmount = maxScroll;
+                }
+
+                targetScrollY = oldScrollY + scrollAmount;
+            } else {
+                //  Wenn wir ohnehin schon nicht am Ende waren, scrollen wir bis zum
+                // Ende durch.
+                targetScrollY = narrationTextView.getBottom() -
+                        narrationScrollView.getHeight()
+                        + narrationScrollView.getPaddingBottom();
+                scrollAmount = targetScrollY - narrationScrollView.getScrollY();
+            }
+
+            if (scrollAmount > 0) {
+                final int scrollDuration = calcScrollDuration(
+                        scrollAmount / narrationScrollView.getPaddingBottom());
+
+                narrationScrollViewAnimator = ObjectAnimator
+                        .ofInt(narrationScrollView, "scrollY", targetScrollY)
+                        .setDuration(scrollDuration);
+                narrationScrollViewAnimator.setAutoCancel(true);
+                narrationScrollViewAnimator.start();
+            }
+        });
+    }
+
+    private static int calcScrollDuration(final float scrollRatio) {
+        if (scrollRatio <= 0) {
+            return 0;
+        }
+
+        return (int) (100 * scrollRatio);
+    }
+
+    @NonNull
+    private SpannableString buildNarrationSpannableString(final String newText,
+                                                          final String oldText) {
         final SpannableString ss = new SpannableString(newText);
 
-        final ForegroundColorSpan fscOld = new ForegroundColorSpan(
-                getResources().getColor(R.color.colorOldNarration, getTheme()));
-
-        final ForegroundColorSpan fscNew = new ForegroundColorSpan(
-                getResources().getColor(R.color.colorNewNarration, getTheme()));
+        final ForegroundColorSpan fscOld = buildForegroundColorSpan(R.color.colorOldNarration);
+        final ForegroundColorSpan fscNew = buildForegroundColorSpan(R.color.colorNewNarration);
 
         if (newText.startsWith(oldText)) {
             ss.setSpan(fscOld, 0, oldText.length(), Spanned.SPAN_INCLUSIVE_INCLUSIVE);
@@ -121,12 +181,12 @@ public class MainActivity extends AppCompatActivity {
         } else {
             ss.setSpan(fscNew, 0, newText.length(), Spanned.SPAN_INCLUSIVE_INCLUSIVE);
         }
+        return ss;
+    }
 
-        narrationTextView.setText(ss);
-        final int scrollDuration = calcScrollDuration(oldText, newText);
-
-        // FIXME Neuen Text nicht rausscrollen lassen
-        scrollToBottom(scrollDuration);
+    @NonNull
+    private ForegroundColorSpan buildForegroundColorSpan(final int p) {
+        return new ForegroundColorSpan(getResources().getColor(p, getTheme()));
     }
 
     @Override
@@ -169,33 +229,6 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    private static int calcScrollDuration(final CharSequence oldText,
-                                          final CharSequence newText) {
-        if (oldText.length() == 0) {
-            return 0;
-        }
-
-        return (newText.length() - oldText.length()) * 5;
-    }
-
-    private void scrollToBottom(final int scrollDuration) {
-        narrationScrollView.post(() -> {
-            final int top = narrationTextView.getBottom() -
-                    narrationScrollView.getHeight()
-                    + narrationScrollView.getPaddingBottom();
-
-            if (scrollDuration <= 0) {
-                narrationScrollView.fullScroll(ScrollView.FOCUS_DOWN);
-            } else {
-                narrationScrollViewAnimator = ObjectAnimator
-                        .ofInt(narrationScrollView, "scrollY", top)
-                        .setDuration(scrollDuration);
-                narrationScrollViewAnimator.setAutoCancel(true);
-                narrationScrollViewAnimator.start();
-            }
-        });
-    }
-
     private void createActionsRecyclerView() {
         final RecyclerView actionsRecyclerView = findViewById(R.id.recyclerView);
         actionsRecyclerView.addItemDecoration(
@@ -213,7 +246,7 @@ public class MainActivity extends AppCompatActivity {
      * @param dp A value in dp (density independent pixels) unit. Which we need to convert into pixels
      * @return A float value to represent px equivalent to dp depending on device density
      */
-    public int convertDpToPixel(final float dp) {
+    private int convertDpToPixel(final float dp) {
         return Math.round(
                 dp * ((float) getResources().getDisplayMetrics().densityDpi /
                         DisplayMetrics.DENSITY_DEFAULT));
