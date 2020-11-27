@@ -42,6 +42,7 @@ class FeelingsPCD extends AbstractPersistentComponentData {
 
     @NonNull
     @Ignore
+    private
     Map<GameObjectId, Map<FeelingTowardsType, Float>> feelingsTowards;
 
     FeelingsPCD(final GameObjectId gameObjectId,
@@ -204,13 +205,14 @@ class FeelingsPCD extends AbstractPersistentComponentData {
         muedigkeitsData =
                 muedigkeitsData
                         .withTemporaereMinimalmuedigkeit(
+                                now,
                                 maxTemporaereMinimalmuedigkeit)
                         .withTemporaerMuedeBis(maxTemporaerMuedeBis);
 
         updateMuedigkeit(now, scActionStepCount, muedigkeitGemaessBiorhythmus);
     }
 
-    public int getMuedigkeit() {
+    int getMuedigkeit() {
         return muedigkeitsData.getMuedigkeit();
     }
 
@@ -253,7 +255,7 @@ class FeelingsPCD extends AbstractPersistentComponentData {
         return now.isBefore(getAusschlafenEffektHaeltVorBis());
     }
 
-    public AvDateTime getAusschlafenEffektHaeltVorBis() {
+    private AvDateTime getAusschlafenEffektHaeltVorBis() {
         return muedigkeitsData.getAusschlafenEffektHaeltVorBis();
     }
 
@@ -272,7 +274,7 @@ class FeelingsPCD extends AbstractPersistentComponentData {
         setChanged();
     }
 
-    public void resetNextMuedigkeitshinweisActionStepCount(final int scActionStepCount) {
+    void resetNextMuedigkeitshinweisActionStepCount(final int scActionStepCount) {
         muedigkeitsData =
                 muedigkeitsData.withNextHinweisActionStepCount(
                         MuedigkeitsData.calcNextHinweisActionStepCount(

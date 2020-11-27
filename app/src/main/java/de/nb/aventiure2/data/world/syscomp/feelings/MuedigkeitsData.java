@@ -70,7 +70,7 @@ public class MuedigkeitsData {
         }
     }
 
-    public static int calcNextHinweisActionStepCount(
+    static int calcNextHinweisActionStepCount(
             final int scActionStepCount, final int muedigkeit) {
         switch (muedigkeit) {
             case FeelingIntensity.NEUTRAL:
@@ -167,10 +167,16 @@ public class MuedigkeitsData {
                 temporaerMuedeBis, temporaereMinimalmuedigkeit);
     }
 
-    MuedigkeitsData withTemporaereMinimalmuedigkeit(final int temporaereMinimalmuedigkeit) {
+    MuedigkeitsData withTemporaereMinimalmuedigkeit(
+            final AvDateTime now,
+            final int temporaereMinimalmuedigkeit) {
         return new MuedigkeitsData(muedigkeit,
                 nextHinweisActionStepCount,
-                zuletztAusgeschlafen, ausschlafenEffektHaeltVorBis,
+                zuletztAusgeschlafen,
+                // Der ausgeschlafen-Effekt ist damit verflogen.
+                AvDateTime.earliest(
+                        ausschlafenEffektHaeltVorBis,
+                        now.minus(AvTimeSpan.secs(1))),
                 temporaerMuedeBis, temporaereMinimalmuedigkeit);
     }
 
