@@ -161,7 +161,7 @@ public class StoryWebReactionsComp
             return;
         }
 
-        if (loadSC().locationComp().hasSameUpperMostLocationAs(to) &&
+        if (world.hasSameUpperMostLocationAsSC(to) &&
                 !world.isOrHasRecursiveLocation(to, DRAUSSEN_VOR_DEM_SCHLOSS)) {
             reachStoryNode(RapunzelStoryNode.ZAUBERIN_AUF_TURM_WEG_GETROFFEN);
         }

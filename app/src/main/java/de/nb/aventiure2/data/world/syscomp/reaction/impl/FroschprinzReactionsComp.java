@@ -90,7 +90,6 @@ public class FroschprinzReactionsComp
         }
 
         if (!locationComp.hasSameUpperMostLocationAs(from)
-                || to == null
                 || locationComp.hasSameUpperMostLocationAs(to)) {
             // Spieler lässt den Frosch nicht zurück
 

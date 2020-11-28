@@ -7,16 +7,16 @@ import de.nb.aventiure2.data.world.time.*;
 
 @Immutable
 class MovementStep {
-    private final GameObjectId from;
-    private final GameObjectId to;
+    private final GameObjectId fromId;
+    private final GameObjectId toId;
     private final AvDateTime startTime;
     private final AvTimeSpan expDuration;
 
-    MovementStep(final GameObjectId from, final GameObjectId to,
+    MovementStep(final GameObjectId fromId, final GameObjectId toId,
                  final AvDateTime startTime,
                  final AvTimeSpan expDuration) {
-        this.from = from;
-        this.to = to;
+        this.fromId = fromId;
+        this.toId = toId;
         this.startTime = startTime;
         this.expDuration = expDuration;
     }
@@ -25,12 +25,12 @@ class MovementStep {
         return startTime.plus(expDuration);
     }
 
-    public GameObjectId getFrom() {
-        return from;
+    GameObjectId getFromId() {
+        return fromId;
     }
 
-    public GameObjectId getTo() {
-        return to;
+    GameObjectId getToId() {
+        return toId;
     }
 
     AvDateTime getStartTime() {

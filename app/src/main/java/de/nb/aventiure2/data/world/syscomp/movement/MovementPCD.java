@@ -9,6 +9,8 @@ import androidx.room.Ignore;
 import de.nb.aventiure2.data.world.base.AbstractPersistentComponentData;
 import de.nb.aventiure2.data.world.base.GameObjectId;
 
+import static de.nb.aventiure2.data.world.syscomp.movement.MovementPCD.PauseForSCAction.UNPAUSED;
+
 /**
  * Mutable - and therefore persistent - data of the {@link MovementPCD} component.
  */
@@ -55,6 +57,15 @@ public class MovementPCD extends AbstractPersistentComponentData {
         super(gameObjectId);
         this.targetLocationId = targetLocationId;
         this.currentStep = currentStep;
+    }
+
+    /**
+     * Beendet die aktuelle Bewegung.
+     */
+    void stopMovement() {
+        setTargetLocationId(null);
+        setCurrentStep(null);
+        setPauseForSCAction(UNPAUSED);
     }
 
     @Nullable

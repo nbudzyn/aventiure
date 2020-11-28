@@ -130,23 +130,18 @@ public class RapunzelsZauberinReactionsComp
                            @Nullable final ILocationGO scTo) {
         if (scTo != null && movementComp.isMoving() && locationComp.getLocationId() == null) {
             // Zauberin ist in Bewegung - und gerade im "Dazwischen"
-            @Nullable final ILocationGO currentMovementStepFrom =
-                    (ILocationGO) world.load(movementComp.getCurrentStepFrom());
-
-            @Nullable final ILocationGO currentMovementStepTo =
-                    (ILocationGO) world.load(movementComp.getCurrentStepTo());
 
             final boolean spielerHatZauberinUeberholt =
                     world.getLocationSystem().haveSameUpperMostLocation(
-                            scFrom, currentMovementStepFrom) &&
+                            scFrom, movementComp.getCurrentStepFrom()) &&
                             world.getLocationSystem().haveSameUpperMostLocation(
-                                    scTo, currentMovementStepTo);
+                                    scTo, movementComp.getCurrentStepTo());
 
             final boolean spielerUndZauberinKommenEinanderEntgegen =
                     world.getLocationSystem().haveSameUpperMostLocation(
-                            scFrom, currentMovementStepTo) &&
+                            scFrom, movementComp.getCurrentStepTo()) &&
                             world.getLocationSystem().haveSameUpperMostLocation(
-                                    scTo, currentMovementStepFrom);
+                                    scTo, movementComp.getCurrentStepFrom());
 
             if (spielerHatZauberinUeberholt || spielerUndZauberinKommenEinanderEntgegen) {
                 // Zauberin im "dazwischen" getroffen
@@ -157,7 +152,7 @@ public class RapunzelsZauberinReactionsComp
         if (locationComp.hasSameUpperMostLocationAs(scFrom)) {
             // Wenn die Zauberin sieht, wie der Spieler weggeht,
             // weiß sie nicht mehr, wo er ist.
-            if (scTo == null || !locationComp.hasSameUpperMostLocationAs(scTo)) {
+            if (!locationComp.hasSameUpperMostLocationAs(scTo)) {
                 mentalModelComp.unsetAssumedLocation(SPIELER_CHARAKTER);
             }
 
@@ -239,7 +234,7 @@ public class RapunzelsZauberinReactionsComp
         }
 
         if (!movementComp.isMoving()) {
-            movementComp.narrateAndDoScTrifftStehendesMovingGOInTo(scFrom, scTo);
+            movementComp.narrateAndDoScTrifftStehendesMovingGOInTo(scTo);
         }
     }
 

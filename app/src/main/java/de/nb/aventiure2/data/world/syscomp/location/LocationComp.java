@@ -116,17 +116,23 @@ public class LocationComp extends AbstractStatefulComponent<LocationPCD> {
 
     /**
      * Gibt zurück, ob sich diese beiden Game Objects dieselbe äußerste Location haben
-     * (z.B. denselben Raum).
+     * (z.B. denselben Raum). Wenn <code>otherId</code> <code>null</code> ist, gibt
+     * * diese Methode immer <code>null</code> zurück.
      */
-    public boolean hasSameUpperMostLocationAs(final GameObjectId otherId) {
+    public boolean hasSameUpperMostLocationAs(@Nullable final GameObjectId otherId) {
+        if (otherId == null) {
+            return false;
+        }
+
         return hasSameUpperMostLocationAs(world.load(otherId));
     }
 
     /**
      * Gibt zurück, ob sich diese beiden Game Objects dieselbe äußerste Location haben
-     * (z.B. denselben Raum).
+     * (z.B. denselben Raum). Wenn <code>other</code> <code>null</code> ist, gibt
+     * diese Methode immer <code>null</code> zurück.
      */
-    public boolean hasSameUpperMostLocationAs(final IGameObject other) {
+    public boolean hasSameUpperMostLocationAs(@Nullable final IGameObject other) {
         ILocationGO otherUpperMostLocation = null;
         if (other instanceof ILocationGO) {
             otherUpperMostLocation = (ILocationGO) other;

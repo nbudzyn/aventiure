@@ -13,6 +13,7 @@ import javax.annotation.CheckReturnValue;
 import de.nb.aventiure2.data.database.AvDatabase;
 import de.nb.aventiure2.data.narration.Narrator;
 import de.nb.aventiure2.data.world.base.GameObjectId;
+import de.nb.aventiure2.data.world.base.IGameObject;
 import de.nb.aventiure2.data.world.gameobject.*;
 import de.nb.aventiure2.data.world.syscomp.location.ILocatableGO;
 import de.nb.aventiure2.data.world.syscomp.reaction.impl.RapunzelsZauberinReactionsComp;
@@ -305,7 +306,7 @@ public enum RapunzelStoryNode implements IStoryNode {
             // FIXME Mehr Hinweise, dass man die magere Frau heimlich beobachten sollte
         }
 
-        if (loadZauberin(world).locationComp().hasSameUpperMostLocationAs(SPIELER_CHARAKTER) &&
+        if (world.hasSameUpperMostLocationAsSC((IGameObject) loadZauberin(world)) &&
                 // Vor dem Schloss fällt sie dem SC nicht auf
                 !loadZauberin(world).locationComp()
                         .hasRecursiveLocation(DRAUSSEN_VOR_DEM_SCHLOSS)) {

@@ -344,12 +344,12 @@ public class SimpleMovementNarrator implements IMovementNarrator {
             final FROM from, final ILocationGO to,
             @Nullable final SpatialConnection spatialConnection,
             final NumberOfWays numberOfWaysIn) {
-        // FIXME Hier gibt es einen Bug: SC setzt sich in den Schatten der Bäume
-        //  (Teil von VOR DEM TURM), Zauberin kommt ->
-        //  "Die Zauberin kommt dir entgegen". Naja... Nein, man ist ja im gleichen
-        //  Hauptraum geblieben!
-
-        if (loadSC().memoryComp().getLastAction().is(BEWEGEN)) {
+        if (loadSC().memoryComp().getLastAction().is(BEWEGEN) &&
+                // Der SC hat sich nicht nur im selben uppermost-Raum bewegt
+                !world.hasSameUpperMostLocationAsSC(
+                        loadSC().locationComp().getLastLocation()
+                )
+        ) {
             @Nullable final ILocationGO scLastLocation =
                     loadSC().locationComp().getLastLocation();
 

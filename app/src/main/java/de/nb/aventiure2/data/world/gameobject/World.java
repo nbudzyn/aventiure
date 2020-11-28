@@ -517,7 +517,7 @@ public class World {
      * und gibt sie zurück -
      * nur Gegenstände, die eine Beschreibung haben.
      */
-    public <LOCATABLE_DESC_LOCATION extends ILocatableGO & IDescribableGO & ILocationGO>
+    private <LOCATABLE_DESC_LOCATION extends ILocatableGO & IDescribableGO & ILocationGO>
     ImmutableList<LOCATABLE_DESC_LOCATION> loadDescribableNonLivingLocationRecursiveInventory(
             final GameObjectId inventoryHolderId) {
         return filterLocation(
@@ -820,10 +820,10 @@ public class World {
      * Gibt eine beschreibende Nominalphrase zurück, die das <code>describable</code>
      * aus Sicht des <code>observer</code>s beschreibt, ggf. kurz-
      */
-    public @NonNull
-    static Nominalphrase getPOVDescription(final IGameObject observer,
-                                           final IDescribableGO describable,
-                                           final boolean shortIfKnown) {
+    @NonNull
+    private static Nominalphrase getPOVDescription(final IGameObject observer,
+                                                   final IDescribableGO describable,
+                                                   final boolean shortIfKnown) {
         if (observer instanceof IHasMemoryGO) {
             return getPOVDescription((IHasMemoryGO) observer, describable,
                     shortIfKnown);
@@ -837,6 +837,22 @@ public class World {
                                                    final boolean shortIfKnown) {
         return describable.descriptionComp().getDescription(
                 observer.memoryComp().isKnown(describable), shortIfKnown);
+    }
+
+    public final boolean hasSameUpperMostLocationAsSC(@Nullable final GameObjectId gameObjectId) {
+        if (gameObjectId == null) {
+            return false;
+        }
+
+        return hasSameUpperMostLocationAsSC(load(gameObjectId));
+    }
+
+    public final boolean hasSameUpperMostLocationAsSC(@Nullable final IGameObject gameObject) {
+        if (gameObject == null) {
+            return false;
+        }
+
+        return loadSC().locationComp().hasSameUpperMostLocationAs(gameObject);
     }
 
     /**

@@ -46,7 +46,7 @@ import static de.nb.aventiure2.german.description.DescriptionBuilder.satzanschlu
 @ParametersAreNonnullByDefault
 public class HochwerfenAction<OBJ extends IDescribableGO & ILocatableGO>
         extends AbstractScAction {
-    private  static final String HOCHWERFEN_ACTION_WIEDERHOLUNG = "HochwerfenAction_Wiederholung";
+    private static final String HOCHWERFEN_ACTION_WIEDERHOLUNG = "HochwerfenAction_Wiederholung";
     @NonNull
     private final OBJ object;
 
@@ -173,7 +173,7 @@ public class HochwerfenAction<OBJ extends IDescribableGO & ILocatableGO>
         // fallen lassen, NACHDEM der Frosch schon Dinge hochgeholt hat.
         // Dann ist die Kugel jetzt WEG - PECH.
         narrateAndDoObjectFaelltSofortInDenBrunnen();
-        if (froschprinz.locationComp().hasSameUpperMostLocationAs(SPIELER_CHARAKTER)) {
+        if (world.hasSameUpperMostLocationAsSC(froschprinz)) {
             return;
         }
 

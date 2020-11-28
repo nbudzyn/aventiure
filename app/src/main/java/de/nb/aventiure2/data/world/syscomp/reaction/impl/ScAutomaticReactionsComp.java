@@ -76,15 +76,15 @@ public class ScAutomaticReactionsComp
 
     @Override
     public void onRuf(final ILocatableGO rufer, final Ruftyp ruftyp) {
-        if (loadSC().locationComp().hasSameUpperMostLocationAs(rufer)) {
+        if (world.hasSameUpperMostLocationAsSC(rufer)) {
             waitingComp.stopWaiting();
         }
     }
 
     @Override
     public void onEssen(final IGameObject gameObject) {
-        if (feelingsComp.getHunger() == HUNGRIG &&
-                loadSC().locationComp().hasSameUpperMostLocationAs(gameObject)) {
+        if (feelingsComp.getHunger() == HUNGRIG
+                && world.hasSameUpperMostLocationAsSC(gameObject)) {
             waitingComp.stopWaiting();
         }
     }

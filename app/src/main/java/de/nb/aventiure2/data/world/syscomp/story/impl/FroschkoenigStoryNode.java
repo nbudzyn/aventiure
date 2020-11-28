@@ -186,7 +186,7 @@ public enum FroschkoenigStoryNode implements IStoryNode {
 
         final ILocatableGO goldeneKugel = (ILocatableGO) world.load(GOLDENE_KUGEL);
 
-        if (!goldeneKugel.locationComp().hasSameUpperMostLocationAs(SPIELER_CHARAKTER)) {
+        if (!world.hasSameUpperMostLocationAsSC(goldeneKugel)) {
             alt.addAll(altKugelVermissen());
         } else {
             if (db.nowDao().now().getTageszeit().equals(NACHTS)) {
@@ -211,7 +211,7 @@ public enum FroschkoenigStoryNode implements IStoryNode {
         final ImmutableList.Builder<AbstractDescription<?>> alt = builder();
 
         final ILocatableGO goldeneKugel = (ILocatableGO) world.load(GOLDENE_KUGEL);
-        if (goldeneKugel.locationComp().hasSameUpperMostLocationAs(SPIELER_CHARAKTER)) {
+        if (world.hasSameUpperMostLocationAsSC(goldeneKugel)) {
             alt.add(du(PARAGRAPH,
                     "hast",
                     "Lust, einmal wieder mit deiner goldenen Kugel "
