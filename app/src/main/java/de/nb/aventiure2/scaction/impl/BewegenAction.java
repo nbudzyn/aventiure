@@ -618,7 +618,14 @@ public class BewegenAction<LOC_DESC extends ILocatableGO & IDescribableGO>
 
     @Override
     protected boolean isDefinitivWiederholung() {
-        return buildMemorizedAction().equals(sc.memoryComp().getLastAction());
+        return buildMemorizedAction().equals(sc.memoryComp().getLastAction())
+                && !isDefinitivDiskontinuitaet();
+    }
+
+    @Override
+    protected boolean isDefinitivFortsetzung() {
+        return sc.memoryComp().getLastAction().is(BEWEGEN)
+                && !isDefinitivDiskontinuitaet();
     }
 
     @Override

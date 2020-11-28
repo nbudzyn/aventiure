@@ -104,7 +104,7 @@ public class NehmenAction
         return ImmutableList.of();
     }
 
-    public static <LIVGO extends IDescribableGO & ILocatableGO & ILivingBeingGO,
+    private static <LIVGO extends IDescribableGO & ILocatableGO & ILivingBeingGO,
             TARGET_LOC extends IDescribableGO & ILocationGO & ILocatableGO>
     Collection<NehmenAction<LIVGO, TARGET_LOC>> buildFroschprinzActions(
             final AvDatabase db,
@@ -467,6 +467,11 @@ public class NehmenAction
     @Override
     protected boolean isDefinitivWiederholung() {
         return buildMemorizedAction().equals(sc.memoryComp().getLastAction());
+    }
+
+    @Override
+    protected boolean isDefinitivFortsetzung() {
+        return false;
     }
 
     @Override

@@ -70,8 +70,8 @@ public class HeulenAction extends AbstractScAction {
 
     @Override
     public void narrateAndDo() {
-        if (isDefinitivWiederholung()) {
-            narrateAndDoWiederholung();
+        if (isDefinitivFortsetzung()) {
+            narrateAndDoWiederholungFortsetzung();
             return;
         }
 
@@ -83,7 +83,7 @@ public class HeulenAction extends AbstractScAction {
             IHasStateGO<FroschprinzState> &
             ITalkerGO<FroschprinzTalkingComp> &
             ILivingBeingGO>
-    void narrateAndDoWiederholung() {
+    void narrateAndDoWiederholungFortsetzung() {
         final F froschprinz = (F) world.load(FROSCHPRINZ);
 
         if (froschprinz.locationComp().hasRecursiveLocation(
@@ -147,6 +147,11 @@ public class HeulenAction extends AbstractScAction {
 
     @Override
     protected boolean isDefinitivWiederholung() {
+        return false;
+    }
+
+    @Override
+    protected boolean isDefinitivFortsetzung() {
         return sc.memoryComp().lastActionWas(buildMemorizedAction());
     }
 

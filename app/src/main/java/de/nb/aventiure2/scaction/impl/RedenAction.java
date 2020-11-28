@@ -208,6 +208,13 @@ public class RedenAction<TALKER extends IDescribableGO & ILocatableGO & ITalkerG
     }
 
     @Override
+    protected boolean isDefinitivFortsetzung() {
+        // Man sagt ja jedes Mal etwas anderes, kommt von einem
+        // Verhandlungsschritt zum nächsten etc.
+        return false;
+    }
+
+    @Override
     protected boolean isDefinitivDiskontinuitaet() {
         return talker.talkingComp().isDefinitivDiskontinuitaet();
     }

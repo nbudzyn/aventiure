@@ -368,6 +368,11 @@ public class AblegenAction
     }
 
     @Override
+    protected boolean isDefinitivFortsetzung() {
+        return false;
+    }
+
+    @Override
     protected boolean isDefinitivDiskontinuitaet() {
         return
                 // Es ist oft keine Diskontinuität, wenn

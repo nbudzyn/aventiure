@@ -1,5 +1,7 @@
 package de.nb.aventiure2.german.description;
 
+import androidx.annotation.Nullable;
+
 import com.google.common.collect.ImmutableCollection;
 import com.google.common.collect.ImmutableList;
 
@@ -67,6 +69,8 @@ public class DescriptionUmformulierer {
                 return drueckeDiskontinuitaetAus(desc);
             case WIEDERHOLUNG:
                 return drueckeWiederholungAus(desc);
+            case FORTSETZUNG:
+                return drueckeFortsetzungAus(desc);
             case VERSTEHT_SICH_VON_SELBST:
                 return ImmutableList.of(desc);
             default:
@@ -186,6 +190,65 @@ public class DescriptionUmformulierer {
         return alt.build();
     }
 
+    private static ImmutableCollection<AbstractDescription<?>> drueckeFortsetzungAus(
+            final AbstractDescription<?> desc) {
+        final ImmutableList.Builder<AbstractDescription<?>> alt = builder();
+
+        if (!(desc instanceof AbstractDuDescription)) {
+            alt.add(duMitPraefix("gibst", "aber nicht auf:",
+                    desc, false));
+            alt.add(duMitPraefix("versuchst", "es weiter:",
+                    desc, false));
+            alt.add(duMitPraefix("versuchst", "es noch weiter:",
+                    desc, false));
+            alt.add(duMitPraefix("versuchst", "es weiterhin:",
+                    desc, false));
+            alt.add(duMitPraefix("lässt", "dich nicht entmutigen.",
+                    desc, false));
+        }
+
+        if (desc instanceof AbstractDuDescription) {
+            final AbstractDuDescription<?, ?> duDesc = (AbstractDuDescription<?, ?>) desc;
+
+            alt.add(duMitPraefixUndSatzanschluss(
+                    "gibst", "nicht auf",
+                    duDesc));
+
+            alt.add(duMitPraefixUndSatzanschluss(
+                    "gibst aber", "nicht auf",
+                    duDesc));
+
+            alt.add(duMitPraefixUndSatzanschluss(
+                    "versuchst", "es weiter",
+                    duDesc));
+
+            alt.add(duMitPraefixUndSatzanschluss(
+                    "versuchst", "es noch weiter",
+                    duDesc));
+
+            alt.add(duMitPraefixUndSatzanschluss(
+                    "versuchst", "es weiterhin",
+                    duDesc));
+
+            alt.add(duMitPraefixUndSatzanschluss(
+                    "versuchst", "es unverdrossen weiter",
+                    "unverdrossen",
+                    duDesc));
+
+            alt.add(duMitVorfeld("Immer noch", duDesc));
+
+            if (desc instanceof PraedikatDuDescription) {
+                final PraedikatDuDescription pDuDesc = (PraedikatDuDescription) duDesc;
+
+                alt.add(mitAdvAngabe(pDuDesc,
+                        new AdverbialeAngabeSkopusSatz("immer noch")));
+            }
+        }
+
+        return alt.build();
+    }
+
+
     private static AllgDescription mitPraefix(final String praefix,
                                               final AbstractDescription<?> desc) {
         return mitPraefix(praefix, desc, true);
@@ -240,7 +303,17 @@ public class DescriptionUmformulierer {
             final String praefixVerb,
             final String praefixRemainder,
             final AbstractDuDescription<?, ?> desc) {
-        return duMitPraefixUndSatzanschluss(praefixVerb, praefixRemainder, desc,
+        return duMitPraefixUndSatzanschluss(praefixVerb, praefixRemainder, null,
+                desc);
+    }
+
+    private static AbstractDuDescription<?, ?> duMitPraefixUndSatzanschluss(
+            final String praefixVerb,
+            final String praefixRemainder,
+            @Nullable final String praefixVorfeldSatzglied,
+            final AbstractDuDescription<?, ?> desc) {
+        return duMitPraefixUndSatzanschluss(praefixVerb, praefixRemainder, praefixVorfeldSatzglied,
+                desc,
                 desc.getDescriptionSatzanschlussOhneSubjekt());
     }
 
@@ -249,11 +322,22 @@ public class DescriptionUmformulierer {
             final String praefixRemainder,
             final AbstractDescription<?> desc,
             final String descSatzanschluss) {
+        return duMitPraefixUndSatzanschluss(
+                praefixVerb, praefixRemainder, null, desc, descSatzanschluss);
+    }
+
+    private static AbstractDuDescription<?, ?> duMitPraefixUndSatzanschluss(
+            final String praefixVerb,
+            final String praefixRemainder,
+            @Nullable final String praefixVorfeldSatzglied,
+            final AbstractDescription<?> desc,
+            final String descSatzanschluss) {
         return du(max(desc.getStartsNew(), PARAGRAPH),
                 praefixVerb,
                 praefixRemainder
                         + " und "
-                        + descSatzanschluss)
+                        + descSatzanschluss,
+                praefixVorfeldSatzglied)
                 .dann(desc.isDann())
                 .komma(desc.isKommaStehtAus())
                 .phorikKandidat(desc.getPhorikKandidat())

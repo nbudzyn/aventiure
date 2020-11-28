@@ -22,7 +22,6 @@ import static de.nb.aventiure2.data.narration.Narration.NarrationSource.REACTION
 import static de.nb.aventiure2.data.narration.Narration.NarrationSource.SC_ACTION;
 import static de.nb.aventiure2.data.world.time.AvTimeSpan.*;
 import static de.nb.aventiure2.german.description.Kohaerenzrelation.DISKONTINUITAET;
-import static de.nb.aventiure2.german.description.Kohaerenzrelation.WIEDERHOLUNG;
 
 /**
  * An action the player could choose.
@@ -142,7 +141,11 @@ public abstract class AbstractScAction implements IPlayerAction {
         }
 
         if (isDefinitivWiederholung()) {
-            return WIEDERHOLUNG;
+            return Kohaerenzrelation.WIEDERHOLUNG;
+        }
+
+        if (isDefinitivFortsetzung()) {
+            return Kohaerenzrelation.FORTSETZUNG;
         }
 
         return Kohaerenzrelation.VERSTEHT_SICH_VON_SELBST;
@@ -150,13 +153,27 @@ public abstract class AbstractScAction implements IPlayerAction {
 
     /**
      * Gibt zurück, ob der Benutzer dasselbe definitiv schon einmal getan und zwischendrin nichts
-     * anderes getan hat. (Es könnte zwischendrin durchaus Reaktionen von anderen Wesen
-     * gegeben haben.)
+     * anderes getan hat und dass es sich um eine Wiederholung (also einen zweiten / dritten...
+     * Versuch) handelt. (Es könnte zwischendrin durchaus Reaktionen von anderen Wesen gegeben haben.)
      * <p>
      * Ein Rückgabewert von {@code false} kann also bedeuten, dass der Benutzer definitiv
      * nicht dasselbe schon einmal getan hat - oder dass sich das System unsicher ist.
+     *
+     * @see #isDefinitivFortsetzung()
      */
-    abstract protected boolean isDefinitivWiederholung();
+    protected abstract boolean isDefinitivWiederholung();
+
+    /**
+     * Gibt zurück, ob der Benutzer dasselbe definitiv schon einmal getan und zwischendrin nichts
+     * anderes getan hat und dass es sich um eine Fortsetzung handelt (er wartet weiter o.Ä.).
+     * (Es könnte zwischendrin durchaus Reaktionen von anderen Wesen gegeben haben.)
+     * <p>
+     * Ein Rückgabewert von {@code false} kann also bedeuten, dass der Benutzer definitiv
+     * nicht dasselbe schon einmal getan hat - oder dass sich das System unsicher ist.
+     *
+     * @see #isDefinitivWiederholung()
+     */
+    protected abstract boolean isDefinitivFortsetzung();
 
     /**
      * Gibt zurück, ob diese Handlung definitiv eine <i>Diskontinuität</i> in der Erzählung

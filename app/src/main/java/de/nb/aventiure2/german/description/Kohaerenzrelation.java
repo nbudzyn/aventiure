@@ -12,7 +12,14 @@ public enum Kohaerenzrelation {
      */
     DISKONTINUITAET,
     /**
-     * Es liegt eine Wiederholung vor.
+     * Es liegt eine Wiederholung vor. Der SC macht eine Handlung noch einmal /
+     * versucht sie zum zweiten (dritten...) Mal. (Z.B.: Der SC hält jemandem, der etwas
+     * nicht angenommen hat, erneut etwas).
      */
-    WIEDERHOLUNG
+    WIEDERHOLUNG,
+    /**
+     * Es liegt eine Fortsetzung vor. Der SC setzt eine bereits begonnene Handlung
+     * fort. (Z.B.: Er wartet weiter.)
+     */
+    FORTSETZUNG
 }

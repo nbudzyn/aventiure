@@ -191,6 +191,11 @@ public class GebenAction<
     }
 
     @Override
+    protected boolean isDefinitivFortsetzung() {
+        return false;
+    }
+
+    @Override
     protected boolean isDefinitivDiskontinuitaet() {
         return false;
     }

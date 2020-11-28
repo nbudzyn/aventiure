@@ -60,9 +60,9 @@ public class RufenAction extends AbstractScAction {
         return res.build();
     }
 
-    public RufenAction(final AvDatabase db, final Narrator n, final World world,
-                       final ILocationGO location,
-                       final Ruftyp ruftyp) {
+    private RufenAction(final AvDatabase db, final Narrator n, final World world,
+                        final ILocationGO location,
+                        final Ruftyp ruftyp) {
         super(db, n, world);
         this.location = location;
         this.ruftyp = ruftyp;
@@ -104,6 +104,11 @@ public class RufenAction extends AbstractScAction {
     protected boolean isDefinitivWiederholung() {
         // Der Ruf-Typ wird derzeit nicht in der Aktion gespeichert (es gibt kein
         // Feld passenden Typs dafür, er hat ja keine GameObjectId).
+        return false;
+    }
+
+    @Override
+    protected boolean isDefinitivFortsetzung() {
         return false;
     }
 

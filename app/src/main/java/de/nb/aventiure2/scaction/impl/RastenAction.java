@@ -72,7 +72,7 @@ public class RastenAction extends AbstractScAction {
 
         //  FIXME (Alternative zum Warten)  mehrere verschiedenen bestätigende Texte, dass sich das Rasten lohnt
         //   (damit der Spieler nicht zu bald aufgibt).
-        if (isDefinitivWiederholung() &&
+        if (isDefinitivFortsetzung() &&
                 ((IHasStateGO<RapunzelState>) world.load(RAPUNZEL)).stateComp()
                         .hasState(SINGEND)) {
             narrateAndDoRapunzelZuhoeren();
@@ -176,12 +176,17 @@ public class RastenAction extends AbstractScAction {
 
     @Override
     protected boolean isDefinitivWiederholung() {
+        return false;
+    }
+
+    @Override
+    protected boolean isDefinitivFortsetzung() {
         return buildMemorizedAction().equals(sc.memoryComp().getLastAction());
     }
 
     @Override
     protected boolean isDefinitivDiskontinuitaet() {
-        if (isDefinitivWiederholung() && n.lastNarrationWasFromReaction()) {
+        if (isDefinitivFortsetzung() && n.lastNarrationWasFromReaction()) {
             // Der Spieler rastet weiter, obwohl andere Dinge passiert sind...
             return true;
         }

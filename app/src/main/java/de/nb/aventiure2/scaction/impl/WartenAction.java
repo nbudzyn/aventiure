@@ -139,11 +139,6 @@ public class WartenAction<LIVGO extends IDescribableGO & ILocatableGO & ILivingB
                     getAnaphPersPronWennMglSonstDescription(erwartet, true);
             n.narrateAlt(
                     DescriptionUmformulierer.drueckeAus(
-                            // FIXME Das führt zu ein paar unschönen Formulieren wie
-                            //  "Ein weiteres Mal wartest du auf...".
-                            //  Vielleicht sollte man zwischen WIEDERHOLUNG und
-                            //  FORTSETZUNG unterscheiden? Oder zwischen
-                            //  zählbaren und unzählbaren Aktionen?
                             kohaerenzrelation,
                             du(WARTEN
                                     .mitObj(anaph)
@@ -159,12 +154,17 @@ public class WartenAction<LIVGO extends IDescribableGO & ILocatableGO & ILivingB
 
     @Override
     protected boolean isDefinitivWiederholung() {
+        return false;
+    }
+
+    @Override
+    protected boolean isDefinitivFortsetzung() {
         return buildMemorizedAction().equals(sc.memoryComp().getLastAction());
     }
 
     @Override
     protected boolean isDefinitivDiskontinuitaet() {
-        if (isDefinitivWiederholung() && n.lastNarrationWasFromReaction()) {
+        if (isDefinitivFortsetzung() && n.lastNarrationWasFromReaction()) {
             // Der Spieler wartet weiter, obwohl andere Dinge passiert sind...
             return true;
         }

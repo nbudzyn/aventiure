@@ -287,6 +287,11 @@ public class SchlafenAction extends AbstractScAction {
     }
 
     @Override
+    protected boolean isDefinitivFortsetzung() {
+        return false;
+    }
+
+    @Override
     protected boolean isDefinitivDiskontinuitaet() {
         if (n.lastNarrationWasFromReaction()) {
             return false;

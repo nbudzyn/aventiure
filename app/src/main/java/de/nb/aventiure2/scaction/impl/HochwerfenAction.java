@@ -88,10 +88,10 @@ public class HochwerfenAction<OBJ extends IDescribableGO & ILocatableGO>
 
     @Override
     public void narrateAndDo() {
-        if (!isDefinitivWiederholung()) {
-            narrateAndDoErstesMal();
-        } else {
+        if (isDefinitivWiederholung()) {
             narrateAndDoWiederholung();
+        } else {
+            narrateAndDoErstesMal();
         }
 
         sc.memoryComp().setLastAction(buildMemorizedAction());
@@ -285,6 +285,11 @@ public class HochwerfenAction<OBJ extends IDescribableGO & ILocatableGO>
     @Override
     protected boolean isDefinitivWiederholung() {
         return buildMemorizedAction().equals(sc.memoryComp().getLastAction());
+    }
+
+    @Override
+    protected boolean isDefinitivFortsetzung() {
+        return false;
     }
 
     @Override
