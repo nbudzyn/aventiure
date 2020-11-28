@@ -337,25 +337,34 @@ public class MovementComp
                 from.spatialConnectionComp().getNumberOfWaysOut());
     }
 
-    public void narrateAndDoSCTrifftMovingGOInToOderImDazwischen(
+    public void narrateAndDoScTrifftMovingGOImDazwischen(
             @Nullable final ILocationGO scFrom,
             final ILocationGO scTo) {
-        narrateScTrifftMovingGOInToOderImDazwischen(scFrom, scTo);
+        narrateScTrifftMovingGOImDazwischen(scFrom, scTo);
+
+        world.loadSC().memoryComp().upgradeKnown(getGameObjectId());
+    }
+
+    public void narrateAndDoScTrifftStehendesMovingGOInTo(
+            @Nullable final ILocationGO scFrom,
+            final ILocationGO scTo) {
+        narrateScTrifftStehendesMovingGOInTo(scFrom, scTo);
 
         world.loadSC().memoryComp().upgradeKnown(getGameObjectId());
     }
 
     private <FROM extends ILocationGO & ISpatiallyConnectedGO>
-    void narrateScTrifftMovingGOInToOderImDazwischen(@Nullable final ILocationGO scFrom,
-                                                     final ILocationGO scTo) {
-        if (!isMoving()) {
-            movementNarrator.narrateScTrifftStehendesMovingGO(
-                    locationComp.getLocation() != null ?
-                            locationComp.getLocation() :
-                            scTo);
-            return;
-        }
+    void narrateScTrifftStehendesMovingGOInTo(@Nullable final ILocationGO scFrom,
+                                              final ILocationGO scTo) {
+        movementNarrator.narrateScTrifftStehendesMovingGO(
+                locationComp.getLocation() != null ?
+                        locationComp.getLocation() :
+                        scTo);
+    }
 
+    private <FROM extends ILocationGO & ISpatiallyConnectedGO>
+    void narrateScTrifftMovingGOImDazwischen(@Nullable final ILocationGO scFrom,
+                                             final ILocationGO scTo) {
         movementNarrator.narrateScTrifftMovingGOImDazwischen(
                 scFrom,
                 scTo,

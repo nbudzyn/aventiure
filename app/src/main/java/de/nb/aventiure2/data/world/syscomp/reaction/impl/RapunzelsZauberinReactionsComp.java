@@ -128,6 +128,32 @@ public class RapunzelsZauberinReactionsComp
 
     private void onSCLeave(final ILocationGO scFrom,
                            @Nullable final ILocationGO scTo) {
+        if (scTo != null && movementComp.isMoving() && locationComp.getLocationId() == null) {
+            // Zauberin ist in Bewegung - und gerade im "Dazwischen"
+            @Nullable final ILocationGO currentMovementStepFrom =
+                    (ILocationGO) world.load(movementComp.getCurrentStepFrom());
+
+            @Nullable final ILocationGO currentMovementStepTo =
+                    (ILocationGO) world.load(movementComp.getCurrentStepTo());
+
+            final boolean spielerHatZauberinUeberholt =
+                    world.getLocationSystem().haveSameUpperMostLocation(
+                            scFrom, currentMovementStepFrom) &&
+                            world.getLocationSystem().haveSameUpperMostLocation(
+                                    scTo, currentMovementStepTo);
+
+            final boolean spielerUndZauberinKommenEinanderEntgegen =
+                    world.getLocationSystem().haveSameUpperMostLocation(
+                            scFrom, currentMovementStepTo) &&
+                            world.getLocationSystem().haveSameUpperMostLocation(
+                                    scTo, currentMovementStepFrom);
+
+            if (spielerHatZauberinUeberholt || spielerUndZauberinKommenEinanderEntgegen) {
+                // Zauberin im "dazwischen" getroffen
+                movementComp.narrateAndDoScTrifftMovingGOImDazwischen(scFrom, scTo);
+            }
+        }
+
         if (locationComp.hasSameUpperMostLocationAs(scFrom)) {
             // Wenn die Zauberin sieht, wie der Spieler weggeht,
             // weiß sie nicht mehr, wo er ist.
@@ -179,39 +205,8 @@ public class RapunzelsZauberinReactionsComp
             mentalModelComp.setAssumedLocation(SPIELER_CHARAKTER, scTo);
         }
 
-        if (locationComp.getLocationId() == null && !movementComp.isMoving()) {
-            // Zauberin hat keinen Ort und ist auch nirgendwo "dazwischen", kann also auch nicht
-            // getroffen werden
-            return;
-        }
-
-        @Nullable final ILocationGO currentMovementStepFrom =
-                movementComp.isMoving() ?
-                        (ILocationGO) world.load(movementComp.getCurrentStepFrom()) :
-                        null;
-
-        @Nullable final ILocationGO currentMovementStepTo =
-                movementComp.isMoving() ?
-                        (ILocationGO) world.load(movementComp.getCurrentStepTo()) :
-                        null;
-
-        final boolean spielerHatZauberinUeberholt =
-                world.getLocationSystem().haveSameUpperMostLocation(
-                        scFrom, currentMovementStepFrom) &&
-                        world.getLocationSystem().haveSameUpperMostLocation(
-                                scTo, currentMovementStepTo);
-
-        final boolean spielerUndZauberinKommenEinanderEntgegen =
-                world.getLocationSystem().haveSameUpperMostLocation(
-                        scFrom, currentMovementStepTo) &&
-                        world.getLocationSystem().haveSameUpperMostLocation(
-                                scTo, currentMovementStepFrom);
-
-        if (!world.loadSC().locationComp().hasRecursiveLocation(locationComp.getLocationId()) &&
-                !spielerHatZauberinUeberholt &&
-                !spielerUndZauberinKommenEinanderEntgegen) {
-            // SC und Zauberin sind nicht am gleichen Ort und haben sich auch nicht
-            // "dazwischen" getroffen
+        if (!world.loadSC().locationComp().hasRecursiveLocation(locationComp.getLocationId())) {
+            // SC und Zauberin sind nicht am gleichen Ort
             return;
         }
 
@@ -243,10 +238,9 @@ public class RapunzelsZauberinReactionsComp
             return;
         }
 
-        // FIXME Es wäre besser, das onSCLeave() zu machen - nicht onEnter!
-        //  Denn dann werden die Gegenstandsbeschreibungen des neuen Raums erst
-        //  danach gedruckt!
-        movementComp.narrateAndDoSCTrifftMovingGOInToOderImDazwischen(scFrom, scTo);
+        if (!movementComp.isMoving()) {
+            movementComp.narrateAndDoScTrifftStehendesMovingGOInTo(scFrom, scTo);
+        }
     }
 
     @Override
