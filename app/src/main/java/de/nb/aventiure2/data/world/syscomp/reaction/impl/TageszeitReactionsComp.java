@@ -163,10 +163,10 @@ public class TageszeitReactionsComp
         switch (currentTageszeit) {
             case ABENDS:
                 n.narrateAlt(noTime(),
-                        neuerSatz(PARAGRAPH, "Allmählich wird es "
-                                + "abendlich dunkel"),
-                        neuerSatz(PARAGRAPH, "Der Tag neigt sich und der Abend beginnt"),
-                        neuerSatz(PARAGRAPH, "Der Tag neigt sich und der Abend bricht an"),
+                        neuerSatz(PARAGRAPH, "Allmählich wird es abendlich dunkel"),
+                        neuerSatz(PARAGRAPH, "Der Tag neigt sich und langsam beginnt der Abend"),
+                        neuerSatz(PARAGRAPH, "Der Tag neigt sich und allmählich bricht "
+                                + "der Abend an"),
                         neuerSatz(PARAGRAPH, "Die Abenddämmerung beginnt"),
                         neuerSatz(PARAGRAPH, "Inzwischen steht die Sonne schon tief")
                         // STORY Noch ein paar Texte!

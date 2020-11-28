@@ -32,7 +32,7 @@ public class StoringPlaceComp extends AbstractStatelessComponent {
      */
     private final boolean dauerhaftBeleuchtet;
 
-    // FIXME: Ob der Raum "drau0en" ist (-> Tageszeiten / Wetterphönomene...)
+    // FIXME: Ob der Raum "draußen" ist (-> Tageszeiten / Wetterphönomene...)
 
     public StoringPlaceComp(final GameObjectId id,
                             final AvDatabase db,

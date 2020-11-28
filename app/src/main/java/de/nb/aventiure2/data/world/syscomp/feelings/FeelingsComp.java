@@ -328,26 +328,26 @@ public class FeelingsComp extends AbstractStatefulComponent<FeelingsPCD> {
             case FeelingIntensity.MERKLICH:
             case FeelingIntensity.DEUTLICH:
                 n.narrateAlt(noTime(),
-                        du(PARAGRAPH,
+                        du(SENTENCE,
                                 "solltest", "etwas schlafen")
                                 .beendet(PARAGRAPH),
-                        du(PARAGRAPH,
+                        du(SENTENCE,
                                 "kannst", "gewiss eine Mütze Schlaf gebrauchen!")
                                 .beendet(PARAGRAPH),
                         paragraph("Ein Bett!"));
                 return;
             case FeelingIntensity.STARK:
                 n.narrateAlt(noTime(),
-                        du(PARAGRAPH,
+                        du(SENTENCE,
                                 "musst", "schlafen")
                                 .beendet(PARAGRAPH),
-                        du(PARAGRAPH,
+                        du(SENTENCE,
                                 "willst", "schlafen")
                                 .beendet(PARAGRAPH),
-                        neuerSatz(PARAGRAPH,
+                        neuerSatz(SENTENCE,
                                 "es ist Zeit, schlafen zu gehen!")
                                 .beendet(PARAGRAPH),
-                        neuerSatz(PARAGRAPH,
+                        neuerSatz(SENTENCE,
                                 "Zeit, sich schlafen zu legen.")
                                 .beendet(PARAGRAPH)
                 );
@@ -360,7 +360,7 @@ public class FeelingsComp extends AbstractStatefulComponent<FeelingsPCD> {
                                         + "denkst du bei dir"),
                         neuerSatz(SENTENCE,
                                 "vielleicht könntest du hier ungestört schlafen?"),
-                        neuerSatz(PARAGRAPH,
+                        neuerSatz(SENTENCE,
                                 "Höchste Zeit, schlafen zu gehen!")
                                 .beendet(PARAGRAPH)
                 );

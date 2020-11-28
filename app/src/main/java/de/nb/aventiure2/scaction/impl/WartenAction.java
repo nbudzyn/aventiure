@@ -161,11 +161,6 @@ public class WartenAction<LIVGO extends IDescribableGO & ILocatableGO & ILivingB
 
     @Override
     protected boolean isDefinitivDiskontinuitaet() {
-        if (isDefinitivFortsetzung() && n.lastNarrationWasFromReaction()) {
-            // Der Spieler wartet weiter, obwohl andere Dinge passiert sind...
-            return true;
-        }
-
         return false;
     }
 

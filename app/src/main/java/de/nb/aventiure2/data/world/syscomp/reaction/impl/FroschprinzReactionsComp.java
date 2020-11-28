@@ -294,6 +294,9 @@ public class FroschprinzReactionsComp
 
         // FIXME Nach der Prinzabfahrt. Klares Lob, aber auch Hinweis auf einsame Stimme
         //  auf Turm oder so (wenn man sie schon kennt und Rapunzel noch im Turm ist....)
+        //  Einfaches allgemeines Konzept: Immer wenn man eine Geschichte abgeschlossen
+        //  hat, erhält man zwingend ein Lob ("Du bist sehr zufrieden mit dir, dass du..."
+        //  und einen Tipp!
 
         // STORY Nach jedem Kapitelende eine kleine Pause (Wartezeit) einlegen?
 
