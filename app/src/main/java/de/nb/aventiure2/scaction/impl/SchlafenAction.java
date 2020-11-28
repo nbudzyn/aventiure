@@ -103,7 +103,8 @@ public class SchlafenAction extends AbstractScAction {
 
         narrateAndDoEinschlafen(schlafdauer);
 
-        // FIXME  Idee: Ein LivingBeing kann schlafen - wenn der SC schläft, bekommt er nichts mit.
+        // FIXME  Idee: Ein LivingBeing oder FeelingBeing kann schlafen - wenn der
+        //  SC schläft, bekommt er nichts mit.
         //  Das _könnte_ der Narrator zentral regeln
 
         // TODO Frosch läuft während des Schlafs weg. Oder kommt ggf. Auch wieder. Oder läuft

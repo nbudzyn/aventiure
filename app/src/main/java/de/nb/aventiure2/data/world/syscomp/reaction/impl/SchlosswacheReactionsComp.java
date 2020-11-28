@@ -45,7 +45,7 @@ public class SchlosswacheReactionsComp
         extends AbstractDescribableReactionsComp
         implements IMovementReactions, ITimePassedReactions {
 
-    public static final String SCHLOSSWACHE_REACTIONS_ABLEGEN_WACHE_IST_AUFMERKSAM =
+    private static final String SCHLOSSWACHE_REACTIONS_ABLEGEN_WACHE_IST_AUFMERKSAM =
             "SchlosswacheReactions_ablegen_wacheIstAufmerksam";
     private final LocationSystem locationSystem;
     private final SchlosswacheStateComp stateComp;
@@ -444,7 +444,8 @@ public class SchlosswacheReactionsComp
 
                     // Der Spieler weiß jetzt, dass das Schlossfest läuft
                     // FIXME Dies hier ist ein Problem, wenn der Spieler z.B. vor dem
-                    //  Schloss auf die magere Frau warten würde.
+                    //  Schloss auf die magere Frau warten würde und der Narrator
+                    //  den Text unterdrücken würde.
                     //  Man muss verhindern, dass der Narrator den Text nicht ausgibt,
                     //  später davon ausgeht, dass der Spieler das Schlossfest kennt.
                     //  Dieses Problem besteht an allen stellen, wo nach einem
