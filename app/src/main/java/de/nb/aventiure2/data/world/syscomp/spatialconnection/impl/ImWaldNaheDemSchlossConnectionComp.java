@@ -54,10 +54,10 @@ public class ImWaldNaheDemSchlossConnectionComp extends AbstractSpatialConnectio
     public boolean isAlternativeMovementDescriptionAllowed(final GameObjectId to,
                                                            final Known newLocationKnown,
                                                            final Lichtverhaeltnisse lichtverhaeltnisseInNewLocation) {
-        if (to.equals(DRAUSSEN_VOR_DEM_SCHLOSS) &&
-                ((IHasStateGO<SchlossfestState>) world.load(SCHLOSSFEST)).stateComp()
-                        .hasState(BEGONNEN) &&
-                !world.loadSC().memoryComp().isKnown(SCHLOSSFEST)) {
+        if (to.equals(DRAUSSEN_VOR_DEM_SCHLOSS)
+                && ((IHasStateGO<SchlossfestState>) world.load(SCHLOSSFEST)).stateComp()
+                .hasState(BEGONNEN)
+                && !world.loadSC().memoryComp().isKnown(SCHLOSSFEST)) {
             return false;
         }
 
@@ -74,8 +74,8 @@ public class ImWaldNaheDemSchlossConnectionComp extends AbstractSpatialConnectio
                         mins(10),
                         this::getDescTo_DraussenVorDemSchloss),
                 con(VOR_DEM_ALTEN_TURM,
-"auf dem Pfad",
-  this::getActionNameTo_VorDemAltenTurm,
+                        "auf dem Pfad",
+                        this::getActionNameTo_VorDemAltenTurm,
                         mins(25),
                         this::getDescTo_VorDemAltenTurm),
                 con(ABZWEIG_IM_WALD,

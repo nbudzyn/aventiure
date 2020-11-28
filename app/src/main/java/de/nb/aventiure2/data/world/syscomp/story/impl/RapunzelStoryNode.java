@@ -306,10 +306,7 @@ public enum RapunzelStoryNode implements IStoryNode {
             // FIXME Mehr Hinweise, dass man die magere Frau heimlich beobachten sollte
         }
 
-        if (world.hasSameUpperMostLocationAsSC((IGameObject) loadZauberin(world)) &&
-                // Vor dem Schloss fällt sie dem SC nicht auf
-                !loadZauberin(world).locationComp()
-                        .hasRecursiveLocation(DRAUSSEN_VOR_DEM_SCHLOSS)) {
+        if (world.hasSameUpperMostLocationAsSC((IGameObject) loadZauberin(world))) {
             alt.add(paragraph("Was will die Frau bloß?"),
                     paragraph("Was will die Frau wohl?"),
                     paragraph("Was mag die Frau wollen?"));

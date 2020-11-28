@@ -47,7 +47,8 @@ public class RapunzelsZauberinTalkingComp extends AbstractTalkingComp {
                 // fall-through
             case AUF_DEM_RUECKWEG_VON_RAPUNZEL:
                 if (locationComp.hasRecursiveLocation(DRAUSSEN_VOR_DEM_SCHLOSS)) {
-                    // Hier bemerkt der SC die Zauberin nicht
+                    // Hier bemerkt der SC die Zauberin nicht - bzw. sie
+                    // "verschwindet" ohnehin gleich wieder.
                     return ImmutableList.of();
                 }
 

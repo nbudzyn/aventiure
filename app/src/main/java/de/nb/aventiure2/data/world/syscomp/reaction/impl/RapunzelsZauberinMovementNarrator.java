@@ -10,7 +10,6 @@ import de.nb.aventiure2.data.world.base.SpatialConnection;
 import de.nb.aventiure2.data.world.gameobject.*;
 import de.nb.aventiure2.data.world.syscomp.movement.SimpleMovementNarrator;
 import de.nb.aventiure2.data.world.syscomp.spatialconnection.ISpatiallyConnectedGO;
-import de.nb.aventiure2.data.world.syscomp.spatialconnection.NumberOfWays;
 import de.nb.aventiure2.data.world.syscomp.storingplace.ILocationGO;
 import de.nb.aventiure2.german.base.Nominalphrase;
 import de.nb.aventiure2.german.base.SubstantivischePhrase;
@@ -135,23 +134,6 @@ public class RapunzelsZauberinMovementNarrator extends SimpleMovementNarrator {
                 scFrom, to, movingGOFrom, spatialConnectionMovingGO);
     }
 
-    @Override
-    public <FROM extends ILocationGO & ISpatiallyConnectedGO>
-    void narrateAndDoLeaves(
-            final FROM from, final ILocationGO to,
-            @Nullable final SpatialConnection spatialConnection,
-            final NumberOfWays numberOfWaysOut) {
-        if (from.is(DRAUSSEN_VOR_DEM_SCHLOSS)) {
-            // Hier bemerkt der SC die Zauberin nicht
-
-            // FIXME Kann man das Thema besser fassen? Die Zauberin wäre ohnehin
-            //  nur einen Moment da?!
-            return;
-        }
-
-        super.narrateAndDoLeaves(from, to, spatialConnection, numberOfWaysOut);
-    }
-
     // STORY Wenn die Zauberin WEISS_DASS_RAPUNZEL_BEFREIT_WURDE, sieht sie
     //  den SC mit bösen und giftigen Blicken an?
 
@@ -160,19 +142,4 @@ public class RapunzelsZauberinMovementNarrator extends SimpleMovementNarrator {
     //  - Denkbar wäre, .dann() optional mit einem Akteur zu qualifizieren:
     //    .dann(RAPUNZELS_ZAUBERIN). Ein "Dann" würde nur dann
     //    erzeugt, wenn der Folgesatz denselben Akteur hat.
-
-    @Override
-    public <FROM extends ILocationGO & ISpatiallyConnectedGO>
-    void narrateAndDoEnters(final FROM from, final ILocationGO to,
-                            @Nullable final SpatialConnection spatialConnection,
-                            final NumberOfWays numberOfWaysIn) {
-        if (to.is(DRAUSSEN_VOR_DEM_SCHLOSS)) {
-            // FIXME Gutes Konzept? Zauberin sollte am besten einfach "verschwinden", wenn
-            //  sie vor dem Schloss ankommt?
-            // Hier bemerkt der SC die Zauberin nicht
-            return;
-        }
-
-        super.narrateAndDoEnters(from, to, spatialConnection, numberOfWaysIn);
-    }
 }

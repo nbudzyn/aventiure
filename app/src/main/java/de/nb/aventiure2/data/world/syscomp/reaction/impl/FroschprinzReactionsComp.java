@@ -553,8 +553,7 @@ public class FroschprinzReactionsComp
     private void prinzDraussenVorDemSchlossAngekommen() {
         locationComp.narrateAndSetLocation(
                 DRAUSSEN_VOR_DEM_SCHLOSS,
-                () -> stateComp
-                        .narrateAndSetState(ZURUECKVERWANDELT_SCHLOSS_VORHALLE_VERLASSEN)
+                () -> stateComp.narrateAndSetState(ZURUECKVERWANDELT_SCHLOSS_VORHALLE_VERLASSEN)
         );
     }
 

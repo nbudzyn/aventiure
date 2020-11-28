@@ -156,13 +156,9 @@ public class RapunzelsZauberinReactionsComp
                 mentalModelComp.unsetAssumedLocation(SPIELER_CHARAKTER);
             }
 
-            if (scFrom.is(DRAUSSEN_VOR_DEM_SCHLOSS)) {
-                // Hier bemerkt der SC die Zauberin nicht
-                return;
-            }
-
-            if (scFrom.is(DRAUSSEN_VOR_DEM_SCHLOSS) &&
-                    !world.isOrHasRecursiveLocation(DRAUSSEN_VOR_DEM_SCHLOSS)) {
+            if (world.isOrHasRecursiveLocation(scFrom, VOR_DEM_ALTEN_TURM) &&
+                    !world.isOrHasRecursiveLocation(scTo, VOR_DEM_ALTEN_TURM)) {
+                // SC hat den Platz vor dem Turm verlassen.
                 // Falls die Zauberin noch vor dem Turm wartet:
                 if (stateComp.hasState(AUF_DEM_WEG_ZU_RAPUNZEL) &&
                         locationComp.hasLocation(VOR_DEM_ALTEN_TURM)) {
@@ -202,11 +198,6 @@ public class RapunzelsZauberinReactionsComp
 
         if (!world.loadSC().locationComp().hasRecursiveLocation(locationComp.getLocationId())) {
             // SC und Zauberin sind nicht am gleichen Ort
-            return;
-        }
-
-        if (scTo.is(DRAUSSEN_VOR_DEM_SCHLOSS) && locationComp.getLocationId() != null) {
-            // Hier bemerkt der SC die Zauberin nicht
             return;
         }
 
@@ -372,9 +363,7 @@ public class RapunzelsZauberinReactionsComp
 
         locationComp.narrateAndSetLocation(VOR_DEM_ALTEN_TURM);
 
-        movementComp.startMovement(
-                db.nowDao().now(),
-                DRAUSSEN_VOR_DEM_SCHLOSS);
+        movementComp.startMovement(db.nowDao().now(), DRAUSSEN_VOR_DEM_SCHLOSS);
     }
 
     private void zauberinZaubertVergessenszauber() {
@@ -415,8 +404,7 @@ public class RapunzelsZauberinReactionsComp
         // Die Zauberin ist schon weit auf dem Rückweg
         stateComp.narrateAndSetState(AUF_DEM_RUECKWEG_VON_RAPUNZEL);
         locationComp.narrateAndSetLocation(IM_WALD_NAHE_DEM_SCHLOSS);
-        movementComp.startMovement(
-                db.nowDao().now(), DRAUSSEN_VOR_DEM_SCHLOSS);
+        movementComp.startMovement(db.nowDao().now(), DRAUSSEN_VOR_DEM_SCHLOSS);
 
         // Rapunzel ist still (Rapunzel hat auch alles vergessen!)
         loadRapunzel().stateComp().narrateAndSetState(RapunzelState.STILL);
@@ -505,7 +493,6 @@ public class RapunzelsZauberinReactionsComp
         locationComp.narrateAndSetLocation(
                 // Zauberin ist auf einmal draußen vor dem Schloss
                 // (wer weiß, wo sie herkommt)
-                // Aber der Spieler bemerkt sie nicht.
                 DRAUSSEN_VOR_DEM_SCHLOSS,
                 () -> stateComp.narrateAndSetState(AUF_DEM_WEG_ZU_RAPUNZEL));
 
