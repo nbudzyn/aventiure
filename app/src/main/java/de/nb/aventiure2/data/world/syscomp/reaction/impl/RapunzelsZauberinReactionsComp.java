@@ -517,24 +517,39 @@ public class RapunzelsZauberinReactionsComp
         //    der Besuch vorbei sein soll (besuchsEndeZeit = ankunft + BESUCH_DAUER)
 
         // Zauberin ist unten am alten Turm angekommen.
-        if (loadSC().locationComp().hasLocation(VOR_DEM_ALTEN_TURM) ||
-                mentalModelComp.hasAssumedLocation(SPIELER_CHARAKTER,
-                        VOR_DEM_ALTEN_TURM_SCHATTEN_DER_BAEUME)
+        if (
+            // Wenn der SC nicht in der Gegend ist...
+                !loadSC().locationComp().hasLocation(VOR_DEM_ALTEN_TURM) &&
+                        // ...und die Zauberin nicht gesehen hat, dass der Spieler sich
+                        // zwischen die Bäume gestellt hat.
+                        !mentalModelComp.hasAssumedLocation(SPIELER_CHARAKTER,
+                                VOR_DEM_ALTEN_TURM_SCHATTEN_DER_BAEUME)
         ) {
-            // Wenn der SC auch in der Gegend ist, dann wartet die Zauberin,
-            // bis der SC weggeht.
-            // Dasselbe, wenn die Zauberin gesehen hat, dass der Spieler sich zwischen die
-            //  Bäume gestellt hat.
+            if (loadRapunzel().stateComp()
+                    .hasState(RapunzelState.HAARE_VOM_TURM_HERUNTERGELASSEN)) {
+                zauberinSteigtAnDenHaarenZuRapunzelHinauf();
+                return;
+            }
+
+            zauberinRuftRapunzelspruchUndRapunzelReagiert();
             return;
         }
 
-        if (loadRapunzel().stateComp().hasState(
-                RapunzelState.HAARE_VOM_TURM_HERUNTERGELASSEN)) {
-            zauberinSteigtAnDenHaarenZuRapunzelHinauf();
+        //  Ansonsten wartet die Zaubberin vor dem Turm bis gegen Abend.
+        if (now.getTime().isBefore(SPAETESTE_LOSGEHZEIT_RAPUNZELBESUCH.rotateMinus(BESUCHSDAUER))) {
+            // STORY Wenn der Spieler weg ist und Rapunzel trotz einem Ruf
+            //  die Haare nicht heruntegelassen hat, ruft die Zauberin noch ein paar Mal.
+
             return;
         }
 
-        zauberinRuftRapunzelspruchUndRapunzelReagiert();
+        // Geht aber spätestens dann wieder zurück.
+
+        // STORY Am Ende geht sie, wenn Rapunzel trotz Rufens die Haare nicht
+        //  heruntergelassen hatt, davon aus, dass Rapunzel befreit wurde.
+
+        stateComp.narrateAndSetState(AUF_DEM_RUECKWEG_VON_RAPUNZEL);
+        movementComp.startMovement(db.nowDao().now(), DRAUSSEN_VOR_DEM_SCHLOSS);
     }
 
     private void zauberinRuftRapunzelspruchUndRapunzelReagiert() {
@@ -560,10 +575,6 @@ public class RapunzelsZauberinReactionsComp
         // Wenn Rapunzel die Haare herunterlässt, steigt, die Zauberin
         // an den Haaren zu Rapunzel hinauf und Rapunzel holt ihre Haare wieder
         // ein (Reactions von Zauberin und Rapunzel).
-
-        // STORY Wenn Rapunzel die Haare nicht herunterlässt, wartet die
-        //  Zauberin noch ein wenig und ruft (sofern der Spieler nicht auftaucht)
-        //  noch ein paar Mal und geht am Ende davon aus, dass Rapunzel befreit wurde.
     }
 
     private void onTimePassed_BeiRapunzelObenImTurm(final AvDateTime now) {

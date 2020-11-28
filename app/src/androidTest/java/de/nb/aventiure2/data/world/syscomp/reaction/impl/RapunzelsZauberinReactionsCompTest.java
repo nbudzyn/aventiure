@@ -12,16 +12,26 @@ import de.nb.aventiure2.data.world.base.GameObjectId;
 import de.nb.aventiure2.data.world.syscomp.location.ILocatableGO;
 import de.nb.aventiure2.data.world.syscomp.movement.IMovingGO;
 import de.nb.aventiure2.data.world.syscomp.reaction.IResponder;
+import de.nb.aventiure2.data.world.syscomp.reaction.interfaces.ITimePassedReactions;
+import de.nb.aventiure2.data.world.syscomp.state.IHasStateGO;
+import de.nb.aventiure2.data.world.syscomp.state.impl.RapunzelsZauberinState;
 import de.nb.aventiure2.data.world.syscomp.storingplace.ILocationGO;
 import de.nb.aventiure2.data.world.time.*;
 
 import static com.google.common.truth.Truth.assertThat;
 import static de.nb.aventiure2.data.world.gameobject.World.*;
+import static de.nb.aventiure2.data.world.syscomp.state.impl.RapunzelsZauberinState.AUF_DEM_WEG_ZU_RAPUNZEL;
+import static de.nb.aventiure2.data.world.time.AvTime.*;
 import static de.nb.aventiure2.data.world.time.AvTimeSpan.*;
 
 @RunWith(AndroidJUnit4.class)
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
+@SuppressWarnings("unchecked")
 public class RapunzelsZauberinReactionsCompTest extends AndroidTestBase {
+    // ---------------------------------------------
+    // Relative Bewegungen von Zauberin und SC
+    // ---------------------------------------------
+
     @Test
     public <Z extends IResponder & ILocatableGO>
     void zauberinUnbewegt_scBewegtSichWoanders__keineErwaehnung() {
@@ -151,6 +161,35 @@ public class RapunzelsZauberinReactionsCompTest extends AndroidTestBase {
         final String narration = n.getNarrationText();
         assertThat(narration).contains("Frau");
         assertThat(narration).containsMatch("geht");
+    }
+
+    // ---------------------------------------------
+    // Zauberin kehrt von Turm wieder zurück
+    // ---------------------------------------------
+
+    @Test
+    public <Z extends IResponder & ILocatableGO & IMovingGO & IHasStateGO<RapunzelsZauberinState>>
+    void zauberinWartetVorTurm_SCAuchVorTurm__ZauberinGehtBaldWieder() {
+        // GIVEN
+        db.nowDao().setNow(new AvDateTime(1, oClock(16)));
+        world.loadSC().locationComp().setLocation(VOR_DEM_ALTEN_TURM);
+
+        final Z zauberin = (Z) world.load(RAPUNZELS_ZAUBERIN);
+        zauberin.stateComp().setState(AUF_DEM_WEG_ZU_RAPUNZEL);
+        zauberin.locationComp().setLocation(VOR_DEM_ALTEN_TURM);
+
+        // WHEN
+        final AvDateTime now = db.nowDao().now();
+        ((ITimePassedReactions) zauberin.reactionsComp()).onTimePassed(
+                now, now.plus(mins(45)));
+
+        // THEN
+        // Ist die Zauberin schon wieder losgegangen
+        assertThat(zauberin.movementComp().isMoving()).isTrue();
+        assertThat(zauberin.locationComp().hasNoLocation()).isTrue();
+        assertThat(zauberin.movementComp().getCurrentStepFromId()).isEqualTo(VOR_DEM_ALTEN_TURM);
+        assertThat(zauberin.movementComp().getCurrentStepToId())
+                .isEqualTo(IM_WALD_NAHE_DEM_SCHLOSS);
     }
 
     private <Z extends IResponder & ILocatableGO> void reactToScMovement(

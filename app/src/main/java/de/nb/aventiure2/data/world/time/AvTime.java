@@ -84,6 +84,11 @@ public class AvTime {
         return new AvTime((int) ((secsSinceMidnight + add.getSecs()) % SECS_IN_A_DAY));
     }
 
+    public AvTime rotateMinus(final AvTimeSpan sub) {
+        return new AvTime(
+                (int) ((secsSinceMidnight + SECS_IN_A_DAY - sub.getSecs()) % SECS_IN_A_DAY));
+    }
+
     int getSec() {
         return secsSinceMidnight
                 - (getHour() * SECS_IN_AN_HOUR)
@@ -131,7 +136,7 @@ public class AvTime {
         return secsSinceMidnight <= other.secsSinceMidnight;
     }
 
-    public boolean isEqualOrAfter(@NonNull final AvTime other) {
+    private boolean isEqualOrAfter(@NonNull final AvTime other) {
         return secsSinceMidnight >= other.secsSinceMidnight;
     }
 

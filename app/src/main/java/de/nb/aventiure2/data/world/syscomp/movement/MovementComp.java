@@ -3,6 +3,8 @@ package de.nb.aventiure2.data.world.syscomp.movement;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
+import com.google.common.annotations.VisibleForTesting;
+
 import org.jetbrains.annotations.Contract;
 
 import de.nb.aventiure2.data.database.AvDatabase;
@@ -432,14 +434,16 @@ public class MovementComp
     }
 
     @Nullable
-    private GameObjectId getCurrentStepFromId() {
+    @VisibleForTesting
+    public GameObjectId getCurrentStepFromId() {
         @Nullable final MovementStep currentStep = getCurrentStep();
 
         return currentStep != null ? currentStep.getFromId() : null;
     }
 
     @Nullable
-    private GameObjectId getCurrentStepToId() {
+    @VisibleForTesting
+    public GameObjectId getCurrentStepToId() {
         @Nullable final MovementStep currentStep = getCurrentStep();
 
         return currentStep != null ? currentStep.getToId() : null;
