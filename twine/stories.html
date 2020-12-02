@@ -1361,7 +1361,7 @@ an seinem Herzen, und er starb bald.
 Der Sohn heiratete die
 schöne Jungfrau, die er als Blume in der Tasche mitgebracht
 hatte, und ob sie noch leben, das steht bei Gott.
-(Die Nelke)</tw-passagedata><tw-passagedata pid="67" name="Unbenannter Abschnitt" tags="" position="987,1898.5" size="100,100">Double-click this passage to edit it.</tw-passagedata><tw-passagedata pid="68" name="Der wünschliche Königssohn rettet Rapunzel und geht mit ihr davon" tags="" position="1404,1854.5" size="100,100">Der wünschliche Königssohn rettet Rapunzel und geht mit ihr davon</tw-passagedata><tw-passagedata pid="69" name="Jüngling wird Erster bei Hofe" tags="" position="2075,4.5" size="100,100">Akteure, die eine wichtige Rolle spielen:
+(Die Nelke)</tw-passagedata><tw-passagedata pid="67" name="Unbenannter Abschnitt" tags="" position="987,1898.5" size="100,100">Double-click this passage to edit it.</tw-passagedata><tw-passagedata pid="68" name="Der wünschliche Königssohn rettet Rapunzel und geht mit ihr davon" tags="" position="1404,1854.5" size="100,100">Der wünschliche Königssohn rettet Rapunzel und geht mit ihr davon</tw-passagedata><tw-passagedata pid="69" name="Jüngling wird Erster bei Hofe" tags="" position="2072,0" size="100,100">Akteure, die eine wichtige Rolle spielen:
 - Jüngling (der Held)
 - sein Vater, ein armer Mann
 - König eines mächtigen Reichs
@@ -1405,6 +1405,7 @@ Welche Herausforderungen meistert der Held? (Plot Points?)
 - Frau bittet um Gnade -&gt; wird (vom König) bestraft
 
 
+(set: $VERHEIRATET to false)
 Es war einmal ein armer Mann, der konnte seinen einzigen
 Sohn nicht mehr ernähren. 
 
@@ -1428,24 +1429,25 @@ nicht zugrunde gehen lassen.« Da folgten ihm die andern, und
 er drang ein und schlug den Feind. Der König, als er hörte,
 daß er ihm allein den Sieg zu danken habe, erhob ihn über alle
 andern, gab ihm große Schätze und machte ihn zum Ersten in
-seinem Reich. (set: $BERUF to &#39;Erster im Reich&#39;) (UNLOCK GRUFT)
+seinem Reich. (set: $BERUF to &#39;Erster im Reich&#39;) (set: $TREUER_DIENER to false) (UNLOCK GRUFT)
 (Die drei Schlangenblätter)
 
-[[Jüngling ist erster bei Hofe]]
-</tw-passagedata><tw-passagedata pid="70" name="Königstochter wird schwerkrank" tags="" position="2124,465.5" size="100,100">
+[[Jüngling ist Erster bei Hofe]]
+</tw-passagedata><tw-passagedata pid="70" name="Königstochter wird schwerkrank" tags="" position="2144,396.5" size="100,100">
 da geschah es, daß die junge Königin in eine schwere
 Krankheit fiel, und kein Arzt konnte ihr helfen.
-Und als sie tot
+Und als sie tot  (set: $koenigstochter to &#39;tot&#39;)
 dalag, 
 (Die drei Schlangenblätter)
 
 [[Jüngling wird in die Gruft geschlossen]]
-[[Jüngling holt Königstochter mit Blättern zurück]] </tw-passagedata><tw-passagedata pid="71" name="Jüngling wird in die Gruft geschlossen" tags="" position="1825,542.5" size="100,100">da erinnerte sich der junge König, was er hatte versprechen
+(if: $blaetter is &#39;Jüngling&#39;)[ [[Jüngling holt Königstochter mit Blättern zurück]]]</tw-passagedata><tw-passagedata pid="71" name="Jüngling wird in die Gruft geschlossen" tags="" position="1833,533.5" size="100,100">da erinnerte sich der junge König, was er hatte versprechen
 müssen, und es grauste ihm davor, sich lebendig in das
 Grab zu legen, aber es war kein Ausweg : der König hatte alle
 Tore mit Wachen besetzen lassen, und es war nicht möglich,
 dem Schicksal zu entgehen. (set: $koenigstochter to &#39;tot&#39;) Als der Tag kam, wo die Leiche in
 das königliche Gewölbe beigesetzt wurde, da ward er mit hinabgeführt,
+(set: $JUENGLING to &#39;Gruft&#39;)
 und dann das Tor verriegelt und verschlossen.
 Neben dem Sarg stand ein Tisch, darauf vier Lichter, vier
 Laibe Brot und vier Flaschen Wein. Sobald dieser Vorrat zu
@@ -1455,8 +1457,9 @@ nur einen Schluck Wein, und sah doch, wie der Tod immer
 näher rückte. Indem er so vor sich hinstarrte, 
 (Die drei Schlangenblätter)
 
-[[Jüngling trifft auf Schlange und nimmt Blätter an sich]]
-</tw-passagedata><tw-passagedata pid="72" name="Jüngling trifft auf Schlange und nimmt Blätter an sich" tags="" position="1788,237.5" size="100,100">sah er aus der
+(if: $blaetter is not &#39;Jüngling&#39;) [ [[Jüngling trifft auf Schlange und nimmt Blätter an sich]]]
+(if: $blaetter is &#39;Jüngling&#39;)[ [[Jüngling holt Königstochter mit Blättern zurück]]]
+</tw-passagedata><tw-passagedata pid="72" name="Jüngling trifft auf Schlange und nimmt Blätter an sich" tags="" position="1794,168.5" size="100,100">sah er aus der
 Ecke des Gewölbes eine Schlange hervorkriechen, die sich der
 Leiche näherte. Und weil er dachte, sie käme, um daran zu
 nagen, 
@@ -1478,8 +1481,10 @@ Menschen helfen könnte.
 
 SC: Er hob also die Blätter auf 
 
-[[Jüngling ist erster bei Hofe]] 
-</tw-passagedata><tw-passagedata pid="73" name="Jüngling holt Königstochter mit Blättern zurück" tags="" position="2178,670.5" size="100,100">Er legte eins davon auf den Mund der Toten, die beiden andern
+(set: $blaetter to &#39;Jüngling&#39;)
+
+(if: $koenigstochter is not &#39;tot&#39;) [[Jüngling ist Erster bei Hofe]] 
+(if: $koenigstochter is &#39;tot&#39;) [[Jüngling holt Königstochter mit Blättern zurück]] </tw-passagedata><tw-passagedata pid="73" name="Jüngling holt Königstochter mit Blättern zurück" tags="" position="2188,657.5" size="100,100">Er legte eins davon auf den Mund der Toten, die beiden andern
 auf ihre Augen. (set: $blaetter to &#39;Königstochter&#39;) Und kaum war es geschehen, so (set: $koenigstochter to &#39;liebt ihren Mann nicht&#39;)  bewegte sich
 das Blut in den Adern, stieg in das bleiche Angesicht und
 rötete es wieder. Da zog sie Atem, schlug die Augen auf und
@@ -1494,8 +1499,8 @@ etwas Wein und Brot, und als sie wieder zu Kräften gekommen
 war, 
 (Die drei Schlangenblätter)
 
-[[Jüngling kommt mit Königstochter aus Gruft]]
-[[Königstochter liebt Jüngling nicht mehr und ermordet ihn]] </tw-passagedata><tw-passagedata pid="74" name="Jüngling kommt mit Königstochter aus Gruft" tags="" position="1928,779.5" size="100,100">SC: erhob sie sich, und sie gingen zu der Türe, und
+(if: $JUENGLING is &#39;Gruft&#39;)[ [[Jüngling kommt mit Königstochter aus Gruft]]]
+(if: $JUENGLING is not &#39;Gruft&#39;)[ [[Königstochter liebt Jüngling nicht mehr und ermordet ihn]]]</tw-passagedata><tw-passagedata pid="74" name="Jüngling kommt mit Königstochter aus Gruft" tags="" position="1928,779.5" size="100,100">SC: erhob sie sich, und sie gingen zu der Türe, und
 
 SC: klopften 
 
@@ -1504,7 +1509,7 @@ dem König meldeten. Der König kam selbst herab und öffnete
 die Türe, 
 (Die drei Schlangenblätter)
 [[Königstochter liebt Jüngling nicht mehr und ermordet ihn]]
-</tw-passagedata><tw-passagedata pid="75" name="Königstochter liebt Jüngling nicht mehr und ermordet ihn" tags="" position="2184,889.5" size="100,100">da fand er beide frisch und gesund und freute sich
+</tw-passagedata><tw-passagedata pid="75" name="Königstochter liebt Jüngling nicht mehr und ermordet ihn" tags="" position="2184,885.5" size="100,100">da fand er beide frisch und gesund und freute sich
 mit ihnen, daß nun alle Not überstanden war. 
 
 SC: Die drei Schlangenblätter
@@ -1535,8 +1540,8 @@ daß er mich mit dir vermählt und dich zum Erben seiner
 Krone einsetzt.« 
 (Die drei Schlangenblätter)
 
-[[Diener mit Blättern belebt Jüngling wieder]]
-[[Jüngling stirbt im Meer]]
+(if: $TREUER_DIENER)[ [[Diener mit Blättern belebt Jüngling wieder]]]
+(if: $TREUER_DIENER is false)[ [[Jüngling stirbt im Meer]]]
 </tw-passagedata><tw-passagedata pid="76" name="Jüngling hält um Hand der Tochter an" tags="" position="2410,314.5" size="100,100">
 Der König hatte eine Tochter, die war sehr schön, aber sie
 war auch sehr wunderlich. Sie hatte das Gelübde getan, keinen
@@ -1562,7 +1567,7 @@ Hochzeit ward mit großer Pracht gefeiert.
 (set: $koenigstochter to &#39;liebt ihren Mann&#39;) Nun lebten sie eine Zeitlang glücklich und vergnügt miteinander,
 (Die drei Schlangenblätter)
 
-[[Königstochter wird schwerkrank]]
+[[Jüngling ist Erster bei Hofe]] 
 </tw-passagedata><tw-passagedata pid="77" name="Diener mit Blättern belebt Jüngling wieder" tags="" position="2173,1072.5" size="100,100">Aber der treue Diener, der alles mit angesehen
 hatte, machte unbemerkt ein kleines Schifflein von dem
 großen los, setzte sich hinein, schiffte seinem Herrn nach, und
@@ -1606,13 +1611,13 @@ Leben wiedergegeben, du aber hast ihn im Schlaf umgebracht,
 und sollst deinen verdienten Lohn empfangen.« Da ward sie
 mit ihrem Helfershelfer in ein durchlöchertes Schiff gesetzt
 und hinaus ins Meer getrieben, wo sie bald in den Wellen versanken.
-(Die drei Schlangenblätter)</tw-passagedata><tw-passagedata pid="80" name="Jünglich und kommen nach den Verrätern an" tags="" position="2245,1224.5" size="100,100">Double-click this passage to edit it.</tw-passagedata><tw-passagedata pid="81" name="Jüngling ist erster bei Hofe" tags="" position="2076,148.5" size="100,100">[[Jüngling gewinnt einen treuen Diener]]
-[[Jüngling trifft auf Schlange und nimmt Blätter an sich]] 
-[[Jüngling hält um Hand der Tochter an]]
-[[Königstochter wird schwerkrank]] 
-</tw-passagedata><tw-passagedata pid="82" name="Jüngling gewinnt einen treuen Diener" tags="" position="2402,151.5" size="100,100">Jüngling gewinnt einen treuen Diener
+(Die drei Schlangenblätter)</tw-passagedata><tw-passagedata pid="80" name="Jünglich und kommen nach den Verrätern an" tags="" position="2244,1222.5" size="100,100">Double-click this passage to edit it.</tw-passagedata><tw-passagedata pid="81" name="Jüngling ist Erster bei Hofe" tags="" position="2074,145.5" size="100,100">(if: $TREUER_DIENER is false)[ [[Jüngling gewinnt einen treuen Diener]]]
+(if: $blaetter is not &#39;Jüngling&#39;) [[Jüngling trifft auf Schlange und nimmt Blätter an sich]] 
+(if: $VERHEIRATET is false)[ [[Jüngling hält um Hand der Tochter an]]]
+(if: $VERHEIRATET)[ [[Königstochter wird schwerkrank]] ] 
+</tw-passagedata><tw-passagedata pid="82" name="Jüngling gewinnt einen treuen Diener" tags="" position="2402,151.5" size="100,100">Jüngling gewinnt einen treuen Diener (set: $TREUER_DIENER to true)
 
-[[Jüngling ist erster bei Hofe]] </tw-passagedata></tw-storydata>
+[[Jüngling ist Erster bei Hofe]] </tw-passagedata></tw-storydata>
 
 <script title="Twine engine code" data-main="harlowe">"use strict";function _defineProperty(e,t,n){return t in e?Object.defineProperty(e,t,{value:n,enumerable:!0,configurable:!0,writable:!0}):e[t]=n,e}function _toConsumableArray(e){if(Array.isArray(e)){for(var t=0,n=Array(e.length);t<e.length;t++)n[t]=e[t];return n}return Array.from(e)}var _slicedToArray=function(){function e(e,t){var n=[],r=!0,i=!1,o=void 0;try{for(var a,s=e[Symbol.iterator]();!(r=(a=s.next()).done)&&(n.push(a.value),!t||n.length!==t);r=!0);}catch(e){i=!0,o=e}finally{try{!r&&s.return&&s.return()}finally{if(i)throw o}}return n}return function(t,n){if(Array.isArray(t))return t;if(Symbol.iterator in Object(t))return e(t,n);throw new TypeError("Invalid attempt to destructure non-iterable instance")}}(),_typeof="function"==typeof Symbol&&"symbol"==typeof Symbol.iterator?function(e){return typeof e}:function(e){return e&&"function"==typeof Symbol&&e.constructor===Symbol&&e!==Symbol.prototype?"symbol":typeof e};!function(){/**
  * @license almond 0.3.3 Copyright jQuery Foundation and other contributors.
