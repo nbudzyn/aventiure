@@ -11,7 +11,7 @@
 
 <tw-story></tw-story>
 
-<tw-storydata name="Aventiure 2 - Stories" startnode="69" creator="Twine" creator-version="2.3.9" ifid="43BE98CB-17C5-4FCC-A510-30A1A04DDD68" zoom="1" format="Harlowe" format-version="3.1.0" options="" hidden><style role="stylesheet" id="twine-user-stylesheet" type="text/twine-css"></style><script role="script" id="twine-user-script" type="text/twine-javascript"></script><tw-passagedata pid="1" name="Du verlierst etwas im Brunnen und der Frosch holt es" tags="froschprinz" position="290,638" size="100,100">        Du verlierst etwas im Brunnen und der Frosch holt es.
+<tw-storydata name="Aventiure 2 - Stories" startnode="85" creator="Twine" creator-version="2.3.9" ifid="43BE98CB-17C5-4FCC-A510-30A1A04DDD68" zoom="1" format="Harlowe" format-version="3.1.0" options="" hidden><style role="stylesheet" id="twine-user-stylesheet" type="text/twine-css"></style><script role="script" id="twine-user-script" type="text/twine-javascript"></script><tw-passagedata pid="1" name="Du verlierst etwas im Brunnen und der Frosch holt es" tags="froschprinz" position="290,638" size="100,100">        Du verlierst etwas im Brunnen und der Frosch holt es.
         [[Du gehst zum Schlossfest]]
     </tw-passagedata><tw-passagedata pid="2" name="Du bringst Rapunzel den kleinen Ballen Seide" tags="rapunzel" position="1218,1470" size="100,100">Du bringst Rapunzel den Ballen Seide
 
@@ -1139,6 +1139,8 @@ So verabredet ihrs.
         
         [[Du kaufst einen kleinen Ballen Seide]]
         [[Du besorgst eine Strickleiter]]
+		[[Du schneidest Rapunzel die Haare ab]]
+		[[Du besorgst Rapunzel eine Schere]]
 		[[Der wünschliche Königssohn wünscht eine Leiter]]
 		[[Du brauchst zu lang und Rapunzel verplappert sich]]
 </tw-passagedata><tw-passagedata pid="61" name="Du brauchst zu lang und Rapunzel verplappert sich" tags="" position="1752,1367" size="100,100">Die Zauberin merkte auch nichts
@@ -1273,7 +1275,7 @@ zog in sein Vaterland.
 (Die Nelke)
 
 [[Der wünschliche Königssohn wünscht eine Leiter]]
-</tw-passagedata><tw-passagedata pid="65" name="Der wünschliche Königssohn wünscht eine Leiter" tags="" position="1505,1492" size="100,100">Nun ging er zu dem Turm, und weil der Turm so hoch war, wünschte er
+</tw-passagedata><tw-passagedata pid="65" name="Der wünschliche Königssohn wünscht eine Leiter" tags="" position="1506,1491" size="100,100">Nun ging er zu dem Turm, und weil der Turm so hoch war, wünschte er
 eine Leiter herbei, die bis obenhin reichte. 
 
 Da stieg er hinauf und sah hinein.
@@ -1361,7 +1363,7 @@ an seinem Herzen, und er starb bald.
 Der Sohn heiratete die
 schöne Jungfrau, die er als Blume in der Tasche mitgebracht
 hatte, und ob sie noch leben, das steht bei Gott.
-(Die Nelke)</tw-passagedata><tw-passagedata pid="67" name="Unbenannter Abschnitt" tags="" position="987,1898" size="100,100">Double-click this passage to edit it.</tw-passagedata><tw-passagedata pid="68" name="Der wünschliche Königssohn rettet Rapunzel und geht mit ihr davon" tags="" position="1404,1854" size="100,100">Der wünschliche Königssohn rettet Rapunzel und geht mit ihr davon</tw-passagedata><tw-passagedata pid="69" name="Du wirst Erster bei Hofe" tags="" position="2072,0" size="100,100">Akteure, die eine wichtige Rolle spielen:
+(Die Nelke)</tw-passagedata><tw-passagedata pid="67" name="Unbenannter Abschnitt" tags="" position="987,1898" size="100,100">Double-click this passage to edit it.</tw-passagedata><tw-passagedata pid="68" name="Der wünschliche Königssohn rettet Rapunzel und geht mit ihr davon" tags="" position="1404,1854" size="100,100">Der wünschliche Königssohn rettet Rapunzel und geht mit ihr davon</tw-passagedata><tw-passagedata pid="69" name="Du wirst Erster bei Hofe" tags="" position="2070,0" size="100,100">Akteure, die eine wichtige Rolle spielen:
 - Jüngling (der Spielercharakter)
 - sein Vater, ein armer Mann
 - König eines mächtigen Reichs
@@ -1539,7 +1541,7 @@ Krone einsetzt.«
 
 (if: $TREUER_DIENER)[ [[Diener mit Blättern belebt dich wieder]]]
 (if: $TREUER_DIENER is false)[ [[Du stirbst im Meer]]]
-</tw-passagedata><tw-passagedata pid="76" name="Du hältst um Hand der Tochter an" tags="" position="2414,314" size="100,100">
+</tw-passagedata><tw-passagedata pid="76" name="Du hältst um Hand der Tochter an" tags="" position="2415,313" size="100,100">
 Warum lässt mam sich mit der Tochter begraben?
 - Weil man es versprochen hat (Gelübde...).
 - Warum hat man es versprochen?
@@ -1556,7 +1558,17 @@ Warum war der Posten so erstrebenswert?
 - (Ist die Tochter eine Zauberin???)
 - Zauberamulett??? / Zauberring?
 
+Oder ist der SC über den Tisch gezogen worden?
 
+Oder gibt es gar kein Versprechen, sondern der König kerkert den SC ohne vorherige Abmachung beim Tode der Prinzessin ein?
+- Aber dann würde der SC ja danach einen große Bogen um das Schloss machen und nicht mit der Prinzessin auf ein Schiff fahren?
+
+- Vieleicht ein schlechter Berater der Königs?! Wird dem SC unterstellt, er hätte die Prinzession umgebracht? 
+
+Oder es gibt gar kein Versprechen und auch kein Festhalten durch den König, sondern der SC wird gebeten und hilft der Tochter freiwillig?!
+
+Anderes Problem:
+Wenn Tochter und SC nicht verheiratet sind - warum tötet die Tocher den SC dann?
 
 
 Der König hat eine Tochter, die ist sehr schön, aber sie
@@ -1633,7 +1645,135 @@ und hinaus ins Meer getrieben, wo sie bald in den Wellen versinken.
 (if: $VERHEIRATET)[ [[Königstochter wird schwerkrank]] ] 
 </tw-passagedata><tw-passagedata pid="82" name="Du gewinnst einen treuen Diener" tags="" position="2402,151" size="100,100">Du gewinnst einen treuen Diener (set: $TREUER_DIENER to true)
 
-[[Du bist Erster bei Hofe]] </tw-passagedata></tw-storydata>
+[[Du bist Erster bei Hofe]] </tw-passagedata><tw-passagedata pid="83" name="Du schneidest Rapunzel die Haare ab" tags="" position="1759,1218" size="100,100">Double-click this passage to edit it.</tw-passagedata><tw-passagedata pid="84" name="Du besorgst Rapunzel eine Schere" tags="" position="1885,1164" size="100,100">Double-click this passage to edit it.</tw-passagedata><tw-passagedata pid="85" name="Du triffst den Soldaten, der verletzt aus dem Krieg kommt" tags="" position="2632,168.5" size="100,100">Du triffst den Soldaten, der verletzt aus dem Krieg kommt. Er sitzt ganz benommen da.
+
+Eine Schlange kriecht auf ihn zu. Nur du bemerkst es.
+
+[[Du tötest die Schlange]]
+</tw-passagedata><tw-passagedata pid="86" name="Du tötest die Schlange" tags="" position="2632,318.5" size="100,100">Du tötest die Schlange mit dem Schwert des Soldaten.
+
+Über ein
+Weilchen kroch eine zweite Schlange aus der Ecke hervor, als
+sie aber die andere tot und zerstückt liegen sah, ging sie zurück,
+kam bald wieder und hatte drei grüne Blätter im Munde.
+Dann nahm sie die drei Stücke von der Schlange, legte sie, wie
+sie zusammengehörten, und tat auf jede Wunde eins von den
+Blättern. Alsbald fügte sich das Getrennte aneinander, die
+Schlange regte sich und ward wieder lebendig, und beide eilten
+miteinander fort. Die Blätter blieben auf der Erde liegen
+
+[[Du nimmst die drei Blätter]]</tw-passagedata><tw-passagedata pid="87" name="Du nimmst die drei Blätter" tags="" position="2632,468.5" size="100,100">Du nimmst die drei Blätter und versuchst den Soldaten zu heilen. KLapp super. Du steckst die Blätter ein.
+
+Der Soldate bedankt sich überschwenglich und erzählt dir seine Geschichte... 
+
+Es war einmal ein armer Mann, der konnte seinen einzigen
+Sohn nicht mehr ernähren. Da sprach der Sohn »lieber Vater,
+es geht Euch so kümmerlich, ich falle Euch zur Last, lieber will
+ich selbst fortgehen und sehen, wie ich mein Brot verdiene.«
+Da gab ihm der Vater seinen Segen und nahm mit großer
+Trauer von ihm Abschied. Zu dieser Zeit führte der König
+eines mächtigen Reichs Krieg, der Jüngling nahm Dienste bei
+ihm und zog mit ins Feld. Und als er vor den Feind kam, so
+ward eine Schlacht geliefert, und es war große Gefahr und
+84
+regnete blaue Bohnen, daß seine Kameraden von allen Seiten
+niederfielen. Und als auch der Anführer blieb, so wollten die
+übrigen die Flucht ergreifen, aber der Jüngling trat heraus,
+sprach ihnen Mut zu und rief »wir wollen unser Vaterland
+nicht zugrunde gehen lassen.« Da folgten ihm die andern, und
+er drang ein und schlug den Feind.
+
+[[Eine Taube bringt dir einen Brief vom Soldaten]]</tw-passagedata><tw-passagedata pid="88" name="Eine Taube bringt dir einen Brief vom Soldaten" tags="" position="2632,618.5" size="100,100">Eine Taube bringt dir einen Brief vom Soldaten
+
+Inhalt:
+
+Der König hatte eine Tochter, die war sehr schön, aber sie
+war auch sehr wunderlich. Sie hatte das Gelübde getan, keinen
+zum Herrn und Gemahl zu nehmen, der nicht verspräche,
+wenn sie zuerst stürbe, sich lebendig mit ihr begraben zu lassen.
+»Hat er mich von Herzen lieb,« sagte sie, »wozu dient ihm
+dann noch das Leben ?« Dagegen wollte sie ein Gleiches tun,
+und wenn er zuerst stürbe, mit ihm in das Grab steigen. Dieses
+seltsame Gelübde hatte bis jetzt alle Freier abgeschreckt, aber
+der Jüngling wurde von ihrer Schönheit so eingenommen, daß
+er auf nichts achtete, sondern bei ihrem Vater um sie anhielt.
+»Weißt du auch,« sprach der König, »was du versprechen
+mußt ?« »Ich muß mit ihr in das Grab gehen,« antwortete er,
+»wenn ich sie überlebe, aber meine Liebe ist so groß, daß ich
+der Gefahr nicht achte.« Da willigte der König ein, und die
+Hochzeit ward mit großer Pracht gefeiert.
+Nun lebten sie eine Zeitlang glücklich und vergnügt miteinander,
+da geschah es, daß die junge Königin in eine schwere
+Krankheit fiel, und kein Arzt konnte ihr helfen.
+
+[[Du gehst mit dem Brief zum Schloss]]</tw-passagedata><tw-passagedata pid="89" name="Du gehst mit dem Brief zum Schloss" tags="" position="2632,768.5" size="100,100">Du gehst mit dem Brief zum Schloss.
+
+Die Tochter liegt tot da.
+
+Der Königsschwiegersohn ist im Grab eingeschlossen.
+
+[[Du lässt dich in das Grab bringen]]</tw-passagedata><tw-passagedata pid="90" name="Du lässt dich in das Grab bringen" tags="" position="2621,914.5" size="100,100">Du lässt dich in das Grab bringen.
+
+Blätter auf und
+legte eins davon auf den Mund der Toten, die beiden andern
+auf ihre Augen. Und kaum war es geschehen, so bewegte sich
+das Blut in den Adern, stieg in das bleiche Angesicht und
+rötete es wieder. Da zog sie Atem, schlug die Augen auf und
+sprach »ach, Gott, wo bin ich ?« »Du bist bei mir, liebe Frau,«
+antwortete er, und erzählte ihr, wie alles gekommen war und
+er sie wieder ins Leben erweckt hatte. Dann reichte er ihr
+etwas Wein und Brot, und als sie wieder zu Kräften gekommen
+war, erhob sie sich, und sie gingen zu der Türe, und
+klopften und riefen so laut, daß es die Wachen hörten und
+dem König meldeten. Der König kam selbst herab und freute sich
+mit ihnen, daß nun alle Not überstanden war.
+
+Du steckst die Schlangenblätter wieder ein.
+
+Der König veranstaltet ein Fest. Du bist herzlich eingeladen.
+
+[[Du gehst zu Fest]]</tw-passagedata><tw-passagedata pid="91" name="Du gehst zu Fest" tags="" position="2620,1061.5" size="100,100">Du gehst zu Fest.
+
+Auf dem Fest kriegst du mit:
+Es war aber in der Frau, nachdem sie wieder ins Leben war
+erweckt worden, eine Veränderung vorgegangen : es war, als ob
+alle Liebe zu ihrem Manne aus ihrem Herzen gewichen wäre.
+so vergaß sie die große Liebe und Treue, die er ihr bewiesen,
+und womit er sie vom Tode gerettet hatte, und faßte eine
+böse Neigung zu dem Schiffer.
+
+Der KÖnigsschwiegersohn erzählt: Er will eine Fahrt zu seinem alten Vater über das Meer machen und ihm alles erzählen. Auch seine Frau kommt natürlich mit.
+
+Ein böse Vorahnung überfällt dich.
+
+[[Ihr steigt auf das Schiff]]</tw-passagedata><tw-passagedata pid="92" name="Ihr steigt auf das Schiff" tags="" position="2621,1214.5" size="100,100">Ihr steigt auf das Schiff
+
+Und als der junge König einmal
+dalag und schlief, rief sie den Schiffer herbei, und faßte
+den Schlafenden am Kopfe, und der Schiffer mußte ihn an den
+Füßen fassen, und so warfen sie ihn hinab ins Meer. Als die
+Schandtat vollbracht war, sprach sie zu ihm »nun laß uns
+heimkehren und sagen, er sei unterwegs gestorben. Ich will
+dich schon bei meinem Vater so herausstreichen und rühmen,
+daß er mich mit dir vermählt und dich zum Erben seiner
+Krone einsetzt.« 
+
+[[Du rettest den Königssohn mit dem Beiboot]]
+</tw-passagedata><tw-passagedata pid="93" name="Du rettest den Königssohn mit dem Beiboot" tags="" position="2621,1364.5" size="100,100">Aber der treue Diener, der alles mit angesehen
+hatte, machte unbemerkt ein kleines Schifflein von dem
+großen los, setzte sich hinein, schiffte seinem Herrn nach, und
+ließ die Verräter fortfahren. Er fischte den Toten wieder auf,
+und mit Hilfe der drei Schlangenblätter, die er bei sich trug
+und auf die Augen und den Mund legte, brachte er ihn glücklich
+wieder ins Leben.
+
+[[Ihr rudert hast was kannste zurück]]</tw-passagedata><tw-passagedata pid="94" name="Ihr rudert hast was kannste zurück" tags="" position="2622,1511.5" size="100,100">daß sie früher als das andere
+bei dem alten König anlangten. Er verwunderte sich, als
+er sie allein kommen sah, und fragte, was ihnen begegnet
+wäre. Als er die Bosheit seiner Tochter vernahm, 
+
+verbannt er sei und ihren Helfershelfer für immer aufs Meer.
+</tw-passagedata></tw-storydata>
 
 <script title="Twine engine code" data-main="harlowe">"use strict";function _defineProperty(e,t,n){return t in e?Object.defineProperty(e,t,{value:n,enumerable:!0,configurable:!0,writable:!0}):e[t]=n,e}function _toConsumableArray(e){if(Array.isArray(e)){for(var t=0,n=Array(e.length);t<e.length;t++)n[t]=e[t];return n}return Array.from(e)}var _slicedToArray=function(){function e(e,t){var n=[],r=!0,i=!1,o=void 0;try{for(var a,s=e[Symbol.iterator]();!(r=(a=s.next()).done)&&(n.push(a.value),!t||n.length!==t);r=!0);}catch(e){i=!0,o=e}finally{try{!r&&s.return&&s.return()}finally{if(i)throw o}}return n}return function(t,n){if(Array.isArray(t))return t;if(Symbol.iterator in Object(t))return e(t,n);throw new TypeError("Invalid attempt to destructure non-iterable instance")}}(),_typeof="function"==typeof Symbol&&"symbol"==typeof Symbol.iterator?function(e){return typeof e}:function(e){return e&&"function"==typeof Symbol&&e.constructor===Symbol&&e!==Symbol.prototype?"symbol":typeof e};!function(){/**
  * @license almond 0.3.3 Copyright jQuery Foundation and other contributors.
