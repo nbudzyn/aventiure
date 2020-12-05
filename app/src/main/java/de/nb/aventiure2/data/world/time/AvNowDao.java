@@ -40,6 +40,9 @@ public abstract class AvNowDao {
         setNow(new AvDateTime(day, time));
     }
 
+    // TODO Tune performance - cache now value?
+    //  (Should DAOs be thread-safe?)
+
     /**
      * Sets the current date and time in the world. Do NOT use this
      * within an action implementation or a reaction.
