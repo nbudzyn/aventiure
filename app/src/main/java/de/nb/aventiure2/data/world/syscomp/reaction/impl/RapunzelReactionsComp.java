@@ -180,9 +180,6 @@ public class RapunzelReactionsComp
         );
 
         world.loadSC().memoryComp().upgradeKnown(RAPUNZELS_GESANG);
-
-        loadSC().feelingsComp().upgradeFeelingsTowards(RAPUNZEL,
-                ZUNEIGUNG_ABNEIGUNG, 1, FeelingIntensity.DEUTLICH);
     }
 
     private void onSCEnter_VorDemAltenTurm_HaareHeruntergelassen(
@@ -371,7 +368,6 @@ public class RapunzelReactionsComp
         n.narrateAlt(alt);
     }
 
-
     private void onZauberinEnter(@Nullable final ILocationGO from, final ILocationGO to) {
         if (locationComp.hasRecursiveLocation(OBEN_IM_ALTEN_TURM) &&
                 from != null && from.is(VOR_DEM_ALTEN_TURM) &&
@@ -499,7 +495,7 @@ public class RapunzelReactionsComp
         }
     }
 
-    public void onRapunzelruf(final ILocatableGO rufer) {
+    private void onRapunzelruf(final ILocatableGO rufer) {
         if (!stateComp.hasState(SINGEND, STILL)) {
             return;
         }
@@ -753,8 +749,6 @@ public class RapunzelReactionsComp
         world.loadSC().memoryComp().upgradeKnown(RAPUNZELS_GESANG);
         loadSC().feelingsComp().upgradeFeelingsTowards(RAPUNZEL,
                 ZUNEIGUNG_ABNEIGUNG, 1, FeelingIntensity.DEUTLICH);
-
-        // FIXME Wird Rapunzels Gesang doppelt eingerechbet - vorher und wenn der Sc sie trifft?
     }
 
     private void onTimePassed_RapunzelMoechteNichtSingen(final AvDateTime lastTime,

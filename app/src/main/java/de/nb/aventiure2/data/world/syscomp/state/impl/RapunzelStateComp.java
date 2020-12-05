@@ -97,7 +97,6 @@ public class RapunzelStateComp extends AbstractStateComp<RapunzelState> {
         return world.loadSC();
     }
 
-
     /**
      * Gibt eine Nominalphrase zurück, die das Game Object beschreibt.
      * Die Phrase kann unterschiedlich sein, je nachdem,
