@@ -19,6 +19,15 @@ import de.nb.aventiure2.data.world.syscomp.description.AbstractDescriptionComp;
 import de.nb.aventiure2.data.world.syscomp.description.IDescribableGO;
 import de.nb.aventiure2.data.world.syscomp.description.impl.FroschprinzDescriptionComp;
 import de.nb.aventiure2.data.world.syscomp.description.impl.SimpleDescriptionComp;
+import de.nb.aventiure2.data.world.syscomp.feelings.FeelingIntensity;
+import de.nb.aventiure2.data.world.syscomp.feelings.FeelingTowardsType;
+import de.nb.aventiure2.data.world.syscomp.feelings.FeelingsComp;
+import de.nb.aventiure2.data.world.syscomp.feelings.Hunger;
+import de.nb.aventiure2.data.world.syscomp.feelings.HungerData;
+import de.nb.aventiure2.data.world.syscomp.feelings.IFeelingBeingGO;
+import de.nb.aventiure2.data.world.syscomp.feelings.MenschlicherMuedigkeitsBiorhythmus;
+import de.nb.aventiure2.data.world.syscomp.feelings.Mood;
+import de.nb.aventiure2.data.world.syscomp.feelings.MuedigkeitsData;
 import de.nb.aventiure2.data.world.syscomp.location.ILocatableGO;
 import de.nb.aventiure2.data.world.syscomp.location.LocationComp;
 import de.nb.aventiure2.data.world.syscomp.memory.IHasMemoryGO;
@@ -48,9 +57,12 @@ import de.nb.aventiure2.data.world.syscomp.talking.ITalkerGO;
 import de.nb.aventiure2.data.world.syscomp.talking.impl.FroschprinzTalkingComp;
 import de.nb.aventiure2.data.world.syscomp.talking.impl.RapunzelTalkingComp;
 import de.nb.aventiure2.data.world.syscomp.talking.impl.RapunzelsZauberinTalkingComp;
+import de.nb.aventiure2.data.world.time.*;
 
 import static de.nb.aventiure2.data.world.base.Known.KNOWN_FROM_LIGHT;
 import static de.nb.aventiure2.data.world.gameobject.World.*;
+import static de.nb.aventiure2.data.world.time.AvTime.*;
+import static de.nb.aventiure2.data.world.time.AvTimeSpan.*;
 import static de.nb.aventiure2.german.base.Artikel.Typ.DEF;
 import static de.nb.aventiure2.german.base.Artikel.Typ.INDEF;
 import static de.nb.aventiure2.german.base.Nominalphrase.np;
@@ -126,22 +138,55 @@ class CreatureFactory {
         final MemoryComp memoryComp =
                 new MemoryComp(RAPUNZEL, db, world, world.getLocationSystem(),
                         createKnownMapForRapunzel());
+        final MenschlicherMuedigkeitsBiorhythmus muedigkeitsBiorhythmus =
+                new MenschlicherMuedigkeitsBiorhythmus();
+        final FeelingsComp feelingsComp =
+                new FeelingsComp(RAPUNZEL, db, n, Mood.NEUTRAL,
+                        muedigkeitsBiorhythmus,
+                        MuedigkeitsData.createFromBiorhythmusFuerMenschen(
+                                muedigkeitsBiorhythmus, db.nowDao().now()),
+                        createInitialHungerDataForRapunzel(),
+                        hours(6),
+                        createDefaultFeelingsTowardsForRapunzel(),
+                        createInitialFeelingsTowardsForRapunzel());
         final RapunzelTalkingComp talkingComp =
                 new RapunzelTalkingComp(db, n, world, stateComp, false);
         final RapunzelReactionsComp reactionsComp =
                 new RapunzelReactionsComp(db, n, world, memoryComp, stateComp,
-                        world.getLocationSystem(), locationComp,
+                        world.getLocationSystem(), locationComp, feelingsComp,
                         talkingComp);
         final RapunzelTakingComp takingComp =
-                new RapunzelTakingComp(db, n, world, stateComp, memoryComp);
-        return new TalkingMemoryTakingReactionsCreature<>(RAPUNZEL,
+                new RapunzelTakingComp(db, n, world, stateComp, memoryComp, feelingsComp);
+        return new TalkingMemoryFeelingsTakingReactionsCreature<>(RAPUNZEL,
                 descriptionComp,
                 locationComp,
                 memoryComp,
                 stateComp,
+                feelingsComp,
                 talkingComp,
                 reactionsComp,
                 takingComp);
+    }
+
+    private static HungerData createInitialHungerDataForRapunzel() {
+        return new HungerData(Hunger.SATT,
+                new AvDateTime(1, oClock(17)));
+    }
+
+    private static ImmutableMap<FeelingTowardsType, Float> createDefaultFeelingsTowardsForRapunzel() {
+        return ImmutableMap.of(FeelingTowardsType.ZUNEIGUNG_ABNEIGUNG,
+                // Rapunzel ist generell jedem gegenüber positiv eingestellt
+                (float) FeelingIntensity.NUR_LEICHT);
+    }
+
+    private static ImmutableMap<GameObjectId, Map<FeelingTowardsType, Float>>
+    createInitialFeelingsTowardsForRapunzel() {
+        return ImmutableMap.of(
+                RAPUNZELS_ZAUBERIN, ImmutableMap.of(
+                        FeelingTowardsType.ZUNEIGUNG_ABNEIGUNG,
+                        (float) -FeelingIntensity.DEUTLICH
+                )
+        );
     }
 
     private static Map<GameObjectId, Known> createKnownMapForRapunzel() {
@@ -287,25 +332,28 @@ class CreatureFactory {
         }
     }
 
-    private static class TalkingMemoryTakingReactionsCreature<S extends Enum<S>,
+    private static class TalkingMemoryFeelingsTakingReactionsCreature<S extends Enum<S>,
             TALKING_COMP extends AbstractTalkingComp,
             TAKING_COMP extends AbstractTakingComp>
             extends TalkingReactionsCreature<S, TALKING_COMP>
-            implements IHasMemoryGO, ITakerGO<TAKING_COMP> {
+            implements IHasMemoryGO, IFeelingBeingGO, ITakerGO<TAKING_COMP> {
         private final MemoryComp memoryComp;
+        private final FeelingsComp feelingsComp;
         private final TAKING_COMP takingComp;
 
-        TalkingMemoryTakingReactionsCreature(final GameObjectId id,
-                                             final AbstractDescriptionComp descriptionComp,
-                                             final LocationComp locationComp,
-                                             final MemoryComp memoryComp,
-                                             final AbstractStateComp<S> stateComp,
-                                             final TALKING_COMP talkingComp,
-                                             final AbstractReactionsComp reactionsComp,
-                                             final TAKING_COMP takingComp) {
+        TalkingMemoryFeelingsTakingReactionsCreature(final GameObjectId id,
+                                                     final AbstractDescriptionComp descriptionComp,
+                                                     final LocationComp locationComp,
+                                                     final MemoryComp memoryComp,
+                                                     final AbstractStateComp<S> stateComp,
+                                                     final FeelingsComp feelingsComp,
+                                                     final TALKING_COMP talkingComp,
+                                                     final AbstractReactionsComp reactionsComp,
+                                                     final TAKING_COMP takingComp) {
             super(id, descriptionComp, locationComp, stateComp, talkingComp, reactionsComp);
             // Jede Komponente muss registiert werden!
             this.memoryComp = addComponent(memoryComp);
+            this.feelingsComp = addComponent(feelingsComp);
             this.takingComp = addComponent(takingComp);
         }
 
@@ -313,6 +361,12 @@ class CreatureFactory {
         @Override
         public MemoryComp memoryComp() {
             return memoryComp;
+        }
+
+        @Nonnull
+        @Override
+        public FeelingsComp feelingsComp() {
+            return feelingsComp;
         }
 
         @Nonnull

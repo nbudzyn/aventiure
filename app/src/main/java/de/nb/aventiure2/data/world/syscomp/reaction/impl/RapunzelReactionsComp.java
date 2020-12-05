@@ -10,6 +10,7 @@ import de.nb.aventiure2.data.database.AvDatabase;
 import de.nb.aventiure2.data.narration.Narrator;
 import de.nb.aventiure2.data.world.gameobject.*;
 import de.nb.aventiure2.data.world.syscomp.feelings.FeelingIntensity;
+import de.nb.aventiure2.data.world.syscomp.feelings.FeelingsComp;
 import de.nb.aventiure2.data.world.syscomp.location.ILocatableGO;
 import de.nb.aventiure2.data.world.syscomp.location.LocationComp;
 import de.nb.aventiure2.data.world.syscomp.location.LocationSystem;
@@ -69,6 +70,7 @@ public class RapunzelReactionsComp
     private final RapunzelStateComp stateComp;
     private final LocationSystem locationSystem;
     private final LocationComp locationComp;
+    private final FeelingsComp feelingsComp;
     private final RapunzelTalkingComp talkingComp;
 
     public RapunzelReactionsComp(final AvDatabase db,
@@ -78,12 +80,14 @@ public class RapunzelReactionsComp
                                  final RapunzelStateComp stateComp,
                                  final LocationSystem locationSystem,
                                  final LocationComp locationComp,
+                                 final FeelingsComp feelingsComp,
                                  final RapunzelTalkingComp talkingComp) {
         super(RAPUNZEL, db, n, world);
         this.memoryComp = memoryComp;
         this.stateComp = stateComp;
         this.locationSystem = locationSystem;
         this.locationComp = locationComp;
+        this.feelingsComp = feelingsComp;
         this.talkingComp = talkingComp;
     }
 
@@ -227,43 +231,18 @@ public class RapunzelReactionsComp
     }
 
     private void onSCEnter_ObenImAltenTurm_RapunzelUnbekannt() {
+        if (db.nowDao().now().getTageszeit() == NACHTS) {
+            onSCEnter_ObenImAltenTurm_RapunzelUnbekannt_nachts();
+            return;
+        }
+
+        onSCEnter_ObenImAltenTurm_RapunzelUnbekannt_tagsueber();
+    }
+
+    private void onSCEnter_ObenImAltenTurm_RapunzelUnbekannt_tagsueber() {
         world.loadSC().memoryComp().upgradeKnown(RAPUNZEL);
         final Nominalphrase desc = getDescription();
 
-        if (db.nowDao().now().getTageszeit() == NACHTS) {
-            n.narrate(neuerSatz(
-                    "Am Fenster sitzt eine junge Frau "
-                            + "und schaut dich entsetzt an. Du hast sie wohl gerade aus tiefem "
-                            + "Nachtschlaf geweckt. "
-                            + capitalize(desc.nom())
-                            + " ist in ein paar Decken gewickelt, "
-                            + desc.possArt().vor(PL_MFN).akk() // "ihre"
-                            + " langen Haare hat sie um einen Fensterhaken gewickelt, so "
-                            + "konntest du "
-                            + "daran heraufsteigen. Mit fahrigen Handbewegungen rafft "
-                            + desc.persPron().nom() // "sie"
-                            + " jetzt "
-                            + desc.possArt().vor(PL_MFN).akk() // "ihre"
-                            + " Haare zusammen, dann weicht "
-                            + desc.persPron().nom() // "sie"
-                            + " vor dir in das dunkle Zimmer zurück",
-                    secs(25))
-                    .phorikKandidat(desc, RAPUNZEL));
-
-            stateComp.setState(STILL);
-            memoryComp.upgradeKnown(SPIELER_CHARAKTER);
-
-            if (loadSC().memoryComp().isKnown(RAPUNZELS_GESANG)) {
-                // Jetzt weiß der SC, wer so schön gesungen hat!
-                loadSC().feelingsComp().upgradeFeelingsTowards(RAPUNZEL,
-                        ZUNEIGUNG_ABNEIGUNG, 1, FeelingIntensity.DEUTLICH);
-            }
-
-            loadSC().feelingsComp().requestMoodMin(ANGESPANNT);
-
-            return;
-        }
-        // Tagsüber
         n.narrate(neuerSatz(
                 "Am Fenster sitzt eine junge Frau, so schön als "
                         + "du unter der Sonne noch keine gesehen hast. "
@@ -294,41 +273,78 @@ public class RapunzelReactionsComp
         }
 
         loadSC().feelingsComp().requestMood(BEWEGT);
+
+        talkingComp.setSchonBegruesstMitSC(true);
+    }
+
+    private void onSCEnter_ObenImAltenTurm_RapunzelUnbekannt_nachts() {
+        world.loadSC().memoryComp().upgradeKnown(RAPUNZEL);
+        final Nominalphrase desc = getDescription();
+
+        n.narrate(neuerSatz(
+                "Am Fenster sitzt eine junge Frau "
+                        + "und schaut dich entsetzt an. Du hast sie wohl gerade aus tiefem "
+                        + "Nachtschlaf geweckt. "
+                        + capitalize(desc.nom())
+                        + " ist in ein paar Decken gewickelt, "
+                        + desc.possArt().vor(PL_MFN).akk() // "ihre"
+                        + " langen Haare hat sie um einen Fensterhaken gewickelt, so "
+                        + "konntest du "
+                        + "daran heraufsteigen. Mit fahrigen Handbewegungen rafft "
+                        + desc.persPron().nom() // "sie"
+                        + " jetzt "
+                        + desc.possArt().vor(PL_MFN).akk() // "ihre"
+                        + " Haare zusammen, dann weicht "
+                        + desc.persPron().nom() // "sie"
+                        + " vor dir in das dunkle Zimmer zurück",
+                secs(25))
+                .phorikKandidat(desc, RAPUNZEL));
+
+        stateComp.setState(STILL);
+        memoryComp.upgradeKnown(SPIELER_CHARAKTER);
+
+        if (loadSC().memoryComp().isKnown(RAPUNZELS_GESANG)) {
+            // Jetzt weiß der SC, wer so schön gesungen hat!
+            loadSC().feelingsComp().upgradeFeelingsTowards(RAPUNZEL,
+                    ZUNEIGUNG_ABNEIGUNG, 1, FeelingIntensity.DEUTLICH);
+        }
+        loadSC().feelingsComp().requestMoodMin(ANGESPANNT);
+
+        feelingsComp.upgradeFeelingsTowards(
+                SPIELER_CHARAKTER, ZUNEIGUNG_ABNEIGUNG,
+                -FeelingIntensity.DEUTLICH, FeelingIntensity.SEHR_STARK);
+        talkingComp.setSchonBegruesstMitSC(true);
     }
 
     private void onSCEnter_ObenImAltenTurm_RapunzelBekannt() {
         loadSC().feelingsComp().requestMoodMin(AUFGEDREHT);
         stateComp.setState(STILL);
 
+        if (db.nowDao().now().getTageszeit() == NACHTS) {
+            narrateAndUpgradeFeelings_RapunzelHeisstSCWillkommen_Nachts();
+        } else {
+            narrateAndUpgradeFeelings_RapunzelHeisstSCWillkommen_Tagsueber();
+        }
+
+        talkingComp.setSchonBegruesstMitSC(true);
+        memoryComp.upgradeKnown(SPIELER_CHARAKTER);
+
+        world.loadSC().memoryComp().upgradeKnown(RAPUNZEL);
+    }
+
+    private void narrateAndUpgradeFeelings_RapunzelHeisstSCWillkommen_Tagsueber() {
+        final SubstantivischePhrase anaph =
+                getAnaphPersPronWennMglSonstDescription(true);
+
         final ImmutableList.Builder<TimedDescription<?>> alt = ImmutableList.builder();
 
-        if (db.nowDao().now().getTageszeit() == NACHTS) {
-            alt.add(du(SENTENCE, "hast", "die junge Frau offenbar aus dem Bett "
-                            + "geholt. Sie "
-                            + "sieht sehr zerknittert "
-                            + "aus, freut sich aber, dich zu sehen",
-                    "offenbar",
-                    secs(30))
-                            .phorikKandidat(F, RAPUNZEL),
-                    neuerSatz("Oben im dunklen Zimmer heißt dich die junge Frau "
-                                    + "etwas überrascht willkommen",
-                            secs(15))
-                            .phorikKandidat(F, RAPUNZEL));
-            if (loadSC().memoryComp().getKnown(RAPUNZEL) == KNOWN_FROM_LIGHT) {
-                alt.add(neuerSatz("Sie ist auch nachts wunderschön – allerdings ist die "
-                                + "junge, verschlafene "
-                                + "Frau in ihren Decken auch sichtlich überrascht, dass zu "
-                                + "dieser Nachtzeit noch einmal bei ihr vorbeischaust",
-                        secs(15))
-                        .phorikKandidat(F, RAPUNZEL));
-            }
-        } else {
-            alt.add(
-                    // STORY Wenn man sich noch nicht so kennt:
-                    neuerSatz("Die junge Frau schaut dich überrascht und etwas "
-                                    + "verwirrt an",
-                            secs(40))
-                            .phorikKandidat(F, RAPUNZEL)
+        alt.add(
+                // STORY Wenn man sich noch nicht so kennt:
+                neuerSatz(capitalize(anaph.nom())
+                                + " schaut dich überrascht und etwas "
+                                + "verwirrt an",
+                        secs(40))
+                        .phorikKandidat(F, RAPUNZEL)
 //                    // STORY Dies nur, wenn man sich schon "duzt"
 //                    du("findest",
 //                            "oben die junge Frau ganz aufgeregt vor: „Du bist schon wieder "
@@ -347,25 +363,59 @@ public class RapunzelReactionsComp
 //                                    + "nicht treffen können. Sie ist so neugierig!”",
 //                            secs(40))
 //                            .phorikKandidat(F, RAPUNZEL)
-            );
+        );
 
-            if (loadSC().memoryComp().getKnown(RAPUNZEL) == KNOWN_FROM_DARKNESS) {
-                alt.add(neuerSatz("Am Fenster sitzt die junge Frau, schön als "
-                        + "du unter der Sonne noch keine gesehen hast. "
-                        + "Ihre Haare glänzen fein wie gesponnen Gold. Sie ist "
-                        + "glücklich, dich zu sehen", secs(30))
-                        .phorikKandidat(F, RAPUNZEL));
-            }
+        if (loadSC().memoryComp().getKnown(RAPUNZEL) == KNOWN_FROM_DARKNESS) {
+            alt.add(neuerSatz("Am Fenster sitzt die junge Frau, schön als "
+                    + "du unter der Sonne noch keine gesehen hast. "
+                    + "Ihre Haare glänzen fein wie gesponnen Gold. Sie ist "
+                    + "glücklich, dich zu sehen", secs(30))
+                    .phorikKandidat(F, RAPUNZEL));
         }
+        n.narrateAlt(alt);
 
-        memoryComp.upgradeKnown(SPIELER_CHARAKTER);
+        feelingsComp.upgradeFeelingsTowards(SPIELER_CHARAKTER, ZUNEIGUNG_ABNEIGUNG,
+                1f, FeelingIntensity.MERKLICH);
+        loadSC().feelingsComp().upgradeFeelingsTowards(RAPUNZEL,
+                ZUNEIGUNG_ABNEIGUNG, 0.75f, FeelingIntensity.DEUTLICH);
+    }
+
+    private void narrateAndUpgradeFeelings_RapunzelHeisstSCWillkommen_Nachts() {
+        final ImmutableList.Builder<TimedDescription<?>> alt = ImmutableList.builder();
+
+        final SubstantivischePhrase anaph =
+                getAnaphPersPronWennMglSonstDescription(true);
+
+        alt.add(du(SENTENCE, "hast",
+                anaph.akk()
+                        + " offenbar aus dem Bett "
+                        + "geholt. "
+                        + capitalize(anaph.persPron().nom()) // Sie 
+                        + " sieht sehr zerknittert "
+                        + "aus, "
+                        // STORY Nur bei Zuneigung...
+                        + "freut sich aber, dich zu sehen",
+                "offenbar",
+                secs(30))
+                        .phorikKandidat(anaph.persPron(), RAPUNZEL),
+                neuerSatz("Oben im dunklen Zimmer heißt dich "
+                                + anaph.nom()
+                                + " etwas überrascht willkommen",
+                        secs(15))
+                        .phorikKandidat(anaph, RAPUNZEL));
+        if (loadSC().memoryComp().getKnown(RAPUNZEL) == KNOWN_FROM_LIGHT) {
+            alt.add(neuerSatz(capitalize(anaph.persPron().nom())
+                            + " ist auch nachts wunderschön – allerdings ist die "
+                            + "junge, verschlafene "
+                            + "Frau in ihren Decken auch sichtlich überrascht, dass zu "
+                            + "dieser Nachtzeit noch einmal bei ihr vorbeischaust",
+                    secs(15))
+                    .phorikKandidat(F, RAPUNZEL));
+        }
+        n.narrateAlt(alt);
 
         loadSC().feelingsComp().upgradeFeelingsTowards(RAPUNZEL,
                 ZUNEIGUNG_ABNEIGUNG, 0.75f, FeelingIntensity.DEUTLICH);
-
-        world.loadSC().memoryComp().upgradeKnown(RAPUNZEL);
-
-        n.narrateAlt(alt);
     }
 
     private void onZauberinEnter(@Nullable final ILocationGO from, final ILocationGO to) {

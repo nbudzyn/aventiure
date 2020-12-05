@@ -34,9 +34,22 @@ public class AvTime {
         return new AvTime(hoursSinceMidnight, minutesSinceHourStart);
     }
 
-    private AvTime(final int hoursSinceMidnight, final int minutesSinceHourStart) {
-        this(hoursSinceMidnight * 60 * 60 + minutesSinceHourStart * 60);
+    public static AvTime oClock(final int hoursSinceMidnight, final int minutesSinceHourStart,
+                                final int secsSinceMinuteStart) {
+        return new AvTime(hoursSinceMidnight, minutesSinceHourStart, secsSinceMinuteStart);
     }
+
+    private AvTime(final int hoursSinceMidnight, final int minutesSinceHourStart) {
+        this(hoursSinceMidnight, minutesSinceHourStart, 0);
+    }
+
+    private AvTime(final int hoursSinceMidnight, final int minutesSinceHourStart,
+                   final int secsSinceMinuteStart) {
+        this(hoursSinceMidnight * 60 * 60
+                + minutesSinceHourStart * 60
+                + secsSinceMinuteStart);
+    }
+
 
     AvTime(final int secsSinceMidnight) {
         checkState(secsSinceMidnight < SECS_IN_A_DAY,

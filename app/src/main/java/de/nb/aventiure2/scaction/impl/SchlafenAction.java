@@ -206,7 +206,7 @@ public class SchlafenAction extends AbstractScAction {
     }
 
     private void narrateAndDoAufwachen(final AvTimeSpan schlafdauer) {
-        sc.feelingsComp().ausgeschlafen(calcAusschlafenEffektHaeltVorFuer(schlafdauer));
+        sc.feelingsComp().menschAusgeschlafen(schlafdauer);
         sc.feelingsComp().requestMoodMin(NEUTRAL);
         sc.feelingsComp().requestMoodMax(BEWEGT);
 
@@ -255,26 +255,6 @@ public class SchlafenAction extends AbstractScAction {
         }
 
         n.narrateAlt(alt, noTime());
-    }
-
-    private static AvTimeSpan calcAusschlafenEffektHaeltVorFuer(final AvTimeSpan schlafdauer) {
-        if (schlafdauer.longerThan(hours(4))) {
-            // Z.B. Nachtschlaf
-            return hours(4);
-        }
-
-        if (schlafdauer.longerThan(mins(75))) {
-            // Z.B. zu langer Mittagsschlaf
-            return hours(1);
-        }
-
-        if (schlafdauer.longerThan(mins(20))) {
-            // Powernap!
-            return hours(2);
-        }
-
-        // Zu kurzer Schlaf
-        return noTime();
     }
 
     @Override

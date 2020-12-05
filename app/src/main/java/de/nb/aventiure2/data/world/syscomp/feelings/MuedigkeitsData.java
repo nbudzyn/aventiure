@@ -9,6 +9,8 @@ import javax.annotation.concurrent.Immutable;
 import de.nb.aventiure2.data.world.time.*;
 import de.nb.aventiure2.german.praedikat.AdverbialeAngabeSkopusSatz;
 
+import static de.nb.aventiure2.data.world.time.AvTimeSpan.*;
+
 @Immutable
 public class MuedigkeitsData {
     private final int muedigkeit;
@@ -30,12 +32,62 @@ public class MuedigkeitsData {
 
     private final int temporaereMinimalmuedigkeit;
 
-    public MuedigkeitsData(final int muedigkeit,
-                           final int nextHinweisActionStepCount,
-                           final AvDateTime zuletztAusgeschlafen,
-                           final AvDateTime ausschlafenEffektHaeltVorBis,
-                           final AvDateTime temporaerMuedeBis,
-                           final int temporaereMinimalmuedigkeit) {
+    /**
+     * Erzeugt eine <code>MuedigkeitsData</code>, das davon ausgehen, dass das
+     * {@link IFeelingBeingGO} sich in letzter Zeit seinem Biorhythmus gemäß verhalten
+     * hat.
+     */
+    public static MuedigkeitsData createFromBiorhythmusFuerMenschen(
+            final Biorhythmus biorhythmus, final AvDateTime now) {
+        final int muedigkeitGemaessBiorhythmus = biorhythmus.get(now.getTime());
+
+        final boolean sollteLautBiorhythmusSchlafen =
+                muedigkeitGemaessBiorhythmus >= FeelingIntensity.STARK;
+        if (sollteLautBiorhythmusSchlafen) {
+            final AvTime zuletztSchlafenGegangenTime =
+                    biorhythmus.getLastTimeWithIntensityLessThan(
+                            now.getTime(), FeelingIntensity.STARK);
+
+            final AvDateTime zuletztSchlafenGegangenDateTime =
+                    now.goBackTo(zuletztSchlafenGegangenTime);
+
+            final AvTimeSpan schlafdauer = now.minus(zuletztSchlafenGegangenDateTime);
+
+            final AvTimeSpan ausschlafenEffektHaeltVorFuer =
+                    calcAusschlafenEffektHaeltBeimMenschenVorFuer(schlafdauer);
+
+            // Gehen wir mal davon aus, dass das IFeelingBeing gerade aufgewacht ist.
+            // Ansonsten macht ein MuedigkeitsData ohnehin nur begrenzt Sinn.
+            return new MuedigkeitsData(
+                    FeelingIntensity.NEUTRAL, // gerade erwacht
+                    Integer.MAX_VALUE,
+                    now,
+                    now.plus(ausschlafenEffektHaeltVorFuer),
+                    now.minus(secs(1)),
+                    FeelingIntensity.NUR_LEICHT);
+        }
+
+        final AvTime zuletztErwachtTime =
+                biorhythmus.getLastTimeWithIntensityAtLeast(
+                        now.getTime(), FeelingIntensity.STARK);
+
+        final AvDateTime zuletztErwachtDateTime = now.goBackTo(zuletztErwachtTime);
+
+        return new MuedigkeitsData(
+                muedigkeitGemaessBiorhythmus,
+                Integer.MAX_VALUE, // Kein "Wiederholungshinweis." Erst wenn der SC noch müder wird!
+                zuletztErwachtDateTime,
+                now.minus(secs(1)),
+                now.minus(secs(1)),
+                FeelingIntensity.NUR_LEICHT);
+    }
+
+    MuedigkeitsData(final int muedigkeit,
+                    final int nextHinweisActionStepCount,
+                    final AvDateTime zuletztAusgeschlafen,
+                    final AvDateTime ausschlafenEffektHaeltVorBis,
+                    final AvDateTime temporaerMuedeBis,
+                    final int temporaereMinimalmuedigkeit) {
         FeelingIntensity.checkValue(muedigkeit);
 
         this.muedigkeit = muedigkeit;
@@ -229,6 +281,27 @@ public class MuedigkeitsData {
 
     boolean hinweisNoetig(final int scActionStepCount) {
         return scActionStepCount >= nextHinweisActionStepCount;
+    }
+
+    static AvTimeSpan calcAusschlafenEffektHaeltBeimMenschenVorFuer(
+            final AvTimeSpan schlafdauer) {
+        if (schlafdauer.longerThan(hours(4))) {
+            // Z.B. Nachtschlaf
+            return hours(4);
+        }
+
+        if (schlafdauer.longerThan(mins(75))) {
+            // Z.B. zu langer Mittagsschlaf
+            return hours(1);
+        }
+
+        if (schlafdauer.longerThan(mins(20))) {
+            // Powernap!
+            return hours(2);
+        }
+
+        // Zu kurzer Schlaf
+        return noTime();
     }
 
     @Override

@@ -158,6 +158,10 @@ public class FeelingsComp extends AbstractStatefulComponent<FeelingsPCD> {
     public double getMovementSpeedFactor() {
         return getPcd().getMovementSpeedFactor();
     }
+    
+    public void menschAusgeschlafen(AvTimeSpan schlafdauer) {
+        ausgeschlafen(MuedigkeitsData.calcAusschlafenEffektHaeltBeimMenschenVorFuer(schlafdauer));
+    }
 
     public void ausgeschlafen(final AvTimeSpan ausschlafenEffektHaeltVorFuer) {
         getPcd().ausgeschlafen(nowDao.now(),

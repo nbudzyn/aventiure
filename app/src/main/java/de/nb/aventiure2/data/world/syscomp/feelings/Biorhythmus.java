@@ -1,6 +1,9 @@
 package de.nb.aventiure2.data.world.syscomp.feelings;
 
+import androidx.annotation.Nullable;
 import androidx.core.util.Pair;
+
+import com.google.common.base.Function;
 
 import java.util.List;
 
@@ -114,15 +117,15 @@ public class Biorhythmus {
         ));
     }
 
-    public Biorhythmus(final AvTime time1, final Integer intensity1,
-                       final AvTime time2, final Integer intensity2,
-                       final AvTime time3, final Integer intensity3,
-                       final AvTime time4, final Integer intensity4,
-                       final AvTime time5, final Integer intensity5,
-                       final AvTime time6, final Integer intensity6,
-                       final AvTime time7, final Integer intensity7,
-                       final AvTime time8, final Integer intensity8,
-                       final AvTime time9, final Integer intensity9
+    Biorhythmus(final AvTime time1, final Integer intensity1,
+                final AvTime time2, final Integer intensity2,
+                final AvTime time3, final Integer intensity3,
+                final AvTime time4, final Integer intensity4,
+                final AvTime time5, final Integer intensity5,
+                final AvTime time6, final Integer intensity6,
+                final AvTime time7, final Integer intensity7,
+                final AvTime time8, final Integer intensity8,
+                final AvTime time9, final Integer intensity9
     ) {
         this(asList(
                 Pair.create(time1, intensity1),
@@ -162,7 +165,7 @@ public class Biorhythmus {
         ));
     }
 
-    public Biorhythmus(final List<Pair<AvTime, Integer>> pairsInTimeOrder) {
+    private Biorhythmus(final List<Pair<AvTime, Integer>> pairsInTimeOrder) {
         check(pairsInTimeOrder);
 
         this.pairsInTimeOrder = pairsInTimeOrder;
@@ -181,17 +184,67 @@ public class Biorhythmus {
         }
     }
 
-    public int get(final AvTime time) {
-        int res = pairsInTimeOrder.get(pairsInTimeOrder.size() - 1).second;
+    @Nullable
+    AvTime getLastTimeWithIntensityAtLeast(final AvTime baseTime, final int intensityBound) {
+        return getLastTimeWith(baseTime, i -> i >= intensityBound);
+    }
 
-        for (final Pair<AvTime, Integer> pair : pairsInTimeOrder) {
-            if (pair.first.isAfter(time)) {
-                return res;
-            }
+    @Nullable
+    AvTime getLastTimeWithIntensityLessThan(final AvTime baseTime, final int intensityBound) {
+        return getLastTimeWith(baseTime, i -> i < intensityBound);
+    }
 
-            res = pair.second;
+    @Nullable
+    private AvTime getLastTimeWith(final AvTime baseTime,
+                                   final Function<Integer, Boolean> intensityCondition) {
+        final int baseIndex = findIndex(baseTime);
+
+        final Pair<AvTime, Integer> basePair = pairsInTimeOrder.get(baseIndex);
+        if (intensityCondition.apply(basePair.second)) {
+            return baseTime;
         }
 
-        return res;
+        for (int i = baseIndex - 1; i >= 0; i--) {
+            final Pair<AvTime, Integer> pair = pairsInTimeOrder.get(i);
+            if (intensityCondition.apply(pair.second)) {
+                return pairsInTimeOrder.get(i + 1).first.rotateMinus(AvTimeSpan.secs(1));
+            }
+        }
+
+        final Pair<AvTime, Integer> latestPair = pairsInTimeOrder.get(pairsInTimeOrder.size() - 1);
+        if (intensityCondition.apply(latestPair.second)) {
+            return pairsInTimeOrder.get(0).first.rotateMinus(AvTimeSpan.secs(1));
+        }
+
+        for (int i = pairsInTimeOrder.size() - 2; i > baseIndex; i--) {
+            final Pair<AvTime, Integer> pair = pairsInTimeOrder.get(i);
+            if (intensityCondition.apply(pair.second)) {
+                return pairsInTimeOrder.get(i + 1).first.rotateMinus(AvTimeSpan.secs(1));
+            }
+        }
+
+        return null;
+    }
+
+    public int get(final AvTime time) {
+        return getByIndex(findIndex(time));
+    }
+
+    private int findIndex(final AvTime time) {
+        int resIndex = pairsInTimeOrder.size() - 1;
+
+        for (int i = 0; i < pairsInTimeOrder.size(); i++) {
+            if (pairsInTimeOrder.get(i).first.isAfter(time)) {
+                return resIndex;
+            }
+
+            resIndex = i;
+        }
+
+        return resIndex;
+    }
+
+    private int getByIndex(final int index) {
+        return pairsInTimeOrder.get(index).second;
     }
 }

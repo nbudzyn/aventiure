@@ -9,12 +9,11 @@ import de.nb.aventiure2.data.narration.Narrator;
 import de.nb.aventiure2.data.world.base.GameObjectId;
 import de.nb.aventiure2.data.world.base.Known;
 import de.nb.aventiure2.data.world.gameobject.*;
-import de.nb.aventiure2.data.world.syscomp.feelings.Biorhythmus;
-import de.nb.aventiure2.data.world.syscomp.feelings.FeelingIntensity;
 import de.nb.aventiure2.data.world.syscomp.feelings.FeelingTowardsType;
 import de.nb.aventiure2.data.world.syscomp.feelings.FeelingsComp;
 import de.nb.aventiure2.data.world.syscomp.feelings.Hunger;
 import de.nb.aventiure2.data.world.syscomp.feelings.HungerData;
+import de.nb.aventiure2.data.world.syscomp.feelings.MenschlicherMuedigkeitsBiorhythmus;
 import de.nb.aventiure2.data.world.syscomp.feelings.Mood;
 import de.nb.aventiure2.data.world.syscomp.feelings.MuedigkeitsData;
 import de.nb.aventiure2.data.world.syscomp.location.LocationComp;
@@ -49,9 +48,12 @@ public class SpielerCharakterFactory {
 
     public SpielerCharakter create(final GameObjectId id) {
         final WaitingComp waitingComp = new WaitingComp(id, db);
+        final MenschlicherMuedigkeitsBiorhythmus muedigkeitsBiorhythmus =
+                new MenschlicherMuedigkeitsBiorhythmus();
         final FeelingsComp feelingsComp = new FeelingsComp(id, db, n, Mood.NEUTRAL,
-                createMuedigkeitsBiorhythmus(),
-                createInitialMuedigkeitsData(),
+                muedigkeitsBiorhythmus,
+                MuedigkeitsData.createFromBiorhythmusFuerMenschen(
+                        muedigkeitsBiorhythmus, db.nowDao().now()),
                 createInitialHungerData(),
                 hours(6),
                 createDefaultFeelingsTowards(),
@@ -70,46 +72,20 @@ public class SpielerCharakterFactory {
                 new ScAutomaticReactionsComp(db, n, world, waitingComp, feelingsComp));
     }
 
-    private static Biorhythmus createMuedigkeitsBiorhythmus() {
-        return new Biorhythmus(
-                oClock(2, 30), FeelingIntensity.SEHR_STARK,
-                oClock(5), FeelingIntensity.STARK,
-                oClock(7), FeelingIntensity.NUR_LEICHT,
-                oClock(7, 30), FeelingIntensity.NEUTRAL,
-                // Mittagstief
-                oClock(12, 30), FeelingIntensity.MERKLICH,
-                oClock(14, 0), FeelingIntensity.NEUTRAL,
-                oClock(17, 30), FeelingIntensity.NUR_LEICHT,
-                oClock(18, 30), FeelingIntensity.DEUTLICH,
-                oClock(22), FeelingIntensity.STARK
-        );
-    }
-
-    private static MuedigkeitsData createInitialMuedigkeitsData() {
-        return new MuedigkeitsData(
-                FeelingIntensity.NEUTRAL,
-                Integer.MAX_VALUE,
-                new AvDateTime(1, oClock(7)),
-                new AvDateTime(1, oClock(11)),
-                new AvDateTime(1, oClock(13,
-                        30)),
-                FeelingIntensity.NUR_LEICHT);
-    }
-
     private static HungerData createInitialHungerData() {
         return new HungerData(Hunger.SATT,
                 new AvDateTime(1, oClock(17)));
     }
 
-    private static Map<FeelingTowardsType, Float> createDefaultFeelingsTowards() {
+    private static ImmutableMap<FeelingTowardsType, Float> createDefaultFeelingsTowards() {
         return ImmutableMap.of(FeelingTowardsType.ZUNEIGUNG_ABNEIGUNG, 0f);
     }
 
-    private static Map<GameObjectId, Map<FeelingTowardsType, Float>> createInitialFeelingsTowards() {
+    private static ImmutableMap<GameObjectId, Map<FeelingTowardsType, Float>> createInitialFeelingsTowards() {
         return ImmutableMap.of();
     }
 
-    private static Map<GameObjectId, Known> createKnownMap() {
+    private static ImmutableMap<GameObjectId, Known> createKnownMap() {
         return ImmutableMap.<GameObjectId, Known>builder()
                 .put(SPIELER_CHARAKTER, KNOWN_FROM_LIGHT)
                 .put(SCHLOSS_VORHALLE, KNOWN_FROM_LIGHT)

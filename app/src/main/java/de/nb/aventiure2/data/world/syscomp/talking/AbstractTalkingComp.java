@@ -83,10 +83,9 @@ public abstract class AbstractTalkingComp extends AbstractStatefulComponent<Talk
             final ILocatableGO locatable, final ILocationGO from,
             @Nullable final ILocationGO to) {
         if (!world.getLocationSystem().haveSameUpperMostLocation(from, to) &&
-                (locatable.is(SPIELER_CHARAKTER) ||
-                        locatable.is(getGameObjectId())) &&
+                (locatable.is(SPIELER_CHARAKTER) || locatable.is(getGameObjectId())) &&
                 !isTalkingTo(SPIELER_CHARAKTER)) {
-            // SC und Rapunzel verlassen einander. Ab jetzt können sie
+            // SC und das ITalkingBeing  verlassen einander. Ab jetzt können sie
             // einander wieder begrüßen.
             setSchonBegruesstMitSC(false);
         }
@@ -209,7 +208,7 @@ public abstract class AbstractTalkingComp extends AbstractStatefulComponent<Talk
         getPcd().setSchonBegruesstMitSC(schonBegruesstMitSC);
     }
 
-    public boolean isSchonBegruesstMitSC() {
+    protected boolean isSchonBegruesstMitSC() {
         return getPcd().isSchonBegruesstMitSC();
     }
 

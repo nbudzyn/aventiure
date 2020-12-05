@@ -25,11 +25,11 @@ public class AvDateTime {
     @PrimaryKey
     private final long secsSinceBeginning;
 
-    public AvDateTime(final int daySinceBeginning, final AvTime time) {
+    public AvDateTime(final long daySinceBeginning, final AvTime time) {
         this(daySinceBeginning * SECS_IN_A_DAY + time.getSecsSinceMidnight());
     }
 
-    public AvDateTime(final int daySinceBeginning, final int hoursSinceDayStart,
+    public AvDateTime(final long daySinceBeginning, final int hoursSinceDayStart,
                       final int minutesSinceHourStart) {
         this(daySinceBeginning * SECS_IN_A_DAY
                 + hoursSinceDayStart * SECS_IN_AN_HOUR
@@ -84,6 +84,16 @@ public class AvDateTime {
         return getTime().timeSpanUntil(otherTime);
     }
 
+    public AvDateTime goBackTo(final AvTime otherTime) {
+        checkNotNull(otherTime, "otherTime is null");
+
+        if (!otherTime.isAfter(getTime())) {
+            return new AvDateTime(getDay(), otherTime);
+        }
+
+        return new AvDateTime(getDay() - 1, otherTime);
+    }
+
     public boolean isWithin(final AvDateTime lowerBoundExclusive,
                             final AvDateTime upperBoundInclusive) {
         checkNotNull(lowerBoundExclusive, "lowerBoundExclusive is null");
@@ -129,7 +139,7 @@ public class AvDateTime {
         return getTime().getHour();
     }
 
-    long getDay() {
+    private long getDay() {
         return secsSinceBeginning / SECS_IN_A_DAY;
     }
 
@@ -164,4 +174,5 @@ public class AvDateTime {
     public String toString() {
         return "d" + getDay() + " " + getTime();
     }
+
 }

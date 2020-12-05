@@ -5,6 +5,7 @@ import de.nb.aventiure2.data.narration.Narrator;
 import de.nb.aventiure2.data.world.gameobject.*;
 import de.nb.aventiure2.data.world.syscomp.description.IDescribableGO;
 import de.nb.aventiure2.data.world.syscomp.feelings.FeelingIntensity;
+import de.nb.aventiure2.data.world.syscomp.feelings.FeelingsComp;
 import de.nb.aventiure2.data.world.syscomp.location.ILocatableGO;
 import de.nb.aventiure2.data.world.syscomp.memory.MemoryComp;
 import de.nb.aventiure2.data.world.syscomp.state.impl.RapunzelStateComp;
@@ -27,13 +28,16 @@ import static de.nb.aventiure2.german.description.DescriptionBuilder.neuerSatz;
 public class RapunzelTakingComp extends AbstractTakingComp {
     private final RapunzelStateComp stateComp;
     private final MemoryComp memoryComp;
+    private final FeelingsComp feelingsComp;
 
     public RapunzelTakingComp(final AvDatabase db, final Narrator n, final World world,
                               final RapunzelStateComp stateComp,
-                              final MemoryComp memoryComp) {
+                              final MemoryComp memoryComp,
+                              final FeelingsComp feelingsComp) {
         super(RAPUNZEL, db, n, world);
         this.stateComp = stateComp;
         this.memoryComp = memoryComp;
+        this.feelingsComp = feelingsComp;
     }
 
     @Override
@@ -154,6 +158,9 @@ public class RapunzelTakingComp extends AbstractTakingComp {
         );
 
         memoryComp.upgradeKnown(given);
+
+        feelingsComp.upgradeFeelingsTowards(
+                SPIELER_CHARAKTER, ZUNEIGUNG_ABNEIGUNG, 1f, FeelingIntensity.DEUTLICH);
 
         world.loadSC().feelingsComp().upgradeFeelingsTowards(
                 RAPUNZEL, ZUNEIGUNG_ABNEIGUNG, 1, FeelingIntensity.DEUTLICH);
