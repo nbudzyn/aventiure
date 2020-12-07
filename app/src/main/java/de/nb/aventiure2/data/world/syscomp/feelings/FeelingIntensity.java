@@ -12,9 +12,13 @@ public class FeelingIntensity {
     public static final int DEUTLICH = 3;
     public static final int STARK = 4;
     public static final int SEHR_STARK = 5;
-    public static final int PATHOLOGISCH = 6;
+    static final int PATHOLOGISCH = 6;
 
-    public static void checkValue(final double intensity) {
+    static void checkValueAbsolute(final double intensity) {
+        checkValuePositive(Math.abs(intensity));
+    }
+
+    static void checkValuePositive(final double intensity) {
         checkArgument(intensity >= NEUTRAL && intensity <= PATHOLOGISCH,
                 "Ungültige Intensität: " + intensity);
     }

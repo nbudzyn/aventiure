@@ -29,7 +29,7 @@ public enum Mood {
     }
 
     Mood(final int gradDerFreude, final AdverbialeAngabeSkopusSatz adverbialeAngabe) {
-        FeelingIntensity.checkValue(Math.abs(gradDerFreude));
+        FeelingIntensity.checkValuePositive(Math.abs(gradDerFreude));
 
         this.gradDerFreude = gradDerFreude;
         this.adverbialeAngabe = adverbialeAngabe;

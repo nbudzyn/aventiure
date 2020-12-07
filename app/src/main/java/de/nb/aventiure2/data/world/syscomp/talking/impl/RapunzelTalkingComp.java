@@ -11,6 +11,7 @@ import de.nb.aventiure2.data.world.syscomp.feelings.FeelingIntensity;
 import de.nb.aventiure2.data.world.syscomp.feelings.FeelingsComp;
 import de.nb.aventiure2.data.world.syscomp.state.impl.RapunzelStateComp;
 import de.nb.aventiure2.data.world.syscomp.talking.AbstractTalkingComp;
+import de.nb.aventiure2.german.base.Nominalphrase;
 import de.nb.aventiure2.german.base.Personalpronomen;
 import de.nb.aventiure2.german.base.SubstantivischePhrase;
 import de.nb.aventiure2.german.description.AbstractDescription;
@@ -46,6 +47,8 @@ import static de.nb.aventiure2.german.praedikat.VerbSubjObj.HINUNTERLASSEN;
  * kann mit Rapunzel im Gespräch sein (dann auch umgekehrt).
  */
 public class RapunzelTalkingComp extends AbstractTalkingComp {
+    private static final String RAPUNZEL_TALKING_COMP_BEGRUESSEN_ENTRY_RE_ENTRY =
+            "RapunzelTalkingComp_begruessen_EntryReEntry";
     private final RapunzelStateComp stateComp;
     private final FeelingsComp feelingsComp;
 
@@ -161,26 +164,36 @@ public class RapunzelTalkingComp extends AbstractTalkingComp {
 
         final ImmutableList.Builder<TimedDescription<?>> alt = ImmutableList.builder();
 
-        if (db.counterDao().incAndGet("RapunzelTalkingComp_begruessen_EntryReEntry") == 1) {
-            alt.add(neuerSatz(
-                    "„Hallihallo!“, sagst du und lächelst breit",
-                    secs(5)));
+        if (db.counterDao().get(RAPUNZEL_TALKING_COMP_BEGRUESSEN_ENTRY_RE_ENTRY) == 0) {
+            alt.add(neuerSatz("„Hallihallo!“, sagst du und lächelst breit",
+                    secs(5), RAPUNZEL_TALKING_COMP_BEGRUESSEN_ENTRY_RE_ENTRY));
         } else {
-            alt.add(
-                    neuerSatz(
-                            "„Hallo, da bin ich wieder!“ sprichst du "
-                                    + anaph.akk()
-                                    + " an",
-                            secs(5))
-                            .phorikKandidat(anaph, RAPUNZEL),
-                    du("schaust ",
+            final int zuneigungSCTowardsRapunzel =
+                    loadSC().feelingsComp().getFeelingTowards(RAPUNZEL, ZUNEIGUNG_ABNEIGUNG);
+            alt.add(neuerSatz(
+                    "„Hallo, da bin ich wieder!“ sprichst du "
+                            + anaph.akk()
+                            + " an",
+                    secs(5))
+                    .phorikKandidat(anaph, RAPUNZEL));
+
+            if (zuneigungSCTowardsRapunzel >= FeelingIntensity.MERKLICH) {
+                if (duzen(zuneigungSCTowardsRapunzel)) {
+                    alt.add(du("schaust ",
                             anaph.akk()
-                                    + " an. „Schön, "
-                                    // TODO oder dich - je nach Zuneigung des SC
-                                    + "euch wiederzusehen, sagst du",
+                                    + " an. „Schön, dich wiederzusehen, sagst du",
                             secs(5))
                             .phorikKandidat(anaph, RAPUNZEL)
-            );
+                    );
+                } else {
+                    alt.add(du("schaust ",
+                            anaph.akk()
+                                    + " an. „Schön, "
+                                    + "euch wiederzusehen, sagst du",
+                            secs(5))
+                            .phorikKandidat(anaph, RAPUNZEL));
+                }
+            }
         }
 
         n.narrateAlt(alt);
@@ -408,15 +421,27 @@ public class RapunzelTalkingComp extends AbstractTalkingComp {
     }
 
     private void haareHerunterlassenBitte_EntryReEntry() {
-        n.narrateAlt(secs(10),
-                // STORY Nur, wenn SC und Rapunzel sich noch nicht gut kennen
-                neuerSatz(PARAGRAPH,
-                        "„Ich wollte euch nicht belästigen“, sprichst du "
-                                + getAnaphPersPronWennMglSonstShortDescription().akk()
-                                + " an, "
-                                + "„lasst mich wieder hinunter und ich lasse euch euren Frieden.“")
-                        .beendet(PARAGRAPH)
-        );
+        final int zuneigungZuRapunzel =
+                loadSC().feelingsComp().getFeelingTowards(RAPUNZEL, ZUNEIGUNG_ABNEIGUNG);
+
+        final Nominalphrase desc = getDescription(true);
+        if (duzen(zuneigungZuRapunzel)) {
+            n.narrateAlt(secs(10),
+                    neuerSatz("„Weißt du“, wendest du dich an "
+                            + desc.akk()
+                            + ", „eigentlich wollte ich "
+                            + "nur schauen, ob's dir gut geht. Lässt du mich wieder hinunter?“")
+                            .phorikKandidat(desc, RAPUNZEL));
+        } else {
+            n.narrateAlt(secs(10),
+                    neuerSatz(PARAGRAPH,
+                            "„Ich wollte euch nicht belästigen“, sprichst du "
+                                    + getAnaphPersPronWennMglSonstShortDescription().akk()
+                                    + " an, "
+                                    + "„lasst mich wieder hinunter und ich lasse euch euren Frieden.“")
+                            .beendet(PARAGRAPH)
+            );
+        }
 
         feelingsComp.upgradeFeelingsTowards(SPIELER_CHARAKTER, ZUNEIGUNG_ABNEIGUNG,
                 0.25f, FeelingIntensity.MERKLICH);
@@ -448,8 +473,9 @@ public class RapunzelTalkingComp extends AbstractTalkingComp {
                         .phorikKandidat(rapunzelAnaph, RAPUNZEL)
         );
 
-        if (loadSC().feelingsComp().getFeelingTowards(RAPUNZEL, ZUNEIGUNG_ABNEIGUNG) >=
-                FeelingIntensity.DEUTLICH) {
+        final int zuneigungSCZuRapunzel =
+                loadSC().feelingsComp().getFeelingTowards(RAPUNZEL, ZUNEIGUNG_ABNEIGUNG);
+        if (duzen(zuneigungSCZuRapunzel)) {
             alt.add(
                     neuerSatz(PARAGRAPH,
                             "„Lässt du mich wieder hinunter?“, fragst du in die "
@@ -459,8 +485,7 @@ public class RapunzelTalkingComp extends AbstractTalkingComp {
             );
         }
 
-        if (loadSC().feelingsComp().getFeelingTowards(RAPUNZEL, ZUNEIGUNG_ABNEIGUNG) >=
-                FeelingIntensity.STARK) {
+        if (zuneigungSCZuRapunzel >= FeelingIntensity.STARK) {
             alt.add(
                     du(PARAGRAPH,
                             "spürst", "plötzlich neuen Tatendrang in dir. „Lass "
@@ -497,8 +522,9 @@ public class RapunzelTalkingComp extends AbstractTalkingComp {
                 .beendet(PARAGRAPH)
         );
 
-        if (loadSC().feelingsComp().getFeelingTowards(RAPUNZEL, ZUNEIGUNG_ABNEIGUNG) >=
-                FeelingIntensity.DEUTLICH) {
+        final int zuneigungSCZuRapunzel =
+                loadSC().feelingsComp().getFeelingTowards(RAPUNZEL, ZUNEIGUNG_ABNEIGUNG);
+        if (duzen(zuneigungSCZuRapunzel)) {
             alt.add(
                     neuerSatz(PARAGRAPH,
                             "„Lass mich wieder gehen!“, gibst du zurück",
@@ -517,5 +543,10 @@ public class RapunzelTalkingComp extends AbstractTalkingComp {
         stateComp.rapunzelLaesstHaareZumAbstiegHerunter();
 
         unsetTalkingTo();
+    }
+
+    private static boolean duzen(final int zuneigung) {
+        return zuneigung > FeelingIntensity.DEUTLICH ||
+                zuneigung <= -FeelingIntensity.DEUTLICH;
     }
 }

@@ -432,8 +432,8 @@ public class RapunzelReactionsComp
             if (loadSC().locationComp().hasRecursiveLocation(VOR_DEM_ALTEN_TURM) &&
                     !world.loadSC().memoryComp().isKnown(RAPUNZELRUF)) {
                 n.narrate(neuerSatz(
-                        "„Das ist also die Leiter, auf welcher man hinaufkommt!“, denkst du "
-                                + "bei dir", secs(5))
+                        "„Das ist also die Leiter, auf welcher man hinaufkommt!“, "
+                                + "denkst du bei dir", secs(5))
                         .beendet(PARAGRAPH));
 
                 world.loadSC().memoryComp().upgradeKnown(RAPUNZELRUF);
@@ -564,10 +564,10 @@ public class RapunzelReactionsComp
                 if (world.loadSC().memoryComp().isKnown(RAPUNZELS_HAARE)) {
                     n.narrate(
                             neuerSatz(
-                                    "Sofort hört der Gesang auf – und gleich darauf fallen "
-                                            + "aus dem kleinen "
-                                            + "Fenster oben im Turm lange, goldene Haarzöpfe herab, "
-                                            + "sicher zwanzig Ellen tief bis auf den Boden",
+                                    "Sofort hört der Gesang auf – und gleich darauf "
+                                            + "fallen aus dem kleinen "
+                                            + "Fenster oben im Turm lange, goldene Haarzöpfe "
+                                            + "herab, sicher zwanzig Ellen tief bis auf den Boden",
                                     secs(30))
                                     .phorikKandidat(PL_MFN, RAPUNZELS_HAARE));
                 } else {
@@ -591,8 +591,8 @@ public class RapunzelReactionsComp
                 } else {
                     n.narrate(
                             neuerSatz("Gleich darauf fallen aus dem kleinen "
-                                    + "Fenster oben im Turm lange, goldene Haarzöpfe herab, sicher "
-                                    + "zwanzig Ellen tief bis auf den Boden", secs(30))
+                                    + "Fenster oben im Turm lange, goldene Haarzöpfe herab, "
+                                    + "sicher zwanzig Ellen tief bis auf den Boden", secs(30))
                                     .phorikKandidat(PL_MFN, RAPUNZELS_HAARE));
                 }
             }
@@ -616,8 +616,7 @@ public class RapunzelReactionsComp
                                     + "schnell!”",
                             secs(15)),
                     neuerSatz("Alarmiert schaut die junge Frau dich an. Dann wandert "
-                                    + "ihr Blick "
-                                    + "auf das Bett",
+                                    + "ihr Blick auf das Bett",
                             secs(20))
                             .phorikKandidat(F, RAPUNZEL)
                     // Hier wäre "dann" nur sinnvoll, wenn Rapunzel etwas tut, nicht der SC

@@ -88,7 +88,7 @@ public class MuedigkeitsData {
                     final AvDateTime ausschlafenEffektHaeltVorBis,
                     final AvDateTime temporaerMuedeBis,
                     final int temporaereMinimalmuedigkeit) {
-        FeelingIntensity.checkValue(muedigkeit);
+        FeelingIntensity.checkValuePositive(muedigkeit);
 
         this.muedigkeit = muedigkeit;
         this.nextHinweisActionStepCount = nextHinweisActionStepCount;

@@ -42,7 +42,7 @@ class FeelingsPCD extends AbstractPersistentComponentData {
 
     @NonNull
     @Ignore
-    private
+    private final
     Map<GameObjectId, Map<FeelingTowardsType, Float>> feelingsTowards;
 
     FeelingsPCD(final GameObjectId gameObjectId,
@@ -82,7 +82,7 @@ class FeelingsPCD extends AbstractPersistentComponentData {
 
     void setFeelingTowards(final GameObjectId target,
                            final FeelingTowardsType type, final float intensity) {
-        FeelingIntensity.checkValue(intensity);
+        FeelingIntensity.checkValueAbsolute(intensity);
 
         final Float oldValue = getFeelingTowards(target, type);
         if (oldValue != null && oldValue == intensity) {

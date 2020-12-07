@@ -115,6 +115,9 @@ public class RapunzelTakingComp extends AbstractTakingComp {
         final Nominalphrase givenDesc = world.getDescription(given);
         final Nominalphrase givenDescShort = world.getDescription(given, true);
 
+        feelingsComp.upgradeFeelingsTowards(
+                SPIELER_CHARAKTER, ZUNEIGUNG_ABNEIGUNG, 1f, FeelingIntensity.DEUTLICH);
+
         n.narrateAlt(secs(30),
                 neuerSatz(rapunzelAnaph.nom()
                         + " dreht "
@@ -140,6 +143,7 @@ public class RapunzelTakingComp extends AbstractTakingComp {
                         + " "
                         + givenDescShort.persPron().akk()
                         + " dir zurück"),
+                // STORY Nur, wenn Zuneigung entsprechend!
                 neuerSatz((stateComp.hasState(HAT_NACH_KUGEL_GEFRAGT) ?
                         "Gespannt" : "Überrascht")
                         + " nimmt "
@@ -158,9 +162,6 @@ public class RapunzelTakingComp extends AbstractTakingComp {
         );
 
         memoryComp.upgradeKnown(given);
-
-        feelingsComp.upgradeFeelingsTowards(
-                SPIELER_CHARAKTER, ZUNEIGUNG_ABNEIGUNG, 1f, FeelingIntensity.DEUTLICH);
 
         world.loadSC().feelingsComp().upgradeFeelingsTowards(
                 RAPUNZEL, ZUNEIGUNG_ABNEIGUNG, 1, FeelingIntensity.DEUTLICH);
