@@ -2,6 +2,8 @@ package de.nb.aventiure2.german.description;
 
 import androidx.annotation.Nullable;
 
+import javax.annotation.CheckReturnValue;
+
 import de.nb.aventiure2.german.base.Numerus;
 import de.nb.aventiure2.german.base.Person;
 import de.nb.aventiure2.german.base.StructuralElement;
@@ -21,16 +23,19 @@ public class PraedikatDuDescription
         super(startsNew, praedikat);
     }
 
+    @CheckReturnValue
     public PraedikatDuDescription mitAdverbialerAngabe(
             @Nullable final AdverbialeAngabeSkopusSatz adverbialeAngabe) {
         return copy(duTextPart.mitAdverbialerAngabe(adverbialeAngabe));
     }
 
+    @CheckReturnValue
     public PraedikatDuDescription mitAdverbialerAngabe(
             @Nullable final AdverbialeAngabeSkopusVerbAllg adverbialeAngabe) {
         return copy(duTextPart.mitAdverbialerAngabe(adverbialeAngabe));
     }
 
+    @CheckReturnValue
     public PraedikatDuDescription mitAdverbialerAngabe(
             @Nullable final AdverbialeAngabeSkopusVerbWohinWoher adverbialeAngabe) {
         return copy(duTextPart.mitAdverbialerAngabe(adverbialeAngabe));
@@ -65,6 +70,7 @@ public class PraedikatDuDescription
         return duTextPart.kannPartizipIIPhraseAmAnfangOderMittenImSatzVerwendetWerden();
     }
 
+    @CheckReturnValue
     private PraedikatDuDescription copy(final PraedikatOhneLeerstellen praedikat) {
         return new PraedikatDuDescription(getStartsNew(),
                 praedikat);

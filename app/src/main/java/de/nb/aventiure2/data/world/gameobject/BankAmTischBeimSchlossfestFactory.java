@@ -2,6 +2,8 @@ package de.nb.aventiure2.data.world.gameobject;
 
 import androidx.annotation.NonNull;
 
+import javax.annotation.CheckReturnValue;
+
 import de.nb.aventiure2.data.database.AvDatabase;
 import de.nb.aventiure2.data.world.base.GameObject;
 import de.nb.aventiure2.data.world.base.GameObjectId;
@@ -23,8 +25,8 @@ import static de.nb.aventiure2.german.base.Nominalphrase.np;
 import static de.nb.aventiure2.german.base.NumerusGenus.M;
 import static de.nb.aventiure2.german.description.DescriptionBuilder.du;
 
-public class BankAmTischBeimSchlossfestFactory {
-    public static final String BANK_AM_TISCH_BEIM_SCHLOSSFEST_FACTORY_IN =
+class BankAmTischBeimSchlossfestFactory {
+    private static final String BANK_AM_TISCH_BEIM_SCHLOSSFEST_FACTORY_IN =
             "BankAmTischBeimSchlossfestFactory_In";
     private final AvDatabase db;
     private final World world;
@@ -73,6 +75,7 @@ public class BankAmTischBeimSchlossfestFactory {
                 storingPlaceComp);
     }
 
+    @CheckReturnValue
     private TimedDescription<?> getDescIn(
             final Known newLocationKnown, final Lichtverhaeltnisse lichtverhaeltnisse) {
         // Der Tisch wird erst jetzt hinzugefügt, damit nicht vorher

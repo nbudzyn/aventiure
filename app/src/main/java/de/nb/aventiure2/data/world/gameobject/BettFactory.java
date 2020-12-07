@@ -2,6 +2,8 @@ package de.nb.aventiure2.data.world.gameobject;
 
 import androidx.annotation.NonNull;
 
+import javax.annotation.CheckReturnValue;
+
 import de.nb.aventiure2.data.database.AvDatabase;
 import de.nb.aventiure2.data.world.base.GameObject;
 import de.nb.aventiure2.data.world.base.GameObjectId;
@@ -24,7 +26,7 @@ import static de.nb.aventiure2.german.base.StructuralElement.PARAGRAPH;
 import static de.nb.aventiure2.german.base.StructuralElement.SENTENCE;
 import static de.nb.aventiure2.german.description.DescriptionBuilder.du;
 
-public class BettFactory {
+class BettFactory {
     private static final String BETT__DESC_IN = "Bett__DescIn";
     private final AvDatabase db;
     private final World world;
@@ -73,6 +75,7 @@ public class BettFactory {
     }
 
 
+    @CheckReturnValue
     private TimedDescription<?> getDescIn(
             final Known newLocationKnown, final Lichtverhaeltnisse lichtverhaeltnisse) {
         if (db.counterDao().get(BETT__DESC_IN) == 0) {

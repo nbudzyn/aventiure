@@ -41,6 +41,7 @@ public class DescriptionBuilder {
     }
 
     @NonNull
+    @CheckReturnValue
     public static AllgDescription neuerSatz(final String description) {
         return neuerSatz(StructuralElement.SENTENCE, description);
     }
@@ -65,6 +66,7 @@ public class DescriptionBuilder {
     }
 
     @NonNull
+    @CheckReturnValue
     public static AllgDescription neuerSatz(final StructuralElement startsNew,
                                             final String description) {
         return new AllgDescription(startsNew, capitalize(description));
@@ -88,6 +90,7 @@ public class DescriptionBuilder {
     }
 
     @NonNull
+    @CheckReturnValue
     public static AllgDescription satzanschluss(final String description) {
         return new AllgDescription(StructuralElement.WORD, description);
     }
@@ -218,6 +221,7 @@ public class DescriptionBuilder {
     }
 
     @NonNull
+    @CheckReturnValue
     public static SimpleDuDescription du(final StructuralElement startsNew, final String verb,
                                          @Nullable final String remainder,
                                          @Nullable final String vorfeldSatzglied) {
@@ -253,7 +257,7 @@ public class DescriptionBuilder {
             final StructuralElement startsNew,
             final PraedikatOhneLeerstellen duTextPart,
             final AvTimeSpan timeElapsed) {
-        return  du(startsNew, duTextPart, timeElapsed, null);
+        return du(startsNew, duTextPart, timeElapsed, null);
     }
 
     @CheckReturnValue
@@ -273,6 +277,7 @@ public class DescriptionBuilder {
     }
 
     @NonNull
+    @CheckReturnValue
     public static PraedikatDuDescription du(final StructuralElement startsNew,
                                             final PraedikatOhneLeerstellen duTextPart) {
         return new PraedikatDuDescription(startsNew, duTextPart);

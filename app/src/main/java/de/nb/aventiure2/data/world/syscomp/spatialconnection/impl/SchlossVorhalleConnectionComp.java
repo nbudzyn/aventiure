@@ -6,6 +6,7 @@ import com.google.common.collect.ImmutableList;
 
 import java.util.List;
 
+import javax.annotation.CheckReturnValue;
 import javax.annotation.ParametersAreNonnullByDefault;
 
 import de.nb.aventiure2.data.database.AvDatabase;
@@ -51,9 +52,9 @@ public class SchlossVorhalleConnectionComp extends AbstractSpatialConnectionComp
         if (to.equals(SCHLOSS_VORHALLE_AM_TISCH_BEIM_FEST) &&
                 ((IHasStateGO<SchlossfestState>) world.load(SCHLOSSFEST)).stateComp()
                         .hasState(BEGONNEN) &&
-        ((IHasStateGO<FroschprinzState>) world.load(FROSCHPRINZ)).stateComp()
-                .hasState(ZURUECKVERWANDELT_IN_VORHALLE,
-                        ZURUECKVERWANDELT_SCHLOSS_VORHALLE_VERLASSEN)) {
+                ((IHasStateGO<FroschprinzState>) world.load(FROSCHPRINZ)).stateComp()
+                        .hasState(ZURUECKVERWANDELT_IN_VORHALLE,
+                                ZURUECKVERWANDELT_SCHLOSS_VORHALLE_VERLASSEN)) {
             return false;
         }
 
@@ -80,6 +81,7 @@ public class SchlossVorhalleConnectionComp extends AbstractSpatialConnectionComp
         return "Das Schloss verlassen";
     }
 
+    @CheckReturnValue
     private TimedDescription<?> getDescTo_DraussenVorDemSchloss(
             final Known newLocationKnown, final Lichtverhaeltnisse lichtverhaeltnisse) {
         switch (((IHasStateGO<SchlossfestState>) world.load(SCHLOSSFEST)).stateComp().getState()) {
@@ -138,6 +140,7 @@ public class SchlossVorhalleConnectionComp extends AbstractSpatialConnectionComp
     }
 
     @NonNull
+    @CheckReturnValue
     private TimedDescription<?>
     getDescTo_DraussenVorDemSchloss_FestBegonnen() {
         if (((IHasStateGO<FroschprinzState>) world.load(FROSCHPRINZ)).stateComp()

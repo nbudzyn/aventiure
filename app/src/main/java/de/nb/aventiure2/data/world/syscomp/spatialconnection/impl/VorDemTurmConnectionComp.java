@@ -107,6 +107,7 @@ public class VorDemTurmConnectionComp extends AbstractSpatialConnectionComp {
         return res.build();
     }
 
+    @CheckReturnValue
     private TimedDescription<?> getDescTo_VorDemTurm(
             final Known newLocationKnown, final Lichtverhaeltnisse lichtverhaeltnisse) {
         final int count = db.counterDao().get(
@@ -123,7 +124,7 @@ public class VorDemTurmConnectionComp extends AbstractSpatialConnectionComp {
 
                 if (!world.loadSC().memoryComp().isKnown(RAPUNZELS_HAARE)) {
                     return du("gehst", "einmal um den Turm herum. Es ist keine "
-                            + "Türe zu sehen, nur ganz oben ein kleines Fensterchen",
+                                    + "Türe zu sehen, nur ganz oben ein kleines Fensterchen",
                             mins(2), COUNTER_ALTER_TURM_UMRUNDET);
                 }
 

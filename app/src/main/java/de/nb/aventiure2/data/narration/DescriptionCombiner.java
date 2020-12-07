@@ -4,6 +4,8 @@ import com.google.common.collect.ImmutableList;
 
 import java.util.Collection;
 
+import javax.annotation.CheckReturnValue;
+
 import de.nb.aventiure2.german.description.AbstractDescription;
 import de.nb.aventiure2.german.description.AbstractDuDescription;
 import de.nb.aventiure2.german.description.AllgDescription;
@@ -16,11 +18,12 @@ import static de.nb.aventiure2.german.base.StructuralElement.SENTENCE;
 import static de.nb.aventiure2.german.base.StructuralElement.WORD;
 import static de.nb.aventiure2.german.base.StructuralElement.max;
 
-public class DescriptionCombiner {
+class DescriptionCombiner {
     private DescriptionCombiner() {
     }
 
-    public static Collection<AllgDescription> combine(
+    @CheckReturnValue
+    static Collection<AllgDescription> combine(
             final AbstractDescription<?> first,
             final AbstractDescription<?> second,
             final Narration initialNarration) {
@@ -58,8 +61,8 @@ public class DescriptionCombiner {
      * Erzeugt einen doppelten Satzanschluss - einmal mit Komma, danach mit und:
      * "Du kommst, siehst und siegst"
      */
-    private static Iterable<AllgDescription>
-    toDuSatzanschlussMitKommaUndUnd(
+    @CheckReturnValue
+    private static Iterable<AllgDescription> toDuSatzanschlussMitKommaUndUnd(
             final AbstractDuDescription<?, ?> first,
             final AbstractDuDescription<?, ?> second) {
         final DescriptionParams params = second.copyParams();
@@ -74,7 +77,8 @@ public class DescriptionCombiner {
                                 second.getDescriptionSatzanschlussOhneSubjekt()));
     }
 
-    public static ImmutableList<AllgDescription> combinePraedikatDuDescUndDuDesc(
+    @CheckReturnValue
+    private static ImmutableList<AllgDescription> combinePraedikatDuDescUndDuDesc(
             final PraedikatDuDescription first, final AbstractDuDescription<?, ?> second) {
         final ImmutableList.Builder<AllgDescription> res = ImmutableList.builder();
 

@@ -150,7 +150,8 @@ class CreatureFactory {
                         createDefaultFeelingsTowardsForRapunzel(),
                         createInitialFeelingsTowardsForRapunzel());
         final RapunzelTalkingComp talkingComp =
-                new RapunzelTalkingComp(db, n, world, stateComp, false);
+                new RapunzelTalkingComp(db, n, world, stateComp, feelingsComp,
+                        false);
         final RapunzelReactionsComp reactionsComp =
                 new RapunzelReactionsComp(db, n, world, memoryComp, stateComp,
                         world.getLocationSystem(), locationComp, feelingsComp,
@@ -175,7 +176,7 @@ class CreatureFactory {
 
     private static ImmutableMap<FeelingTowardsType, Float> createDefaultFeelingsTowardsForRapunzel() {
         return ImmutableMap.of(FeelingTowardsType.ZUNEIGUNG_ABNEIGUNG,
-                // Rapunzel ist generell jedem gegenüber positiv eingestellt
+                // Generell ist sie anderen gegenüber positiv eingestellt
                 (float) FeelingIntensity.NUR_LEICHT);
     }
 

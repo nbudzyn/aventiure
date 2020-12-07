@@ -328,9 +328,15 @@ public class Narrator {
                 pk != null && pk.getBezugsobjekt().equals(gameObjectId));
     }
 
+    @Nullable
     public Personalpronomen getAnaphPersPronWennMgl(final IGameObject gameObject) {
+        return getAnaphPersPronWennMgl(gameObject.getId());
+    }
+
+    @Nullable
+    public Personalpronomen getAnaphPersPronWennMgl(final GameObjectId gameObjectId) {
         return applyToPhorikKandidat(pk ->
-                PhorikKandidat.getAnaphPersPronWennMgl(pk, gameObject.getId()));
+                PhorikKandidat.getAnaphPersPronWennMgl(pk, gameObjectId));
     }
 
     /**

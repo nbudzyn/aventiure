@@ -70,6 +70,7 @@ public class ObenImTurmConnectionComp extends AbstractSpatialConnectionComp {
         return res.build();
     }
 
+    @CheckReturnValue
     private TimedDescription<?> getDescTo_VorDemTurm(
             final Known newLocationKnown, final Lichtverhaeltnisse lichtverhaeltnisse) {
         if (db.counterDao().get(COUNTER_HERABGESTIEGEN) % 2 == 1) {

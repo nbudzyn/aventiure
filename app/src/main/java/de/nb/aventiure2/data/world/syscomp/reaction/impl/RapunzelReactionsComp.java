@@ -265,6 +265,11 @@ public class RapunzelReactionsComp
         stateComp.setState(STILL);
         memoryComp.upgradeKnown(SPIELER_CHARAKTER);
 
+        // Rapunzel ist erst einmal verschreckt.
+        feelingsComp.upgradeFeelingsTowards(
+                SPIELER_CHARAKTER, ZUNEIGUNG_ABNEIGUNG,
+                -FeelingIntensity.NUR_LEICHT, FeelingIntensity.MERKLICH);
+
         if (loadSC().memoryComp().isKnown(RAPUNZELS_GESANG)) {
             // Jetzt weiß der SC, wer so schön gesungen hat! Und schön ist
             // sie obendrein noch!
@@ -340,7 +345,7 @@ public class RapunzelReactionsComp
 
         alt.add(
                 // STORY Wenn man sich noch nicht so kennt:
-                neuerSatz(capitalize(anaph.nom())
+                neuerSatz(anaph.nom()
                                 + " schaut dich überrascht und etwas "
                                 + "verwirrt an",
                         secs(40))
@@ -404,7 +409,7 @@ public class RapunzelReactionsComp
                         secs(15))
                         .phorikKandidat(anaph, RAPUNZEL));
         if (loadSC().memoryComp().getKnown(RAPUNZEL) == KNOWN_FROM_LIGHT) {
-            alt.add(neuerSatz(capitalize(anaph.persPron().nom())
+            alt.add(neuerSatz(anaph.persPron().nom()
                             + " ist auch nachts wunderschön – allerdings ist die "
                             + "junge, verschlafene "
                             + "Frau in ihren Decken auch sichtlich überrascht, dass zu "

@@ -81,6 +81,7 @@ public class BaumFactory {
                 storingPlaceComp);
     }
 
+    @CheckReturnValue
     private TimedDescription<?> getDescIn(
             final Known newLocationKnown, final Lichtverhaeltnisse lichtverhaeltnisse) {
         final int count = db.counterDao().get(HOCHKLETTERN);
@@ -111,6 +112,7 @@ public class BaumFactory {
                         + "Apfelbaum", mins(6), HOCHKLETTERN);
     }
 
+    @CheckReturnValue
     private static TimedDescription<?> getDescInZweitesMal() {
         return du(PARAGRAPH,
                 "kletterst",
@@ -121,6 +123,7 @@ public class BaumFactory {
                 .dann();
     }
 
+    @CheckReturnValue
     private static TimedDescription<?> getDescInNtesMal(
             final Lichtverhaeltnisse lichtverhaeltnisse) {
         return
@@ -166,6 +169,7 @@ public class BaumFactory {
                 .beendet(PARAGRAPH);
     }
 
+    @CheckReturnValue
     private static TimedDescription<?> getDescOutNtesMal(
             final Lichtverhaeltnisse lichtverhaeltnisse) {
         // FIXME Die folgenden Konstruktionen möchte ich ebenfalls automatisch erzeugen (Nach

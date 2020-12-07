@@ -158,8 +158,8 @@ public class FeelingsComp extends AbstractStatefulComponent<FeelingsPCD> {
     public double getMovementSpeedFactor() {
         return getPcd().getMovementSpeedFactor();
     }
-    
-    public void menschAusgeschlafen(AvTimeSpan schlafdauer) {
+
+    public void menschAusgeschlafen(final AvTimeSpan schlafdauer) {
         ausgeschlafen(MuedigkeitsData.calcAusschlafenEffektHaeltBeimMenschenVorFuer(schlafdauer));
     }
 
@@ -230,7 +230,7 @@ public class FeelingsComp extends AbstractStatefulComponent<FeelingsPCD> {
             return;
         }
 
-        final float oldValue = getFeelingTowards(target, type);
+        final float oldValue = getFeelingTowardsAsFloat(target, type);
 
         if (Math.abs(oldValue) >= Math.abs(bound)) {
             // Das stärkere, schon bestehende Gefühl überschattet die Änderung.
@@ -258,7 +258,13 @@ public class FeelingsComp extends AbstractStatefulComponent<FeelingsPCD> {
     }
 
     @CheckReturnValue
-    public float getFeelingTowards(final GameObjectId target, final FeelingTowardsType type) {
+    public int getFeelingTowards(final GameObjectId target, final FeelingTowardsType type) {
+        return Math.round(getFeelingTowardsAsFloat(target, type));
+    }
+
+    @CheckReturnValue
+    private float getFeelingTowardsAsFloat(final GameObjectId target,
+                                           final FeelingTowardsType type) {
         final Float res = getPcd().getFeelingTowards(target, type);
 
         if (res != null) {
@@ -402,6 +408,7 @@ public class FeelingsComp extends AbstractStatefulComponent<FeelingsPCD> {
         n.narrateAlt(altScWirdMuede(), noTime());
     }
 
+    @CheckReturnValue
     private Collection<AbstractDescription<?>> altScWirdMuede() {
         checkArgument(
                 getMuedigkeit() > FeelingIntensity.NEUTRAL,
@@ -545,6 +552,7 @@ public class FeelingsComp extends AbstractStatefulComponent<FeelingsPCD> {
         getPcd().resetNextMuedigkeitshinweisActionStepCount(scActionStepCount);
     }
 
+    @CheckReturnValue
     private Collection<AbstractDescription<?>> altScIstMuede() {
         checkArgument(
                 getMuedigkeit() > FeelingIntensity.NEUTRAL,

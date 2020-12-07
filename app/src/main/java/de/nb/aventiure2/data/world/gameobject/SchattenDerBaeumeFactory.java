@@ -2,6 +2,8 @@ package de.nb.aventiure2.data.world.gameobject;
 
 import androidx.annotation.NonNull;
 
+import javax.annotation.CheckReturnValue;
+
 import de.nb.aventiure2.data.database.AvDatabase;
 import de.nb.aventiure2.data.world.base.GameObject;
 import de.nb.aventiure2.data.world.base.GameObjectId;
@@ -26,7 +28,7 @@ import static de.nb.aventiure2.german.base.StructuralElement.PARAGRAPH;
 import static de.nb.aventiure2.german.base.StructuralElement.SENTENCE;
 import static de.nb.aventiure2.german.description.DescriptionBuilder.du;
 
-public class SchattenDerBaeumeFactory {
+class SchattenDerBaeumeFactory {
     private static final String
             DESC_TO_SCHATTEN_DER_BAEUME__SC_SETZT_SICH_TAGSUEBER_IN_DEN_SCHATTEN_DER_BAEUME =
             "DescTo_SchattenDerBaeume__SCSetztSichTagsueberInDenSchattenDerBaeume";
@@ -75,6 +77,7 @@ public class SchattenDerBaeumeFactory {
                 storingPlaceComp);
     }
 
+    @CheckReturnValue
     private TimedDescription<?> getDescIn(
             final Known newLocationKnown, final Lichtverhaeltnisse lichtverhaeltnisse) {
         if (lichtverhaeltnisse == DUNKEL) {

@@ -8,6 +8,8 @@ import com.google.common.collect.ImmutableList;
 import java.util.Arrays;
 import java.util.Collection;
 
+import javax.annotation.CheckReturnValue;
+
 import de.nb.aventiure2.german.praedikat.AdverbialeAngabeSkopusSatz;
 import de.nb.aventiure2.german.praedikat.AdverbialeAngabeSkopusVerbAllg;
 import de.nb.aventiure2.german.praedikat.Modalpartikel;
@@ -27,6 +29,7 @@ public class DescriptionUmformulierer {
     private DescriptionUmformulierer() {
     }
 
+    @CheckReturnValue
     public static ImmutableCollection<TimedDescription<?>> drueckeAusTimed(
             final Kohaerenzrelation kohaerenzrelation,
             final TimedDescription<?>... desc) {
@@ -34,6 +37,7 @@ public class DescriptionUmformulierer {
                 Arrays.asList(desc));
     }
 
+    @CheckReturnValue
     public static ImmutableCollection<TimedDescription<?>> drueckeAusTimed(
             final Kohaerenzrelation kohaerenzrelation,
             final Collection<? extends TimedDescription<?>> descriptions) {
@@ -46,6 +50,7 @@ public class DescriptionUmformulierer {
                 .collect(ImmutableList.toImmutableList());
     }
 
+    @CheckReturnValue
     public static ImmutableCollection<AbstractDescription<?>> drueckeAus(
             final Kohaerenzrelation kohaerenzrelation,
             final AbstractDescription<?>... desc) {
@@ -53,6 +58,7 @@ public class DescriptionUmformulierer {
                 Arrays.asList(desc));
     }
 
+    @CheckReturnValue
     public static ImmutableCollection<AbstractDescription<?>> drueckeAus(
             final Kohaerenzrelation kohaerenzrelation,
             final Collection<? extends AbstractDescription<?>> descriptions) {
@@ -61,6 +67,7 @@ public class DescriptionUmformulierer {
                 .collect(ImmutableList.toImmutableList());
     }
 
+    @CheckReturnValue
     public static ImmutableCollection<AbstractDescription<?>> drueckeAus(
             final Kohaerenzrelation kohaerenzrelation,
             final AbstractDescription<?> desc) {
@@ -79,6 +86,7 @@ public class DescriptionUmformulierer {
         }
     }
 
+    @CheckReturnValue
     private static ImmutableCollection<AbstractDescription<?>> drueckeDiskontinuitaetAus(
             final AbstractDescription<?> desc) {
         final ImmutableList.Builder<AbstractDescription<?>> alt = builder();
@@ -125,6 +133,7 @@ public class DescriptionUmformulierer {
         return alt.build();
     }
 
+    @CheckReturnValue
     private static ImmutableCollection<AbstractDescription<?>> drueckeWiederholungAus(
             final AbstractDescription<?> desc) {
         final ImmutableList.Builder<AbstractDescription<?>> alt = builder();
@@ -190,6 +199,7 @@ public class DescriptionUmformulierer {
         return alt.build();
     }
 
+    @CheckReturnValue
     private static ImmutableCollection<AbstractDescription<?>> drueckeFortsetzungAus(
             final AbstractDescription<?> desc) {
         final ImmutableList.Builder<AbstractDescription<?>> alt = builder();
@@ -248,12 +258,13 @@ public class DescriptionUmformulierer {
         return alt.build();
     }
 
-
+    @CheckReturnValue
     private static AllgDescription mitPraefix(final String praefix,
                                               final AbstractDescription<?> desc) {
         return mitPraefix(praefix, desc, true);
     }
 
+    @CheckReturnValue
     private static AllgDescription mitPraefix(final String praefix,
                                               final AbstractDescription<?> desc,
                                               final boolean uncapitalize) {
@@ -299,6 +310,7 @@ public class DescriptionUmformulierer {
                 .beendet(desc.getEndsThis());
     }
 
+    @CheckReturnValue
     private static AbstractDuDescription<?, ?> duMitPraefixUndSatzanschluss(
             final String praefixVerb,
             final String praefixRemainder,
@@ -307,6 +319,7 @@ public class DescriptionUmformulierer {
                 desc);
     }
 
+    @CheckReturnValue
     private static AbstractDuDescription<?, ?> duMitPraefixUndSatzanschluss(
             final String praefixVerb,
             final String praefixRemainder,
@@ -317,6 +330,7 @@ public class DescriptionUmformulierer {
                 desc.getDescriptionSatzanschlussOhneSubjekt());
     }
 
+    @CheckReturnValue
     private static AbstractDuDescription<?, ?> duMitPraefixUndSatzanschluss(
             final String praefixVerb,
             final String praefixRemainder,
@@ -326,6 +340,7 @@ public class DescriptionUmformulierer {
                 praefixVerb, praefixRemainder, null, desc, descSatzanschluss);
     }
 
+    @CheckReturnValue
     private static AbstractDuDescription<?, ?> duMitPraefixUndSatzanschluss(
             final String praefixVerb,
             final String praefixRemainder,
@@ -344,6 +359,7 @@ public class DescriptionUmformulierer {
                 .beendet(desc.getEndsThis());
     }
 
+    @CheckReturnValue
     private static AllgDescription duMitVorfeld(final String vorfeld,
                                                 final AbstractDuDescription<?, ?> duDesc) {
         return neuerSatz(max(duDesc.getStartsNew(), PARAGRAPH),
@@ -371,6 +387,7 @@ public class DescriptionUmformulierer {
                 .beendet(desc.getEndsThis());
     }
 
+    @CheckReturnValue
     private static AbstractDuDescription<?, ?> mitAdvAngabe(
             final PraedikatDuDescription desc,
             final AdverbialeAngabeSkopusVerbAllg advAngabe) {

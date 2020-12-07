@@ -11,6 +11,8 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Function;
 import java.util.function.Predicate;
 
+import javax.annotation.CheckReturnValue;
+
 import de.nb.aventiure2.german.base.StructuralElement;
 import de.nb.aventiure2.german.description.AbstractDescription;
 import de.nb.aventiure2.german.description.AbstractDuDescription;
@@ -29,6 +31,7 @@ class AllgDescriptionBuilder {
      * Builds alternative narration additions from these alternative
      * {@link AbstractDescription}s, always based on the given initial narration.
      */
+    @CheckReturnValue
     static List<AllgDescription> toAllgDescriptions(
             final Collection<? extends AbstractDescription<?>> altDescriptions,
             final Narration initialNarration) {
@@ -42,6 +45,7 @@ class AllgDescriptionBuilder {
      * Builds alternative narration additions from an {@link AbstractDescription}, based
      * on the given initial narration.
      */
+    @CheckReturnValue
     static List<AllgDescription> toAllgDescriptions(
             final AbstractDescription<?> desc,
             final Narration initialNarration) {
@@ -61,6 +65,7 @@ class AllgDescriptionBuilder {
     }
 
     @NonNull
+    @CheckReturnValue
     private static List<AllgDescription> toAllgDescriptionsDuSatzanschlussMitUnd(
             final AbstractDuDescription<?, ?> duDesc) {
         final DescriptionParams params = duDesc.copyParams();
@@ -74,6 +79,7 @@ class AllgDescriptionBuilder {
     }
 
     @NonNull
+    @CheckReturnValue
     private static List<AllgDescription> toAllgDescriptionsImDannFall(
             final AbstractDescription<?> desc) {
         final String satzEvtlMitDann =
@@ -88,6 +94,7 @@ class AllgDescriptionBuilder {
                         satzEvtlMitDann));
     }
 
+    @CheckReturnValue
     private static List<AllgDescription> toDefaultAllgDescriptions(
             final AbstractDescription<?> desc) {
         final ImmutableList.Builder<AllgDescription> alternatives = ImmutableList.builder();
@@ -110,6 +117,7 @@ class AllgDescriptionBuilder {
         return alternatives.build();
     }
 
+    @CheckReturnValue
     private static AllgDescription toHauptsatzAllgDescription(
             final StructuralElement startsNew,
             @NonNull final AbstractDescription<?> desc) {
@@ -120,6 +128,7 @@ class AllgDescriptionBuilder {
                 params, desc.getDescriptionHauptsatz());
     }
 
+    @CheckReturnValue
     private static AllgDescription toHauptsatzMitSpeziellemVorfeldAllgDescription(
             final StructuralElement startsNew,
             @NonNull final AbstractDuDescription<?, ?> desc) {
