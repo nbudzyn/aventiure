@@ -459,8 +459,8 @@ public class RapunzelTalkingComp extends AbstractTalkingComp {
                         + anaph.persPron().akk()
                         + " selbst habest sehen müssen."
 
-                        // STORY Rapunzel die Kugel geben - ansonsten "taut sie nicht auf" und
-                        //  Dieser zweite Teil kommt nicht?
+                        // FIXME Dieser zweite Teil muss von Rapunzels
+                        //  Zuneigung abhängen!
 
                         + " Da verliert "
                         + desc.nom()
