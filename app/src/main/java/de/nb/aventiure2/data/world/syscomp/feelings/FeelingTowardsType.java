@@ -88,7 +88,7 @@ public enum FeelingTowardsType {
         if (feelingIntensity <= -FeelingIntensity.SEHR_STARK) {
             final String adjektivphrase = "ganz außer "
                     + Reflexivpronomen.get(
-                    gameObjectSubjektPerson, gameObjectSubjektNumerusGenus.getNumerus())
+                    gameObjectSubjektPerson, gameObjectSubjektNumerusGenus.getNumerus()).dat()
                     + " vor Wut";
 
             return adjektivphraseMitAlsSiehtNebensatz(adjektivphrase, gameObjectSubjektPerson,
@@ -135,7 +135,7 @@ public enum FeelingTowardsType {
 
         final String adjektivphrase = "außer "
                 + Reflexivpronomen.get(
-                gameObjectSubjektPerson, gameObjectSubjektNumerusGenus.getNumerus())
+                gameObjectSubjektPerson, gameObjectSubjektNumerusGenus.getNumerus()).dat()
                 + " vor Freude";
 
         return adjektivphraseMitAlsSiehtNebensatz(adjektivphrase, gameObjectSubjektPerson,
@@ -233,10 +233,11 @@ public enum FeelingTowardsType {
             final NumerusGenus subjektNumerusGenus,
             final String objekt,
             final String verbalkomplex) {
-        return satzanschluss(Personalpronomen.get(subjektPerson, subjektNumerusGenus)
-                + " "
-                + objekt
-                + " "
-                + verbalkomplex).komma();
+        return satzanschluss(
+                Personalpronomen.get(subjektPerson, subjektNumerusGenus).nom()
+                        + " "
+                        + objekt
+                        + " "
+                        + verbalkomplex).komma();
     }
 }
