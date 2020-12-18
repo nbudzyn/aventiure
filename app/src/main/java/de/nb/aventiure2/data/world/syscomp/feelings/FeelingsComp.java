@@ -1,6 +1,7 @@
 package de.nb.aventiure2.data.world.syscomp.feelings;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
 import com.google.common.collect.ImmutableList;
 
@@ -14,15 +15,22 @@ import de.nb.aventiure2.data.narration.Narrator;
 import de.nb.aventiure2.data.world.base.AbstractStatefulComponent;
 import de.nb.aventiure2.data.world.base.GameObject;
 import de.nb.aventiure2.data.world.base.GameObjectId;
+import de.nb.aventiure2.data.world.syscomp.memory.MemoryComp;
 import de.nb.aventiure2.data.world.time.*;
+import de.nb.aventiure2.german.base.NumerusGenus;
+import de.nb.aventiure2.german.base.Personalpronomen;
+import de.nb.aventiure2.german.base.SubstantivischePhrase;
 import de.nb.aventiure2.german.description.AbstractDescription;
 import de.nb.aventiure2.german.praedikat.AdverbialeAngabeSkopusSatz;
 import de.nb.aventiure2.scaction.stepcount.SCActionStepCountDao;
 
 import static com.google.common.base.Preconditions.checkArgument;
 import static de.nb.aventiure2.data.world.gameobject.World.*;
+import static de.nb.aventiure2.data.world.syscomp.feelings.FeelingTowardsType.ZUNEIGUNG_ABNEIGUNG;
 import static de.nb.aventiure2.data.world.syscomp.feelings.Hunger.SATT;
 import static de.nb.aventiure2.data.world.time.AvTimeSpan.*;
+import static de.nb.aventiure2.german.base.NumerusGenus.M;
+import static de.nb.aventiure2.german.base.Person.P2;
 import static de.nb.aventiure2.german.base.StructuralElement.PARAGRAPH;
 import static de.nb.aventiure2.german.base.StructuralElement.SENTENCE;
 import static de.nb.aventiure2.german.description.DescriptionBuilder.du;
@@ -39,6 +47,9 @@ public class FeelingsComp extends AbstractStatefulComponent<FeelingsPCD> {
     private final SCActionStepCountDao scActionStepCountDao;
 
     protected final Narrator n;
+
+    @Nullable
+    private final MemoryComp memoryComp;
 
     @NonNull
     private final Mood initialMood;
@@ -69,6 +80,7 @@ public class FeelingsComp extends AbstractStatefulComponent<FeelingsPCD> {
     public FeelingsComp(final GameObjectId gameObjectId,
                         final AvDatabase db,
                         final Narrator n,
+                        @Nullable final MemoryComp memoryComp,
                         final Mood initialMood,
                         final Biorhythmus muedigkeitsBiorythmus,
                         final MuedigkeitsData initialMuedigkeitsData,
@@ -82,6 +94,7 @@ public class FeelingsComp extends AbstractStatefulComponent<FeelingsPCD> {
         nowDao = db.nowDao();
         this.n = n;
         scActionStepCountDao = db.scActionStepCountDao();
+        this.memoryComp = memoryComp;
         this.initialMood = initialMood;
         this.muedigkeitsBiorythmus = muedigkeitsBiorythmus;
         this.initialMuedigkeitsData = initialMuedigkeitsData;
@@ -191,6 +204,51 @@ public class FeelingsComp extends AbstractStatefulComponent<FeelingsPCD> {
                 scActionStepCountDao.stepCount(),
                 getMuedigkeitGemaessBiorhythmus());
     }
+
+    /**
+     * Gibt ein Prädikativum zurück, das das Gefühl dieses Feeling Beings
+     * gegenüber dem SC beschreibt, wenn die beiden sich begegnen.
+     * Man kann dieses Prädikativum in einer Konstruktion wie "Rapunzel ist ..." verwenden.
+     */
+    @NonNull
+    public AbstractDescription<?> getFeelingBeiBegegnungMitScPraedikativum(
+            final NumerusGenus gameObjectSubjektNumerusGenus,
+            final FeelingTowardsType type) {
+        return getFeelingBeiBegegnungPraedikativum(
+                gameObjectSubjektNumerusGenus,
+                SPIELER_CHARAKTER,
+                Personalpronomen.get(P2,
+                        // Wir tun hier so, als wäre der Spieler männlich, aber das
+                        // ist egal - die Methode garantiert, dass niemals etwas
+                        // wie "du, der du..." oder
+                        // "du, die du..." generiert wird.
+                        M),
+                ZUNEIGUNG_ABNEIGUNG);
+    }
+
+    /**
+     * Gibt ein Prädikativum zurück, das das Gefühl dieses Feeling Beings
+     * gegenüber dem Target beschreibt, wenn die beiden sich begegnen.
+     * Man kann dieses Prädikativum in einer Konstruktion wie "Rapunzel ist ..." verwenden.
+     * <p>
+     * Die Methode garantiert, dass niemals etwas wie "du, der du..." oder
+     * "du, die du..." oder "du, das du..." generiert wird.
+     */
+    @NonNull
+    private AbstractDescription<?> getFeelingBeiBegegnungPraedikativum(
+            final NumerusGenus gameObjectSubjektNumerusGenus,
+            final GameObjectId feelingTargetId,
+            final SubstantivischePhrase targetDesc,
+            final FeelingTowardsType type) {
+        final boolean targetKnown =
+                memoryComp != null ? memoryComp.isKnown(feelingTargetId) : false;
+
+        return type.getFeelingBeiBegegnungPraedikativum(
+                getGameObjectPerson(), gameObjectSubjektNumerusGenus, targetDesc,
+                getFeelingTowards(feelingTargetId, type),
+                targetKnown);
+    }
+
 
     /**
      * Aktualisiert die Gefühle des Typs {@link FeelingTowardsType}: Die

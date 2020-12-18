@@ -27,7 +27,9 @@ import static de.nb.aventiure2.german.base.Person.P3;
  * Ein Pronomen wie "alles", "nichts".
  */
 @ParametersAreNonnullByDefault
-public class Indefinitpronomen extends SubstantivischesPronomenMitVollerFlexionsreihe {
+public class Indefinitpronomen
+        extends SubstantivischesPronomenMitVollerFlexionsreihe
+        implements IErlaubtAttribute {
     public static final Indefinitpronomen ALLES =
             ip(N, Relativpronomen.Typ.WERWAS, fr("alles", "allem"));
     public static final Indefinitpronomen NICHTS =
@@ -51,7 +53,7 @@ public class Indefinitpronomen extends SubstantivischesPronomenMitVollerFlexions
             PL_MFN, ip(PL_MFN, Relativpronomen.Typ.REGEL,
                     fr("welche", "welchen")));
 
-    public static final Map<NumerusGenus, Indefinitpronomen> WELCHER3;
+    static final Map<NumerusGenus, Indefinitpronomen> WELCHER3;
 
     static {
         final IndefinitpronomenFlektierer flekt = new IndefinitpronomenFlektierer();
@@ -108,9 +110,9 @@ public class Indefinitpronomen extends SubstantivischesPronomenMitVollerFlexions
         return new Indefinitpronomen(numerusGenus, relPronTyp, flextionsreihe);
     }
 
-    public Indefinitpronomen(final NumerusGenus numerusGenus,
-                             final Relativpronomen.Typ relPronTyp,
-                             final Flexionsreihe flextionsreihe) {
+    private Indefinitpronomen(final NumerusGenus numerusGenus,
+                              final Relativpronomen.Typ relPronTyp,
+                              final Flexionsreihe flextionsreihe) {
         super(numerusGenus, flextionsreihe);
         this.relPronTyp = relPronTyp;
     }
@@ -118,7 +120,7 @@ public class Indefinitpronomen extends SubstantivischesPronomenMitVollerFlexions
     @Override
     public Personalpronomen persPron() {
         // "Ich habe mir alles angesehen. Es hat mir gefallen."
-        return Personalpronomen.get(getNumerusGenus());
+        return Personalpronomen.get(P3, getNumerusGenus());
     }
 
     @Override
@@ -129,12 +131,13 @@ public class Indefinitpronomen extends SubstantivischesPronomenMitVollerFlexions
 
     @Override
     public Possessivartikel possArt() {
-        return Possessivartikel.get(getNumerusGenus());
+        // "[Haben wir noch Wein? - Im Keller ist noch welcher. ]Sein[ Geruch ist unverkennbar.]"
+        return Possessivartikel.get(P3, getNumerusGenus());
     }
 
     @Override
     public Relativpronomen relPron() {
-        return Relativpronomen.get(relPronTyp, getNumerusGenus());
+        return Relativpronomen.get(relPronTyp, P3, getNumerusGenus());
     }
 
     @Override
@@ -147,7 +150,7 @@ public class Indefinitpronomen extends SubstantivischesPronomenMitVollerFlexions
         if (this == o) {
             return true;
         }
-        if (o == null || getClass() != o.getClass()) {
+        if (getClass() != o.getClass()) {
             return false;
         }
         if (!super.equals(o)) {

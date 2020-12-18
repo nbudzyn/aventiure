@@ -9,31 +9,62 @@ import static de.nb.aventiure2.german.base.NumerusGenus.F;
 import static de.nb.aventiure2.german.base.NumerusGenus.M;
 import static de.nb.aventiure2.german.base.NumerusGenus.N;
 import static de.nb.aventiure2.german.base.NumerusGenus.PL_MFN;
+import static de.nb.aventiure2.german.base.Person.P1;
+import static de.nb.aventiure2.german.base.Person.P2;
 import static de.nb.aventiure2.german.base.Person.P3;
 
 public class Personalpronomen extends SubstantivischesPronomenMitVollerFlexionsreihe {
-    private static final Map<NumerusGenus, Personalpronomen> ALL = ImmutableMap.of(
-            M, new Personalpronomen(M,
-                    fr("er", "ihm", "ihn")),
-            F, new Personalpronomen(F,
-                    fr("sie", "ihr")),
-            N, new Personalpronomen(N,
-                    fr("es", "ihm")),
-            PL_MFN, new Personalpronomen(PL_MFN,
-                    fr("sie", "ihnen")));
+    private static final Map<Person, Map<NumerusGenus, Personalpronomen>> ALL = ImmutableMap.of(
+            P1,
+            alleGenera(P1,
+                    "ich", "mir", "mich", "wir", "uns"),
+            P2,
+            alleGenera(P1,
+                    "du", "dir", "dich", "ihr", "euch"),
+            P3,
+            ImmutableMap.of(
+                    M, new Personalpronomen(P3, M,
+                            fr("er", "ihm", "ihn")),
+                    F, new Personalpronomen(P3, F,
+                            fr("sie", "ihr")),
+                    N, new Personalpronomen(P3, N,
+                            fr("es", "ihm")),
+                    PL_MFN, new Personalpronomen(P3, PL_MFN,
+                            fr("sie", "ihnen")))
+    );
+
+    private final Person person;
+
+    private static Map<NumerusGenus, Personalpronomen>
+    alleGenera(final Person person,
+               final String nomSg, final String datSg, final String akkSg,
+               final String nomPl, final String datAkkPl) {
+        return ImmutableMap.of(
+                // Auch "ich" hat ein Genus, es ist allerdings nicht sichtbar (nicht overt):
+                // - "ich" (m) hat das "Relativpronomen" "der ich"
+                // - "ich" (f) hat das "Relativpronomen" "die ich"
+                M, new Personalpronomen(person, M, fr(nomSg, datSg, akkSg)),
+                F, new Personalpronomen(person, F, fr(nomSg, datSg, akkSg)),
+                N, new Personalpronomen(person, N, fr(nomSg, datSg, akkSg)),
+                PL_MFN, new Personalpronomen(person, PL_MFN, fr(nomPl, datAkkPl))
+        );
+    }
 
     public static boolean isPersonalpronomen(final String string) {
         return ALL.values().stream()
+                .flatMap(x -> x.values().stream())
                 .anyMatch(p -> p.isWortform(string));
     }
 
-    public static Personalpronomen get(final NumerusGenus numerusGenus) {
-        return ALL.get(numerusGenus);
+    public static Personalpronomen get(final Person person, final NumerusGenus numerusGenus) {
+        return ALL.get(person).get(numerusGenus);
     }
 
-    private Personalpronomen(final NumerusGenus numerusGenus,
+    private Personalpronomen(final Person person,
+                             final NumerusGenus numerusGenus,
                              final Flexionsreihe flexionsreihe) {
         super(numerusGenus, flexionsreihe);
+        this.person = person;
     }
 
     @Override
@@ -44,7 +75,7 @@ public class Personalpronomen extends SubstantivischesPronomenMitVollerFlexionsr
     @Override
     public Reflexivpronomen reflPron() {
         // P1 und P2 sind hier noch nicht vorgesehen
-        return Reflexivpronomen.get(P3, getNumerusGenus().getNumerus());
+        return Reflexivpronomen.get(person, getNumerusGenus().getNumerus());
     }
 
     /**
@@ -52,7 +83,7 @@ public class Personalpronomen extends SubstantivischesPronomenMitVollerFlexionsr
      */
     @Override
     public Relativpronomen relPron() {
-        return Relativpronomen.get(getNumerusGenus());
+        return Relativpronomen.get(person, getNumerusGenus());
     }
 
     /**
@@ -60,12 +91,11 @@ public class Personalpronomen extends SubstantivischesPronomenMitVollerFlexionsr
      */
     @Override
     public Possessivartikel possArt() {
-        return Possessivartikel.get(getNumerusGenus());
+        return Possessivartikel.get(person, getNumerusGenus());
     }
 
     @Override
     public Person getPerson() {
-        // P1 und P2 sind hier noch nicht vorgesehen
-        return P3;
+        return person;
     }
 }

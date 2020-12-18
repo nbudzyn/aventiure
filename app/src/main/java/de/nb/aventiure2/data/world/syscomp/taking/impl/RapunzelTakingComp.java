@@ -98,6 +98,7 @@ public class RapunzelTakingComp extends AbstractTakingComp {
                         givenDesc.getNumerusGenus()).akk() // "eine" / "welche"
                         + " bekommen kann.“ "
                         + capitalize(rapunzelAnaph.persPron().nom())
+                        // FIXME Liebenswürdig lächeln nur bei Zuneigung
                         + " lächelt dich liebenswürdig an")
         );
         memoryComp.upgradeKnown(given);
@@ -132,6 +133,7 @@ public class RapunzelTakingComp extends AbstractTakingComp {
                         + " zurück"),
                 neuerSatz(rapunzelAnaph.nom()
                         + " schaut dich "
+                        // FIXME Glücklich nur bei Zuneigung
                         + (stateComp.hasState(HAT_NACH_KUGEL_GEFRAGT) ? "glücklich" : "überrascht")
                         + " an und nimmt "
                         + givenDescShort.akk()
@@ -158,6 +160,7 @@ public class RapunzelTakingComp extends AbstractTakingComp {
                         + rapunzelAnaph.persPron().nom()
                         + " "
                         + givenDescShort.persPron().akk()
+                        // FIXME Löcheln nur bei Zuneigung
                         + " dir zurück und lächelt dich an")
         );
 

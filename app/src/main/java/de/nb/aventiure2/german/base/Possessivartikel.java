@@ -3,14 +3,33 @@ package de.nb.aventiure2.german.base;
 import com.google.common.collect.ImmutableMap;
 
 import java.util.Map;
+import java.util.Objects;
 
 import static de.nb.aventiure2.german.base.Flexionsreihe.fr;
 import static de.nb.aventiure2.german.base.NumerusGenus.F;
 import static de.nb.aventiure2.german.base.NumerusGenus.M;
 import static de.nb.aventiure2.german.base.NumerusGenus.N;
 import static de.nb.aventiure2.german.base.NumerusGenus.PL_MFN;
+import static de.nb.aventiure2.german.base.Person.P1;
+import static de.nb.aventiure2.german.base.Person.P2;
+import static de.nb.aventiure2.german.base.Person.P3;
 
 public class Possessivartikel {
+    private static final Map<Person, Map<NumerusGenus, Possessivartikel>> ALL = ImmutableMap.of(
+            P1,
+            alleGenera(P1, "mein", "unser"),
+            P2,
+            alleGenera(P2, "dein", "euer"),
+            P3,
+            ImmutableMap.of(
+                    M, new Possessivartikel(P3, M, "sein"),
+                    F, new Possessivartikel(P3, F, "ihr"),
+                    N, new Possessivartikel(P3, N, "sein"),
+                    PL_MFN, new Possessivartikel(P3, PL_MFN, "ihr"))
+    );
+
+    private final Person person;
+
     /**
      * Numerus und Genus des Bezugsnomens (also des Worts, auf das sich dieser
      * Possessivartikel bezieht).
@@ -19,19 +38,27 @@ public class Possessivartikel {
 
     private final String stamm;
 
-    private static final Map<NumerusGenus, Possessivartikel> ALL = ImmutableMap.of(
-            M, new Possessivartikel(M, "sein"),
-            F, new Possessivartikel(F, "ihr"),
-            N, new Possessivartikel(N, "sein"),
-            PL_MFN, new Possessivartikel(PL_MFN, "ihr"));
+    private static Map<NumerusGenus, Possessivartikel>
+    alleGenera(final Person person,
+               final String stammSg, final String stammPl) {
+        return ImmutableMap.of(
+                // "mein" hat eigentlich kein Genus.
+                M, new Possessivartikel(person, M, stammSg),
+                F, new Possessivartikel(person, F, stammSg),
+                N, new Possessivartikel(person, N, stammSg),
+                PL_MFN, new Possessivartikel(person, PL_MFN, stammPl));
+    }
 
-    public Possessivartikel(final NumerusGenus numerusGenusBezugsnomen, final String stamm) {
+    private Possessivartikel(final Person person,
+                             final NumerusGenus numerusGenusBezugsnomen, final String stamm) {
+        this.person = person;
         this.numerusGenusBezugsnomen = numerusGenusBezugsnomen;
         this.stamm = stamm;
     }
 
-    public static Possessivartikel get(final NumerusGenus numerusGenusBezugsnomen) {
-        return ALL.get(numerusGenusBezugsnomen);
+    public static Possessivartikel get(final Person person,
+                                       final NumerusGenus numerusGenusBezugsnomen) {
+        return ALL.get(person).get(numerusGenusBezugsnomen);
     }
 
     public NumerusGenus getNumerusGenusBezugsnomen() {
@@ -42,7 +69,7 @@ public class Possessivartikel {
      * Gibt die {@link FlexionsSpalte} zurück, die vor dieser substantivischen Phrase
      * (attributiv) notwendig ist.
      */
-    public FlexionsSpalte vor(final SubstantivischePhrase substantivischePhrase) {
+    public FlexionsSpalte vor(final IErlaubtAttribute substantivischePhrase) {
         return new FlexionsSpalte(stamm, substantivischePhrase.getNumerusGenus());
     }
 
@@ -54,17 +81,10 @@ public class Possessivartikel {
         return new FlexionsSpalte(stamm, numerusGenus);
     }
 
-    public static class FlexionsSpalte extends DeklinierbarePhrase {
-        /**
-         * Numerus und Genus des Nomens, <i>vor</i> dem der Possessivartikel
-         * (attributiv) steht.
-         */
-        private final NumerusGenus numerusGenus;
+    public static class FlexionsSpalte implements DeklinierbarePhrase {
         private final Flexionsreihe flexionsreihe;
 
         FlexionsSpalte(final String stamm, final NumerusGenus numerusGenus) {
-            super(numerusGenus);
-            this.numerusGenus = getEndungen(numerusGenus).numerusGenus;
             flexionsreihe = getEndungen(numerusGenus).buildFlexionsreihe(stamm);
         }
 
@@ -85,6 +105,23 @@ public class Possessivartikel {
         @Override
         public String akk() {
             return flexionsreihe.akk();
+        }
+
+        @Override
+        public boolean equals(final Object o) {
+            if (this == o) {
+                return true;
+            }
+            if (o == null || getClass() != o.getClass()) {
+                return false;
+            }
+            final FlexionsSpalte that = (FlexionsSpalte) o;
+            return flexionsreihe.equals(that.flexionsreihe);
+        }
+
+        @Override
+        public int hashCode() {
+            return Objects.hash(flexionsreihe);
         }
     }
 

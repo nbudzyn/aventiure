@@ -10,6 +10,9 @@ import de.nb.aventiure2.german.base.PhorikKandidat;
 import de.nb.aventiure2.german.base.StructuralElement;
 import de.nb.aventiure2.german.base.SubstantivischePhrase;
 
+import static com.google.common.base.Preconditions.checkArgument;
+import static de.nb.aventiure2.german.base.Person.P3;
+
 /**
  * Parameter einer {@link AbstractDescription} - mutable!
  */
@@ -59,7 +62,7 @@ public class DescriptionParams {
     @Nullable
     private PhorikKandidat phorikKandidat;
 
-    public DescriptionParams copy() {
+    DescriptionParams copy() {
         return new DescriptionParams(startsNew, endsThis, kommaStehtAus,
                 allowsAdditionalDuSatzreihengliedOhneSubjekt, dann, phorikKandidat);
     }
@@ -77,7 +80,7 @@ public class DescriptionParams {
         this.phorikKandidat = phorikKandidat;
     }
 
-    public DescriptionParams(final StructuralElement startsNew) {
+    DescriptionParams(final StructuralElement startsNew) {
         this.startsNew = startsNew;
         endsThis = StructuralElement.WORD;
     }
@@ -86,16 +89,35 @@ public class DescriptionParams {
         this.startsNew = startsNew;
     }
 
+    /**
+     * Erzeugt einen {@link PhorikKandidat}en. Wir unterstützen nur
+     * Phorik-Kandidaten in der dritten Person!
+     *
+     * @param substantivischePhrase Substantivische Phrase in der dritten Person
+     */
     public void phorikKandidat(final SubstantivischePhrase substantivischePhrase,
                                final IGameObject gameObject) {
+        checkArgument(substantivischePhrase.getPerson() == P3,
+                "Substantivische Phrase " + substantivischePhrase + " hat falsche "
+                        + "Person: " + substantivischePhrase.getPerson() + ". Für Phorik-Kandiaten "
+                        + "ist nur 3. Person zugelassen.");
+
         phorikKandidat(substantivischePhrase.getNumerusGenus(), gameObject.getId());
     }
 
+    /**
+     * Erzeugt einen {@link PhorikKandidat}en. Wir unterstützen nur
+     * Phorik-Kandidaten in der dritten Person!
+     */
     public void phorikKandidat(final NumerusGenus numerusGenus,
                                final IGameObject gameObject) {
         phorikKandidat(numerusGenus, gameObject.getId());
     }
 
+    /**
+     * Erzeugt einen {@link PhorikKandidat}en. Wir unterstützen nur
+     * Phorik-Kandidaten in der dritten Person.
+     */
     public void phorikKandidat(final NumerusGenus numerusGenus,
                                final GameObjectId gameObjectId) {
         phorikKandidat(new PhorikKandidat(numerusGenus, gameObjectId));
@@ -144,11 +166,11 @@ public class DescriptionParams {
         return startsNew;
     }
 
-    public StructuralElement getEndsThis() {
+    StructuralElement getEndsThis() {
         return endsThis;
     }
 
-    public boolean isKommaStehtAus() {
+    boolean isKommaStehtAus() {
         return kommaStehtAus;
     }
 

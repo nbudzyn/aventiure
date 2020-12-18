@@ -26,10 +26,11 @@ public enum VerbSubjObj implements PraedikatMitEinerObjektleerstelle {
     BEGRUESSEN("begrüßen", AKK, "begrüßt", Perfektbildung.HABEN, "begrüßt"),
     DISKUTIEREN("diskutieren", MIT_DAT, "diskutierst",
             Perfektbildung.HABEN, "diskutiert"),
+    HABEN("haben", AKK, "hast", Perfektbildung.HABEN, "gehabt"),
     HEBEN("heben", AKK, "hebst", Perfektbildung.HABEN, "gehoben"),
     HERAUSKLAUBEN("herausklauben", AKK, "klaubst", "heraus",
             Perfektbildung.HABEN, "herausgeklaubt"),
-    HINAUFRUFEN("hinaufrufen", ZU, "rufst", "rufen",
+    HINAUFRUFEN("hinaufrufen", ZU, "rufst", "hinauf",
             Perfektbildung.HABEN, "hinaufgerufen"),
     HINLEGEN("hinlegen", AKK, "legst", "hin",
             Perfektbildung.HABEN, "hingelegt"),
@@ -44,8 +45,11 @@ public enum VerbSubjObj implements PraedikatMitEinerObjektleerstelle {
     POLIEREN("polieren", AKK, "polierst", Perfektbildung.HABEN, "poliert"),
     REDEN("reden", MIT_DAT, "redest", Perfektbildung.HABEN, "geredet"),
     RUFEN("rufen", AKK, "rufst", Perfektbildung.HABEN, "gerufen"),
+    SEHEN("sehen", AKK, "siehst", Perfektbildung.HABEN, "gesehen"),
     SETZEN("setzen", AKK, "setzt", Perfektbildung.HABEN, "gesetzt"),
-    WARTEN("warten", AUF_AKK, "wartest",Perfektbildung.HABEN, "gewartet");
+    WARTEN("warten", AUF_AKK, "wartest", Perfektbildung.HABEN, "gewartet"),
+    WIEDERSEHEN("wiedersehen", AKK, "siehst", "wieder",
+            Perfektbildung.HABEN, "wiedergesehen");
 
     /**
      * Das Verb an sich, ohne Informationen zur Valenz, ohne Ergänzungen, ohne
@@ -95,5 +99,9 @@ public enum VerbSubjObj implements PraedikatMitEinerObjektleerstelle {
             final SubstantivischePhrase describable) {
         return new PraedikatSubjObjOhneLeerstellen(verb,
                 kasusOderPraepositionalkasus, describable);
+    }
+
+    public String getDuForm() {
+        return verb.getDuForm();
     }
 }

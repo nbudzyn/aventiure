@@ -75,6 +75,8 @@ public class Narration {
      * Damit sich ein Pronomen (z.B. ein Personalpronomen) auf das
      * {@link #phorikKandidatBezugsobjekt} beziehen kann, müssen
      * diese grammatikalischen Merkmale übereinstimmen.
+     * <p>
+     * Wir unterstützen nur Phorik-Kandidaten in der dritten Person.
      */
     @Nullable
     private final NumerusGenus phorikKandidatNumerusGenus;
@@ -130,7 +132,7 @@ public class Narration {
         return text;
     }
 
-    protected boolean kommaStehtAus() {
+    boolean kommaStehtAus() {
         return kommaStehtAus;
     }
 
@@ -174,7 +176,7 @@ public class Narration {
      * auf die Lampe möglich und diese Methode gibt "sie" zurück.
      */
     @Nullable
-    Personalpronomen getAnaphPersPronWennMgl(final GameObjectId gameObjectId) {
+    private Personalpronomen getAnaphPersPronWennMgl(final GameObjectId gameObjectId) {
         return PhorikKandidat.getAnaphPersPronWennMgl(getPhorikKandidat(), gameObjectId);
     }
 
@@ -234,7 +236,8 @@ public class Narration {
 
         switch (separation) {
             case WORD:
-                if (kommaNeeded(resText.toString(), allgDescription.getDescriptionHauptsatz())) {
+                if (kommaNeeded(resText.toString(),
+                        allgDescription.getDescriptionHauptsatz())) {
                     resText.append(",");
                 }
 
@@ -352,7 +355,7 @@ public class Narration {
         return true;
     }
 
-    static boolean periodNeededToStartNewSentence(
+    private static boolean periodNeededToStartNewSentence(
             final String base, final String addition) {
         final String baseTrimmed =
                 base.trim();

@@ -3,10 +3,14 @@ package de.nb.aventiure2.german.description;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
+import com.google.common.collect.ImmutableList;
+
 import javax.annotation.CheckReturnValue;
 
+import de.nb.aventiure2.data.world.base.GameObjectId;
 import de.nb.aventiure2.data.world.time.*;
 import de.nb.aventiure2.german.base.StructuralElement;
+import de.nb.aventiure2.german.base.SubstantivischePhrase;
 import de.nb.aventiure2.german.praedikat.PraedikatOhneLeerstellen;
 
 import static de.nb.aventiure2.german.base.GermanUtil.capitalize;
@@ -21,6 +25,49 @@ public class DescriptionBuilder {
         return neuerSatz(PARAGRAPH,
                 paragraph)
                 .beendet(PARAGRAPH);
+    }
+
+    @CheckReturnValue
+    @NonNull
+    public static ImmutableList<TimedDescription<AllgDescription>> altNeuerPraedikativumSatz(
+            final GameObjectId subjektGameObject, final SubstantivischePhrase subjekt,
+            final AbstractDescription<?> praedikativum,
+            final AvTimeSpan timeElapsed) {
+        return altNeuerPraedikativumSatz(subjektGameObject, subjekt, praedikativum).stream()
+                .map(s -> new TimedDescription<>(s, timeElapsed))
+                .collect(ImmutableList.toImmutableList());
+    }
+
+    @CheckReturnValue
+    @NonNull
+    public static ImmutableList<AllgDescription> altNeuerPraedikativumSatz(
+            final GameObjectId subjektGameObject, final SubstantivischePhrase subjekt,
+            final AbstractDescription<?> praedikativum) {
+        final ImmutableList.Builder<AllgDescription> alt = ImmutableList.builder();
+
+        alt.add(neuerPraedikativumSatz(subjektGameObject, subjekt, "ist",
+                praedikativum
+                ),
+                neuerPraedikativumSatz(subjektGameObject, subjekt, "wirkt",
+                        praedikativum
+                ),
+                neuerPraedikativumSatz(subjektGameObject, subjekt, "scheint",
+                        praedikativum
+                ));
+
+        return alt.build();
+    }
+
+    @CheckReturnValue
+    @NonNull
+    public static AllgDescription neuerPraedikativumSatz(
+            final GameObjectId subjektGameObject, final SubstantivischePhrase subjekt,
+            final String verb,
+            final AbstractDescription<?> praedikativum) {
+        return neuerSatz(subjekt.nom() + " " + verb + " "
+                + praedikativum.getDescriptionHauptsatz())
+                .komma(praedikativum.isKommaStehtAus())
+                .phorikKandidat(subjekt, subjektGameObject);
     }
 
     @CheckReturnValue

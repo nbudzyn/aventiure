@@ -1,5 +1,7 @@
 package de.nb.aventiure2.data.world.syscomp.talking.impl;
 
+import androidx.annotation.NonNull;
+
 import com.google.common.collect.ImmutableList;
 
 import javax.annotation.Nullable;
@@ -12,6 +14,7 @@ import de.nb.aventiure2.data.world.syscomp.feelings.FeelingsComp;
 import de.nb.aventiure2.data.world.syscomp.state.impl.RapunzelStateComp;
 import de.nb.aventiure2.data.world.syscomp.talking.AbstractTalkingComp;
 import de.nb.aventiure2.german.base.Nominalphrase;
+import de.nb.aventiure2.german.base.NumerusGenus;
 import de.nb.aventiure2.german.base.Personalpronomen;
 import de.nb.aventiure2.german.base.SubstantivischePhrase;
 import de.nb.aventiure2.german.description.AbstractDescription;
@@ -37,6 +40,7 @@ import static de.nb.aventiure2.german.base.PraepositionMitKasus.ZU;
 import static de.nb.aventiure2.german.base.StructuralElement.PARAGRAPH;
 import static de.nb.aventiure2.german.base.StructuralElement.SENTENCE;
 import static de.nb.aventiure2.german.description.DescriptionBuilder.du;
+import static de.nb.aventiure2.german.description.DescriptionBuilder.neuerPraedikativumSatz;
 import static de.nb.aventiure2.german.description.DescriptionBuilder.neuerSatz;
 import static de.nb.aventiure2.german.praedikat.DirektivesVerb.BITTEN;
 import static de.nb.aventiure2.german.praedikat.VerbSubjDatAkk.AUSSCHUETTEN;
@@ -47,8 +51,9 @@ import static de.nb.aventiure2.german.praedikat.VerbSubjObj.HINUNTERLASSEN;
  * kann mit Rapunzel im Gespräch sein (dann auch umgekehrt).
  */
 public class RapunzelTalkingComp extends AbstractTalkingComp {
-    private static final String RAPUNZEL_TALKING_COMP_BEGRUESSEN_ENTRY_RE_ENTRY =
-            "RapunzelTalkingComp_begruessen_EntryReEntry";
+    public static final String SC_BEGRUESST = "RapunzelTalkingComp_sc_begruesst";
+    public static final String RAPUNZEL_REAGIERT_AUF_SC_BEGRUESSUNG =
+            "RapunzelTalkingComp_Rapunzel_reagiert_auf_SC_Begruessung";
     private final RapunzelStateComp stateComp;
     private final FeelingsComp feelingsComp;
 
@@ -78,6 +83,8 @@ public class RapunzelTalkingComp extends AbstractTalkingComp {
                                 bittenHaareHerunterzulassenPraedikat(),
                                 this::haareHerunterlassenBitte_EntryReEntry),
                         SCTalkAction.st(
+                                // FIXME Nur, wenn auch Rapunzel entsprechend Zutrauen
+                                //  gefasst hat! Ansonsten wäre das creepy!
                                 this::zuneigungDesSCZuRapunzelDeutlich,
                                 // "Der jungen Frau dein Herz ausschütten"
                                 AUSSCHUETTEN
@@ -121,8 +128,7 @@ public class RapunzelTalkingComp extends AbstractTalkingComp {
                                 // "wieder hinunterlassen": Das "wieder" gehört
                                 // quasi zu "hinunter", beides zusammen ("wieder hinunter")
                                 // bildet praktisch die adverbiale "Wohin?"-Bestimmung.
-                                new AdverbialeAngabeSkopusVerbWohinWoher(
-                                        "wieder")));
+                                new AdverbialeAngabeSkopusVerbWohinWoher("wieder")));
     }
 
     private boolean zuneigungDesSCZuRapunzelDeutlich() {
@@ -164,9 +170,9 @@ public class RapunzelTalkingComp extends AbstractTalkingComp {
 
         final ImmutableList.Builder<TimedDescription<?>> alt = ImmutableList.builder();
 
-        if (db.counterDao().get(RAPUNZEL_TALKING_COMP_BEGRUESSEN_ENTRY_RE_ENTRY) == 0) {
+        if (db.counterDao().get(SC_BEGRUESST) == 0) {
             alt.add(neuerSatz("„Hallihallo!“, sagst du und lächelst breit",
-                    secs(5), RAPUNZEL_TALKING_COMP_BEGRUESSEN_ENTRY_RE_ENTRY));
+                    secs(5), SC_BEGRUESST));
         } else {
             final int zuneigungSCTowardsRapunzel =
                     loadSC().feelingsComp().getFeelingTowards(RAPUNZEL, ZUNEIGUNG_ABNEIGUNG);
@@ -205,10 +211,22 @@ public class RapunzelTalkingComp extends AbstractTalkingComp {
     }
 
     private void rapunzelBeantwortetBegruessung() {
+        final boolean scBereitsZuvorSchonEinmalGetroffen =
+                db.counterDao().get(RAPUNZEL_REAGIERT_AUF_SC_BEGRUESSUNG) > 0;
+
         final SubstantivischePhrase anaph = getAnaphPersPronWennMglSonstShortDescription();
         @Nullable final Personalpronomen persPron = n.getAnaphPersPronWennMgl(RAPUNZEL);
 
+        final AbstractDescription<?> zuneigungAbneigungPraedikativum =
+                getZuneigungAbneigungBeiBegegnungMitScPraedikativum(anaph.getNumerusGenus());
+
         final ImmutableList.Builder<AbstractDescription<?>> alt = ImmutableList.builder();
+
+        alt.add(neuerPraedikativumSatz(RAPUNZEL, anaph, "wirkt",
+                zuneigungAbneigungPraedikativum),
+                neuerPraedikativumSatz(RAPUNZEL, anaph, "scheint",
+                        zuneigungAbneigungPraedikativum
+                ));
 
         final int zuneigungTowardsSC =
                 feelingsComp.getFeelingTowards(SPIELER_CHARAKTER, ZUNEIGUNG_ABNEIGUNG);
@@ -237,21 +255,25 @@ public class RapunzelTalkingComp extends AbstractTalkingComp {
             );
         } else if (zuneigungTowardsSC == -FeelingIntensity.DEUTLICH) {
             alt.add(neuerSatz("„Was willst du hier?“, gibt "
-                            + anaph.nom()
-                            + " zur Antwort")
-                            .beendet(PARAGRAPH)
-                            .phorikKandidat(anaph, RAPUNZEL),
-                    neuerSatz("„Was willst du noch?“, faucht "
-                            + anaph.nom()
-                            + " dich geradezu an")
-                            .beendet(PARAGRAPH)
-                            .phorikKandidat(anaph, RAPUNZEL),
-                    neuerSatz("„Was willst du wieder hier?“, fragt "
-                            + anaph.nom()
-                            + " unfreundlich")
-                            .beendet(PARAGRAPH)
-                            .phorikKandidat(anaph, RAPUNZEL)
+                    + anaph.nom()
+                    + " zur Antwort")
+                    .beendet(PARAGRAPH)
+                    .phorikKandidat(anaph, RAPUNZEL)
             );
+            if (scBereitsZuvorSchonEinmalGetroffen) {
+                alt.add(neuerSatz("„Was willst du noch?“, faucht "
+                                + anaph.nom()
+                                + " dich geradezu an")
+                                .beendet(PARAGRAPH)
+                                .phorikKandidat(anaph, RAPUNZEL),
+                        neuerSatz("„Was willst du wieder hier?“, fragt "
+                                + anaph.nom()
+                                + " unfreundlich")
+                                .beendet(PARAGRAPH)
+                                .phorikKandidat(anaph, RAPUNZEL)
+                );
+            }
+
         } else if (zuneigungTowardsSC == -FeelingIntensity.MERKLICH) {
             alt.add(neuerSatz("„Hallo“, sagt "
                             + anaph.nom()
@@ -303,70 +325,115 @@ public class RapunzelTalkingComp extends AbstractTalkingComp {
                         .beendet(PARAGRAPH));
             }
         } else if (zuneigungTowardsSC == FeelingIntensity.NUR_LEICHT) {
-            alt.add(neuerSatz("„Ach, ihr seid es wieder.“ "
-                            + capitalize(anaph.nom())
-                            + " wirkt überrascht")
-                            .phorikKandidat(anaph, RAPUNZEL)
-                            .beendet(PARAGRAPH),
-                    neuerSatz("„Oh, ihr seid es wieder.“ "
-                            + capitalize(anaph.nom())
-                            + " ist ganz offenbar überrascht")
-                            .phorikKandidat(anaph, RAPUNZEL)
-                            .beendet(PARAGRAPH),
-                    neuerSatz("„Ich hatte mich schon gefragt, ob ihr mal wieder "
-                            + "vorbeischaut! Willkommen.“ –")
-                            .beendet(SENTENCE)
-            );
+            alt.add(neuerSatz("„Hallo“, antwortet "
+                    + anaph.nom()
+                    + " und "
+                    // FIXME FeelingsComp getFeelingBeiBegegnungPraedikativum()
+                    //  verwenden und dort Alternativen erlauben!
+                    + "wirkt etwas überrumpelt")
+                    .phorikKandidat(anaph, RAPUNZEL)
+                    .beendet(PARAGRAPH));
+
+            if (scBereitsZuvorSchonEinmalGetroffen) {
+                alt.add(neuerSatz("„Ach, ihr seid es wieder.“ "
+                                + capitalize(anaph.nom())
+                                + " wirkt überrascht")
+                                .phorikKandidat(anaph, RAPUNZEL)
+                                .beendet(PARAGRAPH),
+                        // FIXME "wieder" ist bei der ersten Begrüßung unangebracht!
+                        neuerSatz("„Oh, ihr seid es wieder.“ "
+                                + capitalize(anaph.nom())
+                                + " ist ganz offenbar überrascht")
+                                .phorikKandidat(anaph, RAPUNZEL)
+                                .beendet(PARAGRAPH),
+                        neuerSatz("„Ich hatte mich schon gefragt, ob ihr mal wieder "
+                                + "vorbeischaut! Willkommen.“ –")
+                                .beendet(SENTENCE)
+                );
+            }
         } else if (zuneigungTowardsSC == FeelingIntensity.MERKLICH) {
-            alt.add(neuerSatz("„Ah, hallo! Willkommen zurück!“ "
+            alt.add(neuerSatz("„Ah, hallo! – Willkommen!“ "
                             + capitalize(anaph.nom())
                             + " schaut dich freundlich an")
                             .phorikKandidat(anaph, RAPUNZEL),
-                    neuerSatz("„Ihr seid's! Hallo!“, antwortet "
-                            + anaph.nom())
-                            .phorikKandidat(anaph, RAPUNZEL)
-            );
-        } else if (zuneigungTowardsSC == FeelingIntensity.DEUTLICH) {
-            alt.add(
-                    neuerSatz("„Oh, wie schön, dasss du wieder da bist“, antwortet "
-                            + anaph.nom()
-                            + " und schaut glücklich")
-                            .phorikKandidat(anaph, RAPUNZEL)
-                            .beendet(PARAGRAPH),
-                    neuerSatz("„Schön, dich wiederzusehen!“, freut "
-                            + anaph.nom()
-                            + " sich")
-                            .phorikKandidat(anaph, RAPUNZEL)
-            );
-        } else if (zuneigungTowardsSC == FeelingIntensity.STARK) {
-            alt.add(
-                    neuerSatz("„Endlich! Ich hatte dich schon erwartet“, antwortet "
-                            + anaph.nom()
-                            + " dir und schaut ganz fröhlich drein")
-                            .phorikKandidat(anaph, RAPUNZEL)
-                            .beendet(PARAGRAPH),
-                    neuerSatz("„Oh, eine Freude, dich wiederzusehen!“"),
                     neuerSatz(anaph.nom()
-                            + " strahlt dich nur an"),
-                    neuerSatz("„Endlich bist du wieder da! Ich habe dich schon "
-                            + "vermisst.“")
+                            + " heißt dich etwas überrascht willkommen")
+                            .phorikKandidat(anaph, RAPUNZEL),
+                    neuerSatz(anaph.nom()
+                            + " freut sich, dich zu sehen")
+                            .phorikKandidat(anaph, RAPUNZEL)
             );
+
+            if (scBereitsZuvorSchonEinmalGetroffen) {
+                alt.add(neuerSatz("„Ihr seid's! Hallo!“, antwortet "
+                                + anaph.nom())
+                                .phorikKandidat(anaph, RAPUNZEL),
+                        neuerSatz(anaph.nom()
+                                + " freut sich, dich wiederzusehen")
+                                .phorikKandidat(anaph, RAPUNZEL),
+                        neuerSatz(anaph.nom()
+                                + " freut sich, dass du wieder da bist")
+                                .phorikKandidat(anaph, RAPUNZEL));
+            }
+        } else if (zuneigungTowardsSC == FeelingIntensity.DEUTLICH) {
+            alt.add(neuerSatz("„Oh, wie schön“, antwortet "
+                    + anaph.nom()
+                    + " „ich freue mich, dich zu sehen!“")
+                    .phorikKandidat(anaph, RAPUNZEL)
+                    .beendet(PARAGRAPH));
+
+            if (scBereitsZuvorSchonEinmalGetroffen) {
+                alt.add(neuerSatz("„Oh, wie schön, dasss du wieder da bist“, antwortet "
+                                + anaph.nom()
+                                + " und schaut glücklich")
+                                .phorikKandidat(anaph, RAPUNZEL)
+                                .beendet(PARAGRAPH),
+                        neuerSatz("„Schön, dich wiederzusehen!“, freut "
+                                + anaph.nom()
+                                + " sich")
+                                .phorikKandidat(anaph, RAPUNZEL)
+                );
+            }
+        } else if (zuneigungTowardsSC == FeelingIntensity.STARK) {
+            alt.add(neuerSatz(anaph.nom() + " strahlt dich nur an"));
+
             if (persPron != null) {
                 alt.add(neuerSatz(persPron.possArt().vor(PL_MFN).nom()
                         + " Augen strahlen, als "
                         + persPron.nom()
                         + " dich begrüßt"));
             }
-        } else {
-            alt.add(neuerSatz(anaph.nom()
-                    + " ist überglücklich, dich wiederzusehen")
-                    .phorikKandidat(anaph, RAPUNZEL)
-            );
+
+            if (scBereitsZuvorSchonEinmalGetroffen) {
+                alt.add(
+                        neuerSatz("„Endlich! Ich hatte dich schon erwartet“, antwortet "
+                                + anaph.nom()
+                                + " dir und schaut ganz fröhlich drein")
+                                .phorikKandidat(anaph, RAPUNZEL)
+                                .beendet(PARAGRAPH),
+                        neuerSatz("„Oh, eine Freude, dich wiederzusehen!“"),
+                        neuerSatz("„Endlich bist du wieder da! Ich habe dich schon "
+                                + "vermisst.“")
+                );
+            }
         }
 
-        n.narrateAlt(alt, secs(5));
+        n.narrateAlt(alt.build(), secs(5), RAPUNZEL_REAGIERT_AUF_SC_BEGRUESSUNG);
 
         setTalkingTo(SPIELER_CHARAKTER);
+    }
+
+    /**
+     * Gibt ein Prädikativum zurück, der die Zuneigung / Abneigung Rapunzels gegenüber dem
+     * SC beschreibt, wenn sich die beiden begegenen. Man kann dieses Prädikativ in einer
+     * Konstruktion wie "Rapunzel wirkt..." verwenden.
+     */
+    @NonNull
+    private AbstractDescription<?> getZuneigungAbneigungBeiBegegnungMitScPraedikativum(
+            final NumerusGenus rapunzelSubjektNumerusGenus) {
+        return feelingsComp.getFeelingBeiBegegnungMitScPraedikativum(
+                rapunzelSubjektNumerusGenus,
+                ZUNEIGUNG_ABNEIGUNG);
     }
 
     private void herzAusschuetten() {

@@ -397,6 +397,8 @@ public class RapunzelsZauberinReactionsComp
                 FeelingIntensity.NUR_LEICHT, hours(1)
         );
         db.counterDao().reset(VorDemTurmConnectionComp.COUNTER_ALTER_TURM_UMRUNDET);
+        db.counterDao().reset(RapunzelTalkingComp.SC_BEGRUESST);
+        db.counterDao().reset(RapunzelTalkingComp.RAPUNZEL_REAGIERT_AUF_SC_BEGRUESSUNG);
 
         // Auch Rapunzel wird verzaubert und vergisst den Spieler!
         loadRapunzel().memoryComp().forget(SPIELER_CHARAKTER, GOLDENE_KUGEL);

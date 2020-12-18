@@ -48,9 +48,13 @@ public class SpielerCharakterFactory {
 
     public SpielerCharakter create(final GameObjectId id) {
         final WaitingComp waitingComp = new WaitingComp(id, db);
+        final MemoryComp memoryComp =
+                new MemoryComp(id, db, world, world.getLocationSystem(), createKnownMap());
         final MenschlicherMuedigkeitsBiorhythmus muedigkeitsBiorhythmus =
                 new MenschlicherMuedigkeitsBiorhythmus();
-        final FeelingsComp feelingsComp = new FeelingsComp(id, db, n, Mood.NEUTRAL,
+        final FeelingsComp feelingsComp = new FeelingsComp(id, db, n,
+                memoryComp,
+                Mood.NEUTRAL,
                 muedigkeitsBiorhythmus,
                 MuedigkeitsData.createFromBiorhythmusFuerMenschen(
                         muedigkeitsBiorhythmus, db.nowDao().now()),
@@ -67,7 +71,7 @@ public class SpielerCharakterFactory {
                 new StoringPlaceComp(id, db, EINE_TASCHE, false),
                 waitingComp,
                 feelingsComp,
-                new MemoryComp(id, db, world, world.getLocationSystem(), createKnownMap()),
+                memoryComp,
                 new NoSCTalkActionsTalkingComp(SPIELER_CHARAKTER, db, n, world),
                 new ScAutomaticReactionsComp(db, n, world, waitingComp, feelingsComp));
     }

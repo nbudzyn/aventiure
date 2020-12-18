@@ -1,12 +1,16 @@
 package de.nb.aventiure2.german.base;
 
+import java.util.Objects;
+
 /**
  * Eine Phrase, die substantivisch verwendet werden kann, also insbesondere ein Pronomen ("sie") oder
  * eine (andere) Nominalphrase ("die goldene Kugel").
  */
-public abstract class SubstantivischePhrase extends DeklinierbarePhrase {
+public abstract class SubstantivischePhrase implements DeklinierbarePhrase {
+    private final NumerusGenus numerusGenus;
+
     public SubstantivischePhrase(final NumerusGenus numerusGenus) {
-        super(numerusGenus);
+        this.numerusGenus = numerusGenus;
     }
 
     /**
@@ -58,5 +62,30 @@ public abstract class SubstantivischePhrase extends DeklinierbarePhrase {
      */
     public abstract Relativpronomen relPron();
 
+    public Numerus getNumerus() {
+        return getNumerusGenus().getNumerus();
+    }
+
+    public NumerusGenus getNumerusGenus() {
+        return numerusGenus;
+    }
+
     public abstract Person getPerson();
+
+    @Override
+    public boolean equals(final Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        final SubstantivischePhrase that = (SubstantivischePhrase) o;
+        return numerusGenus == that.numerusGenus;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(numerusGenus);
+    }
 }

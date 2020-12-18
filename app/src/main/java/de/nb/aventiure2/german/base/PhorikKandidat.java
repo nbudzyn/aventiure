@@ -5,6 +5,8 @@ import androidx.annotation.Nullable;
 
 import java.util.Objects;
 
+import static de.nb.aventiure2.german.base.Person.P3;
+
 /**
  * Ein Kandidat, auf den sich ein Pronomen beziehen könnte, insbesondere ein Personalpronomen.
  * Anders gesagt: Ein Referent.
@@ -16,12 +18,17 @@ import java.util.Objects;
  *     <li>Die grammatikalischen Kategorien Numerus und Genus
  *     <li>Das Objekt als solches (auf das man sich beziehen könnte)
  * </ol>
+ * <p>
+ * Wir unterstützen noch Phorikkandiaten in der dritten Person.
  */
 public class PhorikKandidat {
     private final NumerusGenus numerusGenus;
 
     private final IBezugsobjekt bezugsobjekt;
 
+    /**
+     * Konstruktor. Wir unterstützen nur Phorikkandidaten in der dritten Person.
+     */
     public PhorikKandidat(final NumerusGenus numerusGenus,
                           final IBezugsobjekt bezugsobjekt) {
         this.numerusGenus = numerusGenus;
@@ -60,7 +67,7 @@ public class PhorikKandidat {
             return null;
         }
 
-        return Personalpronomen.get(getNumerusGenus());
+        return Personalpronomen.get(P3, getNumerusGenus());
     }
 
     /**

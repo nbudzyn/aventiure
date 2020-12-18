@@ -61,9 +61,9 @@ public abstract class AbstractTakingComp extends AbstractStatelessComponent {
                 (IDescribableGO) world.load(describableId), true);
     }
 
-    // TODO Code ist doppelt. Vielleicht sollte es einen
-    //  Narrator als Service geben, der auch zumindest die knownComp des
-    //  SCs kennt, z.B. über ein Interface?? Das wäre quasi das
+    // TODO Code ist doppelt oder mehrfache. Vielleicht sollte der
+    //  Narrator zumindest auch die knownComp des
+    //  SCs kennen, z.B. über ein Interface?? Das wäre quasi das
     //  "Adressatenmodell".
 
     /**

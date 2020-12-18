@@ -140,6 +140,11 @@ public abstract class AbstractPraedikatOhneLeerstellen
                 getNachfeld(person, numerus));
     }
 
+    @Override
+    public String getDuSatzanschlussOhneSubjekt(final Modalpartikel... modalpartikeln) {
+        return null;
+    }
+
     /**
      * Gibt eine Infinitivkonstruktion zurück mit Prädikat
      * ("den Frosch erneut zu ignorieren", "das Leben zu genießen")
@@ -161,16 +166,16 @@ public abstract class AbstractPraedikatOhneLeerstellen
         return null;
     }
 
-    public @Nullable
-    String getMittelfeld(final Person personSubjekt,
-                         final Numerus numerusSubjekt) {
+    @Nullable
+    private String getMittelfeld(final Person personSubjekt,
+                                 final Numerus numerusSubjekt) {
         return getMittelfeld(personSubjekt, numerusSubjekt, new Modalpartikel[0]);
         // "den Frosch" oder "sich" / "mich"
     }
 
-    public String getMittelfeld(final Person personSubjekt,
-                                final Numerus numerusSubjekt,
-                                final Modalpartikel... modalpartikeln) {
+    private String getMittelfeld(final Person personSubjekt,
+                                 final Numerus numerusSubjekt,
+                                 final Modalpartikel... modalpartikeln) {
         return getMittelfeld(asList(modalpartikeln), personSubjekt, numerusSubjekt);
     }
 
@@ -179,7 +184,7 @@ public abstract class AbstractPraedikatOhneLeerstellen
                                          Numerus numerusSubjekt);
 
     @Nullable
-    public String getMittelfeldOhneSpeziellesVorfeld(
+    private String getMittelfeldOhneSpeziellesVorfeld(
             final Person personSubjekt, final Numerus numerusSubjekt) {
         return GermanUtil.cutSatzglied(
                 getMittelfeld(personSubjekt, numerusSubjekt),
@@ -200,12 +205,12 @@ public abstract class AbstractPraedikatOhneLeerstellen
     }
 
     @Nullable
-    public AdverbialeAngabeSkopusSatz getAdverbialeAngabeSkopusSatz() {
+    AdverbialeAngabeSkopusSatz getAdverbialeAngabeSkopusSatz() {
         return adverbialeAngabeSkopusSatz;
     }
 
     @Nullable
-    public AdverbialeAngabeSkopusVerbAllg getAdverbialeAngabeSkopusVerbAllg() {
+    AdverbialeAngabeSkopusVerbAllg getAdverbialeAngabeSkopusVerbAllg() {
         return adverbialeAngabeSkopusVerbAllg;
     }
 

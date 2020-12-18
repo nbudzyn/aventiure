@@ -141,7 +141,9 @@ class CreatureFactory {
         final MenschlicherMuedigkeitsBiorhythmus muedigkeitsBiorhythmus =
                 new MenschlicherMuedigkeitsBiorhythmus();
         final FeelingsComp feelingsComp =
-                new FeelingsComp(RAPUNZEL, db, n, Mood.NEUTRAL,
+                new FeelingsComp(RAPUNZEL, db, n,
+                        memoryComp,
+                        Mood.NEUTRAL,
                         muedigkeitsBiorhythmus,
                         MuedigkeitsData.createFromBiorhythmusFuerMenschen(
                                 muedigkeitsBiorhythmus, db.nowDao().now()),
@@ -176,8 +178,7 @@ class CreatureFactory {
 
     private static ImmutableMap<FeelingTowardsType, Float> createDefaultFeelingsTowardsForRapunzel() {
         return ImmutableMap.of(FeelingTowardsType.ZUNEIGUNG_ABNEIGUNG,
-                // Generell ist sie anderen gegenüber positiv eingestellt
-                (float) FeelingIntensity.NUR_LEICHT);
+                (float) FeelingIntensity.NEUTRAL);
     }
 
     private static ImmutableMap<GameObjectId, Map<FeelingTowardsType, Float>>

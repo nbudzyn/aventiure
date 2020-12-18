@@ -14,7 +14,9 @@ import static de.nb.aventiure2.german.base.Person.P3;
 /**
  * Eine Nominalphrase, z.B. "ein dicker, hässlicher Frosch".
  */
-public class Nominalphrase extends SubstantivischePhrase {
+public class Nominalphrase
+        extends SubstantivischePhrase
+        implements IErlaubtAttribute {
     @Nullable
     private final Artikel.Typ artikelTyp;
 
@@ -131,7 +133,7 @@ public class Nominalphrase extends SubstantivischePhrase {
 
     @Override
     public Personalpronomen persPron() {
-        return Personalpronomen.get(getNumerusGenus());
+        return Personalpronomen.get(P3, getNumerusGenus());
     }
 
     @Override
@@ -141,12 +143,12 @@ public class Nominalphrase extends SubstantivischePhrase {
 
     @Override
     public Possessivartikel possArt() {
-        return Possessivartikel.get(getNumerusGenus());
+        return Possessivartikel.get(P3, getNumerusGenus());
     }
 
     @Override
     public Relativpronomen relPron() {
-        return Relativpronomen.get(getNumerusGenus());
+        return Relativpronomen.get(P3, getNumerusGenus());
     }
 
     @Override

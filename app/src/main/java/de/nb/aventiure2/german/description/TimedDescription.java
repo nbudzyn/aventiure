@@ -10,6 +10,9 @@ import de.nb.aventiure2.german.base.PhorikKandidat;
 import de.nb.aventiure2.german.base.StructuralElement;
 import de.nb.aventiure2.german.base.SubstantivischePhrase;
 
+import static com.google.common.base.Preconditions.checkArgument;
+import static de.nb.aventiure2.german.base.Person.P3;
+
 /**
  * A description of something and the time it takes.
  */
@@ -31,7 +34,8 @@ public class TimedDescription<D extends AbstractDescription<?>> {
                             final AvTimeSpan timeElapsed) {
         this(description, timeElapsed, null);
     }
-    public TimedDescription(final  D description,
+
+    public TimedDescription(final D description,
                             final AvTimeSpan timeElapsed,
                             @Nullable final String counterIdIncrementedIfTextIsNarrated) {
         this.description = description;
@@ -102,14 +106,28 @@ public class TimedDescription<D extends AbstractDescription<?>> {
         return this;
     }
 
+    /**
+     * Erzeugt einen {@link PhorikKandidat}en. Wir unterstützen nur
+     * Phorik-Kandidaten in der dritten Person!
+     *
+     * @param substantivischePhrase Substantivische Phrase in der dritten Person
+     */
     public TimedDescription<D> phorikKandidat(final SubstantivischePhrase substantivischePhrase,
-                                           final IBezugsobjekt bezugsobjekt) {
+                                              final IBezugsobjekt bezugsobjekt) {
+        checkArgument(substantivischePhrase.getPerson() == P3,
+                "Substantivische Phrase " + substantivischePhrase + " hat falsche "
+                        + "Person: " + substantivischePhrase.getPerson() + ". Für Phorik-Kandiaten "
+                        + "ist nur 3. Person zugelassen.");
         getDescription().phorikKandidat(substantivischePhrase.getNumerusGenus(), bezugsobjekt);
         return this;
     }
 
+    /**
+     * Erzeugt einen {@link PhorikKandidat}en. Wir unterstützen nur
+     * Phorik-Kandidaten in der dritten Person!
+     */
     public TimedDescription<D> phorikKandidat(final NumerusGenus numerusGenus,
-                                           final IBezugsobjekt bezugsobjekt) {
+                                              final IBezugsobjekt bezugsobjekt) {
         getDescription().phorikKandidat(new PhorikKandidat(numerusGenus, bezugsobjekt));
         return this;
     }

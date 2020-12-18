@@ -16,7 +16,7 @@ import static de.nb.aventiure2.german.base.NumerusGenus.M;
 import static de.nb.aventiure2.german.base.NumerusGenus.N;
 import static de.nb.aventiure2.german.base.NumerusGenus.PL_MFN;
 
-public class Artikel extends DeklinierbarePhrase {
+public class Artikel implements DeklinierbarePhrase {
     public enum Typ {
         /**
          * "ein( Haus)" , "(Häuser)"
@@ -41,6 +41,7 @@ public class Artikel extends DeklinierbarePhrase {
     private static final Map<Typ, Map<NumerusGenus, Artikel>> ALL =
             new ConcurrentHashMap<>();
 
+    private final NumerusGenus numerusGenus;
     private final Flexionsreihe flexionsreihe;
 
     static {
@@ -73,7 +74,7 @@ public class Artikel extends DeklinierbarePhrase {
 
     public Artikel(final NumerusGenus numerusGenus,
                    final Flexionsreihe flexionsreihe) {
-        super(numerusGenus);
+        this.numerusGenus = numerusGenus;
         this.flexionsreihe = flexionsreihe;
     }
 
@@ -100,15 +101,13 @@ public class Artikel extends DeklinierbarePhrase {
         if (o == null || getClass() != o.getClass()) {
             return false;
         }
-        if (!super.equals(o)) {
-            return false;
-        }
         final Artikel artikel = (Artikel) o;
-        return flexionsreihe.equals(artikel.flexionsreihe);
+        return numerusGenus == artikel.numerusGenus &&
+                flexionsreihe.equals(artikel.flexionsreihe);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(super.hashCode(), flexionsreihe);
+        return Objects.hash(numerusGenus);
     }
 }

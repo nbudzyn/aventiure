@@ -28,6 +28,7 @@ import de.nb.aventiure2.data.world.syscomp.storingplace.ILocationGO;
 import de.nb.aventiure2.data.world.syscomp.talking.impl.RapunzelTalkingComp;
 import de.nb.aventiure2.data.world.time.*;
 import de.nb.aventiure2.german.base.Nominalphrase;
+import de.nb.aventiure2.german.base.NumerusGenus;
 import de.nb.aventiure2.german.base.PraepositionMitKasus;
 import de.nb.aventiure2.german.base.SubstantivischePhrase;
 import de.nb.aventiure2.german.description.AbstractDescription;
@@ -54,6 +55,7 @@ import static de.nb.aventiure2.german.base.NumerusGenus.F;
 import static de.nb.aventiure2.german.base.NumerusGenus.PL_MFN;
 import static de.nb.aventiure2.german.base.StructuralElement.PARAGRAPH;
 import static de.nb.aventiure2.german.base.StructuralElement.SENTENCE;
+import static de.nb.aventiure2.german.description.DescriptionBuilder.altNeuerPraedikativumSatz;
 import static de.nb.aventiure2.german.description.DescriptionBuilder.du;
 import static de.nb.aventiure2.german.description.DescriptionBuilder.neuerSatz;
 
@@ -278,8 +280,6 @@ public class RapunzelReactionsComp
         }
 
         loadSC().feelingsComp().requestMood(BEWEGT);
-
-        talkingComp.setSchonBegruesstMitSC(true);
     }
 
     private void onSCEnter_ObenImAltenTurm_RapunzelUnbekannt_nachts() {
@@ -318,7 +318,6 @@ public class RapunzelReactionsComp
         feelingsComp.upgradeFeelingsTowards(
                 SPIELER_CHARAKTER, ZUNEIGUNG_ABNEIGUNG,
                 -FeelingIntensity.DEUTLICH, FeelingIntensity.SEHR_STARK);
-        talkingComp.setSchonBegruesstMitSC(true);
     }
 
     private void onSCEnter_ObenImAltenTurm_RapunzelBekannt() {
@@ -326,25 +325,35 @@ public class RapunzelReactionsComp
         stateComp.setState(STILL);
 
         if (db.nowDao().now().getTageszeit() == NACHTS) {
-            narrateAndUpgradeFeelings_RapunzelHeisstSCWillkommen_Nachts();
+            narrateAndUpgradeFeelings_ScTrifftRapunzelObenImAltenTurmAn_Nachts();
         } else {
-            narrateAndUpgradeFeelings_RapunzelHeisstSCWillkommen_Tagsueber();
+            narrateAndUpgradeFeelings_ScTrifftRapunzelObenImAltenTurmAn_Tagsueber();
         }
 
-        talkingComp.setSchonBegruesstMitSC(true);
         memoryComp.upgradeKnown(SPIELER_CHARAKTER);
 
         world.loadSC().memoryComp().upgradeKnown(RAPUNZEL);
     }
 
-    private void narrateAndUpgradeFeelings_RapunzelHeisstSCWillkommen_Tagsueber() {
+    private void narrateAndUpgradeFeelings_ScTrifftRapunzelObenImAltenTurmAn_Tagsueber() {
         final SubstantivischePhrase anaph =
                 getAnaphPersPronWennMglSonstDescription(true);
 
+        feelingsComp.upgradeFeelingsTowards(SPIELER_CHARAKTER, ZUNEIGUNG_ABNEIGUNG,
+                1f, FeelingIntensity.MERKLICH);
+        loadSC().feelingsComp().upgradeFeelingsTowards(RAPUNZEL,
+                ZUNEIGUNG_ABNEIGUNG, 0.75f, FeelingIntensity.DEUTLICH);
+
+        final AbstractDescription<?> zuneigungAbneigungPraedikativum =
+                getZuneigungAbneigungBeiBegegnungMitScPraedikativum(anaph.getNumerusGenus());
+
         final ImmutableList.Builder<TimedDescription<?>> alt = ImmutableList.builder();
 
+        alt.addAll(altNeuerPraedikativumSatz(RAPUNZEL, anaph, zuneigungAbneigungPraedikativum,
+                secs(5)));
+
         alt.add(
-                // STORY Wenn man sich noch nicht so kennt:
+                // STORY Nur, wenn man sich noch nicht so kennt:
                 neuerSatz(anaph.nom()
                                 + " schaut dich überrascht und etwas "
                                 + "verwirrt an",
@@ -357,10 +366,6 @@ public class RapunzelReactionsComp
 //                                    + "sie, „Kannst du mir nun helfen?”",
 //                            "oben", secs(20))
 //                            .phorikKandidat(F, RAPUNZEL),
-//                    // STORY Dies nur, wenn man sich schon besser kennt
-//                    neuerSatz("Die junge Frau ist gespannt, was du ihr zu berichten hast",
-//                            secs(40))
-//                            .phorikKandidat(F, RAPUNZEL),
 //                    // STORY Dies nur, wenn Rapunzel schon von der Zauberin erzählt hat
 //                    neuerSatz(
 //                            "„Die Alte hat nichts bemerkt”, sprudelt die "
@@ -372,24 +377,44 @@ public class RapunzelReactionsComp
 
         if (loadSC().memoryComp().getKnown(RAPUNZEL) == KNOWN_FROM_DARKNESS) {
             alt.add(neuerSatz("Am Fenster sitzt die junge Frau, schön als "
-                    + "du unter der Sonne noch keine gesehen hast. "
-                    + "Ihre Haare glänzen fein wie gesponnen Gold. Sie ist "
-                    + "glücklich, dich zu sehen", secs(30))
+                            + "du unter der Sonne noch keine gesehen hast. "
+                            + "Ihre Haare glänzen fein wie gesponnen Gold. Sie ist "
+                            + zuneigungAbneigungPraedikativum.getDescriptionHauptsatz(),
+                    secs(30))
+                    .komma(zuneigungAbneigungPraedikativum.isKommaStehtAus())
                     .phorikKandidat(F, RAPUNZEL));
         }
         n.narrateAlt(alt);
-
-        feelingsComp.upgradeFeelingsTowards(SPIELER_CHARAKTER, ZUNEIGUNG_ABNEIGUNG,
-                1f, FeelingIntensity.MERKLICH);
-        loadSC().feelingsComp().upgradeFeelingsTowards(RAPUNZEL,
-                ZUNEIGUNG_ABNEIGUNG, 0.75f, FeelingIntensity.DEUTLICH);
     }
 
-    private void narrateAndUpgradeFeelings_RapunzelHeisstSCWillkommen_Nachts() {
+    /**
+     * Gibt ein Prädikativum zurück, der die Zuneigung / Abneigung Rapunzels gegenüber dem
+     * SC beschreibt, wenn Rapunzel den SC trifft. Man kann dieses Prädikativ in einer
+     * Konstruktion wie "Rapunzel ist ..." verwenden.
+     */
+    @NonNull
+    private AbstractDescription<?> getZuneigungAbneigungBeiBegegnungMitScPraedikativum(
+            final NumerusGenus rapunzelNumerusGenus
+    ) {
+        return feelingsComp.getFeelingBeiBegegnungMitScPraedikativum(
+                rapunzelNumerusGenus,
+                ZUNEIGUNG_ABNEIGUNG);
+    }
+
+    private void narrateAndUpgradeFeelings_ScTrifftRapunzelObenImAltenTurmAn_Nachts() {
         final ImmutableList.Builder<TimedDescription<?>> alt = ImmutableList.builder();
+
+        loadSC().feelingsComp().upgradeFeelingsTowards(RAPUNZEL,
+                ZUNEIGUNG_ABNEIGUNG, 0.75f, FeelingIntensity.DEUTLICH);
 
         final SubstantivischePhrase anaph =
                 getAnaphPersPronWennMglSonstDescription(true);
+
+        final AbstractDescription<?> zuneigungAbneigungPraedikativum =
+                getZuneigungAbneigungBeiBegegnungMitScPraedikativum(anaph.getNumerusGenus());
+
+        alt.addAll(altNeuerPraedikativumSatz(RAPUNZEL, anaph, zuneigungAbneigungPraedikativum,
+                secs(5)));
 
         alt.add(du(SENTENCE, "hast",
                 anaph.akk()
@@ -397,15 +422,13 @@ public class RapunzelReactionsComp
                         + "geholt. "
                         + capitalize(anaph.persPron().nom()) // Sie 
                         + " sieht sehr zerknittert "
-                        + "aus, "
-                        // STORY Nur bei Zuneigung...
-                        + "freut sich aber, dich zu sehen",
+                        + "aus",
                 "offenbar",
                 secs(30))
                         .phorikKandidat(anaph.persPron(), RAPUNZEL),
-                neuerSatz("Oben im dunklen Zimmer heißt dich "
+                neuerSatz("Oben im dunklen Zimmer schaut dich "
                                 + anaph.nom()
-                                + " etwas überrascht willkommen",
+                                + " etwas überrascht an",
                         secs(15))
                         .phorikKandidat(anaph, RAPUNZEL));
         if (loadSC().memoryComp().getKnown(RAPUNZEL) == KNOWN_FROM_LIGHT) {
@@ -418,9 +441,6 @@ public class RapunzelReactionsComp
                     .phorikKandidat(F, RAPUNZEL));
         }
         n.narrateAlt(alt);
-
-        loadSC().feelingsComp().upgradeFeelingsTowards(RAPUNZEL,
-                ZUNEIGUNG_ABNEIGUNG, 0.75f, FeelingIntensity.DEUTLICH);
     }
 
     private void onZauberinEnter(@Nullable final ILocationGO from, final ILocationGO to) {

@@ -43,7 +43,7 @@ class Flexionsreihe {
     private final String dativ;
     private final String akkusativ;
 
-    public boolean hasWortform(final String string) {
+    boolean hasWortform(final String string) {
         return string.equals(nominativ) ||
                 string.equals(dativ) ||
                 string.equals(akkusativ);
@@ -59,5 +59,24 @@ class Flexionsreihe {
 
     public String akk() {
         return akkusativ;
+    }
+
+    @Override
+    public boolean equals(final Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        final Flexionsreihe that = (Flexionsreihe) o;
+        return nominativ.equals(that.nominativ) &&
+                dativ.equals(that.dativ) &&
+                akkusativ.equals(that.akkusativ);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(nominativ, dativ, akkusativ);
     }
 }

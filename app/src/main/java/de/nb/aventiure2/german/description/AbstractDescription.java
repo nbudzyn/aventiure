@@ -8,6 +8,9 @@ import de.nb.aventiure2.german.base.PhorikKandidat;
 import de.nb.aventiure2.german.base.StructuralElement;
 import de.nb.aventiure2.german.base.SubstantivischePhrase;
 
+import static com.google.common.base.Preconditions.checkArgument;
+import static de.nb.aventiure2.german.base.Person.P3;
+
 /**
  * Abstract superclass for a description.
  */
@@ -31,7 +34,9 @@ public abstract class AbstractDescription<SELF extends AbstractDescription<SELF>
     }
 
     /**
-     * Gibt die Beschreibung zurück, beginnend mit einem Hauptsatz
+     * Gibt die Beschreibung zurück, in der Regel beginnend mit einem Hauptsatz;
+     * handelt es sich bei dieser Description jedoch um eine kleinere Einheit,
+     * wird der Text dieser Description zurückgegeben.
      */
     public abstract String getDescriptionHauptsatz();
 
@@ -96,11 +101,25 @@ public abstract class AbstractDescription<SELF extends AbstractDescription<SELF>
         return params.getEndsThis();
     }
 
+    /**
+     * Erzeugt einen {@link PhorikKandidat}en. Wir unterstützen nur
+     * Phorik-Kandidaten in der dritten Person!
+     *
+     * @param substantivischePhrase Substantivische Phrase in der dritten Person
+     */
     public SELF phorikKandidat(final SubstantivischePhrase substantivischePhrase,
                                final IBezugsobjekt bezugsobjekt) {
+        checkArgument(substantivischePhrase.getPerson() == P3,
+                "Substantivische Phrase " + substantivischePhrase + " hat falsche "
+                        + "Person: " + substantivischePhrase.getPerson() + ". Für Phorik-Kandiaten "
+                        + "ist nur 3. Person zugelassen.");
         return phorikKandidat(substantivischePhrase.getNumerusGenus(), bezugsobjekt);
     }
 
+    /**
+     * Erzeugt einen {@link PhorikKandidat}en. Wir unterstützen nur
+     * Phorik-Kandidaten in der dritten Person!
+     */
     public SELF phorikKandidat(final NumerusGenus numerusGenus,
                                final IBezugsobjekt bezugsobjekt) {
         return phorikKandidat(new PhorikKandidat(numerusGenus, bezugsobjekt));
