@@ -6,6 +6,8 @@ import java.util.Collection;
 
 import javax.annotation.Nullable;
 
+import de.nb.aventiure2.annotations.Argument;
+import de.nb.aventiure2.annotations.VerbValenz;
 import de.nb.aventiure2.german.base.Numerus;
 import de.nb.aventiure2.german.base.Person;
 import de.nb.aventiure2.german.base.WoertlicheRede;
@@ -25,6 +27,7 @@ public class PraedikatMitWoertlicherRedeOhneLeerstellen
     /**
      * Die wörtliche Rede
      */
+    @Argument
     @NonNull
     private final WoertlicheRede woertlicheRede;
 
@@ -33,7 +36,8 @@ public class PraedikatMitWoertlicherRedeOhneLeerstellen
         this(verb, new WoertlicheRede(woertlicheRedeText));
     }
 
-    public PraedikatMitWoertlicherRedeOhneLeerstellen(
+    @VerbValenz
+    PraedikatMitWoertlicherRedeOhneLeerstellen(
             final Verb verb, final WoertlicheRede woertlicheRede) {
         this(verb, woertlicheRede, null,
                 null, null);

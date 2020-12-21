@@ -6,6 +6,8 @@ import java.util.Collection;
 
 import javax.annotation.Nullable;
 
+import de.nb.aventiure2.annotations.Argument;
+import de.nb.aventiure2.annotations.VerbValenz;
 import de.nb.aventiure2.german.base.Numerus;
 import de.nb.aventiure2.german.base.Person;
 import de.nb.aventiure2.german.base.PraepositionMitKasus;
@@ -21,18 +23,21 @@ public class PraedikatAkkPraepOhneLeerstellen extends AbstractPraedikatOhneLeers
     @NonNull
     private final PraepositionMitKasus praepositionMitKasus;
 
+    @Argument
     @NonNull
-    private final SubstantivischePhrase describablePraep;
+    private final SubstantivischePhrase akk;
 
+    @Argument
     @NonNull
-    private final SubstantivischePhrase describableAkk;
+    private final SubstantivischePhrase praep;
 
-    public PraedikatAkkPraepOhneLeerstellen(
+    @VerbValenz
+    PraedikatAkkPraepOhneLeerstellen(
             final Verb verb,
             final PraepositionMitKasus praepositionMitKasus,
-            final SubstantivischePhrase describableAkk,
-            final SubstantivischePhrase describablePraep) {
-        this(verb, praepositionMitKasus, describableAkk, describablePraep,
+            final SubstantivischePhrase akk,
+            final SubstantivischePhrase praep) {
+        this(verb, praepositionMitKasus, akk, praep,
                 null, null,
                 null);
     }
@@ -40,8 +45,8 @@ public class PraedikatAkkPraepOhneLeerstellen extends AbstractPraedikatOhneLeers
     private PraedikatAkkPraepOhneLeerstellen(
             final Verb verb,
             final PraepositionMitKasus praepositionMitKasus,
-            final SubstantivischePhrase describableAkk,
-            final SubstantivischePhrase describablePraep,
+            final SubstantivischePhrase akk,
+            final SubstantivischePhrase praep,
             @Nullable final AdverbialeAngabeSkopusSatz adverbialeAngabeSkopusSatz,
             @Nullable final AdverbialeAngabeSkopusVerbAllg adverbialeAngabeSkopusVerbAllg,
             @Nullable
@@ -49,8 +54,8 @@ public class PraedikatAkkPraepOhneLeerstellen extends AbstractPraedikatOhneLeers
         super(verb, adverbialeAngabeSkopusSatz,
                 adverbialeAngabeSkopusVerbAllg, adverbialeAngabeSkopusVerbWohinWoher);
         this.praepositionMitKasus = praepositionMitKasus;
-        this.describablePraep = describablePraep;
-        this.describableAkk = describableAkk;
+        this.praep = praep;
+        this.akk = akk;
     }
 
     @Override
@@ -64,7 +69,7 @@ public class PraedikatAkkPraepOhneLeerstellen extends AbstractPraedikatOhneLeers
         //  einfach überschrieben wird!
         return new PraedikatAkkPraepOhneLeerstellen(
                 getVerb(),
-                praepositionMitKasus, describableAkk, describablePraep,
+                praepositionMitKasus, akk, praep,
                 adverbialeAngabe, getAdverbialeAngabeSkopusVerbAllg(),
                 getAdverbialeAngabeSkopusVerbWohinWoher()
         );
@@ -81,7 +86,7 @@ public class PraedikatAkkPraepOhneLeerstellen extends AbstractPraedikatOhneLeers
         //  einfach überschrieben wird!
         return new PraedikatAkkPraepOhneLeerstellen(
                 getVerb(),
-                praepositionMitKasus, describableAkk, describablePraep,
+                praepositionMitKasus, akk, praep,
                 getAdverbialeAngabeSkopusSatz(), adverbialeAngabe,
                 getAdverbialeAngabeSkopusVerbWohinWoher()
         );
@@ -98,7 +103,7 @@ public class PraedikatAkkPraepOhneLeerstellen extends AbstractPraedikatOhneLeers
         //  einfach überschrieben wird!
         return new PraedikatAkkPraepOhneLeerstellen(
                 getVerb(),
-                praepositionMitKasus, describableAkk, describablePraep,
+                praepositionMitKasus, akk, praep,
                 getAdverbialeAngabeSkopusSatz(),
                 getAdverbialeAngabeSkopusVerbAllg(),
                 adverbialeAngabe
@@ -124,8 +129,8 @@ public class PraedikatAkkPraepOhneLeerstellen extends AbstractPraedikatOhneLeers
             return speziellesVorfeldFromSuper;
         }
 
-        final String akk = describableAkk.akk();
-        if (!"es".equals(akk)) {
+        final String akk = this.akk.akk();
+        if (!"es" .equals(akk)) {
             // Wenn "es" ein Objekt ist, darf es nicht im Vorfeld stehen.
             // (Eisenberg Der Satz 5.4.2)
             return akk; // "das Teil"
@@ -140,11 +145,11 @@ public class PraedikatAkkPraepOhneLeerstellen extends AbstractPraedikatOhneLeers
                                 final Numerus numerusSubjekt) {
         return joinToNull(
                 getAdverbialeAngabeSkopusSatz(), // "aus einer Laune heraus"
-                describableAkk.akk(), // "das Teil"
+                akk.akk(), // "das Teil"
                 joinToNull(modalpartikeln), // "besser doch"
                 getAdverbialeAngabeSkopusVerbAllg(), // "erneut"
                 getAdverbialeAngabeSkopusVerbWohinWoher(), // "anch dem Weg"
-                describablePraep.im(praepositionMitKasus)); // "aus der La main"
+                praep.im(praepositionMitKasus)); // "aus der La main"
     }
 
     @Override

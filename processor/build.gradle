@@ -1,0 +1,17 @@
+plugins {
+    id 'java-library'
+}
+
+java {
+    sourceCompatibility = JavaVersion.VERSION_1_8
+    targetCompatibility = JavaVersion.VERSION_1_8
+}
+
+dependencies {
+    implementation project(':annotations')
+
+    implementation 'com.google.guava:guava:28.2-jre'
+    implementation group: 'com.squareup', name: 'javapoet', version: '1.13.0'
+
+    implementation fileTree(dir: 'libs', include: ['*.jar'])
+}

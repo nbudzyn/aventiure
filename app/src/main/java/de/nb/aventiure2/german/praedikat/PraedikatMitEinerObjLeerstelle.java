@@ -24,7 +24,7 @@ class PraedikatMitEinerObjLeerstelle implements PraedikatMitEinerObjektleerstell
     @Nullable
     private final AdverbialeAngabeSkopusVerbWohinWoher adverbialeAngabeSkopusVerbWohinWoher;
 
-    public PraedikatMitEinerObjLeerstelle(
+    PraedikatMitEinerObjLeerstelle(
             final Verb verb,
             final KasusOderPraepositionalkasus kasusOderPraepositionalkasus,
             @Nullable final AdverbialeAngabeSkopusVerbWohinWoher
@@ -47,7 +47,7 @@ class PraedikatMitEinerObjLeerstelle implements PraedikatMitEinerObjektleerstell
     }
 
     @Override
-    public PraedikatSubjObjOhneLeerstellen mitObj(
+    public PraedikatSubjObjOhneLeerstellen mit(
             final SubstantivischePhrase describable) {
         return new PraedikatSubjObjOhneLeerstellen(verb, kasusOderPraepositionalkasus,
                 describable, null, null,

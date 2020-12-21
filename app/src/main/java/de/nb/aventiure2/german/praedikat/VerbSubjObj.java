@@ -95,7 +95,7 @@ public enum VerbSubjObj implements PraedikatMitEinerObjektleerstelle {
     }
 
     @Override
-    public PraedikatSubjObjOhneLeerstellen mitObj(
+    public PraedikatSubjObjOhneLeerstellen mit(
             final SubstantivischePhrase describable) {
         return new PraedikatSubjObjOhneLeerstellen(verb,
                 kasusOderPraepositionalkasus, describable);

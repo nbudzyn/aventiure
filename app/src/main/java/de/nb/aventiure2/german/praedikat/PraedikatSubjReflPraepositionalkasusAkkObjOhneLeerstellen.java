@@ -4,6 +4,8 @@ import java.util.Collection;
 
 import javax.annotation.Nullable;
 
+import de.nb.aventiure2.annotations.Argument;
+import de.nb.aventiure2.annotations.VerbValenz;
 import de.nb.aventiure2.german.base.Numerus;
 import de.nb.aventiure2.german.base.Person;
 import de.nb.aventiure2.german.base.Reflexivpronomen;
@@ -20,8 +22,10 @@ class PraedikatSubjReflPraepositionalkasusAkkObjOhneLeerstellen
         extends AbstractPraedikatOhneLeerstellen {
     private final VerbReflPraepositionalkasusAkkObj verbReflPraepositionalkasusAkkObj;
 
+    @Argument
     private final SubstantivischePhrase akkObj;
 
+    @VerbValenz
     PraedikatSubjReflPraepositionalkasusAkkObjOhneLeerstellen(
             final VerbReflPraepositionalkasusAkkObj verbReflPraepositionalkasusAkkObj,
             final SubstantivischePhrase akkObj) {
@@ -112,7 +116,7 @@ class PraedikatSubjReflPraepositionalkasusAkkObjOhneLeerstellen
         }
 
         final String akk = akkObj.akk();
-        if (!"es".equals(akk)) {
+        if (!"es" .equals(akk)) {
             // Wenn "es" ein Objekt ist, darf es nicht im Vorfeld stehen.
             // (Eisenberg Der Satz 5.4.2)
             return akk;  // "den Frosch"

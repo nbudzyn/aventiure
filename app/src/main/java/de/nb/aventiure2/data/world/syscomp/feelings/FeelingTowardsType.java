@@ -151,7 +151,7 @@ public enum FeelingTowardsType {
         return satzanschluss(adjektivphrase
                 + ", "
                 + sehenVerb
-                .mitObj(objekt)
+                .mit(objekt)
                 .getZuInfinitiv(
                         subjektPerson, subjektNumerusGenus.getNumerus()))
                 .komma();

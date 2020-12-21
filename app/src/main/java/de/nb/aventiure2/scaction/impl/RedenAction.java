@@ -125,7 +125,7 @@ public class RedenAction<TALKER extends IDescribableGO & ILocatableGO & ITalkerG
                     worldervice.getPOVDescription(SPIELER_CHARAKTER, talker, true);
 
 
-            return ((PraedikatMitEinerObjektleerstelle) praedikat).mitObj(creatureDesc);
+            return ((PraedikatMitEinerObjektleerstelle) praedikat).mit(creatureDesc);
         }
 
         throw new IllegalArgumentException("Unexpected type of Prädikat: " + praedikat);

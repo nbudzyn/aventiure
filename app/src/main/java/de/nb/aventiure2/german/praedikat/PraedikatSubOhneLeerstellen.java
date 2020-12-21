@@ -4,6 +4,7 @@ import java.util.Collection;
 
 import javax.annotation.Nullable;
 
+import de.nb.aventiure2.annotations.VerbValenz;
 import de.nb.aventiure2.german.base.Numerus;
 import de.nb.aventiure2.german.base.Person;
 
@@ -13,16 +14,18 @@ import static de.nb.aventiure2.german.base.GermanUtil.joinToNull;
  * Ein Prädikat (Verb ggf. mit Präfix) bei dem das Verb mit einem Subjekt steht und keine
  * Leerstellen hat.
  */
+
 public class PraedikatSubOhneLeerstellen
         extends AbstractPraedikatOhneLeerstellen {
 
+    @VerbValenz
     PraedikatSubOhneLeerstellen(final Verb verb) {
         this(verb,
                 null, null,
                 null);
     }
 
-    PraedikatSubOhneLeerstellen(
+    private PraedikatSubOhneLeerstellen(
             final Verb verb,
             @Nullable final AdverbialeAngabeSkopusSatz adverbialeAngabeSkopusSatz,
             @Nullable final AdverbialeAngabeSkopusVerbAllg adverbialeAngabeSkopusVerbAllg,

@@ -172,7 +172,7 @@ public class NehmenAction
     public String getName() {
         final PraedikatMitEinerObjektleerstelle praedikat = getPraedikatFuerName();
 
-        return capitalize(praedikat.mitObj(world.getDescription(gameObject, true))
+        return capitalize(praedikat.mit(world.getDescription(gameObject, true))
                 // Relevant für etwas wie "Die Schale an *mich* nehmen"
                 .getInfinitiv(P1, SG));
     }
@@ -338,7 +338,7 @@ public class NehmenAction
                             .undWartest()
                             .phorikKandidat(froschDesc, FROSCHPRINZ),
                     du(PARAGRAPH,
-                            NEHMEN.mitObj(froschDesc),
+                            NEHMEN.mit(froschDesc),
                             secs(5))
                             .undWartest()
                             .phorikKandidat(froschDesc, FROSCHPRINZ)));
@@ -402,7 +402,7 @@ public class NehmenAction
                     sc.feelingsComp().isEmotional()) {
                 final Nominalphrase objectDesc = world.getDescription(gameObject, true);
                 final PraedikatOhneLeerstellen praedikatMitObjekt =
-                        mitnehmenPraedikat.mitObj(objectDesc);
+                        mitnehmenPraedikat.mit(objectDesc);
                 n.narrate(du(PARAGRAPH,
                         praedikatMitObjekt.mitAdverbialerAngabe(
                                 sc.feelingsComp().getAdverbialeAngabe()),
@@ -417,7 +417,7 @@ public class NehmenAction
         }
 
         final PraedikatOhneLeerstellen praedikatMitObjekt =
-                mitnehmenPraedikat.mitObj(world.getDescription(gameObject, true));
+                mitnehmenPraedikat.mit(world.getDescription(gameObject, true));
         n.narrate(
                 du(PARAGRAPH, praedikatMitObjekt, secs(5))
                         // TODO Kann das .undWartest() bei Prädikat automatisch gesetzt werden?
@@ -436,12 +436,12 @@ public class NehmenAction
 
         alt.addAll(drueckeAusTimed(DISKONTINUITAET,
                 du(PARAGRAPH,
-                        nehmenPraedikat.mitObj(objectDesc),
+                        nehmenPraedikat.mit(objectDesc),
                         secs(5))
                         .undWartest()
                         .phorikKandidat(objectDesc, gameObject.getId()),
                 du(PARAGRAPH,
-                        nehmenPraedikat.mitObj(objectDescShort),
+                        nehmenPraedikat.mit(objectDescShort),
                         secs(5))
                         .undWartest()
                         .phorikKandidat(objectDescShort, gameObject.getId()))
@@ -451,7 +451,7 @@ public class NehmenAction
             alt.add(satzanschluss(
                     ", nur um "
                             + nehmenPraedikat
-                            .mitObj(world.getDescription(gameObject, true).persPron())
+                            .mit(world.getDescription(gameObject, true).persPron())
                             .mitAdverbialerAngabe(
                                     new AdverbialeAngabeSkopusSatz("gleich erneut"))
                             .getZuInfinitiv(P2, SG),

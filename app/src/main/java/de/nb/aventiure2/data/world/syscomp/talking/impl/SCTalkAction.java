@@ -50,11 +50,11 @@ public class SCTalkAction {
         IMMEDIATE_RE_ENTRY
     }
 
-    final static PraedikatMitEinerObjektleerstelle DEFAULT_ENTRY_RE_ENTRY_NAME =
+    private final static PraedikatMitEinerObjektleerstelle DEFAULT_ENTRY_RE_ENTRY_NAME =
             VerbSubjObj.REDEN;
 
-    final static AbstractPraedikatOhneLeerstellen DEFAULT_EXIT_NAME =
-            VerbSubjObj.BEENDEN.mitObj(Nominalphrase.GESPRAECH);
+    private final static AbstractPraedikatOhneLeerstellen DEFAULT_EXIT_NAME =
+            VerbSubjObj.BEENDEN.mit(Nominalphrase.GESPRAECH);
 
     /**
      * Condition to check whether a <code>CreatureConversationStep</code> is possible / allowed.
@@ -77,7 +77,7 @@ public class SCTalkAction {
         void narrateAndDo();
     }
 
-    final static Condition ALWAYS_POSSIBLE = () -> true;
+    private final static Condition ALWAYS_POSSIBLE = () -> true;
 
     /**
      * Typ des Schritts
@@ -255,7 +255,7 @@ public class SCTalkAction {
      * @param condition If this condition does not hold, this step is impossible
      *                  (there won't be an action for this step).
      */
-    SCTalkAction(
+    private SCTalkAction(
 
             final Type stepType,
             final Condition condition,

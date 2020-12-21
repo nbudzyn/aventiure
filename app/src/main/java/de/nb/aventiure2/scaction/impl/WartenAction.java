@@ -77,7 +77,7 @@ public class WartenAction<LIVGO extends IDescribableGO & ILocatableGO & ILivingB
         // "Auf die magere Frau warten"
         return capitalize(
                 WARTEN
-                        .mitObj(world.getDescription(erwartet))
+                        .mit(world.getDescription(erwartet))
                         .getInfinitiv(P2, SG)
         );
     }
@@ -122,7 +122,7 @@ public class WartenAction<LIVGO extends IDescribableGO & ILocatableGO & ILivingB
             final SubstantivischePhrase anaph =
                     getAnaphPersPronWennMglSonstDescription(erwartet, false);
             n.narrateAlt(secs(5),
-                    du(WARTEN.mitObj(anaph))
+                    du(WARTEN.mit(anaph))
                             .dann()
                             .phorikKandidat(anaph, erwartet.getId()),
                     du("beginnst",
@@ -138,7 +138,7 @@ public class WartenAction<LIVGO extends IDescribableGO & ILocatableGO & ILivingB
                     DescriptionUmformulierer.drueckeAus(
                             kohaerenzrelation,
                             du(WARTEN
-                                    .mitObj(anaph)
+                                    .mit(anaph)
                                     .mitAdverbialerAngabe(
                                             new AdverbialeAngabeSkopusSatz("weiter")
                                     )

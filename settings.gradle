@@ -1,2 +1,4 @@
+include ':annotations'
+include ':processor'
 include ':app'
 rootProject.name='Aventiure2'

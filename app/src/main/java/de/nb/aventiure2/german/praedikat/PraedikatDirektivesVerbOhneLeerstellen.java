@@ -8,6 +8,8 @@ import java.util.Collection;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
+import de.nb.aventiure2.annotations.Argument;
+import de.nb.aventiure2.annotations.VerbValenz;
 import de.nb.aventiure2.german.base.Kasus;
 import de.nb.aventiure2.german.base.Numerus;
 import de.nb.aventiure2.german.base.Person;
@@ -36,15 +38,18 @@ public class PraedikatDirektivesVerbOhneLeerstellen extends AbstractPraedikatOhn
     /**
      * Das Objekt, an das die "Direktive" geht
      */
+    @Argument
     private final SubstantivischePhrase objekt;
 
     /**
      * "(...bitten) ihre Haare wieder hinunterzulassen"
      */
     @Nonnull
+    @Argument
     private final PraedikatOhneLeerstellen lexikalischerKern;
 
-    public PraedikatDirektivesVerbOhneLeerstellen(
+    @VerbValenz
+    PraedikatDirektivesVerbOhneLeerstellen(
             final Verb verb,
             final Kasus kasus,
             final SubstantivischePhrase objekt,
@@ -54,7 +59,7 @@ public class PraedikatDirektivesVerbOhneLeerstellen extends AbstractPraedikatOhn
                 null, lexikalischerKern);
     }
 
-    PraedikatDirektivesVerbOhneLeerstellen(
+    private PraedikatDirektivesVerbOhneLeerstellen(
             final Verb verb,
             final Kasus kasus,
             final SubstantivischePhrase objekt,
@@ -140,7 +145,7 @@ public class PraedikatDirektivesVerbOhneLeerstellen extends AbstractPraedikatOhn
         }
 
         final String objektImKasus = objekt.im(kasus);
-        if (!"es".equals(objektImKasus)) {
+        if (!"es" .equals(objektImKasus)) {
             // Wenn "es" ein Objekt ist, darf es nicht im Vorfeld stehen.
             // (Eisenberg Der Satz 5.4.2)
             return objektImKasus;  // "Die junge Frau (bittest du ...)"

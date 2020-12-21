@@ -36,11 +36,17 @@ android {
 }
 
 dependencies {
-    implementation fileTree(dir: 'libs', include: ['*.jar'])
+    // implementation files('libs/processor.jar')
+
+    implementation project(':annotations')
+    // implementation project(':processor')
+    annotationProcessor project(':processor')
+
+    // implementation fileTree(dir: 'libs', include: ['*.jar'])
     implementation 'androidx.appcompat:appcompat:1.1.0'
     implementation 'androidx.constraintlayout:constraintlayout:1.1.3'
     implementation 'com.android.support:recyclerview-v7:28.0.0'
-    implementation('com.google.guava:guava:28.2-jre')
+    implementation 'com.google.guava:guava:28.2-jre'
 
     // Federkiel
     implementation 'de.nb.holdbold:federkiel:0.0.4'
@@ -70,4 +76,16 @@ dependencies {
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.3.0'
     androidTestImplementation "androidx.room:room-testing:$rootProject.roomVersion"
     androidTestImplementation "com.google.truth:truth:1.1"
+
+    implementation group: 'javax.annotation', name: 'javax.annotation-api', version: '1.3.2'
 }
+
+/*
+task processorTask(type: Copy) {
+    from '../processor/build/libs/processor.jar'
+    into 'libs/'
+}
+
+processorTask.dependsOn(':processor:build')
+preBuild.dependsOn(processorTask)
+*/

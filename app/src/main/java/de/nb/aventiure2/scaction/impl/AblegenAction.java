@@ -116,7 +116,7 @@ public class AblegenAction
     public String getName() {
         return capitalize(
                 getPraedikat()
-                        .mitObj(world.getDescription(gameObject, true))
+                        .mit(world.getDescription(gameObject, true))
                         .mitAdverbialerAngabe(getWohinDetail())
                         .getInfinitiv(P1, SG));
     }

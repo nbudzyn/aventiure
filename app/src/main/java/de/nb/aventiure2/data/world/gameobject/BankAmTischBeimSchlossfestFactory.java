@@ -109,7 +109,7 @@ class BankAmTischBeimSchlossfestFactory {
 
         // "du stehst vom Tisch auf"
         return du(VerbSubjObj.AUFSTEHEN_VON
-                        .mitObj(world.getDescription(
+                        .mit(world.getDescription(
                                 SCHLOSS_VORHALLE_LANGER_TISCH_BEIM_FEST, true)),
                 mins(3))
                 .undWartest()

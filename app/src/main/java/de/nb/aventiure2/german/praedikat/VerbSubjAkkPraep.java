@@ -50,7 +50,7 @@ public enum VerbSubjAkkPraep implements Praedikat {
     public String getDescriptionHauptsatz(
             final SubstantivischePhrase describableAkk,
             final SubstantivischePhrase describablePraep) {
-        return mitPraep(describablePraep).mitObj(describableAkk).getDuHauptsatz();
+        return mitPraep(describablePraep).mit(describableAkk).getDuHauptsatz();
     }
 
     /**
@@ -60,7 +60,7 @@ public enum VerbSubjAkkPraep implements Praedikat {
     public String getDescriptionInfinitiv(final Person person, final Numerus numerus,
                                           final SubstantivischePhrase describableAkk,
                                           final SubstantivischePhrase describablePraep) {
-        return mitPraep(describablePraep).mitObj(describableAkk).getInfinitiv(person, numerus);
+        return mitPraep(describablePraep).mit(describableAkk).getInfinitiv(person, numerus);
     }
 
     /**
@@ -70,19 +70,19 @@ public enum VerbSubjAkkPraep implements Praedikat {
     public String getDescriptionZuInfinitiv(final Person person, final Numerus numerus,
                                             final SubstantivischePhrase describableAkk,
                                             final SubstantivischePhrase describablePraep) {
-        return mitPraep(describablePraep).mitObj(describableAkk).getInfinitiv(person, numerus);
+        return mitPraep(describablePraep).mit(describableAkk).getInfinitiv(person, numerus);
     }
 
     public PraedikatMitEinerObjektleerstelle mitPraep(
             final SubstantivischePhrase describablePraep) {
-        return new PraedikatPraepMitEinerAkkLeerstelle(verb,
+        return new PraedikatAkkPraepMitEinerAkkLeerstelle(verb,
                 praepositionMitKasus,
                 describablePraep);
     }
 
     public PraedikatMitEinerObjektleerstelle mitAkk(
             final SubstantivischePhrase describableAkk) {
-        return new PraedikatAkkMitEinerPraepLeerstelle(verb,
+        return new PraedikatAkkPraepMitEinerPraepLeerstelle(verb,
                 praepositionMitKasus,
                 describableAkk);
     }

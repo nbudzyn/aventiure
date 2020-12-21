@@ -6,6 +6,8 @@ import java.util.Collection;
 
 import javax.annotation.Nullable;
 
+import de.nb.aventiure2.annotations.Argument;
+import de.nb.aventiure2.annotations.VerbValenz;
 import de.nb.aventiure2.german.base.Numerus;
 import de.nb.aventiure2.german.base.Person;
 import de.nb.aventiure2.german.base.Personalpronomen;
@@ -23,35 +25,38 @@ public class PraedikatDatAkkOhneLeerstellen extends AbstractPraedikatOhneLeerste
      * Das (Objekt / Wesen / Konzept für das) Dativobjekt (z.B. "Angebote")
      */
     @NonNull
-    private final SubstantivischePhrase describableDat;
+    @Argument
+    private final SubstantivischePhrase dat;
 
     /**
      * Das (Objekt / Wesen / Konzept für das) Akkusativobjekte (z.B. der Frosch)
      */
     @NonNull
-    private final SubstantivischePhrase describableAkk;
+    @Argument
+    private final SubstantivischePhrase akk;
 
-    public PraedikatDatAkkOhneLeerstellen(
+    @VerbValenz
+    PraedikatDatAkkOhneLeerstellen(
             final Verb verb,
-            final SubstantivischePhrase describableDat,
-            final SubstantivischePhrase describableAkk) {
-        this(verb, describableDat, describableAkk,
+            final SubstantivischePhrase dat,
+            final SubstantivischePhrase akk) {
+        this(verb, dat, akk,
                 null, null,
                 null);
     }
 
     private PraedikatDatAkkOhneLeerstellen(
             final Verb verb,
-            final SubstantivischePhrase describableDat,
-            final SubstantivischePhrase describableAkk,
+            final SubstantivischePhrase dat,
+            final SubstantivischePhrase akk,
             @Nullable final AdverbialeAngabeSkopusSatz adverbialeAngabeSkopusSatz,
             @Nullable final AdverbialeAngabeSkopusVerbAllg adverbialeAngabeSkopusVerbAllg,
             @Nullable
             final AdverbialeAngabeSkopusVerbWohinWoher adverbialeAngabeSkopusVerbWohinWoher) {
         super(verb, adverbialeAngabeSkopusSatz,
                 adverbialeAngabeSkopusVerbAllg, adverbialeAngabeSkopusVerbWohinWoher);
-        this.describableDat = describableDat;
-        this.describableAkk = describableAkk;
+        this.dat = dat;
+        this.akk = akk;
     }
 
     @Override
@@ -65,7 +70,7 @@ public class PraedikatDatAkkOhneLeerstellen extends AbstractPraedikatOhneLeerste
         //  einfach überschrieben wird!
         return new PraedikatDatAkkOhneLeerstellen(
                 getVerb(),
-                describableDat, describableAkk,
+                dat, akk,
                 adverbialeAngabe, getAdverbialeAngabeSkopusVerbAllg(),
                 getAdverbialeAngabeSkopusVerbWohinWoher()
         );
@@ -82,7 +87,7 @@ public class PraedikatDatAkkOhneLeerstellen extends AbstractPraedikatOhneLeerste
         //  einfach überschrieben wird!
         return new PraedikatDatAkkOhneLeerstellen(
                 getVerb(),
-                describableDat, describableAkk,
+                dat, akk,
                 getAdverbialeAngabeSkopusSatz(), adverbialeAngabe,
                 getAdverbialeAngabeSkopusVerbWohinWoher()
         );
@@ -100,7 +105,7 @@ public class PraedikatDatAkkOhneLeerstellen extends AbstractPraedikatOhneLeerste
         //  einfach überschrieben wird!
         return new PraedikatDatAkkOhneLeerstellen(
                 getVerb(),
-                describableDat, describableAkk,
+                dat, akk,
                 getAdverbialeAngabeSkopusSatz(),
                 getAdverbialeAngabeSkopusVerbAllg(),
                 adverbialeAngabe
@@ -136,8 +141,8 @@ public class PraedikatDatAkkOhneLeerstellen extends AbstractPraedikatOhneLeerste
         // Duden 1356: "Schwach betonte Personal- und Reflexivpronomen stehen
         // unmittelbar nach der linken Satzklammer [...] Wackernagel-Position"
 
-        final String akk = describableAkk.akk();
-        final String dat = describableDat.dat();
+        final String akk = this.akk.akk();
+        final String dat = this.dat.dat();
         if (Personalpronomen.isPersonalpronomen(akk) ||
                 Reflexivpronomen.isReflexivpronomen(akk)) {
 

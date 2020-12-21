@@ -94,7 +94,7 @@ public class GebenAction<
         return capitalize(
                 GEBEN
                         .mitDat(world.getDescription(taker, true))
-                        .mitObj(world.getDescription(given))
+                        .mit(world.getDescription(given))
                         .getInfinitiv(P1, SG)
         );
     }
@@ -136,20 +136,20 @@ public class GebenAction<
                 // "Du hältst IHR DIE GOLDENE KUGEL hin"
                 HINHALTEN
                         .mitDat(takerAnaph)
-                        .mitObj(givenDesc),
+                        .mit(givenDesc),
                 // "Du bietest IHR DIE GOLDENE KUGEL an"
                 ANBIETEN
                         .mitDat(takerAnaph)
-                        .mitObj(givenDesc),
+                        .mit(givenDesc),
                 //"Du zeigst IHR DIE GOLDENE KUGEL"
                 ZEIGEN
                         .mitDat(takerAnaph)
-                        .mitObj(givenDesc),
+                        .mit(givenDesc),
                 // "Du versuchst IHR DIE GOLDENE KUGEL zu reichen"
                 VERSUCHEN.mitLexikalischemKern(
                         REICHEN
                                 .mitDat(takerAnaph)
-                                .mitObj(givenDesc))
+                                .mit(givenDesc))
         );
 
         return alt.build();
@@ -165,11 +165,11 @@ public class GebenAction<
                 // "Du gibst IHR DIE GOLDENE KUGEL"
                 GEBEN
                         .mitDat(takerAnaph)
-                        .mitObj(givenDesc),
+                        .mit(givenDesc),
                 // "Du reichst IHR DIE GOLDENE KUGEL"
                 REICHEN
                         .mitDat(takerAnaph)
-                        .mitObj(givenDesc)
+                        .mit(givenDesc)
         );
 
         return alt.build();

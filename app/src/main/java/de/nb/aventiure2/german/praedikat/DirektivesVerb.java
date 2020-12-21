@@ -60,9 +60,9 @@ public enum DirektivesVerb implements Praedikat {
         this.kasus = kasus;
     }
 
-    public PraedikatDirektivesVerbObjMitEinerLeerstelleFuerLexikalischenKern mitObj(
+    public PraedikatDirektivesVerbMitEinerLexikalischerKernLeerstelle mitObj(
             final SubstantivischePhrase objekt) {
-        return new PraedikatDirektivesVerbObjMitEinerLeerstelleFuerLexikalischenKern(verb,
+        return new PraedikatDirektivesVerbMitEinerLexikalischerKernLeerstelle(verb,
                 kasus,
                 objekt);
     }

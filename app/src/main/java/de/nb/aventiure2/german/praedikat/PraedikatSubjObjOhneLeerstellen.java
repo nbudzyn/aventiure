@@ -6,6 +6,8 @@ import java.util.Collection;
 
 import javax.annotation.Nullable;
 
+import de.nb.aventiure2.annotations.Argument;
+import de.nb.aventiure2.annotations.VerbValenz;
 import de.nb.aventiure2.german.base.Kasus;
 import de.nb.aventiure2.german.base.KasusOderPraepositionalkasus;
 import de.nb.aventiure2.german.base.Numerus;
@@ -30,11 +32,13 @@ public class PraedikatSubjObjOhneLeerstellen
     /**
      * Das Objekt (z.B. ein Ding, Wesen, Konzept oder deklinierbare Phrase)
      */
+    @Argument
     private final SubstantivischePhrase objekt;
 
-    public PraedikatSubjObjOhneLeerstellen(final Verb verb,
-                                           final KasusOderPraepositionalkasus kasusOderPraepositionalkasus,
-                                           final SubstantivischePhrase objekt) {
+    @VerbValenz
+    PraedikatSubjObjOhneLeerstellen(final Verb verb,
+                                    final KasusOderPraepositionalkasus kasusOderPraepositionalkasus,
+                                    final SubstantivischePhrase objekt) {
         this(verb, kasusOderPraepositionalkasus, objekt,
                 null, null,
                 null);
@@ -125,7 +129,7 @@ public class PraedikatSubjObjOhneLeerstellen
         }
 
         final String objektImKasusOderPraepkasus = objekt.im(kasusOderPraepositionalkasus);
-        if (!"es".equals(objektImKasusOderPraepkasus)) {
+        if (!"es" .equals(objektImKasusOderPraepkasus)) {
             // Wenn "es" ein Objekt ist, darf es nicht im Vorfeld stehen.
             // (Eisenberg Der Satz 5.4.2)
             return objektImKasusOderPraepkasus;  // "den Frosch"

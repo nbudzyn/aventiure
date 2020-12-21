@@ -77,7 +77,7 @@ public class RapunzelTalkingComp extends AbstractTalkingComp {
                         SCTalkAction.entrySt(
                                 VerbSubjAkkPraep.BEGINNEN
                                         .mitAkk(EIN_GESPRAECH)
-                                        .mitObj(getDescription()),
+                                        .mit(getDescription()),
                                 this::gespraechBeginnen_EntryReEntry),
                         SCTalkAction.entrySt(
                                 bittenHaareHerunterzulassenPraedikat(),
@@ -89,7 +89,7 @@ public class RapunzelTalkingComp extends AbstractTalkingComp {
                                 // "Der jungen Frau dein Herz ausschütten"
                                 AUSSCHUETTEN
                                         .mitDat(getDescription(true))
-                                        .mitObj(DEIN_HERZ),
+                                        .mit(DEIN_HERZ),
                                 this::herzAusschuetten),
                         SCTalkAction.exitSt(
                                 bittenHaareHerunterzulassenPraedikat(),
@@ -122,8 +122,8 @@ public class RapunzelTalkingComp extends AbstractTalkingComp {
     private PraedikatOhneLeerstellen bittenHaareHerunterzulassenPraedikat() {
         return BITTEN
                 .mitObj(getDescription(true))
-                .mitLexikalischemKern(HINUNTERLASSEN
-                        .mitObj(IHRE_HAARE)
+                .mitLexikalischerKern(HINUNTERLASSEN
+                        .mit(IHRE_HAARE)
                         .mitAdverbialerAngabe(
                                 // "wieder hinunterlassen": Das "wieder" gehört
                                 // quasi zu "hinunter", beides zusammen ("wieder hinunter")

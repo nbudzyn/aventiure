@@ -6,6 +6,8 @@ import java.util.Collection;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
+import de.nb.aventiure2.annotations.Argument;
+import de.nb.aventiure2.annotations.VerbValenz;
 import de.nb.aventiure2.german.base.Numerus;
 import de.nb.aventiure2.german.base.Person;
 
@@ -29,10 +31,12 @@ public class PraedikatIntentionalesVerbOhneLeerstellen extends AbstractPraedikat
     /**
      * "(...versucht) ihre Haare wieder hinunterzulassen"
      */
+    @Argument
     @Nonnull
     private final PraedikatOhneLeerstellen lexikalischerKern;
 
-    public PraedikatIntentionalesVerbOhneLeerstellen(
+    @VerbValenz
+    PraedikatIntentionalesVerbOhneLeerstellen(
             final Verb verb,
             final PraedikatOhneLeerstellen lexikalischerKern) {
         this(verb,
@@ -40,7 +44,7 @@ public class PraedikatIntentionalesVerbOhneLeerstellen extends AbstractPraedikat
                 null, lexikalischerKern);
     }
 
-    PraedikatIntentionalesVerbOhneLeerstellen(
+    private PraedikatIntentionalesVerbOhneLeerstellen(
             final Verb verb,
             @Nullable final AdverbialeAngabeSkopusSatz adverbialeAngabeSkopusSatz,
             @Nullable final AdverbialeAngabeSkopusVerbAllg adverbialeAngabeSkopusVerbAllg,
