@@ -7,7 +7,7 @@ import java.util.Collection;
 import javax.annotation.Nullable;
 
 import de.nb.aventiure2.annotations.Argument;
-import de.nb.aventiure2.annotations.VerbValenz;
+import de.nb.aventiure2.annotations.Valenz;
 import de.nb.aventiure2.german.base.Numerus;
 import de.nb.aventiure2.german.base.Person;
 import de.nb.aventiure2.german.base.Personalpronomen;
@@ -35,7 +35,7 @@ public class PraedikatDatAkkOhneLeerstellen extends AbstractPraedikatOhneLeerste
     @Argument
     private final SubstantivischePhrase akk;
 
-    @VerbValenz
+    @Valenz
     PraedikatDatAkkOhneLeerstellen(
             final Verb verb,
             final SubstantivischePhrase dat,

@@ -5,7 +5,7 @@ import java.util.Collection;
 import javax.annotation.Nullable;
 
 import de.nb.aventiure2.annotations.Argument;
-import de.nb.aventiure2.annotations.VerbValenz;
+import de.nb.aventiure2.annotations.Valenz;
 import de.nb.aventiure2.german.base.Numerus;
 import de.nb.aventiure2.german.base.Person;
 import de.nb.aventiure2.german.description.AllgDescription;
@@ -22,12 +22,12 @@ public class PraedikativumPraedikatOhneLeerstellen extends AbstractPraedikatOhne
     @Argument
     private final AllgDescription praedikativum;
 
-    public static PraedikativumPraedikatOhneLeerstellen praedikativumPraedikatMit(
+    static PraedikativumPraedikatOhneLeerstellen praedikativumPraedikatMit(
             final AllgDescription praedikativum) {
         return new PraedikativumPraedikatOhneLeerstellen(SeinUtil.VERB, praedikativum);
     }
 
-    @VerbValenz
+    @Valenz
     private PraedikativumPraedikatOhneLeerstellen(final Verb verb,
                                                   final AllgDescription praedikativum) {
         this(verb, praedikativum,

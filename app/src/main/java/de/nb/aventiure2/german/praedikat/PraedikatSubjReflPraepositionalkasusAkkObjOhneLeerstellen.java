@@ -5,7 +5,7 @@ import java.util.Collection;
 import javax.annotation.Nullable;
 
 import de.nb.aventiure2.annotations.Argument;
-import de.nb.aventiure2.annotations.VerbValenz;
+import de.nb.aventiure2.annotations.Valenz;
 import de.nb.aventiure2.german.base.Numerus;
 import de.nb.aventiure2.german.base.Person;
 import de.nb.aventiure2.german.base.Reflexivpronomen;
@@ -25,7 +25,7 @@ class PraedikatSubjReflPraepositionalkasusAkkObjOhneLeerstellen
     @Argument
     private final SubstantivischePhrase akkObj;
 
-    @VerbValenz
+    @Valenz
     PraedikatSubjReflPraepositionalkasusAkkObjOhneLeerstellen(
             final VerbReflPraepositionalkasusAkkObj verbReflPraepositionalkasusAkkObj,
             final SubstantivischePhrase akkObj) {

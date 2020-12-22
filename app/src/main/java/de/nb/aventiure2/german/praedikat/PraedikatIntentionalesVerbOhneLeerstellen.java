@@ -7,7 +7,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import de.nb.aventiure2.annotations.Argument;
-import de.nb.aventiure2.annotations.VerbValenz;
+import de.nb.aventiure2.annotations.Valenz;
 import de.nb.aventiure2.german.base.Numerus;
 import de.nb.aventiure2.german.base.Person;
 
@@ -35,7 +35,7 @@ public class PraedikatIntentionalesVerbOhneLeerstellen extends AbstractPraedikat
     @Nonnull
     private final PraedikatOhneLeerstellen lexikalischerKern;
 
-    @VerbValenz
+    @Valenz
     PraedikatIntentionalesVerbOhneLeerstellen(
             final Verb verb,
             final PraedikatOhneLeerstellen lexikalischerKern) {

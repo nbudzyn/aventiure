@@ -66,4 +66,9 @@ public enum DirektivesVerb implements Praedikat {
                 kasus,
                 objekt);
     }
+
+    public PraedikatDirektivesVerbMitEinerObjektLeerstelle mitLexikalischerKern(
+            final PraedikatOhneLeerstellen lexikalischerKern) {
+        return new PraedikatDirektivesVerbMitEinerObjektLeerstelle(verb, kasus, lexikalischerKern);
+    }
 }

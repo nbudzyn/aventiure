@@ -15,13 +15,14 @@ public class Verb {
     //  - Wortform??
     //  - Konstituente?
     //  - Konstituente der Kategorie X
-    //  Klassen / Interfaces für Konstituenten gewisser Kategorien
-    //    Kategorie(instanze)n oder Subkategorien
+    //  Klassen / Interfaces für Konstituenten gewisser Kategorien, Kategorie(instanze)n oder
+    //  Subkategorien
     //  Methoden für sytaktische Relationen (mitAdvAngabe(Präpostionalphrase)), die
-    //  eine neue KatXKonsituente erzeugen, in der die zrsprügliche
-    //  Konstituenten (oder Wörter? Wortformen?) In dieser Relation
+    //  eine neue KatXKonsituente erzeugen, in der die ursprügliche
+    //  Konstituenten (oder Wörter? Wortformen?) in dieser Relation
     //  stehen.
 
+    /**
     /**
      * Infinitiv des Verbs ("aufheben")
      */

@@ -9,7 +9,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import de.nb.aventiure2.annotations.Argument;
-import de.nb.aventiure2.annotations.VerbValenz;
+import de.nb.aventiure2.annotations.Valenz;
 import de.nb.aventiure2.german.base.Kasus;
 import de.nb.aventiure2.german.base.Numerus;
 import de.nb.aventiure2.german.base.Person;
@@ -48,7 +48,7 @@ public class PraedikatDirektivesVerbOhneLeerstellen extends AbstractPraedikatOhn
     @Argument
     private final PraedikatOhneLeerstellen lexikalischerKern;
 
-    @VerbValenz
+    @Valenz
     PraedikatDirektivesVerbOhneLeerstellen(
             final Verb verb,
             final Kasus kasus,

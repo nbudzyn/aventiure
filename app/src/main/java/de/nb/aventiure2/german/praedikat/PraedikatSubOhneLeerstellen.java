@@ -4,7 +4,7 @@ import java.util.Collection;
 
 import javax.annotation.Nullable;
 
-import de.nb.aventiure2.annotations.VerbValenz;
+import de.nb.aventiure2.annotations.Valenz;
 import de.nb.aventiure2.german.base.Numerus;
 import de.nb.aventiure2.german.base.Person;
 
@@ -18,7 +18,7 @@ import static de.nb.aventiure2.german.base.GermanUtil.joinToNull;
 public class PraedikatSubOhneLeerstellen
         extends AbstractPraedikatOhneLeerstellen {
 
-    @VerbValenz
+    @Valenz
     PraedikatSubOhneLeerstellen(final Verb verb) {
         this(verb,
                 null, null,

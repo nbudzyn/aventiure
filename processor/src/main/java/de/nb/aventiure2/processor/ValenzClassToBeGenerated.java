@@ -29,7 +29,7 @@ import javax.tools.JavaFileObject;
 import static com.google.common.base.Preconditions.checkArgument;
 
 @Immutable
-class VerbValenzClassToBeGenerated {
+class ValenzClassToBeGenerated {
     private final String packageName;
     private final String qualifiedNameWithoutLeerstellen;
     private final ImmutableList<ArgumentField> alleArgumente;
@@ -38,12 +38,12 @@ class VerbValenzClassToBeGenerated {
     private final ImmutableList<VariableElement> sonstigeFelder;
 
 
-    VerbValenzClassToBeGenerated(final String packageName,
-                                 final String qualifiedNameWithoutLeerstellen,
-                                 final Collection<ArgumentField> alleArgumente,
-                                 final Collection<ArgumentField> gefuellteArgumente,
-                                 final Collection<ArgumentField> leerstellen,
-                                 final Collection<VariableElement> sonstigeFelder) {
+    ValenzClassToBeGenerated(final String packageName,
+                             final String qualifiedNameWithoutLeerstellen,
+                             final Collection<ArgumentField> alleArgumente,
+                             final Collection<ArgumentField> gefuellteArgumente,
+                             final Collection<ArgumentField> leerstellen,
+                             final Collection<VariableElement> sonstigeFelder) {
         this.qualifiedNameWithoutLeerstellen = qualifiedNameWithoutLeerstellen;
         checkArgument(!leerstellen.isEmpty(), "leerstellen war leer!");
 
@@ -236,7 +236,7 @@ class VerbValenzClassToBeGenerated {
 
     private static Iterable<?> toNames(final Collection<ArgumentField> argumente) {
         return argumente.stream().map(ArgumentField::getName)
-                .map(VerbValenzClassToBeGenerated::capitalize)
+                .map(ValenzClassToBeGenerated::capitalize)
                 .collect(ImmutableList.toImmutableList());
     }
 

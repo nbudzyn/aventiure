@@ -28,10 +28,10 @@ import javax.lang.model.util.Types;
 import javax.tools.Diagnostic;
 
 import de.nb.aventiure2.annotations.Argument;
-import de.nb.aventiure2.annotations.VerbValenz;
+import de.nb.aventiure2.annotations.Valenz;
 
 @SupportedSourceVersion(SourceVersion.RELEASE_8)
-public class VerbValenzAnnotationProcessor extends AbstractProcessor {
+public class ValenzAnnotationProcessor extends AbstractProcessor {
     // See https://stablekernel.com/article/the-10-step-guide-to-annotation-processing-in-android-studio/
 
     private Types typeUtils;
@@ -51,7 +51,7 @@ public class VerbValenzAnnotationProcessor extends AbstractProcessor {
     @Override
     public Set<String> getSupportedAnnotationTypes() {
         final Set<String> annotataions = new LinkedHashSet<>();
-        annotataions.add(VerbValenz.class.getCanonicalName());
+        annotataions.add(Valenz.class.getCanonicalName());
         return annotataions;
     }
 
@@ -63,10 +63,10 @@ public class VerbValenzAnnotationProcessor extends AbstractProcessor {
     @Override
     public boolean process(final Set<? extends TypeElement> annotations,
                            final RoundEnvironment roundEnv) {
-        for (final Element annotatedElement : roundEnv.getElementsAnnotatedWith(VerbValenz.class)) {
+        for (final Element annotatedElement : roundEnv.getElementsAnnotatedWith(Valenz.class)) {
             if (annotatedElement.getKind() != ElementKind.CONSTRUCTOR) {
                 error(annotatedElement, "Only constructors can be annotated with @%s",
-                        VerbValenz.class.getSimpleName());
+                        Valenz.class.getSimpleName());
                 return true;
             }
 
@@ -89,15 +89,15 @@ public class VerbValenzAnnotationProcessor extends AbstractProcessor {
 
             final TypeElement typeElement = (TypeElement) constructorElement.getEnclosingElement();
 
-            final VerbValenzAnnotatedClass verbValenzAnnotatedClass =
-                    new VerbValenzAnnotatedClass(
+            final ValenzAnnotatedClass valenzAnnotatedClass =
+                    new ValenzAnnotatedClass(
                             pkg != null ? pkg.getQualifiedName().toString() : "",
                             typeElement.getSimpleName().toString(),
                             argumente,
                             sonstigeFelder);
 
-            final Collection<VerbValenzClassToBeGenerated> classesToGenerate =
-                    verbValenzAnnotatedClass.getClassesToGenerate();
+            final Collection<ValenzClassToBeGenerated> classesToGenerate =
+                    valenzAnnotatedClass.getClassesToGenerate();
 
             generate(classesToGenerate);
         } catch (final RuntimeException e) {
@@ -105,10 +105,10 @@ public class VerbValenzAnnotationProcessor extends AbstractProcessor {
         }
     }
 
-    private void generate(final Collection<VerbValenzClassToBeGenerated> classesToGenerate) {
-        for (final VerbValenzClassToBeGenerated verbValenzClassToBeGenerated : classesToGenerate) {
+    private void generate(final Collection<ValenzClassToBeGenerated> classesToGenerate) {
+        for (final ValenzClassToBeGenerated valenzClassToBeGenerated : classesToGenerate) {
             try {
-                verbValenzClassToBeGenerated.generateCode(typeUtils, elementUtils, filer);
+                valenzClassToBeGenerated.generateCode(typeUtils, elementUtils, filer);
             } catch (final IOException e) {
                 error(null, e.getMessage());
             }

@@ -7,7 +7,7 @@ import java.util.Collection;
 import javax.annotation.Nullable;
 
 import de.nb.aventiure2.annotations.Argument;
-import de.nb.aventiure2.annotations.VerbValenz;
+import de.nb.aventiure2.annotations.Valenz;
 import de.nb.aventiure2.german.base.Kasus;
 import de.nb.aventiure2.german.base.KasusOderPraepositionalkasus;
 import de.nb.aventiure2.german.base.Numerus;
@@ -35,7 +35,7 @@ public class PraedikatSubjObjOhneLeerstellen
     @Argument
     private final SubstantivischePhrase objekt;
 
-    @VerbValenz
+    @Valenz
     PraedikatSubjObjOhneLeerstellen(final Verb verb,
                                     final KasusOderPraepositionalkasus kasusOderPraepositionalkasus,
                                     final SubstantivischePhrase objekt) {

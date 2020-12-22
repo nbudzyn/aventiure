@@ -5,7 +5,7 @@ import java.util.Collection;
 import javax.annotation.Nullable;
 
 import de.nb.aventiure2.annotations.Argument;
-import de.nb.aventiure2.annotations.VerbValenz;
+import de.nb.aventiure2.annotations.Valenz;
 import de.nb.aventiure2.german.base.Numerus;
 import de.nb.aventiure2.german.base.Person;
 import de.nb.aventiure2.german.description.AllgDescription;
@@ -32,7 +32,7 @@ public class PraedikativumMitPraedikativerAdjektivphraseOhneLeerstellen
     @Argument
     private final AllgDescription praedikativeAdjektivphrase;
 
-    @VerbValenz
+    @Valenz
     PraedikativumMitPraedikativerAdjektivphraseOhneLeerstellen(
             final Verb verb,
             final AllgDescription praedikativeAdjektivphrase) {
