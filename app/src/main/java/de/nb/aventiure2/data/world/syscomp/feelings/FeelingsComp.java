@@ -227,18 +227,18 @@ public class FeelingsComp extends AbstractStatefulComponent<FeelingsPCD> {
     }
 
     /**
-     * Gibt eventuell alternative prädikative Adjektivphrasen zurück, die das
-     * Gefühl dieses Feeling Beings gegenüber dem Target beschreiben, wenn die beiden sich
-     * begegnen, und die mit
-     * <i>wirken</i> oder <i>scheinen</i> verbunden werden können.
+     * Gibt eventuell alternative prädikative Adjektivphrasen zurück, die den Eindruck
+     * beschreiben, den dieses Feeling Being auf den SC macht, wenn die beiden sich
+     * begegnen. Die Phrasen können mit
+     * <i>wirken</i> oder <i>scheinen</i> verbunden werden.
      *
      * @return Möglicherweise eine leere Liste (insbesondere bei extremen Gefühlen)!
      */
     @NonNull
-    public ImmutableList<AllgDescription> altFeelingsBeiBegegnungMitScPraedAdjPhrase(
+    public ImmutableList<AllgDescription> altEindruckAufScBeiBegegnungPraedAdjPhrase(
             final NumerusGenus gameObjectSubjektNumerusGenus,
             final FeelingTowardsType type) {
-        return altFeelingBeiBegegnungPraedAdjPhrase(
+        return altEindruckBeiBegegnungPraedAdjPhrase(
                 gameObjectSubjektNumerusGenus,
                 SPIELER_CHARAKTER,
                 Personalpronomen.get(P2,
@@ -274,17 +274,17 @@ public class FeelingsComp extends AbstractStatefulComponent<FeelingsPCD> {
     }
 
     /**
-     * Gibt eventuell alternative prädikative Adjektivphrasen zurück, die das
-     * Gefühl dieses Feeling Beings gegenüber dem Target beschreiben, wenn die beiden sich
-     * begegnen, und die mit
-     * <i>wirken</i> oder <i>scheinen</i> verbunden werden können.
+     * Gibt eventuell alternative prädikative Adjektivphrasen zurück, die den Eindruck
+     * beschreiben, den dieses Feeling Beings auf das Target macht, wenn die beiden sich
+     * begegnen. Die Phrasen können mit
+     * <i>wirken</i> oder <i>scheinen</i> verbunden werden.
      * <p>
      * Die Methode garantiert, dass niemals etwas wie "du, der du..." oder
      * "du, die du..." oder "du, das du..." generiert wird.
      *
      * @return Möglicherweise eine leere Liste (insbesondere bei extremen Gefühlen)!
      */
-    private ImmutableList<AllgDescription> altFeelingBeiBegegnungPraedAdjPhrase(
+    private ImmutableList<AllgDescription> altEindruckBeiBegegnungPraedAdjPhrase(
             final NumerusGenus gameObjectSubjektNumerusGenus,
             final GameObjectId feelingTargetId,
             final SubstantivischePhrase targetDesc,
@@ -292,7 +292,7 @@ public class FeelingsComp extends AbstractStatefulComponent<FeelingsPCD> {
         final boolean targetKnown =
                 memoryComp != null ? memoryComp.isKnown(feelingTargetId) : false;
 
-        return type.altFeelingBeiBegegnungPraedAdjPhrase(
+        return type.altEindruckBeiBegegnungPraedAdjPhrase(
                 getGameObjectPerson(), gameObjectSubjektNumerusGenus, targetDesc,
                 getFeelingTowards(feelingTargetId, type),
                 targetKnown);

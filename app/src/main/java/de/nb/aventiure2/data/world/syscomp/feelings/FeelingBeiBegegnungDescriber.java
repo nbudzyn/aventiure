@@ -23,7 +23,7 @@ public interface FeelingBeiBegegnungDescriber {
      * "du, die du..." oder "du, das du..." generiert wird.
      * <p>
      * Diese Methode gibt zumindest immer dann eine nichtleere Liste zurück, wenn
-     * {@link #altFeelingBeiBegegnungPraedAdjPhrase(Person, NumerusGenus, SubstantivischePhrase, int, boolean)}
+     * {@link #altEindruckBeiBegegnungPraedAdjPhrase(Person, NumerusGenus, SubstantivischePhrase, int, boolean)}
      * eine leere Liste zurückgibt. Durch die Kombination bei der Methoden erhält man
      * also immer mindestens eine Beschreibung.
      *
@@ -36,10 +36,10 @@ public interface FeelingBeiBegegnungDescriber {
             final boolean targetKnown);
 
     /**
-     * Gibt eventuell alternative prädikative Adjektivphrasen zurück, die das
-     * Gefühl dieses Feeling Beings gegenüber dem Target beschreiben, wenn die beiden sich
-     * begegnen, und die mit
-     * <i>wirken</i> oder <i>scheinen</i> verbunden werden können.
+     * Gibt eventuell alternative prädikative Adjektivphrasen zurück, die den
+     * Eindruck beschreiben, den dieses Feeling Being auf das Target macht, wenn die beiden sich
+     * begegnen. Die Phrasen können mit
+     * <i>wirken</i> oder <i>scheinen</i> verbunden werden.
      * <p>
      * Die Methode garantiert, dass niemals etwas wie "du, der du..." oder
      * "du, die du..." oder "du, das du..." generiert wird.
@@ -49,7 +49,7 @@ public interface FeelingBeiBegegnungDescriber {
     @NonNull
     // TODO Auch die Zauberin könnte irgendwie wirken, wenn sie
     //  den SC (wieder-) trifft...
-    ImmutableList<AllgDescription> altFeelingBeiBegegnungPraedAdjPhrase(
+    ImmutableList<AllgDescription> altEindruckBeiBegegnungPraedAdjPhrase(
             Person gameObjectSubjektPerson, NumerusGenus gameObjectSubjektNumerusGenus,
             SubstantivischePhrase targetDesc, int feelingIntensity,
             final boolean targetKnown);

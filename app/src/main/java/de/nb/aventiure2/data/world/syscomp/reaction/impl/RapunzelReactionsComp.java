@@ -424,17 +424,17 @@ public class RapunzelReactionsComp
     }
 
     /**
-     * Gibt eventuell alternative prädikative Adjektivphrasen zurück,
-     * die die Zuneigung / Abneigung Rapunzels gegenüber dem
-     * SC beschreiben, wenn Rapunzel den SC trifft. Man kann solche Phrasen mit
+     * Gibt eventuell alternative prädikative Adjektivphrasen zurück, den Eindruck
+     * bezüglich Zuneigung / Abneigung beschreiben, den Rapunzels auf den
+     * SC macht, wenn die beiden sich treffen. Man kann solche Phrasen mit
      * <i>wirken</i> oder <i>scheinen</i> verbinden.
      *
      * @return Möglicherweise eine leere Liste (insbesondere bei extremen Gefühlen)!
      */
     @NonNull
-    private ImmutableList<AllgDescription> altZuneigungAbneigungBeiBegegnungMitScPraedAdjPhrase(
+    private ImmutableList<AllgDescription> altZuneigungAbneigungEindruckAufScBeiBegegnungPraedAdjPhrase(
             final NumerusGenus rapunzelNumerusGenus) {
-        return feelingsComp.altFeelingsBeiBegegnungMitScPraedAdjPhrase(
+        return feelingsComp.altEindruckAufScBeiBegegnungPraedAdjPhrase(
                 rapunzelNumerusGenus,
                 ZUNEIGUNG_ABNEIGUNG);
     }
@@ -451,15 +451,18 @@ public class RapunzelReactionsComp
         final ImmutableList<AllgDescription> altZuneigungAbneigungPraedikativum =
                 altZuneigungAbneigungBeiBegegnungMitScPraedikativum(anaph.getNumerusGenus());
 
-        alt.addAll(altNeuerPraedikativumSatz(RAPUNZEL, anaph, altZuneigungAbneigungPraedikativum,
+        alt.addAll(altNeuerPraedikativumSatz(RAPUNZEL, anaph,
+                altZuneigungAbneigungPraedikativum,
                 secs(5)));
 
         // Könnte leer sein
-        final ImmutableList<AllgDescription> altZuneigungAbneigungPraedAdjPhrase =
-                altZuneigungAbneigungBeiBegegnungMitScPraedAdjPhrase(anaph.getNumerusGenus());
+        final ImmutableList<AllgDescription> altZuneigungAbneigungEindruckPraedAdjPhrase =
+                altZuneigungAbneigungEindruckAufScBeiBegegnungPraedAdjPhrase(
+                        anaph.getNumerusGenus());
 
         // Evtl. wird hier nichts hinzugefügt
-        alt.addAll(altNeuerWirkenScheinenSatz(RAPUNZEL, anaph, altZuneigungAbneigungPraedAdjPhrase,
+        alt.addAll(altNeuerWirkenScheinenSatz(RAPUNZEL, anaph,
+                altZuneigungAbneigungEindruckPraedAdjPhrase,
                 secs(5)));
 
         alt.add(du(SENTENCE, "hast",

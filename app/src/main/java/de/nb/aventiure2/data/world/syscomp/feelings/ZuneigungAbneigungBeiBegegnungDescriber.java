@@ -97,7 +97,7 @@ class ZuneigungAbneigungBeiBegegnungDescriber implements FeelingBeiBegegnungDesc
 
     @NonNull
     @Override
-    public ImmutableList<AllgDescription> altFeelingBeiBegegnungPraedAdjPhrase(
+    public ImmutableList<AllgDescription> altEindruckBeiBegegnungPraedAdjPhrase(
             final Person gameObjectSubjektPerson, final NumerusGenus gameObjectSubjektNumerusGenus,
             final SubstantivischePhrase targetDesc, final int feelingIntensity,
             final boolean targetKnown) {

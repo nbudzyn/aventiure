@@ -225,12 +225,14 @@ public class RapunzelTalkingComp extends AbstractTalkingComp {
         final ImmutableList.Builder<AbstractDescription<?>> alt = ImmutableList.builder();
 
         // Könnte leer sein
-        final ImmutableList<AllgDescription> altZuneigungAbneigungPraedAdjPhrase =
-                altZuneigungAbneigungBeiBegegnungMitScPraedAdjPhrase(anaph.getNumerusGenus());
+        final ImmutableList<AllgDescription> altZuneigungAbneigungEindruckPraedAdjPhrase =
+                altZuneigungAbneigungEindruckAufScBeiBegegnungPraedAdjPhrase(
+                        anaph.getNumerusGenus());
 
         // Evtl. wird hier nichts hinzugefügt
         alt.addAll(
-                altNeuerWirkenScheinenSatz(RAPUNZEL, anaph, altZuneigungAbneigungPraedAdjPhrase));
+                altNeuerWirkenScheinenSatz(RAPUNZEL, anaph,
+                        altZuneigungAbneigungEindruckPraedAdjPhrase));
 
         final int zuneigungTowardsSC =
                 feelingsComp.getFeelingTowards(SPIELER_CHARAKTER, ZUNEIGUNG_ABNEIGUNG);
@@ -333,7 +335,7 @@ public class RapunzelTalkingComp extends AbstractTalkingComp {
                     "„Hallo“, antwortet "
                             + anaph.nom()
                             + " und wirkt ",
-                    altZuneigungAbneigungPraedAdjPhrase,
+                    altZuneigungAbneigungEindruckPraedAdjPhrase,
                     F, RAPUNZEL
             ));
             if (scBereitsZuvorSchonEinmalGetroffen) {
@@ -341,7 +343,7 @@ public class RapunzelTalkingComp extends AbstractTalkingComp {
                         "„Ach, ihr seid es wieder.“ "
                                 + capitalize(anaph.nom())
                                 + " wirkt ",
-                        altZuneigungAbneigungPraedAdjPhrase,
+                        altZuneigungAbneigungEindruckPraedAdjPhrase,
                         anaph.getNumerusGenus(), RAPUNZEL));
                 alt.addAll(altKombinationenBeendetParagraph(
                         "„Oh, ihr seid es wieder.“ "
@@ -440,16 +442,17 @@ public class RapunzelTalkingComp extends AbstractTalkingComp {
     }
 
     /**
-     * Gibt eventuell eine praedikative Adjektivphrase zurück, der die Zuneigung / Abneigung Rapunzels gegenüber dem
-     * SC beschreibt, wenn sich die beiden begegenen. Man kann dieses Prädikativ in einer
+     * Gibt eventuell praedikative Adjektivphrasen zurück, die den Eindruck bezgl.
+     * Zuneigung / Abneigung beschreiben, den Rapunzels auf den
+     * SC macht, wenn sich die beiden begegenen. Man kann dieses Prädikativ in einer
      * Konstruktion wie "Rapunzel wirkt..." verwenden.
      *
      * @return Könnte leer sein!
      */
     @NonNull
-    private ImmutableList<AllgDescription> altZuneigungAbneigungBeiBegegnungMitScPraedAdjPhrase(
+    private ImmutableList<AllgDescription> altZuneigungAbneigungEindruckAufScBeiBegegnungPraedAdjPhrase(
             final NumerusGenus rapunzelSubjektNumerusGenus) {
-        return feelingsComp.altFeelingsBeiBegegnungMitScPraedAdjPhrase(
+        return feelingsComp.altEindruckAufScBeiBegegnungPraedAdjPhrase(
                 rapunzelSubjektNumerusGenus,
                 ZUNEIGUNG_ABNEIGUNG);
     }

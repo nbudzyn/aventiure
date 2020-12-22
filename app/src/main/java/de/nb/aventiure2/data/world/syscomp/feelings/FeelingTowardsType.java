@@ -49,7 +49,7 @@ public enum FeelingTowardsType {
         final ImmutableList.Builder<AllgDescription> res = ImmutableList.builder();
 
         final ImmutableList<AllgDescription> altFeelingBeiBegegnungPraedAdjPhrase =
-                altFeelingBeiBegegnungPraedAdjPhrase(
+                altEindruckBeiBegegnungPraedAdjPhrase(
                         gameObjectSubjektPerson, gameObjectSubjektNumerusGenus, targetDesc,
                         feelingIntensity, targetKnown
                 );
@@ -69,22 +69,22 @@ public enum FeelingTowardsType {
     }
 
     /**
-     * Gibt eventuell alternative prädikative Adjektivphrasen zurück, die das
-     * Gefühl dieses Feeling Beings gegenüber dem Target beschreiben, wenn die beiden sich
-     * begegnen, und die mit
-     * <i>wirken</i> oder <i>scheinen</i> verbunden werden können.
+     * Gibt eventuell alternative prädikative Adjektivphrasen zurück, die den Eindruck
+     * beschreiben, den dieses Feeling Being auf das Target macht, wenn die beiden sich
+     * begegnen. Die Phrasen können mit,
+     * <i>wirken</i> oder <i>scheinen</i> verbunden werden.
      * <p>
      * Die Methode garantiert, dass niemals etwas wie "du, der du..." oder
      * "du, die du..." oder "du, das du..." generiert wird.
      *
      * @return Möglicherweise eine leere Liste (insbesondere bei extremen Gefühlen)!
      */
-    public ImmutableList<AllgDescription> altFeelingBeiBegegnungPraedAdjPhrase(
+    public ImmutableList<AllgDescription> altEindruckBeiBegegnungPraedAdjPhrase(
             final Person gameObjectSubjektPerson,
             final NumerusGenus gameObjectSubjektNumerusGenus,
             final SubstantivischePhrase targetDesc, final int feelingIntensity,
             final boolean targetKnown) {
-        return feelingBeiBegegnungDescriber.altFeelingBeiBegegnungPraedAdjPhrase(
+        return feelingBeiBegegnungDescriber.altEindruckBeiBegegnungPraedAdjPhrase(
                 gameObjectSubjektPerson, gameObjectSubjektNumerusGenus, targetDesc,
                 feelingIntensity, targetKnown
         );
