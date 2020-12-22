@@ -37,9 +37,6 @@ abstract class AbstractAdjPhrOhneLeerstellen implements AdjPhrOhneLeerstellen {
         this.graduativeAngabe = graduativeAngabe;
     }
 
-    public abstract AbstractAdjPhrOhneLeerstellen mitGraduativerAngabe(
-            @Nullable GraduativeAngabe graduativeAngabe);
-
     @NonNull
     Adjektiv getAdjektiv() {
         return adjektiv;

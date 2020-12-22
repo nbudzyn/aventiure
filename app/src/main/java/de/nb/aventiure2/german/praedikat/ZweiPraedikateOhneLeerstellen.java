@@ -8,15 +8,15 @@ import de.nb.aventiure2.german.base.Numerus;
 import de.nb.aventiure2.german.base.Person;
 
 /**
- * Zwei Prädikate mit Subjekt (du) und Objekt ohne Leerstellen, erzeugen einen
- * <i>zusammengezogenen Satz</i>, im dem das Subjekt im zweiten Teil
+ * Zwei Prädikate mit Subjekt (du) und Objekt oh1ne Leerstellen, erzeugen einen
+ * <i>zusammengezogenen Satz</i>, in dem das Subjekt im zweiten Teil
  * <i>eingespart</i> ist ("Du hebst die Kugel auf und [du] nimmst ein Bad").
  */
 class ZweiPraedikateOhneLeerstellen implements PraedikatOhneLeerstellen {
     private final PraedikatOhneLeerstellen ersterSatz;
     private final PraedikatOhneLeerstellen zweiterSatz;
 
-    public ZweiPraedikateOhneLeerstellen(
+    ZweiPraedikateOhneLeerstellen(
             final PraedikatOhneLeerstellen ersterSatz,
             final PraedikatOhneLeerstellen zweiterSatz) {
         this.ersterSatz = ersterSatz;

@@ -1,5 +1,7 @@
 package de.nb.aventiure2.german.adjektiv;
 
+import javax.annotation.Nullable;
+
 /**
  * Eine Adjektivphrase, bei der alle geforderten Ergänzungen gesetzt sind:
  * <ul>
@@ -8,4 +10,5 @@ package de.nb.aventiure2.german.adjektiv;
  * </ul>
  */
 public interface AdjPhrOhneLeerstellen extends Adjektivphrase {
+    AdjPhrOhneLeerstellen mitGraduativerAngabe(@Nullable GraduativeAngabe graduativeAngabe);
 }
