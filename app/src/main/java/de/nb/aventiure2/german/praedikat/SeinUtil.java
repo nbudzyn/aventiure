@@ -7,9 +7,12 @@ import de.nb.aventiure2.german.base.Person;
 import static de.nb.aventiure2.german.base.Numerus.SG;
 
 /**
- * Hilfsmethoden zum Verb "sein".
+ * Hilfsmethoden und Konstanten zum Verb "sein".
  */
 public class SeinUtil {
+    static final Verb VERB =
+            new Verb("sein", "bist", Perfektbildung.SEIN, "gewesen");
+
     private SeinUtil() {
     }
 
@@ -18,7 +21,7 @@ public class SeinUtil {
             case P1:
                 return numerus == SG ? "bin" : "sind";
             case P2:
-                return numerus == SG ? "bist" : "seid";
+                return numerus == SG ? VERB.getDuForm() : "seid";
             case P3:
                 return istSind(numerus);
             default:
