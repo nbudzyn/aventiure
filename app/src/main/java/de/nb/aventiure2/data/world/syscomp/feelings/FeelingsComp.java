@@ -21,12 +21,12 @@ import de.nb.aventiure2.german.base.NumerusGenus;
 import de.nb.aventiure2.german.base.Personalpronomen;
 import de.nb.aventiure2.german.base.SubstantivischePhrase;
 import de.nb.aventiure2.german.description.AbstractDescription;
+import de.nb.aventiure2.german.description.AllgDescription;
 import de.nb.aventiure2.german.praedikat.AdverbialeAngabeSkopusSatz;
 import de.nb.aventiure2.scaction.stepcount.SCActionStepCountDao;
 
 import static com.google.common.base.Preconditions.checkArgument;
 import static de.nb.aventiure2.data.world.gameobject.World.*;
-import static de.nb.aventiure2.data.world.syscomp.feelings.FeelingTowardsType.ZUNEIGUNG_ABNEIGUNG;
 import static de.nb.aventiure2.data.world.syscomp.feelings.Hunger.SATT;
 import static de.nb.aventiure2.data.world.time.AvTimeSpan.*;
 import static de.nb.aventiure2.german.base.NumerusGenus.M;
@@ -206,15 +206,15 @@ public class FeelingsComp extends AbstractStatefulComponent<FeelingsPCD> {
     }
 
     /**
-     * Gibt ein Prädikativum zurück, das das Gefühl dieses Feeling Beings
+     * Gibt alternative Prädikativa zurück, die das Gefühl dieses Feeling Beings
      * gegenüber dem SC beschreibt, wenn die beiden sich begegnen.
-     * Man kann dieses Prädikativum in einer Konstruktion wie "Rapunzel ist ..." verwenden.
+     * Man kann ein solches Prädikativum in einer Konstruktion wie "Rapunzel ist ..." verwenden.
      */
     @NonNull
-    public AbstractDescription<?> getFeelingBeiBegegnungMitScPraedikativum(
+    public ImmutableList<AllgDescription> altFeelingsBeiBegegnungMitScPraedikativum(
             final NumerusGenus gameObjectSubjektNumerusGenus,
             final FeelingTowardsType type) {
-        return getFeelingBeiBegegnungPraedikativum(
+        return altFeelingBeiBegegnungPraedikativum(
                 gameObjectSubjektNumerusGenus,
                 SPIELER_CHARAKTER,
                 Personalpronomen.get(P2,
@@ -223,19 +223,43 @@ public class FeelingsComp extends AbstractStatefulComponent<FeelingsPCD> {
                         // wie "du, der du..." oder
                         // "du, die du..." generiert wird.
                         M),
-                ZUNEIGUNG_ABNEIGUNG);
+                type);
     }
 
     /**
-     * Gibt ein Prädikativum zurück, das das Gefühl dieses Feeling Beings
+     * Gibt eventuell alternative prädikative Adjektivphrasen zurück, die das
+     * Gefühl dieses Feeling Beings gegenüber dem Target beschreiben, wenn die beiden sich
+     * begegnen, und die mit
+     * <i>wirken</i> oder <i>scheinen</i> verbunden werden können.
+     *
+     * @return Möglicherweise eine leere Liste (insbesondere bei extremen Gefühlen)!
+     */
+    @NonNull
+    public ImmutableList<AllgDescription> altFeelingsBeiBegegnungMitScPraedAdjPhrase(
+            final NumerusGenus gameObjectSubjektNumerusGenus,
+            final FeelingTowardsType type) {
+        return altFeelingBeiBegegnungPraedAdjPhrase(
+                gameObjectSubjektNumerusGenus,
+                SPIELER_CHARAKTER,
+                Personalpronomen.get(P2,
+                        // Wir tun hier so, als wäre der Spieler männlich, aber das
+                        // ist egal - die Methode garantiert, dass niemals etwas
+                        // wie "du, der du..." oder
+                        // "du, die du..." generiert wird.
+                        M),
+                type);
+    }
+
+    /**
+     * Gibt alternative Prädikativa zurück, die das Gefühl dieses Feeling Beings
      * gegenüber dem Target beschreibt, wenn die beiden sich begegnen.
-     * Man kann dieses Prädikativum in einer Konstruktion wie "Rapunzel ist ..." verwenden.
+     * Man kann ein solches Prädikativum in einer Konstruktion wie "Rapunzel ist ..." verwenden.
      * <p>
      * Die Methode garantiert, dass niemals etwas wie "du, der du..." oder
      * "du, die du..." oder "du, das du..." generiert wird.
      */
     @NonNull
-    private AbstractDescription<?> getFeelingBeiBegegnungPraedikativum(
+    private ImmutableList<AllgDescription> altFeelingBeiBegegnungPraedikativum(
             final NumerusGenus gameObjectSubjektNumerusGenus,
             final GameObjectId feelingTargetId,
             final SubstantivischePhrase targetDesc,
@@ -243,12 +267,36 @@ public class FeelingsComp extends AbstractStatefulComponent<FeelingsPCD> {
         final boolean targetKnown =
                 memoryComp != null ? memoryComp.isKnown(feelingTargetId) : false;
 
-        return type.getFeelingBeiBegegnungPraedikativum(
+        return type.altFeelingBeiBegegnungPraedikativum(
                 getGameObjectPerson(), gameObjectSubjektNumerusGenus, targetDesc,
                 getFeelingTowards(feelingTargetId, type),
                 targetKnown);
     }
 
+    /**
+     * Gibt eventuell alternative prädikative Adjektivphrasen zurück, die das
+     * Gefühl dieses Feeling Beings gegenüber dem Target beschreiben, wenn die beiden sich
+     * begegnen, und die mit
+     * <i>wirken</i> oder <i>scheinen</i> verbunden werden können.
+     * <p>
+     * Die Methode garantiert, dass niemals etwas wie "du, der du..." oder
+     * "du, die du..." oder "du, das du..." generiert wird.
+     *
+     * @return Möglicherweise eine leere Liste (insbesondere bei extremen Gefühlen)!
+     */
+    private ImmutableList<AllgDescription> altFeelingBeiBegegnungPraedAdjPhrase(
+            final NumerusGenus gameObjectSubjektNumerusGenus,
+            final GameObjectId feelingTargetId,
+            final SubstantivischePhrase targetDesc,
+            final FeelingTowardsType type) {
+        final boolean targetKnown =
+                memoryComp != null ? memoryComp.isKnown(feelingTargetId) : false;
+
+        return type.altFeelingBeiBegegnungPraedAdjPhrase(
+                getGameObjectPerson(), gameObjectSubjektNumerusGenus, targetDesc,
+                getFeelingTowards(feelingTargetId, type),
+                targetKnown);
+    }
 
     /**
      * Aktualisiert die Gefühle des Typs {@link FeelingTowardsType}: Die

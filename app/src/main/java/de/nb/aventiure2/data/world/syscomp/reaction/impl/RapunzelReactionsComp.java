@@ -8,6 +8,7 @@ import javax.annotation.Nullable;
 
 import de.nb.aventiure2.data.database.AvDatabase;
 import de.nb.aventiure2.data.narration.Narrator;
+import de.nb.aventiure2.data.world.base.GameObjectId;
 import de.nb.aventiure2.data.world.gameobject.*;
 import de.nb.aventiure2.data.world.syscomp.feelings.FeelingIntensity;
 import de.nb.aventiure2.data.world.syscomp.feelings.FeelingsComp;
@@ -32,6 +33,7 @@ import de.nb.aventiure2.german.base.NumerusGenus;
 import de.nb.aventiure2.german.base.PraepositionMitKasus;
 import de.nb.aventiure2.german.base.SubstantivischePhrase;
 import de.nb.aventiure2.german.description.AbstractDescription;
+import de.nb.aventiure2.german.description.AllgDescription;
 import de.nb.aventiure2.german.description.TimedDescription;
 
 import static de.nb.aventiure2.data.world.base.Known.KNOWN_FROM_DARKNESS;
@@ -56,6 +58,7 @@ import static de.nb.aventiure2.german.base.NumerusGenus.PL_MFN;
 import static de.nb.aventiure2.german.base.StructuralElement.PARAGRAPH;
 import static de.nb.aventiure2.german.base.StructuralElement.SENTENCE;
 import static de.nb.aventiure2.german.description.DescriptionBuilder.altNeuerPraedikativumSatz;
+import static de.nb.aventiure2.german.description.DescriptionBuilder.altNeuerWirkenScheinenSatz;
 import static de.nb.aventiure2.german.description.DescriptionBuilder.du;
 import static de.nb.aventiure2.german.description.DescriptionBuilder.neuerSatz;
 
@@ -344,12 +347,12 @@ public class RapunzelReactionsComp
         loadSC().feelingsComp().upgradeFeelingsTowards(RAPUNZEL,
                 ZUNEIGUNG_ABNEIGUNG, 0.75f, FeelingIntensity.DEUTLICH);
 
-        final AbstractDescription<?> zuneigungAbneigungPraedikativum =
-                getZuneigungAbneigungBeiBegegnungMitScPraedikativum(anaph.getNumerusGenus());
+        final ImmutableList<AllgDescription> altZuneigungAbneigungPraedikativa =
+                altZuneigungAbneigungBeiBegegnungMitScPraedikativum(anaph.getNumerusGenus());
 
         final ImmutableList.Builder<TimedDescription<?>> alt = ImmutableList.builder();
 
-        alt.addAll(altNeuerPraedikativumSatz(RAPUNZEL, anaph, zuneigungAbneigungPraedikativum,
+        alt.addAll(altNeuerPraedikativumSatz(RAPUNZEL, anaph, altZuneigungAbneigungPraedikativa,
                 secs(5)));
 
         alt.add(
@@ -376,27 +379,62 @@ public class RapunzelReactionsComp
         );
 
         if (loadSC().memoryComp().getKnown(RAPUNZEL) == KNOWN_FROM_DARKNESS) {
-            alt.add(neuerSatz("Am Fenster sitzt die junge Frau, schön als "
+            alt.addAll(altNeuePraefixSaetzeMitPraedikativum(
+                    "Am Fenster sitzt die junge Frau, schön als "
                             + "du unter der Sonne noch keine gesehen hast. "
-                            + "Ihre Haare glänzen fein wie gesponnen Gold. Sie ist "
-                            + zuneigungAbneigungPraedikativum.getDescriptionHauptsatz(),
-                    secs(30))
-                    .komma(zuneigungAbneigungPraedikativum.isKommaStehtAus())
-                    .phorikKandidat(F, RAPUNZEL));
+                            + "Ihre Haare glänzen fein wie gesponnen Gold. Sie ist ",
+                    altZuneigungAbneigungPraedikativa,
+                    F, RAPUNZEL
+            ));
         }
         n.narrateAlt(alt);
     }
 
+    private static Iterable<TimedDescription<AllgDescription>> altNeuePraefixSaetzeMitPraedikativum(
+            final String praefix,
+            final ImmutableList<AllgDescription> altPraedikativa,
+            final NumerusGenus phorikNumerusGenus,
+            final GameObjectId phorikBezugsobjekt) {
+        final ImmutableList.Builder<TimedDescription<AllgDescription>> res =
+                ImmutableList.builder();
+
+        for (final AllgDescription praedikativum : altPraedikativa) {
+            res.add(neuerSatz(praefix
+                            + praedikativum.getDescriptionHauptsatz(),
+                    secs(30))
+                    .komma(praedikativum.isKommaStehtAus())
+                    .phorikKandidat(phorikNumerusGenus, phorikBezugsobjekt));
+        }
+
+        return res.build();
+    }
+
     /**
-     * Gibt ein Prädikativum zurück, der die Zuneigung / Abneigung Rapunzels gegenüber dem
-     * SC beschreibt, wenn Rapunzel den SC trifft. Man kann dieses Prädikativ in einer
+     * Gibt alternative Prädikativa zurück, die die Zuneigung / Abneigung Rapunzels gegenüber dem
+     * SC beschreiben, wenn Rapunzel den SC trifft. Man kann solche Prädikativa in einer
      * Konstruktion wie "Rapunzel ist ..." verwenden.
      */
     @NonNull
-    private AbstractDescription<?> getZuneigungAbneigungBeiBegegnungMitScPraedikativum(
+    private ImmutableList<AllgDescription> altZuneigungAbneigungBeiBegegnungMitScPraedikativum(
             final NumerusGenus rapunzelNumerusGenus
     ) {
-        return feelingsComp.getFeelingBeiBegegnungMitScPraedikativum(
+        return feelingsComp.altFeelingsBeiBegegnungMitScPraedikativum(
+                rapunzelNumerusGenus,
+                ZUNEIGUNG_ABNEIGUNG);
+    }
+
+    /**
+     * Gibt eventuell alternative prädikative Adjektivphrasen zurück,
+     * die die Zuneigung / Abneigung Rapunzels gegenüber dem
+     * SC beschreiben, wenn Rapunzel den SC trifft. Man kann solche Phrasen mit
+     * <i>wirken</i> oder <i>scheinen</i> verbinden.
+     *
+     * @return Möglicherweise eine leere Liste (insbesondere bei extremen Gefühlen)!
+     */
+    @NonNull
+    private ImmutableList<AllgDescription> altZuneigungAbneigungBeiBegegnungMitScPraedAdjPhrase(
+            final NumerusGenus rapunzelNumerusGenus) {
+        return feelingsComp.altFeelingsBeiBegegnungMitScPraedAdjPhrase(
                 rapunzelNumerusGenus,
                 ZUNEIGUNG_ABNEIGUNG);
     }
@@ -410,10 +448,18 @@ public class RapunzelReactionsComp
         final SubstantivischePhrase anaph =
                 getAnaphPersPronWennMglSonstDescription(true);
 
-        final AbstractDescription<?> zuneigungAbneigungPraedikativum =
-                getZuneigungAbneigungBeiBegegnungMitScPraedikativum(anaph.getNumerusGenus());
+        final ImmutableList<AllgDescription> altZuneigungAbneigungPraedikativum =
+                altZuneigungAbneigungBeiBegegnungMitScPraedikativum(anaph.getNumerusGenus());
 
-        alt.addAll(altNeuerPraedikativumSatz(RAPUNZEL, anaph, zuneigungAbneigungPraedikativum,
+        alt.addAll(altNeuerPraedikativumSatz(RAPUNZEL, anaph, altZuneigungAbneigungPraedikativum,
+                secs(5)));
+
+        // Könnte leer sein
+        final ImmutableList<AllgDescription> altZuneigungAbneigungPraedAdjPhrase =
+                altZuneigungAbneigungBeiBegegnungMitScPraedAdjPhrase(anaph.getNumerusGenus());
+
+        // Evtl. wird hier nichts hinzugefügt
+        alt.addAll(altNeuerWirkenScheinenSatz(RAPUNZEL, anaph, altZuneigungAbneigungPraedAdjPhrase,
                 secs(5)));
 
         alt.add(du(SENTENCE, "hast",

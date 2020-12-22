@@ -8,6 +8,7 @@ import javax.annotation.Nullable;
 
 import de.nb.aventiure2.data.database.AvDatabase;
 import de.nb.aventiure2.data.narration.Narrator;
+import de.nb.aventiure2.data.world.base.GameObjectId;
 import de.nb.aventiure2.data.world.gameobject.*;
 import de.nb.aventiure2.data.world.syscomp.feelings.FeelingIntensity;
 import de.nb.aventiure2.data.world.syscomp.feelings.FeelingsComp;
@@ -18,6 +19,7 @@ import de.nb.aventiure2.german.base.NumerusGenus;
 import de.nb.aventiure2.german.base.Personalpronomen;
 import de.nb.aventiure2.german.base.SubstantivischePhrase;
 import de.nb.aventiure2.german.description.AbstractDescription;
+import de.nb.aventiure2.german.description.AllgDescription;
 import de.nb.aventiure2.german.description.TimedDescription;
 import de.nb.aventiure2.german.praedikat.AdverbialeAngabeSkopusVerbWohinWoher;
 import de.nb.aventiure2.german.praedikat.PraedikatOhneLeerstellen;
@@ -39,8 +41,8 @@ import static de.nb.aventiure2.german.base.NumerusGenus.PL_MFN;
 import static de.nb.aventiure2.german.base.PraepositionMitKasus.ZU;
 import static de.nb.aventiure2.german.base.StructuralElement.PARAGRAPH;
 import static de.nb.aventiure2.german.base.StructuralElement.SENTENCE;
+import static de.nb.aventiure2.german.description.DescriptionBuilder.altNeuerWirkenScheinenSatz;
 import static de.nb.aventiure2.german.description.DescriptionBuilder.du;
-import static de.nb.aventiure2.german.description.DescriptionBuilder.neuerPraedikativumSatz;
 import static de.nb.aventiure2.german.description.DescriptionBuilder.neuerSatz;
 import static de.nb.aventiure2.german.praedikat.DirektivesVerb.BITTEN;
 import static de.nb.aventiure2.german.praedikat.VerbSubjDatAkk.AUSSCHUETTEN;
@@ -217,16 +219,18 @@ public class RapunzelTalkingComp extends AbstractTalkingComp {
         final SubstantivischePhrase anaph = getAnaphPersPronWennMglSonstShortDescription();
         @Nullable final Personalpronomen persPron = n.getAnaphPersPronWennMgl(RAPUNZEL);
 
-        final AbstractDescription<?> zuneigungAbneigungPraedikativum =
-                getZuneigungAbneigungBeiBegegnungMitScPraedikativum(anaph.getNumerusGenus());
+        final ImmutableList<AllgDescription> altZuneigungAbneigungPraedikativa =
+                altZuneigungAbneigungBeiBegegnungMitScPraedikativum(anaph.getNumerusGenus());
 
         final ImmutableList.Builder<AbstractDescription<?>> alt = ImmutableList.builder();
 
-        alt.add(neuerPraedikativumSatz(RAPUNZEL, anaph, "wirkt",
-                zuneigungAbneigungPraedikativum),
-                neuerPraedikativumSatz(RAPUNZEL, anaph, "scheint",
-                        zuneigungAbneigungPraedikativum
-                ));
+        // Könnte leer sein
+        final ImmutableList<AllgDescription> altZuneigungAbneigungPraedAdjPhrase =
+                altZuneigungAbneigungBeiBegegnungMitScPraedAdjPhrase(anaph.getNumerusGenus());
+
+        // Evtl. wird hier nichts hinzugefügt
+        alt.addAll(
+                altNeuerWirkenScheinenSatz(RAPUNZEL, anaph, altZuneigungAbneigungPraedAdjPhrase));
 
         final int zuneigungTowardsSC =
                 feelingsComp.getFeelingTowards(SPIELER_CHARAKTER, ZUNEIGUNG_ABNEIGUNG);
@@ -325,30 +329,29 @@ public class RapunzelTalkingComp extends AbstractTalkingComp {
                         .beendet(PARAGRAPH));
             }
         } else if (zuneigungTowardsSC == FeelingIntensity.NUR_LEICHT) {
-            alt.add(neuerSatz("„Hallo“, antwortet "
-                    + anaph.nom()
-                    + " und "
-                    // FIXME FeelingsComp getFeelingBeiBegegnungPraedikativum()
-                    //  verwenden und dort Alternativen erlauben!
-                    + "wirkt etwas überrumpelt")
-                    .phorikKandidat(anaph, RAPUNZEL)
-                    .beendet(PARAGRAPH));
-
+            alt.addAll(altKombinationenBeendetParagraph(
+                    "„Hallo“, antwortet "
+                            + anaph.nom()
+                            + " und wirkt ",
+                    altZuneigungAbneigungPraedAdjPhrase,
+                    F, RAPUNZEL
+            ));
             if (scBereitsZuvorSchonEinmalGetroffen) {
-                alt.add(neuerSatz("„Ach, ihr seid es wieder.“ "
+                alt.addAll(altKombinationenBeendetParagraph(
+                        "„Ach, ihr seid es wieder.“ "
                                 + capitalize(anaph.nom())
-                                + " wirkt überrascht")
-                                .phorikKandidat(anaph, RAPUNZEL)
-                                .beendet(PARAGRAPH),
-                        // FIXME "wieder" ist bei der ersten Begrüßung unangebracht!
-                        neuerSatz("„Oh, ihr seid es wieder.“ "
+                                + " wirkt ",
+                        altZuneigungAbneigungPraedAdjPhrase,
+                        anaph.getNumerusGenus(), RAPUNZEL));
+                alt.addAll(altKombinationenBeendetParagraph(
+                        "„Oh, ihr seid es wieder.“ "
                                 + capitalize(anaph.nom())
-                                + " ist ganz offenbar überrascht")
-                                .phorikKandidat(anaph, RAPUNZEL)
-                                .beendet(PARAGRAPH),
-                        neuerSatz("„Ich hatte mich schon gefragt, ob ihr mal wieder "
-                                + "vorbeischaut! Willkommen.“ –")
-                                .beendet(SENTENCE)
+                                + " ist ",
+                        altZuneigungAbneigungPraedikativa,
+                        anaph.getNumerusGenus(), RAPUNZEL));
+                alt.add(neuerSatz("„Ich hatte mich schon gefragt, ob ihr mal wieder "
+                        + "vorbeischaut! Willkommen.“ –")
+                        .beendet(SENTENCE)
                 );
             }
         } else if (zuneigungTowardsSC == FeelingIntensity.MERKLICH) {
@@ -429,9 +432,24 @@ public class RapunzelTalkingComp extends AbstractTalkingComp {
      * Konstruktion wie "Rapunzel wirkt..." verwenden.
      */
     @NonNull
-    private AbstractDescription<?> getZuneigungAbneigungBeiBegegnungMitScPraedikativum(
+    private ImmutableList<AllgDescription> altZuneigungAbneigungBeiBegegnungMitScPraedikativum(
             final NumerusGenus rapunzelSubjektNumerusGenus) {
-        return feelingsComp.getFeelingBeiBegegnungMitScPraedikativum(
+        return feelingsComp.altFeelingsBeiBegegnungMitScPraedikativum(
+                rapunzelSubjektNumerusGenus,
+                ZUNEIGUNG_ABNEIGUNG);
+    }
+
+    /**
+     * Gibt eventuell eine praedikative Adjektivphrase zurück, der die Zuneigung / Abneigung Rapunzels gegenüber dem
+     * SC beschreibt, wenn sich die beiden begegenen. Man kann dieses Prädikativ in einer
+     * Konstruktion wie "Rapunzel wirkt..." verwenden.
+     *
+     * @return Könnte leer sein!
+     */
+    @NonNull
+    private ImmutableList<AllgDescription> altZuneigungAbneigungBeiBegegnungMitScPraedAdjPhrase(
+            final NumerusGenus rapunzelSubjektNumerusGenus) {
+        return feelingsComp.altFeelingsBeiBegegnungMitScPraedAdjPhrase(
                 rapunzelSubjektNumerusGenus,
                 ZUNEIGUNG_ABNEIGUNG);
     }
@@ -610,6 +628,24 @@ public class RapunzelTalkingComp extends AbstractTalkingComp {
         stateComp.rapunzelLaesstHaareZumAbstiegHerunter();
 
         unsetTalkingTo();
+    }
+
+    private static Iterable<AllgDescription> altKombinationenBeendetParagraph(
+            final String praefix,
+            final ImmutableList<AllgDescription> alt,
+            final NumerusGenus phorikNumerusGenus,
+            final GameObjectId phorikBezugsobjekt) {
+        final ImmutableList.Builder<AllgDescription> res =
+                ImmutableList.builder();
+
+        for (final AbstractDescription<?> desc : alt) {
+            res.add(neuerSatz(praefix + desc.getDescriptionHauptsatz())
+                    .komma(desc.isKommaStehtAus())
+                    .phorikKandidat(phorikNumerusGenus, phorikBezugsobjekt)
+                    .beendet(PARAGRAPH));
+        }
+
+        return res.build();
     }
 
     private static boolean duzen(final int zuneigung) {

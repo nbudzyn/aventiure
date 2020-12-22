@@ -5,16 +5,22 @@ import androidx.annotation.Nullable;
 
 import com.google.common.collect.ImmutableList;
 
+import java.util.Collection;
+
 import javax.annotation.CheckReturnValue;
 
 import de.nb.aventiure2.data.world.base.GameObjectId;
 import de.nb.aventiure2.data.world.time.*;
+import de.nb.aventiure2.german.base.Numerus;
+import de.nb.aventiure2.german.base.Person;
 import de.nb.aventiure2.german.base.StructuralElement;
 import de.nb.aventiure2.german.base.SubstantivischePhrase;
 import de.nb.aventiure2.german.praedikat.PraedikatOhneLeerstellen;
 
 import static de.nb.aventiure2.german.base.GermanUtil.capitalize;
+import static de.nb.aventiure2.german.base.Numerus.SG;
 import static de.nb.aventiure2.german.base.StructuralElement.PARAGRAPH;
+import static de.nb.aventiure2.german.praedikat.SeinUtil.seinVerbform;
 
 public class DescriptionBuilder {
     private DescriptionBuilder() {
@@ -31,9 +37,20 @@ public class DescriptionBuilder {
     @NonNull
     public static ImmutableList<TimedDescription<AllgDescription>> altNeuerPraedikativumSatz(
             final GameObjectId subjektGameObject, final SubstantivischePhrase subjekt,
-            final AbstractDescription<?> praedikativum,
+            final Collection<AllgDescription> altPraedikativa,
             final AvTimeSpan timeElapsed) {
-        return altNeuerPraedikativumSatz(subjektGameObject, subjekt, praedikativum).stream()
+        return altNeuerPraedikativumSatz(subjektGameObject, subjekt, altPraedikativa).stream()
+                .map(s -> new TimedDescription<>(s, timeElapsed))
+                .collect(ImmutableList.toImmutableList());
+    }
+
+    @CheckReturnValue
+    @NonNull
+    public static ImmutableList<TimedDescription<AllgDescription>> altNeuerWirkenScheinenSatz(
+            final GameObjectId subjektGameObject, final SubstantivischePhrase subjekt,
+            final Collection<AllgDescription> altPraedAdjPhrasen,
+            final AvTimeSpan timeElapsed) {
+        return altNeuerWirkenScheinenSatz(subjektGameObject, subjekt, altPraedAdjPhrasen).stream()
                 .map(s -> new TimedDescription<>(s, timeElapsed))
                 .collect(ImmutableList.toImmutableList());
     }
@@ -42,25 +59,83 @@ public class DescriptionBuilder {
     @NonNull
     public static ImmutableList<AllgDescription> altNeuerPraedikativumSatz(
             final GameObjectId subjektGameObject, final SubstantivischePhrase subjekt,
-            final AbstractDescription<?> praedikativum) {
+            final Collection<AllgDescription> altPraedikativa) {
         final ImmutableList.Builder<AllgDescription> alt = ImmutableList.builder();
 
-        alt.add(neuerPraedikativumSatz(subjektGameObject, subjekt, "ist",
-                praedikativum
-                ),
-                neuerPraedikativumSatz(subjektGameObject, subjekt, "wirkt",
-                        praedikativum
-                ),
-                neuerPraedikativumSatz(subjektGameObject, subjekt, "scheint",
-                        praedikativum
-                ));
+        for (final AllgDescription praedikativum : altPraedikativa) {
+            alt.add(
+                    neuerSatz(subjekt.nom() + " "
+                            + seinVerbform(subjekt.getPerson(), subjekt.getNumerus())
+                            + " "
+                            + praedikativum.getDescriptionHauptsatz())
+                            .komma(praedikativum.isKommaStehtAus())
+                            .phorikKandidat(subjekt, subjektGameObject));
+        }
 
         return alt.build();
     }
 
     @CheckReturnValue
     @NonNull
-    public static AllgDescription neuerPraedikativumSatz(
+    public static ImmutableList<AllgDescription> altNeuerWirkenScheinenSatz(
+            final GameObjectId subjektGameObject, final SubstantivischePhrase subjekt,
+            final Collection<AllgDescription> altPraedAdjPhrasen) {
+        final ImmutableList.Builder<AllgDescription> alt = ImmutableList.builder();
+
+        for (final AllgDescription praedAdjPhrase : altPraedAdjPhrasen) {
+            alt.addAll(altNeuerWirkenScheinenSatz(subjektGameObject, subjekt, praedAdjPhrase));
+        }
+
+        return alt.build();
+    }
+
+    @CheckReturnValue
+    @NonNull
+    private static ImmutableList<AllgDescription> altNeuerWirkenScheinenSatz(
+            final GameObjectId subjektGameObject, final SubstantivischePhrase subjekt,
+            final AllgDescription praedAdjPhrase) {
+        return ImmutableList.of(
+                neuerWirkenScheinenSatz(subjektGameObject, subjekt,
+                        wirkenVerbform(subjekt.getPerson(), subjekt.getNumerus()),
+                        praedAdjPhrase),
+                neuerWirkenScheinenSatz(subjektGameObject, subjekt,
+                        scheinenVerbform(subjekt.getPerson(), subjekt.getNumerus()),
+                        praedAdjPhrase)
+                // FIXME ""sieht ... aus"? Geht es generell um "Evidenz", "Wirkung",
+                //  "Anschein" o.Ä.?
+        );
+    }
+
+    private static String wirkenVerbform(final Person person, final Numerus numerus) {
+        switch (person) {
+            case P1:
+                return numerus == SG ? "wirke" : "wirken";
+            case P2:
+                return numerus == SG ? "wirst" : "wirkt";
+            case P3:
+                return numerus == SG ? "wirkt" : "wirken";
+            default:
+                throw new IllegalStateException("Unexpected Person: " + person);
+        }
+    }
+
+    private static String scheinenVerbform(final Person person, final Numerus numerus) {
+        switch (person) {
+            case P1:
+                return numerus == SG ? "scheine" : "scheinen";
+            case P2:
+                return numerus == SG ? "scheinst" : "scheint";
+            case P3:
+                return numerus == SG ? "scheint" : "scheinen";
+            default:
+                throw new IllegalStateException("Unexpected Person: " + person);
+        }
+    }
+
+
+    @CheckReturnValue
+    @NonNull
+    private static AllgDescription neuerWirkenScheinenSatz(
             final GameObjectId subjektGameObject, final SubstantivischePhrase subjekt,
             final String verb,
             final AbstractDescription<?> praedikativum) {

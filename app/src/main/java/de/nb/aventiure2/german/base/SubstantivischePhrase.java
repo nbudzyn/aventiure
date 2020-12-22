@@ -3,8 +3,8 @@ package de.nb.aventiure2.german.base;
 import java.util.Objects;
 
 /**
- * Eine Phrase, die substantivisch verwendet werden kann, also insbesondere ein Pronomen ("sie") oder
- * eine (andere) Nominalphrase ("die goldene Kugel").
+ * Eine Phrase, die substantivisch verwendet werden kann, also insbesondere ein Pronomen ("sie",
+ * "du", "wir") oder eine (andere) Nominalphrase ("die goldene Kugel").
  */
 public abstract class SubstantivischePhrase implements DeklinierbarePhrase {
     private final NumerusGenus numerusGenus;
