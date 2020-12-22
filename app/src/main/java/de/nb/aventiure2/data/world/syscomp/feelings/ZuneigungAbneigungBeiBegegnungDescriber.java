@@ -148,7 +148,12 @@ class ZuneigungAbneigungBeiBegegnungDescriber implements FeelingBeiBegegnungDesc
                             sehenVerb, targetDesc);
 
             // "gespannt, was du ihr zu berichten hast"
-            // FIXME Adjektiv mit indirektem Fragesatz
+            // FIXME Adjektiv mit indirektem Akkusativ-Fragesatz - fürs erste muss man
+            //  das SUBJEKT des Fragesatzes ("du") und das "Genus" des
+            //  Erfragten ("was" sv. "wen") in der Akkusativ-Phrase
+            //  speichern.
+            //  Der indirekte Fragesatz ist quasi ein lexikalischer Kern, in dem
+            //  das Akkusativ-Objekt fehlt.
             final AllgDescription gespanntWasZuBerichten =
                     adjektivphraseMitWasZuBerichtenHastNebensatz("gespannt",
                             gameObjectSubjektPerson, gameObjectSubjektNumerusGenus, targetDesc);
