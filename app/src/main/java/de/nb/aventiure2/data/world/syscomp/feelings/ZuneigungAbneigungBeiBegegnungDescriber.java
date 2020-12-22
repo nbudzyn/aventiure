@@ -101,6 +101,8 @@ class ZuneigungAbneigungBeiBegegnungDescriber implements FeelingBeiBegegnungDesc
             final Person gameObjectSubjektPerson, final NumerusGenus gameObjectSubjektNumerusGenus,
             final SubstantivischePhrase targetDesc, final int feelingIntensity,
             final boolean targetKnown) {
+        // FIXME Adjektivphrasen zurückgeben, die ggf.auch diskontinuierlich ausgegeben werden!
+
         // Damit niemals etwas wie "du, der du" erzeugt wird:
         // Keine Relativpronomen von targetDesc erzeugen - jedenfalls nicht solche
         // im Nominativ!
@@ -121,6 +123,7 @@ class ZuneigungAbneigungBeiBegegnungDescriber implements FeelingBeiBegegnungDesc
             return ImmutableList.of(
                     satzanschluss("verwundert"),
                     satzanschluss("überrascht"),
+                    // FIXME Graduative Angabe
                     satzanschluss("etwas überrumpelt")
             );
         } else if (feelingIntensity == FeelingIntensity.NEUTRAL) {
@@ -145,6 +148,7 @@ class ZuneigungAbneigungBeiBegegnungDescriber implements FeelingBeiBegegnungDesc
                             sehenVerb, targetDesc);
 
             // "gespannt, was du ihr zu berichten hast"
+            // FIXME Adjektiv mit indirektem Fragesatz
             final AllgDescription gespanntWasZuBerichten =
                     adjektivphraseMitWasZuBerichtenHastNebensatz("gespannt",
                             gameObjectSubjektPerson, gameObjectSubjektNumerusGenus, targetDesc);
@@ -154,7 +158,7 @@ class ZuneigungAbneigungBeiBegegnungDescriber implements FeelingBeiBegegnungDesc
                     gluecklichZuSehen,
                     gespanntWasZuBerichten,
                     // "glücklich, dich zu sehen, und gespannt, was du zu berichten hast"
-                    // FIXME Das sollten zwei ver-undete-Prädikativphrasen werden
+                    // FIXME Das sollten zwei ver-undete-Adjektivphrasen werden
                     satzanschluss(gluecklichZuSehen.getDescriptionHauptsatz()
                             + (gluecklichZuSehen.isKommaStehtAus() ? ", und " : " und ")
                             + gespanntWasZuBerichten.getDescriptionHauptsatz())
