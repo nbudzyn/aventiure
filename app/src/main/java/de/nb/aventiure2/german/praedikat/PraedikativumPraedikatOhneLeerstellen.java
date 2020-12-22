@@ -84,8 +84,7 @@ public class PraedikativumPraedikatOhneLeerstellen extends AbstractPraedikatOhne
             return this;
         }
 
-        // Ich frage mich, ob es so etwas überhauppt geben kann.
-        // *"Peter ist nach Norden glücklich" - wohl nicht.
+        // Diese Position kann wohl nicht besetzt sein.
         return new PraedikativumPraedikatOhneLeerstellen(
                 getVerb(),
                 praedikativum,
@@ -117,9 +116,13 @@ public class PraedikativumPraedikatOhneLeerstellen extends AbstractPraedikatOhne
             return speziellesVorfeldFromSuper;
         }
 
-        // "Ein Esel ist Peter", "Glücklich ist Peter".
-        // Stark markiert - aber möglich.
-        return praedikativum.getDescriptionHauptsatz();
+        if (!praedikativum.isKommaStehtAus()) {
+            // "Ein Esel ist Peter", "Glücklich ist Peter".
+            // Stark markiert - aber möglich.
+            return praedikativum.getDescriptionHauptsatz();
+        }
+
+        return null;
     }
 
     @Override
@@ -130,15 +133,19 @@ public class PraedikativumPraedikatOhneLeerstellen extends AbstractPraedikatOhne
                 getAdverbialeAngabeSkopusSatz(), // "plötzlich"
                 joinToNull(modalpartikeln), // "halt"
                 getAdverbialeAngabeSkopusVerbAllg(), // "erneut"
-                praedikativum, // "glücklich"
-                getAdverbialeAngabeSkopusVerbWohinWoher() // (diese Position kann wohl
-                // nicht besetzt sein)
+                getAdverbialeAngabeSkopusVerbWohinWoher(), // (kann wohl nicht besetzt sein?)
+                praedikativum // "glücklich"
         );
     }
 
     @Override
     public String getNachfeld(final Person personSubjekt,
                               final Numerus numerusSubjekt) {
+        // STORY Das Prädikativum könnte diskontinuierlich aufgeteilt werden, dann könnte
+        //  ein Teil ins Nachfeld kommen:
+        //  Sie ist GLÜCKLICH gewesen, DICH ZU SEHEN.
+        //  (alternativ zu ?"Sie ist GLÜCKLICH, DICH ZU SEHEN, gewesen").
+
         return null;
     }
 

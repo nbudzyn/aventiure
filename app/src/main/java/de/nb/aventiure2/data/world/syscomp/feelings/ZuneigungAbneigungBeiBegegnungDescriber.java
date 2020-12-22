@@ -138,21 +138,23 @@ class ZuneigungAbneigungBeiBegegnungDescriber implements FeelingBeiBegegnungDesc
                             gameObjectSubjektNumerusGenus, sehenVerb, targetDesc)
             );
         } else if (feelingIntensity == FeelingIntensity.DEUTLICH) {
-            // "offenbar glücklich, dich zu sehen"
+            // "glücklich, dich zu sehen"
             final AllgDescription gluecklichZuSehen =
                     adjektivphraseMitZuSehen("glücklich", gameObjectSubjektPerson,
                             gameObjectSubjektNumerusGenus,
                             sehenVerb, targetDesc);
 
             // "gespannt, was du ihr zu berichten hast"
-            final AbstractDescription<?> gespanntWasZuBerichten =
+            final AllgDescription gespanntWasZuBerichten =
                     adjektivphraseMitWasZuBerichtenHastNebensatz("gespannt",
                             gameObjectSubjektPerson, gameObjectSubjektNumerusGenus, targetDesc);
 
-            // "offenbar glücklich, dich zu sehen, und gespannt, was du zu berichten hast"
+            // "glücklich, dich zu sehen, und gespannt, was du zu berichten hast"
             return ImmutableList.of(
                     gluecklichZuSehen,
-                    // "offenbar glücklich, dich zu sehen, und gespannt, was du zu berichten hast"
+                    gespanntWasZuBerichten,
+                    // "glücklich, dich zu sehen, und gespannt, was du zu berichten hast"
+                    // FIXME Das sollten zwei ver-undete-Prädikativphrasen werden
                     satzanschluss(gluecklichZuSehen.getDescriptionHauptsatz()
                             + (gluecklichZuSehen.isKommaStehtAus() ? ", und " : " und ")
                             + gespanntWasZuBerichten.getDescriptionHauptsatz())
@@ -162,7 +164,6 @@ class ZuneigungAbneigungBeiBegegnungDescriber implements FeelingBeiBegegnungDesc
 
         return ImmutableList.of();
     }
-
 
     private static AllgDescription adjektivphraseMitZuSehen(final String adjektivphrase,
                                                             final Person subjektPerson,
@@ -199,7 +200,7 @@ class ZuneigungAbneigungBeiBegegnungDescriber implements FeelingBeiBegegnungDesc
                         .isAllowsAdditionalDuSatzreihengliedOhneSubjekt());
     }
 
-    private static AbstractDescription<?> adjektivphraseMitWasZuBerichtenHastNebensatz(
+    private static AllgDescription adjektivphraseMitWasZuBerichtenHastNebensatz(
             final String adjektivphrase,
             final Person berichtempfaengerPerson,
             final NumerusGenus berichtempfaengerNumerusGenus,

@@ -21,6 +21,8 @@ import static de.nb.aventiure2.german.base.GermanUtil.capitalize;
 import static de.nb.aventiure2.german.base.Numerus.SG;
 import static de.nb.aventiure2.german.base.StructuralElement.PARAGRAPH;
 import static de.nb.aventiure2.german.praedikat.SeinUtil.seinVerbform;
+import static de.nb.aventiure2.german.praedikat.VerbSubjPraedikativeAdjektivphrase.SCHEINEN;
+import static de.nb.aventiure2.german.praedikat.VerbSubjPraedikativeAdjektivphrase.WIRKEN;
 
 public class DescriptionBuilder {
     private DescriptionBuilder() {
@@ -101,8 +103,6 @@ public class DescriptionBuilder {
                 neuerWirkenScheinenSatz(subjektGameObject, subjekt,
                         scheinenVerbform(subjekt.getPerson(), subjekt.getNumerus()),
                         praedAdjPhrase)
-                // FIXME ""sieht ... aus"? Geht es generell um "Evidenz", "Wirkung",
-                //  "Anschein" o.Ä.?
         );
     }
 
@@ -111,7 +111,7 @@ public class DescriptionBuilder {
             case P1:
                 return numerus == SG ? "wirke" : "wirken";
             case P2:
-                return numerus == SG ? "wirst" : "wirkt";
+                return numerus == SG ? WIRKEN.getDuForm() : "wirkt";
             case P3:
                 return numerus == SG ? "wirkt" : "wirken";
             default:
@@ -124,7 +124,7 @@ public class DescriptionBuilder {
             case P1:
                 return numerus == SG ? "scheine" : "scheinen";
             case P2:
-                return numerus == SG ? "scheinst" : "scheint";
+                return numerus == SG ? SCHEINEN.getDuForm() : "scheint";
             case P3:
                 return numerus == SG ? "scheint" : "scheinen";
             default:

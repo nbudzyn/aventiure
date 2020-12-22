@@ -1,109 +1,100 @@
 package de.nb.aventiure2.german.praedikat;
 
-import androidx.annotation.NonNull;
-
 import java.util.Collection;
 
 import javax.annotation.Nullable;
 
 import de.nb.aventiure2.annotations.Argument;
 import de.nb.aventiure2.annotations.VerbValenz;
-import de.nb.aventiure2.german.base.Kasus;
-import de.nb.aventiure2.german.base.KasusOderPraepositionalkasus;
 import de.nb.aventiure2.german.base.Numerus;
 import de.nb.aventiure2.german.base.Person;
-import de.nb.aventiure2.german.base.SubstantivischePhrase;
+import de.nb.aventiure2.german.description.AllgDescription;
 
 import static de.nb.aventiure2.german.base.GermanUtil.joinToNull;
 
 /**
- * Ein Prädikat (Verb ggf. mit Präfix) bei dem das Verb mit einem Subjekt und einem
- * (Präpositional-) Objekt steht - alle Leerstellen sind besetzt.
+ * Ein Prädikat, bestehend aus einem Verb und einer prädikativen Adjektivphrase, in dem
+ * alle Leerstellen besetzt sind.
+ * <p>
+ * Beispiele:
+ * <ul>
+ *     <li>glücklich wirken
+ *     <li>glücklich wirken, Peter zu sehen
+ * </ul>
+ * <p>
+ * Hier geht es nicht um Prädikative, vgl. {@link PraedikativumPraedikatOhneLeerstellen}.
  */
-public class PraedikatSubjObjOhneLeerstellen
+public class PraedikativumMitPraedikativerAdjektivphraseOhneLeerstellen
         extends AbstractPraedikatOhneLeerstellen {
     /**
-     * Der Kasus (z.B. Akkusativ, "die Kugel nehmen") oder Präpositionalkasus
-     * (z.B. "mit dem Frosch reden"), mit dem dieses Verb steht (den dieses Verb regiert).
-     */
-    @NonNull
-    private final KasusOderPraepositionalkasus kasusOderPraepositionalkasus;
-
-    /**
-     * Das Objekt (z.B. ein Ding, Wesen, Konzept oder deklinierbare Phrase)
+     * Die prädikative Adjektivphrase
      */
     @Argument
-    private final SubstantivischePhrase objekt;
+    private final AllgDescription praedikativeAdjektivphrase;
 
     @VerbValenz
-    PraedikatSubjObjOhneLeerstellen(final Verb verb,
-                                    final KasusOderPraepositionalkasus kasusOderPraepositionalkasus,
-                                    final SubstantivischePhrase objekt) {
-        this(verb, kasusOderPraepositionalkasus, objekt,
+    PraedikativumMitPraedikativerAdjektivphraseOhneLeerstellen(
+            final Verb verb,
+            final AllgDescription praedikativeAdjektivphrase) {
+        this(verb, praedikativeAdjektivphrase,
                 null, null,
                 null);
     }
 
-    PraedikatSubjObjOhneLeerstellen(
+    private PraedikativumMitPraedikativerAdjektivphraseOhneLeerstellen(
             final Verb verb,
-            final KasusOderPraepositionalkasus kasusOderPraepositionalkasus,
-            final SubstantivischePhrase objekt,
+            final AllgDescription praedikativeAdjektivphrase,
             @Nullable final AdverbialeAngabeSkopusSatz adverbialeAngabeSkopusSatz,
             @Nullable final AdverbialeAngabeSkopusVerbAllg adverbialeAngabeSkopusVerbAllg,
             @Nullable
             final AdverbialeAngabeSkopusVerbWohinWoher adverbialeAngabeSkopusVerbWohinWoher) {
         super(verb, adverbialeAngabeSkopusSatz,
                 adverbialeAngabeSkopusVerbAllg, adverbialeAngabeSkopusVerbWohinWoher);
-        this.kasusOderPraepositionalkasus = kasusOderPraepositionalkasus;
-        this.objekt = objekt;
+        this.praedikativeAdjektivphrase = praedikativeAdjektivphrase;
     }
 
     @Override
-    public PraedikatSubjObjOhneLeerstellen mitAdverbialerAngabe(
+    public PraedikativumMitPraedikativerAdjektivphraseOhneLeerstellen mitAdverbialerAngabe(
             @Nullable final AdverbialeAngabeSkopusSatz adverbialeAngabe) {
         if (adverbialeAngabe == null) {
             return this;
         }
 
-        // TODO Mehrere adverbiale Angaben zulassen, damit die bestehende nicht
-        //  einfach überschrieben wird!
-        return new PraedikatSubjObjOhneLeerstellen(
+        return new PraedikativumMitPraedikativerAdjektivphraseOhneLeerstellen(
                 getVerb(),
-                kasusOderPraepositionalkasus, objekt,
+                praedikativeAdjektivphrase,
                 adverbialeAngabe, getAdverbialeAngabeSkopusVerbAllg(),
                 getAdverbialeAngabeSkopusVerbWohinWoher()
         );
     }
 
     @Override
-    public PraedikatSubjObjOhneLeerstellen mitAdverbialerAngabe(
+    public PraedikativumMitPraedikativerAdjektivphraseOhneLeerstellen mitAdverbialerAngabe(
             @Nullable final AdverbialeAngabeSkopusVerbAllg adverbialeAngabe) {
         if (adverbialeAngabe == null) {
             return this;
         }
 
-        // TODO Mehrere adverbiale Angaben zulassen, damit die bestehende nicht
-        //  einfach überschrieben wird!
-        return new PraedikatSubjObjOhneLeerstellen(
+        return new PraedikativumMitPraedikativerAdjektivphraseOhneLeerstellen(
                 getVerb(),
-                kasusOderPraepositionalkasus, objekt,
+                praedikativeAdjektivphrase,
                 getAdverbialeAngabeSkopusSatz(), adverbialeAngabe,
                 getAdverbialeAngabeSkopusVerbWohinWoher()
         );
     }
 
     @Override
-    public PraedikatSubjObjOhneLeerstellen mitAdverbialerAngabe(
+    public PraedikativumMitPraedikativerAdjektivphraseOhneLeerstellen mitAdverbialerAngabe(
             @Nullable final AdverbialeAngabeSkopusVerbWohinWoher adverbialeAngabe) {
         if (adverbialeAngabe == null) {
             return this;
         }
 
-        // TODO Mehrere adverbiale Angaben zulassen, damit die bestehende nicht
-        //  einfach überschrieben wird!
-        return new PraedikatSubjObjOhneLeerstellen(
+        // Ich frage mich, ob es so etwas überhauppt geben kann.
+        // *"Peter ist nach Norden glücklich" - wohl nicht.
+        return new PraedikativumMitPraedikativerAdjektivphraseOhneLeerstellen(
                 getVerb(),
-                kasusOderPraepositionalkasus, objekt,
+                praedikativeAdjektivphrase,
                 getAdverbialeAngabeSkopusSatz(),
                 getAdverbialeAngabeSkopusVerbAllg(),
                 adverbialeAngabe
@@ -112,12 +103,12 @@ public class PraedikatSubjObjOhneLeerstellen
 
     @Override
     public boolean duHauptsatzLaesstSichMitNachfolgendemDuHauptsatzZusammenziehen() {
-        return true;
+        return !praedikativeAdjektivphrase.isKommaStehtAus();
     }
 
     @Override
     public boolean kannPartizipIIPhraseAmAnfangOderMittenImSatzVerwendetWerden() {
-        return true;
+        return !praedikativeAdjektivphrase.isKommaStehtAus();
     }
 
     @Override
@@ -128,11 +119,10 @@ public class PraedikatSubjObjOhneLeerstellen
             return speziellesVorfeldFromSuper;
         }
 
-        final String objektImKasusOderPraepkasus = objekt.im(kasusOderPraepositionalkasus);
-        if (!"es" .equals(objektImKasusOderPraepkasus)) {
-            // Wenn "es" ein Objekt ist, darf es nicht im Vorfeld stehen.
-            // (Eisenberg Der Satz 5.4.2)
-            return objektImKasusOderPraepkasus;  // "den Frosch"
+        if (!praedikativeAdjektivphrase.isKommaStehtAus()) {
+            // "Glücklich wirkt sie"
+            // Stark markiert - aber möglich.
+            return praedikativeAdjektivphrase.getDescriptionHauptsatz();
         }
 
         return null;
@@ -143,28 +133,32 @@ public class PraedikatSubjObjOhneLeerstellen
                                 final Person personSubjekt,
                                 final Numerus numerusSubjekt) {
         return joinToNull(
-                getAdverbialeAngabeSkopusSatz(), // "aus einer Laune heraus"
-                joinToNull(modalpartikeln), // "mal eben"
+                getAdverbialeAngabeSkopusSatz(), // "leider"
+                joinToNull(modalpartikeln), // "halt"
                 getAdverbialeAngabeSkopusVerbAllg(), // "erneut"
-                objekt.im(kasusOderPraepositionalkasus),
-                getAdverbialeAngabeSkopusVerbWohinWoher() // "auf den Tisch"
+                getAdverbialeAngabeSkopusVerbWohinWoher(), // "nach außen" (?)
+                praedikativeAdjektivphrase // "glücklich"
         );
     }
 
     @Override
     public String getNachfeld(final Person personSubjekt,
                               final Numerus numerusSubjekt) {
+        // STORY Die Adjektivphrase könnte diskontinuierlich aufgeteilt werden, dann könnte
+        //  ein Teil ins Nachfeld kommen:
+        //  Sie hat GLÜCKLICH gewirkt, DICH ZU SEHEN.
+        //  (alternativ zu "Sie hat GLÜCKLICH, DICH ZU SEHEN, gewirkt").
+
         return null;
     }
 
     @Override
-    public boolean
-    umfasstSatzglieder() {
+    public boolean umfasstSatzglieder() {
         return true;
     }
 
     @Override
     public boolean hatAkkusativobjekt() {
-        return kasusOderPraepositionalkasus == Kasus.AKK;
+        return false;
     }
 }
