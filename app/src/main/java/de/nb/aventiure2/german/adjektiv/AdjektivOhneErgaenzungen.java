@@ -21,4 +21,15 @@ public enum AdjektivOhneErgaenzungen implements AdjPhrOhneLeerstellen {
     AdjektivOhneErgaenzungen(@NonNull final Adjektiv adjektiv) {
         this.adjektiv = adjektiv;
     }
+
+    public AdjPhrOhneErgaenzungenOhneLeerstellen mitGraduativerAngabe(
+            final GraduativeAngabe graduativeAngabe) {
+        return toAdjPhr().mitGraduativerAngabe(graduativeAngabe);
+    }
+
+    private AdjPhrOhneErgaenzungenOhneLeerstellen toAdjPhr() {
+        return new AdjPhrOhneErgaenzungenOhneLeerstellen(
+                adjektiv
+        );
+    }
 }
