@@ -108,6 +108,13 @@ class ZweiPraedikateOhneLeerstellen
     }
 
     @Override
+    public String getVerbzweit(final Person person, final Numerus numerus) {
+        return ersterSatz.getVerbzweit(person, numerus)
+                + " und "
+                + zweiterSatz.getVerbzweit(person, numerus);
+    }
+
+    @Override
     public String getVerbletzt(final Person person, final Numerus numerus) {
         return ersterSatz.getVerbletzt(person, numerus)
                 + " und "

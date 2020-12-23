@@ -12,16 +12,14 @@ import javax.annotation.CheckReturnValue;
 import de.nb.aventiure2.data.world.base.GameObjectId;
 import de.nb.aventiure2.data.world.time.*;
 import de.nb.aventiure2.german.adjektiv.AdjPhrOhneLeerstellen;
-import de.nb.aventiure2.german.base.Numerus;
-import de.nb.aventiure2.german.base.Person;
 import de.nb.aventiure2.german.base.StructuralElement;
 import de.nb.aventiure2.german.base.SubstantivischePhrase;
 import de.nb.aventiure2.german.base.Wortfolge;
 import de.nb.aventiure2.german.praedikat.PraedikatOhneLeerstellen;
 import de.nb.aventiure2.german.praedikat.SeinUtil;
+import de.nb.aventiure2.german.praedikat.VerbSubjPraedikativeAdjektivphrase;
 
 import static de.nb.aventiure2.german.base.GermanUtil.capitalize;
-import static de.nb.aventiure2.german.base.Numerus.SG;
 import static de.nb.aventiure2.german.base.StructuralElement.PARAGRAPH;
 import static de.nb.aventiure2.german.praedikat.VerbSubjPraedikativeAdjektivphrase.SCHEINEN;
 import static de.nb.aventiure2.german.praedikat.VerbSubjPraedikativeAdjektivphrase.WIRKEN;
@@ -100,56 +98,36 @@ public class DescriptionBuilder {
             final GameObjectId subjektGameObject, final SubstantivischePhrase subjekt,
             final AdjPhrOhneLeerstellen adjPhrase) {
         return ImmutableList.of(
-                neuerWirkenScheinenSatz(subjektGameObject, subjekt,
-                        wirkenVerbform(subjekt.getPerson(), subjekt.getNumerus()),
+                neuerSatzMitPraedikativerAdjektivphrase(subjektGameObject, subjekt,
+                        WIRKEN,
                         adjPhrase),
-                neuerWirkenScheinenSatz(subjektGameObject, subjekt,
-                        scheinenVerbform(subjekt.getPerson(), subjekt.getNumerus()),
+                neuerSatzMitPraedikativerAdjektivphrase(subjektGameObject, subjekt,
+                        SCHEINEN,
                         adjPhrase)
         );
     }
 
-    private static String wirkenVerbform(final Person person, final Numerus numerus) {
-        switch (person) {
-            case P1:
-                return numerus == SG ? "wirke" : "wirken";
-            case P2:
-                return numerus == SG ? WIRKEN.getDuForm() : "wirkt";
-            case P3:
-                return numerus == SG ? "wirkt" : "wirken";
-            default:
-                throw new IllegalStateException("Unexpected Person: " + person);
-        }
-    }
-
-    private static String scheinenVerbform(final Person person, final Numerus numerus) {
-        switch (person) {
-            case P1:
-                return numerus == SG ? "scheine" : "scheinen";
-            case P2:
-                return numerus == SG ? SCHEINEN.getDuForm() : "scheint";
-            case P3:
-                return numerus == SG ? "scheint" : "scheinen";
-            default:
-                throw new IllegalStateException("Unexpected Person: " + person);
-        }
-    }
-
-
     @CheckReturnValue
     @NonNull
-    private static AllgDescription neuerWirkenScheinenSatz(
+    private static AllgDescription neuerSatzMitPraedikativerAdjektivphrase(
             final GameObjectId subjektGameObject, final SubstantivischePhrase subjekt,
-            final String verb,
+            final VerbSubjPraedikativeAdjektivphrase verb,
             final AdjPhrOhneLeerstellen adjPhrase) {
-        final AllgDescription praedikativeAdjPhrase = satzanschluss(
-                adjPhrase.getPraedikativ(
-                        subjekt.getPerson(), subjekt.getNumerusGenus().getNumerus()));
+        // FIXME Satz über Satz- oder Prädikats-Objekt erzeuben, etwa so:
+        //  verb.mit(adjPhrase).getVerbzweit()
 
-        // FIXME Satz über Satz- oder Prädikats-Objekt erzeuben
-        return neuerSatz(subjekt.nom() + " " + verb + " "
-                + praedikativeAdjPhrase.getDescriptionHauptsatz())
-                .komma(praedikativeAdjPhrase.isKommaStehtAus())
+        // FIXME Das ist das Problem, dass ein Komma am Ende verschluckt werden könnte
+        final String praedikatInVerbzweitform =
+                verb.mit(adjPhrase).getVerbzweit(subjekt.getPerson(), subjekt.getNumerus());
+
+        return neuerSatz(subjekt.nom()
+                + " "
+                + praedikatInVerbzweitform)
+                // FIXME nur nötig, weil das Komma oben verschluckt wurde und man hier
+                //  mit Strings hantiert.
+                .komma(adjPhrase.getPraedikativ(
+                        subjekt.getPerson(), subjekt.getNumerusGenus().getNumerus())
+                        .kommmaStehtAus())
                 .phorikKandidat(subjekt, subjektGameObject);
     }
 

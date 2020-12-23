@@ -6,10 +6,10 @@ import javax.annotation.Nullable;
 
 import de.nb.aventiure2.annotations.Argument;
 import de.nb.aventiure2.annotations.Valenz;
+import de.nb.aventiure2.german.adjektiv.AdjPhrOhneLeerstellen;
 import de.nb.aventiure2.german.base.GermanUtil;
 import de.nb.aventiure2.german.base.Numerus;
 import de.nb.aventiure2.german.base.Person;
-import de.nb.aventiure2.german.description.AllgDescription;
 
 import static de.nb.aventiure2.german.base.GermanUtil.joinToNullString;
 
@@ -31,27 +31,27 @@ public class PraedikatMitPraedikativerAdjektivphraseOhneLeerstellen
      * Die prädikative Adjektivphrase
      */
     @Argument
-    private final AllgDescription praedikativeAdjektivphrase;
+    private final AdjPhrOhneLeerstellen adjektivphrase;
 
     @Valenz
     PraedikatMitPraedikativerAdjektivphraseOhneLeerstellen(
             final Verb verb,
-            final AllgDescription praedikativeAdjektivphrase) {
-        this(verb, praedikativeAdjektivphrase,
+            final AdjPhrOhneLeerstellen adjektivphrase) {
+        this(verb, adjektivphrase,
                 null, null,
                 null);
     }
 
     private PraedikatMitPraedikativerAdjektivphraseOhneLeerstellen(
             final Verb verb,
-            final AllgDescription praedikativeAdjektivphrase,
+            final AdjPhrOhneLeerstellen adjektivphrase,
             @Nullable final AdverbialeAngabeSkopusSatz adverbialeAngabeSkopusSatz,
             @Nullable final AdverbialeAngabeSkopusVerbAllg adverbialeAngabeSkopusVerbAllg,
             @Nullable
             final AdverbialeAngabeSkopusVerbWohinWoher adverbialeAngabeSkopusVerbWohinWoher) {
         super(verb, adverbialeAngabeSkopusSatz,
                 adverbialeAngabeSkopusVerbAllg, adverbialeAngabeSkopusVerbWohinWoher);
-        this.praedikativeAdjektivphrase = praedikativeAdjektivphrase;
+        this.adjektivphrase = adjektivphrase;
     }
 
     @Override
@@ -63,7 +63,7 @@ public class PraedikatMitPraedikativerAdjektivphraseOhneLeerstellen
 
         return new PraedikatMitPraedikativerAdjektivphraseOhneLeerstellen(
                 getVerb(),
-                praedikativeAdjektivphrase,
+                adjektivphrase,
                 adverbialeAngabe, getAdverbialeAngabeSkopusVerbAllg(),
                 getAdverbialeAngabeSkopusVerbWohinWoher()
         );
@@ -78,7 +78,7 @@ public class PraedikatMitPraedikativerAdjektivphraseOhneLeerstellen
 
         return new PraedikatMitPraedikativerAdjektivphraseOhneLeerstellen(
                 getVerb(),
-                praedikativeAdjektivphrase,
+                adjektivphrase,
                 getAdverbialeAngabeSkopusSatz(), adverbialeAngabe,
                 getAdverbialeAngabeSkopusVerbWohinWoher()
         );
@@ -95,7 +95,7 @@ public class PraedikatMitPraedikativerAdjektivphraseOhneLeerstellen
         // *"Peter ist nach Norden glücklich" - wohl nicht.
         return new PraedikatMitPraedikativerAdjektivphraseOhneLeerstellen(
                 getVerb(),
-                praedikativeAdjektivphrase,
+                adjektivphrase,
                 getAdverbialeAngabeSkopusSatz(),
                 getAdverbialeAngabeSkopusVerbAllg(),
                 adverbialeAngabe
@@ -104,12 +104,12 @@ public class PraedikatMitPraedikativerAdjektivphraseOhneLeerstellen
 
     @Override
     public boolean duHauptsatzLaesstSichMitNachfolgendemDuHauptsatzZusammenziehen() {
-        return !praedikativeAdjektivphrase.isKommaStehtAus();
+        return !adjektivphrase.getPraedikativ(Person.P2, Numerus.SG).kommmaStehtAus();
     }
 
     @Override
     public boolean kannPartizipIIPhraseAmAnfangOderMittenImSatzVerwendetWerden() {
-        return !praedikativeAdjektivphrase.isKommaStehtAus();
+        return !adjektivphrase.getPraedikativ(Person.P2, Numerus.SG).kommmaStehtAus();
     }
 
     @Override
@@ -120,10 +120,12 @@ public class PraedikatMitPraedikativerAdjektivphraseOhneLeerstellen
             return speziellesVorfeldFromSuper;
         }
 
-        if (!praedikativeAdjektivphrase.isKommaStehtAus()) {
+        // Ich gehe mal davon aus, dass die Komma-Problematik in jeder Person und jedem
+        // Numerus gleich ist.
+        if (!adjektivphrase.getPraedikativ(Person.P2, Numerus.SG).kommmaStehtAus()) {
             // "Glücklich wirkt sie"
             // Stark markiert - aber möglich.
-            return praedikativeAdjektivphrase.getDescriptionHauptsatz();
+            return adjektivphrase.getPraedikativ(Person.P2, Numerus.SG).getString();
         }
 
         return null;
@@ -138,17 +140,23 @@ public class PraedikatMitPraedikativerAdjektivphraseOhneLeerstellen
                 GermanUtil.joinToNullString(modalpartikeln), // "halt"
                 getAdverbialeAngabeSkopusVerbAllg(), // "erneut"
                 getAdverbialeAngabeSkopusVerbWohinWoher(), // "nach außen" (?)
-                praedikativeAdjektivphrase // "glücklich"
+                adjektivphrase.getPraedikativ(personSubjekt, numerusSubjekt) // "glücklich"
+                // FIXME Hier könnte ein ausstehendes Komma verschwinden!
         );
     }
 
     @Override
     public String getNachfeld(final Person personSubjekt,
                               final Numerus numerusSubjekt) {
-        // STORY Die Adjektivphrase könnte diskontinuierlich aufgeteilt werden, dann könnte
+
+        // FIXME Die Adjektivphrase könnte diskontinuierlich aufgeteilt werden, dann könnte
         //  ein Teil ins Nachfeld kommen:
         //  Sie hat GLÜCKLICH gewirkt, DICH ZU SEHEN.
         //  (alternativ zu "Sie hat GLÜCKLICH, DICH ZU SEHEN, gewirkt").
+        //  Z.B.:         return adjektivphrase.getNachfeldKandidat(personSubjekt, numerusSubjekt)
+        //  Problem dabei: GermanUtil.cut...() muss klüger gemacht werden, damit
+        //  beim Ausschneiden nicht ein oder mehrere unnötiges Kommata im Mittelfeld
+        //  zurückbleiden. Das sollte man ohnehin mal tun...
 
         return null;
     }

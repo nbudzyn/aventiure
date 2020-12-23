@@ -134,11 +134,20 @@ public abstract class AbstractAngabenfaehigesPraedikatOhneLeerstellen
     }
 
     @Override
+    public String getVerbzweit(final Person person, final Numerus numerus) {
+        return joinToNullString(
+                verb.getPraesensOhnePartikel(person, numerus),
+                getMittelfeld(person, numerus),
+                verb.getPartikel(),
+                getNachfeld(person, numerus));
+    }
+
+    @Override
     public String getVerbletzt(final Person person, final Numerus numerus) {
         return joinToNullString(
-                getMittelfeld(P2, SG),
+                getMittelfeld(person, numerus),
                 verb.getPraesensMitPartikel(person, numerus),
-                getNachfeld(P2, SG));
+                getNachfeld(person, numerus));
     }
 
     @Override

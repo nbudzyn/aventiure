@@ -73,6 +73,12 @@ public interface PraedikatOhneLeerstellen extends Praedikat, AbstractDuTextPart 
     boolean duHauptsatzLaesstSichMitNachfolgendemDuHauptsatzZusammenziehen();
 
     /**
+     * Gibt das Prädikat "in Verbzweitform" zurück - das Verb steht also ganz am Anfang
+     * (in einem Verbzweitsatz würde dann noch das Subjekt davor stehen).
+     */
+    String getVerbzweit(Person person, Numerus numerus);
+
+    /**
      * Gibt das Prädikat "in Verbletztform" zurück - das Verb steht also am Ende,
      * nur noch gefolgt vom Nachfeld.
      */

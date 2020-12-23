@@ -92,6 +92,17 @@ public class ZuHabenPraedikatOhneLeerstellen implements PraedikatOhneLeerstellen
     }
 
     @Override
+    public String getVerbzweit(final Person person, final Numerus numerus) {
+        // hast Spannendes zu berichten
+        // hast dich zu waschen
+        // hast zu sagen: "Hallo!"
+
+        return joinToNullString(
+                HabenUtil.VERB.getPraesensOhnePartikel(person, numerus), // "hast"
+                lexikalischerKern.getZuInfinitiv(person, numerus)); // "dich zu waschen"
+    }
+
+    @Override
     public String getVerbletzt(final Person person, final Numerus numerus) {
         // Spannendes zu berichten hast
         // dich zu waschen hast
@@ -231,6 +242,4 @@ public class ZuHabenPraedikatOhneLeerstellen implements PraedikatOhneLeerstellen
     public String getNachfeld(final Person person, final Numerus numerus) {
         return lexikalischerKern.getNachfeld(person, numerus);
     }
-
-
 }

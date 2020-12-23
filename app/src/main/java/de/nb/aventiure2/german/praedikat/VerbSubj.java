@@ -96,6 +96,11 @@ public enum VerbSubj implements PraedikatOhneLeerstellen {
     }
 
     @Override
+    public String getVerbzweit(final Person person, final Numerus numerus) {
+        return toPraedikatSubj().getVerbzweit(person, numerus);
+    }
+
+    @Override
     public String getVerbletzt(final Person person, final Numerus numerus) {
         return toPraedikatSubj().getVerbletzt(person, numerus);
     }

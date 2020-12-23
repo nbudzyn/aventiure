@@ -3,6 +3,9 @@ package de.nb.aventiure2.german.praedikat;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
+import de.nb.aventiure2.german.adjektiv.AdjPhrOhneLeerstellen;
+import de.nb.aventiure2.german.base.Numerus;
+import de.nb.aventiure2.german.base.Person;
 import de.nb.aventiure2.german.description.AllgDescription;
 
 /**
@@ -58,12 +61,12 @@ public enum VerbSubjPraedikativeAdjektivphrase implements Praedikat {
     }
 
     public PraedikatMitPraedikativerAdjektivphraseOhneLeerstellen mit(
-            final AllgDescription praedikativeAdjektivphrase) {
+            final AdjPhrOhneLeerstellen adjektivphrase) {
         return new PraedikatMitPraedikativerAdjektivphraseOhneLeerstellen(verb,
-                praedikativeAdjektivphrase);
+                adjektivphrase);
     }
 
-    public String getDuForm() {
-        return verb.getDuFormOhnePartikel();
+    public String getPraesensOhnePartikel(final Person person, final Numerus numerus) {
+        return verb.getPraesensOhnePartikel(person, numerus);
     }
 }
