@@ -163,7 +163,7 @@ class ZuneigungAbneigungBeiBegegnungDescriber implements FeelingBeiBegegnungDesc
                     gluecklichZuSehen,
                     gespanntWasZuBerichten,
                     // "glücklich, dich zu sehen, und gespannt, was du zu berichten hast"
-                    // FIXME Das sollten zwei ver-undete-Adjektivphrasen werden
+                    // FIXME ZweiAdjPhr...
                     satzanschluss(gluecklichZuSehen.getDescriptionHauptsatz()
                             + (gluecklichZuSehen.isKommaStehtAus() ? ", und " : " und ")
                             + gespanntWasZuBerichten.getDescriptionHauptsatz())
