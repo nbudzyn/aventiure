@@ -15,12 +15,12 @@ import de.nb.aventiure2.german.base.Reflexivpronomen;
 import de.nb.aventiure2.german.base.SubstantivischePhrase;
 import de.nb.aventiure2.german.description.AbstractDescription;
 import de.nb.aventiure2.german.description.AllgDescription;
+import de.nb.aventiure2.german.praedikat.HabenUtil;
 import de.nb.aventiure2.german.praedikat.VerbSubjObj;
 
 import static de.nb.aventiure2.german.base.Numerus.SG;
 import static de.nb.aventiure2.german.base.Person.P2;
 import static de.nb.aventiure2.german.description.DescriptionBuilder.satzanschluss;
-import static de.nb.aventiure2.german.praedikat.VerbSubjObj.HABEN;
 import static de.nb.aventiure2.german.praedikat.VerbSubjObj.SEHEN;
 
 /**
@@ -256,8 +256,8 @@ class ZuneigungAbneigungBeiBegegnungDescriber implements FeelingBeiBegegnungDesc
             final Person berichtempfaengerPerson,
             final NumerusGenus berichtempfaengerNumerusGenus,
             final SubstantivischePhrase berichtender) {
-        final String habenVerbform = habenVerbform(
-                berichtender.getPerson(), berichtender.getNumerus());
+        final String habenVerbform = HabenUtil.VERB
+                .getPraesensOhnePartikel(berichtender.getPerson(), berichtender.getNumerus());
         // "du ihr zu berichten hast"
         final AbstractDescription<?> verbletztsatzanschluss =
                 verbletztsatzanschlussMitSubjektPersonalpronomen(
@@ -281,19 +281,6 @@ class ZuneigungAbneigungBeiBegegnungDescriber implements FeelingBeiBegegnungDesc
                 return numerus == SG ? SEHEN.getDuForm() : "seht";
             case P3:
                 return numerus == SG ? "sieht" : "sehen";
-            default:
-                throw new IllegalStateException("Unexpected Person: " + person);
-        }
-    }
-
-    private static String habenVerbform(final Person person, final Numerus numerus) {
-        switch (person) {
-            case P1:
-                return numerus == SG ? "habe" : "haben";
-            case P2:
-                return numerus == SG ? HABEN.getDuForm() : "habt";
-            case P3:
-                return numerus == SG ? "hat" : "haben";
             default:
                 throw new IllegalStateException("Unexpected Person: " + person);
         }

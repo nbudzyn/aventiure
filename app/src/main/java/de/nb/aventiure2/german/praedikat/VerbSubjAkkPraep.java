@@ -13,11 +13,15 @@ import de.nb.aventiure2.german.base.SubstantivischePhrase;
  */
 public enum VerbSubjAkkPraep implements Praedikat {
     // "ein Gespräch mit Rapunzel beginnen"
-    BEGINNEN("beginnen", "beginnst", PraepositionMitKasus.MIT_DAT,
+    BEGINNEN("beginnen",
+            "beginne", "beginnst", "beginnt", "beginnt",
+            PraepositionMitKasus.MIT_DAT,
             Perfektbildung.HABEN, "begonnen"),
 
     // "die Zauberin nach ihrem Ziel fragen"
-    FRAGEN_NACH("fragen", "fragst", PraepositionMitKasus.NACH,
+    FRAGEN_NACH("fragen",
+            "frage", "fragst", "fragt", "fragt",
+            PraepositionMitKasus.NACH,
             Perfektbildung.HABEN, "gefragt");
 
     /**
@@ -31,10 +35,14 @@ public enum VerbSubjAkkPraep implements Praedikat {
     private final PraepositionMitKasus praepositionMitKasus;
 
     VerbSubjAkkPraep(final String infinitiv,
-                     final String duForm,
+                     @NonNull final String ichForm,
+                     @NonNull final String duForm,
+                     @NonNull final String erSieEsForm,
+                     @NonNull final String ihrForm,
                      final PraepositionMitKasus praepositionMitKasus,
                      final Perfektbildung perfektbildung, final String partizipII) {
-        this(new Verb(infinitiv, duForm, perfektbildung, partizipII), praepositionMitKasus);
+        this(new Verb(infinitiv, ichForm, duForm, erSieEsForm, ihrForm, perfektbildung, partizipII),
+                praepositionMitKasus);
     }
 
     VerbSubjAkkPraep(final Verb verb,

@@ -13,7 +13,9 @@ import androidx.annotation.Nullable;
  */
 public enum IntentionalesVerb implements Praedikat {
     // "Rapunzel versucht, die Haare herunterzulassen"
-    VERSUCHEN("versuchen", "versuchst", Perfektbildung.HABEN, "versucht");
+    VERSUCHEN("versuchen",
+            "versuche", "versuchst", "versucht", "versucht",
+            Perfektbildung.HABEN, "versucht");
     // Weitere direktive Verben sind beabsichtigen, sich weigern, versäumen,
     // zögern
 
@@ -25,16 +27,24 @@ public enum IntentionalesVerb implements Praedikat {
     private final Verb verb;
 
     IntentionalesVerb(@NonNull final String infinitiv,
+                      @NonNull final String ichForm,
                       @NonNull final String duForm,
+                      @NonNull final String erSieEsForm,
+                      @NonNull final String ihrForm,
                       final Perfektbildung perfektbildung, final String partizipII) {
-        this(new Verb(infinitiv, duForm, perfektbildung, partizipII));
+        this(new Verb(infinitiv, ichForm, duForm, erSieEsForm, ihrForm, perfektbildung,
+                partizipII));
     }
 
     IntentionalesVerb(@NonNull final String infinitiv,
+                      @NonNull final String ichForm,
                       @NonNull final String duForm,
+                      @NonNull final String erSieEsForm,
+                      @NonNull final String ihrForm,
                       @Nullable final String partikel,
                       final Perfektbildung perfektbildung, final String partizipII) {
-        this(new Verb(infinitiv, duForm, partikel, perfektbildung, partizipII));
+        this(new Verb(infinitiv, ichForm, duForm, erSieEsForm, ihrForm, partikel, perfektbildung,
+                partizipII));
     }
 
     IntentionalesVerb(@NonNull final Verb verb) {

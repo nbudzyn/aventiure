@@ -12,12 +12,16 @@ import de.nb.aventiure2.german.description.AllgDescription;
  * {@link PraedikativumPraedikatOhneLeerstellen#praedikativumPraedikatMit(AllgDescription)}.
  */
 public enum VerbSubjPraedikativeAdjektivphrase implements Praedikat {
-    SCHEINEN("scheinen", "scheinst", Perfektbildung.HABEN, "geschienen"),
-    WIRKEN("wirken", "wirkst", Perfektbildung.HABEN, "gewirkt");
+    SCHEINEN("scheinen",
+            "scheine", "scheinst", "scheint", "scheint",
+            Perfektbildung.HABEN, "geschienen"),
+    WIRKEN("wirken",
+            "wirke", "wirkst", "wirkt", "wirkt",
+            Perfektbildung.HABEN, "gewirkt");
 
     // FIXME ""sieht ... aus"! Problem: Dann muss die prädikative Adjektivphrase
     //  diskontinuierlich aufgeteilt werden: Sie sieht gluecklich aus, dich zu treffen.
-    //  Außerdem: Dinge verhindern wie "Sie sieht glücklich aus, dich zu sehen".
+    //  Außerdem: Dinge vermeiden wie "Sie sieht glücklich aus, dich zu sehen".
 
     /**
      * Das Verb an sich, ohne Informationen zur Valenz, ohne Ergänzungen, ohne
@@ -27,18 +31,26 @@ public enum VerbSubjPraedikativeAdjektivphrase implements Praedikat {
     private final Verb verb;
 
     VerbSubjPraedikativeAdjektivphrase(@NonNull final String infinitiv,
+                                       @NonNull final String ichForm,
                                        @NonNull final String duForm,
+                                       @NonNull final String erSieEsForm,
+                                       @NonNull final String ihrForm,
                                        @NonNull final Perfektbildung perfektbildung,
                                        final String partizipII) {
-        this(new Verb(infinitiv, duForm, perfektbildung, partizipII));
+        this(new Verb(infinitiv, ichForm, duForm, erSieEsForm, ihrForm, perfektbildung,
+                partizipII));
     }
 
     VerbSubjPraedikativeAdjektivphrase(@NonNull final String infinitiv,
+                                       @NonNull final String ichForm,
                                        @NonNull final String duForm,
+                                       @NonNull final String erSieEsForm,
+                                       @NonNull final String ihrForm,
                                        @Nullable final String partikel,
                                        @NonNull final Perfektbildung perfektbildung,
                                        final String partizipII) {
-        this(new Verb(infinitiv, duForm, partikel, perfektbildung, partizipII));
+        this(new Verb(infinitiv, ichForm, duForm, erSieEsForm, ihrForm,
+                partikel, perfektbildung, partizipII));
     }
 
     VerbSubjPraedikativeAdjektivphrase(@NonNull final Verb verb) {

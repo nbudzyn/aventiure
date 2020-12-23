@@ -8,9 +8,9 @@ import java.util.Objects;
 import de.nb.aventiure2.german.base.GermanUtil;
 import de.nb.aventiure2.german.base.Numerus;
 import de.nb.aventiure2.german.base.Person;
+import de.nb.federkiel.deutsch.grammatik.wortart.flexion.VerbFlektierer;
 
 import static de.nb.aventiure2.german.base.Numerus.SG;
-import static de.nb.aventiure2.german.base.Person.P2;
 
 /**
  * Repräsentiert ein Verb als Lexem, von dem Wortformen gebildet werden können - jedoch <i>ohne
@@ -37,11 +37,39 @@ public class Verb {
     private final String infinitiv;
 
     /**
-     * 2. Person Singular Präsens Indikativ des Verbs, ggf. ohne abgetrenntes Präfix
+     * 1. Person Singular Präsens Indikativ des Verbs, ggf. ist das Präfix abgetrennt
+     * ("hebe")
+     */
+    @NonNull
+    private final String ichFormOhnePartikel;
+
+    /**
+     * 2. Person Singular Präsens Indikativ des Verbs, ggf. ist das Präfix abgetrennt
      * ("hebst")
      */
     @NonNull
     private final String duFormOhnePartikel;
+
+    /**
+     * 3. Person Singular Präsens Indikativ des Verbs, ggf. ist das Präfix abgetrennt
+     * ("(er / sie / es) hebt")
+     */
+    @NonNull
+    private final String erSieEsFormOhnePartikel;
+
+    /**
+     * 1. und 3. Person Plural Präsens Indikativ des Verbs, ggf. ist das Präfix abgetrennt
+     * ("(wir / sie) sind")
+     */
+    @NonNull
+    private final String wirSieFormOhnePartikel;
+
+    /**
+     * 2. Person Plural Präsens Indikativ des Verbs, ggf. ist das Präfix abgetrennt
+     * ("(ihr) hebt")
+     */
+    @NonNull
+    private final String ihrFormOhnePartikel;
 
     /**
      * Wenn es sich um ein <i>Partikelverb</i> ("aufheben")
@@ -61,21 +89,50 @@ public class Verb {
     @NonNull
     private final String partizipII;
 
+    private final static VerbFlektierer flekt = new VerbFlektierer();
+
     /**
      * Erzeugt ein Verb, das <i>kein</i> Partikelverb ist, also ein Verb
      * <i>ohne Partikel</i>. Von dem Verb wird also (anders als z.B.
      * bei "er steht auf") bei der Formenbildung nichts abgetrennt.
      */
-    public Verb(final String infinitiv, final String duFormOhnePartikel,
-                final Perfektbildung perfektbildung, final String partizipII) {
-        this(infinitiv, duFormOhnePartikel, null, perfektbildung, partizipII);
+    public Verb(final String infinitivUndWirSieForm, final String ichFormOhnePartikel,
+                final String duFormOhnePartikel,
+                final String erSieEsFormOhnePartikel, final String ihrFormOhnePartikel,
+                final Perfektbildung perfektbildung,
+                final String partizipII) {
+        this(infinitivUndWirSieForm,
+                ichFormOhnePartikel, duFormOhnePartikel,
+                erSieEsFormOhnePartikel, ihrFormOhnePartikel,
+                null, perfektbildung, partizipII);
     }
 
-    public Verb(final String infinitiv, final String duFormOhnePartikel,
-                @Nullable final String partikel, final Perfektbildung perfektbildung,
+    public Verb(final String infinitivUndWirSieForm, final String ichFormOhnePartikel,
+                final String duFormOhnePartikel,
+                final String erSieEsFormOhnePartikel, final String ihrFormOhnePartikel,
+                @Nullable final String partikel,
+                final Perfektbildung perfektbildung,
+                final String partizipII) {
+        this(infinitivUndWirSieForm,
+                ichFormOhnePartikel, duFormOhnePartikel, erSieEsFormOhnePartikel,
+                infinitivUndWirSieForm, ihrFormOhnePartikel,
+                partikel, perfektbildung, partizipII);
+    }
+
+    public Verb(final String infinitiv, final String ichFormOhnePartikel,
+                final String duFormOhnePartikel,
+                final String erSieEsFormOhnePartikel,
+                final String wirSieFormOhnePartikel,
+                final String ihrFormOhnePartikel,
+                @Nullable final String partikel,
+                final Perfektbildung perfektbildung,
                 final String partizipII) {
         this.infinitiv = infinitiv;
+        this.ichFormOhnePartikel = ichFormOhnePartikel;
         this.duFormOhnePartikel = duFormOhnePartikel;
+        this.erSieEsFormOhnePartikel = erSieEsFormOhnePartikel;
+        this.wirSieFormOhnePartikel = wirSieFormOhnePartikel;
+        this.ihrFormOhnePartikel = ihrFormOhnePartikel;
         this.partikel = partikel;
         this.perfektbildung = perfektbildung;
         this.partizipII = partizipII;
@@ -104,19 +161,23 @@ public class Verb {
 
     @NonNull
     String getPraesensMitPartikel(final Person person, final Numerus numerus) {
-        if (person == P2 && numerus == SG) {
-            return getDuFormMitPartikel();
-        }
-
-        throw new IllegalStateException("Not yet implemented");
+        return GermanUtil.joinToNullString(
+                partikel,
+                getPraesensOhnePartikel(person, numerus));
     }
 
     @NonNull
-    private String getDuFormMitPartikel() {
-        return GermanUtil.joinToNullString(
-                duFormOhnePartikel,
-                partikel
-        );
+    public String getPraesensOhnePartikel(final Person person, final Numerus numerus) {
+        switch (person) {
+            case P1:
+                return numerus == SG ? ichFormOhnePartikel : wirSieFormOhnePartikel;
+            case P2:
+                return numerus == SG ? duFormOhnePartikel : ihrFormOhnePartikel;
+            case P3:
+                return numerus == SG ? erSieEsFormOhnePartikel : wirSieFormOhnePartikel;
+            default:
+                throw new IllegalStateException("Unexpected person: " + person);
+        }
     }
 
     @NonNull

@@ -17,11 +17,11 @@ import de.nb.aventiure2.german.base.StructuralElement;
 import de.nb.aventiure2.german.base.SubstantivischePhrase;
 import de.nb.aventiure2.german.base.Wortfolge;
 import de.nb.aventiure2.german.praedikat.PraedikatOhneLeerstellen;
+import de.nb.aventiure2.german.praedikat.SeinUtil;
 
 import static de.nb.aventiure2.german.base.GermanUtil.capitalize;
 import static de.nb.aventiure2.german.base.Numerus.SG;
 import static de.nb.aventiure2.german.base.StructuralElement.PARAGRAPH;
-import static de.nb.aventiure2.german.praedikat.SeinUtil.seinVerbform;
 import static de.nb.aventiure2.german.praedikat.VerbSubjPraedikativeAdjektivphrase.SCHEINEN;
 import static de.nb.aventiure2.german.praedikat.VerbSubjPraedikativeAdjektivphrase.WIRKEN;
 
@@ -68,7 +68,8 @@ public class DescriptionBuilder {
         for (final AllgDescription praedikativum : altPraedikativa) {
             alt.add(
                     neuerSatz(subjekt.nom() + " "
-                            + seinVerbform(subjekt.getPerson(), subjekt.getNumerus())
+                            + SeinUtil.VERB
+                            .getPraesensOhnePartikel(subjekt.getPerson(), subjekt.getNumerus())
                             + " "
                             + praedikativum.getDescriptionHauptsatz())
                             .komma(praedikativum.isKommaStehtAus())

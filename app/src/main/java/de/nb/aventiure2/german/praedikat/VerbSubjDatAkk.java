@@ -12,21 +12,39 @@ import de.nb.aventiure2.german.base.SubstantivischePhrase;
  * einem Akkusativ-Objekt steht.
  */
 public enum VerbSubjDatAkk implements Praedikat {
-    ANBIETEN("anbieten", "bietest", "an",
+    ANBIETEN("anbieten",
+            "biete", "bietest", "bietet", "bietet",
+            "an",
             Perfektbildung.HABEN, "angeboten"),
-    AUSSCHUETTEN("ausschütten", "schüttest", "aus",
+    AUSSCHUETTEN("ausschütten",
+            "schütte", "schüttest", "schüttet", "schüttet",
+            "aus",
             Perfektbildung.HABEN, "ausgeschüttet"),
-    BERICHTEN("berichten", "berichtest",
+    BERICHTEN("berichten",
+            "berichte", "berichtest", "berichtet", "berichtet",
+            "berichtest",
             Perfektbildung.HABEN, "berichtet"),
-    GEBEN("geben", "gibst", Perfektbildung.HABEN, "gegeben"),
-    HINHALTEN("hinhalten", "hältst", "in",
+    GEBEN("geben",
+            "gebe", "gibst", "gibt", "gebt",
+            Perfektbildung.HABEN, "gegeben"),
+    HINHALTEN("hinhalten",
+            "halte", "hältst", "hält", "haltet",
+            "hin",
             Perfektbildung.HABEN, "hingehalten"),
     // "dem Frosch Angebote machen"
-    MACHEN("machen", "machst", Perfektbildung.HABEN, "gemacht"),
-    REICHEN("reichen", "reichst", Perfektbildung.HABEN, "gereicht"),
-    VERSPRECHEN("versprechen", "versprichst",
+    MACHEN("machen",
+            "mache", "machst", "macht", "macht",
+            Perfektbildung.HABEN, "gemacht"),
+    REICHEN("reichen",
+            "reiche", "reichst", "reicht", "reicht",
+            Perfektbildung.HABEN, "gereicht"),
+    VERSPRECHEN("versprechen",
+            "verspreche", "versprichst", "verspricht",
+            "versprecht",
             Perfektbildung.HABEN, "versprochen"),
-    ZEIGEN("zeigen", "zeigst", Perfektbildung.HABEN, "gezeigt"),
+    ZEIGEN("zeigen",
+            "zeige", "zeigst", "zeigt", "zeigt",
+            Perfektbildung.HABEN, "gezeigt"),
     ;
 
     /**
@@ -37,16 +55,24 @@ public enum VerbSubjDatAkk implements Praedikat {
     private final Verb verb;
 
     VerbSubjDatAkk(@NonNull final String infinitiv,
+                   @NonNull final String ichForm,
                    @NonNull final String duForm,
+                   @NonNull final String erSieEsForm,
+                   @NonNull final String ihrForm,
                    final Perfektbildung perfektbildung, final String partizipII) {
-        this(new Verb(infinitiv, duForm, perfektbildung, partizipII));
+        this(new Verb(infinitiv, ichForm, duForm, erSieEsForm, ihrForm, perfektbildung,
+                partizipII));
     }
 
     VerbSubjDatAkk(@NonNull final String infinitiv,
+                   @NonNull final String ichForm,
                    @NonNull final String duForm,
+                   @NonNull final String erSieEsForm,
+                   @NonNull final String ihrForm,
                    @Nullable final String partikel,
                    final Perfektbildung perfektbildung, final String partizipII) {
-        this(new Verb(infinitiv, duForm, partikel, perfektbildung, partizipII));
+        this(new Verb(infinitiv, ichForm, duForm, erSieEsForm, ihrForm, partikel, perfektbildung,
+                partizipII));
     }
 
     VerbSubjDatAkk(final Verb verb) {

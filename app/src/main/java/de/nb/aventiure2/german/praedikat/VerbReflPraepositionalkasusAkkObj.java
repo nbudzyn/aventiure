@@ -10,8 +10,11 @@ import de.nb.aventiure2.german.base.SubstantivischePhrase;
  * und eine Leerstelle für ein Akkusativobjekt hat.
  */
 public enum VerbReflPraepositionalkasusAkkObj implements PraedikatMitEinerObjektleerstelle {
-    AN_SICH_NEHMEN("nehmen", "nimmst", PraepositionMitKasus.AN_AKK
-            , Perfektbildung.HABEN, "genommen");
+    AN_SICH_NEHMEN("nehmen",
+            "nehme", "nimmst", "nimmt",
+            "nehmt",
+            PraepositionMitKasus.AN_AKK,
+            Perfektbildung.HABEN, "genommen");
 
     /**
      * Das Verb an sich, ohne Informationen zur Valenz, ohne Ergänzungen, ohne
@@ -28,12 +31,16 @@ public enum VerbReflPraepositionalkasusAkkObj implements PraedikatMitEinerObjekt
     private final PraepositionMitKasus prapositionMitKasus;
 
     private VerbReflPraepositionalkasusAkkObj(@NonNull final String infinitiv,
+                                              @NonNull final String ichForm,
                                               @NonNull final String duForm,
+                                              @NonNull final String erSieEsForm,
+                                              @NonNull final String ihrForm,
                                               @NonNull
                                               final PraepositionMitKasus prapositionMitKasus,
                                               @NonNull final Perfektbildung perfektbildung,
                                               final String partizipII) {
-        verb = new Verb(infinitiv, duForm, perfektbildung, partizipII);
+        verb = new Verb(infinitiv, ichForm, duForm, erSieEsForm, ihrForm,
+                perfektbildung, partizipII);
         this.prapositionMitKasus = prapositionMitKasus;
     }
 
