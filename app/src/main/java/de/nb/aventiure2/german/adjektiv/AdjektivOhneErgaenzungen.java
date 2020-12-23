@@ -6,7 +6,14 @@ import androidx.annotation.NonNull;
  * Ein Adjektiv, das keine Ergänzungen fordert.
  */
 public enum AdjektivOhneErgaenzungen implements AdjPhrOhneLeerstellen {
-    GLUECKLICH("glücklich");
+    GESPANNT("gespannt"),
+    GLUECKLICH("glücklich"),
+    VERAERGERT("verärgert"),
+    UEBERRASCHT("überrascht"),
+    UEBERRUMPELT("überrumpelt"),
+    VERSTIMMT("verstimmt"),
+    VERWIRRT("verwirrt"),
+    VERWUNDERT("verwundert");
 
     /**
      * Das Adjektiv an sich, ohne Informationen zur Valenz
@@ -22,6 +29,7 @@ public enum AdjektivOhneErgaenzungen implements AdjPhrOhneLeerstellen {
         this.adjektiv = adjektiv;
     }
 
+    @Override
     public AdjPhrOhneErgaenzungenOhneLeerstellen mitGraduativerAngabe(
             final GraduativeAngabe graduativeAngabe) {
         return toAdjPhr().mitGraduativerAngabe(graduativeAngabe);
