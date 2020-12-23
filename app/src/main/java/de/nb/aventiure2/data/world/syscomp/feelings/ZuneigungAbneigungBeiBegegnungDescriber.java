@@ -4,6 +4,8 @@ import androidx.annotation.NonNull;
 
 import com.google.common.collect.ImmutableList;
 
+import de.nb.aventiure2.german.adjektiv.AdjPhrMitIndirektemFragesatzOhneLeerstellen;
+import de.nb.aventiure2.german.adjektiv.AdjPhrMitZuInfinitivOhneLeerstellen;
 import de.nb.aventiure2.german.adjektiv.AdjektivMitIndirektemFragesatz;
 import de.nb.aventiure2.german.adjektiv.AdjektivMitZuInfinitiv;
 import de.nb.aventiure2.german.adjektiv.AdjektivOhneErgaenzungen;
@@ -183,46 +185,46 @@ class ZuneigungAbneigungBeiBegegnungDescriber implements FeelingBeiBegegnungDesc
             );
         } else if (feelingIntensity == FeelingIntensity.DEUTLICH) {
             // "glücklich, dich [target] zu sehen"
-            final AllgDescription gluecklichZuSehen =
-                    satzanschluss(
-                            AdjektivMitZuInfinitiv.GLUECKLICH
-                                    .mitLexikalischerKern(sehenVerb.mit(targetDesc))
-                                    .getPraedikativ(
-                                            gameObjectSubjektPerson,
-                                            gameObjectSubjektNumerusGenus.getNumerus()));
+            final AdjPhrMitZuInfinitivOhneLeerstellen gluecklichDichZuSehen =
+                    AdjektivMitZuInfinitiv.GLUECKLICH
+                            .mitLexikalischerKern(sehenVerb.mit(targetDesc));
 
             // "gespannt, was du ihr zu berichten hast"
-            final AllgDescription gespanntWasZuBerichten =
-                    satzanschluss(
-                            AdjektivMitIndirektemFragesatz.GESPANNT // "gespannt"
-                                    .mitIndirektemFragesatz(
-                                            VerbSubjDatAkk.BERICHTEN // "berichten"
-                                                    .mitDat(
-                                                            Personalpronomen.get(
-                                                                    gameObjectSubjektPerson,
-                                                                    gameObjectSubjektNumerusGenus)
-                                                            // "ihr"
-                                                    )
-                                                    .mitAkk(Interrogativpronomen.WAS) // "was"
-                                                    .zuHabenPraedikat()
-                                                    // "was ihr zu berichten haben"
-                                                    .alsSatzMitSubjekt(targetDesc.persPron())
-                                            // "was du ihr zu berichten hast"
-                                    )
-                                    .getPraedikativ(
-                                            gameObjectSubjektPerson,
-                                            gameObjectSubjektNumerusGenus.getNumerus()));
+            final AdjPhrMitIndirektemFragesatzOhneLeerstellen gespanntWasZuBerichten =
+                    AdjektivMitIndirektemFragesatz.GESPANNT // "gespannt"
+                            .mitIndirektemFragesatz(
+                                    VerbSubjDatAkk.BERICHTEN // "berichten"
+                                            .mitDat(
+                                                    Personalpronomen.get(
+                                                            gameObjectSubjektPerson,
+                                                            gameObjectSubjektNumerusGenus)
+                                                    // "ihr"
+                                            )
+                                            .mitAkk(Interrogativpronomen.WAS) // "was"
+                                            .zuHabenPraedikat()
+                                            // "was ihr zu berichten haben"
+                                            .alsSatzMitSubjekt(targetDesc.persPron())
+                                    // "was du ihr zu berichten hast"
+                            );
 
             // "glücklich, dich zu sehen, und gespannt, was du zu berichten hast"
             return ImmutableList.of(
-                    gluecklichZuSehen,
-                    gespanntWasZuBerichten,
-                    // "glücklich, dich zu sehen, und gespannt, was du zu berichten hast"
-                    // FIXME ZweiAdjPhr...
-                    satzanschluss(gluecklichZuSehen.getDescriptionHauptsatz()
-                            + (gluecklichZuSehen.isKommaStehtAus() ? ", und " : " und ")
-                            + gespanntWasZuBerichten.getDescriptionHauptsatz())
-                            .komma(gespanntWasZuBerichten.isKommaStehtAus())
+                    satzanschluss(
+                            gluecklichDichZuSehen
+                                    .getPraedikativ(
+                                            gameObjectSubjektPerson,
+                                            gameObjectSubjektNumerusGenus.getNumerus())),
+                    satzanschluss(
+                            gespanntWasZuBerichten
+                                    .getPraedikativ(
+                                            gameObjectSubjektPerson,
+                                            gameObjectSubjektNumerusGenus.getNumerus())),
+                    satzanschluss(
+                            new ZweiAdjPhrOhneLeerstellen(
+                                    gluecklichDichZuSehen, gespanntWasZuBerichten
+                            ).getPraedikativ(
+                                    gameObjectSubjektPerson,
+                                    gameObjectSubjektNumerusGenus.getNumerus()))
             );
         }
 
