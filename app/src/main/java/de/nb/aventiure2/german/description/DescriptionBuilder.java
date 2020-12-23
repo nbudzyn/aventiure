@@ -15,6 +15,7 @@ import de.nb.aventiure2.german.base.Numerus;
 import de.nb.aventiure2.german.base.Person;
 import de.nb.aventiure2.german.base.StructuralElement;
 import de.nb.aventiure2.german.base.SubstantivischePhrase;
+import de.nb.aventiure2.german.base.Wortfolge;
 import de.nb.aventiure2.german.praedikat.PraedikatOhneLeerstellen;
 
 import static de.nb.aventiure2.german.base.GermanUtil.capitalize;
@@ -215,6 +216,12 @@ public class DescriptionBuilder {
     @CheckReturnValue
     public static AllgDescription satzanschluss(final String description) {
         return new AllgDescription(StructuralElement.WORD, description);
+    }
+
+    @NonNull
+    @CheckReturnValue
+    public static AllgDescription satzanschluss(final Wortfolge wortfolge) {
+        return new AllgDescription(StructuralElement.WORD, wortfolge);
     }
 
     @CheckReturnValue

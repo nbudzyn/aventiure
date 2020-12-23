@@ -81,7 +81,12 @@ public class DescriptionParams {
     }
 
     DescriptionParams(final StructuralElement startsNew) {
+        this(startsNew, false);
+    }
+
+    DescriptionParams(final StructuralElement startsNew, final boolean kommaStehtAus) {
         this.startsNew = startsNew;
+        this.kommaStehtAus = kommaStehtAus;
         endsThis = StructuralElement.WORD;
     }
 

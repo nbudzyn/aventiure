@@ -8,13 +8,15 @@ import javax.annotation.Nullable;
 
 import de.nb.aventiure2.annotations.Argument;
 import de.nb.aventiure2.annotations.Valenz;
+import de.nb.aventiure2.german.base.GermanUtil;
+import de.nb.aventiure2.german.base.Interrogativpronomen;
 import de.nb.aventiure2.german.base.Numerus;
 import de.nb.aventiure2.german.base.Person;
 import de.nb.aventiure2.german.base.Personalpronomen;
 import de.nb.aventiure2.german.base.Reflexivpronomen;
 import de.nb.aventiure2.german.base.SubstantivischePhrase;
 
-import static de.nb.aventiure2.german.base.GermanUtil.joinToNull;
+import static de.nb.aventiure2.german.base.GermanUtil.joinToNullString;
 
 /**
  * Ein Prädikat, in dem ein Dativobjekt und Akkusativobjekt gesetzt sind
@@ -150,36 +152,36 @@ public class PraedikatDatAkkOhneLeerstellen
             if (Personalpronomen.isPersonalpronomen(dat) ||
                     Reflexivpronomen.isReflexivpronomen(dat)) {
                 // Duden 1357: "Akkusativ > Dativ"
-                return joinToNull(
+                return joinToNullString(
                         akk, // "sie", Wackernagel-Position 1
                         dat, // "ihm", Wackernagel-Position 2
                         getAdverbialeAngabeSkopusSatz(), // "aus einer Laune heraus"
-                        joinToNull(modalpartikeln), // "halt"
+                        GermanUtil.joinToNullString(modalpartikeln), // "halt"
                         getAdverbialeAngabeSkopusVerbAllg()); // "auf deiner Flöte"
             }
 
-            return joinToNull(
+            return joinToNullString(
                     akk, // "sie", Wackernagel-Position
                     getAdverbialeAngabeSkopusSatz(), // "aus einer Laune heraus"
                     dat, // "dem Frosch"
-                    joinToNull(modalpartikeln), // "halt"
+                    GermanUtil.joinToNullString(modalpartikeln), // "halt"
                     getAdverbialeAngabeSkopusVerbAllg()); // "auf deiner Flöte"
         }
 
         if (Personalpronomen.isPersonalpronomen(dat) ||
                 Reflexivpronomen.isReflexivpronomen(dat)) {
-            return joinToNull(
+            return joinToNullString(
                     dat, // "ihm", Wackernagel-Position
                     getAdverbialeAngabeSkopusSatz(), // "aus einer Laune heraus"
                     akk, // "die Melodie"
-                    joinToNull(modalpartikeln), // "halt"
+                    GermanUtil.joinToNullString(modalpartikeln), // "halt"
                     getAdverbialeAngabeSkopusVerbAllg()); // "auf deiner Flöte"
         }
 
-        return joinToNull(
+        return joinToNullString(
                 getAdverbialeAngabeSkopusSatz(), // "aus einer Laune heraus"
                 dat, // "dem Frosch"
-                joinToNull(modalpartikeln), // "halt"
+                GermanUtil.joinToNullString(modalpartikeln), // "halt"
                 getAdverbialeAngabeSkopusVerbAllg(), // "auf deiner Flöte"
                 akk); // "ein Lied"
     }
@@ -198,5 +200,19 @@ public class PraedikatDatAkkOhneLeerstellen
     @Override
     public boolean hatAkkusativobjekt() {
         return true;
+    }
+
+    @Nullable
+    @Override
+    public String getErstesInterrogativpronomenAlsString() {
+        if (dat instanceof Interrogativpronomen) {
+            return dat.dat();
+        }
+
+        if (akk instanceof Interrogativpronomen) {
+            return akk.akk();
+        }
+
+        return null;
     }
 }

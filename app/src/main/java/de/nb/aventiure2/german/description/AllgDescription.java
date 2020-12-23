@@ -3,6 +3,7 @@ package de.nb.aventiure2.german.description;
 import javax.annotation.ParametersAreNonnullByDefault;
 
 import de.nb.aventiure2.german.base.StructuralElement;
+import de.nb.aventiure2.german.base.Wortfolge;
 
 /**
  * A general description. The subject may be anything.
@@ -22,6 +23,11 @@ public class AllgDescription extends AbstractDescription<AllgDescription> {
     //  - Die Frau hat gute Laune und GEHT WEITER: Koordination zweier Verben zum selben Subj (P3)
     //  - Die Frau geht den Weg hinunten UND DU GEHST HINTERHER: Koordination zweier Hauptsätze
     //  Dazu bräuchte man wohl eine Kontextinfo in der Art "Womit endet die AllgDescription?"
+
+    AllgDescription(final StructuralElement startsNew,
+                    final Wortfolge wortfolge) {
+        this(new DescriptionParams(startsNew, wortfolge.kommmaStehtAus()), wortfolge.getString());
+    }
 
     AllgDescription(final StructuralElement startsNew,
                     final String description) {

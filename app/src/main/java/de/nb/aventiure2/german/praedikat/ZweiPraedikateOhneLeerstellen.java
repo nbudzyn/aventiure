@@ -1,6 +1,7 @@
 package de.nb.aventiure2.german.praedikat;
 
 import java.util.Collection;
+import java.util.Objects;
 
 import javax.annotation.Nullable;
 
@@ -8,7 +9,7 @@ import de.nb.aventiure2.german.base.Numerus;
 import de.nb.aventiure2.german.base.Person;
 
 /**
- * Zwei Prädikate mit Subjekt (du) und Objekt oh1ne Leerstellen, erzeugen einen
+ * Zwei Prädikate mit Objekt ohne Leerstellen, erzeugen einen
  * <i>zusammengezogenen Satz</i>, in dem das Subjekt im zweiten Teil
  * <i>eingespart</i> ist ("Du hebst die Kugel auf und [du] nimmst ein Bad").
  */
@@ -72,7 +73,6 @@ class ZweiPraedikateOhneLeerstellen
                 + zweiterSatz.getDuHauptsatz(); // "du nimmst ein Bad"
     }
 
-
     @Override
     public ZweiPraedikateOhneLeerstellen mitAdverbialerAngabe(
             @Nullable final AdverbialeAngabeSkopusSatz adverbialeAngabe) {
@@ -105,6 +105,13 @@ class ZweiPraedikateOhneLeerstellen
         // Etwas vermeiden wie "Du hebst die Kugel auf und polierst sie und nimmst eine
         // von den Früchten"
         return false;
+    }
+
+    @Override
+    public String getVerbletzt(final Person person, final Numerus numerus) {
+        return ersterSatz.getVerbletzt(person, numerus)
+                + " und "
+                + zweiterSatz.getVerbletzt(person, numerus);
     }
 
     @Override
@@ -165,5 +172,29 @@ class ZweiPraedikateOhneLeerstellen
     @Override
     public String getNachfeld(final Person person, final Numerus numerus) {
         return zweiterSatz.getNachfeld(person, numerus);
+    }
+
+    @Nullable
+    @Override
+    public String getErstesInterrogativpronomenAlsString() {
+        // Das hier ist etwas tricky.
+        // Denkbar wäre so etwas wie "Sie ist gespannt, was du aufhebst und mitnimmmst."
+        // Dazu müsste sowohl im aufheben- als auch im mitnehmen-Prädikat dasselbe
+        // Interrogativpronomen angegeben sein.
+        final String erstesInterrogativpronomenErsterSatz =
+                ersterSatz.getErstesInterrogativpronomenAlsString();
+        final String erstesInterrogativpronomenZweiterSatz =
+                zweiterSatz.getErstesInterrogativpronomenAlsString();
+
+        if (Objects.equals(
+                erstesInterrogativpronomenErsterSatz, erstesInterrogativpronomenZweiterSatz)) {
+            return erstesInterrogativpronomenErsterSatz;
+        }
+
+        // Verhindern müssen wir so etwas wie *"Sie ist gespannt, was du aufhebst und die Kugel
+        // mitnimmmst." - In dem Fall wäre nur eine indirekte ob-Frage gültig:
+        // "Sie ist gespannt, ob du was aufhebst und die Kugel mitnimmst."
+
+        return null;
     }
 }

@@ -18,13 +18,16 @@ abstract class AbstractAdjPhrOhneLeerstellen implements AdjPhrOhneLeerstellen {
     // https://ids-pub.bsz-bw.de/frontdoor/deliver/index/docId/3132/file/Engel_Rytel-Kuc-Diskontinuierliche_Phrasen_im_Deutschen_und_im_Polnischen-1987.pdf
 
     /**
+     * Etwas wie "sehr", "äußerst", "ein bisschen"
+     */
+    @Nullable
+    private final GraduativeAngabe graduativeAngabe;
+
+    /**
      * Das Adjektiv an sich, ohne Informationen zur Valenz
      */
     @NonNull
     private final Adjektiv adjektiv;
-
-    @Nullable
-    private final GraduativeAngabe graduativeAngabe;
 
     AbstractAdjPhrOhneLeerstellen(final Adjektiv adjektiv) {
         this(null, adjektiv);
@@ -35,6 +38,11 @@ abstract class AbstractAdjPhrOhneLeerstellen implements AdjPhrOhneLeerstellen {
             final Adjektiv adjektiv) {
         this.adjektiv = adjektiv;
         this.graduativeAngabe = graduativeAngabe;
+    }
+
+    @Nullable
+    public GraduativeAngabe getGraduativeAngabe() {
+        return graduativeAngabe;
     }
 
     @NonNull

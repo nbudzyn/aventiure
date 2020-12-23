@@ -11,7 +11,7 @@ import de.nb.aventiure2.german.base.Numerus;
 import de.nb.aventiure2.german.base.Person;
 
 import static de.nb.aventiure2.german.base.GermanUtil.capitalize;
-import static de.nb.aventiure2.german.base.GermanUtil.joinToNull;
+import static de.nb.aventiure2.german.base.GermanUtil.joinToNullString;
 import static de.nb.aventiure2.german.base.Numerus.SG;
 import static de.nb.aventiure2.german.base.Person.P2;
 import static java.util.Arrays.asList;
@@ -72,9 +72,9 @@ public abstract class AbstractAngabenfaehigesPraedikatOhneLeerstellen
 
     @Override
     public String getDuHauptsatzMitVorfeld(final String vorfeld) {
-        return joinToNull(
+        return joinToNullString(
                 capitalize(vorfeld), // "dann"
-                verb.getDuForm(), // "nimmst"
+                verb.getDuFormOhnePartikel(), // "nimmst"
                 "du",
                 getMittelfeld(P2, SG), // "den Frosch" / "dich"
                 verb.getPartikel(), // "mit"
@@ -89,9 +89,9 @@ public abstract class AbstractAngabenfaehigesPraedikatOhneLeerstellen
         }
 
         return capitalize(
-                joinToNull(
+                joinToNullString(
                         speziellesVorfeld, // "Den Frosch"
-                        verb.getDuForm(), // "nimmst"
+                        verb.getDuFormOhnePartikel(), // "nimmst"
                         "du",
                         getMittelfeldOhneSpeziellesVorfeld(P2, SG),
                         verb.getPartikel(), // "mit"
@@ -106,9 +106,9 @@ public abstract class AbstractAngabenfaehigesPraedikatOhneLeerstellen
     @Override
     public String getDuHauptsatz(final Collection<Modalpartikel> modalpartikeln) {
         if (adverbialeAngabeSkopusSatz != null) {
-            return joinToNull(
+            return joinToNullString(
                     capitalize(adverbialeAngabeSkopusSatz.getText()),
-                    verb.getDuForm(),
+                    verb.getDuFormOhnePartikel(),
                     "du",
                     GermanUtil.cutSatzglied(
                             getMittelfeld(P2, SG), adverbialeAngabeSkopusSatz.getText()),
@@ -121,8 +121,8 @@ public abstract class AbstractAngabenfaehigesPraedikatOhneLeerstellen
 
     @Override
     public String getDuSatzanschlussOhneSubjekt(final Collection<Modalpartikel> modalpartikeln) {
-        return joinToNull(
-                verb.getDuForm(),
+        return joinToNullString(
+                verb.getDuFormOhnePartikel(),
                 getMittelfeld(modalpartikeln, P2, SG),
                 verb.getPartikel(),
                 getNachfeld(P2, SG));
@@ -134,8 +134,16 @@ public abstract class AbstractAngabenfaehigesPraedikatOhneLeerstellen
     }
 
     @Override
+    public String getVerbletzt(final Person person, final Numerus numerus) {
+        return joinToNullString(
+                getMittelfeld(P2, SG),
+                verb.getPraesensMitPartikel(person, numerus),
+                getNachfeld(P2, SG));
+    }
+
+    @Override
     public String getPartizipIIPhrase(final Person person, final Numerus numerus) {
-        return joinToNull(getMittelfeld(person, numerus),
+        return joinToNullString(getMittelfeld(person, numerus),
                 verb.getPartizipII(),
                 getNachfeld(person, numerus));
     }
@@ -146,7 +154,7 @@ public abstract class AbstractAngabenfaehigesPraedikatOhneLeerstellen
      */
     @Override
     public String getInfinitiv(final Person person, final Numerus numerus) {
-        return joinToNull(getMittelfeld(person, numerus),
+        return joinToNullString(getMittelfeld(person, numerus),
                 verb.getInfinitiv(),
                 getNachfeld(person, numerus));
     }
@@ -162,7 +170,7 @@ public abstract class AbstractAngabenfaehigesPraedikatOhneLeerstellen
      */
     @Override
     public String getZuInfinitiv(final Person person, final Numerus numerus) {
-        return joinToNull(getMittelfeld(person, numerus),
+        return joinToNullString(getMittelfeld(person, numerus),
                 verb.getZuInfinitiv(),
                 getNachfeld(person, numerus));
     }

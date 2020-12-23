@@ -10,12 +10,14 @@ import javax.annotation.Nullable;
 
 import de.nb.aventiure2.annotations.Argument;
 import de.nb.aventiure2.annotations.Valenz;
+import de.nb.aventiure2.german.base.GermanUtil;
+import de.nb.aventiure2.german.base.Interrogativpronomen;
 import de.nb.aventiure2.german.base.Kasus;
 import de.nb.aventiure2.german.base.Numerus;
 import de.nb.aventiure2.german.base.Person;
 import de.nb.aventiure2.german.base.SubstantivischePhrase;
 
-import static de.nb.aventiure2.german.base.GermanUtil.joinToNull;
+import static de.nb.aventiure2.german.base.GermanUtil.joinToNullString;
 
 /**
  * Ein Prädikat eines <i>direktiven Verbs</i>, in dem alle Leerstellen besetzt sind. Beispiele:
@@ -159,9 +161,9 @@ public class PraedikatDirektivesVerbOhneLeerstellen
     public String getMittelfeld(final Collection<Modalpartikel> modalpartikeln,
                                 final Person personSubjekt,
                                 final Numerus numerusSubjekt) {
-        return joinToNull(
+        return joinToNullString(
                 getAdverbialeAngabeSkopusSatz(), // "aus einer Laune heraus"
-                joinToNull(modalpartikeln), // "mal eben"
+                GermanUtil.joinToNullString(modalpartikeln), // "mal eben"
                 getAdverbialeAngabeSkopusVerbAllg(), // "erneut"
                 objekt.im(kasus), // "die junge Frau"
                 getAdverbialeAngabeSkopusVerbWohinWoher() // (kann es wohl gar nicht geben)
@@ -194,5 +196,15 @@ public class PraedikatDirektivesVerbOhneLeerstellen
     @Override
     public boolean hatAkkusativobjekt() {
         return kasus == Kasus.AKK;
+    }
+
+    @Nullable
+    @Override
+    public String getErstesInterrogativpronomenAlsString() {
+        if (objekt instanceof Interrogativpronomen) {
+            return objekt.im(kasus);
+        }
+
+        return lexikalischerKern.getErstesInterrogativpronomenAlsString();
     }
 }

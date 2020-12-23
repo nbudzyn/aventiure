@@ -13,7 +13,7 @@ import de.nb.aventiure2.german.base.Numerus;
 import de.nb.aventiure2.german.base.Person;
 
 import static de.nb.aventiure2.german.base.GermanUtil.capitalize;
-import static de.nb.aventiure2.german.base.GermanUtil.joinToNull;
+import static de.nb.aventiure2.german.base.GermanUtil.joinToNullString;
 import static de.nb.aventiure2.german.base.Numerus.SG;
 import static de.nb.aventiure2.german.base.Person.P2;
 
@@ -22,8 +22,7 @@ import static de.nb.aventiure2.german.base.Person.P2;
  * (z.B. <i>Spannendes zu berichten haben</i>,  <i>mit Paul zu diskutieren haben/i>,
  * <i>zu schlafen haben</i>, <i>sich zu waschen haben</i>).
  */
-public class ZuHabenPraedikatOhneLeerstellen
-        implements PraedikatOhneLeerstellen {
+public class ZuHabenPraedikatOhneLeerstellen implements PraedikatOhneLeerstellen {
     /**
      * Das Prädikat in seiner "ursprünglichen" Form (ohne "zu haben"). Die
      * "ursprüngliche Form" von <i>Spannendes zu berichten haben</i> ist z.B.
@@ -64,13 +63,19 @@ public class ZuHabenPraedikatOhneLeerstellen
                 lexikalischerKern.mitAdverbialerAngabe(adverbialeAngabe));
     }
 
+    @Nullable
+    @Override
+    public String getErstesInterrogativpronomenAlsString() {
+        return lexikalischerKern.getErstesInterrogativpronomenAlsString();
+    }
+
     @Override
     public String getDuSatzanschlussOhneSubjekt(final Collection<Modalpartikel> modalpartikeln) {
         // hast Spannendes zu berichten
         // hast dich zu waschen
         // hast zu sagen: "Hallo!"
-        return joinToNull(
-                HabenUtil.VERB.getDuForm(),
+        return joinToNullString(
+                HabenUtil.VERB.getDuFormOhnePartikel(),
                 // FIXME eigentlich sollte es lexikalischerKern.mitModalpartikeln()
                 //  oder so ähnlich heißen (oder als adverbiale Angaben?).
                 //  Derzeit gehen hier die modalpartikeln einfach verloren.
@@ -87,6 +92,23 @@ public class ZuHabenPraedikatOhneLeerstellen
     }
 
     @Override
+    public String getVerbletzt(final Person person, final Numerus numerus) {
+        // Spannendes zu berichten hast
+        // dich zu waschen hast
+        // zu sagen hast: "Hallo!"
+
+        @Nullable final String nachfeld = getNachfeld(person, numerus);
+
+        return joinToNullString(
+                GermanUtil.cutSatzgliedVonHinten(
+                        lexikalischerKern.getZuInfinitiv(person, numerus),
+                        // "Spannendes zu berichten"
+                        nachfeld),
+                HabenUtil.VERB.getPraesensMitPartikel(person, numerus), // "hast"
+                nachfeld); // : Odysseus ist zurück.
+    }
+
+    @Override
     public String getPartizipIIPhrase(final Person person, final Numerus numerus) {
         // Spannendes zu berichten gehabt
         // dich zu waschen gehabt
@@ -94,12 +116,12 @@ public class ZuHabenPraedikatOhneLeerstellen
 
         @Nullable final String nachfeld = getNachfeld(person, numerus);
 
-        return joinToNull(
+        return joinToNullString(
                 GermanUtil.cutSatzgliedVonHinten(
                         lexikalischerKern.getZuInfinitiv(person, numerus),
                         // "Spannendes zu berichten"
                         nachfeld),
-                HabenUtil.VERB.getPartizipII(), // "gehabt""
+                HabenUtil.VERB.getPartizipII(), // "gehabt"
                 nachfeld); // : Odysseus ist zurück.
     }
 
@@ -120,7 +142,7 @@ public class ZuHabenPraedikatOhneLeerstellen
 
         @Nullable final String nachfeld = getNachfeld(person, numerus);
 
-        return joinToNull(
+        return joinToNullString(
                 GermanUtil.cutSatzgliedVonHinten(
                         lexikalischerKern.getZuInfinitiv(person, numerus),
                         // "Spannendes zu berichten"
@@ -136,7 +158,7 @@ public class ZuHabenPraedikatOhneLeerstellen
         // zu sagen zu haben: "Hallo!"
         @Nullable final String nachfeld = getNachfeld(person, numerus);
 
-        return joinToNull(
+        return joinToNullString(
                 GermanUtil.cutSatzgliedVonHinten(
                         lexikalischerKern.getZuInfinitiv(person, numerus),
                         // "Spannendes zu berichten"
@@ -173,9 +195,9 @@ public class ZuHabenPraedikatOhneLeerstellen
         // Dann hast du Spannendes zu berichten
         // Dann hast du dich zu waschen
         // Dann hast du zu sagen: "Hallo!"
-        return joinToNull(
+        return joinToNullString(
                 capitalize(vorfeld), // "dann"
-                HabenUtil.VERB.getDuForm(), // "hast"
+                HabenUtil.VERB.getDuFormOhnePartikel(), // "hast"
                 "du",
                 lexikalischerKern.getZuInfinitiv(P2, SG)); // "dich zu waschen"
     }
@@ -188,9 +210,9 @@ public class ZuHabenPraedikatOhneLeerstellen
         }
 
         return capitalize(
-                joinToNull(
+                joinToNullString(
                         speziellesVorfeld, // "Spannendes"
-                        HabenUtil.VERB.getDuForm(), // "hast"
+                        HabenUtil.VERB.getDuFormOhnePartikel(), // "hast"
                         "du",
                         GermanUtil.cutSatzglied(
                                 lexikalischerKern.getZuInfinitiv(P2, SG),
@@ -209,4 +231,6 @@ public class ZuHabenPraedikatOhneLeerstellen
     public String getNachfeld(final Person person, final Numerus numerus) {
         return lexikalischerKern.getNachfeld(person, numerus);
     }
+
+
 }

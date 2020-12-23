@@ -6,11 +6,12 @@ import javax.annotation.Nullable;
 
 import de.nb.aventiure2.annotations.Argument;
 import de.nb.aventiure2.annotations.Valenz;
+import de.nb.aventiure2.german.base.GermanUtil;
 import de.nb.aventiure2.german.base.Numerus;
 import de.nb.aventiure2.german.base.Person;
 import de.nb.aventiure2.german.description.AllgDescription;
 
-import static de.nb.aventiure2.german.base.GermanUtil.joinToNull;
+import static de.nb.aventiure2.german.base.GermanUtil.joinToNullString;
 
 /**
  * Ein Prädikat, bestehend aus <i>sein</i> und einem Prädikativum - alle Leerstellen sind besetzt.
@@ -131,9 +132,9 @@ public class PraedikativumPraedikatOhneLeerstellen
     public String getMittelfeld(final Collection<Modalpartikel> modalpartikeln,
                                 final Person personSubjekt,
                                 final Numerus numerusSubjekt) {
-        return joinToNull(
+        return joinToNullString(
                 getAdverbialeAngabeSkopusSatz(), // "plötzlich"
-                joinToNull(modalpartikeln), // "halt"
+                GermanUtil.joinToNullString(modalpartikeln), // "halt"
                 getAdverbialeAngabeSkopusVerbAllg(), // "erneut"
                 getAdverbialeAngabeSkopusVerbWohinWoher(), // (kann wohl nicht besetzt sein?)
                 praedikativum // "glücklich"
@@ -159,5 +160,11 @@ public class PraedikativumPraedikatOhneLeerstellen
     @Override
     public boolean hatAkkusativobjekt() {
         return false;
+    }
+
+    @Nullable
+    @Override
+    public String getErstesInterrogativpronomenAlsString() {
+        return null;
     }
 }

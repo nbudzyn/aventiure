@@ -8,10 +8,11 @@ import javax.annotation.Nullable;
 
 import de.nb.aventiure2.annotations.Argument;
 import de.nb.aventiure2.annotations.Valenz;
+import de.nb.aventiure2.german.base.GermanUtil;
 import de.nb.aventiure2.german.base.Numerus;
 import de.nb.aventiure2.german.base.Person;
 
-import static de.nb.aventiure2.german.base.GermanUtil.joinToNull;
+import static de.nb.aventiure2.german.base.GermanUtil.joinToNullString;
 
 /**
  * Ein Prädikat eines <i>Verbs mit intentionaler Bedeutung</i>,
@@ -129,9 +130,9 @@ public class PraedikatIntentionalesVerbOhneLeerstellen
     public String getMittelfeld(final Collection<Modalpartikel> modalpartikeln,
                                 final Person personSubjekt,
                                 final Numerus numerusSubjekt) {
-        return joinToNull(
+        return joinToNullString(
                 getAdverbialeAngabeSkopusSatz(), // "aus einer Laune heraus"
-                joinToNull(modalpartikeln), // "mal eben"
+                GermanUtil.joinToNullString(modalpartikeln), // "mal eben"
                 getAdverbialeAngabeSkopusVerbAllg(), // "erneut"
                 getAdverbialeAngabeSkopusVerbWohinWoher() // (kann es wohl gar nicht geben)
         );
@@ -159,5 +160,11 @@ public class PraedikatIntentionalesVerbOhneLeerstellen
     @Override
     public boolean hatAkkusativobjekt() {
         return false;
+    }
+
+    @Nullable
+    @Override
+    public String getErstesInterrogativpronomenAlsString() {
+        return lexikalischerKern.getErstesInterrogativpronomenAlsString();
     }
 }

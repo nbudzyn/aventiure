@@ -45,13 +45,13 @@ public enum VerbSubjPraedikativeAdjektivphrase implements Praedikat {
         this.verb = verb;
     }
 
-    public PraedikativumMitPraedikativerAdjektivphraseOhneLeerstellen mit(
+    public PraedikatMitPraedikativerAdjektivphraseOhneLeerstellen mit(
             final AllgDescription praedikativeAdjektivphrase) {
-        return new PraedikativumMitPraedikativerAdjektivphraseOhneLeerstellen(verb,
+        return new PraedikatMitPraedikativerAdjektivphraseOhneLeerstellen(verb,
                 praedikativeAdjektivphrase);
     }
 
     public String getDuForm() {
-        return verb.getDuForm();
+        return verb.getDuFormOhnePartikel();
     }
 }

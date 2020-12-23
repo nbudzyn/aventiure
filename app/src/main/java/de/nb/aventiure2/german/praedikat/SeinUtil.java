@@ -21,7 +21,7 @@ public class SeinUtil {
             case P1:
                 return numerus == SG ? "bin" : "sind";
             case P2:
-                return numerus == SG ? VERB.getDuForm() : "seid";
+                return numerus == SG ? VERB.getDuFormOhnePartikel() : "seid";
             case P3:
                 return istSind(numerus);
             default:

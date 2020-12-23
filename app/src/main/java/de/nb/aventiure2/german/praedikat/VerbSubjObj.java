@@ -104,6 +104,6 @@ public enum VerbSubjObj implements PraedikatMitEinerObjektleerstelle {
     }
 
     public String getDuForm() {
-        return verb.getDuForm();
+        return verb.getDuFormOhnePartikel();
     }
 }

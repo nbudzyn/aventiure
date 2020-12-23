@@ -67,6 +67,12 @@ public interface PraedikatOhneLeerstellen extends Praedikat, AbstractDuTextPart 
     boolean duHauptsatzLaesstSichMitNachfolgendemDuHauptsatzZusammenziehen();
 
     /**
+     * Gibt das Prädikat "in Verbletztform" zurück - das Verb steht also am Ende,
+     * nur noch gefolgt vom Nachfeld.
+     */
+    String getVerbletzt(Person person, Numerus numerus);
+
+    /**
      * Gibt eine unflektierte Phrase mit Partizip II zurück: "unten angekommen",
      * "die Kugel genommen"
      * <p>
@@ -146,4 +152,7 @@ public interface PraedikatOhneLeerstellen extends Praedikat, AbstractDuTextPart 
 
     PraedikatOhneLeerstellen mitAdverbialerAngabe(
             @Nullable AdverbialeAngabeSkopusVerbWohinWoher adverbialeAngabe);
+
+    @Nullable
+    String getErstesInterrogativpronomenAlsString();
 }

@@ -2,6 +2,10 @@ package de.nb.aventiure2.german.adjektiv;
 
 import androidx.annotation.NonNull;
 
+import de.nb.aventiure2.german.base.Numerus;
+import de.nb.aventiure2.german.base.Person;
+import de.nb.aventiure2.german.base.Wortfolge;
+
 /**
  * Ein Adjektiv, das keine Ergänzungen fordert.
  */
@@ -35,9 +39,12 @@ public enum AdjektivOhneErgaenzungen implements AdjPhrOhneLeerstellen {
         return toAdjPhr().mitGraduativerAngabe(graduativeAngabe);
     }
 
+    @Override
+    public Wortfolge getPraedikativ(final Person person, final Numerus numerus) {
+        return toAdjPhr().getPraedikativ(person, numerus);
+    }
+
     private AdjPhrOhneErgaenzungenOhneLeerstellen toAdjPhr() {
-        return new AdjPhrOhneErgaenzungenOhneLeerstellen(
-                adjektiv
-        );
+        return new AdjPhrOhneErgaenzungenOhneLeerstellen(adjektiv);
     }
 }

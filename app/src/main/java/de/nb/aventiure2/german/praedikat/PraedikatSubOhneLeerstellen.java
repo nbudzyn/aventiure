@@ -5,10 +5,11 @@ import java.util.Collection;
 import javax.annotation.Nullable;
 
 import de.nb.aventiure2.annotations.Valenz;
+import de.nb.aventiure2.german.base.GermanUtil;
 import de.nb.aventiure2.german.base.Numerus;
 import de.nb.aventiure2.german.base.Person;
 
-import static de.nb.aventiure2.german.base.GermanUtil.joinToNull;
+import static de.nb.aventiure2.german.base.GermanUtil.joinToNullString;
 
 /**
  * Ein Prädikat (Verb ggf. mit Präfix) bei dem das Verb mit einem Subjekt steht und keine
@@ -98,9 +99,9 @@ public class PraedikatSubOhneLeerstellen
     public String getMittelfeld(final Collection<Modalpartikel> modalpartikeln,
                                 final Person personSubjekt,
                                 final Numerus numerusSubjekt) {
-        return joinToNull(
+        return joinToNullString(
                 getAdverbialeAngabeSkopusSatz(), // "aus einer Laune heraus"
-                joinToNull(modalpartikeln), // "mal eben"
+                GermanUtil.joinToNullString(modalpartikeln), // "mal eben"
                 getAdverbialeAngabeSkopusVerbAllg(), // "erneut"
                 getAdverbialeAngabeSkopusVerbWohinWoher() // "in den Wald"
         );
@@ -115,5 +116,11 @@ public class PraedikatSubOhneLeerstellen
     @Override
     public boolean hatAkkusativobjekt() {
         return false;
+    }
+
+    @Nullable
+    @Override
+    public String getErstesInterrogativpronomenAlsString() {
+        return null;
     }
 }

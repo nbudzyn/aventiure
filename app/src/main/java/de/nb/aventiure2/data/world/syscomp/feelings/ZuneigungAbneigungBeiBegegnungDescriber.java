@@ -4,6 +4,9 @@ import androidx.annotation.NonNull;
 
 import com.google.common.collect.ImmutableList;
 
+import de.nb.aventiure2.german.adjektiv.AdjektivMitZuInfinitiv;
+import de.nb.aventiure2.german.adjektiv.AdjektivOhneErgaenzungen;
+import de.nb.aventiure2.german.adjektiv.ZweiAdjPhrOhneLeerstellen;
 import de.nb.aventiure2.german.base.Numerus;
 import de.nb.aventiure2.german.base.NumerusGenus;
 import de.nb.aventiure2.german.base.Person;
@@ -113,47 +116,86 @@ class ZuneigungAbneigungBeiBegegnungDescriber implements FeelingBeiBegegnungDesc
             return ImmutableList.of();
         } else if (feelingIntensity == -FeelingIntensity.DEUTLICH) {
             return ImmutableList.of(
-                    satzanschluss("verärgert")
-            );
+                    satzanschluss(AdjektivOhneErgaenzungen.VERAERGERT
+                            .getPraedikativ(
+                                    gameObjectSubjektPerson,
+                                    gameObjectSubjektNumerusGenus.getNumerus())));
         } else if (feelingIntensity == -FeelingIntensity.MERKLICH) {
             return ImmutableList.of(
-                    satzanschluss("verstimmt")
-            );
+                    satzanschluss(AdjektivOhneErgaenzungen.VERSTIMMT
+                            .getPraedikativ(
+                                    gameObjectSubjektPerson,
+                                    gameObjectSubjektNumerusGenus.getNumerus())));
         } else if (feelingIntensity == -FeelingIntensity.NUR_LEICHT) {
             return ImmutableList.of(
-                    satzanschluss("verwundert"),
-                    satzanschluss("überrascht"),
-                    // FIXME Graduative Angabe
-                    satzanschluss("etwas überrumpelt")
+                    satzanschluss(AdjektivOhneErgaenzungen.VERWUNDERT
+                            .getPraedikativ(
+                                    gameObjectSubjektPerson,
+                                    gameObjectSubjektNumerusGenus.getNumerus())),
+                    satzanschluss(AdjektivOhneErgaenzungen.UEBERRASCHT
+                            .getPraedikativ(
+                                    gameObjectSubjektPerson,
+                                    gameObjectSubjektNumerusGenus.getNumerus())),
+                    satzanschluss(AdjektivOhneErgaenzungen.UEBERRUMPELT
+                            .mitGraduativerAngabe("etwas")
+                            .getPraedikativ(
+                                    gameObjectSubjektPerson,
+                                    gameObjectSubjektNumerusGenus.getNumerus()))
             );
         } else if (feelingIntensity == FeelingIntensity.NEUTRAL) {
             return ImmutableList.of(
-                    satzanschluss("überrascht und etwas verwirrt")
+                    satzanschluss(
+                            new ZweiAdjPhrOhneLeerstellen(
+                                    AdjektivOhneErgaenzungen.UEBERRASCHT,
+                                    AdjektivOhneErgaenzungen.VERWIRRT
+                                            .mitGraduativerAngabe("etwas")
+                            )
+                                    .getPraedikativ(
+                                            gameObjectSubjektPerson,
+                                            gameObjectSubjektNumerusGenus.getNumerus()))
             );
         } else if (feelingIntensity == FeelingIntensity.NUR_LEICHT) {
             return ImmutableList.of(
-                    adjektivphraseMitZuSehen("überrascht", gameObjectSubjektPerson,
-                            gameObjectSubjektNumerusGenus, sehenVerb, targetDesc)
+                    satzanschluss(
+                            // "überrascht, dich [target] zu sehen"
+                            AdjektivMitZuInfinitiv.UEBERRASCHT
+                                    .mitLexikalischerKern(
+                                            sehenVerb
+                                                    .mit(targetDesc)
+                                    )
+                                    .getPraedikativ(
+                                            gameObjectSubjektPerson,
+                                            gameObjectSubjektNumerusGenus.getNumerus()))
             );
         } else if (feelingIntensity == FeelingIntensity.MERKLICH) {
             return ImmutableList.of(
-                    adjektivphraseMitZuSehen("etwas überrascht", gameObjectSubjektPerson,
-                            gameObjectSubjektNumerusGenus, sehenVerb, targetDesc)
+                    satzanschluss(
+                            // "überrascht, dich [target] zu sehen"
+                            AdjektivMitZuInfinitiv.UEBERRASCHT
+                                    .mitLexikalischerKern(
+                                            sehenVerb
+                                                    .mit(targetDesc)
+                                    )
+                                    .mitGraduativerAngabe("etwas")
+                                    .getPraedikativ(
+                                            gameObjectSubjektPerson,
+                                            gameObjectSubjektNumerusGenus.getNumerus()))
             );
         } else if (feelingIntensity == FeelingIntensity.DEUTLICH) {
-            // "glücklich, dich zu sehen"
+            // "glücklich, dich [target] zu sehen"
             final AllgDescription gluecklichZuSehen =
-                    adjektivphraseMitZuSehen("glücklich", gameObjectSubjektPerson,
-                            gameObjectSubjektNumerusGenus,
-                            sehenVerb, targetDesc);
+                    satzanschluss(
+                            AdjektivMitZuInfinitiv.GLUECKLICH
+                                    .mitLexikalischerKern(
+                                            sehenVerb
+                                                    .mit(targetDesc)
+                                    )
+                                    .getPraedikativ(
+                                            gameObjectSubjektPerson,
+                                            gameObjectSubjektNumerusGenus.getNumerus()));
 
             // "gespannt, was du ihr zu berichten hast"
-            // FIXME Adjektiv mit indirektem Akkusativ-Fragesatz - fürs erste muss man
-            //  das SUBJEKT des Fragesatzes ("du") und das "Genus" des
-            //  Erfragten ("was" sv. "wen") in der Akkusativ-Phrase
-            //  speichern.
-            //  Der indirekte Fragesatz ist quasi ein lexikalischer Kern, in dem
-            //  das Akkusativ-Objekt durch ein Fragewort repräsentiert ist.
+            // FIXME Adjektiv mit indirektem Akkusativ-Fragesatz
             final AllgDescription gespanntWasZuBerichten =
                     adjektivphraseMitWasZuBerichtenHastNebensatz("gespannt",
                             gameObjectSubjektPerson, gameObjectSubjektNumerusGenus, targetDesc);

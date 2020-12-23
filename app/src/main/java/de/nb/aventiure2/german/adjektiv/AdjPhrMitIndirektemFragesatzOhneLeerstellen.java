@@ -6,7 +6,13 @@ import javax.annotation.Nullable;
 
 import de.nb.aventiure2.annotations.Argument;
 import de.nb.aventiure2.annotations.Valenz;
+import de.nb.aventiure2.german.base.GermanUtil;
+import de.nb.aventiure2.german.base.Numerus;
+import de.nb.aventiure2.german.base.Person;
+import de.nb.aventiure2.german.base.Wortfolge;
 import de.nb.aventiure2.german.satz.Satz;
+
+import static de.nb.aventiure2.german.base.Wortfolge.w;
 
 /**
  * Eine Adjektivphrase mit ob- oder w-Fragesatz, in der alle Leerstellen besetzt sind. Beispiel:
@@ -78,6 +84,20 @@ class AdjPhrMitIndirektemFragesatzOhneLeerstellen extends AbstractAdjPhrOhneLeer
                 graduativeAngabe,
                 getAdjektiv(),
                 indirekterFragesatz
+        );
+    }
+
+    @Override
+    public Wortfolge getPraedikativ(final Person person, final Numerus numerus) {
+        return w(
+                GermanUtil.joinToNull(
+                        getGraduativeAngabe(), // "sehr"
+                        getAdjektiv().getPraedikativ(), // "gespannt"
+                        ", ",
+                        indirekterFragesatz.getIndirekteFrage()
+                        // "ob du etwas zu berichten hast", "was du zu berichten hast" etc.
+                ).getString(),
+                true // Komma steht definitiv aus
         );
     }
 }

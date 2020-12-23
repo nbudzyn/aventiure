@@ -26,7 +26,7 @@ public interface AbstractDuTextPart {
      * ("Du nimmst den Ast")
      */
     default String getDuHauptsatz() {
-        return GermanUtil.joinToNull(
+        return GermanUtil.joinToNullString(
                 "Du",
                 getDuSatzanschlussOhneSubjekt());
     }

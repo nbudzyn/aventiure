@@ -21,7 +21,7 @@ public class HabenUtil {
             case P1:
                 return numerus == SG ? "habe" : "haben";
             case P2:
-                return numerus == SG ? VERB.getDuForm() : "habt";
+                return numerus == SG ? VERB.getDuFormOhnePartikel() : "habt";
             case P3:
                 return hatHaben(numerus);
             default:

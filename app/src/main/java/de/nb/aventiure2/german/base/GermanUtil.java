@@ -6,6 +6,7 @@ import androidx.annotation.Nullable;
 import java.util.List;
 
 import static com.google.common.base.Preconditions.checkArgument;
+import static de.nb.aventiure2.german.base.Wortfolge.w;
 import static java.util.Arrays.asList;
 import static java.util.Objects.requireNonNull;
 
@@ -33,42 +34,90 @@ public class GermanUtil {
         return str.substring(0, 1).toLowerCase() + str.substring(1);
     }
 
+    /**
+     * Fügt diese Teile zu einem String zusammen - berücksichtigt auch die Information,
+     * ob ein Komma aussteht.
+     *
+     * @see Wortfolge
+     */
     @Nullable
-    public static String joinToNull(final Object... parts) {
+    public static Wortfolge joinToNull(final Object... parts) {
         return joinToNull(asList(parts));
     }
 
+    /**
+     * Fügt diese Teile zu einem String zusammen. Diese Methode darf nur verwendet werden,
+     * wenn nach dem letzten der Teile definitiv kein Komma aussteht - oder das
+     * ausstehende Kommma auf andere Weise behandelt wird.
+     */
     @Nullable
-    public static String joinToNull(final Iterable<?> parts) {
-        final StringBuilder res = new StringBuilder();
+    public static String joinToNullString(final Object... parts) {
+        return joinToNullString(asList(parts));
+    }
+
+    /**
+     * Fügt diese Teile zu einem String zusammen. Diese Methode darf nur verwendet werden,
+     * wenn nach dem letzten der Teile definitiv kein Komma aussteht - oder das
+     * ausstehende Kommma auf andere Weise behandelt wird.
+     */
+    @Nullable
+    public static String joinToNullString(final Iterable<?> parts) {
+        @Nullable final Wortfolge res = joinToNull(parts);
+        if (res == null) {
+            return null;
+        }
+
+        return res.getString();
+    }
+
+    /**
+     * Fügt diese Teile zu einem String zusammen - einschließlich der Information,
+     * ob ein Komma aussteht.
+     *
+     * @see Wortfolge
+     */
+    @Nullable
+    private static Wortfolge joinToNull(final Iterable<?> parts) {
+        final StringBuilder resString = new StringBuilder();
+        boolean kommaStehtAus = false;
         for (final Object part : parts) {
             if (part == null) {
                 continue;
             }
 
-            final String partString;
+            @Nullable final Wortfolge partWortfolge;
             if (part.getClass().isArray()) {
-                partString = joinToNull((Object[]) part);
+                partWortfolge = joinToNull((Object[]) part);
             } else if (part instanceof Iterable<?>) {
-                partString = joinToNull((Iterable<?>) part);
+                partWortfolge = joinToNull((Iterable<?>) part);
+            } else if (part instanceof Wortfolge) {
+                partWortfolge = (Wortfolge) part;
             } else {
-                partString = part.toString();
-            }
-            if (spaceNeeded(res, partString)) {
-                res.append(" ");
+                partWortfolge = w(part.toString());
             }
 
-            if (partString != null) {
-                res.append(partString);
+            if (partWortfolge != null) {
+                if (kommaStehtAus && !beginnDecktKommaAb(partWortfolge.getString())) {
+                    resString.append(",");
+                    if (spaceNeeded(",", partWortfolge.getString())) {
+                        resString.append(" ");
+                    }
+                } else if (spaceNeeded(resString, partWortfolge.getString())) {
+                    resString.append(" ");
+                }
+
+                resString.append(partWortfolge.getString());
+                kommaStehtAus = partWortfolge.kommmaStehtAus();
             }
         }
 
-        if (res.length() == 0) {
+        if (resString.length() == 0) {
             return null;
         }
 
-        return res.toString();
+        return w(resString.toString(), kommaStehtAus);
     }
+
 
     /**
      * Gibt eine Aufzählung zurück wie "der hässliche Frosch",
@@ -94,7 +143,8 @@ public class GermanUtil {
         return res.toString();
     }
 
-    public static boolean spaceNeeded(final CharSequence base, final CharSequence addition) {
+    public static boolean spaceNeeded(@Nullable final CharSequence base,
+                                      @Nullable final CharSequence addition) {
         if (base == null || base.length() == 0 ||
                 addition == null || addition.length() == 0) {
             return false;
@@ -107,6 +157,24 @@ public class GermanUtil {
 
         final CharSequence firstCharAddition = addition.subSequence(0, 1);
         return !" ,;.:!?“\n" .contains(firstCharAddition);
+    }
+
+    private static boolean beginnDecktKommaAb(final CharSequence charSequence) {
+        requireNonNull(charSequence, "charSequence");
+        checkArgument(charSequence.length() > 0, "charSequence was empty");
+
+        final CharSequence firstChar = charSequence.subSequence(0, 1);
+
+        checkArgument(!"\n" .equals(firstChar), "charSequence beginnt mit "
+                + "Zeilenwechsel. Hier wäre keine Möglichkeit, syntaktisch korrekt noch ein "
+                + "Komma unterzubringen.");
+
+        checkArgument(!"“" .contains(firstChar), "charSequence beginnt "
+                + "mit Abführungszeichen. Hier müsste man eigentlich erst das Abführungszeichen "
+                + "schreiben und dann das Komma (oder Punkt o.Ä.). Diese Logik ist noch nicht "
+                + "implementiert");
+
+        return ",;.:!?" .contains(firstChar);
     }
 
     /**
@@ -219,7 +287,7 @@ public class GermanUtil {
 
     public static String buildHauptsatz(final String vorfeld, final String verb,
                                         @Nullable final String mittelfeldEtc) {
-        return joinToNull(
+        return joinToNullString(
                 capitalize(vorfeld),
                 verb,
                 mittelfeldEtc);

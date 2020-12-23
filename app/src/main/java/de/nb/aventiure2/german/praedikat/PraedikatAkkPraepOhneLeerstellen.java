@@ -8,12 +8,14 @@ import javax.annotation.Nullable;
 
 import de.nb.aventiure2.annotations.Argument;
 import de.nb.aventiure2.annotations.Valenz;
+import de.nb.aventiure2.german.base.GermanUtil;
+import de.nb.aventiure2.german.base.Interrogativpronomen;
 import de.nb.aventiure2.german.base.Numerus;
 import de.nb.aventiure2.german.base.Person;
 import de.nb.aventiure2.german.base.PraepositionMitKasus;
 import de.nb.aventiure2.german.base.SubstantivischePhrase;
 
-import static de.nb.aventiure2.german.base.GermanUtil.joinToNull;
+import static de.nb.aventiure2.german.base.GermanUtil.joinToNullString;
 
 /**
  * Ein Prädikat, in dem ein Akkusativobjekt und ein Präpositionalobjekt gesetzt sind
@@ -21,9 +23,6 @@ import static de.nb.aventiure2.german.base.GermanUtil.joinToNull;
  */
 public class PraedikatAkkPraepOhneLeerstellen
         extends AbstractAngabenfaehigesPraedikatOhneLeerstellen {
-    @NonNull
-    private final PraepositionMitKasus praepositionMitKasus;
-
     @Argument
     @NonNull
     private final SubstantivischePhrase akk;
@@ -31,6 +30,9 @@ public class PraedikatAkkPraepOhneLeerstellen
     @Argument
     @NonNull
     private final SubstantivischePhrase praep;
+
+    @NonNull
+    private final PraepositionMitKasus praepositionMitKasus;
 
     @Valenz
     PraedikatAkkPraepOhneLeerstellen(
@@ -144,10 +146,10 @@ public class PraedikatAkkPraepOhneLeerstellen
     public String getMittelfeld(final Collection<Modalpartikel> modalpartikeln,
                                 final Person personSubjekt,
                                 final Numerus numerusSubjekt) {
-        return joinToNull(
+        return joinToNullString(
                 getAdverbialeAngabeSkopusSatz(), // "aus einer Laune heraus"
                 akk.akk(), // "das Teil"
-                joinToNull(modalpartikeln), // "besser doch"
+                GermanUtil.joinToNullString(modalpartikeln), // "besser doch"
                 getAdverbialeAngabeSkopusVerbAllg(), // "erneut"
                 getAdverbialeAngabeSkopusVerbWohinWoher(), // "anch dem Weg"
                 praep.im(praepositionMitKasus)); // "aus der La main"
@@ -167,5 +169,19 @@ public class PraedikatAkkPraepOhneLeerstellen
     @Override
     public boolean hatAkkusativobjekt() {
         return true;
+    }
+
+    @Nullable
+    @Override
+    public String getErstesInterrogativpronomenAlsString() {
+        if (akk instanceof Interrogativpronomen) {
+            return akk.akk();
+        }
+
+        if (praep instanceof Interrogativpronomen) {
+            return praep.im(praepositionMitKasus);
+        }
+
+        return null;
     }
 }

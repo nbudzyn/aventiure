@@ -6,7 +6,7 @@ import de.nb.aventiure2.german.base.GermanUtil;
 import de.nb.aventiure2.german.praedikat.AbstractDuTextPart;
 
 import static com.google.common.base.Preconditions.checkArgument;
-import static de.nb.aventiure2.german.base.GermanUtil.joinToNull;
+import static de.nb.aventiure2.german.base.GermanUtil.joinToNullString;
 
 public class SimpleDuTextPart implements AbstractDuTextPart {
     /**
@@ -54,7 +54,7 @@ public class SimpleDuTextPart implements AbstractDuTextPart {
     public String getDuHauptsatzMitVorfeld(final String vorfeld) {
         return GermanUtil.buildHauptsatz(vorfeld, // "dann"
                 verb, // "gehst"
-                GermanUtil.joinToNull("du", remainder)); // "du den Fluss entlang"
+                GermanUtil.joinToNullString("du", remainder)); // "du den Fluss entlang"
     }
 
     @Override
@@ -73,7 +73,7 @@ public class SimpleDuTextPart implements AbstractDuTextPart {
 
         return GermanUtil.buildHauptsatz(vorfeldSatzglied,
                 verb,
-                joinToNull("du", remainderWithoutVorfeldSatzglied));
+                joinToNullString("du", remainderWithoutVorfeldSatzglied));
     }
 
     @Override
@@ -88,6 +88,6 @@ public class SimpleDuTextPart implements AbstractDuTextPart {
      */
     @Override
     public String getDuSatzanschlussOhneSubjekt() {
-        return GermanUtil.joinToNull(verb, remainder);
+        return GermanUtil.joinToNullString(verb, remainder);
     }
 }

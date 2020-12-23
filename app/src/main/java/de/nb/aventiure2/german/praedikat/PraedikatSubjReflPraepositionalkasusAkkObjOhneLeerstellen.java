@@ -6,12 +6,14 @@ import javax.annotation.Nullable;
 
 import de.nb.aventiure2.annotations.Argument;
 import de.nb.aventiure2.annotations.Valenz;
+import de.nb.aventiure2.german.base.GermanUtil;
+import de.nb.aventiure2.german.base.Interrogativpronomen;
 import de.nb.aventiure2.german.base.Numerus;
 import de.nb.aventiure2.german.base.Person;
 import de.nb.aventiure2.german.base.Reflexivpronomen;
 import de.nb.aventiure2.german.base.SubstantivischePhrase;
 
-import static de.nb.aventiure2.german.base.GermanUtil.joinToNull;
+import static de.nb.aventiure2.german.base.GermanUtil.joinToNullString;
 
 /**
  * Ein Prädikat wie "die Kugel an sich nehmen", das mit einer
@@ -131,10 +133,10 @@ class PraedikatSubjReflPraepositionalkasusAkkObjOhneLeerstellen
                                 final Numerus numerusSubjekt) {
         checkKeinPartikelVerb();
 
-        return joinToNull(
+        return joinToNullString(
                 getAdverbialeAngabeSkopusSatz(), // "aus einer Laune heraus"
                 akkObj.akk(), // "die goldene Kugel"
-                joinToNull(modalpartikeln), // "besser doch"
+                GermanUtil.joinToNullString(modalpartikeln), // "besser doch"
                 getAdverbialeAngabeSkopusVerbAllg(), // "erneut"
                 Reflexivpronomen.get(personSubjekt, numerusSubjekt)
                         .im(verbReflPraepositionalkasusAkkObj
@@ -169,5 +171,15 @@ class PraedikatSubjReflPraepositionalkasusAkkObjOhneLeerstellen
     @Override
     public boolean isBezugAufNachzustandDesAktantenGegeben() {
         return true;
+    }
+
+    @Nullable
+    @Override
+    public String getErstesInterrogativpronomenAlsString() {
+        if (akkObj instanceof Interrogativpronomen) {
+            return akkObj.akk();
+        }
+
+        return null;
     }
 }

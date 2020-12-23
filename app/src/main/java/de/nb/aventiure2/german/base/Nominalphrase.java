@@ -5,7 +5,7 @@ import androidx.annotation.Nullable;
 import static de.nb.aventiure2.german.base.Artikel.Typ.DEF;
 import static de.nb.aventiure2.german.base.Artikel.Typ.INDEF;
 import static de.nb.aventiure2.german.base.Flexionsreihe.fr;
-import static de.nb.aventiure2.german.base.GermanUtil.joinToNull;
+import static de.nb.aventiure2.german.base.GermanUtil.joinToNullString;
 import static de.nb.aventiure2.german.base.NumerusGenus.F;
 import static de.nb.aventiure2.german.base.NumerusGenus.N;
 import static de.nb.aventiure2.german.base.NumerusGenus.PL_MFN;
@@ -96,7 +96,7 @@ public class Nominalphrase
             return flexionsreiheArtikellos.nom();
         }
 
-        return joinToNull(artikel.nom(), flexionsreiheArtikellos.nom());
+        return joinToNullString(artikel.nom(), flexionsreiheArtikellos.nom());
     }
 
     @Override
@@ -107,7 +107,7 @@ public class Nominalphrase
             return artikellosDat();
         }
 
-        return joinToNull(artikel.dat(), flexionsreiheArtikellos.dat());
+        return joinToNullString(artikel.dat(), flexionsreiheArtikellos.dat());
     }
 
     @Override
@@ -123,7 +123,7 @@ public class Nominalphrase
             return flexionsreiheArtikellos.akk();
         }
 
-        return joinToNull(artikel.akk(), flexionsreiheArtikellos.akk());
+        return joinToNullString(artikel.akk(), flexionsreiheArtikellos.akk());
     }
 
     @Nullable

@@ -12,7 +12,7 @@ import de.nb.aventiure2.german.base.Numerus;
 import de.nb.aventiure2.german.base.Person;
 import de.nb.aventiure2.german.base.WoertlicheRede;
 
-import static de.nb.aventiure2.german.base.GermanUtil.joinToNull;
+import static de.nb.aventiure2.german.base.GermanUtil.joinToNullString;
 
 /**
  * Ein Prädikat mit wörtlicher Rede, in dem alle Leerstellen besetzt sind. Beispiele:
@@ -120,7 +120,7 @@ public class PraedikatMitWoertlicherRedeOhneLeerstellen
     public String getMittelfeld(final Collection<Modalpartikel> modalpartikeln,
                                 final Person personSubjekt,
                                 final Numerus numerusSubjekt) {
-        return joinToNull(
+        return joinToNullString(
                 getAdverbialeAngabeSkopusSatz(), // "aus einer Laune heraus"
                 modalpartikeln,  // "mal eben"
                 getAdverbialeAngabeSkopusVerbAllg(), // "erneut"
@@ -131,7 +131,7 @@ public class PraedikatMitWoertlicherRedeOhneLeerstellen
     @Override
     public String getNachfeld(final Person personSubjekt,
                               final Numerus numerusSubjekt) {
-        return joinToNull(
+        return joinToNullString(
                 ":",
                 woertlicheRede.amSatzende()); // "„Kommt alle her.“"
     }
@@ -144,5 +144,11 @@ public class PraedikatMitWoertlicherRedeOhneLeerstellen
     @Override
     public boolean hatAkkusativobjekt() {
         return false;
+    }
+
+    @Nullable
+    @Override
+    public String getErstesInterrogativpronomenAlsString() {
+        return null;
     }
 }

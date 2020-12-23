@@ -79,6 +79,11 @@ public enum VerbSubj implements PraedikatOhneLeerstellen {
     }
 
     @Override
+    public String getVerbletzt(final Person person, final Numerus numerus) {
+        return toPraedikatSubj().getVerbletzt(person, numerus);
+    }
+
+    @Override
     public String getPartizipIIPhrase(final Person person, final Numerus numerus) {
         return verb.getPartizipII();
     }
@@ -143,6 +148,12 @@ public enum VerbSubj implements PraedikatOhneLeerstellen {
     @Nullable
     @Override
     public String getNachfeld(final Person person, final Numerus numerus) {
+        return null;
+    }
+
+    @Nullable
+    @Override
+    public String getErstesInterrogativpronomenAlsString() {
         return null;
     }
 }

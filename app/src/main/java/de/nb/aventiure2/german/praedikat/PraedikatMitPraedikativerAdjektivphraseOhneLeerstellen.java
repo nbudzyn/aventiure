@@ -6,11 +6,12 @@ import javax.annotation.Nullable;
 
 import de.nb.aventiure2.annotations.Argument;
 import de.nb.aventiure2.annotations.Valenz;
+import de.nb.aventiure2.german.base.GermanUtil;
 import de.nb.aventiure2.german.base.Numerus;
 import de.nb.aventiure2.german.base.Person;
 import de.nb.aventiure2.german.description.AllgDescription;
 
-import static de.nb.aventiure2.german.base.GermanUtil.joinToNull;
+import static de.nb.aventiure2.german.base.GermanUtil.joinToNullString;
 
 /**
  * Ein Prädikat, bestehend aus einem Verb und einer prädikativen Adjektivphrase, in dem
@@ -24,7 +25,7 @@ import static de.nb.aventiure2.german.base.GermanUtil.joinToNull;
  * <p>
  * Hier geht es nicht um Prädikative, vgl. {@link PraedikativumPraedikatOhneLeerstellen}.
  */
-public class PraedikativumMitPraedikativerAdjektivphraseOhneLeerstellen
+public class PraedikatMitPraedikativerAdjektivphraseOhneLeerstellen
         extends AbstractAngabenfaehigesPraedikatOhneLeerstellen {
     /**
      * Die prädikative Adjektivphrase
@@ -33,7 +34,7 @@ public class PraedikativumMitPraedikativerAdjektivphraseOhneLeerstellen
     private final AllgDescription praedikativeAdjektivphrase;
 
     @Valenz
-    PraedikativumMitPraedikativerAdjektivphraseOhneLeerstellen(
+    PraedikatMitPraedikativerAdjektivphraseOhneLeerstellen(
             final Verb verb,
             final AllgDescription praedikativeAdjektivphrase) {
         this(verb, praedikativeAdjektivphrase,
@@ -41,7 +42,7 @@ public class PraedikativumMitPraedikativerAdjektivphraseOhneLeerstellen
                 null);
     }
 
-    private PraedikativumMitPraedikativerAdjektivphraseOhneLeerstellen(
+    private PraedikatMitPraedikativerAdjektivphraseOhneLeerstellen(
             final Verb verb,
             final AllgDescription praedikativeAdjektivphrase,
             @Nullable final AdverbialeAngabeSkopusSatz adverbialeAngabeSkopusSatz,
@@ -54,13 +55,13 @@ public class PraedikativumMitPraedikativerAdjektivphraseOhneLeerstellen
     }
 
     @Override
-    public PraedikativumMitPraedikativerAdjektivphraseOhneLeerstellen mitAdverbialerAngabe(
+    public PraedikatMitPraedikativerAdjektivphraseOhneLeerstellen mitAdverbialerAngabe(
             @Nullable final AdverbialeAngabeSkopusSatz adverbialeAngabe) {
         if (adverbialeAngabe == null) {
             return this;
         }
 
-        return new PraedikativumMitPraedikativerAdjektivphraseOhneLeerstellen(
+        return new PraedikatMitPraedikativerAdjektivphraseOhneLeerstellen(
                 getVerb(),
                 praedikativeAdjektivphrase,
                 adverbialeAngabe, getAdverbialeAngabeSkopusVerbAllg(),
@@ -69,13 +70,13 @@ public class PraedikativumMitPraedikativerAdjektivphraseOhneLeerstellen
     }
 
     @Override
-    public PraedikativumMitPraedikativerAdjektivphraseOhneLeerstellen mitAdverbialerAngabe(
+    public PraedikatMitPraedikativerAdjektivphraseOhneLeerstellen mitAdverbialerAngabe(
             @Nullable final AdverbialeAngabeSkopusVerbAllg adverbialeAngabe) {
         if (adverbialeAngabe == null) {
             return this;
         }
 
-        return new PraedikativumMitPraedikativerAdjektivphraseOhneLeerstellen(
+        return new PraedikatMitPraedikativerAdjektivphraseOhneLeerstellen(
                 getVerb(),
                 praedikativeAdjektivphrase,
                 getAdverbialeAngabeSkopusSatz(), adverbialeAngabe,
@@ -84,7 +85,7 @@ public class PraedikativumMitPraedikativerAdjektivphraseOhneLeerstellen
     }
 
     @Override
-    public PraedikativumMitPraedikativerAdjektivphraseOhneLeerstellen mitAdverbialerAngabe(
+    public PraedikatMitPraedikativerAdjektivphraseOhneLeerstellen mitAdverbialerAngabe(
             @Nullable final AdverbialeAngabeSkopusVerbWohinWoher adverbialeAngabe) {
         if (adverbialeAngabe == null) {
             return this;
@@ -92,7 +93,7 @@ public class PraedikativumMitPraedikativerAdjektivphraseOhneLeerstellen
 
         // Ich frage mich, ob es so etwas überhauppt geben kann.
         // *"Peter ist nach Norden glücklich" - wohl nicht.
-        return new PraedikativumMitPraedikativerAdjektivphraseOhneLeerstellen(
+        return new PraedikatMitPraedikativerAdjektivphraseOhneLeerstellen(
                 getVerb(),
                 praedikativeAdjektivphrase,
                 getAdverbialeAngabeSkopusSatz(),
@@ -132,9 +133,9 @@ public class PraedikativumMitPraedikativerAdjektivphraseOhneLeerstellen
     public String getMittelfeld(final Collection<Modalpartikel> modalpartikeln,
                                 final Person personSubjekt,
                                 final Numerus numerusSubjekt) {
-        return joinToNull(
+        return joinToNullString(
                 getAdverbialeAngabeSkopusSatz(), // "leider"
-                joinToNull(modalpartikeln), // "halt"
+                GermanUtil.joinToNullString(modalpartikeln), // "halt"
                 getAdverbialeAngabeSkopusVerbAllg(), // "erneut"
                 getAdverbialeAngabeSkopusVerbWohinWoher(), // "nach außen" (?)
                 praedikativeAdjektivphrase // "glücklich"
@@ -160,5 +161,11 @@ public class PraedikativumMitPraedikativerAdjektivphraseOhneLeerstellen
     @Override
     public boolean hatAkkusativobjekt() {
         return false;
+    }
+
+    @Nullable
+    @Override
+    public String getErstesInterrogativpronomenAlsString() {
+        return null;
     }
 }

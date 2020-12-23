@@ -8,13 +8,15 @@ import javax.annotation.Nullable;
 
 import de.nb.aventiure2.annotations.Argument;
 import de.nb.aventiure2.annotations.Valenz;
+import de.nb.aventiure2.german.base.GermanUtil;
+import de.nb.aventiure2.german.base.Interrogativpronomen;
 import de.nb.aventiure2.german.base.Kasus;
 import de.nb.aventiure2.german.base.KasusOderPraepositionalkasus;
 import de.nb.aventiure2.german.base.Numerus;
 import de.nb.aventiure2.german.base.Person;
 import de.nb.aventiure2.german.base.SubstantivischePhrase;
 
-import static de.nb.aventiure2.german.base.GermanUtil.joinToNull;
+import static de.nb.aventiure2.german.base.GermanUtil.joinToNullString;
 
 /**
  * Ein Prädikat (Verb ggf. mit Präfix) bei dem das Verb mit einem Subjekt und einem
@@ -142,9 +144,9 @@ public class PraedikatSubjObjOhneLeerstellen
     public String getMittelfeld(final Collection<Modalpartikel> modalpartikeln,
                                 final Person personSubjekt,
                                 final Numerus numerusSubjekt) {
-        return joinToNull(
+        return joinToNullString(
                 getAdverbialeAngabeSkopusSatz(), // "aus einer Laune heraus"
-                joinToNull(modalpartikeln), // "mal eben"
+                GermanUtil.joinToNullString(modalpartikeln), // "mal eben"
                 getAdverbialeAngabeSkopusVerbAllg(), // "erneut"
                 objekt.im(kasusOderPraepositionalkasus),
                 getAdverbialeAngabeSkopusVerbWohinWoher() // "auf den Tisch"
@@ -166,5 +168,15 @@ public class PraedikatSubjObjOhneLeerstellen
     @Override
     public boolean hatAkkusativobjekt() {
         return kasusOderPraepositionalkasus == Kasus.AKK;
+    }
+
+    @Nullable
+    @Override
+    public String getErstesInterrogativpronomenAlsString() {
+        if (objekt instanceof Interrogativpronomen) {
+            return objekt.im(kasusOderPraepositionalkasus);
+        }
+
+        return null;
     }
 }
