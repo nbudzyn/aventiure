@@ -16,6 +16,8 @@ public enum VerbSubjDatAkk implements Praedikat {
             Perfektbildung.HABEN, "angeboten"),
     AUSSCHUETTEN("ausschütten", "schüttest", "aus",
             Perfektbildung.HABEN, "ausgeschüttet"),
+    BERICHTEN("berichten", "berichtest",
+            Perfektbildung.HABEN, "berichtet"),
     GEBEN("geben", "gibst", Perfektbildung.HABEN, "gegeben"),
     HINHALTEN("hinhalten", "hältst", "in",
             Perfektbildung.HABEN, "hingehalten"),
