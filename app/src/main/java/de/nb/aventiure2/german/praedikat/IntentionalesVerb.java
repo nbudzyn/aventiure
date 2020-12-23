@@ -46,6 +46,7 @@ public enum IntentionalesVerb implements Praedikat {
      */
     public PraedikatIntentionalesVerbOhneLeerstellen mitLexikalischemKern(
             final PraedikatOhneLeerstellen lexikalischerKern) {
-        return new PraedikatIntentionalesVerbOhneLeerstellen(verb, lexikalischerKern);
+        return new PraedikatIntentionalesVerbOhneLeerstellen(verb,
+                lexikalischerKern);
     }
 }

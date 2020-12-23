@@ -25,7 +25,7 @@ import static de.nb.aventiure2.german.base.GermanUtil.joinToNull;
  * Hier geht es nicht um Prädikative, vgl. {@link PraedikativumPraedikatOhneLeerstellen}.
  */
 public class PraedikativumMitPraedikativerAdjektivphraseOhneLeerstellen
-        extends AbstractPraedikatOhneLeerstellen {
+        extends AbstractAngabenfaehigesPraedikatOhneLeerstellen {
     /**
      * Die prädikative Adjektivphrase
      */

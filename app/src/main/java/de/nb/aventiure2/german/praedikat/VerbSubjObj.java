@@ -24,6 +24,8 @@ public enum VerbSubjObj implements PraedikatMitEinerObjektleerstelle {
             Perfektbildung.SEIN, "aufgestanden"),
     BEENDEN("beenden", AKK, "beendest", Perfektbildung.HABEN, "beendet"),
     BEGRUESSEN("begrüßen", AKK, "begrüßt", Perfektbildung.HABEN, "begrüßt"),
+    BERICHTEN("berichten", AKK, "berichtest",
+            Perfektbildung.HABEN, "berichtet"),
     DISKUTIEREN("diskutieren", MIT_DAT, "diskutierst",
             Perfektbildung.HABEN, "diskutiert"),
     HABEN("haben", AKK, "hast", Perfektbildung.HABEN, "gehabt"),

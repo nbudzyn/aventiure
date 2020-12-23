@@ -27,7 +27,8 @@ import static de.nb.aventiure2.german.base.GermanUtil.joinToNull;
  * ausführen, die im Komplement genannt ist", siehe Peter Eisenberg,
  * Der Satz, S. 356 (Kapitel 11.2)
  */
-public class PraedikatIntentionalesVerbOhneLeerstellen extends AbstractPraedikatOhneLeerstellen {
+public class PraedikatIntentionalesVerbOhneLeerstellen
+        extends AbstractAngabenfaehigesPraedikatOhneLeerstellen {
     /**
      * "(...versucht) ihre Haare wieder hinunterzulassen"
      */

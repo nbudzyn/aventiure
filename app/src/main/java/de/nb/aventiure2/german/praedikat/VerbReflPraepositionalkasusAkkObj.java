@@ -38,7 +38,8 @@ public enum VerbReflPraepositionalkasusAkkObj implements PraedikatMitEinerObjekt
     }
 
     @Override
-    public AbstractPraedikatOhneLeerstellen mit(final SubstantivischePhrase describable) {
+    public AbstractAngabenfaehigesPraedikatOhneLeerstellen mit(
+            final SubstantivischePhrase describable) {
         return new PraedikatSubjReflPraepositionalkasusAkkObjOhneLeerstellen(
                 this, describable);
     }

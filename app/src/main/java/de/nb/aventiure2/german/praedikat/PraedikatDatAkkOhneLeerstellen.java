@@ -20,7 +20,8 @@ import static de.nb.aventiure2.german.base.GermanUtil.joinToNull;
  * Ein Prädikat, in dem ein Dativobjekt und Akkusativobjekt gesetzt sind
  * und es auch sonst keine Leerstellen gibt. Beispiel: "dem Frosch Angebote machen"
  */
-public class PraedikatDatAkkOhneLeerstellen extends AbstractPraedikatOhneLeerstellen {
+public class PraedikatDatAkkOhneLeerstellen
+        extends AbstractAngabenfaehigesPraedikatOhneLeerstellen {
     /**
      * Das (Objekt / Wesen / Konzept für das) Dativobjekt (z.B. "Angebote")
      */

@@ -4,7 +4,7 @@ import de.nb.aventiure2.data.world.base.SpatialConnection;
 import de.nb.aventiure2.data.world.syscomp.state.impl.SchlosswacheState;
 import de.nb.aventiure2.data.world.syscomp.talking.ITalkerGO;
 import de.nb.aventiure2.german.base.Nominalphrase;
-import de.nb.aventiure2.german.praedikat.AbstractPraedikatOhneLeerstellen;
+import de.nb.aventiure2.german.praedikat.AbstractAngabenfaehigesPraedikatOhneLeerstellen;
 import de.nb.aventiure2.german.praedikat.Praedikat;
 import de.nb.aventiure2.german.praedikat.PraedikatMitEinerObjektleerstelle;
 import de.nb.aventiure2.german.praedikat.VerbSubjObj;
@@ -53,7 +53,7 @@ public class SCTalkAction {
     private final static PraedikatMitEinerObjektleerstelle DEFAULT_ENTRY_RE_ENTRY_NAME =
             VerbSubjObj.REDEN;
 
-    private final static AbstractPraedikatOhneLeerstellen DEFAULT_EXIT_NAME =
+    private final static AbstractAngabenfaehigesPraedikatOhneLeerstellen DEFAULT_EXIT_NAME =
             VerbSubjObj.BEENDEN.mit(Nominalphrase.GESPRAECH);
 
     /**

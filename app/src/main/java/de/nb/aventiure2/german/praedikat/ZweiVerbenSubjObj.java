@@ -21,7 +21,7 @@ public class ZweiVerbenSubjObj implements PraedikatMitEinerObjektleerstelle {
     }
 
     @Override
-    public PraedikatOhneLeerstellen mit(
+    public ZweiPraedikateOhneLeerstellen mit(
             final SubstantivischePhrase substantivischePhrase) {
         return mit(
                 // "die goldene Kugel"
@@ -30,7 +30,7 @@ public class ZweiVerbenSubjObj implements PraedikatMitEinerObjektleerstelle {
                 substantivischePhrase.persPron());
     }
 
-    private PraedikatOhneLeerstellen mit(
+    private ZweiPraedikateOhneLeerstellen mit(
             final SubstantivischePhrase ersteSubstantivischePhrase,
             final SubstantivischePhrase zweiteSubstantivischePhrase) {
         return new ZweiPraedikateOhneLeerstellen(

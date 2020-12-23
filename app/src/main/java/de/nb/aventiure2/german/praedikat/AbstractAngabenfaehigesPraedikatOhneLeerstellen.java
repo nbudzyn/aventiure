@@ -17,15 +17,16 @@ import static de.nb.aventiure2.german.base.Person.P2;
 import static java.util.Arrays.asList;
 
 /**
- * Ein Prädikat, in dem alle Leerstellen besetzt sind. Beispiele:
+ * Ein Prädikat, in dem alle Leerstellen besetzt sind und dem grundsätzlich
+ * "eigene" adverbiale Angaben ("aus Langeweile") immer noch hinzugefügt werden können. Beispiele:
  * <ul>
  *     <li>"das Buch nehmen"
- *     <li>"dem Frosch Angebote machen!"
+ *     <li>"dem Frosch Angebote machen"
+ *     <li>"dem Frosch endlich Angebote machen"
  * </ul>
  * <p>
- * Adverbiale Angaben ("aus Langeweile") können immer noch eingefügt werden.
  */
-public abstract class AbstractPraedikatOhneLeerstellen
+public abstract class AbstractAngabenfaehigesPraedikatOhneLeerstellen
         implements PraedikatOhneLeerstellen {
     /**
      * Das Verb an sich, ohne Informationen zur Valenz, ohne Ergänzungen, ohne
@@ -43,11 +44,11 @@ public abstract class AbstractPraedikatOhneLeerstellen
     @Nullable
     private final AdverbialeAngabeSkopusVerbWohinWoher adverbialeAngabeSkopusVerbWohinWoher;
 
-    public AbstractPraedikatOhneLeerstellen(final Verb verb) {
+    public AbstractAngabenfaehigesPraedikatOhneLeerstellen(final Verb verb) {
         this(verb, null, null, null);
     }
 
-    AbstractPraedikatOhneLeerstellen(
+    AbstractAngabenfaehigesPraedikatOhneLeerstellen(
             final Verb verb,
             @Nullable final AdverbialeAngabeSkopusSatz adverbialeAngabeSkopusSatz,
             @Nullable final AdverbialeAngabeSkopusVerbAllg adverbialeAngabeSkopusVerbAllg,
@@ -57,6 +58,16 @@ public abstract class AbstractPraedikatOhneLeerstellen
         this.adverbialeAngabeSkopusSatz = adverbialeAngabeSkopusSatz;
         this.adverbialeAngabeSkopusVerbAllg = adverbialeAngabeSkopusVerbAllg;
         this.adverbialeAngabeSkopusVerbWohinWoher = adverbialeAngabeSkopusVerbWohinWoher;
+    }
+
+
+    /**
+     * Erzeugt aus diesem Prädikat ein zu-haben-Prädikat
+     * (z.B. <i>Spannendes zu berichten haben</i>,  <i>mit Paul zu diskutieren haben/i>,
+     * <i>zu schlafen haben</i>, <i>sich zu waschen haben</i>).
+     */
+    public ZuHabenPraedikatOhneLeerstellen zuHabenPraedikat() {
+        return new ZuHabenPraedikatOhneLeerstellen(this);
     }
 
     @Override
@@ -190,9 +201,6 @@ public abstract class AbstractPraedikatOhneLeerstellen
                 getMittelfeld(personSubjekt, numerusSubjekt),
                 getSpeziellesVorfeld());
     }
-
-    public abstract String getNachfeld(Person personSubjekt,
-                                       Numerus numerusSubjekt);
 
     @Override
     public boolean bildetPerfektMitSein() {

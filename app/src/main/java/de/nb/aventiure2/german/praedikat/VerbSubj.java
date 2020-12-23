@@ -98,12 +98,6 @@ public enum VerbSubj implements PraedikatOhneLeerstellen {
         return verb.getZuInfinitiv();
     }
 
-    @Nullable
-    @Override
-    public String getSpeziellesVorfeld() {
-        return null;
-    }
-
     @Override
     public boolean umfasstSatzglieder() {
         return false;
@@ -138,5 +132,17 @@ public enum VerbSubj implements PraedikatOhneLeerstellen {
 
     private PraedikatSubOhneLeerstellen toPraedikatSubj() {
         return new PraedikatSubOhneLeerstellen(verb);
+    }
+
+    @Nullable
+    @Override
+    public String getSpeziellesVorfeld() {
+        return null;
+    }
+
+    @Nullable
+    @Override
+    public String getNachfeld(final Person person, final Numerus numerus) {
+        return null;
     }
 }

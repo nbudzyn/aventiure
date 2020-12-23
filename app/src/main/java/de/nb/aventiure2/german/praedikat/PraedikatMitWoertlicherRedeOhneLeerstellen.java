@@ -23,7 +23,7 @@ import static de.nb.aventiure2.german.base.GermanUtil.joinToNull;
  * Adverbiale Angaben ("laut") können immer noch eingefügt werden.
  */
 public class PraedikatMitWoertlicherRedeOhneLeerstellen
-        extends AbstractPraedikatOhneLeerstellen {
+        extends AbstractAngabenfaehigesPraedikatOhneLeerstellen {
     /**
      * Die wörtliche Rede
      */

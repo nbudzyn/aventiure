@@ -19,7 +19,7 @@ import static de.nb.aventiure2.german.base.GermanUtil.joinToNull;
  * alle Leerstellen besetzt
  */
 class PraedikatSubjReflPraepositionalkasusAkkObjOhneLeerstellen
-        extends AbstractPraedikatOhneLeerstellen {
+        extends AbstractAngabenfaehigesPraedikatOhneLeerstellen {
     private final VerbReflPraepositionalkasusAkkObj verbReflPraepositionalkasusAkkObj;
 
     @Argument

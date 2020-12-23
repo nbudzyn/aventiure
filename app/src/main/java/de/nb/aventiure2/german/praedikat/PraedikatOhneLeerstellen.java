@@ -9,17 +9,14 @@ import de.nb.aventiure2.german.base.Person;
 
 import static java.util.Arrays.asList;
 
+/**
+ * Ein Prädikat im Sinne eines Verbs mit allen Ergänzungen und Angaben, jedoch ohne Subjekt, bei
+ * dem alle Leerstellen besetzt sind ("mit dem Frosch reden").
+ *
+ * @see de.nb.aventiure2.german.satz.Satz
+ */
 public interface PraedikatOhneLeerstellen extends Praedikat, AbstractDuTextPart {
-    PraedikatOhneLeerstellen mitAdverbialerAngabe(
-            @Nullable final AdverbialeAngabeSkopusSatz adverbialeAngabe);
-
-    PraedikatOhneLeerstellen mitAdverbialerAngabe(
-            @Nullable final AdverbialeAngabeSkopusVerbAllg adverbialeAngabe);
-
-    PraedikatOhneLeerstellen mitAdverbialerAngabe(
-            @Nullable final AdverbialeAngabeSkopusVerbWohinWoher adverbialeAngabe);
-
-    // TODO Modalpartikeln führen zu einem
+    // TODO Modalpartikeln sollten zu einem
     //  neuen AbstractPraedikat führen, dass man dann auch speichern
     //  und weiterreichen kann!
     @Override
@@ -73,7 +70,7 @@ public interface PraedikatOhneLeerstellen extends Praedikat, AbstractDuTextPart 
      * Gibt eine unflektierte Phrase mit Partizip II zurück: "unten angekommen",
      * "die Kugel genommen"
      * <p>
-     * Implizit (oder bei reflexiven Verben auch explizit) hat Phrase
+     * Implizit (oder bei reflexiven Verben auch explizit) hat eine Partizip-II-Phrase
      * eine Person und einen Numerus - Beispiel:
      * "[Ich habe] die Kugel an mich genommen"
      * (nicht *"[Ich habe] die Kugel an sich genommen")
@@ -119,6 +116,9 @@ public interface PraedikatOhneLeerstellen extends Praedikat, AbstractDuTextPart 
     @Nullable
     String getSpeziellesVorfeld();
 
+    @Nullable
+    String getNachfeld(Person person, Numerus numerus);
+
     /**
      * Gibt zurück, ob dieses Prädikat Satzglieder enthält (nicht nur Verbbestandteile).
      * "läuft los" enthält keine Satzgliederk, "läuft schnell los" oder
@@ -137,4 +137,13 @@ public interface PraedikatOhneLeerstellen extends Praedikat, AbstractDuTextPart 
      * Bezug auf den Nachzustand gegeben.
      */
     boolean isBezugAufNachzustandDesAktantenGegeben();
+
+    PraedikatOhneLeerstellen mitAdverbialerAngabe(
+            @Nullable AdverbialeAngabeSkopusSatz adverbialeAngabe);
+
+    PraedikatOhneLeerstellen mitAdverbialerAngabe(
+            @Nullable AdverbialeAngabeSkopusVerbAllg adverbialeAngabe);
+
+    PraedikatOhneLeerstellen mitAdverbialerAngabe(
+            @Nullable AdverbialeAngabeSkopusVerbWohinWoher adverbialeAngabe);
 }

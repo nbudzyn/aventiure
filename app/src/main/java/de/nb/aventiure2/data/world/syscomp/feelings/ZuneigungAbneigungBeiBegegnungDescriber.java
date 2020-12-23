@@ -153,7 +153,7 @@ class ZuneigungAbneigungBeiBegegnungDescriber implements FeelingBeiBegegnungDesc
             //  Erfragten ("was" sv. "wen") in der Akkusativ-Phrase
             //  speichern.
             //  Der indirekte Fragesatz ist quasi ein lexikalischer Kern, in dem
-            //  das Akkusativ-Objekt fehlt.
+            //  das Akkusativ-Objekt durch ein Fragewort repräsentiert ist.
             final AllgDescription gespanntWasZuBerichten =
                     adjektivphraseMitWasZuBerichtenHastNebensatz("gespannt",
                             gameObjectSubjektPerson, gameObjectSubjektNumerusGenus, targetDesc);

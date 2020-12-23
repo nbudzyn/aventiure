@@ -15,7 +15,8 @@ import static de.nb.aventiure2.german.base.GermanUtil.joinToNull;
 /**
  * Ein Prädikat, bestehend aus <i>sein</i> und einem Prädikativum - alle Leerstellen sind besetzt.
  */
-public class PraedikativumPraedikatOhneLeerstellen extends AbstractPraedikatOhneLeerstellen {
+public class PraedikativumPraedikatOhneLeerstellen
+        extends AbstractAngabenfaehigesPraedikatOhneLeerstellen {
     /**
      * Das Prädikativum
      */
@@ -24,7 +25,8 @@ public class PraedikativumPraedikatOhneLeerstellen extends AbstractPraedikatOhne
 
     static PraedikativumPraedikatOhneLeerstellen praedikativumPraedikatMit(
             final AllgDescription praedikativum) {
-        return new PraedikativumPraedikatOhneLeerstellen(SeinUtil.VERB, praedikativum);
+        return new PraedikativumPraedikatOhneLeerstellen(SeinUtil.VERB,
+                praedikativum);
     }
 
     @Valenz

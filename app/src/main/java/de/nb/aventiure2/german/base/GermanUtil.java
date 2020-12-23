@@ -7,6 +7,7 @@ import java.util.List;
 
 import static com.google.common.base.Preconditions.checkArgument;
 import static java.util.Arrays.asList;
+import static java.util.Objects.requireNonNull;
 
 /**
  * Static helper methods for the german language.
@@ -100,14 +101,18 @@ public class GermanUtil {
         }
 
         final CharSequence lastCharBase = base.subSequence(base.length() - 1, base.length());
-        if (" „\n".contains(lastCharBase)) {
+        if (" „\n" .contains(lastCharBase)) {
             return false;
         }
 
         final CharSequence firstCharAddition = addition.subSequence(0, 1);
-        return !" ,;.:!?“\n".contains(firstCharAddition);
+        return !" ,;.:!?“\n" .contains(firstCharAddition);
     }
 
+    /**
+     * Schneidet das Satzglied (einmalig) aus diesem Text. Die Suche nach
+     * dem Satzglied beginnt von vorn.
+     */
     public static @Nullable
     String cutSatzglied(@Nullable final String text, @Nullable final String satzglied) {
         if (text == null) {
@@ -129,14 +134,51 @@ public class GermanUtil {
                     + "in \"" + text + "\"");
         }
 
+        return cutSatzglied(text, startIndex, satzglied.length());
+    }
+
+
+    /**
+     * Schneidet das Satzglied (einmalig) aus diesem Text;  die Suche nach
+     * dem Satzglied beginnt von hinten.
+     */
+    public static @Nullable
+    String cutSatzgliedVonHinten(@Nullable final String text, @Nullable final String satzglied) {
+        if (text == null) {
+            if (satzglied != null) {
+                throw new IllegalArgumentException(
+                        "Text null, but Satzglied was \"" + satzglied + "\".");
+            }
+
+            return null;
+        }
+
+        if (satzglied == null) {
+            return text;
+        }
+
+        final int startIndex = text.lastIndexOf(satzglied);
+        if (startIndex < 0) {
+            throw new IllegalArgumentException("Satzglied \"" + satzglied + "\" not contained "
+                    + "in \"" + text + "\"");
+        }
+
+        return cutSatzglied(text, startIndex, satzglied.length());
+    }
+
+    @Nullable
+    private static String cutSatzglied(@NonNull final String text, final int startIndex,
+                                       final int satzgliedLength) {
+        requireNonNull(text, "text");
+
         @Nullable final String charBefore = startIndex == 0 ?
                 null :
                 text.substring(startIndex - 1, startIndex);
 
-        final int endIndex = startIndex + satzglied.length();
+        final int endIndex = startIndex + satzgliedLength;
         @Nullable final String charAfter = endIndex >= text.length() ?
                 null :
-                text.substring(endIndex, startIndex + satzglied.length() + 1);
+                text.substring(endIndex, startIndex + satzgliedLength + 1);
 
         if (charBefore == null) {
             if (charAfter == null) {

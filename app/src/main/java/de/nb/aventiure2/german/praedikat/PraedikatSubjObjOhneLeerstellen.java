@@ -21,7 +21,7 @@ import static de.nb.aventiure2.german.base.GermanUtil.joinToNull;
  * (Präpositional-) Objekt steht - alle Leerstellen sind besetzt.
  */
 public class PraedikatSubjObjOhneLeerstellen
-        extends AbstractPraedikatOhneLeerstellen {
+        extends AbstractAngabenfaehigesPraedikatOhneLeerstellen {
     /**
      * Der Kasus (z.B. Akkusativ, "die Kugel nehmen") oder Präpositionalkasus
      * (z.B. "mit dem Frosch reden"), mit dem dieses Verb steht (den dieses Verb regiert).

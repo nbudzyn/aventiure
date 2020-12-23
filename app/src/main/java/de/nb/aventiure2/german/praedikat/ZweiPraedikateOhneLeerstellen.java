@@ -12,7 +12,8 @@ import de.nb.aventiure2.german.base.Person;
  * <i>zusammengezogenen Satz</i>, in dem das Subjekt im zweiten Teil
  * <i>eingespart</i> ist ("Du hebst die Kugel auf und [du] nimmst ein Bad").
  */
-class ZweiPraedikateOhneLeerstellen implements PraedikatOhneLeerstellen {
+class ZweiPraedikateOhneLeerstellen
+        implements PraedikatOhneLeerstellen {
     private final PraedikatOhneLeerstellen ersterSatz;
     private final PraedikatOhneLeerstellen zweiterSatz;
 
@@ -115,7 +116,8 @@ class ZweiPraedikateOhneLeerstellen implements PraedikatOhneLeerstellen {
 
     @Override
     public boolean kannPartizipIIPhraseAmAnfangOderMittenImSatzVerwendetWerden() {
-        return true;
+        return ersterSatz.kannPartizipIIPhraseAmAnfangOderMittenImSatzVerwendetWerden() &&
+                zweiterSatz.kannPartizipIIPhraseAmAnfangOderMittenImSatzVerwendetWerden();
     }
 
     @Override
@@ -130,12 +132,6 @@ class ZweiPraedikateOhneLeerstellen implements PraedikatOhneLeerstellen {
         return ersterSatz.getZuInfinitiv(person, numerus)
                 + " und "
                 + zweiterSatz.getZuInfinitiv(person, numerus);
-    }
-
-    @Nullable
-    @Override
-    public String getSpeziellesVorfeld() {
-        return ersterSatz.getSpeziellesVorfeld();
     }
 
     @Override
@@ -157,5 +153,17 @@ class ZweiPraedikateOhneLeerstellen implements PraedikatOhneLeerstellen {
     public boolean isBezugAufNachzustandDesAktantenGegeben() {
         return ersterSatz.isBezugAufNachzustandDesAktantenGegeben() &&
                 zweiterSatz.isBezugAufNachzustandDesAktantenGegeben();
+    }
+
+    @Nullable
+    @Override
+    public String getSpeziellesVorfeld() {
+        return ersterSatz.getSpeziellesVorfeld();
+    }
+
+    @Nullable
+    @Override
+    public String getNachfeld(final Person person, final Numerus numerus) {
+        return zweiterSatz.getNachfeld(person, numerus);
     }
 }

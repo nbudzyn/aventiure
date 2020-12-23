@@ -16,7 +16,7 @@ import static de.nb.aventiure2.german.base.GermanUtil.joinToNull;
  */
 
 public class PraedikatSubOhneLeerstellen
-        extends AbstractPraedikatOhneLeerstellen {
+        extends AbstractAngabenfaehigesPraedikatOhneLeerstellen {
 
     @Valenz
     PraedikatSubOhneLeerstellen(final Verb verb) {

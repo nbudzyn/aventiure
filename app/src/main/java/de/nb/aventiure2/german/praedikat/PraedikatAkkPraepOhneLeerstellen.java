@@ -19,7 +19,8 @@ import static de.nb.aventiure2.german.base.GermanUtil.joinToNull;
  * Ein Prädikat, in dem ein Akkusativobjekt und ein Präpositionalobjekt gesetzt sind
  * und es auch sonst keine Leerstellen gibt. Beispiel: "den Frosch in die Hände nehmen"
  */
-public class PraedikatAkkPraepOhneLeerstellen extends AbstractPraedikatOhneLeerstellen {
+public class PraedikatAkkPraepOhneLeerstellen
+        extends AbstractAngabenfaehigesPraedikatOhneLeerstellen {
     @NonNull
     private final PraepositionMitKasus praepositionMitKasus;
 

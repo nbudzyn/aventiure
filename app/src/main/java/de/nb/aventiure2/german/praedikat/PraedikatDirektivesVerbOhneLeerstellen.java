@@ -28,7 +28,8 @@ import static de.nb.aventiure2.german.base.GermanUtil.joinToNull;
  * <p>
  * Zu direktiven Verben siehe Peter Eisenberg, Der Satz, S. 357 (Kapitel 11.2)
  */
-public class PraedikatDirektivesVerbOhneLeerstellen extends AbstractPraedikatOhneLeerstellen {
+public class PraedikatDirektivesVerbOhneLeerstellen
+        extends AbstractAngabenfaehigesPraedikatOhneLeerstellen {
     /**
      * Der Kasus mit dem das direktive Verb steht.
      */
