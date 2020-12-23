@@ -4,6 +4,7 @@ import androidx.annotation.NonNull;
 
 import com.google.common.collect.ImmutableList;
 
+import de.nb.aventiure2.german.adjektiv.AdjPhrOhneLeerstellen;
 import de.nb.aventiure2.german.base.NumerusGenus;
 import de.nb.aventiure2.german.base.Person;
 import de.nb.aventiure2.german.base.SubstantivischePhrase;
@@ -23,7 +24,7 @@ public interface FeelingBeiBegegnungDescriber {
      * "du, die du..." oder "du, das du..." generiert wird.
      * <p>
      * Diese Methode gibt zumindest immer dann eine nichtleere Liste zurück, wenn
-     * {@link #altEindruckBeiBegegnungPraedAdjPhrase(Person, NumerusGenus, SubstantivischePhrase, int, boolean)}
+     * {@link #altEindruckBeiBegegnungAdjPhr(Person, NumerusGenus, SubstantivischePhrase, int, boolean)}
      * eine leere Liste zurückgibt. Durch die Kombination bei der Methoden erhält man
      * also immer mindestens eine Beschreibung.
      *
@@ -49,7 +50,7 @@ public interface FeelingBeiBegegnungDescriber {
     @NonNull
     // TODO Auch die Zauberin könnte irgendwie wirken, wenn sie
     //  den SC (wieder-) trifft...
-    ImmutableList<AllgDescription> altEindruckBeiBegegnungPraedAdjPhrase(
+    ImmutableList<AdjPhrOhneLeerstellen> altEindruckBeiBegegnungAdjPhr(
             Person gameObjectSubjektPerson, NumerusGenus gameObjectSubjektNumerusGenus,
             SubstantivischePhrase targetDesc, int feelingIntensity,
             final boolean targetKnown);

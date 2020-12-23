@@ -7,6 +7,7 @@ import java.util.stream.Stream;
 
 import javax.annotation.CheckReturnValue;
 
+import de.nb.aventiure2.german.adjektiv.AdjPhrOhneLeerstellen;
 import de.nb.aventiure2.german.base.NumerusGenus;
 import de.nb.aventiure2.german.base.Person;
 import de.nb.aventiure2.german.base.SubstantivischePhrase;
@@ -49,7 +50,7 @@ public enum FeelingTowardsType {
         final ImmutableList.Builder<AllgDescription> res = ImmutableList.builder();
 
         final ImmutableList<AllgDescription> altFeelingBeiBegegnungPraedAdjPhrase =
-                altEindruckBeiBegegnungPraedAdjPhrase(
+                altEindruckBeiBegegnungPraedAdjPhr(
                         gameObjectSubjektPerson, gameObjectSubjektNumerusGenus, targetDesc,
                         feelingIntensity, targetKnown
                 );
@@ -79,15 +80,25 @@ public enum FeelingTowardsType {
      *
      * @return Möglicherweise eine leere Liste (insbesondere bei extremen Gefühlen)!
      */
-    public ImmutableList<AllgDescription> altEindruckBeiBegegnungPraedAdjPhrase(
+    public ImmutableList<AllgDescription> altEindruckBeiBegegnungPraedAdjPhr(
             final Person gameObjectSubjektPerson,
             final NumerusGenus gameObjectSubjektNumerusGenus,
             final SubstantivischePhrase targetDesc, final int feelingIntensity,
             final boolean targetKnown) {
-        return feelingBeiBegegnungDescriber.altEindruckBeiBegegnungPraedAdjPhrase(
-                gameObjectSubjektPerson, gameObjectSubjektNumerusGenus, targetDesc,
-                feelingIntensity, targetKnown
-        );
+        // FIXME Adjektivphrasen ggf. auch diskontinuierlich ausgeben
+
+        final ImmutableList<AdjPhrOhneLeerstellen> res =
+                feelingBeiBegegnungDescriber.altEindruckBeiBegegnungAdjPhr(
+                        gameObjectSubjektPerson, gameObjectSubjektNumerusGenus, targetDesc,
+                        feelingIntensity, targetKnown
+                );
+        return res.stream()
+                .map(adjPhr ->
+                        satzanschluss(
+                                adjPhr.getPraedikativ(
+                                        gameObjectSubjektPerson,
+                                        gameObjectSubjektNumerusGenus.getNumerus())))
+                .collect(ImmutableList.toImmutableList());
     }
 
     @CheckReturnValue
@@ -117,5 +128,4 @@ public enum FeelingTowardsType {
                 .phorikKandidat(desc.getPhorikKandidat())
                 .beendet(desc.getEndsThis());
     }
-
 }

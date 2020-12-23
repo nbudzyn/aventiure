@@ -292,7 +292,7 @@ public class FeelingsComp extends AbstractStatefulComponent<FeelingsPCD> {
         final boolean targetKnown =
                 memoryComp != null ? memoryComp.isKnown(feelingTargetId) : false;
 
-        return type.altEindruckBeiBegegnungPraedAdjPhrase(
+        return type.altEindruckBeiBegegnungPraedAdjPhr(
                 getGameObjectPerson(), gameObjectSubjektNumerusGenus, targetDesc,
                 getFeelingTowards(feelingTargetId, type),
                 targetKnown);
