@@ -6,6 +6,8 @@ import javax.annotation.Nullable;
 
 import de.nb.aventiure2.german.base.Numerus;
 import de.nb.aventiure2.german.base.Person;
+import de.nb.aventiure2.german.base.SubstantivischePhrase;
+import de.nb.aventiure2.german.satz.Satz;
 
 import static java.util.Arrays.asList;
 
@@ -16,6 +18,10 @@ import static java.util.Arrays.asList;
  * @see de.nb.aventiure2.german.satz.Satz
  */
 public interface PraedikatOhneLeerstellen extends Praedikat, AbstractDuTextPart {
+    default Satz alsSatzMitSubjekt(final SubstantivischePhrase subjekt) {
+        return new Satz(subjekt, this);
+    }
+
     // TODO Modalpartikeln sollten zu einem
     //  neuen AbstractPraedikat führen, dass man dann auch speichern
     //  und weiterreichen kann!

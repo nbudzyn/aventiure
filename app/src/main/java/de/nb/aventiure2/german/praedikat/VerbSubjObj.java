@@ -4,6 +4,8 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import de.nb.aventiure2.german.base.KasusOderPraepositionalkasus;
+import de.nb.aventiure2.german.base.Numerus;
+import de.nb.aventiure2.german.base.Person;
 import de.nb.aventiure2.german.base.SubstantivischePhrase;
 
 import static de.nb.aventiure2.german.base.Kasus.AKK;
@@ -155,5 +157,9 @@ public enum VerbSubjObj implements PraedikatMitEinerObjektleerstelle {
 
     public String getDuForm() {
         return verb.getDuFormOhnePartikel();
+    }
+
+    public String getPraesensOhnePartikel(final Person person, final Numerus numerus) {
+        return verb.getPraesensOhnePartikel(person, numerus);
     }
 }

@@ -27,7 +27,7 @@ import static de.nb.aventiure2.german.base.Wortfolge.w;
  * <li>gespannt, was du zu erzählen beginnen wirst
  * </ul>
  */
-class AdjPhrMitIndirektemFragesatzOhneLeerstellen extends AbstractAdjPhrOhneLeerstellen {
+public class AdjPhrMitIndirektemFragesatzOhneLeerstellen extends AbstractAdjPhrOhneLeerstellen {
     /**
      * Der ob- oder w-Fragesatz (die indirekte Frage), z.B.
      * <ul>

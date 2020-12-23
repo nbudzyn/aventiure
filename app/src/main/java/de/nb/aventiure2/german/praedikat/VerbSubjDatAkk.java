@@ -109,13 +109,13 @@ public enum VerbSubjDatAkk implements Praedikat {
         return mitDat(describableDat).mit(describableAkk).getInfinitiv(person, numerus);
     }
 
-    public PraedikatMitEinerObjektleerstelle mitDat(
+    public PraedikatDatAkkMitEinerAkkLeerstelle mitDat(
             final SubstantivischePhrase describableDat) {
         return new PraedikatDatAkkMitEinerAkkLeerstelle(verb,
                 describableDat);
     }
 
-    public PraedikatMitEinerObjektleerstelle mitAkk(
+    public PraedikatDatAkkMitEinerDatLeerstelle mitAkk(
             final SubstantivischePhrase describableAkk) {
         return new PraedikatDatAkkMitEinerDatLeerstelle(verb,
                 describableAkk);

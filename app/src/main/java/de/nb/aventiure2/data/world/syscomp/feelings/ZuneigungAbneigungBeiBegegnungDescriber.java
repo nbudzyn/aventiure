@@ -4,10 +4,11 @@ import androidx.annotation.NonNull;
 
 import com.google.common.collect.ImmutableList;
 
+import de.nb.aventiure2.german.adjektiv.AdjektivMitIndirektemFragesatz;
 import de.nb.aventiure2.german.adjektiv.AdjektivMitZuInfinitiv;
 import de.nb.aventiure2.german.adjektiv.AdjektivOhneErgaenzungen;
 import de.nb.aventiure2.german.adjektiv.ZweiAdjPhrOhneLeerstellen;
-import de.nb.aventiure2.german.base.Numerus;
+import de.nb.aventiure2.german.base.Interrogativpronomen;
 import de.nb.aventiure2.german.base.NumerusGenus;
 import de.nb.aventiure2.german.base.Person;
 import de.nb.aventiure2.german.base.Personalpronomen;
@@ -15,10 +16,9 @@ import de.nb.aventiure2.german.base.Reflexivpronomen;
 import de.nb.aventiure2.german.base.SubstantivischePhrase;
 import de.nb.aventiure2.german.description.AbstractDescription;
 import de.nb.aventiure2.german.description.AllgDescription;
-import de.nb.aventiure2.german.praedikat.HabenUtil;
+import de.nb.aventiure2.german.praedikat.VerbSubjDatAkk;
 import de.nb.aventiure2.german.praedikat.VerbSubjObj;
 
-import static de.nb.aventiure2.german.base.Numerus.SG;
 import static de.nb.aventiure2.german.base.Person.P2;
 import static de.nb.aventiure2.german.description.DescriptionBuilder.satzanschluss;
 import static de.nb.aventiure2.german.praedikat.VerbSubjObj.SEHEN;
@@ -186,19 +186,32 @@ class ZuneigungAbneigungBeiBegegnungDescriber implements FeelingBeiBegegnungDesc
             final AllgDescription gluecklichZuSehen =
                     satzanschluss(
                             AdjektivMitZuInfinitiv.GLUECKLICH
-                                    .mitLexikalischerKern(
-                                            sehenVerb
-                                                    .mit(targetDesc)
-                                    )
+                                    .mitLexikalischerKern(sehenVerb.mit(targetDesc))
                                     .getPraedikativ(
                                             gameObjectSubjektPerson,
                                             gameObjectSubjektNumerusGenus.getNumerus()));
 
             // "gespannt, was du ihr zu berichten hast"
-            // FIXME Adjektiv mit indirektem Akkusativ-Fragesatz
             final AllgDescription gespanntWasZuBerichten =
-                    adjektivphraseMitWasZuBerichtenHastNebensatz("gespannt",
-                            gameObjectSubjektPerson, gameObjectSubjektNumerusGenus, targetDesc);
+                    satzanschluss(
+                            AdjektivMitIndirektemFragesatz.GESPANNT // "gespannt"
+                                    .mitIndirektemFragesatz(
+                                            VerbSubjDatAkk.BERICHTEN // "berichten"
+                                                    .mitDat(
+                                                            Personalpronomen.get(
+                                                                    gameObjectSubjektPerson,
+                                                                    gameObjectSubjektNumerusGenus)
+                                                            // "ihr"
+                                                    )
+                                                    .mitAkk(Interrogativpronomen.WAS) // "was"
+                                                    .zuHabenPraedikat()
+                                                    // "was ihr zu berichten haben"
+                                                    .alsSatzMitSubjekt(targetDesc.persPron())
+                                            // "was du ihr zu berichten hast"
+                                    )
+                                    .getPraedikativ(
+                                            gameObjectSubjektPerson,
+                                            gameObjectSubjektNumerusGenus.getNumerus()));
 
             // "glücklich, dich zu sehen, und gespannt, was du zu berichten hast"
             return ImmutableList.of(
@@ -234,8 +247,8 @@ class ZuneigungAbneigungBeiBegegnungDescriber implements FeelingBeiBegegnungDesc
             final String adjektivphrase, final Person subjektPerson,
             final NumerusGenus subjektNumerusGenus,
             final SubstantivischePhrase objekt) {
-        final String sehenVerbform = sehenVerbform(
-                subjektPerson, subjektNumerusGenus.getNumerus());
+        final String sehenVerbform =
+                SEHEN.getPraesensOhnePartikel(subjektPerson, subjektNumerusGenus.getNumerus());
         // "du sie siehst"
         final AbstractDescription<?> verbletztsatzanschluss =
                 verbletztsatzanschlussMitSubjektPersonalpronomen(
@@ -246,44 +259,7 @@ class ZuneigungAbneigungBeiBegegnungDescriber implements FeelingBeiBegegnungDesc
         return satzanschluss(adjektivphrase
                 + ", als "
                 + verbletztsatzanschluss.getDescriptionHauptsatz())
-                .komma()
-                .undWartest(verbletztsatzanschluss
-                        .isAllowsAdditionalDuSatzreihengliedOhneSubjekt());
-    }
-
-    private static AllgDescription adjektivphraseMitWasZuBerichtenHastNebensatz(
-            final String adjektivphrase,
-            final Person berichtempfaengerPerson,
-            final NumerusGenus berichtempfaengerNumerusGenus,
-            final SubstantivischePhrase berichtender) {
-        final String habenVerbform = HabenUtil.VERB
-                .getPraesensOhnePartikel(berichtender.getPerson(), berichtender.getNumerus());
-        // "du ihr zu berichten hast"
-        final AbstractDescription<?> verbletztsatzanschluss =
-                verbletztsatzanschlussMitSubjektPersonalpronomen(
-                        berichtender.getPerson(), berichtender.getNumerusGenus(),
-                        Personalpronomen.get(
-                                berichtempfaengerPerson, berichtempfaengerNumerusGenus).dat(),
-                        "zu berichten " + habenVerbform);
-        return satzanschluss(adjektivphrase
-                + ", was "
-                + verbletztsatzanschluss.getDescriptionHauptsatz())
-                .komma()
-                .undWartest(verbletztsatzanschluss
-                        .isAllowsAdditionalDuSatzreihengliedOhneSubjekt());
-    }
-
-    private static String sehenVerbform(final Person person, final Numerus numerus) {
-        switch (person) {
-            case P1:
-                return numerus == SG ? "sehe" : "sehen";
-            case P2:
-                return numerus == SG ? SEHEN.getDuForm() : "seht";
-            case P3:
-                return numerus == SG ? "sieht" : "sehen";
-            default:
-                throw new IllegalStateException("Unexpected Person: " + person);
-        }
+                .komma();
     }
 
     @NonNull
