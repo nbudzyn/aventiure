@@ -18,7 +18,11 @@ public abstract class AbstractDescription<SELF extends AbstractDescription<SELF>
     private final DescriptionParams params;
 
     public AbstractDescription(final StructuralElement startsNew) {
-        this(new DescriptionParams(startsNew));
+        this(startsNew, false);
+    }
+
+    protected AbstractDescription(final StructuralElement startsNew, final boolean kommaStehtAus) {
+        this(new DescriptionParams(startsNew, kommaStehtAus));
     }
 
     protected AbstractDescription(final DescriptionParams params) {

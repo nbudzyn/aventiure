@@ -12,8 +12,9 @@ import de.nb.aventiure2.german.base.Numerus;
 import de.nb.aventiure2.german.base.Person;
 import de.nb.aventiure2.german.base.Reflexivpronomen;
 import de.nb.aventiure2.german.base.SubstantivischePhrase;
+import de.nb.aventiure2.german.base.Wortfolge;
 
-import static de.nb.aventiure2.german.base.GermanUtil.joinToNullString;
+import static de.nb.aventiure2.german.base.GermanUtil.joinToNull;
 
 /**
  * Ein Prädikat wie "die Kugel an sich nehmen", das mit einer
@@ -128,12 +129,12 @@ class PraedikatSubjReflPraepositionalkasusAkkObjOhneLeerstellen
     }
 
     @Override
-    public String getMittelfeld(final Collection<Modalpartikel> modalpartikeln,
-                                final Person personSubjekt,
-                                final Numerus numerusSubjekt) {
+    public Wortfolge getMittelfeld(final Collection<Modalpartikel> modalpartikeln,
+                                   final Person personSubjekt,
+                                   final Numerus numerusSubjekt) {
         checkKeinPartikelVerb();
 
-        return joinToNullString(
+        return joinToNull(
                 getAdverbialeAngabeSkopusSatz(), // "aus einer Laune heraus"
                 akkObj.akk(), // "die goldene Kugel"
                 GermanUtil.joinToNullString(modalpartikeln), // "besser doch"

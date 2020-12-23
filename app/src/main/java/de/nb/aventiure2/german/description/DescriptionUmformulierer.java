@@ -10,6 +10,7 @@ import java.util.Collection;
 
 import javax.annotation.CheckReturnValue;
 
+import de.nb.aventiure2.german.base.Wortfolge;
 import de.nb.aventiure2.german.praedikat.AdverbialeAngabeSkopusSatz;
 import de.nb.aventiure2.german.praedikat.AdverbialeAngabeSkopusVerbAllg;
 import de.nb.aventiure2.german.praedikat.Modalpartikel;
@@ -113,14 +114,15 @@ public class DescriptionUmformulierer {
                 alt.add(mitAdvAngabe(pDuDesc,
                         new AdverbialeAngabeSkopusVerbAllg("sogleich wieder")));
 
+                final Wortfolge duNimmstDieKugelBesserDoch = pDuDesc.getPraedikat().getDuHauptsatz(
+                        new Modalpartikel("besser"),
+                        new Modalpartikel("doch"));
                 alt.add(neuerSatz(
                         max(duDesc.getStartsNew(), SENTENCE),
                         "Ach nein, " +
                                 // du nimmst die Kugel besser doch
-                                uncapitalize(pDuDesc.getPraedikat().getDuHauptsatz(
-                                        new Modalpartikel("besser"),
-                                        new Modalpartikel("doch"))))
-                        .komma(desc.isKommaStehtAus())
+                                uncapitalize(duNimmstDieKugelBesserDoch.getString()))
+                        .komma(duNimmstDieKugelBesserDoch.kommmaStehtAus())
                         .undWartest(duDesc.isAllowsAdditionalDuSatzreihengliedOhneSubjekt())
                         .dann(duDesc.isDann())
                         .phorikKandidat(duDesc.getPhorikKandidat()));

@@ -5,8 +5,10 @@ import java.util.Objects;
 
 import javax.annotation.Nullable;
 
+import de.nb.aventiure2.german.base.GermanUtil;
 import de.nb.aventiure2.german.base.Numerus;
 import de.nb.aventiure2.german.base.Person;
+import de.nb.aventiure2.german.base.Wortfolge;
 
 /**
  * Zwei Prädikate mit Objekt ohne Leerstellen, erzeugen einen
@@ -26,51 +28,55 @@ class ZweiPraedikateOhneLeerstellen
     }
 
     @Override
-    public String getDuHauptsatzMitVorfeld(final String vorfeld) {
+    public Wortfolge getDuHauptsatzMitVorfeld(final String vorfeld) {
         if (ersterSatz.duHauptsatzLaesstSichMitNachfolgendemDuHauptsatzZusammenziehen()) {
-            return ersterSatz.getDuHauptsatzMitVorfeld(vorfeld)
+            return GermanUtil.joinToNull(
+                    ersterSatz.getDuHauptsatzMitVorfeld(vorfeld),
                     // "Dann hebst du die goldene Kugel auf"
-                    + " und "
-                    + zweiterSatz.getDuSatzanschlussOhneSubjekt(); // "nimmst ein Bad"
+                    "und",
+                    zweiterSatz.getDuSatzanschlussOhneSubjekt()); // "nimmst ein Bad"
         }
 
-        return ersterSatz.getDuHauptsatzMitVorfeld(vorfeld)
+        return GermanUtil.joinToNull(
+                ersterSatz.getDuHauptsatzMitVorfeld(vorfeld),
                 // "Dann hebst du die goldene Kugel auf"
-                + "; "
-                + zweiterSatz.getDuHauptsatz(); // "du nimmst ein Bad"
+                ";",
+                zweiterSatz.getDuHauptsatz()); // "du nimmst ein Bad"
     }
 
     @Override
-    public String getDuHauptsatzMitSpeziellemVorfeld() {
+    public Wortfolge getDuHauptsatzMitSpeziellemVorfeld() {
         if (ersterSatz.duHauptsatzLaesstSichMitNachfolgendemDuHauptsatzZusammenziehen()) {
-            return ersterSatz.getDuHauptsatzMitSpeziellemVorfeld()
+            return GermanUtil.joinToNull(
+                    ersterSatz.getDuHauptsatzMitSpeziellemVorfeld(),
                     // "Den Frosch nimmst du in die Hand"
-                    + " und "
-                    + zweiterSatz.getDuSatzanschlussOhneSubjekt(); // "nimmst ein Bad"
+                    "und",
+                    zweiterSatz.getDuSatzanschlussOhneSubjekt()); // "nimmst ein Bad"
         }
 
-        return ersterSatz.getDuHauptsatzMitSpeziellemVorfeld()
+        return GermanUtil.joinToNull(
+                ersterSatz.getDuHauptsatzMitSpeziellemVorfeld(),
                 // "Den Frosch nimmst du in die Hand"
-                + "; "
-                + zweiterSatz.getDuHauptsatz(); // "du nimmst ein Bad"
+                ";",
+                zweiterSatz.getDuHauptsatz()); // "du nimmst ein Bad"
     }
 
     @Override
-    public String getDuSatzanschlussOhneSubjekt(
+    public Wortfolge getDuSatzanschlussOhneSubjekt(
             final Collection<Modalpartikel> modalpartikeln) {
         if (ersterSatz.duHauptsatzLaesstSichMitNachfolgendemDuHauptsatzZusammenziehen()) {
-            return ersterSatz.getDuSatzanschlussOhneSubjekt(modalpartikeln)
+            return GermanUtil.joinToNull(
+                    ersterSatz.getDuSatzanschlussOhneSubjekt(modalpartikeln),
                     // "hebst die goldene Kugel auf"
-                    + " und "
-                    + zweiterSatz
-                    .getDuSatzanschlussOhneSubjekt(
-                            modalpartikeln); // "nimmst ein Bad"
+                    "und",
+                    zweiterSatz.getDuSatzanschlussOhneSubjekt(modalpartikeln)); // "nimmst ein Bad"
         }
 
-        return ersterSatz.getDuSatzanschlussOhneSubjekt(modalpartikeln)
+        return GermanUtil.joinToNull(
+                ersterSatz.getDuSatzanschlussOhneSubjekt(modalpartikeln),
                 // "hebst die goldene Kugel auf"
-                + "; "
-                + zweiterSatz.getDuHauptsatz(); // "du nimmst ein Bad"
+                ";",
+                zweiterSatz.getDuHauptsatz()); // "du nimmst ein Bad"
     }
 
     @Override
@@ -108,17 +114,19 @@ class ZweiPraedikateOhneLeerstellen
     }
 
     @Override
-    public String getVerbzweit(final Person person, final Numerus numerus) {
-        return ersterSatz.getVerbzweit(person, numerus)
-                + " und "
-                + zweiterSatz.getVerbzweit(person, numerus);
+    public Wortfolge getVerbzweit(final Person person, final Numerus numerus) {
+        return GermanUtil.joinToNull(
+                ersterSatz.getVerbzweit(person, numerus),
+                "und",
+                zweiterSatz.getVerbzweit(person, numerus));
     }
 
     @Override
-    public String getVerbletzt(final Person person, final Numerus numerus) {
-        return ersterSatz.getVerbletzt(person, numerus)
-                + " und "
-                + zweiterSatz.getVerbletzt(person, numerus);
+    public Wortfolge getVerbletzt(final Person person, final Numerus numerus) {
+        return GermanUtil.joinToNull(
+                ersterSatz.getVerbletzt(person, numerus),
+                "und",
+                zweiterSatz.getVerbletzt(person, numerus));
     }
 
     @Override

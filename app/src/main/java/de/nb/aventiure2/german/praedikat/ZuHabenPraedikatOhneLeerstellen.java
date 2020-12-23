@@ -11,8 +11,10 @@ import de.nb.aventiure2.annotations.Valenz;
 import de.nb.aventiure2.german.base.GermanUtil;
 import de.nb.aventiure2.german.base.Numerus;
 import de.nb.aventiure2.german.base.Person;
+import de.nb.aventiure2.german.base.Wortfolge;
 
 import static de.nb.aventiure2.german.base.GermanUtil.capitalize;
+import static de.nb.aventiure2.german.base.GermanUtil.joinToNull;
 import static de.nb.aventiure2.german.base.GermanUtil.joinToNullString;
 import static de.nb.aventiure2.german.base.Numerus.SG;
 import static de.nb.aventiure2.german.base.Person.P2;
@@ -70,11 +72,11 @@ public class ZuHabenPraedikatOhneLeerstellen implements PraedikatOhneLeerstellen
     }
 
     @Override
-    public String getDuSatzanschlussOhneSubjekt(final Collection<Modalpartikel> modalpartikeln) {
+    public Wortfolge getDuSatzanschlussOhneSubjekt(final Collection<Modalpartikel> modalpartikeln) {
         // hast Spannendes zu berichten
         // hast dich zu waschen
         // hast zu sagen: "Hallo!"
-        return joinToNullString(
+        return joinToNull(
                 HabenUtil.VERB.getDuFormOhnePartikel(),
                 // FIXME eigentlich sollte es lexikalischerKern.mitModalpartikeln()
                 //  oder so ähnlich heißen (oder als adverbiale Angaben?).
@@ -92,25 +94,25 @@ public class ZuHabenPraedikatOhneLeerstellen implements PraedikatOhneLeerstellen
     }
 
     @Override
-    public String getVerbzweit(final Person person, final Numerus numerus) {
+    public Wortfolge getVerbzweit(final Person person, final Numerus numerus) {
         // hast Spannendes zu berichten
         // hast dich zu waschen
         // hast zu sagen: "Hallo!"
 
-        return joinToNullString(
+        return joinToNull(
                 HabenUtil.VERB.getPraesensOhnePartikel(person, numerus), // "hast"
                 lexikalischerKern.getZuInfinitiv(person, numerus)); // "dich zu waschen"
     }
 
     @Override
-    public String getVerbletzt(final Person person, final Numerus numerus) {
+    public Wortfolge getVerbletzt(final Person person, final Numerus numerus) {
         // Spannendes zu berichten hast
         // dich zu waschen hast
         // zu sagen hast: "Hallo!"
 
         @Nullable final String nachfeld = getNachfeld(person, numerus);
 
-        return joinToNullString(
+        return joinToNull(
                 GermanUtil.cutSatzgliedVonHinten(
                         lexikalischerKern.getZuInfinitiv(person, numerus),
                         // "Spannendes zu berichten"
@@ -202,11 +204,11 @@ public class ZuHabenPraedikatOhneLeerstellen implements PraedikatOhneLeerstellen
     }
 
     @Override
-    public String getDuHauptsatzMitVorfeld(final String vorfeld) {
+    public Wortfolge getDuHauptsatzMitVorfeld(final String vorfeld) {
         // Dann hast du Spannendes zu berichten
         // Dann hast du dich zu waschen
         // Dann hast du zu sagen: "Hallo!"
-        return joinToNullString(
+        return joinToNull(
                 capitalize(vorfeld), // "dann"
                 HabenUtil.VERB.getDuFormOhnePartikel(), // "hast"
                 "du",
@@ -214,14 +216,14 @@ public class ZuHabenPraedikatOhneLeerstellen implements PraedikatOhneLeerstellen
     }
 
     @Override
-    public String getDuHauptsatzMitSpeziellemVorfeld() {
+    public Wortfolge getDuHauptsatzMitSpeziellemVorfeld() {
         @Nullable final String speziellesVorfeld = getSpeziellesVorfeld();
         if (speziellesVorfeld == null) {
             return getDuHauptsatz();
         }
 
         return capitalize(
-                joinToNullString(
+                joinToNull(
                         speziellesVorfeld, // "Spannendes"
                         HabenUtil.VERB.getDuFormOhnePartikel(), // "hast"
                         "du",

@@ -113,21 +113,14 @@ public class DescriptionBuilder {
             final GameObjectId subjektGameObject, final SubstantivischePhrase subjekt,
             final VerbSubjPraedikativeAdjektivphrase verb,
             final AdjPhrOhneLeerstellen adjPhrase) {
-        // FIXME Satz über Satz- oder Prädikats-Objekt erzeuben, etwa so:
-        //  verb.mit(adjPhrase).getVerbzweit()
-
-        // FIXME Das ist das Problem, dass ein Komma am Ende verschluckt werden könnte
-        final String praedikatInVerbzweitform =
+        // FIXME Satz über Satz-Objekt erzeugen: alsSatzMitSubjekt()
+        final Wortfolge praedikatInVerbzweitform =
                 verb.mit(adjPhrase).getVerbzweit(subjekt.getPerson(), subjekt.getNumerus());
 
         return neuerSatz(subjekt.nom()
                 + " "
                 + praedikatInVerbzweitform)
-                // FIXME nur nötig, weil das Komma oben verschluckt wurde und man hier
-                //  mit Strings hantiert.
-                .komma(adjPhrase.getPraedikativ(
-                        subjekt.getPerson(), subjekt.getNumerusGenus().getNumerus())
-                        .kommmaStehtAus())
+                .komma(praedikatInVerbzweitform.kommmaStehtAus())
                 .phorikKandidat(subjekt, subjektGameObject);
     }
 
@@ -171,6 +164,13 @@ public class DescriptionBuilder {
         return new TimedDescription<>(
                 neuerSatz(startsNew, description),
                 timeElapsed, counterIdIncrementedIfTextIsNarrated);
+    }
+
+    @NonNull
+    @CheckReturnValue
+    public static AllgDescription neuerSatz(final StructuralElement startsNew,
+                                            final Wortfolge wortfolge) {
+        return new AllgDescription(startsNew, capitalize(wortfolge));
     }
 
     @NonNull

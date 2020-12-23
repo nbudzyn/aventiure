@@ -6,6 +6,7 @@ import de.nb.aventiure2.german.base.Numerus;
 import de.nb.aventiure2.german.base.Person;
 import de.nb.aventiure2.german.base.PraepositionMitKasus;
 import de.nb.aventiure2.german.base.SubstantivischePhrase;
+import de.nb.aventiure2.german.base.Wortfolge;
 
 /**
  * Ein Verb (ggf. mit Präfix), das genau mit einem Subjekt, einem Präpositionalobjekt und
@@ -55,7 +56,7 @@ public enum VerbSubjAkkPraep implements Praedikat {
      * Gibt einen Satz zurück mit diesem Verb und diesen Objekten zurück.
      * ("Du nimmst den Frosch in die Hände")
      */
-    public String getDescriptionHauptsatz(
+    public Wortfolge getDescriptionHauptsatz(
             final SubstantivischePhrase describableAkk,
             final SubstantivischePhrase describablePraep) {
         return mitPraep(describablePraep).mit(describableAkk).getDuHauptsatz();

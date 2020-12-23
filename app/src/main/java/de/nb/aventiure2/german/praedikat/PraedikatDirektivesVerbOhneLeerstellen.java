@@ -16,8 +16,9 @@ import de.nb.aventiure2.german.base.Kasus;
 import de.nb.aventiure2.german.base.Numerus;
 import de.nb.aventiure2.german.base.Person;
 import de.nb.aventiure2.german.base.SubstantivischePhrase;
+import de.nb.aventiure2.german.base.Wortfolge;
 
-import static de.nb.aventiure2.german.base.GermanUtil.joinToNullString;
+import static de.nb.aventiure2.german.base.GermanUtil.joinToNull;
 
 /**
  * Ein Prädikat eines <i>direktiven Verbs</i>, in dem alle Leerstellen besetzt sind. Beispiele:
@@ -158,10 +159,10 @@ public class PraedikatDirektivesVerbOhneLeerstellen
     }
 
     @Override
-    public String getMittelfeld(final Collection<Modalpartikel> modalpartikeln,
-                                final Person personSubjekt,
-                                final Numerus numerusSubjekt) {
-        return joinToNullString(
+    public Wortfolge getMittelfeld(final Collection<Modalpartikel> modalpartikeln,
+                                   final Person personSubjekt,
+                                   final Numerus numerusSubjekt) {
+        return joinToNull(
                 getAdverbialeAngabeSkopusSatz(), // "aus einer Laune heraus"
                 GermanUtil.joinToNullString(modalpartikeln), // "mal eben"
                 getAdverbialeAngabeSkopusVerbAllg(), // "erneut"

@@ -3,10 +3,12 @@ package de.nb.aventiure2.german.description;
 import androidx.annotation.Nullable;
 
 import de.nb.aventiure2.german.base.GermanUtil;
+import de.nb.aventiure2.german.base.Wortfolge;
 import de.nb.aventiure2.german.praedikat.AbstractDuTextPart;
 
 import static com.google.common.base.Preconditions.checkArgument;
 import static de.nb.aventiure2.german.base.GermanUtil.joinToNullString;
+import static de.nb.aventiure2.german.base.Wortfolge.w;
 
 public class SimpleDuTextPart implements AbstractDuTextPart {
     /**
@@ -51,14 +53,14 @@ public class SimpleDuTextPart implements AbstractDuTextPart {
     }
 
     @Override
-    public String getDuHauptsatzMitVorfeld(final String vorfeld) {
-        return GermanUtil.buildHauptsatz(vorfeld, // "dann"
+    public Wortfolge getDuHauptsatzMitVorfeld(final String vorfeld) {
+        return w(GermanUtil.buildHauptsatz(vorfeld, // "dann"
                 verb, // "gehst"
-                GermanUtil.joinToNullString("du", remainder)); // "du den Fluss entlang"
+                GermanUtil.joinToNullString("du", remainder))); // "du den Fluss entlang"
     }
 
     @Override
-    public String getDuHauptsatzMitSpeziellemVorfeld() {
+    public Wortfolge getDuHauptsatzMitSpeziellemVorfeld() {
         if (vorfeldSatzglied == null) {
             return getDuHauptsatz();
         }
@@ -71,23 +73,23 @@ public class SimpleDuTextPart implements AbstractDuTextPart {
         @Nullable final String remainderWithoutVorfeldSatzglied =
                 GermanUtil.cutSatzglied(remainder, vorfeldSatzglied);
 
-        return GermanUtil.buildHauptsatz(vorfeldSatzglied,
+        return w(GermanUtil.buildHauptsatz(vorfeldSatzglied,
                 verb,
-                joinToNullString("du", remainderWithoutVorfeldSatzglied));
+                joinToNullString("du", remainderWithoutVorfeldSatzglied)));
     }
 
     @Override
-    public String getDuHauptsatz() {
-        return GermanUtil.buildHauptsatz("du",
+    public Wortfolge getDuHauptsatz() {
+        return w(GermanUtil.buildHauptsatz("du",
                 verb,
-                remainder);
+                remainder));
     }
 
     /**
      * Gibt etwas zurück wie "gehst weiter"
      */
     @Override
-    public String getDuSatzanschlussOhneSubjekt() {
-        return GermanUtil.joinToNullString(verb, remainder);
+    public Wortfolge getDuSatzanschlussOhneSubjekt() {
+        return GermanUtil.joinToNull(verb, remainder);
     }
 }

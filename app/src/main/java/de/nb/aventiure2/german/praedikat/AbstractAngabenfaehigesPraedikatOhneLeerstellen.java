@@ -9,8 +9,10 @@ import javax.annotation.Nullable;
 import de.nb.aventiure2.german.base.GermanUtil;
 import de.nb.aventiure2.german.base.Numerus;
 import de.nb.aventiure2.german.base.Person;
+import de.nb.aventiure2.german.base.Wortfolge;
 
 import static de.nb.aventiure2.german.base.GermanUtil.capitalize;
+import static de.nb.aventiure2.german.base.GermanUtil.joinToNull;
 import static de.nb.aventiure2.german.base.GermanUtil.joinToNullString;
 import static de.nb.aventiure2.german.base.Numerus.SG;
 import static de.nb.aventiure2.german.base.Person.P2;
@@ -71,8 +73,8 @@ public abstract class AbstractAngabenfaehigesPraedikatOhneLeerstellen
     }
 
     @Override
-    public String getDuHauptsatzMitVorfeld(final String vorfeld) {
-        return joinToNullString(
+    public Wortfolge getDuHauptsatzMitVorfeld(final String vorfeld) {
+        return joinToNull(
                 capitalize(vorfeld), // "dann"
                 verb.getDuFormOhnePartikel(), // "nimmst"
                 "du",
@@ -82,14 +84,14 @@ public abstract class AbstractAngabenfaehigesPraedikatOhneLeerstellen
     }
 
     @Override
-    public String getDuHauptsatzMitSpeziellemVorfeld() {
+    public Wortfolge getDuHauptsatzMitSpeziellemVorfeld() {
         @Nullable final String speziellesVorfeld = getSpeziellesVorfeld();
         if (speziellesVorfeld == null) {
             return getDuHauptsatz();
         }
 
         return capitalize(
-                joinToNullString(
+                joinToNull(
                         speziellesVorfeld, // "Den Frosch"
                         verb.getDuFormOhnePartikel(), // "nimmst"
                         "du",
@@ -99,14 +101,14 @@ public abstract class AbstractAngabenfaehigesPraedikatOhneLeerstellen
     }
 
     @Override
-    public String getDuHauptsatz() {
+    public Wortfolge getDuHauptsatz() {
         return getDuHauptsatz(new Modalpartikel[0]);
     }
 
     @Override
-    public String getDuHauptsatz(final Collection<Modalpartikel> modalpartikeln) {
+    public Wortfolge getDuHauptsatz(final Collection<Modalpartikel> modalpartikeln) {
         if (adverbialeAngabeSkopusSatz != null) {
-            return joinToNullString(
+            return joinToNull(
                     capitalize(adverbialeAngabeSkopusSatz.getText()),
                     verb.getDuFormOhnePartikel(),
                     "du",
@@ -116,12 +118,14 @@ public abstract class AbstractAngabenfaehigesPraedikatOhneLeerstellen
                     getNachfeld(P2, SG));
         }
 
-        return "Du " + getDuSatzanschlussOhneSubjekt(modalpartikeln);
+        return joinToNull(
+                "Du",
+                getDuSatzanschlussOhneSubjekt(modalpartikeln));
     }
 
     @Override
-    public String getDuSatzanschlussOhneSubjekt(final Collection<Modalpartikel> modalpartikeln) {
-        return joinToNullString(
+    public Wortfolge getDuSatzanschlussOhneSubjekt(final Collection<Modalpartikel> modalpartikeln) {
+        return joinToNull(
                 verb.getDuFormOhnePartikel(),
                 getMittelfeld(modalpartikeln, P2, SG),
                 verb.getPartikel(),
@@ -129,13 +133,13 @@ public abstract class AbstractAngabenfaehigesPraedikatOhneLeerstellen
     }
 
     @Override
-    public String getDuSatzanschlussOhneSubjekt() {
+    public Wortfolge getDuSatzanschlussOhneSubjekt() {
         return PraedikatOhneLeerstellen.super.getDuSatzanschlussOhneSubjekt();
     }
 
     @Override
-    public String getVerbzweit(final Person person, final Numerus numerus) {
-        return joinToNullString(
+    public Wortfolge getVerbzweit(final Person person, final Numerus numerus) {
+        return joinToNull(
                 verb.getPraesensOhnePartikel(person, numerus),
                 getMittelfeld(person, numerus),
                 verb.getPartikel(),
@@ -143,8 +147,8 @@ public abstract class AbstractAngabenfaehigesPraedikatOhneLeerstellen
     }
 
     @Override
-    public String getVerbletzt(final Person person, final Numerus numerus) {
-        return joinToNullString(
+    public Wortfolge getVerbletzt(final Person person, final Numerus numerus) {
+        return joinToNull(
                 getMittelfeld(person, numerus),
                 verb.getPraesensMitPartikel(person, numerus),
                 getNachfeld(person, numerus));
@@ -166,11 +170,6 @@ public abstract class AbstractAngabenfaehigesPraedikatOhneLeerstellen
         return joinToNullString(getMittelfeld(person, numerus),
                 verb.getInfinitiv(),
                 getNachfeld(person, numerus));
-    }
-
-    @Override
-    public String getDuSatzanschlussOhneSubjekt(final Modalpartikel... modalpartikeln) {
-        return null;
     }
 
     /**
@@ -195,24 +194,24 @@ public abstract class AbstractAngabenfaehigesPraedikatOhneLeerstellen
     }
 
     @Nullable
-    private String getMittelfeld(final Person personSubjekt,
-                                 final Numerus numerusSubjekt) {
+    private Wortfolge getMittelfeld(final Person personSubjekt,
+                                    final Numerus numerusSubjekt) {
         return getMittelfeld(personSubjekt, numerusSubjekt, new Modalpartikel[0]);
         // "den Frosch" oder "sich" / "mich"
     }
 
-    private String getMittelfeld(final Person personSubjekt,
-                                 final Numerus numerusSubjekt,
-                                 final Modalpartikel... modalpartikeln) {
+    private Wortfolge getMittelfeld(final Person personSubjekt,
+                                    final Numerus numerusSubjekt,
+                                    final Modalpartikel... modalpartikeln) {
         return getMittelfeld(asList(modalpartikeln), personSubjekt, numerusSubjekt);
     }
 
-    public abstract String getMittelfeld(final Collection<Modalpartikel> modalpartikeln,
-                                         Person personSubjekt,
-                                         Numerus numerusSubjekt);
+    public abstract Wortfolge getMittelfeld(final Collection<Modalpartikel> modalpartikeln,
+                                            Person personSubjekt,
+                                            Numerus numerusSubjekt);
 
     @Nullable
-    private String getMittelfeldOhneSpeziellesVorfeld(
+    private Wortfolge getMittelfeldOhneSpeziellesVorfeld(
             final Person personSubjekt, final Numerus numerusSubjekt) {
         return GermanUtil.cutSatzglied(
                 getMittelfeld(personSubjekt, numerusSubjekt),

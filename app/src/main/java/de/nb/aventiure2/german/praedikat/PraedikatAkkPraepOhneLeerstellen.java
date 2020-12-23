@@ -14,8 +14,9 @@ import de.nb.aventiure2.german.base.Numerus;
 import de.nb.aventiure2.german.base.Person;
 import de.nb.aventiure2.german.base.PraepositionMitKasus;
 import de.nb.aventiure2.german.base.SubstantivischePhrase;
+import de.nb.aventiure2.german.base.Wortfolge;
 
-import static de.nb.aventiure2.german.base.GermanUtil.joinToNullString;
+import static de.nb.aventiure2.german.base.GermanUtil.joinToNull;
 
 /**
  * Ein Prädikat, in dem ein Akkusativobjekt und ein Präpositionalobjekt gesetzt sind
@@ -143,10 +144,10 @@ public class PraedikatAkkPraepOhneLeerstellen
     }
 
     @Override
-    public String getMittelfeld(final Collection<Modalpartikel> modalpartikeln,
-                                final Person personSubjekt,
-                                final Numerus numerusSubjekt) {
-        return joinToNullString(
+    public Wortfolge getMittelfeld(final Collection<Modalpartikel> modalpartikeln,
+                                   final Person personSubjekt,
+                                   final Numerus numerusSubjekt) {
+        return joinToNull(
                 getAdverbialeAngabeSkopusSatz(), // "aus einer Laune heraus"
                 akk.akk(), // "das Teil"
                 GermanUtil.joinToNullString(modalpartikeln), // "besser doch"

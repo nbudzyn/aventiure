@@ -20,7 +20,14 @@ public class PraedikatDuDescription
         extends AbstractDuDescription<PraedikatOhneLeerstellen, PraedikatDuDescription> {
     PraedikatDuDescription(final StructuralElement startsNew,
                            final PraedikatOhneLeerstellen praedikat) {
-        super(startsNew, praedikat);
+        super(startsNew, praedikat, guessKommaStehtAus(praedikat));
+    }
+
+    private static boolean guessKommaStehtAus(final PraedikatOhneLeerstellen praedikat) {
+        // FIXME Hier gibt es ein Problem: Ob ein Komma aussteht, hängt von der
+        //  konkreten Realisierung es Prädikats ab (was steht im Vorfeld etc.).
+        //  Dies hier ist nur eine grobe Richtschnur.
+        return praedikat.getDuHauptsatz().kommmaStehtAus();
     }
 
     @CheckReturnValue

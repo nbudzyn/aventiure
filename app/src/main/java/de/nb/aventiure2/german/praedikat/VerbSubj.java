@@ -8,6 +8,7 @@ import javax.annotation.Nullable;
 
 import de.nb.aventiure2.german.base.Numerus;
 import de.nb.aventiure2.german.base.Person;
+import de.nb.aventiure2.german.base.Wortfolge;
 
 /**
  * Ein Verb (ggf. mit Präfix), das genau mit einem Subjekt steht (ohne Objekte).
@@ -86,7 +87,7 @@ public enum VerbSubj implements PraedikatOhneLeerstellen {
     }
 
     @Override
-    public String getDuSatzanschlussOhneSubjekt(final Collection<Modalpartikel> modalpartikeln) {
+    public Wortfolge getDuSatzanschlussOhneSubjekt(final Collection<Modalpartikel> modalpartikeln) {
         return toPraedikatSubj().getDuSatzanschlussOhneSubjekt(modalpartikeln);
     }
 
@@ -96,12 +97,12 @@ public enum VerbSubj implements PraedikatOhneLeerstellen {
     }
 
     @Override
-    public String getVerbzweit(final Person person, final Numerus numerus) {
+    public Wortfolge getVerbzweit(final Person person, final Numerus numerus) {
         return toPraedikatSubj().getVerbzweit(person, numerus);
     }
 
     @Override
-    public String getVerbletzt(final Person person, final Numerus numerus) {
+    public Wortfolge getVerbletzt(final Person person, final Numerus numerus) {
         return toPraedikatSubj().getVerbletzt(person, numerus);
     }
 
@@ -131,12 +132,12 @@ public enum VerbSubj implements PraedikatOhneLeerstellen {
     }
 
     @Override
-    public String getDuHauptsatzMitVorfeld(final String vorfeld) {
+    public Wortfolge getDuHauptsatzMitVorfeld(final String vorfeld) {
         return toPraedikatSubj().getDuHauptsatzMitVorfeld(vorfeld);
     }
 
     @Override
-    public String getDuHauptsatzMitSpeziellemVorfeld() {
+    public Wortfolge getDuHauptsatzMitSpeziellemVorfeld() {
         return toPraedikatSubj().getDuHauptsatzMitSpeziellemVorfeld();
     }
 

@@ -10,8 +10,9 @@ import de.nb.aventiure2.german.adjektiv.AdjPhrOhneLeerstellen;
 import de.nb.aventiure2.german.base.GermanUtil;
 import de.nb.aventiure2.german.base.Numerus;
 import de.nb.aventiure2.german.base.Person;
+import de.nb.aventiure2.german.base.Wortfolge;
 
-import static de.nb.aventiure2.german.base.GermanUtil.joinToNullString;
+import static de.nb.aventiure2.german.base.GermanUtil.joinToNull;
 
 /**
  * Ein Prädikat, bestehend aus einem Verb und einer prädikativen Adjektivphrase, in dem
@@ -132,16 +133,15 @@ public class PraedikatMitPraedikativerAdjektivphraseOhneLeerstellen
     }
 
     @Override
-    public String getMittelfeld(final Collection<Modalpartikel> modalpartikeln,
-                                final Person personSubjekt,
-                                final Numerus numerusSubjekt) {
-        return joinToNullString(
+    public Wortfolge getMittelfeld(final Collection<Modalpartikel> modalpartikeln,
+                                   final Person personSubjekt,
+                                   final Numerus numerusSubjekt) {
+        return joinToNull(
                 getAdverbialeAngabeSkopusSatz(), // "leider"
                 GermanUtil.joinToNullString(modalpartikeln), // "halt"
                 getAdverbialeAngabeSkopusVerbAllg(), // "erneut"
                 getAdverbialeAngabeSkopusVerbWohinWoher(), // "nach außen" (?)
                 adjektivphrase.getPraedikativ(personSubjekt, numerusSubjekt) // "glücklich"
-                // FIXME Hier könnte ein ausstehendes Komma verschwinden!
         );
     }
 

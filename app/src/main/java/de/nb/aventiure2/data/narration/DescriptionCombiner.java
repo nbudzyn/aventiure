@@ -6,6 +6,7 @@ import java.util.Collection;
 
 import javax.annotation.CheckReturnValue;
 
+import de.nb.aventiure2.german.base.Wortfolge;
 import de.nb.aventiure2.german.description.AbstractDescription;
 import de.nb.aventiure2.german.description.AbstractDuDescription;
 import de.nb.aventiure2.german.description.AllgDescription;
@@ -103,10 +104,14 @@ class DescriptionCombiner {
                     first.getDescriptionPartizipIIPhrase(P2, SG) +
                             (first.isKommaStehtAus() ? ", " : "");
 
-            res.add(
-                    new AllgDescription(params,
-                            // "Unten angekommen bist du ziemlich erschäpft"
-                            second.getDescriptionHauptsatzMitVorfeld(vorfeld)));
+            final Wortfolge hauptsatzMitVorfeld =
+                    second.getDescriptionHauptsatzMitVorfeld(vorfeld);
+
+            params.komma(hauptsatzMitVorfeld.kommmaStehtAus());
+
+            res.add(new AllgDescription(params,
+                    // "Unten angekommen bist du ziemlich erschäpft"
+                    hauptsatzMitVorfeld.getString()));
         }
 
         return res.build();

@@ -1,6 +1,7 @@
 package de.nb.aventiure2.german.description;
 
 import de.nb.aventiure2.german.base.StructuralElement;
+import de.nb.aventiure2.german.base.Wortfolge;
 import de.nb.aventiure2.german.praedikat.AbstractDuTextPart;
 
 /**
@@ -16,33 +17,46 @@ public abstract class AbstractDuDescription<
     AbstractDuDescription(final StructuralElement startsNew,
                           final P duTextPart) {
         // TODO Alle du()-Aufrufe prüfen, ggf. auf SENTENCE setzen
-        super(startsNew);
+        this(startsNew, duTextPart, false);
+    }
+
+    AbstractDuDescription(final StructuralElement startsNew,
+                          final P duTextPart,
+                          final boolean kommaStehtAus) {
+        // TODO Alle du()-Aufrufe prüfen, ggf. auf SENTENCE setzen
+        super(startsNew, kommaStehtAus);
         this.duTextPart = duTextPart;
     }
 
     @Override
     public String getDescriptionHauptsatzMitKonjunktionaladverbWennNoetig(
             final String konjunktionaladverb) {
-        return duTextPart.getDuHauptsatzMitKonjunktionaladverbWennNoetig(konjunktionaladverb);
+        // FIXME Derzeit ist die Sache mit dem Komma nicht einheitlich gelöst.
+        //  Gut wäre es wohl, wenn die DesriptionParams KEIN isKommaStehtAus
+        //  hätten, sondern wenn diese Informatoion hier on-the-fly ermittelt würde.
+        //  In der AllgDescription müsste man die Information dann zusätzlich speichern,
+        //  damit der Benutzer sie (nur dort?!) angeben kann.
+        return duTextPart.getDuHauptsatzMitKonjunktionaladverbWennNoetig(konjunktionaladverb)
+                .getString();
     }
 
-    public String getDescriptionHauptsatzMitVorfeld(final String vorfeld) {
+    public Wortfolge getDescriptionHauptsatzMitVorfeld(final String vorfeld) {
         return duTextPart.getDuHauptsatzMitVorfeld(vorfeld);
     }
 
     public String getDescriptionHauptsatzMitSpeziellemVorfeld() {
-        return duTextPart.getDuHauptsatzMitSpeziellemVorfeld();
+        return duTextPart.getDuHauptsatzMitSpeziellemVorfeld().getString();
     }
 
     @Override
     public String getDescriptionHauptsatz() {
-        return duTextPart.getDuHauptsatz();
+        return duTextPart.getDuHauptsatz().getString();
     }
 
     /**
      * Gibt etwas zurück wie "gehst weiter"
      */
     public String getDescriptionSatzanschlussOhneSubjekt() {
-        return duTextPart.getDuSatzanschlussOhneSubjekt();
+        return duTextPart.getDuSatzanschlussOhneSubjekt().getString();
     }
 }

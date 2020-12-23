@@ -11,7 +11,9 @@ import de.nb.aventiure2.annotations.Valenz;
 import de.nb.aventiure2.german.base.Numerus;
 import de.nb.aventiure2.german.base.Person;
 import de.nb.aventiure2.german.base.WoertlicheRede;
+import de.nb.aventiure2.german.base.Wortfolge;
 
+import static de.nb.aventiure2.german.base.GermanUtil.joinToNull;
 import static de.nb.aventiure2.german.base.GermanUtil.joinToNullString;
 
 /**
@@ -117,10 +119,10 @@ public class PraedikatMitWoertlicherRedeOhneLeerstellen
     }
 
     @Override
-    public String getMittelfeld(final Collection<Modalpartikel> modalpartikeln,
-                                final Person personSubjekt,
-                                final Numerus numerusSubjekt) {
-        return joinToNullString(
+    public Wortfolge getMittelfeld(final Collection<Modalpartikel> modalpartikeln,
+                                   final Person personSubjekt,
+                                   final Numerus numerusSubjekt) {
+        return joinToNull(
                 getAdverbialeAngabeSkopusSatz(), // "aus einer Laune heraus"
                 modalpartikeln,  // "mal eben"
                 getAdverbialeAngabeSkopusVerbAllg(), // "erneut"

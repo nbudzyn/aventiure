@@ -4,9 +4,11 @@ import java.util.Collection;
 
 import javax.annotation.Nullable;
 
+import de.nb.aventiure2.german.base.GermanUtil;
 import de.nb.aventiure2.german.base.Numerus;
 import de.nb.aventiure2.german.base.Person;
 import de.nb.aventiure2.german.base.SubstantivischePhrase;
+import de.nb.aventiure2.german.base.Wortfolge;
 import de.nb.aventiure2.german.satz.Satz;
 
 import static java.util.Arrays.asList;
@@ -26,7 +28,7 @@ public interface PraedikatOhneLeerstellen extends Praedikat, AbstractDuTextPart 
     //  neuen AbstractPraedikat führen, dass man dann auch speichern
     //  und weiterreichen kann!
     @Override
-    default String getDuHauptsatz() {
+    default Wortfolge getDuHauptsatz() {
         return getDuHauptsatz(new Modalpartikel[0]);
     }
 
@@ -37,12 +39,14 @@ public interface PraedikatOhneLeerstellen extends Praedikat, AbstractDuTextPart 
      * Prädikat beziehen</i>
      * ("Du nimmst den Ast besser doch")
      */
-    default String getDuHauptsatz(final Modalpartikel... modalpartikeln) {
+    default Wortfolge getDuHauptsatz(final Modalpartikel... modalpartikeln) {
         return getDuHauptsatz(asList(modalpartikeln));
     }
 
-    default String getDuHauptsatz(final Collection<Modalpartikel> modalpartikeln) {
-        return "Du " + getDuSatzanschlussOhneSubjekt(modalpartikeln);
+    default Wortfolge getDuHauptsatz(final Collection<Modalpartikel> modalpartikeln) {
+        return GermanUtil.joinToNull(
+                "Du ",
+                getDuSatzanschlussOhneSubjekt(modalpartikeln));
     }
 
     /**
@@ -50,7 +54,7 @@ public interface PraedikatOhneLeerstellen extends Praedikat, AbstractDuTextPart 
      * stünde, eingespart ist ("nimmst den Ast")
      */
     @Override
-    default String getDuSatzanschlussOhneSubjekt() {
+    default Wortfolge getDuSatzanschlussOhneSubjekt() {
         return getDuSatzanschlussOhneSubjekt(new Modalpartikel[0]);
     }
 
@@ -58,7 +62,7 @@ public interface PraedikatOhneLeerstellen extends Praedikat, AbstractDuTextPart 
      * Gibt einen Satz zurück mit diesem Prädikat, bei dem das Subjekt, das im Vorfeld
      * stünde, eingespart ist ("nimmst den Ast")
      */
-    default String getDuSatzanschlussOhneSubjekt(final Modalpartikel... modalpartikeln) {
+    default Wortfolge getDuSatzanschlussOhneSubjekt(final Modalpartikel... modalpartikeln) {
         return getDuSatzanschlussOhneSubjekt(asList(modalpartikeln)
         );
     }
@@ -68,7 +72,7 @@ public interface PraedikatOhneLeerstellen extends Praedikat, AbstractDuTextPart 
      * stünde, eingespart ist ("nimmst den Ast"), sowie ggf. diesen
      * Modalpartikeln ("nimmst den Ast eben doch").
      */
-    String getDuSatzanschlussOhneSubjekt(final Collection<Modalpartikel> modalpartikeln);
+    Wortfolge getDuSatzanschlussOhneSubjekt(final Collection<Modalpartikel> modalpartikeln);
 
     boolean duHauptsatzLaesstSichMitNachfolgendemDuHauptsatzZusammenziehen();
 
@@ -76,13 +80,13 @@ public interface PraedikatOhneLeerstellen extends Praedikat, AbstractDuTextPart 
      * Gibt das Prädikat "in Verbzweitform" zurück - das Verb steht also ganz am Anfang
      * (in einem Verbzweitsatz würde dann noch das Subjekt davor stehen).
      */
-    String getVerbzweit(Person person, Numerus numerus);
+    Wortfolge getVerbzweit(Person person, Numerus numerus);
 
     /**
      * Gibt das Prädikat "in Verbletztform" zurück - das Verb steht also am Ende,
      * nur noch gefolgt vom Nachfeld.
      */
-    String getVerbletzt(Person person, Numerus numerus);
+    Wortfolge getVerbletzt(Person person, Numerus numerus);
 
     /**
      * Gibt eine unflektierte Phrase mit Partizip II zurück: "unten angekommen",

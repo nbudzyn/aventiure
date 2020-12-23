@@ -1,13 +1,14 @@
 package de.nb.aventiure2.german.praedikat;
 
 import de.nb.aventiure2.german.base.GermanUtil;
+import de.nb.aventiure2.german.base.Wortfolge;
 
 public interface AbstractDuTextPart {
-    default String getDuHauptsatzMitKonjunktionaladverbWennNoetig(
+    default Wortfolge getDuHauptsatzMitKonjunktionaladverbWennNoetig(
             final String konjunktionaladverb) {
-        final String duHauptsatz = getDuHauptsatz();
+        final Wortfolge duHauptsatz = getDuHauptsatz();
 
-        final String duHauptsatzMitSpeziellemVorfeld =
+        final Wortfolge duHauptsatzMitSpeziellemVorfeld =
                 getDuHauptsatzMitSpeziellemVorfeld();
 
         if (!duHauptsatz.equals(duHauptsatzMitSpeziellemVorfeld)) {
@@ -17,19 +18,19 @@ public interface AbstractDuTextPart {
         return getDuHauptsatzMitVorfeld(konjunktionaladverb);
     }
 
-    String getDuHauptsatzMitVorfeld(String vorfeld);
+    Wortfolge getDuHauptsatzMitVorfeld(String vorfeld);
 
-    String getDuHauptsatzMitSpeziellemVorfeld();
+    Wortfolge getDuHauptsatzMitSpeziellemVorfeld();
 
     /**
      * Gibt einen Satz zurück mit diesem Prädikat.
      * ("Du nimmst den Ast")
      */
-    default String getDuHauptsatz() {
-        return GermanUtil.joinToNullString(
+    default Wortfolge getDuHauptsatz() {
+        return GermanUtil.joinToNull(
                 "Du",
                 getDuSatzanschlussOhneSubjekt());
     }
 
-    String getDuSatzanschlussOhneSubjekt();
+    Wortfolge getDuSatzanschlussOhneSubjekt();
 }

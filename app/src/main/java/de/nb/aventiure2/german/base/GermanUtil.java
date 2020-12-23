@@ -18,12 +18,20 @@ public class GermanUtil {
     private GermanUtil() {
     }
 
+    public static Wortfolge capitalize(final Wortfolge wortfolge) {
+        return w(capitalize(wortfolge.getString()), wortfolge.kommmaStehtAus());
+    }
+
     public static String capitalize(final String str) {
         if (str.isEmpty()) {
             return "";
         }
 
         return str.substring(0, 1).toUpperCase() + str.substring(1);
+    }
+
+    public static Wortfolge uncapitalize(final Wortfolge wortfolge) {
+        return w(uncapitalize(wortfolge.getString()), wortfolge.kommmaStehtAus());
     }
 
     public static String uncapitalize(final String str) {
@@ -182,6 +190,37 @@ public class GermanUtil {
      * dem Satzglied beginnt von vorn.
      */
     public static @Nullable
+    Wortfolge cutSatzglied(@Nullable final Wortfolge text, @Nullable final String satzglied) {
+        if (text == null) {
+            if (satzglied != null) {
+                throw new IllegalArgumentException(
+                        "Text null, but Satzglied was \"" + satzglied + "\".");
+            }
+
+            return null;
+        }
+
+        if (satzglied == null) {
+            return text;
+        }
+
+        // FIXME Hier gibt es ernste Probleme. Grob gesagt:
+        //  - Es könnte zu falscher Zeichensetzung ", , " o.Ä. kommmen.
+        //  - Wenn ein Satzglied entfernt wird, weiß man in einigen Fällen nicht, ob
+        //   Kommata vor oder nach dem Satzglied erhalten bleiben müssen oder nicht.
+        //  Die richtige Lösung wäre vermutlich, dass die Wortfolge nicht einfach nur einen
+        //  String speichert, sondern ihre einzelnen Satzglieder - und zu jedem Satzglied
+        //  auch noch die Information, ob danach ein Komma aussteht.
+        //  Vielleicht sollte man auch Differenzieren zwischen der Wortfolge und dem
+        //  "Mittelfeld", das seine Satzglieder kennt...
+        return w(cutSatzglied(text.getString(), satzglied), text.kommmaStehtAus());
+    }
+
+    /**
+     * Schneidet das Satzglied (einmalig) aus diesem Text. Die Suche nach
+     * dem Satzglied beginnt von vorn.
+     */
+    public static @Nullable
     String cutSatzglied(@Nullable final String text, @Nullable final String satzglied) {
         if (text == null) {
             if (satzglied != null) {
@@ -205,6 +244,32 @@ public class GermanUtil {
         return cutSatzglied(text, startIndex, satzglied.length());
     }
 
+    /**
+     * Schneidet das Satzglied (einmalig) aus diesem Text. Die Suche nach
+     * dem Satzglied beginnt von vorn.
+     */
+    public static @Nullable
+    Wortfolge cutSatzgliedVonHinten(@Nullable final Wortfolge text,
+                                    @Nullable final String satzglied) {
+        if (text == null) {
+            if (satzglied != null) {
+                throw new IllegalArgumentException(
+                        "Text null, but Satzglied was \"" + satzglied + "\".");
+            }
+
+            return null;
+        }
+
+        if (satzglied == null) {
+            return text;
+        }
+
+        // FIXME Hier gibt es ernste Probleme, s.o. Grob gesagt:
+        //  - Es könnte zu falscher Zeichensetzung ", , " o.Ä. kommmen.
+        //  - Wenn ein Satzglied entfernt wird, weiß man in einigen Fällen nicht, ob
+        //   Kommata vor oder nach dem Satzglied erhalten bleiben müssen oder nicht.
+        return w(cutSatzgliedVonHinten(text.getString(), satzglied), text.kommmaStehtAus());
+    }
 
     /**
      * Schneidet das Satzglied (einmalig) aus diesem Text;  die Suche nach

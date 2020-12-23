@@ -65,6 +65,7 @@ public enum FeelingTowardsType {
                         .collect(ImmutableList.toImmutableList());
 
         // FIXME Hier Prädikat- oder Satz-Instanzen erzeugen und zurückgeben!
+        //  PraedikativumPraedikat verwenden.
 
         res.addAll(mitPraefix(
                 altEindruckBeiBegegnungPraedAdjPhrasen, "offenkundig",

@@ -6,6 +6,7 @@ import androidx.annotation.Nullable;
 import de.nb.aventiure2.german.base.Numerus;
 import de.nb.aventiure2.german.base.Person;
 import de.nb.aventiure2.german.base.SubstantivischePhrase;
+import de.nb.aventiure2.german.base.Wortfolge;
 
 /**
  * Ein Verb (ggf. mit Präfix), das genau mit einem Subjekt, einem Dativobjekt und
@@ -83,7 +84,7 @@ public enum VerbSubjDatAkk implements Praedikat {
      * Gibt einen Satz zurück mit diesem Verb und diesen Objekten zurück.
      * ("Du machst dem Frosch Angebote")
      */
-    public String getDescriptionHauptsatz(
+    public Wortfolge getDescriptionHauptsatz(
             final SubstantivischePhrase describableDat,
             final SubstantivischePhrase describableAkk) {
         return mitDat(describableDat).mit(describableAkk).getDuHauptsatz();

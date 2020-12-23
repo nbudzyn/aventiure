@@ -12,6 +12,7 @@ import de.nb.aventiure2.data.world.syscomp.reaction.interfaces.Ruftyp;
 import de.nb.aventiure2.data.world.syscomp.state.IHasStateGO;
 import de.nb.aventiure2.data.world.syscomp.state.impl.RapunzelState;
 import de.nb.aventiure2.data.world.syscomp.storingplace.ILocationGO;
+import de.nb.aventiure2.german.base.Wortfolge;
 import de.nb.aventiure2.german.description.Kohaerenzrelation;
 import de.nb.aventiure2.scaction.AbstractScAction;
 
@@ -90,9 +91,12 @@ public class RufenAction extends AbstractScAction {
             n.narrateAlt(drueckeAus(kohaerenzrelation, du(ruftyp.getName())),
                     secs(30));
         } else {
+            final Wortfolge rufDuHaupsatz = ruftyp.getName().getDuHauptsatz();
             n.narrate(neuerSatz(
-                    "Und " + uncapitalize(ruftyp.getName().getDuHauptsatz()),
-                    secs(30)));
+                    "Und "
+                            + uncapitalize(rufDuHaupsatz).getString(),
+                    secs(30))
+                    .komma(rufDuHaupsatz.kommmaStehtAus()));
         }
 
         world.narrateAndDoReactions().onRuf(sc, Ruftyp.LASS_DEIN_HAAR_HERUNTER);

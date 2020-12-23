@@ -15,8 +15,9 @@ import de.nb.aventiure2.german.base.Person;
 import de.nb.aventiure2.german.base.Personalpronomen;
 import de.nb.aventiure2.german.base.Reflexivpronomen;
 import de.nb.aventiure2.german.base.SubstantivischePhrase;
+import de.nb.aventiure2.german.base.Wortfolge;
 
-import static de.nb.aventiure2.german.base.GermanUtil.joinToNullString;
+import static de.nb.aventiure2.german.base.GermanUtil.joinToNull;
 
 /**
  * Ein Prädikat, in dem ein Dativobjekt und Akkusativobjekt gesetzt sind
@@ -138,9 +139,9 @@ public class PraedikatDatAkkOhneLeerstellen
     }
 
     @Override
-    public String getMittelfeld(final Collection<Modalpartikel> modalpartikeln,
-                                final Person personSubjekt,
-                                final Numerus numerusSubjekt) {
+    public Wortfolge getMittelfeld(final Collection<Modalpartikel> modalpartikeln,
+                                   final Person personSubjekt,
+                                   final Numerus numerusSubjekt) {
         // Duden 1356: "Schwach betonte Personal- und Reflexivpronomen stehen
         // unmittelbar nach der linken Satzklammer [...] Wackernagel-Position"
 
@@ -152,7 +153,7 @@ public class PraedikatDatAkkOhneLeerstellen
             if (Personalpronomen.isPersonalpronomen(dat) ||
                     Reflexivpronomen.isReflexivpronomen(dat)) {
                 // Duden 1357: "Akkusativ > Dativ"
-                return joinToNullString(
+                return joinToNull(
                         akk, // "sie", Wackernagel-Position 1
                         dat, // "ihm", Wackernagel-Position 2
                         getAdverbialeAngabeSkopusSatz(), // "aus einer Laune heraus"
@@ -160,7 +161,7 @@ public class PraedikatDatAkkOhneLeerstellen
                         getAdverbialeAngabeSkopusVerbAllg()); // "auf deiner Flöte"
             }
 
-            return joinToNullString(
+            return joinToNull(
                     akk, // "sie", Wackernagel-Position
                     getAdverbialeAngabeSkopusSatz(), // "aus einer Laune heraus"
                     dat, // "dem Frosch"
@@ -170,7 +171,7 @@ public class PraedikatDatAkkOhneLeerstellen
 
         if (Personalpronomen.isPersonalpronomen(dat) ||
                 Reflexivpronomen.isReflexivpronomen(dat)) {
-            return joinToNullString(
+            return joinToNull(
                     dat, // "ihm", Wackernagel-Position
                     getAdverbialeAngabeSkopusSatz(), // "aus einer Laune heraus"
                     akk, // "die Melodie"
@@ -178,7 +179,7 @@ public class PraedikatDatAkkOhneLeerstellen
                     getAdverbialeAngabeSkopusVerbAllg()); // "auf deiner Flöte"
         }
 
-        return joinToNullString(
+        return joinToNull(
                 getAdverbialeAngabeSkopusSatz(), // "aus einer Laune heraus"
                 dat, // "dem Frosch"
                 GermanUtil.joinToNullString(modalpartikeln), // "halt"
