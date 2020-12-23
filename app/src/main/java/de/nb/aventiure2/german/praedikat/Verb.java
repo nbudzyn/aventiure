@@ -3,9 +3,10 @@ package de.nb.aventiure2.german.praedikat;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
+import com.google.common.base.Joiner;
+
 import java.util.Objects;
 
-import de.nb.aventiure2.german.base.GermanUtil;
 import de.nb.aventiure2.german.base.Numerus;
 import de.nb.aventiure2.german.base.Person;
 import de.nb.federkiel.deutsch.grammatik.wortart.flexion.VerbFlektierer;
@@ -161,7 +162,7 @@ public class Verb {
 
     @NonNull
     String getPraesensMitPartikel(final Person person, final Numerus numerus) {
-        return GermanUtil.joinToNullString(
+        return Joiner.on("").skipNulls().join(
                 partikel,
                 getPraesensOhnePartikel(person, numerus));
     }

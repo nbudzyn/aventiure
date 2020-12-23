@@ -5,9 +5,10 @@ import androidx.annotation.Nullable;
 import de.nb.aventiure2.german.base.GermanUtil;
 import de.nb.aventiure2.german.base.Interrogativpronomen;
 import de.nb.aventiure2.german.base.SubstantivischePhrase;
+import de.nb.aventiure2.german.base.Wortfolge;
 import de.nb.aventiure2.german.praedikat.PraedikatOhneLeerstellen;
 
-import static de.nb.aventiure2.german.base.GermanUtil.joinToNullString;
+import static de.nb.aventiure2.german.base.GermanUtil.joinToNull;
 
 /**
  * Ein Satz.
@@ -45,7 +46,7 @@ public class Satz {
      * <li>was du zu erzählen beginnen wirst
      * </ul>
      */
-    public String getIndirekteFrage() {
+    public Wortfolge getIndirekteFrage() {
         // Zurzeit unterstützen wir nur Interrogativpronomen für die normalen Kasus 
         // wie "wer" oder "was".
         // Später sollten auch unterstützt werden:
@@ -67,7 +68,7 @@ public class Satz {
         }
 
         // "was du zu berichten hast", "wem er was gegeben hat"
-        return joinToNullString(
+        return joinToNull(
                 erstesInterrogativpronomenImPraedikat, // "was" / "wem"
                 GermanUtil.cutSatzglied(
                         getVerletztsatz(),
@@ -76,23 +77,33 @@ public class Satz {
         );
     }
 
-    private String getIndirekteFrageNachSubjekt() {
+    private Wortfolge getIndirekteFrageNachSubjekt() {
         // "wer etwas zu berichten hat", "wer was zu berichten hat", "was er zu berichten hat"
         return getVerletztsatz();
     }
 
-    private String getObFrage() {
-        return joinToNullString(
+    private Wortfolge getObFrage() {
+        return joinToNull(
                 "ob",
                 getVerletztsatz() // "du etwas zu berichten hast"
         );
     }
 
     /**
+     * Gibt den Satz als Verbzweitsatz aus, z.B. "Du hast etwas zu berichten"
+     */
+    public Wortfolge getVerbzweitsatz() {
+        return joinToNull(
+                subjekt.nom(),
+                praedikat.getVerbzweit(subjekt.getPerson(), subjekt.getNumerus())
+        );
+    }
+
+    /**
      * Gibt den Satz als Verbletztsatz aus, z.B. "du etwas zu berichten hast"
      */
-    private String getVerletztsatz() {
-        return joinToNullString(
+    private Wortfolge getVerletztsatz() {
+        return joinToNull(
                 subjekt.nom(),
                 praedikat.getVerbletzt(subjekt.getPerson(), subjekt.getNumerus())
         );

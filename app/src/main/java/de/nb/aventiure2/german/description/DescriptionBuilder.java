@@ -17,7 +17,7 @@ import de.nb.aventiure2.german.base.SubstantivischePhrase;
 import de.nb.aventiure2.german.base.Wortfolge;
 import de.nb.aventiure2.german.praedikat.PraedikatOhneLeerstellen;
 import de.nb.aventiure2.german.praedikat.SeinUtil;
-import de.nb.aventiure2.german.praedikat.VerbSubjPraedikativeAdjektivphrase;
+import de.nb.aventiure2.german.satz.Satz;
 
 import static de.nb.aventiure2.german.base.GermanUtil.capitalize;
 import static de.nb.aventiure2.german.base.StructuralElement.PARAGRAPH;
@@ -98,30 +98,11 @@ public class DescriptionBuilder {
             final GameObjectId subjektGameObject, final SubstantivischePhrase subjekt,
             final AdjPhrOhneLeerstellen adjPhrase) {
         return ImmutableList.of(
-                neuerSatzMitPraedikativerAdjektivphrase(subjektGameObject, subjekt,
-                        WIRKEN,
-                        adjPhrase),
-                neuerSatzMitPraedikativerAdjektivphrase(subjektGameObject, subjekt,
-                        SCHEINEN,
-                        adjPhrase)
+                neuerSatz(WIRKEN.mit(adjPhrase).alsSatzMitSubjekt(subjekt))
+                        .phorikKandidat(subjekt, subjektGameObject),
+                neuerSatz(SCHEINEN.mit(adjPhrase).alsSatzMitSubjekt(subjekt))
+                        .phorikKandidat(subjekt, subjektGameObject)
         );
-    }
-
-    @CheckReturnValue
-    @NonNull
-    private static AllgDescription neuerSatzMitPraedikativerAdjektivphrase(
-            final GameObjectId subjektGameObject, final SubstantivischePhrase subjekt,
-            final VerbSubjPraedikativeAdjektivphrase verb,
-            final AdjPhrOhneLeerstellen adjPhrase) {
-        // FIXME Satz über Satz-Objekt erzeugen: alsSatzMitSubjekt()
-        final Wortfolge praedikatInVerbzweitform =
-                verb.mit(adjPhrase).getVerbzweit(subjekt.getPerson(), subjekt.getNumerus());
-
-        return neuerSatz(subjekt.nom()
-                + " "
-                + praedikatInVerbzweitform)
-                .komma(praedikatInVerbzweitform.kommmaStehtAus())
-                .phorikKandidat(subjekt, subjektGameObject);
     }
 
     @CheckReturnValue
@@ -139,6 +120,18 @@ public class DescriptionBuilder {
         return new TimedDescription<>(
                 neuerSatz(description),
                 timeElapsed, counterIdIncrementedIfTextIsNarrated);
+    }
+
+    @NonNull
+    @CheckReturnValue
+    public static AllgDescription neuerSatz(final Satz satz) {
+        return neuerSatz(satz.getVerbzweitsatz());
+    }
+
+    @NonNull
+    @CheckReturnValue
+    public static AllgDescription neuerSatz(final Wortfolge wortfolge) {
+        return neuerSatz(StructuralElement.SENTENCE, wortfolge);
     }
 
     @NonNull
