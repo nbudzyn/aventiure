@@ -11,6 +11,7 @@ import javax.annotation.CheckReturnValue;
 
 import de.nb.aventiure2.data.world.base.GameObjectId;
 import de.nb.aventiure2.data.world.time.*;
+import de.nb.aventiure2.german.adjektiv.AdjPhrOhneLeerstellen;
 import de.nb.aventiure2.german.base.Numerus;
 import de.nb.aventiure2.german.base.Person;
 import de.nb.aventiure2.german.base.StructuralElement;
@@ -51,9 +52,9 @@ public class DescriptionBuilder {
     @NonNull
     public static ImmutableList<TimedDescription<AllgDescription>> altNeuerWirkenScheinenSatz(
             final GameObjectId subjektGameObject, final SubstantivischePhrase subjekt,
-            final Collection<AllgDescription> altPraedAdjPhrasen,
+            final Collection<AdjPhrOhneLeerstellen> altAdjPhrasen,
             final AvTimeSpan timeElapsed) {
-        return altNeuerWirkenScheinenSatz(subjektGameObject, subjekt, altPraedAdjPhrasen).stream()
+        return altNeuerWirkenScheinenSatz(subjektGameObject, subjekt, altAdjPhrasen).stream()
                 .map(s -> new TimedDescription<>(s, timeElapsed))
                 .collect(ImmutableList.toImmutableList());
     }
@@ -83,11 +84,11 @@ public class DescriptionBuilder {
     @NonNull
     public static ImmutableList<AllgDescription> altNeuerWirkenScheinenSatz(
             final GameObjectId subjektGameObject, final SubstantivischePhrase subjekt,
-            final Collection<AllgDescription> altPraedAdjPhrasen) {
+            final Collection<AdjPhrOhneLeerstellen> altAdjPhrasen) {
         final ImmutableList.Builder<AllgDescription> alt = ImmutableList.builder();
 
-        for (final AllgDescription praedAdjPhrase : altPraedAdjPhrasen) {
-            alt.addAll(altNeuerWirkenScheinenSatz(subjektGameObject, subjekt, praedAdjPhrase));
+        for (final AdjPhrOhneLeerstellen adjPhrase : altAdjPhrasen) {
+            alt.addAll(altNeuerWirkenScheinenSatz(subjektGameObject, subjekt, adjPhrase));
         }
 
         return alt.build();
@@ -97,14 +98,14 @@ public class DescriptionBuilder {
     @NonNull
     private static ImmutableList<AllgDescription> altNeuerWirkenScheinenSatz(
             final GameObjectId subjektGameObject, final SubstantivischePhrase subjekt,
-            final AllgDescription praedAdjPhrase) {
+            final AdjPhrOhneLeerstellen adjPhrase) {
         return ImmutableList.of(
                 neuerWirkenScheinenSatz(subjektGameObject, subjekt,
                         wirkenVerbform(subjekt.getPerson(), subjekt.getNumerus()),
-                        praedAdjPhrase),
+                        adjPhrase),
                 neuerWirkenScheinenSatz(subjektGameObject, subjekt,
                         scheinenVerbform(subjekt.getPerson(), subjekt.getNumerus()),
-                        praedAdjPhrase)
+                        adjPhrase)
         );
     }
 
@@ -140,10 +141,15 @@ public class DescriptionBuilder {
     private static AllgDescription neuerWirkenScheinenSatz(
             final GameObjectId subjektGameObject, final SubstantivischePhrase subjekt,
             final String verb,
-            final AbstractDescription<?> praedikativum) {
+            final AdjPhrOhneLeerstellen adjPhrase) {
+        final AllgDescription praedikativeAdjPhrase = satzanschluss(
+                adjPhrase.getPraedikativ(
+                        subjekt.getPerson(), subjekt.getNumerusGenus().getNumerus()));
+
+        // FIXME Satz über Satz- oder Prädikats-Objekt erzeuben
         return neuerSatz(subjekt.nom() + " " + verb + " "
-                + praedikativum.getDescriptionHauptsatz())
-                .komma(praedikativum.isKommaStehtAus())
+                + praedikativeAdjPhrase.getDescriptionHauptsatz())
+                .komma(praedikativeAdjPhrase.isKommaStehtAus())
                 .phorikKandidat(subjekt, subjektGameObject);
     }
 

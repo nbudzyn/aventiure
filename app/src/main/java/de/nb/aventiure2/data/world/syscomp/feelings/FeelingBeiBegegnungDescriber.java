@@ -37,7 +37,7 @@ public interface FeelingBeiBegegnungDescriber {
             final boolean targetKnown);
 
     /**
-     * Gibt eventuell alternative prädikative Adjektivphrasen zurück, die den
+     * Gibt eventuell alternative Adjektivphrasen zurück, die den
      * Eindruck beschreiben, den dieses Feeling Being auf das Target macht, wenn die beiden sich
      * begegnen. Die Phrasen können mit
      * <i>wirken</i> oder <i>scheinen</i> verbunden werden.

@@ -28,6 +28,7 @@ import de.nb.aventiure2.data.world.syscomp.state.impl.RapunzelsZauberinState;
 import de.nb.aventiure2.data.world.syscomp.storingplace.ILocationGO;
 import de.nb.aventiure2.data.world.syscomp.talking.impl.RapunzelTalkingComp;
 import de.nb.aventiure2.data.world.time.*;
+import de.nb.aventiure2.german.adjektiv.AdjPhrOhneLeerstellen;
 import de.nb.aventiure2.german.base.Nominalphrase;
 import de.nb.aventiure2.german.base.NumerusGenus;
 import de.nb.aventiure2.german.base.PraepositionMitKasus;
@@ -424,7 +425,7 @@ public class RapunzelReactionsComp
     }
 
     /**
-     * Gibt eventuell alternative prädikative Adjektivphrasen zurück, den Eindruck
+     * Gibt eventuell alternative Adjektivphrasen zurück, den Eindruck
      * bezüglich Zuneigung / Abneigung beschreiben, den Rapunzels auf den
      * SC macht, wenn die beiden sich treffen. Man kann solche Phrasen mit
      * <i>wirken</i> oder <i>scheinen</i> verbinden.
@@ -432,9 +433,9 @@ public class RapunzelReactionsComp
      * @return Möglicherweise eine leere Liste (insbesondere bei extremen Gefühlen)!
      */
     @NonNull
-    private ImmutableList<AllgDescription> altZuneigungAbneigungEindruckAufScBeiBegegnungPraedAdjPhrase(
+    private ImmutableList<AdjPhrOhneLeerstellen> altZuneigungAbneigungEindruckAufScBeiBegegnungAdjPhr(
             final NumerusGenus rapunzelNumerusGenus) {
-        return feelingsComp.altEindruckAufScBeiBegegnungPraedAdjPhrase(
+        return feelingsComp.altEindruckAufScBeiBegegnungAdjPhr(
                 rapunzelNumerusGenus,
                 ZUNEIGUNG_ABNEIGUNG);
     }
@@ -456,8 +457,8 @@ public class RapunzelReactionsComp
                 secs(5)));
 
         // Könnte leer sein
-        final ImmutableList<AllgDescription> altZuneigungAbneigungEindruckPraedAdjPhrase =
-                altZuneigungAbneigungEindruckAufScBeiBegegnungPraedAdjPhrase(
+        final ImmutableList<AdjPhrOhneLeerstellen> altZuneigungAbneigungEindruckPraedAdjPhrase =
+                altZuneigungAbneigungEindruckAufScBeiBegegnungAdjPhr(
                         anaph.getNumerusGenus());
 
         // Evtl. wird hier nichts hinzugefügt

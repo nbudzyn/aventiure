@@ -17,6 +17,7 @@ import de.nb.aventiure2.data.world.base.GameObject;
 import de.nb.aventiure2.data.world.base.GameObjectId;
 import de.nb.aventiure2.data.world.syscomp.memory.MemoryComp;
 import de.nb.aventiure2.data.world.time.*;
+import de.nb.aventiure2.german.adjektiv.AdjPhrOhneLeerstellen;
 import de.nb.aventiure2.german.base.NumerusGenus;
 import de.nb.aventiure2.german.base.Personalpronomen;
 import de.nb.aventiure2.german.base.SubstantivischePhrase;
@@ -227,7 +228,7 @@ public class FeelingsComp extends AbstractStatefulComponent<FeelingsPCD> {
     }
 
     /**
-     * Gibt eventuell alternative prädikative Adjektivphrasen zurück, die den Eindruck
+     * Gibt eventuell alternative Adjektivphrasen zurück, die den Eindruck
      * beschreiben, den dieses Feeling Being auf den SC macht, wenn die beiden sich
      * begegnen. Die Phrasen können mit
      * <i>wirken</i> oder <i>scheinen</i> verbunden werden.
@@ -235,10 +236,10 @@ public class FeelingsComp extends AbstractStatefulComponent<FeelingsPCD> {
      * @return Möglicherweise eine leere Liste (insbesondere bei extremen Gefühlen)!
      */
     @NonNull
-    public ImmutableList<AllgDescription> altEindruckAufScBeiBegegnungPraedAdjPhrase(
+    public ImmutableList<AdjPhrOhneLeerstellen> altEindruckAufScBeiBegegnungAdjPhr(
             final NumerusGenus gameObjectSubjektNumerusGenus,
             final FeelingTowardsType type) {
-        return altEindruckBeiBegegnungPraedAdjPhrase(
+        return altEindruckBeiBegegnungAdjPhr(
                 gameObjectSubjektNumerusGenus,
                 SPIELER_CHARAKTER,
                 Personalpronomen.get(P2,
@@ -274,7 +275,7 @@ public class FeelingsComp extends AbstractStatefulComponent<FeelingsPCD> {
     }
 
     /**
-     * Gibt eventuell alternative prädikative Adjektivphrasen zurück, die den Eindruck
+     * Gibt eventuell alternative Adjektivphrasen zurück, die den Eindruck
      * beschreiben, den dieses Feeling Beings auf das Target macht, wenn die beiden sich
      * begegnen. Die Phrasen können mit
      * <i>wirken</i> oder <i>scheinen</i> verbunden werden.
@@ -284,7 +285,7 @@ public class FeelingsComp extends AbstractStatefulComponent<FeelingsPCD> {
      *
      * @return Möglicherweise eine leere Liste (insbesondere bei extremen Gefühlen)!
      */
-    private ImmutableList<AllgDescription> altEindruckBeiBegegnungPraedAdjPhrase(
+    private ImmutableList<AdjPhrOhneLeerstellen> altEindruckBeiBegegnungAdjPhr(
             final NumerusGenus gameObjectSubjektNumerusGenus,
             final GameObjectId feelingTargetId,
             final SubstantivischePhrase targetDesc,
@@ -292,7 +293,7 @@ public class FeelingsComp extends AbstractStatefulComponent<FeelingsPCD> {
         final boolean targetKnown =
                 memoryComp != null ? memoryComp.isKnown(feelingTargetId) : false;
 
-        return type.altEindruckBeiBegegnungPraedAdjPhr(
+        return type.altEindruckBeiBegegnungAdjPhr(
                 getGameObjectPerson(), gameObjectSubjektNumerusGenus, targetDesc,
                 getFeelingTowards(feelingTargetId, type),
                 targetKnown);

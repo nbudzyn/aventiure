@@ -49,14 +49,25 @@ public enum FeelingTowardsType {
             final boolean targetKnown) {
         final ImmutableList.Builder<AllgDescription> res = ImmutableList.builder();
 
-        final ImmutableList<AllgDescription> altFeelingBeiBegegnungPraedAdjPhrase =
-                altEindruckBeiBegegnungPraedAdjPhr(
+        final ImmutableList<AdjPhrOhneLeerstellen> altEindruckBeiBegegnungAdjPhrasen =
+                altEindruckBeiBegegnungAdjPhr(
                         gameObjectSubjektPerson, gameObjectSubjektNumerusGenus, targetDesc,
                         feelingIntensity, targetKnown
                 );
 
+        final ImmutableList<AllgDescription> altEindruckBeiBegegnungPraedAdjPhrasen =
+                altEindruckBeiBegegnungAdjPhrasen.stream()
+                        .map(adjPhr ->
+                                satzanschluss(
+                                        adjPhr.getPraedikativ(
+                                                gameObjectSubjektPerson,
+                                                gameObjectSubjektNumerusGenus.getNumerus())))
+                        .collect(ImmutableList.toImmutableList());
+
+        // FIXME Hier Prädikat- oder Satz-Instanzen erzeugen und zurückgeben!
+
         res.addAll(mitPraefix(
-                altFeelingBeiBegegnungPraedAdjPhrase, "offenkundig",
+                altEindruckBeiBegegnungPraedAdjPhrasen, "offenkundig",
                 "sichtlich",
                 "offenbar", "ganz offenbar"
         ));
@@ -70,7 +81,7 @@ public enum FeelingTowardsType {
     }
 
     /**
-     * Gibt eventuell alternative prädikative Adjektivphrasen zurück, die den Eindruck
+     * Gibt eventuell alternative Adjektivphrasen zurück, die den Eindruck
      * beschreiben, den dieses Feeling Being auf das Target macht, wenn die beiden sich
      * begegnen. Die Phrasen können mit,
      * <i>wirken</i> oder <i>scheinen</i> verbunden werden.
@@ -80,25 +91,15 @@ public enum FeelingTowardsType {
      *
      * @return Möglicherweise eine leere Liste (insbesondere bei extremen Gefühlen)!
      */
-    public ImmutableList<AllgDescription> altEindruckBeiBegegnungPraedAdjPhr(
+    public ImmutableList<AdjPhrOhneLeerstellen> altEindruckBeiBegegnungAdjPhr(
             final Person gameObjectSubjektPerson,
             final NumerusGenus gameObjectSubjektNumerusGenus,
             final SubstantivischePhrase targetDesc, final int feelingIntensity,
             final boolean targetKnown) {
-        // FIXME Adjektivphrasen ggf. auch diskontinuierlich ausgeben
-
-        final ImmutableList<AdjPhrOhneLeerstellen> res =
-                feelingBeiBegegnungDescriber.altEindruckBeiBegegnungAdjPhr(
-                        gameObjectSubjektPerson, gameObjectSubjektNumerusGenus, targetDesc,
-                        feelingIntensity, targetKnown
-                );
-        return res.stream()
-                .map(adjPhr ->
-                        satzanschluss(
-                                adjPhr.getPraedikativ(
-                                        gameObjectSubjektPerson,
-                                        gameObjectSubjektNumerusGenus.getNumerus())))
-                .collect(ImmutableList.toImmutableList());
+        return feelingBeiBegegnungDescriber.altEindruckBeiBegegnungAdjPhr(
+                gameObjectSubjektPerson, gameObjectSubjektNumerusGenus, targetDesc,
+                feelingIntensity, targetKnown
+        );
     }
 
     @CheckReturnValue
