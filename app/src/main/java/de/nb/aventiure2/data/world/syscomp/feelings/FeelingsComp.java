@@ -21,8 +21,8 @@ import de.nb.aventiure2.german.adjektiv.AdjPhrOhneLeerstellen;
 import de.nb.aventiure2.german.base.NumerusGenus;
 import de.nb.aventiure2.german.base.Personalpronomen;
 import de.nb.aventiure2.german.base.SubstantivischePhrase;
+import de.nb.aventiure2.german.base.Wortfolge;
 import de.nb.aventiure2.german.description.AbstractDescription;
-import de.nb.aventiure2.german.description.AllgDescription;
 import de.nb.aventiure2.german.praedikat.AdverbialeAngabeSkopusSatz;
 import de.nb.aventiure2.scaction.stepcount.SCActionStepCountDao;
 
@@ -212,7 +212,7 @@ public class FeelingsComp extends AbstractStatefulComponent<FeelingsPCD> {
      * Man kann ein solches Prädikativum in einer Konstruktion wie "Rapunzel ist ..." verwenden.
      */
     @NonNull
-    public ImmutableList<AllgDescription> altFeelingsBeiBegegnungMitScPraedikativum(
+    public ImmutableList<Wortfolge> altFeelingsBeiBegegnungMitScPraedikativum(
             final NumerusGenus gameObjectSubjektNumerusGenus,
             final FeelingTowardsType type) {
         return altFeelingBeiBegegnungPraedikativum(
@@ -260,7 +260,7 @@ public class FeelingsComp extends AbstractStatefulComponent<FeelingsPCD> {
      * "du, die du..." oder "du, das du..." generiert wird.
      */
     @NonNull
-    private ImmutableList<AllgDescription> altFeelingBeiBegegnungPraedikativum(
+    private ImmutableList<Wortfolge> altFeelingBeiBegegnungPraedikativum(
             final NumerusGenus gameObjectSubjektNumerusGenus,
             final GameObjectId feelingTargetId,
             final SubstantivischePhrase targetDesc,

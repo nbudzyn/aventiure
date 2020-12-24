@@ -11,9 +11,9 @@ import de.nb.aventiure2.german.adjektiv.AdjPhrOhneLeerstellen;
 import de.nb.aventiure2.german.base.NumerusGenus;
 import de.nb.aventiure2.german.base.Person;
 import de.nb.aventiure2.german.base.SubstantivischePhrase;
-import de.nb.aventiure2.german.description.AllgDescription;
+import de.nb.aventiure2.german.base.Wortfolge;
 
-import static de.nb.aventiure2.german.description.DescriptionBuilder.satzanschluss;
+import static de.nb.aventiure2.german.base.Wortfolge.w;
 
 /**
  * Ein Spektrum von Gefühlen, dass ein {@link IFeelingBeingGO} gegenüber jemandem oder
@@ -42,12 +42,12 @@ public enum FeelingTowardsType {
      *
      * @return (gibt niemals eine leere Liste zurück !)
      */
-    public ImmutableList<AllgDescription> altFeelingBeiBegegnungPraedikativum(
+    public ImmutableList<Wortfolge> altFeelingBeiBegegnungPraedikativum(
             final Person gameObjectSubjektPerson,
             final NumerusGenus gameObjectSubjektNumerusGenus,
             final SubstantivischePhrase targetDesc, final int feelingIntensity,
             final boolean targetKnown) {
-        final ImmutableList.Builder<AllgDescription> res = ImmutableList.builder();
+        final ImmutableList.Builder<Wortfolge> res = ImmutableList.builder();
 
         final ImmutableList<AdjPhrOhneLeerstellen> altEindruckBeiBegegnungAdjPhrasen =
                 altEindruckBeiBegegnungAdjPhr(
@@ -55,13 +55,12 @@ public enum FeelingTowardsType {
                         feelingIntensity, targetKnown
                 );
 
-        final ImmutableList<AllgDescription> altEindruckBeiBegegnungPraedAdjPhrasen =
+        final ImmutableList<Wortfolge> altEindruckBeiBegegnungPraedAdjPhrasen =
                 altEindruckBeiBegegnungAdjPhrasen.stream()
                         .map(adjPhr ->
-                                satzanschluss(
-                                        adjPhr.getPraedikativ(
-                                                gameObjectSubjektPerson,
-                                                gameObjectSubjektNumerusGenus.getNumerus())))
+                                adjPhr.getPraedikativ(
+                                        gameObjectSubjektPerson,
+                                        gameObjectSubjektNumerusGenus.getNumerus()))
                         .collect(ImmutableList.toImmutableList());
 
         // FIXME Hier Prädikat- oder Satz-Instanzen erzeugen und zurückgeben!
@@ -104,8 +103,8 @@ public enum FeelingTowardsType {
     }
 
     @CheckReturnValue
-    private static Iterable<AllgDescription> mitPraefix(
-            final Collection<? extends AllgDescription> altPraedAdjPhrasen,
+    private static Iterable<Wortfolge> mitPraefix(
+            final Collection<Wortfolge> altPraedAdjPhrasen,
             final String... prefixes) {
         return Stream.of(prefixes)
                 .flatMap(
@@ -118,16 +117,13 @@ public enum FeelingTowardsType {
     }
 
     @CheckReturnValue
-    private static AllgDescription mitPraefix(final String praefix,
-                                              final AllgDescription desc) {
-        final String hauptsatz = desc.getDescriptionHauptsatz();
+    private static Wortfolge mitPraefix(final String praefix,
+                                        final Wortfolge wortfolge) {
 
-        return satzanschluss(
+        return w(
                 praefix
                         + " "
-                        + hauptsatz)
-                .komma(desc.isKommaStehtAus())
-                .phorikKandidat(desc.getPhorikKandidat())
-                .beendet(desc.getEndsThis());
+                        + wortfolge.getString(),
+                wortfolge.kommmaStehtAus());
     }
 }

@@ -19,6 +19,7 @@ import de.nb.aventiure2.german.base.Nominalphrase;
 import de.nb.aventiure2.german.base.NumerusGenus;
 import de.nb.aventiure2.german.base.Personalpronomen;
 import de.nb.aventiure2.german.base.SubstantivischePhrase;
+import de.nb.aventiure2.german.base.Wortfolge;
 import de.nb.aventiure2.german.description.AbstractDescription;
 import de.nb.aventiure2.german.description.AllgDescription;
 import de.nb.aventiure2.german.description.TimedDescription;
@@ -39,17 +40,16 @@ import static de.nb.aventiure2.german.base.NumerusGenus.F;
 import static de.nb.aventiure2.german.base.NumerusGenus.M;
 import static de.nb.aventiure2.german.base.NumerusGenus.N;
 import static de.nb.aventiure2.german.base.NumerusGenus.PL_MFN;
-import static de.nb.aventiure2.german.base.Person.P3;
 import static de.nb.aventiure2.german.base.PraepositionMitKasus.ZU;
 import static de.nb.aventiure2.german.base.StructuralElement.PARAGRAPH;
 import static de.nb.aventiure2.german.base.StructuralElement.SENTENCE;
 import static de.nb.aventiure2.german.description.DescriptionBuilder.altNeuerWirkenScheinenSatz;
 import static de.nb.aventiure2.german.description.DescriptionBuilder.du;
 import static de.nb.aventiure2.german.description.DescriptionBuilder.neuerSatz;
-import static de.nb.aventiure2.german.description.DescriptionBuilder.satzanschluss;
 import static de.nb.aventiure2.german.praedikat.DirektivesVerb.BITTEN;
 import static de.nb.aventiure2.german.praedikat.VerbSubjDatAkk.AUSSCHUETTEN;
 import static de.nb.aventiure2.german.praedikat.VerbSubjObj.HINUNTERLASSEN;
+import static de.nb.aventiure2.german.praedikat.VerbSubjPraedikativeAdjektivphrase.WIRKEN;
 
 /**
  * Component for {@link World#RAPUNZEL}: Der Spieler
@@ -222,20 +222,20 @@ public class RapunzelTalkingComp extends AbstractTalkingComp {
         final SubstantivischePhrase anaph = getAnaphPersPronWennMglSonstShortDescription();
         @Nullable final Personalpronomen persPron = n.getAnaphPersPronWennMgl(RAPUNZEL);
 
-        final ImmutableList<AllgDescription> altZuneigungAbneigungPraedikativa =
+        final ImmutableList<Wortfolge> altZuneigungAbneigungPraedikativa =
                 altZuneigungAbneigungBeiBegegnungMitScPraedikativum(anaph.getNumerusGenus());
 
         final ImmutableList.Builder<AbstractDescription<?>> alt = ImmutableList.builder();
 
         // Könnte leer sein
-        final ImmutableList<AdjPhrOhneLeerstellen> altZuneigungAbneigungEindruckPraedAdjPhrase =
+        final ImmutableList<AdjPhrOhneLeerstellen> altZuneigungAbneigungEindruckAdjPhrasen =
                 altZuneigungAbneigungEindruckAufScBeiBegegnungAdjPhr(
                         anaph.getNumerusGenus());
 
         // Evtl. wird hier nichts hinzugefügt
         alt.addAll(
                 altNeuerWirkenScheinenSatz(RAPUNZEL, anaph,
-                        altZuneigungAbneigungEindruckPraedAdjPhrase));
+                        altZuneigungAbneigungEindruckAdjPhrasen));
 
         final int zuneigungTowardsSC =
                 feelingsComp.getFeelingTowards(SPIELER_CHARAKTER, ZUNEIGUNG_ABNEIGUNG);
@@ -334,33 +334,27 @@ public class RapunzelTalkingComp extends AbstractTalkingComp {
                         .beendet(PARAGRAPH));
             }
         } else if (zuneigungTowardsSC == FeelingIntensity.NUR_LEICHT) {
+            final ImmutableList<Wortfolge> wirktWortfolge =
+                    altZuneigungAbneigungEindruckAdjPhrasen.stream()
+                            .map(adjPhr ->
+                                    WIRKEN.mit(adjPhr)
+                                            .getVerbzweit(
+                                                    anaph.getPerson(),
+                                                    anaph.getNumerus()))
+                            .collect(ImmutableList.toImmutableList());
             alt.addAll(altKombinationenBeendetParagraph(
                     "„Hallo“, antwortet "
                             + anaph.nom()
-                            + " und wirkt ",
-                    // FIXME Sätze über ein Satz- oder Prädikats-Objekt verbinden
-                    altZuneigungAbneigungEindruckPraedAdjPhrase.stream()
-                            .map(adjPhr ->
-                                    satzanschluss(
-                                            adjPhr.getPraedikativ(
-                                                    P3,
-                                                    anaph.getNumerusGenus().getNumerus())))
-                            .collect(ImmutableList.toImmutableList()),
-                    F, RAPUNZEL
+                            + " und ",
+                    wirktWortfolge,
+                    anaph.getNumerusGenus(), RAPUNZEL
             ));
             if (scBereitsZuvorSchonEinmalGetroffen) {
                 alt.addAll(altKombinationenBeendetParagraph(
                         "„Ach, ihr seid es wieder.“ "
                                 + capitalize(anaph.nom())
-                                + " wirkt ",
-                        // FIXME Sätze über ein Satz- oder Prädikats-Objekt verbinden
-                        altZuneigungAbneigungEindruckPraedAdjPhrase.stream()
-                                .map(adjPhr ->
-                                        satzanschluss(
-                                                adjPhr.getPraedikativ(
-                                                        P3,
-                                                        anaph.getNumerusGenus().getNumerus())))
-                                .collect(ImmutableList.toImmutableList()),
+                                + " ",
+                        wirktWortfolge,
                         anaph.getNumerusGenus(), RAPUNZEL));
                 alt.addAll(altKombinationenBeendetParagraph(
                         "„Oh, ihr seid es wieder.“ "
@@ -448,10 +442,10 @@ public class RapunzelTalkingComp extends AbstractTalkingComp {
     /**
      * Gibt ein Prädikativum zurück, der die Zuneigung / Abneigung Rapunzels gegenüber dem
      * SC beschreibt, wenn sich die beiden begegenen. Man kann dieses Prädikativ in einer
-     * Konstruktion wie "Rapunzel wirkt..." verwenden.
+     * Konstruktion wie "Rapunzel ist ..." verwenden.
      */
     @NonNull
-    private ImmutableList<AllgDescription> altZuneigungAbneigungBeiBegegnungMitScPraedikativum(
+    private ImmutableList<Wortfolge> altZuneigungAbneigungBeiBegegnungMitScPraedikativum(
             final NumerusGenus rapunzelSubjektNumerusGenus) {
         return feelingsComp.altFeelingsBeiBegegnungMitScPraedikativum(
                 rapunzelSubjektNumerusGenus,
@@ -652,15 +646,15 @@ public class RapunzelTalkingComp extends AbstractTalkingComp {
 
     private static Iterable<AllgDescription> altKombinationenBeendetParagraph(
             final String praefix,
-            final ImmutableList<AllgDescription> alt,
+            final ImmutableList<Wortfolge> alt,
             final NumerusGenus phorikNumerusGenus,
             final GameObjectId phorikBezugsobjekt) {
         final ImmutableList.Builder<AllgDescription> res =
                 ImmutableList.builder();
 
-        for (final AbstractDescription<?> desc : alt) {
-            res.add(neuerSatz(praefix + desc.getDescriptionHauptsatz())
-                    .komma(desc.isKommaStehtAus())
+        for (final Wortfolge wortfolge : alt) {
+            res.add(neuerSatz(praefix + wortfolge.getString())
+                    .komma(wortfolge.kommmaStehtAus())
                     .phorikKandidat(phorikNumerusGenus, phorikBezugsobjekt)
                     .beendet(PARAGRAPH));
         }

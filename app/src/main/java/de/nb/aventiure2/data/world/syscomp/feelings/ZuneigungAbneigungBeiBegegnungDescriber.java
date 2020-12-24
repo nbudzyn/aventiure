@@ -17,12 +17,13 @@ import de.nb.aventiure2.german.base.Person;
 import de.nb.aventiure2.german.base.Personalpronomen;
 import de.nb.aventiure2.german.base.Reflexivpronomen;
 import de.nb.aventiure2.german.base.SubstantivischePhrase;
+import de.nb.aventiure2.german.base.Wortfolge;
 import de.nb.aventiure2.german.description.AbstractDescription;
-import de.nb.aventiure2.german.description.AllgDescription;
 import de.nb.aventiure2.german.praedikat.VerbSubjDatAkk;
 import de.nb.aventiure2.german.praedikat.VerbSubjObj;
 
 import static de.nb.aventiure2.german.base.Person.P2;
+import static de.nb.aventiure2.german.base.Wortfolge.w;
 import static de.nb.aventiure2.german.description.DescriptionBuilder.satzanschluss;
 import static de.nb.aventiure2.german.praedikat.VerbSubjObj.SEHEN;
 
@@ -33,7 +34,7 @@ import static de.nb.aventiure2.german.praedikat.VerbSubjObj.SEHEN;
 class ZuneigungAbneigungBeiBegegnungDescriber implements FeelingBeiBegegnungDescriber {
     @NonNull
     @Override
-    public ImmutableList<AllgDescription> altFeelingBeiBegegnungPraedikativ(
+    public ImmutableList<Wortfolge> altFeelingBeiBegegnungPraedikativ(
             final Person gameObjectSubjektPerson, final NumerusGenus gameObjectSubjektNumerusGenus,
             final SubstantivischePhrase targetDesc, final int feelingIntensity,
             final boolean targetKnown) {
@@ -64,13 +65,13 @@ class ZuneigungAbneigungBeiBegegnungDescriber implements FeelingBeiBegegnungDesc
             return ImmutableList.of();
         } else if (feelingIntensity == -FeelingIntensity.NUR_LEICHT) {
             return ImmutableList.of(
-                    satzanschluss("verwundert"),
-                    satzanschluss("überrascht"),
-                    satzanschluss("etwas überrumpelt")
+                    w("verwundert"),
+                    w("überrascht"),
+                    w("etwas überrumpelt")
             );
         } else if (feelingIntensity == FeelingIntensity.NEUTRAL) {
             return ImmutableList.of(
-                    satzanschluss("überrascht und etwas verwirrt")
+                    w("überrascht und etwas verwirrt")
             );
         } else if (feelingIntensity == FeelingIntensity.NUR_LEICHT) {
             return ImmutableList.of();
@@ -190,21 +191,21 @@ class ZuneigungAbneigungBeiBegegnungDescriber implements FeelingBeiBegegnungDesc
         return ImmutableList.of();
     }
 
-    private static AllgDescription adjektivphraseMitZuSehen(final String adjektivphrase,
-                                                            final Person subjektPerson,
-                                                            final NumerusGenus subjektNumerusGenus,
-                                                            final VerbSubjObj sehenVerb,
-                                                            final SubstantivischePhrase objekt) {
-        return satzanschluss(adjektivphrase
+    private static Wortfolge adjektivphraseMitZuSehen(final String adjektivphrase,
+                                                      final Person subjektPerson,
+                                                      final NumerusGenus subjektNumerusGenus,
+                                                      final VerbSubjObj sehenVerb,
+                                                      final SubstantivischePhrase objekt) {
+        // FIXME Adjektivphrase verwenden
+        return w(adjektivphrase
                 + ", "
                 + sehenVerb
                 .mit(objekt)
                 .getZuInfinitiv(
-                        subjektPerson, subjektNumerusGenus.getNumerus()))
-                .komma();
+                        subjektPerson, subjektNumerusGenus.getNumerus()), true);
     }
 
-    private static AllgDescription adjektivphraseMitAlsSiehtNebensatz(
+    private static Wortfolge adjektivphraseMitAlsSiehtNebensatz(
             final String adjektivphrase, final Person subjektPerson,
             final NumerusGenus subjektNumerusGenus,
             final SubstantivischePhrase objekt) {
@@ -217,10 +218,9 @@ class ZuneigungAbneigungBeiBegegnungDescriber implements FeelingBeiBegegnungDesc
                         objekt.akk(),
                         sehenVerbform)
                         .undWartest(subjektPerson == P2);
-        return satzanschluss(adjektivphrase
+        return w(adjektivphrase
                 + ", als "
-                + verbletztsatzanschluss.getDescriptionHauptsatz())
-                .komma();
+                + verbletztsatzanschluss.getDescriptionHauptsatz(), true);
     }
 
     @NonNull

@@ -33,6 +33,7 @@ import de.nb.aventiure2.german.base.Nominalphrase;
 import de.nb.aventiure2.german.base.NumerusGenus;
 import de.nb.aventiure2.german.base.PraepositionMitKasus;
 import de.nb.aventiure2.german.base.SubstantivischePhrase;
+import de.nb.aventiure2.german.base.Wortfolge;
 import de.nb.aventiure2.german.description.AbstractDescription;
 import de.nb.aventiure2.german.description.AllgDescription;
 import de.nb.aventiure2.german.description.TimedDescription;
@@ -348,7 +349,7 @@ public class RapunzelReactionsComp
         loadSC().feelingsComp().upgradeFeelingsTowards(RAPUNZEL,
                 ZUNEIGUNG_ABNEIGUNG, 0.75f, FeelingIntensity.DEUTLICH);
 
-        final ImmutableList<AllgDescription> altZuneigungAbneigungPraedikativa =
+        final ImmutableList<Wortfolge> altZuneigungAbneigungPraedikativa =
                 altZuneigungAbneigungBeiBegegnungMitScPraedikativum(anaph.getNumerusGenus());
 
         final ImmutableList.Builder<TimedDescription<?>> alt = ImmutableList.builder();
@@ -393,17 +394,17 @@ public class RapunzelReactionsComp
 
     private static Iterable<TimedDescription<AllgDescription>> altNeuePraefixSaetzeMitPraedikativum(
             final String praefix,
-            final ImmutableList<AllgDescription> altPraedikativa,
+            final ImmutableList<Wortfolge> altPraedikativa,
             final NumerusGenus phorikNumerusGenus,
             final GameObjectId phorikBezugsobjekt) {
         final ImmutableList.Builder<TimedDescription<AllgDescription>> res =
                 ImmutableList.builder();
 
-        for (final AllgDescription praedikativum : altPraedikativa) {
+        for (final Wortfolge praedikativum : altPraedikativa) {
             res.add(neuerSatz(praefix
-                            + praedikativum.getDescriptionHauptsatz(),
+                            + praedikativum,
                     secs(30))
-                    .komma(praedikativum.isKommaStehtAus())
+                    .komma(praedikativum.kommmaStehtAus())
                     .phorikKandidat(phorikNumerusGenus, phorikBezugsobjekt));
         }
 
@@ -416,7 +417,7 @@ public class RapunzelReactionsComp
      * Konstruktion wie "Rapunzel ist ..." verwenden.
      */
     @NonNull
-    private ImmutableList<AllgDescription> altZuneigungAbneigungBeiBegegnungMitScPraedikativum(
+    private ImmutableList<Wortfolge> altZuneigungAbneigungBeiBegegnungMitScPraedikativum(
             final NumerusGenus rapunzelNumerusGenus
     ) {
         return feelingsComp.altFeelingsBeiBegegnungMitScPraedikativum(
@@ -449,7 +450,7 @@ public class RapunzelReactionsComp
         final SubstantivischePhrase anaph =
                 getAnaphPersPronWennMglSonstDescription(true);
 
-        final ImmutableList<AllgDescription> altZuneigungAbneigungPraedikativum =
+        final ImmutableList<Wortfolge> altZuneigungAbneigungPraedikativum =
                 altZuneigungAbneigungBeiBegegnungMitScPraedikativum(anaph.getNumerusGenus());
 
         alt.addAll(altNeuerPraedikativumSatz(RAPUNZEL, anaph,

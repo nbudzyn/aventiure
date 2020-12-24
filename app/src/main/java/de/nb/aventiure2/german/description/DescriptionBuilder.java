@@ -39,7 +39,7 @@ public class DescriptionBuilder {
     @NonNull
     public static ImmutableList<TimedDescription<AllgDescription>> altNeuerPraedikativumSatz(
             final GameObjectId subjektGameObject, final SubstantivischePhrase subjekt,
-            final Collection<AllgDescription> altPraedikativa,
+            final Collection<Wortfolge> altPraedikativa,
             final AvTimeSpan timeElapsed) {
         return altNeuerPraedikativumSatz(subjektGameObject, subjekt, altPraedikativa).stream()
                 .map(s -> new TimedDescription<>(s, timeElapsed))
@@ -61,17 +61,17 @@ public class DescriptionBuilder {
     @NonNull
     public static ImmutableList<AllgDescription> altNeuerPraedikativumSatz(
             final GameObjectId subjektGameObject, final SubstantivischePhrase subjekt,
-            final Collection<AllgDescription> altPraedikativa) {
+            final Collection<Wortfolge> altPraedikativa) {
         final ImmutableList.Builder<AllgDescription> alt = ImmutableList.builder();
 
-        for (final AllgDescription praedikativum : altPraedikativa) {
+        for (final Wortfolge praedikativum : altPraedikativa) {
             alt.add(
                     neuerSatz(subjekt.nom() + " "
                             + SeinUtil.VERB
                             .getPraesensOhnePartikel(subjekt.getPerson(), subjekt.getNumerus())
                             + " "
-                            + praedikativum.getDescriptionHauptsatz())
-                            .komma(praedikativum.isKommaStehtAus())
+                            + praedikativum.getString())
+                            .komma(praedikativum.kommmaStehtAus())
                             .phorikKandidat(subjekt, subjektGameObject));
         }
 

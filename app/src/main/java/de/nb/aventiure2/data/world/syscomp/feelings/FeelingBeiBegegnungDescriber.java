@@ -8,7 +8,7 @@ import de.nb.aventiure2.german.adjektiv.AdjPhrOhneLeerstellen;
 import de.nb.aventiure2.german.base.NumerusGenus;
 import de.nb.aventiure2.german.base.Person;
 import de.nb.aventiure2.german.base.SubstantivischePhrase;
-import de.nb.aventiure2.german.description.AllgDescription;
+import de.nb.aventiure2.german.base.Wortfolge;
 
 /**
  * Beschreibt das Gefühl eines Feeling Beings
@@ -31,7 +31,7 @@ public interface FeelingBeiBegegnungDescriber {
      * @return Möglicherweise eine leere Liste
      */
     @NonNull
-    ImmutableList<AllgDescription> altFeelingBeiBegegnungPraedikativ(
+    ImmutableList<Wortfolge> altFeelingBeiBegegnungPraedikativ(
             Person gameObjectSubjektPerson, NumerusGenus gameObjectSubjektNumerusGenus,
             SubstantivischePhrase targetDesc, int feelingIntensity,
             final boolean targetKnown);
