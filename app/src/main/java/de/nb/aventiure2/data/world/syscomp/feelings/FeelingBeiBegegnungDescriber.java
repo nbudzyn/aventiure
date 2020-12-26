@@ -7,8 +7,9 @@ import com.google.common.collect.ImmutableList;
 import de.nb.aventiure2.german.adjektiv.AdjPhrOhneLeerstellen;
 import de.nb.aventiure2.german.base.NumerusGenus;
 import de.nb.aventiure2.german.base.Person;
+import de.nb.aventiure2.german.base.Praedikativum;
 import de.nb.aventiure2.german.base.SubstantivischePhrase;
-import de.nb.aventiure2.german.base.Wortfolge;
+import de.nb.aventiure2.german.satz.Satz;
 
 /**
  * Beschreibt das Gefühl eines Feeling Beings
@@ -16,9 +17,8 @@ import de.nb.aventiure2.german.base.Wortfolge;
  */
 public interface FeelingBeiBegegnungDescriber {
     /**
-     * Gibt reventuell alternative Prädikativa zurück, die das Gefühl dieses Feeling Beings
+     * Gibt reventuell alternative Sätze zurück, die das Gefühl dieses Feeling Beings
      * gegenüber dem Target beschreiben, wenn die beiden sich begegnen.
-     * Man kann ein solches Prädikativum in einer Konstruktion wie "Rapunzel ist ..." verwenden.
      * <p>
      * Die Methode garantiert, dass niemals etwas wie "du, der du..." oder
      * "du, die du..." oder "du, das du..." generiert wird.
@@ -26,16 +26,32 @@ public interface FeelingBeiBegegnungDescriber {
      * Diese Methode gibt zumindest immer dann eine nichtleere Liste zurück, wenn
      * {@link #altEindruckBeiBegegnungAdjPhr(Person, NumerusGenus, SubstantivischePhrase, int, boolean)}
      * eine leere Liste zurückgibt. Durch die Kombination bei der Methoden erhält man
-     * also immer mindestens eine Beschreibung.
+     * also immer mindestens einen Satz.
      *
      * @return Möglicherweise eine leere Liste
      */
     @NonNull
-    ImmutableList<Wortfolge> altFeelingBeiBegegnungPraedikativum(
-            Person gameObjectSubjektPerson, NumerusGenus gameObjectSubjektNumerusGenus,
+    ImmutableList<Satz> altFeelingBeiBegegnungSaetze(
+            final SubstantivischePhrase gameObjectSubjekt,
             SubstantivischePhrase targetDesc, int feelingIntensity,
             final boolean targetKnown);
 
+    /**
+     * Gibt reventuell alternative Prädikativa zurück, die das Gefühl dieses Feeling Beings
+     * gegenüber dem Target beschreiben, wenn die beiden sich begegnen.
+     * Man kann ein solches Prädikativum in einer Konstruktion wie "Rapunzel ist ..." verwenden.
+     * <p>
+     * Die Methode garantiert, dass niemals etwas wie "du, der du..." oder
+     * "du, die du..." oder "du, das du..." generiert wird.
+     *
+     * @return Möglicherweise eine leere Liste
+     */
+    @NonNull
+    ImmutableList<Praedikativum> altFeelingBeiBegegnungPraedikativum(
+            Person gameObjectSubjektPerson, NumerusGenus gameObjectSubjektNumerusGenus,
+            SubstantivischePhrase targetDesc, int feelingIntensity,
+            final boolean targetKnown);
+    
     /**
      * Gibt eventuell alternative Adjektivphrasen zurück, die den
      * Eindruck beschreiben, den dieses Feeling Being auf das Target macht, wenn die beiden sich

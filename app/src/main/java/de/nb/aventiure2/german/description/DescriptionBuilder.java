@@ -48,15 +48,28 @@ public class DescriptionBuilder {
 
     @CheckReturnValue
     @NonNull
+    public static ImmutableList<AllgDescription> neueSaetzeMitPhorikKandidat(
+            final SubstantivischePhrase phorikKandidatPhrase,
+            final GameObjectId phorikKandidatGameObjectId,
+            final Collection<Satz> saetze) {
+        return saetze.stream()
+                .map(s -> neuerSatz(s)
+                        .phorikKandidat(phorikKandidatPhrase, phorikKandidatGameObjectId))
+                .collect(toImmutableList());
+    }
+
+    @CheckReturnValue
+    @NonNull
     public static ImmutableList<AllgDescription> neuePraedikativumSaetze(
             final GameObjectId subjektGameObjectId, final SubstantivischePhrase subjekt,
             final Collection<Wortfolge> praedikativa) {
         return praedikativa.stream()
-                .map(p -> neuerSatz(subjekt.nom() + " "
-                        + SeinUtil.VERB
-                        .getPraesensOhnePartikel(subjekt.getPerson(), subjekt.getNumerus())
-                        + " "
-                        + p.getString())
+                .map(p -> neuerSatz(
+                        subjekt.nom() + " "
+                                + SeinUtil.VERB
+                                .getPraesensOhnePartikel(subjekt.getPerson(), subjekt.getNumerus())
+                                + " "
+                                + p.getString())
                         .komma(p.kommmaStehtAus())
                         .phorikKandidat(subjekt, subjektGameObjectId))
                 .collect(toImmutableList());

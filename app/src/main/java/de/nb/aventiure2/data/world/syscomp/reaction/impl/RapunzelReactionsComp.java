@@ -29,10 +29,8 @@ import de.nb.aventiure2.data.world.syscomp.talking.impl.RapunzelTalkingComp;
 import de.nb.aventiure2.data.world.time.*;
 import de.nb.aventiure2.german.adjektiv.AdjPhrOhneLeerstellen;
 import de.nb.aventiure2.german.base.Nominalphrase;
-import de.nb.aventiure2.german.base.NumerusGenus;
 import de.nb.aventiure2.german.base.PraepositionMitKasus;
 import de.nb.aventiure2.german.base.SubstantivischePhrase;
-import de.nb.aventiure2.german.base.Wortfolge;
 import de.nb.aventiure2.german.description.AbstractDescription;
 import de.nb.aventiure2.german.description.AllgDescription;
 import de.nb.aventiure2.german.description.TimedDescription;
@@ -59,7 +57,7 @@ import static de.nb.aventiure2.german.base.NumerusGenus.PL_MFN;
 import static de.nb.aventiure2.german.base.StructuralElement.PARAGRAPH;
 import static de.nb.aventiure2.german.base.StructuralElement.SENTENCE;
 import static de.nb.aventiure2.german.description.DescriptionBuilder.du;
-import static de.nb.aventiure2.german.description.DescriptionBuilder.neuePraedikativumSaetze;
+import static de.nb.aventiure2.german.description.DescriptionBuilder.neueSaetzeMitPhorikKandidat;
 import static de.nb.aventiure2.german.description.DescriptionBuilder.neuerSatz;
 import static de.nb.aventiure2.german.description.TimedDescription.toTimed;
 
@@ -348,14 +346,16 @@ public class RapunzelReactionsComp
         loadSC().feelingsComp().upgradeFeelingsTowards(RAPUNZEL,
                 ZUNEIGUNG_ABNEIGUNG, 0.75f, FeelingIntensity.DEUTLICH);
 
-        final ImmutableList<Wortfolge> altZuneigungAbneigungPraedikativa =
-                altZuneigungAbneigungBeiBegegnungMitScPraedikativum(anaph.getNumerusGenus());
-
         final ImmutableList.Builder<TimedDescription<?>> alt = ImmutableList.builder();
 
-        final ImmutableList<AllgDescription> neuePraedikativumSaetze =
-                neuePraedikativumSaetze(RAPUNZEL, anaph, altZuneigungAbneigungPraedikativa);
-        alt.addAll(toTimed(neuePraedikativumSaetze, secs(5)));
+        final ImmutableList<AllgDescription> altZuneigungAbneigungSaetze =
+                // Es wäre besser, wenn der Phorik-Kandidat schon beim Erzeugen des
+                // Satzes gesetzt würde.
+                neueSaetzeMitPhorikKandidat(
+                        anaph, RAPUNZEL,
+                        feelingsComp
+                                .altFeelingsBeiBegegnungMitScSaetze(anaph, ZUNEIGUNG_ABNEIGUNG));
+        alt.addAll(toTimed(altZuneigungAbneigungSaetze, secs(5)));
 
         alt.add(
                 // STORY Nur, wenn man sich noch nicht so kennt:
@@ -382,7 +382,7 @@ public class RapunzelReactionsComp
 
         if (loadSC().memoryComp().getKnown(RAPUNZEL) == KNOWN_FROM_DARKNESS) {
             alt.addAll(
-                    neuePraedikativumSaetze.stream()
+                    altZuneigungAbneigungSaetze.stream()
                             .map(s -> neuerSatz(
                                     "Am Fenster sitzt die junge Frau, schön als "
                                             + "du unter der Sonne noch keine gesehen hast. "
@@ -390,25 +390,11 @@ public class RapunzelReactionsComp
                                             + s.getDescriptionHauptsatz(),
                                     secs(30))
                                     .komma(s.isKommaStehtAus())
-                                    .phorikKandidat(F, RAPUNZEL))
+                                    .phorikKandidat(s.getPhorikKandidat()))
                             .collect(ImmutableList.toImmutableList())
             );
         }
         n.narrateAlt(alt);
-    }
-
-    /**
-     * Gibt alternative Prädikativa zurück, die die Zuneigung / Abneigung Rapunzels gegenüber dem
-     * SC beschreiben, wenn Rapunzel den SC trifft. Man kann solche Prädikativa in einer
-     * Konstruktion wie "Rapunzel ist ..." verwenden.
-     */
-    @NonNull
-    private ImmutableList<Wortfolge> altZuneigungAbneigungBeiBegegnungMitScPraedikativum(
-            final NumerusGenus rapunzelNumerusGenus
-    ) {
-        return feelingsComp.altFeelingsBeiBegegnungMitScPraedikativa(
-                rapunzelNumerusGenus,
-                ZUNEIGUNG_ABNEIGUNG);
     }
 
     private void narrateAndUpgradeFeelings_ScTrifftRapunzelObenImAltenTurmAn_Nachts() {
@@ -420,12 +406,15 @@ public class RapunzelReactionsComp
         final SubstantivischePhrase anaph =
                 getAnaphPersPronWennMglSonstDescription(true);
 
-        final ImmutableList<Wortfolge> altZuneigungAbneigungPraedikativum =
-                altZuneigungAbneigungBeiBegegnungMitScPraedikativum(anaph.getNumerusGenus());
+        final ImmutableList<AllgDescription> altZuneigungAbneigungSaetze =
+                // Es wäre besser, wenn der Phorik-Kandidat durch den Satz
+                //  gesetzt würde. Das ist allerdings kompliziert...
+                neueSaetzeMitPhorikKandidat(
+                        anaph, RAPUNZEL,
+                        feelingsComp
+                                .altFeelingsBeiBegegnungMitScSaetze(anaph, ZUNEIGUNG_ABNEIGUNG));
 
-        final ImmutableList<AllgDescription> neuePraedikativumSaetze =
-                neuePraedikativumSaetze(RAPUNZEL, anaph, altZuneigungAbneigungPraedikativum);
-        alt.addAll(toTimed(neuePraedikativumSaetze, secs(5)));
+        alt.addAll(toTimed(altZuneigungAbneigungSaetze, secs(5)));
 
         // Könnte leer sein
         final ImmutableList<AdjPhrOhneLeerstellen> altZuneigungAbneigungEindruckPraedAdjPhrase =

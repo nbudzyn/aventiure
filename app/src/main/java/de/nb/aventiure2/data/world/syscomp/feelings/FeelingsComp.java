@@ -21,10 +21,10 @@ import de.nb.aventiure2.german.adjektiv.AdjPhrOhneLeerstellen;
 import de.nb.aventiure2.german.base.NumerusGenus;
 import de.nb.aventiure2.german.base.Personalpronomen;
 import de.nb.aventiure2.german.base.SubstantivischePhrase;
-import de.nb.aventiure2.german.base.Wortfolge;
 import de.nb.aventiure2.german.description.AbstractDescription;
 import de.nb.aventiure2.german.description.AllgDescription;
 import de.nb.aventiure2.german.praedikat.AdverbialeAngabeSkopusSatz;
+import de.nb.aventiure2.german.satz.Satz;
 import de.nb.aventiure2.scaction.stepcount.SCActionStepCountDao;
 
 import static com.google.common.base.Preconditions.checkArgument;
@@ -211,16 +211,15 @@ public class FeelingsComp extends AbstractStatefulComponent<FeelingsPCD> {
     }
 
     /**
-     * Gibt alternative Prädikativa zurück, die das Gefühl dieses Feeling Beings
-     * gegenüber dem SC beschreibt, wenn die beiden sich begegnen.
-     * Man kann ein solches Prädikativum in einer Konstruktion wie "Rapunzel ist ..." verwenden.
+     * Gibt alternative Sätze zurück, die das Gefühl dieses Feeling Beings
+     * gegenüber dem SC beschreiben, wenn die beiden sich begegnen.
      */
     @NonNull
-    public ImmutableList<Wortfolge> altFeelingsBeiBegegnungMitScPraedikativa(
-            final NumerusGenus gameObjectSubjektNumerusGenus,
+    public ImmutableList<Satz> altFeelingsBeiBegegnungMitScSaetze(
+            final SubstantivischePhrase gameObjectSubjekt,
             final FeelingTowardsType type) {
-        return altFeelingBeiBegegnungPraedikativum(
-                gameObjectSubjektNumerusGenus,
+        return altFeelingBeiBegegnungSaetze(
+                gameObjectSubjekt,
                 SPIELER_CHARAKTER,
                 Personalpronomen.get(P2,
                         // Wir tun hier so, als wäre der Spieler männlich, aber das
@@ -277,24 +276,22 @@ public class FeelingsComp extends AbstractStatefulComponent<FeelingsPCD> {
     }
 
     /**
-     * Gibt alternative Prädikativa zurück, die das Gefühl dieses Feeling Beings
+     * Gibt alternative Sätze zurück, die das Gefühl dieses Feeling Beings
      * gegenüber dem Target beschreibt, wenn die beiden sich begegnen.
-     * Man kann ein solches Prädikativum in einer Konstruktion wie "Rapunzel ist ..." verwenden.
      * <p>
      * Die Methode garantiert, dass niemals etwas wie "du, der du..." oder
      * "du, die du..." oder "du, das du..." generiert wird.
      */
     @NonNull
-    private ImmutableList<Wortfolge> altFeelingBeiBegegnungPraedikativum(
-            final NumerusGenus gameObjectSubjektNumerusGenus,
+    private ImmutableList<Satz> altFeelingBeiBegegnungSaetze(
+            final SubstantivischePhrase gameObjectSubjekt,
             final GameObjectId feelingTargetId,
             final SubstantivischePhrase targetDesc,
             final FeelingTowardsType type) {
-        final boolean targetKnown =
-                memoryComp != null ? memoryComp.isKnown(feelingTargetId) : false;
+        final boolean targetKnown = memoryComp != null && memoryComp.isKnown(feelingTargetId);
 
-        return type.altFeelingBeiBegegnungPraedikativum(
-                getGameObjectPerson(), gameObjectSubjektNumerusGenus, targetDesc,
+        return type.altFeelingBeiBegegnungSaetze(
+                gameObjectSubjekt, targetDesc,
                 getFeelingTowards(feelingTargetId, type),
                 targetKnown);
     }

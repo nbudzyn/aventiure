@@ -1,14 +1,11 @@
 package de.nb.aventiure2.data.world.syscomp.talking.impl;
 
-import androidx.annotation.NonNull;
-
 import com.google.common.collect.ImmutableList;
 
 import javax.annotation.Nullable;
 
 import de.nb.aventiure2.data.database.AvDatabase;
 import de.nb.aventiure2.data.narration.Narrator;
-import de.nb.aventiure2.data.world.base.GameObjectId;
 import de.nb.aventiure2.data.world.gameobject.*;
 import de.nb.aventiure2.data.world.syscomp.feelings.FeelingIntensity;
 import de.nb.aventiure2.data.world.syscomp.feelings.FeelingsComp;
@@ -16,7 +13,6 @@ import de.nb.aventiure2.data.world.syscomp.state.impl.RapunzelStateComp;
 import de.nb.aventiure2.data.world.syscomp.talking.AbstractTalkingComp;
 import de.nb.aventiure2.german.adjektiv.AdjPhrOhneLeerstellen;
 import de.nb.aventiure2.german.base.Nominalphrase;
-import de.nb.aventiure2.german.base.NumerusGenus;
 import de.nb.aventiure2.german.base.Personalpronomen;
 import de.nb.aventiure2.german.base.SubstantivischePhrase;
 import de.nb.aventiure2.german.base.Wortfolge;
@@ -27,6 +23,7 @@ import de.nb.aventiure2.german.praedikat.AdverbialeAngabeSkopusVerbWohinWoher;
 import de.nb.aventiure2.german.praedikat.PraedikatOhneLeerstellen;
 import de.nb.aventiure2.german.praedikat.VerbSubjAkkPraep;
 
+import static com.google.common.collect.ImmutableList.toImmutableList;
 import static de.nb.aventiure2.data.world.gameobject.World.*;
 import static de.nb.aventiure2.data.world.syscomp.feelings.FeelingTowardsType.ZUNEIGUNG_ABNEIGUNG;
 import static de.nb.aventiure2.data.world.syscomp.feelings.Mood.AUFGEDREHT;
@@ -44,7 +41,9 @@ import static de.nb.aventiure2.german.base.PraepositionMitKasus.ZU;
 import static de.nb.aventiure2.german.base.StructuralElement.PARAGRAPH;
 import static de.nb.aventiure2.german.base.StructuralElement.SENTENCE;
 import static de.nb.aventiure2.german.description.DescriptionBuilder.du;
+import static de.nb.aventiure2.german.description.DescriptionBuilder.neueSaetzeMitPhorikKandidat;
 import static de.nb.aventiure2.german.description.DescriptionBuilder.neuerSatz;
+import static de.nb.aventiure2.german.description.DescriptionBuilder.satzanschluss;
 import static de.nb.aventiure2.german.praedikat.DirektivesVerb.BITTEN;
 import static de.nb.aventiure2.german.praedikat.VerbSubjDatAkk.AUSSCHUETTEN;
 import static de.nb.aventiure2.german.praedikat.VerbSubjObj.HINUNTERLASSEN;
@@ -221,8 +220,13 @@ public class RapunzelTalkingComp extends AbstractTalkingComp {
         final SubstantivischePhrase anaph = getAnaphPersPronWennMglSonstShortDescription();
         @Nullable final Personalpronomen persPron = n.getAnaphPersPronWennMgl(RAPUNZEL);
 
-        final ImmutableList<Wortfolge> altZuneigungAbneigungPraedikativa =
-                altZuneigungAbneigungBeiBegegnungMitScPraedikativum(anaph.getNumerusGenus());
+        final ImmutableList<AllgDescription> altZuneigungAbneigungSaetze =
+                // Es wäre besser, wenn der Phorik-Kandidat schon beim Erzeugen des
+                // Satzes gesetzt würde.
+                neueSaetzeMitPhorikKandidat(
+                        anaph, RAPUNZEL,
+                        feelingsComp
+                                .altFeelingsBeiBegegnungMitScSaetze(anaph, ZUNEIGUNG_ABNEIGUNG));
 
         final ImmutableList.Builder<AbstractDescription<?>> alt = ImmutableList.builder();
 
@@ -340,27 +344,21 @@ public class RapunzelTalkingComp extends AbstractTalkingComp {
                                             .getVerbzweit(
                                                     anaph.getPerson(),
                                                     anaph.getNumerus()))
-                            .collect(ImmutableList.toImmutableList());
+                            .collect(toImmutableList());
             alt.addAll(altKombinationenBeendetParagraph(
                     "„Hallo“, antwortet "
                             + anaph.nom()
                             + " und ",
-                    wirktWortfolge,
-                    anaph.getNumerusGenus(), RAPUNZEL
-            ));
+                    wirktWortfolge.stream()
+                            .map(wf -> satzanschluss(wf).phorikKandidat(F, RAPUNZEL))
+                            .collect(toImmutableList())));
             if (scBereitsZuvorSchonEinmalGetroffen) {
                 alt.addAll(altKombinationenBeendetParagraph(
-                        "„Ach, ihr seid es wieder.“ "
-                                + capitalize(anaph.nom())
-                                + " ",
-                        wirktWortfolge,
-                        anaph.getNumerusGenus(), RAPUNZEL));
+                        "„Ach, ihr seid es wieder.“ ",
+                        altZuneigungAbneigungSaetze));
                 alt.addAll(altKombinationenBeendetParagraph(
-                        "„Oh, ihr seid es wieder.“ "
-                                + capitalize(anaph.nom())
-                                + " ist ",
-                        altZuneigungAbneigungPraedikativa,
-                        anaph.getNumerusGenus(), RAPUNZEL));
+                        "„Oh, ihr seid es wieder.“ ",
+                        altZuneigungAbneigungSaetze));
                 alt.add(neuerSatz("„Ich hatte mich schon gefragt, ob ihr mal wieder "
                         + "vorbeischaut! Willkommen.“ –")
                         .beendet(SENTENCE)
@@ -436,19 +434,6 @@ public class RapunzelTalkingComp extends AbstractTalkingComp {
         n.narrateAlt(alt.build(), secs(5), RAPUNZEL_REAGIERT_AUF_SC_BEGRUESSUNG);
 
         setTalkingTo(SPIELER_CHARAKTER);
-    }
-
-    /**
-     * Gibt ein Prädikativum zurück, der die Zuneigung / Abneigung Rapunzels gegenüber dem
-     * SC beschreibt, wenn sich die beiden begegenen. Man kann dieses Prädikativ in einer
-     * Konstruktion wie "Rapunzel ist ..." verwenden.
-     */
-    @NonNull
-    private ImmutableList<Wortfolge> altZuneigungAbneigungBeiBegegnungMitScPraedikativum(
-            final NumerusGenus rapunzelSubjektNumerusGenus) {
-        return feelingsComp.altFeelingsBeiBegegnungMitScPraedikativa(
-                rapunzelSubjektNumerusGenus,
-                ZUNEIGUNG_ABNEIGUNG);
     }
 
     private void herzAusschuetten() {
@@ -629,16 +614,14 @@ public class RapunzelTalkingComp extends AbstractTalkingComp {
 
     private static Iterable<AllgDescription> altKombinationenBeendetParagraph(
             final String praefix,
-            final ImmutableList<Wortfolge> alt,
-            final NumerusGenus phorikNumerusGenus,
-            final GameObjectId phorikBezugsobjekt) {
+            final ImmutableList<AllgDescription> alt) {
         final ImmutableList.Builder<AllgDescription> res =
                 ImmutableList.builder();
 
-        for (final Wortfolge wortfolge : alt) {
-            res.add(neuerSatz(praefix + wortfolge.getString())
-                    .komma(wortfolge.kommmaStehtAus())
-                    .phorikKandidat(phorikNumerusGenus, phorikBezugsobjekt)
+        for (final AllgDescription allgDescription : alt) {
+            res.add(neuerSatz(praefix + allgDescription.getDescriptionHauptsatz())
+                    .komma(allgDescription.isKommaStehtAus())
+                    .phorikKandidat(allgDescription.getPhorikKandidat())
                     .beendet(PARAGRAPH));
         }
 

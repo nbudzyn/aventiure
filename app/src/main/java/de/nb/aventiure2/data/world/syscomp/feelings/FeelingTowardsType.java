@@ -2,18 +2,16 @@ package de.nb.aventiure2.data.world.syscomp.feelings;
 
 import com.google.common.collect.ImmutableList;
 
-import java.util.Collection;
 import java.util.stream.Stream;
-
-import javax.annotation.CheckReturnValue;
 
 import de.nb.aventiure2.german.adjektiv.AdjPhrOhneLeerstellen;
 import de.nb.aventiure2.german.base.NumerusGenus;
 import de.nb.aventiure2.german.base.Person;
 import de.nb.aventiure2.german.base.SubstantivischePhrase;
-import de.nb.aventiure2.german.base.Wortfolge;
+import de.nb.aventiure2.german.praedikat.AdverbialeAngabeSkopusSatz;
+import de.nb.aventiure2.german.satz.Satz;
 
-import static de.nb.aventiure2.german.base.Wortfolge.w;
+import static de.nb.aventiure2.german.praedikat.PraedikativumPraedikatOhneLeerstellen.praedikativumPraedikatMit;
 
 /**
  * Ein Spektrum von Gefühlen, dass ein {@link IFeelingBeingGO} gegenüber jemandem oder
@@ -33,52 +31,43 @@ public enum FeelingTowardsType {
     }
 
     /**
-     * Gibt alternative Prädikativa zurück, die das Gefühl dieses Feeling Beings
+     * Gibt alternative Sätze zurück, die das Gefühl dieses Feeling Beings
      * gegenüber dem Target beschreiben, wenn die beiden sich begegnen.
-     * Man kann ein solches Prädikativum in einer Konstruktion wie "Rapunzel ist ..." verwenden.
      * <p>
      * Die Methode garantiert, dass niemals etwas wie "du, der du..." oder
      * "du, die du..." oder "du, das du..." generiert wird.
      *
      * @return (gibt niemals eine leere Liste zurück !)
      */
-    public ImmutableList<Wortfolge> altFeelingBeiBegegnungPraedikativum(
-            final Person gameObjectSubjektPerson,
-            final NumerusGenus gameObjectSubjektNumerusGenus,
+    public ImmutableList<Satz> altFeelingBeiBegegnungSaetze(
+            final SubstantivischePhrase gameObjectSubjekt,
             final SubstantivischePhrase targetDesc, final int feelingIntensity,
             final boolean targetKnown) {
-        final ImmutableList.Builder<Wortfolge> res = ImmutableList.builder();
+        final ImmutableList.Builder<Satz> res = ImmutableList.builder();
 
-        final ImmutableList<AdjPhrOhneLeerstellen> altEindruckBeiBegegnungAdjPhrasen =
-                altEindruckBeiBegegnungAdjPhr(
-                        gameObjectSubjektPerson, gameObjectSubjektNumerusGenus, targetDesc,
-                        feelingIntensity, targetKnown
-                );
+        res.addAll(altEindruckBeiBegegnungAdjPhr(
+                gameObjectSubjekt.getPerson(), gameObjectSubjekt.getNumerusGenus(),
+                targetDesc, feelingIntensity, targetKnown
+        ).stream()
+                .flatMap(adjPhr ->
+                        Stream.of("offenkundig", "sichtlich", "offenbar", "ganz offenbar")
+                                .map(
+                                        advAng ->
+                                                praedikativumPraedikatMit(adjPhr)
+                                                        .mitAdverbialerAngabe(
+                                                                new AdverbialeAngabeSkopusSatz(
+                                                                        advAng))
+                                                        .alsSatzMitSubjekt(gameObjectSubjekt)
+                                )
+                ).collect(ImmutableList.toImmutableList()));
 
-        final ImmutableList<Wortfolge> altEindruckBeiBegegnungPraedAdjPhrasen =
-                altEindruckBeiBegegnungAdjPhrasen.stream()
-                        .map(adjPhr ->
-                                adjPhr.getPraedikativ(
-                                        gameObjectSubjektPerson,
-                                        gameObjectSubjektNumerusGenus.getNumerus()))
-                        .collect(ImmutableList.toImmutableList());
-
-        // FIXME Hier Prädikat- oder Satz-Instanzen erzeugen und zurückgeben!
-        //  PraedikativumPraedikat verwenden.
-
-        res.addAll(mitPraefix(
-                altEindruckBeiBegegnungPraedAdjPhrasen, "offenkundig",
-                "sichtlich",
-                "offenbar", "ganz offenbar"
-        ));
-
-        res.addAll(feelingBeiBegegnungDescriber.altFeelingBeiBegegnungPraedikativum(
-                gameObjectSubjektPerson, gameObjectSubjektNumerusGenus, targetDesc,
-                feelingIntensity, targetKnown
+        res.addAll(feelingBeiBegegnungDescriber.altFeelingBeiBegegnungSaetze(
+                gameObjectSubjekt, targetDesc, feelingIntensity, targetKnown
         ));
 
         return res.build();
     }
+
 
     /**
      * Gibt eventuell alternative Adjektivphrasen zurück, die den Eindruck
@@ -100,30 +89,5 @@ public enum FeelingTowardsType {
                 gameObjectSubjektPerson, gameObjectSubjektNumerusGenus, targetDesc,
                 feelingIntensity, targetKnown
         );
-    }
-
-    @CheckReturnValue
-    private static Iterable<Wortfolge> mitPraefix(
-            final Collection<Wortfolge> altPraedAdjPhrasen,
-            final String... prefixes) {
-        return Stream.of(prefixes)
-                .flatMap(
-                        p -> altPraedAdjPhrasen.stream()
-                                .map(phr -> mitPraefix(p, phr))
-                                .collect(ImmutableList.toImmutableList())
-                                .stream()
-                )
-                .collect(ImmutableList.toImmutableList());
-    }
-
-    @CheckReturnValue
-    private static Wortfolge mitPraefix(final String praefix,
-                                        final Wortfolge wortfolge) {
-
-        return w(
-                praefix
-                        + " "
-                        + wortfolge.getString(),
-                wortfolge.kommmaStehtAus());
     }
 }
