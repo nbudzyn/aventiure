@@ -23,6 +23,7 @@ import de.nb.aventiure2.german.base.Personalpronomen;
 import de.nb.aventiure2.german.base.SubstantivischePhrase;
 import de.nb.aventiure2.german.base.Wortfolge;
 import de.nb.aventiure2.german.description.AbstractDescription;
+import de.nb.aventiure2.german.description.AllgDescription;
 import de.nb.aventiure2.german.praedikat.AdverbialeAngabeSkopusSatz;
 import de.nb.aventiure2.scaction.stepcount.SCActionStepCountDao;
 
@@ -37,6 +38,8 @@ import static de.nb.aventiure2.german.base.StructuralElement.SENTENCE;
 import static de.nb.aventiure2.german.description.DescriptionBuilder.du;
 import static de.nb.aventiure2.german.description.DescriptionBuilder.neuerSatz;
 import static de.nb.aventiure2.german.description.DescriptionBuilder.paragraph;
+import static de.nb.aventiure2.german.praedikat.VerbSubjPraedikativeAdjektivphrase.SCHEINEN;
+import static de.nb.aventiure2.german.praedikat.VerbSubjPraedikativeAdjektivphrase.WIRKEN;
 
 /**
  * Component for a {@link GameObject}: The game object
@@ -226,6 +229,43 @@ public class FeelingsComp extends AbstractStatefulComponent<FeelingsPCD> {
                         M),
                 type);
     }
+
+    /**
+     * Gibt eventuell alternative Sätze zurück, die den Eindruck
+     * beschreiben, den dieses Feeling Being auf den SC macht, wenn die beiden sich
+     * begegnen. Die Phrasen können mit
+     * <i>wirken</i> oder <i>scheinen</i> verbunden werden.
+     *
+     * @return Möglicherweise eine leere Liste (insbesondere bei extremen Gefühlen)!
+     */
+    @CheckReturnValue
+    @NonNull
+    public ImmutableList<AllgDescription> altEindruckAufScBeiBegegnungSaetze(
+            final GameObjectId subjektGameObject, final SubstantivischePhrase subjekt,
+            final FeelingTowardsType type) {
+        final ImmutableList.Builder<AllgDescription> alt = ImmutableList.builder();
+
+        for (final AdjPhrOhneLeerstellen adjPhrase :
+                altEindruckAufScBeiBegegnungAdjPhr(subjekt.getNumerusGenus(), type)) {
+            alt.addAll(altEindruckAufScBeiBegegnungSaetze(subjektGameObject, subjekt, adjPhrase));
+        }
+
+        return alt.build();
+    }
+
+    @CheckReturnValue
+    @NonNull
+    private static ImmutableList<AllgDescription> altEindruckAufScBeiBegegnungSaetze(
+            final GameObjectId subjektGameObject, final SubstantivischePhrase subjekt,
+            final AdjPhrOhneLeerstellen adjPhrase) {
+        return ImmutableList.of(
+                neuerSatz(WIRKEN.mit(adjPhrase).alsSatzMitSubjekt(subjekt))
+                        .phorikKandidat(subjekt, subjektGameObject),
+                neuerSatz(SCHEINEN.mit(adjPhrase).alsSatzMitSubjekt(subjekt))
+                        .phorikKandidat(subjekt, subjektGameObject)
+        );
+    }
+
 
     /**
      * Gibt eventuell alternative Adjektivphrasen zurück, die den Eindruck

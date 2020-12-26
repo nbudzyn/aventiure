@@ -34,6 +34,7 @@ import de.nb.aventiure2.german.description.TimedDescription;
 
 import static de.nb.aventiure2.data.narration.Narration.NarrationSource.REACTIONS;
 import static de.nb.aventiure2.data.world.time.AvTimeSpan.*;
+import static de.nb.aventiure2.german.description.TimedDescription.toTimed;
 import static java.util.Arrays.asList;
 
 @ParametersAreNonnullByDefault
@@ -142,12 +143,7 @@ public class Narrator {
     void narrateAlt(final Collection<D> alternatives,
                     final AvTimeSpan timeElapsed,
                     @Nullable final String counterIdIncrementedIfTextIs) {
-        narrateAlt(
-                alternatives.stream()
-                        .map(d -> new TimedDescription<>(d, timeElapsed,
-                                counterIdIncrementedIfTextIs))
-                        .collect(ImmutableList.toImmutableList())
-        );
+        narrateAlt(toTimed(alternatives, timeElapsed, counterIdIncrementedIfTextIs));
     }
 
     public void narrateAlt(final Collection<? extends TimedDescription<?>> alternatives) {
@@ -276,10 +272,7 @@ public class Narrator {
         return dao.chooseBest(
                 // Zeit spielt hier keine Rolle - die Zeit für die
                 // temporaryNarration ist ja schon vergangen!
-                temporaryNarration.getDescriptionAlternatives().stream()
-                        .map(d -> new TimedDescription<>(d, noTime(),
-                                null))
-                        .collect(ImmutableList.toImmutableList())
+                toTimed(temporaryNarration.getDescriptionAlternatives(), noTime())
         );
     }
 

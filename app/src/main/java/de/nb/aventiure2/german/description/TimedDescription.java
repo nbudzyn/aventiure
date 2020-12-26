@@ -1,5 +1,11 @@
 package de.nb.aventiure2.german.description;
 
+import androidx.annotation.NonNull;
+
+import com.google.common.collect.ImmutableList;
+
+import java.util.Collection;
+
 import javax.annotation.CheckReturnValue;
 import javax.annotation.Nullable;
 
@@ -29,6 +35,26 @@ public class TimedDescription<D extends AbstractDescription<?>> {
      */
     @Nullable
     private final String counterIdIncrementedIfTextIsNarrated;
+
+    @CheckReturnValue
+    @NonNull
+    public static <D extends AbstractDescription<?>>
+    ImmutableList<TimedDescription<D>> toTimed(
+            final Collection<D> descriptions, final AvTimeSpan timeElapsed) {
+        return toTimed(descriptions, timeElapsed, null);
+    }
+
+    @CheckReturnValue
+    @NonNull
+    public static <D extends AbstractDescription<?>>
+    ImmutableList<TimedDescription<D>> toTimed(
+            final Collection<D> descriptions, final AvTimeSpan timeElapsed,
+            @Nullable final String counterIdIncrementedIfTextIsNarrated) {
+        return descriptions.stream()
+                .map(d -> new TimedDescription<>(
+                        d, timeElapsed, counterIdIncrementedIfTextIsNarrated))
+                .collect(ImmutableList.toImmutableList());
+    }
 
     public TimedDescription(final D description,
                             final AvTimeSpan timeElapsed) {

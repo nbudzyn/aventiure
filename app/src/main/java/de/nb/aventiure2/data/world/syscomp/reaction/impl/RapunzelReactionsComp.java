@@ -60,7 +60,6 @@ import static de.nb.aventiure2.german.base.NumerusGenus.PL_MFN;
 import static de.nb.aventiure2.german.base.StructuralElement.PARAGRAPH;
 import static de.nb.aventiure2.german.base.StructuralElement.SENTENCE;
 import static de.nb.aventiure2.german.description.DescriptionBuilder.altNeuerPraedikativumSatz;
-import static de.nb.aventiure2.german.description.DescriptionBuilder.altNeuerWirkenScheinenSatz;
 import static de.nb.aventiure2.german.description.DescriptionBuilder.du;
 import static de.nb.aventiure2.german.description.DescriptionBuilder.neuerSatz;
 
@@ -425,22 +424,6 @@ public class RapunzelReactionsComp
                 ZUNEIGUNG_ABNEIGUNG);
     }
 
-    /**
-     * Gibt eventuell alternative Adjektivphrasen zurück, den Eindruck
-     * bezüglich Zuneigung / Abneigung beschreiben, den Rapunzels auf den
-     * SC macht, wenn die beiden sich treffen. Man kann solche Phrasen mit
-     * <i>wirken</i> oder <i>scheinen</i> verbinden.
-     *
-     * @return Möglicherweise eine leere Liste (insbesondere bei extremen Gefühlen)!
-     */
-    @NonNull
-    private ImmutableList<AdjPhrOhneLeerstellen> altZuneigungAbneigungEindruckAufScBeiBegegnungAdjPhr(
-            final NumerusGenus rapunzelNumerusGenus) {
-        return feelingsComp.altEindruckAufScBeiBegegnungAdjPhr(
-                rapunzelNumerusGenus,
-                ZUNEIGUNG_ABNEIGUNG);
-    }
-
     private void narrateAndUpgradeFeelings_ScTrifftRapunzelObenImAltenTurmAn_Nachts() {
         final ImmutableList.Builder<TimedDescription<?>> alt = ImmutableList.builder();
 
@@ -459,12 +442,14 @@ public class RapunzelReactionsComp
 
         // Könnte leer sein
         final ImmutableList<AdjPhrOhneLeerstellen> altZuneigungAbneigungEindruckPraedAdjPhrase =
-                altZuneigungAbneigungEindruckAufScBeiBegegnungAdjPhr(
-                        anaph.getNumerusGenus());
+                feelingsComp.altEindruckAufScBeiBegegnungAdjPhr(
+                        anaph.getNumerusGenus(),
+                        ZUNEIGUNG_ABNEIGUNG);
 
         // Evtl. wird hier nichts hinzugefügt
-        alt.addAll(altNeuerWirkenScheinenSatz(RAPUNZEL, anaph,
-                altZuneigungAbneigungEindruckPraedAdjPhrase,
+        alt.addAll(TimedDescription.toTimed(
+                feelingsComp.altEindruckAufScBeiBegegnungSaetze(RAPUNZEL, anaph,
+                        ZUNEIGUNG_ABNEIGUNG),
                 secs(5)));
 
         alt.add(du(SENTENCE, "hast",

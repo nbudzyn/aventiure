@@ -43,7 +43,6 @@ import static de.nb.aventiure2.german.base.NumerusGenus.PL_MFN;
 import static de.nb.aventiure2.german.base.PraepositionMitKasus.ZU;
 import static de.nb.aventiure2.german.base.StructuralElement.PARAGRAPH;
 import static de.nb.aventiure2.german.base.StructuralElement.SENTENCE;
-import static de.nb.aventiure2.german.description.DescriptionBuilder.altNeuerWirkenScheinenSatz;
 import static de.nb.aventiure2.german.description.DescriptionBuilder.du;
 import static de.nb.aventiure2.german.description.DescriptionBuilder.neuerSatz;
 import static de.nb.aventiure2.german.praedikat.DirektivesVerb.BITTEN;
@@ -229,13 +228,13 @@ public class RapunzelTalkingComp extends AbstractTalkingComp {
 
         // Könnte leer sein
         final ImmutableList<AdjPhrOhneLeerstellen> altZuneigungAbneigungEindruckAdjPhrasen =
-                altZuneigungAbneigungEindruckAufScBeiBegegnungAdjPhr(
-                        anaph.getNumerusGenus());
+                feelingsComp.altEindruckAufScBeiBegegnungAdjPhr(
+                        anaph.getNumerusGenus(),
+                        ZUNEIGUNG_ABNEIGUNG);
 
         // Evtl. wird hier nichts hinzugefügt
-        alt.addAll(
-                altNeuerWirkenScheinenSatz(RAPUNZEL, anaph,
-                        altZuneigungAbneigungEindruckAdjPhrasen));
+        alt.addAll(feelingsComp.altEindruckAufScBeiBegegnungSaetze(
+                RAPUNZEL, anaph, ZUNEIGUNG_ABNEIGUNG));
 
         final int zuneigungTowardsSC =
                 feelingsComp.getFeelingTowards(SPIELER_CHARAKTER, ZUNEIGUNG_ABNEIGUNG);
@@ -448,22 +447,6 @@ public class RapunzelTalkingComp extends AbstractTalkingComp {
     private ImmutableList<Wortfolge> altZuneigungAbneigungBeiBegegnungMitScPraedikativum(
             final NumerusGenus rapunzelSubjektNumerusGenus) {
         return feelingsComp.altFeelingsBeiBegegnungMitScPraedikativum(
-                rapunzelSubjektNumerusGenus,
-                ZUNEIGUNG_ABNEIGUNG);
-    }
-
-    /**
-     * Gibt eventuell Adjektivphrasen zurück, die den Eindruck bezgl.
-     * Zuneigung / Abneigung beschreiben, den Rapunzels auf den
-     * SC macht, wenn sich die beiden begegenen. Man kann dieses Prädikativ in einer
-     * Konstruktion wie "Rapunzel wirkt..." verwenden.
-     *
-     * @return Könnte leer sein!
-     */
-    @NonNull
-    private ImmutableList<AdjPhrOhneLeerstellen> altZuneigungAbneigungEindruckAufScBeiBegegnungAdjPhr(
-            final NumerusGenus rapunzelSubjektNumerusGenus) {
-        return feelingsComp.altEindruckAufScBeiBegegnungAdjPhr(
                 rapunzelSubjektNumerusGenus,
                 ZUNEIGUNG_ABNEIGUNG);
     }
