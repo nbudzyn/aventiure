@@ -11,6 +11,7 @@ import de.nb.aventiure2.german.base.Numerus;
 import de.nb.aventiure2.german.base.Person;
 import de.nb.federkiel.deutsch.grammatik.wortart.flexion.VerbFlektierer;
 
+import static com.google.common.base.Preconditions.checkArgument;
 import static de.nb.aventiure2.german.base.Numerus.SG;
 
 /**
@@ -137,6 +138,13 @@ public class Verb {
         this.partikel = partikel;
         this.perfektbildung = perfektbildung;
         this.partizipII = partizipII;
+
+        checkArgument(partikel == null || infinitiv.startsWith(partikel),
+                "Inifinitiv beginnt nicht mit Partikel! Partikel: " + partikel +
+                        ", Infinitiv: " + infinitiv);
+        checkArgument(partikel == null || partizipII.startsWith(partikel),
+                "Partizip II beginnt nicht mit Partikel! Partikel: " + partikel +
+                        ", Partizip II: " + partizipII);
     }
 
     public String getZuInfinitiv() {

@@ -8,7 +8,6 @@ import javax.annotation.Nullable;
 
 import de.nb.aventiure2.data.database.AvDatabase;
 import de.nb.aventiure2.data.narration.Narrator;
-import de.nb.aventiure2.data.world.base.GameObjectId;
 import de.nb.aventiure2.data.world.gameobject.*;
 import de.nb.aventiure2.data.world.syscomp.feelings.FeelingIntensity;
 import de.nb.aventiure2.data.world.syscomp.feelings.FeelingsComp;
@@ -62,6 +61,7 @@ import static de.nb.aventiure2.german.base.StructuralElement.SENTENCE;
 import static de.nb.aventiure2.german.description.DescriptionBuilder.du;
 import static de.nb.aventiure2.german.description.DescriptionBuilder.neuePraedikativumSaetze;
 import static de.nb.aventiure2.german.description.DescriptionBuilder.neuerSatz;
+import static de.nb.aventiure2.german.description.TimedDescription.toTimed;
 
 /**
  * "Reaktionen" von Rapunzel, z.B. darauf, dass Zeit vergeht
@@ -353,8 +353,9 @@ public class RapunzelReactionsComp
 
         final ImmutableList.Builder<TimedDescription<?>> alt = ImmutableList.builder();
 
-        alt.addAll(neuePraedikativumSaetze(RAPUNZEL, anaph, altZuneigungAbneigungPraedikativa,
-                secs(5)));
+        final ImmutableList<AllgDescription> neuePraedikativumSaetze =
+                neuePraedikativumSaetze(RAPUNZEL, anaph, altZuneigungAbneigungPraedikativa);
+        alt.addAll(toTimed(neuePraedikativumSaetze, secs(5)));
 
         alt.add(
                 // STORY Nur, wenn man sich noch nicht so kennt:
@@ -380,34 +381,20 @@ public class RapunzelReactionsComp
         );
 
         if (loadSC().memoryComp().getKnown(RAPUNZEL) == KNOWN_FROM_DARKNESS) {
-            alt.addAll(altNeuePraefixSaetzeMitPraedikativum(
-                    "Am Fenster sitzt die junge Frau, schön als "
-                            + "du unter der Sonne noch keine gesehen hast. "
-                            + "Ihre Haare glänzen fein wie gesponnen Gold. Sie ist ",
-                    altZuneigungAbneigungPraedikativa,
-                    F, RAPUNZEL
-            ));
+            alt.addAll(
+                    neuePraedikativumSaetze.stream()
+                            .map(s -> neuerSatz(
+                                    "Am Fenster sitzt die junge Frau, schön als "
+                                            + "du unter der Sonne noch keine gesehen hast. "
+                                            + "Ihre Haare glänzen fein wie gesponnen Gold. "
+                                            + s.getDescriptionHauptsatz(),
+                                    secs(30))
+                                    .komma(s.isKommaStehtAus())
+                                    .phorikKandidat(F, RAPUNZEL))
+                            .collect(ImmutableList.toImmutableList())
+            );
         }
         n.narrateAlt(alt);
-    }
-
-    private static Iterable<TimedDescription<AllgDescription>> altNeuePraefixSaetzeMitPraedikativum(
-            final String praefix,
-            final ImmutableList<Wortfolge> altPraedikativa,
-            final NumerusGenus phorikNumerusGenus,
-            final GameObjectId phorikBezugsobjekt) {
-        final ImmutableList.Builder<TimedDescription<AllgDescription>> res =
-                ImmutableList.builder();
-
-        for (final Wortfolge praedikativum : altPraedikativa) {
-            res.add(neuerSatz(praefix
-                            + praedikativum,
-                    secs(30))
-                    .komma(praedikativum.kommmaStehtAus())
-                    .phorikKandidat(phorikNumerusGenus, phorikBezugsobjekt));
-        }
-
-        return res.build();
     }
 
     /**
@@ -436,9 +423,9 @@ public class RapunzelReactionsComp
         final ImmutableList<Wortfolge> altZuneigungAbneigungPraedikativum =
                 altZuneigungAbneigungBeiBegegnungMitScPraedikativum(anaph.getNumerusGenus());
 
-        alt.addAll(neuePraedikativumSaetze(RAPUNZEL, anaph,
-                altZuneigungAbneigungPraedikativum,
-                secs(5)));
+        final ImmutableList<AllgDescription> neuePraedikativumSaetze =
+                neuePraedikativumSaetze(RAPUNZEL, anaph, altZuneigungAbneigungPraedikativum);
+        alt.addAll(toTimed(neuePraedikativumSaetze, secs(5)));
 
         // Könnte leer sein
         final ImmutableList<AdjPhrOhneLeerstellen> altZuneigungAbneigungEindruckPraedAdjPhrase =
