@@ -37,6 +37,12 @@ public class Praepositionalphrase implements Praedikativum {
         this.praepositionMitKasus = praepositionMitKasus;
     }
 
+    public Praepositionalphrase mitModAdverbOderAdjektiv(
+            @Nullable final String modAdverbOderAdjektiv) {
+        return new Praepositionalphrase(modAdverbOderAdjektiv, praepositionMitKasus,
+                substantivischePhraseOderReflPron);
+    }
+
     @Override
     public Wortfolge getPraedikativ(final Person person, final Numerus numerus) {
         return w(getDescription());

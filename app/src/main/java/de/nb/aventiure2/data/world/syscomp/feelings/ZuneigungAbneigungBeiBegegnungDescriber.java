@@ -20,9 +20,11 @@ import de.nb.aventiure2.german.base.SubstantivischePhrase;
 import de.nb.aventiure2.german.base.Wortfolge;
 import de.nb.aventiure2.german.praedikat.VerbSubjDatAkk;
 import de.nb.aventiure2.german.praedikat.VerbSubjObj;
+import de.nb.aventiure2.german.satz.Konditionalsatz;
 
 import static de.nb.aventiure2.german.base.Nominalphrase.FREUDE_OHNE_ART;
 import static de.nb.aventiure2.german.base.Nominalphrase.WUT_OHNE_ART;
+import static de.nb.aventiure2.german.base.PraepositionMitKasus.AUSSER_DAT;
 import static de.nb.aventiure2.german.base.PraepositionMitKasus.VOR;
 import static de.nb.aventiure2.german.base.Wortfolge.w;
 import static de.nb.aventiure2.german.praedikat.VerbSubjObj.SEHEN;
@@ -45,11 +47,16 @@ class ZuneigungAbneigungBeiBegegnungDescriber implements FeelingBeiBegegnungDesc
         final VerbSubjObj sehenVerb = targetKnown ? VerbSubjObj.WIEDERSEHEN : SEHEN;
 
         if (feelingIntensity <= -FeelingIntensity.SEHR_STARK) {
-            final String praepositionalphrase = "ganz außer "
-                    + Reflexivpronomen.get(
-                    gameObjectSubjektPerson, gameObjectSubjektNumerusGenus.getNumerus()).dat()
-                    + " "
-                    + VOR.mit(WUT_OHNE_ART).getDescription();
+            // "ganz außer sich vor Wut"
+            final String praepositionalphrase =
+                    AUSSER_DAT.mit(
+                            Reflexivpronomen.get(
+                                    gameObjectSubjektPerson,
+                                    gameObjectSubjektNumerusGenus.getNumerus()))
+                            .mitModAdverbOderAdjektiv("ganz")
+                            .getDescription()
+                            + " "
+                            + VOR.mit(WUT_OHNE_ART).getDescription();
 
             return ImmutableList.of(
                     adjektivphraseMitAlsSiehtNebensatz(praepositionalphrase,
@@ -73,8 +80,12 @@ class ZuneigungAbneigungBeiBegegnungDescriber implements FeelingBeiBegegnungDesc
             );
         } else if (feelingIntensity == FeelingIntensity.NEUTRAL) {
             return ImmutableList.of(
-                    w("überrascht und etwas verwirrt")
-            );
+                    new ZweiAdjPhrOhneLeerstellen(
+                            AdjektivOhneErgaenzungen.UEBERRASCHT,
+                            AdjektivOhneErgaenzungen.VERWIRRT.mitGraduativerAngabe("etwas")
+                    ).getPraedikativ(
+                            gameObjectSubjektPerson,
+                            gameObjectSubjektNumerusGenus.getNumerus()));
         } else if (feelingIntensity == FeelingIntensity.NUR_LEICHT) {
             return ImmutableList.of();
         } else if (feelingIntensity == FeelingIntensity.MERKLICH) {
@@ -96,15 +107,17 @@ class ZuneigungAbneigungBeiBegegnungDescriber implements FeelingBeiBegegnungDesc
                                     gameObjectSubjektNumerusGenus.getNumerus()));
         }
 
-        // TODO sein + Präpositionalphrase + adverbiale Angabe
-        final String adjektivphrase = "außer "
-                + Reflexivpronomen.get(
-                gameObjectSubjektPerson, gameObjectSubjektNumerusGenus.getNumerus()).dat()
-                + " "
-                + VOR.mit(FREUDE_OHNE_ART).getDescription();
+        // "außer sich vor Freude"
+        final String praepositionalphrase =
+                AUSSER_DAT.mit(
+                        Reflexivpronomen.get(
+                                gameObjectSubjektPerson, gameObjectSubjektNumerusGenus.getNumerus())
+                ).getDescription()
+                        + " "
+                        + VOR.mit(FREUDE_OHNE_ART).getDescription();
 
         return ImmutableList.of(
-                adjektivphraseMitAlsSiehtNebensatz(adjektivphrase, gameObjectSubjektPerson,
+                adjektivphraseMitAlsSiehtNebensatz(praepositionalphrase, gameObjectSubjektPerson,
                         gameObjectSubjektNumerusGenus,
                         targetDesc)
         );
@@ -205,11 +218,14 @@ class ZuneigungAbneigungBeiBegegnungDescriber implements FeelingBeiBegegnungDesc
             final SubstantivischePhrase objekt) {
         // "du sie siehst"
         return w(adjektivphrase
-                        + ", als "
-                        + SEHEN
-                        .mit(objekt)
-                        .alsSatzMitSubjekt(Personalpronomen.get(subjektPerson, subjektNumerusGenus))
-                        .getVerbletztsatz().getString(),
+                        + ", "
+                        + new Konditionalsatz(
+                        "als",
+                        SEHEN
+                                .mit(objekt)
+                                .alsSatzMitSubjekt(
+                                        Personalpronomen.get(subjektPerson, subjektNumerusGenus)))
+                        .getDescription().getString(),
                 true);
     }
 }

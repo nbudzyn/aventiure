@@ -9,6 +9,8 @@ import de.nb.aventiure2.german.base.Wortfolge;
 import de.nb.aventiure2.german.praedikat.PraedikatOhneLeerstellen;
 
 import static de.nb.aventiure2.german.base.GermanUtil.joinToNull;
+import static de.nb.aventiure2.german.base.GermanUtil.joinToNullString;
+import static de.nb.aventiure2.german.base.Wortfolge.w;
 
 /**
  * Ein Satz.
@@ -25,10 +27,34 @@ public class Satz {
      */
     private final PraedikatOhneLeerstellen praedikat;
 
+    /**
+     * Ein dem Satz direkt untergeordneter (Neben-) Satz, der den Status einer <i>Angabe</i> hat
+     * - der also nicht Subjekt o.Ä. ist.
+     */
+    @Nullable
+    private final Konditionalsatz angabensatz;
+
     public Satz(final SubstantivischePhrase subjekt,
                 final PraedikatOhneLeerstellen praedikat) {
+        this(subjekt, praedikat, null);
+    }
+
+    public Satz(final SubstantivischePhrase subjekt,
+                final PraedikatOhneLeerstellen praedikat,
+                @Nullable final Konditionalsatz angabensatz) {
         this.subjekt = subjekt;
         this.praedikat = praedikat;
+        this.angabensatz = angabensatz;
+    }
+
+    public Satz mitAngabensatz(@Nullable final Konditionalsatz angabensatz) {
+        if (angabensatz == null) {
+            return this;
+        }
+
+        // STORY Mehrere Kondigionalsätze erlauben?
+
+        return new Satz(subjekt, praedikat, angabensatz);
     }
 
     /**
@@ -93,9 +119,20 @@ public class Satz {
      * Gibt den Satz als Verbzweitsatz aus, z.B. "Du hast etwas zu berichten"
      */
     public Wortfolge getVerbzweitsatz() {
-        return joinToNull(
-                subjekt.nom(),
-                praedikat.getVerbzweit(subjekt.getPerson(), subjekt.getNumerus())
+        if (angabensatz == null) {
+            return joinToNull(
+                    subjekt.nom(),
+                    praedikat.getVerbzweit(subjekt.getPerson(), subjekt.getNumerus())
+            );
+        }
+
+        return w(
+                joinToNullString(
+                        subjekt.nom(),
+                        praedikat.getVerbzweit(subjekt.getPerson(), subjekt.getNumerus()),
+                        ",",
+                        angabensatz.getDescription()),
+                true // es steht ein Komma aus
         );
     }
 
@@ -103,9 +140,20 @@ public class Satz {
      * Gibt den Satz als Verbletztsatz aus, z.B. "du etwas zu berichten hast"
      */
     public Wortfolge getVerbletztsatz() {
-        return joinToNull(
-                subjekt.nom(),
-                praedikat.getVerbletzt(subjekt.getPerson(), subjekt.getNumerus())
+        if (angabensatz == null) {
+            return joinToNull(
+                    subjekt.nom(),
+                    praedikat.getVerbletzt(subjekt.getPerson(), subjekt.getNumerus())
+            );
+        }
+
+        return w(
+                joinToNullString(
+                        subjekt.nom(),
+                        praedikat.getVerbletzt(subjekt.getPerson(), subjekt.getNumerus()),
+                        ",",
+                        angabensatz.getDescription()),
+                true // es steht ein Komma aus
         );
     }
 }

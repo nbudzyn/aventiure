@@ -19,6 +19,9 @@ public enum PraepositionMitKasus implements KasusOderPraepositionalkasus {
     AUS("aus", DAT),
     AUF_DAT("auf", DAT),
     AUF_AKK("auf", AKK),
+
+    AUSSER_DAT("außer", DAT), // "außerm" generieren wir nicht, kein rechtes Schriftdeutsch
+
     IN_DAT("in", DAT, "im"),
     IN_AKK("in", AKK),
 
@@ -94,8 +97,11 @@ public enum PraepositionMitKasus implements KasusOderPraepositionalkasus {
         this.praepositionVerschmolzenF = praepositionVerschmolzenF;
     }
 
-    public Praepositionalphrase mit(final SubstantivischePhrase substantivischePhrase) {
-        return new Praepositionalphrase(this, substantivischePhrase);
+    public Praepositionalphrase mit(
+            final SubstantivischePhraseOderReflexivpronomen
+                    substantivischePhraseOderReflexivpronomen) {
+        return new Praepositionalphrase(this,
+                substantivischePhraseOderReflexivpronomen);
     }
 
     public String getDescription(
