@@ -36,6 +36,7 @@ import static de.nb.aventiure2.german.base.Person.P2;
 import static de.nb.aventiure2.german.base.StructuralElement.PARAGRAPH;
 import static de.nb.aventiure2.german.base.StructuralElement.SENTENCE;
 import static de.nb.aventiure2.german.description.DescriptionBuilder.du;
+import static de.nb.aventiure2.german.description.DescriptionBuilder.neueAdjPhrSaetze;
 import static de.nb.aventiure2.german.description.DescriptionBuilder.neuerSatz;
 import static de.nb.aventiure2.german.description.DescriptionBuilder.paragraph;
 import static de.nb.aventiure2.german.praedikat.VerbSubjPraedikativeAdjektivphrase.SCHEINEN;
@@ -215,7 +216,7 @@ public class FeelingsComp extends AbstractStatefulComponent<FeelingsPCD> {
      * Man kann ein solches Prädikativum in einer Konstruktion wie "Rapunzel ist ..." verwenden.
      */
     @NonNull
-    public ImmutableList<Wortfolge> altFeelingsBeiBegegnungMitScPraedikativum(
+    public ImmutableList<Wortfolge> altFeelingsBeiBegegnungMitScPraedikativa(
             final NumerusGenus gameObjectSubjektNumerusGenus,
             final FeelingTowardsType type) {
         return altFeelingBeiBegegnungPraedikativum(
@@ -243,29 +244,13 @@ public class FeelingsComp extends AbstractStatefulComponent<FeelingsPCD> {
     public ImmutableList<AllgDescription> altEindruckAufScBeiBegegnungSaetze(
             final GameObjectId subjektGameObject, final SubstantivischePhrase subjekt,
             final FeelingTowardsType type) {
-        final ImmutableList.Builder<AllgDescription> alt = ImmutableList.builder();
-
-        for (final AdjPhrOhneLeerstellen adjPhrase :
-                altEindruckAufScBeiBegegnungAdjPhr(subjekt.getNumerusGenus(), type)) {
-            alt.addAll(altEindruckAufScBeiBegegnungSaetze(subjektGameObject, subjekt, adjPhrase));
-        }
-
-        return alt.build();
+        return altEindruckAufScBeiBegegnungAdjPhr(subjekt.getNumerusGenus(), type).stream()
+                .flatMap(ap -> neueAdjPhrSaetze(
+                        subjektGameObject, subjekt,
+                        ImmutableList.of(WIRKEN, SCHEINEN),
+                        ap).stream())
+                .collect(ImmutableList.toImmutableList());
     }
-
-    @CheckReturnValue
-    @NonNull
-    private static ImmutableList<AllgDescription> altEindruckAufScBeiBegegnungSaetze(
-            final GameObjectId subjektGameObject, final SubstantivischePhrase subjekt,
-            final AdjPhrOhneLeerstellen adjPhrase) {
-        return ImmutableList.of(
-                neuerSatz(WIRKEN.mit(adjPhrase).alsSatzMitSubjekt(subjekt))
-                        .phorikKandidat(subjekt, subjektGameObject),
-                neuerSatz(SCHEINEN.mit(adjPhrase).alsSatzMitSubjekt(subjekt))
-                        .phorikKandidat(subjekt, subjektGameObject)
-        );
-    }
-
 
     /**
      * Gibt eventuell alternative Adjektivphrasen zurück, die den Eindruck

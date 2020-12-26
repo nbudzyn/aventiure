@@ -7,13 +7,15 @@ import javax.annotation.Nullable;
 import de.nb.aventiure2.annotations.Argument;
 import de.nb.aventiure2.annotations.Valenz;
 import de.nb.aventiure2.german.base.GermanUtil;
+import de.nb.aventiure2.german.base.Interrogativpronomen;
 import de.nb.aventiure2.german.base.Numerus;
 import de.nb.aventiure2.german.base.Person;
+import de.nb.aventiure2.german.base.Praedikativum;
 import de.nb.aventiure2.german.base.Wortfolge;
-import de.nb.aventiure2.german.description.AllgDescription;
 
 import static de.nb.aventiure2.german.base.GermanUtil.joinToNull;
-import static de.nb.aventiure2.german.base.Wortfolge.w;
+import static de.nb.aventiure2.german.base.Numerus.SG;
+import static de.nb.aventiure2.german.base.Person.P2;
 
 /**
  * Ein Prädikat, bestehend aus <i>sein</i> und einem Prädikativum - alle Leerstellen sind besetzt.
@@ -24,17 +26,17 @@ public class PraedikativumPraedikatOhneLeerstellen
      * Das Prädikativum
      */
     @Argument
-    private final AllgDescription praedikativum;
+    private final Praedikativum praedikativum;
 
-    static PraedikativumPraedikatOhneLeerstellen praedikativumPraedikatMit(
-            final AllgDescription praedikativum) {
+    public static PraedikativumPraedikatOhneLeerstellen praedikativumPraedikatMit(
+            final Praedikativum praedikativum) {
         return new PraedikativumPraedikatOhneLeerstellen(SeinUtil.VERB,
                 praedikativum);
     }
 
     @Valenz
     private PraedikativumPraedikatOhneLeerstellen(final Verb verb,
-                                                  final AllgDescription praedikativum) {
+                                                  final Praedikativum praedikativum) {
         this(verb, praedikativum,
                 null, null,
                 null);
@@ -42,7 +44,7 @@ public class PraedikativumPraedikatOhneLeerstellen
 
     private PraedikativumPraedikatOhneLeerstellen(
             final Verb verb,
-            final AllgDescription praedikativum,
+            final Praedikativum praedikativum,
             @Nullable final AdverbialeAngabeSkopusSatz adverbialeAngabeSkopusSatz,
             @Nullable final AdverbialeAngabeSkopusVerbAllg adverbialeAngabeSkopusVerbAllg,
             @Nullable
@@ -101,7 +103,11 @@ public class PraedikativumPraedikatOhneLeerstellen
 
     @Override
     public boolean duHauptsatzLaesstSichMitNachfolgendemDuHauptsatzZusammenziehen() {
-        return !praedikativum.isKommaStehtAus();
+        // FIXME Das hier ist etwas unschön - eigentlich sollte die Frage, ob zusammengezogen
+        //  werden kann, erst an die Wortfolge gestellt werden, nicht zuvor!
+
+        // Ob ein Komma aussteht, wird wohl in jeder Person und jedem Numerus gleich sein...
+        return !praedikativum.getPraedikativ(P2, SG).kommmaStehtAus();
     }
 
     @Override
@@ -121,11 +127,14 @@ public class PraedikativumPraedikatOhneLeerstellen
             return speziellesVorfeldFromSuper;
         }
 
-        if (!praedikativum.isKommaStehtAus()) {
-            // "Ein Esel ist Peter", "Glücklich ist Peter".
-            // Stark markiert - aber möglich.
-            return praedikativum.getDescriptionHauptsatz();
-        }
+        // "Ein Esel ist Peter", "Glücklich ist Peter" - das wäre stark markiert, wir lassen
+        // es hier aus.
+
+        // FIXME Das Prädikativum könnte diskontinuierlich aufgeteilt werden, dann könnte
+        //  ein Teil ins Vorgeld kommen: Glücklich ist sie, dich zu sehen.
+        //  Problem dabei: GermanUtil.cut...() muss klüger gemacht werden, damit
+        //  beim Ausschneiden nicht ein oder mehrere unnötiges Kommata im Mittelfeld
+        //  zurückbleiden. Das sollte man ohnehin mal tun...
 
         return null;
     }
@@ -139,8 +148,9 @@ public class PraedikativumPraedikatOhneLeerstellen
                 GermanUtil.joinToNullString(modalpartikeln), // "halt"
                 getAdverbialeAngabeSkopusVerbAllg(), // "erneut"
                 getAdverbialeAngabeSkopusVerbWohinWoher(), // (kann wohl nicht besetzt sein?)
-                w(praedikativum.getDescriptionHauptsatz(), praedikativum.isKommaStehtAus())
-                // "glücklich"
+                praedikativum.getPraedikativ(personSubjekt, numerusSubjekt)
+                // "glücklich", "ein Esel", "sich ihrer selbst gewiss"
+                // "sehr glücklich, dich zu sehen"
         );
     }
 
@@ -168,6 +178,15 @@ public class PraedikativumPraedikatOhneLeerstellen
     @Nullable
     @Override
     public String getErstesInterrogativpronomenAlsString() {
+        if (praedikativum instanceof Interrogativpronomen) {
+            return praedikativum.getPraedikativ(
+                    // Person und Numersu spielen beim Interrogativpronomen keine Rolle:
+                    // "Sie ist interessiert, wer Peter ist",
+                    // "Sie ist interessiert, wer du bist",
+                    // "Sie ist interessiert, wer wir sind"
+                    P2, SG).getString();
+        }
+
         return null;
     }
 }

@@ -446,7 +446,7 @@ public class RapunzelTalkingComp extends AbstractTalkingComp {
     @NonNull
     private ImmutableList<Wortfolge> altZuneigungAbneigungBeiBegegnungMitScPraedikativum(
             final NumerusGenus rapunzelSubjektNumerusGenus) {
-        return feelingsComp.altFeelingsBeiBegegnungMitScPraedikativum(
+        return feelingsComp.altFeelingsBeiBegegnungMitScPraedikativa(
                 rapunzelSubjektNumerusGenus,
                 ZUNEIGUNG_ABNEIGUNG);
     }

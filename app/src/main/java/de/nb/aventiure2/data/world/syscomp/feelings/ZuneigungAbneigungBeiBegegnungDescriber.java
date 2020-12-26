@@ -18,13 +18,13 @@ import de.nb.aventiure2.german.base.Personalpronomen;
 import de.nb.aventiure2.german.base.Reflexivpronomen;
 import de.nb.aventiure2.german.base.SubstantivischePhrase;
 import de.nb.aventiure2.german.base.Wortfolge;
-import de.nb.aventiure2.german.description.AbstractDescription;
 import de.nb.aventiure2.german.praedikat.VerbSubjDatAkk;
 import de.nb.aventiure2.german.praedikat.VerbSubjObj;
 
-import static de.nb.aventiure2.german.base.Person.P2;
+import static de.nb.aventiure2.german.base.Nominalphrase.FREUDE_OHNE_ART;
+import static de.nb.aventiure2.german.base.Nominalphrase.WUT_OHNE_ART;
+import static de.nb.aventiure2.german.base.PraepositionMitKasus.VOR;
 import static de.nb.aventiure2.german.base.Wortfolge.w;
-import static de.nb.aventiure2.german.description.DescriptionBuilder.satzanschluss;
 import static de.nb.aventiure2.german.praedikat.VerbSubjObj.SEHEN;
 
 /**
@@ -34,7 +34,7 @@ import static de.nb.aventiure2.german.praedikat.VerbSubjObj.SEHEN;
 class ZuneigungAbneigungBeiBegegnungDescriber implements FeelingBeiBegegnungDescriber {
     @NonNull
     @Override
-    public ImmutableList<Wortfolge> altFeelingBeiBegegnungPraedikativ(
+    public ImmutableList<Wortfolge> altFeelingBeiBegegnungPraedikativum(
             final Person gameObjectSubjektPerson, final NumerusGenus gameObjectSubjektNumerusGenus,
             final SubstantivischePhrase targetDesc, final int feelingIntensity,
             final boolean targetKnown) {
@@ -45,13 +45,15 @@ class ZuneigungAbneigungBeiBegegnungDescriber implements FeelingBeiBegegnungDesc
         final VerbSubjObj sehenVerb = targetKnown ? VerbSubjObj.WIEDERSEHEN : SEHEN;
 
         if (feelingIntensity <= -FeelingIntensity.SEHR_STARK) {
-            final String adjektivphrase = "ganz außer "
+            final String praepositionalphrase = "ganz außer "
                     + Reflexivpronomen.get(
                     gameObjectSubjektPerson, gameObjectSubjektNumerusGenus.getNumerus()).dat()
-                    + " vor Wut";
+                    + " "
+                    + VOR.mit(WUT_OHNE_ART).getDescription();
 
             return ImmutableList.of(
-                    adjektivphraseMitAlsSiehtNebensatz(adjektivphrase, gameObjectSubjektPerson,
+                    adjektivphraseMitAlsSiehtNebensatz(praepositionalphrase,
+                            gameObjectSubjektPerson,
                             gameObjectSubjektNumerusGenus, targetDesc)
             );
         } else if (feelingIntensity == -FeelingIntensity.STARK) {
@@ -65,7 +67,7 @@ class ZuneigungAbneigungBeiBegegnungDescriber implements FeelingBeiBegegnungDesc
             return ImmutableList.of();
         } else if (feelingIntensity == -FeelingIntensity.NUR_LEICHT) {
             return ImmutableList.of(
-                    w("verwundert"),
+                    w("verwundert"), //AdjektivOhneErgaenzungen.VERWUNDERT
                     w("überrascht"),
                     w("etwas überrumpelt")
             );
@@ -77,23 +79,29 @@ class ZuneigungAbneigungBeiBegegnungDescriber implements FeelingBeiBegegnungDesc
             return ImmutableList.of();
         } else if (feelingIntensity == FeelingIntensity.MERKLICH) {
             return ImmutableList.of(
-                    adjektivphraseMitZuSehen("etwas überrascht", gameObjectSubjektPerson,
-                            gameObjectSubjektNumerusGenus, sehenVerb, targetDesc)
-            );
+                    AdjektivMitZuInfinitiv.UEBERRASCHT
+                            .mitLexikalischerKern(sehenVerb.mit(targetDesc))
+                            .mitGraduativerAngabe("etwas")
+                            .getPraedikativ(
+                                    gameObjectSubjektPerson,
+                                    gameObjectSubjektNumerusGenus.getNumerus()));
         } else if (feelingIntensity == FeelingIntensity.DEUTLICH) {
             return ImmutableList.of();
         } else if (feelingIntensity == FeelingIntensity.STARK) {
             return ImmutableList.of(
-                    adjektivphraseMitZuSehen("überglücklich", gameObjectSubjektPerson,
-                            gameObjectSubjektNumerusGenus,
-                            sehenVerb, targetDesc)
-            );
+                    AdjektivMitZuInfinitiv.UEBERGLUECKLICH
+                            .mitLexikalischerKern(sehenVerb.mit(targetDesc))
+                            .getPraedikativ(
+                                    gameObjectSubjektPerson,
+                                    gameObjectSubjektNumerusGenus.getNumerus()));
         }
 
+        // TODO sein + Präpositionalphrase + adverbiale Angabe
         final String adjektivphrase = "außer "
                 + Reflexivpronomen.get(
                 gameObjectSubjektPerson, gameObjectSubjektNumerusGenus.getNumerus()).dat()
-                + " vor Freude";
+                + " "
+                + VOR.mit(FREUDE_OHNE_ART).getDescription();
 
         return ImmutableList.of(
                 adjektivphraseMitAlsSiehtNebensatz(adjektivphrase, gameObjectSubjektPerson,
@@ -191,49 +199,17 @@ class ZuneigungAbneigungBeiBegegnungDescriber implements FeelingBeiBegegnungDesc
         return ImmutableList.of();
     }
 
-    private static Wortfolge adjektivphraseMitZuSehen(final String adjektivphrase,
-                                                      final Person subjektPerson,
-                                                      final NumerusGenus subjektNumerusGenus,
-                                                      final VerbSubjObj sehenVerb,
-                                                      final SubstantivischePhrase objekt) {
-        // FIXME Adjektivphrase verwenden
-        return w(adjektivphrase
-                + ", "
-                + sehenVerb
-                .mit(objekt)
-                .getZuInfinitiv(
-                        subjektPerson, subjektNumerusGenus.getNumerus()), true);
-    }
-
     private static Wortfolge adjektivphraseMitAlsSiehtNebensatz(
             final String adjektivphrase, final Person subjektPerson,
             final NumerusGenus subjektNumerusGenus,
             final SubstantivischePhrase objekt) {
-        final String sehenVerbform =
-                SEHEN.getPraesensOhnePartikel(subjektPerson, subjektNumerusGenus.getNumerus());
         // "du sie siehst"
-        final AbstractDescription<?> verbletztsatzanschluss =
-                verbletztsatzanschlussMitSubjektPersonalpronomen(
-                        subjektPerson, subjektNumerusGenus,
-                        objekt.akk(),
-                        sehenVerbform)
-                        .undWartest(subjektPerson == P2);
         return w(adjektivphrase
-                + ", als "
-                + verbletztsatzanschluss.getDescriptionHauptsatz(), true);
-    }
-
-    @NonNull
-    private static AbstractDescription<?> verbletztsatzanschlussMitSubjektPersonalpronomen(
-            final Person subjektPerson,
-            final NumerusGenus subjektNumerusGenus,
-            final String objekt,
-            final String verbalkomplex) {
-        return satzanschluss(
-                Personalpronomen.get(subjektPerson, subjektNumerusGenus).nom()
-                        + " "
-                        + objekt
-                        + " "
-                        + verbalkomplex).komma();
+                        + ", als "
+                        + SEHEN
+                        .mit(objekt)
+                        .alsSatzMitSubjekt(Personalpronomen.get(subjektPerson, subjektNumerusGenus))
+                        .getVerbletztsatz().getString(),
+                true);
     }
 }

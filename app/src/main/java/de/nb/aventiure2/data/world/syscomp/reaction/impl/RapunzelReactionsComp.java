@@ -59,8 +59,8 @@ import static de.nb.aventiure2.german.base.NumerusGenus.F;
 import static de.nb.aventiure2.german.base.NumerusGenus.PL_MFN;
 import static de.nb.aventiure2.german.base.StructuralElement.PARAGRAPH;
 import static de.nb.aventiure2.german.base.StructuralElement.SENTENCE;
-import static de.nb.aventiure2.german.description.DescriptionBuilder.altNeuerPraedikativumSatz;
 import static de.nb.aventiure2.german.description.DescriptionBuilder.du;
+import static de.nb.aventiure2.german.description.DescriptionBuilder.neuePraedikativumSaetze;
 import static de.nb.aventiure2.german.description.DescriptionBuilder.neuerSatz;
 
 /**
@@ -353,7 +353,7 @@ public class RapunzelReactionsComp
 
         final ImmutableList.Builder<TimedDescription<?>> alt = ImmutableList.builder();
 
-        alt.addAll(altNeuerPraedikativumSatz(RAPUNZEL, anaph, altZuneigungAbneigungPraedikativa,
+        alt.addAll(neuePraedikativumSaetze(RAPUNZEL, anaph, altZuneigungAbneigungPraedikativa,
                 secs(5)));
 
         alt.add(
@@ -419,7 +419,7 @@ public class RapunzelReactionsComp
     private ImmutableList<Wortfolge> altZuneigungAbneigungBeiBegegnungMitScPraedikativum(
             final NumerusGenus rapunzelNumerusGenus
     ) {
-        return feelingsComp.altFeelingsBeiBegegnungMitScPraedikativum(
+        return feelingsComp.altFeelingsBeiBegegnungMitScPraedikativa(
                 rapunzelNumerusGenus,
                 ZUNEIGUNG_ABNEIGUNG);
     }
@@ -436,7 +436,7 @@ public class RapunzelReactionsComp
         final ImmutableList<Wortfolge> altZuneigungAbneigungPraedikativum =
                 altZuneigungAbneigungBeiBegegnungMitScPraedikativum(anaph.getNumerusGenus());
 
-        alt.addAll(altNeuerPraedikativumSatz(RAPUNZEL, anaph,
+        alt.addAll(neuePraedikativumSaetze(RAPUNZEL, anaph,
                 altZuneigungAbneigungPraedikativum,
                 secs(5)));
 

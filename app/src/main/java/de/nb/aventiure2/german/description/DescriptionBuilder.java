@@ -11,15 +11,19 @@ import javax.annotation.CheckReturnValue;
 
 import de.nb.aventiure2.data.world.base.GameObjectId;
 import de.nb.aventiure2.data.world.time.*;
+import de.nb.aventiure2.german.adjektiv.AdjPhrOhneLeerstellen;
 import de.nb.aventiure2.german.base.StructuralElement;
 import de.nb.aventiure2.german.base.SubstantivischePhrase;
 import de.nb.aventiure2.german.base.Wortfolge;
 import de.nb.aventiure2.german.praedikat.PraedikatOhneLeerstellen;
 import de.nb.aventiure2.german.praedikat.SeinUtil;
+import de.nb.aventiure2.german.praedikat.VerbSubjPraedikativeAdjektivphrase;
 import de.nb.aventiure2.german.satz.Satz;
 
+import static com.google.common.collect.ImmutableList.toImmutableList;
 import static de.nb.aventiure2.german.base.GermanUtil.capitalize;
 import static de.nb.aventiure2.german.base.StructuralElement.PARAGRAPH;
+import static de.nb.aventiure2.german.description.TimedDescription.toTimed;
 
 public class DescriptionBuilder {
     private DescriptionBuilder() {
@@ -34,34 +38,40 @@ public class DescriptionBuilder {
 
     @CheckReturnValue
     @NonNull
-    public static ImmutableList<TimedDescription<AllgDescription>> altNeuerPraedikativumSatz(
-            final GameObjectId subjektGameObject, final SubstantivischePhrase subjekt,
+    public static ImmutableList<TimedDescription<AllgDescription>> neuePraedikativumSaetze(
+            final GameObjectId subjektGameObjectId, final SubstantivischePhrase subjekt,
             final Collection<Wortfolge> altPraedikativa,
             final AvTimeSpan timeElapsed) {
-        return altNeuerPraedikativumSatz(subjektGameObject, subjekt, altPraedikativa).stream()
-                .map(s -> new TimedDescription<>(s, timeElapsed))
-                .collect(ImmutableList.toImmutableList());
+        return toTimed(neuePraedikativumSaetze(subjektGameObjectId, subjekt, altPraedikativa),
+                timeElapsed);
     }
 
     @CheckReturnValue
     @NonNull
-    public static ImmutableList<AllgDescription> altNeuerPraedikativumSatz(
-            final GameObjectId subjektGameObject, final SubstantivischePhrase subjekt,
-            final Collection<Wortfolge> altPraedikativa) {
-        final ImmutableList.Builder<AllgDescription> alt = ImmutableList.builder();
+    public static ImmutableList<AllgDescription> neuePraedikativumSaetze(
+            final GameObjectId subjektGameObjectId, final SubstantivischePhrase subjekt,
+            final Collection<Wortfolge> praedikativa) {
+        return praedikativa.stream()
+                .map(p -> neuerSatz(subjekt.nom() + " "
+                        + SeinUtil.VERB
+                        .getPraesensOhnePartikel(subjekt.getPerson(), subjekt.getNumerus())
+                        + " "
+                        + p.getString())
+                        .komma(p.kommmaStehtAus())
+                        .phorikKandidat(subjekt, subjektGameObjectId))
+                .collect(toImmutableList());
+    }
 
-        for (final Wortfolge praedikativum : altPraedikativa) {
-            alt.add(
-                    neuerSatz(subjekt.nom() + " "
-                            + SeinUtil.VERB
-                            .getPraesensOhnePartikel(subjekt.getPerson(), subjekt.getNumerus())
-                            + " "
-                            + praedikativum.getString())
-                            .komma(praedikativum.kommmaStehtAus())
-                            .phorikKandidat(subjekt, subjektGameObject));
-        }
-
-        return alt.build();
+    @CheckReturnValue
+    @NonNull
+    public static ImmutableList<AllgDescription> neueAdjPhrSaetze(
+            final GameObjectId subjektGameObjectId, final SubstantivischePhrase subjekt,
+            final Collection<? extends VerbSubjPraedikativeAdjektivphrase> verben,
+            final AdjPhrOhneLeerstellen adjPhrase) {
+        return verben.stream()
+                .map(v -> neuerSatz(v.mit(adjPhrase).alsSatzMitSubjekt(subjekt))
+                        .phorikKandidat(subjekt, subjektGameObjectId))
+                .collect(toImmutableList());
     }
 
     @CheckReturnValue

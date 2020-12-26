@@ -4,6 +4,7 @@ import javax.annotation.Nullable;
 
 import de.nb.aventiure2.german.base.Numerus;
 import de.nb.aventiure2.german.base.Person;
+import de.nb.aventiure2.german.base.Praedikativum;
 import de.nb.aventiure2.german.base.Wortfolge;
 
 /**
@@ -13,7 +14,7 @@ import de.nb.aventiure2.german.base.Wortfolge;
  * <li>glücklich, dich zu sehen
  * </ul>
  */
-public interface AdjPhrOhneLeerstellen extends Adjektivphrase {
+public interface AdjPhrOhneLeerstellen extends Adjektivphrase, Praedikativum {
     default AdjPhrOhneLeerstellen mitGraduativerAngabe(@Nullable final String graduativeAngabe) {
         return mitGraduativerAngabe(new GraduativeAngabe(graduativeAngabe));
     }

@@ -2,15 +2,23 @@ package de.nb.aventiure2.german.base;
 
 import java.util.Objects;
 
+import static de.nb.aventiure2.german.base.Wortfolge.w;
+
 /**
  * Eine Phrase, die substantivisch verwendet werden kann, also insbesondere ein Pronomen ("sie",
  * "du", "wir") oder eine (andere) Nominalphrase ("die goldene Kugel").
  */
-public abstract class SubstantivischePhrase implements DeklinierbarePhrase {
+public abstract class SubstantivischePhrase
+        implements DeklinierbarePhrase, SubstantivischePhraseOderReflexivpronomen, Praedikativum {
     private final NumerusGenus numerusGenus;
 
     public SubstantivischePhrase(final NumerusGenus numerusGenus) {
         this.numerusGenus = numerusGenus;
+    }
+
+    @Override
+    public Wortfolge getPraedikativ(final Person person, final Numerus numerus) {
+        return w(nom());
     }
 
     /**
@@ -40,6 +48,11 @@ public abstract class SubstantivischePhrase implements DeklinierbarePhrase {
 
         throw new IllegalArgumentException("Unexpected Kasus or Präpositionalkasus: " +
                 kasusOderPraepositionalkasus);
+    }
+
+    @Override
+    public String im(final Kasus kasus) {
+        return DeklinierbarePhrase.super.im(kasus);
     }
 
     /**

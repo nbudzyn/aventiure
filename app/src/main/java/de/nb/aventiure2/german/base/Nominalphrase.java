@@ -35,11 +35,15 @@ public class Nominalphrase
             np(PL_MFN, DEF, "Dinge", "Dingen");
     public static final Nominalphrase EIN_GESPRAECH =
             np(N, INDEF, "Gespräch");
+    public static final Nominalphrase FREUDE_OHNE_ART =
+            np(F, null, "FREUDE");
     public static final Nominalphrase GESPRAECH =
             np(N, DEF, "Gespräch");
     public static final Nominalphrase IHRE_HAARE =
             np(PL_MFN, null, "ihre Haare",
                     "ihren Haaren");
+    public static final Nominalphrase WUT_OHNE_ART =
+            np(F, null, "Wut");
 
     public static Nominalphrase np(final NumerusGenus numerusGenus,
                                    @Nullable final Artikel.Typ artikelTyp,

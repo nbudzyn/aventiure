@@ -10,7 +10,7 @@ import static de.nb.aventiure2.german.base.Person.P1;
 import static de.nb.aventiure2.german.base.Person.P2;
 import static de.nb.aventiure2.german.base.Person.P3;
 
-public class Reflexivpronomen {
+public class Reflexivpronomen implements SubstantivischePhraseOderReflexivpronomen {
     private static final Map<Numerus, Map<Person, Reflexivpronomen>> ALL = ImmutableMap.of(
             SG, ImmutableMap.of(
                     P1, new Reflexivpronomen("mir", "mich"),
@@ -66,6 +66,7 @@ public class Reflexivpronomen {
                 kasusOderPraepositionalkasus);
     }
 
+    @Override
     public String im(final Kasus kasus) {
         switch (kasus) {
             case DAT:

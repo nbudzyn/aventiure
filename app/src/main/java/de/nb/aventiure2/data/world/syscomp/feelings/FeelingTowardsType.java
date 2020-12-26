@@ -72,7 +72,7 @@ public enum FeelingTowardsType {
                 "offenbar", "ganz offenbar"
         ));
 
-        res.addAll(feelingBeiBegegnungDescriber.altFeelingBeiBegegnungPraedikativ(
+        res.addAll(feelingBeiBegegnungDescriber.altFeelingBeiBegegnungPraedikativum(
                 gameObjectSubjektPerson, gameObjectSubjektNumerusGenus, targetDesc,
                 feelingIntensity, targetKnown
         ));

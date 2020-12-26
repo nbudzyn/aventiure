@@ -31,7 +31,7 @@ public interface FeelingBeiBegegnungDescriber {
      * @return Möglicherweise eine leere Liste
      */
     @NonNull
-    ImmutableList<Wortfolge> altFeelingBeiBegegnungPraedikativ(
+    ImmutableList<Wortfolge> altFeelingBeiBegegnungPraedikativum(
             Person gameObjectSubjektPerson, NumerusGenus gameObjectSubjektNumerusGenus,
             SubstantivischePhrase targetDesc, int feelingIntensity,
             final boolean targetKnown);

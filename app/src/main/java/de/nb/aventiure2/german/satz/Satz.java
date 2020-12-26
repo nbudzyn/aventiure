@@ -71,7 +71,7 @@ public class Satz {
         return joinToNull(
                 erstesInterrogativpronomenImPraedikat, // "was" / "wem"
                 GermanUtil.cutSatzglied(
-                        getVerletztsatz(),
+                        getVerbletztsatz(),
                         erstesInterrogativpronomenImPraedikat
                 ) // "du zu berichten hast", "wer zu berichten hat"
         );
@@ -79,13 +79,13 @@ public class Satz {
 
     private Wortfolge getIndirekteFrageNachSubjekt() {
         // "wer etwas zu berichten hat", "wer was zu berichten hat", "was er zu berichten hat"
-        return getVerletztsatz();
+        return getVerbletztsatz();
     }
 
     private Wortfolge getObFrage() {
         return joinToNull(
                 "ob",
-                getVerletztsatz() // "du etwas zu berichten hast"
+                getVerbletztsatz() // "du etwas zu berichten hast"
         );
     }
 
@@ -102,7 +102,7 @@ public class Satz {
     /**
      * Gibt den Satz als Verbletztsatz aus, z.B. "du etwas zu berichten hast"
      */
-    private Wortfolge getVerletztsatz() {
+    public Wortfolge getVerbletztsatz() {
         return joinToNull(
                 subjekt.nom(),
                 praedikat.getVerbletzt(subjekt.getPerson(), subjekt.getNumerus())

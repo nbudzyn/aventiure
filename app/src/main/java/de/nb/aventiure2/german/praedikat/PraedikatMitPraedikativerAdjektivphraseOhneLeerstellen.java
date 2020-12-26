@@ -92,8 +92,6 @@ public class PraedikatMitPraedikativerAdjektivphraseOhneLeerstellen
             return this;
         }
 
-        // Ich frage mich, ob es so etwas überhauppt geben kann.
-        // *"Peter ist nach Norden glücklich" - wohl nicht.
         return new PraedikatMitPraedikativerAdjektivphraseOhneLeerstellen(
                 getVerb(),
                 adjektivphrase,
@@ -128,6 +126,12 @@ public class PraedikatMitPraedikativerAdjektivphraseOhneLeerstellen
             // Stark markiert - aber möglich.
             return adjektivphrase.getPraedikativ(Person.P2, Numerus.SG).getString();
         }
+
+        // FIXME Die Adjektivphrase könnte diskontinuierlich aufgeteilt werden, dann könnte
+        //  ein Teil ins Vorgeld kommen: Glücklich wirkt sie, dich zu sehen.
+        //  Problem dabei: GermanUtil.cut...() muss klüger gemacht werden, damit
+        //  beim Ausschneiden nicht ein oder mehrere unnötiges Kommata im Mittelfeld
+        //  zurückbleiden. Das sollte man ohnehin mal tun...
 
         return null;
     }

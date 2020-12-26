@@ -17,7 +17,8 @@ public enum AdjektivOhneErgaenzungen implements AdjPhrOhneLeerstellen {
     UEBERRUMPELT("überrumpelt"),
     VERSTIMMT("verstimmt"),
     VERWIRRT("verwirrt"),
-    VERWUNDERT("verwundert");
+    VERWUNDERT("verwundert"),
+    ZORNIG("zornig");
 
     /**
      * Das Adjektiv an sich, ohne Informationen zur Valenz

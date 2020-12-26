@@ -1,5 +1,6 @@
 package de.nb.aventiure2.german.base;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import static com.google.common.base.Preconditions.checkArgument;
@@ -32,6 +33,11 @@ public enum PraepositionMitKasus implements KasusOderPraepositionalkasus {
      * "vom Tisch"
      */
     VON("von", DAT, "vom"),
+
+    /**
+     * "vor Wut"
+     */
+    VOR("vor", DAT), // "vorm Haus" generieren wir nicht - ist nicht so schön
 
     ZU("zu", DAT, "zum", "zur");
 
@@ -88,6 +94,21 @@ public enum PraepositionMitKasus implements KasusOderPraepositionalkasus {
         this.praepositionVerschmolzenF = praepositionVerschmolzenF;
     }
 
+    public Praepositionalphrase mit(final SubstantivischePhrase substantivischePhrase) {
+        return new Praepositionalphrase(this, substantivischePhrase);
+    }
+
+    public String getDescription(
+            final SubstantivischePhraseOderReflexivpronomen substantivischePhraseOderReflPron) {
+        if (substantivischePhraseOderReflPron instanceof SubstantivischePhrase) {
+            return getDescription((SubstantivischePhrase) substantivischePhraseOderReflPron);
+        }
+
+        // Ansonsten kann es keine Verschmelzungen geben, weil die anderen Phrasen
+        // keinen Artikel haben, mit dem die Präposition verschmelzen könnte.
+        return getDescriptionUnverschmolzen(substantivischePhraseOderReflPron);
+    }
+
     public String getDescription(final SubstantivischePhrase substantivischePhrase) {
         if (kasus == DAT &&
                 // AKK unterstützen wir derzeit nicht
@@ -95,18 +116,22 @@ public enum PraepositionMitKasus implements KasusOderPraepositionalkasus {
             if (praepositionVerschmolzenMN != null &&
                     (substantivischePhrase.getNumerusGenus() == M ||
                             (substantivischePhrase.getNumerusGenus() == N))) {
-                return praepositionVerschmolzenMN + " " +
-                        substantivischePhrase.artikellosDat();
+                return praepositionVerschmolzenMN + " " + substantivischePhrase.artikellosDat();
             }
 
             if (praepositionVerschmolzenF != null &&
                     (substantivischePhrase.getNumerusGenus() == F)) {
-                return praepositionVerschmolzenF + " " +
-                        substantivischePhrase.artikellosDat();
+                return praepositionVerschmolzenF + " " + substantivischePhrase.artikellosDat();
             }
         }
 
-        return praeposition + " " + substantivischePhrase.im(kasus);
+        return getDescriptionUnverschmolzen(substantivischePhrase);
+    }
+
+    @NonNull
+    private String getDescriptionUnverschmolzen(
+            final SubstantivischePhraseOderReflexivpronomen substantivischePhraseOderReflPron) {
+        return praeposition + " " + substantivischePhraseOderReflPron.im(kasus);
     }
 
     public String getPraeposition() {
