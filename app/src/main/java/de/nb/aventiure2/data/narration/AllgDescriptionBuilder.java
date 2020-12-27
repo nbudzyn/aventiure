@@ -49,9 +49,6 @@ class AllgDescriptionBuilder {
     static List<AllgDescription> toAllgDescriptions(
             final AbstractDescription<?> desc,
             final Narration initialNarration) {
-        // STORY Statt "und gehst nach Norden": ", bevor du nach Norden gehst"?
-        //  (Allerdings sollte der Nebensatz dann eher eine Nebensache enthalten...)
-
         if (initialNarration.allowsAdditionalDuSatzreihengliedOhneSubjekt() &&
                 desc.getStartsNew() == WORD &&
                 desc instanceof AbstractDuDescription) {

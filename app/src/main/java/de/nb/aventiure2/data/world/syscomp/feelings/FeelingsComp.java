@@ -41,6 +41,7 @@ import static de.nb.aventiure2.german.description.DescriptionBuilder.neuerSatz;
 import static de.nb.aventiure2.german.description.DescriptionBuilder.paragraph;
 import static de.nb.aventiure2.german.praedikat.VerbSubjPraedikativeAdjektivphrase.SCHEINEN;
 import static de.nb.aventiure2.german.praedikat.VerbSubjPraedikativeAdjektivphrase.WIRKEN;
+import static java.util.stream.Collectors.toList;
 
 /**
  * Component for a {@link GameObject}: The game object
@@ -117,17 +118,17 @@ public class FeelingsComp extends AbstractStatefulComponent<FeelingsPCD> {
                 initialFeelingsTowards);
     }
 
-    public AdverbialeAngabeSkopusSatz getAdverbialeAngabe() {
+    public ImmutableList<AdverbialeAngabeSkopusSatz> altAdverbialeAngaben() {
         if (getMuedigkeit() > Math.abs(getMood().getGradDerFreude())) {
             // Häufig wird die adverbiale Angabe wohl verwendet werden - daher setzen
             // wir den Counter neu.
             getPcd().resetNextMuedigkeitshinweisActionStepCount(
                     scActionStepCountDao.stepCount()
             );
-            return getPcd().getMuedigkeitsData().getAdverbialeAngabe();
+            return getPcd().getMuedigkeitsData().altAdverbialeAngaben();
         }
 
-        return getMood().getAdverbialeAngabe();
+        return getMood().altAdverbialeAngaben();
     }
 
     public boolean hasMood(final Mood mood) {
@@ -546,21 +547,32 @@ public class FeelingsComp extends AbstractStatefulComponent<FeelingsPCD> {
 
         final ImmutableList.Builder<AbstractDescription<?>> res = ImmutableList.builder();
 
-        res.add(
-                du(PARAGRAPH, "wirst",
-                        getPcd().getMuedigkeitsData().getAdjektivphrasePraedikativ()),
-                du(PARAGRAPH, "bist",
-                        getPcd().getMuedigkeitsData().getAdjektivphrasePraedikativ()),
-                du(PARAGRAPH, "fühlst", "dich auf einmal " +
-                                getPcd().getMuedigkeitsData().getAdjektivphrasePraedikativ(),
-                        "auf einmal"),
-                du(PARAGRAPH, "bist",
-                        "auf einmal " +
-                                getPcd().getMuedigkeitsData().getAdjektivphrasePraedikativ()),
-                du(PARAGRAPH, "bist",
-                        "mit einem Mal " +
-                                getPcd().getMuedigkeitsData().getAdjektivphrasePraedikativ())
-        );
+        res.addAll(getPcd().getMuedigkeitsData().altAdjektivphrasePraedikativ().stream()
+                .map(p -> du(PARAGRAPH, "wirst", p)
+                        .beendet(PARAGRAPH))
+                .collect(toList()));
+
+        res.addAll(getPcd().getMuedigkeitsData().altAdjektivphrasePraedikativ().stream()
+                .map(p -> du(PARAGRAPH, "bist", p)
+                        .beendet(PARAGRAPH))
+                .collect(toList()));
+
+        res.addAll(getPcd().getMuedigkeitsData().altAdjektivphrasePraedikativ().stream()
+                .map(p -> du(PARAGRAPH, "fühlst", "dich auf einmal " + p,
+                        "auf einmal")
+                        .beendet(PARAGRAPH))
+                .collect(toList()));
+
+        res.addAll(getPcd().getMuedigkeitsData().altAdjektivphrasePraedikativ().stream()
+                .map(p -> du(PARAGRAPH, "bist", "auf einmal " + p,
+                        "auf einmal")
+                        .beendet(PARAGRAPH))
+                .collect(toList()));
+
+        res.addAll(getPcd().getMuedigkeitsData().altAdjektivphrasePraedikativ().stream()
+                .map(p -> du(PARAGRAPH, "bist", "mit einem Mal " + p)
+                        .beendet(PARAGRAPH))
+                .collect(toList()));
 
         if (getMuedigkeit() == FeelingIntensity.NUR_LEICHT) {
             // NUR_LEICHT: "leicht erschöpft"
@@ -690,17 +702,15 @@ public class FeelingsComp extends AbstractStatefulComponent<FeelingsPCD> {
 
         final ImmutableList.Builder<AbstractDescription<?>> res = ImmutableList.builder();
 
-        res.add(
-                du(PARAGRAPH, "bist",
-                        getPcd().getMuedigkeitsData().getAdjektivphrasePraedikativ())
-                        .beendet(PARAGRAPH),
-                du(PARAGRAPH, "fühlst", "dich " +
-                        getPcd().getMuedigkeitsData().getAdjektivphrasePraedikativ())
-                        .beendet(PARAGRAPH)
-        );
+        res.addAll(getPcd().getMuedigkeitsData().altAdjektivphrasePraedikativ().stream()
+                .map(p -> du(PARAGRAPH, "bist", p)
+                        .beendet(PARAGRAPH))
+                .collect(toList()));
 
-        // STORY In den Grimms-Märchen schauen, wie solche Sätze verknüpft sind und ggf. neue
-        //  Verknüpfungen in den Combiner einbauen.
+        res.addAll(getPcd().getMuedigkeitsData().altAdjektivphrasePraedikativ().stream()
+                .map(p -> du(PARAGRAPH, "fühlst", "dich " + p)
+                        .beendet(PARAGRAPH))
+                .collect(toList()));
 
         if (getMuedigkeit() == FeelingIntensity.NUR_LEICHT) {
             // NUR_LEICHT: "leicht erschöpft"

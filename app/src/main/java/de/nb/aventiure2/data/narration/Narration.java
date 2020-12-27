@@ -141,20 +141,6 @@ public class Narration {
     }
 
     /**
-     * Ob dieses Game Object zurzeit <i>Thema</i> ist (im Sinne von Thema - Rhema).
-     */
-    boolean isThema(@NonNull final GameObjectId gameObjectId) {
-        if (gameObjectId.equals(phorikKandidatBezugsobjekt)) {
-            return true;
-        }
-
-        // STORY es gibt auch noch andere Fälle, wo das Game Object Thema sein könnte...
-        //  (Auch im Narrator anpassen!)
-
-        return false;
-    }
-
-    /**
      * Gibt das Personalpronomen zurück, mit dem ein
      * anaphorischer Bezug auf dieses
      * Game Object möglich ist.
@@ -210,10 +196,6 @@ public class Narration {
         //  Das letzte Ereignis gedauert hat oder wie lang das aktuelle Ereignis
         //  dauert? Wenn das aktuelle Ereignis 0sek dauert, geschieht es offenbar
         //  gleichzeitig?! Also etwas schreiben wie "zugleich"?!
-
-        // TODO Idee könnte sein, dass erst mehrere Alternativen erstellt werden
-        //  und auf Basis des bisherigen Textes ermittelt wird, welche Alternative
-        //  besser passt?
         return dann;
     }
 
@@ -348,7 +330,7 @@ public class Narration {
         }
 
         final String firstCharAdditional = addition.substring(0, 1);
-        if (".,;!?“\n".contains(firstCharAdditional)) {
+        if (".,;!?“\n" .contains(firstCharAdditional)) {
             return false;
         }
 
@@ -362,13 +344,13 @@ public class Narration {
 
         final String lastRelevantCharBase =
                 baseTrimmed.substring(baseTrimmed.length() - 1);
-        if ("….!?\"“\n".contains(lastRelevantCharBase)) {
+        if ("….!?\"“\n" .contains(lastRelevantCharBase)) {
             return false;
         }
 
         final String firstCharAdditional =
                 addition.trim().substring(0, 1);
-        return !".!?".contains(firstCharAdditional);
+        return !".!?" .contains(firstCharAdditional);
     }
 
     NarrationSource getLastNarrationSource() {

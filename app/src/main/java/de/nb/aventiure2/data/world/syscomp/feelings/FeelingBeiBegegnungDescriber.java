@@ -51,7 +51,7 @@ public interface FeelingBeiBegegnungDescriber {
             Person gameObjectSubjektPerson, NumerusGenus gameObjectSubjektNumerusGenus,
             SubstantivischePhrase targetDesc, int feelingIntensity,
             final boolean targetKnown);
-    
+
     /**
      * Gibt eventuell alternative Adjektivphrasen zurück, die den
      * Eindruck beschreiben, den dieses Feeling Being auf das Target macht, wenn die beiden sich
@@ -64,7 +64,7 @@ public interface FeelingBeiBegegnungDescriber {
      * @return Möglicherweise eine leere Liste (insbesondere bei extremen Gefühlen)!
      */
     @NonNull
-    // TODO Auch die Zauberin könnte irgendwie wirken, wenn sie
+    // FIXME Auch die Zauberin könnte irgendwie wirken, wenn sie
     //  den SC (wieder-) trifft...
     ImmutableList<AdjPhrOhneLeerstellen> altEindruckBeiBegegnungAdjPhr(
             Person gameObjectSubjektPerson, NumerusGenus gameObjectSubjektNumerusGenus,

@@ -84,10 +84,7 @@ class BettFactory {
                     + "vielen Schritten tut es sehr gut, sich "
                     + "einmal auszustrecken", secs(15), BETT__DESC_IN);
         }
-
-        // STORY "noch einmal" wäre ein Problem, wenn man mehrere Betten hätte.
-        //  Dann müsste man wissen, in welchem Bett der SC schon gelegen hat.
-        //  Z.B. separater Counter je Bett o.Ä.
+        
         return du("legst", "dich noch einmal in das Holzbett",
                 "noch einmal", secs(15))
                 .undWartest()

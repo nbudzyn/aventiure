@@ -53,8 +53,6 @@ class DescriptionCombiner {
             ));
         }
 
-        // STORY "Als du unten angekommen bist..."
-
         return res.build();
     }
 
@@ -113,6 +111,10 @@ class DescriptionCombiner {
                     // "Unten angekommen bist du ziemlich erschäpft"
                     hauptsatzMitVorfeld.getString()));
         }
+
+        // STORY "Als du unten angekommen bist..."
+        //  (Also Perfekt! Das Partizip II wissen wir ja! Prüfen, ob man das ohne Schaden
+        //  machen kann.)
 
         return res.build();
     }

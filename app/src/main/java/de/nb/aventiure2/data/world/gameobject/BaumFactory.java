@@ -174,17 +174,7 @@ public class BaumFactory {
             final Lichtverhaeltnisse lichtverhaeltnisse) {
         // FIXME Die folgenden Konstruktionen möchte ich ebenfalls automatisch erzeugen (Nach
         //  Möglichkeit Beispiele einbauen):
-        //  - Endlich angekommen bist du sehr erschöpft.
         //  - Gut ausgeschlafen bist du voller Tatendrang.
-        //  - Endlich eingetreten schaust du dich genau um.
-        //  - Endlich eingeschlafen hast du einen Traum.
-
-        // STORY Auch diese Konstruktionen möchte ich nach Möglichkeit automatisch (zentral)
-        //  erzeugen (Nach Möglichkeit Beispiele einbauen):
-        //  - Als du unten angekommen bist, bist du sehr erschöpft.
-        //  - Als du endlich angekommen bist, bist du sehr erschöpft.
-        //  - Als du endlich ausgeschlafen hast, bist du voller Tatendrang.
-        //  - Als du endlich eingetreten bist, schaust du dich genau um.
 
         // STORY Auch dies automatisch erzeugen:
         //  - "Du bist ganz zerknirscht. Du gehst ...." ->  "Ganz zerknirscht gehst du..."??

@@ -32,6 +32,7 @@ import de.nb.aventiure2.scaction.AbstractScAction;
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkState;
 import static com.google.common.collect.ImmutableList.builder;
+import static com.google.common.collect.ImmutableList.toImmutableList;
 import static de.nb.aventiure2.data.world.gameobject.World.*;
 import static de.nb.aventiure2.data.world.syscomp.feelings.Mood.ANGESPANNT;
 import static de.nb.aventiure2.data.world.syscomp.feelings.Mood.NEUTRAL;
@@ -403,15 +404,19 @@ public class NehmenAction
                 final Nominalphrase objectDesc = world.getDescription(gameObject, true);
                 final PraedikatOhneLeerstellen praedikatMitObjekt =
                         mitnehmenPraedikat.mit(objectDesc);
-                n.narrate(du(PARAGRAPH,
-                        praedikatMitObjekt.mitAdverbialerAngabe(
-                                sc.feelingsComp().getAdverbialeAngabe()),
-                        secs(5))
-                        .undWartest(
-                                praedikatMitObjekt
-                                        .duHauptsatzLaesstSichMitNachfolgendemDuHauptsatzZusammenziehen())
-                        .phorikKandidat(objectDesc, gameObject.getId())
-                        .dann());
+
+                n.narrateAlt(
+                        sc.feelingsComp().altAdverbialeAngaben().stream()
+                                .map(a ->
+                                        du(PARAGRAPH,
+                                                praedikatMitObjekt.mitAdverbialerAngabe(a),
+                                                secs(5))
+                                                .undWartest(
+                                                        praedikatMitObjekt
+                                                                .duHauptsatzLaesstSichMitNachfolgendemDuHauptsatzZusammenziehen())
+                                                .phorikKandidat(objectDesc, gameObject.getId())
+                                                .dann())
+                                .collect(toImmutableList()));
                 return;
             }
         }

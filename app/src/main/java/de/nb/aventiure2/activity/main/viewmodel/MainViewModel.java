@@ -76,7 +76,7 @@ public class MainViewModel extends AndroidViewModel {
 
 
     @UiThread
-    public void walkActions(final IActionChooser actionChooser) {
+    private void walkActions(final IActionChooser actionChooser) {
         // Aktionen aus der GUI entfernen
         playerActionHandlers.setValue(ImmutableList.of());
 
@@ -109,10 +109,6 @@ public class MainViewModel extends AndroidViewModel {
                 LOGGER.i(e.getMessage());
                 // Im Moment wird die Action einfach übersprungen.
                 // Um Fehler im Walkthrough zu finden gibt es ja, den WalkerTest
-
-                // TODO Fehlermeldung zeigen: e.getMessage
-                //  - oder nachfragen, ob der Schritt oder alle
-                //  Schritte übersprungen werden sollen...
             }
         }
 

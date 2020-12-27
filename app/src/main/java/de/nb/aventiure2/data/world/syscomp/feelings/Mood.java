@@ -1,6 +1,13 @@
 package de.nb.aventiure2.data.world.syscomp.feelings;
 
+import com.google.common.collect.ImmutableList;
+
+import java.util.Collection;
+import java.util.stream.Stream;
+
 import de.nb.aventiure2.german.praedikat.AdverbialeAngabeSkopusSatz;
+
+import static com.google.common.collect.ImmutableList.toImmutableList;
 
 /**
  * Gemütszustand
@@ -11,8 +18,7 @@ public enum Mood {
     BEGEISTERT(FeelingIntensity.DEUTLICH, "begeistert"),
     AUFGEDREHT(FeelingIntensity.MERKLICH, "aufgedreht"),
     BEWEGT(FeelingIntensity.MERKLICH, "selbstvergessen"),
-    ZUFRIEDEN(FeelingIntensity.NUR_LEICHT, "spielerisch"),
-    // STORY (welche Emotion?) "versonnen"
+    ZUFRIEDEN(FeelingIntensity.NUR_LEICHT, "spielerisch", "versonnen"),
     NEUTRAL(FeelingIntensity.NEUTRAL, "aus Langeweile"),
     ANGESPANNT(FeelingIntensity.NEUTRAL, "trotzig"),
     ETWAS_GEKNICKT(-FeelingIntensity.MERKLICH, "etwas geknickt"),
@@ -22,17 +28,21 @@ public enum Mood {
     UNTROESTLICH(-FeelingIntensity.SEHR_STARK, "voller Trauer");
 
     private final int gradDerFreude;
-    private final AdverbialeAngabeSkopusSatz adverbialeAngabe;
+    private final ImmutableList<AdverbialeAngabeSkopusSatz> altAdverbialeAngaben;
 
-    Mood(final int gradDerFreude, final String adverbialeAngabeText) {
-        this(gradDerFreude, new AdverbialeAngabeSkopusSatz(adverbialeAngabeText));
+    Mood(final int gradDerFreude, final String... altAdverbialeAngabenTexte) {
+        this(gradDerFreude,
+                Stream.of(altAdverbialeAngabenTexte)
+                        .map(AdverbialeAngabeSkopusSatz::new)
+                        .collect(toImmutableList()));
     }
 
-    Mood(final int gradDerFreude, final AdverbialeAngabeSkopusSatz adverbialeAngabe) {
+    Mood(final int gradDerFreude,
+         final Collection<AdverbialeAngabeSkopusSatz> altAdverbialeAngaben) {
         FeelingIntensity.checkValuePositive(Math.abs(gradDerFreude));
 
         this.gradDerFreude = gradDerFreude;
-        this.adverbialeAngabe = adverbialeAngabe;
+        this.altAdverbialeAngaben = ImmutableList.copyOf(altAdverbialeAngaben);
     }
 
     public boolean isFroehlicherAls(final Mood other) {
@@ -43,8 +53,8 @@ public enum Mood {
         return gradDerFreude < other.gradDerFreude;
     }
 
-    public AdverbialeAngabeSkopusSatz getAdverbialeAngabe() {
-        return adverbialeAngabe;
+    public ImmutableList<AdverbialeAngabeSkopusSatz> altAdverbialeAngaben() {
+        return altAdverbialeAngaben;
     }
 
     /**

@@ -8,8 +8,6 @@ import de.nb.aventiure2.data.world.base.GameObjectId;
  * Component for a {@link GameObject}: The game object is alive.
  */
 public class AliveComp extends AbstractStatelessComponent {
-    // STORY LivingBeings könnten sterben.
-
     public AliveComp(final GameObjectId gameObjectId) {
         super(gameObjectId);
     }

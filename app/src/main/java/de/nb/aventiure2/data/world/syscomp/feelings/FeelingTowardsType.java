@@ -20,7 +20,7 @@ import static de.nb.aventiure2.german.praedikat.PraedikativumPraedikatOhneLeerst
  */
 public enum FeelingTowardsType {
     ZUNEIGUNG_ABNEIGUNG(new ZuneigungAbneigungBeiBegegnungDescriber());
-    // STORY Weitere Gefühle könnten zb sein
+    // Weitere Gefühle könnten zb sein
     //  - VERTRAUEN_MISSTRAUEN
     //  - Dankbarkeit / Rachedurst
 

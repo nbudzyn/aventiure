@@ -2,6 +2,8 @@ package de.nb.aventiure2.data.world.syscomp.feelings;
 
 import androidx.annotation.NonNull;
 
+import com.google.common.collect.ImmutableList;
+
 import java.util.Objects;
 
 import javax.annotation.concurrent.Immutable;
@@ -9,6 +11,7 @@ import javax.annotation.concurrent.Immutable;
 import de.nb.aventiure2.data.world.time.*;
 import de.nb.aventiure2.german.praedikat.AdverbialeAngabeSkopusSatz;
 
+import static com.google.common.collect.ImmutableList.toImmutableList;
 import static de.nb.aventiure2.data.world.time.AvTimeSpan.*;
 
 @Immutable
@@ -139,7 +142,7 @@ public class MuedigkeitsData {
                 // STORY Guter Wert?
                 return scActionStepCount + 8;
             case FeelingIntensity.SEHR_STARK:
-                // STORY  uter Wert?
+                // STORY Guter Wert?
                 return scActionStepCount + 7;
             case FeelingIntensity.PATHOLOGISCH:
                 // STORY Guter Wert?
@@ -149,35 +152,36 @@ public class MuedigkeitsData {
         }
     }
 
-    public AdverbialeAngabeSkopusSatz getAdverbialeAngabe() {
-        return new AdverbialeAngabeSkopusSatz(getAdverbialeAngabeString());
+    ImmutableList<AdverbialeAngabeSkopusSatz> altAdverbialeAngaben() {
+        return getAdverbialeAngabeString().stream()
+                .map(AdverbialeAngabeSkopusSatz::new)
+                .collect(toImmutableList());
     }
 
-    private String getAdverbialeAngabeString() {
+    private ImmutableList<String> getAdverbialeAngabeString() {
         if (muedigkeit == FeelingIntensity.NEUTRAL) {
-            return "mit voller Konzentration";
+            return ImmutableList.of("hellwach", "mit voller Konzentration");
         }
 
-        return getAdjektivphrasePraedikativ();
+        return altAdjektivphrasePraedikativ();
     }
 
-    String getAdjektivphrasePraedikativ() {
+    ImmutableList<String> altAdjektivphrasePraedikativ() {
         switch (muedigkeit) {
             case FeelingIntensity.NEUTRAL:
-                return "wach";
+                return ImmutableList.of("wach");
             case FeelingIntensity.NUR_LEICHT:
-                return "leicht erschöpft";
+                return ImmutableList.of("leicht erschöpft");
             case FeelingIntensity.MERKLICH:
-                return "erschöpft";
+                return ImmutableList.of("erschöpft");
             case FeelingIntensity.DEUTLICH:
-                return "müde";
+                return ImmutableList.of("müde");
             case FeelingIntensity.STARK:
-                return "völlig übermüdet";
+                return ImmutableList.of("völlig übermüdet", "hundemüde");
             case FeelingIntensity.SEHR_STARK:
-                // STORY Alternative: hundemüde
-                return "todmüde";
+                return ImmutableList.of("todmüde");
             case FeelingIntensity.PATHOLOGISCH:
-                return "benommen";
+                return ImmutableList.of("benommen");
             default:
                 throw new IllegalStateException("Müdigkeit: " + muedigkeit);
         }

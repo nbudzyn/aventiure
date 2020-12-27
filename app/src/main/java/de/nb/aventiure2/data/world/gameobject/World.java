@@ -313,15 +313,16 @@ public class World {
                         // Ansonsten bekommen wir vorher Aktionen wie
                         // "Die Kugel auf den Tisch legen" angeboten. (Auf welchen der
                         // vielen Tisch denn??)
-                        // TODO Man könnte ein Framework für diese "Instanziierung"
-                        //  anbieten, wo man eine "Tisch-Instanz" betritt und
-                        //  später wieder verlässt (worauf alles zurückgesetzt wird und
-                        //  der SC ggf. alle relevanten Gegenstände automatisch mitnimmt.)
+
+                        // Der Tisch wird sozusagen "instanziiert".
+                        // Man könnte ein Framework für diese "Instanziierung"
+                        // anbieten, wo man eine "Tisch-Instanz" betritt und
+                        // später wieder verlässt (worauf alles zurückgesetzt wird und
+                        // der SC ggf. alle relevanten Gegenstände automatisch mitnimmt.)
                         null, null,
                         false,
                         TISCH,
                         SCHLOSS_VORHALLE_DAUERHAFT_BELEUCHTET),
-                // STORY Spieler kauft Lampe (z.B. für Hütte) auf Schlossfest
 
                 schattenDerBaeume.createVorDemAltenTurm(),
                 bett.createInDerHuetteImWald(),

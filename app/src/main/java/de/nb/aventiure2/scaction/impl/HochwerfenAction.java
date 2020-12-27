@@ -21,9 +21,12 @@ import de.nb.aventiure2.data.world.syscomp.storingplace.ILocationGO;
 import de.nb.aventiure2.german.base.Nominalphrase;
 import de.nb.aventiure2.german.base.SubstantivischePhrase;
 import de.nb.aventiure2.german.description.TimedDescription;
+import de.nb.aventiure2.german.praedikat.AdverbialeAngabeSkopusSatz;
 import de.nb.aventiure2.german.praedikat.SeinUtil;
 import de.nb.aventiure2.scaction.AbstractScAction;
 
+import static com.google.common.collect.ImmutableList.of;
+import static com.google.common.collect.ImmutableList.toImmutableList;
 import static de.nb.aventiure2.data.world.base.Lichtverhaeltnisse.DUNKEL;
 import static de.nb.aventiure2.data.world.base.Lichtverhaeltnisse.HELL;
 import static de.nb.aventiure2.data.world.gameobject.World.*;
@@ -57,12 +60,11 @@ public class HochwerfenAction<OBJ extends IDescribableGO & ILocatableGO>
             final AvDatabase db, final Narrator n, final World world,
             final ILocationGO location, @NonNull final OBJ gameObject) {
         if (gameObject instanceof ILivingBeingGO) {
-            return ImmutableList.of();
+            return of();
         }
 
         // STORY Nicht jedes Object lässt sich hochwerfen...
-        return ImmutableList
-                .of(new HochwerfenAction<>(db, n, world, gameObject, location));
+        return of(new HochwerfenAction<>(db, n, world, gameObject, location));
     }
 
     private HochwerfenAction(final AvDatabase db,
@@ -122,23 +124,28 @@ public class HochwerfenAction<OBJ extends IDescribableGO & ILocatableGO>
             return;
         }
 
-        final String emotionSatzglied = emotionSatzgliedFuersHochwerfen();
+        final ImmutableList<String> altEmotionSatzglieder = altEmotionSatzgliedFuersHochwerfen();
 
         narrateAndDoHochwerfenAuffangen(
-                du(PARAGRAPH, "wirfst",
-                        objectDesc.akk()
-                                + " "
-                                + emotionSatzglied
-                                + " in die Höhe und fängst " +
-                                objectDesc.persPron().akk() +
-                                " wieder auf",
-                        emotionSatzglied, secs(3))
-                        .dann());
+                altEmotionSatzglieder.stream()
+                        .map(emo ->
+                                du(PARAGRAPH, "wirfst",
+                                        objectDesc.akk()
+                                                + " "
+                                                + emo
+                                                + " in die Höhe und fängst " +
+                                                objectDesc.persPron().akk() +
+                                                " wieder auf",
+                                        emo, secs(3))
+                                        .dann())
+                        .collect(toImmutableList()));
     }
 
     @NonNull
-    private String emotionSatzgliedFuersHochwerfen() {
-        return sc.feelingsComp().getAdverbialeAngabe().getText();
+    private ImmutableList<String> altEmotionSatzgliedFuersHochwerfen() {
+        return sc.feelingsComp().altAdverbialeAngaben().stream()
+                .map(AdverbialeAngabeSkopusSatz::getText)
+                .collect(toImmutableList());
     }
 
     private <F extends IHasStateGO<FroschprinzState> & ILocatableGO> void
@@ -189,7 +196,11 @@ public class HochwerfenAction<OBJ extends IDescribableGO & ILocatableGO>
     }
 
     private void narrateAndDoHochwerfenAuffangen(final TimedDescription<?> desc) {
-        n.narrate(desc);
+        narrateAndDoHochwerfenAuffangen(ImmutableList.of(desc));
+    }
+
+    private void narrateAndDoHochwerfenAuffangen(final ImmutableList<TimedDescription<?>> alt) {
+        n.narrateAlt(alt);
 
         object.locationComp().narrateAndDoLeaveReactions(SPIELER_CHARAKTER);
 
