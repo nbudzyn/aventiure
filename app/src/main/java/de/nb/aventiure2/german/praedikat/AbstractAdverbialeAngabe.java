@@ -33,7 +33,6 @@ public abstract class AbstractAdverbialeAngabe {
     @NonNull
     @Override
     public String toString() {
-        // FIXME Verwendungen von toString() prüfen und umbauen auf Konstituenten (wegen Nachkomma)!
         return getText();
     }
 }

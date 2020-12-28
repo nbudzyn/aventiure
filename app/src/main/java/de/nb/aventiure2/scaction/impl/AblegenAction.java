@@ -321,7 +321,7 @@ public class AblegenAction
                                     + gameObjektPersPron.akk()
                                     + (wohinDetail == null ?
                                     " hin" :
-                                    " " + wohinDetail), // "auf den Tisch"
+                                    " " + wohinDetail.getText()), // "auf den Tisch"
                             secs(5))
                             .undWartest());
                     return;
@@ -338,7 +338,7 @@ public class AblegenAction
 
                 n.narrate(du("legst",
                         gameObjektPersPron.akk() +
-                                (wohinDetail == null ? " hin" : " " + wohinDetail),
+                                (wohinDetail == null ? " hin" : " " + wohinDetail.getText()),
                         secs(3)));
                 return;
             }
@@ -358,7 +358,7 @@ public class AblegenAction
         n.narrate(
                 du(PARAGRAPH, "legst",
                         world.getDescription(gameObject, false).akk()
-                                + (wohinDetail == null ? " hin" : " " + wohinDetail),
+                                + (wohinDetail == null ? " hin" : " " + wohinDetail.getText()),
                         secs(3))
                         .undWartest()
                         .dann());

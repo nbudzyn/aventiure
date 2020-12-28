@@ -38,18 +38,14 @@ public class Wortfolge {
      * @see Wortfolge
      */
     @Nullable
-    // FIXME Verwendungen suchen, ggf. entfernen?!
     public static Wortfolge joinToNullWortfolge(final Object... parts) {
         return joinToNullWortfolge(asList(parts));
     }
 
     /**
-     * Fügt diese Teile zu einem String zusammen - einschließlich der Information,
+     * Fügt diese Teile zu einer Wortfolge zusammen - einschließlich der Information,
      * ob ein Komma aussteht.
-     *
-     * @see Wortfolge
      */
-    // FIXME Verwendungen suchen, ggf. durch joinToKonstituenten() ersetzen?
     @Nullable
     static Wortfolge joinToNullWortfolge(final Iterable<?> parts) {
         final StringBuilder resString = new StringBuilder();
@@ -75,38 +71,6 @@ public class Wortfolge {
         }
 
         return w(resString.toString(), kommaStehtAus);
-    }
-
-    /**
-     * Schneidet das Satzglied (einmalig) aus diesem Text. Die Suche nach
-     * dem Satzglied beginnt von vorn.
-     */
-    public static @Nullable
-    Wortfolge cutFirst(@Nullable final Wortfolge text,
-                       @Nullable final String satzglied) {
-        if (text == null) {
-            if (satzglied != null) {
-                throw new IllegalArgumentException(
-                        "Text null, but Satzglied was \"" + satzglied + "\".");
-            }
-
-            return null;
-        }
-
-        if (satzglied == null) {
-            return text;
-        }
-
-        // FIXME Hier gibt es ernste Probleme. Grob gesagt:
-        //  - Es könnte zu falscher Zeichensetzung ", , " o.Ä. kommmen.
-        //  - Wenn ein Satzglied entfernt wird, weiß man in einigen Fällen nicht, ob
-        //   Kommata vor oder nach dem Satzglied erhalten bleiben müssen oder nicht.
-        //  Die richtige Lösung wäre vermutlich, dass die Wortfolge nicht einfach nur einen
-        //  String speichert, sondern ihre einzelnen Satzglieder - und zu jedem Satzglied
-        //  auch noch die Information, ob danach ein Komma aussteht.
-        //  Vielleicht sollte man auch Differenzieren zwischen der Wortfolge und dem
-        //  "Mittelfeld", das seine Satzglieder kennt...
-        return w(GermanUtil.cutFirst(text.getString(), satzglied), text.kommmaStehtAus());
     }
 
     /**

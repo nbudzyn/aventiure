@@ -462,13 +462,15 @@ public class BewegenAction<LOC_DESC extends ILocatableGO & IDescribableGO>
                 alt.add(neuerSatz(
                         "Was willst du hier eigentlich? "
                                 + description.getDescription().getDescriptionHauptsatz(),
-                        description.getTimeElapsed()));
+                        description.getTimeElapsed())
+                        .komma(description.isKommaStehtAus()));
                 if (description.getDescription() instanceof AbstractDuDescription<?, ?>) {
                     alt.add(neuerSatz(
                             "Was willst du hier eigentlich? "
                                     + ((AbstractDuDescription<?, ?>) description.getDescription())
                                     .getDescriptionHauptsatzMitSpeziellemVorfeld(),
-                            description.getTimeElapsed()));
+                            description.getTimeElapsed())
+                            .komma(description.isKommaStehtAus()));
                 }
 
                 alt.addAll(drueckeAusTimed(DISKONTINUITAET, description));

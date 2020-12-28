@@ -39,7 +39,6 @@ public class GermanUtil {
      * ausstehende Kommma auf andere Weise behandelt wird.
      */
     @Nullable
-    // FIXME Verwendungen suchen, ggf. entfernen?!
     public static String joinToNullString(final Object... parts) {
         return joinToNullString(asList(parts));
     }
@@ -50,7 +49,6 @@ public class GermanUtil {
      * ausstehende Kommma auf andere Weise behandelt wird.
      */
     @Nullable
-    // FIXME Verwendungen suchen, ggf. entfernen?!
     public static String joinToNullString(final Iterable<?> parts) {
         @Nullable final Wortfolge res = Wortfolge.joinToNullWortfolge(parts);
         if (res == null) {
@@ -120,7 +118,7 @@ public class GermanUtil {
 
     /**
      * Schneidet diesen Teil-Text (einmalig) aus diesem Text. Die Suche nach
-     * dem Satzglied beginnt von vorn.
+     * dem Teil-Text beginnt am Anfang des Textes.
      */
     public static @Nullable
     String cutFirst(@Nullable final String text, @Nullable final String part) {
@@ -146,36 +144,7 @@ public class GermanUtil {
         return cut(text, startIndex, part.length());
     }
 
-    /**
-     * Schneidet diesen Teil-Text (einmalig) aus diesem Text;  die Suche nach
-     * dem Satzglied beginnt von hinten.
-     */
-    public static @Nullable
-    String cutLast(@Nullable final String text, @Nullable final String part) {
-        if (text == null) {
-            if (part != null) {
-                throw new IllegalArgumentException(
-                        "Text null, but Satzglied was \"" + part + "\".");
-            }
-
-            return null;
-        }
-
-        if (part == null) {
-            return text;
-        }
-
-        final int startIndex = text.lastIndexOf(part);
-        if (startIndex < 0) {
-            throw new IllegalArgumentException("Satzglied \"" + part + "\" not contained "
-                    + "in \"" + text + "\"");
-        }
-
-        return cut(text, startIndex, part.length());
-    }
-
     @Nullable
-    // FIXME Verwendungen suchen und nach Möglichkeit entfernen, dann ggf. diese Methode entfernen
     private static String cut(@NonNull final String text, final int startIndex,
                               final int satzgliedLength) {
         requireNonNull(text, "text");

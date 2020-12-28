@@ -19,6 +19,7 @@ public class Modalpartikel {
     @NonNull
     @Override
     public String toString() {
+        // Muss zwingend so bleiben - wird verwendet!
         return text;
     }
 }
