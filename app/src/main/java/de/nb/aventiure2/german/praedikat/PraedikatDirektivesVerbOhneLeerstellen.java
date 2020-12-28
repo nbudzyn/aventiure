@@ -13,12 +13,12 @@ import de.nb.aventiure2.annotations.Valenz;
 import de.nb.aventiure2.german.base.GermanUtil;
 import de.nb.aventiure2.german.base.Interrogativpronomen;
 import de.nb.aventiure2.german.base.Kasus;
+import de.nb.aventiure2.german.base.Konstituente;
 import de.nb.aventiure2.german.base.Numerus;
 import de.nb.aventiure2.german.base.Person;
 import de.nb.aventiure2.german.base.SubstantivischePhrase;
-import de.nb.aventiure2.german.base.Wortfolge;
 
-import static de.nb.aventiure2.german.base.GermanUtil.joinToNull;
+import static de.nb.aventiure2.german.base.Konstituente.k;
 
 /**
  * Ein Prädikat eines <i>direktiven Verbs</i>, in dem alle Leerstellen besetzt sind. Beispiele:
@@ -142,8 +142,10 @@ public class PraedikatDirektivesVerbOhneLeerstellen
 
     @Nullable
     @Override
-    public String getSpeziellesVorfeld() {
-        @Nullable final String speziellesVorfeldFromSuper = super.getSpeziellesVorfeld();
+    public Konstituente getSpeziellesVorfeld(final Person person,
+                                             final Numerus numerus) {
+        @Nullable final Konstituente speziellesVorfeldFromSuper = super.getSpeziellesVorfeld(person,
+                numerus);
         if (speziellesVorfeldFromSuper != null) {
             return speziellesVorfeldFromSuper;
         }
@@ -152,22 +154,23 @@ public class PraedikatDirektivesVerbOhneLeerstellen
         if (!"es" .equals(objektImKasus)) {
             // Wenn "es" ein Objekt ist, darf es nicht im Vorfeld stehen.
             // (Eisenberg Der Satz 5.4.2)
-            return objektImKasus;  // "Die junge Frau (bittest du ...)"
+            return k(objektImKasus);  // "Die junge Frau (bittest du ...)"
         }
 
         return null;
     }
 
     @Override
-    public Wortfolge getMittelfeld(final Collection<Modalpartikel> modalpartikeln,
-                                   final Person personSubjekt,
-                                   final Numerus numerusSubjekt) {
-        return joinToNull(
-                getAdverbialeAngabeSkopusSatz(), // "aus einer Laune heraus"
+    public Iterable<Konstituente> getMittelfeld(final Collection<Modalpartikel> modalpartikeln,
+                                                final Person personSubjekt,
+                                                final Numerus numerusSubjekt) {
+        return Konstituente.joinToKonstituenten(
+                getAdverbialeAngabeSkopusSatzDescription(), // "aus einer Laune heraus"
                 GermanUtil.joinToNullString(modalpartikeln), // "mal eben"
-                getAdverbialeAngabeSkopusVerbAllg(), // "erneut"
+                getAdverbialeAngabeSkopusVerbAllgDescription(), // "erneut"
                 objekt.im(kasus), // "die junge Frau"
-                getAdverbialeAngabeSkopusVerbWohinWoher() // (kann es wohl gar nicht geben)
+                getAdverbialeAngabeSkopusVerbWohinWoherDescription()
+                // (kann es wohl gar nicht geben)
         );
 
         //  STORY Der lexikalische Kern könnte ebenfalls ins Mittelfeld gestellt werden:
@@ -179,8 +182,8 @@ public class PraedikatDirektivesVerbOhneLeerstellen
     }
 
     @Override
-    public String getNachfeld(final Person personSubjekt,
-                              final Numerus numerusSubjekt) {
+    public Iterable<Konstituente> getNachfeld(final Person personSubjekt,
+                                              final Numerus numerusSubjekt) {
         return lexikalischerKern.getZuInfinitiv(
                 // Es liegt "Objektkontrolle" vor.
                 objekt.getPerson(), objekt.getNumerusGenus().getNumerus()
@@ -201,11 +204,11 @@ public class PraedikatDirektivesVerbOhneLeerstellen
 
     @Nullable
     @Override
-    public String getErstesInterrogativpronomenAlsString() {
+    public Konstituente getErstesInterrogativpronomen() {
         if (objekt instanceof Interrogativpronomen) {
-            return objekt.im(kasus);
+            return k(objekt.im(kasus));
         }
 
-        return lexikalischerKern.getErstesInterrogativpronomenAlsString();
+        return lexikalischerKern.getErstesInterrogativpronomen();
     }
 }

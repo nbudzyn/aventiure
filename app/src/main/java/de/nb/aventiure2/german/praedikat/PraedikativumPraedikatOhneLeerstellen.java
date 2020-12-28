@@ -1,5 +1,7 @@
 package de.nb.aventiure2.german.praedikat;
 
+import com.google.common.collect.ImmutableList;
+
 import java.util.Collection;
 
 import javax.annotation.Nullable;
@@ -8,12 +10,11 @@ import de.nb.aventiure2.annotations.Argument;
 import de.nb.aventiure2.annotations.Valenz;
 import de.nb.aventiure2.german.base.GermanUtil;
 import de.nb.aventiure2.german.base.Interrogativpronomen;
+import de.nb.aventiure2.german.base.Konstituente;
 import de.nb.aventiure2.german.base.Numerus;
 import de.nb.aventiure2.german.base.Person;
 import de.nb.aventiure2.german.base.Praedikativum;
-import de.nb.aventiure2.german.base.Wortfolge;
 
-import static de.nb.aventiure2.german.base.GermanUtil.joinToNull;
 import static de.nb.aventiure2.german.base.Numerus.SG;
 import static de.nb.aventiure2.german.base.Person.P2;
 
@@ -104,10 +105,10 @@ public class PraedikativumPraedikatOhneLeerstellen
     @Override
     public boolean duHauptsatzLaesstSichMitNachfolgendemDuHauptsatzZusammenziehen() {
         // FIXME Das hier ist etwas unschön - eigentlich sollte die Frage, ob zusammengezogen
-        //  werden kann, erst an die Wortfolge gestellt werden, nicht zuvor!
+        //  werden kann, erst an die Konstituenten-Liste oder die Wortfolge gestellt werden, nicht
+        //  zuvor!
 
-        // Ob ein Komma aussteht, wird wohl in jeder Person und jedem Numerus gleich sein...
-        return !praedikativum.getPraedikativ(P2, SG).kommmaStehtAus();
+        return Konstituente.kommaStehtAus(praedikativum.getPraedikativ(P2, SG));
     }
 
     @Override
@@ -121,8 +122,9 @@ public class PraedikativumPraedikatOhneLeerstellen
 
     @Override
     public @Nullable
-    String getSpeziellesVorfeld() {
-        @Nullable final String speziellesVorfeldFromSuper = super.getSpeziellesVorfeld();
+    Konstituente getSpeziellesVorfeld(final Person person, final Numerus numerus) {
+        @Nullable final Konstituente speziellesVorfeldFromSuper = super.getSpeziellesVorfeld(person,
+                numerus);
         if (speziellesVorfeldFromSuper != null) {
             return speziellesVorfeldFromSuper;
         }
@@ -140,14 +142,16 @@ public class PraedikativumPraedikatOhneLeerstellen
     }
 
     @Override
-    public Wortfolge getMittelfeld(final Collection<Modalpartikel> modalpartikeln,
-                                   final Person personSubjekt,
-                                   final Numerus numerusSubjekt) {
-        return joinToNull(
-                getAdverbialeAngabeSkopusSatz(), // "plötzlich"
+    public Iterable<Konstituente> getMittelfeld(final Collection<Modalpartikel> modalpartikeln,
+                                                final Person personSubjekt,
+                                                final Numerus numerusSubjekt) {
+        return Konstituente.joinToKonstituenten(
+                getAdverbialeAngabeSkopusSatzDescription(), // "plötzlich"
                 GermanUtil.joinToNullString(modalpartikeln), // "halt"
-                getAdverbialeAngabeSkopusVerbAllg(), // "erneut"
-                getAdverbialeAngabeSkopusVerbWohinWoher(), // (kann wohl nicht besetzt sein?)
+                // FIXME alle Verwendungen von getAdverbialeAngabeSkopus() etc. auf getDescription umstellen!
+                getAdverbialeAngabeSkopusVerbAllgDescription(), // "erneut"
+                getAdverbialeAngabeSkopusVerbWohinWoherDescription(),
+                // (kann wohl nicht besetzt sein?)
                 praedikativum.getPraedikativ(personSubjekt, numerusSubjekt)
                 // "glücklich", "ein Esel", "sich ihrer selbst gewiss"
                 // "sehr glücklich, dich zu sehen"
@@ -155,14 +159,17 @@ public class PraedikativumPraedikatOhneLeerstellen
     }
 
     @Override
-    public String getNachfeld(final Person personSubjekt,
-                              final Numerus numerusSubjekt) {
+    public Iterable<Konstituente> getNachfeld(final Person personSubjekt,
+                                              final Numerus numerusSubjekt) {
         // STORY Das Prädikativum könnte diskontinuierlich aufgeteilt werden, dann könnte
         //  ein Teil ins Nachfeld kommen:
         //  Sie ist GLÜCKLICH gewesen, DICH ZU SEHEN.
         //  (alternativ zu ?"Sie ist GLÜCKLICH, DICH ZU SEHEN, gewesen").
+        //  Das Kernproblem ist, dass getNachfeld() zurzeit das liefert, was
+        //  dann auch zwingend ins Nachfeld gesetzt wird.
+        //  (Anders als beim Vorfeld - da ist es nur ein Kandidat.)
 
-        return null;
+        return ImmutableList.of();
     }
 
     @Override
@@ -177,14 +184,14 @@ public class PraedikativumPraedikatOhneLeerstellen
 
     @Nullable
     @Override
-    public String getErstesInterrogativpronomenAlsString() {
+    public Konstituente getErstesInterrogativpronomen() {
         if (praedikativum instanceof Interrogativpronomen) {
             return praedikativum.getPraedikativ(
-                    // Person und Numersu spielen beim Interrogativpronomen keine Rolle:
+                    // Person und Numerus spielen beim Interrogativpronomen keine Rolle:
                     // "Sie ist interessiert, wer Peter ist",
                     // "Sie ist interessiert, wer du bist",
                     // "Sie ist interessiert, wer wir sind"
-                    P2, SG).getString();
+                    P2, SG).iterator().next();
         }
 
         return null;

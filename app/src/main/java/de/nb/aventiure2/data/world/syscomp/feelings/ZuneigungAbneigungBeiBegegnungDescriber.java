@@ -17,7 +17,6 @@ import de.nb.aventiure2.german.base.Person;
 import de.nb.aventiure2.german.base.Personalpronomen;
 import de.nb.aventiure2.german.base.Praedikativum;
 import de.nb.aventiure2.german.base.SubstantivischePhrase;
-import de.nb.aventiure2.german.base.Wortfolge;
 import de.nb.aventiure2.german.praedikat.AdverbialeAngabeSkopusVerbAllg;
 import de.nb.aventiure2.german.praedikat.PraedikativumPraedikatOhneLeerstellen;
 import de.nb.aventiure2.german.praedikat.VerbSubjDatAkk;
@@ -29,7 +28,6 @@ import static de.nb.aventiure2.german.base.Nominalphrase.FREUDE_OHNE_ART;
 import static de.nb.aventiure2.german.base.Nominalphrase.WUT_OHNE_ART;
 import static de.nb.aventiure2.german.base.PraepositionMitKasus.AUSSER_DAT;
 import static de.nb.aventiure2.german.base.PraepositionMitKasus.VOR;
-import static de.nb.aventiure2.german.base.Wortfolge.w;
 import static de.nb.aventiure2.german.praedikat.PraedikativumPraedikatOhneLeerstellen.praedikativumPraedikatMit;
 import static de.nb.aventiure2.german.praedikat.VerbSubjObj.SEHEN;
 
@@ -156,7 +154,7 @@ class ZuneigungAbneigungBeiBegegnungDescriber implements FeelingBeiBegegnungDesc
 
         return ImmutableList.of();
     }
-    
+
     @NonNull
     @Override
     public ImmutableList<AdjPhrOhneLeerstellen> altEindruckBeiBegegnungAdjPhr(
@@ -246,20 +244,4 @@ class ZuneigungAbneigungBeiBegegnungDescriber implements FeelingBeiBegegnungDesc
         return ImmutableList.of();
     }
 
-    private static Wortfolge adjektivphraseMitAlsSiehtNebensatz(
-            final String adjektivphrase, final Person subjektPerson,
-            final NumerusGenus subjektNumerusGenus,
-            final SubstantivischePhrase objekt) {
-        // "du sie siehst"
-        return w(adjektivphrase
-                        + ", "
-                        + new Konditionalsatz(
-                        "als",
-                        SEHEN
-                                .mit(objekt)
-                                .alsSatzMitSubjekt(
-                                        Personalpronomen.get(subjektPerson, subjektNumerusGenus)))
-                        .getDescription().getString(),
-                true);
-    }
 }

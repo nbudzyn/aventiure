@@ -1,6 +1,5 @@
 package de.nb.aventiure2.german.praedikat;
 
-import de.nb.aventiure2.german.base.GermanUtil;
 import de.nb.aventiure2.german.base.Wortfolge;
 
 public interface AbstractDuTextPart {
@@ -8,8 +7,7 @@ public interface AbstractDuTextPart {
             final String konjunktionaladverb) {
         final Wortfolge duHauptsatz = getDuHauptsatz();
 
-        final Wortfolge duHauptsatzMitSpeziellemVorfeld =
-                getDuHauptsatzMitSpeziellemVorfeld();
+        final Wortfolge duHauptsatzMitSpeziellemVorfeld = getDuHauptsatzMitSpeziellemVorfeld();
 
         if (!duHauptsatz.equals(duHauptsatzMitSpeziellemVorfeld)) {
             return duHauptsatzMitSpeziellemVorfeld;
@@ -27,7 +25,7 @@ public interface AbstractDuTextPart {
      * ("Du nimmst den Ast")
      */
     default Wortfolge getDuHauptsatz() {
-        return GermanUtil.joinToNull(
+        return Wortfolge.joinToNullWortfolge(
                 "Du",
                 getDuSatzanschlussOhneSubjekt());
     }

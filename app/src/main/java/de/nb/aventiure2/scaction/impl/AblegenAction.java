@@ -19,6 +19,7 @@ import de.nb.aventiure2.data.world.syscomp.memory.Action;
 import de.nb.aventiure2.data.world.syscomp.state.IHasStateGO;
 import de.nb.aventiure2.data.world.syscomp.state.impl.FroschprinzState;
 import de.nb.aventiure2.data.world.syscomp.storingplace.ILocationGO;
+import de.nb.aventiure2.german.base.GermanUtil;
 import de.nb.aventiure2.german.base.Personalpronomen;
 import de.nb.aventiure2.german.base.SubstantivischePhrase;
 import de.nb.aventiure2.german.description.TimedDescription;
@@ -34,7 +35,6 @@ import static de.nb.aventiure2.data.world.syscomp.feelings.Mood.NEUTRAL;
 import static de.nb.aventiure2.data.world.syscomp.memory.Action.Type.NEHMEN;
 import static de.nb.aventiure2.data.world.syscomp.state.impl.FroschprinzState.HAT_HOCHHEBEN_GEFORDERT;
 import static de.nb.aventiure2.data.world.time.AvTimeSpan.*;
-import static de.nb.aventiure2.german.base.GermanUtil.capitalize;
 import static de.nb.aventiure2.german.base.Numerus.SG;
 import static de.nb.aventiure2.german.base.NumerusGenus.M;
 import static de.nb.aventiure2.german.base.Person.P1;
@@ -114,11 +114,12 @@ public class AblegenAction
     @Override
     @NonNull
     public String getName() {
-        return capitalize(
-                getPraedikat()
-                        .mit(world.getDescription(gameObject, true))
-                        .mitAdverbialerAngabe(getWohinDetail())
-                        .getInfinitiv(P1, SG));
+        return GermanUtil.capitalize(
+                GermanUtil.joinToNullString(
+                        getPraedikat()
+                                .mit(world.getDescription(gameObject, true))
+                                .mitAdverbialerAngabe(getWohinDetail())
+                                .getInfinitiv(P1, SG)));
     }
 
     @NonNull
@@ -305,6 +306,7 @@ public class AblegenAction
                             gameObjektPersPron.akk() +
                                     " " +
                                     location.storingPlaceComp().getLocationMode()
+                                            // FIXME Beser mit Konstituenten oder Wortfolge arbeiten? Folgekommma könnte verloren gehen...
                                             .getWohinAdvAngabe(false).getText(),
                             secs(3))
                             .dann()

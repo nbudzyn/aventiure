@@ -8,13 +8,12 @@ import javax.annotation.Nullable;
 
 import de.nb.aventiure2.annotations.Argument;
 import de.nb.aventiure2.annotations.Valenz;
+import de.nb.aventiure2.german.base.Konstituente;
 import de.nb.aventiure2.german.base.Numerus;
 import de.nb.aventiure2.german.base.Person;
 import de.nb.aventiure2.german.base.WoertlicheRede;
-import de.nb.aventiure2.german.base.Wortfolge;
 
-import static de.nb.aventiure2.german.base.GermanUtil.joinToNull;
-import static de.nb.aventiure2.german.base.GermanUtil.joinToNullString;
+import static de.nb.aventiure2.german.base.Konstituente.k;
 
 /**
  * Ein Prädikat mit wörtlicher Rede, in dem alle Leerstellen besetzt sind. Beispiele:
@@ -119,23 +118,23 @@ public class PraedikatMitWoertlicherRedeOhneLeerstellen
     }
 
     @Override
-    public Wortfolge getMittelfeld(final Collection<Modalpartikel> modalpartikeln,
-                                   final Person personSubjekt,
-                                   final Numerus numerusSubjekt) {
-        return joinToNull(
-                getAdverbialeAngabeSkopusSatz(), // "aus einer Laune heraus"
+    public Iterable<Konstituente> getMittelfeld(final Collection<Modalpartikel> modalpartikeln,
+                                                final Person personSubjekt,
+                                                final Numerus numerusSubjekt) {
+        return Konstituente.joinToKonstituenten(
+                getAdverbialeAngabeSkopusSatzDescription(), // "aus einer Laune heraus"
                 modalpartikeln,  // "mal eben"
-                getAdverbialeAngabeSkopusVerbAllg(), // "erneut"
-                getAdverbialeAngabeSkopusVerbWohinWoher() // "in ein Kissen"
+                getAdverbialeAngabeSkopusVerbAllgDescription(), // "erneut"
+                getAdverbialeAngabeSkopusVerbWohinWoherDescription()// "in ein Kissen"
         );
     }
 
     @Override
-    public String getNachfeld(final Person personSubjekt,
-                              final Numerus numerusSubjekt) {
-        return joinToNullString(
+    public Iterable<Konstituente> getNachfeld(final Person personSubjekt,
+                                              final Numerus numerusSubjekt) {
+        return Konstituente.joinToKonstituenten(
                 ":",
-                woertlicheRede.amSatzende()); // "„Kommt alle her.“"
+                k(woertlicheRede.amSatzende())); // "„Kommt alle her.“"
     }
 
     @Override
@@ -150,7 +149,7 @@ public class PraedikatMitWoertlicherRedeOhneLeerstellen
 
     @Nullable
     @Override
-    public String getErstesInterrogativpronomenAlsString() {
+    public Konstituente getErstesInterrogativpronomen() {
         return null;
     }
 }

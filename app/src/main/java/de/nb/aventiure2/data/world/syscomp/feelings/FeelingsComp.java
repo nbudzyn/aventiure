@@ -22,7 +22,6 @@ import de.nb.aventiure2.german.base.NumerusGenus;
 import de.nb.aventiure2.german.base.Personalpronomen;
 import de.nb.aventiure2.german.base.SubstantivischePhrase;
 import de.nb.aventiure2.german.description.AbstractDescription;
-import de.nb.aventiure2.german.description.AllgDescription;
 import de.nb.aventiure2.german.praedikat.AdverbialeAngabeSkopusSatz;
 import de.nb.aventiure2.german.satz.Satz;
 import de.nb.aventiure2.scaction.stepcount.SCActionStepCountDao;
@@ -36,11 +35,8 @@ import static de.nb.aventiure2.german.base.Person.P2;
 import static de.nb.aventiure2.german.base.StructuralElement.PARAGRAPH;
 import static de.nb.aventiure2.german.base.StructuralElement.SENTENCE;
 import static de.nb.aventiure2.german.description.DescriptionBuilder.du;
-import static de.nb.aventiure2.german.description.DescriptionBuilder.neueAdjPhrSaetze;
 import static de.nb.aventiure2.german.description.DescriptionBuilder.neuerSatz;
 import static de.nb.aventiure2.german.description.DescriptionBuilder.paragraph;
-import static de.nb.aventiure2.german.praedikat.VerbSubjPraedikativeAdjektivphrase.SCHEINEN;
-import static de.nb.aventiure2.german.praedikat.VerbSubjPraedikativeAdjektivphrase.WIRKEN;
 import static java.util.stream.Collectors.toList;
 
 /**
@@ -229,27 +225,6 @@ public class FeelingsComp extends AbstractStatefulComponent<FeelingsPCD> {
                         // "du, die du..." generiert wird.
                         M),
                 type);
-    }
-
-    /**
-     * Gibt eventuell alternative Sätze zurück, die den Eindruck
-     * beschreiben, den dieses Feeling Being auf den SC macht, wenn die beiden sich
-     * begegnen. Die Phrasen können mit
-     * <i>wirken</i> oder <i>scheinen</i> verbunden werden.
-     *
-     * @return Möglicherweise eine leere Liste (insbesondere bei extremen Gefühlen)!
-     */
-    @CheckReturnValue
-    @NonNull
-    public ImmutableList<AllgDescription> altEindruckAufScBeiBegegnungSaetze(
-            final GameObjectId subjektGameObject, final SubstantivischePhrase subjekt,
-            final FeelingTowardsType type) {
-        return altEindruckAufScBeiBegegnungAdjPhr(subjekt.getNumerusGenus(), type).stream()
-                .flatMap(ap -> neueAdjPhrSaetze(
-                        subjektGameObject, subjekt,
-                        ImmutableList.of(WIRKEN, SCHEINEN),
-                        ap).stream())
-                .collect(ImmutableList.toImmutableList());
     }
 
     /**

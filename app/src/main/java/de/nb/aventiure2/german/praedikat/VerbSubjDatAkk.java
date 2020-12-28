@@ -3,10 +3,7 @@ package de.nb.aventiure2.german.praedikat;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
-import de.nb.aventiure2.german.base.Numerus;
-import de.nb.aventiure2.german.base.Person;
 import de.nb.aventiure2.german.base.SubstantivischePhrase;
-import de.nb.aventiure2.german.base.Wortfolge;
 
 /**
  * Ein Verb (ggf. mit Präfix), das genau mit einem Subjekt, einem Dativobjekt und
@@ -77,36 +74,6 @@ public enum VerbSubjDatAkk implements Praedikat {
 
     VerbSubjDatAkk(final Verb verb) {
         this.verb = verb;
-    }
-
-    /**
-     * Gibt einen Satz zurück mit diesem Verb und diesen Objekten zurück.
-     * ("Du machst dem Frosch Angebote")
-     */
-    public Wortfolge getDescriptionHauptsatz(
-            final SubstantivischePhrase describableDat,
-            final SubstantivischePhrase describableAkk) {
-        return mitDat(describableDat).mit(describableAkk).getDuHauptsatz();
-    }
-
-    /**
-     * Gibt eine Infinitivkonstruktion zurück mit diesem Verb und diesen Objekten.
-     * ("dem Frosch Angebote machen")
-     */
-    public String getDescriptionInfinitiv(final Person person, final Numerus numerus,
-                                          final SubstantivischePhrase describableDat,
-                                          final SubstantivischePhrase describableAkk) {
-        return mitDat(describableDat).mit(describableAkk).getInfinitiv(person, numerus);
-    }
-
-    /**
-     * Gibt eine Infinitivkonstruktion zurück mit diesem Verb und diesen Objekten.
-     * ("dem Frosch Angebote zu machen")
-     */
-    public String getDescriptionZuInfinitiv(final Person person, final Numerus numerus,
-                                            final SubstantivischePhrase describableDat,
-                                            final SubstantivischePhrase describableAkk) {
-        return mitDat(describableDat).mit(describableAkk).getInfinitiv(person, numerus);
     }
 
     public PraedikatDatAkkMitEinerAkkLeerstelle mitDat(

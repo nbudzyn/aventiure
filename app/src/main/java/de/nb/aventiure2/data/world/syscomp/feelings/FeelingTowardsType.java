@@ -12,6 +12,12 @@ import de.nb.aventiure2.german.praedikat.AdverbialeAngabeSkopusSatz;
 import de.nb.aventiure2.german.satz.Satz;
 
 import static de.nb.aventiure2.german.praedikat.PraedikativumPraedikatOhneLeerstellen.praedikativumPraedikatMit;
+import static de.nb.aventiure2.german.praedikat.VerbSubjObj.ANBLICKEN;
+import static de.nb.aventiure2.german.praedikat.VerbSubjObj.ANSCHAUEN;
+import static de.nb.aventiure2.german.praedikat.VerbSubjObj.ANSEHEN;
+import static de.nb.aventiure2.german.praedikat.VerbSubjPraedikativeAdjektivphrase.SCHEINEN;
+import static de.nb.aventiure2.german.praedikat.VerbSubjPraedikativeAdjektivphrase.WIRKEN;
+import static java.util.stream.Collectors.toList;
 
 /**
  * Ein Spektrum von Gefühlen, dass ein {@link IFeelingBeingGO} gegenüber jemandem oder
@@ -45,10 +51,28 @@ public enum FeelingTowardsType {
             final boolean targetKnown) {
         final ImmutableList.Builder<Satz> res = ImmutableList.builder();
 
-        res.addAll(altEindruckBeiBegegnungAdjPhr(
-                gameObjectSubjekt.getPerson(), gameObjectSubjekt.getNumerusGenus(),
-                targetDesc, feelingIntensity, targetKnown
-        ).stream()
+        final ImmutableList<AdjPhrOhneLeerstellen> altEindruckAdjPhr =
+                altEindruckBeiBegegnungAdjPhr(
+                        gameObjectSubjekt.getPerson(), gameObjectSubjekt.getNumerusGenus(),
+                        targetDesc, feelingIntensity, targetKnown
+                );
+
+        res.addAll(altEindruckAdjPhr.stream()
+                .flatMap(ap -> Stream.of(WIRKEN, SCHEINEN)
+                        .map(v -> v.mit(ap).alsSatzMitSubjekt(gameObjectSubjekt)))
+                .collect(toList()));
+
+        res.addAll(altEindruckAdjPhr.stream()
+                // "Sie schaut dich überrascht an."
+                .flatMap(ap -> Stream.of(ANBLICKEN, ANSEHEN, ANSCHAUEN)
+                        .map(v -> v.mit(gameObjectSubjekt)
+                                .mitAdverbialerAngabe(ap.alsAdverbialeAngabe(
+                                        gameObjectSubjekt.getPerson(),
+                                        gameObjectSubjekt.getNumerus()))
+                                .alsSatzMitSubjekt(gameObjectSubjekt)))
+                .collect(toList()));
+
+        res.addAll(altEindruckAdjPhr.stream()
                 .flatMap(adjPhr ->
                         Stream.of("offenkundig", "sichtlich", "offenbar", "ganz offenbar")
                                 .map(

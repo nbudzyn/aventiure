@@ -45,14 +45,11 @@ public class FeelingsPCDTest {
 
     @NonNull
     private static FeelingsPCD feelingsPCDNichtMuedeAberHungrig() {
-        // TODO "zufällige" Testdaten / PojoBuilder oder Java-PojoBuilder verwenden?
-        //  Oder Lombok?
         return new FeelingsPCD(
                 gameObjectId(),
                 mood(),
                 muedigkeitsDataNichtMuede(),
                 hungerDataHungrig());
-        // TODO some($FeelingsPCD().withHungerData(...))
     }
 
     @NonNull

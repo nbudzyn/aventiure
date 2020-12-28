@@ -2,25 +2,38 @@ package de.nb.aventiure2.german.praedikat;
 
 import androidx.annotation.NonNull;
 
+import de.nb.aventiure2.german.base.GermanUtil;
+import de.nb.aventiure2.german.base.Konstituente;
+
+import static de.nb.aventiure2.german.base.Konstituente.k;
+
 /**
  * Eine adverbiale Angabe (z.B. "aus Langeweile" oder "fröhlich",
  * "den ganzen Tag", "auf dem Tisch").
  */
 public abstract class AbstractAdverbialeAngabe {
-    private final String text;
+    private final Konstituente konstituente;
 
-    public AbstractAdverbialeAngabe(final String text) {
-        this.text = text;
+    AbstractAdverbialeAngabe(final String text) {
+        this(k(text));
+    }
+
+    AbstractAdverbialeAngabe(final Konstituente konstituente) {
+        this.konstituente = konstituente;
     }
 
     public String getText() {
-        return text;
+        return GermanUtil.joinToNullString(konstituente);
+    }
+
+    public Konstituente getDescription() {
+        return konstituente;
     }
 
     @NonNull
     @Override
     public String toString() {
-        // So muss es bleiben - wird so ausgegeben!
-        return text;
+        // FIXME Verwendungen von toString() prüfen und umbauen auf Konstituenten (wegen Nachkomma)!
+        return getText();
     }
 }

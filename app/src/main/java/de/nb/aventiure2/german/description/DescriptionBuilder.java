@@ -12,6 +12,7 @@ import javax.annotation.CheckReturnValue;
 import de.nb.aventiure2.data.world.base.GameObjectId;
 import de.nb.aventiure2.data.world.time.*;
 import de.nb.aventiure2.german.adjektiv.AdjPhrOhneLeerstellen;
+import de.nb.aventiure2.german.base.Konstituente;
 import de.nb.aventiure2.german.base.StructuralElement;
 import de.nb.aventiure2.german.base.SubstantivischePhrase;
 import de.nb.aventiure2.german.base.Wortfolge;
@@ -22,7 +23,10 @@ import de.nb.aventiure2.german.satz.Satz;
 
 import static com.google.common.collect.ImmutableList.toImmutableList;
 import static de.nb.aventiure2.german.base.GermanUtil.capitalize;
+import static de.nb.aventiure2.german.base.Numerus.SG;
+import static de.nb.aventiure2.german.base.Person.P2;
 import static de.nb.aventiure2.german.base.StructuralElement.PARAGRAPH;
+import static de.nb.aventiure2.german.base.StructuralElement.SENTENCE;
 import static de.nb.aventiure2.german.description.TimedDescription.toTimed;
 
 public class DescriptionBuilder {
@@ -48,7 +52,7 @@ public class DescriptionBuilder {
 
     @CheckReturnValue
     @NonNull
-    public static ImmutableList<AllgDescription> neueSaetzeMitPhorikKandidat(
+    public static ImmutableList<AbstractDescription<?>> neueSaetzeMitPhorikKandidat(
             final SubstantivischePhrase phorikKandidatPhrase,
             final GameObjectId phorikKandidatGameObjectId,
             final Collection<Satz> saetze) {
@@ -60,7 +64,7 @@ public class DescriptionBuilder {
 
     @CheckReturnValue
     @NonNull
-    public static ImmutableList<AllgDescription> neuePraedikativumSaetze(
+    private static ImmutableList<AllgDescription> neuePraedikativumSaetze(
             final GameObjectId subjektGameObjectId, final SubstantivischePhrase subjekt,
             final Collection<Wortfolge> praedikativa) {
         return praedikativa.stream()
@@ -77,7 +81,7 @@ public class DescriptionBuilder {
 
     @CheckReturnValue
     @NonNull
-    public static ImmutableList<AllgDescription> neueAdjPhrSaetze(
+    public static ImmutableList<AbstractDescription<?>> neueAdjPhrSaetze(
             final GameObjectId subjektGameObjectId, final SubstantivischePhrase subjekt,
             final Collection<? extends VerbSubjPraedikativeAdjektivphrase> verben,
             final AdjPhrOhneLeerstellen adjPhrase) {
@@ -106,8 +110,16 @@ public class DescriptionBuilder {
 
     @NonNull
     @CheckReturnValue
-    public static AllgDescription neuerSatz(final Satz satz) {
+    public static AbstractDescription<?> neuerSatz(final Satz satz) {
+        if (satz.getSubjekt().getPerson() == P2 && satz.getSubjekt().getNumerus() == SG) {
+            return du(SENTENCE, satz.getPraedikat());
+        }
+
         return neuerSatz(satz.getVerbzweitsatz());
+    }
+
+    public static AllgDescription neuerSatz(final Iterable<Konstituente> verbzweitsatz) {
+        return neuerSatz(Wortfolge.joinToNullWortfolge(verbzweitsatz));
     }
 
     @NonNull
@@ -145,7 +157,7 @@ public class DescriptionBuilder {
     @CheckReturnValue
     public static AllgDescription neuerSatz(final StructuralElement startsNew,
                                             final Wortfolge wortfolge) {
-        return new AllgDescription(startsNew, capitalize(wortfolge));
+        return new AllgDescription(startsNew, wortfolge.capitalize());
     }
 
     @NonNull
@@ -293,7 +305,7 @@ public class DescriptionBuilder {
     @CheckReturnValue
     public static SimpleDuDescription du(final StructuralElement startsNew,
                                          final String verb) {
-        return du(startsNew, verb, (String) null, (String) null);
+        return du(startsNew, verb, null, (String) null);
     }
 
     @CheckReturnValue
@@ -327,48 +339,48 @@ public class DescriptionBuilder {
 
     @CheckReturnValue
     public static TimedDescription<PraedikatDuDescription> du(
-            final PraedikatOhneLeerstellen duTextPart,
+            final PraedikatOhneLeerstellen praedikat,
             final AvTimeSpan timeElapsed) {
-        return du(duTextPart, timeElapsed, null);
+        return du(praedikat, timeElapsed, null);
     }
 
     @CheckReturnValue
     public static TimedDescription<PraedikatDuDescription> du(
-            final PraedikatOhneLeerstellen duTextPart,
+            final PraedikatOhneLeerstellen praedikat,
             final AvTimeSpan timeElapsed,
             @Nullable final String counterIdIncrementedIfTextIsNarrated) {
-        return du(StructuralElement.WORD, duTextPart,
+        return du(StructuralElement.WORD, praedikat,
                 timeElapsed, counterIdIncrementedIfTextIsNarrated);
     }
 
     @CheckReturnValue
     public static TimedDescription<PraedikatDuDescription> du(
             final StructuralElement startsNew,
-            final PraedikatOhneLeerstellen duTextPart,
+            final PraedikatOhneLeerstellen praedikat,
             final AvTimeSpan timeElapsed) {
-        return du(startsNew, duTextPart, timeElapsed, null);
+        return du(startsNew, praedikat, timeElapsed, null);
     }
 
     @CheckReturnValue
     public static TimedDescription<PraedikatDuDescription> du(
             final StructuralElement startsNew,
-            final PraedikatOhneLeerstellen duTextPart,
+            final PraedikatOhneLeerstellen praedikat,
             final AvTimeSpan timeElapsed,
             @Nullable final String counterIdIncrementedIfTextIs) {
         return new TimedDescription<>(
-                du(startsNew, duTextPart),
+                du(startsNew, praedikat),
                 timeElapsed, counterIdIncrementedIfTextIs);
     }
 
     @CheckReturnValue
-    public static PraedikatDuDescription du(final PraedikatOhneLeerstellen duTextPart) {
-        return du(StructuralElement.WORD, duTextPart);
+    public static PraedikatDuDescription du(final PraedikatOhneLeerstellen praedikat) {
+        return du(StructuralElement.WORD, praedikat);
     }
 
     @NonNull
     @CheckReturnValue
     public static PraedikatDuDescription du(final StructuralElement startsNew,
-                                            final PraedikatOhneLeerstellen duTextPart) {
-        return new PraedikatDuDescription(startsNew, duTextPart);
+                                            final PraedikatOhneLeerstellen praedikat) {
+        return new PraedikatDuDescription(startsNew, praedikat);
     }
 }

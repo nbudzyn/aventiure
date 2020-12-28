@@ -265,7 +265,7 @@ public class SimpleMovementNarrator implements IMovementNarrator {
                                     " entgegen und geht an dir vorbei")
                             .phorikKandidat(desc, gameObjectId)
                             .beendet(PARAGRAPH));
-            // STORY "Dir kommt ... entgegen und geht hinter dir seiner / ihrer Wege"
+            // STORY "Dir kommt ... entgegen und geht hinter dir seiner / ihrer Wege (Genitiv!...)
             alt.add(
                     neuerSatz(PARAGRAPH,
                             "Dir kommt " +

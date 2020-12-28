@@ -10,16 +10,17 @@ import java.util.Collection;
 
 import javax.annotation.CheckReturnValue;
 
+import de.nb.aventiure2.german.base.GermanUtil;
 import de.nb.aventiure2.german.base.Wortfolge;
 import de.nb.aventiure2.german.praedikat.AdverbialeAngabeSkopusSatz;
 import de.nb.aventiure2.german.praedikat.AdverbialeAngabeSkopusVerbAllg;
 import de.nb.aventiure2.german.praedikat.Modalpartikel;
 
 import static com.google.common.collect.ImmutableList.builder;
-import static de.nb.aventiure2.german.base.GermanUtil.uncapitalize;
 import static de.nb.aventiure2.german.base.StructuralElement.PARAGRAPH;
 import static de.nb.aventiure2.german.base.StructuralElement.SENTENCE;
 import static de.nb.aventiure2.german.base.StructuralElement.max;
+import static de.nb.aventiure2.german.base.Wortfolge.uncapitalize;
 import static de.nb.aventiure2.german.description.DescriptionBuilder.du;
 import static de.nb.aventiure2.german.description.DescriptionBuilder.neuerSatz;
 
@@ -114,14 +115,16 @@ public class DescriptionUmformulierer {
                 alt.add(mitAdvAngabe(pDuDesc,
                         new AdverbialeAngabeSkopusVerbAllg("sogleich wieder")));
 
-                final Wortfolge duNimmstDieKugelBesserDoch = pDuDesc.getPraedikat().getDuHauptsatz(
-                        new Modalpartikel("besser"),
-                        new Modalpartikel("doch"));
+                final Wortfolge duNimmstDieKugelBesserDoch =
+                        Wortfolge.joinToNullWortfolge(
+                                pDuDesc.getPraedikat().getDuHauptsatz(
+                                        new Modalpartikel("besser"),
+                                        new Modalpartikel("doch")));
                 alt.add(neuerSatz(
                         max(duDesc.getStartsNew(), SENTENCE),
                         "Ach nein, " +
                                 // du nimmst die Kugel besser doch
-                                uncapitalize(duNimmstDieKugelBesserDoch.getString()))
+                                uncapitalize(duNimmstDieKugelBesserDoch).getString())
                         .komma(duNimmstDieKugelBesserDoch.kommmaStehtAus())
                         .undWartest(duDesc.isAllowsAdditionalDuSatzreihengliedOhneSubjekt())
                         .dann(duDesc.isDann())
@@ -272,7 +275,7 @@ public class DescriptionUmformulierer {
                                               final boolean uncapitalize) {
         String hauptsatz = desc.getDescriptionHauptsatz();
         if (uncapitalize) {
-            hauptsatz = uncapitalize(hauptsatz);
+            hauptsatz = GermanUtil.uncapitalize(hauptsatz);
         }
 
         return neuerSatz(
@@ -288,18 +291,11 @@ public class DescriptionUmformulierer {
     private static AbstractDuDescription<?, ?> duMitPraefix(
             final String praefixVerb,
             final String praefixRemainder,
-            final AbstractDescription<?> desc) {
-        return duMitPraefix(praefixVerb, praefixRemainder, desc, true);
-    }
-
-    private static AbstractDuDescription<?, ?> duMitPraefix(
-            final String praefixVerb,
-            final String praefixRemainder,
             final AbstractDescription<?> desc,
             final boolean uncapitalize) {
         String hauptsatz = desc.getDescriptionHauptsatz();
         if (uncapitalize) {
-            hauptsatz = uncapitalize(hauptsatz);
+            hauptsatz = GermanUtil.uncapitalize(hauptsatz);
         }
 
         return du(

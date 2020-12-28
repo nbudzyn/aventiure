@@ -16,6 +16,7 @@ import de.nb.aventiure2.data.world.syscomp.location.ILocatableGO;
 import de.nb.aventiure2.data.world.syscomp.memory.Action;
 import de.nb.aventiure2.data.world.syscomp.taking.ITakerGO;
 import de.nb.aventiure2.data.world.syscomp.taking.SCTakeAction;
+import de.nb.aventiure2.german.base.GermanUtil;
 import de.nb.aventiure2.german.base.Nominalphrase;
 import de.nb.aventiure2.german.base.SubstantivischePhrase;
 import de.nb.aventiure2.german.description.PraedikatDuDescription;
@@ -92,11 +93,11 @@ public class GebenAction<
     @Override
     public String getName() {
         return capitalize(
-                GEBEN
-                        .mitDat(world.getDescription(taker, true))
-                        .mit(world.getDescription(given))
-                        .getInfinitiv(P1, SG)
-        );
+                GermanUtil.joinToNullString(
+                        GEBEN
+                                .mitDat(world.getDescription(taker, true))
+                                .mit(world.getDescription(given))
+                                .getInfinitiv(P1, SG)));
     }
 
     @Override

@@ -8,14 +8,10 @@ import javax.annotation.Nullable;
 
 import de.nb.aventiure2.annotations.Argument;
 import de.nb.aventiure2.annotations.Valenz;
-import de.nb.aventiure2.german.base.GermanUtil;
+import de.nb.aventiure2.german.base.Konstituente;
 import de.nb.aventiure2.german.base.Numerus;
 import de.nb.aventiure2.german.base.Person;
-import de.nb.aventiure2.german.base.Wortfolge;
 
-import static de.nb.aventiure2.german.base.GermanUtil.capitalize;
-import static de.nb.aventiure2.german.base.GermanUtil.joinToNull;
-import static de.nb.aventiure2.german.base.GermanUtil.joinToNullString;
 import static de.nb.aventiure2.german.base.Numerus.SG;
 import static de.nb.aventiure2.german.base.Person.P2;
 
@@ -67,16 +63,17 @@ public class ZuHabenPraedikatOhneLeerstellen implements PraedikatOhneLeerstellen
 
     @Nullable
     @Override
-    public String getErstesInterrogativpronomenAlsString() {
-        return lexikalischerKern.getErstesInterrogativpronomenAlsString();
+    public Konstituente getErstesInterrogativpronomen() {
+        return lexikalischerKern.getErstesInterrogativpronomen();
     }
 
     @Override
-    public Wortfolge getDuSatzanschlussOhneSubjekt(final Collection<Modalpartikel> modalpartikeln) {
+    public Iterable<Konstituente> getDuSatzanschlussOhneSubjekt(
+            final Collection<Modalpartikel> modalpartikeln) {
         // hast Spannendes zu berichten
         // hast dich zu waschen
         // hast zu sagen: "Hallo!"
-        return joinToNull(
+        return Konstituente.joinToKonstituenten(
                 HabenUtil.VERB.getDuFormOhnePartikel(),
                 // FIXME eigentlich sollte es lexikalischerKern.mitModalpartikeln()
                 //  oder so ähnlich heißen (oder als adverbiale Angaben?).
@@ -94,26 +91,26 @@ public class ZuHabenPraedikatOhneLeerstellen implements PraedikatOhneLeerstellen
     }
 
     @Override
-    public Wortfolge getVerbzweit(final Person person, final Numerus numerus) {
+    public Iterable<Konstituente> getVerbzweit(final Person person, final Numerus numerus) {
         // hast Spannendes zu berichten
         // hast dich zu waschen
         // hast zu sagen: "Hallo!"
 
-        return joinToNull(
+        return Konstituente.joinToKonstituenten(
                 HabenUtil.VERB.getPraesensOhnePartikel(person, numerus), // "hast"
                 lexikalischerKern.getZuInfinitiv(person, numerus)); // "dich zu waschen"
     }
 
     @Override
-    public Wortfolge getVerbletzt(final Person person, final Numerus numerus) {
+    public Iterable<Konstituente> getVerbletzt(final Person person, final Numerus numerus) {
         // Spannendes zu berichten hast
         // dich zu waschen hast
         // zu sagen hast: "Hallo!"
 
-        @Nullable final String nachfeld = getNachfeld(person, numerus);
+        @Nullable final Iterable<Konstituente> nachfeld = getNachfeld(person, numerus);
 
-        return joinToNull(
-                GermanUtil.cutSatzgliedVonHinten(
+        return Konstituente.joinToKonstituenten(
+                Konstituente.cutLast(
                         lexikalischerKern.getZuInfinitiv(person, numerus),
                         // "Spannendes zu berichten"
                         nachfeld),
@@ -122,15 +119,15 @@ public class ZuHabenPraedikatOhneLeerstellen implements PraedikatOhneLeerstellen
     }
 
     @Override
-    public String getPartizipIIPhrase(final Person person, final Numerus numerus) {
+    public Iterable<Konstituente> getPartizipIIPhrase(final Person person, final Numerus numerus) {
         // Spannendes zu berichten gehabt
         // dich zu waschen gehabt
         // zu sagen gehabt: "Hallo!"
 
-        @Nullable final String nachfeld = getNachfeld(person, numerus);
+        @Nullable final Iterable<Konstituente> nachfeld = getNachfeld(person, numerus);
 
-        return joinToNullString(
-                GermanUtil.cutSatzgliedVonHinten(
+        return Konstituente.joinToKonstituenten(
+                Konstituente.cutLast(
                         lexikalischerKern.getZuInfinitiv(person, numerus),
                         // "Spannendes zu berichten"
                         nachfeld),
@@ -148,15 +145,15 @@ public class ZuHabenPraedikatOhneLeerstellen implements PraedikatOhneLeerstellen
     }
 
     @Override
-    public String getInfinitiv(final Person person, final Numerus numerus) {
+    public Iterable<Konstituente> getInfinitiv(final Person person, final Numerus numerus) {
         // Spannendes zu berichten haben
         // dich zu waschen haben
         // zu sagen haben: "Hallo!"
 
-        @Nullable final String nachfeld = getNachfeld(person, numerus);
+        @Nullable final Iterable<Konstituente> nachfeld = getNachfeld(person, numerus);
 
-        return joinToNullString(
-                GermanUtil.cutSatzgliedVonHinten(
+        return Konstituente.joinToKonstituenten(
+                Konstituente.cutLast(
                         lexikalischerKern.getZuInfinitiv(person, numerus),
                         // "Spannendes zu berichten"
                         nachfeld),
@@ -165,14 +162,14 @@ public class ZuHabenPraedikatOhneLeerstellen implements PraedikatOhneLeerstellen
     }
 
     @Override
-    public String getZuInfinitiv(final Person person, final Numerus numerus) {
+    public Iterable<Konstituente> getZuInfinitiv(final Person person, final Numerus numerus) {
         // Spannendes zu berichten zu haben
         // dich zu waschen zu haben
         // zu sagen zu haben: "Hallo!"
-        @Nullable final String nachfeld = getNachfeld(person, numerus);
+        @Nullable final Iterable<Konstituente> nachfeld = getNachfeld(person, numerus);
 
-        return joinToNullString(
-                GermanUtil.cutSatzgliedVonHinten(
+        return Konstituente.joinToKonstituenten(
+                Konstituente.cutLast(
                         lexikalischerKern.getZuInfinitiv(person, numerus),
                         // "Spannendes zu berichten"
                         nachfeld),
@@ -204,44 +201,50 @@ public class ZuHabenPraedikatOhneLeerstellen implements PraedikatOhneLeerstellen
     }
 
     @Override
-    public Wortfolge getDuHauptsatzMitVorfeld(final String vorfeld) {
+    public Iterable<Konstituente> getDuHauptsatzMitVorfeld(final String vorfeld) {
         // Dann hast du Spannendes zu berichten
         // Dann hast du dich zu waschen
         // Dann hast du zu sagen: "Hallo!"
-        return joinToNull(
-                capitalize(vorfeld), // "dann"
-                HabenUtil.VERB.getDuFormOhnePartikel(), // "hast"
-                "du",
-                lexikalischerKern.getZuInfinitiv(P2, SG)); // "dich zu waschen"
+        return Konstituente.capitalize(
+                Konstituente.joinToKonstituenten(
+                        vorfeld, // "dann"
+                        HabenUtil.VERB.getDuFormOhnePartikel(), // "hast"
+                        "du",
+                        lexikalischerKern.getZuInfinitiv(P2, SG))); // "dich zu waschen"
     }
 
     @Override
-    public Wortfolge getDuHauptsatzMitSpeziellemVorfeld() {
-        @Nullable final String speziellesVorfeld = getSpeziellesVorfeld();
+    public Iterable<Konstituente> getDuHauptsatzMitSpeziellemVorfeld() {
+        @Nullable final Konstituente speziellesVorfeld = getSpeziellesVorfeld(P2, SG);
+
         if (speziellesVorfeld == null) {
             return getDuHauptsatz();
         }
 
-        return capitalize(
-                joinToNull(
+        return Konstituente.capitalize(
+                Konstituente.joinToKonstituenten(
                         speziellesVorfeld, // "Spannendes"
                         HabenUtil.VERB.getDuFormOhnePartikel(), // "hast"
                         "du",
-                        GermanUtil.cutSatzglied(
+                        Konstituente.cutFirst(
                                 lexikalischerKern.getZuInfinitiv(P2, SG),
                                 speziellesVorfeld))); // "dem König zu berichten deswegen"
     }
 
     @Nullable
     @Override
-    public String getSpeziellesVorfeld() {
+    public Konstituente getSpeziellesVorfeld(final Person person,
+                                             final Numerus numerus) {
         // "Spannendes hat er zu berichten."
-        return lexikalischerKern.getSpeziellesVorfeld();
+        return lexikalischerKern.getSpeziellesVorfeld(person, numerus);
     }
 
     @Nullable
     @Override
-    public String getNachfeld(final Person person, final Numerus numerus) {
+    public Iterable<Konstituente> getNachfeld(final Person person, final Numerus numerus) {
+        // FIXME altNachfelder -> Verschiedene Optionen, fürs Nachfeld.
+        //  Noch bessern: altAusklammerungen -> (Vorfeld, Nachfeld)
+
         return lexikalischerKern.getNachfeld(person, numerus);
     }
 }

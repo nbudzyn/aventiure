@@ -2,11 +2,8 @@ package de.nb.aventiure2.german.praedikat;
 
 import androidx.annotation.NonNull;
 
-import de.nb.aventiure2.german.base.Numerus;
-import de.nb.aventiure2.german.base.Person;
 import de.nb.aventiure2.german.base.PraepositionMitKasus;
 import de.nb.aventiure2.german.base.SubstantivischePhrase;
-import de.nb.aventiure2.german.base.Wortfolge;
 
 /**
  * Ein Verb (ggf. mit Präfix), das genau mit einem Subjekt, einem Präpositionalobjekt und
@@ -50,36 +47,6 @@ public enum VerbSubjAkkPraep implements Praedikat {
                      final PraepositionMitKasus praepositionMitKasus) {
         this.verb = verb;
         this.praepositionMitKasus = praepositionMitKasus;
-    }
-
-    /**
-     * Gibt einen Satz zurück mit diesem Verb und diesen Objekten zurück.
-     * ("Du nimmst den Frosch in die Hände")
-     */
-    public Wortfolge getDescriptionHauptsatz(
-            final SubstantivischePhrase describableAkk,
-            final SubstantivischePhrase describablePraep) {
-        return mitPraep(describablePraep).mit(describableAkk).getDuHauptsatz();
-    }
-
-    /**
-     * Gibt eine Infinitivkonstruktion zurück mit diesem Verb und diesen Objekten.
-     * ("den Frosch in die Hände nehmen")
-     */
-    public String getDescriptionInfinitiv(final Person person, final Numerus numerus,
-                                          final SubstantivischePhrase describableAkk,
-                                          final SubstantivischePhrase describablePraep) {
-        return mitPraep(describablePraep).mit(describableAkk).getInfinitiv(person, numerus);
-    }
-
-    /**
-     * Gibt eine zu-Infinitivkonstruktion zurück mit diesem Verb und diesen Objekten.
-     * ("den Frosch in die Hände zu nehmen")
-     */
-    public String getDescriptionZuInfinitiv(final Person person, final Numerus numerus,
-                                            final SubstantivischePhrase describableAkk,
-                                            final SubstantivischePhrase describablePraep) {
-        return mitPraep(describablePraep).mit(describableAkk).getInfinitiv(person, numerus);
     }
 
     public PraedikatMitEinerObjektleerstelle mitPraep(

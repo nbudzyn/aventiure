@@ -1,8 +1,10 @@
 package de.nb.aventiure2.german.base;
 
+import com.google.common.collect.ImmutableList;
+
 import java.util.Objects;
 
-import static de.nb.aventiure2.german.base.Wortfolge.w;
+import static de.nb.aventiure2.german.base.Konstituente.k;
 
 /**
  * Eine Phrase, die substantivisch verwendet werden kann, also insbesondere ein Pronomen ("sie",
@@ -17,8 +19,8 @@ public abstract class SubstantivischePhrase
     }
 
     @Override
-    public Wortfolge getPraedikativ(final Person person, final Numerus numerus) {
-        return w(nom());
+    public Iterable<Konstituente> getPraedikativ(final Person person, final Numerus numerus) {
+        return ImmutableList.of(k(nom()));
     }
 
     /**

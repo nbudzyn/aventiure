@@ -11,7 +11,7 @@ import javax.annotation.CheckReturnValue;
 import de.nb.aventiure2.data.database.AvDatabase;
 import de.nb.aventiure2.data.world.base.AbstractStatefulComponent;
 import de.nb.aventiure2.data.world.base.GameObjectId;
-import de.nb.aventiure2.data.world.gameobject.World;
+import de.nb.aventiure2.data.world.gameobject.*;
 import de.nb.aventiure2.data.world.syscomp.location.ILocatableGO;
 import de.nb.aventiure2.data.world.syscomp.storingplace.ILocationGO;
 
@@ -68,8 +68,8 @@ public class MentalModelComp extends AbstractStatefulComponent<MentalModelPCD> {
      * rekursiv, also <i>nicht</i> auf einem Tisch in diesem Raum).
      */
     @CheckReturnValue
-    public boolean hasAssumedLocation(final GameObjectId locatableId,
-                                      final ILocationGO location) {
+    private boolean hasAssumedLocation(final GameObjectId locatableId,
+                                       final ILocationGO location) {
         return hasAssumedLocation(locatableId, location.getId());
     }
 
@@ -95,8 +95,6 @@ public class MentalModelComp extends AbstractStatefulComponent<MentalModelPCD> {
      * <i>Locatable</i> an dieser <i>Location</i> befindet
      * (<i>nicht</i> rekursiv, also <i>nicht</i> auf einem Tisch in diesem Raum).
      */
-    // TODO Es gibt Verwirrung mit assume / assumes. Besser
-    //  getAssumedLocation(), setAssumedLocation()
     @CheckReturnValue
     public boolean hasAssumedLocation(final GameObjectId locatableId,
                                       final @Nullable GameObjectId locationId) {
@@ -116,7 +114,7 @@ public class MentalModelComp extends AbstractStatefulComponent<MentalModelPCD> {
 
     @Nullable
     @CheckReturnValue
-    public GameObjectId getAssumedLocationId(final GameObjectId locatableId) {
+    private GameObjectId getAssumedLocationId(final GameObjectId locatableId) {
         if (getGameObjectId().equals(locatableId)) {
             throw new IllegalArgumentException("No assumptions about yourself!");
         }
@@ -139,8 +137,8 @@ public class MentalModelComp extends AbstractStatefulComponent<MentalModelPCD> {
                 location != null ? location.getId() : null);
     }
 
-    public void setAssumedLocation(final GameObjectId locatableId,
-                                   @Nullable final GameObjectId locationId) {
+    private void setAssumedLocation(final GameObjectId locatableId,
+                                    @Nullable final GameObjectId locationId) {
         if (getGameObjectId().equals(locatableId)) {
             throw new IllegalArgumentException("No assumptions about yourself!");
         }

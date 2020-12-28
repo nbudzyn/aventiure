@@ -27,12 +27,10 @@ import de.nb.aventiure2.data.world.syscomp.state.impl.RapunzelsZauberinState;
 import de.nb.aventiure2.data.world.syscomp.storingplace.ILocationGO;
 import de.nb.aventiure2.data.world.syscomp.talking.impl.RapunzelTalkingComp;
 import de.nb.aventiure2.data.world.time.*;
-import de.nb.aventiure2.german.adjektiv.AdjPhrOhneLeerstellen;
 import de.nb.aventiure2.german.base.Nominalphrase;
 import de.nb.aventiure2.german.base.PraepositionMitKasus;
 import de.nb.aventiure2.german.base.SubstantivischePhrase;
 import de.nb.aventiure2.german.description.AbstractDescription;
-import de.nb.aventiure2.german.description.AllgDescription;
 import de.nb.aventiure2.german.description.TimedDescription;
 
 import static de.nb.aventiure2.data.world.base.Known.KNOWN_FROM_DARKNESS;
@@ -348,20 +346,19 @@ public class RapunzelReactionsComp
 
         final ImmutableList.Builder<TimedDescription<?>> alt = ImmutableList.builder();
 
-        final ImmutableList<AllgDescription> altZuneigungAbneigungSaetze =
+        final ImmutableList<AbstractDescription<?>> altZuneigungAbneigungSaetze =
                 // Es wäre besser, wenn der Phorik-Kandidat schon beim Erzeugen des
                 // Satzes gesetzt würde.
-                neueSaetzeMitPhorikKandidat(
-                        anaph, RAPUNZEL,
+                neueSaetzeMitPhorikKandidat(anaph, RAPUNZEL,
                         feelingsComp
                                 .altFeelingsBeiBegegnungMitScSaetze(anaph, ZUNEIGUNG_ABNEIGUNG));
         alt.addAll(toTimed(altZuneigungAbneigungSaetze, secs(5)));
 
         alt.add(
-                // STORY Nur, wenn man sich noch nicht so kennt:
-                neuerSatz(anaph.nom()
-                                + " schaut dich überrascht und etwas "
-                                + "verwirrt an",
+                // FIXME Das hier nur bei entsprechender Emotion -
+                //  "schaut dich ... an" genauso wie WRIKEN und SCHEINEN erzeugenn?
+                //  Entsprechend auch "sieht... aus"?
+                neuerSatz(anaph.nom() + " schaut dich überrascht und etwas verwirrt an",
                         secs(40))
                         .phorikKandidat(F, RAPUNZEL)
 //                    // STORY Dies nur, wenn man sich schon "duzt"
@@ -406,7 +403,7 @@ public class RapunzelReactionsComp
         final SubstantivischePhrase anaph =
                 getAnaphPersPronWennMglSonstDescription(true);
 
-        final ImmutableList<AllgDescription> altZuneigungAbneigungSaetze =
+        final ImmutableList<AbstractDescription<?>> altZuneigungAbneigungSaetze =
                 // Es wäre besser, wenn der Phorik-Kandidat durch den Satz
                 //  gesetzt würde. Das ist allerdings kompliziert...
                 neueSaetzeMitPhorikKandidat(
@@ -416,29 +413,22 @@ public class RapunzelReactionsComp
 
         alt.addAll(toTimed(altZuneigungAbneigungSaetze, secs(5)));
 
-        // Könnte leer sein
-        final ImmutableList<AdjPhrOhneLeerstellen> altZuneigungAbneigungEindruckPraedAdjPhrase =
-                feelingsComp.altEindruckAufScBeiBegegnungAdjPhr(
-                        anaph.getNumerusGenus(),
-                        ZUNEIGUNG_ABNEIGUNG);
-
-        // Evtl. wird hier nichts hinzugefügt
-        alt.addAll(TimedDescription.toTimed(
-                feelingsComp.altEindruckAufScBeiBegegnungSaetze(RAPUNZEL, anaph,
-                        ZUNEIGUNG_ABNEIGUNG),
-                secs(5)));
-
         alt.add(du(SENTENCE, "hast",
                 anaph.akk()
                         + " offenbar aus dem Bett "
                         + "geholt. "
-                        + capitalize(anaph.persPron().nom()) // Sie 
+                        + capitalize(anaph.persPron().nom()) // Sie
                         + " sieht sehr zerknittert "
                         + "aus",
                 "offenbar",
                 secs(30))
                         .phorikKandidat(anaph.persPron(), RAPUNZEL),
-                neuerSatz("Oben im dunklen Zimmer schaut dich "
+                neuerSatz(
+                        "Oben im dunklen Zimmer "
+                                // FIXME Automatisch zu den alternativen Sätzen ergänzen!
+                                + "schaut dich "
+                                // FIXME "schaut dich an..." automatisch erzeugen - allerdings
+                                //  nur, wenn kein "sehen" enthalten ist (sonst doppelt gemoppelt)
                                 + anaph.nom()
                                 + " etwas überrascht an",
                         secs(15))
@@ -447,7 +437,7 @@ public class RapunzelReactionsComp
             alt.add(neuerSatz(anaph.persPron().nom()
                             + " ist auch nachts wunderschön – allerdings ist die "
                             + "junge, verschlafene "
-                            + "Frau in ihren Decken auch sichtlich überrascht, dass zu "
+                            + "Frau in ihren Decken auch sichtlich überrascht, dass du zu "
                             + "dieser Nachtzeit noch einmal bei ihr vorbeischaust",
                     secs(15))
                     .phorikKandidat(F, RAPUNZEL));

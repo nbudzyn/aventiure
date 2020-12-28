@@ -4,11 +4,10 @@ import java.util.Collection;
 
 import javax.annotation.Nullable;
 
-import de.nb.aventiure2.german.base.GermanUtil;
+import de.nb.aventiure2.german.base.Konstituente;
 import de.nb.aventiure2.german.base.Numerus;
 import de.nb.aventiure2.german.base.Person;
 import de.nb.aventiure2.german.base.SubstantivischePhrase;
-import de.nb.aventiure2.german.base.Wortfolge;
 import de.nb.aventiure2.german.satz.Satz;
 
 import static java.util.Arrays.asList;
@@ -19,16 +18,16 @@ import static java.util.Arrays.asList;
  *
  * @see de.nb.aventiure2.german.satz.Satz
  */
-public interface PraedikatOhneLeerstellen extends Praedikat, AbstractDuTextPart {
+public interface PraedikatOhneLeerstellen extends Praedikat {
+    // FIXME Ableitung durch Delegation ersetzen z.B. von einem PraedikatDuTextPart.
+    //  Das würde mittels GermanUtil.joinKonstituentenToNull(...) die Konstituenten in
+    //  Wortfolgen umwandeln
+
     default Satz alsSatzMitSubjekt(final SubstantivischePhrase subjekt) {
         return new Satz(subjekt, this);
     }
 
-    // TODO Modalpartikeln sollten zu einem
-    //  neuen AbstractPraedikat führen, dass man dann auch speichern
-    //  und weiterreichen kann!
-    @Override
-    default Wortfolge getDuHauptsatz() {
+    default Iterable<Konstituente> getDuHauptsatz() {
         return getDuHauptsatz(new Modalpartikel[0]);
     }
 
@@ -39,22 +38,29 @@ public interface PraedikatOhneLeerstellen extends Praedikat, AbstractDuTextPart 
      * Prädikat beziehen</i>
      * ("Du nimmst den Ast besser doch")
      */
-    default Wortfolge getDuHauptsatz(final Modalpartikel... modalpartikeln) {
+    default Iterable<Konstituente> getDuHauptsatz(final Modalpartikel... modalpartikeln) {
         return getDuHauptsatz(asList(modalpartikeln));
     }
 
-    default Wortfolge getDuHauptsatz(final Collection<Modalpartikel> modalpartikeln) {
-        return GermanUtil.joinToNull(
+    default Iterable<Konstituente> getDuHauptsatz(final Collection<Modalpartikel> modalpartikeln) {
+        // TODO Modalpartikeln sollten zu einem
+        //  neuen AbstractPraedikat führen, dass man dann auch speichern
+        //  und weiterreichen kann!
+
+        return Konstituente.joinToKonstituenten(
                 "Du ",
                 getDuSatzanschlussOhneSubjekt(modalpartikeln));
     }
+
+    Iterable<Konstituente> getDuHauptsatzMitVorfeld(String vorfeld);
+
+    Iterable<Konstituente> getDuHauptsatzMitSpeziellemVorfeld();
 
     /**
      * Gibt einen Satz zurück mit diesem Prädikat, bei dem das Subjekt, das im Vorfeld
      * stünde, eingespart ist ("nimmst den Ast")
      */
-    @Override
-    default Wortfolge getDuSatzanschlussOhneSubjekt() {
+    default Iterable<Konstituente> getDuSatzanschlussOhneSubjekt() {
         return getDuSatzanschlussOhneSubjekt(new Modalpartikel[0]);
     }
 
@@ -62,7 +68,8 @@ public interface PraedikatOhneLeerstellen extends Praedikat, AbstractDuTextPart 
      * Gibt einen Satz zurück mit diesem Prädikat, bei dem das Subjekt, das im Vorfeld
      * stünde, eingespart ist ("nimmst den Ast")
      */
-    default Wortfolge getDuSatzanschlussOhneSubjekt(final Modalpartikel... modalpartikeln) {
+    default Iterable<Konstituente> getDuSatzanschlussOhneSubjekt(
+            final Modalpartikel... modalpartikeln) {
         return getDuSatzanschlussOhneSubjekt(asList(modalpartikeln)
         );
     }
@@ -72,7 +79,8 @@ public interface PraedikatOhneLeerstellen extends Praedikat, AbstractDuTextPart 
      * stünde, eingespart ist ("nimmst den Ast"), sowie ggf. diesen
      * Modalpartikeln ("nimmst den Ast eben doch").
      */
-    Wortfolge getDuSatzanschlussOhneSubjekt(final Collection<Modalpartikel> modalpartikeln);
+    Iterable<Konstituente> getDuSatzanschlussOhneSubjekt(
+            final Collection<Modalpartikel> modalpartikeln);
 
     boolean duHauptsatzLaesstSichMitNachfolgendemDuHauptsatzZusammenziehen();
 
@@ -80,13 +88,13 @@ public interface PraedikatOhneLeerstellen extends Praedikat, AbstractDuTextPart 
      * Gibt das Prädikat "in Verbzweitform" zurück - das Verb steht also ganz am Anfang
      * (in einem Verbzweitsatz würde dann noch das Subjekt davor stehen).
      */
-    Wortfolge getVerbzweit(Person person, Numerus numerus);
+    Iterable<Konstituente> getVerbzweit(Person person, Numerus numerus);
 
     /**
      * Gibt das Prädikat "in Verbletztform" zurück - das Verb steht also am Ende,
      * nur noch gefolgt vom Nachfeld.
      */
-    Wortfolge getVerbletzt(Person person, Numerus numerus);
+    Iterable<Konstituente> getVerbletzt(Person person, Numerus numerus);
 
     /**
      * Gibt eine unflektierte Phrase mit Partizip II zurück: "unten angekommen",
@@ -97,7 +105,7 @@ public interface PraedikatOhneLeerstellen extends Praedikat, AbstractDuTextPart 
      * "[Ich habe] die Kugel an mich genommen"
      * (nicht *"[Ich habe] die Kugel an sich genommen")
      */
-    String getPartizipIIPhrase(final Person person, final Numerus numerus);
+    Iterable<Konstituente> getPartizipIIPhrase(final Person person, final Numerus numerus);
 
     /**
      * Gibt zurück, ob die Partizip-II-Phrase
@@ -122,7 +130,7 @@ public interface PraedikatOhneLeerstellen extends Praedikat, AbstractDuTextPart 
      * "[Ich möchte] die Kugel an mich nehmen"
      * (nicht *"[Ich möchte] die Kugel an sich nehmen")
      */
-    String getInfinitiv(final Person person, final Numerus numerus);
+    Iterable<Konstituente> getInfinitiv(final Person person, final Numerus numerus);
 
     /**
      * Gibt eine Infinitivkonstruktion mit dem zu-Infinitiv mit diesem
@@ -133,13 +141,12 @@ public interface PraedikatOhneLeerstellen extends Praedikat, AbstractDuTextPart 
      * "[Ich gedenke,] die Kugel an mich zu nehmen"
      * (nicht *"[Ich gedenke,] die Kugel an sich zu nehmen")
      */
-    String getZuInfinitiv(final Person person, final Numerus numerus);
+    Iterable<Konstituente> getZuInfinitiv(final Person person, final Numerus numerus);
 
     @Nullable
-    String getSpeziellesVorfeld();
+    Konstituente getSpeziellesVorfeld(Person person, Numerus numerus);
 
-    @Nullable
-    String getNachfeld(Person person, Numerus numerus);
+    Iterable<Konstituente> getNachfeld(Person person, Numerus numerus);
 
     /**
      * Gibt zurück, ob dieses Prädikat Satzglieder enthält (nicht nur Verbbestandteile).
@@ -170,5 +177,5 @@ public interface PraedikatOhneLeerstellen extends Praedikat, AbstractDuTextPart 
             @Nullable AdverbialeAngabeSkopusVerbWohinWoher adverbialeAngabe);
 
     @Nullable
-    String getErstesInterrogativpronomenAlsString();
+    Konstituente getErstesInterrogativpronomen();
 }

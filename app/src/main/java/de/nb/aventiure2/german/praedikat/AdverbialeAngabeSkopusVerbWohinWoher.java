@@ -1,5 +1,7 @@
 package de.nb.aventiure2.german.praedikat;
 
+import de.nb.aventiure2.german.base.Konstituente;
+
 /**
  * Eine adverbiale Angabe der Richtung, des Ziel (wohin?) oder
  * der Herkunft (woher?).
@@ -9,5 +11,10 @@ package de.nb.aventiure2.german.praedikat;
 public class AdverbialeAngabeSkopusVerbWohinWoher extends AbstractAdverbialeAngabe {
     public AdverbialeAngabeSkopusVerbWohinWoher(final String text) {
         super(text);
+    }
+
+    public AdverbialeAngabeSkopusVerbWohinWoher(
+            final Konstituente konstituente) {
+        super(konstituente);
     }
 }

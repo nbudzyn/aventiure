@@ -9,11 +9,9 @@ import javax.annotation.Nullable;
 import de.nb.aventiure2.annotations.Argument;
 import de.nb.aventiure2.annotations.Valenz;
 import de.nb.aventiure2.german.base.GermanUtil;
+import de.nb.aventiure2.german.base.Konstituente;
 import de.nb.aventiure2.german.base.Numerus;
 import de.nb.aventiure2.german.base.Person;
-import de.nb.aventiure2.german.base.Wortfolge;
-
-import static de.nb.aventiure2.german.base.GermanUtil.joinToNull;
 
 /**
  * Ein Prädikat eines <i>Verbs mit intentionaler Bedeutung</i>,
@@ -117,25 +115,28 @@ public class PraedikatIntentionalesVerbOhneLeerstellen
 
     @Nullable
     @Override
-    public String getSpeziellesVorfeld() {
-        @Nullable final String speziellesVorfeldFromSuper = super.getSpeziellesVorfeld();
+    public Konstituente getSpeziellesVorfeld(final Person person,
+                                             final Numerus numerus) {
+        @Nullable final Konstituente speziellesVorfeldFromSuper = super.getSpeziellesVorfeld(person,
+                numerus);
         if (speziellesVorfeldFromSuper != null) {
             return speziellesVorfeldFromSuper;
         }
 
         // "Ihre Haare (versucht sie wieder hinunterzulassen)"
-        return lexikalischerKern.getSpeziellesVorfeld();
+        return lexikalischerKern.getSpeziellesVorfeld(person, numerus);
     }
 
     @Override
-    public Wortfolge getMittelfeld(final Collection<Modalpartikel> modalpartikeln,
-                                   final Person personSubjekt,
-                                   final Numerus numerusSubjekt) {
-        return joinToNull(
-                getAdverbialeAngabeSkopusSatz(), // "aus einer Laune heraus"
+    public Iterable<Konstituente> getMittelfeld(final Collection<Modalpartikel> modalpartikeln,
+                                                final Person personSubjekt,
+                                                final Numerus numerusSubjekt) {
+        return Konstituente.joinToKonstituenten(
+                getAdverbialeAngabeSkopusSatzDescription(), // "aus einer Laune heraus"
                 GermanUtil.joinToNullString(modalpartikeln), // "mal eben"
-                getAdverbialeAngabeSkopusVerbAllg(), // "erneut"
-                getAdverbialeAngabeSkopusVerbWohinWoher() // (kann es wohl gar nicht geben)
+                getAdverbialeAngabeSkopusVerbAllgDescription(), // "erneut"
+                getAdverbialeAngabeSkopusVerbWohinWoherDescription()
+                // (kann es wohl gar nicht geben)
         );
 
         //  STORY Der lexikalische Kern könnte ebenfalls ins Mittelfeld gestellt werden:
@@ -143,8 +144,8 @@ public class PraedikatIntentionalesVerbOhneLeerstellen
     }
 
     @Override
-    public String getNachfeld(final Person personSubjekt,
-                              final Numerus numerusSubjekt) {
+    public Iterable<Konstituente> getNachfeld(final Person personSubjekt,
+                                              final Numerus numerusSubjekt) {
         return lexikalischerKern.getZuInfinitiv(
                 // Es liegt "Subjektkontrolle" vor.
                 personSubjekt, numerusSubjekt
@@ -165,7 +166,7 @@ public class PraedikatIntentionalesVerbOhneLeerstellen
 
     @Nullable
     @Override
-    public String getErstesInterrogativpronomenAlsString() {
-        return lexikalischerKern.getErstesInterrogativpronomenAlsString();
+    public Konstituente getErstesInterrogativpronomen() {
+        return lexikalischerKern.getErstesInterrogativpronomen();
     }
 }

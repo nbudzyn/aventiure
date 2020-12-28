@@ -6,7 +6,6 @@ import androidx.annotation.Nullable;
 import java.util.List;
 
 import static com.google.common.base.Preconditions.checkArgument;
-import static de.nb.aventiure2.german.base.Wortfolge.w;
 import static java.util.Arrays.asList;
 import static java.util.Objects.requireNonNull;
 
@@ -18,20 +17,12 @@ public class GermanUtil {
     private GermanUtil() {
     }
 
-    public static Wortfolge capitalize(final Wortfolge wortfolge) {
-        return w(capitalize(wortfolge.getString()), wortfolge.kommmaStehtAus());
-    }
-
     public static String capitalize(final String str) {
         if (str.isEmpty()) {
             return "";
         }
 
         return str.substring(0, 1).toUpperCase() + str.substring(1);
-    }
-
-    public static Wortfolge uncapitalize(final Wortfolge wortfolge) {
-        return w(uncapitalize(wortfolge.getString()), wortfolge.kommmaStehtAus());
     }
 
     public static String uncapitalize(final String str) {
@@ -43,22 +34,12 @@ public class GermanUtil {
     }
 
     /**
-     * Fügt diese Teile zu einem String zusammen - berücksichtigt auch die Information,
-     * ob ein Komma aussteht.
-     *
-     * @see Wortfolge
-     */
-    @Nullable
-    public static Wortfolge joinToNull(final Object... parts) {
-        return joinToNull(asList(parts));
-    }
-
-    /**
      * Fügt diese Teile zu einem String zusammen. Diese Methode darf nur verwendet werden,
      * wenn nach dem letzten der Teile definitiv kein Komma aussteht - oder das
      * ausstehende Kommma auf andere Weise behandelt wird.
      */
     @Nullable
+    // FIXME Verwendungen suchen, ggf. entfernen?!
     public static String joinToNullString(final Object... parts) {
         return joinToNullString(asList(parts));
     }
@@ -69,63 +50,15 @@ public class GermanUtil {
      * ausstehende Kommma auf andere Weise behandelt wird.
      */
     @Nullable
+    // FIXME Verwendungen suchen, ggf. entfernen?!
     public static String joinToNullString(final Iterable<?> parts) {
-        @Nullable final Wortfolge res = joinToNull(parts);
+        @Nullable final Wortfolge res = Wortfolge.joinToNullWortfolge(parts);
         if (res == null) {
             return null;
         }
 
         return res.getString();
     }
-
-    /**
-     * Fügt diese Teile zu einem String zusammen - einschließlich der Information,
-     * ob ein Komma aussteht.
-     *
-     * @see Wortfolge
-     */
-    @Nullable
-    private static Wortfolge joinToNull(final Iterable<?> parts) {
-        final StringBuilder resString = new StringBuilder();
-        boolean kommaStehtAus = false;
-        for (final Object part : parts) {
-            if (part == null) {
-                continue;
-            }
-
-            @Nullable final Wortfolge partWortfolge;
-            if (part.getClass().isArray()) {
-                partWortfolge = joinToNull((Object[]) part);
-            } else if (part instanceof Iterable<?>) {
-                partWortfolge = joinToNull((Iterable<?>) part);
-            } else if (part instanceof Wortfolge) {
-                partWortfolge = (Wortfolge) part;
-            } else {
-                partWortfolge = w(part.toString());
-            }
-
-            if (partWortfolge != null) {
-                if (kommaStehtAus && !beginnDecktKommaAb(partWortfolge.getString())) {
-                    resString.append(",");
-                    if (spaceNeeded(",", partWortfolge.getString())) {
-                        resString.append(" ");
-                    }
-                } else if (spaceNeeded(resString, partWortfolge.getString())) {
-                    resString.append(" ");
-                }
-
-                resString.append(partWortfolge.getString());
-                kommaStehtAus = partWortfolge.kommmaStehtAus();
-            }
-        }
-
-        if (resString.length() == 0) {
-            return null;
-        }
-
-        return w(resString.toString(), kommaStehtAus);
-    }
-
 
     /**
      * Gibt eine Aufzählung zurück wie "der hässliche Frosch",
@@ -167,13 +100,13 @@ public class GermanUtil {
         return !" ,;.:!?“\n" .contains(firstCharAddition);
     }
 
-    private static boolean beginnDecktKommaAb(final CharSequence charSequence) {
+    static boolean beginnDecktKommaAb(final CharSequence charSequence) {
         requireNonNull(charSequence, "charSequence");
         checkArgument(charSequence.length() > 0, "charSequence was empty");
 
         final CharSequence firstChar = charSequence.subSequence(0, 1);
 
-        checkArgument(!"\n" .equals(firstChar), "charSequence beginnt mit "
+        checkArgument(!"\n" .contentEquals(firstChar), "charSequence beginnt mit "
                 + "Zeilenwechsel. Hier wäre keine Möglichkeit, syntaktisch korrekt noch ein "
                 + "Komma unterzubringen.");
 
@@ -186,122 +119,65 @@ public class GermanUtil {
     }
 
     /**
-     * Schneidet das Satzglied (einmalig) aus diesem Text. Die Suche nach
+     * Schneidet diesen Teil-Text (einmalig) aus diesem Text. Die Suche nach
      * dem Satzglied beginnt von vorn.
      */
     public static @Nullable
-    Wortfolge cutSatzglied(@Nullable final Wortfolge text, @Nullable final String satzglied) {
+    String cutFirst(@Nullable final String text, @Nullable final String part) {
         if (text == null) {
-            if (satzglied != null) {
+            if (part != null) {
                 throw new IllegalArgumentException(
-                        "Text null, but Satzglied was \"" + satzglied + "\".");
+                        "Text null, but Satzglied was \"" + part + "\".");
             }
 
             return null;
         }
 
-        if (satzglied == null) {
+        if (part == null) {
             return text;
         }
 
-        // FIXME Hier gibt es ernste Probleme. Grob gesagt:
-        //  - Es könnte zu falscher Zeichensetzung ", , " o.Ä. kommmen.
-        //  - Wenn ein Satzglied entfernt wird, weiß man in einigen Fällen nicht, ob
-        //   Kommata vor oder nach dem Satzglied erhalten bleiben müssen oder nicht.
-        //  Die richtige Lösung wäre vermutlich, dass die Wortfolge nicht einfach nur einen
-        //  String speichert, sondern ihre einzelnen Satzglieder - und zu jedem Satzglied
-        //  auch noch die Information, ob danach ein Komma aussteht.
-        //  Vielleicht sollte man auch Differenzieren zwischen der Wortfolge und dem
-        //  "Mittelfeld", das seine Satzglieder kennt...
-        return w(cutSatzglied(text.getString(), satzglied), text.kommmaStehtAus());
-    }
-
-    /**
-     * Schneidet das Satzglied (einmalig) aus diesem Text. Die Suche nach
-     * dem Satzglied beginnt von vorn.
-     */
-    public static @Nullable
-    String cutSatzglied(@Nullable final String text, @Nullable final String satzglied) {
-        if (text == null) {
-            if (satzglied != null) {
-                throw new IllegalArgumentException(
-                        "Text null, but Satzglied was \"" + satzglied + "\".");
-            }
-
-            return null;
-        }
-
-        if (satzglied == null) {
-            return text;
-        }
-
-        final int startIndex = text.indexOf(satzglied);
+        final int startIndex = text.indexOf(part);
         if (startIndex < 0) {
-            throw new IllegalArgumentException("Satzglied \"" + satzglied + "\" not contained "
+            throw new IllegalArgumentException("Satzglied \"" + part + "\" not contained "
                     + "in \"" + text + "\"");
         }
 
-        return cutSatzglied(text, startIndex, satzglied.length());
+        return cut(text, startIndex, part.length());
     }
 
     /**
-     * Schneidet das Satzglied (einmalig) aus diesem Text. Die Suche nach
-     * dem Satzglied beginnt von vorn.
-     */
-    public static @Nullable
-    Wortfolge cutSatzgliedVonHinten(@Nullable final Wortfolge text,
-                                    @Nullable final String satzglied) {
-        if (text == null) {
-            if (satzglied != null) {
-                throw new IllegalArgumentException(
-                        "Text null, but Satzglied was \"" + satzglied + "\".");
-            }
-
-            return null;
-        }
-
-        if (satzglied == null) {
-            return text;
-        }
-
-        // FIXME Hier gibt es ernste Probleme, s.o. Grob gesagt:
-        //  - Es könnte zu falscher Zeichensetzung ", , " o.Ä. kommmen.
-        //  - Wenn ein Satzglied entfernt wird, weiß man in einigen Fällen nicht, ob
-        //   Kommata vor oder nach dem Satzglied erhalten bleiben müssen oder nicht.
-        return w(cutSatzgliedVonHinten(text.getString(), satzglied), text.kommmaStehtAus());
-    }
-
-    /**
-     * Schneidet das Satzglied (einmalig) aus diesem Text;  die Suche nach
+     * Schneidet diesen Teil-Text (einmalig) aus diesem Text;  die Suche nach
      * dem Satzglied beginnt von hinten.
      */
     public static @Nullable
-    String cutSatzgliedVonHinten(@Nullable final String text, @Nullable final String satzglied) {
+    String cutLast(@Nullable final String text, @Nullable final String part) {
         if (text == null) {
-            if (satzglied != null) {
+            if (part != null) {
                 throw new IllegalArgumentException(
-                        "Text null, but Satzglied was \"" + satzglied + "\".");
+                        "Text null, but Satzglied was \"" + part + "\".");
             }
 
             return null;
         }
 
-        if (satzglied == null) {
+        if (part == null) {
             return text;
         }
 
-        final int startIndex = text.lastIndexOf(satzglied);
+        final int startIndex = text.lastIndexOf(part);
         if (startIndex < 0) {
-            throw new IllegalArgumentException("Satzglied \"" + satzglied + "\" not contained "
+            throw new IllegalArgumentException("Satzglied \"" + part + "\" not contained "
                     + "in \"" + text + "\"");
         }
 
-        return cutSatzglied(text, startIndex, satzglied.length());
+        return cut(text, startIndex, part.length());
     }
 
     @Nullable
-    private static String cutSatzglied(@NonNull final String text, final int startIndex,
-                                       final int satzgliedLength) {
+    // FIXME Verwendungen suchen und nach Möglichkeit entfernen, dann ggf. diese Methode entfernen
+    private static String cut(@NonNull final String text, final int startIndex,
+                              final int satzgliedLength) {
         requireNonNull(text, "text");
 
         @Nullable final String charBefore = startIndex == 0 ?

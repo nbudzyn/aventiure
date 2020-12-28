@@ -9,5 +9,5 @@ public interface Praedikativum {
      * Person und diesem Numerus verwendet wird:
      * "(Ich bin) ein Esel", "(Er ist) doof", "(Sie ist) ihrer selbst sicher" o.Ä.
      */
-    Wortfolge getPraedikativ(final Person person, final Numerus numerus);
+    Iterable<Konstituente> getPraedikativ(final Person person, final Numerus numerus);
 }

@@ -2,15 +2,10 @@ package de.nb.aventiure2.german.satz;
 
 import androidx.annotation.Nullable;
 
-import de.nb.aventiure2.german.base.GermanUtil;
 import de.nb.aventiure2.german.base.Interrogativpronomen;
+import de.nb.aventiure2.german.base.Konstituente;
 import de.nb.aventiure2.german.base.SubstantivischePhrase;
-import de.nb.aventiure2.german.base.Wortfolge;
 import de.nb.aventiure2.german.praedikat.PraedikatOhneLeerstellen;
-
-import static de.nb.aventiure2.german.base.GermanUtil.joinToNull;
-import static de.nb.aventiure2.german.base.GermanUtil.joinToNullString;
-import static de.nb.aventiure2.german.base.Wortfolge.w;
 
 /**
  * Ein Satz.
@@ -72,7 +67,7 @@ public class Satz {
      * <li>was du zu erzählen beginnen wirst
      * </ul>
      */
-    public Wortfolge getIndirekteFrage() {
+    public Iterable<Konstituente> getIndirekteFrage() {
         // Zurzeit unterstützen wir nur Interrogativpronomen für die normalen Kasus 
         // wie "wer" oder "was".
         // Später sollten auch unterstützt werden:
@@ -85,8 +80,8 @@ public class Satz {
             return getIndirekteFrageNachSubjekt();
         }
 
-        @Nullable final String erstesInterrogativpronomenImPraedikat =
-                praedikat.getErstesInterrogativpronomenAlsString();
+        @Nullable final Konstituente erstesInterrogativpronomenImPraedikat =
+                praedikat.getErstesInterrogativpronomen();
 
         if (erstesInterrogativpronomenImPraedikat == null) {
             // "ob du etwas zu berichten hast"
@@ -94,22 +89,22 @@ public class Satz {
         }
 
         // "was du zu berichten hast", "wem er was gegeben hat"
-        return joinToNull(
+        return Konstituente.joinToKonstituenten(
                 erstesInterrogativpronomenImPraedikat, // "was" / "wem"
-                GermanUtil.cutSatzglied(
+                Konstituente.cutFirst(
                         getVerbletztsatz(),
                         erstesInterrogativpronomenImPraedikat
                 ) // "du zu berichten hast", "wer zu berichten hat"
         );
     }
 
-    private Wortfolge getIndirekteFrageNachSubjekt() {
+    private Iterable<Konstituente> getIndirekteFrageNachSubjekt() {
         // "wer etwas zu berichten hat", "wer was zu berichten hat", "was er zu berichten hat"
         return getVerbletztsatz();
     }
 
-    private Wortfolge getObFrage() {
-        return joinToNull(
+    private Iterable<Konstituente> getObFrage() {
+        return Konstituente.joinToKonstituenten(
                 "ob",
                 getVerbletztsatz() // "du etwas zu berichten hast"
         );
@@ -118,42 +113,48 @@ public class Satz {
     /**
      * Gibt den Satz als Verbzweitsatz aus, z.B. "Du hast etwas zu berichten"
      */
-    public Wortfolge getVerbzweitsatz() {
+    public Iterable<Konstituente> getVerbzweitsatz() {
         if (angabensatz == null) {
-            return joinToNull(
+            return Konstituente.joinToKonstituenten(
                     subjekt.nom(),
                     praedikat.getVerbzweit(subjekt.getPerson(), subjekt.getNumerus())
             );
         }
 
-        return w(
-                joinToNullString(
-                        subjekt.nom(),
-                        praedikat.getVerbzweit(subjekt.getPerson(), subjekt.getNumerus()),
-                        ",",
-                        angabensatz.getDescription()),
-                true // es steht ein Komma aus
+        return Konstituente.joinToKonstituenten(
+                subjekt.nom(),
+                praedikat.getVerbzweit(subjekt.getPerson(), subjekt.getNumerus()),
+                ",",
+                Konstituente.withKommaStehtAus(angabensatz.getDescription())
+                // es steht ein Komma aus
         );
     }
 
     /**
      * Gibt den Satz als Verbletztsatz aus, z.B. "du etwas zu berichten hast"
      */
-    public Wortfolge getVerbletztsatz() {
+    Iterable<Konstituente> getVerbletztsatz() {
         if (angabensatz == null) {
-            return joinToNull(
+            return Konstituente.joinToKonstituenten(
                     subjekt.nom(),
                     praedikat.getVerbletzt(subjekt.getPerson(), subjekt.getNumerus())
             );
         }
 
-        return w(
-                joinToNullString(
-                        subjekt.nom(),
-                        praedikat.getVerbletzt(subjekt.getPerson(), subjekt.getNumerus()),
-                        ",",
-                        angabensatz.getDescription()),
-                true // es steht ein Komma aus
+        return Konstituente.joinToKonstituenten(
+                subjekt.nom(),
+                praedikat.getVerbletzt(subjekt.getPerson(), subjekt.getNumerus()),
+                ",",
+                Konstituente.withKommaStehtAus(angabensatz.getDescription())
+                // es steht ein Komma aus
         );
+    }
+
+    public SubstantivischePhrase getSubjekt() {
+        return subjekt;
+    }
+
+    public PraedikatOhneLeerstellen getPraedikat() {
+        return praedikat;
     }
 }

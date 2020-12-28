@@ -31,6 +31,7 @@ import de.nb.aventiure2.data.world.syscomp.spatialconnection.NumberOfWays;
 import de.nb.aventiure2.data.world.syscomp.state.IHasStateGO;
 import de.nb.aventiure2.data.world.syscomp.state.impl.SchlossfestState;
 import de.nb.aventiure2.data.world.syscomp.storingplace.ILocationGO;
+import de.nb.aventiure2.german.base.GermanUtil;
 import de.nb.aventiure2.german.base.StructuralElement;
 import de.nb.aventiure2.german.description.AbstractDuDescription;
 import de.nb.aventiure2.german.description.TimedDescription;
@@ -47,7 +48,6 @@ import static de.nb.aventiure2.data.world.syscomp.state.impl.SchlossfestState.BE
 import static de.nb.aventiure2.data.world.time.AvTimeSpan.*;
 import static de.nb.aventiure2.german.base.GermanUtil.buildAufzaehlung;
 import static de.nb.aventiure2.german.base.GermanUtil.capitalize;
-import static de.nb.aventiure2.german.base.GermanUtil.uncapitalize;
 import static de.nb.aventiure2.german.base.StructuralElement.PARAGRAPH;
 import static de.nb.aventiure2.german.base.StructuralElement.WORD;
 import static de.nb.aventiure2.german.description.DescriptionBuilder.du;
@@ -321,8 +321,7 @@ public class BewegenAction<LOC_DESC extends ILocatableGO & IDescribableGO>
     @NonNull
     private static String buildMovableObjectsInLocationDescription(
             final ImmutableList<String> descriptionsPerLocation) {
-        return capitalize(
-                buildAufzaehlung(descriptionsPerLocation));
+        return capitalize(buildAufzaehlung(descriptionsPerLocation));
     }
 
     private ImmutableList<Pair<ILocationGO, ? extends List<LOC_DESC>>> buildRecursiveLocationsAndDescribables(
@@ -452,9 +451,8 @@ public class BewegenAction<LOC_DESC extends ILocatableGO & IDescribableGO>
             if (numberOfWays == ONLY_WAY) {
                 alt.add(
                         du("schaust", "dich nur kurz um, dann "
-                                        + uncapitalize(
-                                description.getDescription().
-                                        getDescriptionHauptsatz()),
+                                        + GermanUtil.uncapitalize(
+                                description.getDescription().getDescriptionHauptsatz()),
                                 description.getTimeElapsed())
                                 .komma(description.isKommaStehtAus())
                                 .undWartest(
@@ -487,7 +485,7 @@ public class BewegenAction<LOC_DESC extends ILocatableGO & IDescribableGO>
                                 "dann");
                 n.narrate(
                         satzanschluss(
-                                "; " + uncapitalize(satzEvtlMitDann),
+                                "; " + GermanUtil.uncapitalize(satzEvtlMitDann),
                                 description.getTimeElapsed())
                                 .komma(description.isKommaStehtAus())
                                 .dann(description.isDann()

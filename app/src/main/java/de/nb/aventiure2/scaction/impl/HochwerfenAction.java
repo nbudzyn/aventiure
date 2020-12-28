@@ -18,6 +18,7 @@ import de.nb.aventiure2.data.world.syscomp.memory.Action;
 import de.nb.aventiure2.data.world.syscomp.state.IHasStateGO;
 import de.nb.aventiure2.data.world.syscomp.state.impl.FroschprinzState;
 import de.nb.aventiure2.data.world.syscomp.storingplace.ILocationGO;
+import de.nb.aventiure2.german.base.GermanUtil;
 import de.nb.aventiure2.german.base.Nominalphrase;
 import de.nb.aventiure2.german.base.SubstantivischePhrase;
 import de.nb.aventiure2.german.description.TimedDescription;
@@ -37,7 +38,6 @@ import static de.nb.aventiure2.data.world.syscomp.state.impl.FroschprinzState.HA
 import static de.nb.aventiure2.data.world.syscomp.state.impl.FroschprinzState.HAT_SC_HILFSBEREIT_ANGESPROCHEN;
 import static de.nb.aventiure2.data.world.syscomp.state.impl.FroschprinzState.UNAUFFAELLIG;
 import static de.nb.aventiure2.data.world.time.AvTimeSpan.*;
-import static de.nb.aventiure2.german.base.GermanUtil.capitalize;
 import static de.nb.aventiure2.german.base.StructuralElement.PARAGRAPH;
 import static de.nb.aventiure2.german.description.DescriptionBuilder.du;
 import static de.nb.aventiure2.german.description.DescriptionBuilder.neuerSatz;
@@ -85,7 +85,7 @@ public class HochwerfenAction<OBJ extends IDescribableGO & ILocatableGO>
     @Override
     @NonNull
     public String getName() {
-        return capitalize(world.getDescription(object).akk()) + " hochwerfen";
+        return GermanUtil.capitalize(world.getDescription(object).akk()) + " hochwerfen";
     }
 
     @Override
@@ -144,6 +144,7 @@ public class HochwerfenAction<OBJ extends IDescribableGO & ILocatableGO>
     @NonNull
     private ImmutableList<String> altEmotionSatzgliedFuersHochwerfen() {
         return sc.feelingsComp().altAdverbialeAngaben().stream()
+                // FIXME Beser mit Konstituenten oder Wortfolge arbeiten? Folgekommma könnte verloren gehen...
                 .map(AdverbialeAngabeSkopusSatz::getText)
                 .collect(toImmutableList());
     }
@@ -281,8 +282,9 @@ public class HochwerfenAction<OBJ extends IDescribableGO & ILocatableGO>
                 world.getDescription(object).akk() +
                         " übermütig noch einmal in die Luft, aber sie wieder aufzufangen will dir "
                         +
-                        "dieses Mal nicht gelingen. " +
-                        capitalize(world.getDescription(object, true).nom()) +
+                        "dieses Mal nicht gelingen. "
+                        + GermanUtil.capitalize(
+                        world.getDescription(object, true).nom()) +
                         " landet " +
                         location.storingPlaceComp().getLocationMode().getWo(false),
                 "übermütig",

@@ -17,6 +17,8 @@ import de.nb.aventiure2.data.world.syscomp.memory.Action;
 import de.nb.aventiure2.data.world.syscomp.mentalmodel.IHasMentalModelGO;
 import de.nb.aventiure2.data.world.syscomp.talking.ITalkerGO;
 import de.nb.aventiure2.data.world.syscomp.talking.impl.SCTalkAction;
+import de.nb.aventiure2.german.base.GermanUtil;
+import de.nb.aventiure2.german.base.Konstituente;
 import de.nb.aventiure2.german.base.Nominalphrase;
 import de.nb.aventiure2.german.praedikat.Praedikat;
 import de.nb.aventiure2.german.praedikat.PraedikatMitEinerObjektleerstelle;
@@ -24,7 +26,6 @@ import de.nb.aventiure2.german.praedikat.PraedikatOhneLeerstellen;
 import de.nb.aventiure2.scaction.AbstractScAction;
 
 import static de.nb.aventiure2.data.world.gameobject.World.*;
-import static de.nb.aventiure2.german.base.GermanUtil.capitalize;
 import static de.nb.aventiure2.german.base.Numerus.SG;
 import static de.nb.aventiure2.german.base.Person.P1;
 
@@ -146,7 +147,8 @@ public class RedenAction<TALKER extends IDescribableGO & ILocatableGO & ITalkerG
                 talkStep,
                 // "Dem Frosch Angebote machen"
                 // "Das Angebot von *mir* weisen"
-                capitalize(praedikatOhneLeerstellen.getInfinitiv(P1, SG)));
+                GermanUtil.joinToNullString(
+                        Konstituente.capitalize(praedikatOhneLeerstellen.getInfinitiv(P1, SG))));
     }
 
     private RedenAction(final AvDatabase db,

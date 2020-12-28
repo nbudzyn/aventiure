@@ -4,6 +4,8 @@ import androidx.annotation.Nullable;
 
 import javax.annotation.CheckReturnValue;
 
+import de.nb.aventiure2.german.base.GermanUtil;
+import de.nb.aventiure2.german.base.Konstituente;
 import de.nb.aventiure2.german.base.Numerus;
 import de.nb.aventiure2.german.base.Person;
 import de.nb.aventiure2.german.base.StructuralElement;
@@ -17,35 +19,35 @@ import de.nb.aventiure2.german.praedikat.PraedikatOhneLeerstellen;
  * character is the (first) subject. Somehting like "Du gehst in den Wald."
  */
 public class PraedikatDuDescription
-        extends AbstractDuDescription<PraedikatOhneLeerstellen, PraedikatDuDescription> {
+        extends AbstractDuDescription<PraedikatDuTextPart, PraedikatDuDescription> {
     PraedikatDuDescription(final StructuralElement startsNew,
                            final PraedikatOhneLeerstellen praedikat) {
-        super(startsNew, praedikat, guessKommaStehtAus(praedikat));
+        super(startsNew, new PraedikatDuTextPart(praedikat), guessKommaStehtAus(praedikat));
     }
 
     private static boolean guessKommaStehtAus(final PraedikatOhneLeerstellen praedikat) {
         // FIXME Hier gibt es ein Problem: Ob ein Komma aussteht, hängt von der
-        //  konkreten Realisierung es Prädikats ab (was steht im Vorfeld etc.).
+        //  konkreten Realisierung des Prädikats ab (was steht im Vorfeld etc.).
         //  Dies hier ist nur eine grobe Richtschnur.
-        return praedikat.getDuHauptsatz().kommmaStehtAus();
+        return Konstituente.kommaStehtAus(praedikat.getDuHauptsatz());
     }
 
     @CheckReturnValue
     public PraedikatDuDescription mitAdverbialerAngabe(
             @Nullable final AdverbialeAngabeSkopusSatz adverbialeAngabe) {
-        return copy(duTextPart.mitAdverbialerAngabe(adverbialeAngabe));
+        return copy(duTextPart.getPraedikat().mitAdverbialerAngabe(adverbialeAngabe));
     }
 
     @CheckReturnValue
     public PraedikatDuDescription mitAdverbialerAngabe(
             @Nullable final AdverbialeAngabeSkopusVerbAllg adverbialeAngabe) {
-        return copy(duTextPart.mitAdverbialerAngabe(adverbialeAngabe));
+        return copy(duTextPart.getPraedikat().mitAdverbialerAngabe(adverbialeAngabe));
     }
 
     @CheckReturnValue
     public PraedikatDuDescription mitAdverbialerAngabe(
             @Nullable final AdverbialeAngabeSkopusVerbWohinWoher adverbialeAngabe) {
-        return copy(duTextPart.mitAdverbialerAngabe(adverbialeAngabe));
+        return copy(duTextPart.getPraedikat().mitAdverbialerAngabe(adverbialeAngabe));
     }
 
     /**
@@ -58,7 +60,8 @@ public class PraedikatDuDescription
      * (nicht *"[Ich habe] die Kugel an sich genommen")
      */
     public String getDescriptionPartizipIIPhrase(final Person person, final Numerus numerus) {
-        return duTextPart.getPartizipIIPhrase(person, numerus);
+        return GermanUtil.joinToNullString(
+                duTextPart.getPraedikat().getPartizipIIPhrase(person, numerus));
     }
 
     /**
@@ -74,16 +77,16 @@ public class PraedikatDuDescription
      * </ul>
      */
     public boolean kannPartizipIIPhraseAmAnfangOderMittenImSatzVerwendetWerden() {
-        return duTextPart.kannPartizipIIPhraseAmAnfangOderMittenImSatzVerwendetWerden();
+        return duTextPart.getPraedikat()
+                .kannPartizipIIPhraseAmAnfangOderMittenImSatzVerwendetWerden();
     }
 
     @CheckReturnValue
     private PraedikatDuDescription copy(final PraedikatOhneLeerstellen praedikat) {
-        return new PraedikatDuDescription(getStartsNew(),
-                praedikat);
+        return new PraedikatDuDescription(getStartsNew(), praedikat);
     }
 
     public PraedikatOhneLeerstellen getPraedikat() {
-        return duTextPart;
+        return duTextPart.getPraedikat();
     }
 }

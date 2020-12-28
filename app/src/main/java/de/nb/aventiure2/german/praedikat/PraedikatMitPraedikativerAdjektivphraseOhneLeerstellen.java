@@ -1,6 +1,9 @@
 package de.nb.aventiure2.german.praedikat;
 
+import com.google.common.collect.ImmutableList;
+
 import java.util.Collection;
+import java.util.Iterator;
 
 import javax.annotation.Nullable;
 
@@ -8,11 +11,9 @@ import de.nb.aventiure2.annotations.Argument;
 import de.nb.aventiure2.annotations.Valenz;
 import de.nb.aventiure2.german.adjektiv.AdjPhrOhneLeerstellen;
 import de.nb.aventiure2.german.base.GermanUtil;
+import de.nb.aventiure2.german.base.Konstituente;
 import de.nb.aventiure2.german.base.Numerus;
 import de.nb.aventiure2.german.base.Person;
-import de.nb.aventiure2.german.base.Wortfolge;
-
-import static de.nb.aventiure2.german.base.GermanUtil.joinToNull;
 
 /**
  * Ein Prädikat, bestehend aus einem Verb und einer prädikativen Adjektivphrase, in dem
@@ -103,66 +104,75 @@ public class PraedikatMitPraedikativerAdjektivphraseOhneLeerstellen
 
     @Override
     public boolean duHauptsatzLaesstSichMitNachfolgendemDuHauptsatzZusammenziehen() {
-        return !adjektivphrase.getPraedikativ(Person.P2, Numerus.SG).kommmaStehtAus();
+        // FIXME Ist diese Einschränkung hier noch nötig?
+        return !Konstituente.kommaStehtAus(
+                adjektivphrase.getPraedikativ(Person.P2, Numerus.SG));
     }
 
     @Override
     public boolean kannPartizipIIPhraseAmAnfangOderMittenImSatzVerwendetWerden() {
-        return !adjektivphrase.getPraedikativ(Person.P2, Numerus.SG).kommmaStehtAus();
+        return true;
     }
 
     @Override
     public @Nullable
-    String getSpeziellesVorfeld() {
-        @Nullable final String speziellesVorfeldFromSuper = super.getSpeziellesVorfeld();
+    Konstituente getSpeziellesVorfeld(final Person person, final Numerus numerus) {
+        @Nullable final Konstituente speziellesVorfeldFromSuper = super.getSpeziellesVorfeld(person,
+                numerus);
         if (speziellesVorfeldFromSuper != null) {
             return speziellesVorfeldFromSuper;
         }
 
-        // Ich gehe mal davon aus, dass die Komma-Problematik in jeder Person und jedem
-        // Numerus gleich ist.
-        if (!adjektivphrase.getPraedikativ(Person.P2, Numerus.SG).kommmaStehtAus()) {
-            // "Glücklich wirkt sie"
-            // Stark markiert - aber möglich.
-            return adjektivphrase.getPraedikativ(Person.P2, Numerus.SG).getString();
-        }
+        final Iterable<Konstituente> konstituentenPraedAdjPhr =
+                adjektivphrase.getPraedikativ(person, numerus);
 
-        // FIXME Die Adjektivphrase könnte diskontinuierlich aufgeteilt werden, dann könnte
-        //  ein Teil ins Vorgeld kommen: Glücklich wirkt sie, dich zu sehen.
-        //  Problem dabei: GermanUtil.cut...() muss klüger gemacht werden, damit
-        //  beim Ausschneiden nicht ein oder mehrere unnötiges Kommata im Mittelfeld
-        //  zurückbleiden. Das sollte man ohnehin mal tun...
+        final Iterator<Konstituente> iterKonstituentenPraedAdjPhr =
+                konstituentenPraedAdjPhr.iterator();
+
+        if (iterKonstituentenPraedAdjPhr.hasNext()) {
+            final Konstituente firstKonstituentePraedAdjPhr = iterKonstituentenPraedAdjPhr.next();
+            if (!iterKonstituentenPraedAdjPhr.hasNext()) {
+                // "Glücklich wirkt sie". Markiert - aber möglich.
+                return firstKonstituentePraedAdjPhr;
+            }
+
+            // else : Die prädikative Adjektivphrase erzeugt mehrere Konstituenten. Dann wollen
+            // wir sie nicht in das Vorfeld stellen. Dinge wie "Glücklich, dich zu sehen, wirkt
+            // sie." sind zwar möglich, wirken aber ziemlich unnatürlich.
+
+            // FIXME Die Adjektivphrase könnte diskontinuierlich aufgeteilt werden, dann könnte
+            //  ein Teil (nur eine der Konstituenten) ins Vorgeld kommen: Glücklich wirkt sie,
+            //  dich zu sehen.
+        }
 
         return null;
     }
 
     @Override
-    public Wortfolge getMittelfeld(final Collection<Modalpartikel> modalpartikeln,
-                                   final Person personSubjekt,
-                                   final Numerus numerusSubjekt) {
-        return joinToNull(
-                getAdverbialeAngabeSkopusSatz(), // "leider"
+    public Iterable<Konstituente> getMittelfeld(final Collection<Modalpartikel> modalpartikeln,
+                                                final Person personSubjekt,
+                                                final Numerus numerusSubjekt) {
+        return Konstituente.joinToKonstituenten(
+                getAdverbialeAngabeSkopusSatzDescription(), // "leider"
                 GermanUtil.joinToNullString(modalpartikeln), // "halt"
-                getAdverbialeAngabeSkopusVerbAllg(), // "erneut"
-                getAdverbialeAngabeSkopusVerbWohinWoher(), // "nach außen" (?)
+                getAdverbialeAngabeSkopusVerbAllgDescription(), // "erneut"
+                getAdverbialeAngabeSkopusVerbWohinWoherDescription(), // "nach außen" (?)
                 adjektivphrase.getPraedikativ(personSubjekt, numerusSubjekt) // "glücklich"
         );
     }
 
     @Override
-    public String getNachfeld(final Person personSubjekt,
-                              final Numerus numerusSubjekt) {
+    public Iterable<Konstituente> getNachfeld(final Person personSubjekt,
+                                              final Numerus numerusSubjekt) {
 
         // FIXME Die Adjektivphrase könnte diskontinuierlich aufgeteilt werden, dann könnte
         //  ein Teil ins Nachfeld kommen:
         //  Sie hat GLÜCKLICH gewirkt, DICH ZU SEHEN.
         //  (alternativ zu "Sie hat GLÜCKLICH, DICH ZU SEHEN, gewirkt").
         //  Z.B.:         return adjektivphrase.getNachfeldKandidat(personSubjekt, numerusSubjekt)
-        //  Problem dabei: GermanUtil.cut...() muss klüger gemacht werden, damit
-        //  beim Ausschneiden nicht ein oder mehrere unnötiges Kommata im Mittelfeld
-        //  zurückbleiden. Das sollte man ohnehin mal tun...
-
-        return null;
+        //  Problem: Das ist nicht zwingend - und manchmal müssen vielleicht andere
+        //  Dinge zwingend ins Nachfeld?!
+        return ImmutableList.of();
     }
 
     @Override
@@ -177,7 +187,7 @@ public class PraedikatMitPraedikativerAdjektivphraseOhneLeerstellen
 
     @Nullable
     @Override
-    public String getErstesInterrogativpronomenAlsString() {
+    public Konstituente getErstesInterrogativpronomen() {
         return null;
     }
 }

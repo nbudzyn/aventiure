@@ -2,6 +2,8 @@ package de.nb.aventiure2.german.praedikat;
 
 import androidx.annotation.NonNull;
 
+import com.google.common.collect.ImmutableList;
+
 import java.util.Collection;
 
 import javax.annotation.Nullable;
@@ -12,12 +14,12 @@ import de.nb.aventiure2.german.base.GermanUtil;
 import de.nb.aventiure2.german.base.Interrogativpronomen;
 import de.nb.aventiure2.german.base.Kasus;
 import de.nb.aventiure2.german.base.KasusOderPraepositionalkasus;
+import de.nb.aventiure2.german.base.Konstituente;
 import de.nb.aventiure2.german.base.Numerus;
 import de.nb.aventiure2.german.base.Person;
 import de.nb.aventiure2.german.base.SubstantivischePhrase;
-import de.nb.aventiure2.german.base.Wortfolge;
 
-import static de.nb.aventiure2.german.base.GermanUtil.joinToNull;
+import static de.nb.aventiure2.german.base.Konstituente.k;
 
 /**
  * Ein Prädikat (Verb ggf. mit Präfix) bei dem das Verb mit einem Subjekt und einem
@@ -125,8 +127,9 @@ public class PraedikatSubjObjOhneLeerstellen
 
     @Override
     public @Nullable
-    String getSpeziellesVorfeld() {
-        @Nullable final String speziellesVorfeldFromSuper = super.getSpeziellesVorfeld();
+    Konstituente getSpeziellesVorfeld(final Person person, final Numerus numerus) {
+        @Nullable final Konstituente speziellesVorfeldFromSuper = super.getSpeziellesVorfeld(person,
+                numerus);
         if (speziellesVorfeldFromSuper != null) {
             return speziellesVorfeldFromSuper;
         }
@@ -135,29 +138,29 @@ public class PraedikatSubjObjOhneLeerstellen
         if (!"es" .equals(objektImKasusOderPraepkasus)) {
             // Wenn "es" ein Objekt ist, darf es nicht im Vorfeld stehen.
             // (Eisenberg Der Satz 5.4.2)
-            return objektImKasusOderPraepkasus;  // "den Frosch"
+            return k(objektImKasusOderPraepkasus);  // "den Frosch"
         }
 
         return null;
     }
 
     @Override
-    public Wortfolge getMittelfeld(final Collection<Modalpartikel> modalpartikeln,
-                                   final Person personSubjekt,
-                                   final Numerus numerusSubjekt) {
-        return joinToNull(
-                getAdverbialeAngabeSkopusSatz(), // "aus einer Laune heraus"
+    public Iterable<Konstituente> getMittelfeld(final Collection<Modalpartikel> modalpartikeln,
+                                                final Person personSubjekt,
+                                                final Numerus numerusSubjekt) {
+        return Konstituente.joinToKonstituenten(
+                getAdverbialeAngabeSkopusSatzDescription(), // "aus einer Laune heraus"
                 GermanUtil.joinToNullString(modalpartikeln), // "mal eben"
-                getAdverbialeAngabeSkopusVerbAllg(), // "erneut"
+                getAdverbialeAngabeSkopusVerbAllgDescription(), // "erneut"
                 objekt.im(kasusOderPraepositionalkasus),
-                getAdverbialeAngabeSkopusVerbWohinWoher() // "auf den Tisch"
+                getAdverbialeAngabeSkopusVerbWohinWoherDescription() // "auf den Tisch"
         );
     }
 
     @Override
-    public String getNachfeld(final Person personSubjekt,
-                              final Numerus numerusSubjekt) {
-        return null;
+    public Iterable<Konstituente> getNachfeld(final Person personSubjekt,
+                                              final Numerus numerusSubjekt) {
+        return ImmutableList.of();
     }
 
     @Override
@@ -173,9 +176,9 @@ public class PraedikatSubjObjOhneLeerstellen
 
     @Nullable
     @Override
-    public String getErstesInterrogativpronomenAlsString() {
+    public Konstituente getErstesInterrogativpronomen() {
         if (objekt instanceof Interrogativpronomen) {
-            return objekt.im(kasusOderPraepositionalkasus);
+            return k(objekt.im(kasusOderPraepositionalkasus));
         }
 
         return null;

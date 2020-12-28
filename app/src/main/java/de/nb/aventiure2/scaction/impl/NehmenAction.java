@@ -19,6 +19,7 @@ import de.nb.aventiure2.data.world.syscomp.memory.Action;
 import de.nb.aventiure2.data.world.syscomp.state.IHasStateGO;
 import de.nb.aventiure2.data.world.syscomp.state.impl.FroschprinzState;
 import de.nb.aventiure2.data.world.syscomp.storingplace.ILocationGO;
+import de.nb.aventiure2.german.base.GermanUtil;
 import de.nb.aventiure2.german.base.Nominalphrase;
 import de.nb.aventiure2.german.base.NumerusGenus;
 import de.nb.aventiure2.german.base.SubstantivischePhrase;
@@ -39,7 +40,6 @@ import static de.nb.aventiure2.data.world.syscomp.feelings.Mood.NEUTRAL;
 import static de.nb.aventiure2.data.world.syscomp.state.impl.FroschprinzState.ERWARTET_VON_SC_EINLOESUNG_SEINES_VERSPRECHENS;
 import static de.nb.aventiure2.data.world.syscomp.state.impl.FroschprinzState.HAT_HOCHHEBEN_GEFORDERT;
 import static de.nb.aventiure2.data.world.time.AvTimeSpan.*;
-import static de.nb.aventiure2.german.base.GermanUtil.capitalize;
 import static de.nb.aventiure2.german.base.Kasus.AKK;
 import static de.nb.aventiure2.german.base.Numerus.SG;
 import static de.nb.aventiure2.german.base.Person.P1;
@@ -173,9 +173,11 @@ public class NehmenAction
     public String getName() {
         final PraedikatMitEinerObjektleerstelle praedikat = getPraedikatFuerName();
 
-        return capitalize(praedikat.mit(world.getDescription(gameObject, true))
-                // Relevant für etwas wie "Die Schale an *mich* nehmen"
-                .getInfinitiv(P1, SG));
+        return GermanUtil.capitalize(
+                GermanUtil.joinToNullString(
+                        praedikat.mit(world.getDescription(gameObject, true))
+                                // Relevant für etwas wie "Die Schale an *mich* nehmen"
+                                .getInfinitiv(P1, SG)));
     }
 
     @NonNull
@@ -234,7 +236,7 @@ public class NehmenAction
                         .undWartest()
                         .dann(),
                 neuerSatz(PARAGRAPH,
-                        capitalize(froschDesc.akk())
+                        GermanUtil.capitalize(froschDesc.akk())
                                 + " in die Hand nehmen? – Wer hat dir bloß solche Flausen "
                                 + "in den Kopf gesetzt! Kräftig packst du "
                                 + froschDesc.akk())
@@ -258,14 +260,13 @@ public class NehmenAction
 
                             n.narrateAlt(
                                     neuerSatz(
-                                            capitalize(
-                                                    froschDescOderAnapher.nom()) // "er"
+                                            froschDescOderAnapher.nom()// "Er"
                                                     + " ist glibschig und "
                                                     + "schleimig – pfui-bäh! – schnell lässt du "
                                                     + froschDescOderAnapher.persPron().akk()
                                                     + " in "
                                                     + "eine Tasche gleiten. "
-                                                    + capitalize(
+                                                    + GermanUtil.capitalize(
                                                     froschDescOderAnapher.possArt()
                                                             .vor(NumerusGenus.N).nom())
                                                     + " gedämpftes Quaken könnte "
@@ -284,7 +285,7 @@ public class NehmenAction
                                     du("packst",
                                             froschDescOderAnapher.akk() // "ihn"
                                                     + " in deine Tasche. "
-                                                    + capitalize(
+                                                    + GermanUtil.capitalize(
                                                     froschDesc.persPron().nom())
                                                     + " fasst "
                                                     + "sich sehr eklig an und du bist "
@@ -455,11 +456,14 @@ public class NehmenAction
         if (n.allowsAdditionalDuSatzreihengliedOhneSubjekt()) {
             alt.add(satzanschluss(
                     ", nur um "
-                            + nehmenPraedikat
-                            .mit(world.getDescription(gameObject, true).persPron())
-                            .mitAdverbialerAngabe(
-                                    new AdverbialeAngabeSkopusSatz("gleich erneut"))
-                            .getZuInfinitiv(P2, SG),
+                            +
+                            GermanUtil.joinToNullString(
+                                    nehmenPraedikat
+                                            .mit(world.getDescription(gameObject, true).persPron())
+                                            .mitAdverbialerAngabe(
+                                                    new AdverbialeAngabeSkopusSatz("gleich erneut"))
+                                            .getZuInfinitiv(P2, SG)
+                            ),
                     secs(5))
                     // "zu nehmen", "an dich zu nehmen", "aufzuheben"
                     .komma()

@@ -2,9 +2,7 @@ package de.nb.aventiure2.german.satz;
 
 import javax.annotation.Nonnull;
 
-import de.nb.aventiure2.german.base.Wortfolge;
-
-import static de.nb.aventiure2.german.base.GermanUtil.joinToNull;
+import de.nb.aventiure2.german.base.Konstituente;
 
 /**
  * Ein Nebensatz, der mit einer Kondition beginnt. Beispiel:
@@ -26,8 +24,8 @@ public class Konditionalsatz {
      * Gibt den eigentlichen Konditionalsatz zurück, allerdings <i>wird kein ausstehendes
      * Komma gefordert!</i> Das wird der Aufrufer in vielen Fällen selbst tun wollen.
      */
-    public Wortfolge getDescription() {
-        return joinToNull(
+    public Iterable<Konstituente> getDescription() {
+        return Konstituente.joinToKonstituenten(
                 kondition, // "weil"
                 satz.getVerbletztsatz() // "du etwas zu berichten hast"
         );

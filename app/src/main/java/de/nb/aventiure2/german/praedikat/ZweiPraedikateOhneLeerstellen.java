@@ -5,10 +5,9 @@ import java.util.Objects;
 
 import javax.annotation.Nullable;
 
-import de.nb.aventiure2.german.base.GermanUtil;
+import de.nb.aventiure2.german.base.Konstituente;
 import de.nb.aventiure2.german.base.Numerus;
 import de.nb.aventiure2.german.base.Person;
-import de.nb.aventiure2.german.base.Wortfolge;
 
 /**
  * Zwei Prädikate mit Objekt ohne Leerstellen, erzeugen einen
@@ -28,33 +27,35 @@ class ZweiPraedikateOhneLeerstellen
     }
 
     @Override
-    public Wortfolge getDuHauptsatzMitVorfeld(final String vorfeld) {
+    public Iterable<Konstituente> getDuHauptsatzMitVorfeld(final String vorfeld) {
         if (ersterSatz.duHauptsatzLaesstSichMitNachfolgendemDuHauptsatzZusammenziehen()) {
-            return GermanUtil.joinToNull(
+            return Konstituente.joinToKonstituenten(
                     ersterSatz.getDuHauptsatzMitVorfeld(vorfeld),
                     // "Dann hebst du die goldene Kugel auf"
                     "und",
-                    zweiterSatz.getDuSatzanschlussOhneSubjekt()); // "nimmst ein Bad"
+                    zweiterSatz.getDuSatzanschlussOhneSubjekt() // "nimmst ein Bad"
+            );
         }
 
-        return GermanUtil.joinToNull(
+        return Konstituente.joinToKonstituenten(
                 ersterSatz.getDuHauptsatzMitVorfeld(vorfeld),
                 // "Dann hebst du die goldene Kugel auf"
                 ";",
-                zweiterSatz.getDuHauptsatz()); // "du nimmst ein Bad"
+                zweiterSatz.getDuHauptsatz() // "du nimmst ein Bad"
+        );
     }
 
     @Override
-    public Wortfolge getDuHauptsatzMitSpeziellemVorfeld() {
+    public Iterable<Konstituente> getDuHauptsatzMitSpeziellemVorfeld() {
         if (ersterSatz.duHauptsatzLaesstSichMitNachfolgendemDuHauptsatzZusammenziehen()) {
-            return GermanUtil.joinToNull(
+            return Konstituente.joinToKonstituenten(
                     ersterSatz.getDuHauptsatzMitSpeziellemVorfeld(),
                     // "Den Frosch nimmst du in die Hand"
                     "und",
                     zweiterSatz.getDuSatzanschlussOhneSubjekt()); // "nimmst ein Bad"
         }
 
-        return GermanUtil.joinToNull(
+        return Konstituente.joinToKonstituenten(
                 ersterSatz.getDuHauptsatzMitSpeziellemVorfeld(),
                 // "Den Frosch nimmst du in die Hand"
                 ";",
@@ -62,17 +63,17 @@ class ZweiPraedikateOhneLeerstellen
     }
 
     @Override
-    public Wortfolge getDuSatzanschlussOhneSubjekt(
+    public Iterable<Konstituente> getDuSatzanschlussOhneSubjekt(
             final Collection<Modalpartikel> modalpartikeln) {
         if (ersterSatz.duHauptsatzLaesstSichMitNachfolgendemDuHauptsatzZusammenziehen()) {
-            return GermanUtil.joinToNull(
+            return Konstituente.joinToKonstituenten(
                     ersterSatz.getDuSatzanschlussOhneSubjekt(modalpartikeln),
                     // "hebst die goldene Kugel auf"
                     "und",
                     zweiterSatz.getDuSatzanschlussOhneSubjekt(modalpartikeln)); // "nimmst ein Bad"
         }
 
-        return GermanUtil.joinToNull(
+        return Konstituente.joinToKonstituenten(
                 ersterSatz.getDuSatzanschlussOhneSubjekt(modalpartikeln),
                 // "hebst die goldene Kugel auf"
                 ";",
@@ -114,26 +115,28 @@ class ZweiPraedikateOhneLeerstellen
     }
 
     @Override
-    public Wortfolge getVerbzweit(final Person person, final Numerus numerus) {
-        return GermanUtil.joinToNull(
+    public Iterable<Konstituente> getVerbzweit(final Person person, final Numerus numerus) {
+        return Konstituente.joinToKonstituenten(
                 ersterSatz.getVerbzweit(person, numerus),
                 "und",
                 zweiterSatz.getVerbzweit(person, numerus));
     }
 
     @Override
-    public Wortfolge getVerbletzt(final Person person, final Numerus numerus) {
-        return GermanUtil.joinToNull(
+    public Iterable<Konstituente> getVerbletzt(final Person person, final Numerus numerus) {
+        return Konstituente.joinToKonstituenten(
                 ersterSatz.getVerbletzt(person, numerus),
                 "und",
                 zweiterSatz.getVerbletzt(person, numerus));
     }
 
     @Override
-    public String getPartizipIIPhrase(final Person person, final Numerus numerus) {
-        return ersterSatz.getPartizipIIPhrase(person, numerus)
-                + " und "
-                + zweiterSatz.getPartizipIIPhrase(person, numerus);
+    public Iterable<Konstituente> getPartizipIIPhrase(final Person person, final Numerus numerus) {
+        return Konstituente.joinToKonstituenten(
+                ersterSatz.getPartizipIIPhrase(person, numerus),
+                "und",
+                zweiterSatz.getPartizipIIPhrase(person, numerus)
+        );
     }
 
     @Override
@@ -143,17 +146,19 @@ class ZweiPraedikateOhneLeerstellen
     }
 
     @Override
-    public String getInfinitiv(final Person person, final Numerus numerus) {
-        return ersterSatz.getInfinitiv(person, numerus)
-                + " und "
-                + zweiterSatz.getInfinitiv(person, numerus);
+    public Iterable<Konstituente> getInfinitiv(final Person person, final Numerus numerus) {
+        return Konstituente.joinToKonstituenten(
+                ersterSatz.getInfinitiv(person, numerus),
+                "und",
+                zweiterSatz.getInfinitiv(person, numerus));
     }
 
     @Override
-    public String getZuInfinitiv(final Person person, final Numerus numerus) {
-        return ersterSatz.getZuInfinitiv(person, numerus)
-                + " und "
-                + zweiterSatz.getZuInfinitiv(person, numerus);
+    public Iterable<Konstituente> getZuInfinitiv(final Person person, final Numerus numerus) {
+        return Konstituente.joinToKonstituenten(
+                ersterSatz.getZuInfinitiv(person, numerus),
+                "und",
+                zweiterSatz.getZuInfinitiv(person, numerus));
     }
 
     @Override
@@ -179,27 +184,28 @@ class ZweiPraedikateOhneLeerstellen
 
     @Nullable
     @Override
-    public String getSpeziellesVorfeld() {
-        return ersterSatz.getSpeziellesVorfeld();
+    public Konstituente getSpeziellesVorfeld(final Person person,
+                                             final Numerus numerus) {
+        return ersterSatz.getSpeziellesVorfeld(person, numerus);
     }
 
     @Nullable
     @Override
-    public String getNachfeld(final Person person, final Numerus numerus) {
+    public Iterable<Konstituente> getNachfeld(final Person person, final Numerus numerus) {
         return zweiterSatz.getNachfeld(person, numerus);
     }
 
     @Nullable
     @Override
-    public String getErstesInterrogativpronomenAlsString() {
+    public Konstituente getErstesInterrogativpronomen() {
         // Das hier ist etwas tricky.
         // Denkbar wäre so etwas wie "Sie ist gespannt, was du aufhebst und mitnimmmst."
         // Dazu müsste sowohl im aufheben- als auch im mitnehmen-Prädikat dasselbe
         // Interrogativpronomen angegeben sein.
-        final String erstesInterrogativpronomenErsterSatz =
-                ersterSatz.getErstesInterrogativpronomenAlsString();
-        final String erstesInterrogativpronomenZweiterSatz =
-                zweiterSatz.getErstesInterrogativpronomenAlsString();
+        final Konstituente erstesInterrogativpronomenErsterSatz =
+                ersterSatz.getErstesInterrogativpronomen();
+        final Konstituente erstesInterrogativpronomenZweiterSatz =
+                zweiterSatz.getErstesInterrogativpronomen();
 
         if (Objects.equals(
                 erstesInterrogativpronomenErsterSatz, erstesInterrogativpronomenZweiterSatz)) {

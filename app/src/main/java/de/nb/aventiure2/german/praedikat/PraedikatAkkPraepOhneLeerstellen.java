@@ -2,6 +2,8 @@ package de.nb.aventiure2.german.praedikat;
 
 import androidx.annotation.NonNull;
 
+import com.google.common.collect.ImmutableList;
+
 import java.util.Collection;
 
 import javax.annotation.Nullable;
@@ -10,13 +12,13 @@ import de.nb.aventiure2.annotations.Argument;
 import de.nb.aventiure2.annotations.Valenz;
 import de.nb.aventiure2.german.base.GermanUtil;
 import de.nb.aventiure2.german.base.Interrogativpronomen;
+import de.nb.aventiure2.german.base.Konstituente;
 import de.nb.aventiure2.german.base.Numerus;
 import de.nb.aventiure2.german.base.Person;
 import de.nb.aventiure2.german.base.PraepositionMitKasus;
 import de.nb.aventiure2.german.base.SubstantivischePhrase;
-import de.nb.aventiure2.german.base.Wortfolge;
 
-import static de.nb.aventiure2.german.base.GermanUtil.joinToNull;
+import static de.nb.aventiure2.german.base.Konstituente.k;
 
 /**
  * Ein Prädikat, in dem ein Akkusativobjekt und ein Präpositionalobjekt gesetzt sind
@@ -127,8 +129,9 @@ public class PraedikatAkkPraepOhneLeerstellen
 
     @Override
     public @Nullable
-    String getSpeziellesVorfeld() {
-        @Nullable final String speziellesVorfeldFromSuper = super.getSpeziellesVorfeld();
+    Konstituente getSpeziellesVorfeld(final Person person, final Numerus numerus) {
+        @Nullable final Konstituente speziellesVorfeldFromSuper = super.getSpeziellesVorfeld(person,
+                numerus);
         if (speziellesVorfeldFromSuper != null) {
             return speziellesVorfeldFromSuper;
         }
@@ -137,29 +140,29 @@ public class PraedikatAkkPraepOhneLeerstellen
         if (!"es" .equals(akk)) {
             // Wenn "es" ein Objekt ist, darf es nicht im Vorfeld stehen.
             // (Eisenberg Der Satz 5.4.2)
-            return akk; // "das Teil"
+            return k(akk); // "das Teil"
         }
 
         return null;
     }
 
     @Override
-    public Wortfolge getMittelfeld(final Collection<Modalpartikel> modalpartikeln,
-                                   final Person personSubjekt,
-                                   final Numerus numerusSubjekt) {
-        return joinToNull(
-                getAdverbialeAngabeSkopusSatz(), // "aus einer Laune heraus"
+    public Iterable<Konstituente> getMittelfeld(final Collection<Modalpartikel> modalpartikeln,
+                                                final Person personSubjekt,
+                                                final Numerus numerusSubjekt) {
+        return Konstituente.joinToKonstituenten(
+                getAdverbialeAngabeSkopusSatzDescription(), // "aus einer Laune heraus"
                 akk.akk(), // "das Teil"
                 GermanUtil.joinToNullString(modalpartikeln), // "besser doch"
-                getAdverbialeAngabeSkopusVerbAllg(), // "erneut"
-                getAdverbialeAngabeSkopusVerbWohinWoher(), // "anch dem Weg"
+                getAdverbialeAngabeSkopusVerbAllgDescription(), // "erneut"
+                getAdverbialeAngabeSkopusVerbWohinWoherDescription(), // "anch dem Weg"
                 praep.im(praepositionMitKasus)); // "aus der La main"
     }
 
     @Override
-    public String getNachfeld(final Person personSubjekt,
-                              final Numerus numerusSubjekt) {
-        return null;
+    public Iterable<Konstituente> getNachfeld(final Person personSubjekt,
+                                              final Numerus numerusSubjekt) {
+        return ImmutableList.of();
     }
 
     @Override
@@ -174,13 +177,13 @@ public class PraedikatAkkPraepOhneLeerstellen
 
     @Nullable
     @Override
-    public String getErstesInterrogativpronomenAlsString() {
+    public Konstituente getErstesInterrogativpronomen() {
         if (akk instanceof Interrogativpronomen) {
-            return akk.akk();
+            return k(akk.akk());
         }
 
         if (praep instanceof Interrogativpronomen) {
-            return praep.im(praepositionMitKasus);
+            return k(praep.im(praepositionMitKasus));
         }
 
         return null;

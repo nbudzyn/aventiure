@@ -2,6 +2,8 @@ package de.nb.aventiure2.german.praedikat;
 
 import androidx.annotation.NonNull;
 
+import com.google.common.collect.ImmutableList;
+
 import java.util.Collection;
 
 import javax.annotation.Nullable;
@@ -10,14 +12,14 @@ import de.nb.aventiure2.annotations.Argument;
 import de.nb.aventiure2.annotations.Valenz;
 import de.nb.aventiure2.german.base.GermanUtil;
 import de.nb.aventiure2.german.base.Interrogativpronomen;
+import de.nb.aventiure2.german.base.Konstituente;
 import de.nb.aventiure2.german.base.Numerus;
 import de.nb.aventiure2.german.base.Person;
 import de.nb.aventiure2.german.base.Personalpronomen;
 import de.nb.aventiure2.german.base.Reflexivpronomen;
 import de.nb.aventiure2.german.base.SubstantivischePhrase;
-import de.nb.aventiure2.german.base.Wortfolge;
 
-import static de.nb.aventiure2.german.base.GermanUtil.joinToNull;
+import static de.nb.aventiure2.german.base.Konstituente.k;
 
 /**
  * Ein Prädikat, in dem ein Dativobjekt und Akkusativobjekt gesetzt sind
@@ -128,8 +130,9 @@ public class PraedikatDatAkkOhneLeerstellen
 
     @Override
     public @Nullable
-    String getSpeziellesVorfeld() {
-        @Nullable final String speziellesVorfeldFromSuper = super.getSpeziellesVorfeld();
+    Konstituente getSpeziellesVorfeld(final Person person, final Numerus numerus) {
+        @Nullable final Konstituente speziellesVorfeldFromSuper = super.getSpeziellesVorfeld(person,
+                numerus);
         if (speziellesVorfeldFromSuper != null) {
             return speziellesVorfeldFromSuper;
         }
@@ -139,9 +142,9 @@ public class PraedikatDatAkkOhneLeerstellen
     }
 
     @Override
-    public Wortfolge getMittelfeld(final Collection<Modalpartikel> modalpartikeln,
-                                   final Person personSubjekt,
-                                   final Numerus numerusSubjekt) {
+    public Iterable<Konstituente> getMittelfeld(final Collection<Modalpartikel> modalpartikeln,
+                                                final Person personSubjekt,
+                                                final Numerus numerusSubjekt) {
         // Duden 1356: "Schwach betonte Personal- und Reflexivpronomen stehen
         // unmittelbar nach der linken Satzklammer [...] Wackernagel-Position"
 
@@ -153,44 +156,65 @@ public class PraedikatDatAkkOhneLeerstellen
             if (Personalpronomen.isPersonalpronomen(dat) ||
                     Reflexivpronomen.isReflexivpronomen(dat)) {
                 // Duden 1357: "Akkusativ > Dativ"
-                return joinToNull(
+                return Konstituente.joinToKonstituenten(
                         akk, // "sie", Wackernagel-Position 1
                         dat, // "ihm", Wackernagel-Position 2
-                        getAdverbialeAngabeSkopusSatz(), // "aus einer Laune heraus"
+                        getAdverbialeAngabeSkopusSatzDescription(),
+                        // "aus einer Laune heraus"
                         GermanUtil.joinToNullString(modalpartikeln), // "halt"
-                        getAdverbialeAngabeSkopusVerbAllg()); // "auf deiner Flöte"
+                        getAdverbialeAngabeSkopusVerbAllgDescription()); // "auf deiner Flöte"
             }
 
-            return joinToNull(
+            return Konstituente.joinToKonstituenten(
                     akk, // "sie", Wackernagel-Position
-                    getAdverbialeAngabeSkopusSatz(), // "aus einer Laune heraus"
+                    getAdverbialeAngabeSkopusSatzDescription(), // "aus einer Laune heraus"
                     dat, // "dem Frosch"
                     GermanUtil.joinToNullString(modalpartikeln), // "halt"
-                    getAdverbialeAngabeSkopusVerbAllg()); // "auf deiner Flöte"
+                    getAdverbialeAngabeSkopusVerbAllgDescription()); // "auf deiner Flöte"
         }
 
         if (Personalpronomen.isPersonalpronomen(dat) ||
                 Reflexivpronomen.isReflexivpronomen(dat)) {
-            return joinToNull(
+            return Konstituente.joinToKonstituenten(
                     dat, // "ihm", Wackernagel-Position
-                    getAdverbialeAngabeSkopusSatz(), // "aus einer Laune heraus"
+                    getAdverbialeAngabeSkopusSatzDescription(), // "aus einer Laune heraus"
                     akk, // "die Melodie"
                     GermanUtil.joinToNullString(modalpartikeln), // "halt"
-                    getAdverbialeAngabeSkopusVerbAllg()); // "auf deiner Flöte"
+
+                    // FIXME Das hier betrifft alle Mittelfelder:
+                    //  Adjektivphrasen als adverbiale
+                    //  Angaben dürfen nur unter gewissen Voraussetzungen
+                    //  im Mittelfeld stehen:
+                    //  Die Beschränkung ist: Infinitivphrasen
+                    //  können nicht im Mittelfeld stehen
+                    //  (aber im Vorfeld oder Nachfeld). Das gilt auch für
+                    //  Angaben- und Ergänzungssätze (z.B. indirekte Fragen).
+                    //  Vgl. *"Sie schaut dich, glücklich dich zu sehen, an."
+                    //  Möglichw wären "Sie schaut dich an, glücklich, dich zu
+                    //  sehen." und "Glücklich, dich zu sehen, schaut sie dich
+                    //  an." Offenbar muss dann auch die gesamte adverbiale
+                    //  Adjektivphrase kontinuierlich bleiben!
+                    //  Die Logik ist also in etwa: Falls die Phrase ... enthält,
+                    //  Darf sie nicht ins Mittelfeld gestellt werden.
+                    //  Es gilt also diese Logik: Die Phrase sollte dann ins
+                    //  Vorfeld gestellt werden, wenn es keine Skopus-Satz
+                    //  Adverbialie gibt. Wenn doch, dann ins Nachfeld.
+
+                    getAdverbialeAngabeSkopusVerbAllgDescription()); // "auf deiner Flöte"
         }
 
-        return joinToNull(
-                getAdverbialeAngabeSkopusSatz(), // "aus einer Laune heraus"
+        return Konstituente.joinToKonstituenten(
+                getAdverbialeAngabeSkopusSatzDescription(), // "aus einer Laune heraus"
                 dat, // "dem Frosch"
                 GermanUtil.joinToNullString(modalpartikeln), // "halt"
-                getAdverbialeAngabeSkopusVerbAllg(), // "auf deiner Flöte"
+                getAdverbialeAngabeSkopusVerbAllgDescription(), // "auf deiner Flöte"
                 akk); // "ein Lied"
     }
 
     @Override
-    public String getNachfeld(final Person personSubjekt,
-                              final Numerus numerusSubjekt) {
-        return null;
+    public Iterable<Konstituente> getNachfeld(final Person personSubjekt,
+                                              final Numerus numerusSubjekt) {
+        return ImmutableList.of();
     }
 
     @Override
@@ -205,13 +229,13 @@ public class PraedikatDatAkkOhneLeerstellen
 
     @Nullable
     @Override
-    public String getErstesInterrogativpronomenAlsString() {
+    public Konstituente getErstesInterrogativpronomen() {
         if (dat instanceof Interrogativpronomen) {
-            return dat.dat();
+            return k(dat.dat());
         }
 
         if (akk instanceof Interrogativpronomen) {
-            return akk.akk();
+            return k(akk.akk());
         }
 
         return null;

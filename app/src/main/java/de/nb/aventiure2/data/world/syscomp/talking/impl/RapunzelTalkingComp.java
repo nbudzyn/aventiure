@@ -220,7 +220,9 @@ public class RapunzelTalkingComp extends AbstractTalkingComp {
         final SubstantivischePhrase anaph = getAnaphPersPronWennMglSonstShortDescription();
         @Nullable final Personalpronomen persPron = n.getAnaphPersPronWennMgl(RAPUNZEL);
 
-        final ImmutableList<AllgDescription> altZuneigungAbneigungSaetze =
+        final ImmutableList.Builder<AbstractDescription<?>> alt = ImmutableList.builder();
+
+        final ImmutableList<AbstractDescription<?>> altZuneigungAbneigungSaetze =
                 // Es wäre besser, wenn der Phorik-Kandidat schon beim Erzeugen des
                 // Satzes gesetzt würde.
                 neueSaetzeMitPhorikKandidat(
@@ -228,17 +230,11 @@ public class RapunzelTalkingComp extends AbstractTalkingComp {
                         feelingsComp
                                 .altFeelingsBeiBegegnungMitScSaetze(anaph, ZUNEIGUNG_ABNEIGUNG));
 
-        final ImmutableList.Builder<AbstractDescription<?>> alt = ImmutableList.builder();
-
         // Könnte leer sein
         final ImmutableList<AdjPhrOhneLeerstellen> altZuneigungAbneigungEindruckAdjPhrasen =
                 feelingsComp.altEindruckAufScBeiBegegnungAdjPhr(
                         anaph.getNumerusGenus(),
                         ZUNEIGUNG_ABNEIGUNG);
-
-        // Evtl. wird hier nichts hinzugefügt
-        alt.addAll(feelingsComp.altEindruckAufScBeiBegegnungSaetze(
-                RAPUNZEL, anaph, ZUNEIGUNG_ABNEIGUNG));
 
         final int zuneigungTowardsSC =
                 feelingsComp.getFeelingTowards(SPIELER_CHARAKTER, ZUNEIGUNG_ABNEIGUNG);
@@ -340,10 +336,11 @@ public class RapunzelTalkingComp extends AbstractTalkingComp {
             final ImmutableList<Wortfolge> wirktWortfolge =
                     altZuneigungAbneigungEindruckAdjPhrasen.stream()
                             .map(adjPhr ->
-                                    WIRKEN.mit(adjPhr)
-                                            .getVerbzweit(
-                                                    anaph.getPerson(),
-                                                    anaph.getNumerus()))
+                                    Wortfolge.joinToNullWortfolge(
+                                            WIRKEN.mit(adjPhr)
+                                                    .getVerbzweit(
+                                                            anaph.getPerson(),
+                                                            anaph.getNumerus())))
                             .collect(toImmutableList());
             alt.addAll(altKombinationenBeendetParagraph(
                     "„Hallo“, antwortet "
@@ -372,8 +369,10 @@ public class RapunzelTalkingComp extends AbstractTalkingComp {
                     neuerSatz(anaph.nom()
                             + " heißt dich etwas überrascht willkommen")
                             .phorikKandidat(anaph, RAPUNZEL),
-                    neuerSatz(anaph.nom()
-                            + " freut sich, dich zu sehen")
+                    neuerSatz(
+                            // FIXME X freut sich, dich zu sehen" automatisch erzeugen!
+                            anaph.nom()
+                                    + " freut sich, dich zu sehen")
                             .phorikKandidat(anaph, RAPUNZEL)
             );
 
@@ -382,6 +381,7 @@ public class RapunzelTalkingComp extends AbstractTalkingComp {
                                 + anaph.nom())
                                 .phorikKandidat(anaph, RAPUNZEL),
                         neuerSatz(anaph.nom()
+                                // FIXME X freut sich, dich wiederzusehen" automatisch erzeugen!
                                 + " freut sich, dich wiederzusehen")
                                 .phorikKandidat(anaph, RAPUNZEL),
                         neuerSatz(anaph.nom()
@@ -398,6 +398,8 @@ public class RapunzelTalkingComp extends AbstractTalkingComp {
             if (scBereitsZuvorSchonEinmalGetroffen) {
                 alt.add(neuerSatz("„Oh, wie schön, dasss du wieder da bist“, antwortet "
                                 + anaph.nom()
+                                // FIXME Schaut überrascht / schaut glücklich automatisch erzeugen!
+                                //  (prädikative Adjektivphrase!)
                                 + " und schaut glücklich")
                                 .phorikKandidat(anaph, RAPUNZEL)
                                 .beendet(PARAGRAPH),
@@ -408,7 +410,9 @@ public class RapunzelTalkingComp extends AbstractTalkingComp {
                 );
             }
         } else if (zuneigungTowardsSC == FeelingIntensity.STARK) {
-            alt.add(neuerSatz(anaph.nom() + " strahlt dich nur an"));
+            alt.add(neuerSatz(
+                    // FIXME Automatisch erzeugen!
+                    anaph.nom() + " strahlt dich nur an"));
 
             if (persPron != null) {
                 alt.add(neuerSatz(persPron.possArt().vor(PL_MFN).nom()
@@ -421,7 +425,9 @@ public class RapunzelTalkingComp extends AbstractTalkingComp {
                 alt.add(
                         neuerSatz("„Endlich! Ich hatte dich schon erwartet“, antwortet "
                                 + anaph.nom()
-                                + " dir und schaut ganz fröhlich drein")
+                                + " dir und "
+                                // FIXME schaut... drein automatisch erzeugen!
+                                + "schaut ganz fröhlich drein")
                                 .phorikKandidat(anaph, RAPUNZEL)
                                 .beendet(PARAGRAPH),
                         neuerSatz("„Oh, eine Freude, dich wiederzusehen!“"),
@@ -614,14 +620,14 @@ public class RapunzelTalkingComp extends AbstractTalkingComp {
 
     private static Iterable<AllgDescription> altKombinationenBeendetParagraph(
             final String praefix,
-            final ImmutableList<AllgDescription> alt) {
+            final ImmutableList<AbstractDescription<?>> alt) {
         final ImmutableList.Builder<AllgDescription> res =
                 ImmutableList.builder();
 
-        for (final AllgDescription allgDescription : alt) {
-            res.add(neuerSatz(praefix + allgDescription.getDescriptionHauptsatz())
-                    .komma(allgDescription.isKommaStehtAus())
-                    .phorikKandidat(allgDescription.getPhorikKandidat())
+        for (final AbstractDescription<?> desc : alt) {
+            res.add(neuerSatz(praefix + desc.getDescriptionHauptsatz())
+                    .komma(desc.isKommaStehtAus())
+                    .phorikKandidat(desc.getPhorikKandidat())
                     .beendet(PARAGRAPH));
         }
 

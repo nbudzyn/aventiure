@@ -288,14 +288,6 @@ public class MovementComp
 
         getPcd().setCurrentStep(calculateStep(startTime));
 
-        // STORY Idee: Wenn der SC ein IMovingBeing überholt: Hinterher einfach
-        //  so lange warten, bis es hinterhergekommen ist (damit Interakttion
-        //  möglich wird)?
-
-        // STORY Idee: Wenn ein MovingBeing auf dem Weg zu dem Ort ist, zu dem sich
-        //  der SC bewegt hat: Sollte der SC einfach so lange warten, bis das
-        //  MovingBeing da ist?? Also kein "kommt dir entgegen" mehr??
-
         getPcd().setPauseForSCAction(DO_START_LEAVING);
     }
 

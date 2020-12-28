@@ -7,13 +7,10 @@ import java.util.Collection;
 import javax.annotation.Nullable;
 
 import de.nb.aventiure2.german.base.GermanUtil;
+import de.nb.aventiure2.german.base.Konstituente;
 import de.nb.aventiure2.german.base.Numerus;
 import de.nb.aventiure2.german.base.Person;
-import de.nb.aventiure2.german.base.Wortfolge;
 
-import static de.nb.aventiure2.german.base.GermanUtil.capitalize;
-import static de.nb.aventiure2.german.base.GermanUtil.joinToNull;
-import static de.nb.aventiure2.german.base.GermanUtil.joinToNullString;
 import static de.nb.aventiure2.german.base.Numerus.SG;
 import static de.nb.aventiure2.german.base.Person.P2;
 import static java.util.Arrays.asList;
@@ -62,7 +59,6 @@ public abstract class AbstractAngabenfaehigesPraedikatOhneLeerstellen
         this.adverbialeAngabeSkopusVerbWohinWoher = adverbialeAngabeSkopusVerbWohinWoher;
     }
 
-
     /**
      * Erzeugt aus diesem Prädikat ein zu-haben-Prädikat
      * (z.B. <i>Spannendes zu berichten haben</i>,  <i>mit Paul zu diskutieren haben/i>,
@@ -73,9 +69,9 @@ public abstract class AbstractAngabenfaehigesPraedikatOhneLeerstellen
     }
 
     @Override
-    public Wortfolge getDuHauptsatzMitVorfeld(final String vorfeld) {
-        return joinToNull(
-                capitalize(vorfeld), // "dann"
+    public Iterable<Konstituente> getDuHauptsatzMitVorfeld(final String vorfeld) {
+        return Konstituente.joinToKonstituenten(
+                GermanUtil.capitalize(vorfeld), // "Dann"
                 verb.getDuFormOhnePartikel(), // "nimmst"
                 "du",
                 getMittelfeld(P2, SG), // "den Frosch" / "dich"
@@ -84,14 +80,14 @@ public abstract class AbstractAngabenfaehigesPraedikatOhneLeerstellen
     }
 
     @Override
-    public Wortfolge getDuHauptsatzMitSpeziellemVorfeld() {
-        @Nullable final String speziellesVorfeld = getSpeziellesVorfeld();
+    public Iterable<Konstituente> getDuHauptsatzMitSpeziellemVorfeld() {
+        @Nullable final Konstituente speziellesVorfeld = getSpeziellesVorfeld(P2, SG);
         if (speziellesVorfeld == null) {
             return getDuHauptsatz();
         }
 
-        return capitalize(
-                joinToNull(
+        return Konstituente.capitalize(
+                Konstituente.joinToKonstituenten(
                         speziellesVorfeld, // "Den Frosch"
                         verb.getDuFormOhnePartikel(), // "nimmst"
                         "du",
@@ -101,31 +97,34 @@ public abstract class AbstractAngabenfaehigesPraedikatOhneLeerstellen
     }
 
     @Override
-    public Wortfolge getDuHauptsatz() {
+    public Iterable<Konstituente> getDuHauptsatz() {
         return getDuHauptsatz(new Modalpartikel[0]);
     }
 
     @Override
-    public Wortfolge getDuHauptsatz(final Collection<Modalpartikel> modalpartikeln) {
+    public Iterable<Konstituente> getDuHauptsatz(final Collection<Modalpartikel> modalpartikeln) {
         if (adverbialeAngabeSkopusSatz != null) {
-            return joinToNull(
-                    capitalize(adverbialeAngabeSkopusSatz.getText()),
-                    verb.getDuFormOhnePartikel(),
-                    "du",
-                    GermanUtil.cutSatzglied(
-                            getMittelfeld(P2, SG), adverbialeAngabeSkopusSatz.getText()),
-                    verb.getPartikel(),
-                    getNachfeld(P2, SG));
+            return Konstituente.capitalize(
+                    Konstituente.joinToKonstituenten(
+                            adverbialeAngabeSkopusSatz.getDescription(),
+                            verb.getDuFormOhnePartikel(),
+                            "du",
+                            Konstituente.cutFirst(
+                                    getMittelfeld(P2, SG),
+                                    adverbialeAngabeSkopusSatz.getDescription()),
+                            verb.getPartikel(),
+                            getNachfeld(P2, SG)));
         }
 
-        return joinToNull(
+        return Konstituente.joinToKonstituenten(
                 "Du",
                 getDuSatzanschlussOhneSubjekt(modalpartikeln));
     }
 
     @Override
-    public Wortfolge getDuSatzanschlussOhneSubjekt(final Collection<Modalpartikel> modalpartikeln) {
-        return joinToNull(
+    public Iterable<Konstituente> getDuSatzanschlussOhneSubjekt(
+            final Collection<Modalpartikel> modalpartikeln) {
+        return Konstituente.joinToKonstituenten(
                 verb.getDuFormOhnePartikel(),
                 getMittelfeld(modalpartikeln, P2, SG),
                 verb.getPartikel(),
@@ -133,13 +132,13 @@ public abstract class AbstractAngabenfaehigesPraedikatOhneLeerstellen
     }
 
     @Override
-    public Wortfolge getDuSatzanschlussOhneSubjekt() {
+    public Iterable<Konstituente> getDuSatzanschlussOhneSubjekt() {
         return PraedikatOhneLeerstellen.super.getDuSatzanschlussOhneSubjekt();
     }
 
     @Override
-    public Wortfolge getVerbzweit(final Person person, final Numerus numerus) {
-        return joinToNull(
+    public Iterable<Konstituente> getVerbzweit(final Person person, final Numerus numerus) {
+        return Konstituente.joinToKonstituenten(
                 verb.getPraesensOhnePartikel(person, numerus),
                 getMittelfeld(person, numerus),
                 verb.getPartikel(),
@@ -147,16 +146,17 @@ public abstract class AbstractAngabenfaehigesPraedikatOhneLeerstellen
     }
 
     @Override
-    public Wortfolge getVerbletzt(final Person person, final Numerus numerus) {
-        return joinToNull(
+    public Iterable<Konstituente> getVerbletzt(final Person person, final Numerus numerus) {
+        return Konstituente.joinToKonstituenten(
                 getMittelfeld(person, numerus),
                 verb.getPraesensMitPartikel(person, numerus),
                 getNachfeld(person, numerus));
     }
 
     @Override
-    public String getPartizipIIPhrase(final Person person, final Numerus numerus) {
-        return joinToNullString(getMittelfeld(person, numerus),
+    public Iterable<Konstituente> getPartizipIIPhrase(final Person person, final Numerus numerus) {
+        return Konstituente.joinToKonstituenten(
+                getMittelfeld(person, numerus),
                 verb.getPartizipII(),
                 getNachfeld(person, numerus));
     }
@@ -166,8 +166,9 @@ public abstract class AbstractAngabenfaehigesPraedikatOhneLeerstellen
      * ("den Frosch ignorieren", "das Leben genießen")
      */
     @Override
-    public String getInfinitiv(final Person person, final Numerus numerus) {
-        return joinToNullString(getMittelfeld(person, numerus),
+    public Iterable<Konstituente> getInfinitiv(final Person person, final Numerus numerus) {
+        return Konstituente.joinToKonstituenten(
+                getMittelfeld(person, numerus),
                 verb.getInfinitiv(),
                 getNachfeld(person, numerus));
     }
@@ -177,45 +178,53 @@ public abstract class AbstractAngabenfaehigesPraedikatOhneLeerstellen
      * ("den Frosch erneut zu ignorieren", "das Leben zu genießen")
      */
     @Override
-    public String getZuInfinitiv(final Person person, final Numerus numerus) {
-        return joinToNullString(getMittelfeld(person, numerus),
+    public Iterable<Konstituente> getZuInfinitiv(final Person person, final Numerus numerus) {
+        return Konstituente.joinToKonstituenten(
+                getMittelfeld(person, numerus),
                 verb.getZuInfinitiv(),
                 getNachfeld(person, numerus));
     }
 
     @Override
     @Nullable
-    public String getSpeziellesVorfeld() {
+    public Konstituente getSpeziellesVorfeld(final Person person,
+                                             final Numerus numerus) {
         if (adverbialeAngabeSkopusSatz != null) {
-            return adverbialeAngabeSkopusSatz.getText();
+            return adverbialeAngabeSkopusSatz.getDescription();
         }
+
+        // FIXME getAdverbialeAngabeSkopusVerbAllg() - aber nur, wenn
+        //  sie im Mittelfeld nicht erlaubt ist.
+        //  Auf jeden Fall alle Aufrufer prüfen, dass sie nicht nur aus dem Mittelfeld, sondern
+        //  auch aus dem NACHFELD herausgeschnitten wird.
 
         return null;
     }
 
     @Nullable
-    private Wortfolge getMittelfeld(final Person personSubjekt,
-                                    final Numerus numerusSubjekt) {
+    private Iterable<Konstituente> getMittelfeld(final Person personSubjekt,
+                                                 final Numerus numerusSubjekt) {
         return getMittelfeld(personSubjekt, numerusSubjekt, new Modalpartikel[0]);
         // "den Frosch" oder "sich" / "mich"
     }
 
-    private Wortfolge getMittelfeld(final Person personSubjekt,
-                                    final Numerus numerusSubjekt,
-                                    final Modalpartikel... modalpartikeln) {
+    private Iterable<Konstituente> getMittelfeld(final Person personSubjekt,
+                                                 final Numerus numerusSubjekt,
+                                                 final Modalpartikel... modalpartikeln) {
         return getMittelfeld(asList(modalpartikeln), personSubjekt, numerusSubjekt);
     }
 
-    public abstract Wortfolge getMittelfeld(final Collection<Modalpartikel> modalpartikeln,
-                                            Person personSubjekt,
-                                            Numerus numerusSubjekt);
+    public abstract Iterable<Konstituente> getMittelfeld(
+            final Collection<Modalpartikel> modalpartikeln,
+            Person personSubjekt,
+            Numerus numerusSubjekt);
 
     @Nullable
-    private Wortfolge getMittelfeldOhneSpeziellesVorfeld(
+    private Iterable<Konstituente> getMittelfeldOhneSpeziellesVorfeld(
             final Person personSubjekt, final Numerus numerusSubjekt) {
-        return GermanUtil.cutSatzglied(
+        return Konstituente.cutFirst(
                 getMittelfeld(personSubjekt, numerusSubjekt),
-                getSpeziellesVorfeld());
+                getSpeziellesVorfeld(personSubjekt, numerusSubjekt));
     }
 
     @Override
@@ -226,6 +235,24 @@ public abstract class AbstractAngabenfaehigesPraedikatOhneLeerstellen
     @NonNull
     protected Verb getVerb() {
         return verb;
+    }
+
+    @Nullable
+    Konstituente getAdverbialeAngabeSkopusSatzDescription() {
+        return adverbialeAngabeSkopusSatz != null ? adverbialeAngabeSkopusSatz.getDescription() :
+                null;
+    }
+
+    @Nullable
+    Konstituente getAdverbialeAngabeSkopusVerbAllgDescription() {
+        return adverbialeAngabeSkopusVerbAllg != null ?
+                adverbialeAngabeSkopusVerbAllg.getDescription() : null;
+    }
+
+    @Nullable
+    Konstituente getAdverbialeAngabeSkopusVerbWohinWoherDescription() {
+        return adverbialeAngabeSkopusVerbWohinWoher != null ?
+                adverbialeAngabeSkopusVerbWohinWoher.getDescription() : null;
     }
 
     @Nullable
@@ -260,5 +287,4 @@ public abstract class AbstractAngabenfaehigesPraedikatOhneLeerstellen
 
         // Sonst ("gehen", "endlich gehen") eher nicht.
     }
-
 }

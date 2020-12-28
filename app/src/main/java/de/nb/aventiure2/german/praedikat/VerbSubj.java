@@ -2,13 +2,17 @@ package de.nb.aventiure2.german.praedikat;
 
 import androidx.annotation.NonNull;
 
+import com.google.common.collect.ImmutableList;
+
 import java.util.Collection;
 
 import javax.annotation.Nullable;
 
+import de.nb.aventiure2.german.base.Konstituente;
 import de.nb.aventiure2.german.base.Numerus;
 import de.nb.aventiure2.german.base.Person;
-import de.nb.aventiure2.german.base.Wortfolge;
+
+import static de.nb.aventiure2.german.base.Konstituente.k;
 
 /**
  * Ein Verb (ggf. mit Präfix), das genau mit einem Subjekt steht (ohne Objekte).
@@ -87,7 +91,8 @@ public enum VerbSubj implements PraedikatOhneLeerstellen {
     }
 
     @Override
-    public Wortfolge getDuSatzanschlussOhneSubjekt(final Collection<Modalpartikel> modalpartikeln) {
+    public Iterable<Konstituente> getDuSatzanschlussOhneSubjekt(
+            final Collection<Modalpartikel> modalpartikeln) {
         return toPraedikatSubj().getDuSatzanschlussOhneSubjekt(modalpartikeln);
     }
 
@@ -97,18 +102,18 @@ public enum VerbSubj implements PraedikatOhneLeerstellen {
     }
 
     @Override
-    public Wortfolge getVerbzweit(final Person person, final Numerus numerus) {
+    public Iterable<Konstituente> getVerbzweit(final Person person, final Numerus numerus) {
         return toPraedikatSubj().getVerbzweit(person, numerus);
     }
 
     @Override
-    public Wortfolge getVerbletzt(final Person person, final Numerus numerus) {
+    public Iterable<Konstituente> getVerbletzt(final Person person, final Numerus numerus) {
         return toPraedikatSubj().getVerbletzt(person, numerus);
     }
 
     @Override
-    public String getPartizipIIPhrase(final Person person, final Numerus numerus) {
-        return verb.getPartizipII();
+    public Iterable<Konstituente> getPartizipIIPhrase(final Person person, final Numerus numerus) {
+        return ImmutableList.of(k(verb.getPartizipII()));
     }
 
     @Override
@@ -117,13 +122,13 @@ public enum VerbSubj implements PraedikatOhneLeerstellen {
     }
 
     @Override
-    public String getInfinitiv(final Person person, final Numerus numerus) {
-        return verb.getInfinitiv();
+    public Iterable<Konstituente> getInfinitiv(final Person person, final Numerus numerus) {
+        return Konstituente.joinToKonstituenten(verb.getInfinitiv());
     }
 
     @Override
-    public String getZuInfinitiv(final Person person, final Numerus numerus) {
-        return verb.getZuInfinitiv();
+    public Iterable<Konstituente> getZuInfinitiv(final Person person, final Numerus numerus) {
+        return ImmutableList.of(k(verb.getZuInfinitiv()));
     }
 
     @Override
@@ -132,12 +137,12 @@ public enum VerbSubj implements PraedikatOhneLeerstellen {
     }
 
     @Override
-    public Wortfolge getDuHauptsatzMitVorfeld(final String vorfeld) {
+    public Iterable<Konstituente> getDuHauptsatzMitVorfeld(final String vorfeld) {
         return toPraedikatSubj().getDuHauptsatzMitVorfeld(vorfeld);
     }
 
     @Override
-    public Wortfolge getDuHauptsatzMitSpeziellemVorfeld() {
+    public Iterable<Konstituente> getDuHauptsatzMitSpeziellemVorfeld() {
         return toPraedikatSubj().getDuHauptsatzMitSpeziellemVorfeld();
     }
 
@@ -164,19 +169,20 @@ public enum VerbSubj implements PraedikatOhneLeerstellen {
 
     @Nullable
     @Override
-    public String getSpeziellesVorfeld() {
+    public Konstituente getSpeziellesVorfeld(final Person person,
+                                             final Numerus numerus) {
         return null;
     }
 
     @Nullable
     @Override
-    public String getNachfeld(final Person person, final Numerus numerus) {
-        return null;
+    public Iterable<Konstituente> getNachfeld(final Person person, final Numerus numerus) {
+        return ImmutableList.of();
     }
 
     @Nullable
     @Override
-    public String getErstesInterrogativpronomenAlsString() {
+    public Konstituente getErstesInterrogativpronomen() {
         return null;
     }
 }

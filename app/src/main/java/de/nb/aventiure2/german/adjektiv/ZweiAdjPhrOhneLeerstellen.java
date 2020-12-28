@@ -2,10 +2,9 @@ package de.nb.aventiure2.german.adjektiv;
 
 import javax.annotation.Nullable;
 
-import de.nb.aventiure2.german.base.GermanUtil;
+import de.nb.aventiure2.german.base.Konstituente;
 import de.nb.aventiure2.german.base.Numerus;
 import de.nb.aventiure2.german.base.Person;
-import de.nb.aventiure2.german.base.Wortfolge;
 
 /**
  * Zwei Adjektivphrasen ohne Leerstellen, die mit <i>und</i>
@@ -32,11 +31,19 @@ public class ZweiAdjPhrOhneLeerstellen implements AdjPhrOhneLeerstellen {
     }
 
     @Override
-    public Wortfolge getPraedikativ(final Person person, final Numerus numerus) {
-        return GermanUtil.joinToNull(
+    public Iterable<Konstituente> getPraedikativOderAdverbial(final Person person,
+                                                              final Numerus numerus) {
+        return Konstituente.joinToKonstituenten(
                 ersteAdjPhr.getPraedikativ(person, numerus),
                 "und",
                 zweiteAdjPhr.getPraedikativ(person, numerus)
         );
     }
+
+    @Override
+    public boolean enthaeltZuInfinitivOderAngabensatzOderErgaenzungssatz() {
+        return ersteAdjPhr.enthaeltZuInfinitivOderAngabensatzOderErgaenzungssatz() ||
+                zweiteAdjPhr.enthaeltZuInfinitivOderAngabensatzOderErgaenzungssatz();
+    }
+
 }

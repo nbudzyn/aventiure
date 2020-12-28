@@ -71,7 +71,7 @@ public class SimpleDuTextPart implements AbstractDuTextPart {
         }
 
         @Nullable final String remainderWithoutVorfeldSatzglied =
-                GermanUtil.cutSatzglied(remainder, vorfeldSatzglied);
+                GermanUtil.cutFirst(remainder, vorfeldSatzglied);
 
         return w(GermanUtil.buildHauptsatz(vorfeldSatzglied,
                 verb,
@@ -90,6 +90,6 @@ public class SimpleDuTextPart implements AbstractDuTextPart {
      */
     @Override
     public Wortfolge getDuSatzanschlussOhneSubjekt() {
-        return GermanUtil.joinToNull(verb, remainder);
+        return Wortfolge.joinToNullWortfolge(verb, remainder);
     }
 }

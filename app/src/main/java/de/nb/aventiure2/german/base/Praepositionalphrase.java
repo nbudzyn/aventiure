@@ -3,6 +3,7 @@ package de.nb.aventiure2.german.base;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
+import static de.nb.aventiure2.german.base.Konstituente.k;
 import static de.nb.aventiure2.german.base.Wortfolge.w;
 
 /**
@@ -44,8 +45,11 @@ public class Praepositionalphrase implements Praedikativum {
     }
 
     @Override
-    public Wortfolge getPraedikativ(final Person person, final Numerus numerus) {
-        return w(getDescription());
+    public Iterable<Konstituente> getPraedikativ(final Person person, final Numerus numerus) {
+        return Konstituente.joinToKonstituenten(
+                modAdverbOderAdjektiv,
+                k(praepositionMitKasus.getDescription(substantivischePhraseOderReflPron))
+        );
     }
 
     public String getDescription() {

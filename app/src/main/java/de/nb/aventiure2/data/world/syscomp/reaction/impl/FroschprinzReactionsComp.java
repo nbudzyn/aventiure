@@ -100,13 +100,10 @@ public class FroschprinzReactionsComp
                 && !from.is(SCHLOSS_VORHALLE_AM_TISCH_BEIM_FEST)) {
             n.narrateAlt(noTime(),
                     neuerSatz("„Warte, warte“, ruft dir der Frosch noch nach, „nimm mich mit, "
-                                    + "ich kann nicht so "
-                                    + "laufen wie du.“ Aber was hilft ihm, dass er "
-                                    + "sein „Quak, quak!“ so laut schreit, "
-                                    + "als er kann, du hörst nicht darauf"
-                            // FIXME "Du hörst ihn gar nicht mehr" statt "Du hörst nicht darauf"?
-                            //  Möglichst keine Bevormundung, sondern dem Benutzer Freiheit
-                            //  suggerieren.
+                            + "ich kann nicht so "
+                            + "laufen wie du.“ Aber was hilft ihm, dass er "
+                            + "sein „Quak, quak!“ so laut schreit, "
+                            + "als er kann, du hörst nicht darauf"
                     )
                             .undWartest(),
                     neuerSatz("„Halt!“, ruft der Frosch dir nach, „nimm mich mit!“")
@@ -343,8 +340,8 @@ public class FroschprinzReactionsComp
         // Dann ist die Kugel jetzt WEG - PECH.
         final Nominalphrase froschprinzDesc = getDescription(true);
         n.narrate(neuerSatz(
-                capitalize(
-                        froschprinzDesc.nom()) +
+                capitalize(froschprinzDesc.nom())
+                        +
                         " schaut dich vorwurfsvoll und etwas hochnäsig an",
                 secs(5))
                 .phorikKandidat(froschprinzDesc, FROSCHPRINZ));
