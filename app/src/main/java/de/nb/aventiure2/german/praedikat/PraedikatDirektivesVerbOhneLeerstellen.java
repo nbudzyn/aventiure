@@ -150,6 +150,16 @@ public class PraedikatDirektivesVerbOhneLeerstellen
             return speziellesVorfeldFromSuper;
         }
 
+        @Nullable final Konstituente
+                adverbialeAngabeSkopusVerbAllgDescriptionFuerZwangsausklammerung =
+                getAdverbialeAngabeSkopusVerbAllgDescriptionFuerZwangsausklammerung();
+        if (adverbialeAngabeSkopusVerbAllgDescriptionFuerZwangsausklammerung != null) {
+            // "Und zufrieden, endlich mutig auftreten zu können, forderst du ihn auf aufzustehen"
+            return adverbialeAngabeSkopusVerbAllgDescriptionFuerZwangsausklammerung
+                    .withVorkommaNoetig(false);
+        }
+
+
         final String objektImKasus = objekt.im(kasus);
         if (!"es" .equals(objektImKasus)) {
             // Wenn "es" ein Objekt ist, darf es nicht im Vorfeld stehen.
@@ -173,12 +183,12 @@ public class PraedikatDirektivesVerbOhneLeerstellen
                 // (kann es wohl gar nicht geben)
         );
 
-        //  STORY Der lexikalische Kern könnte ebenfalls ins Mittelfeld gestellt werden:
-        //   - "Die junge Frau ihre Haare wieder hinunterzulassen bitten"
-
-        //  STORY Der lexikalische Kern könnte diskontinuierlich aufgeteilt werden:
+        //  STORY Der lexikalische Kern könnte alternativ diskontinuierlich aufgeteilt werden:
         //   - "Ihre Haare die junge Frau wieder hinunterzulassen bitten"
         //   ("Ihre Haare bittest du die junge Frau wieder hinunterzulassen")
+
+        //  STORY Der lexikalische Kern könnte alternativ ebenfalls ins Mittelfeld gestellt werden:
+        //   - "Die junge Frau ihre Haare wieder hinunterzulassen bitten"
     }
 
     @Override
@@ -190,20 +200,10 @@ public class PraedikatDirektivesVerbOhneLeerstellen
                                 // Es liegt "Objektkontrolle" vor.
                                 objekt.getPerson(), objekt.getNumerusGenus().getNumerus()),
                         // "sich zu waschen"
-                        // FIXME Wenn eine Adverbiale Angabe ins Nachfeld ausgeklammert wird,
-                        //  benötigt sie ein VORkomma. Das Vorkomma muss aber evtl.
-                        //  Wieder entfallen, wenn die Komponente aus dem Nachfeld ins
-                        //  Vorfeld verschoben wird (dass es ja nicht immer gibt).
-                        //  Also müssen wir an jeder Komponente auch vermerken, ob sie
-                        //  ein Vorkomma braucht.
-                        // FIXME Außerdem noch einmal prüfen, ob durch das Abschneiden des
-                        //  Kommas bei aus Strings gebildeten Komponenten ggf. ein
-                        //  Leerstring entsteht - dann keine Konstituente anlegen!
                         getAdverbialeAngabeSkopusVerbAllgDescriptionFuerZwangsausklammerung()
                         // , glücklich, dich zu sehen
+                        // Wir lassen diese Kommata weg - das ist erlaubt
                 );
-
-        // Wir lassen die Kommata weg - das ist erlaubt
     }
 
     @Override

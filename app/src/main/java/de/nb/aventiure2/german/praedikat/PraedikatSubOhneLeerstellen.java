@@ -94,6 +94,27 @@ public class PraedikatSubOhneLeerstellen
         return true;
     }
 
+    @Nullable
+    @Override
+    public Konstituente getSpeziellesVorfeld(final Person person, final Numerus numerus) {
+        @Nullable final Konstituente speziellesVorfeldFromSuper = super.getSpeziellesVorfeld(person,
+                numerus);
+
+        if (speziellesVorfeldFromSuper != null) {
+            return speziellesVorfeldFromSuper;
+        }
+
+        @Nullable final Konstituente
+                adverbialeAngabeSkopusVerbAllgDescriptionFuerZwangsausklammerung =
+                getAdverbialeAngabeSkopusVerbAllgDescriptionFuerZwangsausklammerung();
+        if (adverbialeAngabeSkopusVerbAllgDescriptionFuerZwangsausklammerung != null) {
+            return adverbialeAngabeSkopusVerbAllgDescriptionFuerZwangsausklammerung
+                    .withVorkommaNoetig(false);
+        }
+
+        return null;
+    }
+
     @Override
     public Iterable<Konstituente> getMittelfeld(final Collection<Modalpartikel> modalpartikeln,
                                                 final Person personSubjekt,
@@ -109,10 +130,6 @@ public class PraedikatSubOhneLeerstellen
     @Override
     public Iterable<Konstituente> getNachfeld(final Person personSubjekt,
                                               final Numerus numerusSubjekt) {
-        // FIXME Bei allen Aufrufern auch die Angabe aus dem Nachfeld herausschneiden
-        //  (GermanUtil.cut), wenn sie ins VORFELD gesetzt wird.
-
-        // Vermutlich ist das
         return Konstituente.joinToKonstituenten(
                 getAdverbialeAngabeSkopusVerbAllgDescriptionFuerZwangsausklammerung()
         );

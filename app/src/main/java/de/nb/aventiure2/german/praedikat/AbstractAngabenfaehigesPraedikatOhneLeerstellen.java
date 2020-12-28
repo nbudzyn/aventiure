@@ -8,6 +8,7 @@ import javax.annotation.Nullable;
 
 import de.nb.aventiure2.german.base.GermanUtil;
 import de.nb.aventiure2.german.base.Konstituente;
+import de.nb.aventiure2.german.base.KonstituentenNotFoundException;
 import de.nb.aventiure2.german.base.Numerus;
 import de.nb.aventiure2.german.base.Person;
 
@@ -86,14 +87,24 @@ public abstract class AbstractAngabenfaehigesPraedikatOhneLeerstellen
             return getDuHauptsatz();
         }
 
+        Iterable<Konstituente> neuesMittelfeld;
+        Iterable<Konstituente> neuesNachfeld;
+        try {
+            neuesMittelfeld = Konstituente.cutFirst(getMittelfeld(P2, SG), speziellesVorfeld);
+            neuesNachfeld = getNachfeld(P2, SG);
+        } catch (final KonstituentenNotFoundException e) {
+            neuesMittelfeld = getMittelfeld(P2, SG);
+            neuesNachfeld = Konstituente.cutFirst(getNachfeld(P2, SG), speziellesVorfeld);
+        }
+
         return Konstituente.capitalize(
                 Konstituente.joinToKonstituenten(
                         speziellesVorfeld, // "Den Frosch"
                         verb.getDuFormOhnePartikel(), // "nimmst"
                         "du",
-                        getMittelfeldOhneSpeziellesVorfeld(P2, SG),
+                        neuesMittelfeld,
                         verb.getPartikel(), // "mit"
-                        getNachfeld(P2, SG))); // "deswegen"
+                        neuesNachfeld)); // "deswegen"
     }
 
     @Override
@@ -104,16 +115,27 @@ public abstract class AbstractAngabenfaehigesPraedikatOhneLeerstellen
     @Override
     public Iterable<Konstituente> getDuHauptsatz(final Collection<Modalpartikel> modalpartikeln) {
         if (adverbialeAngabeSkopusSatz != null) {
+            Iterable<Konstituente> neuesMittelfeld;
+            Iterable<Konstituente> neuesNachfeld;
+            try {
+                neuesMittelfeld = Konstituente.cutFirst(
+                        getMittelfeld(P2, SG),
+                        adverbialeAngabeSkopusSatz.getDescription());
+                neuesNachfeld = getNachfeld(P2, SG);
+            } catch (final KonstituentenNotFoundException e) {
+                neuesMittelfeld = getMittelfeld(P2, SG);
+                neuesNachfeld = Konstituente
+                        .cutFirst(getNachfeld(P2, SG), adverbialeAngabeSkopusSatz.getDescription());
+            }
+
             return Konstituente.capitalize(
                     Konstituente.joinToKonstituenten(
                             adverbialeAngabeSkopusSatz.getDescription(),
                             verb.getDuFormOhnePartikel(),
                             "du",
-                            Konstituente.cutFirst(
-                                    getMittelfeld(P2, SG),
-                                    adverbialeAngabeSkopusSatz.getDescription()),
+                            neuesMittelfeld,
                             verb.getPartikel(),
-                            getNachfeld(P2, SG)));
+                            neuesNachfeld));
         }
 
         return Konstituente.joinToKonstituenten(
@@ -219,14 +241,6 @@ public abstract class AbstractAngabenfaehigesPraedikatOhneLeerstellen
             final Collection<Modalpartikel> modalpartikeln,
             Person personSubjekt,
             Numerus numerusSubjekt);
-
-    @Nullable
-    private Iterable<Konstituente> getMittelfeldOhneSpeziellesVorfeld(
-            final Person personSubjekt, final Numerus numerusSubjekt) {
-        return Konstituente.cutFirst(
-                getMittelfeld(personSubjekt, numerusSubjekt),
-                getSpeziellesVorfeld(personSubjekt, numerusSubjekt));
-    }
 
     @Override
     public boolean bildetPerfektMitSein() {

@@ -127,14 +127,19 @@ public class PraedikativumPraedikatOhneLeerstellen
             return speziellesVorfeldFromSuper;
         }
 
+        @Nullable final Konstituente
+                adverbialeAngabeSkopusVerbAllgDescriptionFuerZwangsausklammerung =
+                getAdverbialeAngabeSkopusVerbAllgDescriptionFuerZwangsausklammerung();
+        if (adverbialeAngabeSkopusVerbAllgDescriptionFuerZwangsausklammerung != null) {
+            return adverbialeAngabeSkopusVerbAllgDescriptionFuerZwangsausklammerung
+                    .withVorkommaNoetig(false);
+        }
+
         // "Ein Esel ist Peter", "Glücklich ist Peter" - das wäre stark markiert, wir lassen
         // es hier aus.
 
         // FIXME Das Prädikativum könnte diskontinuierlich aufgeteilt werden, dann könnte
         //  ein Teil ins Vorgeld kommen: Glücklich ist sie, dich zu sehen.
-        //  Problem dabei: GermanUtil.cut...() muss klüger gemacht werden, damit
-        //  beim Ausschneiden nicht ein oder mehrere unnötiges Kommata im Mittelfeld
-        //  zurückbleiden. Das sollte man ohnehin mal tun...
 
         return null;
     }
@@ -158,11 +163,11 @@ public class PraedikativumPraedikatOhneLeerstellen
     @Override
     public Iterable<Konstituente> getNachfeld(final Person personSubjekt,
                                               final Numerus numerusSubjekt) {
-        // STORY Das Prädikativum könnte diskontinuierlich aufgeteilt werden, dann könnte
-        //  ein Teil ins Nachfeld kommen:
+        // STORY Das Prädikativum könnte - als Alternative - diskontinuierlich aufgeteilt werden,
+        //  dann könnte ein Teil ins Nachfeld kommen:
         //  Sie ist GLÜCKLICH gewesen, DICH ZU SEHEN.
         //  (alternativ zu ?"Sie ist GLÜCKLICH, DICH ZU SEHEN, gewesen").
-        //  Das Kernproblem ist, dass getNachfeld() zurzeit das liefert, was
+        //  Dann ergibt sich aber das Problem, dass getNachfeld() zurzeit das liefert, was
         //  dann auch zwingend ins Nachfeld gesetzt wird.
         //  (Anders als beim Vorfeld - da ist es nur ein Kandidat.)
 

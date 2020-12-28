@@ -112,6 +112,7 @@ public class PraedikatMitPraedikativerAdjektivphraseOhneLeerstellen
         return true;
     }
 
+
     @Override
     public @Nullable
     Konstituente getSpeziellesVorfeld(final Person person, final Numerus numerus) {
@@ -119,6 +120,15 @@ public class PraedikatMitPraedikativerAdjektivphraseOhneLeerstellen
                 numerus);
         if (speziellesVorfeldFromSuper != null) {
             return speziellesVorfeldFromSuper;
+        }
+
+        @Nullable final Konstituente
+                adverbialeAngabeSkopusVerbAllgDescriptionFuerZwangsausklammerung =
+                getAdverbialeAngabeSkopusVerbAllgDescriptionFuerZwangsausklammerung();
+        if (adverbialeAngabeSkopusVerbAllgDescriptionFuerZwangsausklammerung != null) {
+            // "Und erleichtert, alles hinter sich zu haben, wirkt sie glücklich."
+            return adverbialeAngabeSkopusVerbAllgDescriptionFuerZwangsausklammerung
+                    .withVorkommaNoetig(false);
         }
 
         final Iterable<Konstituente> konstituentenPraedAdjPhr =
@@ -138,9 +148,9 @@ public class PraedikatMitPraedikativerAdjektivphraseOhneLeerstellen
             // wir sie nicht in das Vorfeld stellen. Dinge wie "Glücklich, dich zu sehen, wirkt
             // sie." sind zwar möglich, wirken aber ziemlich unnatürlich.
 
-            // FIXME Die Adjektivphrase könnte diskontinuierlich aufgeteilt werden, dann könnte
-            //  ein Teil (nur eine der Konstituenten) ins Vorgeld kommen: Glücklich wirkt sie,
-            //  dich zu sehen.
+            // FIXME Die prädikative Adjektivphrase könnte diskontinuierlich aufgeteilt werden,
+            //  dann könnte ein Teil (nur eine der Konstituenten) ins Vorfeld kommen: Glücklich
+            //  wirkt sie, dich zu sehen.
         }
 
         return null;
@@ -162,13 +172,13 @@ public class PraedikatMitPraedikativerAdjektivphraseOhneLeerstellen
     @Override
     public Iterable<Konstituente> getNachfeld(final Person personSubjekt,
                                               final Numerus numerusSubjekt) {
-        // FIXME Die Adjektivphrase könnte diskontinuierlich aufgeteilt werden, dann könnte
+        // FIXME Die Adjektivphrase könnte alternativ diskontinuierlich aufgeteilt werden, dann könnte
         //  ein Teil ins Nachfeld kommen:
         //  Sie hat GLÜCKLICH gewirkt, DICH ZU SEHEN.
         //  (alternativ zu "Sie hat GLÜCKLICH, DICH ZU SEHEN, gewirkt").
         //  Z.B.: return adjektivphrase.getNachfeldKandidat(personSubjekt, numerusSubjekt)
-        //  Problem: Das ist nicht zwingend - und manchmal müssen vielleicht andere
-        //  Dinge zwingend ins Nachfeld?!
+        //  Problem: Das ist nicht zwingend, während andere Dinge zwingend ins
+        //  Nachfeld müssen...
         return Konstituente.joinToKonstituenten(
                 getAdverbialeAngabeSkopusVerbAllgDescriptionFuerZwangsausklammerung());
     }

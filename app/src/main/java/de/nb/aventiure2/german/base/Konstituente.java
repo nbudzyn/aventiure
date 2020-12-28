@@ -140,7 +140,7 @@ public class Konstituente {
     @Nonnull
     public static List<Konstituente> cutLast(
             final Iterable<Konstituente> input,
-            @Nullable final Konstituente part) {
+            @Nullable final Konstituente part) throws KonstituentenNotFoundException {
         if (part == null) {
             return ImmutableList.copyOf(input);
         }
@@ -151,7 +151,7 @@ public class Konstituente {
     @Nonnull
     public static List<Konstituente> cutLast(
             final Iterable<Konstituente> input,
-            @Nullable final Iterable<Konstituente> parts) {
+            @Nullable final Iterable<Konstituente> parts) throws KonstituentenNotFoundException {
         return Lists.reverse(
                 cutFirst(
                         Lists.reverse(ImmutableList.copyOf(input)),
@@ -161,7 +161,7 @@ public class Konstituente {
     @Nonnull
     public static List<Konstituente> cutFirst(
             final Iterable<Konstituente> input,
-            @Nullable final Konstituente part) {
+            @Nullable final Konstituente part) throws KonstituentenNotFoundException {
         if (part == null) {
             return ImmutableList.copyOf(input);
         }
@@ -173,7 +173,7 @@ public class Konstituente {
     @Nonnull
     private static List<Konstituente> cutFirst(
             final Iterable<Konstituente> input,
-            final Iterable<Konstituente> parts) {
+            final Iterable<Konstituente> parts) throws KonstituentenNotFoundException {
         final ImmutableList<Konstituente> inputList = ImmutableList.copyOf(input);
         final ImmutableList<Konstituente> partList = ImmutableList.copyOf(parts);
 
@@ -208,8 +208,13 @@ public class Konstituente {
             i = i + 1;
         }
 
-        checkArgument(found, "Konstituente(n) nicht gefunden. "
-                + "Konstituente(n): %s  nicht gefunden in %s", partList, inputList);
+        if (!found) {
+            throw new KonstituentenNotFoundException("Konstituente(n) nicht gefunden. "
+                    + "Konstituente(n): "
+                    + partList
+                    + "  nicht gefunden in "
+                    + inputList);
+        }
 
         return res.build();
     }
@@ -324,13 +329,15 @@ public class Konstituente {
             return false;
         }
         final Konstituente that = (Konstituente) o;
-        return vorkommmaNoetig == that.vorkommmaNoetig &&
-                kommmaStehtAus == that.kommmaStehtAus &&
-                string.equals(that.string);
+        // WICHTIG: Hier darf man nur den Text vergleichen, nicht die Kommata!
+        // Ansonsten funktioniert das Ausschneiden nicht mehr richtig
+        return string.equals(that.string);
     }
 
     @Override
     public int hashCode() {
+        // WICHTIG: Hier darf man nur den Text eingehen lassen, damit die Methode
+        // konsistent mit equals arbeitet.
         return Objects.hash(string);
     }
 

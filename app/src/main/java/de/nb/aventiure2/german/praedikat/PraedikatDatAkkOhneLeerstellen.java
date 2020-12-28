@@ -129,8 +129,19 @@ public class PraedikatDatAkkOhneLeerstellen
             return speziellesVorfeldFromSuper;
         }
 
-        return null; // "Die Kugel gibst du dem Frosch" - nicht schön, da meist "der
+        @Nullable final Konstituente
+                adverbialeAngabeSkopusVerbAllgDescriptionFuerZwangsausklammerung =
+                getAdverbialeAngabeSkopusVerbAllgDescriptionFuerZwangsausklammerung();
+        if (adverbialeAngabeSkopusVerbAllgDescriptionFuerZwangsausklammerung != null) {
+            return adverbialeAngabeSkopusVerbAllgDescriptionFuerZwangsausklammerung
+                    .withVorkommaNoetig(false);
+            // "Und glücklich, weitergehen zu können, gibst du dem Frosch die Kugel."
+        }
+
+        // "Die Kugel gibst du dem Frosch" - nicht schön, da meist "der
         // Frosch" das Thema ist und "die Kugel" das Rhema.
+
+        return null;
     }
 
     @Override

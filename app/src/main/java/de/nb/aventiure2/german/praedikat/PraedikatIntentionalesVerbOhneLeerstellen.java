@@ -112,7 +112,7 @@ public class PraedikatIntentionalesVerbOhneLeerstellen
         // "Gebeten dich zu waschen [gehst du ins Bad]"
         return true;
     }
-
+    
     @Nullable
     @Override
     public Konstituente getSpeziellesVorfeld(final Person person,
@@ -123,6 +123,20 @@ public class PraedikatIntentionalesVerbOhneLeerstellen
             return speziellesVorfeldFromSuper;
         }
 
+        @Nullable final AdverbialeAngabeSkopusVerbAllg adverbialeAngabeSkopusVerbAllg =
+                getAdverbialeAngabeSkopusVerbAllg();
+        if (adverbialeAngabeSkopusVerbAllg != null
+                && !adverbialeAngabeSkopusVerbAllg.imMittelfeldErlaubt()) {
+            @Nullable final Konstituente
+                    adverbialeAngabeSkopusVerbAllgDescriptionFuerZwangsausklammerung =
+                    getAdverbialeAngabeSkopusVerbAllgDescriptionFuerZwangsausklammerung();
+            if (adverbialeAngabeSkopusVerbAllgDescriptionFuerZwangsausklammerung != null) {
+                return adverbialeAngabeSkopusVerbAllgDescriptionFuerZwangsausklammerung
+                        .withVorkommaNoetig(false);
+                // "Und glücklich, dich zu sehen, ..."
+            }
+        }
+
         // "Ihre Haare (versucht sie wieder hinunterzulassen)"
         return lexikalischerKern.getSpeziellesVorfeld(person, numerus);
     }
@@ -131,10 +145,11 @@ public class PraedikatIntentionalesVerbOhneLeerstellen
     public Iterable<Konstituente> getMittelfeld(final Collection<Modalpartikel> modalpartikeln,
                                                 final Person personSubjekt,
                                                 final Numerus numerusSubjekt) {
-        final AdverbialeAngabeSkopusVerbAllg adverbialeAngabeSkopusVerbAllg =
+        @Nullable final AdverbialeAngabeSkopusVerbAllg adverbialeAngabeSkopusVerbAllg =
                 getAdverbialeAngabeSkopusVerbAllg();
 
-        if (adverbialeAngabeSkopusVerbAllg.imMittelfeldErlaubt()) {
+        if (adverbialeAngabeSkopusVerbAllg == null ||
+                adverbialeAngabeSkopusVerbAllg.imMittelfeldErlaubt()) {
             return Konstituente.joinToKonstituenten(
                     getAdverbialeAngabeSkopusSatzDescription(), // "aus einer Laune heraus"
                     GermanUtil.joinToNullString(modalpartikeln), // "mal eben"
@@ -162,9 +177,10 @@ public class PraedikatIntentionalesVerbOhneLeerstellen
     @Override
     public Iterable<Konstituente> getNachfeld(final Person personSubjekt,
                                               final Numerus numerusSubjekt) {
-        final AdverbialeAngabeSkopusVerbAllg adverbialeAngabeSkopusVerbAllg =
+        @Nullable final AdverbialeAngabeSkopusVerbAllg adverbialeAngabeSkopusVerbAllg =
                 getAdverbialeAngabeSkopusVerbAllg();
-        if (!adverbialeAngabeSkopusVerbAllg.imMittelfeldErlaubt()) {
+        if (adverbialeAngabeSkopusVerbAllg != null
+                && !adverbialeAngabeSkopusVerbAllg.imMittelfeldErlaubt()) {
             return Konstituente.joinToKonstituenten(
                     adverbialeAngabeSkopusVerbAllg.getDescription() // "glücklich, dich zu sehen"
             );
