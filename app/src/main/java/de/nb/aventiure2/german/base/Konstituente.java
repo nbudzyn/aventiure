@@ -9,13 +9,10 @@ import com.google.common.collect.Lists;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Objects;
-import java.util.stream.Collectors;
-import java.util.stream.StreamSupport;
 
 import javax.annotation.Nonnull;
 
 import static com.google.common.base.Preconditions.checkArgument;
-import static de.nb.aventiure2.german.base.Wortfolge.w;
 import static java.util.Arrays.asList;
 import static java.util.Objects.requireNonNull;
 
@@ -25,6 +22,13 @@ public class Konstituente {
      */
     @Nonnull
     private final String string;
+
+    /**
+     * Ob noch ein Komma <i>vor dieser Konstituente</i> nötig ist. Alternativ kann ein Punkt,
+     * ein Ausrufezeichen, ein Fragezeichen, ein Doppelpunkt oder
+     * ein Semikolon vorangehen, der ebenfalls das Komma "abdeckt".
+     */
+    private final boolean vorkommmaNoetig;
 
     /**
      * Ob noch ein Komma aussteht. Das Komma wird entweder unmittelbar folgen müssen -
@@ -42,6 +46,24 @@ public class Konstituente {
 
         return ImmutableList.<Konstituente>builder()
                 .add(inputList.get(0).capitalize())
+                .addAll(inputList.subList(1, inputList.size()))
+                .build();
+    }
+
+    private static ImmutableList<Konstituente> withVorkommaNoetig(
+            final Iterable<Konstituente> input) {
+        return withVorkommaNoetig(input, true);
+    }
+
+    private static ImmutableList<Konstituente> withVorkommaNoetig(
+            final Iterable<Konstituente> input, final boolean vorkommaNoetig) {
+        checkArgument(!vorkommaNoetig || input.iterator().hasNext(),
+                "Leere Konstituentenliste, aber Komma nötig?!");
+
+        final ImmutableList<Konstituente> inputList = ImmutableList.copyOf(input);
+
+        return ImmutableList.<Konstituente>builder()
+                .add(inputList.get(0).withVorkommaNoetig(vorkommaNoetig))
                 .addAll(inputList.subList(1, inputList.size()))
                 .build();
     }
@@ -110,12 +132,8 @@ public class Konstituente {
      */
     @Nullable
     public static Konstituente joinToNullSingleKonstituente(final Iterable<Konstituente> parts) {
-        return k(
-                Wortfolge.joinToNullWortfolge(
-                        StreamSupport.stream(parts.spliterator(), false)
-                                .map(Konstituente::toWortfolge)
-                                .collect(Collectors.toList())
-                ));
+        return k(Wortfolge.joinToNullWortfolge(parts)).withVorkommaNoetig(
+                vorkommaNoetig(parts));
     }
 
 
@@ -196,6 +214,15 @@ public class Konstituente {
         return res.build();
     }
 
+    private static boolean vorkommaNoetig(final Iterable<Konstituente> konstituenten) {
+        final Iterator<Konstituente> iter = konstituenten.iterator();
+        if (!iter.hasNext()) {
+            return false;
+        }
+
+        return iter.next().vorkommmaNoetig;
+    }
+
     public static boolean kommaStehtAus(final Iterable<Konstituente> konstituenten) {
         final Iterator<Konstituente> iter = konstituenten.iterator();
         if (!iter.hasNext()) {
@@ -210,6 +237,14 @@ public class Konstituente {
         return last.kommmaStehtAus;
     }
 
+    private Konstituente withVorkommaNoetig() {
+        return withVorkommaNoetig(true);
+    }
+
+    public Konstituente withVorkommaNoetig(final boolean vorkommaNoetig) {
+        return new Konstituente(string, vorkommaNoetig, kommmaStehtAus);
+    }
+
     private Konstituente withKommaStehtAus() {
         return k(string, true);
     }
@@ -218,7 +253,15 @@ public class Konstituente {
      * Erzeugt eine Konstituente gemäß dieser Wortfolge.
      */
     public static Konstituente k(final @Nonnull Wortfolge wortfolge) {
-        return k(wortfolge.getString(), wortfolge.kommmaStehtAus());
+        final String trimmed = wortfolge.getString().trim();
+        if (trimmed.startsWith(",")) {
+            return new Konstituente(
+                    trimmed.substring(1).trim(),
+                    true,
+                    wortfolge.kommmaStehtAus());
+        }
+
+        return new Konstituente(trimmed, false, wortfolge.kommmaStehtAus());
     }
 
     /**
@@ -239,19 +282,24 @@ public class Konstituente {
     }
 
     private Konstituente(final String string, final boolean kommmaStehtAus) {
+        this(string, false, kommmaStehtAus);
+    }
+
+    private Konstituente(final String string, final boolean vorkommaNoetig,
+                         final boolean kommmaStehtAus) {
         requireNonNull(string, "string");
         checkArgument(!string.isEmpty(), "String ist empty");
 
         this.string = string;
+        vorkommmaNoetig = vorkommaNoetig;
         this.kommmaStehtAus = kommmaStehtAus;
     }
 
     public Konstituente capitalize() {
-        return k(GermanUtil.capitalize(string), kommmaStehtAus);
-    }
-
-    Wortfolge toWortfolge() {
-        return w(getString(), kommmaStehtAus);
+        return new Konstituente(GermanUtil.capitalize(string),
+                // Wenn großgeschrieben werden soll, wäre es sinnlos, ein Komma zuvor
+                // setzen zu vollen.
+                false, kommmaStehtAus);
     }
 
     @Nonnull
@@ -259,7 +307,11 @@ public class Konstituente {
         return string;
     }
 
-    public boolean kommmaStehtAus() {
+    boolean vorkommmaNoetig() {
+        return vorkommmaNoetig;
+    }
+
+    boolean kommmaStehtAus() {
         return kommmaStehtAus;
     }
 
@@ -272,7 +324,8 @@ public class Konstituente {
             return false;
         }
         final Konstituente that = (Konstituente) o;
-        return kommmaStehtAus == that.kommmaStehtAus &&
+        return vorkommmaNoetig == that.vorkommmaNoetig &&
+                kommmaStehtAus == that.kommmaStehtAus &&
                 string.equals(that.string);
     }
 
@@ -286,7 +339,8 @@ public class Konstituente {
     public String toString() {
         return super.toString()
                 + ": "
-                + getString()
+                + (vorkommmaNoetig ? "[, ]" : "")
+                + string
                 + (kommmaStehtAus ? "[, ]" : "");
     }
 }

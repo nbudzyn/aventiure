@@ -19,18 +19,10 @@ import de.nb.aventiure2.german.base.Praepositionalphrase;
 public class AdverbialeAngabeSkopusVerbAllg extends AbstractAdverbialeAngabe {
     private final boolean imMittelfeldErlaubt;
 
-    // FIXME Neuen Konstruktor bauen: Aus Adjektivphrase. Konstituente dazu ggf. aus
-    //  mehreren ursprünglichen Konstituenten zusammenbauen (lassen sich nicht mehr
-    //  diskontinuierlich trennen).
-    //  ImMittelfeldErlaubt gemäß Adjektiv-Phrase
-    //  setzen.
-
     /**
      * Erzeugt eine adverbiale Angabe wie "aus lauter Wut".
      */
     public AdverbialeAngabeSkopusVerbAllg(final Praepositionalphrase praepositionalphrase) {
-        // FIXME Alle Aufrufer prüfen, ob im Mittelfeld erlaubt.
-
         this(praepositionalphrase.getDescription(),
                 true
                 // Wenn die Präpositionalphrase später einmal einen Ergänzungs- oder Angaben-Nebensatz
@@ -52,13 +44,19 @@ public class AdverbialeAngabeSkopusVerbAllg extends AbstractAdverbialeAngabe {
         this( // Anscheinend muss die gesamte adverbiale Phrase kontinuierlich bleiben.
                 // Dann können wir sie ohne Verlust zu einer einzigen Konstituente zusammenfassen.
                 Konstituente.joinToNullSingleKonstituente(
-                        adjektivphrase.getPraedikativOderAdverbial(personSubjekt, numerusSubjekt)),
+                        adjektivphrase.getPraedikativOderAdverbial(personSubjekt, numerusSubjekt))
+                        .withVorkommaNoetig(
+                                adjektivphrase
+                                        .enthaeltZuInfinitivOderAngabensatzOderErgaenzungssatz()),
                 // zu-Infinitivphrasen sowie Angaben- und Ergänzungssätze (z.B. indirekte Fragen)
                 //  dürfen nicht im Mittelfeld stehen.
                 // Vgl. *"Sie schaut dich, glücklich dich zu sehen, an."
                 // (Möglich wären "Sie schaut dich an, glücklich, dich zu
                 // sehen." - im Nachfeld - und "Glücklich, dich zu sehen, schaut sie dich
                 // an." - im Vorfeld.)
+                // Außerdem muss so eine adverbiale Angabe offenbar auch vorn durch Komma
+                // Seiten abgetrennt sein: *"Sie schaut dich an glücklich, dich zu
+                // sehen.")
                 !adjektivphrase.enthaeltZuInfinitivOderAngabensatzOderErgaenzungssatz());
     }
 
@@ -84,7 +82,7 @@ public class AdverbialeAngabeSkopusVerbAllg extends AbstractAdverbialeAngabe {
      * Angabe-Nebensätzen sowie zu-Infinitiv-Phrasen. (Beispielsweise ist nicht erlaubt:
      * *"Sie schaut dich glücklich, dich zu sehen, an.")
      */
-    public boolean imMittelfeldErlaubt() {
+    boolean imMittelfeldErlaubt() {
         return imMittelfeldErlaubt;
     }
 }

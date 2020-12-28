@@ -45,25 +45,30 @@ public class Wortfolge {
     /**
      * Fügt diese Teile zu einer Wortfolge zusammen - einschließlich der Information,
      * ob ein Komma aussteht.
+     * <p>
+     * Sollte für den ersten der parts angegeben sein, dass ein Vorkommma nötig ist,
+     * wird <i>keines</i> erzeugt.
      */
     @Nullable
     static Wortfolge joinToNullWortfolge(final Iterable<?> parts) {
         final StringBuilder resString = new StringBuilder();
+        boolean first = true;
         boolean kommaStehtAus = false;
         for (final Konstituente konstituente : Konstituente.joinToKonstituenten(parts)) {
-            final Wortfolge partWortfolge = konstituente.toWortfolge();
-
-            if (kommaStehtAus && !GermanUtil.beginnDecktKommaAb(partWortfolge.getString())) {
+            if ((kommaStehtAus
+                    || (!first && konstituente.vorkommmaNoetig()))
+                    && !GermanUtil.beginnDecktKommaAb(konstituente.getString())) {
                 resString.append(",");
-                if (GermanUtil.spaceNeeded(",", partWortfolge.getString())) {
+                if (GermanUtil.spaceNeeded(",", konstituente.getString())) {
                     resString.append(" ");
                 }
-            } else if (GermanUtil.spaceNeeded(resString, partWortfolge.getString())) {
+            } else if (GermanUtil.spaceNeeded(resString, konstituente.getString())) {
                 resString.append(" ");
             }
 
-            resString.append(partWortfolge.getString());
-            kommaStehtAus = partWortfolge.kommmaStehtAus();
+            resString.append(konstituente.getString());
+            kommaStehtAus = konstituente.kommmaStehtAus();
+            first = false;
         }
 
         if (resString.length() == 0) {

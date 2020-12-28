@@ -70,8 +70,6 @@ public class PraedikatDatAkkOhneLeerstellen
             return this;
         }
 
-        // TODO Mehrere adverbiale Angaben zulassen, damit die bestehende nicht
-        //  einfach überschrieben wird!
         return new PraedikatDatAkkOhneLeerstellen(
                 getVerb(),
                 dat, akk,
@@ -87,8 +85,6 @@ public class PraedikatDatAkkOhneLeerstellen
             return this;
         }
 
-        // TODO Mehrere adverbiale Angaben zulassen, damit die bestehende nicht
-        //  einfach überschrieben wird!
         return new PraedikatDatAkkOhneLeerstellen(
                 getVerb(),
                 dat, akk,
@@ -105,8 +101,6 @@ public class PraedikatDatAkkOhneLeerstellen
             return this;
         }
 
-        // TODO Mehrere adverbiale Angaben zulassen, damit die bestehende nicht
-        //  einfach überschrieben wird!
         return new PraedikatDatAkkOhneLeerstellen(
                 getVerb(),
                 dat, akk,
@@ -180,7 +174,7 @@ public class PraedikatDatAkkOhneLeerstellen
                     GermanUtil.joinToNullString(modalpartikeln), // "halt"
 
                     // FIXME Die Phrase kann - altenativ zum Nachfeld - dann ins
-                    //  Vorfeld gestellt werden, wenn es keine Skopus-Satz
+                    //  Vorfeld gestellt werden, wenn es keine Skopus-Satz-
                     //  Adverbialie gibt. Wenn doch, dann bleibt sie besser im Nachfeld.
 
                     getAdverbialeAngabeSkopusVerbAllgDescriptionFuerMittelfeld()); // "auf deiner Flöte"
