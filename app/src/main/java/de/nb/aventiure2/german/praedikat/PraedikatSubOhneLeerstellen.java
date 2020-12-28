@@ -101,8 +101,6 @@ public class PraedikatSubOhneLeerstellen
         return Konstituente.joinToKonstituenten(
                 getAdverbialeAngabeSkopusSatzDescription(), // "aus einer Laune heraus"
                 GermanUtil.joinToNullString(modalpartikeln), // "mal eben"
-                // FIXME adverbialeAngabeSkopusVerbAllg nur dann, wenn fürs Mittelfeld zugelassen
-                //  (alle Verwendungen von getAdverbialeAngabeSkopusVerbAllg() durchgehen!)
                 getAdverbialeAngabeSkopusVerbAllgDescriptionFuerMittelfeld(), // "erneut"
                 getAdverbialeAngabeSkopusVerbWohinWoherDescription() // "in den Wald"
         );
@@ -111,7 +109,7 @@ public class PraedikatSubOhneLeerstellen
     @Override
     public Iterable<Konstituente> getNachfeld(final Person personSubjekt,
                                               final Numerus numerusSubjekt) {
-        // FIXME Dazu allerdings bei allen Aufrufern auch die Angabe aus dem Nachfeld herausschneiden
+        // FIXME Bei allen Aufrufern auch die Angabe aus dem Nachfeld herausschneiden
         //  (GermanUtil.cut), wenn sie ins VORFELD gesetzt wird.
 
         // Vermutlich ist das

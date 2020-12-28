@@ -134,8 +134,7 @@ public class PraedikatMitWoertlicherRedeOhneLeerstellen
                                               final Numerus numerusSubjekt) {
         return Konstituente.joinToKonstituenten(
                 getAdverbialeAngabeSkopusVerbAllgDescriptionFuerZwangsausklammerung(),
-                ":",
-                k(woertlicheRede.amSatzende())); // "„Kommt alle her.“"
+                k(": " + woertlicheRede.amSatzende())); // "„Kommt alle her.“"
     }
 
     @Override
