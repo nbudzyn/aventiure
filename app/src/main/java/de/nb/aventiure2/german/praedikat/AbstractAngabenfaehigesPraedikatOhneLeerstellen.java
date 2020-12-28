@@ -215,11 +215,14 @@ public abstract class AbstractAngabenfaehigesPraedikatOhneLeerstellen
             return adverbialeAngabeSkopusSatz.getDescription();
         }
 
-        // FIXME getAdverbialeAngabeSkopusVerbAllg() - aber nur, wenn
-        //  sie im Mittelfeld nicht erlaubt ist. Dann müssen die Aufrufer das spezielle
-        //  Vorfeld nicht nur aus dem Mittelfeld, sondern auch aus dem Nachfeld
-        //  herausschneiden! Außerdem darf das Vorkomme nur gesetzt werden, wenn
-        //  kein neuer Satz anfängt und auch vorher kein Komma o.Ä. stand.
+        @Nullable final Konstituente
+                adverbialeAngabeSkopusVerbAllgDescriptionFuerZwangsausklammerung =
+                getAdverbialeAngabeSkopusVerbAllgDescriptionFuerZwangsausklammerung();
+        if (adverbialeAngabeSkopusVerbAllgDescriptionFuerZwangsausklammerung != null) {
+            // "Und glücklich, sie endlich gefunden zu haben, nimmst du die Kugel."
+            return adverbialeAngabeSkopusVerbAllgDescriptionFuerZwangsausklammerung
+                    .withVorkommaNoetig(false);
+        }
 
         return null;
     }

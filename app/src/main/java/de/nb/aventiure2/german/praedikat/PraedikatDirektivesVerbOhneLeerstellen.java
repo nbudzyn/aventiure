@@ -150,15 +150,6 @@ public class PraedikatDirektivesVerbOhneLeerstellen
             return speziellesVorfeldFromSuper;
         }
 
-        @Nullable final Konstituente
-                adverbialeAngabeSkopusVerbAllgDescriptionFuerZwangsausklammerung =
-                getAdverbialeAngabeSkopusVerbAllgDescriptionFuerZwangsausklammerung();
-        if (adverbialeAngabeSkopusVerbAllgDescriptionFuerZwangsausklammerung != null) {
-            // "Und zufrieden, endlich mutig auftreten zu können, forderst du ihn auf aufzustehen"
-            return adverbialeAngabeSkopusVerbAllgDescriptionFuerZwangsausklammerung
-                    .withVorkommaNoetig(false);
-        }
-
 
         final String objektImKasus = objekt.im(kasus);
         if (!"es" .equals(objektImKasus)) {
@@ -187,7 +178,8 @@ public class PraedikatDirektivesVerbOhneLeerstellen
         //   - "Ihre Haare die junge Frau wieder hinunterzulassen bitten"
         //   ("Ihre Haare bittest du die junge Frau wieder hinunterzulassen")
 
-        //  STORY Der lexikalische Kern könnte alternativ ebenfalls ins Mittelfeld gestellt werden:
+        //  STORY Der lexikalische Kern könnte als dritte Alternative ebenfalls ins Mittelfeld
+        //   gestellt werden (statt ins Nachfeld):
         //   - "Die junge Frau ihre Haare wieder hinunterzulassen bitten"
     }
 

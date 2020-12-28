@@ -122,15 +122,6 @@ public class PraedikatMitPraedikativerAdjektivphraseOhneLeerstellen
             return speziellesVorfeldFromSuper;
         }
 
-        @Nullable final Konstituente
-                adverbialeAngabeSkopusVerbAllgDescriptionFuerZwangsausklammerung =
-                getAdverbialeAngabeSkopusVerbAllgDescriptionFuerZwangsausklammerung();
-        if (adverbialeAngabeSkopusVerbAllgDescriptionFuerZwangsausklammerung != null) {
-            // "Und erleichtert, alles hinter sich zu haben, wirkt sie glücklich."
-            return adverbialeAngabeSkopusVerbAllgDescriptionFuerZwangsausklammerung
-                    .withVorkommaNoetig(false);
-        }
-
         final Iterable<Konstituente> konstituentenPraedAdjPhr =
                 adjektivphrase.getPraedikativ(person, numerus);
 

@@ -93,28 +93,7 @@ public class PraedikatSubOhneLeerstellen
     public boolean kannPartizipIIPhraseAmAnfangOderMittenImSatzVerwendetWerden() {
         return true;
     }
-
-    @Nullable
-    @Override
-    public Konstituente getSpeziellesVorfeld(final Person person, final Numerus numerus) {
-        @Nullable final Konstituente speziellesVorfeldFromSuper = super.getSpeziellesVorfeld(person,
-                numerus);
-
-        if (speziellesVorfeldFromSuper != null) {
-            return speziellesVorfeldFromSuper;
-        }
-
-        @Nullable final Konstituente
-                adverbialeAngabeSkopusVerbAllgDescriptionFuerZwangsausklammerung =
-                getAdverbialeAngabeSkopusVerbAllgDescriptionFuerZwangsausklammerung();
-        if (adverbialeAngabeSkopusVerbAllgDescriptionFuerZwangsausklammerung != null) {
-            return adverbialeAngabeSkopusVerbAllgDescriptionFuerZwangsausklammerung
-                    .withVorkommaNoetig(false);
-        }
-
-        return null;
-    }
-
+    
     @Override
     public Iterable<Konstituente> getMittelfeld(final Collection<Modalpartikel> modalpartikeln,
                                                 final Person personSubjekt,

@@ -112,7 +112,7 @@ public class PraedikatIntentionalesVerbOhneLeerstellen
         // "Gebeten dich zu waschen [gehst du ins Bad]"
         return true;
     }
-    
+
     @Nullable
     @Override
     public Konstituente getSpeziellesVorfeld(final Person person,
@@ -122,21 +122,7 @@ public class PraedikatIntentionalesVerbOhneLeerstellen
         if (speziellesVorfeldFromSuper != null) {
             return speziellesVorfeldFromSuper;
         }
-
-        @Nullable final AdverbialeAngabeSkopusVerbAllg adverbialeAngabeSkopusVerbAllg =
-                getAdverbialeAngabeSkopusVerbAllg();
-        if (adverbialeAngabeSkopusVerbAllg != null
-                && !adverbialeAngabeSkopusVerbAllg.imMittelfeldErlaubt()) {
-            @Nullable final Konstituente
-                    adverbialeAngabeSkopusVerbAllgDescriptionFuerZwangsausklammerung =
-                    getAdverbialeAngabeSkopusVerbAllgDescriptionFuerZwangsausklammerung();
-            if (adverbialeAngabeSkopusVerbAllgDescriptionFuerZwangsausklammerung != null) {
-                return adverbialeAngabeSkopusVerbAllgDescriptionFuerZwangsausklammerung
-                        .withVorkommaNoetig(false);
-                // "Und glücklich, dich zu sehen, ..."
-            }
-        }
-
+        
         // "Ihre Haare (versucht sie wieder hinunterzulassen)"
         return lexikalischerKern.getSpeziellesVorfeld(person, numerus);
     }

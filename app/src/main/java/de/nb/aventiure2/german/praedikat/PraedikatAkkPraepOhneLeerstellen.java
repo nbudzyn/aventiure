@@ -134,17 +134,6 @@ public class PraedikatAkkPraepOhneLeerstellen
             return speziellesVorfeldFromSuper;
         }
 
-        @Nullable final Konstituente
-                adverbialeAngabeSkopusVerbAllgDescriptionFuerZwangsausklammerung =
-                getAdverbialeAngabeSkopusVerbAllgDescriptionFuerZwangsausklammerung();
-        if (adverbialeAngabeSkopusVerbAllgDescriptionFuerZwangsausklammerung != null) {
-            // "Und zufrieden, dich endlich überwunden zu haben, nimmst du den Frosch in die
-            // Hände"
-            return adverbialeAngabeSkopusVerbAllgDescriptionFuerZwangsausklammerung
-                    .withVorkommaNoetig(false);
-        }
-
-
         final String akk = this.akk.akk();
         if (!"es" .equals(akk)) {
             // Wenn "es" ein Objekt ist, darf es nicht im Vorfeld stehen.

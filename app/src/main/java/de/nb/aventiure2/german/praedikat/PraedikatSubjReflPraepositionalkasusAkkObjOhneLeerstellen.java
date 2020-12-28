@@ -120,15 +120,6 @@ class PraedikatSubjReflPraepositionalkasusAkkObjOhneLeerstellen
             return speziellesVorfeldFromSuper;
         }
 
-        @Nullable final Konstituente
-                adverbialeAngabeSkopusVerbAllgDescriptionFuerZwangsausklammerung =
-                getAdverbialeAngabeSkopusVerbAllgDescriptionFuerZwangsausklammerung();
-        if (adverbialeAngabeSkopusVerbAllgDescriptionFuerZwangsausklammerung != null) {
-            // "Und glücklich, sie endlich gefunden zu haben, nimmmst du die Kugel an dich"
-            return adverbialeAngabeSkopusVerbAllgDescriptionFuerZwangsausklammerung
-                    .withVorkommaNoetig(false);
-        }
-
         final String akk = akkObj.akk();
         if (!"es" .equals(akk)) {
             // Wenn "es" ein Objekt ist, darf es nicht im Vorfeld stehen.

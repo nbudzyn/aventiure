@@ -129,15 +129,6 @@ public class PraedikatDatAkkOhneLeerstellen
             return speziellesVorfeldFromSuper;
         }
 
-        @Nullable final Konstituente
-                adverbialeAngabeSkopusVerbAllgDescriptionFuerZwangsausklammerung =
-                getAdverbialeAngabeSkopusVerbAllgDescriptionFuerZwangsausklammerung();
-        if (adverbialeAngabeSkopusVerbAllgDescriptionFuerZwangsausklammerung != null) {
-            return adverbialeAngabeSkopusVerbAllgDescriptionFuerZwangsausklammerung
-                    .withVorkommaNoetig(false);
-            // "Und glücklich, weitergehen zu können, gibst du dem Frosch die Kugel."
-        }
-
         // "Die Kugel gibst du dem Frosch" - nicht schön, da meist "der
         // Frosch" das Thema ist und "die Kugel" das Rhema.
 
@@ -183,11 +174,6 @@ public class PraedikatDatAkkOhneLeerstellen
                     getAdverbialeAngabeSkopusSatzDescription(), // "aus einer Laune heraus"
                     akk, // "die Melodie"
                     GermanUtil.joinToNullString(modalpartikeln), // "halt"
-
-                    // FIXME Die Phrase kann - altenativ zum Nachfeld - dann ins
-                    //  Vorfeld gestellt werden, wenn es keine Skopus-Satz-
-                    //  Adverbialie gibt. Wenn doch, dann bleibt sie besser im Nachfeld.
-
                     getAdverbialeAngabeSkopusVerbAllgDescriptionFuerMittelfeld()); // "auf deiner Flöte"
         }
 

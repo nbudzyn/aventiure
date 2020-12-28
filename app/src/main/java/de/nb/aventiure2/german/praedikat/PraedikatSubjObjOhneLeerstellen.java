@@ -131,16 +131,7 @@ public class PraedikatSubjObjOhneLeerstellen
         if (speziellesVorfeldFromSuper != null) {
             return speziellesVorfeldFromSuper;
         }
-
-        @Nullable final Konstituente
-                adverbialeAngabeSkopusVerbAllgDescriptionFuerZwangsausklammerung =
-                getAdverbialeAngabeSkopusVerbAllgDescriptionFuerZwangsausklammerung();
-        if (adverbialeAngabeSkopusVerbAllgDescriptionFuerZwangsausklammerung != null) {
-            // "Und glücklich, sie endlich gefunden zu haben, nimmst du die Kugel."
-            return adverbialeAngabeSkopusVerbAllgDescriptionFuerZwangsausklammerung
-                    .withVorkommaNoetig(false);
-        }
-
+        
         final String objektImKasusOderPraepkasus = objekt.im(kasusOderPraepositionalkasus);
         if (!"es" .equals(objektImKasusOderPraepkasus)) {
             // Wenn "es" ein Objekt ist, darf es nicht im Vorfeld stehen.
