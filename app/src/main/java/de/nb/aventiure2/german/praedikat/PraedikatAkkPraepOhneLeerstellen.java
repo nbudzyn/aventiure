@@ -2,8 +2,6 @@ package de.nb.aventiure2.german.praedikat;
 
 import androidx.annotation.NonNull;
 
-import com.google.common.collect.ImmutableList;
-
 import java.util.Collection;
 
 import javax.annotation.Nullable;
@@ -154,7 +152,7 @@ public class PraedikatAkkPraepOhneLeerstellen
                 getAdverbialeAngabeSkopusSatzDescription(), // "aus einer Laune heraus"
                 akk.akk(), // "das Teil"
                 GermanUtil.joinToNullString(modalpartikeln), // "besser doch"
-                getAdverbialeAngabeSkopusVerbAllgDescription(), // "erneut"
+                getAdverbialeAngabeSkopusVerbAllgDescriptionFuerMittelfeld(), // "erneut"
                 getAdverbialeAngabeSkopusVerbWohinWoherDescription(), // "anch dem Weg"
                 praep.im(praepositionMitKasus)); // "aus der La main"
     }
@@ -162,7 +160,8 @@ public class PraedikatAkkPraepOhneLeerstellen
     @Override
     public Iterable<Konstituente> getNachfeld(final Person personSubjekt,
                                               final Numerus numerusSubjekt) {
-        return ImmutableList.of();
+        return Konstituente.joinToKonstituenten(
+                getAdverbialeAngabeSkopusVerbAllgDescriptionFuerZwangsausklammerung());
     }
 
     @Override

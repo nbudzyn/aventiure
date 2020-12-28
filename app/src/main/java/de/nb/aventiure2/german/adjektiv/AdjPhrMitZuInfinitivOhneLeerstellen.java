@@ -11,6 +11,8 @@ import de.nb.aventiure2.german.base.Numerus;
 import de.nb.aventiure2.german.base.Person;
 import de.nb.aventiure2.german.praedikat.PraedikatOhneLeerstellen;
 
+import static de.nb.aventiure2.german.base.Konstituente.k;
+
 /**
  * Eine Adjektivphrase mit zu-Infinitiv, in der alle Leerstellen besetzt sind. Beispiel:
  * <ul>
@@ -61,8 +63,7 @@ public class AdjPhrMitZuInfinitivOhneLeerstellen extends AbstractAdjPhrOhneLeers
         return Konstituente.withKommaStehtAus(
                 Konstituente.joinToKonstituenten(
                         getGraduativeAngabe(), // "sehr"
-                        getAdjektiv().getPraedikativ(), // "glücklich"
-                        ", ",
+                        k(getAdjektiv().getPraedikativ(), true), // "glücklich"
                         lexikalischerKern.getZuInfinitiv(person, numerus)
                         // "sich erheben zu dürfen"
                 ) // Komma steht definitiv aus

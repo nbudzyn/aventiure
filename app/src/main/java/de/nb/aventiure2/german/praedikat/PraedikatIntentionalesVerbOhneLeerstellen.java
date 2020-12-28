@@ -131,27 +131,50 @@ public class PraedikatIntentionalesVerbOhneLeerstellen
     public Iterable<Konstituente> getMittelfeld(final Collection<Modalpartikel> modalpartikeln,
                                                 final Person personSubjekt,
                                                 final Numerus numerusSubjekt) {
+        final AdverbialeAngabeSkopusVerbAllg adverbialeAngabeSkopusVerbAllg =
+                getAdverbialeAngabeSkopusVerbAllg();
+
+        if (adverbialeAngabeSkopusVerbAllg.imMittelfeldErlaubt()) {
+            return Konstituente.joinToKonstituenten(
+                    getAdverbialeAngabeSkopusSatzDescription(), // "aus einer Laune heraus"
+                    GermanUtil.joinToNullString(modalpartikeln), // "mal eben"
+                    adverbialeAngabeSkopusVerbAllg.getDescription(), // "erneut"
+                    getAdverbialeAngabeSkopusVerbWohinWoherDescription()
+                    // (kann es wohl gar nicht geben)
+            );
+
+            // STORY Der lexikalische Kern könnte als Alternative zusätztlich ins Mittelfeld gestellt
+            //  werden: "ihre Haare wieder hinunterzulassen versuchen"
+        }
+
         return Konstituente.joinToKonstituenten(
                 getAdverbialeAngabeSkopusSatzDescription(), // "aus einer Laune heraus"
                 GermanUtil.joinToNullString(modalpartikeln), // "mal eben"
-                getAdverbialeAngabeSkopusVerbAllgDescription(), // "erneut"
-                getAdverbialeAngabeSkopusVerbWohinWoherDescription()
+                adverbialeAngabeSkopusVerbAllg.getDescription(), // "erneut"
+                lexikalischerKern.getZuInfinitiv(
+                        // Es liegt "Subjektkontrolle" vor.
+                        personSubjekt, numerusSubjekt
+                ) // "ihre Haare wieder hinunterzulassen"
                 // (kann es wohl gar nicht geben)
         );
-
-        //  STORY Der lexikalische Kern könnte ebenfalls ins Mittelfeld gestellt werden:
-        //   - "ihre Haare wieder hinunterzulassen versuchen"
     }
 
     @Override
     public Iterable<Konstituente> getNachfeld(final Person personSubjekt,
                                               final Numerus numerusSubjekt) {
+        final AdverbialeAngabeSkopusVerbAllg adverbialeAngabeSkopusVerbAllg =
+                getAdverbialeAngabeSkopusVerbAllg();
+        if (!adverbialeAngabeSkopusVerbAllg.imMittelfeldErlaubt()) {
+            return Konstituente.joinToKonstituenten(
+                    adverbialeAngabeSkopusVerbAllg.getDescription() // "glücklich, dich zu sehen"
+            );
+        }
+
         return lexikalischerKern.getZuInfinitiv(
                 // Es liegt "Subjektkontrolle" vor.
                 personSubjekt, numerusSubjekt
         ); // "(Du versuchst) dich zu waschen"
-        // Wir lassen die Kommata weg - das ist erlaubt und dann
-        // kann man auch mehrere solche Sätze hintereinanderhängen
+        // Wir lassen die Kommata rund um den Infinitiv weg - das ist erlaubt.
     }
 
     @Override

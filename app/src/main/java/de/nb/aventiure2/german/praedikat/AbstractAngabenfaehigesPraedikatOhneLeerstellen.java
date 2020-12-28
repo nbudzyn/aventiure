@@ -194,9 +194,10 @@ public abstract class AbstractAngabenfaehigesPraedikatOhneLeerstellen
         }
 
         // FIXME getAdverbialeAngabeSkopusVerbAllg() - aber nur, wenn
-        //  sie im Mittelfeld nicht erlaubt ist.
-        //  Auf jeden Fall alle Aufrufer prüfen, dass sie nicht nur aus dem Mittelfeld, sondern
-        //  auch aus dem NACHFELD herausgeschnitten wird.
+        //  sie im Mittelfeld nicht erlaubt ist. Dann müssen die Aufrufer das spezielle
+        //  Vorfeld nicht nur aus dem Mittelfeld, sondern auch aus dem Nachfeld
+        //  herausschneiden! Außerdem darf das Vorkomme nur gesetzt werden, wenn
+        //  kein neuer Satz anfängt und auch vorher kein Komma o.Ä. stand.
 
         return null;
     }
@@ -244,7 +245,34 @@ public abstract class AbstractAngabenfaehigesPraedikatOhneLeerstellen
     }
 
     @Nullable
-    Konstituente getAdverbialeAngabeSkopusVerbAllgDescription() {
+    Konstituente getAdverbialeAngabeSkopusVerbAllgDescriptionFuerMittelfeld() {
+        if (adverbialeAngabeSkopusVerbAllg == null) {
+            return null;
+        }
+
+        if (!adverbialeAngabeSkopusVerbAllg.imMittelfeldErlaubt()) {
+            return null;
+        }
+
+        return getAdverbialeAngabeSkopusVerbAllgDescription();
+    }
+
+    @Nullable
+    Konstituente getAdverbialeAngabeSkopusVerbAllgDescriptionFuerZwangsausklammerung() {
+        if (adverbialeAngabeSkopusVerbAllg == null) {
+            return null;
+        }
+
+        if (adverbialeAngabeSkopusVerbAllg.imMittelfeldErlaubt()) {
+            return null;
+        }
+
+        return getAdverbialeAngabeSkopusVerbAllgDescription();
+    }
+
+
+    @Nullable
+    private Konstituente getAdverbialeAngabeSkopusVerbAllgDescription() {
         return adverbialeAngabeSkopusVerbAllg != null ?
                 adverbialeAngabeSkopusVerbAllg.getDescription() : null;
     }

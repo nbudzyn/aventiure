@@ -1,7 +1,5 @@
 package de.nb.aventiure2.german.praedikat;
 
-import com.google.common.collect.ImmutableList;
-
 import java.util.Collection;
 
 import javax.annotation.Nullable;
@@ -148,8 +146,7 @@ public class PraedikativumPraedikatOhneLeerstellen
         return Konstituente.joinToKonstituenten(
                 getAdverbialeAngabeSkopusSatzDescription(), // "plötzlich"
                 GermanUtil.joinToNullString(modalpartikeln), // "halt"
-                // FIXME alle Verwendungen von getAdverbialeAngabeSkopus() etc. auf getDescription umstellen!
-                getAdverbialeAngabeSkopusVerbAllgDescription(), // "erneut"
+                getAdverbialeAngabeSkopusVerbAllgDescriptionFuerMittelfeld(), // "erneut"
                 getAdverbialeAngabeSkopusVerbWohinWoherDescription(),
                 // (kann wohl nicht besetzt sein?)
                 praedikativum.getPraedikativ(personSubjekt, numerusSubjekt)
@@ -169,7 +166,9 @@ public class PraedikativumPraedikatOhneLeerstellen
         //  dann auch zwingend ins Nachfeld gesetzt wird.
         //  (Anders als beim Vorfeld - da ist es nur ein Kandidat.)
 
-        return ImmutableList.of();
+        return Konstituente.joinToKonstituenten(
+                getAdverbialeAngabeSkopusVerbAllgDescriptionFuerZwangsausklammerung()
+        );
     }
 
     @Override

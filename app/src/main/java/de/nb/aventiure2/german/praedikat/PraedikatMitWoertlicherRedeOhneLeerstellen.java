@@ -124,7 +124,7 @@ public class PraedikatMitWoertlicherRedeOhneLeerstellen
         return Konstituente.joinToKonstituenten(
                 getAdverbialeAngabeSkopusSatzDescription(), // "aus einer Laune heraus"
                 modalpartikeln,  // "mal eben"
-                getAdverbialeAngabeSkopusVerbAllgDescription(), // "erneut"
+                getAdverbialeAngabeSkopusVerbAllgDescriptionFuerMittelfeld(), // "erneut"
                 getAdverbialeAngabeSkopusVerbWohinWoherDescription()// "in ein Kissen"
         );
     }
@@ -133,6 +133,7 @@ public class PraedikatMitWoertlicherRedeOhneLeerstellen
     public Iterable<Konstituente> getNachfeld(final Person personSubjekt,
                                               final Numerus numerusSubjekt) {
         return Konstituente.joinToKonstituenten(
+                getAdverbialeAngabeSkopusVerbAllgDescriptionFuerZwangsausklammerung(),
                 ":",
                 k(woertlicheRede.amSatzende())); // "„Kommt alle her.“"
     }

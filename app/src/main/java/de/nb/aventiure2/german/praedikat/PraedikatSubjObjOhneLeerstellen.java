@@ -2,8 +2,6 @@ package de.nb.aventiure2.german.praedikat;
 
 import androidx.annotation.NonNull;
 
-import com.google.common.collect.ImmutableList;
-
 import java.util.Collection;
 
 import javax.annotation.Nullable;
@@ -151,7 +149,7 @@ public class PraedikatSubjObjOhneLeerstellen
         return Konstituente.joinToKonstituenten(
                 getAdverbialeAngabeSkopusSatzDescription(), // "aus einer Laune heraus"
                 GermanUtil.joinToNullString(modalpartikeln), // "mal eben"
-                getAdverbialeAngabeSkopusVerbAllgDescription(), // "erneut"
+                getAdverbialeAngabeSkopusVerbAllgDescriptionFuerMittelfeld(), // "erneut"
                 objekt.im(kasusOderPraepositionalkasus),
                 getAdverbialeAngabeSkopusVerbWohinWoherDescription() // "auf den Tisch"
         );
@@ -160,7 +158,9 @@ public class PraedikatSubjObjOhneLeerstellen
     @Override
     public Iterable<Konstituente> getNachfeld(final Person personSubjekt,
                                               final Numerus numerusSubjekt) {
-        return ImmutableList.of();
+        return Konstituente.joinToKonstituenten(
+                getAdverbialeAngabeSkopusVerbAllgDescriptionFuerZwangsausklammerung()
+        );
     }
 
     @Override

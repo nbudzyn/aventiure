@@ -2,8 +2,6 @@ package de.nb.aventiure2.german.praedikat;
 
 import androidx.annotation.NonNull;
 
-import com.google.common.collect.ImmutableList;
-
 import java.util.Collection;
 
 import javax.annotation.Nullable;
@@ -162,7 +160,7 @@ public class PraedikatDatAkkOhneLeerstellen
                         getAdverbialeAngabeSkopusSatzDescription(),
                         // "aus einer Laune heraus"
                         GermanUtil.joinToNullString(modalpartikeln), // "halt"
-                        getAdverbialeAngabeSkopusVerbAllgDescription()); // "auf deiner Flöte"
+                        getAdverbialeAngabeSkopusVerbAllgDescriptionFuerMittelfeld()); // "auf deiner Flöte"
             }
 
             return Konstituente.joinToKonstituenten(
@@ -170,7 +168,7 @@ public class PraedikatDatAkkOhneLeerstellen
                     getAdverbialeAngabeSkopusSatzDescription(), // "aus einer Laune heraus"
                     dat, // "dem Frosch"
                     GermanUtil.joinToNullString(modalpartikeln), // "halt"
-                    getAdverbialeAngabeSkopusVerbAllgDescription()); // "auf deiner Flöte"
+                    getAdverbialeAngabeSkopusVerbAllgDescriptionFuerMittelfeld()); // "auf deiner Flöte"
         }
 
         if (Personalpronomen.isPersonalpronomen(dat) ||
@@ -181,40 +179,27 @@ public class PraedikatDatAkkOhneLeerstellen
                     akk, // "die Melodie"
                     GermanUtil.joinToNullString(modalpartikeln), // "halt"
 
-                    // FIXME Das hier betrifft alle Mittelfelder:
-                    //  Adjektivphrasen als adverbiale
-                    //  Angaben dürfen nur unter gewissen Voraussetzungen
-                    //  im Mittelfeld stehen:
-                    //  Die Beschränkung ist: Infinitivphrasen
-                    //  können nicht im Mittelfeld stehen
-                    //  (aber im Vorfeld oder Nachfeld). Das gilt auch für
-                    //  Angaben- und Ergänzungssätze (z.B. indirekte Fragen).
-                    //  Vgl. *"Sie schaut dich, glücklich dich zu sehen, an."
-                    //  Möglichw wären "Sie schaut dich an, glücklich, dich zu
-                    //  sehen." und "Glücklich, dich zu sehen, schaut sie dich
-                    //  an." Offenbar muss dann auch die gesamte adverbiale
-                    //  Adjektivphrase kontinuierlich bleiben!
-                    //  Die Logik ist also in etwa: Falls die Phrase ... enthält,
-                    //  Darf sie nicht ins Mittelfeld gestellt werden.
-                    //  Es gilt also diese Logik: Die Phrase sollte dann ins
+                    // FIXME Die Phrase kann - altenativ zum Nachfeld - dann ins
                     //  Vorfeld gestellt werden, wenn es keine Skopus-Satz
-                    //  Adverbialie gibt. Wenn doch, dann ins Nachfeld.
+                    //  Adverbialie gibt. Wenn doch, dann bleibt sie besser im Nachfeld.
 
-                    getAdverbialeAngabeSkopusVerbAllgDescription()); // "auf deiner Flöte"
+                    getAdverbialeAngabeSkopusVerbAllgDescriptionFuerMittelfeld()); // "auf deiner Flöte"
         }
 
         return Konstituente.joinToKonstituenten(
                 getAdverbialeAngabeSkopusSatzDescription(), // "aus einer Laune heraus"
                 dat, // "dem Frosch"
                 GermanUtil.joinToNullString(modalpartikeln), // "halt"
-                getAdverbialeAngabeSkopusVerbAllgDescription(), // "auf deiner Flöte"
+                getAdverbialeAngabeSkopusVerbAllgDescriptionFuerMittelfeld(), // "auf deiner Flöte"
                 akk); // "ein Lied"
     }
 
     @Override
     public Iterable<Konstituente> getNachfeld(final Person personSubjekt,
                                               final Numerus numerusSubjekt) {
-        return ImmutableList.of();
+        return Konstituente.joinToKonstituenten(
+                getAdverbialeAngabeSkopusVerbAllgDescriptionFuerZwangsausklammerung()
+        );
     }
 
     @Override

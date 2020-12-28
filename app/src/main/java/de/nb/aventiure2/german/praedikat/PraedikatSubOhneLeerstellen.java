@@ -1,7 +1,5 @@
 package de.nb.aventiure2.german.praedikat;
 
-import com.google.common.collect.ImmutableList;
-
 import java.util.Collection;
 
 import javax.annotation.Nullable;
@@ -105,7 +103,7 @@ public class PraedikatSubOhneLeerstellen
                 GermanUtil.joinToNullString(modalpartikeln), // "mal eben"
                 // FIXME adverbialeAngabeSkopusVerbAllg nur dann, wenn fürs Mittelfeld zugelassen
                 //  (alle Verwendungen von getAdverbialeAngabeSkopusVerbAllg() durchgehen!)
-                getAdverbialeAngabeSkopusVerbAllgDescription(), // "erneut"
+                getAdverbialeAngabeSkopusVerbAllgDescriptionFuerMittelfeld(), // "erneut"
                 getAdverbialeAngabeSkopusVerbWohinWoherDescription() // "in den Wald"
         );
     }
@@ -113,10 +111,13 @@ public class PraedikatSubOhneLeerstellen
     @Override
     public Iterable<Konstituente> getNachfeld(final Person personSubjekt,
                                               final Numerus numerusSubjekt) {
-        // FIXME getAdverbialeAngabeSkopusVerbAllg(), sofern nicht fürs Mittelfeld zugelassen
-        //  Dazu allerdings bei allen Aufrufern auch die Angabe aus dem Nachfeld herausschneiden
-        //  (GermanUtil.cut), wenn sie ins Vorfeld gesetzt wird.
-        return ImmutableList.of();
+        // FIXME Dazu allerdings bei allen Aufrufern auch die Angabe aus dem Nachfeld herausschneiden
+        //  (GermanUtil.cut), wenn sie ins VORFELD gesetzt wird.
+
+        // Vermutlich ist das
+        return Konstituente.joinToKonstituenten(
+                getAdverbialeAngabeSkopusVerbAllgDescriptionFuerZwangsausklammerung()
+        );
     }
 
     @Override

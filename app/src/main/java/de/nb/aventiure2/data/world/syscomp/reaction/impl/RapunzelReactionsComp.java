@@ -647,6 +647,10 @@ public class RapunzelReactionsComp
             loadSC().feelingsComp().upgradeFeelingsTowards(RAPUNZEL,
                     ZUNEIGUNG_ABNEIGUNG, 0.5f, FeelingIntensity.DEUTLICH);
 
+            // FIXME Hier ruft die Hexe sofort noch einmal - und Hexe und Rapunzel landen
+            //  in einer ewigen Rückkopplungsschleife (Anwendung hängt). Die Hexe sollte einen
+            //  Zusatndswechsel haben und nach dem Rufen (erst einmal) abwarten, ob sich was tut!
+
             return;
         }
 

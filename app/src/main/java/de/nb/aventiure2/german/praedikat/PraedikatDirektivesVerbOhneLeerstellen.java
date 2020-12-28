@@ -167,7 +167,7 @@ public class PraedikatDirektivesVerbOhneLeerstellen
         return Konstituente.joinToKonstituenten(
                 getAdverbialeAngabeSkopusSatzDescription(), // "aus einer Laune heraus"
                 GermanUtil.joinToNullString(modalpartikeln), // "mal eben"
-                getAdverbialeAngabeSkopusVerbAllgDescription(), // "erneut"
+                getAdverbialeAngabeSkopusVerbAllgDescriptionFuerMittelfeld(), // "erneut"
                 objekt.im(kasus), // "die junge Frau"
                 getAdverbialeAngabeSkopusVerbWohinWoherDescription()
                 // (kann es wohl gar nicht geben)
@@ -184,12 +184,26 @@ public class PraedikatDirektivesVerbOhneLeerstellen
     @Override
     public Iterable<Konstituente> getNachfeld(final Person personSubjekt,
                                               final Numerus numerusSubjekt) {
-        return lexikalischerKern.getZuInfinitiv(
-                // Es liegt "Objektkontrolle" vor.
-                objekt.getPerson(), objekt.getNumerusGenus().getNumerus()
-        ); // "sich zu waschen"
-        // Wir lassen die Kommata weg - das ist erlaubt und dann
-        // kann man auch mehrere solche Sätze hintereinanderhängen
+        return
+                Konstituente.joinToKonstituenten(
+                        lexikalischerKern.getZuInfinitiv(
+                                // Es liegt "Objektkontrolle" vor.
+                                objekt.getPerson(), objekt.getNumerusGenus().getNumerus()),
+                        // "sich zu waschen"
+                        // FIXME Wenn eine Adverbiale Angabe ins Nachfeld ausgeklammert wird,
+                        //  benötigt sie ein VORkomma. Das Vorkomma muss aber evtl.
+                        //  Wieder entfallen, wenn die Komponente aus dem Nachfeld ins
+                        //  Vorfeld verschoben wird (dass es ja nicht immer gibt).
+                        //  Also müssen wir an jeder Komponente auch vermerken, ob sie
+                        //  ein Vorkomma braucht.
+                        // FIXME Außerdem noch einmal prüfen, ob durch das Abschneiden des
+                        //  Kommas bei aus Strings gebildeten Komponenten ggf. ein
+                        //  Leerstring entsteht - dann keine Konstituente anlegen!
+                        getAdverbialeAngabeSkopusVerbAllgDescriptionFuerZwangsausklammerung()
+                        // , glücklich, dich zu sehen
+                );
+
+        // Wir lassen die Kommata weg - das ist erlaubt
     }
 
     @Override

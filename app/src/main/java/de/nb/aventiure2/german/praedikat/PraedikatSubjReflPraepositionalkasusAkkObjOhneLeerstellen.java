@@ -1,7 +1,5 @@
 package de.nb.aventiure2.german.praedikat;
 
-import com.google.common.collect.ImmutableList;
-
 import java.util.Collection;
 
 import javax.annotation.Nullable;
@@ -142,7 +140,7 @@ class PraedikatSubjReflPraepositionalkasusAkkObjOhneLeerstellen
                 getAdverbialeAngabeSkopusSatzDescription(), // "aus einer Laune heraus"
                 akkObj.akk(), // "die goldene Kugel"
                 GermanUtil.joinToNullString(modalpartikeln), // "besser doch"
-                getAdverbialeAngabeSkopusVerbAllgDescription(), // "erneut"
+                getAdverbialeAngabeSkopusVerbAllgDescriptionFuerMittelfeld(), // "erneut"
                 Reflexivpronomen.get(personSubjekt, numerusSubjekt)
                         .im(verbReflPraepositionalkasusAkkObj
                                 .getPrapositionMitKasus()), // "an dich",
@@ -154,7 +152,9 @@ class PraedikatSubjReflPraepositionalkasusAkkObjOhneLeerstellen
     @Override
     public Iterable<Konstituente> getNachfeld(final Person personSubjekt,
                                               final Numerus numerusSubjekt) {
-        return ImmutableList.of();
+        return Konstituente.joinToKonstituenten(
+                getAdverbialeAngabeSkopusVerbAllgDescriptionFuerZwangsausklammerung()
+        );
     }
 
     private void checkKeinPartikelVerb() {

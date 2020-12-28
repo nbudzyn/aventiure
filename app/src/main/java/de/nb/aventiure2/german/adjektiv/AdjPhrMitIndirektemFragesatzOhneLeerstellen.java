@@ -11,6 +11,8 @@ import de.nb.aventiure2.german.base.Numerus;
 import de.nb.aventiure2.german.base.Person;
 import de.nb.aventiure2.german.satz.Satz;
 
+import static de.nb.aventiure2.german.base.Konstituente.k;
+
 /**
  * Eine Adjektivphrase mit ob- oder w-Fragesatz, in der alle Leerstellen besetzt sind. Beispiel:
  * <ul>
@@ -90,8 +92,7 @@ public class AdjPhrMitIndirektemFragesatzOhneLeerstellen extends AbstractAdjPhrO
         return Konstituente.withKommaStehtAus(
                 Konstituente.joinToKonstituenten(
                         getGraduativeAngabe(), // "sehr"
-                        getAdjektiv().getPraedikativ(), // "gespannt"
-                        ",",
+                        k(getAdjektiv().getPraedikativ(), true), // "gespannt"
                         indirekterFragesatz.getIndirekteFrage()
                         // "ob du etwas zu berichten hast", "was du zu berichten hast" etc.
                         // Komma steht definitiv aus

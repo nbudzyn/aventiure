@@ -1,7 +1,5 @@
 package de.nb.aventiure2.german.praedikat;
 
-import com.google.common.collect.ImmutableList;
-
 import java.util.Collection;
 import java.util.Iterator;
 
@@ -155,7 +153,7 @@ public class PraedikatMitPraedikativerAdjektivphraseOhneLeerstellen
         return Konstituente.joinToKonstituenten(
                 getAdverbialeAngabeSkopusSatzDescription(), // "leider"
                 GermanUtil.joinToNullString(modalpartikeln), // "halt"
-                getAdverbialeAngabeSkopusVerbAllgDescription(), // "erneut"
+                getAdverbialeAngabeSkopusVerbAllgDescriptionFuerMittelfeld(), // "erneut"
                 getAdverbialeAngabeSkopusVerbWohinWoherDescription(), // "nach außen" (?)
                 adjektivphrase.getPraedikativ(personSubjekt, numerusSubjekt) // "glücklich"
         );
@@ -164,15 +162,15 @@ public class PraedikatMitPraedikativerAdjektivphraseOhneLeerstellen
     @Override
     public Iterable<Konstituente> getNachfeld(final Person personSubjekt,
                                               final Numerus numerusSubjekt) {
-
         // FIXME Die Adjektivphrase könnte diskontinuierlich aufgeteilt werden, dann könnte
         //  ein Teil ins Nachfeld kommen:
         //  Sie hat GLÜCKLICH gewirkt, DICH ZU SEHEN.
         //  (alternativ zu "Sie hat GLÜCKLICH, DICH ZU SEHEN, gewirkt").
-        //  Z.B.:         return adjektivphrase.getNachfeldKandidat(personSubjekt, numerusSubjekt)
+        //  Z.B.: return adjektivphrase.getNachfeldKandidat(personSubjekt, numerusSubjekt)
         //  Problem: Das ist nicht zwingend - und manchmal müssen vielleicht andere
         //  Dinge zwingend ins Nachfeld?!
-        return ImmutableList.of();
+        return Konstituente.joinToKonstituenten(
+                getAdverbialeAngabeSkopusVerbAllgDescriptionFuerZwangsausklammerung());
     }
 
     @Override

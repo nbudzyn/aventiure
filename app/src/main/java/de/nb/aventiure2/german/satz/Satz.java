@@ -123,8 +123,8 @@ public class Satz {
 
         return Konstituente.joinToKonstituenten(
                 subjekt.nom(),
-                praedikat.getVerbzweit(subjekt.getPerson(), subjekt.getNumerus()),
-                ",",
+                Konstituente.withKommaStehtAus(
+                        praedikat.getVerbzweit(subjekt.getPerson(), subjekt.getNumerus())),
                 Konstituente.withKommaStehtAus(angabensatz.getDescription())
                 // es steht ein Komma aus
         );
@@ -143,8 +143,8 @@ public class Satz {
 
         return Konstituente.joinToKonstituenten(
                 subjekt.nom(),
-                praedikat.getVerbletzt(subjekt.getPerson(), subjekt.getNumerus()),
-                ",",
+                Konstituente.withKommaStehtAus(
+                        praedikat.getVerbletzt(subjekt.getPerson(), subjekt.getNumerus())),
                 Konstituente.withKommaStehtAus(angabensatz.getDescription())
                 // es steht ein Komma aus
         );
