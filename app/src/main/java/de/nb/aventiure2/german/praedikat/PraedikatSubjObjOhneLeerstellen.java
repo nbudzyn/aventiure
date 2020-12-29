@@ -68,8 +68,6 @@ public class PraedikatSubjObjOhneLeerstellen
             return this;
         }
 
-        // TODO Mehrere adverbiale Angaben zulassen, damit die bestehende nicht
-        //  einfach überschrieben wird!
         return new PraedikatSubjObjOhneLeerstellen(
                 getVerb(),
                 kasusOderPraepositionalkasus, objekt,
@@ -85,8 +83,6 @@ public class PraedikatSubjObjOhneLeerstellen
             return this;
         }
 
-        // TODO Mehrere adverbiale Angaben zulassen, damit die bestehende nicht
-        //  einfach überschrieben wird!
         return new PraedikatSubjObjOhneLeerstellen(
                 getVerb(),
                 kasusOderPraepositionalkasus, objekt,
@@ -102,8 +98,6 @@ public class PraedikatSubjObjOhneLeerstellen
             return this;
         }
 
-        // TODO Mehrere adverbiale Angaben zulassen, damit die bestehende nicht
-        //  einfach überschrieben wird!
         return new PraedikatSubjObjOhneLeerstellen(
                 getVerb(),
                 kasusOderPraepositionalkasus, objekt,
@@ -131,7 +125,7 @@ public class PraedikatSubjObjOhneLeerstellen
         if (speziellesVorfeldFromSuper != null) {
             return speziellesVorfeldFromSuper;
         }
-        
+
         final String objektImKasusOderPraepkasus = objekt.im(kasusOderPraepositionalkasus);
         if (!"es" .equals(objektImKasusOderPraepkasus)) {
             // Wenn "es" ein Objekt ist, darf es nicht im Vorfeld stehen.

@@ -62,8 +62,6 @@ public class PraedikatMitWoertlicherRedeOhneLeerstellen
             return this;
         }
 
-        // TODO Mehrere adverbiale Angaben zulassen, damit die bestehende nicht
-        //  einfach überschrieben wird!
         return new PraedikatMitWoertlicherRedeOhneLeerstellen(
                 getVerb(),
                 woertlicheRede,
@@ -79,8 +77,6 @@ public class PraedikatMitWoertlicherRedeOhneLeerstellen
             return this;
         }
 
-        // TODO Mehrere adverbiale Angaben zulassen, damit die bestehende nicht
-        //  einfach überschrieben wird!
         return new PraedikatMitWoertlicherRedeOhneLeerstellen(
                 getVerb(),
                 woertlicheRede,
@@ -96,8 +92,6 @@ public class PraedikatMitWoertlicherRedeOhneLeerstellen
             return this;
         }
 
-        // TODO Mehrere adverbiale Angaben zulassen, damit die bestehende nicht
-        //  einfach überschrieben wird!
         return new PraedikatMitWoertlicherRedeOhneLeerstellen(
                 getVerb(),
                 woertlicheRede,
@@ -116,7 +110,7 @@ public class PraedikatMitWoertlicherRedeOhneLeerstellen
     public boolean kannPartizipIIPhraseAmAnfangOderMittenImSatzVerwendetWerden() {
         return false;
     }
-    
+
     @Override
     public Iterable<Konstituente> getMittelfeld(final Collection<Modalpartikel> modalpartikeln,
                                                 final Person personSubjekt,

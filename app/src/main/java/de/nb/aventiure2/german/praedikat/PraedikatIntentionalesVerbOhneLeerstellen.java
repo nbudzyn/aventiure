@@ -122,7 +122,7 @@ public class PraedikatIntentionalesVerbOhneLeerstellen
         if (speziellesVorfeldFromSuper != null) {
             return speziellesVorfeldFromSuper;
         }
-        
+
         // "Ihre Haare (versucht sie wieder hinunterzulassen)"
         return lexikalischerKern.getSpeziellesVorfeld(person, numerus);
     }
@@ -144,7 +144,7 @@ public class PraedikatIntentionalesVerbOhneLeerstellen
                     // (kann es wohl gar nicht geben)
             );
 
-            // STORY Der lexikalische Kern könnte als Alternative zusätztlich ins Mittelfeld gestellt
+            // STORY Der lexikalische Kern könnte als Alternative zusäztlich ins Mittelfeld gestellt
             //  werden: "ihre Haare wieder hinunterzulassen versuchen"
         }
 

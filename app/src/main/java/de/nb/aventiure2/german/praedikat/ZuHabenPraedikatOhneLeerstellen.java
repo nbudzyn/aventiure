@@ -242,8 +242,8 @@ public class ZuHabenPraedikatOhneLeerstellen implements PraedikatOhneLeerstellen
     @Nullable
     @Override
     public Iterable<Konstituente> getNachfeld(final Person person, final Numerus numerus) {
-        // FIXME altNachfelder -> Verschiedene Optionen, fürs Nachfeld.
-        //  Noch bessern: altAusklammerungen -> (Vorfeld, Nachfeld)
+        // STORY Es könnte Verschidene Nachfeld-Optionen geben (altNachfelder()) - oder besser
+        //  altAusklammerungen(), das jeweils Paare (Vorfeld, Nachfeld) liefert
 
         return lexikalischerKern.getNachfeld(person, numerus);
     }

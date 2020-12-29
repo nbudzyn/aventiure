@@ -19,10 +19,6 @@ import static java.util.Arrays.asList;
  * @see de.nb.aventiure2.german.satz.Satz
  */
 public interface PraedikatOhneLeerstellen extends Praedikat {
-    // FIXME Ableitung durch Delegation ersetzen z.B. von einem PraedikatDuTextPart.
-    //  Das würde mittels GermanUtil.joinKonstituentenToNull(...) die Konstituenten in
-    //  Wortfolgen umwandeln
-
     default Satz alsSatzMitSubjekt(final SubstantivischePhrase subjekt) {
         return new Satz(subjekt, this);
     }

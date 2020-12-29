@@ -58,8 +58,6 @@ class PraedikatSubjReflPraepositionalkasusAkkObjOhneLeerstellen
             return this;
         }
 
-        // TODO Mehrere adverbiale Angaben zulassen, damit die bestehende nicht
-        //  einfach überschrieben wird!
         return new PraedikatSubjReflPraepositionalkasusAkkObjOhneLeerstellen(
                 verbReflPraepositionalkasusAkkObj, akkObj,
                 adverbialeAngabe, getAdverbialeAngabeSkopusVerbAllg(),
@@ -74,8 +72,6 @@ class PraedikatSubjReflPraepositionalkasusAkkObjOhneLeerstellen
             return this;
         }
 
-        // TODO Mehrere adverbiale Angaben zulassen, damit die bestehende nicht
-        //  einfach überschrieben wird!
         return new PraedikatSubjReflPraepositionalkasusAkkObjOhneLeerstellen(
                 verbReflPraepositionalkasusAkkObj, akkObj,
                 getAdverbialeAngabeSkopusSatz(), adverbialeAngabe,
@@ -90,8 +86,6 @@ class PraedikatSubjReflPraepositionalkasusAkkObjOhneLeerstellen
             return this;
         }
 
-        // TODO Mehrere adverbiale Angaben zulassen, damit die bestehende nicht
-        //  einfach überschrieben wird!
         return new PraedikatSubjReflPraepositionalkasusAkkObjOhneLeerstellen(
                 verbReflPraepositionalkasusAkkObj, akkObj,
                 getAdverbialeAngabeSkopusSatz(),

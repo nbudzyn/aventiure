@@ -114,8 +114,8 @@ public class PraedikativumPraedikatOhneLeerstellen
         // ?"Endlich wieder einmal glücklich gewesen verlässt du das Theater."
         return false;
 
-        // STORY Möglich wäre auf jeden Fall die Negation:
-        //  "Lange nicht mehr so glücklich gewesen verlässt du das Theater."
+        // (Möglich wäre auf jeden Fall die Negation:
+        //  "Lange nicht mehr so glücklich gewesen verlässt du das Theater.")
     }
 
     @Override
@@ -131,7 +131,7 @@ public class PraedikativumPraedikatOhneLeerstellen
         // es hier aus.
 
         // FIXME Das Prädikativum könnte diskontinuierlich aufgeteilt werden, dann könnte
-        //  ein Teil ins Vorgeld kommen: Glücklich ist sie, dich zu sehen.
+        //  ein Teil ins Vorgeld kommen: "Glücklich ist sie, dich zu sehen."
 
         return null;
     }
@@ -155,13 +155,11 @@ public class PraedikativumPraedikatOhneLeerstellen
     @Override
     public Iterable<Konstituente> getNachfeld(final Person personSubjekt,
                                               final Numerus numerusSubjekt) {
-        // STORY Das Prädikativum könnte - als Alternative - diskontinuierlich aufgeteilt werden,
-        //  dann könnte ein Teil ins Nachfeld kommen:
+        // FIXME Das Prädikativum, wenn es eine zu-Infinitiv-Phrase oder einen Angaben- oder
+        //  Ergänzungs-Nebensatz enthält, besser diskontinuierlich aufgeteilt werden,
+        //  so dass ein Teil ins Nachfeld kommt:
         //  Sie ist GLÜCKLICH gewesen, DICH ZU SEHEN.
-        //  (alternativ zu ?"Sie ist GLÜCKLICH, DICH ZU SEHEN, gewesen").
-        //  Dann ergibt sich aber das Problem, dass getNachfeld() zurzeit das liefert, was
-        //  dann auch zwingend ins Nachfeld gesetzt wird.
-        //  (Anders als beim Vorfeld - da ist es nur ein Kandidat.)
+        //  (Statt ?"Sie ist GLÜCKLICH, DICH ZU SEHEN, gewesen").
 
         return Konstituente.joinToKonstituenten(
                 getAdverbialeAngabeSkopusVerbAllgDescriptionFuerZwangsausklammerung()

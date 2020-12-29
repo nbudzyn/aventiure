@@ -139,9 +139,11 @@ public class PraedikatMitPraedikativerAdjektivphraseOhneLeerstellen
             // wir sie nicht in das Vorfeld stellen. Dinge wie "Glücklich, dich zu sehen, wirkt
             // sie." sind zwar möglich, wirken aber ziemlich unnatürlich.
 
-            // FIXME Die prädikative Adjektivphrase könnte diskontinuierlich aufgeteilt werden,
-            //  dann könnte ein Teil (nur eine der Konstituenten) ins Vorfeld kommen: Glücklich
-            //  wirkt sie, dich zu sehen.
+            // FIXME Die prädikative Adjektivphrase bei entsprechender Komplexität
+            //  diskontinuierlich aufgeteilt werden,
+            //  dann könnte ein Teil (nur eine der Konstituenten) ins Nachfeld kommen: "Sie hat
+            //  glücklich gewirkt, dich zu sehen."
+            //  Z.B.: return adjektivphrase.getNachfeldKandidat(personSubjekt, numerusSubjekt)
         }
 
         return null;
@@ -163,13 +165,6 @@ public class PraedikatMitPraedikativerAdjektivphraseOhneLeerstellen
     @Override
     public Iterable<Konstituente> getNachfeld(final Person personSubjekt,
                                               final Numerus numerusSubjekt) {
-        // FIXME Die Adjektivphrase könnte alternativ diskontinuierlich aufgeteilt werden, dann könnte
-        //  ein Teil ins Nachfeld kommen:
-        //  Sie hat GLÜCKLICH gewirkt, DICH ZU SEHEN.
-        //  (alternativ zu "Sie hat GLÜCKLICH, DICH ZU SEHEN, gewirkt").
-        //  Z.B.: return adjektivphrase.getNachfeldKandidat(personSubjekt, numerusSubjekt)
-        //  Problem: Das ist nicht zwingend, während andere Dinge zwingend ins
-        //  Nachfeld müssen...
         return Konstituente.joinToKonstituenten(
                 getAdverbialeAngabeSkopusVerbAllgDescriptionFuerZwangsausklammerung());
     }

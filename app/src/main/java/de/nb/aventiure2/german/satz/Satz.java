@@ -47,8 +47,6 @@ public class Satz {
             return this;
         }
 
-        // STORY Mehrere Kondigionalsätze erlauben?
-
         return new Satz(subjekt, praedikat, angabensatz);
     }
 

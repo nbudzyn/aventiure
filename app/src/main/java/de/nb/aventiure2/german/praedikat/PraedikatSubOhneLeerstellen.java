@@ -42,8 +42,6 @@ public class PraedikatSubOhneLeerstellen
             return this;
         }
 
-        // TODO Mehrere adverbiale Angaben zulassen, damit die bestehende nicht
-        //  einfach überschrieben wird!
         return new PraedikatSubOhneLeerstellen(
                 getVerb(),
                 adverbialeAngabe, getAdverbialeAngabeSkopusVerbAllg(),
@@ -58,8 +56,6 @@ public class PraedikatSubOhneLeerstellen
             return this;
         }
 
-        // TODO Mehrere adverbiale Angaben zulassen, damit die bestehende nicht
-        //  einfach überschrieben wird!
         return new PraedikatSubOhneLeerstellen(
                 getVerb(),
                 getAdverbialeAngabeSkopusSatz(), adverbialeAngabe,
@@ -74,8 +70,6 @@ public class PraedikatSubOhneLeerstellen
             return this;
         }
 
-        // TODO Mehrere adverbiale Angaben zulassen, damit die bestehende nicht
-        //  einfach überschrieben wird!
         return new PraedikatSubOhneLeerstellen(
                 getVerb(),
                 getAdverbialeAngabeSkopusSatz(),
@@ -93,7 +87,7 @@ public class PraedikatSubOhneLeerstellen
     public boolean kannPartizipIIPhraseAmAnfangOderMittenImSatzVerwendetWerden() {
         return true;
     }
-    
+
     @Override
     public Iterable<Konstituente> getMittelfeld(final Collection<Modalpartikel> modalpartikeln,
                                                 final Person personSubjekt,
