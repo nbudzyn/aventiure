@@ -78,6 +78,9 @@ public class ZuHabenPraedikatOhneLeerstellen implements PraedikatOhneLeerstellen
                 // FIXME eigentlich sollte es lexikalischerKern.mitModalpartikeln()
                 //  oder so ähnlich heißen (oder als adverbiale Angaben?).
                 //  Derzeit gehen hier die modalpartikeln einfach verloren.
+                //  Modalpartikeln sollten besser zu einem
+                //  neuen "AbstractPraedikat" führen, dass man dann auch speichern
+                //  und weiterreichen kann!
                 lexikalischerKern.getZuInfinitiv(P2, SG));
     }
 

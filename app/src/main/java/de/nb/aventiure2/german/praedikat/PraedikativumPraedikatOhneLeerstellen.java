@@ -102,14 +102,7 @@ public class PraedikativumPraedikatOhneLeerstellen
 
     @Override
     public boolean duHauptsatzLaesstSichMitNachfolgendemDuHauptsatzZusammenziehen() {
-        // FIXME Steht ein ausstehendes Komma wirklich noch dem
-        //  Zusammenziehen entgegen? Prüfe - und falls nicht: Alle Implementierungen von
-        //  duHauptsatzLaesstSichMitNachfolgendemDuHauptsatzZusammenziehen() korrigieren.
-        //  (Braucht man dann duHauptsatzLaesstSichMitNachfolgendemDuHauptsatzZusammenziehen()
-        //  noch?)
-
-        return Konstituente.kommaStehtAus(
-                praedikativum.getPraedikativAnteilKandidatFuerNachfeld(P2, SG));
+        return true;
     }
 
     @Override

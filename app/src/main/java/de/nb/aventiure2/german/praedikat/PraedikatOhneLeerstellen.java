@@ -39,10 +39,6 @@ public interface PraedikatOhneLeerstellen extends Praedikat {
     }
 
     default Iterable<Konstituente> getDuHauptsatz(final Collection<Modalpartikel> modalpartikeln) {
-        // TODO Modalpartikeln sollten zu einem
-        //  neuen AbstractPraedikat führen, dass man dann auch speichern
-        //  und weiterreichen kann!
-
         return Konstituente.joinToKonstituenten(
                 "Du ",
                 getDuSatzanschlussOhneSubjekt(modalpartikeln));

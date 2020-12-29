@@ -13,9 +13,6 @@ import de.nb.aventiure2.german.base.Konstituente;
 import de.nb.aventiure2.german.base.Numerus;
 import de.nb.aventiure2.german.base.Person;
 
-import static de.nb.aventiure2.german.base.Numerus.SG;
-import static de.nb.aventiure2.german.base.Person.P2;
-
 /**
  * Ein Prädikat, bestehend aus einem Verb und einer prädikativen Adjektivphrase, in dem
  * alle Leerstellen besetzt sind.
@@ -105,9 +102,7 @@ public class PraedikatMitPraedikativerAdjektivphraseOhneLeerstellen
 
     @Override
     public boolean duHauptsatzLaesstSichMitNachfolgendemDuHauptsatzZusammenziehen() {
-        // FIXME Ist diese Einschränkung hier noch nötig?
-        return !Konstituente.kommaStehtAus(
-                adjektivphrase.getPraedikativOhneAnteilKandidatFuerNachfeld(P2, SG));
+        return true;
     }
 
     @Override
