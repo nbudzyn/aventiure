@@ -60,14 +60,21 @@ public class AdjPhrMitZuInfinitivOhneLeerstellen extends AbstractAdjPhrOhneLeers
     @Override
     public Iterable<Konstituente> getPraedikativOderAdverbial(final Person person,
                                                               final Numerus numerus) {
-        return Konstituente.withKommaStehtAus(
-                Konstituente.joinToKonstituenten(
-                        getGraduativeAngabe(), // "sehr"
-                        k(getAdjektiv().getPraedikativ(), true), // "glücklich"
-                        lexikalischerKern.getZuInfinitiv(person, numerus)
-                        // "sich erheben zu dürfen"
-                ) // Komma steht definitiv aus
+        return Konstituente.joinToKonstituenten(
+                getGraduativeAngabe(), // "sehr"
+                k(getAdjektiv().getPraedikativ(), true), // "glücklich"
+                getPraedikativAnteilKandidatFuerNachfeld(person, numerus)
+                // "sich erheben zu dürfen[, ]"
         );
+    }
+
+    @Override
+    public Iterable<Konstituente> getPraedikativAnteilKandidatFuerNachfeld(final Person person,
+                                                                           final Numerus numerus) {
+        return Konstituente.withKommaStehtAus(
+                lexikalischerKern.getZuInfinitiv(person, numerus)
+                // "sich erheben zu dürfen"
+        ); // Komma steht definitiv aus
     }
 
     @Override

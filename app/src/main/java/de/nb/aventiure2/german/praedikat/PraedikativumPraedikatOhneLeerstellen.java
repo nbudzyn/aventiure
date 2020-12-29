@@ -106,7 +106,8 @@ public class PraedikativumPraedikatOhneLeerstellen
         //  werden kann, erst an die Konstituenten-Liste oder die Wortfolge gestellt werden, nicht
         //  zuvor!
 
-        return Konstituente.kommaStehtAus(praedikativum.getPraedikativ(P2, SG));
+        return Konstituente.kommaStehtAus(
+                praedikativum.getPraedikativAnteilKandidatFuerNachfeld(P2, SG));
     }
 
     @Override
@@ -130,9 +131,6 @@ public class PraedikativumPraedikatOhneLeerstellen
         // "Ein Esel ist Peter", "Glücklich ist Peter" - das wäre stark markiert, wir lassen
         // es hier aus.
 
-        // FIXME Das Prädikativum könnte diskontinuierlich aufgeteilt werden, dann könnte
-        //  ein Teil ins Vorgeld kommen: "Glücklich ist sie, dich zu sehen."
-
         return null;
     }
 
@@ -146,22 +144,19 @@ public class PraedikativumPraedikatOhneLeerstellen
                 getAdverbialeAngabeSkopusVerbAllgDescriptionFuerMittelfeld(), // "erneut"
                 getAdverbialeAngabeSkopusVerbWohinWoherDescription(),
                 // (kann wohl nicht besetzt sein?)
-                praedikativum.getPraedikativ(personSubjekt, numerusSubjekt)
-                // "glücklich", "ein Esel", "sich ihrer selbst gewiss"
-                // "sehr glücklich, dich zu sehen"
+                praedikativum.getPraedikativOhneAnteilKandidatFuerNachfeld(
+                        personSubjekt, numerusSubjekt)
+                // "glücklich", "ein Esel", "sich ihrer selbst gewiss", "sehr glücklich
+                // [, dich zu sehen]"
         );
     }
 
     @Override
     public Iterable<Konstituente> getNachfeld(final Person personSubjekt,
                                               final Numerus numerusSubjekt) {
-        // FIXME Das Prädikativum, wenn es eine zu-Infinitiv-Phrase oder einen Angaben- oder
-        //  Ergänzungs-Nebensatz enthält, besser diskontinuierlich aufgeteilt werden,
-        //  so dass ein Teil ins Nachfeld kommt:
-        //  Sie ist GLÜCKLICH gewesen, DICH ZU SEHEN.
-        //  (Statt ?"Sie ist GLÜCKLICH, DICH ZU SEHEN, gewesen").
-
         return Konstituente.joinToKonstituenten(
+                praedikativum.getPraedikativAnteilKandidatFuerNachfeld(
+                        personSubjekt, numerusSubjekt), // "dich zu sehen"
                 getAdverbialeAngabeSkopusVerbAllgDescriptionFuerZwangsausklammerung()
         );
     }

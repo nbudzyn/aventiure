@@ -23,6 +23,12 @@ public abstract class SubstantivischePhrase
         return ImmutableList.of(k(nom()));
     }
 
+    @Override
+    public Iterable<Konstituente> getPraedikativAnteilKandidatFuerNachfeld(final Person person,
+                                                                           final Numerus numerus) {
+        return ImmutableList.of();
+    }
+
     /**
      * Ob die substantivische Phase mit einem Artikel beginnt, der mit einer
      * dazu geeigneten Präposition verschmolzen werden darf ("dem Haus" -> "zum Haus")

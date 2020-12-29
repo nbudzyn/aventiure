@@ -89,14 +89,21 @@ public class AdjPhrMitIndirektemFragesatzOhneLeerstellen extends AbstractAdjPhrO
     @Override
     public Iterable<Konstituente> getPraedikativOderAdverbial(final Person person,
                                                               final Numerus numerus) {
+        return Konstituente.joinToKonstituenten(
+                getGraduativeAngabe(), // "sehr"
+                k(getAdjektiv().getPraedikativ(), true), // "gespannt"
+                getPraedikativAnteilKandidatFuerNachfeld(person, numerus));
+        // "ob du etwas zu berichten hast[, ]"
+    }
+
+    @Override
+    public Iterable<Konstituente> getPraedikativAnteilKandidatFuerNachfeld(final Person person,
+                                                                           final Numerus numerus) {
         return Konstituente.withKommaStehtAus(
-                Konstituente.joinToKonstituenten(
-                        getGraduativeAngabe(), // "sehr"
-                        k(getAdjektiv().getPraedikativ(), true), // "gespannt"
-                        indirekterFragesatz.getIndirekteFrage()
-                        // "ob du etwas zu berichten hast", "was du zu berichten hast" etc.
-                        // Komma steht definitiv aus
-                ));
+                indirekterFragesatz.getIndirekteFrage()
+                // "ob du etwas zu berichten hast", "was du zu berichten hast" etc.
+                // Komma steht definitiv aus
+        );
     }
 
     @Override

@@ -1,6 +1,8 @@
 package de.nb.aventiure2.german.adjektiv;
 
 
+import com.google.common.collect.ImmutableList;
+
 import javax.annotation.Nullable;
 
 import de.nb.aventiure2.annotations.Valenz;
@@ -48,6 +50,12 @@ public class AdjPhrOhneErgaenzungenOhneLeerstellen extends AbstractAdjPhrOhneLee
                 getGraduativeAngabe(), // "sehr"
                 getAdjektiv().getPraedikativ() // "zufrieden"
         );
+    }
+
+    @Override
+    public Iterable<Konstituente> getPraedikativAnteilKandidatFuerNachfeld(final Person person,
+                                                                           final Numerus numerus) {
+        return ImmutableList.of();
     }
 
     @Override

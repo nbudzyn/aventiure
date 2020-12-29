@@ -50,7 +50,7 @@ public class Konstituente {
                 .build();
     }
 
-    private static ImmutableList<Konstituente> withVorkommaNoetig(
+    public static ImmutableList<Konstituente> withVorkommaNoetig(
             final Iterable<Konstituente> input) {
         return withVorkommaNoetig(input, true);
     }

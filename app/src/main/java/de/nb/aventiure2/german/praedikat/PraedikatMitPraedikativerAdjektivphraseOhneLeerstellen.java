@@ -13,6 +13,9 @@ import de.nb.aventiure2.german.base.Konstituente;
 import de.nb.aventiure2.german.base.Numerus;
 import de.nb.aventiure2.german.base.Person;
 
+import static de.nb.aventiure2.german.base.Numerus.SG;
+import static de.nb.aventiure2.german.base.Person.P2;
+
 /**
  * Ein Prädikat, bestehend aus einem Verb und einer prädikativen Adjektivphrase, in dem
  * alle Leerstellen besetzt sind.
@@ -104,7 +107,7 @@ public class PraedikatMitPraedikativerAdjektivphraseOhneLeerstellen
     public boolean duHauptsatzLaesstSichMitNachfolgendemDuHauptsatzZusammenziehen() {
         // FIXME Ist diese Einschränkung hier noch nötig?
         return !Konstituente.kommaStehtAus(
-                adjektivphrase.getPraedikativ(Person.P2, Numerus.SG));
+                adjektivphrase.getPraedikativOhneAnteilKandidatFuerNachfeld(P2, SG));
     }
 
     @Override
@@ -123,7 +126,7 @@ public class PraedikatMitPraedikativerAdjektivphraseOhneLeerstellen
         }
 
         final Iterable<Konstituente> konstituentenPraedAdjPhr =
-                adjektivphrase.getPraedikativ(person, numerus);
+                adjektivphrase.getPraedikativOhneAnteilKandidatFuerNachfeld(person, numerus);
 
         final Iterator<Konstituente> iterKonstituentenPraedAdjPhr =
                 konstituentenPraedAdjPhr.iterator();
@@ -131,19 +134,13 @@ public class PraedikatMitPraedikativerAdjektivphraseOhneLeerstellen
         if (iterKonstituentenPraedAdjPhr.hasNext()) {
             final Konstituente firstKonstituentePraedAdjPhr = iterKonstituentenPraedAdjPhr.next();
             if (!iterKonstituentenPraedAdjPhr.hasNext()) {
-                // "Glücklich wirkt sie". Markiert - aber möglich.
+                // "Glücklich wirkt sie [, dich zu sehen].". Markiert - aber möglich.
                 return firstKonstituentePraedAdjPhr;
             }
 
             // else : Die prädikative Adjektivphrase erzeugt mehrere Konstituenten. Dann wollen
-            // wir sie nicht in das Vorfeld stellen. Dinge wie "Glücklich, dich zu sehen, wirkt
-            // sie." sind zwar möglich, wirken aber ziemlich unnatürlich.
-
-            // FIXME Die prädikative Adjektivphrase bei entsprechender Komplexität
-            //  diskontinuierlich aufgeteilt werden,
-            //  dann könnte ein Teil (nur eine der Konstituenten) ins Nachfeld kommen: "Sie hat
-            //  glücklich gewirkt, dich zu sehen."
-            //  Z.B.: return adjektivphrase.getNachfeldKandidat(personSubjekt, numerusSubjekt)
+            // wir sie nicht in das Vorfeld stellen. Dinge wie "Sehr glücklich wirkt
+            // sie." sind zwar möglich, wirken aber schnell unnatürlich.
         }
 
         return null;
@@ -158,7 +155,8 @@ public class PraedikatMitPraedikativerAdjektivphraseOhneLeerstellen
                 GermanUtil.joinToNullString(modalpartikeln), // "halt"
                 getAdverbialeAngabeSkopusVerbAllgDescriptionFuerMittelfeld(), // "erneut"
                 getAdverbialeAngabeSkopusVerbWohinWoherDescription(), // "nach außen" (?)
-                adjektivphrase.getPraedikativ(personSubjekt, numerusSubjekt) // "glücklich"
+                adjektivphrase.getPraedikativOhneAnteilKandidatFuerNachfeld(
+                        personSubjekt, numerusSubjekt) // "glücklich"
         );
     }
 
@@ -166,6 +164,8 @@ public class PraedikatMitPraedikativerAdjektivphraseOhneLeerstellen
     public Iterable<Konstituente> getNachfeld(final Person personSubjekt,
                                               final Numerus numerusSubjekt) {
         return Konstituente.joinToKonstituenten(
+                adjektivphrase.getPraedikativAnteilKandidatFuerNachfeld(
+                        personSubjekt, numerusSubjekt), // ", dich zu sehen"
                 getAdverbialeAngabeSkopusVerbAllgDescriptionFuerZwangsausklammerung());
     }
 

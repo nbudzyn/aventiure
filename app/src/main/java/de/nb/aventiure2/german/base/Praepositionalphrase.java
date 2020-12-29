@@ -1,5 +1,7 @@
 package de.nb.aventiure2.german.base;
 
+import com.google.common.collect.ImmutableList;
+
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
@@ -50,6 +52,12 @@ public class Praepositionalphrase implements Praedikativum {
                 modAdverbOderAdjektiv,
                 k(praepositionMitKasus.getDescription(substantivischePhraseOderReflPron))
         );
+    }
+
+    @Override
+    public Iterable<Konstituente> getPraedikativAnteilKandidatFuerNachfeld(final Person person,
+                                                                           final Numerus numerus) {
+        return ImmutableList.of();
     }
 
     public String getDescription() {

@@ -22,9 +22,8 @@ public enum VerbSubjPraedikativeAdjektivphrase implements Praedikat {
             "wirke", "wirkst", "wirkt", "wirkt",
             Perfektbildung.HABEN, "gewirkt");
 
-    // FIXME ""sieht ... aus"! Problem: Dann sollte die prädikative Adjektivphrase
-    //  diskontinuierlich aufgeteilt werden: Sie sieht gluecklich aus, dich zu treffen.
-    //  Außerdem vielleicht Dinge vermeiden wie "Sie sieht glücklich aus, dich zu sehen".
+    // FIXME ""sieht ... aus"! "Sie sieht gluecklich aus, dich zu treffen."
+    // FIXME Vielleicht Dinge vermeiden wie "Sie sieht glücklich aus, dich zu sehen".
 
     /**
      * Das Verb an sich, ohne Informationen zur Valenz, ohne Ergänzungen, ohne

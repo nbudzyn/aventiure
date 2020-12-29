@@ -41,6 +41,50 @@ public class ZweiAdjPhrOhneLeerstellen implements AdjPhrOhneLeerstellen {
     }
 
     @Override
+    public Iterable<Konstituente> getPraedikativAnteilKandidatFuerNachfeld(final Person person,
+                                                                           final Numerus numerus) {
+        final Iterable<Konstituente> ersterNachfeldAnteil =
+                ersteAdjPhr.getPraedikativAnteilKandidatFuerNachfeld(person, numerus);
+
+        final Iterable<Konstituente> zweiterNachfeldAnteil =
+                zweiteAdjPhr.getPraedikativAnteilKandidatFuerNachfeld(person, numerus);
+
+        if (ersterNachfeldAnteil.equals(zweiterNachfeldAnteil)) {
+            // -> "Sie ist glücklich und erfreut gewesen, dich zu sehen"
+            return zweiterNachfeldAnteil;
+        }
+
+        // -> "Sie ist glücklich, dich zu sehen, gewesen, UND ERFREUT, DICH SO BALD WIEDER
+        // ZU TREFFEN"
+        return Konstituente.withVorkommaNoetig(
+                Konstituente.joinToKonstituenten(
+                        "und",
+                        zweiteAdjPhr.getPraedikativ(person, numerus)
+                )
+        );
+    }
+
+    @Override
+    public Iterable<Konstituente> getPraedikativOhneAnteilKandidatFuerNachfeld(final Person person,
+                                                                               final Numerus numerus) {
+        final Iterable<Konstituente> ersterNachfeldAnteil =
+                ersteAdjPhr.getPraedikativAnteilKandidatFuerNachfeld(person, numerus);
+
+        final Iterable<Konstituente> zweiterNachfeldAnteil =
+                zweiteAdjPhr.getPraedikativAnteilKandidatFuerNachfeld(person, numerus);
+
+        if (ersterNachfeldAnteil.equals(zweiterNachfeldAnteil)) {
+            // -> "Sie ist glücklich und erfreut gewesen, dich zu sehen"
+            return AdjPhrOhneLeerstellen.super
+                    .getPraedikativOhneAnteilKandidatFuerNachfeld(person, numerus);
+        }
+
+        // -> "Sie ist GLÜCKLICH, DICH ZU SEHEN, gewesen, und erfreut, dich so bald wieder zu
+        // treffen"
+        return ersteAdjPhr.getPraedikativ(person, numerus);
+    }
+
+    @Override
     public boolean enthaeltZuInfinitivOderAngabensatzOderErgaenzungssatz() {
         return ersteAdjPhr.enthaeltZuInfinitivOderAngabensatzOderErgaenzungssatz() ||
                 zweiteAdjPhr.enthaeltZuInfinitivOderAngabensatzOderErgaenzungssatz();

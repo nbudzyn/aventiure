@@ -47,6 +47,12 @@ public enum AdjektivOhneErgaenzungen implements AdjPhrOhneLeerstellen {
     }
 
     @Override
+    public Iterable<Konstituente> getPraedikativAnteilKandidatFuerNachfeld(final Person person,
+                                                                           final Numerus numerus) {
+        return toAdjPhr().getPraedikativAnteilKandidatFuerNachfeld(person, numerus);
+    }
+
+    @Override
     public boolean enthaeltZuInfinitivOderAngabensatzOderErgaenzungssatz() {
         return toAdjPhr().enthaeltZuInfinitivOderAngabensatzOderErgaenzungssatz();
     }
