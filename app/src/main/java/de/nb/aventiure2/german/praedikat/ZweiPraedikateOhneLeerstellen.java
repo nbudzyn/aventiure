@@ -63,21 +63,29 @@ class ZweiPraedikateOhneLeerstellen
     }
 
     @Override
-    public Iterable<Konstituente> getDuSatzanschlussOhneSubjekt(
-            final Collection<Modalpartikel> modalpartikeln) {
+    public Iterable<Konstituente> getDuSatzanschlussOhneSubjekt() {
         if (ersterSatz.duHauptsatzLaesstSichMitNachfolgendemDuHauptsatzZusammenziehen()) {
             return Konstituente.joinToKonstituenten(
-                    ersterSatz.getDuSatzanschlussOhneSubjekt(modalpartikeln),
+                    ersterSatz.getDuSatzanschlussOhneSubjekt(),
                     // "hebst die goldene Kugel auf"
                     "und",
-                    zweiterSatz.getDuSatzanschlussOhneSubjekt(modalpartikeln)); // "nimmst ein Bad"
+                    zweiterSatz.getDuSatzanschlussOhneSubjekt()); // "nimmst ein Bad"
         }
 
         return Konstituente.joinToKonstituenten(
-                ersterSatz.getDuSatzanschlussOhneSubjekt(modalpartikeln),
+                ersterSatz.getDuSatzanschlussOhneSubjekt(),
                 // "hebst die goldene Kugel auf"
                 ";",
                 zweiterSatz.getDuHauptsatz()); // "du nimmst ein Bad"
+    }
+
+    @Override
+    public PraedikatOhneLeerstellen mitModalpartikeln(
+            final Collection<Modalpartikel> modalpartikeln) {
+        return new ZweiPraedikateOhneLeerstellen(
+                ersterSatz.mitModalpartikeln(modalpartikeln),
+                zweiterSatz
+        );
     }
 
     @Override

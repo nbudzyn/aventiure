@@ -73,6 +73,12 @@ public enum VerbSubj implements PraedikatOhneLeerstellen {
     }
 
     @Override
+    public PraedikatOhneLeerstellen mitModalpartikeln(
+            final Collection<Modalpartikel> modalpartikeln) {
+        return toPraedikatSubj().mitModalpartikeln(modalpartikeln);
+    }
+
+    @Override
     public PraedikatOhneLeerstellen mitAdverbialerAngabe(
             @Nullable final AdverbialeAngabeSkopusSatz adverbialeAngabe) {
         return toPraedikatSubj().mitAdverbialerAngabe(adverbialeAngabe);
@@ -91,9 +97,8 @@ public enum VerbSubj implements PraedikatOhneLeerstellen {
     }
 
     @Override
-    public Iterable<Konstituente> getDuSatzanschlussOhneSubjekt(
-            final Collection<Modalpartikel> modalpartikeln) {
-        return toPraedikatSubj().getDuSatzanschlussOhneSubjekt(modalpartikeln);
+    public Iterable<Konstituente> getDuSatzanschlussOhneSubjekt() {
+        return toPraedikatSubj().getDuSatzanschlussOhneSubjekt();
     }
 
     @Override

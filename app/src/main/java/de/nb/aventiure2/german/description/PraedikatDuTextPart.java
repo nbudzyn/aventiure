@@ -2,7 +2,6 @@ package de.nb.aventiure2.german.description;
 
 import de.nb.aventiure2.german.base.Wortfolge;
 import de.nb.aventiure2.german.praedikat.AbstractDuTextPart;
-import de.nb.aventiure2.german.praedikat.Modalpartikel;
 import de.nb.aventiure2.german.praedikat.PraedikatOhneLeerstellen;
 
 public class PraedikatDuTextPart implements AbstractDuTextPart {
@@ -14,8 +13,7 @@ public class PraedikatDuTextPart implements AbstractDuTextPart {
 
     @Override
     public Wortfolge getDuHauptsatz() {
-        return Wortfolge.joinToNullWortfolge(
-                praedikat.getDuHauptsatz(new Modalpartikel[0]));
+        return Wortfolge.joinToNullWortfolge(praedikat.getDuHauptsatz());
     }
 
     @Override

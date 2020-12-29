@@ -2,6 +2,8 @@ package de.nb.aventiure2.german.praedikat;
 
 import androidx.annotation.Nullable;
 
+import com.google.common.collect.ImmutableList;
+
 import de.nb.aventiure2.german.base.KasusOderPraepositionalkasus;
 import de.nb.aventiure2.german.base.SubstantivischePhrase;
 
@@ -51,7 +53,8 @@ class PraedikatMitEinerObjLeerstelle implements PraedikatMitEinerObjektleerstell
             final SubstantivischePhrase describable) {
         return new PraedikatSubjObjOhneLeerstellen(verb,
                 kasusOderPraepositionalkasus,
-                describable, null, null,
+                describable, ImmutableList.of(),
+                null, null,
                 adverbialeAngabeSkopusVerbWohinWoher);
     }
 }

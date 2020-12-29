@@ -2,6 +2,9 @@ package de.nb.aventiure2.german.praedikat;
 
 import androidx.annotation.NonNull;
 
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.Iterables;
+
 import java.util.Collection;
 
 import javax.annotation.Nullable;
@@ -45,7 +48,7 @@ public class PraedikatDatAkkOhneLeerstellen
             final SubstantivischePhrase dat,
             final SubstantivischePhrase akk) {
         this(verb, dat, akk,
-                null, null,
+                ImmutableList.of(), null, null,
                 null);
     }
 
@@ -53,14 +56,27 @@ public class PraedikatDatAkkOhneLeerstellen
             final Verb verb,
             final SubstantivischePhrase dat,
             final SubstantivischePhrase akk,
+            final Iterable<Modalpartikel> modalpartikeln,
             @Nullable final AdverbialeAngabeSkopusSatz adverbialeAngabeSkopusSatz,
             @Nullable final AdverbialeAngabeSkopusVerbAllg adverbialeAngabeSkopusVerbAllg,
             @Nullable
             final AdverbialeAngabeSkopusVerbWohinWoher adverbialeAngabeSkopusVerbWohinWoher) {
-        super(verb, adverbialeAngabeSkopusSatz,
+        super(verb, modalpartikeln, adverbialeAngabeSkopusSatz,
                 adverbialeAngabeSkopusVerbAllg, adverbialeAngabeSkopusVerbWohinWoher);
         this.dat = dat;
         this.akk = akk;
+    }
+
+    @Override
+    public PraedikatDatAkkOhneLeerstellen mitModalpartikeln(
+            final Collection<Modalpartikel> modalpartikeln) {
+        return new PraedikatDatAkkOhneLeerstellen(
+                getVerb(), dat, akk,
+                Iterables.concat(getModalpartikeln(), modalpartikeln),
+                getAdverbialeAngabeSkopusSatz(),
+                getAdverbialeAngabeSkopusVerbAllg(),
+                getAdverbialeAngabeSkopusVerbWohinWoher()
+        );
     }
 
     @Override
@@ -73,6 +89,7 @@ public class PraedikatDatAkkOhneLeerstellen
         return new PraedikatDatAkkOhneLeerstellen(
                 getVerb(),
                 dat, akk,
+                getModalpartikeln(),
                 adverbialeAngabe, getAdverbialeAngabeSkopusVerbAllg(),
                 getAdverbialeAngabeSkopusVerbWohinWoher()
         );
@@ -88,6 +105,7 @@ public class PraedikatDatAkkOhneLeerstellen
         return new PraedikatDatAkkOhneLeerstellen(
                 getVerb(),
                 dat, akk,
+                getModalpartikeln(),
                 getAdverbialeAngabeSkopusSatz(), adverbialeAngabe,
                 getAdverbialeAngabeSkopusVerbWohinWoher()
         );
@@ -104,6 +122,7 @@ public class PraedikatDatAkkOhneLeerstellen
         return new PraedikatDatAkkOhneLeerstellen(
                 getVerb(),
                 dat, akk,
+                getModalpartikeln(),
                 getAdverbialeAngabeSkopusSatz(),
                 getAdverbialeAngabeSkopusVerbAllg(),
                 adverbialeAngabe

@@ -117,9 +117,11 @@ public class DescriptionUmformulierer {
 
                 final Wortfolge duNimmstDieKugelBesserDoch =
                         Wortfolge.joinToNullWortfolge(
-                                pDuDesc.getPraedikat().getDuHauptsatz(
-                                        new Modalpartikel("besser"),
-                                        new Modalpartikel("doch")));
+                                pDuDesc.getPraedikat()
+                                        .mitModalpartikeln(
+                                                new Modalpartikel("besser"),
+                                                new Modalpartikel("doch"))
+                                        .getDuHauptsatz());
                 alt.add(neuerSatz(
                         max(duDesc.getStartsNew(), SENTENCE),
                         "Ach nein, " +

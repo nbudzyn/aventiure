@@ -1,5 +1,8 @@
 package de.nb.aventiure2.german.praedikat;
 
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.Iterables;
+
 import java.util.Collection;
 
 import javax.annotation.Nullable;
@@ -33,6 +36,7 @@ class PraedikatSubjReflPraepositionalkasusAkkObjOhneLeerstellen
             final VerbReflPraepositionalkasusAkkObj verbReflPraepositionalkasusAkkObj,
             final SubstantivischePhrase akkObj) {
         this(verbReflPraepositionalkasusAkkObj, akkObj,
+                ImmutableList.of(),
                 null, null,
                 null);
     }
@@ -40,15 +44,28 @@ class PraedikatSubjReflPraepositionalkasusAkkObjOhneLeerstellen
     private PraedikatSubjReflPraepositionalkasusAkkObjOhneLeerstellen(
             final VerbReflPraepositionalkasusAkkObj verbReflPraepositionalkasusAkkObj,
             final SubstantivischePhrase akkObj,
+            final Iterable<Modalpartikel> modalpartikeln,
             @Nullable final AdverbialeAngabeSkopusSatz adverbialeAngabeSkopusSatz,
             @Nullable final AdverbialeAngabeSkopusVerbAllg adverbialeAngabeSkopusVerbAllg,
             @Nullable
             final AdverbialeAngabeSkopusVerbWohinWoher adverbialeAngabeSkopusVerbWohinWoher) {
         super(verbReflPraepositionalkasusAkkObj.getVerb(),
-                adverbialeAngabeSkopusSatz, adverbialeAngabeSkopusVerbAllg,
+                modalpartikeln, adverbialeAngabeSkopusSatz, adverbialeAngabeSkopusVerbAllg,
                 adverbialeAngabeSkopusVerbWohinWoher);
         this.verbReflPraepositionalkasusAkkObj = verbReflPraepositionalkasusAkkObj;
         this.akkObj = akkObj;
+    }
+
+    @Override
+    public PraedikatSubjReflPraepositionalkasusAkkObjOhneLeerstellen mitModalpartikeln(
+            final Collection<Modalpartikel> modalpartikeln) {
+        return new PraedikatSubjReflPraepositionalkasusAkkObjOhneLeerstellen(
+                verbReflPraepositionalkasusAkkObj, akkObj,
+                Iterables.concat(getModalpartikeln(), modalpartikeln),
+                getAdverbialeAngabeSkopusSatz(),
+                getAdverbialeAngabeSkopusVerbAllg(),
+                getAdverbialeAngabeSkopusVerbWohinWoher()
+        );
     }
 
     @Override
@@ -60,6 +77,7 @@ class PraedikatSubjReflPraepositionalkasusAkkObjOhneLeerstellen
 
         return new PraedikatSubjReflPraepositionalkasusAkkObjOhneLeerstellen(
                 verbReflPraepositionalkasusAkkObj, akkObj,
+                getModalpartikeln(),
                 adverbialeAngabe, getAdverbialeAngabeSkopusVerbAllg(),
                 getAdverbialeAngabeSkopusVerbWohinWoher()
         );
@@ -74,6 +92,7 @@ class PraedikatSubjReflPraepositionalkasusAkkObjOhneLeerstellen
 
         return new PraedikatSubjReflPraepositionalkasusAkkObjOhneLeerstellen(
                 verbReflPraepositionalkasusAkkObj, akkObj,
+                getModalpartikeln(),
                 getAdverbialeAngabeSkopusSatz(), adverbialeAngabe,
                 getAdverbialeAngabeSkopusVerbWohinWoher()
         );
@@ -88,6 +107,7 @@ class PraedikatSubjReflPraepositionalkasusAkkObjOhneLeerstellen
 
         return new PraedikatSubjReflPraepositionalkasusAkkObjOhneLeerstellen(
                 verbReflPraepositionalkasusAkkObj, akkObj,
+                getModalpartikeln(),
                 getAdverbialeAngabeSkopusSatz(),
                 getAdverbialeAngabeSkopusVerbAllg(),
                 adverbialeAngabe

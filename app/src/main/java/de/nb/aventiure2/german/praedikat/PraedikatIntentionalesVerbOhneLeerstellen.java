@@ -1,6 +1,9 @@
 package de.nb.aventiure2.german.praedikat;
 
 
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.Iterables;
+
 import java.util.Collection;
 
 import javax.annotation.Nonnull;
@@ -40,22 +43,37 @@ public class PraedikatIntentionalesVerbOhneLeerstellen
     PraedikatIntentionalesVerbOhneLeerstellen(
             final Verb verb,
             final PraedikatOhneLeerstellen lexikalischerKern) {
-        this(verb,
+        this(verb, ImmutableList.of(),
                 null, null,
                 null, lexikalischerKern);
     }
 
     private PraedikatIntentionalesVerbOhneLeerstellen(
             final Verb verb,
+            final Iterable<Modalpartikel> modalpartikeln,
             @Nullable final AdverbialeAngabeSkopusSatz adverbialeAngabeSkopusSatz,
             @Nullable final AdverbialeAngabeSkopusVerbAllg adverbialeAngabeSkopusVerbAllg,
             @Nullable
             final AdverbialeAngabeSkopusVerbWohinWoher adverbialeAngabeSkopusVerbWohinWoher,
             final PraedikatOhneLeerstellen lexikalischerKern) {
-        super(verb, adverbialeAngabeSkopusSatz,
+        super(verb, modalpartikeln, adverbialeAngabeSkopusSatz,
                 adverbialeAngabeSkopusVerbAllg, adverbialeAngabeSkopusVerbWohinWoher);
         this.lexikalischerKern = lexikalischerKern;
     }
+
+    @Override
+    public PraedikatIntentionalesVerbOhneLeerstellen mitModalpartikeln(
+            final Collection<Modalpartikel> modalpartikeln) {
+        return new PraedikatIntentionalesVerbOhneLeerstellen(
+                getVerb(),
+                Iterables.concat(getModalpartikeln(), modalpartikeln),
+                getAdverbialeAngabeSkopusSatz(),
+                getAdverbialeAngabeSkopusVerbAllg(),
+                getAdverbialeAngabeSkopusVerbWohinWoher(),
+                lexikalischerKern
+        );
+    }
+
 
     @Override
     public PraedikatIntentionalesVerbOhneLeerstellen mitAdverbialerAngabe(
@@ -66,6 +84,7 @@ public class PraedikatIntentionalesVerbOhneLeerstellen
 
         return new PraedikatIntentionalesVerbOhneLeerstellen(
                 getVerb(),
+                getModalpartikeln(),
                 adverbialeAngabe, getAdverbialeAngabeSkopusVerbAllg(),
                 getAdverbialeAngabeSkopusVerbWohinWoher(),
                 lexikalischerKern);
@@ -80,6 +99,7 @@ public class PraedikatIntentionalesVerbOhneLeerstellen
 
         return new PraedikatIntentionalesVerbOhneLeerstellen(
                 getVerb(),
+                getModalpartikeln(),
                 getAdverbialeAngabeSkopusSatz(), adverbialeAngabe,
                 getAdverbialeAngabeSkopusVerbWohinWoher(),
                 lexikalischerKern
@@ -95,6 +115,7 @@ public class PraedikatIntentionalesVerbOhneLeerstellen
 
         return new PraedikatIntentionalesVerbOhneLeerstellen(
                 getVerb(),
+                getModalpartikeln(),
                 getAdverbialeAngabeSkopusSatz(),
                 getAdverbialeAngabeSkopusVerbAllg(),
                 adverbialeAngabe,

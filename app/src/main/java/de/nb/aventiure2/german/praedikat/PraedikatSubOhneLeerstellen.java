@@ -1,5 +1,8 @@
 package de.nb.aventiure2.german.praedikat;
 
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.Iterables;
+
 import java.util.Collection;
 
 import javax.annotation.Nullable;
@@ -20,19 +23,32 @@ public class PraedikatSubOhneLeerstellen
 
     @Valenz
     PraedikatSubOhneLeerstellen(final Verb verb) {
-        this(verb,
+        this(verb, ImmutableList.of(),
                 null, null,
                 null);
     }
 
     private PraedikatSubOhneLeerstellen(
             final Verb verb,
+            final Iterable<Modalpartikel> modalpartikeln,
             @Nullable final AdverbialeAngabeSkopusSatz adverbialeAngabeSkopusSatz,
             @Nullable final AdverbialeAngabeSkopusVerbAllg adverbialeAngabeSkopusVerbAllg,
             @Nullable
             final AdverbialeAngabeSkopusVerbWohinWoher adverbialeAngabeSkopusVerbWohinWoher) {
-        super(verb, adverbialeAngabeSkopusSatz,
+        super(verb, modalpartikeln, adverbialeAngabeSkopusSatz,
                 adverbialeAngabeSkopusVerbAllg, adverbialeAngabeSkopusVerbWohinWoher);
+    }
+
+    @Override
+    public PraedikatSubOhneLeerstellen mitModalpartikeln(
+            final Collection<Modalpartikel> modalpartikeln) {
+        return new PraedikatSubOhneLeerstellen(
+                getVerb(),
+                Iterables.concat(getModalpartikeln(), modalpartikeln),
+                getAdverbialeAngabeSkopusSatz(),
+                getAdverbialeAngabeSkopusVerbAllg(),
+                getAdverbialeAngabeSkopusVerbWohinWoher()
+        );
     }
 
     @Override
@@ -43,11 +59,12 @@ public class PraedikatSubOhneLeerstellen
         }
 
         return new PraedikatSubOhneLeerstellen(
-                getVerb(),
+                getVerb(), getModalpartikeln(),
                 adverbialeAngabe, getAdverbialeAngabeSkopusVerbAllg(),
                 getAdverbialeAngabeSkopusVerbWohinWoher()
         );
     }
+
 
     @Override
     public PraedikatSubOhneLeerstellen mitAdverbialerAngabe(
@@ -58,6 +75,7 @@ public class PraedikatSubOhneLeerstellen
 
         return new PraedikatSubOhneLeerstellen(
                 getVerb(),
+                getModalpartikeln(),
                 getAdverbialeAngabeSkopusSatz(), adverbialeAngabe,
                 getAdverbialeAngabeSkopusVerbWohinWoher()
         );
@@ -72,6 +90,7 @@ public class PraedikatSubOhneLeerstellen
 
         return new PraedikatSubOhneLeerstellen(
                 getVerb(),
+                getModalpartikeln(),
                 getAdverbialeAngabeSkopusSatz(),
                 getAdverbialeAngabeSkopusVerbAllg(),
                 adverbialeAngabe

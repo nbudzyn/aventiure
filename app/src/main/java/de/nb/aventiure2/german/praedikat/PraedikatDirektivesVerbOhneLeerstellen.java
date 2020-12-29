@@ -3,6 +3,9 @@ package de.nb.aventiure2.german.praedikat;
 
 import androidx.annotation.NonNull;
 
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.Iterables;
+
 import java.util.Collection;
 
 import javax.annotation.Nonnull;
@@ -59,7 +62,7 @@ public class PraedikatDirektivesVerbOhneLeerstellen
             final SubstantivischePhrase objekt,
             final PraedikatOhneLeerstellen lexikalischerKern) {
         this(verb, kasus, objekt,
-                null, null,
+                ImmutableList.of(), null, null,
                 null, lexikalischerKern);
     }
 
@@ -67,16 +70,30 @@ public class PraedikatDirektivesVerbOhneLeerstellen
             final Verb verb,
             final Kasus kasus,
             final SubstantivischePhrase objekt,
+            final Iterable<Modalpartikel> modalpartikeln,
             @Nullable final AdverbialeAngabeSkopusSatz adverbialeAngabeSkopusSatz,
             @Nullable final AdverbialeAngabeSkopusVerbAllg adverbialeAngabeSkopusVerbAllg,
             @Nullable
             final AdverbialeAngabeSkopusVerbWohinWoher adverbialeAngabeSkopusVerbWohinWoher,
             final PraedikatOhneLeerstellen lexikalischerKern) {
-        super(verb, adverbialeAngabeSkopusSatz,
+        super(verb, modalpartikeln, adverbialeAngabeSkopusSatz,
                 adverbialeAngabeSkopusVerbAllg, adverbialeAngabeSkopusVerbWohinWoher);
         this.kasus = kasus;
         this.objekt = objekt;
         this.lexikalischerKern = lexikalischerKern;
+    }
+
+    @Override
+    public PraedikatDirektivesVerbOhneLeerstellen mitModalpartikeln(
+            final Collection<Modalpartikel> modalpartikeln) {
+        return new PraedikatDirektivesVerbOhneLeerstellen(
+                getVerb(), kasus, objekt,
+                Iterables.concat(getModalpartikeln(), modalpartikeln),
+                getAdverbialeAngabeSkopusSatz(),
+                getAdverbialeAngabeSkopusVerbAllg(),
+                getAdverbialeAngabeSkopusVerbWohinWoher(),
+                lexikalischerKern
+        );
     }
 
     @Override
@@ -90,6 +107,7 @@ public class PraedikatDirektivesVerbOhneLeerstellen
                 getVerb(),
                 kasus,
                 objekt,
+                getModalpartikeln(),
                 adverbialeAngabe, getAdverbialeAngabeSkopusVerbAllg(),
                 getAdverbialeAngabeSkopusVerbWohinWoher(),
                 lexikalischerKern);
@@ -106,6 +124,7 @@ public class PraedikatDirektivesVerbOhneLeerstellen
                 getVerb(),
                 kasus,
                 objekt,
+                getModalpartikeln(),
                 getAdverbialeAngabeSkopusSatz(), adverbialeAngabe,
                 getAdverbialeAngabeSkopusVerbWohinWoher(),
                 lexikalischerKern
@@ -123,6 +142,7 @@ public class PraedikatDirektivesVerbOhneLeerstellen
                 getVerb(),
                 kasus,
                 objekt,
+                getModalpartikeln(),
                 getAdverbialeAngabeSkopusSatz(),
                 getAdverbialeAngabeSkopusVerbAllg(),
                 adverbialeAngabe,

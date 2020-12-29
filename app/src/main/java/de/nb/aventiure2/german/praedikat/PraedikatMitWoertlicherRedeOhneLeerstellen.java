@@ -2,6 +2,9 @@ package de.nb.aventiure2.german.praedikat;
 
 import androidx.annotation.NonNull;
 
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.Iterables;
+
 import java.util.Collection;
 
 import javax.annotation.Nullable;
@@ -40,20 +43,34 @@ public class PraedikatMitWoertlicherRedeOhneLeerstellen
     @Valenz
     PraedikatMitWoertlicherRedeOhneLeerstellen(
             final Verb verb, final WoertlicheRede woertlicheRede) {
-        this(verb, woertlicheRede, null,
+        this(verb, woertlicheRede, ImmutableList.of(), null,
                 null, null);
     }
 
     private PraedikatMitWoertlicherRedeOhneLeerstellen(
             final Verb verb, final WoertlicheRede woertlicheRede,
+            final Iterable<Modalpartikel> modalpartikeln,
             @Nullable final AdverbialeAngabeSkopusSatz adverbialeAngabeSkopusSatz,
             @Nullable final AdverbialeAngabeSkopusVerbAllg adverbialeAngabeSkopusVerbAllg,
             @Nullable
             final AdverbialeAngabeSkopusVerbWohinWoher adverbialeAngabeSkopusVerbWohinWoher) {
-        super(verb, adverbialeAngabeSkopusSatz,
+        super(verb, modalpartikeln, adverbialeAngabeSkopusSatz,
                 adverbialeAngabeSkopusVerbAllg, adverbialeAngabeSkopusVerbWohinWoher);
         this.woertlicheRede = woertlicheRede;
     }
+
+    @Override
+    public PraedikatMitWoertlicherRedeOhneLeerstellen mitModalpartikeln(
+            final Collection<Modalpartikel> modalpartikeln) {
+        return new PraedikatMitWoertlicherRedeOhneLeerstellen(
+                getVerb(), woertlicheRede,
+                Iterables.concat(getModalpartikeln(), modalpartikeln),
+                getAdverbialeAngabeSkopusSatz(),
+                getAdverbialeAngabeSkopusVerbAllg(),
+                getAdverbialeAngabeSkopusVerbWohinWoher()
+        );
+    }
+
 
     @Override
     public PraedikatMitWoertlicherRedeOhneLeerstellen mitAdverbialerAngabe(
@@ -65,6 +82,7 @@ public class PraedikatMitWoertlicherRedeOhneLeerstellen
         return new PraedikatMitWoertlicherRedeOhneLeerstellen(
                 getVerb(),
                 woertlicheRede,
+                getModalpartikeln(),
                 adverbialeAngabe, getAdverbialeAngabeSkopusVerbAllg(),
                 getAdverbialeAngabeSkopusVerbWohinWoher()
         );
@@ -80,6 +98,7 @@ public class PraedikatMitWoertlicherRedeOhneLeerstellen
         return new PraedikatMitWoertlicherRedeOhneLeerstellen(
                 getVerb(),
                 woertlicheRede,
+                getModalpartikeln(),
                 getAdverbialeAngabeSkopusSatz(), adverbialeAngabe,
                 getAdverbialeAngabeSkopusVerbWohinWoher()
         );
@@ -95,6 +114,7 @@ public class PraedikatMitWoertlicherRedeOhneLeerstellen
         return new PraedikatMitWoertlicherRedeOhneLeerstellen(
                 getVerb(),
                 woertlicheRede,
+                getModalpartikeln(),
                 getAdverbialeAngabeSkopusSatz(),
                 getAdverbialeAngabeSkopusVerbAllg(),
                 adverbialeAngabe

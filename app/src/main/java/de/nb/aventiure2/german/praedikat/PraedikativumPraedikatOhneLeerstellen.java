@@ -1,5 +1,8 @@
 package de.nb.aventiure2.german.praedikat;
 
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.Iterables;
+
 import java.util.Collection;
 
 import javax.annotation.Nullable;
@@ -37,6 +40,7 @@ public class PraedikativumPraedikatOhneLeerstellen
     private PraedikativumPraedikatOhneLeerstellen(final Verb verb,
                                                   final Praedikativum praedikativum) {
         this(verb, praedikativum,
+                ImmutableList.of(),
                 null, null,
                 null);
     }
@@ -44,13 +48,26 @@ public class PraedikativumPraedikatOhneLeerstellen
     private PraedikativumPraedikatOhneLeerstellen(
             final Verb verb,
             final Praedikativum praedikativum,
+            final Iterable<Modalpartikel> modalpartikeln,
             @Nullable final AdverbialeAngabeSkopusSatz adverbialeAngabeSkopusSatz,
             @Nullable final AdverbialeAngabeSkopusVerbAllg adverbialeAngabeSkopusVerbAllg,
             @Nullable
             final AdverbialeAngabeSkopusVerbWohinWoher adverbialeAngabeSkopusVerbWohinWoher) {
-        super(verb, adverbialeAngabeSkopusSatz,
+        super(verb, modalpartikeln, adverbialeAngabeSkopusSatz,
                 adverbialeAngabeSkopusVerbAllg, adverbialeAngabeSkopusVerbWohinWoher);
         this.praedikativum = praedikativum;
+    }
+
+    @Override
+    public PraedikativumPraedikatOhneLeerstellen mitModalpartikeln(
+            final Collection<Modalpartikel> modalpartikeln) {
+        return new PraedikativumPraedikatOhneLeerstellen(
+                getVerb(), praedikativum,
+                Iterables.concat(getModalpartikeln(), modalpartikeln),
+                getAdverbialeAngabeSkopusSatz(),
+                getAdverbialeAngabeSkopusVerbAllg(),
+                getAdverbialeAngabeSkopusVerbWohinWoher()
+        );
     }
 
     @Override
@@ -63,6 +80,7 @@ public class PraedikativumPraedikatOhneLeerstellen
         return new PraedikativumPraedikatOhneLeerstellen(
                 getVerb(),
                 praedikativum,
+                getModalpartikeln(),
                 adverbialeAngabe, getAdverbialeAngabeSkopusVerbAllg(),
                 getAdverbialeAngabeSkopusVerbWohinWoher()
         );
@@ -78,6 +96,7 @@ public class PraedikativumPraedikatOhneLeerstellen
         return new PraedikativumPraedikatOhneLeerstellen(
                 getVerb(),
                 praedikativum,
+                getModalpartikeln(),
                 getAdverbialeAngabeSkopusSatz(), adverbialeAngabe,
                 getAdverbialeAngabeSkopusVerbWohinWoher()
         );
@@ -94,6 +113,7 @@ public class PraedikativumPraedikatOhneLeerstellen
         return new PraedikativumPraedikatOhneLeerstellen(
                 getVerb(),
                 praedikativum,
+                getModalpartikeln(),
                 getAdverbialeAngabeSkopusSatz(),
                 getAdverbialeAngabeSkopusVerbAllg(),
                 adverbialeAngabe

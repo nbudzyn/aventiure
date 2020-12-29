@@ -1,5 +1,6 @@
 package de.nb.aventiure2.german.praedikat;
 
+import java.util.Arrays;
 import java.util.Collection;
 
 import javax.annotation.Nullable;
@@ -10,8 +11,6 @@ import de.nb.aventiure2.german.base.Person;
 import de.nb.aventiure2.german.base.SubstantivischePhrase;
 import de.nb.aventiure2.german.satz.Satz;
 
-import static java.util.Arrays.asList;
-
 /**
  * Ein Prädikat im Sinne eines Verbs mit allen Ergänzungen und Angaben, jedoch ohne Subjekt, bei
  * dem alle Leerstellen besetzt sind ("mit dem Frosch reden").
@@ -19,29 +18,24 @@ import static java.util.Arrays.asList;
  * @see de.nb.aventiure2.german.satz.Satz
  */
 public interface PraedikatOhneLeerstellen extends Praedikat {
-    default Satz alsSatzMitSubjekt(final SubstantivischePhrase subjekt) {
-        return new Satz(subjekt, this);
+    default PraedikatOhneLeerstellen mitModalpartikeln(final Modalpartikel... modalpartikeln) {
+        return mitModalpartikeln(Arrays.asList(modalpartikeln));
     }
 
-    default Iterable<Konstituente> getDuHauptsatz() {
-        return getDuHauptsatz(new Modalpartikel[0]);
+    PraedikatOhneLeerstellen mitModalpartikeln(final Collection<Modalpartikel> modalpartikeln);
+
+    default Satz alsSatzMitSubjekt(final SubstantivischePhrase subjekt) {
+        return new Satz(subjekt, this);
     }
 
     /**
      * Gibt einen Satz zurück mit diesem Prädikat
      * ("Du nimmst den Ast")
-     * und ggf. diesen Modalpartikeln, die sich <i>auf das gesamte
-     * Prädikat beziehen</i>
-     * ("Du nimmst den Ast besser doch")
      */
-    default Iterable<Konstituente> getDuHauptsatz(final Modalpartikel... modalpartikeln) {
-        return getDuHauptsatz(asList(modalpartikeln));
-    }
-
-    default Iterable<Konstituente> getDuHauptsatz(final Collection<Modalpartikel> modalpartikeln) {
+    default Iterable<Konstituente> getDuHauptsatz() {
         return Konstituente.joinToKonstituenten(
                 "Du ",
-                getDuSatzanschlussOhneSubjekt(modalpartikeln));
+                getDuSatzanschlussOhneSubjekt());
     }
 
     Iterable<Konstituente> getDuHauptsatzMitVorfeld(String vorfeld);
@@ -52,27 +46,7 @@ public interface PraedikatOhneLeerstellen extends Praedikat {
      * Gibt einen Satz zurück mit diesem Prädikat, bei dem das Subjekt, das im Vorfeld
      * stünde, eingespart ist ("nimmst den Ast")
      */
-    default Iterable<Konstituente> getDuSatzanschlussOhneSubjekt() {
-        return getDuSatzanschlussOhneSubjekt(new Modalpartikel[0]);
-    }
-
-    /**
-     * Gibt einen Satz zurück mit diesem Prädikat, bei dem das Subjekt, das im Vorfeld
-     * stünde, eingespart ist ("nimmst den Ast")
-     */
-    default Iterable<Konstituente> getDuSatzanschlussOhneSubjekt(
-            final Modalpartikel... modalpartikeln) {
-        return getDuSatzanschlussOhneSubjekt(asList(modalpartikeln)
-        );
-    }
-
-    /**
-     * Gibt einen Satz zurück mit diesem Prädikat, bei dem das Subjekt, das im Vorfeld
-     * stünde, eingespart ist ("nimmst den Ast"), sowie ggf. diesen
-     * Modalpartikeln ("nimmst den Ast eben doch").
-     */
-    Iterable<Konstituente> getDuSatzanschlussOhneSubjekt(
-            final Collection<Modalpartikel> modalpartikeln);
+    Iterable<Konstituente> getDuSatzanschlussOhneSubjekt();
 
     boolean duHauptsatzLaesstSichMitNachfolgendemDuHauptsatzZusammenziehen();
 

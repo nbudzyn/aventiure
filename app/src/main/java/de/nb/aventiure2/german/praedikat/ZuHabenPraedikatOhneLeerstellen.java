@@ -37,6 +37,17 @@ public class ZuHabenPraedikatOhneLeerstellen implements PraedikatOhneLeerstellen
     }
 
     @Override
+    public PraedikatOhneLeerstellen mitModalpartikeln(
+            final Collection<Modalpartikel> modalpartikeln) {
+        // Bei einem Prädikat wie "Halt noch etwas zu berichten haben"
+        // kann man nicht differenzieren zwischen *"halt berichten" und *"halt zu haben".
+        // Deshalb speichern wir die Modalpartikeln im lexikalischen Kern und erlauben keine
+        // zusätzlichen Angaben für "zu haben".
+        return new ZuHabenPraedikatOhneLeerstellen(
+                lexikalischerKern.mitModalpartikeln(modalpartikeln));
+    }
+
+    @Override
     public ZuHabenPraedikatOhneLeerstellen mitAdverbialerAngabe(
             @Nullable final AdverbialeAngabeSkopusSatz adverbialeAngabe) {
         // Bei einem Prädikat wie "Leider noch etwas zu berichten haben"
@@ -68,19 +79,12 @@ public class ZuHabenPraedikatOhneLeerstellen implements PraedikatOhneLeerstellen
     }
 
     @Override
-    public Iterable<Konstituente> getDuSatzanschlussOhneSubjekt(
-            final Collection<Modalpartikel> modalpartikeln) {
+    public Iterable<Konstituente> getDuSatzanschlussOhneSubjekt() {
         // hast Spannendes zu berichten
         // hast dich zu waschen
         // hast zu sagen: "Hallo!"
         return Konstituente.joinToKonstituenten(
                 HabenUtil.VERB.getDuFormOhnePartikel(),
-                // FIXME eigentlich sollte es lexikalischerKern.mitModalpartikeln()
-                //  oder so ähnlich heißen (oder als adverbiale Angaben?).
-                //  Derzeit gehen hier die modalpartikeln einfach verloren.
-                //  Modalpartikeln sollten besser zu einem
-                //  neuen "AbstractPraedikat" führen, dass man dann auch speichern
-                //  und weiterreichen kann!
                 lexikalischerKern.getZuInfinitiv(P2, SG));
     }
 

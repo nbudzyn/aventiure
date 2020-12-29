@@ -2,6 +2,8 @@ package de.nb.aventiure2.german.praedikat;
 
 import androidx.annotation.NonNull;
 
+import com.google.common.collect.ImmutableList;
+
 import java.util.Collection;
 
 import javax.annotation.Nullable;
@@ -36,6 +38,9 @@ public abstract class AbstractAngabenfaehigesPraedikatOhneLeerstellen
     private final Verb verb;
 
     @Nullable
+    private final ImmutableList<Modalpartikel> modalpartikeln;
+
+    @Nullable
     private final AdverbialeAngabeSkopusSatz adverbialeAngabeSkopusSatz;
 
     @Nullable
@@ -45,16 +50,18 @@ public abstract class AbstractAngabenfaehigesPraedikatOhneLeerstellen
     private final AdverbialeAngabeSkopusVerbWohinWoher adverbialeAngabeSkopusVerbWohinWoher;
 
     public AbstractAngabenfaehigesPraedikatOhneLeerstellen(final Verb verb) {
-        this(verb, null, null, null);
+        this(verb, ImmutableList.of(), null, null, null);
     }
 
     AbstractAngabenfaehigesPraedikatOhneLeerstellen(
             final Verb verb,
+            final Iterable<Modalpartikel> modalpartikeln,
             @Nullable final AdverbialeAngabeSkopusSatz adverbialeAngabeSkopusSatz,
             @Nullable final AdverbialeAngabeSkopusVerbAllg adverbialeAngabeSkopusVerbAllg,
             @Nullable
             final AdverbialeAngabeSkopusVerbWohinWoher adverbialeAngabeSkopusVerbWohinWoher) {
         this.verb = verb;
+        this.modalpartikeln = ImmutableList.copyOf(modalpartikeln);
         this.adverbialeAngabeSkopusSatz = adverbialeAngabeSkopusSatz;
         this.adverbialeAngabeSkopusVerbAllg = adverbialeAngabeSkopusVerbAllg;
         this.adverbialeAngabeSkopusVerbWohinWoher = adverbialeAngabeSkopusVerbWohinWoher;
@@ -109,11 +116,6 @@ public abstract class AbstractAngabenfaehigesPraedikatOhneLeerstellen
 
     @Override
     public Iterable<Konstituente> getDuHauptsatz() {
-        return getDuHauptsatz(new Modalpartikel[0]);
-    }
-
-    @Override
-    public Iterable<Konstituente> getDuHauptsatz(final Collection<Modalpartikel> modalpartikeln) {
         if (adverbialeAngabeSkopusSatz != null) {
             Iterable<Konstituente> neuesMittelfeld;
             Iterable<Konstituente> neuesNachfeld;
@@ -140,22 +142,16 @@ public abstract class AbstractAngabenfaehigesPraedikatOhneLeerstellen
 
         return Konstituente.joinToKonstituenten(
                 "Du",
-                getDuSatzanschlussOhneSubjekt(modalpartikeln));
+                getDuSatzanschlussOhneSubjekt());
     }
 
     @Override
-    public Iterable<Konstituente> getDuSatzanschlussOhneSubjekt(
-            final Collection<Modalpartikel> modalpartikeln) {
+    public Iterable<Konstituente> getDuSatzanschlussOhneSubjekt() {
         return Konstituente.joinToKonstituenten(
                 verb.getDuFormOhnePartikel(),
                 getMittelfeld(modalpartikeln, P2, SG),
                 verb.getPartikel(),
                 getNachfeld(P2, SG));
-    }
-
-    @Override
-    public Iterable<Konstituente> getDuSatzanschlussOhneSubjekt() {
-        return PraedikatOhneLeerstellen.super.getDuSatzanschlussOhneSubjekt();
     }
 
     @Override
@@ -253,6 +249,11 @@ public abstract class AbstractAngabenfaehigesPraedikatOhneLeerstellen
     @NonNull
     protected Verb getVerb() {
         return verb;
+    }
+
+    @Nullable
+    public ImmutableList<Modalpartikel> getModalpartikeln() {
+        return modalpartikeln;
     }
 
     @Nullable
