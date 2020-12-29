@@ -5,7 +5,7 @@ import java.util.Objects;
 import javax.annotation.concurrent.Immutable;
 
 /**
- * Eine Argument für eine Valenz.
+ * Eine Komplement für eine Valenz.
  */
 @Immutable
 class ArgumentField {
@@ -17,11 +17,11 @@ class ArgumentField {
         this.name = name;
     }
 
-    public String getType() {
+    String getType() {
         return type;
     }
 
-    public String getName() {
+    String getName() {
         return name;
     }
 

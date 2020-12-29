@@ -17,19 +17,21 @@ import static de.nb.aventiure2.german.base.Numerus.SG;
 /**
  * Repräsentiert ein Verb als Lexem, von dem Wortformen gebildet werden können - jedoch <i>ohne
  * Informationen zur Valenz</i>.
+ * <p>
+ * Die Grundidee der Architektur ist:
+ * <ul>
+ * <li>Es gibt ein paar Kernklassen oder Kerninterfaces für Lexeme (z.B. <code>Verb</code>
+ * für Verben gemeinsam mit {@link VerbSubjDatAkk} etc.)
+ * <li>Aus den Lexem-Klassen werden Klassen für die einzelnen Phrasen erzeugt, z.B.
+ * für die {@link Praedikat}e sowie für ganze Sätze. Diese Klassen halten die syntaktischen
+ * Relationen fest, in denen die Lexeme und Teil-Phrasen stehen.
+ * <li>Wortformen werden bei Bedarf als String erzeugt
+ * <li>Sie werden im Rahmen des {@link Praedikat}s zu
+ * {@link de.nb.aventiure2.german.base.Konstituente}n zusammengefasst, über die die Verteilung
+ * in die topologischen Felder sowie die Komma-Setzung gelöst werden.
+ *  </ul>
  */
 public class Verb {
-    // STORY Kernklassen / Kerninterfaces für
-    //  - lexikalisches Wort (Lexem)?
-    //  - Wortform??
-    //  - Konstituente?
-    //  - Konstituente der Kategorie X
-    //  Klassen / Interfaces für Konstituenten gewisser Kategorien, Kategorie(instanze)n oder
-    //  Subkategorien
-    //  Methoden für sytaktische Relationen (mitAdvAngabe(Präpostionalphrase)), die
-    //  eine neue KatXKonsituente erzeugen, in der die ursprügliche
-    //  Konstituenten (oder Wörter? Wortformen?) in dieser Relation
-    //  stehen.
 
     /**
      * /**

@@ -4,7 +4,7 @@ import java.util.Collection;
 
 import javax.annotation.Nullable;
 
-import de.nb.aventiure2.annotations.Argument;
+import de.nb.aventiure2.annotations.Komplement;
 import de.nb.aventiure2.annotations.Valenz;
 import de.nb.aventiure2.german.base.GermanUtil;
 import de.nb.aventiure2.german.base.Interrogativpronomen;
@@ -24,7 +24,7 @@ public class PraedikativumPraedikatOhneLeerstellen
     /**
      * Das Prädikativum
      */
-    @Argument
+    @Komplement
     private final Praedikativum praedikativum;
 
     public static PraedikativumPraedikatOhneLeerstellen praedikativumPraedikatMit(
@@ -102,9 +102,11 @@ public class PraedikativumPraedikatOhneLeerstellen
 
     @Override
     public boolean duHauptsatzLaesstSichMitNachfolgendemDuHauptsatzZusammenziehen() {
-        // FIXME Das hier ist etwas unschön - eigentlich sollte die Frage, ob zusammengezogen
-        //  werden kann, erst an die Konstituenten-Liste oder die Wortfolge gestellt werden, nicht
-        //  zuvor!
+        // FIXME Steht ein ausstehendes Komma wirklich noch dem
+        //  Zusammenziehen entgegen? Prüfe - und falls nicht: Alle Implementierungen von
+        //  duHauptsatzLaesstSichMitNachfolgendemDuHauptsatzZusammenziehen() korrigieren.
+        //  (Braucht man dann duHauptsatzLaesstSichMitNachfolgendemDuHauptsatzZusammenziehen()
+        //  noch?)
 
         return Konstituente.kommaStehtAus(
                 praedikativum.getPraedikativAnteilKandidatFuerNachfeld(P2, SG));

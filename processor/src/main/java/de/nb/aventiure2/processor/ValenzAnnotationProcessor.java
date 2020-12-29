@@ -27,7 +27,7 @@ import javax.lang.model.util.Elements;
 import javax.lang.model.util.Types;
 import javax.tools.Diagnostic;
 
-import de.nb.aventiure2.annotations.Argument;
+import de.nb.aventiure2.annotations.Komplement;
 import de.nb.aventiure2.annotations.Valenz;
 
 @SupportedSourceVersion(SourceVersion.RELEASE_8)
@@ -125,7 +125,7 @@ public class ValenzAnnotationProcessor extends AbstractProcessor {
                 Sets.newLinkedHashSet(elementUtils.getAllMembers(typeElement)));
 
         for (final VariableElement field : fields) {
-            if (field.getAnnotation(Argument.class) != null) {
+            if (field.getAnnotation(Komplement.class) != null) {
                 res.add(buildArgument(field));
             }
         }

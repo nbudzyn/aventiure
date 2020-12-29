@@ -11,7 +11,7 @@ import java.lang.annotation.Target;
  * zusammen:  Wenn man eine Verb- (oder Adjektiv-) Valenz-Klasse mit dieser Annotation versieht,
  * dann werden
  * automatisch Klassen erzeugt, in denen die entsprechenden Felder, die mit
- * {@link Argument} versehen sind, noch nicht gesetzt sind. Man kann also typsicher die
+ * {@link Komplement} versehen sind, noch nicht gesetzt sind. Man kann also typsicher die
  * Argumente der Reihe nach angeben.
  */
 @Documented

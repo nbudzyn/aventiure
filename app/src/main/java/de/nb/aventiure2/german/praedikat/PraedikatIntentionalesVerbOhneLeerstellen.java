@@ -6,7 +6,7 @@ import java.util.Collection;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-import de.nb.aventiure2.annotations.Argument;
+import de.nb.aventiure2.annotations.Komplement;
 import de.nb.aventiure2.annotations.Valenz;
 import de.nb.aventiure2.german.base.GermanUtil;
 import de.nb.aventiure2.german.base.Konstituente;
@@ -32,7 +32,7 @@ public class PraedikatIntentionalesVerbOhneLeerstellen
     /**
      * "(...versucht) ihre Haare wieder hinunterzulassen"
      */
-    @Argument
+    @Komplement
     @Nonnull
     private final PraedikatOhneLeerstellen lexikalischerKern;
 
@@ -144,8 +144,9 @@ public class PraedikatIntentionalesVerbOhneLeerstellen
                     // (kann es wohl gar nicht geben)
             );
 
-            // STORY Der lexikalische Kern könnte als Alternative zusäztlich ins Mittelfeld gestellt
-            //  werden: "ihre Haare wieder hinunterzulassen versuchen"
+            // Der lexikalische Kern könnte als Alternative zusäztlich ins Mittelfeld gestellt
+            //  werden: "ihre Haare wieder hinunterzulassen versuchen":
+            // "Die junge Frau hat ihre Haare wieder hinunterzulassen versucht"
         }
 
         return Konstituente.joinToKonstituenten(

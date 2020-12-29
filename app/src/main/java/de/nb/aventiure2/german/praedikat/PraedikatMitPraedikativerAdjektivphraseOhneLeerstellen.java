@@ -5,7 +5,7 @@ import java.util.Iterator;
 
 import javax.annotation.Nullable;
 
-import de.nb.aventiure2.annotations.Argument;
+import de.nb.aventiure2.annotations.Komplement;
 import de.nb.aventiure2.annotations.Valenz;
 import de.nb.aventiure2.german.adjektiv.AdjPhrOhneLeerstellen;
 import de.nb.aventiure2.german.base.GermanUtil;
@@ -33,7 +33,7 @@ public class PraedikatMitPraedikativerAdjektivphraseOhneLeerstellen
     /**
      * Die prädikative Adjektivphrase
      */
-    @Argument
+    @Komplement
     private final AdjPhrOhneLeerstellen adjektivphrase;
 
     @Valenz

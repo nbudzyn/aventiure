@@ -4,7 +4,7 @@ package de.nb.aventiure2.german.adjektiv;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-import de.nb.aventiure2.annotations.Argument;
+import de.nb.aventiure2.annotations.Komplement;
 import de.nb.aventiure2.annotations.Valenz;
 import de.nb.aventiure2.german.base.Konstituente;
 import de.nb.aventiure2.german.base.Numerus;
@@ -51,7 +51,7 @@ public class AdjPhrMitIndirektemFragesatzOhneLeerstellen extends AbstractAdjPhrO
      * "<i>was</i> du <i>zu erzählen</i> beginnen wirst").
      */
     @Nonnull
-    @Argument
+    @Komplement
     private final Satz indirekterFragesatz;
 
     @Valenz

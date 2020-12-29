@@ -6,7 +6,7 @@ import java.util.Collection;
 
 import javax.annotation.Nullable;
 
-import de.nb.aventiure2.annotations.Argument;
+import de.nb.aventiure2.annotations.Komplement;
 import de.nb.aventiure2.annotations.Valenz;
 import de.nb.aventiure2.german.base.Konstituente;
 import de.nb.aventiure2.german.base.Numerus;
@@ -28,7 +28,7 @@ public class PraedikatMitWoertlicherRedeOhneLeerstellen
     /**
      * Die wörtliche Rede
      */
-    @Argument
+    @Komplement
     @NonNull
     private final WoertlicheRede woertlicheRede;
 

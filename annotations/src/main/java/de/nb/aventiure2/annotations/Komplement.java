@@ -7,8 +7,11 @@ import java.lang.annotation.Target;
 
 import static java.lang.annotation.ElementType.FIELD;
 
+/**
+ * Eine Komplement im Rahmen einer @{@link Valenz}.
+ */
 @Documented
 @Target(FIELD)
 @Retention(RetentionPolicy.CLASS)
-public @interface Argument {
+public @interface Komplement {
 }

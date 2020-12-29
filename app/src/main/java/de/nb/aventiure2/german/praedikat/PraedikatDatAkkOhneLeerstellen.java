@@ -6,7 +6,7 @@ import java.util.Collection;
 
 import javax.annotation.Nullable;
 
-import de.nb.aventiure2.annotations.Argument;
+import de.nb.aventiure2.annotations.Komplement;
 import de.nb.aventiure2.annotations.Valenz;
 import de.nb.aventiure2.german.base.GermanUtil;
 import de.nb.aventiure2.german.base.Interrogativpronomen;
@@ -29,14 +29,14 @@ public class PraedikatDatAkkOhneLeerstellen
      * Das (Objekt / Wesen / Konzept für das) Dativobjekt (z.B. "Angebote")
      */
     @NonNull
-    @Argument
+    @Komplement
     private final SubstantivischePhrase dat;
 
     /**
      * Das (Objekt / Wesen / Konzept für das) Akkusativobjekte (z.B. der Frosch)
      */
     @NonNull
-    @Argument
+    @Komplement
     private final SubstantivischePhrase akk;
 
     @Valenz

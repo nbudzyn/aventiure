@@ -6,7 +6,7 @@ import java.util.Collection;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-import de.nb.aventiure2.annotations.Argument;
+import de.nb.aventiure2.annotations.Komplement;
 import de.nb.aventiure2.annotations.Valenz;
 import de.nb.aventiure2.german.base.Konstituente;
 import de.nb.aventiure2.german.base.Numerus;
@@ -27,7 +27,7 @@ public class ZuHabenPraedikatOhneLeerstellen implements PraedikatOhneLeerstellen
      * <i>Spannendes berichten</i>.
      */
     @Nonnull
-    @Argument
+    @Komplement
     private final PraedikatOhneLeerstellen lexikalischerKern;
 
     @Valenz
@@ -242,8 +242,9 @@ public class ZuHabenPraedikatOhneLeerstellen implements PraedikatOhneLeerstellen
     @Nullable
     @Override
     public Iterable<Konstituente> getNachfeld(final Person person, final Numerus numerus) {
-        // STORY Es könnte Verschidene Nachfeld-Optionen geben (altNachfelder()) - oder besser
-        //  altAusklammerungen(), das jeweils Paare (Vorfeld, Nachfeld) liefert
+        // (Es könnte verschiedene Nachfeld-Optionen geben (altNachfelder()) - oder besser
+        // altAusklammerungen(), das jeweils Paare (Vorfeld, Nachfeld) liefert. Dabei
+        // müsste allerdings die Natürlichkeit der erzeugten Sprache immer im Vordergrund stehen.)
 
         return lexikalischerKern.getNachfeld(person, numerus);
     }

@@ -8,7 +8,7 @@ import java.util.Collection;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-import de.nb.aventiure2.annotations.Argument;
+import de.nb.aventiure2.annotations.Komplement;
 import de.nb.aventiure2.annotations.Valenz;
 import de.nb.aventiure2.german.base.GermanUtil;
 import de.nb.aventiure2.german.base.Interrogativpronomen;
@@ -42,14 +42,14 @@ public class PraedikatDirektivesVerbOhneLeerstellen
     /**
      * Das Objekt, an das die "Direktive" geht
      */
-    @Argument
+    @Komplement
     private final SubstantivischePhrase objekt;
 
     /**
      * "(...bitten) ihre Haare wieder hinunterzulassen"
      */
     @Nonnull
-    @Argument
+    @Komplement
     private final PraedikatOhneLeerstellen lexikalischerKern;
 
     @Valenz
@@ -174,13 +174,14 @@ public class PraedikatDirektivesVerbOhneLeerstellen
                 // (kann es wohl gar nicht geben)
         );
 
-        //  STORY Der lexikalische Kern könnte alternativ diskontinuierlich aufgeteilt werden:
+        //  Der lexikalische Kern könnte alternativ diskontinuierlich aufgeteilt werden:
         //   - "Ihre Haare die junge Frau wieder hinunterzulassen bitten"
         //   ("Ihre Haare bittest du die junge Frau wieder hinunterzulassen")
 
-        //  STORY Der lexikalische Kern könnte als dritte Alternative ebenfalls ins Mittelfeld
+        //  Der lexikalische Kern könnte als dritte Alternative ebenfalls ins Mittelfeld
         //   gestellt werden (statt ins Nachfeld):
         //   - "Die junge Frau ihre Haare wieder hinunterzulassen bitten"
+        //   - "Du hast die junge Frau ihre Haare wieder hinunterzulassen gebeten"
     }
 
     @Override

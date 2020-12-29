@@ -6,7 +6,7 @@ import java.util.Collection;
 
 import javax.annotation.Nullable;
 
-import de.nb.aventiure2.annotations.Argument;
+import de.nb.aventiure2.annotations.Komplement;
 import de.nb.aventiure2.annotations.Valenz;
 import de.nb.aventiure2.german.base.GermanUtil;
 import de.nb.aventiure2.german.base.Interrogativpronomen;
@@ -35,7 +35,7 @@ public class PraedikatSubjObjOhneLeerstellen
     /**
      * Das Objekt (z.B. ein Ding, Wesen, Konzept oder deklinierbare Phrase)
      */
-    @Argument
+    @Komplement
     private final SubstantivischePhrase objekt;
 
     @Valenz

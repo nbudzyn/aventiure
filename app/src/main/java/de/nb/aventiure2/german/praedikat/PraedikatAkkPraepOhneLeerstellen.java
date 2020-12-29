@@ -6,7 +6,7 @@ import java.util.Collection;
 
 import javax.annotation.Nullable;
 
-import de.nb.aventiure2.annotations.Argument;
+import de.nb.aventiure2.annotations.Komplement;
 import de.nb.aventiure2.annotations.Valenz;
 import de.nb.aventiure2.german.base.GermanUtil;
 import de.nb.aventiure2.german.base.Interrogativpronomen;
@@ -24,11 +24,11 @@ import static de.nb.aventiure2.german.base.Konstituente.k;
  */
 public class PraedikatAkkPraepOhneLeerstellen
         extends AbstractAngabenfaehigesPraedikatOhneLeerstellen {
-    @Argument
+    @Komplement
     @NonNull
     private final SubstantivischePhrase akk;
 
-    @Argument
+    @Komplement
     @NonNull
     private final SubstantivischePhrase praep;
 
@@ -69,7 +69,7 @@ public class PraedikatAkkPraepOhneLeerstellen
             return this;
         }
 
-        // TODO Mehrere adverbiale Angaben zulassen, damit die bestehende nicht
+        // Man könnte mehrere adverbiale Angaben derselben Art zulassen, damit die bestehende nicht
         //  einfach überschrieben wird!
         return new PraedikatAkkPraepOhneLeerstellen(
                 getVerb(),
@@ -86,7 +86,7 @@ public class PraedikatAkkPraepOhneLeerstellen
             return this;
         }
 
-        // TODO Mehrere adverbiale Angaben zulassen, damit die bestehende nicht
+        // Man könnte mehrere adverbiale Angaben derselben Art zulassen, damit die bestehende nicht
         //  einfach überschrieben wird!
         return new PraedikatAkkPraepOhneLeerstellen(
                 getVerb(),
@@ -103,7 +103,7 @@ public class PraedikatAkkPraepOhneLeerstellen
             return this;
         }
 
-        // TODO Mehrere adverbiale Angaben zulassen, damit die bestehende nicht
+        // Man könnte mehrere adverbiale Angaben derselben Art zulassen, damit die bestehende nicht
         //  einfach überschrieben wird!
         return new PraedikatAkkPraepOhneLeerstellen(
                 getVerb(),
