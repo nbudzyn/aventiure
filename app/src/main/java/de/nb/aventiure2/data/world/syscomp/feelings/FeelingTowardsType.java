@@ -15,6 +15,7 @@ import static de.nb.aventiure2.german.praedikat.PraedikativumPraedikatOhneLeerst
 import static de.nb.aventiure2.german.praedikat.VerbSubjObj.ANBLICKEN;
 import static de.nb.aventiure2.german.praedikat.VerbSubjObj.ANSCHAUEN;
 import static de.nb.aventiure2.german.praedikat.VerbSubjObj.ANSEHEN;
+import static de.nb.aventiure2.german.praedikat.VerbSubjPraedikativeAdjektivphrase.AUSSEHEN;
 import static de.nb.aventiure2.german.praedikat.VerbSubjPraedikativeAdjektivphrase.SCHEINEN;
 import static de.nb.aventiure2.german.praedikat.VerbSubjPraedikativeAdjektivphrase.WIRKEN;
 import static java.util.stream.Collectors.toList;
@@ -58,12 +59,17 @@ public enum FeelingTowardsType {
                 );
 
         res.addAll(altEindruckAdjPhr.stream()
-                .flatMap(ap -> Stream.of(WIRKEN, SCHEINEN)
+                .flatMap(ap -> Stream.of(WIRKEN, SCHEINEN, AUSSEHEN)
                         .map(v -> v.mit(ap).alsSatzMitSubjekt(gameObjectSubjekt)))
                 .collect(toList()));
 
         res.addAll(altEindruckAdjPhr.stream()
-                // "Sie schaut dich überrascht an."
+                .filter(ap ->
+                        !ap.getPraedikativAnteilKandidatFuerNachfeld(
+                                gameObjectSubjekt.getPerson(), gameObjectSubjekt.getNumerus())
+                                .iterator().hasNext())
+                // "Sie schaut dich überrascht an.", aber nicht
+                // *"Sie schaut dich überrascht an, dich zu sehen".
                 .flatMap(ap -> Stream.of(ANBLICKEN, ANSEHEN, ANSCHAUEN)
                         .map(v -> v.mit(gameObjectSubjekt)
                                 .mitAdverbialerAngabe(ap.alsAdverbialeAngabe(

@@ -15,15 +15,15 @@ import de.nb.aventiure2.german.description.AllgDescription;
  * {@link PraedikativumPraedikatOhneLeerstellen#praedikativumPraedikatMit(AllgDescription)}.
  */
 public enum VerbSubjPraedikativeAdjektivphrase implements Praedikat {
+    AUSSEHEN("aussehen",
+            "sehe", "siehst", "sieht", "seht", "aus",
+            Perfektbildung.HABEN, "ausgesehen"),
     SCHEINEN("scheinen",
             "scheine", "scheinst", "scheint", "scheint",
             Perfektbildung.HABEN, "geschienen"),
     WIRKEN("wirken",
             "wirke", "wirkst", "wirkt", "wirkt",
             Perfektbildung.HABEN, "gewirkt");
-
-    // FIXME ""sieht ... aus"! "Sie sieht gluecklich aus, dich zu treffen."
-    // FIXME Vielleicht Dinge vermeiden wie "Sie sieht glücklich aus, dich zu sehen".
 
     /**
      * Das Verb an sich, ohne Informationen zur Valenz, ohne Ergänzungen, ohne
