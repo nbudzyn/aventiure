@@ -7,7 +7,6 @@ import com.google.common.collect.ImmutableList;
 
 import java.util.List;
 
-import de.nb.aventiure2.data.database.AvDatabase;
 import de.nb.aventiure2.data.narration.Narrator;
 import de.nb.aventiure2.data.world.gameobject.*;
 import de.nb.aventiure2.data.world.syscomp.alive.ILivingBeingGO;
@@ -15,12 +14,14 @@ import de.nb.aventiure2.data.world.syscomp.description.IDescribableGO;
 import de.nb.aventiure2.data.world.syscomp.location.ILocatableGO;
 import de.nb.aventiure2.data.world.syscomp.memory.Action;
 import de.nb.aventiure2.data.world.syscomp.storingplace.ILocationGO;
+import de.nb.aventiure2.data.world.time.*;
 import de.nb.aventiure2.german.base.GermanUtil;
 import de.nb.aventiure2.german.base.SubstantivischePhrase;
 import de.nb.aventiure2.german.description.DescriptionUmformulierer;
 import de.nb.aventiure2.german.description.Kohaerenzrelation;
 import de.nb.aventiure2.german.praedikat.AdverbialeAngabeSkopusSatz;
 import de.nb.aventiure2.scaction.AbstractScAction;
+import de.nb.aventiure2.scaction.stepcount.SCActionStepCountDao;
 
 import static de.nb.aventiure2.data.world.gameobject.World.*;
 import static de.nb.aventiure2.data.world.time.AvTimeSpan.*;
@@ -40,8 +41,8 @@ public class WartenAction<LIVGO extends IDescribableGO & ILocatableGO & ILivingB
 
     public static <LIVGO extends IDescribableGO & ILocatableGO & ILivingBeingGO>
     List<WartenAction<LIVGO>> buildActions(
-            final AvDatabase db,
-            final Narrator n, final World world,
+            final SCActionStepCountDao scActionStepCountDao,
+            final AvNowDao nowDao, final Narrator n, final World world,
             final LIVGO erwartet,
             final ILocationGO location) {
         final ImmutableList.Builder<WartenAction<LIVGO>> res = ImmutableList.builder();
@@ -49,19 +50,20 @@ public class WartenAction<LIVGO extends IDescribableGO & ILocatableGO & ILivingB
                 erwartet.is(RAPUNZELS_ZAUBERIN) &&
                 world.loadSC().memoryComp().isKnown(RAPUNZELS_ZAUBERIN) &&
                 !erwartet.locationComp().hasSameUpperMostLocationAs(location)) {
-            res.add(new WartenAction<>(db, n, world, erwartet, location));
+            res.add(new WartenAction<>(scActionStepCountDao, nowDao, n, world, erwartet, location));
         }
 
         return res.build();
     }
 
     @VisibleForTesting
-    WartenAction(final AvDatabase db,
+    WartenAction(final SCActionStepCountDao scActionStepCountDao,
+                 final AvNowDao nowDao,
                  final Narrator n,
                  final World world,
                  final LIVGO erwartet,
                  final ILocationGO location) {
-        super(db, n, world);
+        super(scActionStepCountDao, nowDao, n, world);
         this.erwartet = erwartet;
         this.location = location;
     }
@@ -99,7 +101,7 @@ public class WartenAction<LIVGO extends IDescribableGO & ILocatableGO & ILivingB
         // Erst einmal vergeht fast keine Zeit. Die ScAutomaticReactionsComp sorgt
         // im onTimePassed() im Zusammenspiel mit der WaitingComp dafür, dass die
         // Zeit vergeht (maximal 3 Stunden).
-        world.loadSC().waitingComp().startWaiting(db.nowDao().now().plus(hours(3)));
+        world.loadSC().waitingComp().startWaiting(nowDao.now().plus(hours(3)));
 
         sc.memoryComp().setLastAction(buildMemorizedAction());
     }

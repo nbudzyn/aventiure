@@ -14,6 +14,7 @@ import de.nb.aventiure2.data.database.AvDatabase;
 import de.nb.aventiure2.data.narration.Narrator;
 import de.nb.aventiure2.data.world.base.GameObjectId;
 import de.nb.aventiure2.data.world.base.IGameObject;
+import de.nb.aventiure2.data.world.counter.CounterDao;
 import de.nb.aventiure2.data.world.gameobject.*;
 import de.nb.aventiure2.data.world.syscomp.location.ILocatableGO;
 import de.nb.aventiure2.data.world.syscomp.reaction.impl.RapunzelsZauberinReactionsComp;
@@ -213,7 +214,7 @@ public enum RapunzelStoryNode implements IStoryNode {
                             .hasRecursiveLocation(IM_WALD_NAHE_DEM_SCHLOSS, VOR_DEM_ALTEN_TURM) &&
                     RapunzelsZauberinReactionsComp.
                             liegtImZeitfensterFuerRapunzelbesuch(db.nowDao().now())) {
-                ensureAdvancedToZauberinMachtRapunzelbesuche(db, world);
+                ensureAdvancedToZauberinMachtRapunzelbesuche(db.counterDao(), world);
                 return true;
             }
         }
@@ -222,11 +223,11 @@ public enum RapunzelStoryNode implements IStoryNode {
     }
 
     public static void ensureAdvancedToZauberinMachtRapunzelbesuche(
-            final AvDatabase db, final World world) {
+            final CounterDao counterDao, final World world) {
         final IHasStateGO<RapunzelsZauberinState> zauberin = loadZauberin(world);
 
         if (zauberin.stateComp().hasState(MACHT_ZURZEIT_KEINE_RAPUNZELBESUCHE)) {
-            db.counterDao().reset(STORY_ADVANCE_COUNTER);
+            counterDao.reset(STORY_ADVANCE_COUNTER);
             zauberin.stateComp().narrateAndSetState(VOR_DEM_NAECHSTEN_RAPUNZEL_BESUCH);
             return;
         }

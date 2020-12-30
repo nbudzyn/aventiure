@@ -121,7 +121,7 @@ public class WartenActionTest extends AndroidTestBase {
     @NonNull
     private <LIVGO extends IDescribableGO & ILocatableGO & ILivingBeingGO> WartenAction<LIVGO>
     buildWartenActionAufZauberinImSchattenDerBaume() {
-        return new WartenAction<>(db, n, world,
+        return new WartenAction<>(db.scActionStepCountDao(), db.nowDao(), n, world,
                 ((LIVGO) world.load(RAPUNZELS_ZAUBERIN)),
                 ((ILocationGO) world.load(VOR_DEM_ALTEN_TURM_SCHATTEN_DER_BAEUME)));
     }
@@ -129,7 +129,7 @@ public class WartenActionTest extends AndroidTestBase {
     private <LIVGO extends IDescribableGO & ILocatableGO & ILivingBeingGO>
     List<WartenAction<LIVGO>> buildWartenActionsImSchattenDerBaeume() {
         return WartenAction.buildActions(
-                db, n, world,
+                db.scActionStepCountDao(), db.nowDao(), n, world,
                 (LIVGO) world.load(RAPUNZELS_ZAUBERIN),
                 (ILocationGO) world.load(VOR_DEM_ALTEN_TURM_SCHATTEN_DER_BAEUME));
     }

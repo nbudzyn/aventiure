@@ -32,7 +32,7 @@ public class SchlossfestReactionsComp
     public SchlossfestReactionsComp(final AvDatabase db, final Narrator n,
                                     final World world,
                                     final AbstractStateComp<SchlossfestState> stateComp) {
-        super(SCHLOSSFEST, db, n, world);
+        super(SCHLOSSFEST, n, world);
         this.stateComp = stateComp;
     }
 

@@ -8,7 +8,6 @@ import org.jetbrains.annotations.Contract;
 
 import java.util.Collection;
 
-import de.nb.aventiure2.data.database.AvDatabase;
 import de.nb.aventiure2.data.narration.Narrator;
 import de.nb.aventiure2.data.world.gameobject.*;
 import de.nb.aventiure2.data.world.syscomp.description.IDescribableGO;
@@ -16,12 +15,14 @@ import de.nb.aventiure2.data.world.syscomp.location.ILocatableGO;
 import de.nb.aventiure2.data.world.syscomp.memory.Action;
 import de.nb.aventiure2.data.world.syscomp.taking.ITakerGO;
 import de.nb.aventiure2.data.world.syscomp.taking.SCTakeAction;
+import de.nb.aventiure2.data.world.time.*;
 import de.nb.aventiure2.german.base.GermanUtil;
 import de.nb.aventiure2.german.base.Nominalphrase;
 import de.nb.aventiure2.german.base.SubstantivischePhrase;
 import de.nb.aventiure2.german.description.PraedikatDuDescription;
 import de.nb.aventiure2.german.praedikat.PraedikatOhneLeerstellen;
 import de.nb.aventiure2.scaction.AbstractScAction;
+import de.nb.aventiure2.scaction.stepcount.SCActionStepCountDao;
 
 import static de.nb.aventiure2.data.world.gameobject.World.*;
 import static de.nb.aventiure2.data.world.time.AvTimeSpan.*;
@@ -57,7 +58,9 @@ public class GebenAction<
             TAKER extends IDescribableGO & ILocatableGO & ITakerGO<?>,
             GIVEN extends IDescribableGO & ILocatableGO>
     Collection<GebenAction<TAKER, GIVEN>> buildActions(
-            final AvDatabase db, final Narrator n, final World world,
+            final SCActionStepCountDao scActionStepCountDao,
+            final AvNowDao nowDao,
+            final Narrator n, final World world,
             final TAKER taker,
             final Collection<GIVEN> givenCandidates) {
         if (world.isOrHasRecursiveLocation(taker, SPIELER_CHARAKTER)) {
@@ -76,16 +79,19 @@ public class GebenAction<
             if (givenCandidate.locationComp().isMovable() &&
                     !givenCandidate.is(taker)) {
                 res.add(
-                        new GebenAction<>(db, n, world, taker, givenCandidate));
+                        new GebenAction<>(scActionStepCountDao, nowDao, n, world, taker,
+                                givenCandidate));
             }
         }
 
         return res.build();
     }
 
-    private GebenAction(final AvDatabase db, final Narrator n, final World world, final TAKER taker,
+    private GebenAction(final SCActionStepCountDao scActionStepCountDao,
+                        final AvNowDao nowDao, final Narrator n, final World world,
+                        final TAKER taker,
                         final GIVEN given) {
-        super(db, n, world);
+        super(scActionStepCountDao, nowDao, n, world);
         this.taker = taker;
         this.given = given;
     }

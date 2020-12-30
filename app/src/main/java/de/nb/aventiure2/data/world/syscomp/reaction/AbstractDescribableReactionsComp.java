@@ -19,7 +19,7 @@ public abstract class AbstractDescribableReactionsComp extends AbstractReactions
     public AbstractDescribableReactionsComp(final GameObjectId id,
                                             final AvDatabase db,
                                             final Narrator n, final World world) {
-        super(id, db, n, world);
+        super(id, n, world);
     }
 
     /**

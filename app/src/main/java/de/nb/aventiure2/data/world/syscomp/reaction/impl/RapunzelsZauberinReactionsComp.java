@@ -6,6 +6,7 @@ import javax.annotation.Nullable;
 
 import de.nb.aventiure2.data.database.AvDatabase;
 import de.nb.aventiure2.data.narration.Narrator;
+import de.nb.aventiure2.data.world.counter.CounterDao;
 import de.nb.aventiure2.data.world.gameobject.*;
 import de.nb.aventiure2.data.world.syscomp.feelings.FeelingIntensity;
 import de.nb.aventiure2.data.world.syscomp.location.ILocatableGO;
@@ -68,6 +69,9 @@ public class RapunzelsZauberinReactionsComp
     //  wieder los. Sie sieht ziemlich oft bei Rapunzel vorbei.
     private static final AvTimeSpan MIN_ZEIT_VOR_DEM_NAECHSTEN_LOSGEHEN = mins(47);
 
+    private final CounterDao counterDao;
+    private final AvNowDao nowDao;
+
     private final RapunzelsZauberinStateComp stateComp;
     private final LocationComp locationComp;
     private final MentalModelComp mentalModelComp;
@@ -75,6 +79,8 @@ public class RapunzelsZauberinReactionsComp
     private final RapunzelsZauberinTalkingComp talkingComp;
 
     public RapunzelsZauberinReactionsComp(final AvDatabase db,
+                                          final CounterDao counterDao,
+                                          final AvNowDao nowDao,
                                           final Narrator n, final World world,
                                           final RapunzelsZauberinStateComp stateComp,
                                           final LocationComp locationComp,
@@ -82,6 +88,8 @@ public class RapunzelsZauberinReactionsComp
                                           final MovementComp movementComp,
                                           final RapunzelsZauberinTalkingComp talkingComp) {
         super(RAPUNZELS_ZAUBERIN, db, n, world);
+        this.counterDao = counterDao;
+        this.nowDao = nowDao;
         this.stateComp = stateComp;
         this.locationComp = locationComp;
         this.mentalModelComp = mentalModelComp;
@@ -358,7 +366,7 @@ public class RapunzelsZauberinReactionsComp
 
         locationComp.narrateAndSetLocation(VOR_DEM_ALTEN_TURM);
 
-        movementComp.startMovement(db.nowDao().now(), DRAUSSEN_VOR_DEM_SCHLOSS);
+        movementComp.startMovement(nowDao.now(), DRAUSSEN_VOR_DEM_SCHLOSS);
     }
 
     private void zauberinZaubertVergessenszauber() {
@@ -391,9 +399,9 @@ public class RapunzelsZauberinReactionsComp
         loadSC().feelingsComp().narrateAndUpgradeTemporaereMinimalmuedigkeit(
                 FeelingIntensity.NUR_LEICHT, hours(1)
         );
-        db.counterDao().reset(VorDemTurmConnectionComp.COUNTER_ALTER_TURM_UMRUNDET);
-        db.counterDao().reset(RapunzelTalkingComp.SC_BEGRUESST);
-        db.counterDao().reset(RapunzelTalkingComp.RAPUNZEL_REAGIERT_AUF_SC_BEGRUESSUNG);
+        counterDao.reset(VorDemTurmConnectionComp.COUNTER_ALTER_TURM_UMRUNDET);
+        counterDao.reset(RapunzelTalkingComp.SC_BEGRUESST);
+        counterDao.reset(RapunzelTalkingComp.RAPUNZEL_REAGIERT_AUF_SC_BEGRUESSUNG);
 
         // Auch Rapunzel wird verzaubert und vergisst den Spieler!
         loadRapunzel().memoryComp().forget(SPIELER_CHARAKTER, GOLDENE_KUGEL);
@@ -401,7 +409,7 @@ public class RapunzelsZauberinReactionsComp
         // Die Zauberin ist schon weit auf dem Rückweg
         stateComp.narrateAndSetState(AUF_DEM_RUECKWEG_VON_RAPUNZEL);
         locationComp.narrateAndSetLocation(IM_WALD_NAHE_DEM_SCHLOSS);
-        movementComp.startMovement(db.nowDao().now(), DRAUSSEN_VOR_DEM_SCHLOSS);
+        movementComp.startMovement(nowDao.now(), DRAUSSEN_VOR_DEM_SCHLOSS);
 
         // Rapunzel ist still (Rapunzel hat auch alles vergessen!)
         loadRapunzel().stateComp().narrateAndSetState(RapunzelState.STILL);
@@ -546,7 +554,7 @@ public class RapunzelsZauberinReactionsComp
         //  heruntergelassen hatt, davon aus, dass Rapunzel befreit wurde.
 
         stateComp.narrateAndSetState(AUF_DEM_RUECKWEG_VON_RAPUNZEL);
-        movementComp.startMovement(db.nowDao().now(), DRAUSSEN_VOR_DEM_SCHLOSS);
+        movementComp.startMovement(nowDao.now(), DRAUSSEN_VOR_DEM_SCHLOSS);
     }
 
     private void zauberinRuftRapunzelspruchUndRapunzelReagiert() {

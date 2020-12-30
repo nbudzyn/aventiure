@@ -4,6 +4,7 @@ import androidx.annotation.Nullable;
 
 import de.nb.aventiure2.data.database.AvDatabase;
 import de.nb.aventiure2.data.narration.Narrator;
+import de.nb.aventiure2.data.world.counter.CounterDao;
 import de.nb.aventiure2.data.world.gameobject.*;
 import de.nb.aventiure2.data.world.syscomp.alive.ILivingBeingGO;
 import de.nb.aventiure2.data.world.syscomp.location.ILocatableGO;
@@ -36,12 +37,16 @@ import static de.nb.aventiure2.data.world.gameobject.World.*;
 public class StoryWebReactionsComp
         extends AbstractReactionsComp
         implements IMovementReactions, IStateChangedReactions, ISCActionReactions {
+    private final CounterDao counterDao;
     private final StoryWebComp storyWebComp;
 
-    public StoryWebReactionsComp(final AvDatabase db, final Narrator n,
+    public StoryWebReactionsComp(final AvDatabase db,
+                                 final CounterDao counterDao,
+                                 final Narrator n,
                                  final World world,
                                  final StoryWebComp storyWebComp) {
-        super(STORY_WEB, db, n, world);
+        super(STORY_WEB, n, world);
+        this.counterDao = counterDao;
         this.storyWebComp = storyWebComp;
     }
 
@@ -88,7 +93,7 @@ public class StoryWebReactionsComp
             // Für den nächsten Schritt in der Geschichte muss man die Nacht durchbringen
             // und das kann eine Zeitlang dauern. Daher "advancen" wir hier die
             // Rapunzel-Story (sofern nicht ohnehin schon geschehen).
-            RapunzelStoryNode.ensureAdvancedToZauberinMachtRapunzelbesuche(db, world);
+            RapunzelStoryNode.ensureAdvancedToZauberinMachtRapunzelbesuche(counterDao, world);
             return;
         }
 

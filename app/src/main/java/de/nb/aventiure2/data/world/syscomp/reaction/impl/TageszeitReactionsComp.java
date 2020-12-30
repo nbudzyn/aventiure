@@ -22,7 +22,7 @@ public class TageszeitReactionsComp
         implements ITimePassedReactions {
     public TageszeitReactionsComp(final AvDatabase db, final Narrator n,
                                   final World world) {
-        super(TAGESZEIT, db, n, world);
+        super(TAGESZEIT, n, world);
     }
 
     @Override

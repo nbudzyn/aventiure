@@ -19,6 +19,7 @@ import de.nb.aventiure2.data.world.syscomp.memory.Action;
 import de.nb.aventiure2.data.world.syscomp.state.IHasStateGO;
 import de.nb.aventiure2.data.world.syscomp.state.impl.FroschprinzState;
 import de.nb.aventiure2.data.world.syscomp.storingplace.ILocationGO;
+import de.nb.aventiure2.data.world.time.*;
 import de.nb.aventiure2.german.base.GermanUtil;
 import de.nb.aventiure2.german.base.Nominalphrase;
 import de.nb.aventiure2.german.base.NumerusGenus;
@@ -29,6 +30,7 @@ import de.nb.aventiure2.german.praedikat.AdverbialeAngabeSkopusVerbWohinWoher;
 import de.nb.aventiure2.german.praedikat.PraedikatMitEinerObjektleerstelle;
 import de.nb.aventiure2.german.praedikat.PraedikatOhneLeerstellen;
 import de.nb.aventiure2.scaction.AbstractScAction;
+import de.nb.aventiure2.scaction.stepcount.SCActionStepCountDao;
 
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkState;
@@ -77,7 +79,7 @@ public class NehmenAction
 
         final ImmutableList.Builder<NehmenAction<GO, TARGET_LOC>> res = ImmutableList.builder();
 
-        res.add(new NehmenAction<>(db, n, world,
+        res.add(new NehmenAction<>(db.scActionStepCountDao(), db.nowDao(), n, world,
                 object, EINE_TASCHE_DES_SPIELER_CHARAKTERS));
 
         return res.build();
@@ -115,7 +117,7 @@ public class NehmenAction
         if (((IHasStateGO<FroschprinzState>) froschprinz).stateComp()
                 .hasState(ERWARTET_VON_SC_EINLOESUNG_SEINES_VERSPRECHENS)) {
             return ImmutableList.of(
-                    new NehmenAction<>(db, n, world,
+                    new NehmenAction<>(db.scActionStepCountDao(), db.nowDao(), n, world,
                             froschprinz, EINE_TASCHE_DES_SPIELER_CHARAKTERS));
         }
 
@@ -123,7 +125,7 @@ public class NehmenAction
                 .hasState(HAT_HOCHHEBEN_GEFORDERT)) {
             if (world.loadSC().locationComp().hasLocation(SCHLOSS_VORHALLE_AM_TISCH_BEIM_FEST)) {
                 return ImmutableList.of(
-                        new NehmenAction<>(db, n, world,
+                        new NehmenAction<>(db.scActionStepCountDao(), db.nowDao(), n, world,
                                 froschprinz, HAENDE_DES_SPIELER_CHARAKTERS));
             }
         }
@@ -138,10 +140,14 @@ public class NehmenAction
      * @param targetLocationId der Ort am SC, wohin es genommen wird, z.B.
      *                         in die Hände o.Ä.
      */
-    private NehmenAction(final AvDatabase db, final Narrator n, final World world,
-                         @NonNull final GO gameObject,
-                         @NonNull final GameObjectId targetLocationId) {
-        this(db, n, world, gameObject, (TARGET_LOC) world.load(targetLocationId));
+    private NehmenAction(
+            final SCActionStepCountDao scActionStepCountDao,
+            final AvNowDao nowDao,
+            final Narrator n, final World world,
+            @NonNull final GO gameObject,
+            @NonNull final GameObjectId targetLocationId) {
+        this(scActionStepCountDao, nowDao, n, world,
+                gameObject, (TARGET_LOC) world.load(targetLocationId));
     }
 
     /**
@@ -151,9 +157,10 @@ public class NehmenAction
      * @param targetLocation der Ort am SC, wohin es genommen wird, z.B.
      *                       in die Hände o.Ä.
      */
-    private NehmenAction(final AvDatabase db, final Narrator n, final World world,
+    private NehmenAction(final SCActionStepCountDao scActionStepCountDao,
+                         final AvNowDao nowDao, final Narrator n, final World world,
                          @NonNull final GO gameObject, @NonNull final TARGET_LOC targetLocation) {
-        super(db, n, world);
+        super(scActionStepCountDao, nowDao, n, world);
 
         checkArgument(gameObject.locationComp().getLocation() != null);
         checkArgument(targetLocation.locationComp().hasLocation(SPIELER_CHARAKTER),

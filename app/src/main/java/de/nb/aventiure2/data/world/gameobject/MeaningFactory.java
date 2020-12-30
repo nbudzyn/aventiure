@@ -19,18 +19,18 @@ import static de.nb.aventiure2.data.world.gameobject.World.*;
  * Factory für sehr abstrakte {@link GameObject}s, die damit zu tun haben, dass die
  * Welt einen Sinn erhält.
  */
-public class MeaningFactory {
+class MeaningFactory {
     private final AvDatabase db;
     private final Narrator n;
     private final World world;
     private final LocationSystem locationSystem;
     private final SpatialConnectionSystem spatialConnectionSystem;
 
-    public MeaningFactory(final AvDatabase db,
-                          final Narrator n,
-                          final World world,
-                          final LocationSystem locationSystem,
-                          final SpatialConnectionSystem spatialConnectionSystem) {
+    MeaningFactory(final AvDatabase db,
+                   final Narrator n,
+                   final World world,
+                   final LocationSystem locationSystem,
+                   final SpatialConnectionSystem spatialConnectionSystem) {
         this.db = db;
         this.n = n;
         this.world = world;
@@ -38,7 +38,7 @@ public class MeaningFactory {
         this.spatialConnectionSystem = spatialConnectionSystem;
     }
 
-    public GameObject createStoryWeb() {
+    GameObject createStoryWeb() {
         return new StoryWeb(db, n, world, locationSystem, spatialConnectionSystem);
     }
 
@@ -47,15 +47,17 @@ public class MeaningFactory {
         private final StoryWebComp storyWebComp;
         private final StoryWebReactionsComp reactionsComp;
 
-        public StoryWeb(final AvDatabase db, final Narrator n, final World world,
-                        final LocationSystem locationSystem,
-                        final SpatialConnectionSystem spatialConnectionSystem) {
+        StoryWeb(final AvDatabase db, final Narrator n, final World world,
+                 final LocationSystem locationSystem,
+                 final SpatialConnectionSystem spatialConnectionSystem) {
             super(STORY_WEB);
             // Jede Komponente muss registiert werden!
             storyWebComp = addComponent(new StoryWebComp(
                     db, n, world, locationSystem, spatialConnectionSystem,
                     Story.FROSCHKOENIG, Story.RAPUNZEL));
-            reactionsComp = addComponent(new StoryWebReactionsComp(db, n, world, storyWebComp));
+            reactionsComp =
+                    addComponent(
+                            new StoryWebReactionsComp(db, db.counterDao(), n, world, storyWebComp));
         }
 
         @Nonnull

@@ -9,7 +9,6 @@ import org.jetbrains.annotations.Contract;
 
 import java.util.Collection;
 
-import de.nb.aventiure2.data.database.AvDatabase;
 import de.nb.aventiure2.data.narration.Narrator;
 import de.nb.aventiure2.data.world.gameobject.*;
 import de.nb.aventiure2.data.world.syscomp.alive.ILivingBeingGO;
@@ -19,6 +18,7 @@ import de.nb.aventiure2.data.world.syscomp.memory.Action;
 import de.nb.aventiure2.data.world.syscomp.state.IHasStateGO;
 import de.nb.aventiure2.data.world.syscomp.state.impl.FroschprinzState;
 import de.nb.aventiure2.data.world.syscomp.storingplace.ILocationGO;
+import de.nb.aventiure2.data.world.time.*;
 import de.nb.aventiure2.german.base.GermanUtil;
 import de.nb.aventiure2.german.base.Personalpronomen;
 import de.nb.aventiure2.german.base.SubstantivischePhrase;
@@ -28,6 +28,7 @@ import de.nb.aventiure2.german.praedikat.AbstractAdverbialeAngabe;
 import de.nb.aventiure2.german.praedikat.AdverbialeAngabeSkopusVerbWohinWoher;
 import de.nb.aventiure2.german.praedikat.PraedikatMitEinerObjektleerstelle;
 import de.nb.aventiure2.scaction.AbstractScAction;
+import de.nb.aventiure2.scaction.stepcount.SCActionStepCountDao;
 
 import static com.google.common.base.Preconditions.checkState;
 import static de.nb.aventiure2.data.world.gameobject.World.*;
@@ -77,37 +78,38 @@ public class AblegenAction
      * Raum ablegen kann oder auf dem Tisch, der sich in dem Raum befindet.
      */
     public static <GO extends IDescribableGO & ILocatableGO>
-    Collection<AblegenAction<GO>> buildActions(
-            final AvDatabase db, final Narrator n, final World world,
-            final GO gameObject,
-            final ILocationGO location) {
+    Collection<AblegenAction<GO>> buildActions(final SCActionStepCountDao scActionStepCountDao,
+                                               final AvNowDao nowDao,
+                                               final Narrator n, final World world,
+                                               final GO gameObject,
+                                               final ILocationGO location) {
         if ((gameObject instanceof ILivingBeingGO) && !gameObject.is(FROSCHPRINZ)) {
             return ImmutableList.of();
         }
 
         final ImmutableList.Builder<AblegenAction<GO>> res = ImmutableList.builder();
         res.add(new AblegenAction<>(
-                db, n, world, gameObject, location,
+                scActionStepCountDao, nowDao, n, world, gameObject, location,
                 true));
 
         for (final ILocationGO innerLocation :
                 world.loadDescribableNonLivingLocationRecursiveInventory(location)) {
             // Z.B. "Auf dem Tisch absetzen"
-            res.add(new AblegenAction<>(
-                    db, n, world, gameObject, innerLocation,
+            res.add(new AblegenAction<>(scActionStepCountDao, nowDao,
+                    n, world, gameObject, innerLocation,
                     false));
         }
 
         return res.build();
     }
 
-    private AblegenAction(final AvDatabase db,
+    private AblegenAction(final SCActionStepCountDao scActionStepCountDao, final AvNowDao nowDao,
                           final Narrator n,
                           final World world,
                           final @NonNull GO gameObject,
                           final ILocationGO location,
                           final boolean detailLocationNecessaryInDescription) {
-        super(db, n, world);
+        super(scActionStepCountDao, nowDao, n, world);
         this.location = location;
         this.gameObject = gameObject;
         this.detailLocationNecessaryInDescription = detailLocationNecessaryInDescription;

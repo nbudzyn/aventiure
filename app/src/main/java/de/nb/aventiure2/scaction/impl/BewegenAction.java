@@ -12,7 +12,6 @@ import org.jetbrains.annotations.Contract;
 
 import java.util.List;
 
-import de.nb.aventiure2.data.database.AvDatabase;
 import de.nb.aventiure2.data.narration.Narrator;
 import de.nb.aventiure2.data.world.base.GameObject;
 import de.nb.aventiure2.data.world.base.IGameObject;
@@ -20,6 +19,7 @@ import de.nb.aventiure2.data.world.base.Known;
 import de.nb.aventiure2.data.world.base.Lichtverhaeltnisse;
 import de.nb.aventiure2.data.world.base.SpatialConnection;
 import de.nb.aventiure2.data.world.base.SpatialConnectionData;
+import de.nb.aventiure2.data.world.counter.CounterDao;
 import de.nb.aventiure2.data.world.gameobject.*;
 import de.nb.aventiure2.data.world.syscomp.description.IDescribableGO;
 import de.nb.aventiure2.data.world.syscomp.feelings.FeelingIntensity;
@@ -31,11 +31,13 @@ import de.nb.aventiure2.data.world.syscomp.spatialconnection.NumberOfWays;
 import de.nb.aventiure2.data.world.syscomp.state.IHasStateGO;
 import de.nb.aventiure2.data.world.syscomp.state.impl.SchlossfestState;
 import de.nb.aventiure2.data.world.syscomp.storingplace.ILocationGO;
+import de.nb.aventiure2.data.world.time.*;
 import de.nb.aventiure2.german.base.GermanUtil;
 import de.nb.aventiure2.german.base.StructuralElement;
 import de.nb.aventiure2.german.description.AbstractDuDescription;
 import de.nb.aventiure2.german.description.TimedDescription;
 import de.nb.aventiure2.scaction.AbstractScAction;
+import de.nb.aventiure2.scaction.stepcount.SCActionStepCountDao;
 
 import static com.google.common.collect.ImmutableList.builder;
 import static de.nb.aventiure2.data.world.base.Lichtverhaeltnisse.HELL;
@@ -69,6 +71,7 @@ public class BewegenAction<LOC_DESC extends ILocatableGO & IDescribableGO>
 
     private final SpatialConnection spatialConnection;
 
+    private final CounterDao counterDao;
     /**
      * Hier werden "Wege" in untergeordnete Objekte (der Weg "auf den Tisch") oder aus
      * untergeordneten Objekten heraus nicht mitgezählt.
@@ -76,7 +79,9 @@ public class BewegenAction<LOC_DESC extends ILocatableGO & IDescribableGO>
     private final NumberOfWays numberOfWays;
 
     public static ImmutableList<AbstractScAction> buildActions(
-            final AvDatabase db,
+            final SCActionStepCountDao scActionStepCountDao,
+            final AvNowDao nowDao,
+            final CounterDao counterDao,
             final Narrator n,
             final World world,
             @NonNull final ILocationGO location) {
@@ -86,7 +91,8 @@ public class BewegenAction<LOC_DESC extends ILocatableGO & IDescribableGO>
         //   Richtung gegangen ist? Dann würde man sie heimlich beobachten (nicht überholen!),
         //   wie sie den Turm hinaufsteigt.
         if (location instanceof ISpatiallyConnectedGO) {
-            res.addAll(buildSpatiallyConnectedActions(db, n, world,
+            res.addAll(buildSpatiallyConnectedActions(scActionStepCountDao, nowDao, counterDao,
+                    n, world,
                     (ILocationGO & ISpatiallyConnectedGO) location));
         }
 
@@ -96,7 +102,8 @@ public class BewegenAction<LOC_DESC extends ILocatableGO & IDescribableGO>
                     inventoryGO.storingPlaceComp().getSpatialConnectionInData();
             if (inData != null) {
                 res.add(new BewegenAction<>(
-                        db, n, world, location,
+                        scActionStepCountDao, nowDao,
+                        counterDao, n, world, location,
                         con(inventoryGO.getId(), inData),
                         NumberOfWays.NO_WAY));
             }
@@ -108,8 +115,8 @@ public class BewegenAction<LOC_DESC extends ILocatableGO & IDescribableGO>
             @Nullable final ILocationGO outerLocation =
                     ((ILocatableGO) location).locationComp().getLocation();
             if (outerLocation != null) {
-                res.add(new BewegenAction<>(
-                        db, n, world, location,
+                res.add(new BewegenAction<>(scActionStepCountDao, nowDao,
+                        counterDao, n, world, location,
                         con(outerLocation.getId(), outData),
                         NumberOfWays.NO_WAY));
             }
@@ -119,10 +126,13 @@ public class BewegenAction<LOC_DESC extends ILocatableGO & IDescribableGO>
     }
 
     private static <LOC extends ILocationGO & ISpatiallyConnectedGO>
-    ImmutableList<AbstractScAction> buildSpatiallyConnectedActions(final AvDatabase db,
-                                                                   final Narrator n,
-                                                                   final World world,
-                                                                   @NonNull final LOC location) {
+    ImmutableList<AbstractScAction> buildSpatiallyConnectedActions(
+            final SCActionStepCountDao scActionStepCountDao,
+            final AvNowDao nowDao,
+            final CounterDao counterDao,
+            final Narrator n,
+            final World world,
+            @NonNull final LOC location) {
         final ImmutableList.Builder<AbstractScAction> res = builder();
 
         final List<SpatialConnection> spatialConnections =
@@ -131,7 +141,8 @@ public class BewegenAction<LOC_DESC extends ILocatableGO & IDescribableGO>
         final NumberOfWays numberOfWays = NumberOfWays.get(spatialConnections.size());
 
         for (final SpatialConnection spatialConnection : spatialConnections) {
-            res.add(new BewegenAction<>(db, n, world, location,
+            res.add(new BewegenAction<>(scActionStepCountDao, nowDao,
+                    counterDao, n, world, location,
                     spatialConnection, numberOfWays));
         }
 
@@ -142,13 +153,15 @@ public class BewegenAction<LOC_DESC extends ILocatableGO & IDescribableGO>
      * Creates a new {@link BewegenAction}.
      */
     @VisibleForTesting
-    BewegenAction(final AvDatabase db,
-                  final Narrator n,
+    BewegenAction(final SCActionStepCountDao scActionStepCountDao,
+                  final AvNowDao nowDao,
+                  final CounterDao counterDao, final Narrator n,
                   final World world,
                   @NonNull final ILocationGO oldLocation,
                   @NonNull final SpatialConnection spatialConnection,
                   final NumberOfWays numberOfWays) {
-        super(db, n, world);
+        super(scActionStepCountDao, nowDao, n, world);
+        this.counterDao = counterDao;
         this.numberOfWays = numberOfWays;
         this.oldLocation = oldLocation;
         this.spatialConnection = spatialConnection;
@@ -394,12 +407,12 @@ public class BewegenAction<LOC_DESC extends ILocatableGO & IDescribableGO>
                 && sc.feelingsComp().hasMood(Mood.ANGESPANNT)) {
             sc.feelingsComp().requestMood(Mood.NEUTRAL);
         } else if (spatialConnection.getTo().equals(BAUM_IM_GARTEN_HINTER_DER_HUETTE_IM_WALD) &&
-                db.counterDao().get(BaumFactory.HOCHKLETTERN) > 2) {
+                counterDao.get(BaumFactory.HOCHKLETTERN) > 2) {
             sc.feelingsComp().narrateAndUpgradeTemporaereMinimalmuedigkeit(
                     FeelingIntensity.NUR_LEICHT, mins(15)
             );
         } else if (oldLocation.is(BAUM_IM_GARTEN_HINTER_DER_HUETTE_IM_WALD) &&
-                db.counterDao().get(BaumFactory.HINABKLETTERN) != 2) {
+                counterDao.get(BaumFactory.HINABKLETTERN) != 2) {
             sc.feelingsComp().narrateAndUpgradeTemporaereMinimalmuedigkeit(
                     FeelingIntensity.MERKLICH, mins(45)
             );

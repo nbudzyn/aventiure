@@ -7,6 +7,7 @@ import javax.annotation.Nullable;
 import de.nb.aventiure2.data.database.AvDatabase;
 import de.nb.aventiure2.data.narration.Narrator;
 import de.nb.aventiure2.data.world.base.Lichtverhaeltnisse;
+import de.nb.aventiure2.data.world.counter.CounterDao;
 import de.nb.aventiure2.data.world.gameobject.*;
 import de.nb.aventiure2.data.world.gameobject.player.*;
 import de.nb.aventiure2.data.world.syscomp.location.ILocatableGO;
@@ -47,16 +48,19 @@ public class SchlosswacheReactionsComp
 
     private static final String SCHLOSSWACHE_REACTIONS_ABLEGEN_WACHE_IST_AUFMERKSAM =
             "SchlosswacheReactions_ablegen_wacheIstAufmerksam";
+    private final CounterDao counterDao;
     private final LocationSystem locationSystem;
     private final SchlosswacheStateComp stateComp;
     private final LocationComp locationComp;
 
     public SchlosswacheReactionsComp(final AvDatabase db,
+                                     final CounterDao counterDao,
                                      final Narrator n, final World world,
                                      final LocationSystem locationSystem,
                                      final SchlosswacheStateComp stateComp,
                                      final LocationComp locationComp) {
         super(SCHLOSSWACHE, db, n, world);
+        this.counterDao = counterDao;
         this.locationSystem = locationSystem;
         this.stateComp = stateComp;
         this.locationComp = locationComp;
@@ -106,7 +110,7 @@ public class SchlosswacheReactionsComp
         final ILocatableGO goldeneKugel = (ILocatableGO) world.load(GOLDENE_KUGEL);
         if (!goldeneKugel.locationComp().hasRecursiveLocation(SPIELER_CHARAKTER)
                 && goldeneKugel.locationComp().hasRecursiveLocation(SCHLOSS_VORHALLE)) {
-            if (db.counterDao().incAndGet(
+            if (counterDao.incAndGet(
                     "SchlosswacheReactions_onEnterRoom_SchlossVorhalle") > 1) {
                 n.narrate(neuerSatz(
                         capitalize(getDescription(true).nom())
@@ -247,7 +251,7 @@ public class SchlosswacheReactionsComp
 
         // Spieler hat goldene Kugel in SCHLOSS_VORHALLE genommen
 
-        if (db.counterDao().incAndGet(
+        if (counterDao.incAndGet(
                 "SchlosswacheReactions_nehmenGoldeneKugel_wacheIstAufmerksam") == 1) {
             scHatGoldeneKugelGenommen_wacheIstAufmerksam_erwischt(goldeneKugel);
             return;
@@ -373,8 +377,7 @@ public class SchlosswacheReactionsComp
     }
 
     private void scHatEtwasInSchlosVorhalleHingelegt_wacheIstAufmerksam() {
-        if (db.counterDao()
-                .get(SCHLOSSWACHE_REACTIONS_ABLEGEN_WACHE_IST_AUFMERKSAM) > 1) {
+        if (counterDao.get(SCHLOSSWACHE_REACTIONS_ABLEGEN_WACHE_IST_AUFMERKSAM) > 1) {
             return;
         }
 

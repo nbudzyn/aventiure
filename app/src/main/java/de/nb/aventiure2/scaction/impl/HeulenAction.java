@@ -6,7 +6,6 @@ import com.google.common.collect.ImmutableList;
 
 import java.util.Collection;
 
-import de.nb.aventiure2.data.database.AvDatabase;
 import de.nb.aventiure2.data.narration.Narrator;
 import de.nb.aventiure2.data.world.gameobject.*;
 import de.nb.aventiure2.data.world.gameobject.player.*;
@@ -18,8 +17,10 @@ import de.nb.aventiure2.data.world.syscomp.state.IHasStateGO;
 import de.nb.aventiure2.data.world.syscomp.state.impl.FroschprinzState;
 import de.nb.aventiure2.data.world.syscomp.talking.ITalkerGO;
 import de.nb.aventiure2.data.world.syscomp.talking.impl.FroschprinzTalkingComp;
+import de.nb.aventiure2.data.world.time.*;
 import de.nb.aventiure2.german.description.TimedDescription;
 import de.nb.aventiure2.scaction.AbstractScAction;
+import de.nb.aventiure2.scaction.stepcount.SCActionStepCountDao;
 
 import static de.nb.aventiure2.data.world.gameobject.World.*;
 import static de.nb.aventiure2.data.world.syscomp.feelings.Mood.NEUTRAL;
@@ -36,7 +37,8 @@ import static de.nb.aventiure2.german.description.DescriptionBuilder.satzanschlu
  */
 public class HeulenAction extends AbstractScAction {
     public static Collection<HeulenAction> buildActions(
-            final AvDatabase db,
+            final SCActionStepCountDao scActionStepCountDao,
+            final AvNowDao nowDao,
             final Narrator n, final World world,
             final SpielerCharakter sc) {
         final ImmutableList.Builder<HeulenAction> res = ImmutableList.builder();
@@ -47,16 +49,17 @@ public class HeulenAction extends AbstractScAction {
         //  seine goldene Kugel erinnert o.Ä.
 
         if (sc.feelingsComp().hasMood(UNTROESTLICH)) {
-            res.add(new HeulenAction(db, n, world));
+            res.add(new HeulenAction(scActionStepCountDao, nowDao, n, world));
         }
 
         return res.build();
     }
 
-    private HeulenAction(final AvDatabase db,
+    private HeulenAction(final SCActionStepCountDao scActionStepCountDao,
+                         final AvNowDao nowDao,
                          final Narrator n,
                          final World world) {
-        super(db, n, world);
+        super(scActionStepCountDao, nowDao, n, world);
     }
 
     @Override

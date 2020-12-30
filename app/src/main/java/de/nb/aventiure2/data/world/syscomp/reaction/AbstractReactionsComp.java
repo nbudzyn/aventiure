@@ -2,7 +2,6 @@ package de.nb.aventiure2.data.world.syscomp.reaction;
 
 import androidx.annotation.NonNull;
 
-import de.nb.aventiure2.data.database.AvDatabase;
 import de.nb.aventiure2.data.narration.Narrator;
 import de.nb.aventiure2.data.world.base.AbstractStatelessComponent;
 import de.nb.aventiure2.data.world.base.GameObject;
@@ -16,7 +15,6 @@ import de.nb.aventiure2.data.world.gameobject.player.*;
  */
 public abstract class AbstractReactionsComp extends AbstractStatelessComponent
         implements IReactions {
-    protected final AvDatabase db;
     protected final World world;
 
     protected final Narrator n;
@@ -30,11 +28,9 @@ public abstract class AbstractReactionsComp extends AbstractStatelessComponent
     // IDEA Player should care about their character / stuff / achievements / reputation.
 
     public AbstractReactionsComp(final GameObjectId id,
-                                 final AvDatabase db,
                                  final Narrator n,
                                  final World world) {
         super(id);
-        this.db = db;
         this.n = n;
         this.world = world;
     }

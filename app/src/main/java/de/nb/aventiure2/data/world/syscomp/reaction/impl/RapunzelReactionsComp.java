@@ -68,6 +68,7 @@ public class RapunzelReactionsComp
         IStateChangedReactions, ITimePassedReactions {
     private static final AvTimeSpan DAUER_WIE_LANGE_DIE_HAARE_MAX_UNTEN_BLEIBEN = mins(3);
 
+    private final AvNowDao nowDao;
     private final MemoryComp memoryComp;
     private final RapunzelStateComp stateComp;
     private final LocationSystem locationSystem;
@@ -76,7 +77,7 @@ public class RapunzelReactionsComp
     private final RapunzelTalkingComp talkingComp;
 
     public RapunzelReactionsComp(final AvDatabase db,
-                                 final Narrator n,
+                                 final AvNowDao nowDao, final Narrator n,
                                  final World world,
                                  final MemoryComp memoryComp,
                                  final RapunzelStateComp stateComp,
@@ -85,6 +86,7 @@ public class RapunzelReactionsComp
                                  final FeelingsComp feelingsComp,
                                  final RapunzelTalkingComp talkingComp) {
         super(RAPUNZEL, db, n, world);
+        this.nowDao = nowDao;
         this.memoryComp = memoryComp;
         this.stateComp = stateComp;
         this.locationSystem = locationSystem;
@@ -233,7 +235,7 @@ public class RapunzelReactionsComp
     }
 
     private void onSCEnter_ObenImAltenTurm_RapunzelUnbekannt() {
-        if (db.nowDao().now().getTageszeit() == NACHTS) {
+        if (nowDao.now().getTageszeit() == NACHTS) {
             onSCEnter_ObenImAltenTurm_RapunzelUnbekannt_nachts();
             return;
         }
@@ -324,7 +326,7 @@ public class RapunzelReactionsComp
         loadSC().feelingsComp().requestMoodMin(AUFGEDREHT);
         stateComp.setState(STILL);
 
-        if (db.nowDao().now().getTageszeit() == NACHTS) {
+        if (nowDao.now().getTageszeit() == NACHTS) {
             narrateAndUpgradeFeelings_ScTrifftRapunzelObenImAltenTurmAn_Nachts();
         } else {
             narrateAndUpgradeFeelings_ScTrifftRapunzelObenImAltenTurmAn_Tagsueber();

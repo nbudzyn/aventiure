@@ -8,8 +8,8 @@ import java.util.Collection;
 
 import javax.annotation.ParametersAreNonnullByDefault;
 
-import de.nb.aventiure2.data.database.AvDatabase;
 import de.nb.aventiure2.data.narration.Narrator;
+import de.nb.aventiure2.data.world.counter.CounterDao;
 import de.nb.aventiure2.data.world.gameobject.*;
 import de.nb.aventiure2.data.world.syscomp.alive.ILivingBeingGO;
 import de.nb.aventiure2.data.world.syscomp.description.IDescribableGO;
@@ -18,6 +18,7 @@ import de.nb.aventiure2.data.world.syscomp.memory.Action;
 import de.nb.aventiure2.data.world.syscomp.state.IHasStateGO;
 import de.nb.aventiure2.data.world.syscomp.state.impl.FroschprinzState;
 import de.nb.aventiure2.data.world.syscomp.storingplace.ILocationGO;
+import de.nb.aventiure2.data.world.time.*;
 import de.nb.aventiure2.german.base.GermanUtil;
 import de.nb.aventiure2.german.base.Nominalphrase;
 import de.nb.aventiure2.german.base.SubstantivischePhrase;
@@ -27,6 +28,7 @@ import de.nb.aventiure2.german.praedikat.AdverbialeAngabeSkopusVerbWohinWoher;
 import de.nb.aventiure2.german.praedikat.SeinUtil;
 import de.nb.aventiure2.german.praedikat.ZweiPraedikateOhneLeerstellen;
 import de.nb.aventiure2.scaction.AbstractScAction;
+import de.nb.aventiure2.scaction.stepcount.SCActionStepCountDao;
 
 import static com.google.common.collect.ImmutableList.of;
 import static com.google.common.collect.ImmutableList.toImmutableList;
@@ -54,6 +56,7 @@ import static de.nb.aventiure2.german.praedikat.VerbSubjObj.WERFEN;
 public class HochwerfenAction<OBJ extends IDescribableGO & ILocatableGO>
         extends AbstractScAction {
     private static final String HOCHWERFEN_ACTION_WIEDERHOLUNG = "HochwerfenAction_Wiederholung";
+    private final CounterDao counterDao;
     @NonNull
     private final OBJ object;
 
@@ -61,21 +64,28 @@ public class HochwerfenAction<OBJ extends IDescribableGO & ILocatableGO>
 
     public static <OBJ extends IDescribableGO & ILocatableGO>
     Collection<HochwerfenAction<OBJ>> buildActions(
-            final AvDatabase db, final Narrator n, final World world,
+            final SCActionStepCountDao scActionStepCountDao,
+            final AvNowDao nowDao,
+            final CounterDao counterDao,
+            final Narrator n, final World world,
             final ILocationGO location, @NonNull final OBJ gameObject) {
         if (gameObject instanceof ILivingBeingGO) {
             return of();
         }
 
-        return of(new HochwerfenAction<>(db, n, world, gameObject, location));
+        return of(new HochwerfenAction<>(scActionStepCountDao, nowDao, counterDao,
+                n, world, gameObject, location));
     }
 
-    private HochwerfenAction(final AvDatabase db,
+    private HochwerfenAction(final SCActionStepCountDao scActionStepCountDao,
+                             final AvNowDao nowDao,
+                             final CounterDao counterDao,
                              final Narrator n,
                              final World world,
                              @NonNull final OBJ object,
                              final ILocationGO location) {
-        super(db, n, world);
+        super(scActionStepCountDao, nowDao, n, world);
+        this.counterDao = counterDao;
         this.object = object;
         this.location = location;
     }
@@ -233,7 +243,7 @@ public class HochwerfenAction<OBJ extends IDescribableGO & ILocatableGO>
         final IHasStateGO<FroschprinzState> froschprinz =
                 (IHasStateGO<FroschprinzState>) world.load(FROSCHPRINZ);
 
-        if (db.counterDao().get(HOCHWERFEN_ACTION_WIEDERHOLUNG) == 0 ||
+        if (counterDao.get(HOCHWERFEN_ACTION_WIEDERHOLUNG) == 0 ||
                 (location.is(IM_WALD_BEIM_BRUNNEN) && !froschprinz.stateComp()
                         .hasState(UNAUFFAELLIG))) {
             n.narrateAlt(secs(3), HOCHWERFEN_ACTION_WIEDERHOLUNG,

@@ -6,8 +6,8 @@ import com.google.common.collect.ImmutableList;
 
 import java.util.Collection;
 
-import de.nb.aventiure2.data.database.AvDatabase;
 import de.nb.aventiure2.data.narration.Narrator;
+import de.nb.aventiure2.data.world.counter.CounterDao;
 import de.nb.aventiure2.data.world.gameobject.*;
 import de.nb.aventiure2.data.world.syscomp.feelings.Hunger;
 import de.nb.aventiure2.data.world.syscomp.location.ILocatableGO;
@@ -16,7 +16,9 @@ import de.nb.aventiure2.data.world.syscomp.state.IHasStateGO;
 import de.nb.aventiure2.data.world.syscomp.state.impl.FroschprinzState;
 import de.nb.aventiure2.data.world.syscomp.state.impl.SchlossfestState;
 import de.nb.aventiure2.data.world.syscomp.storingplace.ILocationGO;
+import de.nb.aventiure2.data.world.time.*;
 import de.nb.aventiure2.scaction.AbstractScAction;
+import de.nb.aventiure2.scaction.stepcount.SCActionStepCountDao;
 
 import static de.nb.aventiure2.data.world.gameobject.World.*;
 import static de.nb.aventiure2.data.world.syscomp.feelings.Mood.ZUFRIEDEN;
@@ -35,23 +37,26 @@ import static de.nb.aventiure2.german.description.DescriptionBuilder.neuerSatz;
  */
 public class EssenAction extends AbstractScAction {
     private static final String COUNTER_FELSENBIRNEN = "EssenAction_Felsenbirnen";
+    private final CounterDao counterDao;
     private final ILocationGO location;
 
     public static Collection<EssenAction> buildActions(
-            final AvDatabase db,
+            final SCActionStepCountDao scActionStepCountDao,
+            final AvNowDao nowDao,
+            final CounterDao counterDao,
             final Narrator n, final World world,
             final ILocationGO location) {
         final ImmutableList.Builder<EssenAction> res = ImmutableList.builder();
-        if (essenMoeglich(db, world, location)) {
-            res.add(new EssenAction(db, n, world, location));
+        if (essenMoeglich(world, location)) {
+            res.add(new EssenAction(scActionStepCountDao, nowDao, counterDao, n, world,
+                    location));
         }
 
         return res.build();
     }
 
     private static <F extends ILocatableGO & IHasStateGO<FroschprinzState>>
-    boolean essenMoeglich(final AvDatabase db,
-                          final World world,
+    boolean essenMoeglich(final World world,
                           final ILocationGO location) {
         if (world.loadSC().memoryComp().getLastAction().is(Action.Type.ESSEN)) {
             // IDEA Es könnten sich verschiedene essbare Dinge am selben Ort befinden!
@@ -86,11 +91,13 @@ public class EssenAction extends AbstractScAction {
         return false;
     }
 
-    private EssenAction(final AvDatabase db,
-                        final Narrator n,
+    private EssenAction(final SCActionStepCountDao scActionStepCountDao,
+                        final AvNowDao nowDao,
+                        final CounterDao counterDao, final Narrator n,
                         final World world,
                         final ILocationGO location) {
-        super(db, n, world);
+        super(scActionStepCountDao, nowDao, n, world);
+        this.counterDao = counterDao;
         this.location = location;
     }
 
@@ -247,7 +254,7 @@ public class EssenAction extends AbstractScAction {
     }
 
     private void narrateFelsenbirnenHungrig() {
-        if (db.counterDao().get(COUNTER_FELSENBIRNEN) == 0) {
+        if (counterDao.get(COUNTER_FELSENBIRNEN) == 0) {
             n.narrate(du(SENTENCE, "nimmst", "eine von den Früchten, "
                     + "schaust sie kurz an, dann "
                     + "beißt du hinein… – "
@@ -329,11 +336,6 @@ public class EssenAction extends AbstractScAction {
     }
 
     private void saveSatt() {
-        // REFACTOR NOW auch zu einem GameObject machen mit einer entsprechenden Stateful Component??
-        // REFACTOR Regel aufstellen: Die Aktionen dürfen nicht auf die DAOs zugreifen.
-        //  Z.B. von DB nur ein Interface definieren, das durchgereicht wird?
-        //  Oder alles über die world machen?
-
         sc.feelingsComp().saveSatt();
     }
 }

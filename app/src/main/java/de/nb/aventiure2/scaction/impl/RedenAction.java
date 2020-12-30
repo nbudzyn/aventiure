@@ -7,7 +7,6 @@ import com.google.common.collect.ImmutableList;
 import java.util.Collection;
 import java.util.List;
 
-import de.nb.aventiure2.data.database.AvDatabase;
 import de.nb.aventiure2.data.narration.Narrator;
 import de.nb.aventiure2.data.world.gameobject.*;
 import de.nb.aventiure2.data.world.syscomp.alive.ILivingBeingGO;
@@ -17,6 +16,7 @@ import de.nb.aventiure2.data.world.syscomp.memory.Action;
 import de.nb.aventiure2.data.world.syscomp.mentalmodel.IHasMentalModelGO;
 import de.nb.aventiure2.data.world.syscomp.talking.ITalkerGO;
 import de.nb.aventiure2.data.world.syscomp.talking.impl.SCTalkAction;
+import de.nb.aventiure2.data.world.time.*;
 import de.nb.aventiure2.german.base.GermanUtil;
 import de.nb.aventiure2.german.base.Konstituente;
 import de.nb.aventiure2.german.base.Nominalphrase;
@@ -24,6 +24,7 @@ import de.nb.aventiure2.german.praedikat.Praedikat;
 import de.nb.aventiure2.german.praedikat.PraedikatMitEinerObjektleerstelle;
 import de.nb.aventiure2.german.praedikat.PraedikatOhneLeerstellen;
 import de.nb.aventiure2.scaction.AbstractScAction;
+import de.nb.aventiure2.scaction.stepcount.SCActionStepCountDao;
 
 import static de.nb.aventiure2.data.world.gameobject.World.*;
 import static de.nb.aventiure2.german.base.Numerus.SG;
@@ -42,7 +43,8 @@ public class RedenAction<TALKER extends IDescribableGO & ILocatableGO & ITalkerG
 
     public static <TALKER extends IDescribableGO & ILocatableGO & ITalkerGO<?>>
     Collection<RedenAction<TALKER>> buildActions(
-            final AvDatabase db, final Narrator n, final World world,
+            final SCActionStepCountDao scActionStepCountDao,
+            final AvNowDao nowDao, final Narrator n, final World world,
             final TALKER talker) {
         if (world.isOrHasRecursiveLocation(talker, SPIELER_CHARAKTER)) {
             return ImmutableList.of();
@@ -54,13 +56,14 @@ public class RedenAction<TALKER extends IDescribableGO & ILocatableGO & ITalkerG
         }
 
         final List<SCTalkAction> talkSteps = talker.talkingComp().getSCConversationSteps();
-        return buildActions(db, n, world,
+        return buildActions(scActionStepCountDao, nowDao, n, world,
                 talker,
                 talkSteps);
     }
 
     private static <TALKER extends IDescribableGO & ILocatableGO & ITalkerGO<?>>
-    Collection<RedenAction<TALKER>> buildActions(final AvDatabase db,
+    Collection<RedenAction<TALKER>> buildActions(final SCActionStepCountDao scActionStepCountDao,
+                                                 final AvNowDao nowDao,
                                                  final Narrator n, final World world,
                                                  final TALKER talker,
                                                  final List<SCTalkAction> talkSteps) {
@@ -69,7 +72,7 @@ public class RedenAction<TALKER extends IDescribableGO & ILocatableGO & ITalkerG
 
         for (final SCTalkAction talkStep : talkSteps) {
             if (stepTypeFits(talker, talkStep.getStepType())) {
-                res.add(buildAction(db, n, world,
+                res.add(buildAction(scActionStepCountDao, nowDao, n, world,
                         talker,
                         // "Mit ... reden" /  "Den ... ignorieren" / "Das Gespräch beenden"
                         talkStep));
@@ -101,14 +104,15 @@ public class RedenAction<TALKER extends IDescribableGO & ILocatableGO & ITalkerG
      */
     @NonNull
     private static <TALKER extends IDescribableGO & ILocatableGO & ITalkerGO<?>>
-    RedenAction<TALKER> buildAction(final AvDatabase db,
+    RedenAction<TALKER> buildAction(final SCActionStepCountDao scActionStepCountDao,
+                                    final AvNowDao nowDao,
                                     final Narrator n, final World world,
                                     final TALKER talker,
                                     final SCTalkAction talkStep) {
         final PraedikatOhneLeerstellen praedikatOhneLeerstellen =
                 fuelleGgfPraedikatLeerstelleMitCreature(world, talkStep.getName(), talker);
 
-        return buildAction(db, n, world, talker,
+        return buildAction(scActionStepCountDao, nowDao, n, world, talker,
                 talkStep,
                 praedikatOhneLeerstellen);
     }
@@ -138,12 +142,14 @@ public class RedenAction<TALKER extends IDescribableGO & ILocatableGO & ITalkerG
      */
     @NonNull
     private static <TALKER extends IDescribableGO & ILocatableGO & ITalkerGO<?>>
-    RedenAction<TALKER> buildAction(final AvDatabase db,
-                                    final Narrator n, final World world,
-                                    final TALKER talker,
-                                    final SCTalkAction talkStep,
-                                    final PraedikatOhneLeerstellen praedikatOhneLeerstellen) {
-        return new RedenAction<>(db, n, world, talker,
+    RedenAction<TALKER> buildAction(
+            final SCActionStepCountDao scActionStepCountDao,
+            final AvNowDao nowDao,
+            final Narrator n, final World world,
+            final TALKER talker,
+            final SCTalkAction talkStep,
+            final PraedikatOhneLeerstellen praedikatOhneLeerstellen) {
+        return new RedenAction<>(scActionStepCountDao, nowDao, n, world, talker,
                 talkStep,
                 // "Dem Frosch Angebote machen"
                 // "Das Angebot von *mir* weisen"
@@ -151,13 +157,14 @@ public class RedenAction<TALKER extends IDescribableGO & ILocatableGO & ITalkerG
                         Konstituente.capitalize(praedikatOhneLeerstellen.getInfinitiv(P1, SG))));
     }
 
-    private RedenAction(final AvDatabase db,
+    private RedenAction(final SCActionStepCountDao scActionStepCountDao,
+                        final AvNowDao nowDao,
                         final Narrator n,
                         final World world,
                         @NonNull final TALKER talker,
                         final SCTalkAction conversationStep,
                         @NonNull final String name) {
-        super(db, n, world);
+        super(scActionStepCountDao, nowDao, n, world);
         this.talker = talker;
         this.conversationStep = conversationStep;
         this.name = name;

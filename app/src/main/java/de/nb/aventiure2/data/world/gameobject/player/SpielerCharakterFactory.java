@@ -73,7 +73,7 @@ public class SpielerCharakterFactory {
                 feelingsComp,
                 memoryComp,
                 new NoSCTalkActionsTalkingComp(SPIELER_CHARAKTER, db, n, world),
-                new ScAutomaticReactionsComp(db, n, world, waitingComp, feelingsComp));
+                new ScAutomaticReactionsComp(db, db.nowDao(), n, world, waitingComp, feelingsComp));
     }
 
     private static HungerData createInitialHungerData() {

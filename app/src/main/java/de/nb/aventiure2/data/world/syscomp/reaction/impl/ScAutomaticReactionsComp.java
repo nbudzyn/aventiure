@@ -34,15 +34,18 @@ public class ScAutomaticReactionsComp
         implements IMovementReactions, IStateChangedReactions, IRufReactions,
         ITimePassedReactions, IEssenReactions,
         ISCActionReactions {
+    private final AvNowDao nowDao;
     private final WaitingComp waitingComp;
     private final FeelingsComp feelingsComp;
 
     public ScAutomaticReactionsComp(final AvDatabase db,
+                                    final AvNowDao nowDao,
                                     final Narrator n,
                                     final World world,
                                     final WaitingComp waitingComp,
                                     final FeelingsComp feelingsComp) {
-        super(SPIELER_CHARAKTER, db, n, world);
+        super(SPIELER_CHARAKTER, n, world);
+        this.nowDao = nowDao;
         this.waitingComp = waitingComp;
         this.feelingsComp = feelingsComp;
     }
@@ -93,7 +96,7 @@ public class ScAutomaticReactionsComp
         if (remainingWaitTime.longerThan(noTime())) {
             // Erzwingen, dass sich die Welt noch weitere 3 Minuten weiterdreht
             // (oder die remainingWaitTime - wenn die kleiner ist)
-            db.nowDao().passTime(min(mins(3), remainingWaitTime));
+            nowDao.passTime(min(mins(3), remainingWaitTime));
         }
     }
 
