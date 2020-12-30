@@ -2,6 +2,8 @@ package de.nb.aventiure2.german.description;
 
 import androidx.annotation.Nullable;
 
+import java.util.Objects;
+
 import de.nb.aventiure2.german.base.GermanUtil;
 import de.nb.aventiure2.german.base.Wortfolge;
 import de.nb.aventiure2.german.praedikat.AbstractDuTextPart;
@@ -91,5 +93,24 @@ public class SimpleDuTextPart implements AbstractDuTextPart {
     @Override
     public Wortfolge getDuSatzanschlussOhneSubjekt() {
         return Wortfolge.joinToNullWortfolge(verb, remainder);
+    }
+
+    @Override
+    public boolean equals(final Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        final SimpleDuTextPart that = (SimpleDuTextPart) o;
+        return verb.equals(that.verb) &&
+                Objects.equals(remainder, that.remainder) &&
+                Objects.equals(vorfeldSatzglied, that.vorfeldSatzglied);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(verb, remainder, vorfeldSatzglied);
     }
 }

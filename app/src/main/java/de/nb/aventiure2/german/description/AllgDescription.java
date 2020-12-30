@@ -1,5 +1,7 @@
 package de.nb.aventiure2.german.description;
 
+import java.util.Objects;
+
 import javax.annotation.ParametersAreNonnullByDefault;
 
 import de.nb.aventiure2.german.base.StructuralElement;
@@ -53,5 +55,25 @@ public class AllgDescription extends AbstractDescription<AllgDescription> {
     @Override
     public String getDescriptionHauptsatz() {
         return description;
+    }
+
+    @Override
+    public boolean equals(final Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        if (!super.equals(o)) {
+            return false;
+        }
+        final AllgDescription that = (AllgDescription) o;
+        return description.equals(that.description);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(super.hashCode(), description);
     }
 }

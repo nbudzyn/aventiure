@@ -1,5 +1,7 @@
 package de.nb.aventiure2.german.description;
 
+import java.util.Objects;
+
 import de.nb.aventiure2.german.base.StructuralElement;
 import de.nb.aventiure2.german.base.Wortfolge;
 import de.nb.aventiure2.german.praedikat.AbstractDuTextPart;
@@ -52,5 +54,25 @@ public abstract class AbstractDuDescription<
      */
     public String getDescriptionSatzanschlussOhneSubjekt() {
         return duTextPart.getDuSatzanschlussOhneSubjekt().getString();
+    }
+
+    @Override
+    public boolean equals(final Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        if (!super.equals(o)) {
+            return false;
+        }
+        final AbstractDuDescription<?, ?> that = (AbstractDuDescription<?, ?>) o;
+        return duTextPart.equals(that.duTextPart);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(super.hashCode(), duTextPart);
     }
 }

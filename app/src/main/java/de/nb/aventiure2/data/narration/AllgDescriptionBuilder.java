@@ -37,7 +37,7 @@ class AllgDescriptionBuilder {
             final Collection<? extends AbstractDescription<?>> altDescriptions,
             final Narration initialNarration) {
         return altDescriptions.stream()
-                .flatMap(d -> toAllgDescriptions(d, initialNarration).stream())
+                .flatMap(d -> toAllgDescriptions(initialNarration, d).stream())
                 .filter(distinctByKey(AllgDescription::getDescriptionHauptsatz))
                 .collect(ImmutableList.toImmutableList());
     }
@@ -48,8 +48,7 @@ class AllgDescriptionBuilder {
      */
     @CheckReturnValue
     static List<AllgDescription> toAllgDescriptions(
-            final AbstractDescription<?> desc,
-            final Narration initialNarration) {
+            final Narration initialNarration, final AbstractDescription<?> desc) {
         if (initialNarration.allowsAdditionalDuSatzreihengliedOhneSubjekt() &&
                 desc.getStartsNew() == WORD &&
                 desc instanceof AbstractDuDescription) {

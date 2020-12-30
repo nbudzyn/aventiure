@@ -113,39 +113,61 @@ public abstract class NarrationDao {
 
     AllgTimedDescriptionWithScore chooseBest(
             final Collection<? extends TimedDescription<?>> alternatives) {
-        checkArgument(!alternatives.isEmpty(), "No alternatives");
-
         final Narration initialNarration = requireNarration();
 
-        TimedDescription<AllgDescription> bestAllgTimedDescription = null;
-        float bestScore = Float.NEGATIVE_INFINITY;
+        return chooseBest(initialNarration, alternatives);
+    }
 
-        // REFACTOR Hier könnte es textuelle Duplikate geben - sowohl zwischen den
-        //  AllgDescriptions einer AbstractDescriptions also auch zwischen den AllgDescriptions
-        //  verschiedener AbstractDescriptions. Die Duplikate kosten vermutlich viel Zeit -
-        //  also sollte man sie herausfiltern. Da nach den ganzen AllgDescription-Prüfungen
-        //  am Ende wieder die bestDesc relevant ist, ist das nicht trivial.
+    @NonNull
+    private static AllgTimedDescriptionWithScore chooseBest(
+            final Narration initialNarration,
+            final Collection<? extends TimedDescription<?>> timedAlternatives) {
+        checkArgument(!timedAlternatives.isEmpty(), "No timedAlternatives");
 
-        for (final TimedDescription<?> descAlternative : alternatives) {
-            final List<AllgDescription> allgDescriptions =
-                    AllgDescriptionBuilder.toAllgDescriptions(
-                            descAlternative.getDescription(),
-                            initialNarration);
-            final IndexAndScore indexAndScore = calcBest(
-                    initialNarration,
-                    allgDescriptions);
-            if (indexAndScore.score > bestScore) {
-                bestScore = indexAndScore.score;
-                bestAllgTimedDescription =
-                        new TimedDescription<>(
-                                allgDescriptions.get(indexAndScore.index),
-                                descAlternative.getTimeElapsed());
+        // Es könnte Duplikate geben:
+        //  - Duplicate innerhalb einer der timedAlternatives
+        //  - Duplikcate zwischen mehreren timedAlternatives
+        // Um Zeit zu sparen, filtern wir die Duplikate heraus.
+
+        final ImmutableList<TimedDescription<AllgDescription>> allGeneratedDescriptionsTimed =
+                timedAlternatives.stream()
+                        .flatMap(t ->
+                                AllgDescriptionBuilder.toAllgDescriptions(
+                                        initialNarration, t.getDescription()).stream()
+                                        .map(a -> new TimedDescription<>(
+                                                a,
+                                                t.getTimeElapsed(),
+                                                t.getCounterIdIncrementedIfTextIsNarrated())))
+                        .distinct()
+                        .collect(ImmutableList.toImmutableList());
+
+        final IndexAndScore indexAndScore =
+                calcBest(initialNarration, allGeneratedDescriptionsTimed);
+        return new AllgTimedDescriptionWithScore(
+                allGeneratedDescriptionsTimed.get(indexAndScore.index),
+                indexAndScore.score
+        );
+
+            /*
+        AllgTimedDescriptionWithScore res = null;
+
+        for (final TimedDescription<?> descAlternative : timedAlternatives) {
+            final List<TimedDescription<AllgDescription>> allgTimedDescriptions =
+                    TimedDescription.toTimed(
+                            AllgDescriptionBuilder.toAllgDescriptions(
+                                    initialNarration, descAlternative.getDescription()),
+                            descAlternative.getTimeElapsed());
+            final IndexAndScore indexAndScore = calcBest(initialNarration, allgTimedDescriptions);
+            if (res == null || indexAndScore.score > res.score) {
+                res = new AllgTimedDescriptionWithScore(
+                        allgTimedDescriptions.get(indexAndScore.index),
+                        indexAndScore.score
+                );
             }
         }
 
-        return new AllgTimedDescriptionWithScore(
-                bestAllgTimedDescription, bestScore
-        );
+        return res;
+        */
     }
 
     // IDEA Bei narrate() eine eingebettete Sprache erlauben:
@@ -202,9 +224,11 @@ public abstract class NarrationDao {
      */
     private static IndexAndScore calcBest(
             final Narration initialNarration,
-            final Collection<AllgDescription> alternatives) {
+            final Collection<TimedDescription<AllgDescription>> alternatives) {
         return calcBest(initialNarration,
-                alternatives.toArray(new AllgDescription[0]));
+                alternatives.stream()
+                        .map(TimedDescription::getDescription)
+                        .toArray(AllgDescription[]::new));
     }
 
     /**

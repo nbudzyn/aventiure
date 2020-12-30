@@ -5,6 +5,7 @@ import androidx.annotation.NonNull;
 import com.google.common.collect.ImmutableList;
 
 import java.util.Collection;
+import java.util.Objects;
 
 import javax.annotation.CheckReturnValue;
 import javax.annotation.Nullable;
@@ -174,5 +175,25 @@ public class TimedDescription<D extends AbstractDescription<?>> {
     @Nullable
     public String getCounterIdIncrementedIfTextIsNarrated() {
         return counterIdIncrementedIfTextIsNarrated;
+    }
+
+    @Override
+    public boolean equals(final Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        final TimedDescription<?> that = (TimedDescription<?>) o;
+        return timeElapsed.equals(that.timeElapsed) &&
+                Objects.equals(counterIdIncrementedIfTextIsNarrated,
+                        that.counterIdIncrementedIfTextIsNarrated) &&
+                description.equals(that.description);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(timeElapsed, counterIdIncrementedIfTextIsNarrated, description);
     }
 }

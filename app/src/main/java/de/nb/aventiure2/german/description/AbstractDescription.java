@@ -2,6 +2,8 @@ package de.nb.aventiure2.german.description;
 
 import androidx.annotation.Nullable;
 
+import java.util.Objects;
+
 import de.nb.aventiure2.german.base.IBezugsobjekt;
 import de.nb.aventiure2.german.base.NumerusGenus;
 import de.nb.aventiure2.german.base.PhorikKandidat;
@@ -137,5 +139,22 @@ public abstract class AbstractDescription<SELF extends AbstractDescription<SELF>
     @Nullable
     public PhorikKandidat getPhorikKandidat() {
         return params.getPhorikKandidat();
+    }
+
+    @Override
+    public boolean equals(final Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        final AbstractDescription<?> that = (AbstractDescription<?>) o;
+        return Objects.equals(params, that.params);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(params);
     }
 }
