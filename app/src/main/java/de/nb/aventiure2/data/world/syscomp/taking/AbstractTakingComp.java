@@ -54,14 +54,15 @@ public abstract class AbstractTakingComp extends AbstractStatelessComponent {
      */
     protected SubstantivischePhrase getAnaphPersPronWennMglSonstShortDescription(
             final GameObjectId describableId) {
-        // TODO Anapher im weitesten Sinne verwenden. Auch Wiederholung und Katapher ist
-        //  Anapher. Perspron ist nur eine Form der Anapher.
+        // IDEA Auch andere "Anaphern" (im weitesten Sinne) erzeugen, nicht nur Personalpronomen:
+        //  Auch Synonyme, Überbegriffe oder schlicht Wiederholung könnten Anaphern sein.
+        //  Dann am besten Alternativen zurückgeben!
 
         return getAnaphPersPronWennMglSonstDescription(
                 (IDescribableGO) world.load(describableId), true);
     }
 
-    // TODO Code ist doppelt oder mehrfache. Vielleicht sollte der
+    // REFACTOR Code ist doppelt oder mehrfache. Vielleicht sollte der
     //  Narrator zumindest auch die knownComp des
     //  SCs kennen, z.B. über ein Interface?? Das wäre quasi das
     //  "Adressatenmodell".

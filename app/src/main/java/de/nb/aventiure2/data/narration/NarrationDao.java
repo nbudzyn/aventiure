@@ -30,7 +30,7 @@ public abstract class NarrationDao {
     @Nullable
     private Narration narrationCached;
 
-    public NarrationDao() {
+    NarrationDao() {
     }
 
     void narrateAltDescriptions(final Narration.NarrationSource narrationSource,
@@ -59,7 +59,6 @@ public abstract class NarrationDao {
     }
 
     @Nullable
-    public
     AllgTimedDescriptionWithScore chooseBestCombination(
             final Collection<AbstractDescription<?>> firstAlternatives,
             final Collection<? extends TimedDescription<?>> secondAlternatives) {
@@ -113,7 +112,7 @@ public abstract class NarrationDao {
     }
 
     AllgTimedDescriptionWithScore chooseBest(
-            final  Collection<? extends TimedDescription<?>> alternatives) {
+            final Collection<? extends TimedDescription<?>> alternatives) {
         checkArgument(!alternatives.isEmpty(), "No alternatives");
 
         final Narration initialNarration = requireNarration();
@@ -121,7 +120,7 @@ public abstract class NarrationDao {
         TimedDescription<AllgDescription> bestAllgTimedDescription = null;
         float bestScore = Float.NEGATIVE_INFINITY;
 
-        // TODO Hier könnte es textuelle Duplikate geben - sowohl zwischen den
+        // REFACTOR Hier könnte es textuelle Duplikate geben - sowohl zwischen den
         //  AllgDescriptions einer AbstractDescriptions also auch zwischen den AllgDescriptions
         //  verschiedener AbstractDescriptions. Die Duplikate kosten vermutlich viel Zeit -
         //  also sollte man sie herausfiltern. Da nach den ganzen AllgDescription-Prüfungen
@@ -149,7 +148,7 @@ public abstract class NarrationDao {
         );
     }
 
-    // TODO Bei narrate() eine eingebettete Sprache erlauben:
+    // IDEA Bei narrate() eine eingebettete Sprache erlauben:
     //  - {RAPUNZEL.std.nom) immer die Langform?
     //  - {RAPUNZEL.short.nom) immer die Langform?
     //  - {RAPUNZEL.persPron.nom) Personalprononem (kontextabhängig von dem was zuvor stand!)
@@ -157,6 +156,7 @@ public abstract class NarrationDao {
     //  - {RAPUNZEL.ana.nom) Nimmt möglichst eine Anapher
     //  - {RAPUNZEL.nom): Wählt automatisch richtig (kontextabhängig!)
     //  - .phorik(..) automatisch oder heuristisch setzen?!
+    //  - Beachten: Meist weiß man "RAPUNZEL" gar nicht...
 
     void narrate(
             final Narration.NarrationSource narrationSource,

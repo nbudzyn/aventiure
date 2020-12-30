@@ -12,7 +12,7 @@ import de.nb.aventiure2.data.world.syscomp.storingplace.ILocationGO;
  * auch die Bewegung des SC in Interaktion mit diesem <code>IMovingGO</code>.
  */
 public interface IMovementNarrator {
-    // STORY MovementSystem fasst alle Movement-Besxhreibungen
+    // IDEA MovementSystem fasst alle Movement-Besxhreibungen
     //  zusammen, auch bei mehreren NPCs am selben Ort. (VOR den Reactions.)
 
     void narrateScTrifftStehendesMovingGO(ILocationGO location);

@@ -58,7 +58,7 @@ public class RapunzelsZauberinTalkingComp extends AbstractTalkingComp {
                                         "ihrem Ziel")),
                                 this::frageNachZiel_zauberinReagiertAbweisend));
             case BEI_RAPUNZEL_OBEN_IM_TURM:
-                // STORY Kann man die Zauberin oben im Turm ansprechen? Wie reagiert
+                // FIXME Kann man die Zauberin oben im Turm ansprechen? Wie reagiert
                 //  sie?
                 return ImmutableList.of();
             case WEISS_DASS_RAPUNZEL_BEFREIT_WURDE:
@@ -88,14 +88,14 @@ public class RapunzelsZauberinTalkingComp extends AbstractTalkingComp {
                         .phorikKandidat(anaphOderDesc, getGameObjectId())
         );
 
-        // STORY Begrüßen (wenn noch nicht begrüßt!) / Ansprechen der Hexe
+        // FIXME Begrüßen (wenn noch nicht begrüßt!) / Ansprechen der Hexe
         //  vom Fragen nach dem Weg trennen, so dass der SC mit der Hexe kurz
         //  im Gespräch ist.
         //  - Hexe Kugel geben (Diebesgut...) (beendet Gespräch)
         //  - Hexe nach Turm fragen (Abneigung steigt - danach "missteauisch...")
         //  - Nach-dem-Weg-fragen beendet das Gespräch.
 
-        // STORY Weitere Antworten.
+        // FIXME Weitere Antworten.
 
         setSchonBegruesstMitSC(true);
         unsetTalkingTo();

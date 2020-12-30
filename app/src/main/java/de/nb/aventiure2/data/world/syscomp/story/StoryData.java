@@ -63,18 +63,12 @@ class StoryData {
         return res.build();
     }
 
-    boolean isReachable(final IStoryNode node) {
+    private boolean isReachable(final IStoryNode node) {
         if (state == BEENDET || isReached(node) || !allNodesReachedRequiredFor(node) ||
                 // oder der Node wird automatisch freigeschaltet
                 node.getExpAchievementSteps() == null) {
             return false;
         }
-
-        // FIXME Zusätzlich könnte die node auch noch
-        //  beliebige Prüfungen auf der world als Voraussetzung(en) haben
-        //  (Prüfung = Interface, in das die world hineingereicht wird, das Story Data würde
-        //  die world übergeben bekommen).
-        //  if (node.getAdvancedPrecondition().holds(world)) {...}
 
         return true;
     }
@@ -89,7 +83,7 @@ class StoryData {
         return true;
     }
 
-    public int getLastAchievementStepCount() {
+    int getLastAchievementStepCount() {
         int res = 0;
         if (state == NICHT_BEGONNEN) {
             return 0;
@@ -122,7 +116,7 @@ class StoryData {
         if (storyNode.beendetStory()) {
             state = BEENDET;
 
-            // STORY Wenn eine Story beendet wurde, könnte der Narrator eine neue
+            // IDEA Wenn eine Story beendet wurde, könnte der Narrator eine neue
             //  (möglichst abstrakte) Überschrift setzen und damit ein neues Kapitel beginnen.
             //  Die Überschrift bezöge sich lose auf eine der
             //  jetzt noch verbleibenden und offenen Storys (sofern es überhaupt solche
@@ -136,7 +130,7 @@ class StoryData {
         return true;
     }
 
-    boolean isReached(final IStoryNode storyNode) {
+    private boolean isReached(final IStoryNode storyNode) {
         return reachedNodes.containsKey(storyNode);
     }
 

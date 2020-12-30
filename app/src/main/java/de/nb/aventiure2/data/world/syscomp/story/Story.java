@@ -13,18 +13,18 @@ import de.nb.aventiure2.data.world.syscomp.story.impl.RapunzelStoryNode;
  * Schritten ({@link IStoryNode}s).
  */
 public enum Story {
-    // STORY Storys einschließlich der Story Nodes könnten auch generiert werden,
+    // IDEA Storys einschließlich der Story Nodes könnten auch generiert werden,
     //  basierend auf Story-Telling-Theorien.
     //  Aber dann können es natürlich keine Enums mehr sein!
 
-    // STORY Meine Story als "Front" (analog Dungeon World) betrachten?
+    // IDEA Meine Story als "Front" (analog Dungeon World) betrachten?
 
     FROSCHKOENIG(FroschkoenigStoryNode.class,
             FroschkoenigStoryNode::checkAndAdvanceIfAppropriate),
     RAPUNZEL(RapunzelStoryNode.class,
             RapunzelStoryNode::checkAndAdvanceIfAppropriate);
 
-    // STORY Märchen zu 3 Act Structures adaptieren? (1. Akt nötig?)
+    // IDEA Märchen zu 3 Act Structures adaptieren? (1. Akt nötig?)
     //  Inciting incident? Spieler bedrohen, dass "seine Welt" gefährdet
     //  sein könnte?
     //  Idee: Märchenelemente für ein neues Märchen in eine Plotstruktur
@@ -37,7 +37,7 @@ public enum Story {
     //  Bewusst machen: was soll der Spieler letztlich aus der
     //  Geschichte mitnehmen? Call to action in der Welt??
 
-    // STORY Wie kommt man von einer Geschichte zu weiteren - ohne dass es langweilig wird?
+    // IDEA Wie kommt man von einer Geschichte zu weiteren - ohne dass es langweilig wird?
     //  Wie kann man eine Geschichte verallgemeinern? Wie kann man eine
     //  Geschichte erzeugen?
     //  Sollte man eine Geschichte parametrisieren? Das Gemeinsame aus zwei Geschichten

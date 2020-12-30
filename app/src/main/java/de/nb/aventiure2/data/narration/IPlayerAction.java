@@ -6,7 +6,7 @@ package de.nb.aventiure2.data.narration;
 public interface IPlayerAction {
     // FIXME Farben: kein Rot!
 
-    // STORY Bei Bewegungen : Farben je nach Raum. In Abfolge ähnlich? Möglichst verschieden?
+    // IDEA Bei Bewegungen : Farben je nach Raum. In Abfolge ähnlich? Möglichst verschieden?
     //  Farben nach Art des Raums?! Farben nach Hashcode?
     //  Vielleicht alle anderen Aktionen gleiche Farbe?
 

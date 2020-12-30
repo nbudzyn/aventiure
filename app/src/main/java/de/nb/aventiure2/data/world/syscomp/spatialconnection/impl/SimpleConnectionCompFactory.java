@@ -79,8 +79,6 @@ public class SimpleConnectionCompFactory {
                                 .undWartest()
                                 .dann()
                 ));
-        // STORY Nächster Raum: "wirst du von einer dichten Dornenhecke
-        //  zurückgehalten"
     }
 
     public SimpleConnectionComp createNoConnections(final GameObjectId gameObjectId) {

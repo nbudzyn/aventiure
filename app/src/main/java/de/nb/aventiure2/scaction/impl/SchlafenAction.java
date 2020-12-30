@@ -103,11 +103,11 @@ public class SchlafenAction extends AbstractScAction {
 
         narrateAndDoEinschlafen(schlafdauer);
 
-        // FIXME  Idee: Ein LivingBeing oder FeelingBeing kann schlafen - wenn der
+        // IDEA  Idee: Ein LivingBeing oder FeelingBeing kann schlafen - wenn der
         //  SC schläft, bekommt er nichts mit.
         //  Das _könnte_ der Narrator zentral regeln
 
-        // TODO Frosch läuft während des Schlafs weg. Oder kommt ggf. Auch wieder. Oder läuft
+        // IDEA Frosch läuft während des Schlafs weg. Oder kommt ggf. Auch wieder. Oder läuft
         //  weg und kommt wieder.
         //  Es sollte in der Zeit keine narrations geben (der Spieler bekommt ja nichts mit, es sei
         //  denn man lässt ihn dann aufwachen...). Nach dem (regulären) Aufwachen sollte etwas
@@ -125,21 +125,19 @@ public class SchlafenAction extends AbstractScAction {
         //  letzter Zeitpunkt, letzter WACHER Zeitpunkt und aktueller Zeitpunkt
         //  Entsprechend kann dann der Text gestaltet werden, z.B. "Der Frosch ist verschwunden."
 
-        // STORY Konzept entwickeln, dass diese "Statusübergänge" realisiert:
-        //  - Benutzer rastet für längere Zeit (wach) und Rapunzel beginnt mehrfach
-        //    zu singen und hört wieder auf, letztlich hat Rapunzel aufgehört
+        // IDEA Konzept entwickeln, dass diese "Statusübergänge" realisiert:
         //  - Benutzer schläft ein, während Rapunzel singt, aufhört und wieder anfängt
         //  - Benutzer schläft ein, während Rapunzel singt und wacht auf und Rapunzel hat
         //    zwischenzeitlich aufgehört zu singen
 
-        // TODO Idee: Jede Reaktion speichert den letzten Zustand (PCD), auf Basis dessen sie einen
+        // IDEA Idee: Jede Reaktion speichert den letzten Zustand (PCD), auf Basis dessen sie einen
         //  Text gerendert hat sowie den Zeitpunkt dazu. Wenn wieder Gelegenheit ist, ein Text zu
         //  rendern, wird geprüft, ob sich der Status gegenüber dem Zeitpunkt geändert hat,
         //  außerdem wird geprüft, ob der Zeitpunkt Benutzer etwas versäumt hat oder die ganze
         //  Zeit anwesend und aufnahmefähig war - entsprechend etwas wie "Plötzlich endet der Gesang"
         //  oder "Es ist kein Gesang mehr zu hören" gerendert.
 
-        // STORY Zum Beispiel wäre der Benutzer über alle Statusänderungen zu unterrichten,
+        // IDEA Zum Beispiel wäre der Benutzer über alle Statusänderungen zu unterrichten,
         //  Die zwischenzeitlich passiert sind ("der Frosch ist verschwunden").
 
         // FIXME Man könnte auch, wenn der Benutzer erstmals wieder nach draußen kommt, etwas
@@ -152,20 +150,19 @@ public class SchlafenAction extends AbstractScAction {
         //  man ihn später wieder laden kann. Alternativ auch mehrere Game Objects,
         //  denn nur so kann man prüfen, was sich nach dem Schlafen an einem Ort verändert hat.
 
-        // TODO Der Benutzer (oder auch andere Game Objects) könnte auch ein "mental model" habe, wo
+        // IDEA Der Benutzer (oder auch andere Game Objects) könnte auch ein "mental model" habe, wo
         //  der Stand der Welt, wie der Benutzer ihn sich vorstellt, gespeichert ist
         //  (z.B. wie ein Raum war als der Benutzer ihn verlassen hat...)
         //  Dann könnte man beim Erzählen vergleich...
 
-        // STORY Der Frosch läuft während des Schlafens davon - nicht beim Aufwachen.
+        // IDEA Der Frosch läuft während des Schlafens davon - nicht beim Aufwachen.
+        //  Alternativ könnte der Spieler durch das Weglaufen aufgeweckt werden
+        //  (so ähnlich, wie das Warten unterbrochen wird).
 
-        // STORY Man kann durch Ereignisse aufgeweckt werden! Der Status des spielers
-        //  wäre dann auf wach gesetzt und würde immer wieder geprüft.
-
-        // STORY Konzept dafür entwickeln, dass der Benutzer einen  Ort verlässt, während XYZ
+        // IDEA Konzept dafür entwickeln, dass der Benutzer einen  Ort verlässt, während XYZ
         //  passiert und zurückkehrt, wenn XYZ nicht mehr passiert
 
-        // STORY Konzept entwickeln, dass diese "Statusübergänge" realisiert:
+        // IDEA Konzept entwickeln, dass diese "Statusübergänge" realisiert:
         //  - Benutzer schläft an einem Ort, Rapunzel beginnt dort zu singen und hört wieder auf
         //     (Benutzer merkt nichts)
         //  - Benutzer schläft ein, während Rapunzel nicht singt und wacht auf und Rapunzel hat

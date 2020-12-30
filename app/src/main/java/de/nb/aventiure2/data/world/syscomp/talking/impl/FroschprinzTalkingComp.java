@@ -461,7 +461,7 @@ public class FroschprinzTalkingComp extends AbstractTalkingComp {
                         + descObjectsInDenBrunnenGefallen.persPron().akk()
                         + " ins Gras. Du "
                         + "bist voll Freude, als du "
-                        // die goldene Kugel / die Dinge / TODO Synonym: "die schönes Spielzeug"
+                        // die goldene Kugel / die Dinge / IDEA Synonym: "das schöne Spielzeug"
                         // Idee zu Synonymen: Synonyme sollte erst NACH dem Originalbegriff auftauchen
                         // und automatisch gewählt werden, wenn syn() oder Ähnliches
                         // programmiert wird.
@@ -577,7 +577,7 @@ public class FroschprinzTalkingComp extends AbstractTalkingComp {
 
     private <LOC_DESC extends ILocatableGO & IDescribableGO>
     ImmutableList<LOC_DESC> getObjectsInDenBrunnenGefallen() {
-        // STORY Es könnten auch Gegenstände unten im Brunnen
+        // IDEA Es könnten auch Gegenstände unten im Brunnen
         //  sein, von denen der Spieler gar nichts weiß - hier filtern nach Known durch den SC.
         return world.loadDescribableNonLivingMovableRecursiveInventory(UNTEN_IM_BRUNNEN);
     }

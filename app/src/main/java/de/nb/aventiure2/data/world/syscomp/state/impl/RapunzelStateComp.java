@@ -50,7 +50,7 @@ public class RapunzelStateComp extends AbstractStateComp<RapunzelState> {
 
             alt.add(
                     neuerSatz(rapunzelDesc.nom() +
-                            // STORY nur verschüchtert, wenn man Rapunzel noch nicht
+                            // FIXME nur verschüchtert, wenn man Rapunzel noch nicht
                             //  viel Zuneigung entwickelt hat
                             " schaut dich verschüchtert an, dann bindet "
                             + rapunzelDesc.persPron().nom() //"sie"
@@ -72,7 +72,7 @@ public class RapunzelStateComp extends AbstractStateComp<RapunzelState> {
                             .phorikKandidat(PL_MFN, RAPUNZELS_HAARE)
             );
 
-            // STORY Nur wenn Rapunzel schon etwas Zuneigung entwickelt hat:
+            // FIXME Nur wenn Rapunzel schon etwas Zuneigung entwickelt hat:
 //                    neuerSatz(rapunzelDesc.nom() +
 //                                    " schaut auf einmal etwas enttäuscht drein. Dann bindet "
 //                                    + rapunzelDesc.persPron().nom() //"sie"
@@ -82,7 +82,7 @@ public class RapunzelStateComp extends AbstractStateComp<RapunzelState> {
 //                            secs(10))
 //                            .phorikKandidat(PL_MFN, RAPUNZELS_HAARE),
 
-            //  STORY "Oh, ich wünschte, ihr könntet noch einen Moment bleiben!" antwortet RAPUNZEL.
+            //  FIXME "Oh, ich wünschte, ihr könntet noch einen Moment bleiben!" antwortet RAPUNZEL.
             //    Aber sie knotet doch ihrer Haare wieder über den Haken am Fenster"
 
             n.narrateAlt(alt, secs(10));

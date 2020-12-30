@@ -13,11 +13,11 @@ public abstract class AbstractDuDescription<
         SELF extends AbstractDescription<SELF>>
         extends AbstractDescription<SELF> {
     final P duTextPart;
-    
+
     AbstractDuDescription(final StructuralElement startsNew,
                           final P duTextPart,
                           final boolean kommaStehtAus) {
-        // TODO Alle du()-Aufrufe prüfen, ggf. auf SENTENCE setzen
+        // FIXME Alle du()-Aufrufe prüfen, ggf. auf SENTENCE setzen
         super(startsNew, kommaStehtAus);
         this.duTextPart = duTextPart;
     }

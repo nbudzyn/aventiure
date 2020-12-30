@@ -72,7 +72,7 @@ public class World {
     public static final GameObjectId HAENDE_DES_SPIELER_CHARAKTERS = new GameObjectId(10_000);
     public static final GameObjectId EINE_TASCHE_DES_SPIELER_CHARAKTERS = new GameObjectId(10_001);
 
-    // STORY Alles im Spiel sollte eine Hintergrundgeschichte haben ("Lore").
+    // IDEA Alles im Spiel sollte eine Hintergrundgeschichte haben ("Lore").
     //  Die sollte in konsistenten Details durchscheinen. Also wissen, wer in XYZ
     //  gewohnt hat o.Ä. und durchblicken lassen.
 
@@ -251,15 +251,6 @@ public class World {
                 creature.createFroschprinz(),
                 creature.createRapunzel(),
                 creature.createRapunzelsZauberin(),
-                // STORY: Ein Wolf könnte nachts "unsichtbar" zufällig durch den
-                //  Wald laufen (MovementComp) und immer mal heulen oder rascheln, wenn er direkt beim SC
-                //  vorbeiläuft (onReachesCenter() o.Ä.).
-
-                // STORY Wölfe (Creatures? Invisibles?) hetzen Spieler nachts
-                //  Es könnte z.B. Räume neben dem Weg geben, die der Spieler in aller Regel
-                //  nicht betreten, kann, wo aber die Wölfe laufen.
-                //  Es könnte einen sicheren Platz geben - z.B. wäre der Weg sicher
-                //  oder die Hütte.
 
                 meaning.createStoryWeb(),
 
@@ -289,12 +280,12 @@ public class World {
                         np(F, DEF, "Kugel"),
                         SCHLOSS_VORHALLE, DRAUSSEN_VOR_DEM_SCHLOSS,
                         true),
-                // STORY Die goldene Kugel kann verloren gehen, zum Beispiel wenn man sie im
+                // IDEA Die goldene Kugel kann verloren gehen, zum Beispiel wenn man sie im
                 //  Sumpf ablegt. Dann gibt es eine art Reset und eine ähnliche goldene
                 //  Kugel erscheint wieder im Schloss. Der Text dort sagt so dann etwas wie
-                //  "eine goldene kugel wie du sie schon einmal gesehen hast, nur etwas
-                //  kleiner".
-                // STORY Dinge, die man auf den Weg legt oder beim Schlossfest
+                //  "eine goldene Kugel, wie du sie schon einmal gesehen hast, nur etwas
+                //  kleiner | größer".
+                // IDEA Dinge, die man auf den Weg legt oder beim Schlossfest
                 //  auf den Tisch, verschwinden einfach, wenn man weggeht (sie werden
                 //  gestohlen) - vorausgesetzt, man braucht sie nicht mehr und die
                 //  emotionale Bindung ist gering (also nicht die goldene Kugel)!

@@ -124,7 +124,7 @@ public class SchlosswacheReactionsComp
 
     private void scMussDasSchlossWiederVerlassen(
             final ILocationGO raumAusDemDerSCDasSchlossBetretenHat) {
-        // STORY Ausspinnen: Der Spieler sollte selbst entscheiden,
+        // IDEA Ausspinnen: Der Spieler sollte selbst entscheiden,
         //  ob der das Schloss wieder verlässt - oder ggf. im Kerker landet.
 
         final SpielerCharakter sc = loadSC();
@@ -149,7 +149,7 @@ public class SchlosswacheReactionsComp
                                 + "Du bleibst besser draußen")
                         .beendet(PARAGRAPH)
 
-                // STORY Eine Nacht im Kerker! (Ist auch ein Übernachten!)
+                // IDEA Eine Nacht im Kerker! (Ist auch ein Übernachten!)
         );
 
         sc.locationComp().narrateAndSetLocation(raumAusDemDerSCDasSchlossBetretenHat);
@@ -265,7 +265,7 @@ public class SchlosswacheReactionsComp
                         + getDescription(true).nom()
                         + " zu", secs(5)));
 
-        // TODO Geschichte ausspinnen: Spieler muss die Kugel selbst
+        // IDEA Geschichte ausspinnen: Spieler muss die Kugel selbst
         //  ablegen bzw. kommt ggf. in den Kerker
 
         final SpielerCharakter sc = loadSC();
@@ -312,7 +312,7 @@ public class SchlosswacheReactionsComp
                 .undWartest()
                 .phorikKandidat(NumerusGenus.F, goldeneKugel.getId()));
 
-        // STORY Geschichte ausspinnen: Spieler muss die Kugel selbst
+        // IDEA Geschichte ausspinnen: Spieler muss die Kugel selbst
         //  ablegen bzw. kommt ggf. in den Kerker
 
         goldeneKugel.locationComp().narrateAndSetLocation(SCHLOSS_VORHALLE);
@@ -443,17 +443,6 @@ public class SchlosswacheReactionsComp
                     sc.feelingsComp().requestMood(NEUTRAL);
 
                     // Der Spieler weiß jetzt, dass das Schlossfest läuft
-                    // FIXME Dies hier ist ein Problem, wenn der Spieler z.B. vor dem
-                    //  Schloss auf die magere Frau warten würde und der Narrator
-                    //  den Text unterdrücken würde.
-                    //  Man muss verhindern, dass der Narrator den Text nicht ausgibt,
-                    //  später davon ausgeht, dass der Spieler das Schlossfest kennt.
-                    //  Dieses Problem besteht an allen stellen, wo nach einem
-                    //  Text oder einer Aktion KNOWN geändert wird.
-                    //  (Hier ist es nur ein theoretisches Problem.)
-                    //  Lösungsansätze könnten sein:
-                    //  - Den Spieler gerade noch rechtzeitig (VOR DEM TEXT!) aufwecken
-                    //  - upgradeKnown() nur aufrufen, wenn der Text sicher gedruckt wird.
                     sc.memoryComp().upgradeKnown(SCHLOSSFEST);
                 });
     }

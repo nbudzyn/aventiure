@@ -89,16 +89,11 @@ public class RapunzelsZauberinReactionsComp
         this.talkingComp = talkingComp;
     }
 
-    // STORY Rapunzels Zauberin zu einer kleinen "Gefahr" (angelehnt an Dungeon World) ausbauen?
-    //  (Nicht nur ein
-    //  "Hindernis", sondern "kann immer noch schlimmer werden?). Gefahrentyp?
-    //  Antrieb? Düstere Vorzeichen? Drohendes Unheil?
-
     @Override
     public void onLeave(final ILocatableGO locatable,
                         final ILocationGO from,
                         @Nullable final ILocationGO to) {
-        //  STORY Hexe reagiert auf Kugel hinlegen, werfen.
+        //  IDEA Hexe reagiert auf Kugel hinlegen, werfen.
 
         // FIXME Wenn der SC sich ins Unterholz setzt und die  Zauberin zusieht:
         //  "Die Frau hat dich gesehen", "Die Frau schickt dir böse Blicke hinterher" o.Ä.
@@ -123,7 +118,7 @@ public class RapunzelsZauberinReactionsComp
             return;
         }
 
-        // STORY Kugel hinlegen: Kommentar von Hexe?
+        // IDEA Kugel hinlegen: Kommentar von Hexe?
     }
 
     private void onSCLeave(final ILocationGO scFrom,
@@ -539,7 +534,7 @@ public class RapunzelsZauberinReactionsComp
 
         //  Ansonsten wartet die Zaubberin vor dem Turm bis gegen Abend.
         if (now.getTime().isBefore(SPAETESTE_LOSGEHZEIT_RAPUNZELBESUCH.rotateMinus(BESUCHSDAUER))) {
-            // STORY Wenn der Spieler weg ist und Rapunzel trotz einem Ruf
+            // FIXME Wenn der Spieler weg ist und Rapunzel trotz einem Ruf
             //  die Haare nicht heruntegelassen hat, ruft die Zauberin noch ein paar Mal.
 
             return;
@@ -547,7 +542,7 @@ public class RapunzelsZauberinReactionsComp
 
         // Geht aber spätestens dann wieder zurück.
 
-        // STORY Am Ende geht sie, wenn Rapunzel trotz Rufens die Haare nicht
+        // FIXME Am Ende geht sie, wenn Rapunzel trotz Rufens die Haare nicht
         //  heruntergelassen hatt, davon aus, dass Rapunzel befreit wurde.
 
         stateComp.narrateAndSetState(AUF_DEM_RUECKWEG_VON_RAPUNZEL);

@@ -24,18 +24,18 @@ import static de.nb.aventiure2.german.description.DescriptionBuilder.du;
 import static de.nb.aventiure2.german.description.DescriptionBuilder.neuerSatz;
 
 public class VorDerHuetteImWaldConnectionComp extends AbstractSpatialConnectionComp {
-        public VorDerHuetteImWaldConnectionComp(
-                final AvDatabase db,
-                final Narrator n, final World world) {
-            super(VOR_DER_HUETTE_IM_WALD, db, n, world);
-        }
+    public VorDerHuetteImWaldConnectionComp(
+            final AvDatabase db,
+            final Narrator n, final World world) {
+        super(VOR_DER_HUETTE_IM_WALD, db, n, world);
+    }
 
 
     @Override
     public boolean isAlternativeMovementDescriptionAllowed(final GameObjectId to,
                                                            final Known newLocationKnown,
                                                            final Lichtverhaeltnisse lichtverhaeltnisseInNewLocation) {
-            return true;
+        return true;
     }
 
     @Override
@@ -88,7 +88,7 @@ public class VorDerHuetteImWaldConnectionComp extends AbstractSpatialConnectionC
                                 + "Bett wenig zu sehen gibt", secs(15))
                                 .komma()
                                 .undWartest()),
-                // FIXME Klar machen, dass die Hütte kein kühler Ort ist! "Die hütte ist
+                // FIXME Klar machen, dass die Hütte kein kühler Ort ist! "Die Hütte ist
                 //  ordentlich aufgeheizt" oder ähnlich
                 con(HINTER_DER_HUETTE,
                         "im Garten",

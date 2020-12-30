@@ -45,7 +45,7 @@ public class GebenAction<
         GIVEN extends IDescribableGO & ILocatableGO>
         extends AbstractScAction {
 
-    // STORY Man könnte auch der Zauberin Dinge zu geben versuchen.
+    // FIXME Man könnte auch der Zauberin Dinge zu geben versuchen.
     //  Sie identifiziert die Goldene Kugel sofort als Diebesgut - "lasst euch nicht erwischen" oder
     //  "so einer seit ihr also"
 
@@ -181,7 +181,7 @@ public class GebenAction<
         return du(anbietenGebenPraedikat)
                 .undWartest()
                 .dann()
-                // STORY Hier wäre es etwas schöner wenn die im anbietenGebenPraedikat
+                // FIXME Hier wäre es etwas schöner wenn die im anbietenGebenPraedikat
                 //  verwendete Description für den Taker als phorikKandidat gesetzt würde.
                 ;
     }

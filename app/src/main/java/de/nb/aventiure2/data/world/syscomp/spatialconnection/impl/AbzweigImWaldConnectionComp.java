@@ -103,7 +103,7 @@ public class AbzweigImWaldConnectionComp extends AbstractSpatialConnectionComp {
                                 .dann()
                                 .beendet(PARAGRAPH),
 
-                        // STORY Wenn der Benutzer die Kugel im Brunnen (o.Ä.)
+                        // FIXME Wenn der Benutzer bereits zuvor die Kugel im Brunnen (o.Ä.)
                         //  im Brunnen verloren hat: Mood setzen zum Heulen
                         //  (sofern der Frosch noch nicht aktiv geworden ist)
                         //  - Dasselbe auch bei der umbekehrten Richtung

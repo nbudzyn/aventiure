@@ -32,7 +32,7 @@ import static java.util.Arrays.asList;
  * Stand, erzeugt Tipps, wenn der Benutzer in einer Story nicht weiterkommt etc.
  */
 public class StoryWebComp extends AbstractStatefulComponent<StoryWebPCD> {
-    // TODO Es könnte einen extra Knopf geben, unter dem der benutzer in einem Baum (oder
+    // IDEA Es könnte einen extra Knopf geben, unter dem der benutzer in einem Baum (oder
     //  einem Graphen) sieht,
     //  welche StoryNodes er bisher erreicht hat. Die baumstruktur ordnet sich nach den
     //  Voraussetzungen der StoryNodes voneinander.
@@ -58,11 +58,11 @@ public class StoryWebComp extends AbstractStatefulComponent<StoryWebPCD> {
         this(db, n, world, locationSystem, spatialConnectionSystem, asList(initialAktiveStories));
     }
 
-    public StoryWebComp(final AvDatabase db,
-                        final Narrator n, final World world,
-                        final LocationSystem locationSystem,
-                        final SpatialConnectionSystem spatialConnectionSystem,
-                        final Collection<Story> initialAktiveStories) {
+    private StoryWebComp(final AvDatabase db,
+                         final Narrator n, final World world,
+                         final LocationSystem locationSystem,
+                         final SpatialConnectionSystem spatialConnectionSystem,
+                         final Collection<Story> initialAktiveStories) {
         this(db, n, world, locationSystem, spatialConnectionSystem,
                 toEmptyStoryDataMap(initialAktiveStories));
     }

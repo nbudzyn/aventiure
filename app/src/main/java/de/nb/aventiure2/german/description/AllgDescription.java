@@ -15,7 +15,7 @@ public class AllgDescription extends AbstractDescription<AllgDescription> {
      */
     private final String description;
 
-    // STORY Das Konzept könnte man verallgemeinern: Die AllgDescription könnte am Ende
+    // IDEA Das Konzept könnte man verallgemeinern: Die AllgDescription könnte am Ende
     //  Koordination (d.h. und-Verbindungen) auf verschiedenen Ebenen erlauben:
     //  - Du nimmst die Lampe UND DAS GLAS: Koordination im AkkObj des NEHMEN-Prädikat
     //  - Den Weg hinunter kommen eine Frau UND EIN MANN: Koordination im Subj des KOMMEN-Prädikats
@@ -23,6 +23,7 @@ public class AllgDescription extends AbstractDescription<AllgDescription> {
     //  - Die Frau hat gute Laune und GEHT WEITER: Koordination zweier Verben zum selben Subj (P3)
     //  - Die Frau geht den Weg hinunten UND DU GEHST HINTERHER: Koordination zweier Hauptsätze
     //  Dazu bräuchte man wohl eine Kontextinfo in der Art "Womit endet die AllgDescription?"
+    //  Das könnte allerdings auch über die Prädikate... gelöst werden...
 
     AllgDescription(final StructuralElement startsNew,
                     final Wortfolge wortfolge) {

@@ -133,7 +133,6 @@ public class ImWaldNaheDemSchlossConnectionComp extends AbstractSpatialConnectio
         //  (beim Aufwachen) merkt ("Der Frosch ist verschwunden".) Man speichert
         //  am besten den Stand VOR dem Einschlafen und vergleicht mit dem Stand NACH dem
         //  Einschlafen.
-        // STORY Nachts sieht man nicht so gut - sieht man alle Objects?
     }
 
     @NonNull

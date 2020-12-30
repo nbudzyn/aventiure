@@ -54,7 +54,7 @@ public class EssenAction extends AbstractScAction {
                           final World world,
                           final ILocationGO location) {
         if (world.loadSC().memoryComp().getLastAction().is(Action.Type.ESSEN)) {
-            // TODO Es könnten sich verschiedene essbare Dinge am selben Ort befinden!
+            // IDEA Es könnten sich verschiedene essbare Dinge am selben Ort befinden!
             //  Das zweite sollte man durchaus essen können, wenn man schon das
             //  erste gegessen hat!
             return false;
@@ -80,8 +80,6 @@ public class EssenAction extends AbstractScAction {
         }
 
         if (location.is(WALDWILDNIS_HINTER_DEM_BRUNNEN)) {
-            // FIXME Früchte sind im Dunkeln kaum zu sehen, selbst wenn man den Weg
-            //  schon kennt
             return true;
         }
 
@@ -124,8 +122,6 @@ public class EssenAction extends AbstractScAction {
         } else {
             throw new IllegalStateException("Unexpected location: " + location);
         }
-
-        //    STORY Essen sollte stärkere Auswirkungen haben. Märchen mit Essen?
 
         sc.memoryComp().setLastAction(buildMemorizedAction());
 
@@ -291,7 +287,7 @@ public class EssenAction extends AbstractScAction {
                 du(SENTENCE, "hast", "nur wenig Hunger und beißt lustlos in eine der Früchte",
                         "Hunger")
                         .dann(),
-                // TODO Das mit dem "entgehen lassen" macht keinen Sinn, wenn man sich gerade erst
+                // FIXME Das mit dem "entgehen lassen" macht keinen Sinn, wenn man sich gerade erst
                 //  satt gegessen hat. Umformulieren? Nur beim ersten Mal, wenn man
                 //  außerdem satt ist?
                 du(SENTENCE, "lässt",
@@ -333,8 +329,8 @@ public class EssenAction extends AbstractScAction {
     }
 
     private void saveSatt() {
-        // TODO NOW auch zu einem GameObject machen mit einer entsprechenden Stateful Component??
-        // TODO Regel aufstellen: Die Aktionen dürfen nicht auf die DAOs zugreifen.
+        // REFACTOR NOW auch zu einem GameObject machen mit einer entsprechenden Stateful Component??
+        // REFACTOR Regel aufstellen: Die Aktionen dürfen nicht auf die DAOs zugreifen.
         //  Z.B. von DB nur ein Interface definieren, das durchgereicht wird?
         //  Oder alles über die world machen?
 

@@ -21,15 +21,13 @@ public abstract class AbstractReactionsComp extends AbstractStatelessComponent
 
     protected final Narrator n;
 
-    // STORY Jeder Creature (jedem NPC) ein Ziel geben - oder in jedem NPC
+    // IDEA Jeder Creature (jedem NPC) ein Ziel geben - oder in jedem NPC
     //  ein "Potenzial" anlegen (durch seine Werte oder Möglichkeiten),
     //  dass er im Rahmen seiner KI ausschöpfen möchte.
 
-    // STORY Zu jedem Schritt einen Konflikt / ein Hindernis vorsehen: Gegenspieler, Rivale o.Ä.
+    // IDEA Zu jedem Schritt einen Konflikt / ein Hindernis vorsehen: Gegenspieler, Rivale o.Ä.
 
-    // STORY Der Wald kämpft (nachts) gegen den Spieler. Als wäre er böse.
-
-    // STORY Player should care about their character / stuff / achievements / reputation.
+    // IDEA Player should care about their character / stuff / achievements / reputation.
 
     public AbstractReactionsComp(final GameObjectId id,
                                  final AvDatabase db,

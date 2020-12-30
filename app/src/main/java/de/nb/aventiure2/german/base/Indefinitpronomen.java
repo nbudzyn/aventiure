@@ -36,7 +36,7 @@ public class Indefinitpronomen
             // Dativ: "Von NICHTS kommt nichts."
             ip(N, Relativpronomen.Typ.WERWAS, fr("nichts"));
 
-    // TODO Überlegen: Was ist die bessere Implementierung für "welcher"?
+    // REFACTOR Überlegen: Was ist die bessere Implementierung für "welcher"? Andere löschen.
 
     /**
      * "Welcher" / "Welcher" im Sinne von "etwas" / "einige", z.B.

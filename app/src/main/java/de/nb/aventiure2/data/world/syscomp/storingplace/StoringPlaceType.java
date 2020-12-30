@@ -22,7 +22,6 @@ public enum StoringPlaceType {
     VOR_DEM_SCHLOSS("vor dem Schloss", "vor das Schloss"),
     BODEN_VOR_DEM_SCHLOSS("auf dem Boden", "auf den Boden", VOR_DEM_SCHLOSS),
     AM_GRUNDE_DES_BRUNNENS("am Grunde des Brunnens", "auf den Grund des Brunnens"),
-    // TODO Not everything fits on a table
     EIN_TISCH("auf einem Tisch", "auf einen Tisch"),
     NEBEN_SC_AUF_EINER_BANK("neben dir auf einer Bank", "neben dich auf eine Bank"),
     TISCH("auf dem Tisch", "auf den Tisch"),
@@ -49,7 +48,7 @@ public enum StoringPlaceType {
     MATSCHIGER_WALDBODEN("auf dem matschigen Waldboden",
             "auf den matschigen Waldboden",
             new ZweiVerbenSubjObj(AUFHEBEN, POLIEREN), WALD),
-    // STORY    WALDBODEN("zwischen Blättern und Gestrüpp", "auf den Waldboden",
+    // IDEA    WALDBODEN("zwischen Blättern und Gestrüpp", "auf den Waldboden",
     //         HERAUSKLAUBEN),
     WEG("auf dem Weg", "auf den Weg"),
     VOR_TURM("vor dem Turm", "vor den Turm"),

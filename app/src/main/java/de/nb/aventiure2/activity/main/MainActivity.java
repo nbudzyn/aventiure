@@ -34,9 +34,9 @@ import de.nb.aventiure2.logger.Logger;
 import de.nb.aventiure2.scaction.devhelper.chooser.impl.Walkthrough;
 
 public class MainActivity extends AppCompatActivity {
-    // TODO "Mein Märchen" "Schneepunzel"? -> Appstore?
+    // IDEA "Mein Märchen" "Schneepunzel"? -> Appstore?
 
-    // TODO Was sollte man in den AppStore schreiben?
+    // IDEA Was sollte man in den AppStore schreiben?
     //  - Choose your own Adventure?
     //  - Abenteuer-Spielbuch?
     //  - In den (Grimmschen) Märchen
@@ -54,9 +54,7 @@ public class MainActivity extends AppCompatActivity {
     private ObjectAnimator narrationScrollViewAnimator;
 
     private GuiActionsAdapter guiActionsAdapter;
-    // TODO Auffälliger anzeigen, dass es mehr Actions
-    //  gibt, als auf den Bildschirm passen.
-    // TODO Geschichte teilen?! exportieren! PDF?...
+    // TODO Text der Geschichte teilen?
 
     private MainViewModel mainViewModel;
     private Toolbar toolbar;
@@ -66,7 +64,7 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        // TODO Use view binding
+        // REFACTOR Use view binding
         narrationTextView = findViewById(R.id.narrationView);
 
         // TODO Blocksatz?

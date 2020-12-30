@@ -190,7 +190,7 @@ public class Narration {
     }
 
     boolean dann() {
-        // STORY Statt dann auch andere "Temporaladverbialia" verwenden,
+        // IDEA Statt "dann" auch andere "Temporaladverbialia" verwenden,
         //  siehe "Grammatik der deutschen Sprache E2.3": darauf, danach,
         //  kurz danach, sofort, bald etc. Vielleicht abhängig davon, wie lang
         //  Das letzte Ereignis gedauert hat oder wie lang das aktuelle Ereignis

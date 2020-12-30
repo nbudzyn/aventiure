@@ -46,9 +46,6 @@ public class WaitingComp extends AbstractStatefulComponent<WaitingPCD> {
     }
 
     public void stopWaiting() {
-        // FIXME Aus den Texten sollte zu erkennen sein, wie lange der SC gewartet hat,
-        //  bevor das Warten beendet wird.
-
         getPcd().setEndTime(nowDao.now().minus(secs(1)));
     }
 

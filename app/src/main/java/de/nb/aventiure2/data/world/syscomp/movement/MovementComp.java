@@ -157,7 +157,7 @@ public class MovementComp
             return;
         }
 
-        //  STORY Zumindest manche Aktionen sollten wohl dazu führen,
+        //  IDEA Zumindest manche Aktionen sollten wohl dazu führen,
         //   dass die Bewegung beendet oder zumindest für eine Weile die Bewegung
         //   "ausgesetzt" (PAUSED?) wird. Z.B. sollte ein Dialog beendet werden, bis
         //   das IMovingGO wieder weitergeht (sofern das IMovingGO auf den Dialog eingeht und
@@ -240,7 +240,7 @@ public class MovementComp
      */
     private boolean pauseIfSameUpperMostLocationWithSC() {
         if (locationComp.hasSameUpperMostLocationAs(SPIELER_CHARAKTER)
-            // STORY Wenn der SC schläft, dann hingegen das Game Object einfach
+            // IDEA Wenn der SC schläft, dann hingegen das Game Object einfach
             //  vorbeilaufen lassen (in diesem Fall sollte es ja aber auch keine
             //  Narration geben...)
         ) {

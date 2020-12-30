@@ -147,7 +147,8 @@ public class Narrator {
     }
 
     public void narrateAlt(final Collection<? extends TimedDescription<?>> alternatives) {
-        // FIXME Adressatenmodell entscheidet, ob SC wartet / SC schläft?
+        // IDEA hier könnte ein Adressatenmodell auf Basis des SC (Interface?)
+        //  entscheiden, ob SC z.B. schläft.
 
         if (temporaryNarration != null) {
             if (narrateTemporaryNarrationAndTryCombiningWithAlternative(alternatives)) {
@@ -314,7 +315,7 @@ public class Narrator {
      * Ob dieses Game Object zurzeit <i>Thema</i> ist (im Sinne von Thema - Rhema).
      */
     public boolean isThema(@NonNull final GameObjectId gameObjectId) {
-        // STORY es gibt auch noch andere Fälle, wo das Game Object Thema sein könnte...
+        // IDEA es gibt auch noch andere Fälle, wo das Game Object Thema sein könnte...
         //  (Auch im NarrationDao anpassen!)
 
         return applyToPhorikKandidat(pk ->

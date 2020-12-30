@@ -87,18 +87,11 @@ public class WartenAction<LIVGO extends IDescribableGO & ILocatableGO & ILivingB
     @Override
     public void narrateAndDo() {
         // FIXME Aktion
-        //  - Der Text ("Du wartest sehr lange. Die Vägel singen über dir, und allmählich wirst du
-        //    hungrig. Endlich kommt...") sollte vielleicht erst am Ende erzeugt werden. Er müsste
-        //    dann aber aLles berücksichtigen, was zwischenzeitlich passiert ist.
-        //    Vermutlich braucht man weitere Möglichkeiten, bei denen das Warten abgebrochen wird,
+        //  - Vermutlich braucht man weitere Möglichkeiten, bei denen das Warten abgebrochen wird,
         //    z.B. wenn der Spieler müder oder hungriger wird?
-        //  - Man könnte das Warten beim Narrator registrieren. Dann werden in der Wartezeit
-        //    keine Texte geschrieben.
         //  - Rapunzels Gesang sollte das Warten abbrechen - wenn man ihn noch nicht kennt.
-        //  - Reactions-Componente anweisen: Unterbrich den Wartemodus, auch wenn
+        //  - Reactions-Componente anweisen: Unterbrich den Wartemodus, z.B. wenn
         //    der Spieler hungriger wird oder müder oder ein Tageszeitenwechsel geschieht o.Ä.).
-        //    In diesem Fällen muss der Spieler einen Hinweistext bekommen in der Art "Du wartest
-        //    lange. Allmählich wirst du hungrig."
 
         // Der SC wartet
         narrate();

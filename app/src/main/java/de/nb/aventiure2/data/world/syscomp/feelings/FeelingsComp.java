@@ -68,7 +68,7 @@ public class FeelingsComp extends AbstractStatefulComponent<FeelingsPCD> {
     @NonNull
     private final AvTimeSpan zeitspanneNachEssenBisWiederHungrig;
 
-    // STORY Je ein Default für in-Group (die Kumpels) und für out-Group (alle anderen). Es gibt
+    // IDEA Je ein Default für in-Group (die Kumpels) und für out-Group (alle anderen). Es gibt
     //  eine Methode, die ermittelt, wer in-group ist.
     @NonNull
     private final Map<FeelingTowardsType, Float> defaultFeelingsTowards;

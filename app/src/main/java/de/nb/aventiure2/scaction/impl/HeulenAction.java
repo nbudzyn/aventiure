@@ -40,7 +40,9 @@ public class HeulenAction extends AbstractScAction {
             final Narrator n, final World world,
             final SpielerCharakter sc) {
         final ImmutableList.Builder<HeulenAction> res = ImmutableList.builder();
-        // STORY Verhindern, dass der Benutzer nicht mehr untröstlich ist, wenn er z.B. erst
+        // FIXME Alle Breakpoints aktivieren, Debuggen, entfernen.
+
+        // FIXME Verhindern, dass der Benutzer nicht mehr untröstlich ist, wenn er z.B. erst
         //  schläft. Z.B. Benutzer traurig machen, wenn er den Brunnen sieht und sich an
         //  seine goldene Kugel erinnert o.Ä.
 

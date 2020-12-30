@@ -16,7 +16,7 @@ public class SimpleDuDescription
     SimpleDuDescription(final StructuralElement startsNew,
                         final SimpleDuTextPart duTextPart,
                         final boolean kommaStehtAus) {
-        // TODO Alle du()-Aufrufe prüfen, ggf. auf SENTENCE setzen
+        // FIXME Alle du()-Aufrufe prüfen, ggf. auf SENTENCE setzen
         super(startsNew, duTextPart, kommaStehtAus);
     }
 }

@@ -143,7 +143,7 @@ public class RapunzelReactionsComp
                 onSCEnter_VorDemAltenTurm_HaareHeruntergelassen(from);
                 return;
             default:
-                // STORY Konzept dafür entwickeln, dass der Benutzer Rapunzel gut gelaunt
+                // IDEA Konzept dafür entwickeln, dass der Benutzer Rapunzel gut gelaunt
                 //  verlässt und niedergeschlagen zu Rapunzel zurückkehrt und
                 //  Rapunzel auf den Wechsel reagiert (Mental Model für Rapunzel?)
                 return;
@@ -197,7 +197,7 @@ public class RapunzelReactionsComp
             alt.addAll(altRapunzelZiehtHaareWiederHoch_VorDemAltenTurm());
             // STORY Wenn Rapunzel das mit der Zauberin erzählt hat (aber auch dann nur
             //  einmal): „Aber komm nicht, wenn die Alte bei mir ist, ruft sie dir noch nach"
-            //  (Die ist ein neuer RufTyp!)
+            //  (Das wäre ein neuer RufTyp!)
 
             alt.add(neuerSatz(
                     "Als du unten bist, verschwinden die goldenen Haare "
@@ -355,9 +355,7 @@ public class RapunzelReactionsComp
         alt.addAll(toTimed(altZuneigungAbneigungSaetze, secs(5)));
 
         alt.add(
-                // FIXME Das hier nur bei entsprechender Emotion -
-                //  "schaut dich ... an" genauso wie WRIKEN und SCHEINEN erzeugenn?
-                //  Entsprechend auch "sieht... aus"?
+                // FIXME Das hier aus der Emotion generieren lassen.
                 neuerSatz(anaph.nom() + " schaut dich überrascht und etwas verwirrt an",
                         secs(40))
                         .phorikKandidat(F, RAPUNZEL)
@@ -427,8 +425,6 @@ public class RapunzelReactionsComp
                         "Oben im dunklen Zimmer "
                                 // FIXME Automatisch zu den alternativen Sätzen ergänzen!
                                 + "schaut dich "
-                                // FIXME "schaut dich an..." automatisch erzeugen - allerdings
-                                //  nur, wenn kein "sehen" enthalten ist (sonst doppelt gemoppelt)
                                 + anaph.nom()
                                 + " etwas überrascht an",
                         secs(15))

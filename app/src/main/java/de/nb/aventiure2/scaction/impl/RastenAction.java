@@ -121,16 +121,16 @@ public class RastenAction extends AbstractScAction {
     private void narrateAndDoHell() {
         sc.feelingsComp().requestMoodMin(Mood.ZUFRIEDEN);
 
-        // STORY Hier ist sehr auffällig, dass die dann()-Logik nicht stimmt:
+        // IDEA Hier ist sehr auffällig, dass die dann()-Logik nicht stimmt:
         //  Ob "Dann..." sinnvoll ist, hängt wesentlich (auch) vom Folgesatz ab.
         //  Rast -> Rast -> Rast: Kein "Dann..."
         //  Rast -> Aufstehen: "Dann..."
         //  Anscheinend setzt "Dann..." eine Art "Aktionsänderung" voraus.
 
-        // TODO "Dann" nicht bei "statischen Verben" (du hast Glück, du hast Hunger,
+        // IDEA "Dann" nicht bei "statischen Verben" (du hast Glück, du hast Hunger,
         //  du freust dich) verwenden.
 
-        // TODO "Dann" nur verwenden, wenn der es einen Aktor gibt und der Aktor im letzten
+        // IDEA "Dann" nur verwenden, wenn der es einen Aktor gibt und der Aktor im letzten
         //  Satz gleich war. (Nach der Logik kann man dann auch für Beschreibungen in
         //  der dritten Person verwenden!)
 
@@ -147,10 +147,9 @@ public class RastenAction extends AbstractScAction {
                         .beendet(SENTENCE)
                         .dann(),
                 du(SENTENCE, "streckst", "die Glieder und hörst auf das Rauschen "
-                                + "in den "
-                                + "Ästen über dir. Ein Rabe setzt "
-                                + "sich neben dich und fliegt nach einer Weile wieder fort"
-                        //    STORY Rabe mit Märchenbezug?
+                        + "in den "
+                        + "Ästen über dir. Ein Rabe setzt "
+                        + "sich neben dich und fliegt nach einer Weile wieder fort"
                 )
                         .beendet(SENTENCE)
                         .dann(),

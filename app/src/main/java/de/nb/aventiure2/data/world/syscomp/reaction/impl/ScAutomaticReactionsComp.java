@@ -51,16 +51,12 @@ public class ScAutomaticReactionsComp
     public void onLeave(final ILocatableGO locatable, final ILocationGO from,
                         @Nullable final ILocationGO to) {
         waitingComp.stopWaiting();
-        // FIXME Problem: Die Beschreibung wurde bereits geschrieben? Wenn
-        //  sie ausgeblendet wäre, ist sie wohl verloren?
     }
 
     @Override
     public void onEnter(final ILocatableGO locatable, @Nullable final ILocationGO from,
                         final ILocationGO to) {
         waitingComp.stopWaiting();
-        // FIXME Problem: Die Beschreibung wurde bereits geschrieben? Wenn
-        //  sie ausgeblendet wäre, ist sie wohl verloren?
     }
 
     @Override

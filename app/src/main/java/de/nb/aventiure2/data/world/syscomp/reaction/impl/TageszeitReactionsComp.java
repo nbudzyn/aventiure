@@ -35,6 +35,7 @@ public class TageszeitReactionsComp
         // FIXME Über den Tag verteilen: die Sonne steht schon hoch.. weit nach Mittag....
         //  Generell nicht nur an den "Tageszeitengrenzen" Texte erzeugen, sondern abhängig von
         //  der Uhrzeit?
+        //  - Hinweise, dass die Nacht allmählich naht.
 
         // FIXME Je nach Ort unterscheiden:
         //  - Dunkelheit ist abhängig von Tageszeit (Raum nicht beleuchtet)
@@ -43,11 +44,6 @@ public class TageszeitReactionsComp
         //  Merken, wann der Benutzer den jeweiligen Status schon aktualisiert bekommen
         //  hat („Du trittst aus dem Wald hinaus. Rotes Abendrot erstreckt sich über den
         //  Horizont....“)
-
-        // FIXME Nacht wie eine Front ("Die Nacht verbringen") oder Gefahr (analog Dungean World)
-        //  behandeln:
-        //  - Düstere Vorzeichen
-        //  - Hinweise, dass die Nacht allmählich naht.
 
         // Es gab also einen (oder mehrere) Tageszeitenwechsel während einer Zeit von
         // weniger als einem Tag
@@ -139,9 +135,6 @@ public class TageszeitReactionsComp
                 );
                 return;
             case NACHTS:
-                // TODO Der Spieler könnte abends MÜDE werden (und morgens oder nach dem
-                // Schlafen wieder wach / NEUTRAL)
-
                 n.narrateAlt(noTime(),
                         neuerSatz("Die Sonne ist über die Zeit untergegangen"),
                         neuerSatz("Jetzt ist es dunkel"),

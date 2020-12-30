@@ -64,7 +64,7 @@ public class StoringPlaceComp extends AbstractStatelessComponent {
      * auf diesem Tisch, in der Tasche o.Ä.)
      */
     public Lichtverhaeltnisse getLichtverhaeltnisse() {
-        // STORY Der SC oder ein anderes Game Object, dass sich an
+        // FIXME Der SC oder ein anderes Game Object, dass sich an
         //   dieser Location befindet, könnte eine Fackel dabei haben.
 
         if (isDauerhaftBeleuchtet()) {

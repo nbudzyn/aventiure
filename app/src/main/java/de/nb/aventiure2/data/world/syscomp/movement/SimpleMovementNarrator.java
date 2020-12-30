@@ -265,7 +265,7 @@ public class SimpleMovementNarrator implements IMovementNarrator {
                                     " entgegen und geht an dir vorbei")
                             .phorikKandidat(desc, gameObjectId)
                             .beendet(PARAGRAPH));
-            // STORY "Dir kommt ... entgegen und geht hinter dir seiner / ihrer Wege (Genitiv!...)
+            // IDEA "Dir kommt ... entgegen und geht hinter dir seiner / ihrer Wege (Genitiv!...)
             alt.add(
                     neuerSatz(PARAGRAPH,
                             "Dir kommt " +
@@ -308,8 +308,8 @@ public class SimpleMovementNarrator implements IMovementNarrator {
                                 " geht weg")
                         .phorikKandidat(anaphOderDesc, gameObjectId)
                         .beendet(PARAGRAPH),
-                // STORY: "X geht seines / ihres Wegs" - Possessivartikel vor Genitiv!
-                // STORY: "X geht seiner / ihrer Wege" - Possessivartikel vor Genitiv!
+                // IDEA: "X geht seines / ihres Wegs" - Possessivartikel vor Genitiv!
+                // IDEA: "X geht seiner / ihrer Wege" - Possessivartikel vor Genitiv!
                 neuerSatz(PARAGRAPH,
                         anaphOderDesc.nom() +
                                 " geht fort")

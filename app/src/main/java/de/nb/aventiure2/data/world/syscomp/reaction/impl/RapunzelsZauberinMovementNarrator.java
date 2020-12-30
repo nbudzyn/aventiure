@@ -135,9 +135,10 @@ public class RapunzelsZauberinMovementNarrator extends SimpleMovementNarrator {
     }
 
     // STORY Wenn die Zauberin WEISS_DASS_RAPUNZEL_BEFREIT_WURDE, sieht sie
-    //  den SC mit bösen und giftigen Blicken an?
+    //  den SC mit bösen und giftigen Blicken an? Vielleicht aus den Emotionen generieren
+    //  lassen?
 
-    // STORY Nicht so schön: "Vor dem Turm siehst du die Frau stehen. Sie geht den
+    // IDEA Nicht so schön: "Vor dem Turm siehst du die Frau stehen. Sie geht den
     //  Pfad hinab." Besser wäre "Dann geht sie den Pfad hinab."
     //  - Denkbar wäre, .dann() optional mit einem Akteur zu qualifizieren:
     //    .dann(RAPUNZELS_ZAUBERIN). Ein "Dann" würde nur dann

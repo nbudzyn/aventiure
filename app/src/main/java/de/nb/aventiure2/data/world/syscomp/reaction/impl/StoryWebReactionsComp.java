@@ -223,7 +223,6 @@ public class StoryWebReactionsComp
                                         final RapunzelState newState) {
         if (newState == RapunzelState.SINGEND &&
                 loadSC().locationComp().hasRecursiveLocation(VOR_DEM_ALTEN_TURM)
-            // STORY und der Spieler war wach oder ist rechtzeitig aufgewacht...
         ) {
             reachStoryNode(RapunzelStoryNode.RAPUNZEL_SINGEN_GEHOERT);
             return;
@@ -231,7 +230,6 @@ public class StoryWebReactionsComp
 
         if (newState == RapunzelState.HAARE_VOM_TURM_HERUNTERGELASSEN &&
                 loadSC().locationComp().hasRecursiveLocation(VOR_DEM_ALTEN_TURM)
-            // STORY und der Spieler war wach oder ist rechtzeitig aufgewacht...
         ) {
             reachStoryNode(RapunzelStoryNode.ZAUBERIN_HEIMLICH_BEIM_RUFEN_BEOBACHTET);
             return;
@@ -265,7 +263,7 @@ public class StoryWebReactionsComp
     public void afterScActionAndFirstWorldUpdate() {
         storyWebComp.narrateAndDoHintActionIfAny();
 
-        // STORY stilisierte Zeichnungen?! Eintopf mit Holzlöffel etc. Evtl. Lisi?
+        // IDEA Stilisierte Zeichnungen?! Eintopf mit Holzlöffel etc. Evtl. Lisi?
         //  Am besten statt einer HintAction merken, dass bald mal eine
         //  Zeichnung schön wäre (als Belohnung fürs Durchhalten), dann Zeichnung einblenden,
         //  wenn wieder ein zur Verfügung steht? Jede Zeichnung nur 1x.

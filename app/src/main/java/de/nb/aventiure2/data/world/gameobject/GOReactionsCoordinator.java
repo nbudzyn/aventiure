@@ -37,7 +37,7 @@ public class GOReactionsCoordinator
     private final AvNowDao nowDao;
     private final Narrator n;
 
-    // TODO ReactionCoordinator zum zentralen Teil eines ReactionSystems machen?
+    // REFACTOR ReactionCoordinator zum zentralen Teil eines ReactionSystems machen?
 
     GOReactionsCoordinator(final Narrator n,
                            final World world, final AvNowDao nowDao) {
@@ -203,7 +203,7 @@ public class GOReactionsCoordinator
         // STORY: Natürlicher wäre "wachst erst nach einigen Stunden wieder auf" -
         //  Danach die Tageszeitreactions ("Es ist jetzt vollständig dunkel geworden"),
         //  dann die "Wann hast du eigentlich zuletzt etwas gegessen", dann
-        //  "Plitsch platsch" Frosch-Recations.
+        //  "Plitsch platsch" Frosch-Reactions.
         //  Die verschiedeenen Responder könnten also eine "Initiative" o.Ä. haben.
 
         final AvDateTime reactionsStartTime = nowDao.now();

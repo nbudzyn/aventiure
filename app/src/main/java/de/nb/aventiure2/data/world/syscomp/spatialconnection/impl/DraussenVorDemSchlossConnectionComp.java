@@ -67,7 +67,7 @@ public class DraussenVorDemSchlossConnectionComp extends AbstractSpatialConnecti
                         du("folgst", "einem Weg in den Wald. "
                                         + "Nach ein paar Schritten führt rechter Hand ein schmaler Pfad "
                                         + "einen Hügel hinauf",
-                                // TODO Es wäre schön, wennn man die Standard-Duration hier
+                                // REFACTOR Es wäre schön, wennn man die Standard-Duration hier
                                 //  nicht wiederholen müsste.
                                 mins(10)),
                         neuerSatz("Jeder kennt die Geschichten, die man "
@@ -106,9 +106,9 @@ public class DraussenVorDemSchlossConnectionComp extends AbstractSpatialConnecti
     getDescTo_SchlossVorhalle_FestBegonnen() {
         if (db.counterDao().get(COUNTER_SCHLOSS_VORHALLE_FEST_BEGONNEN) == 0) {
             return neuerSatz("Vor dem Schloss gibt es ein großes Gedränge und es dauert "
-                    + "eine Weile, bis "
-                    + "die Menge dich hineinschiebt. Die prächtige Vorhalle steht voller "
-                    + "Tische, auf denen in großen Schüsseln Eintöpfe dampfen", mins(7),
+                            + "eine Weile, bis "
+                            + "die Menge dich hineinschiebt. Die prächtige Vorhalle steht voller "
+                            + "Tische, auf denen in großen Schüsseln Eintöpfe dampfen", mins(7),
                     COUNTER_SCHLOSS_VORHALLE_FEST_BEGONNEN)
                     .komma();
         }

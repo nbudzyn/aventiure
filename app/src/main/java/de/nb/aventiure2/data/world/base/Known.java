@@ -14,7 +14,7 @@ public enum Known {
         this.known = known;
     }
 
-    // TODO Die Lichtverhältnisse - gehören die nicht in eine eigene
+    // REFACTOR Die Lichtverhältnisse - gehören die nicht in eine eigene
     //  Component, so in der Art IstLichtverhaeltnissenAusgesetzt?
     public static Known getKnown(final Lichtverhaeltnisse lichtverhaeltnisse) {
         switch (lichtverhaeltnisse) {

@@ -18,10 +18,10 @@ allprojects {
     repositories {
         google()
         jcenter()
-        maven {
-            // TODO Entfernen, da Federkiel inzwischen auf jCenter ist?
-            url 'https://dl.bintray.com/holdbold/maven/'
-        }
+        // maven {
+        // Federkiel ist inzwischen auf jCenter
+        // url 'https://dl.bintray.com/holdbold/maven/'
+        // }
     }
 }
 

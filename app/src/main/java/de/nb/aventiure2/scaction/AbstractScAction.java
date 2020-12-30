@@ -36,7 +36,7 @@ public abstract class AbstractScAction implements IPlayerAction {
 
     protected final SpielerCharakter sc;
 
-    // TODO AbstractScAction so verallgemeinern (oder Inhalte extrahieren?),
+    // REFACTOR AbstractScAction so verallgemeinern (oder Inhalte extrahieren?),
     //  so dass dieselben Actions auch von einer NPC-AI zurückgegeben werden könnten?
     //  Das Framework nimmt dann die (User- oder NPC-) Action entgegen und führt sie aus?
     //  Ziel wäre: Doppelten Code für USER- und NPC-Actions verhindern und
@@ -198,9 +198,6 @@ public abstract class AbstractScAction implements IPlayerAction {
      */
     protected SubstantivischePhrase getAnaphPersPronWennMglSonstShortDescription(
             final GameObjectId describableId) {
-        // TODO Anapher im weitesten Sinne verwenden. Auch Wiederholung und Katapher ist
-        //  Anapher. Perspron ist nur eine Form der Anapher.
-
         return getAnaphPersPronWennMglSonstDescription(
                 (IDescribableGO) world.load(describableId), true);
     }

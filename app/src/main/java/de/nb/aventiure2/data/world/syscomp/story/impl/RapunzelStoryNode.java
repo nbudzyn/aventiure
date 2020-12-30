@@ -43,7 +43,7 @@ public enum RapunzelStoryNode implements IStoryNode {
             RapunzelStoryNode::narrateAndDoHintAction_RapunzelSingenGehoert,
             TURM_GEFUNDEN
     ),
-    // STORY Automatisch dann freischalten, wenn der SC vom Brunnen erstmals zurückkehrt und es
+    // FIXME Automatisch dann freischalten, wenn der SC vom Brunnen erstmals zurückkehrt und es
     //  Tag ist etc., so dass der SC der Zauberin auf jeden Fall einmal im Wald begegnet
     // Dies wird durch checkAndAdvanceIfAppropriate() automatisch freigeschaltet.
     // Tipps dafür wäre nicht sinnvoll
@@ -60,10 +60,7 @@ public enum RapunzelStoryNode implements IStoryNode {
             ZAUBERIN_HEIMLICH_BEIM_RUFEN_BEOBACHTET);
 
 
-    // STORY Was, wenn die Kugel zu Boden fällt oder der SC sie hinlegt?
-    //  "(Die junge Frau) hebt (die goldene Kugel) auf und..."
-
-    // STORY "Mit RAPUNZEL unterhalten"
+    // FIXME "Mit RAPUNZEL unterhalten"
     //  - "Du fragst sie nach ihrem Namen, aber der ist so ungewöhnlich, dass
     //   du ihn dir nicht merken kannst. Es ist dir zu ungegenehm, noch einmal zu fragen."
     //  - Ihr plaudert eine Weile - ihr versteht euch sehr gut.
@@ -82,9 +79,9 @@ public enum RapunzelStoryNode implements IStoryNode {
     //    der wäre ein Vermögen wert! (Meldung muss beim 3. Mal auch jeden Fall kommen ->
     //    Status anpassen?! Kombinierter Status (X /Y)?)
 
-    // STORY Wenn Zauberin kommt: "Du kriechst unter das Bett. Es ist eng und staubig"
+    // FIXME Wenn Zauberin kommt: "Du kriechst unter das Bett. Es ist eng und staubig"
 
-    // STORY "Die Zauberin und RAPUNZEL unterhalten sich, aber eigentlich haben sie
+    // FIXME "Die Zauberin und RAPUNZEL unterhalten sich, aber eigentlich haben sie
     //  einander nichts zu sagen."
     //  - Die ZAUBERIN erzählt von ihren täglichen Verrichtungen und RAPUNZEL hört
     //    artig zu.
@@ -94,11 +91,11 @@ public enum RapunzelStoryNode implements IStoryNode {
     //    das Bett. Dir pocht das Herz"
     //  - Die Zauberin hat Essen und Trinken mitgebracht und du hörst den beiden bei der
     //   Mahlzeit zu. BEI HUNGER: Dein Magen knurrt, aber es scheint niemand zu bemerken.
-    // STORY WARTEN "Du liegst lange Zeit ganz still. Der Staub kribbelt in deiner Nase."
+    // FIXME WARTEN "Du liegst lange Zeit ganz still. Der Staub kribbelt in deiner Nase."
     //  "Endlich verabschiedet sich die ZAUBERIN und steigt herab"
     //  "Du kannst wieder herauskommen - hörst du es lieblich sagen"
 
-    // STORY Oder: Man muss eine Strickleiter
+    // FIXME Oder: Man muss eine Strickleiter
     //  besorgen - oder Seide kaufen und etwas zum Stricken??? Gold gabs vielleicht
     //  vom Froschprinzen?
 

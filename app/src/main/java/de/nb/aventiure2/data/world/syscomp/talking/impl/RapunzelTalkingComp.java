@@ -147,11 +147,11 @@ public class RapunzelTalkingComp extends AbstractTalkingComp {
 
         n.narrateAlt(secs(15),
                 neuerSatz(
-                        // STORY Nur, wenn SC und Rapunzel sich noch nicht gut kennen
+                        // FIXME Nur, wenn SC und Rapunzel sich noch nicht gut kennen
                         "„Die letzen Tage waren ziemlich warm“, sagst du")
                         .beendet(PARAGRAPH),
                 neuerSatz(
-                        // STORY Nur, wenn SC und Rapunzel sich noch nicht gut kennen
+                        // FIXME Nur, wenn SC und Rapunzel sich noch nicht gut kennen
                         "„Nachts war es in letzter Zeit ziemlich kalt“, wirfst du "
                                 + "in den Raum")
                         .beendet(PARAGRAPH)
@@ -455,7 +455,7 @@ public class RapunzelTalkingComp extends AbstractTalkingComp {
                     + " glänzenden Locken";
         }
 
-        // STORY Das hier sollte nur einmal gehen.
+        // FIXME Das hier sollte nur einmal gehen.
         n.narrate(du(PARAGRAPH, "fängst", "an ganz freundlich mit "
                         + anaph.dat()
                         + " zu reden. Du erzählst, dass von "

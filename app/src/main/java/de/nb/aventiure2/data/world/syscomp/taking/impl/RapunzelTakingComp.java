@@ -145,7 +145,7 @@ public class RapunzelTakingComp extends AbstractTakingComp {
                         + " "
                         + givenDescShort.persPron().akk()
                         + " dir zurück"),
-                // STORY Nur, wenn Zuneigung entsprechend!
+                // FIXME Nur, wenn Zuneigung entsprechend!
                 neuerSatz((stateComp.hasState(HAT_NACH_KUGEL_GEFRAGT) ?
                         "Gespannt" : "Überrascht")
                         + " nimmt "

@@ -90,9 +90,6 @@ public class BewegenAction<LOC_DESC extends ILocatableGO & IDescribableGO>
                     (ILocationGO & ISpatiallyConnectedGO) location));
         }
 
-        // TODO Hochklettern an Rapunzels Haaren als Bewegen-Action modellieren:
-        //  "Sogleich fallen die Haare herab und du steigst hinauf"
-
         for (final ILocationGO inventoryGO :
                 world.loadDescribableNonLivingLocationInventory(location)) {
             @Nullable final SpatialConnectionData inData =
@@ -412,8 +409,8 @@ public class BewegenAction<LOC_DESC extends ILocatableGO & IDescribableGO>
     }
 
     private void narrateLocationOnly(@NonNull final ILocationGO to) {
-        // FIXME Texte ab dem xten Mal deutlich verkürzen? Z.B. auch mit Zusammenfassungen in der
-        //  Art "und weiter in Richtung Schloss"
+        // FIXME Verkürzungen automatisch erzeugen, z.B. erzeugen eines Nachfelds nach einem
+        //  Prädikat: "und weiter in Richtung Schloss".
 
         // STORY Wenn Bewegung Wiederholung ist (z.B. Rund um den Turm): Zur Sicherheit...
         //  noch einmal. Um sicher zu

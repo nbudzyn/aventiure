@@ -73,7 +73,7 @@ public class NehmenAction
                                                                 final Narrator n,
                                                                 final World world,
                                                                 final GO object) {
-        // STORY Gegenstände verloren gehen lassen, wenn nicht mehr nötig?
+        // IDEA Gegenstände verloren gehen lassen, wenn nicht mehr nötig?
 
         final ImmutableList.Builder<NehmenAction<GO, TARGET_LOC>> res = ImmutableList.builder();
 

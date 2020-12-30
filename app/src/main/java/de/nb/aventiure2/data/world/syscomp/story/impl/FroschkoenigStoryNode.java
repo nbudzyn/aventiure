@@ -44,7 +44,7 @@ public enum FroschkoenigStoryNode implements IStoryNode {
     ),
     ETWAS_IM_BRUNNEN_VERLOREN(6, IM_WALD_BEIM_BRUNNEN,
             FroschkoenigStoryNode::narrateAndDoHintAction_EtwasImBrunnenVerloren,
-            KUGEL_GENOMMEN // STORY Es könnte auch andere Dinge zum Im-Brunnen-Verlieren geben
+            KUGEL_GENOMMEN // IDEA Es könnte auch andere Dinge zum Im-Brunnen-Verlieren geben
     ),
     FROSCH_HAT_ETWAS_AUS_BRUNNEN_GEHOLT(10, IM_WALD_BEIM_BRUNNEN,
             FroschkoenigStoryNode::narrateAndDoHintAction_FroschHatEtwasAusBrunnenGeholt,
@@ -134,7 +134,7 @@ public enum FroschkoenigStoryNode implements IStoryNode {
         return false;
     }
 
-    // FIXME Alternativen für Tipp-Texte, bei denen Foreshadowing stärker im
+    // IDEA Alternativen für Tipp-Texte, bei denen Foreshadowing stärker im
     //  Vordergrund steht
 
     private static void narrateAndDoHintAction_KugelGenommen(
@@ -201,13 +201,6 @@ public enum FroschkoenigStoryNode implements IStoryNode {
 
     public static void narrateAndDoHintAction_EtwasImBrunnenVerloren(
             final AvDatabase db, final Narrator n, final World world) {
-        // STORY
-        //  - (bis BEIM_SCHLOSSFEST_AN_DEN_TISCH_GESETZT) Eine verwirrte alte Frau
-        //   läuft zwiscchen vor dem Schloss und Wald hin und her und jammert: Im Königreich nebenan
-        //   ist der Prinz verschwunden. Er soll verwünscht oder in ein Tier
-        //   verwandelt worden sein und treibe sich jetzt im Wald herum. Keiner wisse, wo
-        //   er zu finden sei...
-
         final ImmutableList.Builder<AbstractDescription<?>> alt = builder();
 
         final ILocatableGO goldeneKugel = (ILocatableGO) world.load(GOLDENE_KUGEL);

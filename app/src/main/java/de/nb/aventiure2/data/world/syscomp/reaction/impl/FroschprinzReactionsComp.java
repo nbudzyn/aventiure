@@ -112,8 +112,6 @@ public class FroschprinzReactionsComp
                     FROSCHPRINZ, Ruftyp.WARTE_NIMM_MICH_MIT);
             return;
         }
-        // STORY Der Frosch ruft bereits bei "schlägst dich in die Wildnis hinter dem Brunnen",
-        //  nicht erst nach "wie zu klein geratene Äpfel"
     }
 
     private void onSCLeaveMitFroschprinz(final ILocationGO from,
@@ -177,7 +175,7 @@ public class FroschprinzReactionsComp
             case HAT_HOCHHEBEN_GEFORDERT:
                 loadSC().feelingsComp().requestMood(ANGESPANNT);
 
-                // TODO Wenn der Frosch nur rekursiv enthalten ist (Frosch sitzt auf
+                // STORY Wenn der Frosch nur rekursiv enthalten ist (Frosch sitzt
                 //  in einer Schale auf der Bank, dann hier prüfen und ggf. beschreiben
                 //  (vgl. AblegenAction)
                 n.narrateAlt(
@@ -226,7 +224,7 @@ public class FroschprinzReactionsComp
                 onSCEnterPrinzLocation(from, to);
                 return;
             default:
-                // TODO Wenn der Frosch nur rekursiv enthalten ist (Frosch sitzt auf dem Tisch),
+                // STORY Wenn der Frosch nur rekursiv enthalten ist (Frosch sitzt auf dem Tisch),
                 //  dann beschreiben (vgl. BewegenAction)
                 n.narrate(neuerSatz("Hier sitzt " + desc.nom(), noTime())
                         .phorikKandidat(desc, FROSCHPRINZ));
@@ -250,7 +248,7 @@ public class FroschprinzReactionsComp
 
         final Nominalphrase desc = getDescription();
 
-        // TODO Wenn der Prinz nur rekursiv enthalten ist (Prinz sitzt auf einem Stuhl),
+        // STORY Wenn der Prinz nur rekursiv enthalten ist (Prinz sitzt auf einem Stuhl),
         //  dann genauer beschreiben (vgl. BewegenAction)
         n.narrate(du("siehst", getDescription().akk(), noTime())
                 .phorikKandidat(desc, FROSCHPRINZ));
@@ -277,13 +275,6 @@ public class FroschprinzReactionsComp
 
     private void prinzFaehrtMitWagenDavon() {
         n.narrate(
-                // TODO Danach stehst du vom Tisch auf und drängst dich durch das
-                //  Eingangstor. DANN siehst du noch einen Wagen davonfahren... - das DANN
-                //  ergibt keinen Sinn. Wie kann man das sinnvoll verhindern?
-                //  Du drängst dich durch das Eingangstor und siehst noch... ergibt
-                //  total Sinn. Muss man möglicherweise bei du-Sätzen festlegen,
-                //  Ob sie neue Handlung beginnen - und, falls nicht, dann verbieten?
-
                 du("siehst",
                         "noch einen Wagen davonfahren, mit acht weißen Pferden bespannt, "
                                 + "jedes mit weißen Straußfedern auf dem Kopf", mins(2))
@@ -294,9 +285,6 @@ public class FroschprinzReactionsComp
         //  Einfaches allgemeines Konzept: Immer wenn man eine Geschichte abgeschlossen
         //  hat, erhält man zwingend ein Lob ("Du bist sehr zufrieden mit dir, dass du..."
         //  und einen Tipp!
-
-        // STORY Nach jedem Kapitelende eine kleine Pause (Wartezeit) einlegen?
-
         locationComp.narrateAndUnsetLocation();
     }
 

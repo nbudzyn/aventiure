@@ -25,7 +25,7 @@ public interface IStoryNode {
     //  passiert? Was passiert ihr nachher?
     //  Erst nur sehr grob, verfeinern / konsistent machen später.
 
-    // STORY Mein Herz hängt an der Erzählung durch die Maschine. Das sollte in jedem Schritt
+    // IDEA Mein Herz hängt an der Erzählung durch die Maschine. Das sollte in jedem Schritt
     //  des Spiels enforcet werden. Es sollte also in jedem Schritt die Erzählung meaningful
     //   weitergehen. Der Benutzer sollte immer etwas tun können, was eine
     //   meaningful Erzählung fortsetzt (oder beginnt / beendet). (Das ist die Belohnung an den
@@ -37,9 +37,9 @@ public interface IStoryNode {
     //      beschriebenen Elementen interagieren können? Und zwar so, dass die Interaktionen
     //      die Welt ändern? Oder spürbar Auswirkungen auf später haben?
 
-    // STORY Wie kann man eine meaningful Erzählung automatisch erzeugen?
+    // IDEA Wie kann man eine meaningful Erzählung automatisch erzeugen?
 
-    // STORY "Fronten" ("Fronts") angelehnt an Dungeon World: Wenn der Spieler nicht
+    // IDEA "Fronten" ("Fronts") angelehnt an Dungeon World: Wenn der Spieler nicht
     //  interagiert, kommt es mehrstufig zu Eskalationen
 
     @FunctionalInterface
