@@ -425,7 +425,6 @@ public class NehmenAction
                 mitnehmenPraedikat.mit(world.getDescription(gameObject, true));
         n.narrate(
                 du(PARAGRAPH, praedikatMitObjekt, secs(5))
-                        // TODO Kann das .undWartest() bei Prädikat automatisch gesetzt werden?
                         .undWartest(
                                 praedikatMitObjekt
                                         .duHauptsatzLaesstSichMitNachfolgendemDuHauptsatzZusammenziehen())

@@ -28,9 +28,6 @@ import static de.nb.aventiure2.german.description.Kohaerenzrelation.DISKONTINUIT
  */
 @ParametersAreNonnullByDefault
 public abstract class AbstractScAction implements IPlayerAction {
-    // STORY Auch die NPCs könnten actions wie die AbstractScAction
-    //  durchführen
-
     private static final AvTimeSpan MAX_WORLD_TICK = days(1);
 
     protected final AvDatabase db;

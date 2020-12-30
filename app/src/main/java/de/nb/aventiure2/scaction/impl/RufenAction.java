@@ -43,12 +43,6 @@ public class RufenAction extends AbstractScAction {
             final AvDatabase db,
             final Narrator n, final World world,
             @NonNull final ILocationGO location) {
-        // STORY Alle Aktionen mit allen Gegenständen überall erlauben
-
-        // STORY Überall kann man etwas wie "Ist da wer?" rufen (wenn man
-        //  allein ist) Hexe, Rapunzel, Frosch, Schlosswache
-        //  reagierem lassen -> Alternatover weg zu einem späteren milestone
-
         final ImmutableList.Builder<AbstractScAction> res = builder();
 
         if (world.loadSC().memoryComp().isKnown(RAPUNZELRUF)) {

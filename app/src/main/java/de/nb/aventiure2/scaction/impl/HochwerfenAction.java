@@ -23,7 +23,9 @@ import de.nb.aventiure2.german.base.Nominalphrase;
 import de.nb.aventiure2.german.base.SubstantivischePhrase;
 import de.nb.aventiure2.german.description.TimedDescription;
 import de.nb.aventiure2.german.praedikat.AdverbialeAngabeSkopusSatz;
+import de.nb.aventiure2.german.praedikat.AdverbialeAngabeSkopusVerbWohinWoher;
 import de.nb.aventiure2.german.praedikat.SeinUtil;
+import de.nb.aventiure2.german.praedikat.ZweiPraedikateOhneLeerstellen;
 import de.nb.aventiure2.scaction.AbstractScAction;
 
 import static com.google.common.collect.ImmutableList.of;
@@ -42,6 +44,8 @@ import static de.nb.aventiure2.german.base.StructuralElement.PARAGRAPH;
 import static de.nb.aventiure2.german.description.DescriptionBuilder.du;
 import static de.nb.aventiure2.german.description.DescriptionBuilder.neuerSatz;
 import static de.nb.aventiure2.german.description.DescriptionBuilder.satzanschluss;
+import static de.nb.aventiure2.german.praedikat.VerbSubjObj.AUFFANGEN;
+import static de.nb.aventiure2.german.praedikat.VerbSubjObj.WERFEN;
 
 /**
  * Der Spieler(charakter) wirft einen Gegenstand hoch.
@@ -63,7 +67,6 @@ public class HochwerfenAction<OBJ extends IDescribableGO & ILocatableGO>
             return of();
         }
 
-        // STORY Nicht jedes Object lässt sich hochwerfen...
         return of(new HochwerfenAction<>(db, n, world, gameObject, location));
     }
 
@@ -124,36 +127,26 @@ public class HochwerfenAction<OBJ extends IDescribableGO & ILocatableGO>
             return;
         }
 
-        final ImmutableList<String> altEmotionSatzglieder = altEmotionSatzgliedFuersHochwerfen();
-
-        narrateAndDoHochwerfenAuffangen(
-                altEmotionSatzglieder.stream()
-                        .map(emo ->
-                                du(PARAGRAPH, "wirfst",
-                                        objectDesc.akk()
-                                                + " "
-                                                + emo
-                                                + " in die Höhe und fängst " +
-                                                objectDesc.persPron().akk() +
-                                                " wieder auf",
-                                        emo, secs(3))
-                                        .dann())
-                        .collect(toImmutableList()));
-    }
-
-    @NonNull
-    private ImmutableList<String> altEmotionSatzgliedFuersHochwerfen() {
-        return sc.feelingsComp().altAdverbialeAngaben().stream()
-                // FIXME Beser mit Konstituenten oder Wortfolge arbeiten? Folgekommma könnte verloren gehen...
-                .map(AdverbialeAngabeSkopusSatz::getText)
-                .collect(toImmutableList());
+        narrateAndDoHochwerfenAuffangen(sc.feelingsComp().altAdverbialeAngaben().stream()
+                .map(a ->
+                        du(PARAGRAPH,
+                                new ZweiPraedikateOhneLeerstellen(
+                                        WERFEN.mit(objectDesc)
+                                                .mitAdverbialerAngabe(a)
+                                                .mitAdverbialerAngabe(
+                                                        new AdverbialeAngabeSkopusVerbWohinWoher(
+                                                                "in die Höhe")),
+                                        AUFFANGEN.mit(objectDesc.persPron())
+                                                .mitAdverbialerAngabe(
+                                                        new AdverbialeAngabeSkopusSatz(
+                                                                "wieder"))
+                                ), secs(3))
+                                .dann())
+                .collect(toImmutableList()));
     }
 
     private <F extends IHasStateGO<FroschprinzState> & ILocatableGO> void
     narrateAndDoFroschBekannt(final F froschprinz) {
-        // TODO Für jede State Machine ein eigenes State Enum. Nur im PCD
-        //  sind es Strings.
-
         if (froschprinz.stateComp().hasState(HAT_SC_HILFSBEREIT_ANGESPROCHEN,
                 HAT_NACH_BELOHNUNG_GEFRAGT,
                 HAT_FORDERUNG_GESTELLT)) {

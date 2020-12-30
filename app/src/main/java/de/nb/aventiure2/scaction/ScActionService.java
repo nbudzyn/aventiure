@@ -55,8 +55,7 @@ public class ScActionService {
         n = Narrator.getInstance(db);
         world = World.getInstance(db, n);
     }
-
-    // TODO Better have typical combinations available at a central place?
+    
     public <DESC_OBJ extends ILocatableGO & IDescribableGO,
             LIV extends ILocatableGO & IDescribableGO & ILivingBeingGO> List<AbstractScAction>
     getPlayerActions() {

@@ -143,8 +143,6 @@ public class EssenAction extends AbstractScAction {
         }
         final Hunger hunger = getHunger();
 
-        // STORY Eintopf NEHMEN als separate Aktion?!
-
         switch (hunger) {
             case HUNGRIG:
                 narrateAndDoSchlossfestHungrig();

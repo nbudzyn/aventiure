@@ -14,12 +14,12 @@ import de.nb.aventiure2.german.base.Person;
  * <i>zusammengezogenen Satz</i>, in dem das Subjekt im zweiten Teil
  * <i>eingespart</i> ist ("Du hebst die Kugel auf und [du] nimmst ein Bad").
  */
-class ZweiPraedikateOhneLeerstellen
+public class ZweiPraedikateOhneLeerstellen
         implements PraedikatOhneLeerstellen {
     private final PraedikatOhneLeerstellen ersterSatz;
     private final PraedikatOhneLeerstellen zweiterSatz;
 
-    ZweiPraedikateOhneLeerstellen(
+    public ZweiPraedikateOhneLeerstellen(
             final PraedikatOhneLeerstellen ersterSatz,
             final PraedikatOhneLeerstellen zweiterSatz) {
         this.ersterSatz = ersterSatz;

@@ -66,11 +66,11 @@ public class RastenAction extends AbstractScAction {
 
     @Override
     public void narrateAndDo() {
-        // FIXME Ab einem Punkt, wo man davon ausgehen kann, dass der Spieler
-        //  bewusst rastet, um die Frau zu beobachten, sollte die Frau nach 4x Rasten
-        //  oder 4x Warten gekommen
-
-        //  FIXME (Alternative zum Warten)  mehrere verschiedenen bestätigende Texte, dass sich das Rasten lohnt
+        // FIXME: Warten auf die richtige Länge setzen. Wenn das NICHT funktioniert:
+        //  - Ab einem Punkt, wo man davon ausgehen kann, dass der Spieler
+        //   bewusst rastet, um die Frau zu beobachten, sollte die Frau nach 4x Rasten
+        //   oder 4x Warten gekommen
+        //  -  (Alternative zum Warten)  mehrere verschiedenen bestätigende Texte, dass sich das Rasten lohnt
         //   (damit der Spieler nicht zu bald aufgibt).
         if (isDefinitivFortsetzung() &&
                 ((IHasStateGO<RapunzelState>) world.load(RAPUNZEL)).stateComp()
@@ -127,7 +127,8 @@ public class RastenAction extends AbstractScAction {
         //  Rast -> Aufstehen: "Dann..."
         //  Anscheinend setzt "Dann..." eine Art "Aktionsänderung" voraus.
 
-        // TODO "Dann" nicht bei statischen Verben (du hast Glück, du hast Hunger) verwenden
+        // TODO "Dann" nicht bei "statischen Verben" (du hast Glück, du hast Hunger,
+        //  du freust dich) verwenden.
 
         // TODO "Dann" nur verwenden, wenn der es einen Aktor gibt und der Aktor im letzten
         //  Satz gleich war. (Nach der Logik kann man dann auch für Beschreibungen in

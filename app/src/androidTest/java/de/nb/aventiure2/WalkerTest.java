@@ -83,9 +83,6 @@ public class WalkerTest extends AndroidTestBase {
 
     private void walkRandomly() {
         final RandomActionChooser actionChooser = new RandomActionChooser();
-        // TODO Nicht nur zufällig sondern nach konfigurierbaren Vorgaben. Z.B.
-        //  Aktionen gemäß Primzahlen, immer abwechselnd, bestimmte Festlegungen, sonst
-        //  zufällig o.Ä.
 
         walkActions(actionChooser);
     }

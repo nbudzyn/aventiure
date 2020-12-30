@@ -112,10 +112,6 @@ class DescriptionCombiner {
                     hauptsatzMitVorfeld.getString()));
         }
 
-        // STORY "Als du unten angekommen bist..."
-        //  (Also Perfekt! Das Partizip II wissen wir ja! Prüfen, ob man das ohne Schaden
-        //  machen kann.)
-
         return res.build();
     }
 }
