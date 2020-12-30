@@ -1,43 +1,46 @@
 package de.nb.aventiure2.activity.main;
 
-import android.content.Context;
 import android.view.LayoutInflater;
-import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.FrameLayout;
 
+import androidx.annotation.NonNull;
 import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import de.nb.aventiure2.R;
 import de.nb.aventiure2.activity.main.viewmodel.GuiAction;
+import de.nb.aventiure2.databinding.ActionBinding;
 
 public class GuiActionsAdapter extends RecyclerView.Adapter<GuiActionsAdapter.ViewHolder> {
-    private final List<GuiAction> guiActions = new ArrayList<>();
-    private final LayoutInflater inflater;
-
     static class ViewHolder extends RecyclerView.ViewHolder {
         private final Button actionButton;
 
-        private ViewHolder(final View itemView) {
-            super(itemView);
-            actionButton = itemView.findViewById(R.id.actionView);
+        private ViewHolder(final ActionBinding binding) {
+            super(binding.getRoot());
+            actionButton = binding.actionView;
         }
     }
 
-    GuiActionsAdapter(final Context context) {
-        inflater = LayoutInflater.from(context);
+    private final List<GuiAction> guiActions = new ArrayList<>();
+
+    @NonNull
+    @Override
+    public GuiActionsAdapter.ViewHolder onCreateViewHolder(@NonNull final ViewGroup parent,
+                                                           final int viewType) {
+        // See https://chetangupta.net/viewbinding/ .
+        final ActionBinding binding =
+                ActionBinding.inflate(
+                        LayoutInflater.from(parent.getContext()),
+                        parent,
+                        false
+                );
+        return new ViewHolder(binding);
     }
 
-    @Override
-    public GuiActionsAdapter.ViewHolder onCreateViewHolder(final ViewGroup parent,
-                                                           final int viewType) {
-        final FrameLayout v = (FrameLayout) inflater.inflate(R.layout.action, parent, false);
-        return new ViewHolder(v);
+    GuiActionsAdapter() {
     }
 
     @Override

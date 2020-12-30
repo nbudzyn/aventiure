@@ -30,6 +30,7 @@ import com.google.common.collect.ImmutableList;
 import de.nb.aventiure2.BuildConfig;
 import de.nb.aventiure2.R;
 import de.nb.aventiure2.activity.main.viewmodel.MainViewModel;
+import de.nb.aventiure2.databinding.MainActivityBinding;
 import de.nb.aventiure2.logger.Logger;
 import de.nb.aventiure2.scaction.devhelper.chooser.impl.Walkthrough;
 
@@ -45,6 +46,8 @@ public class MainActivity extends AppCompatActivity {
     //  - Nostalgie
 
     private static final Logger LOGGER = Logger.getLogger();
+
+    private MainActivityBinding binding;
 
     private TextView narrationTextView;
 
@@ -62,14 +65,16 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
 
-        // REFACTOR Use view binding
-        narrationTextView = findViewById(R.id.narrationView);
+        binding = MainActivityBinding.inflate(getLayoutInflater());
+        final View view = binding.getRoot();
+        setContentView(view);
+
+        narrationTextView = binding.narrationView;
 
         // TODO Blocksatz?
         // TODO Automatische Trennung?!
-        narrationScrollView = findViewById(R.id.narrationScrollView);
+        narrationScrollView = binding.narrationScrollView;
         narrationTextView.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(final View v, final MotionEvent event) {
@@ -83,7 +88,7 @@ public class MainActivity extends AppCompatActivity {
 
         createActionsRecyclerView();
 
-        toolbar = findViewById(R.id.toolbar);
+        toolbar = binding.toolbar;
         setSupportActionBar(toolbar);
 
         mainViewModel = new ViewModelProvider(this).get(MainViewModel.class);
@@ -233,11 +238,11 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void createActionsRecyclerView() {
-        final RecyclerView actionsRecyclerView = findViewById(R.id.recyclerView);
+        final RecyclerView actionsRecyclerView = binding.recyclerView;
         actionsRecyclerView.addItemDecoration(
                 new VerticalSpaceItemDecoration(convertDpToPixel(24)));
 
-        guiActionsAdapter = new GuiActionsAdapter(this);
+        guiActionsAdapter = new GuiActionsAdapter();
         actionsRecyclerView.setAdapter(guiActionsAdapter);
 
         actionsRecyclerView.setLayoutManager(new LinearLayoutManager(this));
