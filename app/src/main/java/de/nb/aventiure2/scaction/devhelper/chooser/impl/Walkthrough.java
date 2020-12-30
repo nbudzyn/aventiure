@@ -10,8 +10,6 @@ import static java.util.Arrays.asList;
  * Eine vordefinierte Aktionsfolge
  */
 public class Walkthrough {
-    // STORY Walkthrough anpassen!
-
     public static final Walkthrough ANFANG_BIS_FROSCHVERSPRECHEN =
             new Walkthrough(
                     "Die Kugel nehmen", "Das Schloss verlassen", "In den Wald gehen",

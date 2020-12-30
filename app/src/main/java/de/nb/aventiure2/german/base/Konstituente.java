@@ -258,15 +258,14 @@ public class Konstituente {
      * Erzeugt eine Konstituente gemäß dieser Wortfolge.
      */
     public static Konstituente k(final @Nonnull Wortfolge wortfolge) {
-        final String trimmed = wortfolge.getString().trim();
-        if (trimmed.startsWith(",")) {
-            return new Konstituente(
-                    trimmed.substring(1).trim(),
-                    true,
-                    wortfolge.kommmaStehtAus());
-        }
+        // Wenn die Wortfolge mit Komma anfängt, lassen wir es in der Konsituente stehen.
+        // Damit wird das Komma definitiv ausgegeben - auch von Methoden, die das Vorkomma
+        // vielleich sonst (ggf. bewusst) verschlucken. Vgl. Wortfolge#joinToNullWortfolge()
 
-        return new Konstituente(trimmed, false, wortfolge.kommmaStehtAus());
+        return new Konstituente(
+                wortfolge.getString().trim(),
+                false,
+                wortfolge.kommmaStehtAus());
     }
 
     /**
@@ -274,12 +273,10 @@ public class Konstituente {
      * String (getrimmt) mit Komma geendet hat.
      */
     public static Konstituente k(final @Nonnull String string) {
-        final String trimmed = string.trim();
-        if (trimmed.endsWith(",")) {
-            return k(trimmed.substring(0, trimmed.length() - 1), true);
-        }
-
-        return k(trimmed, false);
+        // Wenn der String mit Komma anfängt, lassen wir es in der Konsituente  stehen.
+        // Damit wird das Komma definitiv ausgegeben - auch von Methoden, die das Vorkomma
+        // vielleich sonst (ggf. bewusst) verschlucken. Vgl. Wortfolge#joinToNullWortfolge()
+        return k(string.trim(), false);
     }
 
     public static Konstituente k(final @Nonnull String string, final boolean kommaStehtAus) {
@@ -316,7 +313,7 @@ public class Konstituente {
         return vorkommmaNoetig;
     }
 
-    boolean kommmaStehtAus() {
+    public boolean kommaStehtAus() {
         return kommmaStehtAus;
     }
 

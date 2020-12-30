@@ -26,6 +26,10 @@ public abstract class AbstractAdverbialeAngabe {
         return GermanUtil.joinToNullString(konstituente);
     }
 
+    public boolean kommaStehtAus() {
+        return getDescription().kommaStehtAus();
+    }
+
     public Konstituente getDescription() {
         return konstituente;
     }

@@ -67,7 +67,7 @@ public class Wortfolge {
             }
 
             resString.append(konstituente.getString());
-            kommaStehtAus = konstituente.kommmaStehtAus();
+            kommaStehtAus = konstituente.kommaStehtAus();
             first = false;
         }
 
@@ -79,9 +79,14 @@ public class Wortfolge {
     }
 
     /**
-     * Erzeugt eine Wortfolge, bei der kein Komma aussteht.
+     * Erzeugt eine Wortfolge, bei der kein Komma aussteht - null-safe.
      */
-    public static Wortfolge w(final String string) {
+    @Nullable
+    public static Wortfolge w(final @Nullable String string) {
+        if (string == null) {
+            return null;
+        }
+
         return w(string, false);
     }
 

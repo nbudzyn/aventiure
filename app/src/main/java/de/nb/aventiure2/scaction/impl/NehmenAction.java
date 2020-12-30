@@ -399,7 +399,6 @@ public class NehmenAction
         }
 
         if (sc.memoryComp().getLastAction().hasObject(gameObject)) {
-
             if (sc.memoryComp().getLastAction().is(Action.Type.HOCHWERFEN) &&
                     sc.feelingsComp().isEmotional()) {
                 final Nominalphrase objectDesc = world.getDescription(gameObject, true);

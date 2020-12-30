@@ -33,7 +33,6 @@ public class FederkielUtil {
             final Collection<IWordForm> wortformen,
             final NumerusGenus numerusGenus,
             final BinaryOperator<IWordForm> chooseBest) {
-        // TODO Gibt es Kasus doppelt? Dann vereinheitlichen!
         final ImmutableMap.Builder<Kasus, String> wortformJeKasus = ImmutableMap.builder();
 
         for (final Kasus kasus : Kasus.values()) {

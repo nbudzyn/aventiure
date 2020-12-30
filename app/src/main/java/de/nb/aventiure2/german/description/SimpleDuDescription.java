@@ -8,9 +8,15 @@ import de.nb.aventiure2.german.base.StructuralElement;
  */
 public class SimpleDuDescription
         extends AbstractDuDescription<SimpleDuTextPart, SimpleDuDescription> {
+    public SimpleDuDescription(final StructuralElement startsNew,
+                               final SimpleDuTextPart duTextPart) {
+        this(startsNew, duTextPart, false);
+    }
+
     SimpleDuDescription(final StructuralElement startsNew,
-                        final SimpleDuTextPart duTextPart) {
+                        final SimpleDuTextPart duTextPart,
+                        final boolean kommaStehtAus) {
         // TODO Alle du()-Aufrufe prüfen, ggf. auf SENTENCE setzen
-        super(startsNew, duTextPart);
+        super(startsNew, duTextPart, kommaStehtAus);
     }
 }

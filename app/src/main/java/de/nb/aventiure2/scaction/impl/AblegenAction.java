@@ -22,6 +22,7 @@ import de.nb.aventiure2.data.world.syscomp.storingplace.ILocationGO;
 import de.nb.aventiure2.german.base.GermanUtil;
 import de.nb.aventiure2.german.base.Personalpronomen;
 import de.nb.aventiure2.german.base.SubstantivischePhrase;
+import de.nb.aventiure2.german.base.Wortfolge;
 import de.nb.aventiure2.german.description.TimedDescription;
 import de.nb.aventiure2.german.praedikat.AbstractAdverbialeAngabe;
 import de.nb.aventiure2.german.praedikat.AdverbialeAngabeSkopusVerbWohinWoher;
@@ -35,6 +36,7 @@ import static de.nb.aventiure2.data.world.syscomp.feelings.Mood.NEUTRAL;
 import static de.nb.aventiure2.data.world.syscomp.memory.Action.Type.NEHMEN;
 import static de.nb.aventiure2.data.world.syscomp.state.impl.FroschprinzState.HAT_HOCHHEBEN_GEFORDERT;
 import static de.nb.aventiure2.data.world.time.AvTimeSpan.*;
+import static de.nb.aventiure2.german.base.Konstituente.k;
 import static de.nb.aventiure2.german.base.Numerus.SG;
 import static de.nb.aventiure2.german.base.NumerusGenus.M;
 import static de.nb.aventiure2.german.base.Person.P1;
@@ -289,9 +291,6 @@ public class AblegenAction
             if (gameObjektPersPron != null) {
                 if (isDefinitivDiskontinuitaet()) {
                     n.narrate(satzanschluss(
-                            // STORY Element: Satzanschluss mit "– und"
-                            //  bei Diskontinuität - kann man das dem Narrator
-                            //  beibringen?
                             "– und legst "
                                     + gameObjektPersPron.akk()
                                     + " sogleich wieder "
@@ -302,12 +301,10 @@ public class AblegenAction
 
                 if (sc.memoryComp().getLastAction().is(NEHMEN) &&
                         sc.memoryComp().getLastAction().hasObject(gameObject)) {
-                    n.narrate(du("legst",
-                            gameObjektPersPron.akk() +
-                                    " " +
-                                    location.storingPlaceComp().getLocationMode()
-                                            // FIXME Beser mit Konstituenten oder Wortfolge arbeiten? Folgekommma könnte verloren gehen...
-                                            .getWohinAdvAngabe(false).getText(),
+                    n.narrate(du(LEGEN.mit(gameObjektPersPron)
+                                    .mitAdverbialerAngabe(
+                                            location.storingPlaceComp().getLocationMode()
+                                                    .getWohinAdvAngabe(false)),
                             secs(3))
                             .dann()
                             .phorikKandidat(gameObjektPersPron, gameObject.getId()));
@@ -315,13 +312,12 @@ public class AblegenAction
                 }
 
                 if (sc.memoryComp().getLastAction().hasObject(gameObject)) {
-                    // STORY Element: Satzanschluss mit ", dann"
-                    //  - kann man das dem Narrator beibringen?
-                    n.narrate(satzanschluss(", dann legst du "
-                                    + gameObjektPersPron.akk()
-                                    + (wohinDetail == null ?
-                                    " hin" :
-                                    " " + wohinDetail.getText()), // "auf den Tisch"
+                    n.narrate(du("legst",
+                            Wortfolge.joinToNullWortfolge(
+                                    gameObjektPersPron.akk(),
+                                    (wohinDetail == null ?
+                                            k("hin") :
+                                            wohinDetail.getDescription())), // "auf den Tisch"
                             secs(5))
                             .undWartest());
                     return;
@@ -337,8 +333,9 @@ public class AblegenAction
                 }
 
                 n.narrate(du("legst",
-                        gameObjektPersPron.akk() +
-                                (wohinDetail == null ? " hin" : " " + wohinDetail.getText()),
+                        Wortfolge.joinToNullWortfolge(
+                                gameObjektPersPron.akk(),
+                                (wohinDetail == null ? k("hin") : wohinDetail.getDescription())),
                         secs(3)));
                 return;
             }
@@ -357,8 +354,9 @@ public class AblegenAction
 
         n.narrate(
                 du(PARAGRAPH, "legst",
-                        world.getDescription(gameObject, false).akk()
-                                + (wohinDetail == null ? " hin" : " " + wohinDetail.getText()),
+                        Wortfolge.joinToNullWortfolge(
+                                world.getDescription(gameObject, false).akk(),
+                                (wohinDetail == null ? k("hin") : wohinDetail.getDescription())),
                         secs(3))
                         .undWartest()
                         .dann());

@@ -27,7 +27,7 @@ public class PraedikatDuDescription
 
     private static boolean guessKommaStehtAus(final PraedikatOhneLeerstellen praedikat) {
         // FIXME Hier gibt es ein Problem: Ob ein Komma aussteht, hängt von der
-        //  konkreten Realisierung des Prädikats ab (was steht im Vorfeld etc.).
+        //  konkreten Realisierung des Prädikats ab (was steht im Vorfeld / Nachfeld etc.).
         //  Dies hier ist nur eine grobe Richtschnur.
         return Konstituente.kommaStehtAus(praedikat.getDuHauptsatz());
     }

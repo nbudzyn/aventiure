@@ -14,6 +14,7 @@ import java.util.function.Predicate;
 import javax.annotation.CheckReturnValue;
 
 import de.nb.aventiure2.german.base.StructuralElement;
+import de.nb.aventiure2.german.base.Wortfolge;
 import de.nb.aventiure2.german.description.AbstractDescription;
 import de.nb.aventiure2.german.description.AbstractDuDescription;
 import de.nb.aventiure2.german.description.AllgDescription;
@@ -52,8 +53,12 @@ class AllgDescriptionBuilder {
         if (initialNarration.allowsAdditionalDuSatzreihengliedOhneSubjekt() &&
                 desc.getStartsNew() == WORD &&
                 desc instanceof AbstractDuDescription) {
-            return toAllgDescriptionsDuSatzanschlussMitUnd(
-                    (AbstractDuDescription<?, ?>) desc);
+            final ImmutableList.Builder<AllgDescription> res = ImmutableList.builder();
+            res.add(toAllgDescriptionsDuSatzanschlussMitUnd((AbstractDuDescription<?, ?>) desc));
+            if (initialNarration.dann()) {
+                res.add(toAllgDescriptionsMitKommaDann((AbstractDuDescription<?, ?>) desc));
+            }
+            return res.build();
         } else if (initialNarration.dann()) {
             return toAllgDescriptionsImDannFall(desc);
         } else {
@@ -63,16 +68,29 @@ class AllgDescriptionBuilder {
 
     @NonNull
     @CheckReturnValue
-    private static List<AllgDescription> toAllgDescriptionsDuSatzanschlussMitUnd(
+    private static AllgDescription toAllgDescriptionsDuSatzanschlussMitUnd(
             final AbstractDuDescription<?, ?> duDesc) {
         final DescriptionParams params = duDesc.copyParams();
         params.undWartest(false);
 
-        return ImmutableList.of(
-                new AllgDescription(
-                        params,
-                        "und " +
-                                duDesc.getDescriptionSatzanschlussOhneSubjekt()));
+        return new AllgDescription(
+                params,
+                "und " +
+                        duDesc.getDescriptionSatzanschlussOhneSubjekt());
+    }
+
+    @NonNull
+    @CheckReturnValue
+    private static AllgDescription toAllgDescriptionsMitKommaDann(
+            final AbstractDuDescription<?, ?> duDesc) {
+        final Wortfolge hauptsatzMitKommmaDann =
+                duDesc.getDescriptionHauptsatzMitVorfeld(", dann");
+
+        final DescriptionParams params = duDesc.copyParams();
+        params.komma(hauptsatzMitKommmaDann.kommmaStehtAus());
+        params.dann(false);
+
+        return new AllgDescription(params, hauptsatzMitKommmaDann.getString());
     }
 
     @NonNull
@@ -90,6 +108,7 @@ class AllgDescriptionBuilder {
                         params,
                         satzEvtlMitDann));
     }
+
 
     @CheckReturnValue
     private static List<AllgDescription> toDefaultAllgDescriptions(

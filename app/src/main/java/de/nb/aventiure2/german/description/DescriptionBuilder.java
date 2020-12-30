@@ -11,14 +11,11 @@ import javax.annotation.CheckReturnValue;
 
 import de.nb.aventiure2.data.world.base.GameObjectId;
 import de.nb.aventiure2.data.world.time.*;
-import de.nb.aventiure2.german.adjektiv.AdjPhrOhneLeerstellen;
 import de.nb.aventiure2.german.base.Konstituente;
 import de.nb.aventiure2.german.base.StructuralElement;
 import de.nb.aventiure2.german.base.SubstantivischePhrase;
 import de.nb.aventiure2.german.base.Wortfolge;
 import de.nb.aventiure2.german.praedikat.PraedikatOhneLeerstellen;
-import de.nb.aventiure2.german.praedikat.SeinUtil;
-import de.nb.aventiure2.german.praedikat.VerbSubjPraedikativeAdjektivphrase;
 import de.nb.aventiure2.german.satz.Satz;
 
 import static com.google.common.collect.ImmutableList.toImmutableList;
@@ -27,7 +24,7 @@ import static de.nb.aventiure2.german.base.Numerus.SG;
 import static de.nb.aventiure2.german.base.Person.P2;
 import static de.nb.aventiure2.german.base.StructuralElement.PARAGRAPH;
 import static de.nb.aventiure2.german.base.StructuralElement.SENTENCE;
-import static de.nb.aventiure2.german.description.TimedDescription.toTimed;
+import static de.nb.aventiure2.german.base.Wortfolge.w;
 
 public class DescriptionBuilder {
     private DescriptionBuilder() {
@@ -42,16 +39,6 @@ public class DescriptionBuilder {
 
     @CheckReturnValue
     @NonNull
-    public static ImmutableList<TimedDescription<AllgDescription>> neuePraedikativumSaetze(
-            final GameObjectId subjektGameObjectId, final SubstantivischePhrase subjekt,
-            final Collection<Wortfolge> altPraedikativa,
-            final AvTimeSpan timeElapsed) {
-        return toTimed(neuePraedikativumSaetze(subjektGameObjectId, subjekt, altPraedikativa),
-                timeElapsed);
-    }
-
-    @CheckReturnValue
-    @NonNull
     public static ImmutableList<AbstractDescription<?>> neueSaetzeMitPhorikKandidat(
             final SubstantivischePhrase phorikKandidatPhrase,
             final GameObjectId phorikKandidatGameObjectId,
@@ -59,35 +46,6 @@ public class DescriptionBuilder {
         return saetze.stream()
                 .map(s -> neuerSatz(s)
                         .phorikKandidat(phorikKandidatPhrase, phorikKandidatGameObjectId))
-                .collect(toImmutableList());
-    }
-
-    @CheckReturnValue
-    @NonNull
-    private static ImmutableList<AllgDescription> neuePraedikativumSaetze(
-            final GameObjectId subjektGameObjectId, final SubstantivischePhrase subjekt,
-            final Collection<Wortfolge> praedikativa) {
-        return praedikativa.stream()
-                .map(p -> neuerSatz(
-                        subjekt.nom() + " "
-                                + SeinUtil.VERB
-                                .getPraesensOhnePartikel(subjekt.getPerson(), subjekt.getNumerus())
-                                + " "
-                                + p.getString())
-                        .komma(p.kommmaStehtAus())
-                        .phorikKandidat(subjekt, subjektGameObjectId))
-                .collect(toImmutableList());
-    }
-
-    @CheckReturnValue
-    @NonNull
-    public static ImmutableList<AbstractDescription<?>> neueAdjPhrSaetze(
-            final GameObjectId subjektGameObjectId, final SubstantivischePhrase subjekt,
-            final Collection<? extends VerbSubjPraedikativeAdjektivphrase> verben,
-            final AdjPhrOhneLeerstellen adjPhrase) {
-        return verben.stream()
-                .map(v -> neuerSatz(v.mit(adjPhrase).alsSatzMitSubjekt(subjekt))
-                        .phorikKandidat(subjekt, subjektGameObjectId))
                 .collect(toImmutableList());
     }
 
@@ -207,19 +165,26 @@ public class DescriptionBuilder {
             final String verb,
             final AvTimeSpan timeElapsed,
             @Nullable final String counterIdIncrementedIfTextIsNarrated) {
-        return du(verb, null, timeElapsed, counterIdIncrementedIfTextIsNarrated);
+        return du(verb, (Wortfolge) null, timeElapsed, counterIdIncrementedIfTextIsNarrated);
     }
 
     @CheckReturnValue
     public static TimedDescription<SimpleDuDescription> du(final StructuralElement startsNew,
                                                            final String verb,
                                                            final AvTimeSpan timeElapsed) {
-        return du(startsNew, verb, null, timeElapsed);
+        return du(startsNew, verb, (Wortfolge) null, timeElapsed);
     }
 
     @CheckReturnValue
     public static TimedDescription<SimpleDuDescription> du(final String verb,
                                                            @Nullable final String remainder,
+                                                           final AvTimeSpan timeElapsed) {
+        return du(verb, w(remainder), timeElapsed);
+    }
+
+    @CheckReturnValue
+    public static TimedDescription<SimpleDuDescription> du(final String verb,
+                                                           @Nullable final Wortfolge remainder,
                                                            final AvTimeSpan timeElapsed) {
         return du(verb, remainder, timeElapsed, null);
     }
@@ -228,6 +193,15 @@ public class DescriptionBuilder {
     public static TimedDescription<SimpleDuDescription> du(
             final String verb,
             @Nullable final String remainder,
+            final AvTimeSpan timeElapsed,
+            @Nullable final String counterIdIncrementedIfTextIsNarrated) {
+        return du(verb, w(remainder), timeElapsed, counterIdIncrementedIfTextIsNarrated);
+    }
+
+    @CheckReturnValue
+    public static TimedDescription<SimpleDuDescription> du(
+            final String verb,
+            @Nullable final Wortfolge remainder,
             final AvTimeSpan timeElapsed,
             @Nullable final String counterIdIncrementedIfTextIsNarrated) {
         return du(verb, remainder, null, timeElapsed, counterIdIncrementedIfTextIsNarrated);
@@ -242,10 +216,30 @@ public class DescriptionBuilder {
     }
 
     @CheckReturnValue
+    public static TimedDescription<SimpleDuDescription> du(final StructuralElement startsNew,
+                                                           final String verb,
+                                                           @Nullable final Wortfolge remainder,
+                                                           final AvTimeSpan timeElapsed) {
+        return du(startsNew, verb, remainder, timeElapsed, null);
+    }
+
+    @CheckReturnValue
     public static TimedDescription<SimpleDuDescription> du(
             final StructuralElement startsNew,
             final String verb,
             @Nullable final String remainder,
+            final AvTimeSpan timeElapsed,
+            @Nullable final
+            String counterIdIncrementedIfTextIsNarrated) {
+        return du(startsNew, verb, remainder, null,
+                timeElapsed, counterIdIncrementedIfTextIsNarrated);
+    }
+
+    @CheckReturnValue
+    public static TimedDescription<SimpleDuDescription> du(
+            final StructuralElement startsNew,
+            final String verb,
+            @Nullable final Wortfolge remainder,
             final AvTimeSpan timeElapsed,
             @Nullable final
             String counterIdIncrementedIfTextIsNarrated) {
@@ -265,6 +259,17 @@ public class DescriptionBuilder {
     public static TimedDescription<SimpleDuDescription> du(
             final String verb,
             @Nullable final String remainder,
+            @Nullable final String vorfeldSatzglied,
+            final AvTimeSpan timeElapsed,
+            @Nullable final String counterIdIncrementedIfTextIsNarrated) {
+        return du(verb, w(remainder), vorfeldSatzglied,
+                timeElapsed, counterIdIncrementedIfTextIsNarrated);
+    }
+
+    @CheckReturnValue
+    public static TimedDescription<SimpleDuDescription> du(
+            final String verb,
+            @Nullable final Wortfolge remainder,
             @Nullable final String vorfeldSatzglied,
             final AvTimeSpan timeElapsed,
             @Nullable final String counterIdIncrementedIfTextIsNarrated) {
@@ -292,6 +297,19 @@ public class DescriptionBuilder {
             final AvTimeSpan timeElapsed,
             @Nullable final String counterIdIncrementedIfTextIsNarrated
     ) {
+        return du(startsNew, verb, w(remainder), vorfeldSatzglied, timeElapsed,
+                counterIdIncrementedIfTextIsNarrated);
+    }
+
+    @CheckReturnValue
+    public static TimedDescription<SimpleDuDescription> du(
+            final StructuralElement startsNew,
+            final String verb,
+            @Nullable final Wortfolge remainder,
+            @Nullable final String vorfeldSatzglied,
+            final AvTimeSpan timeElapsed,
+            @Nullable final String counterIdIncrementedIfTextIsNarrated
+    ) {
         return new TimedDescription<>(
                 du(startsNew, verb, remainder, vorfeldSatzglied),
                 timeElapsed, counterIdIncrementedIfTextIsNarrated);
@@ -305,7 +323,7 @@ public class DescriptionBuilder {
     @CheckReturnValue
     public static SimpleDuDescription du(final StructuralElement startsNew,
                                          final String verb) {
-        return du(startsNew, verb, null, (String) null);
+        return du(startsNew, verb, (Wortfolge) null, (String) null);
     }
 
     @CheckReturnValue
@@ -326,8 +344,20 @@ public class DescriptionBuilder {
     public static SimpleDuDescription du(final StructuralElement startsNew, final String verb,
                                          @Nullable final String remainder,
                                          @Nullable final String vorfeldSatzglied) {
+        return du(startsNew, verb, w(remainder), vorfeldSatzglied);
+    }
+
+    @NonNull
+    @CheckReturnValue
+    public static SimpleDuDescription du(final StructuralElement startsNew, final String verb,
+                                         @Nullable final Wortfolge remainder,
+                                         @Nullable final String vorfeldSatzglied) {
         return new SimpleDuDescription(startsNew,
-                new SimpleDuTextPart(verb, remainder, vorfeldSatzglied));
+                new SimpleDuTextPart(
+                        verb,
+                        remainder != null ? remainder.getString() : null,
+                        vorfeldSatzglied),
+                remainder != null && remainder.kommmaStehtAus());
     }
 
     @CheckReturnValue
