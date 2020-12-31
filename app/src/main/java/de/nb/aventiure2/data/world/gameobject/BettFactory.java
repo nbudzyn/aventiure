@@ -57,20 +57,18 @@ class BettFactory {
                 id, db, world, locationId,
                 null, false);
 
-        final StoringPlaceComp storingPlaceComp = new StoringPlaceComp(
-                id, timeTaker, ECKE_IM_BETTGESTELL,
-                false,
+        final StoringPlaceComp storingPlaceComp = new StoringPlaceComp(id, timeTaker, locationComp,
+                ECKE_IM_BETTGESTELL,
+                null,
                 conData("auf der Bettkante",
                         "In das Bett legen",
                         secs(15),
-                        this::getDescIn),
-                conData("auf der Bettkante",
-                        "Aufstehen",
-                        secs(10),
-                        du(SENTENCE, "reckst", "dich noch einmal und stehst "
-                                + "wieder auf", secs(10))
-                                .dann())
-        );
+                        this::getDescIn), conData("auf der Bettkante",
+                "Aufstehen",
+                secs(10),
+                du(SENTENCE, "reckst", "dich noch einmal und stehst "
+                        + "wieder auf", secs(10))
+                        .dann()));
 
         return new StoringPlaceObject(id,
                 descriptionComp,

@@ -22,6 +22,7 @@ import de.nb.aventiure2.data.time.TimeTaker;
 import de.nb.aventiure2.data.world.base.GameObject;
 import de.nb.aventiure2.data.world.base.GameObjectId;
 import de.nb.aventiure2.data.world.base.IGameObject;
+import de.nb.aventiure2.data.world.base.Lichtverhaeltnisse;
 import de.nb.aventiure2.data.world.gameobject.player.*;
 import de.nb.aventiure2.data.world.syscomp.alive.AliveSystem;
 import de.nb.aventiure2.data.world.syscomp.alive.ILivingBeingGO;
@@ -126,9 +127,6 @@ public class World {
     // MEANING
     public static final GameObjectId STORY_WEB = new GameObjectId(100_000);
 
-    // Sonstige Konstanten
-    private static final boolean SCHLOSS_VORHALLE_DAUERHAFT_BELEUCHTET = true;
-
     private static volatile World INSTANCE;
 
     private final AvDatabase db;
@@ -220,41 +218,43 @@ public class World {
         all.putAll(
                 spieler.create(SPIELER_CHARAKTER),
                 room.create(SCHLOSS_VORHALLE, StoringPlaceType.EIN_TISCH,
-                        SCHLOSS_VORHALLE_DAUERHAFT_BELEUCHTET,
+                        Lichtverhaeltnisse.DAUERHAFT_HELL,
                         new SchlossVorhalleConnectionComp(db, timeTaker, n, this)),
                 room.create(DRAUSSEN_VOR_DEM_SCHLOSS,
                         StoringPlaceType.BODEN_VOR_DEM_SCHLOSS,
-                        false,
+                        null,
                         new DraussenVorDemSchlossConnectionComp(db, timeTaker, n, this)),
                 room.create(IM_WALD_NAHE_DEM_SCHLOSS, StoringPlaceType.WEG,
-                        false,
+                        null,
                         new ImWaldNaheDemSchlossConnectionComp(db, timeTaker, n, this)),
-                room.create(VOR_DEM_ALTEN_TURM, StoringPlaceType.STEINIGER_GRUND_VOR_TURM,
-                        false,
+                room.create(VOR_DEM_ALTEN_TURM,
+                        StoringPlaceType.STEINIGER_GRUND_VOR_TURM,
+                        null,
                         new VorDemTurmConnectionComp(db, timeTaker, n, this)),
                 room.create(OBEN_IM_ALTEN_TURM,
                         StoringPlaceType.HOLZDIELEN_OBEN_IM_TURM,
-                        false,
+                        null,
                         new ObenImTurmConnectionComp(db, timeTaker, n, this)),
                 room.create(ABZWEIG_IM_WALD, StoringPlaceType.WEG,
-                        false,
+                        null,
                         new AbzweigImWaldConnectionComp(db, timeTaker, n, this)),
-                room.create(VOR_DER_HUETTE_IM_WALD, StoringPlaceType.ERDBODEN_VOR_DER_HUETTE,
-                        false,
+                room.create(VOR_DER_HUETTE_IM_WALD,
+                        StoringPlaceType.ERDBODEN_VOR_DER_HUETTE,
+                        null,
                         new VorDerHuetteImWaldConnectionComp(db, timeTaker, n, this)),
                 room.create(HUETTE_IM_WALD, StoringPlaceType.HOLZTISCH,
-                        false,
+                        null,
                         connection.createHuetteImWald()),
                 room.create(HINTER_DER_HUETTE, StoringPlaceType.UNTER_DEM_BAUM,
-                        false,
+                        null,
                         connection.createHinterDerHuette()),
                 room.createImWaldBeimBrunnen(),
                 room.create(UNTEN_IM_BRUNNEN, StoringPlaceType.AM_GRUNDE_DES_BRUNNENS,
-                        false,
+                        null,
                         connection.createNoConnections(UNTEN_IM_BRUNNEN)),
                 room.create(WALDWILDNIS_HINTER_DEM_BRUNNEN,
                         StoringPlaceType.MATSCHIGER_WALDBODEN,
-                        false,
+                        null,
                         connection.createWaldwildnisHinterDemBrunnen()),
                 creature.createSchlosswache(),
                 creature.createFroschprinz(),
@@ -273,13 +273,12 @@ public class World {
                         SPIELER_CHARAKTER, null,
                         false, // Man kann nicht "eine Tasche hinlegen" o.Ä.
                         EINE_TASCHE,
-                        false),
+                        Lichtverhaeltnisse.DAUERHAFT_DUNKEL),
                 object.create(HAENDE_DES_SPIELER_CHARAKTERS,
                         np(PL_MFN, DEF, "Hände", "Händen"),
                         SPIELER_CHARAKTER, null,
                         false,
-                        HAENDE,
-                        false),
+                        HAENDE),
                 object.create(GOLDENE_KUGEL,
                         np(F, INDEF, "goldene Kugel",
                                 "goldenen Kugel"),
@@ -298,7 +297,7 @@ public class World {
                 //  auf den Tisch, verschwinden einfach, wenn man weggeht (sie werden
                 //  gestohlen) - vorausgesetzt, man braucht sie nicht mehr und die
                 //  emotionale Bindung ist gering (also nicht die goldene Kugel)!
-                bankAmTischBeimSchlossfest.create(SCHLOSS_VORHALLE_DAUERHAFT_BELEUCHTET),
+                bankAmTischBeimSchlossfest.create(),
                 object.create(SCHLOSS_VORHALLE_LANGER_TISCH_BEIM_FEST,
                         np(M, INDEF, "langer, aus Brettern gezimmerter Tisch",
                                 "langen, aus Brettern gezimmertem Tisch",
@@ -321,8 +320,7 @@ public class World {
                         // der SC ggf. alle relevanten Gegenstände automatisch mitnimmt.)
                         null, null,
                         false,
-                        TISCH,
-                        SCHLOSS_VORHALLE_DAUERHAFT_BELEUCHTET),
+                        TISCH),
 
                 schattenDerBaeume.createVorDemAltenTurm(),
                 bett.createInDerHuetteImWald(),

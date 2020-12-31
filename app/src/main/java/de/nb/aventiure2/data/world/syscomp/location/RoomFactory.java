@@ -1,12 +1,16 @@
 package de.nb.aventiure2.data.world.syscomp.location;
 
+import java.util.function.Supplier;
+
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 import de.nb.aventiure2.data.database.AvDatabase;
 import de.nb.aventiure2.data.narration.Narrator;
 import de.nb.aventiure2.data.time.TimeTaker;
 import de.nb.aventiure2.data.world.base.GameObject;
 import de.nb.aventiure2.data.world.base.GameObjectId;
+import de.nb.aventiure2.data.world.base.Lichtverhaeltnisse;
 import de.nb.aventiure2.data.world.gameobject.*;
 import de.nb.aventiure2.data.world.syscomp.spatialconnection.AbstractSpatialConnectionComp;
 import de.nb.aventiure2.data.world.syscomp.spatialconnection.ISpatiallyConnectedGO;
@@ -38,21 +42,31 @@ public class RoomFactory {
 
     public GameObject createImWaldBeimBrunnen() {
         final StoringPlaceComp storingPlaceComp = new StoringPlaceComp(IM_WALD_BEIM_BRUNNEN,
-                timeTaker, StoringPlaceType.NEBEN_DEM_BRUNNEN,
-                false);
+                timeTaker, null, StoringPlaceType.NEBEN_DEM_BRUNNEN);
 
         return new Room(IM_WALD_BEIM_BRUNNEN, storingPlaceComp,
                 new ImWaldBeimBrunnenConnectionComp(db, timeTaker, n, world, storingPlaceComp));
     }
 
-    public GameObject create(final GameObjectId id, final StoringPlaceType locationMode,
-                             final boolean dauerhaftBeleuchtet,
+    /**
+     * Erzeugt ein Game-Objekt, das etwas enthalten kann, aber selbst nirgendwo enthalten sein
+     * kann.
+     */
+    public GameObject create(final GameObjectId id,
+                             final StoringPlaceType locationMode,
+                             @Nullable
+                             final Supplier<Lichtverhaeltnisse> lichtverhaeltnisseSupplier,
                              final AbstractSpatialConnectionComp spatialConnectionComp) {
         return new Room(id,
-                new StoringPlaceComp(id, timeTaker, locationMode, dauerhaftBeleuchtet),
+                new StoringPlaceComp(id, timeTaker, null, locationMode,
+                        lichtverhaeltnisseSupplier),
                 spatialConnectionComp);
     }
 
+    /**
+     * Ein Game-Objekt, das etwas enthalten kann, aber selbst nirgendwo enthalten sein
+     * kann.
+     */
     private static class Room extends GameObject
             implements ILocationGO, ISpatiallyConnectedGO {
         private final StoringPlaceComp storingPlaceComp;

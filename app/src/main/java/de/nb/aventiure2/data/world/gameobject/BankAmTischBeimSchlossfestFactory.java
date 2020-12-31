@@ -41,13 +41,12 @@ class BankAmTischBeimSchlossfestFactory {
         this.world = world;
     }
 
-    GameObject create(final boolean dauerhaftBeleuchtet) {
-        return create(SCHLOSS_VORHALLE_AM_TISCH_BEIM_FEST, dauerhaftBeleuchtet);
+    GameObject create() {
+        return create(SCHLOSS_VORHALLE_AM_TISCH_BEIM_FEST);
     }
 
     @NonNull
-    private GameObject create(final GameObjectId id,
-                              final boolean dauerhaftBeleuchtet) {
+    private GameObject create(final GameObjectId id) {
         final SimpleDescriptionComp descriptionComp =
                 new SimpleDescriptionComp(id,
                         np(M, INDEF, "Platz auf einer Bank an einem Tisch"),
@@ -60,18 +59,16 @@ class BankAmTischBeimSchlossfestFactory {
                 // Aufbau fürs Schlossfest "aufgebaut".
                 null, null, false);
 
-        final StoringPlaceComp storingPlaceComp = new StoringPlaceComp(
-                id, timeTaker, NEBEN_SC_AUF_EINER_BANK,
-                dauerhaftBeleuchtet,
+        final StoringPlaceComp storingPlaceComp = new StoringPlaceComp(id, timeTaker, locationComp,
+                NEBEN_SC_AUF_EINER_BANK,
+                null,
                 conData("neben einer Bank an einem Tisch",
                         "An einen Tisch setzen",
                         mins(3),
-                        this::getDescIn),
-                conData("neben einer Bank an einem Tisch",
-                        "Vom Tisch aufstehen",
-                        mins(3),
-                        this::getDescOut)
-        );
+                        this::getDescIn), conData("neben einer Bank an einem Tisch",
+                "Vom Tisch aufstehen",
+                mins(3),
+                this::getDescOut));
 
         return new StoringPlaceObject(id,
                 descriptionComp,

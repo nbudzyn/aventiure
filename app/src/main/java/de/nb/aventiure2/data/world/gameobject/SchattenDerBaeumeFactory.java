@@ -61,18 +61,16 @@ class SchattenDerBaeumeFactory {
                 id, db, world, locationId,
                 null, false);
 
-        final StoringPlaceComp storingPlaceComp = new StoringPlaceComp(
-                id, timeTaker, STAMM_EINES_BAUMS,
-                false,
+        final StoringPlaceComp storingPlaceComp = new StoringPlaceComp(id, timeTaker, locationComp,
+                STAMM_EINES_BAUMS,
+                null,
                 conData("vor den Bäumen",
                         "In den Schatten der Bäume setzen",
                         secs(10),
-                        this::getDescIn),
-                conData("vor den Bäumen",
-                        "Aus dem Schatten der Bäume treten",
-                        secs(10),
-                        SchattenDerBaeumeFactory::getDescOut)
-        );
+                        this::getDescIn), conData("vor den Bäumen",
+                "Aus dem Schatten der Bäume treten",
+                secs(10),
+                SchattenDerBaeumeFactory::getDescOut));
 
         return new StoringPlaceObject(id,
                 descriptionComp,

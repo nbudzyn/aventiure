@@ -1,11 +1,14 @@
 package de.nb.aventiure2.data.world.gameobject;
 
+import java.util.function.Supplier;
+
 import javax.annotation.Nullable;
 
 import de.nb.aventiure2.data.database.AvDatabase;
 import de.nb.aventiure2.data.time.TimeTaker;
 import de.nb.aventiure2.data.world.base.GameObject;
 import de.nb.aventiure2.data.world.base.GameObjectId;
+import de.nb.aventiure2.data.world.base.Lichtverhaeltnisse;
 import de.nb.aventiure2.data.world.syscomp.description.impl.SimpleDescriptionComp;
 import de.nb.aventiure2.data.world.syscomp.location.LocationComp;
 import de.nb.aventiure2.data.world.syscomp.storingplace.StoringPlaceComp;
@@ -47,14 +50,27 @@ class GeneralObjectFactory {
                       @Nullable final GameObjectId initialLocationId,
                       @Nullable final GameObjectId initialLastLocationId,
                       final boolean movable,
-                      final StoringPlaceType locationMode,
-                      final boolean dauerhaftBeleuchtet) {
+                      final StoringPlaceType locationMode) {
+        return create(id,
+                descriptionAtFirstSightAndWhenKnown,
+                initialLocationId, initialLastLocationId,
+                movable, locationMode, null);
+    }
+
+    public GameObject create(final GameObjectId id,
+                             final Nominalphrase descriptionAtFirstSightAndWhenKnown,
+                             @Nullable final GameObjectId initialLocationId,
+                             @Nullable final GameObjectId initialLastLocationId,
+                             final boolean movable,
+                             final StoringPlaceType locationMode,
+                             @Nullable
+                             final Supplier<Lichtverhaeltnisse> lichtverhaeltnisseSupplier) {
         return create(id,
                 descriptionAtFirstSightAndWhenKnown,
                 descriptionAtFirstSightAndWhenKnown,
                 descriptionAtFirstSightAndWhenKnown,
                 initialLocationId, initialLastLocationId,
-                movable, locationMode, dauerhaftBeleuchtet);
+                movable, locationMode, lichtverhaeltnisseSupplier);
     }
 
     GameObject create(final GameObjectId id,
@@ -64,14 +80,32 @@ class GeneralObjectFactory {
                       @Nullable final GameObjectId initialLocationId,
                       @Nullable final GameObjectId initialLastLocationId,
                       final boolean movable,
-                      final StoringPlaceType locationMode,
-                      final boolean dauerhaftBeleuchtet) {
+                      final StoringPlaceType locationMode) {
+        return create(id, descriptionAtFirstSight, normalDescriptionWhenKnown,
+                shortDescriptionWhenKnown,
+                initialLocationId, initialLastLocationId, movable, locationMode,
+                null);
+    }
+
+    private GameObject create(final GameObjectId id,
+                              final Nominalphrase descriptionAtFirstSight,
+                              final Nominalphrase normalDescriptionWhenKnown,
+                              final Nominalphrase shortDescriptionWhenKnown,
+                              @Nullable final GameObjectId initialLocationId,
+                              @Nullable final GameObjectId initialLastLocationId,
+                              final boolean movable,
+                              final StoringPlaceType locationMode,
+                              @Nullable
+                              final Supplier<Lichtverhaeltnisse> lichtverhaeltnisseSupplier) {
+        final LocationComp locationComp =
+                new LocationComp(id, db, world, initialLocationId, initialLastLocationId,
+                        movable);
         return new StoringPlaceObject(id,
                 new SimpleDescriptionComp(id, descriptionAtFirstSight,
                         normalDescriptionWhenKnown,
                         shortDescriptionWhenKnown),
-                new LocationComp(id, db, world, initialLocationId, initialLastLocationId,
-                        movable),
-                new StoringPlaceComp(id, timeTaker, locationMode, dauerhaftBeleuchtet));
+                locationComp,
+                new StoringPlaceComp(id, timeTaker, locationComp, locationMode,
+                        lichtverhaeltnisseSupplier));
     }
 }

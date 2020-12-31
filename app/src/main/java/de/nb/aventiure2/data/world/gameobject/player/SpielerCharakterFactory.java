@@ -71,7 +71,8 @@ public class SpielerCharakterFactory {
                 false);
         return new SpielerCharakter(id,
                 locationComp,
-                new StoringPlaceComp(id, timeTaker, EINE_TASCHE, false),
+                new StoringPlaceComp(id, timeTaker, locationComp, EINE_TASCHE,
+                        null),
                 waitingComp,
                 feelingsComp,
                 memoryComp,

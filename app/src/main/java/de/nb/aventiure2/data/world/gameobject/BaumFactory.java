@@ -66,18 +66,16 @@ public class BaumFactory {
                 id, db, world, locationId,
                 null, false);
 
-        final StoringPlaceComp storingPlaceComp = new StoringPlaceComp(
-                id, timeTaker, ASTGABEL,
-                false,
+        final StoringPlaceComp storingPlaceComp = new StoringPlaceComp(id, timeTaker, locationComp,
+                ASTGABEL,
+                null,
                 conData("im Geäst",
                         "Auf den Baum klettern",
                         mins(6),
-                        this::getDescIn),
-                conData("im Geäst",
-                        "Zum Boden hinabklettern",
-                        mins(4),
-                        this::getDescOut)
-        );
+                        this::getDescIn), conData("im Geäst",
+                "Zum Boden hinabklettern",
+                mins(4),
+                this::getDescOut));
 
         return new StoringPlaceObject(id,
                 descriptionComp,
