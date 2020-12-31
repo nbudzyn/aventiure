@@ -50,7 +50,7 @@ public class VorDerHuetteImWaldConnectionComp extends AbstractSpatialConnectionC
                         "Auf den Waldweg zurückkehren",
                         mins(2),
                         neuerSatz("Durch Farn und Gestrüpp gehst du zurück zum "
-                                + "Waldweg", mins(2))
+                                + "Waldweg")
                                 .undWartest()
                                 .dann()
                 ),
@@ -87,7 +87,7 @@ public class VorDerHuetteImWaldConnectionComp extends AbstractSpatialConnectionC
                                 .undWartest(),
                         du("schiebst", "dich noch einmal in die "
                                 + "kleine Hütte, in der es außer Tisch und "
-                                + "Bett wenig zu sehen gibt", secs(15))
+                                + "Bett wenig zu sehen gibt")
                                 .komma()
                                 .undWartest()),
                 // FIXME Klar machen, dass die Hütte kein kühler Ort ist! "Die Hütte ist

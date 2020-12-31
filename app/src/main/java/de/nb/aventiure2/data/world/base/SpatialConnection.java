@@ -5,8 +5,8 @@ import androidx.annotation.NonNull;
 import java.util.function.Supplier;
 
 import de.nb.aventiure2.data.time.AvTimeSpan;
+import de.nb.aventiure2.german.description.AbstractDescription;
 import de.nb.aventiure2.german.description.TimedDescription;
-import de.nb.aventiure2.german.praedikat.AbstractAdverbialeAngabe;
 
 import static de.nb.aventiure2.data.world.base.Known.KNOWN_FROM_DARKNESS;
 import static de.nb.aventiure2.data.world.base.Known.UNKNOWN;
@@ -28,6 +28,15 @@ public class SpatialConnection {
                                         final String wo,
                                         final String actionName,
                                         final AvTimeSpan standardDuration,
+                                        final AbstractDescription<?> newLocationDescription) {
+        return con(to, wo, actionName, standardDuration,
+                new TimedDescription<>(newLocationDescription, standardDuration));
+    }
+
+    public static SpatialConnection con(final GameObjectId to,
+                                        final String wo,
+                                        final String actionName,
+                                        final AvTimeSpan standardDuration,
                                         final TimedDescription<?> newLocationDescription) {
         return con(to, wo, () -> actionName, standardDuration, newLocationDescription);
     }
@@ -36,9 +45,52 @@ public class SpatialConnection {
                                         final String wo,
                                         final Supplier<String> actionNameProvider,
                                         final AvTimeSpan standardDuration,
+                                        final AbstractDescription<?> newLocationDescription) {
+        return con(to, wo, actionNameProvider, standardDuration,
+                new TimedDescription<>(newLocationDescription, standardDuration));
+    }
+
+    public static SpatialConnection con(final GameObjectId to,
+                                        final String wo,
+                                        final Supplier<String> actionNameProvider,
+                                        final AvTimeSpan standardDuration,
                                         final TimedDescription<?> newLocationDescription) {
         return con(to, wo, actionNameProvider, standardDuration,
-                (isnewLocationKnown, lichtverhaeltnisseInNewLocation) -> newLocationDescription);
+                (SpatialConnectionData.SCMoveTimedDescriptionProvider)
+                        (isnewLocationKnown, lichtverhaeltnisseInNewLocation) -> newLocationDescription);
+    }
+
+    public static SpatialConnection con(final GameObjectId to,
+                                        final String wo,
+                                        final String actionName,
+                                        final AvTimeSpan standardDuration,
+                                        final AbstractDescription<?> newLocationDescriptionUnknown,
+                                        final AbstractDescription<?> newLocationDescriptionKnown) {
+        return con(to, wo, actionName, standardDuration,
+                new TimedDescription<>(newLocationDescriptionUnknown, standardDuration),
+                new TimedDescription<>(newLocationDescriptionKnown, standardDuration));
+    }
+
+    public static SpatialConnection con(final GameObjectId to,
+                                        final String wo,
+                                        final String actionName,
+                                        final AvTimeSpan standardDuration,
+                                        final AbstractDescription<?> newLocationDescriptionUnknown,
+                                        final TimedDescription<?> newLocationDescriptionKnown) {
+        return con(to, wo, actionName, standardDuration,
+                new TimedDescription<>(newLocationDescriptionUnknown, standardDuration),
+                newLocationDescriptionKnown);
+    }
+
+    public static SpatialConnection con(final GameObjectId to,
+                                        final String wo,
+                                        final String actionName,
+                                        final AvTimeSpan standardDuration,
+                                        final TimedDescription<?> newLocationDescriptionUnknown,
+                                        final AbstractDescription<?> newLocationDescriptionKnown) {
+        return con(to, wo, actionName, standardDuration,
+                newLocationDescriptionUnknown,
+                new TimedDescription<>(newLocationDescriptionKnown, standardDuration));
     }
 
     public static SpatialConnection con(final GameObjectId to,
@@ -55,12 +107,280 @@ public class SpatialConnection {
                                         final String wo,
                                         final Supplier<String> actionNameSupplier,
                                         final AvTimeSpan standardDuration,
+                                        final AbstractDescription<?> newLocationDescriptionUnknown,
+                                        final AbstractDescription<?> newLocationDescriptionKnown) {
+        return con(to, wo, actionNameSupplier, standardDuration,
+                new TimedDescription<>(newLocationDescriptionUnknown, standardDuration),
+                new TimedDescription<>(newLocationDescriptionKnown, standardDuration));
+    }
+
+    public static SpatialConnection con(final GameObjectId to,
+                                        final String wo,
+                                        final Supplier<String> actionNameSupplier,
+                                        final AvTimeSpan standardDuration,
+                                        final TimedDescription<?> newLocationDescriptionUnknown,
+                                        final AbstractDescription<?> newLocationDescriptionKnown) {
+        return con(to, wo, actionNameSupplier, standardDuration,
+                newLocationDescriptionUnknown,
+                new TimedDescription<>(newLocationDescriptionKnown, standardDuration));
+    }
+
+    public static SpatialConnection con(final GameObjectId to,
+                                        final String wo,
+                                        final Supplier<String> actionNameSupplier,
+                                        final AvTimeSpan standardDuration,
+                                        final AbstractDescription<?> newLocationDescriptionUnknown,
+                                        final TimedDescription<?> newLocationDescriptionKnown) {
+        return con(to, wo, actionNameSupplier, standardDuration,
+                new TimedDescription<>(newLocationDescriptionUnknown, standardDuration),
+                newLocationDescriptionKnown);
+    }
+
+    public static SpatialConnection con(final GameObjectId to,
+                                        final String wo,
+                                        final Supplier<String> actionNameSupplier,
+                                        final AvTimeSpan standardDuration,
                                         final TimedDescription<?> newLocationDescriptionUnknown,
                                         final TimedDescription<?> newLocationDescriptionKnown) {
         return con(to, wo, actionNameSupplier, standardDuration,
-                (newLocationKnown, lichtverhaeltnisseInNewLocation) ->
-                        newLocationKnown == UNKNOWN ?
-                                newLocationDescriptionUnknown : newLocationDescriptionKnown);
+                (SpatialConnectionData.SCMoveTimedDescriptionProvider)
+                        (newLocationKnown, lichtverhaeltnisseInNewLocation) ->
+                                newLocationKnown == UNKNOWN ?
+                                        newLocationDescriptionUnknown :
+                                        newLocationDescriptionKnown);
+    }
+
+    public static SpatialConnection con(final GameObjectId to,
+                                        final String wo,
+                                        final String actionName,
+                                        final AvTimeSpan standardDuration,
+                                        final AbstractDescription<?> newLocationDescriptionUnknownHell,
+                                        final AbstractDescription<?> newLocationDescriptionUnknownDunkel,
+                                        final TimedDescription<?> newLocationDescriptionKnownFromDarknessHell,
+                                        final AbstractDescription<?> newLocationDescriptionOther) {
+        return con(to, wo, actionName, standardDuration,
+                new TimedDescription<>(newLocationDescriptionUnknownHell, standardDuration),
+                new TimedDescription<>(newLocationDescriptionUnknownDunkel, standardDuration),
+                newLocationDescriptionKnownFromDarknessHell,
+                new TimedDescription<>(newLocationDescriptionOther, standardDuration));
+    }
+
+    public static SpatialConnection con(final GameObjectId to,
+                                        final String wo,
+                                        final String actionName,
+                                        final AvTimeSpan standardDuration,
+                                        final TimedDescription<?> newLocationDescriptionUnknownHell,
+                                        final AbstractDescription<?> newLocationDescriptionUnknownDunkel,
+                                        final TimedDescription<?> newLocationDescriptionKnownFromDarknessHell,
+                                        final AbstractDescription<?> newLocationDescriptionOther) {
+        return con(to, wo, actionName, standardDuration,
+                newLocationDescriptionUnknownHell,
+                new TimedDescription<>(newLocationDescriptionUnknownDunkel, standardDuration),
+                newLocationDescriptionKnownFromDarknessHell,
+                new TimedDescription<>(newLocationDescriptionOther, standardDuration));
+    }
+
+    public static SpatialConnection con(final GameObjectId to,
+                                        final String wo,
+                                        final String actionName,
+                                        final AvTimeSpan standardDuration,
+                                        final AbstractDescription<?> newLocationDescriptionUnknownHell,
+                                        final TimedDescription<?> newLocationDescriptionUnknownDunkel,
+                                        final TimedDescription<?> newLocationDescriptionKnownFromDarknessHell,
+                                        final AbstractDescription<?> newLocationDescriptionOther) {
+        return con(to, wo, actionName, standardDuration,
+                new TimedDescription<>(newLocationDescriptionUnknownHell, standardDuration),
+                newLocationDescriptionUnknownDunkel,
+                newLocationDescriptionKnownFromDarknessHell,
+                new TimedDescription<>(newLocationDescriptionOther, standardDuration));
+    }
+
+    public static SpatialConnection con(final GameObjectId to,
+                                        final String wo,
+                                        final String actionName,
+                                        final AvTimeSpan standardDuration,
+                                        final TimedDescription<?> newLocationDescriptionUnknownHell,
+                                        final TimedDescription<?> newLocationDescriptionUnknownDunkel,
+                                        final TimedDescription<?> newLocationDescriptionKnownFromDarknessHell,
+                                        final AbstractDescription<?> newLocationDescriptionOther) {
+        return con(to, wo, actionName, standardDuration,
+                newLocationDescriptionUnknownHell,
+                newLocationDescriptionUnknownDunkel,
+                newLocationDescriptionKnownFromDarknessHell,
+                new TimedDescription<>(newLocationDescriptionOther, standardDuration));
+    }
+
+    public static SpatialConnection con(final GameObjectId to,
+                                        final String wo,
+                                        final String actionName,
+                                        final AvTimeSpan standardDuration,
+                                        final AbstractDescription<?> newLocationDescriptionUnknownHell,
+                                        final AbstractDescription<?> newLocationDescriptionUnknownDunkel,
+                                        final AbstractDescription<?> newLocationDescriptionKnownFromDarknessHell,
+                                        final AbstractDescription<?> newLocationDescriptionOther) {
+        return con(to, wo, actionName, standardDuration,
+                new TimedDescription<>(newLocationDescriptionUnknownHell, standardDuration),
+                new TimedDescription<>(newLocationDescriptionUnknownDunkel, standardDuration),
+                new TimedDescription<>(newLocationDescriptionKnownFromDarknessHell,
+                        standardDuration),
+                new TimedDescription<>(newLocationDescriptionOther, standardDuration));
+    }
+
+    public static SpatialConnection con(final GameObjectId to,
+                                        final String wo,
+                                        final String actionName,
+                                        final AvTimeSpan standardDuration,
+                                        final TimedDescription<?> newLocationDescriptionUnknownHell,
+                                        final AbstractDescription<?> newLocationDescriptionUnknownDunkel,
+                                        final AbstractDescription<?> newLocationDescriptionKnownFromDarknessHell,
+                                        final AbstractDescription<?> newLocationDescriptionOther) {
+        return con(to, wo, actionName, standardDuration,
+                newLocationDescriptionUnknownHell,
+                new TimedDescription<>(newLocationDescriptionUnknownDunkel, standardDuration),
+                new TimedDescription<>(newLocationDescriptionKnownFromDarknessHell,
+                        standardDuration),
+                new TimedDescription<>(newLocationDescriptionOther, standardDuration));
+    }
+
+    public static SpatialConnection con(final GameObjectId to,
+                                        final String wo,
+                                        final String actionName,
+                                        final AvTimeSpan standardDuration,
+                                        final AbstractDescription<?> newLocationDescriptionUnknownHell,
+                                        final TimedDescription<?> newLocationDescriptionUnknownDunkel,
+                                        final AbstractDescription<?> newLocationDescriptionKnownFromDarknessHell,
+                                        final AbstractDescription<?> newLocationDescriptionOther) {
+        return con(to, wo, actionName, standardDuration,
+                new TimedDescription<>(newLocationDescriptionUnknownHell, standardDuration),
+                newLocationDescriptionUnknownDunkel,
+                new TimedDescription<>(newLocationDescriptionKnownFromDarknessHell,
+                        standardDuration),
+                new TimedDescription<>(newLocationDescriptionOther, standardDuration));
+    }
+
+    public static SpatialConnection con(final GameObjectId to,
+                                        final String wo,
+                                        final String actionName,
+                                        final AvTimeSpan standardDuration,
+                                        final TimedDescription<?> newLocationDescriptionUnknownHell,
+                                        final TimedDescription<?> newLocationDescriptionUnknownDunkel,
+                                        final AbstractDescription<?> newLocationDescriptionKnownFromDarknessHell,
+                                        final AbstractDescription<?> newLocationDescriptionOther) {
+        return con(to, wo, actionName, standardDuration,
+                newLocationDescriptionUnknownHell,
+                newLocationDescriptionUnknownDunkel,
+                new TimedDescription<>(newLocationDescriptionKnownFromDarknessHell,
+                        standardDuration),
+                new TimedDescription<>(newLocationDescriptionOther, standardDuration));
+    }
+
+    public static SpatialConnection con(final GameObjectId to,
+                                        final String wo,
+                                        final String actionName,
+                                        final AvTimeSpan standardDuration,
+                                        final TimedDescription<?> newLocationDescriptionUnknownHell,
+                                        final AbstractDescription<?> newLocationDescriptionUnknownDunkel,
+                                        final AbstractDescription<?> newLocationDescriptionKnownFromDarknessHell,
+                                        final TimedDescription<?> newLocationDescriptionOther) {
+        return con(to, wo, actionName, standardDuration,
+                newLocationDescriptionUnknownHell,
+                new TimedDescription<>(newLocationDescriptionUnknownDunkel, standardDuration),
+                new TimedDescription<>(newLocationDescriptionKnownFromDarknessHell,
+                        standardDuration),
+                newLocationDescriptionOther);
+    }
+
+    public static SpatialConnection con(final GameObjectId to,
+                                        final String wo,
+                                        final String actionName,
+                                        final AvTimeSpan standardDuration,
+                                        final AbstractDescription<?> newLocationDescriptionUnknownHell,
+                                        final TimedDescription<?> newLocationDescriptionUnknownDunkel,
+                                        final AbstractDescription<?> newLocationDescriptionKnownFromDarknessHell,
+                                        final TimedDescription<?> newLocationDescriptionOther) {
+        return con(to, wo, actionName, standardDuration,
+                new TimedDescription<>(newLocationDescriptionUnknownHell, standardDuration),
+                newLocationDescriptionUnknownDunkel,
+                new TimedDescription<>(newLocationDescriptionKnownFromDarknessHell,
+                        standardDuration),
+                newLocationDescriptionOther);
+    }
+
+    public static SpatialConnection con(final GameObjectId to,
+                                        final String wo,
+                                        final String actionName,
+                                        final AvTimeSpan standardDuration,
+                                        final TimedDescription<?> newLocationDescriptionUnknownHell,
+                                        final TimedDescription<?> newLocationDescriptionUnknownDunkel,
+                                        final AbstractDescription<?> newLocationDescriptionKnownFromDarknessHell,
+                                        final TimedDescription<?> newLocationDescriptionOther) {
+        return con(to, wo, actionName, standardDuration,
+                newLocationDescriptionUnknownHell,
+                newLocationDescriptionUnknownDunkel,
+                new TimedDescription<>(newLocationDescriptionKnownFromDarknessHell,
+                        standardDuration),
+                newLocationDescriptionOther);
+    }
+
+    public static SpatialConnection con(final GameObjectId to,
+                                        final String wo,
+                                        final String actionName,
+                                        final AvTimeSpan standardDuration,
+                                        final AbstractDescription<?> newLocationDescriptionUnknownHell,
+                                        final AbstractDescription<?> newLocationDescriptionUnknownDunkel,
+                                        final TimedDescription<?> newLocationDescriptionKnownFromDarknessHell,
+                                        final TimedDescription<?> newLocationDescriptionOther) {
+        return con(to, wo, actionName, standardDuration,
+                new TimedDescription<>(newLocationDescriptionUnknownHell, standardDuration),
+                new TimedDescription<>(newLocationDescriptionUnknownDunkel, standardDuration),
+                newLocationDescriptionKnownFromDarknessHell,
+                newLocationDescriptionOther);
+    }
+
+    public static SpatialConnection con(final GameObjectId to,
+                                        final String wo,
+                                        final String actionName,
+                                        final AvTimeSpan standardDuration,
+                                        final TimedDescription<?> newLocationDescriptionUnknownHell,
+                                        final AbstractDescription<?> newLocationDescriptionUnknownDunkel,
+                                        final TimedDescription<?> newLocationDescriptionKnownFromDarknessHell,
+                                        final TimedDescription<?> newLocationDescriptionOther) {
+        return con(to, wo, actionName, standardDuration,
+                newLocationDescriptionUnknownHell,
+                new TimedDescription<>(newLocationDescriptionUnknownDunkel, standardDuration),
+                newLocationDescriptionKnownFromDarknessHell,
+                newLocationDescriptionOther);
+    }
+
+    public static SpatialConnection con(final GameObjectId to,
+                                        final String wo,
+                                        final String actionName,
+                                        final AvTimeSpan standardDuration,
+                                        final AbstractDescription<?> newLocationDescriptionUnknownHell,
+                                        final TimedDescription<?> newLocationDescriptionUnknownDunkel,
+                                        final TimedDescription<?> newLocationDescriptionKnownFromDarknessHell,
+                                        final TimedDescription<?> newLocationDescriptionOther) {
+        return con(to, wo, actionName, standardDuration,
+                new TimedDescription<>(newLocationDescriptionUnknownHell, standardDuration),
+                newLocationDescriptionUnknownDunkel,
+                newLocationDescriptionKnownFromDarknessHell,
+                newLocationDescriptionOther);
+    }
+
+    public static SpatialConnection con(final GameObjectId to,
+                                        final String wo,
+                                        final String actionName,
+                                        final AvTimeSpan standardDuration,
+                                        final AbstractDescription<?> newLocationDescriptionUnknownHell,
+                                        final AbstractDescription<?> newLocationDescriptionUnknownDunkel,
+                                        final AbstractDescription<?> newLocationDescriptionKnownFromDarknessHell,
+                                        final TimedDescription<?> newLocationDescriptionOther) {
+        return con(to, wo, actionName, standardDuration,
+                new TimedDescription<>(newLocationDescriptionUnknownHell, standardDuration),
+                new TimedDescription<>(newLocationDescriptionUnknownDunkel, standardDuration),
+                new TimedDescription<>(newLocationDescriptionKnownFromDarknessHell,
+                        standardDuration),
+                newLocationDescriptionOther);
     }
 
     public static SpatialConnection con(final GameObjectId to,
@@ -81,32 +401,269 @@ public class SpatialConnection {
                                         final String wo,
                                         final Supplier<String> actionNameProvider,
                                         final AvTimeSpan standardDuration,
+                                        final AbstractDescription<?> newLocationDescriptionUnknownHell,
+                                        final AbstractDescription<?> newLocationDescriptionUnknownDunkel,
+                                        final AbstractDescription<?> newLocationDescriptionKnownFromDarknessHell,
+                                        final AbstractDescription<?> newLocationDescriptionOther) {
+        return con(to, wo, actionNameProvider, standardDuration,
+                new TimedDescription<>(newLocationDescriptionUnknownHell, standardDuration),
+                new TimedDescription<>(newLocationDescriptionUnknownDunkel, standardDuration),
+                new TimedDescription<>(newLocationDescriptionKnownFromDarknessHell,
+                        standardDuration),
+                new TimedDescription<>(newLocationDescriptionOther, standardDuration));
+    }
+
+    public static SpatialConnection con(final GameObjectId to,
+                                        final String wo,
+                                        final Supplier<String> actionNameProvider,
+                                        final AvTimeSpan standardDuration,
+                                        final AbstractDescription<?> newLocationDescriptionUnknownHell,
+                                        final AbstractDescription<?> newLocationDescriptionUnknownDunkel,
+                                        final AbstractDescription<?> newLocationDescriptionKnownFromDarknessHell,
+                                        final TimedDescription<?> newLocationDescriptionOther) {
+        return con(to, wo, actionNameProvider, standardDuration,
+                new TimedDescription<>(newLocationDescriptionUnknownHell, standardDuration),
+                new TimedDescription<>(newLocationDescriptionUnknownDunkel, standardDuration),
+                new TimedDescription<>(newLocationDescriptionKnownFromDarknessHell,
+                        standardDuration),
+                newLocationDescriptionOther);
+    }
+
+    public static SpatialConnection con(final GameObjectId to,
+                                        final String wo,
+                                        final Supplier<String> actionNameProvider,
+                                        final AvTimeSpan standardDuration,
+                                        final AbstractDescription<?> newLocationDescriptionUnknownHell,
+                                        final AbstractDescription<?> newLocationDescriptionUnknownDunkel,
+                                        final TimedDescription<?> newLocationDescriptionKnownFromDarknessHell,
+                                        final AbstractDescription<?> newLocationDescriptionOther) {
+        return con(to, wo, actionNameProvider, standardDuration,
+                new TimedDescription<>(newLocationDescriptionUnknownHell, standardDuration),
+                new TimedDescription<>(newLocationDescriptionUnknownDunkel, standardDuration),
+                newLocationDescriptionKnownFromDarknessHell,
+                new TimedDescription<>(newLocationDescriptionOther, standardDuration));
+    }
+
+    public static SpatialConnection con(final GameObjectId to,
+                                        final String wo,
+                                        final Supplier<String> actionNameProvider,
+                                        final AvTimeSpan standardDuration,
+                                        final AbstractDescription<?> newLocationDescriptionUnknownHell,
+                                        final AbstractDescription<?> newLocationDescriptionUnknownDunkel,
+                                        final TimedDescription<?> newLocationDescriptionKnownFromDarknessHell,
+                                        final TimedDescription<?> newLocationDescriptionOther) {
+        return con(to, wo, actionNameProvider, standardDuration,
+                new TimedDescription<>(newLocationDescriptionUnknownHell, standardDuration),
+                new TimedDescription<>(newLocationDescriptionUnknownDunkel, standardDuration),
+                newLocationDescriptionKnownFromDarknessHell,
+                newLocationDescriptionOther);
+    }
+
+    public static SpatialConnection con(final GameObjectId to,
+                                        final String wo,
+                                        final Supplier<String> actionNameProvider,
+                                        final AvTimeSpan standardDuration,
+                                        final AbstractDescription<?> newLocationDescriptionUnknownHell,
+                                        final TimedDescription<?> newLocationDescriptionUnknownDunkel,
+                                        final AbstractDescription<?> newLocationDescriptionKnownFromDarknessHell,
+                                        final AbstractDescription<?> newLocationDescriptionOther) {
+        return con(to, wo, actionNameProvider, standardDuration,
+                new TimedDescription<>(newLocationDescriptionUnknownHell, standardDuration),
+                newLocationDescriptionUnknownDunkel,
+                new TimedDescription<>(newLocationDescriptionKnownFromDarknessHell,
+                        standardDuration),
+                new TimedDescription<>(newLocationDescriptionOther, standardDuration));
+    }
+
+    public static SpatialConnection con(final GameObjectId to,
+                                        final String wo,
+                                        final Supplier<String> actionNameProvider,
+                                        final AvTimeSpan standardDuration,
+                                        final AbstractDescription<?> newLocationDescriptionUnknownHell,
+                                        final TimedDescription<?> newLocationDescriptionUnknownDunkel,
+                                        final AbstractDescription<?> newLocationDescriptionKnownFromDarknessHell,
+                                        final TimedDescription<?> newLocationDescriptionOther) {
+        return con(to, wo, actionNameProvider, standardDuration,
+                new TimedDescription<>(newLocationDescriptionUnknownHell, standardDuration),
+                newLocationDescriptionUnknownDunkel,
+                new TimedDescription<>(newLocationDescriptionKnownFromDarknessHell,
+                        standardDuration),
+                newLocationDescriptionOther);
+    }
+
+    public static SpatialConnection con(final GameObjectId to,
+                                        final String wo,
+                                        final Supplier<String> actionNameProvider,
+                                        final AvTimeSpan standardDuration,
+                                        final AbstractDescription<?> newLocationDescriptionUnknownHell,
+                                        final TimedDescription<?> newLocationDescriptionUnknownDunkel,
+                                        final TimedDescription<?> newLocationDescriptionKnownFromDarknessHell,
+                                        final AbstractDescription<?> newLocationDescriptionOther) {
+        return con(to, wo, actionNameProvider, standardDuration,
+                new TimedDescription<>(newLocationDescriptionUnknownHell, standardDuration),
+                newLocationDescriptionUnknownDunkel,
+                newLocationDescriptionKnownFromDarknessHell,
+                new TimedDescription<>(newLocationDescriptionOther, standardDuration));
+    }
+
+    public static SpatialConnection con(final GameObjectId to,
+                                        final String wo,
+                                        final Supplier<String> actionNameProvider,
+                                        final AvTimeSpan standardDuration,
+                                        final AbstractDescription<?> newLocationDescriptionUnknownHell,
+                                        final TimedDescription<?> newLocationDescriptionUnknownDunkel,
+                                        final TimedDescription<?> newLocationDescriptionKnownFromDarknessHell,
+                                        final TimedDescription<?> newLocationDescriptionOther) {
+        return con(to, wo, actionNameProvider, standardDuration,
+                new TimedDescription<>(newLocationDescriptionUnknownHell, standardDuration),
+                newLocationDescriptionUnknownDunkel,
+                newLocationDescriptionKnownFromDarknessHell,
+                newLocationDescriptionOther);
+    }
+
+    public static SpatialConnection con(final GameObjectId to,
+                                        final String wo,
+                                        final Supplier<String> actionNameProvider,
+                                        final AvTimeSpan standardDuration,
+                                        final TimedDescription<?> newLocationDescriptionUnknownHell,
+                                        final AbstractDescription<?> newLocationDescriptionUnknownDunkel,
+                                        final AbstractDescription<?> newLocationDescriptionKnownFromDarknessHell,
+                                        final AbstractDescription<?> newLocationDescriptionOther) {
+        return con(to, wo, actionNameProvider, standardDuration,
+                newLocationDescriptionUnknownHell,
+                new TimedDescription<>(newLocationDescriptionUnknownDunkel, standardDuration),
+                new TimedDescription<>(newLocationDescriptionKnownFromDarknessHell,
+                        standardDuration),
+                new TimedDescription<>(newLocationDescriptionOther, standardDuration));
+    }
+
+    public static SpatialConnection con(final GameObjectId to,
+                                        final String wo,
+                                        final Supplier<String> actionNameProvider,
+                                        final AvTimeSpan standardDuration,
+                                        final TimedDescription<?> newLocationDescriptionUnknownHell,
+                                        final AbstractDescription<?> newLocationDescriptionUnknownDunkel,
+                                        final AbstractDescription<?> newLocationDescriptionKnownFromDarknessHell,
+                                        final TimedDescription<?> newLocationDescriptionOther) {
+        return con(to, wo, actionNameProvider, standardDuration,
+                newLocationDescriptionUnknownHell,
+                new TimedDescription<>(newLocationDescriptionUnknownDunkel, standardDuration),
+                new TimedDescription<>(newLocationDescriptionKnownFromDarknessHell,
+                        standardDuration),
+                newLocationDescriptionOther);
+    }
+
+    public static SpatialConnection con(final GameObjectId to,
+                                        final String wo,
+                                        final Supplier<String> actionNameProvider,
+                                        final AvTimeSpan standardDuration,
+                                        final TimedDescription<?> newLocationDescriptionUnknownHell,
+                                        final AbstractDescription<?> newLocationDescriptionUnknownDunkel,
+                                        final TimedDescription<?> newLocationDescriptionKnownFromDarknessHell,
+                                        final AbstractDescription<?> newLocationDescriptionOther) {
+        return con(to, wo, actionNameProvider, standardDuration,
+                newLocationDescriptionUnknownHell,
+                new TimedDescription<>(newLocationDescriptionUnknownDunkel, standardDuration),
+                newLocationDescriptionKnownFromDarknessHell,
+                new TimedDescription<>(newLocationDescriptionOther, standardDuration));
+    }
+
+    public static SpatialConnection con(final GameObjectId to,
+                                        final String wo,
+                                        final Supplier<String> actionNameProvider,
+                                        final AvTimeSpan standardDuration,
+                                        final TimedDescription<?> newLocationDescriptionUnknownHell,
+                                        final AbstractDescription<?> newLocationDescriptionUnknownDunkel,
+                                        final TimedDescription<?> newLocationDescriptionKnownFromDarknessHell,
+                                        final TimedDescription<?> newLocationDescriptionOther) {
+        return con(to, wo, actionNameProvider, standardDuration,
+                newLocationDescriptionUnknownHell,
+                new TimedDescription<>(newLocationDescriptionUnknownDunkel, standardDuration),
+                newLocationDescriptionKnownFromDarknessHell,
+                newLocationDescriptionOther);
+    }
+
+    public static SpatialConnection con(final GameObjectId to,
+                                        final String wo,
+                                        final Supplier<String> actionNameProvider,
+                                        final AvTimeSpan standardDuration,
+                                        final TimedDescription<?> newLocationDescriptionUnknownHell,
+                                        final TimedDescription<?> newLocationDescriptionUnknownDunkel,
+                                        final AbstractDescription<?> newLocationDescriptionKnownFromDarknessHell,
+                                        final AbstractDescription<?> newLocationDescriptionOther) {
+        return con(to, wo, actionNameProvider, standardDuration,
+                newLocationDescriptionUnknownHell,
+                newLocationDescriptionUnknownDunkel,
+                new TimedDescription<>(newLocationDescriptionKnownFromDarknessHell,
+                        standardDuration),
+                new TimedDescription<>(newLocationDescriptionOther, standardDuration));
+    }
+
+    public static SpatialConnection con(final GameObjectId to,
+                                        final String wo,
+                                        final Supplier<String> actionNameProvider,
+                                        final AvTimeSpan standardDuration,
+                                        final TimedDescription<?> newLocationDescriptionUnknownHell,
+                                        final TimedDescription<?> newLocationDescriptionUnknownDunkel,
+                                        final AbstractDescription<?> newLocationDescriptionKnownFromDarknessHell,
+                                        final TimedDescription<?> newLocationDescriptionOther) {
+        return con(to, wo, actionNameProvider, standardDuration,
+                newLocationDescriptionUnknownHell,
+                newLocationDescriptionUnknownDunkel,
+                new TimedDescription<>(newLocationDescriptionKnownFromDarknessHell,
+                        standardDuration),
+                newLocationDescriptionOther);
+    }
+
+    public static SpatialConnection con(final GameObjectId to,
+                                        final String wo,
+                                        final Supplier<String> actionNameProvider,
+                                        final AvTimeSpan standardDuration,
+                                        final TimedDescription<?> newLocationDescriptionUnknownHell,
+                                        final TimedDescription<?> newLocationDescriptionUnknownDunkel,
+                                        final TimedDescription<?> newLocationDescriptionKnownFromDarknessHell,
+                                        final AbstractDescription<?> newLocationDescriptionOther) {
+        return con(to, wo, actionNameProvider, standardDuration,
+                newLocationDescriptionUnknownHell,
+                newLocationDescriptionUnknownDunkel,
+                newLocationDescriptionKnownFromDarknessHell,
+                new TimedDescription<>(newLocationDescriptionOther, standardDuration));
+    }
+
+
+    public static SpatialConnection con(final GameObjectId to,
+                                        final String wo,
+                                        final Supplier<String> actionNameProvider,
+                                        final AvTimeSpan standardDuration,
                                         final TimedDescription<?> newLocationDescriptionUnknownHell,
                                         final TimedDescription<?> newLocationDescriptionUnknownDunkel,
                                         final TimedDescription<?> newLocationDescriptionKnownFromDarknessHell,
                                         final TimedDescription<?> newLocationDescriptionOther) {
         return con(to, wo, actionNameProvider, standardDuration,
-                (newLocationKnown, lichtverhaeltnisseInNewLocation) -> {
-                    if (newLocationKnown == UNKNOWN && lichtverhaeltnisseInNewLocation == HELL) {
-                        return newLocationDescriptionUnknownHell;
-                    }
-                    if (newLocationKnown == UNKNOWN && lichtverhaeltnisseInNewLocation == DUNKEL) {
-                        return newLocationDescriptionUnknownDunkel;
-                    }
-                    if (newLocationKnown == KNOWN_FROM_DARKNESS
-                            && lichtverhaeltnisseInNewLocation == HELL) {
-                        return newLocationDescriptionKnownFromDarknessHell;
-                    }
-                    return newLocationDescriptionOther;
-                });
+                (SpatialConnectionData.SCMoveTimedDescriptionProvider)
+                        (newLocationKnown, lichtverhaeltnisseInNewLocation) -> {
+                            if (newLocationKnown == UNKNOWN
+                                    && lichtverhaeltnisseInNewLocation == HELL) {
+                                return newLocationDescriptionUnknownHell;
+                            }
+                            if (newLocationKnown == UNKNOWN
+                                    && lichtverhaeltnisseInNewLocation == DUNKEL) {
+                                return newLocationDescriptionUnknownDunkel;
+                            }
+                            if (newLocationKnown == KNOWN_FROM_DARKNESS
+                                    && lichtverhaeltnisseInNewLocation == HELL) {
+                                return newLocationDescriptionKnownFromDarknessHell;
+                            }
+                            return newLocationDescriptionOther;
+                        });
     }
 
     public static SpatialConnection con(final GameObjectId to,
                                         final String wo,
                                         final String actionName,
                                         final AvTimeSpan standardDuration,
-                                        final SpatialConnectionData.SCMoveDescriptionProvider scMoveDescriptionProvider) {
-        return con(to, wo, () -> actionName, standardDuration, scMoveDescriptionProvider);
+                                        final SpatialConnectionData.SCMoveTimedDescriptionProvider scMoveTimedDescriptionProvider) {
+        return con(to, wo, () -> actionName, standardDuration, scMoveTimedDescriptionProvider);
     }
 
     public static SpatialConnection con(final GameObjectId to,
@@ -114,12 +671,24 @@ public class SpatialConnection {
                                         final Supplier<String> actionNameSupplier,
                                         final AvTimeSpan standardDuration,
                                         final SpatialConnectionData.SCMoveDescriptionProvider scMoveDescriptionProvider) {
+        return con(to, wo, actionNameSupplier, standardDuration,
+                (Known k, Lichtverhaeltnisse l) ->
+                        new TimedDescription<>(
+                                scMoveDescriptionProvider.getSCMoveDescription(k, l),
+                                standardDuration));
+    }
+
+    public static SpatialConnection con(final GameObjectId to,
+                                        final String wo,
+                                        final Supplier<String> actionNameSupplier,
+                                        final AvTimeSpan standardDuration,
+                                        final SpatialConnectionData.SCMoveTimedDescriptionProvider scMoveTimedDescriptionProvider) {
         return con(to,
                 conData(
                         wo,
                         actionNameSupplier,
                         standardDuration,
-                        scMoveDescriptionProvider
+                        scMoveTimedDescriptionProvider
                 ));
     }
 
@@ -147,16 +716,12 @@ public class SpatialConnection {
         return data.getStandardDuration();
     }
 
-    public AbstractAdverbialeAngabe getWoAdvAngabe() {
-        return data.getWoAdvAngabe();
-    }
-
     public String getWo() {
         return data.getWo();
     }
 
-    public SpatialConnectionData.SCMoveDescriptionProvider getSCMoveDescriptionProvider() {
-        return data.getSCMoveDescriptionProvider();
+    public SpatialConnectionData.SCMoveTimedDescriptionProvider getSCMoveDescriptionProvider() {
+        return data.getSCMoveTimedDescriptionProvider();
     }
 
     @NonNull

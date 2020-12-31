@@ -587,7 +587,7 @@ public class BewegenAction<LOC_DESC extends ILocatableGO & IDescribableGO>
                                                final Lichtverhaeltnisse lichtverhaeltnisseInNewLocation) {
 
         return spatialConnection.getSCMoveDescriptionProvider()
-                .getSCMoveDescription(newLocationKnown, lichtverhaeltnisseInNewLocation)
+                .getSCMoveTimedDescription(newLocationKnown, lichtverhaeltnisseInNewLocation)
                 .multiplyTimeElapsedWith(calcSpeedFactor());
     }
 

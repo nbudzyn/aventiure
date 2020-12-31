@@ -63,12 +63,13 @@ class BettFactory {
                 conData("auf der Bettkante",
                         "In das Bett legen",
                         secs(15),
-                        this::getDescIn), conData("auf der Bettkante",
-                "Aufstehen",
-                secs(10),
-                du(SENTENCE, "reckst", "dich noch einmal und stehst "
-                        + "wieder auf", secs(10))
-                        .dann()));
+                        this::getDescIn),
+                conData("auf der Bettkante",
+                        "Aufstehen",
+                        secs(10),
+                        du(SENTENCE, "reckst", "dich noch einmal und stehst "
+                                + "wieder auf")
+                                .dann()));
 
         return new StoringPlaceObject(id,
                 descriptionComp,

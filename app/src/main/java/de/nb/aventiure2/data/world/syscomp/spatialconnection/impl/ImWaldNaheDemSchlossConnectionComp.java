@@ -87,9 +87,9 @@ public class ImWaldNaheDemSchlossConnectionComp extends AbstractSpatialConnectio
                         du(SENTENCE, "gehst", "den Weg weiter in den Wald hinein. "
                                 + "Nicht lang, und es geht zur Linken zwischen "
                                 + "den Bäumen ein alter, düsterer Weg ab, über "
-                                + "den Farn wuchert", mins(5))
+                                + "den Farn wuchert")
                                 .komma(),
-                        du("kommst", "an den farnüberwachsenen Abzweig", mins(5))
+                        du("kommst", "an den farnüberwachsenen Abzweig")
                                 .undWartest()
                 ));
     }

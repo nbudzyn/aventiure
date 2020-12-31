@@ -67,11 +67,8 @@ public class DraussenVorDemSchlossConnectionComp extends AbstractSpatialConnecti
                         "In den Wald gehen",
                         mins(10),
                         du("folgst", "einem Weg in den Wald. "
-                                        + "Nach ein paar Schritten führt rechter Hand ein schmaler Pfad "
-                                        + "einen Hügel hinauf",
-                                // REFACTOR Es wäre schön, wennn man die Standard-Duration hier
-                                //  nicht wiederholen müsste.
-                                mins(10)),
+                                + "Nach ein paar Schritten führt rechter Hand ein schmaler Pfad "
+                                + "einen Hügel hinauf"),
                         neuerSatz("Jeder kennt die Geschichten, die man "
                                 + "sich über den Wald erzählt: Räuber sind noch "
                                 + "die kleinste Gefahr. Aber das schreckt dich ganz "
@@ -79,9 +76,11 @@ public class DraussenVorDemSchlossConnectionComp extends AbstractSpatialConnecti
                                 + "Weg hinein in den dunklen Wald. Schon nach ein paar Schritten "
                                 + "führt rechter Hand ein schmaler, dunkler Pfad einen Hügel "
                                 + "hinauf", mins(12)),
-                        du("läufst", "wieder in den dunklen Wald", "wieder", mins(10))
+                        du("läufst", "wieder in den dunklen Wald",
+                                "wieder")
                                 .dann(),
-                        du("läufst", "wieder in den dunklen Wald", "wieder", mins(10))
+                        du("läufst", "wieder in den dunklen Wald",
+                                "wieder")
                                 .dann()));
     }
 

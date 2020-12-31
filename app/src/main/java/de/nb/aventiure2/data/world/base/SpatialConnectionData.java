@@ -7,9 +7,8 @@ import java.util.function.Supplier;
 import de.nb.aventiure2.data.time.AvTimeSpan;
 import de.nb.aventiure2.data.world.syscomp.spatialconnection.ISpatiallyConnectedGO;
 import de.nb.aventiure2.data.world.syscomp.storingplace.ILocationGO;
+import de.nb.aventiure2.german.description.AbstractDescription;
 import de.nb.aventiure2.german.description.TimedDescription;
-import de.nb.aventiure2.german.praedikat.AbstractAdverbialeAngabe;
-import de.nb.aventiure2.german.praedikat.AdverbialeAngabeSkopusVerbAllg;
 
 public class SpatialConnectionData {
     /**
@@ -34,7 +33,16 @@ public class SpatialConnectionData {
      */
     private final AvTimeSpan standardDuration;
     private final Supplier<String> actionNameProvider;
-    private final SCMoveDescriptionProvider scMoveDescriptionProvider;
+    private final SCMoveTimedDescriptionProvider scMoveTimedDescriptionProvider;
+
+    public static SpatialConnectionData conData(
+            final String wo,
+            final String actionDescription,
+            final AvTimeSpan standardDuration,
+            final AbstractDescription<?> newLocationDescription) {
+        return conData(wo, actionDescription, standardDuration,
+                new TimedDescription<>(newLocationDescription, standardDuration));
+    }
 
     public static SpatialConnectionData conData(
             final String wo,
@@ -42,7 +50,9 @@ public class SpatialConnectionData {
             final AvTimeSpan standardDuration,
             final TimedDescription<?> newLocationDescription) {
         return conData(wo, actionDescription, standardDuration,
-                (isnewLocationKnown, lichtverhaeltnisseInNewLocation) -> newLocationDescription);
+                (SCMoveTimedDescriptionProvider)
+                        (isnewLocationKnown, lichtverhaeltnisseInNewLocation) ->
+                                newLocationDescription);
     }
 
     public static SpatialConnectionData conData(
@@ -50,7 +60,19 @@ public class SpatialConnectionData {
             final String actionName,
             final AvTimeSpan standardDuration,
             final SCMoveDescriptionProvider scMoveDescriptionProvider) {
-        return conData(wo, () -> actionName, standardDuration, scMoveDescriptionProvider);
+        return conData(wo, actionName, standardDuration,
+                (Known k, Lichtverhaeltnisse l) ->
+                        new TimedDescription<AbstractDescription<?>>(
+                                scMoveDescriptionProvider.getSCMoveDescription(k, l),
+                                standardDuration));
+    }
+
+    public static SpatialConnectionData conData(
+            final String wo,
+            final String actionName,
+            final AvTimeSpan standardDuration,
+            final SCMoveTimedDescriptionProvider scMoveTimedDescriptionProvider) {
+        return conData(wo, () -> actionName, standardDuration, scMoveTimedDescriptionProvider);
     }
 
     public static SpatialConnectionData conData(
@@ -58,11 +80,23 @@ public class SpatialConnectionData {
             final Supplier<String> actionNameProvider,
             final AvTimeSpan standardDuration,
             final SCMoveDescriptionProvider scMoveDescriptionProvider) {
+        return conData(wo, actionNameProvider, standardDuration,
+                (Known k, Lichtverhaeltnisse l) ->
+                        new TimedDescription<AbstractDescription<?>>(
+                                scMoveDescriptionProvider.getSCMoveDescription(k, l),
+                                standardDuration));
+    }
+
+    public static SpatialConnectionData conData(
+            final String wo,
+            final Supplier<String> actionNameProvider,
+            final AvTimeSpan standardDuration,
+            final SCMoveTimedDescriptionProvider scMoveTimedDescriptionProvider) {
         return new SpatialConnectionData(
                 wo,
                 actionNameProvider,
                 standardDuration,
-                scMoveDescriptionProvider
+                scMoveTimedDescriptionProvider
         );
     }
 
@@ -70,11 +104,11 @@ public class SpatialConnectionData {
             final String wo,
             final Supplier<String> actionNameProvider,
             final AvTimeSpan standardDuration,
-            final SpatialConnectionData.SCMoveDescriptionProvider scMoveDescriptionProvider) {
+            final SCMoveTimedDescriptionProvider scMoveTimedDescriptionProvider) {
         this.wo = wo;
         this.actionNameProvider = actionNameProvider;
         this.standardDuration = standardDuration;
-        this.scMoveDescriptionProvider = scMoveDescriptionProvider;
+        this.scMoveTimedDescriptionProvider = scMoveTimedDescriptionProvider;
     }
 
     String getActionName() {
@@ -85,21 +119,24 @@ public class SpatialConnectionData {
         return standardDuration;
     }
 
-    AbstractAdverbialeAngabe getWoAdvAngabe() {
-        return new AdverbialeAngabeSkopusVerbAllg(getWo());
-    }
-
     public String getWo() {
         return wo;
     }
 
-    SCMoveDescriptionProvider getSCMoveDescriptionProvider() {
-        return scMoveDescriptionProvider;
+    SCMoveTimedDescriptionProvider getSCMoveTimedDescriptionProvider() {
+        return scMoveTimedDescriptionProvider;
+    }
+
+    @FunctionalInterface
+    public interface SCMoveTimedDescriptionProvider {
+        TimedDescription<?> getSCMoveTimedDescription(
+                Known newLocationKnown,
+                Lichtverhaeltnisse lichtverhaeltnisseInNewLocation);
     }
 
     @FunctionalInterface
     public interface SCMoveDescriptionProvider {
-        TimedDescription<?> getSCMoveDescription(
+        AbstractDescription<?> getSCMoveDescription(
                 Known newLocationKnown,
                 Lichtverhaeltnisse lichtverhaeltnisseInNewLocation);
     }

@@ -49,7 +49,7 @@ public class AbzweigImWaldConnectionComp extends AbstractSpatialConnectionComp {
                         "auf dem Weg zum Schloss",
                         "In Richtung Schloss gehen",
                         mins(5),
-                        du("gehst", "weiter in Richtung Schloss", mins(5))
+                        du("gehst", "weiter in Richtung Schloss")
                 ),
 
                 con(VOR_DER_HUETTE_IM_WALD,

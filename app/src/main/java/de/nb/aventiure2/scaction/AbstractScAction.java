@@ -34,21 +34,6 @@ public abstract class AbstractScAction implements IPlayerAction {
 
     protected final SpielerCharakter sc;
 
-    // REFACTOR AbstractScAction so verallgemeinern (oder Inhalte extrahieren?),
-    //  so dass dieselben Actions auch von einer NPC-AI zurückgegeben werden könnten?
-    //  Das Framework nimmt dann die (User- oder NPC-) Action entgegen und führt sie aus?
-    //  Ziel wäre: Doppelten Code für USER- und NPC-Actions verhindern und
-    //  für den Action-Code einen guten Platz finden.
-    //  Idee dazu: Operationen ("Verbs") in eigene Klassen auslagern.
-    //  Allerdings möchte man weder
-    //  - die schönen Beschreibungen aus Sicht des Spielers verlieren
-    //  - noch alle Beschreibungen für alle Personen konfigurierbar machen.
-    //  Man könnte höchstens die "Funktionalität" als solche" in Aktionsklassen extrahieren.
-    //  Ein Problem ist Moment ist vermutlich, dass die NPCs und der SC derzeit ganz
-    //  unterschiedliche Dinge tun?
-    //  Beispiele wäre derzeit Bewegung (SC, Hexe, Prinz), rufen (SC, Hexe) und
-    //  Reden (diverse).
-
     protected AbstractScAction(final SCActionStepCountDao scActionStepCountDao,
                                final TimeTaker timeTaker, final Narrator n,
                                final World world) {

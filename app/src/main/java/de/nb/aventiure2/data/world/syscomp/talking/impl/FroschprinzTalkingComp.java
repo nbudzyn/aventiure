@@ -471,8 +471,7 @@ public class FroschprinzTalkingComp extends AbstractTalkingComp {
                 secs(30)));
 
         for (final LOC_DESC object : objectsInDenBrunnenGefallen) {
-            object.locationComp()
-                    .narrateAndSetLocation(scLocationId);
+            object.locationComp().narrateAndSetLocation(scLocationId);
         }
 
         stateComp.narrateAndSetState(ERWARTET_VON_SC_EINLOESUNG_SEINES_VERSPRECHENS);

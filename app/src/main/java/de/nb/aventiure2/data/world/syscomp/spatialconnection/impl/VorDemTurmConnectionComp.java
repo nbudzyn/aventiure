@@ -75,7 +75,7 @@ public class VorDemTurmConnectionComp extends AbstractSpatialConnectionComp {
                                 + "zum Waldweg", mins(20))
                         .beendet(PARAGRAPH),
                 du(PARAGRAPH, "gehst", "den Hügel auf dem gewundenen Pfad wieder hinab, "
-                        + "bis du unten am Waldweg ankommst", mins(18))
+                        + "bis du unten am Waldweg ankommst")
                         .komma()
                         .undWartest()
         ));
@@ -89,8 +89,7 @@ public class VorDemTurmConnectionComp extends AbstractSpatialConnectionComp {
                     du("steigst",
                             "hinauf.\n"
                                     + "Durch das Fensterchen kletterst du in eine kleine Kammer: "
-                                    + "Tisch, Stuhl, ein Bett",
-                            mins(1)),
+                                    + "Tisch, Stuhl, ein Bett"),
                     du(SENTENCE, "steigst",
                             "vorsichtig hinauf und klettest durch das Fensterchen "
                                     + "in eine kleine Kammer. Alles ist dunkel, ein Bett kannst "
@@ -100,8 +99,7 @@ public class VorDemTurmConnectionComp extends AbstractSpatialConnectionComp {
                     du("steigst",
                             "wieder hinauf. Im Hellen siehst du, dass die Kammer nur "
                                     + "sehr einfach eingerichtet ist: Ein Tisch, ein Stuhl, "
-                                    + "ein Bett",
-                            mins(1)),
+                                    + "ein Bett"),
                     neuerSatz("In einem Augenblick bist du oben",
                             secs(45))));
         }

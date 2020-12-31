@@ -62,7 +62,7 @@ public class ImWaldBeimBrunnenConnectionComp extends AbstractSpatialConnectionCo
                 mins(3),
                 du(SENTENCE, "verlässt", "den Brunnen und erreichst bald "
                         + "die Stelle, wo der überwachsene Weg "
-                        + "abzweigt", mins(3))
+                        + "abzweigt")
                         .komma()));
 
         if (storingPlaceComp.getLichtverhaeltnisse() == HELL ||
@@ -80,7 +80,7 @@ public class ImWaldBeimBrunnenConnectionComp extends AbstractSpatialConnectionCo
                             + "Nicht weit in den Wald, und dir fällt ein "
                             + "Strauch mit kleinen, "
                             + "purpurnen Früchten auf, wie zu klein geratene "
-                            + "Äpfel", mins(5))
+                            + "Äpfel")
                             .komma()
                             .dann(),
                     du("kämpfst", "dich noch einmal durch den wilden "

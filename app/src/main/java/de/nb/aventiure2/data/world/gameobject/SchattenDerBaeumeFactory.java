@@ -13,6 +13,8 @@ import de.nb.aventiure2.data.world.base.Lichtverhaeltnisse;
 import de.nb.aventiure2.data.world.syscomp.description.impl.SimpleDescriptionComp;
 import de.nb.aventiure2.data.world.syscomp.location.LocationComp;
 import de.nb.aventiure2.data.world.syscomp.storingplace.StoringPlaceComp;
+import de.nb.aventiure2.german.description.AbstractDescription;
+import de.nb.aventiure2.german.description.AbstractDuDescription;
 import de.nb.aventiure2.german.description.TimedDescription;
 import de.nb.aventiure2.german.praedikat.AdverbialeAngabeSkopusVerbAllg;
 import de.nb.aventiure2.german.praedikat.VerbSubj;
@@ -67,10 +69,11 @@ class SchattenDerBaeumeFactory {
                 conData("vor den Bäumen",
                         "In den Schatten der Bäume setzen",
                         secs(10),
-                        this::getDescIn), conData("vor den Bäumen",
-                "Aus dem Schatten der Bäume treten",
-                secs(10),
-                SchattenDerBaeumeFactory::getDescOut));
+                        this::getDescIn),
+                conData("vor den Bäumen",
+                        "Aus dem Schatten der Bäume treten",
+                        secs(10),
+                        SchattenDerBaeumeFactory::getDescOut));
 
         return new StoringPlaceObject(id,
                 descriptionComp,
@@ -106,22 +109,20 @@ class SchattenDerBaeumeFactory {
                 .dann();
     }
 
-    private static TimedDescription<?> getDescOut(
+    private static AbstractDescription<? extends AbstractDuDescription<?, ?>> getDescOut(
             final Known newLocationKnown, final Lichtverhaeltnisse lichtverhaeltnisse) {
         if (lichtverhaeltnisse == DUNKEL) {
 
             // "du stehst wieder auf"
             return du(VerbSubj.AUFSTEHEN
-                            .mitAdverbialerAngabe(
-                                    new AdverbialeAngabeSkopusVerbAllg("wieder")),
-                    secs(10))
+                    .mitAdverbialerAngabe(
+                            new AdverbialeAngabeSkopusVerbAllg("wieder")))
                     .undWartest()
                     .dann();
         }
 
         return du(PARAGRAPH, "erhebst",
-                "dich wieder und trittst aus dem Schatten der Bäume hervor",
-                secs(10))
+                "dich wieder und trittst aus dem Schatten der Bäume hervor")
                 .beendet(SENTENCE)
                 .dann();
     }

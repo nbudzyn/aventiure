@@ -72,10 +72,11 @@ public class BaumFactory {
                 conData("im Geäst",
                         "Auf den Baum klettern",
                         mins(6),
-                        this::getDescIn), conData("im Geäst",
-                "Zum Boden hinabklettern",
-                mins(4),
-                this::getDescOut));
+                        this::getDescIn),
+                conData("im Geäst",
+                        "Zum Boden hinabklettern",
+                        mins(4),
+                        this::getDescOut));
 
         return new StoringPlaceObject(id,
                 descriptionComp,
