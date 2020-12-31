@@ -44,6 +44,10 @@ public abstract class AbstractScAction implements IPlayerAction {
     //  - die schönen Beschreibungen aus Sicht des Spielers verlieren
     //  - noch alle Beschreibungen für alle Personen konfigurierbar machen.
     //  Man könnte höchstens die "Funktionalität" als solche" in Aktionsklassen extrahieren.
+    //  Ein Problem ist Moment ist vermutlich, dass die NPCs und der SC derzeit ganz
+    //  unterschiedliche Dinge tun?
+    //  Beispiele wäre derzeit Bewegung (SC, Hexe, Prinz), rufen (SC, Hexe) und
+    //  Reden (diverse).
 
     protected AbstractScAction(final SCActionStepCountDao scActionStepCountDao,
                                final TimeTaker timeTaker, final Narrator n,
