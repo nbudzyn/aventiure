@@ -263,7 +263,7 @@ public class NehmenAction
                             sc.feelingsComp().requestMood(NEUTRAL);
 
                             final SubstantivischePhrase froschDescOderAnapher =
-                                    getAnaphPersPronWennMglSonstShortDescription(
+                                    world.getAnaphPersPronWennMglSonstShortDescription(
                                             FROSCHPRINZ);
 
                             n.narrateAlt(
@@ -326,7 +326,8 @@ public class NehmenAction
         if (isDefinitivDiskontinuitaet()) {
             if (n.dann()) {
                 final SubstantivischePhrase froschDescOderAnapher =
-                        getAnaphPersPronWennMglSonstShortDescription(FROSCHPRINZ);
+                        world.getAnaphPersPronWennMglSonstShortDescription(
+                                FROSCHPRINZ);
 
                 n.narrate(neuerSatz(PARAGRAPH,
                         "Aber dann nimmst du " + froschDescOderAnapher.akk() +

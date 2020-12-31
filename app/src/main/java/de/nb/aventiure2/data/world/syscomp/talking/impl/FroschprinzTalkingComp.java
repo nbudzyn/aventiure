@@ -150,7 +150,7 @@ public class FroschprinzTalkingComp extends AbstractTalkingComp {
             final IDescribableGO objectInDenBrunnenGefallen =
                     objects.iterator().next();
 
-            return getDescription(objectInDenBrunnenGefallen, false);
+            return world.getDescription(objectInDenBrunnenGefallen, false);
         }
 
         return Nominalphrase.DINGE;
@@ -158,7 +158,7 @@ public class FroschprinzTalkingComp extends AbstractTalkingComp {
 
     private String getAkkShort(final List<? extends IDescribableGO> objects) {
         if (objects.size() == 1) {
-            return getDescription(objects.iterator().next(), true).akk();
+            return world.getDescription(objects.iterator().next(), true).akk();
         }
 
         return "sie";
@@ -253,7 +253,7 @@ public class FroschprinzTalkingComp extends AbstractTalkingComp {
                     objectsInDenBrunnenGefallen.iterator().next();
 
             n.narrate(neuerSatz("„"
-                    + capitalize(getDescription(objectInDenBrunnenGefallen).nom())
+                    + capitalize(world.getDescription(objectInDenBrunnenGefallen).nom())
                     + " ist mir in den Brunnen hinabgefallen.“", secs(10)));
             setSchonBegruesstMitSC(true);
             return;

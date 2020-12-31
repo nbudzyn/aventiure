@@ -44,6 +44,8 @@ import de.nb.aventiure2.data.world.syscomp.spatialconnection.system.SpatialConne
 import de.nb.aventiure2.data.world.syscomp.storingplace.ILocationGO;
 import de.nb.aventiure2.data.world.syscomp.storingplace.StoringPlaceType;
 import de.nb.aventiure2.german.base.Nominalphrase;
+import de.nb.aventiure2.german.base.Personalpronomen;
+import de.nb.aventiure2.german.base.SubstantivischePhrase;
 
 import static com.google.common.collect.ImmutableList.toImmutableList;
 import static de.nb.aventiure2.data.time.AvTime.oClock;
@@ -759,12 +761,68 @@ public class World {
     }
 
     /**
-     * Gibt eine (evtl. auch etwas längere) Nominalphrase zurück, die das Game Object beschreibt.
-     * Die Phrase wird in der Regel unterschiedlich sein, je nachdem, ob
-     * der Spieler das Game Object schon kennt oder nicht.
+     * Gibt das Personalpronomen zurück, mit dem ein
+     * anaphorischer Bezug auf dieses
+     * Game Object möglich ist - wenn das nicht möglich ist, dann eine kurze
+     * Beschreibung des Game Objects.
+     * <br/>
+     * Beispiel 1: "Du hebst die Lampe auf..." - jetzt ist ein anaphorischer Bezug
+     * auf die Lampe möglich und diese Methode gibt "sie" zurück.
+     * <br/>
+     * Beispiel 2: "Du zündest das Feuer an..." - jetzt ist <i>kein</i> anaphorischer Bezug
+     * auf die Lampe möglich und diese Methode gibt "die mysteriöse Lampe" oder "die Lampe" zurück.
      */
-    public Nominalphrase getDescription(final GameObjectId gameObjectId) {
-        return getDescription((IDescribableGO) load(gameObjectId));
+    public SubstantivischePhrase getAnaphPersPronWennMglSonstShortDescription(
+            final IDescribableGO describableGO) {
+        return getAnaphPersPronWennMglSonstDescription(describableGO, true);
+    }
+
+    /**
+     * Gibt das Personalpronomen zurück, mit dem ein
+     * anaphorischer Bezug auf dieses
+     * Game Object möglich ist - wenn das nicht möglich ist, dann eine kurze
+     * Beschreibung des Game Objects.
+     * <br/>
+     * Es muss sich um eine {@link IDescribableGO} handeln!
+     * <br/>
+     * Beispiel 1: "Du hebst die Lampe auf..." - jetzt ist ein anaphorischer Bezug
+     * auf die Lampe möglich und diese Methode gibt "sie" zurück.
+     * <br/>
+     * Beispiel 2: "Du zündest das Feuer an..." - jetzt ist <i>kein</i> anaphorischer Bezug
+     * auf die Lampe möglich und diese Methode gibt "die Lampe" zurück.
+     */
+    public SubstantivischePhrase getAnaphPersPronWennMglSonstShortDescription(
+            final GameObjectId describableId) {
+        // IDEA Auch andere "Anaphern" (im weitesten Sinne) erzeugen, nicht nur Personalpronomen:
+        //  Auch Synonyme, Überbegriffe oder schlicht Wiederholung könnten Anaphern sein.
+        //  Dann am besten Alternativen zurückgeben!
+
+        return getAnaphPersPronWennMglSonstDescription(
+                (IDescribableGO) load(describableId), true);
+    }
+
+    /**
+     * Gibt das Personalpronomen zurück, mit dem ein
+     * anaphorischer Bezug auf dieses
+     * Game Object möglich ist - wenn das nicht möglich ist, dann eine
+     * Beschreibung des Game Objects.
+     * <br/>
+     * Beispiel 1: "Du hebst die Lampe auf..." - jetzt ist ein anaphorischer Bezug
+     * auf die Lampe möglich und diese Methode gibt "sie" zurück.
+     * <br/>
+     * Beispiel 2: "Du zündest das Feuer an..." - jetzt ist <i>kein</i> anaphorischer Bezug
+     * auf die Lampe möglich und diese Methode gibt "die mysteriöse Lampe" zurück.
+     */
+    public SubstantivischePhrase getAnaphPersPronWennMglSonstDescription(
+            final IDescribableGO describableGO,
+            final boolean descShortIfKnown) {
+        @Nullable final Personalpronomen anaphPersPron =
+                n.getAnaphPersPronWennMgl(describableGO);
+        if (anaphPersPron != null) {
+            return anaphPersPron;
+        }
+
+        return getDescription(describableGO, descShortIfKnown);
     }
 
     /**
@@ -939,4 +997,6 @@ public class World {
     SpatialConnectionSystem getSpatialConnectionSystem() {
         return spatialConnectionSystem;
     }
+
+
 }

@@ -1,7 +1,6 @@
 package de.nb.aventiure2.scaction;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 
 import javax.annotation.ParametersAreNonnullByDefault;
 
@@ -10,12 +9,8 @@ import de.nb.aventiure2.data.narration.Narrator;
 import de.nb.aventiure2.data.time.AvDateTime;
 import de.nb.aventiure2.data.time.AvTimeSpan;
 import de.nb.aventiure2.data.time.TimeTaker;
-import de.nb.aventiure2.data.world.base.GameObjectId;
 import de.nb.aventiure2.data.world.gameobject.*;
 import de.nb.aventiure2.data.world.gameobject.player.*;
-import de.nb.aventiure2.data.world.syscomp.description.IDescribableGO;
-import de.nb.aventiure2.german.base.Personalpronomen;
-import de.nb.aventiure2.german.base.SubstantivischePhrase;
 import de.nb.aventiure2.german.description.Kohaerenzrelation;
 import de.nb.aventiure2.scaction.stepcount.SCActionStepCountDao;
 
@@ -44,7 +39,11 @@ public abstract class AbstractScAction implements IPlayerAction {
     //  Das Framework nimmt dann die (User- oder NPC-) Action entgegen und führt sie aus?
     //  Ziel wäre: Doppelten Code für USER- und NPC-Actions verhindern und
     //  für den Action-Code einen guten Platz finden.
-    //  Idee dazu: Operationen ("Verbs") in eigene Klassen auslagern
+    //  Idee dazu: Operationen ("Verbs") in eigene Klassen auslagern.
+    //  Allerdings möchte man weder
+    //  - die schönen Beschreibungen aus Sicht des Spielers verlieren
+    //  - noch alle Beschreibungen für alle Personen konfigurierbar machen.
+    //  Man könnte höchstens die "Funktionalität" als solche" in Aktionsklassen extrahieren.
 
     protected AbstractScAction(final SCActionStepCountDao scActionStepCountDao,
                                final TimeTaker timeTaker, final Narrator n,
@@ -188,68 +187,6 @@ public abstract class AbstractScAction implements IPlayerAction {
      * um eine Diskontinuität handelt - oder das sich das System unsicher ist.
      */
     abstract protected boolean isDefinitivDiskontinuitaet();
-
-    /**
-     * Gibt das Personalpronomen zurück, mit dem ein
-     * anaphorischer Bezug auf dieses
-     * Game Object möglich ist - wenn das nicht möglich ist, dann eine kurze
-     * Beschreibung des Game Objects.
-     * <br/>
-     * Es muss sich um eine {@link IDescribableGO} handeln!
-     * <br/>
-     * Beispiel 1: "Du hebst die Lampe auf..." - jetzt ist ein anaphorischer Bezug
-     * auf die Lampe möglich und diese Methode gibt "sie" zurück.
-     * <br/>
-     * Beispiel 2: "Du zündest das Feuer an..." - jetzt ist <i>kein</i> anaphorischer Bezug
-     * auf die Lampe möglich und diese Methode gibt "die Lampe" zurück.
-     */
-    protected SubstantivischePhrase getAnaphPersPronWennMglSonstShortDescription(
-            final GameObjectId describableId) {
-        return getAnaphPersPronWennMglSonstDescription(
-                (IDescribableGO) world.load(describableId), true);
-    }
-
-    /**
-     * Gibt das Personalpronomen zurück, mit dem ein
-     * anaphorischer Bezug auf dieses
-     * Game Object möglich ist - wenn das nicht möglich ist, dann eine kurze
-     * Beschreibung des Game Objects.
-     * <br/>
-     * Beispiel 1: "Du hebst die Lampe auf..." - jetzt ist ein anaphorischer Bezug
-     * auf die Lampe möglich und diese Methode gibt "sie" zurück.
-     * <br/>
-     * Beispiel 2: "Du zündest das Feuer an..." - jetzt ist <i>kein</i> anaphorischer Bezug
-     * auf die Lampe möglich und diese Methode gibt "die mysteriöse Lampe" oder "die Lampe" zurück.
-     */
-    protected SubstantivischePhrase getAnaphPersPronWennMglSonstShortDescription(
-            final IDescribableGO describableGO) {
-        return getAnaphPersPronWennMglSonstDescription(
-                describableGO, true);
-    }
-
-    /**
-     * Gibt das Personalpronomen zurück, mit dem ein
-     * anaphorischer Bezug auf dieses
-     * Game Object möglich ist - wenn das nicht möglich ist, dann eine
-     * Beschreibung des Game Objects.
-     * <br/>
-     * Beispiel 1: "Du hebst die Lampe auf..." - jetzt ist ein anaphorischer Bezug
-     * auf die Lampe möglich und diese Methode gibt "sie" zurück.
-     * <br/>
-     * Beispiel 2: "Du zündest das Feuer an..." - jetzt ist <i>kein</i> anaphorischer Bezug
-     * auf die Lampe möglich und diese Methode gibt "die mysteriöse Lampe" zurück.
-     */
-    protected SubstantivischePhrase getAnaphPersPronWennMglSonstDescription(
-            final IDescribableGO describableGO,
-            final boolean descShortIfKnown) {
-        @Nullable final Personalpronomen anaphPersPron =
-                n.getAnaphPersPronWennMgl(describableGO);
-        if (anaphPersPron != null) {
-            return anaphPersPron;
-        }
-
-        return world.getDescription(describableGO, descShortIfKnown);
-    }
 
     @NonNull
     @Override

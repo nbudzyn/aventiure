@@ -136,7 +136,8 @@ public class GebenAction<
     private ImmutableList<PraedikatOhneLeerstellen> getAnbietenPraedikatAlt() {
         final ImmutableList.Builder<PraedikatOhneLeerstellen> alt = ImmutableList.builder();
         final SubstantivischePhrase takerAnaph =
-                getAnaphPersPronWennMglSonstShortDescription(taker);
+                world.getAnaphPersPronWennMglSonstShortDescription(
+                        taker);
         final Nominalphrase givenDesc = world.getDescription(given, false);
 
         alt.add(
@@ -165,7 +166,8 @@ public class GebenAction<
     private ImmutableList<PraedikatOhneLeerstellen> getGebenPraedikatAlt() {
         final ImmutableList.Builder<PraedikatOhneLeerstellen> alt = ImmutableList.builder();
         final SubstantivischePhrase takerAnaph =
-                getAnaphPersPronWennMglSonstShortDescription(taker);
+                world.getAnaphPersPronWennMglSonstShortDescription(
+                        taker);
         final Nominalphrase givenDesc = world.getDescription(given, false);
 
         alt.add(

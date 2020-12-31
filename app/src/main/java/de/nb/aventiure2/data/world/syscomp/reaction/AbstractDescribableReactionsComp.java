@@ -1,14 +1,11 @@
 package de.nb.aventiure2.data.world.syscomp.reaction;
 
-import androidx.annotation.Nullable;
-
 import de.nb.aventiure2.data.database.AvDatabase;
 import de.nb.aventiure2.data.narration.Narrator;
 import de.nb.aventiure2.data.world.base.GameObjectId;
 import de.nb.aventiure2.data.world.gameobject.*;
 import de.nb.aventiure2.data.world.syscomp.description.IDescribableGO;
 import de.nb.aventiure2.german.base.Nominalphrase;
-import de.nb.aventiure2.german.base.Personalpronomen;
 import de.nb.aventiure2.german.base.SubstantivischePhrase;
 
 /**
@@ -56,31 +53,7 @@ public abstract class AbstractDescribableReactionsComp extends AbstractReactions
             final boolean descShortIfKnown) {
         final IDescribableGO describableGO = (IDescribableGO) world.load(getGameObjectId());
 
-        return getAnaphPersPronWennMglSonstDescription(describableGO, descShortIfKnown);
-    }
-
-    /**
-     * Gibt das Personalpronomen zurück, mit dem ein
-     * anaphorischer Bezug auf dieses
-     * Game Object möglich ist - wenn das nicht möglich ist, dann eine
-     * Beschreibung des Game Objects.
-     * <br/>
-     * Beispiel 1: "Du hebst die Lampe auf..." - jetzt ist ein anaphorischer Bezug
-     * auf die Lampe möglich und diese Methode gibt "sie" zurück.
-     * <br/>
-     * Beispiel 2: "Du zündest das Feuer an..." - jetzt ist <i>kein</i> anaphorischer Bezug
-     * auf die Lampe möglich und diese Methode gibt "die mysteriöse Lampe" zurück.
-     */
-    protected SubstantivischePhrase getAnaphPersPronWennMglSonstDescription(
-            final IDescribableGO describableGO,
-            final boolean descShortIfKnown) {
-        @Nullable final Personalpronomen anaphPersPron =
-                n.getAnaphPersPronWennMgl(describableGO);
-        if (anaphPersPron != null) {
-            return anaphPersPron;
-        }
-
-        return world.getDescription(describableGO, descShortIfKnown);
+        return world.getAnaphPersPronWennMglSonstDescription(describableGO, descShortIfKnown);
     }
 
     /**

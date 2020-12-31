@@ -109,10 +109,6 @@ public class MemoryComp extends AbstractStatefulComponent<MemoryPCD> {
         return isKnown(otherGameObject.getId());
     }
 
-    public boolean isKnownFromLight(final IGameObject otherGameObject) {
-        return isKnownFromLight(otherGameObject.getId());
-    }
-
     public boolean isKnown(final GameObjectId otherGameObjectId) {
         return getKnown(otherGameObjectId).isKnown();
     }
@@ -189,11 +185,6 @@ public class MemoryComp extends AbstractStatefulComponent<MemoryPCD> {
                 minimalKnown,
                 getKnown(otherGameObjectId) // old value
         ));
-    }
-
-    @NonNull
-    public Known getKnown(final IGameObject otherGameObject) {
-        return getKnown(otherGameObject.getId());
     }
 
     @NonNull

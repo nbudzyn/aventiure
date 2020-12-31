@@ -125,7 +125,7 @@ public class HochwerfenAction<OBJ extends IDescribableGO & ILocatableGO>
         }
 
         final SubstantivischePhrase objectDesc =
-                getAnaphPersPronWennMglSonstDescription(object, false);
+                world.getAnaphPersPronWennMglSonstDescription(object, false);
 
         if (n.allowsAdditionalDuSatzreihengliedOhneSubjekt()) {
             narrateAndDoHochwerfenAuffangen(

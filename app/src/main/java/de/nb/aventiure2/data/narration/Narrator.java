@@ -18,6 +18,7 @@ import java.util.Set;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
+import javax.annotation.Nonnull;
 import javax.annotation.ParametersAreNonnullByDefault;
 
 import de.nb.aventiure2.data.database.AvDatabase;
@@ -41,17 +42,21 @@ import static java.util.Arrays.asList;
 @ParametersAreNonnullByDefault
 public class Narrator {
     private static volatile Narrator INSTANCE;
+
     @Nullable
     private TemporaryNarration temporaryNarration = null;
 
+    @Nonnull
     private Narration.NarrationSource narrationSourceJustInCase =
             Narration.NarrationSource.INITIALIZATION;
 
-    // Better know the TimeTaker
+    @Nonnull
     private final TimeTaker timeTaker;
 
+    @Nonnull
     private final CounterDao counterDao;
 
+    @Nonnull
     private final NarrationDao dao;
 
     public static Narrator getInstance(final AvDatabase db,
@@ -312,6 +317,7 @@ public class Narrator {
     public void saveInitialNarration(final Narration narration) {
         dao.insert(narration);
     }
+
 
     /**
      * Ob dieses Game Object zurzeit <i>Thema</i> ist (im Sinne von Thema - Rhema).

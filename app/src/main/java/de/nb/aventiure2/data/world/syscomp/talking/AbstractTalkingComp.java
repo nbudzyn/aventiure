@@ -21,7 +21,6 @@ import de.nb.aventiure2.data.world.syscomp.memory.Action;
 import de.nb.aventiure2.data.world.syscomp.storingplace.ILocationGO;
 import de.nb.aventiure2.data.world.syscomp.talking.impl.SCTalkAction;
 import de.nb.aventiure2.german.base.Nominalphrase;
-import de.nb.aventiure2.german.base.Personalpronomen;
 import de.nb.aventiure2.german.base.SubstantivischePhrase;
 
 import static de.nb.aventiure2.data.world.gameobject.World.*;
@@ -111,30 +110,6 @@ public abstract class AbstractTalkingComp extends AbstractStatefulComponent<Talk
                 !isTalkingTo(SPIELER_CHARAKTER);
     }
 
-    /**
-     * Gibt eine (evtl. auch etwas längere) Nominalphrase zurück, die das Game Object beschreibt.
-     * Die Phrase wird in der Regel unterschiedlich sein, je nachdem, ob
-     * ob der Spieler das Game Object schon kennt oder nicht.
-     */
-    protected Nominalphrase getDescription(final IDescribableGO gameObject) {
-        return getDescription(gameObject, false);
-    }
-
-    /**
-     * Gibt eine Nominalphrase zurück, die das Game Object beschreibt.
-     * Die Phrase wird in der Regel unterschiedlich sein, je nachdem, ob
-     * ob der Spieler das Game Object schon kennt oder nicht.
-     *
-     * @param shortIfKnown <i>Falls der Spieler(-charakter)</i> das
-     *                     Game Object schon kennt, wird eher eine
-     *                     kürzere Beschreibung gewählt
-     */
-    protected Nominalphrase getDescription(final IDescribableGO gameObject,
-                                           final boolean shortIfKnown) {
-        return world.getPOVDescription(
-                SPIELER_CHARAKTER, gameObject, shortIfKnown);
-    }
-
     public void setTalkingTo(@Nullable final ITalkerGO<?> otherTalker) {
         @Nullable final GameObjectId talkingToId = otherTalker != null ? otherTalker.getId() : null;
 
@@ -199,7 +174,7 @@ public abstract class AbstractTalkingComp extends AbstractStatefulComponent<Talk
         return getPcd().getTalkingToId();
     }
 
-    public void setSchonBegruesstMitSC(final boolean schonBegruesstMitSC) {
+    protected void setSchonBegruesstMitSC(final boolean schonBegruesstMitSC) {
         if (getGameObjectId() == SPIELER_CHARAKTER) {
             throw new IllegalStateException("setSchonBegruesstMitSC() für SPIELER_CHARAKTER - "
                     + "ergibt keinen Sinn");
@@ -244,16 +219,8 @@ public abstract class AbstractTalkingComp extends AbstractStatefulComponent<Talk
      */
     protected final SubstantivischePhrase getAnaphPersPronWennMglSonstDescription(
             final boolean descShortIfKnown) {
-
         final IDescribableGO describableGO = (IDescribableGO) world.load(getGameObjectId());
-
-        @Nullable final Personalpronomen anaphPersPron =
-                n.getAnaphPersPronWennMgl(describableGO);
-        if (anaphPersPron != null) {
-            return anaphPersPron;
-        }
-
-        return world.getDescription(describableGO, descShortIfKnown);
+        return world.getAnaphPersPronWennMglSonstDescription(describableGO, descShortIfKnown);
     }
 
     /**

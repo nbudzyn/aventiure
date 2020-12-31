@@ -220,7 +220,7 @@ public class AblegenAction
         }
 
         final SubstantivischePhrase gameObjectOrPersPron =
-                getAnaphPersPronWennMglSonstDescription(gameObject, true);
+                world.getAnaphPersPronWennMglSonstDescription(gameObject, true);
 
         n.narrate(
                 du("setzt", gameObjectOrPersPron.akk() +
