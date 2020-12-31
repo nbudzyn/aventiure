@@ -1,4 +1,4 @@
-package de.nb.aventiure2.data.world.gameobject;
+package de.nb.aventiure2.data.world.syscomp.reaction.system;
 
 import java.util.List;
 import java.util.function.Consumer;
@@ -13,6 +13,7 @@ import de.nb.aventiure2.data.time.TimeTaker;
 import de.nb.aventiure2.data.world.base.GameObject;
 import de.nb.aventiure2.data.world.base.GameObjectId;
 import de.nb.aventiure2.data.world.base.IGameObject;
+import de.nb.aventiure2.data.world.gameobject.*;
 import de.nb.aventiure2.data.world.syscomp.location.ILocatableGO;
 import de.nb.aventiure2.data.world.syscomp.reaction.IReactions;
 import de.nb.aventiure2.data.world.syscomp.reaction.IResponder;
@@ -29,7 +30,10 @@ import de.nb.aventiure2.data.world.syscomp.storingplace.ILocationGO;
 import static de.nb.aventiure2.data.narration.Narration.NarrationSource.REACTIONS;
 import static de.nb.aventiure2.data.time.AvDateTime.latest;
 
-public class GOReactionsCoordinator
+/**
+ * Functionality concerned with Reactions that might span several game objects.
+ */
+public class ReactionSystem
         implements IMovementReactions, IEssenReactions, IStateChangedReactions,
         IRufReactions,
         ITimePassedReactions,
@@ -38,10 +42,8 @@ public class GOReactionsCoordinator
     private final TimeTaker timeTaker;
     private final Narrator n;
 
-    // REFACTOR ReactionCoordinator zum zentralen Teil eines ReactionSystems machen?
-
-    GOReactionsCoordinator(final Narrator n,
-                           final World world, final TimeTaker timeTaker) {
+    public ReactionSystem(final Narrator n,
+                          final World world, final TimeTaker timeTaker) {
         this.world = world;
         this.timeTaker = timeTaker;
         this.n = n;

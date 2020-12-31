@@ -1,6 +1,5 @@
 package de.nb.aventiure2.data.world.syscomp.reaction;
 
-import de.nb.aventiure2.data.database.AvDatabase;
 import de.nb.aventiure2.data.narration.Narrator;
 import de.nb.aventiure2.data.world.base.GameObjectId;
 import de.nb.aventiure2.data.world.gameobject.*;
@@ -14,7 +13,6 @@ import de.nb.aventiure2.german.base.SubstantivischePhrase;
  */
 public abstract class AbstractDescribableReactionsComp extends AbstractReactionsComp {
     public AbstractDescribableReactionsComp(final GameObjectId id,
-                                            final AvDatabase db,
                                             final Narrator n, final World world) {
         super(id, n, world);
     }

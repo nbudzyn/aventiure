@@ -94,7 +94,7 @@ public class RapunzelsZauberinReactionsComp
                                           final MentalModelComp mentalModelComp,
                                           final MovementComp movementComp,
                                           final RapunzelsZauberinTalkingComp talkingComp) {
-        super(RAPUNZELS_ZAUBERIN, db, n, world);
+        super(RAPUNZELS_ZAUBERIN, n, world);
         this.counterDao = counterDao;
         this.timeTaker = timeTaker;
         this.stateComp = stateComp;

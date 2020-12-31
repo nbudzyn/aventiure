@@ -66,7 +66,7 @@ public class FroschprinzReactionsComp
                                     final FroschprinzStateComp stateComp,
                                     final LocationComp locationComp,
                                     final FroschprinzTalkingComp talkingComp) {
-        super(FROSCHPRINZ, db, n, world);
+        super(FROSCHPRINZ, n, world);
         this.stateComp = stateComp;
         this.locationComp = locationComp;
         this.talkingComp = talkingComp;

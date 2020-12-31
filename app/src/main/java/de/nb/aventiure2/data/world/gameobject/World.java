@@ -32,6 +32,7 @@ import de.nb.aventiure2.data.world.syscomp.location.RoomFactory;
 import de.nb.aventiure2.data.world.syscomp.memory.IHasMemoryGO;
 import de.nb.aventiure2.data.world.syscomp.reaction.IReactions;
 import de.nb.aventiure2.data.world.syscomp.reaction.IResponder;
+import de.nb.aventiure2.data.world.syscomp.reaction.system.ReactionSystem;
 import de.nb.aventiure2.data.world.syscomp.spatialconnection.impl.AbzweigImWaldConnectionComp;
 import de.nb.aventiure2.data.world.syscomp.spatialconnection.impl.DraussenVorDemSchlossConnectionComp;
 import de.nb.aventiure2.data.world.syscomp.spatialconnection.impl.ImWaldNaheDemSchlossConnectionComp;
@@ -138,7 +139,7 @@ public class World {
 
     private GameObjectIdMap all;
 
-    private GOReactionsCoordinator reactionsCoordinator;
+    private ReactionSystem reactionSystem;
 
     // SYSTEMS
     private AliveSystem aliveSystem;
@@ -195,9 +196,8 @@ public class World {
             spatialConnectionSystem = new SpatialConnectionSystem(this);
         }
 
-        if (reactionsCoordinator == null) {
-            reactionsCoordinator = new GOReactionsCoordinator
-                    (n, this, timeTaker);
+        if (reactionSystem == null) {
+            reactionSystem = new ReactionSystem(n, this, timeTaker);
         }
 
         final SpielerCharakterFactory spieler = new SpielerCharakterFactory(db, timeTaker, n, this);
@@ -210,8 +210,8 @@ public class World {
         final BaumFactory baum = new BaumFactory(db, timeTaker, this);
         final CreatureFactory creature = new CreatureFactory(db, timeTaker, n, this);
         final InvisibleFactory invisible = new InvisibleFactory(db, timeTaker, n, this);
-        final MeaningFactory meaning = new MeaningFactory(db, timeTaker, n, this, locationSystem,
-                spatialConnectionSystem);
+        final MeaningFactory meaning = new MeaningFactory(db, timeTaker, n, this,
+                locationSystem, spatialConnectionSystem);
         final RoomFactory room = new RoomFactory(db, timeTaker, n, this);
         final SimpleConnectionCompFactory connection =
                 new SimpleConnectionCompFactory(db, timeTaker, n, this);
@@ -468,11 +468,11 @@ public class World {
 
     @Contract(pure = true)
     @NonNull
-    public GOReactionsCoordinator narrateAndDoReactions() {
-        return reactionsCoordinator;
+    public ReactionSystem narrateAndDoReactions() {
+        return reactionSystem;
     }
 
-    <R extends IReactions, G extends GameObject & IResponder>
+    public <R extends IReactions, G extends GameObject & IResponder>
     List<G> loadResponders(final Class<R> reactionsInterface) {
         prepare();
 
@@ -997,6 +997,4 @@ public class World {
     SpatialConnectionSystem getSpatialConnectionSystem() {
         return spatialConnectionSystem;
     }
-
-
 }

@@ -89,7 +89,7 @@ public class RapunzelReactionsComp
                                  final LocationComp locationComp,
                                  final FeelingsComp feelingsComp,
                                  final RapunzelTalkingComp talkingComp) {
-        super(RAPUNZEL, db, n, world);
+        super(RAPUNZEL, n, world);
         this.timeTaker = timeTaker;
         this.memoryComp = memoryComp;
         this.stateComp = stateComp;

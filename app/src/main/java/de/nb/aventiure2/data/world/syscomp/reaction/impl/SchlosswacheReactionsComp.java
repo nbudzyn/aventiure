@@ -60,7 +60,7 @@ public class SchlosswacheReactionsComp
                                      final LocationSystem locationSystem,
                                      final SchlosswacheStateComp stateComp,
                                      final LocationComp locationComp) {
-        super(SCHLOSSWACHE, db, n, world);
+        super(SCHLOSSWACHE, n, world);
         this.counterDao = counterDao;
         this.locationSystem = locationSystem;
         this.stateComp = stateComp;
