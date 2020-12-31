@@ -1,4 +1,4 @@
-package de.nb.aventiure2.data.world.time;
+package de.nb.aventiure2.data.time;
 
 import androidx.annotation.Nullable;
 import androidx.room.TypeConverter;

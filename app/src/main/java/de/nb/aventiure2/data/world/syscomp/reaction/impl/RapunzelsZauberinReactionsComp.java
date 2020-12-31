@@ -6,6 +6,10 @@ import javax.annotation.Nullable;
 
 import de.nb.aventiure2.data.database.AvDatabase;
 import de.nb.aventiure2.data.narration.Narrator;
+import de.nb.aventiure2.data.time.AvDateTime;
+import de.nb.aventiure2.data.time.AvTime;
+import de.nb.aventiure2.data.time.AvTimeSpan;
+import de.nb.aventiure2.data.time.TimeTaker;
 import de.nb.aventiure2.data.world.counter.CounterDao;
 import de.nb.aventiure2.data.world.gameobject.*;
 import de.nb.aventiure2.data.world.syscomp.feelings.FeelingIntensity;
@@ -28,17 +32,20 @@ import de.nb.aventiure2.data.world.syscomp.storingplace.ILocationGO;
 import de.nb.aventiure2.data.world.syscomp.talking.ITalkerGO;
 import de.nb.aventiure2.data.world.syscomp.talking.impl.RapunzelTalkingComp;
 import de.nb.aventiure2.data.world.syscomp.talking.impl.RapunzelsZauberinTalkingComp;
-import de.nb.aventiure2.data.world.time.*;
 import de.nb.aventiure2.german.base.Nominalphrase;
 
 import static com.google.common.base.Preconditions.checkArgument;
+import static de.nb.aventiure2.data.time.AvTime.oClock;
+import static de.nb.aventiure2.data.time.AvTimeSpan.days;
+import static de.nb.aventiure2.data.time.AvTimeSpan.hours;
+import static de.nb.aventiure2.data.time.AvTimeSpan.mins;
+import static de.nb.aventiure2.data.time.AvTimeSpan.noTime;
+import static de.nb.aventiure2.data.time.AvTimeSpan.secs;
 import static de.nb.aventiure2.data.world.gameobject.World.*;
 import static de.nb.aventiure2.data.world.syscomp.state.impl.RapunzelsZauberinState.AUF_DEM_RUECKWEG_VON_RAPUNZEL;
 import static de.nb.aventiure2.data.world.syscomp.state.impl.RapunzelsZauberinState.AUF_DEM_WEG_ZU_RAPUNZEL;
 import static de.nb.aventiure2.data.world.syscomp.state.impl.RapunzelsZauberinState.BEI_RAPUNZEL_OBEN_IM_TURM;
 import static de.nb.aventiure2.data.world.syscomp.state.impl.RapunzelsZauberinState.WARTEZEIT_NACH_RAPUNZEL_BESUCH;
-import static de.nb.aventiure2.data.world.time.AvTime.*;
-import static de.nb.aventiure2.data.world.time.AvTimeSpan.*;
 import static de.nb.aventiure2.german.base.StructuralElement.CHAPTER;
 import static de.nb.aventiure2.german.base.StructuralElement.PARAGRAPH;
 import static de.nb.aventiure2.german.base.StructuralElement.SENTENCE;
@@ -70,7 +77,7 @@ public class RapunzelsZauberinReactionsComp
     private static final AvTimeSpan MIN_ZEIT_VOR_DEM_NAECHSTEN_LOSGEHEN = mins(47);
 
     private final CounterDao counterDao;
-    private final AvNowDao nowDao;
+    private final TimeTaker timeTaker;
 
     private final RapunzelsZauberinStateComp stateComp;
     private final LocationComp locationComp;
@@ -80,7 +87,7 @@ public class RapunzelsZauberinReactionsComp
 
     public RapunzelsZauberinReactionsComp(final AvDatabase db,
                                           final CounterDao counterDao,
-                                          final AvNowDao nowDao,
+                                          final TimeTaker timeTaker,
                                           final Narrator n, final World world,
                                           final RapunzelsZauberinStateComp stateComp,
                                           final LocationComp locationComp,
@@ -89,7 +96,7 @@ public class RapunzelsZauberinReactionsComp
                                           final RapunzelsZauberinTalkingComp talkingComp) {
         super(RAPUNZELS_ZAUBERIN, db, n, world);
         this.counterDao = counterDao;
-        this.nowDao = nowDao;
+        this.timeTaker = timeTaker;
         this.stateComp = stateComp;
         this.locationComp = locationComp;
         this.mentalModelComp = mentalModelComp;
@@ -366,7 +373,7 @@ public class RapunzelsZauberinReactionsComp
 
         locationComp.narrateAndSetLocation(VOR_DEM_ALTEN_TURM);
 
-        movementComp.startMovement(nowDao.now(), DRAUSSEN_VOR_DEM_SCHLOSS);
+        movementComp.startMovement(timeTaker.now(), DRAUSSEN_VOR_DEM_SCHLOSS);
     }
 
     private void zauberinZaubertVergessenszauber() {
@@ -409,7 +416,7 @@ public class RapunzelsZauberinReactionsComp
         // Die Zauberin ist schon weit auf dem Rückweg
         stateComp.narrateAndSetState(AUF_DEM_RUECKWEG_VON_RAPUNZEL);
         locationComp.narrateAndSetLocation(IM_WALD_NAHE_DEM_SCHLOSS);
-        movementComp.startMovement(nowDao.now(), DRAUSSEN_VOR_DEM_SCHLOSS);
+        movementComp.startMovement(timeTaker.now(), DRAUSSEN_VOR_DEM_SCHLOSS);
 
         // Rapunzel ist still (Rapunzel hat auch alles vergessen!)
         loadRapunzel().stateComp().narrateAndSetState(RapunzelState.STILL);
@@ -554,7 +561,7 @@ public class RapunzelsZauberinReactionsComp
         //  heruntergelassen hatt, davon aus, dass Rapunzel befreit wurde.
 
         stateComp.narrateAndSetState(AUF_DEM_RUECKWEG_VON_RAPUNZEL);
-        movementComp.startMovement(nowDao.now(), DRAUSSEN_VOR_DEM_SCHLOSS);
+        movementComp.startMovement(timeTaker.now(), DRAUSSEN_VOR_DEM_SCHLOSS);
     }
 
     private void zauberinRuftRapunzelspruchUndRapunzelReagiert() {

@@ -6,6 +6,7 @@ import java.util.Set;
 
 import de.nb.aventiure2.data.database.AvDatabase;
 import de.nb.aventiure2.data.narration.Narrator;
+import de.nb.aventiure2.data.time.TimeTaker;
 import de.nb.aventiure2.data.world.base.GameObjectId;
 import de.nb.aventiure2.data.world.gameobject.*;
 
@@ -45,7 +46,7 @@ public interface IStoryNode {
     @FunctionalInterface
     interface IHinter {
         void narrateAndDoHintAction(final AvDatabase db,
-                                    Narrator n,
+                                    TimeTaker timeTaker, Narrator n,
                                     final World world);
     }
 
@@ -90,7 +91,9 @@ public interface IStoryNode {
 
     boolean beendetStory();
 
-    default void narrateAndDoHintAction(final AvDatabase db, final Narrator n, final World world) {
+    default void narrateAndDoHintAction(final AvDatabase db,
+                                        final TimeTaker timeTaker,
+                                        final Narrator n, final World world) {
         // Ziele:
         // - Spieler soll Interesse behalten
         // - Spieler soll einen Tipp fürs weitere Vorgehen gekommen
@@ -133,7 +136,7 @@ public interface IStoryNode {
         if (hinter == null) {
             return;
         }
-        hinter.narrateAndDoHintAction(db, n, world);
+        hinter.narrateAndDoHintAction(db, timeTaker, n, world);
     }
 
     @Nullable

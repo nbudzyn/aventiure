@@ -12,6 +12,7 @@ import javax.annotation.CheckReturnValue;
 
 import de.nb.aventiure2.data.database.AvDatabase;
 import de.nb.aventiure2.data.narration.Narrator;
+import de.nb.aventiure2.data.time.TimeTaker;
 import de.nb.aventiure2.data.world.base.GameObjectId;
 import de.nb.aventiure2.data.world.gameobject.*;
 import de.nb.aventiure2.data.world.syscomp.feelings.FeelingIntensity;
@@ -23,11 +24,11 @@ import de.nb.aventiure2.data.world.syscomp.story.Story;
 import de.nb.aventiure2.german.description.AbstractDescription;
 
 import static com.google.common.collect.ImmutableList.builder;
+import static de.nb.aventiure2.data.time.AvTimeSpan.noTime;
+import static de.nb.aventiure2.data.time.Tageszeit.NACHTS;
 import static de.nb.aventiure2.data.world.gameobject.World.*;
 import static de.nb.aventiure2.data.world.syscomp.feelings.Mood.ETWAS_GEKNICKT;
 import static de.nb.aventiure2.data.world.syscomp.feelings.Mood.UNTROESTLICH;
-import static de.nb.aventiure2.data.world.time.AvTimeSpan.*;
-import static de.nb.aventiure2.data.world.time.Tageszeit.*;
 import static de.nb.aventiure2.german.base.StructuralElement.PARAGRAPH;
 import static de.nb.aventiure2.german.description.DescriptionBuilder.du;
 import static de.nb.aventiure2.german.description.DescriptionBuilder.paragraph;
@@ -47,7 +48,8 @@ public enum FroschkoenigStoryNode implements IStoryNode {
             KUGEL_GENOMMEN // IDEA Es könnte auch andere Dinge zum Im-Brunnen-Verlieren geben
     ),
     FROSCH_HAT_ETWAS_AUS_BRUNNEN_GEHOLT(10, IM_WALD_BEIM_BRUNNEN,
-            FroschkoenigStoryNode::narrateAndDoHintAction_FroschHatEtwasAusBrunnenGeholt,
+            FroschkoenigStoryNode::narrateAndDoHintAction_FroschHatEtwasAusBrunnenGeholt
+            ,
             ETWAS_IM_BRUNNEN_VERLOREN
     ),
     ZUM_SCHLOSSFEST_GEGANGEN(30, // FIXME Diese Zahl ermitteln!
@@ -138,7 +140,7 @@ public enum FroschkoenigStoryNode implements IStoryNode {
     //  Vordergrund steht
 
     private static void narrateAndDoHintAction_KugelGenommen(
-            final AvDatabase db, final Narrator n, final World world) {
+            final AvDatabase db, final TimeTaker timeTaker, final Narrator n, final World world) {
         final ImmutableList.Builder<AbstractDescription<?>> alt = builder();
 
         if (world.loadSC().locationComp().hasRecursiveLocation(SCHLOSS_VORHALLE)) {
@@ -181,7 +183,8 @@ public enum FroschkoenigStoryNode implements IStoryNode {
     }
 
     public static void narrateAndDoHintAction_MitKugelZumBrunnenGegangen(
-            final AvDatabase db, final Narrator n, final World world) {
+            final AvDatabase db, final TimeTaker timeTaker, final Narrator n,
+            final World world) {
         final ImmutableList.Builder<AbstractDescription<?>> alt = builder();
 
         final ILocatableGO goldeneKugel = (ILocatableGO) world.load(GOLDENE_KUGEL);
@@ -189,7 +192,7 @@ public enum FroschkoenigStoryNode implements IStoryNode {
         if (!world.hasSameUpperMostLocationAsSC(goldeneKugel)) {
             alt.addAll(altKugelVermissen());
         } else {
-            if (db.nowDao().now().getTageszeit().equals(NACHTS)) {
+            if (timeTaker.now().getTageszeit().equals(NACHTS)) {
                 alt.addAll(altNachtsSchlafen(world));
             } else {
                 alt.addAll(altHeissHeutKuehlerOrtWaereSchoen());
@@ -200,7 +203,8 @@ public enum FroschkoenigStoryNode implements IStoryNode {
     }
 
     public static void narrateAndDoHintAction_EtwasImBrunnenVerloren(
-            final AvDatabase db, final Narrator n, final World world) {
+            final AvDatabase db, final TimeTaker timeTaker, final Narrator n,
+            final World world) {
         final ImmutableList.Builder<AbstractDescription<?>> alt = builder();
 
         final ILocatableGO goldeneKugel = (ILocatableGO) world.load(GOLDENE_KUGEL);
@@ -221,7 +225,8 @@ public enum FroschkoenigStoryNode implements IStoryNode {
     }
 
     public static void narrateAndDoHintAction_FroschHatEtwasAusBrunnenGeholt(
-            final AvDatabase db, final Narrator n, final World world) {
+            final AvDatabase db, final TimeTaker timeTaker, final Narrator n,
+            final World world) {
         final ImmutableList.Builder<AbstractDescription<?>> alt = builder();
 
         alt.add(paragraph("Unvermittelt befällt dich ein Gedanke: Ist es wohl gut, seine "
@@ -245,10 +250,11 @@ public enum FroschkoenigStoryNode implements IStoryNode {
     }
 
     public static void narrateAndDoHintAction_ZumSchlossfestGegangen(
-            final AvDatabase db, final Narrator n, final World world) {
+            final AvDatabase db, final TimeTaker timeTaker, final Narrator n,
+            final World world) {
         final ImmutableList.Builder<AbstractDescription<?>> alt = builder();
 
-        if (db.nowDao().now().getTageszeit().equals(NACHTS)) {
+        if (timeTaker.now().getTageszeit().equals(NACHTS)) {
             alt.addAll(altNachtsSchlafen(world));
         }
 
@@ -270,7 +276,8 @@ public enum FroschkoenigStoryNode implements IStoryNode {
     }
 
     public static void narrateAndDoHintAction_BeimSchlossfestAnDenTischGesetzt(
-            final AvDatabase db, final Narrator n, final World world) {
+            final AvDatabase db, final TimeTaker timeTaker, final Narrator n,
+            final World world) {
         final ImmutableList.Builder<AbstractDescription<?>> alt = builder();
 
         alt.add(paragraph("Der leckere Duft aus dem Schloss geht dir nicht aus Nase und Sinn"));
@@ -282,7 +289,8 @@ public enum FroschkoenigStoryNode implements IStoryNode {
     }
 
     public static void narrateAndDoHintAction_PrinzIstErloest(
-            final AvDatabase db, final Narrator n, final World world) {
+            final AvDatabase db, final TimeTaker timeTaker, final Narrator n,
+            final World world) {
         final ImmutableList.Builder<AbstractDescription<?>> alt = builder();
 
         alt.add(paragraph("Kann es sein, dass du vor etwas davonläufst?"));
@@ -294,7 +302,8 @@ public enum FroschkoenigStoryNode implements IStoryNode {
     }
 
     public static void narrateAndDoHintAction_PrinzIstWeggefahren(
-            final AvDatabase db, final Narrator n, final World world) {
+            final AvDatabase db, final TimeTaker timeTaker, final Narrator n,
+            final World world) {
         final ImmutableList.Builder<AbstractDescription<?>> alt = builder();
 
         alt.add(du(PARAGRAPH,

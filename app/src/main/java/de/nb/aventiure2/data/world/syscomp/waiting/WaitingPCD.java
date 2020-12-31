@@ -3,9 +3,9 @@ package de.nb.aventiure2.data.world.syscomp.waiting;
 import androidx.annotation.NonNull;
 import androidx.room.Entity;
 
+import de.nb.aventiure2.data.time.AvDateTime;
 import de.nb.aventiure2.data.world.base.AbstractPersistentComponentData;
 import de.nb.aventiure2.data.world.base.GameObjectId;
-import de.nb.aventiure2.data.world.time.*;
 
 /**
  * Mutable - and therefore persistent - data of the {@link WaitingComp} component.

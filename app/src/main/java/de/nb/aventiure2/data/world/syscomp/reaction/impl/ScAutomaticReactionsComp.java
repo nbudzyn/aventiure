@@ -4,6 +4,9 @@ import androidx.annotation.Nullable;
 
 import de.nb.aventiure2.data.database.AvDatabase;
 import de.nb.aventiure2.data.narration.Narrator;
+import de.nb.aventiure2.data.time.AvDateTime;
+import de.nb.aventiure2.data.time.AvTimeSpan;
+import de.nb.aventiure2.data.time.TimeTaker;
 import de.nb.aventiure2.data.world.base.IGameObject;
 import de.nb.aventiure2.data.world.gameobject.*;
 import de.nb.aventiure2.data.world.syscomp.feelings.FeelingsComp;
@@ -19,11 +22,12 @@ import de.nb.aventiure2.data.world.syscomp.reaction.interfaces.Ruftyp;
 import de.nb.aventiure2.data.world.syscomp.state.IHasStateGO;
 import de.nb.aventiure2.data.world.syscomp.storingplace.ILocationGO;
 import de.nb.aventiure2.data.world.syscomp.waiting.WaitingComp;
-import de.nb.aventiure2.data.world.time.*;
 
+import static de.nb.aventiure2.data.time.AvTimeSpan.min;
+import static de.nb.aventiure2.data.time.AvTimeSpan.mins;
+import static de.nb.aventiure2.data.time.AvTimeSpan.noTime;
 import static de.nb.aventiure2.data.world.gameobject.World.*;
 import static de.nb.aventiure2.data.world.syscomp.feelings.Hunger.HUNGRIG;
-import static de.nb.aventiure2.data.world.time.AvTimeSpan.*;
 
 /**
  * "Automatische" Reaktionen des Spielercharakters, z.B. darauf, dass Zeit vergeht.
@@ -34,18 +38,18 @@ public class ScAutomaticReactionsComp
         implements IMovementReactions, IStateChangedReactions, IRufReactions,
         ITimePassedReactions, IEssenReactions,
         ISCActionReactions {
-    private final AvNowDao nowDao;
+    private final TimeTaker timeTaker;
     private final WaitingComp waitingComp;
     private final FeelingsComp feelingsComp;
 
     public ScAutomaticReactionsComp(final AvDatabase db,
-                                    final AvNowDao nowDao,
+                                    final TimeTaker timeTaker,
                                     final Narrator n,
                                     final World world,
                                     final WaitingComp waitingComp,
                                     final FeelingsComp feelingsComp) {
         super(SPIELER_CHARAKTER, n, world);
-        this.nowDao = nowDao;
+        this.timeTaker = timeTaker;
         this.waitingComp = waitingComp;
         this.feelingsComp = feelingsComp;
     }
@@ -90,13 +94,16 @@ public class ScAutomaticReactionsComp
 
     @Override
     public void onTimePassed(final AvDateTime startTime, final AvDateTime endTime) {
+        // FIXME WorldClock, GlobalClock, TimeTaker o.Ä. als neues Objekt,
+        // vergleichbar mit Narrator, Narrator und WOrld hängen davon ab.
+
         feelingsComp.onTimePassed(startTime, endTime);
 
         final AvTimeSpan remainingWaitTime = waitingComp.getEndTime().minus(endTime);
         if (remainingWaitTime.longerThan(noTime())) {
             // Erzwingen, dass sich die Welt noch weitere 3 Minuten weiterdreht
             // (oder die remainingWaitTime - wenn die kleiner ist)
-            nowDao.passTime(min(mins(3), remainingWaitTime));
+            timeTaker.passTime(min(mins(3), remainingWaitTime));
         }
     }
 

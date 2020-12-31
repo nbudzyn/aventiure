@@ -8,6 +8,7 @@ import java.util.Collection;
 import java.util.List;
 
 import de.nb.aventiure2.data.narration.Narrator;
+import de.nb.aventiure2.data.time.TimeTaker;
 import de.nb.aventiure2.data.world.gameobject.*;
 import de.nb.aventiure2.data.world.syscomp.alive.ILivingBeingGO;
 import de.nb.aventiure2.data.world.syscomp.description.IDescribableGO;
@@ -16,7 +17,6 @@ import de.nb.aventiure2.data.world.syscomp.memory.Action;
 import de.nb.aventiure2.data.world.syscomp.mentalmodel.IHasMentalModelGO;
 import de.nb.aventiure2.data.world.syscomp.talking.ITalkerGO;
 import de.nb.aventiure2.data.world.syscomp.talking.impl.SCTalkAction;
-import de.nb.aventiure2.data.world.time.*;
 import de.nb.aventiure2.german.base.GermanUtil;
 import de.nb.aventiure2.german.base.Konstituente;
 import de.nb.aventiure2.german.base.Nominalphrase;
@@ -44,7 +44,7 @@ public class RedenAction<TALKER extends IDescribableGO & ILocatableGO & ITalkerG
     public static <TALKER extends IDescribableGO & ILocatableGO & ITalkerGO<?>>
     Collection<RedenAction<TALKER>> buildActions(
             final SCActionStepCountDao scActionStepCountDao,
-            final AvNowDao nowDao, final Narrator n, final World world,
+            final TimeTaker timeTaker, final Narrator n, final World world,
             final TALKER talker) {
         if (world.isOrHasRecursiveLocation(talker, SPIELER_CHARAKTER)) {
             return ImmutableList.of();
@@ -56,14 +56,14 @@ public class RedenAction<TALKER extends IDescribableGO & ILocatableGO & ITalkerG
         }
 
         final List<SCTalkAction> talkSteps = talker.talkingComp().getSCConversationSteps();
-        return buildActions(scActionStepCountDao, nowDao, n, world,
+        return buildActions(scActionStepCountDao, timeTaker, n, world,
                 talker,
                 talkSteps);
     }
 
     private static <TALKER extends IDescribableGO & ILocatableGO & ITalkerGO<?>>
     Collection<RedenAction<TALKER>> buildActions(final SCActionStepCountDao scActionStepCountDao,
-                                                 final AvNowDao nowDao,
+                                                 final TimeTaker timeTaker,
                                                  final Narrator n, final World world,
                                                  final TALKER talker,
                                                  final List<SCTalkAction> talkSteps) {
@@ -72,7 +72,7 @@ public class RedenAction<TALKER extends IDescribableGO & ILocatableGO & ITalkerG
 
         for (final SCTalkAction talkStep : talkSteps) {
             if (stepTypeFits(talker, talkStep.getStepType())) {
-                res.add(buildAction(scActionStepCountDao, nowDao, n, world,
+                res.add(buildAction(scActionStepCountDao, timeTaker, n, world,
                         talker,
                         // "Mit ... reden" /  "Den ... ignorieren" / "Das Gespräch beenden"
                         talkStep));
@@ -105,14 +105,14 @@ public class RedenAction<TALKER extends IDescribableGO & ILocatableGO & ITalkerG
     @NonNull
     private static <TALKER extends IDescribableGO & ILocatableGO & ITalkerGO<?>>
     RedenAction<TALKER> buildAction(final SCActionStepCountDao scActionStepCountDao,
-                                    final AvNowDao nowDao,
+                                    final TimeTaker timeTaker,
                                     final Narrator n, final World world,
                                     final TALKER talker,
                                     final SCTalkAction talkStep) {
         final PraedikatOhneLeerstellen praedikatOhneLeerstellen =
                 fuelleGgfPraedikatLeerstelleMitCreature(world, talkStep.getName(), talker);
 
-        return buildAction(scActionStepCountDao, nowDao, n, world, talker,
+        return buildAction(scActionStepCountDao, timeTaker, n, world, talker,
                 talkStep,
                 praedikatOhneLeerstellen);
     }
@@ -144,12 +144,12 @@ public class RedenAction<TALKER extends IDescribableGO & ILocatableGO & ITalkerG
     private static <TALKER extends IDescribableGO & ILocatableGO & ITalkerGO<?>>
     RedenAction<TALKER> buildAction(
             final SCActionStepCountDao scActionStepCountDao,
-            final AvNowDao nowDao,
+            final TimeTaker timeTaker,
             final Narrator n, final World world,
             final TALKER talker,
             final SCTalkAction talkStep,
             final PraedikatOhneLeerstellen praedikatOhneLeerstellen) {
-        return new RedenAction<>(scActionStepCountDao, nowDao, n, world, talker,
+        return new RedenAction<>(scActionStepCountDao, timeTaker, n, world, talker,
                 talkStep,
                 // "Dem Frosch Angebote machen"
                 // "Das Angebot von *mir* weisen"
@@ -158,13 +158,13 @@ public class RedenAction<TALKER extends IDescribableGO & ILocatableGO & ITalkerG
     }
 
     private RedenAction(final SCActionStepCountDao scActionStepCountDao,
-                        final AvNowDao nowDao,
+                        final TimeTaker timeTaker,
                         final Narrator n,
                         final World world,
                         @NonNull final TALKER talker,
                         final SCTalkAction conversationStep,
                         @NonNull final String name) {
-        super(scActionStepCountDao, nowDao, n, world);
+        super(scActionStepCountDao, timeTaker, n, world);
         this.talker = talker;
         this.conversationStep = conversationStep;
         this.name = name;

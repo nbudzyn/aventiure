@@ -7,8 +7,8 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
 
+import de.nb.aventiure2.data.time.AvDateTime;
 import de.nb.aventiure2.data.world.syscomp.description.IDescribableGO;
-import de.nb.aventiure2.data.world.time.AvDateTime;
 
 /**
  * Base implementation for any object within in the game. An <i>entity</i> in the

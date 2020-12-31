@@ -8,11 +8,16 @@ import java.util.Objects;
 
 import javax.annotation.concurrent.Immutable;
 
-import de.nb.aventiure2.data.world.time.*;
+import de.nb.aventiure2.data.time.AvDateTime;
+import de.nb.aventiure2.data.time.AvTime;
+import de.nb.aventiure2.data.time.AvTimeSpan;
 import de.nb.aventiure2.german.praedikat.AdverbialeAngabeSkopusSatz;
 
 import static com.google.common.collect.ImmutableList.toImmutableList;
-import static de.nb.aventiure2.data.world.time.AvTimeSpan.*;
+import static de.nb.aventiure2.data.time.AvTimeSpan.hours;
+import static de.nb.aventiure2.data.time.AvTimeSpan.mins;
+import static de.nb.aventiure2.data.time.AvTimeSpan.noTime;
+import static de.nb.aventiure2.data.time.AvTimeSpan.secs;
 
 @Immutable
 public class MuedigkeitsData {

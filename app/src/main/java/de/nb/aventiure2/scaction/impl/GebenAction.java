@@ -9,13 +9,13 @@ import org.jetbrains.annotations.Contract;
 import java.util.Collection;
 
 import de.nb.aventiure2.data.narration.Narrator;
+import de.nb.aventiure2.data.time.TimeTaker;
 import de.nb.aventiure2.data.world.gameobject.*;
 import de.nb.aventiure2.data.world.syscomp.description.IDescribableGO;
 import de.nb.aventiure2.data.world.syscomp.location.ILocatableGO;
 import de.nb.aventiure2.data.world.syscomp.memory.Action;
 import de.nb.aventiure2.data.world.syscomp.taking.ITakerGO;
 import de.nb.aventiure2.data.world.syscomp.taking.SCTakeAction;
-import de.nb.aventiure2.data.world.time.*;
 import de.nb.aventiure2.german.base.GermanUtil;
 import de.nb.aventiure2.german.base.Nominalphrase;
 import de.nb.aventiure2.german.base.SubstantivischePhrase;
@@ -24,8 +24,8 @@ import de.nb.aventiure2.german.praedikat.PraedikatOhneLeerstellen;
 import de.nb.aventiure2.scaction.AbstractScAction;
 import de.nb.aventiure2.scaction.stepcount.SCActionStepCountDao;
 
+import static de.nb.aventiure2.data.time.AvTimeSpan.secs;
 import static de.nb.aventiure2.data.world.gameobject.World.*;
-import static de.nb.aventiure2.data.world.time.AvTimeSpan.*;
 import static de.nb.aventiure2.german.base.GermanUtil.capitalize;
 import static de.nb.aventiure2.german.base.Numerus.SG;
 import static de.nb.aventiure2.german.base.Person.P1;
@@ -59,7 +59,7 @@ public class GebenAction<
             GIVEN extends IDescribableGO & ILocatableGO>
     Collection<GebenAction<TAKER, GIVEN>> buildActions(
             final SCActionStepCountDao scActionStepCountDao,
-            final AvNowDao nowDao,
+            final TimeTaker timeTaker,
             final Narrator n, final World world,
             final TAKER taker,
             final Collection<GIVEN> givenCandidates) {
@@ -79,7 +79,7 @@ public class GebenAction<
             if (givenCandidate.locationComp().isMovable() &&
                     !givenCandidate.is(taker)) {
                 res.add(
-                        new GebenAction<>(scActionStepCountDao, nowDao, n, world, taker,
+                        new GebenAction<>(scActionStepCountDao, timeTaker, n, world, taker,
                                 givenCandidate));
             }
         }
@@ -88,10 +88,10 @@ public class GebenAction<
     }
 
     private GebenAction(final SCActionStepCountDao scActionStepCountDao,
-                        final AvNowDao nowDao, final Narrator n, final World world,
+                        final TimeTaker timeTaker, final Narrator n, final World world,
                         final TAKER taker,
                         final GIVEN given) {
-        super(scActionStepCountDao, nowDao, n, world);
+        super(scActionStepCountDao, timeTaker, n, world);
         this.taker = taker;
         this.given = given;
     }

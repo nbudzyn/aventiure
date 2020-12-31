@@ -3,7 +3,7 @@ package de.nb.aventiure2.data.world.syscomp.feelings;
 import org.junit.Test;
 
 import static com.google.common.truth.Truth.assertThat;
-import static de.nb.aventiure2.data.world.time.AvTime.*;
+import static de.nb.aventiure2.data.time.AvTime.oClock;
 
 public class BiorhythmusTest {
     @Test

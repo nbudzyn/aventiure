@@ -4,7 +4,7 @@ import androidx.annotation.NonNull;
 
 import javax.annotation.concurrent.Immutable;
 
-import de.nb.aventiure2.data.world.time.*;
+import de.nb.aventiure2.data.time.AvDateTime;
 
 @Immutable
 public class HungerData {
@@ -24,12 +24,12 @@ public class HungerData {
         return hunger;
     }
 
-    public HungerData withHunger(final Hunger hunger) {
+    HungerData withHunger(final Hunger hunger) {
         return new HungerData(hunger, essenHaeltVorBis);
     }
 
     @NonNull
-    public AvDateTime getEssenHaeltVorBis() {
+    AvDateTime getEssenHaeltVorBis() {
         return essenHaeltVorBis;
     }
 

@@ -6,23 +6,27 @@ import javax.annotation.CheckReturnValue;
 
 import de.nb.aventiure2.data.database.AvDatabase;
 import de.nb.aventiure2.data.narration.Narrator;
+import de.nb.aventiure2.data.time.TimeTaker;
 import de.nb.aventiure2.data.world.base.GameObjectId;
 import de.nb.aventiure2.data.world.gameobject.*;
 
+import static de.nb.aventiure2.data.time.AvTimeSpan.mins;
+import static de.nb.aventiure2.data.time.AvTimeSpan.secs;
 import static de.nb.aventiure2.data.world.base.SpatialConnection.con;
 import static de.nb.aventiure2.data.world.gameobject.World.*;
-import static de.nb.aventiure2.data.world.time.AvTimeSpan.*;
 import static de.nb.aventiure2.german.description.DescriptionBuilder.du;
 
 public class SimpleConnectionCompFactory {
     private final AvDatabase db;
+    private final TimeTaker timeTaker;
     private final Narrator n;
     private final World world;
 
-    public SimpleConnectionCompFactory(final AvDatabase db,
+    public SimpleConnectionCompFactory(final AvDatabase db, final TimeTaker timeTaker,
                                        final Narrator n,
                                        final World world) {
         this.db = db;
+        this.timeTaker = timeTaker;
         this.n = n;
         this.world = world;
     }
@@ -31,7 +35,7 @@ public class SimpleConnectionCompFactory {
     public SimpleConnectionComp createHuetteImWald() {
         return new SimpleConnectionComp(HUETTE_IM_WALD,
                 db,
-                n,
+                timeTaker, n,
                 world,
                 con(VOR_DER_HUETTE_IM_WALD,
                         "in der Tür",
@@ -48,7 +52,7 @@ public class SimpleConnectionCompFactory {
     public SimpleConnectionComp createHinterDerHuette() {
         return new SimpleConnectionComp(HINTER_DER_HUETTE,
                 db,
-                n,
+                timeTaker, n,
                 world,
                 con(VOR_DER_HUETTE_IM_WALD,
                         "auf dem Weg",
@@ -67,7 +71,7 @@ public class SimpleConnectionCompFactory {
     public SimpleConnectionComp createWaldwildnisHinterDemBrunnen() {
         return new SimpleConnectionComp(WALDWILDNIS_HINTER_DEM_BRUNNEN,
                 db,
-                n, world,
+                timeTaker, n, world,
                 con(IM_WALD_BEIM_BRUNNEN,
                         "mitten im wilden Wald",
                         "Zum Brunnen gehen",
@@ -83,6 +87,6 @@ public class SimpleConnectionCompFactory {
 
     public SimpleConnectionComp createNoConnections(final GameObjectId gameObjectId) {
         return new SimpleConnectionComp(gameObjectId,
-                db, n, world);
+                db, timeTaker, n, world);
     }
 }

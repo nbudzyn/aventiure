@@ -6,6 +6,7 @@ import javax.annotation.ParametersAreNonnullByDefault;
 
 import de.nb.aventiure2.data.database.AvDatabase;
 import de.nb.aventiure2.data.narration.Narrator;
+import de.nb.aventiure2.data.time.TimeTaker;
 import de.nb.aventiure2.data.world.gameobject.*;
 import de.nb.aventiure2.data.world.syscomp.story.IStoryWebGO;
 
@@ -23,8 +24,9 @@ public class ScoreService {
     // dependency. See ScActionService.
     public ScoreService(final Context context) {
         final AvDatabase db = AvDatabase.getDatabase(context);
-        final Narrator n = Narrator.getInstance(db);
-        world = World.getInstance(db, n);
+        final TimeTaker timeTaker = TimeTaker.getInstance(db);
+        final Narrator n = Narrator.getInstance(db, timeTaker);
+        world = World.getInstance(db, timeTaker, n);
     }
 
     public int getScore() {

@@ -11,6 +11,7 @@ import javax.annotation.ParametersAreNonnullByDefault;
 
 import de.nb.aventiure2.data.database.AvDatabase;
 import de.nb.aventiure2.data.narration.Narrator;
+import de.nb.aventiure2.data.time.TimeTaker;
 import de.nb.aventiure2.data.world.base.GameObjectId;
 import de.nb.aventiure2.data.world.base.Known;
 import de.nb.aventiure2.data.world.base.Lichtverhaeltnisse;
@@ -21,8 +22,9 @@ import de.nb.aventiure2.data.world.syscomp.state.IHasStateGO;
 import de.nb.aventiure2.data.world.syscomp.state.impl.SchlossfestState;
 import de.nb.aventiure2.german.description.TimedDescription;
 
+import static de.nb.aventiure2.data.time.AvTimeSpan.mins;
+import static de.nb.aventiure2.data.time.AvTimeSpan.secs;
 import static de.nb.aventiure2.data.world.gameobject.World.*;
-import static de.nb.aventiure2.data.world.time.AvTimeSpan.*;
 import static de.nb.aventiure2.german.description.DescriptionBuilder.du;
 import static de.nb.aventiure2.german.description.DescriptionBuilder.neuerSatz;
 
@@ -37,9 +39,9 @@ public class DraussenVorDemSchlossConnectionComp extends AbstractSpatialConnecti
             "RoomConnectionBuilder_DraussenVorDemSchloss_SchlossVorhalle_FestBegonnen";
 
     public DraussenVorDemSchlossConnectionComp(
-            final AvDatabase db,
+            final AvDatabase db, final TimeTaker timeTaker,
             final Narrator n, final World world) {
-        super(DRAUSSEN_VOR_DEM_SCHLOSS, db, n, world);
+        super(DRAUSSEN_VOR_DEM_SCHLOSS, db, timeTaker, n, world);
     }
 
     @Override

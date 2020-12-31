@@ -8,6 +8,7 @@ import com.google.common.collect.ImmutableList;
 import java.util.List;
 
 import de.nb.aventiure2.data.narration.Narrator;
+import de.nb.aventiure2.data.time.TimeTaker;
 import de.nb.aventiure2.data.world.gameobject.*;
 import de.nb.aventiure2.data.world.syscomp.feelings.FeelingIntensity;
 import de.nb.aventiure2.data.world.syscomp.feelings.Mood;
@@ -15,15 +16,14 @@ import de.nb.aventiure2.data.world.syscomp.memory.Action;
 import de.nb.aventiure2.data.world.syscomp.state.IHasStateGO;
 import de.nb.aventiure2.data.world.syscomp.state.impl.RapunzelState;
 import de.nb.aventiure2.data.world.syscomp.storingplace.ILocationGO;
-import de.nb.aventiure2.data.world.time.*;
 import de.nb.aventiure2.german.description.AbstractDescription;
 import de.nb.aventiure2.scaction.AbstractScAction;
 import de.nb.aventiure2.scaction.stepcount.SCActionStepCountDao;
 
+import static de.nb.aventiure2.data.time.AvTimeSpan.mins;
 import static de.nb.aventiure2.data.world.base.Lichtverhaeltnisse.DUNKEL;
 import static de.nb.aventiure2.data.world.gameobject.World.*;
 import static de.nb.aventiure2.data.world.syscomp.state.impl.RapunzelState.SINGEND;
-import static de.nb.aventiure2.data.world.time.AvTimeSpan.*;
 import static de.nb.aventiure2.german.base.StructuralElement.SENTENCE;
 import static de.nb.aventiure2.german.description.DescriptionBuilder.du;
 import static de.nb.aventiure2.german.description.DescriptionBuilder.neuerSatz;
@@ -36,23 +36,23 @@ public class RastenAction extends AbstractScAction {
 
     public static List<RastenAction> buildActions(
             final SCActionStepCountDao scActionStepCountDao,
-            final AvNowDao nowDao,
+            final TimeTaker timeTaker,
             final Narrator n, final World world,
             @Nullable final ILocationGO location) {
         final ImmutableList.Builder<RastenAction> res = ImmutableList.builder();
         if (location != null && location.is(VOR_DEM_ALTEN_TURM_SCHATTEN_DER_BAEUME)) {
-            res.add(new RastenAction(scActionStepCountDao, nowDao, n, world, location));
+            res.add(new RastenAction(scActionStepCountDao, timeTaker, n, world, location));
         }
 
         return res.build();
     }
 
     private RastenAction(final SCActionStepCountDao scActionStepCountDao,
-                         final AvNowDao nowDao,
+                         final TimeTaker timeTaker,
                          final Narrator n,
                          final World world,
                          final ILocationGO location) {
-        super(scActionStepCountDao, nowDao, n, world);
+        super(scActionStepCountDao, timeTaker, n, world);
         this.location = location;
     }
 

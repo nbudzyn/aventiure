@@ -12,6 +12,7 @@ import javax.annotation.CheckReturnValue;
 
 import de.nb.aventiure2.data.database.AvDatabase;
 import de.nb.aventiure2.data.narration.Narrator;
+import de.nb.aventiure2.data.time.TimeTaker;
 import de.nb.aventiure2.data.world.base.GameObjectId;
 import de.nb.aventiure2.data.world.base.IGameObject;
 import de.nb.aventiure2.data.world.counter.CounterDao;
@@ -26,11 +27,11 @@ import de.nb.aventiure2.data.world.syscomp.story.Story;
 import de.nb.aventiure2.german.description.AbstractDescription;
 
 import static com.google.common.collect.ImmutableList.builder;
+import static de.nb.aventiure2.data.time.AvTimeSpan.noTime;
 import static de.nb.aventiure2.data.world.gameobject.World.*;
 import static de.nb.aventiure2.data.world.syscomp.state.impl.RapunzelState.HAARE_VOM_TURM_HERUNTERGELASSEN;
 import static de.nb.aventiure2.data.world.syscomp.state.impl.RapunzelsZauberinState.MACHT_ZURZEIT_KEINE_RAPUNZELBESUCHE;
 import static de.nb.aventiure2.data.world.syscomp.state.impl.RapunzelsZauberinState.VOR_DEM_NAECHSTEN_RAPUNZEL_BESUCH;
-import static de.nb.aventiure2.data.world.time.AvTimeSpan.*;
 import static de.nb.aventiure2.german.base.StructuralElement.PARAGRAPH;
 import static de.nb.aventiure2.german.description.DescriptionBuilder.du;
 import static de.nb.aventiure2.german.description.DescriptionBuilder.paragraph;
@@ -39,9 +40,11 @@ import static java.util.Arrays.asList;
 public enum RapunzelStoryNode implements IStoryNode {
 
     TURM_GEFUNDEN(10, VOR_DEM_ALTEN_TURM,
-            RapunzelStoryNode::narrateAndDoHintAction_TurmGefunden),
+            (db, timeTaker, n, world) -> {narrateAndDoHintAction_TurmGefunden(db, n, world);}),
     RAPUNZEL_SINGEN_GEHOERT(10, VOR_DEM_ALTEN_TURM,
-            RapunzelStoryNode::narrateAndDoHintAction_RapunzelSingenGehoert,
+            (AvDatabase db, TimeTaker timeTaker, Narrator n, World world) -> {
+                narrateAndDoHintAction_RapunzelSingenGehoert(db, n, world);
+            },
             TURM_GEFUNDEN
     ),
     // FIXME Automatisch dann freischalten, wenn der SC vom Brunnen erstmals zurückkehrt und es
@@ -50,14 +53,20 @@ public enum RapunzelStoryNode implements IStoryNode {
     // Tipps dafür wäre nicht sinnvoll
     ZAUBERIN_MACHT_RAPUNZELBESUCHE(),
     ZAUBERIN_AUF_TURM_WEG_GETROFFEN(10, VOR_DEM_ALTEN_TURM,
-            RapunzelStoryNode::narrateAndDoHintAction_ZauberinAufTurmWegGefunden,
+            (AvDatabase db, TimeTaker timeTaker, Narrator n, World world) -> {
+                narrateAndDoHintAction_ZauberinAufTurmWegGefunden(db, n, world);
+            },
             TURM_GEFUNDEN),
     ZAUBERIN_HEIMLICH_BEIM_RUFEN_BEOBACHTET(10, VOR_DEM_ALTEN_TURM,
-            RapunzelStoryNode::narrateAndDoHintAction_ZauberinHeimlichBeimRufenBeobachtet,
+            (AvDatabase db, TimeTaker timeTaker, Narrator n, World world) -> {
+                narrateAndDoHintAction_ZauberinHeimlichBeimRufenBeobachtet(db, n, world);
+            },
             TURM_GEFUNDEN
     ),
     ZU_RAPUNZEL_HINAUFGESTIEGEN(10, VOR_DEM_ALTEN_TURM,
-            RapunzelStoryNode::narrateAndDoHintAction_ZuRapunzelHinaufgestiegen,
+            (AvDatabase db, TimeTaker timeTaker, Narrator n, World world) -> {
+                narrateAndDoHintAction_ZuRapunzelHinaufgestiegen(db, n, world);
+            },
             ZAUBERIN_HEIMLICH_BEIM_RUFEN_BEOBACHTET);
 
 
@@ -204,7 +213,7 @@ public enum RapunzelStoryNode implements IStoryNode {
 
     public static boolean checkAndAdvanceIfAppropriate(
             final AvDatabase db,
-            final Narrator n,
+            final TimeTaker timeTaker, final Narrator n,
             final World world) {
         final IHasStateGO<RapunzelsZauberinState> zauberin = loadZauberin(world);
 
@@ -213,7 +222,7 @@ public enum RapunzelStoryNode implements IStoryNode {
                     world.loadSC().locationComp()
                             .hasRecursiveLocation(IM_WALD_NAHE_DEM_SCHLOSS, VOR_DEM_ALTEN_TURM) &&
                     RapunzelsZauberinReactionsComp.
-                            liegtImZeitfensterFuerRapunzelbesuch(db.nowDao().now())) {
+                            liegtImZeitfensterFuerRapunzelbesuch(timeTaker.now())) {
                 ensureAdvancedToZauberinMachtRapunzelbesuche(db.counterDao(), world);
                 return true;
             }

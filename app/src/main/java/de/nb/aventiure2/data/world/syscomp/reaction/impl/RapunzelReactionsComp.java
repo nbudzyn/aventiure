@@ -8,6 +8,9 @@ import javax.annotation.Nullable;
 
 import de.nb.aventiure2.data.database.AvDatabase;
 import de.nb.aventiure2.data.narration.Narrator;
+import de.nb.aventiure2.data.time.AvDateTime;
+import de.nb.aventiure2.data.time.AvTimeSpan;
+import de.nb.aventiure2.data.time.TimeTaker;
 import de.nb.aventiure2.data.world.gameobject.*;
 import de.nb.aventiure2.data.world.syscomp.feelings.FeelingIntensity;
 import de.nb.aventiure2.data.world.syscomp.feelings.FeelingsComp;
@@ -26,13 +29,17 @@ import de.nb.aventiure2.data.world.syscomp.state.impl.RapunzelStateComp;
 import de.nb.aventiure2.data.world.syscomp.state.impl.RapunzelsZauberinState;
 import de.nb.aventiure2.data.world.syscomp.storingplace.ILocationGO;
 import de.nb.aventiure2.data.world.syscomp.talking.impl.RapunzelTalkingComp;
-import de.nb.aventiure2.data.world.time.*;
 import de.nb.aventiure2.german.base.Nominalphrase;
 import de.nb.aventiure2.german.base.PraepositionMitKasus;
 import de.nb.aventiure2.german.base.SubstantivischePhrase;
 import de.nb.aventiure2.german.description.AbstractDescription;
 import de.nb.aventiure2.german.description.TimedDescription;
 
+import static de.nb.aventiure2.data.time.AvTime.oClock;
+import static de.nb.aventiure2.data.time.AvTimeSpan.mins;
+import static de.nb.aventiure2.data.time.AvTimeSpan.noTime;
+import static de.nb.aventiure2.data.time.AvTimeSpan.secs;
+import static de.nb.aventiure2.data.time.Tageszeit.NACHTS;
 import static de.nb.aventiure2.data.world.base.Known.KNOWN_FROM_DARKNESS;
 import static de.nb.aventiure2.data.world.base.Known.KNOWN_FROM_LIGHT;
 import static de.nb.aventiure2.data.world.base.Lichtverhaeltnisse.HELL;
@@ -46,9 +53,6 @@ import static de.nb.aventiure2.data.world.syscomp.state.impl.RapunzelState.HAARE
 import static de.nb.aventiure2.data.world.syscomp.state.impl.RapunzelState.HAT_NACH_KUGEL_GEFRAGT;
 import static de.nb.aventiure2.data.world.syscomp.state.impl.RapunzelState.SINGEND;
 import static de.nb.aventiure2.data.world.syscomp.state.impl.RapunzelState.STILL;
-import static de.nb.aventiure2.data.world.time.AvTime.*;
-import static de.nb.aventiure2.data.world.time.AvTimeSpan.*;
-import static de.nb.aventiure2.data.world.time.Tageszeit.*;
 import static de.nb.aventiure2.german.base.GermanUtil.capitalize;
 import static de.nb.aventiure2.german.base.NumerusGenus.F;
 import static de.nb.aventiure2.german.base.NumerusGenus.PL_MFN;
@@ -68,7 +72,7 @@ public class RapunzelReactionsComp
         IStateChangedReactions, ITimePassedReactions {
     private static final AvTimeSpan DAUER_WIE_LANGE_DIE_HAARE_MAX_UNTEN_BLEIBEN = mins(3);
 
-    private final AvNowDao nowDao;
+    private final TimeTaker timeTaker;
     private final MemoryComp memoryComp;
     private final RapunzelStateComp stateComp;
     private final LocationSystem locationSystem;
@@ -77,7 +81,7 @@ public class RapunzelReactionsComp
     private final RapunzelTalkingComp talkingComp;
 
     public RapunzelReactionsComp(final AvDatabase db,
-                                 final AvNowDao nowDao, final Narrator n,
+                                 final TimeTaker timeTaker, final Narrator n,
                                  final World world,
                                  final MemoryComp memoryComp,
                                  final RapunzelStateComp stateComp,
@@ -86,7 +90,7 @@ public class RapunzelReactionsComp
                                  final FeelingsComp feelingsComp,
                                  final RapunzelTalkingComp talkingComp) {
         super(RAPUNZEL, db, n, world);
-        this.nowDao = nowDao;
+        this.timeTaker = timeTaker;
         this.memoryComp = memoryComp;
         this.stateComp = stateComp;
         this.locationSystem = locationSystem;
@@ -235,7 +239,7 @@ public class RapunzelReactionsComp
     }
 
     private void onSCEnter_ObenImAltenTurm_RapunzelUnbekannt() {
-        if (nowDao.now().getTageszeit() == NACHTS) {
+        if (timeTaker.now().getTageszeit() == NACHTS) {
             onSCEnter_ObenImAltenTurm_RapunzelUnbekannt_nachts();
             return;
         }
@@ -326,7 +330,7 @@ public class RapunzelReactionsComp
         loadSC().feelingsComp().requestMoodMin(AUFGEDREHT);
         stateComp.setState(STILL);
 
-        if (nowDao.now().getTageszeit() == NACHTS) {
+        if (timeTaker.now().getTageszeit() == NACHTS) {
             narrateAndUpgradeFeelings_ScTrifftRapunzelObenImAltenTurmAn_Nachts();
         } else {
             narrateAndUpgradeFeelings_ScTrifftRapunzelObenImAltenTurmAn_Tagsueber();

@@ -10,6 +10,7 @@ import javax.annotation.CheckReturnValue;
 
 import de.nb.aventiure2.data.database.AvDatabase;
 import de.nb.aventiure2.data.narration.Narrator;
+import de.nb.aventiure2.data.time.TimeTaker;
 import de.nb.aventiure2.data.world.base.GameObjectId;
 import de.nb.aventiure2.data.world.base.Known;
 import de.nb.aventiure2.data.world.base.Lichtverhaeltnisse;
@@ -17,9 +18,9 @@ import de.nb.aventiure2.data.world.base.SpatialConnection;
 import de.nb.aventiure2.data.world.gameobject.*;
 import de.nb.aventiure2.data.world.syscomp.spatialconnection.AbstractSpatialConnectionComp;
 
+import static de.nb.aventiure2.data.time.AvTimeSpan.mins;
 import static de.nb.aventiure2.data.world.base.SpatialConnection.con;
 import static de.nb.aventiure2.data.world.gameobject.World.*;
-import static de.nb.aventiure2.data.world.time.AvTimeSpan.*;
 import static de.nb.aventiure2.german.base.StructuralElement.PARAGRAPH;
 import static de.nb.aventiure2.german.base.StructuralElement.SENTENCE;
 import static de.nb.aventiure2.german.description.DescriptionBuilder.du;
@@ -27,9 +28,9 @@ import static de.nb.aventiure2.german.description.DescriptionBuilder.neuerSatz;
 
 public class AbzweigImWaldConnectionComp extends AbstractSpatialConnectionComp {
     public AbzweigImWaldConnectionComp(
-            final AvDatabase db,
+            final AvDatabase db, final TimeTaker timeTaker,
             final Narrator n, final World world) {
-        super(ABZWEIG_IM_WALD, db, n, world);
+        super(ABZWEIG_IM_WALD, db, timeTaker, n, world);
     }
 
     @Override

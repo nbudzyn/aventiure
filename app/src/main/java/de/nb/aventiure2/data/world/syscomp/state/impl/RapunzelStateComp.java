@@ -6,24 +6,26 @@ import com.google.common.collect.ImmutableList;
 
 import de.nb.aventiure2.data.database.AvDatabase;
 import de.nb.aventiure2.data.narration.Narrator;
+import de.nb.aventiure2.data.time.TimeTaker;
 import de.nb.aventiure2.data.world.gameobject.*;
 import de.nb.aventiure2.data.world.gameobject.player.*;
 import de.nb.aventiure2.data.world.syscomp.state.AbstractStateComp;
 import de.nb.aventiure2.german.base.Nominalphrase;
 import de.nb.aventiure2.german.description.AbstractDescription;
 
+import static de.nb.aventiure2.data.time.AvTimeSpan.secs;
 import static de.nb.aventiure2.data.world.gameobject.World.*;
 import static de.nb.aventiure2.data.world.syscomp.state.impl.RapunzelState.HAARE_VOM_TURM_HERUNTERGELASSEN;
 import static de.nb.aventiure2.data.world.syscomp.state.impl.RapunzelState.STILL;
-import static de.nb.aventiure2.data.world.time.AvTimeSpan.*;
 import static de.nb.aventiure2.german.base.NumerusGenus.PL_MFN;
 import static de.nb.aventiure2.german.base.StructuralElement.PARAGRAPH;
 import static de.nb.aventiure2.german.description.DescriptionBuilder.du;
 import static de.nb.aventiure2.german.description.DescriptionBuilder.neuerSatz;
 
 public class RapunzelStateComp extends AbstractStateComp<RapunzelState> {
-    public RapunzelStateComp(final AvDatabase db, final Narrator n, final World world) {
-        super(RAPUNZEL, db, n, world, RapunzelState.class, STILL);
+    public RapunzelStateComp(final AvDatabase db, final TimeTaker timeTaker,
+                             final Narrator n, final World world) {
+        super(RAPUNZEL, db, timeTaker, n, world, RapunzelState.class, STILL);
     }
 
     public void rapunzelLaesstHaareZumAbstiegHerunter() {

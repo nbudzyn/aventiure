@@ -2,8 +2,9 @@ package de.nb.aventiure2.data.world.syscomp.movement;
 
 import javax.annotation.concurrent.Immutable;
 
+import de.nb.aventiure2.data.time.AvDateTime;
+import de.nb.aventiure2.data.time.AvTimeSpan;
 import de.nb.aventiure2.data.world.base.GameObjectId;
-import de.nb.aventiure2.data.world.time.*;
 
 @Immutable
 class MovementStep {

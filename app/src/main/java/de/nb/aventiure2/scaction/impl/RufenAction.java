@@ -5,13 +5,13 @@ import androidx.annotation.NonNull;
 import com.google.common.collect.ImmutableList;
 
 import de.nb.aventiure2.data.narration.Narrator;
+import de.nb.aventiure2.data.time.TimeTaker;
 import de.nb.aventiure2.data.world.gameobject.*;
 import de.nb.aventiure2.data.world.syscomp.memory.Action;
 import de.nb.aventiure2.data.world.syscomp.reaction.interfaces.Ruftyp;
 import de.nb.aventiure2.data.world.syscomp.state.IHasStateGO;
 import de.nb.aventiure2.data.world.syscomp.state.impl.RapunzelState;
 import de.nb.aventiure2.data.world.syscomp.storingplace.ILocationGO;
-import de.nb.aventiure2.data.world.time.*;
 import de.nb.aventiure2.german.base.GermanUtil;
 import de.nb.aventiure2.german.base.Konstituente;
 import de.nb.aventiure2.german.base.Wortfolge;
@@ -20,10 +20,10 @@ import de.nb.aventiure2.scaction.AbstractScAction;
 import de.nb.aventiure2.scaction.stepcount.SCActionStepCountDao;
 
 import static com.google.common.collect.ImmutableList.builder;
+import static de.nb.aventiure2.data.time.AvTimeSpan.secs;
 import static de.nb.aventiure2.data.world.gameobject.World.*;
 import static de.nb.aventiure2.data.world.syscomp.reaction.interfaces.Ruftyp.LASS_DEIN_HAAR_HERUNTER;
 import static de.nb.aventiure2.data.world.syscomp.state.impl.RapunzelState.HAARE_VOM_TURM_HERUNTERGELASSEN;
-import static de.nb.aventiure2.data.world.time.AvTimeSpan.*;
 import static de.nb.aventiure2.german.base.Numerus.SG;
 import static de.nb.aventiure2.german.base.Person.P1;
 import static de.nb.aventiure2.german.base.Wortfolge.uncapitalize;
@@ -42,7 +42,7 @@ public class RufenAction extends AbstractScAction {
 
     public static ImmutableList<AbstractScAction> buildActions(
             final SCActionStepCountDao scActionStepCountDao,
-            final AvNowDao nowDao,
+            final TimeTaker timeTaker,
             final Narrator n, final World world,
             @NonNull final ILocationGO location) {
         final ImmutableList.Builder<AbstractScAction> res = builder();
@@ -51,7 +51,7 @@ public class RufenAction extends AbstractScAction {
             if (world.isOrHasRecursiveLocation(location, VOR_DEM_ALTEN_TURM) &&
                     !((IHasStateGO<RapunzelState>) world.load(RAPUNZEL)).stateComp()
                             .hasState(HAARE_VOM_TURM_HERUNTERGELASSEN)) {
-                res.add(new RufenAction(scActionStepCountDao, nowDao, n, world, location,
+                res.add(new RufenAction(scActionStepCountDao, timeTaker, n, world, location,
                         LASS_DEIN_HAAR_HERUNTER));
             }
         }
@@ -60,10 +60,10 @@ public class RufenAction extends AbstractScAction {
     }
 
     private RufenAction(final SCActionStepCountDao scActionStepCountDao,
-                        final AvNowDao nowDao, final Narrator n, final World world,
+                        final TimeTaker timeTaker, final Narrator n, final World world,
                         final ILocationGO location,
                         final Ruftyp ruftyp) {
-        super(scActionStepCountDao, nowDao, n, world);
+        super(scActionStepCountDao, timeTaker, n, world);
         this.location = location;
         this.ruftyp = ruftyp;
     }

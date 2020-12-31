@@ -1,4 +1,4 @@
-package de.nb.aventiure2.data.world.time;
+package de.nb.aventiure2.data.time;
 
 import androidx.annotation.NonNull;
 import androidx.room.PrimaryKey;
@@ -11,7 +11,8 @@ import javax.annotation.ParametersAreNonnullByDefault;
 import javax.annotation.concurrent.Immutable;
 
 import static com.google.common.base.Preconditions.checkNotNull;
-import static de.nb.aventiure2.data.world.time.AvTime.*;
+import static de.nb.aventiure2.data.time.AvTime.SECS_IN_AN_HOUR;
+import static de.nb.aventiure2.data.time.AvTime.SECS_IN_A_DAY;
 
 /**
  * Value Object für Datum und Zeitpunkt.

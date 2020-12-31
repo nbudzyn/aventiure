@@ -2,11 +2,13 @@ package de.nb.aventiure2.data.world.syscomp.feelings;
 
 import org.junit.Test;
 
-import de.nb.aventiure2.data.world.time.*;
+import de.nb.aventiure2.data.time.AvDateTime;
 
 import static com.google.common.truth.Truth.assertThat;
-import static de.nb.aventiure2.data.world.time.AvTime.*;
-import static de.nb.aventiure2.data.world.time.AvTimeSpan.*;
+import static de.nb.aventiure2.data.time.AvTime.oClock;
+import static de.nb.aventiure2.data.time.AvTimeSpan.hours;
+import static de.nb.aventiure2.data.time.AvTimeSpan.mins;
+import static de.nb.aventiure2.data.time.AvTimeSpan.noTime;
 
 public class MuedigkeitsDataTest {
     @Test

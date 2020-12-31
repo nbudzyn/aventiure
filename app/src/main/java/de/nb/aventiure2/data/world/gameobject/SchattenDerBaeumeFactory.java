@@ -5,6 +5,7 @@ import androidx.annotation.NonNull;
 import javax.annotation.CheckReturnValue;
 
 import de.nb.aventiure2.data.database.AvDatabase;
+import de.nb.aventiure2.data.time.TimeTaker;
 import de.nb.aventiure2.data.world.base.GameObject;
 import de.nb.aventiure2.data.world.base.GameObjectId;
 import de.nb.aventiure2.data.world.base.Known;
@@ -16,11 +17,12 @@ import de.nb.aventiure2.german.description.TimedDescription;
 import de.nb.aventiure2.german.praedikat.AdverbialeAngabeSkopusVerbAllg;
 import de.nb.aventiure2.german.praedikat.VerbSubj;
 
+import static de.nb.aventiure2.data.time.AvTimeSpan.mins;
+import static de.nb.aventiure2.data.time.AvTimeSpan.secs;
 import static de.nb.aventiure2.data.world.base.Lichtverhaeltnisse.DUNKEL;
 import static de.nb.aventiure2.data.world.base.SpatialConnectionData.conData;
 import static de.nb.aventiure2.data.world.gameobject.World.*;
 import static de.nb.aventiure2.data.world.syscomp.storingplace.StoringPlaceType.STAMM_EINES_BAUMS;
-import static de.nb.aventiure2.data.world.time.AvTimeSpan.*;
 import static de.nb.aventiure2.german.base.Artikel.Typ.DEF;
 import static de.nb.aventiure2.german.base.Nominalphrase.np;
 import static de.nb.aventiure2.german.base.NumerusGenus.M;
@@ -33,11 +35,13 @@ class SchattenDerBaeumeFactory {
             DESC_TO_SCHATTEN_DER_BAEUME__SC_SETZT_SICH_TAGSUEBER_IN_DEN_SCHATTEN_DER_BAEUME =
             "DescTo_SchattenDerBaeume__SCSetztSichTagsueberInDenSchattenDerBaeume";
     private final AvDatabase db;
+    private final TimeTaker timeTaker;
     private final World world;
 
     SchattenDerBaeumeFactory(final AvDatabase db,
-                             final World world) {
+                             final TimeTaker timeTaker, final World world) {
         this.db = db;
+        this.timeTaker = timeTaker;
         this.world = world;
     }
 
@@ -58,7 +62,7 @@ class SchattenDerBaeumeFactory {
                 null, false);
 
         final StoringPlaceComp storingPlaceComp = new StoringPlaceComp(
-                id, db, STAMM_EINES_BAUMS,
+                id, timeTaker, STAMM_EINES_BAUMS,
                 false,
                 conData("vor den Bäumen",
                         "In den Schatten der Bäume setzen",

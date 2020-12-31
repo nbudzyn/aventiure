@@ -4,10 +4,10 @@ import androidx.annotation.Nullable;
 
 import java.util.HashMap;
 
+import de.nb.aventiure2.data.time.AvTimeSpan;
 import de.nb.aventiure2.data.world.base.GameObjectId;
-import de.nb.aventiure2.data.world.time.AvTimeSpan;
 
-import static de.nb.aventiure2.data.world.time.AvTimeSpan.noTime;
+import static de.nb.aventiure2.data.time.AvTimeSpan.noTime;
 
 /**
  * Priority queue for the A* algorithm.

@@ -10,6 +10,7 @@ import javax.annotation.ParametersAreNonnullByDefault;
 
 import de.nb.aventiure2.data.database.AvDatabase;
 import de.nb.aventiure2.data.narration.Narrator;
+import de.nb.aventiure2.data.time.TimeTaker;
 import de.nb.aventiure2.data.world.base.GameObjectId;
 import de.nb.aventiure2.data.world.base.Known;
 import de.nb.aventiure2.data.world.base.Lichtverhaeltnisse;
@@ -18,10 +19,10 @@ import de.nb.aventiure2.data.world.gameobject.*;
 import de.nb.aventiure2.data.world.syscomp.spatialconnection.AbstractSpatialConnectionComp;
 import de.nb.aventiure2.data.world.syscomp.storingplace.StoringPlaceComp;
 
+import static de.nb.aventiure2.data.time.AvTimeSpan.mins;
 import static de.nb.aventiure2.data.world.base.Lichtverhaeltnisse.HELL;
 import static de.nb.aventiure2.data.world.base.SpatialConnection.con;
 import static de.nb.aventiure2.data.world.gameobject.World.*;
-import static de.nb.aventiure2.data.world.time.AvTimeSpan.*;
 import static de.nb.aventiure2.german.base.StructuralElement.SENTENCE;
 import static de.nb.aventiure2.german.description.DescriptionBuilder.du;
 
@@ -35,10 +36,10 @@ public class ImWaldBeimBrunnenConnectionComp extends AbstractSpatialConnectionCo
     private final StoringPlaceComp storingPlaceComp;
 
     public ImWaldBeimBrunnenConnectionComp(
-            final AvDatabase db,
+            final AvDatabase db, final TimeTaker timeTaker,
             final Narrator n, final World world,
             final StoringPlaceComp storingPlaceComp) {
-        super(IM_WALD_BEIM_BRUNNEN, db, n, world);
+        super(IM_WALD_BEIM_BRUNNEN, db, timeTaker, n, world);
         this.storingPlaceComp = storingPlaceComp;
     }
 

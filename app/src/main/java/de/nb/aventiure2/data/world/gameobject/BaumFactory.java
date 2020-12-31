@@ -5,6 +5,7 @@ import androidx.annotation.NonNull;
 import javax.annotation.CheckReturnValue;
 
 import de.nb.aventiure2.data.database.AvDatabase;
+import de.nb.aventiure2.data.time.TimeTaker;
 import de.nb.aventiure2.data.world.base.GameObject;
 import de.nb.aventiure2.data.world.base.GameObjectId;
 import de.nb.aventiure2.data.world.base.Known;
@@ -15,11 +16,11 @@ import de.nb.aventiure2.data.world.syscomp.storingplace.StoringPlaceComp;
 import de.nb.aventiure2.german.description.TimedDescription;
 import de.nb.aventiure2.german.praedikat.AdverbialeAngabeSkopusVerbAllg;
 
+import static de.nb.aventiure2.data.time.AvTimeSpan.mins;
 import static de.nb.aventiure2.data.world.base.Lichtverhaeltnisse.DUNKEL;
 import static de.nb.aventiure2.data.world.base.SpatialConnectionData.conData;
 import static de.nb.aventiure2.data.world.gameobject.World.*;
 import static de.nb.aventiure2.data.world.syscomp.storingplace.StoringPlaceType.ASTGABEL;
-import static de.nb.aventiure2.data.world.time.AvTimeSpan.*;
 import static de.nb.aventiure2.german.base.Artikel.Typ.DEF;
 import static de.nb.aventiure2.german.base.Artikel.Typ.INDEF;
 import static de.nb.aventiure2.german.base.Nominalphrase.np;
@@ -34,11 +35,14 @@ public class BaumFactory {
     public static final String HOCHKLETTERN = "BaumFactory_HOCHKLETTERN";
     public static final String HINABKLETTERN = "BaumFactory_HINABKLETTERN";
     private final AvDatabase db;
+    private final TimeTaker timeTaker;
     private final World world;
 
     BaumFactory(final AvDatabase db,
+                final TimeTaker timeTaker,
                 final World world) {
         this.db = db;
+        this.timeTaker = timeTaker;
         this.world = world;
     }
 
@@ -63,7 +67,7 @@ public class BaumFactory {
                 null, false);
 
         final StoringPlaceComp storingPlaceComp = new StoringPlaceComp(
-                id, db, ASTGABEL,
+                id, timeTaker, ASTGABEL,
                 false,
                 conData("im Geäst",
                         "Auf den Baum klettern",

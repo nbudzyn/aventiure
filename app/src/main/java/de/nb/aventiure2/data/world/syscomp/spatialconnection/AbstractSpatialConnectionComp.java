@@ -9,6 +9,7 @@ import javax.annotation.ParametersAreNonnullByDefault;
 
 import de.nb.aventiure2.data.database.AvDatabase;
 import de.nb.aventiure2.data.narration.Narrator;
+import de.nb.aventiure2.data.time.TimeTaker;
 import de.nb.aventiure2.data.world.base.AbstractStatelessComponent;
 import de.nb.aventiure2.data.world.base.GameObject;
 import de.nb.aventiure2.data.world.base.GameObjectId;
@@ -27,15 +28,18 @@ import de.nb.aventiure2.german.description.AbstractDescription;
 @ParametersAreNonnullByDefault
 public abstract class AbstractSpatialConnectionComp extends AbstractStatelessComponent {
     protected final AvDatabase db;
+    protected final TimeTaker timeTaker;
     protected final Narrator n;
     protected final World world;
 
     public AbstractSpatialConnectionComp(final GameObjectId id,
                                          final AvDatabase db,
+                                         final TimeTaker timeTaker,
                                          final Narrator n,
                                          final World world) {
         super(id);
         this.db = db;
+        this.timeTaker = timeTaker;
         this.n = n;
         this.world = world;
     }

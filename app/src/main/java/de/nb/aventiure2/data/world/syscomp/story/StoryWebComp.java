@@ -11,6 +11,8 @@ import java.util.Map;
 
 import de.nb.aventiure2.data.database.AvDatabase;
 import de.nb.aventiure2.data.narration.Narrator;
+import de.nb.aventiure2.data.time.AvTimeSpan;
+import de.nb.aventiure2.data.time.TimeTaker;
 import de.nb.aventiure2.data.world.base.AbstractStatefulComponent;
 import de.nb.aventiure2.data.world.base.GameObjectId;
 import de.nb.aventiure2.data.world.gameobject.*;
@@ -18,12 +20,11 @@ import de.nb.aventiure2.data.world.syscomp.location.LocationSystem;
 import de.nb.aventiure2.data.world.syscomp.spatialconnection.ISpatiallyConnectedGO;
 import de.nb.aventiure2.data.world.syscomp.spatialconnection.system.SpatialConnectionSystem;
 import de.nb.aventiure2.data.world.syscomp.storingplace.ILocationGO;
-import de.nb.aventiure2.data.world.time.*;
 import de.nb.aventiure2.scaction.stepcount.SCActionStepCountDao;
 
 import static com.google.common.base.Preconditions.checkArgument;
+import static de.nb.aventiure2.data.time.AvTimeSpan.noTime;
 import static de.nb.aventiure2.data.world.gameobject.World.*;
-import static de.nb.aventiure2.data.world.time.AvTimeSpan.*;
 import static java.util.Arrays.asList;
 
 /**
@@ -39,6 +40,7 @@ public class StoryWebComp extends AbstractStatefulComponent<StoryWebPCD> {
 
     private final AvDatabase db;
     private final World world;
+    private final TimeTaker timeTaker;
     protected final Narrator n;
 
     private final LocationSystem locationSystem;
@@ -49,21 +51,23 @@ public class StoryWebComp extends AbstractStatefulComponent<StoryWebPCD> {
     @NonNull
     private final Map<Story, StoryData> initialStoryDataMap;
 
-    public StoryWebComp(final AvDatabase db,
+    public StoryWebComp(final AvDatabase db, final TimeTaker timeTaker,
                         final Narrator n,
                         final World world,
                         final LocationSystem locationSystem,
                         final SpatialConnectionSystem spatialConnectionSystem,
                         final Story... initialAktiveStories) {
-        this(db, n, world, locationSystem, spatialConnectionSystem, asList(initialAktiveStories));
+        this(db, timeTaker, n, world, locationSystem, spatialConnectionSystem,
+                asList(initialAktiveStories));
     }
 
     private StoryWebComp(final AvDatabase db,
-                         final Narrator n, final World world,
+                         final TimeTaker timeTaker, final Narrator n,
+                         final World world,
                          final LocationSystem locationSystem,
                          final SpatialConnectionSystem spatialConnectionSystem,
                          final Collection<Story> initialAktiveStories) {
-        this(db, n, world, locationSystem, spatialConnectionSystem,
+        this(db, timeTaker, n, world, locationSystem, spatialConnectionSystem,
                 toEmptyStoryDataMap(initialAktiveStories));
     }
 
@@ -79,13 +83,14 @@ public class StoryWebComp extends AbstractStatefulComponent<StoryWebPCD> {
         return res.build();
     }
 
-    private StoryWebComp(final AvDatabase db,
+    private StoryWebComp(final AvDatabase db, final TimeTaker timeTaker,
                          final Narrator n, final World world,
                          final LocationSystem locationSystem,
                          final SpatialConnectionSystem spatialConnectionSystem,
                          final Map<Story, StoryData> initialStoryDataMap) {
         super(STORY_WEB, db.storyWebDao());
         this.db = db;
+        this.timeTaker = timeTaker;
 
         this.n = n;
 
@@ -126,9 +131,9 @@ public class StoryWebComp extends AbstractStatefulComponent<StoryWebPCD> {
         // nicht oder nur langsam weiterkommt, versuchen wir, eine solche Geschichte
         // "weiterzusetzen" (z.B. zu starten).
         // (Das wird wohl eher selten der Fall sein.)
-        if (!Story.checkAndAdvanceAStoryIfAppropriate(db, n, world)) {
+        if (!Story.checkAndAdvanceAStoryIfAppropriate(db, timeTaker, n, world)) {
             // Das hier ist der Regelfall!
-            storyNode.narrateAndDoHintAction(db, n, world);
+            storyNode.narrateAndDoHintAction(db, timeTaker, n, world);
         }
 
         getPcd().setLastHintActionStepCount(scActionStepCountDao.stepCount());

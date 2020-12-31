@@ -7,6 +7,7 @@ import com.google.common.collect.ImmutableList;
 import java.util.Collection;
 
 import de.nb.aventiure2.data.narration.Narrator;
+import de.nb.aventiure2.data.time.TimeTaker;
 import de.nb.aventiure2.data.world.counter.CounterDao;
 import de.nb.aventiure2.data.world.gameobject.*;
 import de.nb.aventiure2.data.world.syscomp.feelings.Hunger;
@@ -16,17 +17,17 @@ import de.nb.aventiure2.data.world.syscomp.state.IHasStateGO;
 import de.nb.aventiure2.data.world.syscomp.state.impl.FroschprinzState;
 import de.nb.aventiure2.data.world.syscomp.state.impl.SchlossfestState;
 import de.nb.aventiure2.data.world.syscomp.storingplace.ILocationGO;
-import de.nb.aventiure2.data.world.time.*;
 import de.nb.aventiure2.scaction.AbstractScAction;
 import de.nb.aventiure2.scaction.stepcount.SCActionStepCountDao;
 
+import static de.nb.aventiure2.data.time.AvTimeSpan.mins;
+import static de.nb.aventiure2.data.time.AvTimeSpan.secs;
 import static de.nb.aventiure2.data.world.gameobject.World.*;
 import static de.nb.aventiure2.data.world.syscomp.feelings.Mood.ZUFRIEDEN;
 import static de.nb.aventiure2.data.world.syscomp.state.impl.FroschprinzState.BEIM_SCHLOSSFEST_AUF_TISCH_WILL_ZUSAMMEN_ESSEN;
 import static de.nb.aventiure2.data.world.syscomp.state.impl.FroschprinzState.HAT_HOCHHEBEN_GEFORDERT;
 import static de.nb.aventiure2.data.world.syscomp.state.impl.FroschprinzState.ZURUECKVERWANDELT_IN_VORHALLE;
 import static de.nb.aventiure2.data.world.syscomp.state.impl.SchlossfestState.BEGONNEN;
-import static de.nb.aventiure2.data.world.time.AvTimeSpan.*;
 import static de.nb.aventiure2.german.base.StructuralElement.PARAGRAPH;
 import static de.nb.aventiure2.german.base.StructuralElement.SENTENCE;
 import static de.nb.aventiure2.german.description.DescriptionBuilder.du;
@@ -42,13 +43,13 @@ public class EssenAction extends AbstractScAction {
 
     public static Collection<EssenAction> buildActions(
             final SCActionStepCountDao scActionStepCountDao,
-            final AvNowDao nowDao,
+            final TimeTaker timeTaker,
             final CounterDao counterDao,
             final Narrator n, final World world,
             final ILocationGO location) {
         final ImmutableList.Builder<EssenAction> res = ImmutableList.builder();
         if (essenMoeglich(world, location)) {
-            res.add(new EssenAction(scActionStepCountDao, nowDao, counterDao, n, world,
+            res.add(new EssenAction(scActionStepCountDao, timeTaker, counterDao, n, world,
                     location));
         }
 
@@ -92,11 +93,11 @@ public class EssenAction extends AbstractScAction {
     }
 
     private EssenAction(final SCActionStepCountDao scActionStepCountDao,
-                        final AvNowDao nowDao,
+                        final TimeTaker timeTaker,
                         final CounterDao counterDao, final Narrator n,
                         final World world,
                         final ILocationGO location) {
-        super(scActionStepCountDao, nowDao, n, world);
+        super(scActionStepCountDao, timeTaker, n, world);
         this.counterDao = counterDao;
         this.location = location;
     }

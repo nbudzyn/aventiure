@@ -8,6 +8,7 @@ import javax.annotation.ParametersAreNonnullByDefault;
 
 import de.nb.aventiure2.data.database.AvDatabase;
 import de.nb.aventiure2.data.narration.Narrator;
+import de.nb.aventiure2.data.time.TimeTaker;
 import de.nb.aventiure2.data.world.base.GameObjectId;
 import de.nb.aventiure2.data.world.base.Known;
 import de.nb.aventiure2.data.world.base.Lichtverhaeltnisse;
@@ -26,18 +27,18 @@ class SimpleConnectionComp extends AbstractSpatialConnectionComp {
 
     SimpleConnectionComp(
             final GameObjectId gameObjectId,
-            final AvDatabase db,
+            final AvDatabase db, final TimeTaker timeTaker,
             final Narrator n, final World world,
             final SpatialConnection... connections) {
-        this(gameObjectId, db, n, world, ImmutableList.copyOf(connections));
+        this(gameObjectId, db, timeTaker, n, world, ImmutableList.copyOf(connections));
     }
 
-    SimpleConnectionComp(
+    private SimpleConnectionComp(
             final GameObjectId gameObjectId,
-            final AvDatabase db,
+            final AvDatabase db, final TimeTaker timeTaker,
             final Narrator n, final World world,
             final Iterable<SpatialConnection> connections) {
-        super(gameObjectId, db, n, world);
+        super(gameObjectId, db, timeTaker, n, world);
         this.connections = ImmutableList.copyOf(connections);
     }
 

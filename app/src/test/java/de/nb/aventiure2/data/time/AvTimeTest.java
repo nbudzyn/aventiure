@@ -1,10 +1,10 @@
-package de.nb.aventiure2.data.world.time;
+package de.nb.aventiure2.data.time;
 
 import org.junit.Test;
 
 import static com.google.common.truth.Truth.assertThat;
-import static de.nb.aventiure2.data.world.time.AvTime.*;
-import static de.nb.aventiure2.data.world.time.AvTimeSpan.*;
+import static de.nb.aventiure2.data.time.AvTime.oClock;
+import static de.nb.aventiure2.data.time.AvTimeSpan.mins;
 
 public class AvTimeTest {
     @Test

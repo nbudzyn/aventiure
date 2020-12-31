@@ -8,6 +8,8 @@ import javax.annotation.Nullable;
 
 import de.nb.aventiure2.data.narration.Narration;
 import de.nb.aventiure2.data.narration.Narrator;
+import de.nb.aventiure2.data.time.AvDateTime;
+import de.nb.aventiure2.data.time.TimeTaker;
 import de.nb.aventiure2.data.world.base.GameObject;
 import de.nb.aventiure2.data.world.base.GameObjectId;
 import de.nb.aventiure2.data.world.base.IGameObject;
@@ -23,10 +25,9 @@ import de.nb.aventiure2.data.world.syscomp.reaction.interfaces.ITimePassedReacti
 import de.nb.aventiure2.data.world.syscomp.reaction.interfaces.Ruftyp;
 import de.nb.aventiure2.data.world.syscomp.state.IHasStateGO;
 import de.nb.aventiure2.data.world.syscomp.storingplace.ILocationGO;
-import de.nb.aventiure2.data.world.time.*;
 
 import static de.nb.aventiure2.data.narration.Narration.NarrationSource.REACTIONS;
-import static de.nb.aventiure2.data.world.time.AvDateTime.*;
+import static de.nb.aventiure2.data.time.AvDateTime.latest;
 
 public class GOReactionsCoordinator
         implements IMovementReactions, IEssenReactions, IStateChangedReactions,
@@ -34,15 +35,15 @@ public class GOReactionsCoordinator
         ITimePassedReactions,
         ISCActionReactions {
     private final World world;
-    private final AvNowDao nowDao;
+    private final TimeTaker timeTaker;
     private final Narrator n;
 
     // REFACTOR ReactionCoordinator zum zentralen Teil eines ReactionSystems machen?
 
     GOReactionsCoordinator(final Narrator n,
-                           final World world, final AvNowDao nowDao) {
+                           final World world, final TimeTaker timeTaker) {
         this.world = world;
-        this.nowDao = nowDao;
+        this.timeTaker = timeTaker;
         this.n = n;
     }
 
@@ -206,7 +207,7 @@ public class GOReactionsCoordinator
         //  "Plitsch platsch" Frosch-Reactions.
         //  Die verschiedeenen Responder könnten also eine "Initiative" o.Ä. haben.
 
-        final AvDateTime reactionsStartTime = nowDao.now();
+        final AvDateTime reactionsStartTime = timeTaker.now();
         AvDateTime timeAfterAllReactions = reactionsStartTime;
 
         final Narration.NarrationSource narrationSourceBefore = n.getNarrationSourceJustInCase();
@@ -215,18 +216,18 @@ public class GOReactionsCoordinator
 
             for (final IResponder responder : respondersToReaction) {
                 // All reactions start at the same time.
-                nowDao.setNow(reactionsStartTime);
+                timeTaker.setNow(reactionsStartTime);
 
                 if (condition.test(responder)) {
                     final R reactionsComp = (R) responder.reactionsComp();
                     narrateAndDoReaction.accept(reactionsComp);
-                    timeAfterAllReactions = latest(timeAfterAllReactions, nowDao.now());
+                    timeAfterAllReactions = latest(timeAfterAllReactions, timeTaker.now());
                 }
             }
         } finally {
             n.setNarrationSourceJustInCase(narrationSourceBefore);
 
-            nowDao.setNow(timeAfterAllReactions);
+            timeTaker.setNow(timeAfterAllReactions);
         }
     }
 }

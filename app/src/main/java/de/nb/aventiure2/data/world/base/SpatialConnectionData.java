@@ -4,9 +4,9 @@ import androidx.annotation.NonNull;
 
 import java.util.function.Supplier;
 
+import de.nb.aventiure2.data.time.AvTimeSpan;
 import de.nb.aventiure2.data.world.syscomp.spatialconnection.ISpatiallyConnectedGO;
 import de.nb.aventiure2.data.world.syscomp.storingplace.ILocationGO;
-import de.nb.aventiure2.data.world.time.*;
 import de.nb.aventiure2.german.description.TimedDescription;
 import de.nb.aventiure2.german.praedikat.AbstractAdverbialeAngabe;
 import de.nb.aventiure2.german.praedikat.AdverbialeAngabeSkopusVerbAllg;
@@ -27,14 +27,14 @@ public class SpatialConnectionData {
      * {@link ISpatiallyConnectedGO}s
      * nicht mehr als zweimal auftritt.
      */
-    final String wo;
+    private final String wo;
     /**
      * Standard-Dauer für die Bewegung: Bewegungszeit eines Menschen (wie des SC), der sich
      * auskennt, tagsüber.
      */
-    final AvTimeSpan standardDuration;
-    final Supplier<String> actionNameProvider;
-    final SCMoveDescriptionProvider scMoveDescriptionProvider;
+    private final AvTimeSpan standardDuration;
+    private final Supplier<String> actionNameProvider;
+    private final SCMoveDescriptionProvider scMoveDescriptionProvider;
 
     public static SpatialConnectionData conData(
             final String wo,
@@ -66,7 +66,7 @@ public class SpatialConnectionData {
         );
     }
 
-    SpatialConnectionData(
+    private SpatialConnectionData(
             final String wo,
             final Supplier<String> actionNameProvider,
             final AvTimeSpan standardDuration,
@@ -77,15 +77,15 @@ public class SpatialConnectionData {
         this.scMoveDescriptionProvider = scMoveDescriptionProvider;
     }
 
-    public String getActionName() {
+    String getActionName() {
         return actionNameProvider.get();
     }
 
-    public AvTimeSpan getStandardDuration() {
+    AvTimeSpan getStandardDuration() {
         return standardDuration;
     }
 
-    public AbstractAdverbialeAngabe getWoAdvAngabe() {
+    AbstractAdverbialeAngabe getWoAdvAngabe() {
         return new AdverbialeAngabeSkopusVerbAllg(getWo());
     }
 
@@ -93,7 +93,7 @@ public class SpatialConnectionData {
         return wo;
     }
 
-    public SCMoveDescriptionProvider getSCMoveDescriptionProvider() {
+    SCMoveDescriptionProvider getSCMoveDescriptionProvider() {
         return scMoveDescriptionProvider;
     }
 

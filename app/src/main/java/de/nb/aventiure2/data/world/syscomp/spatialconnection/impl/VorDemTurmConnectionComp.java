@@ -11,6 +11,7 @@ import javax.annotation.ParametersAreNonnullByDefault;
 
 import de.nb.aventiure2.data.database.AvDatabase;
 import de.nb.aventiure2.data.narration.Narrator;
+import de.nb.aventiure2.data.time.TimeTaker;
 import de.nb.aventiure2.data.world.base.GameObjectId;
 import de.nb.aventiure2.data.world.base.Known;
 import de.nb.aventiure2.data.world.base.Lichtverhaeltnisse;
@@ -21,9 +22,10 @@ import de.nb.aventiure2.data.world.syscomp.state.IHasStateGO;
 import de.nb.aventiure2.data.world.syscomp.state.impl.RapunzelState;
 import de.nb.aventiure2.german.description.TimedDescription;
 
+import static de.nb.aventiure2.data.time.AvTimeSpan.mins;
+import static de.nb.aventiure2.data.time.AvTimeSpan.secs;
 import static de.nb.aventiure2.data.world.base.SpatialConnection.con;
 import static de.nb.aventiure2.data.world.gameobject.World.*;
-import static de.nb.aventiure2.data.world.time.AvTimeSpan.*;
 import static de.nb.aventiure2.german.base.StructuralElement.PARAGRAPH;
 import static de.nb.aventiure2.german.base.StructuralElement.SENTENCE;
 import static de.nb.aventiure2.german.description.DescriptionBuilder.du;
@@ -40,9 +42,9 @@ public class VorDemTurmConnectionComp extends AbstractSpatialConnectionComp {
             "VorDemTurmConnectionComp_AlterTurm_Umrundet";
 
     public VorDemTurmConnectionComp(
-            final AvDatabase db,
+            final AvDatabase db, final TimeTaker timeTaker,
             final Narrator n, final World world) {
-        super(VOR_DEM_ALTEN_TURM, db, n, world);
+        super(VOR_DEM_ALTEN_TURM, db, timeTaker, n, world);
     }
 
     @Override

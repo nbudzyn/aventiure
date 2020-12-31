@@ -4,8 +4,8 @@ import androidx.annotation.Nullable;
 
 import java.util.Objects;
 
+import de.nb.aventiure2.data.time.AvTimeSpan;
 import de.nb.aventiure2.data.world.base.IGameObject;
-import de.nb.aventiure2.data.world.time.AvTimeSpan;
 
 /**
  * Node datastructure for the A* pathfinding algorithm

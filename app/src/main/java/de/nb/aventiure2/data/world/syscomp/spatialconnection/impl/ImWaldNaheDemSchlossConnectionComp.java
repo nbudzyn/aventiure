@@ -10,6 +10,8 @@ import javax.annotation.ParametersAreNonnullByDefault;
 
 import de.nb.aventiure2.data.database.AvDatabase;
 import de.nb.aventiure2.data.narration.Narrator;
+import de.nb.aventiure2.data.time.AvTimeSpan;
+import de.nb.aventiure2.data.time.TimeTaker;
 import de.nb.aventiure2.data.world.base.GameObjectId;
 import de.nb.aventiure2.data.world.base.Known;
 import de.nb.aventiure2.data.world.base.Lichtverhaeltnisse;
@@ -20,9 +22,10 @@ import de.nb.aventiure2.data.world.syscomp.spatialconnection.AbstractSpatialConn
 import de.nb.aventiure2.data.world.syscomp.state.IHasStateGO;
 import de.nb.aventiure2.data.world.syscomp.state.impl.FroschprinzState;
 import de.nb.aventiure2.data.world.syscomp.state.impl.SchlossfestState;
-import de.nb.aventiure2.data.world.time.*;
 import de.nb.aventiure2.german.description.TimedDescription;
 
+import static de.nb.aventiure2.data.time.AvTimeSpan.mins;
+import static de.nb.aventiure2.data.time.Tageszeit.TAGSUEBER;
 import static de.nb.aventiure2.data.world.base.Known.KNOWN_FROM_DARKNESS;
 import static de.nb.aventiure2.data.world.base.Known.UNKNOWN;
 import static de.nb.aventiure2.data.world.base.Lichtverhaeltnisse.DUNKEL;
@@ -30,8 +33,6 @@ import static de.nb.aventiure2.data.world.base.Lichtverhaeltnisse.HELL;
 import static de.nb.aventiure2.data.world.base.SpatialConnection.con;
 import static de.nb.aventiure2.data.world.gameobject.World.*;
 import static de.nb.aventiure2.data.world.syscomp.state.impl.SchlossfestState.BEGONNEN;
-import static de.nb.aventiure2.data.world.time.AvTimeSpan.*;
-import static de.nb.aventiure2.data.world.time.Tageszeit.*;
 import static de.nb.aventiure2.german.base.StructuralElement.PARAGRAPH;
 import static de.nb.aventiure2.german.base.StructuralElement.SENTENCE;
 import static de.nb.aventiure2.german.description.DescriptionBuilder.du;
@@ -46,8 +47,9 @@ import static de.nb.aventiure2.german.description.DescriptionBuilder.neuerSatz;
 public class ImWaldNaheDemSchlossConnectionComp extends AbstractSpatialConnectionComp {
     public ImWaldNaheDemSchlossConnectionComp(
             final AvDatabase db,
+            final TimeTaker timeTaker,
             final Narrator n, final World world) {
-        super(IM_WALD_NAHE_DEM_SCHLOSS, db, n, world);
+        super(IM_WALD_NAHE_DEM_SCHLOSS, db, timeTaker, n, world);
     }
 
     @Override
@@ -108,7 +110,7 @@ public class ImWaldNaheDemSchlossConnectionComp extends AbstractSpatialConnectio
     private TimedDescription<?>
     getDescTo_DraussenVorDemSchloss_KeinFest(
             final Lichtverhaeltnisse lichtverhaeltnisse) {
-        if (db.nowDao().now().getTageszeit() == TAGSUEBER) {
+        if (timeTaker.now().getTageszeit() == TAGSUEBER) {
             return du("erreichst", "bald das helle "
                     + "Tageslicht, in dem der Schlossgarten "
                     + "liegt", "bald", mins(10))

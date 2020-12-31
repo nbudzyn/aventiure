@@ -13,6 +13,7 @@ import org.jetbrains.annotations.Contract;
 import java.util.List;
 
 import de.nb.aventiure2.data.narration.Narrator;
+import de.nb.aventiure2.data.time.TimeTaker;
 import de.nb.aventiure2.data.world.base.GameObject;
 import de.nb.aventiure2.data.world.base.IGameObject;
 import de.nb.aventiure2.data.world.base.Known;
@@ -31,7 +32,6 @@ import de.nb.aventiure2.data.world.syscomp.spatialconnection.NumberOfWays;
 import de.nb.aventiure2.data.world.syscomp.state.IHasStateGO;
 import de.nb.aventiure2.data.world.syscomp.state.impl.SchlossfestState;
 import de.nb.aventiure2.data.world.syscomp.storingplace.ILocationGO;
-import de.nb.aventiure2.data.world.time.*;
 import de.nb.aventiure2.german.base.GermanUtil;
 import de.nb.aventiure2.german.base.StructuralElement;
 import de.nb.aventiure2.german.description.AbstractDuDescription;
@@ -40,6 +40,8 @@ import de.nb.aventiure2.scaction.AbstractScAction;
 import de.nb.aventiure2.scaction.stepcount.SCActionStepCountDao;
 
 import static com.google.common.collect.ImmutableList.builder;
+import static de.nb.aventiure2.data.time.AvTimeSpan.mins;
+import static de.nb.aventiure2.data.time.AvTimeSpan.secs;
 import static de.nb.aventiure2.data.world.base.Lichtverhaeltnisse.HELL;
 import static de.nb.aventiure2.data.world.base.SpatialConnection.con;
 import static de.nb.aventiure2.data.world.gameobject.World.*;
@@ -47,7 +49,6 @@ import static de.nb.aventiure2.data.world.syscomp.memory.Action.Type.BEWEGEN;
 import static de.nb.aventiure2.data.world.syscomp.spatialconnection.NumberOfWays.ONE_IN_ONE_OUT;
 import static de.nb.aventiure2.data.world.syscomp.spatialconnection.NumberOfWays.ONLY_WAY;
 import static de.nb.aventiure2.data.world.syscomp.state.impl.SchlossfestState.BEGONNEN;
-import static de.nb.aventiure2.data.world.time.AvTimeSpan.*;
 import static de.nb.aventiure2.german.base.GermanUtil.buildAufzaehlung;
 import static de.nb.aventiure2.german.base.GermanUtil.capitalize;
 import static de.nb.aventiure2.german.base.StructuralElement.PARAGRAPH;
@@ -80,7 +81,7 @@ public class BewegenAction<LOC_DESC extends ILocatableGO & IDescribableGO>
 
     public static ImmutableList<AbstractScAction> buildActions(
             final SCActionStepCountDao scActionStepCountDao,
-            final AvNowDao nowDao,
+            final TimeTaker timeTaker,
             final CounterDao counterDao,
             final Narrator n,
             final World world,
@@ -91,7 +92,7 @@ public class BewegenAction<LOC_DESC extends ILocatableGO & IDescribableGO>
         //   Richtung gegangen ist? Dann würde man sie heimlich beobachten (nicht überholen!),
         //   wie sie den Turm hinaufsteigt.
         if (location instanceof ISpatiallyConnectedGO) {
-            res.addAll(buildSpatiallyConnectedActions(scActionStepCountDao, nowDao, counterDao,
+            res.addAll(buildSpatiallyConnectedActions(scActionStepCountDao, timeTaker, counterDao,
                     n, world,
                     (ILocationGO & ISpatiallyConnectedGO) location));
         }
@@ -102,7 +103,7 @@ public class BewegenAction<LOC_DESC extends ILocatableGO & IDescribableGO>
                     inventoryGO.storingPlaceComp().getSpatialConnectionInData();
             if (inData != null) {
                 res.add(new BewegenAction<>(
-                        scActionStepCountDao, nowDao,
+                        scActionStepCountDao, timeTaker,
                         counterDao, n, world, location,
                         con(inventoryGO.getId(), inData),
                         NumberOfWays.NO_WAY));
@@ -115,7 +116,7 @@ public class BewegenAction<LOC_DESC extends ILocatableGO & IDescribableGO>
             @Nullable final ILocationGO outerLocation =
                     ((ILocatableGO) location).locationComp().getLocation();
             if (outerLocation != null) {
-                res.add(new BewegenAction<>(scActionStepCountDao, nowDao,
+                res.add(new BewegenAction<>(scActionStepCountDao, timeTaker,
                         counterDao, n, world, location,
                         con(outerLocation.getId(), outData),
                         NumberOfWays.NO_WAY));
@@ -128,7 +129,7 @@ public class BewegenAction<LOC_DESC extends ILocatableGO & IDescribableGO>
     private static <LOC extends ILocationGO & ISpatiallyConnectedGO>
     ImmutableList<AbstractScAction> buildSpatiallyConnectedActions(
             final SCActionStepCountDao scActionStepCountDao,
-            final AvNowDao nowDao,
+            final TimeTaker nowDao,
             final CounterDao counterDao,
             final Narrator n,
             final World world,
@@ -154,13 +155,13 @@ public class BewegenAction<LOC_DESC extends ILocatableGO & IDescribableGO>
      */
     @VisibleForTesting
     BewegenAction(final SCActionStepCountDao scActionStepCountDao,
-                  final AvNowDao nowDao,
+                  final TimeTaker timeTaker,
                   final CounterDao counterDao, final Narrator n,
                   final World world,
                   @NonNull final ILocationGO oldLocation,
                   @NonNull final SpatialConnection spatialConnection,
                   final NumberOfWays numberOfWays) {
-        super(scActionStepCountDao, nowDao, n, world);
+        super(scActionStepCountDao, timeTaker, n, world);
         this.counterDao = counterDao;
         this.numberOfWays = numberOfWays;
         this.oldLocation = oldLocation;

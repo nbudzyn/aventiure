@@ -7,6 +7,7 @@ import com.google.common.collect.ImmutableList;
 import java.util.Collection;
 
 import de.nb.aventiure2.data.narration.Narrator;
+import de.nb.aventiure2.data.time.TimeTaker;
 import de.nb.aventiure2.data.world.gameobject.*;
 import de.nb.aventiure2.data.world.gameobject.player.*;
 import de.nb.aventiure2.data.world.syscomp.alive.ILivingBeingGO;
@@ -17,17 +18,17 @@ import de.nb.aventiure2.data.world.syscomp.state.IHasStateGO;
 import de.nb.aventiure2.data.world.syscomp.state.impl.FroschprinzState;
 import de.nb.aventiure2.data.world.syscomp.talking.ITalkerGO;
 import de.nb.aventiure2.data.world.syscomp.talking.impl.FroschprinzTalkingComp;
-import de.nb.aventiure2.data.world.time.*;
 import de.nb.aventiure2.german.description.TimedDescription;
 import de.nb.aventiure2.scaction.AbstractScAction;
 import de.nb.aventiure2.scaction.stepcount.SCActionStepCountDao;
 
+import static de.nb.aventiure2.data.time.AvTimeSpan.mins;
+import static de.nb.aventiure2.data.time.AvTimeSpan.secs;
 import static de.nb.aventiure2.data.world.gameobject.World.*;
 import static de.nb.aventiure2.data.world.syscomp.feelings.Mood.NEUTRAL;
 import static de.nb.aventiure2.data.world.syscomp.feelings.Mood.UNTROESTLICH;
 import static de.nb.aventiure2.data.world.syscomp.state.impl.FroschprinzState.HAT_SC_HILFSBEREIT_ANGESPROCHEN;
 import static de.nb.aventiure2.data.world.syscomp.state.impl.FroschprinzState.UNAUFFAELLIG;
-import static de.nb.aventiure2.data.world.time.AvTimeSpan.*;
 import static de.nb.aventiure2.german.description.DescriptionBuilder.du;
 import static de.nb.aventiure2.german.description.DescriptionBuilder.neuerSatz;
 import static de.nb.aventiure2.german.description.DescriptionBuilder.satzanschluss;
@@ -38,7 +39,7 @@ import static de.nb.aventiure2.german.description.DescriptionBuilder.satzanschlu
 public class HeulenAction extends AbstractScAction {
     public static Collection<HeulenAction> buildActions(
             final SCActionStepCountDao scActionStepCountDao,
-            final AvNowDao nowDao,
+            final TimeTaker timeTaker,
             final Narrator n, final World world,
             final SpielerCharakter sc) {
         final ImmutableList.Builder<HeulenAction> res = ImmutableList.builder();
@@ -49,17 +50,17 @@ public class HeulenAction extends AbstractScAction {
         //  seine goldene Kugel erinnert o.Ä.
 
         if (sc.feelingsComp().hasMood(UNTROESTLICH)) {
-            res.add(new HeulenAction(scActionStepCountDao, nowDao, n, world));
+            res.add(new HeulenAction(scActionStepCountDao, timeTaker, n, world));
         }
 
         return res.build();
     }
 
     private HeulenAction(final SCActionStepCountDao scActionStepCountDao,
-                         final AvNowDao nowDao,
+                         final TimeTaker timeTaker,
                          final Narrator n,
                          final World world) {
-        super(scActionStepCountDao, nowDao, n, world);
+        super(scActionStepCountDao, timeTaker, n, world);
     }
 
     @Override

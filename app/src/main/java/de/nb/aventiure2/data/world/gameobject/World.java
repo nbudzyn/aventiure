@@ -17,6 +17,8 @@ import javax.annotation.Nonnull;
 
 import de.nb.aventiure2.data.database.AvDatabase;
 import de.nb.aventiure2.data.narration.Narrator;
+import de.nb.aventiure2.data.time.AvDateTime;
+import de.nb.aventiure2.data.time.TimeTaker;
 import de.nb.aventiure2.data.world.base.GameObject;
 import de.nb.aventiure2.data.world.base.GameObjectId;
 import de.nb.aventiure2.data.world.base.IGameObject;
@@ -41,14 +43,13 @@ import de.nb.aventiure2.data.world.syscomp.spatialconnection.impl.VorDerHuetteIm
 import de.nb.aventiure2.data.world.syscomp.spatialconnection.system.SpatialConnectionSystem;
 import de.nb.aventiure2.data.world.syscomp.storingplace.ILocationGO;
 import de.nb.aventiure2.data.world.syscomp.storingplace.StoringPlaceType;
-import de.nb.aventiure2.data.world.time.*;
 import de.nb.aventiure2.german.base.Nominalphrase;
 
 import static com.google.common.collect.ImmutableList.toImmutableList;
+import static de.nb.aventiure2.data.time.AvTime.oClock;
 import static de.nb.aventiure2.data.world.syscomp.storingplace.StoringPlaceType.EINE_TASCHE;
 import static de.nb.aventiure2.data.world.syscomp.storingplace.StoringPlaceType.HAENDE;
 import static de.nb.aventiure2.data.world.syscomp.storingplace.StoringPlaceType.TISCH;
-import static de.nb.aventiure2.data.world.time.AvTime.*;
 import static de.nb.aventiure2.german.base.Artikel.Typ.DEF;
 import static de.nb.aventiure2.german.base.Artikel.Typ.INDEF;
 import static de.nb.aventiure2.german.base.Nominalphrase.np;
@@ -129,6 +130,8 @@ public class World {
 
     private final AvDatabase db;
 
+    private final TimeTaker timeTaker;
+
     private final Narrator n;
 
     private GameObjectIdMap all;
@@ -142,11 +145,13 @@ public class World {
 
     private LocationSystem locationSystem;
 
-    public static World getInstance(final AvDatabase db, final Narrator n) {
+    public static World getInstance(final AvDatabase db,
+                                    final TimeTaker timeTaker,
+                                    final Narrator n) {
         if (INSTANCE == null) {
             synchronized (World.class) {
                 if (INSTANCE == null) {
-                    INSTANCE = new World(db, n);
+                    INSTANCE = new World(db, timeTaker, n);
                 }
             }
         }
@@ -159,8 +164,10 @@ public class World {
         INSTANCE = null;
     }
 
-    private World(final AvDatabase db, final Narrator n) {
+    private World(final AvDatabase db, final TimeTaker timeTaker,
+                  final Narrator n) {
         this.db = db;
+        this.timeTaker = timeTaker;
         this.n = n;
     }
 
@@ -188,51 +195,51 @@ public class World {
 
         if (reactionsCoordinator == null) {
             reactionsCoordinator = new GOReactionsCoordinator
-                    (n, this, db.nowDao());
+                    (n, this, timeTaker);
         }
 
-        final SpielerCharakterFactory spieler = new SpielerCharakterFactory(db, n, this);
-        final GeneralObjectFactory object = new GeneralObjectFactory(db, this);
+        final SpielerCharakterFactory spieler = new SpielerCharakterFactory(db, timeTaker, n, this);
+        final GeneralObjectFactory object = new GeneralObjectFactory(db, timeTaker, this);
         final BankAmTischBeimSchlossfestFactory bankAmTischBeimSchlossfest =
-                new BankAmTischBeimSchlossfestFactory(db, this);
+                new BankAmTischBeimSchlossfestFactory(db, timeTaker, this);
         final SchattenDerBaeumeFactory schattenDerBaeume =
-                new SchattenDerBaeumeFactory(db, this);
-        final BettFactory bett = new BettFactory(db, this);
-        final BaumFactory baum = new BaumFactory(db, this);
-        final CreatureFactory creature = new CreatureFactory(db, n, this);
-        final InvisibleFactory invisible = new InvisibleFactory(db, n, this);
-        final MeaningFactory meaning = new MeaningFactory(db, n, this, locationSystem,
+                new SchattenDerBaeumeFactory(db, timeTaker, this);
+        final BettFactory bett = new BettFactory(db, timeTaker, this);
+        final BaumFactory baum = new BaumFactory(db, timeTaker, this);
+        final CreatureFactory creature = new CreatureFactory(db, timeTaker, n, this);
+        final InvisibleFactory invisible = new InvisibleFactory(db, timeTaker, n, this);
+        final MeaningFactory meaning = new MeaningFactory(db, timeTaker, n, this, locationSystem,
                 spatialConnectionSystem);
-        final RoomFactory room = new RoomFactory(db, n, this);
+        final RoomFactory room = new RoomFactory(db, timeTaker, n, this);
         final SimpleConnectionCompFactory connection =
-                new SimpleConnectionCompFactory(db, n, this);
+                new SimpleConnectionCompFactory(db, timeTaker, n, this);
 
         all = new GameObjectIdMap();
         all.putAll(
                 spieler.create(SPIELER_CHARAKTER),
                 room.create(SCHLOSS_VORHALLE, StoringPlaceType.EIN_TISCH,
                         SCHLOSS_VORHALLE_DAUERHAFT_BELEUCHTET,
-                        new SchlossVorhalleConnectionComp(db, n, this)),
+                        new SchlossVorhalleConnectionComp(db, timeTaker, n, this)),
                 room.create(DRAUSSEN_VOR_DEM_SCHLOSS,
                         StoringPlaceType.BODEN_VOR_DEM_SCHLOSS,
                         false,
-                        new DraussenVorDemSchlossConnectionComp(db, n, this)),
+                        new DraussenVorDemSchlossConnectionComp(db, timeTaker, n, this)),
                 room.create(IM_WALD_NAHE_DEM_SCHLOSS, StoringPlaceType.WEG,
                         false,
-                        new ImWaldNaheDemSchlossConnectionComp(db, n, this)),
+                        new ImWaldNaheDemSchlossConnectionComp(db, timeTaker, n, this)),
                 room.create(VOR_DEM_ALTEN_TURM, StoringPlaceType.STEINIGER_GRUND_VOR_TURM,
                         false,
-                        new VorDemTurmConnectionComp(db, n, this)),
+                        new VorDemTurmConnectionComp(db, timeTaker, n, this)),
                 room.create(OBEN_IM_ALTEN_TURM,
                         StoringPlaceType.HOLZDIELEN_OBEN_IM_TURM,
                         false,
-                        new ObenImTurmConnectionComp(db, n, this)),
+                        new ObenImTurmConnectionComp(db, timeTaker, n, this)),
                 room.create(ABZWEIG_IM_WALD, StoringPlaceType.WEG,
                         false,
-                        new AbzweigImWaldConnectionComp(db, n, this)),
+                        new AbzweigImWaldConnectionComp(db, timeTaker, n, this)),
                 room.create(VOR_DER_HUETTE_IM_WALD, StoringPlaceType.ERDBODEN_VOR_DER_HUETTE,
                         false,
-                        new VorDerHuetteImWaldConnectionComp(db, n, this)),
+                        new VorDerHuetteImWaldConnectionComp(db, timeTaker, n, this)),
                 room.create(HUETTE_IM_WALD, StoringPlaceType.HOLZTISCH,
                         false,
                         connection.createHuetteImWald()),
@@ -845,6 +852,13 @@ public class World {
         }
 
         return loadSC().locationComp().hasSameUpperMostLocationAs(gameObject);
+    }
+
+    /**
+     * Setzt den aktuellen Zeitpunkt. Meistens wird man allerdings passTime() verwenden wollen.
+     */
+    public static void setNow(final AvDateTime dateTime) {
+        ;
     }
 
     /**

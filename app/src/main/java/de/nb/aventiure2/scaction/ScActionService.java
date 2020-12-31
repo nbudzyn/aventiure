@@ -13,6 +13,7 @@ import javax.annotation.ParametersAreNonnullByDefault;
 
 import de.nb.aventiure2.data.database.AvDatabase;
 import de.nb.aventiure2.data.narration.Narrator;
+import de.nb.aventiure2.data.time.TimeTaker;
 import de.nb.aventiure2.data.world.base.IGameObject;
 import de.nb.aventiure2.data.world.gameobject.*;
 import de.nb.aventiure2.data.world.gameobject.player.*;
@@ -22,7 +23,6 @@ import de.nb.aventiure2.data.world.syscomp.location.ILocatableGO;
 import de.nb.aventiure2.data.world.syscomp.storingplace.ILocationGO;
 import de.nb.aventiure2.data.world.syscomp.taking.ITakerGO;
 import de.nb.aventiure2.data.world.syscomp.talking.ITalkerGO;
-import de.nb.aventiure2.data.world.time.*;
 import de.nb.aventiure2.scaction.impl.AblegenAction;
 import de.nb.aventiure2.scaction.impl.BewegenAction;
 import de.nb.aventiure2.scaction.impl.EssenAction;
@@ -45,6 +45,7 @@ import static de.nb.aventiure2.data.world.gameobject.World.*;
 @ParametersAreNonnullByDefault
 public class ScActionService {
     private final AvDatabase db;
+    private final TimeTaker timeTaker;
     private final Narrator n;
     private final World world;
 
@@ -54,8 +55,9 @@ public class ScActionService {
     // https://github.com/googlesamples
     public ScActionService(final Context context) {
         db = AvDatabase.getDatabase(context);
-        n = Narrator.getInstance(db);
-        world = World.getInstance(db, n);
+        timeTaker = TimeTaker.getInstance(db);
+        n = Narrator.getInstance(db, timeTaker);
+        world = World.getInstance(db, timeTaker, n);
     }
 
     public <DESC_OBJ extends ILocatableGO & IDescribableGO,
@@ -96,10 +98,10 @@ public class ScActionService {
         }
 
         if (!spielerCharakter.talkingComp().isInConversation()) {
-            res.addAll(buildInventoryActions(db.scActionStepCountDao(), db.nowDao(),
+            res.addAll(buildInventoryActions(db.scActionStepCountDao(), timeTaker,
                     wasSCInDenHaendenHat, location,
                     scInventoryLivingBeings));
-            res.addAll(buildInventoryActions(db.scActionStepCountDao(), db.nowDao(),
+            res.addAll(buildInventoryActions(db.scActionStepCountDao(), timeTaker,
                     wasSCInDenHaendenHat, location,
                     scInventoryObjects));
 
@@ -126,22 +128,22 @@ public class ScActionService {
 
         for (final LIV creature : creatures) {
             if (creature instanceof ITalkerGO) {
-                res.addAll(RedenAction.buildActions(db.scActionStepCountDao(), db.nowDao(),
+                res.addAll(RedenAction.buildActions(db.scActionStepCountDao(), timeTaker,
                         n, world, (TALKER) creature));
             }
 
             if (scCanGiveSomthingTo(creature)) {
                 if (!wasSCInDenHaendenHat.isEmpty()) {
                     res.addAll(GebenAction.buildActions(
-                            db.scActionStepCountDao(), db.nowDao(), n, world, (TAKER) creature,
+                            db.scActionStepCountDao(), timeTaker, n, world, (TAKER) creature,
                             wasSCInDenHaendenHat));
                 } else {
                     res.addAll(GebenAction
-                            .buildActions(db.scActionStepCountDao(), db.nowDao(), n, world,
+                            .buildActions(db.scActionStepCountDao(), timeTaker, n, world,
                                     (TAKER) creature,
                                     scInventoryLivingBeings));
                     res.addAll(GebenAction
-                            .buildActions(db.scActionStepCountDao(), db.nowDao(), n, world,
+                            .buildActions(db.scActionStepCountDao(), timeTaker, n, world,
                                     (TAKER) creature,
                                     scInventoryObjects));
                 }
@@ -150,13 +152,14 @@ public class ScActionService {
             if (wasSCInDenHaendenHat.isEmpty() &&
                     !spielerCharakter.talkingComp().isInConversation()) {
                 if (creature.locationComp().isMovable()) {
-                    res.addAll(NehmenAction.buildCreatureActions(db, n, world, creature));
+                    res.addAll(
+                            NehmenAction.buildCreatureActions(db, timeTaker, n, world, creature));
                 }
             }
 
             if (location != null) {
                 res.addAll(WartenAction
-                        .buildActions(db.scActionStepCountDao(), db.nowDao(), n, world, creature,
+                        .buildActions(db.scActionStepCountDao(), timeTaker, n, world, creature,
                                 location));
             }
         }
@@ -171,14 +174,17 @@ public class ScActionService {
         final ImmutableList.Builder<AbstractScAction> res = ImmutableList.builder();
 
         if (!spielerCharakter.talkingComp().isInConversation()) {
-            res.addAll(HeulenAction.buildActions(db.scActionStepCountDao(), db.nowDao(), n, world,
-                    spielerCharakter));
+            res.addAll(
+                    HeulenAction.buildActions(db.scActionStepCountDao(), timeTaker, n, world,
+                            spielerCharakter));
 
             if (wasSCInDenHaendenHat.isEmpty()) {
                 res.addAll(RastenAction
-                        .buildActions(db.scActionStepCountDao(), db.nowDao(), n, world, location));
+                        .buildActions(db.scActionStepCountDao(), timeTaker, n, world,
+                                location));
                 res.addAll(SchlafenAction
-                        .buildActions(db.scActionStepCountDao(), db.nowDao(), n, world, location));
+                        .buildActions(db.scActionStepCountDao(), timeTaker, n, world,
+                                location));
             }
         }
 
@@ -201,7 +207,7 @@ public class ScActionService {
             if (object instanceof ITalkerGO) {
                 if (spielerCharakter.talkingComp().isTalkingTo((TALKER) object) ||
                         !spielerCharakter.talkingComp().isInConversation()) {
-                    res.addAll(RedenAction.buildActions(db.scActionStepCountDao(), db.nowDao(),
+                    res.addAll(RedenAction.buildActions(db.scActionStepCountDao(), timeTaker,
                             n, world, (TALKER) object));
                 }
             }
@@ -209,15 +215,15 @@ public class ScActionService {
             if (scCanGiveSomthingTo(object)) {
                 if (!wasSCInDenHaendenHat.isEmpty()) {
                     res.addAll(GebenAction.buildActions(
-                            db.scActionStepCountDao(), db.nowDao(), n, world, (TAKER) object,
+                            db.scActionStepCountDao(), timeTaker, n, world, (TAKER) object,
                             wasSCInDenHaendenHat));
                 } else {
                     res.addAll(GebenAction
-                            .buildActions(db.scActionStepCountDao(), db.nowDao(), n, world,
+                            .buildActions(db.scActionStepCountDao(), timeTaker, n, world,
                                     (TAKER) object,
                                     scInventoryLivingBeings));
                     res.addAll(GebenAction
-                            .buildActions(db.scActionStepCountDao(), db.nowDao(), n, world,
+                            .buildActions(db.scActionStepCountDao(), timeTaker, n, world,
                                     (TAKER) object,
                                     scInventoryObjects));
                 }
@@ -225,7 +231,7 @@ public class ScActionService {
 
             if (!spielerCharakter.talkingComp().isInConversation()) {
                 if (wasSCInDenHaendenHat.isEmpty() && object.locationComp().isMovable()) {
-                    res.addAll(NehmenAction.buildObjectActions(db, n, world, object));
+                    res.addAll(NehmenAction.buildObjectActions(db, timeTaker, n, world, object));
                 }
             }
         }
@@ -233,7 +239,7 @@ public class ScActionService {
         if (!spielerCharakter.talkingComp().isInConversation()) {
             if (wasSCInDenHaendenHat.isEmpty()) {
                 res.addAll(EssenAction
-                        .buildActions(db.scActionStepCountDao(), db.nowDao(), db.counterDao(),
+                        .buildActions(db.scActionStepCountDao(), timeTaker, db.counterDao(),
                                 n, world, location));
             }
         }
@@ -264,7 +270,7 @@ public class ScActionService {
     private <DESC_OBJ extends IDescribableGO & ILocatableGO>
     ImmutableList<AbstractScAction> buildInventoryActions(
             final SCActionStepCountDao scActionStepCountDao,
-            final AvNowDao nowDao,
+            final TimeTaker timeTaker,
             final List<? extends ILocatableGO> wasSCInDenHaendenHat,
             final @Nullable ILocationGO location,
             final List<DESC_OBJ> inventory) {
@@ -277,10 +283,10 @@ public class ScActionService {
                     // Das inventoryObject könnte auch ein ILivingBeing sein!
                     res.addAll(HochwerfenAction
                             .buildActions(
-                                    db.scActionStepCountDao(), db.nowDao(), db.counterDao(),
+                                    db.scActionStepCountDao(), timeTaker, db.counterDao(),
                                     n, world, location,
                                     inventoryObject));
-                    res.addAll(AblegenAction.buildActions(scActionStepCountDao, nowDao,
+                    res.addAll(AblegenAction.buildActions(scActionStepCountDao, timeTaker,
                             n, world, inventoryObject, location));
                 }
             }
@@ -309,9 +315,9 @@ public class ScActionService {
         final ImmutableList.Builder<AbstractScAction> res = ImmutableList.builder();
 
         res.addAll(RufenAction
-                .buildActions(db.scActionStepCountDao(), db.nowDao(), n, world, location));
+                .buildActions(db.scActionStepCountDao(), timeTaker, n, world, location));
         res.addAll(BewegenAction
-                .buildActions(db.scActionStepCountDao(), db.nowDao(), db.counterDao(),
+                .buildActions(db.scActionStepCountDao(), timeTaker, db.counterDao(),
                         n, world, location));
 
         return res.build();

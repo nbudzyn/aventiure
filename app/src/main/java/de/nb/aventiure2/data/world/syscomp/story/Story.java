@@ -4,6 +4,7 @@ import java.util.EnumSet;
 
 import de.nb.aventiure2.data.database.AvDatabase;
 import de.nb.aventiure2.data.narration.Narrator;
+import de.nb.aventiure2.data.time.TimeTaker;
 import de.nb.aventiure2.data.world.gameobject.*;
 import de.nb.aventiure2.data.world.syscomp.story.impl.FroschkoenigStoryNode;
 import de.nb.aventiure2.data.world.syscomp.story.impl.RapunzelStoryNode;
@@ -20,9 +21,13 @@ public enum Story {
     // IDEA Meine Story als "Front" (analog Dungeon World) betrachten?
 
     FROSCHKOENIG(FroschkoenigStoryNode.class,
-            FroschkoenigStoryNode::checkAndAdvanceIfAppropriate),
+            (db, timeTaker, n, world) -> {
+                return FroschkoenigStoryNode.checkAndAdvanceIfAppropriate(db, n, world);
+            }),
     RAPUNZEL(RapunzelStoryNode.class,
-            RapunzelStoryNode::checkAndAdvanceIfAppropriate);
+            (db, timeTaker, n, world) -> {
+                return RapunzelStoryNode.checkAndAdvanceIfAppropriate(db, timeTaker, n, world);
+            });
 
     // IDEA Märchen zu 3 Act Structures adaptieren? (1. Akt nötig?)
     //  Inciting incident? Spieler bedrohen, dass "seine Welt" gefährdet
@@ -55,7 +60,7 @@ public enum Story {
     interface IStoryAdvancer {
         boolean checkAndAdvanceIfAppropriate(
                 final AvDatabase db,
-                Narrator n,
+                TimeTaker timeTaker, Narrator n,
                 final World world);
     }
 
@@ -82,11 +87,11 @@ public enum Story {
      */
     public static boolean checkAndAdvanceAStoryIfAppropriate(
             final AvDatabase db,
-            final Narrator n,
+            final TimeTaker timeTaker, final Narrator n,
             final World world
     ) {
         for (final Story story : values()) {
-            if (story.checkAndAdvanceIfAppropriate(db, n, world)) {
+            if (story.checkAndAdvanceIfAppropriate(db, timeTaker, n, world)) {
                 return true;
             }
         }
@@ -96,9 +101,9 @@ public enum Story {
 
     private boolean checkAndAdvanceIfAppropriate(
             final AvDatabase db,
-            final Narrator n,
+            final TimeTaker timeTaker, final Narrator n,
             final World world) {
-        return advancer.checkAndAdvanceIfAppropriate(db, n, world);
+        return advancer.checkAndAdvanceIfAppropriate(db, timeTaker, n, world);
     }
 
     public <N extends Enum<N> & IStoryNode> EnumSet<N> getNodes() {

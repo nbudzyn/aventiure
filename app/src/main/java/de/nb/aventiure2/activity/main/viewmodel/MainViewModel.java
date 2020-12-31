@@ -16,6 +16,7 @@ import java.util.stream.Collectors;
 
 import de.nb.aventiure2.data.database.AvDatabase;
 import de.nb.aventiure2.data.narration.Narrator;
+import de.nb.aventiure2.data.time.TimeTaker;
 import de.nb.aventiure2.logger.Logger;
 import de.nb.aventiure2.scaction.AbstractScAction;
 import de.nb.aventiure2.scaction.ScActionService;
@@ -36,6 +37,7 @@ public class MainViewModel extends AndroidViewModel {
 
     private final ScoreService scoreService;
     private final ScActionService scActionService;
+    private final TimeTaker timeTaker;
     private final Narrator n;
     private final AvDatabase db;
 
@@ -47,7 +49,8 @@ public class MainViewModel extends AndroidViewModel {
         // After installing the app, this call also initializes the game and fills the
         // database.
 
-        n = Narrator.getInstance(db);
+        timeTaker = TimeTaker.getInstance(db);
+        n = Narrator.getInstance(db, timeTaker);
 
         scoreService = new ScoreService(application);
         scActionService = new ScActionService(application);
@@ -103,7 +106,8 @@ public class MainViewModel extends AndroidViewModel {
                     break;
                 }
 
-                LOGGER.d("Action: " + playerAction.getName() + " [" + db.nowDao().now() + "]");
+                LOGGER.d("Action: " + playerAction.getName() + " [" +
+                        timeTaker.now() + "]");
                 db.runInTransaction(playerAction::doAndPassTime);
             } catch (final ExpectedActionNotFoundException e) {
                 LOGGER.i(e.getMessage());
@@ -139,8 +143,8 @@ public class MainViewModel extends AndroidViewModel {
                             @WorkerThread
                             @Override
                             public void run() {
-                                LOGGER.d("Action: " + playerAction.getName() + " [" + db.nowDao()
-                                        .now() + "]");
+                                LOGGER.d("Action: " + playerAction.getName() + " [" +
+                                        timeTaker.now() + "]");
                                 db.runInTransaction(playerAction::doAndPassTime);
                                 postLiveDataUpdate();
                             }

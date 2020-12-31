@@ -4,14 +4,14 @@ import androidx.annotation.Nullable;
 
 import org.jetbrains.annotations.Contract;
 
-import de.nb.aventiure2.data.world.gameobject.World;
+import de.nb.aventiure2.data.time.AvTimeSpan;
+import de.nb.aventiure2.data.world.gameobject.*;
 import de.nb.aventiure2.data.world.syscomp.spatialconnection.ISpatiallyConnectedGO;
 import de.nb.aventiure2.data.world.syscomp.spatialconnection.impl.SpatialStandardStep;
 import de.nb.aventiure2.data.world.syscomp.spatialconnection.system.pathfinder.AStarPathfinder;
 import de.nb.aventiure2.data.world.syscomp.storingplace.ILocationGO;
-import de.nb.aventiure2.data.world.time.AvTimeSpan;
 
-import static de.nb.aventiure2.data.world.time.AvTimeSpan.noTime;
+import static de.nb.aventiure2.data.time.AvTimeSpan.noTime;
 
 /**
  * Functionality concerned with spatial connections that might span several game objects.

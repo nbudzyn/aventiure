@@ -10,6 +10,7 @@ import org.jetbrains.annotations.Contract;
 import java.util.Collection;
 
 import de.nb.aventiure2.data.narration.Narrator;
+import de.nb.aventiure2.data.time.TimeTaker;
 import de.nb.aventiure2.data.world.gameobject.*;
 import de.nb.aventiure2.data.world.syscomp.alive.ILivingBeingGO;
 import de.nb.aventiure2.data.world.syscomp.description.IDescribableGO;
@@ -18,7 +19,6 @@ import de.nb.aventiure2.data.world.syscomp.memory.Action;
 import de.nb.aventiure2.data.world.syscomp.state.IHasStateGO;
 import de.nb.aventiure2.data.world.syscomp.state.impl.FroschprinzState;
 import de.nb.aventiure2.data.world.syscomp.storingplace.ILocationGO;
-import de.nb.aventiure2.data.world.time.*;
 import de.nb.aventiure2.german.base.GermanUtil;
 import de.nb.aventiure2.german.base.Personalpronomen;
 import de.nb.aventiure2.german.base.SubstantivischePhrase;
@@ -31,12 +31,12 @@ import de.nb.aventiure2.scaction.AbstractScAction;
 import de.nb.aventiure2.scaction.stepcount.SCActionStepCountDao;
 
 import static com.google.common.base.Preconditions.checkState;
+import static de.nb.aventiure2.data.time.AvTimeSpan.secs;
 import static de.nb.aventiure2.data.world.gameobject.World.*;
 import static de.nb.aventiure2.data.world.syscomp.feelings.Mood.ANGESPANNT;
 import static de.nb.aventiure2.data.world.syscomp.feelings.Mood.NEUTRAL;
 import static de.nb.aventiure2.data.world.syscomp.memory.Action.Type.NEHMEN;
 import static de.nb.aventiure2.data.world.syscomp.state.impl.FroschprinzState.HAT_HOCHHEBEN_GEFORDERT;
-import static de.nb.aventiure2.data.world.time.AvTimeSpan.*;
 import static de.nb.aventiure2.german.base.Konstituente.k;
 import static de.nb.aventiure2.german.base.Numerus.SG;
 import static de.nb.aventiure2.german.base.NumerusGenus.M;
@@ -79,7 +79,7 @@ public class AblegenAction
      */
     public static <GO extends IDescribableGO & ILocatableGO>
     Collection<AblegenAction<GO>> buildActions(final SCActionStepCountDao scActionStepCountDao,
-                                               final AvNowDao nowDao,
+                                               final TimeTaker timeTaker,
                                                final Narrator n, final World world,
                                                final GO gameObject,
                                                final ILocationGO location) {
@@ -89,13 +89,13 @@ public class AblegenAction
 
         final ImmutableList.Builder<AblegenAction<GO>> res = ImmutableList.builder();
         res.add(new AblegenAction<>(
-                scActionStepCountDao, nowDao, n, world, gameObject, location,
+                scActionStepCountDao, timeTaker, n, world, gameObject, location,
                 true));
 
         for (final ILocationGO innerLocation :
                 world.loadDescribableNonLivingLocationRecursiveInventory(location)) {
             // Z.B. "Auf dem Tisch absetzen"
-            res.add(new AblegenAction<>(scActionStepCountDao, nowDao,
+            res.add(new AblegenAction<>(scActionStepCountDao, timeTaker,
                     n, world, gameObject, innerLocation,
                     false));
         }
@@ -103,13 +103,14 @@ public class AblegenAction
         return res.build();
     }
 
-    private AblegenAction(final SCActionStepCountDao scActionStepCountDao, final AvNowDao nowDao,
+    private AblegenAction(final SCActionStepCountDao scActionStepCountDao,
+                          final TimeTaker timeTaker,
                           final Narrator n,
                           final World world,
                           final @NonNull GO gameObject,
                           final ILocationGO location,
                           final boolean detailLocationNecessaryInDescription) {
-        super(scActionStepCountDao, nowDao, n, world);
+        super(scActionStepCountDao, timeTaker, n, world);
         this.location = location;
         this.gameObject = gameObject;
         this.detailLocationNecessaryInDescription = detailLocationNecessaryInDescription;

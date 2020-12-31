@@ -5,6 +5,7 @@ import androidx.annotation.NonNull;
 import javax.annotation.CheckReturnValue;
 
 import de.nb.aventiure2.data.database.AvDatabase;
+import de.nb.aventiure2.data.time.TimeTaker;
 import de.nb.aventiure2.data.world.base.GameObject;
 import de.nb.aventiure2.data.world.base.GameObjectId;
 import de.nb.aventiure2.data.world.base.Known;
@@ -16,10 +17,10 @@ import de.nb.aventiure2.data.world.syscomp.storingplace.StoringPlaceComp;
 import de.nb.aventiure2.german.description.TimedDescription;
 import de.nb.aventiure2.german.praedikat.VerbSubjObj;
 
+import static de.nb.aventiure2.data.time.AvTimeSpan.mins;
 import static de.nb.aventiure2.data.world.base.SpatialConnectionData.conData;
 import static de.nb.aventiure2.data.world.gameobject.World.*;
 import static de.nb.aventiure2.data.world.syscomp.storingplace.StoringPlaceType.NEBEN_SC_AUF_EINER_BANK;
-import static de.nb.aventiure2.data.world.time.AvTimeSpan.*;
 import static de.nb.aventiure2.german.base.Artikel.Typ.INDEF;
 import static de.nb.aventiure2.german.base.Nominalphrase.np;
 import static de.nb.aventiure2.german.base.NumerusGenus.M;
@@ -29,11 +30,14 @@ class BankAmTischBeimSchlossfestFactory {
     private static final String BANK_AM_TISCH_BEIM_SCHLOSSFEST_FACTORY_IN =
             "BankAmTischBeimSchlossfestFactory_In";
     private final AvDatabase db;
+    private final TimeTaker timeTaker;
     private final World world;
 
     BankAmTischBeimSchlossfestFactory(final AvDatabase db,
+                                      final TimeTaker timeTaker,
                                       final World world) {
         this.db = db;
+        this.timeTaker = timeTaker;
         this.world = world;
     }
 
@@ -57,7 +61,7 @@ class BankAmTischBeimSchlossfestFactory {
                 null, null, false);
 
         final StoringPlaceComp storingPlaceComp = new StoringPlaceComp(
-                id, db, NEBEN_SC_AUF_EINER_BANK,
+                id, timeTaker, NEBEN_SC_AUF_EINER_BANK,
                 dauerhaftBeleuchtet,
                 conData("neben einer Bank an einem Tisch",
                         "An einen Tisch setzen",

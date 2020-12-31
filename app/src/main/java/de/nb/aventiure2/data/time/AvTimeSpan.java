@@ -1,4 +1,4 @@
-package de.nb.aventiure2.data.world.time;
+package de.nb.aventiure2.data.time;
 
 import androidx.annotation.NonNull;
 import androidx.room.PrimaryKey;
@@ -11,7 +11,8 @@ import java.util.Objects;
 import javax.annotation.concurrent.Immutable;
 
 import static com.google.common.base.Preconditions.checkArgument;
-import static de.nb.aventiure2.data.world.time.AvTime.*;
+import static de.nb.aventiure2.data.time.AvTime.HOURS_IN_A_DAY;
+import static de.nb.aventiure2.data.time.AvTime.SECS_IN_AN_HOUR;
 
 /**
  * Eine Zeitspanne, immutable
@@ -107,7 +108,7 @@ public class AvTimeSpan {
         return (int) (secs - (getDays() * SECS_IN_AN_HOUR * HOURS_IN_A_DAY)) / SECS_IN_AN_HOUR;
     }
 
-    public long getDays() {
+    private long getDays() {
         return getSecs() / SECS_IN_AN_HOUR / HOURS_IN_A_DAY;
     }
 

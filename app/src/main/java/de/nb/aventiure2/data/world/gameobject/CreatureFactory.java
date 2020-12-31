@@ -10,6 +10,8 @@ import javax.annotation.Nonnull;
 
 import de.nb.aventiure2.data.database.AvDatabase;
 import de.nb.aventiure2.data.narration.Narrator;
+import de.nb.aventiure2.data.time.AvDateTime;
+import de.nb.aventiure2.data.time.TimeTaker;
 import de.nb.aventiure2.data.world.base.GameObject;
 import de.nb.aventiure2.data.world.base.GameObjectId;
 import de.nb.aventiure2.data.world.base.Known;
@@ -57,12 +59,11 @@ import de.nb.aventiure2.data.world.syscomp.talking.ITalkerGO;
 import de.nb.aventiure2.data.world.syscomp.talking.impl.FroschprinzTalkingComp;
 import de.nb.aventiure2.data.world.syscomp.talking.impl.RapunzelTalkingComp;
 import de.nb.aventiure2.data.world.syscomp.talking.impl.RapunzelsZauberinTalkingComp;
-import de.nb.aventiure2.data.world.time.*;
 
+import static de.nb.aventiure2.data.time.AvTime.oClock;
+import static de.nb.aventiure2.data.time.AvTimeSpan.hours;
 import static de.nb.aventiure2.data.world.base.Known.KNOWN_FROM_LIGHT;
 import static de.nb.aventiure2.data.world.gameobject.World.*;
-import static de.nb.aventiure2.data.world.time.AvTime.*;
-import static de.nb.aventiure2.data.world.time.AvTimeSpan.*;
 import static de.nb.aventiure2.german.base.Artikel.Typ.DEF;
 import static de.nb.aventiure2.german.base.Artikel.Typ.INDEF;
 import static de.nb.aventiure2.german.base.Nominalphrase.np;
@@ -73,18 +74,21 @@ import static de.nb.aventiure2.german.base.NumerusGenus.F;
  */
 class CreatureFactory {
     private final AvDatabase db;
+    private final TimeTaker timeTaker;
     private final Narrator n;
     private final World world;
 
-    CreatureFactory(final AvDatabase db, final Narrator n, final World world) {
+    CreatureFactory(final AvDatabase db, final TimeTaker timeTaker,
+                    final Narrator n, final World world) {
         this.db = db;
+        this.timeTaker = timeTaker;
         this.n = n;
         this.world = world;
     }
 
     GameObject createSchlosswache() {
         final SchlosswacheStateComp stateComp =
-                new SchlosswacheStateComp(SCHLOSSWACHE, db, n, world);
+                new SchlosswacheStateComp(SCHLOSSWACHE, db, timeTaker, n, world);
         final AbstractDescriptionComp descriptionComp =
                 new SimpleDescriptionComp(SCHLOSSWACHE,
                         np(F, INDEF,
@@ -105,7 +109,7 @@ class CreatureFactory {
     }
 
     GameObject createFroschprinz() {
-        final FroschprinzStateComp stateComp = new FroschprinzStateComp(db, n, world);
+        final FroschprinzStateComp stateComp = new FroschprinzStateComp(db, timeTaker, n, world);
         final FroschprinzDescriptionComp descriptionComp =
                 new FroschprinzDescriptionComp(stateComp);
         final LocationComp locationComp =
@@ -123,7 +127,7 @@ class CreatureFactory {
     }
 
     GameObject createRapunzel() {
-        final RapunzelStateComp stateComp = new RapunzelStateComp(db, n, world);
+        final RapunzelStateComp stateComp = new RapunzelStateComp(db, timeTaker, n, world);
         final AbstractDescriptionComp descriptionComp =
                 new SimpleDescriptionComp(RAPUNZEL,
                         np(F, INDEF, "wunderschöne junge Frau",
@@ -141,12 +145,12 @@ class CreatureFactory {
         final MenschlicherMuedigkeitsBiorhythmus muedigkeitsBiorhythmus =
                 new MenschlicherMuedigkeitsBiorhythmus();
         final FeelingsComp feelingsComp =
-                new FeelingsComp(RAPUNZEL, db, n,
-                        memoryComp,
+                new FeelingsComp(RAPUNZEL, db, timeTaker, n,
+                        world, memoryComp,
                         Mood.NEUTRAL,
                         muedigkeitsBiorhythmus,
                         MuedigkeitsData.createFromBiorhythmusFuerMenschen(
-                                muedigkeitsBiorhythmus, db.nowDao().now()),
+                                muedigkeitsBiorhythmus, timeTaker.now()),
                         createInitialHungerDataForRapunzel(),
                         hours(6),
                         createDefaultFeelingsTowardsForRapunzel(),
@@ -155,7 +159,7 @@ class CreatureFactory {
                 new RapunzelTalkingComp(db, n, world, stateComp, feelingsComp,
                         false);
         final RapunzelReactionsComp reactionsComp =
-                new RapunzelReactionsComp(db, db.nowDao(), n, world, memoryComp, stateComp,
+                new RapunzelReactionsComp(db, timeTaker, n, world, memoryComp, stateComp,
                         world.getLocationSystem(), locationComp, feelingsComp,
                         talkingComp);
         final RapunzelTakingComp takingComp =
@@ -204,7 +208,8 @@ class CreatureFactory {
     }
 
     GameObject createRapunzelsZauberin() {
-        final RapunzelsZauberinStateComp stateComp = new RapunzelsZauberinStateComp(db, n, world);
+        final RapunzelsZauberinStateComp stateComp =
+                new RapunzelsZauberinStateComp(db, timeTaker, n, world);
         final AbstractDescriptionComp descriptionComp =
                 new SimpleDescriptionComp(RAPUNZELS_ZAUBERIN,
                         np(F, INDEF, "magere Frau mit krummer, bis zum Kinn "
@@ -240,7 +245,7 @@ class CreatureFactory {
                 stateComp,
                 talkingComp,
                 mentalModelComp,
-                new RapunzelsZauberinReactionsComp(db, db.counterDao(), db.nowDao(), n, world,
+                new RapunzelsZauberinReactionsComp(db, db.counterDao(), timeTaker, n, world,
                         stateComp, locationComp, mentalModelComp, movementComp, talkingComp));
     }
 

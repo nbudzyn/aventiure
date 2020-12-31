@@ -21,10 +21,11 @@ import java.util.stream.Collectors;
 import javax.annotation.ParametersAreNonnullByDefault;
 
 import de.nb.aventiure2.data.database.AvDatabase;
+import de.nb.aventiure2.data.time.AvTimeSpan;
+import de.nb.aventiure2.data.time.TimeTaker;
 import de.nb.aventiure2.data.world.base.GameObjectId;
 import de.nb.aventiure2.data.world.base.IGameObject;
 import de.nb.aventiure2.data.world.counter.CounterDao;
-import de.nb.aventiure2.data.world.time.*;
 import de.nb.aventiure2.german.base.Personalpronomen;
 import de.nb.aventiure2.german.base.PhorikKandidat;
 import de.nb.aventiure2.german.base.StructuralElement;
@@ -33,7 +34,7 @@ import de.nb.aventiure2.german.description.AllgDescription;
 import de.nb.aventiure2.german.description.TimedDescription;
 
 import static de.nb.aventiure2.data.narration.Narration.NarrationSource.REACTIONS;
-import static de.nb.aventiure2.data.world.time.AvTimeSpan.*;
+import static de.nb.aventiure2.data.time.AvTimeSpan.noTime;
 import static de.nb.aventiure2.german.description.TimedDescription.toTimed;
 import static java.util.Arrays.asList;
 
@@ -46,17 +47,19 @@ public class Narrator {
     private Narration.NarrationSource narrationSourceJustInCase =
             Narration.NarrationSource.INITIALIZATION;
 
-    private final AvNowDao nowDao;
+    // Better know the TimeTaker
+    private final TimeTaker timeTaker;
 
     private final CounterDao counterDao;
 
     private final NarrationDao dao;
 
-    public static Narrator getInstance(final AvDatabase db) {
+    public static Narrator getInstance(final AvDatabase db,
+                                       final TimeTaker timeTaker) {
         if (INSTANCE == null) {
             synchronized (Narrator.class) {
                 if (INSTANCE == null) {
-                    INSTANCE = new Narrator(db);
+                    INSTANCE = new Narrator(db, timeTaker);
                 }
             }
         }
@@ -69,10 +72,10 @@ public class Narrator {
         INSTANCE = null;
     }
 
-    private Narrator(final AvDatabase db) {
+    private Narrator(final AvDatabase db, final TimeTaker timeTaker) {
         dao = db.narrationDao();
-        nowDao = db.nowDao();
         counterDao = db.counterDao();
+        this.timeTaker = timeTaker;
     }
 
     public void setNarrationSourceJustInCase(
@@ -98,7 +101,6 @@ public class Narrator {
 
         return false;
     }
-
 
     public <D extends AbstractDescription<?>>
     void narrate(final TimedDescription<D> desc) {
@@ -173,7 +175,7 @@ public class Narrator {
     }
 
     private void passTimeAndIncCounter(final TimedDescription<?> timedDescription) {
-        nowDao.passTime(timedDescription.getTimeElapsed());
+        timeTaker.passTime(timedDescription.getTimeElapsed());
         if (timedDescription.getCounterIdIncrementedIfTextIsNarrated() != null) {
             counterDao.inc(timedDescription.getCounterIdIncrementedIfTextIsNarrated());
         }

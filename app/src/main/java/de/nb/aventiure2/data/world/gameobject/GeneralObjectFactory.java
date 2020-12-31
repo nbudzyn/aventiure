@@ -3,6 +3,7 @@ package de.nb.aventiure2.data.world.gameobject;
 import javax.annotation.Nullable;
 
 import de.nb.aventiure2.data.database.AvDatabase;
+import de.nb.aventiure2.data.time.TimeTaker;
 import de.nb.aventiure2.data.world.base.GameObject;
 import de.nb.aventiure2.data.world.base.GameObjectId;
 import de.nb.aventiure2.data.world.syscomp.description.impl.SimpleDescriptionComp;
@@ -14,13 +15,15 @@ import de.nb.aventiure2.german.base.Nominalphrase;
 /**
  * A factory for special {@link GameObject}s: Tangible objects, that might be found somewhere.
  */
-public class GeneralObjectFactory {
+class GeneralObjectFactory {
     private final AvDatabase db;
+    private final TimeTaker timeTaker;
     private final World world;
 
-    GeneralObjectFactory(final AvDatabase db,
+    GeneralObjectFactory(final AvDatabase db, final TimeTaker timeTaker,
                          final World world) {
         this.db = db;
+        this.timeTaker = timeTaker;
         this.world = world;
     }
 
@@ -69,6 +72,6 @@ public class GeneralObjectFactory {
                         shortDescriptionWhenKnown),
                 new LocationComp(id, db, world, initialLocationId, initialLastLocationId,
                         movable),
-                new StoringPlaceComp(id, db, locationMode, dauerhaftBeleuchtet));
+                new StoringPlaceComp(id, timeTaker, locationMode, dauerhaftBeleuchtet));
     }
 }

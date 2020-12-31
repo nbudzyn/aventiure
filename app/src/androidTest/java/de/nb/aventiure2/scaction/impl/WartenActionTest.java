@@ -13,6 +13,7 @@ import org.junit.runners.MethodSorters;
 import java.util.List;
 
 import de.nb.aventiure2.androidtest.AndroidTestBase;
+import de.nb.aventiure2.data.time.AvDateTime;
 import de.nb.aventiure2.data.world.syscomp.alive.ILivingBeingGO;
 import de.nb.aventiure2.data.world.syscomp.description.IDescribableGO;
 import de.nb.aventiure2.data.world.syscomp.location.ILocatableGO;
@@ -20,7 +21,6 @@ import de.nb.aventiure2.data.world.syscomp.movement.IMovingGO;
 import de.nb.aventiure2.data.world.syscomp.state.IHasStateGO;
 import de.nb.aventiure2.data.world.syscomp.state.impl.RapunzelsZauberinState;
 import de.nb.aventiure2.data.world.syscomp.storingplace.ILocationGO;
-import de.nb.aventiure2.data.world.time.*;
 import de.nb.aventiure2.scaction.AbstractScAction;
 
 import static com.google.common.truth.Truth.assertThat;
@@ -82,11 +82,11 @@ public class WartenActionTest extends AndroidTestBase {
         world.loadSC().memoryComp().upgradeKnown(RAPUNZELS_ZAUBERIN);
 
         // WHEN
-        final AvDateTime timeBefore = db.nowDao().now();
+        final AvDateTime timeBefore = timeTaker.now();
 
         doAction(buildWartenActionAufZauberinImSchattenDerBaume());
 
-        final AvDateTime timeAfter = db.nowDao().now();
+        final AvDateTime timeAfter = timeTaker.now();
         // THEN
 
         assertThat(timeAfter.minus(timeBefore).getAsHours()).isAtLeast(3);
@@ -103,14 +103,14 @@ public class WartenActionTest extends AndroidTestBase {
         Z zauberin = (Z) world.load(RAPUNZELS_ZAUBERIN);
         zauberin.locationComp().setLocation(IM_WALD_NAHE_DEM_SCHLOSS);
         zauberin.stateComp().setState(RapunzelsZauberinState.AUF_DEM_WEG_ZU_RAPUNZEL);
-        zauberin.movementComp().startMovement(db.nowDao().now(), VOR_DEM_ALTEN_TURM);
+        zauberin.movementComp().startMovement(timeTaker.now(), VOR_DEM_ALTEN_TURM);
 
         // WHEN
-        final AvDateTime timeBefore = db.nowDao().now();
+        final AvDateTime timeBefore = timeTaker.now();
 
         doAction(buildWartenActionAufZauberinImSchattenDerBaume());
 
-        final AvDateTime timeAfter = db.nowDao().now();
+        final AvDateTime timeAfter = timeTaker.now();
 
         // THEN
         zauberin = (Z) world.load(RAPUNZELS_ZAUBERIN);
@@ -121,7 +121,7 @@ public class WartenActionTest extends AndroidTestBase {
     @NonNull
     private <LIVGO extends IDescribableGO & ILocatableGO & ILivingBeingGO> WartenAction<LIVGO>
     buildWartenActionAufZauberinImSchattenDerBaume() {
-        return new WartenAction<>(db.scActionStepCountDao(), db.nowDao(), n, world,
+        return new WartenAction<>(db.scActionStepCountDao(), timeTaker, n, world,
                 ((LIVGO) world.load(RAPUNZELS_ZAUBERIN)),
                 ((ILocationGO) world.load(VOR_DEM_ALTEN_TURM_SCHATTEN_DER_BAEUME)));
     }
@@ -129,7 +129,7 @@ public class WartenActionTest extends AndroidTestBase {
     private <LIVGO extends IDescribableGO & ILocatableGO & ILivingBeingGO>
     List<WartenAction<LIVGO>> buildWartenActionsImSchattenDerBaeume() {
         return WartenAction.buildActions(
-                db.scActionStepCountDao(), db.nowDao(), n, world,
+                db.scActionStepCountDao(), timeTaker, n, world,
                 (LIVGO) world.load(RAPUNZELS_ZAUBERIN),
                 (ILocationGO) world.load(VOR_DEM_ALTEN_TURM_SCHATTEN_DER_BAEUME));
     }

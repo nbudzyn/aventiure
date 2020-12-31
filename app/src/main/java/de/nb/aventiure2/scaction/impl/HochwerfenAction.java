@@ -9,6 +9,7 @@ import java.util.Collection;
 import javax.annotation.ParametersAreNonnullByDefault;
 
 import de.nb.aventiure2.data.narration.Narrator;
+import de.nb.aventiure2.data.time.TimeTaker;
 import de.nb.aventiure2.data.world.counter.CounterDao;
 import de.nb.aventiure2.data.world.gameobject.*;
 import de.nb.aventiure2.data.world.syscomp.alive.ILivingBeingGO;
@@ -18,7 +19,6 @@ import de.nb.aventiure2.data.world.syscomp.memory.Action;
 import de.nb.aventiure2.data.world.syscomp.state.IHasStateGO;
 import de.nb.aventiure2.data.world.syscomp.state.impl.FroschprinzState;
 import de.nb.aventiure2.data.world.syscomp.storingplace.ILocationGO;
-import de.nb.aventiure2.data.world.time.*;
 import de.nb.aventiure2.german.base.GermanUtil;
 import de.nb.aventiure2.german.base.Nominalphrase;
 import de.nb.aventiure2.german.base.SubstantivischePhrase;
@@ -32,6 +32,8 @@ import de.nb.aventiure2.scaction.stepcount.SCActionStepCountDao;
 
 import static com.google.common.collect.ImmutableList.of;
 import static com.google.common.collect.ImmutableList.toImmutableList;
+import static de.nb.aventiure2.data.time.AvTimeSpan.noTime;
+import static de.nb.aventiure2.data.time.AvTimeSpan.secs;
 import static de.nb.aventiure2.data.world.base.Lichtverhaeltnisse.DUNKEL;
 import static de.nb.aventiure2.data.world.base.Lichtverhaeltnisse.HELL;
 import static de.nb.aventiure2.data.world.gameobject.World.*;
@@ -41,7 +43,6 @@ import static de.nb.aventiure2.data.world.syscomp.state.impl.FroschprinzState.HA
 import static de.nb.aventiure2.data.world.syscomp.state.impl.FroschprinzState.HAT_NACH_BELOHNUNG_GEFRAGT;
 import static de.nb.aventiure2.data.world.syscomp.state.impl.FroschprinzState.HAT_SC_HILFSBEREIT_ANGESPROCHEN;
 import static de.nb.aventiure2.data.world.syscomp.state.impl.FroschprinzState.UNAUFFAELLIG;
-import static de.nb.aventiure2.data.world.time.AvTimeSpan.*;
 import static de.nb.aventiure2.german.base.StructuralElement.PARAGRAPH;
 import static de.nb.aventiure2.german.description.DescriptionBuilder.du;
 import static de.nb.aventiure2.german.description.DescriptionBuilder.neuerSatz;
@@ -65,7 +66,7 @@ public class HochwerfenAction<OBJ extends IDescribableGO & ILocatableGO>
     public static <OBJ extends IDescribableGO & ILocatableGO>
     Collection<HochwerfenAction<OBJ>> buildActions(
             final SCActionStepCountDao scActionStepCountDao,
-            final AvNowDao nowDao,
+            final TimeTaker timeTaker,
             final CounterDao counterDao,
             final Narrator n, final World world,
             final ILocationGO location, @NonNull final OBJ gameObject) {
@@ -73,18 +74,18 @@ public class HochwerfenAction<OBJ extends IDescribableGO & ILocatableGO>
             return of();
         }
 
-        return of(new HochwerfenAction<>(scActionStepCountDao, nowDao, counterDao,
+        return of(new HochwerfenAction<>(scActionStepCountDao, timeTaker, counterDao,
                 n, world, gameObject, location));
     }
 
     private HochwerfenAction(final SCActionStepCountDao scActionStepCountDao,
-                             final AvNowDao nowDao,
+                             final TimeTaker timeTaker,
                              final CounterDao counterDao,
                              final Narrator n,
                              final World world,
                              @NonNull final OBJ object,
                              final ILocationGO location) {
-        super(scActionStepCountDao, nowDao, n, world);
+        super(scActionStepCountDao, timeTaker, n, world);
         this.counterDao = counterDao;
         this.object = object;
         this.location = location;

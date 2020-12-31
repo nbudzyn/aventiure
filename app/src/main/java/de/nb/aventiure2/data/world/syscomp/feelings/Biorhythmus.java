@@ -7,7 +7,8 @@ import com.google.common.base.Function;
 
 import java.util.List;
 
-import de.nb.aventiure2.data.world.time.*;
+import de.nb.aventiure2.data.time.AvTime;
+import de.nb.aventiure2.data.time.AvTimeSpan;
 
 import static com.google.common.base.Preconditions.checkArgument;
 import static java.util.Arrays.asList;

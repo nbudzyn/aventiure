@@ -1,7 +1,7 @@
 package de.nb.aventiure2.data.world.syscomp.feelings;
 
 
-import static de.nb.aventiure2.data.world.time.AvTime.*;
+import static de.nb.aventiure2.data.time.AvTime.oClock;
 
 /**
  * {@link Biorhythmus} für Müdigkeit, wie ihn ein Mensch typischerweise haben könnte.

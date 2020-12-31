@@ -4,17 +4,17 @@ import androidx.annotation.Nullable;
 
 import com.google.common.collect.ImmutableList;
 
+import de.nb.aventiure2.data.time.AvTimeSpan;
 import de.nb.aventiure2.data.world.base.GameObjectId;
 import de.nb.aventiure2.data.world.base.IGameObject;
 import de.nb.aventiure2.data.world.base.SpatialConnection;
-import de.nb.aventiure2.data.world.gameobject.World;
+import de.nb.aventiure2.data.world.gameobject.*;
 import de.nb.aventiure2.data.world.syscomp.spatialconnection.ISpatiallyConnectedGO;
 import de.nb.aventiure2.data.world.syscomp.spatialconnection.impl.SpatialStandardStep;
 import de.nb.aventiure2.data.world.syscomp.storingplace.ILocationGO;
-import de.nb.aventiure2.data.world.time.AvTimeSpan;
 
-import static de.nb.aventiure2.data.world.time.AvTimeSpan.noTime;
-import static de.nb.aventiure2.data.world.time.AvTimeSpan.secs;
+import static de.nb.aventiure2.data.time.AvTimeSpan.noTime;
+import static de.nb.aventiure2.data.time.AvTimeSpan.secs;
 
 public class AStarPathfinder {
     private final World world;
@@ -50,7 +50,7 @@ public class AStarPathfinder {
     }
 
     @Nullable
-    public AStarNode findPath(
+    private AStarNode findPath(
             final ISpatiallyConnectedGO startGO,
             final ILocationGO targetGO) {
         // Based on Ahlquist / Novak: Game Artificial Intelligence

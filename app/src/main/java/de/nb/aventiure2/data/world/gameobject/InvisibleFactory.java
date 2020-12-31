@@ -6,6 +6,7 @@ import javax.annotation.Nonnull;
 
 import de.nb.aventiure2.data.database.AvDatabase;
 import de.nb.aventiure2.data.narration.Narrator;
+import de.nb.aventiure2.data.time.TimeTaker;
 import de.nb.aventiure2.data.world.base.GameObject;
 import de.nb.aventiure2.data.world.base.GameObjectId;
 import de.nb.aventiure2.data.world.syscomp.reaction.IResponder;
@@ -24,23 +25,26 @@ import static de.nb.aventiure2.data.world.gameobject.World.*;
  */
 public class InvisibleFactory {
     private final AvDatabase db;
+    private final TimeTaker timeTaker;
     private final Narrator n;
     private final World world;
 
-    public InvisibleFactory(final AvDatabase db,
-                            final Narrator n,
-                            final World world) {
+    InvisibleFactory(final AvDatabase db,
+                     final TimeTaker timeTaker,
+                     final Narrator n,
+                     final World world) {
         this.db = db;
+        this.timeTaker = timeTaker;
         this.n = n;
         this.world = world;
     }
 
-    public GameObject createTageszeit() {
+    GameObject createTageszeit() {
         return new Tageszeit(db, n, world);
     }
 
-    public GameObject createSchlossfest() {
-        return new Schlossfest(db, n, world);
+    GameObject createSchlossfest() {
+        return new Schlossfest(db, timeTaker, n, world);
     }
 
     @NonNull
@@ -51,7 +55,7 @@ public class InvisibleFactory {
     private static class Tageszeit extends GameObject implements IResponder {
         private final TageszeitReactionsComp reactionsComp;
 
-        public Tageszeit(final AvDatabase db, final Narrator n, final World world) {
+        Tageszeit(final AvDatabase db, final Narrator n, final World world) {
             super(TAGESZEIT);
             // Jede Komponente muss registiert werden!
             reactionsComp = addComponent(new TageszeitReactionsComp(db, n, world));
@@ -69,10 +73,11 @@ public class InvisibleFactory {
         private final AbstractStateComp<SchlossfestState> stateComp;
         private final SchlossfestReactionsComp reactionsComp;
 
-        public Schlossfest(final AvDatabase db, final Narrator n, final World world) {
+        Schlossfest(final AvDatabase db, final TimeTaker timeTaker,
+                    final Narrator n, final World world) {
             super(SCHLOSSFEST);
 
-            stateComp = addComponent(new SchlossfestStateComp(db, n, world));
+            stateComp = addComponent(new SchlossfestStateComp(db, timeTaker, n, world));
             reactionsComp = addComponent(
                     new SchlossfestReactionsComp(db, n, world, stateComp));
         }

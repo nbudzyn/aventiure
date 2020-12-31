@@ -1,7 +1,7 @@
 package de.nb.aventiure2.data.world.syscomp.reaction.interfaces;
 
+import de.nb.aventiure2.data.time.AvDateTime;
 import de.nb.aventiure2.data.world.syscomp.reaction.IReactions;
-import de.nb.aventiure2.data.world.time.*;
 
 /**
  * Reactions to time passing.

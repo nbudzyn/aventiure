@@ -1,4 +1,4 @@
-package de.nb.aventiure2.data.world.time;
+package de.nb.aventiure2.data.time;
 
 import androidx.annotation.NonNull;
 import androidx.room.PrimaryKey;
@@ -9,7 +9,10 @@ import java.util.Objects;
 import javax.annotation.concurrent.Immutable;
 
 import static com.google.common.base.Preconditions.checkState;
-import static de.nb.aventiure2.data.world.time.Tageszeit.*;
+import static de.nb.aventiure2.data.time.Tageszeit.ABENDS;
+import static de.nb.aventiure2.data.time.Tageszeit.MORGENS;
+import static de.nb.aventiure2.data.time.Tageszeit.NACHTS;
+import static de.nb.aventiure2.data.time.Tageszeit.TAGSUEBER;
 
 /**
  * Wertobjekt für eine Uhrzeit in der Spielwelt

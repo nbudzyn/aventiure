@@ -6,6 +6,8 @@ import java.util.Map;
 
 import de.nb.aventiure2.data.database.AvDatabase;
 import de.nb.aventiure2.data.narration.Narrator;
+import de.nb.aventiure2.data.time.AvDateTime;
+import de.nb.aventiure2.data.time.TimeTaker;
 import de.nb.aventiure2.data.world.base.GameObjectId;
 import de.nb.aventiure2.data.world.base.Known;
 import de.nb.aventiure2.data.world.gameobject.*;
@@ -22,42 +24,43 @@ import de.nb.aventiure2.data.world.syscomp.reaction.impl.ScAutomaticReactionsCom
 import de.nb.aventiure2.data.world.syscomp.storingplace.StoringPlaceComp;
 import de.nb.aventiure2.data.world.syscomp.talking.impl.NoSCTalkActionsTalkingComp;
 import de.nb.aventiure2.data.world.syscomp.waiting.WaitingComp;
-import de.nb.aventiure2.data.world.time.*;
 
+import static de.nb.aventiure2.data.time.AvTime.oClock;
+import static de.nb.aventiure2.data.time.AvTimeSpan.hours;
 import static de.nb.aventiure2.data.world.base.Known.KNOWN_FROM_LIGHT;
 import static de.nb.aventiure2.data.world.gameobject.World.*;
 import static de.nb.aventiure2.data.world.syscomp.storingplace.StoringPlaceType.EINE_TASCHE;
-import static de.nb.aventiure2.data.world.time.AvTime.*;
-import static de.nb.aventiure2.data.world.time.AvTimeSpan.*;
 
 /**
  * Der vom Spieler gesteuerte Charakter.
  */
 public class SpielerCharakterFactory {
     private final AvDatabase db;
+    private final TimeTaker timeTaker;
     private final Narrator n;
     private final World world;
 
     public SpielerCharakterFactory(final AvDatabase db,
-                                   final Narrator n,
+                                   final TimeTaker timeTaker, final Narrator n,
                                    final World world) {
         this.db = db;
+        this.timeTaker = timeTaker;
         this.n = n;
         this.world = world;
     }
 
     public SpielerCharakter create(final GameObjectId id) {
-        final WaitingComp waitingComp = new WaitingComp(id, db);
+        final WaitingComp waitingComp = new WaitingComp(id, db, timeTaker);
         final MemoryComp memoryComp =
                 new MemoryComp(id, db, world, world.getLocationSystem(), createKnownMap());
         final MenschlicherMuedigkeitsBiorhythmus muedigkeitsBiorhythmus =
                 new MenschlicherMuedigkeitsBiorhythmus();
-        final FeelingsComp feelingsComp = new FeelingsComp(id, db, n,
-                memoryComp,
+        final FeelingsComp feelingsComp = new FeelingsComp(id, db, timeTaker, n,
+                world, memoryComp,
                 Mood.NEUTRAL,
                 muedigkeitsBiorhythmus,
                 MuedigkeitsData.createFromBiorhythmusFuerMenschen(
-                        muedigkeitsBiorhythmus, db.nowDao().now()),
+                        muedigkeitsBiorhythmus, timeTaker.now()),
                 createInitialHungerData(),
                 hours(6),
                 createDefaultFeelingsTowards(),
@@ -68,12 +71,13 @@ public class SpielerCharakterFactory {
                 false);
         return new SpielerCharakter(id,
                 locationComp,
-                new StoringPlaceComp(id, db, EINE_TASCHE, false),
+                new StoringPlaceComp(id, timeTaker, EINE_TASCHE, false),
                 waitingComp,
                 feelingsComp,
                 memoryComp,
                 new NoSCTalkActionsTalkingComp(SPIELER_CHARAKTER, db, n, world),
-                new ScAutomaticReactionsComp(db, db.nowDao(), n, world, waitingComp, feelingsComp));
+                new ScAutomaticReactionsComp(db, timeTaker, n, world, waitingComp,
+                        feelingsComp));
     }
 
     private static HungerData createInitialHungerData() {

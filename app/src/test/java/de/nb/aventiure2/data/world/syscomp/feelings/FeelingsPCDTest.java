@@ -4,11 +4,12 @@ import androidx.annotation.NonNull;
 
 import org.junit.Test;
 
+import de.nb.aventiure2.data.time.AvDateTime;
+import de.nb.aventiure2.data.time.AvTimeSpan;
 import de.nb.aventiure2.data.world.base.GameObjectId;
-import de.nb.aventiure2.data.world.time.*;
 
 import static com.google.common.truth.Truth.assertThat;
-import static de.nb.aventiure2.data.world.time.AvTimeSpan.*;
+import static de.nb.aventiure2.data.time.AvTimeSpan.mins;
 
 public class FeelingsPCDTest {
     @Test

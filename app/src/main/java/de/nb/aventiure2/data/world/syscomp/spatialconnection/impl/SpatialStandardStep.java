@@ -6,8 +6,8 @@ import org.jetbrains.annotations.Contract;
 
 import java.util.Objects;
 
+import de.nb.aventiure2.data.time.AvTimeSpan;
 import de.nb.aventiure2.data.world.base.GameObjectId;
-import de.nb.aventiure2.data.world.time.AvTimeSpan;
 
 public class SpatialStandardStep {
     @NonNull

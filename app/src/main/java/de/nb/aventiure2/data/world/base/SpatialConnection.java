@@ -4,7 +4,7 @@ import androidx.annotation.NonNull;
 
 import java.util.function.Supplier;
 
-import de.nb.aventiure2.data.world.time.*;
+import de.nb.aventiure2.data.time.AvTimeSpan;
 import de.nb.aventiure2.german.description.TimedDescription;
 import de.nb.aventiure2.german.praedikat.AbstractAdverbialeAngabe;
 

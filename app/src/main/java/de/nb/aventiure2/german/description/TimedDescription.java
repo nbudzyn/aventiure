@@ -10,7 +10,7 @@ import java.util.Objects;
 import javax.annotation.CheckReturnValue;
 import javax.annotation.Nullable;
 
-import de.nb.aventiure2.data.world.time.*;
+import de.nb.aventiure2.data.time.AvTimeSpan;
 import de.nb.aventiure2.german.base.IBezugsobjekt;
 import de.nb.aventiure2.german.base.NumerusGenus;
 import de.nb.aventiure2.german.base.PhorikKandidat;

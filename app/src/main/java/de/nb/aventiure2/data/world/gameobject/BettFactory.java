@@ -5,6 +5,7 @@ import androidx.annotation.NonNull;
 import javax.annotation.CheckReturnValue;
 
 import de.nb.aventiure2.data.database.AvDatabase;
+import de.nb.aventiure2.data.time.TimeTaker;
 import de.nb.aventiure2.data.world.base.GameObject;
 import de.nb.aventiure2.data.world.base.GameObjectId;
 import de.nb.aventiure2.data.world.base.Known;
@@ -14,10 +15,10 @@ import de.nb.aventiure2.data.world.syscomp.location.LocationComp;
 import de.nb.aventiure2.data.world.syscomp.storingplace.StoringPlaceComp;
 import de.nb.aventiure2.german.description.TimedDescription;
 
+import static de.nb.aventiure2.data.time.AvTimeSpan.secs;
 import static de.nb.aventiure2.data.world.base.SpatialConnectionData.conData;
 import static de.nb.aventiure2.data.world.gameobject.World.*;
 import static de.nb.aventiure2.data.world.syscomp.storingplace.StoringPlaceType.ECKE_IM_BETTGESTELL;
-import static de.nb.aventiure2.data.world.time.AvTimeSpan.*;
 import static de.nb.aventiure2.german.base.Artikel.Typ.DEF;
 import static de.nb.aventiure2.german.base.Artikel.Typ.INDEF;
 import static de.nb.aventiure2.german.base.Nominalphrase.np;
@@ -29,11 +30,14 @@ import static de.nb.aventiure2.german.description.DescriptionBuilder.du;
 class BettFactory {
     private static final String BETT__DESC_IN = "Bett__DescIn";
     private final AvDatabase db;
+    private final TimeTaker timeTaker;
     private final World world;
 
     BettFactory(final AvDatabase db,
+                final TimeTaker timeTaker,
                 final World world) {
         this.db = db;
+        this.timeTaker = timeTaker;
         this.world = world;
     }
 
@@ -54,7 +58,7 @@ class BettFactory {
                 null, false);
 
         final StoringPlaceComp storingPlaceComp = new StoringPlaceComp(
-                id, db, ECKE_IM_BETTGESTELL,
+                id, timeTaker, ECKE_IM_BETTGESTELL,
                 false,
                 conData("auf der Bettkante",
                         "In das Bett legen",
@@ -84,7 +88,7 @@ class BettFactory {
                     + "vielen Schritten tut es sehr gut, sich "
                     + "einmal auszustrecken", secs(15), BETT__DESC_IN);
         }
-        
+
         return du("legst", "dich noch einmal in das Holzbett",
                 "noch einmal", secs(15))
                 .undWartest()

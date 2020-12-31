@@ -2,7 +2,7 @@ package de.nb.aventiure2.data.world.syscomp.storingplace;
 
 import javax.annotation.Nullable;
 
-import de.nb.aventiure2.data.database.AvDatabase;
+import de.nb.aventiure2.data.time.TimeTaker;
 import de.nb.aventiure2.data.world.base.AbstractStatelessComponent;
 import de.nb.aventiure2.data.world.base.GameObject;
 import de.nb.aventiure2.data.world.base.GameObjectId;
@@ -17,8 +17,7 @@ import static de.nb.aventiure2.data.world.base.Lichtverhaeltnisse.HELL;
  * (z.B. "auf dem Boden" oder "auf einem Tisch").
  */
 public class StoringPlaceComp extends AbstractStatelessComponent {
-    private final AvDatabase db;
-
+    private final TimeTaker timeTaker;
     private final StoringPlaceType locationMode;
 
     @Nullable
@@ -35,20 +34,20 @@ public class StoringPlaceComp extends AbstractStatelessComponent {
     // FIXME: Ob der Raum "draußen" ist (-> Tageszeiten / Wetterphönomene...)
 
     public StoringPlaceComp(final GameObjectId id,
-                            final AvDatabase db,
+                            final TimeTaker timeTaker,
                             final StoringPlaceType locationMode,
                             final boolean dauerhaftBeleuchtet) {
-        this(id, db, locationMode, dauerhaftBeleuchtet, null, null);
+        this(id, timeTaker, locationMode, dauerhaftBeleuchtet, null, null);
     }
 
     public StoringPlaceComp(final GameObjectId id,
-                            final AvDatabase db,
+                            final TimeTaker timeTaker,
                             final StoringPlaceType locationMode,
                             final boolean dauerhaftBeleuchtet,
                             @Nullable final SpatialConnectionData spatialConnectionInData,
                             @Nullable final SpatialConnectionData spatialConnectionOutData) {
         super(id);
-        this.db = db;
+        this.timeTaker = timeTaker;
         this.locationMode = locationMode;
         this.dauerhaftBeleuchtet = dauerhaftBeleuchtet;
         this.spatialConnectionInData = spatialConnectionInData;
@@ -78,7 +77,7 @@ public class StoringPlaceComp extends AbstractStatelessComponent {
             return HELL;
         }
 
-        return db.nowDao().now().getTageszeit().getLichtverhaeltnisseDraussen();
+        return timeTaker.now().getTageszeit().getLichtverhaeltnisseDraussen();
     }
 
     private boolean isDauerhaftBeleuchtet() {

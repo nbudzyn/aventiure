@@ -3,12 +3,13 @@ package de.nb.aventiure2.data.world.syscomp.waiting;
 import androidx.annotation.NonNull;
 
 import de.nb.aventiure2.data.database.AvDatabase;
+import de.nb.aventiure2.data.time.AvDateTime;
+import de.nb.aventiure2.data.time.TimeTaker;
 import de.nb.aventiure2.data.world.base.AbstractStatefulComponent;
 import de.nb.aventiure2.data.world.base.GameObject;
 import de.nb.aventiure2.data.world.base.GameObjectId;
-import de.nb.aventiure2.data.world.time.*;
 
-import static de.nb.aventiure2.data.world.time.AvTimeSpan.*;
+import static de.nb.aventiure2.data.time.AvTimeSpan.secs;
 
 /**
  * Component for a {@link GameObject}: The game object
@@ -16,23 +17,24 @@ import static de.nb.aventiure2.data.world.time.AvTimeSpan.*;
  */
 public class WaitingComp extends AbstractStatefulComponent<WaitingPCD> {
     @NonNull
-    private final AvNowDao nowDao;
+    private final TimeTaker timeTaker;
 
     @NonNull
     private final AvDateTime initialEndTime;
 
     public WaitingComp(final GameObjectId gameObjectId,
-                       final AvDatabase db) {
+                       final AvDatabase db, final TimeTaker timeTaker) {
         this(gameObjectId, db,
                 // Warten ist schon vorbei
-                new AvDateTime(0, 0, 0));
+                timeTaker, new AvDateTime(0, 0, 0));
     }
 
     private WaitingComp(final GameObjectId gameObjectId,
                         final AvDatabase db,
+                        final TimeTaker timeTaker,
                         final AvDateTime initialEndTime) {
         super(gameObjectId, db.waitingDao());
-        nowDao = db.nowDao();
+        this.timeTaker = timeTaker;
         this.initialEndTime = initialEndTime;
     }
 
@@ -46,7 +48,7 @@ public class WaitingComp extends AbstractStatefulComponent<WaitingPCD> {
     }
 
     public void stopWaiting() {
-        getPcd().setEndTime(nowDao.now().minus(secs(1)));
+        getPcd().setEndTime(timeTaker.now().minus(secs(1)));
     }
 
     public AvDateTime getEndTime() {

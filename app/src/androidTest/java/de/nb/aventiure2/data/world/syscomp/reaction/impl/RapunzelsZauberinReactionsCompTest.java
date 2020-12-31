@@ -8,6 +8,7 @@ import org.junit.runner.RunWith;
 import org.junit.runners.MethodSorters;
 
 import de.nb.aventiure2.androidtest.AndroidTestBase;
+import de.nb.aventiure2.data.time.AvDateTime;
 import de.nb.aventiure2.data.world.base.GameObjectId;
 import de.nb.aventiure2.data.world.syscomp.location.ILocatableGO;
 import de.nb.aventiure2.data.world.syscomp.movement.IMovingGO;
@@ -16,13 +17,12 @@ import de.nb.aventiure2.data.world.syscomp.reaction.interfaces.ITimePassedReacti
 import de.nb.aventiure2.data.world.syscomp.state.IHasStateGO;
 import de.nb.aventiure2.data.world.syscomp.state.impl.RapunzelsZauberinState;
 import de.nb.aventiure2.data.world.syscomp.storingplace.ILocationGO;
-import de.nb.aventiure2.data.world.time.*;
 
 import static com.google.common.truth.Truth.assertThat;
+import static de.nb.aventiure2.data.time.AvTime.oClock;
+import static de.nb.aventiure2.data.time.AvTimeSpan.mins;
 import static de.nb.aventiure2.data.world.gameobject.World.*;
 import static de.nb.aventiure2.data.world.syscomp.state.impl.RapunzelsZauberinState.AUF_DEM_WEG_ZU_RAPUNZEL;
-import static de.nb.aventiure2.data.world.time.AvTime.*;
-import static de.nb.aventiure2.data.world.time.AvTimeSpan.*;
 
 @RunWith(AndroidJUnit4.class)
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
@@ -71,7 +71,7 @@ public class RapunzelsZauberinReactionsCompTest extends AndroidTestBase {
         final Z zauberin = (Z) world.load(RAPUNZELS_ZAUBERIN);
         zauberin.locationComp().setLocation(VOR_DEM_ALTEN_TURM);
         zauberin.movementComp().startMovement(
-                db.nowDao().now(), IM_WALD_NAHE_DEM_SCHLOSS
+                timeTaker.now(), IM_WALD_NAHE_DEM_SCHLOSS
         );
 
         // WHEN
@@ -90,7 +90,7 @@ public class RapunzelsZauberinReactionsCompTest extends AndroidTestBase {
         final Z zauberin = (Z) world.load(RAPUNZELS_ZAUBERIN);
         zauberin.locationComp().setLocation(VOR_DEM_ALTEN_TURM);
         zauberin.movementComp().startMovement(
-                db.nowDao().now(), IM_WALD_NAHE_DEM_SCHLOSS
+                timeTaker.now(), IM_WALD_NAHE_DEM_SCHLOSS
         );
 
         // WHEN
@@ -112,7 +112,7 @@ public class RapunzelsZauberinReactionsCompTest extends AndroidTestBase {
         world.loadSC().locationComp().setLocation(VOR_DER_HUETTE_IM_WALD);
 
         // WHEN
-        final AvDateTime now = db.nowDao().now();
+        final AvDateTime now = timeTaker.now();
         zauberin.movementComp().onTimePassed(now.plus(mins(10)));
 
         // THEN
@@ -129,9 +129,9 @@ public class RapunzelsZauberinReactionsCompTest extends AndroidTestBase {
         zauberin.locationComp().setLocation(ABZWEIG_IM_WALD);
 
         // WHEN
-        final AvDateTime now = db.nowDao().now();
+        final AvDateTime now = timeTaker.now();
         zauberin.movementComp().startMovement(
-                db.nowDao().now(), VOR_DER_HUETTE_IM_WALD
+                timeTaker.now(), VOR_DER_HUETTE_IM_WALD
         );
         zauberin.movementComp().onTimePassed(now.plus(mins(10)));
 
@@ -151,9 +151,9 @@ public class RapunzelsZauberinReactionsCompTest extends AndroidTestBase {
         zauberin.locationComp().setLocation(VOR_DER_HUETTE_IM_WALD);
 
         // WHEN
-        final AvDateTime now = db.nowDao().now();
+        final AvDateTime now = timeTaker.now();
         zauberin.movementComp().startMovement(
-                db.nowDao().now(), ABZWEIG_IM_WALD
+                timeTaker.now(), ABZWEIG_IM_WALD
         );
         zauberin.movementComp().onTimePassed(now.plus(mins(10)));
 
@@ -171,7 +171,7 @@ public class RapunzelsZauberinReactionsCompTest extends AndroidTestBase {
     public <Z extends IResponder & ILocatableGO & IMovingGO & IHasStateGO<RapunzelsZauberinState>>
     void zauberinWartetVorTurm_SCAuchVorTurm__ZauberinGehtBaldWieder() {
         // GIVEN
-        db.nowDao().setNow(new AvDateTime(1, oClock(16)));
+        timeTaker.setNow(new AvDateTime(1, oClock(16)));
         world.loadSC().locationComp().setLocation(VOR_DEM_ALTEN_TURM);
 
         final Z zauberin = (Z) world.load(RAPUNZELS_ZAUBERIN);
@@ -179,7 +179,7 @@ public class RapunzelsZauberinReactionsCompTest extends AndroidTestBase {
         zauberin.locationComp().setLocation(VOR_DEM_ALTEN_TURM);
 
         // WHEN
-        final AvDateTime now = db.nowDao().now();
+        final AvDateTime now = timeTaker.now();
         ((ITimePassedReactions) zauberin.reactionsComp()).onTimePassed(
                 now, now.plus(mins(45)));
 

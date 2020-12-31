@@ -7,11 +7,13 @@ import javax.annotation.ParametersAreNonnullByDefault;
 
 import de.nb.aventiure2.data.narration.IPlayerAction;
 import de.nb.aventiure2.data.narration.Narrator;
+import de.nb.aventiure2.data.time.AvDateTime;
+import de.nb.aventiure2.data.time.AvTimeSpan;
+import de.nb.aventiure2.data.time.TimeTaker;
 import de.nb.aventiure2.data.world.base.GameObjectId;
 import de.nb.aventiure2.data.world.gameobject.*;
 import de.nb.aventiure2.data.world.gameobject.player.*;
 import de.nb.aventiure2.data.world.syscomp.description.IDescribableGO;
-import de.nb.aventiure2.data.world.time.*;
 import de.nb.aventiure2.german.base.Personalpronomen;
 import de.nb.aventiure2.german.base.SubstantivischePhrase;
 import de.nb.aventiure2.german.description.Kohaerenzrelation;
@@ -20,7 +22,7 @@ import de.nb.aventiure2.scaction.stepcount.SCActionStepCountDao;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static de.nb.aventiure2.data.narration.Narration.NarrationSource.REACTIONS;
 import static de.nb.aventiure2.data.narration.Narration.NarrationSource.SC_ACTION;
-import static de.nb.aventiure2.data.world.time.AvTimeSpan.*;
+import static de.nb.aventiure2.data.time.AvTimeSpan.days;
 import static de.nb.aventiure2.german.description.Kohaerenzrelation.DISKONTINUITAET;
 
 /**
@@ -31,7 +33,7 @@ public abstract class AbstractScAction implements IPlayerAction {
     private static final AvTimeSpan MAX_WORLD_TICK = days(1);
 
     private final SCActionStepCountDao scActionStepCountDao;
-    protected AvNowDao nowDao;
+    protected final TimeTaker timeTaker;
     protected final World world;
     protected final Narrator n;
 
@@ -45,10 +47,10 @@ public abstract class AbstractScAction implements IPlayerAction {
     //  Idee dazu: Operationen ("Verbs") in eigene Klassen auslagern
 
     protected AbstractScAction(final SCActionStepCountDao scActionStepCountDao,
-                               final AvNowDao nowDao, final Narrator n,
+                               final TimeTaker timeTaker, final Narrator n,
                                final World world) {
         this.scActionStepCountDao = scActionStepCountDao;
-        this.nowDao = nowDao;
+        this.timeTaker = timeTaker;
         this.world = world;
 
         this.n = n;
@@ -66,7 +68,7 @@ public abstract class AbstractScAction implements IPlayerAction {
      * Aktualisiert dabei auch die Welt.
      */
     public final void doAndPassTime() {
-        final AvDateTime start = nowDao.now();
+        final AvDateTime start = timeTaker.now();
 
         n.setNarrationSourceJustInCase(SC_ACTION);
 
@@ -79,20 +81,21 @@ public abstract class AbstractScAction implements IPlayerAction {
 
         // Jetzt die Zeit zurücksetzen und in der Welt das nachholen,
         // was passiert ist, während der Benutzer gehandelt hat!
-        final AvDateTime until = nowDao.now();
-        nowDao.setNow(start);
+        final AvDateTime until = timeTaker.now();
+        timeTaker.setNow(start);
         updateWorld(until);
 
-        final AvDateTime dateTimeBetweenMainWorldUpdateAndHints = nowDao.now();
+        final AvDateTime dateTimeBetweenMainWorldUpdateAndHints = timeTaker.now();
 
         fireAfterScActionAndFirstWorldUpdate();
 
-        if (nowDao.now().isAfter(dateTimeBetweenMainWorldUpdateAndHints)) {
-            updateWorld(nowDao.now());
+        if (timeTaker.now().isAfter(dateTimeBetweenMainWorldUpdateAndHints)) {
+            updateWorld(timeTaker.now());
         }
 
         world.saveAll(true);
         n.saveAll();
+        timeTaker.save();
     }
 
     private void fireScActionDone(final AvDateTime startTimeOfScAction) {
@@ -102,31 +105,31 @@ public abstract class AbstractScAction implements IPlayerAction {
     private void updateWorld(final AvDateTime until) {
         checkNotNull(until, "now is null");
 
-        if (nowDao.now().isEqualOrAfter(until)) {
+        if (timeTaker.now().isEqualOrAfter(until)) {
             return;
         }
 
-        while (until.minus(nowDao.now()).longerThan(MAX_WORLD_TICK)) {
-            final AvDateTime endOfTick = nowDao.now().plus(MAX_WORLD_TICK);
-            world.narrateAndDoReactions().onTimePassed(nowDao.now(), endOfTick);
+        while (until.minus(timeTaker.now()).longerThan(MAX_WORLD_TICK)) {
+            final AvDateTime endOfTick = timeTaker.now().plus(MAX_WORLD_TICK);
+            world.narrateAndDoReactions().onTimePassed(timeTaker.now(), endOfTick);
 
-            nowDao.setNow(endOfTick);
+            timeTaker.setNow(endOfTick);
         }
 
-        world.narrateAndDoReactions().onTimePassed(nowDao.now(), until);
+        world.narrateAndDoReactions().onTimePassed(timeTaker.now(), until);
 
-        final AvDateTime timeAfterReactions = nowDao.now();
+        final AvDateTime timeAfterReactions = timeTaker.now();
         if (timeAfterReactions.isAfter(until)) {
             // Sonderfall! Einzelne Game Objects haben Aktionen begonnen, die
             // Zusatzzeit gebraucht haben.
             // Dann lassen wir diese "Zusatzzeit" auch offiziell hier vergehen, so dass
             // jedes Game Object darauf reagieren kann.
             // (Rekursiv möglich.)
-            nowDao.setNow(until);
+            timeTaker.setNow(until);
 
             updateWorld(timeAfterReactions);
         } else {
-            nowDao.setNow(until);
+            timeTaker.setNow(until);
         }
     }
 

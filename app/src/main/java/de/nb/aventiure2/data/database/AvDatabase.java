@@ -22,6 +22,11 @@ import de.nb.aventiure2.data.narration.NarrationDao;
 import de.nb.aventiure2.data.narration.NarrationSourceConverters;
 import de.nb.aventiure2.data.narration.Narrator;
 import de.nb.aventiure2.data.narration.StructuralElementConverters;
+import de.nb.aventiure2.data.time.AvDateTimeConverters;
+import de.nb.aventiure2.data.time.AvNowDao;
+import de.nb.aventiure2.data.time.AvTimeSpanConverters;
+import de.nb.aventiure2.data.time.NowEntity;
+import de.nb.aventiure2.data.time.TimeTaker;
 import de.nb.aventiure2.data.world.base.GameObjectIdConverters;
 import de.nb.aventiure2.data.world.counter.Counter;
 import de.nb.aventiure2.data.world.counter.CounterDao;
@@ -58,20 +63,18 @@ import de.nb.aventiure2.data.world.syscomp.talking.TalkingDao;
 import de.nb.aventiure2.data.world.syscomp.talking.TalkingPCD;
 import de.nb.aventiure2.data.world.syscomp.waiting.WaitingDao;
 import de.nb.aventiure2.data.world.syscomp.waiting.WaitingPCD;
-import de.nb.aventiure2.data.world.time.*;
 import de.nb.aventiure2.german.base.NumerusGenusConverters;
 import de.nb.aventiure2.german.base.StructuralElement;
 import de.nb.aventiure2.scaction.stepcount.SCActionStepCount;
 import de.nb.aventiure2.scaction.stepcount.SCActionStepCountDao;
 
 import static de.nb.aventiure2.data.world.gameobject.World.*;
-import static de.nb.aventiure2.data.world.time.AvTime.*;
 
 @Database(entities = {
         Counter.class,
         Narration.class,
-        AvNow.class,
         SCActionStepCount.class,
+        NowEntity.class,
         StatePCD.class,
         WaitingPCD.class,
         MovementPCD.class,
@@ -158,12 +161,12 @@ public abstract class AvDatabase extends RoomDatabase {
 
                         // Set date and time in the game
                         INSTANCE.scActionStepCountDao().resetStepCount();
-                        INSTANCE.nowDao().setNow(
-                                1, oClock(14, 30));
 
-                        final Narrator narrator = Narrator.getInstance(INSTANCE);
+                        final TimeTaker timeTaker = TimeTaker.getInstance(INSTANCE);
+                        timeTaker.saveInitialState();
 
-                        final World world = World.getInstance(INSTANCE, narrator);
+                        final Narrator narrator = Narrator.getInstance(INSTANCE, timeTaker);
+                        final World world = World.getInstance(INSTANCE, timeTaker, narrator);
                         world.saveAllInitialState();
 
                         narrator.saveInitialNarration(buildInitialNarration(world));
@@ -174,17 +177,6 @@ public abstract class AvDatabase extends RoomDatabase {
     public static void setInMemory(final boolean inMemory) {
         AvDatabase.inMemory = inMemory;
     }
-
-    /*
-    public static void resetDatabase(Context context) {
-        if (!inMemory) {
-            throw new IllegalStateException(
-                    "Resetting non-in-memory database? Why would you do that?");
-        }
-        context.deleteDatabase(DATABASE_NAME);
-        ...
-    }
-    */
 
     /**
      * @return Something similar to <code>Du befindest dich in einem Schloss. Hier liegt eine goldene Kugel.</code>
@@ -266,7 +258,7 @@ public abstract class AvDatabase extends RoomDatabase {
                         if (INSTANCE.nowDao().now() == null) {
                             try {
                                 Thread.sleep(5000);
-                            } catch (final InterruptedException e) {
+                            } catch (final InterruptedException e1) {
                                 Thread.currentThread().interrupt();
                             }
 

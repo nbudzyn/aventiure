@@ -4,11 +4,12 @@ import androidx.annotation.NonNull;
 
 import de.nb.aventiure2.data.database.AvDatabase;
 import de.nb.aventiure2.data.narration.Narrator;
+import de.nb.aventiure2.data.time.AvDateTime;
+import de.nb.aventiure2.data.time.TimeTaker;
 import de.nb.aventiure2.data.world.base.AbstractStatefulComponent;
 import de.nb.aventiure2.data.world.base.GameObject;
 import de.nb.aventiure2.data.world.base.GameObjectId;
 import de.nb.aventiure2.data.world.gameobject.*;
-import de.nb.aventiure2.data.world.time.*;
 
 /**
  * Component für ein {@link GameObject}: Das Game Object hat einen Zustand (der sich
@@ -16,31 +17,30 @@ import de.nb.aventiure2.data.world.time.*;
  */
 public abstract class AbstractStateComp<S extends Enum<S>>
         extends AbstractStatefulComponent<StatePCD> {
+    private final TimeTaker timeTaker;
     protected final Narrator n;
+
 
     protected final World world;
 
     private final Class<S> stateEnumClass;
     private final S initialState;
 
-    private final AvNowDao nowDao;
-
     /**
      * Constructor for a {@link AbstractStateComp}.
      */
     protected AbstractStateComp(final GameObjectId gameObjectId,
                                 final AvDatabase db,
-                                final Narrator n,
+                                final TimeTaker timeTaker, final Narrator n,
                                 final World world,
                                 final Class<S> stateEnumClass,
                                 final S initialState) {
         super(gameObjectId, db.stateDao());
+        this.timeTaker = timeTaker;
         this.n = n;
         this.world = world;
         this.stateEnumClass = stateEnumClass;
         this.initialState = initialState;
-
-        nowDao = db.nowDao();
     }
 
     @Override
@@ -49,7 +49,7 @@ public abstract class AbstractStateComp<S extends Enum<S>>
         return new StatePCD(
                 getGameObjectId(),
                 toString(initialState),
-                nowDao.now());
+                timeTaker.now());
     }
 
     @SafeVarargs
@@ -86,7 +86,7 @@ public abstract class AbstractStateComp<S extends Enum<S>>
         }
 
         getPcd().setState(toString(state));
-        getPcd().setStateDateTime(nowDao.now());
+        getPcd().setStateDateTime(timeTaker.now());
     }
 
     public AvDateTime getStateDateTime() {

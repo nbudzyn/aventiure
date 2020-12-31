@@ -9,21 +9,25 @@ import com.google.common.collect.ImmutableList;
 import java.util.Collection;
 
 import de.nb.aventiure2.data.narration.Narrator;
+import de.nb.aventiure2.data.time.AvDateTime;
+import de.nb.aventiure2.data.time.AvTimeSpan;
+import de.nb.aventiure2.data.time.TimeTaker;
 import de.nb.aventiure2.data.world.base.IGameObject;
 import de.nb.aventiure2.data.world.gameobject.*;
 import de.nb.aventiure2.data.world.syscomp.feelings.FeelingIntensity;
 import de.nb.aventiure2.data.world.syscomp.memory.Action;
-import de.nb.aventiure2.data.world.time.*;
 import de.nb.aventiure2.german.description.AbstractDescription;
 import de.nb.aventiure2.german.description.TimedDescription;
 import de.nb.aventiure2.scaction.AbstractScAction;
 import de.nb.aventiure2.scaction.stepcount.SCActionStepCountDao;
 
+import static de.nb.aventiure2.data.time.AvTime.oClock;
+import static de.nb.aventiure2.data.time.AvTimeSpan.hours;
+import static de.nb.aventiure2.data.time.AvTimeSpan.mins;
+import static de.nb.aventiure2.data.time.AvTimeSpan.noTime;
 import static de.nb.aventiure2.data.world.gameobject.World.*;
 import static de.nb.aventiure2.data.world.syscomp.feelings.Mood.BEWEGT;
 import static de.nb.aventiure2.data.world.syscomp.feelings.Mood.NEUTRAL;
-import static de.nb.aventiure2.data.world.time.AvTime.*;
-import static de.nb.aventiure2.data.world.time.AvTimeSpan.*;
 import static de.nb.aventiure2.german.base.StructuralElement.CHAPTER;
 import static de.nb.aventiure2.german.base.StructuralElement.SENTENCE;
 import static de.nb.aventiure2.german.description.DescriptionBuilder.du;
@@ -35,21 +39,21 @@ import static de.nb.aventiure2.german.description.DescriptionBuilder.neuerSatz;
 public class SchlafenAction extends AbstractScAction {
     public static Collection<SchlafenAction> buildActions(
             final SCActionStepCountDao scActionStepCountDao,
-            final AvNowDao nowDao,
+            final TimeTaker timeTaker,
             final Narrator n, final World world,
             @Nullable final IGameObject location) {
         final ImmutableList.Builder<SchlafenAction> res = ImmutableList.builder();
         if (location != null && location.is(BETT_IN_DER_HUETTE_IM_WALD)) {
-            res.add(new SchlafenAction(scActionStepCountDao, nowDao, n, world));
+            res.add(new SchlafenAction(scActionStepCountDao, timeTaker, n, world));
         }
 
         return res.build();
     }
 
     private SchlafenAction(final SCActionStepCountDao scActionStepCountDao,
-                           final AvNowDao nowDao, final Narrator n,
+                           final TimeTaker timeTaker, final Narrator n,
                            final World world) {
-        super(scActionStepCountDao, nowDao, n, world);
+        super(scActionStepCountDao, timeTaker, n, world);
     }
 
     @Override
@@ -283,7 +287,7 @@ public class SchlafenAction extends AbstractScAction {
     }
 
     private AvTimeSpan schlafen() {
-        final AvDateTime now = nowDao.now();
+        final AvDateTime now = timeTaker.now();
 
         if (sc.feelingsComp().getMuedigkeit() < FeelingIntensity.DEUTLICH) {
             return mins(59);

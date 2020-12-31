@@ -10,6 +10,7 @@ import javax.annotation.ParametersAreNonnullByDefault;
 
 import de.nb.aventiure2.data.database.AvDatabase;
 import de.nb.aventiure2.data.narration.Narrator;
+import de.nb.aventiure2.data.time.TimeTaker;
 import de.nb.aventiure2.data.world.base.GameObjectId;
 import de.nb.aventiure2.data.world.gameobject.*;
 import de.nb.aventiure2.data.world.syscomp.alive.ILivingBeingGO;
@@ -19,7 +20,6 @@ import de.nb.aventiure2.data.world.syscomp.memory.Action;
 import de.nb.aventiure2.data.world.syscomp.state.IHasStateGO;
 import de.nb.aventiure2.data.world.syscomp.state.impl.FroschprinzState;
 import de.nb.aventiure2.data.world.syscomp.storingplace.ILocationGO;
-import de.nb.aventiure2.data.world.time.*;
 import de.nb.aventiure2.german.base.GermanUtil;
 import de.nb.aventiure2.german.base.Nominalphrase;
 import de.nb.aventiure2.german.base.NumerusGenus;
@@ -36,12 +36,12 @@ import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkState;
 import static com.google.common.collect.ImmutableList.builder;
 import static com.google.common.collect.ImmutableList.toImmutableList;
+import static de.nb.aventiure2.data.time.AvTimeSpan.secs;
 import static de.nb.aventiure2.data.world.gameobject.World.*;
 import static de.nb.aventiure2.data.world.syscomp.feelings.Mood.ANGESPANNT;
 import static de.nb.aventiure2.data.world.syscomp.feelings.Mood.NEUTRAL;
 import static de.nb.aventiure2.data.world.syscomp.state.impl.FroschprinzState.ERWARTET_VON_SC_EINLOESUNG_SEINES_VERSPRECHENS;
 import static de.nb.aventiure2.data.world.syscomp.state.impl.FroschprinzState.HAT_HOCHHEBEN_GEFORDERT;
-import static de.nb.aventiure2.data.world.time.AvTimeSpan.*;
 import static de.nb.aventiure2.german.base.Kasus.AKK;
 import static de.nb.aventiure2.german.base.Numerus.SG;
 import static de.nb.aventiure2.german.base.Person.P1;
@@ -72,6 +72,7 @@ public class NehmenAction
     public static <GO extends IDescribableGO & ILocatableGO,
             TARGET_LOC extends IDescribableGO & ILocationGO & ILocatableGO>
     Collection<NehmenAction<GO, TARGET_LOC>> buildObjectActions(final AvDatabase db,
+                                                                final TimeTaker timeTaker,
                                                                 final Narrator n,
                                                                 final World world,
                                                                 final GO object) {
@@ -79,7 +80,7 @@ public class NehmenAction
 
         final ImmutableList.Builder<NehmenAction<GO, TARGET_LOC>> res = ImmutableList.builder();
 
-        res.add(new NehmenAction<>(db.scActionStepCountDao(), db.nowDao(), n, world,
+        res.add(new NehmenAction<>(db.scActionStepCountDao(), timeTaker, n, world,
                 object, EINE_TASCHE_DES_SPIELER_CHARAKTERS));
 
         return res.build();
@@ -89,7 +90,7 @@ public class NehmenAction
             TARGET_LOC extends IDescribableGO & ILocationGO & ILocatableGO>
     Collection<NehmenAction<LIVGO, TARGET_LOC>> buildCreatureActions(
             final AvDatabase db,
-            final Narrator n, final World world,
+            final TimeTaker timeTaker, final Narrator n, final World world,
             final LIVGO creature) {
         if (world.isOrHasRecursiveLocation(creature, SPIELER_CHARAKTER)) {
             return ImmutableList.of();
@@ -101,7 +102,7 @@ public class NehmenAction
         }
 
         if (creature.is(FROSCHPRINZ)) {
-            return buildFroschprinzActions(db, n, world, creature);
+            return buildFroschprinzActions(db, timeTaker, n, world, creature);
         }
 
         return ImmutableList.of();
@@ -111,13 +112,13 @@ public class NehmenAction
             TARGET_LOC extends IDescribableGO & ILocationGO & ILocatableGO>
     Collection<NehmenAction<LIVGO, TARGET_LOC>> buildFroschprinzActions(
             final AvDatabase db,
-            final Narrator n,
+            final TimeTaker timeTaker, final Narrator n,
             final World world,
             final LIVGO froschprinz) {
         if (((IHasStateGO<FroschprinzState>) froschprinz).stateComp()
                 .hasState(ERWARTET_VON_SC_EINLOESUNG_SEINES_VERSPRECHENS)) {
             return ImmutableList.of(
-                    new NehmenAction<>(db.scActionStepCountDao(), db.nowDao(), n, world,
+                    new NehmenAction<>(db.scActionStepCountDao(), timeTaker, n, world,
                             froschprinz, EINE_TASCHE_DES_SPIELER_CHARAKTERS));
         }
 
@@ -125,7 +126,7 @@ public class NehmenAction
                 .hasState(HAT_HOCHHEBEN_GEFORDERT)) {
             if (world.loadSC().locationComp().hasLocation(SCHLOSS_VORHALLE_AM_TISCH_BEIM_FEST)) {
                 return ImmutableList.of(
-                        new NehmenAction<>(db.scActionStepCountDao(), db.nowDao(), n, world,
+                        new NehmenAction<>(db.scActionStepCountDao(), timeTaker, n, world,
                                 froschprinz, HAENDE_DES_SPIELER_CHARAKTERS));
             }
         }
@@ -142,11 +143,11 @@ public class NehmenAction
      */
     private NehmenAction(
             final SCActionStepCountDao scActionStepCountDao,
-            final AvNowDao nowDao,
+            final TimeTaker timeTaker,
             final Narrator n, final World world,
             @NonNull final GO gameObject,
             @NonNull final GameObjectId targetLocationId) {
-        this(scActionStepCountDao, nowDao, n, world,
+        this(scActionStepCountDao, timeTaker, n, world,
                 gameObject, (TARGET_LOC) world.load(targetLocationId));
     }
 
@@ -158,9 +159,9 @@ public class NehmenAction
      *                       in die Hände o.Ä.
      */
     private NehmenAction(final SCActionStepCountDao scActionStepCountDao,
-                         final AvNowDao nowDao, final Narrator n, final World world,
+                         final TimeTaker timeTaker, final Narrator n, final World world,
                          @NonNull final GO gameObject, @NonNull final TARGET_LOC targetLocation) {
-        super(scActionStepCountDao, nowDao, n, world);
+        super(scActionStepCountDao, timeTaker, n, world);
 
         checkArgument(gameObject.locationComp().getLocation() != null);
         checkArgument(targetLocation.locationComp().hasLocation(SPIELER_CHARAKTER),

@@ -12,11 +12,15 @@ import javax.annotation.CheckReturnValue;
 
 import de.nb.aventiure2.data.database.AvDatabase;
 import de.nb.aventiure2.data.narration.Narrator;
+import de.nb.aventiure2.data.time.AvDateTime;
+import de.nb.aventiure2.data.time.AvTimeSpan;
+import de.nb.aventiure2.data.time.Tageszeit;
+import de.nb.aventiure2.data.time.TimeTaker;
 import de.nb.aventiure2.data.world.base.AbstractStatefulComponent;
 import de.nb.aventiure2.data.world.base.GameObject;
 import de.nb.aventiure2.data.world.base.GameObjectId;
+import de.nb.aventiure2.data.world.gameobject.*;
 import de.nb.aventiure2.data.world.syscomp.memory.MemoryComp;
-import de.nb.aventiure2.data.world.time.*;
 import de.nb.aventiure2.german.adjektiv.AdjPhrOhneLeerstellen;
 import de.nb.aventiure2.german.base.NumerusGenus;
 import de.nb.aventiure2.german.base.Personalpronomen;
@@ -27,9 +31,9 @@ import de.nb.aventiure2.german.satz.Satz;
 import de.nb.aventiure2.scaction.stepcount.SCActionStepCountDao;
 
 import static com.google.common.base.Preconditions.checkArgument;
+import static de.nb.aventiure2.data.time.AvTimeSpan.noTime;
 import static de.nb.aventiure2.data.world.gameobject.World.*;
 import static de.nb.aventiure2.data.world.syscomp.feelings.Hunger.SATT;
-import static de.nb.aventiure2.data.world.time.AvTimeSpan.*;
 import static de.nb.aventiure2.german.base.NumerusGenus.M;
 import static de.nb.aventiure2.german.base.Person.P2;
 import static de.nb.aventiure2.german.base.StructuralElement.PARAGRAPH;
@@ -44,12 +48,13 @@ import static java.util.stream.Collectors.toList;
  * has needs and feelings.
  */
 public class FeelingsComp extends AbstractStatefulComponent<FeelingsPCD> {
-    protected AvNowDao nowDao;
+    protected TimeTaker timeTaker;
 
     private final SCActionStepCountDao scActionStepCountDao;
 
     protected final Narrator n;
 
+    private final World world;
     @Nullable
     private final MemoryComp memoryComp;
 
@@ -81,7 +86,8 @@ public class FeelingsComp extends AbstractStatefulComponent<FeelingsPCD> {
      */
     public FeelingsComp(final GameObjectId gameObjectId,
                         final AvDatabase db,
-                        final Narrator n,
+                        final TimeTaker timeTaker, final Narrator n,
+                        final World world,
                         @Nullable final MemoryComp memoryComp,
                         final Mood initialMood,
                         final Biorhythmus muedigkeitsBiorythmus,
@@ -93,9 +99,10 @@ public class FeelingsComp extends AbstractStatefulComponent<FeelingsPCD> {
                                 initialFeelingsTowards) {
         super(gameObjectId, db.feelingsDao());
 
-        nowDao = db.nowDao();
+        this.timeTaker = timeTaker;
         this.n = n;
         scActionStepCountDao = db.scActionStepCountDao();
+        this.world = world;
         this.memoryComp = memoryComp;
         this.initialMood = initialMood;
         this.muedigkeitsBiorythmus = muedigkeitsBiorythmus;
@@ -179,7 +186,7 @@ public class FeelingsComp extends AbstractStatefulComponent<FeelingsPCD> {
     }
 
     public void ausgeschlafen(final AvTimeSpan ausschlafenEffektHaeltVorFuer) {
-        getPcd().ausgeschlafen(nowDao.now(),
+        getPcd().ausgeschlafen(timeTaker.now(),
                 scActionStepCountDao.stepCount(),
                 ausschlafenEffektHaeltVorFuer,
                 getMuedigkeitGemaessBiorhythmus());
@@ -194,7 +201,7 @@ public class FeelingsComp extends AbstractStatefulComponent<FeelingsPCD> {
     }
 
     private void updateHunger() {
-        getPcd().updateHunger(nowDao.now());
+        getPcd().updateHunger(timeTaker.now());
     }
 
     /**
@@ -202,7 +209,7 @@ public class FeelingsComp extends AbstractStatefulComponent<FeelingsPCD> {
      * auf Laune und Müdigkeit.
      */
     public void saveSatt() {
-        getPcd().saveSatt(nowDao.now(), zeitspanneNachEssenBisWiederHungrig,
+        getPcd().saveSatt(timeTaker.now(), zeitspanneNachEssenBisWiederHungrig,
                 scActionStepCountDao.stepCount(),
                 getMuedigkeitGemaessBiorhythmus());
     }
@@ -384,7 +391,7 @@ public class FeelingsComp extends AbstractStatefulComponent<FeelingsPCD> {
      */
     public void onTimePassed(final AvDateTime startTime,
                              final AvDateTime endTime) {
-        nowDao.setNow(endTime);
+        timeTaker.setNow(endTime);
 
         narrateAndUpdateHunger();
         narrateAndUpdateMuedigkeit();
@@ -502,7 +509,7 @@ public class FeelingsComp extends AbstractStatefulComponent<FeelingsPCD> {
         final int muedigkeitBisher = getMuedigkeit();
 
         getPcd().updateMuedigkeit(
-                nowDao.now(),
+                timeTaker.now(),
                 scActionStepCountDao.stepCount(),
                 getMuedigkeitGemaessBiorhythmus());
 
@@ -631,7 +638,7 @@ public class FeelingsComp extends AbstractStatefulComponent<FeelingsPCD> {
         final int muedigkeitBisher = getMuedigkeit();
 
         getPcd().upgradeTemporaereMinimalmuedigkeit(
-                nowDao.now(), scActionStepCountDao.stepCount(),
+                timeTaker.now(), scActionStepCountDao.stepCount(),
                 temporaereMinimalmuedigkeit, duration,
                 getMuedigkeitGemaessBiorhythmus());
 
@@ -735,7 +742,7 @@ public class FeelingsComp extends AbstractStatefulComponent<FeelingsPCD> {
                             .beendet(PARAGRAPH)
             );
 
-            if (nowDao.now().getTageszeit() == Tageszeit.NACHTS) {
+            if (timeTaker.now().getTageszeit() == Tageszeit.NACHTS) {
                 res.add(
                         neuerSatz("es ist Schlafenszeit")
                                 .beendet(SENTENCE)
@@ -803,6 +810,6 @@ public class FeelingsComp extends AbstractStatefulComponent<FeelingsPCD> {
     }
 
     private int getMuedigkeitGemaessBiorhythmus() {
-        return muedigkeitsBiorythmus.get(nowDao.now().getTime());
+        return muedigkeitsBiorythmus.get(timeTaker.now().getTime());
     }
 }

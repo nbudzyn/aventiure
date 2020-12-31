@@ -13,6 +13,7 @@ import javax.annotation.Nullable;
 
 import de.nb.aventiure2.data.database.AvDatabase;
 import de.nb.aventiure2.data.narration.Narrator;
+import de.nb.aventiure2.data.time.TimeTaker;
 import de.nb.aventiure2.data.world.base.GameObjectId;
 import de.nb.aventiure2.data.world.base.SpatialConnection;
 import de.nb.aventiure2.data.world.gameobject.*;
@@ -29,6 +30,7 @@ public abstract class AndroidTestBase {
 
     protected Context appContext;
     protected AvDatabase db;
+    protected TimeTaker timeTaker;
     protected Narrator n;
     protected World world;
 
@@ -43,11 +45,13 @@ public abstract class AndroidTestBase {
     protected void resetDatabase() {
         World.reset();
         Narrator.reset();
+        TimeTaker.reset();
         AvDatabase.resetDatabase();
 
         db = AvDatabase.getDatabase(appContext);
-        n = Narrator.getInstance(db);
-        world = World.getInstance(db, n);
+        timeTaker = TimeTaker.getInstance(db);
+        n = Narrator.getInstance(db, timeTaker);
+        world = World.getInstance(db, timeTaker, n);
     }
 
     @After
@@ -63,7 +67,7 @@ public abstract class AndroidTestBase {
     }
 
     protected void doAction(final AbstractScAction playerAction) {
-        LOGGER.d("Action: " + playerAction.getName() + " [" + db.nowDao().now() + "]");
+        LOGGER.d("Action: " + playerAction.getName() + " [" + timeTaker.now() + "]");
         db.runInTransaction(playerAction::doAndPassTime);
     }
 }
