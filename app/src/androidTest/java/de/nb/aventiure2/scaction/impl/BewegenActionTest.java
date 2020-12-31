@@ -8,6 +8,7 @@ import org.junit.runner.RunWith;
 import org.junit.runners.MethodSorters;
 
 import de.nb.aventiure2.androidtest.AndroidTestBase;
+import de.nb.aventiure2.data.time.AvTimeSpan;
 import de.nb.aventiure2.data.world.base.GameObject;
 import de.nb.aventiure2.data.world.base.Known;
 import de.nb.aventiure2.data.world.base.Lichtverhaeltnisse;
@@ -17,10 +18,9 @@ import de.nb.aventiure2.data.world.syscomp.feelings.FeelingIntensity;
 import de.nb.aventiure2.data.world.syscomp.location.ILocatableGO;
 import de.nb.aventiure2.data.world.syscomp.spatialconnection.ISpatiallyConnectedGO;
 import de.nb.aventiure2.data.world.syscomp.storingplace.ILocationGO;
-import de.nb.aventiure2.data.world.time.*;
 
 import static com.google.common.truth.Truth.assertThat;
-import static de.nb.aventiure2.data.world.time.AvTimeSpan.*;
+import static de.nb.aventiure2.data.time.AvTimeSpan.hours;
 
 @RunWith(AndroidJUnit4.class)
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
@@ -52,7 +52,8 @@ public class BewegenActionTest extends AndroidTestBase {
     BewegenAction<LOC_DESC> bewegenAction() {
         final GameObject oldLocation = world.load(World.IM_WALD_NAHE_DEM_SCHLOSS);
         return new BewegenAction<>(
-                db, n, world,
+                db.scActionStepCountDao(), timeTaker,
+                db.counterDao(), n, world,
                 (ILocationGO) oldLocation,
                 ((ISpatiallyConnectedGO) oldLocation).spatialConnectionComp()
                         .getConnections().iterator().next(),
