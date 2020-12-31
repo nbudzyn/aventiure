@@ -79,7 +79,7 @@ public class ScAutomaticReactionsComp
 
     @Override
     public void onRuf(final ILocatableGO rufer, final Ruftyp ruftyp) {
-        if (world.hasSameUpperMostLocationAsSC(rufer)) {
+        if (world.hasSameOuterMostLocationAsSC(rufer)) {
             waitingComp.stopWaiting();
         }
     }
@@ -87,7 +87,7 @@ public class ScAutomaticReactionsComp
     @Override
     public void onEssen(final IGameObject gameObject) {
         if (feelingsComp.getHunger() == HUNGRIG
-                && world.hasSameUpperMostLocationAsSC(gameObject)) {
+                && world.hasSameOuterMostLocationAsSC(gameObject)) {
             waitingComp.stopWaiting();
         }
     }

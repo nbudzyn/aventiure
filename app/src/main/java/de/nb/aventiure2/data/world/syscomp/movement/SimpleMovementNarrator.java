@@ -345,8 +345,8 @@ public class SimpleMovementNarrator implements IMovementNarrator {
             @Nullable final SpatialConnection spatialConnection,
             final NumberOfWays numberOfWaysIn) {
         if (loadSC().memoryComp().getLastAction().is(BEWEGEN) &&
-                // Der SC hat sich nicht nur im selben uppermost-Raum bewegt
-                !world.hasSameUpperMostLocationAsSC(
+                // Der SC hat sich nicht nur im selben outermost-Raum bewegt
+                !world.hasSameOuterMostLocationAsSC(
                         loadSC().locationComp().getLastLocation()
                 )
         ) {

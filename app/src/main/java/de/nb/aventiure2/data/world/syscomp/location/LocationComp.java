@@ -119,12 +119,12 @@ public class LocationComp extends AbstractStatefulComponent<LocationPCD> {
      * (z.B. denselben Raum). Wenn <code>otherId</code> <code>null</code> ist, gibt
      * * diese Methode immer <code>null</code> zurück.
      */
-    public boolean hasSameUpperMostLocationAs(@Nullable final GameObjectId otherId) {
+    public boolean hasSameOuterMostLocationAs(@Nullable final GameObjectId otherId) {
         if (otherId == null) {
             return false;
         }
 
-        return hasSameUpperMostLocationAs(world.load(otherId));
+        return hasSameOuterMostLocationAs(world.load(otherId));
     }
 
     /**
@@ -132,21 +132,21 @@ public class LocationComp extends AbstractStatefulComponent<LocationPCD> {
      * (z.B. denselben Raum). Wenn <code>other</code> <code>null</code> ist, gibt
      * diese Methode immer <code>null</code> zurück.
      */
-    public boolean hasSameUpperMostLocationAs(@Nullable final IGameObject other) {
-        ILocationGO otherUpperMostLocation = null;
+    public boolean hasSameOuterMostLocationAs(@Nullable final IGameObject other) {
+        ILocationGO otherOuterMostLocation = null;
         if (other instanceof ILocationGO) {
-            otherUpperMostLocation = (ILocationGO) other;
+            otherOuterMostLocation = (ILocationGO) other;
         }
 
         if (other instanceof ILocatableGO) {
-            otherUpperMostLocation = ((ILocatableGO) other).locationComp().getUpperMostLocation();
+            otherOuterMostLocation = ((ILocatableGO) other).locationComp().getOuterMostLocation();
         }
 
-        if (otherUpperMostLocation == null) {
+        if (otherOuterMostLocation == null) {
             return false;
         }
 
-        return otherUpperMostLocation.equals(getUpperMostLocation());
+        return otherOuterMostLocation.equals(getOuterMostLocation());
     }
 
     /**
@@ -206,25 +206,11 @@ public class LocationComp extends AbstractStatefulComponent<LocationPCD> {
         return ((ILocatableGO) myLocation).locationComp().hasRecursiveLocation(location);
     }
 
-    public boolean hasUpperMostLocation(final GameObjectId locationId) {
-        final GameObject location = world.load(locationId);
-
-        if (!(location instanceof ILocationGO)) {
-            return false;
-        }
-
-        return hasUpperMostLocation((ILocationGO) location);
-    }
-
-    private boolean hasUpperMostLocation(final ILocationGO location) {
-        return location.equals(getUpperMostLocation());
-    }
-
     public @Nullable
-    ILocationGO getUpperMostLocation() {
+    ILocationGO getOuterMostLocation() {
         @Nullable final ILocationGO res = getLocation();
         if (res instanceof ILocatableGO) {
-            return ((ILocatableGO) res).locationComp().getUpperMostLocation();
+            return ((ILocatableGO) res).locationComp().getOuterMostLocation();
         }
 
         return res;

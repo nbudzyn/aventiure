@@ -92,8 +92,8 @@ public class FroschprinzReactionsComp
             return;
         }
 
-        if (!locationComp.hasSameUpperMostLocationAs(from)
-                || locationComp.hasSameUpperMostLocationAs(to)) {
+        if (!locationComp.hasSameOuterMostLocationAs(from)
+                || locationComp.hasSameOuterMostLocationAs(to)) {
             // Spieler lässt den Frosch nicht zurück
 
             return;
@@ -525,7 +525,7 @@ public class FroschprinzReactionsComp
     void froschprinzLaueftZumSchlossfestLos() {
         // TODO Find all equals() warnings and fix the code.
 
-        if (locationComp.hasSameUpperMostLocationAs(SPIELER_CHARAKTER)) {
+        if (locationComp.hasSameOuterMostLocationAs(SPIELER_CHARAKTER)) {
             n.narrate(neuerSatz(PARAGRAPH,
                     "Plitsch platsch, plitsch platsch hüpft der Frosch davon",
                     // FIXME "Wir sehen uns noch!"

@@ -475,7 +475,7 @@ public class RapunzelReactionsComp
     }
 
     private void onGoldeneKugelEnter(@Nullable final ILocationGO from, final ILocationGO to) {
-        if (!locationComp.hasSameUpperMostLocationAs(to)) {
+        if (!locationComp.hasSameOuterMostLocationAs(to)) {
             return;
         }
 
@@ -562,7 +562,7 @@ public class RapunzelReactionsComp
     @Override
     public void onRuf(final ILocatableGO rufer, final Ruftyp ruftyp) {
         // Hört Rapunzel den Ruf?
-        if (!locationComp.hasSameUpperMostLocationAs(rufer) &&
+        if (!locationComp.hasSameOuterMostLocationAs(rufer) &&
                 (!rufer.locationComp().hasRecursiveLocation(VOR_DEM_ALTEN_TURM) ||
                         !locationComp.hasRecursiveLocation(OBEN_IM_ALTEN_TURM))) {
             return;

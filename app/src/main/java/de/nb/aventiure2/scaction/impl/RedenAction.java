@@ -195,7 +195,7 @@ public class RedenAction<TALKER extends IDescribableGO & ILocatableGO & ITalkerG
             return;
         }
 
-        if (!world.hasSameUpperMostLocationAsSC(talker)) {
+        if (!world.hasSameOuterMostLocationAsSC(talker)) {
             return;
         }
 

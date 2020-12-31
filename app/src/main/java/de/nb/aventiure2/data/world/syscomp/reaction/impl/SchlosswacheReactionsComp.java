@@ -359,7 +359,7 @@ public class SchlosswacheReactionsComp
      * der Gegenstand hat sich aufgelöst o.Ä.
      */
     private void onRelocationFromSC(final ILocationGO to) {
-        if (!locationComp.hasSameUpperMostLocationAs(to)) {
+        if (!locationComp.hasSameOuterMostLocationAs(to)) {
             // The Schlosswache does not notice.
             return;
         }

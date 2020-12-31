@@ -62,18 +62,18 @@ public class LocationSystem {
                 .collect(toImmutableList());
     }
 
-    public static boolean haveSameUpperMostLocation(
+    public static boolean haveSameOuterMostLocation(
             final @Nullable ILocationGO one, final @Nullable ILocationGO other) {
         if (one == null || other == null) {
             return false;
         }
 
-        return getUpperMostLocation(one).is(getUpperMostLocation(other));
+        return getOuterMostLocation(one).is(getOuterMostLocation(other));
     }
 
-    public static ILocationGO getUpperMostLocation(final ILocationGO location) {
+    public static ILocationGO getOuterMostLocation(final ILocationGO location) {
         if (location instanceof ILocatableGO) {
-            return ((ILocatableGO) location).locationComp().getUpperMostLocation();
+            return ((ILocatableGO) location).locationComp().getOuterMostLocation();
         }
 
         return location;

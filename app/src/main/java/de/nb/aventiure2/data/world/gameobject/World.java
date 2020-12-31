@@ -894,20 +894,20 @@ public class World {
                 observer.memoryComp().isKnown(describable), shortIfKnown);
     }
 
-    public final boolean hasSameUpperMostLocationAsSC(@Nullable final GameObjectId gameObjectId) {
+    public final boolean hasSameOuterMostLocationAsSC(@Nullable final GameObjectId gameObjectId) {
         if (gameObjectId == null) {
             return false;
         }
 
-        return hasSameUpperMostLocationAsSC(load(gameObjectId));
+        return hasSameOuterMostLocationAsSC(load(gameObjectId));
     }
 
-    public final boolean hasSameUpperMostLocationAsSC(@Nullable final IGameObject gameObject) {
+    public final boolean hasSameOuterMostLocationAsSC(@Nullable final IGameObject gameObject) {
         if (gameObject == null) {
             return false;
         }
 
-        return loadSC().locationComp().hasSameUpperMostLocationAs(gameObject);
+        return loadSC().locationComp().hasSameOuterMostLocationAs(gameObject);
     }
 
     /**

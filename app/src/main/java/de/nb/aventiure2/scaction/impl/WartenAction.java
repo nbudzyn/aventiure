@@ -50,7 +50,7 @@ public class WartenAction<LIVGO extends IDescribableGO & ILocatableGO & ILivingB
         if (location.is(VOR_DEM_ALTEN_TURM_SCHATTEN_DER_BAEUME) &&
                 erwartet.is(RAPUNZELS_ZAUBERIN) &&
                 world.loadSC().memoryComp().isKnown(RAPUNZELS_ZAUBERIN) &&
-                !erwartet.locationComp().hasSameUpperMostLocationAs(location)) {
+                !erwartet.locationComp().hasSameOuterMostLocationAs(location)) {
             res.add(new WartenAction<>(scActionStepCountDao, timeTaker, n, world, erwartet,
                     location));
         }

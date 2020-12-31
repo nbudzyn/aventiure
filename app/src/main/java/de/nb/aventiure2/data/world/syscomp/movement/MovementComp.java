@@ -150,7 +150,7 @@ public class MovementComp
                 !locationComp.hasLocation(getCurrentStepToId()) &&
                 getPcd().getPauseForSCAction() != PAUSED) {
             setupNextStepIfNecessaryAndPossible(now);
-            pauseIfSameUpperMostLocationWithSC();
+            pauseIfSameOuterMostLocationWithSC();
         }
 
         if (!hasCurrentStep() || getPcd().getPauseForSCAction() == PAUSED) {
@@ -217,7 +217,7 @@ public class MovementComp
             return false;
         }
 
-        if (pauseIfSameUpperMostLocationWithSC()) {
+        if (pauseIfSameOuterMostLocationWithSC()) {
             return false;
         }
 
@@ -231,15 +231,15 @@ public class MovementComp
     }
 
     /**
-     * Pausiert die aktuelle Bewegung, falls sich er SC an derselben uppermost location
+     * Pausiert die aktuelle Bewegung, falls sich er SC an derselben outermost location
      * befindet (gibt dann <code>true</code> zurück) - tut sonst nichts.
      * <p>
      * Die Idee ist: Das {@link IMovingGO} soll in der Regel nicht einfach am SC
      * vorbeilaufen. Der SC soll die Möglichkeit erhalten, zumindest einmalig mit dem
      * IMovingGO zu interagieren.
      */
-    private boolean pauseIfSameUpperMostLocationWithSC() {
-        if (locationComp.hasSameUpperMostLocationAs(SPIELER_CHARAKTER)
+    private boolean pauseIfSameOuterMostLocationWithSC() {
+        if (locationComp.hasSameOuterMostLocationAs(SPIELER_CHARAKTER)
             // IDEA Wenn der SC schläft, dann hingegen das Game Object einfach
             //  vorbeilaufen lassen (in diesem Fall sollte es ja aber auch keine
             //  Narration geben...)

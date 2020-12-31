@@ -142,15 +142,15 @@ public class RapunzelsZauberinReactionsComp
             // Zauberin ist in Bewegung - und gerade im "Dazwischen"
 
             final boolean spielerHatZauberinUeberholt =
-                    world.getLocationSystem().haveSameUpperMostLocation(
+                    world.getLocationSystem().haveSameOuterMostLocation(
                             scFrom, movementComp.getCurrentStepFrom()) &&
-                            world.getLocationSystem().haveSameUpperMostLocation(
+                            world.getLocationSystem().haveSameOuterMostLocation(
                                     scTo, movementComp.getCurrentStepTo());
 
             final boolean spielerUndZauberinKommenEinanderEntgegen =
-                    world.getLocationSystem().haveSameUpperMostLocation(
+                    world.getLocationSystem().haveSameOuterMostLocation(
                             scFrom, movementComp.getCurrentStepTo()) &&
-                            world.getLocationSystem().haveSameUpperMostLocation(
+                            world.getLocationSystem().haveSameOuterMostLocation(
                                     scTo, movementComp.getCurrentStepFrom());
 
             if (spielerHatZauberinUeberholt || spielerUndZauberinKommenEinanderEntgegen) {
@@ -159,10 +159,10 @@ public class RapunzelsZauberinReactionsComp
             }
         }
 
-        if (locationComp.hasSameUpperMostLocationAs(scFrom)) {
+        if (locationComp.hasSameOuterMostLocationAs(scFrom)) {
             // Wenn die Zauberin sieht, wie der Spieler weggeht,
             // weiß sie nicht mehr, wo er ist.
-            if (!locationComp.hasSameUpperMostLocationAs(scTo)) {
+            if (!locationComp.hasSameOuterMostLocationAs(scTo)) {
                 mentalModelComp.unsetAssumedLocation(SPIELER_CHARAKTER);
             }
 
@@ -199,7 +199,7 @@ public class RapunzelsZauberinReactionsComp
     private void onSCEnter(@Nullable final ILocationGO scFrom, final ILocationGO scTo) {
         // Wenn die Zauberin sieht, wie sich der Spieler in den Schatten der
         // Bäume setzt, weiß sie, dass er dort ist.
-        if (locationComp.hasSameUpperMostLocationAs(SPIELER_CHARAKTER) &&
+        if (locationComp.hasSameOuterMostLocationAs(SPIELER_CHARAKTER) &&
                 scFrom != null &&
                 scFrom.is(VOR_DEM_ALTEN_TURM) &&
                 scTo.is(VOR_DEM_ALTEN_TURM_SCHATTEN_DER_BAEUME)) {
@@ -242,7 +242,7 @@ public class RapunzelsZauberinReactionsComp
     @Override
     public void onRuf(final ILocatableGO rufer, final Ruftyp ruftyp) {
         // Hört die Zauberin den Ruf?
-        if (!locationComp.hasSameUpperMostLocationAs(rufer) &&
+        if (!locationComp.hasSameOuterMostLocationAs(rufer) &&
                 (!rufer.locationComp().hasRecursiveLocation(VOR_DEM_ALTEN_TURM) ||
                         !locationComp.hasRecursiveLocation(OBEN_IM_ALTEN_TURM))) {
             return;

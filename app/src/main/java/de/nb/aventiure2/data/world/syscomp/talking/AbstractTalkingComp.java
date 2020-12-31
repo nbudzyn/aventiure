@@ -81,7 +81,7 @@ public abstract class AbstractTalkingComp extends AbstractStatefulComponent<Talk
     public void updateSchonBegruesstMitSCOnLeave(
             final ILocatableGO locatable, final ILocationGO from,
             @Nullable final ILocationGO to) {
-        if (!world.getLocationSystem().haveSameUpperMostLocation(from, to) &&
+        if (!world.getLocationSystem().haveSameOuterMostLocation(from, to) &&
                 (locatable.is(SPIELER_CHARAKTER) || locatable.is(getGameObjectId())) &&
                 !isTalkingTo(SPIELER_CHARAKTER)) {
             // SC und das ITalkingBeing  verlassen einander. Ab jetzt können sie

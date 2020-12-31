@@ -200,23 +200,23 @@ public class StoryWebComp extends AbstractStatefulComponent<StoryWebPCD> {
 
         final ILocationGO storyNodeLocation = (ILocationGO) world.load(storyNodeLocationId);
 
-        final ILocationGO upperMostStoryNodeLocation =
-                locationSystem.getUpperMostLocation(storyNodeLocation);
-        @Nullable final ILocationGO upperMostSCLocation =
-                world.loadSC().locationComp().getUpperMostLocation();
+        final ILocationGO outerMostStoryNodeLocation =
+                locationSystem.getOuterMostLocation(storyNodeLocation);
+        @Nullable final ILocationGO outerMostSCLocation =
+                world.loadSC().locationComp().getOuterMostLocation();
 
-        if (upperMostStoryNodeLocation.is(upperMostSCLocation)) {
+        if (outerMostStoryNodeLocation.is(outerMostSCLocation)) {
             return noTime();
         }
 
-        if (!(upperMostSCLocation instanceof ISpatiallyConnectedGO)) {
+        if (!(outerMostSCLocation instanceof ISpatiallyConnectedGO)) {
             // Der Benutzer ist sonstwo - wie soll er hinkommen?!
             return null;
         }
 
         return spatialConnectionSystem.findDistance(
-                (ISpatiallyConnectedGO) upperMostSCLocation,
-                upperMostStoryNodeLocation);
+                (ISpatiallyConnectedGO) outerMostSCLocation,
+                outerMostStoryNodeLocation);
     }
 
 }
