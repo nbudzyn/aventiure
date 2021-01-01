@@ -91,18 +91,17 @@ public class AdjPhrMitIndirektemFragesatzOhneLeerstellen extends AbstractAdjPhrO
                                                               final Numerus numerus) {
         return Konstituente.joinToKonstituenten(
                 getGraduativeAngabe(), // "sehr"
-                k(getAdjektiv().getPraedikativ(), true), // "gespannt"
+                k(getAdjektiv().getPraedikativ()), // "gespannt"
                 getPraedikativAnteilKandidatFuerNachfeld(person, numerus));
-        // "ob du etwas zu berichten hast[, ]"
+        // ", ob du etwas zu berichten hast[, ]"
     }
 
     @Override
     public Iterable<Konstituente> getPraedikativAnteilKandidatFuerNachfeld(final Person person,
                                                                            final Numerus numerus) {
-        return Konstituente.withKommaStehtAus(
+        return Konstituente.schliesseInKommaEin(
                 indirekterFragesatz.getIndirekteFrage()
-                // "ob du etwas zu berichten hast", "was du zu berichten hast" etc.
-                // Komma steht definitiv aus
+                // "[,] ob du etwas zu berichten hast[,] ", "[,] was du zu berichten hast[,] " etc.
         );
     }
 

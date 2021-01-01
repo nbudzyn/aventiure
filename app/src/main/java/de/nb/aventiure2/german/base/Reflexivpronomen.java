@@ -86,4 +86,9 @@ public class Reflexivpronomen implements SubstantivischePhraseOderReflexivpronom
     public String akk() {
         return akkusativ;
     }
+
+    @Override
+    public boolean isUnbetontesPronomen() {
+        return true;
+    }
 }

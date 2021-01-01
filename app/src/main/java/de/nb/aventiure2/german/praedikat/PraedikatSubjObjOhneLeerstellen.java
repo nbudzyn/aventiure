@@ -11,15 +11,16 @@ import javax.annotation.Nullable;
 
 import de.nb.aventiure2.annotations.Komplement;
 import de.nb.aventiure2.annotations.Valenz;
-import de.nb.aventiure2.german.base.GermanUtil;
 import de.nb.aventiure2.german.base.Interrogativpronomen;
-import de.nb.aventiure2.german.base.Kasus;
 import de.nb.aventiure2.german.base.KasusOderPraepositionalkasus;
 import de.nb.aventiure2.german.base.Konstituente;
 import de.nb.aventiure2.german.base.Numerus;
 import de.nb.aventiure2.german.base.Person;
 import de.nb.aventiure2.german.base.SubstantivischePhrase;
+import de.nb.aventiure2.german.base.SubstantivischePhraseOderReflexivpronomen;
 
+import static de.nb.aventiure2.german.base.Kasus.AKK;
+import static de.nb.aventiure2.german.base.Kasus.DAT;
 import static de.nb.aventiure2.german.base.Konstituente.k;
 
 /**
@@ -147,7 +148,7 @@ public class PraedikatSubjObjOhneLeerstellen
         }
 
         final String objektImKasusOderPraepkasus = objekt.im(kasusOderPraepositionalkasus);
-        if (!"es" .equals(objektImKasusOderPraepkasus)) {
+        if (!"es".equals(objektImKasusOderPraepkasus)) {
             // Wenn "es" ein Objekt ist, darf es nicht im Vorfeld stehen.
             // (Eisenberg Der Satz 5.4.2)
             return k(objektImKasusOderPraepkasus);  // "den Frosch"
@@ -157,16 +158,41 @@ public class PraedikatSubjObjOhneLeerstellen
     }
 
     @Override
-    public Iterable<Konstituente> getMittelfeld(final Collection<Modalpartikel> modalpartikeln,
-                                                final Person personSubjekt,
-                                                final Numerus numerusSubjekt) {
+    Iterable<Konstituente> getMittelfeldOhneLinksversetzungUnbetonterPronomen(
+            final Person personSubjekt, final Numerus numerusSubjekt) {
         return Konstituente.joinToKonstituenten(
                 getAdverbialeAngabeSkopusSatzDescription(), // "aus einer Laune heraus"
-                GermanUtil.joinToNullString(modalpartikeln), // "mal eben"
+                getModalpartikeln(), // "mal eben"
                 getAdverbialeAngabeSkopusVerbAllgDescriptionFuerMittelfeld(), // "erneut"
                 objekt.im(kasusOderPraepositionalkasus),
                 getAdverbialeAngabeSkopusVerbWohinWoherDescription() // "auf den Tisch"
         );
+    }
+
+    @Nullable
+    @Override
+    SubstantivischePhraseOderReflexivpronomen getDat() {
+        if (kasusOderPraepositionalkasus == DAT) {
+            return objekt;
+        }
+
+        return null;
+    }
+
+    @Nullable
+    @Override
+    SubstantivischePhraseOderReflexivpronomen getAkk() {
+        if (kasusOderPraepositionalkasus == AKK) {
+            return objekt;
+        }
+
+        return null;
+    }
+
+    @Nullable
+    @Override
+    SubstantivischePhraseOderReflexivpronomen getZweitesAkk() {
+        return null;
     }
 
     @Override
@@ -185,7 +211,7 @@ public class PraedikatSubjObjOhneLeerstellen
 
     @Override
     public boolean hatAkkusativobjekt() {
-        return kasusOderPraepositionalkasus == Kasus.AKK;
+        return kasusOderPraepositionalkasus == AKK;
     }
 
     @Nullable

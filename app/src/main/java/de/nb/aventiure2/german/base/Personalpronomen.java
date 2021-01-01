@@ -95,6 +95,11 @@ public class Personalpronomen extends SubstantivischesPronomenMitVollerFlexionsr
     }
 
     @Override
+    public boolean isUnbetontesPronomen() {
+        return true;
+    }
+
+    @Override
     public Person getPerson() {
         return person;
     }

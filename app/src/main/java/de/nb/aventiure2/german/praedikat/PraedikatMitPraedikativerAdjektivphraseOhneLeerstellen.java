@@ -11,10 +11,10 @@ import javax.annotation.Nullable;
 import de.nb.aventiure2.annotations.Komplement;
 import de.nb.aventiure2.annotations.Valenz;
 import de.nb.aventiure2.german.adjektiv.AdjPhrOhneLeerstellen;
-import de.nb.aventiure2.german.base.GermanUtil;
 import de.nb.aventiure2.german.base.Konstituente;
 import de.nb.aventiure2.german.base.Numerus;
 import de.nb.aventiure2.german.base.Person;
+import de.nb.aventiure2.german.base.SubstantivischePhraseOderReflexivpronomen;
 
 /**
  * Ein Prädikat, bestehend aus einem Verb und einer prädikativen Adjektivphrase, in dem
@@ -161,17 +161,34 @@ public class PraedikatMitPraedikativerAdjektivphraseOhneLeerstellen
     }
 
     @Override
-    public Iterable<Konstituente> getMittelfeld(final Collection<Modalpartikel> modalpartikeln,
-                                                final Person personSubjekt,
-                                                final Numerus numerusSubjekt) {
+    Iterable<Konstituente> getMittelfeldOhneLinksversetzungUnbetonterPronomen(
+            final Person personSubjekt, final Numerus numerusSubjekt) {
         return Konstituente.joinToKonstituenten(
                 getAdverbialeAngabeSkopusSatzDescription(), // "leider"
-                GermanUtil.joinToNullString(modalpartikeln), // "halt"
+                getModalpartikeln(), // "halt"
                 getAdverbialeAngabeSkopusVerbAllgDescriptionFuerMittelfeld(), // "erneut"
                 getAdverbialeAngabeSkopusVerbWohinWoherDescription(), // "nach außen" (?)
                 adjektivphrase.getPraedikativOhneAnteilKandidatFuerNachfeld(
                         personSubjekt, numerusSubjekt) // "glücklich"
         );
+    }
+
+    @Nullable
+    @Override
+    SubstantivischePhraseOderReflexivpronomen getDat() {
+        return null;
+    }
+
+    @Nullable
+    @Override
+    SubstantivischePhraseOderReflexivpronomen getAkk() {
+        return null;
+    }
+
+    @Nullable
+    @Override
+    SubstantivischePhraseOderReflexivpronomen getZweitesAkk() {
+        return null;
     }
 
     @Override

@@ -172,6 +172,11 @@ public class Relativpronomen extends SubstantivischesPronomenMitVollerFlexionsre
     }
 
     @Override
+    public boolean isUnbetontesPronomen() {
+        return true;
+    }
+
+    @Override
     public Person getPerson() {
         return person;
     }

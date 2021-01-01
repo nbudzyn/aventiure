@@ -11,13 +11,13 @@ import javax.annotation.Nullable;
 
 import de.nb.aventiure2.annotations.Komplement;
 import de.nb.aventiure2.annotations.Valenz;
-import de.nb.aventiure2.german.base.GermanUtil;
 import de.nb.aventiure2.german.base.Interrogativpronomen;
 import de.nb.aventiure2.german.base.Konstituente;
 import de.nb.aventiure2.german.base.Numerus;
 import de.nb.aventiure2.german.base.Person;
 import de.nb.aventiure2.german.base.PraepositionMitKasus;
 import de.nb.aventiure2.german.base.SubstantivischePhrase;
+import de.nb.aventiure2.german.base.SubstantivischePhraseOderReflexivpronomen;
 
 import static de.nb.aventiure2.german.base.Konstituente.k;
 
@@ -154,7 +154,7 @@ public class PraedikatAkkPraepOhneLeerstellen
         }
 
         final String akk = this.akk.akk();
-        if (!"es" .equals(akk)) {
+        if (!"es".equals(akk)) {
             // Wenn "es" ein Objekt ist, darf es nicht im Vorfeld stehen.
             // (Eisenberg Der Satz 5.4.2)
             return k(akk); // "das Teil"
@@ -164,16 +164,33 @@ public class PraedikatAkkPraepOhneLeerstellen
     }
 
     @Override
-    public Iterable<Konstituente> getMittelfeld(final Collection<Modalpartikel> modalpartikeln,
-                                                final Person personSubjekt,
-                                                final Numerus numerusSubjekt) {
+    Iterable<Konstituente> getMittelfeldOhneLinksversetzungUnbetonterPronomen(
+            final Person personSubjekt, final Numerus numerusSubjekt) {
         return Konstituente.joinToKonstituenten(
                 getAdverbialeAngabeSkopusSatzDescription(), // "aus einer Laune heraus"
                 akk.akk(), // "das Teil"
-                GermanUtil.joinToNullString(modalpartikeln), // "besser doch"
+                getModalpartikeln(), // "besser doch"
                 getAdverbialeAngabeSkopusVerbAllgDescriptionFuerMittelfeld(), // "erneut"
                 getAdverbialeAngabeSkopusVerbWohinWoherDescription(), // "anch dem Weg"
                 praep.im(praepositionMitKasus)); // "aus der La main"
+    }
+
+    @Nullable
+    @Override
+    SubstantivischePhraseOderReflexivpronomen getDat() {
+        return null;
+    }
+
+    @Nullable
+    @Override
+    SubstantivischePhraseOderReflexivpronomen getAkk() {
+        return akk;
+    }
+
+    @Nullable
+    @Override
+    SubstantivischePhraseOderReflexivpronomen getZweitesAkk() {
+        return null;
     }
 
     @Override

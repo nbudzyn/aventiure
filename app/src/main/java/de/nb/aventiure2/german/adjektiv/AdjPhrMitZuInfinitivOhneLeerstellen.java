@@ -62,19 +62,19 @@ public class AdjPhrMitZuInfinitivOhneLeerstellen extends AbstractAdjPhrOhneLeers
                                                               final Numerus numerus) {
         return Konstituente.joinToKonstituenten(
                 getGraduativeAngabe(), // "sehr"
-                k(getAdjektiv().getPraedikativ(), true), // "glücklich"
+                k(getAdjektiv().getPraedikativ()), // "glücklich"
                 getPraedikativAnteilKandidatFuerNachfeld(person, numerus)
-                // "sich erheben zu dürfen[, ]"
+                // ", sich erheben zu dürfen[, ]"
         );
     }
 
     @Override
     public Iterable<Konstituente> getPraedikativAnteilKandidatFuerNachfeld(final Person person,
                                                                            final Numerus numerus) {
-        return Konstituente.withKommaStehtAus(
+        return Konstituente.schliesseInKommaEin(
                 lexikalischerKern.getZuInfinitiv(person, numerus)
-                // "sich erheben zu dürfen"
-        ); // Komma steht definitiv aus
+                // "[,] sich erheben zu dürfen[,] "
+        );
     }
 
     @Override

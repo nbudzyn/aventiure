@@ -235,6 +235,32 @@ public class FeelingsComp extends AbstractStatefulComponent<FeelingsPCD> {
     }
 
     /**
+     * Gibt eventuell alternative Sätze zurück, die beschreiben, wie dieses Feeling Being
+     * den SC ansieht, wenn die beiden sich begegnen.
+     * <p>
+     * Die Sätze sind bereits in
+     * {@link #altFeelingBeiBegegnungSaetze(SubstantivischePhrase, GameObjectId, SubstantivischePhrase, FeelingTowardsType)}
+     * enthalten.
+     *
+     * @return Möglicherweise eine leere Liste (insbesondere bei extremen Gefühlen)!
+     */
+    public ImmutableList<Satz> altSCBeiBegegnungAnsehenSaetze(
+            final SubstantivischePhrase gameObjectSubjekt,
+            final FeelingTowardsType type) {
+        return altBeiBegegnungAnsehenSaetze(
+                gameObjectSubjekt,
+                SPIELER_CHARAKTER,
+                Personalpronomen.get(P2,
+                        // Wir tun hier so, als wäre der Spieler männlich, aber das
+                        // ist egal - die Methode garantiert, dass niemals etwas
+                        // wie "du, der du..." oder
+                        // "du, die du..." generiert wird.
+                        M),
+                type);
+    }
+
+
+    /**
      * Gibt eventuell alternative Adjektivphrasen zurück, die den Eindruck
      * beschreiben, den dieses Feeling Being auf den SC macht, wenn die beiden sich
      * begegnen. Die Phrasen können mit
@@ -271,12 +297,31 @@ public class FeelingsComp extends AbstractStatefulComponent<FeelingsPCD> {
             final GameObjectId feelingTargetId,
             final SubstantivischePhrase targetDesc,
             final FeelingTowardsType type) {
-        final boolean targetKnown = memoryComp != null && memoryComp.isKnown(feelingTargetId);
+        final boolean targetKnown = isTargetKnown(feelingTargetId);
 
         return type.altFeelingBeiBegegnungSaetze(
                 gameObjectSubjekt, targetDesc,
                 getFeelingTowards(feelingTargetId, type),
                 targetKnown);
+    }
+
+    /**
+     * Gibt eventuell alternative Sätze zurück, die beschreiben, wie dieses Feeling Being
+     * das Target ansieht, wenn die beiden sich begegnen.
+     * <p>
+     * Die Methode garantiert, dass niemals etwas wie "du, der du..." oder
+     * "du, die du..." oder "du, das du..." generiert wird.
+     *
+     * @return Möglicherweise eine leere Liste (insbesondere bei extremen Gefühlen)!
+     */
+    private ImmutableList<Satz> altBeiBegegnungAnsehenSaetze(
+            final SubstantivischePhrase gameObjectSubjekt,
+            final GameObjectId feelingTargetId,
+            final SubstantivischePhrase targetDesc, final FeelingTowardsType type) {
+        return type.altBeiBegegnungAnsehenSaetze(
+                gameObjectSubjekt, targetDesc,
+                getFeelingTowards(feelingTargetId, type),
+                isTargetKnown(feelingTargetId));
     }
 
     /**
@@ -295,13 +340,14 @@ public class FeelingsComp extends AbstractStatefulComponent<FeelingsPCD> {
             final GameObjectId feelingTargetId,
             final SubstantivischePhrase targetDesc,
             final FeelingTowardsType type) {
-        final boolean targetKnown =
-                memoryComp != null ? memoryComp.isKnown(feelingTargetId) : false;
-
         return type.altEindruckBeiBegegnungAdjPhr(
                 getGameObjectPerson(), gameObjectSubjektNumerusGenus, targetDesc,
                 getFeelingTowards(feelingTargetId, type),
-                targetKnown);
+                isTargetKnown(feelingTargetId));
+    }
+
+    private boolean isTargetKnown(final GameObjectId targetId) {
+        return memoryComp != null && memoryComp.isKnown(targetId);
     }
 
     /**

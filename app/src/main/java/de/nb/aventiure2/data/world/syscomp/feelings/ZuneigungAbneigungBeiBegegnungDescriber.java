@@ -184,29 +184,22 @@ class ZuneigungAbneigungBeiBegegnungDescriber implements FeelingBeiBegegnungDesc
             return ImmutableList.of(
                     new ZweiAdjPhrOhneLeerstellen(
                             AdjektivOhneErgaenzungen.UEBERRASCHT,
-                            AdjektivOhneErgaenzungen.VERWIRRT
-                                    .mitGraduativerAngabe("etwas")
+                            AdjektivOhneErgaenzungen.VERWIRRT.mitGraduativerAngabe("etwas")
                     )
             );
         } else if (feelingIntensity == FeelingIntensity.NUR_LEICHT) {
             return ImmutableList.of(
+                    AdjektivOhneErgaenzungen.UEBERRASCHT.mitGraduativerAngabe("etwas"),
                     // "überrascht, dich [target] zu sehen"
                     AdjektivMitZuInfinitiv.UEBERRASCHT
-                            .mitLexikalischerKern(
-                                    sehenVerb
-                                            .mit(targetDesc)
-                            )
-            );
+                            .mitLexikalischerKern(sehenVerb.mit(targetDesc)));
         } else if (feelingIntensity == FeelingIntensity.MERKLICH) {
             return ImmutableList.of(
-                    // "überrascht, dich [target] zu sehen"
+                    AdjektivOhneErgaenzungen.UEBERRASCHT.mitGraduativerAngabe("etwas"),
+                    // "etwas überrascht, dich [target] zu sehen"
                     AdjektivMitZuInfinitiv.UEBERRASCHT
-                            .mitLexikalischerKern(
-                                    sehenVerb
-                                            .mit(targetDesc)
-                            )
-                            .mitGraduativerAngabe("etwas")
-            );
+                            .mitLexikalischerKern(sehenVerb.mit(targetDesc))
+                            .mitGraduativerAngabe("etwas"));
         } else if (feelingIntensity == FeelingIntensity.DEUTLICH) {
             // "glücklich, dich [target] zu sehen"
             final AdjPhrMitZuInfinitivOhneLeerstellen gluecklichDichZuSehen =
@@ -243,5 +236,4 @@ class ZuneigungAbneigungBeiBegegnungDescriber implements FeelingBeiBegegnungDesc
 
         return ImmutableList.of();
     }
-
 }

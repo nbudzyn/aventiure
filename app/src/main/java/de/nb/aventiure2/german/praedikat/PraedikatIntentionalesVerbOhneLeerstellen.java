@@ -11,10 +11,10 @@ import javax.annotation.Nullable;
 
 import de.nb.aventiure2.annotations.Komplement;
 import de.nb.aventiure2.annotations.Valenz;
-import de.nb.aventiure2.german.base.GermanUtil;
 import de.nb.aventiure2.german.base.Konstituente;
 import de.nb.aventiure2.german.base.Numerus;
 import de.nb.aventiure2.german.base.Person;
+import de.nb.aventiure2.german.base.SubstantivischePhraseOderReflexivpronomen;
 
 /**
  * Ein Prädikat eines <i>Verbs mit intentionaler Bedeutung</i>,
@@ -149,9 +149,8 @@ public class PraedikatIntentionalesVerbOhneLeerstellen
     }
 
     @Override
-    public Iterable<Konstituente> getMittelfeld(final Collection<Modalpartikel> modalpartikeln,
-                                                final Person personSubjekt,
-                                                final Numerus numerusSubjekt) {
+    Iterable<Konstituente> getMittelfeldOhneLinksversetzungUnbetonterPronomen(
+            final Person personSubjekt, final Numerus numerusSubjekt) {
         @Nullable final AdverbialeAngabeSkopusVerbAllg adverbialeAngabeSkopusVerbAllg =
                 getAdverbialeAngabeSkopusVerbAllg();
 
@@ -159,8 +158,10 @@ public class PraedikatIntentionalesVerbOhneLeerstellen
                 adverbialeAngabeSkopusVerbAllg.imMittelfeldErlaubt()) {
             return Konstituente.joinToKonstituenten(
                     getAdverbialeAngabeSkopusSatzDescription(), // "aus einer Laune heraus"
-                    GermanUtil.joinToNullString(modalpartikeln), // "mal eben"
-                    adverbialeAngabeSkopusVerbAllg.getDescription(), // "erneut"
+                    getModalpartikeln(), // "mal eben"
+                    adverbialeAngabeSkopusVerbAllg != null ?
+                            adverbialeAngabeSkopusVerbAllg.getDescription() :  // "erneut"
+                            null,
                     getAdverbialeAngabeSkopusVerbWohinWoherDescription()
                     // (kann es wohl gar nicht geben)
             );
@@ -172,7 +173,7 @@ public class PraedikatIntentionalesVerbOhneLeerstellen
 
         return Konstituente.joinToKonstituenten(
                 getAdverbialeAngabeSkopusSatzDescription(), // "aus einer Laune heraus"
-                GermanUtil.joinToNullString(modalpartikeln), // "mal eben"
+                getModalpartikeln(), // "mal eben"
                 adverbialeAngabeSkopusVerbAllg.getDescription(), // "erneut"
                 lexikalischerKern.getZuInfinitiv(
                         // Es liegt "Subjektkontrolle" vor.
@@ -180,6 +181,24 @@ public class PraedikatIntentionalesVerbOhneLeerstellen
                 ) // "ihre Haare wieder hinunterzulassen"
                 // (kann es wohl gar nicht geben)
         );
+    }
+
+    @Nullable
+    @Override
+    SubstantivischePhraseOderReflexivpronomen getDat() {
+        return null;
+    }
+
+    @Nullable
+    @Override
+    SubstantivischePhraseOderReflexivpronomen getAkk() {
+        return null;
+    }
+
+    @Nullable
+    @Override
+    SubstantivischePhraseOderReflexivpronomen getZweitesAkk() {
+        return null;
     }
 
     @Override

@@ -50,6 +50,19 @@ public class Konstituente {
                 .build();
     }
 
+    /**
+     * Gibt denselben Input zurück, wobei ein Vorkomma und ein Folgekomma gefordert werden.
+     * Ist der Input leer, wird eine leere Konsitutenten-Liste zurückgeben.
+     */
+    public static ImmutableList<Konstituente> schliesseInKommaEin(
+            final Iterable<Konstituente> input) {
+        if (!input.iterator().hasNext()) {
+            return ImmutableList.of();
+        }
+
+        return withVorkommaNoetig(withKommaStehtAus(input));
+    }
+
     public static ImmutableList<Konstituente> withVorkommaNoetig(
             final Iterable<Konstituente> input) {
         return withVorkommaNoetig(input, true);
@@ -68,7 +81,7 @@ public class Konstituente {
                 .build();
     }
 
-    public static ImmutableList<Konstituente> withKommaStehtAus(
+    private static ImmutableList<Konstituente> withKommaStehtAus(
             final Iterable<Konstituente> input) {
         checkArgument(
                 input.iterator().hasNext(),
@@ -156,6 +169,22 @@ public class Konstituente {
                 cutFirst(
                         Lists.reverse(ImmutableList.copyOf(input)),
                         Lists.reverse(ImmutableList.copyOf(parts))));
+    }
+
+    /**
+     * Schneidet die einzelnen <code>singleParts</code> einen nach dem anderen aus dem Input.
+     * Doppelt auftretende Texte werden also auch zweimal herausgeschnitten.
+     * Für jeden einzelnen Schnitt wird {@link #cutFirst(Iterable, Konstituente)} verwendet.
+     */
+    @Nonnull
+    public static List<Konstituente> cutFirstOneByOne(final Iterable<Konstituente> input,
+                                                      final List<Konstituente> singleParts) {
+        List<Konstituente> res = ImmutableList.copyOf(input);
+        for (final Konstituente singlePart : singleParts) {
+            res = Konstituente.cutFirst(res, singlePart);
+        }
+
+        return res;
     }
 
     @Nonnull

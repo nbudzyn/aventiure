@@ -47,6 +47,11 @@ public class Interrogativpronomen extends SubstantivischesPronomenMitVollerFlexi
     }
 
     @Override
+    public boolean isUnbetontesPronomen() {
+        return false;
+    }
+
+    @Override
     public Person getPerson() {
         return P3;
     }

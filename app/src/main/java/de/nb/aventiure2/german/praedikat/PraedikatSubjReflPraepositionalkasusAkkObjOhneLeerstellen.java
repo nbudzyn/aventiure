@@ -9,13 +9,13 @@ import javax.annotation.Nullable;
 
 import de.nb.aventiure2.annotations.Komplement;
 import de.nb.aventiure2.annotations.Valenz;
-import de.nb.aventiure2.german.base.GermanUtil;
 import de.nb.aventiure2.german.base.Interrogativpronomen;
 import de.nb.aventiure2.german.base.Konstituente;
 import de.nb.aventiure2.german.base.Numerus;
 import de.nb.aventiure2.german.base.Person;
 import de.nb.aventiure2.german.base.Reflexivpronomen;
 import de.nb.aventiure2.german.base.SubstantivischePhrase;
+import de.nb.aventiure2.german.base.SubstantivischePhraseOderReflexivpronomen;
 
 import static de.nb.aventiure2.german.base.Konstituente.k;
 
@@ -135,7 +135,7 @@ class PraedikatSubjReflPraepositionalkasusAkkObjOhneLeerstellen
         }
 
         final String akk = akkObj.akk();
-        if (!"es" .equals(akk)) {
+        if (!"es".equals(akk)) {
             // Wenn "es" ein Objekt ist, darf es nicht im Vorfeld stehen.
             // (Eisenberg Der Satz 5.4.2)
             return k(akk);  // "den Frosch"
@@ -145,15 +145,14 @@ class PraedikatSubjReflPraepositionalkasusAkkObjOhneLeerstellen
     }
 
     @Override
-    public Iterable<Konstituente> getMittelfeld(final Collection<Modalpartikel> modalpartikeln,
-                                                final Person personSubjekt,
-                                                final Numerus numerusSubjekt) {
+    Iterable<Konstituente> getMittelfeldOhneLinksversetzungUnbetonterPronomen(
+            final Person personSubjekt, final Numerus numerusSubjekt) {
         checkKeinPartikelVerb();
 
         return Konstituente.joinToKonstituenten(
                 getAdverbialeAngabeSkopusSatzDescription(), // "aus einer Laune heraus"
                 akkObj.akk(), // "die goldene Kugel"
-                GermanUtil.joinToNullString(modalpartikeln), // "besser doch"
+                getModalpartikeln(), // "besser doch"
                 getAdverbialeAngabeSkopusVerbAllgDescriptionFuerMittelfeld(), // "erneut"
                 Reflexivpronomen.get(personSubjekt, numerusSubjekt)
                         .im(verbReflPraepositionalkasusAkkObj
@@ -161,6 +160,24 @@ class PraedikatSubjReflPraepositionalkasusAkkObjOhneLeerstellen
                 getAdverbialeAngabeSkopusVerbWohinWoherDescription()
                 // "in deine Jackentasche"
         );
+    }
+
+    @Nullable
+    @Override
+    SubstantivischePhraseOderReflexivpronomen getAkk() {
+        return akkObj;
+    }
+
+    @Nullable
+    @Override
+    SubstantivischePhraseOderReflexivpronomen getZweitesAkk() {
+        return null;
+    }
+
+    @Nullable
+    @Override
+    SubstantivischePhraseOderReflexivpronomen getDat() {
+        return null;
     }
 
     @Override

@@ -5,6 +5,9 @@ import androidx.annotation.Nullable;
 import de.nb.aventiure2.german.base.Interrogativpronomen;
 import de.nb.aventiure2.german.base.Konstituente;
 import de.nb.aventiure2.german.base.SubstantivischePhrase;
+import de.nb.aventiure2.german.praedikat.AdverbialeAngabeSkopusSatz;
+import de.nb.aventiure2.german.praedikat.AdverbialeAngabeSkopusVerbAllg;
+import de.nb.aventiure2.german.praedikat.AdverbialeAngabeSkopusVerbWohinWoher;
 import de.nb.aventiure2.german.praedikat.PraedikatOhneLeerstellen;
 
 /**
@@ -40,6 +43,21 @@ public class Satz {
         this.subjekt = subjekt;
         this.praedikat = praedikat;
         this.angabensatz = angabensatz;
+    }
+
+
+    public Satz mitAdverbialerAngabe(@Nullable final AdverbialeAngabeSkopusSatz adverbialeAngabe) {
+        return new Satz(subjekt, praedikat.mitAdverbialerAngabe(adverbialeAngabe), angabensatz);
+    }
+
+    public Satz mitAdverbialerAngabe(
+            @Nullable final AdverbialeAngabeSkopusVerbAllg adverbialeAngabe) {
+        return new Satz(subjekt, praedikat.mitAdverbialerAngabe(adverbialeAngabe), angabensatz);
+    }
+
+    public Satz mitAdverbialerAngabe(
+            @Nullable final AdverbialeAngabeSkopusVerbWohinWoher adverbialeAngabe) {
+        return new Satz(subjekt, praedikat.mitAdverbialerAngabe(adverbialeAngabe), angabensatz);
     }
 
     public Satz mitAngabensatz(@Nullable final Konditionalsatz angabensatz) {
@@ -112,40 +130,24 @@ public class Satz {
      * Gibt den Satz als Verbzweitsatz aus, z.B. "Du hast etwas zu berichten"
      */
     public Iterable<Konstituente> getVerbzweitsatz() {
-        if (angabensatz == null) {
-            return Konstituente.joinToKonstituenten(
-                    subjekt.nom(),
-                    praedikat.getVerbzweit(subjekt.getPerson(), subjekt.getNumerus())
-            );
-        }
-
         return Konstituente.joinToKonstituenten(
                 subjekt.nom(),
-                Konstituente.withKommaStehtAus(
-                        praedikat.getVerbzweit(subjekt.getPerson(), subjekt.getNumerus())),
-                Konstituente.withKommaStehtAus(angabensatz.getDescription())
-                // es steht ein Komma aus
-        );
+                praedikat.getVerbzweit(subjekt.getPerson(), subjekt.getNumerus()),
+                angabensatz != null ?
+                        Konstituente.schliesseInKommaEin(angabensatz.getDescription()) :
+                        null);
     }
 
     /**
      * Gibt den Satz als Verbletztsatz aus, z.B. "du etwas zu berichten hast"
      */
     Iterable<Konstituente> getVerbletztsatz() {
-        if (angabensatz == null) {
-            return Konstituente.joinToKonstituenten(
-                    subjekt.nom(),
-                    praedikat.getVerbletzt(subjekt.getPerson(), subjekt.getNumerus())
-            );
-        }
-
         return Konstituente.joinToKonstituenten(
                 subjekt.nom(),
-                Konstituente.withKommaStehtAus(
-                        praedikat.getVerbletzt(subjekt.getPerson(), subjekt.getNumerus())),
-                Konstituente.withKommaStehtAus(angabensatz.getDescription())
-                // es steht ein Komma aus
-        );
+                praedikat.getVerbletzt(subjekt.getPerson(), subjekt.getNumerus()),
+                angabensatz != null ?
+                        Konstituente.schliesseInKommaEin(angabensatz.getDescription()) :
+                        null);
     }
 
     public SubstantivischePhrase getSubjekt() {

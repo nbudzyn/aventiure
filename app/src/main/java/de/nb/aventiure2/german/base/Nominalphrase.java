@@ -156,6 +156,11 @@ public class Nominalphrase
     }
 
     @Override
+    public boolean isUnbetontesPronomen() {
+        return false;
+    }
+
+    @Override
     public Person getPerson() {
         return P3;
     }

@@ -4,6 +4,8 @@ import androidx.annotation.NonNull;
 
 import com.google.common.collect.ImmutableList;
 
+import java.util.stream.Collectors;
+
 import javax.annotation.Nullable;
 
 import de.nb.aventiure2.data.database.AvDatabase;
@@ -34,6 +36,7 @@ import de.nb.aventiure2.german.base.PraepositionMitKasus;
 import de.nb.aventiure2.german.base.SubstantivischePhrase;
 import de.nb.aventiure2.german.description.AbstractDescription;
 import de.nb.aventiure2.german.description.TimedDescription;
+import de.nb.aventiure2.german.praedikat.AdverbialeAngabeSkopusSatz;
 
 import static de.nb.aventiure2.data.time.AvTime.oClock;
 import static de.nb.aventiure2.data.time.AvTimeSpan.mins;
@@ -360,26 +363,25 @@ public class RapunzelReactionsComp
                                 .altFeelingsBeiBegegnungMitScSaetze(anaph, ZUNEIGUNG_ABNEIGUNG));
         alt.addAll(toTimed(altZuneigungAbneigungSaetze, secs(5)));
 
-        alt.add(
-                // FIXME Das hier aus der Emotion generieren lassen.
-                neuerSatz(anaph.nom() + " schaut dich überrascht und etwas verwirrt an",
-                        secs(40))
-                        .phorikKandidat(F, RAPUNZEL)
-//                    // STORY Dies nur, wenn man sich schon "duzt"
-//                    du("findest",
-//                            "oben die junge Frau ganz aufgeregt vor: „Du bist schon wieder "
-//                                    + "da!”, sagt "
-//                                    + "sie, „Kannst du mir nun helfen?”",
-//                            "oben", secs(20))
-//                            .phorikKandidat(F, RAPUNZEL),
-//                    // STORY Dies nur, wenn Rapunzel schon von der Zauberin erzählt hat
-//                    neuerSatz(
-//                            "„Die Alte hat nichts bemerkt”, sprudelt die "
-//                                    + "wunderschöne junge Frau los, „aber lange werden wir uns "
-//                                    + "nicht treffen können. Sie ist so neugierig!”",
-//                            secs(40))
-//                            .phorikKandidat(F, RAPUNZEL)
-        );
+        final int zuneigungSCTowardsRapunzel =
+                loadSC().feelingsComp().getFeelingTowards(RAPUNZEL, ZUNEIGUNG_ABNEIGUNG);
+        if (RapunzelTalkingComp.duzen(zuneigungSCTowardsRapunzel)
+                && zuneigungSCTowardsRapunzel >= FeelingIntensity.MERKLICH) {
+            // FIXME Dies beides darf erst erscheinen, wenn Rapunzel von der Zauberin erzählt hat
+            //  und den SCu m Hilfe gebeten oder der SC Hilfe angeboten hat
+            alt.addAll(TimedDescription.toTimed(secs(15),
+                    du("findest",
+                            "oben die junge Frau ganz aufgeregt vor: „Du bist schon "
+                                    + "wieder da!”, sagt sie, „Kannst du mir nun helfen?”",
+                            "oben")
+                            .phorikKandidat(F, RAPUNZEL),
+                    neuerSatz(
+                            "„Die Alte hat nichts bemerkt”, sprudelt die "
+                                    + "wunderschöne junge Frau los, „aber lange werden wir uns "
+                                    + "nicht treffen können. Sie ist so neugierig!”")
+                            .phorikKandidat(F, RAPUNZEL)
+            ));
+        }
 
         if (loadSC().memoryComp().getKnown(RAPUNZEL) == KNOWN_FROM_DARKNESS) {
             alt.addAll(
@@ -416,6 +418,24 @@ public class RapunzelReactionsComp
                                 .altFeelingsBeiBegegnungMitScSaetze(anaph, ZUNEIGUNG_ABNEIGUNG));
 
         alt.addAll(toTimed(altZuneigungAbneigungSaetze, secs(5)));
+
+        // Könnte leer sein
+        final ImmutableList<AbstractDescription<?>> altSCBeiBegegnungAnsehenSaetze =
+                // Es wäre besser, wenn der Phorik-Kandidat durch den Satz
+                //  gesetzt würde. Das ist allerdings kompliziert...
+                neueSaetzeMitPhorikKandidat(
+                        anaph, RAPUNZEL,
+                        // Diese Sätze sind bereits in altZuneigungAbneigungSaetze enthalten...
+                        feelingsComp
+                                .altSCBeiBegegnungAnsehenSaetze(anaph, ZUNEIGUNG_ABNEIGUNG)
+                                // ...aber noch nicht mit dieser Ergänzung:
+                                .stream()
+                                .map(s -> s.mitAdverbialerAngabe(
+                                        new AdverbialeAngabeSkopusSatz("oben im dunklen Zimmer")
+                                ))
+                                .collect(Collectors.toList())
+                );
+        alt.addAll(toTimed(altSCBeiBegegnungAnsehenSaetze, secs(15)));
 
         alt.add(du(SENTENCE, "hast",
                 anaph.akk()
@@ -474,7 +494,8 @@ public class RapunzelReactionsComp
         }
     }
 
-    private void onGoldeneKugelEnter(@Nullable final ILocationGO from, final ILocationGO to) {
+    private void onGoldeneKugelEnter(@Nullable final ILocationGO from,
+                                     final ILocationGO to) {
         if (!locationComp.hasSameOuterMostLocationAs(to)) {
             return;
         }
@@ -537,7 +558,8 @@ public class RapunzelReactionsComp
         );
     }
 
-    private ImmutableList<TimedDescription<?>> altRapunzelZiehtHaareWiederHoch_ObenImAltenTurm() {
+    private ImmutableList<TimedDescription<?>>
+    altRapunzelZiehtHaareWiederHoch_ObenImAltenTurm() {
         final SubstantivischePhrase anaph =
                 getAnaphPersPronWennMglSonstDescription(false);
 
@@ -615,8 +637,9 @@ public class RapunzelReactionsComp
                 } else {
                     n.narrate(
                             neuerSatz("Gleich darauf fallen aus dem kleinen "
-                                    + "Fenster oben im Turm lange, goldene Haarzöpfe herab, "
-                                    + "sicher zwanzig Ellen tief bis auf den Boden", secs(30))
+                                            + "Fenster oben im Turm lange, goldene Haarzöpfe herab, "
+                                            + "sicher zwanzig Ellen tief bis auf den Boden",
+                                    secs(30))
                                     .phorikKandidat(PL_MFN, RAPUNZELS_HAARE));
                 }
             }

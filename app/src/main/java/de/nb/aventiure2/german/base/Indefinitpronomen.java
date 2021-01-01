@@ -129,6 +129,11 @@ public class Indefinitpronomen
     }
 
     @Override
+    public boolean isUnbetontesPronomen() {
+        return false;
+    }
+
+    @Override
     public int hashCode() {
         return Objects.hash(super.hashCode(), relPronTyp);
     }

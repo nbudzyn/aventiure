@@ -49,9 +49,7 @@ public abstract class AbstractDescribableReactionsComp extends AbstractReactions
      */
     protected SubstantivischePhrase getAnaphPersPronWennMglSonstDescription(
             final boolean descShortIfKnown) {
-        final IDescribableGO describableGO = (IDescribableGO) world.load(getGameObjectId());
-
-        return world.getAnaphPersPronWennMglSonstDescription(describableGO, descShortIfKnown);
+        return world.getAnaphPersPronWennMglSonstDescription(getGameObjectId(), descShortIfKnown);
     }
 
     /**

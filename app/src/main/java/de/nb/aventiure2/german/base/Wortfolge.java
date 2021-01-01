@@ -120,13 +120,19 @@ public class Wortfolge {
             return false;
         }
         final Wortfolge wortfolge = (Wortfolge) o;
-        return kommmaStehtAus == wortfolge.kommmaStehtAus &&
-                Objects.equals(string, wortfolge.string);
+
+        // Wir prüfen kommaStehtAus nicht mit. Im Kontext von
+        // cut...() könnte vielleicht so nötig sein...
+
+        return Objects.equals(string, wortfolge.string);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(string, kommmaStehtAus);
+        // kommaStehtAus nicht mitverwenden - damit hashCode() konsistent mit
+        // equals() wird.
+
+        return Objects.hash(string);
     }
 
     @NonNull

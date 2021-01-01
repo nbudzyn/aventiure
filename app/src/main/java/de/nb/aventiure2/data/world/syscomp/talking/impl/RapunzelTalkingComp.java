@@ -635,7 +635,7 @@ public class RapunzelTalkingComp extends AbstractTalkingComp {
         return res.build();
     }
 
-    private static boolean duzen(final int zuneigung) {
+    public static boolean duzen(final int zuneigung) {
         return zuneigung > FeelingIntensity.DEUTLICH ||
                 zuneigung <= -FeelingIntensity.DEUTLICH;
     }

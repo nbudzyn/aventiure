@@ -791,12 +791,26 @@ public class World {
      */
     public SubstantivischePhrase getAnaphPersPronWennMglSonstShortDescription(
             final GameObjectId describableId) {
-        // IDEA Auch andere "Anaphern" (im weitesten Sinne) erzeugen, nicht nur Personalpronomen:
-        //  Auch Synonyme, Überbegriffe oder schlicht Wiederholung könnten Anaphern sein.
-        //  Dann am besten Alternativen zurückgeben!
+        return getAnaphPersPronWennMglSonstDescription(describableId, true);
+    }
 
+    /**
+     * Gibt das Personalpronomen zurück, mit dem ein
+     * anaphorischer Bezug auf dieses
+     * Game Object möglich ist - wenn das nicht möglich ist, dann eine
+     * Beschreibung des Game Objects.
+     * <br/>
+     * Beispiel 1: "Du hebst die Lampe auf..." - jetzt ist ein anaphorischer Bezug
+     * auf die Lampe möglich und diese Methode gibt "sie" zurück.
+     * <br/>
+     * Beispiel 2: "Du zündest das Feuer an..." - jetzt ist <i>kein</i> anaphorischer Bezug
+     * auf die Lampe möglich und diese Methode gibt "die mysteriöse Lampe" zurück.
+     */
+    public SubstantivischePhrase getAnaphPersPronWennMglSonstDescription(
+            final GameObjectId describableId,
+            final boolean descShortIfKnown) {
         return getAnaphPersPronWennMglSonstDescription(
-                (IDescribableGO) load(describableId), true);
+                (IDescribableGO) load(describableId), descShortIfKnown);
     }
 
     /**
@@ -814,8 +828,11 @@ public class World {
     public SubstantivischePhrase getAnaphPersPronWennMglSonstDescription(
             final IDescribableGO describableGO,
             final boolean descShortIfKnown) {
-        @Nullable final Personalpronomen anaphPersPron =
-                n.getAnaphPersPronWennMgl(describableGO);
+        // IDEA Auch andere "Anaphern" (im weitesten Sinne) erzeugen, nicht nur Personalpronomen:
+        //  Auch Synonyme, Überbegriffe oder schlicht Wiederholung könnten Anaphern sein.
+        //  Dann am besten Alternativen zurückgeben!
+
+        @Nullable final Personalpronomen anaphPersPron = n.getAnaphPersPronWennMgl(describableGO);
         if (anaphPersPron != null) {
             return anaphPersPron;
         }

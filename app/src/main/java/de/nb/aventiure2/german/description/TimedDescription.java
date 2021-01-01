@@ -4,6 +4,7 @@ import androidx.annotation.NonNull;
 
 import com.google.common.collect.ImmutableList;
 
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Objects;
 
@@ -36,6 +37,14 @@ public class TimedDescription<D extends AbstractDescription<?>> {
      */
     @Nullable
     private final String counterIdIncrementedIfTextIsNarrated;
+
+    @CheckReturnValue
+    @NonNull
+    public static <D extends AbstractDescription<?>>
+    ImmutableList<TimedDescription<D>> toTimed(final AvTimeSpan timeElapsed,
+                                               final D... descriptions) {
+        return toTimed(Arrays.asList(descriptions), timeElapsed);
+    }
 
     @CheckReturnValue
     @NonNull

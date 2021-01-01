@@ -11,14 +11,12 @@ import javax.annotation.Nullable;
 
 import de.nb.aventiure2.annotations.Komplement;
 import de.nb.aventiure2.annotations.Valenz;
-import de.nb.aventiure2.german.base.GermanUtil;
 import de.nb.aventiure2.german.base.Interrogativpronomen;
 import de.nb.aventiure2.german.base.Konstituente;
 import de.nb.aventiure2.german.base.Numerus;
 import de.nb.aventiure2.german.base.Person;
-import de.nb.aventiure2.german.base.Personalpronomen;
-import de.nb.aventiure2.german.base.Reflexivpronomen;
 import de.nb.aventiure2.german.base.SubstantivischePhrase;
+import de.nb.aventiure2.german.base.SubstantivischePhraseOderReflexivpronomen;
 
 import static de.nb.aventiure2.german.base.Konstituente.k;
 
@@ -155,53 +153,32 @@ public class PraedikatDatAkkOhneLeerstellen
     }
 
     @Override
-    public Iterable<Konstituente> getMittelfeld(final Collection<Modalpartikel> modalpartikeln,
-                                                final Person personSubjekt,
-                                                final Numerus numerusSubjekt) {
-        // Duden 1356: "Schwach betonte Personal- und Reflexivpronomen stehen
-        // unmittelbar nach der linken Satzklammer [...] Wackernagel-Position"
-
-        final String akk = this.akk.akk();
-        final String dat = this.dat.dat();
-        if (Personalpronomen.isPersonalpronomen(akk) ||
-                Reflexivpronomen.isReflexivpronomen(akk)) {
-
-            if (Personalpronomen.isPersonalpronomen(dat) ||
-                    Reflexivpronomen.isReflexivpronomen(dat)) {
-                // Duden 1357: "Akkusativ > Dativ"
-                return Konstituente.joinToKonstituenten(
-                        akk, // "sie", Wackernagel-Position 1
-                        dat, // "ihm", Wackernagel-Position 2
-                        getAdverbialeAngabeSkopusSatzDescription(),
-                        // "aus einer Laune heraus"
-                        GermanUtil.joinToNullString(modalpartikeln), // "halt"
-                        getAdverbialeAngabeSkopusVerbAllgDescriptionFuerMittelfeld()); // "auf deiner Flöte"
-            }
-
-            return Konstituente.joinToKonstituenten(
-                    akk, // "sie", Wackernagel-Position
-                    getAdverbialeAngabeSkopusSatzDescription(), // "aus einer Laune heraus"
-                    dat, // "dem Frosch"
-                    GermanUtil.joinToNullString(modalpartikeln), // "halt"
-                    getAdverbialeAngabeSkopusVerbAllgDescriptionFuerMittelfeld()); // "auf deiner Flöte"
-        }
-
-        if (Personalpronomen.isPersonalpronomen(dat) ||
-                Reflexivpronomen.isReflexivpronomen(dat)) {
-            return Konstituente.joinToKonstituenten(
-                    dat, // "ihm", Wackernagel-Position
-                    getAdverbialeAngabeSkopusSatzDescription(), // "aus einer Laune heraus"
-                    akk, // "die Melodie"
-                    GermanUtil.joinToNullString(modalpartikeln), // "halt"
-                    getAdverbialeAngabeSkopusVerbAllgDescriptionFuerMittelfeld()); // "auf deiner Flöte"
-        }
-
+    Iterable<Konstituente> getMittelfeldOhneLinksversetzungUnbetonterPronomen(
+            final Person personSubjekt, final Numerus numerusSubjekt) {
         return Konstituente.joinToKonstituenten(
                 getAdverbialeAngabeSkopusSatzDescription(), // "aus einer Laune heraus"
-                dat, // "dem Frosch"
-                GermanUtil.joinToNullString(modalpartikeln), // "halt"
+                dat.dat(), // "dem Frosch"
+                getModalpartikeln(), // "halt"
                 getAdverbialeAngabeSkopusVerbAllgDescriptionFuerMittelfeld(), // "auf deiner Flöte"
-                akk); // "ein Lied"
+                akk.akk()); // "ein Lied"
+    }
+
+    @Override
+    @Nullable
+    public SubstantivischePhrase getDat() {
+        return dat;
+    }
+
+    @Nullable
+    @Override
+    public SubstantivischePhrase getAkk() {
+        return akk;
+    }
+
+    @Nullable
+    @Override
+    SubstantivischePhraseOderReflexivpronomen getZweitesAkk() {
+        return null;
     }
 
     @Override

@@ -11,6 +11,7 @@ import de.nb.aventiure2.german.base.SubstantivischePhrase;
 import de.nb.aventiure2.german.praedikat.AdverbialeAngabeSkopusSatz;
 import de.nb.aventiure2.german.satz.Satz;
 
+import static com.google.common.collect.ImmutableList.toImmutableList;
 import static de.nb.aventiure2.german.praedikat.PraedikativumPraedikatOhneLeerstellen.praedikativumPraedikatMit;
 import static de.nb.aventiure2.german.praedikat.VerbSubjObj.ANBLICKEN;
 import static de.nb.aventiure2.german.praedikat.VerbSubjObj.ANSCHAUEN;
@@ -63,20 +64,8 @@ public enum FeelingTowardsType {
                         .map(v -> v.mit(ap).alsSatzMitSubjekt(gameObjectSubjekt)))
                 .collect(toList()));
 
-        res.addAll(altEindruckAdjPhr.stream()
-                .filter(ap ->
-                        !ap.getPraedikativAnteilKandidatFuerNachfeld(
-                                gameObjectSubjekt.getPerson(), gameObjectSubjekt.getNumerus())
-                                .iterator().hasNext())
-                // "Sie schaut dich überrascht an.", aber nicht
-                // *"Sie schaut dich überrascht an, dich zu sehen".
-                .flatMap(ap -> Stream.of(ANBLICKEN, ANSEHEN, ANSCHAUEN)
-                        .map(v -> v.mit(gameObjectSubjekt)
-                                .mitAdverbialerAngabe(ap.alsAdverbialeAngabe(
-                                        gameObjectSubjekt.getPerson(),
-                                        gameObjectSubjekt.getNumerus()))
-                                .alsSatzMitSubjekt(gameObjectSubjekt)))
-                .collect(toList()));
+        res.addAll(altBeiBegegnungAnsehenSaetze(gameObjectSubjekt,
+                targetDesc, feelingIntensity, targetKnown));
 
         res.addAll(altEindruckAdjPhr.stream()
                 .flatMap(adjPhr ->
@@ -89,7 +78,7 @@ public enum FeelingTowardsType {
                                                                         advAng))
                                                         .alsSatzMitSubjekt(gameObjectSubjekt)
                                 )
-                ).collect(ImmutableList.toImmutableList()));
+                ).collect(toImmutableList()));
 
         res.addAll(feelingBeiBegegnungDescriber.altFeelingBeiBegegnungSaetze(
                 gameObjectSubjekt, targetDesc, feelingIntensity, targetKnown
@@ -98,12 +87,50 @@ public enum FeelingTowardsType {
         return res.build();
     }
 
+    /**
+     * Gibt eventuell alternative Sätze zurück, die beschreiben, wie dieses Feeling Being
+     * das Target ansieht, wenn die beiden sich begegnen.
+     * <p>
+     * Die Methode garantiert, dass niemals etwas wie "du, der du..." oder
+     * "du, die du..." oder "du, das du..." generiert wird.
+     *
+     * @return Möglicherweise eine leere Liste (insbesondere bei extremen Gefühlen)!
+     */
+    public ImmutableList<Satz> altBeiBegegnungAnsehenSaetze(
+            final SubstantivischePhrase gameObjectSubjekt,
+            final SubstantivischePhrase targetDesc, final int feelingIntensity,
+            final boolean targetKnown) {
+        final ImmutableList<AdjPhrOhneLeerstellen> altEindruckAdjPhr =
+                altEindruckBeiBegegnungAdjPhr(
+                        gameObjectSubjekt.getPerson(), gameObjectSubjekt.getNumerusGenus(),
+                        targetDesc, feelingIntensity, targetKnown
+                );
+
+        return altEindruckAdjPhr.stream()
+                .filter(ap ->
+                        !ap.getPraedikativAnteilKandidatFuerNachfeld(
+                                gameObjectSubjekt.getPerson(), gameObjectSubjekt.getNumerus())
+                                .iterator().hasNext())
+                // "Sie schaut dich überrascht an.", aber nicht
+                // *"Sie schaut dich überrascht an, dich zu sehen".
+                .flatMap(ap -> Stream.of(ANBLICKEN, ANSEHEN, ANSCHAUEN)
+                        .map(v -> v.mit(gameObjectSubjekt)
+                                .mitAdverbialerAngabe(ap.alsAdverbialeAngabe(
+                                        gameObjectSubjekt.getPerson(),
+                                        gameObjectSubjekt.getNumerus()))
+                                .alsSatzMitSubjekt(gameObjectSubjekt)))
+                .collect(toImmutableList());
+    }
 
     /**
      * Gibt eventuell alternative Adjektivphrasen zurück, die den Eindruck
      * beschreiben, den dieses Feeling Being auf das Target macht, wenn die beiden sich
      * begegnen. Die Phrasen können mit,
      * <i>wirken</i> oder <i>scheinen</i> verbunden werden.
+     * <p>
+     * Diese Sätze sind in
+     * {@link #altFeelingBeiBegegnungSaetze(SubstantivischePhrase, SubstantivischePhrase, int, boolean)}
+     * bereits enthalten.
      * <p>
      * Die Methode garantiert, dass niemals etwas wie "du, der du..." oder
      * "du, die du..." oder "du, das du..." generiert wird.

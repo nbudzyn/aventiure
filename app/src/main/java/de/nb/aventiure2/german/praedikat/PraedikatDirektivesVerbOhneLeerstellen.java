@@ -13,14 +13,16 @@ import javax.annotation.Nullable;
 
 import de.nb.aventiure2.annotations.Komplement;
 import de.nb.aventiure2.annotations.Valenz;
-import de.nb.aventiure2.german.base.GermanUtil;
 import de.nb.aventiure2.german.base.Interrogativpronomen;
 import de.nb.aventiure2.german.base.Kasus;
 import de.nb.aventiure2.german.base.Konstituente;
 import de.nb.aventiure2.german.base.Numerus;
 import de.nb.aventiure2.german.base.Person;
 import de.nb.aventiure2.german.base.SubstantivischePhrase;
+import de.nb.aventiure2.german.base.SubstantivischePhraseOderReflexivpronomen;
 
+import static de.nb.aventiure2.german.base.Kasus.AKK;
+import static de.nb.aventiure2.german.base.Kasus.DAT;
 import static de.nb.aventiure2.german.base.Konstituente.k;
 
 /**
@@ -172,7 +174,7 @@ public class PraedikatDirektivesVerbOhneLeerstellen
 
 
         final String objektImKasus = objekt.im(kasus);
-        if (!"es" .equals(objektImKasus)) {
+        if (!"es".equals(objektImKasus)) {
             // Wenn "es" ein Objekt ist, darf es nicht im Vorfeld stehen.
             // (Eisenberg Der Satz 5.4.2)
             return k(objektImKasus);  // "Die junge Frau (bittest du ...)"
@@ -182,12 +184,11 @@ public class PraedikatDirektivesVerbOhneLeerstellen
     }
 
     @Override
-    public Iterable<Konstituente> getMittelfeld(final Collection<Modalpartikel> modalpartikeln,
-                                                final Person personSubjekt,
-                                                final Numerus numerusSubjekt) {
+    Iterable<Konstituente> getMittelfeldOhneLinksversetzungUnbetonterPronomen(
+            final Person personSubjekt, final Numerus numerusSubjekt) {
         return Konstituente.joinToKonstituenten(
                 getAdverbialeAngabeSkopusSatzDescription(), // "aus einer Laune heraus"
-                GermanUtil.joinToNullString(modalpartikeln), // "mal eben"
+                getModalpartikeln(), // "mal eben"
                 getAdverbialeAngabeSkopusVerbAllgDescriptionFuerMittelfeld(), // "erneut"
                 objekt.im(kasus), // "die junge Frau"
                 getAdverbialeAngabeSkopusVerbWohinWoherDescription()
@@ -202,6 +203,32 @@ public class PraedikatDirektivesVerbOhneLeerstellen
         //   gestellt werden (statt ins Nachfeld):
         //   - "Die junge Frau ihre Haare wieder hinunterzulassen bitten"
         //   - "Du hast die junge Frau ihre Haare wieder hinunterzulassen gebeten"
+    }
+
+    @Nullable
+    @Override
+    SubstantivischePhraseOderReflexivpronomen getDat() {
+        if (kasus == DAT) {
+            return objekt;
+        }
+
+        return null;
+    }
+
+    @Nullable
+    @Override
+    SubstantivischePhraseOderReflexivpronomen getAkk() {
+        if (kasus == AKK) {
+            return objekt;
+        }
+
+        return null;
+    }
+
+    @Nullable
+    @Override
+    SubstantivischePhraseOderReflexivpronomen getZweitesAkk() {
+        return null;
     }
 
     @Override
