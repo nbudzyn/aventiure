@@ -167,6 +167,24 @@ public class PraedikatMitWoertlicherRedeOhneLeerstellen
         return Konstituente.joinToKonstituenten(
                 getAdverbialeAngabeSkopusVerbAllgDescriptionFuerZwangsausklammerung(),
                 k(": " + woertlicheRede.amSatzende())); // "„Kommt alle her.“"
+
+        // FIXME
+        //  Laut http://www.pro-publish.com/korrektor/zeichensetzung-interpunktion/den-doppelpunkt-richtig-setzen/
+        //  ist es möglich, nach dem Doppelpunkt den Satz fortzuführen - dabei darf die
+        //  wörtliche Rede allerdings nicht mit Punkt abgeschlossen worden sein:
+        //  "Peter sagte: „Ich fahre jetzt nach Hause“, doch es wurde noch viel später an diesem
+        //  Abend."
+        //  Wir müssen also den letzten Punkt - sofern einer angegeben war - und auch das letzte
+        //  "“" von der wörtlichen Rede entfernen und uns merken, dass die wörtliche Rede noch nicht
+        //  abgeschlossen wurde. Betroffen sind also die Kombinationen ".“", "“." und "“".
+        //  Wir dürfen also Wörtliche Rede nicht mit ".“" beenden, sofern noch nicht klar ist,
+        //  ob der Satz beendet ist:
+        //  - Wenn der Satz beendet wird, muss die wörtliche Rede mit "".“" beendet werden - oder
+        //    mit ""“", wenn schon ein Fragezeichen oder Ausrufezeichen in der wörtlichen Rede
+        //    stand.
+        //  - Wenn der Satz aber weitergeführt wird, wird die wörtliche Rede nur mit ""“, " beendet
+        //    - ganz gleich, ob schon ein Fragezeichen oder Ausrufezeichen stand.
+
     }
 
     @Override
