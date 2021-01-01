@@ -41,8 +41,8 @@ import static de.nb.aventiure2.german.base.NumerusGenus.PL_MFN;
 import static de.nb.aventiure2.german.base.PraepositionMitKasus.ZU;
 import static de.nb.aventiure2.german.base.StructuralElement.PARAGRAPH;
 import static de.nb.aventiure2.german.base.StructuralElement.SENTENCE;
+import static de.nb.aventiure2.german.description.DescriptionBuilder.altNeueSaetzeMitPhorikKandidat;
 import static de.nb.aventiure2.german.description.DescriptionBuilder.du;
-import static de.nb.aventiure2.german.description.DescriptionBuilder.neueSaetzeMitPhorikKandidat;
 import static de.nb.aventiure2.german.description.DescriptionBuilder.neuerSatz;
 import static de.nb.aventiure2.german.description.DescriptionBuilder.satzanschluss;
 import static de.nb.aventiure2.german.praedikat.DirektivesVerb.BITTEN;
@@ -226,7 +226,7 @@ public class RapunzelTalkingComp extends AbstractTalkingComp {
         final ImmutableList<AbstractDescription<?>> altZuneigungAbneigungSaetze =
                 // Es wäre besser, wenn der Phorik-Kandidat schon beim Erzeugen des
                 // Satzes gesetzt würde.
-                neueSaetzeMitPhorikKandidat(
+                altNeueSaetzeMitPhorikKandidat(
                         anaph, RAPUNZEL,
                         feelingsComp
                                 .altFeelingsBeiBegegnungMitScSaetze(anaph, ZUNEIGUNG_ABNEIGUNG));

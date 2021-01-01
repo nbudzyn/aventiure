@@ -61,8 +61,8 @@ import static de.nb.aventiure2.german.base.NumerusGenus.F;
 import static de.nb.aventiure2.german.base.NumerusGenus.PL_MFN;
 import static de.nb.aventiure2.german.base.StructuralElement.PARAGRAPH;
 import static de.nb.aventiure2.german.base.StructuralElement.SENTENCE;
+import static de.nb.aventiure2.german.description.DescriptionBuilder.altNeueSaetzeMitPhorikKandidat;
 import static de.nb.aventiure2.german.description.DescriptionBuilder.du;
-import static de.nb.aventiure2.german.description.DescriptionBuilder.neueSaetzeMitPhorikKandidat;
 import static de.nb.aventiure2.german.description.DescriptionBuilder.neuerSatz;
 import static de.nb.aventiure2.german.description.TimedDescription.toTimed;
 
@@ -358,7 +358,7 @@ public class RapunzelReactionsComp
         final ImmutableList<AbstractDescription<?>> altZuneigungAbneigungSaetze =
                 // Es wäre besser, wenn der Phorik-Kandidat schon beim Erzeugen des
                 // Satzes gesetzt würde.
-                neueSaetzeMitPhorikKandidat(anaph, RAPUNZEL,
+                altNeueSaetzeMitPhorikKandidat(anaph, RAPUNZEL,
                         feelingsComp
                                 .altFeelingsBeiBegegnungMitScSaetze(anaph, ZUNEIGUNG_ABNEIGUNG));
         alt.addAll(toTimed(altZuneigungAbneigungSaetze, secs(5)));
@@ -412,7 +412,7 @@ public class RapunzelReactionsComp
         final ImmutableList<AbstractDescription<?>> altZuneigungAbneigungSaetze =
                 // Es wäre besser, wenn der Phorik-Kandidat durch den Satz
                 //  gesetzt würde. Das ist allerdings kompliziert...
-                neueSaetzeMitPhorikKandidat(
+                altNeueSaetzeMitPhorikKandidat(
                         anaph, RAPUNZEL,
                         feelingsComp
                                 .altFeelingsBeiBegegnungMitScSaetze(anaph, ZUNEIGUNG_ABNEIGUNG));
@@ -423,7 +423,7 @@ public class RapunzelReactionsComp
         final ImmutableList<AbstractDescription<?>> altSCBeiBegegnungAnsehenSaetze =
                 // Es wäre besser, wenn der Phorik-Kandidat durch den Satz
                 //  gesetzt würde. Das ist allerdings kompliziert...
-                neueSaetzeMitPhorikKandidat(
+                altNeueSaetzeMitPhorikKandidat(
                         anaph, RAPUNZEL,
                         // Diese Sätze sind bereits in altZuneigungAbneigungSaetze enthalten...
                         feelingsComp

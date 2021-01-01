@@ -11,9 +11,7 @@ import de.nb.aventiure2.annotations.Valenz;
 import de.nb.aventiure2.german.base.Konstituente;
 import de.nb.aventiure2.german.base.Numerus;
 import de.nb.aventiure2.german.base.Person;
-
-import static de.nb.aventiure2.german.base.Numerus.SG;
-import static de.nb.aventiure2.german.base.Person.P2;
+import de.nb.aventiure2.german.base.SubstantivischePhrase;
 
 /**
  * Ein zu-haben-Prädikat, bei dem alle Leerstellen gefüllt sind
@@ -79,22 +77,13 @@ public class ZuHabenPraedikatOhneLeerstellen implements PraedikatOhneLeerstellen
     }
 
     @Override
-    public Iterable<Konstituente> getDuSatzanschlussOhneSubjekt() {
-        // hast Spannendes zu berichten
-        // hast dich zu waschen
-        // hast zu sagen: "Hallo!"
-        return Konstituente.joinToKonstituenten(
-                HabenUtil.VERB.getDuFormOhnePartikel(),
-                lexikalischerKern.getZuInfinitiv(P2, SG));
-    }
-
-    @Override
-    public boolean duHauptsatzLaesstSichMitNachfolgendemDuHauptsatzZusammenziehen() {
+    public boolean hauptsatzLaesstSichBeiGleichemSubjektMitNachfolgendemVerbzweitsatzZusammenziehen() {
         // Diese Einschränkung hängt wohl hauptsächlich vom Nachfeld ab, dass
         // auch in der zu-haben-Konstruktion das Nachfeld wird:
         // Du sagst: "Hallo!" -> Du hast zu sagen: "Hallo!"
 
-        return lexikalischerKern.duHauptsatzLaesstSichMitNachfolgendemDuHauptsatzZusammenziehen();
+        return lexikalischerKern
+                .hauptsatzLaesstSichBeiGleichemSubjektMitNachfolgendemVerbzweitsatzZusammenziehen();
     }
 
     @Override
@@ -106,6 +95,21 @@ public class ZuHabenPraedikatOhneLeerstellen implements PraedikatOhneLeerstellen
         return Konstituente.joinToKonstituenten(
                 HabenUtil.VERB.getPraesensOhnePartikel(person, numerus), // "hast"
                 lexikalischerKern.getZuInfinitiv(person, numerus)); // "dich zu waschen"
+    }
+
+    @Override
+    public Iterable<Konstituente> getVerbzweitMitSubjektImMittelfeld(
+            final SubstantivischePhrase subjekt) {
+        // hast du Spannendes zu berichten
+        // hast du dich zu waschen
+        // hast du zu sagen: "Hallo!"
+
+        return Konstituente.joinToKonstituenten(
+                HabenUtil.VERB.getPraesensOhnePartikel(
+                        subjekt.getPerson(), subjekt.getNumerus()), // "hast"
+                subjekt.nom(), // "du"
+                lexikalischerKern.getZuInfinitiv(
+                        subjekt.getPerson(), subjekt.getNumerus())); // "dich zu waschen"
     }
 
     @Override
@@ -206,44 +210,21 @@ public class ZuHabenPraedikatOhneLeerstellen implements PraedikatOhneLeerstellen
         // eine normative Forderung handelt, nicht um eine Aktion.
         return false;
     }
-
+    
+    @Nullable
     @Override
-    public Iterable<Konstituente> getDuHauptsatzMitVorfeld(final String vorfeld) {
-        // Dann hast du Spannendes zu berichten
-        // Dann hast du dich zu waschen
-        // Dann hast du zu sagen: "Hallo!"
-        return Konstituente.capitalize(
-                Konstituente.joinToKonstituenten(
-                        vorfeld, // "dann"
-                        HabenUtil.VERB.getDuFormOhnePartikel(), // "hast"
-                        "du",
-                        lexikalischerKern.getZuInfinitiv(P2, SG))); // "dich zu waschen"
-    }
-
-    @Override
-    public Iterable<Konstituente> getDuHauptsatzMitSpeziellemVorfeld() {
-        @Nullable final Konstituente speziellesVorfeld = getSpeziellesVorfeld(P2, SG);
-
-        if (speziellesVorfeld == null) {
-            return getDuHauptsatz();
-        }
-
-        return Konstituente.capitalize(
-                Konstituente.joinToKonstituenten(
-                        speziellesVorfeld, // "Spannendes"
-                        HabenUtil.VERB.getDuFormOhnePartikel(), // "hast"
-                        "du",
-                        Konstituente.cutFirst(
-                                lexikalischerKern.getZuInfinitiv(P2, SG),
-                                speziellesVorfeld))); // "dem König zu berichten deswegen"
+    public Konstituente getSpeziellesVorfeldSehrErwuenscht(final Person person,
+                                                           final Numerus numerus) {
+        // "Danach hast du Spannendes zu berichten."
+        return lexikalischerKern.getSpeziellesVorfeldSehrErwuenscht(person, numerus);
     }
 
     @Nullable
     @Override
-    public Konstituente getSpeziellesVorfeld(final Person person,
-                                             final Numerus numerus) {
+    public Konstituente getSpeziellesVorfeldAlsWeitereOption(final Person person,
+                                                             final Numerus numerus) {
         // "Spannendes hat er zu berichten."
-        return lexikalischerKern.getSpeziellesVorfeld(person, numerus);
+        return lexikalischerKern.getSpeziellesVorfeldAlsWeitereOption(person, numerus);
     }
 
     @Nullable

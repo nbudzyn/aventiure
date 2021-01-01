@@ -11,6 +11,7 @@ import javax.annotation.Nullable;
 import de.nb.aventiure2.german.base.Konstituente;
 import de.nb.aventiure2.german.base.Numerus;
 import de.nb.aventiure2.german.base.Person;
+import de.nb.aventiure2.german.base.SubstantivischePhrase;
 
 import static de.nb.aventiure2.german.base.Konstituente.k;
 
@@ -97,18 +98,19 @@ public enum VerbSubj implements PraedikatOhneLeerstellen {
     }
 
     @Override
-    public Iterable<Konstituente> getDuSatzanschlussOhneSubjekt() {
-        return toPraedikatSubj().getDuSatzanschlussOhneSubjekt();
-    }
-
-    @Override
-    public boolean duHauptsatzLaesstSichMitNachfolgendemDuHauptsatzZusammenziehen() {
+    public boolean hauptsatzLaesstSichBeiGleichemSubjektMitNachfolgendemVerbzweitsatzZusammenziehen() {
         return true;
     }
 
     @Override
     public Iterable<Konstituente> getVerbzweit(final Person person, final Numerus numerus) {
         return toPraedikatSubj().getVerbzweit(person, numerus);
+    }
+
+    @Override
+    public Iterable<Konstituente> getVerbzweitMitSubjektImMittelfeld(
+            final SubstantivischePhrase subjekt) {
+        return toPraedikatSubj().getVerbzweitMitSubjektImMittelfeld(subjekt);
     }
 
     @Override
@@ -140,15 +142,19 @@ public enum VerbSubj implements PraedikatOhneLeerstellen {
     public boolean umfasstSatzglieder() {
         return false;
     }
-
+    
+    @Nullable
     @Override
-    public Iterable<Konstituente> getDuHauptsatzMitVorfeld(final String vorfeld) {
-        return toPraedikatSubj().getDuHauptsatzMitVorfeld(vorfeld);
+    public Konstituente getSpeziellesVorfeldSehrErwuenscht(final Person person,
+                                                           final Numerus numerus) {
+        return toPraedikatSubj().getSpeziellesVorfeldSehrErwuenscht(person, numerus);
     }
 
+    @Nullable
     @Override
-    public Iterable<Konstituente> getDuHauptsatzMitSpeziellemVorfeld() {
-        return toPraedikatSubj().getDuHauptsatzMitSpeziellemVorfeld();
+    public Konstituente getSpeziellesVorfeldAlsWeitereOption(final Person person,
+                                                             final Numerus numerus) {
+        return toPraedikatSubj().getSpeziellesVorfeldAlsWeitereOption(person, numerus);
     }
 
     @Override
@@ -173,9 +179,8 @@ public enum VerbSubj implements PraedikatOhneLeerstellen {
     }
 
     @Nullable
-    @Override
-    public Konstituente getSpeziellesVorfeld(final Person person,
-                                             final Numerus numerus) {
+    public static Konstituente getSpeziellesVorfeld(final Person person,
+                                                    final Numerus numerus) {
         return null;
     }
 

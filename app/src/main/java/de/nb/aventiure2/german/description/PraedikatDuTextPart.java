@@ -1,8 +1,16 @@
 package de.nb.aventiure2.german.description;
 
+import javax.annotation.Nullable;
+
+import de.nb.aventiure2.german.base.Konstituente;
+import de.nb.aventiure2.german.base.Personalpronomen;
 import de.nb.aventiure2.german.base.Wortfolge;
 import de.nb.aventiure2.german.praedikat.AbstractDuTextPart;
 import de.nb.aventiure2.german.praedikat.PraedikatOhneLeerstellen;
+
+import static de.nb.aventiure2.german.base.Numerus.SG;
+import static de.nb.aventiure2.german.base.NumerusGenus.M;
+import static de.nb.aventiure2.german.base.Person.P2;
 
 public class PraedikatDuTextPart implements AbstractDuTextPart {
     private final PraedikatOhneLeerstellen praedikat;
@@ -13,25 +21,43 @@ public class PraedikatDuTextPart implements AbstractDuTextPart {
 
     @Override
     public Wortfolge getDuHauptsatz() {
-        return Wortfolge.joinToNullWortfolge(praedikat.getDuHauptsatz());
+        return Wortfolge.joinToNullWortfolge(praedikat
+                .alsSatzMitSubjekt(Personalpronomen.get(P2,
+                        // Hier muss man darauf achten, keine Sätze mit
+                        // "du, der du" zu generieren, weil es ja eine
+                        // weibliche Spielerin sein könnte!
+                        M))
+                .getVerbzweitsatzStandard());
     }
 
     @Override
     public Wortfolge getDuHauptsatzMitVorfeld(final String vorfeld) {
         return Wortfolge.joinToNullWortfolge(
-                praedikat.getDuHauptsatzMitVorfeld(vorfeld));
+                praedikat
+                        .alsSatzMitSubjekt(Personalpronomen.get(P2,
+                                // Hier muss man darauf achten, keine Sätze mit
+                                // "du, der du" zu generieren, weil es ja eine
+                                // weibliche Spielerin sein könnte!
+                                M))
+                        .getVerbzweitsatzMitVorfeld(vorfeld));
     }
 
     @Override
     public Wortfolge getDuHauptsatzMitSpeziellemVorfeld() {
-        return Wortfolge.joinToNullWortfolge(
-                praedikat.getDuHauptsatzMitSpeziellemVorfeld());
+        @Nullable final Iterable<Konstituente> speziellesVorfeld =
+                praedikat.alsSatzMitSubjekt(Personalpronomen.get(P2, M))
+                        .getVerbzweitsatzMitSpeziellemVorfeldAlsWeitereOption();
+        if (speziellesVorfeld != null) {
+            return Wortfolge.joinToNullWortfolge(speziellesVorfeld);
+        }
+
+        return getDuHauptsatz();
     }
 
     @Override
     public Wortfolge getDuSatzanschlussOhneSubjekt() {
         return Wortfolge.joinToNullWortfolge(
-                praedikat.getDuSatzanschlussOhneSubjekt());
+                praedikat.getVerbzweit(P2, SG));
     }
 
     public PraedikatOhneLeerstellen getPraedikat() {

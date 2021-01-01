@@ -11,12 +11,15 @@ import java.util.Collection;
 import javax.annotation.CheckReturnValue;
 
 import de.nb.aventiure2.german.base.GermanUtil;
+import de.nb.aventiure2.german.base.Personalpronomen;
 import de.nb.aventiure2.german.base.Wortfolge;
 import de.nb.aventiure2.german.praedikat.AdverbialeAngabeSkopusSatz;
 import de.nb.aventiure2.german.praedikat.AdverbialeAngabeSkopusVerbAllg;
 import de.nb.aventiure2.german.praedikat.Modalpartikel;
 
 import static com.google.common.collect.ImmutableList.builder;
+import static de.nb.aventiure2.german.base.NumerusGenus.M;
+import static de.nb.aventiure2.german.base.Person.P2;
 import static de.nb.aventiure2.german.base.StructuralElement.PARAGRAPH;
 import static de.nb.aventiure2.german.base.StructuralElement.SENTENCE;
 import static de.nb.aventiure2.german.base.StructuralElement.max;
@@ -121,7 +124,8 @@ public class DescriptionUmformulierer {
                                         .mitModalpartikeln(
                                                 new Modalpartikel("besser"),
                                                 new Modalpartikel("doch"))
-                                        .getDuHauptsatz());
+                                        .alsSatzMitSubjekt(Personalpronomen.get(P2, M))
+                                        .getVerbzweitsatzStandard());
                 alt.add(neuerSatz(
                         max(duDesc.getStartsNew(), SENTENCE),
                         "Ach nein, " +

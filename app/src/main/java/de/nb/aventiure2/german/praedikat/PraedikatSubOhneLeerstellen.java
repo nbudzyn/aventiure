@@ -98,7 +98,7 @@ public class PraedikatSubOhneLeerstellen
     }
 
     @Override
-    public boolean duHauptsatzLaesstSichMitNachfolgendemDuHauptsatzZusammenziehen() {
+    public boolean hauptsatzLaesstSichBeiGleichemSubjektMitNachfolgendemVerbzweitsatzZusammenziehen() {
         return true;
     }
 

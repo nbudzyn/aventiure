@@ -11,19 +11,16 @@ import java.util.stream.Stream;
 
 import javax.annotation.Nullable;
 
-import de.nb.aventiure2.german.base.GermanUtil;
 import de.nb.aventiure2.german.base.Kasus;
 import de.nb.aventiure2.german.base.Konstituente;
-import de.nb.aventiure2.german.base.KonstituentenNotFoundException;
 import de.nb.aventiure2.german.base.Numerus;
 import de.nb.aventiure2.german.base.Person;
+import de.nb.aventiure2.german.base.SubstantivischePhrase;
 import de.nb.aventiure2.german.base.SubstantivischePhraseOderReflexivpronomen;
 
 import static com.google.common.collect.ImmutableList.toImmutableList;
 import static de.nb.aventiure2.german.base.Konstituente.cutFirstOneByOne;
 import static de.nb.aventiure2.german.base.Konstituente.k;
-import static de.nb.aventiure2.german.base.Numerus.SG;
-import static de.nb.aventiure2.german.base.Person.P2;
 
 /**
  * Ein Prädikat, in dem alle Leerstellen besetzt sind und dem grundsätzlich
@@ -82,83 +79,6 @@ public abstract class AbstractAngabenfaehigesPraedikatOhneLeerstellen
         return new ZuHabenPraedikatOhneLeerstellen(this);
     }
 
-    @Override
-    public final Iterable<Konstituente> getDuHauptsatzMitVorfeld(final String vorfeld) {
-        return Konstituente.joinToKonstituenten(
-                GermanUtil.capitalize(vorfeld), // "Dann"
-                verb.getDuFormOhnePartikel(), // "nimmst"
-                "du",
-                getMittelfeld(P2, SG), // "den Frosch" / "dich"
-                verb.getPartikel(), // "mit"
-                getNachfeld(P2, SG)); // "deswegen"
-    }
-
-    @Override
-    public final Iterable<Konstituente> getDuHauptsatzMitSpeziellemVorfeld() {
-        @Nullable final Konstituente speziellesVorfeld = getSpeziellesVorfeld(P2, SG);
-        if (speziellesVorfeld == null) {
-            return getDuHauptsatz();
-        }
-
-        Iterable<Konstituente> neuesMittelfeld;
-        Iterable<Konstituente> neuesNachfeld;
-        try {
-            neuesMittelfeld = Konstituente.cutFirst(getMittelfeld(P2, SG), speziellesVorfeld);
-            neuesNachfeld = getNachfeld(P2, SG);
-        } catch (final KonstituentenNotFoundException e) {
-            neuesMittelfeld = getMittelfeld(P2, SG);
-            neuesNachfeld = Konstituente.cutFirst(getNachfeld(P2, SG), speziellesVorfeld);
-        }
-
-        return Konstituente.capitalize(
-                Konstituente.joinToKonstituenten(
-                        speziellesVorfeld, // "Den Frosch"
-                        verb.getDuFormOhnePartikel(), // "nimmst"
-                        "du",
-                        neuesMittelfeld,
-                        verb.getPartikel(), // "mit"
-                        neuesNachfeld)); // "deswegen"
-    }
-
-    @Override
-    public final Iterable<Konstituente> getDuHauptsatz() {
-        if (adverbialeAngabeSkopusSatz != null) {
-            Iterable<Konstituente> neuesMittelfeld;
-            Iterable<Konstituente> neuesNachfeld;
-            try {
-                neuesMittelfeld = Konstituente.cutFirst(
-                        getMittelfeld(P2, SG),
-                        adverbialeAngabeSkopusSatz.getDescription());
-                neuesNachfeld = getNachfeld(P2, SG);
-            } catch (final KonstituentenNotFoundException e) {
-                neuesMittelfeld = getMittelfeld(P2, SG);
-                neuesNachfeld = Konstituente
-                        .cutFirst(getNachfeld(P2, SG), adverbialeAngabeSkopusSatz.getDescription());
-            }
-
-            return Konstituente.capitalize(
-                    Konstituente.joinToKonstituenten(
-                            adverbialeAngabeSkopusSatz.getDescription(),
-                            verb.getDuFormOhnePartikel(),
-                            "du",
-                            neuesMittelfeld,
-                            verb.getPartikel(),
-                            neuesNachfeld));
-        }
-
-        return Konstituente.joinToKonstituenten(
-                "Du",
-                getDuSatzanschlussOhneSubjekt());
-    }
-
-    @Override
-    public final Iterable<Konstituente> getDuSatzanschlussOhneSubjekt() {
-        return Konstituente.joinToKonstituenten(
-                verb.getDuFormOhnePartikel(),
-                getMittelfeld(P2, SG),
-                verb.getPartikel(),
-                getNachfeld(P2, SG));
-    }
 
     @Override
     public final Iterable<Konstituente> getVerbzweit(final Person person, final Numerus numerus) {
@@ -167,6 +87,20 @@ public abstract class AbstractAngabenfaehigesPraedikatOhneLeerstellen
                 getMittelfeld(person, numerus),
                 verb.getPartikel(),
                 getNachfeld(person, numerus));
+    }
+
+    @Override
+    public Iterable<Konstituente> getVerbzweitMitSubjektImMittelfeld(
+            final SubstantivischePhrase subjekt) {
+        return Konstituente.joinToKonstituenten(
+                verb.getPraesensOhnePartikel(subjekt.getPerson(), subjekt.getNumerus()),
+                // Damit steht das Subjekt entweder als nicht-pronominales Subjekt vor der
+                // Wackernagelposition oder als unbetontes Pronomen zu Anfang der
+                // Wackernagelposition:
+                subjekt.nom(),
+                getMittelfeld(subjekt.getPerson(), subjekt.getNumerus()),
+                verb.getPartikel(),
+                getNachfeld(subjekt.getPerson(), subjekt.getNumerus()));
     }
 
     @Override
@@ -210,14 +144,21 @@ public abstract class AbstractAngabenfaehigesPraedikatOhneLeerstellen
                 getNachfeld(person, numerus));
     }
 
-    @Override
     @Nullable
-    public Konstituente getSpeziellesVorfeld(final Person person,
-                                             final Numerus numerus) {
+    @Override
+    public Konstituente getSpeziellesVorfeldSehrErwuenscht(final Person person,
+                                                           final Numerus numerus) {
         if (adverbialeAngabeSkopusSatz != null) {
             return adverbialeAngabeSkopusSatz.getDescription();
         }
 
+        return null;
+    }
+
+    @Nullable
+    @Override
+    public Konstituente getSpeziellesVorfeldAlsWeitereOption(final Person person,
+                                                             final Numerus numerus) {
         @Nullable final Konstituente
                 adverbialeAngabeSkopusVerbAllgDescriptionFuerZwangsausklammerung =
                 getAdverbialeAngabeSkopusVerbAllgDescriptionFuerZwangsausklammerung();
@@ -230,9 +171,7 @@ public abstract class AbstractAngabenfaehigesPraedikatOhneLeerstellen
         return null;
     }
 
-    // FIXME Prüfen, ob das Mittelfeld VOR DER WACKERNAGELPOSITION (nicht-pronominales Subjekt)
-    //  von den Aufrufern korrekt hinzugefügt wird!
-    private final Iterable<Konstituente> getMittelfeld(
+    private Iterable<Konstituente> getMittelfeld(
             final Person personSubjekt,
             final Numerus numerusSubjekt) {
         @Nullable final SubstantivischePhraseOderReflexivpronomen datObjekt = getDat();

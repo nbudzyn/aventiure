@@ -123,7 +123,7 @@ public class PraedikatMitWoertlicherRedeOhneLeerstellen
     }
 
     @Override
-    public boolean duHauptsatzLaesstSichMitNachfolgendemDuHauptsatzZusammenziehen() {
+    public boolean hauptsatzLaesstSichBeiGleichemSubjektMitNachfolgendemVerbzweitsatzZusammenziehen() {
         return false;
     }
 

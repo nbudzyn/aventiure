@@ -25,6 +25,7 @@ import static de.nb.aventiure2.german.base.Person.P2;
 import static de.nb.aventiure2.german.base.StructuralElement.PARAGRAPH;
 import static de.nb.aventiure2.german.base.StructuralElement.SENTENCE;
 import static de.nb.aventiure2.german.base.Wortfolge.w;
+import static de.nb.aventiure2.german.description.TimedDescription.toTimed;
 
 public class DescriptionBuilder {
     private DescriptionBuilder() {
@@ -39,15 +40,43 @@ public class DescriptionBuilder {
 
     @CheckReturnValue
     @NonNull
-    public static ImmutableList<AbstractDescription<?>> neueSaetzeMitPhorikKandidat(
+    public static ImmutableList<AbstractDescription<?>> altNeueSaetzeMitPhorikKandidat(
             final SubstantivischePhrase phorikKandidatPhrase,
             final GameObjectId phorikKandidatGameObjectId,
             final Collection<Satz> saetze) {
         return saetze.stream()
-                .map(s -> neuerSatz(s)
-                        .phorikKandidat(phorikKandidatPhrase, phorikKandidatGameObjectId))
+                .flatMap(s -> altNeueSaetze(s).stream()
+                        .map(allgDesc -> allgDesc
+                                .phorikKandidat(phorikKandidatPhrase, phorikKandidatGameObjectId))
+                )
                 .collect(toImmutableList());
     }
+
+    @CheckReturnValue
+    @NonNull
+    public static ImmutableList<TimedDescription<AbstractDescription<?>>> altNeueSaetze(
+            final Satz satz,
+            final AvTimeSpan timeElapsed) {
+        return toTimed(altNeueSaetze(satz), timeElapsed);
+    }
+
+    @CheckReturnValue
+    @NonNull
+    public static ImmutableList<AbstractDescription<?>> altNeueSaetze(
+            final Satz satz) {
+        final ImmutableList.Builder<AbstractDescription<?>> res = ImmutableList.builder();
+
+        final AbstractDescription<?> standard = neuerSatzStandard(satz);
+        res.add(standard);
+
+        final AbstractDescription<?> speziellesVorfeld = neuerSatzMitSpeziellemVorfeld(satz);
+        if (!standard.equals(speziellesVorfeld)) {
+            res.add(speziellesVorfeld);
+        }
+
+        return res.build();
+    }
+
 
     @CheckReturnValue
     public static TimedDescription<AllgDescription> neuerSatz(
@@ -68,16 +97,29 @@ public class DescriptionBuilder {
 
     @NonNull
     @CheckReturnValue
-    public static AbstractDescription<?> neuerSatz(final Satz satz) {
+    private static AbstractDescription<?> neuerSatzStandard(final Satz satz) {
         if (satz.getSubjekt().getPerson() == P2 && satz.getSubjekt().getNumerus() == SG) {
             return du(SENTENCE, satz.getPraedikat());
         }
 
-        return neuerSatz(satz.getVerbzweitsatz());
+        // IDEA: Der Satz könnte auch analog der Prädikat-Du-Description gespeichert werden.
+        //  Das hätte den Vorteil, das man erst gegen Ende die Alternativen bauen würde und
+        //  Einiges an der Logik von Du-Descriptions weiterverwendet werden könnte.
+        return neuerSatz(satz.getVerbzweitsatzStandard());
     }
 
-    public static AllgDescription neuerSatz(final Iterable<Konstituente> verbzweitsatz) {
-        return neuerSatz(Wortfolge.joinToNullWortfolge(verbzweitsatz));
+    @NonNull
+    @CheckReturnValue
+    private static AbstractDescription<?> neuerSatzMitSpeziellemVorfeld(final Satz satz) {
+        if (satz.getSubjekt().getPerson() == P2 && satz.getSubjekt().getNumerus() == SG) {
+            return du(SENTENCE, satz.getPraedikat());
+        }
+
+        return neuerSatz(satz.getVerbzweitsatzMitSpeziellemVorfeldAlsWeitereOption());
+    }
+
+    public static AllgDescription neuerSatz(final Iterable<Konstituente> konsituenten) {
+        return neuerSatz(Wortfolge.joinToNullWortfolge(konsituenten));
     }
 
     @NonNull

@@ -129,7 +129,7 @@ public class PraedikatSubjObjOhneLeerstellen
     }
 
     @Override
-    public boolean duHauptsatzLaesstSichMitNachfolgendemDuHauptsatzZusammenziehen() {
+    public boolean hauptsatzLaesstSichBeiGleichemSubjektMitNachfolgendemVerbzweitsatzZusammenziehen() {
         return true;
     }
 
@@ -140,9 +140,9 @@ public class PraedikatSubjObjOhneLeerstellen
 
     @Override
     public @Nullable
-    Konstituente getSpeziellesVorfeld(final Person person, final Numerus numerus) {
-        @Nullable final Konstituente speziellesVorfeldFromSuper = super.getSpeziellesVorfeld(person,
-                numerus);
+    Konstituente getSpeziellesVorfeldAlsWeitereOption(final Person person, final Numerus numerus) {
+        @Nullable final Konstituente speziellesVorfeldFromSuper =
+                super.getSpeziellesVorfeldAlsWeitereOption(person, numerus);
         if (speziellesVorfeldFromSuper != null) {
             return speziellesVorfeldFromSuper;
         }

@@ -422,7 +422,7 @@ public class NehmenAction
                                                 secs(5))
                                                 .undWartest(
                                                         praedikatMitObjekt
-                                                                .duHauptsatzLaesstSichMitNachfolgendemDuHauptsatzZusammenziehen())
+                                                                .hauptsatzLaesstSichBeiGleichemSubjektMitNachfolgendemVerbzweitsatzZusammenziehen())
                                                 .phorikKandidat(objectDesc, gameObject.getId())
                                                 .dann())
                                 .collect(toImmutableList()));
@@ -436,7 +436,7 @@ public class NehmenAction
                 du(PARAGRAPH, praedikatMitObjekt, secs(5))
                         .undWartest(
                                 praedikatMitObjekt
-                                        .duHauptsatzLaesstSichMitNachfolgendemDuHauptsatzZusammenziehen())
+                                        .hauptsatzLaesstSichBeiGleichemSubjektMitNachfolgendemVerbzweitsatzZusammenziehen())
                         .dann());
     }
 

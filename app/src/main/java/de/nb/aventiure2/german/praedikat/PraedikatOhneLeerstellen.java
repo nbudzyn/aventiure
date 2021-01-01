@@ -25,36 +25,29 @@ public interface PraedikatOhneLeerstellen extends Praedikat {
     PraedikatOhneLeerstellen mitModalpartikeln(final Collection<Modalpartikel> modalpartikeln);
 
     default Satz alsSatzMitSubjekt(final SubstantivischePhrase subjekt) {
-        return new Satz(subjekt, this);
+        return alsSatzMitSubjekt(null, subjekt);
     }
 
-    /**
-     * Gibt einen Satz zurück mit diesem Prädikat
-     * ("Du nimmst den Ast")
-     */
-    default Iterable<Konstituente> getDuHauptsatz() {
-        return Konstituente.joinToKonstituenten(
-                "Du ",
-                getDuSatzanschlussOhneSubjekt());
+    default Satz alsSatzMitSubjekt(
+            final @Nullable String anschlusswort, final SubstantivischePhrase subjekt) {
+        return new Satz(anschlusswort, subjekt, this);
     }
-
-    Iterable<Konstituente> getDuHauptsatzMitVorfeld(String vorfeld);
-
-    Iterable<Konstituente> getDuHauptsatzMitSpeziellemVorfeld();
-
-    /**
-     * Gibt einen Satz zurück mit diesem Prädikat, bei dem das Subjekt, das im Vorfeld
-     * stünde, eingespart ist ("nimmst den Ast")
-     */
-    Iterable<Konstituente> getDuSatzanschlussOhneSubjekt();
-
-    boolean duHauptsatzLaesstSichMitNachfolgendemDuHauptsatzZusammenziehen();
+    
+    boolean hauptsatzLaesstSichBeiGleichemSubjektMitNachfolgendemVerbzweitsatzZusammenziehen();
 
     /**
      * Gibt das Prädikat "in Verbzweitform" zurück - das Verb steht also ganz am Anfang
      * (in einem Verbzweitsatz würde dann noch das Subjekt davor stehen).
      */
     Iterable<Konstituente> getVerbzweit(Person person, Numerus numerus);
+
+    /**
+     * Gibt das Prädikat "in Verbzweitform" zurück - das Verb steht also ganz am Anfang -,
+     * wobei dieses Subjekt zusätzlich ins Mittelfeld eingebaut wird.
+     * (In einem Verbzweitsatz würde dann noch ein Satzglied vor dem Ganzen stehen, z.B.
+     * eine adverbiale Angabe).
+     */
+    Iterable<Konstituente> getVerbzweitMitSubjektImMittelfeld(SubstantivischePhrase subjekt);
 
     /**
      * Gibt das Prädikat "in Verbletztform" zurück - das Verb steht also am Ende,
@@ -109,8 +102,22 @@ public interface PraedikatOhneLeerstellen extends Praedikat {
      */
     Iterable<Konstituente> getZuInfinitiv(final Person person, final Numerus numerus);
 
+    /**
+     * Gibt ein "spezielles" Vorfeld zurück, das (bei Sätzen, die ein Vorfeld haben)
+     * der Stellung, wo das Subjekt im Vorfeld ist, vorgezogen werden sollte.
+     */
     @Nullable
-    Konstituente getSpeziellesVorfeld(Person person, Numerus numerus);
+    Konstituente getSpeziellesVorfeldSehrErwuenscht(Person person, Numerus numerus);
+
+    /**
+     * Gibt ein "spezielles" Vorfeld zurück, das (bei Sätzen, die ein Vorfeld haben)
+     * optional (um weitere Alternativen zu haben) verwendet werden kann.
+     * <p>
+     * Wenn {@link #getSpeziellesVorfeldSehrErwuenscht(Person, Numerus)} einen Wert zurückgibt,
+     * so sollte diese Methode etweder einen anderen oder keinen Wert zurückgeben.
+     */
+    @Nullable
+    Konstituente getSpeziellesVorfeldAlsWeitereOption(Person person, Numerus numerus);
 
     Iterable<Konstituente> getNachfeld(Person person, Numerus numerus);
 

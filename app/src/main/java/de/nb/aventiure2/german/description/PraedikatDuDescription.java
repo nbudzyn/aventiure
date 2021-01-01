@@ -8,11 +8,15 @@ import de.nb.aventiure2.german.base.GermanUtil;
 import de.nb.aventiure2.german.base.Konstituente;
 import de.nb.aventiure2.german.base.Numerus;
 import de.nb.aventiure2.german.base.Person;
+import de.nb.aventiure2.german.base.Personalpronomen;
 import de.nb.aventiure2.german.base.StructuralElement;
 import de.nb.aventiure2.german.praedikat.AdverbialeAngabeSkopusSatz;
 import de.nb.aventiure2.german.praedikat.AdverbialeAngabeSkopusVerbAllg;
 import de.nb.aventiure2.german.praedikat.AdverbialeAngabeSkopusVerbWohinWoher;
 import de.nb.aventiure2.german.praedikat.PraedikatOhneLeerstellen;
+
+import static de.nb.aventiure2.german.base.NumerusGenus.M;
+import static de.nb.aventiure2.german.base.Person.P2;
 
 /**
  * A description based on a {@link PraedikatOhneLeerstellen} - assuming the player
@@ -29,7 +33,10 @@ public class PraedikatDuDescription
         // FIXME Hier gibt es ein Problem: Ob ein Komma aussteht, hängt von der
         //  konkreten Realisierung des Prädikats ab (was steht im Vorfeld / Nachfeld etc.).
         //  Dies hier ist nur eine grobe Richtschnur.
-        return Konstituente.kommaStehtAus(praedikat.getDuHauptsatz());
+        return Konstituente.kommaStehtAus(
+                praedikat
+                        .alsSatzMitSubjekt(Personalpronomen.get(P2, M))
+                        .getVerbzweitsatzStandard());
     }
 
     @CheckReturnValue

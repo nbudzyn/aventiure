@@ -124,7 +124,7 @@ public class PraedikatIntentionalesVerbOhneLeerstellen
     }
 
     @Override
-    public boolean duHauptsatzLaesstSichMitNachfolgendemDuHauptsatzZusammenziehen() {
+    public boolean hauptsatzLaesstSichBeiGleichemSubjektMitNachfolgendemVerbzweitsatzZusammenziehen() {
         return true;
     }
 
@@ -136,16 +136,17 @@ public class PraedikatIntentionalesVerbOhneLeerstellen
 
     @Nullable
     @Override
-    public Konstituente getSpeziellesVorfeld(final Person person,
-                                             final Numerus numerus) {
-        @Nullable final Konstituente speziellesVorfeldFromSuper = super.getSpeziellesVorfeld(person,
-                numerus);
+    public Konstituente getSpeziellesVorfeldAlsWeitereOption(
+            final Person person, final Numerus numerus) {
+        @Nullable final Konstituente speziellesVorfeldFromSuper =
+                super.getSpeziellesVorfeldAlsWeitereOption(person,
+                        numerus);
         if (speziellesVorfeldFromSuper != null) {
             return speziellesVorfeldFromSuper;
         }
 
         // "Ihre Haare (versucht sie wieder hinunterzulassen)"
-        return lexikalischerKern.getSpeziellesVorfeld(person, numerus);
+        return lexikalischerKern.getSpeziellesVorfeldAlsWeitereOption(person, numerus);
     }
 
     @Override

@@ -15,6 +15,13 @@ import de.nb.aventiure2.german.praedikat.PraedikatOhneLeerstellen;
  */
 public class Satz {
     /**
+     * Anschlusswörter sind vor allem "und", "denn" und "aber". Sie stehen vor dem
+     * Vorfeld.
+     */
+    @Nullable
+    private final String anschlusswort;
+
+    /**
      * Das Subjekt des Satzes.
      */
     private final SubstantivischePhrase subjekt;
@@ -34,30 +41,44 @@ public class Satz {
 
     public Satz(final SubstantivischePhrase subjekt,
                 final PraedikatOhneLeerstellen praedikat) {
-        this(subjekt, praedikat, null);
+        this(null, subjekt, praedikat);
     }
 
-    public Satz(final SubstantivischePhrase subjekt,
+    public Satz(@Nullable final String anschlusswort,
+                final SubstantivischePhrase subjekt,
+                final PraedikatOhneLeerstellen praedikat) {
+        this(anschlusswort, subjekt, praedikat, null);
+    }
+
+    public Satz(@Nullable final String anschlusswort,
+                final SubstantivischePhrase subjekt,
                 final PraedikatOhneLeerstellen praedikat,
                 @Nullable final Konditionalsatz angabensatz) {
+        this.anschlusswort = anschlusswort;
         this.subjekt = subjekt;
         this.praedikat = praedikat;
         this.angabensatz = angabensatz;
     }
 
+    public Satz mitAnschlusswort(@Nullable final String anschlusswort) {
+        return new Satz(anschlusswort, subjekt, praedikat, angabensatz);
+    }
 
     public Satz mitAdverbialerAngabe(@Nullable final AdverbialeAngabeSkopusSatz adverbialeAngabe) {
-        return new Satz(subjekt, praedikat.mitAdverbialerAngabe(adverbialeAngabe), angabensatz);
+        return new Satz(anschlusswort, subjekt, praedikat.mitAdverbialerAngabe(adverbialeAngabe),
+                angabensatz);
     }
 
     public Satz mitAdverbialerAngabe(
             @Nullable final AdverbialeAngabeSkopusVerbAllg adverbialeAngabe) {
-        return new Satz(subjekt, praedikat.mitAdverbialerAngabe(adverbialeAngabe), angabensatz);
+        return new Satz(anschlusswort, subjekt, praedikat.mitAdverbialerAngabe(adverbialeAngabe),
+                angabensatz);
     }
 
     public Satz mitAdverbialerAngabe(
             @Nullable final AdverbialeAngabeSkopusVerbWohinWoher adverbialeAngabe) {
-        return new Satz(subjekt, praedikat.mitAdverbialerAngabe(adverbialeAngabe), angabensatz);
+        return new Satz(anschlusswort, subjekt, praedikat.mitAdverbialerAngabe(adverbialeAngabe),
+                angabensatz);
     }
 
     public Satz mitAngabensatz(@Nullable final Konditionalsatz angabensatz) {
@@ -65,7 +86,7 @@ public class Satz {
             return this;
         }
 
-        return new Satz(subjekt, praedikat, angabensatz);
+        return new Satz(anschlusswort, subjekt, praedikat, angabensatz);
     }
 
     /**
@@ -106,6 +127,7 @@ public class Satz {
 
         // "was du zu berichten hast", "wem er was gegeben hat"
         return Konstituente.joinToKonstituenten(
+                anschlusswort, // "und"
                 erstesInterrogativpronomenImPraedikat, // "was" / "wem"
                 Konstituente.cutFirst(
                         getVerbletztsatz(),
@@ -121,21 +143,75 @@ public class Satz {
 
     private Iterable<Konstituente> getObFrage() {
         return Konstituente.joinToKonstituenten(
+                anschlusswort, // "und"
                 "ob",
                 getVerbletztsatz() // "du etwas zu berichten hast"
         );
     }
 
     /**
-     * Gibt den Satz als Verbzweitsatz aus, z.B. "Du hast etwas zu berichten"
+     * Gibt den Satz als Verbzweitsatz aus, bei dem nach Möglichkeit ein "spezielles"
+     * Vorfeld gewählt wird, z.B. eine adverbiale Bestimmung: "Am Abend hast du etwas zu berichten"
      */
-    public Iterable<Konstituente> getVerbzweitsatz() {
-        return Konstituente.joinToKonstituenten(
-                subjekt.nom(),
-                praedikat.getVerbzweit(subjekt.getPerson(), subjekt.getNumerus()),
-                angabensatz != null ?
-                        Konstituente.schliesseInKommaEin(angabensatz.getDescription()) :
-                        null);
+    public Iterable<Konstituente> getVerbzweitsatzMitSpeziellemVorfeldAlsWeitereOption() {
+        @Nullable final Konstituente speziellesVorfeld =
+                praedikat.getSpeziellesVorfeldAlsWeitereOption(subjekt.getPerson(),
+                        subjekt.getNumerus());
+        if (speziellesVorfeld == null) {
+            // Angabensätze können / sollten nur unter gewissen Voraussetzungen
+            // ins Vorfeld gesetzt werden.
+
+            return getVerbzweitsatzStandard();
+        }
+
+        return getVerbzweitsatzMitVorfeldAusMittelOderNachfeld(speziellesVorfeld);
+    }
+
+    /**
+     * Gibt den Satz als Verbzweitsatz aus, bei dem das Subjekt im Vorfeld steht, z.B. "Du hast
+     * am Abend etwas zu berichten" oder "Du nimmst den Ast"
+     */
+    public Iterable<Konstituente> getVerbzweitsatzStandard() {
+        @Nullable final Konstituente speziellesVorfeld =
+                praedikat.getSpeziellesVorfeldSehrErwuenscht(
+                        subjekt.getPerson(), subjekt.getNumerus());
+        if (speziellesVorfeld != null) {
+            return getVerbzweitsatzMitVorfeldAusMittelOderNachfeld(speziellesVorfeld);
+        }
+
+        return Konstituente.capitalize(
+                Konstituente.joinToKonstituenten(
+                        anschlusswort, // "und"
+                        subjekt.nom(),
+                        praedikat.getVerbzweit(subjekt.getPerson(), subjekt.getNumerus()),
+                        angabensatz != null ?
+                                Konstituente.schliesseInKommaEin(angabensatz.getDescription()) :
+                                null));
+    }
+
+    private Iterable<Konstituente> getVerbzweitsatzMitVorfeldAusMittelOderNachfeld(
+            final Konstituente vorfeld) {
+        return Konstituente.capitalize(
+                Konstituente.joinToKonstituenten(
+                        anschlusswort, // "und"
+                        vorfeld,
+                        Konstituente.cutFirst(
+                                praedikat.getVerbzweitMitSubjektImMittelfeld(subjekt),
+                                vorfeld),
+                        angabensatz != null ?
+                                Konstituente.schliesseInKommaEin(angabensatz.getDescription()) :
+                                null));
+    }
+
+    public Iterable<Konstituente> getVerbzweitsatzMitVorfeld(final String vorfeld) {
+        return Konstituente.capitalize(
+                Konstituente.joinToKonstituenten(
+                        anschlusswort, // "und"
+                        vorfeld,
+                        praedikat.getVerbzweitMitSubjektImMittelfeld(subjekt),
+                        angabensatz != null ?
+                                Konstituente.schliesseInKommaEin(angabensatz.getDescription()) :
+                                null));
     }
 
     /**
@@ -143,6 +219,7 @@ public class Satz {
      */
     Iterable<Konstituente> getVerbletztsatz() {
         return Konstituente.joinToKonstituenten(
+                anschlusswort, // "und"
                 subjekt.nom(),
                 praedikat.getVerbletzt(subjekt.getPerson(), subjekt.getNumerus()),
                 angabensatz != null ?
