@@ -17,10 +17,7 @@ import de.nb.federkiel.deutsch.lexikon.GermanPOS;
 import de.nb.federkiel.interfaces.IWordForm;
 
 import static de.nb.aventiure2.german.base.Flexionsreihe.fr;
-import static de.nb.aventiure2.german.base.NumerusGenus.F;
-import static de.nb.aventiure2.german.base.NumerusGenus.M;
 import static de.nb.aventiure2.german.base.NumerusGenus.N;
-import static de.nb.aventiure2.german.base.NumerusGenus.PL_MFN;
 import static de.nb.aventiure2.german.base.Person.P3;
 
 /**
@@ -35,23 +32,6 @@ public class Indefinitpronomen
     public static final Indefinitpronomen NICHTS =
             // Dativ: "Von NICHTS kommt nichts."
             ip(N, Relativpronomen.Typ.WERWAS, fr("nichts"));
-
-    // REFACTOR Überlegen: Was ist die bessere Implementierung für "welcher"? Andere löschen.
-
-    /**
-     * "Welcher" / "Welcher" im Sinne von "etwas" / "einige", z.B.
-     * - "Haben wir noch Wein? - Im Keller ist noch welcher." (nicht zählbar)
-     * - "Wo liegen die Schwerter? - In der Waffenkammer sind welche." (zählbar)
-     */
-    public static final Map<NumerusGenus, Indefinitpronomen> WELCHER1 = ImmutableMap.of(
-            M, ip(M, Relativpronomen.Typ.REGEL,
-                    fr("welcher", "welchem", "welchen")),
-            F, ip(F, Relativpronomen.Typ.REGEL,
-                    fr("welche", "welcher")),
-            N, ip(N, Relativpronomen.Typ.REGEL,
-                    fr("welches", "welchem")),
-            PL_MFN, ip(PL_MFN, Relativpronomen.Typ.REGEL,
-                    fr("welche", "welchen")));
 
     static final Map<NumerusGenus, Indefinitpronomen> WELCHER3;
 
@@ -79,18 +59,6 @@ public class Indefinitpronomen
      * ("alles, was"; "es gibt nichts, was mir fehlt")
      */
     private final Relativpronomen.Typ relPronTyp;
-
-    public static Map<NumerusGenus, Indefinitpronomen> welch2() {
-        return ImmutableMap.of(
-                M, ip(M, Relativpronomen.Typ.REGEL,
-                        fr("welcher", "welchem", "welchen")),
-                F, ip(F, Relativpronomen.Typ.REGEL,
-                        fr("welche", "welcher")),
-                N, ip(N, Relativpronomen.Typ.REGEL,
-                        fr("welches", "welchem")),
-                PL_MFN, ip(PL_MFN, Relativpronomen.Typ.REGEL,
-                        fr("welche", "welchen")));
-    }
 
     private static Flexionsreihe extractFlexionsreihe(
             final Collection<IWordForm> wortformen, final NumerusGenus numerusGenus) {

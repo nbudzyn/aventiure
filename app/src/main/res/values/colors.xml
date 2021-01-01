@@ -12,14 +12,16 @@
     <color name="actionAblegen">#AFBF0C</color>
     <color name="actionGeben">#AFBF0C</color>
     <color name="actionHochwerfen">#F0FC6D</color>
-    <color name="actionHeulen">#FF766F</color>
-    <color name="actionSchlafen">#FF766F</color>
-    <color name="actionRastenWarten">#FF766F</color>
-    <color name="actionRedenRufen">#FF9D98</color>
+    <color name="actionHeulen">#E9F84B</color>
+    <color name="actionSchlafen">#5BD26A</color>
+    <color name="actionRastenWarten">#5BD26A</color>
+    <color name="actionRedenRufen">#E9F84B</color>
 
-    <!-- TODO Buttons nicht rot. -->
+    <color name="unused">#87E393</color>
+    <color name="unused2">#0A961B</color>
 
     <!--
+    Generated color schema:
 .color-primary-0 { color: #3BC34C }	/* Main Primary color */
 .color-primary-1 { color: #87E393 }
 .color-primary-2 { color: #5BD26A }
