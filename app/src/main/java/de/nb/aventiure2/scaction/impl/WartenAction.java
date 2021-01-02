@@ -80,7 +80,7 @@ public class WartenAction<LIVGO extends IDescribableGO & ILocatableGO & ILivingB
     public String getName() {
         // "Auf die magere Frau warten"
         return GermanUtil.capitalize(
-                GermanUtil.joinToNullString(
+                GermanUtil.joinToString(
                         WARTEN
                                 .mit(world.getDescription(erwartet))
                                 .getInfinitiv(P2, SG)

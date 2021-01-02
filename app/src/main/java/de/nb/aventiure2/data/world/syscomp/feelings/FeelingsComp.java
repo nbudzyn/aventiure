@@ -27,10 +27,12 @@ import de.nb.aventiure2.german.base.Personalpronomen;
 import de.nb.aventiure2.german.base.SubstantivischePhrase;
 import de.nb.aventiure2.german.description.AbstractDescription;
 import de.nb.aventiure2.german.praedikat.AdverbialeAngabeSkopusSatz;
+import de.nb.aventiure2.german.praedikat.AdverbialeAngabeSkopusVerbAllg;
 import de.nb.aventiure2.german.satz.Satz;
 import de.nb.aventiure2.scaction.stepcount.SCActionStepCountDao;
 
 import static com.google.common.base.Preconditions.checkArgument;
+import static com.google.common.collect.ImmutableList.toImmutableList;
 import static de.nb.aventiure2.data.time.AvTimeSpan.noTime;
 import static de.nb.aventiure2.data.world.gameobject.World.*;
 import static de.nb.aventiure2.data.world.syscomp.feelings.Hunger.SATT;
@@ -41,6 +43,7 @@ import static de.nb.aventiure2.german.base.StructuralElement.SENTENCE;
 import static de.nb.aventiure2.german.description.DescriptionBuilder.du;
 import static de.nb.aventiure2.german.description.DescriptionBuilder.neuerSatz;
 import static de.nb.aventiure2.german.description.DescriptionBuilder.paragraph;
+import static java.util.Arrays.stream;
 import static java.util.stream.Collectors.toList;
 
 /**
@@ -215,14 +218,31 @@ public class FeelingsComp extends AbstractStatefulComponent<FeelingsPCD> {
     }
 
     /**
-     * Gibt alternative Sätze zurück, die das Gefühl dieses Feeling Beings
-     * gegenüber dem SC beschreiben, wenn die beiden sich begegnen.
+     * Gibt alternative Sätze zurück, die die gefühlsmäßige Reaktion dieses Feeling Beings
+     * auf den SC beschreiben, wenn die beiden sich begegnen.
+     * Hier werden <i>keine Begrüßungen</i> beschrieben!
      */
     @NonNull
-    public ImmutableList<Satz> altFeelingsBeiBegegnungMitScSaetze(
+    public ImmutableList<Satz> altReaktionBeiBegegnungMitScSaetze(
+            final SubstantivischePhrase gameObjectSubjekt) {
+        // FIXME Hier den allgemeine Gefühle den Vorang geben - wenn sie deutlich
+        //  stärker sind.
+
+        return stream(FeelingTowardsType.values())
+                .flatMap(f -> altReaktionBeiBegegnungMitScSaetze(gameObjectSubjekt, f).stream())
+                .collect(toImmutableList());
+    }
+
+    /**
+     * Gibt alternative Sätze zurück, die die durch dieses Gefühl hervorgerufene
+     * Reaktion dieses Feeling Beings auf den SC beschreiben, wenn die beiden sich begegnen.
+     * Hier werden <i>keine Begrüßungen</i> beschrieben!
+     */
+    @NonNull
+    private ImmutableList<Satz> altReaktionBeiBegegnungMitScSaetze(
             final SubstantivischePhrase gameObjectSubjekt,
             final FeelingTowardsType type) {
-        return altFeelingBeiBegegnungSaetze(
+        return altReaktionBeiBegegnungSaetze(
                 gameObjectSubjekt,
                 SPIELER_CHARAKTER,
                 Personalpronomen.get(P2,
@@ -239,67 +259,125 @@ public class FeelingsComp extends AbstractStatefulComponent<FeelingsPCD> {
      * den SC ansieht, wenn die beiden sich begegnen.
      * <p>
      * Die Sätze sind bereits in
-     * {@link #altFeelingBeiBegegnungSaetze(SubstantivischePhrase, GameObjectId, SubstantivischePhrase, FeelingTowardsType)}
+     * {@link #altReaktionBeiBegegnungSaetze(SubstantivischePhrase, GameObjectId, SubstantivischePhrase, FeelingTowardsType)}
      * enthalten.
      *
      * @return Möglicherweise eine leere Liste (insbesondere bei extremen Gefühlen)!
      */
     public ImmutableList<Satz> altSCBeiBegegnungAnsehenSaetze(
-            final SubstantivischePhrase gameObjectSubjekt,
-            final FeelingTowardsType type) {
-        return altBeiBegegnungAnsehenSaetze(
-                gameObjectSubjekt,
-                SPIELER_CHARAKTER,
-                Personalpronomen.get(P2,
-                        // Wir tun hier so, als wäre der Spieler männlich, aber das
-                        // ist egal - die Methode garantiert, dass niemals etwas
-                        // wie "du, der du..." oder
-                        // "du, die du..." generiert wird.
-                        M),
-                type);
+            final SubstantivischePhrase gameObjectSubjekt) {
+        return stream(FeelingTowardsType.values())
+                .flatMap(f -> altBeiBegegnungAnsehenSaetze(
+                        gameObjectSubjekt,
+                        SPIELER_CHARAKTER,
+                        Personalpronomen.get(P2,
+                                // Wir tun hier so, als wäre der Spieler männlich, aber das
+                                // ist egal - die Methode garantiert, dass niemals etwas
+                                // wie "du, der du..." oder
+                                // "du, die du..." generiert wird.
+                                M),
+                        f).stream())
+                .collect(toImmutableList());
     }
 
+    /**
+     * Gibt eventuell alternative Sätze zurück, die den Eindruck
+     * beschreiben, den dieses Feeling Beings auf den SC macht, wenn die beiden sich
+     * begegnen.
+     * <p>
+     * Die Sätze sind bereits in
+     * {@link #altReaktionBeiBegegnungSaetze(SubstantivischePhrase, GameObjectId, SubstantivischePhrase, FeelingTowardsType)}
+     * enthalten.
+     *
+     * @return Möglicherweise eine leere Liste (insbesondere bei extremen Gefühlen)!
+     */
+    public ImmutableList<Satz> altEindruckAufScBeiBegegnungSaetze(
+            final SubstantivischePhrase gameObjectSubjekt) {
+        return stream(FeelingTowardsType.values())
+                .flatMap(f -> altEindruckBeiBegegnungSaetze(
+                        gameObjectSubjekt,
+                        SPIELER_CHARAKTER,
+                        Personalpronomen.get(P2,
+                                // Wir tun hier so, als wäre der Spieler männlich, aber das
+                                // ist egal - die Methode garantiert, dass niemals etwas
+                                // wie "du, der du..." oder
+                                // "du, die du..." generiert wird.
+                                M),
+                        f).stream())
+                .collect(toImmutableList());
+    }
+
+
+    /**
+     * Gibt eventuell alternative adverbiale Angaben zurück, die beschreiben, welchen Eindruck dieses
+     * Feeling Being auf den SC macht, wenn die beiden sich begegnen.
+     * <p>
+     * Die Methode garantiert, dass niemals etwas wie "du, der du..." oder
+     * "du, die du..." oder "du, das du..." generiert wird.
+     *
+     * @return Möglicherweise eine leere Liste!
+     */
+    public ImmutableList<AdverbialeAngabeSkopusVerbAllg> altEindruckAufScBeiBegegnungAdvAngaben(
+            final SubstantivischePhrase gameObjectSubjekt) {
+        return stream(FeelingTowardsType.values())
+                .flatMap(f -> altEindruckBeiBegegnungAdvAngaben(
+                        gameObjectSubjekt, SPIELER_CHARAKTER,
+                        Personalpronomen.get(P2,
+                                // Wir tun hier so, als wäre der Spieler männlich, aber das
+                                // ist egal - die Methode garantiert, dass niemals etwas
+                                // wie "du, der du..." oder
+                                // "du, die du..." generiert wird.
+                                M),
+                        f).stream())
+                .collect(toImmutableList());
+    }
 
     /**
      * Gibt eventuell alternative Adjektivphrasen zurück, die den Eindruck
      * beschreiben, den dieses Feeling Being auf den SC macht, wenn die beiden sich
      * begegnen. Die Phrasen können mit
      * <i>wirken</i> oder <i>scheinen</i> verbunden werden.
+     * <p>
+     * Nicht alle diese Phrasen sind für adverbiale Angaben geeignet, dazu
+     * siehe
+     * {@link #altEindruckAufScBeiBegegnungAdvAngaben(SubstantivischePhrase)}!
      *
      * @return Möglicherweise eine leere Liste (insbesondere bei extremen Gefühlen)!
      */
     @NonNull
     public ImmutableList<AdjPhrOhneLeerstellen> altEindruckAufScBeiBegegnungAdjPhr(
-            final NumerusGenus gameObjectSubjektNumerusGenus,
-            final FeelingTowardsType type) {
-        return altEindruckBeiBegegnungAdjPhr(
-                gameObjectSubjektNumerusGenus,
-                SPIELER_CHARAKTER,
-                Personalpronomen.get(P2,
-                        // Wir tun hier so, als wäre der Spieler männlich, aber das
-                        // ist egal - die Methode garantiert, dass niemals etwas
-                        // wie "du, der du..." oder
-                        // "du, die du..." generiert wird.
-                        M),
-                type);
+            final NumerusGenus gameObjectSubjektNumerusGenus) {
+        return stream(FeelingTowardsType.values())
+                .flatMap(f -> altEindruckBeiBegegnungAdjPhr(
+                        gameObjectSubjektNumerusGenus,
+                        SPIELER_CHARAKTER,
+                        Personalpronomen.get(P2,
+                                // Wir tun hier so, als wäre der Spieler männlich, aber das
+                                // ist egal - die Methode garantiert, dass niemals etwas
+                                // wie "du, der du..." oder
+                                // "du, die du..." generiert wird.
+                                M),
+                        f).stream())
+                .collect(toImmutableList());
     }
 
     /**
-     * Gibt alternative Sätze zurück, die das Gefühl dieses Feeling Beings
-     * gegenüber dem Target beschreibt, wenn die beiden sich begegnen.
+     * Gibt alternative Sätze zurück, die die durch diese Gefühl hervorgerufene
+     * Reaktion dieses Feeling Beings auf das Target beschreibt, wenn die beiden sich begegnen.
+     * Hier werden <i>keine Begrüßungen</i> beschrieben!
      * <p>
      * Die Methode garantiert, dass niemals etwas wie "du, der du..." oder
      * "du, die du..." oder "du, das du..." generiert wird.
      */
     @NonNull
-    private ImmutableList<Satz> altFeelingBeiBegegnungSaetze(
+    private ImmutableList<Satz> altReaktionBeiBegegnungSaetze(
             final SubstantivischePhrase gameObjectSubjekt,
             final GameObjectId feelingTargetId,
             final SubstantivischePhrase targetDesc,
             final FeelingTowardsType type) {
         final boolean targetKnown = isTargetKnown(feelingTargetId);
 
-        return type.altFeelingBeiBegegnungSaetze(
+        return type.altReaktionBeiBegegnungSaetze(
                 gameObjectSubjekt, targetDesc,
                 getFeelingTowards(feelingTargetId, type),
                 targetKnown);
@@ -325,10 +403,54 @@ public class FeelingsComp extends AbstractStatefulComponent<FeelingsPCD> {
     }
 
     /**
+     * Gibt eventuell alternative Sätze zurück, die den Eindruck
+     * beschreiben, den dieses Feeling Beings auf das Target macht, wenn die beiden sich
+     * begegnen.
+     * <p>
+     * Die Methode garantiert, dass niemals etwas wie "du, der du..." oder
+     * "du, die du..." oder "du, das du..." generiert wird.
+     *
+     * @return Möglicherweise eine leere Liste (insbesondere bei extremen Gefühlen)!
+     */
+    private ImmutableList<Satz> altEindruckBeiBegegnungSaetze(
+            final SubstantivischePhrase gameObjectSubjekt,
+            final GameObjectId feelingTargetId,
+            final SubstantivischePhrase targetDesc, final FeelingTowardsType type) {
+        return type.altEindruckBeiBegegnungSaetze(
+                gameObjectSubjekt, targetDesc,
+                getFeelingTowards(feelingTargetId, type),
+                isTargetKnown(feelingTargetId));
+    }
+
+    /**
+     * Gibt eventuell adverbiale Angaben zurück, die beschreiben, welchen Eindruck dieses
+     * Feeling Being - basiert auf diesem {@link FeelingTowardsType} - auf das  Target
+     * macht, wenn die beiden sich begegnen.
+     * <p>
+     * Die Methode garantiert, dass niemals etwas wie "du, der du..." oder
+     * "du, die du..." oder "du, das du..." generiert wird.
+     *
+     * @return Möglicherweise eine leere Liste!
+     */
+    private ImmutableList<AdverbialeAngabeSkopusVerbAllg> altEindruckBeiBegegnungAdvAngaben(
+            final SubstantivischePhrase gameObjectSubjekt,
+            final GameObjectId feelingTargetId,
+            final SubstantivischePhrase targetDesc, final FeelingTowardsType type) {
+        return type.altEindruckBeiBegegnungAdvAngaben(
+                gameObjectSubjekt, targetDesc,
+                getFeelingTowards(feelingTargetId, type),
+                isTargetKnown(feelingTargetId));
+    }
+
+    /**
      * Gibt eventuell alternative Adjektivphrasen zurück, die den Eindruck
      * beschreiben, den dieses Feeling Beings auf das Target macht, wenn die beiden sich
      * begegnen. Die Phrasen können mit
      * <i>wirken</i> oder <i>scheinen</i> verbunden werden.
+     * <p>
+     * Nicht alle diese Phrasen sind für adverbiale Angaben geeignet, dazu
+     * siehe
+     * {@link #altEindruckBeiBegegnungAdvAngaben(SubstantivischePhrase, SubstantivischePhrase, int, boolean)}.
      * <p>
      * Die Methode garantiert, dass niemals etwas wie "du, der du..." oder
      * "du, die du..." oder "du, das du..." generiert wird.

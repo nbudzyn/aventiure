@@ -1,5 +1,7 @@
 package de.nb.aventiure2.data.world.syscomp.taking.impl;
 
+import androidx.annotation.Nullable;
+
 import de.nb.aventiure2.data.database.AvDatabase;
 import de.nb.aventiure2.data.narration.Narrator;
 import de.nb.aventiure2.data.world.gameobject.*;
@@ -28,12 +30,14 @@ import static de.nb.aventiure2.german.description.DescriptionBuilder.neuerSatz;
 public class RapunzelTakingComp extends AbstractTakingComp {
     private final RapunzelStateComp stateComp;
     private final MemoryComp memoryComp;
+
+    @Nullable
     private final FeelingsComp feelingsComp;
 
     public RapunzelTakingComp(final AvDatabase db, final Narrator n, final World world,
                               final RapunzelStateComp stateComp,
                               final MemoryComp memoryComp,
-                              final FeelingsComp feelingsComp) {
+                              @Nullable final FeelingsComp feelingsComp) {
         super(RAPUNZEL, db, n, world);
         this.stateComp = stateComp;
         this.memoryComp = memoryComp;
@@ -98,12 +102,23 @@ public class RapunzelTakingComp extends AbstractTakingComp {
                         givenDesc.getNumerusGenus()).akk() // "eine" / "welche"
                         + " bekommen kann.“ "
                         + capitalize(rapunzelAnaph.persPron().nom())
-                        // FIXME Liebenswürdig lächeln nur bei Zuneigung
-                        + " lächelt dich liebenswürdig an")
+                        + " lächelt dich "
+                        + (getZuneigungAbneigungTowardsSC()
+                        > FeelingIntensity.NEUTRAL ?
+                        "liebenswürdig" : "schnippisch")
+                        + " an")
         );
         memoryComp.upgradeKnown(given);
 
         // Das Gespräch wird nicht beendet!
+    }
+
+    private int getZuneigungAbneigungTowardsSC() {
+        if (feelingsComp == null) {
+            return FeelingIntensity.NEUTRAL;
+        }
+
+        return feelingsComp.getFeelingTowards(SPIELER_CHARAKTER, ZUNEIGUNG_ABNEIGUNG);
     }
 
     private <GIVEN extends IDescribableGO & ILocatableGO> void narrateTakerAndDo_GoldeneKugel(
@@ -116,8 +131,7 @@ public class RapunzelTakingComp extends AbstractTakingComp {
         final Nominalphrase givenDesc = world.getDescription(given);
         final Nominalphrase givenDescShort = world.getDescription(given, true);
 
-        feelingsComp.upgradeFeelingsTowards(
-                SPIELER_CHARAKTER, ZUNEIGUNG_ABNEIGUNG, 1f, FeelingIntensity.DEUTLICH);
+        upgradeZuneigungAbneigung(1f, FeelingIntensity.DEUTLICH);
 
         n.narrateAlt(secs(30),
                 neuerSatz(rapunzelAnaph.nom()
@@ -130,39 +144,38 @@ public class RapunzelTakingComp extends AbstractTakingComp {
                         + rapunzelAnaph.persPron().nom()
                         + " dir "
                         + givenDesc.akk()
-                        + " zurück"),
-                neuerSatz(rapunzelAnaph.nom()
-                        + " schaut dich "
-                        // FIXME Glücklich nur bei Zuneigung
-                        + (stateComp.hasState(HAT_NACH_KUGEL_GEFRAGT) ? "glücklich" : "überrascht")
-                        + " an und nimmt "
-                        + givenDescShort.akk()
-                        + ". "
-                        + capitalize(rapunzelAnaph.persPron().nom())
-                        + " spielt "
-                        + "eine Weile damit herum, dann gibt "
-                        + rapunzelAnaph.persPron().nom()
-                        + " "
-                        + givenDescShort.persPron().akk()
-                        + " dir zurück"),
-                // FIXME Nur, wenn Zuneigung entsprechend!
-                neuerSatz((stateComp.hasState(HAT_NACH_KUGEL_GEFRAGT) ?
-                        "Gespannt" : "Überrascht")
-                        + " nimmt "
-                        + rapunzelAnaph.nom()
-                        + " "
-                        + givenDescShort.akk()
-                        + " und versucht, "
-                        + rapunzelAnaph.reflPron().akk() // sich
-                        + " darin zu spiegeln. "
-                        + capitalize(rapunzelAnaph.persPron().nom())
-                        + " streicht eine Locke zurecht, dann gibt "
-                        + rapunzelAnaph.persPron().nom()
-                        + " "
-                        + givenDescShort.persPron().akk()
-                        // FIXME Löcheln nur bei Zuneigung
-                        + " dir zurück und lächelt dich an")
-        );
+                        + " zurück"));
+        if (getZuneigungAbneigungTowardsSC() >= FeelingIntensity.MERKLICH) {
+            n.narrateAlt(secs(30), neuerSatz(rapunzelAnaph.nom()
+                            + " schaut dich "
+                            + (stateComp.hasState(HAT_NACH_KUGEL_GEFRAGT) ? "glücklich" : "überrascht")
+                            + " an und nimmt "
+                            + givenDescShort.akk()
+                            + ". "
+                            + capitalize(rapunzelAnaph.persPron().nom())
+                            + " spielt "
+                            + "eine Weile damit herum, dann gibt "
+                            + rapunzelAnaph.persPron().nom()
+                            + " "
+                            + givenDescShort.persPron().akk()
+                            + " dir zurück"),
+                    neuerSatz((stateComp.hasState(HAT_NACH_KUGEL_GEFRAGT) ?
+                            "Gespannt" : "Überrascht")
+                            + " nimmt "
+                            + rapunzelAnaph.nom()
+                            + " "
+                            + givenDescShort.akk()
+                            + " und versucht, "
+                            + rapunzelAnaph.reflPron().akk() // sich
+                            + " darin zu spiegeln. "
+                            + capitalize(rapunzelAnaph.persPron().nom())
+                            + " streicht eine Locke zurecht, dann gibt "
+                            + rapunzelAnaph.persPron().nom()
+                            + " "
+                            + givenDescShort.persPron().akk()
+                            + " dir zurück und lächelt dich an")
+            );
+        }
 
         memoryComp.upgradeKnown(given);
 
@@ -171,5 +184,14 @@ public class RapunzelTakingComp extends AbstractTakingComp {
         world.loadSC().feelingsComp().requestMoodMin(GLUECKLICH);
 
         // Das Gespräch wird nicht beendet!
+    }
+
+    private void upgradeZuneigungAbneigung(final float increment, final int bound) {
+        if (feelingsComp == null) {
+            return;
+        }
+
+        feelingsComp.upgradeFeelingsTowards(
+                SPIELER_CHARAKTER, ZUNEIGUNG_ABNEIGUNG, increment, bound);
     }
 }

@@ -80,7 +80,7 @@ public class PraedikatDuDescription
      */
     public String getDescriptionPartizipIIPhrase(final Person person, final Numerus numerus) {
         // FIXME hier kann ein Komma verloren gehen!
-        return GermanUtil.joinToNullString(
+        return GermanUtil.joinToString(
                 duTextPart.getPraedikat().getPartizipIIPhrase(person, numerus));
     }
 

@@ -120,7 +120,7 @@ public class AblegenAction
     @NonNull
     public String getName() {
         return GermanUtil.capitalize(
-                GermanUtil.joinToNullString(
+                GermanUtil.joinToString(
                         getPraedikat()
                                 .mit(world.getDescription(gameObject, true))
                                 .mitAdverbialerAngabe(getWohinDetail())

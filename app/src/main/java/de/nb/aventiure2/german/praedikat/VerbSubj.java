@@ -39,7 +39,10 @@ public enum VerbSubj implements PraedikatOhneLeerstellen {
     HINABSTEIGEN("hinabsteigen",
             "steige", "steigst", "steigt", "steigt",
             "hinab",
-            Perfektbildung.SEIN, "hinabgestiegen");
+            Perfektbildung.SEIN, "hinabgestiegen"),
+    STRAHLEN("strahlen",
+            "strahle", "strahlst", "strahlt", "strahlt",
+            Perfektbildung.HABEN, "gestrahlt");
 
     /**
      * Das Verb an sich, ohne Informationen zur Valenz, ohne Ergänzungen, ohne
@@ -142,7 +145,7 @@ public enum VerbSubj implements PraedikatOhneLeerstellen {
     public boolean umfasstSatzglieder() {
         return false;
     }
-    
+
     @Nullable
     @Override
     public Konstituente getSpeziellesVorfeldSehrErwuenscht(final Person person,

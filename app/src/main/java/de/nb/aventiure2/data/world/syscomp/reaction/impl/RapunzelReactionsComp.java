@@ -355,13 +355,13 @@ public class RapunzelReactionsComp
 
         final ImmutableList.Builder<TimedDescription<?>> alt = ImmutableList.builder();
 
-        final ImmutableList<AbstractDescription<?>> altZuneigungAbneigungSaetze =
+        final ImmutableList<AbstractDescription<?>> altReaktionSaetze =
                 // Es wäre besser, wenn der Phorik-Kandidat schon beim Erzeugen des
                 // Satzes gesetzt würde.
                 altNeueSaetzeMitPhorikKandidat(anaph, RAPUNZEL,
                         feelingsComp
-                                .altFeelingsBeiBegegnungMitScSaetze(anaph, ZUNEIGUNG_ABNEIGUNG));
-        alt.addAll(toTimed(altZuneigungAbneigungSaetze, secs(5)));
+                                .altReaktionBeiBegegnungMitScSaetze(anaph));
+        alt.addAll(toTimed(altReaktionSaetze, secs(5)));
 
         final int zuneigungSCTowardsRapunzel =
                 loadSC().feelingsComp().getFeelingTowards(RAPUNZEL, ZUNEIGUNG_ABNEIGUNG);
@@ -385,7 +385,7 @@ public class RapunzelReactionsComp
 
         if (loadSC().memoryComp().getKnown(RAPUNZEL) == KNOWN_FROM_DARKNESS) {
             alt.addAll(
-                    altZuneigungAbneigungSaetze.stream()
+                    altReaktionSaetze.stream()
                             .map(s -> neuerSatz(
                                     "Am Fenster sitzt die junge Frau, schön als "
                                             + "du unter der Sonne noch keine gesehen hast. "
@@ -410,15 +410,15 @@ public class RapunzelReactionsComp
         final SubstantivischePhrase anaph =
                 getAnaphPersPronWennMglSonstDescription(true);
 
-        final ImmutableList<AbstractDescription<?>> altZuneigungAbneigungSaetze =
+        final ImmutableList<AbstractDescription<?>> altReaktionSaetze =
                 // Es wäre besser, wenn der Phorik-Kandidat durch den Satz
                 //  gesetzt würde. Das ist allerdings kompliziert...
                 altNeueSaetzeMitPhorikKandidat(
                         anaph, RAPUNZEL,
                         feelingsComp
-                                .altFeelingsBeiBegegnungMitScSaetze(anaph, ZUNEIGUNG_ABNEIGUNG));
+                                .altReaktionBeiBegegnungMitScSaetze(anaph));
 
-        alt.addAll(toTimed(altZuneigungAbneigungSaetze, secs(5)));
+        alt.addAll(toTimed(altReaktionSaetze, secs(5)));
 
         // Könnte leer sein
         final ImmutableList<AbstractDescription<?>> altSCBeiBegegnungAnsehenSaetze =
@@ -428,7 +428,7 @@ public class RapunzelReactionsComp
                         anaph, RAPUNZEL,
                         // Diese Sätze sind bereits in altZuneigungAbneigungSaetze enthalten...
                         feelingsComp
-                                .altSCBeiBegegnungAnsehenSaetze(anaph, ZUNEIGUNG_ABNEIGUNG)
+                                .altSCBeiBegegnungAnsehenSaetze(anaph)
                                 // ...aber noch nicht mit dieser Ergänzung:
                                 .stream()
                                 .map(s -> s.mitAdverbialerAngabe(

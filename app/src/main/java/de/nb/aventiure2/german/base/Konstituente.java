@@ -58,6 +58,19 @@ public class Konstituente {
                 .build();
     }
 
+    public static Iterable<Konstituente> uncapitalize(final Iterable<Konstituente> input) {
+        final ImmutableList<Konstituente> inputList = ImmutableList.copyOf(input);
+
+        if (inputList.isEmpty()) {
+            return ImmutableList.of();
+        }
+
+        return ImmutableList.<Konstituente>builder()
+                .add(inputList.get(0).uncapitalize())
+                .addAll(inputList.subList(1, inputList.size()))
+                .build();
+    }
+
     /**
      * Gibt denselben Input zurück, wobei ein Vorkomma und ein Folgekomma gefordert werden.
      * Ist der Input leer, wird eine leere Konsitutenten-Liste zurückgeben.
@@ -328,6 +341,13 @@ public class Konstituente {
 
     public Konstituente capitalize() {
         return new Konstituente(GermanUtil.capitalize(string),
+                // Wenn großgeschrieben werden soll, wäre es sinnlos, ein Komma zuvor
+                // setzen zu vollen.
+                false, woertlicheRedeNochOffen, kommmaStehtAus);
+    }
+
+    private Konstituente uncapitalize() {
+        return new Konstituente(GermanUtil.uncapitalize(string),
                 // Wenn großgeschrieben werden soll, wäre es sinnlos, ein Komma zuvor
                 // setzen zu vollen.
                 false, woertlicheRedeNochOffen, kommmaStehtAus);

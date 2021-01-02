@@ -61,7 +61,7 @@ public class Praepositionalphrase implements Praedikativum {
     }
 
     public String getDescription() {
-        return GermanUtil.joinToNullString(
+        return GermanUtil.joinToString(
                 modAdverbOderAdjektiv,
                 w(praepositionMitKasus.getDescription(substantivischePhraseOderReflPron)));
     }

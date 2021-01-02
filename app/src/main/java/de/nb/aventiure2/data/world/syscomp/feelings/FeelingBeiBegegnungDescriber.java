@@ -17,21 +17,22 @@ import de.nb.aventiure2.german.satz.Satz;
  */
 public interface FeelingBeiBegegnungDescriber {
     /**
-     * Gibt reventuell alternative Sätze zurück, die das Gefühl dieses Feeling Beings
-     * gegenüber dem Target beschreiben, wenn die beiden sich begegnen.
+     * Gibt eventuell alternative Sätze zurück, die auf Basis dieses Gefühls
+     * die Reaktion dieses Feeling Beings auf das Target beschreiben, wenn die beiden sich begegnen.
+     * Hier werden <i>keine Begrüßungen</i> beschrieben!
      * <p>
      * Die Methode garantiert, dass niemals etwas wie "du, der du..." oder
      * "du, die du..." oder "du, das du..." generiert wird.
      * <p>
-     * Diese Methode gibt zumindest immer dann eine nichtleere Liste zurück, wenn
+     * Diese Methode soll zumindest immer dann eine nichtleere Liste zurückgeben, wenn
      * {@link #altEindruckBeiBegegnungAdjPhr(Person, NumerusGenus, SubstantivischePhrase, int, boolean)}
-     * eine leere Liste zurückgibt. Durch die Kombination bei der Methoden erhält man
-     * also immer mindestens einen Satz.
+     * eine leere Liste zurückgibt, so dass man durch die Kombination beider Methoden immer
+     * mindestens einen Satz erhält.
      *
      * @return Möglicherweise eine leere Liste
      */
     @NonNull
-    ImmutableList<Satz> altFeelingBeiBegegnungSaetze(
+    ImmutableList<Satz> altReaktionBeiBegegnungSaetze(
             final SubstantivischePhrase gameObjectSubjekt,
             SubstantivischePhrase targetDesc, int feelingIntensity,
             final boolean targetKnown);

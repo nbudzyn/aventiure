@@ -23,7 +23,7 @@ public abstract class AbstractAdverbialeAngabe {
     }
 
     public String getText() {
-        return GermanUtil.joinToNullString(konstituente);
+        return GermanUtil.joinToString(konstituente);
     }
 
     public Konstituente getDescription() {

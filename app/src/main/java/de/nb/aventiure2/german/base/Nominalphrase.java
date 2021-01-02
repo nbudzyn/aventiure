@@ -5,7 +5,7 @@ import androidx.annotation.Nullable;
 import static de.nb.aventiure2.german.base.Artikel.Typ.DEF;
 import static de.nb.aventiure2.german.base.Artikel.Typ.INDEF;
 import static de.nb.aventiure2.german.base.Flexionsreihe.fr;
-import static de.nb.aventiure2.german.base.GermanUtil.joinToNullString;
+import static de.nb.aventiure2.german.base.GermanUtil.joinToString;
 import static de.nb.aventiure2.german.base.NumerusGenus.F;
 import static de.nb.aventiure2.german.base.NumerusGenus.N;
 import static de.nb.aventiure2.german.base.NumerusGenus.PL_MFN;
@@ -28,6 +28,8 @@ public class Nominalphrase
             np(PL_MFN, INDEF, "Angebote", "Angeboten");
     public static final Nominalphrase ASTGABEL =
             np(F, DEF, "Astgabel");
+    public static final Nominalphrase AUGEN =
+            np(PL_MFN, INDEF, "Augen");
     public static final Nominalphrase DEIN_HERZ =
             np(N, null, "dein Herz",
                     "deinem Herzen");
@@ -100,7 +102,7 @@ public class Nominalphrase
             return flexionsreiheArtikellos.nom();
         }
 
-        return joinToNullString(artikel.nom(), flexionsreiheArtikellos.nom());
+        return joinToString(artikel.nom(), flexionsreiheArtikellos.nom());
     }
 
     @Override
@@ -111,7 +113,7 @@ public class Nominalphrase
             return artikellosDat();
         }
 
-        return joinToNullString(artikel.dat(), flexionsreiheArtikellos.dat());
+        return joinToString(artikel.dat(), flexionsreiheArtikellos.dat());
     }
 
     @Override
@@ -127,7 +129,7 @@ public class Nominalphrase
             return flexionsreiheArtikellos.akk();
         }
 
-        return joinToNullString(artikel.akk(), flexionsreiheArtikellos.akk());
+        return joinToString(artikel.akk(), flexionsreiheArtikellos.akk());
     }
 
     @Nullable

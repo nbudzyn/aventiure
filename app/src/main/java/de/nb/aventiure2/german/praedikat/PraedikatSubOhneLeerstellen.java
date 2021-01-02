@@ -98,11 +98,6 @@ public class PraedikatSubOhneLeerstellen
     }
 
     @Override
-    public boolean hauptsatzLaesstSichBeiGleichemSubjektMitNachfolgendemVerbzweitsatzZusammenziehen() {
-        return true;
-    }
-
-    @Override
     public boolean kannPartizipIIPhraseAmAnfangOderMittenImSatzVerwendetWerden() {
         return true;
     }
@@ -120,13 +115,15 @@ public class PraedikatSubOhneLeerstellen
 
     @Nullable
     @Override
-    SubstantivischePhraseOderReflexivpronomen getDat() {
+    SubstantivischePhraseOderReflexivpronomen getDat(
+            final Person personSubjekt, final Numerus numerusSubjekt) {
         return null;
     }
 
     @Nullable
     @Override
-    SubstantivischePhraseOderReflexivpronomen getAkk() {
+    SubstantivischePhraseOderReflexivpronomen getAkk(
+            final Person personSubjekt, final Numerus numerusSubjekt) {
         return null;
     }
 
@@ -142,11 +139,6 @@ public class PraedikatSubOhneLeerstellen
         return Konstituente.joinToKonstituenten(
                 getAdverbialeAngabeSkopusVerbAllgDescriptionFuerZwangsausklammerung()
         );
-    }
-
-    @Override
-    public boolean hatAkkusativobjekt() {
-        return false;
     }
 
     @Nullable

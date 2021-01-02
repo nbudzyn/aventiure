@@ -10,11 +10,13 @@ import de.nb.aventiure2.german.base.Person;
  * Ein Adjektiv, das keine Ergänzungen fordert.
  */
 public enum AdjektivOhneErgaenzungen implements AdjPhrOhneLeerstellen {
+    FROEHLICH("fröhlich"),
     GESPANNT("gespannt"),
     GLUECKLICH("glücklich"),
-    VERAERGERT("verärgert"),
+    RESERVIERT("reserviert"),
     UEBERRASCHT("überrascht"),
     UEBERRUMPELT("überrumpelt"),
+    VERAERGERT("verärgert"),
     VERSTIMMT("verstimmt"),
     VERWIRRT("verwirrt"),
     VERWUNDERT("verwundert"),

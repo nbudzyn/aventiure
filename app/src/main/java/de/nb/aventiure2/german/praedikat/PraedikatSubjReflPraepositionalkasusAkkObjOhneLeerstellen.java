@@ -115,11 +115,6 @@ class PraedikatSubjReflPraepositionalkasusAkkObjOhneLeerstellen
     }
 
     @Override
-    public boolean hauptsatzLaesstSichBeiGleichemSubjektMitNachfolgendemVerbzweitsatzZusammenziehen() {
-        return true;
-    }
-
-    @Override
     public boolean kannPartizipIIPhraseAmAnfangOderMittenImSatzVerwendetWerden() {
         return true;
     }
@@ -164,7 +159,8 @@ class PraedikatSubjReflPraepositionalkasusAkkObjOhneLeerstellen
 
     @Nullable
     @Override
-    SubstantivischePhraseOderReflexivpronomen getAkk() {
+    SubstantivischePhraseOderReflexivpronomen getAkk(
+            final Person personSubjekt, final Numerus numerusSubjekt) {
         return akkObj;
     }
 
@@ -176,7 +172,8 @@ class PraedikatSubjReflPraepositionalkasusAkkObjOhneLeerstellen
 
     @Nullable
     @Override
-    SubstantivischePhraseOderReflexivpronomen getDat() {
+    SubstantivischePhraseOderReflexivpronomen getDat(
+            final Person personSubjekt, final Numerus numerusSubjekt) {
         return null;
     }
 
@@ -190,18 +187,13 @@ class PraedikatSubjReflPraepositionalkasusAkkObjOhneLeerstellen
 
     private void checkKeinPartikelVerb() {
         if (verbReflPraepositionalkasusAkkObj.getVerb().getPartikel() != null) {
-            throw new IllegalStateException("Reflexives Partikel Verb mit Präpositionalkasus? "
+            throw new IllegalStateException("Reflexives Partikel-Verb mit Präpositionalkasus? "
                     + "Unerwartet!");
         }
     }
 
     @Override
     public boolean umfasstSatzglieder() {
-        return true;
-    }
-
-    @Override
-    public boolean hatAkkusativobjekt() {
         return true;
     }
 

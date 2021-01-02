@@ -52,6 +52,15 @@ public class RapunzelStateComp extends AbstractStateComp<RapunzelState> {
 
             alt.add(
                     neuerSatz(rapunzelDesc.nom() +
+                            // FIXME Die feelings-Comp ist hier nicht zugreifbar. Das ist ein
+                            //  Problem. Ein anderes Problem ist, dass man teilweise
+                            //  mehrere States für dasselbe Game Object gebrauchen könnte.
+                            //  Vielleicht sollte man die "Statemachine" nicht als Komponente
+                            //  haben, sondern nurals speicherbare Datenstruktur, die jede
+                            //  KOmponente - ggf. auch mehrfach! - instanziieren kann?!
+                            //  Wichtig ist, dass dennoch ein "onStateChanged" erzeugt werden
+                            //  kann - und (zumindest die Information) auch an andere
+                            //  GOs delivert.
                             // FIXME nur verschüchtert, wenn Rapunzel noch nicht
                             //  viel Zuneigung entwickelt hat
                             //  ansehen...-Methode verwenden!

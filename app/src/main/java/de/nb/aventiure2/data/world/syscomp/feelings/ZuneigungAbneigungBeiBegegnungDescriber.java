@@ -29,6 +29,8 @@ import static de.nb.aventiure2.german.base.Nominalphrase.WUT_OHNE_ART;
 import static de.nb.aventiure2.german.base.PraepositionMitKasus.AUSSER_DAT;
 import static de.nb.aventiure2.german.base.PraepositionMitKasus.VOR;
 import static de.nb.aventiure2.german.praedikat.PraedikativumPraedikatOhneLeerstellen.praedikativumPraedikatMit;
+import static de.nb.aventiure2.german.praedikat.ReflVerbZuInfSubjektkontrolle.SICH_FREUEN_ZU;
+import static de.nb.aventiure2.german.praedikat.VerbSubjObj.ANSTRAHLEN;
 import static de.nb.aventiure2.german.praedikat.VerbSubjObj.SEHEN;
 
 /**
@@ -38,7 +40,7 @@ import static de.nb.aventiure2.german.praedikat.VerbSubjObj.SEHEN;
 class ZuneigungAbneigungBeiBegegnungDescriber implements FeelingBeiBegegnungDescriber {
     @Override
     @NonNull
-    public ImmutableList<Satz> altFeelingBeiBegegnungSaetze(
+    public ImmutableList<Satz> altReaktionBeiBegegnungSaetze(
             final SubstantivischePhrase gameObjectSubjekt,
             final SubstantivischePhrase targetDesc, final int feelingIntensity,
             final boolean targetKnown) {
@@ -46,7 +48,7 @@ class ZuneigungAbneigungBeiBegegnungDescriber implements FeelingBeiBegegnungDesc
         // Keine Relativpronomen von targetDesc erzeugen - jedenfalls nicht solche
         // im Nominativ!
 
-        final ImmutableList.Builder<Satz> res = ImmutableList.builder();
+        ImmutableList.Builder<Satz> res = ImmutableList.builder();
 
         res.addAll(
                 altFeelingBeiBegegnungPraedikativum(
@@ -90,6 +92,35 @@ class ZuneigungAbneigungBeiBegegnungDescriber implements FeelingBeiBegegnungDesc
                                                             .alsSatzMitSubjekt(gameObjectSubjekt))
                                     ))
                     .collect(ImmutableList.toImmutableList());
+        } else if (feelingIntensity == FeelingIntensity.MERKLICH) {
+            return altSehenVerben.stream()
+                    .map(v ->
+                            // "Sie freut sich, dich zu sehen"
+                            SICH_FREUEN_ZU
+                                    .mitLexikalischemKern(
+                                            v.mit(targetDesc)
+                                    )
+                                    .alsSatzMitSubjekt(gameObjectSubjekt))
+                    .collect(ImmutableList.toImmutableList());
+        } else if (feelingIntensity == FeelingIntensity.STARK) {
+            res = ImmutableList.builder();
+
+            res.add(ANSTRAHLEN.mit(gameObjectSubjekt).alsSatzMitSubjekt(targetDesc));
+
+            res.addAll(altSehenVerben.stream()
+                    .map(v ->
+                            // "Sie freut sich, dich zu sehen"
+                            SICH_FREUEN_ZU
+                                    .mitLexikalischemKern(
+                                            v.mit(targetDesc)
+                                    )
+                                    .mitAdverbialerAngabe(
+                                            new AdverbialeAngabeSkopusVerbAllg("sehr")
+                                    )
+                                    .alsSatzMitSubjekt(gameObjectSubjekt))
+                    .collect(ImmutableList.toImmutableList()));
+
+            return res.build();
         } else if (feelingIntensity >= FeelingIntensity.SEHR_STARK) {
             // "außer sich vor Freude, als sie dich sieht"
             return altSehenVerben.stream()
@@ -172,13 +203,16 @@ class ZuneigungAbneigungBeiBegegnungDescriber implements FeelingBeiBegegnungDesc
         } else if (feelingIntensity == -FeelingIntensity.DEUTLICH) {
             return ImmutableList.of(AdjektivOhneErgaenzungen.VERAERGERT);
         } else if (feelingIntensity == -FeelingIntensity.MERKLICH) {
-            return ImmutableList.of(AdjektivOhneErgaenzungen.VERSTIMMT);
+            return ImmutableList.of(
+                    AdjektivOhneErgaenzungen.VERSTIMMT,
+                    AdjektivOhneErgaenzungen.RESERVIERT);
         } else if (feelingIntensity == -FeelingIntensity.NUR_LEICHT) {
             return ImmutableList.of(
-                    AdjektivOhneErgaenzungen.VERWUNDERT,
+                    AdjektivOhneErgaenzungen.RESERVIERT,
                     AdjektivOhneErgaenzungen.UEBERRASCHT,
                     AdjektivOhneErgaenzungen.UEBERRUMPELT
-                            .mitGraduativerAngabe("etwas")
+                            .mitGraduativerAngabe("etwas"),
+                    AdjektivOhneErgaenzungen.VERWUNDERT
             );
         } else if (feelingIntensity == FeelingIntensity.NEUTRAL) {
             return ImmutableList.of(
@@ -232,6 +266,11 @@ class ZuneigungAbneigungBeiBegegnungDescriber implements FeelingBeiBegegnungDesc
                             gluecklichDichZuSehen, gespanntWasZuBerichten
                     )
             );
+        } else if (feelingIntensity == FeelingIntensity.MERKLICH) {
+            return ImmutableList.of(
+                    AdjektivOhneErgaenzungen.FROEHLICH.mitGraduativerAngabe("ganz")
+            );
+
         }
 
         return ImmutableList.of();

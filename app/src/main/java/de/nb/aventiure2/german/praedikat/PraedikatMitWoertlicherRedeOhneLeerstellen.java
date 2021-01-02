@@ -123,11 +123,6 @@ public class PraedikatMitWoertlicherRedeOhneLeerstellen
     }
 
     @Override
-    public boolean hauptsatzLaesstSichBeiGleichemSubjektMitNachfolgendemVerbzweitsatzZusammenziehen() {
-        return false;
-    }
-
-    @Override
     public boolean kannPartizipIIPhraseAmAnfangOderMittenImSatzVerwendetWerden() {
         return false;
     }
@@ -145,13 +140,15 @@ public class PraedikatMitWoertlicherRedeOhneLeerstellen
 
     @Nullable
     @Override
-    SubstantivischePhraseOderReflexivpronomen getDat() {
+    SubstantivischePhraseOderReflexivpronomen getDat(
+            final Person personSubjekt, final Numerus numerusSubjekt) {
         return null;
     }
 
     @Nullable
     @Override
-    SubstantivischePhraseOderReflexivpronomen getAkk() {
+    SubstantivischePhraseOderReflexivpronomen getAkk(
+            final Person personSubjekt, final Numerus numerusSubjekt) {
         return null;
     }
 
@@ -182,10 +179,6 @@ public class PraedikatMitWoertlicherRedeOhneLeerstellen
         return true;
     }
 
-    @Override
-    public boolean hatAkkusativobjekt() {
-        return false;
-    }
 
     @Nullable
     @Override

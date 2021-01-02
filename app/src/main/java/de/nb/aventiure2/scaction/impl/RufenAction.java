@@ -77,7 +77,7 @@ public class RufenAction extends AbstractScAction {
     @NonNull
     public String getName() {
         return GermanUtil.capitalize(
-                GermanUtil.joinToNullString(
+                GermanUtil.joinToString(
                         ruftyp.getName().getInfinitiv(P1, SG)));
     }
 

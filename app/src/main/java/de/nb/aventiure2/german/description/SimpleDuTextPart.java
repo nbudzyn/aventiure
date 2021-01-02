@@ -9,7 +9,7 @@ import de.nb.aventiure2.german.base.Wortfolge;
 import de.nb.aventiure2.german.praedikat.AbstractDuTextPart;
 
 import static com.google.common.base.Preconditions.checkArgument;
-import static de.nb.aventiure2.german.base.GermanUtil.joinToNullString;
+import static de.nb.aventiure2.german.base.GermanUtil.joinToString;
 import static de.nb.aventiure2.german.base.Wortfolge.w;
 
 public class SimpleDuTextPart implements AbstractDuTextPart {
@@ -58,7 +58,7 @@ public class SimpleDuTextPart implements AbstractDuTextPart {
     public Wortfolge getDuHauptsatzMitVorfeld(final String vorfeld) {
         return w(GermanUtil.buildHauptsatz(vorfeld, // "dann"
                 verb, // "gehst"
-                GermanUtil.joinToNullString("du", remainder))); // "du den Fluss entlang"
+                joinToString("du", remainder))); // "du den Fluss entlang"
     }
 
     @Override
@@ -77,7 +77,7 @@ public class SimpleDuTextPart implements AbstractDuTextPart {
 
         return w(GermanUtil.buildHauptsatz(vorfeldSatzglied,
                 verb,
-                joinToNullString("du", remainderWithoutVorfeldSatzglied)));
+                joinToString("du", remainderWithoutVorfeldSatzglied)));
     }
 
     @Override

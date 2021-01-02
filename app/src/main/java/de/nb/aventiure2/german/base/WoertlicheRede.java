@@ -1,6 +1,6 @@
 package de.nb.aventiure2.german.base;
 
-import static de.nb.aventiure2.german.base.GermanUtil.joinToNullString;
+import static de.nb.aventiure2.german.base.GermanUtil.joinToString;
 
 public class WoertlicheRede {
     private final String woertlicheRedeText;
@@ -16,7 +16,7 @@ public class WoertlicheRede {
                         woertlicheRedeTextTrimmed.substring(
                                 0, woertlicheRedeTextTrimmed.length() - 1) :
                         woertlicheRedeTextTrimmed;
-        return joinToNullString(
+        return joinToString(
                 ":",
                 "„",
                 woertlicheRedeTextOhnePunkt); // Der "Punkt" wird je nachdem später als

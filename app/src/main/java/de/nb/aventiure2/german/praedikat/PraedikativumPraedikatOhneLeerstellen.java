@@ -121,11 +121,6 @@ public class PraedikativumPraedikatOhneLeerstellen
     }
 
     @Override
-    public boolean hauptsatzLaesstSichBeiGleichemSubjektMitNachfolgendemVerbzweitsatzZusammenziehen() {
-        return true;
-    }
-
-    @Override
     public boolean kannPartizipIIPhraseAmAnfangOderMittenImSatzVerwendetWerden() {
         // ?"Endlich wieder einmal glücklich gewesen verlässt du das Theater."
         return false;
@@ -167,13 +162,15 @@ public class PraedikativumPraedikatOhneLeerstellen
 
     @Nullable
     @Override
-    SubstantivischePhraseOderReflexivpronomen getDat() {
+    SubstantivischePhraseOderReflexivpronomen getDat(
+            final Person personSubjekt, final Numerus numerusSubjekt) {
         return null;
     }
 
     @Nullable
     @Override
-    SubstantivischePhraseOderReflexivpronomen getAkk() {
+    SubstantivischePhraseOderReflexivpronomen getAkk(
+            final Person personSubjekt, final Numerus numerusSubjekt) {
         return null;
     }
 
@@ -196,11 +193,6 @@ public class PraedikativumPraedikatOhneLeerstellen
     @Override
     public boolean umfasstSatzglieder() {
         return true;
-    }
-
-    @Override
-    public boolean hatAkkusativobjekt() {
-        return false;
     }
 
     @Nullable

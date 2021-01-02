@@ -21,6 +21,8 @@ import de.nb.aventiure2.german.base.SubstantivischePhraseOderReflexivpronomen;
 import static com.google.common.collect.ImmutableList.toImmutableList;
 import static de.nb.aventiure2.german.base.Konstituente.cutFirstOneByOne;
 import static de.nb.aventiure2.german.base.Konstituente.k;
+import static de.nb.aventiure2.german.base.Numerus.SG;
+import static de.nb.aventiure2.german.base.Person.P2;
 
 /**
  * Ein Prädikat, in dem alle Leerstellen besetzt sind und dem grundsätzlich
@@ -68,6 +70,14 @@ public abstract class AbstractAngabenfaehigesPraedikatOhneLeerstellen
         this.adverbialeAngabeSkopusSatz = adverbialeAngabeSkopusSatz;
         this.adverbialeAngabeSkopusVerbAllg = adverbialeAngabeSkopusVerbAllg;
         this.adverbialeAngabeSkopusVerbWohinWoher = adverbialeAngabeSkopusVerbWohinWoher;
+    }
+
+    @Override
+    public final
+        // Es sollte eigentlich keinen Grund gehen, warum das bei einer Unterklasse
+        // nicht der Fall sein sollte
+    boolean hauptsatzLaesstSichBeiGleichemSubjektMitNachfolgendemVerbzweitsatzZusammenziehen() {
+        return true;
     }
 
     /**
@@ -174,8 +184,10 @@ public abstract class AbstractAngabenfaehigesPraedikatOhneLeerstellen
     private Iterable<Konstituente> getMittelfeld(
             final Person personSubjekt,
             final Numerus numerusSubjekt) {
-        @Nullable final SubstantivischePhraseOderReflexivpronomen datObjekt = getDat();
-        final SubstantivischePhraseOderReflexivpronomen akkObjekt = getAkk();
+        @Nullable final SubstantivischePhraseOderReflexivpronomen datObjekt = getDat(personSubjekt,
+                numerusSubjekt);
+        final SubstantivischePhraseOderReflexivpronomen akkObjekt = getAkk(personSubjekt,
+                numerusSubjekt);
 
         // einige wenige Verben wie "jdn. etw. lehren" haben zwei Akkusativobjekte
         final SubstantivischePhraseOderReflexivpronomen zweitesAkkObjekt = getZweitesAkk();
@@ -202,11 +214,24 @@ public abstract class AbstractAngabenfaehigesPraedikatOhneLeerstellen
                 ));
     }
 
+    @Override
+    public final boolean hatAkkusativobjekt() {
+        return getAkk(
+                // Ob es ein Akkusativobjekt gibt, sollte von Person und Numuerus
+                // unabhängig sein.
+                P2, SG) != null
+                || getZweitesAkk() != null;
+    }
+
     /**
      * Gibt das Akkusativ-Objekt zurück - sofern es eines gibt.
+     *
+     * @param personSubjekt
+     * @param numerusSubjekt
      */
     @Nullable
-    abstract SubstantivischePhraseOderReflexivpronomen getAkk();
+    abstract SubstantivischePhraseOderReflexivpronomen getAkk(
+            Person personSubjekt, Numerus numerusSubjekt);
 
     /**
      * Gibt das <i>zweite</i> Akkusativ-Objekt zurück - sofern es eines gibt.
@@ -219,9 +244,13 @@ public abstract class AbstractAngabenfaehigesPraedikatOhneLeerstellen
 
     /**
      * Gibt das Dativ-Objekt zurück - sofern es eines gibt.
+     *
+     * @param personSubjekt
+     * @param numerusSubjekt
      */
     @Nullable
-    abstract SubstantivischePhraseOderReflexivpronomen getDat();
+    abstract SubstantivischePhraseOderReflexivpronomen getDat(
+            Person personSubjekt, Numerus numerusSubjekt);
 
 
     private static Pair<SubstantivischePhraseOderReflexivpronomen, Kasus> toPair(
@@ -252,8 +281,8 @@ public abstract class AbstractAngabenfaehigesPraedikatOhneLeerstellen
      * <p>
      * Die Linksversetzung der unbetonten Pronomen an die Wackernagel-Position geschieht durch
      * die Methode {@link #getMittelfeld(Person, Numerus)} auf Basis der Methoden
-     * {@link #getAkk()}, {@link #getZweitesAkk()} und
-     * {@link #getDat()}.
+     * {@link #getAkk(Person, Numerus)}, {@link #getZweitesAkk()} und
+     * {@link #getDat(Person, Numerus)}.
      */
     abstract Iterable<Konstituente>
     getMittelfeldOhneLinksversetzungUnbetonterPronomen(final Person personSubjekt,

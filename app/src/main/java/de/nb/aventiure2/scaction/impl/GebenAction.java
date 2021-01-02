@@ -99,7 +99,7 @@ public class GebenAction<
     @Override
     public String getName() {
         return capitalize(
-                GermanUtil.joinToNullString(
+                GermanUtil.joinToString(
                         GEBEN
                                 .mitDat(world.getDescription(taker, true))
                                 .mit(world.getDescription(given))

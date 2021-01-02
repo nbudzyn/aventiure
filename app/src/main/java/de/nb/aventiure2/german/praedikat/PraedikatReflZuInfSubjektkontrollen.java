@@ -1,6 +1,8 @@
 package de.nb.aventiure2.german.praedikat;
 
 
+import androidx.annotation.NonNull;
+
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Iterables;
 
@@ -11,45 +13,55 @@ import javax.annotation.Nullable;
 
 import de.nb.aventiure2.annotations.Komplement;
 import de.nb.aventiure2.annotations.Valenz;
+import de.nb.aventiure2.german.base.Kasus;
 import de.nb.aventiure2.german.base.Konstituente;
 import de.nb.aventiure2.german.base.Numerus;
 import de.nb.aventiure2.german.base.Person;
+import de.nb.aventiure2.german.base.Reflexivpronomen;
 import de.nb.aventiure2.german.base.SubstantivischePhraseOderReflexivpronomen;
 
+import static de.nb.aventiure2.german.base.Kasus.AKK;
+import static de.nb.aventiure2.german.base.Kasus.DAT;
+
 /**
- * Ein Prädikat eines <i>Verbs mit intentionaler Bedeutung</i>,
- * in dem alle Leerstellen besetzt sind. Beispiele:
+ * Ein Prädikat eines Verbs wie "sich [Akk] freuen, zu ...". Dabei ist es das Subjekt, dass ... tut
+ * (<i>Subjektkontrolle</i>). Beispiel:
  * <ul>
- *     <li>"die junge Frau versucht ihre Haare wieder hinunterzulassen"
- *     <li>"die junge Frau versucht sich zu beruhigen"
+ *     <li>Du freust dich, sie zu sehen
+ *     <li>Ich stelle mir vor, umzuziehen
  * </ul>
  * <p>
  * Adverbiale Angaben ("aus einer Laune heraus") können immer noch eingefügt werden.
- * <p>
- * "Die vom Subjekt bezeichnete Person will oder will nicht die Handlung
- * ausführen, die im Komplement genannt ist", siehe Peter Eisenberg,
- * Der Satz, S. 356 (Kapitel 11.2)
  */
-public class PraedikatIntentionalesVerbOhneLeerstellen
+public class PraedikatReflZuInfSubjektkontrollen
         extends AbstractAngabenfaehigesPraedikatOhneLeerstellen {
     /**
-     * "(...versucht) ihre Haare wieder hinunterzulassen"
+     * Der Kasus mit dem das Verb reflexiv steht - z.B. Akkusativ ("sich freuen") oder
+     * Dativ ("sich vorstellen")
+     */
+    @NonNull
+    private final Kasus kasus;
+
+    /**
+     * "(...freut sich, ) das du kommst"
      */
     @Komplement
     @Nonnull
     private final PraedikatOhneLeerstellen lexikalischerKern;
 
     @Valenz
-    PraedikatIntentionalesVerbOhneLeerstellen(
+    PraedikatReflZuInfSubjektkontrollen(
             final Verb verb,
+            final Kasus kasus,
             final PraedikatOhneLeerstellen lexikalischerKern) {
-        this(verb, ImmutableList.of(),
+        this(verb, kasus, ImmutableList.of(),
                 null, null,
                 null, lexikalischerKern);
     }
 
-    private PraedikatIntentionalesVerbOhneLeerstellen(
+    private PraedikatReflZuInfSubjektkontrollen(
             final Verb verb,
+            final Kasus kasus,
             final Iterable<Modalpartikel> modalpartikeln,
             @Nullable final AdverbialeAngabeSkopusSatz adverbialeAngabeSkopusSatz,
             @Nullable final AdverbialeAngabeSkopusVerbAllg adverbialeAngabeSkopusVerbAllg,
@@ -58,14 +70,16 @@ public class PraedikatIntentionalesVerbOhneLeerstellen
             final PraedikatOhneLeerstellen lexikalischerKern) {
         super(verb, modalpartikeln, adverbialeAngabeSkopusSatz,
                 adverbialeAngabeSkopusVerbAllg, adverbialeAngabeSkopusVerbWohinWoher);
+        this.kasus = kasus;
         this.lexikalischerKern = lexikalischerKern;
     }
 
     @Override
-    public PraedikatIntentionalesVerbOhneLeerstellen mitModalpartikeln(
+    public PraedikatReflZuInfSubjektkontrollen mitModalpartikeln(
             final Collection<Modalpartikel> modalpartikeln) {
-        return new PraedikatIntentionalesVerbOhneLeerstellen(
+        return new PraedikatReflZuInfSubjektkontrollen(
                 getVerb(),
+                kasus,
                 Iterables.concat(getModalpartikeln(), modalpartikeln),
                 getAdverbialeAngabeSkopusSatz(),
                 getAdverbialeAngabeSkopusVerbAllg(),
@@ -74,16 +88,16 @@ public class PraedikatIntentionalesVerbOhneLeerstellen
         );
     }
 
-
     @Override
-    public PraedikatIntentionalesVerbOhneLeerstellen mitAdverbialerAngabe(
+    public PraedikatReflZuInfSubjektkontrollen mitAdverbialerAngabe(
             @Nullable final AdverbialeAngabeSkopusSatz adverbialeAngabe) {
         if (adverbialeAngabe == null) {
             return this;
         }
 
-        return new PraedikatIntentionalesVerbOhneLeerstellen(
+        return new PraedikatReflZuInfSubjektkontrollen(
                 getVerb(),
+                kasus,
                 getModalpartikeln(),
                 adverbialeAngabe, getAdverbialeAngabeSkopusVerbAllg(),
                 getAdverbialeAngabeSkopusVerbWohinWoher(),
@@ -91,14 +105,15 @@ public class PraedikatIntentionalesVerbOhneLeerstellen
     }
 
     @Override
-    public PraedikatIntentionalesVerbOhneLeerstellen mitAdverbialerAngabe(
+    public PraedikatReflZuInfSubjektkontrollen mitAdverbialerAngabe(
             @Nullable final AdverbialeAngabeSkopusVerbAllg adverbialeAngabe) {
         if (adverbialeAngabe == null) {
             return this;
         }
 
-        return new PraedikatIntentionalesVerbOhneLeerstellen(
+        return new PraedikatReflZuInfSubjektkontrollen(
                 getVerb(),
+                kasus,
                 getModalpartikeln(),
                 getAdverbialeAngabeSkopusSatz(), adverbialeAngabe,
                 getAdverbialeAngabeSkopusVerbWohinWoher(),
@@ -107,14 +122,15 @@ public class PraedikatIntentionalesVerbOhneLeerstellen
     }
 
     @Override
-    public PraedikatIntentionalesVerbOhneLeerstellen mitAdverbialerAngabe(
+    public PraedikatReflZuInfSubjektkontrollen mitAdverbialerAngabe(
             @Nullable final AdverbialeAngabeSkopusVerbWohinWoher adverbialeAngabe) {
         if (adverbialeAngabe == null) {
             return this;
         }
 
-        return new PraedikatIntentionalesVerbOhneLeerstellen(
+        return new PraedikatReflZuInfSubjektkontrollen(
                 getVerb(),
+                kasus,
                 getModalpartikeln(),
                 getAdverbialeAngabeSkopusSatz(),
                 getAdverbialeAngabeSkopusVerbAllg(),
@@ -123,11 +139,10 @@ public class PraedikatIntentionalesVerbOhneLeerstellen
         );
     }
 
-
     @Override
     public boolean kannPartizipIIPhraseAmAnfangOderMittenImSatzVerwendetWerden() {
-        // "Gebeten dich zu waschen [gehst du ins Bad]"
-        return true;
+        // *"Dich gefreut, sie zu sehen, [gehst du ins Bad]"
+        return false;
     }
 
     @Nullable
@@ -135,14 +150,14 @@ public class PraedikatIntentionalesVerbOhneLeerstellen
     public Konstituente getSpeziellesVorfeldAlsWeitereOption(
             final Person person, final Numerus numerus) {
         @Nullable final Konstituente speziellesVorfeldFromSuper =
-                super.getSpeziellesVorfeldAlsWeitereOption(person,
-                        numerus);
+                super.getSpeziellesVorfeldAlsWeitereOption(person, numerus);
         if (speziellesVorfeldFromSuper != null) {
             return speziellesVorfeldFromSuper;
         }
 
-        // "Ihre Haare (versucht sie wieder hinunterzulassen)"
-        return lexikalischerKern.getSpeziellesVorfeldAlsWeitereOption(person, numerus);
+        // ?"Rapunzel freust du, dich zu sehen" - eher nicht.
+
+        return null;
     }
 
     @Override
@@ -154,6 +169,7 @@ public class PraedikatIntentionalesVerbOhneLeerstellen
         if (adverbialeAngabeSkopusVerbAllg == null ||
                 adverbialeAngabeSkopusVerbAllg.imMittelfeldErlaubt()) {
             return Konstituente.joinToKonstituenten(
+                    Reflexivpronomen.get(personSubjekt, numerusSubjekt).im(kasus), // "dich"
                     getAdverbialeAngabeSkopusSatzDescription(), // "aus einer Laune heraus"
                     getModalpartikeln(), // "mal eben"
                     adverbialeAngabeSkopusVerbAllg != null ?
@@ -162,20 +178,18 @@ public class PraedikatIntentionalesVerbOhneLeerstellen
                     getAdverbialeAngabeSkopusVerbWohinWoherDescription()
                     // (kann es wohl gar nicht geben)
             );
-
-            // Der lexikalische Kern könnte als Alternative zusäztlich ins Mittelfeld gestellt
-            //  werden: "ihre Haare wieder hinunterzulassen versuchen":
-            // "Die junge Frau hat ihre Haare wieder hinunterzulassen versucht"
         }
 
         return Konstituente.joinToKonstituenten(
+                Reflexivpronomen.get(personSubjekt, numerusSubjekt).im(kasus), // "dich"
                 getAdverbialeAngabeSkopusSatzDescription(), // "aus einer Laune heraus"
                 getModalpartikeln(), // "mal eben"
                 adverbialeAngabeSkopusVerbAllg.getDescription(), // "erneut"
-                lexikalischerKern.getZuInfinitiv(
-                        // Es liegt "Subjektkontrolle" vor.
-                        personSubjekt, numerusSubjekt
-                ) // "ihre Haare wieder hinunterzulassen"
+                Konstituente.schliesseInKommaEin(
+                        lexikalischerKern.getZuInfinitiv(
+                                // Es liegt Subjektkontrolle vor!
+                                personSubjekt, numerusSubjekt
+                        )) // ", Rapunzel zu sehen[, ]"
                 // (kann es wohl gar nicht geben)
         );
     }
@@ -184,6 +198,10 @@ public class PraedikatIntentionalesVerbOhneLeerstellen
     @Override
     SubstantivischePhraseOderReflexivpronomen getDat(
             final Person personSubjekt, final Numerus numerusSubjekt) {
+        if (kasus == DAT) {
+            return Reflexivpronomen.get(personSubjekt, numerusSubjekt);
+        }
+
         return null;
     }
 
@@ -191,6 +209,10 @@ public class PraedikatIntentionalesVerbOhneLeerstellen
     @Override
     SubstantivischePhraseOderReflexivpronomen getAkk(
             final Person personSubjekt, final Numerus numerusSubjekt) {
+        if (kasus == AKK) {
+            return Reflexivpronomen.get(personSubjekt, numerusSubjekt);
+        }
+
         return null;
     }
 
@@ -212,16 +234,19 @@ public class PraedikatIntentionalesVerbOhneLeerstellen
             );
         }
 
-        return lexikalischerKern.getZuInfinitiv(
-                // Es liegt "Subjektkontrolle" vor.
-                personSubjekt, numerusSubjekt
-        ); // "(Du versuchst) dich zu waschen"
-        // Wir lassen die Kommata rund um den Infinitiv weg - das ist erlaubt.
+        return Konstituente.schliesseInKommaEin(
+                lexikalischerKern.getZuInfinitiv(
+                        // Es liegt Subjektkontrolle vor.
+                        personSubjekt, numerusSubjekt
+                )); // "(Du freust dich), Rapunzel zu sehen[,] "
     }
 
     @Override
     public boolean umfasstSatzglieder() {
-        return super.umfasstSatzglieder() || lexikalischerKern.umfasstSatzglieder();
+        return super.umfasstSatzglieder()
+                // Ich bin nicht sicher, ob das reflexivische "sich" als Satzglied gilt.
+                // Sagen wir mal sicherheitshalber: Nein.
+                || lexikalischerKern.umfasstSatzglieder();
     }
 
     @Nullable

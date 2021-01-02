@@ -153,11 +153,6 @@ public class PraedikatDirektivesVerbOhneLeerstellen
     }
 
     @Override
-    public boolean hauptsatzLaesstSichBeiGleichemSubjektMitNachfolgendemVerbzweitsatzZusammenziehen() {
-        return true;
-    }
-
-    @Override
     public boolean kannPartizipIIPhraseAmAnfangOderMittenImSatzVerwendetWerden() {
         return true;
     }
@@ -207,7 +202,8 @@ public class PraedikatDirektivesVerbOhneLeerstellen
 
     @Nullable
     @Override
-    SubstantivischePhraseOderReflexivpronomen getDat() {
+    SubstantivischePhraseOderReflexivpronomen getDat(
+            final Person personSubjekt, final Numerus numerusSubjekt) {
         if (kasus == DAT) {
             return objekt;
         }
@@ -217,7 +213,8 @@ public class PraedikatDirektivesVerbOhneLeerstellen
 
     @Nullable
     @Override
-    SubstantivischePhraseOderReflexivpronomen getAkk() {
+    SubstantivischePhraseOderReflexivpronomen getAkk(
+            final Person personSubjekt, final Numerus numerusSubjekt) {
         if (kasus == AKK) {
             return objekt;
         }
@@ -249,11 +246,6 @@ public class PraedikatDirektivesVerbOhneLeerstellen
     @Override
     public boolean umfasstSatzglieder() {
         return true;
-    }
-
-    @Override
-    public boolean hatAkkusativobjekt() {
-        return kasus == Kasus.AKK;
     }
 
     @Nullable

@@ -140,6 +140,11 @@ public class Wortfolge {
                 kommmaStehtAus());
     }
 
+    public Wortfolge uncapitalize() {
+        return new Wortfolge(GermanUtil.uncapitalize(getString()), woertlicheRedeNochOffen,
+                kommmaStehtAus());
+    }
+
     public String getString() {
         return string;
     }

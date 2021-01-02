@@ -128,11 +128,6 @@ public class PraedikatDatAkkOhneLeerstellen
     }
 
     @Override
-    public boolean hauptsatzLaesstSichBeiGleichemSubjektMitNachfolgendemVerbzweitsatzZusammenziehen() {
-        return true;
-    }
-
-    @Override
     public boolean kannPartizipIIPhraseAmAnfangOderMittenImSatzVerwendetWerden() {
         return true;
     }
@@ -165,13 +160,15 @@ public class PraedikatDatAkkOhneLeerstellen
 
     @Override
     @Nullable
-    public SubstantivischePhrase getDat() {
+    public SubstantivischePhrase getDat(final Person personSubjekt,
+                                        final Numerus numerusSubjekt) {
         return dat;
     }
 
     @Nullable
     @Override
-    public SubstantivischePhrase getAkk() {
+    public SubstantivischePhrase getAkk(final Person personSubjekt,
+                                        final Numerus numerusSubjekt) {
         return akk;
     }
 
@@ -193,12 +190,7 @@ public class PraedikatDatAkkOhneLeerstellen
     public boolean umfasstSatzglieder() {
         return true;
     }
-
-    @Override
-    public boolean hatAkkusativobjekt() {
-        return true;
-    }
-
+    
     @Nullable
     @Override
     public Konstituente getErstesInterrogativpronomen() {

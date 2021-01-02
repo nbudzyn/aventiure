@@ -34,12 +34,48 @@ public class GermanUtil {
     }
 
     /**
+     * Fügt diese Teile zu einem String zusammen, wobei ein nichtleerer
+     * * String das Ergebnis sein muss. . Diese Methode darf nur verwendet werden,
+     * wenn nach dem letzten der Teile definitiv kein Komma aussteht - oder das
+     * ausstehende Kommma auf andere Weise behandelt wird.
+     */
+    public static String joinToString(final Object... parts) {
+        return checkJoiningResultNotNull(joinToNullString(parts), parts);
+    }
+
+    /**
+     * Fügt diese Teile zu einem String zusammen, wobei ein nichtleerer
+     * String das Ergebnis sein muss. Diese Methode darf nur verwendet werden,
+     * wenn nach dem letzten der Teile definitiv kein Komma aussteht - oder das
+     * ausstehende Kommma auf andere Weise behandelt wird.
+     */
+    public static String joinToString(final Iterable<?> parts) {
+        return checkJoiningResultNotNull(joinToNullString(parts), parts);
+    }
+
+    private static String checkJoiningResultNotNull(
+            @Nullable final String joiningResult,
+            final Object... parts) {
+        return checkJoiningResultNotNull(joiningResult, asList(parts));
+    }
+
+    private static String checkJoiningResultNotNull(
+            @Nullable final String joiningResult,
+            final Iterable<?> parts) {
+        if (joiningResult == null) {
+            throw new IllegalStateException("Joining result was null. parts: " + parts);
+        }
+
+        return joiningResult;
+    }
+
+    /**
      * Fügt diese Teile zu einem String zusammen. Diese Methode darf nur verwendet werden,
      * wenn nach dem letzten der Teile definitiv kein Komma aussteht - oder das
      * ausstehende Kommma auf andere Weise behandelt wird.
      */
     @Nullable
-    public static String joinToNullString(final Object... parts) {
+    private static String joinToNullString(final Object... parts) {
         return joinToNullString(asList(parts));
     }
 
@@ -49,7 +85,7 @@ public class GermanUtil {
      * ausstehende Kommma auf andere Weise behandelt wird.
      */
     @Nullable
-    public static String joinToNullString(final Iterable<?> parts) {
+    private static String joinToNullString(final Iterable<?> parts) {
         @Nullable final Wortfolge res = Wortfolge.joinToNullWortfolge(parts);
         if (res == null) {
             return null;
@@ -203,7 +239,7 @@ public class GermanUtil {
 
     public static String buildHauptsatz(final String vorfeld, final String verb,
                                         @Nullable final String mittelfeldEtc) {
-        return joinToNullString(
+        return joinToString(
                 capitalize(vorfeld),
                 verb,
                 mittelfeldEtc);

@@ -129,11 +129,6 @@ public class PraedikatSubjObjOhneLeerstellen
     }
 
     @Override
-    public boolean hauptsatzLaesstSichBeiGleichemSubjektMitNachfolgendemVerbzweitsatzZusammenziehen() {
-        return true;
-    }
-
-    @Override
     public boolean kannPartizipIIPhraseAmAnfangOderMittenImSatzVerwendetWerden() {
         return true;
     }
@@ -171,7 +166,8 @@ public class PraedikatSubjObjOhneLeerstellen
 
     @Nullable
     @Override
-    SubstantivischePhraseOderReflexivpronomen getDat() {
+    SubstantivischePhraseOderReflexivpronomen getDat(
+            final Person personSubjekt, final Numerus numerusSubjekt) {
         if (kasusOderPraepositionalkasus == DAT) {
             return objekt;
         }
@@ -181,7 +177,8 @@ public class PraedikatSubjObjOhneLeerstellen
 
     @Nullable
     @Override
-    SubstantivischePhraseOderReflexivpronomen getAkk() {
+    SubstantivischePhraseOderReflexivpronomen getAkk(
+            final Person personSubjekt, final Numerus numerusSubjekt) {
         if (kasusOderPraepositionalkasus == AKK) {
             return objekt;
         }
@@ -207,11 +204,6 @@ public class PraedikatSubjObjOhneLeerstellen
     public boolean
     umfasstSatzglieder() {
         return true;
-    }
-
-    @Override
-    public boolean hatAkkusativobjekt() {
-        return kasusOderPraepositionalkasus == AKK;
     }
 
     @Nullable
