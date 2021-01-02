@@ -71,6 +71,7 @@ class DescriptionCombiner {
                 new AllgDescription(params,
                         ", " +
                                 first.getDescriptionSatzanschlussOhneSubjekt() +
+                                (first.isWoertlicheRedeNochOffen() ? "“" : "") +
                                 (first.isKommaStehtAus() ? "," : "") +
                                 " und " +
                                 second.getDescriptionSatzanschlussOhneSubjekt()));

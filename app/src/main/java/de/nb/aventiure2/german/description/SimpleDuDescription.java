@@ -10,13 +10,14 @@ public class SimpleDuDescription
         extends AbstractDuDescription<SimpleDuTextPart, SimpleDuDescription> {
     public SimpleDuDescription(final StructuralElement startsNew,
                                final SimpleDuTextPart duTextPart) {
-        this(startsNew, duTextPart, false);
+        this(startsNew, duTextPart, false, false);
     }
 
     SimpleDuDescription(final StructuralElement startsNew,
                         final SimpleDuTextPart duTextPart,
+                        final boolean woertlicheRedeNochOffen,
                         final boolean kommaStehtAus) {
         // FIXME Alle du()-Aufrufe prüfen, ggf. auf SENTENCE setzen
-        super(startsNew, duTextPart, kommaStehtAus);
+        super(startsNew, duTextPart, woertlicheRedeNochOffen, kommaStehtAus);
     }
 }

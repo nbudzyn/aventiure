@@ -401,6 +401,7 @@ public class RapunzelTalkingComp extends AbstractTalkingComp {
                                 + anaph.nom()
                                 // FIXME Schaut überrascht / schaut glücklich automatisch erzeugen!
                                 //  (prädikative Adjektivphrase!)
+                                //  ansehen-Methode verwenden
                                 + " und schaut glücklich")
                                 .phorikKandidat(anaph, RAPUNZEL)
                                 .beendet(PARAGRAPH),
@@ -627,6 +628,7 @@ public class RapunzelTalkingComp extends AbstractTalkingComp {
 
         for (final AbstractDescription<?> desc : alt) {
             res.add(neuerSatz(praefix + desc.getDescriptionHauptsatz())
+                    .woertlicheRedeNochOffen(desc.isWoertlicheRedeNochOffen())
                     .komma(desc.isKommaStehtAus())
                     .phorikKandidat(desc.getPhorikKandidat())
                     .beendet(PARAGRAPH));

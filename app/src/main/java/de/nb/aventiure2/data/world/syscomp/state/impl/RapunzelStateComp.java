@@ -52,8 +52,9 @@ public class RapunzelStateComp extends AbstractStateComp<RapunzelState> {
 
             alt.add(
                     neuerSatz(rapunzelDesc.nom() +
-                            // FIXME nur verschüchtert, wenn man Rapunzel noch nicht
+                            // FIXME nur verschüchtert, wenn Rapunzel noch nicht
                             //  viel Zuneigung entwickelt hat
+                            //  ansehen...-Methode verwenden!
                             " schaut dich verschüchtert an, dann bindet "
                             + rapunzelDesc.persPron().nom() //"sie"
                             + " "

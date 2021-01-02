@@ -55,7 +55,13 @@ public class GermanUtil {
             return null;
         }
 
-        return res.getString();
+        final StringBuilder resString = new StringBuilder(res.getString());
+
+        if (res.woertlicheRedeNochOffen()) {
+            resString.append("“");
+        }
+
+        return resString.toString();
     }
 
     /**
@@ -90,12 +96,12 @@ public class GermanUtil {
         }
 
         final CharSequence lastCharBase = base.subSequence(base.length() - 1, base.length());
-        if (" „\n" .contains(lastCharBase)) {
+        if (" „\n".contains(lastCharBase)) {
             return false;
         }
 
         final CharSequence firstCharAddition = addition.subSequence(0, 1);
-        return !" ,;.:!?“\n" .contains(firstCharAddition);
+        return !" ,;.:!?“\n".contains(firstCharAddition);
     }
 
     static boolean beginnDecktKommaAb(final CharSequence charSequence) {
@@ -104,16 +110,16 @@ public class GermanUtil {
 
         final CharSequence firstChar = charSequence.subSequence(0, 1);
 
-        checkArgument(!"\n" .contentEquals(firstChar), "charSequence beginnt mit "
+        checkArgument(!"\n".contentEquals(firstChar), "charSequence beginnt mit "
                 + "Zeilenwechsel. Hier wäre keine Möglichkeit, syntaktisch korrekt noch ein "
                 + "Komma unterzubringen.");
 
-        checkArgument(!"“" .contains(firstChar), "charSequence beginnt "
+        checkArgument(!"“".contains(firstChar), "charSequence beginnt "
                 + "mit Abführungszeichen. Hier müsste man eigentlich erst das Abführungszeichen "
                 + "schreiben und dann das Komma (oder Punkt o.Ä.). Diese Logik ist noch nicht "
                 + "implementiert");
 
-        return ",;.:!?" .contains(firstChar);
+        return ",;.:!?".contains(firstChar);
     }
 
     /**

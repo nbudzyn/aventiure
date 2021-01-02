@@ -36,6 +36,20 @@ public class Narration {
     private final String text;
 
     /**
+     * Ob die wörtliche Rede noch "offen" ist.  Es steht also noch ein schließendes
+     * Anführungszeichen aus. Wenn ein schließendes Anführungszeichen aussteht,
+     * gibt es zwei Möglichkeiten, fortzufahren:
+     * <ol>
+     * <li>Es folgt (wenn noch kein Satzzeichen geschrieben wurde) ein Punkt, danach
+     * das schließende Anführungszeichen - damit ist der Satz beendet.
+     * <li>Es folgt kein Punkt, sondern direkt  das schließende Anführungszeichen. Damit kann
+     * der Satz fortgesetzt werden (es sei denn, vor dem Anfürhungszeichen wäre bereits ein
+     * Punkt geschrieben).
+     * </ol>
+     */
+    private final boolean woertlicheRedeNochOffen;
+
+    /**
      * Ob ein Komma aussteht. Wenn ein Komma aussteht, muss als nächstes ein Komma folgen -
      * oder das Satzende.
      */
@@ -88,11 +102,11 @@ public class Narration {
     public Narration(@NonNull final NarrationSource lastNarrationSource,
                      @NonNull final StructuralElement endsThis,
                      @NonNull final String text,
-                     final boolean kommaStehtAus,
+                     final boolean woertlicheRedeNochOffen, final boolean kommaStehtAus,
                      final boolean allowsAdditionalDuSatzreihengliedOhneSubjekt,
                      final boolean dann,
                      @Nullable final PhorikKandidat phorikKandidat) {
-        this(lastNarrationSource, endsThis, text, kommaStehtAus,
+        this(lastNarrationSource, endsThis, text, woertlicheRedeNochOffen, kommaStehtAus,
                 allowsAdditionalDuSatzreihengliedOhneSubjekt, dann,
                 phorikKandidat != null ?
                         ((GameObjectId) phorikKandidat.getBezugsobjekt()) : null,
@@ -103,7 +117,7 @@ public class Narration {
     Narration(@NonNull final NarrationSource lastNarrationSource,
               @NonNull final StructuralElement endsThis,
               @NonNull final String text,
-              final boolean kommaStehtAus,
+              final boolean woertlicheRedeNochOffen, final boolean kommaStehtAus,
               final boolean allowsAdditionalDuSatzreihengliedOhneSubjekt,
               final boolean dann,
               @Nullable final GameObjectId phorikKandidatBezugsobjekt,
@@ -112,6 +126,7 @@ public class Narration {
                         || endsThis == StructuralElement.WORD,
                 "!allowsAdditionalDuSatzreihengliedOhneSubjekt "
                         + "|| endsThis == StructuralElement.WORD verletzt");
+        this.woertlicheRedeNochOffen = woertlicheRedeNochOffen;
         this.lastNarrationSource = lastNarrationSource;
         this.endsThis = endsThis;
         this.text = text;
@@ -134,6 +149,10 @@ public class Narration {
 
     boolean kommaStehtAus() {
         return kommaStehtAus;
+    }
+
+    boolean woertlicheRedeNochOffen() {
+        return woertlicheRedeNochOffen;
     }
 
     boolean allowsAdditionalDuSatzreihengliedOhneSubjekt() {
@@ -211,36 +230,50 @@ public class Narration {
 
     Narration add(final NarrationSource narrationSource,
                   final AllgDescription allgDescription) {
-        final StringBuilder resText = new StringBuilder(getText().trim());
+        final StringBuilder resText = new StringBuilder(text.trim());
 
         final StructuralElement separation =
                 StructuralElement.max(endsThis, allgDescription.getStartsNew());
 
         switch (separation) {
             case WORD:
+                resText.append(schliesseWoertlicheRedeFallsNoetig(
+                        resText.toString(),
+                        allgDescription.getDescriptionHauptsatz(),
+                        false));
+
                 if (kommaNeeded(resText.toString(),
                         allgDescription.getDescriptionHauptsatz())) {
                     resText.append(",");
                 }
 
-                if (GermanUtil
-                        .spaceNeeded(resText.toString(),
-                                allgDescription.getDescriptionHauptsatz())) {
+                if (GermanUtil.spaceNeeded(resText.toString(),
+                        allgDescription.getDescriptionHauptsatz())) {
                     resText.append(" ");
                 }
                 break;
             case SENTENCE:
+                resText.append(schliesseWoertlicheRedeFallsNoetig(
+                        resText.toString(),
+                        allgDescription.getDescriptionHauptsatz(),
+                        true));
+
                 if (periodNeededToStartNewSentence(resText.toString(),
                         allgDescription.getDescriptionHauptsatz())) {
                     resText.append(".");
                 }
-                if (GermanUtil
-                        .spaceNeeded(resText.toString(),
-                                allgDescription.getDescriptionHauptsatz())) {
+                if (GermanUtil.spaceNeeded(
+                        resText.toString(),
+                        allgDescription.getDescriptionHauptsatz())) {
                     resText.append(" ");
                 }
                 break;
             case PARAGRAPH:
+                resText.append(schliesseWoertlicheRedeFallsNoetig(
+                        resText.toString(),
+                        allgDescription.getDescriptionHauptsatz(),
+                        true));
+
                 if (periodNeededToStartNewSentence(resText.toString(),
                         allgDescription.getDescriptionHauptsatz())) {
                     resText.append(".");
@@ -251,6 +284,11 @@ public class Narration {
                 }
                 break;
             case CHAPTER:
+                resText.append(schliesseWoertlicheRedeFallsNoetig(
+                        resText.toString(),
+                        allgDescription.getDescriptionHauptsatz(),
+                        true));
+
                 if (periodNeededToStartNewSentence(resText.toString(),
                         allgDescription.getDescriptionHauptsatz())) {
                     resText.append(".");
@@ -274,7 +312,7 @@ public class Narration {
                 narrationSource,
                 allgDescription.getEndsThis(),
                 resText.toString(),
-                allgDescription.isKommaStehtAus(),
+                allgDescription.isWoertlicheRedeNochOffen(), allgDescription.isKommaStehtAus(),
                 allgDescription.isAllowsAdditionalDuSatzreihengliedOhneSubjekt(),
                 allgDescription.isDann(),
                 allgDescription.getPhorikKandidat());
@@ -323,34 +361,95 @@ public class Narration {
             return false;
         }
 
-        final String lastCharBase =
-                base.substring(base.length() - 1);
+        final String lastCharBase = base.substring(base.length() - 1);
         if (lastCharBase.equals(",")) {
             return false;
         }
 
         final String firstCharAdditional = addition.substring(0, 1);
-        if (".,;!?“\n" .contains(firstCharAdditional)) {
+        if (".,;!?\n".contains(firstCharAdditional)) {
             return false;
         }
 
         return true;
     }
 
+    /**
+     * Gibt den String zurück, mit dem die wörtliche Rede abgeschlossen wird - falls überhaupt
+     * eine wörtliche Rede noch offen ist. Dies können ein Leerstring, "“" oder ".“" sein.
+     */
+    private String schliesseWoertlicheRedeFallsNoetig(
+            final String base, final String addition, final boolean satzende) {
+        if (!woertlicheRedeNochOffen) {
+            return "";
+        }
+
+        return schliesseWoertlicheRede(base, addition, satzende);
+    }
+
+    /**
+     * Gibt den String zurück, mit dem die noch offene wörtliche Rede abgeschlossen wird.
+     * Dies können ein Leerstring, "“" oder ".“" sein.
+     */
+    private static String schliesseWoertlicheRede(
+            final String base, final String addition, final boolean satzende) {
+        final String baseTrimmed = base.trim();
+        final String additionTrimmed = addition.trim();
+
+        if (satzende) {
+            final String lastRelevantCharBase = baseTrimmed.substring(baseTrimmed.length() - 1);
+            if ("….!?\"“".contains(lastRelevantCharBase)) {
+                if (baseTrimmed.endsWith("…“") || baseTrimmed.endsWith(".“")
+                        || baseTrimmed.endsWith("!“") || baseTrimmed.endsWith("?“")
+                        || baseTrimmed.endsWith("…\"") || baseTrimmed.endsWith(".\"")
+                        || baseTrimmed.endsWith("!\"") || baseTrimmed.endsWith("?\"")) {
+                    return "";
+                }
+
+                if (additionTrimmed.startsWith("“")) {
+                    return "";
+                }
+
+                return "“";
+            }
+
+            if (additionTrimmed.startsWith(".“")) {
+                return "";
+            }
+
+            if (additionTrimmed.startsWith("“")) {
+                return ".";
+            }
+
+            return ".“";
+        }
+
+        if (baseTrimmed.endsWith("“")) {
+            return "";
+        }
+
+        if (additionTrimmed.startsWith("“")) {
+            return "";
+        }
+
+        return "“";
+
+        // Das Komma sollte ohnehin durch kommaStehtAus gefordert sein
+    }
+
     private static boolean periodNeededToStartNewSentence(
             final String base, final String addition) {
-        final String baseTrimmed =
-                base.trim();
+        final String baseTrimmed = base.trim();
 
         final String lastRelevantCharBase =
                 baseTrimmed.substring(baseTrimmed.length() - 1);
-        if ("….!?\"“\n" .contains(lastRelevantCharBase)) {
+        if ("….!?\"“\n".contains(lastRelevantCharBase)) {
             return false;
         }
 
         final String firstCharAdditional =
                 addition.trim().substring(0, 1);
-        return !".!?" .contains(firstCharAdditional);
+        return !".!?".contains(firstCharAdditional);
     }
 
     NarrationSource getLastNarrationSource() {

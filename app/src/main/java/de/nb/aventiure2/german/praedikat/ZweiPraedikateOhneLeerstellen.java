@@ -17,9 +17,6 @@ import de.nb.aventiure2.german.base.SubstantivischePhrase;
  */
 public class ZweiPraedikateOhneLeerstellen
         implements PraedikatOhneLeerstellen {
-    // FIXME HIer ist einige kaputt gegangen. Durchgehen!
-
-
     private final PraedikatOhneLeerstellen ersterSatz;
     private final PraedikatOhneLeerstellen zweiterSatz;
 
@@ -75,53 +72,24 @@ public class ZweiPraedikateOhneLeerstellen
 
     @Override
     public Iterable<Konstituente> getVerbzweit(final Person person, final Numerus numerus) {
-        if (ersterSatz
-                .hauptsatzLaesstSichBeiGleichemSubjektMitNachfolgendemVerbzweitsatzZusammenziehen()) {
-            return Konstituente.joinToKonstituenten(
-                    // "hebst die goldene Kugel auf"
-                    ersterSatz.getVerbzweit(person, numerus),
-                    "und",
-                    zweiterSatz.getVerbzweit(person, numerus)
-                    // "nimmst ein Bad"
-            );
-        }
-
         return Konstituente.joinToKonstituenten(
-                ersterSatz.getVerbzweit(person, numerus),
                 // "hebst die goldene Kugel auf"
-                ";",
-                // FIXME Hier fehlt das Personalpronomen! "du", "sie", ...
-                zweiterSatz.getVerbzweit(person, numerus)); // "du nimmst ein Bad"
+                ersterSatz.getVerbzweit(person, numerus),
+                "und",
+                zweiterSatz.getVerbzweit(person, numerus)
+                // "nimmst ein Bad"
+        );
     }
 
     @Override
     public Iterable<Konstituente> getVerbzweitMitSubjektImMittelfeld(
             final SubstantivischePhrase subjekt) {
-        if (ersterSatz
-                .hauptsatzLaesstSichBeiGleichemSubjektMitNachfolgendemVerbzweitsatzZusammenziehen()) {
-            return Konstituente.joinToKonstituenten(
-                    ersterSatz.getVerbzweitMitSubjektImMittelfeld(subjekt),
-                    // "ziehst du erst noch eine Weile um die Häuser"
-                    "und",
-                    zweiterSatz.getVerbzweit(subjekt.getPerson(), subjekt.getNumerus())
-                    // "fällst dann todmüde ins Bett."
-            );
-        }
-
         return Konstituente.joinToKonstituenten(
                 ersterSatz.getVerbzweitMitSubjektImMittelfeld(subjekt),
                 // "ziehst du erst noch eine Weile um die Häuser"
-                ";",
-                "du",
-                // FIXME Das Personalpronomen "du" ist hier i.A. falsch, könnte auch
-                //  "sie" o.Ä. sein...
-                //  Wenn sich der Hauptsatz NICHT zusammenziehen lässt, dann hätte man
-                //  das hier gar nicht bauen dürfen!
-                //  Am besten eine Methode in SATZ anbieten, die zwei Sätze
-                //  soweit wie möglich zusammenzieht. Evtl. überlegen, ob man
-                //  ";" formalisiert...
-                zweiterSatz.getVerbzweitMitSubjektImMittelfeld(subjekt)
-                // "du fällst todmüde ins Bett."
+                "und",
+                zweiterSatz.getVerbzweit(subjekt.getPerson(), subjekt.getNumerus())
+                // "fällst dann todmüde ins Bett."
         );
     }
 
@@ -201,6 +169,7 @@ public class ZweiPraedikateOhneLeerstellen
 
     @Nullable
     @Override
+    // FIXME Wozu wird das eigentlich verwendet? Ist das hier sinnvoll?
     public Iterable<Konstituente> getNachfeld(final Person person, final Numerus numerus) {
         return zweiterSatz.getNachfeld(person, numerus);
     }

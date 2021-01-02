@@ -1,7 +1,5 @@
 package de.nb.aventiure2.german.base;
 
-import androidx.annotation.Nullable;
-
 import static de.nb.aventiure2.german.base.GermanUtil.joinToNullString;
 
 public class WoertlicheRede {
@@ -11,13 +9,17 @@ public class WoertlicheRede {
         this.woertlicheRedeText = woertlicheRedeText;
     }
 
-    public String amSatzende() {
-        @Nullable final String woertlichRedeSatzendeZeichen =
-                !woertlicheRedeText.endsWith(".") ? "." : null;
+    public String fuerNachfeld() {
+        final String woertlicheRedeTextTrimmed = woertlicheRedeText.trim();
+        final String woertlicheRedeTextOhnePunkt =
+                woertlicheRedeTextTrimmed.endsWith(".") ?
+                        woertlicheRedeTextTrimmed.substring(
+                                0, woertlicheRedeTextTrimmed.length() - 1) :
+                        woertlicheRedeTextTrimmed;
         return joinToNullString(
+                ":",
                 "„",
-                woertlicheRedeText,
-                woertlichRedeSatzendeZeichen,
-                "“");
+                woertlicheRedeTextOhnePunkt); // Der "Punkt" wird je nachdem später als
+        // ".“" (Satzende) oder "“" (im Satz) ausgegeben.
     }
 }

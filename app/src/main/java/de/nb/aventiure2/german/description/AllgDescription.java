@@ -29,7 +29,9 @@ public class AllgDescription extends AbstractDescription<AllgDescription> {
 
     AllgDescription(final StructuralElement startsNew,
                     final Wortfolge wortfolge) {
-        this(new DescriptionParams(startsNew, wortfolge.kommmaStehtAus()), wortfolge.getString());
+        this(new DescriptionParams(startsNew,
+                        wortfolge.woertlicheRedeNochOffen(), wortfolge.kommmaStehtAus()),
+                wortfolge.getString());
     }
 
     AllgDescription(final StructuralElement startsNew,

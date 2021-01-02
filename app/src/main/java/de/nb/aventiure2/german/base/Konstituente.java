@@ -4,6 +4,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import com.google.common.collect.ImmutableList;
+import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 
 import java.util.Iterator;
@@ -28,7 +29,14 @@ public class Konstituente {
      * ein Ausrufezeichen, ein Fragezeichen, ein Doppelpunkt oder
      * ein Semikolon vorangehen, der ebenfalls das Komma "abdeckt".
      */
-    private final boolean vorkommmaNoetig;
+    private final boolean vorkommaNoetig;
+
+    /**
+     * Ob die wörtliche Rede noch "offen" ist.  Es steht also noch ein schließendes
+     * Anführungszeichen aus. Wenn der Satz beendet wird, muss vielleicht außerdem
+     * noch ein Punkt nach dem Anführungszeitchen gesetzt werden.
+     */
+    private final boolean woertlicheRedeNochOffen;
 
     /**
      * Ob noch ein Komma aussteht. Das Komma wird entweder unmittelbar folgen müssen -
@@ -153,7 +161,7 @@ public class Konstituente {
     @Nonnull
     public static List<Konstituente> cutLast(
             final Iterable<Konstituente> input,
-            @Nullable final Konstituente part) throws KonstituentenNotFoundException {
+            @Nullable final Konstituente part) {
         if (part == null) {
             return ImmutableList.copyOf(input);
         }
@@ -164,7 +172,7 @@ public class Konstituente {
     @Nonnull
     public static List<Konstituente> cutLast(
             final Iterable<Konstituente> input,
-            @Nullable final Iterable<Konstituente> parts) throws KonstituentenNotFoundException {
+            @Nullable final Iterable<Konstituente> parts) {
         return Lists.reverse(
                 cutFirst(
                         Lists.reverse(ImmutableList.copyOf(input)),
@@ -190,7 +198,7 @@ public class Konstituente {
     @Nonnull
     public static List<Konstituente> cutFirst(
             final Iterable<Konstituente> input,
-            @Nullable final Konstituente part) throws KonstituentenNotFoundException {
+            @Nullable final Konstituente part) {
         if (part == null) {
             return ImmutableList.copyOf(input);
         }
@@ -202,7 +210,7 @@ public class Konstituente {
     @Nonnull
     private static List<Konstituente> cutFirst(
             final Iterable<Konstituente> input,
-            final Iterable<Konstituente> parts) throws KonstituentenNotFoundException {
+            final Iterable<Konstituente> parts) {
         final ImmutableList<Konstituente> inputList = ImmutableList.copyOf(input);
         final ImmutableList<Konstituente> partList = ImmutableList.copyOf(parts);
 
@@ -237,13 +245,8 @@ public class Konstituente {
             i = i + 1;
         }
 
-        if (!found) {
-            throw new KonstituentenNotFoundException("Konstituente(n) nicht gefunden. "
-                    + "Konstituente(n): "
-                    + partList
-                    + "  nicht gefunden in "
-                    + inputList);
-        }
+        checkArgument(found, "Konstituente(n) nicht gefunden. "
+                + "Konstituente(n) %s nicht gefunden in %s", partList, inputList);
 
         return res.build();
     }
@@ -254,33 +257,30 @@ public class Konstituente {
             return false;
         }
 
-        return iter.next().vorkommmaNoetig;
+        return iter.next().vorkommaNoetig;
+    }
+
+    public static boolean woertlicheRedeNochOffen(final Iterable<Konstituente> konstituenten) {
+        if (Iterables.isEmpty(konstituenten)) {
+            return false;
+        }
+        return Iterables.getLast(konstituenten).woertlicheRedeNochOffen;
     }
 
     public static boolean kommaStehtAus(final Iterable<Konstituente> konstituenten) {
-        final Iterator<Konstituente> iter = konstituenten.iterator();
-        if (!iter.hasNext()) {
+        if (Iterables.isEmpty(konstituenten)) {
             return false;
         }
 
-        Konstituente last;
-        do {
-            last = iter.next();
-        } while (iter.hasNext());
-
-        return last.kommmaStehtAus;
-    }
-
-    private Konstituente withVorkommaNoetig() {
-        return withVorkommaNoetig(true);
+        return Iterables.getLast(konstituenten).kommmaStehtAus;
     }
 
     public Konstituente withVorkommaNoetig(final boolean vorkommaNoetig) {
-        return new Konstituente(string, vorkommaNoetig, kommmaStehtAus);
+        return new Konstituente(string, vorkommaNoetig, woertlicheRedeNochOffen, kommmaStehtAus);
     }
 
     private Konstituente withKommaStehtAus() {
-        return k(string, true);
+        return k(string, woertlicheRedeNochOffen, true);
     }
 
     /**
@@ -294,6 +294,7 @@ public class Konstituente {
         return new Konstituente(
                 wortfolge.getString().trim(),
                 false,
+                wortfolge.woertlicheRedeNochOffen(),
                 wortfolge.kommmaStehtAus());
     }
 
@@ -305,24 +306,23 @@ public class Konstituente {
         // Wenn der String mit Komma anfängt, lassen wir es in der Konsituente  stehen.
         // Damit wird das Komma definitiv ausgegeben - auch von Methoden, die das Vorkomma
         // vielleich sonst (ggf. bewusst) verschlucken. Vgl. Wortfolge#joinToNullWortfolge()
-        return k(string.trim(), false);
+        return k(string.trim(), false, false);
     }
 
-    public static Konstituente k(final @Nonnull String string, final boolean kommaStehtAus) {
-        return new Konstituente(string, kommaStehtAus);
-    }
-
-    private Konstituente(final String string, final boolean kommmaStehtAus) {
-        this(string, false, kommmaStehtAus);
+    public static Konstituente k(final @Nonnull String string,
+                                 final boolean woertlicheRedeNochOffen,
+                                 final boolean kommaStehtAus) {
+        return new Konstituente(string, kommaStehtAus, woertlicheRedeNochOffen, false);
     }
 
     private Konstituente(final String string, final boolean vorkommaNoetig,
-                         final boolean kommmaStehtAus) {
+                         final boolean woertlicheRedeNochOffen, final boolean kommmaStehtAus) {
+        this.woertlicheRedeNochOffen = woertlicheRedeNochOffen;
         requireNonNull(string, "string");
         checkArgument(!string.isEmpty(), "String ist empty");
 
         this.string = string;
-        vorkommmaNoetig = vorkommaNoetig;
+        this.vorkommaNoetig = vorkommaNoetig;
         this.kommmaStehtAus = kommmaStehtAus;
     }
 
@@ -330,7 +330,7 @@ public class Konstituente {
         return new Konstituente(GermanUtil.capitalize(string),
                 // Wenn großgeschrieben werden soll, wäre es sinnlos, ein Komma zuvor
                 // setzen zu vollen.
-                false, kommmaStehtAus);
+                false, woertlicheRedeNochOffen, kommmaStehtAus);
     }
 
     @Nonnull
@@ -339,7 +339,11 @@ public class Konstituente {
     }
 
     boolean vorkommmaNoetig() {
-        return vorkommmaNoetig;
+        return vorkommaNoetig;
+    }
+
+    public boolean woertlicheRedeNochOffen() {
+        return woertlicheRedeNochOffen;
     }
 
     public boolean kommaStehtAus() {
@@ -372,7 +376,7 @@ public class Konstituente {
     public String toString() {
         return super.toString()
                 + ": "
-                + (vorkommmaNoetig ? "[, ]" : "")
+                + (vorkommaNoetig ? "[, ]" : "")
                 + string
                 + (kommmaStehtAus ? "[, ]" : "");
     }

@@ -26,7 +26,19 @@ public class PraedikatDuDescription
         extends AbstractDuDescription<PraedikatDuTextPart, PraedikatDuDescription> {
     PraedikatDuDescription(final StructuralElement startsNew,
                            final PraedikatOhneLeerstellen praedikat) {
-        super(startsNew, new PraedikatDuTextPart(praedikat), guessKommaStehtAus(praedikat));
+        super(startsNew, new PraedikatDuTextPart(praedikat),
+                guessWoertlicheRedeNochOffen(praedikat),
+                guessKommaStehtAus(praedikat));
+    }
+
+    private static boolean guessWoertlicheRedeNochOffen(final PraedikatOhneLeerstellen praedikat) {
+        // FIXME Hier gibt es ein Problem: Ob die wörtliche Rede noch offen ist, hängt von der
+        //  konkreten Realisierung des Prädikats ab (was steht im Vorfeld / Nachfeld etc.).
+        //  Dies hier ist nur eine grobe Richtschnur.
+        return Konstituente.woertlicheRedeNochOffen(
+                praedikat
+                        .alsSatzMitSubjekt(Personalpronomen.get(P2, M))
+                        .getVerbzweitsatzStandard());
     }
 
     private static boolean guessKommaStehtAus(final PraedikatOhneLeerstellen praedikat) {
@@ -67,6 +79,7 @@ public class PraedikatDuDescription
      * (nicht *"[Ich habe] die Kugel an sich genommen")
      */
     public String getDescriptionPartizipIIPhrase(final Person person, final Numerus numerus) {
+        // FIXME hier kann ein Komma verloren gehen!
         return GermanUtil.joinToNullString(
                 duTextPart.getPraedikat().getPartizipIIPhrase(person, numerus));
     }

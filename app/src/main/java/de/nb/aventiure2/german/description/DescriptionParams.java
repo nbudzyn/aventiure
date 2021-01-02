@@ -26,6 +26,12 @@ public class DescriptionParams {
      */
     private StructuralElement endsThis;
     /**
+     * Ob die wörtliche Rede noch "offen" ist.  Es steht also noch ein schließendes
+     * Anführungszeichen aus. Wenn der Satz beendet wird, muss vielleicht außerdem
+     * noch ein Punkt nach dem Anführungszeitchen gesetzt werden.
+     */
+    private boolean woertlicheRedeNochOffen;
+    /**
      * Ob ein Komma aussteht. Wenn ein Komma aussteht, muss als nächstes ein Komma folgen -
      * oder das Satzende.
      */
@@ -63,16 +69,18 @@ public class DescriptionParams {
     private PhorikKandidat phorikKandidat;
 
     DescriptionParams copy() {
-        return new DescriptionParams(startsNew, endsThis, kommaStehtAus,
+        return new DescriptionParams(startsNew, endsThis, woertlicheRedeNochOffen, kommaStehtAus,
                 allowsAdditionalDuSatzreihengliedOhneSubjekt, dann, phorikKandidat);
     }
 
     private DescriptionParams(final StructuralElement startsNew, final StructuralElement endsThis,
-                              final boolean kommaStehtAus,
+                              final boolean woertlicheRedeNochOffen, final boolean kommaStehtAus,
                               final boolean allowsAdditionalDuSatzreihengliedOhneSubjekt,
-                              final boolean dann, final PhorikKandidat phorikKandidat) {
+                              final boolean dann,
+                              @Nullable final PhorikKandidat phorikKandidat) {
         this.startsNew = startsNew;
         this.endsThis = endsThis;
+        this.woertlicheRedeNochOffen = woertlicheRedeNochOffen;
         this.kommaStehtAus = kommaStehtAus;
         this.allowsAdditionalDuSatzreihengliedOhneSubjekt =
                 allowsAdditionalDuSatzreihengliedOhneSubjekt;
@@ -81,11 +89,13 @@ public class DescriptionParams {
     }
 
     DescriptionParams(final StructuralElement startsNew) {
-        this(startsNew, false);
+        this(startsNew, false, false);
     }
 
-    DescriptionParams(final StructuralElement startsNew, final boolean kommaStehtAus) {
+    DescriptionParams(final StructuralElement startsNew, final boolean woertlicheRedeNochOffen,
+                      final boolean kommaStehtAus) {
         this.startsNew = startsNew;
+        this.woertlicheRedeNochOffen = woertlicheRedeNochOffen;
         this.kommaStehtAus = kommaStehtAus;
         endsThis = StructuralElement.WORD;
     }
@@ -145,6 +155,14 @@ public class DescriptionParams {
         this.kommaStehtAus = kommaStehtAus;
     }
 
+    public void woertlicheRedeNochOffen() {
+        woertlicheRedeNochOffen(true);
+    }
+
+    public void woertlicheRedeNochOffen(final boolean woertlicheRedeNochOffen) {
+        this.woertlicheRedeNochOffen = woertlicheRedeNochOffen;
+    }
+
     /**
      * Sets a flag that the text can be continued by a Satzreihenglied without subject where
      * the player character is the implicit subject
@@ -177,6 +195,10 @@ public class DescriptionParams {
 
     boolean isKommaStehtAus() {
         return kommaStehtAus;
+    }
+
+    boolean isWoertlicheRedeNochOffen() {
+        return woertlicheRedeNochOffen;
     }
 
     public boolean isAllowsAdditionalDuSatzreihengliedOhneSubjekt() {

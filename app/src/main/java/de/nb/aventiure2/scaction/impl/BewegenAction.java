@@ -382,7 +382,7 @@ public class BewegenAction<LOC_DESC extends ILocatableGO & IDescribableGO>
         }
 
         if (newLocation.is(WALDWILDNIS_HINTER_DEM_BRUNNEN)) {
-            // FIXME Im Dunkeln kann man keine Früchte sehen
+            // FIXME Im Dunkeln kann man keine Früchte sehen? Oder doch?!
             return true;
         }
 
@@ -443,6 +443,7 @@ public class BewegenAction<LOC_DESC extends ILocatableGO & IDescribableGO>
                             .getDescriptionSatzanschlussOhneSubjekt(),
                     description.getTimeElapsed())
                     .dann(description.isDann())
+                    .woertlicheRedeNochOffen(description.isWoertlicheRedeNochOffen())
                     .komma(description.isKommaStehtAus()));
 
             alt.addAll(drueckeAusTimed(DISKONTINUITAET, description));
@@ -465,6 +466,7 @@ public class BewegenAction<LOC_DESC extends ILocatableGO & IDescribableGO>
                                         + GermanUtil.uncapitalize(
                                 description.getDescription().getDescriptionHauptsatz()),
                                 description.getTimeElapsed())
+                                .woertlicheRedeNochOffen(description.isWoertlicheRedeNochOffen())
                                 .komma(description.isKommaStehtAus())
                                 .undWartest(
                                         description
@@ -474,6 +476,7 @@ public class BewegenAction<LOC_DESC extends ILocatableGO & IDescribableGO>
                         "Was willst du hier eigentlich? "
                                 + description.getDescription().getDescriptionHauptsatz(),
                         description.getTimeElapsed())
+                        .woertlicheRedeNochOffen(description.isWoertlicheRedeNochOffen())
                         .komma(description.isKommaStehtAus()));
                 if (description.getDescription() instanceof AbstractDuDescription<?, ?>) {
                     alt.add(neuerSatz(
@@ -481,6 +484,7 @@ public class BewegenAction<LOC_DESC extends ILocatableGO & IDescribableGO>
                                     + ((AbstractDuDescription<?, ?>) description.getDescription())
                                     .getDescriptionHauptsatzMitSpeziellemVorfeld(),
                             description.getTimeElapsed())
+                            .woertlicheRedeNochOffen(description.isWoertlicheRedeNochOffen())
                             .komma(description.isKommaStehtAus()));
                 }
 
@@ -500,6 +504,7 @@ public class BewegenAction<LOC_DESC extends ILocatableGO & IDescribableGO>
                         satzanschluss(
                                 "; " + GermanUtil.uncapitalize(satzEvtlMitDann),
                                 description.getTimeElapsed())
+                                .woertlicheRedeNochOffen(description.isWoertlicheRedeNochOffen())
                                 .komma(description.isKommaStehtAus())
                                 .dann(description.isDann()
                                         && !satzEvtlMitDann.startsWith("Dann")));
@@ -514,6 +519,7 @@ public class BewegenAction<LOC_DESC extends ILocatableGO & IDescribableGO>
                         neuerSatz(PARAGRAPH, description.getDescription()
                                         .getDescriptionHauptsatzMitKonjunktionaladverbWennNoetig("danach"),
                                 description.getTimeElapsed())
+                                .woertlicheRedeNochOffen(description.isWoertlicheRedeNochOffen())
                                 .komma(description.isKommaStehtAus())
                                 .undWartest(description
                                         .isAllowsAdditionalDuSatzreihengliedOhneSubjekt()));

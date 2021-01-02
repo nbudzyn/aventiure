@@ -94,9 +94,6 @@ public class ScAutomaticReactionsComp
 
     @Override
     public void onTimePassed(final AvDateTime startTime, final AvDateTime endTime) {
-        // FIXME WorldClock, GlobalClock, TimeTaker o.Ä. als neues Objekt,
-        // vergleichbar mit Narrator, Narrator und WOrld hängen davon ab.
-
         feelingsComp.onTimePassed(startTime, endTime);
 
         final AvTimeSpan remainingWaitTime = waitingComp.getEndTime().minus(endTime);

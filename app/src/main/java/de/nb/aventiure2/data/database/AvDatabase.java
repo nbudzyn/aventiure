@@ -195,7 +195,8 @@ public abstract class AvDatabase extends RoomDatabase {
 
         return new Narration(Narration.NarrationSource.INITIALIZATION,
                 StructuralElement.PARAGRAPH,
-                text.toString(), false, false, false,
+                text.toString(), false, false,
+                false, false,
                 null);
     }
 

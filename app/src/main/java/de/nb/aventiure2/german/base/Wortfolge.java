@@ -20,6 +20,13 @@ public class Wortfolge {
     private final String string;
 
     /**
+     * Ob die wörtliche Rede noch "offen" ist.  Es steht also noch ein schließendes
+     * Anführungszeichen aus. Wenn der Satz beendet wird, muss vielleicht außerdem
+     * noch ein Punkt nach dem Anführungszeitchen gesetzt werden.
+     */
+    private final boolean woertlicheRedeNochOffen;
+
+    /**
      * Ob noch ein Komma aussteht. Das Komma wird entweder unmittelbar folgen müssen -
      * oder es folgt ein Punkt, ein Ausrufezeichen, ein Fragezeichen, ein Doppelpunkt oder
      * ein Semikolon, der ebenfalls das Komma "abdeckt".
@@ -28,7 +35,9 @@ public class Wortfolge {
 
 
     public static Wortfolge uncapitalize(final Wortfolge wortfolge) {
-        return w(GermanUtil.uncapitalize(wortfolge.getString()), wortfolge.kommmaStehtAus());
+        return new Wortfolge(GermanUtil.uncapitalize(wortfolge.getString()),
+                wortfolge.woertlicheRedeNochOffen(),
+                wortfolge.kommmaStehtAus());
     }
 
     /**
@@ -53,21 +62,43 @@ public class Wortfolge {
     static Wortfolge joinToNullWortfolge(final Iterable<?> parts) {
         final StringBuilder resString = new StringBuilder();
         boolean first = true;
+        boolean woertlicheRedeNochOffen = false;
         boolean kommaStehtAus = false;
         for (final Konstituente konstituente : Konstituente.joinToKonstituenten(parts)) {
+            final String konstitentenString = konstituente.getString();
+            if (woertlicheRedeNochOffen) {
+                if (resString.toString().trim().endsWith(".")) {
+                    resString.append("“");
+                    if (GermanUtil.spaceNeeded("“", konstitentenString)) {
+                        resString.append(" ");
+                    }
+                } else if (!konstitentenString.trim().startsWith(".“")
+                        && !konstitentenString.trim().startsWith("!“")
+                        && !konstitentenString.trim().startsWith("?“")
+                        && !konstitentenString.trim().startsWith("…“")
+                        // Kein Satzende
+                        && !konstitentenString.trim().startsWith("“")) {
+                    resString.append("“");
+                    if (GermanUtil.spaceNeeded("“", konstitentenString)) {
+                        resString.append(" ");
+                    }
+                }
+            }
+
             if ((kommaStehtAus
                     || (!first && konstituente.vorkommmaNoetig()))
-                    && !GermanUtil.beginnDecktKommaAb(konstituente.getString())) {
+                    && !GermanUtil.beginnDecktKommaAb(konstitentenString)) {
                 resString.append(",");
-                if (GermanUtil.spaceNeeded(",", konstituente.getString())) {
+                if (GermanUtil.spaceNeeded(",", konstitentenString)) {
                     resString.append(" ");
                 }
-            } else if (GermanUtil.spaceNeeded(resString, konstituente.getString())) {
+            } else if (GermanUtil.spaceNeeded(resString, konstitentenString)) {
                 resString.append(" ");
             }
 
-            resString.append(konstituente.getString());
+            resString.append(konstitentenString);
             kommaStehtAus = konstituente.kommaStehtAus();
+            woertlicheRedeNochOffen = konstituente.woertlicheRedeNochOffen();
             first = false;
         }
 
@@ -75,7 +106,9 @@ public class Wortfolge {
             return null;
         }
 
-        return w(resString.toString(), kommaStehtAus);
+        return
+
+                w(resString.toString(), woertlicheRedeNochOffen, kommaStehtAus);
     }
 
     /**
@@ -87,24 +120,32 @@ public class Wortfolge {
             return null;
         }
 
-        return w(string, false);
+        return w(string, false, false);
     }
 
-    public static Wortfolge w(final String string, final boolean kommaStehtAus) {
-        return new Wortfolge(string, kommaStehtAus);
+    public static Wortfolge w(final String string, final boolean woertlicheRedeNochOffen,
+                              final boolean kommaStehtAus) {
+        return new Wortfolge(string, woertlicheRedeNochOffen, kommaStehtAus);
     }
 
-    private Wortfolge(final String string, final boolean kommmaStehtAus) {
+    private Wortfolge(final String string, final boolean woertlicheRedeNochOffen,
+                      final boolean kommmaStehtAus) {
         this.string = string;
+        this.woertlicheRedeNochOffen = woertlicheRedeNochOffen;
         this.kommmaStehtAus = kommmaStehtAus;
     }
 
     public Wortfolge capitalize() {
-        return w(GermanUtil.capitalize(getString()), kommmaStehtAus());
+        return new Wortfolge(GermanUtil.capitalize(getString()), woertlicheRedeNochOffen,
+                kommmaStehtAus());
     }
 
     public String getString() {
         return string;
+    }
+
+    public boolean woertlicheRedeNochOffen() {
+        return woertlicheRedeNochOffen;
     }
 
     public boolean kommmaStehtAus() {
@@ -141,6 +182,7 @@ public class Wortfolge {
         return super.toString()
                 + ": "
                 + getString()
+                + (woertlicheRedeNochOffen ? "[“]" : "")
                 + (kommmaStehtAus ? "[, ]" : "");
     }
 }

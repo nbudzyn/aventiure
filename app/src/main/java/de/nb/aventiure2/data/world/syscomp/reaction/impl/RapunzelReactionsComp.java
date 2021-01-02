@@ -372,13 +372,13 @@ public class RapunzelReactionsComp
             alt.addAll(TimedDescription.toTimed(secs(15),
                     du("findest",
                             "oben die junge Frau ganz aufgeregt vor: „Du bist schon "
-                                    + "wieder da!”, sagt sie, „Kannst du mir nun helfen?”",
+                                    + "wieder da!“, sagt sie, „Kannst du mir nun helfen?“",
                             "oben")
                             .phorikKandidat(F, RAPUNZEL),
                     neuerSatz(
-                            "„Die Alte hat nichts bemerkt”, sprudelt die "
+                            "„Die Alte hat nichts bemerkt“, sprudelt die "
                                     + "wunderschöne junge Frau los, „aber lange werden wir uns "
-                                    + "nicht treffen können. Sie ist so neugierig!”")
+                                    + "nicht treffen können. Sie ist so neugierig!“")
                             .phorikKandidat(F, RAPUNZEL)
             ));
         }
@@ -392,6 +392,7 @@ public class RapunzelReactionsComp
                                             + "Ihre Haare glänzen fein wie gesponnen Gold. "
                                             + s.getDescriptionHauptsatz(),
                                     secs(30))
+                                    .woertlicheRedeNochOffen(s.isWoertlicheRedeNochOffen())
                                     .komma(s.isKommaStehtAus())
                                     .phorikKandidat(s.getPhorikKandidat()))
                             .collect(ImmutableList.toImmutableList())
@@ -446,15 +447,7 @@ public class RapunzelReactionsComp
                         + "aus",
                 "offenbar",
                 secs(30))
-                        .phorikKandidat(anaph.persPron(), RAPUNZEL),
-                neuerSatz(
-                        "Oben im dunklen Zimmer "
-                                // FIXME Automatisch zu den alternativen Sätzen ergänzen!
-                                + "schaut dich "
-                                + anaph.nom()
-                                + " etwas überrascht an",
-                        secs(15))
-                        .phorikKandidat(anaph, RAPUNZEL));
+                .phorikKandidat(anaph.persPron(), RAPUNZEL));
         if (loadSC().memoryComp().getKnown(RAPUNZEL) == KNOWN_FROM_LIGHT) {
             alt.add(neuerSatz(anaph.persPron().nom()
                             + " ist auch nachts wunderschön – allerdings ist die "
@@ -653,14 +646,14 @@ public class RapunzelReactionsComp
         if (loadSC().locationComp().hasLocation(OBEN_IM_ALTEN_TURM)) {
             n.narrateAlt(
                     neuerSatz(
-                            "„O weh, die Alte kommt!”, entfährt es der jungen "
+                            "„O weh, die Alte kommt!“, entfährt es der jungen "
                                     + "Frau. „Du musst dich verstecken! Sie "
-                                    + "ist eine mächtige Zauberin!”",
+                                    + "ist eine mächtige Zauberin!“",
                             secs(10)),
                     neuerSatz(
-                            "„O nein, die Alte kommt schon wieder!”, sagt "
+                            "„O nein, die Alte kommt schon wieder!“, sagt "
                                     + "die junge Frau entsetzt. „Versteck dich "
-                                    + "schnell!”",
+                                    + "schnell!“",
                             secs(15)),
                     neuerSatz("Alarmiert schaut die junge Frau dich an. Dann wandert "
                                     + "ihr Blick auf das Bett",

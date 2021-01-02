@@ -86,6 +86,7 @@ class AllgDescriptionBuilder {
                 duDesc.getDescriptionHauptsatzMitVorfeld(", dann");
 
         final DescriptionParams params = duDesc.copyParams();
+        params.woertlicheRedeNochOffen(hauptsatzMitKommmaDann.woertlicheRedeNochOffen());
         params.komma(hauptsatzMitKommmaDann.kommmaStehtAus());
         params.dann(false);
 

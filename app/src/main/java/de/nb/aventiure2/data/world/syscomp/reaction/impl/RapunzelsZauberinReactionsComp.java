@@ -573,7 +573,7 @@ public class RapunzelsZauberinReactionsComp
                             + " unten am Turm steht, ruft "
                             + desc.persPron().nom()
                             + " etwas. Du kannst nicht alles verstehen, aber du hörst etwas wie: "
-                            + "„…lass dein Haar herunter!”", mins(1)));
+                            + "„…lass dein Haar herunter!“", mins(1)));
         } else if (loadSC().locationComp().hasRecursiveLocation(OBEN_IM_ALTEN_TURM)) {
             n.narrateAlt(secs(10),
                     neuerSatz(PARAGRAPH,

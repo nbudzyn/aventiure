@@ -131,6 +131,8 @@ public class DescriptionUmformulierer {
                         "Ach nein, " +
                                 // du nimmst die Kugel besser doch
                                 uncapitalize(duNimmstDieKugelBesserDoch).getString())
+                        .woertlicheRedeNochOffen(
+                                duNimmstDieKugelBesserDoch.woertlicheRedeNochOffen())
                         .komma(duNimmstDieKugelBesserDoch.kommmaStehtAus())
                         .undWartest(duDesc.isAllowsAdditionalDuSatzreihengliedOhneSubjekt())
                         .dann(duDesc.isDann())
@@ -289,6 +291,7 @@ public class DescriptionUmformulierer {
                 praefix
                         + " "
                         + hauptsatz)
+                .woertlicheRedeNochOffen(desc.isWoertlicheRedeNochOffen())
                 .komma(desc.isKommaStehtAus())
                 .phorikKandidat(desc.getPhorikKandidat())
                 .beendet(desc.getEndsThis());
@@ -309,6 +312,7 @@ public class DescriptionUmformulierer {
                 praefixVerb,
                 praefixRemainder + " "
                         + hauptsatz)
+                .woertlicheRedeNochOffen(desc.isWoertlicheRedeNochOffen())
                 .komma(desc.isKommaStehtAus())
                 .phorikKandidat(desc.getPhorikKandidat())
                 .beendet(desc.getEndsThis());
@@ -357,7 +361,10 @@ public class DescriptionUmformulierer {
                         + " und "
                         + descSatzanschluss,
                 praefixVorfeldSatzglied)
+                // FIXME Das ist falsch hier! Es müssten die Werte von descSatzanschluss
+                //  verwendet werden!
                 .dann(desc.isDann())
+                .woertlicheRedeNochOffen(desc.isWoertlicheRedeNochOffen())
                 .komma(desc.isKommaStehtAus())
                 .phorikKandidat(desc.getPhorikKandidat())
                 .beendet(desc.getEndsThis());

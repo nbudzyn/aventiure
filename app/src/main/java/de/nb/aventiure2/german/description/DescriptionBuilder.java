@@ -399,6 +399,7 @@ public class DescriptionBuilder {
                         verb,
                         remainder != null ? remainder.getString() : null,
                         vorfeldSatzglied),
+                remainder != null && remainder.woertlicheRedeNochOffen(),
                 remainder != null && remainder.kommmaStehtAus());
     }
 

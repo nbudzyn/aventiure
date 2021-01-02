@@ -20,11 +20,12 @@ public abstract class AbstractDescription<SELF extends AbstractDescription<SELF>
     private final DescriptionParams params;
 
     public AbstractDescription(final StructuralElement startsNew) {
-        this(startsNew, false);
+        this(startsNew, false, false);
     }
 
-    protected AbstractDescription(final StructuralElement startsNew, final boolean kommaStehtAus) {
-        this(new DescriptionParams(startsNew, kommaStehtAus));
+    protected AbstractDescription(final StructuralElement startsNew,
+                                  final boolean woertlicheRedeNochOffen, final boolean kommaStehtAus) {
+        this(new DescriptionParams(startsNew, woertlicheRedeNochOffen, kommaStehtAus));
     }
 
     protected AbstractDescription(final DescriptionParams params) {
@@ -53,6 +54,15 @@ public abstract class AbstractDescription<SELF extends AbstractDescription<SELF>
     public abstract String
     getDescriptionHauptsatzMitKonjunktionaladverbWennNoetig(String konjunktionaladverb);
 
+    public SELF woertlicheRedeNochOffen() {
+        return woertlicheRedeNochOffen(true);
+    }
+
+    public SELF woertlicheRedeNochOffen(final boolean woertlicheRedeNochOffen) {
+        params.woertlicheRedeNochOffen(woertlicheRedeNochOffen);
+        return (SELF) this;
+    }
+
     public SELF komma() {
         return komma(true);
     }
@@ -60,6 +70,10 @@ public abstract class AbstractDescription<SELF extends AbstractDescription<SELF>
     public SELF komma(final boolean kommaStehtAus) {
         params.komma(kommaStehtAus);
         return (SELF) this;
+    }
+
+    public boolean isWoertlicheRedeNochOffen() {
+        return params.isWoertlicheRedeNochOffen();
     }
 
     public boolean isKommaStehtAus() {

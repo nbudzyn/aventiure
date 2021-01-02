@@ -101,7 +101,7 @@ public class Walkthrough {
                     "Auf die magere Frau warten",
                     // Zauberin steigt die Zöpfe hoch
                     "Auf die magere Frau warten",
-                    "Rufen: „Lass dein Haar herunter.“",
+                    "Rufen: „Lass dein Haar herunter“",
                     "Aus dem Schatten der Bäume treten",
                     "An den Haaren hinaufsteigen"
             );
@@ -110,7 +110,7 @@ public class Walkthrough {
             new Walkthrough(
                     "Die junge Frau bitten ihre Haare wieder hinunterzulassen",
                     "An den Haaren hinabsteigen",
-                    "Rufen: „Lass dein Haar herunter.“",
+                    "Rufen: „Lass dein Haar herunter“",
                     "An den Haaren hinaufsteigen",
                     "Die goldene Kugel hochwerfen",
                     "Der jungen Frau die goldene Kugel geben",
@@ -157,7 +157,7 @@ public class Walkthrough {
                     "Rasten",
                     "Rasten",
                     "Aus dem Schatten der Bäume treten",
-                    "Rufen: „Lass dein Haar herunter.“",
+                    "Rufen: „Lass dein Haar herunter“",
                     "An den Haaren hinaufsteigen"
             ));
 

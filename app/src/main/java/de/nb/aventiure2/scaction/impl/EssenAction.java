@@ -163,7 +163,7 @@ public class EssenAction extends AbstractScAction {
     void narrateAndDoSchlossfestEssenMitFrosch(final F froschprinz) {
         n.narrate(neuerSatz(PARAGRAPH,
                 "Was hatte deine Großmutter immer gesagt? „Wer dir geholfen in der "
-                        + "Not, den sollst du hernach nicht verachten.” Du füllst deine Schale "
+                        + "Not, den sollst du hernach nicht verachten.“ Du füllst deine Schale "
                         + "neu mit Eintopf, steckst deinen Holzlöffel hinein... aber was ist das? "
                         + "Auch ein goldener Löffel fährt mit in die Schale. Du schaust "
                         + "verwirrt auf - kein Frosch mehr auf dem Tisch, doch neben dir auf der "
@@ -172,9 +172,9 @@ public class EssenAction extends AbstractScAction {
                 // FIXME klarer formulieren. Der Prinz ist nicht gefesselt!
                 secs(10)));
         n.narrate(neuerSatz(PARAGRAPH,
-                "Er schaut an sich herab – „Ihr habt mich erlöst”, sagt er, „ich "
-                        + "danke euch!” Eine böse Hexe "
-                        + "habe ihn verwünscht. „Ich werde euch nicht vergessen!”",
+                "Er schaut an sich herab – „Ihr habt mich erlöst“, sagt er, „ich "
+                        + "danke euch!“ Eine böse Hexe "
+                        + "habe ihn verwünscht. „Ich werde euch nicht vergessen!“",
                 secs(10)));
         n.narrate(neuerSatz(PARAGRAPH,
                 "Am Tisch um euch herum entsteht Aufregung. Der junge Mann erhebt "

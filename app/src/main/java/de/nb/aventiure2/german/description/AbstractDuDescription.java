@@ -18,9 +18,10 @@ public abstract class AbstractDuDescription<
 
     AbstractDuDescription(final StructuralElement startsNew,
                           final P duTextPart,
+                          final boolean woertlicheRedeNochOffen,
                           final boolean kommaStehtAus) {
         // FIXME Alle du()-Aufrufe prüfen, ggf. auf SENTENCE setzen
-        super(startsNew, kommaStehtAus);
+        super(startsNew, woertlicheRedeNochOffen, kommaStehtAus);
         this.duTextPart = duTextPart;
     }
 

@@ -69,7 +69,7 @@ public class SimpleDuTextPart implements AbstractDuTextPart {
 
         if (remainder == null) {
             throw new IllegalStateException(
-                    "Keine remainder, aber ein Vorfeldsatzglied: " + vorfeldSatzglied);
+                    "Kein remainder, aber ein Vorfeldsatzglied: " + vorfeldSatzglied);
         }
 
         @Nullable final String remainderWithoutVorfeldSatzglied =

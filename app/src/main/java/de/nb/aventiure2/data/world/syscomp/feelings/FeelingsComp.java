@@ -524,7 +524,7 @@ public class FeelingsComp extends AbstractStatefulComponent<FeelingsPCD> {
             case FeelingIntensity.PATHOLOGISCH:
                 n.narrateAlt(noTime(),
                         neuerSatz(SENTENCE,
-                                "„So legt dich doch endlich schlafen!”, "
+                                "„So legt dich doch endlich schlafen!“, "
                                         + "denkst du bei dir"),
                         neuerSatz(SENTENCE,
                                 "vielleicht könntest du hier ungestört schlafen?"),
