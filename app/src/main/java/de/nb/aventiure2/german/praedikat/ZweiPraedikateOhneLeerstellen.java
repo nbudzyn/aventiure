@@ -169,7 +169,6 @@ public class ZweiPraedikateOhneLeerstellen
 
     @Nullable
     @Override
-    // FIXME Wozu wird das eigentlich verwendet? Ist das hier sinnvoll?
     public Iterable<Konstituente> getNachfeld(final Person person, final Numerus numerus) {
         return zweiterSatz.getNachfeld(person, numerus);
     }
