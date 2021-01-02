@@ -79,7 +79,6 @@ public class PraedikatDuDescription
      * (nicht *"[Ich habe] die Kugel an sich genommen")
      */
     public String getDescriptionPartizipIIPhrase(final Person person, final Numerus numerus) {
-        // FIXME hier kann ein Komma verloren gehen!
         return GermanUtil.joinToString(
                 duTextPart.getPraedikat().getPartizipIIPhrase(person, numerus));
     }

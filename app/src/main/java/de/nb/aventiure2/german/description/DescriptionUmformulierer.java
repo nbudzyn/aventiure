@@ -333,36 +333,12 @@ public class DescriptionUmformulierer {
             final String praefixRemainder,
             @Nullable final String praefixVorfeldSatzglied,
             final AbstractDuDescription<?, ?> desc) {
-        return duMitPraefixUndSatzanschluss(praefixVerb, praefixRemainder, praefixVorfeldSatzglied,
-                desc,
-                desc.getDescriptionSatzanschlussOhneSubjekt());
-    }
-
-    @CheckReturnValue
-    private static AbstractDuDescription<?, ?> duMitPraefixUndSatzanschluss(
-            final String praefixVerb,
-            final String praefixRemainder,
-            final AbstractDescription<?> desc,
-            final String descSatzanschluss) {
-        return duMitPraefixUndSatzanschluss(
-                praefixVerb, praefixRemainder, null, desc, descSatzanschluss);
-    }
-
-    @CheckReturnValue
-    private static AbstractDuDescription<?, ?> duMitPraefixUndSatzanschluss(
-            final String praefixVerb,
-            final String praefixRemainder,
-            @Nullable final String praefixVorfeldSatzglied,
-            final AbstractDescription<?> desc,
-            final String descSatzanschluss) {
         return du(max(desc.getStartsNew(), PARAGRAPH),
                 praefixVerb,
                 praefixRemainder
                         + " und "
-                        + descSatzanschluss,
+                        + desc.getDescriptionSatzanschlussOhneSubjekt(),
                 praefixVorfeldSatzglied)
-                // FIXME Das ist falsch hier! Es müssten die Werte von descSatzanschluss
-                //  verwendet werden!
                 .dann(desc.isDann())
                 .woertlicheRedeNochOffen(desc.isWoertlicheRedeNochOffen())
                 .komma(desc.isKommaStehtAus())

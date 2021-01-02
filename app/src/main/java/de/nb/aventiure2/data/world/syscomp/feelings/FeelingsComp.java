@@ -225,7 +225,7 @@ public class FeelingsComp extends AbstractStatefulComponent<FeelingsPCD> {
     @NonNull
     public ImmutableList<Satz> altReaktionBeiBegegnungMitScSaetze(
             final SubstantivischePhrase gameObjectSubjekt) {
-        // FIXME Hier den allgemeine Gefühle den Vorang geben - wenn sie deutlich
+        // FIXME Hier den allgemeinen Gefühle den Vorang geben - wenn sie deutlich
         //  stärker sind.
 
         return stream(FeelingTowardsType.values())
