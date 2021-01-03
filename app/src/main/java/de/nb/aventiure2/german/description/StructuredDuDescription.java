@@ -14,59 +14,64 @@ import de.nb.aventiure2.german.praedikat.AdverbialeAngabeSkopusSatz;
 import de.nb.aventiure2.german.praedikat.AdverbialeAngabeSkopusVerbAllg;
 import de.nb.aventiure2.german.praedikat.AdverbialeAngabeSkopusVerbWohinWoher;
 import de.nb.aventiure2.german.praedikat.PraedikatOhneLeerstellen;
+import de.nb.aventiure2.german.satz.Satz;
 
 import static de.nb.aventiure2.german.base.NumerusGenus.M;
 import static de.nb.aventiure2.german.base.Person.P2;
 
 /**
- * A description based on a {@link PraedikatOhneLeerstellen} - assuming the player
- * character is the (first) subject. Somehting like "Du gehst in den Wald."
+ * A description based on a structured data structure: A {@link de.nb.aventiure2.german.satz.Satz}.
+ * We are assuming the player character is the subject. Somehting like "Du gehst in den Wald."
  */
-public class PraedikatDuDescription
-        extends AbstractDuDescription<PraedikatDuTextPart, PraedikatDuDescription> {
-    PraedikatDuDescription(final StructuralElement startsNew,
-                           final PraedikatOhneLeerstellen praedikat) {
-        super(startsNew, new PraedikatDuTextPart(praedikat),
-                guessWoertlicheRedeNochOffen(praedikat),
-                guessKommaStehtAus(praedikat));
+public class StructuredDuDescription
+        extends AbstractDuDescription<StructuredDuTextPart, StructuredDuDescription> {
+    StructuredDuDescription(final StructuralElement startsNew,
+                            final PraedikatOhneLeerstellen praedikat) {
+        this(startsNew, praedikat.alsSatzMitSubjekt(Personalpronomen.get(P2,
+                // Wir behaupten hier, der Adressat wäre männlich.
+                // Es ist die Verantwortung des Aufrufers, keine
+                // Sätze mit Konstruktionen wie "Du, der du" zu erzeugen, die
+                // weibliche Adressaten ("du, die du") ausschließen.
+                M)));
     }
 
-    private static boolean guessWoertlicheRedeNochOffen(final PraedikatOhneLeerstellen praedikat) {
+    private StructuredDuDescription(final StructuralElement startsNew,
+                                    final Satz satz) {
+        super(startsNew, new StructuredDuTextPart(satz),
+                guessWoertlicheRedeNochOffen(satz),
+                guessKommaStehtAus(satz));
+    }
+
+    private static boolean guessWoertlicheRedeNochOffen(final Satz satz) {
         // FIXME Hier gibt es ein Problem: Ob die wörtliche Rede noch offen ist, hängt von der
         //  konkreten Realisierung des Prädikats ab (was steht im Vorfeld / Nachfeld etc.).
         //  Dies hier ist nur eine grobe Richtschnur.
-        return Konstituente.woertlicheRedeNochOffen(
-                praedikat
-                        .alsSatzMitSubjekt(Personalpronomen.get(P2, M))
-                        .getVerbzweitsatzStandard());
+        return Konstituente.woertlicheRedeNochOffen(satz.getVerbzweitsatzStandard());
     }
 
-    private static boolean guessKommaStehtAus(final PraedikatOhneLeerstellen praedikat) {
+    private static boolean guessKommaStehtAus(final Satz satz) {
         // FIXME Hier gibt es ein Problem: Ob ein Komma aussteht, hängt von der
         //  konkreten Realisierung des Prädikats ab (was steht im Vorfeld / Nachfeld etc.).
         //  Dies hier ist nur eine grobe Richtschnur.
-        return Konstituente.kommaStehtAus(
-                praedikat
-                        .alsSatzMitSubjekt(Personalpronomen.get(P2, M))
-                        .getVerbzweitsatzStandard());
+        return Konstituente.kommaStehtAus(satz.getVerbzweitsatzStandard());
     }
 
     @CheckReturnValue
-    public PraedikatDuDescription mitAdverbialerAngabe(
+    public StructuredDuDescription mitAdverbialerAngabe(
             @Nullable final AdverbialeAngabeSkopusSatz adverbialeAngabe) {
-        return copy(duTextPart.getPraedikat().mitAdverbialerAngabe(adverbialeAngabe));
+        return copy(getPraedikat().mitAdverbialerAngabe(adverbialeAngabe));
     }
 
     @CheckReturnValue
-    public PraedikatDuDescription mitAdverbialerAngabe(
+    public StructuredDuDescription mitAdverbialerAngabe(
             @Nullable final AdverbialeAngabeSkopusVerbAllg adverbialeAngabe) {
-        return copy(duTextPart.getPraedikat().mitAdverbialerAngabe(adverbialeAngabe));
+        return copy(getPraedikat().mitAdverbialerAngabe(adverbialeAngabe));
     }
 
     @CheckReturnValue
-    public PraedikatDuDescription mitAdverbialerAngabe(
+    public StructuredDuDescription mitAdverbialerAngabe(
             @Nullable final AdverbialeAngabeSkopusVerbWohinWoher adverbialeAngabe) {
-        return copy(duTextPart.getPraedikat().mitAdverbialerAngabe(adverbialeAngabe));
+        return copy(getPraedikat().mitAdverbialerAngabe(adverbialeAngabe));
     }
 
     /**
@@ -78,9 +83,10 @@ public class PraedikatDuDescription
      * "[Ich habe] die Kugel an mich genommen"
      * (nicht *"[Ich habe] die Kugel an sich genommen")
      */
-    public String getDescriptionPartizipIIPhrase(final Person person, final Numerus numerus) {
+    public String getDescriptionPartizipIIPhrase(final Person person,
+                                                 final Numerus numerus) {
         return GermanUtil.joinToString(
-                duTextPart.getPraedikat().getPartizipIIPhrase(person, numerus));
+                getPraedikat().getPartizipIIPhrase(person, numerus));
     }
 
     /**
@@ -96,13 +102,13 @@ public class PraedikatDuDescription
      * </ul>
      */
     public boolean kannPartizipIIPhraseAmAnfangOderMittenImSatzVerwendetWerden() {
-        return duTextPart.getPraedikat()
+        return getPraedikat()
                 .kannPartizipIIPhraseAmAnfangOderMittenImSatzVerwendetWerden();
     }
 
     @CheckReturnValue
-    private PraedikatDuDescription copy(final PraedikatOhneLeerstellen praedikat) {
-        return new PraedikatDuDescription(getStartsNew(), praedikat);
+    private StructuredDuDescription copy(final PraedikatOhneLeerstellen praedikat) {
+        return new StructuredDuDescription(getStartsNew(), praedikat);
     }
 
     public PraedikatOhneLeerstellen getPraedikat() {
