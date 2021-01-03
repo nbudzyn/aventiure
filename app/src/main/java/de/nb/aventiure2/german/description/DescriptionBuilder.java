@@ -428,14 +428,14 @@ public class DescriptionBuilder {
     }
 
     @CheckReturnValue
-    public static TimedDescription<PraedikatDuDescription> du(
+    public static TimedDescription<StructuredDuDescription> du(
             final PraedikatOhneLeerstellen praedikat,
             final AvTimeSpan timeElapsed) {
         return du(praedikat, timeElapsed, null);
     }
 
     @CheckReturnValue
-    public static TimedDescription<PraedikatDuDescription> du(
+    public static TimedDescription<StructuredDuDescription> du(
             final PraedikatOhneLeerstellen praedikat,
             final AvTimeSpan timeElapsed,
             @Nullable final String counterIdIncrementedIfTextIsNarrated) {
@@ -444,7 +444,7 @@ public class DescriptionBuilder {
     }
 
     @CheckReturnValue
-    public static TimedDescription<PraedikatDuDescription> du(
+    public static TimedDescription<StructuredDuDescription> du(
             final StructuralElement startsNew,
             final PraedikatOhneLeerstellen praedikat,
             final AvTimeSpan timeElapsed) {
@@ -452,7 +452,7 @@ public class DescriptionBuilder {
     }
 
     @CheckReturnValue
-    public static TimedDescription<PraedikatDuDescription> du(
+    public static TimedDescription<StructuredDuDescription> du(
             final StructuralElement startsNew,
             final PraedikatOhneLeerstellen praedikat,
             final AvTimeSpan timeElapsed,
@@ -463,14 +463,14 @@ public class DescriptionBuilder {
     }
 
     @CheckReturnValue
-    public static PraedikatDuDescription du(final PraedikatOhneLeerstellen praedikat) {
+    public static StructuredDuDescription du(final PraedikatOhneLeerstellen praedikat) {
         return du(StructuralElement.WORD, praedikat);
     }
 
     @NonNull
     @CheckReturnValue
-    public static PraedikatDuDescription du(final StructuralElement startsNew,
-                                            final PraedikatOhneLeerstellen praedikat) {
-        return new PraedikatDuDescription(startsNew, praedikat);
+    public static StructuredDuDescription du(final StructuralElement startsNew,
+                                             final PraedikatOhneLeerstellen praedikat) {
+        return new StructuredDuDescription(startsNew, praedikat);
     }
 }

@@ -37,6 +37,15 @@ public interface PraedikatOhneLeerstellen extends Praedikat {
 
     /**
      * Gibt das Prädikat "in Verbzweitform" zurück - das Verb steht also ganz am Anfang
+     * (in einem Verbzweitsatz würde dann noch das Subjekt davor stehen) - für ein
+     * Subjekt wie dieses (was Person und Numerus angeht).
+     */
+    default Iterable<Konstituente> getVerbzweit(final SubstantivischePhrase subjekt) {
+        return getVerbzweit(subjekt.getPerson(), subjekt.getNumerus());
+    }
+
+    /**
+     * Gibt das Prädikat "in Verbzweitform" zurück - das Verb steht also ganz am Anfang
      * (in einem Verbzweitsatz würde dann noch das Subjekt davor stehen).
      */
     Iterable<Konstituente> getVerbzweit(Person person, Numerus numerus);

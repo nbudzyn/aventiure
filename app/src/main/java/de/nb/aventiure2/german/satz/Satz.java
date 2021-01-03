@@ -234,4 +234,9 @@ public class Satz {
     public PraedikatOhneLeerstellen getPraedikat() {
         return praedikat;
     }
+
+    // equals() und hashCode() überschreiben wir extra nicht! Alle Satz-Objekte
+    // sollen als "verschieden" gelten. Ansonsten müssten wir auch in allen
+    // PraedikatOhneLeerstellen-Implementierungen equals() und hashCode() überschreiben.
+    // Das wäre inhaltlich richtig, aber viel Arbeit.
 }

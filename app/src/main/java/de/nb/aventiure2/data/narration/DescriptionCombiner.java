@@ -11,7 +11,7 @@ import de.nb.aventiure2.german.description.AbstractDescription;
 import de.nb.aventiure2.german.description.AbstractDuDescription;
 import de.nb.aventiure2.german.description.AllgDescription;
 import de.nb.aventiure2.german.description.DescriptionParams;
-import de.nb.aventiure2.german.description.PraedikatDuDescription;
+import de.nb.aventiure2.german.description.StructuredDuDescription;
 
 import static de.nb.aventiure2.german.base.Numerus.SG;
 import static de.nb.aventiure2.german.base.Person.P2;
@@ -44,11 +44,11 @@ class DescriptionCombiner {
             ));
         }
 
-        if (first instanceof PraedikatDuDescription &&
+        if (first instanceof StructuredDuDescription &&
                 second instanceof AbstractDuDescription<?, ?>) {
             // Evtl. etwas wie "Unten angekommen bist du ziemlich erschöpft"
             res.addAll(combinePraedikatDuDescUndDuDesc(
-                    (PraedikatDuDescription) first,
+                    (StructuredDuDescription) first,
                     (AbstractDuDescription<?, ?>) second
             ));
         }
@@ -79,7 +79,7 @@ class DescriptionCombiner {
 
     @CheckReturnValue
     private static ImmutableList<AllgDescription> combinePraedikatDuDescUndDuDesc(
-            final PraedikatDuDescription first, final AbstractDuDescription<?, ?> second) {
+            final StructuredDuDescription first, final AbstractDuDescription<?, ?> second) {
         final ImmutableList.Builder<AllgDescription> res = ImmutableList.builder();
 
         // Bei Partikelverben mit sein-Perfekt ohne Akkusativobjekt,

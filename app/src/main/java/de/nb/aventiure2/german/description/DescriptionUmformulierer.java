@@ -106,21 +106,21 @@ public class DescriptionUmformulierer {
 
             alt.add(duMitVorfeld("noch einmal", duDesc));
 
-            if (duDesc instanceof PraedikatDuDescription) {
-                final PraedikatDuDescription pDuDesc = (PraedikatDuDescription) duDesc;
+            if (duDesc instanceof StructuredDuDescription) {
+                final StructuredDuDescription structuredDuDesc = (StructuredDuDescription) duDesc;
 
-                alt.add(mitAdvAngabe(pDuDesc,
+                alt.add(mitAdvAngabe(structuredDuDesc,
                         new AdverbialeAngabeSkopusVerbAllg("noch einmal")));
 
-                alt.add(mitAdvAngabe(pDuDesc,
+                alt.add(mitAdvAngabe(structuredDuDesc,
                         new AdverbialeAngabeSkopusVerbAllg("erneut")));
 
-                alt.add(mitAdvAngabe(pDuDesc,
+                alt.add(mitAdvAngabe(structuredDuDesc,
                         new AdverbialeAngabeSkopusVerbAllg("sogleich wieder")));
 
                 final Wortfolge duNimmstDieKugelBesserDoch =
                         Wortfolge.joinToWortfolge(
-                                pDuDesc.getPraedikat()
+                                structuredDuDesc.getPraedikat()
                                         .mitModalpartikeln(
                                                 new Modalpartikel("besser"),
                                                 new Modalpartikel("doch"))
@@ -186,8 +186,8 @@ public class DescriptionUmformulierer {
             alt.add(duMitVorfeld("nochmals", duDesc));
             alt.add(duMitVorfeld("wieder", duDesc));
 
-            if (desc instanceof PraedikatDuDescription) {
-                final PraedikatDuDescription pDuDesc = (PraedikatDuDescription) duDesc;
+            if (desc instanceof StructuredDuDescription) {
+                final StructuredDuDescription pDuDesc = (StructuredDuDescription) duDesc;
 
                 alt.add(mitAdvAngabe(pDuDesc,
                         new AdverbialeAngabeSkopusSatz("noch einmal")));
@@ -260,8 +260,8 @@ public class DescriptionUmformulierer {
 
             alt.add(duMitVorfeld("Immer noch", duDesc));
 
-            if (desc instanceof PraedikatDuDescription) {
-                final PraedikatDuDescription pDuDesc = (PraedikatDuDescription) duDesc;
+            if (desc instanceof StructuredDuDescription) {
+                final StructuredDuDescription pDuDesc = (StructuredDuDescription) duDesc;
 
                 alt.add(mitAdvAngabe(pDuDesc,
                         new AdverbialeAngabeSkopusSatz("immer noch")));
@@ -359,7 +359,7 @@ public class DescriptionUmformulierer {
     }
 
     private static AbstractDuDescription<?, ?> mitAdvAngabe(
-            final PraedikatDuDescription desc,
+            final StructuredDuDescription desc,
             final AdverbialeAngabeSkopusSatz advAngabe) {
         return du(
                 max(desc.getStartsNew(), PARAGRAPH),
@@ -376,7 +376,7 @@ public class DescriptionUmformulierer {
 
     @CheckReturnValue
     private static AbstractDuDescription<?, ?> mitAdvAngabe(
-            final PraedikatDuDescription desc,
+            final StructuredDuDescription desc,
             final AdverbialeAngabeSkopusVerbAllg advAngabe) {
         return du(
                 max(desc.getStartsNew(), PARAGRAPH),
