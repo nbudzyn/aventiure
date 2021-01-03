@@ -2,12 +2,15 @@ package de.nb.aventiure2.german.satz;
 
 import androidx.annotation.Nullable;
 
+import java.util.Collection;
+
 import de.nb.aventiure2.german.base.Interrogativpronomen;
 import de.nb.aventiure2.german.base.Konstituente;
 import de.nb.aventiure2.german.base.SubstantivischePhrase;
 import de.nb.aventiure2.german.praedikat.AdverbialeAngabeSkopusSatz;
 import de.nb.aventiure2.german.praedikat.AdverbialeAngabeSkopusVerbAllg;
 import de.nb.aventiure2.german.praedikat.AdverbialeAngabeSkopusVerbWohinWoher;
+import de.nb.aventiure2.german.praedikat.Modalpartikel;
 import de.nb.aventiure2.german.praedikat.PraedikatOhneLeerstellen;
 
 /**
@@ -62,6 +65,16 @@ public class Satz {
 
     public Satz mitAnschlusswort(@Nullable final String anschlusswort) {
         return new Satz(anschlusswort, subjekt, praedikat, angabensatz);
+    }
+
+    public Satz mitModalpartikeln(final Modalpartikel... modalpartikeln) {
+        return new Satz(anschlusswort, subjekt, praedikat.mitModalpartikeln(modalpartikeln),
+                angabensatz);
+    }
+
+    public Satz mitModalpartikeln(final Collection<Modalpartikel> modalpartikeln) {
+        return new Satz(anschlusswort, subjekt, praedikat.mitModalpartikeln(modalpartikeln),
+                angabensatz);
     }
 
     public Satz mitAdverbialerAngabe(@Nullable final AdverbialeAngabeSkopusSatz adverbialeAngabe) {

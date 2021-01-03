@@ -24,13 +24,9 @@ public interface AbstractDuTextPart {
      * Gibt einen Satz zurück mit diesem Prädikat.
      * ("Du nimmst den Ast")
      */
-    default Wortfolge getDuHauptsatz() {
-        return Wortfolge.joinToWortfolge(
-                "Du",
-                getDuSatzanschlussOhneSubjekt());
-    }
+    Wortfolge getDuHauptsatz();
 
     Wortfolge getDuSatzanschlussOhneSubjekt();
 
-    
+
 }

@@ -89,7 +89,7 @@ class DescriptionCombiner {
         //  "Du kommst unten an" + "Du bist ziemlich erschöpft" ->
         //  "Unten angekommen bist du ziemlich erschöpft"
 
-        if (first.kannPartizipIIPhraseAmAnfangOderMittenImSatzVerwendetWerden() &&
+        if (first.getPraedikat().kannPartizipIIPhraseAmAnfangOderMittenImSatzVerwendetWerden() &&
                 first.getPraedikat().bildetPerfektMitSein() &&
                 !first.getPraedikat().hatAkkusativobjekt() &&
                 first.getPraedikat().isBezugAufNachzustandDesAktantenGegeben() &&

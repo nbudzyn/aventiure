@@ -59,19 +59,19 @@ public class StructuredDuDescription
     @CheckReturnValue
     public StructuredDuDescription mitAdverbialerAngabe(
             @Nullable final AdverbialeAngabeSkopusSatz adverbialeAngabe) {
-        return copy(getPraedikat().mitAdverbialerAngabe(adverbialeAngabe));
+        return copy(getSatz().mitAdverbialerAngabe(adverbialeAngabe));
     }
 
     @CheckReturnValue
     public StructuredDuDescription mitAdverbialerAngabe(
             @Nullable final AdverbialeAngabeSkopusVerbAllg adverbialeAngabe) {
-        return copy(getPraedikat().mitAdverbialerAngabe(adverbialeAngabe));
+        return copy(getSatz().mitAdverbialerAngabe(adverbialeAngabe));
     }
 
     @CheckReturnValue
     public StructuredDuDescription mitAdverbialerAngabe(
             @Nullable final AdverbialeAngabeSkopusVerbWohinWoher adverbialeAngabe) {
-        return copy(getPraedikat().mitAdverbialerAngabe(adverbialeAngabe));
+        return copy(getSatz().mitAdverbialerAngabe(adverbialeAngabe));
     }
 
     /**
@@ -89,26 +89,13 @@ public class StructuredDuDescription
                 getPraedikat().getPartizipIIPhrase(person, numerus));
     }
 
-    /**
-     * Gibt zurück, ob die Partizip-II-Phrase
-     * (vgl. {@link #getDescriptionPartizipIIPhrase(Person, Numerus)})
-     * am Anfang oder mitten im Satz möglich ist (<code>true</code>) oder nur am Ende
-     * (<code>false</code>).
-     * <ul>
-     * <li>Diese Partizip-II-Phrasen sind am Anfang oder mitten im Satz  möglich: "unten angekommen
-     * [bist du erschöpft]". "gut gefüttert [ist der Fisch zufrieden]"
-     * <li>Diese Partizip-II-Phrase kann <i>nicht</i>satzwertig verwendet werden: gerufen:
-     * "Kommt alle her."
-     * </ul>
-     */
-    public boolean kannPartizipIIPhraseAmAnfangOderMittenImSatzVerwendetWerden() {
-        return getPraedikat()
-                .kannPartizipIIPhraseAmAnfangOderMittenImSatzVerwendetWerden();
+    @CheckReturnValue
+    private StructuredDuDescription copy(final Satz satz) {
+        return new StructuredDuDescription(getStartsNew(), satz);
     }
 
-    @CheckReturnValue
-    private StructuredDuDescription copy(final PraedikatOhneLeerstellen praedikat) {
-        return new StructuredDuDescription(getStartsNew(), praedikat);
+    public Satz getSatz() {
+        return duTextPart.getSatz();
     }
 
     public PraedikatOhneLeerstellen getPraedikat() {

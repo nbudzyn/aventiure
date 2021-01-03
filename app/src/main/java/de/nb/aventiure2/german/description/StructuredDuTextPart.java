@@ -47,6 +47,10 @@ public class StructuredDuTextPart implements AbstractDuTextPart {
         return satz.getPraedikat();
     }
 
+    public Satz getSatz() {
+        return satz;
+    }
+
     @Override
     public boolean equals(final Object o) {
         if (this == o) {

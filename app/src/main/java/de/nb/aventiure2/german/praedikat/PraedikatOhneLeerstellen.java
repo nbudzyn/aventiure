@@ -18,7 +18,8 @@ import de.nb.aventiure2.german.satz.Satz;
  * @see de.nb.aventiure2.german.satz.Satz
  */
 public interface PraedikatOhneLeerstellen extends Praedikat {
-    default PraedikatOhneLeerstellen mitModalpartikeln(final Modalpartikel... modalpartikeln) {
+    default PraedikatOhneLeerstellen
+    mitModalpartikeln(final Modalpartikel... modalpartikeln) {
         return mitModalpartikeln(Arrays.asList(modalpartikeln));
     }
 

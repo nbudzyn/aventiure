@@ -11,21 +11,19 @@ import java.util.Collection;
 import javax.annotation.CheckReturnValue;
 
 import de.nb.aventiure2.german.base.GermanUtil;
-import de.nb.aventiure2.german.base.Personalpronomen;
 import de.nb.aventiure2.german.base.Wortfolge;
 import de.nb.aventiure2.german.praedikat.AdverbialeAngabeSkopusSatz;
 import de.nb.aventiure2.german.praedikat.AdverbialeAngabeSkopusVerbAllg;
 import de.nb.aventiure2.german.praedikat.Modalpartikel;
 
 import static com.google.common.collect.ImmutableList.builder;
-import static de.nb.aventiure2.german.base.NumerusGenus.M;
-import static de.nb.aventiure2.german.base.Person.P2;
 import static de.nb.aventiure2.german.base.StructuralElement.PARAGRAPH;
 import static de.nb.aventiure2.german.base.StructuralElement.SENTENCE;
 import static de.nb.aventiure2.german.base.StructuralElement.max;
 import static de.nb.aventiure2.german.base.Wortfolge.uncapitalize;
 import static de.nb.aventiure2.german.description.DescriptionBuilder.du;
 import static de.nb.aventiure2.german.description.DescriptionBuilder.neuerSatz;
+import static de.nb.aventiure2.german.description.DescriptionBuilder.neuerSatzStandard;
 
 /**
  * Statische Methoden, die {@link AbstractDescription}s umformulieren.
@@ -120,11 +118,10 @@ public class DescriptionUmformulierer {
 
                 final Wortfolge duNimmstDieKugelBesserDoch =
                         Wortfolge.joinToWortfolge(
-                                structuredDuDesc.getPraedikat()
+                                structuredDuDesc.getSatz()
                                         .mitModalpartikeln(
                                                 new Modalpartikel("besser"),
                                                 new Modalpartikel("doch"))
-                                        .alsSatzMitSubjekt(Personalpronomen.get(P2, M))
                                         .getVerbzweitsatzStandard());
                 alt.add(neuerSatz(
                         max(duDesc.getStartsNew(), SENTENCE),
@@ -358,16 +355,15 @@ public class DescriptionUmformulierer {
                 .beendet(duDesc.getEndsThis());
     }
 
-    private static AbstractDuDescription<?, ?> mitAdvAngabe(
+    private static AbstractDescription<?> mitAdvAngabe(
             final StructuredDuDescription desc,
             final AdverbialeAngabeSkopusSatz advAngabe) {
-        return du(
+        return neuerSatzStandard(
                 max(desc.getStartsNew(), PARAGRAPH),
-                desc.getPraedikat().mitAdverbialerAngabe(
+                desc.getSatz().mitAdverbialerAngabe(
                         // "Erneut gibst du der Frau die Kugel"
                         // "Du gibst erneut der Frau die Kugel"
                         advAngabe))
-                .komma(desc.isKommaStehtAus())
                 .undWartest(desc.isAllowsAdditionalDuSatzreihengliedOhneSubjekt())
                 .dann(desc.isDann())
                 .phorikKandidat(desc.getPhorikKandidat())
@@ -375,15 +371,14 @@ public class DescriptionUmformulierer {
     }
 
     @CheckReturnValue
-    private static AbstractDuDescription<?, ?> mitAdvAngabe(
+    private static AbstractDescription<?> mitAdvAngabe(
             final StructuredDuDescription desc,
             final AdverbialeAngabeSkopusVerbAllg advAngabe) {
-        return du(
+        return neuerSatzStandard(
                 max(desc.getStartsNew(), PARAGRAPH),
-                desc.getPraedikat().mitAdverbialerAngabe(
+                desc.getSatz().mitAdverbialerAngabe(
                         // "gibst der Frau die Kugel noch einmal"
                         advAngabe))
-                .komma(desc.isKommaStehtAus())
                 .undWartest(desc.isAllowsAdditionalDuSatzreihengliedOhneSubjekt())
                 .dann(desc.isDann())
                 .phorikKandidat(desc.getPhorikKandidat())

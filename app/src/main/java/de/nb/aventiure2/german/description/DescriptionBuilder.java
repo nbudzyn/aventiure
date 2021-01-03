@@ -107,7 +107,7 @@ public class DescriptionBuilder {
 
     @NonNull
     @CheckReturnValue
-    private static AbstractDescription<?> neuerSatzStandard(
+    static AbstractDescription<?> neuerSatzStandard(
             final StructuralElement startsNew, final Satz satz) {
         if (satz.getSubjekt().getPerson() == P2 && satz.getSubjekt().getNumerus() == SG) {
             return du(startsNew, satz.getPraedikat());
