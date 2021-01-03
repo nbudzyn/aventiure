@@ -6,6 +6,8 @@ import androidx.annotation.Nullable;
 import com.google.common.collect.ImmutableList;
 
 import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Map;
 
 import javax.annotation.CheckReturnValue;
@@ -19,12 +21,13 @@ import de.nb.aventiure2.data.time.TimeTaker;
 import de.nb.aventiure2.data.world.base.AbstractStatefulComponent;
 import de.nb.aventiure2.data.world.base.GameObject;
 import de.nb.aventiure2.data.world.base.GameObjectId;
-import de.nb.aventiure2.data.world.gameobject.*;
 import de.nb.aventiure2.data.world.syscomp.memory.MemoryComp;
 import de.nb.aventiure2.german.adjektiv.AdjPhrOhneLeerstellen;
+import de.nb.aventiure2.german.base.GermanUtil;
 import de.nb.aventiure2.german.base.NumerusGenus;
 import de.nb.aventiure2.german.base.Personalpronomen;
 import de.nb.aventiure2.german.base.SubstantivischePhrase;
+import de.nb.aventiure2.german.base.Wortfolge;
 import de.nb.aventiure2.german.description.AbstractDescription;
 import de.nb.aventiure2.german.praedikat.AdverbialeAngabeSkopusSatz;
 import de.nb.aventiure2.german.praedikat.AdverbialeAngabeSkopusVerbAllg;
@@ -32,10 +35,10 @@ import de.nb.aventiure2.german.satz.Satz;
 import de.nb.aventiure2.scaction.stepcount.SCActionStepCountDao;
 
 import static com.google.common.base.Preconditions.checkArgument;
-import static com.google.common.collect.ImmutableList.toImmutableList;
 import static de.nb.aventiure2.data.time.AvTimeSpan.noTime;
 import static de.nb.aventiure2.data.world.gameobject.World.*;
 import static de.nb.aventiure2.data.world.syscomp.feelings.Hunger.SATT;
+import static de.nb.aventiure2.german.base.Numerus.SG;
 import static de.nb.aventiure2.german.base.NumerusGenus.M;
 import static de.nb.aventiure2.german.base.Person.P2;
 import static de.nb.aventiure2.german.base.StructuralElement.PARAGRAPH;
@@ -43,7 +46,9 @@ import static de.nb.aventiure2.german.base.StructuralElement.SENTENCE;
 import static de.nb.aventiure2.german.description.DescriptionBuilder.du;
 import static de.nb.aventiure2.german.description.DescriptionBuilder.neuerSatz;
 import static de.nb.aventiure2.german.description.DescriptionBuilder.paragraph;
-import static java.util.Arrays.stream;
+import static de.nb.aventiure2.german.praedikat.PraedikativumPraedikatOhneLeerstellen.praedikativumPraedikatMit;
+import static de.nb.aventiure2.german.praedikat.PraedikativumPraedikatOhneLeerstellen.praedikativumPraedikatWerdenMit;
+import static java.util.Arrays.asList;
 import static java.util.stream.Collectors.toList;
 
 /**
@@ -57,7 +62,6 @@ public class FeelingsComp extends AbstractStatefulComponent<FeelingsPCD> {
 
     protected final Narrator n;
 
-    private final World world;
     @Nullable
     private final MemoryComp memoryComp;
 
@@ -90,7 +94,6 @@ public class FeelingsComp extends AbstractStatefulComponent<FeelingsPCD> {
     public FeelingsComp(final GameObjectId gameObjectId,
                         final AvDatabase db,
                         final TimeTaker timeTaker, final Narrator n,
-                        final World world,
                         @Nullable final MemoryComp memoryComp,
                         final Mood initialMood,
                         final Biorhythmus muedigkeitsBiorythmus,
@@ -105,7 +108,6 @@ public class FeelingsComp extends AbstractStatefulComponent<FeelingsPCD> {
         this.timeTaker = timeTaker;
         this.n = n;
         scActionStepCountDao = db.scActionStepCountDao();
-        this.world = world;
         this.memoryComp = memoryComp;
         this.initialMood = initialMood;
         this.muedigkeitsBiorythmus = muedigkeitsBiorythmus;
@@ -124,17 +126,49 @@ public class FeelingsComp extends AbstractStatefulComponent<FeelingsPCD> {
                 initialFeelingsTowards);
     }
 
-    public ImmutableList<AdverbialeAngabeSkopusSatz> altAdverbialeAngaben() {
+    public ImmutableList<AdverbialeAngabeSkopusSatz> altAdverbialeAngabenSkopusSatz() {
         if (getMuedigkeit() > Math.abs(getMood().getGradDerFreude())) {
             // Häufig wird die adverbiale Angabe wohl verwendet werden - daher setzen
             // wir den Counter neu.
-            getPcd().resetNextMuedigkeitshinweisActionStepCount(
-                    scActionStepCountDao.stepCount()
-            );
-            return getPcd().getMuedigkeitsData().altAdverbialeAngaben();
+            resetMuedigkeitshinweisStepCount();
+            return getPcd().getMuedigkeitsData().altAdverbialeAngabenSkopusSatz();
         }
 
-        return getMood().altAdverbialeAngaben();
+        return getMood().altAdverbialeAngabenSkopusSatz();
+    }
+
+    private ImmutableList<AdverbialeAngabeSkopusVerbAllg> altAdverbialeAngabenSkopusVerbAllg() {
+        if (getMuedigkeit() > Math.abs(getMood().getGradDerFreude())) {
+            // Häufig wird die adverbiale Angabe wohl verwendet werden - daher setzen
+            // wir den Counter neu.
+            resetMuedigkeitshinweisStepCount();
+            return getPcd().getMuedigkeitsData().altAdverbialeAngabenSkopusVerbAllg();
+        }
+
+        return getMood().altAdverbialeAngabenSkopusVerbAllg();
+    }
+
+    /**
+     * Eventuell Adjektive zur Beschreibung des Gefühls, <i>möglicherweise leer</i>.
+     */
+    @NonNull
+    private ImmutableList<AdjPhrOhneLeerstellen> altAdjPhr() {
+        if (getMuedigkeit() > Math.abs(getMood().getGradDerFreude())) {
+            // Häufig wird diese Phrase wohl verwendet werden - daher setzen
+            // wir den Counter neu.
+            resetMuedigkeitshinweisStepCount();
+            return getPcd().getMuedigkeitsData().altAdjektivphrase();
+        }
+
+        return getMood().altAdjPhr();
+    }
+
+    private void resetMuedigkeitshinweisStepCount() {
+        resetMuedigkeitshinweisStepCount(scActionStepCountDao.stepCount());
+    }
+
+    private void resetMuedigkeitshinweisStepCount(final int scActionStepCount) {
+        getPcd().resetNextMuedigkeitshinweisActionStepCount(scActionStepCount);
     }
 
     public boolean hasMood(final Mood mood) {
@@ -143,10 +177,6 @@ public class FeelingsComp extends AbstractStatefulComponent<FeelingsPCD> {
 
     public boolean isEmotional() {
         return getMood().isEmotional();
-    }
-
-    public boolean isSehrEmotional() {
-        return getMood().isSehrEmotional();
     }
 
     public boolean isFroehlicherAls(final Mood other) {
@@ -225,12 +255,22 @@ public class FeelingsComp extends AbstractStatefulComponent<FeelingsPCD> {
     @NonNull
     public ImmutableList<Satz> altReaktionBeiBegegnungMitScSaetze(
             final SubstantivischePhrase gameObjectSubjekt) {
-        // FIXME Hier den allgemeinen Gefühle den Vorang geben - wenn sie deutlich
-        //  stärker sind.
+        final FeelingTowardsType strongestFeelingTowards =
+                getStrongestFeelingTowardsType();
 
-        return stream(FeelingTowardsType.values())
-                .flatMap(f -> altReaktionBeiBegegnungMitScSaetze(gameObjectSubjekt, f).stream())
-                .collect(toImmutableList());
+        final int schwelle =
+                Math.abs(getFeelingTowards(SPIELER_CHARAKTER, strongestFeelingTowards)) + 1;
+
+        if (schwelle < getMuedigkeit() || schwelle < Math.abs(getMood().getGradDerFreude())) {
+            final ImmutableList<AdjPhrOhneLeerstellen> altAdjPhr = altAdjPhr();
+            final ImmutableList<AdverbialeAngabeSkopusVerbAllg> adverbialeAngaben =
+                    altAdverbialeAngabenSkopusVerbAllg();
+
+            return FeelingsSaetzeUtil.toReaktionSaetze(
+                    gameObjectSubjekt, altAdjPhr, adverbialeAngaben);
+        }
+
+        return altReaktionBeiBegegnungMitScSaetze(gameObjectSubjekt, strongestFeelingTowards);
     }
 
     /**
@@ -266,18 +306,27 @@ public class FeelingsComp extends AbstractStatefulComponent<FeelingsPCD> {
      */
     public ImmutableList<Satz> altSCBeiBegegnungAnsehenSaetze(
             final SubstantivischePhrase gameObjectSubjekt) {
-        return stream(FeelingTowardsType.values())
-                .flatMap(f -> altBeiBegegnungAnsehenSaetze(
-                        gameObjectSubjekt,
-                        SPIELER_CHARAKTER,
-                        Personalpronomen.get(P2,
-                                // Wir tun hier so, als wäre der Spieler männlich, aber das
-                                // ist egal - die Methode garantiert, dass niemals etwas
-                                // wie "du, der du..." oder
-                                // "du, die du..." generiert wird.
-                                M),
-                        f).stream())
-                .collect(toImmutableList());
+        final FeelingTowardsType strongestFeelingTowards =
+                getStrongestFeelingTowardsType();
+
+        final int schwelle =
+                Math.abs(getFeelingTowards(SPIELER_CHARAKTER, strongestFeelingTowards)) + 1;
+
+        if (schwelle < getMuedigkeit() || schwelle < Math.abs(getMood().getGradDerFreude())) {
+            return FeelingsSaetzeUtil.toAnsehenSaetze(
+                    gameObjectSubjekt, altAdverbialeAngabenSkopusVerbAllg());
+        }
+
+        return altBeiBegegnungAnsehenSaetze(
+                gameObjectSubjekt,
+                SPIELER_CHARAKTER,
+                Personalpronomen.get(P2,
+                        // Wir tun hier so, als wäre der Spieler männlich, aber das
+                        // ist egal - die Methode garantiert, dass niemals etwas
+                        // wie "du, der du..." oder
+                        // "du, die du..." generiert wird.
+                        M),
+                strongestFeelingTowards);
     }
 
     /**
@@ -293,18 +342,28 @@ public class FeelingsComp extends AbstractStatefulComponent<FeelingsPCD> {
      */
     public ImmutableList<Satz> altEindruckAufScBeiBegegnungSaetze(
             final SubstantivischePhrase gameObjectSubjekt) {
-        return stream(FeelingTowardsType.values())
-                .flatMap(f -> altEindruckBeiBegegnungSaetze(
-                        gameObjectSubjekt,
-                        SPIELER_CHARAKTER,
-                        Personalpronomen.get(P2,
-                                // Wir tun hier so, als wäre der Spieler männlich, aber das
-                                // ist egal - die Methode garantiert, dass niemals etwas
-                                // wie "du, der du..." oder
-                                // "du, die du..." generiert wird.
-                                M),
-                        f).stream())
-                .collect(toImmutableList());
+        final FeelingTowardsType strongestFeelingTowards =
+                getStrongestFeelingTowardsType();
+        final int schwelle =
+                Math.abs(getFeelingTowards(SPIELER_CHARAKTER, strongestFeelingTowards)) + 1;
+
+        if (schwelle < getMuedigkeit() || schwelle < Math.abs(getMood().getGradDerFreude())) {
+            final ImmutableList<AdjPhrOhneLeerstellen> adjektivPhrasen = altAdjPhr();
+            if (!adjektivPhrasen.isEmpty()) {
+                return FeelingsSaetzeUtil.toEindrueckSaetze(gameObjectSubjekt, adjektivPhrasen);
+            }
+        }
+
+        return altEindruckBeiBegegnungSaetze(
+                gameObjectSubjekt,
+                SPIELER_CHARAKTER,
+                Personalpronomen.get(P2,
+                        // Wir tun hier so, als wäre der Spieler männlich, aber das
+                        // ist egal - die Methode garantiert, dass niemals etwas
+                        // wie "du, der du..." oder
+                        // "du, die du..." generiert wird.
+                        M),
+                strongestFeelingTowards);
     }
 
 
@@ -319,17 +378,25 @@ public class FeelingsComp extends AbstractStatefulComponent<FeelingsPCD> {
      */
     public ImmutableList<AdverbialeAngabeSkopusVerbAllg> altEindruckAufScBeiBegegnungAdvAngaben(
             final SubstantivischePhrase gameObjectSubjekt) {
-        return stream(FeelingTowardsType.values())
-                .flatMap(f -> altEindruckBeiBegegnungAdvAngaben(
-                        gameObjectSubjekt, SPIELER_CHARAKTER,
-                        Personalpronomen.get(P2,
-                                // Wir tun hier so, als wäre der Spieler männlich, aber das
-                                // ist egal - die Methode garantiert, dass niemals etwas
-                                // wie "du, der du..." oder
-                                // "du, die du..." generiert wird.
-                                M),
-                        f).stream())
-                .collect(toImmutableList());
+        final FeelingTowardsType strongestFeelingTowards =
+                getStrongestFeelingTowardsType();
+
+        final int schwelle =
+                Math.abs(getFeelingTowards(SPIELER_CHARAKTER, strongestFeelingTowards)) + 1;
+
+        if (schwelle < getMuedigkeit() || schwelle < Math.abs(getMood().getGradDerFreude())) {
+            return altAdverbialeAngabenSkopusVerbAllg();
+        }
+
+        return altEindruckBeiBegegnungAdvAngaben(
+                gameObjectSubjekt, SPIELER_CHARAKTER,
+                Personalpronomen.get(P2,
+                        // Wir tun hier so, als wäre der Spieler männlich, aber das
+                        // ist egal - die Methode garantiert, dass niemals etwas
+                        // wie "du, der du..." oder
+                        // "du, die du..." generiert wird.
+                        M),
+                strongestFeelingTowards);
     }
 
     /**
@@ -347,18 +414,35 @@ public class FeelingsComp extends AbstractStatefulComponent<FeelingsPCD> {
     @NonNull
     public ImmutableList<AdjPhrOhneLeerstellen> altEindruckAufScBeiBegegnungAdjPhr(
             final NumerusGenus gameObjectSubjektNumerusGenus) {
-        return stream(FeelingTowardsType.values())
-                .flatMap(f -> altEindruckBeiBegegnungAdjPhr(
-                        gameObjectSubjektNumerusGenus,
-                        SPIELER_CHARAKTER,
-                        Personalpronomen.get(P2,
-                                // Wir tun hier so, als wäre der Spieler männlich, aber das
-                                // ist egal - die Methode garantiert, dass niemals etwas
-                                // wie "du, der du..." oder
-                                // "du, die du..." generiert wird.
-                                M),
-                        f).stream())
-                .collect(toImmutableList());
+        final FeelingTowardsType strongestFeelingTowards =
+                getStrongestFeelingTowardsType();
+
+        final int schwelle =
+                Math.abs(getFeelingTowards(SPIELER_CHARAKTER, strongestFeelingTowards)) + 1;
+
+        if (schwelle < getMuedigkeit() || schwelle < Math.abs(getMood().getGradDerFreude())) {
+            final ImmutableList<AdjPhrOhneLeerstellen> allgemein = altAdjPhr();
+            if (!allgemein.isEmpty()) {
+                return allgemein;
+            }
+        }
+
+        return altEindruckBeiBegegnungAdjPhr(
+                gameObjectSubjektNumerusGenus,
+                SPIELER_CHARAKTER,
+                Personalpronomen.get(P2,
+                        // Wir tun hier so, als wäre der Spieler männlich, aber das
+                        // ist egal - die Methode garantiert, dass niemals etwas
+                        // wie "du, der du..." oder
+                        // "du, die du..." generiert wird.
+                        M),
+                strongestFeelingTowards);
+    }
+
+    private FeelingTowardsType getStrongestFeelingTowardsType() {
+        return Collections.max(asList(FeelingTowardsType.values()),
+                Comparator.comparing(
+                        f -> Math.abs(getFeelingTowards(getGameObjectId(), f))));
     }
 
     /**
@@ -450,7 +534,7 @@ public class FeelingsComp extends AbstractStatefulComponent<FeelingsPCD> {
      * <p>
      * Nicht alle diese Phrasen sind für adverbiale Angaben geeignet, dazu
      * siehe
-     * {@link #altEindruckBeiBegegnungAdvAngaben(SubstantivischePhrase, SubstantivischePhrase, int, boolean)}.
+     * {@link #altEindruckBeiBegegnungAdvAngaben(SubstantivischePhrase, GameObjectId, SubstantivischePhrase, FeelingTowardsType)}.
      * <p>
      * Die Methode garantiert, dass niemals etwas wie "du, der du..." oder
      * "du, die du..." oder "du, das du..." generiert wird.
@@ -697,30 +781,37 @@ public class FeelingsComp extends AbstractStatefulComponent<FeelingsPCD> {
 
         final ImmutableList.Builder<AbstractDescription<?>> res = ImmutableList.builder();
 
-        res.addAll(getPcd().getMuedigkeitsData().altAdjektivphrasePraedikativ().stream()
-                .map(p -> du(PARAGRAPH, "wirst", p)
-                        .beendet(PARAGRAPH))
+        res.addAll(getPcd().getMuedigkeitsData().altAdjektivphrase().stream()
+                // FIXME schöner wäre du(prädikat), das dann den Satz
+                //  speichern würde (nicht nur für 2. Person SG, sondern generell!)
+                .map(p -> du(PARAGRAPH, praedikativumPraedikatWerdenMit(p)).beendet(PARAGRAPH))
                 .collect(toList()));
 
-        res.addAll(getPcd().getMuedigkeitsData().altAdjektivphrasePraedikativ().stream()
-                .map(p -> du(PARAGRAPH, "bist", p)
-                        .beendet(PARAGRAPH))
+        res.addAll(getPcd().getMuedigkeitsData().altAdjektivphrase().stream()
+                .map(p -> du(PARAGRAPH, praedikativumPraedikatMit(p)).beendet(PARAGRAPH))
                 .collect(toList()));
 
-        res.addAll(getPcd().getMuedigkeitsData().altAdjektivphrasePraedikativ().stream()
-                .map(p -> du(PARAGRAPH, "fühlst", "dich auf einmal " + p,
+        res.addAll(getPcd().getMuedigkeitsData().altAdjektivphrase().stream()
+                .map(p -> du(PARAGRAPH,
+                        "fühlst", "dich auf einmal "
+                                + GermanUtil.joinToString(
+                                p.getPraedikativ(P2, SG)),
                         "auf einmal")
+                        .komma(Wortfolge.joinToWortfolge(p.getPraedikativ(P2, SG))
+                                .kommmaStehtAus())
                         .beendet(PARAGRAPH))
                 .collect(toList()));
 
-        res.addAll(getPcd().getMuedigkeitsData().altAdjektivphrasePraedikativ().stream()
-                .map(p -> du(PARAGRAPH, "bist", "auf einmal " + p,
-                        "auf einmal")
+        res.addAll(getPcd().getMuedigkeitsData().altAdjektivphrase().stream()
+                .map(p -> du(PARAGRAPH,
+                        praedikativumPraedikatMit(p).mitAdverbialerAngabe(
+                                new AdverbialeAngabeSkopusSatz("auf einmal")))
                         .beendet(PARAGRAPH))
                 .collect(toList()));
 
-        res.addAll(getPcd().getMuedigkeitsData().altAdjektivphrasePraedikativ().stream()
-                .map(p -> du(PARAGRAPH, "bist", "mit einem Mal " + p)
+        res.addAll(getPcd().getMuedigkeitsData().altAdjektivphrase().stream()
+                .map(p -> du(PARAGRAPH, praedikativumPraedikatMit(p).mitAdverbialerAngabe(
+                        new AdverbialeAngabeSkopusSatz("mit einem Mal")))
                         .beendet(PARAGRAPH))
                 .collect(toList()));
 
@@ -840,7 +931,7 @@ public class FeelingsComp extends AbstractStatefulComponent<FeelingsPCD> {
 
         n.narrateAlt(altScIstMuede(), noTime());
 
-        getPcd().resetNextMuedigkeitshinweisActionStepCount(scActionStepCount);
+        resetMuedigkeitshinweisStepCount(scActionStepCount);
     }
 
     @CheckReturnValue
@@ -852,13 +943,17 @@ public class FeelingsComp extends AbstractStatefulComponent<FeelingsPCD> {
 
         final ImmutableList.Builder<AbstractDescription<?>> res = ImmutableList.builder();
 
-        res.addAll(getPcd().getMuedigkeitsData().altAdjektivphrasePraedikativ().stream()
-                .map(p -> du(PARAGRAPH, "bist", p)
-                        .beendet(PARAGRAPH))
+        res.addAll(getPcd().getMuedigkeitsData().altAdjektivphrase().stream()
+                .map(p -> du(PARAGRAPH, praedikativumPraedikatMit(p)).beendet(PARAGRAPH))
                 .collect(toList()));
 
-        res.addAll(getPcd().getMuedigkeitsData().altAdjektivphrasePraedikativ().stream()
-                .map(p -> du(PARAGRAPH, "fühlst", "dich " + p)
+        res.addAll(getPcd().getMuedigkeitsData().altAdjektivphrase().stream()
+                .map(p -> du(PARAGRAPH,
+                        "fühlst", "dich  "
+                                + GermanUtil.joinToString(
+                                p.getPraedikativ(P2, SG)))
+                        .komma(Wortfolge.joinToWortfolge(p.getPraedikativ(P2, SG))
+                                .kommmaStehtAus())
                         .beendet(PARAGRAPH))
                 .collect(toList()));
 

@@ -106,10 +106,14 @@ public class PraedikatSubOhneLeerstellen
     Iterable<Konstituente> getMittelfeldOhneLinksversetzungUnbetonterPronomen(
             final Person personSubjekt, final Numerus numerusSubjekt) {
         return Konstituente.joinToKonstituenten(
-                getAdverbialeAngabeSkopusSatzDescription(), // "aus einer Laune heraus"
+                getAdverbialeAngabeSkopusSatzDescriptionFuerMittelfeld(personSubjekt,
+                        numerusSubjekt),
+                // "aus einer Laune heraus"
                 getModalpartikeln(), // "mal eben"
-                getAdverbialeAngabeSkopusVerbAllgDescriptionFuerMittelfeld(), // "erneut"
-                getAdverbialeAngabeSkopusVerbWohinWoherDescription() // "in den Wald"
+                getAdverbialeAngabeSkopusVerbAllgDescriptionFuerMittelfeld(personSubjekt,
+                        numerusSubjekt), // "erneut"
+                getAdverbialeAngabeSkopusVerbWohinWoherDescription(personSubjekt, numerusSubjekt)
+                // "in den Wald"
         );
     }
 
@@ -137,7 +141,10 @@ public class PraedikatSubOhneLeerstellen
     public Iterable<Konstituente> getNachfeld(final Person personSubjekt,
                                               final Numerus numerusSubjekt) {
         return Konstituente.joinToKonstituenten(
-                getAdverbialeAngabeSkopusVerbAllgDescriptionFuerZwangsausklammerung()
+                getAdverbialeAngabeSkopusVerbAllgDescriptionFuerZwangsausklammerung(personSubjekt,
+                        numerusSubjekt),
+                getAdverbialeAngabeSkopusSatzDescriptionFuerZwangsausklammerung(personSubjekt,
+                        numerusSubjekt)
         );
     }
 

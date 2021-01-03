@@ -41,6 +41,40 @@ public class Wortfolge {
     }
 
     /**
+     * Fügt diese Teile zu einer Wortfolge zusammen, wobei eine nichtleere
+     * Wortfolge das Ergebnis sein muss. Berücksichtigt auch die Information,
+     * ob ein Kommma aussteht.
+     */
+    public static Wortfolge joinToWortfolge(final Object... parts) {
+        return checkJoiningResultNotNull(joinToNullWortfolge(parts), parts);
+    }
+
+    /**
+     * Fügt diese Teile zu einer Wortfolge zusammen, wobei eine nichtleere
+     * Wortfolge das Ergebnis sein muss. Berücksichtigt auch die Information,
+     * ob ein Kommma aussteht.
+     */
+    public static Wortfolge joinToWortfolge(final Iterable<?> parts) {
+        return checkJoiningResultNotNull(joinToNullWortfolge(parts), parts);
+    }
+
+    private static Wortfolge checkJoiningResultNotNull(
+            @Nullable final Wortfolge joiningResult,
+            final Object... parts) {
+        return checkJoiningResultNotNull(joiningResult, asList(parts));
+    }
+
+    private static Wortfolge checkJoiningResultNotNull(
+            @Nullable final Wortfolge joiningResult,
+            final Iterable<?> parts) {
+        if (joiningResult == null) {
+            throw new IllegalStateException("Joining result was null. parts: " + parts);
+        }
+
+        return joiningResult;
+    }
+
+    /**
      * Fügt diese Teile zu einem String zusammen - berücksichtigt auch die Information,
      * ob ein Komma aussteht.
      *

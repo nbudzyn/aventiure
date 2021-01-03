@@ -60,16 +60,26 @@ public class DescriptionBuilder {
         return toTimed(altNeueSaetze(satz), timeElapsed);
     }
 
+
     @CheckReturnValue
     @NonNull
     public static ImmutableList<AbstractDescription<?>> altNeueSaetze(
             final Satz satz) {
+        return altNeueSaetze(SENTENCE, satz);
+    }
+
+    @CheckReturnValue
+    @NonNull
+    public static ImmutableList<AbstractDescription<?>> altNeueSaetze(
+            final StructuralElement startsNew,
+            final Satz satz) {
         final ImmutableList.Builder<AbstractDescription<?>> res = ImmutableList.builder();
 
-        final AbstractDescription<?> standard = neuerSatzStandard(satz);
+        final AbstractDescription<?> standard = neuerSatzStandard(startsNew, satz);
         res.add(standard);
 
-        final AbstractDescription<?> speziellesVorfeld = neuerSatzMitSpeziellemVorfeld(satz);
+        final AbstractDescription<?> speziellesVorfeld =
+                neuerSatzMitSpeziellemVorfeld(startsNew, satz);
         if (!standard.equals(speziellesVorfeld)) {
             res.add(speziellesVorfeld);
         }
@@ -97,29 +107,36 @@ public class DescriptionBuilder {
 
     @NonNull
     @CheckReturnValue
-    private static AbstractDescription<?> neuerSatzStandard(final Satz satz) {
+    private static AbstractDescription<?> neuerSatzStandard(
+            final StructuralElement startsNew, final Satz satz) {
         if (satz.getSubjekt().getPerson() == P2 && satz.getSubjekt().getNumerus() == SG) {
-            return du(SENTENCE, satz.getPraedikat());
+            return du(startsNew, satz.getPraedikat());
         }
 
         // IDEA: Der Satz könnte auch analog der Prädikat-Du-Description gespeichert werden.
         //  Das hätte den Vorteil, das man erst gegen Ende die Alternativen bauen würde und
         //  Einiges an der Logik von Du-Descriptions weiterverwendet werden könnte.
-        return neuerSatz(satz.getVerbzweitsatzStandard());
+        return neuerSatz(startsNew, satz.getVerbzweitsatzStandard());
     }
 
     @NonNull
     @CheckReturnValue
-    private static AbstractDescription<?> neuerSatzMitSpeziellemVorfeld(final Satz satz) {
+    private static AbstractDescription<?> neuerSatzMitSpeziellemVorfeld(
+            final StructuralElement startsNew, final Satz satz) {
         if (satz.getSubjekt().getPerson() == P2 && satz.getSubjekt().getNumerus() == SG) {
-            return du(SENTENCE, satz.getPraedikat());
+            return du(startsNew, satz.getPraedikat());
         }
 
-        return neuerSatz(satz.getVerbzweitsatzMitSpeziellemVorfeldAlsWeitereOption());
+        return neuerSatz(startsNew, satz.getVerbzweitsatzMitSpeziellemVorfeldAlsWeitereOption());
     }
 
     public static AllgDescription neuerSatz(final Iterable<Konstituente> konsituenten) {
-        return neuerSatz(Wortfolge.joinToNullWortfolge(konsituenten));
+        return neuerSatz(SENTENCE, konsituenten);
+    }
+
+    public static AllgDescription neuerSatz(final StructuralElement startsNew,
+                                            final Iterable<Konstituente> konsituenten) {
+        return neuerSatz(startsNew, Wortfolge.joinToWortfolge(konsituenten));
     }
 
     @NonNull

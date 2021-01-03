@@ -10,16 +10,33 @@ import de.nb.aventiure2.german.base.Person;
  * Ein Adjektiv, das keine Ergänzungen fordert.
  */
 public enum AdjektivOhneErgaenzungen implements AdjPhrOhneLeerstellen {
+    ANGESPANNT("angespannt"),
+    AUFGEDREHT("aufgedreht"),
+    BEGEISTERT("begeistert"),
+    BENOMMEN("benommen"),
+    BETRUEBT("betrübt"),
+    BEWEGT("bewegt"),
+    ERSCHOEPFT("erschöpft"),
     FROEHLICH("fröhlich"),
+    GEKNICKT("geknickt"),
     GESPANNT("gespannt"),
     GLUECKLICH("glücklich"),
+    HUNDEMUEDE("hundemüde"),
+    MUEDE("müde"),
     RESERVIERT("reserviert"),
+    TRAURIG("traurig"),
+    TODMUEDE("todmüde"),
+    TROTZIG("trotzig"),
+    UEBERMUEDET("übermüdet"),
     UEBERRASCHT("überrascht"),
     UEBERRUMPELT("überrumpelt"),
     VERAERGERT("verärgert"),
     VERSTIMMT("verstimmt"),
+    VERUNSICHERT("verunsichert"),
     VERWIRRT("verwirrt"),
     VERWUNDERT("verwundert"),
+    ZUFRIEDEN("zufrieden"),
+    WACH("wach"),
     ZORNIG("zornig");
 
     /**

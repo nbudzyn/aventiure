@@ -41,6 +41,7 @@ import static de.nb.aventiure2.german.base.Konstituente.k;
 import static de.nb.aventiure2.german.base.Numerus.SG;
 import static de.nb.aventiure2.german.base.NumerusGenus.M;
 import static de.nb.aventiure2.german.base.Person.P1;
+import static de.nb.aventiure2.german.base.Person.P2;
 import static de.nb.aventiure2.german.base.StructuralElement.PARAGRAPH;
 import static de.nb.aventiure2.german.description.DescriptionBuilder.du;
 import static de.nb.aventiure2.german.description.DescriptionBuilder.neuerSatz;
@@ -316,11 +317,11 @@ public class AblegenAction
 
                 if (sc.memoryComp().getLastAction().hasObject(gameObject)) {
                     n.narrate(du("legst",
-                            Wortfolge.joinToNullWortfolge(
+                            Wortfolge.joinToWortfolge(
                                     gameObjektPersPron.akk(),
                                     (wohinDetail == null ?
                                             k("hin") :
-                                            wohinDetail.getDescription())), // "auf den Tisch"
+                                            wohinDetail.getDescription(P2, SG))), // "auf den Tisch"
                             secs(5))
                             .undWartest());
                     return;
@@ -338,7 +339,8 @@ public class AblegenAction
                 n.narrate(du("legst",
                         Wortfolge.joinToNullWortfolge(
                                 gameObjektPersPron.akk(),
-                                (wohinDetail == null ? k("hin") : wohinDetail.getDescription())),
+                                (wohinDetail == null ? k("hin") : wohinDetail.getDescription(
+                                        P2, SG))),
                         secs(3)));
                 return;
             }
@@ -359,7 +361,8 @@ public class AblegenAction
                 du(PARAGRAPH, "legst",
                         Wortfolge.joinToNullWortfolge(
                                 world.getDescription(gameObject, false).akk(),
-                                (wohinDetail == null ? k("hin") : wohinDetail.getDescription())),
+                                (wohinDetail == null ? k("hin") : wohinDetail.getDescription(
+                                        P2, SG))),
                         secs(3))
                         .undWartest()
                         .dann());

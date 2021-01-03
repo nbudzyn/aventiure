@@ -119,7 +119,7 @@ public class DescriptionUmformulierer {
                         new AdverbialeAngabeSkopusVerbAllg("sogleich wieder")));
 
                 final Wortfolge duNimmstDieKugelBesserDoch =
-                        Wortfolge.joinToNullWortfolge(
+                        Wortfolge.joinToWortfolge(
                                 pDuDesc.getPraedikat()
                                         .mitModalpartikeln(
                                                 new Modalpartikel("besser"),

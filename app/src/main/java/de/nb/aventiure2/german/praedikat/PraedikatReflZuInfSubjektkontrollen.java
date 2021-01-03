@@ -163,33 +163,38 @@ public class PraedikatReflZuInfSubjektkontrollen
     @Override
     Iterable<Konstituente> getMittelfeldOhneLinksversetzungUnbetonterPronomen(
             final Person personSubjekt, final Numerus numerusSubjekt) {
+        @Nullable final AdverbialeAngabeSkopusSatz adverbialeAngabeSkopusSatz =
+                getAdverbialeAngabeSkopusSatz();
         @Nullable final AdverbialeAngabeSkopusVerbAllg adverbialeAngabeSkopusVerbAllg =
                 getAdverbialeAngabeSkopusVerbAllg();
 
-        if (adverbialeAngabeSkopusVerbAllg == null ||
-                adverbialeAngabeSkopusVerbAllg.imMittelfeldErlaubt()) {
-            return Konstituente.joinToKonstituenten(
-                    Reflexivpronomen.get(personSubjekt, numerusSubjekt).im(kasus), // "dich"
-                    getAdverbialeAngabeSkopusSatzDescription(), // "aus einer Laune heraus"
-                    getModalpartikeln(), // "mal eben"
-                    adverbialeAngabeSkopusVerbAllg != null ?
-                            adverbialeAngabeSkopusVerbAllg.getDescription() :  // "erneut"
-                            null,
-                    getAdverbialeAngabeSkopusVerbWohinWoherDescription()
-                    // (kann es wohl gar nicht geben)
-            );
-        }
-
         return Konstituente.joinToKonstituenten(
                 Reflexivpronomen.get(personSubjekt, numerusSubjekt).im(kasus), // "dich"
-                getAdverbialeAngabeSkopusSatzDescription(), // "aus einer Laune heraus"
+                adverbialeAngabeSkopusSatz != null &&
+                        adverbialeAngabeSkopusSatz.imMittelfeldErlaubt() ?
+                        adverbialeAngabeSkopusSatz.getDescription(personSubjekt, numerusSubjekt) :
+                        // "aus einer Laune heraus"
+                        null, // (ins Nachfeld verschieben)
                 getModalpartikeln(), // "mal eben"
-                adverbialeAngabeSkopusVerbAllg.getDescription(), // "erneut"
-                Konstituente.schliesseInKommaEin(
-                        lexikalischerKern.getZuInfinitiv(
-                                // Es liegt Subjektkontrolle vor!
-                                personSubjekt, numerusSubjekt
-                        )) // ", Rapunzel zu sehen[, ]"
+                adverbialeAngabeSkopusVerbAllg != null &&
+                        adverbialeAngabeSkopusVerbAllg.imMittelfeldErlaubt() ?
+                        adverbialeAngabeSkopusVerbAllg.getDescription(personSubjekt,
+                                numerusSubjekt) :  // "erneut"
+                        null, // (ins Nachfeld verschieben)
+                adverbialeAngabeSkopusVerbAllg != null &&
+                        !adverbialeAngabeSkopusVerbAllg.imMittelfeldErlaubt()
+                        // Die adverbialeAngabeSkopusSatz schieben wir immer ins Nachfeld,
+                        // daraus wird sie nach Möglichkeit ins Vorfeld gezogen werden.
+                        ?
+                        // -> Lex. Kern sollten wir aus dem Nachfeld vorziehen
+                        Konstituente.schliesseInKommaEin(
+                                lexikalischerKern.getZuInfinitiv(
+                                        // Es liegt "Subjektkontrolle" vor.
+                                        personSubjekt, numerusSubjekt
+                                )) // ", Rapunzel zu sehen[, ]"
+                        : null, // (Normalfall: lexikalischer Kern im Nachfeld)
+                getAdverbialeAngabeSkopusVerbWohinWoherDescription(personSubjekt,
+                        numerusSubjekt)
                 // (kann es wohl gar nicht geben)
         );
     }
@@ -225,20 +230,30 @@ public class PraedikatReflZuInfSubjektkontrollen
     @Override
     public Iterable<Konstituente> getNachfeld(final Person personSubjekt,
                                               final Numerus numerusSubjekt) {
+        @Nullable final AdverbialeAngabeSkopusSatz adverbialeAngabeSkopusSatz =
+                getAdverbialeAngabeSkopusSatz();
         @Nullable final AdverbialeAngabeSkopusVerbAllg adverbialeAngabeSkopusVerbAllg =
                 getAdverbialeAngabeSkopusVerbAllg();
-        if (adverbialeAngabeSkopusVerbAllg != null
-                && !adverbialeAngabeSkopusVerbAllg.imMittelfeldErlaubt()) {
-            return Konstituente.joinToKonstituenten(
-                    adverbialeAngabeSkopusVerbAllg.getDescription() // "glücklich, dich zu sehen"
-            );
-        }
-
-        return Konstituente.schliesseInKommaEin(
-                lexikalischerKern.getZuInfinitiv(
-                        // Es liegt Subjektkontrolle vor.
-                        personSubjekt, numerusSubjekt
-                )); // "(Du freust dich), Rapunzel zu sehen[,] "
+        return Konstituente.joinToKonstituenten(
+                adverbialeAngabeSkopusVerbAllg == null
+                        || adverbialeAngabeSkopusVerbAllg.imMittelfeldErlaubt() ?
+                        Konstituente.schliesseInKommaEin(
+                                lexikalischerKern.getZuInfinitiv(
+                                        // Es liegt Subjektkontrolle vor.
+                                        personSubjekt, numerusSubjekt
+                                )) // "(Du freust dich), Rapunzel zu sehen[,] "
+                        // Wir lassen die Kommata rund um den Infinitiv weg - das ist erlaubt.
+                        : null,
+                adverbialeAngabeSkopusVerbAllg != null
+                        && !adverbialeAngabeSkopusVerbAllg.imMittelfeldErlaubt() ?
+                        adverbialeAngabeSkopusVerbAllg.getDescription(personSubjekt, numerusSubjekt)
+                        // "glücklich, dich zu sehen"
+                        : null,
+                adverbialeAngabeSkopusSatz != null
+                        && !adverbialeAngabeSkopusSatz.imMittelfeldErlaubt() ?
+                        adverbialeAngabeSkopusSatz
+                                .getDescription(personSubjekt, numerusSubjekt)
+                        : null);
     }
 
     @Override

@@ -25,7 +25,7 @@ public interface AbstractDuTextPart {
      * ("Du nimmst den Ast")
      */
     default Wortfolge getDuHauptsatz() {
-        return Wortfolge.joinToNullWortfolge(
+        return Wortfolge.joinToWortfolge(
                 "Du",
                 getDuSatzanschlussOhneSubjekt());
     }

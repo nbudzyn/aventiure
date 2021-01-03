@@ -30,6 +30,12 @@ public class PraedikativumPraedikatOhneLeerstellen
     @Komplement
     private final Praedikativum praedikativum;
 
+    public static PraedikativumPraedikatOhneLeerstellen praedikativumPraedikatWerdenMit(
+            final Praedikativum praedikativum) {
+        return new PraedikativumPraedikatOhneLeerstellen(WerdenUtil.VERB,
+                praedikativum);
+    }
+
     public static PraedikativumPraedikatOhneLeerstellen praedikativumPraedikatMit(
             final Praedikativum praedikativum) {
         return new PraedikativumPraedikatOhneLeerstellen(SeinUtil.VERB,
@@ -148,10 +154,13 @@ public class PraedikativumPraedikatOhneLeerstellen
     Iterable<Konstituente> getMittelfeldOhneLinksversetzungUnbetonterPronomen(
             final Person personSubjekt, final Numerus numerusSubjekt) {
         return Konstituente.joinToKonstituenten(
-                getAdverbialeAngabeSkopusSatzDescription(), // "plötzlich"
+                getAdverbialeAngabeSkopusSatzDescriptionFuerMittelfeld(personSubjekt,
+                        numerusSubjekt),
+                // "plötzlich"
                 getModalpartikeln(), // "halt"
-                getAdverbialeAngabeSkopusVerbAllgDescriptionFuerMittelfeld(), // "erneut"
-                getAdverbialeAngabeSkopusVerbWohinWoherDescription(),
+                getAdverbialeAngabeSkopusVerbAllgDescriptionFuerMittelfeld(personSubjekt,
+                        numerusSubjekt), // "erneut"
+                getAdverbialeAngabeSkopusVerbWohinWoherDescription(personSubjekt, numerusSubjekt),
                 // (kann wohl nicht besetzt sein?)
                 praedikativum.getPraedikativOhneAnteilKandidatFuerNachfeld(
                         personSubjekt, numerusSubjekt)
@@ -186,7 +195,10 @@ public class PraedikativumPraedikatOhneLeerstellen
         return Konstituente.joinToKonstituenten(
                 praedikativum.getPraedikativAnteilKandidatFuerNachfeld(
                         personSubjekt, numerusSubjekt), // "dich zu sehen"
-                getAdverbialeAngabeSkopusVerbAllgDescriptionFuerZwangsausklammerung()
+                getAdverbialeAngabeSkopusVerbAllgDescriptionFuerZwangsausklammerung(personSubjekt,
+                        numerusSubjekt),
+                getAdverbialeAngabeSkopusSatzDescriptionFuerZwangsausklammerung(personSubjekt,
+                        numerusSubjekt)
         );
     }
 

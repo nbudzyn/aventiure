@@ -151,10 +151,13 @@ public class PraedikatDatAkkOhneLeerstellen
     Iterable<Konstituente> getMittelfeldOhneLinksversetzungUnbetonterPronomen(
             final Person personSubjekt, final Numerus numerusSubjekt) {
         return Konstituente.joinToKonstituenten(
-                getAdverbialeAngabeSkopusSatzDescription(), // "aus einer Laune heraus"
+                getAdverbialeAngabeSkopusSatzDescriptionFuerMittelfeld(personSubjekt,
+                        numerusSubjekt),
+                // "aus einer Laune heraus"
                 dat.dat(), // "dem Frosch"
                 getModalpartikeln(), // "halt"
-                getAdverbialeAngabeSkopusVerbAllgDescriptionFuerMittelfeld(), // "auf deiner Flöte"
+                getAdverbialeAngabeSkopusVerbAllgDescriptionFuerMittelfeld(personSubjekt,
+                        numerusSubjekt), // "auf deiner Flöte"
                 akk.akk()); // "ein Lied"
     }
 
@@ -182,7 +185,10 @@ public class PraedikatDatAkkOhneLeerstellen
     public Iterable<Konstituente> getNachfeld(final Person personSubjekt,
                                               final Numerus numerusSubjekt) {
         return Konstituente.joinToKonstituenten(
-                getAdverbialeAngabeSkopusVerbAllgDescriptionFuerZwangsausklammerung()
+                getAdverbialeAngabeSkopusVerbAllgDescriptionFuerZwangsausklammerung(personSubjekt,
+                        numerusSubjekt),
+                getAdverbialeAngabeSkopusSatzDescriptionFuerZwangsausklammerung(personSubjekt,
+                        numerusSubjekt)
         );
     }
 
@@ -190,7 +196,7 @@ public class PraedikatDatAkkOhneLeerstellen
     public boolean umfasstSatzglieder() {
         return true;
     }
-    
+
     @Nullable
     @Override
     public Konstituente getErstesInterrogativpronomen() {

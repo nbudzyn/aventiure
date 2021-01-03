@@ -32,7 +32,7 @@ public interface PraedikatOhneLeerstellen extends Praedikat {
             final @Nullable String anschlusswort, final SubstantivischePhrase subjekt) {
         return new Satz(anschlusswort, subjekt, this);
     }
-    
+
     boolean hauptsatzLaesstSichBeiGleichemSubjektMitNachfolgendemVerbzweitsatzZusammenziehen();
 
     /**
@@ -107,7 +107,7 @@ public interface PraedikatOhneLeerstellen extends Praedikat {
      * der Stellung, wo das Subjekt im Vorfeld ist, vorgezogen werden sollte.
      */
     @Nullable
-    Konstituente getSpeziellesVorfeldSehrErwuenscht(Person person, Numerus numerus);
+    Konstituente getSpeziellesVorfeldSehrErwuenscht(Person personSubjekt, Numerus numerusSubjekt);
 
     /**
      * Gibt ein "spezielles" Vorfeld zurück, das (bei Sätzen, die ein Vorfeld haben)
@@ -117,7 +117,8 @@ public interface PraedikatOhneLeerstellen extends Praedikat {
      * so sollte diese Methode etweder einen anderen oder keinen Wert zurückgeben.
      */
     @Nullable
-    Konstituente getSpeziellesVorfeldAlsWeitereOption(Person person, Numerus numerus);
+    Konstituente getSpeziellesVorfeldAlsWeitereOption(Person personSubjekt,
+                                                      Numerus numerusSubjekt);
 
     Iterable<Konstituente> getNachfeld(Person person, Numerus numerus);
 

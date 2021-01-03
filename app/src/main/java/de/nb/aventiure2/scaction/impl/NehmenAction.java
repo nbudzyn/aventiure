@@ -415,7 +415,7 @@ public class NehmenAction
                         mitnehmenPraedikat.mit(objectDesc);
 
                 n.narrateAlt(
-                        sc.feelingsComp().altAdverbialeAngaben().stream()
+                        sc.feelingsComp().altAdverbialeAngabenSkopusSatz().stream()
                                 .map(a ->
                                         du(PARAGRAPH,
                                                 praedikatMitObjekt.mitAdverbialerAngabe(a),

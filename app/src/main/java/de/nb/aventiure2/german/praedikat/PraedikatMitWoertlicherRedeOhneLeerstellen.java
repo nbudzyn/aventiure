@@ -131,10 +131,14 @@ public class PraedikatMitWoertlicherRedeOhneLeerstellen
     Iterable<Konstituente> getMittelfeldOhneLinksversetzungUnbetonterPronomen(
             final Person personSubjekt, final Numerus numerusSubjekt) {
         return Konstituente.joinToKonstituenten(
-                getAdverbialeAngabeSkopusSatzDescription(), // "aus einer Laune heraus"
+                getAdverbialeAngabeSkopusSatzDescriptionFuerMittelfeld(personSubjekt,
+                        numerusSubjekt),
+                // "aus einer Laune heraus"
                 getModalpartikeln(),  // "mal eben"
-                getAdverbialeAngabeSkopusVerbAllgDescriptionFuerMittelfeld(), // "erneut"
-                getAdverbialeAngabeSkopusVerbWohinWoherDescription()// "in ein Kissen"
+                getAdverbialeAngabeSkopusVerbAllgDescriptionFuerMittelfeld(personSubjekt,
+                        numerusSubjekt), // "erneut"
+                getAdverbialeAngabeSkopusVerbWohinWoherDescription(personSubjekt, numerusSubjekt)
+// "in ein Kissen"
         );
     }
 
@@ -162,7 +166,10 @@ public class PraedikatMitWoertlicherRedeOhneLeerstellen
     public Iterable<Konstituente> getNachfeld(final Person personSubjekt,
                                               final Numerus numerusSubjekt) {
         return Konstituente.joinToKonstituenten(
-                getAdverbialeAngabeSkopusVerbAllgDescriptionFuerZwangsausklammerung(),
+                getAdverbialeAngabeSkopusVerbAllgDescriptionFuerZwangsausklammerung(personSubjekt,
+                        numerusSubjekt),
+                getAdverbialeAngabeSkopusSatzDescriptionFuerZwangsausklammerung(personSubjekt,
+                        numerusSubjekt),
                 k(woertlicheRede.fuerNachfeld(),
                         true,
                         true)); // "„Kommt alle her.“"

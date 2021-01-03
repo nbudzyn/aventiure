@@ -1,6 +1,6 @@
 package de.nb.aventiure2.german.praedikat;
 
-import de.nb.aventiure2.german.base.Konstituente;
+import de.nb.aventiure2.german.adjektiv.AdjPhrOhneLeerstellen;
 
 /**
  * Eine adverbiale Angabe der Richtung, des Ziel (wohin?) oder
@@ -13,8 +13,7 @@ public class AdverbialeAngabeSkopusVerbWohinWoher extends AbstractAdverbialeAnga
         super(text);
     }
 
-    public AdverbialeAngabeSkopusVerbWohinWoher(
-            final Konstituente konstituente) {
-        super(konstituente);
+    public AdverbialeAngabeSkopusVerbWohinWoher(final AdjPhrOhneLeerstellen adjektivphrase) {
+        super(adjektivphrase);
     }
 }

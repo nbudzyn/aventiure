@@ -145,14 +145,17 @@ class PraedikatSubjReflPraepositionalkasusAkkObjOhneLeerstellen
         checkKeinPartikelVerb();
 
         return Konstituente.joinToKonstituenten(
-                getAdverbialeAngabeSkopusSatzDescription(), // "aus einer Laune heraus"
+                getAdverbialeAngabeSkopusSatzDescriptionFuerMittelfeld(personSubjekt,
+                        numerusSubjekt),
+                // "aus einer Laune heraus"
                 akkObj.akk(), // "die goldene Kugel"
                 getModalpartikeln(), // "besser doch"
-                getAdverbialeAngabeSkopusVerbAllgDescriptionFuerMittelfeld(), // "erneut"
+                getAdverbialeAngabeSkopusVerbAllgDescriptionFuerMittelfeld(personSubjekt,
+                        numerusSubjekt), // "erneut"
                 Reflexivpronomen.get(personSubjekt, numerusSubjekt)
                         .im(verbReflPraepositionalkasusAkkObj
                                 .getPrapositionMitKasus()), // "an dich",
-                getAdverbialeAngabeSkopusVerbWohinWoherDescription()
+                getAdverbialeAngabeSkopusVerbWohinWoherDescription(personSubjekt, numerusSubjekt)
                 // "in deine Jackentasche"
         );
     }
@@ -181,7 +184,11 @@ class PraedikatSubjReflPraepositionalkasusAkkObjOhneLeerstellen
     public Iterable<Konstituente> getNachfeld(final Person personSubjekt,
                                               final Numerus numerusSubjekt) {
         return Konstituente.joinToKonstituenten(
-                getAdverbialeAngabeSkopusVerbAllgDescriptionFuerZwangsausklammerung()
+                getAdverbialeAngabeSkopusVerbAllgDescriptionFuerZwangsausklammerung(personSubjekt,
+                        numerusSubjekt),
+                getAdverbialeAngabeSkopusSatzDescriptionFuerZwangsausklammerung(personSubjekt,
+                        numerusSubjekt)
+
         );
     }
 

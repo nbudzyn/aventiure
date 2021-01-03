@@ -27,6 +27,10 @@ public class Adjektiv {
         return praedikativ;
     }
 
+    public AdjPhrOhneErgaenzungenOhneLeerstellen toAdjPhr() {
+        return new AdjPhrOhneErgaenzungenOhneLeerstellen(this);
+    }
+
     @Override
     public boolean equals(final Object o) {
         if (this == o) {

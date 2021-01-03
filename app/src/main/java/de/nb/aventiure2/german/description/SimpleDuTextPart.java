@@ -92,7 +92,7 @@ public class SimpleDuTextPart implements AbstractDuTextPart {
      */
     @Override
     public Wortfolge getDuSatzanschlussOhneSubjekt() {
-        return Wortfolge.joinToNullWortfolge(verb, remainder);
+        return Wortfolge.joinToWortfolge(verb, remainder);
     }
 
     @Override

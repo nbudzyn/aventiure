@@ -3,45 +3,100 @@ package de.nb.aventiure2.data.world.syscomp.feelings;
 import com.google.common.collect.ImmutableList;
 
 import java.util.Collection;
-import java.util.stream.Stream;
 
+import de.nb.aventiure2.german.adjektiv.AdjPhrOhneLeerstellen;
+import de.nb.aventiure2.german.adjektiv.AdjektivOhneErgaenzungen;
+import de.nb.aventiure2.german.base.GermanUtil;
 import de.nb.aventiure2.german.praedikat.AdverbialeAngabeSkopusSatz;
+import de.nb.aventiure2.german.praedikat.AdverbialeAngabeSkopusVerbAllg;
 
 import static com.google.common.collect.ImmutableList.toImmutableList;
+import static de.nb.aventiure2.german.base.Numerus.SG;
+import static de.nb.aventiure2.german.base.Person.P2;
+import static java.util.Arrays.asList;
+import static java.util.Arrays.stream;
+import static java.util.stream.Collectors.toList;
 
 /**
  * Gemütszustand
  */
 public enum Mood {
     VOLLER_FREUDE(FeelingIntensity.SEHR_STARK, "fröhlich"),
-    GLUECKLICH(FeelingIntensity.STARK, "glücklich"),
+    GLUECKLICH(FeelingIntensity.STARK, AdjektivOhneErgaenzungen.GLUECKLICH),
     BEGEISTERT(FeelingIntensity.DEUTLICH, "begeistert"),
     AUFGEDREHT(FeelingIntensity.MERKLICH, "aufgedreht"),
     BEWEGT(FeelingIntensity.MERKLICH, "selbstvergessen"),
     ZUFRIEDEN(FeelingIntensity.NUR_LEICHT, "spielerisch", "versonnen"),
     NEUTRAL(FeelingIntensity.NEUTRAL, "aus Langeweile"),
-    ANGESPANNT(FeelingIntensity.NEUTRAL, "trotzig"),
-    ETWAS_GEKNICKT(-FeelingIntensity.MERKLICH, "etwas geknickt"),
-    VERUNSICHERT(-FeelingIntensity.MERKLICH, "verunsichert"),
-    BETRUEBT(-FeelingIntensity.DEUTLICH, "betrübt"),
-    TRAURIG(-FeelingIntensity.STARK, "traurig"),
+    ANGESPANNT(FeelingIntensity.NEUTRAL,
+            AdjektivOhneErgaenzungen.ANGESPANNT,
+            new AdverbialeAngabeSkopusSatz("trotzig")),
+    ETWAS_GEKNICKT(-FeelingIntensity.MERKLICH,
+            AdjektivOhneErgaenzungen.GEKNICKT.mitGraduativerAngabe("etwas"),
+            new AdverbialeAngabeSkopusSatz("etwas geknickt")),
+    VERUNSICHERT(-FeelingIntensity.MERKLICH, AdjektivOhneErgaenzungen.VERUNSICHERT),
+    BETRUEBT(-FeelingIntensity.DEUTLICH, AdjektivOhneErgaenzungen.BETRUEBT),
+    TRAURIG(-FeelingIntensity.STARK, AdjektivOhneErgaenzungen.TRAURIG),
     UNTROESTLICH(-FeelingIntensity.SEHR_STARK, "voller Trauer");
 
     private final int gradDerFreude;
+
+    /**
+     * Adjektive zur Beschreibung dieses "Moods", <i>möglicherweise leer</i>.
+     */
+    private final ImmutableList<AdjPhrOhneLeerstellen> altAdjPhr;
+
+    /**
+     * Adverbiale Angabe zur Beschreibung dieses "Moods".
+     */
     private final ImmutableList<AdverbialeAngabeSkopusSatz> altAdverbialeAngaben;
 
     Mood(final int gradDerFreude, final String... altAdverbialeAngabenTexte) {
         this(gradDerFreude,
-                Stream.of(altAdverbialeAngabenTexte)
-                        .map(AdverbialeAngabeSkopusSatz::new)
-                        .collect(toImmutableList()));
+                ImmutableList.of(),
+                stream(altAdverbialeAngabenTexte)
+                        .map(s -> new AdverbialeAngabeSkopusSatz(s))
+                        .collect(toImmutableList())
+        );
     }
 
     Mood(final int gradDerFreude,
+         final AdjektivOhneErgaenzungen... altAdjPhr) {
+        this(gradDerFreude,
+                ImmutableList.copyOf(altAdjPhr),
+                stream(altAdjPhr)
+                        .map(a -> new AdverbialeAngabeSkopusSatz(
+                                GermanUtil.joinToString(
+                                        a.getPraedikativ(
+                                                // irrelevant für AdjektivOhneErgaenzungen
+                                                P2, SG))))
+                        .collect(toList()));
+    }
+
+    Mood(final int gradDerFreude,
+         final AdverbialeAngabeSkopusSatz altAdverbialeAngabe) {
+        this(gradDerFreude, ImmutableList.of(), ImmutableList.of(altAdverbialeAngabe));
+    }
+
+    Mood(final int gradDerFreude,
+         final AdjPhrOhneLeerstellen altAdjPhr,
+         final AdverbialeAngabeSkopusSatz altAdverbialeAngabe) {
+        this(gradDerFreude, ImmutableList.of(altAdjPhr), ImmutableList.of(altAdverbialeAngabe));
+    }
+
+    Mood(final int gradDerFreude,
+         final AdjPhrOhneLeerstellen[] altAdjPhr,
+         final AdverbialeAngabeSkopusSatz[] altAdverbialeAngaben) {
+        this(gradDerFreude, asList(altAdjPhr), asList(altAdverbialeAngaben));
+    }
+
+    Mood(final int gradDerFreude,
+         final Collection<AdjPhrOhneLeerstellen> altAdjPhr,
          final Collection<AdverbialeAngabeSkopusSatz> altAdverbialeAngaben) {
         FeelingIntensity.checkValuePositive(Math.abs(gradDerFreude));
 
         this.gradDerFreude = gradDerFreude;
+        this.altAdjPhr = ImmutableList.copyOf(altAdjPhr);
         this.altAdverbialeAngaben = ImmutableList.copyOf(altAdverbialeAngaben);
     }
 
@@ -53,8 +108,21 @@ public enum Mood {
         return gradDerFreude < other.gradDerFreude;
     }
 
-    public ImmutableList<AdverbialeAngabeSkopusSatz> altAdverbialeAngaben() {
+    public ImmutableList<AdverbialeAngabeSkopusVerbAllg> altAdverbialeAngabenSkopusVerbAllg() {
+        return altAdverbialeAngaben.stream()
+                .map(AdverbialeAngabeSkopusSatz::toSkopusVerbAllg)
+                .collect(toImmutableList());
+    }
+
+    public ImmutableList<AdverbialeAngabeSkopusSatz> altAdverbialeAngabenSkopusSatz() {
         return altAdverbialeAngaben;
+    }
+
+    /**
+     * Eventuell Adjektive zur Beschreibung dieses "Moods", <i>möglicherweise leer</i>.
+     */
+    public ImmutableList<AdjPhrOhneLeerstellen> altAdjPhr() {
+        return altAdjPhr;
     }
 
     /**
@@ -74,4 +142,5 @@ public enum Mood {
     int getGradDerFreude() {
         return gradDerFreude;
     }
+
 }

@@ -156,10 +156,12 @@ public abstract class AbstractAngabenfaehigesPraedikatOhneLeerstellen
 
     @Nullable
     @Override
-    public Konstituente getSpeziellesVorfeldSehrErwuenscht(final Person person,
-                                                           final Numerus numerus) {
+    public Konstituente getSpeziellesVorfeldSehrErwuenscht(final Person personSubjekt,
+                                                           final Numerus numerusSubjekt) {
         if (adverbialeAngabeSkopusSatz != null) {
-            return adverbialeAngabeSkopusSatz.getDescription();
+            return adverbialeAngabeSkopusSatz
+                    .getDescription(personSubjekt, numerusSubjekt)
+                    .withVorkommaNoetig(false);
         }
 
         return null;
@@ -167,11 +169,12 @@ public abstract class AbstractAngabenfaehigesPraedikatOhneLeerstellen
 
     @Nullable
     @Override
-    public Konstituente getSpeziellesVorfeldAlsWeitereOption(final Person person,
-                                                             final Numerus numerus) {
+    public Konstituente getSpeziellesVorfeldAlsWeitereOption(final Person personSubjekt,
+                                                             final Numerus numerusSubjekt) {
         @Nullable final Konstituente
                 adverbialeAngabeSkopusVerbAllgDescriptionFuerZwangsausklammerung =
-                getAdverbialeAngabeSkopusVerbAllgDescriptionFuerZwangsausklammerung();
+                getAdverbialeAngabeSkopusVerbAllgDescriptionFuerZwangsausklammerung(personSubjekt,
+                        numerusSubjekt);
         if (adverbialeAngabeSkopusVerbAllgDescriptionFuerZwangsausklammerung != null) {
             // "Und glücklich, sie endlich gefunden zu haben, nimmst du die Kugel."
             return adverbialeAngabeSkopusVerbAllgDescriptionFuerZwangsausklammerung
@@ -225,9 +228,6 @@ public abstract class AbstractAngabenfaehigesPraedikatOhneLeerstellen
 
     /**
      * Gibt das Akkusativ-Objekt zurück - sofern es eines gibt.
-     *
-     * @param personSubjekt
-     * @param numerusSubjekt
      */
     @Nullable
     abstract SubstantivischePhraseOderReflexivpronomen getAkk(
@@ -303,14 +303,44 @@ public abstract class AbstractAngabenfaehigesPraedikatOhneLeerstellen
     }
 
     @Nullable
-    Konstituente getAdverbialeAngabeSkopusSatzDescription() {
+    private Konstituente getAdverbialeAngabeSkopusSatzDescription(
+            final Person personSubjekt, final Numerus numerusSubjekt) {
         return adverbialeAngabeSkopusSatz != null ?
-                adverbialeAngabeSkopusSatz.getDescription() :
+                adverbialeAngabeSkopusSatz.getDescription(personSubjekt, numerusSubjekt) :
                 null;
     }
 
     @Nullable
-    Konstituente getAdverbialeAngabeSkopusVerbAllgDescriptionFuerMittelfeld() {
+    Konstituente getAdverbialeAngabeSkopusSatzDescriptionFuerMittelfeld(
+            final Person personSubjekt, final Numerus numerusSubjekt) {
+        if (adverbialeAngabeSkopusSatz == null) {
+            return null;
+        }
+
+        if (!adverbialeAngabeSkopusSatz.imMittelfeldErlaubt()) {
+            return null;
+        }
+
+        return getAdverbialeAngabeSkopusSatzDescription(personSubjekt, numerusSubjekt);
+    }
+
+    @Nullable
+    Konstituente getAdverbialeAngabeSkopusSatzDescriptionFuerZwangsausklammerung(
+            final Person personSubjekt, final Numerus numerusSubjekt) {
+        if (adverbialeAngabeSkopusSatz == null) {
+            return null;
+        }
+
+        if (adverbialeAngabeSkopusSatz.imMittelfeldErlaubt()) {
+            return null;
+        }
+
+        return getAdverbialeAngabeSkopusSatzDescription(personSubjekt, numerusSubjekt);
+    }
+
+    @Nullable
+    Konstituente getAdverbialeAngabeSkopusVerbAllgDescriptionFuerMittelfeld(
+            final Person personSubjekt, final Numerus numerusSubjekt) {
         if (adverbialeAngabeSkopusVerbAllg == null) {
             return null;
         }
@@ -319,11 +349,12 @@ public abstract class AbstractAngabenfaehigesPraedikatOhneLeerstellen
             return null;
         }
 
-        return getAdverbialeAngabeSkopusVerbAllgDescription();
+        return getAdverbialeAngabeSkopusVerbAllgDescription(personSubjekt, numerusSubjekt);
     }
 
     @Nullable
-    Konstituente getAdverbialeAngabeSkopusVerbAllgDescriptionFuerZwangsausklammerung() {
+    Konstituente getAdverbialeAngabeSkopusVerbAllgDescriptionFuerZwangsausklammerung(
+            final Person personSubjekt, final Numerus numerusSubjekt) {
         if (adverbialeAngabeSkopusVerbAllg == null) {
             return null;
         }
@@ -332,20 +363,23 @@ public abstract class AbstractAngabenfaehigesPraedikatOhneLeerstellen
             return null;
         }
 
-        return getAdverbialeAngabeSkopusVerbAllgDescription();
+        return getAdverbialeAngabeSkopusVerbAllgDescription(personSubjekt, numerusSubjekt);
     }
 
 
     @Nullable
-    private Konstituente getAdverbialeAngabeSkopusVerbAllgDescription() {
+    private Konstituente getAdverbialeAngabeSkopusVerbAllgDescription(
+            final Person personSubjekt, final Numerus numerusSubjekt) {
         return adverbialeAngabeSkopusVerbAllg != null ?
-                adverbialeAngabeSkopusVerbAllg.getDescription() : null;
+                adverbialeAngabeSkopusVerbAllg.getDescription(personSubjekt, numerusSubjekt) : null;
     }
 
     @Nullable
-    Konstituente getAdverbialeAngabeSkopusVerbWohinWoherDescription() {
+    Konstituente getAdverbialeAngabeSkopusVerbWohinWoherDescription(
+            final Person personSubjekt, final Numerus numerusSubjekt) {
         return adverbialeAngabeSkopusVerbWohinWoher != null ?
-                adverbialeAngabeSkopusVerbWohinWoher.getDescription() : null;
+                adverbialeAngabeSkopusVerbWohinWoher.getDescription(personSubjekt, numerusSubjekt) :
+                null;
     }
 
     @Nullable

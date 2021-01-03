@@ -146,7 +146,7 @@ class CreatureFactory {
                 new MenschlicherMuedigkeitsBiorhythmus();
         final FeelingsComp feelingsComp =
                 new FeelingsComp(RAPUNZEL, db, timeTaker, n,
-                        world, memoryComp,
+                        memoryComp,
                         Mood.NEUTRAL,
                         muedigkeitsBiorhythmus,
                         MuedigkeitsData.createFromBiorhythmusFuerMenschen(

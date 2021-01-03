@@ -6,6 +6,7 @@ import de.nb.aventiure2.german.base.Konstituente;
 import de.nb.aventiure2.german.base.Numerus;
 import de.nb.aventiure2.german.base.Person;
 import de.nb.aventiure2.german.base.Praedikativum;
+import de.nb.aventiure2.german.praedikat.AdverbialeAngabeSkopusSatz;
 import de.nb.aventiure2.german.praedikat.AdverbialeAngabeSkopusVerbAllg;
 
 /**
@@ -17,7 +18,8 @@ import de.nb.aventiure2.german.praedikat.AdverbialeAngabeSkopusVerbAllg;
  */
 public interface AdjPhrOhneLeerstellen extends Adjektivphrase, Praedikativum {
     default AdjPhrOhneLeerstellen mitGraduativerAngabe(@Nullable final String graduativeAngabe) {
-        return mitGraduativerAngabe(new GraduativeAngabe(graduativeAngabe));
+        return mitGraduativerAngabe(
+                graduativeAngabe != null ? new GraduativeAngabe(graduativeAngabe) : null);
     }
 
     AdjPhrOhneLeerstellen mitGraduativerAngabe(@Nullable GraduativeAngabe graduativeAngabe);
@@ -37,10 +39,12 @@ public interface AdjPhrOhneLeerstellen extends Adjektivphrase, Praedikativum {
      */
     Iterable<Konstituente> getPraedikativOderAdverbial(final Person person, final Numerus numerus);
 
-    default AdverbialeAngabeSkopusVerbAllg alsAdverbialeAngabe(final Person personSubjekt,
-                                                               final Numerus numerusSubjekt) {
-        return new AdverbialeAngabeSkopusVerbAllg(
-                this, personSubjekt, numerusSubjekt);
+    default AdverbialeAngabeSkopusSatz alsAdverbialeAngabeSkopusSatz() {
+        return new AdverbialeAngabeSkopusSatz(this);
+    }
+
+    default AdverbialeAngabeSkopusVerbAllg alsAdverbialeAngabeSkopusVerbAllg() {
+        return new AdverbialeAngabeSkopusVerbAllg(this);
     }
 
     /**

@@ -21,7 +21,7 @@ public class PraedikatDuTextPart implements AbstractDuTextPart {
 
     @Override
     public Wortfolge getDuHauptsatz() {
-        return Wortfolge.joinToNullWortfolge(praedikat
+        return Wortfolge.joinToWortfolge(praedikat
                 .alsSatzMitSubjekt(Personalpronomen.get(P2,
                         // Hier muss man darauf achten, keine Sätze mit
                         // "du, der du" zu generieren, weil es ja eine
@@ -32,7 +32,7 @@ public class PraedikatDuTextPart implements AbstractDuTextPart {
 
     @Override
     public Wortfolge getDuHauptsatzMitVorfeld(final String vorfeld) {
-        return Wortfolge.joinToNullWortfolge(
+        return Wortfolge.joinToWortfolge(
                 praedikat
                         .alsSatzMitSubjekt(Personalpronomen.get(P2,
                                 // Hier muss man darauf achten, keine Sätze mit
@@ -56,7 +56,7 @@ public class PraedikatDuTextPart implements AbstractDuTextPart {
 
     @Override
     public Wortfolge getDuSatzanschlussOhneSubjekt() {
-        return Wortfolge.joinToNullWortfolge(
+        return Wortfolge.joinToWortfolge(
                 praedikat.getVerbzweit(P2, SG));
     }
 

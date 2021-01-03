@@ -159,10 +159,13 @@ public class PraedikatMitPraedikativerAdjektivphraseOhneLeerstellen
     Iterable<Konstituente> getMittelfeldOhneLinksversetzungUnbetonterPronomen(
             final Person personSubjekt, final Numerus numerusSubjekt) {
         return Konstituente.joinToKonstituenten(
-                getAdverbialeAngabeSkopusSatzDescription(), // "leider"
+                getAdverbialeAngabeSkopusSatzDescriptionFuerMittelfeld(personSubjekt,
+                        numerusSubjekt), // "leider"
                 getModalpartikeln(), // "halt"
-                getAdverbialeAngabeSkopusVerbAllgDescriptionFuerMittelfeld(), // "erneut"
-                getAdverbialeAngabeSkopusVerbWohinWoherDescription(), // "nach außen" (?)
+                getAdverbialeAngabeSkopusVerbAllgDescriptionFuerMittelfeld(personSubjekt,
+                        numerusSubjekt), // "erneut"
+                getAdverbialeAngabeSkopusVerbWohinWoherDescription(personSubjekt, numerusSubjekt),
+                // "nach außen" (?)
                 adjektivphrase.getPraedikativOhneAnteilKandidatFuerNachfeld(
                         personSubjekt, numerusSubjekt) // "glücklich"
         );
@@ -194,7 +197,11 @@ public class PraedikatMitPraedikativerAdjektivphraseOhneLeerstellen
         return Konstituente.joinToKonstituenten(
                 adjektivphrase.getPraedikativAnteilKandidatFuerNachfeld(
                         personSubjekt, numerusSubjekt), // ", dich zu sehen"
-                getAdverbialeAngabeSkopusVerbAllgDescriptionFuerZwangsausklammerung());
+                getAdverbialeAngabeSkopusVerbAllgDescriptionFuerZwangsausklammerung(personSubjekt,
+                        numerusSubjekt),
+                getAdverbialeAngabeSkopusSatzDescriptionFuerZwangsausklammerung(personSubjekt,
+                        numerusSubjekt)
+        );
     }
 
     @Override

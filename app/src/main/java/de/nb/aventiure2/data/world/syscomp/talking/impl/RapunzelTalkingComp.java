@@ -257,7 +257,7 @@ public class RapunzelTalkingComp extends AbstractTalkingComp {
                     .map(a -> neuerSatz(joinToString(
                             anaph.nom(),
                             "heißt dich",
-                            a.getDescription(),
+                            a.getDescription(anaph.getPerson(), anaph.getNumerus()),
                             "willkommen"))
                             .phorikKandidat(anaph, RAPUNZEL))
                     .collect(Collectors.toList()));
@@ -266,10 +266,10 @@ public class RapunzelTalkingComp extends AbstractTalkingComp {
         if (zuneigungTowardsSC >= -FeelingIntensity.MERKLICH
                 && zuneigungTowardsSC <= FeelingIntensity.DEUTLICH) {
             alt.addAll(altEindruckAdvAngaben.stream()
-                    .map(a -> neuerSatz(Wortfolge.joinToNullWortfolge(
+                    .map(a -> neuerSatz(Wortfolge.joinToWortfolge(
                             "„Hallo“, sagt",
                             anaph.nom(),
-                            a.getDescription()))
+                            a.getDescription(anaph.getPerson(), anaph.getNumerus())))
                             .beendet(SENTENCE)
                             .phorikKandidat(anaph, RAPUNZEL))
                     .collect(Collectors.toList()));

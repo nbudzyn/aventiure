@@ -1,9 +1,6 @@
 package de.nb.aventiure2.german.praedikat;
 
 import de.nb.aventiure2.german.adjektiv.AdjPhrOhneLeerstellen;
-import de.nb.aventiure2.german.base.Konstituente;
-import de.nb.aventiure2.german.base.Numerus;
-import de.nb.aventiure2.german.base.Person;
 import de.nb.aventiure2.german.base.Praepositionalphrase;
 
 /**
@@ -17,14 +14,11 @@ import de.nb.aventiure2.german.base.Praepositionalphrase;
  * Dazu siehe {@link AdverbialeAngabeSkopusSatz}
  */
 public class AdverbialeAngabeSkopusVerbAllg extends AbstractAdverbialeAngabe {
-    private final boolean imMittelfeldErlaubt;
-
     /**
      * Erzeugt eine adverbiale Angabe wie "aus lauter Wut".
      */
     public AdverbialeAngabeSkopusVerbAllg(final Praepositionalphrase praepositionalphrase) {
-        this(praepositionalphrase.getDescription(),
-                true
+        this(praepositionalphrase.getDescription()
                 // Wenn die Präpositionalphrase später einmal einen Ergänzungs- oder Angaben-Nebensatz
                 // enthalten könnte - oder eine zu-Infinitiv-Phrase - dann wäre sie im
                 // Mittelfeld nicht erlaubt.
@@ -34,45 +28,18 @@ public class AdverbialeAngabeSkopusVerbAllg extends AbstractAdverbialeAngabe {
     /**
      * Erzeugt eine Adverbiale Angabe aus dieser Adjektivphrase. (Z.B. "glücklich" oder
      * "mich wundernd")
-     *
-     * @param personSubjekt  Die Person des Subjekts
-     * @param numerusSubjekt Der Numerus des Subjekts
      */
-    public AdverbialeAngabeSkopusVerbAllg(final AdjPhrOhneLeerstellen adjektivphrase,
-                                          final Person personSubjekt,
-                                          final Numerus numerusSubjekt) {
-        this( // Anscheinend muss die gesamte adverbiale Phrase kontinuierlich bleiben.
-                // Dann können wir sie ohne Verlust zu einer einzigen Konstituente zusammenfassen.
-                Konstituente.joinToNullSingleKonstituente(
-                        adjektivphrase.getPraedikativOderAdverbial(personSubjekt, numerusSubjekt))
-                        .withVorkommaNoetig(
-                                adjektivphrase
-                                        .enthaeltZuInfinitivOderAngabensatzOderErgaenzungssatz()),
-                // zu-Infinitivphrasen sowie Angaben- und Ergänzungssätze (z.B. indirekte Fragen)
-                //  dürfen nicht im Mittelfeld stehen.
-                // Vgl. *"Sie schaut dich, glücklich dich zu sehen, an."
-                // (Möglich wären "Sie schaut dich an, glücklich, dich zu
-                // sehen." - im Nachfeld - und "Glücklich, dich zu sehen, schaut sie dich
-                // an." - im Vorfeld.)
-                // Außerdem muss so eine adverbiale Angabe offenbar auch vorn durch Komma
-                // Seiten abgetrennt sein: *"Sie schaut dich an glücklich, dich zu
-                // sehen.")
-                !adjektivphrase.enthaeltZuInfinitivOderAngabensatzOderErgaenzungssatz());
+    public AdverbialeAngabeSkopusVerbAllg(final AdjPhrOhneLeerstellen adjektivphrase) {
+        super(adjektivphrase);
     }
 
+    /**
+     * Erzeugt eine adverbiale Bestimmung mit dem Skopus Verb allgemein; der Text darf
+     * keine zu-Infinitive, keine Angabensätze (z.B. zum Adjektiv) und keine Ergönzungssätze
+     * (z.B. zum Adjektiv) enthalten.
+     */
     public AdverbialeAngabeSkopusVerbAllg(final String text) {
-        this(text, true);
-    }
-
-    public AdverbialeAngabeSkopusVerbAllg(final String text, final boolean imMittelfeldErlaubt) {
         super(text);
-        this.imMittelfeldErlaubt = imMittelfeldErlaubt;
-    }
-
-    public AdverbialeAngabeSkopusVerbAllg(final Konstituente konstituente,
-                                          final boolean imMittelfeldErlaubt) {
-        super(konstituente);
-        this.imMittelfeldErlaubt = imMittelfeldErlaubt;
     }
 
     /**
@@ -83,6 +50,12 @@ public class AdverbialeAngabeSkopusVerbAllg extends AbstractAdverbialeAngabe {
      * *"Sie schaut dich glücklich, dich zu sehen, an.")
      */
     boolean imMittelfeldErlaubt() {
-        return imMittelfeldErlaubt;
+        return !getAdjektivphrase().enthaeltZuInfinitivOderAngabensatzOderErgaenzungssatz();
+        // zu-Infinitivphrasen sowie Angaben- und Ergänzungssätze (z.B. indirekte Fragen)
+        //  dürfen nicht im Mittelfeld stehen.
+        // Vgl. *"Sie schaut dich, glücklich dich zu sehen, an."
+        // (Möglich wären "Sie schaut dich an, glücklich, dich zu
+        // sehen." - im Nachfeld - und "Glücklich, dich zu sehen, schaut sie dich
+        // an." - im Vorfeld.)
     }
 }

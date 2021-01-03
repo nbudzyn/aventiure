@@ -182,11 +182,14 @@ public class PraedikatDirektivesVerbOhneLeerstellen
     Iterable<Konstituente> getMittelfeldOhneLinksversetzungUnbetonterPronomen(
             final Person personSubjekt, final Numerus numerusSubjekt) {
         return Konstituente.joinToKonstituenten(
-                getAdverbialeAngabeSkopusSatzDescription(), // "aus einer Laune heraus"
+                getAdverbialeAngabeSkopusSatzDescriptionFuerMittelfeld(personSubjekt,
+                        numerusSubjekt),
+                // "aus einer Laune heraus"
                 getModalpartikeln(), // "mal eben"
-                getAdverbialeAngabeSkopusVerbAllgDescriptionFuerMittelfeld(), // "erneut"
+                getAdverbialeAngabeSkopusVerbAllgDescriptionFuerMittelfeld(personSubjekt,
+                        numerusSubjekt), // "erneut"
                 objekt.im(kasus), // "die junge Frau"
-                getAdverbialeAngabeSkopusVerbWohinWoherDescription()
+                getAdverbialeAngabeSkopusVerbWohinWoherDescription(personSubjekt, numerusSubjekt)
                 // (kann es wohl gar nicht geben)
         );
 
@@ -236,10 +239,12 @@ public class PraedikatDirektivesVerbOhneLeerstellen
                         lexikalischerKern.getZuInfinitiv(
                                 // Es liegt "Objektkontrolle" vor.
                                 objekt.getPerson(), objekt.getNumerusGenus().getNumerus()),
-                        // "sich zu waschen"
-                        getAdverbialeAngabeSkopusVerbAllgDescriptionFuerZwangsausklammerung()
+                        // "sich zu waschen"; wir lassen diese Kommata weg - das ist erlaubt
+                        getAdverbialeAngabeSkopusVerbAllgDescriptionFuerZwangsausklammerung(
+                                personSubjekt, numerusSubjekt),
                         // , glücklich, dich zu sehen
-                        // Wir lassen diese Kommata weg - das ist erlaubt
+                        getAdverbialeAngabeSkopusSatzDescriptionFuerZwangsausklammerung(
+                                personSubjekt, numerusSubjekt)
                 );
     }
 

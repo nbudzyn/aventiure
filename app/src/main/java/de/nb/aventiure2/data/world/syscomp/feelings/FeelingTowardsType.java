@@ -2,26 +2,14 @@ package de.nb.aventiure2.data.world.syscomp.feelings;
 
 import com.google.common.collect.ImmutableList;
 
-import java.util.stream.Stream;
-
 import de.nb.aventiure2.german.adjektiv.AdjPhrOhneLeerstellen;
 import de.nb.aventiure2.german.base.NumerusGenus;
 import de.nb.aventiure2.german.base.Person;
 import de.nb.aventiure2.german.base.SubstantivischePhrase;
-import de.nb.aventiure2.german.praedikat.AdverbialeAngabeSkopusSatz;
 import de.nb.aventiure2.german.praedikat.AdverbialeAngabeSkopusVerbAllg;
 import de.nb.aventiure2.german.satz.Satz;
 
 import static com.google.common.collect.ImmutableList.toImmutableList;
-import static de.nb.aventiure2.german.praedikat.PraedikativumPraedikatOhneLeerstellen.praedikativumPraedikatMit;
-import static de.nb.aventiure2.german.praedikat.VerbSubjObj.ANBLICKEN;
-import static de.nb.aventiure2.german.praedikat.VerbSubjObj.ANSCHAUEN;
-import static de.nb.aventiure2.german.praedikat.VerbSubjObj.ANSEHEN;
-import static de.nb.aventiure2.german.praedikat.VerbSubjPraedikativeAdjektivphrase.AUSSEHEN;
-import static de.nb.aventiure2.german.praedikat.VerbSubjPraedikativeAdjektivphrase.DREINSCHAUEN;
-import static de.nb.aventiure2.german.praedikat.VerbSubjPraedikativeAdjektivphrase.SCHAUEN;
-import static de.nb.aventiure2.german.praedikat.VerbSubjPraedikativeAdjektivphrase.SCHEINEN;
-import static de.nb.aventiure2.german.praedikat.VerbSubjPraedikativeAdjektivphrase.WIRKEN;
 
 /**
  * Ein Spektrum von Gefühlen, dass ein {@link IFeelingBeingGO} gegenüber jemandem oder
@@ -54,32 +42,19 @@ public enum FeelingTowardsType {
             final SubstantivischePhrase gameObjectSubjekt,
             final SubstantivischePhrase targetDesc, final int feelingIntensity,
             final boolean targetKnown) {
-        final ImmutableList.Builder<Satz> res = ImmutableList.builder();
-
         final ImmutableList<AdjPhrOhneLeerstellen> altEindruckAdjPhr =
                 altEindruckBeiBegegnungAdjPhr(
                         gameObjectSubjekt.getPerson(), gameObjectSubjekt.getNumerusGenus(),
                         targetDesc, feelingIntensity, targetKnown
                 );
 
-        res.addAll(altEindruckBeiBegegnungSaetze(gameObjectSubjekt, targetDesc,
-                feelingIntensity, targetKnown));
+        final ImmutableList<AdverbialeAngabeSkopusVerbAllg> adverbialeAngaben =
+                altEindruckBeiBegegnungAdvAngaben(
+                        gameObjectSubjekt, targetDesc, feelingIntensity, targetKnown);
 
-        res.addAll(altBeiBegegnungAnsehenSaetze(gameObjectSubjekt,
-                targetDesc, feelingIntensity, targetKnown));
-
-        res.addAll(altEindruckAdjPhr.stream()
-                .flatMap(adjPhr ->
-                        Stream.of("offenkundig", "sichtlich", "offenbar", "ganz offenbar")
-                                .map(
-                                        advAng ->
-                                                praedikativumPraedikatMit(adjPhr)
-                                                        .mitAdverbialerAngabe(
-                                                                new AdverbialeAngabeSkopusSatz(
-                                                                        advAng))
-                                                        .alsSatzMitSubjekt(gameObjectSubjekt)
-                                )
-                ).collect(toImmutableList()));
+        final ImmutableList.Builder<Satz> res = ImmutableList.builder();
+        res.addAll(FeelingsSaetzeUtil.
+                toReaktionSaetze(gameObjectSubjekt, altEindruckAdjPhr, adverbialeAngaben));
 
         res.addAll(feelingBeiBegegnungDescriber.altReaktionBeiBegegnungSaetze(
                 gameObjectSubjekt, targetDesc, feelingIntensity, targetKnown
@@ -92,13 +67,11 @@ public enum FeelingTowardsType {
             final SubstantivischePhrase gameObjectSubjekt,
             final SubstantivischePhrase targetDesc,
             final int feelingIntensity, final boolean targetKnown) {
-        return altEindruckBeiBegegnungAdjPhr(
-                gameObjectSubjekt.getPerson(), gameObjectSubjekt.getNumerusGenus(),
-                targetDesc, feelingIntensity, targetKnown)
-                .stream()
-                .flatMap(ap -> Stream.of(AUSSEHEN, DREINSCHAUEN, SCHAUEN, SCHEINEN, WIRKEN)
-                        .map(v -> v.mit(ap).alsSatzMitSubjekt(gameObjectSubjekt)))
-                .collect(toImmutableList());
+        final ImmutableList<AdjPhrOhneLeerstellen> adjektivPhrasen =
+                altEindruckBeiBegegnungAdjPhr(
+                        gameObjectSubjekt.getPerson(), gameObjectSubjekt.getNumerusGenus(),
+                        targetDesc, feelingIntensity, targetKnown);
+        return FeelingsSaetzeUtil.toEindrueckSaetze(gameObjectSubjekt, adjektivPhrasen);
     }
 
     /**
@@ -114,13 +87,10 @@ public enum FeelingTowardsType {
             final SubstantivischePhrase gameObjectSubjekt,
             final SubstantivischePhrase targetDesc, final int feelingIntensity,
             final boolean targetKnown) {
-        return altEindruckBeiBegegnungAdvAngaben(
-                gameObjectSubjekt, targetDesc, feelingIntensity, targetKnown).stream()
-                .flatMap(aa -> Stream.of(ANBLICKEN, ANSEHEN, ANSCHAUEN)
-                        .map(v -> v.mit(gameObjectSubjekt)
-                                .mitAdverbialerAngabe(aa)
-                                .alsSatzMitSubjekt(gameObjectSubjekt)))
-                .collect(toImmutableList());
+        final ImmutableList<AdverbialeAngabeSkopusVerbAllg> adverbialeAngaben =
+                altEindruckBeiBegegnungAdvAngaben(
+                        gameObjectSubjekt, targetDesc, feelingIntensity, targetKnown);
+        return FeelingsSaetzeUtil.toAnsehenSaetze(gameObjectSubjekt, adverbialeAngaben);
     }
 
     /**
@@ -150,9 +120,7 @@ public enum FeelingTowardsType {
                                 .iterator().hasNext())
                 // "Sie schaut dich überrascht an.", aber nicht
                 // *"Sie schaut dich überrascht an, dich zu sehen".
-                .map(ap -> ap.alsAdverbialeAngabe(
-                        gameObjectSubjekt.getPerson(),
-                        gameObjectSubjekt.getNumerus()))
+                .map(AdjPhrOhneLeerstellen::alsAdverbialeAngabeSkopusVerbAllg)
                 .collect(toImmutableList());
     }
 

@@ -11,13 +11,22 @@ import javax.annotation.concurrent.Immutable;
 import de.nb.aventiure2.data.time.AvDateTime;
 import de.nb.aventiure2.data.time.AvTime;
 import de.nb.aventiure2.data.time.AvTimeSpan;
+import de.nb.aventiure2.german.adjektiv.AdjPhrOhneLeerstellen;
 import de.nb.aventiure2.german.praedikat.AdverbialeAngabeSkopusSatz;
+import de.nb.aventiure2.german.praedikat.AdverbialeAngabeSkopusVerbAllg;
 
 import static com.google.common.collect.ImmutableList.toImmutableList;
 import static de.nb.aventiure2.data.time.AvTimeSpan.hours;
 import static de.nb.aventiure2.data.time.AvTimeSpan.mins;
 import static de.nb.aventiure2.data.time.AvTimeSpan.noTime;
 import static de.nb.aventiure2.data.time.AvTimeSpan.secs;
+import static de.nb.aventiure2.german.adjektiv.AdjektivOhneErgaenzungen.BENOMMEN;
+import static de.nb.aventiure2.german.adjektiv.AdjektivOhneErgaenzungen.ERSCHOEPFT;
+import static de.nb.aventiure2.german.adjektiv.AdjektivOhneErgaenzungen.HUNDEMUEDE;
+import static de.nb.aventiure2.german.adjektiv.AdjektivOhneErgaenzungen.MUEDE;
+import static de.nb.aventiure2.german.adjektiv.AdjektivOhneErgaenzungen.TODMUEDE;
+import static de.nb.aventiure2.german.adjektiv.AdjektivOhneErgaenzungen.UEBERMUEDET;
+import static de.nb.aventiure2.german.adjektiv.AdjektivOhneErgaenzungen.WACH;
 
 @Immutable
 public class MuedigkeitsData {
@@ -157,40 +166,53 @@ public class MuedigkeitsData {
         }
     }
 
-    ImmutableList<AdverbialeAngabeSkopusSatz> altAdverbialeAngaben() {
-        return getAdverbialeAngabeString().stream()
-                .map(AdverbialeAngabeSkopusSatz::new)
+    ImmutableList<AdverbialeAngabeSkopusSatz> altAdverbialeAngabenSkopusSatz() {
+        if (muedigkeit == FeelingIntensity.NEUTRAL) {
+            return ImmutableList.of(
+                    new AdverbialeAngabeSkopusSatz("hellwach"),
+                    new AdverbialeAngabeSkopusSatz("mit voller Konzentration"));
+        }
+
+        return altAdjektivphrase().stream()
+                .map(AdjPhrOhneLeerstellen::alsAdverbialeAngabeSkopusSatz)
                 .collect(toImmutableList());
     }
 
-    private ImmutableList<String> getAdverbialeAngabeString() {
+    ImmutableList<AdverbialeAngabeSkopusVerbAllg> altAdverbialeAngabenSkopusVerbAllg() {
         if (muedigkeit == FeelingIntensity.NEUTRAL) {
-            return ImmutableList.of("hellwach", "mit voller Konzentration");
+            return ImmutableList.of(
+                    new AdverbialeAngabeSkopusVerbAllg("hellwach"),
+                    new AdverbialeAngabeSkopusVerbAllg("mit voller Konzentration"));
         }
 
-        return altAdjektivphrasePraedikativ();
+        return altAdjektivphrase().stream()
+                .map(AdjPhrOhneLeerstellen::alsAdverbialeAngabeSkopusVerbAllg)
+                .collect(toImmutableList());
     }
 
-    ImmutableList<String> altAdjektivphrasePraedikativ() {
+    ImmutableList<AdjPhrOhneLeerstellen> altAdjektivphrase() {
         switch (muedigkeit) {
             case FeelingIntensity.NEUTRAL:
-                return ImmutableList.of("wach");
+                return ImmutableList.of(WACH);
             case FeelingIntensity.NUR_LEICHT:
-                return ImmutableList.of("leicht erschöpft");
+                return ImmutableList.of(ERSCHOEPFT.mitGraduativerAngabe("leicht"));
             case FeelingIntensity.MERKLICH:
-                return ImmutableList.of("erschöpft");
+                return ImmutableList.of(ERSCHOEPFT);
             case FeelingIntensity.DEUTLICH:
-                return ImmutableList.of("müde");
+                return ImmutableList.of(MUEDE);
             case FeelingIntensity.STARK:
-                return ImmutableList.of("völlig übermüdet", "hundemüde");
+                return ImmutableList.of(
+                        UEBERMUEDET.mitGraduativerAngabe("völig"),
+                        HUNDEMUEDE);
             case FeelingIntensity.SEHR_STARK:
-                return ImmutableList.of("todmüde");
+                return ImmutableList.of(TODMUEDE);
             case FeelingIntensity.PATHOLOGISCH:
-                return ImmutableList.of("benommen");
+                return ImmutableList.of(BENOMMEN);
             default:
                 throw new IllegalStateException("Müdigkeit: " + muedigkeit);
         }
     }
+
 
     MuedigkeitsData withMuedigkeit(final int muedigkeit, final int nextHinweisActionStepCount) {
         return new MuedigkeitsData(muedigkeit,

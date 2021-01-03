@@ -138,7 +138,7 @@ public class HochwerfenAction<OBJ extends IDescribableGO & ILocatableGO>
             return;
         }
 
-        narrateAndDoHochwerfenAuffangen(sc.feelingsComp().altAdverbialeAngaben().stream()
+        narrateAndDoHochwerfenAuffangen(sc.feelingsComp().altAdverbialeAngabenSkopusSatz().stream()
                 .map(a ->
                         du(PARAGRAPH,
                                 new ZweiPraedikateOhneLeerstellen(

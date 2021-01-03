@@ -148,34 +148,36 @@ public class PraedikatIntentionalesVerbOhneLeerstellen
     @Override
     Iterable<Konstituente> getMittelfeldOhneLinksversetzungUnbetonterPronomen(
             final Person personSubjekt, final Numerus numerusSubjekt) {
+        @Nullable final AdverbialeAngabeSkopusSatz adverbialeAngabeSkopusSatz =
+                getAdverbialeAngabeSkopusSatz();
         @Nullable final AdverbialeAngabeSkopusVerbAllg adverbialeAngabeSkopusVerbAllg =
                 getAdverbialeAngabeSkopusVerbAllg();
 
-        if (adverbialeAngabeSkopusVerbAllg == null ||
-                adverbialeAngabeSkopusVerbAllg.imMittelfeldErlaubt()) {
-            return Konstituente.joinToKonstituenten(
-                    getAdverbialeAngabeSkopusSatzDescription(), // "aus einer Laune heraus"
-                    getModalpartikeln(), // "mal eben"
-                    adverbialeAngabeSkopusVerbAllg != null ?
-                            adverbialeAngabeSkopusVerbAllg.getDescription() :  // "erneut"
-                            null,
-                    getAdverbialeAngabeSkopusVerbWohinWoherDescription()
-                    // (kann es wohl gar nicht geben)
-            );
-
-            // Der lexikalische Kern könnte als Alternative zusäztlich ins Mittelfeld gestellt
-            //  werden: "ihre Haare wieder hinunterzulassen versuchen":
-            // "Die junge Frau hat ihre Haare wieder hinunterzulassen versucht"
-        }
-
         return Konstituente.joinToKonstituenten(
-                getAdverbialeAngabeSkopusSatzDescription(), // "aus einer Laune heraus"
+                adverbialeAngabeSkopusSatz != null &&
+                        adverbialeAngabeSkopusSatz.imMittelfeldErlaubt() ?
+                        adverbialeAngabeSkopusSatz.getDescription(personSubjekt, numerusSubjekt) :
+                        // "aus einer Laune heraus"
+                        null, // (ins Nachfeld verschieben)
                 getModalpartikeln(), // "mal eben"
-                adverbialeAngabeSkopusVerbAllg.getDescription(), // "erneut"
-                lexikalischerKern.getZuInfinitiv(
-                        // Es liegt "Subjektkontrolle" vor.
-                        personSubjekt, numerusSubjekt
-                ) // "ihre Haare wieder hinunterzulassen"
+                adverbialeAngabeSkopusVerbAllg != null &&
+                        adverbialeAngabeSkopusVerbAllg.imMittelfeldErlaubt() ?
+                        adverbialeAngabeSkopusVerbAllg.getDescription(personSubjekt,
+                                numerusSubjekt) :  // "erneut"
+                        null, // (ins Nachfeld verschieben)
+                adverbialeAngabeSkopusVerbAllg != null &&
+                        !adverbialeAngabeSkopusVerbAllg.imMittelfeldErlaubt()
+                        // Die adverbialeAngabeSkopusSatz schieben wir immer ins Nachfeld,
+                        // daraus wird sie nach Möglichkeit ins Vorfeld gezogen werden.
+                        ?
+                        // -> Lex. Kern sollten wir aus dem Nachfeld vorziehen
+                        lexikalischerKern.getZuInfinitiv(
+                                // Es liegt Subjektkontrolle vor.
+                                personSubjekt, numerusSubjekt
+                        ) // "ihre Haare wieder hinunterzulassen"
+                        : null, // (Normalfall: lexikalischer Kern im Nachfeld)
+                getAdverbialeAngabeSkopusVerbWohinWoherDescription(personSubjekt,
+                        numerusSubjekt)
                 // (kann es wohl gar nicht geben)
         );
     }
@@ -203,20 +205,30 @@ public class PraedikatIntentionalesVerbOhneLeerstellen
     @Override
     public Iterable<Konstituente> getNachfeld(final Person personSubjekt,
                                               final Numerus numerusSubjekt) {
+        @Nullable final AdverbialeAngabeSkopusSatz adverbialeAngabeSkopusSatz =
+                getAdverbialeAngabeSkopusSatz();
         @Nullable final AdverbialeAngabeSkopusVerbAllg adverbialeAngabeSkopusVerbAllg =
                 getAdverbialeAngabeSkopusVerbAllg();
-        if (adverbialeAngabeSkopusVerbAllg != null
-                && !adverbialeAngabeSkopusVerbAllg.imMittelfeldErlaubt()) {
-            return Konstituente.joinToKonstituenten(
-                    adverbialeAngabeSkopusVerbAllg.getDescription() // "glücklich, dich zu sehen"
-            );
-        }
-
-        return lexikalischerKern.getZuInfinitiv(
-                // Es liegt "Subjektkontrolle" vor.
-                personSubjekt, numerusSubjekt
-        ); // "(Du versuchst) dich zu waschen"
-        // Wir lassen die Kommata rund um den Infinitiv weg - das ist erlaubt.
+        return Konstituente.joinToKonstituenten(
+                adverbialeAngabeSkopusVerbAllg == null
+                        || adverbialeAngabeSkopusVerbAllg.imMittelfeldErlaubt() ?
+                        lexikalischerKern.getZuInfinitiv(
+                                // Es liegt Subjektkontrolle vor.
+                                personSubjekt, numerusSubjekt
+                        ) // "(Du versuchst) dich zu waschen"
+                        // Wir lassen die Kommata rund um den Infinitiv weg - das ist erlaubt.
+                        : null,
+                adverbialeAngabeSkopusVerbAllg != null
+                        && !adverbialeAngabeSkopusVerbAllg.imMittelfeldErlaubt() ?
+                        adverbialeAngabeSkopusVerbAllg
+                                .getDescription(personSubjekt, numerusSubjekt)
+                        // "glücklich, dich zu sehen"
+                        : null,
+                adverbialeAngabeSkopusSatz != null
+                        && !adverbialeAngabeSkopusSatz.imMittelfeldErlaubt() ?
+                        adverbialeAngabeSkopusSatz
+                                .getDescription(personSubjekt, numerusSubjekt)
+                        : null);
     }
 
     @Override
