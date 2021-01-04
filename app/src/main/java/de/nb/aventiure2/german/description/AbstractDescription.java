@@ -30,7 +30,7 @@ public abstract class AbstractDescription<SELF extends AbstractDescription<SELF>
     protected AbstractDescription(final StructuralElement startsNew,
                                   final boolean woertlicheRedeNochOffen,
                                   final boolean kommaStehtAus) {
-        this(new DescriptionParams(startsNew, woertlicheRedeNochOffen, kommaStehtAus));
+        this(new DescriptionParams(startsNew, kommaStehtAus));
     }
 
     protected AbstractDescription(final DescriptionParams params) {
@@ -80,19 +80,10 @@ public abstract class AbstractDescription<SELF extends AbstractDescription<SELF>
     @NonNull
     public TextDescription toTextDescriptionKeepParams(final Wortfolge wortfolge) {
         final DescriptionParams params = copyParams();
-        params.woertlicheRedeNochOffen(wortfolge.woertlicheRedeNochOffen());
         params.komma(wortfolge.kommaStehtAus());
 
-        return new TextDescription(params, wortfolge.getString());
-    }
-
-    public SELF woertlicheRedeNochOffen() {
-        return woertlicheRedeNochOffen(true);
-    }
-
-    public SELF woertlicheRedeNochOffen(final boolean woertlicheRedeNochOffen) {
-        params.woertlicheRedeNochOffen(woertlicheRedeNochOffen);
-        return (SELF) this;
+        return new TextDescription(params, wortfolge.getString(),
+                wortfolge.woertlicheRedeNochOffen());
     }
 
     public SELF komma() {
@@ -102,10 +93,6 @@ public abstract class AbstractDescription<SELF extends AbstractDescription<SELF>
     public SELF komma(final boolean kommaStehtAus) {
         params.komma(kommaStehtAus);
         return (SELF) this;
-    }
-
-    public boolean isWoertlicheRedeNochOffen() {
-        return params.isWoertlicheRedeNochOffen();
     }
 
     public boolean isKommaStehtAus() {

@@ -288,9 +288,10 @@ public class DescriptionUmformulierer {
         return du(
                 max(desc.getStartsNew(), SENTENCE),
                 praefixVerb,
-                praefixRemainder + " " +
-                        GermanUtil.capitalize(textDescription.getText()))
-                .woertlicheRedeNochOffen(textDescription.isWoertlicheRedeNochOffen())
+                GermanUtil.capitalize(
+                        GermanUtil.joinToString(
+                                praefixRemainder,
+                                textDescription.toWortfolge())))
                 .komma(textDescription.isKommaStehtAus())
                 .phorikKandidat(textDescription.getPhorikKandidat())
                 .beendet(textDescription.getEndsThis());
@@ -315,13 +316,12 @@ public class DescriptionUmformulierer {
                 desc.toTextDescriptionSatzanschlussOhneSubjekt();
         return du(max(desc.getStartsNew(), PARAGRAPH),
                 praefixVerb,
-                praefixRemainder
-                        + " und "
-                        + descriptionSatzanschlussOhneSubjekt.getText(),
-                praefixVorfeldSatzglied)
+                GermanUtil.joinToString(
+                        praefixRemainder,
+                        "und",
+                        descriptionSatzanschlussOhneSubjekt.toWortfolge(),
+                        praefixVorfeldSatzglied))
                 .dann(desc.isDann())
-                .woertlicheRedeNochOffen(
-                        descriptionSatzanschlussOhneSubjekt.isWoertlicheRedeNochOffen())
                 .komma(descriptionSatzanschlussOhneSubjekt.isKommaStehtAus())
                 .phorikKandidat(desc.getPhorikKandidat())
                 .beendet(desc.getEndsThis());

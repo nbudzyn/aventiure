@@ -32,6 +32,7 @@ import de.nb.aventiure2.data.world.syscomp.spatialconnection.NumberOfWays;
 import de.nb.aventiure2.data.world.syscomp.state.IHasStateGO;
 import de.nb.aventiure2.data.world.syscomp.state.impl.SchlossfestState;
 import de.nb.aventiure2.data.world.syscomp.storingplace.ILocationGO;
+import de.nb.aventiure2.german.base.GermanUtil;
 import de.nb.aventiure2.german.base.StructuralElement;
 import de.nb.aventiure2.german.description.AbstractFlexibleDescription;
 import de.nb.aventiure2.german.description.TextDescription;
@@ -464,12 +465,11 @@ public class BewegenAction<LOC_DESC extends ILocatableGO & IDescribableGO>
                     description.getDescription().toTextDescription();
             if (numberOfWays == ONLY_WAY) {
                 alt.add(
-                        du("schaust", "dich nur kurz um, dann "
-                                        +
-                                        descriptionHauptsatz.getText(),
+                        du("schaust",
+                                GermanUtil.joinToString(
+                                        "dich nur kurz um, dann",
+                                        descriptionHauptsatz.toWortfolge()),
                                 description.getTimeElapsed())
-                                .woertlicheRedeNochOffen(
-                                        descriptionHauptsatz.isWoertlicheRedeNochOffen())
                                 .komma(descriptionHauptsatz.isKommaStehtAus())
                                 .undWartest(
                                         description

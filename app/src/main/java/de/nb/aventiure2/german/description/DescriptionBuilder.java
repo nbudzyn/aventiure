@@ -192,7 +192,7 @@ public class DescriptionBuilder {
         checkArgument(startsNew != WORD,
                 "Neuer Satz unmöglich für " + startsNew);
 
-        return new TextDescription(startsNew, description);
+        return neuerSatz(startsNew, w(description));
     }
 
     @CheckReturnValue
@@ -215,7 +215,7 @@ public class DescriptionBuilder {
     @NonNull
     @CheckReturnValue
     public static TextDescription satzanschluss(final String description) {
-        return new TextDescription(StructuralElement.WORD, description);
+        return satzanschluss(w(description));
     }
 
     @NonNull

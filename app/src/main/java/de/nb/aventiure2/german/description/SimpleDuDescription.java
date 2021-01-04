@@ -118,7 +118,7 @@ public class SimpleDuDescription extends AbstractFlexibleDescription<SimpleDuDes
     public Wortfolge toWortfolge() {
         return w(GermanUtil.buildHauptsatz("du",
                 verb,
-                remainder), copyParams().isWoertlicheRedeNochOffen(),
+                remainder), false,
                 copyParams().isKommaStehtAus());
     }
 

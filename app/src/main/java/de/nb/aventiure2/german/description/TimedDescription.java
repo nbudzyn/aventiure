@@ -38,6 +38,7 @@ public class TimedDescription<D extends AbstractDescription<?>> {
     @Nullable
     private final String counterIdIncrementedIfTextIsNarrated;
 
+    @SafeVarargs
     @CheckReturnValue
     @NonNull
     public static <D extends AbstractDescription<?>>
@@ -96,16 +97,6 @@ public class TimedDescription<D extends AbstractDescription<?>> {
         return getDescription().getStartsNew();
     }
 
-    public TimedDescription<D> woertlicheRedeNochOffen() {
-        getDescription().woertlicheRedeNochOffen(true);
-        return this;
-    }
-
-    public TimedDescription<D> woertlicheRedeNochOffen(final boolean woertlicheRedeNochOffen) {
-        getDescription().woertlicheRedeNochOffen(woertlicheRedeNochOffen);
-        return this;
-    }
-
     public TimedDescription<D> komma() {
         getDescription().komma(true);
         return this;
@@ -114,10 +105,6 @@ public class TimedDescription<D extends AbstractDescription<?>> {
     public TimedDescription<D> komma(final boolean kommaStehtAus) {
         getDescription().komma(kommaStehtAus);
         return this;
-    }
-
-    public boolean isWoertlicheRedeNochOffen() {
-        return getDescription().isWoertlicheRedeNochOffen();
     }
 
     public boolean isKommaStehtAus() {

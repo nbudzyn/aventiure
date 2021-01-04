@@ -29,6 +29,13 @@ public class TextDescription extends AbstractDescription<TextDescription> {
      */
     private String text;
 
+    /**
+     * Ob die wörtliche Rede noch "offen" ist.  Es steht also noch ein schließendes
+     * Anführungszeichen aus. Wenn der Satz beendet wird, muss vielleicht außerdem
+     * noch ein Punkt nach dem Anführungszeitchen gesetzt werden.
+     */
+    private boolean woertlicheRedeNochOffen;
+
     // IDEA Das Konzept könnte man verallgemeinern: Die TextDescription könnte am Ende
     //  Koordination (d.h. und-Verbindungen) auf verschiedenen Ebenen erlauben:
     //  - Du nimmst die Lampe UND DAS GLAS: Koordination im AkkObj des NEHMEN-Prädikat
@@ -42,18 +49,19 @@ public class TextDescription extends AbstractDescription<TextDescription> {
     TextDescription(final StructuralElement startsNew,
                     final Wortfolge wortfolge) {
         this(new DescriptionParams(startsNew,
-                        wortfolge.woertlicheRedeNochOffen(), wortfolge.kommaStehtAus()),
-                wortfolge.getString());
+                        wortfolge.kommaStehtAus()),
+                wortfolge.getString(), wortfolge.woertlicheRedeNochOffen());
     }
 
     TextDescription(final StructuralElement startsNew,
-                    final String description) {
-        this(new DescriptionParams(startsNew), description);
+                    final String description, final boolean woertlicheRedeNochOffen) {
+        this(new DescriptionParams(startsNew), description, woertlicheRedeNochOffen);
     }
 
     public TextDescription(final DescriptionParams descriptionParams,
-                           final String description) {
+                           final String description, final boolean woertlicheRedeNochOffen) {
         super(descriptionParams);
+        this.woertlicheRedeNochOffen = woertlicheRedeNochOffen;
 
         // FIXME Alle Aufrufer prüfen, ob startsNew richtig gesetzt wird!
         //  Immer, wenn noch etwas anderes als ganze Sätze vorangestellt werden sollen, muss
@@ -79,7 +87,7 @@ public class TextDescription extends AbstractDescription<TextDescription> {
     public TextDescription mitPraefix(final String praefix) {
         return new TextDescription(
                 copyParams(),
-                praefix + text);
+                praefix + text, woertlicheRedeNochOffen);
     }
 
     /**
@@ -95,7 +103,7 @@ public class TextDescription extends AbstractDescription<TextDescription> {
     public TextDescription mitPraefixCapitalize(final String praefix) {
         return new TextDescription(
                 copyParams(),
-                praefix + GermanUtil.capitalize(text));
+                praefix + GermanUtil.capitalize(text), woertlicheRedeNochOffen);
     }
 
     @Override
@@ -142,12 +150,25 @@ public class TextDescription extends AbstractDescription<TextDescription> {
     @CheckReturnValue
     @NonNull
     public Wortfolge toWortfolge() {
-        return w(text, copyParams().isWoertlicheRedeNochOffen(),
+        return w(text, woertlicheRedeNochOffen,
                 copyParams().isKommaStehtAus());
     }
 
     public String getText() {
         return text;
+    }
+
+    public TextDescription woertlicheRedeNochOffen() {
+        return woertlicheRedeNochOffen(true);
+    }
+
+    public TextDescription woertlicheRedeNochOffen(final boolean woertlicheRedeNochOffen) {
+        this.woertlicheRedeNochOffen = woertlicheRedeNochOffen;
+        return this;
+    }
+
+    public boolean isWoertlicheRedeNochOffen() {
+        return woertlicheRedeNochOffen;
     }
 
     @Override
