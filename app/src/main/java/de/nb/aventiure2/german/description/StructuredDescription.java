@@ -20,6 +20,8 @@ import de.nb.aventiure2.german.praedikat.AdverbialeAngabeSkopusVerbWohinWoher;
 import de.nb.aventiure2.german.praedikat.PraedikatOhneLeerstellen;
 import de.nb.aventiure2.german.satz.Satz;
 
+import static de.nb.aventiure2.german.base.Wortfolge.w;
+
 /**
  * A description based on a structured data structure: A {@link de.nb.aventiure2.german.satz.Satz}.
  * Somehting like "Du gehst in den Wald" or "Peter liebt Petra"
@@ -152,7 +154,9 @@ public class StructuredDescription extends AbstractFlexibleDescription<Structure
         @Nullable final Wortfolge hauptsatzMitSpeziellemVorfeldOrNull =
                 getHauptsatzMitSpeziellemVorfeldOrNull();
         if (hauptsatzMitSpeziellemVorfeldOrNull == null) {
-            return getDescriptionHauptsatz();
+            final TextDescription textDescription = toTextDescription();
+            return w(textDescription.getText(), textDescription.isWoertlicheRedeNochOffen(),
+                    textDescription.isKommaStehtAus());
         }
 
         return hauptsatzMitSpeziellemVorfeldOrNull;

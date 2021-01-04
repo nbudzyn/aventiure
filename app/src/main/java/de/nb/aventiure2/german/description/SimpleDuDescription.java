@@ -127,7 +127,9 @@ public class SimpleDuDescription extends AbstractFlexibleDescription<SimpleDuDes
                 getHauptsatzMitSpeziellemVorfeldOrNull();
 
         if (duHauptsatzMitSpeziellemVorfeldOrNull == null) {
-            return getDescriptionHauptsatz();
+            final TextDescription textDescription = toTextDescription();
+            return w(textDescription.getText(), textDescription.isWoertlicheRedeNochOffen(),
+                    textDescription.isKommaStehtAus());
         }
 
         return duHauptsatzMitSpeziellemVorfeldOrNull;

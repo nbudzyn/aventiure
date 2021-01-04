@@ -466,29 +466,25 @@ public class BewegenAction<LOC_DESC extends ILocatableGO & IDescribableGO>
         if (isDefinitivDiskontinuitaet()) {
             final ImmutableList.Builder<TimedDescription<?>> alt = builder();
 
-            final Wortfolge descriptionHauptsatz =
-                    description.getDescription().getDescriptionHauptsatz();
+            final TextDescription descriptionHauptsatz =
+                    description.getDescription().toTextDescription();
             if (numberOfWays == ONLY_WAY) {
                 alt.add(
                         du("schaust", "dich nur kurz um, dann "
                                         +
-                                        // FIXME Wortfolge verwenden!
-                                        descriptionHauptsatz.getString(),
+                                        descriptionHauptsatz.getText(),
                                 description.getTimeElapsed())
                                 .woertlicheRedeNochOffen(
-                                        descriptionHauptsatz.woertlicheRedeNochOffen())
-                                .komma(descriptionHauptsatz.kommaStehtAus())
+                                        descriptionHauptsatz.isWoertlicheRedeNochOffen())
+                                .komma(descriptionHauptsatz.isKommaStehtAus())
                                 .undWartest(
                                         description
                                                 .isAllowsAdditionalDuSatzreihengliedOhneSubjekt()));
             } else {
-                alt.add(neuerSatz(
-                        "Was willst du hier eigentlich? "
-                                + descriptionHauptsatz
-                                .getString(),
-                        description.getTimeElapsed())
-                        .woertlicheRedeNochOffen(descriptionHauptsatz.woertlicheRedeNochOffen())
-                        .komma(descriptionHauptsatz.kommaStehtAus()));
+                alt.add(new TimedDescription<>(
+                        descriptionHauptsatz
+                                .mitPraefixCapitalize("Was willst du hier eigentlich? ")
+                        , description.getTimeElapsed()));
                 if (description.getDescription() instanceof AbstractFlexibleDescription<?> &&
                         ((AbstractFlexibleDescription<?>) description.getDescription())
                                 .hasSubjektDu()) {
@@ -515,7 +511,7 @@ public class BewegenAction<LOC_DESC extends ILocatableGO & IDescribableGO>
                 final TextDescription satzEvtlMitDann = description.getDescription()
                         .toTextDescriptionMitKonjunktionaladverbWennNoetig("dann")
                         .beginntZumindestSentence();
-                if (satzEvtlMitDann.getDescriptionHauptsatz().getString().startsWith("Dann")) {
+                if (satzEvtlMitDann.getText().startsWith("Dann")) {
                     satzEvtlMitDann.dann(false);
                 }
 

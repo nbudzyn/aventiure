@@ -283,16 +283,17 @@ public class DescriptionUmformulierer {
             final String praefixRemainder,
             final AbstractDescription<?> desc) {
         // FIXME Wortfolge verwenden!
-        final String hauptsatz = GermanUtil.capitalize(desc.getDescriptionHauptsatz().getString());
 
+        final TextDescription textDescription = desc.toTextDescription();
         return du(
                 max(desc.getStartsNew(), SENTENCE),
                 praefixVerb,
-                praefixRemainder + " " + hauptsatz)
-                .woertlicheRedeNochOffen(desc.isWoertlicheRedeNochOffen())
-                .komma(desc.isKommaStehtAus())
-                .phorikKandidat(desc.getPhorikKandidat())
-                .beendet(desc.getEndsThis());
+                praefixRemainder + " " +
+                        GermanUtil.capitalize(textDescription.getText()))
+                .woertlicheRedeNochOffen(textDescription.isWoertlicheRedeNochOffen())
+                .komma(textDescription.isKommaStehtAus())
+                .phorikKandidat(textDescription.getPhorikKandidat())
+                .beendet(textDescription.getEndsThis());
     }
 
     @CheckReturnValue

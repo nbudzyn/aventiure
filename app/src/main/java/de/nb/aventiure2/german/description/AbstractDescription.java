@@ -57,7 +57,7 @@ public abstract class AbstractDescription<SELF extends AbstractDescription<SELF>
      * handelt es sich bei dieser Description jedoch um eine kleinere Einheit,
      * wird der Text dieser Description zurückgegeben.
      */
-    public abstract Wortfolge getDescriptionHauptsatz();
+    abstract Wortfolge getDescriptionHauptsatz();
 
     /**
      * Gibt die Beschreibung als Hauptsatz zurück, wenn nötig mit dem angegebenen
