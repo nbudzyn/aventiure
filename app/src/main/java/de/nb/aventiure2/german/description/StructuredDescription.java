@@ -30,16 +30,8 @@ public class StructuredDescription extends AbstractFlexibleDescription<Structure
     StructuredDescription(final StructuralElement startsNew,
                           final Satz satz) {
         super(startsNew,
-                guessWoertlicheRedeNochOffen(satz),
                 guessKommaStehtAus(satz));
         this.satz = satz;
-    }
-
-    private static boolean guessWoertlicheRedeNochOffen(final Satz satz) {
-        // FIXME Hier gibt es ein Problem: Ob die wörtliche Rede noch offen ist, hängt von der
-        //  konkreten Realisierung des Prädikats ab (was steht im Vorfeld / Nachfeld etc.).
-        //  Dies hier ist nur eine grobe Richtschnur.
-        return Konstituente.woertlicheRedeNochOffen(satz.getVerbzweitsatzStandard());
     }
 
     private static boolean guessKommaStehtAus(final Satz satz) {

@@ -319,8 +319,8 @@ public class DescriptionUmformulierer {
                 GermanUtil.joinToString(
                         praefixRemainder,
                         "und",
-                        descriptionSatzanschlussOhneSubjekt.toWortfolge(),
-                        praefixVorfeldSatzglied))
+                        descriptionSatzanschlussOhneSubjekt.toWortfolge()),
+                praefixVorfeldSatzglied)
                 .dann(desc.isDann())
                 .komma(descriptionSatzanschlussOhneSubjekt.isKommaStehtAus())
                 .phorikKandidat(desc.getPhorikKandidat())

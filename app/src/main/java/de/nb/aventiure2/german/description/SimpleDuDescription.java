@@ -35,6 +35,13 @@ public class SimpleDuDescription extends AbstractFlexibleDescription<SimpleDuDes
     @Nullable
     private final String vorfeldSatzglied;
 
+    /**
+     * Ob die wörtliche Rede noch "offen" ist.  Es steht also noch ein schließendes
+     * Anführungszeichen aus. Wenn der Satz beendet wird, muss vielleicht außerdem
+     * noch ein Punkt nach dem Anführungszeitchen gesetzt werden.
+     */
+    private boolean woertlicheRedeNochOffen;
+
     SimpleDuDescription(final StructuralElement startsNew,
                         final String verb,
                         @Nullable final String remainder,
@@ -42,10 +49,11 @@ public class SimpleDuDescription extends AbstractFlexibleDescription<SimpleDuDes
                         final boolean woertlicheRedeNochOffen,
                         final boolean kommaStehtAus) {
         // FIXME Alle du()-Aufrufe prüfen, ggf. auf SENTENCE setzen
-        super(startsNew, woertlicheRedeNochOffen, kommaStehtAus);
+        super(startsNew, kommaStehtAus);
         this.verb = verb;
         this.remainder = remainder;
         this.vorfeldSatzglied = vorfeldSatzglied;
+        this.woertlicheRedeNochOffen = woertlicheRedeNochOffen;
 
         checkArgument(vorfeldSatzglied == null || remainder != null,
                 "Kein remainder, aber ein vorfeldSatzglied? Unmöglich!");
@@ -99,7 +107,10 @@ public class SimpleDuDescription extends AbstractFlexibleDescription<SimpleDuDes
     public Wortfolge toWortfolgeMitVorfeld(final String vorfeld) {
         return w(GermanUtil.buildHauptsatz(vorfeld, // "dann"
                 verb, // "gehst"
-                joinToString("du", remainder))); // "du den Fluss entlang"
+                joinToString("du", remainder)),
+                woertlicheRedeNochOffen,
+                isKommaStehtAus()
+        ); // "du den Fluss entlang"
     }
 
     @Override
@@ -118,8 +129,8 @@ public class SimpleDuDescription extends AbstractFlexibleDescription<SimpleDuDes
     public Wortfolge toWortfolge() {
         return w(GermanUtil.buildHauptsatz("du",
                 verb,
-                remainder), false,
-                copyParams().isKommaStehtAus());
+                remainder), woertlicheRedeNochOffen,
+                isKommaStehtAus());
     }
 
     @Nullable
@@ -138,7 +149,11 @@ public class SimpleDuDescription extends AbstractFlexibleDescription<SimpleDuDes
 
         return w(GermanUtil.buildHauptsatz(vorfeldSatzglied,
                 verb,
-                joinToString("du", remainderWithoutVorfeldSatzglied)));
+                joinToString(
+                        "du",
+                        remainderWithoutVorfeldSatzglied)),
+                woertlicheRedeNochOffen,
+                isKommaStehtAus());
     }
 
     /**
@@ -146,7 +161,12 @@ public class SimpleDuDescription extends AbstractFlexibleDescription<SimpleDuDes
      */
     @Override
     public Wortfolge toWortfolgeSatzanschlussOhneSubjekt() {
-        return Wortfolge.joinToWortfolge(verb, remainder);
+        return w(joinToString(verb, remainder), woertlicheRedeNochOffen, isKommaStehtAus());
+    }
+
+    public SimpleDuDescription woertlicheRedeNochOffen(final boolean woertlicheRedeNochOffen) {
+        this.woertlicheRedeNochOffen = woertlicheRedeNochOffen;
+        return this;
     }
 
     @Override

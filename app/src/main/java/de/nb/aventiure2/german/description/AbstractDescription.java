@@ -24,11 +24,10 @@ public abstract class AbstractDescription<SELF extends AbstractDescription<SELF>
     private final DescriptionParams params;
 
     public AbstractDescription(final StructuralElement startsNew) {
-        this(startsNew, false, false);
+        this(startsNew, false);
     }
 
     protected AbstractDescription(final StructuralElement startsNew,
-                                  final boolean woertlicheRedeNochOffen,
                                   final boolean kommaStehtAus) {
         this(new DescriptionParams(startsNew, kommaStehtAus));
     }

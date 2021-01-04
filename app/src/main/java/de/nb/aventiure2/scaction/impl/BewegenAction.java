@@ -465,10 +465,13 @@ public class BewegenAction<LOC_DESC extends ILocatableGO & IDescribableGO>
                     description.getDescription().toTextDescription();
             if (numberOfWays == ONLY_WAY) {
                 alt.add(
-                        du("schaust",
-                                GermanUtil.joinToString(
-                                        "dich nur kurz um, dann",
-                                        descriptionHauptsatz.toWortfolge()),
+                        new TimedDescription<>(
+                                du("schaust",
+                                        GermanUtil.joinToString(
+                                                "dich nur kurz um, dann",
+                                                descriptionHauptsatz.toWortfolge()))
+                                        .woertlicheRedeNochOffen(
+                                                descriptionHauptsatz.isWoertlicheRedeNochOffen()),
                                 description.getTimeElapsed())
                                 .komma(descriptionHauptsatz.isKommaStehtAus())
                                 .undWartest(

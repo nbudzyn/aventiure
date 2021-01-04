@@ -53,11 +53,6 @@ public class TextDescription extends AbstractDescription<TextDescription> {
                 wortfolge.getString(), wortfolge.woertlicheRedeNochOffen());
     }
 
-    TextDescription(final StructuralElement startsNew,
-                    final String description, final boolean woertlicheRedeNochOffen) {
-        this(new DescriptionParams(startsNew), description, woertlicheRedeNochOffen);
-    }
-
     public TextDescription(final DescriptionParams descriptionParams,
                            final String description, final boolean woertlicheRedeNochOffen) {
         super(descriptionParams);

@@ -151,10 +151,6 @@ public class DescriptionParams {
         endsThis = structuralElement;
     }
 
-    public void komma() {
-        komma(true);
-    }
-
     public void komma(final boolean kommaStehtAus) {
         this.kommaStehtAus = kommaStehtAus;
     }

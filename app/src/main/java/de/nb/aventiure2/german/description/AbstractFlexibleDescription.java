@@ -12,9 +12,8 @@ import de.nb.aventiure2.german.base.Wortfolge;
 public abstract class AbstractFlexibleDescription<SELF extends AbstractDescription<SELF>>
         extends AbstractDescription<SELF> {
     AbstractFlexibleDescription(final StructuralElement startsNew,
-                                final boolean woertlicheRedeNochOffen,
                                 final boolean kommaStehtAus) {
-        super(startsNew, woertlicheRedeNochOffen, kommaStehtAus);
+        super(startsNew, kommaStehtAus);
     }
 
     @NonNull
