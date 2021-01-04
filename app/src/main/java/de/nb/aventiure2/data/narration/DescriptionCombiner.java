@@ -7,10 +7,8 @@ import java.util.Collection;
 import javax.annotation.CheckReturnValue;
 
 import de.nb.aventiure2.german.base.GermanUtil;
-import de.nb.aventiure2.german.base.Wortfolge;
 import de.nb.aventiure2.german.description.AbstractDescription;
 import de.nb.aventiure2.german.description.AbstractFlexibleDescription;
-import de.nb.aventiure2.german.description.DescriptionParams;
 import de.nb.aventiure2.german.description.StructuredDescription;
 import de.nb.aventiure2.german.description.TextDescription;
 
@@ -71,22 +69,18 @@ class DescriptionCombiner {
         checkArgument(first.getStartsNew() == WORD,
                 "Satzanschluss unmöglich für " + first);
 
-        final Wortfolge secondDescriptionSatzanschlussOhneSubjekt =
-                second.getDescriptionSatzanschlussOhneSubjekt();
-
-        final DescriptionParams params = second.copyParams();
-        params.undWartest(false);
-        params.woertlicheRedeNochOffen(
-                secondDescriptionSatzanschlussOhneSubjekt.woertlicheRedeNochOffen());
-        params.komma(secondDescriptionSatzanschlussOhneSubjekt.kommaStehtAus());
+        final TextDescription secondDescriptionSatzanschlussOhneSubjekt =
+                second.toTextDescriptionSatzanschlussOhneSubjekt();
 
         return ImmutableList.of(
-                new TextDescription(params,
-                        GermanUtil.joinToString(
-                                ",",
-                                first.getDescriptionSatzanschlussOhneSubjekt(),
-                                "und",
-                                secondDescriptionSatzanschlussOhneSubjekt)));
+                secondDescriptionSatzanschlussOhneSubjekt
+                        .mitPraefix(
+                                GermanUtil.joinToString(
+                                        ",",
+                                        first.toTextDescriptionSatzanschlussOhneSubjekt()
+                                                .toWortfolge(),
+                                        "und"))
+                        .undWartest(false));
     }
 
     @CheckReturnValue

@@ -20,8 +20,6 @@ import de.nb.aventiure2.german.praedikat.AdverbialeAngabeSkopusVerbWohinWoher;
 import de.nb.aventiure2.german.praedikat.PraedikatOhneLeerstellen;
 import de.nb.aventiure2.german.satz.Satz;
 
-import static de.nb.aventiure2.german.base.Wortfolge.w;
-
 /**
  * A description based on a structured data structure: A {@link de.nb.aventiure2.german.satz.Satz}.
  * Somehting like "Du gehst in den Wald" or "Peter liebt Petra"
@@ -70,7 +68,7 @@ public class StructuredDescription extends AbstractFlexibleDescription<Structure
     }
 
     @Override
-    public ImmutableList<TextDescription> altDescriptionHaupsaetze() {
+    public ImmutableList<TextDescription> altTextDescriptions() {
         final ImmutableList.Builder<TextDescription> res = ImmutableList.builder();
 
         res.add(toTextDescription()
@@ -79,7 +77,7 @@ public class StructuredDescription extends AbstractFlexibleDescription<Structure
                 .beginntZumindestSentence());
 
         @Nullable final Wortfolge hauptsatzMitSpeziellemVorfeld =
-                getHauptsatzMitSpeziellemVorfeldOrNull();
+                toWortfolgeMitSpeziellemVorfeldOrNull();
 
         if (hauptsatzMitSpeziellemVorfeld != null) {
             res.add(toTextDescriptionKeepParams(hauptsatzMitSpeziellemVorfeld)
@@ -118,52 +116,46 @@ public class StructuredDescription extends AbstractFlexibleDescription<Structure
     }
 
     @Override
-    public TextDescription toTextDescriptionMitKonjunktionaladverbWennNoetig(
+    public Wortfolge toWortfolgeMitKonjunktionaladverbWennNoetig(
             final String konjunktionaladverb) {
         // FIXME Derzeit ist die Sache mit dem Komma nicht einheitlich gelöst.
         //  Gut wäre es wohl, wenn die DesriptionParams KEIN isKommaStehtAus
         //  hätten, sondern wenn diese Informatoion hier on-the-fly ermittelt würde.
         //  In der TextDescription müsste man die Information dann zusätzlich speichern,
         //  damit der Benutzer sie (nur dort?!) angeben kann.
-        @Nullable final Wortfolge hauptsatzMitSpeziellemVorfeldOrNull =
-                getHauptsatzMitSpeziellemVorfeldOrNull();
+        @Nullable final Wortfolge wortfolgeMitSpeziellemVorfeldOrNull =
+                toWortfolgeMitSpeziellemVorfeldOrNull();
 
-        if (hauptsatzMitSpeziellemVorfeldOrNull != null) {
-            return toTextDescriptionKeepParams(hauptsatzMitSpeziellemVorfeldOrNull);
+        if (wortfolgeMitSpeziellemVorfeldOrNull != null) {
+            return wortfolgeMitSpeziellemVorfeldOrNull;
         }
 
-        return toTextDescriptionMitVorfeld(konjunktionaladverb);
+        return toWortfolgeMitVorfeld(konjunktionaladverb);
     }
 
     @Override
-    public Wortfolge getDescriptionHauptsatzMitVorfeld(final String vorfeld) {
+    public Wortfolge toWortfolgeMitVorfeld(final String vorfeld) {
         return Wortfolge.joinToWortfolge(satz.getVerbzweitsatzMitVorfeld(vorfeld));
     }
 
     @Override
-    public Wortfolge getDescriptionHauptsatzMitSpeziellemVorfeld() {
-        return getHauptsatzMitSpeziellemVorfeldOrStandard();
-    }
-
-    @Override
-    public Wortfolge getDescriptionHauptsatz() {
-        return Wortfolge.joinToWortfolge(satz.getVerbzweitsatzStandard());
-    }
-
-    private Wortfolge getHauptsatzMitSpeziellemVorfeldOrStandard() {
+    public Wortfolge toWortfolgeMitSpeziellemVorfeld() {
         @Nullable final Wortfolge hauptsatzMitSpeziellemVorfeldOrNull =
-                getHauptsatzMitSpeziellemVorfeldOrNull();
+                toWortfolgeMitSpeziellemVorfeldOrNull();
         if (hauptsatzMitSpeziellemVorfeldOrNull == null) {
-            final TextDescription textDescription = toTextDescription();
-            return w(textDescription.getText(), textDescription.isWoertlicheRedeNochOffen(),
-                    textDescription.isKommaStehtAus());
+            return toWortfolge();
         }
 
         return hauptsatzMitSpeziellemVorfeldOrNull;
     }
 
+    @Override
+    public Wortfolge toWortfolge() {
+        return Wortfolge.joinToWortfolge(satz.getVerbzweitsatzStandard());
+    }
+
     @Nullable
-    private Wortfolge getHauptsatzMitSpeziellemVorfeldOrNull() {
+    private Wortfolge toWortfolgeMitSpeziellemVorfeldOrNull() {
         @Nullable final Iterable<Konstituente> speziellesVorfeld =
                 satz.getVerbzweitsatzMitSpeziellemVorfeldAlsWeitereOption();
         if (speziellesVorfeld == null) {
@@ -174,7 +166,7 @@ public class StructuredDescription extends AbstractFlexibleDescription<Structure
     }
 
     @Override
-    public Wortfolge getDescriptionSatzanschlussOhneSubjekt() {
+    public Wortfolge toWortfolgeSatzanschlussOhneSubjekt() {
         return Wortfolge.joinToWortfolge(getPraedikat().getVerbzweit(satz.getSubjekt()));
     }
 

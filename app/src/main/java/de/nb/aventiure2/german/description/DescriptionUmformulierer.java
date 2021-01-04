@@ -311,18 +311,18 @@ public class DescriptionUmformulierer {
             final String praefixRemainder,
             @Nullable final String praefixVorfeldSatzglied,
             final AbstractFlexibleDescription<?> desc) {
-        final Wortfolge descriptionSatzanschlussOhneSubjekt =
-                desc.getDescriptionSatzanschlussOhneSubjekt();
+        final TextDescription descriptionSatzanschlussOhneSubjekt =
+                desc.toTextDescriptionSatzanschlussOhneSubjekt();
         return du(max(desc.getStartsNew(), PARAGRAPH),
                 praefixVerb,
                 praefixRemainder
                         + " und "
-                        + descriptionSatzanschlussOhneSubjekt.getString(),
+                        + descriptionSatzanschlussOhneSubjekt.getText(),
                 praefixVorfeldSatzglied)
                 .dann(desc.isDann())
                 .woertlicheRedeNochOffen(
-                        descriptionSatzanschlussOhneSubjekt.woertlicheRedeNochOffen())
-                .komma(descriptionSatzanschlussOhneSubjekt.kommaStehtAus())
+                        descriptionSatzanschlussOhneSubjekt.isWoertlicheRedeNochOffen())
+                .komma(descriptionSatzanschlussOhneSubjekt.isKommaStehtAus())
                 .phorikKandidat(desc.getPhorikKandidat())
                 .beendet(desc.getEndsThis());
     }

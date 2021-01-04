@@ -33,7 +33,6 @@ import de.nb.aventiure2.data.world.syscomp.state.IHasStateGO;
 import de.nb.aventiure2.data.world.syscomp.state.impl.SchlossfestState;
 import de.nb.aventiure2.data.world.syscomp.storingplace.ILocationGO;
 import de.nb.aventiure2.german.base.StructuralElement;
-import de.nb.aventiure2.german.base.Wortfolge;
 import de.nb.aventiure2.german.description.AbstractFlexibleDescription;
 import de.nb.aventiure2.german.description.TextDescription;
 import de.nb.aventiure2.german.description.TimedDescription;
@@ -55,7 +54,6 @@ import static de.nb.aventiure2.german.base.GermanUtil.capitalize;
 import static de.nb.aventiure2.german.base.StructuralElement.WORD;
 import static de.nb.aventiure2.german.description.DescriptionBuilder.du;
 import static de.nb.aventiure2.german.description.DescriptionBuilder.neuerSatz;
-import static de.nb.aventiure2.german.description.DescriptionBuilder.satzanschluss;
 import static de.nb.aventiure2.german.description.DescriptionUmformulierer.drueckeAusTimed;
 import static de.nb.aventiure2.german.description.Kohaerenzrelation.DISKONTINUITAET;
 import static java.util.stream.Collectors.toList;
@@ -439,16 +437,13 @@ public class BewegenAction<LOC_DESC extends ILocatableGO & IDescribableGO>
                 isDefinitivDiskontinuitaet()) {
             final ImmutableList.Builder<TimedDescription<?>> alt = builder();
 
-            final Wortfolge descriptionSatzanschlussOhneSubjekt =
+            final TextDescription descriptionSatzanschlussOhneSubjekt =
                     ((AbstractFlexibleDescription<?>) description.getDescription())
-                            .getDescriptionSatzanschlussOhneSubjekt();
-            alt.add(satzanschluss(", besinnst dich aber und "
-                            + descriptionSatzanschlussOhneSubjekt.getString(),
-                    description.getTimeElapsed())
-                    .dann(description.isDann())
-                    .woertlicheRedeNochOffen(
-                            descriptionSatzanschlussOhneSubjekt.woertlicheRedeNochOffen())
-                    .komma(descriptionSatzanschlussOhneSubjekt.kommaStehtAus()));
+                            .toTextDescriptionSatzanschlussOhneSubjekt();
+            alt.add(new TimedDescription<>(
+                    descriptionSatzanschlussOhneSubjekt
+                            .mitPraefix(", besinnst dich aber und "),
+                    description.getTimeElapsed()));
 
             alt.addAll(drueckeAusTimed(DISKONTINUITAET, description));
             n.narrateAlt(alt);

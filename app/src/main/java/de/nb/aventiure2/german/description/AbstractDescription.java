@@ -47,24 +47,35 @@ public abstract class AbstractDescription<SELF extends AbstractDescription<SELF>
 
     @NonNull
     @CheckReturnValue
-    public TextDescription toTextDescription() {
-        return toTextDescriptionKeepParams(getDescriptionHauptsatz());
+    public final TextDescription toTextDescription() {
+        return toTextDescriptionKeepParams(toWortfolge());
     }
-
 
     /**
      * Gibt die Beschreibung zurück, in der Regel beginnend mit einem Hauptsatz;
      * handelt es sich bei dieser Description jedoch um eine kleinere Einheit,
      * wird der Text dieser Description zurückgegeben.
      */
-    abstract Wortfolge getDescriptionHauptsatz();
+    public abstract Wortfolge toWortfolge();
 
     /**
      * Gibt die Beschreibung als Hauptsatz zurück, wenn nötig mit dem angegebenen
      * <code>konjunktionaladverb</code> ("dann", "darauf") im Vorfeld.
      */
-    public abstract TextDescription
-    toTextDescriptionMitKonjunktionaladverbWennNoetig(String konjunktionaladverb);
+    @NonNull
+    @CheckReturnValue
+    public final TextDescription toTextDescriptionMitKonjunktionaladverbWennNoetig(
+            final String konjunktionaladverb) {
+        return toTextDescriptionKeepParams(
+                toWortfolgeMitKonjunktionaladverbWennNoetig(konjunktionaladverb));
+    }
+
+    /**
+     * Gibt die Beschreibung als Hauptsatz zurück, wenn nötig mit dem angegebenen
+     * <code>konjunktionaladverb</code> ("dann", "darauf") im Vorfeld.
+     */
+    abstract Wortfolge
+    toWortfolgeMitKonjunktionaladverbWennNoetig(String konjunktionaladverb);
 
     @NonNull
     public TextDescription toTextDescriptionKeepParams(final Wortfolge wortfolge) {

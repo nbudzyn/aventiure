@@ -20,24 +20,28 @@ public abstract class AbstractFlexibleDescription<SELF extends AbstractDescripti
     @NonNull
     @CheckReturnValue
     public final TextDescription toTextDescriptionMitVorfeld(final String vorfeld) {
-        return toTextDescriptionKeepParams(getDescriptionHauptsatzMitVorfeld(vorfeld));
+        return toTextDescriptionKeepParams(toWortfolgeMitVorfeld(vorfeld));
     }
 
-    public abstract ImmutableList<TextDescription> altDescriptionHaupsaetze();
+    public abstract ImmutableList<TextDescription> altTextDescriptions();
 
-    abstract Wortfolge getDescriptionHauptsatzMitVorfeld(final String vorfeld);
+    abstract Wortfolge toWortfolgeMitVorfeld(final String vorfeld);
 
     @NonNull
     @CheckReturnValue
     public final TextDescription toTextDescriptionMitSpeziellemVorfeld() {
-        return toTextDescriptionKeepParams(getDescriptionHauptsatzMitSpeziellemVorfeld());
+        return toTextDescriptionKeepParams(toWortfolgeMitSpeziellemVorfeld());
     }
 
-    abstract Wortfolge getDescriptionHauptsatzMitSpeziellemVorfeld();
+    abstract Wortfolge toWortfolgeMitSpeziellemVorfeld();
 
-    // FIXME Wortfolge sollte "extern" nicht mehr verwendet werden - stattdessen
-    //  TextDescription.
-    public abstract Wortfolge getDescriptionSatzanschlussOhneSubjekt();
+    @NonNull
+    @CheckReturnValue
+    public final TextDescription toTextDescriptionSatzanschlussOhneSubjekt() {
+        return toTextDescriptionKeepParams(toWortfolgeSatzanschlussOhneSubjekt());
+    }
+
+    abstract Wortfolge toWortfolgeSatzanschlussOhneSubjekt();
 
     public abstract boolean hasSubjektDu();
 }

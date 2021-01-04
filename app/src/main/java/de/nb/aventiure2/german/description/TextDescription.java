@@ -1,6 +1,7 @@
 package de.nb.aventiure2.german.description;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
 import com.google.common.base.Preconditions;
 
@@ -99,20 +100,11 @@ public class TextDescription extends AbstractDescription<TextDescription> {
 
     @Override
     @NonNull
-    public TextDescription toTextDescriptionMitKonjunktionaladverbWennNoetig(
+    public Wortfolge toWortfolgeMitKonjunktionaladverbWennNoetig(
             final String konjunktionaladverb) {
-
         // Konjunktionaladverb ist in diesen Fällen nicht nötig:
         // "Du gehst in den Wald. Der Weg führt an einem Bach entlang."
-        return this;
-    }
-
-    @Override
-    @NonNull
-    @CheckReturnValue
-    public Wortfolge getDescriptionHauptsatz() {
-        return w(text, copyParams().isWoertlicheRedeNochOffen(),
-                copyParams().isKommaStehtAus());
+        return toWortfolge();
     }
 
     @NonNull
@@ -146,12 +138,20 @@ public class TextDescription extends AbstractDescription<TextDescription> {
                 max(copyParams().getStartsNew(), zumindest));
     }
 
+    @Override
+    @CheckReturnValue
+    @NonNull
+    public Wortfolge toWortfolge() {
+        return w(text, copyParams().isWoertlicheRedeNochOffen(),
+                copyParams().isKommaStehtAus());
+    }
+
     public String getText() {
         return text;
     }
 
     @Override
-    public boolean equals(final Object o) {
+    public boolean equals(@Nullable final Object o) {
         if (this == o) {
             return true;
         }

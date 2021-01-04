@@ -89,10 +89,8 @@ class TextDescriptionBuilder {
         final DescriptionParams params = duDesc.copyParams();
         params.undWartest(false);
 
-        return new TextDescription(
-                params,
-                "und " +
-                        duDesc.getDescriptionSatzanschlussOhneSubjektString());
+        return duDesc.toTextDescriptionSatzanschlussOhneSubjekt()
+                .mitPraefix("und ");
     }
 
     @NonNull
@@ -147,7 +145,7 @@ class TextDescriptionBuilder {
     private static List<TextDescription> toDefaultAllgDescriptions(
             final AbstractDescription<?> desc) {
         if (desc instanceof AbstractFlexibleDescription) {
-            return ((AbstractFlexibleDescription) desc).altDescriptionHaupsaetze();
+            return ((AbstractFlexibleDescription) desc).altTextDescriptions();
         }
 
         return ImmutableList.of((TextDescription) desc);

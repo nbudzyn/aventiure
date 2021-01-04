@@ -56,7 +56,7 @@ public class SimpleDuDescription extends AbstractFlexibleDescription<SimpleDuDes
     }
 
     @Override
-    public ImmutableList<TextDescription> altDescriptionHaupsaetze() {
+    public ImmutableList<TextDescription> altTextDescriptions() {
         final ImmutableList.Builder<TextDescription> res = ImmutableList.builder();
 
         res.add(toTextDescription()
@@ -65,7 +65,7 @@ public class SimpleDuDescription extends AbstractFlexibleDescription<SimpleDuDes
                 .beginntZumindestSentence());
 
         @Nullable final Wortfolge hauptsatzMitSpeziellemVorfeld =
-                getHauptsatzMitSpeziellemVorfeldOrNull();
+                toWortfolgeMitSpeziellemVorfeldOrNull();
 
         if (hauptsatzMitSpeziellemVorfeld != null) {
             res.add(toTextDescriptionKeepParams(hauptsatzMitSpeziellemVorfeld)
@@ -78,65 +78,52 @@ public class SimpleDuDescription extends AbstractFlexibleDescription<SimpleDuDes
     }
 
     @Override
-    public TextDescription toTextDescriptionMitKonjunktionaladverbWennNoetig(
+    public Wortfolge toWortfolgeMitKonjunktionaladverbWennNoetig(
             final String konjunktionaladverb) {
         // FIXME Derzeit ist die Sache mit dem Komma nicht einheitlich gelöst.
         //  Gut wäre es wohl, wenn die DesriptionParams KEIN isKommaStehtAus
         //  hätten, sondern wenn diese Informatoion hier on-the-fly ermittelt würde.
         //  In der TextDescription müsste man die Information dann zusätzlich speichern,
         //  damit der Benutzer sie (nur dort?!) angeben kann.
-        @Nullable final Wortfolge hauptsatzMitSpeziellemVorfeldOrNull =
-                getHauptsatzMitSpeziellemVorfeldOrNull();
+        @Nullable final Wortfolge wortfolgeMitSpeziellemVorfeldOrNull =
+                toWortfolgeMitSpeziellemVorfeldOrNull();
 
-        if (hauptsatzMitSpeziellemVorfeldOrNull != null) {
-            return toTextDescriptionKeepParams(hauptsatzMitSpeziellemVorfeldOrNull);
+        if (wortfolgeMitSpeziellemVorfeldOrNull != null) {
+            return wortfolgeMitSpeziellemVorfeldOrNull;
         }
 
-        return toTextDescriptionMitVorfeld(konjunktionaladverb);
+        return toWortfolgeMitVorfeld(konjunktionaladverb);
     }
 
     @Override
-    public Wortfolge getDescriptionHauptsatzMitVorfeld(final String vorfeld) {
+    public Wortfolge toWortfolgeMitVorfeld(final String vorfeld) {
         return w(GermanUtil.buildHauptsatz(vorfeld, // "dann"
                 verb, // "gehst"
                 joinToString("du", remainder))); // "du den Fluss entlang"
     }
 
     @Override
-    public Wortfolge getDescriptionHauptsatzMitSpeziellemVorfeld() {
-        return getHauptsatzMitSpeziellemVorfeldOrStandard();
+    public Wortfolge toWortfolgeMitSpeziellemVorfeld() {
+        final Wortfolge duHauptsatzMitSpeziellemVorfeldOrNull =
+                toWortfolgeMitSpeziellemVorfeldOrNull();
+
+        if (duHauptsatzMitSpeziellemVorfeldOrNull == null) {
+            return toWortfolge();
+        }
+
+        return duHauptsatzMitSpeziellemVorfeldOrNull;
     }
 
     @Override
-    public Wortfolge getDescriptionHauptsatz() {
+    public Wortfolge toWortfolge() {
         return w(GermanUtil.buildHauptsatz("du",
                 verb,
                 remainder), copyParams().isWoertlicheRedeNochOffen(),
                 copyParams().isKommaStehtAus());
     }
 
-    /**
-     * Gibt etwas zurück wie "gehst weiter"
-     */
-    public String getDescriptionSatzanschlussOhneSubjektString() {
-        return getDescriptionSatzanschlussOhneSubjekt().getString();
-    }
-
-    private Wortfolge getHauptsatzMitSpeziellemVorfeldOrStandard() {
-        final Wortfolge duHauptsatzMitSpeziellemVorfeldOrNull =
-                getHauptsatzMitSpeziellemVorfeldOrNull();
-
-        if (duHauptsatzMitSpeziellemVorfeldOrNull == null) {
-            final TextDescription textDescription = toTextDescription();
-            return w(textDescription.getText(), textDescription.isWoertlicheRedeNochOffen(),
-                    textDescription.isKommaStehtAus());
-        }
-
-        return duHauptsatzMitSpeziellemVorfeldOrNull;
-    }
-
     @Nullable
-    private Wortfolge getHauptsatzMitSpeziellemVorfeldOrNull() {
+    private Wortfolge toWortfolgeMitSpeziellemVorfeldOrNull() {
         if (vorfeldSatzglied == null) {
             return null;
         }
@@ -158,7 +145,7 @@ public class SimpleDuDescription extends AbstractFlexibleDescription<SimpleDuDes
      * Gibt etwas zurück wie "gehst weiter"
      */
     @Override
-    public Wortfolge getDescriptionSatzanschlussOhneSubjekt() {
+    public Wortfolge toWortfolgeSatzanschlussOhneSubjekt() {
         return Wortfolge.joinToWortfolge(verb, remainder);
     }
 
