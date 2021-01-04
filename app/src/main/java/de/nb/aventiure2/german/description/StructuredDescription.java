@@ -132,7 +132,7 @@ public class StructuredDescription extends AbstractFlexibleDescription<Structure
             return toTextDescriptionKeepParams(hauptsatzMitSpeziellemVorfeldOrNull);
         }
 
-        return toAllgDescriptionMitVorfeld(konjunktionaladverb);
+        return toTextDescriptionMitVorfeld(konjunktionaladverb);
     }
 
     @Override
@@ -141,8 +141,8 @@ public class StructuredDescription extends AbstractFlexibleDescription<Structure
     }
 
     @Override
-    public String getDescriptionHauptsatzMitSpeziellemVorfeld() {
-        return getHauptsatzMitSpeziellemVorfeldOrStandard().getString();
+    public Wortfolge getDescriptionHauptsatzMitSpeziellemVorfeld() {
+        return getHauptsatzMitSpeziellemVorfeldOrStandard();
     }
 
     @Override

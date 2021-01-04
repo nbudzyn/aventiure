@@ -331,7 +331,7 @@ public class DescriptionUmformulierer {
     private static TextDescription toAllgDescriptionMindestensParagraphMitVorfeld(
             final String vorfeld,
             final AbstractFlexibleDescription<?> desc) {
-        return desc.toAllgDescriptionMitVorfeld(vorfeld).beginntZumindestParagraph();
+        return desc.toTextDescriptionMitVorfeld(vorfeld).beginntZumindestParagraph();
     }
 
     private static AbstractDescription<?> mitAdvAngabe(

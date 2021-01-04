@@ -92,7 +92,7 @@ public class SimpleDuDescription extends AbstractFlexibleDescription<SimpleDuDes
             return toTextDescriptionKeepParams(hauptsatzMitSpeziellemVorfeldOrNull);
         }
 
-        return toAllgDescriptionMitVorfeld(konjunktionaladverb);
+        return toTextDescriptionMitVorfeld(konjunktionaladverb);
     }
 
     @Override
@@ -103,8 +103,8 @@ public class SimpleDuDescription extends AbstractFlexibleDescription<SimpleDuDes
     }
 
     @Override
-    public String getDescriptionHauptsatzMitSpeziellemVorfeld() {
-        return getHauptsatzMitSpeziellemVorfeldOrStandard().getString();
+    public Wortfolge getDescriptionHauptsatzMitSpeziellemVorfeld() {
+        return getHauptsatzMitSpeziellemVorfeldOrStandard();
     }
 
     @Override

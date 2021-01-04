@@ -11,26 +11,15 @@ import de.nb.aventiure2.german.base.Wortfolge;
 
 public abstract class AbstractFlexibleDescription<SELF extends AbstractDescription<SELF>>
         extends AbstractDescription<SELF> {
-    // FIXME Wortfolge sollte hier nicht mehr verwendet werden - stattdessen
-    //  TextDescription.
-
-    public AbstractFlexibleDescription(final StructuralElement startsNew) {
-        super(startsNew);
-    }
-
     AbstractFlexibleDescription(final StructuralElement startsNew,
                                 final boolean woertlicheRedeNochOffen,
                                 final boolean kommaStehtAus) {
         super(startsNew, woertlicheRedeNochOffen, kommaStehtAus);
     }
 
-    protected AbstractFlexibleDescription(final DescriptionParams params) {
-        super(params);
-    }
-
     @NonNull
     @CheckReturnValue
-    public TextDescription toAllgDescriptionMitVorfeld(final String vorfeld) {
+    public final TextDescription toTextDescriptionMitVorfeld(final String vorfeld) {
         return toTextDescriptionKeepParams(getDescriptionHauptsatzMitVorfeld(vorfeld));
     }
 
@@ -38,8 +27,16 @@ public abstract class AbstractFlexibleDescription<SELF extends AbstractDescripti
 
     abstract Wortfolge getDescriptionHauptsatzMitVorfeld(final String vorfeld);
 
-    public abstract String getDescriptionHauptsatzMitSpeziellemVorfeld();
+    @NonNull
+    @CheckReturnValue
+    public final TextDescription toTextDescriptionMitSpeziellemVorfeld() {
+        return toTextDescriptionKeepParams(getDescriptionHauptsatzMitSpeziellemVorfeld());
+    }
 
+    abstract Wortfolge getDescriptionHauptsatzMitSpeziellemVorfeld();
+
+    // FIXME Wortfolge sollte "extern" nicht mehr verwendet werden - stattdessen
+    //  TextDescription.
     public abstract Wortfolge getDescriptionSatzanschlussOhneSubjekt();
 
     public abstract boolean hasSubjektDu();

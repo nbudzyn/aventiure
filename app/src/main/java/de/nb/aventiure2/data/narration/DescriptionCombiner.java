@@ -114,7 +114,7 @@ class DescriptionCombiner {
 
             res.add(
                     // "Unten angekommen bist du ziemlich erschäpft"
-                    second.toAllgDescriptionMitVorfeld(vorfeld)
+                    second.toTextDescriptionMitVorfeld(vorfeld)
                             .beginntZumindestSentence());
         }
 

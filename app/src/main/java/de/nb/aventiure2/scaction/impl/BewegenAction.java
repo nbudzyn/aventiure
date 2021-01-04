@@ -32,7 +32,6 @@ import de.nb.aventiure2.data.world.syscomp.spatialconnection.NumberOfWays;
 import de.nb.aventiure2.data.world.syscomp.state.IHasStateGO;
 import de.nb.aventiure2.data.world.syscomp.state.impl.SchlossfestState;
 import de.nb.aventiure2.data.world.syscomp.storingplace.ILocationGO;
-import de.nb.aventiure2.german.base.GermanUtil;
 import de.nb.aventiure2.german.base.StructuralElement;
 import de.nb.aventiure2.german.base.Wortfolge;
 import de.nb.aventiure2.german.description.AbstractFlexibleDescription;
@@ -488,15 +487,11 @@ public class BewegenAction<LOC_DESC extends ILocatableGO & IDescribableGO>
                 if (description.getDescription() instanceof AbstractFlexibleDescription<?> &&
                         ((AbstractFlexibleDescription<?>) description.getDescription())
                                 .hasSubjektDu()) {
-                    alt.add(neuerSatz(
-                            "Was willst du hier eigentlich? "
-                                    + GermanUtil.capitalize(
-                                    ((AbstractFlexibleDescription<?>) description
-                                            .getDescription())
-                                            .getDescriptionHauptsatzMitSpeziellemVorfeld()),
-                            description.getTimeElapsed())
-                            .woertlicheRedeNochOffen(description.isWoertlicheRedeNochOffen())
-                            .komma(description.isKommaStehtAus()));
+                    alt.add(new TimedDescription<>(
+                            ((AbstractFlexibleDescription<?>) description.getDescription())
+                                    .toTextDescriptionMitSpeziellemVorfeld()
+                                    .mitPraefixCapitalize("Was willst du hier eigentlich? "),
+                            description.getTimeElapsed()));
                 }
 
                 alt.addAll(drueckeAusTimed(DISKONTINUITAET, description));

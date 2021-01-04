@@ -116,7 +116,7 @@ class TextDescriptionBuilder {
         checkArgument(desc.getStartsNew() == WORD,
                 "Satzanschluss unmöglich für " + desc);
 
-        return desc.toAllgDescriptionMitVorfeld("dann")
+        return desc.toTextDescriptionMitVorfeld("dann")
                 .dann(false)
                 .mitPraefix(", ");
     }
