@@ -1,14 +1,18 @@
 package de.nb.aventiure2.german.description;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import java.util.Objects;
+
+import javax.annotation.CheckReturnValue;
 
 import de.nb.aventiure2.german.base.IBezugsobjekt;
 import de.nb.aventiure2.german.base.NumerusGenus;
 import de.nb.aventiure2.german.base.PhorikKandidat;
 import de.nb.aventiure2.german.base.StructuralElement;
 import de.nb.aventiure2.german.base.SubstantivischePhrase;
+import de.nb.aventiure2.german.base.Wortfolge;
 
 import static com.google.common.base.Preconditions.checkArgument;
 import static de.nb.aventiure2.german.base.Person.P3;
@@ -24,7 +28,8 @@ public abstract class AbstractDescription<SELF extends AbstractDescription<SELF>
     }
 
     protected AbstractDescription(final StructuralElement startsNew,
-                                  final boolean woertlicheRedeNochOffen, final boolean kommaStehtAus) {
+                                  final boolean woertlicheRedeNochOffen,
+                                  final boolean kommaStehtAus) {
         this(new DescriptionParams(startsNew, woertlicheRedeNochOffen, kommaStehtAus));
     }
 
@@ -40,19 +45,35 @@ public abstract class AbstractDescription<SELF extends AbstractDescription<SELF>
         return params.getStartsNew();
     }
 
+    @NonNull
+    @CheckReturnValue
+    public AllgDescription toAllgDescription() {
+        return toAllgDescriptionKeepParams(getDescriptionHauptsatz());
+    }
+
+
     /**
      * Gibt die Beschreibung zurück, in der Regel beginnend mit einem Hauptsatz;
      * handelt es sich bei dieser Description jedoch um eine kleinere Einheit,
      * wird der Text dieser Description zurückgegeben.
      */
-    public abstract String getDescriptionHauptsatz();
+    public abstract Wortfolge getDescriptionHauptsatz();
 
     /**
      * Gibt die Beschreibung als Hauptsatz zurück, wenn nötig mit dem angegebenen
      * <code>konjunktionaladverb</code> ("dann", "darauf") im Vorfeld.
      */
-    public abstract String
+    public abstract AllgDescription
     getDescriptionHauptsatzMitKonjunktionaladverbWennNoetig(String konjunktionaladverb);
+
+    @NonNull
+    public AllgDescription toAllgDescriptionKeepParams(final Wortfolge wortfolge) {
+        final DescriptionParams params = copyParams();
+        params.woertlicheRedeNochOffen(wortfolge.woertlicheRedeNochOffen());
+        params.komma(wortfolge.kommaStehtAus());
+
+        return new AllgDescription(params, wortfolge.getString());
+    }
 
     public SELF woertlicheRedeNochOffen() {
         return woertlicheRedeNochOffen(true);
@@ -153,6 +174,14 @@ public abstract class AbstractDescription<SELF extends AbstractDescription<SELF>
     @Nullable
     public PhorikKandidat getPhorikKandidat() {
         return params.getPhorikKandidat();
+    }
+
+    /**
+     * Gibt die Parameter veränderbar zurück. Das hier  wird man selten
+     * aufrufen!
+     */
+    DescriptionParams getParamsMutable() {
+        return params;
     }
 
     @Override

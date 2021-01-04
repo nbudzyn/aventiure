@@ -20,7 +20,6 @@ import static com.google.common.collect.ImmutableList.builder;
 import static de.nb.aventiure2.german.base.StructuralElement.PARAGRAPH;
 import static de.nb.aventiure2.german.base.StructuralElement.SENTENCE;
 import static de.nb.aventiure2.german.base.StructuralElement.max;
-import static de.nb.aventiure2.german.base.Wortfolge.uncapitalize;
 import static de.nb.aventiure2.german.description.DescriptionBuilder.du;
 import static de.nb.aventiure2.german.description.DescriptionBuilder.neuerSatz;
 import static de.nb.aventiure2.german.description.DescriptionBuilder.neuerSatzStandard;
@@ -94,50 +93,51 @@ public class DescriptionUmformulierer {
             final AbstractDescription<?> desc) {
         final ImmutableList.Builder<AbstractDescription<?>> alt = builder();
 
-        if (desc instanceof AbstractDuDescription) {
-            final AbstractDuDescription<?, ?> duDesc =
-                    (AbstractDuDescription<?, ?>) desc;
+        if (desc instanceof AbstractFlexibleDescription) {
+            final AbstractFlexibleDescription<?> fDesc = (AbstractFlexibleDescription<?>) desc;
 
-            alt.add(duMitPraefixUndSatzanschluss(
-                    "besinnst", "dich aber",
-                    duDesc));
+            if (fDesc.hasSubjektDu()) {
+                alt.add(duMitPraefixUndSatzanschluss(
+                        "besinnst", "dich aber",
+                        fDesc));
+            }
 
-            alt.add(duMitVorfeld("noch einmal", duDesc));
+            alt.add(toAllgDescriptionMindestensParagraphMitVorfeld("noch einmal", fDesc));
 
-            if (duDesc instanceof StructuredDuDescription) {
-                final StructuredDuDescription structuredDuDesc = (StructuredDuDescription) duDesc;
+            if (fDesc instanceof StructuredDescription) {
+                final StructuredDescription sDesc = (StructuredDescription) fDesc;
 
-                alt.add(mitAdvAngabe(structuredDuDesc,
+                alt.add(mitAdvAngabe(sDesc,
                         new AdverbialeAngabeSkopusVerbAllg("noch einmal")));
 
-                alt.add(mitAdvAngabe(structuredDuDesc,
+                alt.add(mitAdvAngabe(sDesc,
                         new AdverbialeAngabeSkopusVerbAllg("erneut")));
 
-                alt.add(mitAdvAngabe(structuredDuDesc,
+                alt.add(mitAdvAngabe(sDesc,
                         new AdverbialeAngabeSkopusVerbAllg("sogleich wieder")));
 
                 final Wortfolge duNimmstDieKugelBesserDoch =
                         Wortfolge.joinToWortfolge(
-                                structuredDuDesc.getSatz()
+                                sDesc.getSatz()
                                         .mitModalpartikeln(
                                                 new Modalpartikel("besser"),
                                                 new Modalpartikel("doch"))
                                         .getVerbzweitsatzStandard());
                 alt.add(neuerSatz(
-                        max(duDesc.getStartsNew(), SENTENCE),
+                        max(fDesc.getStartsNew(), SENTENCE),
                         "Ach nein, " +
                                 // du nimmst die Kugel besser doch
-                                uncapitalize(duNimmstDieKugelBesserDoch).getString())
+                                duNimmstDieKugelBesserDoch.getString())
                         .woertlicheRedeNochOffen(
                                 duNimmstDieKugelBesserDoch.woertlicheRedeNochOffen())
-                        .komma(duNimmstDieKugelBesserDoch.kommmaStehtAus())
-                        .undWartest(duDesc.isAllowsAdditionalDuSatzreihengliedOhneSubjekt())
-                        .dann(duDesc.isDann())
-                        .phorikKandidat(duDesc.getPhorikKandidat()));
+                        .komma(duNimmstDieKugelBesserDoch.kommaStehtAus())
+                        .undWartest(fDesc.isAllowsAdditionalDuSatzreihengliedOhneSubjekt())
+                        .dann(fDesc.isDann())
+                        .phorikKandidat(fDesc.getPhorikKandidat()));
             }
         } else {
-            alt.add(mitPraefix("Aber dir kommt ein Gedanke und", desc));
-            alt.add(mitPraefix("Dir kommt ein Gedanke –", desc));
+            alt.add(mitPraefixCap("Aber dir kommt ein Gedanke:", desc));
+            alt.add(mitPraefixCap("Dir kommt ein Gedanke:", desc));
         }
 
         return alt.build();
@@ -148,60 +148,62 @@ public class DescriptionUmformulierer {
             final AbstractDescription<?> desc) {
         final ImmutableList.Builder<AbstractDescription<?>> alt = builder();
 
-        if (!(desc instanceof AbstractDuDescription)) {
-            alt.add(duMitPraefix("gibst", "aber nicht auf:",
-                    desc, false));
-            alt.add(duMitPraefix("versuchst", "es noch einmal:",
-                    desc, false));
-            alt.add(duMitPraefix("lässt", "dich nicht entmutigen.",
-                    desc, false));
+        if (!(desc instanceof AbstractFlexibleDescription)) {
+            alt.add(duMitPraefixCapitalize("gibst", "aber nicht auf:",
+                    desc));
+            alt.add(duMitPraefixCapitalize("versuchst", "es noch einmal:",
+                    desc));
+            alt.add(duMitPraefixCapitalize("lässt", "dich nicht entmutigen.",
+                    desc));
         }
 
-        if (desc instanceof AbstractDuDescription) {
-            final AbstractDuDescription<?, ?> duDesc = (AbstractDuDescription<?, ?>) desc;
+        if (desc instanceof AbstractFlexibleDescription) {
+            final AbstractFlexibleDescription<?> fDesc = (AbstractFlexibleDescription<?>) desc;
 
-            alt.add(duMitPraefixUndSatzanschluss(
-                    "gibst", "nicht auf",
-                    duDesc));
+            if (fDesc.hasSubjektDu()) {
+                alt.add(duMitPraefixUndSatzanschluss(
+                        "gibst", "nicht auf",
+                        fDesc));
 
-            alt.add(duMitPraefixUndSatzanschluss(
-                    "gibst aber", "nicht auf",
-                    duDesc));
+                alt.add(duMitPraefixUndSatzanschluss(
+                        "gibst aber", "nicht auf",
+                        fDesc));
 
-            alt.add(duMitPraefixUndSatzanschluss(
-                    "versuchst", "es noch einmal",
-                    duDesc));
+                alt.add(duMitPraefixUndSatzanschluss(
+                        "versuchst", "es noch einmal",
+                        fDesc));
 
-            alt.add(duMitPraefixUndSatzanschluss(
-                    "versuchst", "dich aber erneut", duDesc));
+                alt.add(duMitPraefixUndSatzanschluss(
+                        "versuchst", "dich aber erneut", fDesc));
+            }
 
-            alt.add(duMitVorfeld("noch einmal", duDesc));
-            alt.add(duMitVorfeld("noch einmal aber", duDesc));
-            alt.add(duMitVorfeld("erneut", duDesc));
-            alt.add(duMitVorfeld("von neuem", duDesc));
-            alt.add(duMitVorfeld("ein weiteres Mal", duDesc));
-            alt.add(duMitVorfeld("nochmals", duDesc));
-            alt.add(duMitVorfeld("wieder", duDesc));
+            alt.add(toAllgDescriptionMindestensParagraphMitVorfeld("noch einmal", fDesc));
+            alt.add(toAllgDescriptionMindestensParagraphMitVorfeld("noch einmal aber", fDesc));
+            alt.add(toAllgDescriptionMindestensParagraphMitVorfeld("erneut", fDesc));
+            alt.add(toAllgDescriptionMindestensParagraphMitVorfeld("von neuem", fDesc));
+            alt.add(toAllgDescriptionMindestensParagraphMitVorfeld("ein weiteres Mal", fDesc));
+            alt.add(toAllgDescriptionMindestensParagraphMitVorfeld("nochmals", fDesc));
+            alt.add(toAllgDescriptionMindestensParagraphMitVorfeld("wieder", fDesc));
 
-            if (desc instanceof StructuredDuDescription) {
-                final StructuredDuDescription pDuDesc = (StructuredDuDescription) duDesc;
+            if (desc instanceof StructuredDescription) {
+                final StructuredDescription sDesc = (StructuredDescription) fDesc;
 
-                alt.add(mitAdvAngabe(pDuDesc,
+                alt.add(mitAdvAngabe(sDesc,
                         new AdverbialeAngabeSkopusSatz("noch einmal")));
 
-                alt.add(mitAdvAngabe(pDuDesc,
+                alt.add(mitAdvAngabe(sDesc,
                         new AdverbialeAngabeSkopusSatz("erneut")));
 
-                alt.add(mitAdvAngabe(pDuDesc,
+                alt.add(mitAdvAngabe(sDesc,
                         new AdverbialeAngabeSkopusSatz("von neuem")));
 
-                alt.add(mitAdvAngabe(pDuDesc,
+                alt.add(mitAdvAngabe(sDesc,
                         new AdverbialeAngabeSkopusSatz("ein weiteres Mal")));
 
-                alt.add(mitAdvAngabe(pDuDesc,
+                alt.add(mitAdvAngabe(sDesc,
                         new AdverbialeAngabeSkopusSatz("nochmals")));
 
-                alt.add(mitAdvAngabe(pDuDesc,
+                alt.add(mitAdvAngabe(sDesc,
                         new AdverbialeAngabeSkopusSatz("wieder")));
             }
         }
@@ -214,54 +216,55 @@ public class DescriptionUmformulierer {
             final AbstractDescription<?> desc) {
         final ImmutableList.Builder<AbstractDescription<?>> alt = builder();
 
-        if (!(desc instanceof AbstractDuDescription)) {
-            alt.add(duMitPraefix("gibst", "aber nicht auf:",
-                    desc, false));
-            alt.add(duMitPraefix("versuchst", "es weiter:",
-                    desc, false));
-            alt.add(duMitPraefix("versuchst", "es noch weiter:",
-                    desc, false));
-            alt.add(duMitPraefix("versuchst", "es weiterhin:",
-                    desc, false));
-            alt.add(duMitPraefix("lässt", "dich nicht entmutigen.",
-                    desc, false));
+        if (!(desc instanceof AbstractFlexibleDescription<?>)) {
+            alt.add(duMitPraefixCapitalize("gibst", "aber nicht auf:",
+                    desc));
+            alt.add(duMitPraefixCapitalize("versuchst", "es weiter:",
+                    desc));
+            alt.add(duMitPraefixCapitalize("versuchst", "es noch weiter:",
+                    desc));
+            alt.add(duMitPraefixCapitalize("versuchst", "es weiterhin:",
+                    desc));
+            alt.add(duMitPraefixCapitalize("lässt", "dich nicht entmutigen.",
+                    desc));
         }
 
-        if (desc instanceof AbstractDuDescription) {
-            final AbstractDuDescription<?, ?> duDesc = (AbstractDuDescription<?, ?>) desc;
+        if (desc instanceof AbstractFlexibleDescription<?>) {
+            final AbstractFlexibleDescription<?> fDesc = (AbstractFlexibleDescription<?>) desc;
 
-            alt.add(duMitPraefixUndSatzanschluss(
-                    "gibst", "nicht auf",
-                    duDesc));
+            if (fDesc.hasSubjektDu()) {
+                alt.add(duMitPraefixUndSatzanschluss(
+                        "gibst", "nicht auf",
+                        fDesc));
 
-            alt.add(duMitPraefixUndSatzanschluss(
-                    "gibst aber", "nicht auf",
-                    duDesc));
+                alt.add(duMitPraefixUndSatzanschluss(
+                        "gibst aber", "nicht auf",
+                        fDesc));
 
-            alt.add(duMitPraefixUndSatzanschluss(
-                    "versuchst", "es weiter",
-                    duDesc));
+                alt.add(duMitPraefixUndSatzanschluss(
+                        "versuchst", "es weiter",
+                        fDesc));
 
-            alt.add(duMitPraefixUndSatzanschluss(
-                    "versuchst", "es noch weiter",
-                    duDesc));
+                alt.add(duMitPraefixUndSatzanschluss(
+                        "versuchst", "es noch weiter",
+                        fDesc));
 
-            alt.add(duMitPraefixUndSatzanschluss(
-                    "versuchst", "es weiterhin",
-                    duDesc));
+                alt.add(duMitPraefixUndSatzanschluss(
+                        "versuchst", "es weiterhin",
+                        fDesc));
 
-            alt.add(duMitPraefixUndSatzanschluss(
-                    "versuchst", "es unverdrossen weiter",
-                    "unverdrossen",
-                    duDesc));
+                alt.add(duMitPraefixUndSatzanschluss(
+                        "versuchst", "es unverdrossen weiter",
+                        "unverdrossen",
+                        fDesc));
+            }
 
-            alt.add(duMitVorfeld("Immer noch", duDesc));
+            alt.add(toAllgDescriptionMindestensParagraphMitVorfeld("Immer noch", fDesc));
 
-            if (desc instanceof StructuredDuDescription) {
-                final StructuredDuDescription pDuDesc = (StructuredDuDescription) duDesc;
+            if (desc instanceof StructuredDescription) {
+                final StructuredDescription sDesc = (StructuredDescription) fDesc;
 
-                alt.add(mitAdvAngabe(pDuDesc,
-                        new AdverbialeAngabeSkopusSatz("immer noch")));
+                alt.add(mitAdvAngabe(sDesc, new AdverbialeAngabeSkopusSatz("immer noch")));
             }
         }
 
@@ -269,46 +272,23 @@ public class DescriptionUmformulierer {
     }
 
     @CheckReturnValue
-    private static AllgDescription mitPraefix(final String praefix,
-                                              final AbstractDescription<?> desc) {
-        return mitPraefix(praefix, desc, true);
+    private static AllgDescription mitPraefixCap(final String praefix,
+                                                 final AbstractDescription<?> desc) {
+        return desc.toAllgDescription().mitPraefixCapitalize(praefix + " ")
+                .beginntZumindestSentence();
     }
 
-    @CheckReturnValue
-    private static AllgDescription mitPraefix(final String praefix,
-                                              final AbstractDescription<?> desc,
-                                              final boolean uncapitalize) {
-        String hauptsatz = desc.getDescriptionHauptsatz();
-        if (uncapitalize) {
-            hauptsatz = GermanUtil.uncapitalize(hauptsatz);
-        }
-
-        return neuerSatz(
-                max(desc.getStartsNew(), SENTENCE),
-                praefix
-                        + " "
-                        + hauptsatz)
-                .woertlicheRedeNochOffen(desc.isWoertlicheRedeNochOffen())
-                .komma(desc.isKommaStehtAus())
-                .phorikKandidat(desc.getPhorikKandidat())
-                .beendet(desc.getEndsThis());
-    }
-
-    private static AbstractDuDescription<?, ?> duMitPraefix(
+    private static AbstractFlexibleDescription<?> duMitPraefixCapitalize(
             final String praefixVerb,
             final String praefixRemainder,
-            final AbstractDescription<?> desc,
-            final boolean uncapitalize) {
-        String hauptsatz = desc.getDescriptionHauptsatz();
-        if (uncapitalize) {
-            hauptsatz = GermanUtil.uncapitalize(hauptsatz);
-        }
+            final AbstractDescription<?> desc) {
+        // FIXME Wortfolge verwenden!
+        final String hauptsatz = GermanUtil.capitalize(desc.getDescriptionHauptsatz().getString());
 
         return du(
                 max(desc.getStartsNew(), SENTENCE),
                 praefixVerb,
-                praefixRemainder + " "
-                        + hauptsatz)
+                praefixRemainder + " " + hauptsatz)
                 .woertlicheRedeNochOffen(desc.isWoertlicheRedeNochOffen())
                 .komma(desc.isKommaStehtAus())
                 .phorikKandidat(desc.getPhorikKandidat())
@@ -316,47 +296,45 @@ public class DescriptionUmformulierer {
     }
 
     @CheckReturnValue
-    private static AbstractDuDescription<?, ?> duMitPraefixUndSatzanschluss(
+    private static AbstractFlexibleDescription<?> duMitPraefixUndSatzanschluss(
             final String praefixVerb,
             final String praefixRemainder,
-            final AbstractDuDescription<?, ?> desc) {
+            final AbstractFlexibleDescription<?> desc) {
         return duMitPraefixUndSatzanschluss(praefixVerb, praefixRemainder, null,
                 desc);
     }
 
     @CheckReturnValue
-    private static AbstractDuDescription<?, ?> duMitPraefixUndSatzanschluss(
+    private static AbstractFlexibleDescription<?> duMitPraefixUndSatzanschluss(
             final String praefixVerb,
             final String praefixRemainder,
             @Nullable final String praefixVorfeldSatzglied,
-            final AbstractDuDescription<?, ?> desc) {
+            final AbstractFlexibleDescription<?> desc) {
+        final Wortfolge descriptionSatzanschlussOhneSubjekt =
+                desc.getDescriptionSatzanschlussOhneSubjekt();
         return du(max(desc.getStartsNew(), PARAGRAPH),
                 praefixVerb,
                 praefixRemainder
                         + " und "
-                        + desc.getDescriptionSatzanschlussOhneSubjekt(),
+                        + descriptionSatzanschlussOhneSubjekt.getString(),
                 praefixVorfeldSatzglied)
                 .dann(desc.isDann())
-                .woertlicheRedeNochOffen(desc.isWoertlicheRedeNochOffen())
-                .komma(desc.isKommaStehtAus())
+                .woertlicheRedeNochOffen(
+                        descriptionSatzanschlussOhneSubjekt.woertlicheRedeNochOffen())
+                .komma(descriptionSatzanschlussOhneSubjekt.kommaStehtAus())
                 .phorikKandidat(desc.getPhorikKandidat())
                 .beendet(desc.getEndsThis());
     }
 
     @CheckReturnValue
-    private static AllgDescription duMitVorfeld(final String vorfeld,
-                                                final AbstractDuDescription<?, ?> duDesc) {
-        return neuerSatz(max(duDesc.getStartsNew(), PARAGRAPH),
-                duDesc.getDescriptionHauptsatzMitVorfeld(vorfeld))
-                .komma(duDesc.isKommaStehtAus())
-                .undWartest(duDesc.isAllowsAdditionalDuSatzreihengliedOhneSubjekt())
-                .dann(duDesc.isDann())
-                .phorikKandidat(duDesc.getPhorikKandidat())
-                .beendet(duDesc.getEndsThis());
+    private static AllgDescription toAllgDescriptionMindestensParagraphMitVorfeld(
+            final String vorfeld,
+            final AbstractFlexibleDescription<?> desc) {
+        return desc.toAllgDescriptionMitVorfeld(vorfeld).beginntZumindestParagraph();
     }
 
     private static AbstractDescription<?> mitAdvAngabe(
-            final StructuredDuDescription desc,
+            final StructuredDescription desc,
             final AdverbialeAngabeSkopusSatz advAngabe) {
         return neuerSatzStandard(
                 max(desc.getStartsNew(), PARAGRAPH),
@@ -372,7 +350,7 @@ public class DescriptionUmformulierer {
 
     @CheckReturnValue
     private static AbstractDescription<?> mitAdvAngabe(
-            final StructuredDuDescription desc,
+            final StructuredDescription desc,
             final AdverbialeAngabeSkopusVerbAllg advAngabe) {
         return neuerSatzStandard(
                 max(desc.getStartsNew(), PARAGRAPH),

@@ -6,12 +6,16 @@ import java.util.Collection;
 
 import de.nb.aventiure2.german.base.Interrogativpronomen;
 import de.nb.aventiure2.german.base.Konstituente;
+import de.nb.aventiure2.german.base.Personalpronomen;
 import de.nb.aventiure2.german.base.SubstantivischePhrase;
 import de.nb.aventiure2.german.praedikat.AdverbialeAngabeSkopusSatz;
 import de.nb.aventiure2.german.praedikat.AdverbialeAngabeSkopusVerbAllg;
 import de.nb.aventiure2.german.praedikat.AdverbialeAngabeSkopusVerbWohinWoher;
 import de.nb.aventiure2.german.praedikat.Modalpartikel;
 import de.nb.aventiure2.german.praedikat.PraedikatOhneLeerstellen;
+
+import static de.nb.aventiure2.german.base.Numerus.SG;
+import static de.nb.aventiure2.german.base.Person.P2;
 
 /**
  * Ein Satz.
@@ -164,7 +168,7 @@ public class Satz {
 
     /**
      * Gibt den Satz als Verbzweitsatz aus, bei dem nach Möglichkeit ein "spezielles"
-     * Vorfeld gewählt wird, z.B. eine adverbiale Bestimmung: "Am Abend hast du etwas zu berichten"
+     * Vorfeld gewählt wird, z.B. eine adverbiale Bestimmung: "am Abend hast du etwas zu berichten"
      */
     public Iterable<Konstituente> getVerbzweitsatzMitSpeziellemVorfeldAlsWeitereOption() {
         @Nullable final Konstituente speziellesVorfeld =
@@ -181,8 +185,8 @@ public class Satz {
     }
 
     /**
-     * Gibt den Satz als Verbzweitsatz aus, bei dem das Subjekt im Vorfeld steht, z.B. "Du hast
-     * am Abend etwas zu berichten" oder "Du nimmst den Ast"
+     * Gibt den Satz als Verbzweitsatz aus, bei dem das Subjekt im Vorfeld steht, z.B. "du hast
+     * am Abend etwas zu berichten" oder "du nimmst den Ast"
      */
     public Iterable<Konstituente> getVerbzweitsatzStandard() {
         @Nullable final Konstituente speziellesVorfeld =
@@ -192,39 +196,47 @@ public class Satz {
             return getVerbzweitsatzMitVorfeldAusMittelOderNachfeld(speziellesVorfeld);
         }
 
-        return Konstituente.capitalize(
+        return
+                // FIXME capitalize() sollte nur möglichst weit außen aufgerufen werden!
+                // FIXME capitalize() sollte auch bei der SimpleDuDescription möglichst weit
+                //  außen aufgerufen werden.
+                // FIXME Aber IRGENDWANN MUSS hieraus auch verbindlich ein neuerSatz gemacht werden
+                //  Z.B. neuerSatz(allgDesc) oder so!!, damit würde es capitalized1
                 Konstituente.joinToKonstituenten(
                         anschlusswort, // "und"
                         subjekt.nom(),
                         praedikat.getVerbzweit(subjekt.getPerson(), subjekt.getNumerus()),
                         angabensatz != null ?
-                                Konstituente.schliesseInKommaEin(angabensatz.getDescription()) :
-                                null));
+                                Konstituente
+                                        .schliesseInKommaEin(angabensatz.getDescription()) :
+                                null);
     }
 
     private Iterable<Konstituente> getVerbzweitsatzMitVorfeldAusMittelOderNachfeld(
             final Konstituente vorfeld) {
-        return Konstituente.capitalize(
-                Konstituente.joinToKonstituenten(
-                        anschlusswort, // "und"
-                        vorfeld,
-                        Konstituente.cutFirst(
-                                praedikat.getVerbzweitMitSubjektImMittelfeld(subjekt),
-                                vorfeld),
-                        angabensatz != null ?
-                                Konstituente.schliesseInKommaEin(angabensatz.getDescription()) :
-                                null));
+        // FIXME capitalize() sollte nur möglichst spät und möglichst
+        //  weit außen aufgerufen werden!
+        return Konstituente.joinToKonstituenten(
+                anschlusswort, // "und"
+                vorfeld,
+                Konstituente.cutFirst(
+                        praedikat.getVerbzweitMitSubjektImMittelfeld(subjekt),
+                        vorfeld),
+                angabensatz != null ?
+                        Konstituente.schliesseInKommaEin(angabensatz.getDescription()) :
+                        null);
     }
 
     public Iterable<Konstituente> getVerbzweitsatzMitVorfeld(final String vorfeld) {
-        return Konstituente.capitalize(
-                Konstituente.joinToKonstituenten(
-                        anschlusswort, // "und"
-                        vorfeld,
-                        praedikat.getVerbzweitMitSubjektImMittelfeld(subjekt),
-                        angabensatz != null ?
-                                Konstituente.schliesseInKommaEin(angabensatz.getDescription()) :
-                                null));
+        // FIXME capitalize() sollte nur möglichst spät und möglichst
+        //  weit außen aufgerufen werden!
+        return Konstituente.joinToKonstituenten(
+                anschlusswort, // "und"
+                vorfeld,
+                praedikat.getVerbzweitMitSubjektImMittelfeld(subjekt),
+                angabensatz != null ?
+                        Konstituente.schliesseInKommaEin(angabensatz.getDescription()) :
+                        null);
     }
 
     /**
@@ -238,6 +250,28 @@ public class Satz {
                 angabensatz != null ?
                         Konstituente.schliesseInKommaEin(angabensatz.getDescription()) :
                         null);
+    }
+
+    /**
+     * Gibt den Satz in Verbzeitform aus, jedoch ohne Subjekt, also beginnend mit
+     * dem Anschlusswort (z.B. "und") und dem Verb. Z.B. "und hast
+     * am Abend etwas zu berichten" oder "und nimmst den Ast"
+     */
+    public Iterable<Konstituente> getSatzanschlussOhneSubjekt() {
+        // FIXME capitalize() sollte nur möglichst spät und möglichst
+        //  weit außen aufgerufen werden!
+        return Konstituente.joinToKonstituenten(
+                anschlusswort, // "und"
+                praedikat.getVerbzweit(subjekt.getPerson(), subjekt.getNumerus()),
+                angabensatz != null ?
+                        Konstituente.schliesseInKommaEin(angabensatz.getDescription()) :
+                        null);
+    }
+
+    public boolean hasSubjektDu() {
+        return subjekt instanceof Personalpronomen
+                && subjekt.getPerson() == P2
+                && subjekt.getNumerus() == SG;
     }
 
     public SubstantivischePhrase getSubjekt() {

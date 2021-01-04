@@ -6,18 +6,18 @@ import java.util.Collection;
 
 import javax.annotation.CheckReturnValue;
 
+import de.nb.aventiure2.german.base.GermanUtil;
 import de.nb.aventiure2.german.base.Wortfolge;
 import de.nb.aventiure2.german.description.AbstractDescription;
-import de.nb.aventiure2.german.description.AbstractDuDescription;
+import de.nb.aventiure2.german.description.AbstractFlexibleDescription;
 import de.nb.aventiure2.german.description.AllgDescription;
 import de.nb.aventiure2.german.description.DescriptionParams;
-import de.nb.aventiure2.german.description.StructuredDuDescription;
+import de.nb.aventiure2.german.description.StructuredDescription;
 
+import static com.google.common.base.Preconditions.checkArgument;
 import static de.nb.aventiure2.german.base.Numerus.SG;
 import static de.nb.aventiure2.german.base.Person.P2;
-import static de.nb.aventiure2.german.base.StructuralElement.SENTENCE;
 import static de.nb.aventiure2.german.base.StructuralElement.WORD;
-import static de.nb.aventiure2.german.base.StructuralElement.max;
 
 class DescriptionCombiner {
     private DescriptionCombiner() {
@@ -33,23 +33,27 @@ class DescriptionCombiner {
 
         if (initialNarration.allowsAdditionalDuSatzreihengliedOhneSubjekt() &&
                 first.getStartsNew() == WORD &&
-                first instanceof AbstractDuDescription &&
+                first instanceof AbstractFlexibleDescription &&
+                ((AbstractFlexibleDescription<?>) first).hasSubjektDu() &&
                 first.isAllowsAdditionalDuSatzreihengliedOhneSubjekt() &&
                 second.getStartsNew() == WORD &&
-                second instanceof AbstractDuDescription) {
+                second instanceof AbstractFlexibleDescription &&
+                ((AbstractFlexibleDescription<?>) second).hasSubjektDu()) {
             //  "Du kommst, siehst und siegst"
             res.addAll(toDuSatzanschlussMitKommaUndUnd(
-                    (AbstractDuDescription<?, ?>) first,
-                    (AbstractDuDescription<?, ?>) second
+                    (AbstractFlexibleDescription<?>) first,
+                    (AbstractFlexibleDescription<?>) second
             ));
         }
 
-        if (first instanceof StructuredDuDescription &&
-                second instanceof AbstractDuDescription<?, ?>) {
+        if (first instanceof StructuredDescription &&
+                ((StructuredDescription) first).hasSubjektDu() &&
+                second instanceof AbstractFlexibleDescription &&
+                ((AbstractFlexibleDescription<?>) second).hasSubjektDu()) {
             // Evtl. etwas wie "Unten angekommen bist du ziemlich erschöpft"
-            res.addAll(combinePraedikatDuDescUndDuDesc(
-                    (StructuredDuDescription) first,
-                    (AbstractDuDescription<?, ?>) second
+            res.addAll(combineStructuredDescUndFlexibleDescDu(
+                    (StructuredDescription) first,
+                    (AbstractFlexibleDescription<?>) second
             ));
         }
 
@@ -62,24 +66,32 @@ class DescriptionCombiner {
      */
     @CheckReturnValue
     private static Iterable<AllgDescription> toDuSatzanschlussMitKommaUndUnd(
-            final AbstractDuDescription<?, ?> first,
-            final AbstractDuDescription<?, ?> second) {
+            final AbstractFlexibleDescription<?> first,
+            final AbstractFlexibleDescription<?> second) {
+        checkArgument(first.getStartsNew() == WORD,
+                "Satzanschluss unmöglich für " + first);
+
+        final Wortfolge secondDescriptionSatzanschlussOhneSubjekt =
+                second.getDescriptionSatzanschlussOhneSubjekt();
+
         final DescriptionParams params = second.copyParams();
         params.undWartest(false);
+        params.woertlicheRedeNochOffen(
+                secondDescriptionSatzanschlussOhneSubjekt.woertlicheRedeNochOffen());
+        params.komma(secondDescriptionSatzanschlussOhneSubjekt.kommaStehtAus());
 
         return ImmutableList.of(
                 new AllgDescription(params,
-                        ", " +
-                                first.getDescriptionSatzanschlussOhneSubjekt() +
-                                (first.isWoertlicheRedeNochOffen() ? "“" : "") +
-                                (first.isKommaStehtAus() ? "," : "") +
-                                " und " +
-                                second.getDescriptionSatzanschlussOhneSubjekt()));
+                        GermanUtil.joinToString(
+                                ",",
+                                first.getDescriptionSatzanschlussOhneSubjekt(),
+                                "und",
+                                secondDescriptionSatzanschlussOhneSubjekt)));
     }
 
     @CheckReturnValue
-    private static ImmutableList<AllgDescription> combinePraedikatDuDescUndDuDesc(
-            final StructuredDuDescription first, final AbstractDuDescription<?, ?> second) {
+    private static ImmutableList<AllgDescription> combineStructuredDescUndFlexibleDescDu(
+            final StructuredDescription first, final AbstractFlexibleDescription<?> second) {
         final ImmutableList.Builder<AllgDescription> res = ImmutableList.builder();
 
         // Bei Partikelverben mit sein-Perfekt ohne Akkusativobjekt,
@@ -95,22 +107,15 @@ class DescriptionCombiner {
                 first.getPraedikat().isBezugAufNachzustandDesAktantenGegeben() &&
                 first.getPraedikat().umfasstSatzglieder() &&
                 second.getStartsNew() == WORD) {
-            final DescriptionParams params = second.copyParams();
-            params.setStartsNew(max(first.getStartsNew(), SENTENCE));
-
             final String vorfeld =
                     // "unten angekommen"
                     first.getDescriptionPartizipIIPhrase(P2, SG) +
                             (first.isKommaStehtAus() ? ", " : "");
 
-            final Wortfolge hauptsatzMitVorfeld =
-                    second.getDescriptionHauptsatzMitVorfeld(vorfeld);
-
-            params.komma(hauptsatzMitVorfeld.kommmaStehtAus());
-
-            res.add(new AllgDescription(params,
+            res.add(
                     // "Unten angekommen bist du ziemlich erschäpft"
-                    hauptsatzMitVorfeld.getString()));
+                    second.toAllgDescriptionMitVorfeld(vorfeld)
+                            .beginntZumindestSentence());
         }
 
         return res.build();

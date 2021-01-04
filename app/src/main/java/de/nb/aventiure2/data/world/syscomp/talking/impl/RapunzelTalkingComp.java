@@ -367,12 +367,13 @@ public class RapunzelTalkingComp extends AbstractTalkingComp {
         } else if (zuneigungTowardsSC == FeelingIntensity.NUR_LEICHT) {
             alt.addAll(altKombinationenBeendetParagraph(
                     "„Hallo“, antwortet "
-                            + anaph.nom(),
+                            + anaph.nom()
+                            + " ",
                     altEindruckSaetze.stream()
                             .map(s ->
-                                    Wortfolge.joinToNullWortfolge(
+                                    Wortfolge.joinToWortfolge(
                                             s.mitAnschlusswort("und").getVerbzweitsatzStandard()
-                                    ).uncapitalize())
+                                    ))
                             .map(wf -> satzanschluss(wf).phorikKandidat(F, RAPUNZEL))
                             .collect(toImmutableList())));
             if (scBereitsZuvorSchonEinmalGetroffen) {
@@ -418,7 +419,7 @@ public class RapunzelTalkingComp extends AbstractTalkingComp {
                                                 "„Oh, wie schön, dasss du wieder da "
                                                         + "bist“, antwortet",
                                                 anaph.nom(),
-                                                Konstituente.uncapitalize(s)
+                                                s
                                         ))
                                         .phorikKandidat(anaph, RAPUNZEL)
                                         .beendet(PARAGRAPH))
@@ -452,7 +453,7 @@ public class RapunzelTalkingComp extends AbstractTalkingComp {
                                                 "erwartet“, antwortet",
                                                 anaph.nom(),
                                                 "dir",
-                                                Konstituente.uncapitalize(s)
+                                                s
                                         ))
                                         .phorikKandidat(anaph, RAPUNZEL)
                                         .beendet(PARAGRAPH))
@@ -654,11 +655,8 @@ public class RapunzelTalkingComp extends AbstractTalkingComp {
                 ImmutableList.builder();
 
         for (final AbstractDescription<?> desc : alt) {
-            res.add(neuerSatz(praefix + desc.getDescriptionHauptsatz())
-                    .woertlicheRedeNochOffen(desc.isWoertlicheRedeNochOffen())
-                    .komma(desc.isKommaStehtAus())
-                    .phorikKandidat(desc.getPhorikKandidat())
-                    .beendet(PARAGRAPH));
+            res.add(desc.toAllgDescription().mitPraefix(praefix)
+                    .beginntZumindestSentence().beendet(PARAGRAPH));
         }
 
         return res.build();

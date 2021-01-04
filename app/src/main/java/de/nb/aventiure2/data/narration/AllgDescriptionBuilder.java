@@ -16,10 +16,13 @@ import javax.annotation.CheckReturnValue;
 import de.nb.aventiure2.german.base.StructuralElement;
 import de.nb.aventiure2.german.base.Wortfolge;
 import de.nb.aventiure2.german.description.AbstractDescription;
-import de.nb.aventiure2.german.description.AbstractDuDescription;
+import de.nb.aventiure2.german.description.AbstractFlexibleDescription;
 import de.nb.aventiure2.german.description.AllgDescription;
 import de.nb.aventiure2.german.description.DescriptionParams;
+import de.nb.aventiure2.german.description.SimpleDuDescription;
+import de.nb.aventiure2.german.description.StructuredDescription;
 
+import static com.google.common.base.Preconditions.checkArgument;
 import static de.nb.aventiure2.german.base.StructuralElement.SENTENCE;
 import static de.nb.aventiure2.german.base.StructuralElement.WORD;
 import static de.nb.aventiure2.german.base.StructuralElement.max;
@@ -38,7 +41,8 @@ class AllgDescriptionBuilder {
             final Narration initialNarration) {
         return altDescriptions.stream()
                 .flatMap(d -> toAllgDescriptions(initialNarration, d).stream())
-                .filter(distinctByKey(AllgDescription::getDescriptionHauptsatz))
+                .filter(distinctByKey(
+                        allgDescription -> allgDescription.getDescriptionHauptsatz().getString()))
                 .collect(ImmutableList.toImmutableList());
     }
 
@@ -50,15 +54,26 @@ class AllgDescriptionBuilder {
     static List<AllgDescription> toAllgDescriptions(
             final Narration initialNarration, final AbstractDescription<?> desc) {
         if (initialNarration.allowsAdditionalDuSatzreihengliedOhneSubjekt() &&
-                desc.getStartsNew() == WORD &&
-                desc instanceof AbstractDuDescription) {
-            final ImmutableList.Builder<AllgDescription> res = ImmutableList.builder();
-            res.add(toAllgDescriptionsDuSatzanschlussMitUnd((AbstractDuDescription<?, ?>) desc));
-            if (initialNarration.dann()) {
-                res.add(toAllgDescriptionsMitKommaDann((AbstractDuDescription<?, ?>) desc));
+                desc.getStartsNew() == WORD) {
+            if (desc instanceof SimpleDuDescription) {
+                final ImmutableList.Builder<AllgDescription> res = ImmutableList.builder();
+                res.add(toAllgDescriptionSatzanschlussMitUnd((SimpleDuDescription) desc));
+                if (initialNarration.dann()) {
+                    res.add(toAllgDescriptionMitKommaDann((SimpleDuDescription) desc));
+                }
+                return res.build();
+            } else if (desc instanceof StructuredDescription
+                    && ((StructuredDescription) desc).hasSubjektDu()) {
+                final ImmutableList.Builder<AllgDescription> res = ImmutableList.builder();
+                res.add(toAllgDescriptionSatzanschlussMitUnd((StructuredDescription) desc));
+                if (initialNarration.dann()) {
+                    res.add(toAllgDescriptionMitKommaDann((StructuredDescription) desc));
+                }
+                return res.build();
             }
-            return res.build();
-        } else if (initialNarration.dann()) {
+        }
+
+        if (initialNarration.dann()) {
             return toAllgDescriptionsImDannFall(desc);
         } else {
             return toDefaultAllgDescriptions(desc);
@@ -67,104 +82,89 @@ class AllgDescriptionBuilder {
 
     @NonNull
     @CheckReturnValue
-    private static AllgDescription toAllgDescriptionsDuSatzanschlussMitUnd(
-            final AbstractDuDescription<?, ?> duDesc) {
+    private static AllgDescription toAllgDescriptionSatzanschlussMitUnd(
+            final SimpleDuDescription duDesc) {
+        checkArgument(duDesc.getStartsNew() == WORD,
+                "Satzanschluss unmöglich für " + duDesc.getStartsNew());
+
         final DescriptionParams params = duDesc.copyParams();
         params.undWartest(false);
 
         return new AllgDescription(
                 params,
                 "und " +
-                        duDesc.getDescriptionSatzanschlussOhneSubjekt());
+                        duDesc.getDescriptionSatzanschlussOhneSubjektString());
     }
 
     @NonNull
     @CheckReturnValue
-    private static AllgDescription toAllgDescriptionsMitKommaDann(
-            final AbstractDuDescription<?, ?> duDesc) {
-        final Wortfolge hauptsatzMitKommmaDann =
-                duDesc.getDescriptionHauptsatzMitVorfeld(", dann");
+    private static AllgDescription toAllgDescriptionSatzanschlussMitUnd(
+            final StructuredDescription desc) {
+        final Wortfolge satzanschlussMitUnd =
+                Wortfolge.joinToWortfolge(desc.getSatz()
+                        .mitAnschlusswort("und")
+                        .getSatzanschlussOhneSubjekt());
 
-        final DescriptionParams params = duDesc.copyParams();
-        params.woertlicheRedeNochOffen(hauptsatzMitKommmaDann.woertlicheRedeNochOffen());
-        params.komma(hauptsatzMitKommmaDann.kommmaStehtAus());
-        params.dann(false);
+        return desc.toAllgDescriptionKeepParams(satzanschlussMitUnd)
+                // Noch nicht einmal bei P2 SG soll ein erneuter und-Anschluss erfolgen!
+                .undWartest(false);
+    }
 
-        return new AllgDescription(params, hauptsatzMitKommmaDann.getString());
+    @NonNull
+    @CheckReturnValue
+    private static AllgDescription toAllgDescriptionMitKommaDann(
+            final AbstractFlexibleDescription<?> desc) {
+        checkArgument(desc.getStartsNew() == WORD,
+                "Satzanschluss unmöglich für " + desc);
+
+        return desc.toAllgDescriptionMitVorfeld("dann")
+                .dann(false)
+                .mitPraefix(", ");
     }
 
     @NonNull
     @CheckReturnValue
     private static List<AllgDescription> toAllgDescriptionsImDannFall(
             final AbstractDescription<?> desc) {
-        final String satzEvtlMitDann =
+        final AllgDescription res =
                 desc.getDescriptionHauptsatzMitKonjunktionaladverbWennNoetig("dann");
-        final DescriptionParams params = desc.copyParams();
-        params.setStartsNew(startsNewAtLeastSentenceForDuDescription(desc));
-        params.dann(desc.isDann() && !satzEvtlMitDann.startsWith("Dann"));
+        if (desc instanceof AbstractFlexibleDescription) {
+            // Bei einer AbstractFlexibleDescription ist der Hauptsatz ein echter
+            // Hauptsatz. Daher muss ein neuer Satz begonnen werden.
+            res.beginntZumindestSentence();
+        }
+        // else: Ansonsten könnte der "Hauptsatz" auch einfach ein paar Wörter sein,
+        // die Vorgabe WORD soll dann erhalten bleiben
 
-        return ImmutableList.of(
-                new AllgDescription(
-                        params,
-                        satzEvtlMitDann));
+        if (res.getDescriptionHauptsatz().getString().startsWith("Dann")) {
+            res.dann(false);
+        }
+
+        return ImmutableList.of(res);
     }
 
 
     @CheckReturnValue
     private static List<AllgDescription> toDefaultAllgDescriptions(
             final AbstractDescription<?> desc) {
-        final ImmutableList.Builder<AllgDescription> alternatives = ImmutableList.builder();
-
-        final AllgDescription standard = toHauptsatzAllgDescription(
-                startsNewAtLeastSentenceForDuDescription(desc), desc);
-        alternatives.add(standard);
-
-        if (desc instanceof AbstractDuDescription) {
-            final AllgDescription speziellesVorfeld =
-                    toHauptsatzMitSpeziellemVorfeldAllgDescription(
-                            startsNewAtLeastSentenceForDuDescription(desc),
-                            (AbstractDuDescription<?, ?>) desc);
-            if (!speziellesVorfeld.getDescriptionHauptsatz().equals(
-                    standard.getDescriptionHauptsatz())) {
-                alternatives.add(speziellesVorfeld);
-            }
+        if (desc instanceof AbstractFlexibleDescription) {
+            return ((AbstractFlexibleDescription) desc).altDescriptionHaupsaetze();
         }
 
-        return alternatives.build();
+        return ImmutableList.of((AllgDescription) desc);
     }
 
-    @CheckReturnValue
-    private static AllgDescription toHauptsatzAllgDescription(
-            final StructuralElement startsNew,
-            @NonNull final AbstractDescription<?> desc) {
-        final DescriptionParams params = desc.copyParams();
-        params.setStartsNew(startsNew);
-
-        return new AllgDescription(
-                params, desc.getDescriptionHauptsatz());
-    }
-
-    @CheckReturnValue
-    private static AllgDescription toHauptsatzMitSpeziellemVorfeldAllgDescription(
-            final StructuralElement startsNew,
-            @NonNull final AbstractDuDescription<?, ?> desc) {
-        final DescriptionParams params = desc.copyParams();
-        params.setStartsNew(startsNew);
-
-        return new AllgDescription(
-                params, desc.getDescriptionHauptsatzMitSpeziellemVorfeld());
-    }
-
-    private static StructuralElement startsNewAtLeastSentenceForDuDescription(
+    private static StructuralElement startsNewAtLeastSentenceForFlexbibleDescription(
             final AbstractDescription<?> desc) {
-        return (desc instanceof AbstractDuDescription) ?
-                // Bei einer AbstractDuDescription ist der Hauptsatz ein echter
+        return (desc instanceof AbstractFlexibleDescription) ?
+                // Bei einer AbstractFlexibleDescription ist der Hauptsatz ein echter
                 // Hauptsatz. Daher muss ein neuer Satz begonnen werden.
                 max(desc.getStartsNew(), SENTENCE) :
                 // Ansonsten könnte der "Hauptsatz" auch einfach ein paar Wörter sein,
                 // die Vorgabe WORD soll dann erhalten bleiben
                 desc.getStartsNew();
     }
+
 
     private static <T> Predicate<T> distinctByKey(final Function<? super T, ?> keyExtractor) {
         final Set<Object> seen = ConcurrentHashMap.newKeySet();

@@ -14,7 +14,6 @@ import de.nb.aventiure2.data.world.syscomp.description.impl.SimpleDescriptionCom
 import de.nb.aventiure2.data.world.syscomp.location.LocationComp;
 import de.nb.aventiure2.data.world.syscomp.storingplace.StoringPlaceComp;
 import de.nb.aventiure2.german.description.AbstractDescription;
-import de.nb.aventiure2.german.description.AbstractDuDescription;
 import de.nb.aventiure2.german.description.TimedDescription;
 import de.nb.aventiure2.german.praedikat.AdverbialeAngabeSkopusVerbAllg;
 import de.nb.aventiure2.german.praedikat.VerbSubj;
@@ -109,7 +108,7 @@ class SchattenDerBaeumeFactory {
                 .dann();
     }
 
-    private static AbstractDescription<? extends AbstractDuDescription<?, ?>> getDescOut(
+    private static AbstractDescription<? extends AbstractDescription<?>> getDescOut(
             final Known newLocationKnown, final Lichtverhaeltnisse lichtverhaeltnisse) {
         if (lichtverhaeltnisse == DUNKEL) {
 

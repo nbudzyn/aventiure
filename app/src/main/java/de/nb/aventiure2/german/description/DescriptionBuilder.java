@@ -12,18 +12,21 @@ import javax.annotation.CheckReturnValue;
 import de.nb.aventiure2.data.time.AvTimeSpan;
 import de.nb.aventiure2.data.world.base.GameObjectId;
 import de.nb.aventiure2.german.base.Konstituente;
+import de.nb.aventiure2.german.base.Personalpronomen;
 import de.nb.aventiure2.german.base.StructuralElement;
 import de.nb.aventiure2.german.base.SubstantivischePhrase;
 import de.nb.aventiure2.german.base.Wortfolge;
 import de.nb.aventiure2.german.praedikat.PraedikatOhneLeerstellen;
 import de.nb.aventiure2.german.satz.Satz;
 
+import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.collect.ImmutableList.toImmutableList;
-import static de.nb.aventiure2.german.base.GermanUtil.capitalize;
 import static de.nb.aventiure2.german.base.Numerus.SG;
+import static de.nb.aventiure2.german.base.NumerusGenus.M;
 import static de.nb.aventiure2.german.base.Person.P2;
 import static de.nb.aventiure2.german.base.StructuralElement.PARAGRAPH;
 import static de.nb.aventiure2.german.base.StructuralElement.SENTENCE;
+import static de.nb.aventiure2.german.base.StructuralElement.WORD;
 import static de.nb.aventiure2.german.base.Wortfolge.w;
 import static de.nb.aventiure2.german.description.TimedDescription.toTimed;
 
@@ -174,14 +177,22 @@ public class DescriptionBuilder {
     @CheckReturnValue
     public static AllgDescription neuerSatz(final StructuralElement startsNew,
                                             final Wortfolge wortfolge) {
-        return new AllgDescription(startsNew, wortfolge.capitalize());
+        checkArgument(startsNew != WORD,
+                "Neuer Satz unmöglich für " + startsNew);
+
+        // FIXME capitalize() sollte nur möglichst spät und möglichst
+        //  weit außen aufgerufen werden!
+        return new AllgDescription(startsNew, wortfolge);
     }
 
     @NonNull
     @CheckReturnValue
     public static AllgDescription neuerSatz(final StructuralElement startsNew,
                                             final String description) {
-        return new AllgDescription(startsNew, capitalize(description));
+        checkArgument(startsNew != WORD,
+                "Neuer Satz unmöglich für " + startsNew);
+
+        return new AllgDescription(startsNew, description);
     }
 
     @CheckReturnValue
@@ -412,12 +423,11 @@ public class DescriptionBuilder {
                                          @Nullable final Wortfolge remainder,
                                          @Nullable final String vorfeldSatzglied) {
         return new SimpleDuDescription(startsNew,
-                new SimpleDuTextPart(
-                        verb,
-                        remainder != null ? remainder.getString() : null,
-                        vorfeldSatzglied),
+                verb,
+                remainder != null ? remainder.getString() : null,
+                vorfeldSatzglied,
                 remainder != null && remainder.woertlicheRedeNochOffen(),
-                remainder != null && remainder.kommmaStehtAus());
+                remainder != null && remainder.kommaStehtAus());
     }
 
     @CheckReturnValue
@@ -428,14 +438,14 @@ public class DescriptionBuilder {
     }
 
     @CheckReturnValue
-    public static TimedDescription<StructuredDuDescription> du(
+    public static TimedDescription<StructuredDescription> du(
             final PraedikatOhneLeerstellen praedikat,
             final AvTimeSpan timeElapsed) {
         return du(praedikat, timeElapsed, null);
     }
 
     @CheckReturnValue
-    public static TimedDescription<StructuredDuDescription> du(
+    public static TimedDescription<StructuredDescription> du(
             final PraedikatOhneLeerstellen praedikat,
             final AvTimeSpan timeElapsed,
             @Nullable final String counterIdIncrementedIfTextIsNarrated) {
@@ -444,7 +454,7 @@ public class DescriptionBuilder {
     }
 
     @CheckReturnValue
-    public static TimedDescription<StructuredDuDescription> du(
+    public static TimedDescription<StructuredDescription> du(
             final StructuralElement startsNew,
             final PraedikatOhneLeerstellen praedikat,
             final AvTimeSpan timeElapsed) {
@@ -452,7 +462,7 @@ public class DescriptionBuilder {
     }
 
     @CheckReturnValue
-    public static TimedDescription<StructuredDuDescription> du(
+    public static TimedDescription<StructuredDescription> du(
             final StructuralElement startsNew,
             final PraedikatOhneLeerstellen praedikat,
             final AvTimeSpan timeElapsed,
@@ -463,14 +473,22 @@ public class DescriptionBuilder {
     }
 
     @CheckReturnValue
-    public static StructuredDuDescription du(final PraedikatOhneLeerstellen praedikat) {
+    public static StructuredDescription du(final PraedikatOhneLeerstellen praedikat) {
         return du(StructuralElement.WORD, praedikat);
     }
 
     @NonNull
     @CheckReturnValue
-    public static StructuredDuDescription du(final StructuralElement startsNew,
-                                             final PraedikatOhneLeerstellen praedikat) {
-        return new StructuredDuDescription(startsNew, praedikat);
+    public static StructuredDescription du(final StructuralElement startsNew,
+                                           final PraedikatOhneLeerstellen praedikat) {
+        // FIXME Alle du()-Aufrufe prüfen, ggf. auf SENTENCE setzen
+
+        return new StructuredDescription(startsNew,
+                praedikat.alsSatzMitSubjekt(Personalpronomen.get(P2,
+                        // Wir behaupten hier, der Adressat wäre männlich.
+                        // Es ist die Verantwortung des Aufrufers, keine
+                        // Sätze mit Konstruktionen wie "Du, der du" zu erzeugen, die
+                        // weibliche Adressaten ("du, die du") ausschließen.
+                        M)));
     }
 }

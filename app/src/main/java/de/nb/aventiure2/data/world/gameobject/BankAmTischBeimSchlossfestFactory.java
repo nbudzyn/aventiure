@@ -14,7 +14,7 @@ import de.nb.aventiure2.data.world.syscomp.description.impl.SimpleDescriptionCom
 import de.nb.aventiure2.data.world.syscomp.location.ILocatableGO;
 import de.nb.aventiure2.data.world.syscomp.location.LocationComp;
 import de.nb.aventiure2.data.world.syscomp.storingplace.StoringPlaceComp;
-import de.nb.aventiure2.german.description.StructuredDuDescription;
+import de.nb.aventiure2.german.description.StructuredDescription;
 import de.nb.aventiure2.german.description.TimedDescription;
 import de.nb.aventiure2.german.praedikat.VerbSubjObj;
 
@@ -106,7 +106,7 @@ class BankAmTischBeimSchlossfestFactory {
                 "erneut", mins(3));
     }
 
-    private StructuredDuDescription getDescOut(
+    private StructuredDescription getDescOut(
             final Known newLocationKnown, final Lichtverhaeltnisse lichtverhaeltnisse) {
         // Der Tisch wird wieder entfernt, s.o.
         ((ILocatableGO) world.load(SCHLOSS_VORHALLE_LANGER_TISCH_BEIM_FEST))

@@ -34,7 +34,9 @@ import de.nb.aventiure2.data.world.syscomp.state.impl.SchlossfestState;
 import de.nb.aventiure2.data.world.syscomp.storingplace.ILocationGO;
 import de.nb.aventiure2.german.base.GermanUtil;
 import de.nb.aventiure2.german.base.StructuralElement;
-import de.nb.aventiure2.german.description.AbstractDuDescription;
+import de.nb.aventiure2.german.base.Wortfolge;
+import de.nb.aventiure2.german.description.AbstractFlexibleDescription;
+import de.nb.aventiure2.german.description.AllgDescription;
 import de.nb.aventiure2.german.description.TimedDescription;
 import de.nb.aventiure2.scaction.AbstractScAction;
 import de.nb.aventiure2.scaction.stepcount.SCActionStepCountDao;
@@ -51,7 +53,6 @@ import static de.nb.aventiure2.data.world.syscomp.spatialconnection.NumberOfWays
 import static de.nb.aventiure2.data.world.syscomp.state.impl.SchlossfestState.BEGONNEN;
 import static de.nb.aventiure2.german.base.GermanUtil.buildAufzaehlung;
 import static de.nb.aventiure2.german.base.GermanUtil.capitalize;
-import static de.nb.aventiure2.german.base.StructuralElement.PARAGRAPH;
 import static de.nb.aventiure2.german.base.StructuralElement.WORD;
 import static de.nb.aventiure2.german.description.DescriptionBuilder.du;
 import static de.nb.aventiure2.german.description.DescriptionBuilder.neuerSatz;
@@ -433,18 +434,22 @@ public class BewegenAction<LOC_DESC extends ILocatableGO & IDescribableGO>
         final TimedDescription<?> description = getNormalDescription(
                 to.storingPlaceComp().getLichtverhaeltnisse());
 
-        if (description.getDescription() instanceof AbstractDuDescription &&
+        if (description.getDescription() instanceof AbstractFlexibleDescription &&
+                ((AbstractFlexibleDescription<?>) description.getDescription()).hasSubjektDu() &&
                 n.allowsAdditionalDuSatzreihengliedOhneSubjekt() &&
                 isDefinitivDiskontinuitaet()) {
             final ImmutableList.Builder<TimedDescription<?>> alt = builder();
 
+            final Wortfolge descriptionSatzanschlussOhneSubjekt =
+                    ((AbstractFlexibleDescription<?>) description.getDescription())
+                            .getDescriptionSatzanschlussOhneSubjekt();
             alt.add(satzanschluss(", besinnst dich aber und "
-                            + ((AbstractDuDescription<?, ?>) description.getDescription())
-                            .getDescriptionSatzanschlussOhneSubjekt(),
+                            + descriptionSatzanschlussOhneSubjekt.getString(),
                     description.getTimeElapsed())
                     .dann(description.isDann())
-                    .woertlicheRedeNochOffen(description.isWoertlicheRedeNochOffen())
-                    .komma(description.isKommaStehtAus()));
+                    .woertlicheRedeNochOffen(
+                            descriptionSatzanschlussOhneSubjekt.woertlicheRedeNochOffen())
+                    .komma(descriptionSatzanschlussOhneSubjekt.kommaStehtAus()));
 
             alt.addAll(drueckeAusTimed(DISKONTINUITAET, description));
             n.narrateAlt(alt);
@@ -453,36 +458,45 @@ public class BewegenAction<LOC_DESC extends ILocatableGO & IDescribableGO>
 
         if (description.getStartsNew() == WORD &&
                 n.allowsAdditionalDuSatzreihengliedOhneSubjekt() &&
-                description.getDescription() instanceof AbstractDuDescription) {
+                description.getDescription() instanceof AbstractFlexibleDescription) {
             n.narrate(description);
             return;
         }
 
         if (isDefinitivDiskontinuitaet()) {
             final ImmutableList.Builder<TimedDescription<?>> alt = builder();
+            final Wortfolge descriptionHauptsatz =
+                    description.getDescription().getDescriptionHauptsatz();
             if (numberOfWays == ONLY_WAY) {
                 alt.add(
                         du("schaust", "dich nur kurz um, dann "
-                                        + GermanUtil.uncapitalize(
-                                description.getDescription().getDescriptionHauptsatz()),
+                                        +
+                                        // FIXME Wortfolge verwenden!
+                                        descriptionHauptsatz.getString(),
                                 description.getTimeElapsed())
-                                .woertlicheRedeNochOffen(description.isWoertlicheRedeNochOffen())
-                                .komma(description.isKommaStehtAus())
+                                .woertlicheRedeNochOffen(
+                                        descriptionHauptsatz.woertlicheRedeNochOffen())
+                                .komma(descriptionHauptsatz.kommaStehtAus())
                                 .undWartest(
                                         description
                                                 .isAllowsAdditionalDuSatzreihengliedOhneSubjekt()));
             } else {
                 alt.add(neuerSatz(
                         "Was willst du hier eigentlich? "
-                                + description.getDescription().getDescriptionHauptsatz(),
+                                + descriptionHauptsatz
+                                .getString(),
                         description.getTimeElapsed())
-                        .woertlicheRedeNochOffen(description.isWoertlicheRedeNochOffen())
-                        .komma(description.isKommaStehtAus()));
-                if (description.getDescription() instanceof AbstractDuDescription<?, ?>) {
+                        .woertlicheRedeNochOffen(descriptionHauptsatz.woertlicheRedeNochOffen())
+                        .komma(descriptionHauptsatz.kommaStehtAus()));
+                if (description.getDescription() instanceof AbstractFlexibleDescription<?> &&
+                        ((AbstractFlexibleDescription<?>) description.getDescription())
+                                .hasSubjektDu()) {
                     alt.add(neuerSatz(
                             "Was willst du hier eigentlich? "
-                                    + ((AbstractDuDescription<?, ?>) description.getDescription())
-                                    .getDescriptionHauptsatzMitSpeziellemVorfeld(),
+                                    + GermanUtil.capitalize(
+                                    ((AbstractFlexibleDescription<?>) description
+                                            .getDescription())
+                                            .getDescriptionHauptsatzMitSpeziellemVorfeld()),
                             description.getTimeElapsed())
                             .woertlicheRedeNochOffen(description.isWoertlicheRedeNochOffen())
                             .komma(description.isKommaStehtAus()));
@@ -496,18 +510,15 @@ public class BewegenAction<LOC_DESC extends ILocatableGO & IDescribableGO>
 
         if (sc.memoryComp().getLastAction().is(BEWEGEN)) {
             if (n.endsThisIsExactly(StructuralElement.WORD) && n.dann()) {
-                // "Du stehst wieder vor dem Schloss; dann gehst du wieder hinein in das Schloss."
-                final String satzEvtlMitDann = description.getDescription()
-                        .getDescriptionHauptsatzMitKonjunktionaladverbWennNoetig(
-                                "dann");
-                n.narrate(
-                        satzanschluss(
-                                "; " + GermanUtil.uncapitalize(satzEvtlMitDann),
-                                description.getTimeElapsed())
-                                .woertlicheRedeNochOffen(description.isWoertlicheRedeNochOffen())
-                                .komma(description.isKommaStehtAus())
-                                .dann(description.isDann()
-                                        && !satzEvtlMitDann.startsWith("Dann")));
+                // "Du stehst wieder vor dem Schloss. Dann gehst du wieder hinein in das Schloss."
+                final AllgDescription satzEvtlMitDann = description.getDescription()
+                        .getDescriptionHauptsatzMitKonjunktionaladverbWennNoetig("dann")
+                        .beginntZumindestSentence();
+                if (satzEvtlMitDann.getDescriptionHauptsatz().getString().startsWith("Dann")) {
+                    satzEvtlMitDann.dann(false);
+                }
+
+                n.narrate(description.withDescription(satzEvtlMitDann));
                 return;
             } else {
                 n.narrate(description);
@@ -515,14 +526,11 @@ public class BewegenAction<LOC_DESC extends ILocatableGO & IDescribableGO>
             }
         } else {
             if (n.dann()) {
-                n.narrate(
-                        neuerSatz(PARAGRAPH, description.getDescription()
-                                        .getDescriptionHauptsatzMitKonjunktionaladverbWennNoetig("danach"),
-                                description.getTimeElapsed())
-                                .woertlicheRedeNochOffen(description.isWoertlicheRedeNochOffen())
-                                .komma(description.isKommaStehtAus())
-                                .undWartest(description
-                                        .isAllowsAdditionalDuSatzreihengliedOhneSubjekt()));
+                n.narrate(description.withDescription(
+                        description.getDescription()
+                                .getDescriptionHauptsatzMitKonjunktionaladverbWennNoetig(
+                                        "danach")
+                                .beginntZumindestParagraph()));
                 return;
             }
 

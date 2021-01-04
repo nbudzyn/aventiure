@@ -19,7 +19,7 @@ import de.nb.aventiure2.data.world.syscomp.taking.SCTakeAction;
 import de.nb.aventiure2.german.base.GermanUtil;
 import de.nb.aventiure2.german.base.Nominalphrase;
 import de.nb.aventiure2.german.base.SubstantivischePhrase;
-import de.nb.aventiure2.german.description.StructuredDuDescription;
+import de.nb.aventiure2.german.description.StructuredDescription;
 import de.nb.aventiure2.german.praedikat.PraedikatOhneLeerstellen;
 import de.nb.aventiure2.scaction.AbstractScAction;
 import de.nb.aventiure2.scaction.stepcount.SCActionStepCountDao;
@@ -125,7 +125,7 @@ public class GebenAction<
                 action.wirdZunaechstAngenommen() ?
                         getGebenPraedikatAlt() : getAnbietenPraedikatAlt();
 
-        final ImmutableList<StructuredDuDescription> descAlt =
+        final ImmutableList<StructuredDescription> descAlt =
                 praedikatAlt.stream().map(GebenAction::toAnbietenGebenDuDescription)
                         .collect(ImmutableList.toImmutableList());
 
@@ -184,7 +184,7 @@ public class GebenAction<
         return alt.build();
     }
 
-    private static StructuredDuDescription toAnbietenGebenDuDescription(
+    private static StructuredDescription toAnbietenGebenDuDescription(
             final PraedikatOhneLeerstellen anbietenGebenPraedikat) {
         return du(anbietenGebenPraedikat)
                 .undWartest()
