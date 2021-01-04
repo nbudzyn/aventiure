@@ -45,8 +45,6 @@ public class Konstituente {
      */
     private final boolean kommmaStehtAus;
 
-    // FIXME capitalize() sollte nur möglichst spät und möglichst
-    //  weit außen aufgerufen werden!
     public static Iterable<Konstituente> capitalize(final Iterable<Konstituente> input) {
         final ImmutableList<Konstituente> inputList = ImmutableList.copyOf(input);
 

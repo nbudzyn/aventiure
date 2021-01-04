@@ -782,8 +782,6 @@ public class FeelingsComp extends AbstractStatefulComponent<FeelingsPCD> {
         final ImmutableList.Builder<AbstractDescription<?>> res = ImmutableList.builder();
 
         res.addAll(getPcd().getMuedigkeitsData().altAdjektivphrase().stream()
-                // FIXME schöner wäre du(prädikat), das dann den Satz
-                //  speichern würde (nicht nur für 2. Person SG, sondern generell!)
                 .map(p -> du(PARAGRAPH, praedikativumPraedikatWerdenMit(p)).beendet(PARAGRAPH))
                 .collect(toList()));
 

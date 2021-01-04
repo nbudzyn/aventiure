@@ -422,7 +422,7 @@ public class BewegenAction<LOC_DESC extends ILocatableGO & IDescribableGO>
     }
 
     private void narrateLocationOnly(@NonNull final ILocationGO to) {
-        // FIXME Verkürzungen automatisch erzeugen, z.B. erzeugen eines Nachfelds nach einem
+        // IDEA Verkürzungen automatisch erzeugen, z.B. erzeugen eines Nachfelds nach einem
         //  Prädikat: "und weiter in Richtung Schloss".
 
         // STORY Wenn Bewegung Wiederholung ist (z.B. Rund um den Turm): Zur Sicherheit...
