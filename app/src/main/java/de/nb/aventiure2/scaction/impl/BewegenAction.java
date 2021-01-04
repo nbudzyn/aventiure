@@ -36,7 +36,7 @@ import de.nb.aventiure2.german.base.GermanUtil;
 import de.nb.aventiure2.german.base.StructuralElement;
 import de.nb.aventiure2.german.base.Wortfolge;
 import de.nb.aventiure2.german.description.AbstractFlexibleDescription;
-import de.nb.aventiure2.german.description.AllgDescription;
+import de.nb.aventiure2.german.description.TextDescription;
 import de.nb.aventiure2.german.description.TimedDescription;
 import de.nb.aventiure2.scaction.AbstractScAction;
 import de.nb.aventiure2.scaction.stepcount.SCActionStepCountDao;
@@ -512,8 +512,8 @@ public class BewegenAction<LOC_DESC extends ILocatableGO & IDescribableGO>
         if (sc.memoryComp().getLastAction().is(BEWEGEN)) {
             if (n.endsThisIsExactly(StructuralElement.WORD) && n.dann()) {
                 // "Du stehst wieder vor dem Schloss. Dann gehst du wieder hinein in das Schloss."
-                final AllgDescription satzEvtlMitDann = description.getDescription()
-                        .getDescriptionHauptsatzMitKonjunktionaladverbWennNoetig("dann")
+                final TextDescription satzEvtlMitDann = description.getDescription()
+                        .toTextDescriptionMitKonjunktionaladverbWennNoetig("dann")
                         .beginntZumindestSentence();
                 if (satzEvtlMitDann.getDescriptionHauptsatz().getString().startsWith("Dann")) {
                     satzEvtlMitDann.dann(false);
@@ -529,7 +529,7 @@ public class BewegenAction<LOC_DESC extends ILocatableGO & IDescribableGO>
             if (n.dann()) {
                 n.narrate(description.withDescription(
                         description.getDescription()
-                                .getDescriptionHauptsatzMitKonjunktionaladverbWennNoetig(
+                                .toTextDescriptionMitKonjunktionaladverbWennNoetig(
                                         "danach")
                                 .beginntZumindestParagraph()));
                 return;

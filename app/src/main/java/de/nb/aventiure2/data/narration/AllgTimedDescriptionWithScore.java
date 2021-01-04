@@ -4,16 +4,16 @@ import androidx.annotation.NonNull;
 
 import java.util.Objects;
 
-import de.nb.aventiure2.german.description.AllgDescription;
+import de.nb.aventiure2.german.description.TextDescription;
 import de.nb.aventiure2.german.description.TimedDescription;
 
 class AllgTimedDescriptionWithScore {
-    final TimedDescription<AllgDescription> allgTimedDescription;
+    final TimedDescription<TextDescription> allgTimedDescription;
     final float score;
 
     AllgTimedDescriptionWithScore(
-            final TimedDescription<AllgDescription> allgTimedDescription,
-                                           final float score) {
+            final TimedDescription<TextDescription> allgTimedDescription,
+            final float score) {
         this.allgTimedDescription = allgTimedDescription;
         this.score = score;
     }

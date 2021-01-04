@@ -47,8 +47,8 @@ public abstract class AbstractDescription<SELF extends AbstractDescription<SELF>
 
     @NonNull
     @CheckReturnValue
-    public AllgDescription toAllgDescription() {
-        return toAllgDescriptionKeepParams(getDescriptionHauptsatz());
+    public TextDescription toTextDescription() {
+        return toTextDescriptionKeepParams(getDescriptionHauptsatz());
     }
 
 
@@ -63,16 +63,16 @@ public abstract class AbstractDescription<SELF extends AbstractDescription<SELF>
      * Gibt die Beschreibung als Hauptsatz zurück, wenn nötig mit dem angegebenen
      * <code>konjunktionaladverb</code> ("dann", "darauf") im Vorfeld.
      */
-    public abstract AllgDescription
-    getDescriptionHauptsatzMitKonjunktionaladverbWennNoetig(String konjunktionaladverb);
+    public abstract TextDescription
+    toTextDescriptionMitKonjunktionaladverbWennNoetig(String konjunktionaladverb);
 
     @NonNull
-    public AllgDescription toAllgDescriptionKeepParams(final Wortfolge wortfolge) {
+    public TextDescription toTextDescriptionKeepParams(final Wortfolge wortfolge) {
         final DescriptionParams params = copyParams();
         params.woertlicheRedeNochOffen(wortfolge.woertlicheRedeNochOffen());
         params.komma(wortfolge.kommaStehtAus());
 
-        return new AllgDescription(params, wortfolge.getString());
+        return new TextDescription(params, wortfolge.getString());
     }
 
     public SELF woertlicheRedeNochOffen() {

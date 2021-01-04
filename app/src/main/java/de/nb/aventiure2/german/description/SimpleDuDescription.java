@@ -56,10 +56,10 @@ public class SimpleDuDescription extends AbstractFlexibleDescription<SimpleDuDes
     }
 
     @Override
-    public ImmutableList<AllgDescription> altDescriptionHaupsaetze() {
-        final ImmutableList.Builder<AllgDescription> res = ImmutableList.builder();
+    public ImmutableList<TextDescription> altDescriptionHaupsaetze() {
+        final ImmutableList.Builder<TextDescription> res = ImmutableList.builder();
 
-        res.add(toAllgDescription()
+        res.add(toTextDescription()
                 // Bei einer SimpleDuDescription ist der Hauptsatz-Standard ein echter
                 // Hauptsatz. Daher muss ein neuer Satz begonnen werden.
                 .beginntZumindestSentence());
@@ -68,7 +68,7 @@ public class SimpleDuDescription extends AbstractFlexibleDescription<SimpleDuDes
                 getHauptsatzMitSpeziellemVorfeldOrNull();
 
         if (hauptsatzMitSpeziellemVorfeld != null) {
-            res.add(toAllgDescriptionKeepParams(hauptsatzMitSpeziellemVorfeld)
+            res.add(toTextDescriptionKeepParams(hauptsatzMitSpeziellemVorfeld)
                     // Bei einer SimpleDuDescription ist auch dieser Hauptsatz ein echter
                     // Hauptsatz. Daher muss ein neuer Satz begonnen werden.
                     .beginntZumindestSentence());
@@ -78,18 +78,18 @@ public class SimpleDuDescription extends AbstractFlexibleDescription<SimpleDuDes
     }
 
     @Override
-    public AllgDescription getDescriptionHauptsatzMitKonjunktionaladverbWennNoetig(
+    public TextDescription toTextDescriptionMitKonjunktionaladverbWennNoetig(
             final String konjunktionaladverb) {
         // FIXME Derzeit ist die Sache mit dem Komma nicht einheitlich gelöst.
         //  Gut wäre es wohl, wenn die DesriptionParams KEIN isKommaStehtAus
         //  hätten, sondern wenn diese Informatoion hier on-the-fly ermittelt würde.
-        //  In der AllgDescription müsste man die Information dann zusätzlich speichern,
+        //  In der TextDescription müsste man die Information dann zusätzlich speichern,
         //  damit der Benutzer sie (nur dort?!) angeben kann.
         @Nullable final Wortfolge hauptsatzMitSpeziellemVorfeldOrNull =
                 getHauptsatzMitSpeziellemVorfeldOrNull();
 
         if (hauptsatzMitSpeziellemVorfeldOrNull != null) {
-            return toAllgDescriptionKeepParams(hauptsatzMitSpeziellemVorfeldOrNull);
+            return toTextDescriptionKeepParams(hauptsatzMitSpeziellemVorfeldOrNull);
         }
 
         return toAllgDescriptionMitVorfeld(konjunktionaladverb);

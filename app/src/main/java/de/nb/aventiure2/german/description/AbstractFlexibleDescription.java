@@ -12,7 +12,7 @@ import de.nb.aventiure2.german.base.Wortfolge;
 public abstract class AbstractFlexibleDescription<SELF extends AbstractDescription<SELF>>
         extends AbstractDescription<SELF> {
     // FIXME Wortfolge sollte hier nicht mehr verwendet werden - stattdessen
-    //  AllgDescription.
+    //  TextDescription.
 
     public AbstractFlexibleDescription(final StructuralElement startsNew) {
         super(startsNew);
@@ -30,11 +30,11 @@ public abstract class AbstractFlexibleDescription<SELF extends AbstractDescripti
 
     @NonNull
     @CheckReturnValue
-    public AllgDescription toAllgDescriptionMitVorfeld(final String vorfeld) {
-        return toAllgDescriptionKeepParams(getDescriptionHauptsatzMitVorfeld(vorfeld));
+    public TextDescription toAllgDescriptionMitVorfeld(final String vorfeld) {
+        return toTextDescriptionKeepParams(getDescriptionHauptsatzMitVorfeld(vorfeld));
     }
 
-    public abstract ImmutableList<AllgDescription> altDescriptionHaupsaetze();
+    public abstract ImmutableList<TextDescription> altDescriptionHaupsaetze();
 
     abstract Wortfolge getDescriptionHauptsatzMitVorfeld(final String vorfeld);
 

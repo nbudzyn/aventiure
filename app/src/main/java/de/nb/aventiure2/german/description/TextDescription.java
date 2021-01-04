@@ -22,35 +22,35 @@ import static de.nb.aventiure2.german.base.Wortfolge.w;
  * A general description. The subject may be anything.
  */
 @ParametersAreNonnullByDefault
-public class AllgDescription extends AbstractDescription<AllgDescription> {
+public class TextDescription extends AbstractDescription<TextDescription> {
     /**
      * Something like "Der Weg führt weiter in den Wald hinein. Dann stehst du vor einer Kirche"
      */
     private String text;
 
-    // IDEA Das Konzept könnte man verallgemeinern: Die AllgDescription könnte am Ende
+    // IDEA Das Konzept könnte man verallgemeinern: Die TextDescription könnte am Ende
     //  Koordination (d.h. und-Verbindungen) auf verschiedenen Ebenen erlauben:
     //  - Du nimmst die Lampe UND DAS GLAS: Koordination im AkkObj des NEHMEN-Prädikat
     //  - Den Weg hinunter kommen eine Frau UND EIN MANN: Koordination im Subj des KOMMEN-Prädikats
     //  - Du hast gute Laune und GEHST WEITER: Koordination zweier Verben zum selben Subj (P2)
     //  - Die Frau hat gute Laune und GEHT WEITER: Koordination zweier Verben zum selben Subj (P3)
     //  - Die Frau geht den Weg hinunten UND DU GEHST HINTERHER: Koordination zweier Hauptsätze
-    //  Dazu bräuchte man wohl eine Kontextinfo in der Art "Womit endet die AllgDescription?"
+    //  Dazu bräuchte man wohl eine Kontextinfo in der Art "Womit endet die TextDescription?"
     //  Das könnte allerdings auch über die Prädikate... gelöst werden...
 
-    AllgDescription(final StructuralElement startsNew,
+    TextDescription(final StructuralElement startsNew,
                     final Wortfolge wortfolge) {
         this(new DescriptionParams(startsNew,
                         wortfolge.woertlicheRedeNochOffen(), wortfolge.kommaStehtAus()),
                 wortfolge.getString());
     }
 
-    AllgDescription(final StructuralElement startsNew,
+    TextDescription(final StructuralElement startsNew,
                     final String description) {
         this(new DescriptionParams(startsNew), description);
     }
 
-    public AllgDescription(final DescriptionParams descriptionParams,
+    public TextDescription(final DescriptionParams descriptionParams,
                            final String description) {
         super(descriptionParams);
 
@@ -68,22 +68,22 @@ public class AllgDescription extends AbstractDescription<AllgDescription> {
     }
 
     /**
-     * Gibt eine neue <code>AllgDescription</code> zurück, die um dieses Präfix
+     * Gibt eine neue <code>TextDescription</code> zurück, die um dieses Präfix
      * ergänzt ist. Hier wird also keinesfalls ein Satzglied in das Vorfeld gestellt
      * oder Ähnliches, sondern es wird rein mechanisch ein Präfix vorangestellt.
      * Wird dazwischen ein Leerzeichen erwartet, so muss das Präfix mit diesem Leerzeichen enden.
      */
     @NonNull
     @CheckReturnValue
-    public AllgDescription mitPraefix(final String praefix) {
-        return new AllgDescription(
+    public TextDescription mitPraefix(final String praefix) {
+        return new TextDescription(
                 copyParams(),
                 praefix + text);
     }
 
     /**
-     * Gibt eine neue <code>AllgDescription</code> zurück, die um dieses Präfix
-     * ergänzt ist, wobei die alte <code>AllgDescription</code> großgeschrieben
+     * Gibt eine neue <code>TextDescription</code> zurück, die um dieses Präfix
+     * ergänzt ist, wobei die alte <code>TextDescription</code> großgeschrieben
      * (capitalized) wird. Hier wird also keinesfalls ein Satzglied in das Vorfeld gestellt
      * oder Ähnliches, sondern es wird ein Präfix vorangestellt, z.B. ein ganz neuer
      * Satz.
@@ -91,15 +91,15 @@ public class AllgDescription extends AbstractDescription<AllgDescription> {
      */
     @NonNull
     @CheckReturnValue
-    public AllgDescription mitPraefixCapitalize(final String praefix) {
-        return new AllgDescription(
+    public TextDescription mitPraefixCapitalize(final String praefix) {
+        return new TextDescription(
                 copyParams(),
                 praefix + GermanUtil.capitalize(text));
     }
 
     @Override
     @NonNull
-    public AllgDescription getDescriptionHauptsatzMitKonjunktionaladverbWennNoetig(
+    public TextDescription toTextDescriptionMitKonjunktionaladverbWennNoetig(
             final String konjunktionaladverb) {
 
         // Konjunktionaladverb ist in diesen Fällen nicht nötig:
@@ -116,14 +116,14 @@ public class AllgDescription extends AbstractDescription<AllgDescription> {
     }
 
     @NonNull
-    public AllgDescription beginntZumindestParagraph() {
+    public TextDescription beginntZumindestParagraph() {
         beginntZumindest(PARAGRAPH);
         text = GermanUtil.capitalize(text);
         return this;
     }
 
     @NonNull
-    public AllgDescription beginntZumindestSentence() {
+    public TextDescription beginntZumindestSentence() {
         beginntZumindest(SENTENCE);
         text = GermanUtil.capitalize(text);
         return this;
@@ -161,7 +161,7 @@ public class AllgDescription extends AbstractDescription<AllgDescription> {
         if (!super.equals(o)) {
             return false;
         }
-        final AllgDescription that = (AllgDescription) o;
+        final TextDescription that = (TextDescription) o;
         return text.equals(that.text);
     }
 

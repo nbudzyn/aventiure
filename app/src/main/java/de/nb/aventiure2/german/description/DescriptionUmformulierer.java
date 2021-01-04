@@ -272,9 +272,9 @@ public class DescriptionUmformulierer {
     }
 
     @CheckReturnValue
-    private static AllgDescription mitPraefixCap(final String praefix,
+    private static TextDescription mitPraefixCap(final String praefix,
                                                  final AbstractDescription<?> desc) {
-        return desc.toAllgDescription().mitPraefixCapitalize(praefix + " ")
+        return desc.toTextDescription().mitPraefixCapitalize(praefix + " ")
                 .beginntZumindestSentence();
     }
 
@@ -327,7 +327,7 @@ public class DescriptionUmformulierer {
     }
 
     @CheckReturnValue
-    private static AllgDescription toAllgDescriptionMindestensParagraphMitVorfeld(
+    private static TextDescription toAllgDescriptionMindestensParagraphMitVorfeld(
             final String vorfeld,
             final AbstractFlexibleDescription<?> desc) {
         return desc.toAllgDescriptionMitVorfeld(vorfeld).beginntZumindestParagraph();

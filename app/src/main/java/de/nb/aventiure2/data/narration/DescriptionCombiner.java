@@ -10,9 +10,9 @@ import de.nb.aventiure2.german.base.GermanUtil;
 import de.nb.aventiure2.german.base.Wortfolge;
 import de.nb.aventiure2.german.description.AbstractDescription;
 import de.nb.aventiure2.german.description.AbstractFlexibleDescription;
-import de.nb.aventiure2.german.description.AllgDescription;
 import de.nb.aventiure2.german.description.DescriptionParams;
 import de.nb.aventiure2.german.description.StructuredDescription;
+import de.nb.aventiure2.german.description.TextDescription;
 
 import static com.google.common.base.Preconditions.checkArgument;
 import static de.nb.aventiure2.german.base.Numerus.SG;
@@ -24,11 +24,11 @@ class DescriptionCombiner {
     }
 
     @CheckReturnValue
-    static Collection<AllgDescription> combine(
+    static Collection<TextDescription> combine(
             final AbstractDescription<?> first,
             final AbstractDescription<?> second,
             final Narration initialNarration) {
-        final ImmutableList.Builder<AllgDescription>
+        final ImmutableList.Builder<TextDescription>
                 res = ImmutableList.builder();
 
         if (initialNarration.allowsAdditionalDuSatzreihengliedOhneSubjekt() &&
@@ -65,7 +65,7 @@ class DescriptionCombiner {
      * "Du kommst, siehst und siegst"
      */
     @CheckReturnValue
-    private static Iterable<AllgDescription> toDuSatzanschlussMitKommaUndUnd(
+    private static Iterable<TextDescription> toDuSatzanschlussMitKommaUndUnd(
             final AbstractFlexibleDescription<?> first,
             final AbstractFlexibleDescription<?> second) {
         checkArgument(first.getStartsNew() == WORD,
@@ -81,7 +81,7 @@ class DescriptionCombiner {
         params.komma(secondDescriptionSatzanschlussOhneSubjekt.kommaStehtAus());
 
         return ImmutableList.of(
-                new AllgDescription(params,
+                new TextDescription(params,
                         GermanUtil.joinToString(
                                 ",",
                                 first.getDescriptionSatzanschlussOhneSubjekt(),
@@ -90,9 +90,9 @@ class DescriptionCombiner {
     }
 
     @CheckReturnValue
-    private static ImmutableList<AllgDescription> combineStructuredDescUndFlexibleDescDu(
+    private static ImmutableList<TextDescription> combineStructuredDescUndFlexibleDescDu(
             final StructuredDescription first, final AbstractFlexibleDescription<?> second) {
-        final ImmutableList.Builder<AllgDescription> res = ImmutableList.builder();
+        final ImmutableList.Builder<TextDescription> res = ImmutableList.builder();
 
         // Bei Partikelverben mit sein-Perfekt ohne Akkusativobjekt,
         //  bei denen das Subjekt gleich ist ("du") und bei denen mindestens ein weiteres

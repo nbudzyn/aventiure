@@ -31,7 +31,7 @@ import de.nb.aventiure2.german.base.Personalpronomen;
 import de.nb.aventiure2.german.base.PhorikKandidat;
 import de.nb.aventiure2.german.base.StructuralElement;
 import de.nb.aventiure2.german.description.AbstractDescription;
-import de.nb.aventiure2.german.description.AllgDescription;
+import de.nb.aventiure2.german.description.TextDescription;
 import de.nb.aventiure2.german.description.TimedDescription;
 
 import static de.nb.aventiure2.data.narration.Narration.NarrationSource.REACTIONS;
@@ -285,7 +285,7 @@ public class Narrator {
     }
 
     private void narratePassTimeAndIncrementCounter(
-            final TimedDescription<AllgDescription> allgTimedDescription) {
+            final TimedDescription<TextDescription> allgTimedDescription) {
         // Time of temporaryNarration has already been accounted for.
         dao.narrate(narrationSourceJustInCase, allgTimedDescription.getDescription());
         passTimeAndIncCounter(allgTimedDescription);

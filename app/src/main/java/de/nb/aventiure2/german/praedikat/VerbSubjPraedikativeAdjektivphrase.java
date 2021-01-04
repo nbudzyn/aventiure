@@ -6,13 +6,13 @@ import androidx.annotation.Nullable;
 import de.nb.aventiure2.german.adjektiv.AdjPhrOhneLeerstellen;
 import de.nb.aventiure2.german.base.Numerus;
 import de.nb.aventiure2.german.base.Person;
-import de.nb.aventiure2.german.description.AllgDescription;
+import de.nb.aventiure2.german.description.TextDescription;
 
 /**
  * Ein Verb, das mit einer prädikativen Adjektivphrase steht. (Z.B: "(glücklich) wirken").
  * <p>
  * Zum Verb sein mit Prädikativum siehe
- * {@link PraedikativumPraedikatOhneLeerstellen#praedikativumPraedikatMit(AllgDescription)}.
+ * {@link PraedikativumPraedikatOhneLeerstellen#praedikativumPraedikatMit(TextDescription)}.
  */
 public enum VerbSubjPraedikativeAdjektivphrase implements Praedikat {
     AUSSEHEN("aussehen",

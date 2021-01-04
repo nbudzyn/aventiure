@@ -16,7 +16,7 @@ import java.util.List;
 import java.util.Objects;
 
 import de.nb.aventiure2.german.description.AbstractDescription;
-import de.nb.aventiure2.german.description.AllgDescription;
+import de.nb.aventiure2.german.description.TextDescription;
 import de.nb.aventiure2.german.description.TimedDescription;
 
 import static com.google.common.base.Preconditions.checkArgument;
@@ -39,23 +39,23 @@ public abstract class NarrationDao {
 
         final Narration initialNarration = requireNarration();
 
-        final List<AllgDescription> allgDescriptionAlternatives =
+        final List<TextDescription> textDescriptionAlternatives =
                 TextDescriptionBuilder.toAllgDescriptions(
                         alternatives, initialNarration);
 
-        narrateAltAllgDescriptions(narrationSource, allgDescriptionAlternatives,
+        narrateAltAllgDescriptions(narrationSource, textDescriptionAlternatives,
                 initialNarration);
     }
 
     private void narrateAltAllgDescriptions(final Narration.NarrationSource narrationSource,
-                                            final List<AllgDescription> alternatives,
+                                            final List<TextDescription> alternatives,
                                             final Narration initialNarration) {
         checkArgument(!alternatives.isEmpty(), "No alternatives");
 
-        final AllgDescription bestAllgDescription =
+        final TextDescription bestTextDescription =
                 getBestAllgDescription(alternatives, initialNarration);
 
-        narrate(narrationSource, bestAllgDescription);
+        narrate(narrationSource, bestTextDescription);
     }
 
     @Nullable
@@ -67,7 +67,7 @@ public abstract class NarrationDao {
 
         final Narration initialNarration = requireNarration();
 
-        final List<TimedDescription<AllgDescription>> combinations = Lists.newArrayList();
+        final List<TimedDescription<TextDescription>> combinations = Lists.newArrayList();
 
         for (final AbstractDescription<?> first : firstAlternatives) {
             for (final TimedDescription<?> second : secondAlternatives) {
@@ -92,23 +92,23 @@ public abstract class NarrationDao {
     }
 
     @Nullable
-    private static AllgDescription getBestAllgDescription(
-            final List<AllgDescription> alternatives,
+    private static TextDescription getBestAllgDescription(
+            final List<TextDescription> alternatives,
             final Narration initialNarration) {
         float bestScore = Float.NEGATIVE_INFINITY;
-        AllgDescription bestAllgDescription = null;
+        TextDescription bestTextDescription = null;
 
-        for (final AllgDescription allgDescriptionAlternative : alternatives) {
+        for (final TextDescription textDescriptionAlternative : alternatives) {
             final float score = TextAdditionEvaluator.evaluateAddition(
                     initialNarration.getText(),
-                    allgDescriptionAlternative.getText());
+                    textDescriptionAlternative.getText());
 
             if (score > bestScore) {
                 bestScore = score;
-                bestAllgDescription = allgDescriptionAlternative;
+                bestTextDescription = textDescriptionAlternative;
             }
         }
-        return bestAllgDescription;
+        return bestTextDescription;
     }
 
     AllgTimedDescriptionWithScore chooseBest(
@@ -129,7 +129,7 @@ public abstract class NarrationDao {
         //  - Duplikcate zwischen mehreren timedAlternatives
         // Um Zeit zu sparen, filtern wir die Duplikate heraus.
 
-        final ImmutableList<TimedDescription<AllgDescription>> allGeneratedDescriptionsTimed =
+        final ImmutableList<TimedDescription<TextDescription>> allGeneratedDescriptionsTimed =
                 timedAlternatives.stream()
                         .flatMap(t ->
                                 TextDescriptionBuilder.toAllgDescriptions(
@@ -152,7 +152,7 @@ public abstract class NarrationDao {
         AllgTimedDescriptionWithScore res = null;
 
         for (final TimedDescription<?> descAlternative : timedAlternatives) {
-            final List<TimedDescription<AllgDescription>> allgTimedDescriptions =
+            final List<TimedDescription<TextDescription>> allgTimedDescriptions =
                     TimedDescription.toTimed(
                             TextDescriptionBuilder.toAllgDescriptions(
                                     initialNarration, descAlternative.getDescription()),
@@ -182,15 +182,15 @@ public abstract class NarrationDao {
 
     void narrate(
             final Narration.NarrationSource narrationSource,
-            @NonNull final AllgDescription allgDescription) {
-        checkNotNull(allgDescription, "allgDescription is null");
+            @NonNull final TextDescription textDescription) {
+        checkNotNull(textDescription, "textDescription is null");
 
         @Nullable final Narration currentNarration = requireNarration();
 
         delete(currentNarration);
 
         final Narration res = currentNarration.add(narrationSource,
-                allgDescription);
+                textDescription);
         insert(res);
     }
 
@@ -218,25 +218,25 @@ public abstract class NarrationDao {
     }
 
     /**
-     * Wählt einen {@link AllgDescription} aus den Alternativen und gibt den Score zurück -
+     * Wählt einen {@link TextDescription} aus den Alternativen und gibt den Score zurück -
      * versucht dabei vor allem, Wiederholgungen mit der unmittelbar zuvor geschriebenen
      * Narration zu vermeiden.
      */
     private static IndexAndScore calcBest(
             final Narration initialNarration,
-            final Collection<TimedDescription<AllgDescription>> alternatives) {
+            final Collection<TimedDescription<TextDescription>> alternatives) {
         return calcBest(initialNarration,
                 alternatives.stream()
                         .map(TimedDescription::getDescription)
-                        .toArray(AllgDescription[]::new));
+                        .toArray(TextDescription[]::new));
     }
 
     /**
-     * Wählt einen {@link AllgDescription} aus den Alternativen und gibt den Score zurück.
+     * Wählt einen {@link TextDescription} aus den Alternativen und gibt den Score zurück.
      */
     private static IndexAndScore calcBest(
             final Narration initialNarration,
-            final AllgDescription... alternatives) {
+            final TextDescription... alternatives) {
         checkArgument(alternatives.length > 0,
                 "No alternatives");
 
@@ -246,7 +246,7 @@ public abstract class NarrationDao {
         float bestScore = Float.NEGATIVE_INFINITY;
 
         for (int i = 0; i < alternatives.length; i++) {
-            final AllgDescription alternative = alternatives[i];
+            final TextDescription alternative = alternatives[i];
             final float score =
                     TextAdditionEvaluator.evaluateAddition(currentText, alternative.getText());
             if (score > bestScore) {

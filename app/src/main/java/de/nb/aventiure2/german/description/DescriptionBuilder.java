@@ -35,7 +35,7 @@ public class DescriptionBuilder {
     }
 
     @CheckReturnValue
-    public static AllgDescription paragraph(final String paragraph) {
+    public static TextDescription paragraph(final String paragraph) {
         return neuerSatz(PARAGRAPH,
                 paragraph)
                 .beendet(PARAGRAPH);
@@ -92,14 +92,14 @@ public class DescriptionBuilder {
 
 
     @CheckReturnValue
-    public static TimedDescription<AllgDescription> neuerSatz(
+    public static TimedDescription<TextDescription> neuerSatz(
             final String description,
             final AvTimeSpan timeElapsed) {
         return neuerSatz(description, timeElapsed, null);
     }
 
     @CheckReturnValue
-    public static TimedDescription<AllgDescription> neuerSatz(
+    public static TimedDescription<TextDescription> neuerSatz(
             final String description,
             final AvTimeSpan timeElapsed,
             @Nullable final String counterIdIncrementedIfTextIsNarrated) {
@@ -133,29 +133,29 @@ public class DescriptionBuilder {
         return neuerSatz(startsNew, satz.getVerbzweitsatzMitSpeziellemVorfeldAlsWeitereOption());
     }
 
-    public static AllgDescription neuerSatz(final Iterable<Konstituente> konsituenten) {
+    public static TextDescription neuerSatz(final Iterable<Konstituente> konsituenten) {
         return neuerSatz(SENTENCE, konsituenten);
     }
 
-    public static AllgDescription neuerSatz(final StructuralElement startsNew,
+    public static TextDescription neuerSatz(final StructuralElement startsNew,
                                             final Iterable<Konstituente> konsituenten) {
         return neuerSatz(startsNew, Wortfolge.joinToWortfolge(konsituenten));
     }
 
     @NonNull
     @CheckReturnValue
-    public static AllgDescription neuerSatz(final Wortfolge wortfolge) {
+    public static TextDescription neuerSatz(final Wortfolge wortfolge) {
         return neuerSatz(StructuralElement.SENTENCE, wortfolge);
     }
 
     @NonNull
     @CheckReturnValue
-    public static AllgDescription neuerSatz(final String description) {
+    public static TextDescription neuerSatz(final String description) {
         return neuerSatz(StructuralElement.SENTENCE, description);
     }
 
     @CheckReturnValue
-    public static TimedDescription<AllgDescription> neuerSatz(
+    public static TimedDescription<TextDescription> neuerSatz(
             final StructuralElement startsNew,
             final String description,
             final AvTimeSpan timeElapsed) {
@@ -163,7 +163,7 @@ public class DescriptionBuilder {
     }
 
     @CheckReturnValue
-    public static TimedDescription<AllgDescription> neuerSatz(
+    public static TimedDescription<TextDescription> neuerSatz(
             final StructuralElement startsNew,
             final String description,
             final AvTimeSpan timeElapsed,
@@ -175,35 +175,35 @@ public class DescriptionBuilder {
 
     @NonNull
     @CheckReturnValue
-    public static AllgDescription neuerSatz(final StructuralElement startsNew,
+    public static TextDescription neuerSatz(final StructuralElement startsNew,
                                             final Wortfolge wortfolge) {
         checkArgument(startsNew != WORD,
                 "Neuer Satz unmöglich für " + startsNew);
 
         // FIXME capitalize() sollte nur möglichst spät und möglichst
         //  weit außen aufgerufen werden!
-        return new AllgDescription(startsNew, wortfolge);
+        return new TextDescription(startsNew, wortfolge);
     }
 
     @NonNull
     @CheckReturnValue
-    public static AllgDescription neuerSatz(final StructuralElement startsNew,
+    public static TextDescription neuerSatz(final StructuralElement startsNew,
                                             final String description) {
         checkArgument(startsNew != WORD,
                 "Neuer Satz unmöglich für " + startsNew);
 
-        return new AllgDescription(startsNew, description);
+        return new TextDescription(startsNew, description);
     }
 
     @CheckReturnValue
-    public static TimedDescription<AllgDescription> satzanschluss(
+    public static TimedDescription<TextDescription> satzanschluss(
             final String description,
             final AvTimeSpan timeElapsed) {
         return satzanschluss(description, timeElapsed, null);
     }
 
     @CheckReturnValue
-    public static TimedDescription<AllgDescription> satzanschluss(
+    public static TimedDescription<TextDescription> satzanschluss(
             final String description,
             final AvTimeSpan timeElapsed,
             @Nullable final String counterIdIncrementedIfTextIsNarrated) {
@@ -214,14 +214,14 @@ public class DescriptionBuilder {
 
     @NonNull
     @CheckReturnValue
-    public static AllgDescription satzanschluss(final String description) {
-        return new AllgDescription(StructuralElement.WORD, description);
+    public static TextDescription satzanschluss(final String description) {
+        return new TextDescription(StructuralElement.WORD, description);
     }
 
     @NonNull
     @CheckReturnValue
-    public static AllgDescription satzanschluss(final Wortfolge wortfolge) {
-        return new AllgDescription(StructuralElement.WORD, wortfolge);
+    public static TextDescription satzanschluss(final Wortfolge wortfolge) {
+        return new TextDescription(StructuralElement.WORD, wortfolge);
     }
 
     @CheckReturnValue

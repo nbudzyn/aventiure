@@ -20,7 +20,7 @@ import de.nb.aventiure2.german.base.Personalpronomen;
 import de.nb.aventiure2.german.base.SubstantivischePhrase;
 import de.nb.aventiure2.german.base.Wortfolge;
 import de.nb.aventiure2.german.description.AbstractDescription;
-import de.nb.aventiure2.german.description.AllgDescription;
+import de.nb.aventiure2.german.description.TextDescription;
 import de.nb.aventiure2.german.description.TimedDescription;
 import de.nb.aventiure2.german.praedikat.AdverbialeAngabeSkopusVerbAllg;
 import de.nb.aventiure2.german.praedikat.AdverbialeAngabeSkopusVerbWohinWoher;
@@ -648,14 +648,14 @@ public class RapunzelTalkingComp extends AbstractTalkingComp {
         unsetTalkingTo();
     }
 
-    private static Iterable<AllgDescription> altKombinationenBeendetParagraph(
+    private static Iterable<TextDescription> altKombinationenBeendetParagraph(
             final String praefix,
             final ImmutableList<AbstractDescription<?>> alt) {
-        final ImmutableList.Builder<AllgDescription> res =
+        final ImmutableList.Builder<TextDescription> res =
                 ImmutableList.builder();
 
         for (final AbstractDescription<?> desc : alt) {
-            res.add(desc.toAllgDescription().mitPraefix(praefix)
+            res.add(desc.toTextDescription().mitPraefix(praefix)
                     .beginntZumindestSentence().beendet(PARAGRAPH));
         }
 

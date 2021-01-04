@@ -387,7 +387,7 @@ public class RapunzelReactionsComp
             alt.addAll(
                     altReaktionSaetze.stream()
                             .map(s -> new TimedDescription<>(
-                                    s.toAllgDescription()
+                                    s.toTextDescription()
                                             .mitPraefixCapitalize(
                                                     "Am Fenster sitzt die junge Frau, schön als "
                                                             + "du unter der Sonne noch keine gesehen hast. "
