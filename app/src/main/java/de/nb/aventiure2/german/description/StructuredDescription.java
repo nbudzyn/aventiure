@@ -8,7 +8,6 @@ import java.util.Objects;
 
 import javax.annotation.CheckReturnValue;
 
-import de.nb.aventiure2.german.base.GermanUtil;
 import de.nb.aventiure2.german.base.Konstituente;
 import de.nb.aventiure2.german.base.Numerus;
 import de.nb.aventiure2.german.base.Person;
@@ -29,18 +28,10 @@ public class StructuredDescription extends AbstractFlexibleDescription<Structure
 
     StructuredDescription(final StructuralElement startsNew,
                           final Satz satz) {
-        super(startsNew,
-                guessKommaStehtAus(satz));
+        super(startsNew);
         this.satz = satz;
     }
-
-    private static boolean guessKommaStehtAus(final Satz satz) {
-        // FIXME Hier gibt es ein Problem: Ob ein Komma aussteht, hängt von der
-        //  konkreten Realisierung des Prädikats ab (was steht im Vorfeld / Nachfeld etc.).
-        //  Dies hier ist nur eine grobe Richtschnur.
-        return Konstituente.kommaStehtAus(satz.getVerbzweitsatzStandard());
-    }
-
+    
     @CheckReturnValue
     public StructuredDescription mitAdverbialerAngabe(
             @Nullable final AdverbialeAngabeSkopusSatz adverbialeAngabe) {
@@ -91,9 +82,9 @@ public class StructuredDescription extends AbstractFlexibleDescription<Structure
      * "[Ich habe] die Kugel an mich genommen"
      * (nicht *"[Ich habe] die Kugel an sich genommen")
      */
-    public String getDescriptionPartizipIIPhrase(final Person person,
-                                                 final Numerus numerus) {
-        return GermanUtil.joinToString(
+    public Wortfolge getDescriptionPartizipIIPhrase(final Person person,
+                                                    final Numerus numerus) {
+        return Wortfolge.joinToWortfolge(
                 getPraedikat().getPartizipIIPhrase(person, numerus));
     }
 
@@ -168,6 +159,14 @@ public class StructuredDescription extends AbstractFlexibleDescription<Structure
 
     public Satz getSatz() {
         return satz;
+    }
+
+    @Override
+    public StructuredDescription komma(final boolean kommaStehtAus) {
+        // Bewirkt nichts. Der Satz weiß schon selbst, wann ein Komma nötig ist.
+        // (Aber die Methode erleichert das Handling, so dass z.B. die
+        // TimedDescription problemlos komma() implementieren kann etc.)
+        return this;
     }
 
     @Override

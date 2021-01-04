@@ -180,8 +180,6 @@ public class DescriptionBuilder {
         checkArgument(startsNew != WORD,
                 "Neuer Satz unmöglich für " + startsNew);
 
-        // FIXME capitalize() sollte nur möglichst spät und möglichst
-        //  weit außen aufgerufen werden!
         return new TextDescription(startsNew, wortfolge);
     }
 

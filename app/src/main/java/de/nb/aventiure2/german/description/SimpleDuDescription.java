@@ -42,6 +42,12 @@ public class SimpleDuDescription extends AbstractFlexibleDescription<SimpleDuDes
      */
     private boolean woertlicheRedeNochOffen;
 
+    /**
+     * Ob ein Komma aussteht. Wenn ein Komma aussteht, muss als nächstes ein Komma folgen -
+     * oder das Satzende.
+     */
+    private boolean kommaStehtAus;
+
     SimpleDuDescription(final StructuralElement startsNew,
                         final String verb,
                         @Nullable final String remainder,
@@ -49,10 +55,11 @@ public class SimpleDuDescription extends AbstractFlexibleDescription<SimpleDuDes
                         final boolean woertlicheRedeNochOffen,
                         final boolean kommaStehtAus) {
         // FIXME Alle du()-Aufrufe prüfen, ggf. auf SENTENCE setzen
-        super(startsNew, kommaStehtAus);
+        super(startsNew);
         this.verb = verb;
         this.remainder = remainder;
         this.vorfeldSatzglied = vorfeldSatzglied;
+        this.kommaStehtAus = kommaStehtAus;
         this.woertlicheRedeNochOffen = woertlicheRedeNochOffen;
 
         checkArgument(vorfeldSatzglied == null || remainder != null,
@@ -167,6 +174,21 @@ public class SimpleDuDescription extends AbstractFlexibleDescription<SimpleDuDes
     public SimpleDuDescription woertlicheRedeNochOffen(final boolean woertlicheRedeNochOffen) {
         this.woertlicheRedeNochOffen = woertlicheRedeNochOffen;
         return this;
+    }
+
+    @Override
+    public SimpleDuDescription komma() {
+        return komma(true);
+    }
+
+    @Override
+    public SimpleDuDescription komma(final boolean kommaStehtAus) {
+        this.kommaStehtAus = kommaStehtAus;
+        return this;
+    }
+
+    public boolean isKommaStehtAus() {
+        return kommaStehtAus;
     }
 
     @Override

@@ -36,6 +36,12 @@ public class TextDescription extends AbstractDescription<TextDescription> {
      */
     private boolean woertlicheRedeNochOffen;
 
+    /**
+     * Ob ein Komma aussteht. Wenn ein Komma aussteht, muss als nächstes ein Komma folgen -
+     * oder das Satzende.
+     */
+    private boolean kommaStehtAus;
+
     // IDEA Das Konzept könnte man verallgemeinern: Die TextDescription könnte am Ende
     //  Koordination (d.h. und-Verbindungen) auf verschiedenen Ebenen erlauben:
     //  - Du nimmst die Lampe UND DAS GLAS: Koordination im AkkObj des NEHMEN-Prädikat
@@ -48,14 +54,16 @@ public class TextDescription extends AbstractDescription<TextDescription> {
 
     TextDescription(final StructuralElement startsNew,
                     final Wortfolge wortfolge) {
-        this(new DescriptionParams(startsNew,
-                        wortfolge.kommaStehtAus()),
-                wortfolge.getString(), wortfolge.woertlicheRedeNochOffen());
+        this(new DescriptionParams(startsNew),
+                wortfolge.getString(), wortfolge.woertlicheRedeNochOffen(),
+                wortfolge.kommaStehtAus());
     }
 
     public TextDescription(final DescriptionParams descriptionParams,
-                           final String description, final boolean woertlicheRedeNochOffen) {
+                           final String description, final boolean woertlicheRedeNochOffen,
+                           final boolean kommaStehtAus) {
         super(descriptionParams);
+        this.kommaStehtAus = kommaStehtAus;
         this.woertlicheRedeNochOffen = woertlicheRedeNochOffen;
 
         // FIXME Alle Aufrufer prüfen, ob startsNew richtig gesetzt wird!
@@ -82,7 +90,7 @@ public class TextDescription extends AbstractDescription<TextDescription> {
     public TextDescription mitPraefix(final String praefix) {
         return new TextDescription(
                 copyParams(),
-                praefix + text, woertlicheRedeNochOffen);
+                praefix + text, woertlicheRedeNochOffen, kommaStehtAus);
     }
 
     /**
@@ -98,7 +106,7 @@ public class TextDescription extends AbstractDescription<TextDescription> {
     public TextDescription mitPraefixCapitalize(final String praefix) {
         return new TextDescription(
                 copyParams(),
-                praefix + GermanUtil.capitalize(text), woertlicheRedeNochOffen);
+                praefix + GermanUtil.capitalize(text), woertlicheRedeNochOffen, kommaStehtAus);
     }
 
     @Override
@@ -145,8 +153,7 @@ public class TextDescription extends AbstractDescription<TextDescription> {
     @CheckReturnValue
     @NonNull
     public Wortfolge toWortfolge() {
-        return w(text, woertlicheRedeNochOffen,
-                copyParams().isKommaStehtAus());
+        return w(text, woertlicheRedeNochOffen, isKommaStehtAus());
     }
 
     public String getText() {
@@ -164,6 +171,21 @@ public class TextDescription extends AbstractDescription<TextDescription> {
 
     public boolean isWoertlicheRedeNochOffen() {
         return woertlicheRedeNochOffen;
+    }
+
+    @Override
+    public TextDescription komma() {
+        return komma(true);
+    }
+
+    @Override
+    public TextDescription komma(final boolean kommaStehtAus) {
+        this.kommaStehtAus = kommaStehtAus;
+        return this;
+    }
+
+    public boolean isKommaStehtAus() {
+        return kommaStehtAus;
     }
 
     @Override

@@ -335,12 +335,14 @@ public class SchlosswacheReactionsComp
                     secs(3))
                     .dann());
         } else {
-            alt.add(du(
-                    "hast", "großes Glück, denn "
-                            + getDescription().nom()
-                            + " ist gerade damit beschäftigt, ihre Waffen zu polieren", secs(3))
-                    .komma(true)
-                    .dann());
+            alt.add(
+                    new TimedDescription<>(
+                            du("hast", "großes Glück, denn "
+                                    + getDescription().nom()
+                                    + " ist gerade damit beschäftigt, ihre Waffen zu polieren")
+                                    .komma(true)
+                            , secs(3))
+                            .dann());
         }
 
         alt.add(neuerSatz(

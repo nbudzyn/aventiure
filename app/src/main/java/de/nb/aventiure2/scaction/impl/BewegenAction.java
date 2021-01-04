@@ -471,9 +471,9 @@ public class BewegenAction<LOC_DESC extends ILocatableGO & IDescribableGO>
                                                 "dich nur kurz um, dann",
                                                 descriptionHauptsatz.toWortfolge()))
                                         .woertlicheRedeNochOffen(
-                                                descriptionHauptsatz.isWoertlicheRedeNochOffen()),
+                                                descriptionHauptsatz.isWoertlicheRedeNochOffen())
+                                        .komma(descriptionHauptsatz.isKommaStehtAus()),
                                 description.getTimeElapsed())
-                                .komma(descriptionHauptsatz.isKommaStehtAus())
                                 .undWartest(
                                         description
                                                 .isAllowsAdditionalDuSatzreihengliedOhneSubjekt()));

@@ -23,13 +23,8 @@ import static de.nb.aventiure2.german.base.Person.P3;
 public abstract class AbstractDescription<SELF extends AbstractDescription<SELF>> {
     private final DescriptionParams params;
 
-    public AbstractDescription(final StructuralElement startsNew) {
-        this(startsNew, false);
-    }
-
-    protected AbstractDescription(final StructuralElement startsNew,
-                                  final boolean kommaStehtAus) {
-        this(new DescriptionParams(startsNew, kommaStehtAus));
+    protected AbstractDescription(final StructuralElement startsNew) {
+        this(new DescriptionParams(startsNew));
     }
 
     protected AbstractDescription(final DescriptionParams params) {
@@ -78,25 +73,16 @@ public abstract class AbstractDescription<SELF extends AbstractDescription<SELF>
 
     @NonNull
     public TextDescription toTextDescriptionKeepParams(final Wortfolge wortfolge) {
-        final DescriptionParams params = copyParams();
-        params.komma(wortfolge.kommaStehtAus());
-
         return new TextDescription(params, wortfolge.getString(),
-                wortfolge.woertlicheRedeNochOffen());
+                wortfolge.woertlicheRedeNochOffen(), wortfolge.kommaStehtAus());
     }
 
     public SELF komma() {
-        return komma(true);
-    }
-
-    public SELF komma(final boolean kommaStehtAus) {
-        params.komma(kommaStehtAus);
+        komma(true);
         return (SELF) this;
     }
 
-    public boolean isKommaStehtAus() {
-        return params.isKommaStehtAus();
-    }
+    public abstract SELF komma(final boolean kommaStehtAus);
 
     /**
      * Sets a flag that the text can be continued by a Satzreihenglied without subject where

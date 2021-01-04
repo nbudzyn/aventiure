@@ -7,6 +7,7 @@ import java.util.Collection;
 import javax.annotation.CheckReturnValue;
 
 import de.nb.aventiure2.german.base.GermanUtil;
+import de.nb.aventiure2.german.base.Wortfolge;
 import de.nb.aventiure2.german.description.AbstractDescription;
 import de.nb.aventiure2.german.description.AbstractFlexibleDescription;
 import de.nb.aventiure2.german.description.StructuredDescription;
@@ -101,10 +102,12 @@ class DescriptionCombiner {
                 first.getPraedikat().isBezugAufNachzustandDesAktantenGegeben() &&
                 first.getPraedikat().umfasstSatzglieder() &&
                 second.getStartsNew() == WORD) {
+            final Wortfolge descriptionPartizipIIPhrase =
+                    first.getDescriptionPartizipIIPhrase(P2, SG);
             final String vorfeld =
                     // "unten angekommen"
-                    first.getDescriptionPartizipIIPhrase(P2, SG) +
-                            (first.isKommaStehtAus() ? ", " : "");
+                    GermanUtil.joinToString(descriptionPartizipIIPhrase) +
+                            (descriptionPartizipIIPhrase.kommaStehtAus() ? ", " : "");
 
             res.add(
                     // "Unten angekommen bist du ziemlich erschäpft"

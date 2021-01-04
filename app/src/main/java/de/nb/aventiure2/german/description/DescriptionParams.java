@@ -26,11 +26,6 @@ public class DescriptionParams {
      */
     private StructuralElement endsThis;
     /**
-     * Ob ein Komma aussteht. Wenn ein Komma aussteht, muss als nächstes ein Komma folgen -
-     * oder das Satzende.
-     */
-    private boolean kommaStehtAus;
-    /**
      * Whether the narration can be continued by a Satzreihenglied without subject where
      * the player character is the implicit subject (such as " und gehst durch die Tür.")
      */
@@ -63,18 +58,16 @@ public class DescriptionParams {
     private PhorikKandidat phorikKandidat;
 
     DescriptionParams copy() {
-        return new DescriptionParams(startsNew, endsThis, kommaStehtAus,
+        return new DescriptionParams(startsNew, endsThis,
                 allowsAdditionalDuSatzreihengliedOhneSubjekt, dann, phorikKandidat);
     }
 
     private DescriptionParams(final StructuralElement startsNew, final StructuralElement endsThis,
-                              final boolean kommaStehtAus,
                               final boolean allowsAdditionalDuSatzreihengliedOhneSubjekt,
                               final boolean dann,
                               @Nullable final PhorikKandidat phorikKandidat) {
         this.startsNew = startsNew;
         this.endsThis = endsThis;
-        this.kommaStehtAus = kommaStehtAus;
         this.allowsAdditionalDuSatzreihengliedOhneSubjekt =
                 allowsAdditionalDuSatzreihengliedOhneSubjekt;
         this.dann = dann;
@@ -82,13 +75,7 @@ public class DescriptionParams {
     }
 
     DescriptionParams(final StructuralElement startsNew) {
-        this(startsNew, false);
-    }
-
-    DescriptionParams(final StructuralElement startsNew,
-                      final boolean kommaStehtAus) {
         this.startsNew = startsNew;
-        this.kommaStehtAus = kommaStehtAus;
         endsThis = StructuralElement.WORD;
     }
 
@@ -151,10 +138,6 @@ public class DescriptionParams {
         endsThis = structuralElement;
     }
 
-    public void komma(final boolean kommaStehtAus) {
-        this.kommaStehtAus = kommaStehtAus;
-    }
-
     /**
      * Sets a flag that the text can be continued by a Satzreihenglied without subject where
      * the player character is the implicit subject
@@ -183,10 +166,6 @@ public class DescriptionParams {
 
     StructuralElement getEndsThis() {
         return endsThis;
-    }
-
-    boolean isKommaStehtAus() {
-        return kommaStehtAus;
     }
 
     public boolean isAllowsAdditionalDuSatzreihengliedOhneSubjekt() {
