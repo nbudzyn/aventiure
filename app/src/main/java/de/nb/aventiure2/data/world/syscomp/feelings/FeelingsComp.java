@@ -798,7 +798,7 @@ public class FeelingsComp extends AbstractStatefulComponent<FeelingsPCD> {
                                 p.getPraedikativ(P2, SG)),
                         "auf einmal")
                         .komma(Wortfolge.joinToWortfolge(p.getPraedikativ(P2, SG))
-                                .kommmaStehtAus())
+                                .kommaStehtAus())
                         .beendet(PARAGRAPH))
                 .collect(toList()));
 
@@ -953,7 +953,7 @@ public class FeelingsComp extends AbstractStatefulComponent<FeelingsPCD> {
                                 + GermanUtil.joinToString(
                                 p.getPraedikativ(P2, SG)))
                         .komma(Wortfolge.joinToWortfolge(p.getPraedikativ(P2, SG))
-                                .kommmaStehtAus())
+                                .kommaStehtAus())
                         .beendet(PARAGRAPH))
                 .collect(toList()));
 

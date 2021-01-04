@@ -16,6 +16,8 @@ import de.nb.aventiure2.german.base.PhorikKandidat;
 import de.nb.aventiure2.german.base.StructuralElement;
 import de.nb.aventiure2.german.description.AllgDescription;
 
+import static de.nb.aventiure2.german.base.StructuralElement.SENTENCE;
+
 /**
  * The text of the narration, together with state relevant for going on with the narration.
  * Only things that have already happened.
@@ -235,68 +237,69 @@ public class Narration {
         final StructuralElement separation =
                 StructuralElement.max(endsThis, allgDescription.getStartsNew());
 
+        final String text = allgDescription.getText();
         switch (separation) {
             case WORD:
                 resText.append(schliesseWoertlicheRedeFallsNoetig(
                         resText.toString(),
-                        allgDescription.getDescriptionHauptsatz(),
+                        text,
                         false));
 
                 if (kommaNeeded(resText.toString(),
-                        allgDescription.getDescriptionHauptsatz())) {
+                        text)) {
                     resText.append(",");
                 }
 
                 if (GermanUtil.spaceNeeded(resText.toString(),
-                        allgDescription.getDescriptionHauptsatz())) {
+                        text)) {
                     resText.append(" ");
                 }
                 break;
             case SENTENCE:
                 resText.append(schliesseWoertlicheRedeFallsNoetig(
                         resText.toString(),
-                        allgDescription.getDescriptionHauptsatz(),
+                        text,
                         true));
 
                 if (periodNeededToStartNewSentence(resText.toString(),
-                        allgDescription.getDescriptionHauptsatz())) {
+                        text)) {
                     resText.append(".");
                 }
                 if (GermanUtil.spaceNeeded(
                         resText.toString(),
-                        allgDescription.getDescriptionHauptsatz())) {
+                        text)) {
                     resText.append(" ");
                 }
                 break;
             case PARAGRAPH:
                 resText.append(schliesseWoertlicheRedeFallsNoetig(
                         resText.toString(),
-                        allgDescription.getDescriptionHauptsatz(),
+                        text,
                         true));
 
                 if (periodNeededToStartNewSentence(resText.toString(),
-                        allgDescription.getDescriptionHauptsatz())) {
+                        text)) {
                     resText.append(".");
                 }
                 if (newlineNeededToStartNewParagraph(resText.toString(),
-                        allgDescription.getDescriptionHauptsatz())) {
+                        text)) {
                     resText.append("\n");
                 }
                 break;
             case CHAPTER:
                 resText.append(schliesseWoertlicheRedeFallsNoetig(
                         resText.toString(),
-                        allgDescription.getDescriptionHauptsatz(),
+                        text,
                         true));
 
                 if (periodNeededToStartNewSentence(resText.toString(),
-                        allgDescription.getDescriptionHauptsatz())) {
+                        text)) {
                     resText.append(".");
                 }
 
                 final int numNewlinesNeeded =
                         howManyNewlinesNeedeToStartNewChapter(resText.toString(),
-                                allgDescription.getDescriptionHauptsatz());
+                                text);
                 for (int i = 0; i < numNewlinesNeeded; i++) {
                     resText.append("\n");
                 }
@@ -306,7 +309,11 @@ public class Narration {
                         + separation);
         }
 
-        resText.append(allgDescription.getDescriptionHauptsatz());
+        if (SENTENCE == StructuralElement.min(allgDescription.getStartsNew(), SENTENCE)) {
+            resText.append(GermanUtil.capitalize(text));
+        } else {
+            resText.append(text);
+        }
 
         return new Narration(
                 narrationSource,

@@ -100,6 +100,18 @@ public class DescriptionParams {
         endsThis = StructuralElement.WORD;
     }
 
+    /**
+     * Ändert das {@link #startsNew} der Parameter. Wer das hier aufruft,
+     * muss bedenken, dass möglicherweise bereits der Text
+     * in Großschreibung gesetzt wurde, weil es sich um einen Satz
+     * handeln sollte. Das lässt sich im allgemeinen Fall nicht
+     * zurückdrehen, da man dann nicht weiß, ob der Text vielleicht
+     * mit einem Nomen begann, dass auch inmitten eines Satzes
+     * großgeschrieben werden muss, also nicht uncapitalizet werden darf.
+     * Man darf diese Methode also nur mit Bedacht verwenden und sollte
+     * sehr skeptisch sein, wenn man startsNew auf {@link StructuralElement#WORD}
+     * zurücksetzen möchte.
+     */
     public void setStartsNew(final StructuralElement startsNew) {
         this.startsNew = startsNew;
     }

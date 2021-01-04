@@ -33,7 +33,6 @@ import static de.nb.aventiure2.data.world.syscomp.feelings.Mood.NEUTRAL;
 import static de.nb.aventiure2.data.world.syscomp.state.impl.SchlossfestState.BEGONNEN;
 import static de.nb.aventiure2.data.world.syscomp.state.impl.SchlosswacheState.AUFMERKSAM;
 import static de.nb.aventiure2.data.world.syscomp.state.impl.SchlosswacheState.UNAUFFAELLIG;
-import static de.nb.aventiure2.german.base.GermanUtil.capitalize;
 import static de.nb.aventiure2.german.base.StructuralElement.PARAGRAPH;
 import static de.nb.aventiure2.german.description.DescriptionBuilder.du;
 import static de.nb.aventiure2.german.description.DescriptionBuilder.neuerSatz;
@@ -114,7 +113,7 @@ public class SchlosswacheReactionsComp
             if (counterDao.incAndGet(
                     "SchlosswacheReactions_onEnterRoom_SchlossVorhalle") > 1) {
                 n.narrate(neuerSatz(
-                        capitalize(getDescription(true).nom())
+                        getDescription(true).nom()
                                 + " scheint dich nicht zu bemerken", secs(3)));
                 return;
             }
@@ -345,7 +344,7 @@ public class SchlosswacheReactionsComp
         }
 
         alt.add(neuerSatz(
-                capitalize(getDescription().dat())
+                getDescription().dat()
                         + " ist anscheinend nichts aufgefallen",
                 secs(3))
                 .dann());

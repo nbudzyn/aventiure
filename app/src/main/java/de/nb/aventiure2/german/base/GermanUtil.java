@@ -25,14 +25,6 @@ public class GermanUtil {
         return str.substring(0, 1).toUpperCase() + str.substring(1);
     }
 
-    public static String uncapitalize(final String str) {
-        if (str.isEmpty()) {
-            return "";
-        }
-
-        return str.substring(0, 1).toLowerCase() + str.substring(1);
-    }
-
     /**
      * Fügt diese Teile zu einem String zusammen, wobei ein nichtleerer
      * * String das Ergebnis sein muss. . Diese Methode darf nur verwendet werden,
@@ -240,7 +232,7 @@ public class GermanUtil {
     public static String buildHauptsatz(final String vorfeld, final String verb,
                                         @Nullable final String mittelfeldEtc) {
         return joinToString(
-                capitalize(vorfeld),
+                vorfeld,
                 verb,
                 mittelfeldEtc);
     }

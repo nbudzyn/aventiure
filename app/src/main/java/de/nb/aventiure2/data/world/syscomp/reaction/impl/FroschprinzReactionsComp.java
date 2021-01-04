@@ -42,7 +42,6 @@ import static de.nb.aventiure2.data.world.syscomp.state.impl.FroschprinzState.UN
 import static de.nb.aventiure2.data.world.syscomp.state.impl.FroschprinzState.WARTET_AUF_SC_BEIM_SCHLOSSFEST;
 import static de.nb.aventiure2.data.world.syscomp.state.impl.FroschprinzState.ZURUECKVERWANDELT_SCHLOSS_VORHALLE_VERLASSEN;
 import static de.nb.aventiure2.data.world.syscomp.state.impl.SchlossfestState.BEGONNEN;
-import static de.nb.aventiure2.german.base.GermanUtil.capitalize;
 import static de.nb.aventiure2.german.base.NumerusGenus.M;
 import static de.nb.aventiure2.german.base.StructuralElement.CHAPTER;
 import static de.nb.aventiure2.german.base.StructuralElement.PARAGRAPH;
@@ -331,7 +330,7 @@ public class FroschprinzReactionsComp
         // Dann ist die Kugel jetzt WEG - PECH.
         final Nominalphrase froschprinzDesc = getDescription(true);
         n.narrate(neuerSatz(
-                capitalize(froschprinzDesc.nom())
+                froschprinzDesc.nom()
                         +
                         " schaut dich vorwurfsvoll und etwas hochnäsig an",
                 secs(5))

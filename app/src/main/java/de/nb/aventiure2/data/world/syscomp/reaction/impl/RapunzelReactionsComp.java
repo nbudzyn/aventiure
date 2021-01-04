@@ -386,15 +386,13 @@ public class RapunzelReactionsComp
         if (loadSC().memoryComp().getKnown(RAPUNZEL) == KNOWN_FROM_DARKNESS) {
             alt.addAll(
                     altReaktionSaetze.stream()
-                            .map(s -> neuerSatz(
-                                    "Am Fenster sitzt die junge Frau, schön als "
-                                            + "du unter der Sonne noch keine gesehen hast. "
-                                            + "Ihre Haare glänzen fein wie gesponnen Gold. "
-                                            + s.getDescriptionHauptsatz(),
-                                    secs(30))
-                                    .woertlicheRedeNochOffen(s.isWoertlicheRedeNochOffen())
-                                    .komma(s.isKommaStehtAus())
-                                    .phorikKandidat(s.getPhorikKandidat()))
+                            .map(s -> new TimedDescription<>(
+                                    s.toAllgDescription()
+                                            .mitPraefixCapitalize(
+                                                    "Am Fenster sitzt die junge Frau, schön als "
+                                                            + "du unter der Sonne noch keine gesehen hast. "
+                                                            + "Ihre Haare glänzen fein wie gesponnen Gold. "
+                                            ), secs(30)))
                             .collect(ImmutableList.toImmutableList())
             );
         }

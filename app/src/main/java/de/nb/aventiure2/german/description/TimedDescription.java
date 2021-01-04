@@ -80,6 +80,13 @@ public class TimedDescription<D extends AbstractDescription<?>> {
     }
 
     @CheckReturnValue
+    public <OTHER extends AbstractDescription<?>> TimedDescription<OTHER>
+    withDescription(final OTHER description) {
+        return new TimedDescription<>(description, timeElapsed,
+                counterIdIncrementedIfTextIsNarrated);
+    }
+
+    @CheckReturnValue
     public TimedDescription<D> multiplyTimeElapsedWith(final double speedFactor) {
         return new TimedDescription<>(description,
                 timeElapsed.times(speedFactor), counterIdIncrementedIfTextIsNarrated);

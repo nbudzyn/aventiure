@@ -244,7 +244,7 @@ public class NehmenAction
                         .undWartest()
                         .dann(),
                 neuerSatz(PARAGRAPH,
-                        GermanUtil.capitalize(froschDesc.akk())
+                        froschDesc.akk()
                                 + " in die Hand nehmen? – Wer hat dir bloß solche Flausen "
                                 + "in den Kopf gesetzt! Kräftig packst du "
                                 + froschDesc.akk())

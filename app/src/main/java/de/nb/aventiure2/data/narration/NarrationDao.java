@@ -40,7 +40,7 @@ public abstract class NarrationDao {
         final Narration initialNarration = requireNarration();
 
         final List<AllgDescription> allgDescriptionAlternatives =
-                AllgDescriptionBuilder.toAllgDescriptions(
+                TextDescriptionBuilder.toAllgDescriptions(
                         alternatives, initialNarration);
 
         narrateAltAllgDescriptions(narrationSource, allgDescriptionAlternatives,
@@ -101,7 +101,7 @@ public abstract class NarrationDao {
         for (final AllgDescription allgDescriptionAlternative : alternatives) {
             final float score = TextAdditionEvaluator.evaluateAddition(
                     initialNarration.getText(),
-                    allgDescriptionAlternative.getDescriptionHauptsatz());
+                    allgDescriptionAlternative.getText());
 
             if (score > bestScore) {
                 bestScore = score;
@@ -132,7 +132,7 @@ public abstract class NarrationDao {
         final ImmutableList<TimedDescription<AllgDescription>> allGeneratedDescriptionsTimed =
                 timedAlternatives.stream()
                         .flatMap(t ->
-                                AllgDescriptionBuilder.toAllgDescriptions(
+                                TextDescriptionBuilder.toAllgDescriptions(
                                         initialNarration, t.getDescription()).stream()
                                         .map(a -> new TimedDescription<>(
                                                 a,
@@ -154,7 +154,7 @@ public abstract class NarrationDao {
         for (final TimedDescription<?> descAlternative : timedAlternatives) {
             final List<TimedDescription<AllgDescription>> allgTimedDescriptions =
                     TimedDescription.toTimed(
-                            AllgDescriptionBuilder.toAllgDescriptions(
+                            TextDescriptionBuilder.toAllgDescriptions(
                                     initialNarration, descAlternative.getDescription()),
                             descAlternative.getTimeElapsed());
             final IndexAndScore indexAndScore = calcBest(initialNarration, allgTimedDescriptions);
@@ -248,8 +248,7 @@ public abstract class NarrationDao {
         for (int i = 0; i < alternatives.length; i++) {
             final AllgDescription alternative = alternatives[i];
             final float score =
-                    TextAdditionEvaluator
-                            .evaluateAddition(currentText, alternative.getDescriptionHauptsatz());
+                    TextAdditionEvaluator.evaluateAddition(currentText, alternative.getText());
             if (score > bestScore) {
                 bestScore = score;
                 bestIndex = i;

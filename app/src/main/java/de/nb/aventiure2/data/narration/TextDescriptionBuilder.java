@@ -30,7 +30,7 @@ import static de.nb.aventiure2.german.base.StructuralElement.max;
 /**
  * Builds {@link AllgDescription}s from {@link AbstractDescription}s.
  */
-class AllgDescriptionBuilder {
+class TextDescriptionBuilder {
     /**
      * Builds alternative narration additions from these alternative
      * {@link AbstractDescription}s, always based on the given initial narration.
@@ -41,8 +41,7 @@ class AllgDescriptionBuilder {
             final Narration initialNarration) {
         return altDescriptions.stream()
                 .flatMap(d -> toAllgDescriptions(initialNarration, d).stream())
-                .filter(distinctByKey(
-                        allgDescription -> allgDescription.getDescriptionHauptsatz().getString()))
+                .filter(distinctByKey(AllgDescription::getText))
                 .collect(ImmutableList.toImmutableList());
     }
 
@@ -136,7 +135,7 @@ class AllgDescriptionBuilder {
         // else: Ansonsten könnte der "Hauptsatz" auch einfach ein paar Wörter sein,
         // die Vorgabe WORD soll dann erhalten bleiben
 
-        if (res.getDescriptionHauptsatz().getString().startsWith("Dann")) {
+        if (res.getText().startsWith("Dann")) {
             res.dann(false);
         }
 

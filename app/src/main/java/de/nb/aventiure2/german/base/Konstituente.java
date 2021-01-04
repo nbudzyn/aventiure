@@ -45,6 +45,8 @@ public class Konstituente {
      */
     private final boolean kommmaStehtAus;
 
+    // FIXME capitalize() sollte nur möglichst spät und möglichst
+    //  weit außen aufgerufen werden!
     public static Iterable<Konstituente> capitalize(final Iterable<Konstituente> input) {
         final ImmutableList<Konstituente> inputList = ImmutableList.copyOf(input);
 
@@ -54,19 +56,6 @@ public class Konstituente {
 
         return ImmutableList.<Konstituente>builder()
                 .add(inputList.get(0).capitalize())
-                .addAll(inputList.subList(1, inputList.size()))
-                .build();
-    }
-
-    public static Iterable<Konstituente> uncapitalize(final Iterable<Konstituente> input) {
-        final ImmutableList<Konstituente> inputList = ImmutableList.copyOf(input);
-
-        if (inputList.isEmpty()) {
-            return ImmutableList.of();
-        }
-
-        return ImmutableList.<Konstituente>builder()
-                .add(inputList.get(0).uncapitalize())
                 .addAll(inputList.subList(1, inputList.size()))
                 .build();
     }
@@ -308,7 +297,7 @@ public class Konstituente {
                 wortfolge.getString().trim(),
                 false,
                 wortfolge.woertlicheRedeNochOffen(),
-                wortfolge.kommmaStehtAus());
+                wortfolge.kommaStehtAus());
     }
 
     /**
@@ -341,13 +330,6 @@ public class Konstituente {
 
     public Konstituente capitalize() {
         return new Konstituente(GermanUtil.capitalize(string),
-                // Wenn großgeschrieben werden soll, wäre es sinnlos, ein Komma zuvor
-                // setzen zu vollen.
-                false, woertlicheRedeNochOffen, kommmaStehtAus);
-    }
-
-    private Konstituente uncapitalize() {
-        return new Konstituente(GermanUtil.uncapitalize(string),
                 // Wenn großgeschrieben werden soll, wäre es sinnlos, ein Komma zuvor
                 // setzen zu vollen.
                 false, woertlicheRedeNochOffen, kommmaStehtAus);

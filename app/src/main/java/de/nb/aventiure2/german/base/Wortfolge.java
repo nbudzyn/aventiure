@@ -33,13 +33,6 @@ public class Wortfolge {
      */
     private final boolean kommmaStehtAus;
 
-
-    public static Wortfolge uncapitalize(final Wortfolge wortfolge) {
-        return new Wortfolge(GermanUtil.uncapitalize(wortfolge.getString()),
-                wortfolge.woertlicheRedeNochOffen(),
-                wortfolge.kommmaStehtAus());
-    }
-
     /**
      * Fügt diese Teile zu einer Wortfolge zusammen, wobei eine nichtleere
      * Wortfolge das Ergebnis sein muss. Berücksichtigt auch die Information,
@@ -169,15 +162,6 @@ public class Wortfolge {
         this.kommmaStehtAus = kommmaStehtAus;
     }
 
-    public Wortfolge capitalize() {
-        return new Wortfolge(GermanUtil.capitalize(getString()), woertlicheRedeNochOffen,
-                kommmaStehtAus());
-    }
-
-    public Wortfolge uncapitalize() {
-        return new Wortfolge(GermanUtil.uncapitalize(getString()), woertlicheRedeNochOffen,
-                kommmaStehtAus());
-    }
 
     public String getString() {
         return string;
@@ -187,7 +171,7 @@ public class Wortfolge {
         return woertlicheRedeNochOffen;
     }
 
-    public boolean kommmaStehtAus() {
+    public boolean kommaStehtAus() {
         return kommmaStehtAus;
     }
 

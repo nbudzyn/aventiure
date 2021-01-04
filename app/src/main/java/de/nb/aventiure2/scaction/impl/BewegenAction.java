@@ -465,6 +465,7 @@ public class BewegenAction<LOC_DESC extends ILocatableGO & IDescribableGO>
 
         if (isDefinitivDiskontinuitaet()) {
             final ImmutableList.Builder<TimedDescription<?>> alt = builder();
+
             final Wortfolge descriptionHauptsatz =
                     description.getDescription().getDescriptionHauptsatz();
             if (numberOfWays == ONLY_WAY) {
