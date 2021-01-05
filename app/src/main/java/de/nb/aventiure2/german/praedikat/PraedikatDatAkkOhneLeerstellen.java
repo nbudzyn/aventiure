@@ -13,12 +13,14 @@ import de.nb.aventiure2.annotations.Komplement;
 import de.nb.aventiure2.annotations.Valenz;
 import de.nb.aventiure2.german.base.Interrogativpronomen;
 import de.nb.aventiure2.german.base.Konstituente;
+import de.nb.aventiure2.german.base.Konstituentenfolge;
 import de.nb.aventiure2.german.base.Numerus;
 import de.nb.aventiure2.german.base.Person;
 import de.nb.aventiure2.german.base.SubstantivischePhrase;
 import de.nb.aventiure2.german.base.SubstantivischePhraseOderReflexivpronomen;
 
 import static de.nb.aventiure2.german.base.Konstituente.k;
+import static de.nb.aventiure2.german.base.Konstituentenfolge.kf;
 
 /**
  * Ein Prädikat, in dem ein Dativobjekt und Akkusativobjekt gesetzt sind
@@ -148,14 +150,14 @@ public class PraedikatDatAkkOhneLeerstellen
     }
 
     @Override
-    Iterable<Konstituente> getMittelfeldOhneLinksversetzungUnbetonterPronomen(
+    Konstituentenfolge getMittelfeldOhneLinksversetzungUnbetonterPronomen(
             final Person personSubjekt, final Numerus numerusSubjekt) {
-        return Konstituente.joinToKonstituenten(
+        return Konstituentenfolge.joinToKonstituentenfolge(
                 getAdverbialeAngabeSkopusSatzDescriptionFuerMittelfeld(personSubjekt,
                         numerusSubjekt),
                 // "aus einer Laune heraus"
                 dat.dat(), // "dem Frosch"
-                getModalpartikeln(), // "halt"
+                kf(getModalpartikeln()), // "halt"
                 getAdverbialeAngabeSkopusVerbAllgDescriptionFuerMittelfeld(personSubjekt,
                         numerusSubjekt), // "auf deiner Flöte"
                 akk.akk()); // "ein Lied"
@@ -182,9 +184,9 @@ public class PraedikatDatAkkOhneLeerstellen
     }
 
     @Override
-    public Iterable<Konstituente> getNachfeld(final Person personSubjekt,
-                                              final Numerus numerusSubjekt) {
-        return Konstituente.joinToKonstituenten(
+    public Konstituentenfolge getNachfeld(final Person personSubjekt,
+                                          final Numerus numerusSubjekt) {
+        return Konstituentenfolge.joinToKonstituentenfolge(
                 getAdverbialeAngabeSkopusVerbAllgDescriptionFuerZwangsausklammerung(personSubjekt,
                         numerusSubjekt),
                 getAdverbialeAngabeSkopusSatzDescriptionFuerZwangsausklammerung(personSubjekt,

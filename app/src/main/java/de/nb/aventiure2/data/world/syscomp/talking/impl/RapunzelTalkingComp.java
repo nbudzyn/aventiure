@@ -13,7 +13,7 @@ import de.nb.aventiure2.data.world.syscomp.state.impl.RapunzelStateComp;
 import de.nb.aventiure2.data.world.syscomp.talking.AbstractTalkingComp;
 import de.nb.aventiure2.german.adjektiv.AdjPhrOhneLeerstellen;
 import de.nb.aventiure2.german.base.GermanUtil;
-import de.nb.aventiure2.german.base.Konstituente;
+import de.nb.aventiure2.german.base.Konstituentenfolge;
 import de.nb.aventiure2.german.base.Nominalphrase;
 import de.nb.aventiure2.german.base.Personalpronomen;
 import de.nb.aventiure2.german.base.SubstantivischePhrase;
@@ -417,7 +417,7 @@ public class RapunzelTalkingComp extends AbstractTalkingComp {
                         altEindruckSaetze.stream()
                                 .map(s -> s.mitAnschlusswort("und").getVerbzweitsatzStandard())
                                 .map(s -> neuerSatz(
-                                        Konstituente.joinToKonstituenten(
+                                        Konstituentenfolge.joinToKonstituentenfolge(
                                                 "„Oh, wie schön, dasss du wieder da "
                                                         + "bist“, antwortet",
                                                 anaph.nom(),
@@ -450,7 +450,7 @@ public class RapunzelTalkingComp extends AbstractTalkingComp {
                         altEindruckSaetze.stream()
                                 .map(s -> s.mitAnschlusswort("und").getVerbzweitsatzStandard())
                                 .map(s -> neuerSatz(
-                                        Konstituente.joinToKonstituenten(
+                                        Konstituentenfolge.joinToKonstituentenfolge(
                                                 "„Endlich! Ich hatte dich schon",
                                                 "erwartet“, antwortet",
                                                 anaph.nom(),

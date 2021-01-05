@@ -13,14 +13,16 @@ import javax.annotation.Nullable;
 
 import de.nb.aventiure2.german.base.Kasus;
 import de.nb.aventiure2.german.base.Konstituente;
+import de.nb.aventiure2.german.base.Konstituentenfolge;
 import de.nb.aventiure2.german.base.Numerus;
 import de.nb.aventiure2.german.base.Person;
 import de.nb.aventiure2.german.base.SubstantivischePhrase;
 import de.nb.aventiure2.german.base.SubstantivischePhraseOderReflexivpronomen;
 
 import static com.google.common.collect.ImmutableList.toImmutableList;
-import static de.nb.aventiure2.german.base.Konstituente.cutFirstOneByOne;
 import static de.nb.aventiure2.german.base.Konstituente.k;
+import static de.nb.aventiure2.german.base.Konstituentenfolge.cutFirstOneByOne;
+import static de.nb.aventiure2.german.base.Konstituentenfolge.kf;
 import static de.nb.aventiure2.german.base.Numerus.SG;
 import static de.nb.aventiure2.german.base.Person.P2;
 
@@ -91,8 +93,8 @@ public abstract class AbstractAngabenfaehigesPraedikatOhneLeerstellen
 
 
     @Override
-    public final Iterable<Konstituente> getVerbzweit(final Person person, final Numerus numerus) {
-        return Konstituente.joinToKonstituenten(
+    public final Konstituentenfolge getVerbzweit(final Person person, final Numerus numerus) {
+        return Konstituentenfolge.joinToKonstituentenfolge(
                 verb.getPraesensOhnePartikel(person, numerus),
                 getMittelfeld(person, numerus),
                 verb.getPartikel(),
@@ -100,9 +102,9 @@ public abstract class AbstractAngabenfaehigesPraedikatOhneLeerstellen
     }
 
     @Override
-    public Iterable<Konstituente> getVerbzweitMitSubjektImMittelfeld(
+    public Konstituentenfolge getVerbzweitMitSubjektImMittelfeld(
             final SubstantivischePhrase subjekt) {
-        return Konstituente.joinToKonstituenten(
+        return Konstituentenfolge.joinToKonstituentenfolge(
                 verb.getPraesensOhnePartikel(subjekt.getPerson(), subjekt.getNumerus()),
                 // Damit steht das Subjekt entweder als nicht-pronominales Subjekt vor der
                 // Wackernagelposition oder als unbetontes Pronomen zu Anfang der
@@ -114,17 +116,17 @@ public abstract class AbstractAngabenfaehigesPraedikatOhneLeerstellen
     }
 
     @Override
-    public final Iterable<Konstituente> getVerbletzt(final Person person, final Numerus numerus) {
-        return Konstituente.joinToKonstituenten(
+    public final Konstituentenfolge getVerbletzt(final Person person, final Numerus numerus) {
+        return Konstituentenfolge.joinToKonstituentenfolge(
                 getMittelfeld(person, numerus),
                 verb.getPraesensMitPartikel(person, numerus),
                 getNachfeld(person, numerus));
     }
 
     @Override
-    public final Iterable<Konstituente> getPartizipIIPhrase(final Person person,
-                                                            final Numerus numerus) {
-        return Konstituente.joinToKonstituenten(
+    public final Konstituentenfolge getPartizipIIPhrase(final Person person,
+                                                        final Numerus numerus) {
+        return Konstituentenfolge.joinToKonstituentenfolge(
                 getMittelfeld(person, numerus),
                 verb.getPartizipII(),
                 getNachfeld(person, numerus));
@@ -135,8 +137,8 @@ public abstract class AbstractAngabenfaehigesPraedikatOhneLeerstellen
      * ("den Frosch ignorieren", "das Leben genießen")
      */
     @Override
-    public final Iterable<Konstituente> getInfinitiv(final Person person, final Numerus numerus) {
-        return Konstituente.joinToKonstituenten(
+    public final Konstituentenfolge getInfinitiv(final Person person, final Numerus numerus) {
+        return Konstituentenfolge.joinToKonstituentenfolge(
                 getMittelfeld(person, numerus),
                 verb.getInfinitiv(),
                 getNachfeld(person, numerus));
@@ -147,8 +149,8 @@ public abstract class AbstractAngabenfaehigesPraedikatOhneLeerstellen
      * ("den Frosch erneut zu ignorieren", "das Leben zu genießen")
      */
     @Override
-    public final Iterable<Konstituente> getZuInfinitiv(final Person person, final Numerus numerus) {
-        return Konstituente.joinToKonstituenten(
+    public final Konstituentenfolge getZuInfinitiv(final Person person, final Numerus numerus) {
+        return Konstituentenfolge.joinToKonstituentenfolge(
                 getMittelfeld(person, numerus),
                 verb.getZuInfinitiv(),
                 getNachfeld(person, numerus));
@@ -184,7 +186,7 @@ public abstract class AbstractAngabenfaehigesPraedikatOhneLeerstellen
         return null;
     }
 
-    private Iterable<Konstituente> getMittelfeld(
+    private Konstituentenfolge getMittelfeld(
             final Person personSubjekt,
             final Numerus numerusSubjekt) {
         @Nullable final SubstantivischePhraseOderReflexivpronomen datObjekt = getDat(personSubjekt,
@@ -202,13 +204,13 @@ public abstract class AbstractAngabenfaehigesPraedikatOhneLeerstellen
                         toPair(datObjekt, Kasus.DAT));
 
         // Das Mittelfeld besteht aus drei Teilen:
-        return Konstituente.joinToKonstituenten(
+        return Konstituentenfolge.joinToKonstituentenfolge(
                 // 1. Der Bereich vor der Wackernagel-Position. Dort kann höchstens ein
                 //   Subjekt stehen, das keine unbetontes Pronomen ist.
                 //   Das Subjekt ist hier im Prädikat noch nicht bekannt.
                 // 2. Die Wackernagelposition. Hier stehen alle unbetonten Pronomen in den
                 // reinen Kasus in der festen Reihenfolge Nom < Akk < Dat
-                unbetontePronomen,
+                kf(unbetontePronomen),
                 // 3. Der Bereich nach der Wackernagel-Position. Hier steht alles übrige
                 cutFirstOneByOne(
                         getMittelfeldOhneLinksversetzungUnbetonterPronomen(
@@ -284,7 +286,8 @@ public abstract class AbstractAngabenfaehigesPraedikatOhneLeerstellen
      * {@link #getAkk(Person, Numerus)}, {@link #getZweitesAkk()} und
      * {@link #getDat(Person, Numerus)}.
      */
-    abstract Iterable<Konstituente>
+    @Nullable
+    abstract Konstituentenfolge
     getMittelfeldOhneLinksversetzungUnbetonterPronomen(final Person personSubjekt,
                                                        final Numerus numerusSubjekt);
 

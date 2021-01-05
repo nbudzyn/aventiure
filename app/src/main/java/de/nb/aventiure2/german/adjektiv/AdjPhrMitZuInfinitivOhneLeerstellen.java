@@ -6,7 +6,7 @@ import javax.annotation.Nullable;
 
 import de.nb.aventiure2.annotations.Komplement;
 import de.nb.aventiure2.annotations.Valenz;
-import de.nb.aventiure2.german.base.Konstituente;
+import de.nb.aventiure2.german.base.Konstituentenfolge;
 import de.nb.aventiure2.german.base.Numerus;
 import de.nb.aventiure2.german.base.Person;
 import de.nb.aventiure2.german.praedikat.PraedikatOhneLeerstellen;
@@ -58,9 +58,9 @@ public class AdjPhrMitZuInfinitivOhneLeerstellen extends AbstractAdjPhrOhneLeers
     }
 
     @Override
-    public Iterable<Konstituente> getPraedikativOderAdverbial(final Person person,
-                                                              final Numerus numerus) {
-        return Konstituente.joinToKonstituenten(
+    public Konstituentenfolge getPraedikativOderAdverbial(final Person person,
+                                                          final Numerus numerus) {
+        return Konstituentenfolge.joinToKonstituentenfolge(
                 getGraduativeAngabe(), // "sehr"
                 k(getAdjektiv().getPraedikativ()), // "glücklich"
                 getPraedikativAnteilKandidatFuerNachfeld(person, numerus)
@@ -69,9 +69,9 @@ public class AdjPhrMitZuInfinitivOhneLeerstellen extends AbstractAdjPhrOhneLeers
     }
 
     @Override
-    public Iterable<Konstituente> getPraedikativAnteilKandidatFuerNachfeld(final Person person,
-                                                                           final Numerus numerus) {
-        return Konstituente.schliesseInKommaEin(
+    public Konstituentenfolge getPraedikativAnteilKandidatFuerNachfeld(final Person person,
+                                                                       final Numerus numerus) {
+        return Konstituentenfolge.schliesseInKommaEin(
                 lexikalischerKern.getZuInfinitiv(person, numerus)
                 // "[,] sich erheben zu dürfen[,] "
         );

@@ -6,6 +6,7 @@ import java.util.Collection;
 import javax.annotation.Nullable;
 
 import de.nb.aventiure2.german.base.Konstituente;
+import de.nb.aventiure2.german.base.Konstituentenfolge;
 import de.nb.aventiure2.german.base.Numerus;
 import de.nb.aventiure2.german.base.Person;
 import de.nb.aventiure2.german.base.SubstantivischePhrase;
@@ -49,7 +50,7 @@ public interface PraedikatOhneLeerstellen extends Praedikat {
      * Gibt das Prädikat "in Verbzweitform" zurück - das Verb steht also ganz am Anfang
      * (in einem Verbzweitsatz würde dann noch das Subjekt davor stehen).
      */
-    Iterable<Konstituente> getVerbzweit(Person person, Numerus numerus);
+    Konstituentenfolge getVerbzweit(Person person, Numerus numerus);
 
     /**
      * Gibt das Prädikat "in Verbzweitform" zurück - das Verb steht also ganz am Anfang -,
@@ -57,13 +58,13 @@ public interface PraedikatOhneLeerstellen extends Praedikat {
      * (In einem Verbzweitsatz würde dann noch ein Satzglied vor dem Ganzen stehen, z.B.
      * eine adverbiale Angabe).
      */
-    Iterable<Konstituente> getVerbzweitMitSubjektImMittelfeld(SubstantivischePhrase subjekt);
+    Konstituentenfolge getVerbzweitMitSubjektImMittelfeld(SubstantivischePhrase subjekt);
 
     /**
      * Gibt das Prädikat "in Verbletztform" zurück - das Verb steht also am Ende,
      * nur noch gefolgt vom Nachfeld.
      */
-    Iterable<Konstituente> getVerbletzt(Person person, Numerus numerus);
+    Konstituentenfolge getVerbletzt(Person person, Numerus numerus);
 
     /**
      * Gibt eine unflektierte Phrase mit Partizip II zurück: "unten angekommen",
@@ -74,7 +75,7 @@ public interface PraedikatOhneLeerstellen extends Praedikat {
      * "[Ich habe] die Kugel an mich genommen"
      * (nicht *"[Ich habe] die Kugel an sich genommen")
      */
-    Iterable<Konstituente> getPartizipIIPhrase(final Person person, final Numerus numerus);
+    Konstituentenfolge getPartizipIIPhrase(final Person person, final Numerus numerus);
 
     /**
      * Gibt zurück, ob die Partizip-II-Phrase
@@ -99,7 +100,7 @@ public interface PraedikatOhneLeerstellen extends Praedikat {
      * "[Ich möchte] die Kugel an mich nehmen"
      * (nicht *"[Ich möchte] die Kugel an sich nehmen")
      */
-    Iterable<Konstituente> getInfinitiv(final Person person, final Numerus numerus);
+    Konstituentenfolge getInfinitiv(final Person person, final Numerus numerus);
 
     /**
      * Gibt eine Infinitivkonstruktion mit dem zu-Infinitiv mit diesem
@@ -110,7 +111,7 @@ public interface PraedikatOhneLeerstellen extends Praedikat {
      * "[Ich gedenke,] die Kugel an mich zu nehmen"
      * (nicht *"[Ich gedenke,] die Kugel an sich zu nehmen")
      */
-    Iterable<Konstituente> getZuInfinitiv(final Person person, final Numerus numerus);
+    Konstituentenfolge getZuInfinitiv(final Person person, final Numerus numerus);
 
     /**
      * Gibt ein "spezielles" Vorfeld zurück, das (bei Sätzen, die ein Vorfeld haben)
@@ -130,7 +131,8 @@ public interface PraedikatOhneLeerstellen extends Praedikat {
     Konstituente getSpeziellesVorfeldAlsWeitereOption(Person personSubjekt,
                                                       Numerus numerusSubjekt);
 
-    Iterable<Konstituente> getNachfeld(Person person, Numerus numerus);
+    @Nullable
+    Konstituentenfolge getNachfeld(Person person, Numerus numerus);
 
     /**
      * Gibt zurück, ob dieses Prädikat Satzglieder enthält (nicht nur Verbbestandteile).

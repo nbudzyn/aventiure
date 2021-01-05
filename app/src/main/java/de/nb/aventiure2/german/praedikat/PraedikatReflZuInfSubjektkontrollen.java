@@ -15,6 +15,7 @@ import de.nb.aventiure2.annotations.Komplement;
 import de.nb.aventiure2.annotations.Valenz;
 import de.nb.aventiure2.german.base.Kasus;
 import de.nb.aventiure2.german.base.Konstituente;
+import de.nb.aventiure2.german.base.Konstituentenfolge;
 import de.nb.aventiure2.german.base.Numerus;
 import de.nb.aventiure2.german.base.Person;
 import de.nb.aventiure2.german.base.Reflexivpronomen;
@@ -22,6 +23,7 @@ import de.nb.aventiure2.german.base.SubstantivischePhraseOderReflexivpronomen;
 
 import static de.nb.aventiure2.german.base.Kasus.AKK;
 import static de.nb.aventiure2.german.base.Kasus.DAT;
+import static de.nb.aventiure2.german.base.Konstituentenfolge.kf;
 
 /**
  * Ein Prädikat eines Verbs wie "sich [Akk] freuen, zu ...". Dabei ist es das Subjekt, dass ... tut
@@ -161,21 +163,21 @@ public class PraedikatReflZuInfSubjektkontrollen
     }
 
     @Override
-    Iterable<Konstituente> getMittelfeldOhneLinksversetzungUnbetonterPronomen(
+    Konstituentenfolge getMittelfeldOhneLinksversetzungUnbetonterPronomen(
             final Person personSubjekt, final Numerus numerusSubjekt) {
         @Nullable final AdverbialeAngabeSkopusSatz adverbialeAngabeSkopusSatz =
                 getAdverbialeAngabeSkopusSatz();
         @Nullable final AdverbialeAngabeSkopusVerbAllg adverbialeAngabeSkopusVerbAllg =
                 getAdverbialeAngabeSkopusVerbAllg();
 
-        return Konstituente.joinToKonstituenten(
+        return Konstituentenfolge.joinToKonstituentenfolge(
                 Reflexivpronomen.get(personSubjekt, numerusSubjekt).im(kasus), // "dich"
                 adverbialeAngabeSkopusSatz != null &&
                         adverbialeAngabeSkopusSatz.imMittelfeldErlaubt() ?
                         adverbialeAngabeSkopusSatz.getDescription(personSubjekt, numerusSubjekt) :
                         // "aus einer Laune heraus"
                         null, // (ins Nachfeld verschieben)
-                getModalpartikeln(), // "mal eben"
+                kf(getModalpartikeln()), // "mal eben"
                 adverbialeAngabeSkopusVerbAllg != null &&
                         adverbialeAngabeSkopusVerbAllg.imMittelfeldErlaubt() ?
                         adverbialeAngabeSkopusVerbAllg.getDescription(personSubjekt,
@@ -187,7 +189,7 @@ public class PraedikatReflZuInfSubjektkontrollen
                         // daraus wird sie nach Möglichkeit ins Vorfeld gezogen werden.
                         ?
                         // -> Lex. Kern sollten wir aus dem Nachfeld vorziehen
-                        Konstituente.schliesseInKommaEin(
+                        Konstituentenfolge.schliesseInKommaEin(
                                 lexikalischerKern.getZuInfinitiv(
                                         // Es liegt "Subjektkontrolle" vor.
                                         personSubjekt, numerusSubjekt
@@ -228,16 +230,17 @@ public class PraedikatReflZuInfSubjektkontrollen
     }
 
     @Override
-    public Iterable<Konstituente> getNachfeld(final Person personSubjekt,
-                                              final Numerus numerusSubjekt) {
+    @Nullable
+    public Konstituentenfolge getNachfeld(final Person personSubjekt,
+                                          final Numerus numerusSubjekt) {
         @Nullable final AdverbialeAngabeSkopusSatz adverbialeAngabeSkopusSatz =
                 getAdverbialeAngabeSkopusSatz();
         @Nullable final AdverbialeAngabeSkopusVerbAllg adverbialeAngabeSkopusVerbAllg =
                 getAdverbialeAngabeSkopusVerbAllg();
-        return Konstituente.joinToKonstituenten(
+        return Konstituentenfolge.joinToKonstituentenfolge(
                 adverbialeAngabeSkopusVerbAllg == null
                         || adverbialeAngabeSkopusVerbAllg.imMittelfeldErlaubt() ?
-                        Konstituente.schliesseInKommaEin(
+                        Konstituentenfolge.schliesseInKommaEin(
                                 lexikalischerKern.getZuInfinitiv(
                                         // Es liegt Subjektkontrolle vor.
                                         personSubjekt, numerusSubjekt

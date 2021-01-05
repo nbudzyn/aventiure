@@ -2,13 +2,12 @@ package de.nb.aventiure2.german.praedikat;
 
 import androidx.annotation.NonNull;
 
-import com.google.common.collect.ImmutableList;
-
 import java.util.Collection;
 
 import javax.annotation.Nullable;
 
 import de.nb.aventiure2.german.base.Konstituente;
+import de.nb.aventiure2.german.base.Konstituentenfolge;
 import de.nb.aventiure2.german.base.Numerus;
 import de.nb.aventiure2.german.base.Person;
 import de.nb.aventiure2.german.base.SubstantivischePhrase;
@@ -106,24 +105,24 @@ public enum VerbSubj implements PraedikatOhneLeerstellen {
     }
 
     @Override
-    public Iterable<Konstituente> getVerbzweit(final Person person, final Numerus numerus) {
+    public Konstituentenfolge getVerbzweit(final Person person, final Numerus numerus) {
         return toPraedikatSubj().getVerbzweit(person, numerus);
     }
 
     @Override
-    public Iterable<Konstituente> getVerbzweitMitSubjektImMittelfeld(
+    public Konstituentenfolge getVerbzweitMitSubjektImMittelfeld(
             final SubstantivischePhrase subjekt) {
         return toPraedikatSubj().getVerbzweitMitSubjektImMittelfeld(subjekt);
     }
 
     @Override
-    public Iterable<Konstituente> getVerbletzt(final Person person, final Numerus numerus) {
+    public Konstituentenfolge getVerbletzt(final Person person, final Numerus numerus) {
         return toPraedikatSubj().getVerbletzt(person, numerus);
     }
 
     @Override
-    public Iterable<Konstituente> getPartizipIIPhrase(final Person person, final Numerus numerus) {
-        return ImmutableList.of(k(verb.getPartizipII()));
+    public Konstituentenfolge getPartizipIIPhrase(final Person person, final Numerus numerus) {
+        return new Konstituentenfolge(k(verb.getPartizipII()));
     }
 
     @Override
@@ -132,13 +131,13 @@ public enum VerbSubj implements PraedikatOhneLeerstellen {
     }
 
     @Override
-    public Iterable<Konstituente> getInfinitiv(final Person person, final Numerus numerus) {
-        return Konstituente.joinToKonstituenten(verb.getInfinitiv());
+    public Konstituentenfolge getInfinitiv(final Person person, final Numerus numerus) {
+        return Konstituentenfolge.joinToKonstituentenfolge(verb.getInfinitiv());
     }
 
     @Override
-    public Iterable<Konstituente> getZuInfinitiv(final Person person, final Numerus numerus) {
-        return ImmutableList.of(k(verb.getZuInfinitiv()));
+    public Konstituentenfolge getZuInfinitiv(final Person person, final Numerus numerus) {
+        return new Konstituentenfolge(k(verb.getZuInfinitiv()));
     }
 
     @Override
@@ -189,8 +188,8 @@ public enum VerbSubj implements PraedikatOhneLeerstellen {
 
     @Nullable
     @Override
-    public Iterable<Konstituente> getNachfeld(final Person person, final Numerus numerus) {
-        return ImmutableList.of();
+    public Konstituentenfolge getNachfeld(final Person person, final Numerus numerus) {
+        return null;
     }
 
     @Nullable

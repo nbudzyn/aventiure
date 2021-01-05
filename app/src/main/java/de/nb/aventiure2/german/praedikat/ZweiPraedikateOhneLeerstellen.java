@@ -6,6 +6,7 @@ import java.util.Objects;
 import javax.annotation.Nullable;
 
 import de.nb.aventiure2.german.base.Konstituente;
+import de.nb.aventiure2.german.base.Konstituentenfolge;
 import de.nb.aventiure2.german.base.Numerus;
 import de.nb.aventiure2.german.base.Person;
 import de.nb.aventiure2.german.base.SubstantivischePhrase;
@@ -71,8 +72,8 @@ public class ZweiPraedikateOhneLeerstellen
     }
 
     @Override
-    public Iterable<Konstituente> getVerbzweit(final Person person, final Numerus numerus) {
-        return Konstituente.joinToKonstituenten(
+    public Konstituentenfolge getVerbzweit(final Person person, final Numerus numerus) {
+        return Konstituentenfolge.joinToKonstituentenfolge(
                 // "hebst die goldene Kugel auf"
                 ersterSatz.getVerbzweit(person, numerus),
                 "und",
@@ -82,9 +83,9 @@ public class ZweiPraedikateOhneLeerstellen
     }
 
     @Override
-    public Iterable<Konstituente> getVerbzweitMitSubjektImMittelfeld(
+    public Konstituentenfolge getVerbzweitMitSubjektImMittelfeld(
             final SubstantivischePhrase subjekt) {
-        return Konstituente.joinToKonstituenten(
+        return Konstituentenfolge.joinToKonstituentenfolge(
                 ersterSatz.getVerbzweitMitSubjektImMittelfeld(subjekt),
                 // "ziehst du erst noch eine Weile um die Häuser"
                 "und",
@@ -94,16 +95,16 @@ public class ZweiPraedikateOhneLeerstellen
     }
 
     @Override
-    public Iterable<Konstituente> getVerbletzt(final Person person, final Numerus numerus) {
-        return Konstituente.joinToKonstituenten(
+    public Konstituentenfolge getVerbletzt(final Person person, final Numerus numerus) {
+        return Konstituentenfolge.joinToKonstituentenfolge(
                 ersterSatz.getVerbletzt(person, numerus),
                 "und",
                 zweiterSatz.getVerbletzt(person, numerus));
     }
 
     @Override
-    public Iterable<Konstituente> getPartizipIIPhrase(final Person person, final Numerus numerus) {
-        return Konstituente.joinToKonstituenten(
+    public Konstituentenfolge getPartizipIIPhrase(final Person person, final Numerus numerus) {
+        return Konstituentenfolge.joinToKonstituentenfolge(
                 ersterSatz.getPartizipIIPhrase(person, numerus),
                 "und",
                 zweiterSatz.getPartizipIIPhrase(person, numerus)
@@ -117,16 +118,16 @@ public class ZweiPraedikateOhneLeerstellen
     }
 
     @Override
-    public Iterable<Konstituente> getInfinitiv(final Person person, final Numerus numerus) {
-        return Konstituente.joinToKonstituenten(
+    public Konstituentenfolge getInfinitiv(final Person person, final Numerus numerus) {
+        return Konstituentenfolge.joinToKonstituentenfolge(
                 ersterSatz.getInfinitiv(person, numerus),
                 "und",
                 zweiterSatz.getInfinitiv(person, numerus));
     }
 
     @Override
-    public Iterable<Konstituente> getZuInfinitiv(final Person person, final Numerus numerus) {
-        return Konstituente.joinToKonstituenten(
+    public Konstituentenfolge getZuInfinitiv(final Person person, final Numerus numerus) {
+        return Konstituentenfolge.joinToKonstituentenfolge(
                 ersterSatz.getZuInfinitiv(person, numerus),
                 "und",
                 zweiterSatz.getZuInfinitiv(person, numerus));
@@ -169,7 +170,7 @@ public class ZweiPraedikateOhneLeerstellen
 
     @Nullable
     @Override
-    public Iterable<Konstituente> getNachfeld(final Person person, final Numerus numerus) {
+    public Konstituentenfolge getNachfeld(final Person person, final Numerus numerus) {
         return zweiterSatz.getNachfeld(person, numerus);
     }
 

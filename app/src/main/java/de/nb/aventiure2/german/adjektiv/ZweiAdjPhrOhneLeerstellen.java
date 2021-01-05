@@ -1,8 +1,10 @@
 package de.nb.aventiure2.german.adjektiv;
 
+import java.util.Objects;
+
 import javax.annotation.Nullable;
 
-import de.nb.aventiure2.german.base.Konstituente;
+import de.nb.aventiure2.german.base.Konstituentenfolge;
 import de.nb.aventiure2.german.base.Numerus;
 import de.nb.aventiure2.german.base.Person;
 
@@ -31,9 +33,9 @@ public class ZweiAdjPhrOhneLeerstellen implements AdjPhrOhneLeerstellen {
     }
 
     @Override
-    public Iterable<Konstituente> getPraedikativOderAdverbial(final Person person,
-                                                              final Numerus numerus) {
-        return Konstituente.joinToKonstituenten(
+    public Konstituentenfolge getPraedikativOderAdverbial(final Person person,
+                                                          final Numerus numerus) {
+        return Konstituentenfolge.joinToKonstituentenfolge(
                 ersteAdjPhr.getPraedikativ(person, numerus),
                 "und",
                 zweiteAdjPhr.getPraedikativ(person, numerus)
@@ -41,39 +43,40 @@ public class ZweiAdjPhrOhneLeerstellen implements AdjPhrOhneLeerstellen {
     }
 
     @Override
-    public Iterable<Konstituente> getPraedikativAnteilKandidatFuerNachfeld(final Person person,
-                                                                           final Numerus numerus) {
-        final Iterable<Konstituente> ersterNachfeldAnteil =
+    @Nullable
+    public Konstituentenfolge getPraedikativAnteilKandidatFuerNachfeld(final Person person,
+                                                                       final Numerus numerus) {
+        @Nullable final Konstituentenfolge ersterNachfeldAnteil =
                 ersteAdjPhr.getPraedikativAnteilKandidatFuerNachfeld(person, numerus);
 
-        final Iterable<Konstituente> zweiterNachfeldAnteil =
+        @Nullable final Konstituentenfolge zweiterNachfeldAnteil =
                 zweiteAdjPhr.getPraedikativAnteilKandidatFuerNachfeld(person, numerus);
 
-        if (ersterNachfeldAnteil.equals(zweiterNachfeldAnteil)) {
+        if (Objects.equals(ersterNachfeldAnteil, zweiterNachfeldAnteil)) {
             // -> "Sie ist glücklich und erfreut gewesen, dich zu sehen"
             return zweiterNachfeldAnteil;
         }
 
         // -> "Sie ist glücklich, dich zu sehen, gewesen, UND ERFREUT, DICH SO BALD WIEDER
         // ZU TREFFEN"
-        return Konstituente.withVorkommaNoetig(
-                Konstituente.joinToKonstituenten(
-                        "und",
-                        zweiteAdjPhr.getPraedikativ(person, numerus)
-                )
+        return Konstituentenfolge.joinToKonstituentenfolge(
+                "und",
+                zweiteAdjPhr.getPraedikativ(person, numerus)
+        ).withVorkommaNoetig(
         );
     }
 
+    @Nullable
     @Override
-    public Iterable<Konstituente> getPraedikativOhneAnteilKandidatFuerNachfeld(final Person person,
-                                                                               final Numerus numerus) {
-        final Iterable<Konstituente> ersterNachfeldAnteil =
+    public Konstituentenfolge getPraedikativOhneAnteilKandidatFuerNachfeld(final Person person,
+                                                                           final Numerus numerus) {
+        @Nullable final Konstituentenfolge ersterNachfeldAnteil =
                 ersteAdjPhr.getPraedikativAnteilKandidatFuerNachfeld(person, numerus);
 
-        final Iterable<Konstituente> zweiterNachfeldAnteil =
+        @Nullable final Konstituentenfolge zweiterNachfeldAnteil =
                 zweiteAdjPhr.getPraedikativAnteilKandidatFuerNachfeld(person, numerus);
 
-        if (ersterNachfeldAnteil.equals(zweiterNachfeldAnteil)) {
+        if (Objects.equals(ersterNachfeldAnteil, zweiterNachfeldAnteil)) {
             // -> "Sie ist glücklich und erfreut gewesen, dich zu sehen"
             return AdjPhrOhneLeerstellen.super
                     .getPraedikativOhneAnteilKandidatFuerNachfeld(person, numerus);

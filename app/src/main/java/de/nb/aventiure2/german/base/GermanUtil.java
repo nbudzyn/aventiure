@@ -36,13 +36,14 @@ public class GermanUtil {
     }
 
     /**
-     * Fügt diese Teile zu einem String zusammen, wobei ein nichtleerer
+     * Fügt diese Konstituentenfolge zu einem String zusammen, wobei ein nichtleerer
      * String das Ergebnis sein muss. Diese Methode darf nur verwendet werden,
      * wenn nach dem letzten der Teile definitiv kein Komma aussteht - oder das
      * ausstehende Kommma auf andere Weise behandelt wird.
      */
-    public static String joinToString(final Iterable<?> parts) {
-        return checkJoiningResultNotNull(joinToNullString(parts), parts);
+    // FIXME hieraus eine Istanz-Methode machen!
+    public static String joinToString(final Konstituentenfolge konstituentenfolge) {
+        return Wortfolge.joinToWortfolge(konstituentenfolge).toStringFixWoertlicheRedeNochOffen();
     }
 
     private static String checkJoiningResultNotNull(
@@ -83,13 +84,7 @@ public class GermanUtil {
             return null;
         }
 
-        final StringBuilder resString = new StringBuilder(res.getString());
-
-        if (res.woertlicheRedeNochOffen()) {
-            resString.append("“");
-        }
-
-        return resString.toString();
+        return res.toStringFixWoertlicheRedeNochOffen();
     }
 
     /**

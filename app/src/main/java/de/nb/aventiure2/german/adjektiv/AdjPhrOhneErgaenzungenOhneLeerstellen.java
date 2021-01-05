@@ -1,12 +1,10 @@
 package de.nb.aventiure2.german.adjektiv;
 
 
-import com.google.common.collect.ImmutableList;
-
 import javax.annotation.Nullable;
 
 import de.nb.aventiure2.annotations.Valenz;
-import de.nb.aventiure2.german.base.Konstituente;
+import de.nb.aventiure2.german.base.Konstituentenfolge;
 import de.nb.aventiure2.german.base.Numerus;
 import de.nb.aventiure2.german.base.Person;
 
@@ -44,18 +42,19 @@ public class AdjPhrOhneErgaenzungenOhneLeerstellen extends AbstractAdjPhrOhneLee
     }
 
     @Override
-    public Iterable<Konstituente> getPraedikativOderAdverbial(final Person person,
-                                                              final Numerus numerus) {
-        return Konstituente.joinToKonstituenten(
+    public Konstituentenfolge getPraedikativOderAdverbial(final Person person,
+                                                          final Numerus numerus) {
+        return Konstituentenfolge.joinToKonstituentenfolge(
                 getGraduativeAngabe(), // "sehr"
                 getAdjektiv().getPraedikativ() // "zufrieden"
         );
     }
 
     @Override
-    public Iterable<Konstituente> getPraedikativAnteilKandidatFuerNachfeld(final Person person,
-                                                                           final Numerus numerus) {
-        return ImmutableList.of();
+    @Nullable
+    public Konstituentenfolge getPraedikativAnteilKandidatFuerNachfeld(final Person person,
+                                                                       final Numerus numerus) {
+        return null;
     }
 
     @Override

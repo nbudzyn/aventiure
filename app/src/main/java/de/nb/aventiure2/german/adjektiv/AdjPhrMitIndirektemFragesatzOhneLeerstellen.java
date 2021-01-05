@@ -6,7 +6,7 @@ import javax.annotation.Nullable;
 
 import de.nb.aventiure2.annotations.Komplement;
 import de.nb.aventiure2.annotations.Valenz;
-import de.nb.aventiure2.german.base.Konstituente;
+import de.nb.aventiure2.german.base.Konstituentenfolge;
 import de.nb.aventiure2.german.base.Numerus;
 import de.nb.aventiure2.german.base.Person;
 import de.nb.aventiure2.german.satz.Satz;
@@ -87,9 +87,9 @@ public class AdjPhrMitIndirektemFragesatzOhneLeerstellen extends AbstractAdjPhrO
     }
 
     @Override
-    public Iterable<Konstituente> getPraedikativOderAdverbial(final Person person,
-                                                              final Numerus numerus) {
-        return Konstituente.joinToKonstituenten(
+    public Konstituentenfolge getPraedikativOderAdverbial(final Person person,
+                                                          final Numerus numerus) {
+        return Konstituentenfolge.joinToKonstituentenfolge(
                 getGraduativeAngabe(), // "sehr"
                 k(getAdjektiv().getPraedikativ()), // "gespannt"
                 getPraedikativAnteilKandidatFuerNachfeld(person, numerus));
@@ -97,9 +97,10 @@ public class AdjPhrMitIndirektemFragesatzOhneLeerstellen extends AbstractAdjPhrO
     }
 
     @Override
-    public Iterable<Konstituente> getPraedikativAnteilKandidatFuerNachfeld(final Person person,
-                                                                           final Numerus numerus) {
-        return Konstituente.schliesseInKommaEin(
+    @Nullable
+    public Konstituentenfolge getPraedikativAnteilKandidatFuerNachfeld(final Person person,
+                                                                       final Numerus numerus) {
+        return Konstituentenfolge.schliesseInKommaEin(
                 indirekterFragesatz.getIndirekteFrage()
                 // "[,] ob du etwas zu berichten hast[,] ", "[,] was du zu berichten hast[,] " etc.
         );

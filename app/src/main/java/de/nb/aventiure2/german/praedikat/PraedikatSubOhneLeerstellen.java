@@ -9,9 +9,12 @@ import javax.annotation.Nullable;
 
 import de.nb.aventiure2.annotations.Valenz;
 import de.nb.aventiure2.german.base.Konstituente;
+import de.nb.aventiure2.german.base.Konstituentenfolge;
 import de.nb.aventiure2.german.base.Numerus;
 import de.nb.aventiure2.german.base.Person;
 import de.nb.aventiure2.german.base.SubstantivischePhraseOderReflexivpronomen;
+
+import static de.nb.aventiure2.german.base.Konstituentenfolge.kf;
 
 /**
  * Ein Prädikat (Verb ggf. mit Präfix) bei dem das Verb mit einem Subjekt steht und keine
@@ -103,13 +106,14 @@ public class PraedikatSubOhneLeerstellen
     }
 
     @Override
-    Iterable<Konstituente> getMittelfeldOhneLinksversetzungUnbetonterPronomen(
+    @Nullable
+    Konstituentenfolge getMittelfeldOhneLinksversetzungUnbetonterPronomen(
             final Person personSubjekt, final Numerus numerusSubjekt) {
-        return Konstituente.joinToKonstituenten(
+        return Konstituentenfolge.joinToKonstituentenfolge(
                 getAdverbialeAngabeSkopusSatzDescriptionFuerMittelfeld(personSubjekt,
                         numerusSubjekt),
                 // "aus einer Laune heraus"
-                getModalpartikeln(), // "mal eben"
+                kf(getModalpartikeln()), // "mal eben"
                 getAdverbialeAngabeSkopusVerbAllgDescriptionFuerMittelfeld(personSubjekt,
                         numerusSubjekt), // "erneut"
                 getAdverbialeAngabeSkopusVerbWohinWoherDescription(personSubjekt, numerusSubjekt)
@@ -138,9 +142,9 @@ public class PraedikatSubOhneLeerstellen
     }
 
     @Override
-    public Iterable<Konstituente> getNachfeld(final Person personSubjekt,
-                                              final Numerus numerusSubjekt) {
-        return Konstituente.joinToKonstituenten(
+    public Konstituentenfolge getNachfeld(final Person personSubjekt,
+                                          final Numerus numerusSubjekt) {
+        return Konstituentenfolge.joinToKonstituentenfolge(
                 getAdverbialeAngabeSkopusVerbAllgDescriptionFuerZwangsausklammerung(personSubjekt,
                         numerusSubjekt),
                 getAdverbialeAngabeSkopusSatzDescriptionFuerZwangsausklammerung(personSubjekt,

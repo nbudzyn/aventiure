@@ -16,6 +16,7 @@ import de.nb.aventiure2.annotations.Valenz;
 import de.nb.aventiure2.german.base.Interrogativpronomen;
 import de.nb.aventiure2.german.base.Kasus;
 import de.nb.aventiure2.german.base.Konstituente;
+import de.nb.aventiure2.german.base.Konstituentenfolge;
 import de.nb.aventiure2.german.base.Numerus;
 import de.nb.aventiure2.german.base.Person;
 import de.nb.aventiure2.german.base.SubstantivischePhrase;
@@ -24,6 +25,7 @@ import de.nb.aventiure2.german.base.SubstantivischePhraseOderReflexivpronomen;
 import static de.nb.aventiure2.german.base.Kasus.AKK;
 import static de.nb.aventiure2.german.base.Kasus.DAT;
 import static de.nb.aventiure2.german.base.Konstituente.k;
+import static de.nb.aventiure2.german.base.Konstituentenfolge.kf;
 
 /**
  * Ein Prädikat eines <i>direktiven Verbs</i>, in dem alle Leerstellen besetzt sind. Beispiele:
@@ -179,13 +181,13 @@ public class PraedikatDirektivesVerbOhneLeerstellen
     }
 
     @Override
-    Iterable<Konstituente> getMittelfeldOhneLinksversetzungUnbetonterPronomen(
+    Konstituentenfolge getMittelfeldOhneLinksversetzungUnbetonterPronomen(
             final Person personSubjekt, final Numerus numerusSubjekt) {
-        return Konstituente.joinToKonstituenten(
+        return Konstituentenfolge.joinToKonstituentenfolge(
                 getAdverbialeAngabeSkopusSatzDescriptionFuerMittelfeld(personSubjekt,
                         numerusSubjekt),
                 // "aus einer Laune heraus"
-                getModalpartikeln(), // "mal eben"
+                kf(getModalpartikeln()), // "mal eben"
                 getAdverbialeAngabeSkopusVerbAllgDescriptionFuerMittelfeld(personSubjekt,
                         numerusSubjekt), // "erneut"
                 objekt.im(kasus), // "die junge Frau"
@@ -232,10 +234,10 @@ public class PraedikatDirektivesVerbOhneLeerstellen
     }
 
     @Override
-    public Iterable<Konstituente> getNachfeld(final Person personSubjekt,
-                                              final Numerus numerusSubjekt) {
+    public Konstituentenfolge getNachfeld(final Person personSubjekt,
+                                          final Numerus numerusSubjekt) {
         return
-                Konstituente.joinToKonstituenten(
+                Konstituentenfolge.joinToKonstituentenfolge(
                         lexikalischerKern.getZuInfinitiv(
                                 // Es liegt "Objektkontrolle" vor.
                                 objekt.getPerson(), objekt.getNumerusGenus().getNumerus()),

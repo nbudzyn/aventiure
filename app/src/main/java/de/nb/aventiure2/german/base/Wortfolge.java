@@ -87,11 +87,25 @@ public class Wortfolge {
      */
     @Nullable
     static Wortfolge joinToNullWortfolge(final Iterable<?> parts) {
-        final StringBuilder resString = new StringBuilder();
+        @Nullable final Konstituentenfolge konstituentenfolge =
+                Konstituentenfolge.joinToKonstituentenfolge(parts);
+        if (konstituentenfolge == null) {
+            return null;
+        }
+
+        return joinToWortfolge(konstituentenfolge);
+    }
+
+    /**
+     * Fügt diese Konstituentenfolge zu einer Wortfolge zusammen
+     */
+    static Wortfolge joinToWortfolge(final Konstituentenfolge konstituentenfolge) {
+        final StringBuilder resString =
+                new StringBuilder(konstituentenfolge.size() * 25);
         boolean first = true;
         boolean woertlicheRedeNochOffen = false;
         boolean kommaStehtAus = false;
-        for (final Konstituente konstituente : Konstituente.joinToKonstituenten(parts)) {
+        for (final Konstituente konstituente : konstituentenfolge) {
             final String konstitentenString = konstituente.getString();
             if (woertlicheRedeNochOffen) {
                 if (resString.toString().trim().endsWith(".")) {
@@ -113,7 +127,7 @@ public class Wortfolge {
             }
 
             if ((kommaStehtAus
-                    || (!first && konstituente.vorkommmaNoetig()))
+                    || (!first && konstituente.vorkommaNoetig()))
                     && !GermanUtil.beginnDecktKommaAb(konstitentenString)) {
                 resString.append(",");
                 if (GermanUtil.spaceNeeded(",", konstitentenString)) {
@@ -129,13 +143,7 @@ public class Wortfolge {
             first = false;
         }
 
-        if (resString.length() == 0) {
-            return null;
-        }
-
-        return
-
-                w(resString.toString(), woertlicheRedeNochOffen, kommaStehtAus);
+        return w(resString.toString(), woertlicheRedeNochOffen, kommaStehtAus);
     }
 
     /**
@@ -160,6 +168,17 @@ public class Wortfolge {
         this.string = string;
         this.woertlicheRedeNochOffen = woertlicheRedeNochOffen;
         this.kommmaStehtAus = kommmaStehtAus;
+    }
+
+    @NonNull
+    String toStringFixWoertlicheRedeNochOffen() {
+        final StringBuilder resString = new StringBuilder(getString());
+
+        if (woertlicheRedeNochOffen()) {
+            resString.append("“");
+        }
+
+        return resString.toString();
     }
 
 

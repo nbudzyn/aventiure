@@ -1,20 +1,14 @@
 package de.nb.aventiure2.german.base;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 
-import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Iterables;
-import com.google.common.collect.Lists;
 
-import java.util.Iterator;
-import java.util.List;
 import java.util.Objects;
 
 import javax.annotation.Nonnull;
 
 import static com.google.common.base.Preconditions.checkArgument;
-import static java.util.Arrays.asList;
 import static java.util.Objects.requireNonNull;
 
 public class Konstituente {
@@ -45,221 +39,6 @@ public class Konstituente {
      */
     private final boolean kommmaStehtAus;
 
-    public static Iterable<Konstituente> capitalize(final Iterable<Konstituente> input) {
-        final ImmutableList<Konstituente> inputList = ImmutableList.copyOf(input);
-
-        if (inputList.isEmpty()) {
-            return ImmutableList.of();
-        }
-
-        return ImmutableList.<Konstituente>builder()
-                .add(inputList.get(0).capitalize())
-                .addAll(inputList.subList(1, inputList.size()))
-                .build();
-    }
-
-    /**
-     * Gibt denselben Input zurück, wobei ein Vorkomma und ein Folgekomma gefordert werden.
-     * Ist der Input leer, wird eine leere Konsitutenten-Liste zurückgeben.
-     */
-    public static ImmutableList<Konstituente> schliesseInKommaEin(
-            final Iterable<Konstituente> input) {
-        if (!input.iterator().hasNext()) {
-            return ImmutableList.of();
-        }
-
-        return withVorkommaNoetig(withKommaStehtAus(input));
-    }
-
-    public static ImmutableList<Konstituente> withVorkommaNoetig(
-            final Iterable<Konstituente> input) {
-        return withVorkommaNoetig(input, true);
-    }
-
-    private static ImmutableList<Konstituente> withVorkommaNoetig(
-            final Iterable<Konstituente> input, final boolean vorkommaNoetig) {
-        checkArgument(!vorkommaNoetig || input.iterator().hasNext(),
-                "Leere Konstituentenliste, aber Komma nötig?!");
-
-        final ImmutableList<Konstituente> inputList = ImmutableList.copyOf(input);
-
-        return ImmutableList.<Konstituente>builder()
-                .add(inputList.get(0).withVorkommaNoetig(vorkommaNoetig))
-                .addAll(inputList.subList(1, inputList.size()))
-                .build();
-    }
-
-    private static ImmutableList<Konstituente> withKommaStehtAus(
-            final Iterable<Konstituente> input) {
-        checkArgument(
-                input.iterator().hasNext(),
-                "Leere Konstituentenliste, aber Komma steht aus?!");
-
-        final ImmutableList<Konstituente> inputList = ImmutableList.copyOf(input);
-
-        return ImmutableList.<Konstituente>builder()
-                .addAll(inputList.subList(0, inputList.size() - 1))
-                .add(inputList.get(inputList.size() - 1).withKommaStehtAus())
-                .build();
-    }
-
-    /**
-     * Fügt diese Teile zu einer Liste von Konstituenten zusammen.
-     *
-     * @return Eine - ggf. leere - Liste von Konstituenten, enthält nicht <code>null</code>
-     */
-    public static Iterable<Konstituente> joinToKonstituenten(final Object... parts) {
-        return joinToKonstituenten(asList(parts));
-    }
-
-    /**
-     * Fügt diese Teile zu einer Liste von Konstituenten zusammen.
-     *
-     * @return Eine - ggf. leere - Liste von Konstituenten, enthält nicht <code>null</code>
-     */
-    static ImmutableList<Konstituente> joinToKonstituenten(final Iterable<?> parts) {
-        final ImmutableList.Builder<Konstituente> res = ImmutableList.builder();
-        for (final Object part : parts) {
-            if (part == null) {
-                continue;
-            }
-
-            @Nullable final Iterable<Konstituente> partKonstituenten;
-            if (part.getClass().isArray()) {
-                partKonstituenten = joinToKonstituenten((Object[]) part);
-            } else if (part instanceof Iterable<?>) {
-                partKonstituenten = joinToKonstituenten((Iterable<?>) part);
-            } else if (part instanceof Konstituente) {
-                partKonstituenten = ImmutableList.of((Konstituente) part);
-            } else if (part instanceof Wortfolge) {
-                partKonstituenten = ImmutableList.of(k((Wortfolge) part));
-            } else {
-                partKonstituenten = ImmutableList.of(k(part.toString()));
-            }
-
-            res.addAll(partKonstituenten);
-        }
-
-        return res.build();
-    }
-
-    /**
-     * Fügt diese Konstituenten zu einer einzigen Konsituente zusammen.
-     * <p>
-     * Diese Methode wird man nur selten verwenden wollen - vgl.
-     * {@link #joinToKonstituenten(Object...)}!
-     *
-     * @return Eine einzige Konstituente- ggf. null
-     */
-    @Nullable
-    public static Konstituente joinToNullSingleKonstituente(final Iterable<Konstituente> parts) {
-        return k(Wortfolge.joinToNullWortfolge(parts)).withVorkommaNoetig(
-                vorkommaNoetig(parts));
-    }
-
-
-    @Nonnull
-    public static List<Konstituente> cutLast(
-            final Iterable<Konstituente> input,
-            @Nullable final Konstituente part) {
-        if (part == null) {
-            return ImmutableList.copyOf(input);
-        }
-
-        return cutLast(input, ImmutableList.of(part));
-    }
-
-    @Nonnull
-    public static List<Konstituente> cutLast(
-            final Iterable<Konstituente> input,
-            @Nullable final Iterable<Konstituente> parts) {
-        return Lists.reverse(
-                cutFirst(
-                        Lists.reverse(ImmutableList.copyOf(input)),
-                        Lists.reverse(ImmutableList.copyOf(parts))));
-    }
-
-    /**
-     * Schneidet die einzelnen <code>singleParts</code> einen nach dem anderen aus dem Input.
-     * Doppelt auftretende Texte werden also auch zweimal herausgeschnitten.
-     * Für jeden einzelnen Schnitt wird {@link #cutFirst(Iterable, Konstituente)} verwendet.
-     */
-    @Nonnull
-    public static List<Konstituente> cutFirstOneByOne(final Iterable<Konstituente> input,
-                                                      final List<Konstituente> singleParts) {
-        List<Konstituente> res = ImmutableList.copyOf(input);
-        for (final Konstituente singlePart : singleParts) {
-            res = Konstituente.cutFirst(res, singlePart);
-        }
-
-        return res;
-    }
-
-    @Nonnull
-    public static List<Konstituente> cutFirst(
-            final Iterable<Konstituente> input,
-            @Nullable final Konstituente part) {
-        if (part == null) {
-            return ImmutableList.copyOf(input);
-        }
-
-        return cutFirst(input, ImmutableList.of(part));
-    }
-
-    @SuppressWarnings("UnstableApiUsage")
-    @Nonnull
-    private static List<Konstituente> cutFirst(
-            final Iterable<Konstituente> input,
-            final Iterable<Konstituente> parts) {
-        final ImmutableList<Konstituente> inputList = ImmutableList.copyOf(input);
-        final ImmutableList<Konstituente> partList = ImmutableList.copyOf(parts);
-
-        requireNonNull(inputList, "inputList");
-        checkArgument(inputList.stream().noneMatch(Objects::isNull));
-        checkArgument(inputList.stream().map(Konstituente::getString).noneMatch(String::isEmpty));
-        checkArgument(
-                inputList.stream().map(Konstituente::getString).noneMatch(s -> s.startsWith(" ")));
-        checkArgument(
-                inputList.stream().map(Konstituente::getString).noneMatch(s -> s.endsWith(" ")));
-
-        if (partList.isEmpty()) {
-            return inputList;
-        }
-
-        final ImmutableList.Builder<Konstituente> res =
-                ImmutableList.builderWithExpectedSize(inputList.size() - partList.size());
-        boolean found = false;
-        int i = 0;
-
-        while (i < inputList.size()) {
-            if (!found
-                    && i <= inputList.size() - partList.size()
-                    && inputList.subList(i, i + partList.size()).equals(partList)) {
-                found = true;
-                i = i + partList.size();
-
-                continue;
-            }
-
-            res.add(inputList.get(i));
-            i = i + 1;
-        }
-
-        checkArgument(found, "Konstituente(n) nicht gefunden. "
-                + "Konstituente(n) %s nicht gefunden in %s", partList, inputList);
-
-        return res.build();
-    }
-
-    private static boolean vorkommaNoetig(final Iterable<Konstituente> konstituenten) {
-        final Iterator<Konstituente> iter = konstituenten.iterator();
-        if (!iter.hasNext()) {
-            return false;
-        }
-
-        return iter.next().vorkommaNoetig;
-    }
-
     public static boolean woertlicheRedeNochOffen(final Iterable<Konstituente> konstituenten) {
         if (Iterables.isEmpty(konstituenten)) {
             return false;
@@ -279,7 +58,7 @@ public class Konstituente {
         return new Konstituente(string, vorkommaNoetig, woertlicheRedeNochOffen, kommmaStehtAus);
     }
 
-    private Konstituente withKommaStehtAus() {
+    Konstituente withKommaStehtAus() {
         return k(string, woertlicheRedeNochOffen, true);
     }
 
@@ -320,6 +99,8 @@ public class Konstituente {
         this.woertlicheRedeNochOffen = woertlicheRedeNochOffen;
         requireNonNull(string, "string");
         checkArgument(!string.isEmpty(), "String ist empty");
+        checkArgument(!string.startsWith(" "));
+        checkArgument(!string.endsWith(" "));
 
         this.string = string;
         this.vorkommaNoetig = vorkommaNoetig;
@@ -338,7 +119,7 @@ public class Konstituente {
         return string;
     }
 
-    boolean vorkommmaNoetig() {
+    boolean vorkommaNoetig() {
         return vorkommaNoetig;
     }
 
@@ -375,9 +156,10 @@ public class Konstituente {
     @Override
     public String toString() {
         return super.toString()
-                + ": "
+                + ": \""
                 + (vorkommaNoetig ? "[, ]" : "")
                 + string
-                + (kommmaStehtAus ? "[, ]" : "");
+                + (kommmaStehtAus ? "[, ]" : "")
+                + "\"";
     }
 }

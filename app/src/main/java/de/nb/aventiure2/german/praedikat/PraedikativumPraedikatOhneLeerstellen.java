@@ -11,11 +11,13 @@ import de.nb.aventiure2.annotations.Komplement;
 import de.nb.aventiure2.annotations.Valenz;
 import de.nb.aventiure2.german.base.Interrogativpronomen;
 import de.nb.aventiure2.german.base.Konstituente;
+import de.nb.aventiure2.german.base.Konstituentenfolge;
 import de.nb.aventiure2.german.base.Numerus;
 import de.nb.aventiure2.german.base.Person;
 import de.nb.aventiure2.german.base.Praedikativum;
 import de.nb.aventiure2.german.base.SubstantivischePhraseOderReflexivpronomen;
 
+import static de.nb.aventiure2.german.base.Konstituentenfolge.kf;
 import static de.nb.aventiure2.german.base.Numerus.SG;
 import static de.nb.aventiure2.german.base.Person.P2;
 
@@ -151,13 +153,14 @@ public class PraedikativumPraedikatOhneLeerstellen
     }
 
     @Override
-    Iterable<Konstituente> getMittelfeldOhneLinksversetzungUnbetonterPronomen(
+    @Nullable
+    Konstituentenfolge getMittelfeldOhneLinksversetzungUnbetonterPronomen(
             final Person personSubjekt, final Numerus numerusSubjekt) {
-        return Konstituente.joinToKonstituenten(
+        return Konstituentenfolge.joinToKonstituentenfolge(
                 getAdverbialeAngabeSkopusSatzDescriptionFuerMittelfeld(personSubjekt,
                         numerusSubjekt),
                 // "plötzlich"
-                getModalpartikeln(), // "halt"
+                kf(getModalpartikeln()), // "halt"
                 getAdverbialeAngabeSkopusVerbAllgDescriptionFuerMittelfeld(personSubjekt,
                         numerusSubjekt), // "erneut"
                 getAdverbialeAngabeSkopusVerbWohinWoherDescription(personSubjekt, numerusSubjekt),
@@ -190,9 +193,10 @@ public class PraedikativumPraedikatOhneLeerstellen
     }
 
     @Override
-    public Iterable<Konstituente> getNachfeld(final Person personSubjekt,
-                                              final Numerus numerusSubjekt) {
-        return Konstituente.joinToKonstituenten(
+    @Nullable
+    public Konstituentenfolge getNachfeld(final Person personSubjekt,
+                                          final Numerus numerusSubjekt) {
+        return Konstituentenfolge.joinToKonstituentenfolge(
                 praedikativum.getPraedikativAnteilKandidatFuerNachfeld(
                         personSubjekt, numerusSubjekt), // "dich zu sehen"
                 getAdverbialeAngabeSkopusVerbAllgDescriptionFuerZwangsausklammerung(personSubjekt,

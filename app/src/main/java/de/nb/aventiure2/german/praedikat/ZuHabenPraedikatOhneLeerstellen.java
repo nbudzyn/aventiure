@@ -9,6 +9,7 @@ import javax.annotation.Nullable;
 import de.nb.aventiure2.annotations.Komplement;
 import de.nb.aventiure2.annotations.Valenz;
 import de.nb.aventiure2.german.base.Konstituente;
+import de.nb.aventiure2.german.base.Konstituentenfolge;
 import de.nb.aventiure2.german.base.Numerus;
 import de.nb.aventiure2.german.base.Person;
 import de.nb.aventiure2.german.base.SubstantivischePhrase;
@@ -87,24 +88,24 @@ public class ZuHabenPraedikatOhneLeerstellen implements PraedikatOhneLeerstellen
     }
 
     @Override
-    public Iterable<Konstituente> getVerbzweit(final Person person, final Numerus numerus) {
+    public Konstituentenfolge getVerbzweit(final Person person, final Numerus numerus) {
         // hast Spannendes zu berichten
         // hast dich zu waschen
         // hast zu sagen: "Hallo!"
 
-        return Konstituente.joinToKonstituenten(
+        return Konstituentenfolge.joinToKonstituentenfolge(
                 HabenUtil.VERB.getPraesensOhnePartikel(person, numerus), // "hast"
                 lexikalischerKern.getZuInfinitiv(person, numerus)); // "dich zu waschen"
     }
 
     @Override
-    public Iterable<Konstituente> getVerbzweitMitSubjektImMittelfeld(
+    public Konstituentenfolge getVerbzweitMitSubjektImMittelfeld(
             final SubstantivischePhrase subjekt) {
         // hast du Spannendes zu berichten
         // hast du dich zu waschen
         // hast du zu sagen: "Hallo!"
 
-        return Konstituente.joinToKonstituenten(
+        return Konstituentenfolge.joinToKonstituentenfolge(
                 HabenUtil.VERB.getPraesensOhnePartikel(
                         subjekt.getPerson(), subjekt.getNumerus()), // "hast"
                 subjekt.nom(), // "du"
@@ -113,16 +114,15 @@ public class ZuHabenPraedikatOhneLeerstellen implements PraedikatOhneLeerstellen
     }
 
     @Override
-    public Iterable<Konstituente> getVerbletzt(final Person person, final Numerus numerus) {
+    public Konstituentenfolge getVerbletzt(final Person person, final Numerus numerus) {
         // Spannendes zu berichten hast
         // dich zu waschen hast
         // zu sagen hast: "Hallo!"
 
-        @Nullable final Iterable<Konstituente> nachfeld = getNachfeld(person, numerus);
+        @Nullable final Konstituentenfolge nachfeld = getNachfeld(person, numerus);
 
-        return Konstituente.joinToKonstituenten(
-                Konstituente.cutLast(
-                        lexikalischerKern.getZuInfinitiv(person, numerus),
+        return Konstituentenfolge.joinToKonstituentenfolge(
+                lexikalischerKern.getZuInfinitiv(person, numerus).cutLast(
                         // "Spannendes zu berichten"
                         nachfeld),
                 HabenUtil.VERB.getPraesensMitPartikel(person, numerus), // "hast"
@@ -130,16 +130,15 @@ public class ZuHabenPraedikatOhneLeerstellen implements PraedikatOhneLeerstellen
     }
 
     @Override
-    public Iterable<Konstituente> getPartizipIIPhrase(final Person person, final Numerus numerus) {
+    public Konstituentenfolge getPartizipIIPhrase(final Person person, final Numerus numerus) {
         // Spannendes zu berichten gehabt
         // dich zu waschen gehabt
         // zu sagen gehabt: "Hallo!"
 
-        @Nullable final Iterable<Konstituente> nachfeld = getNachfeld(person, numerus);
+        @Nullable final Konstituentenfolge nachfeld = getNachfeld(person, numerus);
 
-        return Konstituente.joinToKonstituenten(
-                Konstituente.cutLast(
-                        lexikalischerKern.getZuInfinitiv(person, numerus),
+        return Konstituentenfolge.joinToKonstituentenfolge(
+                lexikalischerKern.getZuInfinitiv(person, numerus).cutLast(
                         // "Spannendes zu berichten"
                         nachfeld),
                 HabenUtil.VERB.getPartizipII(), // "gehabt"
@@ -156,16 +155,15 @@ public class ZuHabenPraedikatOhneLeerstellen implements PraedikatOhneLeerstellen
     }
 
     @Override
-    public Iterable<Konstituente> getInfinitiv(final Person person, final Numerus numerus) {
+    public Konstituentenfolge getInfinitiv(final Person person, final Numerus numerus) {
         // Spannendes zu berichten haben
         // dich zu waschen haben
         // zu sagen haben: "Hallo!"
 
-        @Nullable final Iterable<Konstituente> nachfeld = getNachfeld(person, numerus);
+        @Nullable final Konstituentenfolge nachfeld = getNachfeld(person, numerus);
 
-        return Konstituente.joinToKonstituenten(
-                Konstituente.cutLast(
-                        lexikalischerKern.getZuInfinitiv(person, numerus),
+        return Konstituentenfolge.joinToKonstituentenfolge(
+                lexikalischerKern.getZuInfinitiv(person, numerus).cutLast(
                         // "Spannendes zu berichten"
                         nachfeld),
                 HabenUtil.VERB.getInfinitiv(), // haben
@@ -173,15 +171,14 @@ public class ZuHabenPraedikatOhneLeerstellen implements PraedikatOhneLeerstellen
     }
 
     @Override
-    public Iterable<Konstituente> getZuInfinitiv(final Person person, final Numerus numerus) {
+    public Konstituentenfolge getZuInfinitiv(final Person person, final Numerus numerus) {
         // Spannendes zu berichten zu haben
         // dich zu waschen zu haben
         // zu sagen zu haben: "Hallo!"
-        @Nullable final Iterable<Konstituente> nachfeld = getNachfeld(person, numerus);
+        @Nullable final Konstituentenfolge nachfeld = getNachfeld(person, numerus);
 
-        return Konstituente.joinToKonstituenten(
-                Konstituente.cutLast(
-                        lexikalischerKern.getZuInfinitiv(person, numerus),
+        return Konstituentenfolge.joinToKonstituentenfolge(
+                lexikalischerKern.getZuInfinitiv(person, numerus).cutLast(
                         // "Spannendes zu berichten"
                         nachfeld),
                 HabenUtil.VERB.getZuInfinitiv(), // zu haben
@@ -210,7 +207,7 @@ public class ZuHabenPraedikatOhneLeerstellen implements PraedikatOhneLeerstellen
         // eine normative Forderung handelt, nicht um eine Aktion.
         return false;
     }
-    
+
     @Nullable
     @Override
     public Konstituente getSpeziellesVorfeldSehrErwuenscht(final Person person,
@@ -229,7 +226,7 @@ public class ZuHabenPraedikatOhneLeerstellen implements PraedikatOhneLeerstellen
 
     @Nullable
     @Override
-    public Iterable<Konstituente> getNachfeld(final Person person, final Numerus numerus) {
+    public Konstituentenfolge getNachfeld(final Person person, final Numerus numerus) {
         // (Es könnte verschiedene Nachfeld-Optionen geben (altNachfelder()) - oder besser
         // altAusklammerungen(), das jeweils Paare (Vorfeld, Nachfeld) liefert. Dabei
         // müsste allerdings die Natürlichkeit der erzeugten Sprache immer im Vordergrund stehen.)

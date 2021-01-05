@@ -39,8 +39,9 @@ public abstract class AbstractAdverbialeAngabe {
     private static Konstituente joinToKonstituente(final AdjPhrOhneLeerstellen adjektivphrase,
                                                    final Person personSubjekt,
                                                    final Numerus numerusSubjekt) {
-        return Konstituente.joinToNullSingleKonstituente(
-                adjektivphrase.getPraedikativOderAdverbial(personSubjekt, numerusSubjekt))
+        return adjektivphrase.getPraedikativOderAdverbial(personSubjekt, numerusSubjekt)
+                .joinToNullSingleKonstituente(
+                )
                 .withVorkommaNoetig(
                         // So eine adverbiale Angabe muss offenbar durch Komma
                         // abgetrennt sein: *"Sie schaut dich an glücklich, dich zu

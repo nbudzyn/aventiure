@@ -12,9 +12,12 @@ import de.nb.aventiure2.annotations.Komplement;
 import de.nb.aventiure2.annotations.Valenz;
 import de.nb.aventiure2.german.adjektiv.AdjPhrOhneLeerstellen;
 import de.nb.aventiure2.german.base.Konstituente;
+import de.nb.aventiure2.german.base.Konstituentenfolge;
 import de.nb.aventiure2.german.base.Numerus;
 import de.nb.aventiure2.german.base.Person;
 import de.nb.aventiure2.german.base.SubstantivischePhraseOderReflexivpronomen;
+
+import static de.nb.aventiure2.german.base.Konstituentenfolge.kf;
 
 /**
  * Ein Prädikat, bestehend aus einem Verb und einer prädikativen Adjektivphrase, in dem
@@ -134,13 +137,13 @@ public class PraedikatMitPraedikativerAdjektivphraseOhneLeerstellen
             return speziellesVorfeldFromSuper;
         }
 
-        final Iterable<Konstituente> konstituentenPraedAdjPhr =
+        @Nullable final Konstituentenfolge konstituentenPraedAdjPhr =
                 adjektivphrase.getPraedikativOhneAnteilKandidatFuerNachfeld(person, numerus);
 
-        final Iterator<Konstituente> iterKonstituentenPraedAdjPhr =
-                konstituentenPraedAdjPhr.iterator();
 
-        if (iterKonstituentenPraedAdjPhr.hasNext()) {
+        if (konstituentenPraedAdjPhr != null) {
+            final Iterator<Konstituente> iterKonstituentenPraedAdjPhr =
+                    konstituentenPraedAdjPhr.iterator();
             final Konstituente firstKonstituentePraedAdjPhr = iterKonstituentenPraedAdjPhr.next();
             if (!iterKonstituentenPraedAdjPhr.hasNext()) {
                 // "Glücklich wirkt sie [, dich zu sehen].". Markiert - aber möglich.
@@ -156,12 +159,12 @@ public class PraedikatMitPraedikativerAdjektivphraseOhneLeerstellen
     }
 
     @Override
-    Iterable<Konstituente> getMittelfeldOhneLinksversetzungUnbetonterPronomen(
+    Konstituentenfolge getMittelfeldOhneLinksversetzungUnbetonterPronomen(
             final Person personSubjekt, final Numerus numerusSubjekt) {
-        return Konstituente.joinToKonstituenten(
+        return Konstituentenfolge.joinToKonstituentenfolge(
                 getAdverbialeAngabeSkopusSatzDescriptionFuerMittelfeld(personSubjekt,
                         numerusSubjekt), // "leider"
-                getModalpartikeln(), // "halt"
+                kf(getModalpartikeln()), // "halt"
                 getAdverbialeAngabeSkopusVerbAllgDescriptionFuerMittelfeld(personSubjekt,
                         numerusSubjekt), // "erneut"
                 getAdverbialeAngabeSkopusVerbWohinWoherDescription(personSubjekt, numerusSubjekt),
@@ -192,9 +195,10 @@ public class PraedikatMitPraedikativerAdjektivphraseOhneLeerstellen
     }
 
     @Override
-    public Iterable<Konstituente> getNachfeld(final Person personSubjekt,
-                                              final Numerus numerusSubjekt) {
-        return Konstituente.joinToKonstituenten(
+    @Nullable
+    public Konstituentenfolge getNachfeld(final Person personSubjekt,
+                                          final Numerus numerusSubjekt) {
+        return Konstituentenfolge.joinToKonstituentenfolge(
                 adjektivphrase.getPraedikativAnteilKandidatFuerNachfeld(
                         personSubjekt, numerusSubjekt), // ", dich zu sehen"
                 getAdverbialeAngabeSkopusVerbAllgDescriptionFuerZwangsausklammerung(personSubjekt,

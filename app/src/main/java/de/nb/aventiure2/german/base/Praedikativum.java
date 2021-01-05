@@ -1,5 +1,7 @@
 package de.nb.aventiure2.german.base;
 
+import androidx.annotation.Nullable;
+
 /**
  * Eine Phrase, die als Prädikativum dienen kann: "(Peter ist) ein Esel", (Peter ist) doof".
  */
@@ -9,10 +11,9 @@ public interface Praedikativum {
      * Person und diesem Numerus verwendet wird, - ohne den Anteil, der nach Möglichkeit
      * ins Nachfeld gestellt werden soll.
      */
-    default Iterable<Konstituente> getPraedikativOhneAnteilKandidatFuerNachfeld(
+    default Konstituentenfolge getPraedikativOhneAnteilKandidatFuerNachfeld(
             final Person person, final Numerus numerus) {
-        return Konstituente.cutLast(
-                getPraedikativ(person, numerus),
+        return getPraedikativ(person, numerus).cutLast(
                 getPraedikativAnteilKandidatFuerNachfeld(person, numerus));
     }
 
@@ -21,7 +22,7 @@ public interface Praedikativum {
      * Person und diesem Numerus verwendet wird:
      * "(Ich bin) ein Esel", "(Er ist) doof", "(Sie ist) ihrer selbst sicher" o.Ä.
      */
-    Iterable<Konstituente> getPraedikativ(final Person person, final Numerus numerus);
+    Konstituentenfolge getPraedikativ(final Person person, final Numerus numerus);
 
     /**
      * Liefert die Teil-Konstituenten-Folge von {@link #getPraedikativ(Person, Numerus)},
@@ -31,7 +32,8 @@ public interface Praedikativum {
      * Als Beispiel sollen sich letztlich Sätze ergeben wie "Sie ist glücklich gewesen, dich
      * zu sehen."
      */
-    Iterable<Konstituente> getPraedikativAnteilKandidatFuerNachfeld(
+    @Nullable
+    Konstituentenfolge getPraedikativAnteilKandidatFuerNachfeld(
             final Person person, final Numerus numerus);
 
 }

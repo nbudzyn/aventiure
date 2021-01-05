@@ -1,6 +1,6 @@
 package de.nb.aventiure2.german.base;
 
-import com.google.common.collect.ImmutableList;
+import androidx.annotation.Nullable;
 
 import java.util.Objects;
 
@@ -19,14 +19,15 @@ public abstract class SubstantivischePhrase
     }
 
     @Override
-    public Iterable<Konstituente> getPraedikativ(final Person person, final Numerus numerus) {
-        return ImmutableList.of(k(nom()));
+    public Konstituentenfolge getPraedikativ(final Person person, final Numerus numerus) {
+        return new Konstituentenfolge(k(nom()));
     }
 
     @Override
-    public Iterable<Konstituente> getPraedikativAnteilKandidatFuerNachfeld(final Person person,
-                                                                           final Numerus numerus) {
-        return ImmutableList.of();
+    @Nullable
+    public Konstituentenfolge getPraedikativAnteilKandidatFuerNachfeld(final Person person,
+                                                                       final Numerus numerus) {
+        return null;
     }
 
     /**

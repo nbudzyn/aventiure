@@ -1,8 +1,9 @@
 package de.nb.aventiure2.german.adjektiv;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
-import de.nb.aventiure2.german.base.Konstituente;
+import de.nb.aventiure2.german.base.Konstituentenfolge;
 import de.nb.aventiure2.german.base.Numerus;
 import de.nb.aventiure2.german.base.Person;
 
@@ -63,14 +64,15 @@ public enum AdjektivOhneErgaenzungen implements AdjPhrOhneLeerstellen {
     }
 
     @Override
-    public Iterable<Konstituente> getPraedikativOderAdverbial(final Person person,
-                                                              final Numerus numerus) {
+    public Konstituentenfolge getPraedikativOderAdverbial(final Person person,
+                                                          final Numerus numerus) {
         return toAdjPhr().getPraedikativ(person, numerus);
     }
 
     @Override
-    public Iterable<Konstituente> getPraedikativAnteilKandidatFuerNachfeld(final Person person,
-                                                                           final Numerus numerus) {
+    @Nullable
+    public Konstituentenfolge getPraedikativAnteilKandidatFuerNachfeld(final Person person,
+                                                                       final Numerus numerus) {
         return toAdjPhr().getPraedikativAnteilKandidatFuerNachfeld(person, numerus);
     }
 

@@ -6,7 +6,7 @@ import java.util.Collection;
 
 import javax.annotation.Nullable;
 
-import de.nb.aventiure2.german.base.Konstituente;
+import de.nb.aventiure2.german.base.Konstituentenfolge;
 import de.nb.aventiure2.german.base.Numerus;
 import de.nb.aventiure2.german.base.Person;
 import de.nb.aventiure2.german.base.Praedikativum;
@@ -36,10 +36,9 @@ public interface AdjPhrOhneLeerstellen extends Adjektivphrase, Praedikativum {
     default boolean isGeeignetAlsAdvAngabe(final SubstantivischePhrase subjekt) {
         // "Sie schaut dich überrascht an.", aber nicht
         // *"Sie schaut dich überrascht an, dich zu sehen".
-        return !getPraedikativAnteilKandidatFuerNachfeld(
+        return getPraedikativAnteilKandidatFuerNachfeld(
                 subjekt.getPerson(),
-                subjekt.getNumerus())
-                .iterator().hasNext();
+                subjekt.getNumerus()) == null;
     }
 
     default AdjPhrOhneLeerstellen mitGraduativerAngabe(@Nullable final String graduativeAngabe) {
@@ -54,7 +53,7 @@ public interface AdjPhrOhneLeerstellen extends Adjektivphrase, Praedikativum {
      * "glücklich, sich erheben zu dürfen"
      */
     @Override
-    default Iterable<Konstituente> getPraedikativ(final Person person, final Numerus numerus) {
+    default Konstituentenfolge getPraedikativ(final Person person, final Numerus numerus) {
         return getPraedikativOderAdverbial(person, numerus);
     }
 
@@ -62,7 +61,7 @@ public interface AdjPhrOhneLeerstellen extends Adjektivphrase, Praedikativum {
      * Gibt die prädikative oder adverbiale Form zurück: "hoch", "glücklich, dich zu sehen",
      * "glücklich, sich erheben zu dürfen"
      */
-    Iterable<Konstituente> getPraedikativOderAdverbial(final Person person, final Numerus numerus);
+    Konstituentenfolge getPraedikativOderAdverbial(final Person person, final Numerus numerus);
 
     default AdverbialeAngabeSkopusSatz alsAdverbialeAngabeSkopusSatz() {
         return new AdverbialeAngabeSkopusSatz(this);
