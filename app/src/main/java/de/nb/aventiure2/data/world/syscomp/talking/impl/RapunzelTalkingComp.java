@@ -54,6 +54,7 @@ import static de.nb.aventiure2.german.description.DescriptionBuilder.satzanschlu
 import static de.nb.aventiure2.german.praedikat.DirektivesVerb.BITTEN;
 import static de.nb.aventiure2.german.praedikat.VerbSubjDatAkk.AUSSCHUETTEN;
 import static de.nb.aventiure2.german.praedikat.VerbSubjObj.HINUNTERLASSEN;
+import static java.util.Arrays.asList;
 import static java.util.stream.Collectors.toList;
 
 /**
@@ -233,9 +234,9 @@ public class RapunzelTalkingComp extends AbstractTalkingComp {
                 // Es wäre besser, wenn der Phorik-Kandidat schon beim Erzeugen des
                 // Satzes gesetzt würde.
                 altNeueSaetzeMitPhorikKandidat(
-                        anaph, RAPUNZEL,
                         feelingsComp
-                                .altReaktionBeiBegegnungMitScSaetze(anaph));
+                                .altReaktionBeiBegegnungMitScSaetze(anaph), anaph, RAPUNZEL
+                );
 
         // Könnte leer sein
         final ImmutableList<AdjPhrOhneLeerstellen> altEindruckAdjPhrasen =
@@ -674,6 +675,18 @@ public class RapunzelTalkingComp extends AbstractTalkingComp {
             final ImmutableList<Satz> altReaktionSaetze
                     = feelingsComp.altReaktionWennSCGehenMoechteSaetze(rapunzelDesc);
 
+            /*
+            alt.addAll(altNeueSaetzeMitPhorikKandidat(
+                    PL_MFN, RAPUNZELS_HAARE,
+                    altReaktionSaetze,
+                    ", dann bindet",
+                    rapunzelDesc.persPron().nom(), //"sie"
+                    rapunzelDesc.possArt().vor(PL_MFN).akk(),
+                    // "ihre"
+                    "Haare wieder um den Haken am Fenster"
+            ));
+*/
+
             alt.addAll(altReaktionSaetze.stream()
                     .map(s ->
                             neuerSatz(
@@ -729,6 +742,44 @@ public class RapunzelTalkingComp extends AbstractTalkingComp {
         stateComp.narrateAndSetState(HAARE_VOM_TURM_HERUNTERGELASSEN);
         // Ggf. steigt die Zauberin als Reaktion daran herunter
     }
+
+    /* FIXME
+    private ImmutableList<TextDescription> altNeueSaetzeMitPhorikKandidat(
+            final NumerusGenus phorikKandidatNumerusGenus,
+            final IBezugsobjekt phorikKandidatBezugsobjekt,
+            final Object... parts) {
+        return joinToAltDesc(parts).stream()
+                // altNeueSaetze(s)
+                .map(d -> d.phorikKandidat(IBezugsobjekt))
+                .collect(toImmutableList());
+    }
+
+    private ImmutableList<TextDescription> joinToAltDesc(final Object... parts) {
+        return checkJoiningResultNotEmpty(
+                joinToEmptyAltDesc(parts), parts);
+    }
+
+    private static ImmutableList<TextDescription> joinToEmptyAltDesc(final Object[] parts) {
+        GermanUtil.joinToString()
+    }
+     */
+
+    private static String checkJoiningResultNotNull(
+            @Nullable final String joiningResult,
+            final Object... parts) {
+        return checkJoiningResultNotEmpty(joiningResult, asList(parts));
+    }
+
+    private static String checkJoiningResultNotEmpty(
+            @Nullable final String joiningResult,
+            final Iterable<?> parts) {
+        if (joiningResult == null) {
+            throw new IllegalStateException("Joining result was empty. parts: " + parts);
+        }
+
+        return joiningResult;
+    }
+
 
     private static Iterable<TextDescription> altKombinationenBeendetParagraph(
             final String praefix,

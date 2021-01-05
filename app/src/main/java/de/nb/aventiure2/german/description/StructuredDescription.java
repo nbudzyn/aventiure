@@ -19,6 +19,8 @@ import de.nb.aventiure2.german.praedikat.AdverbialeAngabeSkopusVerbWohinWoher;
 import de.nb.aventiure2.german.praedikat.PraedikatOhneLeerstellen;
 import de.nb.aventiure2.german.satz.Satz;
 
+import static com.google.common.collect.ImmutableList.toImmutableList;
+
 /**
  * A description based on a structured data structure: A {@link de.nb.aventiure2.german.satz.Satz}.
  * Somehting like "Du gehst in den Wald" or "Peter liebt Petra"
@@ -31,7 +33,7 @@ public class StructuredDescription extends AbstractFlexibleDescription<Structure
         super(startsNew);
         this.satz = satz;
     }
-    
+
     @CheckReturnValue
     public StructuredDescription mitAdverbialerAngabe(
             @Nullable final AdverbialeAngabeSkopusSatz adverbialeAngabe) {
@@ -52,24 +54,11 @@ public class StructuredDescription extends AbstractFlexibleDescription<Structure
 
     @Override
     public ImmutableList<TextDescription> altTextDescriptions() {
-        final ImmutableList.Builder<TextDescription> res = ImmutableList.builder();
-
-        res.add(toTextDescription()
-                // Bei einer StructuredDescription ist der Hauptsatz-Standard ein echter
-                // Hauptsatz. Daher muss ein neuer Satz begonnen werden.
-                .beginntZumindestSentence());
-
-        @Nullable final Wortfolge hauptsatzMitSpeziellemVorfeld =
-                toWortfolgeMitSpeziellemVorfeldOrNull();
-
-        if (hauptsatzMitSpeziellemVorfeld != null) {
-            res.add(toTextDescriptionKeepParams(hauptsatzMitSpeziellemVorfeld)
-                    // Bei einer StructuredDescription ist auch dieser Hauptsatz ein echter
-                    // Hauptsatz. Daher muss ein neuer Satz begonnen werden.
-                    .beginntZumindestSentence());
-        }
-
-        return res.build();
+        return satz.altVerzweitsaetze().stream()
+                .map(Wortfolge::joinToWortfolge)
+                .map(this::toTextDescriptionKeepParams)
+                .map(TextDescription::beginntZumindestSentence)
+                .collect(toImmutableList());
     }
 
 

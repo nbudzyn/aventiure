@@ -358,9 +358,9 @@ public class RapunzelReactionsComp
         final ImmutableList<AbstractDescription<?>> altReaktionSaetze =
                 // Es wäre besser, wenn der Phorik-Kandidat schon beim Erzeugen des
                 // Satzes gesetzt würde.
-                altNeueSaetzeMitPhorikKandidat(anaph, RAPUNZEL,
-                        feelingsComp
-                                .altReaktionBeiBegegnungMitScSaetze(anaph));
+                altNeueSaetzeMitPhorikKandidat(feelingsComp
+                        .altReaktionBeiBegegnungMitScSaetze(anaph), anaph, RAPUNZEL
+                );
         alt.addAll(toTimed(altReaktionSaetze, secs(5)));
 
         final int zuneigungSCTowardsRapunzel =
@@ -412,9 +412,9 @@ public class RapunzelReactionsComp
                 // Es wäre besser, wenn der Phorik-Kandidat durch den Satz
                 //  gesetzt würde. Das ist allerdings kompliziert...
                 altNeueSaetzeMitPhorikKandidat(
-                        anaph, RAPUNZEL,
                         feelingsComp
-                                .altReaktionBeiBegegnungMitScSaetze(anaph));
+                                .altReaktionBeiBegegnungMitScSaetze(anaph), anaph, RAPUNZEL
+                );
 
         alt.addAll(toTimed(altReaktionSaetze, secs(5)));
 
@@ -423,8 +423,6 @@ public class RapunzelReactionsComp
                 // Es wäre besser, wenn der Phorik-Kandidat durch den Satz
                 //  gesetzt würde. Das ist allerdings kompliziert...
                 altNeueSaetzeMitPhorikKandidat(
-                        anaph, RAPUNZEL,
-                        // Diese Sätze sind bereits in altZuneigungAbneigungSaetze enthalten...
                         feelingsComp
                                 .altSCBeiBegegnungAnsehenSaetze(anaph)
                                 // ...aber noch nicht mit dieser Ergänzung:
@@ -432,7 +430,8 @@ public class RapunzelReactionsComp
                                 .map(s -> s.mitAdverbialerAngabe(
                                         new AdverbialeAngabeSkopusSatz("oben im dunklen Zimmer")
                                 ))
-                                .collect(Collectors.toList())
+                                .collect(Collectors.toList()), anaph, RAPUNZEL
+                        // Diese Sätze sind bereits in altZuneigungAbneigungSaetze enthalten...
                 );
         alt.addAll(toTimed(altSCBeiBegegnungAnsehenSaetze, secs(15)));
 

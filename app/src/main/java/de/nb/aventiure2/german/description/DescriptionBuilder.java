@@ -12,6 +12,7 @@ import javax.annotation.CheckReturnValue;
 import de.nb.aventiure2.data.time.AvTimeSpan;
 import de.nb.aventiure2.data.world.base.GameObjectId;
 import de.nb.aventiure2.german.base.Konstituente;
+import de.nb.aventiure2.german.base.NumerusGenus;
 import de.nb.aventiure2.german.base.Personalpronomen;
 import de.nb.aventiure2.german.base.StructuralElement;
 import de.nb.aventiure2.german.base.SubstantivischePhrase;
@@ -44,13 +45,22 @@ public class DescriptionBuilder {
     @CheckReturnValue
     @NonNull
     public static ImmutableList<AbstractDescription<?>> altNeueSaetzeMitPhorikKandidat(
-            final SubstantivischePhrase phorikKandidatPhrase,
-            final GameObjectId phorikKandidatGameObjectId,
-            final Collection<Satz> saetze) {
+            final Collection<Satz> saetze, final SubstantivischePhrase phorikKandidatPhrase,
+            final GameObjectId phorikKandidatGameObjectId) {
+        return altNeueSaetzeMitPhorikKandidat(
+                saetze, phorikKandidatPhrase.getNumerusGenus(), phorikKandidatGameObjectId);
+    }
+
+    @CheckReturnValue
+    @NonNull
+    public static ImmutableList<AbstractDescription<?>> altNeueSaetzeMitPhorikKandidat(
+            final Collection<Satz> saetze, final NumerusGenus phorikKandidatNumerusGenus,
+            final GameObjectId phorikKandidatGameObjectId) {
         return saetze.stream()
                 .flatMap(s -> altNeueSaetze(s).stream()
                         .map(allgDesc -> allgDesc
-                                .phorikKandidat(phorikKandidatPhrase, phorikKandidatGameObjectId))
+                                .phorikKandidat(
+                                        phorikKandidatNumerusGenus, phorikKandidatGameObjectId))
                 )
                 .collect(toImmutableList());
     }
@@ -66,8 +76,7 @@ public class DescriptionBuilder {
 
     @CheckReturnValue
     @NonNull
-    public static ImmutableList<AbstractDescription<?>> altNeueSaetze(
-            final Satz satz) {
+    public static ImmutableList<AbstractDescription<?>> altNeueSaetze(final Satz satz) {
         return altNeueSaetze(SENTENCE, satz);
     }
 

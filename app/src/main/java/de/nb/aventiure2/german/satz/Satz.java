@@ -1,8 +1,13 @@
 package de.nb.aventiure2.german.satz;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
+import com.google.common.collect.ImmutableList;
+
 import java.util.Collection;
+
+import javax.annotation.CheckReturnValue;
 
 import de.nb.aventiure2.german.base.Interrogativpronomen;
 import de.nb.aventiure2.german.base.Konstituente;
@@ -185,6 +190,27 @@ public class Satz {
     }
 
     /**
+     * Gibt den Satz als einige alternative Verbzweitsätze aus, z.B. "du hast
+     * am Abend etwas zu berichten" oder "am Abend hast du etwas zu berichten"
+     */
+    @CheckReturnValue
+    @NonNull
+    public ImmutableList<Iterable<Konstituente>> altVerzweitsaetze() {
+        final ImmutableList.Builder<Iterable<Konstituente>> res = ImmutableList.builder();
+
+        res.add(getVerbzweitsatzStandard());
+
+        @Nullable final Konstituente speziellesVorfeld =
+                praedikat.getSpeziellesVorfeldAlsWeitereOption(
+                        subjekt.getPerson(), subjekt.getNumerus());
+        if (speziellesVorfeld == null) {
+            res.add(getVerbzweitsatzMitSpeziellemVorfeldAlsWeitereOption());
+        }
+
+        return res.build();
+    }
+
+    /**
      * Gibt den Satz als Verbzweitsatz aus, bei dem das Subjekt im Vorfeld steht, z.B. "du hast
      * am Abend etwas zu berichten" oder "du nimmst den Ast"
      */
@@ -197,11 +223,6 @@ public class Satz {
         }
 
         return
-                // FIXME capitalize() sollte nur möglichst weit außen aufgerufen werden!
-                // FIXME capitalize() sollte auch bei der SimpleDuDescription möglichst weit
-                //  außen aufgerufen werden.
-                // FIXME Aber IRGENDWANN MUSS hieraus auch verbindlich ein neuerSatz gemacht werden
-                //  Z.B. neuerSatz(allgDesc) oder so!!, damit würde es capitalized1
                 Konstituente.joinToKonstituenten(
                         anschlusswort, // "und"
                         subjekt.nom(),
@@ -214,8 +235,6 @@ public class Satz {
 
     private Iterable<Konstituente> getVerbzweitsatzMitVorfeldAusMittelOderNachfeld(
             final Konstituente vorfeld) {
-        // FIXME capitalize() sollte nur möglichst spät und möglichst
-        //  weit außen aufgerufen werden!
         return Konstituente.joinToKonstituenten(
                 anschlusswort, // "und"
                 vorfeld,
@@ -228,8 +247,6 @@ public class Satz {
     }
 
     public Iterable<Konstituente> getVerbzweitsatzMitVorfeld(final String vorfeld) {
-        // FIXME capitalize() sollte nur möglichst spät und möglichst
-        //  weit außen aufgerufen werden!
         return Konstituente.joinToKonstituenten(
                 anschlusswort, // "und"
                 vorfeld,
@@ -258,8 +275,6 @@ public class Satz {
      * am Abend etwas zu berichten" oder "und nimmst den Ast"
      */
     public Iterable<Konstituente> getSatzanschlussOhneSubjekt() {
-        // FIXME capitalize() sollte nur möglichst spät und möglichst
-        //  weit außen aufgerufen werden!
         return Konstituente.joinToKonstituenten(
                 anschlusswort, // "und"
                 praedikat.getVerbzweit(subjekt.getPerson(), subjekt.getNumerus()),
