@@ -71,4 +71,20 @@ public interface FeelingBeiBegegnungDescriber {
             Person gameObjectSubjektPerson, NumerusGenus gameObjectSubjektNumerusGenus,
             SubstantivischePhrase targetDesc, int feelingIntensity,
             final boolean targetKnown);
+
+    /**
+     * Gibt eventuell alternative Adjektivphrasen zurück, die den
+     * Eindruck beschreiben, den dieses Feeling Being auf das Target macht, wenn das Targeter
+     * gehen möchte. Die Phrasen können mit <i>wirken</i> oder <i>scheinen</i> verbunden werden.
+     * <p>
+     * Die Methode garantiert, dass niemals etwas wie "du, der du..." oder
+     * "du, die du..." oder "du, das du..." generiert wird.
+     *
+     * @return Möglicherweise eine leere Liste!
+     */
+    @NonNull
+    ImmutableList<AdjPhrOhneLeerstellen> altEindruckWennTargetGehenMoechteAdjPhr(
+            Person gameObjectSubjektPerson, NumerusGenus gameObjectSubjektNumerusGenus,
+            SubstantivischePhrase targetDesc, int feelingIntensity,
+            final boolean targetKnown);
 }

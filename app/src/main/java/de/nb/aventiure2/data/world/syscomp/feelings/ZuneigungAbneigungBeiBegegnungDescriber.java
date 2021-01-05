@@ -24,6 +24,9 @@ import de.nb.aventiure2.german.praedikat.VerbSubjObj;
 import de.nb.aventiure2.german.satz.Konditionalsatz;
 import de.nb.aventiure2.german.satz.Satz;
 
+import static de.nb.aventiure2.german.adjektiv.AdjektivOhneErgaenzungen.BETRUEBT;
+import static de.nb.aventiure2.german.adjektiv.AdjektivOhneErgaenzungen.ERLEICHTERT;
+import static de.nb.aventiure2.german.adjektiv.AdjektivOhneErgaenzungen.VERSCHUECHTERT;
 import static de.nb.aventiure2.german.base.Nominalphrase.FREUDE_OHNE_ART;
 import static de.nb.aventiure2.german.base.Nominalphrase.WUT_OHNE_ART;
 import static de.nb.aventiure2.german.base.PraepositionMitKasus.AUSSER_DAT;
@@ -266,13 +269,32 @@ class ZuneigungAbneigungBeiBegegnungDescriber implements FeelingBeiBegegnungDesc
                             gluecklichDichZuSehen, gespanntWasZuBerichten
                     )
             );
-        } else if (feelingIntensity == FeelingIntensity.MERKLICH) {
+        } else if (feelingIntensity == FeelingIntensity.STARK) {
             return ImmutableList.of(
                     AdjektivOhneErgaenzungen.FROEHLICH.mitGraduativerAngabe("ganz")
             );
-
         }
 
         return ImmutableList.of();
+    }
+
+    @NonNull
+    @Override
+    public ImmutableList<AdjPhrOhneLeerstellen> altEindruckWennTargetGehenMoechteAdjPhr(
+            final Person gameObjectSubjektPerson, final NumerusGenus gameObjectSubjektNumerusGenus,
+            final SubstantivischePhrase targetDesc, final int feelingIntensity,
+            final boolean targetKnown) {
+        final ImmutableList.Builder<AdjPhrOhneLeerstellen> res = ImmutableList.builder();
+        if (feelingIntensity >= -FeelingIntensity.DEUTLICH &&
+                feelingIntensity <= -FeelingIntensity.NUR_LEICHT) {
+            res.add(ERLEICHTERT);
+        } else if (feelingIntensity >= FeelingIntensity.MERKLICH &&
+                feelingIntensity <= FeelingIntensity.DEUTLICH) {
+            res.add(VERSCHUECHTERT);
+        } else if (feelingIntensity == FeelingIntensity.STARK) {
+            res.add(BETRUEBT.mitGraduativerAngabe("etwas"));
+        }
+
+        return res.build();
     }
 }

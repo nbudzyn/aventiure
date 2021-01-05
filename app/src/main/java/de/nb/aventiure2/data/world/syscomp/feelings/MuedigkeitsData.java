@@ -12,6 +12,7 @@ import de.nb.aventiure2.data.time.AvDateTime;
 import de.nb.aventiure2.data.time.AvTime;
 import de.nb.aventiure2.data.time.AvTimeSpan;
 import de.nb.aventiure2.german.adjektiv.AdjPhrOhneLeerstellen;
+import de.nb.aventiure2.german.base.Personalpronomen;
 import de.nb.aventiure2.german.praedikat.AdverbialeAngabeSkopusSatz;
 import de.nb.aventiure2.german.praedikat.AdverbialeAngabeSkopusVerbAllg;
 
@@ -27,6 +28,8 @@ import static de.nb.aventiure2.german.adjektiv.AdjektivOhneErgaenzungen.MUEDE;
 import static de.nb.aventiure2.german.adjektiv.AdjektivOhneErgaenzungen.TODMUEDE;
 import static de.nb.aventiure2.german.adjektiv.AdjektivOhneErgaenzungen.UEBERMUEDET;
 import static de.nb.aventiure2.german.adjektiv.AdjektivOhneErgaenzungen.WACH;
+import static de.nb.aventiure2.german.base.NumerusGenus.M;
+import static de.nb.aventiure2.german.base.Person.P2;
 
 @Immutable
 public class MuedigkeitsData {
@@ -174,6 +177,10 @@ public class MuedigkeitsData {
         }
 
         return altAdjektivphrase().stream()
+                .filter(ap -> ap.isGeeignetAlsAdvAngabe(
+                        // Was dafür nicht geeignet ist, ist wohl auch für kein anderes
+                        // Subjekt geeignet.
+                        Personalpronomen.get(P2, M)))
                 .map(AdjPhrOhneLeerstellen::alsAdverbialeAngabeSkopusSatz)
                 .collect(toImmutableList());
     }
@@ -186,6 +193,10 @@ public class MuedigkeitsData {
         }
 
         return altAdjektivphrase().stream()
+                .filter(ap -> ap.isGeeignetAlsAdvAngabe(
+                        // Was dafür nicht geeignet ist, ist wohl auch für kein anderes
+                        // Subjekt geeignet.
+                        Personalpronomen.get(P2, M)))
                 .map(AdjPhrOhneLeerstellen::alsAdverbialeAngabeSkopusVerbAllg)
                 .collect(toImmutableList());
     }

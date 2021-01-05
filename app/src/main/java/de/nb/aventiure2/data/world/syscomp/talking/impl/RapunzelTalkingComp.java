@@ -2,8 +2,6 @@ package de.nb.aventiure2.data.world.syscomp.talking.impl;
 
 import com.google.common.collect.ImmutableList;
 
-import java.util.stream.Collectors;
-
 import javax.annotation.Nullable;
 
 import de.nb.aventiure2.data.database.AvDatabase;
@@ -14,6 +12,7 @@ import de.nb.aventiure2.data.world.syscomp.feelings.FeelingsComp;
 import de.nb.aventiure2.data.world.syscomp.state.impl.RapunzelStateComp;
 import de.nb.aventiure2.data.world.syscomp.talking.AbstractTalkingComp;
 import de.nb.aventiure2.german.adjektiv.AdjPhrOhneLeerstellen;
+import de.nb.aventiure2.german.base.GermanUtil;
 import de.nb.aventiure2.german.base.Konstituente;
 import de.nb.aventiure2.german.base.Nominalphrase;
 import de.nb.aventiure2.german.base.Personalpronomen;
@@ -55,6 +54,7 @@ import static de.nb.aventiure2.german.description.DescriptionBuilder.satzanschlu
 import static de.nb.aventiure2.german.praedikat.DirektivesVerb.BITTEN;
 import static de.nb.aventiure2.german.praedikat.VerbSubjDatAkk.AUSSCHUETTEN;
 import static de.nb.aventiure2.german.praedikat.VerbSubjObj.HINUNTERLASSEN;
+import static java.util.stream.Collectors.toList;
 
 /**
  * Component for {@link World#RAPUNZEL}: Der Spieler
@@ -261,7 +261,7 @@ public class RapunzelTalkingComp extends AbstractTalkingComp {
                             a.getDescription(anaph.getPerson(), anaph.getNumerus()),
                             "willkommen"))
                             .phorikKandidat(anaph, RAPUNZEL))
-                    .collect(Collectors.toList()));
+                    .collect(toList()));
         }
 
         if (zuneigungTowardsSC >= -FeelingIntensity.MERKLICH
@@ -273,7 +273,7 @@ public class RapunzelTalkingComp extends AbstractTalkingComp {
                             a.getDescription(anaph.getPerson(), anaph.getNumerus())))
                             .beendet(SENTENCE)
                             .phorikKandidat(anaph, RAPUNZEL))
-                    .collect(Collectors.toList()));
+                    .collect(toList()));
         }
 
         if (zuneigungTowardsSC <= -FeelingIntensity.SEHR_STARK) {
@@ -424,7 +424,7 @@ public class RapunzelTalkingComp extends AbstractTalkingComp {
                                         ))
                                         .phorikKandidat(anaph, RAPUNZEL)
                                         .beendet(PARAGRAPH))
-                                .collect(Collectors.toList()));
+                                .collect(toList()));
 
                 alt.add(
                         neuerSatz("„Schön, dich wiederzusehen!“, freut "
@@ -458,7 +458,7 @@ public class RapunzelTalkingComp extends AbstractTalkingComp {
                                         ))
                                         .phorikKandidat(anaph, RAPUNZEL)
                                         .beendet(PARAGRAPH))
-                                .collect(Collectors.toList()));
+                                .collect(toList()));
 
                 alt.add(
                         neuerSatz("„Oh, eine Freude, dich wiederzusehen!“"),
@@ -671,30 +671,41 @@ public class RapunzelTalkingComp extends AbstractTalkingComp {
             final ImmutableList.Builder<AbstractDescription<?>> alt =
                     ImmutableList.builder();
 
-            alt.add(
-                    neuerSatz(rapunzelDesc.nom() +
-                            // FIXME nur verschüchtert, wenn Rapunzel noch nicht
-                            //  viel Zuneigung entwickelt hat
-                            //  ansehen...-Methode verwenden!
-                            " schaut dich verschüchtert an, dann bindet "
-                            + rapunzelDesc.persPron().nom() //"sie"
-                            + " "
-                            + rapunzelDesc.possArt().vor(PL_MFN).akk() // "ihre"
-                            + " Haare wieder um den Haken am Fenster")
-                            .phorikKandidat(PL_MFN, RAPUNZELS_HAARE),
-                    neuerSatz(rapunzelDesc.nom() +
-                            " schaut dich an, dann knotet "
-                            + rapunzelDesc.persPron().nom() //"sie"
-                            + " "
-                            + rapunzelDesc.possArt().vor(PL_MFN).akk() // "ihre"
-                            + " Haare wieder um den Fensterhaken")
-                            .phorikKandidat(PL_MFN, RAPUNZELS_HAARE),
-                    neuerSatz(rapunzelDesc.nom() +
-                            " wickelt "
-                            + rapunzelDesc.possArt().vor(PL_MFN).akk() // "ihre"
-                            + " Haare wieder an den Fensterhaken")
-                            .phorikKandidat(PL_MFN, RAPUNZELS_HAARE)
-            );
+            final ImmutableList<Satz> altAnsehenSaetze
+                    = feelingsComp.altAnsehenSaetzeWennSCGehenMoechte(rapunzelDesc);
+
+            alt.addAll(altAnsehenSaetze.stream()
+                    .map(s ->
+                            neuerSatz(
+                                    GermanUtil.joinToString(
+                                            s.getVerbzweitsatzStandard(),
+                                            ", dann bindet",
+                                            rapunzelDesc.persPron().nom(), //"sie"
+                                            rapunzelDesc.possArt().vor(PL_MFN).akk(),
+                                            // "ihre"
+                                            "Haare wieder um den Haken am Fenster"))
+                                    .phorikKandidat(PL_MFN, RAPUNZELS_HAARE))
+                    .collect(toList()));
+
+            // FIXME Verknüpfung von Satz mit weiterem Text zu neuerSatz erleichtern
+            alt.addAll(altAnsehenSaetze.stream()
+                    .map(s ->
+                            neuerSatz(
+                                    GermanUtil.joinToString(
+                                            s.getVerbzweitsatzStandard(),
+                                            ", dann knotet",
+                                            rapunzelDesc.persPron().nom(), //"sie"
+                                            rapunzelDesc.possArt().vor(PL_MFN).akk(),
+                                            // "ihre"
+                                            "Haare wieder um den Fensterhaken"))
+                                    .phorikKandidat(PL_MFN, RAPUNZELS_HAARE))
+                    .collect(toList()));
+
+            alt.add(neuerSatz(rapunzelDesc.nom() +
+                    " wickelt "
+                    + rapunzelDesc.possArt().vor(PL_MFN).akk() // "ihre"
+                    + " Haare wieder um den Fensterhaken")
+                    .phorikKandidat(PL_MFN, RAPUNZELS_HAARE));
 
             // FIXME Nur wenn Rapunzel schon etwas Zuneigung entwickelt hat:
 //                    neuerSatz(rapunzelDesc.nom() +

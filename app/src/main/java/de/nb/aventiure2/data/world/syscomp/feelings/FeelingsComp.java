@@ -9,6 +9,8 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Map;
+import java.util.function.Function;
+import java.util.function.Supplier;
 
 import javax.annotation.CheckReturnValue;
 
@@ -255,22 +257,19 @@ public class FeelingsComp extends AbstractStatefulComponent<FeelingsPCD> {
     @NonNull
     public ImmutableList<Satz> altReaktionBeiBegegnungMitScSaetze(
             final SubstantivischePhrase gameObjectSubjekt) {
-        final FeelingTowardsType strongestFeelingTowards =
-                getStrongestFeelingTowardsType();
+        return dispatchFeelings(
+                SPIELER_CHARAKTER,
+                1,
+                () -> {
+                    final ImmutableList<AdjPhrOhneLeerstellen> altAdjPhr = altAdjPhr();
+                    final ImmutableList<AdverbialeAngabeSkopusVerbAllg> adverbialeAngaben =
+                            altAdverbialeAngabenSkopusVerbAllg();
 
-        final int schwelle =
-                Math.abs(getFeelingTowards(SPIELER_CHARAKTER, strongestFeelingTowards)) + 1;
-
-        if (schwelle < getMuedigkeit() || schwelle < Math.abs(getMood().getGradDerFreude())) {
-            final ImmutableList<AdjPhrOhneLeerstellen> altAdjPhr = altAdjPhr();
-            final ImmutableList<AdverbialeAngabeSkopusVerbAllg> adverbialeAngaben =
-                    altAdverbialeAngabenSkopusVerbAllg();
-
-            return FeelingsSaetzeUtil.toReaktionSaetze(
-                    gameObjectSubjekt, altAdjPhr, adverbialeAngaben);
-        }
-
-        return altReaktionBeiBegegnungMitScSaetze(gameObjectSubjekt, strongestFeelingTowards);
+                    return FeelingsSaetzeUtil.toReaktionSaetze(
+                            gameObjectSubjekt, altAdjPhr, adverbialeAngaben);
+                },
+                (feelingTowardsType) -> altReaktionBeiBegegnungMitScSaetze(
+                        gameObjectSubjekt, feelingTowardsType));
     }
 
     /**
@@ -285,12 +284,7 @@ public class FeelingsComp extends AbstractStatefulComponent<FeelingsPCD> {
         return altReaktionBeiBegegnungSaetze(
                 gameObjectSubjekt,
                 SPIELER_CHARAKTER,
-                Personalpronomen.get(P2,
-                        // Wir tun hier so, als wäre der Spieler männlich, aber das
-                        // ist egal - die Methode garantiert, dass niemals etwas
-                        // wie "du, der du..." oder
-                        // "du, die du..." generiert wird.
-                        M),
+                getPersonalpronomenSC(),
                 type);
     }
 
@@ -306,27 +300,17 @@ public class FeelingsComp extends AbstractStatefulComponent<FeelingsPCD> {
      */
     public ImmutableList<Satz> altSCBeiBegegnungAnsehenSaetze(
             final SubstantivischePhrase gameObjectSubjekt) {
-        final FeelingTowardsType strongestFeelingTowards =
-                getStrongestFeelingTowardsType();
-
-        final int schwelle =
-                Math.abs(getFeelingTowards(SPIELER_CHARAKTER, strongestFeelingTowards)) + 1;
-
-        if (schwelle < getMuedigkeit() || schwelle < Math.abs(getMood().getGradDerFreude())) {
-            return FeelingsSaetzeUtil.toAnsehenSaetze(
-                    gameObjectSubjekt, altAdverbialeAngabenSkopusVerbAllg());
-        }
-
-        return altBeiBegegnungAnsehenSaetze(
-                gameObjectSubjekt,
+        return dispatchFeelings(
                 SPIELER_CHARAKTER,
-                Personalpronomen.get(P2,
-                        // Wir tun hier so, als wäre der Spieler männlich, aber das
-                        // ist egal - die Methode garantiert, dass niemals etwas
-                        // wie "du, der du..." oder
-                        // "du, die du..." generiert wird.
-                        M),
-                strongestFeelingTowards);
+                1,
+                () -> FeelingsSaetzeUtil.toAnsehenSaetze(
+                        gameObjectSubjekt, altAdverbialeAngabenSkopusVerbAllg()),
+                (feelingTowardsType) -> FeelingsSaetzeUtil.toAnsehenSaetze(gameObjectSubjekt,
+                        feelingTowardsType.altEindruckBeiBegegnungAdvAngaben(
+                                gameObjectSubjekt, getPersonalpronomenSC(),
+                                getFeelingTowards(SPIELER_CHARAKTER, feelingTowardsType),
+                                isTargetKnown(SPIELER_CHARAKTER)))
+        );
     }
 
     /**
@@ -342,28 +326,18 @@ public class FeelingsComp extends AbstractStatefulComponent<FeelingsPCD> {
      */
     public ImmutableList<Satz> altEindruckAufScBeiBegegnungSaetze(
             final SubstantivischePhrase gameObjectSubjekt) {
-        final FeelingTowardsType strongestFeelingTowards =
-                getStrongestFeelingTowardsType();
-        final int schwelle =
-                Math.abs(getFeelingTowards(SPIELER_CHARAKTER, strongestFeelingTowards)) + 1;
-
-        if (schwelle < getMuedigkeit() || schwelle < Math.abs(getMood().getGradDerFreude())) {
-            final ImmutableList<AdjPhrOhneLeerstellen> adjektivPhrasen = altAdjPhr();
-            if (!adjektivPhrasen.isEmpty()) {
-                return FeelingsSaetzeUtil.toEindrueckSaetze(gameObjectSubjekt, adjektivPhrasen);
-            }
-        }
-
-        return altEindruckBeiBegegnungSaetze(
-                gameObjectSubjekt,
+        return dispatchFeelings(
                 SPIELER_CHARAKTER,
-                Personalpronomen.get(P2,
-                        // Wir tun hier so, als wäre der Spieler männlich, aber das
-                        // ist egal - die Methode garantiert, dass niemals etwas
-                        // wie "du, der du..." oder
-                        // "du, die du..." generiert wird.
-                        M),
-                strongestFeelingTowards);
+                1,
+                () -> {
+                    final ImmutableList<AdjPhrOhneLeerstellen> adjektivPhrasen = altAdjPhr();
+                    return FeelingsSaetzeUtil.toEindrueckSaetze(gameObjectSubjekt, adjektivPhrasen);
+                },
+                (feelingTowardsType) -> altEindruckBeiBegegnungSaetze(
+                        gameObjectSubjekt,
+                        SPIELER_CHARAKTER,
+                        getPersonalpronomenSC(),
+                        feelingTowardsType));
     }
 
 
@@ -378,25 +352,14 @@ public class FeelingsComp extends AbstractStatefulComponent<FeelingsPCD> {
      */
     public ImmutableList<AdverbialeAngabeSkopusVerbAllg> altEindruckAufScBeiBegegnungAdvAngaben(
             final SubstantivischePhrase gameObjectSubjekt) {
-        final FeelingTowardsType strongestFeelingTowards =
-                getStrongestFeelingTowardsType();
-
-        final int schwelle =
-                Math.abs(getFeelingTowards(SPIELER_CHARAKTER, strongestFeelingTowards)) + 1;
-
-        if (schwelle < getMuedigkeit() || schwelle < Math.abs(getMood().getGradDerFreude())) {
-            return altAdverbialeAngabenSkopusVerbAllg();
-        }
-
-        return altEindruckBeiBegegnungAdvAngaben(
-                gameObjectSubjekt, SPIELER_CHARAKTER,
-                Personalpronomen.get(P2,
-                        // Wir tun hier so, als wäre der Spieler männlich, aber das
-                        // ist egal - die Methode garantiert, dass niemals etwas
-                        // wie "du, der du..." oder
-                        // "du, die du..." generiert wird.
-                        M),
-                strongestFeelingTowards);
+        return dispatchFeelings(
+                SPIELER_CHARAKTER,
+                1,
+                () -> altAdverbialeAngabenSkopusVerbAllg(),
+                (feelingTowardsType) -> altEindruckBeiBegegnungAdvAngaben(
+                        gameObjectSubjekt, SPIELER_CHARAKTER,
+                        getPersonalpronomenSC(),
+                        feelingTowardsType));
     }
 
     /**
@@ -414,35 +377,84 @@ public class FeelingsComp extends AbstractStatefulComponent<FeelingsPCD> {
     @NonNull
     public ImmutableList<AdjPhrOhneLeerstellen> altEindruckAufScBeiBegegnungAdjPhr(
             final NumerusGenus gameObjectSubjektNumerusGenus) {
+        return dispatchFeelings(
+                SPIELER_CHARAKTER,
+                1,
+                this::altAdjPhr,
+                (feelingTowardsType) -> altEindruckBeiBegegnungAdjPhr(
+                        gameObjectSubjektNumerusGenus,
+                        SPIELER_CHARAKTER,
+                        getPersonalpronomenSC(),
+                        feelingTowardsType));
+    }
+
+    /**
+     * Gibt eventuell alternative Sätze zurück, die beschreiben, wie dieses Feeling Being
+     * den SC ansieht, wenn er gehen möchte.
+     */
+    public ImmutableList<Satz> altAnsehenSaetzeWennSCGehenMoechte(
+            final SubstantivischePhrase gameObjectSubjekt) {
+        return dispatchFeelings(
+                SPIELER_CHARAKTER,
+                2,
+                () -> FeelingsSaetzeUtil.toAnsehenSaetze(
+                        gameObjectSubjekt, altAdverbialeAngabenSkopusVerbAllg()),
+                (feelingTowardsType) -> {
+                    final ImmutableList.Builder<Satz> res = ImmutableList.builder();
+                    res.addAll(FeelingsSaetzeUtil.toAnsehenSaetze(gameObjectSubjekt,
+                            feelingTowardsType.altEindruckWennTargetGehenMoechteAdvAngaben(
+                                    gameObjectSubjekt, getPersonalpronomenSC(),
+                                    getFeelingTowards(SPIELER_CHARAKTER, feelingTowardsType),
+                                    isTargetKnown(SPIELER_CHARAKTER))));
+                    res.addAll(FeelingsSaetzeUtil.ansehenSaetze(gameObjectSubjekt));
+                    return res.build();
+                }
+        );
+    }
+
+    private static Personalpronomen getPersonalpronomenSC() {
+        return Personalpronomen.get(P2,
+                // Wir tun hier so, als wäre der SC männlich, aber das
+                // ist egal - die Methode garantiert, dass niemals etwas
+                // wie "du, der du..." oder
+                // "du, die du..." generiert wird.
+                M);
+    }
+
+    /**
+     * Entscheidet, welche Art von Gefühlen zurückgegeben wird: allgemeinge Gefühle
+     * oder spezielle Gefühle gegenüber diesem Feelings Target. Beim Vergleich wird
+     * das Offset mit einbezogen: Je höher das Offet, desto mehr treten allgemeine
+     * Gefühle in den Hintergrund.
+     *
+     * @return Möglicherweise eine leere Collection - je nach übergebenen Werten!
+     */
+    @NonNull
+    private <C extends Collection<?>> C dispatchFeelings(
+            final GameObjectId feelingTargetId,
+            final int offset,
+            final Supplier<C> allgemeinFeelingSupplier,
+            final Function<FeelingTowardsType, C> feelingTowardsFeelingRetriever) {
         final FeelingTowardsType strongestFeelingTowards =
-                getStrongestFeelingTowardsType();
+                getStrongestFeelingTowardsType(feelingTargetId);
 
         final int schwelle =
-                Math.abs(getFeelingTowards(SPIELER_CHARAKTER, strongestFeelingTowards)) + 1;
+                Math.abs(getFeelingTowards(feelingTargetId, strongestFeelingTowards)) + offset;
 
         if (schwelle < getMuedigkeit() || schwelle < Math.abs(getMood().getGradDerFreude())) {
-            final ImmutableList<AdjPhrOhneLeerstellen> allgemein = altAdjPhr();
+            final C allgemein = allgemeinFeelingSupplier.get();
             if (!allgemein.isEmpty()) {
                 return allgemein;
             }
         }
 
-        return altEindruckBeiBegegnungAdjPhr(
-                gameObjectSubjektNumerusGenus,
-                SPIELER_CHARAKTER,
-                Personalpronomen.get(P2,
-                        // Wir tun hier so, als wäre der Spieler männlich, aber das
-                        // ist egal - die Methode garantiert, dass niemals etwas
-                        // wie "du, der du..." oder
-                        // "du, die du..." generiert wird.
-                        M),
-                strongestFeelingTowards);
+        return feelingTowardsFeelingRetriever.apply(strongestFeelingTowards);
     }
 
-    private FeelingTowardsType getStrongestFeelingTowardsType() {
+    private FeelingTowardsType getStrongestFeelingTowardsType(final GameObjectId feelingTargetId) {
         return Collections.max(asList(FeelingTowardsType.values()),
                 Comparator.comparing(
-                        f -> Math.abs(getFeelingTowards(getGameObjectId(), f))));
+                        f -> Math.abs(getFeelingTowards(feelingTargetId, f))));
     }
 
     /**
@@ -465,25 +477,6 @@ public class FeelingsComp extends AbstractStatefulComponent<FeelingsPCD> {
                 gameObjectSubjekt, targetDesc,
                 getFeelingTowards(feelingTargetId, type),
                 targetKnown);
-    }
-
-    /**
-     * Gibt eventuell alternative Sätze zurück, die beschreiben, wie dieses Feeling Being
-     * das Target ansieht, wenn die beiden sich begegnen.
-     * <p>
-     * Die Methode garantiert, dass niemals etwas wie "du, der du..." oder
-     * "du, die du..." oder "du, das du..." generiert wird.
-     *
-     * @return Möglicherweise eine leere Liste (insbesondere bei extremen Gefühlen)!
-     */
-    private ImmutableList<Satz> altBeiBegegnungAnsehenSaetze(
-            final SubstantivischePhrase gameObjectSubjekt,
-            final GameObjectId feelingTargetId,
-            final SubstantivischePhrase targetDesc, final FeelingTowardsType type) {
-        return type.altBeiBegegnungAnsehenSaetze(
-                gameObjectSubjekt, targetDesc,
-                getFeelingTowards(feelingTargetId, type),
-                isTargetKnown(feelingTargetId));
     }
 
     /**

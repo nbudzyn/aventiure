@@ -1,5 +1,7 @@
 package de.nb.aventiure2.data.world.syscomp.feelings;
 
+import androidx.annotation.NonNull;
+
 import com.google.common.collect.ImmutableList;
 
 import java.util.stream.Stream;
@@ -8,6 +10,7 @@ import de.nb.aventiure2.german.adjektiv.AdjPhrOhneLeerstellen;
 import de.nb.aventiure2.german.base.SubstantivischePhrase;
 import de.nb.aventiure2.german.praedikat.AdverbialeAngabeSkopusSatz;
 import de.nb.aventiure2.german.praedikat.AdverbialeAngabeSkopusVerbAllg;
+import de.nb.aventiure2.german.praedikat.VerbSubjObj;
 import de.nb.aventiure2.german.satz.Satz;
 
 import static com.google.common.collect.ImmutableList.toImmutableList;
@@ -62,11 +65,23 @@ class FeelingsSaetzeUtil {
     static ImmutableList<Satz> toAnsehenSaetze(final SubstantivischePhrase gameObjectSubjekt,
                                                final ImmutableList<AdverbialeAngabeSkopusVerbAllg> adverbialeAngaben) {
         return adverbialeAngaben.stream()
-                .flatMap(aa -> Stream.of(ANBLICKEN, ANSEHEN, ANSCHAUEN)
+                .flatMap(aa -> Stream.of(ansehenVerben())
                         .map(v -> v.mit(gameObjectSubjekt)
                                 .mitAdverbialerAngabe(aa)
                                 .alsSatzMitSubjekt(gameObjectSubjekt)))
                 .collect(toImmutableList());
+    }
+
+    static ImmutableList<Satz> ansehenSaetze(final SubstantivischePhrase gameObjectSubjekt) {
+        return Stream.of(ansehenVerben())
+                .map(v -> v.mit(gameObjectSubjekt)
+                        .alsSatzMitSubjekt(gameObjectSubjekt))
+                .collect(toImmutableList());
+    }
+
+    @NonNull
+    private static VerbSubjObj[] ansehenVerben() {
+        return new VerbSubjObj[]{ANBLICKEN, ANSEHEN, ANSCHAUEN};
     }
 
     static ImmutableList<Satz> toEindrueckSaetze(

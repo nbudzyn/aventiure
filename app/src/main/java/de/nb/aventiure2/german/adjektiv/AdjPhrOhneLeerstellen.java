@@ -6,6 +6,7 @@ import de.nb.aventiure2.german.base.Konstituente;
 import de.nb.aventiure2.german.base.Numerus;
 import de.nb.aventiure2.german.base.Person;
 import de.nb.aventiure2.german.base.Praedikativum;
+import de.nb.aventiure2.german.base.SubstantivischePhrase;
 import de.nb.aventiure2.german.praedikat.AdverbialeAngabeSkopusSatz;
 import de.nb.aventiure2.german.praedikat.AdverbialeAngabeSkopusVerbAllg;
 
@@ -17,6 +18,15 @@ import de.nb.aventiure2.german.praedikat.AdverbialeAngabeSkopusVerbAllg;
  * </ul>
  */
 public interface AdjPhrOhneLeerstellen extends Adjektivphrase, Praedikativum {
+    default boolean isGeeignetAlsAdvAngabe(final SubstantivischePhrase subjekt) {
+        // "Sie schaut dich überrascht an.", aber nicht
+        // *"Sie schaut dich überrascht an, dich zu sehen".
+        return !getPraedikativAnteilKandidatFuerNachfeld(
+                subjekt.getPerson(),
+                subjekt.getNumerus())
+                .iterator().hasNext();
+    }
+
     default AdjPhrOhneLeerstellen mitGraduativerAngabe(@Nullable final String graduativeAngabe) {
         return mitGraduativerAngabe(
                 graduativeAngabe != null ? new GraduativeAngabe(graduativeAngabe) : null);
