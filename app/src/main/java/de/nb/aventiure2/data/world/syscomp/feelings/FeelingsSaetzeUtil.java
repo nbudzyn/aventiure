@@ -33,6 +33,19 @@ class FeelingsSaetzeUtil {
     }
 
     /**
+     * Wandelt diese Adjektivphrasen - die Eindrücke beschreiben - in Sätze um.
+     */
+    static ImmutableList<Satz> toReaktionSaetze(
+            final SubstantivischePhrase gameObjectSubjekt,
+            final ImmutableList<AdjPhrOhneLeerstellen> eindruckAdjPhr) {
+        final ImmutableList<AdverbialeAngabeSkopusVerbAllg> adverbialeAngaben =
+                AdjPhrOhneLeerstellen
+                        .toAdvAngabenSkopusVerbAllg(gameObjectSubjekt, eindruckAdjPhr);
+
+        return toReaktionSaetze(gameObjectSubjekt, eindruckAdjPhr, adverbialeAngaben);
+    }
+
+    /**
      * Wandelt diese Adjektivphrasen - die Eindrücke beschreiben - und diese adverbialen
      * Angaben in Sätze um.
      */

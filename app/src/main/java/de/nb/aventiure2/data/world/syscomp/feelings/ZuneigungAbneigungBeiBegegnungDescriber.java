@@ -25,6 +25,7 @@ import de.nb.aventiure2.german.satz.Konditionalsatz;
 import de.nb.aventiure2.german.satz.Satz;
 
 import static de.nb.aventiure2.german.adjektiv.AdjektivOhneErgaenzungen.BETRUEBT;
+import static de.nb.aventiure2.german.adjektiv.AdjektivOhneErgaenzungen.ENTTAEUSCHT;
 import static de.nb.aventiure2.german.adjektiv.AdjektivOhneErgaenzungen.ERLEICHTERT;
 import static de.nb.aventiure2.german.adjektiv.AdjektivOhneErgaenzungen.VERSCHUECHTERT;
 import static de.nb.aventiure2.german.base.Nominalphrase.FREUDE_OHNE_ART;
@@ -288,9 +289,11 @@ class ZuneigungAbneigungBeiBegegnungDescriber implements FeelingBeiBegegnungDesc
         if (feelingIntensity >= -FeelingIntensity.DEUTLICH &&
                 feelingIntensity <= -FeelingIntensity.NUR_LEICHT) {
             res.add(ERLEICHTERT);
-        } else if (feelingIntensity >= FeelingIntensity.MERKLICH &&
-                feelingIntensity <= FeelingIntensity.DEUTLICH) {
-            res.add(VERSCHUECHTERT);
+        } else if (feelingIntensity == FeelingIntensity.MERKLICH) {
+            res.add(VERSCHUECHTERT,
+                    ENTTAEUSCHT.mitGraduativerAngabe("etwas"));
+        } else if (feelingIntensity == FeelingIntensity.DEUTLICH) {
+            res.add(ENTTAEUSCHT);
         } else if (feelingIntensity == FeelingIntensity.STARK) {
             res.add(BETRUEBT.mitGraduativerAngabe("etwas"));
         }

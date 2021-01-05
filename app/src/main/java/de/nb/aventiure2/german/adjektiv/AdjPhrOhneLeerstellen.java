@@ -1,5 +1,9 @@
 package de.nb.aventiure2.german.adjektiv;
 
+import com.google.common.collect.ImmutableList;
+
+import java.util.Collection;
+
 import javax.annotation.Nullable;
 
 import de.nb.aventiure2.german.base.Konstituente;
@@ -10,6 +14,8 @@ import de.nb.aventiure2.german.base.SubstantivischePhrase;
 import de.nb.aventiure2.german.praedikat.AdverbialeAngabeSkopusSatz;
 import de.nb.aventiure2.german.praedikat.AdverbialeAngabeSkopusVerbAllg;
 
+import static com.google.common.collect.ImmutableList.toImmutableList;
+
 /**
  * Eine Adjektivphrase, bei der alle geforderten Ergänzungen gesetzt sind:
  * <ul>
@@ -18,6 +24,15 @@ import de.nb.aventiure2.german.praedikat.AdverbialeAngabeSkopusVerbAllg;
  * </ul>
  */
 public interface AdjPhrOhneLeerstellen extends Adjektivphrase, Praedikativum {
+    static ImmutableList<AdverbialeAngabeSkopusVerbAllg> toAdvAngabenSkopusVerbAllg(
+            final SubstantivischePhrase subjekt,
+            final Collection<AdjPhrOhneLeerstellen> adjektivPhrasen) {
+        return adjektivPhrasen.stream()
+                .filter(ap -> ap.isGeeignetAlsAdvAngabe(subjekt))
+                .map(AdjPhrOhneLeerstellen::alsAdverbialeAngabeSkopusVerbAllg)
+                .collect(toImmutableList());
+    }
+
     default boolean isGeeignetAlsAdvAngabe(final SubstantivischePhrase subjekt) {
         // "Sie schaut dich überrascht an.", aber nicht
         // *"Sie schaut dich überrascht an, dich zu sehen".

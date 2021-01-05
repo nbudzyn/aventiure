@@ -2,16 +2,15 @@ package de.nb.aventiure2.data.world.syscomp.feelings;
 
 import com.google.common.collect.ImmutableList;
 
-import java.util.Collection;
-
 import de.nb.aventiure2.german.adjektiv.AdjPhrOhneLeerstellen;
 import de.nb.aventiure2.german.base.NumerusGenus;
 import de.nb.aventiure2.german.base.Person;
 import de.nb.aventiure2.german.base.SubstantivischePhrase;
+import de.nb.aventiure2.german.praedikat.AdverbialeAngabeSkopusSatz;
 import de.nb.aventiure2.german.praedikat.AdverbialeAngabeSkopusVerbAllg;
 import de.nb.aventiure2.german.satz.Satz;
 
-import static com.google.common.collect.ImmutableList.toImmutableList;
+import static java.util.stream.Collectors.toList;
 
 /**
  * Ein Spektrum von Gefühlen, dass ein {@link IFeelingBeingGO} gegenüber jemandem oder
@@ -65,15 +64,45 @@ public enum FeelingTowardsType {
         return res.build();
     }
 
+    /**
+     * Gibt alternative Sätze zurück, die die durch dieses Gefühl hervorgerufene
+     * Reaktion dieses Feeling Beings beschreiben, wenn das Target gehen möchte.
+     * <p>
+     * Die Methode garantiert, dass niemals etwas wie "du, der du..." oder
+     * "du, die du..." oder "du, das du..." generiert wird.
+     */
+    public ImmutableList<Satz> altReaktionWennSCGehenMoechteSaetze(
+            final SubstantivischePhrase gameObjectSubjekt,
+            final SubstantivischePhrase targetDesc, final int feelingIntensity,
+            final boolean targetKnown) {
+        final ImmutableList<AdjPhrOhneLeerstellen> altEindruckAdjPhr =
+                altEindruckWennTargetGehenMoechteAdjPhr(
+                        gameObjectSubjekt.getPerson(), gameObjectSubjekt.getNumerusGenus(),
+                        targetDesc, feelingIntensity, targetKnown
+                );
+
+        final ImmutableList.Builder<Satz> res = ImmutableList.builder();
+
+        final ImmutableList<Satz> saetze = FeelingsSaetzeUtil.toReaktionSaetze(
+                gameObjectSubjekt, altEindruckAdjPhr);
+
+        res.addAll(saetze);
+
+        res.addAll(saetze.stream()
+                .map(s -> s.mitAdverbialerAngabe(new AdverbialeAngabeSkopusSatz("auf einmal")))
+                .collect(toList()));
+
+        return res.build();
+    }
+
     public ImmutableList<Satz> altEindruckBeiBegegnungSaetze(
             final SubstantivischePhrase gameObjectSubjekt,
             final SubstantivischePhrase targetDesc,
             final int feelingIntensity, final boolean targetKnown) {
-        final ImmutableList<AdjPhrOhneLeerstellen> adjektivPhrasen =
+        return FeelingsSaetzeUtil.toEindrueckSaetze(gameObjectSubjekt,
                 altEindruckBeiBegegnungAdjPhr(
                         gameObjectSubjekt.getPerson(), gameObjectSubjekt.getNumerusGenus(),
-                        targetDesc, feelingIntensity, targetKnown);
-        return FeelingsSaetzeUtil.toEindrueckSaetze(gameObjectSubjekt, adjektivPhrasen);
+                        targetDesc, feelingIntensity, targetKnown));
     }
 
     /**
@@ -90,7 +119,7 @@ public enum FeelingTowardsType {
             final SubstantivischePhrase gameObjectSubjekt, final SubstantivischePhrase targetDesc,
             final int feelingIntensity, final boolean targetKnown) {
 
-        return toAdvAngabenSkopusVerbAllg(gameObjectSubjekt,
+        return AdjPhrOhneLeerstellen.toAdvAngabenSkopusVerbAllg(gameObjectSubjekt,
                 altEindruckBeiBegegnungAdjPhr(
                         gameObjectSubjekt.getPerson(), gameObjectSubjekt.getNumerusGenus(),
                         targetDesc, feelingIntensity, targetKnown
@@ -124,27 +153,6 @@ public enum FeelingTowardsType {
     }
 
     /**
-     * Gibt eventuell adverbiale Angaben zurück, die beschreiben, welchen Eindruck dieses
-     * Feeling Being - basiert auf diesem {@link FeelingTowardsType} - auf das  Target
-     * macht, wenn das Target gehen möchte.
-     * <p>
-     * Die Methode garantiert, dass niemals etwas wie "du, der du..." oder
-     * "du, die du..." oder "du, das du..." generiert wird.
-     *
-     * @return Möglicherweise eine leere Liste!
-     */
-    public ImmutableList<AdverbialeAngabeSkopusVerbAllg> altEindruckWennTargetGehenMoechteAdvAngaben(
-            final SubstantivischePhrase gameObjectSubjekt, final SubstantivischePhrase targetDesc,
-            final int feelingIntensity, final boolean targetKnown) {
-
-        return toAdvAngabenSkopusVerbAllg(gameObjectSubjekt,
-                altEindruckWennTargetGehenMoechteAdjPhr(
-                        gameObjectSubjekt.getPerson(), gameObjectSubjekt.getNumerusGenus(),
-                        targetDesc, feelingIntensity, targetKnown
-                ));
-    }
-
-    /**
      * Gibt eventuell alternative Adjektivphrasen zurück, die den Eindruck
      * beschreiben, den dieses Feeling Being auf das Target macht, wenn das Target gehen möchte.
      * Die Phrasen können mit <i>wirken</i> oder <i>scheinen</i> verbunden werden.
@@ -164,14 +172,4 @@ public enum FeelingTowardsType {
                 feelingIntensity, targetKnown
         );
     }
-
-    public static ImmutableList<AdverbialeAngabeSkopusVerbAllg> toAdvAngabenSkopusVerbAllg(
-            final SubstantivischePhrase subjekt,
-            final Collection<AdjPhrOhneLeerstellen> adjektivPhrasen) {
-        return adjektivPhrasen.stream()
-                .filter(ap -> ap.isGeeignetAlsAdvAngabe(subjekt))
-                .map(AdjPhrOhneLeerstellen::alsAdverbialeAngabeSkopusVerbAllg)
-                .collect(toImmutableList());
-    }
-
 }
