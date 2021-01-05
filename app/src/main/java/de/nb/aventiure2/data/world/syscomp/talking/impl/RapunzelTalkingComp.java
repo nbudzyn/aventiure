@@ -35,6 +35,7 @@ import static de.nb.aventiure2.data.world.gameobject.World.*;
 import static de.nb.aventiure2.data.world.syscomp.feelings.FeelingTowardsType.ZUNEIGUNG_ABNEIGUNG;
 import static de.nb.aventiure2.data.world.syscomp.feelings.Mood.AUFGEDREHT;
 import static de.nb.aventiure2.data.world.syscomp.feelings.Mood.BEWEGT;
+import static de.nb.aventiure2.data.world.syscomp.state.impl.RapunzelState.HAARE_VOM_TURM_HERUNTERGELASSEN;
 import static de.nb.aventiure2.german.base.GermanUtil.capitalize;
 import static de.nb.aventiure2.german.base.GermanUtil.joinToString;
 import static de.nb.aventiure2.german.base.Nominalphrase.DEIN_HERZ;
@@ -643,9 +644,76 @@ public class RapunzelTalkingComp extends AbstractTalkingComp {
     }
 
     private void haareHerunterlassen() {
-        stateComp.rapunzelLaesstHaareZumAbstiegHerunter();
+        rapunzelLaesstHaareZumAbstiegHerunter();
 
         unsetTalkingTo();
+    }
+
+    public void rapunzelLaesstHaareZumAbstiegHerunter() {
+        if (loadSC().locationComp().hasRecursiveLocation(VOR_DEM_ALTEN_TURM)) {
+            if (!loadSC().memoryComp().isKnown(RAPUNZELS_HAARE)) {
+                n.narrate(du(PARAGRAPH, "siehst", " über dir eine Bewegung: "
+                                + "Aus dem Turmfenster fallen auf einmal lange, golden "
+                                + "glänzende Haare bis zum Boden herab",
+                        secs(10))
+                        .dann());
+            } else {
+                n.narrate(du(PARAGRAPH, "siehst", " über dir eine Bewegung: "
+                                + "Aus dem Turmfenster fallen wieder die "
+                                + "langen, golden glänzenden Haare bis zum Boden herab",
+                        secs(10))
+                        .dann());
+            }
+            world.loadSC().memoryComp().upgradeKnown(RAPUNZELS_HAARE);
+        } else if (loadSC().locationComp().hasRecursiveLocation(OBEN_IM_ALTEN_TURM)) {
+            final Nominalphrase rapunzelDesc = getDescription(true);
+
+            final ImmutableList.Builder<AbstractDescription<?>> alt =
+                    ImmutableList.builder();
+
+            alt.add(
+                    neuerSatz(rapunzelDesc.nom() +
+                            // FIXME nur verschüchtert, wenn Rapunzel noch nicht
+                            //  viel Zuneigung entwickelt hat
+                            //  ansehen...-Methode verwenden!
+                            " schaut dich verschüchtert an, dann bindet "
+                            + rapunzelDesc.persPron().nom() //"sie"
+                            + " "
+                            + rapunzelDesc.possArt().vor(PL_MFN).akk() // "ihre"
+                            + " Haare wieder um den Haken am Fenster")
+                            .phorikKandidat(PL_MFN, RAPUNZELS_HAARE),
+                    neuerSatz(rapunzelDesc.nom() +
+                            " schaut dich an, dann knotet "
+                            + rapunzelDesc.persPron().nom() //"sie"
+                            + " "
+                            + rapunzelDesc.possArt().vor(PL_MFN).akk() // "ihre"
+                            + " Haare wieder um den Fensterhaken")
+                            .phorikKandidat(PL_MFN, RAPUNZELS_HAARE),
+                    neuerSatz(rapunzelDesc.nom() +
+                            " wickelt "
+                            + rapunzelDesc.possArt().vor(PL_MFN).akk() // "ihre"
+                            + " Haare wieder an den Fensterhaken")
+                            .phorikKandidat(PL_MFN, RAPUNZELS_HAARE)
+            );
+
+            // FIXME Nur wenn Rapunzel schon etwas Zuneigung entwickelt hat:
+//                    neuerSatz(rapunzelDesc.nom() +
+//                                    " schaut auf einmal etwas enttäuscht drein. Dann bindet "
+//                                    + rapunzelDesc.persPron().nom() //"sie"
+//                                    + " "
+//                                    + rapunzelDesc.possArt().vor(PL_MFN).akk() // "ihre"
+//                                    + " Haare wieder beim Fenster fest",
+//                            secs(10))
+//                            .phorikKandidat(PL_MFN, RAPUNZELS_HAARE),
+
+            //  FIXME "Oh, ich wünschte, ihr könntet noch einen Moment bleiben!" antwortet RAPUNZEL.
+            //    Aber sie knotet doch ihrer Haare wieder über den Haken am Fenster"
+
+            n.narrateAlt(alt, secs(10));
+        }
+
+        stateComp.narrateAndSetState(HAARE_VOM_TURM_HERUNTERGELASSEN);
+        // Ggf. steigt die Zauberin als Reaktion daran herunter
     }
 
     private static Iterable<TextDescription> altKombinationenBeendetParagraph(

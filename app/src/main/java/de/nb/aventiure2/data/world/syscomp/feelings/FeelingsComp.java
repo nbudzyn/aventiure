@@ -698,8 +698,8 @@ public class FeelingsComp extends AbstractStatefulComponent<FeelingsPCD> {
                 // fall-through
             case FeelingIntensity.NUR_LEICHT:
                 return;
-
             case FeelingIntensity.MERKLICH:
+                // fall-through
             case FeelingIntensity.DEUTLICH:
                 n.narrateAlt(noTime(),
                         du(SENTENCE,
@@ -725,8 +725,9 @@ public class FeelingsComp extends AbstractStatefulComponent<FeelingsPCD> {
                                 "Zeit, sich schlafen zu legen.")
                                 .beendet(PARAGRAPH)
                 );
-
+                return;
             case FeelingIntensity.SEHR_STARK:
+                // fall-through
             case FeelingIntensity.PATHOLOGISCH:
                 n.narrateAlt(noTime(),
                         neuerSatz(SENTENCE,
@@ -738,6 +739,7 @@ public class FeelingsComp extends AbstractStatefulComponent<FeelingsPCD> {
                                 "Höchste Zeit, schlafen zu gehen!")
                                 .beendet(PARAGRAPH)
                 );
+                return;
             default:
                 throw new IllegalStateException("Unerwartete Müdigkeit: " + muedigkeit);
         }

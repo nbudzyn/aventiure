@@ -696,7 +696,7 @@ public class RapunzelReactionsComp
                 .hasRecursiveLocation(OBEN_IM_ALTEN_TURM) &&
                 locationComp.hasRecursiveLocation(OBEN_IM_ALTEN_TURM) &&
                 !stateComp.hasState(HAARE_VOM_TURM_HERUNTERGELASSEN)) {
-            stateComp.rapunzelLaesstHaareZumAbstiegHerunter();
+            talkingComp.rapunzelLaesstHaareZumAbstiegHerunter();
             return;
         }
     }

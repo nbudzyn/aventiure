@@ -2,8 +2,6 @@ package de.nb.aventiure2.data.world.syscomp.state.impl;
 
 import androidx.annotation.NonNull;
 
-import com.google.common.collect.ImmutableList;
-
 import de.nb.aventiure2.data.database.AvDatabase;
 import de.nb.aventiure2.data.narration.Narrator;
 import de.nb.aventiure2.data.time.TimeTaker;
@@ -11,16 +9,9 @@ import de.nb.aventiure2.data.world.gameobject.*;
 import de.nb.aventiure2.data.world.gameobject.player.*;
 import de.nb.aventiure2.data.world.syscomp.state.AbstractStateComp;
 import de.nb.aventiure2.german.base.Nominalphrase;
-import de.nb.aventiure2.german.description.AbstractDescription;
 
-import static de.nb.aventiure2.data.time.AvTimeSpan.secs;
 import static de.nb.aventiure2.data.world.gameobject.World.*;
-import static de.nb.aventiure2.data.world.syscomp.state.impl.RapunzelState.HAARE_VOM_TURM_HERUNTERGELASSEN;
 import static de.nb.aventiure2.data.world.syscomp.state.impl.RapunzelState.STILL;
-import static de.nb.aventiure2.german.base.NumerusGenus.PL_MFN;
-import static de.nb.aventiure2.german.base.StructuralElement.PARAGRAPH;
-import static de.nb.aventiure2.german.description.DescriptionBuilder.du;
-import static de.nb.aventiure2.german.description.DescriptionBuilder.neuerSatz;
 
 public class RapunzelStateComp extends AbstractStateComp<RapunzelState> {
     public RapunzelStateComp(final AvDatabase db, final TimeTaker timeTaker,
@@ -28,81 +19,6 @@ public class RapunzelStateComp extends AbstractStateComp<RapunzelState> {
         super(RAPUNZEL, db, timeTaker, n, world, RapunzelState.class, STILL);
     }
 
-    public void rapunzelLaesstHaareZumAbstiegHerunter() {
-        if (loadSC().locationComp().hasRecursiveLocation(VOR_DEM_ALTEN_TURM)) {
-            if (!loadSC().memoryComp().isKnown(RAPUNZELS_HAARE)) {
-                n.narrate(du(PARAGRAPH, "siehst", " über dir eine Bewegung: "
-                                + "Aus dem Turmfenster fallen auf einmal lange, golden "
-                                + "glänzende Haare bis zum Boden herab",
-                        secs(10))
-                        .dann());
-            } else {
-                n.narrate(du(PARAGRAPH, "siehst", " über dir eine Bewegung: "
-                                + "Aus dem Turmfenster fallen wieder die "
-                                + "langen, golden glänzenden Haare bis zum Boden herab",
-                        secs(10))
-                        .dann());
-            }
-            world.loadSC().memoryComp().upgradeKnown(RAPUNZELS_HAARE);
-        } else if (loadSC().locationComp().hasRecursiveLocation(OBEN_IM_ALTEN_TURM)) {
-            final Nominalphrase rapunzelDesc = getDescription(true);
-
-            final ImmutableList.Builder<AbstractDescription<?>> alt =
-                    ImmutableList.builder();
-
-            alt.add(
-                    neuerSatz(rapunzelDesc.nom() +
-                            // FIXME Die feelings-Comp ist hier nicht zugreifbar. Das ist ein
-                            //  Problem. Ein anderes Problem ist, dass man teilweise
-                            //  mehrere States für dasselbe Game Object gebrauchen könnte.
-                            //  Vielleicht sollte man die "Statemachine" nicht als Komponente
-                            //  haben, sondern nurals speicherbare Datenstruktur, die jede
-                            //  KOmponente - ggf. auch mehrfach! - instanziieren kann?!
-                            //  Wichtig ist, dass dennoch ein "onStateChanged" erzeugt werden
-                            //  kann - und (zumindest die Information) auch an andere
-                            //  GOs delivert.
-                            // FIXME nur verschüchtert, wenn Rapunzel noch nicht
-                            //  viel Zuneigung entwickelt hat
-                            //  ansehen...-Methode verwenden!
-                            " schaut dich verschüchtert an, dann bindet "
-                            + rapunzelDesc.persPron().nom() //"sie"
-                            + " "
-                            + rapunzelDesc.possArt().vor(PL_MFN).akk() // "ihre"
-                            + " Haare wieder um den Haken am Fenster")
-                            .phorikKandidat(PL_MFN, RAPUNZELS_HAARE),
-                    neuerSatz(rapunzelDesc.nom() +
-                            " schaut dich an, dann knotet "
-                            + rapunzelDesc.persPron().nom() //"sie"
-                            + " "
-                            + rapunzelDesc.possArt().vor(PL_MFN).akk() // "ihre"
-                            + " Haare wieder um den Fensterhaken")
-                            .phorikKandidat(PL_MFN, RAPUNZELS_HAARE),
-                    neuerSatz(rapunzelDesc.nom() +
-                            " wickelt "
-                            + rapunzelDesc.possArt().vor(PL_MFN).akk() // "ihre"
-                            + " Haare wieder an den Fensterhaken")
-                            .phorikKandidat(PL_MFN, RAPUNZELS_HAARE)
-            );
-
-            // FIXME Nur wenn Rapunzel schon etwas Zuneigung entwickelt hat:
-//                    neuerSatz(rapunzelDesc.nom() +
-//                                    " schaut auf einmal etwas enttäuscht drein. Dann bindet "
-//                                    + rapunzelDesc.persPron().nom() //"sie"
-//                                    + " "
-//                                    + rapunzelDesc.possArt().vor(PL_MFN).akk() // "ihre"
-//                                    + " Haare wieder beim Fenster fest",
-//                            secs(10))
-//                            .phorikKandidat(PL_MFN, RAPUNZELS_HAARE),
-
-            //  FIXME "Oh, ich wünschte, ihr könntet noch einen Moment bleiben!" antwortet RAPUNZEL.
-            //    Aber sie knotet doch ihrer Haare wieder über den Haken am Fenster"
-
-            n.narrateAlt(alt, secs(10));
-        }
-
-        narrateAndSetState(HAARE_VOM_TURM_HERUNTERGELASSEN);
-        // Ggf. steigt die Zauberin als Reaktion daran herunter
-    }
 
     @NonNull
     protected SpielerCharakter loadSC() {
