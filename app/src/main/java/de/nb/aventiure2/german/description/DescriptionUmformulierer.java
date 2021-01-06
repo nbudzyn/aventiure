@@ -22,7 +22,6 @@ import static de.nb.aventiure2.german.base.StructuralElement.SENTENCE;
 import static de.nb.aventiure2.german.base.StructuralElement.max;
 import static de.nb.aventiure2.german.description.DescriptionBuilder.du;
 import static de.nb.aventiure2.german.description.DescriptionBuilder.neuerSatz;
-import static de.nb.aventiure2.german.description.DescriptionBuilder.neuerSatzStandard;
 
 /**
  * Statische Methoden, die {@link AbstractDescription}s umformulieren.
@@ -337,7 +336,7 @@ public class DescriptionUmformulierer {
     private static AbstractDescription<?> mitAdvAngabe(
             final StructuredDescription desc,
             final AdverbialeAngabeSkopusSatz advAngabe) {
-        return neuerSatzStandard(
+        return DescriptionBuilder.satz(
                 max(desc.getStartsNew(), PARAGRAPH),
                 desc.getSatz().mitAdverbialerAngabe(
                         // "Erneut gibst du der Frau die Kugel"
@@ -353,7 +352,7 @@ public class DescriptionUmformulierer {
     private static AbstractDescription<?> mitAdvAngabe(
             final StructuredDescription desc,
             final AdverbialeAngabeSkopusVerbAllg advAngabe) {
-        return neuerSatzStandard(
+        return DescriptionBuilder.satz(
                 max(desc.getStartsNew(), PARAGRAPH),
                 desc.getSatz().mitAdverbialerAngabe(
                         // "gibst der Frau die Kugel noch einmal"

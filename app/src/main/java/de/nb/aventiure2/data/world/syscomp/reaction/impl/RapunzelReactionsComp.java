@@ -35,6 +35,7 @@ import de.nb.aventiure2.german.base.Nominalphrase;
 import de.nb.aventiure2.german.base.PraepositionMitKasus;
 import de.nb.aventiure2.german.base.SubstantivischePhrase;
 import de.nb.aventiure2.german.description.AbstractDescription;
+import de.nb.aventiure2.german.description.StructuredDescription;
 import de.nb.aventiure2.german.description.TimedDescription;
 import de.nb.aventiure2.german.praedikat.AdverbialeAngabeSkopusSatz;
 
@@ -62,9 +63,9 @@ import static de.nb.aventiure2.german.base.NumerusGenus.F;
 import static de.nb.aventiure2.german.base.NumerusGenus.PL_MFN;
 import static de.nb.aventiure2.german.base.StructuralElement.PARAGRAPH;
 import static de.nb.aventiure2.german.base.StructuralElement.SENTENCE;
-import static de.nb.aventiure2.german.description.DescriptionBuilder.altNeueSaetze;
 import static de.nb.aventiure2.german.description.DescriptionBuilder.du;
 import static de.nb.aventiure2.german.description.DescriptionBuilder.neuerSatz;
+import static de.nb.aventiure2.german.description.DescriptionBuilder.satz;
 import static de.nb.aventiure2.german.description.TimedDescription.toTimed;
 
 /**
@@ -356,15 +357,11 @@ public class RapunzelReactionsComp
 
         final ImmutableList.Builder<TimedDescription<?>> alt = ImmutableList.builder();
 
-        final ImmutableList<AbstractDescription<?>> altReaktionSaetze =
-                // Es wäre besser, wenn der Phorik-Kandidat schon beim Erzeugen des
-                // Satzes gesetzt würde.
-                feelingsComp
-                        .altReaktionBeiBegegnungMitScSaetze(anaph).stream()
-                        .flatMap(s1 -> altNeueSaetze(s1).stream())
-                        .map(allgDesc -> allgDesc
-                                .phorikKandidat(anaph.getNumerusGenus(),
-                                        RAPUNZEL))
+        final ImmutableList<StructuredDescription> altReaktionSaetze =
+                // IDEA: Es wäre vielleicht besser, wenn der Phorik-Kandidat schon beim Erzeugen des
+                //  Satzes gesetzt würde?
+                feelingsComp.altReaktionBeiBegegnungMitScSaetze(anaph).stream()
+                        .map(s -> satz(s).phorikKandidat(anaph, RAPUNZEL))
                         .collect(toImmutableList());
         alt.addAll(toTimed(altReaktionSaetze, secs(5)));
 
@@ -413,13 +410,12 @@ public class RapunzelReactionsComp
         final SubstantivischePhrase anaph =
                 getAnaphPersPronWennMglSonstDescription(true);
 
-        final ImmutableList<AbstractDescription<?>> altReaktionSaetze =
+        final ImmutableList<StructuredDescription> altReaktionSaetze =
                 // Es wäre besser, wenn der Phorik-Kandidat durch den Satz
                 //  gesetzt würde. Das ist allerdings kompliziert...
                 feelingsComp
                         .altReaktionBeiBegegnungMitScSaetze(anaph).stream()
-                        .flatMap(s -> altNeueSaetze(s).stream())
-                        .map(d -> d.phorikKandidat(anaph.getNumerusGenus(), RAPUNZEL))
+                        .map(s -> satz(s).phorikKandidat(anaph.getNumerusGenus(), RAPUNZEL))
                         .collect(toImmutableList());
 
         alt.addAll(toTimed(altReaktionSaetze, secs(5)));
@@ -438,7 +434,9 @@ public class RapunzelReactionsComp
                                 new AdverbialeAngabeSkopusSatz("oben im dunklen Zimmer")
                         ))
                         .collect(Collectors.toList()).stream()
-                        .flatMap(s1 -> altNeueSaetze(s1).stream())
+                        .flatMap(
+                                s1 -> ImmutableList.<AbstractDescription<?>>of(
+                                        satz(s1)).stream())
                         .map(allgDesc -> allgDesc
                                 .phorikKandidat(anaph.getNumerusGenus(),
                                         RAPUNZEL))

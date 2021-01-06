@@ -480,8 +480,8 @@ public class BewegenAction<LOC_DESC extends ILocatableGO & IDescribableGO>
             } else {
                 alt.add(new TimedDescription<>(
                         descriptionHauptsatz
-                                .mitPraefixCapitalize("Was willst du hier eigentlich? ")
-                        , description.getTimeElapsed()));
+                                .mitPraefixCapitalize("Was willst du hier eigentlich? "),
+                        description.getTimeElapsed()));
                 if (description.getDescription() instanceof AbstractFlexibleDescription<?> &&
                         ((AbstractFlexibleDescription<?>) description.getDescription())
                                 .hasSubjektDu()) {

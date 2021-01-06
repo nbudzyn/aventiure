@@ -27,8 +27,8 @@ import static de.nb.aventiure2.german.base.Numerus.SG;
 import static de.nb.aventiure2.german.base.NumerusGenus.M;
 import static de.nb.aventiure2.german.base.Person.P1;
 import static de.nb.aventiure2.german.base.Person.P2;
-import static de.nb.aventiure2.german.description.DescriptionBuilder.altNeueSaetze;
 import static de.nb.aventiure2.german.description.DescriptionBuilder.du;
+import static de.nb.aventiure2.german.description.DescriptionBuilder.satz;
 import static de.nb.aventiure2.german.description.DescriptionUmformulierer.drueckeAus;
 import static de.nb.aventiure2.german.description.Kohaerenzrelation.VERSTEHT_SICH_VON_SELBST;
 import static de.nb.aventiure2.german.description.Kohaerenzrelation.WIEDERHOLUNG;
@@ -87,14 +87,16 @@ public class RufenAction extends AbstractScAction {
                 sc.memoryComp().getLastAction().is(Action.Type.RUFEN) ?
                         WIEDERHOLUNG : VERSTEHT_SICH_VON_SELBST;
 
-        if (kohaerenzrelation != VERSTEHT_SICH_VON_SELBST ||
-                n.allowsAdditionalDuSatzreihengliedOhneSubjekt()) {
+        if (kohaerenzrelation != VERSTEHT_SICH_VON_SELBST
+                || n.allowsAdditionalDuSatzreihengliedOhneSubjekt()) {
             n.narrateAlt(drueckeAus(kohaerenzrelation, du(ruftyp.getName())),
                     secs(30));
         } else {
-            n.narrateAlt(altNeueSaetze(ruftyp.getName()
-                    .alsSatzMitSubjekt(Personalpronomen.get(P2, M))
-                    .mitAnschlusswort("und"), secs(30)));
+            n.narrate(satz(
+                    ruftyp.getName()
+                            .alsSatzMitSubjekt(Personalpronomen.get(P2, M))
+                            .mitAnschlusswort("und"),
+                    secs(30)));
         }
 
         world.narrateAndDoReactions().onRuf(sc, Ruftyp.LASS_DEIN_HAAR_HERUNTER);

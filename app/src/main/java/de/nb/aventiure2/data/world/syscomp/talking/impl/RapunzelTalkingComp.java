@@ -17,7 +17,7 @@ import de.nb.aventiure2.german.base.Personalpronomen;
 import de.nb.aventiure2.german.base.SubstantivischePhrase;
 import de.nb.aventiure2.german.base.Wortfolge;
 import de.nb.aventiure2.german.description.AbstractDescription;
-import de.nb.aventiure2.german.description.DescriptionBuilder;
+import de.nb.aventiure2.german.description.StructuredDescription;
 import de.nb.aventiure2.german.description.TimedDescription;
 import de.nb.aventiure2.german.praedikat.AdverbialeAngabeSkopusVerbAllg;
 import de.nb.aventiure2.german.praedikat.AdverbialeAngabeSkopusVerbWohinWoher;
@@ -50,6 +50,7 @@ import static de.nb.aventiure2.german.base.Wortfolge.joinToAltWortfolgen;
 import static de.nb.aventiure2.german.base.Wortfolge.joinToWortfolge;
 import static de.nb.aventiure2.german.description.DescriptionBuilder.du;
 import static de.nb.aventiure2.german.description.DescriptionBuilder.neuerSatz;
+import static de.nb.aventiure2.german.description.DescriptionBuilder.satz;
 import static de.nb.aventiure2.german.description.DescriptionBuilder.satzanschluss;
 import static de.nb.aventiure2.german.praedikat.DirektivesVerb.BITTEN;
 import static de.nb.aventiure2.german.praedikat.VerbSubjDatAkk.AUSSCHUETTEN;
@@ -230,14 +231,12 @@ public class RapunzelTalkingComp extends AbstractTalkingComp {
 
         final ImmutableList.Builder<AbstractDescription<?>> alt = ImmutableList.builder();
 
-        final ImmutableList<AbstractDescription<?>> altReaktionSaetze =
+        final ImmutableList<StructuredDescription> altReaktionSaetze =
                 // Es wäre besser, wenn der Phorik-Kandidat schon beim Erzeugen des
                 // Satzes gesetzt würde.
                 feelingsComp
                         .altReaktionBeiBegegnungMitScSaetze(anaph).stream()
-                        .flatMap(s -> DescriptionBuilder.altNeueSaetze(s).stream())
-                        .map(allgDesc -> allgDesc
-                                .phorikKandidat(anaph.getNumerusGenus(), RAPUNZEL))
+                        .map(s -> satz(s).phorikKandidat(anaph.getNumerusGenus(), RAPUNZEL))
                         .collect(toImmutableList());
 
         // Könnte leer sein

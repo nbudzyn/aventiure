@@ -3,8 +3,6 @@ package de.nb.aventiure2.german.description;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
-import com.google.common.collect.ImmutableList;
-
 import javax.annotation.CheckReturnValue;
 
 import de.nb.aventiure2.data.time.AvTimeSpan;
@@ -16,14 +14,12 @@ import de.nb.aventiure2.german.praedikat.PraedikatOhneLeerstellen;
 import de.nb.aventiure2.german.satz.Satz;
 
 import static com.google.common.base.Preconditions.checkArgument;
-import static de.nb.aventiure2.german.base.Numerus.SG;
 import static de.nb.aventiure2.german.base.NumerusGenus.M;
 import static de.nb.aventiure2.german.base.Person.P2;
 import static de.nb.aventiure2.german.base.StructuralElement.PARAGRAPH;
 import static de.nb.aventiure2.german.base.StructuralElement.SENTENCE;
 import static de.nb.aventiure2.german.base.StructuralElement.WORD;
 import static de.nb.aventiure2.german.base.Wortfolge.w;
-import static de.nb.aventiure2.german.description.TimedDescription.toTimed;
 
 public class DescriptionBuilder {
     private DescriptionBuilder() {
@@ -34,39 +30,6 @@ public class DescriptionBuilder {
         return neuerSatz(PARAGRAPH,
                 paragraph)
                 .beendet(PARAGRAPH);
-    }
-
-    @CheckReturnValue
-    @NonNull
-    public static ImmutableList<TimedDescription<AbstractDescription<?>>> altNeueSaetze(
-            final Satz satz,
-            final AvTimeSpan timeElapsed) {
-        return toTimed(altNeueSaetze(satz), timeElapsed);
-    }
-
-    @CheckReturnValue
-    @NonNull
-    public static ImmutableList<AbstractDescription<?>> altNeueSaetze(final Satz satz) {
-        return altNeueSaetze(SENTENCE, satz);
-    }
-
-    @CheckReturnValue
-    @NonNull
-    public static ImmutableList<AbstractDescription<?>> altNeueSaetze(
-            final StructuralElement startsNew,
-            final Satz satz) {
-        final ImmutableList.Builder<AbstractDescription<?>> res = ImmutableList.builder();
-
-        final AbstractDescription<?> standard = neuerSatzStandard(startsNew, satz);
-        res.add(standard);
-
-        final AbstractDescription<?> speziellesVorfeld =
-                neuerSatzMitSpeziellemVorfeld(startsNew, satz);
-        if (!standard.equals(speziellesVorfeld)) {
-            res.add(speziellesVorfeld);
-        }
-
-        return res.build();
     }
 
 
@@ -85,31 +48,6 @@ public class DescriptionBuilder {
         return new TimedDescription<>(
                 neuerSatz(description),
                 timeElapsed, counterIdIncrementedIfTextIsNarrated);
-    }
-
-    @NonNull
-    @CheckReturnValue
-    static AbstractDescription<?> neuerSatzStandard(
-            final StructuralElement startsNew, final Satz satz) {
-        if (satz.getSubjekt().getPerson() == P2 && satz.getSubjekt().getNumerus() == SG) {
-            return du(startsNew, satz.getPraedikat());
-        }
-
-        // IDEA: Der Satz könnte auch analog der Prädikat-Du-Description gespeichert werden.
-        //  Das hätte den Vorteil, das man erst gegen Ende die Alternativen bauen würde und
-        //  Einiges an der Logik von Du-Descriptions weiterverwendet werden könnte.
-        return neuerSatz(startsNew, satz.getVerbzweitsatzStandard());
-    }
-
-    @NonNull
-    @CheckReturnValue
-    private static AbstractDescription<?> neuerSatzMitSpeziellemVorfeld(
-            final StructuralElement startsNew, final Satz satz) {
-        if (satz.getSubjekt().getPerson() == P2 && satz.getSubjekt().getNumerus() == SG) {
-            return du(startsNew, satz.getPraedikat());
-        }
-
-        return neuerSatz(startsNew, satz.getVerbzweitsatzMitSpeziellemVorfeldAlsWeitereOption());
     }
 
     public static TextDescription neuerSatz(final Iterable<Konstituente> konsituenten) {
@@ -171,6 +109,43 @@ public class DescriptionBuilder {
 
         return neuerSatz(startsNew, w(description));
     }
+
+    @NonNull
+    @CheckReturnValue
+    public static TimedDescription<StructuredDescription> satz(
+            final Satz satz,
+            final AvTimeSpan timeElapsed) {
+        return satz(WORD, satz, timeElapsed);
+    }
+
+    @NonNull
+    @CheckReturnValue
+    public static TimedDescription<StructuredDescription> satz(
+            final Satz satz,
+            final AvTimeSpan timeElapsed,
+            @Nullable final String counterIdIncrementedIfTextIsNarrated) {
+        return satz(WORD, satz, timeElapsed, counterIdIncrementedIfTextIsNarrated);
+    }
+
+    @NonNull
+    @CheckReturnValue
+    public static TimedDescription<StructuredDescription> satz(
+            final StructuralElement startsNew, final Satz satz,
+            final AvTimeSpan timeElapsed) {
+        return satz(startsNew, satz, timeElapsed, null);
+    }
+
+    @NonNull
+    @CheckReturnValue
+    public static TimedDescription<StructuredDescription> satz(
+            final StructuralElement startsNew, final Satz satz,
+            final AvTimeSpan timeElapsed,
+            @Nullable final String counterIdIncrementedIfTextIsNarrated) {
+        return new TimedDescription<>(
+                satz(startsNew, satz), timeElapsed,
+                counterIdIncrementedIfTextIsNarrated);
+    }
+
 
     @CheckReturnValue
     public static TimedDescription<TextDescription> satzanschluss(
@@ -460,12 +435,24 @@ public class DescriptionBuilder {
                                            final PraedikatOhneLeerstellen praedikat) {
         // FIXME Alle du()-Aufrufe prüfen, ggf. auf SENTENCE setzen
 
-        return new StructuredDescription(startsNew,
+        return satz(startsNew,
                 praedikat.alsSatzMitSubjekt(Personalpronomen.get(P2,
                         // Wir behaupten hier, der Adressat wäre männlich.
                         // Es ist die Verantwortung des Aufrufers, keine
                         // Sätze mit Konstruktionen wie "Du, der du" zu erzeugen, die
                         // weibliche Adressaten ("du, die du") ausschließen.
                         M)));
+    }
+
+    @NonNull
+    @CheckReturnValue
+    public static StructuredDescription satz(final Satz satz) {
+        return satz(WORD, satz);
+    }
+
+    @NonNull
+    @CheckReturnValue
+    static StructuredDescription satz(final StructuralElement startsNew, final Satz satz) {
+        return new StructuredDescription(startsNew, satz);
     }
 }
