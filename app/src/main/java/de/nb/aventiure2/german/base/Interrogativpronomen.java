@@ -18,7 +18,7 @@ public class Interrogativpronomen extends SubstantivischesPronomenMitVollerFlexi
 
     private Interrogativpronomen(final NumerusGenus numerusGenus,
                                  final Flexionsreihe flextionsreihe) {
-        super(numerusGenus, flextionsreihe);
+        super(numerusGenus, flextionsreihe, null);
     }
 
     @Override

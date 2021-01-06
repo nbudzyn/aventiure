@@ -4,11 +4,14 @@ import androidx.annotation.NonNull;
 
 import java.util.Objects;
 
+import javax.annotation.concurrent.Immutable;
+
 import de.nb.aventiure2.german.base.IBezugsobjekt;
 
 /**
  * ID of an {@link GameObject}
  */
+@Immutable
 public class GameObjectId implements IBezugsobjekt {
     private final long value;
 

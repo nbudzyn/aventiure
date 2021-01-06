@@ -56,11 +56,11 @@ public class BaumFactory {
                 new SimpleDescriptionComp(id,
                         np(M, INDEF, "einzelner Baum in der Mitte des Gartens",
                                 "einzelnen Baum in der Mitte des Gartens",
-                                "einzelnen Baum in der Mitte des Gartens"),
+                                "einzelnen Baum in der Mitte des Gartens", id),
                         np(M, DEF, "einzelne Baum in der Mitte des Gartens",
                                 "einzelnen Baum in der Mitte des Gartens",
-                                "einzelnen Baum in der Mitte des Gartens"),
-                        np(M, DEF, "Baum"));
+                                "einzelnen Baum in der Mitte des Gartens", id),
+                        np(M, DEF, "Baum", id));
 
         final LocationComp locationComp = new LocationComp(
                 id, db, world, locationId,

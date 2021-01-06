@@ -108,7 +108,7 @@ public class ZuHabenPraedikatOhneLeerstellen implements PraedikatOhneLeerstellen
         return Konstituentenfolge.joinToKonstituentenfolge(
                 HabenUtil.VERB.getPraesensOhnePartikel(
                         subjekt.getPerson(), subjekt.getNumerus()), // "hast"
-                subjekt.nom(), // "du"
+                subjekt.nomK(), // "du"
                 lexikalischerKern.getZuInfinitiv(
                         subjekt.getPerson(), subjekt.getNumerus())); // "dich zu waschen"
     }

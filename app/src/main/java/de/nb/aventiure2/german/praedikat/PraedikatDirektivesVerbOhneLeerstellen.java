@@ -24,7 +24,6 @@ import de.nb.aventiure2.german.base.SubstantivischePhraseOderReflexivpronomen;
 
 import static de.nb.aventiure2.german.base.Kasus.AKK;
 import static de.nb.aventiure2.german.base.Kasus.DAT;
-import static de.nb.aventiure2.german.base.Konstituente.k;
 import static de.nb.aventiure2.german.base.Konstituentenfolge.kf;
 
 /**
@@ -170,11 +169,11 @@ public class PraedikatDirektivesVerbOhneLeerstellen
         }
 
 
-        final String objektImKasus = objekt.im(kasus);
-        if (!"es".equals(objektImKasus)) {
+        final Konstituente objektImKasus = objekt.imK(kasus);
+        if (!"es".equals(objektImKasus.getString())) {
             // Wenn "es" ein Objekt ist, darf es nicht im Vorfeld stehen.
             // (Eisenberg Der Satz 5.4.2)
-            return k(objektImKasus);  // "Die junge Frau (bittest du ...)"
+            return objektImKasus;  // "Die junge Frau (bittest du ...)"
         }
 
         return null;
@@ -190,7 +189,7 @@ public class PraedikatDirektivesVerbOhneLeerstellen
                 kf(getModalpartikeln()), // "mal eben"
                 getAdverbialeAngabeSkopusVerbAllgDescriptionFuerMittelfeld(personSubjekt,
                         numerusSubjekt), // "erneut"
-                objekt.im(kasus), // "die junge Frau"
+                objekt.imK(kasus), // "die junge Frau"
                 getAdverbialeAngabeSkopusVerbWohinWoherDescription(personSubjekt, numerusSubjekt)
                 // (kann es wohl gar nicht geben)
         );
@@ -259,7 +258,7 @@ public class PraedikatDirektivesVerbOhneLeerstellen
     @Override
     public Konstituente getErstesInterrogativpronomen() {
         if (objekt instanceof Interrogativpronomen) {
-            return k(objekt.im(kasus));
+            return objekt.imK(kasus);
         }
 
         return lexikalischerKern.getErstesInterrogativpronomen();

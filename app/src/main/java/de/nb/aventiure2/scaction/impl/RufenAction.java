@@ -94,7 +94,7 @@ public class RufenAction extends AbstractScAction {
         } else {
             n.narrate(satz(
                     ruftyp.getName()
-                            .alsSatzMitSubjekt(Personalpronomen.get(P2, M))
+                            .alsSatzMitSubjekt(Personalpronomen.get(P2, M, SPIELER_CHARAKTER))
                             .mitAnschlusswort("und"),
                     secs(30)));
         }

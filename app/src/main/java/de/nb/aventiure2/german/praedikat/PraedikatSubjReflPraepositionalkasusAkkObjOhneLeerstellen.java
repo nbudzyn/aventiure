@@ -18,7 +18,6 @@ import de.nb.aventiure2.german.base.Reflexivpronomen;
 import de.nb.aventiure2.german.base.SubstantivischePhrase;
 import de.nb.aventiure2.german.base.SubstantivischePhraseOderReflexivpronomen;
 
-import static de.nb.aventiure2.german.base.Konstituente.k;
 import static de.nb.aventiure2.german.base.Konstituentenfolge.kf;
 
 /**
@@ -131,11 +130,11 @@ class PraedikatSubjReflPraepositionalkasusAkkObjOhneLeerstellen
             return speziellesVorfeldFromSuper;
         }
 
-        final String akk = akkObj.akk();
-        if (!"es".equals(akk)) {
+        final Konstituente akk = akkObj.akkK();
+        if (!"es".equals(akk.getString())) {
             // Wenn "es" ein Objekt ist, darf es nicht im Vorfeld stehen.
             // (Eisenberg Der Satz 5.4.2)
-            return k(akk);  // "den Frosch"
+            return akk;  // "den Frosch"
         }
 
         return null;
@@ -150,7 +149,7 @@ class PraedikatSubjReflPraepositionalkasusAkkObjOhneLeerstellen
                 getAdverbialeAngabeSkopusSatzDescriptionFuerMittelfeld(personSubjekt,
                         numerusSubjekt),
                 // "aus einer Laune heraus"
-                akkObj.akk(), // "die goldene Kugel"
+                akkObj.akkK(), // "die goldene Kugel"
                 kf(getModalpartikeln()), // "besser doch"
                 getAdverbialeAngabeSkopusVerbAllgDescriptionFuerMittelfeld(personSubjekt,
                         numerusSubjekt), // "erneut"
@@ -216,7 +215,7 @@ class PraedikatSubjReflPraepositionalkasusAkkObjOhneLeerstellen
     @Override
     public Konstituente getErstesInterrogativpronomen() {
         if (akkObj instanceof Interrogativpronomen) {
-            return k(akkObj.akk());
+            return akkObj.akkK();
         }
 
         return null;

@@ -1,5 +1,7 @@
 package de.nb.aventiure2.german.base;
 
+import androidx.annotation.Nullable;
+
 import com.google.common.collect.ImmutableMap;
 
 import java.util.Map;
@@ -12,6 +14,7 @@ import static de.nb.aventiure2.german.base.NumerusGenus.PL_MFN;
 import static de.nb.aventiure2.german.base.Person.P1;
 import static de.nb.aventiure2.german.base.Person.P2;
 import static de.nb.aventiure2.german.base.Person.P3;
+import static java.util.Objects.requireNonNull;
 
 public class Personalpronomen extends SubstantivischesPronomenMitVollerFlexionsreihe {
     private static final Map<Person, Map<NumerusGenus, Personalpronomen>> ALL = ImmutableMap.of(
@@ -19,7 +22,7 @@ public class Personalpronomen extends SubstantivischesPronomenMitVollerFlexionsr
             alleGenera(P1,
                     "ich", "mir", "mich", "wir", "uns"),
             P2,
-            alleGenera(P1,
+            alleGenera(P2,
                     "du", "dir", "dich", "ihr", "euch"),
             P3,
             ImmutableMap.of(
@@ -56,14 +59,40 @@ public class Personalpronomen extends SubstantivischesPronomenMitVollerFlexionsr
                 .anyMatch(p -> p.isWortform(string));
     }
 
+    /**
+     * Gibt das passende Personalpronomen zurück - ohne Bezugsobjekt
+     */
     public static Personalpronomen get(final Person person, final NumerusGenus numerusGenus) {
-        return ALL.get(person).get(numerusGenus);
+        return get(person, numerusGenus, null);
+    }
+
+    public static Personalpronomen get(final Person person, final NumerusGenus numerusGenus,
+                                       @Nullable final IBezugsobjekt bezugsobjekt) {
+        final Personalpronomen ohneBezugsobjekt = requireNonNull(ALL.get(person)).get(numerusGenus);
+
+        return requireNonNull(ohneBezugsobjekt).mitBezugsobjekt(bezugsobjekt);
+    }
+
+    private Personalpronomen mitBezugsobjekt(@Nullable final IBezugsobjekt bezugsobjekt) {
+        if (bezugsobjekt == null) {
+            return this;
+        }
+
+        return new Personalpronomen(person, getNumerusGenus(), getFlexionsreihe(), bezugsobjekt);
     }
 
     private Personalpronomen(final Person person,
                              final NumerusGenus numerusGenus,
                              final Flexionsreihe flexionsreihe) {
-        super(numerusGenus, flexionsreihe);
+        this(person, numerusGenus, flexionsreihe, null);
+    }
+
+    private Personalpronomen(final Person person,
+                             final NumerusGenus numerusGenus,
+                             final Flexionsreihe flexionsreihe,
+                             @Nullable final IBezugsobjekt bezugsobjekt) {
+        super(numerusGenus, flexionsreihe,
+                person == P3 ? bezugsobjekt : null);
         this.person = person;
     }
 
@@ -83,7 +112,7 @@ public class Personalpronomen extends SubstantivischesPronomenMitVollerFlexionsr
      */
     @Override
     public Relativpronomen relPron() {
-        return Relativpronomen.get(person, getNumerusGenus());
+        return Relativpronomen.get(person, getNumerusGenus(), getBezugsobjekt());
     }
 
     /**

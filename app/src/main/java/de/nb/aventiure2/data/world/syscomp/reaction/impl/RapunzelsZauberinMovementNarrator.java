@@ -45,13 +45,13 @@ public class RapunzelsZauberinMovementNarrator extends SimpleMovementNarrator {
 
         final ImmutableCollection.Builder<AbstractDescription<?>> alt = ImmutableList.builder();
 
-        alt.add(neuerSatz(anaphOderDesc.nom()
+        alt.add(neuerSatz(anaphOderDesc.nomStr()
                 + " kommt daher")
                 .phorikKandidat(desc, gameObjectId)
                 .beendet(PARAGRAPH));
 
         if (spatialConnectionMovingGO != null) {
-            alt.add(neuerSatz(anaphOderDesc.nom()
+            alt.add(neuerSatz(anaphOderDesc.nomStr()
                     + " kommt "
                     + spatialConnectionMovingGO.getWo() // "auf dem Pfad "
                     + " daher")
@@ -63,7 +63,7 @@ public class RapunzelsZauberinMovementNarrator extends SimpleMovementNarrator {
             if (spatialConnectionMovingGO != null) {
                 alt.add(neuerSatz(spatialConnectionMovingGO.getWo() // "auf dem Pfad "
                         + " kommt " +
-                        desc.nom() +
+                        desc.nomStr() +
                         " gegangen")
                         .phorikKandidat(desc, gameObjectId)
                         .beendet(PARAGRAPH));
@@ -71,14 +71,14 @@ public class RapunzelsZauberinMovementNarrator extends SimpleMovementNarrator {
 
             alt.add(
                     neuerSatz("Es kommt dir " +
-                            desc.nom() +
+                            desc.nomStr() +
                             " entgegen")
                             .phorikKandidat(desc, gameObjectId)
                             .beendet(PARAGRAPH));
             alt.add(
                     neuerSatz(PARAGRAPH,
                             "Dir kommt " +
-                                    desc.nom() +
+                                    desc.nomStr() +
                                     " entgegen")
                             .phorikKandidat(desc, gameObjectId)
                             .beendet(PARAGRAPH));
@@ -89,7 +89,7 @@ public class RapunzelsZauberinMovementNarrator extends SimpleMovementNarrator {
                 to.is(VOR_DEM_ALTEN_TURM)) {
             if (!n.isThema(gameObjectId)) {
                 alt.add(neuerSatz("Den Pfad herauf kommt " +
-                        desc.nom())
+                        desc.nomStr())
                         .phorikKandidat(desc, RAPUNZELS_ZAUBERIN)
                         .beendet(SENTENCE));
             }
@@ -104,7 +104,7 @@ public class RapunzelsZauberinMovementNarrator extends SimpleMovementNarrator {
             if (!n.isThema(gameObjectId)) {
                 alt.add(neuerSatz(PARAGRAPH,
                         "Von dem Pfad her kommt dir " +
-                                desc.nom() +
+                                desc.nomStr() +
                                 " entgegen")
                         .phorikKandidat(desc, RAPUNZELS_ZAUBERIN)
                         .beendet(SENTENCE));
@@ -121,7 +121,7 @@ public class RapunzelsZauberinMovementNarrator extends SimpleMovementNarrator {
             if (!n.isThema(gameObjectId)) {
                 alt.add(neuerSatz(PARAGRAPH,
                         "Von dem Pfad her kommt " +
-                                desc.nom())
+                                desc.nomStr())
                         .phorikKandidat(desc, RAPUNZELS_ZAUBERIN)
                         .beendet(SENTENCE));
             }

@@ -14,7 +14,6 @@ import de.nb.aventiure2.german.adjektiv.ZweiAdjPhrOhneLeerstellen;
 import de.nb.aventiure2.german.base.Interrogativpronomen;
 import de.nb.aventiure2.german.base.NumerusGenus;
 import de.nb.aventiure2.german.base.Person;
-import de.nb.aventiure2.german.base.Personalpronomen;
 import de.nb.aventiure2.german.base.Praedikativum;
 import de.nb.aventiure2.german.base.SubstantivischePhrase;
 import de.nb.aventiure2.german.praedikat.AdverbialeAngabeSkopusVerbAllg;
@@ -193,7 +192,7 @@ class ZuneigungAbneigungBeiBegegnungDescriber implements FeelingBeiBegegnungDesc
     @NonNull
     @Override
     public ImmutableList<AdjPhrOhneLeerstellen> altEindruckBeiBegegnungAdjPhr(
-            final Person gameObjectSubjektPerson, final NumerusGenus gameObjectSubjektNumerusGenus,
+            final SubstantivischePhrase gameObjectSubjekt,
             final SubstantivischePhrase targetDesc, final int feelingIntensity,
             final boolean targetKnown) {
         // Damit niemals etwas wie "du, der du" erzeugt wird:
@@ -249,10 +248,7 @@ class ZuneigungAbneigungBeiBegegnungDescriber implements FeelingBeiBegegnungDesc
                     AdjektivMitIndirektemFragesatz.GESPANNT // "gespannt"
                             .mitIndirektemFragesatz(
                                     VerbSubjDatAkk.BERICHTEN // "berichten"
-                                            .mitDat(
-                                                    Personalpronomen.get(
-                                                            gameObjectSubjektPerson,
-                                                            gameObjectSubjektNumerusGenus)
+                                            .mitDat(gameObjectSubjekt.persPron()
                                                     // "ihr"
                                             )
                                             .mitAkk(Interrogativpronomen.WAS) // "was"

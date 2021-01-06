@@ -99,7 +99,7 @@ public class HochwerfenAction<OBJ extends IDescribableGO & ILocatableGO>
     @Override
     @NonNull
     public String getName() {
-        return GermanUtil.capitalize(world.getDescription(object).akk()) + " hochwerfen";
+        return GermanUtil.capitalize(world.getDescription(object).akkStr()) + " hochwerfen";
     }
 
     @Override
@@ -130,9 +130,9 @@ public class HochwerfenAction<OBJ extends IDescribableGO & ILocatableGO>
         if (n.allowsAdditionalDuSatzreihengliedOhneSubjekt()) {
             narrateAndDoHochwerfenAuffangen(
                     satzanschluss(", wirfst " +
-                            objectDesc.akk() +
+                            objectDesc.akkStr() +
                             " in die Höhe und fängst " +
-                            objectDesc.persPron().akk() +
+                            objectDesc.persPron().akkStr() +
                             " wieder auf", secs(3))
                             .dann());
             return;
@@ -173,9 +173,9 @@ public class HochwerfenAction<OBJ extends IDescribableGO & ILocatableGO>
             final Nominalphrase objectDesc = world.getDescription(object);
 
             narrateAndDoHochwerfenAuffangen(
-                    du(PARAGRAPH, "wirfst", objectDesc.akk() +
+                    du(PARAGRAPH, "wirfst", objectDesc.akkStr() +
                             " hoch in die Luft und fängst " +
-                            objectDesc.persPron().akk() +
+                            objectDesc.persPron().akkStr() +
                             " geschickt wieder auf", secs(3))
                             .dann());
             return;
@@ -225,15 +225,15 @@ public class HochwerfenAction<OBJ extends IDescribableGO & ILocatableGO>
         final Nominalphrase objectDesc = world.getDescription(object, false);
 
         n.narrate(
-                du(PARAGRAPH, "wirfst", objectDesc.akk() +
+                du(PARAGRAPH, "wirfst", objectDesc.akkStr() +
                         " nur ein einziges Mal in die Höhe, " +
                         "aber wie das Unglück es will, fällt " +
-                        objectDesc.persPron().akk() +
+                        objectDesc.persPron().akkStr() +
                         " sofort in den Brunnen: " +
                         "Platsch! – weg " +
                         SeinUtil.istSind(objectDesc.getNumerusGenus()) +
                         " " +
-                        objectDesc.persPron().akk(), "nur ein einziges Mal", secs(10))
+                        objectDesc.persPron().akkStr(), "nur ein einziges Mal", secs(10))
                         .dann(!n.dann())
                         .beendet(PARAGRAPH));
 
@@ -263,13 +263,13 @@ public class HochwerfenAction<OBJ extends IDescribableGO & ILocatableGO>
                             "– bei dieser Dunkelheit schon gar nicht" : "";
 
             n.narrate(du("wirfst",
-                    world.getDescription(object).akk() +
+                    world.getDescription(object).akkStr() +
                             " noch einmal in die Höhe… doch oh nein, " +
-                            world.getDescription(object, true).nom() +
+                            world.getDescription(object, true).nomStr() +
                             " fällt dir nicht in die Hände, sondern schlägt vorbei " +
                             "auf den Brunnenrand und rollt geradezu ins Wasser hinein." +
                             " Du folgst ihr mit den Augen nach, aber " +
-                            world.getDescription(object, true).nom() +
+                            world.getDescription(object, true).nomStr() +
                             " verschwindet, und der Brunnen ist tief, so tief, dass " +
                             "man keinen Grund sieht"
                             + dunkelheitNachsatz,
@@ -283,12 +283,12 @@ public class HochwerfenAction<OBJ extends IDescribableGO & ILocatableGO>
         }
 
         n.narrate(du("schleuderst",
-                world.getDescription(object).akk() +
+                world.getDescription(object).akkStr() +
                         " übermütig noch einmal in die Luft, aber sie wieder aufzufangen will dir "
                         +
                         "dieses Mal nicht gelingen. "
                         + GermanUtil.capitalize(
-                        world.getDescription(object, true).nom()) +
+                        world.getDescription(object, true).nomStr()) +
                         " landet " +
                         location.storingPlaceComp().getLocationMode().getWo(false),
                 "übermütig",

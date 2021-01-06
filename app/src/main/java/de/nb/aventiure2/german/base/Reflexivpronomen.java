@@ -4,6 +4,7 @@ import com.google.common.collect.ImmutableMap;
 
 import java.util.Map;
 
+import static de.nb.aventiure2.german.base.Konstituente.k;
 import static de.nb.aventiure2.german.base.Numerus.PL;
 import static de.nb.aventiure2.german.base.Numerus.SG;
 import static de.nb.aventiure2.german.base.Person.P1;
@@ -50,15 +51,16 @@ public class Reflexivpronomen implements SubstantivischePhraseOderReflexivpronom
     }
 
     public String im(final KasusOderPraepositionalkasus kasusOderPraepositionalkasus) {
+        // "sich" etc. etablieren wohl kaum einen Bezug auf Bezugsobjekt
         if (kasusOderPraepositionalkasus instanceof Kasus) {
-            return im((Kasus) kasusOderPraepositionalkasus);
+            return imStr((Kasus) kasusOderPraepositionalkasus);
         }
 
         if (kasusOderPraepositionalkasus instanceof PraepositionMitKasus) {
             final PraepositionMitKasus praepositionMitKasus =
                     (PraepositionMitKasus) kasusOderPraepositionalkasus;
 
-            return praepositionMitKasus.getPraeposition() + " " + im(
+            return praepositionMitKasus.getPraeposition() + " " + imStr(
                     praepositionMitKasus.getKasus());
         }
 
@@ -67,7 +69,7 @@ public class Reflexivpronomen implements SubstantivischePhraseOderReflexivpronom
     }
 
     @Override
-    public String im(final Kasus kasus) {
+    public String imStr(final Kasus kasus) {
         switch (kasus) {
             case DAT:
                 return dat();
@@ -77,6 +79,13 @@ public class Reflexivpronomen implements SubstantivischePhraseOderReflexivpronom
                 throw new IllegalArgumentException(
                         "Unexpected kasus for Reflexivpronomen: " + kasus);
         }
+    }
+
+    @Override
+    public Konstituente imK(final Kasus kasus) {
+        // Ich glaube, ein Reflexivpronomen etabliert nicht wirklich einen Bezug
+        // auf ein Bezugsobjekt.
+        return k(imStr(kasus));
     }
 
     public String dat() {

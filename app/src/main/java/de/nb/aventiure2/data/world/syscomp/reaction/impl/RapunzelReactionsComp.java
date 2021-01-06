@@ -262,15 +262,15 @@ public class RapunzelReactionsComp
                         + "Ihre Haare, fein wie gesponnen "
                         + "Gold, hat sie um einen Fensterhaken gewickelt, so konntest du "
                         + "daran heraufsteigen.\n"
-                        + capitalize(desc.nom())
+                        + capitalize(desc.nomStr())
                         + " erschrickt gewaltig, als du "
                         + PraepositionMitKasus.ZU.getDescription(desc.persPron()) // "zu ihr"
                         + " hereinkommst. Schnell bindet "
-                        + desc.persPron().nom() // "sie"
+                        + desc.persPron().nomStr() // "sie"
                         + " "
-                        + desc.possArt().vor(PL_MFN).akk() // "ihre"
+                        + desc.possArt().vor(PL_MFN).akkStr() // "ihre"
                         + " Haare wieder zusammen, dann starrt "
-                        + desc.persPron().nom() // "sie"
+                        + desc.persPron().nomStr() // "sie"
                         + " dich an",
                 secs(20))
                 .phorikKandidat(desc, RAPUNZEL));
@@ -301,17 +301,17 @@ public class RapunzelReactionsComp
                 "Am Fenster sitzt eine junge Frau "
                         + "und schaut dich entsetzt an. Du hast sie wohl gerade aus tiefem "
                         + "Nachtschlaf geweckt. "
-                        + capitalize(desc.nom())
+                        + capitalize(desc.nomStr())
                         + " ist in ein paar Decken gewickelt, "
-                        + desc.possArt().vor(PL_MFN).akk() // "ihre"
+                        + desc.possArt().vor(PL_MFN).akkStr() // "ihre"
                         + " langen Haare hat sie um einen Fensterhaken gewickelt, so "
                         + "konntest du "
                         + "daran heraufsteigen. Mit fahrigen Handbewegungen rafft "
-                        + desc.persPron().nom() // "sie"
+                        + desc.persPron().nomStr() // "sie"
                         + " jetzt "
-                        + desc.possArt().vor(PL_MFN).akk() // "ihre"
+                        + desc.possArt().vor(PL_MFN).akkStr() // "ihre"
                         + " Haare zusammen, dann weicht "
-                        + desc.persPron().nom() // "sie"
+                        + desc.persPron().nomStr() // "sie"
                         + " vor dir in das dunkle Zimmer zurück",
                 secs(25))
                 .phorikKandidat(desc, RAPUNZEL));
@@ -444,17 +444,17 @@ public class RapunzelReactionsComp
         alt.addAll(toTimed(altSCBeiBegegnungAnsehenSaetze, secs(15)));
 
         alt.add(du(SENTENCE, "hast",
-                anaph.akk()
+                anaph.akkStr()
                         + " offenbar aus dem Bett "
                         + "geholt. "
-                        + capitalize(anaph.persPron().nom()) // Sie
+                        + capitalize(anaph.persPron().nomStr()) // Sie
                         + " sieht sehr zerknittert "
                         + "aus",
                 "offenbar",
                 secs(30))
                 .phorikKandidat(anaph.persPron(), RAPUNZEL));
         if (loadSC().memoryComp().getKnown(RAPUNZEL) == KNOWN_FROM_LIGHT) {
-            alt.add(neuerSatz(anaph.persPron().nom()
+            alt.add(neuerSatz(anaph.persPron().nomStr()
                             + " ist auch nachts wunderschön – allerdings ist die "
                             + "junge, verschlafene "
                             + "Frau in ihren Decken auch sichtlich überrascht, dass du zu "
@@ -512,9 +512,9 @@ public class RapunzelReactionsComp
         final SubstantivischePhrase desc =
                 getAnaphPersPronWennMglSonstShortDescription();
         n.narrate(
-                neuerSatz(desc.nom() +
+                neuerSatz(desc.nomStr() +
                                 " sieht interessiert zu. „Darf ich auch "
-                                + "einmal?“, fragt " + desc.persPron().nom() + " dich",
+                                + "einmal?“, fragt " + desc.persPron().nomStr() + " dich",
                         secs(30))
                         .phorikKandidat(F, RAPUNZEL));
 
@@ -564,15 +564,15 @@ public class RapunzelReactionsComp
         return ImmutableList.of(
                 neuerSatz(
                         "Jetzt zieht "
-                                + anaph.nom() // "die junge Frau"
+                                + anaph.nomStr() // "die junge Frau"
                                 + " "
-                                + anaph.possArt().vor(PL_MFN).akk() // "ihre"
+                                + anaph.possArt().vor(PL_MFN).akkStr() // "ihre"
                                 + " Haare wieder hoch",
                         secs(15))
                         .beendet(PARAGRAPH),
                 neuerSatz(
                         "Die Haare zieht "
-                                + anaph.nom()
+                                + anaph.nomStr()
                                 + " wieder hoch",
                         secs(15))
                         .beendet(PARAGRAPH)

@@ -113,7 +113,7 @@ public class SchlosswacheReactionsComp
             if (counterDao.incAndGet(
                     "SchlosswacheReactions_onEnterRoom_SchlossVorhalle") > 1) {
                 n.narrate(neuerSatz(
-                        getDescription(true).nom()
+                        getDescription(true).nomStr()
                                 + " scheint dich nicht zu bemerken", secs(3)));
                 return;
             }
@@ -266,7 +266,7 @@ public class SchlosswacheReactionsComp
                 neuerSatz(PARAGRAPH, "„Was treibt Ihr für einen Unfug, legt sofort das "
                         + "Schmuckstück wieder hin!“, "
                         + "ruft dir "
-                        + getDescription(true).nom()
+                        + getDescription(true).nomStr()
                         + " zu", secs(5)));
 
         // IDEA Geschichte ausspinnen: Spieler muss die Kugel selbst
@@ -330,7 +330,7 @@ public class SchlosswacheReactionsComp
         if (n.allowsAdditionalDuSatzreihengliedOhneSubjekt()) {
             alt.add(satzanschluss(
                     ", während "
-                            + getDescription().nom()
+                            + getDescription().nomStr()
                             + " gerade damit beschäftigt ist, ihre Waffen zu polieren",
                     secs(3))
                     .dann());
@@ -338,7 +338,7 @@ public class SchlosswacheReactionsComp
             alt.add(
                     new TimedDescription<>(
                             du("hast", "großes Glück, denn "
-                                    + getDescription().nom()
+                                    + getDescription().nomStr()
                                     + " ist gerade damit beschäftigt, ihre Waffen zu polieren")
                                     .komma(true)
                             , secs(3))
@@ -346,7 +346,7 @@ public class SchlosswacheReactionsComp
         }
 
         alt.add(neuerSatz(
-                getDescription().dat()
+                getDescription().datStr()
                         + " ist anscheinend nichts aufgefallen",
                 secs(3))
                 .dann());
@@ -392,10 +392,10 @@ public class SchlosswacheReactionsComp
 
         loadSC().feelingsComp().requestMood(ANGESPANNT);
         n.narrateAlt(
-                neuerSatz(getDescription().nom()
+                neuerSatz(getDescription().nomStr()
                         + " beoabachtet dich dabei", secs(5))
                         .dann(),
-                neuerSatz(getDescription().nom()
+                neuerSatz(getDescription().nomStr()
                         + " sieht dir belustig dabei zu", secs(5))
                         .dann(),
                 neuerSatz(PARAGRAPH, "Die Wache sieht sehr missbilligend zu", secs(3)));

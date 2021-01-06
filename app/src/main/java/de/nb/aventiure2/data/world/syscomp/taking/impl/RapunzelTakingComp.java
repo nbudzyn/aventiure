@@ -73,35 +73,35 @@ public class RapunzelTakingComp extends AbstractTakingComp {
                 given.descriptionComp().getDescriptionAtFirstSight();
 
         n.narrateAlt(secs(10),
-                neuerSatz(rapunzelAnaph.nom()
+                neuerSatz(rapunzelAnaph.nomStr()
                         + " sieht dich verwundert an"),
                 neuerSatz("„Ähm, was soll ich damit?“, "
                         + "ist "
-                        + rapunzelAnaph.possArt().vor(F).nom()
+                        + rapunzelAnaph.possArt().vor(F).nomStr()
                         + " Reaktion"),
                 neuerSatz("„Das ist nett“, sagt "
-                        + rapunzelAnaph.nom()
+                        + rapunzelAnaph.nomStr()
                         + ", "
                         + "„aber was mache ich damit?“ Du steckst "
-                        + givenDesc.akk()
+                        + givenDesc.akkStr()
                         + " wieder ein"),
-                neuerSatz(rapunzelAnaph.nom()
+                neuerSatz(rapunzelAnaph.nomStr()
                         + " schaut kurz, aber dann scheint "
-                        + rapunzelAnaph.persPron().nom() // "sie"
+                        + rapunzelAnaph.persPron().nomStr() // "sie"
                         + " das Interesse zu verlieren"),
                 neuerSatz("„Verstehe“, sagt "
-                        + rapunzelAnaph.nom()
+                        + rapunzelAnaph.nomStr()
                         + ", „wenn ich einmal "
-                        + givenDescAtFirstSight.akk()
+                        + givenDescAtFirstSight.akkStr()
                         + " brauche, "
                         + "weiß ich, wo ich "
                         // Gehen wir davon aus, dass der Benutzer nur
                         // "zählbare Dinge" jemandem geben kann, z.B.
                         // "den Stuhl" oder "den Wein", also "einen".
                         + DeklinierbarePhraseUtil.getIndefinitAnapherZaehlbar(
-                        givenDesc.getNumerusGenus()).akk() // "eine" / "welche"
+                        givenDesc.getNumerusGenus()).akkStr() // "eine" / "welche"
                         + " bekommen kann.“ "
-                        + capitalize(rapunzelAnaph.persPron().nom())
+                        + capitalize(rapunzelAnaph.persPron().nomStr())
                         + " lächelt dich "
                         + (getZuneigungAbneigungTowardsSC()
                         > FeelingIntensity.NEUTRAL ?
@@ -134,45 +134,45 @@ public class RapunzelTakingComp extends AbstractTakingComp {
         upgradeZuneigungAbneigung(1f, FeelingIntensity.DEUTLICH);
 
         n.narrateAlt(secs(30),
-                neuerSatz(rapunzelAnaph.nom()
+                neuerSatz(rapunzelAnaph.nomStr()
                         + " dreht "
-                        + givenAnaph.akk()
+                        + givenAnaph.akkStr()
                         + " in den Händen und wirft "
-                        + givenAnaph.persPron().akk()
+                        + givenAnaph.persPron().akkStr()
                         + " sanft "
                         + "in die Höhe - dann gibt "
-                        + rapunzelAnaph.persPron().nom()
+                        + rapunzelAnaph.persPron().nomStr()
                         + " dir "
-                        + givenDesc.akk()
+                        + givenDesc.akkStr()
                         + " zurück"));
         if (getZuneigungAbneigungTowardsSC() >= FeelingIntensity.MERKLICH) {
-            n.narrateAlt(secs(30), neuerSatz(rapunzelAnaph.nom()
+            n.narrateAlt(secs(30), neuerSatz(rapunzelAnaph.nomStr()
                             + " schaut dich "
                             + (stateComp.hasState(HAT_NACH_KUGEL_GEFRAGT) ? "glücklich" : "überrascht")
                             + " an und nimmt "
-                            + givenDescShort.akk()
+                            + givenDescShort.akkStr()
                             + ". "
-                            + capitalize(rapunzelAnaph.persPron().nom())
+                            + capitalize(rapunzelAnaph.persPron().nomStr())
                             + " spielt "
                             + "eine Weile damit herum, dann gibt "
-                            + rapunzelAnaph.persPron().nom()
+                            + rapunzelAnaph.persPron().nomStr()
                             + " "
-                            + givenDescShort.persPron().akk()
+                            + givenDescShort.persPron().akkStr()
                             + " dir zurück"),
                     neuerSatz((stateComp.hasState(HAT_NACH_KUGEL_GEFRAGT) ?
                             "Gespannt" : "Überrascht")
                             + " nimmt "
-                            + rapunzelAnaph.nom()
+                            + rapunzelAnaph.nomStr()
                             + " "
-                            + givenDescShort.akk()
+                            + givenDescShort.akkStr()
                             + " und versucht, "
                             + rapunzelAnaph.reflPron().akk() // sich
                             + " darin zu spiegeln. "
-                            + capitalize(rapunzelAnaph.persPron().nom())
+                            + capitalize(rapunzelAnaph.persPron().nomStr())
                             + " streicht eine Locke zurecht, dann gibt "
-                            + rapunzelAnaph.persPron().nom()
+                            + rapunzelAnaph.persPron().nomStr()
                             + " "
-                            + givenDescShort.persPron().akk()
+                            + givenDescShort.persPron().akkStr()
                             + " dir zurück und lächelt dich an")
             );
         }

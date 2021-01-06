@@ -182,7 +182,7 @@ public class FroschprinzReactionsComp
                 //  (vgl. AblegenAction)
                 n.narrateAlt(
                         neuerSatz(PARAGRAPH, "Plötzlich sitzt "
-                                        + desc.nom()
+                                        + desc.nomStr()
                                         + " neben dir auf der Bank. „Denk an dein "
                                         + "Versprechen“, quakt er dir zu, "
                                         + "„Lass uns aus einem Tellerlein essen!“ Du bist ganz "
@@ -202,19 +202,19 @@ public class FroschprinzReactionsComp
 
                 n.narrateAlt(
                         neuerSatz(PARAGRAPH, "Auf einmal sitzt "
-                                        + desc.nom()
+                                        + desc.nomStr()
                                         + " bei dir auf dem Tisch. „Auf, füll deine "
                                         + "Schale, wir wollen zusammen essen“, quakt " +
-                                        desc.persPron().nom() +
+                                        desc.persPron().nomStr() +
                                         " dich an. Es schauert dich bei dem Gedanken",
                                 secs(10))
                                 .beendet(PARAGRAPH),
                         neuerSatz(PARAGRAPH, "Platsch – da springt auf einmal "
-                                        + desc.nom()
+                                        + desc.nomStr()
                                         + " vor dich auf den Tisch. Gerade noch, dass er "
                                         + "dir nicht in die Essensschale gehüpft ist. Dir läuft "
                                         + "ein Schauer über den Rücken, als "
-                                        + desc.persPron().nom()
+                                        + desc.persPron().nomStr()
                                         + " fordert: „Nicht länger gezögert – nun lass uns zusammen "
                                         + "essen!“",
                                 secs(10))
@@ -228,7 +228,7 @@ public class FroschprinzReactionsComp
             default:
                 // STORY Wenn der Frosch nur rekursiv enthalten ist (Frosch sitzt auf dem Tisch),
                 //  dann beschreiben (vgl. BewegenAction)
-                n.narrate(neuerSatz("Hier sitzt " + desc.nom(), noTime())
+                n.narrate(neuerSatz("Hier sitzt " + desc.nomStr(), noTime())
                         .phorikKandidat(desc, FROSCHPRINZ));
                 return;
         }
@@ -252,7 +252,7 @@ public class FroschprinzReactionsComp
 
         // STORY Wenn der Prinz nur rekursiv enthalten ist (Prinz sitzt auf einem Stuhl),
         //  dann genauer beschreiben (vgl. BewegenAction)
-        n.narrate(du("siehst", getDescription().akk(), noTime())
+        n.narrate(du("siehst", getDescription().akkStr(), noTime())
                 .phorikKandidat(desc, FROSCHPRINZ));
     }
 
@@ -330,7 +330,7 @@ public class FroschprinzReactionsComp
         // Dann ist die Kugel jetzt WEG - PECH.
         final Nominalphrase froschprinzDesc = getDescription(true);
         n.narrate(neuerSatz(
-                froschprinzDesc.nom()
+                froschprinzDesc.nomStr()
                         +
                         " schaut dich vorwurfsvoll und etwas hochnäsig an",
                 secs(5))
@@ -360,9 +360,9 @@ public class FroschprinzReactionsComp
 
         final Nominalphrase froschprinzDesc = getDescription(true);
         n.narrateAlt(secs(5),
-                neuerSatz(froschprinzDesc.nom() + " quakt erbost")
+                neuerSatz(froschprinzDesc.nomStr() + " quakt erbost")
                         .phorikKandidat(froschprinzDesc, FROSCHPRINZ),
-                neuerSatz("Entrüstet quakt " + froschprinzDesc.nom())
+                neuerSatz("Entrüstet quakt " + froschprinzDesc.nomStr())
                         .phorikKandidat(froschprinzDesc, FROSCHPRINZ)
         );
     }
@@ -382,9 +382,9 @@ public class FroschprinzReactionsComp
 
         n.narrate(neuerSatz(
                 "Wie " +
-                        froschDescOderAnapher.nom() +
+                        froschDescOderAnapher.nomStr() +
                         " nun da sitzt, glotzt " +
-                        froschDescOderAnapher.nom() +
+                        froschDescOderAnapher.nomStr() +
                         " dich mit großen Glubschaugen an und spricht: „Nun füll deine "
                         + "Holzschale auf, wir wollen zusammen essen.“",
                 secs(10))

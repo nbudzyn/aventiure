@@ -5,6 +5,9 @@ import androidx.annotation.Nullable;
 
 import java.util.Objects;
 
+import javax.annotation.concurrent.Immutable;
+
+import static com.google.common.base.Preconditions.checkNotNull;
 import static de.nb.aventiure2.german.base.Person.P3;
 
 /**
@@ -21,6 +24,7 @@ import static de.nb.aventiure2.german.base.Person.P3;
  * <p>
  * Wir unterstützen noch Phorikkandiaten in der dritten Person.
  */
+@Immutable
 public class PhorikKandidat {
     private final NumerusGenus numerusGenus;
 
@@ -31,6 +35,9 @@ public class PhorikKandidat {
      */
     public PhorikKandidat(final NumerusGenus numerusGenus,
                           final IBezugsobjekt bezugsobjekt) {
+        checkNotNull(numerusGenus, "numerusGenus ist null");
+        checkNotNull(bezugsobjekt, "bezugsobjekt ist null");
+
         this.numerusGenus = numerusGenus;
         this.bezugsobjekt = bezugsobjekt;
     }
@@ -67,7 +74,7 @@ public class PhorikKandidat {
             return null;
         }
 
-        return Personalpronomen.get(P3, getNumerusGenus());
+        return Personalpronomen.get(P3, getNumerusGenus(), bezugsobjekt);
     }
 
     /**

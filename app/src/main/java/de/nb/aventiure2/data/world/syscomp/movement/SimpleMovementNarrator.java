@@ -65,23 +65,23 @@ public class SimpleMovementNarrator implements IMovementNarrator {
         n.narrateAlt(noTime(),
                 neuerSatz(wo +
                         " steht " +
-                        desc.nom())
+                        desc.nomStr())
                         .phorikKandidat(desc, gameObjectId)
                         .beendet(PARAGRAPH),
                 neuerSatz(wo +
                         " siehst du " +
-                        descShort.nom() +
+                        descShort.nomStr() +
                         " stehen")
                         .phorikKandidat(descShort, gameObjectId)
                         .beendet(PARAGRAPH),
                 neuerSatz(wo +
                         " begegnest du " +
-                        desc.dat())
+                        desc.datStr())
                         .phorikKandidat(desc, gameObjectId)
                         .beendet(PARAGRAPH),
                 neuerSatz(wo +
                         " scheint " +
-                        desc.nom() +
+                        desc.nomStr() +
                         " geradezu auf dich zu warten")
                         .phorikKandidat(desc, gameObjectId)
                         .beendet(PARAGRAPH)
@@ -116,21 +116,21 @@ public class SimpleMovementNarrator implements IMovementNarrator {
         n.narrateAlt(noTime(),
                 du("gehst",
                         "dabei an " +
-                                desc.dat() +
+                                desc.datStr() +
                                 " vorbei",
                         "dabei")
                         .phorikKandidat(desc, gameObjectId)
                         .beendet(SENTENCE),
                 du("gehst",
                         "dabei schnellen Schrittes an " +
-                                desc.dat() +
+                                desc.datStr() +
                                 " vorüber",
                         "dabei")
                         .phorikKandidat(desc, gameObjectId)
                         .beendet(SENTENCE),
                 du("gehst",
                         "dabei mit schnellen Schritten an " +
-                                desc.dat() +
+                                desc.datStr() +
                                 " vorüber",
                         "dabei")
                         .phorikKandidat(desc, gameObjectId)
@@ -143,11 +143,11 @@ public class SimpleMovementNarrator implements IMovementNarrator {
 
         n.narrateAlt(noTime(),
                 neuerSatz(PARAGRAPH,
-                        "Dir begegnet " + desc.nom())
+                        "Dir begegnet " + desc.nomStr())
                         .phorikKandidat(desc, gameObjectId)
                         .beendet(PARAGRAPH),
                 du("begegnest ",
-                        desc.dat())
+                        desc.datStr())
                         .phorikKandidat(desc, gameObjectId)
         );
     }
@@ -160,18 +160,18 @@ public class SimpleMovementNarrator implements IMovementNarrator {
 
         final ImmutableCollection.Builder<AbstractDescription<?>> alt = ImmutableList.builder();
 
-        alt.add(neuerSatz(anaphOderDesc.nom() +
+        alt.add(neuerSatz(anaphOderDesc.nomStr() +
                 " kommt dir entgegen und geht an dir vorbei")
                 .phorikKandidat(desc, gameObjectId));
         alt.add(
                 neuerSatz(PARAGRAPH,
-                        anaphOderDesc.nom() +
+                        anaphOderDesc.nomStr() +
                                 " kommt auf dich zu und geht an dir vorbei")
                         .phorikKandidat(desc, gameObjectId)
                         .beendet(PARAGRAPH));
         alt.add(
                 neuerSatz(PARAGRAPH,
-                        anaphOderDesc.nom() +
+                        anaphOderDesc.nomStr() +
                                 " kommt auf dich zu und läuft vorbei")
                         .phorikKandidat(desc, gameObjectId)
                         .beendet(PARAGRAPH));
@@ -180,14 +180,14 @@ public class SimpleMovementNarrator implements IMovementNarrator {
             alt.add(
                     neuerSatz(PARAGRAPH,
                             "Dir kommt " +
-                                    desc.nom() +
+                                    desc.nomStr() +
                                     " entgegen und geht an dir vorbei")
                             .phorikKandidat(desc, gameObjectId)
                             .beendet(PARAGRAPH));
             alt.add(
                     neuerSatz(PARAGRAPH,
                             "Dir kommt " +
-                                    desc.nom() +
+                                    desc.nomStr() +
                                     " entgegen und geht hinter dir davon")
                             .phorikKandidat(desc, gameObjectId)
                             .beendet(PARAGRAPH));
@@ -236,23 +236,23 @@ public class SimpleMovementNarrator implements IMovementNarrator {
         final ImmutableCollection.Builder<AbstractDescription<?>> alt = ImmutableList.builder();
 
         alt.add(neuerSatz(PARAGRAPH,
-                anaphOderDesc.nom() +
+                anaphOderDesc.nomStr() +
                         " kommt dir entgegen und geht an dir vorbei")
                 .phorikKandidat(desc, gameObjectId));
         alt.add(
                 neuerSatz(PARAGRAPH,
-                        anaphOderDesc.nom() +
+                        anaphOderDesc.nomStr() +
                                 " kommt dir entgegen und geht an dir vorbei")
                         .phorikKandidat(desc, gameObjectId));
         alt.add(
                 neuerSatz(PARAGRAPH,
-                        anaphOderDesc.nom() +
+                        anaphOderDesc.nomStr() +
                                 " kommt auf dich zu und geht an dir vorbei")
                         .phorikKandidat(desc, gameObjectId)
                         .beendet(PARAGRAPH));
         alt.add(
                 neuerSatz(PARAGRAPH,
-                        anaphOderDesc.nom() +
+                        anaphOderDesc.nomStr() +
                                 " kommt auf dich zu und läuft vorbei")
                         .phorikKandidat(desc, gameObjectId)
                         .beendet(PARAGRAPH));
@@ -261,7 +261,7 @@ public class SimpleMovementNarrator implements IMovementNarrator {
             alt.add(
                     neuerSatz(PARAGRAPH,
                             "Dir kommt " +
-                                    desc.nom() +
+                                    desc.nomStr() +
                                     " entgegen und geht an dir vorbei")
                             .phorikKandidat(desc, gameObjectId)
                             .beendet(PARAGRAPH));
@@ -269,7 +269,7 @@ public class SimpleMovementNarrator implements IMovementNarrator {
             alt.add(
                     neuerSatz(PARAGRAPH,
                             "Dir kommt " +
-                                    desc.nom() +
+                                    desc.nomStr() +
                                     " entgegen und geht hinter dir davon")
                             .phorikKandidat(desc, gameObjectId)
                             .beendet(PARAGRAPH));
@@ -290,38 +290,38 @@ public class SimpleMovementNarrator implements IMovementNarrator {
 
         n.narrateAlt(noTime(),
                 neuerSatz(PARAGRAPH,
-                        anaphOderDesc.nom() +
+                        anaphOderDesc.nomStr() +
                                 " geht "
                                 + wo // "auf dem Weg "
                                 + "davon")
                         .phorikKandidat(anaphOderDesc, gameObjectId)
                         .beendet(PARAGRAPH),
                 neuerSatz(PARAGRAPH,
-                        anaphOderDesc.nom() +
+                        anaphOderDesc.nomStr() +
                                 " geht "
                                 + wo // "auf dem Weg "
                                 + "weiter")
                         .phorikKandidat(anaphOderDesc, gameObjectId)
                         .beendet(PARAGRAPH),
                 neuerSatz(PARAGRAPH,
-                        anaphOderDesc.nom() +
+                        anaphOderDesc.nomStr() +
                                 " geht weg")
                         .phorikKandidat(anaphOderDesc, gameObjectId)
                         .beendet(PARAGRAPH),
                 // IDEA: "X geht seines / ihres Wegs" - Possessivartikel vor Genitiv!
                 // IDEA: "X geht seiner / ihrer Wege" - Possessivartikel vor Genitiv!
                 neuerSatz(PARAGRAPH,
-                        anaphOderDesc.nom() +
+                        anaphOderDesc.nomStr() +
                                 " geht fort")
                         .phorikKandidat(anaphOderDesc, gameObjectId)
                         .beendet(PARAGRAPH),
                 neuerSatz(PARAGRAPH,
-                        anaphOderDesc.nom() +
+                        anaphOderDesc.nomStr() +
                                 " läuft vorbei")
                         .phorikKandidat(anaphOderDesc, gameObjectId)
                         .beendet(PARAGRAPH),
                 neuerSatz(PARAGRAPH,
-                        anaphOderDesc.nom() +
+                        anaphOderDesc.nomStr() +
                                 " läuft weiter")
                         .phorikKandidat(anaphOderDesc, gameObjectId)
                         .beendet(PARAGRAPH)
@@ -388,32 +388,32 @@ public class SimpleMovementNarrator implements IMovementNarrator {
         final ImmutableCollection.Builder<AbstractDescription<?>> alt = ImmutableList.builder();
 
         alt.add(neuerSatz(PARAGRAPH,
-                anaphOderDesc.nom() +
+                anaphOderDesc.nomStr() +
                         " kommt dir "
                         + wo
                         + "hinterher")
                 .phorikKandidat(desc, gameObjectId)
                 .beendet(PARAGRAPH));
         alt.add(neuerSatz(PARAGRAPH,
-                anaphOderDesc.nom() +
+                anaphOderDesc.nomStr() +
                         " kommt dir hinterher")
                 .phorikKandidat(desc, gameObjectId)
                 .beendet(PARAGRAPH));
         alt.add(
                 neuerSatz(PARAGRAPH,
-                        anaphOderDesc.nom() +
+                        anaphOderDesc.nomStr() +
                                 " kommt hinter dir her")
                         .phorikKandidat(desc, gameObjectId)
                         .beendet(PARAGRAPH));
         alt.add(
                 neuerSatz(PARAGRAPH,
-                        anaphOderDesc.nom() +
+                        anaphOderDesc.nomStr() +
                                 " kommt dir hinterhergegangen")
                         .phorikKandidat(desc, gameObjectId)
                         .beendet(PARAGRAPH));
         alt.add(
                 neuerSatz(PARAGRAPH,
-                        anaphOderDesc.nom() +
+                        anaphOderDesc.nomStr() +
                                 " ist dir nachgekommen")
                         .phorikKandidat(desc, gameObjectId)
                         .beendet(PARAGRAPH));
@@ -422,7 +422,7 @@ public class SimpleMovementNarrator implements IMovementNarrator {
             alt.add(
                     neuerSatz(PARAGRAPH,
                             "Hinter dir kommt " +
-                                    desc.nom() +
+                                    desc.nomStr() +
                                     " gegangen")
                             .phorikKandidat(desc, gameObjectId)
                             .beendet(PARAGRAPH));
@@ -460,7 +460,7 @@ public class SimpleMovementNarrator implements IMovementNarrator {
         final ImmutableCollection.Builder<AbstractDescription<?>> alt = ImmutableList.builder();
 
 
-        alt.add(neuerSatz(desc.nom() + " kommt dir entgegen")
+        alt.add(neuerSatz(desc.nomStr() + " kommt dir entgegen")
                 .phorikKandidat(desc, gameObjectId)
                 .beendet(PARAGRAPH));
 
@@ -479,13 +479,13 @@ public class SimpleMovementNarrator implements IMovementNarrator {
 
         final ImmutableCollection.Builder<AbstractDescription<?>> alt = ImmutableList.builder();
 
-        alt.add(neuerSatz(anaphOderDesc.nom()
+        alt.add(neuerSatz(anaphOderDesc.nomStr()
                 + " kommt daher")
                 .phorikKandidat(desc, gameObjectId)
                 .beendet(PARAGRAPH));
 
         if (spatialConnectionMovingGO != null) {
-            alt.add(neuerSatz(anaphOderDesc.nom()
+            alt.add(neuerSatz(anaphOderDesc.nomStr()
                     + " kommt "
                     + spatialConnectionMovingGO.getWo() // "auf dem Pfad "
                     + " daher")
@@ -497,7 +497,7 @@ public class SimpleMovementNarrator implements IMovementNarrator {
             if (spatialConnectionMovingGO != null) {
                 alt.add(neuerSatz(spatialConnectionMovingGO.getWo() // "auf dem Pfad "
                         + " kommt " +
-                        desc.nom() +
+                        desc.nomStr() +
                         " gegangen")
                         .phorikKandidat(desc, gameObjectId)
                         .beendet(PARAGRAPH));
@@ -505,14 +505,14 @@ public class SimpleMovementNarrator implements IMovementNarrator {
 
             alt.add(
                     neuerSatz("Es kommt dir " +
-                            desc.nom() +
+                            desc.nomStr() +
                             " entgegen")
                             .phorikKandidat(desc, gameObjectId)
                             .beendet(PARAGRAPH));
             alt.add(
                     neuerSatz(PARAGRAPH,
                             "Dir kommt " +
-                                    desc.nom() +
+                                    desc.nomStr() +
                                     " entgegen")
                             .phorikKandidat(desc, gameObjectId)
                             .beendet(PARAGRAPH));
@@ -534,18 +534,18 @@ public class SimpleMovementNarrator implements IMovementNarrator {
                 neuerSatz(PARAGRAPH,
                         wo // "auf dem Weg "
                                 + " kommt " +
-                                desc.nom())
+                                desc.nomStr())
                         .beendet(PARAGRAPH)
                         .phorikKandidat(desc, gameObjectId),
                 neuerSatz(PARAGRAPH,
-                        desc.nom()
+                        desc.nomStr()
                                 + " kommt "
                                 + wo // "auf dem Weg "
                                 + "daher")
                         .beendet(PARAGRAPH)
                         .phorikKandidat(desc, gameObjectId),
                 neuerSatz(PARAGRAPH,
-                        desc.nom()
+                        desc.nomStr()
                                 + " kommt "
                                 + wo // "auf dem Weg "
                                 + "gegangen")

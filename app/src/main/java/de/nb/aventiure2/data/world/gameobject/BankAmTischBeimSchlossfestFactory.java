@@ -50,9 +50,11 @@ class BankAmTischBeimSchlossfestFactory {
     private GameObject create(final GameObjectId id) {
         final SimpleDescriptionComp descriptionComp =
                 new SimpleDescriptionComp(id,
-                        np(M, INDEF, "Platz auf einer Bank an einem Tisch"),
-                        np(M, INDEF, "Platz auf einer Bank an einem Tisch"),
-                        np(M, INDEF, "Platz an einem Tisch"));
+                        np(M, INDEF, "Platz auf einer "
+                                + "Bank an einem Tisch", id),
+                        np(M, INDEF, "Platz auf einer "
+                                + "Bank an einem Tisch", id),
+                        np(M, INDEF, "Platz an einem Tisch", id));
 
         final LocationComp locationComp = new LocationComp(
                 id, db, world,

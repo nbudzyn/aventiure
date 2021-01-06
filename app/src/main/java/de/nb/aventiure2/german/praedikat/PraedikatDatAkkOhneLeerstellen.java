@@ -19,7 +19,6 @@ import de.nb.aventiure2.german.base.Person;
 import de.nb.aventiure2.german.base.SubstantivischePhrase;
 import de.nb.aventiure2.german.base.SubstantivischePhraseOderReflexivpronomen;
 
-import static de.nb.aventiure2.german.base.Konstituente.k;
 import static de.nb.aventiure2.german.base.Konstituentenfolge.kf;
 
 /**
@@ -156,11 +155,11 @@ public class PraedikatDatAkkOhneLeerstellen
                 getAdverbialeAngabeSkopusSatzDescriptionFuerMittelfeld(personSubjekt,
                         numerusSubjekt),
                 // "aus einer Laune heraus"
-                dat.dat(), // "dem Frosch"
+                dat.datK(), // "dem Frosch"
                 kf(getModalpartikeln()), // "halt"
                 getAdverbialeAngabeSkopusVerbAllgDescriptionFuerMittelfeld(personSubjekt,
                         numerusSubjekt), // "auf deiner Flöte"
-                akk.akk()); // "ein Lied"
+                akk.akkK()); // "ein Lied"
     }
 
     @Override
@@ -204,11 +203,11 @@ public class PraedikatDatAkkOhneLeerstellen
     @Override
     public Konstituente getErstesInterrogativpronomen() {
         if (dat instanceof Interrogativpronomen) {
-            return k(dat.dat());
+            return dat.datK();
         }
 
         if (akk instanceof Interrogativpronomen) {
-            return k(akk.akk());
+            return akk.akkK();
         }
 
         return null;

@@ -1,14 +1,25 @@
 package de.nb.aventiure2.german.base;
 
+import androidx.annotation.Nullable;
+
 import java.util.Objects;
 
 public abstract class SubstantivischesPronomenMitVollerFlexionsreihe
         extends SubstantivischePhrase {
     private final Flexionsreihe flexionsreihe;
 
-    public SubstantivischesPronomenMitVollerFlexionsreihe(final NumerusGenus numerusGenus,
-                                                          final Flexionsreihe flexionsreihe) {
-        super(numerusGenus);
+    /**
+     * Erzeugt ein substantivisches Pronomen mit voller Flexionsreihe ohne Bezugsobjekt.
+     */
+    SubstantivischesPronomenMitVollerFlexionsreihe(final NumerusGenus numerusGenus,
+                                                   final Flexionsreihe flexionsreihe) {
+        this(numerusGenus, flexionsreihe, null);
+    }
+
+    SubstantivischesPronomenMitVollerFlexionsreihe(final NumerusGenus numerusGenus,
+                                                   final Flexionsreihe flexionsreihe,
+                                                   @Nullable final IBezugsobjekt bezugsobjekt) {
+        super(numerusGenus, bezugsobjekt);
         this.flexionsreihe = flexionsreihe;
     }
 
@@ -17,32 +28,36 @@ public abstract class SubstantivischesPronomenMitVollerFlexionsreihe
         return false;
     }
 
-    protected boolean isWortform(final String string) {
+    boolean isWortform(final String string) {
         return flexionsreihe.hasWortform(string);
     }
 
     @Override
-    public String artikellosDat() {
-        return dat();
+    public String artikellosDatStr() {
+        return datStr();
     }
 
     @Override
-    public String nom() {
+    public String nomStr() {
         return flexionsreihe.nom();
     }
 
     @Override
-    public String dat() {
+    public String datStr() {
         return flexionsreihe.dat();
     }
 
     @Override
-    public String akk() {
+    public String akkStr() {
         return flexionsreihe.akk();
     }
 
+    Flexionsreihe getFlexionsreihe() {
+        return flexionsreihe;
+    }
+
     @Override
-    public boolean equals(final Object o) {
+    public boolean equals(@Nullable final Object o) {
         if (this == o) {
             return true;
         }

@@ -75,15 +75,15 @@ public class RapunzelsZauberinTalkingComp extends AbstractTalkingComp {
 
         n.narrateAlt(secs(10),
                 neuerSatz(PARAGRAPH, "„Wohin des Wegs, gute Frau“, sprichst du " +
-                        anaphOderDesc.akk() +
+                        anaphOderDesc.akkStr() +
                         " an. „Was geht es dich an?“, ist "
-                        + anaphOderDesc.possArt().vor(F).nom() // "ihre"
+                        + anaphOderDesc.possArt().vor(F).nomStr() // "ihre"
                         + " abweisende Antwort")
                         .phorikKandidat(anaphOderDesc, getGameObjectId()),
                 neuerSatz("„Ihr habt es wohl eilig?“, sprichst du " +
-                        anaphOderDesc.akk() +
+                        anaphOderDesc.akkStr() +
                         " an. „So ist es“, antwortet "
-                        + anaphOderDesc.persPron().nom()
+                        + anaphOderDesc.persPron().nomStr()
                         + " dir")
                         .phorikKandidat(anaphOderDesc, getGameObjectId())
         );

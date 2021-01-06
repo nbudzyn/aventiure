@@ -55,7 +55,10 @@ public class TextDescription extends AbstractDescription<TextDescription> {
 
     TextDescription(final StructuralElement startsNew,
                     final Wortfolge wortfolge) {
-        this(new DescriptionParams(startsNew),
+        this(new DescriptionParams(startsNew, wortfolge.getPhorikKandidat()),
+                // FIXME wegen getString() kann wohl ein woertlicheRede... ausfallen.
+                //  Richiger wäre wohl hier GermanUtil.joinToString()
+                //  Parallelstellen?
                 wortfolge.getString(), wortfolge.woertlicheRedeNochOffen(),
                 wortfolge.kommaStehtAus());
     }
@@ -159,7 +162,8 @@ public class TextDescription extends AbstractDescription<TextDescription> {
     @CheckReturnValue
     @NonNull
     public Wortfolge toWortfolge() {
-        return w(text, woertlicheRedeNochOffen, isKommaStehtAus());
+        return w(text, woertlicheRedeNochOffen, isKommaStehtAus(),
+                copyParams().getPhorikKandidat());
     }
 
     public String getText() {

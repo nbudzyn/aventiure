@@ -310,7 +310,7 @@ public class RapunzelsZauberinReactionsComp
             final Nominalphrase desc = getDescription(true);
             n.narrate(
                     du("siehst",
-                            desc.akk()
+                            desc.akkStr()
                                     + " an den Haarflechten hinaufsteigen", mins(4)));
 
         }
@@ -347,7 +347,7 @@ public class RapunzelsZauberinReactionsComp
             n.narrate(
                     du("siehst",
                             ", wie "
-                                    + desc.nom()
+                                    + desc.nomStr()
                                     + " an den Haaren herabsteigt",
                             mins(1))
                             .komma()
@@ -366,7 +366,7 @@ public class RapunzelsZauberinReactionsComp
 
             n.narrate(
                     neuerSatz(getAnaphPersPronWennMglSonstDescription(
-                            true).nom()
+                            true).nomStr()
                             + " hat dich nicht bemerkt", noTime()));
         }
         // STORY UNTER_DEM_BETT_OBEN_IM_ALTEN_TURM
@@ -569,9 +569,9 @@ public class RapunzelsZauberinReactionsComp
             final Nominalphrase desc = getDescription(true);
             n.narrate(
                     neuerSatz(PARAGRAPH, "Als "
-                            + desc.nom()
+                            + desc.nomStr()
                             + " unten am Turm steht, ruft "
-                            + desc.persPron().nom()
+                            + desc.persPron().nomStr()
                             + " etwas. Du kannst nicht alles verstehen, aber du hörst etwas wie: "
                             + "„…lass dein Haar herunter!“", mins(1)));
         } else if (loadSC().locationComp().hasRecursiveLocation(OBEN_IM_ALTEN_TURM)) {

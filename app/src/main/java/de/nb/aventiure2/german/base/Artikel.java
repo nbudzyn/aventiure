@@ -79,17 +79,17 @@ public class Artikel implements DeklinierbarePhrase {
     }
 
     @Override
-    public String nom() {
+    public String nomStr() {
         return flexionsreihe.nom();
     }
 
     @Override
-    public String dat() {
+    public String datStr() {
         return flexionsreihe.dat();
     }
 
     @Override
-    public String akk() {
+    public String akkStr() {
         return flexionsreihe.akk();
     }
 

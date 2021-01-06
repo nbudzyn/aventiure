@@ -21,6 +21,7 @@ import static de.nb.aventiure2.data.time.AvTimeSpan.hours;
 import static de.nb.aventiure2.data.time.AvTimeSpan.mins;
 import static de.nb.aventiure2.data.time.AvTimeSpan.noTime;
 import static de.nb.aventiure2.data.time.AvTimeSpan.secs;
+import static de.nb.aventiure2.data.world.gameobject.World.*;
 import static de.nb.aventiure2.german.adjektiv.AdjektivOhneErgaenzungen.BENOMMEN;
 import static de.nb.aventiure2.german.adjektiv.AdjektivOhneErgaenzungen.ERSCHOEPFT;
 import static de.nb.aventiure2.german.adjektiv.AdjektivOhneErgaenzungen.HUNDEMUEDE;
@@ -180,7 +181,7 @@ public class MuedigkeitsData {
                 .filter(ap -> ap.isGeeignetAlsAdvAngabe(
                         // Was dafür nicht geeignet ist, ist wohl auch für kein anderes
                         // Subjekt geeignet.
-                        Personalpronomen.get(P2, M)))
+                        Personalpronomen.get(P2, M, SPIELER_CHARAKTER)))
                 .map(AdjPhrOhneLeerstellen::alsAdverbialeAngabeSkopusSatz)
                 .collect(toImmutableList());
     }
@@ -196,7 +197,7 @@ public class MuedigkeitsData {
                 .filter(ap -> ap.isGeeignetAlsAdvAngabe(
                         // Was dafür nicht geeignet ist, ist wohl auch für kein anderes
                         // Subjekt geeignet.
-                        Personalpronomen.get(P2, M)))
+                        Personalpronomen.get(P2, M, SPIELER_CHARAKTER)))
                 .map(AdjPhrOhneLeerstellen::alsAdverbialeAngabeSkopusVerbAllg)
                 .collect(toImmutableList());
     }
@@ -369,6 +370,7 @@ public class MuedigkeitsData {
                 ausschlafenEffektHaeltVorBis, temporaerMuedeBis, temporaereMinimalmuedigkeit);
     }
 
+    @NonNull
     @Override
     public String toString() {
         return "MuedigkeitsData{" +

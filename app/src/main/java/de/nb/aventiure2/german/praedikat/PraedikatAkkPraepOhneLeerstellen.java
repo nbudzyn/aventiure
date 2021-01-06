@@ -20,7 +20,6 @@ import de.nb.aventiure2.german.base.PraepositionMitKasus;
 import de.nb.aventiure2.german.base.SubstantivischePhrase;
 import de.nb.aventiure2.german.base.SubstantivischePhraseOderReflexivpronomen;
 
-import static de.nb.aventiure2.german.base.Konstituente.k;
 import static de.nb.aventiure2.german.base.Konstituentenfolge.kf;
 
 /**
@@ -149,11 +148,11 @@ public class PraedikatAkkPraepOhneLeerstellen
             return speziellesVorfeldFromSuper;
         }
 
-        final String akk = this.akk.akk();
-        if (!"es".equals(akk)) {
+        final Konstituente akk = this.akk.akkK();
+        if (!"es".equals(akk.getString())) {
             // Wenn "es" ein Objekt ist, darf es nicht im Vorfeld stehen.
             // (Eisenberg Der Satz 5.4.2)
-            return k(akk); // "das Teil"
+            return akk; // "das Teil"
         }
 
         return null;
@@ -166,13 +165,13 @@ public class PraedikatAkkPraepOhneLeerstellen
                 getAdverbialeAngabeSkopusSatzDescriptionFuerMittelfeld(personSubjekt,
                         numerusSubjekt),
                 // "aus einer Laune heraus"
-                akk.akk(), // "das Teil"
+                akk.akkK(), // "das Teil"
                 kf(getModalpartikeln()), // "besser doch"
                 getAdverbialeAngabeSkopusVerbAllgDescriptionFuerMittelfeld(personSubjekt,
                         numerusSubjekt), // "erneut"
                 getAdverbialeAngabeSkopusVerbWohinWoherDescription(personSubjekt, numerusSubjekt),
                 // "anch dem Weg"
-                praep.im(praepositionMitKasus)); // "aus der La main"
+                praep.imK(praepositionMitKasus)); // "aus der La main"
     }
 
     @Nullable
@@ -215,11 +214,11 @@ public class PraedikatAkkPraepOhneLeerstellen
     @Override
     public Konstituente getErstesInterrogativpronomen() {
         if (akk instanceof Interrogativpronomen) {
-            return k(akk.akk());
+            return akk.akkK();
         }
 
         if (praep instanceof Interrogativpronomen) {
-            return k(praep.im(praepositionMitKasus));
+            return praep.imK(praepositionMitKasus);
         }
 
         return null;

@@ -14,13 +14,14 @@ import static de.nb.aventiure2.german.base.Person.P2;
 import static de.nb.aventiure2.german.base.Person.P3;
 import static de.nb.aventiure2.german.base.Relativpronomen.Typ.REGEL;
 import static de.nb.aventiure2.german.base.Relativpronomen.Typ.WERWAS;
+import static java.util.Objects.requireNonNull;
 
 public class Relativpronomen extends SubstantivischesPronomenMitVollerFlexionsreihe {
     public enum Typ {
         // "das Kind, das"
         REGEL,
         // "alles, was"
-        WERWAS;
+        WERWAS
     }
 
 
@@ -38,7 +39,7 @@ public class Relativpronomen extends SubstantivischesPronomenMitVollerFlexionsre
         all.put(REGEL, regel);
 
         // "alles, was"
-        all.put(WERWAS, ImmutableMap.of(P3, buildWerWas(regel.get(P3))));
+        all.put(WERWAS, ImmutableMap.of(P3, buildWerWas(requireNonNull(regel.get(P3)))));
 
         ALL = all.build();
     }
@@ -78,13 +79,13 @@ public class Relativpronomen extends SubstantivischesPronomenMitVollerFlexionsre
                         fr("wer", "wem", "wen")),
                 F,
                 // Ersatz
-                regelP3.get(F),
+                requireNonNull(regelP3.get(F)),
                 N, new Relativpronomen(P3, N,
                         fr("was",
                                 // Ersatz
-                                regelP3.get(N).dat())),
+                                requireNonNull(regelP3.get(N)).datStr())),
                 // Ersatz
-                PL_MFN, regelP3.get(PL_MFN));
+                PL_MFN, requireNonNull(regelP3.get(PL_MFN)));
     }
 
     private final Person person;
@@ -97,13 +98,13 @@ public class Relativpronomen extends SubstantivischesPronomenMitVollerFlexionsre
             final String nachgestelltesPersonalpronomenNomPl) {
         return ImmutableMap.of(
                 M, new Relativpronomen(person, M,
-                        regelP3.get(M), nachgestelltesPersonalpronomenNomSg),
+                        requireNonNull(regelP3.get(M)), nachgestelltesPersonalpronomenNomSg),
                 F, new Relativpronomen(person, F,
-                        regelP3.get(F), nachgestelltesPersonalpronomenNomSg),
+                        requireNonNull(regelP3.get(F)), nachgestelltesPersonalpronomenNomSg),
                 N, new Relativpronomen(person, N,
-                        regelP3.get(M), nachgestelltesPersonalpronomenNomSg),
+                        requireNonNull(regelP3.get(M)), nachgestelltesPersonalpronomenNomSg),
                 PL_MFN, new Relativpronomen(person, PL_MFN,
-                        regelP3.get(PL_MFN), nachgestelltesPersonalpronomenNomPl)
+                        requireNonNull(regelP3.get(PL_MFN)), nachgestelltesPersonalpronomenNomPl)
         );
     }
 
@@ -112,20 +113,36 @@ public class Relativpronomen extends SubstantivischesPronomenMitVollerFlexionsre
         return get(WERWAS, person, numerusGenus);
     }
 
+    /**
+     * Gibt ein Relativpronomen ohne Bezugsobjekt zurück.
+     */
     public static Relativpronomen get(final Person person, final NumerusGenus numerusGenus) {
-        return get(REGEL, person, numerusGenus);
+        return get(person, numerusGenus, null);
+    }
+
+    public static Relativpronomen get(final Person person, final NumerusGenus numerusGenus,
+                                      @Nullable final IBezugsobjekt bezugsobjekt) {
+        return get(REGEL, person, numerusGenus, bezugsobjekt);
     }
 
     public static Relativpronomen get(final Typ typ, final Person person,
                                       final NumerusGenus numerusGenus) {
-        @Nullable final Relativpronomen res = ALL.get(REGEL).get(person).get(numerusGenus);
-        if (res == null) {
+        return get(typ, person, numerusGenus, null);
+    }
+
+    public static Relativpronomen get(final Typ typ, final Person person,
+                                      final NumerusGenus numerusGenus,
+                                      @Nullable final IBezugsobjekt bezugsobjekt) {
+        @Nullable Relativpronomen ohneBezugsobjekt = requireNonNull(
+                requireNonNull(ALL.get(typ)).get(person)).get(numerusGenus);
+        if (ohneBezugsobjekt == null) {
             // P1 und P2 sind immer zählbar, also kein *"ich, was" oder "*"ich, der was"
             // Ersatz
-            return get(REGEL, person, numerusGenus);
+            ohneBezugsobjekt = get(REGEL, person, numerusGenus, bezugsobjekt);
         }
 
-        return res;
+
+        return requireNonNull(ohneBezugsobjekt).mitBezugsobjekt(bezugsobjekt);
     }
 
     private Relativpronomen(final Person person, final NumerusGenus numerusGenus,
@@ -133,24 +150,42 @@ public class Relativpronomen extends SubstantivischesPronomenMitVollerFlexionsre
                             final String nachgestelltesPersonalpronomenNomPl) {
         this(person, numerusGenus, fr(
                 // "[ich, ]der ich", "[wir, ]die wir"
-                basis.nom() + " " + nachgestelltesPersonalpronomenNomPl,
+                basis.nomStr() + " " + nachgestelltesPersonalpronomenNomPl,
                 // "[ich, ]dem"
-                basis.dat(),
+                basis.datStr(),
                 // "[ich, ]den"
-                basis.akk()));
+                basis.akkStr()));
+    }
+
+    /**
+     * Erzeugt ein Relativpronomen ohne Bezugsobjekt.
+     */
+    private Relativpronomen(final Person person,
+                            final NumerusGenus numerusGenus,
+                            final Flexionsreihe flexionsreihe) {
+        this(person, numerusGenus, flexionsreihe, null);
     }
 
     private Relativpronomen(final Person person,
                             final NumerusGenus numerusGenus,
-                            final Flexionsreihe flexionsreihe) {
-        super(numerusGenus, flexionsreihe);
+                            final Flexionsreihe flexionsreihe,
+                            @Nullable final IBezugsobjekt bezugsobjekt) {
+        super(numerusGenus, flexionsreihe, bezugsobjekt);
         this.person = person;
+    }
+
+    private Relativpronomen mitBezugsobjekt(@Nullable final IBezugsobjekt bezugsobjekt) {
+        if (bezugsobjekt == null) {
+            return this;
+        }
+
+        return new Relativpronomen(person, getNumerusGenus(), getFlexionsreihe(), bezugsobjekt);
     }
 
     @Override
     public Personalpronomen persPron() {
         // "Das Haus, das ich gesehen habe, - es ist ein schönes Haus."
-        return Personalpronomen.get(person, getNumerusGenus());
+        return Personalpronomen.get(person, getNumerusGenus(), getBezugsobjekt());
     }
 
     @Override

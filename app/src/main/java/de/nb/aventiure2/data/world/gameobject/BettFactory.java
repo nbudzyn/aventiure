@@ -49,9 +49,9 @@ class BettFactory {
     private GameObject create(final GameObjectId id, final GameObjectId locationId) {
         final SimpleDescriptionComp descriptionComp =
                 new SimpleDescriptionComp(id,
-                        np(N, INDEF, "Bettgestell"),
-                        np(N, DEF, "Bettgestell"),
-                        np(N, DEF, "Bettgestell"));
+                        np(N, INDEF, "Bettgestell", id),
+                        np(N, DEF, "Bettgestell", id),
+                        np(N, DEF, "Bettgestell", id));
 
         final LocationComp locationComp = new LocationComp(
                 id, db, world, locationId,

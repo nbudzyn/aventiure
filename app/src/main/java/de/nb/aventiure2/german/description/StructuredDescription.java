@@ -11,6 +11,7 @@ import javax.annotation.CheckReturnValue;
 import de.nb.aventiure2.german.base.Konstituente;
 import de.nb.aventiure2.german.base.Numerus;
 import de.nb.aventiure2.german.base.Person;
+import de.nb.aventiure2.german.base.PhorikKandidat;
 import de.nb.aventiure2.german.base.StructuralElement;
 import de.nb.aventiure2.german.base.Wortfolge;
 import de.nb.aventiure2.german.praedikat.AdverbialeAngabeSkopusSatz;
@@ -30,8 +31,16 @@ public class StructuredDescription extends AbstractFlexibleDescription<Structure
 
     StructuredDescription(final StructuralElement startsNew,
                           final Satz satz) {
-        super(startsNew);
+        super(startsNew,
+                // Das hier ist eine automatische Vorbelegung auf Basis des Satzes.
+                // Bei Bedarf kann man das in den Params noch überschreiben.
+                guessPhorikKandidat(satz));
         this.satz = satz;
+    }
+
+    private static PhorikKandidat guessPhorikKandidat(final Satz satz) {
+        return Wortfolge.joinToNullWortfolge(satz.getVerbzweitsatzStandard())
+                .getPhorikKandidat();
     }
 
     @CheckReturnValue

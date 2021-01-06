@@ -4,22 +4,22 @@ package de.nb.aventiure2.german.base;
  * Eine Phrase, die dekliniert werden kann.
  */
 public interface DeklinierbarePhrase {
-    default String im(final Kasus kasus) {
+    default String imStr(final Kasus kasus) {
         switch (kasus) {
             case NOM:
-                return nom();
+                return nomStr();
             case DAT:
-                return dat();
+                return datStr();
             case AKK:
-                return akk();
+                return akkStr();
             default:
                 throw new IllegalArgumentException("Unexpected kasus: " + kasus);
         }
     }
 
-    public abstract String nom();
+    String nomStr();
 
-    public abstract String dat();
+    String datStr();
 
-    public abstract String akk();
+    String akkStr();
 }

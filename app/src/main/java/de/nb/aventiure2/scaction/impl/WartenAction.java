@@ -121,7 +121,7 @@ public class WartenAction<LIVGO extends IDescribableGO & ILocatableGO & ILivingB
                             .phorikKandidat(anaph, erwartet.getId()),
                     du("beginnst",
                             "auf "
-                                    + anaph.akk()
+                                    + anaph.akkStr()
                                     + " zu warten")
                             .dann()
                             .phorikKandidat(anaph, erwartet.getId()));

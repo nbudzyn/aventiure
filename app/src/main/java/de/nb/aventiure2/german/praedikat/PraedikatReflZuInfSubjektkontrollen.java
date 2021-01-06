@@ -171,7 +171,7 @@ public class PraedikatReflZuInfSubjektkontrollen
                 getAdverbialeAngabeSkopusVerbAllg();
 
         return Konstituentenfolge.joinToKonstituentenfolge(
-                Reflexivpronomen.get(personSubjekt, numerusSubjekt).im(kasus), // "dich"
+                Reflexivpronomen.get(personSubjekt, numerusSubjekt).imK(kasus), // "dich"
                 adverbialeAngabeSkopusSatz != null &&
                         adverbialeAngabeSkopusSatz.imMittelfeldErlaubt() ?
                         adverbialeAngabeSkopusSatz.getDescription(personSubjekt, numerusSubjekt) :

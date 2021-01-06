@@ -14,6 +14,7 @@ import de.nb.aventiure2.german.praedikat.PraedikatOhneLeerstellen;
 import de.nb.aventiure2.german.satz.Satz;
 
 import static com.google.common.base.Preconditions.checkArgument;
+import static de.nb.aventiure2.data.world.gameobject.World.*;
 import static de.nb.aventiure2.german.base.NumerusGenus.M;
 import static de.nb.aventiure2.german.base.Person.P2;
 import static de.nb.aventiure2.german.base.StructuralElement.PARAGRAPH;
@@ -217,7 +218,8 @@ public class DescriptionBuilder {
             @Nullable final String remainder,
             final AvTimeSpan timeElapsed,
             @Nullable final String counterIdIncrementedIfTextIsNarrated) {
-        return du(verb, w(remainder), timeElapsed, counterIdIncrementedIfTextIsNarrated);
+        return du(verb, w(remainder), timeElapsed,
+                counterIdIncrementedIfTextIsNarrated);
     }
 
     @CheckReturnValue
@@ -364,6 +366,13 @@ public class DescriptionBuilder {
     @NonNull
     @CheckReturnValue
     public static SimpleDuDescription du(final StructuralElement startsNew, final String verb,
+                                         @Nullable final Wortfolge remainder) {
+        return du(startsNew, verb, remainder, (String) null);
+    }
+
+    @NonNull
+    @CheckReturnValue
+    public static SimpleDuDescription du(final StructuralElement startsNew, final String verb,
                                          @Nullable final String remainder,
                                          @Nullable final String vorfeldSatzglied) {
         return du(startsNew, verb, w(remainder), vorfeldSatzglied);
@@ -379,7 +388,8 @@ public class DescriptionBuilder {
                 remainder != null ? remainder.getString() : null,
                 vorfeldSatzglied,
                 remainder != null && remainder.woertlicheRedeNochOffen(),
-                remainder != null && remainder.kommaStehtAus());
+                remainder != null && remainder.kommaStehtAus(),
+                remainder != null ? remainder.getPhorikKandidat() : null);
     }
 
     @CheckReturnValue
@@ -441,7 +451,7 @@ public class DescriptionBuilder {
                         // Es ist die Verantwortung des Aufrufers, keine
                         // Sätze mit Konstruktionen wie "Du, der du" zu erzeugen, die
                         // weibliche Adressaten ("du, die du") ausschließen.
-                        M)));
+                        M, SPIELER_CHARAKTER)));
     }
 
     @NonNull

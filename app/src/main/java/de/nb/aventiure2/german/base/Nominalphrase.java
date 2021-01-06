@@ -47,40 +47,85 @@ public class Nominalphrase
     public static final Nominalphrase WUT_OHNE_ART =
             np(F, null, "Wut");
 
+    /**
+     * Erzeugt eine Nominalphrase ohne Bezugsobjekt.
+     */
     public static Nominalphrase np(final NumerusGenus numerusGenus,
                                    @Nullable final Artikel.Typ artikelTyp,
                                    final String nominalNominativDativUndAkkusativ) {
+        return np(numerusGenus, artikelTyp, nominalNominativDativUndAkkusativ,
+                (IBezugsobjekt) null);
+    }
+
+    public static Nominalphrase np(final NumerusGenus numerusGenus,
+                                   @Nullable final Artikel.Typ artikelTyp,
+                                   final String nominalNominativDativUndAkkusativ,
+                                   @Nullable final IBezugsobjekt bezugsobjekt) {
         return np(numerusGenus, artikelTyp,
-                nominalNominativDativUndAkkusativ, nominalNominativDativUndAkkusativ);
+                nominalNominativDativUndAkkusativ, nominalNominativDativUndAkkusativ, bezugsobjekt);
+    }
+
+    /**
+     * Erzeugt eine Nominalphrase ohne Bezugsobjekt.
+     */
+    public static Nominalphrase np(final NumerusGenus numerusGenus,
+                                   @Nullable final Artikel.Typ artikelTyp,
+                                   final String nominalNominativUndAkkusativ,
+                                   final String nominalDativ) {
+        return np(numerusGenus, artikelTyp, nominalNominativUndAkkusativ, nominalDativ,
+                (IBezugsobjekt) null);
     }
 
     public static Nominalphrase np(final NumerusGenus numerusGenus,
                                    @Nullable final Artikel.Typ artikelTyp,
                                    final String nominalNominativUndAkkusativ,
-                                   final String nominalDativ) {
+                                   final String nominalDativ,
+                                   @Nullable final IBezugsobjekt bezugsobjekt) {
         return np(numerusGenus, artikelTyp,
-                nominalNominativUndAkkusativ, nominalDativ, nominalNominativUndAkkusativ);
+                nominalNominativUndAkkusativ, nominalDativ, nominalNominativUndAkkusativ,
+                bezugsobjekt);
+    }
+
+    /**
+     * Erzeugt eine Nominalphrase ohne Bezugsobjekt.
+     */
+    public static Nominalphrase np(final NumerusGenus numerusGenus,
+                                   @Nullable final Artikel.Typ artikelTyp,
+                                   final String nominalNominativ,
+                                   final String nominalDativ,
+                                   final String nominalAkkusativ) {
+        return np(numerusGenus, artikelTyp, nominalNominativ, nominalDativ, nominalAkkusativ,
+                null);
     }
 
     public static Nominalphrase np(final NumerusGenus numerusGenus,
                                    @Nullable final Artikel.Typ artikelTyp,
                                    final String nominalNominativ,
                                    final String nominalDativ,
-                                   final String nominalAkkusativ) {
+                                   final String nominalAkkusativ,
+                                   @Nullable final IBezugsobjekt bezugsobjekt) {
         return np(numerusGenus, artikelTyp,
-                fr(nominalNominativ, nominalDativ, nominalAkkusativ));
+                fr(nominalNominativ, nominalDativ, nominalAkkusativ), bezugsobjekt);
     }
 
     public static Nominalphrase np(final NumerusGenus numerusGenus,
                                    @Nullable final Artikel.Typ artikelTyp,
                                    final Flexionsreihe flexionsreiheArtikellos) {
-        return new Nominalphrase(numerusGenus, artikelTyp, flexionsreiheArtikellos);
+        return np(numerusGenus, artikelTyp, flexionsreiheArtikellos, null);
+    }
+
+    public static Nominalphrase np(final NumerusGenus numerusGenus,
+                                   @Nullable final Artikel.Typ artikelTyp,
+                                   final Flexionsreihe flexionsreiheArtikellos,
+                                   @Nullable final IBezugsobjekt bezugsobjekt) {
+        return new Nominalphrase(numerusGenus, artikelTyp, flexionsreiheArtikellos, bezugsobjekt);
     }
 
     public Nominalphrase(final NumerusGenus numerusGenus,
                          @Nullable final Artikel.Typ artikelTyp,
-                         final Flexionsreihe flexionsreiheArtikellos) {
-        super(numerusGenus);
+                         final Flexionsreihe flexionsreiheArtikellos,
+                         @Nullable final IBezugsobjekt bezugsobjekt) {
+        super(numerusGenus, bezugsobjekt);
         this.artikelTyp = artikelTyp;
         this.flexionsreiheArtikellos = flexionsreiheArtikellos;
     }
@@ -95,41 +140,41 @@ public class Nominalphrase
     }
 
     @Override
-    public String nom() {
+    public String nomStr() {
         @Nullable final Artikel artikel = getArtikel();
 
         if (artikel == null) {
             return flexionsreiheArtikellos.nom();
         }
 
-        return joinToString(artikel.nom(), flexionsreiheArtikellos.nom());
+        return joinToString(artikel.nomStr(), flexionsreiheArtikellos.nom());
     }
 
     @Override
-    public String dat() {
+    public String datStr() {
         @Nullable final Artikel artikel = getArtikel();
 
         if (artikel == null) {
-            return artikellosDat();
+            return artikellosDatStr();
         }
 
-        return joinToString(artikel.dat(), flexionsreiheArtikellos.dat());
+        return joinToString(artikel.datStr(), flexionsreiheArtikellos.dat());
     }
 
     @Override
-    public String artikellosDat() {
+    public String artikellosDatStr() {
         return flexionsreiheArtikellos.dat();
     }
 
     @Override
-    public String akk() {
+    public String akkStr() {
         @Nullable final Artikel artikel = getArtikel();
 
         if (artikel == null) {
             return flexionsreiheArtikellos.akk();
         }
 
-        return joinToString(artikel.akk(), flexionsreiheArtikellos.akk());
+        return joinToString(artikel.akkStr(), flexionsreiheArtikellos.akk());
     }
 
     @Nullable
@@ -139,7 +184,7 @@ public class Nominalphrase
 
     @Override
     public Personalpronomen persPron() {
-        return Personalpronomen.get(P3, getNumerusGenus());
+        return Personalpronomen.get(P3, getNumerusGenus(), getBezugsobjekt());
     }
 
     @Override
@@ -154,7 +199,7 @@ public class Nominalphrase
 
     @Override
     public Relativpronomen relPron() {
-        return Relativpronomen.get(P3, getNumerusGenus());
+        return Relativpronomen.get(P3, getNumerusGenus(), getBezugsobjekt());
     }
 
     @Override

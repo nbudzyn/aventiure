@@ -233,7 +233,8 @@ public abstract class AvDatabase extends RoomDatabase {
             final List<? extends IDescribableGO> objectsInRoom) {
         final StringBuilder res = new StringBuilder();
         for (int i = 0; i < objectsInRoom.size(); i++) {
-            res.append(objectsInRoom.get(i).descriptionComp().getDescriptionAtFirstSight().nom());
+            res.append(
+                    objectsInRoom.get(i).descriptionComp().getDescriptionAtFirstSight().nomStr());
             if (i == objectsInRoom.size() - 2) {
                 // one before the last
                 res.append(" und ");

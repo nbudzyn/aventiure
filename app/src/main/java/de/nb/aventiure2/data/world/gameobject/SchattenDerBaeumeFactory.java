@@ -54,9 +54,9 @@ class SchattenDerBaeumeFactory {
     private GameObject create(final GameObjectId id, final GameObjectId locationId) {
         final SimpleDescriptionComp descriptionComp =
                 new SimpleDescriptionComp(id,
-                        np(M, DEF, "Schatten der Bäume"),
-                        np(M, DEF, "Schatten der Bäume"),
-                        np(M, DEF, "Schatten"));
+                        np(M, DEF, "Schatten der Bäume", id),
+                        np(M, DEF, "Schatten der Bäume", id),
+                        np(M, DEF, "Schatten", id));
 
         final LocationComp locationComp = new LocationComp(
                 id, db, world, locationId,

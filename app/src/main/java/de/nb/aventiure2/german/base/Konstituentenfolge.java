@@ -157,7 +157,7 @@ public class Konstituentenfolge implements Iterable<Konstituente> {
                 for (final Konstituentenfolge alternativePartKonstituentenfolge : alternativePartKonstituentenfolgen) {
                     if (alternativePartKonstituentenfolge != null) {
                         final ImmutableList.Builder<Konstituente> ergaenzteKonstituentenfolge =
-                                ImmutableList.<Konstituente>builder();
+                                ImmutableList.builder();
                         ergaenzteKonstituentenfolge.addAll(alternative.build());
                         ergaenzteKonstituentenfolge
                                 .addAll(alternativePartKonstituentenfolge.konstituenten);
@@ -241,7 +241,15 @@ public class Konstituentenfolge implements Iterable<Konstituente> {
      * @return Eine einzige Konstituente- ggf. null
      */
     public Konstituente joinToNullSingleKonstituente() {
-        return Konstituente.k(Wortfolge.joinToWortfolge(this))
+        final Wortfolge wortfolge = Wortfolge.joinToWortfolge(this);
+
+        final NumerusGenus kannAlsBezugsobjektVerstandenWerdenFuer =
+                wortfolge.getPhorikKandidat() != null ?
+                        wortfolge.getPhorikKandidat().getNumerusGenus() :
+                        Wortfolge.
+                                calcKannAlsBezugsobjektVerstandenWerdenFuer(this);
+        return Konstituente.k(wortfolge,
+                kannAlsBezugsobjektVerstandenWerdenFuer)
                 .withVorkommaNoetig(vorkommaNoetig());
     }
 
@@ -338,6 +346,13 @@ public class Konstituentenfolge implements Iterable<Konstituente> {
                         .addAll(konstituenten.subList(1, konstituenten.size()))
                         .build());
     }
+
+    @Nullable
+    public static PhorikKandidat getPhorikKandidat() {
+        // FIXME
+        return null;
+    }
+
 
     private Konstituentenfolge reverse() {
         return new Konstituentenfolge(Lists.reverse(konstituenten));

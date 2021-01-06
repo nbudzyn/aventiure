@@ -4,7 +4,7 @@ import de.nb.aventiure2.data.world.syscomp.description.AbstractDescriptionComp;
 import de.nb.aventiure2.data.world.syscomp.state.impl.FroschprinzStateComp;
 import de.nb.aventiure2.german.base.Nominalphrase;
 
-import static de.nb.aventiure2.data.world.gameobject.World.FROSCHPRINZ;
+import static de.nb.aventiure2.data.world.gameobject.World.*;
 import static de.nb.aventiure2.german.base.Artikel.Typ.DEF;
 import static de.nb.aventiure2.german.base.Artikel.Typ.INDEF;
 import static de.nb.aventiure2.german.base.Nominalphrase.np;
@@ -26,19 +26,19 @@ public class FroschprinzDescriptionComp extends AbstractDescriptionComp {
         froschDescriptionTriple = new DescriptionTriple(
                 np(M, INDEF, "dicker, hässlicher Frosch",
                         "dicken, hässlichen Frosch",
-                        "dicken, hässlichen Frosch"),
+                        "dicken, hässlichen Frosch", FROSCHPRINZ),
                 np(M, DEF, "hässliche Frosch",
                         "hässlichen Frosch",
-                        "hässlichen Frosch"),
-                np(M, DEF, "Frosch"));
+                        "hässlichen Frosch", FROSCHPRINZ),
+                np(M, DEF, "Frosch", FROSCHPRINZ));
         prinzDescriptionTriple =
                 new DescriptionTriple(
                         np(M, INDEF, "junger Königssohn",
                                 "jungen Königssohn",
-                                "jungen Königssohn"),
+                                "jungen Königssohn", FROSCHPRINZ),
                         np(M, DEF, "junge Königssohn",
                                 "jungen Königssohn",
-                                "jungen Königssohn"));
+                                "jungen Königssohn", FROSCHPRINZ));
     }
 
     @Override

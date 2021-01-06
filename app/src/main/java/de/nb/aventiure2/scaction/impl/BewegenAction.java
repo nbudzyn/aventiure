@@ -622,7 +622,7 @@ public class BewegenAction<LOC_DESC extends ILocatableGO & IDescribableGO>
     }
 
     private String getNom(final IDescribableGO d) {
-        return world.getDescription(d, false).nom();
+        return world.getDescription(d, false).nomStr();
     }
 
     @Override

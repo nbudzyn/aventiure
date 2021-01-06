@@ -92,10 +92,13 @@ class CreatureFactory {
         final AbstractDescriptionComp descriptionComp =
                 new SimpleDescriptionComp(SCHLOSSWACHE,
                         np(F, INDEF,
-                                "Schlosswache mit langer Hellebarde"),
+                                "Schlosswache mit langer Hellebarde",
+                                SCHLOSSWACHE),
                         np(F, DEF,
-                                "Schlosswache mit ihrer langen Hellebarde"),
-                        np(F, DEF, "Schlosswache"));
+                                "Schlosswache mit ihrer "
+                                        + "langen Hellebarde",
+                                SCHLOSSWACHE),
+                        np(F, DEF, "Schlosswache", SCHLOSSWACHE));
         final LocationComp locationComp =
                 new LocationComp(SCHLOSSWACHE, db, world, SCHLOSS_VORHALLE,
                         DRAUSSEN_VOR_DEM_SCHLOSS,
@@ -131,11 +134,11 @@ class CreatureFactory {
         final AbstractDescriptionComp descriptionComp =
                 new SimpleDescriptionComp(RAPUNZEL,
                         np(F, INDEF, "wunderschöne junge Frau",
-                                "wunderschönen jungen Frau"),
+                                "wunderschönen jungen Frau", RAPUNZEL),
                         np(F, DEF, "schöne junge Frau",
-                                "schönen junge Frau"),
+                                "schönen junge Frau", RAPUNZEL),
                         np(F, DEF, "junge Frau",
-                                "jungen Frau"));
+                                "jungen Frau", RAPUNZEL));
         final LocationComp locationComp =
                 new LocationComp(RAPUNZEL, db, world, OBEN_IM_ALTEN_TURM, VOR_DEM_ALTEN_TURM,
                         false);
@@ -215,10 +218,10 @@ class CreatureFactory {
                         np(F, INDEF, "magere Frau mit krummer, bis zum Kinn "
                                         + "reichender Nase",
                                 "mageren Frau mit krummer, bis zum Kinn "
-                                        + "reichender Nase"),
+                                        + "reichender Nase", RAPUNZELS_ZAUBERIN),
                         np(F, DEF, "magere Frau",
-                                "mageren Frau"),
-                        np(F, DEF, "Frau"));
+                                "mageren Frau", RAPUNZELS_ZAUBERIN),
+                        np(F, DEF, "Frau", RAPUNZELS_ZAUBERIN));
         final LocationComp locationComp =
                 new LocationComp(RAPUNZELS_ZAUBERIN, db, world,
                         // Muss zum Zustand der Zauberin passen!

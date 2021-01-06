@@ -44,10 +44,9 @@ public enum FeelingTowardsType {
             final SubstantivischePhrase targetDesc, final int feelingIntensity,
             final boolean targetKnown) {
         final ImmutableList<AdjPhrOhneLeerstellen> altEindruckAdjPhr =
-                altEindruckBeiBegegnungAdjPhr(
-                        gameObjectSubjekt.getPerson(), gameObjectSubjekt.getNumerusGenus(),
-                        targetDesc, feelingIntensity, targetKnown
-                );
+                altEindruckBeiBegegnungAdjPhr(gameObjectSubjekt,
+                        targetDesc, feelingIntensity,
+                        targetKnown);
 
         final ImmutableList<AdverbialeAngabeSkopusVerbAllg> adverbialeAngaben =
                 altEindruckBeiBegegnungAdvAngaben(
@@ -100,9 +99,9 @@ public enum FeelingTowardsType {
             final SubstantivischePhrase targetDesc,
             final int feelingIntensity, final boolean targetKnown) {
         return FeelingsSaetzeUtil.toEindrueckSaetze(gameObjectSubjekt,
-                altEindruckBeiBegegnungAdjPhr(
-                        gameObjectSubjekt.getPerson(), gameObjectSubjekt.getNumerusGenus(),
-                        targetDesc, feelingIntensity, targetKnown));
+                altEindruckBeiBegegnungAdjPhr(gameObjectSubjekt,
+                        targetDesc, feelingIntensity,
+                        targetKnown));
     }
 
     /**
@@ -120,10 +119,9 @@ public enum FeelingTowardsType {
             final int feelingIntensity, final boolean targetKnown) {
 
         return AdjPhrOhneLeerstellen.toAdvAngabenSkopusVerbAllg(gameObjectSubjekt,
-                altEindruckBeiBegegnungAdjPhr(
-                        gameObjectSubjekt.getPerson(), gameObjectSubjekt.getNumerusGenus(),
-                        targetDesc, feelingIntensity, targetKnown
-                ));
+                altEindruckBeiBegegnungAdjPhr(gameObjectSubjekt,
+                        targetDesc, feelingIntensity,
+                        targetKnown));
     }
 
     /**
@@ -142,12 +140,12 @@ public enum FeelingTowardsType {
      * @return Möglicherweise eine leere Liste (insbesondere bei extremen Gefühlen)!
      */
     public ImmutableList<AdjPhrOhneLeerstellen> altEindruckBeiBegegnungAdjPhr(
-            final Person gameObjectSubjektPerson,
-            final NumerusGenus gameObjectSubjektNumerusGenus,
+            final SubstantivischePhrase gameObjectSubjekt,
             final SubstantivischePhrase targetDesc, final int feelingIntensity,
             final boolean targetKnown) {
         return feelingBeiBegegnungDescriber.altEindruckBeiBegegnungAdjPhr(
-                gameObjectSubjektPerson, gameObjectSubjektNumerusGenus, targetDesc,
+                gameObjectSubjekt,
+                targetDesc,
                 feelingIntensity, targetKnown
         );
     }

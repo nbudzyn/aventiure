@@ -222,15 +222,14 @@ public class Satz {
             return getVerbzweitsatzMitVorfeldAusMittelOderNachfeld(speziellesVorfeld);
         }
 
-        return
-                Konstituentenfolge.joinToKonstituentenfolge(
-                        anschlusswort, // "und"
-                        subjekt.nom(),
-                        praedikat.getVerbzweit(subjekt.getPerson(), subjekt.getNumerus()),
-                        angabensatz != null ?
-                                Konstituentenfolge
-                                        .schliesseInKommaEin(angabensatz.getDescription()) :
-                                null);
+        return Konstituentenfolge.joinToKonstituentenfolge(
+                anschlusswort, // "und"
+                subjekt.nomK(),
+                praedikat.getVerbzweit(subjekt.getPerson(), subjekt.getNumerus()),
+                angabensatz != null ?
+                        Konstituentenfolge
+                                .schliesseInKommaEin(angabensatz.getDescription()) :
+                        null);
     }
 
     private Konstituentenfolge getVerbzweitsatzMitVorfeldAusMittelOderNachfeld(
@@ -261,7 +260,7 @@ public class Satz {
     Konstituentenfolge getVerbletztsatz() {
         return Konstituentenfolge.joinToKonstituentenfolge(
                 anschlusswort, // "und"
-                subjekt.nom(),
+                subjekt.nomK(),
                 praedikat.getVerbletzt(subjekt.getPerson(), subjekt.getNumerus()),
                 angabensatz != null ?
                         Konstituentenfolge.schliesseInKommaEin(angabensatz.getDescription()) :

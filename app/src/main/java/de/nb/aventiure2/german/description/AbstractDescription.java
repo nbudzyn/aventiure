@@ -25,8 +25,9 @@ import static de.nb.aventiure2.german.base.Person.P3;
 public abstract class AbstractDescription<SELF extends AbstractDescription<SELF>> {
     private final DescriptionParams params;
 
-    protected AbstractDescription(final StructuralElement startsNew) {
-        this(new DescriptionParams(startsNew));
+    protected AbstractDescription(final StructuralElement startsNew,
+                                  @Nullable final PhorikKandidat phorikKandidat) {
+        this(new DescriptionParams(startsNew, phorikKandidat));
     }
 
     protected AbstractDescription(final DescriptionParams params) {
@@ -45,7 +46,7 @@ public abstract class AbstractDescription<SELF extends AbstractDescription<SELF>
 
     @NonNull
     @CheckReturnValue
-    public final TextDescription toTextDescription() {
+    final TextDescription toTextDescription() {
         return toTextDescriptionKeepParams(toWortfolge());
     }
 
@@ -77,7 +78,16 @@ public abstract class AbstractDescription<SELF extends AbstractDescription<SELF>
 
     @NonNull
     public TextDescription toTextDescriptionKeepParams(final Wortfolge wortfolge) {
-        return new TextDescription(params, wortfolge.getString(),
+        // FIXME Hier auf den PhorikKandidaten aus der Wortfolge
+        //  übernehmen und hier separat speichern!!
+        //  Aus den params entfernen und params unverändert übergeben.
+        final DescriptionParams newParams = copyParams();
+        if (wortfolge.getPhorikKandidat() != null) {
+            newParams.phorikKandidat(wortfolge.getPhorikKandidat());
+        }
+        return new TextDescription(
+                newParams,
+                wortfolge.getString(),
                 wortfolge.woertlicheRedeNochOffen(), wortfolge.kommaStehtAus());
     }
 

@@ -108,6 +108,8 @@ class DescriptionCombiner {
                     // "unten angekommen"
                     GermanUtil.joinToString(descriptionPartizipIIPhrase) +
                             (descriptionPartizipIIPhrase.kommaStehtAus() ? ", " : "");
+            // Einen Phorik-Kandidat aus first übernehmen wir nicht - das Vorfeld ist
+            // schließlich maximal weit vom Satzende entfernt.
 
             res.add(
                     // "Unten angekommen bist du ziemlich erschäpft"

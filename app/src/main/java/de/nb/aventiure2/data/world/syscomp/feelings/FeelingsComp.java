@@ -25,10 +25,8 @@ import de.nb.aventiure2.data.world.base.GameObject;
 import de.nb.aventiure2.data.world.base.GameObjectId;
 import de.nb.aventiure2.data.world.syscomp.memory.MemoryComp;
 import de.nb.aventiure2.german.adjektiv.AdjPhrOhneLeerstellen;
-import de.nb.aventiure2.german.base.NumerusGenus;
 import de.nb.aventiure2.german.base.Personalpronomen;
 import de.nb.aventiure2.german.base.SubstantivischePhrase;
-import de.nb.aventiure2.german.base.Wortfolge;
 import de.nb.aventiure2.german.description.AbstractDescription;
 import de.nb.aventiure2.german.praedikat.AdverbialeAngabeSkopusSatz;
 import de.nb.aventiure2.german.praedikat.AdverbialeAngabeSkopusVerbAllg;
@@ -44,6 +42,7 @@ import static de.nb.aventiure2.german.base.NumerusGenus.M;
 import static de.nb.aventiure2.german.base.Person.P2;
 import static de.nb.aventiure2.german.base.StructuralElement.PARAGRAPH;
 import static de.nb.aventiure2.german.base.StructuralElement.SENTENCE;
+import static de.nb.aventiure2.german.base.Wortfolge.joinToWortfolge;
 import static de.nb.aventiure2.german.description.DescriptionBuilder.du;
 import static de.nb.aventiure2.german.description.DescriptionBuilder.neuerSatz;
 import static de.nb.aventiure2.german.description.DescriptionBuilder.paragraph;
@@ -398,39 +397,13 @@ public class FeelingsComp extends AbstractStatefulComponent<FeelingsPCD> {
                         feelingTowardsType));
     }
 
-    /**
-     * Gibt eventuell alternative Adjektivphrasen zurück, die den Eindruck
-     * beschreiben, den dieses Feeling Being auf den SC macht, wenn die beiden sich
-     * begegnen. Die Phrasen können mit
-     * <i>wirken</i> oder <i>scheinen</i> verbunden werden.
-     * <p>
-     * Nicht alle diese Phrasen sind für adverbiale Angaben geeignet, dazu
-     * siehe
-     * {@link #altEindruckAufScBeiBegegnungAdvAngaben(SubstantivischePhrase)}!
-     *
-     * @return Möglicherweise eine leere Liste (insbesondere bei extremen Gefühlen)!
-     */
-    @NonNull
-    public ImmutableList<AdjPhrOhneLeerstellen> altEindruckAufScBeiBegegnungAdjPhr(
-            final NumerusGenus gameObjectSubjektNumerusGenus) {
-        return dispatchFeelings(
-                SPIELER_CHARAKTER,
-                1,
-                this::altAdjPhr,
-                (feelingTowardsType) -> altEindruckBeiBegegnungAdjPhr(
-                        gameObjectSubjektNumerusGenus,
-                        SPIELER_CHARAKTER,
-                        getPersonalpronomenSC(),
-                        feelingTowardsType));
-    }
-
     private static Personalpronomen getPersonalpronomenSC() {
         return Personalpronomen.get(P2,
                 // Wir tun hier so, als wäre der SC männlich, aber das
                 // ist egal - die Methode garantiert, dass niemals etwas
                 // wie "du, der du..." oder
                 // "du, die du..." generiert wird.
-                M);
+                M, SPIELER_CHARAKTER);
     }
 
     /**
@@ -568,14 +541,13 @@ public class FeelingsComp extends AbstractStatefulComponent<FeelingsPCD> {
      * @return Möglicherweise eine leere Liste (insbesondere bei extremen Gefühlen)!
      */
     private ImmutableList<AdjPhrOhneLeerstellen> altEindruckBeiBegegnungAdjPhr(
-            final NumerusGenus gameObjectSubjektNumerusGenus,
+            final SubstantivischePhrase gameObjectSubjekt,
             final GameObjectId feelingTargetId,
             final SubstantivischePhrase targetDesc,
             final FeelingTowardsType type) {
-        return type.altEindruckBeiBegegnungAdjPhr(
-                getGameObjectPerson(), gameObjectSubjektNumerusGenus, targetDesc,
-                getFeelingTowards(feelingTargetId, type),
-                isTargetKnown(feelingTargetId));
+        return type.altEindruckBeiBegegnungAdjPhr(gameObjectSubjekt,
+                targetDesc,
+                getFeelingTowards(feelingTargetId, type), isTargetKnown(feelingTargetId));
     }
 
     private boolean isTargetKnown(final GameObjectId targetId) {
@@ -818,13 +790,9 @@ public class FeelingsComp extends AbstractStatefulComponent<FeelingsPCD> {
                 .collect(toList()));
 
         res.addAll(getPcd().getMuedigkeitsData().altAdjektivphrase().stream()
-                .map(p -> du(PARAGRAPH,
-                        "fühlst", "dich auf einmal "
-                                + p.getPraedikativ(P2, SG).joinToString(
-                        ),
+                .map(p -> du(PARAGRAPH, "fühlst",
+                        joinToWortfolge("dich auf einmal", p.getPraedikativ(P2, SG)),
                         "auf einmal")
-                        .komma(Wortfolge.joinToWortfolge(p.getPraedikativ(P2, SG))
-                                .kommaStehtAus())
                         .beendet(PARAGRAPH))
                 .collect(toList()));
 
@@ -974,12 +942,8 @@ public class FeelingsComp extends AbstractStatefulComponent<FeelingsPCD> {
                 .collect(toList()));
 
         res.addAll(getPcd().getMuedigkeitsData().altAdjektivphrase().stream()
-                .map(p -> du(PARAGRAPH,
-                        "fühlst", "dich  "
-                                + p.getPraedikativ(P2, SG).joinToString(
-                        ))
-                        .komma(Wortfolge.joinToWortfolge(p.getPraedikativ(P2, SG))
-                                .kommaStehtAus())
+                .map(p -> du(PARAGRAPH, "fühlst",
+                        joinToWortfolge("dich", p.getPraedikativ(P2, SG)))
                         .beendet(PARAGRAPH))
                 .collect(toList()));
 

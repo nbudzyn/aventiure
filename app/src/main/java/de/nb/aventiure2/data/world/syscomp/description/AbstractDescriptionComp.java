@@ -28,7 +28,7 @@ public abstract class AbstractDescriptionComp extends AbstractStatelessComponent
         return getDescriptionAtFirstSight();
     }
 
-    public Nominalphrase getDescriptionWhenKnown(final boolean shortIfKnown) {
+    private Nominalphrase getDescriptionWhenKnown(final boolean shortIfKnown) {
         return shortIfKnown ?
                 getShortDescriptionWhenKnown() :
                 getNormalDescriptionWhenKnown();
@@ -42,6 +42,6 @@ public abstract class AbstractDescriptionComp extends AbstractStatelessComponent
     @NonNull
     @Override
     public String toString() {
-        return getNormalDescriptionWhenKnown().nom();
+        return getNormalDescriptionWhenKnown().nomStr();
     }
 }

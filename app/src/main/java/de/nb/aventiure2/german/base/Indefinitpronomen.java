@@ -81,7 +81,7 @@ public class Indefinitpronomen
     private Indefinitpronomen(final NumerusGenus numerusGenus,
                               final Relativpronomen.Typ relPronTyp,
                               final Flexionsreihe flextionsreihe) {
-        super(numerusGenus, flextionsreihe);
+        super(numerusGenus, flextionsreihe, null);
         this.relPronTyp = relPronTyp;
     }
 

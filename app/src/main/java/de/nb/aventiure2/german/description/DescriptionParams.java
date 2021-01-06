@@ -29,15 +29,15 @@ public class DescriptionParams {
      * Whether the narration can be continued by a Satzreihenglied without subject where
      * the player character is the implicit subject (such as " und gehst durch die Tür.")
      */
-    private boolean allowsAdditionalDuSatzreihengliedOhneSubjekt = false;
-    private boolean dann = false;
+    private boolean allowsAdditionalDuSatzreihengliedOhneSubjekt;
+    private boolean dann;
     /**
      * Hierauf könnte sich ein Pronomen (z.B. ein Personalpronomen) unmittelbar
      * danach (<i>anaphorisch</i>) beziehen. Dazu müssen (in aller Regel) die grammatischen
      * Merkmale übereinstimmen und es muss mit dem Pronomen dieses Bezugsobjekt
      * gemeint sein.
      * <p>
-     * Dieses Feld nur gesetzt werden wenn man sich sicher ist, wenn es also keine
+     * Dieses Feld sollte nur gesetzt werden wenn man sich sicher ist, wenn es also keine
      * Fehlreferenzierungen, Doppeldeutigkeiten
      * oder unerwünschten Wiederholungen geben kann. Typische Fälle wären "Du nimmst die Lampe und
      * zündest sie an." oder "Du stellst die Lampe auf den Tisch und zündest sie an."
@@ -62,6 +62,12 @@ public class DescriptionParams {
                 allowsAdditionalDuSatzreihengliedOhneSubjekt, dann, phorikKandidat);
     }
 
+    DescriptionParams(final StructuralElement startsNew,
+                      @Nullable final PhorikKandidat phorikKandidat) {
+        this(startsNew, StructuralElement.WORD,
+                false, false, null);
+    }
+
     private DescriptionParams(final StructuralElement startsNew, final StructuralElement endsThis,
                               final boolean allowsAdditionalDuSatzreihengliedOhneSubjekt,
                               final boolean dann,
@@ -72,11 +78,6 @@ public class DescriptionParams {
                 allowsAdditionalDuSatzreihengliedOhneSubjekt;
         this.dann = dann;
         this.phorikKandidat = phorikKandidat;
-    }
-
-    DescriptionParams(final StructuralElement startsNew) {
-        this.startsNew = startsNew;
-        endsThis = StructuralElement.WORD;
     }
 
     /**

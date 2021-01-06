@@ -124,7 +124,7 @@ public class HeulenAction extends AbstractScAction {
                 "du schreist ja, dass sich ein Stein erbarmen möchte.“ Du siehst " +
                 "dich um, woher " +
                 "die Stimme käme, da erblickst du " +
-                world.getDescription(froschprinz).akk(), "immer lauter", secs(30)));
+                world.getDescription(froschprinz).akkStr(), "immer lauter", secs(30)));
 
         froschprinz.stateComp().narrateAndSetState(HAT_SC_HILFSBEREIT_ANGESPROCHEN);
         froschprinz.talkingComp().setTalkingTo(sc);

@@ -25,7 +25,7 @@ public interface FeelingBeiBegegnungDescriber {
      * "du, die du..." oder "du, das du..." generiert wird.
      * <p>
      * Diese Methode soll zumindest immer dann eine nichtleere Liste zurückgeben, wenn
-     * {@link #altEindruckBeiBegegnungAdjPhr(Person, NumerusGenus, SubstantivischePhrase, int, boolean)}
+     * {@link #altEindruckBeiBegegnungAdjPhr(SubstantivischePhrase, SubstantivischePhrase, int, boolean)}
      * eine leere Liste zurückgibt, so dass man durch die Kombination beider Methoden immer
      * mindestens einen Satz erhält.
      *
@@ -68,7 +68,7 @@ public interface FeelingBeiBegegnungDescriber {
     // FIXME Auch die Zauberin könnte irgendwie wirken, wenn sie
     //  den SC (wieder-) trifft...
     ImmutableList<AdjPhrOhneLeerstellen> altEindruckBeiBegegnungAdjPhr(
-            Person gameObjectSubjektPerson, NumerusGenus gameObjectSubjektNumerusGenus,
+            SubstantivischePhrase gameObjectSubjekt,
             SubstantivischePhrase targetDesc, int feelingIntensity,
             final boolean targetKnown);
 

@@ -126,12 +126,10 @@ public class DescriptionUmformulierer {
                                         .getVerbzweitsatzStandard());
                 alt.add(neuerSatz(
                         max(fDesc.getStartsNew(), SENTENCE),
-                        "Ach nein, " +
+                        Wortfolge.joinToWortfolge(
+                                "Ach nein,",
                                 // du nimmst die Kugel besser doch
-                                duNimmstDieKugelBesserDoch.getString())
-                        .woertlicheRedeNochOffen(
-                                duNimmstDieKugelBesserDoch.woertlicheRedeNochOffen())
-                        .komma(duNimmstDieKugelBesserDoch.kommaStehtAus())
+                                duNimmstDieKugelBesserDoch))
                         .undWartest(fDesc.isAllowsAdditionalDuSatzreihengliedOhneSubjekt())
                         .dann(fDesc.isDann())
                         .phorikKandidat(fDesc.getPhorikKandidat()));

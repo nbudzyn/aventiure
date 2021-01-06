@@ -194,10 +194,11 @@ public class NehmenAction
             return NEHMEN
                     .mitAdverbialerAngabe(
                             new AdverbialeAngabeSkopusVerbWohinWoher(
+                                    // FIXME Möglichen Bezug auf NumerusGenus speichern!
                                     "in " +
                                             targetLocation.descriptionComp()
                                                     .getDescription(true, true)
-                                                    .im(AKK)
+                                                    .imStr(AKK)
                             )); // "in die Hände nehmen"
         }
 
@@ -237,17 +238,17 @@ public class NehmenAction
                 du(PARAGRAPH,
                         "ekelst",
                         "dich sehr, aber mit einiger Überwindung nimmst du "
-                                + froschDesc.akk()
+                                + froschDesc.akkStr()
                                 + " in "
                                 + "die Hand")
                         .phorikKandidat(froschDesc, FROSCHPRINZ)
                         .undWartest()
                         .dann(),
                 neuerSatz(PARAGRAPH,
-                        froschDesc.akk()
+                        froschDesc.akkStr()
                                 + " in die Hand nehmen? – Wer hat dir bloß solche Flausen "
                                 + "in den Kopf gesetzt! Kräftig packst du "
-                                + froschDesc.akk())
+                                + froschDesc.akkStr())
                         .phorikKandidat(froschDesc, FROSCHPRINZ)
                         .undWartest()
                         .dann(),
@@ -268,21 +269,21 @@ public class NehmenAction
 
                             n.narrateAlt(
                                     neuerSatz(
-                                            froschDescOderAnapher.nom()// "Er"
+                                            froschDescOderAnapher.nomStr()// "Er"
                                                     + " ist glibschig und "
                                                     + "schleimig – pfui-bäh! – schnell lässt du "
-                                                    + froschDescOderAnapher.persPron().akk()
+                                                    + froschDescOderAnapher.persPron().akkStr()
                                                     + " in "
                                                     + "eine Tasche gleiten. "
                                                     + GermanUtil.capitalize(
                                                     froschDescOderAnapher.possArt()
-                                                            .vor(NumerusGenus.N).nom())
+                                                            .vor(NumerusGenus.N).nomStr())
                                                     + " gedämpftes Quaken könnte "
                                                     + "wohlig sein oder "
                                                     + "genauso gut vorwurfsvoll", secs(10))
                                             .beendet(PARAGRAPH),
                                     du("versenkst",
-                                            froschDescOderAnapher.akk() // "ihn"
+                                            froschDescOderAnapher.akkStr() // "ihn"
                                                     + " tief in deine Tasche. Du "
                                                     + "versuchst, deine Hand an der "
                                                     + "Kleidung zu reinigen, aber der "
@@ -291,10 +292,10 @@ public class NehmenAction
                                             "tief in deine Tasche", secs(10))
                                             .beendet(PARAGRAPH),
                                     du("packst",
-                                            froschDescOderAnapher.akk() // "ihn"
+                                            froschDescOderAnapher.akkStr() // "ihn"
                                                     + " in deine Tasche. "
                                                     + GermanUtil.capitalize(
-                                                    froschDesc.persPron().nom())
+                                                    froschDesc.persPron().nomStr())
                                                     + " fasst "
                                                     + "sich sehr eklig an und du bist "
                                                     + "glücklich, als die Prozedur "
@@ -330,7 +331,7 @@ public class NehmenAction
                                 FROSCHPRINZ);
 
                 n.narrate(neuerSatz(PARAGRAPH,
-                        "Aber dann nimmst du " + froschDescOderAnapher.akk() +
+                        "Aber dann nimmst du " + froschDescOderAnapher.akkStr() +
                                 " doch wieder",
                         secs(5))
                         .undWartest()
@@ -344,7 +345,7 @@ public class NehmenAction
             alt.addAll(drueckeAusTimed(DISKONTINUITAET,
                     du(PARAGRAPH,
                             "nimmst",
-                            froschDesc.akk(),
+                            froschDesc.akkStr(),
                             secs(5))
                             .undWartest()
                             .phorikKandidat(froschDesc, FROSCHPRINZ),
@@ -361,7 +362,7 @@ public class NehmenAction
         n.narrateAlt(
                 du(PARAGRAPH,
                         "zauderst", "und dein Herz klopft gewaltig, als du endlich "
-                                + world.getDescription(gameObject, true).akk()
+                                + world.getDescription(gameObject, true).akkStr()
                                 + " greifst",
                         secs(5))
                         .phorikKandidat(world.getDescription(gameObject, true), FROSCHPRINZ)
@@ -369,7 +370,7 @@ public class NehmenAction
                         .dann(),
                 neuerSatz("Dir wird ganz angst, aber was man "
                                 + "versprochen hat, das muss man auch halten! Du nimmst "
-                                + world.getDescription(gameObject, true).akk()
+                                + world.getDescription(gameObject, true).akkStr()
                                 + " in die Hände",
                         secs(15))
                         .phorikKandidat(world.getDescription(gameObject, true), FROSCHPRINZ)
@@ -400,7 +401,7 @@ public class NehmenAction
         if (sc.memoryComp().getLastAction().is(Action.Type.ABLEGEN)) {
             final Nominalphrase objectDesc = world.getDescription(gameObject, true);
             n.narrate(neuerSatz(
-                    "Dann nimmst du " + objectDesc.akk(),
+                    "Dann nimmst du " + objectDesc.akkStr(),
                     secs(5))
                     .undWartest()
                     .phorikKandidat(objectDesc.getNumerusGenus(), gameObject.getId()));

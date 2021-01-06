@@ -7,6 +7,7 @@ import com.google.common.collect.ImmutableList;
 import java.util.Objects;
 
 import de.nb.aventiure2.german.base.GermanUtil;
+import de.nb.aventiure2.german.base.PhorikKandidat;
 import de.nb.aventiure2.german.base.StructuralElement;
 import de.nb.aventiure2.german.base.Wortfolge;
 
@@ -53,9 +54,10 @@ public class SimpleDuDescription extends AbstractFlexibleDescription<SimpleDuDes
                         @Nullable final String remainder,
                         @Nullable final String vorfeldSatzglied,
                         final boolean woertlicheRedeNochOffen,
-                        final boolean kommaStehtAus) {
+                        final boolean kommaStehtAus,
+                        @Nullable final PhorikKandidat phorikKandidat) {
         // FIXME Alle du()-Aufrufe prüfen, ggf. auf SENTENCE setzen
-        super(startsNew);
+        super(startsNew, phorikKandidat);
         this.verb = verb;
         this.remainder = remainder;
         this.vorfeldSatzglied = vorfeldSatzglied;
@@ -95,11 +97,6 @@ public class SimpleDuDescription extends AbstractFlexibleDescription<SimpleDuDes
     @Override
     public Wortfolge toWortfolgeMitKonjunktionaladverbWennNoetig(
             final String konjunktionaladverb) {
-        // FIXME Derzeit ist die Sache mit dem Komma nicht einheitlich gelöst.
-        //  Gut wäre es wohl, wenn die DesriptionParams KEIN isKommaStehtAus
-        //  hätten, sondern wenn diese Informatoion hier on-the-fly ermittelt würde.
-        //  In der TextDescription müsste man die Information dann zusätzlich speichern,
-        //  damit der Benutzer sie (nur dort?!) angeben kann.
         @Nullable final Wortfolge wortfolgeMitSpeziellemVorfeldOrNull =
                 toWortfolgeMitSpeziellemVorfeldOrNull();
 
@@ -114,10 +111,10 @@ public class SimpleDuDescription extends AbstractFlexibleDescription<SimpleDuDes
     public Wortfolge toWortfolgeMitVorfeld(final String vorfeld) {
         return w(GermanUtil.buildHauptsatz(vorfeld, // "dann"
                 verb, // "gehst"
-                joinToString("du", remainder)),
+                joinToString("du", remainder)), // "du den Fluss entlang"
                 woertlicheRedeNochOffen,
-                isKommaStehtAus()
-        ); // "du den Fluss entlang"
+                isKommaStehtAus(),
+                copyParams().getPhorikKandidat());
     }
 
     @Override
@@ -137,7 +134,8 @@ public class SimpleDuDescription extends AbstractFlexibleDescription<SimpleDuDes
         return w(GermanUtil.buildHauptsatz("du",
                 verb,
                 remainder), woertlicheRedeNochOffen,
-                isKommaStehtAus());
+                isKommaStehtAus(),
+                copyParams().getPhorikKandidat());
     }
 
     @Nullable
@@ -160,7 +158,8 @@ public class SimpleDuDescription extends AbstractFlexibleDescription<SimpleDuDes
                         "du",
                         remainderWithoutVorfeldSatzglied)),
                 woertlicheRedeNochOffen,
-                isKommaStehtAus());
+                isKommaStehtAus(),
+                copyParams().getPhorikKandidat());
     }
 
     /**
@@ -168,7 +167,8 @@ public class SimpleDuDescription extends AbstractFlexibleDescription<SimpleDuDes
      */
     @Override
     public Wortfolge toWortfolgeSatzanschlussOhneSubjekt() {
-        return w(joinToString(verb, remainder), woertlicheRedeNochOffen, isKommaStehtAus());
+        return w(joinToString(verb, remainder), woertlicheRedeNochOffen, isKommaStehtAus(),
+                copyParams().getPhorikKandidat());
     }
 
     public SimpleDuDescription woertlicheRedeNochOffen(final boolean woertlicheRedeNochOffen) {

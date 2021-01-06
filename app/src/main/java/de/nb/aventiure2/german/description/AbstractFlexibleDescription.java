@@ -1,16 +1,19 @@
 package de.nb.aventiure2.german.description;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
 import javax.annotation.CheckReturnValue;
 
+import de.nb.aventiure2.german.base.PhorikKandidat;
 import de.nb.aventiure2.german.base.StructuralElement;
 import de.nb.aventiure2.german.base.Wortfolge;
 
 public abstract class AbstractFlexibleDescription<SELF extends AbstractDescription<SELF>>
         extends AbstractDescription<SELF> {
-    AbstractFlexibleDescription(final StructuralElement startsNew) {
-        super(startsNew);
+    AbstractFlexibleDescription(final StructuralElement startsNew,
+                                @Nullable final PhorikKandidat phorikKandidat) {
+        super(startsNew, phorikKandidat);
     }
 
     @NonNull

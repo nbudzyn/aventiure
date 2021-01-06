@@ -4,6 +4,9 @@ import androidx.annotation.Nullable;
 
 import java.util.Objects;
 
+import static de.nb.aventiure2.german.base.Kasus.AKK;
+import static de.nb.aventiure2.german.base.Kasus.DAT;
+import static de.nb.aventiure2.german.base.Kasus.NOM;
 import static de.nb.aventiure2.german.base.Konstituente.k;
 
 /**
@@ -14,13 +17,24 @@ public abstract class SubstantivischePhrase
         implements DeklinierbarePhrase, SubstantivischePhraseOderReflexivpronomen, Praedikativum {
     private final NumerusGenus numerusGenus;
 
-    public SubstantivischePhrase(final NumerusGenus numerusGenus) {
+    /**
+     * Eine Person, ein Gegenstand, ein Konzept o.Ä., auf das sich diese substantivische
+     * Phrase bezieht.
+     */
+    @Nullable
+    private final IBezugsobjekt bezugsobjekt;
+
+    public SubstantivischePhrase(final NumerusGenus numerusGenus,
+                                 @Nullable final IBezugsobjekt bezugsobjekt) {
         this.numerusGenus = numerusGenus;
+        this.bezugsobjekt = bezugsobjekt;
     }
 
     @Override
     public Konstituentenfolge getPraedikativ(final Person person, final Numerus numerus) {
-        return new Konstituentenfolge(k(nom()));
+        // Ein Bezug auf ein Prädikatsnomen kann es wohl nicht geben:
+        // *"Petra ist Professor. Er ..."
+        return new Konstituentenfolge(k(nomStr()));
     }
 
     @Override
@@ -41,11 +55,11 @@ public abstract class SubstantivischePhrase
      * Die substantivische Phrase im Dativ, aber ohne Artikel
      * ("(zum) Haus")
      */
-    public abstract String artikellosDat();
+    public abstract String artikellosDatStr();
 
-    public String im(final KasusOderPraepositionalkasus kasusOderPraepositionalkasus) {
+    private String imStr(final KasusOderPraepositionalkasus kasusOderPraepositionalkasus) {
         if (kasusOderPraepositionalkasus instanceof Kasus) {
-            return im((Kasus) kasusOderPraepositionalkasus);
+            return imStr((Kasus) kasusOderPraepositionalkasus);
         }
 
         if (kasusOderPraepositionalkasus instanceof PraepositionMitKasus) {
@@ -60,8 +74,29 @@ public abstract class SubstantivischePhrase
     }
 
     @Override
-    public String im(final Kasus kasus) {
-        return DeklinierbarePhrase.super.im(kasus);
+    public String imStr(final Kasus kasus) {
+        return DeklinierbarePhrase.super.imStr(kasus);
+    }
+
+    public Konstituente nomK() {
+        return imK(NOM);
+    }
+
+    public Konstituente datK() {
+        return imK(DAT);
+    }
+
+    public Konstituente akkK() {
+        return imK(AKK);
+    }
+
+    public Konstituente imK(final KasusOderPraepositionalkasus kasusOderPraepositionalkasus) {
+        return k(imStr(kasusOderPraepositionalkasus), getNumerusGenus(), getBezugsobjekt());
+    }
+
+    @Override
+    public Konstituente imK(final Kasus kasus) {
+        return k(imStr(kasus), getNumerusGenus(), getBezugsobjekt());
     }
 
     /**
@@ -93,6 +128,11 @@ public abstract class SubstantivischePhrase
     }
 
     public abstract Person getPerson();
+
+    @Nullable
+    public IBezugsobjekt getBezugsobjekt() {
+        return bezugsobjekt;
+    }
 
     @Override
     public boolean equals(final Object o) {

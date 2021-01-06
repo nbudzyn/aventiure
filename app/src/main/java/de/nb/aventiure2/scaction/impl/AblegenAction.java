@@ -224,7 +224,7 @@ public class AblegenAction
                 world.getAnaphPersPronWennMglSonstDescription(gameObject, true);
 
         n.narrate(
-                du("setzt", gameObjectOrPersPron.akk() +
+                du("setzt", gameObjectOrPersPron.akkStr() +
                                 " " +
                                 location.storingPlaceComp().getLocationMode().getWohin(false),
                         secs(2))
@@ -296,7 +296,7 @@ public class AblegenAction
                 if (isDefinitivDiskontinuitaet()) {
                     n.narrate(satzanschluss(
                             "– und legst "
-                                    + gameObjektPersPron.akk()
+                                    + gameObjektPersPron.akkStr()
                                     + " sogleich wieder "
                                     + (wohinDetail != null ? "dort" : "")
                                     + "hin", secs(3)));
@@ -318,7 +318,7 @@ public class AblegenAction
                 if (sc.memoryComp().getLastAction().hasObject(gameObject)) {
                     n.narrate(du("legst",
                             Wortfolge.joinToWortfolge(
-                                    gameObjektPersPron.akk(),
+                                    gameObjektPersPron.akkStr(),
                                     (wohinDetail == null ?
                                             k("hin") :
                                             wohinDetail.getDescription(P2, SG))), // "auf den Tisch"
@@ -330,7 +330,7 @@ public class AblegenAction
                 if (sc.memoryComp().getLastAction().is(Action.Type.BEWEGEN) &&
                         wohinDetail == null) {
                     n.narrate(du("legst",
-                            gameObjektPersPron.akk() +
+                            gameObjektPersPron.akkStr() +
                                     " zurück",
                             secs(3)));
                     return;
@@ -338,9 +338,9 @@ public class AblegenAction
 
                 n.narrate(du("legst",
                         Wortfolge.joinToNullWortfolge(
-                                gameObjektPersPron.akk(),
-                                (wohinDetail == null ? k("hin") : wohinDetail.getDescription(
-                                        P2, SG))),
+                                gameObjektPersPron.akkStr(),
+                                (wohinDetail == null ? k("hin") :
+                                        wohinDetail.getDescription(P2, SG))),
                         secs(3)));
                 return;
             }
@@ -349,7 +349,7 @@ public class AblegenAction
         if (isDefinitivDiskontinuitaet()) {
             n.narrate(
                     du(PARAGRAPH, "legst",
-                            world.getDescription(gameObject, false).akk()
+                            world.getDescription(gameObject, false).akkStr()
                                     + (wohinDetail != null ? " zurück" : " wieder hin"),
                             secs(5))
                             .undWartest()
@@ -360,9 +360,9 @@ public class AblegenAction
         n.narrate(
                 du(PARAGRAPH, "legst",
                         Wortfolge.joinToNullWortfolge(
-                                world.getDescription(gameObject, false).akk(),
-                                (wohinDetail == null ? k("hin") : wohinDetail.getDescription(
-                                        P2, SG))),
+                                world.getDescription(gameObject, false).akkStr(),
+                                (wohinDetail == null ? k("hin") :
+                                        wohinDetail.getDescription(P2, SG))),
                         secs(3))
                         .undWartest()
                         .dann());

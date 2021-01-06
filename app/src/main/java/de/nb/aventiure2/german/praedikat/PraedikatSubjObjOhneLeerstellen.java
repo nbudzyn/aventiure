@@ -22,7 +22,6 @@ import de.nb.aventiure2.german.base.SubstantivischePhraseOderReflexivpronomen;
 
 import static de.nb.aventiure2.german.base.Kasus.AKK;
 import static de.nb.aventiure2.german.base.Kasus.DAT;
-import static de.nb.aventiure2.german.base.Konstituente.k;
 import static de.nb.aventiure2.german.base.Konstituentenfolge.kf;
 
 /**
@@ -144,11 +143,11 @@ public class PraedikatSubjObjOhneLeerstellen
             return speziellesVorfeldFromSuper;
         }
 
-        final String objektImKasusOderPraepkasus = objekt.im(kasusOderPraepositionalkasus);
-        if (!"es".equals(objektImKasusOderPraepkasus)) {
+        final Konstituente objektImKasusOderPraepkasus = objekt.imK(kasusOderPraepositionalkasus);
+        if (!"es".equals(objektImKasusOderPraepkasus.getString())) {
             // Wenn "es" ein Objekt ist, darf es nicht im Vorfeld stehen.
             // (Eisenberg Der Satz 5.4.2)
-            return k(objektImKasusOderPraepkasus);  // "den Frosch"
+            return objektImKasusOderPraepkasus;  // "den Frosch"
         }
 
         return null;
@@ -164,7 +163,7 @@ public class PraedikatSubjObjOhneLeerstellen
                 kf(getModalpartikeln()), // "mal eben"
                 getAdverbialeAngabeSkopusVerbAllgDescriptionFuerMittelfeld(personSubjekt,
                         numerusSubjekt), // "erneut"
-                objekt.im(kasusOderPraepositionalkasus),
+                objekt.imK(kasusOderPraepositionalkasus),
                 getAdverbialeAngabeSkopusVerbWohinWoherDescription(personSubjekt, numerusSubjekt)
                 // "auf den Tisch"
         );
@@ -220,7 +219,7 @@ public class PraedikatSubjObjOhneLeerstellen
     @Override
     public Konstituente getErstesInterrogativpronomen() {
         if (objekt instanceof Interrogativpronomen) {
-            return k(objekt.im(kasusOderPraepositionalkasus));
+            return objekt.imK(kasusOderPraepositionalkasus);
         }
 
         return null;

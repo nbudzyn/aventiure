@@ -46,9 +46,17 @@ public class Praepositionalphrase implements Praedikativum {
 
     @Override
     public Konstituentenfolge getPraedikativ(final Person person, final Numerus numerus) {
+        final PhorikKandidat theoretischerPhorikKandidat =
+                substantivischePhraseOderReflPron.imK(praepositionMitKasus.getKasus())
+                        .getPhorikKandidat();
+
         return Konstituentenfolge.joinToKonstituentenfolge(
                 modAdverbOderAdjektiv,
-                k(praepositionMitKasus.getDescription(substantivischePhraseOderReflPron))
+                k(praepositionMitKasus.getDescription(substantivischePhraseOderReflPron),
+                        // Es sollte wohl eher selten sein, dass man ein prädikativ
+                        // gebrauchte Phrase danach mit "er..." referenziert.
+                        // Allerdings könnte es eventuell zu Verwirrung führen?
+                        theoretischerPhorikKandidat.getNumerusGenus(), null)
         );
     }
 
@@ -59,8 +67,14 @@ public class Praepositionalphrase implements Praedikativum {
     }
 
     public String getDescription() {
+        // FIXME Hier könnte die substantivischePhraseOderReflPron
+        //  durchaus einen Phorik-Kandidaten geben - auch
+        //  kannAlsBezugsobjektVerstandenWerdenFuer = X wäre gut möglich.
+        //  Also sollte hier besser eine Konstituente mit diesen
+        //  Angaben zurückgegeben werden.
         return GermanUtil.joinToString(
                 modAdverbOderAdjektiv,
-                w(praepositionMitKasus.getDescription(substantivischePhraseOderReflPron)));
+                w(praepositionMitKasus.getDescription(substantivischePhraseOderReflPron),
+                        null));
     }
 }

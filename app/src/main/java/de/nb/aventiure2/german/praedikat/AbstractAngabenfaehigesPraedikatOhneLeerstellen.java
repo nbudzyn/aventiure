@@ -20,7 +20,6 @@ import de.nb.aventiure2.german.base.SubstantivischePhrase;
 import de.nb.aventiure2.german.base.SubstantivischePhraseOderReflexivpronomen;
 
 import static com.google.common.collect.ImmutableList.toImmutableList;
-import static de.nb.aventiure2.german.base.Konstituente.k;
 import static de.nb.aventiure2.german.base.Konstituentenfolge.cutFirstOneByOne;
 import static de.nb.aventiure2.german.base.Konstituentenfolge.kf;
 import static de.nb.aventiure2.german.base.Numerus.SG;
@@ -109,7 +108,7 @@ public abstract class AbstractAngabenfaehigesPraedikatOhneLeerstellen
                 // Damit steht das Subjekt entweder als nicht-pronominales Subjekt vor der
                 // Wackernagelposition oder als unbetontes Pronomen zu Anfang der
                 // Wackernagelposition:
-                subjekt.nom(),
+                subjekt.nomK(),
                 getMittelfeld(subjekt.getPerson(), subjekt.getNumerus()),
                 verb.getPartikel(),
                 getNachfeld(subjekt.getPerson(), subjekt.getNumerus()));
@@ -272,7 +271,7 @@ public abstract class AbstractAngabenfaehigesPraedikatOhneLeerstellen
         return Stream.of(substantivischePhrasenMitKasus)
                 .filter(Objects::nonNull)
                 .filter(spk -> spk.first.isUnbetontesPronomen())
-                .map(spk -> k(spk.first.im(spk.second)))
+                .map(spk -> spk.first.imK(spk.second))
                 .collect(toImmutableList());
     }
 
