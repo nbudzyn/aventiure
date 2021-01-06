@@ -90,11 +90,6 @@ public class StructuredDescription extends AbstractFlexibleDescription<Structure
     @Override
     public Wortfolge toWortfolgeMitKonjunktionaladverbWennNoetig(
             final String konjunktionaladverb) {
-        // FIXME Derzeit ist die Sache mit dem Komma nicht einheitlich gelöst.
-        //  Gut wäre es wohl, wenn die DesriptionParams KEIN isKommaStehtAus
-        //  hätten, sondern wenn diese Informatoion hier on-the-fly ermittelt würde.
-        //  In der TextDescription müsste man die Information dann zusätzlich speichern,
-        //  damit der Benutzer sie (nur dort?!) angeben kann.
         @Nullable final Wortfolge wortfolgeMitSpeziellemVorfeldOrNull =
                 toWortfolgeMitSpeziellemVorfeldOrNull();
 

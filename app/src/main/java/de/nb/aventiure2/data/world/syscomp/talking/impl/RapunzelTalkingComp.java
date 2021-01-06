@@ -367,17 +367,19 @@ public class RapunzelTalkingComp extends AbstractTalkingComp {
                     .flatMap(s -> joinToAltWortfolgen(
                             s.mitAnschlusswort("und").altVerzweitsaetze()).stream())
                     .map(wf -> satzanschluss(wf).phorikKandidat(F, RAPUNZEL))
-                    .map(d -> d.toTextDescription()
-                            .mitPraefix("„Hallo“, antwortet " + anaph.nom() + " ")
+                    .flatMap(d -> d.altTextDescriptions().stream())
+                    .map(d -> d.mitPraefix("„Hallo“, antwortet " + anaph.nom() + " ")
                             .beginntZumindestSentence().beendet(PARAGRAPH))
                     .collect(toSet()));
             if (scBereitsZuvorSchonEinmalGetroffen) {
                 alt.addAll(altReaktionSaetze.stream()
-                        .map(d -> d.toTextDescription().mitPraefix("„Ach, ihr seid es wieder.“ ")
+                        .flatMap(d -> d.altTextDescriptions().stream())
+                        .map(d -> d.mitPraefix("„Ach, ihr seid es wieder.“ ")
                                 .beginntZumindestSentence().beendet(PARAGRAPH))
                         .collect(toSet()));
                 alt.addAll(altReaktionSaetze.stream()
-                        .map(d -> d.toTextDescription().mitPraefix("„Oh, ihr seid es wieder.“ ")
+                        .flatMap(d -> d.altTextDescriptions().stream())
+                        .map(d -> d.mitPraefix("„Oh, ihr seid es wieder.“ ")
                                 .beginntZumindestSentence().beendet(PARAGRAPH))
                         .collect(toSet()));
                 alt.add(neuerSatz("„Ich hatte mich schon gefragt, ob ihr mal wieder "
@@ -410,7 +412,7 @@ public class RapunzelTalkingComp extends AbstractTalkingComp {
             if (scBereitsZuvorSchonEinmalGetroffen) {
                 alt.addAll(
                         altEindruckSaetze.stream()
-                                .map(s -> s.mitAnschlusswort("und").getVerbzweitsatzStandard())
+                                .map(s -> s.mitAnschlusswort("und").getSatzanschlussOhneSubjekt())
                                 .map(s -> neuerSatz(
                                         Konstituentenfolge.joinToKonstituentenfolge(
                                                 "„Oh, wie schön, dasss du wieder da "

@@ -2,8 +2,6 @@ package de.nb.aventiure2.german.description;
 
 import androidx.annotation.NonNull;
 
-import com.google.common.collect.ImmutableList;
-
 import javax.annotation.CheckReturnValue;
 
 import de.nb.aventiure2.german.base.StructuralElement;
@@ -20,8 +18,6 @@ public abstract class AbstractFlexibleDescription<SELF extends AbstractDescripti
     public final TextDescription toTextDescriptionMitVorfeld(final String vorfeld) {
         return toTextDescriptionKeepParams(toWortfolgeMitVorfeld(vorfeld));
     }
-
-    public abstract ImmutableList<TextDescription> altTextDescriptions();
 
     abstract Wortfolge toWortfolgeMitVorfeld(final String vorfeld);
 

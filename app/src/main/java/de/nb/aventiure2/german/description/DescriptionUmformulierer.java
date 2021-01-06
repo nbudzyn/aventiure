@@ -7,16 +7,18 @@ import com.google.common.collect.ImmutableList;
 
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.stream.Collectors;
 
 import javax.annotation.CheckReturnValue;
 
-import de.nb.aventiure2.german.base.GermanUtil;
 import de.nb.aventiure2.german.base.Wortfolge;
 import de.nb.aventiure2.german.praedikat.AdverbialeAngabeSkopusSatz;
 import de.nb.aventiure2.german.praedikat.AdverbialeAngabeSkopusVerbAllg;
 import de.nb.aventiure2.german.praedikat.Modalpartikel;
 
 import static com.google.common.collect.ImmutableList.builder;
+import static de.nb.aventiure2.german.base.GermanUtil.capitalize;
+import static de.nb.aventiure2.german.base.GermanUtil.joinToString;
 import static de.nb.aventiure2.german.base.StructuralElement.PARAGRAPH;
 import static de.nb.aventiure2.german.base.StructuralElement.SENTENCE;
 import static de.nb.aventiure2.german.base.StructuralElement.max;
@@ -135,8 +137,8 @@ public class DescriptionUmformulierer {
                         .phorikKandidat(fDesc.getPhorikKandidat()));
             }
         } else {
-            alt.add(mitPraefixCap("Aber dir kommt ein Gedanke:", desc));
-            alt.add(mitPraefixCap("Dir kommt ein Gedanke:", desc));
+            alt.addAll(mitPraefixCap("Aber dir kommt ein Gedanke:", desc));
+            alt.addAll(mitPraefixCap("Dir kommt ein Gedanke:", desc));
         }
 
         return alt.build();
@@ -148,11 +150,11 @@ public class DescriptionUmformulierer {
         final ImmutableList.Builder<AbstractDescription<?>> alt = builder();
 
         if (!(desc instanceof AbstractFlexibleDescription)) {
-            alt.add(duMitPraefixCapitalize("gibst", "aber nicht auf:",
+            alt.addAll(duMitPraefixCapitalize("gibst", "aber nicht auf:",
                     desc));
-            alt.add(duMitPraefixCapitalize("versuchst", "es noch einmal:",
+            alt.addAll(duMitPraefixCapitalize("versuchst", "es noch einmal:",
                     desc));
-            alt.add(duMitPraefixCapitalize("lässt", "dich nicht entmutigen.",
+            alt.addAll(duMitPraefixCapitalize("lässt", "dich nicht entmutigen.",
                     desc));
         }
 
@@ -216,15 +218,15 @@ public class DescriptionUmformulierer {
         final ImmutableList.Builder<AbstractDescription<?>> alt = builder();
 
         if (!(desc instanceof AbstractFlexibleDescription<?>)) {
-            alt.add(duMitPraefixCapitalize("gibst", "aber nicht auf:",
+            alt.addAll(duMitPraefixCapitalize("gibst", "aber nicht auf:",
                     desc));
-            alt.add(duMitPraefixCapitalize("versuchst", "es weiter:",
+            alt.addAll(duMitPraefixCapitalize("versuchst", "es weiter:",
                     desc));
-            alt.add(duMitPraefixCapitalize("versuchst", "es noch weiter:",
+            alt.addAll(duMitPraefixCapitalize("versuchst", "es noch weiter:",
                     desc));
-            alt.add(duMitPraefixCapitalize("versuchst", "es weiterhin:",
+            alt.addAll(duMitPraefixCapitalize("versuchst", "es weiterhin:",
                     desc));
-            alt.add(duMitPraefixCapitalize("lässt", "dich nicht entmutigen.",
+            alt.addAll(duMitPraefixCapitalize("lässt", "dich nicht entmutigen.",
                     desc));
         }
 
@@ -271,29 +273,26 @@ public class DescriptionUmformulierer {
     }
 
     @CheckReturnValue
-    private static TextDescription mitPraefixCap(final String praefix,
-                                                 final AbstractDescription<?> desc) {
-        return desc.toTextDescription().mitPraefixCapitalize(praefix + " ")
-                .beginntZumindestSentence();
+    private static Collection<TextDescription> mitPraefixCap(final String praefix,
+                                                             final AbstractDescription<?> desc) {
+        return desc.altTextDescriptions().stream()
+                .map(d -> d.mitPraefixCapitalize(praefix + " ").beginntZumindestSentence())
+                .collect(Collectors.toSet());
     }
 
-    private static AbstractFlexibleDescription<?> duMitPraefixCapitalize(
+    private static Collection<AbstractFlexibleDescription<?>> duMitPraefixCapitalize(
             final String praefixVerb,
             final String praefixRemainder,
             final AbstractDescription<?> desc) {
-        // FIXME Wortfolge verwenden!
-
-        final TextDescription textDescription = desc.toTextDescription();
-        return du(
-                max(desc.getStartsNew(), SENTENCE),
-                praefixVerb,
-                GermanUtil.capitalize(
-                        GermanUtil.joinToString(
-                                praefixRemainder,
-                                textDescription.toWortfolge())))
-                .komma(textDescription.isKommaStehtAus())
-                .phorikKandidat(textDescription.getPhorikKandidat())
-                .beendet(textDescription.getEndsThis());
+        return desc.altTextDescriptions().stream()
+                .map(d -> du(
+                        max(d.getStartsNew(), SENTENCE),
+                        praefixVerb,
+                        capitalize(joinToString(praefixRemainder, d.toWortfolge())))
+                        .komma(d.isKommaStehtAus())
+                        .phorikKandidat(d.getPhorikKandidat())
+                        .beendet(d.getEndsThis()))
+                .collect(Collectors.toSet());
     }
 
     @CheckReturnValue
@@ -315,7 +314,7 @@ public class DescriptionUmformulierer {
                 desc.toTextDescriptionSatzanschlussOhneSubjekt();
         return du(max(desc.getStartsNew(), PARAGRAPH),
                 praefixVerb,
-                GermanUtil.joinToString(
+                joinToString(
                         praefixRemainder,
                         "und",
                         descriptionSatzanschlussOhneSubjekt.toWortfolge()),

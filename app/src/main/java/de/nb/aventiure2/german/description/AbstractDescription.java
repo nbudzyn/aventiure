@@ -3,6 +3,8 @@ package de.nb.aventiure2.german.description;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
+import com.google.common.collect.ImmutableList;
+
 import java.util.Objects;
 
 import javax.annotation.CheckReturnValue;
@@ -38,6 +40,8 @@ public abstract class AbstractDescription<SELF extends AbstractDescription<SELF>
     public StructuralElement getStartsNew() {
         return params.getStartsNew();
     }
+
+    public abstract ImmutableList<TextDescription> altTextDescriptions();
 
     @NonNull
     @CheckReturnValue

@@ -4,6 +4,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import com.google.common.base.Preconditions;
+import com.google.common.collect.ImmutableList;
 
 import java.util.Objects;
 
@@ -77,6 +78,11 @@ public class TextDescription extends AbstractDescription<TextDescription> {
                 // sie auch jetzt gleich capitalizen!
                 StructuralElement.min(descriptionParams.getStartsNew(), SENTENCE) == SENTENCE ?
                         GermanUtil.capitalize(description) : description;
+    }
+
+    @Override
+    public ImmutableList<TextDescription> altTextDescriptions() {
+        return ImmutableList.of(toTextDescription());
     }
 
     /**

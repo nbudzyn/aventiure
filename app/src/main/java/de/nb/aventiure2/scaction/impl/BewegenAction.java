@@ -11,6 +11,7 @@ import com.google.common.collect.ImmutableList;
 import org.jetbrains.annotations.Contract;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 import de.nb.aventiure2.data.narration.Narrator;
 import de.nb.aventiure2.data.time.TimeTaker;
@@ -461,37 +462,30 @@ public class BewegenAction<LOC_DESC extends ILocatableGO & IDescribableGO>
         if (isDefinitivDiskontinuitaet()) {
             final ImmutableList.Builder<TimedDescription<?>> alt = builder();
 
-            final TextDescription descriptionHauptsatz =
-                    description.getDescription().toTextDescription();
             if (numberOfWays == ONLY_WAY) {
-                alt.add(
-                        new TimedDescription<>(
-                                du("schaust",
-                                        GermanUtil.joinToString(
-                                                "dich nur kurz um, dann",
-                                                descriptionHauptsatz.toWortfolge()))
-                                        .woertlicheRedeNochOffen(
-                                                descriptionHauptsatz.isWoertlicheRedeNochOffen())
-                                        .komma(descriptionHauptsatz.isKommaStehtAus()),
-                                description.getTimeElapsed())
-                                .undWartest(
-                                        description
-                                                .isAllowsAdditionalDuSatzreihengliedOhneSubjekt()));
+                alt.addAll(description.getDescription().altTextDescriptions().stream()
+                        .map(d ->
+                                new TimedDescription<>(
+                                        du("schaust",
+                                                GermanUtil.joinToString(
+                                                        "dich nur kurz um, dann",
+                                                        d.toWortfolge()))
+                                                .woertlicheRedeNochOffen(
+                                                        d.isWoertlicheRedeNochOffen())
+                                                .komma(d.isKommaStehtAus()),
+                                        description.getTimeElapsed())
+                                        .undWartest(
+                                                description
+                                                        .isAllowsAdditionalDuSatzreihengliedOhneSubjekt()))
+                        .collect(Collectors.toSet()));
             } else {
-                alt.add(new TimedDescription<>(
-                        descriptionHauptsatz
-                                .mitPraefixCapitalize("Was willst du hier eigentlich? "),
-                        description.getTimeElapsed()));
-                if (description.getDescription() instanceof AbstractFlexibleDescription<?> &&
-                        ((AbstractFlexibleDescription<?>) description.getDescription())
-                                .hasSubjektDu()) {
-                    alt.add(new TimedDescription<>(
-                            ((AbstractFlexibleDescription<?>) description.getDescription())
-                                    .toTextDescriptionMitSpeziellemVorfeld()
-                                    .mitPraefixCapitalize("Was willst du hier eigentlich? "),
-                            description.getTimeElapsed()));
-                }
-
+                alt.addAll(description.getDescription().altTextDescriptions().stream()
+                        .map(d ->
+                                new TimedDescription<>(
+                                        d.mitPraefixCapitalize(
+                                                "Was willst du hier eigentlich? "),
+                                        description.getTimeElapsed()))
+                        .collect(Collectors.toSet()));
                 alt.addAll(drueckeAusTimed(DISKONTINUITAET, description));
             }
             n.narrateAlt(alt);

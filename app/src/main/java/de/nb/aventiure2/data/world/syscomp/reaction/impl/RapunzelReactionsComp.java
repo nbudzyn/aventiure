@@ -388,13 +388,13 @@ public class RapunzelReactionsComp
         if (loadSC().memoryComp().getKnown(RAPUNZEL) == KNOWN_FROM_DARKNESS) {
             alt.addAll(
                     altReaktionSaetze.stream()
-                            .map(s -> new TimedDescription<>(
-                                    s.toTextDescription()
-                                            .mitPraefixCapitalize(
-                                                    "Am Fenster sitzt die junge Frau, schön als "
-                                                            + "du unter der Sonne noch keine gesehen hast. "
-                                                            + "Ihre Haare glänzen fein wie gesponnen Gold. "
-                                            ), secs(30)))
+                            .flatMap(s -> s.altTextDescriptions().stream())
+                            .map(d -> new TimedDescription<>(
+                                    d.mitPraefixCapitalize(
+                                            "Am Fenster sitzt die junge Frau, schön als "
+                                                    + "du unter der Sonne noch keine gesehen hast. "
+                                                    + "Ihre Haare glänzen fein wie gesponnen Gold. "
+                                    ), secs(30)))
                             .collect(ImmutableList.toImmutableList())
             );
         }
