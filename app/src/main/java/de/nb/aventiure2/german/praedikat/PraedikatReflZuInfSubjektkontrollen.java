@@ -237,7 +237,7 @@ public class PraedikatReflZuInfSubjektkontrollen
                 getAdverbialeAngabeSkopusSatz();
         @Nullable final AdverbialeAngabeSkopusVerbAllg adverbialeAngabeSkopusVerbAllg =
                 getAdverbialeAngabeSkopusVerbAllg();
-        return Konstituentenfolge.joinToKonstituentenfolge(
+        return Konstituentenfolge.joinToNullKonstituentenfolge(
                 adverbialeAngabeSkopusVerbAllg == null
                         || adverbialeAngabeSkopusVerbAllg.imMittelfeldErlaubt() ?
                         Konstituentenfolge.schliesseInKommaEin(

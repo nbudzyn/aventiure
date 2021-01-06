@@ -183,9 +183,10 @@ class PraedikatSubjReflPraepositionalkasusAkkObjOhneLeerstellen
     }
 
     @Override
+    @Nullable
     public Konstituentenfolge getNachfeld(final Person personSubjekt,
                                           final Numerus numerusSubjekt) {
-        return Konstituentenfolge.joinToKonstituentenfolge(
+        return Konstituentenfolge.joinToNullKonstituentenfolge(
                 getAdverbialeAngabeSkopusVerbAllgDescriptionFuerZwangsausklammerung(personSubjekt,
                         numerusSubjekt),
                 getAdverbialeAngabeSkopusSatzDescriptionFuerZwangsausklammerung(personSubjekt,

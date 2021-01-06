@@ -6,7 +6,6 @@ import java.util.Collection;
 
 import de.nb.aventiure2.german.adjektiv.AdjPhrOhneLeerstellen;
 import de.nb.aventiure2.german.adjektiv.AdjektivOhneErgaenzungen;
-import de.nb.aventiure2.german.base.GermanUtil;
 import de.nb.aventiure2.german.praedikat.AdverbialeAngabeSkopusSatz;
 import de.nb.aventiure2.german.praedikat.AdverbialeAngabeSkopusVerbAllg;
 
@@ -66,10 +65,10 @@ public enum Mood {
                 ImmutableList.copyOf(altAdjPhr),
                 stream(altAdjPhr)
                         .map(a -> new AdverbialeAngabeSkopusSatz(
-                                GermanUtil.joinToString(
-                                        a.getPraedikativ(
-                                                // irrelevant für AdjektivOhneErgaenzungen
-                                                P2, SG))))
+                                a.getPraedikativ(
+                                        // irrelevant für AdjektivOhneErgaenzungen
+                                        P2, SG).joinToString(
+                                )))
                         .collect(toList()));
     }
 

@@ -6,12 +6,17 @@ import androidx.annotation.Nullable;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import javax.annotation.Nonnull;
 import javax.annotation.concurrent.Immutable;
 
 import static com.google.common.base.Preconditions.checkArgument;
@@ -28,7 +33,7 @@ public class Konstituentenfolge implements Iterable<Konstituente> {
 
     @Nullable
     public static Konstituentenfolge kf(final Iterable<?> parts) {
-        return joinToKonstituentenfolge(parts);
+        return joinToNullKonstituentenfolge(parts);
     }
 
     public Konstituentenfolge(final Konstituente konstituente) {
@@ -58,57 +63,126 @@ public class Konstituentenfolge implements Iterable<Konstituente> {
     }
 
     /**
-     * Fügt diese Teile zu einer Liste von Konstituenten zusammen.
+     * Fügt diese Teile zu einer Konstituentenfolge zusammen - es darf sich nicht
+     * <code>null</code> ergeben.
      *
-     * @return Eine - ggf. leere - Liste von Konstituenten, enthält nicht <code>null</code>
+     * @return Eine Konstituentenfolge, nie <code>null</code>>
      */
-    @Nullable
+    @Nonnull
     public static Konstituentenfolge joinToKonstituentenfolge(final Object... parts) {
-        return joinToKonstituentenfolge(asList(parts));
+        return Wortfolge.checkJoiningResultNotNull(joinToNullKonstituentenfolge(parts), parts);
     }
 
     /**
-     * Fügt diese Teile zu einer Liste von Konstituenten zusammen.
+     * Fügt diese Teile zu einer Konstituentenfolge zusammen.
      *
-     * @return Eine - ggf. leere - Liste von Konstituenten, enthält nicht <code>null</code>
+     * @return Eine Konstituentenfolge - oder <code>null</code>
      */
     @Nullable
-    static Konstituentenfolge joinToKonstituentenfolge(final Iterable<?> parts) {
-        final ImmutableList.Builder<Konstituente> resBuilder = ImmutableList.builder();
-        for (final Object part : parts) {
-            if (part == null) {
-                continue;
-            }
+    public static Konstituentenfolge joinToNullKonstituentenfolge(final Object... parts) {
+        return joinToNullKonstituentenfolge(asList(parts));
+    }
 
-            final Konstituentenfolge partKonstituentenfolge;
-            if (part.getClass().isArray()) {
-                partKonstituentenfolge = joinToKonstituentenfolge((Object[]) part);
-            } else if (part instanceof Konstituentenfolge) {
-                partKonstituentenfolge = joinToKonstituentenfolge((Konstituentenfolge) part);
-            } else if (part instanceof Iterable<?>) {
-                // FIXME Hier bei Satz Alternativen erzeugen!
-                throw new IllegalStateException(
-                        "Iterables sollen nur noch für Alternativen verwendet werden...");
-            } else if (part instanceof Konstituente) {
-                partKonstituentenfolge = new Konstituentenfolge((Konstituente) part);
-            } else if (part instanceof Wortfolge) {
-                partKonstituentenfolge = new Konstituentenfolge(Konstituente.k((Wortfolge) part));
-            } else {
-                partKonstituentenfolge = new Konstituentenfolge(Konstituente.k(part.toString()));
-            }
-
-            if (partKonstituentenfolge != null) {
-                resBuilder.addAll(partKonstituentenfolge);
-            }
-        }
-
-        final ImmutableList<Konstituente> res = resBuilder.build();
-
-        if (res.isEmpty()) {
+    /**
+     * Fügt diese Teile zu einer Konstituentenfolge zusammen.
+     *
+     * @return Eine Konstituentenfolge - oder <code>null</code>
+     */
+    @Nullable
+    static Konstituentenfolge joinToNullKonstituentenfolge(final Iterable<?> parts) {
+        final Collection<Konstituentenfolge> alternatives = joinToAltKonstituentenfolgen(parts);
+        if (alternatives.isEmpty()) {
             return null;
         }
 
-        return new Konstituentenfolge(res);
+        if (alternatives.size() > 1) {
+            throw new IllegalArgumentException("Unerwartet mehrere Alternativen! "
+                    + "parts: " + parts
+                    + ", alternatives : " + alternatives);
+        }
+
+        return alternatives.iterator().next();
+    }
+
+    /**
+     * Fügt diese Teile zu mehreren alternativen Konstituentenfolgen zusammen.
+     *
+     * @return Mehrere alternative Konstituentenfolgen - die Collection kann statt einer
+     * Konstituentenfolge auch <code>null</code> enthalten.
+     */
+    @Nonnull
+    static Collection<Konstituentenfolge> joinToAltKonstituentenfolgen(
+            final Iterable<?> parts) {
+        ArrayList<ImmutableList.Builder<Konstituente>> alternativeKonstituentenfolgen =
+                new ArrayList<>();
+
+        alternativeKonstituentenfolgen.add(ImmutableList.builder());
+
+        for (final Object part : parts) {
+            final List<Konstituentenfolge> alternativePartKonstituentenfolgen;
+
+            if (part == null) {
+                alternativePartKonstituentenfolgen = Collections.singletonList(null);
+            } else if (part.getClass().isArray()) {
+                alternativePartKonstituentenfolgen =
+                        Collections.singletonList(joinToNullKonstituentenfolge((Object[]) part));
+            } else if (part instanceof Konstituentenfolge) {
+                alternativePartKonstituentenfolgen =
+                        Collections
+                                .singletonList(
+                                        joinToNullKonstituentenfolge((Konstituentenfolge) part));
+            } else if (part instanceof Collection<?>) {
+                alternativePartKonstituentenfolgen =
+                        ((Collection<?>) part).stream()
+                                .map(Konstituentenfolge::joinToNullKonstituentenfolge)
+                                .collect(Collectors.toList());
+                // FIXME altVerzweitsaetze() benutzen, um das zu nutzen!
+            } else if (part instanceof Konstituente) {
+                alternativePartKonstituentenfolgen =
+                        Collections.singletonList(new Konstituentenfolge((Konstituente) part));
+            } else if (part instanceof Wortfolge) {
+                alternativePartKonstituentenfolgen =
+                        Collections.singletonList(
+                                new Konstituentenfolge(Konstituente.k((Wortfolge) part)));
+            } else {
+                alternativePartKonstituentenfolgen =
+                        Collections.singletonList(
+                                new Konstituentenfolge(Konstituente.k(part.toString())));
+            }
+
+            final ArrayList<ImmutableList.Builder<Konstituente>>
+                    ergaenzteAlternativeKonstituentenfolgen = new ArrayList<>();
+
+            for (final ImmutableList.Builder<Konstituente> alternative : alternativeKonstituentenfolgen) {
+                for (final Konstituentenfolge alternativePartKonstituentenfolge : alternativePartKonstituentenfolgen) {
+                    if (alternativePartKonstituentenfolge != null) {
+                        final ImmutableList.Builder<Konstituente> ergaenzteKonstituentenfolge =
+                                ImmutableList.<Konstituente>builder();
+                        ergaenzteKonstituentenfolge.addAll(alternative.build());
+                        ergaenzteKonstituentenfolge
+                                .addAll(alternativePartKonstituentenfolge.konstituenten);
+                        ergaenzteAlternativeKonstituentenfolgen.add(ergaenzteKonstituentenfolge);
+                    } else {
+                        ergaenzteAlternativeKonstituentenfolgen.add(alternative);
+                    }
+                }
+            }
+
+            alternativeKonstituentenfolgen = ergaenzteAlternativeKonstituentenfolgen;
+        }
+
+        final HashSet<Konstituentenfolge> res = new HashSet<>();
+        for (final ImmutableList.Builder<Konstituente> alternative : alternativeKonstituentenfolgen) {
+            final ImmutableList<Konstituente> konstituenten = alternative.build();
+
+            if (konstituenten.isEmpty()) {
+                res.add(null);
+            } else {
+                res.add(new Konstituentenfolge(konstituenten));
+            }
+        }
+
+        return res;
     }
 
     /**
@@ -135,10 +209,34 @@ public class Konstituentenfolge implements Iterable<Konstituente> {
     }
 
     /**
+     * Fügt diese Konstituentenfolge auf verschiedene alternative Arten zu
+     * jeweils einem String zusammen (statt eines des Strings ist auch null möglich).
+     * Diese Methode darf nur verwendet werden,
+     * wenn nach dem letzten der Teile definitiv kein Komma aussteht - oder das
+     * ausstehende Kommma auf andere Weise behandelt wird.
+     */
+    public Collection<String> joinToAltStrings() {
+        return Wortfolge.joinToAltWortfolgen(this).stream()
+                .map(wf -> wf != null ?
+                        wf.toStringFixWoertlicheRedeNochOffen() : null)
+                .collect(Collectors.toSet());
+    }
+
+    /**
+     * Fügt diese Konstituentenfolge zu einem String zusammen, wobei ein nichtleerer
+     * String das Ergebnis sein muss. Diese Methode darf nur verwendet werden,
+     * wenn nach dem letzten der Teile definitiv kein Komma aussteht - oder das
+     * ausstehende Kommma auf andere Weise behandelt wird.
+     */
+    public String joinToString() {
+        return Wortfolge.joinToWortfolge(this).toStringFixWoertlicheRedeNochOffen();
+    }
+
+    /**
      * Fügt diese Konstituenten zu einer einzigen Konsituente zusammen.
      * <p>
      * Diese Methode wird man nur selten verwenden wollen - vgl.
-     * {@link Konstituentenfolge#joinToKonstituentenfolge(Object...)}!
+     * {@link Konstituentenfolge#joinToNullKonstituentenfolge(Object...)}!
      *
      * @return Eine einzige Konstituente- ggf. null
      */

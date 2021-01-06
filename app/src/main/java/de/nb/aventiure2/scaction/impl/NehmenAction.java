@@ -182,10 +182,10 @@ public class NehmenAction
         final PraedikatMitEinerObjektleerstelle praedikat = getPraedikatFuerName();
 
         return GermanUtil.capitalize(
-                GermanUtil.joinToString(
-                        praedikat.mit(world.getDescription(gameObject, true))
-                                // Relevant für etwas wie "Die Schale an *mich* nehmen"
-                                .getInfinitiv(P1, SG)));
+                praedikat.mit(world.getDescription(gameObject, true))
+                        // Relevant für etwas wie "Die Schale an *mich* nehmen"
+                        .getInfinitiv(P1, SG).joinToString(
+                ));
     }
 
     @NonNull
@@ -464,12 +464,11 @@ public class NehmenAction
             alt.add(satzanschluss(
                     ", nur um "
                             +
-                            GermanUtil.joinToString(
-                                    nehmenPraedikat
-                                            .mit(world.getDescription(gameObject, true).persPron())
-                                            .mitAdverbialerAngabe(
-                                                    new AdverbialeAngabeSkopusSatz("gleich erneut"))
-                                            .getZuInfinitiv(P2, SG)
+                            nehmenPraedikat
+                                    .mit(world.getDescription(gameObject, true).persPron())
+                                    .mitAdverbialerAngabe(
+                                            new AdverbialeAngabeSkopusSatz("gleich erneut"))
+                                    .getZuInfinitiv(P2, SG).joinToString(
                             ),
                     secs(5))
                     // "zu nehmen", "an dich zu nehmen", "aufzuheben"

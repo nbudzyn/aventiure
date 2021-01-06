@@ -109,7 +109,7 @@ public class PraedikatSubOhneLeerstellen
     @Nullable
     Konstituentenfolge getMittelfeldOhneLinksversetzungUnbetonterPronomen(
             final Person personSubjekt, final Numerus numerusSubjekt) {
-        return Konstituentenfolge.joinToKonstituentenfolge(
+        return Konstituentenfolge.joinToNullKonstituentenfolge(
                 getAdverbialeAngabeSkopusSatzDescriptionFuerMittelfeld(personSubjekt,
                         numerusSubjekt),
                 // "aus einer Laune heraus"
@@ -142,9 +142,10 @@ public class PraedikatSubOhneLeerstellen
     }
 
     @Override
+    @Nullable
     public Konstituentenfolge getNachfeld(final Person personSubjekt,
                                           final Numerus numerusSubjekt) {
-        return Konstituentenfolge.joinToKonstituentenfolge(
+        return Konstituentenfolge.joinToNullKonstituentenfolge(
                 getAdverbialeAngabeSkopusVerbAllgDescriptionFuerZwangsausklammerung(personSubjekt,
                         numerusSubjekt),
                 getAdverbialeAngabeSkopusSatzDescriptionFuerZwangsausklammerung(personSubjekt,

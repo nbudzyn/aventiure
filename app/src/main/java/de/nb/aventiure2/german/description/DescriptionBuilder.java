@@ -5,23 +5,17 @@ import androidx.annotation.Nullable;
 
 import com.google.common.collect.ImmutableList;
 
-import java.util.Collection;
-
 import javax.annotation.CheckReturnValue;
 
 import de.nb.aventiure2.data.time.AvTimeSpan;
-import de.nb.aventiure2.data.world.base.GameObjectId;
 import de.nb.aventiure2.german.base.Konstituente;
-import de.nb.aventiure2.german.base.NumerusGenus;
 import de.nb.aventiure2.german.base.Personalpronomen;
 import de.nb.aventiure2.german.base.StructuralElement;
-import de.nb.aventiure2.german.base.SubstantivischePhrase;
 import de.nb.aventiure2.german.base.Wortfolge;
 import de.nb.aventiure2.german.praedikat.PraedikatOhneLeerstellen;
 import de.nb.aventiure2.german.satz.Satz;
 
 import static com.google.common.base.Preconditions.checkArgument;
-import static com.google.common.collect.ImmutableList.toImmutableList;
 import static de.nb.aventiure2.german.base.Numerus.SG;
 import static de.nb.aventiure2.german.base.NumerusGenus.M;
 import static de.nb.aventiure2.german.base.Person.P2;
@@ -44,35 +38,11 @@ public class DescriptionBuilder {
 
     @CheckReturnValue
     @NonNull
-    public static ImmutableList<AbstractDescription<?>> altNeueSaetzeMitPhorikKandidat(
-            final Collection<Satz> saetze, final SubstantivischePhrase phorikKandidatPhrase,
-            final GameObjectId phorikKandidatGameObjectId) {
-        return altNeueSaetzeMitPhorikKandidat(
-                saetze, phorikKandidatPhrase.getNumerusGenus(), phorikKandidatGameObjectId);
-    }
-
-    @CheckReturnValue
-    @NonNull
-    public static ImmutableList<AbstractDescription<?>> altNeueSaetzeMitPhorikKandidat(
-            final Collection<Satz> saetze, final NumerusGenus phorikKandidatNumerusGenus,
-            final GameObjectId phorikKandidatGameObjectId) {
-        return saetze.stream()
-                .flatMap(s -> altNeueSaetze(s).stream()
-                        .map(allgDesc -> allgDesc
-                                .phorikKandidat(
-                                        phorikKandidatNumerusGenus, phorikKandidatGameObjectId))
-                )
-                .collect(toImmutableList());
-    }
-
-    @CheckReturnValue
-    @NonNull
     public static ImmutableList<TimedDescription<AbstractDescription<?>>> altNeueSaetze(
             final Satz satz,
             final AvTimeSpan timeElapsed) {
         return toTimed(altNeueSaetze(satz), timeElapsed);
     }
-
 
     @CheckReturnValue
     @NonNull

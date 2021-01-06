@@ -62,8 +62,7 @@ public class ZweiAdjPhrOhneLeerstellen implements AdjPhrOhneLeerstellen {
         return Konstituentenfolge.joinToKonstituentenfolge(
                 "und",
                 zweiteAdjPhr.getPraedikativ(person, numerus)
-        ).withVorkommaNoetig(
-        );
+        ).withVorkommaNoetig();
     }
 
     @Nullable

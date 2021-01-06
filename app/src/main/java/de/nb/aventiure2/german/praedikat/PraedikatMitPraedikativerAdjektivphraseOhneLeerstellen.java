@@ -198,7 +198,7 @@ public class PraedikatMitPraedikativerAdjektivphraseOhneLeerstellen
     @Nullable
     public Konstituentenfolge getNachfeld(final Person personSubjekt,
                                           final Numerus numerusSubjekt) {
-        return Konstituentenfolge.joinToKonstituentenfolge(
+        return Konstituentenfolge.joinToNullKonstituentenfolge(
                 adjektivphrase.getPraedikativAnteilKandidatFuerNachfeld(
                         personSubjekt, numerusSubjekt), // ", dich zu sehen"
                 getAdverbialeAngabeSkopusVerbAllgDescriptionFuerZwangsausklammerung(personSubjekt,

@@ -121,11 +121,11 @@ public class AblegenAction
     @NonNull
     public String getName() {
         return GermanUtil.capitalize(
-                GermanUtil.joinToString(
-                        getPraedikat()
-                                .mit(world.getDescription(gameObject, true))
-                                .mitAdverbialerAngabe(getWohinDetail())
-                                .getInfinitiv(P1, SG)));
+                getPraedikat()
+                        .mit(world.getDescription(gameObject, true))
+                        .mitAdverbialerAngabe(getWohinDetail())
+                        .getInfinitiv(P1, SG).joinToString(
+                ));
     }
 
     @NonNull

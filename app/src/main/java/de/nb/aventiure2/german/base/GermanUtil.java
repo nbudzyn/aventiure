@@ -3,7 +3,9 @@ package de.nb.aventiure2.german.base;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
+import java.util.Collection;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static com.google.common.base.Preconditions.checkArgument;
 import static java.util.Arrays.asList;
@@ -26,6 +28,20 @@ public class GermanUtil {
     }
 
     /**
+     * Fügt diese Teile auf verschiedene alternative Arten zu
+     * jeweils einem String zusammen (statt eines des Strings ist auch null möglich).
+     * Diese Methode darf nur verwendet werden,
+     * wenn nach dem letzten der Teile definitiv kein Komma aussteht - oder das
+     * ausstehende Kommma auf andere Weise behandelt wird.
+     */
+    public static Collection<String> joinToAltStrings(final Object... parts) {
+        return Wortfolge.joinToAltWortfolgen(parts).stream()
+                .map(wf -> wf != null ?
+                        wf.toStringFixWoertlicheRedeNochOffen() : null)
+                .collect(Collectors.toSet());
+    }
+
+    /**
      * Fügt diese Teile zu einem String zusammen, wobei ein nichtleerer
      * * String das Ergebnis sein muss. . Diese Methode darf nur verwendet werden,
      * wenn nach dem letzten der Teile definitiv kein Komma aussteht - oder das
@@ -33,17 +49,6 @@ public class GermanUtil {
      */
     public static String joinToString(final Object... parts) {
         return checkJoiningResultNotNull(joinToNullString(parts), parts);
-    }
-
-    /**
-     * Fügt diese Konstituentenfolge zu einem String zusammen, wobei ein nichtleerer
-     * String das Ergebnis sein muss. Diese Methode darf nur verwendet werden,
-     * wenn nach dem letzten der Teile definitiv kein Komma aussteht - oder das
-     * ausstehende Kommma auf andere Weise behandelt wird.
-     */
-    // FIXME hieraus eine Istanz-Methode machen!
-    public static String joinToString(final Konstituentenfolge konstituentenfolge) {
-        return Wortfolge.joinToWortfolge(konstituentenfolge).toStringFixWoertlicheRedeNochOffen();
     }
 
     private static String checkJoiningResultNotNull(

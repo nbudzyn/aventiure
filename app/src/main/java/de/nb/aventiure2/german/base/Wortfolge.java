@@ -3,8 +3,11 @@ package de.nb.aventiure2.german.base;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
+import java.util.Collection;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
+import javax.annotation.Nonnull;
 import javax.annotation.concurrent.Immutable;
 
 import static java.util.Arrays.asList;
@@ -42,23 +45,14 @@ public class Wortfolge {
         return checkJoiningResultNotNull(joinToNullWortfolge(parts), parts);
     }
 
-    /**
-     * Fügt diese Teile zu einer Wortfolge zusammen, wobei eine nichtleere
-     * Wortfolge das Ergebnis sein muss. Berücksichtigt auch die Information,
-     * ob ein Kommma aussteht.
-     */
-    public static Wortfolge joinToWortfolge(final Iterable<?> parts) {
-        return checkJoiningResultNotNull(joinToNullWortfolge(parts), parts);
-    }
-
-    private static Wortfolge checkJoiningResultNotNull(
-            @Nullable final Wortfolge joiningResult,
+    static <R> R checkJoiningResultNotNull(
+            @Nullable final R joiningResult,
             final Object... parts) {
         return checkJoiningResultNotNull(joiningResult, asList(parts));
     }
 
-    private static Wortfolge checkJoiningResultNotNull(
-            @Nullable final Wortfolge joiningResult,
+    private static <R> R checkJoiningResultNotNull(
+            @Nullable final R joiningResult,
             final Iterable<?> parts) {
         if (joiningResult == null) {
             throw new IllegalStateException("Joining result was null. parts: " + parts);
@@ -68,10 +62,38 @@ public class Wortfolge {
     }
 
     /**
-     * Fügt diese Teile zu einem String zusammen - berücksichtigt auch die Information,
-     * ob ein Komma aussteht.
+     * Fügt diese Teile zu mehreren alternativen Wortfolgen zusammen.
      *
-     * @see Wortfolge
+     * @return Mehrere alternative Wortfolgen - die Collection kann statt einer
+     * Wortfolgen auch <code>null</code> enthalten.
+     */
+    @Nonnull
+    public static Collection<Wortfolge> joinToAltWortfolgen(final Object... parts) {
+        return joinToAltWortfolgen(asList(parts));
+    }
+
+    /**
+     * Fügt diese Teile zu mehreren alternativen Wortfolgen zusammen.
+     *
+     * @return Mehrere alternative Wortfolgen - die Collection kann statt einer
+     * Wortfolgen auch <code>null</code> enthalten.
+     */
+    @Nonnull
+    private static Collection<Wortfolge> joinToAltWortfolgen(final Iterable<?> parts) {
+        @Nullable final Collection<Konstituentenfolge> konstituentenfolge =
+                Konstituentenfolge.joinToAltKonstituentenfolgen(parts);
+
+        return konstituentenfolge.stream()
+                .map(k -> k != null ? joinToWortfolge(k) : null)
+                .collect(Collectors.toSet());
+    }
+
+    /**
+     * Fügt diese Teile zu einer Wortfolge zusammen - berücksichtigt auch die Information,
+     * ob ein Komma aussteht.
+     * <p>
+     * Sollte für den ersten der Parts angegeben sein, dass ein Vorkommma nötig ist,
+     * wird <i>keines</i> erzeugt.
      */
     @Nullable
     public static Wortfolge joinToNullWortfolge(final Object... parts) {
@@ -82,13 +104,13 @@ public class Wortfolge {
      * Fügt diese Teile zu einer Wortfolge zusammen - einschließlich der Information,
      * ob ein Komma aussteht.
      * <p>
-     * Sollte für den ersten der parts angegeben sein, dass ein Vorkommma nötig ist,
+     * Sollte für den ersten der Parts angegeben sein, dass ein Vorkommma nötig ist,
      * wird <i>keines</i> erzeugt.
      */
     @Nullable
     static Wortfolge joinToNullWortfolge(final Iterable<?> parts) {
         @Nullable final Konstituentenfolge konstituentenfolge =
-                Konstituentenfolge.joinToKonstituentenfolge(parts);
+                Konstituentenfolge.joinToNullKonstituentenfolge(parts);
         if (konstituentenfolge == null) {
             return null;
         }
@@ -99,7 +121,7 @@ public class Wortfolge {
     /**
      * Fügt diese Konstituentenfolge zu einer Wortfolge zusammen
      */
-    static Wortfolge joinToWortfolge(final Konstituentenfolge konstituentenfolge) {
+    public static Wortfolge joinToWortfolge(final Konstituentenfolge konstituentenfolge) {
         final StringBuilder resString =
                 new StringBuilder(konstituentenfolge.size() * 25);
         boolean first = true;

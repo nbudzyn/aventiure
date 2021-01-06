@@ -17,7 +17,6 @@ import de.nb.aventiure2.data.world.syscomp.memory.Action;
 import de.nb.aventiure2.data.world.syscomp.mentalmodel.IHasMentalModelGO;
 import de.nb.aventiure2.data.world.syscomp.talking.ITalkerGO;
 import de.nb.aventiure2.data.world.syscomp.talking.impl.SCTalkAction;
-import de.nb.aventiure2.german.base.GermanUtil;
 import de.nb.aventiure2.german.base.Nominalphrase;
 import de.nb.aventiure2.german.praedikat.Praedikat;
 import de.nb.aventiure2.german.praedikat.PraedikatMitEinerObjektleerstelle;
@@ -152,8 +151,8 @@ public class RedenAction<TALKER extends IDescribableGO & ILocatableGO & ITalkerG
                 talkStep,
                 // "Dem Frosch Angebote machen"
                 // "Das Angebot von *mir* weisen"
-                GermanUtil.joinToString(
-                        praedikatOhneLeerstellen.getInfinitiv(P1, SG).capitalize()));
+                praedikatOhneLeerstellen.getInfinitiv(P1, SG).capitalize().joinToString(
+                ));
     }
 
     private RedenAction(final SCActionStepCountDao scActionStepCountDao,

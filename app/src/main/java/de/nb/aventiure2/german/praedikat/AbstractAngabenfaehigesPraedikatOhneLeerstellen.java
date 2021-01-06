@@ -204,7 +204,7 @@ public abstract class AbstractAngabenfaehigesPraedikatOhneLeerstellen
                         toPair(datObjekt, Kasus.DAT));
 
         // Das Mittelfeld besteht aus drei Teilen:
-        return Konstituentenfolge.joinToKonstituentenfolge(
+        return Konstituentenfolge.joinToNullKonstituentenfolge(
                 // 1. Der Bereich vor der Wackernagel-Position. Dort kann höchstens ein
                 //   Subjekt stehen, das keine unbetontes Pronomen ist.
                 //   Das Subjekt ist hier im Prädikat noch nicht bekannt.

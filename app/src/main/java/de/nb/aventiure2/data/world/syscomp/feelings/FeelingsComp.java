@@ -25,7 +25,6 @@ import de.nb.aventiure2.data.world.base.GameObject;
 import de.nb.aventiure2.data.world.base.GameObjectId;
 import de.nb.aventiure2.data.world.syscomp.memory.MemoryComp;
 import de.nb.aventiure2.german.adjektiv.AdjPhrOhneLeerstellen;
-import de.nb.aventiure2.german.base.GermanUtil;
 import de.nb.aventiure2.german.base.NumerusGenus;
 import de.nb.aventiure2.german.base.Personalpronomen;
 import de.nb.aventiure2.german.base.SubstantivischePhrase;
@@ -821,8 +820,8 @@ public class FeelingsComp extends AbstractStatefulComponent<FeelingsPCD> {
         res.addAll(getPcd().getMuedigkeitsData().altAdjektivphrase().stream()
                 .map(p -> du(PARAGRAPH,
                         "fühlst", "dich auf einmal "
-                                + GermanUtil.joinToString(
-                                p.getPraedikativ(P2, SG)),
+                                + p.getPraedikativ(P2, SG).joinToString(
+                        ),
                         "auf einmal")
                         .komma(Wortfolge.joinToWortfolge(p.getPraedikativ(P2, SG))
                                 .kommaStehtAus())
@@ -977,8 +976,8 @@ public class FeelingsComp extends AbstractStatefulComponent<FeelingsPCD> {
         res.addAll(getPcd().getMuedigkeitsData().altAdjektivphrase().stream()
                 .map(p -> du(PARAGRAPH,
                         "fühlst", "dich  "
-                                + GermanUtil.joinToString(
-                                p.getPraedikativ(P2, SG)))
+                                + p.getPraedikativ(P2, SG).joinToString(
+                        ))
                         .komma(Wortfolge.joinToWortfolge(p.getPraedikativ(P2, SG))
                                 .kommaStehtAus())
                         .beendet(PARAGRAPH))

@@ -42,7 +42,7 @@ public interface PraedikatOhneLeerstellen extends Praedikat {
      * (in einem Verbzweitsatz würde dann noch das Subjekt davor stehen) - für ein
      * Subjekt wie dieses (was Person und Numerus angeht).
      */
-    default Iterable<Konstituente> getVerbzweit(final SubstantivischePhrase subjekt) {
+    default Konstituentenfolge getVerbzweit(final SubstantivischePhrase subjekt) {
         return getVerbzweit(subjekt.getPerson(), subjekt.getNumerus());
     }
 

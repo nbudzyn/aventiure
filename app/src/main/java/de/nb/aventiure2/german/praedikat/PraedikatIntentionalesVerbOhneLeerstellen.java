@@ -156,7 +156,7 @@ public class PraedikatIntentionalesVerbOhneLeerstellen
         @Nullable final AdverbialeAngabeSkopusVerbAllg adverbialeAngabeSkopusVerbAllg =
                 getAdverbialeAngabeSkopusVerbAllg();
 
-        return Konstituentenfolge.joinToKonstituentenfolge(
+        return Konstituentenfolge.joinToNullKonstituentenfolge(
                 adverbialeAngabeSkopusSatz != null &&
                         adverbialeAngabeSkopusSatz.imMittelfeldErlaubt() ?
                         adverbialeAngabeSkopusSatz.getDescription(personSubjekt, numerusSubjekt) :
@@ -212,7 +212,7 @@ public class PraedikatIntentionalesVerbOhneLeerstellen
                 getAdverbialeAngabeSkopusSatz();
         @Nullable final AdverbialeAngabeSkopusVerbAllg adverbialeAngabeSkopusVerbAllg =
                 getAdverbialeAngabeSkopusVerbAllg();
-        return Konstituentenfolge.joinToKonstituentenfolge(
+        return Konstituentenfolge.joinToNullKonstituentenfolge(
                 adverbialeAngabeSkopusVerbAllg == null
                         || adverbialeAngabeSkopusVerbAllg.imMittelfeldErlaubt() ?
                         lexikalischerKern.getZuInfinitiv(

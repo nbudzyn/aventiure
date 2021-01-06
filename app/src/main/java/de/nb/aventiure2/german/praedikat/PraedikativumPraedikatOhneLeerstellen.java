@@ -156,7 +156,7 @@ public class PraedikativumPraedikatOhneLeerstellen
     @Nullable
     Konstituentenfolge getMittelfeldOhneLinksversetzungUnbetonterPronomen(
             final Person personSubjekt, final Numerus numerusSubjekt) {
-        return Konstituentenfolge.joinToKonstituentenfolge(
+        return Konstituentenfolge.joinToNullKonstituentenfolge(
                 getAdverbialeAngabeSkopusSatzDescriptionFuerMittelfeld(personSubjekt,
                         numerusSubjekt),
                 // "plötzlich"
@@ -196,7 +196,7 @@ public class PraedikativumPraedikatOhneLeerstellen
     @Nullable
     public Konstituentenfolge getNachfeld(final Person personSubjekt,
                                           final Numerus numerusSubjekt) {
-        return Konstituentenfolge.joinToKonstituentenfolge(
+        return Konstituentenfolge.joinToNullKonstituentenfolge(
                 praedikativum.getPraedikativAnteilKandidatFuerNachfeld(
                         personSubjekt, numerusSubjekt), // "dich zu sehen"
                 getAdverbialeAngabeSkopusVerbAllgDescriptionFuerZwangsausklammerung(personSubjekt,
