@@ -2,7 +2,6 @@ package de.nb.aventiure2.german.praedikat;
 
 import de.nb.aventiure2.german.adjektiv.AdjPhrOhneLeerstellen;
 import de.nb.aventiure2.german.adjektiv.Adjektiv;
-import de.nb.aventiure2.german.base.GermanUtil;
 import de.nb.aventiure2.german.base.Konstituente;
 import de.nb.aventiure2.german.base.Numerus;
 import de.nb.aventiure2.german.base.Person;
@@ -20,14 +19,6 @@ public abstract class AbstractAdverbialeAngabe {
 
     AbstractAdverbialeAngabe(final AdjPhrOhneLeerstellen adjektivphrase) {
         this.adjektivphrase = adjektivphrase;
-    }
-
-    /**
-     * Gibt den Text der adverbialen Angabe zurück - Achtung, der Aufrufer muss sich
-     * darum kümmmern, dass kein noch ausstehendes Nachkomma verloren geht!
-     */
-    private String getText(final Person personSubjekt, final Numerus numerusSubjekt) {
-        return GermanUtil.joinToString(getDescription(personSubjekt, numerusSubjekt));
     }
 
     public Konstituente getDescription(final Person personSubjekt, final Numerus numerusSubjekt) {

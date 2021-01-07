@@ -212,20 +212,6 @@ public class Konstituentenfolge implements Iterable<Konstituente> {
     }
 
     /**
-     * Fügt diese Konstituentenfolge auf verschiedene alternative Arten zu
-     * jeweils einem String zusammen (statt eines des Strings ist auch null möglich).
-     * Diese Methode darf nur verwendet werden,
-     * wenn nach dem letzten der Teile definitiv kein Komma aussteht - oder das
-     * ausstehende Kommma auf andere Weise behandelt wird.
-     */
-    public Collection<String> joinToAltStrings() {
-        return Wortfolge.joinToAltWortfolgen(this).stream()
-                .map(wf -> wf != null ?
-                        wf.toStringFixWoertlicheRedeNochOffen() : null)
-                .collect(toSet());
-    }
-
-    /**
      * Fügt diese Konstituentenfolge zu einem String zusammen, wobei ein nichtleerer
      * String das Ergebnis sein muss. Diese Methode darf nur verwendet werden,
      * wenn nach dem letzten der Teile definitiv kein Komma aussteht - oder das

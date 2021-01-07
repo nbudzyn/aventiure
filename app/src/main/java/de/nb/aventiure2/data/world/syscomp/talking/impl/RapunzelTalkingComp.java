@@ -438,7 +438,7 @@ public class RapunzelTalkingComp extends AbstractTalkingComp {
                         "dir",
                         altEindruckSaetze.stream()
                                 .map(s -> s.mitAnschlusswort("und").getVerbzweitsatzStandard())
-                                .collect(toList())).stream()
+                ).stream()
                         .map(wf -> neuerSatz(wf).beendet(PARAGRAPH))
                         .collect(toSet()));
 

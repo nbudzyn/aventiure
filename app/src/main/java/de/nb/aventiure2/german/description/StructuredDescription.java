@@ -8,7 +8,7 @@ import java.util.Objects;
 
 import javax.annotation.CheckReturnValue;
 
-import de.nb.aventiure2.german.base.Konstituente;
+import de.nb.aventiure2.german.base.Konstituentenfolge;
 import de.nb.aventiure2.german.base.Numerus;
 import de.nb.aventiure2.german.base.Person;
 import de.nb.aventiure2.german.base.PhorikKandidat;
@@ -132,7 +132,7 @@ public class StructuredDescription extends AbstractFlexibleDescription<Structure
 
     @Nullable
     private Wortfolge toWortfolgeMitSpeziellemVorfeldOrNull() {
-        @Nullable final Iterable<Konstituente> speziellesVorfeld =
+        @Nullable final Konstituentenfolge speziellesVorfeld =
                 satz.getVerbzweitsatzMitSpeziellemVorfeldAlsWeitereOption();
         if (speziellesVorfeld == null) {
             return null;
