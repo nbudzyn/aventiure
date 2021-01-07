@@ -390,7 +390,7 @@ public class FeelingsComp extends AbstractStatefulComponent<FeelingsPCD> {
         return dispatchFeelings(
                 SPIELER_CHARAKTER,
                 1,
-                () -> altAdverbialeAngabenSkopusVerbAllg(),
+                this::altAdverbialeAngabenSkopusVerbAllg,
                 (feelingTowardsType) -> altEindruckBeiBegegnungAdvAngaben(
                         gameObjectSubjekt, SPIELER_CHARAKTER,
                         getPersonalpronomenSC(),
@@ -523,31 +523,6 @@ public class FeelingsComp extends AbstractStatefulComponent<FeelingsPCD> {
                 gameObjectSubjekt, targetDesc,
                 getFeelingTowards(feelingTargetId, type),
                 isTargetKnown(feelingTargetId));
-    }
-
-    /**
-     * Gibt eventuell alternative Adjektivphrasen zurück, die den Eindruck
-     * beschreiben, den dieses Feeling Beings auf das Target macht, wenn die beiden sich
-     * begegnen. Die Phrasen können mit
-     * <i>wirken</i> oder <i>scheinen</i> verbunden werden.
-     * <p>
-     * Nicht alle diese Phrasen sind für adverbiale Angaben geeignet, dazu
-     * siehe
-     * {@link #altEindruckBeiBegegnungAdvAngaben(SubstantivischePhrase, GameObjectId, SubstantivischePhrase, FeelingTowardsType)}.
-     * <p>
-     * Die Methode garantiert, dass niemals etwas wie "du, der du..." oder
-     * "du, die du..." oder "du, das du..." generiert wird.
-     *
-     * @return Möglicherweise eine leere Liste (insbesondere bei extremen Gefühlen)!
-     */
-    private ImmutableList<AdjPhrOhneLeerstellen> altEindruckBeiBegegnungAdjPhr(
-            final SubstantivischePhrase gameObjectSubjekt,
-            final GameObjectId feelingTargetId,
-            final SubstantivischePhrase targetDesc,
-            final FeelingTowardsType type) {
-        return type.altEindruckBeiBegegnungAdjPhr(gameObjectSubjekt,
-                targetDesc,
-                getFeelingTowards(feelingTargetId, type), isTargetKnown(feelingTargetId));
     }
 
     private boolean isTargetKnown(final GameObjectId targetId) {

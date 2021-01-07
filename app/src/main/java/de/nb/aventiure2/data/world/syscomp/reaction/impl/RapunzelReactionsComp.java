@@ -4,8 +4,6 @@ import androidx.annotation.NonNull;
 
 import com.google.common.collect.ImmutableList;
 
-import java.util.stream.Collectors;
-
 import javax.annotation.Nullable;
 
 import de.nb.aventiure2.data.database.AvDatabase;
@@ -35,9 +33,9 @@ import de.nb.aventiure2.german.base.Nominalphrase;
 import de.nb.aventiure2.german.base.PraepositionMitKasus;
 import de.nb.aventiure2.german.base.SubstantivischePhrase;
 import de.nb.aventiure2.german.description.AbstractDescription;
-import de.nb.aventiure2.german.description.StructuredDescription;
 import de.nb.aventiure2.german.description.TimedDescription;
 import de.nb.aventiure2.german.praedikat.AdverbialeAngabeSkopusSatz;
+import de.nb.aventiure2.german.satz.Satz;
 
 import static com.google.common.collect.ImmutableList.toImmutableList;
 import static de.nb.aventiure2.data.time.AvTime.oClock;
@@ -63,10 +61,11 @@ import static de.nb.aventiure2.german.base.NumerusGenus.F;
 import static de.nb.aventiure2.german.base.NumerusGenus.PL_MFN;
 import static de.nb.aventiure2.german.base.StructuralElement.PARAGRAPH;
 import static de.nb.aventiure2.german.base.StructuralElement.SENTENCE;
+import static de.nb.aventiure2.german.base.Wortfolge.joinToAltWortfolgen;
 import static de.nb.aventiure2.german.description.DescriptionBuilder.du;
 import static de.nb.aventiure2.german.description.DescriptionBuilder.neuerSatz;
 import static de.nb.aventiure2.german.description.DescriptionBuilder.satz;
-import static de.nb.aventiure2.german.description.TimedDescription.toTimed;
+import static java.util.stream.Collectors.toSet;
 
 /**
  * "Reaktionen" von Rapunzel, z.B. darauf, dass Zeit vergeht
@@ -357,13 +356,10 @@ public class RapunzelReactionsComp
 
         final ImmutableList.Builder<TimedDescription<?>> alt = ImmutableList.builder();
 
-        final ImmutableList<StructuredDescription> altReaktionSaetze =
-                // IDEA: Es wäre vielleicht besser, wenn der Phorik-Kandidat schon beim Erzeugen des
-                //  Satzes gesetzt würde?
-                feelingsComp.altReaktionBeiBegegnungMitScSaetze(anaph).stream()
-                        .map(s -> satz(s).phorikKandidat(anaph, RAPUNZEL))
-                        .collect(toImmutableList());
-        alt.addAll(toTimed(altReaktionSaetze, secs(5)));
+        final ImmutableList<Satz> altReaktionSaetze =
+                feelingsComp.altReaktionBeiBegegnungMitScSaetze(anaph);
+
+        alt.addAll(altReaktionSaetze.stream().map(s -> satz(s, secs(5))).collect(toSet()));
 
         final int zuneigungSCTowardsRapunzel =
                 loadSC().feelingsComp().getFeelingTowards(RAPUNZEL, ZUNEIGUNG_ABNEIGUNG);
@@ -386,17 +382,14 @@ public class RapunzelReactionsComp
         }
 
         if (loadSC().memoryComp().getKnown(RAPUNZEL) == KNOWN_FROM_DARKNESS) {
-            alt.addAll(
+            alt.addAll(joinToAltWortfolgen(
+                    "Am Fenster sitzt die junge Frau, schön als",
+                    "du unter der Sonne noch keine gesehen hast.",
+                    "Ihre Haare glänzen fein wie gesponnen Gold.",
                     altReaktionSaetze.stream()
-                            .flatMap(s -> s.altTextDescriptions().stream())
-                            .map(d -> new TimedDescription<>(
-                                    d.mitPraefixCapitalize(
-                                            "Am Fenster sitzt die junge Frau, schön als "
-                                                    + "du unter der Sonne noch keine gesehen hast. "
-                                                    + "Ihre Haare glänzen fein wie gesponnen Gold. "
-                                    ), secs(30)))
-                            .collect(ImmutableList.toImmutableList())
-            );
+                            .flatMap(s -> s.altVerzweitsaetze().stream())).stream()
+                    .map(wf -> neuerSatz(wf, secs(30)))
+                    .collect(toSet()));
         }
         n.narrateAlt(alt);
     }
@@ -410,38 +403,18 @@ public class RapunzelReactionsComp
         final SubstantivischePhrase anaph =
                 getAnaphPersPronWennMglSonstDescription(true);
 
-        final ImmutableList<StructuredDescription> altReaktionSaetze =
-                // Es wäre besser, wenn der Phorik-Kandidat durch den Satz
-                //  gesetzt würde. Das ist allerdings kompliziert...
-                feelingsComp
-                        .altReaktionBeiBegegnungMitScSaetze(anaph).stream()
-                        .map(s -> satz(s).phorikKandidat(anaph.getNumerusGenus(), RAPUNZEL))
-                        .collect(toImmutableList());
+        final ImmutableList<Satz> altReaktionSaetze =
+                feelingsComp.altReaktionBeiBegegnungMitScSaetze(anaph);
 
-        alt.addAll(toTimed(altReaktionSaetze, secs(5)));
+        alt.addAll(altReaktionSaetze.stream().map(s -> satz(s, secs(5))).collect(toSet()));
 
-        // Könnte leer sein
-        // ...aber noch nicht mit dieser Ergänzung:
-        // Diese Sätze sind bereits in altZuneigungAbneigungSaetze enthalten...
-        final ImmutableList<AbstractDescription<?>> altSCBeiBegegnungAnsehenSaetze =
-                // Es wäre besser, wenn der Phorik-Kandidat durch den Satz
-                //  gesetzt würde. Das ist allerdings kompliziert...
-                feelingsComp
-                        .altSCBeiBegegnungAnsehenSaetze(anaph)
-                        // ...aber noch nicht mit dieser Ergänzung:
-                        .stream()
-                        .map(s -> s.mitAdverbialerAngabe(
-                                new AdverbialeAngabeSkopusSatz("oben im dunklen Zimmer")
-                        ))
-                        .collect(Collectors.toList()).stream()
-                        .flatMap(
-                                s1 -> ImmutableList.<AbstractDescription<?>>of(
-                                        satz(s1)).stream())
-                        .map(allgDesc -> allgDesc
-                                .phorikKandidat(anaph.getNumerusGenus(),
-                                        RAPUNZEL))
-                        .collect(toImmutableList());
-        alt.addAll(toTimed(altSCBeiBegegnungAnsehenSaetze, secs(15)));
+        alt.addAll(feelingsComp.altSCBeiBegegnungAnsehenSaetze(anaph).stream()
+                // Diese Sätze sind bereits in altZuneigungAbneigungSaetze enthalten...
+                // ...aber noch nicht mit dieser Ergänzung:
+                .map(s -> s.mitAdverbialerAngabe(
+                        new AdverbialeAngabeSkopusSatz("oben im dunklen Zimmer")))
+                .map(satz -> satz(satz, secs(15)))
+                .collect(toImmutableList()));
 
         alt.add(du(SENTENCE, "hast",
                 anaph.akkStr()

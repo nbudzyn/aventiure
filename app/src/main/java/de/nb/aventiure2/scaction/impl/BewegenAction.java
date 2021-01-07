@@ -33,7 +33,6 @@ import de.nb.aventiure2.data.world.syscomp.spatialconnection.NumberOfWays;
 import de.nb.aventiure2.data.world.syscomp.state.IHasStateGO;
 import de.nb.aventiure2.data.world.syscomp.state.impl.SchlossfestState;
 import de.nb.aventiure2.data.world.syscomp.storingplace.ILocationGO;
-import de.nb.aventiure2.german.base.GermanUtil;
 import de.nb.aventiure2.german.base.StructuralElement;
 import de.nb.aventiure2.german.description.AbstractFlexibleDescription;
 import de.nb.aventiure2.german.description.TextDescription;
@@ -443,8 +442,7 @@ public class BewegenAction<LOC_DESC extends ILocatableGO & IDescribableGO>
                     ((AbstractFlexibleDescription<?>) description.getDescription())
                             .toTextDescriptionSatzanschlussOhneSubjekt();
             alt.add(new TimedDescription<>(
-                    descriptionSatzanschlussOhneSubjekt
-                            .mitPraefix(", besinnst dich aber und "),
+                    descriptionSatzanschlussOhneSubjekt.mitPraefix(", besinnst dich aber und "),
                     description.getTimeElapsed()));
 
             alt.addAll(drueckeAusTimed(DISKONTINUITAET, description));
@@ -464,27 +462,16 @@ public class BewegenAction<LOC_DESC extends ILocatableGO & IDescribableGO>
 
             if (numberOfWays == ONLY_WAY) {
                 alt.addAll(description.getDescription().altTextDescriptions().stream()
-                        .map(d ->
-                                new TimedDescription<>(
-                                        du("schaust",
-                                                GermanUtil.joinToString(
-                                                        "dich nur kurz um, dann",
-                                                        d.toWortfolge()))
-                                                .woertlicheRedeNochOffen(
-                                                        d.isWoertlicheRedeNochOffen())
-                                                .komma(d.isKommaStehtAus()),
-                                        description.getTimeElapsed())
-                                        .undWartest(
-                                                description
-                                                        .isAllowsAdditionalDuSatzreihengliedOhneSubjekt()))
+                        .map(d -> new TimedDescription<>(
+                                d.mitPraefix("dich nur kurz um, dann "),
+                                description.getTimeElapsed()))
                         .collect(Collectors.toSet()));
             } else {
                 alt.addAll(description.getDescription().altTextDescriptions().stream()
-                        .map(d ->
-                                new TimedDescription<>(
-                                        d.mitPraefixCapitalize(
-                                                "Was willst du hier eigentlich? "),
-                                        description.getTimeElapsed()))
+                        .map(d -> new TimedDescription<>(
+                                d.mitPraefixCapitalize(
+                                        "Was willst du hier eigentlich? "),
+                                description.getTimeElapsed()))
                         .collect(Collectors.toSet()));
                 alt.addAll(drueckeAusTimed(DISKONTINUITAET, description));
             }

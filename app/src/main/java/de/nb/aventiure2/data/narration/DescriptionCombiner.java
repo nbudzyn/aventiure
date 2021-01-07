@@ -74,13 +74,12 @@ class DescriptionCombiner {
                 second.toTextDescriptionSatzanschlussOhneSubjekt();
 
         return ImmutableList.of(
-                secondDescriptionSatzanschlussOhneSubjekt
-                        .mitPraefix(
-                                GermanUtil.joinToString(
-                                        ",",
-                                        first.toTextDescriptionSatzanschlussOhneSubjekt()
-                                                .toWortfolge(),
-                                        "und"))
+                secondDescriptionSatzanschlussOhneSubjekt.mitPraefix(
+                        GermanUtil.joinToString(
+                                ",",
+                                first.toTextDescriptionSatzanschlussOhneSubjekt()
+                                        .toWortfolge(),
+                                "und"))
                         .undWartest(false));
     }
 

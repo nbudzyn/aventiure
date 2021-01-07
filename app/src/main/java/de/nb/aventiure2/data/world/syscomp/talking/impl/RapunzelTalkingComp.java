@@ -2,8 +2,6 @@ package de.nb.aventiure2.data.world.syscomp.talking.impl;
 
 import com.google.common.collect.ImmutableList;
 
-import java.util.stream.Collectors;
-
 import javax.annotation.Nullable;
 
 import de.nb.aventiure2.data.database.AvDatabase;
@@ -13,13 +11,12 @@ import de.nb.aventiure2.data.world.syscomp.feelings.FeelingIntensity;
 import de.nb.aventiure2.data.world.syscomp.feelings.FeelingsComp;
 import de.nb.aventiure2.data.world.syscomp.state.impl.RapunzelStateComp;
 import de.nb.aventiure2.data.world.syscomp.talking.AbstractTalkingComp;
-import de.nb.aventiure2.german.base.Konstituentenfolge;
 import de.nb.aventiure2.german.base.Nominalphrase;
 import de.nb.aventiure2.german.base.Personalpronomen;
 import de.nb.aventiure2.german.base.SubstantivischePhrase;
 import de.nb.aventiure2.german.base.Wortfolge;
 import de.nb.aventiure2.german.description.AbstractDescription;
-import de.nb.aventiure2.german.description.StructuredDescription;
+import de.nb.aventiure2.german.description.DescriptionBuilder;
 import de.nb.aventiure2.german.description.TimedDescription;
 import de.nb.aventiure2.german.praedikat.AdverbialeAngabeSkopusVerbAllg;
 import de.nb.aventiure2.german.praedikat.AdverbialeAngabeSkopusVerbWohinWoher;
@@ -27,7 +24,6 @@ import de.nb.aventiure2.german.praedikat.PraedikatOhneLeerstellen;
 import de.nb.aventiure2.german.praedikat.VerbSubjAkkPraep;
 import de.nb.aventiure2.german.satz.Satz;
 
-import static com.google.common.collect.ImmutableList.toImmutableList;
 import static de.nb.aventiure2.data.time.AvTimeSpan.mins;
 import static de.nb.aventiure2.data.time.AvTimeSpan.secs;
 import static de.nb.aventiure2.data.world.gameobject.World.*;
@@ -37,7 +33,6 @@ import static de.nb.aventiure2.data.world.syscomp.feelings.Mood.BEWEGT;
 import static de.nb.aventiure2.data.world.syscomp.state.impl.RapunzelState.HAARE_VOM_TURM_HERUNTERGELASSEN;
 import static de.nb.aventiure2.german.base.GermanUtil.capitalize;
 import static de.nb.aventiure2.german.base.GermanUtil.joinToAltStrings;
-import static de.nb.aventiure2.german.base.GermanUtil.joinToString;
 import static de.nb.aventiure2.german.base.Nominalphrase.DEIN_HERZ;
 import static de.nb.aventiure2.german.base.Nominalphrase.EIN_GESPRAECH;
 import static de.nb.aventiure2.german.base.Nominalphrase.IHRE_HAARE;
@@ -52,7 +47,6 @@ import static de.nb.aventiure2.german.base.Wortfolge.joinToAltWortfolgen;
 import static de.nb.aventiure2.german.base.Wortfolge.joinToWortfolge;
 import static de.nb.aventiure2.german.description.DescriptionBuilder.du;
 import static de.nb.aventiure2.german.description.DescriptionBuilder.neuerSatz;
-import static de.nb.aventiure2.german.description.DescriptionBuilder.satz;
 import static de.nb.aventiure2.german.praedikat.DirektivesVerb.BITTEN;
 import static de.nb.aventiure2.german.praedikat.VerbSubjDatAkk.AUSSCHUETTEN;
 import static de.nb.aventiure2.german.praedikat.VerbSubjObj.HINUNTERLASSEN;
@@ -232,13 +226,8 @@ public class RapunzelTalkingComp extends AbstractTalkingComp {
 
         final ImmutableList.Builder<AbstractDescription<?>> alt = ImmutableList.builder();
 
-        final ImmutableList<StructuredDescription> altReaktionSaetze =
-                // Es wäre besser, wenn der Phorik-Kandidat schon beim Erzeugen des
-                // Satzes gesetzt würde.
-                feelingsComp
-                        .altReaktionBeiBegegnungMitScSaetze(anaph).stream()
-                        .map(s -> satz(s).phorikKandidat(anaph.getNumerusGenus(), RAPUNZEL))
-                        .collect(toImmutableList());
+        final ImmutableList<Satz> altReaktionSaetze =
+                feelingsComp.altReaktionBeiBegegnungMitScSaetze(anaph);
 
         // Könnte leer sein
         final ImmutableList<Satz> altEindruckSaetze =
@@ -252,26 +241,26 @@ public class RapunzelTalkingComp extends AbstractTalkingComp {
                 feelingsComp.getFeelingTowards(SPIELER_CHARAKTER, ZUNEIGUNG_ABNEIGUNG);
 
         if (zuneigungTowardsSC >= -FeelingIntensity.MERKLICH) {
-            alt.addAll(altEindruckAdvAngaben.stream()
-                    .map(a -> neuerSatz(joinToString(
-                            anaph.nomStr(),
-                            "heißt dich",
-                            a.getDescription(anaph.getPerson(), anaph.getNumerus()),
-                            "willkommen"))
-                            .phorikKandidat(anaph, RAPUNZEL))
-                    .collect(toList()));
+            alt.addAll(joinToAltWortfolgen(
+                    anaph.nomK(),
+                    "heißt dich",
+                    altEindruckAdvAngaben.stream()
+                            .map(a -> a.getDescription(anaph.getPerson(), anaph.getNumerus())),
+                    "willkommen").stream()
+                    .map(DescriptionBuilder::neuerSatz)
+                    .collect(toSet()));
         }
 
         if (zuneigungTowardsSC >= -FeelingIntensity.MERKLICH
                 && zuneigungTowardsSC <= FeelingIntensity.DEUTLICH) {
-            alt.addAll(altEindruckAdvAngaben.stream()
-                    .map(a -> neuerSatz(joinToWortfolge(
-                            "„Hallo“, sagt",
-                            anaph.nomStr(),
-                            a.getDescription(anaph.getPerson(), anaph.getNumerus())))
-                            .beendet(SENTENCE)
-                            .phorikKandidat(anaph, RAPUNZEL))
-                    .collect(toList()));
+            alt.addAll(joinToAltWortfolgen(
+                    "„Hallo“, sagt",
+                    anaph.nomStr(),
+                    altEindruckAdvAngaben.stream()
+                            .map(a -> a.getDescription(anaph.getPerson(), anaph.getNumerus())))
+                    .stream()
+                    .map(wf -> neuerSatz(wf).beendet(SENTENCE))
+                    .collect(toSet()));
         }
 
         if (zuneigungTowardsSC <= -FeelingIntensity.SEHR_STARK) {
@@ -372,17 +361,19 @@ public class RapunzelTalkingComp extends AbstractTalkingComp {
                                     .map(s -> s.mitAnschlusswort("und").altVerzweitsaetze()))
                             .stream()
                             .map(wf -> neuerSatz(wf).beginntZumindestParagraph())
-                            .collect(Collectors.toSet()));
+                            .collect(toSet()));
             if (scBereitsZuvorSchonEinmalGetroffen) {
-                alt.addAll(altReaktionSaetze.stream()
-                        .flatMap(d -> d.altTextDescriptions().stream())
-                        .map(d -> d.mitPraefix("„Ach, ihr seid es wieder.“ ")
-                                .beginntZumindestSentence().beendet(PARAGRAPH))
+                alt.addAll(joinToAltWortfolgen(
+                        "„Ach, ihr seid es wieder.“",
+                        altReaktionSaetze.stream()
+                                .flatMap(s -> s.altVerzweitsaetze().stream())).stream()
+                        .map(wf -> neuerSatz(wf).beginntZumindestSentence().beendet(PARAGRAPH))
                         .collect(toSet()));
-                alt.addAll(altReaktionSaetze.stream()
-                        .flatMap(d -> d.altTextDescriptions().stream())
-                        .map(d -> d.mitPraefix("„Oh, ihr seid es wieder.“ ")
-                                .beginntZumindestSentence().beendet(PARAGRAPH))
+                alt.addAll(joinToAltWortfolgen(
+                        "„Oh, ihr seid es wieder.“",
+                        altReaktionSaetze.stream()
+                                .flatMap(s -> s.altVerzweitsaetze().stream())).stream()
+                        .map(wf -> neuerSatz(wf).beginntZumindestSentence().beendet(PARAGRAPH))
                         .collect(toSet()));
                 alt.add(neuerSatz("„Ich hatte mich schon gefragt, ob ihr mal wieder "
                         + "vorbeischaut! Willkommen.“ –")
@@ -412,19 +403,15 @@ public class RapunzelTalkingComp extends AbstractTalkingComp {
                     .beendet(PARAGRAPH));
 
             if (scBereitsZuvorSchonEinmalGetroffen) {
-                alt.addAll(
+                alt.addAll(joinToAltWortfolgen(
+                        "„Oh, wie schön, dasss du wieder da "
+                                + "bist“, antwortet",
+                        anaph.nomK(), // autom. Phorik-Kandidat!
                         altEindruckSaetze.stream()
-                                .map(s -> s.mitAnschlusswort("und").getSatzanschlussOhneSubjekt())
-                                .map(s -> neuerSatz(
-                                        Konstituentenfolge.joinToKonstituentenfolge(
-                                                "„Oh, wie schön, dasss du wieder da "
-                                                        + "bist“, antwortet",
-                                                anaph.nomK(), // autom. Phorik-Kandidat!
-                                                s
-                                        ))
-                                        .beendet(PARAGRAPH))
-                                .collect(toList()));
-
+                                .map(s -> s.mitAnschlusswort("und").getSatzanschlussOhneSubjekt()))
+                        .stream()
+                        .map(wf -> neuerSatz(wf).beendet(PARAGRAPH))
+                        .collect(toSet()));
                 alt.add(
                         neuerSatz("„Schön, dich wiederzusehen!“, freut "
                                 + anaph.nomStr()
@@ -453,7 +440,7 @@ public class RapunzelTalkingComp extends AbstractTalkingComp {
                                 .map(s -> s.mitAnschlusswort("und").getVerbzweitsatzStandard())
                                 .collect(toList())).stream()
                         .map(wf -> neuerSatz(wf).beendet(PARAGRAPH))
-                        .collect(Collectors.toSet()));
+                        .collect(toSet()));
 
                 alt.add(
                         neuerSatz("„Oh, eine Freude, dich wiederzusehen!“"),

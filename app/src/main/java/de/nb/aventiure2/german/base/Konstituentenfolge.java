@@ -23,6 +23,7 @@ import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static java.util.Arrays.asList;
 import static java.util.Objects.requireNonNull;
+import static java.util.stream.Collectors.toSet;
 
 /**
  * Eine Folge von {@link Konstituente}n.
@@ -119,7 +120,7 @@ public class Konstituentenfolge implements Iterable<Konstituente> {
         alternativeKonstituentenfolgen.add(ImmutableList.builder());
 
         for (final Object part : parts) {
-            final List<Konstituentenfolge> alternativePartKonstituentenfolgen;
+            final Collection<Konstituentenfolge> alternativePartKonstituentenfolgen;
 
             if (part == null) {
                 alternativePartKonstituentenfolgen = Collections.singletonList(null);
@@ -131,12 +132,14 @@ public class Konstituentenfolge implements Iterable<Konstituente> {
                         Collections
                                 .singletonList(
                                         joinToNullKonstituentenfolge((Konstituentenfolge) part));
+            } else if (part instanceof Stream<?>) {
+                alternativePartKonstituentenfolgen =
+                        joinToAltKonstituentenfolgen(((Stream<?>) part).collect(toSet()));
             } else if (part instanceof Collection<?>) {
                 alternativePartKonstituentenfolgen =
                         ((Collection<?>) part).stream()
                                 .map(Konstituentenfolge::joinToNullKonstituentenfolge)
-                                .collect(Collectors.toList());
-                // FIXME altVerzweitsaetze() benutzen, um das zu nutzen!
+                                .collect(Collectors.toSet());
             } else if (part instanceof Konstituente) {
                 alternativePartKonstituentenfolgen =
                         Collections.singletonList(new Konstituentenfolge((Konstituente) part));
@@ -219,7 +222,7 @@ public class Konstituentenfolge implements Iterable<Konstituente> {
         return Wortfolge.joinToAltWortfolgen(this).stream()
                 .map(wf -> wf != null ?
                         wf.toStringFixWoertlicheRedeNochOffen() : null)
-                .collect(Collectors.toSet());
+                .collect(toSet());
     }
 
     /**

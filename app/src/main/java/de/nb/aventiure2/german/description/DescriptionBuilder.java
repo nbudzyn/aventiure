@@ -62,6 +62,13 @@ public class DescriptionBuilder {
 
     @NonNull
     @CheckReturnValue
+    public static TimedDescription<TextDescription> neuerSatz(final Wortfolge wortfolge,
+                                                              final AvTimeSpan timeElapsed) {
+        return neuerSatz(StructuralElement.SENTENCE, wortfolge, timeElapsed);
+    }
+
+    @NonNull
+    @CheckReturnValue
     public static TextDescription neuerSatz(final Wortfolge wortfolge) {
         return neuerSatz(StructuralElement.SENTENCE, wortfolge);
     }
@@ -90,6 +97,15 @@ public class DescriptionBuilder {
                 neuerSatz(startsNew, description),
                 timeElapsed, counterIdIncrementedIfTextIsNarrated);
     }
+
+    @NonNull
+    @CheckReturnValue
+    public static TimedDescription<TextDescription> neuerSatz(final StructuralElement startsNew,
+                                                              final Wortfolge wortfolge,
+                                                              final AvTimeSpan timeElapsed) {
+        return new TimedDescription<>(neuerSatz(startsNew, wortfolge), timeElapsed);
+    }
+
 
     @NonNull
     @CheckReturnValue

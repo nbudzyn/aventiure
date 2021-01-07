@@ -89,8 +89,7 @@ class TextDescriptionBuilder {
         final DescriptionParams params = duDesc.copyParams();
         params.undWartest(false);
 
-        return duDesc.toTextDescriptionSatzanschlussOhneSubjekt()
-                .mitPraefix("und ");
+        return duDesc.toTextDescriptionSatzanschlussOhneSubjekt().mitPraefix("und ");
     }
 
     @NonNull
@@ -114,9 +113,7 @@ class TextDescriptionBuilder {
         checkArgument(desc.getStartsNew() == WORD,
                 "Satzanschluss unmöglich für " + desc);
 
-        return desc.toTextDescriptionMitVorfeld("dann")
-                .dann(false)
-                .mitPraefix(", ");
+        return desc.toTextDescriptionMitVorfeld("dann").dann(false).mitPraefix(", ");
     }
 
     @NonNull
