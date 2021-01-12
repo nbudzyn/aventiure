@@ -470,7 +470,8 @@ public class BewegenAction<LOC_DESC extends ILocatableGO & IDescribableGO>
                 alt.addAll(description.getDescription().altTextDescriptions().stream()
                         .map(d -> new TimedDescription<>(
                                 d.mitPraefixCapitalize(
-                                        "Was willst du hier eigentlich? "),
+                                        "Was willst du hier eigentlich? ")
+                                        .beginntZumindestSentence(),
                                 description.getTimeElapsed()))
                         .collect(Collectors.toSet()));
                 alt.addAll(drueckeAusTimed(DISKONTINUITAET, description));

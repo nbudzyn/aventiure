@@ -66,10 +66,6 @@ public class TextDescription extends AbstractDescription<TextDescription> {
         super(descriptionParams);
         this.kommaStehtAus = kommaStehtAus;
         this.woertlicheRedeNochOffen = woertlicheRedeNochOffen;
-
-        // FIXME Alle Aufrufer prüfen, ob startsNew richtig gesetzt wird!
-        //  Immer, wenn noch etwas anderes als ganze Sätze vorangestellt werden sollen, muss
-        //  startsNew auf WORD stehen!
         text =
                 // Wenn eine Description als "neuer Satz" (oder Paragraph...) gekenzeichnet
                 // wurde, darf man ihr nichts mehr voranstellen - außer andere vollständige
