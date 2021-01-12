@@ -56,7 +56,8 @@ public class SimpleDuDescription extends AbstractFlexibleDescription<SimpleDuDes
                         final boolean woertlicheRedeNochOffen,
                         final boolean kommaStehtAus,
                         @Nullable final PhorikKandidat phorikKandidat) {
-        // FIXME Alle du()-Aufrufe prüfen, ggf. auf SENTENCE setzen
+        // FIXME Alle du()-Aufrufe prüfen, auf SENTENCE setzen, wenn
+        //  kein "...und tust dies und jenes"-Anschluss gewünscht ist
         super(startsNew, phorikKandidat);
         this.verb = verb;
         this.remainder = remainder;

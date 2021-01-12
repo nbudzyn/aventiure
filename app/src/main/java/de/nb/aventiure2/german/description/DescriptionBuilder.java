@@ -459,8 +459,6 @@ public class DescriptionBuilder {
     @CheckReturnValue
     public static StructuredDescription du(final StructuralElement startsNew,
                                            final PraedikatOhneLeerstellen praedikat) {
-        // FIXME Alle du()-Aufrufe prüfen, ggf. auf SENTENCE setzen
-
         return satz(startsNew,
                 praedikat.alsSatzMitSubjekt(Personalpronomen.get(P2,
                         // Wir behaupten hier, der Adressat wäre männlich.
