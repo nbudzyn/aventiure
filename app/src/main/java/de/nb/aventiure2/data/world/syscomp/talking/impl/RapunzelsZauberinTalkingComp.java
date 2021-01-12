@@ -88,7 +88,7 @@ public class RapunzelsZauberinTalkingComp extends AbstractTalkingComp {
                         .phorikKandidat(anaphOderDesc, getGameObjectId())
         );
 
-        // FIXME Begrüßen (wenn noch nicht begrüßt!) / Ansprechen der Hexe
+        // IDEA Begrüßen (wenn noch nicht begrüßt!) / Ansprechen der Hexe
         //  vom Fragen nach dem Weg trennen, so dass der SC mit der Hexe kurz
         //  im Gespräch ist.
         //  - Hexe Kugel geben (Diebesgut...) (beendet Gespräch)

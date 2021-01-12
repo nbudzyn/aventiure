@@ -106,12 +106,12 @@ public class SchlossVorhalleConnectionComp extends AbstractSpatialConnectionComp
         if (known == KNOWN_FROM_DARKNESS && lichtverhaeltnisse == HELL) {
             return du("verlässt", "das Schloss. Draußen scheint dir die " +
                     "Sonne ins Gesicht; "
-                    // FIXME Vielleicht ist es nur tagsüber / mittags heiß und morgens
+                    // TODO Vielleicht ist es nur tagsüber / mittags heiß und morgens
                     //  noch nicht?
                     + "der Tag ist recht heiß", mins(1));
         }
 
-        // FIXME: Wenn man aus dem hellen (Schloss) ins Dunkle kommt:
+        // TODO: Wenn man aus dem hellen (Schloss) ins Dunkle kommt:
         //  "Draußen ist es dunkel" o.Ä.
 
         return du("verlässt", "das Schloss", mins(1))
@@ -127,7 +127,7 @@ public class SchlossVorhalleConnectionComp extends AbstractSpatialConnectionComp
             return du("gehst", "über eine Marmortreppe hinaus in die Gärten vor dem Schloss.\n\n" +
                             "Draußen scheint dir die " +
                             "Sonne ins Gesicht; "
-                            // FIXME Vielleicht ist es nur tagsüber / mittags heiß und morgens
+                            // TODO Vielleicht ist es nur tagsüber / mittags heiß und morgens
                             //  noch nicht?
                             + "der Tag ist recht heiß. " +
                             "Nahebei liegt ein großer, dunkler Wald", "über eine Marmortreppe",
@@ -156,7 +156,7 @@ public class SchlossVorhalleConnectionComp extends AbstractSpatialConnectionComp
 
         world.loadSC().feelingsComp().requestMoodMin(AUFGEDREHT);
 
-        // FIXME: Nachts ist weniger Trubel?
+        // TODO Nachts ist weniger Trubel?
         return du("gehst",
                 "über die Marmortreppe hinaus in den Trubel "
                         + "im Schlossgarten",

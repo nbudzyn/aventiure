@@ -242,7 +242,7 @@ public enum RapunzelStoryNode implements IStoryNode {
         }
     }
 
-    // FIXME Alternativen für Tipp-Texte, bei denen Foreshadowing stärker im
+    // IDEA Alternativen für Tipp-Texte, bei denen Foreshadowing stärker im
     //  Vordergrund steht
     private static void narrateAndDoHintAction_TurmGefunden(
             final AvDatabase db, final Narrator n, final World world) {

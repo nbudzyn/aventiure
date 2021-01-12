@@ -69,7 +69,7 @@ public class SchlafenAction extends AbstractScAction {
 
     @Override
     public void narrateAndDo() {
-        // FIXME "Vor Hunger kannst du nicht einschlafen"
+        // TODO "Vor Hunger kannst du nicht einschlafen"
         if (sc.feelingsComp().getMuedigkeit() >=
                 // Es ist nicht besonders gemütlich. NUR_LEICHT müde genügt nicht
                 FeelingIntensity.MERKLICH) {
@@ -146,7 +146,7 @@ public class SchlafenAction extends AbstractScAction {
         // IDEA Zum Beispiel wäre der Benutzer über alle Statusänderungen zu unterrichten,
         //  Die zwischenzeitlich passiert sind ("der Frosch ist verschwunden").
 
-        // FIXME Man könnte auch, wenn der Benutzer erstmals wieder nach draußen kommt, etwas
+        // TODO Man könnte auch, wenn der Benutzer erstmals wieder nach draußen kommt, etwas
         //  schreiben wie "Inzwischen ist es dunkel geworden". Dazu müsste der "Tageszeit-Status"
         //  (oder zumindest der Zeitpunkt) gespeichert werden, wenn der Benutzer REIN GEHT
         //  und später beim RAUSTRETEN dieser Status mit dem aktuellen Tageszeitstatus verglichen

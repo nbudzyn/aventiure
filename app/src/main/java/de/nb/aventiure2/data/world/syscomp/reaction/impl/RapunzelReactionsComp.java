@@ -365,6 +365,7 @@ public class RapunzelReactionsComp
                 loadSC().feelingsComp().getFeelingTowards(RAPUNZEL, ZUNEIGUNG_ABNEIGUNG);
         if (RapunzelTalkingComp.duzen(zuneigungSCTowardsRapunzel)
                 && zuneigungSCTowardsRapunzel >= FeelingIntensity.MERKLICH) {
+
             // FIXME Dies beides darf erst erscheinen, wenn Rapunzel von der Zauberin erzählt hat
             //  und den SCu m Hilfe gebeten oder der SC Hilfe angeboten hat
             alt.addAll(TimedDescription.toTimed(secs(15),

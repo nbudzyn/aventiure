@@ -122,7 +122,7 @@ public enum PraepositionMitKasus implements KasusOderPraepositionalkasus {
             if (praepositionVerschmolzenMN != null &&
                     (substantivischePhrase.getNumerusGenus() == M ||
                             (substantivischePhrase.getNumerusGenus() == N))) {
-                // FIXME Konstituente mit artikellosDatK oder so zurückgeben!
+                // TODO Konstituente mit artikellosDatK oder so zurückgeben!
                 return praepositionVerschmolzenMN + " " + substantivischePhrase.artikellosDatStr();
             }
 
@@ -138,7 +138,7 @@ public enum PraepositionMitKasus implements KasusOderPraepositionalkasus {
     @NonNull
     private String getDescriptionUnverschmolzen(
             final SubstantivischePhraseOderReflexivpronomen substantivischePhraseOderReflPron) {
-        // FIXME Hier imK verwenden und eine Konstituente zurückgeben!
+        // TODO Hier imK verwenden und eine Konstituente zurückgeben!
 
         return praeposition + " " + substantivischePhraseOderReflPron.imStr(kasus);
     }

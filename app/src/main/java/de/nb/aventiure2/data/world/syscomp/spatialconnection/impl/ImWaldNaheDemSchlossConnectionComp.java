@@ -128,7 +128,7 @@ public class ImWaldNaheDemSchlossConnectionComp extends AbstractSpatialConnectio
         return du(SENTENCE, "gehst", "noch eine Weile vorsichtig durch den dunklen "
                 + "Wald, dann öffnet sich der Weg wieder und du stehst im Schlossgarten "
                 + "unter dem Sternenhimmel", "noch eine Weile", mins(15));
-        // FIXME Lichtverhältnisse auch bei den anderen Aktionen berücksichtigen,
+        // TODO Lichtverhältnisse auch bei den anderen Aktionen berücksichtigen,
         //  insbesondere nach derselben Logik (z.B. "im Schloss ist es immer hell",
         //  "eine Fackel bringt auch nachts Licht" etc.)
         // IDEA Wenn man schläft, "verpasst" man Reactions, die man dann später

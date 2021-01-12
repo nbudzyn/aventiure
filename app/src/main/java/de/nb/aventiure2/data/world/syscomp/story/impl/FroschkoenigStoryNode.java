@@ -52,7 +52,7 @@ public enum FroschkoenigStoryNode implements IStoryNode {
             ,
             ETWAS_IM_BRUNNEN_VERLOREN
     ),
-    ZUM_SCHLOSSFEST_GEGANGEN(30, // FIXME Diese Zahl ermitteln!
+    ZUM_SCHLOSSFEST_GEGANGEN(30, // TODO Diese Zahl ermitteln!
             DRAUSSEN_VOR_DEM_SCHLOSS,
             FroschkoenigStoryNode::narrateAndDoHintAction_ZumSchlossfestGegangen,
             KUGEL_GENOMMEN, // Ansonsten kann der Spieler nicht wissen, dass es ein Schlossfest
@@ -359,7 +359,7 @@ public enum FroschkoenigStoryNode implements IStoryNode {
         alt.add(paragraph("Heut ist ein heißer Tag!"));
         alt.add(paragraph("Es ist ziemlich heiß heute – ein kühler Ort wäre schön"));
 
-        // FIXME ab dem zb 3. Mal deutlichere Hinweise, noch zum Brunnen zu gehen:
+        // TODO ab dem zb 3. Mal deutlichere Hinweise, noch zum Brunnen zu gehen:
         //  Heiß vielleicht irhendwo am wasser...
 
         return alt.build();

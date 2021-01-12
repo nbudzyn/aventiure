@@ -67,8 +67,8 @@ public class Praepositionalphrase implements Praedikativum {
     }
 
     public String getDescription() {
-        // FIXME Hier könnte die substantivischePhraseOderReflPron
-        //  durchaus einen Phorik-Kandidaten geben - auch
+        // TODO Hier könnte die substantivischePhraseOderReflPron
+        //  durchaus einen Phorik-Kandidaten enthalten - auch
         //  kannAlsBezugsobjektVerstandenWerdenFuer = X wäre gut möglich.
         //  Also sollte hier besser eine Konstituente mit diesen
         //  Angaben zurückgegeben werden.

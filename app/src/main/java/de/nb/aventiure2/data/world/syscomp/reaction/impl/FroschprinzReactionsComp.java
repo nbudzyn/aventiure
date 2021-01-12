@@ -527,11 +527,11 @@ public class FroschprinzReactionsComp
         if (locationComp.hasSameOuterMostLocationAs(SPIELER_CHARAKTER)) {
             n.narrate(neuerSatz(PARAGRAPH,
                     "Plitsch platsch, plitsch platsch hüpft der Frosch davon",
-                    // FIXME "Wir sehen uns noch!"
+                    // IDEA "Wir sehen uns noch!"
                     secs(5))
                     .beendet(PARAGRAPH));
         }
-        // FIXME Wenn man nicht erlebt, wie der Frosch weghüpft: "Der Frosch ist verschwunden"
+        // IDEA Wenn man nicht erlebt, wie der Frosch weghüpft: "Der Frosch ist verschwunden"
         //  oder ähnlich, wenn man wieder an den Ort zurückkommt, wo man den Frosch
         //  abgesetzt (oder zuletzt gesehen) hat. (Assumed Locations verwenden?)
         locationComp.narrateAndSetLocation(

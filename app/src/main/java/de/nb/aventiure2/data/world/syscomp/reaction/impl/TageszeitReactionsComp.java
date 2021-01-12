@@ -34,12 +34,12 @@ public class TageszeitReactionsComp
             return;
         }
 
-        // FIXME Über den Tag verteilen: die Sonne steht schon hoch.. weit nach Mittag....
+        // TODO Über den Tag verteilen: die Sonne steht schon hoch.. weit nach Mittag....
         //  Generell nicht nur an den "Tageszeitengrenzen" Texte erzeugen, sondern abhängig von
         //  der Uhrzeit?
         //  - Hinweise, dass die Nacht allmählich naht.
 
-        // FIXME Je nach Ort unterscheiden:
+        // TODO Je nach Ort unterscheiden:
         //  - Dunkelheit ist abhängig von Tageszeit (Raum nicht beleuchtet)
         //  - SC ist draußen / drinnen (z.B. im Wald)
         //  - SC ist unter offener Himmel (z.B. vor dem Schloss)
@@ -91,7 +91,7 @@ public class TageszeitReactionsComp
                         neuerSatz("Unterdessen ist es hell geworden"),
                         neuerSatz("Die Sonne geht auf")
 
-                        // FIXME So etwas ermöglichen, wenn der Spieler sich
+                        // TODO So etwas ermöglichen, wenn der Spieler sich
                         //  DRAUSSEN aufhält
                         //  allg("Im Osten kündigt sich der neue Tag an")
                         //  "Die Sterne verblassen und die Sonne ist am Horizont zu sehen"
@@ -165,7 +165,7 @@ public class TageszeitReactionsComp
                         neuerSatz(PARAGRAPH, "Die Abenddämmerung beginnt"),
                         neuerSatz(PARAGRAPH, "Inzwischen steht die Sonne schon tief")
                         // STORY Noch ein paar Texte!
-                        // FIXME WENN DER SPIELER DRAUSSEN IST "Heute ist ein schönes Abendrot zu sehen"
+                        // TODO WENN DER SPIELER DRAUSSEN IST "Heute ist ein schönes Abendrot zu sehen"
                 );
                 return;
             case NACHTS:
@@ -212,7 +212,7 @@ public class TageszeitReactionsComp
                         neuerSatz(PARAGRAPH,
                                 "Es ist Nacht geworden und man sieht nicht "
                                         + "mehr so gut")
-                        // FIXME wenn der SC draußen ist:
+                        // TODO wenn der SC draußen ist:
                         //  "Jetzt sind am Himmel die Sterne zu sehen. Es ist dunkel und in der Ferne "
                         //  + "ruft ein Käuzchen"
                 );

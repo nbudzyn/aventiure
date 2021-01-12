@@ -336,13 +336,6 @@ public class Konstituentenfolge implements Iterable<Konstituente> {
                         .build());
     }
 
-    @Nullable
-    public static PhorikKandidat getPhorikKandidat() {
-        // FIXME
-        return null;
-    }
-
-
     private Konstituentenfolge reverse() {
         return new Konstituentenfolge(Lists.reverse(konstituenten));
     }

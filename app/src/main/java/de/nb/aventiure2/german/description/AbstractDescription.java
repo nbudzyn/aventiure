@@ -78,9 +78,9 @@ public abstract class AbstractDescription<SELF extends AbstractDescription<SELF>
 
     @NonNull
     public TextDescription toTextDescriptionKeepParams(final Wortfolge wortfolge) {
-        // FIXME Hier auf den PhorikKandidaten aus der Wortfolge
-        //  übernehmen und hier separat speichern!!
-        //  Aus den params entfernen und params unverändert übergeben.
+        // IDEA Hier den PhorikKandidaten aus der Wortfolge
+        //  übernehmen und hier separat speichern?
+        //  Aus den params entfernen und params unverändert übergeben?
         final DescriptionParams newParams = copyParams();
         if (wortfolge.getPhorikKandidat() != null) {
             newParams.phorikKandidat(wortfolge.getPhorikKandidat());
