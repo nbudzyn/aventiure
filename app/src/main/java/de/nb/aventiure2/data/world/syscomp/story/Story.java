@@ -20,12 +20,31 @@ public enum Story {
 
     // IDEA Meine Story als "Front" (analog Dungeon World) betrachten?
 
+    // IDEA Kernelemente der Geschichte sollten in der Environmet sichtbar sein. Schon zu 
+    //  Beginn (2. Text o.ä.) und danach geändert.
+    //  Zb: Flugblatt am Baum, dass den Verschwundenen Prinzen sucht. "Anschlag lesen".
+    //  Wird erzeugt oncounterup (neues event oder parameterlambda)
+    //  Oder Fußspuren unter Fenster oder es ist nass auf dem brunnen. Evtl. Über den
+    //  Tipp-Mechanismus freischalten!!
+    //  Verschwindet automatisch
+
+    // IDEA Ein NSC könnte den SC darauf ansprechen, was er Tolles getan hat.
+    //  Die Achievements des Spielers könnte GameObjects sein, die ein NSC
+    //  wissen kann. Die NSC könnten dieses Wissen zu bestimmten Zeitpunkten
+    //  erfahren - zum Beispiel, wenn sie jemand anderen treffen.
+    //  Darauf ändern Sie die Kommunikation zum SC.
+
     FROSCHKOENIG(FroschkoenigStoryNode.class,
-            (db, timeTaker, n, world) -> {
+            (db, timeTaker, n, world) ->
+
+            {
                 return FroschkoenigStoryNode.checkAndAdvanceIfAppropriate(db, n, world);
             }),
+
     RAPUNZEL(RapunzelStoryNode.class,
-            (db, timeTaker, n, world) -> {
+            (db, timeTaker, n, world) ->
+
+            {
                 return RapunzelStoryNode.checkAndAdvanceIfAppropriate(db, timeTaker, n, world);
             });
 

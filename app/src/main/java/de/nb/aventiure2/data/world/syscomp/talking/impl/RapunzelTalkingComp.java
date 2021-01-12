@@ -628,6 +628,10 @@ public class RapunzelTalkingComp extends AbstractTalkingComp {
     private void haareHerunterlassen() {
         rapunzelLaesstHaareZumAbstiegHerunter();
 
+        // TODO Anfrage nach Storytelling / Narrative Designer bei Github einstellen?
+        //  Inhalt: Storytelling Grimms Märchen deutsch rein textbasiert, kein Zufall
+        //  (kein Auswürfeln), aber simulierte Welt
+
         unsetTalkingTo();
     }
 

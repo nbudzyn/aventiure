@@ -65,7 +65,7 @@ public interface FeelingBeiBegegnungDescriber {
      * @return Möglicherweise eine leere Liste (insbesondere bei extremen Gefühlen)!
      */
     @NonNull
-    // FIXME Auch die Zauberin könnte irgendwie wirken, wenn sie
+    // IDEA Auch die Zauberin könnte irgendwie wirken, wenn sie
     //  den SC (wieder-) trifft...
     ImmutableList<AdjPhrOhneLeerstellen> altEindruckBeiBegegnungAdjPhr(
             SubstantivischePhrase gameObjectSubjekt,
