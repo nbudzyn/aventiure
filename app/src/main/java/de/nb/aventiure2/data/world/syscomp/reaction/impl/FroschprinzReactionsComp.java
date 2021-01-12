@@ -282,7 +282,7 @@ public class FroschprinzReactionsComp
                                 + "jedes mit weißen Straußfedern auf dem Kopf", mins(2))
                         .beendet(CHAPTER));
 
-        // FIXME Nach der Prinzabfahrt. Klares Lob, aber auch Hinweis auf einsame Stimme
+        // TODO Nach der Prinzabfahrt. Klares Lob, aber auch Hinweis auf einsame Stimme
         //  auf Turm oder so (wenn man sie schon kennt und Rapunzel noch im Turm ist....)
         //  Einfaches allgemeines Konzept: Immer wenn man eine Geschichte abgeschlossen
         //  hat, erhält man zwingend ein Lob ("Du bist sehr zufrieden mit dir, dass du..."

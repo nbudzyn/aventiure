@@ -1,9 +1,8 @@
 package de.nb.aventiure2.german.base;
 
-import android.util.Pair;
-
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.core.util.Pair;
 
 import java.util.Collection;
 import java.util.Objects;

@@ -69,7 +69,7 @@ public class AvTime {
             return MORGENS;
         }
 
-        // FIXME TAGSÜBER ersetzen durch: VORMITTAGS, MITTAGS, NACHMITTAGS
+        // TODO TAGSÜBER ersetzen durch: VORMITTAGS, MITTAGS, NACHMITTAGS
         //  MITTAGS (z.B. 11 - 13)
         //  VORMITTAGS -> MITTAGS: "Inzwischen steht die Sonne schon sehr hoch"
         //  "Inzwischen steht die Sonne hoch am Firmament"
