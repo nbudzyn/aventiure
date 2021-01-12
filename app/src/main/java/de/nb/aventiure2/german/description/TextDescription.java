@@ -56,9 +56,6 @@ public class TextDescription extends AbstractDescription<TextDescription> {
     TextDescription(final StructuralElement startsNew,
                     final Wortfolge wortfolge) {
         this(new DescriptionParams(startsNew, wortfolge.getPhorikKandidat()),
-                // FIXME wegen getString() kann wohl ein woertlicheRede... ausfallen.
-                //  Richiger wäre wohl hier GermanUtil.joinToString()
-                //  Parallelstellen?
                 wortfolge.getString(), wortfolge.woertlicheRedeNochOffen(),
                 wortfolge.kommaStehtAus());
     }
@@ -174,7 +171,7 @@ public class TextDescription extends AbstractDescription<TextDescription> {
         return woertlicheRedeNochOffen(true);
     }
 
-    public TextDescription woertlicheRedeNochOffen(final boolean woertlicheRedeNochOffen) {
+    private TextDescription woertlicheRedeNochOffen(final boolean woertlicheRedeNochOffen) {
         this.woertlicheRedeNochOffen = woertlicheRedeNochOffen;
         return this;
     }
