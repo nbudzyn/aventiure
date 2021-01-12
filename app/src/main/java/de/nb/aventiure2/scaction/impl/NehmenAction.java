@@ -23,6 +23,7 @@ import de.nb.aventiure2.data.world.syscomp.storingplace.ILocationGO;
 import de.nb.aventiure2.german.base.GermanUtil;
 import de.nb.aventiure2.german.base.Nominalphrase;
 import de.nb.aventiure2.german.base.NumerusGenus;
+import de.nb.aventiure2.german.base.PraepositionMitKasus;
 import de.nb.aventiure2.german.base.SubstantivischePhrase;
 import de.nb.aventiure2.german.description.TimedDescription;
 import de.nb.aventiure2.german.praedikat.AdverbialeAngabeSkopusSatz;
@@ -42,7 +43,6 @@ import static de.nb.aventiure2.data.world.syscomp.feelings.Mood.ANGESPANNT;
 import static de.nb.aventiure2.data.world.syscomp.feelings.Mood.NEUTRAL;
 import static de.nb.aventiure2.data.world.syscomp.state.impl.FroschprinzState.ERWARTET_VON_SC_EINLOESUNG_SEINES_VERSPRECHENS;
 import static de.nb.aventiure2.data.world.syscomp.state.impl.FroschprinzState.HAT_HOCHHEBEN_GEFORDERT;
-import static de.nb.aventiure2.german.base.Kasus.AKK;
 import static de.nb.aventiure2.german.base.Numerus.SG;
 import static de.nb.aventiure2.german.base.Person.P1;
 import static de.nb.aventiure2.german.base.Person.P2;
@@ -194,11 +194,10 @@ public class NehmenAction
             return NEHMEN
                     .mitAdverbialerAngabe(
                             new AdverbialeAngabeSkopusVerbWohinWoher(
-                                    // FIXME Möglichen Bezug auf NumerusGenus speichern!
-                                    "in " +
-                                            targetLocation.descriptionComp()
-                                                    .getDescription(true, true)
-                                                    .imStr(AKK)
+                                    PraepositionMitKasus.IN_AKK
+                                            .mit(targetLocation.descriptionComp()
+                                                    .getDescription(true, true))
+                                            .getDescription()
                             )); // "in die Hände nehmen"
         }
 

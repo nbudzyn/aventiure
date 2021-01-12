@@ -101,6 +101,7 @@ public enum RapunzelStoryNode implements IStoryNode {
     //    das Bett. Dir pocht das Herz"
     //  - Die Zauberin hat Essen und Trinken mitgebracht und du hörst den beiden bei der
     //   Mahlzeit zu. BEI HUNGER: Dein Magen knurrt, aber es scheint niemand zu bemerken.
+
     // FIXME WARTEN "Du liegst lange Zeit ganz still. Der Staub kribbelt in deiner Nase."
     //  "Endlich verabschiedet sich die ZAUBERIN und steigt herab"
     //  "Du kannst wieder herauskommen - hörst du es lieblich sagen"

@@ -14,7 +14,16 @@ public abstract class AbstractAdverbialeAngabe {
     private final AdjPhrOhneLeerstellen adjektivphrase;
 
     AbstractAdverbialeAngabe(final String text) {
-        this(new Adjektiv(text).toAdjPhr());
+        this(
+                // TODO Bei der dem Text könnte es sich durchaus um etwas anderes als ein
+                //  einzelnes Adjektiv handeln. Beispielsweise könnte es sich um
+                //  ein Präspositionalphrase handeln wie "in die Hände".
+                //  Dann könnte diese Phrase möglicherweise einen Phorik-Kandidaten enthalten -
+                //  zumindest ein kannAlsBezugsobjektVerstandenWerdenFuer = X wäre gut möglich.
+                //  Vielleicht sollte "AdjPhrOhneLeerstellen adjektivphrase" durch
+                //  etwas Ähnliches wie das Interface Praedikativum ersetzt werden.
+
+                new Adjektiv(text).toAdjPhr());
     }
 
     AbstractAdverbialeAngabe(final AdjPhrOhneLeerstellen adjektivphrase) {
