@@ -116,7 +116,7 @@ public class VorDemTurmConnectionComp extends AbstractSpatialConnectionComp {
             case 0:
                 if (world.loadSC().memoryComp().isKnown(RAPUNZELS_GESANG) &&
                         !world.loadSC().memoryComp().isKnown(RAPUNZEL)) {
-                    return du("möchtest", "zu der süßen Stimme hinaufsteigen, "
+                    return du(SENTENCE, "möchtest", "zu der süßen Stimme hinaufsteigen, "
                             + "und suchst rundherum nach einer Türe des Turms, aber es ist keine "
                             + "zu finden", mins(2), COUNTER_ALTER_TURM_UMRUNDET)
                             .dann();
@@ -128,7 +128,7 @@ public class VorDemTurmConnectionComp extends AbstractSpatialConnectionComp {
                             mins(2), COUNTER_ALTER_TURM_UMRUNDET);
                 }
 
-                return du("gehst", "einmal um den Turm herum, findest "
+                return du(SENTENCE, "gehst", "einmal um den Turm herum, findest "
                         + "aber nicht die kleinste Tür", secs(90), COUNTER_ALTER_TURM_UMRUNDET)
                         .dann();
             case 1:

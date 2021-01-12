@@ -542,7 +542,7 @@ public class FroschprinzTalkingComp extends AbstractTalkingComp {
                                 + " an: „Wie läuft's, Frosch? Schönes Wetter heut.“ "
                                 + "„Vergiss dein Versprechen nicht“, sagt er nur")
                         .beendet(PARAGRAPH),
-                du("holst", "Luft, aber da kommt dir "
+                du(SENTENCE, "holst", "Luft, aber da kommt dir "
                         + getDescription().nomStr()
                         + " schon zuvor: „Wir sehen uns noch!“").beendet(PARAGRAPH),
                 neuerSatz("„Und jetzt, Frosch?“ "
@@ -565,7 +565,7 @@ public class FroschprinzTalkingComp extends AbstractTalkingComp {
                         "gerade",
                         secs(10))
                         .phorikKandidat(desc, FROSCHPRINZ),
-                du("druckst", "ein bisschen herum und faselst etwas von "
+                du(SENTENCE, "druckst", "ein bisschen herum und faselst etwas von "
                                 + "hygienischen Gründen. "
                                 + capitalize(desc.nomStr())
                                 + " schaut dich nur… traurig? verächtlich?… an",

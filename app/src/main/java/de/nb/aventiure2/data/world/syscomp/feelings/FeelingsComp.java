@@ -646,7 +646,7 @@ public class FeelingsComp extends AbstractStatefulComponent<FeelingsPCD> {
                         .undWartest(),
                 neuerSatz("Dir fällt auf, dass du Hunger hast")
                         .komma(),
-                du("empfindest", "wieder leichten Hunger")
+                du(SENTENCE, "empfindest", "wieder leichten Hunger")
                         .undWartest()
         );
     }
@@ -808,7 +808,7 @@ public class FeelingsComp extends AbstractStatefulComponent<FeelingsPCD> {
                     du("bist", "ziemlich erschöpft; ein Nickerchen täte dir "
                             + "gut")
                             .beendet(PARAGRAPH),
-                    du("bist", "ziemlich erschöpft. Und müde")
+                    du(SENTENCE, "bist", "ziemlich erschöpft. Und müde")
                             .beendet(PARAGRAPH),
                     neuerSatz("Das war alles anstrengend!")
                             .beendet(PARAGRAPH)
@@ -834,7 +834,7 @@ public class FeelingsComp extends AbstractStatefulComponent<FeelingsPCD> {
         if (getMuedigkeit() == FeelingIntensity.STARK) {
             //  STARK: "völlig übermüdet"
             res.add(
-                    du("bist", "ganz müde")
+                    du(SENTENCE, "bist", "ganz müde")
                             .beendet(SENTENCE)
             );
         }
@@ -842,7 +842,7 @@ public class FeelingsComp extends AbstractStatefulComponent<FeelingsPCD> {
         if (getMuedigkeit() == FeelingIntensity.SEHR_STARK) {
             // SEHR_STARK: "todmüde"
             res.add(
-                    du("bist", "hundemüde")
+                    du(SENTENCE, "bist", "hundemüde")
                             .beendet(PARAGRAPH),
                     neuerSatz("auf einmal beginnen dir die Augen zuzufallen")
             );
@@ -1007,7 +1007,7 @@ public class FeelingsComp extends AbstractStatefulComponent<FeelingsPCD> {
                             .beendet(PARAGRAPH),
                     neuerSatz("immer wieder fallen dir die Augen zu")
                             .beendet(SENTENCE),
-                    du("bist", "so müde, dass du die Augen kaum aufhalten magst")
+                    du(SENTENCE, "bist", "so müde, dass du die Augen kaum aufhalten magst")
                             .beendet(SENTENCE),
                     neuerSatz(SENTENCE, "dir ist, als könntest du vor Müdigkeit kaum mehr "
                             + "ein Glied regen")
@@ -1021,7 +1021,7 @@ public class FeelingsComp extends AbstractStatefulComponent<FeelingsPCD> {
         if (getMuedigkeit() == FeelingIntensity.PATHOLOGISCH) {
             //  PATHOLOGISCH: "benommen"
             res.add(
-                    du("empfindest",
+                    du(SENTENCE, "empfindest",
                             "so große Müdigkeit, dass dich deine Glieder "
                                     + "kaum halten")
                             .komma()

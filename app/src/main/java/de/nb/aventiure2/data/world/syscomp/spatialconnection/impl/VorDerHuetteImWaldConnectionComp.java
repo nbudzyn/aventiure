@@ -22,6 +22,7 @@ import static de.nb.aventiure2.data.time.AvTimeSpan.mins;
 import static de.nb.aventiure2.data.time.AvTimeSpan.secs;
 import static de.nb.aventiure2.data.world.base.SpatialConnection.con;
 import static de.nb.aventiure2.data.world.gameobject.World.*;
+import static de.nb.aventiure2.german.base.StructuralElement.SENTENCE;
 import static de.nb.aventiure2.german.description.DescriptionBuilder.du;
 import static de.nb.aventiure2.german.description.DescriptionBuilder.neuerSatz;
 
@@ -58,7 +59,7 @@ public class VorDerHuetteImWaldConnectionComp extends AbstractSpatialConnectionC
                         "in der Tür",
                         "Die Hütte betreten",
                         secs(15),
-                        du("schiebst",
+                        du(SENTENCE, "schiebst",
                                 "die Tür zur Seite und "
                                         + "zwängst dich hinein. Durch Ritzen in den "
                                         + "Fensterläden fällt ein wenig Licht: "
@@ -68,7 +69,7 @@ public class VorDerHuetteImWaldConnectionComp extends AbstractSpatialConnectionC
                                         + "Tausendfüßler "
                                         + "unbewohnt. Du siehst ein Bettgestell, "
                                         + "einen Tisch, aber sonst keine Einrichtung", mins(1)),
-                        du("schiebst",
+                        du(SENTENCE, "schiebst",
                                 "die Tür zur Seite und "
                                         + "zwängst dich hinein. Erst ist alles "
                                         + "stockdunkel, aber dann kannst du doch mit "
