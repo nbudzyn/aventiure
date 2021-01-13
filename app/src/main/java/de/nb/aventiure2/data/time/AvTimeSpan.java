@@ -19,6 +19,7 @@ import static de.nb.aventiure2.data.time.AvTime.SECS_IN_AN_HOUR;
  */
 @Immutable
 public class AvTimeSpan {
+    public static final AvTimeSpan NO_TIME = secs(0);
     public static final AvTimeSpan ONE_DAY = days(1);
 
     /**
@@ -26,12 +27,6 @@ public class AvTimeSpan {
      */
     @PrimaryKey
     private final long secs;
-
-    @NonNull
-    @Contract(pure = true)
-    public static AvTimeSpan noTime() {
-        return secs(0);
-    }
 
     @NonNull
     @Contract(pure = true)
@@ -162,7 +157,7 @@ public class AvTimeSpan {
     }
 
     public boolean isNoTime() {
-        return equals(noTime());
+        return equals(NO_TIME);
     }
 
     @Contract(value = "null -> false", pure = true)

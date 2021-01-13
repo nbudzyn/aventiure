@@ -8,6 +8,7 @@ import com.google.common.collect.ImmutableList;
 import javax.annotation.Nullable;
 
 import de.nb.aventiure2.data.narration.Narrator;
+import de.nb.aventiure2.data.time.AvTimeSpan;
 import de.nb.aventiure2.data.world.base.GameObjectId;
 import de.nb.aventiure2.data.world.base.SpatialConnection;
 import de.nb.aventiure2.data.world.gameobject.*;
@@ -21,7 +22,6 @@ import de.nb.aventiure2.german.base.Personalpronomen;
 import de.nb.aventiure2.german.base.SubstantivischePhrase;
 import de.nb.aventiure2.german.description.AbstractDescription;
 
-import static de.nb.aventiure2.data.time.AvTimeSpan.noTime;
 import static de.nb.aventiure2.data.world.syscomp.memory.Action.Type.BEWEGEN;
 import static de.nb.aventiure2.data.world.syscomp.spatialconnection.NumberOfWays.NO_WAY;
 import static de.nb.aventiure2.data.world.syscomp.spatialconnection.NumberOfWays.ONE_IN_ONE_OUT;
@@ -62,7 +62,7 @@ public class SimpleMovementNarrator implements IMovementNarrator {
 
         final String wo = locationMovingGO.storingPlaceComp().getLocationMode().getWo(eherGross);
 
-        n.narrateAlt(noTime(),
+        n.narrateAlt(AvTimeSpan.NO_TIME,
                 neuerSatz(wo +
                         " steht " +
                         desc.nomStr())
@@ -113,7 +113,7 @@ public class SimpleMovementNarrator implements IMovementNarrator {
     public void narrateScUeberholtMovingGO() {
         final Nominalphrase desc = getDescription();
 
-        n.narrateAlt(noTime(),
+        n.narrateAlt(AvTimeSpan.NO_TIME,
                 du("gehst",
                         "dabei an " +
                                 desc.datStr() +
@@ -141,7 +141,7 @@ public class SimpleMovementNarrator implements IMovementNarrator {
     private void narrateScTrifftMovingGOImDazwischen_scHatKeinenVorigenOrt() {
         final Nominalphrase desc = getDescription();
 
-        n.narrateAlt(noTime(),
+        n.narrateAlt(AvTimeSpan.NO_TIME,
                 neuerSatz(PARAGRAPH,
                         "Dir begegnet " + desc.nomStr())
                         .phorikKandidat(desc, gameObjectId)
@@ -193,7 +193,7 @@ public class SimpleMovementNarrator implements IMovementNarrator {
                             .beendet(PARAGRAPH));
         }
 
-        n.narrateAlt(alt, noTime());
+        n.narrateAlt(alt, AvTimeSpan.NO_TIME);
     }
 
     @Override
@@ -275,7 +275,7 @@ public class SimpleMovementNarrator implements IMovementNarrator {
                             .beendet(PARAGRAPH));
         }
 
-        n.narrateAlt(alt, noTime());
+        n.narrateAlt(alt, AvTimeSpan.NO_TIME);
     }
 
     private <FROM extends ILocationGO & ISpatiallyConnectedGO>
@@ -288,7 +288,7 @@ public class SimpleMovementNarrator implements IMovementNarrator {
 
         final String wo = calcWoIfNecessary(spatialConnection, numberOfWaysOut);
 
-        n.narrateAlt(noTime(),
+        n.narrateAlt(AvTimeSpan.NO_TIME,
                 neuerSatz(PARAGRAPH,
                         anaphOderDesc.nomStr() +
                                 " geht "
@@ -428,7 +428,7 @@ public class SimpleMovementNarrator implements IMovementNarrator {
                             .beendet(PARAGRAPH));
         }
 
-        n.narrateAlt(alt, noTime());
+        n.narrateAlt(alt, AvTimeSpan.NO_TIME);
     }
 
     private <FROM extends ILocationGO & ISpatiallyConnectedGO>
@@ -464,7 +464,7 @@ public class SimpleMovementNarrator implements IMovementNarrator {
                 .phorikKandidat(desc, gameObjectId)
                 .beendet(PARAGRAPH));
 
-        n.narrateAlt(alt, noTime());
+        n.narrateAlt(alt, AvTimeSpan.NO_TIME);
     }
 
     public <FROM extends ILocationGO & ISpatiallyConnectedGO>
@@ -518,7 +518,7 @@ public class SimpleMovementNarrator implements IMovementNarrator {
                             .beendet(PARAGRAPH));
         }
 
-        n.narrateAlt(alt, noTime());
+        n.narrateAlt(alt, AvTimeSpan.NO_TIME);
     }
 
     private <FROM extends ILocationGO & ISpatiallyConnectedGO>
@@ -530,7 +530,7 @@ public class SimpleMovementNarrator implements IMovementNarrator {
 
         final String wo = calcWoIfNecessary(spatialConnection, numberOfWaysIn);
 
-        n.narrateAlt(noTime(),
+        n.narrateAlt(AvTimeSpan.NO_TIME,
                 neuerSatz(PARAGRAPH,
                         wo // "auf dem Weg "
                                 + " kommt " +

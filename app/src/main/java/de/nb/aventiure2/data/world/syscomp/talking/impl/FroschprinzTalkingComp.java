@@ -8,6 +8,7 @@ import java.util.List;
 
 import de.nb.aventiure2.data.database.AvDatabase;
 import de.nb.aventiure2.data.narration.Narrator;
+import de.nb.aventiure2.data.time.AvTimeSpan;
 import de.nb.aventiure2.data.world.base.GameObjectId;
 import de.nb.aventiure2.data.world.gameobject.*;
 import de.nb.aventiure2.data.world.syscomp.description.IDescribableGO;
@@ -18,7 +19,6 @@ import de.nb.aventiure2.data.world.syscomp.talking.AbstractTalkingComp;
 import de.nb.aventiure2.german.base.Nominalphrase;
 import de.nb.aventiure2.german.base.SubstantivischePhrase;
 
-import static de.nb.aventiure2.data.time.AvTimeSpan.noTime;
 import static de.nb.aventiure2.data.time.AvTimeSpan.secs;
 import static de.nb.aventiure2.data.world.gameobject.World.*;
 import static de.nb.aventiure2.data.world.syscomp.feelings.Mood.VOLLER_FREUDE;
@@ -180,12 +180,12 @@ public class FroschprinzTalkingComp extends AbstractTalkingComp {
         if (n.dann()) {
             if (n.allowsAdditionalDuSatzreihengliedOhneSubjekt()) {
                 n.narrate(satzanschluss("– aber dann gibst du dir einen Ruck:",
-                        noTime()));
+                        AvTimeSpan.NO_TIME));
             } else {
-                n.narrate(neuerSatz("Aber dann gibst du dir einen Ruck:", noTime()));
+                n.narrate(neuerSatz("Aber dann gibst du dir einen Ruck:", AvTimeSpan.NO_TIME));
             }
         } else {
-            n.narrate(du("gibst", "dir einen Ruck:", noTime()));
+            n.narrate(du("gibst", "dir einen Ruck:", AvTimeSpan.NO_TIME));
         }
 
         froschHatAngesprochen_ReEntry();
@@ -200,7 +200,7 @@ public class FroschprinzTalkingComp extends AbstractTalkingComp {
             return;
         }
 
-        n.narrate(neuerSatz("„Hallo, du hässlicher Frosch!“, redest du ihn an", noTime())
+        n.narrate(neuerSatz("„Hallo, du hässlicher Frosch!“, redest du ihn an", AvTimeSpan.NO_TIME)
                 .undWartest()
                 .dann());
 
@@ -428,7 +428,7 @@ public class FroschprinzTalkingComp extends AbstractTalkingComp {
     private <LOC_DESC extends ILocatableGO & IDescribableGO> void froschReagiertAufVersprechen() {
         n.narrate(neuerSatz(PARAGRAPH,
                 "Der Frosch, als er die Zusage erhalten hat,",
-                noTime()));
+                AvTimeSpan.NO_TIME));
 
         @Nullable final GameObjectId scLocationId = world.loadSC().locationComp().getLocationId();
 

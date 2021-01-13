@@ -8,7 +8,6 @@ import de.nb.aventiure2.data.database.AvDatabase;
 import de.nb.aventiure2.scaction.AbstractScAction;
 
 import static de.nb.aventiure2.data.time.AvTime.oClock;
-import static de.nb.aventiure2.data.time.AvTimeSpan.noTime;
 
 /**
  * Keeps track of the current time in the world.
@@ -58,7 +57,7 @@ public class TimeTaker {
      * {@link AbstractScAction#doAndPassTime()} deals with this.
      */
     public void passTime(final AvTimeSpan timePassed) {
-        if (timePassed.equals(noTime())) {
+        if (timePassed.equals(AvTimeSpan.NO_TIME)) {
             return;
         }
 

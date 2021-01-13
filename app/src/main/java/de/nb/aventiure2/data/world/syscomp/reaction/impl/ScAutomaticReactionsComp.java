@@ -28,7 +28,6 @@ import de.nb.aventiure2.scaction.impl.EssenAction;
 
 import static de.nb.aventiure2.data.time.AvTimeSpan.min;
 import static de.nb.aventiure2.data.time.AvTimeSpan.mins;
-import static de.nb.aventiure2.data.time.AvTimeSpan.noTime;
 import static de.nb.aventiure2.data.world.gameobject.World.*;
 import static de.nb.aventiure2.data.world.syscomp.feelings.Hunger.HUNGRIG;
 
@@ -79,6 +78,16 @@ public class ScAutomaticReactionsComp
     private void onSCEnter(@Nullable final ILocationGO from, final ILocationGO to) {
         if (!LocationSystem.haveSameOuterMostLocation(from, to)) {
             if (to.is(WALDWILDNIS_HINTER_DEM_BRUNNEN)) {
+
+
+                // FIXME Automatisch die Zauberin loslaufen lassen
+                //  (RapunzelsZauberinState.VOR_DEM_NAECHSTEN_RAPUNZEL_BESUCH)
+                //  und auf der Kreuzung treffen lassen, wenn der SC vom
+                //  Brunnen erstmals zur Kreuzung zurückkehrt und es
+                //  Tag ist etc., so dass der SC der Zauberin auf jeden Fall einmal im Wald begegnet
+
+
+            } else if (to.is(WALDWILDNIS_HINTER_DEM_BRUNNEN)) {
                 counterDao.reset(EssenAction.COUNTER_FELSENBIRNEN_SEIT_ENTER);
             }
         }
@@ -115,7 +124,7 @@ public class ScAutomaticReactionsComp
         feelingsComp.onTimePassed(startTime, endTime);
 
         final AvTimeSpan remainingWaitTime = waitingComp.getEndTime().minus(endTime);
-        if (remainingWaitTime.longerThan(noTime())) {
+        if (remainingWaitTime.longerThan(AvTimeSpan.NO_TIME)) {
             // Erzwingen, dass sich die Welt noch weitere 3 Minuten weiterdreht
             // (oder die remainingWaitTime - wenn die kleiner ist)
             timeTaker.passTime(min(mins(3), remainingWaitTime));

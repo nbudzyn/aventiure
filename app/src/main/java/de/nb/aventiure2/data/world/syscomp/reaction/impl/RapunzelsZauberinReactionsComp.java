@@ -39,12 +39,13 @@ import static de.nb.aventiure2.data.time.AvTime.oClock;
 import static de.nb.aventiure2.data.time.AvTimeSpan.days;
 import static de.nb.aventiure2.data.time.AvTimeSpan.hours;
 import static de.nb.aventiure2.data.time.AvTimeSpan.mins;
-import static de.nb.aventiure2.data.time.AvTimeSpan.noTime;
 import static de.nb.aventiure2.data.time.AvTimeSpan.secs;
 import static de.nb.aventiure2.data.world.gameobject.World.*;
 import static de.nb.aventiure2.data.world.syscomp.state.impl.RapunzelsZauberinState.AUF_DEM_RUECKWEG_VON_RAPUNZEL;
 import static de.nb.aventiure2.data.world.syscomp.state.impl.RapunzelsZauberinState.AUF_DEM_WEG_ZU_RAPUNZEL;
 import static de.nb.aventiure2.data.world.syscomp.state.impl.RapunzelsZauberinState.BEI_RAPUNZEL_OBEN_IM_TURM;
+import static de.nb.aventiure2.data.world.syscomp.state.impl.RapunzelsZauberinState.MACHT_ZURZEIT_KEINE_RAPUNZELBESUCHE;
+import static de.nb.aventiure2.data.world.syscomp.state.impl.RapunzelsZauberinState.VOR_DEM_NAECHSTEN_RAPUNZEL_BESUCH;
 import static de.nb.aventiure2.data.world.syscomp.state.impl.RapunzelsZauberinState.WARTEZEIT_NACH_RAPUNZEL_BESUCH;
 import static de.nb.aventiure2.german.base.StructuralElement.CHAPTER;
 import static de.nb.aventiure2.german.base.StructuralElement.PARAGRAPH;
@@ -138,6 +139,13 @@ public class RapunzelsZauberinReactionsComp
 
     private void onSCLeave(final ILocationGO scFrom,
                            @Nullable final ILocationGO scTo) {
+        if (    // Der Spieler kommt aus Richtung Brunnen
+            // zum "Rapunzel-Abzweig" zurück.
+                scFrom.is(ABZWEIG_IM_WALD)
+                        && scTo != null && scTo.is(IM_WALD_NAHE_DEM_SCHLOSS)) {
+            onSCLeave_AbzweigImWald_To_ImWaldNaheDemSchloss();
+        }
+
         if (scTo != null && movementComp.isMoving() && locationComp.getLocationId() == null) {
             // Zauberin ist in Bewegung - und gerade im "Dazwischen"
 
@@ -183,6 +191,29 @@ public class RapunzelsZauberinReactionsComp
             //  Oder schaut vielleicht Rapunzel aus dem Fenster, bevor sie die
             //  Haare herunterlässt?
             return;
+        }
+    }
+
+    private void onSCLeave_AbzweigImWald_To_ImWaldNaheDemSchloss() {
+        if (stateComp.hasState(MACHT_ZURZEIT_KEINE_RAPUNZELBESUCHE,
+                VOR_DEM_NAECHSTEN_RAPUNZEL_BESUCH)
+                && RapunzelsZauberinReactionsComp
+                .liegtImZeitfensterFuerRapunzelbesuch(timeTaker.now())) {
+            // Automatisch die Zauberin loslaufen lassen,
+            //  so dass der SC die Zauberin auf jeden Fall
+            //  auf der Kreuzung trifft
+
+            locationComp.narrateAndSetLocation(
+                    // Zauberin ist auf einmal draußen vor dem Schloss
+                    // (wer weiß, wo sie herkommt)
+                    DRAUSSEN_VOR_DEM_SCHLOSS,
+                    () -> stateComp.narrateAndSetState(AUF_DEM_WEG_ZU_RAPUNZEL));
+
+            // Zauberin geht Richtung Turm. Der SC soll die Zauberin _jetzt_
+            // auf der Kreuzung treffen - keine Zeit für den ersten Schritt der
+            // Zauberin einplanen.
+            movementComp.startMovement(timeTaker.now(),
+                    VOR_DEM_ALTEN_TURM, true);
         }
     }
 
@@ -367,7 +398,7 @@ public class RapunzelsZauberinReactionsComp
             n.narrate(
                     neuerSatz(getAnaphPersPronWennMglSonstDescription(
                             true).nomStr()
-                            + " hat dich nicht bemerkt", noTime()));
+                            + " hat dich nicht bemerkt", AvTimeSpan.NO_TIME));
         }
         // STORY UNTER_DEM_BETT_OBEN_IM_ALTEN_TURM
 

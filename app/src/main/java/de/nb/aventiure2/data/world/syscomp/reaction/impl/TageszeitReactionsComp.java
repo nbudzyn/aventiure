@@ -11,7 +11,6 @@ import de.nb.aventiure2.data.world.gameobject.*;
 import de.nb.aventiure2.data.world.syscomp.reaction.AbstractReactionsComp;
 import de.nb.aventiure2.data.world.syscomp.reaction.interfaces.ITimePassedReactions;
 
-import static de.nb.aventiure2.data.time.AvTimeSpan.noTime;
 import static de.nb.aventiure2.data.world.gameobject.World.*;
 import static de.nb.aventiure2.german.base.StructuralElement.PARAGRAPH;
 import static de.nb.aventiure2.german.description.DescriptionBuilder.neuerSatz;
@@ -81,7 +80,7 @@ public class TageszeitReactionsComp
     private void onTimePassedFromNachtsTo(@NonNull final Tageszeit currentTageszeit) {
         switch (currentTageszeit) {
             case MORGENS:
-                n.narrateAlt(noTime(),
+                n.narrateAlt(AvTimeSpan.NO_TIME,
                         neuerSatz("Allmählich ist es Morgen geworden"
                                 // Der Tageszeitenwechsel ist parallel passiert.
                         ),
@@ -98,14 +97,14 @@ public class TageszeitReactionsComp
                 );
                 return;
             case TAGSUEBER:
-                n.narrateAlt(noTime(),
+                n.narrateAlt(AvTimeSpan.NO_TIME,
                         neuerSatz("Inzwischen ist es hellichter Tag"),
                         neuerSatz("Der andere Tag hat begonnen"),
                         neuerSatz("Zwischenzeitlich ist die Sonne aufgegangen")
                 );
                 return;
             case ABENDS:
-                n.narrateAlt(noTime(),
+                n.narrateAlt(AvTimeSpan.NO_TIME,
                         neuerSatz("Inzwischen ist beinahe der ganze Tag vergangen"),
                         neuerSatz("Inzwischen wird es schon wieder dunkel"),
                         neuerSatz("Der Tag ist schon fast vorüber"),
@@ -120,14 +119,14 @@ public class TageszeitReactionsComp
     private void onTimePassedFromMorgensTo(@NonNull final Tageszeit currentTageszeit) {
         switch (currentTageszeit) {
             case TAGSUEBER:
-                n.narrateAlt(noTime(),
+                n.narrateAlt(AvTimeSpan.NO_TIME,
                         neuerSatz("Die Sonne steigt langsam am Firmament "
                                 + "empor"),
                         neuerSatz("Die Sonne ist aufgegangen und beginnt ihren Lauf")
                 );
                 return;
             case ABENDS:
-                n.narrateAlt(noTime(),
+                n.narrateAlt(AvTimeSpan.NO_TIME,
                         neuerSatz("Währenddessen ist der Tag vergangen und die Sonne steht "
                                 + "schon tief am Himmel"),
                         neuerSatz("Inzwischen ist beinahe der ganze Tag vergangen"),
@@ -137,7 +136,7 @@ public class TageszeitReactionsComp
                 );
                 return;
             case NACHTS:
-                n.narrateAlt(noTime(),
+                n.narrateAlt(AvTimeSpan.NO_TIME,
                         neuerSatz("Die Sonne ist über die Zeit untergegangen"),
                         neuerSatz("Jetzt ist es dunkel"),
                         neuerSatz("Jetzt ist es Nacht und man sieht nur noch wenig"),
@@ -157,7 +156,7 @@ public class TageszeitReactionsComp
     private void onTimePassedFromTagsueberTo(@NonNull final Tageszeit currentTageszeit) {
         switch (currentTageszeit) {
             case ABENDS:
-                n.narrateAlt(noTime(),
+                n.narrateAlt(AvTimeSpan.NO_TIME,
                         neuerSatz(PARAGRAPH, "Allmählich wird es abendlich dunkel"),
                         neuerSatz(PARAGRAPH, "Der Tag neigt sich und langsam beginnt der Abend"),
                         neuerSatz(PARAGRAPH, "Der Tag neigt sich und allmählich bricht "
@@ -171,7 +170,7 @@ public class TageszeitReactionsComp
             case NACHTS:
                 // TODO Der Spieler könnte abends MÜDE werden (und morgens oder nach dem
                 // Schlafen wieder wach / NEUTRAL)
-                n.narrateAlt(noTime(),
+                n.narrateAlt(AvTimeSpan.NO_TIME,
                         neuerSatz(PARAGRAPH, "Die Sonne ist jetzt untergegangen"),
                         neuerSatz(PARAGRAPH, "Es ist dunkel geworden"),
                         neuerSatz(PARAGRAPH, "Die Sonne ist untergegangen"),
@@ -185,7 +184,7 @@ public class TageszeitReactionsComp
                 );
                 return;
             case MORGENS:
-                n.narrateAlt(noTime(),
+                n.narrateAlt(AvTimeSpan.NO_TIME,
                         neuerSatz(PARAGRAPH, "Unterdessen hat der neue Tag begonnen")
                                 .beendet(PARAGRAPH),
                         neuerSatz(PARAGRAPH, "Es ist schon der nächste Morgen"),
@@ -203,7 +202,7 @@ public class TageszeitReactionsComp
     private void onTimePassedFromAbendsTo(@NonNull final Tageszeit currentTageszeit) {
         switch (currentTageszeit) {
             case NACHTS:
-                n.narrateAlt(noTime(),
+                n.narrateAlt(AvTimeSpan.NO_TIME,
                         neuerSatz("Die Sonne ist jetzt untergegangen"),
                         neuerSatz(PARAGRAPH,
                                 "Es ist jetzt vollständig dunkel geworden. Nur noch "
@@ -218,7 +217,7 @@ public class TageszeitReactionsComp
                 );
                 return;
             case MORGENS:
-                n.narrateAlt(noTime(),
+                n.narrateAlt(AvTimeSpan.NO_TIME,
                         neuerSatz("Unterdessen hat der neue Tag begonnen")
                                 .beendet(PARAGRAPH),
                         neuerSatz("Es ist schon der nächste Morgen"),
@@ -230,7 +229,7 @@ public class TageszeitReactionsComp
                 );
                 return;
             case TAGSUEBER:
-                n.narrateAlt(noTime(),
+                n.narrateAlt(AvTimeSpan.NO_TIME,
                         neuerSatz("Es ist schon wieder heller Tag"),
                         neuerSatz("Die Sonne ist schon wieder aufgegangen")
                 );

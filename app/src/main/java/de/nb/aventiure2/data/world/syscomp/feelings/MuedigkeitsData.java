@@ -19,7 +19,6 @@ import de.nb.aventiure2.german.praedikat.AdverbialeAngabeSkopusVerbAllg;
 import static com.google.common.collect.ImmutableList.toImmutableList;
 import static de.nb.aventiure2.data.time.AvTimeSpan.hours;
 import static de.nb.aventiure2.data.time.AvTimeSpan.mins;
-import static de.nb.aventiure2.data.time.AvTimeSpan.noTime;
 import static de.nb.aventiure2.data.time.AvTimeSpan.secs;
 import static de.nb.aventiure2.data.world.gameobject.World.*;
 import static de.nb.aventiure2.german.adjektiv.AdjektivOhneErgaenzungen.BENOMMEN;
@@ -344,7 +343,7 @@ public class MuedigkeitsData {
         }
 
         // Zu kurzer Schlaf
-        return noTime();
+        return AvTimeSpan.NO_TIME;
     }
 
     @Override

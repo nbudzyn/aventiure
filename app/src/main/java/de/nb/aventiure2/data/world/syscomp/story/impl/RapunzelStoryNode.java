@@ -12,6 +12,7 @@ import javax.annotation.CheckReturnValue;
 
 import de.nb.aventiure2.data.database.AvDatabase;
 import de.nb.aventiure2.data.narration.Narrator;
+import de.nb.aventiure2.data.time.AvTimeSpan;
 import de.nb.aventiure2.data.time.TimeTaker;
 import de.nb.aventiure2.data.world.base.GameObjectId;
 import de.nb.aventiure2.data.world.base.IGameObject;
@@ -27,7 +28,6 @@ import de.nb.aventiure2.data.world.syscomp.story.Story;
 import de.nb.aventiure2.german.description.AbstractDescription;
 
 import static com.google.common.collect.ImmutableList.builder;
-import static de.nb.aventiure2.data.time.AvTimeSpan.noTime;
 import static de.nb.aventiure2.data.world.gameobject.World.*;
 import static de.nb.aventiure2.data.world.syscomp.state.impl.RapunzelState.HAARE_VOM_TURM_HERUNTERGELASSEN;
 import static de.nb.aventiure2.data.world.syscomp.state.impl.RapunzelsZauberinState.MACHT_ZURZEIT_KEINE_RAPUNZELBESUCHE;
@@ -47,8 +47,6 @@ public enum RapunzelStoryNode implements IStoryNode {
             },
             TURM_GEFUNDEN
     ),
-    // FIXME Automatisch dann freischalten, wenn der SC vom Brunnen erstmals zurückkehrt und es
-    //  Tag ist etc., so dass der SC der Zauberin auf jeden Fall einmal im Wald begegnet
     // Dies wird durch checkAndAdvanceIfAppropriate() automatisch freigeschaltet.
     // Tipps dafür wäre nicht sinnvoll
     ZAUBERIN_MACHT_RAPUNZELBESUCHE(),
@@ -219,11 +217,11 @@ public enum RapunzelStoryNode implements IStoryNode {
         final IHasStateGO<RapunzelsZauberinState> zauberin = loadZauberin(world);
 
         if (db.counterDao().incAndGet(STORY_ADVANCE_COUNTER) > 5) {
-            if (zauberin.stateComp().hasState(MACHT_ZURZEIT_KEINE_RAPUNZELBESUCHE) &&
-                    world.loadSC().locationComp()
-                            .hasRecursiveLocation(IM_WALD_NAHE_DEM_SCHLOSS, VOR_DEM_ALTEN_TURM) &&
-                    RapunzelsZauberinReactionsComp.
-                            liegtImZeitfensterFuerRapunzelbesuch(timeTaker.now())) {
+            if (zauberin.stateComp().hasState(MACHT_ZURZEIT_KEINE_RAPUNZELBESUCHE)
+                    && world.loadSC().locationComp()
+                    .hasRecursiveLocation(IM_WALD_NAHE_DEM_SCHLOSS, VOR_DEM_ALTEN_TURM)
+                    && RapunzelsZauberinReactionsComp.
+                    liegtImZeitfensterFuerRapunzelbesuch(timeTaker.now())) {
                 ensureAdvancedToZauberinMachtRapunzelbesuche(db.counterDao(), world);
                 return true;
             }
@@ -256,7 +254,7 @@ public enum RapunzelStoryNode implements IStoryNode {
 
         // STORY (bis SC Rapunzel gefunden hat) Mutter sammelt im
         //  Wald Holz und klagt ihr Leid: Tochter an Zauberin verloren
-        n.narrateAlt(alt, noTime());
+        n.narrateAlt(alt, AvTimeSpan.NO_TIME);
     }
 
     private static void narrateAndDoHintAction_RapunzelSingenGehoert(
@@ -278,7 +276,7 @@ public enum RapunzelStoryNode implements IStoryNode {
                             + "in den Sinn. Ob der wohl bewohnt ist?"));
         }
 
-        n.narrateAlt(alt, noTime());
+        n.narrateAlt(alt, AvTimeSpan.NO_TIME);
     }
 
     private static void narrateAndDoHintAction_ZauberinAufTurmWegGefunden(
@@ -287,7 +285,7 @@ public enum RapunzelStoryNode implements IStoryNode {
 
         alt.addAll(altTurmWohnenHineinHeraus(world));
 
-        n.narrateAlt(alt, noTime());
+        n.narrateAlt(alt, AvTimeSpan.NO_TIME);
     }
 
     private static void narrateAndDoHintAction_ZauberinHeimlichBeimRufenBeobachtet(
@@ -320,7 +318,7 @@ public enum RapunzelStoryNode implements IStoryNode {
                     paragraph("Was mag die Frau wollen?"));
         }
 
-        n.narrateAlt(alt, noTime());
+        n.narrateAlt(alt, AvTimeSpan.NO_TIME);
     }
 
     private static void narrateAndDoHintAction_ZuRapunzelHinaufgestiegen(
@@ -355,11 +353,11 @@ public enum RapunzelStoryNode implements IStoryNode {
                     "Manchmal hast du das Gefühl: Du hast noch eine wichtige Rolle "
                             + "zu spielen. Aber wenn du genauer darüber nachdenkst, weißt "
                             + "du plötzlich nicht weiter. Es ist wie verhext"));
-            // FIXME Mehr Texte für diesen Fall!
+            // FIXME Mehr Texte für diesen Fall (Nach dem Verhextwerden)
             alt.addAll(altTurmWohnenHineinHeraus(world));
         }
 
-        n.narrateAlt(alt, noTime());
+        n.narrateAlt(alt, AvTimeSpan.NO_TIME);
     }
 
     @CheckReturnValue

@@ -3,12 +3,12 @@ package de.nb.aventiure2.data.world.syscomp.feelings;
 import org.junit.Test;
 
 import de.nb.aventiure2.data.time.AvDateTime;
+import de.nb.aventiure2.data.time.AvTimeSpan;
 
 import static com.google.common.truth.Truth.assertThat;
 import static de.nb.aventiure2.data.time.AvTime.oClock;
 import static de.nb.aventiure2.data.time.AvTimeSpan.hours;
 import static de.nb.aventiure2.data.time.AvTimeSpan.mins;
-import static de.nb.aventiure2.data.time.AvTimeSpan.noTime;
 
 public class MuedigkeitsDataTest {
     @Test
@@ -34,7 +34,7 @@ public class MuedigkeitsDataTest {
     @Test
     public void calcAusschlafenEffektHaeltBeimMenschenVorFuer() {
         assertThat(MuedigkeitsData.calcAusschlafenEffektHaeltBeimMenschenVorFuer(mins(5)))
-                .isEqualTo(noTime());
+                .isEqualTo(AvTimeSpan.NO_TIME);
         assertThat(MuedigkeitsData.calcAusschlafenEffektHaeltBeimMenschenVorFuer(mins(30)))
                 .isEqualTo(hours(2));
         assertThat(MuedigkeitsData.calcAusschlafenEffektHaeltBeimMenschenVorFuer(hours(7)))

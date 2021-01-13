@@ -95,7 +95,7 @@ public class RapunzelsZauberinTalkingComp extends AbstractTalkingComp {
         //  - Hexe nach Turm fragen (Abneigung steigt - danach "missteauisch...")
         //  - Nach-dem-Weg-fragen beendet das Gespräch.
 
-        // FIXME Weitere Antworten.
+        // FIXME Weitere Antworten der Zauberin
 
         setSchonBegruesstMitSC(true);
         unsetTalkingTo();

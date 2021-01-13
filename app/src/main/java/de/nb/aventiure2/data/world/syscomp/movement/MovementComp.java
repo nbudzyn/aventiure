@@ -9,6 +9,7 @@ import org.jetbrains.annotations.Contract;
 
 import de.nb.aventiure2.data.database.AvDatabase;
 import de.nb.aventiure2.data.time.AvDateTime;
+import de.nb.aventiure2.data.time.AvTimeSpan;
 import de.nb.aventiure2.data.world.base.AbstractStatefulComponent;
 import de.nb.aventiure2.data.world.base.GameObject;
 import de.nb.aventiure2.data.world.base.GameObjectId;
@@ -113,13 +114,28 @@ public class MovementComp
      */
     public void startMovement(final AvDateTime now,
                               final GameObjectId targetLocationId) {
+        startMovement(now, targetLocationId, false);
+    }
+
+    /**
+     * Beginnt die Bewegung.
+     *
+     * @param firstStepTakesNoTime Bei <code>false</code> wird der erste Schritt
+     *                             ganz normal ausgeführt - bei <code>true</code> wird der erste
+     *                             Schritt in 0 Sekunden ausgeführt. Damit lässt sich z.B.
+     *                             eine Bewegung in X starten, in der ein NPC dem SC sofort von X
+     *                             her entgegenkommt.
+     */
+    public void startMovement(final AvDateTime now,
+                              final GameObjectId targetLocationId,
+                              final boolean firstStepTakesNoTime) {
         checkNotNull(targetLocationId, "targetLocationId is null");
         checkArgument(
                 !getGameObjectId().equals(targetLocationId),
                 "A game object cannot move inside itself.");
 
         setTargetLocationId(targetLocationId);
-        setupNextStepIfNecessaryAndPossible(now);
+        setupNextStepIfNecessaryAndPossible(now, firstStepTakesNoTime);
 
         if (hasCurrentStep()) {
             narrateAndDoMovementLeaves();
@@ -280,19 +296,41 @@ public class MovementComp
                 numberOfWaysIn);
     }
 
+    /**
+     * Plant den nächsten Schritt ein - sofern noch nötig und überhaupt möglich.
+     */
     private void setupNextStepIfNecessaryAndPossible(final AvDateTime startTime) {
+        setupNextStepIfNecessaryAndPossible(startTime, false);
+    }
+
+    /**
+     * Plant den nächsten Schritt ein - sofern noch nötig und überhaupt möglich.
+     *
+     * @param stepTakesNoTime Bei <code>false</code> wird der Schritt
+     *                        ganz normal ausgeführt - bei <code>true</code> wird der
+     *                        Schritt in 0 Sekunden ausgeführt. Der NPC wird sofort ankommen.
+     */
+    private void setupNextStepIfNecessaryAndPossible(
+            final AvDateTime startTime, final boolean stepTakesNoTime) {
         if (!isMoving() || locationComp.hasLocation(getTargetLocationId())) {
             stopMovement();
             return;
         }
 
-        getPcd().setCurrentStep(calculateStep(startTime));
+        getPcd().setCurrentStep(calculateStep(startTime, stepTakesNoTime));
 
         getPcd().setPauseForSCAction(DO_START_LEAVING);
     }
 
+    /**
+     * Berechnet den nächsten Schritt - sofern überhaupt möglich.
+     *
+     * @param stepTakesNoTime Bei <code>false</code> wird der Schritt
+     *                        ganz normal ausgeführt - bei <code>true</code> wird der
+     *                        Schritt in 0 Sekunden ausgeführt. Der NPC wird sofort ankommen.
+     */
     @Nullable
-    private MovementStep calculateStep(final AvDateTime startTime) {
+    private MovementStep calculateStep(final AvDateTime startTime, final boolean stepTakesNoTime) {
         final ILocationGO from = locationComp.getLocation();
 
         if (!(from instanceof ISpatiallyConnectedGO)) {
@@ -303,14 +341,23 @@ public class MovementComp
                 spatialConnectionSystem
                         .findFirstStep((ISpatiallyConnectedGO) from, getTargetLocation());
 
-        return toMovementStep(from, firstStep, startTime);
+        return toMovementStep(from, firstStep, startTime, stepTakesNoTime);
     }
 
+    /**
+     * Erzeugt den nächsten Schritt aus diesem {@link SpatialStandardStep} -
+     * null-safe.
+     *
+     * @param takesNoTime Bei <code>false</code> wird der Schritt
+     *                    ganz normal erzeugt - bei <code>true</code> werden für den
+     *                    Schritt 0 Sekunden eingeplant. Der NPC wird also sofort ankommen.
+     */
     @Contract("_, null, _ -> null; _, !null, _ -> new")
     private MovementStep toMovementStep(
             final ILocationGO from,
             @Nullable final SpatialStandardStep spatialStandardStep,
-            final AvDateTime startTime) {
+            final AvDateTime startTime,
+            final boolean takesNoTime) {
         if (spatialStandardStep == null) {
             return null;
         }
@@ -319,7 +366,24 @@ public class MovementComp
                 from.getId(),
                 spatialStandardStep.getTo(),
                 startTime,
-                spatialStandardStep.getStandardDuration().times(relativeVelocity));
+                calcExpectedDuration(spatialStandardStep.getStandardDuration(), takesNoTime));
+    }
+
+    /**
+     * Berechnet die erwartete Dauer für einen Schritt auf Basis der Standard-Dauer und
+     * der relativen Geschwindigkeit dieses NPCs.
+     *
+     * @param takesNoTime Bei <code>false</code> wird die Dauer
+     *                    ganz normal berechnet - bei <code>true</code> werden
+     *                    0 Sekunden eingeplant. Der NPC wird also sofort ankommen.
+     */
+    private AvTimeSpan calcExpectedDuration(final AvTimeSpan standardDuration,
+                                            final boolean takesNoTime) {
+        if (takesNoTime) {
+            return AvTimeSpan.NO_TIME;
+        }
+
+        return standardDuration.times(relativeVelocity);
     }
 
     private void narrateAndDoMovementLeaves() {

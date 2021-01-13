@@ -66,6 +66,7 @@ public class AbzweigImWaldConnectionComp extends AbstractSpatialConnectionComp {
                         "auf dem Weg zum Schloss",
                         "In Richtung Schloss gehen",
                         mins(5),
+                        // FIXME "weiter" ist falsch, wenn man am Abzweig umkehrt
                         du("gehst", "weiter in Richtung Schloss")
                 ),
 

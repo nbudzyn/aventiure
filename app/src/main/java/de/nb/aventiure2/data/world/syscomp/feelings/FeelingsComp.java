@@ -34,7 +34,6 @@ import de.nb.aventiure2.german.satz.Satz;
 import de.nb.aventiure2.scaction.stepcount.SCActionStepCountDao;
 
 import static com.google.common.base.Preconditions.checkArgument;
-import static de.nb.aventiure2.data.time.AvTimeSpan.noTime;
 import static de.nb.aventiure2.data.world.gameobject.World.*;
 import static de.nb.aventiure2.data.world.syscomp.feelings.Hunger.SATT;
 import static de.nb.aventiure2.german.base.Numerus.SG;
@@ -634,7 +633,7 @@ public class FeelingsComp extends AbstractStatefulComponent<FeelingsPCD> {
     }
 
     private void narrateScWirdHungrig() {
-        n.narrateAlt(noTime(),
+        n.narrateAlt(AvTimeSpan.NO_TIME,
                 du(PARAGRAPH, "fühlst", "dich allmählich etwas hungrig")
                         .undWartest(),
                 neuerSatz("Wann hast du eigentlich zuletzt etwas gegessen? Das "
@@ -674,7 +673,7 @@ public class FeelingsComp extends AbstractStatefulComponent<FeelingsPCD> {
             case FeelingIntensity.MERKLICH:
                 // fall-through
             case FeelingIntensity.DEUTLICH:
-                n.narrateAlt(noTime(),
+                n.narrateAlt(AvTimeSpan.NO_TIME,
                         du(SENTENCE,
                                 "solltest", "etwas schlafen")
                                 .beendet(PARAGRAPH),
@@ -684,7 +683,7 @@ public class FeelingsComp extends AbstractStatefulComponent<FeelingsPCD> {
                         paragraph("Ein Bett!"));
                 return;
             case FeelingIntensity.STARK:
-                n.narrateAlt(noTime(),
+                n.narrateAlt(AvTimeSpan.NO_TIME,
                         du(SENTENCE,
                                 "musst", "schlafen")
                                 .beendet(PARAGRAPH),
@@ -702,7 +701,7 @@ public class FeelingsComp extends AbstractStatefulComponent<FeelingsPCD> {
             case FeelingIntensity.SEHR_STARK:
                 // fall-through
             case FeelingIntensity.PATHOLOGISCH:
-                n.narrateAlt(noTime(),
+                n.narrateAlt(AvTimeSpan.NO_TIME,
                         neuerSatz(SENTENCE,
                                 "„So legt dich doch endlich schlafen!“, "
                                         + "denkst du bei dir"),
@@ -719,7 +718,7 @@ public class FeelingsComp extends AbstractStatefulComponent<FeelingsPCD> {
     }
 
     private void narrateAnDoSCMitEssenKonfrontiertReagiertHungrig() {
-        n.narrateAlt(noTime(),
+        n.narrateAlt(AvTimeSpan.NO_TIME,
                 neuerSatz("Mmh!")
                         .beendet(PARAGRAPH),
                 neuerSatz("Dir läuft das Wasser im Munde zusammen"),
@@ -744,7 +743,7 @@ public class FeelingsComp extends AbstractStatefulComponent<FeelingsPCD> {
     }
 
     private void narrateScWirdMuede() {
-        n.narrateAlt(altScWirdMuede(), noTime());
+        n.narrateAlt(altScWirdMuede(), AvTimeSpan.NO_TIME);
     }
 
     @CheckReturnValue
@@ -898,7 +897,7 @@ public class FeelingsComp extends AbstractStatefulComponent<FeelingsPCD> {
             return;
         }
 
-        n.narrateAlt(altScIstMuede(), noTime());
+        n.narrateAlt(altScIstMuede(), AvTimeSpan.NO_TIME);
 
         resetMuedigkeitshinweisStepCount(scActionStepCount);
     }

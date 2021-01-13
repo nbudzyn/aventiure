@@ -12,6 +12,7 @@ import javax.annotation.CheckReturnValue;
 
 import de.nb.aventiure2.data.database.AvDatabase;
 import de.nb.aventiure2.data.narration.Narrator;
+import de.nb.aventiure2.data.time.AvTimeSpan;
 import de.nb.aventiure2.data.time.TimeTaker;
 import de.nb.aventiure2.data.world.base.GameObjectId;
 import de.nb.aventiure2.data.world.gameobject.*;
@@ -24,7 +25,6 @@ import de.nb.aventiure2.data.world.syscomp.story.Story;
 import de.nb.aventiure2.german.description.AbstractDescription;
 
 import static com.google.common.collect.ImmutableList.builder;
-import static de.nb.aventiure2.data.time.AvTimeSpan.noTime;
 import static de.nb.aventiure2.data.time.Tageszeit.NACHTS;
 import static de.nb.aventiure2.data.world.gameobject.World.*;
 import static de.nb.aventiure2.data.world.syscomp.feelings.Mood.ETWAS_GEKNICKT;
@@ -179,7 +179,7 @@ public enum FroschkoenigStoryNode implements IStoryNode {
                     + "dich wohl aufheitern! Aber woher nehmen und nicht stehlen?"));
         }
 
-        n.narrateAlt(alt, noTime());
+        n.narrateAlt(alt, AvTimeSpan.NO_TIME);
     }
 
     public static void narrateAndDoHintAction_MitKugelZumBrunnenGegangen(
@@ -199,7 +199,7 @@ public enum FroschkoenigStoryNode implements IStoryNode {
             }
         }
 
-        n.narrateAlt(alt, noTime());
+        n.narrateAlt(alt, AvTimeSpan.NO_TIME);
     }
 
     public static void narrateAndDoHintAction_EtwasImBrunnenVerloren(
@@ -221,7 +221,7 @@ public enum FroschkoenigStoryNode implements IStoryNode {
             alt.addAll(altKugelVermissen());
         }
 
-        n.narrateAlt(alt, noTime());
+        n.narrateAlt(alt, AvTimeSpan.NO_TIME);
     }
 
     public static void narrateAndDoHintAction_FroschHatEtwasAusBrunnenGeholt(
@@ -246,7 +246,7 @@ public enum FroschkoenigStoryNode implements IStoryNode {
 
         world.loadSC().feelingsComp().requestMoodMax(UNTROESTLICH);
 
-        n.narrateAlt(alt, noTime());
+        n.narrateAlt(alt, AvTimeSpan.NO_TIME);
     }
 
     public static void narrateAndDoHintAction_ZumSchlossfestGegangen(
@@ -272,7 +272,7 @@ public enum FroschkoenigStoryNode implements IStoryNode {
                     + "nicht zwangsläufig…"));
         }
 
-        n.narrateAlt(alt, noTime());
+        n.narrateAlt(alt, AvTimeSpan.NO_TIME);
     }
 
     public static void narrateAndDoHintAction_BeimSchlossfestAnDenTischGesetzt(
@@ -285,7 +285,7 @@ public enum FroschkoenigStoryNode implements IStoryNode {
         alt.add(paragraph("Welches Versprechen hattest du dem Frosch noch gegeben? Du kannst "
                 + "dich kaum mehr erinnern"));
 
-        n.narrateAlt(alt, noTime());
+        n.narrateAlt(alt, AvTimeSpan.NO_TIME);
     }
 
     public static void narrateAndDoHintAction_PrinzIstErloest(
@@ -298,7 +298,7 @@ public enum FroschkoenigStoryNode implements IStoryNode {
         alt.add(paragraph("Ein schlechtes Gewissen ist kein gutes Ruhekissen – so geht es "
                 + "die ganze Zeit in deinem Kopf"));
 
-        n.narrateAlt(alt, noTime());
+        n.narrateAlt(alt, AvTimeSpan.NO_TIME);
     }
 
     public static void narrateAndDoHintAction_PrinzIstWeggefahren(
@@ -311,7 +311,7 @@ public enum FroschkoenigStoryNode implements IStoryNode {
                 "auch sehen, was vor dem Schloss geschieht!")
                 .beendet(PARAGRAPH));
 
-        n.narrateAlt(alt, noTime());
+        n.narrateAlt(alt, AvTimeSpan.NO_TIME);
     }
 
     @CheckReturnValue
