@@ -38,6 +38,8 @@ import static de.nb.aventiure2.german.description.DescriptionBuilder.neuerSatz;
  */
 public class EssenAction extends AbstractScAction {
     private static final String COUNTER_FELSENBIRNEN = "EssenAction_Felsenbirnen";
+    public static final String COUNTER_FELSENBIRNEN_SEIT_ENTER =
+            "EssenAction_Felsenbirnen_SeitEnter";
     private final CounterDao counterDao;
     private final ILocationGO location;
 
@@ -168,8 +170,7 @@ public class EssenAction extends AbstractScAction {
                         + "Auch ein goldener Löffel fährt mit in die Schale. Du schaust "
                         + "verwirrt auf - kein Frosch mehr auf dem Tisch, doch neben dir auf der "
                         + "Bank sitzt ein junger Mann mit schönen freundlichen Augen. In Samt und "
-                        + "Seide ist er gekleidet, mit goldenen Ketten um den Hals",
-                // FIXME klarer formulieren. Der Prinz ist nicht gefesselt!
+                        + "Seide ist er gekleidet und trägt goldene Ketten um den Hals",
                 secs(10)));
         n.narrate(neuerSatz(PARAGRAPH,
                 "Er schaut an sich herab – „Ihr habt mich erlöst“, sagt er, „ich "
@@ -238,6 +239,8 @@ public class EssenAction extends AbstractScAction {
 
         narrateFelsenbirnen(hunger);
 
+        counterDao.inc(COUNTER_FELSENBIRNEN_SEIT_ENTER);
+
         saveSatt();
     }
 
@@ -255,14 +258,14 @@ public class EssenAction extends AbstractScAction {
     }
 
     private void narrateFelsenbirnenHungrig() {
-        if (counterDao.get(COUNTER_FELSENBIRNEN) == 0) {
-            n.narrate(du(SENTENCE, "nimmst", "eine von den Früchten, "
-                    + "schaust sie kurz an, dann "
-                    + "beißt du hinein… – "
-                    + "Mmh! Die Frucht ist saftig und schmeckt süß wie Marzipan!\n"
-                    + "Du isst dich an den Früchten satt", mins(10), COUNTER_FELSENBIRNEN)
-                    .undWartest()
-                    .dann());
+        if (n.narrateIfCounterIs(0,
+                du(SENTENCE, "nimmst", "eine von den Früchten, "
+                        + "schaust sie kurz an, dann "
+                        + "beißt du hinein… – "
+                        + "Mmh! Die Frucht ist saftig und schmeckt süß wie Marzipan!\n"
+                        + "Du isst dich an den Früchten satt", mins(10), COUNTER_FELSENBIRNEN)
+                        .undWartest()
+                        .dann())) {
             return;
         }
 
@@ -291,20 +294,18 @@ public class EssenAction extends AbstractScAction {
             return;
         }
 
-        n.narrateAlt(mins(3),
-                du(SENTENCE, "hast", "nur wenig Hunger und beißt lustlos in eine der Früchte",
-                        "Hunger")
-                        .dann(),
-                // FIXME Das mit dem "entgehen lassen" macht keinen Sinn, wenn man sich gerade erst
-                //  satt gegessen hat. Umformulieren? Nur beim ersten Mal, wenn man
-                //  außerdem satt ist?
-                du(SENTENCE, "lässt",
-                        "dir die süßen Früchte nicht entgehen, auch wenn du kaum Hunger "
-                                + "hast", "die süßen Früchte")
-                        .komma()
-                        .undWartest()
-                        .dann()
-        );
+        n.narrateAlt(du(SENTENCE, "hast",
+                "nur wenig Hunger und beißt lustlos in eine der Früchte",
+                "Hunger", mins(3))
+                .dann());
+        if (counterDao.get(COUNTER_FELSENBIRNEN_SEIT_ENTER) == 0) {
+            n.narrateAlt(du(SENTENCE, "lässt",
+                    "dir die süßen Früchte nicht entgehen, auch wenn du kaum Hunger "
+                            + "hast", "die süßen Früchte", mins(3))
+                    .komma()
+                    .undWartest()
+                    .dann());
+        }
     }
 
     private Hunger getHunger() {

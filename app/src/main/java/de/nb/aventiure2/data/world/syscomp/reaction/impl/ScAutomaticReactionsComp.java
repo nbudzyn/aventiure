@@ -8,9 +8,11 @@ import de.nb.aventiure2.data.time.AvDateTime;
 import de.nb.aventiure2.data.time.AvTimeSpan;
 import de.nb.aventiure2.data.time.TimeTaker;
 import de.nb.aventiure2.data.world.base.IGameObject;
+import de.nb.aventiure2.data.world.counter.CounterDao;
 import de.nb.aventiure2.data.world.gameobject.*;
 import de.nb.aventiure2.data.world.syscomp.feelings.FeelingsComp;
 import de.nb.aventiure2.data.world.syscomp.location.ILocatableGO;
+import de.nb.aventiure2.data.world.syscomp.location.LocationSystem;
 import de.nb.aventiure2.data.world.syscomp.reaction.AbstractReactionsComp;
 import de.nb.aventiure2.data.world.syscomp.reaction.interfaces.IEssenReactions;
 import de.nb.aventiure2.data.world.syscomp.reaction.interfaces.IMovementReactions;
@@ -22,6 +24,7 @@ import de.nb.aventiure2.data.world.syscomp.reaction.interfaces.Ruftyp;
 import de.nb.aventiure2.data.world.syscomp.state.IHasStateGO;
 import de.nb.aventiure2.data.world.syscomp.storingplace.ILocationGO;
 import de.nb.aventiure2.data.world.syscomp.waiting.WaitingComp;
+import de.nb.aventiure2.scaction.impl.EssenAction;
 
 import static de.nb.aventiure2.data.time.AvTimeSpan.min;
 import static de.nb.aventiure2.data.time.AvTimeSpan.mins;
@@ -38,6 +41,7 @@ public class ScAutomaticReactionsComp
         implements IMovementReactions, IStateChangedReactions, IRufReactions,
         ITimePassedReactions, IEssenReactions,
         ISCActionReactions {
+    private final CounterDao counterDao;
     private final TimeTaker timeTaker;
     private final WaitingComp waitingComp;
     private final FeelingsComp feelingsComp;
@@ -49,6 +53,7 @@ public class ScAutomaticReactionsComp
                                     final WaitingComp waitingComp,
                                     final FeelingsComp feelingsComp) {
         super(SPIELER_CHARAKTER, n, world);
+        counterDao = db.counterDao();
         this.timeTaker = timeTaker;
         this.waitingComp = waitingComp;
         this.feelingsComp = feelingsComp;
@@ -64,6 +69,19 @@ public class ScAutomaticReactionsComp
     public void onEnter(final ILocatableGO locatable, @Nullable final ILocationGO from,
                         final ILocationGO to) {
         waitingComp.stopWaiting();
+
+        if (locatable.is(SPIELER_CHARAKTER)) {
+            onSCEnter(from, to);
+            return;
+        }
+    }
+
+    private void onSCEnter(@Nullable final ILocationGO from, final ILocationGO to) {
+        if (!LocationSystem.haveSameOuterMostLocation(from, to)) {
+            if (to.is(WALDWILDNIS_HINTER_DEM_BRUNNEN)) {
+                counterDao.reset(EssenAction.COUNTER_FELSENBIRNEN_SEIT_ENTER);
+            }
+        }
     }
 
     @Override

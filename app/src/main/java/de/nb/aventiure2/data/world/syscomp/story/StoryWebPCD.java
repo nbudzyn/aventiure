@@ -23,8 +23,7 @@ import static de.nb.aventiure2.data.world.syscomp.story.StoryData.State.AKTIV;
  */
 @Entity
 public class StoryWebPCD extends AbstractPersistentComponentData {
-    // FIXME 10?
-    private static final int STEPS_BETWEEN_HINTS = 4;
+    private static final int STEPS_BETWEEN_HINTS = 10;
 
     @NonNull
     @Ignore
@@ -47,9 +46,9 @@ public class StoryWebPCD extends AbstractPersistentComponentData {
     }
 
     @Ignore
-    StoryWebPCD(final GameObjectId gameObjectId,
-                final int lastHintActionStepCount,
-                final Map<Story, StoryData> storyDataMap) {
+    private StoryWebPCD(final GameObjectId gameObjectId,
+                        final int lastHintActionStepCount,
+                        final Map<Story, StoryData> storyDataMap) {
         super(gameObjectId);
         this.lastHintActionStepCount = lastHintActionStepCount;
         this.storyDataMap = new HashMap<>(storyDataMap);
