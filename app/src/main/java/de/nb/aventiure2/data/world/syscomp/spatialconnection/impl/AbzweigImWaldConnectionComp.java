@@ -62,14 +62,9 @@ public class AbzweigImWaldConnectionComp extends AbstractSpatialConnectionComp {
     @CheckReturnValue
     public List<SpatialConnection> getConnections() {
         return ImmutableList.of(
-                con(IM_WALD_NAHE_DEM_SCHLOSS,
-                        "auf dem Weg zum Schloss",
-                        "In Richtung Schloss gehen",
-                        mins(5),
-                        // FIXME "weiter" ist falsch, wenn man am Abzweig umkehrt
-                        du("gehst", "weiter in Richtung Schloss")
-                ),
-
+                con(IM_WALD_NAHE_DEM_SCHLOSS, "auf dem Weg zum Schloss",
+                        "In Richtung Schloss gehen", mins(5),
+                        this::getDescTo_ImWaldNaheDemSchloss),
                 con(VOR_DER_HUETTE_IM_WALD,
                         "in all dem Unkraut",
                         this::getActionNameTo_HinterDerHuette,
@@ -110,6 +105,20 @@ public class AbzweigImWaldConnectionComp extends AbstractSpatialConnectionComp {
                 con(IM_WALD_BEIM_BRUNNEN, "auf dem breiten Weg tiefer in den Wald",
                         this::getActionNameTo_ImWaldBeimBrunnen, mins(3),
                         this::getDescTo_ImWaldBeimBrunnen));
+    }
+
+    private TimedDescription<?> getDescTo_ImWaldNaheDemSchloss(
+            final Known newLocationKnown,
+            final Lichtverhaeltnisse lichtverhaeltnisseInNewLocation) {
+        if (world.loadSC().locationComp().lastLocationWas(IM_WALD_NAHE_DEM_SCHLOSS)) {
+            return du("gehst",
+                    "zurück in Richtung Schloss",
+                    mins(5));
+        }
+
+        return du("gehst",
+                "weiter in Richtung Schloss",
+                mins(5));
     }
 
     private TimedDescription<?> getDescTo_ImWaldBeimBrunnen(final Known newLocationKnown,
