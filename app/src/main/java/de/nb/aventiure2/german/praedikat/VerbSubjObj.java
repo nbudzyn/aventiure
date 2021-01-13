@@ -9,6 +9,7 @@ import de.nb.aventiure2.german.base.Person;
 import de.nb.aventiure2.german.base.SubstantivischePhrase;
 
 import static de.nb.aventiure2.german.base.Kasus.AKK;
+import static de.nb.aventiure2.german.base.Kasus.DAT;
 import static de.nb.aventiure2.german.base.PraepositionMitKasus.AUF_AKK;
 import static de.nb.aventiure2.german.base.PraepositionMitKasus.MIT_DAT;
 import static de.nb.aventiure2.german.base.PraepositionMitKasus.VON;
@@ -100,6 +101,10 @@ public enum VerbSubjObj implements PraedikatMitEinerObjektleerstelle {
             Perfektbildung.HABEN, "gesehen"),
     SETZEN("setzen", AKK, "setze", "setzt", "setzt",
             "setzt", Perfektbildung.HABEN, "gesetzt"),
+    // Z.B. "jm. vor Augen stehen"
+    STEHEN("stehen", DAT, "stehe", "stehst", "steht",
+            "steht",
+            Perfektbildung.HABEN, "gestanden"),
     WARTEN("warten", AUF_AKK,
             "warte", "wartest", "wartet", "wartet",
             Perfektbildung.HABEN, "gewartet"),

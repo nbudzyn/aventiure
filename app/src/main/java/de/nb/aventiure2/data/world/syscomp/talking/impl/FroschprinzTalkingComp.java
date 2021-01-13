@@ -15,7 +15,6 @@ import de.nb.aventiure2.data.world.syscomp.location.ILocatableGO;
 import de.nb.aventiure2.data.world.syscomp.memory.Action;
 import de.nb.aventiure2.data.world.syscomp.state.impl.FroschprinzStateComp;
 import de.nb.aventiure2.data.world.syscomp.talking.AbstractTalkingComp;
-import de.nb.aventiure2.german.base.Indefinitpronomen;
 import de.nb.aventiure2.german.base.Nominalphrase;
 import de.nb.aventiure2.german.base.SubstantivischePhrase;
 
@@ -136,32 +135,15 @@ public class FroschprinzTalkingComp extends AbstractTalkingComp {
         }
     }
 
-    /**
-     * Gibt eine Beschreibung dieses Objekts zurück - wenn es nur eines ist - sonst
-     * etwas wie "die Dinge".
-     */
-    private SubstantivischePhrase getDescriptionSingleOrCollective(
-            final List<? extends IDescribableGO> objects) {
-        if (objects.isEmpty()) {
-            return Indefinitpronomen.NICHTS;
-        }
+    private String getAkkShortOrPersPron(final List<? extends IDescribableGO> objects) {
+        final SubstantivischePhrase description =
+                world.getDescriptionSingleOrCollective(objects, true);
 
         if (objects.size() == 1) {
-            final IDescribableGO objectInDenBrunnenGefallen =
-                    objects.iterator().next();
-
-            return world.getDescription(objectInDenBrunnenGefallen, false);
+            return description.akkStr();
         }
 
-        return Nominalphrase.DINGE;
-    }
-
-    private String getAkkShort(final List<? extends IDescribableGO> objects) {
-        if (objects.size() == 1) {
-            return world.getDescription(objects.iterator().next(), true).akkStr();
-        }
-
-        return "sie";
+        return description.persPron().akkStr();
     }
 
     // -------------------------------------------------------------------------------
@@ -234,7 +216,7 @@ public class FroschprinzTalkingComp extends AbstractTalkingComp {
 
         if (world.loadSC().memoryComp().getLastAction().is(Action.Type.HEULEN)) {
             final SubstantivischePhrase objectsDesc =
-                    getDescriptionSingleOrCollective(objectsInDenBrunnenGefallen);
+                    world.getDescriptionSingleOrCollective(objectsInDenBrunnenGefallen);
             // die goldene Kugel
             // die
             n.narrate(neuerSatz("„Ich weine über "
@@ -268,7 +250,7 @@ public class FroschprinzTalkingComp extends AbstractTalkingComp {
                 getObjectsInDenBrunnenGefallen();
 
         final String objectsInDenBrunnenGefallenShortAkk =
-                getAkkShort(objectsInDenBrunnenGefallen);
+                getAkkShortOrPersPron(objectsInDenBrunnenGefallen);
 
         final String ratschlag;
         if (world.loadSC().memoryComp().getLastAction().is(Action.Type.HEULEN)) {
@@ -322,7 +304,8 @@ public class FroschprinzTalkingComp extends AbstractTalkingComp {
                         + "essen: Wenn du mir das versprichst, so will ich "
                         + "hinuntersteigen und dir "
                         // die goldene Kugel / die Dinge
-                        + getDescriptionSingleOrCollective(objectsInDenBrunnenGefallen).akkStr()
+                        + world.getDescriptionSingleOrCollective(objectsInDenBrunnenGefallen)
+                        .akkStr()
                         + " wieder heraufholen.“", secs(15))
                 .beendet(PARAGRAPH));
 
@@ -365,7 +348,8 @@ public class FroschprinzTalkingComp extends AbstractTalkingComp {
                         + "aus deinem Becherlein trinken: Wenn du mir das versprichst, so will ich "
                         + "hinuntersteigen und dir "
                         // die goldene Kugel / die Dinge
-                        + getDescriptionSingleOrCollective(objectsInDenBrunnenGefallen).akkStr()
+                        + world.getDescriptionSingleOrCollective(objectsInDenBrunnenGefallen)
+                        .akkStr()
                         + " wieder herauf holen.“",
                 secs(15))
                 .beendet(PARAGRAPH));
@@ -395,7 +379,8 @@ public class FroschprinzTalkingComp extends AbstractTalkingComp {
         n.narrate(
                 neuerSatz(PARAGRAPH, "„Ach ja“, sagst du, „ich verspreche dir alles, was du "
                                 + "willst, wenn du mir nur "
-                                + getDescriptionSingleOrCollective(objectsInDenBrunnenGefallen).akkStr()
+                                + world.getDescriptionSingleOrCollective(objectsInDenBrunnenGefallen)
+                                .akkStr()
                                 + " wiederbringst.“ Du denkst "
                                 + "aber: „Was der einfältige Frosch schwätzt, der sitzt im Wasser bei "
                                 + "seinesgleichen und quakt und kann keines Menschen Geselle sein.“",
@@ -411,7 +396,8 @@ public class FroschprinzTalkingComp extends AbstractTalkingComp {
         n.narrate(neuerSatz(
                 "Aber im nächsten Moment entschuldigst du dich schon: "
                         + "„Nichts für ungut! Wenn du mir wirklich "
-                        + getDescriptionSingleOrCollective(objectsInDenBrunnenGefallen).akkStr()
+                        + world.getDescriptionSingleOrCollective(objectsInDenBrunnenGefallen)
+                        .akkStr()
                         + " wieder besorgen kannst – ich verspreche dir alles, was du willst!“"
                         + " Bei dir selbst denkst du: "
                         + "„Was der einfältige Frosch schwätzt, der sitzt im Wasser bei "
@@ -429,7 +415,8 @@ public class FroschprinzTalkingComp extends AbstractTalkingComp {
                 "„Lieber Frosch“, sagst du, „ich habe es mir überlegt. Ich verspreche dir alles, "
                         + "was du "
                         + "willst, wenn du mir nur "
-                        + getDescriptionSingleOrCollective(objectsInDenBrunnenGefallen).akkStr()
+                        + world.getDescriptionSingleOrCollective(objectsInDenBrunnenGefallen)
+                        .akkStr()
                         + " wiederbringst.“ – Was du dir eigentlich überlegt hast, ist:"
                         + " „Was der einfältige Frosch schwätzt, der sitzt im"
                         + " Wasser bei seinesgleichen und quakt und kann keines Menschen "
@@ -449,7 +436,7 @@ public class FroschprinzTalkingComp extends AbstractTalkingComp {
                 getObjectsInDenBrunnenGefallen();
 
         final SubstantivischePhrase descObjectsInDenBrunnenGefallen =
-                getDescriptionSingleOrCollective(objectsInDenBrunnenGefallen);
+                world.getDescriptionSingleOrCollective(objectsInDenBrunnenGefallen);
 
         world.loadSC().feelingsComp().requestMoodMin(VOLLER_FREUDE);
 
@@ -577,8 +564,6 @@ public class FroschprinzTalkingComp extends AbstractTalkingComp {
 
     private <LOC_DESC extends ILocatableGO & IDescribableGO>
     ImmutableList<LOC_DESC> getObjectsInDenBrunnenGefallen() {
-        // IDEA Es könnten auch Gegenstände unten im Brunnen
-        //  sein, von denen der Spieler gar nichts weiß - hier filtern nach Known durch den SC.
-        return world.loadDescribableNonLivingMovableRecursiveInventory(UNTEN_IM_BRUNNEN);
+        return world.loadDescribableNonLivingMovableKnownToSCRecursiveInventory(UNTEN_IM_BRUNNEN);
     }
 }

@@ -45,6 +45,7 @@ import de.nb.aventiure2.data.world.syscomp.spatialconnection.impl.VorDerHuetteIm
 import de.nb.aventiure2.data.world.syscomp.spatialconnection.system.SpatialConnectionSystem;
 import de.nb.aventiure2.data.world.syscomp.storingplace.ILocationGO;
 import de.nb.aventiure2.data.world.syscomp.storingplace.StoringPlaceType;
+import de.nb.aventiure2.german.base.Indefinitpronomen;
 import de.nb.aventiure2.german.base.Nominalphrase;
 import de.nb.aventiure2.german.base.Personalpronomen;
 import de.nb.aventiure2.german.base.SubstantivischePhrase;
@@ -555,10 +556,24 @@ public class World {
      * Ermittelt die nicht-lebenden Game Objects,
      * die <i>movable</i> sind (also z.B. vom SC bewegt werden könnten) an dieser
      * <i>locationId</i> (auch rekursiv enthaltene, z.B. Kugel auf einem Tisch in einem Raum),
-     * lädt sie (sofern noch nicht geschehen) und gibt sie zurück -
+     * soweit sie dem SC bekannt sind, lädt sie (sofern noch nicht geschehen) und gibt sie zurück -
      * nur Gegenstände, die eine Beschreibung haben.
      */
     public <LOC_DESC extends ILocatableGO & IDescribableGO>
+    ImmutableList<LOC_DESC> loadDescribableNonLivingMovableKnownToSCRecursiveInventory(
+            final GameObjectId locationId) {
+        return loadSC().memoryComp()
+                .filterKnown(loadDescribableNonLivingMovableRecursiveInventory(locationId));
+    }
+
+    /**
+     * Ermittelt die nicht-lebenden Game Objects,
+     * die <i>movable</i> sind (also z.B. vom SC bewegt werden könnten) an dieser
+     * <i>locationId</i> (auch rekursiv enthaltene, z.B. Kugel auf einem Tisch in einem Raum),
+     * lädt sie (sofern noch nicht geschehen) und gibt sie zurück -
+     * nur Gegenstände, die eine Beschreibung haben.
+     */
+    private <LOC_DESC extends ILocatableGO & IDescribableGO>
     ImmutableList<LOC_DESC> loadDescribableNonLivingMovableRecursiveInventory(
             final GameObjectId locationId) {
         return LocationSystem.filterMovable(loadDescribableNonLivingRecursiveInventory(locationId));
@@ -761,6 +776,35 @@ public class World {
                 all.values().stream()
                         .filter(ILivingBeingGO.class::isInstance)
                         .collect(toImmutableList());
+    }
+
+    /**
+     * Gibt eine Beschreibung dieses Objekts zurück - wenn es nur eines ist - sonst
+     * etwas wie "die Dinge".
+     */
+    public SubstantivischePhrase getDescriptionSingleOrCollective(
+            final Collection<? extends IDescribableGO> objects) {
+        return getDescriptionSingleOrCollective(objects, false);
+    }
+
+    /**
+     * Gibt eine Beschreibung dieses Objekts zurück - wenn es nur eines ist - sonst
+     * etwas wie "die Dinge".
+     */
+    public SubstantivischePhrase getDescriptionSingleOrCollective(
+            final Collection<? extends IDescribableGO> objects,
+            final boolean shortIfKnown) {
+        if (objects.isEmpty()) {
+            return Indefinitpronomen.NICHTS;
+        }
+
+        if (objects.size() == 1) {
+            final IDescribableGO object = objects.iterator().next();
+
+            return getDescription(object, shortIfKnown);
+        }
+
+        return Nominalphrase.DINGE;
     }
 
     /**

@@ -10,7 +10,6 @@ import de.nb.aventiure2.data.time.TimeTaker;
 import de.nb.aventiure2.data.world.base.GameObjectId;
 import de.nb.aventiure2.data.world.gameobject.*;
 
-import static de.nb.aventiure2.data.time.AvTimeSpan.mins;
 import static de.nb.aventiure2.data.time.AvTimeSpan.secs;
 import static de.nb.aventiure2.data.world.base.SpatialConnection.con;
 import static de.nb.aventiure2.data.world.gameobject.World.*;
@@ -68,20 +67,8 @@ public class SimpleConnectionCompFactory {
 
     @NonNull
     @CheckReturnValue
-    public SimpleConnectionComp createWaldwildnisHinterDemBrunnen() {
-        return new SimpleConnectionComp(WALDWILDNIS_HINTER_DEM_BRUNNEN,
-                db,
-                timeTaker, n, world,
-                con(IM_WALD_BEIM_BRUNNEN,
-                        "mitten im wilden Wald",
-                        "Zum Brunnen gehen",
-                        mins(3),
-                        du("suchst", "dir einen Weg "
-                                        + "durch den wilden Wald zurück zum Brunnen",
-                                "durch den wilden Wald")
-                                .undWartest()
-                                .dann()
-                ));
+    public WaldwildnisHinterDemBrunnenConnectionComp createWaldwildnisHinterDemBrunnen() {
+        return new WaldwildnisHinterDemBrunnenConnectionComp(db, timeTaker, n, world);
     }
 
     public SimpleConnectionComp createNoConnections(final GameObjectId gameObjectId) {

@@ -367,7 +367,7 @@ public class RapunzelReactionsComp
                 && zuneigungSCTowardsRapunzel >= FeelingIntensity.MERKLICH) {
 
             // FIXME Dies beides darf erst erscheinen, wenn Rapunzel von der Zauberin erzählt hat
-            //  und den SCu m Hilfe gebeten oder der SC Hilfe angeboten hat
+            //  und den SC um Hilfe gebeten oder der SC Hilfe angeboten hat
             alt.addAll(TimedDescription.toTimed(secs(15),
                     du("findest",
                             "oben die junge Frau ganz aufgeregt vor: „Du bist schon "

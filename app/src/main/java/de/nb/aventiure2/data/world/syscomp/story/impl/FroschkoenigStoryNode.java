@@ -331,9 +331,18 @@ public enum FroschkoenigStoryNode implements IStoryNode {
                         .beendet(PARAGRAPH));
             }
         } else {
-            alt.add(paragraph("Vielleicht solltest du dir einen Platz zum Schlafen suchen?"));
-            alt.add(paragraph("Ob es sicher ist, nachts herumzulaufen? Wo könntest du "
-                    + "übernachten?")); // FIXME Übernachten nicht, wenn man nicht müde ist?!
+            if (world.loadSC().feelingsComp().getMuedigkeit() >= FeelingIntensity.MERKLICH) {
+                alt.add(paragraph("Vielleicht solltest du dir einen Platz zum Schlafen suchen?"));
+                alt.add(paragraph("Ob es sicher ist, nachts herumzulaufen? Wo könntest du "
+                        + "übernachten?"));
+            } else {
+                alt.add(paragraph("Es ist zwar Nacht, aber du bist noch gar nicht müde"));
+                alt.add(paragraph("Es ist längst Nacht. Aber recht müde bist du noch nicht"));
+                alt.add(paragraph("Leider bist du noch nicht wirklich müde – obwohl es doch "
+                        + "längst Nacht ist"));
+                alt.add(paragraph("Vielleicht kannst du etwas Anstrengendes tun, um müde zu "
+                        + "werden? Nachts sollte man schließlich schlafen!"));
+            }
         }
 
         return alt.build();

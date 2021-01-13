@@ -25,8 +25,8 @@ import de.nb.aventiure2.scaction.stepcount.SCActionStepCountDao;
 import static de.nb.aventiure2.data.time.AvTimeSpan.mins;
 import static de.nb.aventiure2.data.time.AvTimeSpan.secs;
 import static de.nb.aventiure2.data.world.gameobject.World.*;
+import static de.nb.aventiure2.data.world.syscomp.feelings.Mood.BETRUEBT;
 import static de.nb.aventiure2.data.world.syscomp.feelings.Mood.NEUTRAL;
-import static de.nb.aventiure2.data.world.syscomp.feelings.Mood.UNTROESTLICH;
 import static de.nb.aventiure2.data.world.syscomp.state.impl.FroschprinzState.HAT_SC_HILFSBEREIT_ANGESPROCHEN;
 import static de.nb.aventiure2.data.world.syscomp.state.impl.FroschprinzState.UNAUFFAELLIG;
 import static de.nb.aventiure2.german.description.DescriptionBuilder.du;
@@ -45,11 +45,7 @@ public class HeulenAction extends AbstractScAction {
         final ImmutableList.Builder<HeulenAction> res = ImmutableList.builder();
         // TODO Alle Breakpoints aktivieren, Debuggen, entfernen.
 
-        // FIXME Verhindern, dass der Benutzer nicht mehr untröstlich ist, wenn er z.B. erst
-        //  schläft. Z.B. Benutzer traurig machen, wenn er den Brunnen sieht und sich an
-        //  seine goldene Kugel erinnert o.Ä.
-
-        if (sc.feelingsComp().hasMood(UNTROESTLICH)) {
+        if (sc.feelingsComp().isTraurigerAls(BETRUEBT)) {
             res.add(new HeulenAction(scActionStepCountDao, timeTaker, n, world));
         }
 

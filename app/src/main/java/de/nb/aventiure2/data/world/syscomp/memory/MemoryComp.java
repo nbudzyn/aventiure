@@ -2,6 +2,9 @@ package de.nb.aventiure2.data.world.syscomp.memory;
 
 import androidx.annotation.NonNull;
 
+import com.google.common.collect.ImmutableList;
+
+import java.util.Collection;
 import java.util.Map;
 import java.util.Objects;
 
@@ -14,10 +17,12 @@ import de.nb.aventiure2.data.world.base.GameObjectId;
 import de.nb.aventiure2.data.world.base.IGameObject;
 import de.nb.aventiure2.data.world.base.Known;
 import de.nb.aventiure2.data.world.gameobject.*;
+import de.nb.aventiure2.data.world.syscomp.description.IDescribableGO;
 import de.nb.aventiure2.data.world.syscomp.location.ILocatableGO;
 import de.nb.aventiure2.data.world.syscomp.location.LocationSystem;
 
 import static com.google.common.base.Preconditions.checkNotNull;
+import static com.google.common.collect.ImmutableList.toImmutableList;
 
 /**
  * Component for a {@link GameObject}: The game object
@@ -158,6 +163,11 @@ public class MemoryComp extends AbstractStatefulComponent<MemoryPCD> {
         return Known.getKnown(
                 locationSystem.getLichtverhaeltnisse(
                         ((ILocatableGO) otherGameObject).locationComp().getLocation()));
+    }
+
+    public <LOC_DESC extends ILocatableGO & IDescribableGO> ImmutableList<LOC_DESC> filterKnown(
+            final Collection<? extends LOC_DESC> gameObjects) {
+        return gameObjects.stream().filter(this::isKnown).collect(toImmutableList());
     }
 
     public void upgradeKnown(
