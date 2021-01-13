@@ -13,6 +13,7 @@ import de.nb.aventiure2.data.world.syscomp.spatialconnection.ISpatiallyConnected
 import de.nb.aventiure2.data.world.syscomp.spatialconnection.impl.SpatialStandardStep;
 import de.nb.aventiure2.data.world.syscomp.storingplace.ILocationGO;
 
+import static de.nb.aventiure2.data.time.AvTimeSpan.NO_TIME;
 import static de.nb.aventiure2.data.time.AvTimeSpan.secs;
 
 public class AStarPathfinder {
@@ -57,7 +58,7 @@ public class AStarPathfinder {
         final AStarClosedList closedList = new AStarClosedList();
 
         final AStarNode startNode =
-                new AStarNode(startGO, AvTimeSpan.NO_TIME, estimateDistToTarget(startGO, targetGO));
+                new AStarNode(startGO, NO_TIME, estimateDistToTarget(startGO, targetGO));
         priorityQueue.add(startNode);
 
         while (true) {
@@ -155,7 +156,7 @@ public class AStarPathfinder {
             final GameObjectId startGOId,
             final ILocationGO targetGO) {
         if (targetGO.is(startGOId)) {
-            return AvTimeSpan.NO_TIME;
+            return NO_TIME;
         }
 
         return

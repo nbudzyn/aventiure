@@ -7,6 +7,8 @@ import java.util.HashMap;
 import de.nb.aventiure2.data.time.AvTimeSpan;
 import de.nb.aventiure2.data.world.base.GameObjectId;
 
+import static de.nb.aventiure2.data.time.AvTimeSpan.NO_TIME;
+
 /**
  * Priority queue for the A* algorithm.
  * <p>
@@ -28,7 +30,7 @@ class AStarPriorityQueue {
     @Nullable
     AStarNode removeSmallest() {
         AStarNode smallestNode = null;
-        AvTimeSpan smallestTotalCost = AvTimeSpan.NO_TIME;
+        AvTimeSpan smallestTotalCost = NO_TIME;
 
         for (final AStarNode node : map.values()) {
             if (smallestNode == null ||

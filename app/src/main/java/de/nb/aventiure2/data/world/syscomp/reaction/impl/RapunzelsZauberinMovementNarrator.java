@@ -6,7 +6,6 @@ import com.google.common.collect.ImmutableList;
 import javax.annotation.Nullable;
 
 import de.nb.aventiure2.data.narration.Narrator;
-import de.nb.aventiure2.data.time.AvTimeSpan;
 import de.nb.aventiure2.data.world.base.SpatialConnection;
 import de.nb.aventiure2.data.world.gameobject.*;
 import de.nb.aventiure2.data.world.syscomp.movement.SimpleMovementNarrator;
@@ -16,6 +15,7 @@ import de.nb.aventiure2.german.base.Nominalphrase;
 import de.nb.aventiure2.german.base.SubstantivischePhrase;
 import de.nb.aventiure2.german.description.AbstractDescription;
 
+import static de.nb.aventiure2.data.time.AvTimeSpan.NO_TIME;
 import static de.nb.aventiure2.data.world.gameobject.World.*;
 import static de.nb.aventiure2.german.base.StructuralElement.PARAGRAPH;
 import static de.nb.aventiure2.german.base.StructuralElement.SENTENCE;
@@ -94,7 +94,7 @@ public class RapunzelsZauberinMovementNarrator extends SimpleMovementNarrator {
                         .beendet(SENTENCE));
             }
 
-            n.narrateAlt(alt, AvTimeSpan.NO_TIME);
+            n.narrateAlt(alt, NO_TIME);
             return;
         }
 
@@ -110,7 +110,7 @@ public class RapunzelsZauberinMovementNarrator extends SimpleMovementNarrator {
                         .beendet(SENTENCE));
             }
 
-            n.narrateAlt(alt, AvTimeSpan.NO_TIME);
+            n.narrateAlt(alt, NO_TIME);
             return;
         }
 
@@ -126,7 +126,7 @@ public class RapunzelsZauberinMovementNarrator extends SimpleMovementNarrator {
                         .beendet(SENTENCE));
             }
 
-            n.narrateAlt(alt, AvTimeSpan.NO_TIME);
+            n.narrateAlt(alt, NO_TIME);
             return;
         }
 

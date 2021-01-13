@@ -39,6 +39,7 @@ import de.nb.aventiure2.german.satz.Satz;
 
 import static com.google.common.collect.ImmutableList.toImmutableList;
 import static de.nb.aventiure2.data.time.AvTime.oClock;
+import static de.nb.aventiure2.data.time.AvTimeSpan.NO_TIME;
 import static de.nb.aventiure2.data.time.AvTimeSpan.mins;
 import static de.nb.aventiure2.data.time.AvTimeSpan.secs;
 import static de.nb.aventiure2.data.time.Tageszeit.NACHTS;
@@ -184,14 +185,14 @@ public class RapunzelReactionsComp
                 du("hörst",
                         "es wieder von oben aus dem Turm singen",
                         "von oben aus dem Turm",
-                        AvTimeSpan.NO_TIME),
+                        NO_TIME),
                 du(PARAGRAPH, "hörst",
                         "wieder Gesang von oben",
                         "wieder",
-                        AvTimeSpan.NO_TIME)
+                        NO_TIME)
                         .beendet(PARAGRAPH),
                 neuerSatz("Erneut hörst du den Gesang aus dem Turmfenster",
-                        AvTimeSpan.NO_TIME)
+                        NO_TIME)
         );
 
         world.loadSC().memoryComp().upgradeKnown(RAPUNZELS_GESANG);
@@ -225,7 +226,7 @@ public class RapunzelReactionsComp
             //  Rapunzel schon kennengelernt hat
             n.narrate(neuerSatz("Aus dem kleinen "
                             + "Fenster oben im Turm hängen lange, goldene Haarzöpfe herab",
-                    AvTimeSpan.NO_TIME));
+                    NO_TIME));
 
             world.loadSC().memoryComp().upgradeKnown(RAPUNZELS_HAARE);
             return;
@@ -780,18 +781,18 @@ public class RapunzelReactionsComp
                     du("hörst",
                             "es von oben aus dem Turm singen",
                             "von oben aus dem Turm",
-                            AvTimeSpan.NO_TIME),
+                            NO_TIME),
                     du(PARAGRAPH, "hörst",
                             "wieder Gesang von oben schallen",
                             "wieder",
-                            AvTimeSpan.NO_TIME)
+                            NO_TIME)
                             .beendet(PARAGRAPH),
                     neuerSatz(PARAGRAPH, "Plötzlich erschallt über dir wieder Gesang",
-                            AvTimeSpan.NO_TIME),
+                            NO_TIME),
                     du("hörst",
                             "den Gesang erneut",
                             "erneut",
-                            AvTimeSpan.NO_TIME)
+                            NO_TIME)
             );
 
             world.loadSC().memoryComp().upgradeKnown(RAPUNZELS_GESANG);
@@ -811,7 +812,7 @@ public class RapunzelReactionsComp
                                 + "die junge Frau "
                                 + "endlich retten können?",
                         "plötzlich",
-                        AvTimeSpan.NO_TIME)
+                        NO_TIME)
                         .beendet(PARAGRAPH)
                         .phorikKandidat(F, RAPUNZEL),
                 du("hörst",
@@ -819,7 +820,7 @@ public class RapunzelReactionsComp
                                 + "weißt du "
                                 + "endlich, wer dort singt – und sein Vertrauen in dich setzt",
                         "erneut",
-                        AvTimeSpan.NO_TIME)
+                        NO_TIME)
         );
 
         world.loadSC().memoryComp().upgradeKnown(RAPUNZELS_GESANG);
@@ -870,7 +871,7 @@ public class RapunzelReactionsComp
                             .beendet(PARAGRAPH));
         }
 
-        n.narrateAlt(alt, AvTimeSpan.NO_TIME);
+        n.narrateAlt(alt, NO_TIME);
 
         world.loadSC().memoryComp().upgradeKnown(RAPUNZELS_GESANG);
     }

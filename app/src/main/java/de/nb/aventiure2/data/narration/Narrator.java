@@ -35,6 +35,7 @@ import de.nb.aventiure2.german.description.TextDescription;
 import de.nb.aventiure2.german.description.TimedDescription;
 
 import static de.nb.aventiure2.data.narration.Narration.NarrationSource.REACTIONS;
+import static de.nb.aventiure2.data.time.AvTimeSpan.NO_TIME;
 import static de.nb.aventiure2.german.description.TimedDescription.toTimed;
 import static java.util.Arrays.asList;
 
@@ -279,7 +280,7 @@ public class Narrator {
         return dao.chooseBest(
                 // Zeit spielt hier keine Rolle - die Zeit für die
                 // temporaryNarration ist ja schon vergangen!
-                toTimed(temporaryNarration.getDescriptionAlternatives(), AvTimeSpan.NO_TIME)
+                toTimed(temporaryNarration.getDescriptionAlternatives(), NO_TIME)
         );
     }
 

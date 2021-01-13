@@ -17,6 +17,7 @@ import de.nb.aventiure2.german.praedikat.AdverbialeAngabeSkopusSatz;
 import de.nb.aventiure2.german.praedikat.AdverbialeAngabeSkopusVerbAllg;
 
 import static com.google.common.collect.ImmutableList.toImmutableList;
+import static de.nb.aventiure2.data.time.AvTimeSpan.NO_TIME;
 import static de.nb.aventiure2.data.time.AvTimeSpan.hours;
 import static de.nb.aventiure2.data.time.AvTimeSpan.mins;
 import static de.nb.aventiure2.data.time.AvTimeSpan.secs;
@@ -343,7 +344,7 @@ public class MuedigkeitsData {
         }
 
         // Zu kurzer Schlaf
-        return AvTimeSpan.NO_TIME;
+        return NO_TIME;
     }
 
     @Override

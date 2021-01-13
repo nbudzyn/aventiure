@@ -36,6 +36,7 @@ import de.nb.aventiure2.german.base.Nominalphrase;
 
 import static com.google.common.base.Preconditions.checkArgument;
 import static de.nb.aventiure2.data.time.AvTime.oClock;
+import static de.nb.aventiure2.data.time.AvTimeSpan.NO_TIME;
 import static de.nb.aventiure2.data.time.AvTimeSpan.days;
 import static de.nb.aventiure2.data.time.AvTimeSpan.hours;
 import static de.nb.aventiure2.data.time.AvTimeSpan.mins;
@@ -398,7 +399,7 @@ public class RapunzelsZauberinReactionsComp
             n.narrate(
                     neuerSatz(getAnaphPersPronWennMglSonstDescription(
                             true).nomStr()
-                            + " hat dich nicht bemerkt", AvTimeSpan.NO_TIME));
+                            + " hat dich nicht bemerkt", NO_TIME));
         }
         // STORY UNTER_DEM_BETT_OBEN_IM_ALTEN_TURM
 

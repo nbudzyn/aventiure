@@ -12,7 +12,6 @@ import javax.annotation.CheckReturnValue;
 
 import de.nb.aventiure2.data.database.AvDatabase;
 import de.nb.aventiure2.data.narration.Narrator;
-import de.nb.aventiure2.data.time.AvTimeSpan;
 import de.nb.aventiure2.data.time.TimeTaker;
 import de.nb.aventiure2.data.world.base.GameObjectId;
 import de.nb.aventiure2.data.world.base.IGameObject;
@@ -28,6 +27,7 @@ import de.nb.aventiure2.data.world.syscomp.story.Story;
 import de.nb.aventiure2.german.description.AbstractDescription;
 
 import static com.google.common.collect.ImmutableList.builder;
+import static de.nb.aventiure2.data.time.AvTimeSpan.NO_TIME;
 import static de.nb.aventiure2.data.world.gameobject.World.*;
 import static de.nb.aventiure2.data.world.syscomp.state.impl.RapunzelState.HAARE_VOM_TURM_HERUNTERGELASSEN;
 import static de.nb.aventiure2.data.world.syscomp.state.impl.RapunzelsZauberinState.MACHT_ZURZEIT_KEINE_RAPUNZELBESUCHE;
@@ -47,9 +47,11 @@ public enum RapunzelStoryNode implements IStoryNode {
             },
             TURM_GEFUNDEN
     ),
-    // Dies wird durch checkAndAdvanceIfAppropriate() automatisch freigeschaltet.
-    // Tipps dafür wäre nicht sinnvoll
-    ZAUBERIN_MACHT_RAPUNZELBESUCHE(),
+
+    //  Dies wird durch checkAndAdvanceIfAppropriate() automatisch freigeschaltet.
+    //  Tipps dafür wäre nicht sinnvoll
+    ZAUBERIN_MACHT_RAPUNZELBESUCHE,
+
     ZAUBERIN_AUF_TURM_WEG_GETROFFEN(10, VOR_DEM_ALTEN_TURM,
             (AvDatabase db, TimeTaker timeTaker, Narrator n, World world) -> {
                 narrateAndDoHintAction_ZauberinAufTurmWegGefunden(db, n, world);
@@ -254,15 +256,12 @@ public enum RapunzelStoryNode implements IStoryNode {
 
         // STORY (bis SC Rapunzel gefunden hat) Mutter sammelt im
         //  Wald Holz und klagt ihr Leid: Tochter an Zauberin verloren
-        n.narrateAlt(alt, AvTimeSpan.NO_TIME);
+        n.narrateAlt(alt, NO_TIME);
     }
 
     private static void narrateAndDoHintAction_RapunzelSingenGehoert(
             final AvDatabase db, final Narrator n, final World world) {
         final ImmutableList.Builder<AbstractDescription<?>> alt = builder();
-
-        // FIXME Kein Tipp für Rapunzel, wenn Hexe noch nicht losgegangen ist (schließlich
-        //  kann der Spieler nichts tun)
 
         if (world.loadSC().locationComp().hasRecursiveLocation(VOR_DEM_ALTEN_TURM)) {
             alt.add(paragraph("Ob der Turm wohl bewohnt ist?"),
@@ -276,7 +275,7 @@ public enum RapunzelStoryNode implements IStoryNode {
                             + "in den Sinn. Ob der wohl bewohnt ist?"));
         }
 
-        n.narrateAlt(alt, AvTimeSpan.NO_TIME);
+        n.narrateAlt(alt, NO_TIME);
     }
 
     private static void narrateAndDoHintAction_ZauberinAufTurmWegGefunden(
@@ -285,7 +284,7 @@ public enum RapunzelStoryNode implements IStoryNode {
 
         alt.addAll(altTurmWohnenHineinHeraus(world));
 
-        n.narrateAlt(alt, AvTimeSpan.NO_TIME);
+        n.narrateAlt(alt, NO_TIME);
     }
 
     private static void narrateAndDoHintAction_ZauberinHeimlichBeimRufenBeobachtet(
@@ -293,8 +292,6 @@ public enum RapunzelStoryNode implements IStoryNode {
         final ImmutableList.Builder<AbstractDescription<?>> alt = builder();
 
         alt.addAll(altTurmWohnenHineinHeraus(world));
-
-        // FIXME Mehr sätze für RAPUNZELbeobachtentipps
 
         if (world.loadSC().locationComp().hasRecursiveLocation(VOR_DEM_ALTEN_TURM)) {
             alt.add(du(PARAGRAPH,
@@ -309,7 +306,7 @@ public enum RapunzelStoryNode implements IStoryNode {
                             + "hineinkommt?",
                     "bestimmt")
                     .beendet(PARAGRAPH));
-            // FIXME Mehr Hinweise, dass man die magere Frau heimlich beobachten sollte
+            // FIXME Mehr verschiedene Hinweise, dass man die magere Frau heimlich beobachten sollte
         }
 
         if (world.hasSameOuterMostLocationAsSC((IGameObject) loadZauberin(world))) {
@@ -318,7 +315,7 @@ public enum RapunzelStoryNode implements IStoryNode {
                     paragraph("Was mag die Frau wollen?"));
         }
 
-        n.narrateAlt(alt, AvTimeSpan.NO_TIME);
+        n.narrateAlt(alt, NO_TIME);
     }
 
     private static void narrateAndDoHintAction_ZuRapunzelHinaufgestiegen(
@@ -357,7 +354,7 @@ public enum RapunzelStoryNode implements IStoryNode {
             alt.addAll(altTurmWohnenHineinHeraus(world));
         }
 
-        n.narrateAlt(alt, AvTimeSpan.NO_TIME);
+        n.narrateAlt(alt, NO_TIME);
     }
 
     @CheckReturnValue

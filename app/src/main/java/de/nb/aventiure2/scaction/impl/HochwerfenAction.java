@@ -9,7 +9,6 @@ import java.util.Collection;
 import javax.annotation.ParametersAreNonnullByDefault;
 
 import de.nb.aventiure2.data.narration.Narrator;
-import de.nb.aventiure2.data.time.AvTimeSpan;
 import de.nb.aventiure2.data.time.TimeTaker;
 import de.nb.aventiure2.data.world.counter.CounterDao;
 import de.nb.aventiure2.data.world.gameobject.*;
@@ -33,6 +32,7 @@ import de.nb.aventiure2.scaction.stepcount.SCActionStepCountDao;
 
 import static com.google.common.collect.ImmutableList.of;
 import static com.google.common.collect.ImmutableList.toImmutableList;
+import static de.nb.aventiure2.data.time.AvTimeSpan.NO_TIME;
 import static de.nb.aventiure2.data.time.AvTimeSpan.secs;
 import static de.nb.aventiure2.data.world.base.Lichtverhaeltnisse.DUNKEL;
 import static de.nb.aventiure2.data.world.base.Lichtverhaeltnisse.HELL;
@@ -197,7 +197,7 @@ public class HochwerfenAction<OBJ extends IDescribableGO & ILocatableGO>
 
         n.narrate(
                 neuerSatz(praefix + " kein Frosch zu sehen… Das war vielleicht etwas "
-                        + "ungeschickt, oder?", AvTimeSpan.NO_TIME));
+                        + "ungeschickt, oder?", NO_TIME));
     }
 
     private void narrateAndDoHochwerfenAuffangen(final TimedDescription<?> desc) {

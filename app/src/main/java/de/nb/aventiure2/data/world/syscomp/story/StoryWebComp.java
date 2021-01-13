@@ -23,6 +23,7 @@ import de.nb.aventiure2.data.world.syscomp.storingplace.ILocationGO;
 import de.nb.aventiure2.scaction.stepcount.SCActionStepCountDao;
 
 import static com.google.common.base.Preconditions.checkArgument;
+import static de.nb.aventiure2.data.time.AvTimeSpan.NO_TIME;
 import static de.nb.aventiure2.data.world.gameobject.World.*;
 import static java.util.Arrays.asList;
 
@@ -194,7 +195,7 @@ public class StoryWebComp extends AbstractStatefulComponent<StoryWebPCD> {
         if (storyNodeLocationId == null) {
             // Das Ereignis kann an verschiedenen Orten oder "praktisch überall"
             // auftreten.
-            return AvTimeSpan.NO_TIME;
+            return NO_TIME;
         }
 
         final ILocationGO storyNodeLocation = (ILocationGO) world.load(storyNodeLocationId);
@@ -205,7 +206,7 @@ public class StoryWebComp extends AbstractStatefulComponent<StoryWebPCD> {
                 world.loadSC().locationComp().getOuterMostLocation();
 
         if (outerMostStoryNodeLocation.is(outerMostSCLocation)) {
-            return AvTimeSpan.NO_TIME;
+            return NO_TIME;
         }
 
         if (!(outerMostSCLocation instanceof ISpatiallyConnectedGO)) {

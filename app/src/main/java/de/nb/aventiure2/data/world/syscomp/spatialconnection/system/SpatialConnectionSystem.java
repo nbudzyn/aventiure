@@ -11,6 +11,8 @@ import de.nb.aventiure2.data.world.syscomp.spatialconnection.impl.SpatialStandar
 import de.nb.aventiure2.data.world.syscomp.spatialconnection.system.pathfinder.AStarPathfinder;
 import de.nb.aventiure2.data.world.syscomp.storingplace.ILocationGO;
 
+import static de.nb.aventiure2.data.time.AvTimeSpan.NO_TIME;
+
 /**
  * Functionality concerned with spatial connections that might span several game objects.
  */
@@ -53,7 +55,7 @@ public class SpatialConnectionSystem {
         }
 
         if (start.is(target)) {
-            return AvTimeSpan.NO_TIME;
+            return NO_TIME;
         }
 
         return pathfinder.findDistance(start, target);

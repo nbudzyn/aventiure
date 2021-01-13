@@ -22,6 +22,7 @@ import de.nb.aventiure2.scaction.AbstractScAction;
 import de.nb.aventiure2.scaction.stepcount.SCActionStepCountDao;
 
 import static de.nb.aventiure2.data.time.AvTime.oClock;
+import static de.nb.aventiure2.data.time.AvTimeSpan.NO_TIME;
 import static de.nb.aventiure2.data.time.AvTimeSpan.hours;
 import static de.nb.aventiure2.data.time.AvTimeSpan.mins;
 import static de.nb.aventiure2.data.world.gameobject.World.*;
@@ -254,7 +255,7 @@ public class SchlafenAction extends AbstractScAction {
                             + "hingelegt zu haben"));
         }
 
-        n.narrateAlt(alt, AvTimeSpan.NO_TIME);
+        n.narrateAlt(alt, NO_TIME);
     }
 
     @Override

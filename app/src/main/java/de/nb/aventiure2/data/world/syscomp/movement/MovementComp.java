@@ -26,6 +26,7 @@ import de.nb.aventiure2.data.world.syscomp.storingplace.ILocationGO;
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Preconditions.checkState;
+import static de.nb.aventiure2.data.time.AvTimeSpan.NO_TIME;
 import static de.nb.aventiure2.data.world.gameobject.World.*;
 import static de.nb.aventiure2.data.world.syscomp.movement.MovementPCD.PauseForSCAction.DO_START_LEAVING;
 import static de.nb.aventiure2.data.world.syscomp.movement.MovementPCD.PauseForSCAction.PAUSED;
@@ -380,7 +381,7 @@ public class MovementComp
     private AvTimeSpan calcExpectedDuration(final AvTimeSpan standardDuration,
                                             final boolean takesNoTime) {
         if (takesNoTime) {
-            return AvTimeSpan.NO_TIME;
+            return NO_TIME;
         }
 
         return standardDuration.times(relativeVelocity);

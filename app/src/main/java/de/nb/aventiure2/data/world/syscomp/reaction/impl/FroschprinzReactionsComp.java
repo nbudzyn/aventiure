@@ -27,6 +27,7 @@ import de.nb.aventiure2.german.base.Nominalphrase;
 import de.nb.aventiure2.german.base.StructuralElement;
 import de.nb.aventiure2.german.base.SubstantivischePhrase;
 
+import static de.nb.aventiure2.data.time.AvTimeSpan.NO_TIME;
 import static de.nb.aventiure2.data.time.AvTimeSpan.mins;
 import static de.nb.aventiure2.data.time.AvTimeSpan.secs;
 import static de.nb.aventiure2.data.world.gameobject.World.*;
@@ -99,7 +100,7 @@ public class FroschprinzReactionsComp
 
         if (stateComp.hasState(ERWARTET_VON_SC_EINLOESUNG_SEINES_VERSPRECHENS)
                 && !from.is(SCHLOSS_VORHALLE_AM_TISCH_BEIM_FEST)) {
-            n.narrateAlt(AvTimeSpan.NO_TIME,
+            n.narrateAlt(NO_TIME,
                     neuerSatz("„Warte, warte“, ruft dir der Frosch noch nach, „nimm mich mit, "
                             + "ich kann nicht so "
                             + "laufen wie du.“ Aber was hilft ihm, dass er "
@@ -227,7 +228,7 @@ public class FroschprinzReactionsComp
             default:
                 // STORY Wenn der Frosch nur rekursiv enthalten ist (Frosch sitzt auf dem Tisch),
                 //  dann beschreiben (vgl. BewegenAction)
-                n.narrate(neuerSatz("Hier sitzt " + desc.nomStr(), AvTimeSpan.NO_TIME)
+                n.narrate(neuerSatz("Hier sitzt " + desc.nomStr(), NO_TIME)
                         .phorikKandidat(desc, FROSCHPRINZ));
                 return;
         }
@@ -251,7 +252,7 @@ public class FroschprinzReactionsComp
 
         // STORY Wenn der Prinz nur rekursiv enthalten ist (Prinz sitzt auf einem Stuhl),
         //  dann genauer beschreiben (vgl. BewegenAction)
-        n.narrate(du("siehst", getDescription().akkStr(), AvTimeSpan.NO_TIME)
+        n.narrate(du("siehst", getDescription().akkStr(), NO_TIME)
                 .phorikKandidat(desc, FROSCHPRINZ));
     }
 

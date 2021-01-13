@@ -41,12 +41,7 @@ public enum Story {
                 return FroschkoenigStoryNode.checkAndAdvanceIfAppropriate(db, n, world);
             }),
 
-    RAPUNZEL(RapunzelStoryNode.class,
-            (db, timeTaker, n, world) ->
-
-            {
-                return RapunzelStoryNode.checkAndAdvanceIfAppropriate(db, timeTaker, n, world);
-            });
+    RAPUNZEL(RapunzelStoryNode.class, RapunzelStoryNode::checkAndAdvanceIfAppropriate);
 
     // IDEA Märchen zu 3 Act Structures adaptieren? (1. Akt nötig?)
     //  Inciting incident? Spieler bedrohen, dass "seine Welt" gefährdet
