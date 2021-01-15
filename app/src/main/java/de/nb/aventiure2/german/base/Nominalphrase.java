@@ -38,9 +38,11 @@ public class Nominalphrase
     public static final Nominalphrase EIN_GESPRAECH =
             np(N, INDEF, "Gespräch");
     public static final Nominalphrase FREUDE_OHNE_ART =
-            np(F, null, "FREUDE");
+            np(F, null, "Freude");
     public static final Nominalphrase GESPRAECH =
             np(N, DEF, "Gespräch");
+    public static final Nominalphrase HOEHE =
+            np(F, DEF, "Höhe");
     public static final Nominalphrase IHRE_HAARE =
             np(PL_MFN, null, "ihre Haare",
                     "ihren Haaren");

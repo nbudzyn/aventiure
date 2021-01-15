@@ -16,8 +16,8 @@ import de.nb.aventiure2.german.base.Konstituente;
 import de.nb.aventiure2.german.base.Konstituentenfolge;
 import de.nb.aventiure2.german.base.Numerus;
 import de.nb.aventiure2.german.base.Person;
+import de.nb.aventiure2.german.base.SubstPhrOderReflexivpronomen;
 import de.nb.aventiure2.german.base.SubstantivischePhrase;
-import de.nb.aventiure2.german.base.SubstantivischePhraseOderReflexivpronomen;
 
 import static com.google.common.collect.ImmutableList.toImmutableList;
 import static de.nb.aventiure2.german.base.Konstituentenfolge.cutFirstOneByOne;
@@ -188,13 +188,13 @@ public abstract class AbstractAngabenfaehigesPraedikatOhneLeerstellen
     private Konstituentenfolge getMittelfeld(
             final Person personSubjekt,
             final Numerus numerusSubjekt) {
-        @Nullable final SubstantivischePhraseOderReflexivpronomen datObjekt = getDat(personSubjekt,
+        @Nullable final SubstPhrOderReflexivpronomen datObjekt = getDat(personSubjekt,
                 numerusSubjekt);
-        final SubstantivischePhraseOderReflexivpronomen akkObjekt = getAkk(personSubjekt,
+        final SubstPhrOderReflexivpronomen akkObjekt = getAkk(personSubjekt,
                 numerusSubjekt);
 
         // einige wenige Verben wie "jdn. etw. lehren" haben zwei Akkusativobjekte
-        final SubstantivischePhraseOderReflexivpronomen zweitesAkkObjekt = getZweitesAkk();
+        final SubstPhrOderReflexivpronomen zweitesAkkObjekt = getZweitesAkk();
 
         final ImmutableList<Konstituente> unbetontePronomen =
                 filterUnbetontePronomen(
@@ -231,7 +231,7 @@ public abstract class AbstractAngabenfaehigesPraedikatOhneLeerstellen
      * Gibt das Akkusativ-Objekt zurück - sofern es eines gibt.
      */
     @Nullable
-    abstract SubstantivischePhraseOderReflexivpronomen getAkk(
+    abstract SubstPhrOderReflexivpronomen getAkk(
             Person personSubjekt, Numerus numerusSubjekt);
 
     /**
@@ -241,7 +241,7 @@ public abstract class AbstractAngabenfaehigesPraedikatOhneLeerstellen
      * <i>jdn. etw. lehren</i>
      */
     @Nullable
-    abstract SubstantivischePhraseOderReflexivpronomen getZweitesAkk();
+    abstract SubstPhrOderReflexivpronomen getZweitesAkk();
 
     /**
      * Gibt das Dativ-Objekt zurück - sofern es eines gibt.
@@ -250,24 +250,24 @@ public abstract class AbstractAngabenfaehigesPraedikatOhneLeerstellen
      * @param numerusSubjekt
      */
     @Nullable
-    abstract SubstantivischePhraseOderReflexivpronomen getDat(
+    abstract SubstPhrOderReflexivpronomen getDat(
             Person personSubjekt, Numerus numerusSubjekt);
 
 
-    private static Pair<SubstantivischePhraseOderReflexivpronomen, Kasus> toPair(
+    private static Pair<SubstPhrOderReflexivpronomen, Kasus> toPair(
             @Nullable final
-            SubstantivischePhraseOderReflexivpronomen substantivischePhraseOderReflexivpronomen,
+            SubstPhrOderReflexivpronomen substPhrOderReflexivpronomen,
             final Kasus kasus) {
-        if (substantivischePhraseOderReflexivpronomen == null) {
+        if (substPhrOderReflexivpronomen == null) {
             return null;
         }
 
-        return Pair.create(substantivischePhraseOderReflexivpronomen, kasus);
+        return Pair.create(substPhrOderReflexivpronomen, kasus);
     }
 
     @SafeVarargs
     private static ImmutableList<Konstituente> filterUnbetontePronomen(
-            final Pair<SubstantivischePhraseOderReflexivpronomen, Kasus>... substantivischePhrasenMitKasus) {
+            final Pair<SubstPhrOderReflexivpronomen, Kasus>... substantivischePhrasenMitKasus) {
         return Stream.of(substantivischePhrasenMitKasus)
                 .filter(Objects::nonNull)
                 .filter(spk -> spk.first.isUnbetontesPronomen())

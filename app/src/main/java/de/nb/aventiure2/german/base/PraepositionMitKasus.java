@@ -98,21 +98,21 @@ public enum PraepositionMitKasus implements KasusOderPraepositionalkasus {
     }
 
     public Praepositionalphrase mit(
-            final SubstantivischePhraseOderReflexivpronomen
-                    substantivischePhraseOderReflexivpronomen) {
+            final SubstPhrOderReflexivpronomen
+                    substPhrOderReflexivpronomen) {
         return new Praepositionalphrase(this,
-                substantivischePhraseOderReflexivpronomen);
+                substPhrOderReflexivpronomen);
     }
 
     public String getDescription(
-            final SubstantivischePhraseOderReflexivpronomen substantivischePhraseOderReflPron) {
-        if (substantivischePhraseOderReflPron instanceof SubstantivischePhrase) {
-            return getDescription((SubstantivischePhrase) substantivischePhraseOderReflPron);
+            final SubstPhrOderReflexivpronomen substPhrOderReflPron) {
+        if (substPhrOderReflPron instanceof SubstantivischePhrase) {
+            return getDescription((SubstantivischePhrase) substPhrOderReflPron);
         }
 
         // Ansonsten kann es keine Verschmelzungen geben, weil die anderen Phrasen
         // keinen Artikel haben, mit dem die Präposition verschmelzen könnte.
-        return getDescriptionUnverschmolzen(substantivischePhraseOderReflPron);
+        return getDescriptionUnverschmolzen(substPhrOderReflPron);
     }
 
     public String getDescription(final SubstantivischePhrase substantivischePhrase) {
@@ -137,10 +137,10 @@ public enum PraepositionMitKasus implements KasusOderPraepositionalkasus {
 
     @NonNull
     private String getDescriptionUnverschmolzen(
-            final SubstantivischePhraseOderReflexivpronomen substantivischePhraseOderReflPron) {
+            final SubstPhrOderReflexivpronomen substPhrOderReflPron) {
         // TODO Hier imK verwenden und eine Konstituente zurückgeben!
 
-        return praeposition + " " + substantivischePhraseOderReflPron.imStr(kasus);
+        return praeposition + " " + substPhrOderReflPron.imStr(kasus);
     }
 
     public String getPraeposition() {

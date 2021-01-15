@@ -17,8 +17,8 @@ import de.nb.aventiure2.german.base.Konstituente;
 import de.nb.aventiure2.german.base.Konstituentenfolge;
 import de.nb.aventiure2.german.base.Numerus;
 import de.nb.aventiure2.german.base.Person;
+import de.nb.aventiure2.german.base.SubstPhrOderReflexivpronomen;
 import de.nb.aventiure2.german.base.SubstantivischePhrase;
-import de.nb.aventiure2.german.base.SubstantivischePhraseOderReflexivpronomen;
 
 import static de.nb.aventiure2.german.base.Kasus.AKK;
 import static de.nb.aventiure2.german.base.Kasus.DAT;
@@ -171,7 +171,7 @@ public class PraedikatSubjObjOhneLeerstellen
 
     @Nullable
     @Override
-    SubstantivischePhraseOderReflexivpronomen getDat(
+    SubstPhrOderReflexivpronomen getDat(
             final Person personSubjekt, final Numerus numerusSubjekt) {
         if (kasusOderPraepositionalkasus == DAT) {
             return objekt;
@@ -182,7 +182,7 @@ public class PraedikatSubjObjOhneLeerstellen
 
     @Nullable
     @Override
-    SubstantivischePhraseOderReflexivpronomen getAkk(
+    SubstPhrOderReflexivpronomen getAkk(
             final Person personSubjekt, final Numerus numerusSubjekt) {
         if (kasusOderPraepositionalkasus == AKK) {
             return objekt;
@@ -193,7 +193,7 @@ public class PraedikatSubjObjOhneLeerstellen
 
     @Nullable
     @Override
-    SubstantivischePhraseOderReflexivpronomen getZweitesAkk() {
+    SubstPhrOderReflexivpronomen getZweitesAkk() {
         return null;
     }
 

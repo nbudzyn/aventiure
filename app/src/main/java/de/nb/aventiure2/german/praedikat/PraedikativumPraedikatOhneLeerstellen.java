@@ -15,7 +15,7 @@ import de.nb.aventiure2.german.base.Konstituentenfolge;
 import de.nb.aventiure2.german.base.Numerus;
 import de.nb.aventiure2.german.base.Person;
 import de.nb.aventiure2.german.base.Praedikativum;
-import de.nb.aventiure2.german.base.SubstantivischePhraseOderReflexivpronomen;
+import de.nb.aventiure2.german.base.SubstPhrOderReflexivpronomen;
 
 import static de.nb.aventiure2.german.base.Konstituentenfolge.kf;
 import static de.nb.aventiure2.german.base.Numerus.SG;
@@ -174,21 +174,21 @@ public class PraedikativumPraedikatOhneLeerstellen
 
     @Nullable
     @Override
-    SubstantivischePhraseOderReflexivpronomen getDat(
+    SubstPhrOderReflexivpronomen getDat(
             final Person personSubjekt, final Numerus numerusSubjekt) {
         return null;
     }
 
     @Nullable
     @Override
-    SubstantivischePhraseOderReflexivpronomen getAkk(
+    SubstPhrOderReflexivpronomen getAkk(
             final Person personSubjekt, final Numerus numerusSubjekt) {
         return null;
     }
 
     @Nullable
     @Override
-    SubstantivischePhraseOderReflexivpronomen getZweitesAkk() {
+    SubstPhrOderReflexivpronomen getZweitesAkk() {
         return null;
     }
 

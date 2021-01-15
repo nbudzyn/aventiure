@@ -14,7 +14,7 @@ import static de.nb.aventiure2.german.base.Konstituente.k;
  * "du", "wir") oder eine (andere) Nominalphrase ("die goldene Kugel").
  */
 public abstract class SubstantivischePhrase
-        implements DeklinierbarePhrase, SubstantivischePhraseOderReflexivpronomen, Praedikativum {
+        implements DeklinierbarePhrase, SubstPhrOderReflexivpronomen, Praedikativum {
     private final NumerusGenus numerusGenus;
 
     /**
@@ -119,6 +119,18 @@ public abstract class SubstantivischePhrase
      */
     public abstract Relativpronomen relPron();
 
+    @Nullable
+    @Override
+    public NumerusGenus kannAlsBezugsobjektVerstandenWerdenFuer() {
+        return numerusGenus;
+    }
+
+    @Override
+    @Nullable
+    public IBezugsobjekt getBezugsobjekt() {
+        return bezugsobjekt;
+    }
+
     public Numerus getNumerus() {
         return getNumerusGenus().getNumerus();
     }
@@ -128,11 +140,6 @@ public abstract class SubstantivischePhrase
     }
 
     public abstract Person getPerson();
-
-    @Nullable
-    public IBezugsobjekt getBezugsobjekt() {
-        return bezugsobjekt;
-    }
 
     @Override
     public boolean equals(final Object o) {

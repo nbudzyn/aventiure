@@ -18,8 +18,9 @@ public class AdverbialeAngabeSkopusVerbAllg extends AbstractAdverbialeAngabe {
      * Erzeugt eine adverbiale Angabe wie "aus lauter Wut".
      */
     public AdverbialeAngabeSkopusVerbAllg(final Praepositionalphrase praepositionalphrase) {
-        this(praepositionalphrase.getDescription()
-                // Wenn die Präpositionalphrase später einmal einen Ergänzungs- oder Angaben-Nebensatz
+        this(praepositionalphrase.getDescription().joinToString()
+                // Wenn die Präpositionalphrase später einmal einen Ergänzungs- oder
+                // Angaben-Nebensatz
                 // enthalten könnte - oder eine zu-Infinitiv-Phrase - dann wäre sie im
                 // Mittelfeld nicht erlaubt.
         );

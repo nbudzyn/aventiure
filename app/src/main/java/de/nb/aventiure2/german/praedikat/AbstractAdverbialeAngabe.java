@@ -5,6 +5,7 @@ import de.nb.aventiure2.german.adjektiv.Adjektiv;
 import de.nb.aventiure2.german.base.Konstituente;
 import de.nb.aventiure2.german.base.Numerus;
 import de.nb.aventiure2.german.base.Person;
+import de.nb.aventiure2.german.base.Praepositionalphrase;
 
 /**
  * Eine adverbiale Angabe (z.B. "aus Langeweile" oder "fröhlich",
@@ -13,17 +14,29 @@ import de.nb.aventiure2.german.base.Person;
 public abstract class AbstractAdverbialeAngabe {
     private final AdjPhrOhneLeerstellen adjektivphrase;
 
-    AbstractAdverbialeAngabe(final String text) {
-        this(
-                // TODO Bei der dem Text könnte es sich durchaus um etwas anderes als ein
-                //  einzelnes Adjektiv handeln. Beispielsweise könnte es sich um
-                //  ein Präspositionalphrase handeln wie "in die Hände".
-                //  Dann könnte diese Phrase möglicherweise einen Phorik-Kandidaten enthalten -
-                //  zumindest ein kannAlsBezugsobjektVerstandenWerdenFuer = X wäre gut möglich.
-                //  Vielleicht sollte "AdjPhrOhneLeerstellen adjektivphrase" durch
-                //  etwas Ähnliches wie das Interface Praedikativum ersetzt werden.
+    AbstractAdverbialeAngabe(final Praepositionalphrase praepositionalphrase) {
+        // TODO Wenn es sich um eine Präpositionalphrase handelt wie
+        //  "mit Peters Hilfe", dann könnte diese Phrase möglicherweise einen
+        //  Phorik-Kandidaten enthalten (Peter).
+        //  Wenn die Phrase allerdings keinen Phorik-Kandidaten enthält,
+        //  dann ist kannAlsBezugsobjektVerstandenWerdenFuer = X wohl eher nicht
+        //  möglich; etwas wie "mit voller Konzentration" bewirkt nicht, dass man ein
+        //  nachfolgendes "sie" auf "die Konzentration" beziehen würde.
+        this(praepositionalphrase.getDescription().joinToString());
+    }
 
-                new Adjektiv(text).toAdjPhr());
+    AbstractAdverbialeAngabe(final String text) {
+        // TODO Wenn es sich um eine Präpositionalphrase handelt wie
+        //  "mit Peters Hilfe", dann könnte diese Phrase möglicherweise einen
+        //  Phorik-Kandidaten enthalten (Peter).
+        //  Wenn die Phrase allerdings keinen Phorik-Kandidaten enthält,
+        //  dann ist kannAlsBezugsobjektVerstandenWerdenFuer = X wohl eher nicht
+        //  möglich; etwas wie "mit voller Konzentration" bewirkt nicht, dass man ein
+        //  nachfolgendes "sie" auf "die Konzentration" beziehen würde.
+
+        // TODO Vielleicht sollte "AdjPhrOhneLeerstellen adjektivphrase" durch
+        //  etwas Ähnliches wie das Interface Praedikativum ersetzt werden.
+        this(new Adjektiv(text).toAdjPhr());
     }
 
     AbstractAdverbialeAngabe(final AdjPhrOhneLeerstellen adjektivphrase) {

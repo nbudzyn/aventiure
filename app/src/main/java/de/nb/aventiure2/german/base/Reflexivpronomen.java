@@ -1,5 +1,7 @@
 package de.nb.aventiure2.german.base;
 
+import androidx.annotation.Nullable;
+
 import com.google.common.collect.ImmutableMap;
 
 import java.util.Map;
@@ -11,7 +13,7 @@ import static de.nb.aventiure2.german.base.Person.P1;
 import static de.nb.aventiure2.german.base.Person.P2;
 import static de.nb.aventiure2.german.base.Person.P3;
 
-public class Reflexivpronomen implements SubstantivischePhraseOderReflexivpronomen {
+public class Reflexivpronomen implements SubstPhrOderReflexivpronomen {
     private static final Map<Numerus, Map<Person, Reflexivpronomen>> ALL = ImmutableMap.of(
             SG, ImmutableMap.of(
                     P1, new Reflexivpronomen("mir", "mich"),
@@ -83,9 +85,24 @@ public class Reflexivpronomen implements SubstantivischePhraseOderReflexivpronom
 
     @Override
     public Konstituente imK(final Kasus kasus) {
+        return k(imStr(kasus), kannAlsBezugsobjektVerstandenWerdenFuer(),
+                getBezugsobjekt());
+    }
+
+    @Nullable
+    @Override
+    public NumerusGenus kannAlsBezugsobjektVerstandenWerdenFuer() {
         // Ich glaube, ein Reflexivpronomen etabliert nicht wirklich einen Bezug
         // auf ein Bezugsobjekt.
-        return k(imStr(kasus));
+        return null;
+    }
+
+    @Nullable
+    @Override
+    public IBezugsobjekt getBezugsobjekt() {
+        // Ich glaube, ein Reflexivpronomen etabliert nicht wirklich einen Bezug
+        // auf ein Bezugsobjekt.
+        return null;
     }
 
     public String dat() {

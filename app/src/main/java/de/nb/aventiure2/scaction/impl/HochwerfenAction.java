@@ -43,6 +43,8 @@ import static de.nb.aventiure2.data.world.syscomp.state.impl.FroschprinzState.HA
 import static de.nb.aventiure2.data.world.syscomp.state.impl.FroschprinzState.HAT_NACH_BELOHNUNG_GEFRAGT;
 import static de.nb.aventiure2.data.world.syscomp.state.impl.FroschprinzState.HAT_SC_HILFSBEREIT_ANGESPROCHEN;
 import static de.nb.aventiure2.data.world.syscomp.state.impl.FroschprinzState.UNAUFFAELLIG;
+import static de.nb.aventiure2.german.base.Nominalphrase.HOEHE;
+import static de.nb.aventiure2.german.base.PraepositionMitKasus.IN_AKK;
 import static de.nb.aventiure2.german.base.StructuralElement.PARAGRAPH;
 import static de.nb.aventiure2.german.description.DescriptionBuilder.du;
 import static de.nb.aventiure2.german.description.DescriptionBuilder.neuerSatz;
@@ -145,7 +147,7 @@ public class HochwerfenAction<OBJ extends IDescribableGO & ILocatableGO>
                                                 .mitAdverbialerAngabe(a)
                                                 .mitAdverbialerAngabe(
                                                         new AdverbialeAngabeSkopusVerbWohinWoher(
-                                                                "in die Höhe")),
+                                                                IN_AKK.mit(HOEHE))),
                                         AUFFANGEN.mit(anaph.persPron())
                                                 .mitAdverbialerAngabe(
                                                         new AdverbialeAngabeSkopusSatz(

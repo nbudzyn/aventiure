@@ -200,7 +200,7 @@ public abstract class AbstractTalkingComp extends AbstractStatefulComponent<Talk
      * Gibt alternative Grüße zurück, jeweils beginnend mit Kleinbuchstaben
      * und ohne Satzschlusszeichen
      */
-    protected ImmutableList<String> altGruesse() {
+    private ImmutableList<String> altGruesse() {
         return ImmutableList.<String>builder()
                 .addAll(timeTaker.now().getTageszeit().altTagezeitabhaengigeGruesse())
                 .addAll(TAGESZEITUNABHAENGIE_GRUESSE)

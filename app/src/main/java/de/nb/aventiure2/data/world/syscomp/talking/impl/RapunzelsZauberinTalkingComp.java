@@ -171,8 +171,6 @@ public class RapunzelsZauberinTalkingComp extends AbstractTalkingComp {
         alt.add(neuerSatz("„Na, dann erstmal!“ Du wendest dich ab"),
                 du("verabschiedest",
                         joinToWortfolge("dich wieder",
-                                // FIXME Praepositionalphrase berücksichtigt
-                                //  Phorik-Kandidat noch nicht.
                                 PraepositionMitKasus.VON.mit(anaph).getDescription()))
                         .undWartest()
                         .dann());

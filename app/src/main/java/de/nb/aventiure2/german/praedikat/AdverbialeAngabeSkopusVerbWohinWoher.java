@@ -1,6 +1,7 @@
 package de.nb.aventiure2.german.praedikat;
 
 import de.nb.aventiure2.german.adjektiv.AdjPhrOhneLeerstellen;
+import de.nb.aventiure2.german.base.Praepositionalphrase;
 
 /**
  * Eine adverbiale Angabe der Richtung, des Ziel (wohin?) oder
@@ -15,5 +16,9 @@ public class AdverbialeAngabeSkopusVerbWohinWoher extends AbstractAdverbialeAnga
 
     public AdverbialeAngabeSkopusVerbWohinWoher(final AdjPhrOhneLeerstellen adjektivphrase) {
         super(adjektivphrase);
+    }
+
+    public AdverbialeAngabeSkopusVerbWohinWoher(final Praepositionalphrase praepositionalphrase) {
+        super(praepositionalphrase);
     }
 }

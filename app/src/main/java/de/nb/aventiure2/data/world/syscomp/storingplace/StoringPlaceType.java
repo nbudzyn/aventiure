@@ -2,11 +2,13 @@ package de.nb.aventiure2.data.world.syscomp.storingplace;
 
 import androidx.annotation.Nullable;
 
+import de.nb.aventiure2.german.base.Nominalphrase;
 import de.nb.aventiure2.german.praedikat.AdverbialeAngabeSkopusVerbAllg;
 import de.nb.aventiure2.german.praedikat.AdverbialeAngabeSkopusVerbWohinWoher;
 import de.nb.aventiure2.german.praedikat.PraedikatMitEinerObjektleerstelle;
 import de.nb.aventiure2.german.praedikat.ZweiVerbenSubjObj;
 
+import static de.nb.aventiure2.german.base.PraepositionMitKasus.AUS;
 import static de.nb.aventiure2.german.praedikat.VerbReflPraepositionalkasusAkkObj.AN_SICH_NEHMEN;
 import static de.nb.aventiure2.german.praedikat.VerbSubjObj.AUFHEBEN;
 import static de.nb.aventiure2.german.praedikat.VerbSubjObj.HEBEN;
@@ -42,7 +44,8 @@ public enum StoringPlaceType {
     ASTGABEL("in einer Astgabel",
             "in eine Astgabel",
             HEBEN.mitAdverbialerAngabe(
-                    new AdverbialeAngabeSkopusVerbWohinWoher("aus der Ausgabel")),
+                    new AdverbialeAngabeSkopusVerbWohinWoher(
+                            AUS.mit(Nominalphrase.ASTGABEL))),
             IM_GEAEST),
     WALD("im Wald", "in den Wald"),
     MATSCHIGER_WALDBODEN("auf dem matschigen Waldboden",

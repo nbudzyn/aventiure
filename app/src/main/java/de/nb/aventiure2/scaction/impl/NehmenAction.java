@@ -197,7 +197,6 @@ public class NehmenAction
                                     PraepositionMitKasus.IN_AKK
                                             .mit(targetLocation.descriptionComp()
                                                     .getDescription(true, true))
-                                            .getDescription()
                             )); // "in die Hände nehmen"
         }
 
