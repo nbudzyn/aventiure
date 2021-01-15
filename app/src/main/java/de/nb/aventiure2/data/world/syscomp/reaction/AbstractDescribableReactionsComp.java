@@ -31,8 +31,8 @@ public abstract class AbstractDescribableReactionsComp extends AbstractReactions
      * Beispiel 2: "Du zündest das Feuer an..." - jetzt ist <i>kein</i> anaphorischer Bezug
      * auf die Lampe möglich und diese Methode gibt "die Lampe" zurück.
      */
-    protected SubstantivischePhrase getAnaphPersPronWennMglSonstShortDescription() {
-        return getAnaphPersPronWennMglSonstDescription(true);
+    protected SubstantivischePhrase anaph() {
+        return anaph(true);
     }
 
     /**
@@ -47,9 +47,8 @@ public abstract class AbstractDescribableReactionsComp extends AbstractReactions
      * Beispiel 2: "Du zündest das Feuer an..." - jetzt ist <i>kein</i> anaphorischer Bezug
      * auf die Lampe möglich und diese Methode gibt "die mysteriöse Lampe" zurück.
      */
-    protected SubstantivischePhrase getAnaphPersPronWennMglSonstDescription(
-            final boolean descShortIfKnown) {
-        return world.getAnaphPersPronWennMglSonstDescription(getGameObjectId(), descShortIfKnown);
+    protected SubstantivischePhrase anaph(final boolean descShortIfKnown) {
+        return world.anaph(getGameObjectId(), descShortIfKnown);
     }
 
     /**

@@ -112,9 +112,7 @@ public class WartenAction<LIVGO extends IDescribableGO & ILocatableGO & ILivingB
         final Kohaerenzrelation kohaerenzrelation = getKohaerenzrelationFuerUmformulierung();
 
         if (kohaerenzrelation == VERSTEHT_SICH_VON_SELBST) {
-            final SubstantivischePhrase anaph =
-                    world.getAnaphPersPronWennMglSonstDescription(erwartet, false
-                    );
+            final SubstantivischePhrase anaph = world.anaph(erwartet, false);
             n.narrateAlt(secs(5),
                     du(WARTEN.mit(anaph))
                             .dann()
@@ -127,7 +125,7 @@ public class WartenAction<LIVGO extends IDescribableGO & ILocatableGO & ILivingB
                             .phorikKandidat(anaph, erwartet.getId()));
         } else {
             final SubstantivischePhrase anaph =
-                    world.getAnaphPersPronWennMglSonstDescription(erwartet, true);
+                    world.anaph(erwartet, true);
             n.narrateAlt(
                     DescriptionUmformulierer.drueckeAus(
                             kohaerenzrelation,

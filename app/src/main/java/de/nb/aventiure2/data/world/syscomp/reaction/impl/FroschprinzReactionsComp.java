@@ -375,20 +375,19 @@ public class FroschprinzReactionsComp
             return;
         }
 
-        final SubstantivischePhrase froschDescOderAnapher =
-                getAnaphPersPronWennMglSonstShortDescription();
+        final SubstantivischePhrase anaph = anaph();
 
         stateComp.narrateAndSetState(BEIM_SCHLOSSFEST_AUF_TISCH_WILL_ZUSAMMEN_ESSEN);
 
         n.narrate(neuerSatz(
                 "Wie " +
-                        froschDescOderAnapher.nomStr() +
+                        anaph.nomStr() +
                         " nun da sitzt, glotzt " +
-                        froschDescOderAnapher.nomStr() +
+                        anaph.nomStr() +
                         " dich mit großen Glubschaugen an und spricht: „Nun füll deine "
                         + "Holzschale auf, wir wollen zusammen essen.“",
                 secs(10))
-                .phorikKandidat(froschDescOderAnapher, FROSCHPRINZ));
+                .phorikKandidat(anaph, FROSCHPRINZ));
     }
 
     @Override

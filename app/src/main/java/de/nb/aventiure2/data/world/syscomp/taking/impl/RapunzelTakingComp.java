@@ -64,8 +64,7 @@ public class RapunzelTakingComp extends AbstractTakingComp {
 
     private <GIVEN extends IDescribableGO & ILocatableGO>
     void narrateTakerAndDo_Sonstiges_Abgelehnt(final GIVEN given) {
-        final SubstantivischePhrase rapunzelAnaph =
-                world.getAnaphPersPronWennMglSonstShortDescription(RAPUNZEL);
+        final SubstantivischePhrase rapunzelAnaph = world.anaph(RAPUNZEL);
 
         final Nominalphrase givenDesc = world.getDescription(given);
         final Nominalphrase givenDescAtFirstSight =
@@ -123,10 +122,8 @@ public class RapunzelTakingComp extends AbstractTakingComp {
 
     private <GIVEN extends IDescribableGO & ILocatableGO> void narrateTakerAndDo_GoldeneKugel(
             final GIVEN given) {
-        final SubstantivischePhrase rapunzelAnaph =
-                world.getAnaphPersPronWennMglSonstShortDescription(RAPUNZEL);
-        final SubstantivischePhrase givenAnaph =
-                world.getAnaphPersPronWennMglSonstShortDescription(given);
+        final SubstantivischePhrase rapunzelAnaph = world.anaph(RAPUNZEL);
+        final SubstantivischePhrase givenAnaph = world.anaph(given);
 
         final Nominalphrase givenDesc = world.getDescription(given);
         final Nominalphrase givenDescShort = world.getDescription(given, true);

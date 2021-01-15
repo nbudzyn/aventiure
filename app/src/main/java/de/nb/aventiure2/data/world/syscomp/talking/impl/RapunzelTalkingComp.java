@@ -194,7 +194,7 @@ public class RapunzelTalkingComp extends AbstractTalkingComp {
     }
 
     private void scBegruesst() {
-        final SubstantivischePhrase anaph = getAnaphPersPronWennMglSonstShortDescription();
+        final SubstantivischePhrase anaph = anaph();
 
         final ImmutableList.Builder<TimedDescription<?>> alt = ImmutableList.builder();
 
@@ -242,7 +242,7 @@ public class RapunzelTalkingComp extends AbstractTalkingComp {
         final boolean scBereitsZuvorSchonEinmalGetroffen =
                 db.counterDao().get(RAPUNZEL_REAGIERT_AUF_SC_BEGRUESSUNG) > 0;
 
-        final SubstantivischePhrase anaph = getAnaphPersPronWennMglSonstShortDescription();
+        final SubstantivischePhrase anaph = anaph();
         @Nullable final Personalpronomen persPron = n.getAnaphPersPronWennMgl(RAPUNZEL);
 
         final ImmutableList.Builder<AbstractDescription<?>> alt = ImmutableList.builder();
@@ -477,7 +477,7 @@ public class RapunzelTalkingComp extends AbstractTalkingComp {
     }
 
     private void herzAusschuetten() {
-        final SubstantivischePhrase anaph = getAnaphPersPronWennMglSonstShortDescription();
+        final SubstantivischePhrase anaph = anaph();
         final SubstantivischePhrase desc = getDescription();
 
         final String wovonHerzBewegtDat;
@@ -543,7 +543,7 @@ public class RapunzelTalkingComp extends AbstractTalkingComp {
             n.narrateAlt(secs(10),
                     neuerSatz(PARAGRAPH,
                             "„Ich wollte euch nicht belästigen“, sprichst du "
-                                    + getAnaphPersPronWennMglSonstShortDescription().akkStr()
+                                    + anaph().akkStr()
                                     + " an, "
                                     + "„lasst mich wieder hinunter und ich lasse euch euren Frieden.“")
                             .beendet(PARAGRAPH)
@@ -559,8 +559,7 @@ public class RapunzelTalkingComp extends AbstractTalkingComp {
     }
 
     private void haareHerunterlassenBitte_ExitImmReEntry() {
-        final SubstantivischePhrase rapunzelAnaph =
-                getAnaphPersPronWennMglSonstDescription(true);
+        final SubstantivischePhrase anaph = anaph(true);
         final ImmutableList.Builder<TimedDescription<?>> alt =
                 ImmutableList.builder();
 
@@ -576,9 +575,9 @@ public class RapunzelTalkingComp extends AbstractTalkingComp {
                         secs(10)),
                 neuerSatz(PARAGRAPH, "„Dann will ich wieder ins "
                                 + "Abenteuer hinaus“, sagst du "
-                                + ZU.getDescription(rapunzelAnaph),
+                                + ZU.getDescription(anaph),
                         secs(15))
-                        .phorikKandidat(rapunzelAnaph, RAPUNZEL)
+                        .phorikKandidat(anaph, RAPUNZEL)
         );
 
         final int zuneigungSCZuRapunzel =
@@ -617,14 +616,13 @@ public class RapunzelTalkingComp extends AbstractTalkingComp {
     }
 
     private void hatNachKugelGefragt_haareHerunterlassenBitte_Exit() {
-        final SubstantivischePhrase rapunzelAnaph =
-                getAnaphPersPronWennMglSonstDescription(true);
+        final SubstantivischePhrase anaph = anaph(true);
         final ImmutableList.Builder<TimedDescription<?>> alt =
                 ImmutableList.builder();
 
         alt.add(neuerSatz(
                 "Doch du reagierst gar nicht darauf, sondern forderst "
-                        + rapunzelAnaph.akkStr()
+                        + anaph.akkStr()
                         + " nur auf, die Haare "
                         + "wieder heruterzulassen, dass du wieder gehen kannst",
                 secs(15))

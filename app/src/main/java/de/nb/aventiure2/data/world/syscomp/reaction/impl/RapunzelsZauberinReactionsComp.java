@@ -396,10 +396,8 @@ public class RapunzelsZauberinReactionsComp
                 return;
             }
 
-            n.narrate(
-                    neuerSatz(getAnaphPersPronWennMglSonstDescription(
-                            true).nomStr()
-                            + " hat dich nicht bemerkt", NO_TIME));
+            n.narrate(neuerSatz(anaph(true).nomStr()
+                    + " hat dich nicht bemerkt", NO_TIME));
         }
         // STORY UNTER_DEM_BETT_OBEN_IM_ALTEN_TURM
 

@@ -220,11 +220,10 @@ public class AblegenAction
             return;
         }
 
-        final SubstantivischePhrase gameObjectOrPersPron =
-                world.getAnaphPersPronWennMglSonstDescription(gameObject, true);
+        final SubstantivischePhrase anaph = world.anaph(gameObject, true);
 
         n.narrate(
-                du("setzt", gameObjectOrPersPron.akkStr() +
+                du("setzt", anaph.akkStr() +
                                 " " +
                                 location.storingPlaceComp().getLocationMode().getWohin(false),
                         secs(2))

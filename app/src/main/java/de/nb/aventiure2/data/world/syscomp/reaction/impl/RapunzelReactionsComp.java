@@ -346,8 +346,7 @@ public class RapunzelReactionsComp
     }
 
     private void narrateAndUpgradeFeelings_ScTrifftRapunzelObenImAltenTurmAn_Tagsueber() {
-        final SubstantivischePhrase anaph =
-                getAnaphPersPronWennMglSonstDescription(true);
+        final SubstantivischePhrase anaph = anaph(true);
 
         feelingsComp.upgradeFeelingsTowards(SPIELER_CHARAKTER, ZUNEIGUNG_ABNEIGUNG,
                 1f, FeelingIntensity.MERKLICH);
@@ -401,8 +400,7 @@ public class RapunzelReactionsComp
         loadSC().feelingsComp().upgradeFeelingsTowards(RAPUNZEL,
                 ZUNEIGUNG_ABNEIGUNG, 0.75f, FeelingIntensity.DEUTLICH);
 
-        final SubstantivischePhrase anaph =
-                getAnaphPersPronWennMglSonstDescription(true);
+        final SubstantivischePhrase anaph = anaph(true);
 
         final ImmutableList<Satz> altReaktionSaetze =
                 feelingsComp.altReaktionBeiBegegnungMitScSaetze(anaph);
@@ -483,12 +481,11 @@ public class RapunzelReactionsComp
     }
 
     private void rapunzelMoechteGoldeneKugelHaben() {
-        final SubstantivischePhrase desc =
-                getAnaphPersPronWennMglSonstShortDescription();
+        final SubstantivischePhrase anaph = anaph();
         n.narrate(
-                neuerSatz(desc.nomStr() +
+                neuerSatz(anaph.nomStr() +
                                 " sieht interessiert zu. „Darf ich auch "
-                                + "einmal?“, fragt " + desc.persPron().nomStr() + " dich",
+                                + "einmal?“, fragt " + anaph.persPron().nomStr() + " dich",
                         secs(30))
                         .phorikKandidat(F, RAPUNZEL));
 
@@ -532,8 +529,7 @@ public class RapunzelReactionsComp
 
     private ImmutableList<TimedDescription<?>>
     altRapunzelZiehtHaareWiederHoch_ObenImAltenTurm() {
-        final SubstantivischePhrase anaph =
-                getAnaphPersPronWennMglSonstDescription(false);
+        final SubstantivischePhrase anaph = anaph(false);
 
         return ImmutableList.of(
                 neuerSatz(

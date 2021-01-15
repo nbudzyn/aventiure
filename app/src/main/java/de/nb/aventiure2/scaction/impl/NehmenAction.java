@@ -262,27 +262,25 @@ public class NehmenAction
                             world.loadSC().memoryComp().upgradeKnown(gameObject);
                             sc.feelingsComp().requestMood(NEUTRAL);
 
-                            final SubstantivischePhrase froschDescOderAnapher =
-                                    world.getAnaphPersPronWennMglSonstShortDescription(
-                                            FROSCHPRINZ);
+                            final SubstantivischePhrase anaph = world.anaph(FROSCHPRINZ);
 
                             n.narrateAlt(
                                     neuerSatz(
-                                            froschDescOderAnapher.nomStr()// "Er"
+                                            anaph.nomStr()// "Er"
                                                     + " ist glibschig und "
                                                     + "schleimig – pfui-bäh! – schnell lässt du "
-                                                    + froschDescOderAnapher.persPron().akkStr()
+                                                    + anaph.persPron().akkStr()
                                                     + " in "
                                                     + "eine Tasche gleiten. "
                                                     + GermanUtil.capitalize(
-                                                    froschDescOderAnapher.possArt()
+                                                    anaph.possArt()
                                                             .vor(NumerusGenus.N).nomStr())
                                                     + " gedämpftes Quaken könnte "
                                                     + "wohlig sein oder "
                                                     + "genauso gut vorwurfsvoll", secs(10))
                                             .beendet(PARAGRAPH),
                                     du("versenkst",
-                                            froschDescOderAnapher.akkStr() // "ihn"
+                                            anaph.akkStr() // "ihn"
                                                     + " tief in deine Tasche. Du "
                                                     + "versuchst, deine Hand an der "
                                                     + "Kleidung zu reinigen, aber der "
@@ -291,7 +289,7 @@ public class NehmenAction
                                             "tief in deine Tasche", secs(10))
                                             .beendet(PARAGRAPH),
                                     du("packst",
-                                            froschDescOderAnapher.akkStr() // "ihn"
+                                            anaph.akkStr() // "ihn"
                                                     + " in deine Tasche. "
                                                     + GermanUtil.capitalize(
                                                     froschDesc.persPron().nomStr())
@@ -325,16 +323,14 @@ public class NehmenAction
     private void narrateFroschprinz_HatHochhebenGefordert() {
         if (isDefinitivDiskontinuitaet()) {
             if (n.dann()) {
-                final SubstantivischePhrase froschDescOderAnapher =
-                        world.getAnaphPersPronWennMglSonstShortDescription(
-                                FROSCHPRINZ);
+                final SubstantivischePhrase anaph = world.anaph(FROSCHPRINZ);
 
                 n.narrate(neuerSatz(PARAGRAPH,
-                        "Aber dann nimmst du " + froschDescOderAnapher.akkStr() +
+                        "Aber dann nimmst du " + anaph.akkStr() +
                                 " doch wieder",
                         secs(5))
                         .undWartest()
-                        .phorikKandidat(froschDescOderAnapher, FROSCHPRINZ));
+                        .phorikKandidat(anaph, FROSCHPRINZ));
                 return;
             }
 

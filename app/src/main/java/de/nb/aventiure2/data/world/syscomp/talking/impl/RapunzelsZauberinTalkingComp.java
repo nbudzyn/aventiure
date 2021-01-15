@@ -100,27 +100,26 @@ public class RapunzelsZauberinTalkingComp extends AbstractTalkingComp {
 //            return;
 //        }
 
-        final SubstantivischePhrase anaphOderDesc =
-                getAnaphPersPronWennMglSonstDescription(false);
+        final SubstantivischePhrase anaph = anaph(false);
 
 
         final ImmutableList.Builder<AbstractDescription<?>> alt = ImmutableList.builder();
 
         alt.add(neuerSatz(PARAGRAPH, "„Einen schönen guten Tag“, sprichst du " +
-                        anaphOderDesc.akkStr() +
+                        anaph.akkStr() +
                         " an")
                         .dann()
-                        .phorikKandidat(anaphOderDesc, getGameObjectId()),
+                        .phorikKandidat(anaph, getGameObjectId()),
                 neuerSatz(PARAGRAPH, "„Holla, gute Frau“, sprichst du " +
-                        anaphOderDesc.akkStr() +
+                        anaph.akkStr() +
                         " an")
                         .dann()
-                        .phorikKandidat(anaphOderDesc, getGameObjectId()),
+                        .phorikKandidat(anaph, getGameObjectId()),
                 neuerSatz("„Schön euch zu sehen“, sprichst du " +
-                        anaphOderDesc.akkStr() +
+                        anaph.akkStr() +
                         " an")
                         .dann()
-                        .phorikKandidat(anaphOderDesc, getGameObjectId()));
+                        .phorikKandidat(anaph, getGameObjectId()));
 
         n.narrateAlt(alt, secs(10));
 
@@ -128,8 +127,7 @@ public class RapunzelsZauberinTalkingComp extends AbstractTalkingComp {
     }
 
     private void gespraechBeenden() {
-        final SubstantivischePhrase anaphOderDesc =
-                getAnaphPersPronWennMglSonstDescription(false);
+        final SubstantivischePhrase anaph = anaph(false);
 
         final ImmutableList.Builder<AbstractDescription<?>> alt = ImmutableList.builder();
 
@@ -138,7 +136,7 @@ public class RapunzelsZauberinTalkingComp extends AbstractTalkingComp {
                         joinToWortfolge("dich wieder",
                                 // FIXME Praepositionalphrase berücksichtigt
                                 //  Phorik-Kandidat noch nicht.
-                                PraepositionMitKasus.VON.mit(anaphOderDesc).getDescription()))
+                                PraepositionMitKasus.VON.mit(anaph).getDescription()))
                         .undWartest()
                         .dann());
         // FIXME weitere Alternativen
@@ -155,13 +153,12 @@ public class RapunzelsZauberinTalkingComp extends AbstractTalkingComp {
     }
 
     private void frageNachZiel_ImmReEntryNSCHatteGespraechBeendet() {
-        final SubstantivischePhrase anaphOderDesc =
-                getAnaphPersPronWennMglSonstDescription(false);
+        final SubstantivischePhrase anaph = anaph(false);
 
         n.narrateAlt(NO_TIME,
                 neuerSatz("Aber du lässt nicht locker:"),
                 du("fragst",
-                        joinToWortfolge(anaphOderDesc.akkK(), "erneut:")));
+                        joinToWortfolge(anaph.akkK(), "erneut:")));
 
         frageNachZiel(SENTENCE);
     }
@@ -172,19 +169,18 @@ public class RapunzelsZauberinTalkingComp extends AbstractTalkingComp {
     }
 
     private void frageNachZiel(final StructuralElement startsWith) {
-        final SubstantivischePhrase anaphOderDesc =
-                getAnaphPersPronWennMglSonstDescription(false);
+        final SubstantivischePhrase anaph = anaph(false);
 
         n.narrateAlt(secs(10),
                 neuerSatz(startsWith, "„Wohin des Wegs?“ – „Was geht es dich an?“, ist "
-                        + anaphOderDesc.possArt().vor(F).nomStr() // "ihre"
+                        + anaph.possArt().vor(F).nomStr() // "ihre"
                         + " abweisende Antwort")
-                        .phorikKandidat(anaphOderDesc, getGameObjectId())
+                        .phorikKandidat(anaph, getGameObjectId())
                         .beendet(PARAGRAPH),
                 neuerSatz(startsWith, "„Ihr habt es wohl eilig?“ – „So ist es“, antwortet "
-                        + anaphOderDesc.persPron().nomStr()
+                        + anaph.persPron().nomStr()
                         + " dir")
-                        .phorikKandidat(anaphOderDesc, getGameObjectId())
+                        .phorikKandidat(anaph, getGameObjectId())
                         .beendet(PARAGRAPH)
         );
 

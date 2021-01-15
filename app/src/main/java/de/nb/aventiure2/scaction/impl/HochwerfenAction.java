@@ -124,15 +124,14 @@ public class HochwerfenAction<OBJ extends IDescribableGO & ILocatableGO>
             return;
         }
 
-        final SubstantivischePhrase objectDesc =
-                world.getAnaphPersPronWennMglSonstDescription(object, false);
+        final SubstantivischePhrase anaph = world.anaph(object, false);
 
         if (n.allowsAdditionalDuSatzreihengliedOhneSubjekt()) {
             narrateAndDoHochwerfenAuffangen(
                     satzanschluss(", wirfst " +
-                            objectDesc.akkStr() +
+                            anaph.akkStr() +
                             " in die Höhe und fängst " +
-                            objectDesc.persPron().akkStr() +
+                            anaph.persPron().akkStr() +
                             " wieder auf", secs(3))
                             .dann());
             return;
@@ -142,12 +141,12 @@ public class HochwerfenAction<OBJ extends IDescribableGO & ILocatableGO>
                 .map(a ->
                         du(PARAGRAPH,
                                 new ZweiPraedikateOhneLeerstellen(
-                                        WERFEN.mit(objectDesc)
+                                        WERFEN.mit(anaph)
                                                 .mitAdverbialerAngabe(a)
                                                 .mitAdverbialerAngabe(
                                                         new AdverbialeAngabeSkopusVerbWohinWoher(
                                                                 "in die Höhe")),
-                                        AUFFANGEN.mit(objectDesc.persPron())
+                                        AUFFANGEN.mit(anaph.persPron())
                                                 .mitAdverbialerAngabe(
                                                         new AdverbialeAngabeSkopusSatz(
                                                                 "wieder"))

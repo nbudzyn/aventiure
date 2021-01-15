@@ -819,9 +819,8 @@ public class World {
      * Beispiel 2: "Du zündest das Feuer an..." - jetzt ist <i>kein</i> anaphorischer Bezug
      * auf die Lampe möglich und diese Methode gibt "die mysteriöse Lampe" oder "die Lampe" zurück.
      */
-    public SubstantivischePhrase getAnaphPersPronWennMglSonstShortDescription(
-            final IDescribableGO describableGO) {
-        return getAnaphPersPronWennMglSonstDescription(describableGO, true);
+    public SubstantivischePhrase anaph(final IDescribableGO describableGO) {
+        return anaph(describableGO, true);
     }
 
     /**
@@ -838,9 +837,8 @@ public class World {
      * Beispiel 2: "Du zündest das Feuer an..." - jetzt ist <i>kein</i> anaphorischer Bezug
      * auf die Lampe möglich und diese Methode gibt "die Lampe" zurück.
      */
-    public SubstantivischePhrase getAnaphPersPronWennMglSonstShortDescription(
-            final GameObjectId describableId) {
-        return getAnaphPersPronWennMglSonstDescription(describableId, true);
+    public SubstantivischePhrase anaph(final GameObjectId describableId) {
+        return anaph(describableId, true);
     }
 
     /**
@@ -855,11 +853,10 @@ public class World {
      * Beispiel 2: "Du zündest das Feuer an..." - jetzt ist <i>kein</i> anaphorischer Bezug
      * auf die Lampe möglich und diese Methode gibt "die mysteriöse Lampe" zurück.
      */
-    public SubstantivischePhrase getAnaphPersPronWennMglSonstDescription(
+    public SubstantivischePhrase anaph(
             final GameObjectId describableId,
             final boolean descShortIfKnown) {
-        return getAnaphPersPronWennMglSonstDescription(
-                (IDescribableGO) load(describableId), descShortIfKnown);
+        return anaph((IDescribableGO) load(describableId), descShortIfKnown);
     }
 
     /**
@@ -874,7 +871,7 @@ public class World {
      * Beispiel 2: "Du zündest das Feuer an..." - jetzt ist <i>kein</i> anaphorischer Bezug
      * auf die Lampe möglich und diese Methode gibt "die mysteriöse Lampe" zurück.
      */
-    public SubstantivischePhrase getAnaphPersPronWennMglSonstDescription(
+    public SubstantivischePhrase anaph(
             final IDescribableGO describableGO,
             final boolean descShortIfKnown) {
         // IDEA Auch andere "Anaphern" (im weitesten Sinne) erzeugen, nicht nur Personalpronomen:
