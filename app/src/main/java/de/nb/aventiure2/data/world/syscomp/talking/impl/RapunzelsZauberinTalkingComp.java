@@ -4,10 +4,12 @@ import com.google.common.collect.ImmutableList;
 
 import de.nb.aventiure2.data.database.AvDatabase;
 import de.nb.aventiure2.data.narration.Narrator;
+import de.nb.aventiure2.data.time.TimeTaker;
 import de.nb.aventiure2.data.world.gameobject.*;
 import de.nb.aventiure2.data.world.syscomp.location.LocationComp;
 import de.nb.aventiure2.data.world.syscomp.state.impl.RapunzelsZauberinStateComp;
 import de.nb.aventiure2.data.world.syscomp.talking.AbstractTalkingComp;
+import de.nb.aventiure2.german.base.GermanUtil;
 import de.nb.aventiure2.german.base.PraepositionMitKasus;
 import de.nb.aventiure2.german.base.StructuralElement;
 import de.nb.aventiure2.german.base.SubstantivischePhrase;
@@ -26,11 +28,14 @@ import static de.nb.aventiure2.german.base.NumerusGenus.F;
 import static de.nb.aventiure2.german.base.NumerusGenus.N;
 import static de.nb.aventiure2.german.base.StructuralElement.PARAGRAPH;
 import static de.nb.aventiure2.german.base.StructuralElement.SENTENCE;
+import static de.nb.aventiure2.german.base.Wortfolge.joinToAltWortfolgen;
 import static de.nb.aventiure2.german.base.Wortfolge.joinToWortfolge;
 import static de.nb.aventiure2.german.description.DescriptionBuilder.du;
 import static de.nb.aventiure2.german.description.DescriptionBuilder.neuerSatz;
 import static de.nb.aventiure2.german.praedikat.VerbSubjAkkPraep.FRAGEN_NACH;
 import static de.nb.aventiure2.german.praedikat.VerbSubjObj.ANSPRECHEN;
+import static de.nb.aventiure2.german.praedikat.VerbSubjObj.BEGRUESSEN;
+import static java.util.stream.Collectors.toSet;
 
 /**
  * Component for {@link World#RAPUNZELS_ZAUBERIN}: Der Spieler
@@ -42,11 +47,12 @@ public class RapunzelsZauberinTalkingComp extends AbstractTalkingComp {
 
     public RapunzelsZauberinTalkingComp(final AvDatabase db,
                                         final Narrator n,
+                                        final TimeTaker timeTaker,
                                         final World world,
                                         final LocationComp locationComp,
                                         final RapunzelsZauberinStateComp stateComp,
                                         final boolean initialSchonBegruesstMitSC) {
-        super(RAPUNZELS_ZAUBERIN, db, n, world, initialSchonBegruesstMitSC);
+        super(RAPUNZELS_ZAUBERIN, db, timeTaker, n, world, initialSchonBegruesstMitSC);
         this.locationComp = locationComp;
         this.stateComp = stateComp;
     }
@@ -93,33 +99,58 @@ public class RapunzelsZauberinTalkingComp extends AbstractTalkingComp {
     }
 
     private void ansprechen() {
-        // FIXME Ansprechen: Wenn noch nicht begrüßt, dann begrüßen, sonst
-        //  allgemein ansprechen
-//        if (!isSchonBegruesstMitSC()) {
-//            begruessen_EntryReEntry();
-//            return;
-//        }
+        if (!isSchonBegruesstMitSC()) {
+            begruessen();
+            return;
+        }
 
         final SubstantivischePhrase anaph = anaph(false);
-
-
         final ImmutableList.Builder<AbstractDescription<?>> alt = ImmutableList.builder();
 
-        alt.add(neuerSatz(PARAGRAPH, "„Einen schönen guten Tag“, sprichst du " +
-                        anaph.akkStr() +
-                        " an")
-                        .dann()
-                        .phorikKandidat(anaph, getGameObjectId()),
-                neuerSatz(PARAGRAPH, "„Holla, gute Frau“, sprichst du " +
-                        anaph.akkStr() +
-                        " an")
-                        .dann()
-                        .phorikKandidat(anaph, getGameObjectId()),
-                neuerSatz("„Schön euch zu sehen“, sprichst du " +
-                        anaph.akkStr() +
-                        " an")
-                        .dann()
-                        .phorikKandidat(anaph, getGameObjectId()));
+        alt.add(neuerSatz(PARAGRAPH,
+                joinToWortfolge(
+                        "„Gute Frau“, sprichst du",
+                        anaph.akkK(),
+                        "an"))
+                        .dann(),
+                du(PARAGRAPH,
+                        "wendest",
+                        joinToWortfolge(
+                                "dich noch einmal",
+                                anaph.datK(), "zu"))
+                        .undWartest()
+        );
+
+        n.narrateAlt(alt, secs(10));
+
+        setTalkingTo(SPIELER_CHARAKTER);
+    }
+
+    private void begruessen() {
+        final SubstantivischePhrase anaph = anaph(false);
+        final ImmutableList.Builder<AbstractDescription<?>> alt = ImmutableList.builder();
+
+        alt.addAll(joinToAltWortfolgen(
+                "„",
+                altGruesse().stream().map(GermanUtil::capitalize),
+                // "Einen schönen guten Tag"
+                "“, sprichst du",
+                anaph.akkK(),
+                "an").stream()
+                .map(wf -> neuerSatz(PARAGRAPH, wf))
+                .collect(toSet()));
+        alt.add(neuerSatz(PARAGRAPH,
+                joinToWortfolge(
+                        "„Holla, gute Frau“, sprichst du",
+                        anaph.akkK(),
+                        "an"))
+                        .dann(),
+                neuerSatz(joinToWortfolge(
+                        "„Schön euch zu sehen“, sprichst du",
+                        anaph.akkK(),
+                        "an"))
+                        .dann(),
+                du(PARAGRAPH, BEGRUESSEN.mit(anaph)));
 
         n.narrateAlt(alt, secs(10));
 

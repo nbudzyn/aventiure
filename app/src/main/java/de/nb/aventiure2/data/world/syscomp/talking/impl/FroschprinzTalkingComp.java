@@ -8,6 +8,7 @@ import java.util.List;
 
 import de.nb.aventiure2.data.database.AvDatabase;
 import de.nb.aventiure2.data.narration.Narrator;
+import de.nb.aventiure2.data.time.TimeTaker;
 import de.nb.aventiure2.data.world.base.GameObjectId;
 import de.nb.aventiure2.data.world.gameobject.*;
 import de.nb.aventiure2.data.world.syscomp.description.IDescribableGO;
@@ -58,10 +59,11 @@ public class FroschprinzTalkingComp extends AbstractTalkingComp {
     private final FroschprinzStateComp stateComp;
 
     public FroschprinzTalkingComp(final AvDatabase db,
+                                  final TimeTaker timeTaker,
                                   final Narrator n, final World world,
                                   final FroschprinzStateComp stateComp,
                                   final boolean initialSchonBegruesstMitSC) {
-        super(FROSCHPRINZ, db, n, world, initialSchonBegruesstMitSC);
+        super(FROSCHPRINZ, db, timeTaker, n, world, initialSchonBegruesstMitSC);
         this.stateComp = stateComp;
     }
 

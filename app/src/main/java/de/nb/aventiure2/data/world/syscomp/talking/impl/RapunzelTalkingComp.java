@@ -6,6 +6,7 @@ import javax.annotation.Nullable;
 
 import de.nb.aventiure2.data.database.AvDatabase;
 import de.nb.aventiure2.data.narration.Narrator;
+import de.nb.aventiure2.data.time.TimeTaker;
 import de.nb.aventiure2.data.world.gameobject.*;
 import de.nb.aventiure2.data.world.syscomp.feelings.FeelingIntensity;
 import de.nb.aventiure2.data.world.syscomp.feelings.FeelingsComp;
@@ -70,12 +71,13 @@ public class RapunzelTalkingComp extends AbstractTalkingComp {
     private final FeelingsComp feelingsComp;
 
     public RapunzelTalkingComp(final AvDatabase db,
+                               final TimeTaker timeTaker,
                                final Narrator n,
                                final World world,
                                final RapunzelStateComp stateComp,
                                final FeelingsComp feelingsComp,
                                final boolean initialSchonBegruesstMitSC) {
-        super(RAPUNZEL, db, n, world, initialSchonBegruesstMitSC);
+        super(RAPUNZEL, db, timeTaker, n, world, initialSchonBegruesstMitSC);
         this.stateComp = stateComp;
         this.feelingsComp = feelingsComp;
     }

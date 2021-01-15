@@ -76,7 +76,7 @@ public class SpielerCharakterFactory {
                 waitingComp,
                 feelingsComp,
                 memoryComp,
-                new NoSCTalkActionsTalkingComp(SPIELER_CHARAKTER, db, n, world),
+                new NoSCTalkActionsTalkingComp(SPIELER_CHARAKTER, db, timeTaker, n, world),
                 new ScAutomaticReactionsComp(db, timeTaker, n, world, waitingComp,
                         feelingsComp));
     }
@@ -90,7 +90,8 @@ public class SpielerCharakterFactory {
         return ImmutableMap.of(FeelingTowardsType.ZUNEIGUNG_ABNEIGUNG, 0f);
     }
 
-    private static ImmutableMap<GameObjectId, Map<FeelingTowardsType, Float>> createInitialFeelingsTowards() {
+    private static ImmutableMap<GameObjectId, Map<FeelingTowardsType, Float>>
+    createInitialFeelingsTowards() {
         return ImmutableMap.of();
     }
 

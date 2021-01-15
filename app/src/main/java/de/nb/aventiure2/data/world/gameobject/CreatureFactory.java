@@ -119,7 +119,7 @@ class CreatureFactory {
                 new LocationComp(FROSCHPRINZ, db, world, IM_WALD_BEIM_BRUNNEN, ABZWEIG_IM_WALD,
                         true);
         final FroschprinzTalkingComp talkingComp =
-                new FroschprinzTalkingComp(db, n, world,
+                new FroschprinzTalkingComp(db, timeTaker, n, world,
                         stateComp, false);
         return new TalkingReactionsCreature<>(FROSCHPRINZ,
                 descriptionComp,
@@ -159,7 +159,7 @@ class CreatureFactory {
                         createDefaultFeelingsTowardsForRapunzel(),
                         createInitialFeelingsTowardsForRapunzel());
         final RapunzelTalkingComp talkingComp =
-                new RapunzelTalkingComp(db, n, world, stateComp, feelingsComp,
+                new RapunzelTalkingComp(db, timeTaker, n, world, stateComp, feelingsComp,
                         false);
         final RapunzelReactionsComp reactionsComp =
                 new RapunzelReactionsComp(db, timeTaker, n, world, memoryComp, stateComp,
@@ -232,7 +232,9 @@ class CreatureFactory {
                         // Muss zum Zustand der Zauberin passen!
                         ImmutableMap.of());
         final RapunzelsZauberinTalkingComp talkingComp =
-                new RapunzelsZauberinTalkingComp(db, n, world, locationComp, stateComp, false);
+                new RapunzelsZauberinTalkingComp(
+                        db, n, timeTaker, world, locationComp, stateComp,
+                        false);
         final MovementComp movementComp =
                 new MovementComp(RAPUNZELS_ZAUBERIN, db, world,
                         world.getSpatialConnectionSystem(),

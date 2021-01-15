@@ -4,12 +4,14 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableSet;
 
 import java.util.List;
 import java.util.Objects;
 
 import de.nb.aventiure2.data.database.AvDatabase;
 import de.nb.aventiure2.data.narration.Narrator;
+import de.nb.aventiure2.data.time.TimeTaker;
 import de.nb.aventiure2.data.world.base.AbstractStatefulComponent;
 import de.nb.aventiure2.data.world.base.GameObject;
 import de.nb.aventiure2.data.world.base.GameObjectId;
@@ -33,7 +35,11 @@ import static de.nb.aventiure2.data.world.gameobject.World.*;
  * {@link ITalkerGO} dann irgendwie reagiert).
  */
 public abstract class AbstractTalkingComp extends AbstractStatefulComponent<TalkingPCD> {
+    private static final ImmutableSet<String> TAGESZEITUNABHAENGIE_GRUESSE =
+            ImmutableSet.of("hallo", "holla", "Gott zum Gruß", "Gott zum Gruße");
+
     protected final AvDatabase db;
+    protected final TimeTaker timeTaker;
     protected final World world;
 
     protected final Narrator n;
@@ -45,12 +51,13 @@ public abstract class AbstractTalkingComp extends AbstractStatefulComponent<Talk
      */
     public AbstractTalkingComp(final GameObjectId gameObjectId,
                                final AvDatabase db,
-                               final Narrator n,
+                               final TimeTaker timeTaker, final Narrator n,
                                final World world,
                                final boolean initialSchonBegruesstMitSC) {
         super(gameObjectId, db.talkingDao());
         this.db = db;
         this.n = n;
+        this.timeTaker = timeTaker;
         this.world = world;
         this.initialSchonBegruesstMitSC = initialSchonBegruesstMitSC;
     }
@@ -178,6 +185,17 @@ public abstract class AbstractTalkingComp extends AbstractStatefulComponent<Talk
         return getPcd().isTalkerHatletztesGespraechSelbstBeendet();
     }
 
+    /**
+     * Gibt alternative Grüße zurück, jeweils beginnend mit Kleinbuchstaben
+     * und ohne Satzschlusszeichen
+     */
+    protected ImmutableList<String> altGruesse() {
+        return ImmutableList.<String>builder()
+                .addAll(timeTaker.now().getTageszeit().altTagezeitabhaengigeGruesse())
+                .addAll(TAGESZEITUNABHAENGIE_GRUESSE)
+                .build();
+    }
+
     protected void setSchonBegruesstMitSC(final boolean schonBegruesstMitSC) {
         if (getGameObjectId() == SPIELER_CHARAKTER) {
             throw new IllegalStateException("setSchonBegruesstMitSC() für SPIELER_CHARAKTER - "
@@ -190,7 +208,6 @@ public abstract class AbstractTalkingComp extends AbstractStatefulComponent<Talk
     protected boolean isSchonBegruesstMitSC() {
         return getPcd().isSchonBegruesstMitSC();
     }
-
 
     /**
      * Gibt das Personalpronomen zurück, mit dem ein
