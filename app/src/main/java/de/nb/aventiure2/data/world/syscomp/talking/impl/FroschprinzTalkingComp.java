@@ -19,6 +19,7 @@ import de.nb.aventiure2.data.world.syscomp.talking.AbstractTalkingComp;
 import de.nb.aventiure2.german.base.Nominalphrase;
 import de.nb.aventiure2.german.base.SubstantivischePhrase;
 import de.nb.aventiure2.german.description.AbstractDescription;
+import de.nb.aventiure2.german.description.DescriptionBuilder;
 
 import static de.nb.aventiure2.data.time.AvTimeSpan.NO_TIME;
 import static de.nb.aventiure2.data.time.AvTimeSpan.secs;
@@ -37,6 +38,7 @@ import static de.nb.aventiure2.german.base.Indefinitpronomen.ALLES;
 import static de.nb.aventiure2.german.base.Nominalphrase.ANGEBOTE;
 import static de.nb.aventiure2.german.base.StructuralElement.PARAGRAPH;
 import static de.nb.aventiure2.german.base.StructuralElement.SENTENCE;
+import static de.nb.aventiure2.german.base.Wortfolge.joinToAltWortfolgen;
 import static de.nb.aventiure2.german.description.DescriptionBuilder.du;
 import static de.nb.aventiure2.german.description.DescriptionBuilder.neuerSatz;
 import static de.nb.aventiure2.german.description.DescriptionBuilder.satzanschluss;
@@ -46,6 +48,7 @@ import static de.nb.aventiure2.german.praedikat.VerbSubjDatAkk.VERSPRECHEN;
 import static de.nb.aventiure2.german.praedikat.VerbSubjObj.DISKUTIEREN;
 import static de.nb.aventiure2.german.praedikat.VerbSubjObj.IGNORIEREN;
 import static de.nb.aventiure2.german.praedikat.VerbSubjObj.REDEN;
+import static java.util.stream.Collectors.toSet;
 
 /**
  * Component for den {@link World#FROSCHPRINZ}en: Der Spieler
@@ -242,9 +245,14 @@ public class FroschprinzTalkingComp extends AbstractTalkingComp {
             return;
         }
 
-        n.narrate(neuerSatz("„Hallo, du hässlicher Frosch!“, redest du ihn an", NO_TIME)
-                .undWartest()
-                .dann());
+        n.narrateAlt(
+                joinToAltWortfolgen(
+                        "„",
+                        altGruesseCap(),
+                        // "Hallo"
+                        ", du hässlicher Frosch!“, redest du ihn an").stream()
+                        .map(wf -> neuerSatz(wf).undWartest().dann())
+                        .collect(toSet()), NO_TIME);
 
         world.loadSC().talkingComp().setTalkingTo(FROSCHPRINZ);
 
@@ -365,7 +373,8 @@ public class FroschprinzTalkingComp extends AbstractTalkingComp {
         world.loadSC().talkingComp().setTalkingTo(getGameObjectId());
 
         n.narrate(
-                neuerSatz(PARAGRAPH, "„Frosch“, sprichst du ihn an, „steht dein Angebot noch?“",
+                neuerSatz(PARAGRAPH, "„Frosch“, sprichst du ihn an, „steht "
+                                + "dein Angebot noch?“",
                         secs(5)));
 
         setSchonBegruesstMitSC(true);
@@ -554,11 +563,28 @@ public class FroschprinzTalkingComp extends AbstractTalkingComp {
 
     private void ansprechen_froschReagiertNicht() {
         if (!isSchonBegruesstMitSC()) {
-            n.narrateAlt(secs(3),
-                    neuerSatz("„Hallo, Kollege Frosch!“"),
-                    neuerSatz("„Hallo, du hässlicher Frosch!“, redest du ihn an")
-                            .undWartest()
-                            .dann(), neuerSatz("„Hallo nochmal, Meister Frosch!“"));
+            final ImmutableList.Builder<AbstractDescription<?>> alt = ImmutableList.builder();
+
+            alt.addAll(joinToAltWortfolgen(
+                    "„",
+                    altGruesseCap(),
+                    // "Hallo" / "Einen schönen guten Morgen"
+                    ", Kollege Frosch!“").stream()
+                    .map(DescriptionBuilder::neuerSatz)
+                    .collect(toSet()));
+
+            alt.addAll(joinToAltWortfolgen(
+                    "„",
+                    altGruesseCap(),
+                    // "Hallo" / "Einen schönen guten Morgen"
+                    "„, du hässlicher Frosch!“, redest du ihn an").stream()
+                    .map(wf -> neuerSatz(wf).undWartest().dann())
+                    .collect(toSet()));
+
+            alt.add(neuerSatz("„Hallo nochmal, Meister Frosch!“"));
+
+            n.narrateAlt(alt, secs(3));
+
             setSchonBegruesstMitSC(true);
         } else {
             n.narrateAlt(secs(3),

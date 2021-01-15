@@ -9,7 +9,6 @@ import de.nb.aventiure2.data.world.gameobject.*;
 import de.nb.aventiure2.data.world.syscomp.location.LocationComp;
 import de.nb.aventiure2.data.world.syscomp.state.impl.RapunzelsZauberinStateComp;
 import de.nb.aventiure2.data.world.syscomp.talking.AbstractTalkingComp;
-import de.nb.aventiure2.german.base.GermanUtil;
 import de.nb.aventiure2.german.base.PraepositionMitKasus;
 import de.nb.aventiure2.german.base.StructuralElement;
 import de.nb.aventiure2.german.base.SubstantivischePhrase;
@@ -132,9 +131,18 @@ public class RapunzelsZauberinTalkingComp extends AbstractTalkingComp {
 
         alt.addAll(joinToAltWortfolgen(
                 "„",
-                altGruesse().stream().map(GermanUtil::capitalize),
+                altGruesseCap(),
                 // "Einen schönen guten Tag"
                 "“, sprichst du",
+                anaph.akkK(),
+                "an").stream()
+                .map(wf -> neuerSatz(PARAGRAPH, wf))
+                .collect(toSet()));
+        alt.addAll(joinToAltWortfolgen(
+                "„",
+                altGruesseCap(),
+                // "Einen schönen guten Tag"
+                "“, redest du",
                 anaph.akkK(),
                 "an").stream()
                 .map(wf -> neuerSatz(PARAGRAPH, wf))
@@ -195,8 +203,7 @@ public class RapunzelsZauberinTalkingComp extends AbstractTalkingComp {
     }
 
     private void frageNachZiel() {
-        frageNachZiel(PARAGRAPH);
-
+        frageNachZiel(SENTENCE);
     }
 
     private void frageNachZiel(final StructuralElement startsWith) {
