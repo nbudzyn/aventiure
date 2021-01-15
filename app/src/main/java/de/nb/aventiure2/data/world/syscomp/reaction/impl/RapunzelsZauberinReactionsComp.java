@@ -147,6 +147,27 @@ public class RapunzelsZauberinReactionsComp
             onSCLeave_AbzweigImWald_To_ImWaldNaheDemSchloss();
         }
 
+        narrateAndDoScTrifftEvtlZauberinImDazwischen(scFrom, scTo);
+
+        if (locationComp.hasSameOuterMostLocationAs(scFrom)) {
+            // Wenn die Zauberin sieht, wie der Spieler weggeht,
+            // weiß sie nicht mehr, wo er ist.
+            if (!locationComp.hasSameOuterMostLocationAs(scTo)) {
+                mentalModelComp.unsetAssumedLocation(SPIELER_CHARAKTER);
+            }
+
+            // STORY Wenn der Spieler oben im Turm ist
+            //  "Unten vor dem Turm steht eine..."?
+            //  Zumindest, wenn der Spieler aus dem Fenster schaut?!
+            //  Oder schaut vielleicht Rapunzel aus dem Fenster, bevor sie die
+            //  Haare herunterlässt?
+            return;
+        }
+    }
+
+    private void narrateAndDoScTrifftEvtlZauberinImDazwischen(final ILocationGO scFrom,
+                                                              @Nullable final
+                                                              ILocationGO scTo) {
         if (scTo != null && movementComp.isMoving() && locationComp.getLocationId() == null) {
             // Zauberin ist in Bewegung - und gerade im "Dazwischen"
 
@@ -166,32 +187,6 @@ public class RapunzelsZauberinReactionsComp
                 // Zauberin im "dazwischen" getroffen
                 movementComp.narrateAndDoScTrifftMovingGOImDazwischen(scFrom, scTo);
             }
-        }
-
-        if (locationComp.hasSameOuterMostLocationAs(scFrom)) {
-            // Wenn die Zauberin sieht, wie der Spieler weggeht,
-            // weiß sie nicht mehr, wo er ist.
-            if (!locationComp.hasSameOuterMostLocationAs(scTo)) {
-                mentalModelComp.unsetAssumedLocation(SPIELER_CHARAKTER);
-            }
-
-            if (world.isOrHasRecursiveLocation(scFrom, VOR_DEM_ALTEN_TURM) &&
-                    !world.isOrHasRecursiveLocation(scTo, VOR_DEM_ALTEN_TURM)) {
-                // SC hat den Platz vor dem Turm verlassen.
-                // Falls die Zauberin noch vor dem Turm wartet:
-                if (stateComp.hasState(AUF_DEM_WEG_ZU_RAPUNZEL) &&
-                        locationComp.hasLocation(VOR_DEM_ALTEN_TURM)) {
-                    zauberinRuftRapunzelspruchUndRapunzelReagiert();
-                    return;
-                }
-            }
-
-            // STORY Wenn der Spieler oben im Turm ist
-            //  "Unten vor dem Turm steht eine..."?
-            //  Zumindest, wenn der Spieler aus dem Fenster schaut?!
-            //  Oder schaut vielleicht Rapunzel aus dem Fenster, bevor sie die
-            //  Haare herunterlässt?
-            return;
         }
     }
 
@@ -240,6 +235,18 @@ public class RapunzelsZauberinReactionsComp
 
         if (!world.loadSC().locationComp().hasRecursiveLocation(locationComp.getLocationId())) {
             // SC und Zauberin sind nicht am gleichen Ort
+
+            if (world.isOrHasRecursiveLocation(scFrom, VOR_DEM_ALTEN_TURM) &&
+                    !world.isOrHasRecursiveLocation(scTo, VOR_DEM_ALTEN_TURM)) {
+                // SC hat den Platz vor dem Turm verlassen.
+                // Falls die Zauberin noch vor dem Turm wartet:
+                if (stateComp.hasState(AUF_DEM_WEG_ZU_RAPUNZEL) &&
+                        locationComp.hasLocation(VOR_DEM_ALTEN_TURM)) {
+                    zauberinRuftRapunzelspruchUndRapunzelReagiert();
+                    return;
+                }
+            }
+
             return;
         }
 
