@@ -191,7 +191,8 @@ public class RapunzelsZauberinReactionsComp
     }
 
     private void onSCLeave_AbzweigImWald_To_ImWaldNaheDemSchloss() {
-        if (stateComp.hasState(MACHT_ZURZEIT_KEINE_RAPUNZELBESUCHE,
+        if (loadSC().memoryComp().isKnown(RAPUNZELS_GESANG)
+                && stateComp.hasState(MACHT_ZURZEIT_KEINE_RAPUNZELBESUCHE,
                 VOR_DEM_NAECHSTEN_RAPUNZEL_BESUCH)
                 && RapunzelsZauberinReactionsComp
                 .liegtImZeitfensterFuerRapunzelbesuch(timeTaker.now())) {
@@ -250,8 +251,8 @@ public class RapunzelsZauberinReactionsComp
             return;
         }
 
-        if (world.isOrHasRecursiveLocation(scTo, scFrom) ||
-                world.isOrHasRecursiveLocation(scFrom, scTo)) {
+        if (isOrHasRecursiveLocation(scTo, scFrom) ||
+                isOrHasRecursiveLocation(scFrom, scTo)) {
             // Der Spieler ist nur im selben Raum auf einen Tisch gestiegen,
             // wieder vom Tisch herabgestiegen o.Ä.,
             // die Zauberin wurde bereits beschrieben.
