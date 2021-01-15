@@ -10,7 +10,6 @@ import de.nb.aventiure2.data.world.syscomp.location.LocationComp;
 import de.nb.aventiure2.data.world.syscomp.state.impl.RapunzelsZauberinStateComp;
 import de.nb.aventiure2.data.world.syscomp.talking.AbstractTalkingComp;
 import de.nb.aventiure2.german.base.PraepositionMitKasus;
-import de.nb.aventiure2.german.base.StructuralElement;
 import de.nb.aventiure2.german.base.SubstantivischePhrase;
 import de.nb.aventiure2.german.description.AbstractDescription;
 
@@ -26,7 +25,6 @@ import static de.nb.aventiure2.german.base.Nominalphrase.np;
 import static de.nb.aventiure2.german.base.NumerusGenus.F;
 import static de.nb.aventiure2.german.base.NumerusGenus.N;
 import static de.nb.aventiure2.german.base.StructuralElement.PARAGRAPH;
-import static de.nb.aventiure2.german.base.StructuralElement.SENTENCE;
 import static de.nb.aventiure2.german.base.Wortfolge.joinToAltWortfolgen;
 import static de.nb.aventiure2.german.base.Wortfolge.joinToWortfolge;
 import static de.nb.aventiure2.german.description.DescriptionBuilder.du;
@@ -188,7 +186,7 @@ public class RapunzelsZauberinTalkingComp extends AbstractTalkingComp {
         n.narrateAlt(NO_TIME,
                 neuerSatz("Aber dann fragst du doch noch:"));
 
-        frageNachZiel(SENTENCE);
+        frageNachZiel();
     }
 
     private void frageNachZiel_ImmReEntryNSCHatteGespraechBeendet() {
@@ -199,23 +197,19 @@ public class RapunzelsZauberinTalkingComp extends AbstractTalkingComp {
                 du("fragst",
                         joinToWortfolge(anaph.akkK(), "erneut:")));
 
-        frageNachZiel(SENTENCE);
+        frageNachZiel();
     }
 
     private void frageNachZiel() {
-        frageNachZiel(SENTENCE);
-    }
-
-    private void frageNachZiel(final StructuralElement startsWith) {
         final SubstantivischePhrase anaph = anaph(false);
 
         n.narrateAlt(secs(10),
-                neuerSatz(startsWith, "„Wohin des Wegs?“ – „Was geht es dich an?“, ist "
+                neuerSatz("„Wohin des Wegs?“ – „Was geht es dich an?“, ist "
                         + anaph.possArt().vor(F).nomStr() // "ihre"
                         + " abweisende Antwort")
                         .phorikKandidat(anaph, getGameObjectId())
                         .beendet(PARAGRAPH),
-                neuerSatz(startsWith, "„Ihr habt es wohl eilig?“ – „So ist es“, antwortet "
+                neuerSatz("„Ihr habt es wohl eilig?“ – „So ist es“, antwortet "
                         + anaph.persPron().nomStr()
                         + " dir")
                         .phorikKandidat(anaph, getGameObjectId())

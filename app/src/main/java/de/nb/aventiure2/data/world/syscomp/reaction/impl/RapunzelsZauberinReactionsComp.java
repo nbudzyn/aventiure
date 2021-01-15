@@ -197,7 +197,7 @@ public class RapunzelsZauberinReactionsComp
                 && RapunzelsZauberinReactionsComp
                 .liegtImZeitfensterFuerRapunzelbesuch(timeTaker.now())) {
             // Automatisch die Zauberin loslaufen lassen,
-            //  so dass der SC die Zauberin auf jeden Fall
+            //  sodass der SC die Zauberin auf jeden Fall
             //  auf der Kreuzung trifft
 
             locationComp.narrateAndSetLocation(
