@@ -16,13 +16,22 @@ class TalkingPCD extends AbstractPersistentComponentData {
     @Nullable
     private GameObjectId talkingToId;
 
+    /**
+     * <code>true</code> bedeutet, dass das {@link ITalkerGO} sein letztes Gespräch
+     * selbst aktiv beendet hat - <code>false</code> bedeutet, dass der Gesprächspartner
+     * das Gespräch beendet hat (oder der Talker noch nie ein Gespräch hatte).
+     */
+    private boolean talkerHatletztesGespraechSelbstBeendet;
+
     private boolean schonBegruesstMitSC;
 
     TalkingPCD(@NonNull final GameObjectId gameObjectId,
                @Nullable final GameObjectId talkingToId,
+               final boolean talkerHatletztesGespraechSelbstBeendet,
                final boolean schonBegruesstMitSC) {
         super(gameObjectId);
         this.talkingToId = talkingToId;
+        this.talkerHatletztesGespraechSelbstBeendet = talkerHatletztesGespraechSelbstBeendet;
         this.schonBegruesstMitSC = schonBegruesstMitSC;
     }
 
@@ -36,7 +45,18 @@ class TalkingPCD extends AbstractPersistentComponentData {
         talkingToId = talkingTo;
     }
 
+    boolean isTalkerHatletztesGespraechSelbstBeendet() {
+        return talkerHatletztesGespraechSelbstBeendet;
+    }
+
+    void setTalkerHatletztesGespraechSelbstBeendet(
+            final boolean talkerHatletztesGespraechSelbstBeendet) {
+        setChanged();
+        this.talkerHatletztesGespraechSelbstBeendet = talkerHatletztesGespraechSelbstBeendet;
+    }
+
     void setSchonBegruesstMitSC(final boolean schonBegruesstMitSC) {
+        setChanged();
         this.schonBegruesstMitSC = schonBegruesstMitSC;
     }
 

@@ -9,5 +9,5 @@ import de.nb.aventiure2.data.world.base.IGameObject;
  */
 public interface IMovingGO extends IGameObject {
     @Nonnull
-    public MovementComp movementComp();
+    MovementComp movementComp();
 }

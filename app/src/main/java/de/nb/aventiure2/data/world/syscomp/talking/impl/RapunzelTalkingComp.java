@@ -31,6 +31,11 @@ import static de.nb.aventiure2.data.world.syscomp.feelings.FeelingTowardsType.ZU
 import static de.nb.aventiure2.data.world.syscomp.feelings.Mood.AUFGEDREHT;
 import static de.nb.aventiure2.data.world.syscomp.feelings.Mood.BEWEGT;
 import static de.nb.aventiure2.data.world.syscomp.state.impl.RapunzelState.HAARE_VOM_TURM_HERUNTERGELASSEN;
+import static de.nb.aventiure2.data.world.syscomp.talking.impl.SCTalkAction.entryReEntrySt;
+import static de.nb.aventiure2.data.world.syscomp.talking.impl.SCTalkAction.exitSt;
+import static de.nb.aventiure2.data.world.syscomp.talking.impl.SCTalkAction.immReEntryStNSCHatteGespraechBeendet;
+import static de.nb.aventiure2.data.world.syscomp.talking.impl.SCTalkAction.immReEntryStSCHatteGespraechBeendet;
+import static de.nb.aventiure2.data.world.syscomp.talking.impl.SCTalkAction.st;
 import static de.nb.aventiure2.german.base.GermanUtil.capitalize;
 import static de.nb.aventiure2.german.base.GermanUtil.joinToAltStrings;
 import static de.nb.aventiure2.german.base.Nominalphrase.DEIN_HERZ;
@@ -81,15 +86,15 @@ public class RapunzelTalkingComp extends AbstractTalkingComp {
             case STILL:
                 // "Die junge Frau bitten ihre Haare wieder hinunterzulassen"
                 return ImmutableList.of(
-                        SCTalkAction.entrySt(
+                        entryReEntrySt(
                                 VerbSubjAkkPraep.BEGINNEN
                                         .mitAkk(EIN_GESPRAECH)
                                         .mit(getDescription()),
-                                this::gespraechBeginnen_EntryReEntry),
-                        SCTalkAction.entrySt(
+                                this::gespraechBeginnen_EntryReEntryImmReEntry),
+                        entryReEntrySt(
                                 bittenHaareHerunterzulassenPraedikat(),
                                 this::haareHerunterlassenBitte_EntryReEntry),
-                        SCTalkAction.st(
+                        st(
                                 // FIXME Nur, wenn auch Rapunzel entsprechend Zutrauen
                                 //  gefasst hat! Ansonsten wäre das creepy!
                                 this::zuneigungDesSCZuRapunzelDeutlich,
@@ -98,12 +103,25 @@ public class RapunzelTalkingComp extends AbstractTalkingComp {
                                         .mitDat(getDescription(true))
                                         .mit(DEIN_HERZ),
                                 this::herzAusschuetten),
-                        SCTalkAction.exitSt(
+                        exitSt(
                                 bittenHaareHerunterzulassenPraedikat(),
-                                this::still_haareHerunterlassenBitte_ExitImmReEntry),
-                        SCTalkAction.immReEntrySt(
+                                this::haareHerunterlassenBitte_ExitImmReEntry),
+                        immReEntryStSCHatteGespraechBeendet(
+                                VerbSubjAkkPraep.BEGINNEN
+                                        .mitAkk(EIN_GESPRAECH)
+                                        .mit(getDescription()),
+                                this::gespraechBeginnen_EntryReEntryImmReEntry),
+                        immReEntryStNSCHatteGespraechBeendet(
+                                VerbSubjAkkPraep.BEGINNEN
+                                        .mitAkk(EIN_GESPRAECH)
+                                        .mit(getDescription()),
+                                this::gespraechBeginnen_EntryReEntryImmReEntry),
+                        immReEntryStSCHatteGespraechBeendet(
                                 bittenHaareHerunterzulassenPraedikat(),
-                                this::still_haareHerunterlassenBitte_ExitImmReEntry)
+                                this::haareHerunterlassenBitte_ExitImmReEntry),
+                        immReEntryStNSCHatteGespraechBeendet(
+                                bittenHaareHerunterzulassenPraedikat(),
+                                this::haareHerunterlassenBitte_ExitImmReEntry)
                 );
             case SINGEND:
                 // FALL-THROUGH
@@ -111,15 +129,18 @@ public class RapunzelTalkingComp extends AbstractTalkingComp {
                 return ImmutableList.of();
             case HAT_NACH_KUGEL_GEFRAGT:
                 return ImmutableList.of(
-                        SCTalkAction.entrySt(
+                        entryReEntrySt(
                                 bittenHaareHerunterzulassenPraedikat(),
                                 this::haareHerunterlassenBitte_EntryReEntry),
-                        SCTalkAction.exitSt(
+                        exitSt(
                                 bittenHaareHerunterzulassenPraedikat(),
-                                this::hatNachKugelGefragt_haareHerunterlassenBitte_ExitImmReEntry),
-                        SCTalkAction.immReEntrySt(
+                                this::hatNachKugelGefragt_haareHerunterlassenBitte_Exit),
+                        immReEntryStSCHatteGespraechBeendet(
                                 bittenHaareHerunterzulassenPraedikat(),
-                                this::hatNachKugelGefragt_haareHerunterlassenBitte_ExitImmReEntry)
+                                this::haareHerunterlassenBitte_EntryReEntry),
+                        immReEntryStNSCHatteGespraechBeendet(
+                                bittenHaareHerunterzulassenPraedikat(),
+                                this::haareHerunterlassenBitte_EntryReEntry)
                 );
             default:
                 throw new IllegalStateException("Unexpected state: " + stateComp.getState());
@@ -143,7 +164,7 @@ public class RapunzelTalkingComp extends AbstractTalkingComp {
                 ZUNEIGUNG_ABNEIGUNG) >= FeelingIntensity.DEUTLICH;
     }
 
-    private void gespraechBeginnen_EntryReEntry() {
+    private void gespraechBeginnen_EntryReEntryImmReEntry() {
         if (!isSchonBegruesstMitSC()) {
             begruessen_EntryReEntry();
             return;
@@ -534,9 +555,10 @@ public class RapunzelTalkingComp extends AbstractTalkingComp {
 
         setSchonBegruesstMitSC(true);
         haareHerunterlassen();
+        gespraechspartnerBeendetGespraech();
     }
 
-    private void still_haareHerunterlassenBitte_ExitImmReEntry() {
+    private void haareHerunterlassenBitte_ExitImmReEntry() {
         final SubstantivischePhrase rapunzelAnaph =
                 getAnaphPersPronWennMglSonstDescription(true);
         final ImmutableList.Builder<TimedDescription<?>> alt =
@@ -591,9 +613,10 @@ public class RapunzelTalkingComp extends AbstractTalkingComp {
         loadSC().feelingsComp().requestMoodMin(AUFGEDREHT);
 
         haareHerunterlassen();
+        gespraechspartnerBeendetGespraech();
     }
 
-    private void hatNachKugelGefragt_haareHerunterlassenBitte_ExitImmReEntry() {
+    private void hatNachKugelGefragt_haareHerunterlassenBitte_Exit() {
         final SubstantivischePhrase rapunzelAnaph =
                 getAnaphPersPronWennMglSonstDescription(true);
         final ImmutableList.Builder<TimedDescription<?>> alt =
@@ -623,6 +646,7 @@ public class RapunzelTalkingComp extends AbstractTalkingComp {
 
         setSchonBegruesstMitSC(true);
         haareHerunterlassen();
+        gespraechspartnerBeendetGespraech();
     }
 
     private void haareHerunterlassen() {
@@ -631,8 +655,6 @@ public class RapunzelTalkingComp extends AbstractTalkingComp {
         // TODO Anfrage nach Storytelling / Narrative Designer bei Github einstellen?
         //  Inhalt: Storytelling Grimms Märchen deutsch rein textbasiert, kein Zufall
         //  (kein Auswürfeln), aber simulierte Welt
-
-        unsetTalkingTo();
     }
 
     public void rapunzelLaesstHaareZumAbstiegHerunter() {

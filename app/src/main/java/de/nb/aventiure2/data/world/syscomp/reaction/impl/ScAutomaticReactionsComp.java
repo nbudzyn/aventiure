@@ -78,16 +78,6 @@ public class ScAutomaticReactionsComp
     private void onSCEnter(@Nullable final ILocationGO from, final ILocationGO to) {
         if (!LocationSystem.haveSameOuterMostLocation(from, to)) {
             if (to.is(WALDWILDNIS_HINTER_DEM_BRUNNEN)) {
-
-
-                // FIXME Automatisch die Zauberin loslaufen lassen
-                //  (RapunzelsZauberinState.VOR_DEM_NAECHSTEN_RAPUNZEL_BESUCH)
-                //  und auf der Kreuzung treffen lassen, wenn der SC vom
-                //  Brunnen erstmals zur Kreuzung zurückkehrt und es
-                //  Tag ist etc., so dass der SC der Zauberin auf jeden Fall einmal im Wald begegnet
-
-
-            } else if (to.is(WALDWILDNIS_HINTER_DEM_BRUNNEN)) {
                 counterDao.reset(EssenAction.COUNTER_FELSENBIRNEN_SEIT_ENTER);
             }
         }

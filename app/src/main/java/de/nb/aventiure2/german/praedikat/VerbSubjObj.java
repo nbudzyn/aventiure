@@ -29,6 +29,8 @@ public enum VerbSubjObj implements PraedikatMitEinerObjektleerstelle {
             "schaut", "an", Perfektbildung.HABEN, "angeschaut"),
     ANSEHEN("ansehen", AKK, "sehe", "siehst", "sieht",
             "seht", "an", Perfektbildung.HABEN, "angesehen"),
+    ANSPRECHEN("ansprechen", AKK, "spreche", "sprichst", "spricht",
+            "sprecht", "an", Perfektbildung.HABEN, "angesprochen"),
     ANSTRAHLEN("anstrahlen", AKK, "strahle", "strahlst",
             "strahlt", "strahlt", "an",
             Perfektbildung.HABEN, "angestrahlt"),

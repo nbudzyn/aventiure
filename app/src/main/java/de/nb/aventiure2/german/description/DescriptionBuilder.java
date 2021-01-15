@@ -381,6 +381,13 @@ public class DescriptionBuilder {
 
     @NonNull
     @CheckReturnValue
+    public static SimpleDuDescription du(final String verb,
+                                         @Nullable final Wortfolge remainder) {
+        return du(WORD, verb, remainder);
+    }
+
+    @NonNull
+    @CheckReturnValue
     public static SimpleDuDescription du(final StructuralElement startsNew, final String verb,
                                          @Nullable final Wortfolge remainder) {
         return du(startsNew, verb, remainder, (String) null);

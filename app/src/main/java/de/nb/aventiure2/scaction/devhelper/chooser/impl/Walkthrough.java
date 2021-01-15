@@ -32,6 +32,7 @@ public class Walkthrough {
                     "Den Weg Richtung Schloss gehen",
                     "In Richtung Schloss gehen",
                     "Den schmalen Pfad aufwärtsgehen", // Frau!
+                    "Die Frau ansprechen",
                     "Die Frau nach ihrem Ziel fragen",
                     "Um den Turm herumgehen",
                     "Die Kugel an den Stamm eines Baumes legen",

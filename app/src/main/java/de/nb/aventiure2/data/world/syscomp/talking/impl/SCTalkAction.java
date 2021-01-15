@@ -1,7 +1,6 @@
 package de.nb.aventiure2.data.world.syscomp.talking.impl;
 
 import de.nb.aventiure2.data.world.base.SpatialConnection;
-import de.nb.aventiure2.data.world.syscomp.state.impl.SchlosswacheState;
 import de.nb.aventiure2.data.world.syscomp.talking.ITalkerGO;
 import de.nb.aventiure2.german.base.Nominalphrase;
 import de.nb.aventiure2.german.praedikat.AbstractAngabenfaehigesPraedikatOhneLeerstellen;
@@ -9,13 +8,15 @@ import de.nb.aventiure2.german.praedikat.Praedikat;
 import de.nb.aventiure2.german.praedikat.PraedikatMitEinerObjektleerstelle;
 import de.nb.aventiure2.german.praedikat.VerbSubjObj;
 
+import static de.nb.aventiure2.data.world.syscomp.talking.impl.SCTalkAction.Type.IMMEDIATE_RE_ENTRY_NSC_HATTE_GESPRAECH_BEENDET;
+import static de.nb.aventiure2.data.world.syscomp.talking.impl.SCTalkAction.Type.IMMEDIATE_RE_ENTRY_SC_HATTE_GESPRAECH_BEENDET;
+
 /**
  * Ein Redebeitrag, den der Spieler(-Charakter) an das {@link ITalkerGO} richten kann
  * (und auf den das {@link ITalkerGO} dann irgendwie reagiert).
  * <p>
  * Die Reaktion des {@link ITalkerGO}s auf den Redebeitrag führt oft von
- * einem {@link SchlosswacheState}
- * zu einem anderen.
+ * einem State zu einem anderen.
  * <p>
  * Das Konzept ist ähnliche wie die
  * {@link SpatialConnection},
@@ -39,15 +40,25 @@ public class SCTalkAction {
         /**
          * Ein EXIT-Schritt ist nur möglich, wenn der SC unmittelbar zuvor noch im Gespräch
          * mit der Kreatur war. Der Benutzer möchte das Gespräch beenden.
+         * <p>
+         * Diese Talk-Action unterscheidet sich formal nicht von {@link #NORMAL} - allerdings
+         * formalisiert sie die Spielererwartung, jederzeit das Gespräch aktiv beenden zu können.
+         * Man wird also in aller Regel in jedem Zustand (wenn das Gespräch erst einmal im Gang
+         * ist) eine EXIT-Talk-Action haben - und vielleicht einige {@link #NORMAL}-Talk-Actions.
          */
         EXIT,
         /**
-         * Ein IMMEDIATE_RE_ENTRY-Schritt ist nur möglich, wenn der SC GERADE EBEN das
-         * im Gespräch mit der Kreatur beendet hat (oder die Creature hat das Gespräch
-         * beendet). Der Benutzer hat es sich offenbar
-         * anders überlegt und möchte sofort wieder ein Gespräch beginnen.
+         * Ein IMMEDIATE_RE_ENTRY_SC_HATTE_GESPRAECH_BEENDET-Schritt ist nur möglich, wenn der
+         * SC GERADE EBEN das Gespräch beendet hat. Der Benutzer hat es sich
+         * offenbar anders überlegt und möchte sofort wieder ein Gespräch beginnen.
          */
-        IMMEDIATE_RE_ENTRY
+        IMMEDIATE_RE_ENTRY_SC_HATTE_GESPRAECH_BEENDET,
+        /**
+         * Ein IMMEDIATE_RE_ENTRY_TALKER_HATTE_GESPRAECH_BEENDET-Schritt ist nur möglich, wenn
+         * <i>nicht des SC</i>, sondern sein Gesprächspartner GERADE EBEN das
+         * im Gespräch beendet hat. Der Benutzer möchte sofort wieder ein Gespräch beginnen.
+         */
+        IMMEDIATE_RE_ENTRY_NSC_HATTE_GESPRAECH_BEENDET
     }
 
     private final static PraedikatMitEinerObjektleerstelle DEFAULT_ENTRY_RE_ENTRY_NAME =
@@ -100,14 +111,14 @@ public class SCTalkAction {
      */
     private final Condition condition;
 
-    static SCTalkAction entrySt(
+    static SCTalkAction entryReEntrySt(
             final SCTalkAction.NarrationAndAction narrationAndAction) {
-        return entrySt(DEFAULT_ENTRY_RE_ENTRY_NAME, narrationAndAction);
+        return entryReEntrySt(DEFAULT_ENTRY_RE_ENTRY_NAME, narrationAndAction);
     }
 
-    static SCTalkAction entrySt(final Praedikat entryName,
-                                final SCTalkAction.NarrationAndAction narrationAndAction) {
-        return entrySt(ALWAYS_POSSIBLE, entryName, narrationAndAction);
+    static SCTalkAction entryReEntrySt(final Praedikat entryName,
+                                       final SCTalkAction.NarrationAndAction narrationAndAction) {
+        return entryReEntrySt(ALWAYS_POSSIBLE, entryName, narrationAndAction);
     }
 
     /**
@@ -116,19 +127,20 @@ public class SCTalkAction {
      * @param condition If this condition does not hold, this step is impossible
      *                  (there won't be an action for this step).
      */
-    static SCTalkAction entrySt(
+    static SCTalkAction entryReEntrySt(
             final SCTalkAction.Condition condition,
             final SCTalkAction.NarrationAndAction narrationAndAction) {
-        return entrySt(condition, DEFAULT_ENTRY_RE_ENTRY_NAME, narrationAndAction);
+        return entryReEntrySt(condition, DEFAULT_ENTRY_RE_ENTRY_NAME, narrationAndAction);
     }
 
     /**
-     * Creates a {@link SCTalkAction} to enter a conversation.
+     * Creates a {@link SCTalkAction} to enter a conversation - or to re-enter, though not
+     * immediately.
      *
      * @param condition If this condition does not hold, this step is impossible
      *                  (there won't be an action for this step).
      */
-    static SCTalkAction entrySt(
+    static SCTalkAction entryReEntrySt(
             final SCTalkAction.Condition condition,
             final Praedikat entryName,
             final SCTalkAction.NarrationAndAction narrationAndAction) {
@@ -137,77 +149,86 @@ public class SCTalkAction {
                 narrationAndAction);
     }
 
-    static SCTalkAction immReEntrySt(
+    static SCTalkAction immReEntryStSCHatteGespraechBeendet(
             final SCTalkAction.NarrationAndAction narrationAndAction) {
-        return immReEntrySt(DEFAULT_ENTRY_RE_ENTRY_NAME, narrationAndAction);
+        return immReEntryStSCHatteGespraechBeendet(DEFAULT_ENTRY_RE_ENTRY_NAME, narrationAndAction);
     }
 
-    static SCTalkAction immReEntrySt(final Praedikat entryName,
-                                     final SCTalkAction.NarrationAndAction narrationAndAction) {
-        return immReEntrySt(ALWAYS_POSSIBLE, entryName, narrationAndAction);
+    static SCTalkAction immReEntryStSCHatteGespraechBeendet(final Praedikat entryName,
+                                                            final SCTalkAction.NarrationAndAction narrationAndAction) {
+        return immReEntryStSCHatteGespraechBeendet(ALWAYS_POSSIBLE, entryName, narrationAndAction);
     }
 
     /**
-     * Creates a {@link SCTalkAction} to immediately re-enter a conversation.
+     * Creates a {@link SCTalkAction} to immediately re-enter a conversation after the SC
+     * had finished the previous conversation.
      *
      * @param condition If this condition does not hold, this step is impossible
      *                  (there won't be an action for this step).
      */
-    static SCTalkAction immReEntrySt(final SCTalkAction.Condition condition,
-                                     final SCTalkAction.NarrationAndAction narrationAndAction) {
-        return immReEntrySt(condition, DEFAULT_ENTRY_RE_ENTRY_NAME, narrationAndAction);
+    static SCTalkAction immReEntryStSCHatteGespraechBeendet(
+            final SCTalkAction.Condition condition,
+            final SCTalkAction.NarrationAndAction narrationAndAction) {
+        return immReEntryStSCHatteGespraechBeendet(
+                condition, DEFAULT_ENTRY_RE_ENTRY_NAME, narrationAndAction);
     }
 
     /**
-     * Creates a {@link SCTalkAction} to immediately re-enter a conversation.
+     * Creates a {@link SCTalkAction} to immediately re-enter a conversation after the SC
+     * had finished the previous conversation.
      *
      * @param condition If this condition does not hold, this step is impossible
      *                  (there won't be an action for this step).
      */
-    static SCTalkAction immReEntrySt(
+    static SCTalkAction immReEntryStSCHatteGespraechBeendet(
             final SCTalkAction.Condition condition,
             final Praedikat entryName,
             final SCTalkAction.NarrationAndAction narrationAndAction) {
-        return new SCTalkAction(SCTalkAction.Type.IMMEDIATE_RE_ENTRY,
+        return new SCTalkAction(IMMEDIATE_RE_ENTRY_SC_HATTE_GESPRAECH_BEENDET,
                 condition,
                 entryName, narrationAndAction);
     }
 
-    static SCTalkAction reEntrySt(
+    static SCTalkAction immReEntryStNSCHatteGespraechBeendet(
             final SCTalkAction.NarrationAndAction narrationAndAction) {
-        return reEntrySt(DEFAULT_ENTRY_RE_ENTRY_NAME, narrationAndAction);
+        return immReEntryStNSCHatteGespraechBeendet(
+                DEFAULT_ENTRY_RE_ENTRY_NAME, narrationAndAction);
     }
 
-    static SCTalkAction reEntrySt(final Praedikat entryName,
-                                  final SCTalkAction.NarrationAndAction narrationAndAction) {
-        return reEntrySt(ALWAYS_POSSIBLE, entryName, narrationAndAction);
+    static SCTalkAction immReEntryStNSCHatteGespraechBeendet(
+            final Praedikat entryName,
+            final SCTalkAction.NarrationAndAction narrationAndAction) {
+        return immReEntryStNSCHatteGespraechBeendet(ALWAYS_POSSIBLE, entryName, narrationAndAction);
     }
 
     /**
-     * Creates a {@link SCTalkAction} to re-enter a conversation (but not immediately)
+     * Creates a {@link SCTalkAction} to immediately re-enter a conversation after the NSC
+     * had finished the previous conversation.
      *
      * @param condition If this condition does not hold, this step is impossible
      *                  (there won't be an action for this step).
      */
-    static SCTalkAction reEntrySt(
+    static SCTalkAction immReEntryStNSCHatteGespraechBeendet(
             final SCTalkAction.Condition condition,
             final SCTalkAction.NarrationAndAction narrationAndAction) {
-        return reEntrySt(condition, DEFAULT_ENTRY_RE_ENTRY_NAME, narrationAndAction);
+        return immReEntryStNSCHatteGespraechBeendet(
+                condition, DEFAULT_ENTRY_RE_ENTRY_NAME, narrationAndAction);
     }
 
     /**
-     * Creates a {@link SCTalkAction} to re-enter a conversation (but not immediately)
+     * Creates a {@link SCTalkAction} to immediately re-enter a conversation after the NSC
+     * had finished the previous conversation.
      *
      * @param condition If this condition does not hold, this step is impossible
      *                  (there won't be an action for this step).
      */
-    static SCTalkAction reEntrySt(
+    static SCTalkAction immReEntryStNSCHatteGespraechBeendet(
             final SCTalkAction.Condition condition,
             final Praedikat entryName,
             final SCTalkAction.NarrationAndAction narrationAndAction) {
-        return new SCTalkAction(SCTalkAction.Type.ENTRY_RE_ENTRY, condition,
-                entryName,
-                narrationAndAction);
+        return new SCTalkAction(IMMEDIATE_RE_ENTRY_NSC_HATTE_GESPRAECH_BEENDET,
+                condition,
+                entryName, narrationAndAction);
     }
 
     static SCTalkAction st(final Praedikat name,

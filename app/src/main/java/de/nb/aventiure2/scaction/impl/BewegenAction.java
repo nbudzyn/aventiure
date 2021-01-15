@@ -471,7 +471,7 @@ public class BewegenAction<LOC_DESC extends ILocatableGO & IDescribableGO>
                         .map(d -> new TimedDescription<>(
                                 d.mitPraefixCapitalize(
                                         "Was willst du hier eigentlich? ")
-                                        .beginntZumindestSentence(),
+                                        .beginntZumindestParagraph(),
                                 description.getTimeElapsed()))
                         .collect(Collectors.toSet()));
                 alt.addAll(drueckeAusTimed(DISKONTINUITAET, description));

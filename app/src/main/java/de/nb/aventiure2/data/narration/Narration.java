@@ -405,7 +405,7 @@ public class Narration {
 
         if (satzende) {
             final String lastRelevantCharBase = baseTrimmed.substring(baseTrimmed.length() - 1);
-            if ("….!?\"“".contains(lastRelevantCharBase)) {
+            if ("….!?:\"“".contains(lastRelevantCharBase)) {
                 if (baseTrimmed.endsWith("…“") || baseTrimmed.endsWith(".“")
                         || baseTrimmed.endsWith("!“") || baseTrimmed.endsWith("?“")
                         || baseTrimmed.endsWith("…\"") || baseTrimmed.endsWith(".\"")
@@ -450,7 +450,7 @@ public class Narration {
 
         final String lastRelevantCharBase =
                 baseTrimmed.substring(baseTrimmed.length() - 1);
-        if ("….!?\"“\n".contains(lastRelevantCharBase)) {
+        if ("….!?:\"“\n".contains(lastRelevantCharBase)) {
             return false;
         }
 

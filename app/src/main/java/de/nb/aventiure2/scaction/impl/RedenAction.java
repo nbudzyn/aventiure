@@ -10,6 +10,7 @@ import java.util.List;
 import de.nb.aventiure2.data.narration.Narrator;
 import de.nb.aventiure2.data.time.TimeTaker;
 import de.nb.aventiure2.data.world.gameobject.*;
+import de.nb.aventiure2.data.world.gameobject.player.*;
 import de.nb.aventiure2.data.world.syscomp.alive.ILivingBeingGO;
 import de.nb.aventiure2.data.world.syscomp.description.IDescribableGO;
 import de.nb.aventiure2.data.world.syscomp.location.ILocatableGO;
@@ -69,7 +70,7 @@ public class RedenAction<TALKER extends IDescribableGO & ILocatableGO & ITalkerG
                 ImmutableList.builder();
 
         for (final SCTalkAction talkStep : talkSteps) {
-            if (stepTypeFits(talker, talkStep.getStepType())) {
+            if (stepTypeFits(n, world, talker, talkStep.getStepType())) {
                 res.add(buildAction(scActionStepCountDao, timeTaker, n, world,
                         talker,
                         // "Mit ... reden" /  "Den ... ignorieren" / "Das Gespräch beenden"
@@ -80,20 +81,26 @@ public class RedenAction<TALKER extends IDescribableGO & ILocatableGO & ITalkerG
         return res.build();
     }
 
-    private static boolean stepTypeFits(final ITalkerGO<?> talker,
+    private static boolean stepTypeFits(final Narrator n,
+                                        final World world,
+                                        final ITalkerGO<?> talker,
                                         final SCTalkAction.Type stepType) {
         if (talker.talkingComp().isTalkingTo(SPIELER_CHARAKTER)) {
-            // Der SC befindet sich gerade im Gespräch mit der Creature-
+            // Der SC befindet sich gerade im Gespräch mit dem Talker.
             return stepType == SCTalkAction.Type.NORMAL ||
                     stepType == SCTalkAction.Type.EXIT;
         }
 
-        if (talker.talkingComp().isDefinitivDiskontinuitaet()) {
-            return stepType == SCTalkAction.Type.IMMEDIATE_RE_ENTRY;
+        if (scHatGeradeGespraechMitTalkerBeendet(n, world.loadSC(), talker)) {
+            return stepType == SCTalkAction.Type.IMMEDIATE_RE_ENTRY_SC_HATTE_GESPRAECH_BEENDET;
         }
 
-        // Der SC befindet sich gerade nicht im Gespräch mit der Creature
-        // (und hat auch nicht GERADE EBEN so ein Gespräch beendet).
+        if (talkerHatGeradeGespraechMitSCBeendet(n, world.loadSC(), talker)) {
+            return stepType == SCTalkAction.Type.IMMEDIATE_RE_ENTRY_NSC_HATTE_GESPRAECH_BEENDET;
+        }
+
+        // Der SC befindet sich gerade nicht im Gespräch mit dem Talker
+        // (es wurde auch nicht GERADE EBEN so ein Gespräch beendet).
         return stepType == SCTalkAction.Type.ENTRY_RE_ENTRY;
     }
 
@@ -223,7 +230,28 @@ public class RedenAction<TALKER extends IDescribableGO & ILocatableGO & ITalkerG
 
     @Override
     protected boolean isDefinitivDiskontinuitaet() {
-        return talker.talkingComp().isDefinitivDiskontinuitaet();
+        // Der SC hat das Gespräch mit der Creature GERADE EBEN beendet
+        // und hat es sich ganz offenbar anders überlegt.
+        return scHatGeradeGespraechMitTalkerBeendet(n, world.loadSC(), talker);
+    }
+
+    private static boolean scHatGeradeGespraechMitTalkerBeendet(
+            final Narrator n, final SpielerCharakter sc, final ITalkerGO<?> talker) {
+        return gespraechZwischenTalkerUndSCWurdeGeradeBeendet(n, sc, talker)
+                && !talker.talkingComp().isTalkerHatLetztesGespraechSelbstBeendet();
+    }
+
+    private static boolean talkerHatGeradeGespraechMitSCBeendet(
+            final Narrator n, final SpielerCharakter sc, final ITalkerGO<?> talker) {
+        return gespraechZwischenTalkerUndSCWurdeGeradeBeendet(n, sc, talker)
+                && talker.talkingComp().isTalkerHatLetztesGespraechSelbstBeendet();
+    }
+
+    private static boolean gespraechZwischenTalkerUndSCWurdeGeradeBeendet(
+            final Narrator n, final SpielerCharakter sc, final ITalkerGO<?> talker) {
+        return !n.lastNarrationWasFromReaction()
+                && sc.memoryComp().lastActionWas(Action.Type.REDEN, talker)
+                && !talker.talkingComp().isTalkingTo(SPIELER_CHARAKTER);
     }
 
     @NonNull

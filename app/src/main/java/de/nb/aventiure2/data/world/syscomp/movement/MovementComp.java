@@ -22,6 +22,7 @@ import de.nb.aventiure2.data.world.syscomp.spatialconnection.NumberOfWays;
 import de.nb.aventiure2.data.world.syscomp.spatialconnection.impl.SpatialStandardStep;
 import de.nb.aventiure2.data.world.syscomp.spatialconnection.system.SpatialConnectionSystem;
 import de.nb.aventiure2.data.world.syscomp.storingplace.ILocationGO;
+import de.nb.aventiure2.data.world.syscomp.talking.AbstractTalkingComp;
 
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
@@ -78,6 +79,8 @@ public class MovementComp
     @Nullable
     private final GameObjectId initialTargetLocationId;
 
+    @Nullable
+    private final AbstractTalkingComp talkingComp;
     /**
      * Relative Geschwindigkeit. 1 = Standard-Geschwindigkeit (Geschwindigkeit des SC, der
      * sich aufkennt)
@@ -93,6 +96,7 @@ public class MovementComp
                         final SpatialConnectionSystem spatialConnectionSystem,
                         final IMovementNarrator movementNarrator,
                         final LocationComp locationComp,
+                        @Nullable final AbstractTalkingComp talkingComp,
                         final float relativeVelocity,
                         @Nullable final GameObjectId initialTargetLocationId) {
         super(gameObjectId, db.movementDao());
@@ -100,6 +104,7 @@ public class MovementComp
         this.spatialConnectionSystem = spatialConnectionSystem;
         this.movementNarrator = movementNarrator;
         this.locationComp = locationComp;
+        this.talkingComp = talkingComp;
         this.relativeVelocity = relativeVelocity;
         this.initialTargetLocationId = initialTargetLocationId;
     }
@@ -145,9 +150,22 @@ public class MovementComp
 
     @Override
     public void onSCActionDone(final AvDateTime startTimeOfUserAction) {
-        if (getPcd().getPauseForSCAction() == PAUSED) {
+        if (getPcd().getPauseForSCAction() == PAUSED
+                && !stayPaused()) {
             setupNextStepIfNecessaryAndPossible(startTimeOfUserAction);
         }
+    }
+
+    /**
+     * Ermittelt, ob im Fall, dass gerade eine Pause eingelegt ist, die Pause
+     * fortgesetzt werden soll.
+     */
+    private boolean stayPaused() {
+        if (talkingComp != null && talkingComp.isInConversation()) {
+            return true;
+        }
+
+        return false;
     }
 
     /**
@@ -173,12 +191,6 @@ public class MovementComp
         if (!hasCurrentStep() || getPcd().getPauseForSCAction() == PAUSED) {
             return;
         }
-
-        //  IDEA Zumindest manche Aktionen sollten wohl dazu führen,
-        //   dass die Bewegung beendet oder zumindest für eine Weile die Bewegung
-        //   "ausgesetzt" (PAUSED?) wird. Z.B. sollte ein Dialog beendet werden, bis
-        //   das IMovingGO wieder weitergeht (sofern das IMovingGO auf den Dialog eingeht und
-        //   ihn nicht von sich aus beendet)
 
         narrateAndMove(now);
     }

@@ -17,7 +17,6 @@ import de.nb.aventiure2.data.world.gameobject.*;
 import de.nb.aventiure2.data.world.gameobject.player.*;
 import de.nb.aventiure2.data.world.syscomp.description.IDescribableGO;
 import de.nb.aventiure2.data.world.syscomp.location.ILocatableGO;
-import de.nb.aventiure2.data.world.syscomp.memory.Action;
 import de.nb.aventiure2.data.world.syscomp.storingplace.ILocationGO;
 import de.nb.aventiure2.data.world.syscomp.talking.impl.SCTalkAction;
 import de.nb.aventiure2.german.base.Nominalphrase;
@@ -75,7 +74,8 @@ public abstract class AbstractTalkingComp extends AbstractStatefulComponent<Talk
     @Override
     @NonNull
     protected TalkingPCD createInitialState() {
-        return new TalkingPCD(getGameObjectId(), null, initialSchonBegruesstMitSC);
+        return new TalkingPCD(getGameObjectId(), null, true,
+                initialSchonBegruesstMitSC);
     }
 
     public void updateSchonBegruesstMitSCOnLeave(
@@ -92,22 +92,11 @@ public abstract class AbstractTalkingComp extends AbstractStatefulComponent<Talk
 
     public void setTalkingTo(@Nullable final GameObjectId talkingToId) {
         if (talkingToId == null) {
-            unsetTalkingTo();
+            unsetTalkingTo(true);
             return;
         }
 
         setTalkingTo((ITalkerGO<?>) world.load(talkingToId));
-    }
-
-    public boolean isDefinitivDiskontinuitaet() {
-        // Der SC hat das Gespräch mit der Creature GERADE EBEN beendet
-        // und hat es sich ganz offenbar anders überlegt.
-        // Oder die Creature hat das Gespräch beendet und der Benutzer möchte
-        // sofort wieder ein Gespräch anknüpfen.
-
-        return n.lastNarrationWasFromReaction() &&
-                world.loadSC().memoryComp().lastActionWas(Action.Type.REDEN, getGameObjectId()) &&
-                !isTalkingTo(SPIELER_CHARAKTER);
     }
 
     public void setTalkingTo(@Nullable final ITalkerGO<?> otherTalker) {
@@ -134,17 +123,28 @@ public abstract class AbstractTalkingComp extends AbstractStatefulComponent<Talk
         }
     }
 
+    protected void talkerBeendetGespraech() {
+        unsetTalkingTo(true);
+    }
+
+    protected void gespraechspartnerBeendetGespraech() {
+        unsetTalkingTo(false);
+    }
+
     /**
      * Setzt den Gesprächspartner auf <code>null</code>.
      */
-    protected void unsetTalkingTo() {
+    @SuppressWarnings("WeakerAccess")
+    public void unsetTalkingTo(final boolean talkerHatletztesGespraechSelbstBeendet) {
         @Nullable final ITalkerGO<?> talkingTo = getTalkingTo();
+        getPcd().setTalkerHatletztesGespraechSelbstBeendet(talkerHatletztesGespraechSelbstBeendet);
+
         if (talkingTo == null) {
             return;
         }
 
         getPcd().setTalkingToId(null);
-        talkingTo.talkingComp().unsetTalkingTo();
+        talkingTo.talkingComp().unsetTalkingTo(!talkerHatletztesGespraechSelbstBeendet);
     }
 
     public boolean isInConversation() {
@@ -174,6 +174,10 @@ public abstract class AbstractTalkingComp extends AbstractStatefulComponent<Talk
         return getPcd().getTalkingToId();
     }
 
+    public boolean isTalkerHatLetztesGespraechSelbstBeendet() {
+        return getPcd().isTalkerHatletztesGespraechSelbstBeendet();
+    }
+
     protected void setSchonBegruesstMitSC(final boolean schonBegruesstMitSC) {
         if (getGameObjectId() == SPIELER_CHARAKTER) {
             throw new IllegalStateException("setSchonBegruesstMitSC() für SPIELER_CHARAKTER - "
@@ -186,6 +190,7 @@ public abstract class AbstractTalkingComp extends AbstractStatefulComponent<Talk
     protected boolean isSchonBegruesstMitSC() {
         return getPcd().isSchonBegruesstMitSC();
     }
+
 
     /**
      * Gibt das Personalpronomen zurück, mit dem ein

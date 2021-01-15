@@ -84,7 +84,7 @@ public class ImWaldNaheDemSchlossConnectionComp extends AbstractSpatialConnectio
                         "auf dem Weg in den Wald hinein",
                         "Tiefer in den Wald hineingehen",
                         mins(5),
-                        du(SENTENCE, "gehst", "den Weg weiter in den Wald hinein. "
+                        du(PARAGRAPH, "gehst", "den Weg weiter in den Wald hinein. "
                                 + "Nicht lang, und es geht zur Linken zwischen "
                                 + "den Bäumen ein alter, düsterer Weg ab, über "
                                 + "den Farn wuchert")

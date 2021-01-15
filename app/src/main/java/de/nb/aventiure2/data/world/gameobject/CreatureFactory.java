@@ -231,16 +231,17 @@ class CreatureFactory {
                 new MentalModelComp(RAPUNZELS_ZAUBERIN, db, world,
                         // Muss zum Zustand der Zauberin passen!
                         ImmutableMap.of());
+        final RapunzelsZauberinTalkingComp talkingComp =
+                new RapunzelsZauberinTalkingComp(db, n, world, locationComp, stateComp, false);
         final MovementComp movementComp =
                 new MovementComp(RAPUNZELS_ZAUBERIN, db, world,
                         world.getSpatialConnectionSystem(),
                         new RapunzelsZauberinMovementNarrator(n, world),
                         locationComp,
+                        talkingComp,
                         1,
                         // Muss zum Zustand der Zauberin passen!
                         null);
-        final RapunzelsZauberinTalkingComp talkingComp =
-                new RapunzelsZauberinTalkingComp(db, n, world, locationComp, stateComp, false);
         return new MovingTalkingMentalModelReactionsCreature<>(RAPUNZELS_ZAUBERIN,
                 descriptionComp,
                 locationComp,
