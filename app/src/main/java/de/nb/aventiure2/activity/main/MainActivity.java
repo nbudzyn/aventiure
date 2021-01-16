@@ -233,8 +233,8 @@ public class MainActivity extends AppCompatActivity {
             case R.id.walk_full:
                 mainViewModel.walkActions(Walkthrough.FULL);
                 return true;
-            case R.id.walk_sep_anfang_bis_mit_frosch_bei_rapunzel:
-                mainViewModel.walkActions(Walkthrough.SEP_ANFANG_BIS_MIT_FROSCH_BEI_RAPUNZEL);
+            case R.id.walk_sep_nur_rapunzel:
+                mainViewModel.walkActions(Walkthrough.SEP_NUR_RAPUNZEL);
                 return true;
             default:
                 return super.onOptionsItemSelected(item);

@@ -22,7 +22,7 @@
     </group>
     <group android:id="@+id/menu_main_group_alternativer_durchlauf_1">
         <item
-            android:id="@+id/walk_sep_anfang_bis_mit_frosch_bei_rapunzel"
-            android:title="Anfang bis mit Frosch bei Rapunzel" />
+            android:id="@+id/walk_sep_nur_rapunzel"
+            android:title="Nur Rapunzel" />
     </group>
 </menu>

@@ -85,6 +85,8 @@ public class RapunzelTalkingComp extends AbstractTalkingComp {
     @Override
     protected Iterable<SCTalkAction> getSCTalkActionsWithoutCheckingConditions() {
         switch (stateComp.getState()) {
+            case UNAEUFFAELLIG:
+                return ImmutableList.of();
             case STILL:
                 // "Die junge Frau bitten ihre Haare wieder hinunterzulassen"
                 return ImmutableList.of(

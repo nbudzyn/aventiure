@@ -140,27 +140,31 @@ public class Walkthrough {
                     .append(OBEN_BEI_RAPUNZEL_BIS_ENDE);
 
     //  -- separate Walkthroughs --
-    public static final Walkthrough SEP_ANFANG_BIS_MIT_FROSCH_BEI_RAPUNZEL =
-            ANFANG_BIS_FROSCHVERSPRECHEN.append(new Walkthrough(
-                    "Den Frosch mitnehmen", "Die Kugel nehmen",
-                    "Den Weg Richtung Schloss gehen",
-                    "In Richtung Schloss gehen",
+    public static final Walkthrough SEP_NUR_RAPUNZEL =
+            new Walkthrough(
+                    "Die Kugel nehmen",
+                    "Das Schloss verlassen",
+                    "In den Wald gehen",
                     "Den schmalen Pfad aufwärtsgehen",
                     "In den Schatten der Bäume setzen",
-                    "Rasten",
-                    "Rasten",
-                    "Rasten",
-                    "Rasten", // Frau kommt
-                    "Rasten",
-                    "Rasten",
-                    "Rasten",
-                    "Rasten",
-                    "Rasten",
-                    "Rasten",
+                    "Aus dem Schatten der Bäume treten",
+                    "Den Pfad zurückgehen",
+                    "Tiefer in den Wald hineingehen",
+                    "In Richtung Schloss gehen",
+                    "Die Frau ansprechen",
+                    "Die Frau nach ihrem Ziel fragen",
+                    "Den langen schmalen Pfad zum Turm aufwärtsgehen",
+                    "In den Schatten der Bäume setzen",
+                    "Auf die magere Frau warten",
+                    "Auf die magere Frau warten",
                     "Aus dem Schatten der Bäume treten",
                     "Rufen: „Lass dein Haar herunter“",
-                    "An den Haaren hinaufsteigen"
-            ));
+                    "An den Haaren hinaufsteigen",
+                    "Ein Gespräch mit der schönen jungen Frau beginnen",
+                    "Der jungen Frau die goldene Kugel geben",
+                    "Der jungen Frau dein Herz ausschütten",
+                    "Die junge Frau bitten ihre Haare wieder hinunterzulassen"
+            );
 
     private final ImmutableList<String> steps;
 

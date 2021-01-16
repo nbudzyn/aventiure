@@ -136,7 +136,7 @@ class CreatureFactory {
                         np(F, INDEF, "wunderschöne junge Frau",
                                 "wunderschönen jungen Frau", RAPUNZEL),
                         np(F, DEF, "schöne junge Frau",
-                                "schönen junge Frau", RAPUNZEL),
+                                "schönen jungen Frau", RAPUNZEL),
                         np(F, DEF, "junge Frau",
                                 "jungen Frau", RAPUNZEL));
         final LocationComp locationComp =

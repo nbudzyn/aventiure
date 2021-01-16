@@ -11,12 +11,12 @@ import de.nb.aventiure2.data.world.syscomp.state.AbstractStateComp;
 import de.nb.aventiure2.german.base.Nominalphrase;
 
 import static de.nb.aventiure2.data.world.gameobject.World.*;
-import static de.nb.aventiure2.data.world.syscomp.state.impl.RapunzelState.STILL;
+import static de.nb.aventiure2.data.world.syscomp.state.impl.RapunzelState.UNAEUFFAELLIG;
 
 public class RapunzelStateComp extends AbstractStateComp<RapunzelState> {
     public RapunzelStateComp(final AvDatabase db, final TimeTaker timeTaker,
                              final Narrator n, final World world) {
-        super(RAPUNZEL, db, timeTaker, n, world, RapunzelState.class, STILL);
+        super(RAPUNZEL, db, timeTaker, n, world, RapunzelState.class, UNAEUFFAELLIG);
     }
 
 

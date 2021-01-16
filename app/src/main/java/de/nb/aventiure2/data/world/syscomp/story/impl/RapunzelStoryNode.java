@@ -264,11 +264,9 @@ public enum RapunzelStoryNode implements IStoryNode {
         final ImmutableList.Builder<AbstractDescription<?>> alt = builder();
 
         if (world.loadSC().locationComp().hasRecursiveLocation(VOR_DEM_ALTEN_TURM)) {
-            alt.add(paragraph("Ob der Turm wohl bewohnt ist?"),
+            alt.add(paragraph("Eine kleine Pause hat noch keinem geschadet"),
+                    paragraph("In der Ruhe liegt die Kraft – hast du mal irgendwo gehört"),
                     paragraph("Eine längere Rast würde dir sicher guttun"));
-
-            // FIXME ab dem zb 3. Mal deutlichere Hinweise länger Rasten - sofern das
-            //  Warten nicht ohnehin lang genug ist.
         } else {
             alt.add(paragraph(
                     "Dir kommt noch einmal der alte Turm auf der Hügelkuppe "
@@ -307,6 +305,9 @@ public enum RapunzelStoryNode implements IStoryNode {
                     "bestimmt")
                     .beendet(PARAGRAPH));
             // FIXME Mehr verschiedene Hinweise, dass man die magere Frau heimlich beobachten sollte
+
+            // FIXME ab dem zb 3. Mal deutlichere Hinweise länger Rasten - sofern das
+            //  Warten nicht ohnehin lang genug ist.
         }
 
         if (world.hasSameOuterMostLocationAsSC((IGameObject) loadZauberin(world))) {

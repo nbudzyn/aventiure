@@ -132,7 +132,7 @@ public class RapunzelReactionsComp
 
     private void onSCEnter(@Nullable final ILocationGO from, final ILocationGO to) {
         if (loadSC().locationComp().hasRecursiveLocation(VOR_DEM_ALTEN_TURM)) {
-            onSCEnter_VorDemAltenTurm(from);
+            onSCEnter_VorDemAltenTurm(from, to);
             return;
         }
 
@@ -144,8 +144,12 @@ public class RapunzelReactionsComp
         return;
     }
 
-    private void onSCEnter_VorDemAltenTurm(@Nullable final ILocationGO from) {
+    private void onSCEnter_VorDemAltenTurm(@Nullable final ILocationGO from,
+                                           final ILocationGO to) {
         switch (stateComp.getState()) {
+            case UNAEUFFAELLIG:
+                onSCEnter_VorDemAltenTurm_Unauffaellig(from, to);
+                return;
             case SINGEND:
                 onSCEnter_VorDemAltenTurm_Singend(from);
                 return;
@@ -157,6 +161,14 @@ public class RapunzelReactionsComp
                 //  verlässt und niedergeschlagen zu Rapunzel zurückkehrt und
                 //  Rapunzel auf den Wechsel reagiert (Mental Model für Rapunzel?)
                 return;
+        }
+    }
+
+    private void onSCEnter_VorDemAltenTurm_Unauffaellig(@Nullable final ILocationGO from,
+                                                        final ILocationGO to) {
+        if (to.is(VOR_DEM_ALTEN_TURM_SCHATTEN_DER_BAEUME)) {
+            stateComp.narrateAndSetState(STILL);
+            // Ab jetzt wird Rapunzel hin und wieder singen.
         }
     }
 
