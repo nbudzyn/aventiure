@@ -215,7 +215,11 @@ public enum FroschkoenigStoryNode implements IStoryNode {
                             + "zu spielen")
                     .beendet(PARAGRAPH));
             if (!world.loadSC().locationComp().hasRecursiveLocation(IM_WALD_BEIM_BRUNNEN)) {
-                alt.addAll(altHeissHeutKuehlerOrtWaereSchoen());
+                if (timeTaker.now().getTageszeit().equals(NACHTS)) {
+                    alt.addAll(altNachtsSchlafen(world));
+                } else {
+                    alt.addAll(altHeissHeutKuehlerOrtWaereSchoen());
+                }
             }
         } else {
             alt.addAll(altKugelVermissen());
