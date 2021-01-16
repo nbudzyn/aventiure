@@ -103,10 +103,15 @@ public class RapunzelsZauberinTalkingComp extends AbstractTalkingComp {
 
     private void ansprechen() {
         if (!isSchonBegruesstMitSC()) {
-            begruessen();
-            return;
+            scBegruesst();
+        } else {
+            scSprichtAnBereitsBegruesst();
         }
 
+        zauberinReagiertAufAnsprechen();
+    }
+
+    private void scSprichtAnBereitsBegruesst() {
         final SubstantivischePhrase anaph = anaph(false);
         final ImmutableList.Builder<AbstractDescription<?>> alt = ImmutableList.builder();
 
@@ -125,13 +130,12 @@ public class RapunzelsZauberinTalkingComp extends AbstractTalkingComp {
         );
 
         n.narrateAlt(alt, secs(10));
-
-        zauberinReagiertAufBegruessung();
+        setTalkingTo(SPIELER_CHARAKTER);
     }
 
     private void begruessen() {
         scBegruesst();
-        zauberinReagiertAufBegruessung();
+        zauberinReagiertAufAnsprechen();
     }
 
     private void scBegruesst() {
@@ -173,7 +177,7 @@ public class RapunzelsZauberinTalkingComp extends AbstractTalkingComp {
         setTalkingTo(SPIELER_CHARAKTER);
     }
 
-    private void zauberinReagiertAufBegruessung() {
+    private void zauberinReagiertAufAnsprechen() {
         final SubstantivischePhrase anaph = anaph(true);
 
         final ImmutableList<Satz> altReaktionSaetze =
