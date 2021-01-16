@@ -13,7 +13,6 @@ import java.util.function.Predicate;
 
 import javax.annotation.CheckReturnValue;
 
-import de.nb.aventiure2.german.base.StructuralElement;
 import de.nb.aventiure2.german.base.Wortfolge;
 import de.nb.aventiure2.german.description.AbstractDescription;
 import de.nb.aventiure2.german.description.AbstractFlexibleDescription;
@@ -23,9 +22,8 @@ import de.nb.aventiure2.german.description.StructuredDescription;
 import de.nb.aventiure2.german.description.TextDescription;
 
 import static com.google.common.base.Preconditions.checkArgument;
-import static de.nb.aventiure2.german.base.StructuralElement.SENTENCE;
+import static com.google.common.collect.ImmutableList.toImmutableList;
 import static de.nb.aventiure2.german.base.StructuralElement.WORD;
-import static de.nb.aventiure2.german.base.StructuralElement.max;
 
 /**
  * Builds {@link TextDescription}s from {@link AbstractDescription}s.
@@ -36,13 +34,13 @@ class TextDescriptionBuilder {
      * {@link AbstractDescription}s, always based on the given initial narration.
      */
     @CheckReturnValue
-    static List<TextDescription> toAllgDescriptions(
+    static ImmutableList<TextDescription> toTextDescriptions(
             final Collection<? extends AbstractDescription<?>> altDescriptions,
             final Narration initialNarration) {
         return altDescriptions.stream()
-                .flatMap(d -> toAllgDescriptions(initialNarration, d).stream())
+                .flatMap(d -> toTextDescriptions(initialNarration, d).stream())
                 .filter(distinctByKey(TextDescription::getText))
-                .collect(ImmutableList.toImmutableList());
+                .collect(toImmutableList());
     }
 
     /**
@@ -50,13 +48,13 @@ class TextDescriptionBuilder {
      * on the given initial narration.
      */
     @CheckReturnValue
-    static List<TextDescription> toAllgDescriptions(
+    static List<TextDescription> toTextDescriptions(
             final Narration initialNarration, final AbstractDescription<?> desc) {
         if (initialNarration.allowsAdditionalDuSatzreihengliedOhneSubjekt() &&
                 desc.getStartsNew() == WORD) {
             if (desc instanceof SimpleDuDescription) {
                 final ImmutableList.Builder<TextDescription> res = ImmutableList.builder();
-                res.add(toAllgDescriptionSatzanschlussMitUnd((SimpleDuDescription) desc));
+                res.add(toTextDescriptionsatzanschlussMitUnd((SimpleDuDescription) desc));
                 if (initialNarration.dann()) {
                     res.add(toAllgDescriptionMitKommaDann((SimpleDuDescription) desc));
                 }
@@ -64,7 +62,7 @@ class TextDescriptionBuilder {
             } else if (desc instanceof StructuredDescription
                     && ((StructuredDescription) desc).hasSubjektDu()) {
                 final ImmutableList.Builder<TextDescription> res = ImmutableList.builder();
-                res.add(toAllgDescriptionSatzanschlussMitUnd((StructuredDescription) desc));
+                res.add(toTextDescriptionsatzanschlussMitUnd((StructuredDescription) desc));
                 if (initialNarration.dann()) {
                     res.add(toAllgDescriptionMitKommaDann((StructuredDescription) desc));
                 }
@@ -73,7 +71,7 @@ class TextDescriptionBuilder {
         }
 
         if (initialNarration.dann()) {
-            return toAllgDescriptionsImDannFall(desc);
+            return toTextDescriptionsImDannFall(desc);
         } else {
             return toDefaultAllgDescriptions(desc);
         }
@@ -81,7 +79,7 @@ class TextDescriptionBuilder {
 
     @NonNull
     @CheckReturnValue
-    private static TextDescription toAllgDescriptionSatzanschlussMitUnd(
+    private static TextDescription toTextDescriptionsatzanschlussMitUnd(
             final SimpleDuDescription duDesc) {
         checkArgument(duDesc.getStartsNew() == WORD,
                 "Satzanschluss unmöglich für " + duDesc.getStartsNew());
@@ -94,7 +92,7 @@ class TextDescriptionBuilder {
 
     @NonNull
     @CheckReturnValue
-    private static TextDescription toAllgDescriptionSatzanschlussMitUnd(
+    private static TextDescription toTextDescriptionsatzanschlussMitUnd(
             final StructuredDescription desc) {
         final Wortfolge satzanschlussMitUnd =
                 Wortfolge.joinToWortfolge(desc.getSatz()
@@ -118,7 +116,7 @@ class TextDescriptionBuilder {
 
     @NonNull
     @CheckReturnValue
-    private static List<TextDescription> toAllgDescriptionsImDannFall(
+    private static List<TextDescription> toTextDescriptionsImDannFall(
             final AbstractDescription<?> desc) {
         final TextDescription res =
                 desc.toTextDescriptionMitKonjunktionaladverbWennNoetig("dann");
@@ -142,23 +140,11 @@ class TextDescriptionBuilder {
     private static List<TextDescription> toDefaultAllgDescriptions(
             final AbstractDescription<?> desc) {
         if (desc instanceof AbstractFlexibleDescription) {
-            return ((AbstractFlexibleDescription) desc).altTextDescriptions();
+            return ((AbstractFlexibleDescription<?>) desc).altTextDescriptions();
         }
 
         return ImmutableList.of((TextDescription) desc);
     }
-
-    private static StructuralElement startsNewAtLeastSentenceForFlexbibleDescription(
-            final AbstractDescription<?> desc) {
-        return (desc instanceof AbstractFlexibleDescription) ?
-                // Bei einer AbstractFlexibleDescription ist der Hauptsatz ein echter
-                // Hauptsatz. Daher muss ein neuer Satz begonnen werden.
-                max(desc.getStartsNew(), SENTENCE) :
-                // Ansonsten könnte der "Hauptsatz" auch einfach ein paar Wörter sein,
-                // die Vorgabe WORD soll dann erhalten bleiben
-                desc.getStartsNew();
-    }
-
 
     private static <T> Predicate<T> distinctByKey(final Function<? super T, ?> keyExtractor) {
         final Set<Object> seen = ConcurrentHashMap.newKeySet();

@@ -115,17 +115,6 @@ public class StructuredDescription extends AbstractFlexibleDescription<Structure
     }
 
     @Override
-    public Wortfolge toWortfolgeMitSpeziellemVorfeld() {
-        @Nullable final Wortfolge hauptsatzMitSpeziellemVorfeldOrNull =
-                toWortfolgeMitSpeziellemVorfeldOrNull();
-        if (hauptsatzMitSpeziellemVorfeldOrNull == null) {
-            return toWortfolge();
-        }
-
-        return hauptsatzMitSpeziellemVorfeldOrNull;
-    }
-
-    @Override
     public Wortfolge toWortfolge() {
         return Wortfolge.joinToWortfolge(satz.getVerbzweitsatzStandard());
     }

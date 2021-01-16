@@ -21,6 +21,9 @@ import de.nb.aventiure2.german.description.TimedDescription;
 
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
+import static com.google.common.collect.ImmutableList.toImmutableList;
+import static com.google.common.collect.ImmutableSet.toImmutableSet;
+import static de.nb.aventiure2.data.narration.TextDescriptionBuilder.toTextDescriptions;
 
 /**
  * Android Room DAO for {@link Narration}s.
@@ -39,27 +42,26 @@ public abstract class NarrationDao {
 
         final Narration initialNarration = requireNarration();
 
-        final List<TextDescription> textDescriptionAlternatives =
-                TextDescriptionBuilder.toAllgDescriptions(
-                        alternatives, initialNarration);
+        final ImmutableList<TextDescription> textDescriptionAlternatives =
+                toTextDescriptions(alternatives, initialNarration);
 
-        narrateAltAllgDescriptions(narrationSource, textDescriptionAlternatives,
-                initialNarration);
+        narrateAltTextDescriptions(
+                narrationSource, textDescriptionAlternatives, initialNarration);
     }
 
-    private void narrateAltAllgDescriptions(final Narration.NarrationSource narrationSource,
-                                            final List<TextDescription> alternatives,
+    private void narrateAltTextDescriptions(final Narration.NarrationSource narrationSource,
+                                            final ImmutableList<TextDescription> alternatives,
                                             final Narration initialNarration) {
         checkArgument(!alternatives.isEmpty(), "No alternatives");
 
         final TextDescription bestTextDescription =
-                getBestAllgDescription(alternatives, initialNarration);
+                calcBestTextDescription(alternatives, initialNarration);
 
-        narrate(narrationSource, bestTextDescription);
+        narrateAndConsume(alternatives, narrationSource, bestTextDescription);
     }
 
-    @Nullable
-    AllgTimedDescriptionWithScore chooseBestCombination(
+    @NonNull
+    List<TimedDescription<TextDescription>> altCombinations(
             final Collection<AbstractDescription<?>> firstAlternatives,
             final Collection<? extends TimedDescription<?>> secondAlternatives) {
         checkArgument(!firstAlternatives.isEmpty(), "No first alternatives");
@@ -79,39 +81,21 @@ public abstract class NarrationDao {
                                 .map(na -> new TimedDescription<>
                                         (na, second.getTimeElapsed(),
                                                 second.getCounterIdIncrementedIfTextIsNarrated()))
-                                .collect(ImmutableList.toImmutableList())
+                                .collect(toImmutableList())
                 );
             }
         }
-
-        if (combinations.isEmpty()) {
-            return null;
-        }
-
-        return chooseBest(combinations);
+        return combinations;
     }
 
     @Nullable
-    private static TextDescription getBestAllgDescription(
-            final List<TextDescription> alternatives,
+    private TextDescription calcBestTextDescription(
+            final ImmutableList<TextDescription> alternatives,
             final Narration initialNarration) {
-        float bestScore = Float.NEGATIVE_INFINITY;
-        TextDescription bestTextDescription = null;
-
-        for (final TextDescription textDescriptionAlternative : alternatives) {
-            final float score = TextAdditionEvaluator.evaluateAddition(
-                    initialNarration.getText(),
-                    textDescriptionAlternative.getText());
-
-            if (score > bestScore) {
-                bestScore = score;
-                bestTextDescription = textDescriptionAlternative;
-            }
-        }
-        return bestTextDescription;
+        return alternatives.get(calcBestIndexAndScore(alternatives, initialNarration).index);
     }
 
-    AllgTimedDescriptionWithScore chooseBest(
+    TimedTextDescriptionWithScore chooseBest(
             final Collection<? extends TimedDescription<?>> alternatives) {
         final Narration initialNarration = requireNarration();
 
@@ -119,55 +103,33 @@ public abstract class NarrationDao {
     }
 
     @NonNull
-    private static AllgTimedDescriptionWithScore chooseBest(
+    private TimedTextDescriptionWithScore chooseBest(
             final Narration initialNarration,
             final Collection<? extends TimedDescription<?>> timedAlternatives) {
         checkArgument(!timedAlternatives.isEmpty(), "No timedAlternatives");
 
         // Es könnte Duplikate geben:
-        //  - Duplicate innerhalb einer der timedAlternatives
-        //  - Duplikcate zwischen mehreren timedAlternatives
+        //  - Duplichte innerhalb einer der timedAlternatives
+        //  - Duplikate zwischen mehreren timedAlternatives
         // Um Zeit zu sparen, filtern wir die Duplikate heraus.
 
         final ImmutableList<TimedDescription<TextDescription>> allGeneratedDescriptionsTimed =
                 timedAlternatives.stream()
                         .flatMap(t ->
-                                TextDescriptionBuilder.toAllgDescriptions(
-                                        initialNarration, t.getDescription()).stream()
+                                toTextDescriptions(initialNarration, t.getDescription()).stream()
                                         .map(a -> new TimedDescription<>(
                                                 a,
                                                 t.getTimeElapsed(),
                                                 t.getCounterIdIncrementedIfTextIsNarrated())))
                         .distinct()
-                        .collect(ImmutableList.toImmutableList());
+                        .collect(toImmutableList());
 
         final IndexAndScore indexAndScore =
-                calcBest(initialNarration, allGeneratedDescriptionsTimed);
-        return new AllgTimedDescriptionWithScore(
+                calcBestTimed(initialNarration, allGeneratedDescriptionsTimed);
+        return new TimedTextDescriptionWithScore(
                 allGeneratedDescriptionsTimed.get(indexAndScore.index),
                 indexAndScore.score
         );
-
-            /*
-        AllgTimedDescriptionWithScore res = null;
-
-        for (final TimedDescription<?> descAlternative : timedAlternatives) {
-            final List<TimedDescription<TextDescription>> allgTimedDescriptions =
-                    TimedDescription.toTimed(
-                            TextDescriptionBuilder.toAllgDescriptions(
-                                    initialNarration, descAlternative.getDescription()),
-                            descAlternative.getTimeElapsed());
-            final IndexAndScore indexAndScore = calcBest(initialNarration, allgTimedDescriptions);
-            if (res == null || indexAndScore.score > res.score) {
-                res = new AllgTimedDescriptionWithScore(
-                        allgTimedDescriptions.get(indexAndScore.index),
-                        indexAndScore.score
-                );
-            }
-        }
-
-        return res;
-        */
     }
 
     // IDEA Bei narrate() eine eingebettete Sprache erlauben:
@@ -180,17 +142,38 @@ public abstract class NarrationDao {
     //  - .phorik(..) automatisch oder heuristisch setzen?!
     //  - Beachten: Meist weiß man "RAPUNZEL" gar nicht...
 
-    void narrate(
+    void narrateAndConsume(
+            final ImmutableList<? extends TextDescription> alternativesChosenFrom,
             final Narration.NarrationSource narrationSource,
             @NonNull final TextDescription textDescription) {
+        narrateInternal(narrationSource, textDescription);
+        consume(alternativesChosenFrom, textDescription);
+    }
+
+    private void consume(final ImmutableList<? extends TextDescription> alternativesChosenFrom,
+                         final TextDescription textDescription) {
+        checkArgument(alternativesChosenFrom.contains(textDescription),
+                "textDescription not contained in alternativesChosenFrom");
+
+        final ConsumedNarrationAlternativeInfo info =
+                new ConsumedNarrationAlternativeInfo(alternativesChosenFrom, textDescription);
+
+        final boolean wasAlreadyConsumed = insert(info) == -1;
+        if (wasAlreadyConsumed) {
+            // FIXME Das consumed-Zeugs ist unnötig, wenn es nur 1 Alternative gab!
+            resetConsumed(alternativesChosenFrom);
+        }
+    }
+
+    private void narrateInternal(final Narration.NarrationSource narrationSource,
+                                 @NonNull final TextDescription textDescription) {
         checkNotNull(textDescription, "textDescription is null");
 
         @Nullable final Narration currentNarration = requireNarration();
 
         delete(currentNarration);
 
-        final Narration res = currentNarration.add(narrationSource,
-                textDescription);
+        final Narration res = currentNarration.add(narrationSource, textDescription);
         insert(res);
     }
 
@@ -222,33 +205,35 @@ public abstract class NarrationDao {
      * versucht dabei vor allem, Wiederholgungen mit der unmittelbar zuvor geschriebenen
      * Narration zu vermeiden.
      */
-    private static IndexAndScore calcBest(
+    private IndexAndScore calcBestTimed(
             final Narration initialNarration,
             final Collection<TimedDescription<TextDescription>> alternatives) {
-        return calcBest(initialNarration,
-                alternatives.stream()
-                        .map(TimedDescription::getDescription)
-                        .toArray(TextDescription[]::new));
+        return calcBestIndexAndScore(alternatives.stream()
+                .map(TimedDescription::getDescription)
+                .collect(toImmutableList()), initialNarration
+        );
     }
 
     /**
-     * Wählt einen {@link TextDescription} aus den Alternativen und gibt den Score zurück.
+     * Wählt eine {@link TextDescription} aus den Alternativen und gibt den Score zurück -
+     * versucht dabei vor allem, Wiederholgungen mit der unmittelbar zuvor geschriebenen
+     * Narration zu vermeiden.
      */
-    private static IndexAndScore calcBest(
-            final Narration initialNarration,
-            final TextDescription... alternatives) {
-        checkArgument(alternatives.length > 0,
-                "No alternatives");
+    IndexAndScore calcBestIndexAndScore(
+            final ImmutableList<TextDescription> alternatives,
+            final Narration initialNarration) {
+        checkArgument(!alternatives.isEmpty(), "No alternatives");
 
-        final String currentText = initialNarration.getText();
+        final ConsumedAlternatives consumedAlternatives = loadConsumed(alternatives);
 
-        int bestIndex = -1;
         float bestScore = Float.NEGATIVE_INFINITY;
+        int bestIndex = -1;
+        for (int i = 0; i < alternatives.size(); i++) {
+            final TextDescription alternative = alternatives.get(i);
+            final float score = TextAdditionEvaluator.evaluateAddition(
+                    initialNarration.getText(), alternative.getText(),
+                    consumedAlternatives.isConsumed(alternative));
 
-        for (int i = 0; i < alternatives.length; i++) {
-            final TextDescription alternative = alternatives[i];
-            final float score =
-                    TextAdditionEvaluator.evaluateAddition(currentText, alternative.getText());
             if (score > bestScore) {
                 bestScore = score;
                 bestIndex = i;
@@ -257,6 +242,59 @@ public abstract class NarrationDao {
 
         return new IndexAndScore(bestIndex, bestScore);
     }
+
+    /**
+     * Lädt zu diesem <i>Satz von Alternativen</i>, welche der Alternativen
+     * bereits "verbraucht" sind. Eine Alternative wird "verbraucht", wenn
+     * sie gewählt wird. (Die Alternative sollte also eher nicht erneut gewählt werden, um
+     * Wiederholungen zu vermeiden.)
+     *
+     * @param alternatives <i>Der Satz von Alternativen</i>
+     */
+    private ConsumedAlternatives loadConsumed(
+            final ImmutableList<TextDescription> alternatives) {
+        return loadConsumed(
+                ConsumedNarrationAlternativeInfo.calcAlternativesStringHash(alternatives));
+    }
+
+    /**
+     * Lädt zu diesem <i>Hash-Code eines Satzes von Alternativen</i>, welche der Alternativen
+     * bereits "verbraucht" sind. Eine Alternative wird "verbraucht", wenn
+     * sie gewählt wird. (Die Alternative sollte also eher nicht erneut gewählt werden, um
+     * Wiederholungen zu vermeiden.)
+     */
+    private ConsumedAlternatives loadConsumed(final int alternativesStringHash) {
+        return toConsumedAlternatives(loadConsumedInternal(alternativesStringHash));
+    }
+
+    private static ConsumedAlternatives toConsumedAlternatives(
+            final List<ConsumedNarrationAlternativeInfo> infos) {
+        return new ConsumedAlternatives(infos.stream()
+                .map(ConsumedNarrationAlternativeInfo::getConsumedAlternativeStringHash)
+                .collect(toImmutableSet()));
+    }
+
+    @Query("SELECT * from ConsumedNarrationAlternativeInfo where :alternativesStringHash = alternativesStringHash")
+    abstract List<ConsumedNarrationAlternativeInfo> loadConsumedInternal(
+            final int alternativesStringHash);
+
+    private void resetConsumed(
+            final ImmutableList<? extends TextDescription> alternativesChosenFrom) {
+        resetConsumed(ConsumedNarrationAlternativeInfo
+                .calcAlternativesStringHash(alternativesChosenFrom));
+    }
+
+    /**
+     * Speichert das ConsumedNarrationAlternativeInfo, sofern noch keines vorhanden ist.
+     *
+     * @return Gab es bereits eines mit gleichen Schlüsseln (also gleichen Daten), so
+     * wird -1 zurückgegeben.
+     */
+    @Insert(onConflict = OnConflictStrategy.IGNORE)
+    abstract long insert(ConsumedNarrationAlternativeInfo info);
+
+    @Query("DELETE FROM ConsumedNarrationAlternativeInfo WHERE :alternativesStringHash = alternativesStringHash")
+    abstract void resetConsumed(int alternativesStringHash);
 
     @Query("SELECT * from Narration")
     abstract Narration loadNarration();
@@ -273,13 +311,21 @@ public abstract class NarrationDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     abstract void insertInternal(Narration narration);
 
-    private static class IndexAndScore {
+    static class IndexAndScore {
         private final int index;
         private final float score;
 
         private IndexAndScore(final int index, final float score) {
             this.index = index;
             this.score = score;
+        }
+
+        int getIndex() {
+            return index;
+        }
+
+        float getScore() {
+            return score;
         }
 
         @Override

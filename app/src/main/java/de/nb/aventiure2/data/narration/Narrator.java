@@ -14,6 +14,7 @@ import com.google.common.collect.ImmutableList;
 
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.List;
 import java.util.Set;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -36,8 +37,9 @@ import de.nb.aventiure2.german.description.TextDescription;
 import de.nb.aventiure2.german.description.TimedDescription;
 
 import static de.nb.aventiure2.data.narration.Narration.NarrationSource.REACTIONS;
-import static de.nb.aventiure2.data.time.AvTimeSpan.NO_TIME;
+import static de.nb.aventiure2.data.narration.TextDescriptionBuilder.toTextDescriptions;
 import static de.nb.aventiure2.german.description.TimedDescription.toTimed;
+import static de.nb.aventiure2.german.description.TimedDescription.toUntimed;
 import static java.util.Arrays.asList;
 
 @ParametersAreNonnullByDefault
@@ -226,13 +228,13 @@ public class Narrator {
         // auf "gleiche" Alternativen beschränken - ansonsten ist
         // nicht klar, wieviel Zeit jetzt (!) vergehen muss oder welcher
         // Counter hochgezählt werden muss!
-        final AllgTimedDescriptionWithScore best = dao.chooseBest(alternatives);
+        final TimedTextDescriptionWithScore best = dao.chooseBest(alternatives);
 
         return alternatives.stream()
-                .filter(d -> d.getTimeElapsed().equals(best.allgTimedDescription.getTimeElapsed()))
+                .filter(d -> d.getTimeElapsed().equals(best.timedTextDescription.getTimeElapsed()))
                 .filter(d -> Objects.equal(
                         d.getCounterIdIncrementedIfTextIsNarrated(),
-                        best.allgTimedDescription.getCounterIdIncrementedIfTextIsNarrated()))
+                        best.timedTextDescription.getCounterIdIncrementedIfTextIsNarrated()))
                 .collect(Collectors.toSet());
     }
 
@@ -249,7 +251,7 @@ public class Narrator {
      * </ul>
      */
     private boolean narrateTemporaryNarrationAndTryCombiningWithAlternative(
-            final Collection<? extends TimedDescription<?>> alternatives) {
+            final Collection<? extends TimedDescription<?>> timedAlternatives) {
         // Hier gibt es zwei Möglichkeiten:
         // 1. Die temporary Narration und die (neuen) Alternatives werden
         //  gemeinsam in einen Text gegossen, etwa in der Art
@@ -259,19 +261,32 @@ public class Narrator {
         //  werden temporär gespeichert:
         //  "Du gehst weiter durch den Wald".
 
-        final AllgTimedDescriptionWithScore bestTemporaryNarrationAlone =
-                chooseBestTemporaryNarration();
-        @Nullable final AllgTimedDescriptionWithScore bestCombined
-                = dao.chooseBestCombination(
-                temporaryNarration.getDescriptionAlternatives(), alternatives);
+        final Narration initialNarration = dao.requireNarration();
 
-        if (bestCombined != null && bestCombined.score >= bestTemporaryNarrationAlone.score) {
-            // Die temporary Narration und die (neuen) Alternatives werden
-            //  gemeinsam in einen optimalen Text gegossen, etwa in der Art
-            //  "Als du weiter durch den Wald gehst, kommt dir eine Frau entgegen"
-            temporaryNarration = null;
-            narratePassTimeAndIncrementCounter(bestCombined.allgTimedDescription);
-            return true;
+        final ImmutableList<TextDescription> allGeneratedDescriptionsAlone =
+                toTextDescriptions(temporaryNarration.getDescriptionAlternatives(),
+                        initialNarration);
+
+        final NarrationDao.IndexAndScore indexAndScoreAlone =
+                dao.calcBestIndexAndScore(allGeneratedDescriptionsAlone, initialNarration);
+
+        final List<TimedDescription<TextDescription>> alternativeCombinations =
+                dao.altCombinations(
+                        temporaryNarration.getDescriptionAlternatives(), timedAlternatives);
+
+        if (!alternativeCombinations.isEmpty()) {
+            final TimedTextDescriptionWithScore bestCombined =
+                    dao.chooseBest(alternativeCombinations);
+            if (bestCombined.score >= indexAndScoreAlone.getScore()) {
+                // Die temporary Narration und die (neuen) Alternatives werden
+                //  gemeinsam in einen optimalen Text gegossen, etwa in der Art
+                //  "Als du weiter durch den Wald gehst, kommt dir eine Frau entgegen"
+                temporaryNarration = null;
+
+                narratePassTimeAndIncrementCounter(
+                        alternativeCombinations, bestCombined.timedTextDescription);
+                return true;
+            }
         }
 
         // Wenn scoreCombinedDescription < scoreTemporaryNarrationAlone:
@@ -279,28 +294,21 @@ public class Narrator {
         //  "Du gehst weiter durch den Wald".
 
         // Time of temporaryNarration has already been accounted for.
-        dao.narrate(temporaryNarration.getNarrationSource(),
-                bestTemporaryNarrationAlone.allgTimedDescription.getDescription());
+
+        dao.narrateAndConsume(allGeneratedDescriptionsAlone,
+                temporaryNarration.getNarrationSource(),
+                allGeneratedDescriptionsAlone.get(indexAndScoreAlone.getIndex()));
 
         // Die  Alternatives müssen noch temporär gespeichert werden
         return false;
     }
 
-    /**
-     * Wählt die beste Alternative der {@link #temporaryNarration} aus.
-     */
-    private AllgTimedDescriptionWithScore chooseBestTemporaryNarration() {
-        return dao.chooseBest(
-                // Zeit spielt hier keine Rolle - die Zeit für die
-                // temporaryNarration ist ja schon vergangen!
-                toTimed(temporaryNarration.getDescriptionAlternatives(), NO_TIME)
-        );
-    }
-
     private void narratePassTimeAndIncrementCounter(
+            final List<TimedDescription<TextDescription>> alternativeCombinations,
             final TimedDescription<TextDescription> allgTimedDescription) {
         // Time of temporaryNarration has already been accounted for.
-        dao.narrate(narrationSourceJustInCase, allgTimedDescription.getDescription());
+        dao.narrateAndConsume(toUntimed(alternativeCombinations),
+                narrationSourceJustInCase, allgTimedDescription.getDescription());
         passTimeAndIncCounter(allgTimedDescription);
     }
 

@@ -7,14 +7,14 @@ import java.util.Objects;
 import de.nb.aventiure2.german.description.TextDescription;
 import de.nb.aventiure2.german.description.TimedDescription;
 
-class AllgTimedDescriptionWithScore {
-    final TimedDescription<TextDescription> allgTimedDescription;
+class TimedTextDescriptionWithScore {
+    final TimedDescription<TextDescription> timedTextDescription;
     final float score;
 
-    AllgTimedDescriptionWithScore(
-            final TimedDescription<TextDescription> allgTimedDescription,
+    TimedTextDescriptionWithScore(
+            final TimedDescription<TextDescription> timedTextDescription,
             final float score) {
-        this.allgTimedDescription = allgTimedDescription;
+        this.timedTextDescription = timedTextDescription;
         this.score = score;
     }
 
@@ -26,9 +26,9 @@ class AllgTimedDescriptionWithScore {
         if (o == null || getClass() != o.getClass()) {
             return false;
         }
-        final AllgTimedDescriptionWithScore that = (AllgTimedDescriptionWithScore) o;
+        final TimedTextDescriptionWithScore that = (TimedTextDescriptionWithScore) o;
         return Float.compare(that.score, score) == 0 &&
-                Objects.equals(allgTimedDescription, that.allgTimedDescription);
+                Objects.equals(timedTextDescription, that.timedTextDescription);
     }
 
     @Override
@@ -39,8 +39,8 @@ class AllgTimedDescriptionWithScore {
     @NonNull
     @Override
     public String toString() {
-        return "AllgTimedDescriptionWithScore{" +
-                "allgTimedDescription=" + allgTimedDescription +
+        return "TimedTextDescriptionWithScore{" +
+                "allgTimedDescription=" + timedTextDescription +
                 ", score=" + score +
                 '}';
     }

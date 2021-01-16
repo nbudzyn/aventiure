@@ -8,6 +8,7 @@ import org.jetbrains.annotations.Contract;
 
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Locale;
 
 import static java.util.Arrays.asList;
 
@@ -24,19 +25,42 @@ class TextAdditionEvaluator {
     /**
      * Bewertet diese Hinzufügung (<code>addition</code>) an diesen
      * <code>base</code>-Text. Wiederholgungen gegenüber dem
-     * Ende des <code>base</code>-Textes gelten als schlecht.
+     * Ende des <code>base</code>-Textes gelten als schlecht. Außerdem wird geprüft, ob
+     * derselbe Satz an Alternativen schon einmal geprüft wurde - Alternativen, die bei einem
+     * früheren Mal gewählt wurden, werden dann vermieden.
      *
+     * @param base              Der Text, dem etwas hinzugefügt werdnen soll
+     * @param isConsumed        Wurde dieser Kandidat bereits bei einem der letzten Male gewählt, als aus
+     *                          <i>denselben Alternativen</i> ausgewählt wurde - gilt er also
+     *                          aus "verbraucht"?
+     * @param additionCandidate Der Text, der als Kandidat (Alternative) zum Hinzugefügt-werden geprüft
+     *                          werden soll
      * @return Bewertungsergebnis - je größer die Zahl, desto besser
      */
-    static float evaluateAddition(final String base, final String addition) {
-        // Wir wollen wiederholungen vermeiden.
-        // Wenn also addition Wörter enthält, die das Ende von base wiederholen, ist
-        // das schlecht.
-
+    static float evaluateAddition(final String base,
+                                  final String additionCandidate,
+                                  final boolean isConsumed) {
         float res = 0;
-        // Wir machen es so: Wir teilen addition in Wörter auf,
+
+        // Wir wollen Wiederholungen vermeiden.
+        // Dazu gibt es zwei Stratgien:
+        // Strategie "verbrauchte Kandidaten vermeiden": Wenn bei den letzten Malen, als aus denselben
+        // Alternativen ausgewählt werden sollte, dieser Kandidat ausgewählt wurde, wollen wir
+        // ihn vermeiden.
+        if (isConsumed) {
+            // FIXME Was wäre hier ein guter Wert? Je kleiner die Zahl, desto eher
+            //  wird auch ein "verbrauchter" Kandidat noch wiederholt, wenn die Alternativen
+            //  unschöne Endewiederholungen erzeugen würde.
+            res -= 30000;
+        }
+
+        // FIXME Hierfür eigene Methode...
+
+        // Strategie "Endewiederholungen vermeiden": Wenn der additionCandidate Wörter enthält,
+        // die das Ende von base wiederholen, ist das schlecht.
+        // Wir machen es dazu so: Wir teilen addition in Wörter auf,
         // dabei verwerfen wir Interpunktion.
-        final ImmutableList<String> additionWords = splitInWords(addition);
+        final ImmutableList<String> additionWords = splitInWords(additionCandidate);
 
         // Dasselbe machen wir mit dem Ende von base.
         final ImmutableList<String> baseWords = splitEndInWords(base, 100);
@@ -54,7 +78,7 @@ class TextAdditionEvaluator {
         res += evaluateAdditionWordSequence(baseWords, additionWords, 2);
         // 1?
         res += evaluateAdditionWordSequence(baseWords, additionWords, 1);
-        // Das addieren wir alles - je größer die Zahl, desto besser!
+        // Das addieren wir alles - je höher die Zahl, desto besser!
 
         return res;
     }
@@ -81,7 +105,7 @@ class TextAdditionEvaluator {
                 from--;
             }
 
-            res.addFirst(text.substring(from + 1, to + 1).toLowerCase());
+            res.addFirst(text.substring(from + 1, to + 1).toLowerCase(Locale.GERMAN));
 
             if (res.size() >= maxWords) {
                 return ImmutableList.copyOf(res);

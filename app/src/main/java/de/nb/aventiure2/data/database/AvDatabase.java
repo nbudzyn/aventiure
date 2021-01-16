@@ -17,6 +17,7 @@ import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
+import de.nb.aventiure2.data.narration.ConsumedNarrationAlternativeInfo;
 import de.nb.aventiure2.data.narration.Narration;
 import de.nb.aventiure2.data.narration.NarrationDao;
 import de.nb.aventiure2.data.narration.NarrationSourceConverters;
@@ -72,6 +73,7 @@ import static de.nb.aventiure2.data.world.gameobject.World.*;
 
 @Database(entities = {
         Counter.class,
+        ConsumedNarrationAlternativeInfo.class,
         Narration.class,
         SCActionStepCount.class,
         NowEntity.class,

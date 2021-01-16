@@ -19,6 +19,7 @@ import de.nb.aventiure2.german.base.StructuralElement;
 import de.nb.aventiure2.german.base.SubstantivischePhrase;
 
 import static com.google.common.base.Preconditions.checkArgument;
+import static com.google.common.collect.ImmutableList.toImmutableList;
 import static de.nb.aventiure2.german.base.Person.P3;
 
 /**
@@ -64,8 +65,18 @@ public class TimedDescription<D extends AbstractDescription<?>> {
         return descriptions.stream()
                 .map(d -> new TimedDescription<>(
                         d, timeElapsed, counterIdIncrementedIfTextIsNarrated))
-                .collect(ImmutableList.toImmutableList());
+                .collect(toImmutableList());
     }
+
+    @CheckReturnValue
+    @NonNull
+    public static <D extends AbstractDescription<?>>
+    ImmutableList<D> toUntimed(final Collection<? extends TimedDescription<D>> timedDescriptions) {
+        return timedDescriptions.stream()
+                .map(TimedDescription::getDescription)
+                .collect(toImmutableList());
+    }
+
 
     public TimedDescription(final D description,
                             final AvTimeSpan timeElapsed) {

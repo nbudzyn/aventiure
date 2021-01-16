@@ -26,14 +26,6 @@ public abstract class AbstractFlexibleDescription<SELF extends AbstractDescripti
 
     @NonNull
     @CheckReturnValue
-    public final TextDescription toTextDescriptionMitSpeziellemVorfeld() {
-        return toTextDescriptionKeepParams(toWortfolgeMitSpeziellemVorfeld());
-    }
-
-    abstract Wortfolge toWortfolgeMitSpeziellemVorfeld();
-
-    @NonNull
-    @CheckReturnValue
     public final TextDescription toTextDescriptionSatzanschlussOhneSubjekt() {
         return toTextDescriptionKeepParams(toWortfolgeSatzanschlussOhneSubjekt());
     }

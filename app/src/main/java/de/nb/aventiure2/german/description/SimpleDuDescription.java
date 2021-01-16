@@ -41,7 +41,7 @@ public class SimpleDuDescription extends AbstractFlexibleDescription<SimpleDuDes
      * Anführungszeichen aus. Wenn der Satz beendet wird, muss vielleicht außerdem
      * noch ein Punkt nach dem Anführungszeitchen gesetzt werden.
      */
-    private boolean woertlicheRedeNochOffen;
+    private final boolean woertlicheRedeNochOffen;
 
     /**
      * Ob ein Komma aussteht. Wenn ein Komma aussteht, muss als nächstes ein Komma folgen -
@@ -117,18 +117,6 @@ public class SimpleDuDescription extends AbstractFlexibleDescription<SimpleDuDes
     }
 
     @Override
-    public Wortfolge toWortfolgeMitSpeziellemVorfeld() {
-        final Wortfolge duHauptsatzMitSpeziellemVorfeldOrNull =
-                toWortfolgeMitSpeziellemVorfeldOrNull();
-
-        if (duHauptsatzMitSpeziellemVorfeldOrNull == null) {
-            return toWortfolge();
-        }
-
-        return duHauptsatzMitSpeziellemVorfeldOrNull;
-    }
-
-    @Override
     public Wortfolge toWortfolge() {
         return w(GermanUtil.buildHauptsatz("du",
                 verb,
@@ -168,11 +156,6 @@ public class SimpleDuDescription extends AbstractFlexibleDescription<SimpleDuDes
     public Wortfolge toWortfolgeSatzanschlussOhneSubjekt() {
         return w(joinToString(verb, remainder), woertlicheRedeNochOffen, isKommaStehtAus(),
                 copyParams().getPhorikKandidat());
-    }
-
-    public SimpleDuDescription woertlicheRedeNochOffen(final boolean woertlicheRedeNochOffen) {
-        this.woertlicheRedeNochOffen = woertlicheRedeNochOffen;
-        return this;
     }
 
     @Override
