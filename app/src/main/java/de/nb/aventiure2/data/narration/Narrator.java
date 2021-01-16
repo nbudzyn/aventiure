@@ -36,7 +36,9 @@ import de.nb.aventiure2.german.description.AbstractDescription;
 import de.nb.aventiure2.german.description.TextDescription;
 import de.nb.aventiure2.german.description.TimedDescription;
 
+import static com.google.common.collect.ImmutableList.toImmutableList;
 import static de.nb.aventiure2.data.narration.Narration.NarrationSource.REACTIONS;
+import static de.nb.aventiure2.data.narration.TextDescriptionBuilder.distinctByKey;
 import static de.nb.aventiure2.data.narration.TextDescriptionBuilder.toTextDescriptions;
 import static de.nb.aventiure2.german.description.TimedDescription.toTimed;
 import static de.nb.aventiure2.german.description.TimedDescription.toUntimed;
@@ -262,29 +264,53 @@ public class Narrator {
         //  "Du gehst weiter durch den Wald".
 
         final Narration initialNarration = dao.requireNarration();
-
         final ImmutableList<TextDescription> allGeneratedDescriptionsAlone =
                 toTextDescriptions(temporaryNarration.getDescriptionAlternatives(),
                         initialNarration);
-
-        final NarrationDao.IndexAndScore indexAndScoreAlone =
-                dao.calcBestIndexAndScore(allGeneratedDescriptionsAlone, initialNarration);
 
         final List<TimedDescription<TextDescription>> alternativeCombinations =
                 dao.altCombinations(
                         temporaryNarration.getDescriptionAlternatives(), timedAlternatives);
 
+        // Optimierung, Zeit sparen!
+        if (allGeneratedDescriptionsAlone.size() == 1 && alternativeCombinations.isEmpty()) {
+            // Es wird nur die temporary Narration erzählt:
+            //  "Du gehst weiter durch den Wald".
+
+            // Time of temporaryNarration has already been accounted for.
+            dao.narrateAndConsume(allGeneratedDescriptionsAlone,
+                    temporaryNarration.getNarrationSource(),
+                    allGeneratedDescriptionsAlone.get(0));
+
+            // Die  Alternatives müssen noch temporär gespeichert werden
+            return false;
+        }
+
+        final NarrationDao.IndexAndScore indexAndScoreAlone =
+                dao.calcBestIndexAndScore(allGeneratedDescriptionsAlone, initialNarration);
+
         if (!alternativeCombinations.isEmpty()) {
-            final TimedTextDescriptionWithScore bestCombined =
-                    dao.chooseBest(alternativeCombinations);
-            if (bestCombined.score >= indexAndScoreAlone.getScore()) {
+            // Hier könnte es ganz theoretisch Duplikate geben.
+            //  Um Zeit zu sparen, filtern wir die Duplikate heraus.
+            //  Löschen, wenn es keine Duplikate geben kann
+            final ImmutableList<TimedDescription<TextDescription>>
+                    alternativeCombinationsOhneDuplikate =
+                    alternativeCombinations.stream()
+                            .filter(distinctByKey(t -> t.getDescription().getText()))
+                            .collect(toImmutableList());
+
+            final NarrationDao.IndexAndScore indexAndScoreCombined =
+                    dao.calcBestTimed(initialNarration, alternativeCombinationsOhneDuplikate);
+
+            if (indexAndScoreCombined.getScore() >= indexAndScoreAlone.getScore()) {
                 // Die temporary Narration und die (neuen) Alternatives werden
                 //  gemeinsam in einen optimalen Text gegossen, etwa in der Art
                 //  "Als du weiter durch den Wald gehst, kommt dir eine Frau entgegen"
                 temporaryNarration = null;
 
                 narratePassTimeAndIncrementCounter(
-                        alternativeCombinations, bestCombined.timedTextDescription);
+                        alternativeCombinationsOhneDuplikate,
+                        alternativeCombinationsOhneDuplikate.get(indexAndScoreCombined.getIndex()));
                 return true;
             }
         }
@@ -294,7 +320,6 @@ public class Narrator {
         //  "Du gehst weiter durch den Wald".
 
         // Time of temporaryNarration has already been accounted for.
-
         dao.narrateAndConsume(allGeneratedDescriptionsAlone,
                 temporaryNarration.getNarrationSource(),
                 allGeneratedDescriptionsAlone.get(indexAndScoreAlone.getIndex()));
@@ -305,11 +330,11 @@ public class Narrator {
 
     private void narratePassTimeAndIncrementCounter(
             final List<TimedDescription<TextDescription>> alternativeCombinations,
-            final TimedDescription<TextDescription> allgTimedDescription) {
+            final TimedDescription<TextDescription> timedTextDescription) {
         // Time of temporaryNarration has already been accounted for.
         dao.narrateAndConsume(toUntimed(alternativeCombinations),
-                narrationSourceJustInCase, allgTimedDescription.getDescription());
-        passTimeAndIncCounter(allgTimedDescription);
+                narrationSourceJustInCase, timedTextDescription.getDescription());
+        passTimeAndIncCounter(timedTextDescription);
     }
 
     private void doTemporaryNarration() {

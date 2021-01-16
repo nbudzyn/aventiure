@@ -214,7 +214,7 @@ public abstract class NarrationDao {
      * versucht dabei vor allem, Wiederholgungen mit der unmittelbar zuvor geschriebenen
      * Narration zu vermeiden.
      */
-    private IndexAndScore calcBestTimed(
+    IndexAndScore calcBestTimed(
             final Narration initialNarration,
             final Collection<TimedDescription<TextDescription>> alternatives) {
         return calcBestIndexAndScore(alternatives.stream()

@@ -146,7 +146,7 @@ class TextDescriptionBuilder {
         return ImmutableList.of((TextDescription) desc);
     }
 
-    private static <T> Predicate<T> distinctByKey(final Function<? super T, ?> keyExtractor) {
+    static <T> Predicate<T> distinctByKey(final Function<? super T, ?> keyExtractor) {
         final Set<Object> seen = ConcurrentHashMap.newKeySet();
         return t -> seen.add(keyExtractor.apply(t));
     }
