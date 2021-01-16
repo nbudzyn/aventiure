@@ -77,14 +77,12 @@ public enum VerbSubjDatAkk implements Praedikat {
     }
 
     public PraedikatDatAkkMitEinerAkkLeerstelle mitDat(
-            final SubstantivischePhrase describableDat) {
-        return new PraedikatDatAkkMitEinerAkkLeerstelle(verb,
-                describableDat);
+            final SubstantivischePhrase substPhrDat) {
+        return new PraedikatDatAkkMitEinerAkkLeerstelle(verb, substPhrDat);
     }
 
     public PraedikatDatAkkMitEinerDatLeerstelle mitAkk(
-            final SubstantivischePhrase describableAkk) {
-        return new PraedikatDatAkkMitEinerDatLeerstelle(verb,
-                describableAkk);
+            final SubstantivischePhrase substPhrAkk) {
+        return new PraedikatDatAkkMitEinerDatLeerstelle(verb, substPhrAkk);
     }
 }

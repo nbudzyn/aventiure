@@ -4,7 +4,6 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Iterables;
 
 import java.util.Collection;
-import java.util.Iterator;
 
 import javax.annotation.Nullable;
 
@@ -137,23 +136,8 @@ public class PraedikatMitPraedikativerAdjektivphraseOhneLeerstellen
             return speziellesVorfeldFromSuper;
         }
 
-        @Nullable final Konstituentenfolge konstituentenPraedAdjPhr =
-                adjektivphrase.getPraedikativOhneAnteilKandidatFuerNachfeld(person, numerus);
-
-
-        if (konstituentenPraedAdjPhr != null) {
-            final Iterator<Konstituente> iterKonstituentenPraedAdjPhr =
-                    konstituentenPraedAdjPhr.iterator();
-            final Konstituente firstKonstituentePraedAdjPhr = iterKonstituentenPraedAdjPhr.next();
-            if (!iterKonstituentenPraedAdjPhr.hasNext()) {
-                // "Glücklich wirkt sie [, dich zu sehen].". Markiert - aber möglich.
-                return firstKonstituentePraedAdjPhr;
-            }
-
-            // else : Die prädikative Adjektivphrase erzeugt mehrere Konstituenten. Dann wollen
-            // wir sie nicht in das Vorfeld stellen. Dinge wie "Sehr glücklich wirkt
-            // sie." sind zwar möglich, wirken aber schnell unnatürlich.
-        }
+        // "Glücklich wirkt sie [, dich zu sehen]" oder "Verstimmt schaut sie" wären sehr markiert.
+        // In aller Regel ist das Adjektiv das Rhema und sollte also hinten stehen.
 
         return null;
     }

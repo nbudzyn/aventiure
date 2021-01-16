@@ -50,16 +50,14 @@ public enum VerbSubjAkkPraep implements Praedikat {
     }
 
     public PraedikatMitEinerObjektleerstelle mitPraep(
-            final SubstantivischePhrase describablePraep) {
-        return new PraedikatAkkPraepMitEinerAkkLeerstelle(verb,
-                praepositionMitKasus,
-                describablePraep);
+            final SubstantivischePhrase substPhrPraep) {
+        return new PraedikatAkkPraepMitEinerAkkLeerstelle(
+                verb, praepositionMitKasus, substPhrPraep);
     }
 
     public PraedikatMitEinerObjektleerstelle mitAkk(
-            final SubstantivischePhrase describableAkk) {
-        return new PraedikatAkkPraepMitEinerPraepLeerstelle(verb,
-                praepositionMitKasus,
-                describableAkk);
+            final SubstantivischePhrase substPhrAkk) {
+        return new PraedikatAkkPraepMitEinerPraepLeerstelle(
+                verb, praepositionMitKasus, substPhrAkk);
     }
 }

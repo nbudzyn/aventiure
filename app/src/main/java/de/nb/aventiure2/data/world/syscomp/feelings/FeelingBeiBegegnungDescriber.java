@@ -65,12 +65,23 @@ public interface FeelingBeiBegegnungDescriber {
      * @return Möglicherweise eine leere Liste (insbesondere bei extremen Gefühlen)!
      */
     @NonNull
-    // IDEA Auch die Zauberin könnte irgendwie wirken, wenn sie
-    //  den SC (wieder-) trifft...
     ImmutableList<AdjPhrOhneLeerstellen> altEindruckBeiBegegnungAdjPhr(
             SubstantivischePhrase gameObjectSubjekt,
             SubstantivischePhrase targetDesc, int feelingIntensity,
             final boolean targetKnown);
+
+    /**
+     * Gibt eventuell alternative Adverbien zurück, die den
+     * Eindruck beschreiben, den dieses Feeling Being auf das Target macht, wenn die beiden sich
+     * begegnen. Die Adjektivphrasen aus
+     * {@link #altEindruckBeiBegegnungAdjPhr(SubstantivischePhrase, SubstantivischePhrase, int, boolean)}
+     * werden hier <i>nicht</i> wiederholt.
+     *
+     * @return Möglicherweise eine leere Liste (insbesondere bei extremen Gefühlen)!
+     */
+    @NonNull
+    ImmutableList<String>
+    altEindruckBeiBegegnungZusAdverbialeAngaben(int feelingIntensity);
 
     /**
      * Gibt eventuell alternative Adjektivphrasen zurück, die den

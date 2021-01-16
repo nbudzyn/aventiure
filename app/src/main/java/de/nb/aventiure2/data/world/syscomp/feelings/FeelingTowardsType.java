@@ -11,6 +11,7 @@ import de.nb.aventiure2.german.praedikat.AdverbialeAngabeSkopusVerbAllg;
 import de.nb.aventiure2.german.satz.Satz;
 
 import static java.util.stream.Collectors.toList;
+import static java.util.stream.Collectors.toSet;
 
 /**
  * Ein Spektrum von Gefühlen, dass ein {@link IFeelingBeingGO} gegenüber jemandem oder
@@ -54,7 +55,8 @@ public enum FeelingTowardsType {
 
         final ImmutableList.Builder<Satz> res = ImmutableList.builder();
         res.addAll(FeelingsSaetzeUtil.
-                toReaktionSaetze(gameObjectSubjekt, altEindruckAdjPhr, adverbialeAngaben));
+                toReaktionSaetze(gameObjectSubjekt, targetDesc, altEindruckAdjPhr,
+                        adverbialeAngaben));
 
         res.addAll(feelingBeiBegegnungDescriber.altReaktionBeiBegegnungSaetze(
                 gameObjectSubjekt, targetDesc, feelingIntensity, targetKnown
@@ -70,7 +72,7 @@ public enum FeelingTowardsType {
      * Die Methode garantiert, dass niemals etwas wie "du, der du..." oder
      * "du, die du..." oder "du, das du..." generiert wird.
      */
-    public ImmutableList<Satz> altReaktionWennSCGehenMoechteSaetze(
+    public ImmutableList<Satz> altReaktionWennTargetGehenMoechteSaetze(
             final SubstantivischePhrase gameObjectSubjekt,
             final SubstantivischePhrase targetDesc, final int feelingIntensity,
             final boolean targetKnown) {
@@ -83,7 +85,7 @@ public enum FeelingTowardsType {
         final ImmutableList.Builder<Satz> res = ImmutableList.builder();
 
         final ImmutableList<Satz> saetze = FeelingsSaetzeUtil.toReaktionSaetze(
-                gameObjectSubjekt, altEindruckAdjPhr);
+                gameObjectSubjekt, targetDesc, altEindruckAdjPhr);
 
         res.addAll(saetze);
 
@@ -118,10 +120,16 @@ public enum FeelingTowardsType {
             final SubstantivischePhrase gameObjectSubjekt, final SubstantivischePhrase targetDesc,
             final int feelingIntensity, final boolean targetKnown) {
 
-        return AdjPhrOhneLeerstellen.toAdvAngabenSkopusVerbAllg(gameObjectSubjekt,
-                altEindruckBeiBegegnungAdjPhr(gameObjectSubjekt,
-                        targetDesc, feelingIntensity,
-                        targetKnown));
+        return ImmutableList.<AdverbialeAngabeSkopusVerbAllg>builder()
+                .addAll(AdjPhrOhneLeerstellen.toAdvAngabenSkopusVerbAllg(gameObjectSubjekt,
+                        altEindruckBeiBegegnungAdjPhr(gameObjectSubjekt,
+                                targetDesc, feelingIntensity,
+                                targetKnown)))
+                .addAll(feelingBeiBegegnungDescriber
+                        .altEindruckBeiBegegnungZusAdverbialeAngaben(feelingIntensity).stream()
+                        .map(AdverbialeAngabeSkopusVerbAllg::new)
+                        .collect(toSet()))
+                .build();
     }
 
     /**

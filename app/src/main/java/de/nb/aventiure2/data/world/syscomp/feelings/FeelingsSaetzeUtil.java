@@ -37,12 +37,14 @@ class FeelingsSaetzeUtil {
      */
     static ImmutableList<Satz> toReaktionSaetze(
             final SubstantivischePhrase gameObjectSubjekt,
+            final SubstantivischePhrase feelingTargetDesc,
             final ImmutableList<AdjPhrOhneLeerstellen> eindruckAdjPhr) {
         final ImmutableList<AdverbialeAngabeSkopusVerbAllg> adverbialeAngaben =
                 AdjPhrOhneLeerstellen
                         .toAdvAngabenSkopusVerbAllg(gameObjectSubjekt, eindruckAdjPhr);
 
-        return toReaktionSaetze(gameObjectSubjekt, eindruckAdjPhr, adverbialeAngaben);
+        return toReaktionSaetze(gameObjectSubjekt, feelingTargetDesc, eindruckAdjPhr,
+                adverbialeAngaben);
     }
 
     /**
@@ -51,11 +53,13 @@ class FeelingsSaetzeUtil {
      */
     static ImmutableList<Satz> toReaktionSaetze(
             final SubstantivischePhrase gameObjectSubjekt,
+            final SubstantivischePhrase feelingTargetDesc,
             final ImmutableList<AdjPhrOhneLeerstellen> eindruckAdjPhr,
             final ImmutableList<AdverbialeAngabeSkopusVerbAllg> eindruckAdverbialeAngaben) {
         final ImmutableList.Builder<Satz> res = ImmutableList.builder();
 
-        res.addAll(toAnsehenSaetze(gameObjectSubjekt, eindruckAdverbialeAngaben));
+        res.addAll(
+                toAnsehenSaetze(gameObjectSubjekt, feelingTargetDesc, eindruckAdverbialeAngaben));
 
         res.addAll(toEindrueckSaetze(gameObjectSubjekt, eindruckAdjPhr));
 
@@ -76,10 +80,13 @@ class FeelingsSaetzeUtil {
     }
 
     static ImmutableList<Satz> toAnsehenSaetze(final SubstantivischePhrase gameObjectSubjekt,
+                                               final SubstantivischePhrase angesehenDesc,
                                                final ImmutableList<AdverbialeAngabeSkopusVerbAllg> adverbialeAngaben) {
+        // FIXME generell habe ich den Eindruck, dass bei der Zauberin immer dieselben
+        //  wenigen Auswahlen erscheinen.
         return adverbialeAngaben.stream()
                 .flatMap(aa -> Stream.of(ansehenVerben())
-                        .map(v -> v.mit(gameObjectSubjekt)
+                        .map(v -> v.mit(angesehenDesc)
                                 .mitAdverbialerAngabe(aa)
                                 .alsSatzMitSubjekt(gameObjectSubjekt)))
                 .collect(toImmutableList());

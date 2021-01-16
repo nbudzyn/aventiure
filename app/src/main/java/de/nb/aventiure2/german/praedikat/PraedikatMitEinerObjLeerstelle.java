@@ -50,10 +50,9 @@ class PraedikatMitEinerObjLeerstelle implements PraedikatMitEinerObjektleerstell
 
     @Override
     public PraedikatSubjObjOhneLeerstellen mit(
-            final SubstantivischePhrase describable) {
+            final SubstantivischePhrase substPhr) {
         return new PraedikatSubjObjOhneLeerstellen(verb,
-                kasusOderPraepositionalkasus,
-                describable, ImmutableList.of(),
+                kasusOderPraepositionalkasus, substPhr, ImmutableList.of(),
                 null, null,
                 adverbialeAngabeSkopusVerbWohinWoher);
     }

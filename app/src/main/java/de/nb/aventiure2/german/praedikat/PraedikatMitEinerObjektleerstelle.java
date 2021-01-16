@@ -13,5 +13,5 @@ public interface PraedikatMitEinerObjektleerstelle extends Praedikat {
     /**
      * Füllt die Objekt-Leerstelle mit diesem Objekt.
      */
-    PraedikatOhneLeerstellen mit(final SubstantivischePhrase describable);
+    PraedikatOhneLeerstellen mit(final SubstantivischePhrase substPhr);
 }

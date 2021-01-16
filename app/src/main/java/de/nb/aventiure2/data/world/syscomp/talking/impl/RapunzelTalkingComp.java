@@ -256,7 +256,7 @@ public class RapunzelTalkingComp extends AbstractTalkingComp {
         final ImmutableList<Satz> altEindruckSaetze =
                 feelingsComp.altEindruckAufScBeiBegegnungSaetze(anaph);
 
-        // Könnte auch leer sein
+        // Könnte ebenfalls leer sein
         final ImmutableList<AdverbialeAngabeSkopusVerbAllg> altEindruckAdvAngaben =
                 feelingsComp.altEindruckAufScBeiBegegnungAdvAngaben(anaph);
 
@@ -680,7 +680,7 @@ public class RapunzelTalkingComp extends AbstractTalkingComp {
                     ImmutableList.builder();
 
             final ImmutableList<Satz> altReaktionSaetze
-                    = feelingsComp.altReaktionWennSCGehenMoechteSaetze(rapunzelDesc);
+                    = feelingsComp.altReaktionWennTargetGehenMoechteSaetze(rapunzelDesc);
 
             alt.addAll(altReaktionSaetze.stream()
                     .flatMap(s -> joinToAltStrings(

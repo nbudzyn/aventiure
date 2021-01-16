@@ -231,10 +231,23 @@ class CreatureFactory {
                 new MentalModelComp(RAPUNZELS_ZAUBERIN, db, world,
                         // Muss zum Zustand der Zauberin passen!
                         ImmutableMap.of());
+        final MenschlicherMuedigkeitsBiorhythmus muedigkeitsBiorhythmus =
+                new MenschlicherMuedigkeitsBiorhythmus();
+        final FeelingsComp feelingsComp =
+                new FeelingsComp(RAPUNZELS_ZAUBERIN, db, timeTaker, n,
+                        null,
+                        Mood.NEUTRAL,
+                        muedigkeitsBiorhythmus,
+                        MuedigkeitsData.createFromBiorhythmusFuerMenschen(
+                                muedigkeitsBiorhythmus, timeTaker.now()),
+                        createInitialHungerDataForRapunzelsZauberin(),
+                        hours(6),
+                        createDefaultFeelingsTowardsForRapunzelsZauberin(),
+                        createInitialFeelingsTowardsForRapunzelsZauberin());
         final RapunzelsZauberinTalkingComp talkingComp =
                 new RapunzelsZauberinTalkingComp(
                         db, n, timeTaker, world, locationComp, stateComp,
-                        false);
+                        feelingsComp, false);
         final MovementComp movementComp =
                 new MovementComp(RAPUNZELS_ZAUBERIN, db, world,
                         world.getSpatialConnectionSystem(),
@@ -249,11 +262,34 @@ class CreatureFactory {
                 locationComp,
                 movementComp,
                 stateComp,
+                feelingsComp,
                 talkingComp,
                 mentalModelComp,
                 new RapunzelsZauberinReactionsComp(db, db.counterDao(), timeTaker, n, world,
                         stateComp, locationComp, mentalModelComp, movementComp, talkingComp));
     }
+
+    private static HungerData createInitialHungerDataForRapunzelsZauberin() {
+        return new HungerData(Hunger.SATT,
+                new AvDateTime(1, oClock(17)));
+    }
+
+    private static ImmutableMap<FeelingTowardsType, Float>
+    createDefaultFeelingsTowardsForRapunzelsZauberin() {
+        return ImmutableMap.of(FeelingTowardsType.ZUNEIGUNG_ABNEIGUNG,
+                (float) -FeelingIntensity.MERKLICH);
+    }
+
+    private static ImmutableMap<GameObjectId, Map<FeelingTowardsType, Float>>
+    createInitialFeelingsTowardsForRapunzelsZauberin() {
+        return ImmutableMap.of(
+                RAPUNZEL, ImmutableMap.of(
+                        FeelingTowardsType.ZUNEIGUNG_ABNEIGUNG,
+                        (float) FeelingIntensity.DEUTLICH
+                )
+        );
+    }
+
 
     private static class BasicCreature<S extends Enum<S>> extends GameObject
             implements IDescribableGO, IHasStateGO<S>, ILocatableGO, ILivingBeingGO {
@@ -417,7 +453,8 @@ class CreatureFactory {
     private static class MovingTalkingMentalModelReactionsCreature<S extends Enum<S>,
             TALKING_COMP extends AbstractTalkingComp>
             extends MovingTalkingReactionsCreature<S, TALKING_COMP>
-            implements IHasMentalModelGO {
+            implements IFeelingBeingGO, IHasMentalModelGO {
+        private final FeelingsComp feelingsComp;
         private final MentalModelComp mentalModelComp;
 
         MovingTalkingMentalModelReactionsCreature(final GameObjectId id,
@@ -425,13 +462,21 @@ class CreatureFactory {
                                                   final LocationComp locationComp,
                                                   final MovementComp movementComp,
                                                   final AbstractStateComp<S> stateComp,
+                                                  final FeelingsComp feelingsComp,
                                                   final TALKING_COMP talkingComp,
                                                   final MentalModelComp mentalModelComp,
                                                   final AbstractReactionsComp reactionsComp) {
             super(id, descriptionComp, locationComp, movementComp, stateComp, talkingComp,
                     reactionsComp);
             // Jede Komponente muss registiert werden!
+            this.feelingsComp = addComponent(feelingsComp);
             this.mentalModelComp = addComponent(mentalModelComp);
+        }
+
+        @Nonnull
+        @Override
+        public FeelingsComp feelingsComp() {
+            return feelingsComp;
         }
 
         @Nonnull

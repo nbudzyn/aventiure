@@ -251,8 +251,8 @@ public class FroschprinzTalkingComp extends AbstractTalkingComp {
                         altGruesseCap(),
                         // "Hallo"
                         ", du hässlicher Frosch!“, redest du ihn an").stream()
-                        .map(wf -> neuerSatz(wf).undWartest().dann())
-                        .collect(toSet()), NO_TIME);
+                        .map(wf -> neuerSatz(wf).undWartest().dann()),
+                NO_TIME);
 
         world.loadSC().talkingComp().setTalkingTo(FROSCHPRINZ);
 

@@ -203,41 +203,51 @@ class ZuneigungAbneigungBeiBegegnungDescriber implements FeelingBeiBegegnungDesc
 
         if (feelingIntensity <= -FeelingIntensity.STARK) {
             return ImmutableList.of();
-        } else if (feelingIntensity == -FeelingIntensity.DEUTLICH) {
+        }
+
+        if (feelingIntensity == -FeelingIntensity.DEUTLICH) {
             return ImmutableList.of(AdjektivOhneErgaenzungen.VERAERGERT);
-        } else if (feelingIntensity == -FeelingIntensity.MERKLICH) {
+        }
+
+        if (feelingIntensity == -FeelingIntensity.MERKLICH) {
+            return ImmutableList.of(AdjektivOhneErgaenzungen.VERSTIMMT);
+        }
+
+        if (feelingIntensity == -FeelingIntensity.NUR_LEICHT) {
             return ImmutableList.of(
-                    AdjektivOhneErgaenzungen.VERSTIMMT,
-                    AdjektivOhneErgaenzungen.RESERVIERT);
-        } else if (feelingIntensity == -FeelingIntensity.NUR_LEICHT) {
-            return ImmutableList.of(
-                    AdjektivOhneErgaenzungen.RESERVIERT,
                     AdjektivOhneErgaenzungen.UEBERRASCHT,
                     AdjektivOhneErgaenzungen.UEBERRUMPELT
                             .mitGraduativerAngabe("etwas"),
-                    AdjektivOhneErgaenzungen.VERWUNDERT
-            );
-        } else if (feelingIntensity == FeelingIntensity.NEUTRAL) {
+                    AdjektivOhneErgaenzungen.VERWUNDERT);
+        }
+
+        if (feelingIntensity == FeelingIntensity.NEUTRAL) {
             return ImmutableList.of(
                     new ZweiAdjPhrOhneLeerstellen(
                             AdjektivOhneErgaenzungen.UEBERRASCHT,
                             AdjektivOhneErgaenzungen.VERWIRRT.mitGraduativerAngabe("etwas")
                     )
             );
-        } else if (feelingIntensity == FeelingIntensity.NUR_LEICHT) {
+        }
+
+        if (feelingIntensity == FeelingIntensity.NUR_LEICHT) {
             return ImmutableList.of(
                     AdjektivOhneErgaenzungen.UEBERRASCHT.mitGraduativerAngabe("etwas"),
                     // "überrascht, dich [target] zu sehen"
                     AdjektivMitZuInfinitiv.UEBERRASCHT
                             .mitLexikalischerKern(sehenVerb.mit(targetDesc)));
-        } else if (feelingIntensity == FeelingIntensity.MERKLICH) {
+        }
+
+        if (feelingIntensity == FeelingIntensity.MERKLICH) {
             return ImmutableList.of(
                     AdjektivOhneErgaenzungen.UEBERRASCHT.mitGraduativerAngabe("etwas"),
                     // "etwas überrascht, dich [target] zu sehen"
                     AdjektivMitZuInfinitiv.UEBERRASCHT
                             .mitLexikalischerKern(sehenVerb.mit(targetDesc))
                             .mitGraduativerAngabe("etwas"));
-        } else if (feelingIntensity == FeelingIntensity.DEUTLICH) {
+        }
+
+        if (feelingIntensity == FeelingIntensity.DEUTLICH) {
             // "glücklich, dich [target] zu sehen"
             final AdjPhrMitZuInfinitivOhneLeerstellen gluecklichDichZuSehen =
                     AdjektivMitZuInfinitiv.GLUECKLICH
@@ -266,10 +276,39 @@ class ZuneigungAbneigungBeiBegegnungDescriber implements FeelingBeiBegegnungDesc
                             gluecklichDichZuSehen, gespanntWasZuBerichten
                     )
             );
-        } else if (feelingIntensity == FeelingIntensity.STARK) {
+        }
+
+        if (feelingIntensity == FeelingIntensity.STARK) {
             return ImmutableList.of(
                     AdjektivOhneErgaenzungen.FROEHLICH.mitGraduativerAngabe("ganz")
             );
+        }
+
+        return ImmutableList.of();
+    }
+
+    @NonNull
+    @Override
+    public ImmutableList<String> altEindruckBeiBegegnungZusAdverbialeAngaben(
+            final int feelingIntensity) {
+        if (feelingIntensity <= -FeelingIntensity.SEHR_STARK) {
+            return ImmutableList.of("mit bösen und giftigen Blicken");
+        }
+
+        if (feelingIntensity == -FeelingIntensity.STARK) {
+            return ImmutableList.of("giftig");
+        }
+
+        if (feelingIntensity <= -FeelingIntensity.DEUTLICH) {
+            return ImmutableList.of();
+        }
+
+        if (feelingIntensity == -FeelingIntensity.MERKLICH) {
+            return ImmutableList.of("reserviert");
+        }
+
+        if (feelingIntensity == -FeelingIntensity.NUR_LEICHT) {
+            return ImmutableList.of("reserviert");
         }
 
         return ImmutableList.of();

@@ -23,6 +23,7 @@ import de.nb.aventiure2.german.base.SubstantivischePhrase;
 import static de.nb.aventiure2.german.base.Kasus.AKK;
 import static de.nb.aventiure2.german.base.Kasus.DAT;
 import static de.nb.aventiure2.german.base.Konstituentenfolge.kf;
+import static de.nb.aventiure2.german.base.Personalpronomen.isPersonalpronomen;
 
 /**
  * Ein Prädikat (Verb ggf. mit Präfix) bei dem das Verb mit einem Subjekt und einem
@@ -144,9 +145,12 @@ public class PraedikatSubjObjOhneLeerstellen
         }
 
         final Konstituente objektImKasusOderPraepkasus = objekt.imK(kasusOderPraepositionalkasus);
-        if (!"es".equals(objektImKasusOderPraepkasus.getString())) {
-            // Wenn "es" ein Objekt ist, darf es nicht im Vorfeld stehen.
-            // (Eisenberg Der Satz 5.4.2)
+        // Wenn "es" ein Objekt ist, darf es nicht im Vorfeld stehen.
+        // (Eisenberg Der Satz 5.4.2)
+        // Aber auch andere Personalpronomen wirken im Vorfeld oft eher unangebracht,
+        // wenn es sich um ein Objekt handelt.
+        // "Dich sieht die Frau überrascht an."
+        if (!isPersonalpronomen(objektImKasusOderPraepkasus.getString())) {
             return objektImKasusOderPraepkasus;  // "den Frosch"
         }
 

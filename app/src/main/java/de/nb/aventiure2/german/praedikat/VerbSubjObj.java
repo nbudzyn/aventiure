@@ -171,10 +171,9 @@ public enum VerbSubjObj implements PraedikatMitEinerObjektleerstelle {
     }
 
     @Override
-    public PraedikatSubjObjOhneLeerstellen mit(
-            final SubstantivischePhrase describable) {
+    public PraedikatSubjObjOhneLeerstellen mit(final SubstantivischePhrase substPhr) {
         return new PraedikatSubjObjOhneLeerstellen(verb,
-                kasusOderPraepositionalkasus, describable);
+                kasusOderPraepositionalkasus, substPhr);
     }
 
     public String getDuForm() {

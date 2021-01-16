@@ -17,6 +17,7 @@ import java.util.Collection;
 import java.util.Set;
 import java.util.function.Function;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import javax.annotation.Nonnull;
 import javax.annotation.ParametersAreNonnullByDefault;
@@ -88,6 +89,7 @@ public class Narrator {
         this.narrationSourceJustInCase = narrationSourceJustInCase;
     }
 
+    @NonNull
     public Narration.NarrationSource getNarrationSourceJustInCase() {
         return narrationSourceJustInCase;
     }
@@ -97,7 +99,7 @@ public class Narrator {
                                final TimedDescription<D> desc) {
         Preconditions.checkArgument(
                 desc.getCounterIdIncrementedIfTextIsNarrated() != null,
-                "No counter given in TimedDescription " + desc);
+                "No counter given in TimedDescription " + desc.getDescription());
 
         if (counterDao.get(desc.getCounterIdIncrementedIfTextIsNarrated()) == counterValue) {
             narrate(desc);
@@ -122,22 +124,28 @@ public class Narrator {
         narrateAlt(alternatives.build());
     }
 
-    public <D extends AbstractDescription<?>>
-    void narrateAlt(final TimedDescription<?>... alternatives) {
+    public void narrateAlt(final TimedDescription<?>... alternatives) {
         narrateAlt(Arrays.asList(alternatives));
     }
 
-    public <D extends AbstractDescription<?>>
+    @SafeVarargs
+    public final <D extends AbstractDescription<?>>
     void narrateAlt(final AvTimeSpan timeElapsed,
                     final D... alternatives) {
         narrateAlt(asList(alternatives), timeElapsed);
     }
 
-    public <D extends AbstractDescription<?>>
+    @SafeVarargs
+    public final <D extends AbstractDescription<?>>
     void narrateAlt(final AvTimeSpan timeElapsed,
                     final String counterIdIncrementedIfTextIsNarrated,
                     final D... alternatives) {
         narrateAlt(asList(alternatives), timeElapsed, counterIdIncrementedIfTextIsNarrated);
+    }
+
+    public <D extends AbstractDescription<?>>
+    void narrateAlt(final Stream<D> alternativesStream, final AvTimeSpan timeElapsed) {
+        narrateAlt(alternativesStream.collect(Collectors.toSet()), timeElapsed);
     }
 
     public <D extends AbstractDescription<?>>
@@ -151,6 +159,11 @@ public class Narrator {
                     final AvTimeSpan timeElapsed,
                     @Nullable final String counterIdIncrementedIfTextIs) {
         narrateAlt(toTimed(alternatives, timeElapsed, counterIdIncrementedIfTextIs));
+    }
+
+    public <D extends TimedDescription<?>>
+    void narrateAlt(final Stream<D> alternativesStream) {
+        narrateAlt(alternativesStream.collect(Collectors.toSet()));
     }
 
     public void narrateAlt(final Collection<? extends TimedDescription<?>> alternatives) {
@@ -173,7 +186,7 @@ public class Narrator {
 
         temporaryNarration = new TemporaryNarration(narrationSourceJustInCase,
                 bestAlternatives.stream()
-                        .map(d -> d.getDescription())
+                        .map(TimedDescription::getDescription)
                         .collect(ImmutableList.toImmutableList()));
 
         passTimeAndIncCounter(bestAlternatives.iterator().next());
@@ -324,7 +337,7 @@ public class Narrator {
      */
     public boolean isThema(@NonNull final GameObjectId gameObjectId) {
         // IDEA es gibt auch noch andere Fälle, wo das Game Object Thema sein könnte...
-        //  (Auch im NarrationDao anpassen!)
+        //  (Auch im NarrationDao anpassen, dort noch analog zu finden.)
 
         return applyToPhorikKandidat(pk ->
                 pk != null && pk.getBezugsobjekt().equals(gameObjectId));

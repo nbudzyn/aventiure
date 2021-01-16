@@ -264,7 +264,8 @@ public class FeelingsComp extends AbstractStatefulComponent<FeelingsPCD> {
                             altAdverbialeAngabenSkopusVerbAllg();
 
                     return FeelingsSaetzeUtil.toReaktionSaetze(
-                            gameObjectSubjekt, altAdjPhr, adverbialeAngaben);
+                            gameObjectSubjekt, getPersonalpronomenSC(), altAdjPhr,
+                            adverbialeAngaben);
                 },
                 (feelingTowardsType) -> altReaktionBeiBegegnungMitScSaetze(
                         gameObjectSubjekt, feelingTowardsType));
@@ -275,7 +276,7 @@ public class FeelingsComp extends AbstractStatefulComponent<FeelingsPCD> {
      * beschreiben, wenn der SC gehen möchte.
      */
     @NonNull
-    public ImmutableList<Satz> altReaktionWennSCGehenMoechteSaetze(
+    public ImmutableList<Satz> altReaktionWennTargetGehenMoechteSaetze(
             final SubstantivischePhrase gameObjectSubjekt) {
         return dispatchFeelings(
                 SPIELER_CHARAKTER,
@@ -286,9 +287,10 @@ public class FeelingsComp extends AbstractStatefulComponent<FeelingsPCD> {
                             altAdverbialeAngabenSkopusVerbAllg();
 
                     return FeelingsSaetzeUtil.toReaktionSaetze(
-                            gameObjectSubjekt, altAdjPhr, adverbialeAngaben);
+                            gameObjectSubjekt, getPersonalpronomenSC(), altAdjPhr,
+                            adverbialeAngaben);
                 },
-                (feelingTowardsType) -> altReaktionWennSCGehenMoechteSaetze(
+                (feelingTowardsType) -> altReaktionWennTargetGehenMoechteSaetze(
                         gameObjectSubjekt, feelingTowardsType));
     }
 
@@ -313,10 +315,10 @@ public class FeelingsComp extends AbstractStatefulComponent<FeelingsPCD> {
      * Reaktion dieses Feeling Beings beschreiben, wenn der SC gehen möchte.
      */
     @NonNull
-    private ImmutableList<Satz> altReaktionWennSCGehenMoechteSaetze(
+    private ImmutableList<Satz> altReaktionWennTargetGehenMoechteSaetze(
             final SubstantivischePhrase gameObjectSubjekt,
             final FeelingTowardsType type) {
-        return altReaktionWennSCGehenMoechteSaetze(
+        return altReaktionWennTargetGehenMoechteSaetze(
                 gameObjectSubjekt,
                 SPIELER_CHARAKTER,
                 getPersonalpronomenSC(),
@@ -339,8 +341,11 @@ public class FeelingsComp extends AbstractStatefulComponent<FeelingsPCD> {
                 SPIELER_CHARAKTER,
                 1,
                 () -> FeelingsSaetzeUtil.toAnsehenSaetze(
-                        gameObjectSubjekt, altAdverbialeAngabenSkopusVerbAllg()),
+                        gameObjectSubjekt,
+                        getPersonalpronomenSC(),
+                        altAdverbialeAngabenSkopusVerbAllg()),
                 (feelingTowardsType) -> FeelingsSaetzeUtil.toAnsehenSaetze(gameObjectSubjekt,
+                        getPersonalpronomenSC(),
                         feelingTowardsType.altEindruckBeiBegegnungAdvAngaben(
                                 gameObjectSubjekt, getPersonalpronomenSC(),
                                 getFeelingTowards(SPIELER_CHARAKTER, feelingTowardsType),
@@ -472,14 +477,14 @@ public class FeelingsComp extends AbstractStatefulComponent<FeelingsPCD> {
      * "du, die du..." oder "du, das du..." generiert wird.
      */
     @NonNull
-    private ImmutableList<Satz> altReaktionWennSCGehenMoechteSaetze(
+    private ImmutableList<Satz> altReaktionWennTargetGehenMoechteSaetze(
             final SubstantivischePhrase gameObjectSubjekt,
             final GameObjectId feelingTargetId,
             final SubstantivischePhrase targetDesc,
             final FeelingTowardsType type) {
         final boolean targetKnown = isTargetKnown(feelingTargetId);
 
-        return type.altReaktionWennSCGehenMoechteSaetze(
+        return type.altReaktionWennTargetGehenMoechteSaetze(
                 gameObjectSubjekt, targetDesc,
                 getFeelingTowards(feelingTargetId, type),
                 targetKnown);

@@ -21,6 +21,7 @@ import de.nb.aventiure2.german.base.SubstPhrOderReflexivpronomen;
 import de.nb.aventiure2.german.base.SubstantivischePhrase;
 
 import static de.nb.aventiure2.german.base.Konstituentenfolge.kf;
+import static de.nb.aventiure2.german.base.Personalpronomen.isPersonalpronomen;
 
 /**
  * Ein Prädikat, in dem ein Akkusativobjekt und ein Präpositionalobjekt gesetzt sind
@@ -149,9 +150,12 @@ public class PraedikatAkkPraepOhneLeerstellen
         }
 
         final Konstituente akk = this.akk.akkK();
-        if (!"es".equals(akk.getString())) {
-            // Wenn "es" ein Objekt ist, darf es nicht im Vorfeld stehen.
-            // (Eisenberg Der Satz 5.4.2)
+        // Wenn "es" ein Objekt ist, darf es nicht im Vorfeld stehen.
+        // (Eisenberg Der Satz 5.4.2)
+        // Aber auch andere Personalpronomen wirken im Vorfeld oft eher unangebracht,
+        // wenn es sich um ein Objekt handelt.
+        // "Ihn nimmst du an dich."
+        if (!isPersonalpronomen(akk.getString())) {
             return akk; // "das Teil"
         }
 

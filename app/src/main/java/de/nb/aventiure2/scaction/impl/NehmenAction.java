@@ -36,7 +36,6 @@ import de.nb.aventiure2.scaction.stepcount.SCActionStepCountDao;
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkState;
 import static com.google.common.collect.ImmutableList.builder;
-import static com.google.common.collect.ImmutableList.toImmutableList;
 import static de.nb.aventiure2.data.time.AvTimeSpan.secs;
 import static de.nb.aventiure2.data.world.gameobject.World.*;
 import static de.nb.aventiure2.data.world.syscomp.feelings.Mood.ANGESPANNT;
@@ -419,8 +418,7 @@ public class NehmenAction
                                                         praedikatMitObjekt
                                                                 .hauptsatzLaesstSichBeiGleichemSubjektMitNachfolgendemVerbzweitsatzZusammenziehen())
                                                 .phorikKandidat(objectDesc, gameObject.getId())
-                                                .dann())
-                                .collect(toImmutableList()));
+                                                .dann()));
                 return;
             }
         }

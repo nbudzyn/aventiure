@@ -6,12 +6,15 @@ import de.nb.aventiure2.data.database.AvDatabase;
 import de.nb.aventiure2.data.narration.Narrator;
 import de.nb.aventiure2.data.time.TimeTaker;
 import de.nb.aventiure2.data.world.gameobject.*;
+import de.nb.aventiure2.data.world.syscomp.feelings.FeelingsComp;
 import de.nb.aventiure2.data.world.syscomp.location.LocationComp;
 import de.nb.aventiure2.data.world.syscomp.state.impl.RapunzelsZauberinStateComp;
 import de.nb.aventiure2.data.world.syscomp.talking.AbstractTalkingComp;
 import de.nb.aventiure2.german.base.PraepositionMitKasus;
 import de.nb.aventiure2.german.base.SubstantivischePhrase;
 import de.nb.aventiure2.german.description.AbstractDescription;
+import de.nb.aventiure2.german.description.DescriptionBuilder;
+import de.nb.aventiure2.german.satz.Satz;
 
 import static de.nb.aventiure2.data.time.AvTimeSpan.NO_TIME;
 import static de.nb.aventiure2.data.time.AvTimeSpan.secs;
@@ -41,6 +44,7 @@ import static java.util.stream.Collectors.toSet;
 public class RapunzelsZauberinTalkingComp extends AbstractTalkingComp {
     private final LocationComp locationComp;
     private final RapunzelsZauberinStateComp stateComp;
+    private final FeelingsComp feelingsComp;
 
     public RapunzelsZauberinTalkingComp(final AvDatabase db,
                                         final Narrator n,
@@ -48,10 +52,12 @@ public class RapunzelsZauberinTalkingComp extends AbstractTalkingComp {
                                         final World world,
                                         final LocationComp locationComp,
                                         final RapunzelsZauberinStateComp stateComp,
+                                        final FeelingsComp feelingsComp,
                                         final boolean initialSchonBegruesstMitSC) {
         super(RAPUNZELS_ZAUBERIN, db, timeTaker, n, world, initialSchonBegruesstMitSC);
         this.locationComp = locationComp;
         this.stateComp = stateComp;
+        this.feelingsComp = feelingsComp;
     }
 
     @Override
@@ -120,10 +126,15 @@ public class RapunzelsZauberinTalkingComp extends AbstractTalkingComp {
 
         n.narrateAlt(alt, secs(10));
 
-        setTalkingTo(SPIELER_CHARAKTER);
+        zauberinReagiertAufBegruessung();
     }
 
     private void begruessen() {
+        scBegruesst();
+        zauberinReagiertAufBegruessung();
+    }
+
+    private void scBegruesst() {
         final SubstantivischePhrase anaph = anaph(false);
         final ImmutableList.Builder<AbstractDescription<?>> alt = ImmutableList.builder();
 
@@ -157,10 +168,20 @@ public class RapunzelsZauberinTalkingComp extends AbstractTalkingComp {
                         "an"))
                         .dann(),
                 du(PARAGRAPH, BEGRUESSEN.mit(anaph)));
-
-        n.narrateAlt(alt, secs(10));
+        n.narrateAlt(alt, secs(5));
 
         setTalkingTo(SPIELER_CHARAKTER);
+    }
+
+    private void zauberinReagiertAufBegruessung() {
+        final SubstantivischePhrase anaph = anaph(true);
+
+        final ImmutableList<Satz> altReaktionSaetze =
+                feelingsComp.altReaktionBeiBegegnungMitScSaetze(anaph);
+
+        n.narrateAlt(
+                altReaktionSaetze.stream().map(DescriptionBuilder::satz),
+                secs(5));
     }
 
     private void gespraechBeenden() {
@@ -213,8 +234,6 @@ public class RapunzelsZauberinTalkingComp extends AbstractTalkingComp {
                         .phorikKandidat(anaph, getGameObjectId())
                         .beendet(PARAGRAPH)
         );
-
-        // FIXME Weiteres Ansprechen der Zauberin, evtl. Reaktion
 
         // FIXME Weitere Antworten der Zauberin auf Frage nach dem Weg
 
