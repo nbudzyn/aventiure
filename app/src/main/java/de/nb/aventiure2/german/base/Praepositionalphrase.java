@@ -45,17 +45,13 @@ public class Praepositionalphrase implements Praedikativum {
 
     @Override
     public Konstituentenfolge getPraedikativ(final Person person, final Numerus numerus) {
-        final PhorikKandidat theoretischerPhorikKandidat =
-                substPhrOderReflPron.imK(praepositionMitKasus.getKasus())
-                        .getPhorikKandidat();
-
         return Konstituentenfolge.joinToKonstituentenfolge(
                 modAdverbOderAdjektiv,
                 k(praepositionMitKasus.getDescription(substPhrOderReflPron),
                         // Es sollte wohl eher selten sein, dass man ein prädikativ
                         // gebrauchte Phrase danach mit "er..." referenziert.
                         // Allerdings könnte es eventuell zu Verwirrung führen?
-                        theoretischerPhorikKandidat.getNumerusGenus(), null)
+                        substPhrOderReflPron.kannAlsBezugsobjektVerstandenWerdenFuer(), null)
         );
     }
 

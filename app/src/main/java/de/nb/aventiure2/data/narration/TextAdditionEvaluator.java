@@ -48,18 +48,28 @@ class TextAdditionEvaluator {
         // Alternativen ausgewählt werden sollte, dieser Kandidat ausgewählt wurde, wollen wir
         // ihn vermeiden.
         if (isConsumed) {
-            // FIXME Was wäre hier ein guter Wert? Je kleiner die Zahl, desto eher
-            //  wird auch ein "verbrauchter" Kandidat noch wiederholt, wenn die Alternativen
-            //  unschöne Endewiederholungen erzeugen würde.
-            res -= 30000;
+            res += -11.04;
+            // Das ist ein Wertsein im Bereich einer richtig bösen Endwiederholung.
+            // So, dass es immer noch besser ist, dieselbe, schon verbrauchte Alternative zu
+            // verwenden, als diese bösen Endwiederholungen einzugehen.
+            // In der Praxis führen allerdings alle Werte ab -0.9 dazu, dass alle
+            // Alternativen ausgeschöpft werden - und das ist der Erfahrung nach auch
+            // gut so.
         }
 
-        // FIXME Hierfür eigene Methode...
-
-        // Strategie "Endewiederholungen vermeiden": Wenn der additionCandidate Wörter enthält,
+        // Strategie "Endwiederholungen vermeiden": Wenn der additionCandidate Wörter enthält,
         // die das Ende von base wiederholen, ist das schlecht.
         // Wir machen es dazu so: Wir teilen addition in Wörter auf,
         // dabei verwerfen wir Interpunktion.
+        res += evaluateAdditionEndwiederholungen(base, additionCandidate);
+
+        return res;
+    }
+
+    private static float evaluateAdditionEndwiederholungen(final String base,
+                                                           final String additionCandidate) {
+        float res = 0;
+
         final ImmutableList<String> additionWords = splitInWords(additionCandidate);
 
         // Dasselbe machen wir mit dem Ende von base.
@@ -79,7 +89,6 @@ class TextAdditionEvaluator {
         // 1?
         res += evaluateAdditionWordSequence(baseWords, additionWords, 1);
         // Das addieren wir alles - je höher die Zahl, desto besser!
-
         return res;
     }
 

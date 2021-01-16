@@ -79,7 +79,7 @@ class DescriptionCombiner {
                                 ",",
                                 first.toTextDescriptionSatzanschlussOhneSubjekt()
                                         .toWortfolge(),
-                                "und"))
+                                "und ")) // Präfix muss mit Leerzeichen enden
                         .undWartest(false));
     }
 

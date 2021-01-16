@@ -8,6 +8,7 @@ import static de.nb.aventiure2.german.base.Kasus.AKK;
 import static de.nb.aventiure2.german.base.Kasus.DAT;
 import static de.nb.aventiure2.german.base.Kasus.NOM;
 import static de.nb.aventiure2.german.base.Konstituente.k;
+import static de.nb.aventiure2.german.base.Person.P3;
 
 /**
  * Eine Phrase, die substantivisch verwendet werden kann, also insbesondere ein Pronomen ("sie",
@@ -96,7 +97,7 @@ public abstract class SubstantivischePhrase
 
     @Override
     public Konstituente imK(final Kasus kasus) {
-        return k(imStr(kasus), getNumerusGenus(), getBezugsobjekt());
+        return k(imStr(kasus), kannAlsBezugsobjektVerstandenWerdenFuer(), getBezugsobjekt());
     }
 
     /**
@@ -122,6 +123,10 @@ public abstract class SubstantivischePhrase
     @Nullable
     @Override
     public NumerusGenus kannAlsBezugsobjektVerstandenWerdenFuer() {
+        if (getPerson() != P3) {
+            return null;
+        }
+
         return numerusGenus;
     }
 

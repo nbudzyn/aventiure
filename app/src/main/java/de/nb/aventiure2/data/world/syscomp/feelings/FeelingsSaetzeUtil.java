@@ -82,8 +82,6 @@ class FeelingsSaetzeUtil {
     static ImmutableList<Satz> toAnsehenSaetze(final SubstantivischePhrase gameObjectSubjekt,
                                                final SubstantivischePhrase angesehenDesc,
                                                final ImmutableList<AdverbialeAngabeSkopusVerbAllg> adverbialeAngaben) {
-        // FIXME generell habe ich den Eindruck, dass bei der Zauberin immer dieselben
-        //  wenigen Auswahlen erscheinen.
         return adverbialeAngaben.stream()
                 .flatMap(aa -> Stream.of(ansehenVerben())
                         .map(v -> v.mit(angesehenDesc)

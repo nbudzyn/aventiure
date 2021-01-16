@@ -1,5 +1,6 @@
 package de.nb.aventiure2.data.narration;
 
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
 
 import java.util.Collection;
@@ -14,6 +15,8 @@ import de.nb.aventiure2.german.description.TextDescription;
  */
 @Immutable
 class ConsumedAlternatives {
+    static ConsumedAlternatives EMPTY = new ConsumedAlternatives(ImmutableList.of());
+
     /**
      * Hash-Codes der "verbrauchten" Alternativen.
      */

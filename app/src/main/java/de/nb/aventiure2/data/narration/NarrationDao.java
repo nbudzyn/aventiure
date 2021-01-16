@@ -92,6 +92,11 @@ public abstract class NarrationDao {
     private TextDescription calcBestTextDescription(
             final ImmutableList<TextDescription> alternatives,
             final Narration initialNarration) {
+        // Optimierung
+        if (alternatives.size() == 1) {
+            return alternatives.get(0);
+        }
+
         return alternatives.get(calcBestIndexAndScore(alternatives, initialNarration).index);
     }
 
@@ -155,13 +160,17 @@ public abstract class NarrationDao {
         checkArgument(alternativesChosenFrom.contains(textDescription),
                 "textDescription not contained in alternativesChosenFrom");
 
-        final ConsumedNarrationAlternativeInfo info =
-                new ConsumedNarrationAlternativeInfo(alternativesChosenFrom, textDescription);
+        if (alternativesChosenFrom.size() != 1) {
+            // (Optimierung. Wenn es nur eine Alternative gibt, machen wir keine
+            // Buchführung, ob sie verbraucht wird.)
 
-        final boolean wasAlreadyConsumed = insert(info) == -1;
-        if (wasAlreadyConsumed) {
-            // FIXME Das consumed-Zeugs ist unnötig, wenn es nur 1 Alternative gab!
-            resetConsumed(alternativesChosenFrom);
+            final ConsumedNarrationAlternativeInfo info =
+                    new ConsumedNarrationAlternativeInfo(alternativesChosenFrom, textDescription);
+
+            final boolean wasAlreadyConsumed = insert(info) == -1;
+            if (wasAlreadyConsumed) {
+                resetConsumed(alternativesChosenFrom);
+            }
         }
     }
 
@@ -224,7 +233,12 @@ public abstract class NarrationDao {
             final Narration initialNarration) {
         checkArgument(!alternatives.isEmpty(), "No alternatives");
 
-        final ConsumedAlternatives consumedAlternatives = loadConsumed(alternatives);
+        // Optimierung. Wenn es nur eine Alternative gibt, machen wir keine
+        // Buchführung, ob sie verbraucht wird.
+        final ConsumedAlternatives consumedAlternatives =
+                alternatives.size() != 1 ?
+                        loadConsumed(alternatives) :
+                        ConsumedAlternatives.EMPTY;
 
         float bestScore = Float.NEGATIVE_INFINITY;
         int bestIndex = -1;
@@ -249,10 +263,10 @@ public abstract class NarrationDao {
      * sie gewählt wird. (Die Alternative sollte also eher nicht erneut gewählt werden, um
      * Wiederholungen zu vermeiden.)
      *
-     * @param alternatives <i>Der Satz von Alternativen</i>
+     * @param alternatives Der Satz von Alternativen
      */
     private ConsumedAlternatives loadConsumed(
-            final ImmutableList<TextDescription> alternatives) {
+            final ImmutableList<? extends TextDescription> alternatives) {
         return loadConsumed(
                 ConsumedNarrationAlternativeInfo.calcAlternativesStringHash(alternatives));
     }
