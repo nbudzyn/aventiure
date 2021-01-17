@@ -8,7 +8,8 @@ import org.jetbrains.annotations.Contract;
 
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Locale;
+
+import de.nb.aventiure2.german.base.GermanUtil;
 
 import static java.util.Arrays.asList;
 
@@ -66,6 +67,11 @@ class TextAdditionEvaluator {
         return res;
     }
 
+    /**
+     * Bewertet diese Hinzufügung (<code>addition</code>) an diesen
+     * <code>base</code>-Text auf Basis von Wiederholgungen von Wortstämmen
+     * am Ende des <code>base</code>-Textes.
+     */
     private static float evaluateAdditionEndwiederholungen(final String base,
                                                            final String additionCandidate) {
         float res = 0;
@@ -135,8 +141,12 @@ class TextAdditionEvaluator {
      */
     @NonNull
     private static String stemWord(final String word) {
-        // FIXME GermanEasyStemmer einbinden
-        return word.toLowerCase(Locale.GERMAN);
+        final String uncapitalized = GermanUtil.uncapitalize(word);
+        if (GermanStopwords.isStopword(uncapitalized)) {
+            return uncapitalized;
+        }
+
+        return GermanStemmer.toDiscriminator(word);
     }
 
     /**

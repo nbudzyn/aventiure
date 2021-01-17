@@ -20,7 +20,7 @@ public class GermanUtil {
     private GermanUtil() {
     }
 
-    public static String toLowerCase(final String str) {
+    public static String uncapitalize(final String str) {
         if (str.isEmpty()) {
             return "";
         }

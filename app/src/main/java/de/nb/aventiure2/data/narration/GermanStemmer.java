@@ -3,7 +3,7 @@ package de.nb.aventiure2.data.narration;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
-import static de.nb.aventiure2.german.base.GermanUtil.toLowerCase;
+import static de.nb.aventiure2.german.base.GermanUtil.uncapitalize;
 
 /**
  * Ein einfacher und schneller Stemming-Algorithmus für das Deutsche, implementiert auf der
@@ -21,9 +21,6 @@ class GermanStemmer {
     private GermanStemmer() {
     }
 
-    // FIXME Stopwords dürfen nicht übergeben werden ("determiners and other
-    //  function words")
-
     /**
      * Erzeugt aus der Wortform den Discriminator. Verschiedene Wortformen desselben
      * Lexems ergeben - im Großen und Ganzen - denselben Discriminator.
@@ -32,7 +29,7 @@ class GermanStemmer {
     static String toDiscriminator(final String word) {
         final boolean wasLowercase = startsWithLowerCase(word);
 
-        String res = toLowerCase(word);
+        String res = uncapitalize(word);
         res = doSubstitutions1(res);
 
         while (res.length() > 3) {
