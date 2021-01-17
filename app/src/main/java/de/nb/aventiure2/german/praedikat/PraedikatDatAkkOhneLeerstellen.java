@@ -157,7 +157,7 @@ public class PraedikatDatAkkOhneLeerstellen
                 // "aus einer Laune heraus"
                 dat.datK(), // "dem Frosch"
                 kf(getModalpartikeln()), // "halt"
-                getAdverbialeAngabeSkopusVerbAllgDescriptionFuerMittelfeld(personSubjekt,
+                getAdverbialeAngabeSkopusVerbTextDescriptionFuerMittelfeld(personSubjekt,
                         numerusSubjekt), // "auf deiner Flöte"
                 akk.akkK()); // "ein Lied"
     }
@@ -187,7 +187,7 @@ public class PraedikatDatAkkOhneLeerstellen
     public Konstituentenfolge getNachfeld(final Person personSubjekt,
                                           final Numerus numerusSubjekt) {
         return Konstituentenfolge.joinToNullKonstituentenfolge(
-                getAdverbialeAngabeSkopusVerbAllgDescriptionFuerZwangsausklammerung(personSubjekt,
+                getAdverbialeAngabeSkopusVerbTextDescriptionFuerZwangsausklammerung(personSubjekt,
                         numerusSubjekt),
                 getAdverbialeAngabeSkopusSatzDescriptionFuerZwangsausklammerung(personSubjekt,
                         numerusSubjekt)

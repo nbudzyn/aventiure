@@ -161,7 +161,7 @@ public class PraedikativumPraedikatOhneLeerstellen
                         numerusSubjekt),
                 // "plötzlich"
                 kf(getModalpartikeln()), // "halt"
-                getAdverbialeAngabeSkopusVerbAllgDescriptionFuerMittelfeld(personSubjekt,
+                getAdverbialeAngabeSkopusVerbTextDescriptionFuerMittelfeld(personSubjekt,
                         numerusSubjekt), // "erneut"
                 getAdverbialeAngabeSkopusVerbWohinWoherDescription(personSubjekt, numerusSubjekt),
                 // (kann wohl nicht besetzt sein?)
@@ -199,7 +199,7 @@ public class PraedikativumPraedikatOhneLeerstellen
         return Konstituentenfolge.joinToNullKonstituentenfolge(
                 praedikativum.getPraedikativAnteilKandidatFuerNachfeld(
                         personSubjekt, numerusSubjekt), // "dich zu sehen"
-                getAdverbialeAngabeSkopusVerbAllgDescriptionFuerZwangsausklammerung(personSubjekt,
+                getAdverbialeAngabeSkopusVerbTextDescriptionFuerZwangsausklammerung(personSubjekt,
                         numerusSubjekt),
                 getAdverbialeAngabeSkopusSatzDescriptionFuerZwangsausklammerung(personSubjekt,
                         numerusSubjekt)

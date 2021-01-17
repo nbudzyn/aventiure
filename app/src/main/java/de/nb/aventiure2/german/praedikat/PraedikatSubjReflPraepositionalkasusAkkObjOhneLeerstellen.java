@@ -155,7 +155,7 @@ class PraedikatSubjReflPraepositionalkasusAkkObjOhneLeerstellen
                 // "aus einer Laune heraus"
                 akkObj.akkK(), // "die goldene Kugel"
                 kf(getModalpartikeln()), // "besser doch"
-                getAdverbialeAngabeSkopusVerbAllgDescriptionFuerMittelfeld(personSubjekt,
+                getAdverbialeAngabeSkopusVerbTextDescriptionFuerMittelfeld(personSubjekt,
                         numerusSubjekt), // "erneut"
                 Reflexivpronomen.get(personSubjekt, numerusSubjekt)
                         .im(verbReflPraepositionalkasusAkkObj
@@ -190,7 +190,7 @@ class PraedikatSubjReflPraepositionalkasusAkkObjOhneLeerstellen
     public Konstituentenfolge getNachfeld(final Person personSubjekt,
                                           final Numerus numerusSubjekt) {
         return Konstituentenfolge.joinToNullKonstituentenfolge(
-                getAdverbialeAngabeSkopusVerbAllgDescriptionFuerZwangsausklammerung(personSubjekt,
+                getAdverbialeAngabeSkopusVerbTextDescriptionFuerZwangsausklammerung(personSubjekt,
                         numerusSubjekt),
                 getAdverbialeAngabeSkopusSatzDescriptionFuerZwangsausklammerung(personSubjekt,
                         numerusSubjekt)

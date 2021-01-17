@@ -149,7 +149,7 @@ public class PraedikatMitPraedikativerAdjektivphraseOhneLeerstellen
                 getAdverbialeAngabeSkopusSatzDescriptionFuerMittelfeld(personSubjekt,
                         numerusSubjekt), // "leider"
                 kf(getModalpartikeln()), // "halt"
-                getAdverbialeAngabeSkopusVerbAllgDescriptionFuerMittelfeld(personSubjekt,
+                getAdverbialeAngabeSkopusVerbTextDescriptionFuerMittelfeld(personSubjekt,
                         numerusSubjekt), // "erneut"
                 getAdverbialeAngabeSkopusVerbWohinWoherDescription(personSubjekt, numerusSubjekt),
                 // "nach außen" (?)
@@ -185,7 +185,7 @@ public class PraedikatMitPraedikativerAdjektivphraseOhneLeerstellen
         return Konstituentenfolge.joinToNullKonstituentenfolge(
                 adjektivphrase.getPraedikativAnteilKandidatFuerNachfeld(
                         personSubjekt, numerusSubjekt), // ", dich zu sehen"
-                getAdverbialeAngabeSkopusVerbAllgDescriptionFuerZwangsausklammerung(personSubjekt,
+                getAdverbialeAngabeSkopusVerbTextDescriptionFuerZwangsausklammerung(personSubjekt,
                         numerusSubjekt),
                 getAdverbialeAngabeSkopusSatzDescriptionFuerZwangsausklammerung(personSubjekt,
                         numerusSubjekt)

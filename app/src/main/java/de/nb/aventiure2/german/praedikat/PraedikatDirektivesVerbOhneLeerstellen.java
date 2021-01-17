@@ -187,7 +187,7 @@ public class PraedikatDirektivesVerbOhneLeerstellen
                         numerusSubjekt),
                 // "aus einer Laune heraus"
                 kf(getModalpartikeln()), // "mal eben"
-                getAdverbialeAngabeSkopusVerbAllgDescriptionFuerMittelfeld(personSubjekt,
+                getAdverbialeAngabeSkopusVerbTextDescriptionFuerMittelfeld(personSubjekt,
                         numerusSubjekt), // "erneut"
                 objekt.imK(kasus), // "die junge Frau"
                 getAdverbialeAngabeSkopusVerbWohinWoherDescription(personSubjekt, numerusSubjekt)
@@ -241,7 +241,7 @@ public class PraedikatDirektivesVerbOhneLeerstellen
                                 // Es liegt "Objektkontrolle" vor.
                                 objekt.getPerson(), objekt.getNumerusGenus().getNumerus()),
                         // "sich zu waschen"; wir lassen diese Kommata weg - das ist erlaubt
-                        getAdverbialeAngabeSkopusVerbAllgDescriptionFuerZwangsausklammerung(
+                        getAdverbialeAngabeSkopusVerbTextDescriptionFuerZwangsausklammerung(
                                 personSubjekt, numerusSubjekt),
                         // , glücklich, dich zu sehen
                         getAdverbialeAngabeSkopusSatzDescriptionFuerZwangsausklammerung(

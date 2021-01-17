@@ -56,7 +56,7 @@ class TextDescriptionBuilder {
                 final ImmutableList.Builder<TextDescription> res = ImmutableList.builder();
                 res.add(toTextDescriptionsatzanschlussMitUnd((SimpleDuDescription) desc));
                 if (initialNarration.dann()) {
-                    res.add(toAllgDescriptionMitKommaDann((SimpleDuDescription) desc));
+                    res.add(toTextDescriptionMitKommaDann((SimpleDuDescription) desc));
                 }
                 return res.build();
             } else if (desc instanceof StructuredDescription
@@ -64,7 +64,7 @@ class TextDescriptionBuilder {
                 final ImmutableList.Builder<TextDescription> res = ImmutableList.builder();
                 res.add(toTextDescriptionsatzanschlussMitUnd((StructuredDescription) desc));
                 if (initialNarration.dann()) {
-                    res.add(toAllgDescriptionMitKommaDann((StructuredDescription) desc));
+                    res.add(toTextDescriptionMitKommaDann((StructuredDescription) desc));
                 }
                 return res.build();
             }
@@ -73,7 +73,7 @@ class TextDescriptionBuilder {
         if (initialNarration.dann()) {
             return toTextDescriptionsImDannFall(desc);
         } else {
-            return toDefaultAllgDescriptions(desc);
+            return toDefaultTextDescriptions(desc);
         }
     }
 
@@ -106,7 +106,7 @@ class TextDescriptionBuilder {
 
     @NonNull
     @CheckReturnValue
-    private static TextDescription toAllgDescriptionMitKommaDann(
+    private static TextDescription toTextDescriptionMitKommaDann(
             final AbstractFlexibleDescription<?> desc) {
         checkArgument(desc.getStartsNew() == WORD,
                 "Satzanschluss unmöglich für " + desc);
@@ -137,7 +137,7 @@ class TextDescriptionBuilder {
 
 
     @CheckReturnValue
-    private static List<TextDescription> toDefaultAllgDescriptions(
+    private static List<TextDescription> toDefaultTextDescriptions(
             final AbstractDescription<?> desc) {
         if (desc instanceof AbstractFlexibleDescription) {
             return ((AbstractFlexibleDescription<?>) desc).altTextDescriptions();
