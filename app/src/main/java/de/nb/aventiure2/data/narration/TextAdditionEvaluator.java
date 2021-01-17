@@ -2,8 +2,6 @@ package de.nb.aventiure2.data.narration;
 
 import androidx.annotation.NonNull;
 
-import com.google.common.collect.ImmutableList;
-
 import org.jetbrains.annotations.Contract;
 
 import java.util.LinkedList;
@@ -76,10 +74,10 @@ class TextAdditionEvaluator {
                                                            final String additionCandidate) {
         float res = 0;
 
-        final ImmutableList<String> additionWords = stem(additionCandidate);
+        final StemmedWords additionWords = stem(additionCandidate);
 
         // Dasselbe machen wir mit dem Ende von base.
-        final ImmutableList<String> baseWords = stemEnd(base, 100);
+        final StemmedWords baseWords = stemEnd(base, 100);
 
         // Dann suchen wir: Gibt es am Ende von base genau 10 Wörter aus addition in Folge?
         res += evaluateAdditionWordSequence(baseWords, additionWords, 10);
@@ -101,15 +99,15 @@ class TextAdditionEvaluator {
     /**
      * Teilt den Text grob in einzelne Wortstämme auf
      */
-    private static ImmutableList<String> stem(final String text) {
+    private static StemmedWords stem(final String text) {
         return stemEnd(text, Integer.MAX_VALUE);
     }
 
     /**
      * Teilt das Ende des Textes grob in einzelne Wortstämme auf
      */
-    private static ImmutableList<String> stemEnd(@NonNull final String text,
-                                                 final int maxWords) {
+    private static StemmedWords stemEnd(@NonNull final String text,
+                                        final int maxWords) {
         final LinkedList<String> res = new LinkedList<>();
         int to = text.length() - 1;
         while (true) {
@@ -117,7 +115,7 @@ class TextAdditionEvaluator {
                 to--;
             }
             if (to < 0) {
-                return ImmutableList.copyOf(res); // ==>
+                return new StemmedWords(res); // ==>
             }
 
             int from = to;
@@ -129,7 +127,7 @@ class TextAdditionEvaluator {
             res.addFirst(stemWord(text.substring(from + 1, to + 1)));
 
             if (res.size() >= maxWords) {
-                return ImmutableList.copyOf(res);
+                return new StemmedWords(res);
             }
 
             to = from;
@@ -159,20 +157,20 @@ class TextAdditionEvaluator {
      * @return Bewertungsergebnis - je größer die Zahl, desto besser
      */
     private static float evaluateAdditionWordSequence(
-            @NonNull final ImmutableList<String> baseWords,
-            final ImmutableList<String> additionWords,
+            @NonNull final StemmedWords baseWords,
+            final StemmedWords additionWords,
             final int num) {
         float res = 0;
         // Wir suchen: Gibt es am Ende von baseWords genau num Wörter aus dem Anfang von
         // additionWords in Folge?
         for (int baseWordsIndex = baseWords.size() - num; baseWordsIndex > 0;
              baseWordsIndex--) {
-            final List<String> baseSequence =
+            final StemmedWords baseSequence =
                     baseWords.subList(baseWordsIndex, baseWordsIndex + num);
 
             for (int additionWordsIndex = 0; additionWordsIndex + num <= additionWords.size();
                  additionWordsIndex++) {
-                final List<String> additionSequence =
+                final StemmedWords additionSequence =
                         additionWords.subList(additionWordsIndex, additionWordsIndex + num);
 
                 final int distanceBase = baseWords.size() - num - baseWordsIndex;
@@ -201,7 +199,7 @@ class TextAdditionEvaluator {
         return res;
     }
 
-    private static boolean repetitionAcceptable(@NonNull final List<String> sequence) {
+    private static boolean repetitionAcceptable(@NonNull final StemmedWords sequence) {
         if (sequence.isEmpty()) {
             return true;
         }
