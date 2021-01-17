@@ -183,7 +183,7 @@ public class MovementComp
         // Wurde das Game Object zwischenzeitlich versetzt?
         if (locationComp.getLocation() != null &&
                 !locationComp.hasLocation(getCurrentStepToId()) &&
-                getPcd().getPauseForSCAction() != PAUSED) {
+                getPcd().getPauseForSCAction() == UNPAUSED) {
             setupNextStepIfNecessaryAndPossible(now);
             pauseIfSameOuterMostLocationWithSC();
         }

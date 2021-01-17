@@ -67,7 +67,7 @@ public class VorDemTurmConnectionComp extends AbstractSpatialConnectionComp {
                 this::getDescTo_VorDemTurm
         ));
         res.add(con(IM_WALD_NAHE_DEM_SCHLOSS,
-                "auf dem Pfad",
+                "auf dem Pfad den Hügel hinab",
                 "Den Pfad zurückgehen",
                 mins(18),
                 du(PARAGRAPH, "gehst",

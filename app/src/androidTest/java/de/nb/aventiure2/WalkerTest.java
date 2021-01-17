@@ -50,7 +50,7 @@ public class WalkerTest extends AndroidTestBase {
 
     @Test
     public void baa_doStrictWalkthrough_separat_nur_rapunzel() {
-        doWalkthrough(Walkthrough.SEP_NUR_RAPUNZEL);
+        doWalkthrough(Walkthrough.SEP_1_NUR_RAPUNZEL);
 
         assertThat(db.narrationDao().requireNarration().getText())
                 .doesNotContain("@");

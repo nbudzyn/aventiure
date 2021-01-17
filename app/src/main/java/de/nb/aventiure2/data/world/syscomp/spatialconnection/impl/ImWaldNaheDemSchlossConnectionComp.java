@@ -76,7 +76,7 @@ public class ImWaldNaheDemSchlossConnectionComp extends AbstractSpatialConnectio
                         mins(10),
                         this::getDescTo_DraussenVorDemSchloss),
                 con(VOR_DEM_ALTEN_TURM,
-                        "auf dem Pfad",
+                        "auf dem schmalen Pfad den Hügel hinauf",
                         this::getActionNameTo_VorDemAltenTurm,
                         mins(25),
                         this::getDescTo_VorDemAltenTurm),

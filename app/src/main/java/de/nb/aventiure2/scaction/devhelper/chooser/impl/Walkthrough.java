@@ -140,7 +140,7 @@ public class Walkthrough {
                     .append(OBEN_BEI_RAPUNZEL_BIS_ENDE);
 
     //  -- separate Walkthroughs --
-    public static final Walkthrough SEP_NUR_RAPUNZEL =
+    public static final Walkthrough SEP_1_RAPUNZEL_HOEREN_UND_IN_DEN_WALD =
             new Walkthrough(
                     "Die Kugel nehmen",
                     "Das Schloss verlassen",
@@ -149,7 +149,11 @@ public class Walkthrough {
                     "In den Schatten der Bäume setzen",
                     "Aus dem Schatten der Bäume treten",
                     "Den Pfad zurückgehen",
-                    "Tiefer in den Wald hineingehen",
+                    "Tiefer in den Wald hineingehen"
+            );
+
+    public static final Walkthrough SEP_1_IM_WALD_BIS_RAPUNZEL =
+            new Walkthrough(
                     "In Richtung Schloss gehen",
                     "Die Frau ansprechen",
                     "Die Frau nach ihrem Ziel fragen",
@@ -166,6 +170,9 @@ public class Walkthrough {
                     "Die junge Frau bitten ihre Haare wieder hinunterzulassen"
             );
 
+    public static final Walkthrough SEP_1_NUR_RAPUNZEL =
+            SEP_1_RAPUNZEL_HOEREN_UND_IN_DEN_WALD.append(SEP_1_IM_WALD_BIS_RAPUNZEL);
+    
     private final ImmutableList<String> steps;
 
     private Walkthrough(final String... steps) {
