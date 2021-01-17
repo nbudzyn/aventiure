@@ -23,9 +23,9 @@ import static de.nb.aventiure2.data.world.syscomp.feelings.FeelingTowardsType.ZU
 import static de.nb.aventiure2.data.world.syscomp.feelings.Mood.GLUECKLICH;
 import static de.nb.aventiure2.data.world.syscomp.state.impl.RapunzelState.HAT_NACH_KUGEL_GEFRAGT;
 import static de.nb.aventiure2.data.world.syscomp.state.impl.RapunzelState.STILL;
-import static de.nb.aventiure2.german.base.GermanUtil.capitalize;
 import static de.nb.aventiure2.german.base.NumerusGenus.F;
 import static de.nb.aventiure2.german.description.DescriptionBuilder.neuerSatz;
+import static de.nb.aventiure2.german.string.GermanStringUtil.capitalize;
 
 public class RapunzelTakingComp extends AbstractTakingComp {
     private final RapunzelStateComp stateComp;

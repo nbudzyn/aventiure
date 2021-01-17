@@ -19,7 +19,6 @@ import de.nb.aventiure2.data.world.syscomp.memory.Action;
 import de.nb.aventiure2.data.world.syscomp.state.IHasStateGO;
 import de.nb.aventiure2.data.world.syscomp.state.impl.FroschprinzState;
 import de.nb.aventiure2.data.world.syscomp.storingplace.ILocationGO;
-import de.nb.aventiure2.german.base.GermanUtil;
 import de.nb.aventiure2.german.base.Nominalphrase;
 import de.nb.aventiure2.german.base.SubstantivischePhrase;
 import de.nb.aventiure2.german.description.TimedDescription;
@@ -27,6 +26,7 @@ import de.nb.aventiure2.german.praedikat.AdverbialeAngabeSkopusSatz;
 import de.nb.aventiure2.german.praedikat.AdverbialeAngabeSkopusVerbWohinWoher;
 import de.nb.aventiure2.german.praedikat.SeinUtil;
 import de.nb.aventiure2.german.praedikat.ZweiPraedikateOhneLeerstellen;
+import de.nb.aventiure2.german.string.GermanStringUtil;
 import de.nb.aventiure2.scaction.AbstractScAction;
 import de.nb.aventiure2.scaction.stepcount.SCActionStepCountDao;
 
@@ -101,7 +101,7 @@ public class HochwerfenAction<OBJ extends IDescribableGO & ILocatableGO>
     @Override
     @NonNull
     public String getName() {
-        return GermanUtil.capitalize(world.getDescription(object).akkStr()) + " hochwerfen";
+        return GermanStringUtil.capitalize(world.getDescription(object).akkStr()) + " hochwerfen";
     }
 
     @Override
@@ -288,7 +288,7 @@ public class HochwerfenAction<OBJ extends IDescribableGO & ILocatableGO>
                         " übermütig noch einmal in die Luft, aber sie wieder aufzufangen will dir "
                         +
                         "dieses Mal nicht gelingen. "
-                        + GermanUtil.capitalize(
+                        + GermanStringUtil.capitalize(
                         world.getDescription(object, true).nomStr()) +
                         " landet " +
                         location.storingPlaceComp().getLocationMode().getWo(false),

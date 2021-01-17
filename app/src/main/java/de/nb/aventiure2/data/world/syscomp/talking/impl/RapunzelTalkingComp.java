@@ -37,7 +37,6 @@ import static de.nb.aventiure2.data.world.syscomp.talking.impl.SCTalkAction.exit
 import static de.nb.aventiure2.data.world.syscomp.talking.impl.SCTalkAction.immReEntryStNSCHatteGespraechBeendet;
 import static de.nb.aventiure2.data.world.syscomp.talking.impl.SCTalkAction.immReEntryStSCHatteGespraechBeendet;
 import static de.nb.aventiure2.data.world.syscomp.talking.impl.SCTalkAction.st;
-import static de.nb.aventiure2.german.base.GermanUtil.capitalize;
 import static de.nb.aventiure2.german.base.GermanUtil.joinToAltStrings;
 import static de.nb.aventiure2.german.base.Nominalphrase.DEIN_HERZ;
 import static de.nb.aventiure2.german.base.Nominalphrase.EIN_GESPRAECH;
@@ -56,6 +55,7 @@ import static de.nb.aventiure2.german.description.DescriptionBuilder.neuerSatz;
 import static de.nb.aventiure2.german.praedikat.DirektivesVerb.BITTEN;
 import static de.nb.aventiure2.german.praedikat.VerbSubjDatAkk.AUSSCHUETTEN;
 import static de.nb.aventiure2.german.praedikat.VerbSubjObj.HINUNTERLASSEN;
+import static de.nb.aventiure2.german.string.GermanStringUtil.capitalize;
 import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toSet;
 

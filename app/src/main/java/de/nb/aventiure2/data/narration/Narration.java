@@ -15,6 +15,7 @@ import de.nb.aventiure2.german.base.Personalpronomen;
 import de.nb.aventiure2.german.base.PhorikKandidat;
 import de.nb.aventiure2.german.base.StructuralElement;
 import de.nb.aventiure2.german.description.TextDescription;
+import de.nb.aventiure2.german.string.GermanStringUtil;
 
 import static de.nb.aventiure2.german.base.StructuralElement.SENTENCE;
 
@@ -310,7 +311,7 @@ public class Narration {
         }
 
         if (SENTENCE == StructuralElement.min(textDescription.getStartsNew(), SENTENCE)) {
-            resText.append(GermanUtil.capitalize(text));
+            resText.append(GermanStringUtil.capitalize(text));
         } else {
             resText.append(text);
         }

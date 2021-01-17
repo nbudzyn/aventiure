@@ -12,9 +12,9 @@ import de.nb.aventiure2.data.world.syscomp.reaction.interfaces.Ruftyp;
 import de.nb.aventiure2.data.world.syscomp.state.IHasStateGO;
 import de.nb.aventiure2.data.world.syscomp.state.impl.RapunzelState;
 import de.nb.aventiure2.data.world.syscomp.storingplace.ILocationGO;
-import de.nb.aventiure2.german.base.GermanUtil;
 import de.nb.aventiure2.german.base.Personalpronomen;
 import de.nb.aventiure2.german.description.Kohaerenzrelation;
+import de.nb.aventiure2.german.string.GermanStringUtil;
 import de.nb.aventiure2.scaction.AbstractScAction;
 import de.nb.aventiure2.scaction.stepcount.SCActionStepCountDao;
 
@@ -76,7 +76,7 @@ public class RufenAction extends AbstractScAction {
     @Override
     @NonNull
     public String getName() {
-        return GermanUtil.capitalize(
+        return GermanStringUtil.capitalize(
                 ruftyp.getName().getInfinitiv(P1, SG).joinToString(
                 ));
     }

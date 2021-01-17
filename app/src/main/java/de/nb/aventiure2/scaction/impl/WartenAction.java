@@ -15,11 +15,11 @@ import de.nb.aventiure2.data.world.syscomp.description.IDescribableGO;
 import de.nb.aventiure2.data.world.syscomp.location.ILocatableGO;
 import de.nb.aventiure2.data.world.syscomp.memory.Action;
 import de.nb.aventiure2.data.world.syscomp.storingplace.ILocationGO;
-import de.nb.aventiure2.german.base.GermanUtil;
 import de.nb.aventiure2.german.base.SubstantivischePhrase;
 import de.nb.aventiure2.german.description.DescriptionUmformulierer;
 import de.nb.aventiure2.german.description.Kohaerenzrelation;
 import de.nb.aventiure2.german.praedikat.AdverbialeAngabeSkopusSatz;
+import de.nb.aventiure2.german.string.GermanStringUtil;
 import de.nb.aventiure2.scaction.AbstractScAction;
 import de.nb.aventiure2.scaction.stepcount.SCActionStepCountDao;
 
@@ -79,7 +79,7 @@ public class WartenAction<LIVGO extends IDescribableGO & ILocatableGO & ILivingB
     @NonNull
     public String getName() {
         // "Auf die magere Frau warten"
-        return GermanUtil.capitalize(
+        return GermanStringUtil.capitalize(
                 WARTEN
                         .mit(world.getDescription(erwartet))
                         .getInfinitiv(P2, SG).joinToString(

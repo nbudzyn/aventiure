@@ -20,7 +20,6 @@ import de.nb.aventiure2.data.world.syscomp.memory.Action;
 import de.nb.aventiure2.data.world.syscomp.state.IHasStateGO;
 import de.nb.aventiure2.data.world.syscomp.state.impl.FroschprinzState;
 import de.nb.aventiure2.data.world.syscomp.storingplace.ILocationGO;
-import de.nb.aventiure2.german.base.GermanUtil;
 import de.nb.aventiure2.german.base.Nominalphrase;
 import de.nb.aventiure2.german.base.NumerusGenus;
 import de.nb.aventiure2.german.base.PraepositionMitKasus;
@@ -30,6 +29,7 @@ import de.nb.aventiure2.german.praedikat.AdverbialeAngabeSkopusSatz;
 import de.nb.aventiure2.german.praedikat.AdverbialeAngabeSkopusVerbWohinWoher;
 import de.nb.aventiure2.german.praedikat.PraedikatMitEinerObjektleerstelle;
 import de.nb.aventiure2.german.praedikat.PraedikatOhneLeerstellen;
+import de.nb.aventiure2.german.string.GermanStringUtil;
 import de.nb.aventiure2.scaction.AbstractScAction;
 import de.nb.aventiure2.scaction.stepcount.SCActionStepCountDao;
 
@@ -180,7 +180,7 @@ public class NehmenAction
     public String getName() {
         final PraedikatMitEinerObjektleerstelle praedikat = getPraedikatFuerName();
 
-        return GermanUtil.capitalize(
+        return GermanStringUtil.capitalize(
                 praedikat.mit(world.getDescription(gameObject, true))
                         // Relevant für etwas wie "Die Schale an *mich* nehmen"
                         .getInfinitiv(P1, SG).joinToString(
@@ -270,7 +270,7 @@ public class NehmenAction
                                                     + anaph.persPron().akkStr()
                                                     + " in "
                                                     + "eine Tasche gleiten. "
-                                                    + GermanUtil.capitalize(
+                                                    + GermanStringUtil.capitalize(
                                                     anaph.possArt()
                                                             .vor(NumerusGenus.N).nomStr())
                                                     + " gedämpftes Quaken könnte "
@@ -289,7 +289,7 @@ public class NehmenAction
                                     du("packst",
                                             anaph.akkStr() // "ihn"
                                                     + " in deine Tasche. "
-                                                    + GermanUtil.capitalize(
+                                                    + GermanStringUtil.capitalize(
                                                     froschDesc.persPron().nomStr())
                                                     + " fasst "
                                                     + "sich sehr eklig an und du bist "

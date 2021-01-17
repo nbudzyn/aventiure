@@ -5,7 +5,6 @@ import androidx.annotation.Nullable;
 
 import java.util.Collection;
 import java.util.List;
-import java.util.Locale;
 import java.util.stream.Collectors;
 
 import static com.google.common.base.Preconditions.checkArgument;
@@ -18,22 +17,6 @@ import static java.util.Objects.requireNonNull;
 public class GermanUtil {
     // Not to be called
     private GermanUtil() {
-    }
-
-    public static String uncapitalize(final String str) {
-        if (str.isEmpty()) {
-            return "";
-        }
-
-        return str.substring(0, 1).toLowerCase(Locale.GERMAN) + str.substring(1);
-    }
-
-    public static String capitalize(final String str) {
-        if (str.isEmpty()) {
-            return "";
-        }
-
-        return str.substring(0, 1).toUpperCase(Locale.GERMAN) + str.substring(1);
     }
 
     /**
@@ -110,7 +93,7 @@ public class GermanUtil {
     public static String buildAufzaehlung(final List<String> elemente) {
         checkArgument(!elemente.isEmpty(), "Elemente war leer");
 
-        final StringBuilder res = new StringBuilder();
+        final StringBuilder res = new StringBuilder(elemente.size() * 30);
         for (int i = 0; i < elemente.size(); i++) {
             res.append(elemente.get(i));
             if (i == elemente.size() - 2) {

@@ -8,6 +8,8 @@ import java.util.Objects;
 import javax.annotation.Nonnull;
 import javax.annotation.concurrent.Immutable;
 
+import de.nb.aventiure2.german.string.GermanStringUtil;
+
 import static com.google.common.base.Preconditions.checkArgument;
 import static java.util.Objects.requireNonNull;
 
@@ -197,7 +199,7 @@ public class Konstituente {
     }
 
     public Konstituente capitalize() {
-        return new Konstituente(GermanUtil.capitalize(string),
+        return new Konstituente(GermanStringUtil.capitalize(string),
                 // Wenn großgeschrieben werden soll, wäre es sinnlos, ein Komma zuvor
                 // setzen zu vollen.
                 false, woertlicheRedeNochOffen, kommmaStehtAus,
@@ -213,7 +215,7 @@ public class Konstituente {
         return vorkommaNoetig;
     }
 
-    public boolean woertlicheRedeNochOffen() {
+    boolean woertlicheRedeNochOffen() {
         return woertlicheRedeNochOffen;
     }
 

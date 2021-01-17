@@ -21,9 +21,9 @@ import de.nb.aventiure2.data.world.syscomp.description.IDescribableGO;
 import de.nb.aventiure2.data.world.syscomp.location.ILocatableGO;
 import de.nb.aventiure2.data.world.syscomp.storingplace.ILocationGO;
 import de.nb.aventiure2.data.world.syscomp.talking.impl.SCTalkAction;
-import de.nb.aventiure2.german.base.GermanUtil;
 import de.nb.aventiure2.german.base.Nominalphrase;
 import de.nb.aventiure2.german.base.SubstantivischePhrase;
+import de.nb.aventiure2.german.string.GermanStringUtil;
 
 import static de.nb.aventiure2.data.world.gameobject.World.*;
 
@@ -192,7 +192,7 @@ public abstract class AbstractTalkingComp extends AbstractStatefulComponent<Talk
      */
     protected ImmutableList<String> altGruesseCap() {
         return altGruesse().stream()
-                .map(GermanUtil::capitalize)
+                .map(GermanStringUtil::capitalize)
                 .collect(ImmutableList.toImmutableList());
     }
 

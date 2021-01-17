@@ -35,6 +35,7 @@ import de.nb.aventiure2.german.base.StructuralElement;
 import de.nb.aventiure2.german.description.AbstractDescription;
 import de.nb.aventiure2.german.description.TextDescription;
 import de.nb.aventiure2.german.description.TimedDescription;
+import de.nb.aventiure2.german.stemming.StemmedWords;
 
 import static com.google.common.collect.ImmutableList.toImmutableList;
 import static de.nb.aventiure2.data.narration.Narration.NarrationSource.REACTIONS;
@@ -286,8 +287,11 @@ public class Narrator {
             return false;
         }
 
+        final StemmedWords baseStems =
+                StemmedWords.stemEnd(initialNarration.getText(), 100);
+
         final NarrationDao.IndexAndScore indexAndScoreAlone =
-                dao.calcBestIndexAndScore(allGeneratedDescriptionsAlone, initialNarration);
+                dao.calcBestIndexAndScore(allGeneratedDescriptionsAlone, baseStems);
 
         if (!alternativeCombinations.isEmpty()) {
             // Hier könnte es ganz theoretisch Duplikate geben.
@@ -300,7 +304,9 @@ public class Narrator {
                             .collect(toImmutableList());
 
             final NarrationDao.IndexAndScore indexAndScoreCombined =
-                    dao.calcBestTimed(initialNarration, alternativeCombinationsOhneDuplikate);
+                    dao.calcBestIndexAndScore(
+                            toUntimed(alternativeCombinationsOhneDuplikate),
+                            baseStems);
 
             if (indexAndScoreCombined.getScore() >= indexAndScoreAlone.getScore()) {
                 // Die temporary Narration und die (neuen) Alternatives werden

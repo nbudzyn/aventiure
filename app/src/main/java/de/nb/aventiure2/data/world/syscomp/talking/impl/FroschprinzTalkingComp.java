@@ -33,7 +33,6 @@ import static de.nb.aventiure2.data.world.syscomp.talking.impl.SCTalkAction.exit
 import static de.nb.aventiure2.data.world.syscomp.talking.impl.SCTalkAction.immReEntryStNSCHatteGespraechBeendet;
 import static de.nb.aventiure2.data.world.syscomp.talking.impl.SCTalkAction.immReEntryStSCHatteGespraechBeendet;
 import static de.nb.aventiure2.data.world.syscomp.talking.impl.SCTalkAction.st;
-import static de.nb.aventiure2.german.base.GermanUtil.capitalize;
 import static de.nb.aventiure2.german.base.Indefinitpronomen.ALLES;
 import static de.nb.aventiure2.german.base.Nominalphrase.ANGEBOTE;
 import static de.nb.aventiure2.german.base.StructuralElement.PARAGRAPH;
@@ -48,6 +47,7 @@ import static de.nb.aventiure2.german.praedikat.VerbSubjDatAkk.VERSPRECHEN;
 import static de.nb.aventiure2.german.praedikat.VerbSubjObj.DISKUTIEREN;
 import static de.nb.aventiure2.german.praedikat.VerbSubjObj.IGNORIEREN;
 import static de.nb.aventiure2.german.praedikat.VerbSubjObj.REDEN;
+import static de.nb.aventiure2.german.string.GermanStringUtil.capitalize;
 import static java.util.stream.Collectors.toSet;
 
 /**

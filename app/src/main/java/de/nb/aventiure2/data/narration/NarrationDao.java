@@ -18,12 +18,14 @@ import java.util.Objects;
 import de.nb.aventiure2.german.description.AbstractDescription;
 import de.nb.aventiure2.german.description.TextDescription;
 import de.nb.aventiure2.german.description.TimedDescription;
+import de.nb.aventiure2.german.stemming.StemmedWords;
 
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.collect.ImmutableList.toImmutableList;
 import static com.google.common.collect.ImmutableSet.toImmutableSet;
 import static de.nb.aventiure2.data.narration.TextDescriptionBuilder.toTextDescriptions;
+import static de.nb.aventiure2.german.description.TimedDescription.toUntimed;
 
 /**
  * Android Room DAO for {@link Narration}s.
@@ -102,9 +104,7 @@ public abstract class NarrationDao {
 
     TimedTextDescriptionWithScore chooseBest(
             final Collection<? extends TimedDescription<?>> alternatives) {
-        final Narration initialNarration = requireNarration();
-
-        return chooseBest(initialNarration, alternatives);
+        return chooseBest(requireNarration(), alternatives);
     }
 
     @NonNull
@@ -214,13 +214,10 @@ public abstract class NarrationDao {
      * versucht dabei vor allem, Wiederholgungen mit der unmittelbar zuvor geschriebenen
      * Narration zu vermeiden.
      */
-    IndexAndScore calcBestTimed(
+    private IndexAndScore calcBestTimed(
             final Narration initialNarration,
             final Collection<TimedDescription<TextDescription>> alternatives) {
-        return calcBestIndexAndScore(alternatives.stream()
-                .map(TimedDescription::getDescription)
-                .collect(toImmutableList()), initialNarration
-        );
+        return calcBestIndexAndScore(toUntimed(alternatives), initialNarration);
     }
 
     /**
@@ -231,6 +228,22 @@ public abstract class NarrationDao {
     IndexAndScore calcBestIndexAndScore(
             final ImmutableList<TextDescription> alternatives,
             final Narration initialNarration) {
+        checkArgument(!alternatives.isEmpty(), "No alternatives");
+
+        return calcBestIndexAndScore(
+                alternatives,
+                StemmedWords.stemEnd(initialNarration.getText(), 100));
+
+    }
+
+    /**
+     * Wählt eine {@link TextDescription} aus den Alternativen und gibt den Score zurück -
+     * versucht dabei vor allem, Wiederholgungen mit der unmittelbar zuvor geschriebenen
+     * Narration zu vermeiden.
+     */
+    IndexAndScore calcBestIndexAndScore(
+            final ImmutableList<TextDescription> alternatives,
+            final StemmedWords baseStems) {
         checkArgument(!alternatives.isEmpty(), "No alternatives");
 
         // Optimierung. Wenn es nur eine Alternative gibt, machen wir keine
@@ -244,8 +257,9 @@ public abstract class NarrationDao {
         int bestIndex = -1;
         for (int i = 0; i < alternatives.size(); i++) {
             final TextDescription alternative = alternatives.get(i);
+
             final float score = TextAdditionEvaluator.evaluateAddition(
-                    initialNarration.getText(), alternative.getText(),
+                    baseStems, alternative.getText(),
                     consumedAlternatives.isConsumed(alternative));
 
             if (score > bestScore) {

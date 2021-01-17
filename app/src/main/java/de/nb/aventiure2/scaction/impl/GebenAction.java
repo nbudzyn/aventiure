@@ -25,7 +25,6 @@ import de.nb.aventiure2.scaction.stepcount.SCActionStepCountDao;
 
 import static de.nb.aventiure2.data.time.AvTimeSpan.secs;
 import static de.nb.aventiure2.data.world.gameobject.World.*;
-import static de.nb.aventiure2.german.base.GermanUtil.capitalize;
 import static de.nb.aventiure2.german.base.Numerus.SG;
 import static de.nb.aventiure2.german.base.Person.P1;
 import static de.nb.aventiure2.german.description.DescriptionBuilder.du;
@@ -36,6 +35,7 @@ import static de.nb.aventiure2.german.praedikat.VerbSubjDatAkk.GEBEN;
 import static de.nb.aventiure2.german.praedikat.VerbSubjDatAkk.HINHALTEN;
 import static de.nb.aventiure2.german.praedikat.VerbSubjDatAkk.REICHEN;
 import static de.nb.aventiure2.german.praedikat.VerbSubjDatAkk.ZEIGEN;
+import static de.nb.aventiure2.german.string.GermanStringUtil.capitalize;
 
 /**
  * Der Benutzer gibt einem Living Being einen Gegenstand, den er bei sich trägt.

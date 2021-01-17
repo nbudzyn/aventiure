@@ -1,10 +1,10 @@
-package de.nb.aventiure2.data.narration;
+package de.nb.aventiure2.german.stemming;
 
 import java.util.SortedSet;
 import java.util.TreeSet;
 import java.util.stream.Stream;
 
-import de.nb.aventiure2.german.base.GermanUtil;
+import de.nb.aventiure2.german.string.GermanStringUtil;
 
 import static java.util.stream.Collectors.toSet;
 
@@ -141,7 +141,7 @@ class GermanStopwords {
                     "zugleich", "zum", "zum", "zunächst", "zur", "zurück", "zusammen", "zwanzig",
                     "zwar", "zwar", "zwei", "zweite", "zweiten", "zweiter", "zweites", "zwischen",
                     "zwölf")
-                    .map(GermanUtil::uncapitalize)
+                    .map(GermanStringUtil::uncapitalize)
                     .collect(toSet()));
 
     static boolean isStopword(final String word) {

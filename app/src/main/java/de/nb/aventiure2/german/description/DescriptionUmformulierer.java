@@ -17,13 +17,13 @@ import de.nb.aventiure2.german.praedikat.AdverbialeAngabeSkopusVerbAllg;
 import de.nb.aventiure2.german.praedikat.Modalpartikel;
 
 import static com.google.common.collect.ImmutableList.builder;
-import static de.nb.aventiure2.german.base.GermanUtil.capitalize;
 import static de.nb.aventiure2.german.base.GermanUtil.joinToString;
 import static de.nb.aventiure2.german.base.StructuralElement.PARAGRAPH;
 import static de.nb.aventiure2.german.base.StructuralElement.SENTENCE;
 import static de.nb.aventiure2.german.base.StructuralElement.max;
 import static de.nb.aventiure2.german.description.DescriptionBuilder.du;
 import static de.nb.aventiure2.german.description.DescriptionBuilder.neuerSatz;
+import static de.nb.aventiure2.german.string.GermanStringUtil.capitalize;
 
 /**
  * Statische Methoden, die {@link AbstractDescription}s umformulieren.
@@ -103,7 +103,7 @@ public class DescriptionUmformulierer {
                         fDesc));
             }
 
-            alt.add(toAllgDescriptionMindestensParagraphMitVorfeld("noch einmal", fDesc));
+            alt.add(toTextDescriptionMindestensParagraphMitVorfeld("noch einmal", fDesc));
 
             if (fDesc instanceof StructuredDescription) {
                 final StructuredDescription sDesc = (StructuredDescription) fDesc;
@@ -176,13 +176,13 @@ public class DescriptionUmformulierer {
                         "versuchst", "dich aber erneut", fDesc));
             }
 
-            alt.add(toAllgDescriptionMindestensParagraphMitVorfeld("noch einmal", fDesc));
-            alt.add(toAllgDescriptionMindestensParagraphMitVorfeld("noch einmal aber", fDesc));
-            alt.add(toAllgDescriptionMindestensParagraphMitVorfeld("erneut", fDesc));
-            alt.add(toAllgDescriptionMindestensParagraphMitVorfeld("von neuem", fDesc));
-            alt.add(toAllgDescriptionMindestensParagraphMitVorfeld("ein weiteres Mal", fDesc));
-            alt.add(toAllgDescriptionMindestensParagraphMitVorfeld("nochmals", fDesc));
-            alt.add(toAllgDescriptionMindestensParagraphMitVorfeld("wieder", fDesc));
+            alt.add(toTextDescriptionMindestensParagraphMitVorfeld("noch einmal", fDesc));
+            alt.add(toTextDescriptionMindestensParagraphMitVorfeld("noch einmal aber", fDesc));
+            alt.add(toTextDescriptionMindestensParagraphMitVorfeld("erneut", fDesc));
+            alt.add(toTextDescriptionMindestensParagraphMitVorfeld("von neuem", fDesc));
+            alt.add(toTextDescriptionMindestensParagraphMitVorfeld("ein weiteres Mal", fDesc));
+            alt.add(toTextDescriptionMindestensParagraphMitVorfeld("nochmals", fDesc));
+            alt.add(toTextDescriptionMindestensParagraphMitVorfeld("wieder", fDesc));
 
             if (desc instanceof StructuredDescription) {
                 final StructuredDescription sDesc = (StructuredDescription) fDesc;
@@ -258,7 +258,7 @@ public class DescriptionUmformulierer {
                         fDesc));
             }
 
-            alt.add(toAllgDescriptionMindestensParagraphMitVorfeld("Immer noch", fDesc));
+            alt.add(toTextDescriptionMindestensParagraphMitVorfeld("Immer noch", fDesc));
 
             if (desc instanceof StructuredDescription) {
                 final StructuredDescription sDesc = (StructuredDescription) fDesc;
@@ -324,7 +324,7 @@ public class DescriptionUmformulierer {
     }
 
     @CheckReturnValue
-    private static TextDescription toAllgDescriptionMindestensParagraphMitVorfeld(
+    private static TextDescription toTextDescriptionMindestensParagraphMitVorfeld(
             final String vorfeld,
             final AbstractFlexibleDescription<?> desc) {
         return desc.toTextDescriptionMitVorfeld(vorfeld).beginntZumindestParagraph();

@@ -51,12 +51,12 @@ import static de.nb.aventiure2.data.world.syscomp.spatialconnection.NumberOfWays
 import static de.nb.aventiure2.data.world.syscomp.spatialconnection.NumberOfWays.ONLY_WAY;
 import static de.nb.aventiure2.data.world.syscomp.state.impl.SchlossfestState.BEGONNEN;
 import static de.nb.aventiure2.german.base.GermanUtil.buildAufzaehlung;
-import static de.nb.aventiure2.german.base.GermanUtil.capitalize;
 import static de.nb.aventiure2.german.base.StructuralElement.WORD;
 import static de.nb.aventiure2.german.description.DescriptionBuilder.du;
 import static de.nb.aventiure2.german.description.DescriptionBuilder.neuerSatz;
 import static de.nb.aventiure2.german.description.DescriptionUmformulierer.drueckeAusTimed;
 import static de.nb.aventiure2.german.description.Kohaerenzrelation.DISKONTINUITAET;
+import static de.nb.aventiure2.german.string.GermanStringUtil.capitalize;
 import static java.util.stream.Collectors.toList;
 
 /**

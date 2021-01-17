@@ -11,9 +11,9 @@ import java.util.Objects;
 import javax.annotation.CheckReturnValue;
 import javax.annotation.ParametersAreNonnullByDefault;
 
-import de.nb.aventiure2.german.base.GermanUtil;
 import de.nb.aventiure2.german.base.StructuralElement;
 import de.nb.aventiure2.german.base.Wortfolge;
+import de.nb.aventiure2.german.string.GermanStringUtil;
 
 import static de.nb.aventiure2.german.base.StructuralElement.PARAGRAPH;
 import static de.nb.aventiure2.german.base.StructuralElement.SENTENCE;
@@ -73,7 +73,7 @@ public class TextDescription extends AbstractDescription<TextDescription> {
                 // ob die Description mit einem Nomen anfängt oder nicht). Dann können wir
                 // sie auch jetzt gleich capitalizen!
                 StructuralElement.min(descriptionParams.getStartsNew(), SENTENCE) == SENTENCE ?
-                        GermanUtil.capitalize(description) : description;
+                        GermanStringUtil.capitalize(description) : description;
     }
 
     @Override
@@ -108,7 +108,8 @@ public class TextDescription extends AbstractDescription<TextDescription> {
     public TextDescription mitPraefixCapitalize(final String praefix) {
         return new TextDescription(
                 copyParams(),
-                praefix + GermanUtil.capitalize(text), woertlicheRedeNochOffen, kommaStehtAus);
+                praefix + GermanStringUtil.capitalize(text), woertlicheRedeNochOffen,
+                kommaStehtAus);
     }
 
     @Override
@@ -123,14 +124,14 @@ public class TextDescription extends AbstractDescription<TextDescription> {
     @NonNull
     public TextDescription beginntZumindestParagraph() {
         beginntZumindest(PARAGRAPH);
-        text = GermanUtil.capitalize(text);
+        text = GermanStringUtil.capitalize(text);
         return this;
     }
 
     @NonNull
     public TextDescription beginntZumindestSentence() {
         beginntZumindest(SENTENCE);
-        text = GermanUtil.capitalize(text);
+        text = GermanStringUtil.capitalize(text);
         return this;
     }
 

@@ -56,7 +56,6 @@ import static de.nb.aventiure2.data.world.syscomp.state.impl.RapunzelState.HAARE
 import static de.nb.aventiure2.data.world.syscomp.state.impl.RapunzelState.HAT_NACH_KUGEL_GEFRAGT;
 import static de.nb.aventiure2.data.world.syscomp.state.impl.RapunzelState.SINGEND;
 import static de.nb.aventiure2.data.world.syscomp.state.impl.RapunzelState.STILL;
-import static de.nb.aventiure2.german.base.GermanUtil.capitalize;
 import static de.nb.aventiure2.german.base.NumerusGenus.F;
 import static de.nb.aventiure2.german.base.NumerusGenus.PL_MFN;
 import static de.nb.aventiure2.german.base.StructuralElement.PARAGRAPH;
@@ -65,6 +64,7 @@ import static de.nb.aventiure2.german.base.Wortfolge.joinToAltWortfolgen;
 import static de.nb.aventiure2.german.description.DescriptionBuilder.du;
 import static de.nb.aventiure2.german.description.DescriptionBuilder.neuerSatz;
 import static de.nb.aventiure2.german.description.DescriptionBuilder.satz;
+import static de.nb.aventiure2.german.string.GermanStringUtil.capitalize;
 import static java.util.stream.Collectors.toSet;
 
 /**

@@ -1,9 +1,9 @@
-package de.nb.aventiure2.data.narration;
+package de.nb.aventiure2.german.stemming;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
-import static de.nb.aventiure2.german.base.GermanUtil.uncapitalize;
+import static de.nb.aventiure2.german.string.GermanStringUtil.uncapitalize;
 
 /**
  * Ein einfacher und schneller Stemming-Algorithmus für das Deutsche, implementiert auf der
@@ -50,8 +50,8 @@ class GermanStemmer {
     @SuppressWarnings("DynamicRegexReplaceableByCompiledPattern")
     private static String doSubstitutions1(final String string) {
         String res = string.replace("ß", "ss");
-        if (res.length() > 6) {
-            res = stripPrefixIfAny(res, "ge");
+        if (res.length() > 6 && res.startsWith("ge")) {
+            res = res.substring("ge".length());
         }
         res = res.replace("sch", "$");
 
@@ -129,10 +129,11 @@ class GermanStemmer {
         // tet, -end-, and -nd- (-end- and -nd- turn verbs into adverbs
         // and can be followed by any of the adjective suffixes)."
 
-        final String tmp =
-                stripFirstSuffixIfAnyIfLengthIsAtLeast(5, string, SUFFIXES_MIN_LENGTH_5);
-        if (!tmp.equals(string)) {
-            return tmp;
+        if (string.length() >= 5) {
+            final String tmp = stripFirstSuffixIfAny(string, SUFFIXES_MIN_LENGTH_5);
+            if (!tmp.equals(string)) {
+                return tmp;
+            }
         }
 
         if (wasLowerCase) {
@@ -147,12 +148,7 @@ class GermanStemmer {
             }
         }
 
-        final String tmp3 = stripFirstSuffixIfAny(string, SUFFIXES_ALL_CASES);
-        if (!tmp3.equals(string)) {
-            return tmp3;
-        }
-
-        return string;
+        return stripFirstSuffixIfAny(string, SUFFIXES_ALL_CASES);
     }
 
     /**
@@ -174,29 +170,6 @@ class GermanStemmer {
                 && Character.isLowerCase(string.codePointAt(0));
     }
 
-    private static String stripFirstSuffixIfAnyIfLengthIsAtLeast(
-            final int minLength, final String string, final String[] suffixes) {
-        if (string.length() < minLength) {
-            return string;
-        }
-
-        return stripFirstSuffixIfAny(string, suffixes);
-    }
-
-    @NonNull
-    private static String stripPrefixIfAny(final String string, final String prefix) {
-        if (!string.startsWith(prefix) || string.length() <= prefix.length()) {
-            return string;
-        }
-
-        return stripPrefix(string, prefix);
-    }
-
-    @NonNull
-    private static String stripPrefix(final String string, final String prefix) {
-        return string.substring(prefix.length());
-    }
-
     /**
      * Entfernt das erste dieser Suffixe - sofern eines vorkommt.
      */
@@ -213,5 +186,18 @@ class GermanStemmer {
     @NonNull
     private static String stripSuffix(final String string, final String suffix) {
         return string.substring(0, string.length() - suffix.length());
+    }
+
+    /**
+     * Ermittelt zu diesem Wort grob den Stamm
+     */
+    @NonNull
+    static String stemWord(final String word) {
+        final String uncapitalized = uncapitalize(word);
+        if (GermanStopwords.isStopword(uncapitalized)) {
+            return uncapitalized;
+        }
+
+        return toDiscriminator(word);
     }
 }

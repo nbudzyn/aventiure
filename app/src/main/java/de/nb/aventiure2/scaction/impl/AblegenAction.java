@@ -19,7 +19,6 @@ import de.nb.aventiure2.data.world.syscomp.memory.Action;
 import de.nb.aventiure2.data.world.syscomp.state.IHasStateGO;
 import de.nb.aventiure2.data.world.syscomp.state.impl.FroschprinzState;
 import de.nb.aventiure2.data.world.syscomp.storingplace.ILocationGO;
-import de.nb.aventiure2.german.base.GermanUtil;
 import de.nb.aventiure2.german.base.Personalpronomen;
 import de.nb.aventiure2.german.base.SubstantivischePhrase;
 import de.nb.aventiure2.german.base.Wortfolge;
@@ -27,6 +26,7 @@ import de.nb.aventiure2.german.description.TimedDescription;
 import de.nb.aventiure2.german.praedikat.AbstractAdverbialeAngabe;
 import de.nb.aventiure2.german.praedikat.AdverbialeAngabeSkopusVerbWohinWoher;
 import de.nb.aventiure2.german.praedikat.PraedikatMitEinerObjektleerstelle;
+import de.nb.aventiure2.german.string.GermanStringUtil;
 import de.nb.aventiure2.scaction.AbstractScAction;
 import de.nb.aventiure2.scaction.stepcount.SCActionStepCountDao;
 
@@ -120,7 +120,7 @@ public class AblegenAction
     @Override
     @NonNull
     public String getName() {
-        return GermanUtil.capitalize(
+        return GermanStringUtil.capitalize(
                 getPraedikat()
                         .mit(world.getDescription(gameObject, true))
                         .mitAdverbialerAngabe(getWohinDetail())

@@ -4,10 +4,9 @@ import androidx.annotation.NonNull;
 
 import org.jetbrains.annotations.Contract;
 
-import java.util.LinkedList;
 import java.util.List;
 
-import de.nb.aventiure2.german.base.GermanUtil;
+import de.nb.aventiure2.german.stemming.StemmedWords;
 
 import static java.util.Arrays.asList;
 
@@ -23,12 +22,13 @@ class TextAdditionEvaluator {
 
     /**
      * Bewertet diese Hinzufügung (<code>addition</code>) an diesen
-     * <code>base</code>-Text. Wiederholgungen gegenüber dem
+     * Basistext. Wiederholungen gegenüber dem
      * Ende des <code>base</code>-Textes gelten als schlecht. Außerdem wird geprüft, ob
      * derselbe Satz an Alternativen schon einmal geprüft wurde - Alternativen, die bei einem
      * früheren Mal gewählt wurden, werden dann vermieden.
      *
-     * @param base              Der Text, dem etwas hinzugefügt werdnen soll
+     * @param baseStems         Der Text, dem etwas hinzugefügt werden soll (nur das Ende, und für
+     *                          das wurde bereits ein Stemming durchgeführt)
      * @param isConsumed        Wurde dieser Kandidat bereits bei einem der letzten Male gewählt, als aus
      *                          <i>denselben Alternativen</i> ausgewählt wurde - gilt er also
      *                          aus "verbraucht"?
@@ -36,7 +36,7 @@ class TextAdditionEvaluator {
      *                          werden soll
      * @return Bewertungsergebnis - je größer die Zahl, desto besser
      */
-    static float evaluateAddition(final String base,
+    static float evaluateAddition(final StemmedWords baseStems,
                                   final String additionCandidate,
                                   final boolean isConsumed) {
         float res = 0;
@@ -58,93 +58,38 @@ class TextAdditionEvaluator {
 
         // Strategie "Endwiederholungen vermeiden": Wenn der additionCandidate Wörter enthält,
         // die das Ende von base wiederholen, ist das schlecht.
-        // Wir machen es dazu so: Wir teilen addition in Wörter auf,
-        // dabei verwerfen wir Interpunktion.
-        res += evaluateAdditionEndwiederholungen(base, additionCandidate);
+        // Wir machen es dazu so: Wir teilen addition in Wortstämme auf.
+        res += evaluateAdditionEndwiederholungen(baseStems, additionCandidate);
 
         return res;
     }
 
     /**
-     * Bewertet diese Hinzufügung (<code>addition</code>) an diesen
-     * <code>base</code>-Text auf Basis von Wiederholgungen von Wortstämmen
+     * Bewertet diese Hinzufügung (<code>addition</code>) an diesen Basistext auf Basis von
+     * Wiederholgungen von Wortstämmen
      * am Ende des <code>base</code>-Textes.
      */
-    private static float evaluateAdditionEndwiederholungen(final String base,
+    private static float evaluateAdditionEndwiederholungen(final StemmedWords baseStems,
                                                            final String additionCandidate) {
         float res = 0;
 
-        final StemmedWords additionWords = stem(additionCandidate);
-
-        // Dasselbe machen wir mit dem Ende von base.
-        final StemmedWords baseWords = stemEnd(base, 100);
+        final StemmedWords additionStems = StemmedWords.stem(additionCandidate);
 
         // Dann suchen wir: Gibt es am Ende von base genau 10 Wörter aus addition in Folge?
-        res += evaluateAdditionWordSequence(baseWords, additionWords, 10);
+        res += evaluateAdditionWordSequence(baseStems, additionStems, 10);
         // Das wäre schlecht (negative Zahlen).
         // Dann suchen wir: Gibt es am Ende von base genau 7 Wörter aus addition in Folge?
-        res += evaluateAdditionWordSequence(baseWords, additionWords, 7);
+        res += evaluateAdditionWordSequence(baseStems, additionStems, 7);
         // 5?
-        res += evaluateAdditionWordSequence(baseWords, additionWords, 5);
+        res += evaluateAdditionWordSequence(baseStems, additionStems, 5);
         // 3?
-        res += evaluateAdditionWordSequence(baseWords, additionWords, 3);
+        res += evaluateAdditionWordSequence(baseStems, additionStems, 3);
         // 2?
-        res += evaluateAdditionWordSequence(baseWords, additionWords, 2);
+        res += evaluateAdditionWordSequence(baseStems, additionStems, 2);
         // 1?
-        res += evaluateAdditionWordSequence(baseWords, additionWords, 1);
+        res += evaluateAdditionWordSequence(baseStems, additionStems, 1);
         // Das addieren wir alles - je höher die Zahl, desto besser!
         return res;
-    }
-
-    /**
-     * Teilt den Text grob in einzelne Wortstämme auf
-     */
-    private static StemmedWords stem(final String text) {
-        return stemEnd(text, Integer.MAX_VALUE);
-    }
-
-    /**
-     * Teilt das Ende des Textes grob in einzelne Wortstämme auf
-     */
-    private static StemmedWords stemEnd(@NonNull final String text,
-                                        final int maxWords) {
-        final LinkedList<String> res = new LinkedList<>();
-        int to = text.length() - 1;
-        while (true) {
-            while (to >= 0 && !Character.isLetter(text.charAt(to))) {
-                to--;
-            }
-            if (to < 0) {
-                return new StemmedWords(res); // ==>
-            }
-
-            int from = to;
-
-            while (from >= 0 && Character.isLetter(text.charAt(from))) {
-                from--;
-            }
-
-            res.addFirst(stemWord(text.substring(from + 1, to + 1)));
-
-            if (res.size() >= maxWords) {
-                return new StemmedWords(res);
-            }
-
-            to = from;
-        }
-    }
-
-    /**
-     * Ermittelt zu diesem Wort grob den Stamm
-     */
-    @NonNull
-    private static String stemWord(final String word) {
-        final String uncapitalized = GermanUtil.uncapitalize(word);
-        if (GermanStopwords.isStopword(uncapitalized)) {
-            return uncapitalized;
-        }
-
-        return GermanStemmer.toDiscriminator(word);
     }
 
     /**
