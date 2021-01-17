@@ -199,7 +199,7 @@ public class RapunzelsZauberinTalkingComp extends AbstractTalkingComp {
                                 PraepositionMitKasus.VON.mit(anaph).getDescription()))
                         .undWartest()
                         .dann());
-        // FIXME weitere Alternativen
+        // FIXME weitere Alternativen zum Verabschieden von der Zauberin
 
         n.narrateAlt(alt, secs(10));
         gespraechspartnerBeendetGespraech();
@@ -239,11 +239,17 @@ public class RapunzelsZauberinTalkingComp extends AbstractTalkingComp {
                         .beendet(PARAGRAPH)
         );
 
+        // FIXME Zauberin wird abweisender beim Fragen nach dem Weg
+
         // FIXME Weitere Antworten der Zauberin auf Frage nach dem Weg
 
-        // FIXME Wenn im Gespräch: Hexe Kugel geben (Diebesgut...) (beendet Gespräch)
+        // FIXME Wenn im Gespräch: Hexe Kugel geben? (Diebesgut...) (beendet Gespräch, macht
+        //  sie noch abweisender)
 
-        // FIXME Hexe nach Turm fragen (Abneigung steigt - danach "misstrauisch...")
+        // FIXME Hexe nach Turm fragen? (Abneigung steigt - danach "misstrauisch...")
+        
+        // FIXME Geht die Zauberin eigentlich von sich aus weiter?? Oder gibt es hier einen
+        //  Bug und die Zauberin wartet, solange der SC vor Ort ist?
 
         setSchonBegruesstMitSC(true);
         talkerBeendetGespraech();

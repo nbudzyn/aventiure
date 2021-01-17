@@ -180,8 +180,6 @@ public class RapunzelReactionsComp
         loadSC().feelingsComp().requestMoodMin(BEWEGT);
 
         if (!loadSC().memoryComp().isKnown(RAPUNZELS_GESANG)) {
-            // FIXME Rapunzels sollte erst anfangen, regelmäßig zu singen, wenn der Spieler
-            //  ein oder zweimal gerastet hat.
             n.narrate(neuerSatz(PARAGRAPH,
                     "Wie du näher kommst, hörst du einen Gesang, so lieblich, dass es "
                             + "dir das Herz rührt. Du hältst still und horchst: Kommt die "
