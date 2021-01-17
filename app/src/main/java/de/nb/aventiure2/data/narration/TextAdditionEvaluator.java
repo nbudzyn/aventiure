@@ -70,10 +70,10 @@ class TextAdditionEvaluator {
                                                            final String additionCandidate) {
         float res = 0;
 
-        final ImmutableList<String> additionWords = splitInWords(additionCandidate);
+        final ImmutableList<String> additionWords = stem(additionCandidate);
 
         // Dasselbe machen wir mit dem Ende von base.
-        final ImmutableList<String> baseWords = splitEndInWords(base, 100);
+        final ImmutableList<String> baseWords = stemEnd(base, 100);
 
         // Dann suchen wir: Gibt es am Ende von base genau 10 Wörter aus addition in Folge?
         res += evaluateAdditionWordSequence(baseWords, additionWords, 10);
@@ -92,12 +92,18 @@ class TextAdditionEvaluator {
         return res;
     }
 
-    private static ImmutableList<String> splitInWords(final String text) {
-        return splitEndInWords(text, Integer.MAX_VALUE);
+    /**
+     * Teilt den Text grob in einzelne Wortstämme auf
+     */
+    private static ImmutableList<String> stem(final String text) {
+        return stemEnd(text, Integer.MAX_VALUE);
     }
 
-    private static ImmutableList<String> splitEndInWords(@NonNull final String text,
-                                                         final int maxWords) {
+    /**
+     * Teilt das Ende des Textes grob in einzelne Wortstämme auf
+     */
+    private static ImmutableList<String> stemEnd(@NonNull final String text,
+                                                 final int maxWords) {
         final LinkedList<String> res = new LinkedList<>();
         int to = text.length() - 1;
         while (true) {
@@ -114,7 +120,7 @@ class TextAdditionEvaluator {
                 from--;
             }
 
-            res.addFirst(text.substring(from + 1, to + 1).toLowerCase(Locale.GERMAN));
+            res.addFirst(stemWord(text.substring(from + 1, to + 1)));
 
             if (res.size() >= maxWords) {
                 return ImmutableList.copyOf(res);
@@ -122,6 +128,15 @@ class TextAdditionEvaluator {
 
             to = from;
         }
+    }
+
+    /**
+     * Ermittelt zu diesem Wort grob den Stamm
+     */
+    @NonNull
+    private static String stemWord(final String word) {
+        // FIXME GermanEasyStemmer einbinden
+        return word.toLowerCase(Locale.GERMAN);
     }
 
     /**

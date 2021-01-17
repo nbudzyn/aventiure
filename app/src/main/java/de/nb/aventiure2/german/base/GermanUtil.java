@@ -5,6 +5,7 @@ import androidx.annotation.Nullable;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.Locale;
 import java.util.stream.Collectors;
 
 import static com.google.common.base.Preconditions.checkArgument;
@@ -19,12 +20,20 @@ public class GermanUtil {
     private GermanUtil() {
     }
 
+    public static String toLowerCase(final String str) {
+        if (str.isEmpty()) {
+            return "";
+        }
+
+        return str.substring(0, 1).toLowerCase(Locale.GERMAN) + str.substring(1);
+    }
+
     public static String capitalize(final String str) {
         if (str.isEmpty()) {
             return "";
         }
 
-        return str.substring(0, 1).toUpperCase() + str.substring(1);
+        return str.substring(0, 1).toUpperCase(Locale.GERMAN) + str.substring(1);
     }
 
     /**
