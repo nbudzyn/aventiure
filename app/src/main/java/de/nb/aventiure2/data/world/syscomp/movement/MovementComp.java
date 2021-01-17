@@ -150,8 +150,7 @@ public class MovementComp
 
     @Override
     public void onSCActionDone(final AvDateTime startTimeOfUserAction) {
-        if (getPcd().getPauseForSCAction() == PAUSED
-                && !stayPaused()) {
+        if (getPcd().getPauseForSCAction() == PAUSED && !stayPaused()) {
             setupNextStepIfNecessaryAndPossible(startTimeOfUserAction);
         }
     }

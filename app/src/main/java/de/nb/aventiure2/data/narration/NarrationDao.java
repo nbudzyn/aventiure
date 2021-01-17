@@ -114,7 +114,7 @@ public abstract class NarrationDao {
         checkArgument(!timedAlternatives.isEmpty(), "No timedAlternatives");
 
         // Es könnte Duplikate geben:
-        //  - Duplichte innerhalb einer der timedAlternatives
+        //  - Duplikate innerhalb einer der timedAlternatives
         //  - Duplikate zwischen mehreren timedAlternatives
         // Um Zeit zu sparen, filtern wir die Duplikate heraus.
 
@@ -225,7 +225,7 @@ public abstract class NarrationDao {
      * versucht dabei vor allem, Wiederholgungen mit der unmittelbar zuvor geschriebenen
      * Narration zu vermeiden.
      */
-    IndexAndScore calcBestIndexAndScore(
+    private IndexAndScore calcBestIndexAndScore(
             final ImmutableList<TextDescription> alternatives,
             final Narration initialNarration) {
         checkArgument(!alternatives.isEmpty(), "No alternatives");

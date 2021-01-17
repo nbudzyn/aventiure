@@ -41,7 +41,7 @@ public class RapunzelsZauberinMovementNarrator extends SimpleMovementNarrator {
             @Nullable final SpatialConnection spatialConnectionMovingGO) {
         final Nominalphrase desc = getDescription();
         final SubstantivischePhrase anaphOderDesc =
-                getAnaphPersPronWennMglSonstDescription(false);
+                anaph(false);
 
         final ImmutableCollection.Builder<AbstractDescription<?>> alt = ImmutableList.builder();
 

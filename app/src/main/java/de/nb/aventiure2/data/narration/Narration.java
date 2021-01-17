@@ -385,6 +385,8 @@ public class Narration {
     /**
      * Gibt den String zurück, mit dem die wörtliche Rede abgeschlossen wird - falls überhaupt
      * eine wörtliche Rede noch offen ist. Dies können ein Leerstring, "“" oder ".“" sein.
+     *
+     * @param satzende Ob der Satz damit beendet werden soll
      */
     private String schliesseWoertlicheRedeFallsNoetig(
             final String base, final String addition, final boolean satzende) {
@@ -398,39 +400,55 @@ public class Narration {
     /**
      * Gibt den String zurück, mit dem die noch offene wörtliche Rede abgeschlossen wird.
      * Dies können ein Leerstring, "“" oder ".“" sein.
+     *
+     * @param satzende Ob der Satz damit beendet werden soll
      */
     private static String schliesseWoertlicheRede(
             final String base, final String addition, final boolean satzende) {
+
+        if (satzende) {
+            return schliesseWoertlicheRedeSatzende(base, addition);
+        }
+
+        return schliesseWoertlicheRedeNichtSatzende(base, addition);
+    }
+
+    @NonNull
+    private static String schliesseWoertlicheRedeSatzende(final String base, final String addition) {
         final String baseTrimmed = base.trim();
         final String additionTrimmed = addition.trim();
 
-        if (satzende) {
-            final String lastRelevantCharBase = baseTrimmed.substring(baseTrimmed.length() - 1);
-            if ("….!?:\"“".contains(lastRelevantCharBase)) {
-                if (baseTrimmed.endsWith("…“") || baseTrimmed.endsWith(".“")
-                        || baseTrimmed.endsWith("!“") || baseTrimmed.endsWith("?“")
-                        || baseTrimmed.endsWith("…\"") || baseTrimmed.endsWith(".\"")
-                        || baseTrimmed.endsWith("!\"") || baseTrimmed.endsWith("?\"")) {
-                    return "";
-                }
-
-                if (additionTrimmed.startsWith("“")) {
-                    return "";
-                }
-
-                return "“";
-            }
-
-            if (additionTrimmed.startsWith(".“")) {
+        final String lastRelevantCharBase = baseTrimmed.substring(baseTrimmed.length() - 1);
+        if ("….!?:\"“".contains(lastRelevantCharBase)) {
+            if (baseTrimmed.endsWith("…“") || baseTrimmed.endsWith(".“")
+                    || baseTrimmed.endsWith("!“") || baseTrimmed.endsWith("?“")
+                    || baseTrimmed.endsWith("…\"") || baseTrimmed.endsWith(".\"")
+                    || baseTrimmed.endsWith("!\"") || baseTrimmed.endsWith("?\"")) {
                 return "";
             }
 
             if (additionTrimmed.startsWith("“")) {
-                return ".";
+                return "";
             }
 
-            return ".“";
+            return "“";
         }
+
+        if (additionTrimmed.startsWith(".“")) {
+            return "";
+        }
+
+        if (additionTrimmed.startsWith("“")) {
+            return ".";
+        }
+
+        return ".“";
+    }
+
+    @NonNull
+    private static String schliesseWoertlicheRedeNichtSatzende(final String base, final String addition) {
+        final String baseTrimmed = base.trim();
+        final String additionTrimmed = addition.trim();
 
         if (baseTrimmed.endsWith("“")) {
             return "";

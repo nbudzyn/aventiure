@@ -43,7 +43,7 @@ public class HeulenAction extends AbstractScAction {
             final Narrator n, final World world,
             final SpielerCharakter sc) {
         final ImmutableList.Builder<HeulenAction> res = ImmutableList.builder();
-        // TODO Alle Breakpoints aktivieren, Debuggen, entfernen.
+        // TODO Alle Breakpoints durchdebuggen, entfernen.
 
         if (sc.feelingsComp().isTraurigerAls(BETRUEBT)) {
             res.add(new HeulenAction(scActionStepCountDao, timeTaker, n, world));

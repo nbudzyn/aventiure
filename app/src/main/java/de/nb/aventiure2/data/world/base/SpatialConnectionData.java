@@ -144,6 +144,6 @@ public class SpatialConnectionData {
     @NonNull
     @Override
     public String toString() {
-        return "SpatialConnectionData";
+        return wo;
     }
 }

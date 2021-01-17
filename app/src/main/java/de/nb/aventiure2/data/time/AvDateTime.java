@@ -88,11 +88,11 @@ public class AvDateTime {
     public AvDateTime goBackTo(final AvTime otherTime) {
         checkNotNull(otherTime, "otherTime is null");
 
-        if (!otherTime.isAfter(getTime())) {
-            return new AvDateTime(getDay(), otherTime);
+        if (otherTime.isAfter(getTime())) {
+            return new AvDateTime(getDay() - 1, otherTime);
         }
 
-        return new AvDateTime(getDay() - 1, otherTime);
+        return new AvDateTime(getDay(), otherTime);
     }
 
     public boolean isWithin(final AvDateTime lowerBoundExclusive,

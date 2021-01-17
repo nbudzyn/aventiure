@@ -727,8 +727,6 @@ public class SpatialConnection {
     @NonNull
     @Override
     public String toString() {
-        return "SpatialConnection{" +
-                "data='" + data + '\'' +
-                '}';
+        return data.toString();
     }
 }

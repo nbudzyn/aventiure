@@ -152,15 +152,27 @@ public class Walkthrough {
                     "Tiefer in den Wald hineingehen"
             );
 
-    public static final Walkthrough SEP_1_IM_WALD_BIS_RAPUNZEL =
+    private static final Walkthrough SEP_1_IM_WALD_BIS_RAPUNZEL =
             new Walkthrough(
                     "In Richtung Schloss gehen",
                     "Die Frau ansprechen",
-                    "Die Frau nach ihrem Ziel fragen",
+                    "Die Frau nach ihrem Ziel fragen", // Frau geht weg Richtung Turm
+                    "Den langen schmalen Pfad zum Turm aufwärtsgehen",
+                    "Den Pfad zurückgehen",
                     "Den langen schmalen Pfad zum Turm aufwärtsgehen",
                     "In den Schatten der Bäume setzen",
+                    "Auf die magere Frau warten", // Frau steigt vom Turm herunter und geht
                     "Auf die magere Frau warten",
                     "Auf die magere Frau warten",
+                    "Auf die magere Frau warten",
+                    "Auf die magere Frau warten",
+                    "Auf die magere Frau warten",
+                    "Auf die magere Frau warten",
+                    "Auf die magere Frau warten",
+                    "Auf die magere Frau warten",
+                    "Auf die magere Frau warten",
+                    "Auf die magere Frau warten", // Frau kommt und ruft
+                    "Auf die magere Frau warten", // Frau steigt vom Turm herunter und geht
                     "Aus dem Schatten der Bäume treten",
                     "Rufen: „Lass dein Haar herunter“",
                     "An den Haaren hinaufsteigen",
@@ -172,7 +184,7 @@ public class Walkthrough {
 
     public static final Walkthrough SEP_1_NUR_RAPUNZEL =
             SEP_1_RAPUNZEL_HOEREN_UND_IN_DEN_WALD.append(SEP_1_IM_WALD_BIS_RAPUNZEL);
-    
+
     private final ImmutableList<String> steps;
 
     private Walkthrough(final String... steps) {

@@ -65,29 +65,43 @@ public class MuedigkeitsData {
         final boolean sollteLautBiorhythmusSchlafen =
                 muedigkeitGemaessBiorhythmus >= FeelingIntensity.STARK;
         if (sollteLautBiorhythmusSchlafen) {
-            final AvTime zuletztSchlafenGegangenTime =
-                    biorhythmus.getLastTimeWithIntensityLessThan(
-                            now.getTime(), FeelingIntensity.STARK);
-
-            final AvDateTime zuletztSchlafenGegangenDateTime =
-                    now.goBackTo(zuletztSchlafenGegangenTime);
-
-            final AvTimeSpan schlafdauer = now.minus(zuletztSchlafenGegangenDateTime);
-
-            final AvTimeSpan ausschlafenEffektHaeltVorFuer =
-                    calcAusschlafenEffektHaeltBeimMenschenVorFuer(schlafdauer);
-
-            // Gehen wir mal davon aus, dass das IFeelingBeing gerade aufgewacht ist.
-            // Ansonsten macht ein MuedigkeitsData ohnehin nur begrenzt Sinn.
-            return new MuedigkeitsData(
-                    FeelingIntensity.NEUTRAL, // gerade erwacht
-                    Integer.MAX_VALUE,
-                    now,
-                    now.plus(ausschlafenEffektHaeltVorFuer),
-                    now.minus(secs(1)),
-                    FeelingIntensity.NUR_LEICHT);
+            return createFromBiorhythmusFuerMenschenGeradeAufgewacht(biorhythmus, now);
         }
 
+        return createFromBiorhythmusFuerMenschenGeradeWach(biorhythmus, now,
+                muedigkeitGemaessBiorhythmus);
+    }
+
+    @NonNull
+    private static MuedigkeitsData createFromBiorhythmusFuerMenschenGeradeAufgewacht(
+            final Biorhythmus biorhythmus, final AvDateTime now) {
+        final AvTime zuletztSchlafenGegangenTime =
+                biorhythmus.getLastTimeWithIntensityLessThan(
+                        now.getTime(), FeelingIntensity.STARK);
+
+        final AvDateTime zuletztSchlafenGegangenDateTime =
+                now.goBackTo(zuletztSchlafenGegangenTime);
+
+        final AvTimeSpan schlafdauer = now.minus(zuletztSchlafenGegangenDateTime);
+
+        final AvTimeSpan ausschlafenEffektHaeltVorFuer =
+                calcAusschlafenEffektHaeltBeimMenschenVorFuer(schlafdauer);
+
+        // Gehen wir mal davon aus, dass das IFeelingBeing gerade aufgewacht ist.
+        // Ansonsten macht ein MuedigkeitsData ohnehin nur begrenzt Sinn.
+        return new MuedigkeitsData(
+                FeelingIntensity.NEUTRAL, // gerade erwacht
+                Integer.MAX_VALUE,
+                now,
+                now.plus(ausschlafenEffektHaeltVorFuer),
+                now.minus(secs(1)),
+                FeelingIntensity.NUR_LEICHT);
+    }
+
+    @NonNull
+    private static MuedigkeitsData createFromBiorhythmusFuerMenschenGeradeWach(
+            final Biorhythmus biorhythmus, final AvDateTime now,
+            final int muedigkeitGemaessBiorhythmus) {
         final AvTime zuletztErwachtTime =
                 biorhythmus.getLastTimeWithIntensityAtLeast(
                         now.getTime(), FeelingIntensity.STARK);
