@@ -22,173 +22,6 @@ class GermanStemmer {
     }
 
     /**
-     * Erzeugt aus der Wortform den Discriminator. Verschiedene Wortformen desselben
-     * Lexems ergeben - im Großen und Ganzen - denselben Discriminator.
-     */
-    @NonNull
-    static String toDiscriminator(final String word) {
-        final boolean wasLowercase = startsWithLowerCase(word);
-
-        String res = uncapitalize(word);
-        res = doSubstitutions1(res);
-
-        while (res.length() > 3) {
-            final String tmp = stripSuffixes(res, wasLowercase);
-            if (tmp.equals(res)) {
-                break;
-            }
-            res = tmp;
-        }
-
-        return doSubstitutions2(res);
-    }
-
-    /**
-     * Ersetzt gewisse Zeichen(folgen) - für den Beginn des Algorithmus
-     */
-    @NonNull
-    @SuppressWarnings("DynamicRegexReplaceableByCompiledPattern")
-    private static String doSubstitutions1(final String string) {
-        String res = string.replace("ß", "ss");
-        if (res.length() > 6 && res.startsWith("ge")) {
-            res = res.substring("ge".length());
-        }
-        res = res.replace("sch", "$");
-
-        // Schauspielerin (nicht bei Cistem)
-        res = res.replace("erinn", "erin");
-
-        res = replaceSecondOfDoubleCharsWithAsterisk(res);
-
-        res = res.replace("ü", "u");
-        res = res.replace("ö", "o");
-        res = res.replace("ä", "a");
-        res = res.replace("ei", "%");
-        return res.replace("ie", "&");
-
-        // "Irregular verbs (sah / sieht) and foreign words (Drama / Dramen) can only be solved
-        //  by using a dictionary"
-    }
-
-    /**
-     * Folgen zwei gleiche Buchstaben aufeinander, so wird der zweite
-     * durch "*" ersetzt.
-     */
-    @NonNull
-    private static String replaceSecondOfDoubleCharsWithAsterisk(final String string) {
-        final StringBuilder res = new StringBuilder(string.length());
-
-        @Nullable
-        String prevChar = null;
-        for (int i = 0; i < string.length(); i++) {
-            final String currChar = string.substring(i, i + 1);
-            if (currChar.equals(prevChar)) {
-                res.append("*");
-                prevChar = null; // "nnn" -> "n*n"
-            } else {
-                res.append(currChar);
-                prevChar = currChar;
-            }
-        }
-
-        return res.toString();
-    }
-
-    /**
-     * Folgt auf einen Buchstaben ein "*", wird er durch den vorigen Buchstaben ersetzt.
-     */
-    @NonNull
-    private static String replaceAsteriskWithPreviousChar(final String string) {
-        final StringBuilder res = new StringBuilder(string.length());
-
-        @Nullable
-        String prevChar = null;
-        for (int i = 0; i < string.length(); i++) {
-            final String currChar = string.substring(i, i + 1);
-            if (prevChar != null && currChar.equals("*")) {
-                res.append(prevChar);
-            } else {
-                res.append(currChar);
-            }
-            prevChar = currChar;
-        }
-
-        return res.toString();
-    }
-
-
-    /**
-     * Entfernt Endungen von diesem intermediateWord;
-     */
-    private static String stripSuffixes(final String string, final boolean wasLowerCase) {
-        // "In German there are seven declensional suffixes for
-        // nouns: -s, -es, -e, -en, -n, -er, and -ern, 16 for
-        // adjectives: -e, -er, -en, -em, -ere, -erer, -eren, -erem,
-        // -ste, -ster, -sten, and -stem, and 48 for verbs: -e, -est,
-        // -st, -et, -t, -en, -ete, -te, etest, -test, eten, -ten, -etet,
-        // tet, -end-, and -nd- (-end- and -nd- turn verbs into adverbs
-        // and can be followed by any of the adjective suffixes)."
-
-        if (string.length() >= 5) {
-            final String tmp = stripFirstSuffixIfAny(string, SUFFIXES_MIN_LENGTH_5);
-            if (!tmp.equals(string)) {
-                return tmp;
-            }
-        }
-
-        if (wasLowerCase) {
-            // Hier entsteht eine Ungenauigkeit: Ist eine Verbform am Satzanfang groß
-            // geschrieben (z.B. in "Kommt Peter auch?"), so wird das "-t" nicht entfernt.
-            // Anscheinend ist das immer noch besser, als das -t auch von Substantiven
-            // zu entfernen, da Fragen eher selten sind.
-            final String tmp2 = stripFirstSuffixIfAny(string, SUFFIXES_LOWER_CASE);
-
-            if (!tmp2.equals(string)) {
-                return tmp2;
-            }
-        }
-
-        return stripFirstSuffixIfAny(string, SUFFIXES_ALL_CASES);
-    }
-
-    /**
-     * Ersetzt gewisse Zeichen(folgen) - für das Ende des Algorithmus
-     */
-    @NonNull
-    @SuppressWarnings("DynamicRegexReplaceableByCompiledPattern")
-    private static String doSubstitutions2(final String string) {
-        String res = replaceAsteriskWithPreviousChar(string);
-
-        res = res.replace("$", "sch");
-        res = res.replace("%", "ei");
-        return res.replace("&", "ie");
-    }
-
-
-    private static boolean startsWithLowerCase(final String string) {
-        return !string.isEmpty()
-                && Character.isLowerCase(string.codePointAt(0));
-    }
-
-    /**
-     * Entfernt das erste dieser Suffixe - sofern eines vorkommt.
-     */
-    private static String stripFirstSuffixIfAny(final String string, final String[] suffixes) {
-        for (final String suffix : suffixes) {
-            if (string.endsWith(suffix) && string.length() > suffix.length()) {
-                return stripSuffix(string, suffix);
-            }
-        }
-
-        return string;
-    }
-
-    @NonNull
-    private static String stripSuffix(final String string, final String suffix) {
-        return string.substring(0, string.length() - suffix.length());
-    }
-
-    /**
      * Ermittelt zu diesem Wort grob den Stamm
      */
     @NonNull
@@ -199,5 +32,180 @@ class GermanStemmer {
         }
 
         return toDiscriminator(word);
+    }
+
+    /**
+     * Erzeugt aus der Wortform den Discriminator. Verschiedene Wortformen desselben
+     * Lexems ergeben - im Großen und Ganzen - denselben Discriminator.
+     */
+    @NonNull
+    static String toDiscriminator(final String word) {
+        final boolean wasLowercase = startsWithLowerCase(word);
+
+        final StringBuilder res = new StringBuilder(word.length());
+
+        if (wasLowercase) {
+            res.append(word);
+        } else {
+            res.append(uncapitalize(word));
+        }
+
+        doSubstitutions1(res);
+
+        while (res.length() > 3) {
+            final boolean changed = stripSomeSuffixesIfAny(res, wasLowercase);
+            if (!changed) {
+                break;
+            }
+        }
+
+        doSubstitutions2(res);
+
+        return res.toString();
+    }
+
+    /**
+     * Ersetzt gewisse Zeichen(folgen) - für den Beginn des Algorithmus
+     */
+    private static void doSubstitutions1(final StringBuilder stringBuilder) {
+        replaceAll(stringBuilder, "ß", "ss");
+        if (stringBuilder.length() > 6
+                && "ge".contentEquals(stringBuilder.subSequence(0, 2))) {
+            stringBuilder.delete(0, 2);
+        }
+        replaceAll(stringBuilder, "sch", "$");
+
+        // Schauspielerin (nicht bei Cistem)
+        replaceAll(stringBuilder, "erinn", "erin");
+
+        replaceSecondOfDoubleCharsWithAsterisk(stringBuilder);
+
+        replaceAll(stringBuilder, "ü", "u");
+        replaceAll(stringBuilder, "ö", "o");
+        replaceAll(stringBuilder, "ä", "a");
+        replaceAll(stringBuilder, "ei", "%");
+        replaceAll(stringBuilder, "ie", "&");
+
+        // "Irregular verbs (sah / sieht) and foreign words (Drama / Dramen) can only be solved
+        //  by using a dictionary"
+    }
+
+    /**
+     * Folgen zwei gleiche Buchstaben aufeinander, so wird der zweite
+     * durch "*" ersetzt.
+     */
+    private static void replaceSecondOfDoubleCharsWithAsterisk(final StringBuilder stringBuilder) {
+        @Nullable
+        String prevChar = null;
+        for (int i = 0; i < stringBuilder.length(); i++) {
+            final String currChar = stringBuilder.substring(i, i + 1);
+            if (currChar.equals(prevChar)) {
+                stringBuilder.replace(i, i + 1, "*");
+                prevChar = null; // "nnn" -> "n*n"
+            } else {
+                prevChar = currChar;
+            }
+        }
+    }
+
+    /**
+     * Folgt auf einen Buchstaben ein "*", wird er durch den vorigen Buchstaben ersetzt.
+     */
+    private static void replaceAsteriskWithPreviousChar(final StringBuilder stringBuilder) {
+        @Nullable
+        String prevChar = null;
+        for (int i = 0; i < stringBuilder.length(); i++) {
+            final String currChar = stringBuilder.substring(i, i + 1);
+            if (prevChar != null && currChar.equals("*")) {
+                stringBuilder.replace(i, i + 1, prevChar);
+            }
+            prevChar = currChar;
+        }
+    }
+
+
+    /**
+     * Entfernt Endungen von diesem intermediateWord;
+     */
+    private static boolean stripSomeSuffixesIfAny(final StringBuilder stringBuilder,
+                                                  final boolean wasLowerCase) {
+        // "In German there are seven declensional suffixes for
+        // nouns: -s, -es, -e, -en, -n, -er, and -ern, 16 for
+        // adjectives: -e, -er, -en, -em, -ere, -erer, -eren, -erem,
+        // -ste, -ster, -sten, and -stem, and 48 for verbs: -e, -est,
+        // -st, -et, -t, -en, -ete, -te, etest, -test, eten, -ten, -etet,
+        // tet, -end-, and -nd- (-end- and -nd- turn verbs into adverbs
+        // and can be followed by any of the adjective suffixes)."
+
+        boolean changed = false;
+
+        if (stringBuilder.length() >= 5) {
+            changed = stripSuffixesIfExist(stringBuilder, SUFFIXES_MIN_LENGTH_5) || changed;
+        }
+
+        if (wasLowerCase) {
+            // Hier entsteht eine Ungenauigkeit: Ist eine Verbform am Satzanfang groß
+            // geschrieben (z.B. in "Kommt Peter auch?"), so wird das "-t" nicht entfernt.
+            // Anscheinend ist das immer noch besser, als das -t auch von Substantiven
+            // zu entfernen, da Fragen eher selten sind.
+            changed = stripSuffixesIfExist(stringBuilder, SUFFIXES_LOWER_CASE) || changed;
+        }
+
+        changed = stripSuffixesIfExist(stringBuilder, SUFFIXES_ALL_CASES) || changed;
+
+        return changed;
+    }
+
+    /**
+     * Ersetzt gewisse Zeichen(folgen) - für das Ende des Algorithmus
+     */
+    private static void doSubstitutions2(final StringBuilder stringBuilder) {
+        replaceAsteriskWithPreviousChar(stringBuilder);
+
+        replaceAll(stringBuilder, "$", "sch");
+        replaceAll(stringBuilder, "%", "ei");
+        replaceAll(stringBuilder, "&", "ie");
+    }
+
+    private static boolean startsWithLowerCase(final String string) {
+        return !string.isEmpty()
+                && Character.isLowerCase(string.codePointAt(0));
+    }
+
+    /**
+     * Entfernt das erste dieser Suffixe - sofern eines vorkommt.
+     *
+     * @return true if something has changed
+     */
+    private static boolean stripSuffixesIfExist(final StringBuilder stringBuilder,
+                                                final String[] suffixes) {
+        boolean changed = false;
+        for (final String suffix : suffixes) {
+            changed = stripSuffixIfExists(stringBuilder, suffix) || changed;
+        }
+
+        return changed;
+    }
+
+    private static boolean stripSuffixIfExists(final StringBuilder stringBuilder,
+                                               final String suffix) {
+        if (suffix.contentEquals(
+                stringBuilder.subSequence(
+                        stringBuilder.length() - suffix.length(), stringBuilder.length()))) {
+            stringBuilder.delete(stringBuilder.length() - suffix.length(), stringBuilder.length());
+            return true;
+        }
+
+        return false;
+    }
+
+    private static void replaceAll(final StringBuilder stringBuilder, final String from,
+                                   final String to) {
+        int index = stringBuilder.indexOf(from);
+        while (index != -1) {
+            stringBuilder.replace(index, index + from.length(), to);
+            index += to.length(); // Move to the end of the replacement
+            index = stringBuilder.indexOf(from, index);
+        }
     }
 }
