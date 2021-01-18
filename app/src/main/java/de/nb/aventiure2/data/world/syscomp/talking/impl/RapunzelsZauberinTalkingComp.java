@@ -247,9 +247,6 @@ public class RapunzelsZauberinTalkingComp extends AbstractTalkingComp {
         //  sie noch abweisender)
 
         // FIXME Hexe nach Turm fragen? (Abneigung steigt - danach "misstrauisch...")
-        
-        // FIXME Geht die Zauberin eigentlich von sich aus weiter?? Oder gibt es hier einen
-        //  Bug und die Zauberin wartet, solange der SC vor Ort ist?
 
         setSchonBegruesstMitSC(true);
         talkerBeendetGespraech();
