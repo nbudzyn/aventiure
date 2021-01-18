@@ -248,7 +248,7 @@ public class FroschprinzTalkingComp extends AbstractTalkingComp {
         n.narrateAlt(
                 joinToAltWortfolgen(
                         "„",
-                        altGruesseCap(),
+                        altBegruessungenCap(),
                         // "Hallo"
                         ", du hässlicher Frosch!“, redest du ihn an").stream()
                         .map(wf -> neuerSatz(wf).undWartest().dann()),
@@ -567,7 +567,7 @@ public class FroschprinzTalkingComp extends AbstractTalkingComp {
 
             alt.addAll(joinToAltWortfolgen(
                     "„",
-                    altGruesseCap(),
+                    altBegruessungenCap(),
                     // "Hallo" / "Einen schönen guten Morgen"
                     ", Kollege Frosch!“").stream()
                     .map(DescriptionBuilder::neuerSatz)
@@ -575,7 +575,7 @@ public class FroschprinzTalkingComp extends AbstractTalkingComp {
 
             alt.addAll(joinToAltWortfolgen(
                     "„",
-                    altGruesseCap(),
+                    altBegruessungenCap(),
                     // "Hallo" / "Einen schönen guten Morgen"
                     "„, du hässlicher Frosch!“, redest du ihn an").stream()
                     .map(wf -> neuerSatz(wf).undWartest().dann())

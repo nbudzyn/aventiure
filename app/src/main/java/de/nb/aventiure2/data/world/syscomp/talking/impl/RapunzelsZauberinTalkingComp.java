@@ -144,7 +144,7 @@ public class RapunzelsZauberinTalkingComp extends AbstractTalkingComp {
 
         alt.addAll(joinToAltWortfolgen(
                 "„",
-                altGruesseCap(),
+                altBegruessungenCap(),
                 // "Einen schönen guten Tag"
                 "“, sprichst du",
                 anaph.akkK(),
@@ -153,7 +153,7 @@ public class RapunzelsZauberinTalkingComp extends AbstractTalkingComp {
                 .collect(toSet()));
         alt.addAll(joinToAltWortfolgen(
                 "„",
-                altGruesseCap(),
+                altBegruessungenCap(),
                 // "Einen schönen guten Tag"
                 "“, redest du",
                 anaph.akkK(),
@@ -193,13 +193,33 @@ public class RapunzelsZauberinTalkingComp extends AbstractTalkingComp {
 
         final ImmutableList.Builder<AbstractDescription<?>> alt = ImmutableList.builder();
 
-        alt.add(neuerSatz("„Na, dann erstmal!“ Du wendest dich ab"),
-                du("verabschiedest",
-                        joinToWortfolge("dich wieder",
-                                PraepositionMitKasus.VON.mit(anaph).getDescription()))
-                        .undWartest()
-                        .dann());
-        // FIXME weitere Alternativen zum Verabschieden von der Zauberin
+        alt.addAll(
+                // FIXME joinToAltWortfolgen ersetzen durch etwas wie altNeueSaetze(...)?
+                joinToAltWortfolgen(
+                        "„",
+                        altVerabschiedungenCap(),
+                        // "Tschüss"
+                        "!“ Du wendest dich ab").stream()
+                        .map(wortfolge -> neuerSatz(wortfolge).undWartest().dann())
+                        .collect(toSet()));
+
+        alt.addAll(joinToAltWortfolgen(
+                "„",
+                altVerabschiedungenCap(),
+                // "Tschüss"
+                "“, verabschiedest du dich",
+                PraepositionMitKasus.VON.mit(anaph).getDescription()).stream()
+                .map(wortfolge -> neuerSatz(wortfolge).undWartest().dann())
+                .collect(toSet()));
+
+        alt.add(du("verabschiedest",
+                joinToWortfolge("dich wieder",
+                        PraepositionMitKasus.VON.mit(anaph).getDescription()))
+                        .undWartest().dann(),
+                du("sagst",
+                        joinToWortfolge(anaph.datK(), "Ade"))
+                        .undWartest().dann()
+        );
 
         n.narrateAlt(alt, secs(10));
         gespraechspartnerBeendetGespraech();

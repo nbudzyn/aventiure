@@ -19,6 +19,7 @@ import de.nb.aventiure2.data.world.gameobject.*;
 import de.nb.aventiure2.data.world.gameobject.player.*;
 import de.nb.aventiure2.data.world.syscomp.description.IDescribableGO;
 import de.nb.aventiure2.data.world.syscomp.location.ILocatableGO;
+import de.nb.aventiure2.data.world.syscomp.location.LocationSystem;
 import de.nb.aventiure2.data.world.syscomp.storingplace.ILocationGO;
 import de.nb.aventiure2.data.world.syscomp.talking.impl.SCTalkAction;
 import de.nb.aventiure2.german.base.Nominalphrase;
@@ -36,8 +37,14 @@ import static de.nb.aventiure2.data.world.gameobject.World.*;
  * {@link ITalkerGO} dann irgendwie reagiert).
  */
 public abstract class AbstractTalkingComp extends AbstractStatefulComponent<TalkingPCD> {
-    private static final ImmutableSet<String> TAGESZEITUNABHAENGIE_GRUESSE =
+    private static final ImmutableSet<String> TAGESZEITUNABHAENGIE_BEGRUESSUNGEN =
             ImmutableSet.of("hallo", "holla", "Gott zum Gruß", "Gott zum Gruße");
+
+    private static final ImmutableSet<String> TAGESZEITUNABHAENGIE_VERABSCHIEDUNGEN =
+            ImmutableSet.of("auf Wiedersehen", "bis ein andermal", "tschüss",
+                    "na, dann bis bald einmal", "na dann, bis dann",
+                    "na dann, man sieht sich", "man sieht sich",
+                    "auf ein andermal", "na, dann erstmal!");
 
     protected final AvDatabase db;
     protected final TimeTaker timeTaker;
@@ -89,7 +96,7 @@ public abstract class AbstractTalkingComp extends AbstractStatefulComponent<Talk
     public void updateSchonBegruesstMitSCOnLeave(
             final ILocatableGO locatable, final ILocationGO from,
             @Nullable final ILocationGO to) {
-        if (!world.getLocationSystem().haveSameOuterMostLocation(from, to) &&
+        if (!LocationSystem.haveSameOuterMostLocation(from, to) &&
                 (locatable.is(SPIELER_CHARAKTER) || locatable.is(getGameObjectId())) &&
                 !isTalkingTo(SPIELER_CHARAKTER)) {
             // SC und das ITalkingBeing  verlassen einander. Ab jetzt können sie
@@ -188,22 +195,20 @@ public abstract class AbstractTalkingComp extends AbstractStatefulComponent<Talk
 
     /**
      * Gibt alternative Grüße zurück, jeweils beginnend mit Großbuchstaben,
-     * aber  ohne Satzschlusszeichen
+     * aber ohne Satzschlusszeichen
      */
-    protected ImmutableList<String> altGruesseCap() {
-        return altGruesse().stream()
-                .map(GermanStringUtil::capitalize)
-                .collect(ImmutableList.toImmutableList());
+    protected ImmutableList<String> altBegruessungenCap() {
+        return GermanStringUtil.capitalize(altBegruessungen());
     }
 
     /**
-     * Gibt alternative Grüße zurück, jeweils beginnend mit Kleinbuchstaben
+     * Gibt alternative Begrüßungen zurück, jeweils beginnend mit Kleinbuchstaben
      * und ohne Satzschlusszeichen
      */
-    private ImmutableList<String> altGruesse() {
+    private ImmutableList<String> altBegruessungen() {
         return ImmutableList.<String>builder()
-                .addAll(timeTaker.now().getTageszeit().altTagezeitabhaengigeGruesse())
-                .addAll(TAGESZEITUNABHAENGIE_GRUESSE)
+                .addAll(timeTaker.now().getTageszeit().altTagezeitabhaengigeBegruessungen())
+                .addAll(TAGESZEITUNABHAENGIE_BEGRUESSUNGEN)
                 .build();
     }
 
@@ -216,8 +221,33 @@ public abstract class AbstractTalkingComp extends AbstractStatefulComponent<Talk
         getPcd().setSchonBegruesstMitSC(schonBegruesstMitSC);
     }
 
+    @SuppressWarnings("BooleanMethodIsAlwaysInverted")
     protected boolean isSchonBegruesstMitSC() {
         return getPcd().isSchonBegruesstMitSC();
+    }
+
+    /**
+     * Gibt alternative Grüße zurück, jeweils beginnend mit Großbuchstaben,
+     * aber  ohne Satzschlusszeichen
+     */
+    protected ImmutableList<String> altVerabschiedungenCap() {
+        // FIXME "Du nimmst Abschied mit ihr"
+        //  "Du sagst ihr Abschied"
+        //  "Du verabschiedest dich von ihr"
+
+
+        return GermanStringUtil.capitalize(altVerabschiedungen());
+    }
+
+    /**
+     * Gibt alternative Verabschiedungen zurück, jeweils beginnend mit Kleinbuchstaben
+     * und ohne Satzschlusszeichen
+     */
+    private ImmutableList<String> altVerabschiedungen() {
+        return ImmutableList.<String>builder()
+                .addAll(timeTaker.now().getTageszeit().altTagezeitabhaengigeVerabschiedungen())
+                .addAll(TAGESZEITUNABHAENGIE_VERABSCHIEDUNGEN)
+                .build();
     }
 
     /**
