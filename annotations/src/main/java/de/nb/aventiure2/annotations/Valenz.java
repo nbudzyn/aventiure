@@ -7,7 +7,7 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * Diese Annotation hängt mit dem {@link de.nb.aventiure2.processor.ValenzAnnotationProcessor}
+ * Diese Annotation hängt mit dem <code>de.nb.aventiure2.processor.ValenzAnnotationProcessor</code>.
  * zusammen:  Wenn man eine Verb- (oder Adjektiv-) Valenz-Klasse mit dieser Annotation versieht,
  * dann werden
  * automatisch Klassen erzeugt, in denen die entsprechenden Felder, die mit

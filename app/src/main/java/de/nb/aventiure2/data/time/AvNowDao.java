@@ -8,7 +8,7 @@ import androidx.room.Query;
 import de.nb.aventiure2.scaction.AbstractScAction;
 
 /**
- * Room DAO for the {@link WorldClock}.
+ * Room DAO for the {@link TimeTaker}.
  */
 @Dao
 public abstract class AvNowDao {
