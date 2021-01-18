@@ -69,21 +69,18 @@ public class RapunzelsZauberinMovementNarrator extends SimpleMovementNarrator {
                         .beendet(PARAGRAPH));
             }
 
-            alt.add(
-                    neuerSatz("Es kommt dir " +
+            alt.add(neuerSatz("Es kommt dir " +
+                    desc.nomStr() +
+                    " entgegen")
+                    .phorikKandidat(desc, gameObjectId)
+                    .beendet(PARAGRAPH));
+            alt.add(neuerSatz(PARAGRAPH,
+                    "Dir kommt " +
                             desc.nomStr() +
                             " entgegen")
-                            .phorikKandidat(desc, gameObjectId)
-                            .beendet(PARAGRAPH));
-            alt.add(
-                    neuerSatz(PARAGRAPH,
-                            "Dir kommt " +
-                                    desc.nomStr() +
-                                    " entgegen")
-                            .phorikKandidat(desc, gameObjectId)
-                            .beendet(PARAGRAPH));
+                    .phorikKandidat(desc, gameObjectId)
+                    .beendet(PARAGRAPH));
         }
-
 
         if (world.isOrHasRecursiveLocation(movingGOFrom, IM_WALD_NAHE_DEM_SCHLOSS) &&
                 to.is(VOR_DEM_ALTEN_TURM)) {

@@ -347,7 +347,7 @@ public class SimpleMovementNarrator implements IMovementNarrator {
             @Nullable final ILocationGO scLastLocation =
                     loadSC().locationComp().getLastLocation();
 
-            if (world.isOrHasRecursiveLocation(scLastLocation, from)) {
+            if (World.isOrHasRecursiveLocation(scLastLocation, from)) {
                 narrateMovingGOKommtSCNach(
                         from,
                         to,

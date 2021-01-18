@@ -16,6 +16,7 @@ import android.view.WindowManager;
 import android.widget.ScrollView;
 import android.widget.TextView;
 
+import androidx.annotation.ColorRes;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
@@ -197,7 +198,8 @@ public class MainActivity extends AppCompatActivity {
     }
 
     @NonNull
-    private ForegroundColorSpan buildForegroundColorSpan(final int p) {
+    private ForegroundColorSpan buildForegroundColorSpan(
+            @ColorRes final int p) {
         return new ForegroundColorSpan(getResources().getColor(p, getTheme()));
     }
 
