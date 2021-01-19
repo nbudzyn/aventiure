@@ -94,14 +94,14 @@ public abstract class AbstractDescription<SELF extends AbstractDescription<SELF>
 
     @SuppressWarnings("unchecked")
     public TimedDescription<SELF> timed(final AvTimeSpan timeElapsed) {
-        return timed(timeElapsed, null);
+        return new TimedDescription<>((SELF) this, timeElapsed);
     }
 
-    @SuppressWarnings("unchecked")
     TimedDescription<SELF> timed(final AvTimeSpan timeElapsed,
                                  @Nullable final String counterIdIncrementedIfTextIsNarrated) {
-        return new TimedDescription<>((SELF) this, timeElapsed,
-                counterIdIncrementedIfTextIsNarrated);
+        return timed(timeElapsed)
+                .withCounterIdIncrementedIfTextIsNarrated(
+                        counterIdIncrementedIfTextIsNarrated);
     }
 
     @SuppressWarnings("unchecked")

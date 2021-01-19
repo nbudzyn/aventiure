@@ -25,7 +25,9 @@ import static de.nb.aventiure2.german.base.Person.P3;
 /**
  * A description of something and the time it takes.
  */
-public class TimedDescription<D extends AbstractDescription<?>> {
+public class TimedDescription<
+        D extends AbstractDescription<?>
+        > {
     private final D description;
 
     /**
@@ -71,12 +73,12 @@ public class TimedDescription<D extends AbstractDescription<?>> {
     @CheckReturnValue
     @NonNull
     public static <D extends AbstractDescription<?>>
-    ImmutableList<D> toUntimed(final Collection<? extends TimedDescription<D>> timedDescriptions) {
+    ImmutableList<D> toUntimed(
+            final Collection<? extends TimedDescription<D>> timedDescriptions) {
         return timedDescriptions.stream()
                 .map(TimedDescription::getDescription)
                 .collect(toImmutableList());
     }
-
 
     public TimedDescription(final D description,
                             final AvTimeSpan timeElapsed) {
@@ -94,6 +96,12 @@ public class TimedDescription<D extends AbstractDescription<?>> {
     @CheckReturnValue
     public <OTHER extends AbstractDescription<?>> TimedDescription<OTHER>
     withDescription(final OTHER description) {
+        return new TimedDescription<>(description, timeElapsed,
+                counterIdIncrementedIfTextIsNarrated);
+    }
+
+    public TimedDescription<D> withCounterIdIncrementedIfTextIsNarrated(
+            @Nullable final String counterIdIncrementedIfTextIsNarrated) {
         return new TimedDescription<>(description, timeElapsed,
                 counterIdIncrementedIfTextIsNarrated);
     }
@@ -158,8 +166,9 @@ public class TimedDescription<D extends AbstractDescription<?>> {
      *
      * @param substantivischePhrase Substantivische Phrase in der dritten Person
      */
-    public TimedDescription<D> phorikKandidat(final SubstantivischePhrase substantivischePhrase,
-                                              final IBezugsobjekt bezugsobjekt) {
+    public TimedDescription<D> phorikKandidat(
+            final SubstantivischePhrase substantivischePhrase,
+            final IBezugsobjekt bezugsobjekt) {
         checkArgument(substantivischePhrase.getPerson() == P3,
                 "Substantivische Phrase " + substantivischePhrase + " hat falsche "
                         + "Person: " + substantivischePhrase.getPerson() + ". Für Phorik-Kandiaten "

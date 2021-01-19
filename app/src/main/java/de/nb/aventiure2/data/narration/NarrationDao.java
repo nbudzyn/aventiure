@@ -80,8 +80,10 @@ public abstract class NarrationDao {
                                 first,
                                 second.getDescription(),
                                 initialNarration).stream()
-                                .map(na -> new TimedDescription<>(na, second.getTimeElapsed(),
-                                        second.getCounterIdIncrementedIfTextIsNarrated()))
+                                .map(na -> na
+                                        .timed(second.getTimeElapsed())
+                                        .withCounterIdIncrementedIfTextIsNarrated(
+                                                second.getCounterIdIncrementedIfTextIsNarrated()))
                                 .collect(toImmutableList())
                 );
             }
@@ -121,10 +123,9 @@ public abstract class NarrationDao {
                 timedAlternatives.stream()
                         .flatMap(t ->
                                 toTextDescriptions(initialNarration, t.getDescription()).stream()
-                                        .map(a -> new TimedDescription<>(
-                                                a,
-                                                t.getTimeElapsed(),
-                                                t.getCounterIdIncrementedIfTextIsNarrated())))
+                                        .map(a -> a.timed(t.getTimeElapsed())
+                                                .withCounterIdIncrementedIfTextIsNarrated(
+                                                        t.getCounterIdIncrementedIfTextIsNarrated())))
                         .distinct()
                         .collect(toImmutableList());
 

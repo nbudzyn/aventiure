@@ -46,9 +46,10 @@ public class DescriptionBuilder {
             final String description,
             final AvTimeSpan timeElapsed,
             @Nullable final String counterIdIncrementedIfTextIsNarrated) {
-        return new TimedDescription<>(
-                neuerSatz(description),
-                timeElapsed, counterIdIncrementedIfTextIsNarrated);
+        return neuerSatz(description)
+                .timed(timeElapsed)
+                .withCounterIdIncrementedIfTextIsNarrated(
+                        counterIdIncrementedIfTextIsNarrated);
     }
 
     public static TextDescription neuerSatz(final Iterable<Konstituente> konsituenten) {
@@ -93,9 +94,10 @@ public class DescriptionBuilder {
             final String description,
             final AvTimeSpan timeElapsed,
             @Nullable final String counterIdIncrementedIfTextIsNarrated) {
-        return new TimedDescription<>(
-                neuerSatz(startsNew, description),
-                timeElapsed, counterIdIncrementedIfTextIsNarrated);
+        return neuerSatz(startsNew, description)
+                .timed(timeElapsed)
+                .withCounterIdIncrementedIfTextIsNarrated(
+                        counterIdIncrementedIfTextIsNarrated);
     }
 
     @NonNull
@@ -158,9 +160,10 @@ public class DescriptionBuilder {
             final StructuralElement startsNew, final Satz satz,
             final AvTimeSpan timeElapsed,
             @Nullable final String counterIdIncrementedIfTextIsNarrated) {
-        return new TimedDescription<>(
-                satz(startsNew, satz), timeElapsed,
-                counterIdIncrementedIfTextIsNarrated);
+        return satz(startsNew, satz)
+                .timed(timeElapsed)
+                .withCounterIdIncrementedIfTextIsNarrated(
+                        counterIdIncrementedIfTextIsNarrated);
     }
 
 
@@ -176,9 +179,9 @@ public class DescriptionBuilder {
             final String description,
             final AvTimeSpan timeElapsed,
             @Nullable final String counterIdIncrementedIfTextIsNarrated) {
-        return new TimedDescription<>(
-                satzanschluss(description),
-                timeElapsed, counterIdIncrementedIfTextIsNarrated);
+        return satzanschluss(description)
+                .timed(timeElapsed)
+                .withCounterIdIncrementedIfTextIsNarrated(counterIdIncrementedIfTextIsNarrated);
     }
 
     @NonNull
@@ -350,9 +353,9 @@ public class DescriptionBuilder {
             final AvTimeSpan timeElapsed,
             @Nullable final String counterIdIncrementedIfTextIsNarrated
     ) {
-        return new TimedDescription<>(
-                du(startsNew, verb, remainder, vorfeldSatzglied),
-                timeElapsed, counterIdIncrementedIfTextIsNarrated);
+        return du(startsNew, verb, remainder, vorfeldSatzglied)
+                .timed(timeElapsed)
+                .withCounterIdIncrementedIfTextIsNarrated(counterIdIncrementedIfTextIsNarrated);
     }
 
     @CheckReturnValue
@@ -452,9 +455,9 @@ public class DescriptionBuilder {
             final PraedikatOhneLeerstellen praedikat,
             final AvTimeSpan timeElapsed,
             @Nullable final String counterIdIncrementedIfTextIs) {
-        return new TimedDescription<>(
-                du(startsNew, praedikat),
-                timeElapsed, counterIdIncrementedIfTextIs);
+        return du(startsNew, praedikat)
+                .timed(timeElapsed)
+                .withCounterIdIncrementedIfTextIsNarrated(counterIdIncrementedIfTextIs);
     }
 
     @CheckReturnValue
