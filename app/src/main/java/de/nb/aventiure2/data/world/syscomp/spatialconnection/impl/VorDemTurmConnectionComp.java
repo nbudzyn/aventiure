@@ -28,6 +28,7 @@ import static de.nb.aventiure2.data.world.base.SpatialConnection.con;
 import static de.nb.aventiure2.data.world.gameobject.World.*;
 import static de.nb.aventiure2.german.base.StructuralElement.PARAGRAPH;
 import static de.nb.aventiure2.german.base.StructuralElement.SENTENCE;
+import static de.nb.aventiure2.german.base.Wortfolge.w;
 import static de.nb.aventiure2.german.description.DescriptionBuilder.du;
 import static de.nb.aventiure2.german.description.DescriptionBuilder.neuerSatz;
 
@@ -70,9 +71,10 @@ public class VorDemTurmConnectionComp extends AbstractSpatialConnectionComp {
                 "auf dem Pfad den Hügel hinab",
                 "Den Pfad zurückgehen",
                 mins(18),
-                du(PARAGRAPH, "gehst",
-                        "den langen Pfad wieder zurück, den Hügel hinab, bis "
-                                + "zum Waldweg", mins(20))
+                du(PARAGRAPH, "gehst", "den langen Pfad wieder zurück, den Hügel hinab, bis "
+                        + "zum Waldweg")
+                        .timed(mins(20))
+                        .withCounterIdIncrementedIfTextIsNarrated(null)
                         .beendet(PARAGRAPH),
                 du(PARAGRAPH, "gehst", "den Hügel auf dem gewundenen Pfad wieder hinab, "
                         + "bis du unten am Waldweg ankommst")
@@ -90,18 +92,16 @@ public class VorDemTurmConnectionComp extends AbstractSpatialConnectionComp {
                             "hinauf.\n"
                                     + "Durch das Fensterchen kletterst du in eine kleine Kammer: "
                                     + "Tisch, Stuhl, ein Bett"),
-                    du(SENTENCE, "steigst",
-                            "vorsichtig hinauf und klettest durch das Fensterchen "
-                                    + "in eine kleine Kammer. Alles ist dunkel, ein Bett kannst "
-                                    + "du wohl erkennen",
-                            "vorsichtig",
-                            mins(2)),
+                    du(SENTENCE, "steigst", "vorsichtig hinauf und klettest durch das Fensterchen "
+                            + "in eine kleine Kammer. Alles ist dunkel, ein Bett kannst "
+                            + "du wohl erkennen", "vorsichtig")
+                            .timed(mins(2)),
                     du("steigst",
                             "wieder hinauf. Im Hellen siehst du, dass die Kammer nur "
                                     + "sehr einfach eingerichtet ist: Ein Tisch, ein Stuhl, "
                                     + "ein Bett"),
-                    neuerSatz("In einem Augenblick bist du oben",
-                            secs(45))));
+                    neuerSatz("In einem Augenblick bist du oben")
+                            .timed(secs(45))));
         }
 
         return res.build();
@@ -118,26 +118,35 @@ public class VorDemTurmConnectionComp extends AbstractSpatialConnectionComp {
                         !world.loadSC().memoryComp().isKnown(RAPUNZEL)) {
                     return du(SENTENCE, "möchtest", "zu der süßen Stimme hinaufsteigen, "
                             + "und suchst rundherum nach einer Türe des Turms, aber es ist keine "
-                            + "zu finden", mins(2), COUNTER_ALTER_TURM_UMRUNDET)
+                            + "zu finden")
+                            .timed(mins(2))
+                            .withCounterIdIncrementedIfTextIsNarrated(COUNTER_ALTER_TURM_UMRUNDET)
                             .dann();
                 }
 
                 if (!world.loadSC().memoryComp().isKnown(RAPUNZELS_HAARE)) {
-                    return du("gehst", "einmal um den Turm herum. Es ist keine "
-                                    + "Türe zu sehen, nur ganz oben ein kleines Fensterchen",
-                            mins(2), COUNTER_ALTER_TURM_UMRUNDET);
+                    return du("gehst", w("einmal um den Turm herum. Es ist keine "
+                            + "Türe zu sehen, nur ganz oben ein kleines Fensterchen")).timed(
+                            mins(2))
+                            .withCounterIdIncrementedIfTextIsNarrated(
+                                    COUNTER_ALTER_TURM_UMRUNDET);
                 }
 
                 return du(SENTENCE, "gehst", "einmal um den Turm herum, findest "
-                        + "aber nicht die kleinste Tür", secs(90), COUNTER_ALTER_TURM_UMRUNDET)
+                        + "aber nicht die kleinste Tür")
+                        .timed(secs(90))
+                        .withCounterIdIncrementedIfTextIsNarrated(COUNTER_ALTER_TURM_UMRUNDET)
                         .dann();
             case 1:
-                return du("schaust", "noch einmal um den Turm, ob dir vielleicht "
-                        + "eine Tür entgangen wäre – nichts", mins(2), COUNTER_ALTER_TURM_UMRUNDET)
+                return du("schaust", w("noch einmal um den Turm, ob dir vielleicht "
+                        + "eine Tür entgangen wäre – nichts")).timed(mins(2))
+                        .withCounterIdIncrementedIfTextIsNarrated(
+                                COUNTER_ALTER_TURM_UMRUNDET)
                         .dann();
             default:
-                return du("gehst", "noch einmal um den Turm herum",
-                        mins(1), COUNTER_ALTER_TURM_UMRUNDET)
+                return du("gehst", w("noch einmal um den Turm herum")).timed(mins(1))
+                        .withCounterIdIncrementedIfTextIsNarrated(
+                                COUNTER_ALTER_TURM_UMRUNDET)
                         .dann();
         }
     }

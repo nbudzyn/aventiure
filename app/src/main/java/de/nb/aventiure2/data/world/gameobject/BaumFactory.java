@@ -27,6 +27,7 @@ import static de.nb.aventiure2.german.base.Nominalphrase.np;
 import static de.nb.aventiure2.german.base.NumerusGenus.M;
 import static de.nb.aventiure2.german.base.StructuralElement.PARAGRAPH;
 import static de.nb.aventiure2.german.base.StructuralElement.SENTENCE;
+import static de.nb.aventiure2.german.base.Wortfolge.w;
 import static de.nb.aventiure2.german.description.DescriptionBuilder.du;
 import static de.nb.aventiure2.german.description.DescriptionBuilder.neuerSatz;
 import static de.nb.aventiure2.german.praedikat.VerbSubj.ANKOMMEN;
@@ -112,17 +113,19 @@ public class BaumFactory {
                         + "der immer dünner wird und gefährlich schwankt. Irgendeine "
                         + "Aussicht hast du "
                         + "nicht, und Äpfel sind auch keine zu finden. Vielleicht doch kein "
-                        + "Apfelbaum", mins(6), HOCHKLETTERN);
+                        + "Apfelbaum")
+                .timed(mins(6))
+                .withCounterIdIncrementedIfTextIsNarrated(
+                        HOCHKLETTERN);
     }
 
     @CheckReturnValue
     private static TimedDescription<?> getDescInZweitesMal() {
-        return du(PARAGRAPH,
-                "kletterst",
-                "noch einmal eine, zwei Etagen den Baum hinauf. "
-                        + "Du schaust ins Blattwerk und bist stolz auf dich",
-                "noch einmal",
-                mins(6), HOCHKLETTERN)
+        return du(PARAGRAPH, "kletterst", w("noch einmal eine, zwei Etagen den Baum hinauf. "
+                + "Du schaust ins Blattwerk und bist stolz auf dich"), "noch einmal")
+                .timed(mins(6))
+                .withCounterIdIncrementedIfTextIsNarrated(
+                        HOCHKLETTERN)
                 .dann();
     }
 
@@ -135,11 +138,11 @@ public class BaumFactory {
                 //                        "ein weiteres Mal auf den Baum")
                 //  Dazu noch einmal prüfen, dass die "Wiederholung" nicht doppelt
                 //  ausgedrückt wird.
-                du(PARAGRAPH,
-                        "kletterst", "noch einmal "
-                                + "auf den Baum. Neues gibt es hier oben nicht zu erleben",
-                        "noch einmal",
-                        mins(7), HOCHKLETTERN)
+                du(PARAGRAPH, "kletterst", w("noch einmal "
+                        + "auf den Baum. Neues gibt es hier oben nicht zu erleben"), "noch einmal")
+                        .timed(mins(7))
+                        .withCounterIdIncrementedIfTextIsNarrated(
+                                HOCHKLETTERN)
                         .dann();
     }
 
@@ -165,12 +168,17 @@ public class BaumFactory {
         return neuerSatz("Mit einiger Mühe drehst du auf dem Ast um und hangelst dich "
                 + "vorsichtig "
                 + "wieder herab auf den Boden"
-                + dunkelNachsatz, mins(4), HINABKLETTERN);
+                + dunkelNachsatz)
+                .timed(mins(4))
+                .withCounterIdIncrementedIfTextIsNarrated(
+                        HINABKLETTERN);
     }
 
     private static TimedDescription<?> getDescOutZweitesMal() {
-        return neuerSatz(
-                "Dann geht es vorsichtig wieder hinunter", mins(4), HINABKLETTERN)
+        return neuerSatz("Dann geht es vorsichtig wieder hinunter")
+                .timed(mins(4))
+                .withCounterIdIncrementedIfTextIsNarrated(
+                        HINABKLETTERN)
                 .beendet(PARAGRAPH);
     }
 
@@ -191,11 +199,11 @@ public class BaumFactory {
                 // "Dann kommst du wieder unten an"
                 // Kann mit Müdigkeit kombiniert werden zu:
                 // "Unten angekommen bist du ziemlich erschöpft..."
-                du(SENTENCE,
-                        ANKOMMEN
-                                .mitAdverbialerAngabe(
-                                        new AdverbialeAngabeSkopusVerbAllg("wieder unten")),
-                        mins(8), HINABKLETTERN)
+                du(SENTENCE, ANKOMMEN
+                        .mitAdverbialerAngabe(
+                                new AdverbialeAngabeSkopusVerbAllg("wieder unten")))
+                        .timed(mins(8))
+                        .withCounterIdIncrementedIfTextIsNarrated(HINABKLETTERN)
                         .dann();
 
         // STORY Alternative:

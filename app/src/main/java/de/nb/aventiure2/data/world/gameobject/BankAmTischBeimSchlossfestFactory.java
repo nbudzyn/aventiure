@@ -25,6 +25,7 @@ import static de.nb.aventiure2.data.world.syscomp.storingplace.StoringPlaceType.
 import static de.nb.aventiure2.german.base.Artikel.Typ.INDEF;
 import static de.nb.aventiure2.german.base.Nominalphrase.np;
 import static de.nb.aventiure2.german.base.NumerusGenus.M;
+import static de.nb.aventiure2.german.base.Wortfolge.w;
 import static de.nb.aventiure2.german.description.DescriptionBuilder.du;
 
 class BankAmTischBeimSchlossfestFactory {
@@ -92,20 +93,21 @@ class BankAmTischBeimSchlossfestFactory {
                 .locationComp().setLocation(SCHLOSS_VORHALLE_AM_TISCH_BEIM_FEST);
 
         if (db.counterDao().get(BANK_AM_TISCH_BEIM_SCHLOSSFEST_FACTORY_IN) == 0) {
-            return du("ergatterst", "einen Platz auf einer Bank an einem langen,"
-                            + " aus Brettern gezimmerten Tisch.\n"
-                            + "Unter einem Baldachin sitzen – soweit du durch das Gedänge "
-                            + "erkennen kannst – "
-                            + "einige Hofleute an einer Tafel mit "
-                            + "goldenen Tellern vor Fasan und anderem Wildbret. "
-                            + "Immerhin stellt "
-                            + "dir ein eifriger Diener einen leeren Holzteller und einen "
-                            + "Löffel bereit", mins(3),
-                    BANK_AM_TISCH_BEIM_SCHLOSSFEST_FACTORY_IN);
+            return du("ergatterst", w("einen Platz auf einer Bank an einem langen,"
+                    + " aus Brettern gezimmerten Tisch.\n"
+                    + "Unter einem Baldachin sitzen – soweit du durch das Gedänge "
+                    + "erkennen kannst – "
+                    + "einige Hofleute an einer Tafel mit "
+                    + "goldenen Tellern vor Fasan und anderem Wildbret. "
+                    + "Immerhin stellt "
+                    + "dir ein eifriger Diener einen leeren Holzteller und einen "
+                    + "Löffel bereit")).timed(mins(3))
+                    .withCounterIdIncrementedIfTextIsNarrated(
+                            BANK_AM_TISCH_BEIM_SCHLOSSFEST_FACTORY_IN);
         }
 
-        return du("suchst", "dir erneut im Gedränge einen Platz an einem Tisch",
-                "erneut", mins(3));
+        return du("suchst", "dir erneut im Gedränge einen Platz an einem Tisch", "erneut")
+                .timed(mins(3));
     }
 
     private StructuredDescription getDescOut(

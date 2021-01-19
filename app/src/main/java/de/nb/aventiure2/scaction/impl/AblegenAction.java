@@ -20,6 +20,7 @@ import de.nb.aventiure2.data.world.syscomp.state.IHasStateGO;
 import de.nb.aventiure2.data.world.syscomp.state.impl.FroschprinzState;
 import de.nb.aventiure2.data.world.syscomp.storingplace.ILocationGO;
 import de.nb.aventiure2.german.base.Personalpronomen;
+import de.nb.aventiure2.german.base.StructuralElement;
 import de.nb.aventiure2.german.base.SubstantivischePhrase;
 import de.nb.aventiure2.german.base.Wortfolge;
 import de.nb.aventiure2.german.description.TimedDescription;
@@ -43,6 +44,7 @@ import static de.nb.aventiure2.german.base.NumerusGenus.M;
 import static de.nb.aventiure2.german.base.Person.P1;
 import static de.nb.aventiure2.german.base.Person.P2;
 import static de.nb.aventiure2.german.base.StructuralElement.PARAGRAPH;
+import static de.nb.aventiure2.german.base.Wortfolge.w;
 import static de.nb.aventiure2.german.description.DescriptionBuilder.du;
 import static de.nb.aventiure2.german.description.DescriptionBuilder.neuerSatz;
 import static de.nb.aventiure2.german.description.DescriptionBuilder.satzanschluss;
@@ -177,33 +179,32 @@ public class AblegenAction
         final ImmutableList.Builder<TimedDescription<?>> alt =
                 ImmutableList.builder();
 
-        alt.add(du(PARAGRAPH,
-                "wühlst", "in deiner Tasche und auf einmal "
-                        + "schauert's dich und "
-                        + "der nasse Frosch sitzt in deiner Hand. Schnell "
-                        + location.storingPlaceComp().getLocationMode().getWohin(false)
-                        + " mit ihm!",
-                secs(7))
+        alt.add(du(PARAGRAPH, "wühlst", "in deiner Tasche und auf einmal "
+                + "schauert's dich und "
+                + "der nasse Frosch sitzt in deiner Hand. Schnell "
+                + location.storingPlaceComp().getLocationMode().getWohin(false)
+                + " mit ihm!")
+                .timed(secs(7))
+                .withCounterIdIncrementedIfTextIsNarrated(null)
                 .dann()
                 .beendet(PARAGRAPH));
 
         if (getWohinDetail() == null) {
             // Wenn kein wohin-Detail nötig ist, dann ist es wohl kein Tisch o.Ä. und "fällt" passt.
-            alt.add(du(PARAGRAPH,
-                    "schüttest", "deine Tasche aus, bis der Frosch endlich " +
-                            location.storingPlaceComp().getLocationMode().getWohin(false) +
-                            " fällt. Puh.",
-                    secs(7))
+            alt.add(du(PARAGRAPH, "schüttest", "deine Tasche aus, bis der Frosch endlich " +
+                    location.storingPlaceComp().getLocationMode().getWohin(false) +
+                    " fällt. Puh.")
+                    .timed(secs(7))
+                    .withCounterIdIncrementedIfTextIsNarrated(null)
                     .dann()
                     .beendet(PARAGRAPH));
         }
 
-        alt.add(du(PARAGRAPH,
-                "wühlst", "in deiner Tasche. Da quakt es erbost, auf einmal "
-                        + "springt der Fosch heraus und direkt "
-                        + location.storingPlaceComp().getLocationMode().getWohin(false),
-                secs(7)
-        ));
+        alt.add(du(PARAGRAPH, "wühlst", "in deiner Tasche. Da quakt es erbost, auf einmal "
+                + "springt der Fosch heraus und direkt "
+                + location.storingPlaceComp().getLocationMode().getWohin(false))
+                .timed(secs(7))
+                .withCounterIdIncrementedIfTextIsNarrated(null));
 
         n.narrateAlt(alt);
 
@@ -223,10 +224,10 @@ public class AblegenAction
         final SubstantivischePhrase anaph = world.anaph(gameObject, true);
 
         n.narrate(
-                du("setzt", anaph.akkStr() +
-                                " " +
-                                location.storingPlaceComp().getLocationMode().getWohin(false),
-                        secs(2))
+                du("setzt", w(anaph.akkStr() +
+                        " " +
+                        location.storingPlaceComp().getLocationMode().getWohin(false)))
+                        .timed(secs(2))
                         .undWartest()
                         .dann()
                         .phorikKandidat(M, FROSCHPRINZ));
@@ -242,33 +243,31 @@ public class AblegenAction
 
             final ImmutableList.Builder<TimedDescription<?>> alt =
                     ImmutableList.builder();
-            alt.add(satzanschluss(
-                    ", aber dann denkst du dir: „So ein Ekeltier hat auf "
-                            + "meiner Tafel nichts "
-                            + "verloren!“, und setzt den Frosch wieder ab",
-                    secs(5))
+            alt.add(satzanschluss(", aber dann denkst du dir: „So ein Ekeltier hat auf "
+                    + "meiner Tafel nichts "
+                    + "verloren!“, und setzt den Frosch wieder ab")
+                    .timed(secs(5))
                     .dann()
                     .phorikKandidat(M, FROSCHPRINZ));
-            alt.add(satzanschluss(
-                    ", aber dann stellst du dir vor, die schleimigen "
-                            + "Patscher auf den Tisch zu stellen, und setzt den "
-                            + "Frosch gleich wieder ab",
-                    secs(5))
+            alt.add(satzanschluss(", aber dann stellst du dir vor, die schleimigen "
+                    + "Patscher auf den Tisch zu stellen, und setzt den "
+                    + "Frosch gleich wieder ab")
+                    .timed(secs(5))
                     .dann()
                     .phorikKandidat(M, FROSCHPRINZ));
             n.narrateAlt(alt);
             return;
         }
 
-        n.narrate(neuerSatz(
-                "Der Frosch will auf den Tisch, aber du setzt den Frosch"
-                        + (location.is(SCHLOSS_VORHALLE_AM_TISCH_BEIM_FEST) ?
-                        " wieder " :
-                        " ")
-                        + location.storingPlaceComp().getLocationMode().getWohin(false)
-                        + " und "
-                        + "wendest dich demonstrativ ab",
-                secs(5))
+        final String description = "Der Frosch will auf den Tisch, aber du setzt den Frosch"
+                + (location.is(SCHLOSS_VORHALLE_AM_TISCH_BEIM_FEST) ?
+                " wieder " :
+                " ")
+                + location.storingPlaceComp().getLocationMode().getWohin(false)
+                + " und "
+                + "wendest dich demonstrativ ab";
+        n.narrate(neuerSatz(description)
+                .timed(secs(5))
                 .dann()
                 .phorikKandidat(M, FROSCHPRINZ));
     }
@@ -293,76 +292,76 @@ public class AblegenAction
 
             if (gameObjektPersPron != null) {
                 if (isDefinitivDiskontinuitaet()) {
-                    n.narrate(satzanschluss(
-                            "– und legst "
-                                    + gameObjektPersPron.akkStr()
-                                    + " sogleich wieder "
-                                    + (wohinDetail != null ? "dort" : "")
-                                    + "hin", secs(3)));
+                    final String description = "– und legst "
+                            + gameObjektPersPron.akkStr()
+                            + " sogleich wieder "
+                            + (wohinDetail != null ? "dort" : "")
+                            + "hin";
+                    n.narrate(satzanschluss(description)
+                            .timed(secs(3)));
                     return;
                 }
 
                 if (sc.memoryComp().getLastAction().is(NEHMEN) &&
                         sc.memoryComp().getLastAction().hasObject(gameObject)) {
-                    n.narrate(du(LEGEN.mit(gameObjektPersPron)
-                                    .mitAdverbialerAngabe(
-                                            location.storingPlaceComp().getLocationMode()
-                                                    .getWohinAdvAngabe(false)),
-                            secs(3))
+                    n.narrate(du(StructuralElement.WORD, LEGEN.mit(gameObjektPersPron)
+                            .mitAdverbialerAngabe(
+                                    location.storingPlaceComp().getLocationMode()
+                                            .getWohinAdvAngabe(false)))
+                            .timed(secs(3))
+                            .withCounterIdIncrementedIfTextIsNarrated(null)
                             .dann()
                             .phorikKandidat(gameObjektPersPron, gameObject.getId()));
                     return;
                 }
 
                 if (sc.memoryComp().getLastAction().hasObject(gameObject)) {
-                    n.narrate(du("legst",
-                            Wortfolge.joinToWortfolge(
-                                    gameObjektPersPron.akkStr(),
-                                    (wohinDetail == null ?
-                                            k("hin") :
-                                            wohinDetail.getDescription(P2, SG))), // "auf den Tisch"
-                            secs(5))
+                    final Wortfolge remainder = Wortfolge.joinToWortfolge(
+                            gameObjektPersPron.akkStr(),
+                            (wohinDetail == null ?
+                                    k("hin") :
+                                    wohinDetail.getDescription(P2, SG)));
+                    // "auf den Tisch"
+                    n.narrate(du("legst", remainder).timed(secs(5))
                             .undWartest());
                     return;
                 }
 
                 if (sc.memoryComp().getLastAction().is(Action.Type.BEWEGEN) &&
                         wohinDetail == null) {
-                    n.narrate(du("legst",
-                            gameObjektPersPron.akkStr() +
-                                    " zurück",
-                            secs(3)));
+                    n.narrate(du("legst", w(gameObjektPersPron.akkStr() +
+                            " zurück")).timed(secs(3)));
                     return;
                 }
 
-                n.narrate(du("legst",
-                        Wortfolge.joinToWortfolge(
-                                gameObjektPersPron.akkStr(),
-                                (wohinDetail == null ? k("hin") :
-                                        wohinDetail.getDescription(P2, SG))),
-                        secs(3)));
+                final Wortfolge remainder = Wortfolge.joinToWortfolge(
+                        gameObjektPersPron.akkStr(),
+                        (wohinDetail == null ? k("hin") :
+                                wohinDetail.getDescription(P2, SG)));
+                n.narrate(du("legst", remainder).timed(secs(3)));
                 return;
             }
         }
 
         if (isDefinitivDiskontinuitaet()) {
+            final String remainder = world.getDescription(gameObject, false).akkStr()
+                    + (wohinDetail != null ? " zurück" : " wieder hin");
             n.narrate(
-                    du(PARAGRAPH, "legst",
-                            world.getDescription(gameObject, false).akkStr()
-                                    + (wohinDetail != null ? " zurück" : " wieder hin"),
-                            secs(5))
+                    du(PARAGRAPH, "legst", remainder)
+                            .timed(secs(5))
+                            .withCounterIdIncrementedIfTextIsNarrated(null)
                             .undWartest()
                             .dann());
             return;
         }
 
+        final Wortfolge remainder = Wortfolge.joinToWortfolge(
+                world.getDescription(gameObject, false).akkStr(),
+                (wohinDetail == null ? k("hin") :
+                        wohinDetail.getDescription(P2, SG)));
         n.narrate(
-                du(PARAGRAPH, "legst",
-                        Wortfolge.joinToWortfolge(
-                                world.getDescription(gameObject, false).akkStr(),
-                                (wohinDetail == null ? k("hin") :
-                                        wohinDetail.getDescription(P2, SG))),
-                        secs(3))
+                du(PARAGRAPH, "legst", remainder)
+                        .timed(secs(3))
                         .undWartest()
                         .dann());
     }

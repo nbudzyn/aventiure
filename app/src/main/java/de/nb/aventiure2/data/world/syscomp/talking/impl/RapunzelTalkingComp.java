@@ -47,6 +47,7 @@ import static de.nb.aventiure2.german.base.PraepositionMitKasus.ZU;
 import static de.nb.aventiure2.german.base.StructuralElement.PARAGRAPH;
 import static de.nb.aventiure2.german.base.StructuralElement.SENTENCE;
 import static de.nb.aventiure2.german.base.Wortfolge.joinToWortfolge;
+import static de.nb.aventiure2.german.base.Wortfolge.w;
 import static de.nb.aventiure2.german.description.AltDescriptionsBuilder.alt;
 import static de.nb.aventiure2.german.description.AltDescriptionsBuilder.altNeueSaetze;
 import static de.nb.aventiure2.german.description.DescriptionBuilder.du;
@@ -200,32 +201,29 @@ public class RapunzelTalkingComp extends AbstractTalkingComp {
         final ImmutableList.Builder<TimedDescription<?>> alt = ImmutableList.builder();
 
         if (db.counterDao().get(SC_BEGRUESST) == 0) {
-            alt.add(neuerSatz("„Hallihallo!“, sagst du und lächelst breit",
-                    secs(5), SC_BEGRUESST));
+            alt.add(neuerSatz("„Hallihallo!“, sagst du und lächelst breit")
+                    .timed(secs(5))
+                    .withCounterIdIncrementedIfTextIsNarrated(
+                            SC_BEGRUESST));
         } else {
             final int zuneigungSCTowardsRapunzel =
                     loadSC().feelingsComp().getFeelingTowards(RAPUNZEL, ZUNEIGUNG_ABNEIGUNG);
-            alt.add(neuerSatz(
-                    "„Hallo, da bin ich wieder!“ sprichst du "
-                            + anaph.akkStr()
-                            + " an",
-                    secs(5))
+            alt.add(neuerSatz("„Hallo, da bin ich wieder!“ sprichst du "
+                    + anaph.akkStr()
+                    + " an")
+                    .timed(secs(5))
                     .phorikKandidat(anaph, RAPUNZEL));
 
             if (zuneigungSCTowardsRapunzel >= FeelingIntensity.MERKLICH) {
                 if (duzen(zuneigungSCTowardsRapunzel)) {
-                    alt.add(du("schaust ",
-                            anaph.akkStr()
-                                    + " an. „Schön, dich wiederzusehen, sagst du",
-                            secs(5))
+                    alt.add(du("schaust ", w(anaph.akkStr()
+                            + " an. „Schön, dich wiederzusehen, sagst du")).timed(secs(5))
                             .phorikKandidat(anaph, RAPUNZEL)
                     );
                 } else {
-                    alt.add(du("schaust ",
-                            anaph.akkStr()
-                                    + " an. „Schön, "
-                                    + "euch wiederzusehen, sagst du",
-                            secs(5))
+                    alt.add(du("schaust ", w(anaph.akkStr()
+                            + " an. „Schön, "
+                            + "euch wiederzusehen, sagst du")).timed(secs(5))
                             .phorikKandidat(anaph, RAPUNZEL));
                 }
             }
@@ -477,34 +475,38 @@ public class RapunzelTalkingComp extends AbstractTalkingComp {
         }
 
         // FIXME Das hier sollte nur einmal gehen.
+        // FIXME Dieser zweite Teil muss von Rapunzels
+        //  Zuneigung abhängen!
+        // "ihren"
+        // "ihrem"
+        // "sie"
         n.narrate(du(PARAGRAPH, "fängst", "an ganz freundlich mit "
-                        + anaph.datStr()
-                        + " zu reden. Du erzählst, dass von "
-                        + wovonHerzBewegtDat
-                        + " dein Herz so sehr sei bewegt worden, dass es dir "
-                        + "keine Ruhe gelassen und du "
-                        + anaph.persPron().akkStr()
-                        + " selbst habest sehen müssen."
+                + anaph.datStr()
+                + " zu reden. Du erzählst, dass von "
+                + wovonHerzBewegtDat
+                + " dein Herz so sehr sei bewegt worden, dass es dir "
+                + "keine Ruhe gelassen und du "
+                + anaph.persPron().akkStr()
+                + " selbst habest sehen müssen."
 
-                        // FIXME Dieser zweite Teil muss von Rapunzels
-                        //  Zuneigung abhängen!
+                // FIXME Dieser zweite Teil muss von Rapunzels
+                //  Zuneigung abhängen!
 
-                        + " Da verliert "
-                        + desc.nomStr()
-                        + " ihre Angst und es bricht aus "
-                        + desc.persPron().datStr()
-                        + " heraus."
-                        + " Eine alte Zauberin hätte "
-                        + desc.persPron().akkStr()
-                        + " "
-                        + desc.possArt().vor(PL_MFN).datStr()  // "ihren"
-                        + " Eltern fortgenommen, seit "
-                        + desc.possArt().vor(N).datStr()  // "ihrem"
-                        + " zwölften Jahre sei "
-                        + desc.persPron().nomStr() // "sie"
-                        + " in diesen Turm geschlossen",
-                "ganz freundlich",
-                mins(1)));
+                + " Da verliert "
+                + desc.nomStr()
+                + " ihre Angst und es bricht aus "
+                + desc.persPron().datStr()
+                + " heraus."
+                + " Eine alte Zauberin hätte "
+                + desc.persPron().akkStr()
+                + " "
+                + desc.possArt().vor(PL_MFN).datStr()  // "ihren"
+                + " Eltern fortgenommen, seit "
+                + desc.possArt().vor(N).datStr()  // "ihrem"
+                + " zwölften Jahre sei "
+                + desc.persPron().nomStr() // "sie"
+                + " in diesen Turm geschlossen", "ganz freundlich")
+                .timed(mins(1)));
 
         setSchonBegruesstMitSC(true);
 
@@ -551,19 +553,18 @@ public class RapunzelTalkingComp extends AbstractTalkingComp {
                 ImmutableList.builder();
 
         alt.add(
-                neuerSatz(PARAGRAPH,
-                        "„Jetzt muss ich aber gehen“, sagst du unvermittelt und "
-                                + "blickst "
-                                + "zum Fenster hin",
-                        secs(15))
+                neuerSatz(PARAGRAPH, "„Jetzt muss ich aber gehen“, sagst du unvermittelt und "
+                        + "blickst "
+                        + "zum Fenster hin")
+                        .timed(secs(15))
                         .beendet(PARAGRAPH),
                 neuerSatz(SENTENCE, "„Ich muss wieder hinaus in die Welt!“, "
-                                + "sagst du",
-                        secs(10)),
+                        + "sagst du")
+                        .timed(secs(10)),
                 neuerSatz(PARAGRAPH, "„Dann will ich wieder ins "
-                                + "Abenteuer hinaus“, sagst du "
-                                + ZU.getDescription(anaph),
-                        secs(15))
+                        + "Abenteuer hinaus“, sagst du "
+                        + ZU.getDescription(anaph))
+                        .timed(secs(15))
                         .phorikKandidat(anaph, RAPUNZEL)
         );
 
@@ -571,23 +572,20 @@ public class RapunzelTalkingComp extends AbstractTalkingComp {
                 loadSC().feelingsComp().getFeelingTowards(RAPUNZEL, ZUNEIGUNG_ABNEIGUNG);
         if (duzen(zuneigungSCZuRapunzel)) {
             alt.add(
-                    neuerSatz(PARAGRAPH,
-                            "„Lässt du mich wieder hinunter?“, fragst du in die "
-                                    + "Stille hinein",
-                            secs(15))
+                    neuerSatz(PARAGRAPH, "„Lässt du mich wieder hinunter?“, fragst du in die "
+                            + "Stille hinein")
+                            .timed(secs(15))
                             .beendet(PARAGRAPH)
             );
         }
 
         if (zuneigungSCZuRapunzel >= FeelingIntensity.STARK) {
             alt.add(
-                    du(PARAGRAPH,
-                            "spürst", "plötzlich neuen Tatendrang in dir. „Lass "
-                                    + "mich gehen“, "
-                                    + "sagst du, "
-                                    + "„bald bin ich wieder zurück!“",
-                            "plötzlich",
-                            secs(15))
+                    du(PARAGRAPH, "spürst", "plötzlich neuen Tatendrang in dir. „Lass "
+                            + "mich gehen“, "
+                            + "sagst du, "
+                            + "„bald bin ich wieder zurück!“", "plötzlich")
+                            .timed(secs(15))
                             .beendet(PARAGRAPH)
             );
         }
@@ -607,12 +605,11 @@ public class RapunzelTalkingComp extends AbstractTalkingComp {
         final ImmutableList.Builder<TimedDescription<?>> alt =
                 ImmutableList.builder();
 
-        alt.add(neuerSatz(
-                "Doch du reagierst gar nicht darauf, sondern forderst "
-                        + anaph.akkStr()
-                        + " nur auf, die Haare "
-                        + "wieder heruterzulassen, dass du wieder gehen kannst",
-                secs(15))
+        alt.add(neuerSatz("Doch du reagierst gar nicht darauf, sondern forderst "
+                + anaph.akkStr()
+                + " nur auf, die Haare "
+                + "wieder heruterzulassen, dass du wieder gehen kannst")
+                .timed(secs(15))
                 .beendet(PARAGRAPH)
         );
 
@@ -620,9 +617,8 @@ public class RapunzelTalkingComp extends AbstractTalkingComp {
                 loadSC().feelingsComp().getFeelingTowards(RAPUNZEL, ZUNEIGUNG_ABNEIGUNG);
         if (duzen(zuneigungSCZuRapunzel)) {
             alt.add(
-                    neuerSatz(PARAGRAPH,
-                            "„Lass mich wieder gehen!“, gibst du zurück",
-                            secs(15))
+                    neuerSatz(PARAGRAPH, "„Lass mich wieder gehen!“, gibst du zurück")
+                            .timed(secs(15))
                             .beendet(PARAGRAPH)
             );
         }
@@ -646,15 +642,17 @@ public class RapunzelTalkingComp extends AbstractTalkingComp {
         if (loadSC().locationComp().hasRecursiveLocation(VOR_DEM_ALTEN_TURM)) {
             if (!loadSC().memoryComp().isKnown(RAPUNZELS_HAARE)) {
                 n.narrate(du(PARAGRAPH, "siehst", " über dir eine Bewegung: "
-                                + "Aus dem Turmfenster fallen auf einmal lange, golden "
-                                + "glänzende Haare bis zum Boden herab",
-                        secs(10))
+                        + "Aus dem Turmfenster fallen auf einmal lange, golden "
+                        + "glänzende Haare bis zum Boden herab")
+                        .timed(secs(10))
+                        .withCounterIdIncrementedIfTextIsNarrated(null)
                         .dann());
             } else {
                 n.narrate(du(PARAGRAPH, "siehst", " über dir eine Bewegung: "
-                                + "Aus dem Turmfenster fallen wieder die "
-                                + "langen, golden glänzenden Haare bis zum Boden herab",
-                        secs(10))
+                        + "Aus dem Turmfenster fallen wieder die "
+                        + "langen, golden glänzenden Haare bis zum Boden herab")
+                        .timed(secs(10))
+                        .withCounterIdIncrementedIfTextIsNarrated(null)
                         .dann());
             }
             world.loadSC().memoryComp().upgradeKnown(RAPUNZELS_HAARE);

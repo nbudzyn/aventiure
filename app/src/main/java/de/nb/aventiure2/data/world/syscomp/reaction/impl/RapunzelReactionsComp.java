@@ -31,6 +31,7 @@ import de.nb.aventiure2.data.world.syscomp.storingplace.ILocationGO;
 import de.nb.aventiure2.data.world.syscomp.talking.impl.RapunzelTalkingComp;
 import de.nb.aventiure2.german.base.Nominalphrase;
 import de.nb.aventiure2.german.base.PraepositionMitKasus;
+import de.nb.aventiure2.german.base.StructuralElement;
 import de.nb.aventiure2.german.base.SubstantivischePhrase;
 import de.nb.aventiure2.german.description.AltDescriptionsBuilder;
 import de.nb.aventiure2.german.description.TimedDescription;
@@ -60,6 +61,7 @@ import static de.nb.aventiure2.german.base.NumerusGenus.F;
 import static de.nb.aventiure2.german.base.NumerusGenus.PL_MFN;
 import static de.nb.aventiure2.german.base.StructuralElement.PARAGRAPH;
 import static de.nb.aventiure2.german.base.StructuralElement.SENTENCE;
+import static de.nb.aventiure2.german.base.StructuralElement.WORD;
 import static de.nb.aventiure2.german.base.Wortfolge.joinToAltWortfolgen;
 import static de.nb.aventiure2.german.description.AltDescriptionsBuilder.alt;
 import static de.nb.aventiure2.german.description.DescriptionBuilder.du;
@@ -184,28 +186,23 @@ public class RapunzelReactionsComp
             n.narrate(neuerSatz(PARAGRAPH,
                     "Wie du näher kommst, hörst du einen Gesang, so lieblich, dass es "
                             + "dir das Herz rührt. Du hältst still und horchst: Kommt die "
-                            + "Stimme aus dem kleinen Fensterchen oben im Turm?",
-                    secs(20))
+                            + "Stimme aus dem kleinen Fensterchen oben im Turm?")
+                    .timed(secs(20))
                     .beendet(PARAGRAPH));
 
             world.loadSC().memoryComp().upgradeKnown(RAPUNZELS_GESANG);
             return;
         }
         n.narrateAlt(
-                du("hörst",
-                        "erneut die süße Stimme aus dem Turmfenster singen",
-                        "erneut", secs(10)),
-                du("hörst",
-                        "es wieder von oben aus dem Turm singen",
-                        "von oben aus dem Turm",
-                        NO_TIME),
-                du(PARAGRAPH, "hörst",
-                        "wieder Gesang von oben",
-                        "wieder",
-                        NO_TIME)
+                du("hörst", "erneut die süße Stimme aus dem Turmfenster singen", "erneut")
+                        .timed(secs(10)),
+                du("hörst", "es wieder von oben aus dem Turm singen", "von oben aus dem Turm")
+                        .timed(NO_TIME),
+                du(PARAGRAPH, "hörst", "wieder Gesang von oben", "wieder")
+                        .timed(NO_TIME)
                         .beendet(PARAGRAPH),
-                neuerSatz("Erneut hörst du den Gesang aus dem Turmfenster",
-                        NO_TIME)
+                neuerSatz("Erneut hörst du den Gesang aus dem Turmfenster")
+                        .timed(NO_TIME)
         );
 
         world.loadSC().memoryComp().upgradeKnown(RAPUNZELS_GESANG);
@@ -222,9 +219,9 @@ public class RapunzelReactionsComp
             //  einmal): „Aber komm nicht, wenn die Alte bei mir ist, ruft sie dir noch nach"
             //  (Das wäre ein neuer RufTyp!)
 
-            alt.add(neuerSatz(
-                    "Als du unten bist, verschwinden die goldenen Haare "
-                            + "wieder oben im Fenster", secs(15))
+            alt.add(neuerSatz("Als du unten bist, verschwinden die goldenen Haare "
+                    + "wieder oben im Fenster")
+                    .timed(secs(15))
                     .beendet(PARAGRAPH));
 
             n.narrateAlt(alt);
@@ -237,8 +234,8 @@ public class RapunzelReactionsComp
             // STORY Andere und alternative Beschreibungen, wenn der SC
             //  Rapunzel schon kennengelernt hat
             n.narrate(neuerSatz("Aus dem kleinen "
-                            + "Fenster oben im Turm hängen lange, goldene Haarzöpfe herab",
-                    NO_TIME));
+                    + "Fenster oben im Turm hängen lange, goldene Haarzöpfe herab")
+                    .timed(NO_TIME));
 
             world.loadSC().memoryComp().upgradeKnown(RAPUNZELS_HAARE);
             return;
@@ -267,23 +264,26 @@ public class RapunzelReactionsComp
         world.loadSC().memoryComp().upgradeKnown(RAPUNZEL);
         final Nominalphrase desc = getDescription();
 
-        n.narrate(neuerSatz(
-                "Am Fenster sitzt eine junge Frau, so schön als "
-                        + "du unter der Sonne noch keine gesehen hast. "
-                        + "Ihre Haare, fein wie gesponnen "
-                        + "Gold, hat sie um einen Fensterhaken gewickelt, so konntest du "
-                        + "daran heraufsteigen.\n"
-                        + capitalize(desc.nomStr())
-                        + " erschrickt gewaltig, als du "
-                        + PraepositionMitKasus.ZU.getDescription(desc.persPron()) // "zu ihr"
-                        + " hereinkommst. Schnell bindet "
-                        + desc.persPron().nomStr() // "sie"
-                        + " "
-                        + desc.possArt().vor(PL_MFN).akkStr() // "ihre"
-                        + " Haare wieder zusammen, dann starrt "
-                        + desc.persPron().nomStr() // "sie"
-                        + " dich an",
-                secs(20))
+        // "zu ihr"
+        // "sie"
+        // "ihre"
+        // "sie"
+        n.narrate(neuerSatz("Am Fenster sitzt eine junge Frau, so schön als "
+                + "du unter der Sonne noch keine gesehen hast. "
+                + "Ihre Haare, fein wie gesponnen "
+                + "Gold, hat sie um einen Fensterhaken gewickelt, so konntest du "
+                + "daran heraufsteigen.\n"
+                + capitalize(desc.nomStr())
+                + " erschrickt gewaltig, als du "
+                + PraepositionMitKasus.ZU.getDescription(desc.persPron()) // "zu ihr"
+                + " hereinkommst. Schnell bindet "
+                + desc.persPron().nomStr() // "sie"
+                + " "
+                + desc.possArt().vor(PL_MFN).akkStr() // "ihre"
+                + " Haare wieder zusammen, dann starrt "
+                + desc.persPron().nomStr() // "sie"
+                + " dich an")
+                .timed(secs(20))
                 .phorikKandidat(desc, RAPUNZEL));
 
         stateComp.setState(STILL);
@@ -308,23 +308,26 @@ public class RapunzelReactionsComp
         world.loadSC().memoryComp().upgradeKnown(RAPUNZEL);
         final Nominalphrase desc = getDescription();
 
-        n.narrate(neuerSatz(
-                "Am Fenster sitzt eine junge Frau "
-                        + "und schaut dich entsetzt an. Du hast sie wohl gerade aus tiefem "
-                        + "Nachtschlaf geweckt. "
-                        + capitalize(desc.nomStr())
-                        + " ist in ein paar Decken gewickelt, "
-                        + desc.possArt().vor(PL_MFN).akkStr() // "ihre"
-                        + " langen Haare hat sie um einen Fensterhaken gewickelt, so "
-                        + "konntest du "
-                        + "daran heraufsteigen. Mit fahrigen Handbewegungen rafft "
-                        + desc.persPron().nomStr() // "sie"
-                        + " jetzt "
-                        + desc.possArt().vor(PL_MFN).akkStr() // "ihre"
-                        + " Haare zusammen, dann weicht "
-                        + desc.persPron().nomStr() // "sie"
-                        + " vor dir in das dunkle Zimmer zurück",
-                secs(25))
+        // "ihre"
+        // "sie"
+        // "ihre"
+        // "sie"
+        n.narrate(neuerSatz("Am Fenster sitzt eine junge Frau "
+                + "und schaut dich entsetzt an. Du hast sie wohl gerade aus tiefem "
+                + "Nachtschlaf geweckt. "
+                + capitalize(desc.nomStr())
+                + " ist in ein paar Decken gewickelt, "
+                + desc.possArt().vor(PL_MFN).akkStr() // "ihre"
+                + " langen Haare hat sie um einen Fensterhaken gewickelt, so "
+                + "konntest du "
+                + "daran heraufsteigen. Mit fahrigen Handbewegungen rafft "
+                + desc.persPron().nomStr() // "sie"
+                + " jetzt "
+                + desc.possArt().vor(PL_MFN).akkStr() // "ihre"
+                + " Haare zusammen, dann weicht "
+                + desc.persPron().nomStr() // "sie"
+                + " vor dir in das dunkle Zimmer zurück")
+                .timed(secs(25))
                 .phorikKandidat(desc, RAPUNZEL));
 
         stateComp.setState(STILL);
@@ -370,7 +373,8 @@ public class RapunzelReactionsComp
         final ImmutableList<Satz> altReaktionSaetze =
                 feelingsComp.altReaktionBeiBegegnungMitScSaetze(anaph);
 
-        alt.addAll(altReaktionSaetze.stream().map(s -> satz(s, secs(5))).collect(toSet()));
+        alt.addAll(altReaktionSaetze.stream().map(s -> satz(WORD, s)
+                .timed(secs(5))).collect(toSet()));
 
         final int zuneigungSCTowardsRapunzel =
                 loadSC().feelingsComp().getFeelingTowards(RAPUNZEL, ZUNEIGUNG_ABNEIGUNG);
@@ -406,7 +410,8 @@ public class RapunzelReactionsComp
                             altReaktionSaetze.stream()
                                     .flatMap(s -> s.altVerzweitsaetze().stream()))
                             .stream()
-                            .map(wf -> neuerSatz(wf, secs(30)))
+                            .map(wf -> neuerSatz(StructuralElement.SENTENCE, wf)
+                                    .timed(secs(30)))
                             .collect(toSet()));
         }
         n.narrateAlt(alt);
@@ -423,33 +428,34 @@ public class RapunzelReactionsComp
         final ImmutableList<Satz> altReaktionSaetze =
                 feelingsComp.altReaktionBeiBegegnungMitScSaetze(anaph);
 
-        alt.addAll(altReaktionSaetze.stream().map(s -> satz(s, secs(5))).collect(toSet()));
+        alt.addAll(altReaktionSaetze.stream().map(s -> satz(WORD, s)
+                .timed(secs(5))).collect(toSet()));
 
         alt.addAll(feelingsComp.altSCBeiBegegnungAnsehenSaetze(anaph).stream()
                 // Diese Sätze sind bereits in altZuneigungAbneigungSaetze enthalten...
                 // ...aber noch nicht mit dieser Ergänzung:
                 .map(s -> s.mitAdverbialerAngabe(
                         new AdverbialeAngabeSkopusSatz("oben im dunklen Zimmer")))
-                .map(satz -> satz(satz, secs(15)))
+                .map(satz -> satz(WORD, satz)
+                        .timed(secs(15)))
                 .collect(toImmutableList()));
 
-        alt.add(du(SENTENCE, "hast",
-                anaph.akkStr()
-                        + " offenbar aus dem Bett "
-                        + "geholt. "
-                        + capitalize(anaph.persPron().nomStr()) // Sie
-                        + " sieht sehr zerknittert "
-                        + "aus",
-                "offenbar",
-                secs(30))
+        // Sie
+        alt.add(du(SENTENCE, "hast", anaph.akkStr()
+                + " offenbar aus dem Bett "
+                + "geholt. "
+                + capitalize(anaph.persPron().nomStr()) // Sie
+                + " sieht sehr zerknittert "
+                + "aus", "offenbar")
+                .timed(secs(30))
                 .phorikKandidat(anaph.persPron(), RAPUNZEL));
         if (loadSC().memoryComp().getKnown(RAPUNZEL) == KNOWN_FROM_LIGHT) {
             alt.add(neuerSatz(anaph.persPron().nomStr()
-                            + " ist auch nachts wunderschön – allerdings ist die "
-                            + "junge, verschlafene "
-                            + "Frau in ihren Decken auch sichtlich überrascht, dass du zu "
-                            + "dieser Nachtzeit noch einmal bei ihr vorbeischaust",
-                    secs(15))
+                    + " ist auch nachts wunderschön – allerdings ist die "
+                    + "junge, verschlafene "
+                    + "Frau in ihren Decken auch sichtlich überrascht, dass du zu "
+                    + "dieser Nachtzeit noch einmal bei ihr vorbeischaust")
+                    .timed(secs(15))
                     .phorikKandidat(F, RAPUNZEL));
         }
         n.narrateAlt(alt);
@@ -463,9 +469,9 @@ public class RapunzelReactionsComp
 
             if (loadSC().locationComp().hasRecursiveLocation(VOR_DEM_ALTEN_TURM) &&
                     !world.loadSC().memoryComp().isKnown(RAPUNZELRUF)) {
-                n.narrate(neuerSatz(
-                        "„Das ist also die Leiter, auf welcher man hinaufkommt!“, "
-                                + "denkst du bei dir", secs(5))
+                n.narrate(neuerSatz("„Das ist also die Leiter, auf welcher man hinaufkommt!“, "
+                        + "denkst du bei dir")
+                        .timed(secs(5))
                         .beendet(PARAGRAPH));
 
                 world.loadSC().memoryComp().upgradeKnown(RAPUNZELRUF);
@@ -502,9 +508,9 @@ public class RapunzelReactionsComp
         final SubstantivischePhrase anaph = anaph();
         n.narrate(
                 neuerSatz(anaph.nomStr() +
-                                " sieht interessiert zu. „Darf ich auch "
-                                + "einmal?“, fragt " + anaph.persPron().nomStr() + " dich",
-                        secs(30))
+                        " sieht interessiert zu. „Darf ich auch "
+                        + "einmal?“, fragt " + anaph.persPron().nomStr() + " dich")
+                        .timed(secs(30))
                         .phorikKandidat(F, RAPUNZEL));
 
         memoryComp.upgradeKnown(GOLDENE_KUGEL);
@@ -527,20 +533,17 @@ public class RapunzelReactionsComp
     private static ImmutableList<TimedDescription<?>>
     altRapunzelZiehtHaareWiederHoch_VorDemAltenTurm() {
         return ImmutableList.of(
-                neuerSatz(
-                        "Dann verschwinden die prächtigen Haare wieder oben im Fenster",
-                        secs(15))
+                neuerSatz("Dann verschwinden die prächtigen Haare wieder oben im Fenster")
+                        .timed(secs(15))
                         .beendet(PARAGRAPH),
-                du("schaust",
-                        "fasziniert zu, wie die langen Haare wieder in "
-                                + "das Turmfenster "
-                                + "zurückgezogen werden",
-                        "fasziniert",
-                        secs(15))
+                du("schaust", "fasziniert zu, wie die langen Haare wieder in "
+                        + "das Turmfenster "
+                        + "zurückgezogen werden", "fasziniert")
+                        .timed(secs(15))
                         .beendet(PARAGRAPH),
                 neuerSatz("Nur ein paar Augenblicke, dann sind die Haare "
-                                + "wieder oben im Fenster verschwunden",
-                        secs(10))
+                        + "wieder oben im Fenster verschwunden")
+                        .timed(secs(10))
                         .beendet(PARAGRAPH)
         );
     }
@@ -549,20 +552,20 @@ public class RapunzelReactionsComp
     altRapunzelZiehtHaareWiederHoch_ObenImAltenTurm() {
         final SubstantivischePhrase anaph = anaph(false);
 
+        // "die junge Frau"
+        // "ihre"
         return ImmutableList.of(
-                neuerSatz(
-                        "Jetzt zieht "
-                                + anaph.nomStr() // "die junge Frau"
-                                + " "
-                                + anaph.possArt().vor(PL_MFN).akkStr() // "ihre"
-                                + " Haare wieder hoch",
-                        secs(15))
+                neuerSatz("Jetzt zieht "
+                        + anaph.nomStr() // "die junge Frau"
+                        + " "
+                        + anaph.possArt().vor(PL_MFN).akkStr() // "ihre"
+                        + " Haare wieder hoch")
+                        .timed(secs(15))
                         .beendet(PARAGRAPH),
-                neuerSatz(
-                        "Die Haare zieht "
-                                + anaph.nomStr()
-                                + " wieder hoch",
-                        secs(15))
+                neuerSatz("Die Haare zieht "
+                        + anaph.nomStr()
+                        + " wieder hoch")
+                        .timed(secs(15))
                         .beendet(PARAGRAPH)
         );
     }
@@ -595,20 +598,18 @@ public class RapunzelReactionsComp
             if (stateComp.hasState(SINGEND)) {
                 if (world.loadSC().memoryComp().isKnown(RAPUNZELS_HAARE)) {
                     n.narrate(
-                            neuerSatz(
-                                    "Sofort hört der Gesang auf – und gleich darauf "
-                                            + "fallen aus dem kleinen "
-                                            + "Fenster oben im Turm lange, goldene Haarzöpfe "
-                                            + "herab, sicher zwanzig Ellen tief bis auf den Boden",
-                                    secs(30))
+                            neuerSatz("Sofort hört der Gesang auf – und gleich darauf "
+                                    + "fallen aus dem kleinen "
+                                    + "Fenster oben im Turm lange, goldene Haarzöpfe "
+                                    + "herab, sicher zwanzig Ellen tief bis auf den Boden")
+                                    .timed(secs(30))
                                     .phorikKandidat(PL_MFN, RAPUNZELS_HAARE));
                 } else {
                     n.narrate(
-                            neuerSatz(
-                                    "Der Gesang hört auf, und wieder fallen "
-                                            + "die wunderschönen goldenen Haare aus dem Fenster "
-                                            + "bis ganz auf den Boden",
-                                    secs(30))
+                            neuerSatz("Der Gesang hört auf, und wieder fallen "
+                                    + "die wunderschönen goldenen Haare aus dem Fenster "
+                                    + "bis ganz auf den Boden")
+                                    .timed(secs(30))
                                     .phorikKandidat(PL_MFN, RAPUNZELS_HAARE));
                 }
 
@@ -618,14 +619,15 @@ public class RapunzelReactionsComp
                     n.narrate(
                             neuerSatz("Wieder fallen die langen, golden "
                                     + "glänzenden Zöpfe aus dem "
-                                    + "Fenster bis zum Boden herab", secs(30))
+                                    + "Fenster bis zum Boden herab")
+                                    .timed(secs(30))
                                     .phorikKandidat(PL_MFN, RAPUNZELS_HAARE));
                 } else {
                     n.narrate(
                             neuerSatz("Gleich darauf fallen aus dem kleinen "
-                                            + "Fenster oben im Turm lange, goldene Haarzöpfe herab, "
-                                            + "sicher zwanzig Ellen tief bis auf den Boden",
-                                    secs(30))
+                                    + "Fenster oben im Turm lange, goldene Haarzöpfe herab, "
+                                    + "sicher zwanzig Ellen tief bis auf den Boden")
+                                    .timed(secs(30))
                                     .phorikKandidat(PL_MFN, RAPUNZELS_HAARE));
                 }
             }
@@ -638,19 +640,17 @@ public class RapunzelReactionsComp
         // Sonderfall: Rapunzel verzögert das Haare-Herunterlassen
         if (loadSC().locationComp().hasLocation(OBEN_IM_ALTEN_TURM)) {
             n.narrateAlt(
-                    neuerSatz(
-                            "„O weh, die Alte kommt!“, entfährt es der jungen "
-                                    + "Frau. „Du musst dich verstecken! Sie "
-                                    + "ist eine mächtige Zauberin!“",
-                            secs(10)),
-                    neuerSatz(
-                            "„O nein, die Alte kommt schon wieder!“, sagt "
-                                    + "die junge Frau entsetzt. „Versteck dich "
-                                    + "schnell!“",
-                            secs(15)),
+                    neuerSatz("„O weh, die Alte kommt!“, entfährt es der jungen "
+                            + "Frau. „Du musst dich verstecken! Sie "
+                            + "ist eine mächtige Zauberin!“")
+                            .timed(secs(10)),
+                    neuerSatz("„O nein, die Alte kommt schon wieder!“, sagt "
+                            + "die junge Frau entsetzt. „Versteck dich "
+                            + "schnell!“")
+                            .timed(secs(15)),
                     neuerSatz("Alarmiert schaut die junge Frau dich an. Dann wandert "
-                                    + "ihr Blick auf das Bett",
-                            secs(20))
+                            + "ihr Blick auf das Bett")
+                            .timed(secs(20))
                             .phorikKandidat(F, RAPUNZEL)
                     // Hier wäre "dann" nur sinnvoll, wenn Rapunzel etwas tut, nicht der SC
             );
@@ -780,8 +780,8 @@ public class RapunzelReactionsComp
             n.narrate(neuerSatz(PARAGRAPH,
                     "Auf einmal hebt ein Gesang an, so lieblich, dass es dir das "
                             + "Herz rührt. Du hältst still und horchst: Kommt die Stimme aus "
-                            + "dem kleinen Fensterchen oben im Turm?",
-                    secs(20)));
+                            + "dem kleinen Fensterchen oben im Turm?")
+                    .timed(secs(20)));
 
             world.loadSC().memoryComp().upgradeKnown(RAPUNZELS_GESANG);
             return;
@@ -789,24 +789,17 @@ public class RapunzelReactionsComp
 
         if (!loadSC().memoryComp().isKnown(RAPUNZEL)) {
             n.narrateAlt(
-                    du("hörst",
-                            "erneut die süße Stimme aus dem Turmfenster singen",
-                            "erneut", secs(10)),
-                    du("hörst",
-                            "es von oben aus dem Turm singen",
-                            "von oben aus dem Turm",
-                            NO_TIME),
-                    du(PARAGRAPH, "hörst",
-                            "wieder Gesang von oben schallen",
-                            "wieder",
-                            NO_TIME)
+                    du("hörst", "erneut die süße Stimme aus dem Turmfenster singen", "erneut")
+                            .timed(secs(10)),
+                    du("hörst", "es von oben aus dem Turm singen", "von oben aus dem Turm")
+                            .timed(NO_TIME),
+                    du(PARAGRAPH, "hörst", "wieder Gesang von oben schallen", "wieder")
+                            .timed(NO_TIME)
                             .beendet(PARAGRAPH),
-                    neuerSatz(PARAGRAPH, "Plötzlich erschallt über dir wieder Gesang",
-                            NO_TIME),
-                    du("hörst",
-                            "den Gesang erneut",
-                            "erneut",
-                            NO_TIME)
+                    neuerSatz(PARAGRAPH, "Plötzlich erschallt über dir wieder Gesang")
+                            .timed(NO_TIME),
+                    du("hörst", "den Gesang erneut", "erneut")
+                            .timed(NO_TIME)
             );
 
             world.loadSC().memoryComp().upgradeKnown(RAPUNZELS_GESANG);
@@ -815,26 +808,21 @@ public class RapunzelReactionsComp
         }
 
         n.narrateAlt(
-                du(SENTENCE, "hörst",
-                        "aus dem Turmfenster die junge Frau singen. Dir wird ganz "
-                                + "warm beim Zuhören",
-                        "aus dem Turmfenster", secs(10))
+                du(SENTENCE, "hörst", "aus dem Turmfenster die junge Frau singen. Dir wird ganz "
+                        + "warm beim Zuhören", "aus dem Turmfenster")
+                        .timed(secs(10))
                         .undWartest()
                         .phorikKandidat(F, RAPUNZEL),
-                du(SENTENCE, "hörst",
-                        "plötzlich wieder Gesang aus dem Turmfenster. Wann wirst du "
-                                + "die junge Frau "
-                                + "endlich retten können?",
-                        "plötzlich",
-                        NO_TIME)
+                du(SENTENCE, "hörst", "plötzlich wieder Gesang aus dem Turmfenster. Wann wirst du "
+                        + "die junge Frau "
+                        + "endlich retten können?", "plötzlich")
+                        .timed(NO_TIME)
                         .beendet(PARAGRAPH)
                         .phorikKandidat(F, RAPUNZEL),
-                du("hörst",
-                        "erneut die süße Stimme aus dem Turmfenster singen. Jetzt "
-                                + "weißt du "
-                                + "endlich, wer dort singt – und sein Vertrauen in dich setzt",
-                        "erneut",
-                        NO_TIME)
+                du("hörst", "erneut die süße Stimme aus dem Turmfenster singen. Jetzt "
+                        + "weißt du "
+                        + "endlich, wer dort singt – und sein Vertrauen in dich setzt", "erneut")
+                        .timed(NO_TIME)
         );
 
         world.loadSC().memoryComp().upgradeKnown(RAPUNZELS_GESANG);

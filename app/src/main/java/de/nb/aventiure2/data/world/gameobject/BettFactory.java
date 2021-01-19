@@ -85,11 +85,13 @@ class BettFactory {
             return du(PARAGRAPH, "legst", "dich in das hölzere Bettgestell. "
                     + "Gemütlich ist etwas anderes, aber nach den "
                     + "vielen Schritten tut es sehr gut, sich "
-                    + "einmal auszustrecken", secs(15), BETT__DESC_IN);
+                    + "einmal auszustrecken")
+                    .timed(secs(15))
+                    .withCounterIdIncrementedIfTextIsNarrated(BETT__DESC_IN);
         }
 
-        return du("legst", "dich noch einmal in das Holzbett",
-                "noch einmal", secs(15))
+        return du("legst", "dich noch einmal in das Holzbett", "noch einmal")
+                .timed(secs(15))
                 .undWartest()
                 .dann();
     }

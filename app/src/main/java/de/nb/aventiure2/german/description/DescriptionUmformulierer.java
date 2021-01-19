@@ -47,8 +47,8 @@ public class DescriptionUmformulierer {
         return descriptions.stream()
                 .flatMap(d ->
                         drueckeAus(kohaerenzrelation, d.getDescription()).stream()
-                                .map(r ->
-                                        r.timed(d.getTimeElapsed(),
+                                .map(r -> r.timed(d.getTimeElapsed())
+                                        .withCounterIdIncrementedIfTextIsNarrated(
                                                 d.getCounterIdIncrementedIfTextIsNarrated()))
                 )
                 .collect(ImmutableList.toImmutableList());

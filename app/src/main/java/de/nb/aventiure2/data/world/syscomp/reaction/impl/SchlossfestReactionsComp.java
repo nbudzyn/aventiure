@@ -65,9 +65,9 @@ public class SchlossfestReactionsComp
 
         n.narrate(
                 neuerSatz(PARAGRAPH, "Dir fällt auf, dass Handwerker dabei sind, überall "
-                                + "im Schlossgarten kleine bunte Pagoden aufzubauen. Du schaust eine Weile "
-                                + "zu, und wie es scheint, beginnen von überallher Menschen zu "
-                                + "strömen. Aus dem Schloss weht dich der Geruch von Gebratenem an.",
-                        mins(30)));
+                        + "im Schlossgarten kleine bunte Pagoden aufzubauen. Du schaust eine Weile "
+                        + "zu, und wie es scheint, beginnen von überallher Menschen zu "
+                        + "strömen. Aus dem Schloss weht dich der Geruch von Gebratenem an.")
+                        .timed(mins(30)));
     }
 }

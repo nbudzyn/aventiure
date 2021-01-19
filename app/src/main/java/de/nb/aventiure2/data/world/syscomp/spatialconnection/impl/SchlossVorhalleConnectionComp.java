@@ -33,6 +33,7 @@ import static de.nb.aventiure2.data.world.syscomp.feelings.Mood.AUFGEDREHT;
 import static de.nb.aventiure2.data.world.syscomp.state.impl.FroschprinzState.ZURUECKVERWANDELT_IN_VORHALLE;
 import static de.nb.aventiure2.data.world.syscomp.state.impl.FroschprinzState.ZURUECKVERWANDELT_SCHLOSS_VORHALLE_VERLASSEN;
 import static de.nb.aventiure2.data.world.syscomp.state.impl.SchlossfestState.BEGONNEN;
+import static de.nb.aventiure2.german.base.Wortfolge.w;
 import static de.nb.aventiure2.german.description.DescriptionBuilder.du;
 
 /**
@@ -104,17 +105,19 @@ public class SchlossVorhalleConnectionComp extends AbstractSpatialConnectionComp
         }
 
         if (known == KNOWN_FROM_DARKNESS && lichtverhaeltnisse == HELL) {
-            return du("verlässt", "das Schloss. Draußen scheint dir die " +
+            // TODO Vielleicht ist es nur tagsüber / mittags heiß und morgens
+            //  noch nicht?
+            return du("verlässt", w("das Schloss. Draußen scheint dir die " +
                     "Sonne ins Gesicht; "
                     // TODO Vielleicht ist es nur tagsüber / mittags heiß und morgens
                     //  noch nicht?
-                    + "der Tag ist recht heiß", mins(1));
+                    + "der Tag ist recht heiß")).timed(mins(1));
         }
 
         // TODO: Wenn man aus dem hellen (Schloss) ins Dunkle kommt:
         //  "Draußen ist es dunkel" o.Ä.
 
-        return du("verlässt", "das Schloss", mins(1))
+        return du("verlässt", w("das Schloss")).timed(mins(1))
                 .undWartest()
                 .dann();
     }
@@ -124,20 +127,23 @@ public class SchlossVorhalleConnectionComp extends AbstractSpatialConnectionComp
     getDescTo_DraussenVorDemSchlosss_KeinFest_Unknown(
             final Lichtverhaeltnisse lichtverhaeltnisse) {
         if (lichtverhaeltnisse == HELL) {
+            // TODO Vielleicht ist es nur tagsüber / mittags heiß und morgens
+            //  noch nicht?
             return du("gehst", "über eine Marmortreppe hinaus in die Gärten vor dem Schloss.\n\n" +
-                            "Draußen scheint dir die " +
-                            "Sonne ins Gesicht; "
-                            // TODO Vielleicht ist es nur tagsüber / mittags heiß und morgens
-                            //  noch nicht?
-                            + "der Tag ist recht heiß. " +
-                            "Nahebei liegt ein großer, dunkler Wald", "über eine Marmortreppe",
-                    mins(1));
+                    "Draußen scheint dir die " +
+                    "Sonne ins Gesicht; "
+                    // TODO Vielleicht ist es nur tagsüber / mittags heiß und morgens
+                    //  noch nicht?
+                    + "der Tag ist recht heiß. " +
+                    "Nahebei liegt ein großer, dunkler Wald", "über eine Marmortreppe")
+                    .timed(mins(1));
         }
 
         return du("gehst", "über eine Marmortreppe hinaus den Garten vor dem Schloss.\n\n" +
                         "Draußen ist es dunkel. " +
                         "In der Nähe liegt ein großer Wald, der sehr bedrohlich wirkt",
-                "über eine Marmortreppe", mins(1))
+                "über eine Marmortreppe")
+                .timed(mins(1))
                 .komma();
     }
 
@@ -148,20 +154,16 @@ public class SchlossVorhalleConnectionComp extends AbstractSpatialConnectionComp
         if (((IHasStateGO<FroschprinzState>) world.load(FROSCHPRINZ)).stateComp()
                 .hasState(ZURUECKVERWANDELT_IN_VORHALLE,
                         ZURUECKVERWANDELT_SCHLOSS_VORHALLE_VERLASSEN)) {
-            return du("drängst",
-                    "dich durch das Eingangstor",
-                    mins(2))
+            return du("drängst", w("dich durch das Eingangstor")).timed(mins(2))
                     .undWartest();
         }
 
         world.loadSC().feelingsComp().requestMoodMin(AUFGEDREHT);
 
         // TODO Nachts ist weniger Trubel?
-        return du("gehst",
-                "über die Marmortreppe hinaus in den Trubel "
-                        + "im Schlossgarten",
-                "über die Marmortreppe",
-                mins(3))
+        return du("gehst", "über die Marmortreppe hinaus in den Trubel "
+                + "im Schlossgarten", "über die Marmortreppe")
+                .timed(mins(3))
                 .dann();
     }
 }

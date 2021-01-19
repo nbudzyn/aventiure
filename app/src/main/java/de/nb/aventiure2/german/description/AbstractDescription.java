@@ -97,13 +97,6 @@ public abstract class AbstractDescription<SELF extends AbstractDescription<SELF>
         return new TimedDescription<>((SELF) this, timeElapsed);
     }
 
-    TimedDescription<SELF> timed(final AvTimeSpan timeElapsed,
-                                 @Nullable final String counterIdIncrementedIfTextIsNarrated) {
-        return timed(timeElapsed)
-                .withCounterIdIncrementedIfTextIsNarrated(
-                        counterIdIncrementedIfTextIsNarrated);
-    }
-
     @SuppressWarnings("unchecked")
     public SELF komma() {
         komma(true);

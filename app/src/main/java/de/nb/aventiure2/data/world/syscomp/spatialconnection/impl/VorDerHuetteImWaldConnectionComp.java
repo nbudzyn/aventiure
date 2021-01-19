@@ -23,6 +23,7 @@ import static de.nb.aventiure2.data.time.AvTimeSpan.secs;
 import static de.nb.aventiure2.data.world.base.SpatialConnection.con;
 import static de.nb.aventiure2.data.world.gameobject.World.*;
 import static de.nb.aventiure2.german.base.StructuralElement.SENTENCE;
+import static de.nb.aventiure2.german.base.Wortfolge.w;
 import static de.nb.aventiure2.german.description.DescriptionBuilder.du;
 import static de.nb.aventiure2.german.description.DescriptionBuilder.neuerSatz;
 
@@ -59,23 +60,25 @@ public class VorDerHuetteImWaldConnectionComp extends AbstractSpatialConnectionC
                         "in der Tür",
                         "Die Hütte betreten",
                         secs(15),
-                        du(SENTENCE, "schiebst",
-                                "die Tür zur Seite und "
-                                        + "zwängst dich hinein. Durch Ritzen in den "
-                                        + "Fensterläden fällt ein wenig Licht: "
-                                        + "Die Hütte ist "
-                                        + "anscheinend trocken und, wie es aussieht, "
-                                        + "bis auf einige "
-                                        + "Tausendfüßler "
-                                        + "unbewohnt. Du siehst ein Bettgestell, "
-                                        + "einen Tisch, aber sonst keine Einrichtung", mins(1)),
-                        du(SENTENCE, "schiebst",
-                                "die Tür zur Seite und "
-                                        + "zwängst dich hinein. Erst ist alles "
-                                        + "stockdunkel, aber dann kannst du doch mit "
-                                        + "Mühe ein Bettgestell und einen Tisch "
-                                        + "ausmachen", secs(90)),
-                        du("schiebst", "dich noch einmal in die "
+                        du(SENTENCE, "schiebst", "die Tür zur Seite und "
+                                + "zwängst dich hinein. Durch Ritzen in den "
+                                + "Fensterläden fällt ein wenig Licht: "
+                                + "Die Hütte ist "
+                                + "anscheinend trocken und, wie es aussieht, "
+                                + "bis auf einige "
+                                + "Tausendfüßler "
+                                + "unbewohnt. Du siehst ein Bettgestell, "
+                                + "einen Tisch, aber sonst keine Einrichtung")
+                                .timed(mins(1))
+                                .withCounterIdIncrementedIfTextIsNarrated(null),
+                        du(SENTENCE, "schiebst", "die Tür zur Seite und "
+                                + "zwängst dich hinein. Erst ist alles "
+                                + "stockdunkel, aber dann kannst du doch mit "
+                                + "Mühe ein Bettgestell und einen Tisch "
+                                + "ausmachen")
+                                .timed(secs(90))
+                                .withCounterIdIncrementedIfTextIsNarrated(null),
+                        du("schiebst", w("dich noch einmal in die "
                                 + "kleine Hütte. Durch Ritzen in den "
                                 + "Fensterläden fällt ein wenig Licht: "
                                 + "Die Hütte ist "
@@ -83,7 +86,7 @@ public class VorDerHuetteImWaldConnectionComp extends AbstractSpatialConnectionC
                                 + "bis auf einige "
                                 + "Tausendfüßler "
                                 + "unbewohnt. Du siehst ein Bettgestell, "
-                                + "einen Tisch, aber sonst keine Einrichtung", mins(1))
+                                + "einen Tisch, aber sonst keine Einrichtung")).timed(mins(1))
                                 .komma()
                                 .undWartest(),
                         du("schiebst", "dich noch einmal in die "
@@ -102,21 +105,20 @@ public class VorDerHuetteImWaldConnectionComp extends AbstractSpatialConnectionC
                                 + "verwilderten Garten. In seiner Mitte "
                                 + "steht einzeln… es könnte ein "
                                 + "Apfelbaum sein. Früchte siehst du von "
-                                + "unten keine.", secs(30)),
-                        du("gehst",
-                                "im Dunkeln vorsichtig ein paar Schritte "
-                                        + "um die Hütte herum. Du kannst die Silhouette "
-                                        + "eines einzelnen Baums erkennen, vielleicht – "
-                                        + "ein Apfelbaum",
-                                "vorsichtig",
-                                mins(1)),
-                        du("schaust", "noch einmal hinter die Hütte. "
+                                + "unten keine.")
+                                .timed(secs(30)),
+                        du("gehst", "im Dunkeln vorsichtig ein paar Schritte "
+                                + "um die Hütte herum. Du kannst die Silhouette "
+                                + "eines einzelnen Baums erkennen, vielleicht – "
+                                + "ein Apfelbaum", "vorsichtig")
+                                .timed(mins(1)),
+                        du("schaust", w("noch einmal hinter die Hütte. "
                                 + "Im Licht erkennst du dort einen kleinen, völlig "
                                 + "verwilderten Garten mit dem einzelnen Baum in "
-                                + "der Mitte", secs(30)),
-                        du("schaust", "noch einmal in den alten "
+                                + "der Mitte")).timed(secs(30)),
+                        du("schaust", w("noch einmal in den alten "
                                 + "Garten hinter der Hütte, wo der "
-                                + "Baum wächst", secs(30))
+                                + "Baum wächst")).timed(secs(30))
                                 .komma()
                                 .undWartest()
                                 .dann()

@@ -86,20 +86,20 @@ public class SchlafenAction extends AbstractScAction {
         final ImmutableList.Builder<TimedDescription<?>> alt = ImmutableList.builder();
         if (!isDefinitivWiederholung()) {
             alt.add(du("schließt", "kurz die Augen. Die Aufregung der letzten Stunden "
-                            + "steckt dir noch in den Knochen – an Einschlafen ist "
-                            + "nicht zu denken",
-                    "kurz",
-                    mins(1)));
+                    + "steckt dir noch in den Knochen – an Einschlafen ist "
+                    + "nicht zu denken", "kurz")
+                    .timed(mins(1)));
         }
 
-        alt.add(du(SENTENCE, "bist", "noch nicht müde",
-                "müde", mins(1))
+        alt.add(du(SENTENCE, "bist", "noch nicht müde", "müde")
+                .timed(mins(1))
                 .dann());
 
-        alt.add(neuerSatz("Gibt es hier eigentlich Spinnen?", mins(1)));
+        alt.add(neuerSatz("Gibt es hier eigentlich Spinnen?")
+                .timed(mins(1)));
 
-        alt.add(du("drehst", "dich von einer Seite auf die andere",
-                "von einer Seite", mins(1)));
+        alt.add(du("drehst", "dich von einer Seite auf die andere", "von einer Seite")
+                .timed(mins(1)));
 
         n.narrateAlt(alt);
     }

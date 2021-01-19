@@ -51,6 +51,7 @@ import static de.nb.aventiure2.data.world.syscomp.state.impl.RapunzelsZauberinSt
 import static de.nb.aventiure2.german.base.StructuralElement.CHAPTER;
 import static de.nb.aventiure2.german.base.StructuralElement.PARAGRAPH;
 import static de.nb.aventiure2.german.base.StructuralElement.SENTENCE;
+import static de.nb.aventiure2.german.base.Wortfolge.w;
 import static de.nb.aventiure2.german.description.DescriptionBuilder.du;
 import static de.nb.aventiure2.german.description.DescriptionBuilder.neuerSatz;
 
@@ -349,9 +350,8 @@ public class RapunzelsZauberinReactionsComp
         if (loadSC().locationComp().hasRecursiveLocation(VOR_DEM_ALTEN_TURM)) {
             final Nominalphrase desc = getDescription(true);
             n.narrate(
-                    du("siehst",
-                            desc.akkStr()
-                                    + " an den Haarflechten hinaufsteigen", mins(4)));
+                    du("siehst", w(desc.akkStr()
+                            + " an den Haarflechten hinaufsteigen")).timed(mins(4)));
 
         }
         // STORY UNTER_DEM_BETT_OBEN_IM_ALTEN_TURM
@@ -385,11 +385,9 @@ public class RapunzelsZauberinReactionsComp
         if (loadSC().locationComp().hasRecursiveLocation(VOR_DEM_ALTEN_TURM)) {
             final Nominalphrase desc = getDescription();
             n.narrate(
-                    du("siehst",
-                            ", wie "
-                                    + desc.nomStr()
-                                    + " an den Haaren herabsteigt",
-                            mins(1))
+                    du("siehst", w(", wie "
+                            + desc.nomStr()
+                            + " an den Haaren herabsteigt")).timed(mins(1))
                             .komma()
                             .beendet(SENTENCE)
                             .phorikKandidat(desc, RAPUNZELS_ZAUBERIN));
@@ -405,7 +403,8 @@ public class RapunzelsZauberinReactionsComp
             }
 
             n.narrate(neuerSatz(anaph(true).nomStr()
-                    + " hat dich nicht bemerkt", NO_TIME));
+                    + " hat dich nicht bemerkt")
+                    .timed(NO_TIME));
         }
         // STORY UNTER_DEM_BETT_OBEN_IM_ALTEN_TURM
 
@@ -416,25 +415,23 @@ public class RapunzelsZauberinReactionsComp
 
     private void zauberinZaubertVergessenszauber() {
         if (loadSC().locationComp().hasRecursiveLocation(OBEN_IM_ALTEN_TURM)) {
-            n.narrate(neuerSatz(
-                    "Jetzt geht alles ganz schnell. Die magere Frau schaut "
-                            + "zum Fenster "
-                            + "herein. Ihr Blick fällt auf dich – und mit einem Mal "
-                            + "sieht sie direkt in die Augen. Du bist wie gebannt und"
-                            + " kannst deinen Blick gar nicht abwenden…",
-                    mins(5)));
+            n.narrate(neuerSatz("Jetzt geht alles ganz schnell. Die magere Frau schaut "
+                    + "zum Fenster "
+                    + "herein. Ihr Blick fällt auf dich – und mit einem Mal "
+                    + "sieht sie direkt in die Augen. Du bist wie gebannt und"
+                    + " kannst deinen Blick gar nicht abwenden…")
+                    .timed(mins(5)));
         } else if (locationComp.hasRecursiveLocation(OBEN_IM_ALTEN_TURM)) {
             n.narrate(neuerSatz(PARAGRAPH, "Jetzt schaut oben aus dem Turmfenster die "
-                            + "magere Frau heraus. "
-                            + "Kurz sucht ihr Blick umher, dann sieht sie dich direkt an. "
-                            + "Ihre Augen sind - du kannst deinen Blick gar nicht abwenden…",
-                    mins(5)));
+                    + "magere Frau heraus. "
+                    + "Kurz sucht ihr Blick umher, dann sieht sie dich direkt an. "
+                    + "Ihre Augen sind - du kannst deinen Blick gar nicht abwenden…")
+                    .timed(mins(5)));
         } else {
-            n.narrate(neuerSatz(PARAGRAPH,
-                    "Die magere Frau sieht dich mit einem Mal "
-                            + "direkt an. Ihre Augen sind - du kannst deinen Blick "
-                            + "gar nicht abwenden…",
-                    mins(5)));
+            n.narrate(neuerSatz(PARAGRAPH, "Die magere Frau sieht dich mit einem Mal "
+                    + "direkt an. Ihre Augen sind - du kannst deinen Blick "
+                    + "gar nicht abwenden…")
+                    .timed(mins(5)));
         }
 
         // Spieler wird verzaubert und vergisst alles.
@@ -473,14 +470,13 @@ public class RapunzelsZauberinReactionsComp
 
         // FIXME Im Text klarer machen, dass der SC verzaubert wurde:
         //  "Du füllst dich wie verhext", "auf einmal ist alles wie weggeblasen" o.Ä.
-        n.narrate(neuerSatz(CHAPTER,
-                "Du " +
-                        ortsbeschreibung +
-                        " und "
-                        + "fühlst dich etwas verwirrt: Was hattest du "
-                        + "eigentlich gerade vor? Ob der Turm wohl "
-                        + "bewohnt ist? Niemand ist zu sehen",
-                secs(15)));
+        n.narrate(neuerSatz(CHAPTER, "Du " +
+                ortsbeschreibung +
+                " und "
+                + "fühlst dich etwas verwirrt: Was hattest du "
+                + "eigentlich gerade vor? Ob der Turm wohl "
+                + "bewohnt ist? Niemand ist zu sehen")
+                .timed(secs(15)));
     }
 
     @Override
@@ -611,7 +607,8 @@ public class RapunzelsZauberinReactionsComp
                             + " unten am Turm steht, ruft "
                             + desc.persPron().nomStr()
                             + " etwas. Du kannst nicht alles verstehen, aber du hörst etwas wie: "
-                            + "„…lass dein Haar herunter!“", mins(1)));
+                            + "„…lass dein Haar herunter!“")
+                            .timed(mins(1)));
         } else if (loadSC().locationComp().hasRecursiveLocation(OBEN_IM_ALTEN_TURM)) {
             n.narrateAlt(secs(10),
                     neuerSatz(PARAGRAPH,

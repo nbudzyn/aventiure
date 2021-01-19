@@ -20,6 +20,7 @@ import de.nb.aventiure2.data.world.gameobject.*;
 import de.nb.aventiure2.data.world.syscomp.spatialconnection.AbstractSpatialConnectionComp;
 import de.nb.aventiure2.data.world.syscomp.state.IHasStateGO;
 import de.nb.aventiure2.data.world.syscomp.state.impl.RapunzelState;
+import de.nb.aventiure2.german.base.StructuralElement;
 import de.nb.aventiure2.german.description.TimedDescription;
 import de.nb.aventiure2.german.praedikat.AdverbialeAngabeSkopusVerbAllg;
 import de.nb.aventiure2.german.praedikat.VerbSubj;
@@ -28,6 +29,7 @@ import static de.nb.aventiure2.data.time.AvTimeSpan.mins;
 import static de.nb.aventiure2.data.time.AvTimeSpan.secs;
 import static de.nb.aventiure2.data.world.base.SpatialConnection.con;
 import static de.nb.aventiure2.data.world.gameobject.World.*;
+import static de.nb.aventiure2.german.base.Wortfolge.w;
 import static de.nb.aventiure2.german.description.DescriptionBuilder.du;
 
 /**
@@ -77,26 +79,26 @@ public class ObenImTurmConnectionComp extends AbstractSpatialConnectionComp {
             final Known newLocationKnown, final Lichtverhaeltnisse lichtverhaeltnisse) {
         if (db.counterDao().get(COUNTER_HERABGESTIEGEN) % 2 == 1) {
             // 2.Mal, 4. Mal, ...
-            return du("bist",
-                    "schnell wieder hinab",
-                    "schnell",
-                    secs(30), COUNTER_HERABGESTIEGEN)
+            return du(StructuralElement.WORD, "bist", w("schnell wieder hinab"), "schnell")
+                    .timed(secs(30))
+                    .withCounterIdIncrementedIfTextIsNarrated(COUNTER_HERABGESTIEGEN)
                     .undWartest()
                     .dann();
         }
 
         if (n.isAnaphorischerBezugMoeglich(RAPUNZELS_HAARE)) {
-            return du("steigst",
-                    "daran hinab",
-                    mins(1), COUNTER_HERABGESTIEGEN)
+            return du("steigst", w("daran hinab")).timed(mins(1))
+                    .withCounterIdIncrementedIfTextIsNarrated(
+                            COUNTER_HERABGESTIEGEN)
                     .undWartest()
                     .dann();
         }
 
-        return du(VerbSubj.HINABSTEIGEN
-                        .mitAdverbialerAngabe(
-                                new AdverbialeAngabeSkopusVerbAllg("wieder")),
-                mins(1), COUNTER_HERABGESTIEGEN)
+        return du(StructuralElement.WORD, VerbSubj.HINABSTEIGEN
+                .mitAdverbialerAngabe(
+                        new AdverbialeAngabeSkopusVerbAllg("wieder")))
+                .timed(mins(1))
+                .withCounterIdIncrementedIfTextIsNarrated(COUNTER_HERABGESTIEGEN)
                 .undWartest()
                 .dann();
     }

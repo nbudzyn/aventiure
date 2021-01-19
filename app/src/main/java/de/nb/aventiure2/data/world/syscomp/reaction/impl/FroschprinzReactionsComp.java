@@ -45,6 +45,7 @@ import static de.nb.aventiure2.data.world.syscomp.state.impl.SchlossfestState.BE
 import static de.nb.aventiure2.german.base.NumerusGenus.M;
 import static de.nb.aventiure2.german.base.StructuralElement.CHAPTER;
 import static de.nb.aventiure2.german.base.StructuralElement.PARAGRAPH;
+import static de.nb.aventiure2.german.base.Wortfolge.w;
 import static de.nb.aventiure2.german.description.DescriptionBuilder.du;
 import static de.nb.aventiure2.german.description.DescriptionBuilder.neuerSatz;
 import static de.nb.aventiure2.german.description.DescriptionBuilder.satzanschluss;
@@ -134,7 +135,8 @@ public class FroschprinzReactionsComp
 
         n.narrate(
                 neuerSatz("Da springt dir der Frosch "
-                        + "aus der Hand – weg ist er!", secs(3))
+                        + "aus der Hand – weg ist er!")
+                        .timed(secs(3))
                         .beendet(PARAGRAPH));
     }
 
@@ -182,19 +184,19 @@ public class FroschprinzReactionsComp
                 //  (vgl. AblegenAction)
                 n.narrateAlt(
                         neuerSatz(PARAGRAPH, "Plötzlich sitzt "
-                                        + desc.nomStr()
-                                        + " neben dir auf der Bank. „Denk an dein "
-                                        + "Versprechen“, quakt er dir zu, "
-                                        + "„Lass uns aus einem Tellerlein essen!“ Du bist ganz "
-                                        + "erschrocken – was für eine "
-                                        + "abstoßende Vorstellung!",
-                                secs(30)),
+                                + desc.nomStr()
+                                + " neben dir auf der Bank. „Denk an dein "
+                                + "Versprechen“, quakt er dir zu, "
+                                + "„Lass uns aus einem Tellerlein essen!“ Du bist ganz "
+                                + "erschrocken – was für eine "
+                                + "abstoßende Vorstellung!")
+                                .timed(secs(30)),
                         neuerSatz("Da stößt es schon von der Seite an dein Bein. "
-                                        + "Du drehst dich "
-                                        + "hastig weg und dein Herz klopft vor schlechtem "
-                                        + "Gewissen, als "
-                                        + "der Frosch „Heb mich herauf, heb mich herauf!“ quakt",
-                                secs(20))
+                                + "Du drehst dich "
+                                + "hastig weg und dein Herz klopft vor schlechtem "
+                                + "Gewissen, als "
+                                + "der Frosch „Heb mich herauf, heb mich herauf!“ quakt")
+                                .timed(secs(20))
                                 .beendet(PARAGRAPH));
                 return;
             case BEIM_SCHLOSSFEST_AUF_TISCH_WILL_ZUSAMMEN_ESSEN:
@@ -202,22 +204,22 @@ public class FroschprinzReactionsComp
 
                 n.narrateAlt(
                         neuerSatz(PARAGRAPH, "Auf einmal sitzt "
-                                        + desc.nomStr()
-                                        + " bei dir auf dem Tisch. „Auf, füll deine "
-                                        + "Schale, wir wollen zusammen essen“, quakt " +
-                                        desc.persPron().nomStr() +
-                                        " dich an. Es schauert dich bei dem Gedanken",
-                                secs(10))
+                                + desc.nomStr()
+                                + " bei dir auf dem Tisch. „Auf, füll deine "
+                                + "Schale, wir wollen zusammen essen“, quakt " +
+                                desc.persPron().nomStr() +
+                                " dich an. Es schauert dich bei dem Gedanken")
+                                .timed(secs(10))
                                 .beendet(PARAGRAPH),
                         neuerSatz(PARAGRAPH, "Platsch – da springt auf einmal "
-                                        + desc.nomStr()
-                                        + " vor dich auf den Tisch. Gerade noch, dass er "
-                                        + "dir nicht in die Essensschale gehüpft ist. Dir läuft "
-                                        + "ein Schauer über den Rücken, als "
-                                        + desc.persPron().nomStr()
-                                        + " fordert: „Nicht länger gezögert – nun lass uns zusammen "
-                                        + "essen!“",
-                                secs(10))
+                                + desc.nomStr()
+                                + " vor dich auf den Tisch. Gerade noch, dass er "
+                                + "dir nicht in die Essensschale gehüpft ist. Dir läuft "
+                                + "ein Schauer über den Rücken, als "
+                                + desc.persPron().nomStr()
+                                + " fordert: „Nicht länger gezögert – nun lass uns zusammen "
+                                + "essen!“")
+                                .timed(secs(10))
                                 .beendet(PARAGRAPH)
                 );
                 return;
@@ -228,7 +230,8 @@ public class FroschprinzReactionsComp
             default:
                 // STORY Wenn der Frosch nur rekursiv enthalten ist (Frosch sitzt auf dem Tisch),
                 //  dann beschreiben (vgl. BewegenAction)
-                n.narrate(neuerSatz("Hier sitzt " + desc.nomStr(), NO_TIME)
+                n.narrate(neuerSatz("Hier sitzt " + desc.nomStr())
+                        .timed(NO_TIME)
                         .phorikKandidat(desc, FROSCHPRINZ));
                 return;
         }
@@ -252,7 +255,7 @@ public class FroschprinzReactionsComp
 
         // STORY Wenn der Prinz nur rekursiv enthalten ist (Prinz sitzt auf einem Stuhl),
         //  dann genauer beschreiben (vgl. BewegenAction)
-        n.narrate(du("siehst", getDescription().akkStr(), NO_TIME)
+        n.narrate(du("siehst", w(getDescription().akkStr())).timed(NO_TIME)
                 .phorikKandidat(desc, FROSCHPRINZ));
     }
 
@@ -260,7 +263,8 @@ public class FroschprinzReactionsComp
         if (n.allowsAdditionalDuSatzreihengliedOhneSubjekt()) {
             n.narrate(
                     satzanschluss(", aber die Menge hat dich schon von dem "
-                            + "jungen Königssohn getrennt", secs(15))
+                            + "jungen Königssohn getrennt")
+                            .timed(secs(15))
                             .phorikKandidat(M, FROSCHPRINZ));
 
             prinzDraussenVorDemSchlossAngekommen();
@@ -269,7 +273,8 @@ public class FroschprinzReactionsComp
 
         n.narrate(
                 neuerSatz("In der Menge ist der junge Königssohn nicht mehr zu "
-                        + "erkennen", secs(15))
+                        + "erkennen")
+                        .timed(secs(15))
                         .phorikKandidat(M, FROSCHPRINZ));
 
         prinzDraussenVorDemSchlossAngekommen();
@@ -277,9 +282,8 @@ public class FroschprinzReactionsComp
 
     private void prinzFaehrtMitWagenDavon() {
         n.narrate(
-                du("siehst",
-                        "noch einen Wagen davonfahren, mit acht weißen Pferden bespannt, "
-                                + "jedes mit weißen Straußfedern auf dem Kopf", mins(2))
+                du("siehst", w("noch einen Wagen davonfahren, mit acht weißen Pferden bespannt, "
+                        + "jedes mit weißen Straußfedern auf dem Kopf")).timed(mins(2))
                         .beendet(CHAPTER));
 
         // TODO Nach der Prinzabfahrt. Klares Lob, aber auch Hinweis auf einsame Stimme
@@ -318,8 +322,8 @@ public class FroschprinzReactionsComp
             // Der Spieler hat die goldene Kugel in den Brunnen fallen
             // lassen, obwohl er noch mit dem Frosch verhandelt.
             n.narrate(neuerSatz(StructuralElement.PARAGRAPH,
-                    "Ob der Frosch gerade seine glitschige Nase gerümpft hat?",
-                    secs(3))
+                    "Ob der Frosch gerade seine glitschige Nase gerümpft hat?")
+                    .timed(secs(3))
                     .beendet(PARAGRAPH)
             );
             return;
@@ -329,11 +333,10 @@ public class FroschprinzReactionsComp
         // fallen lassen, NACHDEM der Frosch schon Dinge hochgeholt hat.
         // Dann ist die Kugel jetzt WEG - PECH.
         final Nominalphrase froschprinzDesc = getDescription(true);
-        n.narrate(neuerSatz(
-                froschprinzDesc.nomStr()
-                        +
-                        " schaut dich vorwurfsvoll und etwas hochnäsig an",
-                secs(5))
+        n.narrate(neuerSatz(froschprinzDesc.nomStr()
+                +
+                " schaut dich vorwurfsvoll und etwas hochnäsig an")
+                .timed(secs(5))
                 .phorikKandidat(froschprinzDesc, FROSCHPRINZ));
     }
 
@@ -379,14 +382,13 @@ public class FroschprinzReactionsComp
 
         stateComp.narrateAndSetState(BEIM_SCHLOSSFEST_AUF_TISCH_WILL_ZUSAMMEN_ESSEN);
 
-        n.narrate(neuerSatz(
-                "Wie " +
-                        anaph.nomStr() +
-                        " nun da sitzt, glotzt " +
-                        anaph.nomStr() +
-                        " dich mit großen Glubschaugen an und spricht: „Nun füll deine "
-                        + "Holzschale auf, wir wollen zusammen essen.“",
-                secs(10))
+        n.narrate(neuerSatz("Wie " +
+                anaph.nomStr() +
+                " nun da sitzt, glotzt " +
+                anaph.nomStr() +
+                " dich mit großen Glubschaugen an und spricht: „Nun füll deine "
+                + "Holzschale auf, wir wollen zusammen essen.“")
+                .timed(secs(10))
                 .phorikKandidat(anaph, FROSCHPRINZ));
     }
 
@@ -437,16 +439,15 @@ public class FroschprinzReactionsComp
     private void froschprinzHuepftAusTascheUndWillMitessen() {
         locationComp.narrateAndSetLocation(SCHLOSS_VORHALLE_AM_TISCH_BEIM_FEST,
                 () -> {
-                    n.narrate(neuerSatz(
-                            "Auf einmal ruckelt es unangenehm in deiner Tasche, und eh "
-                                    + "du dich's versiehst "
-                                    + "hüpft der garstige Frosch heraus. Patsch! – sitzt er neben "
-                                    + "dir auf der "
-                                    + "Holzbank und drängt sich nass an deinen Oberschenkel. "
-                                    + "„Heb mich herauf!“ ruft er "
-                                    + "„weißt du nicht, was du zu mir gesagt bei dem kühlen "
-                                    + "Brunnenwasser? Heb mich herauf!“",
-                            secs(25))
+                    n.narrate(neuerSatz("Auf einmal ruckelt es unangenehm in deiner Tasche, und eh "
+                            + "du dich's versiehst "
+                            + "hüpft der garstige Frosch heraus. Patsch! – sitzt er neben "
+                            + "dir auf der "
+                            + "Holzbank und drängt sich nass an deinen Oberschenkel. "
+                            + "„Heb mich herauf!“ ruft er "
+                            + "„weißt du nicht, was du zu mir gesagt bei dem kühlen "
+                            + "Brunnenwasser? Heb mich herauf!“")
+                            .timed(secs(25))
                             .beendet(PARAGRAPH));
 
                     narrateAndDoFroschHatHochhebenGefordert();
@@ -455,13 +456,11 @@ public class FroschprinzReactionsComp
     }
 
     private void froschprinzSitztAufEinmalAufDerBankUndWillMitessen() {
-        n.narrate(du(
-                "spürst", "auf einmal etwas Feuchtes an deinem rechten Bein – oh "
-                        + "nein, der "
-                        + "garstige Frosch! „Heb mich herauf!“, ruft er, „weißt du nicht, was du "
-                        + "zu mir gesagt bei dem kühlen Brunnenwasser? Heb mich herauf!“",
-                "auf einmal",
-                secs(20))
+        n.narrate(du("spürst", "auf einmal etwas Feuchtes an deinem rechten Bein – oh "
+                + "nein, der "
+                + "garstige Frosch! „Heb mich herauf!“, ruft er, „weißt du nicht, was du "
+                + "zu mir gesagt bei dem kühlen Brunnenwasser? Heb mich herauf!“", "auf einmal")
+                .timed(secs(20))
                 .beendet(PARAGRAPH));
 
         narrateAndDoFroschHatHochhebenGefordert();
@@ -524,11 +523,11 @@ public class FroschprinzReactionsComp
         // TODO Find all equals() warnings and fix the code.
 
         if (locationComp.hasSameOuterMostLocationAs(SPIELER_CHARAKTER)) {
-            n.narrate(neuerSatz(PARAGRAPH,
-                    "Plitsch platsch, plitsch platsch hüpft der Frosch davon",
-                    // IDEA "Wir sehen uns noch!"
-                    secs(5))
-                    .beendet(PARAGRAPH));
+            // IDEA "Wir sehen uns noch!"
+            n.narrate(
+                    neuerSatz(PARAGRAPH, "Plitsch platsch, plitsch platsch hüpft der Frosch davon")
+                            .timed(secs(5))
+                            .beendet(PARAGRAPH));
         }
         // IDEA Wenn man nicht erlebt, wie der Frosch weghüpft: "Der Frosch ist verschwunden"
         //  oder ähnlich, wenn man wieder an den Ort zurückkommt, wo man den Frosch

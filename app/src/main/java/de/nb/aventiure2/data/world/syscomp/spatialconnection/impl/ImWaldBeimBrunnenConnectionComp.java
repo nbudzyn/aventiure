@@ -84,10 +84,9 @@ public class ImWaldBeimBrunnenConnectionComp extends AbstractSpatialConnectionCo
                             .komma()
                             .dann(),
                     du("kämpfst", "dich noch einmal durch den wilden "
-                                    + "Wald hinter dem Brunnen, bis du den Strauch mit den "
-                                    + "kleinen, violetten Früchten erreichst",
-                            "noch einmal",
-                            mins(4))
+                            + "Wald hinter dem Brunnen, bis du den Strauch mit den "
+                            + "kleinen, violetten Früchten erreichst", "noch einmal")
+                            .timed(mins(4))
                             .komma()
                             .undWartest()
                             .dann()));

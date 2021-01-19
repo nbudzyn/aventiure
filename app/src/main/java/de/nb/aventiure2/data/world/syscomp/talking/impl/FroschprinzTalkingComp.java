@@ -36,6 +36,7 @@ import static de.nb.aventiure2.german.base.Indefinitpronomen.ALLES;
 import static de.nb.aventiure2.german.base.Nominalphrase.ANGEBOTE;
 import static de.nb.aventiure2.german.base.StructuralElement.PARAGRAPH;
 import static de.nb.aventiure2.german.base.StructuralElement.SENTENCE;
+import static de.nb.aventiure2.german.base.Wortfolge.w;
 import static de.nb.aventiure2.german.description.AltDescriptionsBuilder.alt;
 import static de.nb.aventiure2.german.description.AltDescriptionsBuilder.altNeueSaetze;
 import static de.nb.aventiure2.german.description.DescriptionBuilder.du;
@@ -184,8 +185,8 @@ public class FroschprinzTalkingComp extends AbstractTalkingComp {
                 getObjectsInDenBrunnenGefallen();
 
         if (objectsInDenBrunnenGefallen.isEmpty()) {
-            n.narrate(neuerSatz("„Ach, du bist's, alter Wasserpatscher“, sagst du",
-                    secs(5))
+            n.narrate(neuerSatz("„Ach, du bist's, alter Wasserpatscher“, sagst du")
+                    .timed(secs(5))
                     .undWartest()
                     .dann());
 
@@ -209,13 +210,14 @@ public class FroschprinzTalkingComp extends AbstractTalkingComp {
 
         if (n.dann()) {
             if (n.allowsAdditionalDuSatzreihengliedOhneSubjekt()) {
-                n.narrate(satzanschluss("– aber dann gibst du dir einen Ruck:",
-                        NO_TIME));
+                n.narrate(satzanschluss("– aber dann gibst du dir einen Ruck:")
+                        .timed(NO_TIME));
             } else {
-                n.narrate(neuerSatz("Aber dann gibst du dir einen Ruck:", NO_TIME));
+                n.narrate(neuerSatz("Aber dann gibst du dir einen Ruck:")
+                        .timed(NO_TIME));
             }
         } else {
-            n.narrate(du("gibst", "dir einen Ruck:", NO_TIME));
+            n.narrate(du("gibst", w("dir einen Ruck:")).timed(NO_TIME));
         }
 
         froschHatAngesprochen_ReEntry();
@@ -230,7 +232,7 @@ public class FroschprinzTalkingComp extends AbstractTalkingComp {
             return;
         }
 
-        n.narrate(du("bleibst", "beharrlich:", NO_TIME));
+        n.narrate(du("bleibst", w("beharrlich:")).timed(NO_TIME));
 
         froschHatAngesprochen_ReEntry();
     }
@@ -267,13 +269,16 @@ public class FroschprinzTalkingComp extends AbstractTalkingComp {
                     world.getDescriptionSingleOrCollective(objectsInDenBrunnenGefallen);
             // die goldene Kugel
             // die
+            // die goldene Kugel
+            // die
             n.narrate(neuerSatz("„Ich weine über "
                     + objectsDesc.akkStr() // die goldene Kugel
                     + ", "
                     + objectsDesc.relPron().akkStr() // die
                     + " mir in den Brunnen hinabgefallen " +
                     istSind(objectsDesc.getNumerusGenus()) +
-                    ".“", secs(10)));
+                    ".“")
+                    .timed(secs(10)));
             setSchonBegruesstMitSC(true);
             return;
         }
@@ -284,13 +289,15 @@ public class FroschprinzTalkingComp extends AbstractTalkingComp {
 
             n.narrate(neuerSatz("„"
                     + capitalize(world.getDescription(objectInDenBrunnenGefallen).nomStr())
-                    + " ist mir in den Brunnen hinabgefallen.“", secs(10)));
+                    + " ist mir in den Brunnen hinabgefallen.“")
+                    .timed(secs(10)));
             setSchonBegruesstMitSC(true);
             return;
         }
 
         setSchonBegruesstMitSC(true);
-        n.narrate(neuerSatz("„Mir sind Dinge in den Brunnen hinabgefallen.“", secs(5)));
+        n.narrate(neuerSatz("„Mir sind Dinge in den Brunnen hinabgefallen.“")
+                .timed(secs(5)));
     }
 
     private void herausholenAngebot() {
@@ -308,13 +315,13 @@ public class FroschprinzTalkingComp extends AbstractTalkingComp {
         }
 
         n.narrate(neuerSatz(PARAGRAPH, "„Sei still und "
-                        + ratschlag
-                        + "“, antwortet "
-                        + getDescription(true).nomStr()
-                        + ", „ich kann wohl Rat schaffen, aber was gibst du mir, wenn ich "
-                        + objectsInDenBrunnenGefallenShortAkk
-                        + " wieder heraufhole?“",
-                secs(15))
+                + ratschlag
+                + "“, antwortet "
+                + getDescription(true).nomStr()
+                + ", „ich kann wohl Rat schaffen, aber was gibst du mir, wenn ich "
+                + objectsInDenBrunnenGefallenShortAkk
+                + " wieder heraufhole?“")
+                .timed(secs(15))
                 .beendet(PARAGRAPH));
 
         setSchonBegruesstMitSC(true);
@@ -322,8 +329,9 @@ public class FroschprinzTalkingComp extends AbstractTalkingComp {
     }
 
     private void froschHatAngesprochen_Exit() {
-        n.narrate(du(SENTENCE, "tust", ", als hättest du nichts gehört",
-                secs(3))
+        n.narrate(du(SENTENCE, "tust", ", als hättest du nichts gehört")
+                .timed(secs(3))
+                .withCounterIdIncrementedIfTextIsNarrated(null)
                 .komma()
                 .undWartest()
                 .dann());
@@ -338,13 +346,14 @@ public class FroschprinzTalkingComp extends AbstractTalkingComp {
     private void froschHatNachBelohnungGefragt_AngeboteMachen() {
         world.loadSC().talkingComp().setTalkingTo(FROSCHPRINZ);
 
-        n.narrate(neuerSatz(
-                "„Was du haben willst, lieber Frosch“, sagst du, „meine Kleider, "
-                        + "Reichtümer oder Edelsteine?“", secs(5)));
+        n.narrate(neuerSatz("„Was du haben willst, lieber Frosch“, sagst du, „meine Kleider, "
+                + "Reichtümer oder Edelsteine?“")
+                .timed(secs(5)));
 
         final ImmutableList<? extends IDescribableGO> objectsInDenBrunnenGefallen =
                 getObjectsInDenBrunnenGefallen();
 
+        // die goldene Kugel / die Dinge
         n.narrate(neuerSatz(PARAGRAPH,
                 "Der Frosch antwortet: „Deine Kleider, Reichtümer oder Edelsteine, die mag "
                         + "ich nicht. "
@@ -354,7 +363,8 @@ public class FroschprinzTalkingComp extends AbstractTalkingComp {
                         // die goldene Kugel / die Dinge
                         + world.getDescriptionSingleOrCollective(objectsInDenBrunnenGefallen)
                         .akkStr()
-                        + " wieder heraufholen.“", secs(15))
+                        + " wieder heraufholen.“")
+                .timed(secs(15))
                 .beendet(PARAGRAPH));
 
         setSchonBegruesstMitSC(true);
@@ -362,7 +372,9 @@ public class FroschprinzTalkingComp extends AbstractTalkingComp {
     }
 
     private void froschHatNachBelohnungGefragt_ImmReEntry() {
-        n.narrate(du(SENTENCE, "gehst", "kurz in dich…", secs(5)));
+        n.narrate(du(SENTENCE, "gehst", "kurz in dich…")
+                .timed(secs(5))
+                .withCounterIdIncrementedIfTextIsNarrated(null));
 
         froschHatNachBelohnungGefragt_ReEntry();
     }
@@ -372,8 +384,8 @@ public class FroschprinzTalkingComp extends AbstractTalkingComp {
 
         n.narrate(
                 neuerSatz(PARAGRAPH, "„Frosch“, sprichst du ihn an, „steht "
-                                + "dein Angebot noch?“",
-                        secs(5)));
+                        + "dein Angebot noch?“")
+                        .timed(secs(5)));
 
         setSchonBegruesstMitSC(true);
 
@@ -382,13 +394,14 @@ public class FroschprinzTalkingComp extends AbstractTalkingComp {
                         "„Sicher“, antwortet der Frosch, „ich kann dir alles aus dem Brunnen "
                                 + "holen, was hineingefallen ist. Was gibst du mir dafür?“ "
                                 + "„Was du haben willst, lieber Frosch“, sagst du, „meine Kleider, "
-                                + "Reichtümer oder Edelsteine?“",
-                        secs(10)));
+                                + "Reichtümer oder Edelsteine?“")
+                        .timed(secs(10)));
 
 
         final ImmutableList<? extends IDescribableGO> objectsInDenBrunnenGefallen =
                 getObjectsInDenBrunnenGefallen();
 
+        // die goldene Kugel / die Dinge
         n.narrate(neuerSatz(PARAGRAPH,
                 "Der Frosch antwortet: „Deine Kleider, Reichtümer oder Edelsteine, die mag "
                         + "ich nicht. "
@@ -399,8 +412,8 @@ public class FroschprinzTalkingComp extends AbstractTalkingComp {
                         // die goldene Kugel / die Dinge
                         + world.getDescriptionSingleOrCollective(objectsInDenBrunnenGefallen)
                         .akkStr()
-                        + " wieder herauf holen.“",
-                secs(15))
+                        + " wieder herauf holen.“")
+                .timed(secs(15))
                 .beendet(PARAGRAPH));
 
         stateComp.narrateAndSetState(HAT_FORDERUNG_GESTELLT);
@@ -408,10 +421,9 @@ public class FroschprinzTalkingComp extends AbstractTalkingComp {
 
     private void froschHatNachBelohnungGefragt_Exit() {
         n.narrate(
-                neuerSatz(
-                        "„Denkst du etwa, ich überschütte dich mit Gold "
-                                + "und Juwelen? – Vergiss es!“",
-                        secs(5)));
+                neuerSatz("„Denkst du etwa, ich überschütte dich mit Gold "
+                        + "und Juwelen? – Vergiss es!“")
+                        .timed(secs(5)));
 
         setSchonBegruesstMitSC(true);
         gespraechspartnerBeendetGespraech();
@@ -427,13 +439,13 @@ public class FroschprinzTalkingComp extends AbstractTalkingComp {
         // die goldene Kugel / die Dinge
         n.narrate(
                 neuerSatz(PARAGRAPH, "„Ach ja“, sagst du, „ich verspreche dir alles, was du "
-                                + "willst, wenn du mir nur "
-                                + world.getDescriptionSingleOrCollective(objectsInDenBrunnenGefallen)
-                                .akkStr()
-                                + " wiederbringst.“ Du denkst "
-                                + "aber: „Was der einfältige Frosch schwätzt, der sitzt im Wasser bei "
-                                + "seinesgleichen und quakt und kann keines Menschen Geselle sein.“",
-                        secs(20)));
+                        + "willst, wenn du mir nur "
+                        + world.getDescriptionSingleOrCollective(objectsInDenBrunnenGefallen)
+                        .akkStr()
+                        + " wiederbringst.“ Du denkst "
+                        + "aber: „Was der einfältige Frosch schwätzt, der sitzt im Wasser bei "
+                        + "seinesgleichen und quakt und kann keines Menschen Geselle sein.“")
+                        .timed(secs(20)));
 
         froschReagiertAufVersprechen();
     }
@@ -442,16 +454,15 @@ public class FroschprinzTalkingComp extends AbstractTalkingComp {
         final ImmutableList<? extends IDescribableGO> objectsInDenBrunnenGefallen =
                 getObjectsInDenBrunnenGefallen();
 
-        n.narrate(neuerSatz(
-                "Aber im nächsten Moment entschuldigst du dich schon: "
-                        + "„Nichts für ungut! Wenn du mir wirklich "
-                        + world.getDescriptionSingleOrCollective(objectsInDenBrunnenGefallen)
-                        .akkStr()
-                        + " wieder besorgen kannst – ich verspreche dir alles, was du willst!“ "
-                        + "Bei dir selbst denkst du: "
-                        + "„Was der einfältige Frosch schwätzt, der sitzt im Wasser bei "
-                        + "seinesgleichen und quakt und kann keines Menschen Geselle sein.“",
-                secs(20)));
+        n.narrate(neuerSatz("Aber im nächsten Moment entschuldigst du dich schon: "
+                + "„Nichts für ungut! Wenn du mir wirklich "
+                + world.getDescriptionSingleOrCollective(objectsInDenBrunnenGefallen)
+                .akkStr()
+                + " wieder besorgen kannst – ich verspreche dir alles, was du willst!“ "
+                + "Bei dir selbst denkst du: "
+                + "„Was der einfältige Frosch schwätzt, der sitzt im Wasser bei "
+                + "seinesgleichen und quakt und kann keines Menschen Geselle sein.“")
+                .timed(secs(20)));
 
         froschReagiertAufVersprechen();
     }
@@ -460,16 +471,15 @@ public class FroschprinzTalkingComp extends AbstractTalkingComp {
         final ImmutableList<? extends IDescribableGO> objectsInDenBrunnenGefallen =
                 getObjectsInDenBrunnenGefallen();
 
-        n.narrate(neuerSatz(
-                "Aber so einfach lässt du dich nicht abspeisen. "
-                        + "„Wenn du mir "
-                        + world.getDescriptionSingleOrCollective(objectsInDenBrunnenGefallen)
-                        .akkStr()
-                        + " wieder besorgen kannst, verspreche ich dir alles, was du willst!“ "
-                        + "Bei dir selbst denkst du: "
-                        + "„Was der einfältige Frosch schwätzt, der sitzt im Wasser bei "
-                        + "seinesgleichen und quakt und kann keines Menschen Geselle sein.“",
-                secs(20)));
+        n.narrate(neuerSatz("Aber so einfach lässt du dich nicht abspeisen. "
+                + "„Wenn du mir "
+                + world.getDescriptionSingleOrCollective(objectsInDenBrunnenGefallen)
+                .akkStr()
+                + " wieder besorgen kannst, verspreche ich dir alles, was du willst!“ "
+                + "Bei dir selbst denkst du: "
+                + "„Was der einfältige Frosch schwätzt, der sitzt im Wasser bei "
+                + "seinesgleichen und quakt und kann keines Menschen Geselle sein.“")
+                .timed(secs(20)));
 
         froschReagiertAufVersprechen();
     }
@@ -487,15 +497,15 @@ public class FroschprinzTalkingComp extends AbstractTalkingComp {
                         + " wiederbringst.“ – Was du dir eigentlich überlegt hast, ist:"
                         + " „Was der einfältige Frosch schwätzt, der sitzt im"
                         + " Wasser bei seinesgleichen und quakt und kann keines Menschen "
-                        + "Geselle sein.“", secs(20)));
+                        + "Geselle sein.“")
+                .timed(secs(20)));
 
         froschReagiertAufVersprechen();
     }
 
     private <LOC_DESC extends ILocatableGO & IDescribableGO> void froschReagiertAufVersprechen() {
-        n.narrate(neuerSatz(PARAGRAPH,
-                "Der Frosch, als er die Zusage erhalten hat,",
-                NO_TIME));
+        n.narrate(neuerSatz(PARAGRAPH, "Der Frosch, als er die Zusage erhalten hat,")
+                .timed(NO_TIME));
 
         @Nullable final GameObjectId scLocationId = world.loadSC().locationComp().getLocationId();
 
@@ -507,22 +517,27 @@ public class FroschprinzTalkingComp extends AbstractTalkingComp {
 
         world.loadSC().feelingsComp().requestMoodMin(VOLLER_FREUDE);
 
+        // die goldene Kugel / die Dinge
+        // die goldene Kugel / die Dinge / IDEA Synonym: "das schöne Spielzeug"
+        // Idee zu Synonymen: Synonyme sollte erst NACH dem Originalbegriff auftauchen
+        // und automatisch gewählt werden, wenn syn() oder Ähnliches
+        // programmiert wird.
         n.narrate(satzanschluss("taucht seinen Kopf "
-                        + "unter, sinkt hinab und über ein Weilchen kommt er wieder herauf gerudert, "
-                        + "hat "
-                        // die goldene Kugel / die Dinge
-                        + descObjectsInDenBrunnenGefallen.akkStr()
-                        + " im Maul und wirft "
-                        + descObjectsInDenBrunnenGefallen.persPron().akkStr()
-                        + " ins Gras. Du "
-                        + "bist voll Freude, als du "
-                        // die goldene Kugel / die Dinge / IDEA Synonym: "das schöne Spielzeug"
-                        // Idee zu Synonymen: Synonyme sollte erst NACH dem Originalbegriff auftauchen
-                        // und automatisch gewählt werden, wenn syn() oder Ähnliches
-                        // programmiert wird.
-                        + descObjectsInDenBrunnenGefallen.akkStr()
-                        + " wieder erblickst",
-                secs(30)));
+                + "unter, sinkt hinab und über ein Weilchen kommt er wieder herauf gerudert, "
+                + "hat "
+                // die goldene Kugel / die Dinge
+                + descObjectsInDenBrunnenGefallen.akkStr()
+                + " im Maul und wirft "
+                + descObjectsInDenBrunnenGefallen.persPron().akkStr()
+                + " ins Gras. Du "
+                + "bist voll Freude, als du "
+                // die goldene Kugel / die Dinge / IDEA Synonym: "das schöne Spielzeug"
+                // Idee zu Synonymen: Synonyme sollte erst NACH dem Originalbegriff auftauchen
+                // und automatisch gewählt werden, wenn syn() oder Ähnliches
+                // programmiert wird.
+                + descObjectsInDenBrunnenGefallen.akkStr()
+                + " wieder erblickst")
+                .timed(secs(30)));
 
         for (final LOC_DESC object : objectsInDenBrunnenGefallen) {
             object.locationComp().narrateAndSetLocation(scLocationId);
@@ -597,7 +612,8 @@ public class FroschprinzTalkingComp extends AbstractTalkingComp {
     }
 
     private void froschReagiertNicht() {
-        n.narrate(neuerSatz("Der Frosch reagiert nicht", secs(3))
+        n.narrate(neuerSatz("Der Frosch reagiert nicht")
+                .timed(secs(3))
                 .beendet(PARAGRAPH));
 
         talkerBeendetGespraech();
@@ -637,20 +653,19 @@ public class FroschprinzTalkingComp extends AbstractTalkingComp {
     private void froschAufTischDraengelt() {
         final Nominalphrase desc = getDescription(true);
         n.narrateAlt(
-                du(
-                        "hast", "gerade Luft geholt, da schneidet dir "
-                                + desc.nomStr()
-                                + " schon das Wort ab. „Was gibt es da noch zu diskutieren?“, quakt "
-                                + desc.persPron().nomStr()
-                                + " dich laut an",
-                        "gerade",
-                        secs(10))
+                du("hast", "gerade Luft geholt, da schneidet dir "
+                        + desc.nomStr()
+                        + " schon das Wort ab. „Was gibt es da noch zu diskutieren?“, quakt "
+                        + desc.persPron().nomStr()
+                        + " dich laut an", "gerade")
+                        .timed(secs(10))
                         .phorikKandidat(desc, FROSCHPRINZ),
                 du(SENTENCE, "druckst", "ein bisschen herum und faselst etwas von "
-                                + "hygienischen Gründen. "
-                                + capitalize(desc.nomStr())
-                                + " schaut dich nur… traurig? verächtlich?… an",
-                        secs(15)).beendet(PARAGRAPH));
+                        + "hygienischen Gründen. "
+                        + capitalize(desc.nomStr())
+                        + " schaut dich nur… traurig? verächtlich?… an")
+                        .timed(secs(15))
+                        .withCounterIdIncrementedIfTextIsNarrated(null).beendet(PARAGRAPH));
 
         setSchonBegruesstMitSC(true);
         talkerBeendetGespraech();

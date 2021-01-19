@@ -29,6 +29,7 @@ import static de.nb.aventiure2.data.world.syscomp.feelings.Mood.BETRUEBT;
 import static de.nb.aventiure2.data.world.syscomp.feelings.Mood.NEUTRAL;
 import static de.nb.aventiure2.data.world.syscomp.state.impl.FroschprinzState.HAT_SC_HILFSBEREIT_ANGESPROCHEN;
 import static de.nb.aventiure2.data.world.syscomp.state.impl.FroschprinzState.UNAUFFAELLIG;
+import static de.nb.aventiure2.german.base.Wortfolge.w;
 import static de.nb.aventiure2.german.description.DescriptionBuilder.du;
 import static de.nb.aventiure2.german.description.DescriptionBuilder.neuerSatz;
 import static de.nb.aventiure2.german.description.DescriptionBuilder.satzanschluss;
@@ -99,12 +100,13 @@ public class HeulenAction extends AbstractScAction {
 
         final ImmutableList.Builder<TimedDescription<?>> alt = ImmutableList.builder();
         if (n.allowsAdditionalDuSatzreihengliedOhneSubjekt()) {
-            alt.add(du("weinst", mins(1))
+            alt.add(du("weinst").timed(mins(1))
                     .undWartest());
-            alt.add(satzanschluss(", so viele Tränen haben sich angestaut", mins(1)));
+            alt.add(satzanschluss(", so viele Tränen haben sich angestaut")
+                    .timed(mins(1)));
         }
 
-        alt.add(du("kannst", "dich gar nicht mehr beruhigen", mins(1))
+        alt.add(du("kannst", w("dich gar nicht mehr beruhigen")).timed(mins(1))
                 .undWartest());
         n.narrateAlt(alt);
     }
@@ -120,7 +122,8 @@ public class HeulenAction extends AbstractScAction {
                 "du schreist ja, dass sich ein Stein erbarmen möchte.“ Du siehst " +
                 "dich um, woher " +
                 "die Stimme käme, da erblickst du " +
-                world.getDescription(froschprinz).akkStr(), "immer lauter", secs(30)));
+                world.getDescription(froschprinz).akkStr(), "immer lauter")
+                .timed(secs(30)));
 
         froschprinz.stateComp().narrateAndSetState(HAT_SC_HILFSBEREIT_ANGESPROCHEN);
         froschprinz.talkingComp().setTalkingTo(sc);
@@ -132,14 +135,15 @@ public class HeulenAction extends AbstractScAction {
         sc.memoryComp().setLastAction(buildMemorizedAction());
 
         final ImmutableList.Builder<TimedDescription<?>> alt = ImmutableList.builder();
-        alt.add(neuerSatz("Dich überkommt ein Schluchzen", mins(1)));
+        alt.add(neuerSatz("Dich überkommt ein Schluchzen")
+                .timed(mins(1)));
 
         if (n.dann()) {
-            alt.add(neuerSatz("Dann bricht die Trauer aus dir heraus und du heulst los",
-                    mins(1)));
+            alt.add(neuerSatz("Dann bricht die Trauer aus dir heraus und du heulst los")
+                    .timed(mins(1)));
         }
 
-        alt.add(du("weinst", mins(1))
+        alt.add(du("weinst").timed(mins(1))
                 .undWartest()
                 .dann());
         n.narrateAlt(alt);

@@ -29,6 +29,7 @@ import static de.nb.aventiure2.german.base.Nominalphrase.np;
 import static de.nb.aventiure2.german.base.NumerusGenus.M;
 import static de.nb.aventiure2.german.base.StructuralElement.PARAGRAPH;
 import static de.nb.aventiure2.german.base.StructuralElement.SENTENCE;
+import static de.nb.aventiure2.german.base.Wortfolge.w;
 import static de.nb.aventiure2.german.description.DescriptionBuilder.du;
 
 class SchattenDerBaeumeFactory {
@@ -84,7 +85,7 @@ class SchattenDerBaeumeFactory {
     private TimedDescription<?> getDescIn(
             final Known newLocationKnown, final Lichtverhaeltnisse lichtverhaeltnisse) {
         if (lichtverhaeltnisse == DUNKEL) {
-            return du("setzt", "dich unter die Bäume", secs(20))
+            return du("setzt", w("dich unter die Bäume")).timed(secs(20))
                     .dann();
         }
 
@@ -93,17 +94,16 @@ class SchattenDerBaeumeFactory {
         if (db.counterDao().get(
                 DESC_TO_SCHATTEN_DER_BAEUME__SC_SETZT_SICH_TAGSUEBER_IN_DEN_SCHATTEN_DER_BAEUME)
                 == 0) {
-            return du(
-                    PARAGRAPH,
-                    "lässt", "dich im Schatten der umstehenden Bäume nieder",
-                    "im Schatten der umstehenden Bäume",
-                    mins(5),
-                    DESC_TO_SCHATTEN_DER_BAEUME__SC_SETZT_SICH_TAGSUEBER_IN_DEN_SCHATTEN_DER_BAEUME)
+            return du(PARAGRAPH, "lässt", w("dich im Schatten der umstehenden Bäume nieder"),
+                    "im Schatten der umstehenden Bäume")
+                    .timed(mins(5))
+                    .withCounterIdIncrementedIfTextIsNarrated(
+                            DESC_TO_SCHATTEN_DER_BAEUME__SC_SETZT_SICH_TAGSUEBER_IN_DEN_SCHATTEN_DER_BAEUME)
                     .beendet(SENTENCE)
                     .dann();
         }
 
-        return du("setzt", "dich wieder in den Schatten der Bäume", secs(30))
+        return du("setzt", w("dich wieder in den Schatten der Bäume")).timed(secs(30))
                 .undWartest()
                 .dann();
     }

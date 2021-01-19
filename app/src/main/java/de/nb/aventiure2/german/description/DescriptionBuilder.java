@@ -5,7 +5,6 @@ import androidx.annotation.Nullable;
 
 import javax.annotation.CheckReturnValue;
 
-import de.nb.aventiure2.data.time.AvTimeSpan;
 import de.nb.aventiure2.german.base.Konstituente;
 import de.nb.aventiure2.german.base.Personalpronomen;
 import de.nb.aventiure2.german.base.StructuralElement;
@@ -34,24 +33,6 @@ public class DescriptionBuilder {
     }
 
 
-    @CheckReturnValue
-    public static TimedDescription<TextDescription> neuerSatz(
-            final String description,
-            final AvTimeSpan timeElapsed) {
-        return neuerSatz(description, timeElapsed, null);
-    }
-
-    @CheckReturnValue
-    public static TimedDescription<TextDescription> neuerSatz(
-            final String description,
-            final AvTimeSpan timeElapsed,
-            @Nullable final String counterIdIncrementedIfTextIsNarrated) {
-        return neuerSatz(description)
-                .timed(timeElapsed)
-                .withCounterIdIncrementedIfTextIsNarrated(
-                        counterIdIncrementedIfTextIsNarrated);
-    }
-
     public static TextDescription neuerSatz(final Iterable<Konstituente> konsituenten) {
         return neuerSatz(SENTENCE, konsituenten);
     }
@@ -59,13 +40,6 @@ public class DescriptionBuilder {
     public static TextDescription neuerSatz(final StructuralElement startsNew,
                                             final Iterable<Konstituente> konsituenten) {
         return neuerSatz(startsNew, Wortfolge.joinToWortfolge(konsituenten));
-    }
-
-    @NonNull
-    @CheckReturnValue
-    public static TimedDescription<TextDescription> neuerSatz(final Wortfolge wortfolge,
-                                                              final AvTimeSpan timeElapsed) {
-        return neuerSatz(StructuralElement.SENTENCE, wortfolge, timeElapsed);
     }
 
     @NonNull
@@ -78,34 +52,6 @@ public class DescriptionBuilder {
     @CheckReturnValue
     public static TextDescription neuerSatz(final String description) {
         return neuerSatz(StructuralElement.SENTENCE, description);
-    }
-
-    @CheckReturnValue
-    public static TimedDescription<TextDescription> neuerSatz(
-            final StructuralElement startsNew,
-            final String description,
-            final AvTimeSpan timeElapsed) {
-        return neuerSatz(startsNew, description, timeElapsed, null);
-    }
-
-    @CheckReturnValue
-    public static TimedDescription<TextDescription> neuerSatz(
-            final StructuralElement startsNew,
-            final String description,
-            final AvTimeSpan timeElapsed,
-            @Nullable final String counterIdIncrementedIfTextIsNarrated) {
-        return neuerSatz(startsNew, description)
-                .timed(timeElapsed)
-                .withCounterIdIncrementedIfTextIsNarrated(
-                        counterIdIncrementedIfTextIsNarrated);
-    }
-
-    @NonNull
-    @CheckReturnValue
-    public static TimedDescription<TextDescription> neuerSatz(final StructuralElement startsNew,
-                                                              final Wortfolge wortfolge,
-                                                              final AvTimeSpan timeElapsed) {
-        return neuerSatz(startsNew, wortfolge).timed(timeElapsed);
     }
 
 
@@ -129,60 +75,6 @@ public class DescriptionBuilder {
         return neuerSatz(startsNew, w(description));
     }
 
-    @NonNull
-    @CheckReturnValue
-    public static TimedDescription<StructuredDescription> satz(
-            final Satz satz,
-            final AvTimeSpan timeElapsed) {
-        return satz(WORD, satz, timeElapsed);
-    }
-
-    @NonNull
-    @CheckReturnValue
-    public static TimedDescription<StructuredDescription> satz(
-            final Satz satz,
-            final AvTimeSpan timeElapsed,
-            @Nullable final String counterIdIncrementedIfTextIsNarrated) {
-        return satz(WORD, satz, timeElapsed, counterIdIncrementedIfTextIsNarrated);
-    }
-
-    @NonNull
-    @CheckReturnValue
-    public static TimedDescription<StructuredDescription> satz(
-            final StructuralElement startsNew, final Satz satz,
-            final AvTimeSpan timeElapsed) {
-        return satz(startsNew, satz, timeElapsed, null);
-    }
-
-    @NonNull
-    @CheckReturnValue
-    public static TimedDescription<StructuredDescription> satz(
-            final StructuralElement startsNew, final Satz satz,
-            final AvTimeSpan timeElapsed,
-            @Nullable final String counterIdIncrementedIfTextIsNarrated) {
-        return satz(startsNew, satz)
-                .timed(timeElapsed)
-                .withCounterIdIncrementedIfTextIsNarrated(
-                        counterIdIncrementedIfTextIsNarrated);
-    }
-
-
-    @CheckReturnValue
-    public static TimedDescription<TextDescription> satzanschluss(
-            final String description,
-            final AvTimeSpan timeElapsed) {
-        return satzanschluss(description, timeElapsed, null);
-    }
-
-    @CheckReturnValue
-    public static TimedDescription<TextDescription> satzanschluss(
-            final String description,
-            final AvTimeSpan timeElapsed,
-            @Nullable final String counterIdIncrementedIfTextIsNarrated) {
-        return satzanschluss(description)
-                .timed(timeElapsed)
-                .withCounterIdIncrementedIfTextIsNarrated(counterIdIncrementedIfTextIsNarrated);
-    }
 
     @NonNull
     @CheckReturnValue
@@ -194,168 +86,6 @@ public class DescriptionBuilder {
     @CheckReturnValue
     public static TextDescription satzanschluss(final Wortfolge wortfolge) {
         return new TextDescription(StructuralElement.WORD, wortfolge);
-    }
-
-    @CheckReturnValue
-    public static TimedDescription<SimpleDuDescription> du(final String verb,
-                                                           final AvTimeSpan timeElapsed) {
-        return du(verb, timeElapsed, null);
-    }
-
-    @CheckReturnValue
-    public static TimedDescription<SimpleDuDescription> du(
-            final String verb,
-            final AvTimeSpan timeElapsed,
-            @Nullable final String counterIdIncrementedIfTextIsNarrated) {
-        return du(verb, (Wortfolge) null, timeElapsed, counterIdIncrementedIfTextIsNarrated);
-    }
-
-    @CheckReturnValue
-    public static TimedDescription<SimpleDuDescription> du(final StructuralElement startsNew,
-                                                           final String verb,
-                                                           final AvTimeSpan timeElapsed) {
-        return du(startsNew, verb, (Wortfolge) null, timeElapsed);
-    }
-
-    @CheckReturnValue
-    public static TimedDescription<SimpleDuDescription> du(final String verb,
-                                                           @Nullable final String remainder,
-                                                           final AvTimeSpan timeElapsed) {
-        return du(verb, w(remainder), timeElapsed);
-    }
-
-    @CheckReturnValue
-    public static TimedDescription<SimpleDuDescription> du(final String verb,
-                                                           @Nullable final Wortfolge remainder,
-                                                           final AvTimeSpan timeElapsed) {
-        return du(verb, remainder, timeElapsed, null);
-    }
-
-    @CheckReturnValue
-    public static TimedDescription<SimpleDuDescription> du(
-            final String verb,
-            @Nullable final String remainder,
-            final AvTimeSpan timeElapsed,
-            @Nullable final String counterIdIncrementedIfTextIsNarrated) {
-        return du(verb, w(remainder), timeElapsed,
-                counterIdIncrementedIfTextIsNarrated);
-    }
-
-    @CheckReturnValue
-    public static TimedDescription<SimpleDuDescription> du(
-            final String verb,
-            @Nullable final Wortfolge remainder,
-            final AvTimeSpan timeElapsed,
-            @Nullable final String counterIdIncrementedIfTextIsNarrated) {
-        return du(verb, remainder, null, timeElapsed, counterIdIncrementedIfTextIsNarrated);
-    }
-
-    @CheckReturnValue
-    public static TimedDescription<SimpleDuDescription> du(final StructuralElement startsNew,
-                                                           final String verb,
-                                                           @Nullable final String remainder,
-                                                           final AvTimeSpan timeElapsed) {
-        return du(startsNew, verb, remainder, timeElapsed, null);
-    }
-
-    @CheckReturnValue
-    public static TimedDescription<SimpleDuDescription> du(final StructuralElement startsNew,
-                                                           final String verb,
-                                                           @Nullable final Wortfolge remainder,
-                                                           final AvTimeSpan timeElapsed) {
-        return du(startsNew, verb, remainder, timeElapsed, null);
-    }
-
-    @CheckReturnValue
-    public static TimedDescription<SimpleDuDescription> du(
-            final StructuralElement startsNew,
-            final String verb,
-            @Nullable final String remainder,
-            final AvTimeSpan timeElapsed,
-            @Nullable final
-            String counterIdIncrementedIfTextIsNarrated) {
-        return du(startsNew, verb, remainder, null,
-                timeElapsed, counterIdIncrementedIfTextIsNarrated);
-    }
-
-    @CheckReturnValue
-    public static TimedDescription<SimpleDuDescription> du(
-            final StructuralElement startsNew,
-            final String verb,
-            @Nullable final Wortfolge remainder,
-            final AvTimeSpan timeElapsed,
-            @Nullable final
-            String counterIdIncrementedIfTextIsNarrated) {
-        return du(startsNew, verb, remainder, null,
-                timeElapsed, counterIdIncrementedIfTextIsNarrated);
-    }
-
-    @CheckReturnValue
-    public static TimedDescription<SimpleDuDescription> du(final String verb,
-                                                           @Nullable final String remainder,
-                                                           @Nullable final String vorfeldSatzglied,
-                                                           final AvTimeSpan timeElapsed) {
-        return du(verb, remainder, vorfeldSatzglied, timeElapsed, null);
-    }
-
-    @CheckReturnValue
-    public static TimedDescription<SimpleDuDescription> du(
-            final String verb,
-            @Nullable final String remainder,
-            @Nullable final String vorfeldSatzglied,
-            final AvTimeSpan timeElapsed,
-            @Nullable final String counterIdIncrementedIfTextIsNarrated) {
-        return du(verb, w(remainder), vorfeldSatzglied,
-                timeElapsed, counterIdIncrementedIfTextIsNarrated);
-    }
-
-    @CheckReturnValue
-    public static TimedDescription<SimpleDuDescription> du(
-            final String verb,
-            @Nullable final Wortfolge remainder,
-            @Nullable final String vorfeldSatzglied,
-            final AvTimeSpan timeElapsed,
-            @Nullable final String counterIdIncrementedIfTextIsNarrated) {
-        return du(StructuralElement.WORD, verb, remainder, vorfeldSatzglied,
-                timeElapsed, counterIdIncrementedIfTextIsNarrated);
-    }
-
-    @CheckReturnValue
-    public static TimedDescription<SimpleDuDescription> du(final StructuralElement startsNew,
-                                                           final String verb,
-                                                           @Nullable final String remainder,
-                                                           @Nullable final String vorfeldSatzglied,
-                                                           final AvTimeSpan timeElapsed) {
-        return du(
-                startsNew, verb, remainder, vorfeldSatzglied,
-                timeElapsed, null);
-    }
-
-    @CheckReturnValue
-    public static TimedDescription<SimpleDuDescription> du(
-            final StructuralElement startsNew,
-            final String verb,
-            @Nullable final String remainder,
-            @Nullable final String vorfeldSatzglied,
-            final AvTimeSpan timeElapsed,
-            @Nullable final String counterIdIncrementedIfTextIsNarrated
-    ) {
-        return du(startsNew, verb, w(remainder), vorfeldSatzglied, timeElapsed,
-                counterIdIncrementedIfTextIsNarrated);
-    }
-
-    @CheckReturnValue
-    public static TimedDescription<SimpleDuDescription> du(
-            final StructuralElement startsNew,
-            final String verb,
-            @Nullable final Wortfolge remainder,
-            @Nullable final String vorfeldSatzglied,
-            final AvTimeSpan timeElapsed,
-            @Nullable final String counterIdIncrementedIfTextIsNarrated
-    ) {
-        return du(startsNew, verb, remainder, vorfeldSatzglied)
-                .timed(timeElapsed)
-                .withCounterIdIncrementedIfTextIsNarrated(counterIdIncrementedIfTextIsNarrated);
     }
 
     @CheckReturnValue
@@ -426,41 +156,6 @@ public class DescriptionBuilder {
     }
 
     @CheckReturnValue
-    public static TimedDescription<StructuredDescription> du(
-            final PraedikatOhneLeerstellen praedikat,
-            final AvTimeSpan timeElapsed) {
-        return du(praedikat, timeElapsed, null);
-    }
-
-    @CheckReturnValue
-    public static TimedDescription<StructuredDescription> du(
-            final PraedikatOhneLeerstellen praedikat,
-            final AvTimeSpan timeElapsed,
-            @Nullable final String counterIdIncrementedIfTextIsNarrated) {
-        return du(StructuralElement.WORD, praedikat,
-                timeElapsed, counterIdIncrementedIfTextIsNarrated);
-    }
-
-    @CheckReturnValue
-    public static TimedDescription<StructuredDescription> du(
-            final StructuralElement startsNew,
-            final PraedikatOhneLeerstellen praedikat,
-            final AvTimeSpan timeElapsed) {
-        return du(startsNew, praedikat, timeElapsed, null);
-    }
-
-    @CheckReturnValue
-    public static TimedDescription<StructuredDescription> du(
-            final StructuralElement startsNew,
-            final PraedikatOhneLeerstellen praedikat,
-            final AvTimeSpan timeElapsed,
-            @Nullable final String counterIdIncrementedIfTextIs) {
-        return du(startsNew, praedikat)
-                .timed(timeElapsed)
-                .withCounterIdIncrementedIfTextIsNarrated(counterIdIncrementedIfTextIs);
-    }
-
-    @CheckReturnValue
     public static StructuredDescription du(final PraedikatOhneLeerstellen praedikat) {
         return du(StructuralElement.WORD, praedikat);
     }
@@ -486,7 +181,7 @@ public class DescriptionBuilder {
 
     @NonNull
     @CheckReturnValue
-    static StructuredDescription satz(final StructuralElement startsNew, final Satz satz) {
+    public static StructuredDescription satz(final StructuralElement startsNew, final Satz satz) {
         return new StructuredDescription(startsNew, satz);
     }
 }

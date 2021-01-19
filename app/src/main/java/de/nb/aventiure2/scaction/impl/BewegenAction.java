@@ -52,6 +52,7 @@ import static de.nb.aventiure2.data.world.syscomp.spatialconnection.NumberOfWays
 import static de.nb.aventiure2.data.world.syscomp.state.impl.SchlossfestState.BEGONNEN;
 import static de.nb.aventiure2.german.base.GermanUtil.buildAufzaehlung;
 import static de.nb.aventiure2.german.base.StructuralElement.WORD;
+import static de.nb.aventiure2.german.base.Wortfolge.w;
 import static de.nb.aventiure2.german.description.DescriptionBuilder.du;
 import static de.nb.aventiure2.german.description.DescriptionBuilder.neuerSatz;
 import static de.nb.aventiure2.german.description.DescriptionUmformulierer.drueckeAusTimed;
@@ -286,7 +287,8 @@ public class BewegenAction<LOC_DESC extends ILocatableGO & IDescribableGO>
     private void narrateObjects(final String objectsDescription, final int numObjects,
                                 final IDescribableGO lastObject) {
         n.narrate(
-                neuerSatz(objectsDescription, secs(numObjects * 2))
+                neuerSatz(objectsDescription)
+                        .timed(secs(numObjects * 2))
                         .phorikKandidat(
                                 world.getDescription(lastObject, false),
                                 lastObject.getId()));
@@ -539,15 +541,15 @@ public class BewegenAction<LOC_DESC extends ILocatableGO & IDescribableGO>
                         lichtverhaeltnisseInNewLocation == HELL &&
                         n.allowsAdditionalDuSatzreihengliedOhneSubjekt() &&
                         sc.memoryComp().getLastAction().is(Action.Type.NEHMEN)) {
-                    return du("springst", "damit fort", "damit",
-                            standardDescription.getTimeElapsed().times(0.8))
+                    return du("springst", "damit fort", "damit")
+                            .timed(standardDescription.getTimeElapsed().times(0.8))
                             .undWartest()
                             .dann();
                 }
 
                 if (sc.feelingsComp().hasMood(Mood.UNTROESTLICH)) {
-                    return du("trottest", "tieftraurig von dannen", "tieftraurig",
-                            standardDescription.getTimeElapsed().times(2))
+                    return du("trottest", "tieftraurig von dannen", "tieftraurig")
+                            .timed(standardDescription.getTimeElapsed().times(2))
                             .undWartest();
                 }
             } else if (numberOfWays == ONE_IN_ONE_OUT
@@ -557,7 +559,8 @@ public class BewegenAction<LOC_DESC extends ILocatableGO & IDescribableGO>
                     lichtverhaeltnisseInNewLocation ==
                             HELL &&
                     n.allowsAdditionalDuSatzreihengliedOhneSubjekt()) {
-                return du("eilst", "weiter", standardDescription.getTimeElapsed().times(0.8))
+                return du("eilst", w("weiter"))
+                        .timed(standardDescription.getTimeElapsed().times(0.8))
                         .undWartest();
             }
         }

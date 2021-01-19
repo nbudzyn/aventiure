@@ -134,26 +134,27 @@ public class HochwerfenAction<OBJ extends IDescribableGO & ILocatableGO>
                             anaph.akkStr() +
                             " in die Höhe und fängst " +
                             anaph.persPron().akkStr() +
-                            " wieder auf", secs(3))
+                            " wieder auf")
+                            .timed(secs(3))
                             .dann());
             return;
         }
 
         narrateAndDoHochwerfenAuffangen(sc.feelingsComp().altAdverbialeAngabenSkopusSatz().stream()
-                .map(a ->
-                        du(PARAGRAPH,
-                                new ZweiPraedikateOhneLeerstellen(
-                                        WERFEN.mit(anaph)
-                                                .mitAdverbialerAngabe(a)
-                                                .mitAdverbialerAngabe(
-                                                        new AdverbialeAngabeSkopusVerbWohinWoher(
-                                                                IN_AKK.mit(HOEHE))),
-                                        AUFFANGEN.mit(anaph.persPron())
-                                                .mitAdverbialerAngabe(
-                                                        new AdverbialeAngabeSkopusSatz(
-                                                                "wieder"))
-                                ), secs(3))
-                                .dann())
+                .map(a -> du(PARAGRAPH, new ZweiPraedikateOhneLeerstellen(
+                        WERFEN.mit(anaph)
+                                .mitAdverbialerAngabe(a)
+                                .mitAdverbialerAngabe(
+                                        new AdverbialeAngabeSkopusVerbWohinWoher(
+                                                IN_AKK.mit(HOEHE))),
+                        AUFFANGEN.mit(anaph.persPron())
+                                .mitAdverbialerAngabe(
+                                        new AdverbialeAngabeSkopusSatz(
+                                                "wieder"))
+                ))
+                        .timed(secs(3))
+                        .withCounterIdIncrementedIfTextIsNarrated(null)
+                        .dann())
                 .collect(toImmutableList()));
     }
 
@@ -177,7 +178,9 @@ public class HochwerfenAction<OBJ extends IDescribableGO & ILocatableGO>
                     du(PARAGRAPH, "wirfst", objectDesc.akkStr() +
                             " hoch in die Luft und fängst " +
                             objectDesc.persPron().akkStr() +
-                            " geschickt wieder auf", secs(3))
+                            " geschickt wieder auf")
+                            .timed(secs(3))
+                            .withCounterIdIncrementedIfTextIsNarrated(null)
                             .dann());
             return;
         }
@@ -198,7 +201,8 @@ public class HochwerfenAction<OBJ extends IDescribableGO & ILocatableGO>
 
         n.narrate(
                 neuerSatz(praefix + " kein Frosch zu sehen… Das war vielleicht etwas "
-                        + "ungeschickt, oder?", NO_TIME));
+                        + "ungeschickt, oder?")
+                        .timed(NO_TIME));
     }
 
     private void narrateAndDoHochwerfenAuffangen(final TimedDescription<?> desc) {
@@ -234,7 +238,8 @@ public class HochwerfenAction<OBJ extends IDescribableGO & ILocatableGO>
                         "Platsch! – weg " +
                         SeinUtil.istSind(objectDesc.getNumerusGenus()) +
                         " " +
-                        objectDesc.persPron().akkStr(), "nur ein einziges Mal", secs(10))
+                        objectDesc.persPron().akkStr(), "nur ein einziges Mal")
+                        .timed(secs(10))
                         .dann(!n.dann())
                         .beendet(PARAGRAPH));
 
@@ -263,18 +268,17 @@ public class HochwerfenAction<OBJ extends IDescribableGO & ILocatableGO>
                     location.storingPlaceComp().getLichtverhaeltnisse() == DUNKEL ?
                             "– bei dieser Dunkelheit schon gar nicht" : "";
 
-            n.narrate(du("wirfst",
-                    world.getDescription(object).akkStr() +
-                            " noch einmal in die Höhe… doch oh nein, " +
-                            world.getDescription(object, true).nomStr() +
-                            " fällt dir nicht in die Hände, sondern schlägt vorbei " +
-                            "auf den Brunnenrand und rollt geradezu ins Wasser hinein." +
-                            " Du folgst ihr mit den Augen nach, aber " +
-                            world.getDescription(object, true).nomStr() +
-                            " verschwindet, und der Brunnen ist tief, so tief, dass " +
-                            "man keinen Grund sieht"
-                            + dunkelheitNachsatz,
-                    "noch einmal", secs(10))
+            n.narrate(du("wirfst", world.getDescription(object).akkStr() +
+                    " noch einmal in die Höhe… doch oh nein, " +
+                    world.getDescription(object, true).nomStr() +
+                    " fällt dir nicht in die Hände, sondern schlägt vorbei " +
+                    "auf den Brunnenrand und rollt geradezu ins Wasser hinein." +
+                    " Du folgst ihr mit den Augen nach, aber " +
+                    world.getDescription(object, true).nomStr() +
+                    " verschwindet, und der Brunnen ist tief, so tief, dass " +
+                    "man keinen Grund sieht"
+                    + dunkelheitNachsatz, "noch einmal")
+                    .timed(secs(10))
                     .beendet(PARAGRAPH));
 
             sc.feelingsComp().requestMoodMax(UNTROESTLICH);
@@ -283,17 +287,15 @@ public class HochwerfenAction<OBJ extends IDescribableGO & ILocatableGO>
             return;
         }
 
-        n.narrate(du("schleuderst",
-                world.getDescription(object).akkStr() +
-                        " übermütig noch einmal in die Luft, aber sie wieder aufzufangen will dir "
-                        +
-                        "dieses Mal nicht gelingen. "
-                        + GermanStringUtil.capitalize(
-                        world.getDescription(object, true).nomStr()) +
-                        " landet " +
-                        location.storingPlaceComp().getLocationMode().getWo(false),
-                "übermütig",
-                secs(5)));
+        n.narrate(du("schleuderst", world.getDescription(object).akkStr() +
+                " übermütig noch einmal in die Luft, aber sie wieder aufzufangen will dir "
+                +
+                "dieses Mal nicht gelingen. "
+                + GermanStringUtil.capitalize(
+                world.getDescription(object, true).nomStr()) +
+                " landet " +
+                location.storingPlaceComp().getLocationMode().getWo(false), "übermütig")
+                .timed(secs(5)));
 
         sc.feelingsComp().requestMoodMax(ETWAS_GEKNICKT);
 

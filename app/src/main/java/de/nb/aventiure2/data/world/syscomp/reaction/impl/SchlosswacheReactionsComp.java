@@ -112,9 +112,9 @@ public class SchlosswacheReactionsComp
                 && goldeneKugel.locationComp().hasRecursiveLocation(SCHLOSS_VORHALLE)) {
             if (counterDao.incAndGet(
                     "SchlosswacheReactions_onEnterRoom_SchlossVorhalle") > 1) {
-                n.narrate(neuerSatz(
-                        getDescription(true).nomStr()
-                                + " scheint dich nicht zu bemerken", secs(3)));
+                n.narrate(neuerSatz(getDescription(true).nomStr()
+                        + " scheint dich nicht zu bemerken")
+                        .timed(secs(3)));
                 return;
             }
         }
@@ -229,11 +229,11 @@ public class SchlosswacheReactionsComp
 
         n.narrate(
                 neuerSatz(PARAGRAPH, "Da wird eine Wache auf dich aufmerksam. "
-                                + "„Wie seid Ihr hier hereingekommen?“, fährt sie dich "
-                                + "scharf an. „Das Fest ist erst am Sonntag. Heute "
-                                + "ist Samstag und Ihr habt hier nichts zu suchen!“ "
-                                + "Mit kräftiger Hand klopft die Wache auf ihre Hellebarde",
-                        secs(20)));
+                        + "„Wie seid Ihr hier hereingekommen?“, fährt sie dich "
+                        + "scharf an. „Das Fest ist erst am Sonntag. Heute "
+                        + "ist Samstag und Ihr habt hier nichts zu suchen!“ "
+                        + "Mit kräftiger Hand klopft die Wache auf ihre Hellebarde")
+                        .timed(secs(20)));
 
         stateComp.narrateAndSetState(AUFMERKSAM);
 
@@ -267,7 +267,8 @@ public class SchlosswacheReactionsComp
                         + "Schmuckstück wieder hin!“, "
                         + "ruft dir "
                         + getDescription(true).nomStr()
-                        + " zu", secs(5)));
+                        + " zu")
+                        .timed(secs(5)));
 
         // IDEA Geschichte ausspinnen: Spieler muss die Kugel selbst
         //  ablegen bzw. kommt ggf. in den Kerker
@@ -275,10 +276,9 @@ public class SchlosswacheReactionsComp
         final SpielerCharakter sc = loadSC();
         sc.feelingsComp().requestMood(ANGESPANNT);
 
-        n.narrate(du(PARAGRAPH,
-                "legst", "die schöne goldene Kugel eingeschüchtert wieder an ihren Platz",
-                "eingeschüchtert",
-                secs(5))
+        n.narrate(du(PARAGRAPH, "legst",
+                "die schöne goldene Kugel eingeschüchtert wieder an ihren Platz", "eingeschüchtert")
+                .timed(secs(5))
                 .undWartest()
                 .phorikKandidat(NumerusGenus.F, goldeneKugel.getId()));
 
@@ -296,23 +296,22 @@ public class SchlosswacheReactionsComp
 
         if (n.allowsAdditionalDuSatzreihengliedOhneSubjekt()) {
             alt.add(satzanschluss(", doch keine Sekunde später baut sich die "
-                            + "Wache vor dir auf. "
-                            + "„Wir haben hier sehr gute Verliese, Ihr dürftet "
-                            + "überrascht sein“, sagt sie und schaut dich "
-                            + "durchdringend an",
-                    secs(15)));
+                    + "Wache vor dir auf. "
+                    + "„Wir haben hier sehr gute Verliese, Ihr dürftet "
+                    + "überrascht sein“, sagt sie und schaut dich "
+                    + "durchdringend an")
+                    .timed(secs(15)));
         }
 
         alt.add(neuerSatz("„Ihr habt da wohl etwas, das nicht Euch gehört“, "
-                        + "wirst du von hinten angesprochen.",
-                secs(15)));
+                + "wirst du von hinten angesprochen.")
+                .timed(secs(15)));
 
         n.narrateAlt(alt);
 
-        n.narrate(neuerSatz(PARAGRAPH,
-                "Da legst du doch besser die schöne goldene Kugel "
-                        + "wieder an ihren Platz",
-                secs(5))
+        n.narrate(neuerSatz(PARAGRAPH, "Da legst du doch besser die schöne goldene Kugel "
+                + "wieder an ihren Platz")
+                .timed(secs(5))
                 .undWartest()
                 .phorikKandidat(NumerusGenus.F, goldeneKugel.getId()));
 
@@ -328,11 +327,10 @@ public class SchlosswacheReactionsComp
         final ImmutableList.Builder<TimedDescription<?>> alt = ImmutableList.builder();
 
         if (n.allowsAdditionalDuSatzreihengliedOhneSubjekt()) {
-            alt.add(satzanschluss(
-                    ", während "
-                            + getDescription().nomStr()
-                            + " gerade damit beschäftigt ist, ihre Waffen zu polieren",
-                    secs(3))
+            alt.add(satzanschluss(", während "
+                    + getDescription().nomStr()
+                    + " gerade damit beschäftigt ist, ihre Waffen zu polieren")
+                    .timed(secs(3))
                     .dann());
         } else {
             alt.add(
@@ -343,10 +341,9 @@ public class SchlosswacheReactionsComp
                             .dann());
         }
 
-        alt.add(neuerSatz(
-                getDescription().datStr()
-                        + " ist anscheinend nichts aufgefallen",
-                secs(3))
+        alt.add(neuerSatz(getDescription().datStr()
+                + " ist anscheinend nichts aufgefallen")
+                .timed(secs(3))
                 .dann());
 
         n.narrateAlt(alt);
@@ -382,8 +379,10 @@ public class SchlosswacheReactionsComp
         }
 
         if (n.allowsAdditionalDuSatzreihengliedOhneSubjekt()) {
-            n.narrate(satzanschluss(", von der kopfschüttelnden Wache beobachtet",
-                    secs(5), SCHLOSSWACHE_REACTIONS_ABLEGEN_WACHE_IST_AUFMERKSAM)
+            n.narrate(satzanschluss(", von der kopfschüttelnden Wache beobachtet")
+                    .timed(secs(5))
+                    .withCounterIdIncrementedIfTextIsNarrated(
+                            SCHLOSSWACHE_REACTIONS_ABLEGEN_WACHE_IST_AUFMERKSAM)
                     .dann());
             return;
         }
@@ -391,12 +390,15 @@ public class SchlosswacheReactionsComp
         loadSC().feelingsComp().requestMood(ANGESPANNT);
         n.narrateAlt(
                 neuerSatz(getDescription().nomStr()
-                        + " beoabachtet dich dabei", secs(5))
+                        + " beoabachtet dich dabei")
+                        .timed(secs(5))
                         .dann(),
                 neuerSatz(getDescription().nomStr()
-                        + " sieht dir belustig dabei zu", secs(5))
+                        + " sieht dir belustig dabei zu")
+                        .timed(secs(5))
                         .dann(),
-                neuerSatz(PARAGRAPH, "Die Wache sieht sehr missbilligend zu", secs(3)));
+                neuerSatz(PARAGRAPH, "Die Wache sieht sehr missbilligend zu")
+                        .timed(secs(3)));
     }
 
     @Override
@@ -420,27 +422,27 @@ public class SchlosswacheReactionsComp
 
     private void schlossfestBeginnt_Vorhalle(final SpielerCharakter sc) {
         // Beim Fest ist die Schlosswache mit anderen Dingen beschäftigt
-        n.narrate(neuerSatz(PARAGRAPH,
-                "Die Wache spricht dich an: „Wenn ich Euch dann "
-                        + "hinausbitten dürfte? Wer wollte "
-                        + "denn den Vorbereitungen für das große Fest im Wege stehen?“ – Nein, "
-                        + "das willst du sicher nicht.", secs(30)));
+        n.narrate(neuerSatz(PARAGRAPH, "Die Wache spricht dich an: „Wenn ich Euch dann "
+                + "hinausbitten dürfte? Wer wollte "
+                + "denn den Vorbereitungen für das große Fest im Wege stehen?“ – Nein, "
+                + "das willst du sicher nicht.")
+                .timed(secs(30)));
         stateComp.narrateAndSetState(UNAUFFAELLIG);
 
         sc.locationComp().narrateAndSetLocation(DRAUSSEN_VOR_DEM_SCHLOSS,
                 () -> {
-                    n.narrate(neuerSatz(PARAGRAPH,
-                            "Draußen sind Handwerker dabei, im "
-                                    + "ganzen Schlossgarten kleine bunte "
-                                    + "Pagoden aufzubauen. Du schaust eine "
-                                    + "Zeitlang zu.\n"
-                                    + "Zunehmend strömen von allen Seiten "
-                                    + "Menschen herzu und wie es scheint, "
-                                    + "ist auch "
-                                    + "der Zugang zum Schloss jetzt für alle "
-                                    + "geöffnet. Aus dem Schloss "
-                                    + "weht dich der "
-                                    + "Geruch von Gebratenem an.", mins(44))
+                    n.narrate(neuerSatz(PARAGRAPH, "Draußen sind Handwerker dabei, im "
+                            + "ganzen Schlossgarten kleine bunte "
+                            + "Pagoden aufzubauen. Du schaust eine "
+                            + "Zeitlang zu.\n"
+                            + "Zunehmend strömen von allen Seiten "
+                            + "Menschen herzu und wie es scheint, "
+                            + "ist auch "
+                            + "der Zugang zum Schloss jetzt für alle "
+                            + "geöffnet. Aus dem Schloss "
+                            + "weht dich der "
+                            + "Geruch von Gebratenem an.")
+                            .timed(mins(44))
                             .beendet(PARAGRAPH));
 
                     sc.feelingsComp().requestMood(NEUTRAL);

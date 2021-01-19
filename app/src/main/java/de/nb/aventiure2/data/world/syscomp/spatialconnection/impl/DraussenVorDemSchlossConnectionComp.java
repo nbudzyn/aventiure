@@ -25,6 +25,7 @@ import de.nb.aventiure2.german.description.TimedDescription;
 import static de.nb.aventiure2.data.time.AvTimeSpan.mins;
 import static de.nb.aventiure2.data.time.AvTimeSpan.secs;
 import static de.nb.aventiure2.data.world.gameobject.World.*;
+import static de.nb.aventiure2.german.base.Wortfolge.w;
 import static de.nb.aventiure2.german.description.DescriptionBuilder.du;
 import static de.nb.aventiure2.german.description.DescriptionBuilder.neuerSatz;
 
@@ -75,7 +76,8 @@ public class DraussenVorDemSchlossConnectionComp extends AbstractSpatialConnecti
                                 + "offenbar nicht und du folgst dem erstbesten "
                                 + "Weg hinein in den dunklen Wald. Schon nach ein paar Schritten "
                                 + "führt rechter Hand ein schmaler, dunkler Pfad einen Hügel "
-                                + "hinauf", mins(12)),
+                                + "hinauf")
+                                .timed(mins(12)),
                         du("läufst", "wieder in den dunklen Wald",
                                 "wieder")
                                 .dann(),
@@ -98,7 +100,7 @@ public class DraussenVorDemSchlossConnectionComp extends AbstractSpatialConnecti
     @NonNull
     private static TimedDescription<?>
     getDescTo_SchlossVorhalle_KeinFest() {
-        return du("gehst", "wieder hinein in das Schloss", mins(1))
+        return du("gehst", w("wieder hinein in das Schloss")).timed(mins(1))
                 .undWartest()
                 .dann();
     }
@@ -107,14 +109,17 @@ public class DraussenVorDemSchlossConnectionComp extends AbstractSpatialConnecti
     getDescTo_SchlossVorhalle_FestBegonnen() {
         if (db.counterDao().get(COUNTER_SCHLOSS_VORHALLE_FEST_BEGONNEN) == 0) {
             return neuerSatz("Vor dem Schloss gibt es ein großes Gedränge und es dauert "
-                            + "eine Weile, bis "
-                            + "die Menge dich hineinschiebt. Die prächtige Vorhalle steht voller "
-                            + "Tische, auf denen in großen Schüsseln Eintöpfe dampfen", mins(7),
-                    COUNTER_SCHLOSS_VORHALLE_FEST_BEGONNEN)
+                    + "eine Weile, bis "
+                    + "die Menge dich hineinschiebt. Die prächtige Vorhalle steht voller "
+                    + "Tische, auf denen in großen Schüsseln Eintöpfe dampfen")
+                    .timed(mins(7))
+                    .withCounterIdIncrementedIfTextIsNarrated(
+                            COUNTER_SCHLOSS_VORHALLE_FEST_BEGONNEN)
                     .komma();
         }
 
-        return du("betrittst", "wieder das Schloss", "wieder", mins(2))
+        return du("betrittst", "wieder das Schloss", "wieder")
+                .timed(mins(2))
                 .undWartest()
                 .dann();
     }

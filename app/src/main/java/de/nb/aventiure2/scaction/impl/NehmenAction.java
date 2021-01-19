@@ -46,6 +46,7 @@ import static de.nb.aventiure2.german.base.Numerus.SG;
 import static de.nb.aventiure2.german.base.Person.P1;
 import static de.nb.aventiure2.german.base.Person.P2;
 import static de.nb.aventiure2.german.base.StructuralElement.PARAGRAPH;
+import static de.nb.aventiure2.german.base.Wortfolge.w;
 import static de.nb.aventiure2.german.description.DescriptionBuilder.du;
 import static de.nb.aventiure2.german.description.DescriptionBuilder.neuerSatz;
 import static de.nb.aventiure2.german.description.DescriptionBuilder.satzanschluss;
@@ -262,39 +263,40 @@ public class NehmenAction
 
                             final SubstantivischePhrase anaph = world.anaph(FROSCHPRINZ);
 
+                            // "ihn"
+                            // "ihn"
+                            // "Er"
                             n.narrateAlt(
-                                    neuerSatz(
-                                            anaph.nomStr()// "Er"
-                                                    + " ist glibschig und "
-                                                    + "schleimig – pfui-bäh! – schnell lässt du "
-                                                    + anaph.persPron().akkStr()
-                                                    + " in "
-                                                    + "eine Tasche gleiten. "
-                                                    + GermanStringUtil.capitalize(
-                                                    anaph.possArt()
-                                                            .vor(NumerusGenus.N).nomStr())
-                                                    + " gedämpftes Quaken könnte "
-                                                    + "wohlig sein oder "
-                                                    + "genauso gut vorwurfsvoll", secs(10))
+                                    neuerSatz(anaph.nomStr()// "Er"
+                                            + " ist glibschig und "
+                                            + "schleimig – pfui-bäh! – schnell lässt du "
+                                            + anaph.persPron().akkStr()
+                                            + " in "
+                                            + "eine Tasche gleiten. "
+                                            + GermanStringUtil.capitalize(
+                                            anaph.possArt()
+                                                    .vor(NumerusGenus.N).nomStr())
+                                            + " gedämpftes Quaken könnte "
+                                            + "wohlig sein oder "
+                                            + "genauso gut vorwurfsvoll")
+                                            .timed(secs(10))
                                             .beendet(PARAGRAPH),
-                                    du("versenkst",
-                                            anaph.akkStr() // "ihn"
-                                                    + " tief in deine Tasche. Du "
-                                                    + "versuchst, deine Hand an der "
-                                                    + "Kleidung zu reinigen, aber der "
-                                                    + "Schleim verteilt sich nur "
-                                                    + "überall – igitt!",
-                                            "tief in deine Tasche", secs(10))
+                                    du("versenkst", anaph.akkStr() // "ihn"
+                                            + " tief in deine Tasche. Du "
+                                            + "versuchst, deine Hand an der "
+                                            + "Kleidung zu reinigen, aber der "
+                                            + "Schleim verteilt sich nur "
+                                            + "überall – igitt!", "tief in deine Tasche")
+                                            .timed(secs(10))
                                             .beendet(PARAGRAPH),
-                                    du("packst",
-                                            anaph.akkStr() // "ihn"
-                                                    + " in deine Tasche. "
-                                                    + GermanStringUtil.capitalize(
-                                                    froschDesc.persPron().nomStr())
-                                                    + " fasst "
-                                                    + "sich sehr eklig an und du bist "
-                                                    + "glücklich, als die Prozedur "
-                                                    + "vorbei ist.", secs(10))
+                                    du("packst", w(anaph.akkStr() // "ihn"
+                                            + " in deine Tasche. "
+                                            + GermanStringUtil.capitalize(
+                                            froschDesc.persPron().nomStr())
+                                            + " fasst "
+                                            + "sich sehr eklig an und du bist "
+                                            + "glücklich, als die Prozedur "
+                                            + "vorbei ist.")).timed(secs(10))
                                             .dann()
                             );
                         }
@@ -323,10 +325,9 @@ public class NehmenAction
             if (n.dann()) {
                 final SubstantivischePhrase anaph = world.anaph(FROSCHPRINZ);
 
-                n.narrate(neuerSatz(PARAGRAPH,
-                        "Aber dann nimmst du " + anaph.akkStr() +
-                                " doch wieder",
-                        secs(5))
+                n.narrate(neuerSatz(PARAGRAPH, "Aber dann nimmst du " + anaph.akkStr() +
+                        " doch wieder")
+                        .timed(secs(5))
                         .undWartest()
                         .phorikKandidat(anaph, FROSCHPRINZ));
                 return;
@@ -336,15 +337,14 @@ public class NehmenAction
 
             final ImmutableList.Builder<TimedDescription<?>> alt = builder();
             alt.addAll(drueckeAusTimed(DISKONTINUITAET,
-                    du(PARAGRAPH,
-                            "nimmst",
-                            froschDesc.akkStr(),
-                            secs(5))
+                    du(PARAGRAPH, "nimmst", froschDesc.akkStr())
+                            .timed(secs(5))
+                            .withCounterIdIncrementedIfTextIsNarrated(null)
                             .undWartest()
                             .phorikKandidat(froschDesc, FROSCHPRINZ),
-                    du(PARAGRAPH,
-                            NEHMEN.mit(froschDesc),
-                            secs(5))
+                    du(PARAGRAPH, NEHMEN.mit(froschDesc))
+                            .timed(secs(5))
+                            .withCounterIdIncrementedIfTextIsNarrated(null)
                             .undWartest()
                             .phorikKandidat(froschDesc, FROSCHPRINZ)));
 
@@ -353,19 +353,19 @@ public class NehmenAction
 
         }
         n.narrateAlt(
-                du(PARAGRAPH,
-                        "zauderst", "und dein Herz klopft gewaltig, als du endlich "
-                                + world.getDescription(gameObject, true).akkStr()
-                                + " greifst",
-                        secs(5))
+                du(PARAGRAPH, "zauderst", "und dein Herz klopft gewaltig, als du endlich "
+                        + world.getDescription(gameObject, true).akkStr()
+                        + " greifst")
+                        .timed(secs(5))
+                        .withCounterIdIncrementedIfTextIsNarrated(null)
                         .phorikKandidat(world.getDescription(gameObject, true), FROSCHPRINZ)
                         .komma()
                         .dann(),
                 neuerSatz("Dir wird ganz angst, aber was man "
-                                + "versprochen hat, das muss man auch halten! Du nimmst "
-                                + world.getDescription(gameObject, true).akkStr()
-                                + " in die Hände",
-                        secs(15))
+                        + "versprochen hat, das muss man auch halten! Du nimmst "
+                        + world.getDescription(gameObject, true).akkStr()
+                        + " in die Hände")
+                        .timed(secs(15))
                         .phorikKandidat(world.getDescription(gameObject, true), FROSCHPRINZ)
                         .undWartest()
                         .dann());
@@ -393,9 +393,8 @@ public class NehmenAction
 
         if (sc.memoryComp().getLastAction().is(Action.Type.ABLEGEN)) {
             final Nominalphrase objectDesc = world.getDescription(gameObject, true);
-            n.narrate(neuerSatz(
-                    "Dann nimmst du " + objectDesc.akkStr(),
-                    secs(5))
+            n.narrate(neuerSatz("Dann nimmst du " + objectDesc.akkStr())
+                    .timed(secs(5))
                     .undWartest()
                     .phorikKandidat(objectDesc.getNumerusGenus(), gameObject.getId()));
             return;
@@ -410,15 +409,14 @@ public class NehmenAction
 
                 n.narrateAlt(
                         sc.feelingsComp().altAdverbialeAngabenSkopusSatz().stream()
-                                .map(a ->
-                                        du(PARAGRAPH,
-                                                praedikatMitObjekt.mitAdverbialerAngabe(a),
-                                                secs(5))
-                                                .undWartest(
-                                                        praedikatMitObjekt
-                                                                .hauptsatzLaesstSichBeiGleichemSubjektMitNachfolgendemVerbzweitsatzZusammenziehen())
-                                                .phorikKandidat(objectDesc, gameObject.getId())
-                                                .dann()));
+                                .map(a -> du(PARAGRAPH, praedikatMitObjekt.mitAdverbialerAngabe(a))
+                                        .timed(secs(5))
+                                        .withCounterIdIncrementedIfTextIsNarrated(null)
+                                        .undWartest(
+                                                praedikatMitObjekt
+                                                        .hauptsatzLaesstSichBeiGleichemSubjektMitNachfolgendemVerbzweitsatzZusammenziehen())
+                                        .phorikKandidat(objectDesc, gameObject.getId())
+                                        .dann()));
                 return;
             }
         }
@@ -426,7 +424,9 @@ public class NehmenAction
         final PraedikatOhneLeerstellen praedikatMitObjekt =
                 mitnehmenPraedikat.mit(world.getDescription(gameObject, true));
         n.narrate(
-                du(PARAGRAPH, praedikatMitObjekt, secs(5))
+                du(PARAGRAPH, praedikatMitObjekt)
+                        .timed(secs(5))
+                        .withCounterIdIncrementedIfTextIsNarrated(null)
                         .undWartest(
                                 praedikatMitObjekt
                                         .hauptsatzLaesstSichBeiGleichemSubjektMitNachfolgendemVerbzweitsatzZusammenziehen())
@@ -441,29 +441,28 @@ public class NehmenAction
         final ImmutableList.Builder<TimedDescription<?>> alt = ImmutableList.builder();
 
         alt.addAll(drueckeAusTimed(DISKONTINUITAET,
-                du(PARAGRAPH,
-                        nehmenPraedikat.mit(objectDesc),
-                        secs(5))
+                du(PARAGRAPH, nehmenPraedikat.mit(objectDesc))
+                        .timed(secs(5))
+                        .withCounterIdIncrementedIfTextIsNarrated(null)
                         .undWartest()
                         .phorikKandidat(objectDesc, gameObject.getId()),
-                du(PARAGRAPH,
-                        nehmenPraedikat.mit(objectDescShort),
-                        secs(5))
+                du(PARAGRAPH, nehmenPraedikat.mit(objectDescShort))
+                        .timed(secs(5))
+                        .withCounterIdIncrementedIfTextIsNarrated(null)
                         .undWartest()
                         .phorikKandidat(objectDescShort, gameObject.getId()))
         );
 
         if (n.allowsAdditionalDuSatzreihengliedOhneSubjekt()) {
-            alt.add(satzanschluss(
-                    ", nur um "
-                            +
-                            nehmenPraedikat
-                                    .mit(world.getDescription(gameObject, true).persPron())
-                                    .mitAdverbialerAngabe(
-                                            new AdverbialeAngabeSkopusSatz("gleich erneut"))
-                                    .getZuInfinitiv(P2, SG).joinToString(
-                            ),
-                    secs(5))
+            alt.add(satzanschluss(", nur um "
+                    +
+                    nehmenPraedikat
+                            .mit(world.getDescription(gameObject, true).persPron())
+                            .mitAdverbialerAngabe(
+                                    new AdverbialeAngabeSkopusSatz("gleich erneut"))
+                            .getZuInfinitiv(P2, SG).joinToString(
+                    ))
+                    .timed(secs(5))
                     // "zu nehmen", "an dich zu nehmen", "aufzuheben"
                     .komma()
                     .dann());

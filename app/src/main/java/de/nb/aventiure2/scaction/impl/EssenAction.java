@@ -170,17 +170,17 @@ public class EssenAction extends AbstractScAction {
                         + "Auch ein goldener Löffel fährt mit in die Schale. Du schaust "
                         + "verwirrt auf - kein Frosch mehr auf dem Tisch, doch neben dir auf der "
                         + "Bank sitzt ein junger Mann mit schönen freundlichen Augen. In Samt und "
-                        + "Seide ist er gekleidet und trägt goldene Ketten um den Hals",
-                secs(10)));
+                        + "Seide ist er gekleidet und trägt goldene Ketten um den Hals")
+                .timed(secs(10)));
         n.narrate(neuerSatz(PARAGRAPH,
                 "Er schaut an sich herab – „Ihr habt mich erlöst“, sagt er, „ich "
                         + "danke euch!“ Eine böse Hexe "
-                        + "habe ihn verwünscht. „Ich werde euch nicht vergessen!“",
-                secs(10)));
+                        + "habe ihn verwünscht. „Ich werde euch nicht vergessen!“")
+                .timed(secs(10)));
         n.narrate(neuerSatz(PARAGRAPH,
                 "Am Tisch um euch herum entsteht Aufregung. Der junge Mann erhebt "
-                        + "sich und schickt sich an, die Halle zu verlassen",
-                secs(10)));
+                        + "sich und schickt sich an, die Halle zu verlassen")
+                .timed(secs(10)));
 
         world.loadSC().feelingsComp().requestMoodMin(ZUFRIEDEN);
         froschprinz.stateComp().narrateAndSetState(ZURUECKVERWANDELT_IN_VORHALLE);
@@ -263,7 +263,9 @@ public class EssenAction extends AbstractScAction {
                         + "schaust sie kurz an, dann "
                         + "beißt du hinein… – "
                         + "Mmh! Die Frucht ist saftig und schmeckt süß wie Marzipan!\n"
-                        + "Du isst dich an den Früchten satt", mins(10), COUNTER_FELSENBIRNEN)
+                        + "Du isst dich an den Früchten satt")
+                        .timed(mins(10))
+                        .withCounterIdIncrementedIfTextIsNarrated(COUNTER_FELSENBIRNEN)
                         .undWartest()
                         .dann())) {
             return;
@@ -285,23 +287,24 @@ public class EssenAction extends AbstractScAction {
 
     private void narrateFelsenbirnenSatt() {
         if (n.narrateIfCounterIs(0,
-                du(SENTENCE, "nimmst",
-                        "eine von den Früchten und beißt hinein. "
-                                + "Sie ist überraschend süß und saftig. Du isst die Frucht auf",
-                        mins(3), COUNTER_FELSENBIRNEN)
+                du(SENTENCE, "nimmst", "eine von den Früchten und beißt hinein. "
+                        + "Sie ist überraschend süß und saftig. Du isst die Frucht auf")
+                        .timed(mins(3))
+                        .withCounterIdIncrementedIfTextIsNarrated(COUNTER_FELSENBIRNEN)
                         .undWartest()
                         .dann())) {
             return;
         }
 
-        n.narrateAlt(du(SENTENCE, "hast",
-                "nur wenig Hunger und beißt lustlos in eine der Früchte",
-                "Hunger", mins(3))
+        n.narrateAlt(du(SENTENCE, "hast", "nur wenig Hunger und beißt lustlos in eine der Früchte",
+                "Hunger")
+                .timed(mins(3))
                 .dann());
         if (counterDao.get(COUNTER_FELSENBIRNEN_SEIT_ENTER) == 0) {
             n.narrateAlt(du(SENTENCE, "lässt",
                     "dir die süßen Früchte nicht entgehen, auch wenn du kaum Hunger "
-                            + "hast", "die süßen Früchte", mins(3))
+                            + "hast", "die süßen Früchte")
+                    .timed(mins(3))
                     .komma()
                     .undWartest()
                     .dann());

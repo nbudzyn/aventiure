@@ -13,6 +13,7 @@ import de.nb.aventiure2.data.world.syscomp.state.IHasStateGO;
 import de.nb.aventiure2.data.world.syscomp.state.impl.RapunzelState;
 import de.nb.aventiure2.data.world.syscomp.storingplace.ILocationGO;
 import de.nb.aventiure2.german.base.Personalpronomen;
+import de.nb.aventiure2.german.description.DescriptionBuilder;
 import de.nb.aventiure2.german.description.Kohaerenzrelation;
 import de.nb.aventiure2.german.string.GermanStringUtil;
 import de.nb.aventiure2.scaction.AbstractScAction;
@@ -27,8 +28,8 @@ import static de.nb.aventiure2.german.base.Numerus.SG;
 import static de.nb.aventiure2.german.base.NumerusGenus.M;
 import static de.nb.aventiure2.german.base.Person.P1;
 import static de.nb.aventiure2.german.base.Person.P2;
+import static de.nb.aventiure2.german.base.StructuralElement.WORD;
 import static de.nb.aventiure2.german.description.DescriptionBuilder.du;
-import static de.nb.aventiure2.german.description.DescriptionBuilder.satz;
 import static de.nb.aventiure2.german.description.DescriptionUmformulierer.drueckeAus;
 import static de.nb.aventiure2.german.description.Kohaerenzrelation.VERSTEHT_SICH_VON_SELBST;
 import static de.nb.aventiure2.german.description.Kohaerenzrelation.WIEDERHOLUNG;
@@ -92,11 +93,10 @@ public class RufenAction extends AbstractScAction {
             n.narrateAlt(drueckeAus(kohaerenzrelation, du(ruftyp.getName())),
                     secs(30));
         } else {
-            n.narrate(satz(
-                    ruftyp.getName()
-                            .alsSatzMitSubjekt(Personalpronomen.get(P2, M, SPIELER_CHARAKTER))
-                            .mitAnschlusswort("und"),
-                    secs(30)));
+            n.narrate(DescriptionBuilder.satz(WORD, ruftyp.getName()
+                    .alsSatzMitSubjekt(Personalpronomen.get(P2, M, SPIELER_CHARAKTER))
+                    .mitAnschlusswort("und"))
+                    .timed(secs(30)));
         }
 
         world.narrateAndDoReactions().onRuf(sc, Ruftyp.LASS_DEIN_HAAR_HERUNTER);

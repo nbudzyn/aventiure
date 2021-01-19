@@ -35,6 +35,7 @@ import static de.nb.aventiure2.data.world.gameobject.World.*;
 import static de.nb.aventiure2.data.world.syscomp.feelings.Mood.TRAURIG;
 import static de.nb.aventiure2.german.base.StructuralElement.PARAGRAPH;
 import static de.nb.aventiure2.german.base.StructuralElement.SENTENCE;
+import static de.nb.aventiure2.german.base.Wortfolge.w;
 import static de.nb.aventiure2.german.description.DescriptionBuilder.du;
 import static de.nb.aventiure2.german.description.DescriptionBuilder.neuerSatz;
 
@@ -69,16 +70,17 @@ public class AbzweigImWaldConnectionComp extends AbstractSpatialConnectionComp {
                         "in all dem Unkraut",
                         this::getActionNameTo_HinterDerHuette,
                         mins(2),
-                        du(SENTENCE, "fasst",
-                                "dir ein Herz und stapfst zwischen "
-                                        + "dem Unkraut einen Weg entlang, "
-                                        + "der wohl schon länger nicht mehr benutzt wurde.\n"
-                                        + "Hinter der "
-                                        + "nächsten Biegung stehst du unvermittelt vor"
-                                        + " einer Holzhütte. "
-                                        + "Die Fensterläden sind "
-                                        + "geschlossen, die Tür hängt nur noch lose "
-                                        + "in den Angeln", mins(2))
+                        du(SENTENCE, "fasst", "dir ein Herz und stapfst zwischen "
+                                + "dem Unkraut einen Weg entlang, "
+                                + "der wohl schon länger nicht mehr benutzt wurde.\n"
+                                + "Hinter der "
+                                + "nächsten Biegung stehst du unvermittelt vor"
+                                + " einer Holzhütte. "
+                                + "Die Fensterläden sind "
+                                + "geschlossen, die Tür hängt nur noch lose "
+                                + "in den Angeln")
+                                .timed(mins(2))
+                                .withCounterIdIncrementedIfTextIsNarrated(null)
                                 .beendet(PARAGRAPH),
 
                         neuerSatz("Hat gerade neben dir im Unterholz geknarzt? "
@@ -89,16 +91,17 @@ public class AbzweigImWaldConnectionComp extends AbstractSpatialConnectionComp {
                                 + "nächsten Biegung stehst du unvermittelt vor"
                                 + " der Tür einer Holzhütte. "
                                 + "Die Tür hängt nur noch lose "
-                                + "in den Angeln", mins(2)),
+                                + "in den Angeln")
+                                .timed(mins(2)),
 
-                        du("wählst", "noch einmal den überwachsenen "
+                        du("wählst", w("noch einmal den überwachsenen "
                                 + "Pfad zur Hütte. Es wirkt alles so, also sei "
-                                + "er schon lange nicht mehr benutzt worden", mins(2))
+                                + "er schon lange nicht mehr benutzt worden")).timed(mins(2))
                                 .komma()
                                 .dann(),
 
-                        du("wählst", "noch einmal den überwachsenen "
-                                + "Pfad zur Hütte", mins(2))
+                        du("wählst", w("noch einmal den überwachsenen "
+                                + "Pfad zur Hütte")).timed(mins(2))
                                 .undWartest()
                 ),
 
@@ -111,14 +114,10 @@ public class AbzweigImWaldConnectionComp extends AbstractSpatialConnectionComp {
             final Known newLocationKnown,
             final Lichtverhaeltnisse lichtverhaeltnisseInNewLocation) {
         if (world.loadSC().locationComp().lastLocationWas(IM_WALD_NAHE_DEM_SCHLOSS)) {
-            return du("gehst",
-                    "zurück in Richtung Schloss",
-                    mins(5));
+            return du("gehst", w("zurück in Richtung Schloss")).timed(mins(5));
         }
 
-        return du("gehst",
-                "weiter in Richtung Schloss",
-                mins(5));
+        return du("gehst", w("weiter in Richtung Schloss")).timed(mins(5));
     }
 
     private TimedDescription<?> getDescTo_ImWaldBeimBrunnen(final Known newLocationKnown,
@@ -145,27 +144,23 @@ public class AbzweigImWaldConnectionComp extends AbstractSpatialConnectionComp {
 
     @NonNull
     private static TimedDescription<?> getDescTo_ImWaldBeimBrunnenUnknownDunkel() {
-        return (TimedDescription<?>) du("gehst",
-                "den breiteren Weg weiter in "
-                        + "den Wald hinein. Wohl ist dir dabei nicht.\n"
-                        + "In der Ferne heult ein Wolf – oder hast du "
-                        + "dir das eingebildet?\nDann kommst du an einen "
-                        + "Baum, unter dem ist ein Brunnen. Kühl ist es "
-                        + "hier, und der Weg scheint zu Ende zu sein",
-                mins(10));
+        return (TimedDescription<?>) du("gehst", w("den breiteren Weg weiter in "
+                + "den Wald hinein. Wohl ist dir dabei nicht.\n"
+                + "In der Ferne heult ein Wolf – oder hast du "
+                + "dir das eingebildet?\nDann kommst du an einen "
+                + "Baum, unter dem ist ein Brunnen. Kühl ist es "
+                + "hier, und der Weg scheint zu Ende zu sein")).timed(mins(10));
     }
 
     private static TimedDescription<?> getDescTo_ImWaldBeimBrunnenDarknessHell() {
-        return (TimedDescription<?>) du("kehrst",
-                "zurück zum Brunnen – unter einer Linde, wie "
-                        + "du bei Licht erkennen kannst. Hinter dem "
-                        + "Brunnen beginnt der wilde Wald", mins(4))
+        return (TimedDescription<?>) du("kehrst", w("zurück zum Brunnen – unter einer Linde, wie "
+                + "du bei Licht erkennen kannst. Hinter dem "
+                + "Brunnen beginnt der wilde Wald")).timed(mins(4))
                 .komma();
     }
 
     private static TimedDescription<?> getDescTo_ImWaldBeimBrunnenOtherWirNichtTraurig() {
-        return (TimedDescription<?>) du("kehrst", "zurück zum Brunnen",
-                mins(3))
+        return (TimedDescription<?>) du("kehrst", w("zurück zum Brunnen")).timed(mins(3))
                 .undWartest()
                 .dann();
     }
@@ -180,26 +175,25 @@ public class AbzweigImWaldConnectionComp extends AbstractSpatialConnectionComp {
         final SubstantivischePhrase descObjects =
                 world.getDescriptionSingleOrCollective(objectsInDenBrunnenGefallen);
 
-        return (TimedDescription<?>) du("gehst",
-                "weiter; als du an den Brunnen kommst, "
-                        + VerbSubjObj.STEHEN.getPraesensOhnePartikel(
-                        descObjects.getPerson(), descObjects.getNumerus()) // steht
-                        + " dir "
-                        + descObjects.nomStr()
-                        + " sofort wieder vor Augen und du wirst ganz traurig",
-                mins(3));
+        // steht
+        return (TimedDescription<?>) du("gehst", w("weiter; als du an den Brunnen kommst, "
+                + VerbSubjObj.STEHEN.getPraesensOhnePartikel(
+                descObjects.getPerson(), descObjects.getNumerus()) // steht
+                + " dir "
+                + descObjects.nomStr()
+                + " sofort wieder vor Augen und du wirst ganz traurig")).timed(mins(3));
     }
 
     private static TimedDescription<?> getDescTo_ImWaldBeimBrunnenUnkownHell() {
-        return (TimedDescription<?>) neuerSatz(
-                "Der breitere Weg führt zu einer alten "
-                        + "Linde, unter der ist ein Brunnen. "
-                        + "Hinter dem Brunnen endet der Weg und der "
-                        + "wilde Wald beginnt.\n"
-                        + "Du setzt "
-                        + "dich an den Brunnenrand – "
-                        + "hier ist es "
-                        + "angenehm kühl", mins(5))
+        return (TimedDescription<?>) neuerSatz("Der breitere Weg führt zu einer alten "
+                + "Linde, unter der ist ein Brunnen. "
+                + "Hinter dem Brunnen endet der Weg und der "
+                + "wilde Wald beginnt.\n"
+                + "Du setzt "
+                + "dich an den Brunnenrand – "
+                + "hier ist es "
+                + "angenehm kühl")
+                .timed(mins(5))
                 .dann()
                 .beendet(PARAGRAPH);
     }
