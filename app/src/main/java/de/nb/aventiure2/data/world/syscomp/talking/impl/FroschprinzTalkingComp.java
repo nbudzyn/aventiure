@@ -18,8 +18,7 @@ import de.nb.aventiure2.data.world.syscomp.state.impl.FroschprinzStateComp;
 import de.nb.aventiure2.data.world.syscomp.talking.AbstractTalkingComp;
 import de.nb.aventiure2.german.base.Nominalphrase;
 import de.nb.aventiure2.german.base.SubstantivischePhrase;
-import de.nb.aventiure2.german.description.AbstractDescription;
-import de.nb.aventiure2.german.description.DescriptionBuilder;
+import de.nb.aventiure2.german.description.AltDescriptionsBuilder;
 
 import static de.nb.aventiure2.data.time.AvTimeSpan.NO_TIME;
 import static de.nb.aventiure2.data.time.AvTimeSpan.secs;
@@ -37,7 +36,8 @@ import static de.nb.aventiure2.german.base.Indefinitpronomen.ALLES;
 import static de.nb.aventiure2.german.base.Nominalphrase.ANGEBOTE;
 import static de.nb.aventiure2.german.base.StructuralElement.PARAGRAPH;
 import static de.nb.aventiure2.german.base.StructuralElement.SENTENCE;
-import static de.nb.aventiure2.german.base.Wortfolge.joinToAltWortfolgen;
+import static de.nb.aventiure2.german.description.AltDescriptionsBuilder.alt;
+import static de.nb.aventiure2.german.description.AltDescriptionsBuilder.altNeueSaetze;
 import static de.nb.aventiure2.german.description.DescriptionBuilder.du;
 import static de.nb.aventiure2.german.description.DescriptionBuilder.neuerSatz;
 import static de.nb.aventiure2.german.description.DescriptionBuilder.satzanschluss;
@@ -48,7 +48,6 @@ import static de.nb.aventiure2.german.praedikat.VerbSubjObj.DISKUTIEREN;
 import static de.nb.aventiure2.german.praedikat.VerbSubjObj.IGNORIEREN;
 import static de.nb.aventiure2.german.praedikat.VerbSubjObj.REDEN;
 import static de.nb.aventiure2.german.string.GermanStringUtil.capitalize;
-import static java.util.stream.Collectors.toSet;
 
 /**
  * Component for den {@link World#FROSCHPRINZ}en: Der Spieler
@@ -245,13 +244,12 @@ public class FroschprinzTalkingComp extends AbstractTalkingComp {
             return;
         }
 
-        n.narrateAlt(
-                joinToAltWortfolgen(
-                        "„",
-                        altBegruessungenCap(),
-                        // "Hallo"
-                        ", du hässlicher Frosch!“, redest du ihn an").stream()
-                        .map(wf -> neuerSatz(wf).undWartest().dann()),
+        n.narrateAlt(altNeueSaetze(
+                "„",
+                altBegruessungenCap(),
+                // "Hallo"
+                ", du hässlicher Frosch!“, redest du ihn an")
+                        .undWartest().dann(),
                 NO_TIME);
 
         world.loadSC().talkingComp().setTalkingTo(FROSCHPRINZ);
@@ -563,23 +561,20 @@ public class FroschprinzTalkingComp extends AbstractTalkingComp {
 
     private void ansprechen_froschReagiertNicht() {
         if (!isSchonBegruesstMitSC()) {
-            final ImmutableList.Builder<AbstractDescription<?>> alt = ImmutableList.builder();
+            final AltDescriptionsBuilder alt = alt();
 
-            alt.addAll(joinToAltWortfolgen(
+            alt.addAll(altNeueSaetze(
                     "„",
                     altBegruessungenCap(),
                     // "Hallo" / "Einen schönen guten Morgen"
-                    ", Kollege Frosch!“").stream()
-                    .map(DescriptionBuilder::neuerSatz)
-                    .collect(toSet()));
+                    ", Kollege Frosch!“"));
 
-            alt.addAll(joinToAltWortfolgen(
+            alt.addAll(altNeueSaetze(
                     "„",
                     altBegruessungenCap(),
                     // "Hallo" / "Einen schönen guten Morgen"
-                    "„, du hässlicher Frosch!“, redest du ihn an").stream()
-                    .map(wf -> neuerSatz(wf).undWartest().dann())
-                    .collect(toSet()));
+                    "„, du hässlicher Frosch!“, redest du ihn an")
+                    .undWartest().dann());
 
             alt.add(neuerSatz("„Hallo nochmal, Meister Frosch!“"));
 
@@ -617,7 +612,7 @@ public class FroschprinzTalkingComp extends AbstractTalkingComp {
     }
 
     private void ansprechen_froschErinnertAnVersprechen(final boolean immediateReEntry) {
-        final ImmutableList.Builder<AbstractDescription<?>> alt = ImmutableList.builder();
+        final AltDescriptionsBuilder alt = alt();
 
         alt.add(du(SENTENCE, "holst", "Luft, aber da kommt dir "
                         + getDescription().nomStr()

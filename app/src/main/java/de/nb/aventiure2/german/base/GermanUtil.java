@@ -3,9 +3,7 @@ package de.nb.aventiure2.german.base;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
-import java.util.Collection;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import static com.google.common.base.Preconditions.checkArgument;
 import static java.util.Arrays.asList;
@@ -17,20 +15,6 @@ import static java.util.Objects.requireNonNull;
 public class GermanUtil {
     // Not to be called
     private GermanUtil() {
-    }
-
-    /**
-     * Fügt diese Teile auf verschiedene alternative Arten zu
-     * jeweils einem String zusammen (statt eines des Strings ist auch null möglich).
-     * Diese Methode darf nur verwendet werden,
-     * wenn nach dem letzten der Teile definitiv kein Komma aussteht - oder das
-     * ausstehende Kommma auf andere Weise behandelt wird.
-     */
-    public static Collection<String> joinToAltStrings(final Object... parts) {
-        return Wortfolge.joinToAltWortfolgen(parts).stream()
-                .map(wf -> wf != null ?
-                        wf.toStringFixWoertlicheRedeNochOffen() : null)
-                .collect(Collectors.toSet());
     }
 
     /**

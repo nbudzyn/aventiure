@@ -3,7 +3,6 @@ package de.nb.aventiure2.data.world.syscomp.story.impl;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
-import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
 
 import java.util.Collection;
@@ -25,14 +24,15 @@ import de.nb.aventiure2.data.world.syscomp.state.impl.RapunzelsZauberinState;
 import de.nb.aventiure2.data.world.syscomp.story.IStoryNode;
 import de.nb.aventiure2.data.world.syscomp.story.Story;
 import de.nb.aventiure2.german.description.AbstractDescription;
+import de.nb.aventiure2.german.description.AltDescriptionsBuilder;
 
-import static com.google.common.collect.ImmutableList.builder;
 import static de.nb.aventiure2.data.time.AvTimeSpan.NO_TIME;
 import static de.nb.aventiure2.data.world.gameobject.World.*;
 import static de.nb.aventiure2.data.world.syscomp.state.impl.RapunzelState.HAARE_VOM_TURM_HERUNTERGELASSEN;
 import static de.nb.aventiure2.data.world.syscomp.state.impl.RapunzelsZauberinState.MACHT_ZURZEIT_KEINE_RAPUNZELBESUCHE;
 import static de.nb.aventiure2.data.world.syscomp.state.impl.RapunzelsZauberinState.VOR_DEM_NAECHSTEN_RAPUNZEL_BESUCH;
 import static de.nb.aventiure2.german.base.StructuralElement.PARAGRAPH;
+import static de.nb.aventiure2.german.description.AltDescriptionsBuilder.alt;
 import static de.nb.aventiure2.german.description.DescriptionBuilder.du;
 import static de.nb.aventiure2.german.description.DescriptionBuilder.paragraph;
 import static java.util.Arrays.asList;
@@ -247,7 +247,7 @@ public enum RapunzelStoryNode implements IStoryNode {
     //  Vordergrund steht
     private static void narrateAndDoHintAction_TurmGefunden(
             final AvDatabase db, final Narrator n, final World world) {
-        final ImmutableList.Builder<AbstractDescription<?>> alt = builder();
+        final AltDescriptionsBuilder alt = alt();
         alt.add(
                 paragraph("Hast du den Wald eigentlich schon überall erkundet?"),
                 paragraph("Was gibt es wohl noch alles im Wald zu entdecken, fragst du dich"),
@@ -261,7 +261,7 @@ public enum RapunzelStoryNode implements IStoryNode {
 
     private static void narrateAndDoHintAction_RapunzelSingenGehoert(
             final AvDatabase db, final Narrator n, final World world) {
-        final ImmutableList.Builder<AbstractDescription<?>> alt = builder();
+        final AltDescriptionsBuilder alt = alt();
 
         if (world.loadSC().locationComp().hasRecursiveLocation(VOR_DEM_ALTEN_TURM)) {
             alt.add(paragraph("Eine kleine Pause hat noch keinem geschadet"),
@@ -278,7 +278,7 @@ public enum RapunzelStoryNode implements IStoryNode {
 
     private static void narrateAndDoHintAction_ZauberinAufTurmWegGefunden(
             final AvDatabase db, final Narrator n, final World world) {
-        final ImmutableList.Builder<AbstractDescription<?>> alt = builder();
+        final AltDescriptionsBuilder alt = alt();
 
         alt.addAll(altTurmWohnenHineinHeraus(world));
 
@@ -287,7 +287,7 @@ public enum RapunzelStoryNode implements IStoryNode {
 
     private static void narrateAndDoHintAction_ZauberinHeimlichBeimRufenBeobachtet(
             final AvDatabase db, final Narrator n, final World world) {
-        final ImmutableList.Builder<AbstractDescription<?>> alt = builder();
+        final AltDescriptionsBuilder alt = alt();
 
         alt.addAll(altTurmWohnenHineinHeraus(world));
 
@@ -321,7 +321,7 @@ public enum RapunzelStoryNode implements IStoryNode {
 
     private static void narrateAndDoHintAction_ZuRapunzelHinaufgestiegen(
             final AvDatabase db, final Narrator n, final World world) {
-        final ImmutableList.Builder<AbstractDescription<?>> alt = builder();
+        final AltDescriptionsBuilder alt = alt();
         final IHasStateGO<RapunzelState> rapunzel = loadRapunzel(world);
 
         if (world.loadSC().locationComp().hasRecursiveLocation(VOR_DEM_ALTEN_TURM) &&
@@ -359,9 +359,9 @@ public enum RapunzelStoryNode implements IStoryNode {
     }
 
     @CheckReturnValue
-    private static ImmutableList<AbstractDescription<?>> altTurmWohnenHineinHeraus(
+    private static ImmutableSet<AbstractDescription<?>> altTurmWohnenHineinHeraus(
             final World world) {
-        final ImmutableList.Builder<AbstractDescription<?>> alt = builder();
+        final AltDescriptionsBuilder alt = alt();
 
         if (world.loadSC().locationComp().hasRecursiveLocation(VOR_DEM_ALTEN_TURM)) {
             alt.add(paragraph("Wenn im Turm jemand wohnt – wie kommt er herein "

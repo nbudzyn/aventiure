@@ -441,9 +441,8 @@ public class BewegenAction<LOC_DESC extends ILocatableGO & IDescribableGO>
             final TextDescription descriptionSatzanschlussOhneSubjekt =
                     ((AbstractFlexibleDescription<?>) description.getDescription())
                             .toTextDescriptionSatzanschlussOhneSubjekt();
-            alt.add(new TimedDescription<>(
-                    descriptionSatzanschlussOhneSubjekt.mitPraefix(", besinnst dich aber und "),
-                    description.getTimeElapsed()));
+            alt.add(descriptionSatzanschlussOhneSubjekt.mitPraefix(", besinnst dich aber und ")
+                    .timed(description.getTimeElapsed()));
 
             alt.addAll(drueckeAusTimed(DISKONTINUITAET, description));
             n.narrateAlt(alt);
@@ -462,17 +461,15 @@ public class BewegenAction<LOC_DESC extends ILocatableGO & IDescribableGO>
 
             if (numberOfWays == ONLY_WAY) {
                 alt.addAll(description.getDescription().altTextDescriptions().stream()
-                        .map(d -> new TimedDescription<>(
-                                d.mitPraefix("dich nur kurz um, dann "),
-                                description.getTimeElapsed()))
+                        .map(d -> d.mitPraefix("dich nur kurz um, dann ")
+                                .timed(description.getTimeElapsed()))
                         .collect(Collectors.toSet()));
             } else {
                 alt.addAll(description.getDescription().altTextDescriptions().stream()
-                        .map(d -> new TimedDescription<>(
-                                d.mitPraefixCapitalize(
-                                        "Was willst du hier eigentlich? ")
-                                        .beginntZumindestParagraph(),
-                                description.getTimeElapsed()))
+                        .map(d -> d.mitPraefixCapitalize(
+                                "Was willst du hier eigentlich? ")
+                                .beginntZumindestParagraph()
+                                .timed(description.getTimeElapsed()))
                         .collect(Collectors.toSet()));
                 alt.addAll(drueckeAusTimed(DISKONTINUITAET, description));
             }

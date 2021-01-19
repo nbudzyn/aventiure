@@ -41,7 +41,7 @@ public class SpatialConnectionData {
             final AvTimeSpan standardDuration,
             final AbstractDescription<?> newLocationDescription) {
         return conData(wo, actionDescription, standardDuration,
-                new TimedDescription<>(newLocationDescription, standardDuration));
+                newLocationDescription.timed(standardDuration));
     }
 
     public static SpatialConnectionData conData(
@@ -62,9 +62,8 @@ public class SpatialConnectionData {
             final SCMoveDescriptionProvider scMoveDescriptionProvider) {
         return conData(wo, actionName, standardDuration,
                 (Known k, Lichtverhaeltnisse l) ->
-                        new TimedDescription<AbstractDescription<?>>(
-                                scMoveDescriptionProvider.getSCMoveDescription(k, l),
-                                standardDuration));
+                        scMoveDescriptionProvider.getSCMoveDescription(k, l)
+                                .timed(standardDuration));
     }
 
     public static SpatialConnectionData conData(
@@ -82,9 +81,8 @@ public class SpatialConnectionData {
             final SCMoveDescriptionProvider scMoveDescriptionProvider) {
         return conData(wo, actionNameProvider, standardDuration,
                 (Known k, Lichtverhaeltnisse l) ->
-                        new TimedDescription<AbstractDescription<?>>(
-                                scMoveDescriptionProvider.getSCMoveDescription(k, l),
-                                standardDuration));
+                        scMoveDescriptionProvider.getSCMoveDescription(k, l)
+                                .timed(standardDuration));
     }
 
     public static SpatialConnectionData conData(

@@ -50,7 +50,7 @@ public class TimedDescription<D extends AbstractDescription<?>> {
 
     @CheckReturnValue
     @NonNull
-    public static <D extends AbstractDescription<?>>
+    private static <D extends AbstractDescription<?>>
     ImmutableList<TimedDescription<D>> toTimed(
             final Collection<D> descriptions, final AvTimeSpan timeElapsed) {
         return toTimed(descriptions, timeElapsed, null);

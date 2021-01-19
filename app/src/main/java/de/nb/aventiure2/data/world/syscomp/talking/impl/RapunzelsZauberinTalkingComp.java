@@ -12,7 +12,7 @@ import de.nb.aventiure2.data.world.syscomp.state.impl.RapunzelsZauberinStateComp
 import de.nb.aventiure2.data.world.syscomp.talking.AbstractTalkingComp;
 import de.nb.aventiure2.german.base.PraepositionMitKasus;
 import de.nb.aventiure2.german.base.SubstantivischePhrase;
-import de.nb.aventiure2.german.description.AbstractDescription;
+import de.nb.aventiure2.german.description.AltDescriptionsBuilder;
 import de.nb.aventiure2.german.description.DescriptionBuilder;
 import de.nb.aventiure2.german.satz.Satz;
 
@@ -28,14 +28,14 @@ import static de.nb.aventiure2.german.base.Nominalphrase.np;
 import static de.nb.aventiure2.german.base.NumerusGenus.F;
 import static de.nb.aventiure2.german.base.NumerusGenus.N;
 import static de.nb.aventiure2.german.base.StructuralElement.PARAGRAPH;
-import static de.nb.aventiure2.german.base.Wortfolge.joinToAltWortfolgen;
 import static de.nb.aventiure2.german.base.Wortfolge.joinToWortfolge;
+import static de.nb.aventiure2.german.description.AltDescriptionsBuilder.alt;
+import static de.nb.aventiure2.german.description.AltDescriptionsBuilder.altNeueSaetze;
 import static de.nb.aventiure2.german.description.DescriptionBuilder.du;
 import static de.nb.aventiure2.german.description.DescriptionBuilder.neuerSatz;
 import static de.nb.aventiure2.german.praedikat.VerbSubjAkkPraep.FRAGEN_NACH;
 import static de.nb.aventiure2.german.praedikat.VerbSubjObj.ANSPRECHEN;
 import static de.nb.aventiure2.german.praedikat.VerbSubjObj.BEGRUESSEN;
-import static java.util.stream.Collectors.toSet;
 
 /**
  * Component for {@link World#RAPUNZELS_ZAUBERIN}: Der Spieler
@@ -113,7 +113,7 @@ public class RapunzelsZauberinTalkingComp extends AbstractTalkingComp {
 
     private void scSprichtAnBereitsBegruesst() {
         final SubstantivischePhrase anaph = anaph(false);
-        final ImmutableList.Builder<AbstractDescription<?>> alt = ImmutableList.builder();
+        final AltDescriptionsBuilder alt = alt();
 
         alt.add(neuerSatz(PARAGRAPH,
                 joinToWortfolge(
@@ -140,26 +140,22 @@ public class RapunzelsZauberinTalkingComp extends AbstractTalkingComp {
 
     private void scBegruesst() {
         final SubstantivischePhrase anaph = anaph(false);
-        final ImmutableList.Builder<AbstractDescription<?>> alt = ImmutableList.builder();
+        final AltDescriptionsBuilder alt = alt();
 
-        alt.addAll(joinToAltWortfolgen(
+        alt.addAll(altNeueSaetze(PARAGRAPH,
                 "„",
                 altBegruessungenCap(),
                 // "Einen schönen guten Tag"
                 "“, sprichst du",
                 anaph.akkK(),
-                "an").stream()
-                .map(wf -> neuerSatz(PARAGRAPH, wf))
-                .collect(toSet()));
-        alt.addAll(joinToAltWortfolgen(
+                "an"));
+        alt.addAll(altNeueSaetze(PARAGRAPH,
                 "„",
                 altBegruessungenCap(),
                 // "Einen schönen guten Tag"
                 "“, redest du",
                 anaph.akkK(),
-                "an").stream()
-                .map(wf -> neuerSatz(PARAGRAPH, wf))
-                .collect(toSet()));
+                "an"));
         alt.add(neuerSatz(PARAGRAPH,
                 joinToWortfolge(
                         "„Holla, gute Frau“, sprichst du",
@@ -191,26 +187,23 @@ public class RapunzelsZauberinTalkingComp extends AbstractTalkingComp {
     private void gespraechBeenden() {
         final SubstantivischePhrase anaph = anaph(false);
 
-        final ImmutableList.Builder<AbstractDescription<?>> alt = ImmutableList.builder();
+        final AltDescriptionsBuilder alt = alt();
 
-        alt.addAll(
-                // FIXME joinToAltWortfolgen ersetzen durch etwas wie altNeueSaetze(...)?
-                joinToAltWortfolgen(
-                        "„",
-                        altVerabschiedungenCap(),
-                        // "Tschüss"
-                        "!“ Du wendest dich ab").stream()
-                        .map(wortfolge -> neuerSatz(wortfolge).undWartest().dann())
-                        .collect(toSet()));
+        // FIXME joinToAltWortfolgen überall in dieser Art
+        //  ersetzen!
+        alt.addAll(altNeueSaetze(
+                "„",
+                altVerabschiedungenCap(),
+                // "Tschüss"
+                "!“ Du wendest dich ab").undWartest().dann());
 
-        alt.addAll(joinToAltWortfolgen(
+        alt.addAll(altNeueSaetze(
                 "„",
                 altVerabschiedungenCap(),
                 // "Tschüss"
                 "“, verabschiedest du dich",
-                PraepositionMitKasus.VON.mit(anaph).getDescription()).stream()
-                .map(wortfolge -> neuerSatz(wortfolge).undWartest().dann())
-                .collect(toSet()));
+                PraepositionMitKasus.VON.mit(anaph).getDescription())
+                .undWartest().dann());
 
         alt.add(du("verabschiedest",
                 joinToWortfolge("dich wieder",

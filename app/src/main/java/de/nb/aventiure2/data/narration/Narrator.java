@@ -33,6 +33,7 @@ import de.nb.aventiure2.german.base.Personalpronomen;
 import de.nb.aventiure2.german.base.PhorikKandidat;
 import de.nb.aventiure2.german.base.StructuralElement;
 import de.nb.aventiure2.german.description.AbstractDescription;
+import de.nb.aventiure2.german.description.AltDescriptionsBuilder;
 import de.nb.aventiure2.german.description.TextDescription;
 import de.nb.aventiure2.german.description.TimedDescription;
 import de.nb.aventiure2.german.stemming.StemmedWords;
@@ -119,9 +120,8 @@ public class Narrator {
         narrateAlt(desc);
     }
 
-    public <D extends AbstractDescription<?>>
-    void narrateAlt(final ImmutableCollection.Builder<D> alternatives,
-                    final AvTimeSpan timeElapsed) {
+    public void narrateAlt(final AltDescriptionsBuilder alternatives,
+                           final AvTimeSpan timeElapsed) {
         narrateAlt(alternatives.build(), timeElapsed);
     }
 

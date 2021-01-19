@@ -103,7 +103,7 @@ public class DescriptionBuilder {
     public static TimedDescription<TextDescription> neuerSatz(final StructuralElement startsNew,
                                                               final Wortfolge wortfolge,
                                                               final AvTimeSpan timeElapsed) {
-        return new TimedDescription<>(neuerSatz(startsNew, wortfolge), timeElapsed);
+        return neuerSatz(startsNew, wortfolge).timed(timeElapsed);
     }
 
 

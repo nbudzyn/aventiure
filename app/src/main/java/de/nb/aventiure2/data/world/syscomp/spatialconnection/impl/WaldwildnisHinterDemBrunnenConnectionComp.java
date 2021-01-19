@@ -21,7 +21,6 @@ import de.nb.aventiure2.data.world.syscomp.location.ILocatableGO;
 import de.nb.aventiure2.data.world.syscomp.spatialconnection.AbstractSpatialConnectionComp;
 import de.nb.aventiure2.data.world.syscomp.state.IHasStateGO;
 import de.nb.aventiure2.data.world.syscomp.state.impl.FroschprinzState;
-import de.nb.aventiure2.german.description.AbstractDescription;
 import de.nb.aventiure2.german.description.TimedDescription;
 
 import static de.nb.aventiure2.data.time.AvTimeSpan.mins;
@@ -69,12 +68,12 @@ public class WaldwildnisHinterDemBrunnenConnectionComp extends AbstractSpatialCo
             return getDescTo_ImWaldBeimBrunnenWirdTraurig();
         }
 
-        return new TimedDescription<AbstractDescription<?>>(
-                (AbstractDescription<?>) du("suchst", "dir einen Weg "
-                                + "durch den wilden Wald zurück zum Brunnen",
-                        "durch den wilden Wald")
-                        .undWartest()
-                        .dann(), mins(3));
+        return du("suchst", "dir einen Weg "
+                        + "durch den wilden Wald zurück zum Brunnen",
+                "durch den wilden Wald")
+                .undWartest()
+                .dann()
+                .timed(mins(3));
     }
 
     @NonNull

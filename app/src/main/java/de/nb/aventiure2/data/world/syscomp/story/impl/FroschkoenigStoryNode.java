@@ -3,7 +3,6 @@ package de.nb.aventiure2.data.world.syscomp.story.impl;
 import androidx.annotation.Nullable;
 
 import com.google.common.collect.ImmutableCollection;
-import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
 
 import java.util.Collection;
@@ -22,14 +21,15 @@ import de.nb.aventiure2.data.world.syscomp.state.impl.SchlossfestState;
 import de.nb.aventiure2.data.world.syscomp.story.IStoryNode;
 import de.nb.aventiure2.data.world.syscomp.story.Story;
 import de.nb.aventiure2.german.description.AbstractDescription;
+import de.nb.aventiure2.german.description.AltDescriptionsBuilder;
 
-import static com.google.common.collect.ImmutableList.builder;
 import static de.nb.aventiure2.data.time.AvTimeSpan.NO_TIME;
 import static de.nb.aventiure2.data.time.Tageszeit.NACHTS;
 import static de.nb.aventiure2.data.world.gameobject.World.*;
 import static de.nb.aventiure2.data.world.syscomp.feelings.Mood.ETWAS_GEKNICKT;
 import static de.nb.aventiure2.data.world.syscomp.feelings.Mood.UNTROESTLICH;
 import static de.nb.aventiure2.german.base.StructuralElement.PARAGRAPH;
+import static de.nb.aventiure2.german.description.AltDescriptionsBuilder.alt;
 import static de.nb.aventiure2.german.description.DescriptionBuilder.du;
 import static de.nb.aventiure2.german.description.DescriptionBuilder.paragraph;
 import static java.util.Arrays.asList;
@@ -141,7 +141,7 @@ public enum FroschkoenigStoryNode implements IStoryNode {
 
     private static void narrateAndDoHintAction_KugelGenommen(
             final AvDatabase db, final TimeTaker timeTaker, final Narrator n, final World world) {
-        final ImmutableList.Builder<AbstractDescription<?>> alt = builder();
+        final AltDescriptionsBuilder alt = alt();
 
         if (world.loadSC().locationComp().hasRecursiveLocation(SCHLOSS_VORHALLE)) {
             alt.add(du(PARAGRAPH,
@@ -185,7 +185,7 @@ public enum FroschkoenigStoryNode implements IStoryNode {
     public static void narrateAndDoHintAction_MitKugelZumBrunnenGegangen(
             final AvDatabase db, final TimeTaker timeTaker, final Narrator n,
             final World world) {
-        final ImmutableList.Builder<AbstractDescription<?>> alt = builder();
+        final AltDescriptionsBuilder alt = alt();
 
         final ILocatableGO goldeneKugel = (ILocatableGO) world.load(GOLDENE_KUGEL);
 
@@ -205,7 +205,7 @@ public enum FroschkoenigStoryNode implements IStoryNode {
     public static void narrateAndDoHintAction_EtwasImBrunnenVerloren(
             final AvDatabase db, final TimeTaker timeTaker, final Narrator n,
             final World world) {
-        final ImmutableList.Builder<AbstractDescription<?>> alt = builder();
+        final AltDescriptionsBuilder alt = alt();
 
         final ILocatableGO goldeneKugel = (ILocatableGO) world.load(GOLDENE_KUGEL);
         if (world.hasSameOuterMostLocationAsSC(goldeneKugel)) {
@@ -231,7 +231,7 @@ public enum FroschkoenigStoryNode implements IStoryNode {
     public static void narrateAndDoHintAction_FroschHatEtwasAusBrunnenGeholt(
             final AvDatabase db, final TimeTaker timeTaker, final Narrator n,
             final World world) {
-        final ImmutableList.Builder<AbstractDescription<?>> alt = builder();
+        final AltDescriptionsBuilder alt = alt();
 
         alt.add(paragraph("Unvermittelt befällt dich ein Gedanke: Ist es wohl gut, seine "
                 + "Gefühle zu unterdrücken?"));
@@ -256,7 +256,7 @@ public enum FroschkoenigStoryNode implements IStoryNode {
     public static void narrateAndDoHintAction_ZumSchlossfestGegangen(
             final AvDatabase db, final TimeTaker timeTaker, final Narrator n,
             final World world) {
-        final ImmutableList.Builder<AbstractDescription<?>> alt = builder();
+        final AltDescriptionsBuilder alt = alt();
 
         if (timeTaker.now().getTageszeit().equals(NACHTS)) {
             alt.addAll(altNachtsSchlafen(world));
@@ -282,7 +282,7 @@ public enum FroschkoenigStoryNode implements IStoryNode {
     public static void narrateAndDoHintAction_BeimSchlossfestAnDenTischGesetzt(
             final AvDatabase db, final TimeTaker timeTaker, final Narrator n,
             final World world) {
-        final ImmutableList.Builder<AbstractDescription<?>> alt = builder();
+        final AltDescriptionsBuilder alt = alt();
 
         alt.add(paragraph("Der leckere Duft aus dem Schloss geht dir nicht aus Nase und Sinn"));
 
@@ -295,7 +295,7 @@ public enum FroschkoenigStoryNode implements IStoryNode {
     public static void narrateAndDoHintAction_PrinzIstErloest(
             final AvDatabase db, final TimeTaker timeTaker, final Narrator n,
             final World world) {
-        final ImmutableList.Builder<AbstractDescription<?>> alt = builder();
+        final AltDescriptionsBuilder alt = alt();
 
         alt.add(paragraph("Kann es sein, dass du vor etwas davonläufst?"));
 
@@ -308,7 +308,7 @@ public enum FroschkoenigStoryNode implements IStoryNode {
     public static void narrateAndDoHintAction_PrinzIstWeggefahren(
             final AvDatabase db, final TimeTaker timeTaker, final Narrator n,
             final World world) {
-        final ImmutableList.Builder<AbstractDescription<?>> alt = builder();
+        final AltDescriptionsBuilder alt = alt();
 
         alt.add(du(PARAGRAPH,
                 "willst",
@@ -321,7 +321,7 @@ public enum FroschkoenigStoryNode implements IStoryNode {
     @CheckReturnValue
     private static ImmutableCollection<AbstractDescription<?>> altNachtsSchlafen(
             final World world) {
-        final ImmutableList.Builder<AbstractDescription<?>> alt = builder();
+        final AltDescriptionsBuilder alt = alt();
 
         if (world.loadSC().locationComp().hasRecursiveLocation(HUETTE_IM_WALD)) {
             if (world.loadSC().feelingsComp().getMuedigkeit() >= FeelingIntensity.MERKLICH) {
@@ -354,7 +354,7 @@ public enum FroschkoenigStoryNode implements IStoryNode {
 
     @CheckReturnValue
     private static ImmutableCollection<AbstractDescription<?>> altKugelVermissen() {
-        final ImmutableList.Builder<AbstractDescription<?>> alt = builder();
+        final AltDescriptionsBuilder alt = alt();
 
         alt.add(paragraph("Wo ist eigentlich die schöne goldene Kugel, die du "
                 + "aus dem Schloss… die dir so gut Gesellschaft geleistet hatte?"));
@@ -367,7 +367,7 @@ public enum FroschkoenigStoryNode implements IStoryNode {
 
     @CheckReturnValue
     private static ImmutableCollection<AbstractDescription<?>> altHeissHeutKuehlerOrtWaereSchoen() {
-        final ImmutableList.Builder<AbstractDescription<?>> alt = builder();
+        final AltDescriptionsBuilder alt = alt();
 
         alt.add(paragraph("Heut ist ein heißer Tag!"));
         alt.add(paragraph("Es ist ziemlich heiß heute – ein kühler Ort wäre schön"));

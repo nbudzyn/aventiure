@@ -1,7 +1,6 @@
 package de.nb.aventiure2.german.description;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;
@@ -35,7 +34,7 @@ public class TextDescription extends AbstractDescription<TextDescription> {
      * Anführungszeichen aus. Wenn der Satz beendet wird, muss vielleicht außerdem
      * noch ein Punkt nach dem Anführungszeitchen gesetzt werden.
      */
-    private boolean woertlicheRedeNochOffen;
+    private final boolean woertlicheRedeNochOffen;
 
     /**
      * Ob ein Komma aussteht. Wenn ein Komma aussteht, muss als nächstes ein Komma folgen -
@@ -164,15 +163,6 @@ public class TextDescription extends AbstractDescription<TextDescription> {
         return text;
     }
 
-    public TextDescription woertlicheRedeNochOffen() {
-        return woertlicheRedeNochOffen(true);
-    }
-
-    private TextDescription woertlicheRedeNochOffen(final boolean woertlicheRedeNochOffen) {
-        this.woertlicheRedeNochOffen = woertlicheRedeNochOffen;
-        return this;
-    }
-
     public boolean isWoertlicheRedeNochOffen() {
         return woertlicheRedeNochOffen;
     }
@@ -193,7 +183,7 @@ public class TextDescription extends AbstractDescription<TextDescription> {
     }
 
     @Override
-    public boolean equals(@Nullable final Object o) {
+    public boolean equals(final Object o) {
         if (this == o) {
             return true;
         }
@@ -204,7 +194,9 @@ public class TextDescription extends AbstractDescription<TextDescription> {
             return false;
         }
         final TextDescription that = (TextDescription) o;
-        return text.equals(that.text);
+        return woertlicheRedeNochOffen == that.woertlicheRedeNochOffen &&
+                kommaStehtAus == that.kommaStehtAus &&
+                text.equals(that.text);
     }
 
     @Override

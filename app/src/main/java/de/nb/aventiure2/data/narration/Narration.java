@@ -5,8 +5,6 @@ import androidx.annotation.Nullable;
 import androidx.room.Entity;
 import androidx.room.PrimaryKey;
 
-import com.google.common.base.Preconditions;
-
 import de.nb.aventiure2.data.world.base.GameObjectId;
 import de.nb.aventiure2.data.world.base.IGameObject;
 import de.nb.aventiure2.german.base.GermanUtil;
@@ -17,6 +15,7 @@ import de.nb.aventiure2.german.base.StructuralElement;
 import de.nb.aventiure2.german.description.TextDescription;
 import de.nb.aventiure2.german.string.GermanStringUtil;
 
+import static com.google.common.base.Preconditions.checkArgument;
 import static de.nb.aventiure2.german.base.StructuralElement.SENTENCE;
 
 /**
@@ -125,7 +124,7 @@ public class Narration {
               final boolean dann,
               @Nullable final GameObjectId phorikKandidatBezugsobjekt,
               @Nullable final NumerusGenus phorikKandidatNumerusGenus) {
-        Preconditions.checkArgument(!allowsAdditionalDuSatzreihengliedOhneSubjekt
+        checkArgument(!allowsAdditionalDuSatzreihengliedOhneSubjekt
                         || endsThis == StructuralElement.WORD,
                 "!allowsAdditionalDuSatzreihengliedOhneSubjekt "
                         + "|| endsThis == StructuralElement.WORD verletzt");
@@ -414,7 +413,8 @@ public class Narration {
     }
 
     @NonNull
-    private static String schliesseWoertlicheRedeSatzende(final String base, final String addition) {
+    private static String schliesseWoertlicheRedeSatzende(final String base,
+                                                          final String addition) {
         final String baseTrimmed = base.trim();
         final String additionTrimmed = addition.trim();
 
@@ -446,7 +446,8 @@ public class Narration {
     }
 
     @NonNull
-    private static String schliesseWoertlicheRedeNichtSatzende(final String base, final String addition) {
+    private static String schliesseWoertlicheRedeNichtSatzende(final String base,
+                                                               final String addition) {
         final String baseTrimmed = base.trim();
         final String additionTrimmed = addition.trim();
 

@@ -2,9 +2,6 @@ package de.nb.aventiure2.data.world.syscomp.movement;
 
 import androidx.annotation.NonNull;
 
-import com.google.common.collect.ImmutableCollection;
-import com.google.common.collect.ImmutableList;
-
 import javax.annotation.Nullable;
 
 import de.nb.aventiure2.data.narration.Narrator;
@@ -19,7 +16,7 @@ import de.nb.aventiure2.data.world.syscomp.storingplace.ILocationGO;
 import de.nb.aventiure2.german.base.Nominalphrase;
 import de.nb.aventiure2.german.base.Personalpronomen;
 import de.nb.aventiure2.german.base.SubstantivischePhrase;
-import de.nb.aventiure2.german.description.AbstractDescription;
+import de.nb.aventiure2.german.description.AltDescriptionsBuilder;
 
 import static de.nb.aventiure2.data.time.AvTimeSpan.NO_TIME;
 import static de.nb.aventiure2.data.world.syscomp.memory.Action.Type.BEWEGEN;
@@ -27,6 +24,7 @@ import static de.nb.aventiure2.data.world.syscomp.spatialconnection.NumberOfWays
 import static de.nb.aventiure2.data.world.syscomp.spatialconnection.NumberOfWays.ONE_IN_ONE_OUT;
 import static de.nb.aventiure2.german.base.StructuralElement.PARAGRAPH;
 import static de.nb.aventiure2.german.base.StructuralElement.SENTENCE;
+import static de.nb.aventiure2.german.description.AltDescriptionsBuilder.alt;
 import static de.nb.aventiure2.german.description.DescriptionBuilder.du;
 import static de.nb.aventiure2.german.description.DescriptionBuilder.neuerSatz;
 
@@ -158,7 +156,7 @@ public class SimpleMovementNarrator implements IMovementNarrator {
         final SubstantivischePhrase anaphOderDesc =
                 anaph(false);
 
-        final ImmutableCollection.Builder<AbstractDescription<?>> alt = ImmutableList.builder();
+        final AltDescriptionsBuilder alt = alt();
 
         alt.add(neuerSatz(anaphOderDesc.nomStr() +
                 " kommt dir entgegen und geht an dir vorbei")
@@ -233,7 +231,7 @@ public class SimpleMovementNarrator implements IMovementNarrator {
         final SubstantivischePhrase anaphOderDesc =
                 anaph(false);
 
-        final ImmutableCollection.Builder<AbstractDescription<?>> alt = ImmutableList.builder();
+        final AltDescriptionsBuilder alt = alt();
 
         alt.add(neuerSatz(PARAGRAPH,
                 anaphOderDesc.nomStr() +
@@ -379,7 +377,7 @@ public class SimpleMovementNarrator implements IMovementNarrator {
 
         final String wo = calcWoIfNecessary(spatialConnection, numberOfWaysIn);
 
-        final ImmutableCollection.Builder<AbstractDescription<?>> alt = ImmutableList.builder();
+        final AltDescriptionsBuilder alt = alt();
 
         alt.add(neuerSatz(PARAGRAPH,
                 anaphOderDesc.nomStr() +
@@ -451,7 +449,7 @@ public class SimpleMovementNarrator implements IMovementNarrator {
             @Nullable final SpatialConnection spatialConnectionMovingGO) {
         final Nominalphrase desc = getDescription();
 
-        final ImmutableCollection.Builder<AbstractDescription<?>> alt = ImmutableList.builder();
+        final AltDescriptionsBuilder alt = alt();
 
 
         alt.add(neuerSatz(desc.nomStr() + " kommt dir entgegen")
@@ -471,7 +469,7 @@ public class SimpleMovementNarrator implements IMovementNarrator {
         final SubstantivischePhrase anaphOderDesc =
                 anaph(false);
 
-        final ImmutableCollection.Builder<AbstractDescription<?>> alt = ImmutableList.builder();
+        final AltDescriptionsBuilder alt = alt();
 
         alt.add(neuerSatz(anaphOderDesc.nomStr()
                 + " kommt daher")

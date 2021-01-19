@@ -1,8 +1,5 @@
 package de.nb.aventiure2.data.world.syscomp.reaction.impl;
 
-import com.google.common.collect.ImmutableCollection;
-import com.google.common.collect.ImmutableList;
-
 import javax.annotation.Nullable;
 
 import de.nb.aventiure2.data.narration.Narrator;
@@ -13,12 +10,13 @@ import de.nb.aventiure2.data.world.syscomp.spatialconnection.ISpatiallyConnected
 import de.nb.aventiure2.data.world.syscomp.storingplace.ILocationGO;
 import de.nb.aventiure2.german.base.Nominalphrase;
 import de.nb.aventiure2.german.base.SubstantivischePhrase;
-import de.nb.aventiure2.german.description.AbstractDescription;
+import de.nb.aventiure2.german.description.AltDescriptionsBuilder;
 
 import static de.nb.aventiure2.data.time.AvTimeSpan.NO_TIME;
 import static de.nb.aventiure2.data.world.gameobject.World.*;
 import static de.nb.aventiure2.german.base.StructuralElement.PARAGRAPH;
 import static de.nb.aventiure2.german.base.StructuralElement.SENTENCE;
+import static de.nb.aventiure2.german.description.AltDescriptionsBuilder.alt;
 import static de.nb.aventiure2.german.description.DescriptionBuilder.neuerSatz;
 
 /**
@@ -43,7 +41,7 @@ public class RapunzelsZauberinMovementNarrator extends SimpleMovementNarrator {
         final SubstantivischePhrase anaphOderDesc =
                 anaph(false);
 
-        final ImmutableCollection.Builder<AbstractDescription<?>> alt = ImmutableList.builder();
+        final AltDescriptionsBuilder alt = alt();
 
         alt.add(neuerSatz(anaphOderDesc.nomStr()
                 + " kommt daher")

@@ -9,6 +9,7 @@ import java.util.Objects;
 
 import javax.annotation.CheckReturnValue;
 
+import de.nb.aventiure2.data.time.AvTimeSpan;
 import de.nb.aventiure2.german.base.IBezugsobjekt;
 import de.nb.aventiure2.german.base.NumerusGenus;
 import de.nb.aventiure2.german.base.PhorikKandidat;
@@ -91,6 +92,19 @@ public abstract class AbstractDescription<SELF extends AbstractDescription<SELF>
                 wortfolge.woertlicheRedeNochOffen(), wortfolge.kommaStehtAus());
     }
 
+    @SuppressWarnings("unchecked")
+    public TimedDescription<SELF> timed(final AvTimeSpan timeElapsed) {
+        return timed(timeElapsed, null);
+    }
+
+    @SuppressWarnings("unchecked")
+    TimedDescription<SELF> timed(final AvTimeSpan timeElapsed,
+                                 @Nullable final String counterIdIncrementedIfTextIsNarrated) {
+        return new TimedDescription<>((SELF) this, timeElapsed,
+                counterIdIncrementedIfTextIsNarrated);
+    }
+
+    @SuppressWarnings("unchecked")
     public SELF komma() {
         komma(true);
         return (SELF) this;
@@ -106,6 +120,7 @@ public abstract class AbstractDescription<SELF extends AbstractDescription<SELF>
         return undWartest(true);
     }
 
+    @SuppressWarnings("unchecked")
     public SELF undWartest(
             final boolean allowsAdditionalPlayerSatzreihengliedOhneSubjekt) {
         params.undWartest(
@@ -121,6 +136,7 @@ public abstract class AbstractDescription<SELF extends AbstractDescription<SELF>
         return dann(true);
     }
 
+    @SuppressWarnings("unchecked")
     public SELF dann(final boolean dann) {
         params.dann(dann);
         return (SELF) this;
@@ -130,6 +146,7 @@ public abstract class AbstractDescription<SELF extends AbstractDescription<SELF>
         return params.isDann();
     }
 
+    @SuppressWarnings("unchecked")
     public SELF beendet(final StructuralElement structuralElement) {
         params.beendet(structuralElement);
         return (SELF) this;
@@ -163,6 +180,7 @@ public abstract class AbstractDescription<SELF extends AbstractDescription<SELF>
         return phorikKandidat(new PhorikKandidat(numerusGenus, bezugsobjekt));
     }
 
+    @SuppressWarnings("unchecked")
     public SELF phorikKandidat(@Nullable final PhorikKandidat phorikKandidat) {
         params.phorikKandidat(phorikKandidat);
         return (SELF) this;

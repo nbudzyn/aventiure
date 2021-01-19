@@ -97,10 +97,12 @@ public class Wortfolge {
     }
 
     /**
-     * Fügt diese Teile zu mehreren alternativen Wortfolgen zusammen.
+     * Fügt diese Teile zu mehreren alternativen Wortfolgen zusammen. Gibt es für mehrere Teile mehrere Alternativen, so werden
+     * * alle Kombinationen erzeugt.
      *
-     * @return Mehrere alternative Wortfolgen - die Collection kann statt einer
-     * Wortfolgen auch <code>null</code> enthalten.
+     * @return Mehrere alternative Wortfolgen. Wenn eine der Kombinationen ausschließlich
+     * {@code null}-Werte enthält, wird die Collection auch den Wert
+     * {@code null} enthalten.
      */
     @Nonnull
     public static Collection<Wortfolge> joinToAltWortfolgen(final Object... parts) {
@@ -108,10 +110,12 @@ public class Wortfolge {
     }
 
     /**
-     * Fügt diese Teile zu mehreren alternativen Wortfolgen zusammen.
+     * Fügt diese Teile zu mehreren alternativen Wortfolgen zusammen. Gibt es für mehrere Teile mehrere Alternativen, so werden
+     * * alle Kombinationen erzeugt.
      *
-     * @return Mehrere alternative Wortfolgen - die Collection kann statt einer
-     * Wortfolgen auch <code>null</code> enthalten.
+     * @return Mehrere alternative Wortfolgen. Wenn eine der Kombinationen ausschließlich
+     * {@code null}-Werte enthält, wird die Collection auch den Wert
+     * {@code null} enthalten.
      */
     @Nonnull
     private static Collection<Wortfolge> joinToAltWortfolgen(final Iterable<?> parts) {
@@ -131,7 +135,7 @@ public class Wortfolge {
      * wird <i>keines</i> erzeugt.
      */
     @Nullable
-    public static Wortfolge joinToNullWortfolge(final Object... parts) {
+    private static Wortfolge joinToNullWortfolge(final Object... parts) {
         return joinToNullWortfolge(asList(parts));
     }
 

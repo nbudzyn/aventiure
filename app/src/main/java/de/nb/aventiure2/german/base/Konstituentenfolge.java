@@ -70,7 +70,10 @@ public class Konstituentenfolge implements Iterable<Konstituente> {
      * @return Eine Konstituentenfolge, nie <code>null</code>>
      */
     @Nonnull
-    public static Konstituentenfolge joinToKonstituentenfolge(final Object... parts) {
+    public static Konstituentenfolge joinToKonstituentenfolge(
+            final
+            // FIXME CharSequence ?! Das wäre quasi type-safe!!
+                    Object... parts) {
         return Wortfolge.checkJoiningResultNotNull(joinToNullKonstituentenfolge(parts), parts);
     }
 

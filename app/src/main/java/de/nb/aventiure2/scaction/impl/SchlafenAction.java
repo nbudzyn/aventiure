@@ -3,7 +3,6 @@ package de.nb.aventiure2.scaction.impl;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
-import com.google.common.collect.ImmutableCollection;
 import com.google.common.collect.ImmutableList;
 
 import java.util.Collection;
@@ -16,7 +15,7 @@ import de.nb.aventiure2.data.world.base.IGameObject;
 import de.nb.aventiure2.data.world.gameobject.*;
 import de.nb.aventiure2.data.world.syscomp.feelings.FeelingIntensity;
 import de.nb.aventiure2.data.world.syscomp.memory.Action;
-import de.nb.aventiure2.german.description.AbstractDescription;
+import de.nb.aventiure2.german.description.AltDescriptionsBuilder;
 import de.nb.aventiure2.german.description.TimedDescription;
 import de.nb.aventiure2.scaction.AbstractScAction;
 import de.nb.aventiure2.scaction.stepcount.SCActionStepCountDao;
@@ -30,6 +29,7 @@ import static de.nb.aventiure2.data.world.syscomp.feelings.Mood.BEWEGT;
 import static de.nb.aventiure2.data.world.syscomp.feelings.Mood.NEUTRAL;
 import static de.nb.aventiure2.german.base.StructuralElement.CHAPTER;
 import static de.nb.aventiure2.german.base.StructuralElement.SENTENCE;
+import static de.nb.aventiure2.german.description.AltDescriptionsBuilder.alt;
 import static de.nb.aventiure2.german.description.DescriptionBuilder.du;
 import static de.nb.aventiure2.german.description.DescriptionBuilder.neuerSatz;
 
@@ -180,7 +180,7 @@ public class SchlafenAction extends AbstractScAction {
     }
 
     private void narrateAndDoEinschlafen(final AvTimeSpan schlafdauer) {
-        final ImmutableList.Builder<AbstractDescription<?>> alt = ImmutableList.builder();
+        final AltDescriptionsBuilder alt = alt();
 
         alt.add(
                 du(SENTENCE,
@@ -211,7 +211,7 @@ public class SchlafenAction extends AbstractScAction {
         sc.feelingsComp().requestMoodMin(NEUTRAL);
         sc.feelingsComp().requestMoodMax(BEWEGT);
 
-        final ImmutableCollection.Builder<AbstractDescription<?>> alt = ImmutableList.builder();
+        final AltDescriptionsBuilder alt = alt();
 
         if (schlafdauer.longerThanOrEqual(hours(7))) {
             alt.add(du(CHAPTER,

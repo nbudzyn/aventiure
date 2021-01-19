@@ -336,7 +336,7 @@ public class AblegenAction
                 }
 
                 n.narrate(du("legst",
-                        Wortfolge.joinToNullWortfolge(
+                        Wortfolge.joinToWortfolge(
                                 gameObjektPersPron.akkStr(),
                                 (wohinDetail == null ? k("hin") :
                                         wohinDetail.getDescription(P2, SG))),
@@ -358,7 +358,7 @@ public class AblegenAction
 
         n.narrate(
                 du(PARAGRAPH, "legst",
-                        Wortfolge.joinToNullWortfolge(
+                        Wortfolge.joinToWortfolge(
                                 world.getDescription(gameObject, false).akkStr(),
                                 (wohinDetail == null ? k("hin") :
                                         wohinDetail.getDescription(P2, SG))),

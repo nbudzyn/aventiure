@@ -39,7 +39,7 @@ public class StructuredDescription extends AbstractFlexibleDescription<Structure
     }
 
     private static PhorikKandidat guessPhorikKandidat(final Satz satz) {
-        return Wortfolge.joinToNullWortfolge(satz.getVerbzweitsatzStandard())
+        return Wortfolge.joinToWortfolge(satz.getVerbzweitsatzStandard())
                 .getPhorikKandidat();
     }
 
@@ -127,7 +127,7 @@ public class StructuredDescription extends AbstractFlexibleDescription<Structure
             return null;
         }
 
-        return Wortfolge.joinToNullWortfolge(speziellesVorfeld);
+        return Wortfolge.joinToWortfolge(speziellesVorfeld);
     }
 
     @Override
@@ -146,7 +146,7 @@ public class StructuredDescription extends AbstractFlexibleDescription<Structure
     @Override
     public StructuredDescription komma(final boolean kommaStehtAus) {
         // Bewirkt nichts. Der Satz weiß schon selbst, wann ein Komma nötig ist.
-        // (Aber die Methode erleichert das Handling, so dass z.B. die
+        // (Aber die Methode erleichert das Handling, sodass z.B. die
         // TimedDescription problemlos komma() implementieren kann etc.)
         return this;
     }

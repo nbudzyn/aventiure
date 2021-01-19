@@ -30,7 +30,7 @@ public class SpatialConnection {
                                         final AvTimeSpan standardDuration,
                                         final AbstractDescription<?> newLocationDescription) {
         return con(to, wo, actionName, standardDuration,
-                new TimedDescription<>(newLocationDescription, standardDuration));
+                newLocationDescription.timed(standardDuration));
     }
 
     public static SpatialConnection con(final GameObjectId to,
@@ -47,7 +47,7 @@ public class SpatialConnection {
                                         final AvTimeSpan standardDuration,
                                         final AbstractDescription<?> newLocationDescription) {
         return con(to, wo, actionNameProvider, standardDuration,
-                new TimedDescription<>(newLocationDescription, standardDuration));
+                newLocationDescription.timed(standardDuration));
     }
 
     public static SpatialConnection con(final GameObjectId to,
@@ -67,8 +67,8 @@ public class SpatialConnection {
                                         final AbstractDescription<?> newLocationDescriptionUnknown,
                                         final AbstractDescription<?> newLocationDescriptionKnown) {
         return con(to, wo, actionName, standardDuration,
-                new TimedDescription<>(newLocationDescriptionUnknown, standardDuration),
-                new TimedDescription<>(newLocationDescriptionKnown, standardDuration));
+                newLocationDescriptionUnknown.timed(standardDuration),
+                newLocationDescriptionKnown.timed(standardDuration));
     }
 
     public static SpatialConnection con(final GameObjectId to,
@@ -78,7 +78,7 @@ public class SpatialConnection {
                                         final AbstractDescription<?> newLocationDescriptionUnknown,
                                         final TimedDescription<?> newLocationDescriptionKnown) {
         return con(to, wo, actionName, standardDuration,
-                new TimedDescription<>(newLocationDescriptionUnknown, standardDuration),
+                newLocationDescriptionUnknown.timed(standardDuration),
                 newLocationDescriptionKnown);
     }
 
@@ -90,7 +90,7 @@ public class SpatialConnection {
                                         final AbstractDescription<?> newLocationDescriptionKnown) {
         return con(to, wo, actionName, standardDuration,
                 newLocationDescriptionUnknown,
-                new TimedDescription<>(newLocationDescriptionKnown, standardDuration));
+                newLocationDescriptionKnown.timed(standardDuration));
     }
 
     public static SpatialConnection con(final GameObjectId to,
@@ -110,8 +110,8 @@ public class SpatialConnection {
                                         final AbstractDescription<?> newLocationDescriptionUnknown,
                                         final AbstractDescription<?> newLocationDescriptionKnown) {
         return con(to, wo, actionNameSupplier, standardDuration,
-                new TimedDescription<>(newLocationDescriptionUnknown, standardDuration),
-                new TimedDescription<>(newLocationDescriptionKnown, standardDuration));
+                newLocationDescriptionUnknown.timed(standardDuration),
+                newLocationDescriptionKnown.timed(standardDuration));
     }
 
     public static SpatialConnection con(final GameObjectId to,
@@ -122,7 +122,7 @@ public class SpatialConnection {
                                         final AbstractDescription<?> newLocationDescriptionKnown) {
         return con(to, wo, actionNameSupplier, standardDuration,
                 newLocationDescriptionUnknown,
-                new TimedDescription<>(newLocationDescriptionKnown, standardDuration));
+                newLocationDescriptionKnown.timed(standardDuration));
     }
 
     public static SpatialConnection con(final GameObjectId to,
@@ -132,7 +132,7 @@ public class SpatialConnection {
                                         final AbstractDescription<?> newLocationDescriptionUnknown,
                                         final TimedDescription<?> newLocationDescriptionKnown) {
         return con(to, wo, actionNameSupplier, standardDuration,
-                new TimedDescription<>(newLocationDescriptionUnknown, standardDuration),
+                newLocationDescriptionUnknown.timed(standardDuration),
                 newLocationDescriptionKnown);
     }
 
@@ -159,10 +159,11 @@ public class SpatialConnection {
                                         final TimedDescription<?> newLocationDescriptionKnownFromDarknessHell,
                                         final AbstractDescription<?> newLocationDescriptionOther) {
         return con(to, wo, actionName, standardDuration,
-                new TimedDescription<>(newLocationDescriptionUnknownHell, standardDuration),
-                new TimedDescription<>(newLocationDescriptionUnknownDunkel, standardDuration),
+                newLocationDescriptionUnknownHell.timed(standardDuration),
+                newLocationDescriptionUnknownDunkel.timed(
+                        standardDuration),
                 newLocationDescriptionKnownFromDarknessHell,
-                new TimedDescription<>(newLocationDescriptionOther, standardDuration));
+                newLocationDescriptionOther.timed(standardDuration));
     }
 
     public static SpatialConnection con(final GameObjectId to,
@@ -175,9 +176,10 @@ public class SpatialConnection {
                                         final AbstractDescription<?> newLocationDescriptionOther) {
         return con(to, wo, actionName, standardDuration,
                 newLocationDescriptionUnknownHell,
-                new TimedDescription<>(newLocationDescriptionUnknownDunkel, standardDuration),
+                newLocationDescriptionUnknownDunkel.timed(
+                        standardDuration),
                 newLocationDescriptionKnownFromDarknessHell,
-                new TimedDescription<>(newLocationDescriptionOther, standardDuration));
+                newLocationDescriptionOther.timed(standardDuration));
     }
 
     public static SpatialConnection con(final GameObjectId to,
@@ -189,10 +191,10 @@ public class SpatialConnection {
                                         final TimedDescription<?> newLocationDescriptionKnownFromDarknessHell,
                                         final AbstractDescription<?> newLocationDescriptionOther) {
         return con(to, wo, actionName, standardDuration,
-                new TimedDescription<>(newLocationDescriptionUnknownHell, standardDuration),
+                newLocationDescriptionUnknownHell.timed(standardDuration),
                 newLocationDescriptionUnknownDunkel,
                 newLocationDescriptionKnownFromDarknessHell,
-                new TimedDescription<>(newLocationDescriptionOther, standardDuration));
+                newLocationDescriptionOther.timed(standardDuration));
     }
 
     public static SpatialConnection con(final GameObjectId to,
@@ -207,7 +209,7 @@ public class SpatialConnection {
                 newLocationDescriptionUnknownHell,
                 newLocationDescriptionUnknownDunkel,
                 newLocationDescriptionKnownFromDarknessHell,
-                new TimedDescription<>(newLocationDescriptionOther, standardDuration));
+                newLocationDescriptionOther.timed(standardDuration));
     }
 
     public static SpatialConnection con(final GameObjectId to,
@@ -219,11 +221,12 @@ public class SpatialConnection {
                                         final AbstractDescription<?> newLocationDescriptionKnownFromDarknessHell,
                                         final AbstractDescription<?> newLocationDescriptionOther) {
         return con(to, wo, actionName, standardDuration,
-                new TimedDescription<>(newLocationDescriptionUnknownHell, standardDuration),
-                new TimedDescription<>(newLocationDescriptionUnknownDunkel, standardDuration),
-                new TimedDescription<>(newLocationDescriptionKnownFromDarknessHell,
+                newLocationDescriptionUnknownHell.timed(standardDuration),
+                newLocationDescriptionUnknownDunkel.timed(
                         standardDuration),
-                new TimedDescription<>(newLocationDescriptionOther, standardDuration));
+                newLocationDescriptionKnownFromDarknessHell.timed(
+                        standardDuration),
+                newLocationDescriptionOther.timed(standardDuration));
     }
 
     public static SpatialConnection con(final GameObjectId to,
@@ -236,10 +239,11 @@ public class SpatialConnection {
                                         final AbstractDescription<?> newLocationDescriptionOther) {
         return con(to, wo, actionName, standardDuration,
                 newLocationDescriptionUnknownHell,
-                new TimedDescription<>(newLocationDescriptionUnknownDunkel, standardDuration),
-                new TimedDescription<>(newLocationDescriptionKnownFromDarknessHell,
+                newLocationDescriptionUnknownDunkel.timed(
                         standardDuration),
-                new TimedDescription<>(newLocationDescriptionOther, standardDuration));
+                newLocationDescriptionKnownFromDarknessHell.timed(
+                        standardDuration),
+                newLocationDescriptionOther.timed(standardDuration));
     }
 
     public static SpatialConnection con(final GameObjectId to,
@@ -251,11 +255,11 @@ public class SpatialConnection {
                                         final AbstractDescription<?> newLocationDescriptionKnownFromDarknessHell,
                                         final AbstractDescription<?> newLocationDescriptionOther) {
         return con(to, wo, actionName, standardDuration,
-                new TimedDescription<>(newLocationDescriptionUnknownHell, standardDuration),
+                newLocationDescriptionUnknownHell.timed(standardDuration),
                 newLocationDescriptionUnknownDunkel,
-                new TimedDescription<>(newLocationDescriptionKnownFromDarknessHell,
+                newLocationDescriptionKnownFromDarknessHell.timed(
                         standardDuration),
-                new TimedDescription<>(newLocationDescriptionOther, standardDuration));
+                newLocationDescriptionOther.timed(standardDuration));
     }
 
     public static SpatialConnection con(final GameObjectId to,
@@ -269,9 +273,9 @@ public class SpatialConnection {
         return con(to, wo, actionName, standardDuration,
                 newLocationDescriptionUnknownHell,
                 newLocationDescriptionUnknownDunkel,
-                new TimedDescription<>(newLocationDescriptionKnownFromDarknessHell,
+                newLocationDescriptionKnownFromDarknessHell.timed(
                         standardDuration),
-                new TimedDescription<>(newLocationDescriptionOther, standardDuration));
+                newLocationDescriptionOther.timed(standardDuration));
     }
 
     public static SpatialConnection con(final GameObjectId to,
@@ -284,8 +288,9 @@ public class SpatialConnection {
                                         final TimedDescription<?> newLocationDescriptionOther) {
         return con(to, wo, actionName, standardDuration,
                 newLocationDescriptionUnknownHell,
-                new TimedDescription<>(newLocationDescriptionUnknownDunkel, standardDuration),
-                new TimedDescription<>(newLocationDescriptionKnownFromDarknessHell,
+                newLocationDescriptionUnknownDunkel.timed(
+                        standardDuration),
+                newLocationDescriptionKnownFromDarknessHell.timed(
                         standardDuration),
                 newLocationDescriptionOther);
     }
@@ -299,9 +304,9 @@ public class SpatialConnection {
                                         final AbstractDescription<?> newLocationDescriptionKnownFromDarknessHell,
                                         final TimedDescription<?> newLocationDescriptionOther) {
         return con(to, wo, actionName, standardDuration,
-                new TimedDescription<>(newLocationDescriptionUnknownHell, standardDuration),
+                newLocationDescriptionUnknownHell.timed(standardDuration),
                 newLocationDescriptionUnknownDunkel,
-                new TimedDescription<>(newLocationDescriptionKnownFromDarknessHell,
+                newLocationDescriptionKnownFromDarknessHell.timed(
                         standardDuration),
                 newLocationDescriptionOther);
     }
@@ -317,7 +322,7 @@ public class SpatialConnection {
         return con(to, wo, actionName, standardDuration,
                 newLocationDescriptionUnknownHell,
                 newLocationDescriptionUnknownDunkel,
-                new TimedDescription<>(newLocationDescriptionKnownFromDarknessHell,
+                newLocationDescriptionKnownFromDarknessHell.timed(
                         standardDuration),
                 newLocationDescriptionOther);
     }
@@ -331,8 +336,9 @@ public class SpatialConnection {
                                         final TimedDescription<?> newLocationDescriptionKnownFromDarknessHell,
                                         final TimedDescription<?> newLocationDescriptionOther) {
         return con(to, wo, actionName, standardDuration,
-                new TimedDescription<>(newLocationDescriptionUnknownHell, standardDuration),
-                new TimedDescription<>(newLocationDescriptionUnknownDunkel, standardDuration),
+                newLocationDescriptionUnknownHell.timed(standardDuration),
+                newLocationDescriptionUnknownDunkel.timed(
+                        standardDuration),
                 newLocationDescriptionKnownFromDarknessHell,
                 newLocationDescriptionOther);
     }
@@ -347,7 +353,8 @@ public class SpatialConnection {
                                         final TimedDescription<?> newLocationDescriptionOther) {
         return con(to, wo, actionName, standardDuration,
                 newLocationDescriptionUnknownHell,
-                new TimedDescription<>(newLocationDescriptionUnknownDunkel, standardDuration),
+                newLocationDescriptionUnknownDunkel.timed(
+                        standardDuration),
                 newLocationDescriptionKnownFromDarknessHell,
                 newLocationDescriptionOther);
     }
@@ -361,7 +368,7 @@ public class SpatialConnection {
                                         final TimedDescription<?> newLocationDescriptionKnownFromDarknessHell,
                                         final TimedDescription<?> newLocationDescriptionOther) {
         return con(to, wo, actionName, standardDuration,
-                new TimedDescription<>(newLocationDescriptionUnknownHell, standardDuration),
+                newLocationDescriptionUnknownHell.timed(standardDuration),
                 newLocationDescriptionUnknownDunkel,
                 newLocationDescriptionKnownFromDarknessHell,
                 newLocationDescriptionOther);
@@ -376,9 +383,10 @@ public class SpatialConnection {
                                         final AbstractDescription<?> newLocationDescriptionKnownFromDarknessHell,
                                         final TimedDescription<?> newLocationDescriptionOther) {
         return con(to, wo, actionName, standardDuration,
-                new TimedDescription<>(newLocationDescriptionUnknownHell, standardDuration),
-                new TimedDescription<>(newLocationDescriptionUnknownDunkel, standardDuration),
-                new TimedDescription<>(newLocationDescriptionKnownFromDarknessHell,
+                newLocationDescriptionUnknownHell.timed(standardDuration),
+                newLocationDescriptionUnknownDunkel.timed(
+                        standardDuration),
+                newLocationDescriptionKnownFromDarknessHell.timed(
                         standardDuration),
                 newLocationDescriptionOther);
     }
@@ -406,11 +414,12 @@ public class SpatialConnection {
                                         final AbstractDescription<?> newLocationDescriptionKnownFromDarknessHell,
                                         final AbstractDescription<?> newLocationDescriptionOther) {
         return con(to, wo, actionNameProvider, standardDuration,
-                new TimedDescription<>(newLocationDescriptionUnknownHell, standardDuration),
-                new TimedDescription<>(newLocationDescriptionUnknownDunkel, standardDuration),
-                new TimedDescription<>(newLocationDescriptionKnownFromDarknessHell,
+                newLocationDescriptionUnknownHell.timed(standardDuration),
+                newLocationDescriptionUnknownDunkel.timed(
                         standardDuration),
-                new TimedDescription<>(newLocationDescriptionOther, standardDuration));
+                newLocationDescriptionKnownFromDarknessHell.timed(
+                        standardDuration),
+                newLocationDescriptionOther.timed(standardDuration));
     }
 
     public static SpatialConnection con(final GameObjectId to,
@@ -422,9 +431,10 @@ public class SpatialConnection {
                                         final AbstractDescription<?> newLocationDescriptionKnownFromDarknessHell,
                                         final TimedDescription<?> newLocationDescriptionOther) {
         return con(to, wo, actionNameProvider, standardDuration,
-                new TimedDescription<>(newLocationDescriptionUnknownHell, standardDuration),
-                new TimedDescription<>(newLocationDescriptionUnknownDunkel, standardDuration),
-                new TimedDescription<>(newLocationDescriptionKnownFromDarknessHell,
+                newLocationDescriptionUnknownHell.timed(standardDuration),
+                newLocationDescriptionUnknownDunkel.timed(
+                        standardDuration),
+                newLocationDescriptionKnownFromDarknessHell.timed(
                         standardDuration),
                 newLocationDescriptionOther);
     }
@@ -438,10 +448,11 @@ public class SpatialConnection {
                                         final TimedDescription<?> newLocationDescriptionKnownFromDarknessHell,
                                         final AbstractDescription<?> newLocationDescriptionOther) {
         return con(to, wo, actionNameProvider, standardDuration,
-                new TimedDescription<>(newLocationDescriptionUnknownHell, standardDuration),
-                new TimedDescription<>(newLocationDescriptionUnknownDunkel, standardDuration),
+                newLocationDescriptionUnknownHell.timed(standardDuration),
+                newLocationDescriptionUnknownDunkel.timed(
+                        standardDuration),
                 newLocationDescriptionKnownFromDarknessHell,
-                new TimedDescription<>(newLocationDescriptionOther, standardDuration));
+                newLocationDescriptionOther.timed(standardDuration));
     }
 
     public static SpatialConnection con(final GameObjectId to,
@@ -453,8 +464,9 @@ public class SpatialConnection {
                                         final TimedDescription<?> newLocationDescriptionKnownFromDarknessHell,
                                         final TimedDescription<?> newLocationDescriptionOther) {
         return con(to, wo, actionNameProvider, standardDuration,
-                new TimedDescription<>(newLocationDescriptionUnknownHell, standardDuration),
-                new TimedDescription<>(newLocationDescriptionUnknownDunkel, standardDuration),
+                newLocationDescriptionUnknownHell.timed(standardDuration),
+                newLocationDescriptionUnknownDunkel.timed(
+                        standardDuration),
                 newLocationDescriptionKnownFromDarknessHell,
                 newLocationDescriptionOther);
     }
@@ -468,11 +480,11 @@ public class SpatialConnection {
                                         final AbstractDescription<?> newLocationDescriptionKnownFromDarknessHell,
                                         final AbstractDescription<?> newLocationDescriptionOther) {
         return con(to, wo, actionNameProvider, standardDuration,
-                new TimedDescription<>(newLocationDescriptionUnknownHell, standardDuration),
+                newLocationDescriptionUnknownHell.timed(standardDuration),
                 newLocationDescriptionUnknownDunkel,
-                new TimedDescription<>(newLocationDescriptionKnownFromDarknessHell,
+                newLocationDescriptionKnownFromDarknessHell.timed(
                         standardDuration),
-                new TimedDescription<>(newLocationDescriptionOther, standardDuration));
+                newLocationDescriptionOther.timed(standardDuration));
     }
 
     public static SpatialConnection con(final GameObjectId to,
@@ -484,9 +496,9 @@ public class SpatialConnection {
                                         final AbstractDescription<?> newLocationDescriptionKnownFromDarknessHell,
                                         final TimedDescription<?> newLocationDescriptionOther) {
         return con(to, wo, actionNameProvider, standardDuration,
-                new TimedDescription<>(newLocationDescriptionUnknownHell, standardDuration),
+                newLocationDescriptionUnknownHell.timed(standardDuration),
                 newLocationDescriptionUnknownDunkel,
-                new TimedDescription<>(newLocationDescriptionKnownFromDarknessHell,
+                newLocationDescriptionKnownFromDarknessHell.timed(
                         standardDuration),
                 newLocationDescriptionOther);
     }
@@ -500,10 +512,10 @@ public class SpatialConnection {
                                         final TimedDescription<?> newLocationDescriptionKnownFromDarknessHell,
                                         final AbstractDescription<?> newLocationDescriptionOther) {
         return con(to, wo, actionNameProvider, standardDuration,
-                new TimedDescription<>(newLocationDescriptionUnknownHell, standardDuration),
+                newLocationDescriptionUnknownHell.timed(standardDuration),
                 newLocationDescriptionUnknownDunkel,
                 newLocationDescriptionKnownFromDarknessHell,
-                new TimedDescription<>(newLocationDescriptionOther, standardDuration));
+                newLocationDescriptionOther.timed(standardDuration));
     }
 
     public static SpatialConnection con(final GameObjectId to,
@@ -515,7 +527,7 @@ public class SpatialConnection {
                                         final TimedDescription<?> newLocationDescriptionKnownFromDarknessHell,
                                         final TimedDescription<?> newLocationDescriptionOther) {
         return con(to, wo, actionNameProvider, standardDuration,
-                new TimedDescription<>(newLocationDescriptionUnknownHell, standardDuration),
+                newLocationDescriptionUnknownHell.timed(standardDuration),
                 newLocationDescriptionUnknownDunkel,
                 newLocationDescriptionKnownFromDarknessHell,
                 newLocationDescriptionOther);
@@ -531,10 +543,11 @@ public class SpatialConnection {
                                         final AbstractDescription<?> newLocationDescriptionOther) {
         return con(to, wo, actionNameProvider, standardDuration,
                 newLocationDescriptionUnknownHell,
-                new TimedDescription<>(newLocationDescriptionUnknownDunkel, standardDuration),
-                new TimedDescription<>(newLocationDescriptionKnownFromDarknessHell,
+                newLocationDescriptionUnknownDunkel.timed(
                         standardDuration),
-                new TimedDescription<>(newLocationDescriptionOther, standardDuration));
+                newLocationDescriptionKnownFromDarknessHell.timed(
+                        standardDuration),
+                newLocationDescriptionOther.timed(standardDuration));
     }
 
     public static SpatialConnection con(final GameObjectId to,
@@ -547,8 +560,9 @@ public class SpatialConnection {
                                         final TimedDescription<?> newLocationDescriptionOther) {
         return con(to, wo, actionNameProvider, standardDuration,
                 newLocationDescriptionUnknownHell,
-                new TimedDescription<>(newLocationDescriptionUnknownDunkel, standardDuration),
-                new TimedDescription<>(newLocationDescriptionKnownFromDarknessHell,
+                newLocationDescriptionUnknownDunkel.timed(
+                        standardDuration),
+                newLocationDescriptionKnownFromDarknessHell.timed(
                         standardDuration),
                 newLocationDescriptionOther);
     }
@@ -563,9 +577,10 @@ public class SpatialConnection {
                                         final AbstractDescription<?> newLocationDescriptionOther) {
         return con(to, wo, actionNameProvider, standardDuration,
                 newLocationDescriptionUnknownHell,
-                new TimedDescription<>(newLocationDescriptionUnknownDunkel, standardDuration),
+                newLocationDescriptionUnknownDunkel.timed(
+                        standardDuration),
                 newLocationDescriptionKnownFromDarknessHell,
-                new TimedDescription<>(newLocationDescriptionOther, standardDuration));
+                newLocationDescriptionOther.timed(standardDuration));
     }
 
     public static SpatialConnection con(final GameObjectId to,
@@ -578,7 +593,8 @@ public class SpatialConnection {
                                         final TimedDescription<?> newLocationDescriptionOther) {
         return con(to, wo, actionNameProvider, standardDuration,
                 newLocationDescriptionUnknownHell,
-                new TimedDescription<>(newLocationDescriptionUnknownDunkel, standardDuration),
+                newLocationDescriptionUnknownDunkel.timed(
+                        standardDuration),
                 newLocationDescriptionKnownFromDarknessHell,
                 newLocationDescriptionOther);
     }
@@ -594,9 +610,9 @@ public class SpatialConnection {
         return con(to, wo, actionNameProvider, standardDuration,
                 newLocationDescriptionUnknownHell,
                 newLocationDescriptionUnknownDunkel,
-                new TimedDescription<>(newLocationDescriptionKnownFromDarknessHell,
+                newLocationDescriptionKnownFromDarknessHell.timed(
                         standardDuration),
-                new TimedDescription<>(newLocationDescriptionOther, standardDuration));
+                newLocationDescriptionOther.timed(standardDuration));
     }
 
     public static SpatialConnection con(final GameObjectId to,
@@ -610,7 +626,7 @@ public class SpatialConnection {
         return con(to, wo, actionNameProvider, standardDuration,
                 newLocationDescriptionUnknownHell,
                 newLocationDescriptionUnknownDunkel,
-                new TimedDescription<>(newLocationDescriptionKnownFromDarknessHell,
+                newLocationDescriptionKnownFromDarknessHell.timed(
                         standardDuration),
                 newLocationDescriptionOther);
     }
@@ -627,7 +643,7 @@ public class SpatialConnection {
                 newLocationDescriptionUnknownHell,
                 newLocationDescriptionUnknownDunkel,
                 newLocationDescriptionKnownFromDarknessHell,
-                new TimedDescription<>(newLocationDescriptionOther, standardDuration));
+                newLocationDescriptionOther.timed(standardDuration));
     }
 
 
@@ -673,9 +689,8 @@ public class SpatialConnection {
                                         final SpatialConnectionData.SCMoveDescriptionProvider scMoveDescriptionProvider) {
         return con(to, wo, actionNameSupplier, standardDuration,
                 (Known k, Lichtverhaeltnisse l) ->
-                        new TimedDescription<>(
-                                scMoveDescriptionProvider.getSCMoveDescription(k, l),
-                                standardDuration));
+                        scMoveDescriptionProvider.getSCMoveDescription(k, l)
+                                .timed(standardDuration));
     }
 
     public static SpatialConnection con(final GameObjectId to,

@@ -179,7 +179,7 @@ public class SimpleDuDescription extends AbstractFlexibleDescription<SimpleDuDes
     }
 
     @Override
-    public boolean equals(@Nullable final Object o) {
+    public boolean equals(final Object o) {
         if (this == o) {
             return true;
         }
@@ -190,7 +190,9 @@ public class SimpleDuDescription extends AbstractFlexibleDescription<SimpleDuDes
             return false;
         }
         final SimpleDuDescription that = (SimpleDuDescription) o;
-        return verb.equals(that.verb) &&
+        return woertlicheRedeNochOffen == that.woertlicheRedeNochOffen &&
+                kommaStehtAus == that.kommaStehtAus &&
+                verb.equals(that.verb) &&
                 Objects.equals(remainder, that.remainder) &&
                 Objects.equals(vorfeldSatzglied, that.vorfeldSatzglied);
     }

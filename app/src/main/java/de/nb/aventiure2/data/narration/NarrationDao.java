@@ -80,9 +80,8 @@ public abstract class NarrationDao {
                                 first,
                                 second.getDescription(),
                                 initialNarration).stream()
-                                .map(na -> new TimedDescription<>
-                                        (na, second.getTimeElapsed(),
-                                                second.getCounterIdIncrementedIfTextIsNarrated()))
+                                .map(na -> new TimedDescription<>(na, second.getTimeElapsed(),
+                                        second.getCounterIdIncrementedIfTextIsNarrated()))
                                 .collect(toImmutableList())
                 );
             }

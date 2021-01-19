@@ -16,11 +16,11 @@ import de.nb.aventiure2.german.praedikat.AdverbialeAngabeSkopusSatz;
 import de.nb.aventiure2.german.praedikat.AdverbialeAngabeSkopusVerbAllg;
 import de.nb.aventiure2.german.praedikat.Modalpartikel;
 
-import static com.google.common.collect.ImmutableList.builder;
 import static de.nb.aventiure2.german.base.GermanUtil.joinToString;
 import static de.nb.aventiure2.german.base.StructuralElement.PARAGRAPH;
 import static de.nb.aventiure2.german.base.StructuralElement.SENTENCE;
 import static de.nb.aventiure2.german.base.StructuralElement.max;
+import static de.nb.aventiure2.german.description.AltDescriptionsBuilder.alt;
 import static de.nb.aventiure2.german.description.DescriptionBuilder.du;
 import static de.nb.aventiure2.german.description.DescriptionBuilder.neuerSatz;
 import static de.nb.aventiure2.german.string.GermanStringUtil.capitalize;
@@ -47,8 +47,9 @@ public class DescriptionUmformulierer {
         return descriptions.stream()
                 .flatMap(d ->
                         drueckeAus(kohaerenzrelation, d.getDescription()).stream()
-                                .map(r -> new TimedDescription<>(r, d.getTimeElapsed(),
-                                        d.getCounterIdIncrementedIfTextIsNarrated()))
+                                .map(r ->
+                                        r.timed(d.getTimeElapsed(),
+                                                d.getCounterIdIncrementedIfTextIsNarrated()))
                 )
                 .collect(ImmutableList.toImmutableList());
     }
@@ -92,7 +93,7 @@ public class DescriptionUmformulierer {
     @CheckReturnValue
     private static ImmutableCollection<AbstractDescription<?>> drueckeDiskontinuitaetAus(
             final AbstractDescription<?> desc) {
-        final ImmutableList.Builder<AbstractDescription<?>> alt = builder();
+        final AltDescriptionsBuilder alt = alt();
 
         if (desc instanceof AbstractFlexibleDescription) {
             final AbstractFlexibleDescription<?> fDesc = (AbstractFlexibleDescription<?>) desc;
@@ -145,7 +146,7 @@ public class DescriptionUmformulierer {
     @CheckReturnValue
     private static ImmutableCollection<AbstractDescription<?>> drueckeWiederholungAus(
             final AbstractDescription<?> desc) {
-        final ImmutableList.Builder<AbstractDescription<?>> alt = builder();
+        final AltDescriptionsBuilder alt = alt();
 
         if (!(desc instanceof AbstractFlexibleDescription)) {
             alt.addAll(duMitPraefixCapitalize("gibst", "aber nicht auf:",
@@ -213,7 +214,7 @@ public class DescriptionUmformulierer {
     @CheckReturnValue
     private static ImmutableCollection<AbstractDescription<?>> drueckeFortsetzungAus(
             final AbstractDescription<?> desc) {
-        final ImmutableList.Builder<AbstractDescription<?>> alt = builder();
+        final AltDescriptionsBuilder alt = alt();
 
         if (!(desc instanceof AbstractFlexibleDescription<?>)) {
             alt.addAll(duMitPraefixCapitalize("gibst", "aber nicht auf:",

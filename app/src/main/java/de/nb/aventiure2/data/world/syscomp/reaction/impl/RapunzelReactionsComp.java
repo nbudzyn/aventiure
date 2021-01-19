@@ -32,7 +32,7 @@ import de.nb.aventiure2.data.world.syscomp.talking.impl.RapunzelTalkingComp;
 import de.nb.aventiure2.german.base.Nominalphrase;
 import de.nb.aventiure2.german.base.PraepositionMitKasus;
 import de.nb.aventiure2.german.base.SubstantivischePhrase;
-import de.nb.aventiure2.german.description.AbstractDescription;
+import de.nb.aventiure2.german.description.AltDescriptionsBuilder;
 import de.nb.aventiure2.german.description.TimedDescription;
 import de.nb.aventiure2.german.praedikat.AdverbialeAngabeSkopusSatz;
 import de.nb.aventiure2.german.satz.Satz;
@@ -61,6 +61,7 @@ import static de.nb.aventiure2.german.base.NumerusGenus.PL_MFN;
 import static de.nb.aventiure2.german.base.StructuralElement.PARAGRAPH;
 import static de.nb.aventiure2.german.base.StructuralElement.SENTENCE;
 import static de.nb.aventiure2.german.base.Wortfolge.joinToAltWortfolgen;
+import static de.nb.aventiure2.german.description.AltDescriptionsBuilder.alt;
 import static de.nb.aventiure2.german.description.DescriptionBuilder.du;
 import static de.nb.aventiure2.german.description.DescriptionBuilder.neuerSatz;
 import static de.nb.aventiure2.german.description.DescriptionBuilder.satz;
@@ -223,8 +224,7 @@ public class RapunzelReactionsComp
 
             alt.add(neuerSatz(
                     "Als du unten bist, verschwinden die goldenen Haare "
-                            + "wieder oben im Fenster", secs(15)
-            )
+                            + "wieder oben im Fenster", secs(15))
                     .beendet(PARAGRAPH));
 
             n.narrateAlt(alt);
@@ -394,14 +394,20 @@ public class RapunzelReactionsComp
         }
 
         if (loadSC().memoryComp().getKnown(RAPUNZEL) == KNOWN_FROM_DARKNESS) {
-            alt.addAll(joinToAltWortfolgen(
-                    "Am Fenster sitzt die junge Frau, schön als",
-                    "du unter der Sonne noch keine gesehen hast.",
-                    "Ihre Haare glänzen fein wie gesponnen Gold.",
-                    altReaktionSaetze.stream()
-                            .flatMap(s -> s.altVerzweitsaetze().stream())).stream()
-                    .map(wf -> neuerSatz(wf, secs(30)))
-                    .collect(toSet()));
+            alt.addAll(
+                    // FIXME AltDescriptionBuilder.toTimed(secs(30))
+
+                    // FIXME joinTo(Null)Wortfolge() überall durch
+                    //  altNeueSaetze ersetzen?
+                    joinToAltWortfolgen(
+                            "Am Fenster sitzt die junge Frau, schön als",
+                            "du unter der Sonne noch keine gesehen hast.",
+                            "Ihre Haare glänzen fein wie gesponnen Gold.",
+                            altReaktionSaetze.stream()
+                                    .flatMap(s -> s.altVerzweitsaetze().stream()))
+                            .stream()
+                            .map(wf -> neuerSatz(wf, secs(30)))
+                            .collect(toSet()));
         }
         n.narrateAlt(alt);
     }
@@ -854,7 +860,7 @@ public class RapunzelReactionsComp
 
         loadSC().feelingsComp().requestMoodMin(BEWEGT);
 
-        final ImmutableList.Builder<AbstractDescription<?>> alt = ImmutableList.builder();
+        final AltDescriptionsBuilder alt = alt();
 
         alt.add(
                 neuerSatz("Plötzlich endet der Gesang")
