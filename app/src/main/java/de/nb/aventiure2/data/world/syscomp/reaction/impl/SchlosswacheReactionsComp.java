@@ -263,11 +263,11 @@ public class SchlosswacheReactionsComp
     private void scHatGoldeneKugelHochgeworfenUndAufgefangen_wacheIstAufmerksam(
             final ILocatableGO goldeneKugel) {
         n.narrate(
-                neuerSatz(PARAGRAPH, "„Was treibt Ihr für einen Unfug, legt sofort das "
-                        + "Schmuckstück wieder hin!“, "
-                        + "ruft dir "
-                        + getDescription(true).nomStr()
-                        + " zu")
+                neuerSatz(PARAGRAPH, "„Was treibt Ihr für einen Unfug, legt sofort das",
+                        "Schmuckstück wieder hin!“,",
+                        "ruft dir",
+                        getDescription(true).nomK(),
+                        "zu")
                         .timed(secs(5)));
 
         // IDEA Geschichte ausspinnen: Spieler muss die Kugel selbst

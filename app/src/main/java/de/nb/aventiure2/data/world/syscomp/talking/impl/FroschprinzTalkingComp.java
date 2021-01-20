@@ -166,15 +166,16 @@ public class FroschprinzTalkingComp extends AbstractTalkingComp {
         }
     }
 
-    private String getAkkShortOrPersPron(final List<? extends IDescribableGO> objects) {
+    private SubstantivischePhrase getAkkShortOrPersPron(
+            final List<? extends IDescribableGO> objects) {
         final SubstantivischePhrase description =
                 world.getDescriptionSingleOrCollective(objects, true);
 
         if (objects.size() == 1) {
-            return description.akkStr();
+            return description;
         }
 
-        return description.persPron().akkStr();
+        return description.persPron();
     }
 
     // -------------------------------------------------------------------------------
@@ -304,9 +305,6 @@ public class FroschprinzTalkingComp extends AbstractTalkingComp {
         final ImmutableList<? extends IDescribableGO> objectsInDenBrunnenGefallen =
                 getObjectsInDenBrunnenGefallen();
 
-        final String objectsInDenBrunnenGefallenShortAkk =
-                getAkkShortOrPersPron(objectsInDenBrunnenGefallen);
-
         final String ratschlag;
         if (world.loadSC().memoryComp().getLastAction().is(Action.Type.HEULEN)) {
             ratschlag = "weine nicht";
@@ -314,13 +312,12 @@ public class FroschprinzTalkingComp extends AbstractTalkingComp {
             ratschlag = "sorge dich nicht";
         }
 
-        n.narrate(neuerSatz(PARAGRAPH, "„Sei still und "
-                + ratschlag
-                + "“, antwortet "
-                + getDescription(true).nomStr()
-                + ", „ich kann wohl Rat schaffen, aber was gibst du mir, wenn ich "
-                + objectsInDenBrunnenGefallenShortAkk
-                + " wieder heraufhole?“")
+        n.narrate(neuerSatz(PARAGRAPH, "„Sei still und " + ratschlag,
+                "“, antwortet",
+                getDescription(true).nomK(),
+                ", „ich kann wohl Rat schaffen, aber was gibst du mir, wenn ich",
+                getAkkShortOrPersPron(objectsInDenBrunnenGefallen).akkK(),
+                "wieder heraufhole?“")
                 .timed(secs(15))
                 .beendet(PARAGRAPH));
 
@@ -355,15 +352,16 @@ public class FroschprinzTalkingComp extends AbstractTalkingComp {
 
         // die goldene Kugel / die Dinge
         n.narrate(neuerSatz(PARAGRAPH,
-                "Der Frosch antwortet: „Deine Kleider, Reichtümer oder Edelsteine, die mag "
-                        + "ich nicht. "
-                        + "Aber wenn ich am Tischlein bei dir sitzen soll und von deinem Tellerlein "
-                        + "essen: Wenn du mir das versprichst, so will ich "
-                        + "hinuntersteigen und dir "
-                        // die goldene Kugel / die Dinge
-                        + world.getDescriptionSingleOrCollective(objectsInDenBrunnenGefallen)
-                        .akkStr()
-                        + " wieder heraufholen.“")
+                "Der Frosch antwortet: „Deine Kleider, Reichtümer oder Edelsteine, die mag",
+                "ich nicht.",
+                "Aber wenn ich am Tischlein bei dir sitzen soll und von deinem",
+                "Tellerlein",
+                "essen: Wenn du mir das versprichst, so will ich",
+                "hinuntersteigen und dir",
+                // die goldene Kugel / die Dinge
+                world.getDescriptionSingleOrCollective(objectsInDenBrunnenGefallen)
+                        .akkK(),
+                "wieder heraufholen.“")
                 .timed(secs(15))
                 .beendet(PARAGRAPH));
 
@@ -403,16 +401,15 @@ public class FroschprinzTalkingComp extends AbstractTalkingComp {
 
         // die goldene Kugel / die Dinge
         n.narrate(neuerSatz(PARAGRAPH,
-                "Der Frosch antwortet: „Deine Kleider, Reichtümer oder Edelsteine, die mag "
-                        + "ich nicht. "
-                        + "Aber wenn ich am Tischlein neben dir sitzen soll, von deinem Tellerlein "
-                        + "essen und "
-                        + "aus deinem Becherlein trinken: Wenn du mir das versprichst, so will ich "
-                        + "hinuntersteigen und dir "
-                        // die goldene Kugel / die Dinge
-                        + world.getDescriptionSingleOrCollective(objectsInDenBrunnenGefallen)
-                        .akkStr()
-                        + " wieder herauf holen.“")
+                "Der Frosch antwortet: „Deine Kleider, Reichtümer oder Edelsteine, die mag",
+                "ich nicht.",
+                "Aber wenn ich am Tischlein neben dir sitzen soll, von deinem Tellerlein",
+                "essen und",
+                "aus deinem Becherlein trinken: Wenn du mir das versprichst, so will ich",
+                "hinuntersteigen und dir",
+                // die goldene Kugel / die Dinge
+                world.getDescriptionSingleOrCollective(objectsInDenBrunnenGefallen).akkK(),
+                " wieder herauf holen.“")
                 .timed(secs(15))
                 .beendet(PARAGRAPH));
 
@@ -444,9 +441,9 @@ public class FroschprinzTalkingComp extends AbstractTalkingComp {
                         world.getDescriptionSingleOrCollective(objectsInDenBrunnenGefallen)
                                 .akkStr(),
                         // IDEA Man könnte programmieren: Wenn der Text hiernach
-                        //  Zu mehr als x Wörter hat, dann gehört das Bezugsobjekt
+                        //  mehr als x Wörter hat, dann gerät das Bezugsobjekt
                         //  Wieder in Vergessenheit - analog zum bereits implementieren
-                        //  Vorgehen. Z.B. Auch summieren über mehrere Strings
+                        //  Vorgehen. Z.B. Auch summieren über mehrere Strings ins Folge...
                         "wiederbringst.“ Du denkst",
                         "aber: „Was der einfältige Frosch schwätzt, der sitzt im Wasser bei",
                         "seinesgleichen und quakt und kann keines Menschen Geselle sein.“")

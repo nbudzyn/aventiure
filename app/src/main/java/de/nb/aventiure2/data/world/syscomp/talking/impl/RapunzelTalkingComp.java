@@ -553,20 +553,19 @@ public class RapunzelTalkingComp extends AbstractTalkingComp {
                 ImmutableList.builder();
 
         alt.add(
-                neuerSatz(PARAGRAPH, "„Jetzt muss ich aber gehen“, sagst du unvermittelt und "
-                        + "blickst "
-                        + "zum Fenster hin")
+                neuerSatz(PARAGRAPH, "„Jetzt muss ich aber gehen“, sagst du",
+                        "unvermittelt und blickst zum Fenster hin")
                         .timed(secs(15))
                         .beendet(PARAGRAPH),
-                neuerSatz(SENTENCE, "„Ich muss wieder hinaus in die Welt!“, "
+                neuerSatz(SENTENCE, "„Ich muss wieder hinaus in die Welt!“,"
                         + "sagst du")
                         .timed(secs(10)),
-                neuerSatz(PARAGRAPH, "„Dann will ich wieder ins "
-                        + "Abenteuer hinaus“, sagst du "
-                        // FIXME ZU.getDescription(anaph)) sollte keinen
-                        //  String, sondern eine Wortfolge erzeugen und einen
-                        //  Phorik-Kandidaten setzen
-                        + ZU.getDescription(anaph))
+                neuerSatz(PARAGRAPH, "„Dann will ich wieder ins",
+                        "Abenteuer hinaus“, sagst du "
+                                // FIXME ZU.getDescription(anaph)) sollte keinen
+                                //  String, sondern eine Wortfolge erzeugen und einen
+                                //  Phorik-Kandidaten setzen
+                                + ZU.getDescription(anaph))
                         .timed(secs(15))
                         .phorikKandidat(anaph, RAPUNZEL)
         );

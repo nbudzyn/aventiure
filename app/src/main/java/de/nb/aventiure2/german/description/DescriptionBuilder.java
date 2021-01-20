@@ -43,9 +43,6 @@ public class DescriptionBuilder {
 
     @NonNull
     @CheckReturnValue
-    // FIXME Alle Verwendunge prüfen,
-    //  unnötiges joinToWortfolge() entfernen, nomStr() durch nomK()
-    //  ersetzen etc.
     public static TextDescription neuerSatz(
             final StructuralElement startsNew,
             final Object... parts) {
@@ -65,17 +62,20 @@ public class DescriptionBuilder {
     @NonNull
     @CheckReturnValue
     public static TextDescription satzanschluss(final String description) {
+        // FIXME Umbauen analog zu neuerSatz(parts...)
         return satzanschluss(w(description));
     }
 
     @NonNull
     @CheckReturnValue
     public static TextDescription satzanschluss(final Wortfolge wortfolge) {
+        // FIXME Umbauen analog zu neuerSatz(parts...)
         return new TextDescription(StructuralElement.WORD, wortfolge);
     }
 
     @CheckReturnValue
     public static SimpleDuDescription du(final String verb) {
+        // FIXME Alle du() umbauen analog zu neuerSatz(parts...)
         return du(verb, (String) null, (String) null);
     }
 

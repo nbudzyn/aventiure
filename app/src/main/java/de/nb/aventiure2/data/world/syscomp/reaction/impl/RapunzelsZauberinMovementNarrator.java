@@ -61,20 +61,17 @@ public class RapunzelsZauberinMovementNarrator extends SimpleMovementNarrator {
                         "kommt",
                         desc.nomK(),
                         "gegangen")
-                        .phorikKandidat(desc, gameObjectId)
                         .beendet(PARAGRAPH));
             }
 
             alt.add(neuerSatz("Es kommt dir",
                     desc.nomK(),
                     "entgegen")
-                    .phorikKandidat(desc, gameObjectId)
                     .beendet(PARAGRAPH));
             alt.add(neuerSatz(PARAGRAPH,
                     "Dir kommt",
                     desc.nomK(),
                     "entgegen")
-                    .phorikKandidat(desc, gameObjectId)
                     .beendet(PARAGRAPH));
         }
 

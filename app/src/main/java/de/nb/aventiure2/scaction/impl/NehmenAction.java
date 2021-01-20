@@ -243,11 +243,10 @@ public class NehmenAction
                         .undWartest()
                         .dann(),
                 neuerSatz(PARAGRAPH,
-                        froschDesc.akkStr()
-                                + " in die Hand nehmen? – Wer hat dir bloß solche Flausen "
-                                + "in den Kopf gesetzt! Kräftig packst du "
-                                + froschDesc.akkStr())
-                        .phorikKandidat(froschDesc, FROSCHPRINZ)
+                        froschDesc.akkK(),
+                        " in die Hand nehmen? – Wer hat dir bloß solche Flausen",
+                        "in den Kopf gesetzt! Kräftig packst du",
+                        froschDesc.akkK())
                         .undWartest()
                         .dann(),
                 du(PARAGRAPH,

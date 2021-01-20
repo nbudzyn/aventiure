@@ -183,19 +183,21 @@ public class FroschprinzReactionsComp
                 //  in einer Schale auf der Bank, dann hier prüfen und ggf. beschreiben
                 //  (vgl. AblegenAction)
                 n.narrateAlt(
-                        neuerSatz(PARAGRAPH, "Plötzlich sitzt "
-                                + desc.nomStr()
-                                + " neben dir auf der Bank. „Denk an dein "
-                                + "Versprechen“, quakt er dir zu, "
-                                + "„Lass uns aus einem Tellerlein essen!“ Du bist ganz "
-                                + "erschrocken – was für eine "
-                                + "abstoßende Vorstellung!")
+                        neuerSatz(PARAGRAPH, "Plötzlich sitzt",
+                                desc.nomStr(), // Gerät in Vergessenheit...
+                                "neben dir auf der Bank. „Denk an dein",
+                                "Versprechen“, quakt",
+                                desc.persPron().nomStr(), // Gerät in Vergessenheit...
+                                "dir zu,",
+                                "„Lass uns aus einem Tellerlein essen!“ Du bist ganz",
+                                "erschrocken – was für eine",
+                                "abstoßende Vorstellung!")
                                 .timed(secs(30)),
-                        neuerSatz("Da stößt es schon von der Seite an dein Bein. "
-                                + "Du drehst dich "
-                                + "hastig weg und dein Herz klopft vor schlechtem "
-                                + "Gewissen, als "
-                                + "der Frosch „Heb mich herauf, heb mich herauf!“ quakt")
+                        neuerSatz("Da stößt es schon von der Seite an dein Bein.",
+                                "Du drehst dich",
+                                "hastig weg und dein Herz klopft vor schlechtem",
+                                "Gewissen, als",
+                                "der Frosch „Heb mich herauf, heb mich herauf!“ quakt")
                                 .timed(secs(20))
                                 .beendet(PARAGRAPH));
                 return;
@@ -203,22 +205,26 @@ public class FroschprinzReactionsComp
                 loadSC().feelingsComp().requestMood(ANGESPANNT);
 
                 n.narrateAlt(
-                        neuerSatz(PARAGRAPH, "Auf einmal sitzt "
-                                + desc.nomStr()
-                                + " bei dir auf dem Tisch. „Auf, füll deine "
-                                + "Schale, wir wollen zusammen essen“, quakt " +
-                                desc.persPron().nomStr() +
-                                " dich an. Es schauert dich bei dem Gedanken")
+                        neuerSatz(PARAGRAPH, "Auf einmal sitzt",
+                                desc.nomStr(), // Gerät in Vergessenheit
+                                "bei dir auf dem Tisch. „Auf, füll deine",
+                                "Schale, wir wollen zusammen essen“, quakt",
+                                desc.persPron().nomStr(), // Gerät in Vergessenheit
+                                "dich an. Es schauert dich bei dem Gedanken")
                                 .timed(secs(10))
                                 .beendet(PARAGRAPH),
-                        neuerSatz(PARAGRAPH, "Platsch – da springt auf einmal "
-                                + desc.nomStr()
-                                + " vor dich auf den Tisch. Gerade noch, dass er "
-                                + "dir nicht in die Essensschale gehüpft ist. Dir läuft "
-                                + "ein Schauer über den Rücken, als "
-                                + desc.persPron().nomStr()
-                                + " fordert: „Nicht länger gezögert – nun lass uns zusammen "
-                                + "essen!“")
+                        neuerSatz(PARAGRAPH, "Platsch – da springt auf einmal",
+                                desc.nomK(),
+                                "vor dich auf den Tisch. Gerade noch, dass "
+                                        + desc.persPron().nomK(),
+                                "dir nicht in die Essensschale gehüpft ist. Dir läuft",
+                                "ein Schauer über den Rücken, als",
+                                // FIXME Idee: Nur Bezugsobjekt und Kasus übergeben und
+                                //  Text / Anaphern automatisch wählen lassen?
+                                //  Abhängigkeiten gut bedenken.
+                                desc.persPron().nomK(),
+                                "fordert: „Nicht länger gezögert – nun lass uns zusammen",
+                                "essen!“")
                                 .timed(secs(10))
                                 .beendet(PARAGRAPH)
                 );
@@ -322,7 +328,9 @@ public class FroschprinzReactionsComp
             // Der Spieler hat die goldene Kugel in den Brunnen fallen
             // lassen, obwohl er noch mit dem Frosch verhandelt.
             n.narrate(neuerSatz(StructuralElement.PARAGRAPH,
-                    "Ob der Frosch gerade seine glitschige Nase gerümpft hat?")
+                    "Ob",
+                    getDescription(true).nomK(),
+                    "gerade seine glitschige Nase gerümpft hat?")
                     .timed(secs(3))
                     .beendet(PARAGRAPH)
             );
@@ -525,7 +533,8 @@ public class FroschprinzReactionsComp
         if (locationComp.hasSameOuterMostLocationAs(SPIELER_CHARAKTER)) {
             // IDEA "Wir sehen uns noch!"
             n.narrate(
-                    neuerSatz(PARAGRAPH, "Plitsch platsch, plitsch platsch hüpft der Frosch davon")
+                    neuerSatz(PARAGRAPH, "Plitsch platsch, plitsch platsch",
+                            "hüpft der Frosch davon")
                             .timed(secs(5))
                             .beendet(PARAGRAPH));
         }
