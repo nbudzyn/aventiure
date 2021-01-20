@@ -70,8 +70,8 @@ public class WaldwildnisHinterDemBrunnenConnectionComp extends AbstractSpatialCo
         }
 
         return du("suchst", "dir einen Weg "
-                        + "durch den wilden Wald zurück zum Brunnen",
-                "durch den wilden Wald")
+                + "durch den wilden Wald zurück zum Brunnen")
+                .mitVorfeldSatzglied("durch den wilden Wald")
                 .undWartest()
                 .dann()
                 .timed(mins(3));

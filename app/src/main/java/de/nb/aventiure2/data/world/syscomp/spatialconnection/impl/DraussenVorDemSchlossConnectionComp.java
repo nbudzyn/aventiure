@@ -78,11 +78,9 @@ public class DraussenVorDemSchlossConnectionComp extends AbstractSpatialConnecti
                                 + "führt rechter Hand ein schmaler, dunkler Pfad einen Hügel "
                                 + "hinauf")
                                 .timed(mins(12)),
-                        du("läufst", "wieder in den dunklen Wald",
-                                "wieder")
+                        du("läufst", "wieder in den dunklen Wald").mitVorfeldSatzglied("wieder")
                                 .dann(),
-                        du("läufst", "wieder in den dunklen Wald",
-                                "wieder")
+                        du("läufst", "wieder in den dunklen Wald").mitVorfeldSatzglied("wieder")
                                 .dann()));
     }
 
@@ -118,7 +116,7 @@ public class DraussenVorDemSchlossConnectionComp extends AbstractSpatialConnecti
                     .komma();
         }
 
-        return du("betrittst", "wieder das Schloss", "wieder")
+        return du("betrittst", "wieder das Schloss").mitVorfeldSatzglied("wieder")
                 .timed(mins(2))
                 .undWartest()
                 .dann();

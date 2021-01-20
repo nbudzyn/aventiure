@@ -541,14 +541,15 @@ public class BewegenAction<LOC_DESC extends ILocatableGO & IDescribableGO>
                         lichtverhaeltnisseInNewLocation == HELL &&
                         n.allowsAdditionalDuSatzreihengliedOhneSubjekt() &&
                         sc.memoryComp().getLastAction().is(Action.Type.NEHMEN)) {
-                    return du("springst", "damit fort", "damit")
+                    return du("springst", "damit fort").mitVorfeldSatzglied("damit")
                             .timed(standardDescription.getTimeElapsed().times(0.8))
                             .undWartest()
                             .dann();
                 }
 
                 if (sc.feelingsComp().hasMood(Mood.UNTROESTLICH)) {
-                    return du("trottest", "tieftraurig von dannen", "tieftraurig")
+                    return du("trottest", "tieftraurig von dannen")
+                            .mitVorfeldSatzglied("tieftraurig")
                             .timed(standardDescription.getTimeElapsed().times(2))
                             .undWartest();
                 }

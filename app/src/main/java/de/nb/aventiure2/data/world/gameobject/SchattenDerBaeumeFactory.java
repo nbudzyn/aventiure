@@ -94,8 +94,8 @@ class SchattenDerBaeumeFactory {
         if (db.counterDao().get(
                 DESC_TO_SCHATTEN_DER_BAEUME__SC_SETZT_SICH_TAGSUEBER_IN_DEN_SCHATTEN_DER_BAEUME)
                 == 0) {
-            return du(PARAGRAPH, "lässt", w("dich im Schatten der umstehenden Bäume nieder"),
-                    "im Schatten der umstehenden Bäume")
+            return du(PARAGRAPH, "lässt", w("dich im Schatten der umstehenden Bäume nieder"))
+                    .mitVorfeldSatzglied("im Schatten der umstehenden Bäume")
                     .timed(mins(5))
                     .withCounterIdIncrementedIfTextIsNarrated(
                             DESC_TO_SCHATTEN_DER_BAEUME__SC_SETZT_SICH_TAGSUEBER_IN_DEN_SCHATTEN_DER_BAEUME)

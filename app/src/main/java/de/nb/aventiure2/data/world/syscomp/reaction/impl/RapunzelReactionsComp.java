@@ -62,6 +62,7 @@ import static de.nb.aventiure2.german.base.StructuralElement.PARAGRAPH;
 import static de.nb.aventiure2.german.base.StructuralElement.SENTENCE;
 import static de.nb.aventiure2.german.base.StructuralElement.WORD;
 import static de.nb.aventiure2.german.base.Wortfolge.joinToAltWortfolgen;
+import static de.nb.aventiure2.german.base.Wortfolge.w;
 import static de.nb.aventiure2.german.description.AltDescriptionsBuilder.alt;
 import static de.nb.aventiure2.german.description.DescriptionBuilder.du;
 import static de.nb.aventiure2.german.description.DescriptionBuilder.neuerSatz;
@@ -193,11 +194,13 @@ public class RapunzelReactionsComp
             return;
         }
         n.narrateAlt(
-                du("hörst", "erneut die süße Stimme aus dem Turmfenster singen", "erneut")
+                du("hörst", "erneut die süße Stimme aus dem Turmfenster singen")
+                        .mitVorfeldSatzglied("erneut")
                         .timed(secs(10)),
-                du("hörst", "es wieder von oben aus dem Turm singen", "von oben aus dem Turm")
+                du("hörst", "es wieder von oben aus dem Turm singen")
+                        .mitVorfeldSatzglied("von oben aus dem Turm")
                         .timed(NO_TIME),
-                du(PARAGRAPH, "hörst", "wieder Gesang von oben", "wieder")
+                du(PARAGRAPH, "hörst", w("wieder Gesang von oben")).mitVorfeldSatzglied("wieder")
                         .timed(NO_TIME)
                         .beendet(PARAGRAPH),
                 neuerSatz("Erneut hörst du den Gesang aus dem Turmfenster")
@@ -382,10 +385,9 @@ public class RapunzelReactionsComp
             // FIXME Dies beides darf erst erscheinen, wenn Rapunzel von der Zauberin erzählt hat
             //  und den SC um Hilfe gebeten oder der SC Hilfe angeboten hat
             alt.addAll(TimedDescription.toTimed(secs(15),
-                    du("findest",
-                            "oben die junge Frau ganz aufgeregt vor: „Du bist schon "
-                                    + "wieder da!“, sagt sie, „Kannst du mir nun helfen?“",
-                            "oben")
+                    du("findest", "oben die junge Frau ganz aufgeregt vor: „Du bist schon "
+                            + "wieder da!“, sagt sie, „Kannst du mir nun helfen?“")
+                            .mitVorfeldSatzglied("oben")
                             .phorikKandidat(F, RAPUNZEL),
                     neuerSatz(
                             "„Die Alte hat nichts bemerkt“, sprudelt die "
@@ -438,12 +440,13 @@ public class RapunzelReactionsComp
                 .collect(toImmutableList()));
 
         // Sie
-        alt.add(du(SENTENCE, "hast", anaph.akkStr()
+        // Sie
+        alt.add(du(SENTENCE, "hast", w(anaph.akkStr()
                 + " offenbar aus dem Bett "
                 + "geholt. "
                 + capitalize(anaph.persPron().nomStr()) // Sie
                 + " sieht sehr zerknittert "
-                + "aus", "offenbar")
+                + "aus")).mitVorfeldSatzglied("offenbar")
                 .timed(secs(30))
                 .phorikKandidat(anaph.persPron(), RAPUNZEL));
         if (loadSC().memoryComp().getKnown(RAPUNZEL) == KNOWN_FROM_LIGHT) {
@@ -533,7 +536,7 @@ public class RapunzelReactionsComp
                         .beendet(PARAGRAPH),
                 du("schaust", "fasziniert zu, wie die langen Haare wieder in "
                         + "das Turmfenster "
-                        + "zurückgezogen werden", "fasziniert")
+                        + "zurückgezogen werden").mitVorfeldSatzglied("fasziniert")
                         .timed(secs(15))
                         .beendet(PARAGRAPH),
                 neuerSatz("Nur ein paar Augenblicke, dann sind die Haare "
@@ -783,16 +786,19 @@ public class RapunzelReactionsComp
 
         if (!loadSC().memoryComp().isKnown(RAPUNZEL)) {
             n.narrateAlt(
-                    du("hörst", "erneut die süße Stimme aus dem Turmfenster singen", "erneut")
+                    du("hörst", "erneut die süße Stimme aus dem Turmfenster singen")
+                            .mitVorfeldSatzglied("erneut")
                             .timed(secs(10)),
-                    du("hörst", "es von oben aus dem Turm singen", "von oben aus dem Turm")
+                    du("hörst", "es von oben aus dem Turm singen")
+                            .mitVorfeldSatzglied("von oben aus dem Turm")
                             .timed(NO_TIME),
-                    du(PARAGRAPH, "hörst", "wieder Gesang von oben schallen", "wieder")
+                    du(PARAGRAPH, "hörst", w("wieder Gesang von oben schallen"))
+                            .mitVorfeldSatzglied("wieder")
                             .timed(NO_TIME)
                             .beendet(PARAGRAPH),
                     neuerSatz(PARAGRAPH, "Plötzlich erschallt über dir wieder Gesang")
                             .timed(NO_TIME),
-                    du("hörst", "den Gesang erneut", "erneut")
+                    du("hörst", "den Gesang erneut").mitVorfeldSatzglied("erneut")
                             .timed(NO_TIME)
             );
 
@@ -802,20 +808,22 @@ public class RapunzelReactionsComp
         }
 
         n.narrateAlt(
-                du(SENTENCE, "hörst", "aus dem Turmfenster die junge Frau singen. Dir wird ganz "
-                        + "warm beim Zuhören", "aus dem Turmfenster")
+                du(SENTENCE, "hörst", w("aus dem Turmfenster die junge Frau singen. Dir wird ganz "
+                        + "warm beim Zuhören")).mitVorfeldSatzglied("aus dem Turmfenster")
                         .timed(secs(10))
                         .undWartest()
                         .phorikKandidat(F, RAPUNZEL),
-                du(SENTENCE, "hörst", "plötzlich wieder Gesang aus dem Turmfenster. Wann wirst du "
-                        + "die junge Frau "
-                        + "endlich retten können?", "plötzlich")
+                du(SENTENCE, "hörst",
+                        w("plötzlich wieder Gesang aus dem Turmfenster. Wann wirst du "
+                                + "die junge Frau "
+                                + "endlich retten können?")).mitVorfeldSatzglied("plötzlich")
                         .timed(NO_TIME)
                         .beendet(PARAGRAPH)
                         .phorikKandidat(F, RAPUNZEL),
                 du("hörst", "erneut die süße Stimme aus dem Turmfenster singen. Jetzt "
                         + "weißt du "
-                        + "endlich, wer dort singt – und sein Vertrauen in dich setzt", "erneut")
+                        + "endlich, wer dort singt – und sein Vertrauen in dich setzt")
+                        .mitVorfeldSatzglied("erneut")
                         .timed(NO_TIME)
         );
 

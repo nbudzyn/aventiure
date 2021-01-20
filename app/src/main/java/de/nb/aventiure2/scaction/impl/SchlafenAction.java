@@ -29,6 +29,7 @@ import static de.nb.aventiure2.data.world.syscomp.feelings.Mood.BEWEGT;
 import static de.nb.aventiure2.data.world.syscomp.feelings.Mood.NEUTRAL;
 import static de.nb.aventiure2.german.base.StructuralElement.CHAPTER;
 import static de.nb.aventiure2.german.base.StructuralElement.SENTENCE;
+import static de.nb.aventiure2.german.base.Wortfolge.w;
 import static de.nb.aventiure2.german.description.AltDescriptionsBuilder.alt;
 import static de.nb.aventiure2.german.description.DescriptionBuilder.du;
 import static de.nb.aventiure2.german.description.DescriptionBuilder.neuerSatz;
@@ -87,18 +88,19 @@ public class SchlafenAction extends AbstractScAction {
         if (!isDefinitivWiederholung()) {
             alt.add(du("schließt", "kurz die Augen. Die Aufregung der letzten Stunden "
                     + "steckt dir noch in den Knochen – an Einschlafen ist "
-                    + "nicht zu denken", "kurz")
+                    + "nicht zu denken").mitVorfeldSatzglied("kurz")
                     .timed(mins(1)));
         }
 
-        alt.add(du(SENTENCE, "bist", "noch nicht müde", "müde")
+        alt.add(du(SENTENCE, "bist", w("noch nicht müde")).mitVorfeldSatzglied("müde")
                 .timed(mins(1))
                 .dann());
 
         alt.add(neuerSatz("Gibt es hier eigentlich Spinnen?")
                 .timed(mins(1)));
 
-        alt.add(du("drehst", "dich von einer Seite auf die andere", "von einer Seite")
+        alt.add(du("drehst", "dich von einer Seite auf die andere")
+                .mitVorfeldSatzglied("von einer Seite")
                 .timed(mins(1)));
 
         n.narrateAlt(alt);
@@ -183,17 +185,14 @@ public class SchlafenAction extends AbstractScAction {
         final AltDescriptionsBuilder alt = alt();
 
         alt.add(
-                du(SENTENCE,
-                        "schließt", "nur kurz die Augen. Die Erlebnisse der letzten Stunden "
-                                + "gehen dir durch den Kopf. Was wäre wohl passiert, wenn du…\n"
-                                + "Kaum hast du die Augen geschlossen, bist du auch schon "
-                                + "eingeschlafen",
-                        "nur kurz"
-                )
+                du(SENTENCE, "schließt", w("nur kurz die Augen. Die Erlebnisse der letzten Stunden "
+                        + "gehen dir durch den Kopf. Was wäre wohl passiert, wenn du…\n"
+                        + "Kaum hast du die Augen geschlossen, bist du auch schon "
+                        + "eingeschlafen")).mitVorfeldSatzglied("nur kurz")
                         .beendet(CHAPTER),
                 du("fühlst", "dich auf einmal warm und schwer. Du kuschelst dich an "
-                                + "das harte Holz und schon bist du eingeschlafen",
-                        "warm und schwer")
+                        + "das harte Holz und schon bist du eingeschlafen")
+                        .mitVorfeldSatzglied("warm und schwer")
                         .beendet(CHAPTER)
         );
 
@@ -214,16 +213,13 @@ public class SchlafenAction extends AbstractScAction {
         final AltDescriptionsBuilder alt = alt();
 
         if (schlafdauer.longerThanOrEqual(hours(7))) {
-            alt.add(du(CHAPTER,
-                    "wachst", "nach einem langen Schlaf gut erholt wieder auf",
-                    "nach einem langen Schlaf"));
+            alt.add(du(CHAPTER, "wachst", w("nach einem langen Schlaf gut erholt wieder auf"))
+                    .mitVorfeldSatzglied("nach einem langen Schlaf"));
         }
 
         if (schlafdauer.longerThanOrEqual(hours(4))) {
-            alt.add(du(CHAPTER,
-                    "schläfst", "tief und fest und wachst erst nach einigen "
-                            + "Stunden wieder auf",
-                    "tief"));
+            alt.add(du(CHAPTER, "schläfst", w("tief und fest und wachst erst nach einigen "
+                    + "Stunden wieder auf")).mitVorfeldSatzglied("tief"));
         }
 
         if (schlafdauer.isBetween(hours(3), hours(6))) {
@@ -241,12 +237,10 @@ public class SchlafenAction extends AbstractScAction {
         if (schlafdauer.shorterThan(hours(1))) {
             alt.add(neuerSatz(CHAPTER,
                     "Keine Stunde und du erwachst wieder"),
-                    du(CHAPTER,
-                            "bist", "nach einem kurzen Nickerchen wieder wach",
-                            "nach einem kurzen Nickerchen"),
-                    du(CHAPTER,
-                            "bist", "nach knapp einer Stunde wieder wach",
-                            "nach knapp einer Stunde"));
+                    du(CHAPTER, "bist", w("nach einem kurzen Nickerchen wieder wach"))
+                            .mitVorfeldSatzglied("nach einem kurzen Nickerchen"),
+                    du(CHAPTER, "bist", w("nach knapp einer Stunde wieder wach"))
+                            .mitVorfeldSatzglied("nach knapp einer Stunde"));
         }
 
         if (schlafdauer.shorterThanOrEqual(mins(20))) {

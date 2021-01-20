@@ -659,7 +659,7 @@ public class FroschprinzTalkingComp extends AbstractTalkingComp {
                         + desc.nomStr()
                         + " schon das Wort ab. „Was gibt es da noch zu diskutieren?“, quakt "
                         + desc.persPron().nomStr()
-                        + " dich laut an", "gerade")
+                        + " dich laut an").mitVorfeldSatzglied("gerade")
                         .timed(secs(10))
                         .phorikKandidat(desc, FROSCHPRINZ),
                 du(SENTENCE, "druckst", "ein bisschen herum und faselst etwas von "

@@ -46,6 +46,7 @@ import static de.nb.aventiure2.data.world.syscomp.state.impl.FroschprinzState.UN
 import static de.nb.aventiure2.german.base.Nominalphrase.HOEHE;
 import static de.nb.aventiure2.german.base.PraepositionMitKasus.IN_AKK;
 import static de.nb.aventiure2.german.base.StructuralElement.PARAGRAPH;
+import static de.nb.aventiure2.german.base.Wortfolge.w;
 import static de.nb.aventiure2.german.description.DescriptionBuilder.du;
 import static de.nb.aventiure2.german.description.DescriptionBuilder.neuerSatz;
 import static de.nb.aventiure2.german.description.DescriptionBuilder.satzanschluss;
@@ -230,7 +231,7 @@ public class HochwerfenAction<OBJ extends IDescribableGO & ILocatableGO>
         final Nominalphrase objectDesc = world.getDescription(object, false);
 
         n.narrate(
-                du(PARAGRAPH, "wirfst", objectDesc.akkStr() +
+                du(PARAGRAPH, "wirfst", w(objectDesc.akkStr() +
                         " nur ein einziges Mal in die Höhe, " +
                         "aber wie das Unglück es will, fällt " +
                         objectDesc.persPron().akkStr() +
@@ -238,7 +239,7 @@ public class HochwerfenAction<OBJ extends IDescribableGO & ILocatableGO>
                         "Platsch! – weg " +
                         SeinUtil.istSind(objectDesc.getNumerusGenus()) +
                         " " +
-                        objectDesc.persPron().akkStr(), "nur ein einziges Mal")
+                        objectDesc.persPron().akkStr())).mitVorfeldSatzglied("nur ein einziges Mal")
                         .timed(secs(10))
                         .dann(!n.dann())
                         .beendet(PARAGRAPH));
@@ -277,7 +278,7 @@ public class HochwerfenAction<OBJ extends IDescribableGO & ILocatableGO>
                     world.getDescription(object, true).nomStr() +
                     " verschwindet, und der Brunnen ist tief, so tief, dass " +
                     "man keinen Grund sieht"
-                    + dunkelheitNachsatz, "noch einmal")
+                    + dunkelheitNachsatz).mitVorfeldSatzglied("noch einmal")
                     .timed(secs(10))
                     .beendet(PARAGRAPH));
 
@@ -294,7 +295,8 @@ public class HochwerfenAction<OBJ extends IDescribableGO & ILocatableGO>
                 + GermanStringUtil.capitalize(
                 world.getDescription(object, true).nomStr()) +
                 " landet " +
-                location.storingPlaceComp().getLocationMode().getWo(false), "übermütig")
+                location.storingPlaceComp().getLocationMode().getWo(false))
+                .mitVorfeldSatzglied("übermütig")
                 .timed(secs(5)));
 
         sc.feelingsComp().requestMoodMax(ETWAS_GEKNICKT);

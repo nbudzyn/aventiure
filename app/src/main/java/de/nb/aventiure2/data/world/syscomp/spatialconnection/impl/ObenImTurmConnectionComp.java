@@ -79,7 +79,8 @@ public class ObenImTurmConnectionComp extends AbstractSpatialConnectionComp {
             final Known newLocationKnown, final Lichtverhaeltnisse lichtverhaeltnisse) {
         if (db.counterDao().get(COUNTER_HERABGESTIEGEN) % 2 == 1) {
             // 2.Mal, 4. Mal, ...
-            return du(StructuralElement.WORD, "bist", w("schnell wieder hinab"), "schnell")
+            return du(StructuralElement.WORD, "bist", w("schnell wieder hinab"))
+                    .mitVorfeldSatzglied("schnell")
                     .timed(secs(30))
                     .withCounterIdIncrementedIfTextIsNarrated(COUNTER_HERABGESTIEGEN)
                     .undWartest()

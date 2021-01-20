@@ -34,7 +34,7 @@ public class SimpleDuDescription extends AbstractFlexibleDescription<SimpleDuDes
      * Ein Teil von {@link #remainder}, der statt "Du" das Vorfeld einnehmen kann.
      */
     @Nullable
-    private final String vorfeldSatzglied;
+    private String vorfeldSatzglied;
 
     /**
      * Ob die wörtliche Rede noch "offen" ist.  Es steht also noch ein schließendes
@@ -49,17 +49,20 @@ public class SimpleDuDescription extends AbstractFlexibleDescription<SimpleDuDes
      */
     private boolean kommaStehtAus;
 
+    /**
+     * Erzeugt eine {@link SimpleDuDescription} ohne Vorfeld-Satzglied.
+     *
+     * @see #mitVorfeldSatzglied(String)
+     */
     SimpleDuDescription(final StructuralElement startsNew,
                         final String verb,
                         @Nullable final String remainder,
-                        @Nullable final String vorfeldSatzglied,
                         final boolean woertlicheRedeNochOffen,
                         final boolean kommaStehtAus,
                         @Nullable final PhorikKandidat phorikKandidat) {
         super(startsNew, phorikKandidat);
         this.verb = verb;
         this.remainder = remainder;
-        this.vorfeldSatzglied = vorfeldSatzglied;
         this.kommaStehtAus = kommaStehtAus;
         this.woertlicheRedeNochOffen = woertlicheRedeNochOffen;
 
@@ -156,6 +159,11 @@ public class SimpleDuDescription extends AbstractFlexibleDescription<SimpleDuDes
     public Wortfolge toWortfolgeSatzanschlussOhneSubjekt() {
         return w(joinToString(verb, remainder), woertlicheRedeNochOffen, isKommaStehtAus(),
                 copyParams().getPhorikKandidat());
+    }
+
+    public SimpleDuDescription mitVorfeldSatzglied(@Nullable final String vorfeldSatzglied) {
+        this.vorfeldSatzglied = vorfeldSatzglied;
+        return this;
     }
 
     @Override

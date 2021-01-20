@@ -34,6 +34,7 @@ import static de.nb.aventiure2.data.world.syscomp.state.impl.SchlossfestState.BE
 import static de.nb.aventiure2.data.world.syscomp.state.impl.SchlosswacheState.AUFMERKSAM;
 import static de.nb.aventiure2.data.world.syscomp.state.impl.SchlosswacheState.UNAUFFAELLIG;
 import static de.nb.aventiure2.german.base.StructuralElement.PARAGRAPH;
+import static de.nb.aventiure2.german.base.Wortfolge.w;
 import static de.nb.aventiure2.german.description.DescriptionBuilder.du;
 import static de.nb.aventiure2.german.description.DescriptionBuilder.neuerSatz;
 import static de.nb.aventiure2.german.description.DescriptionBuilder.satzanschluss;
@@ -277,7 +278,8 @@ public class SchlosswacheReactionsComp
         sc.feelingsComp().requestMood(ANGESPANNT);
 
         n.narrate(du(PARAGRAPH, "legst",
-                "die schöne goldene Kugel eingeschüchtert wieder an ihren Platz", "eingeschüchtert")
+                w("die schöne goldene Kugel eingeschüchtert wieder an ihren Platz"))
+                .mitVorfeldSatzglied("eingeschüchtert")
                 .timed(secs(5))
                 .undWartest()
                 .phorikKandidat(NumerusGenus.F, goldeneKugel.getId()));

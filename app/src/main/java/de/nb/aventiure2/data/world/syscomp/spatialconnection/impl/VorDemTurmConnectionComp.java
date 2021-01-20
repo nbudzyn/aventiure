@@ -92,9 +92,10 @@ public class VorDemTurmConnectionComp extends AbstractSpatialConnectionComp {
                             "hinauf.\n"
                                     + "Durch das Fensterchen kletterst du in eine kleine Kammer: "
                                     + "Tisch, Stuhl, ein Bett"),
-                    du(SENTENCE, "steigst", "vorsichtig hinauf und klettest durch das Fensterchen "
-                            + "in eine kleine Kammer. Alles ist dunkel, ein Bett kannst "
-                            + "du wohl erkennen", "vorsichtig")
+                    du(SENTENCE, "steigst",
+                            w("vorsichtig hinauf und klettest durch das Fensterchen "
+                                    + "in eine kleine Kammer. Alles ist dunkel, ein Bett kannst "
+                                    + "du wohl erkennen")).mitVorfeldSatzglied("vorsichtig")
                             .timed(mins(2)),
                     du("steigst",
                             "wieder hinauf. Im Hellen siehst du, dass die Kammer nur "

@@ -20,6 +20,7 @@ import static de.nb.aventiure2.german.base.GermanUtil.joinToString;
 import static de.nb.aventiure2.german.base.StructuralElement.PARAGRAPH;
 import static de.nb.aventiure2.german.base.StructuralElement.SENTENCE;
 import static de.nb.aventiure2.german.base.StructuralElement.max;
+import static de.nb.aventiure2.german.base.Wortfolge.w;
 import static de.nb.aventiure2.german.description.AltDescriptionsBuilder.alt;
 import static de.nb.aventiure2.german.description.DescriptionBuilder.du;
 import static de.nb.aventiure2.german.description.DescriptionBuilder.neuerSatz;
@@ -310,13 +311,11 @@ public class DescriptionUmformulierer {
             final AbstractFlexibleDescription<?> desc) {
         final TextDescription descriptionSatzanschlussOhneSubjekt =
                 desc.toTextDescriptionSatzanschlussOhneSubjekt();
-        return du(max(desc.getStartsNew(), PARAGRAPH),
-                praefixVerb,
-                joinToString(
-                        praefixRemainder,
-                        "und",
-                        descriptionSatzanschlussOhneSubjekt.toWortfolge()),
-                praefixVorfeldSatzglied)
+        return du(max(desc.getStartsNew(), PARAGRAPH), praefixVerb, w(joinToString(
+                praefixRemainder,
+                "und",
+                descriptionSatzanschlussOhneSubjekt.toWortfolge())))
+                .mitVorfeldSatzglied(praefixVorfeldSatzglied)
                 .dann(desc.isDann())
                 .komma(descriptionSatzanschlussOhneSubjekt.isKommaStehtAus())
                 .phorikKandidat(desc.getPhorikKandidat())

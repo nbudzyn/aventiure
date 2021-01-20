@@ -106,7 +106,8 @@ class BankAmTischBeimSchlossfestFactory {
                             BANK_AM_TISCH_BEIM_SCHLOSSFEST_FACTORY_IN);
         }
 
-        return du("suchst", "dir erneut im Gedränge einen Platz an einem Tisch", "erneut")
+        return du("suchst", "dir erneut im Gedränge einen Platz an einem Tisch")
+                .mitVorfeldSatzglied("erneut")
                 .timed(mins(3));
     }
 

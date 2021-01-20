@@ -108,25 +108,19 @@ public class SimpleMovementNarrator implements IMovementNarrator {
         final Nominalphrase desc = getDescription();
 
         n.narrateAlt(NO_TIME,
-                du("gehst",
-                        "dabei an " +
-                                desc.datStr() +
-                                " vorbei",
-                        "dabei")
+                du("gehst", "dabei an " +
+                        desc.datStr() +
+                        " vorbei").mitVorfeldSatzglied("dabei")
                         .phorikKandidat(desc, gameObjectId)
                         .beendet(SENTENCE),
-                du("gehst",
-                        "dabei schnellen Schrittes an " +
-                                desc.datStr() +
-                                " vorüber",
-                        "dabei")
+                du("gehst", "dabei schnellen Schrittes an " +
+                        desc.datStr() +
+                        " vorüber").mitVorfeldSatzglied("dabei")
                         .phorikKandidat(desc, gameObjectId)
                         .beendet(SENTENCE),
-                du("gehst",
-                        "dabei mit schnellen Schritten an " +
-                                desc.datStr() +
-                                " vorüber",
-                        "dabei")
+                du("gehst", "dabei mit schnellen Schritten an " +
+                        desc.datStr() +
+                        " vorüber").mitVorfeldSatzglied("dabei")
                         .phorikKandidat(desc, gameObjectId)
                         .beendet(SENTENCE)
         );

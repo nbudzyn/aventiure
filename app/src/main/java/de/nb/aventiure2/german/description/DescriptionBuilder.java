@@ -18,8 +18,8 @@ import static de.nb.aventiure2.german.base.Person.P2;
 import static de.nb.aventiure2.german.base.StructuralElement.PARAGRAPH;
 import static de.nb.aventiure2.german.base.StructuralElement.SENTENCE;
 import static de.nb.aventiure2.german.base.StructuralElement.WORD;
+import static de.nb.aventiure2.german.base.Wortfolge.joinToNullWortfolge;
 import static de.nb.aventiure2.german.base.Wortfolge.joinToWortfolge;
-import static de.nb.aventiure2.german.base.Wortfolge.w;
 
 public class DescriptionBuilder {
     private DescriptionBuilder() {
@@ -66,33 +66,18 @@ public class DescriptionBuilder {
     }
 
     @CheckReturnValue
-    public static SimpleDuDescription du(final String verb) {
-        return du(verb, (String) null);
+    public static SimpleDuDescription du(final String verb, final Object... remainderParts) {
+        // FIXME Aufrufer vereinfachen - joinTo... weg, nomK()
+        //  phorikKandidat weg etc.
+        return du(WORD, verb, remainderParts);
     }
 
     @CheckReturnValue
     public static SimpleDuDescription du(final StructuralElement startsNew,
-                                         final String verb) {
-        return du(startsNew, verb, (String) null);
-    }
-
-    @CheckReturnValue
-    public static SimpleDuDescription du(final String verb,
-                                         @Nullable final String remainder) {
-        // FIXME Umbauen analog zu mit parts... (analog neuerSatz())
+                                         final String verb, final Object... remainderParts) {
         // FIXME Aufrufer vereinfachen - joinTo... weg, nomK()
         //  phorikKandidat weg etc.
-        return du(verb, remainder, (String) null);
-    }
-
-    @CheckReturnValue
-    public static SimpleDuDescription du(final StructuralElement startsNew,
-                                         final String verb,
-                                         @Nullable final String remainder) {
-        // FIXME Umbauen analog zu mit parts... (analog neuerSatz())
-        // FIXME Aufrufer vereinfachen - joinTo... weg, nomK()
-        //  phorikKandidat weg etc.
-        return du(startsNew, verb, remainder, (String) null);
+        return du(startsNew, verb, joinToNullWortfolge(remainderParts));
     }
 
     @NonNull
@@ -108,26 +93,6 @@ public class DescriptionBuilder {
     @CheckReturnValue
     public static SimpleDuDescription du(final StructuralElement startsNew, final String verb,
                                          @Nullable final Wortfolge remainder) {
-        return du(startsNew, verb, remainder, (String) null);
-    }
-
-    @NonNull
-    @CheckReturnValue
-    public static SimpleDuDescription du(final StructuralElement startsNew, final String verb,
-                                         @Nullable final String remainder,
-                                         @Nullable final String vorfeldSatzglied) {
-        // FIXME Umbauen analog zu mit parts... (analog neuerSatz())
-        //  Insbesonder muss das vorfeldSatzglied aus dem Aufruf raus!
-        // FIXME Aufrufer vereinfachen - joinTo... weg, nomK()
-        //  phorikKandidat weg etc.
-        return du(startsNew, verb, w(remainder), vorfeldSatzglied);
-    }
-
-    @NonNull
-    @CheckReturnValue
-    public static SimpleDuDescription du(final StructuralElement startsNew, final String verb,
-                                         @Nullable final Wortfolge remainder,
-                                         @Nullable final String vorfeldSatzglied) {
         // FIXME Umbauen analog zu mit parts... (analog neuerSatz())
         // FIXME Aufrufer vereinfachen - joinTo... weg, nomK()
         //  phorikKandidat weg etc.
@@ -135,21 +100,9 @@ public class DescriptionBuilder {
         return new SimpleDuDescription(startsNew,
                 verb,
                 remainder != null ? remainder.getString() : null,
-                vorfeldSatzglied,
                 remainder != null && remainder.woertlicheRedeNochOffen(),
                 remainder != null && remainder.kommaStehtAus(),
                 remainder != null ? remainder.getPhorikKandidat() : null);
-    }
-
-    @CheckReturnValue
-    public static SimpleDuDescription du(final String verb,
-                                         @Nullable final String remainder,
-                                         @Nullable final String vorfeldSatzglied) {
-        // FIXME Umbauen analog zu mit parts... (analog neuerSatz())
-        // FIXME Aufrufer vereinfachen - joinTo... weg, nomK()
-        //  phorikKandidat weg etc.
-
-        return du(StructuralElement.WORD, verb, remainder, vorfeldSatzglied);
     }
 
     @CheckReturnValue

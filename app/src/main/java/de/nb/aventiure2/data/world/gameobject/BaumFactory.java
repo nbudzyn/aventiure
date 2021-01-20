@@ -122,7 +122,8 @@ public class BaumFactory {
     @CheckReturnValue
     private static TimedDescription<?> getDescInZweitesMal() {
         return du(PARAGRAPH, "kletterst", w("noch einmal eine, zwei Etagen den Baum hinauf. "
-                + "Du schaust ins Blattwerk und bist stolz auf dich"), "noch einmal")
+                + "Du schaust ins Blattwerk und bist stolz auf dich"))
+                .mitVorfeldSatzglied("noch einmal")
                 .timed(mins(6))
                 .withCounterIdIncrementedIfTextIsNarrated(
                         HOCHKLETTERN)
@@ -139,7 +140,8 @@ public class BaumFactory {
                 //  Dazu noch einmal prüfen, dass die "Wiederholung" nicht doppelt
                 //  ausgedrückt wird.
                 du(PARAGRAPH, "kletterst", w("noch einmal "
-                        + "auf den Baum. Neues gibt es hier oben nicht zu erleben"), "noch einmal")
+                        + "auf den Baum. Neues gibt es hier oben nicht zu erleben"))
+                        .mitVorfeldSatzglied("noch einmal")
                         .timed(mins(7))
                         .withCounterIdIncrementedIfTextIsNarrated(
                                 HOCHKLETTERN)

@@ -25,6 +25,7 @@ import static de.nb.aventiure2.data.world.base.Lichtverhaeltnisse.DUNKEL;
 import static de.nb.aventiure2.data.world.gameobject.World.*;
 import static de.nb.aventiure2.data.world.syscomp.state.impl.RapunzelState.SINGEND;
 import static de.nb.aventiure2.german.base.StructuralElement.SENTENCE;
+import static de.nb.aventiure2.german.base.Wortfolge.w;
 import static de.nb.aventiure2.german.description.AltDescriptionsBuilder.alt;
 import static de.nb.aventiure2.german.description.DescriptionBuilder.du;
 import static de.nb.aventiure2.german.description.DescriptionBuilder.neuerSatz;
@@ -99,8 +100,8 @@ public class RastenAction extends AbstractScAction {
                 du("genießt deine Rast")
                         .undWartest()
                         .dann(),
-                du(SENTENCE, "sitzt", "glücklich da und genießt",
-                        "glücklich")
+                du(SENTENCE, "sitzt", w("glücklich da und genießt"))
+                        .mitVorfeldSatzglied("glücklich")
                         .beendet(SENTENCE),
                 neuerSatz("Dein Herz wird ganz warm von dem Gesang")
                         .beendet(SENTENCE));
@@ -141,9 +142,8 @@ public class RastenAction extends AbstractScAction {
         final AltDescriptionsBuilder alt = alt();
 
         alt.add(
-                du(SENTENCE, "hältst",
-                        "verborgen unter den Bäumen noch eine Zeitlang Rast",
-                        "verborgen unter den Bäumen")
+                du(SENTENCE, "hältst", w("verborgen unter den Bäumen noch eine Zeitlang Rast"))
+                        .mitVorfeldSatzglied("verborgen unter den Bäumen")
                         .beendet(SENTENCE)
                         .dann(),
                 neuerSatz("Es tut gut, eine Weile zu rasten. Über dir zwitschern die "
@@ -157,11 +157,9 @@ public class RastenAction extends AbstractScAction {
                 )
                         .beendet(SENTENCE)
                         .dann(),
-                du(SENTENCE, "ruhst", "noch eine Weile aus und lauschst, wie die "
-                                + "Insekten "
-                                + "zirpen und der Wind saust",
-                        "eine Weile"
-                )
+                du(SENTENCE, "ruhst", w("noch eine Weile aus und lauschst, wie die "
+                        + "Insekten "
+                        + "zirpen und der Wind saust")).mitVorfeldSatzglied("eine Weile")
                         .beendet(SENTENCE)
                         .dann()
         );

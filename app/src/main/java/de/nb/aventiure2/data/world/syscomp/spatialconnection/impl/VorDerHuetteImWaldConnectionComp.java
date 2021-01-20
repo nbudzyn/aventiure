@@ -52,8 +52,7 @@ public class VorDerHuetteImWaldConnectionComp extends AbstractSpatialConnectionC
                         "Auf den Waldweg zurückkehren",
                         mins(2),
                         du("gehst", "durch Farn und Gestrüpp zurück zum "
-                                        + "Waldweg",
-                                "durch Farn und Gestrüpp")
+                                + "Waldweg").mitVorfeldSatzglied("durch Farn und Gestrüpp")
                                 .undWartest()
                                 .dann()
                 ),
@@ -111,7 +110,7 @@ public class VorDerHuetteImWaldConnectionComp extends AbstractSpatialConnectionC
                         du("gehst", "im Dunkeln vorsichtig ein paar Schritte "
                                 + "um die Hütte herum. Du kannst die Silhouette "
                                 + "eines einzelnen Baums erkennen, vielleicht – "
-                                + "ein Apfelbaum", "vorsichtig")
+                                + "ein Apfelbaum").mitVorfeldSatzglied("vorsichtig")
                                 .timed(mins(1)),
                         du("schaust", w("noch einmal hinter die Hütte. "
                                 + "Im Licht erkennst du dort einen kleinen, völlig "

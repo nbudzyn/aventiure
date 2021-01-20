@@ -314,8 +314,8 @@ public class RapunzelTalkingComp extends AbstractTalkingComp {
             }
         } else if (zuneigungTowardsSC == -FeelingIntensity.MERKLICH) {
             alt.add(
-                    du("erhältst", "nur ein knappes Nicken zurück",
-                            "nur ein knappes Nicken")
+                    du("erhältst", "nur ein knappes Nicken zurück")
+                            .mitVorfeldSatzglied("nur ein knappes Nicken")
                             .beendet(PARAGRAPH),
                     neuerSatz(anaph.nomK(),
                             "nickt dir nur knapp zu")
@@ -452,7 +452,12 @@ public class RapunzelTalkingComp extends AbstractTalkingComp {
         // "ihren"
         // "ihrem"
         // "sie"
-        n.narrate(du(PARAGRAPH, "fängst", "an ganz freundlich mit "
+        // FIXME Dieser zweite Teil muss von Rapunzels
+        //  Zuneigung abhängen!
+        // "ihren"
+        // "ihrem"
+        // "sie"
+        n.narrate(du(PARAGRAPH, "fängst", w("an ganz freundlich mit "
                 + anaph.datStr()
                 + " zu reden. Du erzählst, dass von "
                 + wovonHerzBewegtDat
@@ -477,7 +482,7 @@ public class RapunzelTalkingComp extends AbstractTalkingComp {
                 + desc.possArt().vor(N).datStr()  // "ihrem"
                 + " zwölften Jahre sei "
                 + desc.persPron().nomStr() // "sie"
-                + " in diesen Turm geschlossen", "ganz freundlich")
+                + " in diesen Turm geschlossen")).mitVorfeldSatzglied("ganz freundlich")
                 .timed(mins(1)));
 
         setSchonBegruesstMitSC(true);
@@ -555,10 +560,10 @@ public class RapunzelTalkingComp extends AbstractTalkingComp {
 
         if (zuneigungSCZuRapunzel >= FeelingIntensity.STARK) {
             alt.add(
-                    du(PARAGRAPH, "spürst", "plötzlich neuen Tatendrang in dir. „Lass "
+                    du(PARAGRAPH, "spürst", w("plötzlich neuen Tatendrang in dir. „Lass "
                             + "mich gehen“, "
                             + "sagst du, "
-                            + "„bald bin ich wieder zurück!“", "plötzlich")
+                            + "„bald bin ich wieder zurück!“")).mitVorfeldSatzglied("plötzlich")
                             .timed(secs(15))
                             .beendet(PARAGRAPH)
             );

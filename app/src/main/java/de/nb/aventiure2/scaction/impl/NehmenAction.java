@@ -265,6 +265,7 @@ public class NehmenAction
                             // "ihn"
                             // "ihn"
                             // "Er"
+                            // "ihn"
                             n.narrateAlt(
                                     neuerSatz(anaph.nomK(),// "Er"
                                             "ist glibschig und",
@@ -284,7 +285,8 @@ public class NehmenAction
                                             + "versuchst, deine Hand an der "
                                             + "Kleidung zu reinigen, aber der "
                                             + "Schleim verteilt sich nur "
-                                            + "überall – igitt!", "tief in deine Tasche")
+                                            + "überall – igitt!")
+                                            .mitVorfeldSatzglied("tief in deine Tasche")
                                             .timed(secs(10))
                                             .beendet(PARAGRAPH),
                                     du("packst", w(anaph.akkStr() // "ihn"

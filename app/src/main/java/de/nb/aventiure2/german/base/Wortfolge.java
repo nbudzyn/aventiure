@@ -135,7 +135,7 @@ public class Wortfolge {
      * wird <i>keines</i> erzeugt.
      */
     @Nullable
-    private static Wortfolge joinToNullWortfolge(final Object... parts) {
+    public static Wortfolge joinToNullWortfolge(final Object... parts) {
         return joinToNullWortfolge(asList(parts));
     }
 
