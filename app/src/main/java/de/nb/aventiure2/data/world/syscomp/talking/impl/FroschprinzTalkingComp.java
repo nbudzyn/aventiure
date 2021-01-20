@@ -524,21 +524,21 @@ public class FroschprinzTalkingComp extends AbstractTalkingComp {
         // Idee zu Synonymen: Synonyme sollte erst NACH dem Originalbegriff auftauchen
         // und automatisch gewählt werden, wenn syn() oder Ähnliches
         // programmiert wird.
-        n.narrate(satzanschluss("taucht seinen Kopf "
-                + "unter, sinkt hinab und über ein Weilchen kommt er wieder herauf gerudert, "
-                + "hat "
+        n.narrate(satzanschluss("taucht seinen Kopf",
+                "unter, sinkt hinab und über ein Weilchen kommt er wieder herauf gerudert,",
+                "hat",
                 // die goldene Kugel / die Dinge
-                + descObjectsInDenBrunnenGefallen.akkStr()
-                + " im Maul und wirft "
-                + descObjectsInDenBrunnenGefallen.persPron().akkStr()
-                + " ins Gras. Du "
-                + "bist voll Freude, als du "
+                descObjectsInDenBrunnenGefallen.akkK(),
+                "im Maul und wirft",
+                descObjectsInDenBrunnenGefallen.persPron().akkK(),
+                "ins Gras. Du",
+                "bist voll Freude, als du",
                 // die goldene Kugel / die Dinge / IDEA Synonym: "das schöne Spielzeug"
                 // Idee zu Synonymen: Synonyme sollte erst NACH dem Originalbegriff auftauchen
                 // und automatisch gewählt werden, wenn syn() oder Ähnliches
                 // programmiert wird.
-                + descObjectsInDenBrunnenGefallen.akkStr()
-                + " wieder erblickst")
+                descObjectsInDenBrunnenGefallen.akkK(),
+                "wieder erblickst")
                 .timed(secs(30)));
 
         for (final LOC_DESC object : objectsInDenBrunnenGefallen) {

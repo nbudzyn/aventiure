@@ -285,8 +285,7 @@ public class RapunzelTalkingComp extends AbstractTalkingComp {
                     neuerSatz("Aber",
                             anaph.nomK(),
                             "schreit nur: „Raus! Auf der Stelle!“")
-                            .beendet(PARAGRAPH))
-            );
+                            .beendet(PARAGRAPH));
         } else if (zuneigungTowardsSC == -FeelingIntensity.STARK) {
             alt.add(neuerSatz("„Was willst du hier?“, antwortet",
                     anaph.nomK(),
@@ -369,7 +368,7 @@ public class RapunzelTalkingComp extends AbstractTalkingComp {
                         altReaktionSaetze.stream()
                                 .flatMap(s -> s.altVerzweitsaetze().stream()))
                         .beendet(PARAGRAPH));
-                alt.add(neuerSatz("„Ich hatte mich schon gefragt, ob ihr mal wieder "
+                alt.add(neuerSatz("„Ich hatte mich schon gefragt, ob ihr mal wieder ",
                         "vorbeischaut! Willkommen.“ –")
                         .beendet(SENTENCE)
                 );

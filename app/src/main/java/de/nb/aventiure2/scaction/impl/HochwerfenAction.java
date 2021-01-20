@@ -130,10 +130,10 @@ public class HochwerfenAction<OBJ extends IDescribableGO & ILocatableGO>
 
         if (n.allowsAdditionalDuSatzreihengliedOhneSubjekt()) {
             narrateAndDoHochwerfenAuffangen(
-                    satzanschluss(", wirfst " +
-                            anaph.akkStr() +
-                            " in die Höhe und fängst " +
-                            anaph.persPron().akkStr() +
+                    satzanschluss(", wirfst",
+                            anaph.akkK(),
+                            "in die Höhe und fängst",
+                            anaph.persPron().akkK(),
                             " wieder auf")
                             .timed(secs(3))
                             .dann());

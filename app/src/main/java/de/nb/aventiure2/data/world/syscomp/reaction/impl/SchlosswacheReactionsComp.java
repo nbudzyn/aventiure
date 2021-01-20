@@ -327,9 +327,9 @@ public class SchlosswacheReactionsComp
         final ImmutableList.Builder<TimedDescription<?>> alt = ImmutableList.builder();
 
         if (n.allowsAdditionalDuSatzreihengliedOhneSubjekt()) {
-            alt.add(satzanschluss(", während "
-                    + getDescription().nomStr()
-                    + " gerade damit beschäftigt ist, ihre Waffen zu polieren")
+            alt.add(satzanschluss(", während",
+                    getDescription().nomK(),
+                    "gerade damit beschäftigt ist, ihre Waffen zu polieren")
                     .timed(secs(3))
                     .dann());
         } else {

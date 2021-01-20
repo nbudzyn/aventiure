@@ -267,8 +267,8 @@ public class FroschprinzReactionsComp
     private void prinzVerlaesstSchlossVorhalle() {
         if (n.allowsAdditionalDuSatzreihengliedOhneSubjekt()) {
             n.narrate(
-                    satzanschluss(", aber die Menge hat dich schon von dem "
-                            + "jungen Königssohn getrennt")
+                    satzanschluss(", aber die Menge hat dich schon von dem",
+                            "jungen Königssohn getrennt")
                             .timed(secs(15))
                             .phorikKandidat(M, FROSCHPRINZ));
 

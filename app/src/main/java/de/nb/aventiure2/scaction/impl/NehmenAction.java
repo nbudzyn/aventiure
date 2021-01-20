@@ -451,14 +451,12 @@ public class NehmenAction
         );
 
         if (n.allowsAdditionalDuSatzreihengliedOhneSubjekt()) {
-            alt.add(satzanschluss(", nur um "
-                    +
+            alt.add(satzanschluss(", nur um",
                     nehmenPraedikat
                             .mit(world.getDescription(gameObject, true).persPron())
                             .mitAdverbialerAngabe(
                                     new AdverbialeAngabeSkopusSatz("gleich erneut"))
-                            .getZuInfinitiv(P2, SG).joinToString(
-                    ))
+                            .getZuInfinitiv(P2, SG))
                     .timed(secs(5))
                     // "zu nehmen", "an dich zu nehmen", "aufzuheben"
                     .komma()

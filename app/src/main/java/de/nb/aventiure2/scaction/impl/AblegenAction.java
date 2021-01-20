@@ -243,15 +243,15 @@ public class AblegenAction
 
             final ImmutableList.Builder<TimedDescription<?>> alt =
                     ImmutableList.builder();
-            alt.add(satzanschluss(", aber dann denkst du dir: „So ein Ekeltier hat auf "
-                    + "meiner Tafel nichts "
-                    + "verloren!“, und setzt den Frosch wieder ab")
+            alt.add(satzanschluss(", aber dann denkst du dir: „So ein Ekeltier hat auf",
+                    "meiner Tafel nichts",
+                    "verloren!“, und setzt den Frosch wieder ab")
                     .timed(secs(5))
                     .dann()
                     .phorikKandidat(M, FROSCHPRINZ));
-            alt.add(satzanschluss(", aber dann stellst du dir vor, die schleimigen "
-                    + "Patscher auf den Tisch zu stellen, und setzt den "
-                    + "Frosch gleich wieder ab")
+            alt.add(satzanschluss(", aber dann stellst du dir vor, die schleimigen",
+                    "Patscher auf den Tisch zu stellen, und setzt den",
+                    "Frosch gleich wieder ab")
                     .timed(secs(5))
                     .dann()
                     .phorikKandidat(M, FROSCHPRINZ));
@@ -291,12 +291,11 @@ public class AblegenAction
 
             if (gameObjektPersPron != null) {
                 if (isDefinitivDiskontinuitaet()) {
-                    final String description = "– und legst "
-                            + gameObjektPersPron.akkStr()
-                            + " sogleich wieder "
-                            + (wohinDetail != null ? "dort" : "")
-                            + "hin";
-                    n.narrate(satzanschluss(description)
+                    n.narrate(satzanschluss("– und legst",
+                            gameObjektPersPron.akkK(),
+                            "sogleich wieder",
+                            (wohinDetail != null ? "dort" : null),
+                            "hin")
                             .timed(secs(3)));
                     return;
                 }
