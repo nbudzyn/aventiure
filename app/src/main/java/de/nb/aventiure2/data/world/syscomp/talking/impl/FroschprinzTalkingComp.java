@@ -438,13 +438,18 @@ public class FroschprinzTalkingComp extends AbstractTalkingComp {
 
         // die goldene Kugel / die Dinge
         n.narrate(
-                neuerSatz(PARAGRAPH, "„Ach ja“, sagst du, „ich verspreche dir alles, was du "
-                        + "willst, wenn du mir nur "
-                        + world.getDescriptionSingleOrCollective(objectsInDenBrunnenGefallen)
-                        .akkStr()
-                        + " wiederbringst.“ Du denkst "
-                        + "aber: „Was der einfältige Frosch schwätzt, der sitzt im Wasser bei "
-                        + "seinesgleichen und quakt und kann keines Menschen Geselle sein.“")
+                neuerSatz(PARAGRAPH,
+                        "„Ach ja“, sagst du, „ich verspreche dir alles, was du",
+                        "willst, wenn du mir nur",
+                        world.getDescriptionSingleOrCollective(objectsInDenBrunnenGefallen)
+                                .akkStr(),
+                        // IDEA Man könnte programmieren: Wenn der Text hiernach
+                        //  Zu mehr als x Wörter hat, dann gehört das Bezugsobjekt
+                        //  Wieder in Vergessenheit - analog zum bereits implementieren
+                        //  Vorgehen. Z.B. Auch summieren über mehrere Strings
+                        "wiederbringst.“ Du denkst",
+                        "aber: „Was der einfältige Frosch schwätzt, der sitzt im Wasser bei",
+                        "seinesgleichen und quakt und kann keines Menschen Geselle sein.“")
                         .timed(secs(20)));
 
         froschReagiertAufVersprechen();

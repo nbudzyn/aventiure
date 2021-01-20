@@ -44,16 +44,14 @@ public class WalkerTest extends AndroidTestBase {
         doWalkthrough(Walkthrough.FULL);
 
         assertThat(scoreService.getScore()).isEqualTo(100);
-        assertThat(db.narrationDao().requireNarration().getText())
-                .doesNotContain("@");
+        assertNoVerbiddenContentInNarration();
     }
 
     @Test
     public void baa_doStrictWalkthrough_separat_nur_rapunzel() {
         doWalkthrough(Walkthrough.SEP_1_NUR_RAPUNZEL);
 
-        assertThat(db.narrationDao().requireNarration().getText())
-                .doesNotContain("@");
+        assertNoVerbiddenContentInNarration();
     }
 
     @Test
@@ -64,12 +62,29 @@ public class WalkerTest extends AndroidTestBase {
 
             doWalkthrough(Walkthrough.FULL.truncate(maxSteps));
             walkRandomly();
-            assertThat(db.narrationDao().requireNarration().getText())
-                    .doesNotContain("@");
+            assertNoVerbiddenContentInNarration();
 
             resetDatabase();
 
             maxSteps = maxSteps + STEP_SIZE;
+        }
+    }
+
+    public void assertNoVerbiddenContentInNarration() {
+        final String narrationText = db.narrationDao().requireNarration().getText();
+        assertThatDoesNotContainAnyOf(narrationText,
+                "@", "  ", ".!", "!.", "?.", ".?",
+                "\"", // Falsche Anführungszeichen
+                "„.", "„!", "„ ", "„?", ".„", "!„", "?„", "„,",
+                "“.", "“!", "“?", ",“", ", “",
+                "”" // Falsche Abführungszeichen
+        );
+    }
+
+    private static void assertThatDoesNotContainAnyOf(final String actual,
+                                                      final String... notExpected) {
+        for (final String notExcptectedString : notExpected) {
+            assertThat(actual).doesNotContain(notExcptectedString);
         }
     }
 

@@ -31,7 +31,6 @@ import de.nb.aventiure2.data.world.syscomp.storingplace.ILocationGO;
 import de.nb.aventiure2.data.world.syscomp.talking.impl.RapunzelTalkingComp;
 import de.nb.aventiure2.german.base.Nominalphrase;
 import de.nb.aventiure2.german.base.PraepositionMitKasus;
-import de.nb.aventiure2.german.base.StructuralElement;
 import de.nb.aventiure2.german.base.SubstantivischePhrase;
 import de.nb.aventiure2.german.description.AltDescriptionsBuilder;
 import de.nb.aventiure2.german.description.TimedDescription;
@@ -410,8 +409,8 @@ public class RapunzelReactionsComp
                             altReaktionSaetze.stream()
                                     .flatMap(s -> s.altVerzweitsaetze().stream()))
                             .stream()
-                            .map(wf -> neuerSatz(StructuralElement.SENTENCE, wf)
-                                    .timed(secs(30)))
+                            // FIXME AltDescriptionBuilder.timed() bauen!
+                            .map(wf -> neuerSatz(wf).timed(secs(30)))
                             .collect(toSet()));
         }
         n.narrateAlt(alt);

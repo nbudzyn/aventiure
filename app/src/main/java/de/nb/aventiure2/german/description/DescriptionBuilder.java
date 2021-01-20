@@ -5,7 +5,6 @@ import androidx.annotation.Nullable;
 
 import javax.annotation.CheckReturnValue;
 
-import de.nb.aventiure2.german.base.Konstituente;
 import de.nb.aventiure2.german.base.Personalpronomen;
 import de.nb.aventiure2.german.base.StructuralElement;
 import de.nb.aventiure2.german.base.Wortfolge;
@@ -19,41 +18,39 @@ import static de.nb.aventiure2.german.base.Person.P2;
 import static de.nb.aventiure2.german.base.StructuralElement.PARAGRAPH;
 import static de.nb.aventiure2.german.base.StructuralElement.SENTENCE;
 import static de.nb.aventiure2.german.base.StructuralElement.WORD;
+import static de.nb.aventiure2.german.base.Wortfolge.joinToWortfolge;
 import static de.nb.aventiure2.german.base.Wortfolge.w;
 
 public class DescriptionBuilder {
     private DescriptionBuilder() {
     }
 
+    // FIXME Alle Verwendunge prüfen,
+    //  unnötiges joinToWortfolge() entfernen, nomStr() durch nomK()
+    //  ersetzen etc.
     @CheckReturnValue
     public static TextDescription paragraph(final String paragraph) {
-        return neuerSatz(PARAGRAPH,
-                paragraph)
+        return neuerSatz(PARAGRAPH, paragraph)
                 .beendet(PARAGRAPH);
     }
 
-
-    public static TextDescription neuerSatz(final Iterable<Konstituente> konsituenten) {
-        return neuerSatz(SENTENCE, konsituenten);
-    }
-
-    public static TextDescription neuerSatz(final StructuralElement startsNew,
-                                            final Iterable<Konstituente> konsituenten) {
-        return neuerSatz(startsNew, Wortfolge.joinToWortfolge(konsituenten));
+    public static TextDescription neuerSatz(final Object... parts) {
+        // FIXME Alle Verwendunge prüfen,
+        //  unnötiges joinToWortfolge() entfernen, nomStr() durch nomK()
+        //  ersetzen etc.
+        return neuerSatz(SENTENCE, parts);
     }
 
     @NonNull
     @CheckReturnValue
-    public static TextDescription neuerSatz(final Wortfolge wortfolge) {
-        return neuerSatz(StructuralElement.SENTENCE, wortfolge);
+    // FIXME Alle Verwendunge prüfen,
+    //  unnötiges joinToWortfolge() entfernen, nomStr() durch nomK()
+    //  ersetzen etc.
+    public static TextDescription neuerSatz(
+            final StructuralElement startsNew,
+            final Object... parts) {
+        return neuerSatz(startsNew, joinToWortfolge(parts));
     }
-
-    @NonNull
-    @CheckReturnValue
-    public static TextDescription neuerSatz(final String description) {
-        return neuerSatz(StructuralElement.SENTENCE, description);
-    }
-
 
     @NonNull
     @CheckReturnValue
@@ -64,17 +61,6 @@ public class DescriptionBuilder {
 
         return new TextDescription(startsNew, wortfolge);
     }
-
-    @NonNull
-    @CheckReturnValue
-    public static TextDescription neuerSatz(final StructuralElement startsNew,
-                                            final String description) {
-        checkArgument(startsNew != WORD,
-                "Neuer Satz unmöglich für " + startsNew);
-
-        return neuerSatz(startsNew, w(description));
-    }
-
 
     @NonNull
     @CheckReturnValue

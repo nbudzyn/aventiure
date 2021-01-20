@@ -325,11 +325,11 @@ public class NehmenAction
             if (n.dann()) {
                 final SubstantivischePhrase anaph = world.anaph(FROSCHPRINZ);
 
-                n.narrate(neuerSatz(PARAGRAPH, "Aber dann nimmst du " + anaph.akkStr() +
-                        " doch wieder")
+                n.narrate(neuerSatz(PARAGRAPH, "Aber dann nimmst du",
+                        anaph.akkK(),
+                        "doch wieder")
                         .timed(secs(5))
-                        .undWartest()
-                        .phorikKandidat(anaph, FROSCHPRINZ));
+                        .undWartest());
                 return;
             }
 

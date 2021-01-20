@@ -169,13 +169,13 @@ public class SchlosswacheReactionsComp
                 raumAusDemDerSCDasSchlossBetretenHat);
     }
 
-    private String schlossVerlassenWohinDescription(
+    private static String schlossVerlassenWohinDescription(
             final ILocationGO schlossRoom,
             final ILocationGO wohinRoom) {
         final Lichtverhaeltnisse lichtverhaeltnisseImSchloss =
-                locationSystem.getLichtverhaeltnisse(schlossRoom);
+                LocationSystem.getLichtverhaeltnisse(schlossRoom);
         final Lichtverhaeltnisse lichtverhaeltnisseDraussen =
-                locationSystem.getLichtverhaeltnisse(wohinRoom);
+                LocationSystem.getLichtverhaeltnisse(wohinRoom);
         if (lichtverhaeltnisseImSchloss  // Im Schloss ist es immer hell, wenn es also draußen
                 // auch hell ist...
                 == lichtverhaeltnisseDraussen) {

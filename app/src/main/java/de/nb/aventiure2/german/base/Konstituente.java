@@ -11,6 +11,7 @@ import javax.annotation.concurrent.Immutable;
 import de.nb.aventiure2.german.string.GermanStringUtil;
 
 import static com.google.common.base.Preconditions.checkArgument;
+import static com.google.common.base.Preconditions.checkState;
 import static java.util.Objects.requireNonNull;
 
 @Immutable
@@ -128,6 +129,7 @@ public class Konstituente {
      * Phorik-Kandidaten.
      */
     public static Konstituente k(final @Nonnull String string,
+                                 @Nullable
                                  final NumerusGenus koennteAlsBezugsobjektVerstandenWerdenFuer) {
         return k(string, koennteAlsBezugsobjektVerstandenWerdenFuer, null);
     }
@@ -137,6 +139,7 @@ public class Konstituente {
      * String (getrimmt) mit Komma geendet hat.
      */
     public static Konstituente k(final @Nonnull String string,
+                                 @Nullable
                                  final NumerusGenus kannAlsBezugsobjektVerstandenWerdenFuer,
                                  @Nullable final IBezugsobjekt bezugsobjekt) {
         // Wenn der String mit Komma anfängt, lassen wir es in der Konsituente  stehen.
@@ -161,6 +164,7 @@ public class Konstituente {
     public static Konstituente k(final @Nonnull String string,
                                  final boolean woertlicheRedeNochOffen,
                                  final boolean kommaStehtAus,
+                                 @Nullable
                                  final NumerusGenus kannAlsBezugsobjektVerstandenWerdenFuer,
                                  @Nullable final IBezugsobjekt bezugsobjekt) {
         return new Konstituente(string, kommaStehtAus, woertlicheRedeNochOffen, false,
@@ -251,6 +255,11 @@ public class Konstituente {
         if (bezugsobjekt == null) {
             return null;
         }
+
+        checkState(kannAlsBezugsobjektVerstandenWerdenFuer != null,
+                "Bezugsobjekt gesetzt, aber kein "
+                        + "kannAlsBezugsobjektVerstandenWerdenFuer! Bezugsobjekt: "
+                        + bezugsobjekt);
 
         return new PhorikKandidat(kannAlsBezugsobjektVerstandenWerdenFuer, bezugsobjekt);
     }

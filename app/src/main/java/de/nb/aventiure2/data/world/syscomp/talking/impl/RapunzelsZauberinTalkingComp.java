@@ -116,11 +116,11 @@ public class RapunzelsZauberinTalkingComp extends AbstractTalkingComp {
         final AltDescriptionsBuilder alt = alt();
 
         alt.add(neuerSatz(PARAGRAPH,
-                joinToWortfolge(
-                        "„Gute Frau“, sprichst du",
-                        anaph.akkK(),
-                        "an"))
-                        .dann(),
+                // FIXME  joinToWortfolge() möglichst überall
+                //  durch neuerSatz o.Ä. ersetzen.
+                "„Gute Frau“, sprichst du",
+                anaph.akkK(),
+                "an").dann(),
                 du(PARAGRAPH,
                         "wendest",
                         joinToWortfolge(
@@ -157,15 +157,12 @@ public class RapunzelsZauberinTalkingComp extends AbstractTalkingComp {
                 anaph.akkK(),
                 "an"));
         alt.add(neuerSatz(PARAGRAPH,
-                joinToWortfolge(
-                        "„Holla, gute Frau“, sprichst du",
+                "„Holla, gute Frau“, sprichst du",
+                anaph.akkK(),
+                "an").dann(),
+                neuerSatz("„Schön euch zu sehen“, sprichst du",
                         anaph.akkK(),
-                        "an"))
-                        .dann(),
-                neuerSatz(joinToWortfolge(
-                        "„Schön euch zu sehen“, sprichst du",
-                        anaph.akkK(),
-                        "an"))
+                        "an")
                         .dann(),
                 du(PARAGRAPH, BEGRUESSEN.mit(anaph)));
         n.narrateAlt(alt, secs(5));

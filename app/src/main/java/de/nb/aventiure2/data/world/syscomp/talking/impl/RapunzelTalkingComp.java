@@ -531,10 +531,10 @@ public class RapunzelTalkingComp extends AbstractTalkingComp {
         } else {
             n.narrateAlt(secs(10),
                     neuerSatz(PARAGRAPH,
-                            "„Ich wollte euch nicht belästigen“, sprichst du "
-                                    + anaph().akkStr()
-                                    + " an, "
-                                    + "„lasst mich wieder hinunter und ich lasse euch euren Frieden.“")
+                            "„Ich wollte euch nicht belästigen“, sprichst du",
+                            anaph().akkK(),
+                            "an,",
+                            "„lasst mich wieder hinunter und ich lasse euch euren Frieden.“")
                             .beendet(PARAGRAPH)
             );
         }
@@ -563,6 +563,9 @@ public class RapunzelTalkingComp extends AbstractTalkingComp {
                         .timed(secs(10)),
                 neuerSatz(PARAGRAPH, "„Dann will ich wieder ins "
                         + "Abenteuer hinaus“, sagst du "
+                        // FIXME ZU.getDescription(anaph)) sollte keinen
+                        //  String, sondern eine Wortfolge erzeugen und einen
+                        //  Phorik-Kandidaten setzen
                         + ZU.getDescription(anaph))
                         .timed(secs(15))
                         .phorikKandidat(anaph, RAPUNZEL)
@@ -605,10 +608,10 @@ public class RapunzelTalkingComp extends AbstractTalkingComp {
         final ImmutableList.Builder<TimedDescription<?>> alt =
                 ImmutableList.builder();
 
-        alt.add(neuerSatz("Doch du reagierst gar nicht darauf, sondern forderst "
-                + anaph.akkStr()
-                + " nur auf, die Haare "
-                + "wieder heruterzulassen, dass du wieder gehen kannst")
+        alt.add(neuerSatz("Doch du reagierst gar nicht darauf, sondern forderst",
+                anaph.akkStr(),
+                "nur auf, die Haare",
+                "wieder heruterzulassen, dass du wieder gehen kannst")
                 .timed(secs(15))
                 .beendet(PARAGRAPH)
         );

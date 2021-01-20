@@ -602,12 +602,12 @@ public class RapunzelsZauberinReactionsComp
         if (loadSC().locationComp().hasRecursiveLocation(VOR_DEM_ALTEN_TURM)) {
             final Nominalphrase desc = getDescription(true);
             n.narrate(
-                    neuerSatz(PARAGRAPH, "Als "
-                            + desc.nomStr()
-                            + " unten am Turm steht, ruft "
-                            + desc.persPron().nomStr()
-                            + " etwas. Du kannst nicht alles verstehen, aber du hörst etwas wie: "
-                            + "„…lass dein Haar herunter!“")
+                    neuerSatz(PARAGRAPH, "Als",
+                            desc.nomK(),
+                            "unten am Turm steht, ruft",
+                            desc.persPron().nomK(),
+                            "etwas. Du kannst nicht alles verstehen, aber du hörst etwas wie: "
+                                    + "„…lass dein Haar herunter!“")
                             .timed(mins(1)));
         } else if (loadSC().locationComp().hasRecursiveLocation(OBEN_IM_ALTEN_TURM)) {
             n.narrateAlt(secs(10),

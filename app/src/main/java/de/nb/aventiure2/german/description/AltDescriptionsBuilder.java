@@ -57,6 +57,7 @@ public class AltDescriptionsBuilder {
     @Nonnull
     public static AltDescriptionsBuilder altNeueSaetze(final StructuralElement structuralElement,
                                                        final Object... parts) {
+        // FIXME Prüfen, möglichst durch AltDescriptions ersetzen
         final AltDescriptionsBuilder res = alt();
         res.addAll(joinToAltWortfolgen(parts).stream()
                 .map(wortfolge -> neuerSatz(structuralElement, wortfolge)));

@@ -43,39 +43,37 @@ public class RapunzelsZauberinMovementNarrator extends SimpleMovementNarrator {
 
         final AltDescriptionsBuilder alt = alt();
 
-        alt.add(neuerSatz(anaphOderDesc.nomStr()
-                + " kommt daher")
-                .phorikKandidat(desc, gameObjectId)
+        alt.add(neuerSatz(anaphOderDesc.nomK(),
+                "kommt daher")
                 .beendet(PARAGRAPH));
 
         if (spatialConnectionMovingGO != null) {
-            alt.add(neuerSatz(anaphOderDesc.nomStr()
-                    + " kommt "
-                    + spatialConnectionMovingGO.getWo() // "auf dem Pfad "
-                    + " daher")
-                    .phorikKandidat(desc, gameObjectId)
+            alt.add(neuerSatz(anaphOderDesc.nomK(),
+                    "kommt",
+                    spatialConnectionMovingGO.getWo(), // "auf dem Pfad "
+                    "daher")
                     .beendet(PARAGRAPH));
         }
 
         if (!n.isThema(gameObjectId)) {
             if (spatialConnectionMovingGO != null) {
-                alt.add(neuerSatz(spatialConnectionMovingGO.getWo() // "auf dem Pfad "
-                        + " kommt " +
-                        desc.nomStr() +
-                        " gegangen")
+                alt.add(neuerSatz(spatialConnectionMovingGO.getWo(), // "auf dem Pfad "
+                        "kommt",
+                        desc.nomK(),
+                        "gegangen")
                         .phorikKandidat(desc, gameObjectId)
                         .beendet(PARAGRAPH));
             }
 
-            alt.add(neuerSatz("Es kommt dir " +
-                    desc.nomStr() +
-                    " entgegen")
+            alt.add(neuerSatz("Es kommt dir",
+                    desc.nomK(),
+                    "entgegen")
                     .phorikKandidat(desc, gameObjectId)
                     .beendet(PARAGRAPH));
             alt.add(neuerSatz(PARAGRAPH,
-                    "Dir kommt " +
-                            desc.nomStr() +
-                            " entgegen")
+                    "Dir kommt",
+                    desc.nomK(),
+                    "entgegen")
                     .phorikKandidat(desc, gameObjectId)
                     .beendet(PARAGRAPH));
         }
@@ -83,8 +81,11 @@ public class RapunzelsZauberinMovementNarrator extends SimpleMovementNarrator {
         if (world.isOrHasRecursiveLocation(movingGOFrom, IM_WALD_NAHE_DEM_SCHLOSS) &&
                 to.is(VOR_DEM_ALTEN_TURM)) {
             if (!n.isThema(gameObjectId)) {
-                alt.add(neuerSatz("Den Pfad herauf kommt " +
-                        desc.nomStr())
+                // FIXME Alle Verwendungen von nomStr, datStr etc. suchen
+                //  und ggf. durch nomK etc. ergänzen und .phorikKandidat() entfernen.
+
+                alt.add(neuerSatz("Den Pfad herauf kommt",
+                        desc.nomK())
                         .phorikKandidat(desc, RAPUNZELS_ZAUBERIN)
                         .beendet(SENTENCE));
             }
