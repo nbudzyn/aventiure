@@ -385,8 +385,9 @@ public class RapunzelReactionsComp
             // FIXME Dies beides darf erst erscheinen, wenn Rapunzel von der Zauberin erzählt hat
             //  und den SC um Hilfe gebeten oder der SC Hilfe angeboten hat
             alt.addAll(TimedDescription.toTimed(secs(15),
-                    du("findest", "oben die junge Frau ganz aufgeregt vor: „Du bist schon "
-                            + "wieder da!“, sagt sie, „Kannst du mir nun helfen?“")
+                    du("findest", "oben die junge Frau ganz ",
+                            "aufgeregt vor: „Du bist schon ",
+                            "wieder da!“, sagt sie, „Kannst du mir nun helfen?“")
                             .mitVorfeldSatzglied("oben")
                             .phorikKandidat(F, RAPUNZEL),
                     neuerSatz(
@@ -798,7 +799,8 @@ public class RapunzelReactionsComp
                             .beendet(PARAGRAPH),
                     neuerSatz(PARAGRAPH, "Plötzlich erschallt über dir wieder Gesang")
                             .timed(NO_TIME),
-                    du("hörst", "den Gesang erneut").mitVorfeldSatzglied("erneut")
+                    du("hörst", "den Gesang erneut")
+                            .mitVorfeldSatzglied("erneut")
                             .timed(NO_TIME)
             );
 

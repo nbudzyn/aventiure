@@ -100,7 +100,7 @@ public class RastenAction extends AbstractScAction {
                 du("genießt deine Rast")
                         .undWartest()
                         .dann(),
-                du(SENTENCE, "sitzt", w("glücklich da und genießt"))
+                du(SENTENCE, "sitzt", "glücklich da und genießt")
                         .mitVorfeldSatzglied("glücklich")
                         .beendet(SENTENCE),
                 neuerSatz("Dein Herz wird ganz warm von dem Gesang")

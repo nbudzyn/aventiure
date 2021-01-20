@@ -90,7 +90,8 @@ class BettFactory {
                     .withCounterIdIncrementedIfTextIsNarrated(BETT__DESC_IN);
         }
 
-        return du("legst", "dich noch einmal in das Holzbett").mitVorfeldSatzglied("noch einmal")
+        return du("legst", "dich noch einmal in das Holzbett")
+                .mitVorfeldSatzglied("noch einmal")
                 .timed(secs(15))
                 .undWartest()
                 .dann();

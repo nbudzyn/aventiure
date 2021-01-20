@@ -86,9 +86,10 @@ public class SchlafenAction extends AbstractScAction {
 
         final ImmutableList.Builder<TimedDescription<?>> alt = ImmutableList.builder();
         if (!isDefinitivWiederholung()) {
-            alt.add(du("schließt", "kurz die Augen. Die Aufregung der letzten Stunden "
-                    + "steckt dir noch in den Knochen – an Einschlafen ist "
-                    + "nicht zu denken").mitVorfeldSatzglied("kurz")
+            alt.add(du("schließt",
+                    "kurz die Augen. Die Aufregung der letzten Stunden "
+                            + "steckt dir noch in den Knochen – an Einschlafen ist "
+                            + "nicht zu denken").mitVorfeldSatzglied("kurz")
                     .timed(mins(1)));
         }
 

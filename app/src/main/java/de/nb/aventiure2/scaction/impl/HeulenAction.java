@@ -117,12 +117,14 @@ public class HeulenAction extends AbstractScAction {
     void narrateAndDoFroschprinzUnauffaellig(final F froschprinz) {
         sc.memoryComp().setLastAction(buildMemorizedAction());
 
-        n.narrate(du("weinst", "immer lauter und kannst dich gar nicht trösten. " +
-                "Und wie du so klagst, ruft dir jemand zu: „Was hast du vor, " +
-                "du schreist ja, dass sich ein Stein erbarmen möchte.“ Du siehst " +
-                "dich um, woher " +
-                "die Stimme käme, da erblickst du " +
-                world.getDescription(froschprinz).akkStr()).mitVorfeldSatzglied("immer lauter")
+        n.narrate(du("weinst",
+                "immer lauter und kannst dich gar nicht trösten.",
+                "Und wie du so klagst, ruft dir jemand zu: „Was hast du vor,",
+                "du schreist ja, dass sich ein Stein erbarmen möchte.“ Du siehst",
+                "dich um, woher",
+                "die Stimme käme, da erblickst du",
+                world.getDescription(froschprinz).akkK())
+                .mitVorfeldSatzglied("immer lauter")
                 .timed(secs(30)));
 
         froschprinz.stateComp().narrateAndSetState(HAT_SC_HILFSBEREIT_ANGESPROCHEN);

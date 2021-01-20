@@ -458,10 +458,11 @@ public class FroschprinzReactionsComp
     }
 
     private void froschprinzSitztAufEinmalAufDerBankUndWillMitessen() {
-        n.narrate(du("spürst", "auf einmal etwas Feuchtes an deinem rechten Bein – oh "
-                + "nein, der "
-                + "garstige Frosch! „Heb mich herauf!“, ruft er, „weißt du nicht, was du "
-                + "zu mir gesagt bei dem kühlen Brunnenwasser? Heb mich herauf!“")
+        n.narrate(du("spürst",
+                "auf einmal etwas Feuchtes an deinem rechten Bein – oh "
+                        + "nein, der "
+                        + "garstige Frosch! „Heb mich herauf!“, ruft er, „weißt du nicht, was du "
+                        + "zu mir gesagt bei dem kühlen Brunnenwasser? Heb mich herauf!“")
                 .mitVorfeldSatzglied("auf einmal")
                 .timed(secs(20))
                 .beendet(PARAGRAPH));

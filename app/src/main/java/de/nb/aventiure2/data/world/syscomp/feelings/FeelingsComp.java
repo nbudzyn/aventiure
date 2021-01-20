@@ -1013,8 +1013,7 @@ public class FeelingsComp extends AbstractStatefulComponent<FeelingsPCD> {
                     neuerSatz(SENTENCE, "dir ist, als könntest du vor Müdigkeit kaum mehr "
                             + "ein Glied regen")
                             .beendet(SENTENCE),
-                    du("kannst",
-                            "dich des Schlafes kaum wehren")
+                    du("kannst", "dich des Schlafes kaum wehren")
                             .beendet(PARAGRAPH)
             );
         }
@@ -1027,11 +1026,9 @@ public class FeelingsComp extends AbstractStatefulComponent<FeelingsPCD> {
                                     + "kaum halten")
                             .komma()
                             .beendet(SENTENCE),
-                    du("kannst",
-                            "dich des Schlafes kaum wehren")
+                    du("kannst", "dich des Schlafes kaum wehren")
                             .beendet(PARAGRAPH),
-                    du(PARAGRAPH, "fühlst",
-                            "dich wie eingeschläfert")
+                    du(PARAGRAPH, "fühlst", "dich wie eingeschläfert")
             );
         }
 

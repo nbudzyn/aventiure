@@ -46,7 +46,6 @@ import static de.nb.aventiure2.german.base.Numerus.SG;
 import static de.nb.aventiure2.german.base.Person.P1;
 import static de.nb.aventiure2.german.base.Person.P2;
 import static de.nb.aventiure2.german.base.StructuralElement.PARAGRAPH;
-import static de.nb.aventiure2.german.base.Wortfolge.w;
 import static de.nb.aventiure2.german.description.DescriptionBuilder.du;
 import static de.nb.aventiure2.german.description.DescriptionBuilder.neuerSatz;
 import static de.nb.aventiure2.german.description.DescriptionBuilder.satzanschluss;
@@ -280,23 +279,23 @@ public class NehmenAction
                                             "genauso gut vorwurfsvoll")
                                             .timed(secs(10))
                                             .beendet(PARAGRAPH),
-                                    du("versenkst", anaph.akkStr() // "ihn"
-                                            + " tief in deine Tasche. Du "
-                                            + "versuchst, deine Hand an der "
-                                            + "Kleidung zu reinigen, aber der "
-                                            + "Schleim verteilt sich nur "
-                                            + "überall – igitt!")
+                                    du("versenkst", anaph.akkK(), // "ihn"
+                                            "tief in deine Tasche. Du",
+                                            "versuchst, deine Hand an der",
+                                            "Kleidung zu reinigen, aber der",
+                                            "Schleim verteilt sich nur",
+                                            "überall – igitt!")
                                             .mitVorfeldSatzglied("tief in deine Tasche")
                                             .timed(secs(10))
                                             .beendet(PARAGRAPH),
-                                    du("packst", w(anaph.akkStr() // "ihn"
-                                            + " in deine Tasche. "
-                                            + GermanStringUtil.capitalize(
-                                            froschDesc.persPron().nomStr())
-                                            + " fasst "
-                                            + "sich sehr eklig an und du bist "
-                                            + "glücklich, als die Prozedur "
-                                            + "vorbei ist.")).timed(secs(10))
+                                    du("packst",
+                                            anaph.akkK(), // "ihn"
+                                            "in deine Tasche.",
+                                            froschDesc.persPron().nomK().capitalize(),
+                                            "fasst",
+                                            "sich sehr eklig an und du bist",
+                                            "glücklich, als die Prozedur",
+                                            "vorbei ist.").timed(secs(10))
                                             .dann()
                             );
                         }

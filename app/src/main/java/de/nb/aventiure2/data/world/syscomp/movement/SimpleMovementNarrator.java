@@ -130,13 +130,8 @@ public class SimpleMovementNarrator implements IMovementNarrator {
         final Nominalphrase desc = getDescription();
 
         n.narrateAlt(NO_TIME,
-                neuerSatz(PARAGRAPH,
-                        "Dir begegnet",
-                        desc.nomK())
-                        .beendet(PARAGRAPH),
-                du("begegnest", desc.datStr())
-                        .phorikKandidat(desc, gameObjectId)
-        );
+                neuerSatz(PARAGRAPH, "Dir begegnet", desc.nomK()).beendet(PARAGRAPH),
+                du("begegnest", desc.datK()));
     }
 
     @Override

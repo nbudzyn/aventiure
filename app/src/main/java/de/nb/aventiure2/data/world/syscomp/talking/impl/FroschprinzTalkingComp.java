@@ -655,17 +655,18 @@ public class FroschprinzTalkingComp extends AbstractTalkingComp {
     private void froschAufTischDraengelt() {
         final Nominalphrase desc = getDescription(true);
         n.narrateAlt(
-                du("hast", "gerade Luft geholt, da schneidet dir "
-                        + desc.nomStr()
-                        + " schon das Wort ab. „Was gibt es da noch zu diskutieren?“, quakt "
-                        + desc.persPron().nomStr()
-                        + " dich laut an").mitVorfeldSatzglied("gerade")
+                du("hast", "gerade Luft geholt, da schneidet dir",
+                        desc.nomK(),
+                        "schon das Wort ab. „Was gibt es da noch zu diskutieren?“, quakt",
+                        desc.persPron().nomK(),
+                        "dich laut an")
+                        .mitVorfeldSatzglied("gerade")
                         .timed(secs(10))
                         .phorikKandidat(desc, FROSCHPRINZ),
-                du(SENTENCE, "druckst", "ein bisschen herum und faselst etwas von "
-                        + "hygienischen Gründen. "
-                        + capitalize(desc.nomStr())
-                        + " schaut dich nur… traurig? verächtlich?… an")
+                du(SENTENCE, "druckst", "ein bisschen herum und faselst etwas von",
+                        "hygienischen Gründen.",
+                        desc.nomK().capitalize(),
+                        " schaut dich nur… traurig? verächtlich?… an")
                         .timed(secs(15))
                         .withCounterIdIncrementedIfTextIsNarrated(null).beendet(PARAGRAPH));
 

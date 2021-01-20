@@ -116,7 +116,8 @@ public class DraussenVorDemSchlossConnectionComp extends AbstractSpatialConnecti
                     .komma();
         }
 
-        return du("betrittst", "wieder das Schloss").mitVorfeldSatzglied("wieder")
+        return du("betrittst", "wieder das Schloss")
+                .mitVorfeldSatzglied("wieder")
                 .timed(mins(2))
                 .undWartest()
                 .dann();

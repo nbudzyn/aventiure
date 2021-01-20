@@ -117,12 +117,7 @@ public class WartenAction<LIVGO extends IDescribableGO & ILocatableGO & ILivingB
                     du(WARTEN.mit(anaph))
                             .dann()
                             .phorikKandidat(anaph, erwartet.getId()),
-                    du("beginnst",
-                            "auf "
-                                    + anaph.akkStr()
-                                    + " zu warten")
-                            .dann()
-                            .phorikKandidat(anaph, erwartet.getId()));
+                    du("beginnst", "auf", anaph.akkK(), "zu warten").dann());
         } else {
             final SubstantivischePhrase anaph =
                     world.anaph(erwartet, true);
