@@ -402,8 +402,8 @@ public class RapunzelsZauberinReactionsComp
                 return;
             }
 
-            n.narrate(neuerSatz(anaph(true).nomStr()
-                    + " hat dich nicht bemerkt")
+            n.narrate(neuerSatz(anaph(true).nomK(),
+                    "hat dich nicht bemerkt")
                     .timed(NO_TIME));
         }
         // STORY UNTER_DEM_BETT_OBEN_IM_ALTEN_TURM

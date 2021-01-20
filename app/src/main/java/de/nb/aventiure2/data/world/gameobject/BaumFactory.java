@@ -170,8 +170,7 @@ public class BaumFactory {
                 + "wieder herab auf den Boden"
                 + dunkelNachsatz)
                 .timed(mins(4))
-                .withCounterIdIncrementedIfTextIsNarrated(
-                        HINABKLETTERN);
+                .withCounterIdIncrementedIfTextIsNarrated(HINABKLETTERN);
     }
 
     private static TimedDescription<?> getDescOutZweitesMal() {

@@ -262,8 +262,8 @@ public enum FroschkoenigStoryNode implements IStoryNode {
             alt.addAll(altNachtsSchlafen(world));
         }
 
-        alt.add(paragraph("Wann sollte eigentlich das Schlossfest sein? Da gibt es sicher "
-                + "etwas Gutes zu essen!"));
+        alt.add(paragraph("Wann sollte eigentlich das Schlossfest sein? Da gibt es sicher",
+                "etwas Gutes zu essen!"));
 
         alt.add(paragraph("Heute ist viel passiert"));
 
@@ -286,8 +286,8 @@ public enum FroschkoenigStoryNode implements IStoryNode {
 
         alt.add(paragraph("Der leckere Duft aus dem Schloss geht dir nicht aus Nase und Sinn"));
 
-        alt.add(paragraph("Welches Versprechen hattest du dem Frosch noch gegeben? Du kannst "
-                + "dich kaum mehr erinnern"));
+        alt.add(paragraph("Welches Versprechen hattest du dem Frosch noch gegeben? Du kannst",
+                "dich kaum mehr erinnern"));
 
         n.narrateAlt(alt, NO_TIME);
     }
@@ -342,10 +342,10 @@ public enum FroschkoenigStoryNode implements IStoryNode {
             } else {
                 alt.add(paragraph("Es ist zwar Nacht, aber du bist noch gar nicht müde"));
                 alt.add(paragraph("Es ist längst Nacht. Aber recht müde bist du noch nicht"));
-                alt.add(paragraph("Leider bist du noch nicht wirklich müde – obwohl es doch "
-                        + "längst Nacht ist"));
-                alt.add(paragraph("Vielleicht kannst du etwas Anstrengendes tun, um müde zu "
-                        + "werden? Nachts sollte man schließlich schlafen!"));
+                alt.add(paragraph("Leider bist du noch nicht wirklich müde – obwohl es doch",
+                        "längst Nacht ist"));
+                alt.add(paragraph("Vielleicht kannst du etwas Anstrengendes tun, um müde zu",
+                        "werden? Nachts sollte man schließlich schlafen!"));
             }
         }
 

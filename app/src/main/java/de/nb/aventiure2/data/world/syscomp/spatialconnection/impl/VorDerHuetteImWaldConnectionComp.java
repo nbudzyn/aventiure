@@ -51,8 +51,9 @@ public class VorDerHuetteImWaldConnectionComp extends AbstractSpatialConnectionC
                         "auf dem Weg",
                         "Auf den Waldweg zurückkehren",
                         mins(2),
-                        neuerSatz("Durch Farn und Gestrüpp gehst du zurück zum "
-                                + "Waldweg")
+                        du("gehst", "durch Farn und Gestrüpp zurück zum "
+                                        + "Waldweg",
+                                "durch Farn und Gestrüpp")
                                 .undWartest()
                                 .dann()
                 ),

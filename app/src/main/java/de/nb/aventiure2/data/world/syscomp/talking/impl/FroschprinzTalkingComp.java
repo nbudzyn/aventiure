@@ -272,12 +272,11 @@ public class FroschprinzTalkingComp extends AbstractTalkingComp {
             // die
             // die goldene Kugel
             // die
-            n.narrate(neuerSatz("„Ich weine über "
-                    + objectsDesc.akkStr() // die goldene Kugel
-                    + ", "
-                    + objectsDesc.relPron().akkStr() // die
-                    + " mir in den Brunnen hinabgefallen " +
-                    istSind(objectsDesc.getNumerusGenus()) +
+            n.narrate(neuerSatz("„Ich weine über",
+                    objectsDesc.akkK().kommaStehtAus(), // die goldene Kugel
+                    objectsDesc.relPron().akkK(), // die
+                    "mir in den Brunnen hinabgefallen",
+                    istSind(objectsDesc.getNumerusGenus()),
                     ".“")
                     .timed(secs(10)));
             setSchonBegruesstMitSC(true);
@@ -456,14 +455,14 @@ public class FroschprinzTalkingComp extends AbstractTalkingComp {
         final ImmutableList<? extends IDescribableGO> objectsInDenBrunnenGefallen =
                 getObjectsInDenBrunnenGefallen();
 
-        n.narrate(neuerSatz("Aber im nächsten Moment entschuldigst du dich schon: "
-                + "„Nichts für ungut! Wenn du mir wirklich "
-                + world.getDescriptionSingleOrCollective(objectsInDenBrunnenGefallen)
-                .akkStr()
-                + " wieder besorgen kannst – ich verspreche dir alles, was du willst!“ "
-                + "Bei dir selbst denkst du: "
-                + "„Was der einfältige Frosch schwätzt, der sitzt im Wasser bei "
-                + "seinesgleichen und quakt und kann keines Menschen Geselle sein.“")
+        n.narrate(neuerSatz("Aber im nächsten Moment entschuldigst du dich schon:",
+                "„Nichts für ungut! Wenn du mir wirklich",
+                world.getDescriptionSingleOrCollective(objectsInDenBrunnenGefallen)
+                        .akkStr(), // Zu viele andere Substantive danach.
+                "wieder besorgen kannst – ich verspreche dir alles, was du willst!“",
+                "Bei dir selbst denkst du:",
+                "„Was der einfältige Frosch schwätzt, der sitzt im Wasser bei",
+                "seinesgleichen und quakt und kann keines Menschen Geselle sein.“")
                 .timed(secs(20)));
 
         froschReagiertAufVersprechen();
@@ -473,14 +472,14 @@ public class FroschprinzTalkingComp extends AbstractTalkingComp {
         final ImmutableList<? extends IDescribableGO> objectsInDenBrunnenGefallen =
                 getObjectsInDenBrunnenGefallen();
 
-        n.narrate(neuerSatz("Aber so einfach lässt du dich nicht abspeisen. "
-                + "„Wenn du mir "
-                + world.getDescriptionSingleOrCollective(objectsInDenBrunnenGefallen)
-                .akkStr()
-                + " wieder besorgen kannst, verspreche ich dir alles, was du willst!“ "
-                + "Bei dir selbst denkst du: "
-                + "„Was der einfältige Frosch schwätzt, der sitzt im Wasser bei "
-                + "seinesgleichen und quakt und kann keines Menschen Geselle sein.“")
+        n.narrate(neuerSatz("Aber so einfach lässt du dich nicht abspeisen.",
+                "„Wenn du mir",
+                world.getDescriptionSingleOrCollective(objectsInDenBrunnenGefallen)
+                        .akkStr(), // Gerät in Vergessenheit
+                "wieder besorgen kannst, verspreche ich dir alles, was du willst!“",
+                "Bei dir selbst denkst du:",
+                "„Was der einfältige Frosch schwätzt, der sitzt im Wasser bei",
+                "seinesgleichen und quakt und kann keines Menschen Geselle sein.“")
                 .timed(secs(20)));
 
         froschReagiertAufVersprechen();
@@ -491,15 +490,16 @@ public class FroschprinzTalkingComp extends AbstractTalkingComp {
                 getObjectsInDenBrunnenGefallen();
 
         n.narrate(neuerSatz(
-                "„Lieber Frosch“, sagst du, „ich habe es mir überlegt. Ich verspreche dir alles, "
-                        + "was du "
-                        + "willst, wenn du mir nur "
-                        + world.getDescriptionSingleOrCollective(objectsInDenBrunnenGefallen)
-                        .akkStr()
-                        + " wiederbringst.“ – Was du dir eigentlich überlegt hast, ist:"
-                        + " „Was der einfältige Frosch schwätzt, der sitzt im"
-                        + " Wasser bei seinesgleichen und quakt und kann keines Menschen "
-                        + "Geselle sein.“")
+                "„Lieber Frosch“, sagst du, „ich habe es mir überlegt. Ich",
+                "verspreche dir alles,",
+                "was du",
+                "willst, wenn du mir nur",
+                world.getDescriptionSingleOrCollective(objectsInDenBrunnenGefallen)
+                        .akkStr(), /// Gerät in Vergessenheit
+                "wiederbringst.“ – Was du dir eigentlich überlegt hast, ist:",
+                "„Was der einfältige Frosch schwätzt, der sitzt im",
+                "Wasser bei seinesgleichen und quakt und kann keines Menschen",
+                "Geselle sein.“")
                 .timed(secs(20)));
 
         froschReagiertAufVersprechen();
@@ -604,9 +604,9 @@ public class FroschprinzTalkingComp extends AbstractTalkingComp {
                             + "Gescheiteres will "
                             + "dir partout nicht einfallen"),
                     neuerSatz(
-                            "„Und sonst so?“, fragst du "
-                                    + getDescription(true).akkStr()
-                                    + " etwas hilflos")
+                            "„Und sonst so?“, fragst du",
+                            getDescription(true).akkK(),
+                            "etwas hilflos")
             );
         }
 

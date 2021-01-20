@@ -977,8 +977,7 @@ public class FeelingsComp extends AbstractStatefulComponent<FeelingsPCD> {
 
             if (timeTaker.now().getTageszeit() == Tageszeit.NACHTS) {
                 res.add(
-                        neuerSatz("es ist Schlafenszeit")
-                                .beendet(SENTENCE)
+                        neuerSatz("es ist Schlafenszeit").beendet(SENTENCE)
                 );
             }
         }

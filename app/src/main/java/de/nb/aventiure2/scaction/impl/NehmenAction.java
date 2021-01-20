@@ -266,18 +266,17 @@ public class NehmenAction
                             // "ihn"
                             // "Er"
                             n.narrateAlt(
-                                    neuerSatz(anaph.nomStr()// "Er"
-                                            + " ist glibschig und "
-                                            + "schleimig – pfui-bäh! – schnell lässt du "
-                                            + anaph.persPron().akkStr()
-                                            + " in "
-                                            + "eine Tasche gleiten. "
-                                            + GermanStringUtil.capitalize(
-                                            anaph.possArt()
-                                                    .vor(NumerusGenus.N).nomStr())
-                                            + " gedämpftes Quaken könnte "
-                                            + "wohlig sein oder "
-                                            + "genauso gut vorwurfsvoll")
+                                    neuerSatz(anaph.nomK(),// "Er"
+                                            "ist glibschig und",
+                                            "schleimig – pfui-bäh! – schnell lässt du",
+                                            anaph.persPron().akkK(),
+                                            "in",
+                                            "eine Tasche gleiten.",
+                                            GermanStringUtil.capitalize(
+                                                    anaph.possArt().vor(NumerusGenus.N).nomStr()),
+                                            "gedämpftes Quaken könnte",
+                                            "wohlig sein oder",
+                                            "genauso gut vorwurfsvoll")
                                             .timed(secs(10))
                                             .beendet(PARAGRAPH),
                                     du("versenkst", anaph.akkStr() // "ihn"
@@ -360,12 +359,11 @@ public class NehmenAction
                         .phorikKandidat(world.getDescription(gameObject, true), FROSCHPRINZ)
                         .komma()
                         .dann(),
-                neuerSatz("Dir wird ganz angst, aber was man "
-                        + "versprochen hat, das muss man auch halten! Du nimmst "
-                        + world.getDescription(gameObject, true).akkStr()
-                        + " in die Hände")
+                neuerSatz("Dir wird ganz angst, aber was man",
+                        "versprochen hat, das muss man auch halten! Du nimmst",
+                        world.getDescription(gameObject, true).akkK(),
+                        " in die Hände")
                         .timed(secs(15))
-                        .phorikKandidat(world.getDescription(gameObject, true), FROSCHPRINZ)
                         .undWartest()
                         .dann());
     }
@@ -392,7 +390,7 @@ public class NehmenAction
 
         if (sc.memoryComp().getLastAction().is(Action.Type.ABLEGEN)) {
             final Nominalphrase objectDesc = world.getDescription(gameObject, true);
-            n.narrate(neuerSatz("Dann nimmst du " + objectDesc.akkStr())
+            n.narrate(neuerSatz("Dann nimmst du", objectDesc.akkK())
                     .timed(secs(5))
                     .undWartest()
                     .phorikKandidat(objectDesc.getNumerusGenus(), gameObject.getId()));

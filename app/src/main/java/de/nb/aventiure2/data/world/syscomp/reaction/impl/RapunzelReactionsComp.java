@@ -267,21 +267,20 @@ public class RapunzelReactionsComp
         // "sie"
         // "ihre"
         // "sie"
-        n.narrate(neuerSatz("Am Fenster sitzt eine junge Frau, so schön als "
-                + "du unter der Sonne noch keine gesehen hast. "
-                + "Ihre Haare, fein wie gesponnen "
-                + "Gold, hat sie um einen Fensterhaken gewickelt, so konntest du "
-                + "daran heraufsteigen.\n"
-                + capitalize(desc.nomStr())
-                + " erschrickt gewaltig, als du "
-                + PraepositionMitKasus.ZU.getDescription(desc.persPron()) // "zu ihr"
-                + " hereinkommst. Schnell bindet "
-                + desc.persPron().nomStr() // "sie"
-                + " "
-                + desc.possArt().vor(PL_MFN).akkStr() // "ihre"
-                + " Haare wieder zusammen, dann starrt "
-                + desc.persPron().nomStr() // "sie"
-                + " dich an")
+        n.narrate(neuerSatz("Am Fenster sitzt eine junge Frau, so schön als",
+                "du unter der Sonne noch keine gesehen hast.",
+                "Ihre Haare, fein wie gesponnen",
+                "Gold, hat sie um einen Fensterhaken gewickelt, so konntest du",
+                "daran heraufsteigen.\n",
+                desc.nomK().capitalize(),
+                "erschrickt gewaltig, als du",
+                PraepositionMitKasus.ZU.getDescription(desc.persPron()), // "zu ihr"
+                "hereinkommst. Schnell bindet",
+                desc.persPron().nomK(), // "sie"
+                desc.possArt().vor(PL_MFN).akkStr(), // "ihre"
+                "Haare wieder zusammen, dann starrt",
+                desc.persPron().nomK(), // "sie"
+                "dich an")
                 .timed(secs(20))
                 .phorikKandidat(desc, RAPUNZEL));
 
@@ -311,21 +310,21 @@ public class RapunzelReactionsComp
         // "sie"
         // "ihre"
         // "sie"
-        n.narrate(neuerSatz("Am Fenster sitzt eine junge Frau "
-                + "und schaut dich entsetzt an. Du hast sie wohl gerade aus tiefem "
-                + "Nachtschlaf geweckt. "
-                + capitalize(desc.nomStr())
-                + " ist in ein paar Decken gewickelt, "
-                + desc.possArt().vor(PL_MFN).akkStr() // "ihre"
-                + " langen Haare hat sie um einen Fensterhaken gewickelt, so "
-                + "konntest du "
-                + "daran heraufsteigen. Mit fahrigen Handbewegungen rafft "
-                + desc.persPron().nomStr() // "sie"
-                + " jetzt "
-                + desc.possArt().vor(PL_MFN).akkStr() // "ihre"
-                + " Haare zusammen, dann weicht "
-                + desc.persPron().nomStr() // "sie"
-                + " vor dir in das dunkle Zimmer zurück")
+        n.narrate(neuerSatz("Am Fenster sitzt eine junge Frau",
+                "und schaut dich entsetzt an. Du hast sie wohl gerade aus tiefem",
+                "Nachtschlaf geweckt.",
+                desc.nomK().capitalize(),
+                "ist in ein paar Decken gewickelt,",
+                desc.possArt().vor(PL_MFN).akkStr(), // "ihre"
+                "langen Haare hat sie um einen Fensterhaken gewickelt, so",
+                "konntest du",
+                "daran heraufsteigen. Mit fahrigen Handbewegungen rafft",
+                desc.persPron().nomK(), // "sie
+                "jetzt",
+                desc.possArt().vor(PL_MFN).akkStr(), // "ihre"
+                "Haare zusammen, dann weicht",
+                desc.persPron().nomK(), // "sie"
+                "vor dir in das dunkle Zimmer zurück")
                 .timed(secs(25))
                 .phorikKandidat(desc, RAPUNZEL));
 
@@ -391,9 +390,8 @@ public class RapunzelReactionsComp
                     neuerSatz(
                             "„Die Alte hat nichts bemerkt“, sprudelt die "
                                     + "wunderschöne junge Frau los, „aber lange werden wir uns "
-                                    + "nicht treffen können. Sie ist so neugierig!“")
-                            .phorikKandidat(F, RAPUNZEL)
-            ));
+                                    + "nicht treffen können. Sie ist so neugierig!“"))
+            );
         }
 
         if (loadSC().memoryComp().getKnown(RAPUNZEL) == KNOWN_FROM_DARKNESS) {
@@ -449,11 +447,11 @@ public class RapunzelReactionsComp
                 .timed(secs(30))
                 .phorikKandidat(anaph.persPron(), RAPUNZEL));
         if (loadSC().memoryComp().getKnown(RAPUNZEL) == KNOWN_FROM_LIGHT) {
-            alt.add(neuerSatz(anaph.persPron().nomStr()
-                    + " ist auch nachts wunderschön – allerdings ist die "
-                    + "junge, verschlafene "
-                    + "Frau in ihren Decken auch sichtlich überrascht, dass du zu "
-                    + "dieser Nachtzeit noch einmal bei ihr vorbeischaust")
+            alt.add(neuerSatz(anaph.persPron().nomK(),
+                    "ist auch nachts wunderschön – allerdings ist die",
+                    "junge, verschlafene",
+                    "Frau in ihren Decken auch sichtlich überrascht, dass du zu",
+                    "dieser Nachtzeit noch einmal bei ihr vorbeischaust")
                     .timed(secs(15))
                     .phorikKandidat(F, RAPUNZEL));
         }
@@ -505,12 +503,10 @@ public class RapunzelReactionsComp
 
     private void rapunzelMoechteGoldeneKugelHaben() {
         final SubstantivischePhrase anaph = anaph();
-        n.narrate(
-                neuerSatz(anaph.nomStr() +
-                        " sieht interessiert zu. „Darf ich auch "
-                        + "einmal?“, fragt " + anaph.persPron().nomStr() + " dich")
-                        .timed(secs(30))
-                        .phorikKandidat(F, RAPUNZEL));
+        n.narrate(neuerSatz(anaph.nomK(),
+                "sieht interessiert zu. „Darf ich auch",
+                "einmal?“, fragt", anaph.persPron().nomK(), "dich")
+                .timed(secs(30)));
 
         memoryComp.upgradeKnown(GOLDENE_KUGEL);
 
@@ -554,16 +550,15 @@ public class RapunzelReactionsComp
         // "die junge Frau"
         // "ihre"
         return ImmutableList.of(
-                neuerSatz("Jetzt zieht "
-                        + anaph.nomStr() // "die junge Frau"
-                        + " "
-                        + anaph.possArt().vor(PL_MFN).akkStr() // "ihre"
-                        + " Haare wieder hoch")
+                neuerSatz("Jetzt zieht",
+                        anaph.nomK(), // "die junge Frau"
+                        anaph.possArt().vor(PL_MFN).akkStr(), // "ihre"
+                        "Haare wieder hoch")
                         .timed(secs(15))
                         .beendet(PARAGRAPH),
-                neuerSatz("Die Haare zieht "
-                        + anaph.nomStr()
-                        + " wieder hoch")
+                neuerSatz("Die Haare zieht",
+                        anaph.nomK(),
+                        "wieder hoch")
                         .timed(secs(15))
                         .beendet(PARAGRAPH)
         );
@@ -639,16 +634,16 @@ public class RapunzelReactionsComp
         // Sonderfall: Rapunzel verzögert das Haare-Herunterlassen
         if (loadSC().locationComp().hasLocation(OBEN_IM_ALTEN_TURM)) {
             n.narrateAlt(
-                    neuerSatz("„O weh, die Alte kommt!“, entfährt es der jungen "
-                            + "Frau. „Du musst dich verstecken! Sie "
-                            + "ist eine mächtige Zauberin!“")
+                    neuerSatz("„O weh, die Alte kommt!“, entfährt es der jungen",
+                            "Frau. „Du musst dich verstecken! Sie",
+                            "ist eine mächtige Zauberin!“")
                             .timed(secs(10)),
-                    neuerSatz("„O nein, die Alte kommt schon wieder!“, sagt "
-                            + "die junge Frau entsetzt. „Versteck dich "
-                            + "schnell!“")
+                    neuerSatz("„O nein, die Alte kommt schon wieder!“, sagt",
+                            "die junge Frau entsetzt. „Versteck dich",
+                            "schnell!“")
                             .timed(secs(15)),
-                    neuerSatz("Alarmiert schaut die junge Frau dich an. Dann wandert "
-                            + "ihr Blick auf das Bett")
+                    neuerSatz("Alarmiert schaut die junge Frau dich an. Dann wandert",
+                            "ihr Blick auf das Bett")
                             .timed(secs(20))
                             .phorikKandidat(F, RAPUNZEL)
                     // Hier wäre "dann" nur sinnvoll, wenn Rapunzel etwas tut, nicht der SC

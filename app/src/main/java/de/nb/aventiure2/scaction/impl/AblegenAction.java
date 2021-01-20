@@ -259,14 +259,13 @@ public class AblegenAction
             return;
         }
 
-        final String description = "Der Frosch will auf den Tisch, aber du setzt den Frosch"
-                + (location.is(SCHLOSS_VORHALLE_AM_TISCH_BEIM_FEST) ?
-                " wieder " :
-                " ")
-                + location.storingPlaceComp().getLocationMode().getWohin(false)
-                + " und "
-                + "wendest dich demonstrativ ab";
-        n.narrate(neuerSatz(description)
+        n.narrate(neuerSatz("Der Frosch will auf den Tisch, aber du setzt den Frosch",
+                (location.is(SCHLOSS_VORHALLE_AM_TISCH_BEIM_FEST) ?
+                        "wieder" :
+                        null),
+                location.storingPlaceComp().getLocationMode().getWohin(false),
+                "und",
+                "wendest dich demonstrativ ab")
                 .timed(secs(5))
                 .dann()
                 .phorikKandidat(M, FROSCHPRINZ));

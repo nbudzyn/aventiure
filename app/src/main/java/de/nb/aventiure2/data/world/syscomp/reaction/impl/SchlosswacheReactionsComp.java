@@ -112,8 +112,8 @@ public class SchlosswacheReactionsComp
                 && goldeneKugel.locationComp().hasRecursiveLocation(SCHLOSS_VORHALLE)) {
             if (counterDao.incAndGet(
                     "SchlosswacheReactions_onEnterRoom_SchlossVorhalle") > 1) {
-                n.narrate(neuerSatz(getDescription(true).nomStr()
-                        + " scheint dich nicht zu bemerken")
+                n.narrate(neuerSatz(getDescription(true).nomK(),
+                        "scheint dich nicht zu bemerken")
                         .timed(secs(3)));
                 return;
             }
@@ -341,8 +341,7 @@ public class SchlosswacheReactionsComp
                             .dann());
         }
 
-        alt.add(neuerSatz(getDescription().datStr()
-                + " ist anscheinend nichts aufgefallen")
+        alt.add(neuerSatz(getDescription().datK(), "ist anscheinend nichts aufgefallen")
                 .timed(secs(3))
                 .dann());
 
@@ -389,12 +388,12 @@ public class SchlosswacheReactionsComp
 
         loadSC().feelingsComp().requestMood(ANGESPANNT);
         n.narrateAlt(
-                neuerSatz(getDescription().nomStr()
-                        + " beoabachtet dich dabei")
+                neuerSatz(getDescription().nomK(),
+                        "beoabachtet dich dabei")
                         .timed(secs(5))
                         .dann(),
-                neuerSatz(getDescription().nomStr()
-                        + " sieht dir belustig dabei zu")
+                neuerSatz(getDescription().nomK(),
+                        "sieht dir belustig dabei zu")
                         .timed(secs(5))
                         .dann(),
                 neuerSatz(PARAGRAPH, "Die Wache sieht sehr missbilligend zu")

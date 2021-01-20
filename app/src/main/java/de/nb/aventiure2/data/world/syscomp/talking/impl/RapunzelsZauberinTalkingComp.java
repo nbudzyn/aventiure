@@ -227,8 +227,7 @@ public class RapunzelsZauberinTalkingComp extends AbstractTalkingComp {
 
         n.narrateAlt(NO_TIME,
                 neuerSatz("Aber du lässt nicht locker:"),
-                du("fragst",
-                        joinToWortfolge(anaph.akkK(), "erneut:")));
+                du("fragst", joinToWortfolge(anaph.akkK(), "erneut:")));
 
         frageNachZiel();
     }
@@ -237,15 +236,13 @@ public class RapunzelsZauberinTalkingComp extends AbstractTalkingComp {
         final SubstantivischePhrase anaph = anaph(false);
 
         n.narrateAlt(secs(10),
-                neuerSatz("„Wohin des Wegs?“ – „Was geht es dich an?“, ist "
-                        + anaph.possArt().vor(F).nomStr() // "ihre"
-                        + " abweisende Antwort")
-                        .phorikKandidat(anaph, getGameObjectId())
+                neuerSatz("„Wohin des Wegs?“ – „Was geht es dich an?“, ist",
+                        anaph.possArt().vor(F).nomStr(), // "ihre"
+                        "abweisende Antwort")
                         .beendet(PARAGRAPH),
-                neuerSatz("„Ihr habt es wohl eilig?“ – „So ist es“, antwortet "
-                        + anaph.persPron().nomStr()
-                        + " dir")
-                        .phorikKandidat(anaph, getGameObjectId())
+                neuerSatz("„Ihr habt es wohl eilig?“ – „So ist es“, antwortet",
+                        anaph.persPron().nomK(),
+                        "dir")
                         .beendet(PARAGRAPH)
         );
 

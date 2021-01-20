@@ -92,7 +92,7 @@ public class DeklinierbarePhraseUtil {
      * <li>die Waffen -> welche
      * </ul>
      */
-    public static DeklinierbarePhrase getIndefinitAnapherZaehlbar(
+    public static SubstantivischePhrase getIndefinitAnapherZaehlbar(
             final NumerusGenus numerusGenus) {
         switch (numerusGenus) {
             case M:

@@ -134,8 +134,7 @@ public class FroschprinzReactionsComp
         locationComp.narrateAndSetLocation(SCHLOSS_VORHALLE_AM_TISCH_BEIM_FEST);
 
         n.narrate(
-                neuerSatz("Da springt dir der Frosch "
-                        + "aus der Hand – weg ist er!")
+                neuerSatz("Da springt dir der Frosch aus der Hand – weg ist er!")
                         .timed(secs(3))
                         .beendet(PARAGRAPH));
     }
@@ -341,11 +340,9 @@ public class FroschprinzReactionsComp
         // fallen lassen, NACHDEM der Frosch schon Dinge hochgeholt hat.
         // Dann ist die Kugel jetzt WEG - PECH.
         final Nominalphrase froschprinzDesc = getDescription(true);
-        n.narrate(neuerSatz(froschprinzDesc.nomStr()
-                +
-                " schaut dich vorwurfsvoll und etwas hochnäsig an")
-                .timed(secs(5))
-                .phorikKandidat(froschprinzDesc, FROSCHPRINZ));
+        n.narrate(neuerSatz(froschprinzDesc.nomK(),
+                "schaut dich vorwurfsvoll und etwas hochnäsig an")
+                .timed(secs(5)));
     }
 
     private void onFroschprinzEnter(@Nullable final ILocationGO from, final ILocationGO to) {
@@ -371,10 +368,8 @@ public class FroschprinzReactionsComp
 
         final Nominalphrase froschprinzDesc = getDescription(true);
         n.narrateAlt(secs(5),
-                neuerSatz(froschprinzDesc.nomStr() + " quakt erbost")
-                        .phorikKandidat(froschprinzDesc, FROSCHPRINZ),
-                neuerSatz("Entrüstet quakt " + froschprinzDesc.nomStr())
-                        .phorikKandidat(froschprinzDesc, FROSCHPRINZ)
+                neuerSatz(froschprinzDesc.nomK(), "quakt erbost"),
+                neuerSatz("Entrüstet quakt", froschprinzDesc.nomK())
         );
     }
 
@@ -390,14 +385,13 @@ public class FroschprinzReactionsComp
 
         stateComp.narrateAndSetState(BEIM_SCHLOSSFEST_AUF_TISCH_WILL_ZUSAMMEN_ESSEN);
 
-        n.narrate(neuerSatz("Wie " +
-                anaph.nomStr() +
-                " nun da sitzt, glotzt " +
-                anaph.nomStr() +
-                " dich mit großen Glubschaugen an und spricht: „Nun füll deine "
-                + "Holzschale auf, wir wollen zusammen essen.“")
-                .timed(secs(10))
-                .phorikKandidat(anaph, FROSCHPRINZ));
+        n.narrate(neuerSatz("Wie",
+                anaph.nomK(),
+                "nun da sitzt, glotzt",
+                anaph.nomK(),
+                "dich mit großen Glubschaugen an und spricht: „Nun füll deine",
+                "Holzschale auf, wir wollen zusammen essen.“")
+                .timed(secs(10)));
     }
 
     @Override

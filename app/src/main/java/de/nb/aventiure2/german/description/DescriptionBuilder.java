@@ -25,9 +25,6 @@ public class DescriptionBuilder {
     private DescriptionBuilder() {
     }
 
-    // FIXME Alle Verwendunge prüfen,
-    //  unnötiges joinToWortfolge() entfernen, nomStr() durch nomK()
-    //  ersetzen etc.
     @CheckReturnValue
     public static TextDescription paragraph(final String paragraph) {
         return neuerSatz(PARAGRAPH, paragraph)
@@ -35,9 +32,6 @@ public class DescriptionBuilder {
     }
 
     public static TextDescription neuerSatz(final Object... parts) {
-        // FIXME Alle Verwendunge prüfen,
-        //  unnötiges joinToWortfolge() entfernen, nomStr() durch nomK()
-        //  ersetzen etc.
         return neuerSatz(SENTENCE, parts);
     }
 

@@ -153,9 +153,8 @@ public class SimpleMovementNarrator implements IMovementNarrator {
 
         final AltDescriptionsBuilder alt = alt();
 
-        alt.add(neuerSatz(anaphOderDesc.nomStr() +
-                " kommt dir entgegen und geht an dir vorbei")
-                .phorikKandidat(desc, gameObjectId));
+        alt.add(neuerSatz(anaphOderDesc.nomK(),
+                "kommt dir entgegen und geht an dir vorbei"));
         alt.add(
                 neuerSatz(PARAGRAPH,
                         anaphOderDesc.nomK(),
@@ -426,8 +425,7 @@ public class SimpleMovementNarrator implements IMovementNarrator {
         final AltDescriptionsBuilder alt = alt();
 
 
-        alt.add(neuerSatz(desc.nomStr() + " kommt dir entgegen")
-                .phorikKandidat(desc, gameObjectId)
+        alt.add(neuerSatz(desc.nomK(), "kommt dir entgegen")
                 .beendet(PARAGRAPH));
 
         n.narrateAlt(alt, NO_TIME);
