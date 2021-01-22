@@ -8,12 +8,12 @@ import java.util.Objects;
 
 import javax.annotation.CheckReturnValue;
 
+import de.nb.aventiure2.german.base.Konstituente;
 import de.nb.aventiure2.german.base.Konstituentenfolge;
 import de.nb.aventiure2.german.base.Numerus;
 import de.nb.aventiure2.german.base.Person;
 import de.nb.aventiure2.german.base.PhorikKandidat;
 import de.nb.aventiure2.german.base.StructuralElement;
-import de.nb.aventiure2.german.base.Wortfolge;
 import de.nb.aventiure2.german.praedikat.AdverbialeAngabeSkopusSatz;
 import de.nb.aventiure2.german.praedikat.AdverbialeAngabeSkopusVerbAllg;
 import de.nb.aventiure2.german.praedikat.AdverbialeAngabeSkopusVerbWohinWoher;
@@ -80,10 +80,9 @@ public class StructuredDescription extends AbstractFlexibleDescription<Structure
      * "[Ich habe] die Kugel an mich genommen"
      * (nicht *"[Ich habe] die Kugel an sich genommen")
      */
-    public Wortfolge getDescriptionPartizipIIPhrase(final Person person,
-                                                    final Numerus numerus) {
-        return Wortfolge.joinToWortfolge(
-                getPraedikat().getPartizipIIPhrase(person, numerus));
+    public Konstituente getDescriptionPartizipIIPhrase(final Person person,
+                                                       final Numerus numerus) {
+        return getPraedikat().getPartizipIIPhrase(person, numerus).joinToSingleKonstituente();
     }
 
     @CheckReturnValue
@@ -97,30 +96,30 @@ public class StructuredDescription extends AbstractFlexibleDescription<Structure
     }
 
     @Override
-    public Wortfolge toWortfolgeMitVorfeld(final String vorfeld) {
-        return Wortfolge.joinToWortfolge(satz.getVerbzweitsatzMitVorfeld(vorfeld));
+    public Konstituente toSingleKonstituenteMitVorfeld(final String vorfeld) {
+        return satz.getVerbzweitsatzMitVorfeld(vorfeld).joinToSingleKonstituente();
     }
 
     @Override
-    public Wortfolge toWortfolge() {
-        return Wortfolge.joinToWortfolge(satz.getVerbzweitsatzStandard());
+    public Konstituente toSingleKonstituente() {
+        return satz.getVerbzweitsatzStandard().joinToSingleKonstituente();
     }
 
     @Override
     @Nullable
-    protected Wortfolge toWortfolgeMitSpeziellemVorfeldOrNull() {
+    protected Konstituente toSingleKonstituenteMitSpeziellemVorfeldOrNull() {
         @Nullable final Konstituentenfolge speziellesVorfeld =
                 satz.getVerbzweitsatzMitSpeziellemVorfeldAlsWeitereOption();
         if (speziellesVorfeld == null) {
             return null;
         }
 
-        return Wortfolge.joinToWortfolge(speziellesVorfeld);
+        return speziellesVorfeld.joinToSingleKonstituente();
     }
 
     @Override
-    public Wortfolge toWortfolgeSatzanschlussOhneSubjekt() {
-        return Wortfolge.joinToWortfolge(getPraedikat().getVerbzweit(satz.getSubjekt()));
+    public Konstituente toSingleKonstituenteSatzanschlussOhneSubjekt() {
+        return getPraedikat().getVerbzweit(satz.getSubjekt()).joinToSingleKonstituente();
     }
 
     public PraedikatOhneLeerstellen getPraedikat() {

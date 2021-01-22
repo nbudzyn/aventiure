@@ -1,6 +1,7 @@
 package de.nb.aventiure2.german.description;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;
@@ -10,14 +11,15 @@ import java.util.Objects;
 import javax.annotation.CheckReturnValue;
 import javax.annotation.ParametersAreNonnullByDefault;
 
+import de.nb.aventiure2.german.base.Konstituente;
+import de.nb.aventiure2.german.base.PhorikKandidat;
 import de.nb.aventiure2.german.base.StructuralElement;
-import de.nb.aventiure2.german.base.Wortfolge;
 import de.nb.aventiure2.german.string.GermanStringUtil;
 
+import static de.nb.aventiure2.german.base.Konstituente.k;
 import static de.nb.aventiure2.german.base.StructuralElement.PARAGRAPH;
 import static de.nb.aventiure2.german.base.StructuralElement.SENTENCE;
 import static de.nb.aventiure2.german.base.StructuralElement.max;
-import static de.nb.aventiure2.german.base.Wortfolge.w;
 
 /**
  * A general description. The subject may be anything.
@@ -52,11 +54,11 @@ public class TextDescription extends AbstractDescription<TextDescription> {
     //  Dazu bräuchte man wohl eine Kontextinfo in der Art "Womit endet die TextDescription?"
     //  Das könnte allerdings auch über die Prädikate... gelöst werden...
 
-    TextDescription(final StructuralElement startsNew,
-                    final Wortfolge wortfolge) {
-        this(new DescriptionParams(startsNew, wortfolge.getPhorikKandidat()),
-                wortfolge.getString(), wortfolge.woertlicheRedeNochOffen(),
-                wortfolge.kommaStehtAus());
+    public TextDescription(final StructuralElement startsNew,
+                           final Konstituente konstituente) {
+        this(new DescriptionParams(startsNew, konstituente.getPhorikKandidat()),
+                konstituente.getString(), konstituente.woertlicheRedeNochOffen(),
+                konstituente.kommaStehtAus());
     }
 
     public TextDescription(final DescriptionParams descriptionParams,
@@ -113,11 +115,11 @@ public class TextDescription extends AbstractDescription<TextDescription> {
 
     @Override
     @NonNull
-    public Wortfolge toWortfolgeMitKonjunktionaladverbWennNoetig(
+    public Konstituente toSingleKonstituenteMitKonjunktionaladverbWennNoetig(
             final String konjunktionaladverb) {
         // Konjunktionaladverb ist in diesen Fällen nicht nötig:
         // "Du gehst in den Wald. Der Weg führt an einem Bach entlang."
-        return toWortfolge();
+        return toSingleKonstituente();
     }
 
     @NonNull
@@ -154,9 +156,11 @@ public class TextDescription extends AbstractDescription<TextDescription> {
     @Override
     @CheckReturnValue
     @NonNull
-    public Wortfolge toWortfolge() {
-        return w(text, woertlicheRedeNochOffen, isKommaStehtAus(),
-                copyParams().getPhorikKandidat());
+    public Konstituente toSingleKonstituente() {
+        @Nullable final PhorikKandidat phorikKandidat = copyParams().getPhorikKandidat();
+        return k(text, woertlicheRedeNochOffen, isKommaStehtAus(),
+                phorikKandidat != null ? phorikKandidat.getNumerusGenus() : null,
+                phorikKandidat != null ? phorikKandidat.getBezugsobjekt() : null);
     }
 
     public String getText() {

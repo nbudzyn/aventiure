@@ -6,12 +6,12 @@ import com.google.common.collect.ImmutableList;
 
 import java.util.Objects;
 
+import de.nb.aventiure2.german.base.Konstituente;
 import de.nb.aventiure2.german.base.StructuralElement;
-import de.nb.aventiure2.german.base.Wortfolge;
 
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkState;
-import static de.nb.aventiure2.german.base.Wortfolge.joinToWortfolge;
+import static de.nb.aventiure2.german.base.Konstituentenfolge.joinToKonstituentenfolge;
 
 /**
  * A description - assuming the player character is the (first) subject. Somehting like
@@ -23,10 +23,10 @@ public class SimpleDuDescription extends AbstractFlexibleDescription<SimpleDuDes
      */
     private final String verb;
     /**
-     * Wortfolge für etwas wie "in den Wald"
+     * Konstituente für etwas wie "in den Wald"
      */
     @Nullable
-    private Wortfolge remainder;
+    private Konstituente remainder;
 
     /**
      * Ein Teil des {@link #remainder}-Strings, der statt "Du" das Vorfeld einnehmen kann.
@@ -41,7 +41,7 @@ public class SimpleDuDescription extends AbstractFlexibleDescription<SimpleDuDes
      */
     SimpleDuDescription(final StructuralElement startsNew,
                         final String verb,
-                        @Nullable final Wortfolge remainder) {
+                        @Nullable final Konstituente remainder) {
         super(startsNew, remainder != null ? remainder.getPhorikKandidat() : null);
 
         checkArgument(vorfeldSatzglied == null || remainder != null,
@@ -65,8 +65,8 @@ public class SimpleDuDescription extends AbstractFlexibleDescription<SimpleDuDes
                 // Hauptsatz. Daher muss ein neuer Satz begonnen werden.
                 .beginntZumindestSentence());
 
-        @Nullable final Wortfolge hauptsatzMitSpeziellemVorfeld =
-                toWortfolgeMitSpeziellemVorfeldOrNull();
+        @Nullable final Konstituente hauptsatzMitSpeziellemVorfeld =
+                toSingleKonstituenteMitSpeziellemVorfeldOrNull();
 
         if (hauptsatzMitSpeziellemVorfeld != null) {
             res.add(toTextDescriptionKeepParams(hauptsatzMitSpeziellemVorfeld)
@@ -79,25 +79,27 @@ public class SimpleDuDescription extends AbstractFlexibleDescription<SimpleDuDes
     }
 
     @Override
-    public Wortfolge toWortfolgeMitVorfeld(final String vorfeld) {
-        return joinToWortfolge(
+    public Konstituente toSingleKonstituenteMitVorfeld(final String vorfeld) {
+        return joinToKonstituentenfolge(
                 vorfeld, // "dann"
                 verb, // "gehst"
                 "du", // "du"
                 remainder) // "den Fluss entlang"
+                .joinToSingleKonstituente()
                 .mitPhorikKandidat(copyParams().getPhorikKandidat());
     }
 
     @Override
-    public Wortfolge toWortfolge() {
-        return joinToWortfolge(
+    public Konstituente toSingleKonstituente() {
+        return joinToKonstituentenfolge(
                 "du",
-                toWortfolgeSatzanschlussOhneSubjekt());
+                toSingleKonstituenteSatzanschlussOhneSubjekt())
+                .joinToSingleKonstituente();
     }
 
     @Override
     @Nullable
-    protected Wortfolge toWortfolgeMitSpeziellemVorfeldOrNull() {
+    protected Konstituente toSingleKonstituenteMitSpeziellemVorfeldOrNull() {
         if (vorfeldSatzglied == null) {
             return null;
         }
@@ -107,11 +109,12 @@ public class SimpleDuDescription extends AbstractFlexibleDescription<SimpleDuDes
                     "Kein remainder, aber ein Vorfeldsatzglied: " + vorfeldSatzglied);
         }
 
-        return joinToWortfolge(
+        return joinToKonstituentenfolge(
                 vorfeldSatzglied,
                 verb,
                 "du",
                 remainder.cutFirst(vorfeldSatzglied))
+                .joinToSingleKonstituente()
                 .mitPhorikKandidat(copyParams().getPhorikKandidat());
     }
 
@@ -119,10 +122,9 @@ public class SimpleDuDescription extends AbstractFlexibleDescription<SimpleDuDes
      * Gibt etwas zurück wie "gehst weiter"
      */
     @Override
-    public Wortfolge toWortfolgeSatzanschlussOhneSubjekt() {
-        return joinToWortfolge(
-                verb,
-                remainder)
+    public Konstituente toSingleKonstituenteSatzanschlussOhneSubjekt() {
+        return joinToKonstituentenfolge(verb, remainder)
+                .joinToSingleKonstituente()
                 .mitPhorikKandidat(copyParams().getPhorikKandidat());
     }
 
@@ -142,7 +144,7 @@ public class SimpleDuDescription extends AbstractFlexibleDescription<SimpleDuDes
                 "Es soll ein Komma ausstehen, aber ohne remainder?");
 
         if (remainder != null) {
-            remainder = remainder.mitKommaStehtAus(kommaStehtAus);
+            remainder = remainder.withKommaStehtAus(kommaStehtAus);
         }
 
         return this;

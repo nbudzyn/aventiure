@@ -16,7 +16,6 @@ import de.nb.aventiure2.german.base.NumerusGenus;
 import de.nb.aventiure2.german.base.PhorikKandidat;
 import de.nb.aventiure2.german.base.StructuralElement;
 import de.nb.aventiure2.german.base.SubstantivischePhrase;
-import de.nb.aventiure2.german.base.Wortfolge;
 
 import static com.google.common.base.Preconditions.checkArgument;
 import static de.nb.aventiure2.german.base.Person.P3;
@@ -49,7 +48,7 @@ public abstract class AbstractDescription<SELF extends AbstractDescription<SELF>
     @NonNull
     @CheckReturnValue
     final TextDescription toTextDescription() {
-        return toTextDescriptionKeepParams(toWortfolge());
+        return toTextDescriptionKeepParams(toSingleKonstituente());
     }
 
     /**
@@ -57,7 +56,7 @@ public abstract class AbstractDescription<SELF extends AbstractDescription<SELF>
      * handelt es sich bei dieser Description jedoch um eine kleinere Einheit,
      * wird der Text dieser Description zurückgegeben.
      */
-    public abstract Wortfolge toWortfolge();
+    public abstract Konstituente toSingleKonstituente();
 
     /**
      * Gibt die Beschreibung als Hauptsatz zurück, wenn nötig mit dem angegebenen
@@ -68,15 +67,15 @@ public abstract class AbstractDescription<SELF extends AbstractDescription<SELF>
     public final TextDescription toTextDescriptionMitKonjunktionaladverbWennNoetig(
             final String konjunktionaladverb) {
         return toTextDescriptionKeepParams(
-                toWortfolgeMitKonjunktionaladverbWennNoetig(konjunktionaladverb));
+                toSingleKonstituenteMitKonjunktionaladverbWennNoetig(konjunktionaladverb));
     }
 
     /**
      * Gibt die Beschreibung als Hauptsatz zurück, wenn nötig mit dem angegebenen
      * <code>konjunktionaladverb</code> ("dann", "darauf") im Vorfeld.
      */
-    abstract Wortfolge
-    toWortfolgeMitKonjunktionaladverbWennNoetig(String konjunktionaladverb);
+    abstract Konstituente
+    toSingleKonstituenteMitKonjunktionaladverbWennNoetig(String konjunktionaladverb);
 
     @NonNull
     public TextDescription toTextDescriptionKeepParams(final Konstituente konstituente) {
@@ -91,21 +90,6 @@ public abstract class AbstractDescription<SELF extends AbstractDescription<SELF>
                 newParams,
                 konstituente.getString(),
                 konstituente.woertlicheRedeNochOffen(), konstituente.kommaStehtAus());
-    }
-
-    @NonNull
-    public TextDescription toTextDescriptionKeepParams(final Wortfolge wortfolge) {
-        // IDEA Hier den PhorikKandidaten aus der Wortfolge
-        //  übernehmen und hier separat speichern?
-        //  Aus den params entfernen und params unverändert übergeben?
-        final DescriptionParams newParams = copyParams();
-        if (wortfolge.getPhorikKandidat() != null) {
-            newParams.phorikKandidat(wortfolge.getPhorikKandidat());
-        }
-        return new TextDescription(
-                newParams,
-                wortfolge.getString(),
-                wortfolge.woertlicheRedeNochOffen(), wortfolge.kommaStehtAus());
     }
 
     @SuppressWarnings("unchecked")

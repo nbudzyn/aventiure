@@ -287,7 +287,7 @@ public class DescriptionUmformulierer {
                         max(d.getStartsNew(), SENTENCE),
                         praefixVerb,
                         praefixRemainder,
-                        d.toWortfolge().capitalize())
+                        d.toSingleKonstituente().capitalize())
                         .komma(d.isKommaStehtAus())
                         .phorikKandidat(d.getPhorikKandidat())
                         .beendet(d.getEndsThis()))
@@ -317,7 +317,7 @@ public class DescriptionUmformulierer {
                 praefixVerb,
                 praefixRemainder,
                 "und",
-                descriptionSatzanschlussOhneSubjekt.toWortfolge())
+                descriptionSatzanschlussOhneSubjekt.toSingleKonstituente())
                 .mitVorfeldSatzglied(praefixVorfeldSatzglied)
                 .dann(desc.isDann())
                 .komma(descriptionSatzanschlussOhneSubjekt.isKommaStehtAus())

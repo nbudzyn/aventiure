@@ -5,9 +5,9 @@ import androidx.annotation.Nullable;
 
 import javax.annotation.CheckReturnValue;
 
+import de.nb.aventiure2.german.base.Konstituente;
 import de.nb.aventiure2.german.base.PhorikKandidat;
 import de.nb.aventiure2.german.base.StructuralElement;
-import de.nb.aventiure2.german.base.Wortfolge;
 
 public abstract class AbstractFlexibleDescription<SELF extends AbstractDescription<SELF>>
         extends AbstractDescription<SELF> {
@@ -21,34 +21,34 @@ public abstract class AbstractFlexibleDescription<SELF extends AbstractDescripti
     @NonNull
     @CheckReturnValue
     public final TextDescription toTextDescriptionMitVorfeld(final String vorfeld) {
-        return toTextDescriptionKeepParams(toWortfolgeMitVorfeld(vorfeld));
+        return toTextDescriptionKeepParams(toSingleKonstituenteMitVorfeld(vorfeld));
     }
 
     @Override
-    public Wortfolge toWortfolgeMitKonjunktionaladverbWennNoetig(
+    public Konstituente toSingleKonstituenteMitKonjunktionaladverbWennNoetig(
             final String konjunktionaladverb) {
-        @Nullable final Wortfolge wortfolgeMitSpeziellemVorfeldOrNull =
-                toWortfolgeMitSpeziellemVorfeldOrNull();
+        @Nullable final Konstituente mitSpeziellemVorfeldOrNull =
+                toSingleKonstituenteMitSpeziellemVorfeldOrNull();
 
-        if (wortfolgeMitSpeziellemVorfeldOrNull != null) {
-            return wortfolgeMitSpeziellemVorfeldOrNull;
+        if (mitSpeziellemVorfeldOrNull != null) {
+            return mitSpeziellemVorfeldOrNull;
         }
 
-        return toWortfolgeMitVorfeld(konjunktionaladverb);
+        return toSingleKonstituenteMitVorfeld(konjunktionaladverb);
     }
 
     @Nullable
-    protected abstract Wortfolge toWortfolgeMitSpeziellemVorfeldOrNull();
+    protected abstract Konstituente toSingleKonstituenteMitSpeziellemVorfeldOrNull();
 
-    abstract Wortfolge toWortfolgeMitVorfeld(final String vorfeld);
+    abstract Konstituente toSingleKonstituenteMitVorfeld(final String vorfeld);
 
     @NonNull
     @CheckReturnValue
     public final TextDescription toTextDescriptionSatzanschlussOhneSubjekt() {
-        return toTextDescriptionKeepParams(toWortfolgeSatzanschlussOhneSubjekt());
+        return toTextDescriptionKeepParams(toSingleKonstituenteSatzanschlussOhneSubjekt());
     }
 
-    abstract Wortfolge toWortfolgeSatzanschlussOhneSubjekt();
+    abstract Konstituente toSingleKonstituenteSatzanschlussOhneSubjekt();
 
     public abstract boolean hasSubjektDu();
 }

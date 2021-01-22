@@ -5,21 +5,22 @@ import androidx.annotation.Nullable;
 
 import javax.annotation.CheckReturnValue;
 
+import de.nb.aventiure2.german.base.Konstituente;
+import de.nb.aventiure2.german.base.Konstituentenfolge;
 import de.nb.aventiure2.german.base.Personalpronomen;
 import de.nb.aventiure2.german.base.StructuralElement;
-import de.nb.aventiure2.german.base.Wortfolge;
 import de.nb.aventiure2.german.praedikat.PraedikatOhneLeerstellen;
 import de.nb.aventiure2.german.satz.Satz;
 
 import static com.google.common.base.Preconditions.checkArgument;
 import static de.nb.aventiure2.data.world.gameobject.World.*;
+import static de.nb.aventiure2.german.base.Konstituentenfolge.joinToKonstituentenfolge;
+import static de.nb.aventiure2.german.base.Konstituentenfolge.joinToNullKonstituentenfolge;
 import static de.nb.aventiure2.german.base.NumerusGenus.M;
 import static de.nb.aventiure2.german.base.Person.P2;
 import static de.nb.aventiure2.german.base.StructuralElement.PARAGRAPH;
 import static de.nb.aventiure2.german.base.StructuralElement.SENTENCE;
 import static de.nb.aventiure2.german.base.StructuralElement.WORD;
-import static de.nb.aventiure2.german.base.Wortfolge.joinToNullWortfolge;
-import static de.nb.aventiure2.german.base.Wortfolge.joinToWortfolge;
 
 public class DescriptionBuilder {
     private DescriptionBuilder() {
@@ -40,29 +41,43 @@ public class DescriptionBuilder {
     public static TextDescription neuerSatz(
             final StructuralElement startsNew,
             final Object... parts) {
-        return neuerSatz(startsNew, joinToWortfolge(parts));
+        return neuerSatz(startsNew, joinToKonstituentenfolge(parts));
     }
 
     @NonNull
     @CheckReturnValue
     public static TextDescription neuerSatz(final StructuralElement startsNew,
-                                            final Wortfolge wortfolge) {
+                                            final Konstituentenfolge konstituentenfolge) {
+        return neuerSatz(startsNew,
+                konstituentenfolge.joinToSingleKonstituente());
+    }
+
+    @NonNull
+    @CheckReturnValue
+    public static TextDescription neuerSatz(final StructuralElement startsNew,
+                                            final Konstituente konstituente) {
         checkArgument(startsNew != WORD,
                 "Neuer Satz unmöglich für " + startsNew);
 
-        return new TextDescription(startsNew, wortfolge);
+        return new TextDescription(startsNew, konstituente);
     }
 
     @NonNull
     @CheckReturnValue
     public static TextDescription satzanschluss(final Object... parts) {
-        return satzanschluss(joinToWortfolge(parts));
+        return satzanschluss(joinToKonstituentenfolge(parts));
     }
 
     @NonNull
     @CheckReturnValue
-    private static TextDescription satzanschluss(final Wortfolge wortfolge) {
-        return new TextDescription(StructuralElement.WORD, wortfolge);
+    private static TextDescription satzanschluss(final Konstituentenfolge konstituentenfolge) {
+        return satzanschluss(konstituentenfolge.joinToSingleKonstituente());
+    }
+
+    @NonNull
+    @CheckReturnValue
+    private static TextDescription satzanschluss(final Konstituente konstituente) {
+        return new TextDescription(StructuralElement.WORD, konstituente);
     }
 
     @CheckReturnValue
@@ -73,20 +88,28 @@ public class DescriptionBuilder {
     @CheckReturnValue
     public static SimpleDuDescription du(final StructuralElement startsNew,
                                          final String verb, final Object... remainderParts) {
-        return du(startsNew, verb, joinToNullWortfolge(remainderParts));
-    }
-
-    @NonNull
-    @CheckReturnValue
-    public static SimpleDuDescription du(final String verb,
-                                         @Nullable final Wortfolge remainder) {
-        return du(WORD, verb, remainder);
+        return du(startsNew, verb, joinToNullKonstituentenfolge(remainderParts));
     }
 
     @NonNull
     @CheckReturnValue
     public static SimpleDuDescription du(final StructuralElement startsNew, final String verb,
-                                         @Nullable final Wortfolge remainder) {
+                                         @Nullable final Konstituentenfolge konstituentenfolge) {
+        return du(startsNew, verb,
+                konstituentenfolge != null ? konstituentenfolge.joinToSingleKonstituente() : null);
+    }
+
+    @NonNull
+    @CheckReturnValue
+    public static SimpleDuDescription du(final String verb,
+                                         @Nullable final Konstituente konstituente) {
+        return du(WORD, verb, konstituente);
+    }
+
+    @NonNull
+    @CheckReturnValue
+    public static SimpleDuDescription du(final StructuralElement startsNew, final String verb,
+                                         @Nullable final Konstituente remainder) {
         return new SimpleDuDescription(startsNew, verb, remainder);
     }
 

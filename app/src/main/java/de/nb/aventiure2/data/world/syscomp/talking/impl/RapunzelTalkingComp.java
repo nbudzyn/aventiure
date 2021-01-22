@@ -633,7 +633,7 @@ public class RapunzelTalkingComp extends AbstractTalkingComp {
                     ",",
                     altDannHaareFestbinden(rapunzelDesc).stream()
                             .flatMap(d -> d.altTextDescriptions().stream())
-                            .map(TextDescription::toWortfolge)
+                            .map(TextDescription::toSingleKonstituente)
             ));
 
             alt.add(neuerSatz(rapunzelDesc.nomK(),

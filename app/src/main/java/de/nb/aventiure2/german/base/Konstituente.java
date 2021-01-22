@@ -69,7 +69,12 @@ public class Konstituente {
     }
 
     Konstituente withKommaStehtAus() {
-        return k(string, woertlicheRedeNochOffen, true, kannAlsBezugsobjektVerstandenWerdenFuer,
+        return withKommaStehtAus(true);
+    }
+
+    public Konstituente withKommaStehtAus(final boolean kommmaStehtAus) {
+        return k(string, woertlicheRedeNochOffen, kommmaStehtAus,
+                kannAlsBezugsobjektVerstandenWerdenFuer,
                 bezugsobjekt
         );
     }
@@ -202,12 +207,36 @@ public class Konstituente {
                 kannAlsBezugsobjektVerstandenWerdenFuer;
     }
 
+    @Nullable
+    public Konstituente cutFirst(final String subString) {
+        @Nullable final String resultString = GermanUtil.cutFirst(string, subString);
+
+        if (resultString == null) {
+            return null;
+        }
+
+        return new Konstituente(
+                resultString, vorkommaNoetig,
+                woertlicheRedeNochOffen, kommmaStehtAus, kannAlsBezugsobjektVerstandenWerdenFuer,
+                bezugsobjekt);
+    }
+
     public Konstituente capitalize() {
         return new Konstituente(GermanStringUtil.capitalize(string),
                 // Wenn großgeschrieben werden soll, wäre es sinnlos, ein Komma zuvor
                 // setzen zu vollen.
                 false, woertlicheRedeNochOffen, kommmaStehtAus,
                 kannAlsBezugsobjektVerstandenWerdenFuer, bezugsobjekt);
+    }
+
+    public Konstituente mitPhorikKandidat(@Nullable final PhorikKandidat phorikKandidat) {
+        if (phorikKandidat == null) {
+            return ohneBezugsobjekt();
+        }
+
+        return new Konstituente(string,
+                vorkommaNoetig, woertlicheRedeNochOffen, kommmaStehtAus,
+                phorikKandidat.getNumerusGenus(), phorikKandidat.getBezugsobjekt());
     }
 
     Konstituente ohneBezugsobjekt() {

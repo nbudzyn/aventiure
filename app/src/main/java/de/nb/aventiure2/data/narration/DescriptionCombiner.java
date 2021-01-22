@@ -7,7 +7,7 @@ import java.util.Collection;
 import javax.annotation.CheckReturnValue;
 
 import de.nb.aventiure2.german.base.GermanUtil;
-import de.nb.aventiure2.german.base.Wortfolge;
+import de.nb.aventiure2.german.base.Konstituente;
 import de.nb.aventiure2.german.description.AbstractDescription;
 import de.nb.aventiure2.german.description.AbstractFlexibleDescription;
 import de.nb.aventiure2.german.description.StructuredDescription;
@@ -79,8 +79,11 @@ class DescriptionCombiner {
                         GermanUtil.joinToString(
                                 ",",
                                 first.toTextDescriptionSatzanschlussOhneSubjekt()
-                                        .toWortfolge(),
+                                        .toSingleKonstituente(),
                                 "und ")) // Präfix muss mit Leerzeichen enden
+                        // FIXME Hier gibt es ein Problem: Nachkomma
+                        //  geht verloren, wörtlicheRedeNochOffen wird automatisch
+                        //  geschlossen. Beides Schlecht...
                         .undWartest(false));
     }
 
@@ -102,7 +105,7 @@ class DescriptionCombiner {
                 first.getPraedikat().isBezugAufNachzustandDesAktantenGegeben() &&
                 first.getPraedikat().umfasstSatzglieder() &&
                 second.getStartsNew() == WORD) {
-            final Wortfolge descriptionPartizipIIPhrase =
+            final Konstituente descriptionPartizipIIPhrase =
                     first.getDescriptionPartizipIIPhrase(P2, SG);
             final String vorfeld =
                     // "unten angekommen"
