@@ -42,7 +42,6 @@ import static de.nb.aventiure2.german.base.NumerusGenus.M;
 import static de.nb.aventiure2.german.base.Person.P2;
 import static de.nb.aventiure2.german.base.StructuralElement.PARAGRAPH;
 import static de.nb.aventiure2.german.base.StructuralElement.SENTENCE;
-import static de.nb.aventiure2.german.base.Wortfolge.w;
 import static de.nb.aventiure2.german.description.DescriptionBuilder.du;
 import static de.nb.aventiure2.german.description.DescriptionBuilder.neuerSatz;
 import static de.nb.aventiure2.german.description.DescriptionBuilder.paragraph;
@@ -420,6 +419,7 @@ public class FeelingsComp extends AbstractStatefulComponent<FeelingsPCD> {
      *
      * @return Möglicherweise eine leere Collection - je nach übergebenen Werten!
      */
+    @SuppressWarnings("SameParameterValue")
     @NonNull
     private <C extends Collection<?>> C dispatchFeelings(
             final GameObjectId feelingTargetId,
@@ -827,9 +827,9 @@ public class FeelingsComp extends AbstractStatefulComponent<FeelingsPCD> {
             res.add(
                     du("beginnst", "müde zu werden")
                             .beendet(SENTENCE),
-                    du(PARAGRAPH, "bist", w("jetzt müde")).mitVorfeldSatzglied("jetzt")
+                    du(PARAGRAPH, "bist", "jetzt müde").mitVorfeldSatzglied("jetzt")
                             .beendet(SENTENCE),
-                    du(PARAGRAPH, "bist", w("indessen müde geworden"))
+                    du(PARAGRAPH, "bist", "indessen müde geworden")
                             .mitVorfeldSatzglied("indessen")
                             .beendet(SENTENCE),
                     neuerSatz("da wollen dir deine Augen nicht länger offen bleiben "

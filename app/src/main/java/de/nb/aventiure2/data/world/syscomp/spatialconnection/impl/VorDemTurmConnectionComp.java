@@ -28,7 +28,6 @@ import static de.nb.aventiure2.data.world.base.SpatialConnection.con;
 import static de.nb.aventiure2.data.world.gameobject.World.*;
 import static de.nb.aventiure2.german.base.StructuralElement.PARAGRAPH;
 import static de.nb.aventiure2.german.base.StructuralElement.SENTENCE;
-import static de.nb.aventiure2.german.base.Wortfolge.w;
 import static de.nb.aventiure2.german.description.DescriptionBuilder.du;
 import static de.nb.aventiure2.german.description.DescriptionBuilder.neuerSatz;
 
@@ -143,13 +142,13 @@ public class VorDemTurmConnectionComp extends AbstractSpatialConnectionComp {
                         .withCounterIdIncrementedIfTextIsNarrated(COUNTER_ALTER_TURM_UMRUNDET)
                         .dann();
             case 1:
-                return du("schaust", w("noch einmal um den Turm, ob dir vielleicht "
-                        + "eine Tür entgangen wäre – nichts")).timed(mins(2))
+                return du("schaust", "noch einmal um den Turm, ob dir vielleicht "
+                        + "eine Tür entgangen wäre – nichts").timed(mins(2))
                         .withCounterIdIncrementedIfTextIsNarrated(
                                 COUNTER_ALTER_TURM_UMRUNDET)
                         .dann();
             default:
-                return du("gehst", w("noch einmal um den Turm herum")).timed(mins(1))
+                return du("gehst", "noch einmal um den Turm herum").timed(mins(1))
                         .withCounterIdIncrementedIfTextIsNarrated(
                                 COUNTER_ALTER_TURM_UMRUNDET)
                         .dann();

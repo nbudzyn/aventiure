@@ -80,44 +80,6 @@ public class Konstituente {
     }
 
     /**
-     * Erzeugt eine Konstituente gemäß dieser Wortfolge. Dabei wird davon ausgegangen:
-     * Wenn in der Wortfolge kein Bezugsobjekt angegeben ist, dann enthält sie auch
-     * keine Objekte, die als Bezugsobjekt verstanden werden könnten.
-     */
-    public static Konstituente k(final @Nonnull Wortfolge wortfolge) {
-        return k(wortfolge,
-                wortfolge.getPhorikKandidat() != null ?
-                        wortfolge.getPhorikKandidat().getNumerusGenus() :
-                        null);
-    }
-
-    /**
-     * Erzeugt eine Konstituente gemäß dieser Wortfolge.
-     *
-     * @param kannAlsBezugsobjektVerstandenWerdenFuer Wenn in der Wortfolge ein Bezugsobjekt
-     *                                                angegeben ist, muss dessen Numerus und Kasus
-     *                                                mit dieser Angabe übereinstimmen.
-     */
-    public static Konstituente k(final @Nonnull Wortfolge wortfolge,
-                                 @Nullable
-                                 final NumerusGenus kannAlsBezugsobjektVerstandenWerdenFuer) {
-        // Wenn die Wortfolge mit Komma anfängt, lassen wir es in der Konsituente stehen.
-        // Damit wird das Komma definitiv ausgegeben - auch von Methoden, die das Vorkomma
-        // vielleich sonst (ggf. bewusst) verschlucken. Vgl. Wortfolge#joinToNullWortfolge()
-
-        return new Konstituente(
-                wortfolge.getString().trim(),
-                false,
-                wortfolge.woertlicheRedeNochOffen(),
-                wortfolge.kommaStehtAus(),
-                kannAlsBezugsobjektVerstandenWerdenFuer,
-                wortfolge.getPhorikKandidat() != null ?
-                        wortfolge.getPhorikKandidat().getBezugsobjekt() :
-                        null
-        );
-    }
-
-    /**
      * Erzeugt eine Konstituente, bei der nur dann kein Komma aussteht, wenn der
      * String (getrimmt) mit Komma geendet hat. Die Konstituente enthält keinen
      * Phorik-Kandidaten und kann auch nicht als phorischer Bezug verstanden werden

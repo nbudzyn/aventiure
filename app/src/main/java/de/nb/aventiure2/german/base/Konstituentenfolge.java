@@ -112,6 +112,7 @@ public class Konstituentenfolge implements Iterable<Konstituente> {
         return alternatives.iterator().next();
     }
 
+
     /**
      * Fügt diese Teile zu mehreren alternativen Konstituentenfolgen zusammen.
      *
@@ -119,7 +120,19 @@ public class Konstituentenfolge implements Iterable<Konstituente> {
      * Konstituentenfolge auch <code>null</code> enthalten.
      */
     @Nonnull
-    static Collection<Konstituentenfolge> joinToAltKonstituentenfolgen(
+    public static Collection<Konstituentenfolge> joinToAltKonstituentenfolgen(
+            final Object... parts) {
+        return joinToAltKonstituentenfolgen(asList(parts));
+    }
+
+    /**
+     * Fügt diese Teile zu mehreren alternativen Konstituentenfolgen zusammen.
+     *
+     * @return Mehrere alternative Konstituentenfolgen - die Collection kann statt einer
+     * Konstituentenfolge auch <code>null</code> enthalten.
+     */
+    @Nonnull
+    public static Collection<Konstituentenfolge> joinToAltKonstituentenfolgen(
             final Iterable<?> parts) {
         ArrayList<ImmutableList.Builder<Konstituente>> alternativeKonstituentenfolgen =
                 new ArrayList<>();
@@ -150,10 +163,6 @@ public class Konstituentenfolge implements Iterable<Konstituente> {
             } else if (part instanceof Konstituente) {
                 alternativePartKonstituentenfolgen =
                         Collections.singletonList(new Konstituentenfolge((Konstituente) part));
-            } else if (part instanceof Wortfolge) {
-                alternativePartKonstituentenfolgen =
-                        Collections.singletonList(
-                                new Konstituentenfolge(Konstituente.k((Wortfolge) part)));
             } else {
                 alternativePartKonstituentenfolgen =
                         Collections.singletonList(
@@ -221,7 +230,7 @@ public class Konstituentenfolge implements Iterable<Konstituente> {
         return res;
     }
 
-    static <R> R checkJoiningResultNotNull(
+    private static <R> R checkJoiningResultNotNull(
             @Nullable final R joiningResult,
             final Object... parts) {
         return checkJoiningResultNotNull(joiningResult, asList(parts));
@@ -334,7 +343,7 @@ public class Konstituentenfolge implements Iterable<Konstituente> {
         return new Pair<>(indexKandidat, true);
     }
 
-    PhorikKandidat findPhorikKandidat() {
+    private PhorikKandidat findPhorikKandidat() {
         final Integer indexKandidatM = interpretPair(
                 findPhorikKandidatAndSicherheit(M));
         final Integer indexKandidatF = interpretPair(

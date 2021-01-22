@@ -29,7 +29,6 @@ import static de.nb.aventiure2.german.base.Nominalphrase.np;
 import static de.nb.aventiure2.german.base.NumerusGenus.M;
 import static de.nb.aventiure2.german.base.StructuralElement.PARAGRAPH;
 import static de.nb.aventiure2.german.base.StructuralElement.SENTENCE;
-import static de.nb.aventiure2.german.base.Wortfolge.w;
 import static de.nb.aventiure2.german.description.DescriptionBuilder.du;
 
 class SchattenDerBaeumeFactory {
@@ -51,6 +50,7 @@ class SchattenDerBaeumeFactory {
         return create(VOR_DEM_ALTEN_TURM_SCHATTEN_DER_BAEUME, VOR_DEM_ALTEN_TURM);
     }
 
+    @SuppressWarnings("SameParameterValue")
     @NonNull
     private GameObject create(final GameObjectId id, final GameObjectId locationId) {
         final SimpleDescriptionComp descriptionComp =
@@ -104,7 +104,7 @@ class SchattenDerBaeumeFactory {
                     .dann();
         }
 
-        return du("setzt", w("dich wieder in den Schatten der Bäume")).timed(secs(30))
+        return du("setzt", "dich wieder in den Schatten der Bäume").timed(secs(30))
                 .undWartest()
                 .dann();
     }

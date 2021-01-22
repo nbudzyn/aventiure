@@ -17,8 +17,8 @@ import de.nb.aventiure2.german.base.SubstantivischePhrase;
 
 import static com.google.common.collect.ImmutableSet.builder;
 import static com.google.common.collect.ImmutableSet.toImmutableSet;
+import static de.nb.aventiure2.german.base.Konstituentenfolge.joinToAltKonstituentenfolgen;
 import static de.nb.aventiure2.german.base.StructuralElement.SENTENCE;
-import static de.nb.aventiure2.german.base.Wortfolge.joinToAltWortfolgen;
 import static de.nb.aventiure2.german.description.DescriptionBuilder.neuerSatz;
 
 /**
@@ -59,8 +59,8 @@ public class AltDescriptionsBuilder {
                                                        final Object... parts) {
         // FIXME Prüfen - kann man das durch etwas anderes ersetzen?
         final AltDescriptionsBuilder res = alt();
-        res.addAll(joinToAltWortfolgen(parts).stream()
-                .map(wortfolge -> neuerSatz(structuralElement, wortfolge)));
+        res.addAll(joinToAltKonstituentenfolgen(parts).stream()
+                .map(k -> neuerSatz(structuralElement, k)));
         return res;
     }
 
