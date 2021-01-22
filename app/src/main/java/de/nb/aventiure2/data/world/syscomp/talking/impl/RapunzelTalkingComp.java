@@ -1,6 +1,7 @@
 package de.nb.aventiure2.data.world.syscomp.talking.impl;
 
 import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableSet;
 
 import javax.annotation.Nullable;
 
@@ -15,9 +16,10 @@ import de.nb.aventiure2.data.world.syscomp.talking.AbstractTalkingComp;
 import de.nb.aventiure2.german.base.Nominalphrase;
 import de.nb.aventiure2.german.base.Personalpronomen;
 import de.nb.aventiure2.german.base.SubstantivischePhrase;
-import de.nb.aventiure2.german.base.Wortfolge;
+import de.nb.aventiure2.german.description.AbstractDescription;
 import de.nb.aventiure2.german.description.AltDescriptionsBuilder;
 import de.nb.aventiure2.german.description.AltTimedDescriptionsBuilder;
+import de.nb.aventiure2.german.description.TextDescription;
 import de.nb.aventiure2.german.praedikat.AdverbialeAngabeSkopusVerbAllg;
 import de.nb.aventiure2.german.praedikat.AdverbialeAngabeSkopusVerbWohinWoher;
 import de.nb.aventiure2.german.praedikat.PraedikatOhneLeerstellen;
@@ -46,7 +48,6 @@ import static de.nb.aventiure2.german.base.NumerusGenus.PL_MFN;
 import static de.nb.aventiure2.german.base.PraepositionMitKasus.ZU;
 import static de.nb.aventiure2.german.base.StructuralElement.PARAGRAPH;
 import static de.nb.aventiure2.german.base.StructuralElement.SENTENCE;
-import static de.nb.aventiure2.german.base.Wortfolge.joinToWortfolge;
 import static de.nb.aventiure2.german.description.AltDescriptionsBuilder.alt;
 import static de.nb.aventiure2.german.description.AltDescriptionsBuilder.altNeueSaetze;
 import static de.nb.aventiure2.german.description.AltTimedDescriptionsBuilder.altTimed;
@@ -628,11 +629,12 @@ public class RapunzelTalkingComp extends AbstractTalkingComp {
 
             alt.addAll(altNeueSaetze(
                     altReaktionSaetze.stream()
-                            .flatMap(s ->
-                                    s.altVerzweitsaetze()
-                                            .stream()),
+                            .flatMap(s -> s.altVerzweitsaetze().stream()),
                     ",",
-                    altDannHaareFestbinden(rapunzelDesc)));
+                    altDannHaareFestbinden(rapunzelDesc).stream()
+                            .flatMap(d -> d.altTextDescriptions().stream())
+                            .map(TextDescription::toWortfolge)
+            ));
 
             alt.add(neuerSatz(rapunzelDesc.nomK(),
                     "wickelt",
@@ -650,26 +652,25 @@ public class RapunzelTalkingComp extends AbstractTalkingComp {
         // Ggf. steigt die Zauberin als Reaktion daran herunter
     }
 
-    private static ImmutableList<Wortfolge> altDannHaareFestbinden(
+    private static ImmutableSet<AbstractDescription<?>> altDannHaareFestbinden(
             final Nominalphrase rapunzelDesc) {
-        // FIXME Falsche Abstraktion?! Der fachliche Code sollte eher nicht mit
-        //  Wortfolgen agieren müssen, eher mit Alt...Builder etc.
-        return ImmutableList.of(
-                joinToWortfolge(
+        return alt()
+                .add(neuerSatz(
                         "dann bindet",
                         rapunzelDesc.persPron().nomK(), //"sie"
                         rapunzelDesc.possArt().vor(PL_MFN).akkStr(),// "ihre"
-                        "Haare wieder um den Haken am Fenster"),
-                joinToWortfolge(
+                        "Haare wieder um den Haken am Fenster"))
+                .add(neuerSatz(
                         "dann knotet",
                         rapunzelDesc.persPron().nomK(), //"sie"
                         rapunzelDesc.possArt().vor(PL_MFN).akkStr(),// "ihre"
-                        "Haare wieder um den Fensterhaken"),
-                joinToWortfolge(
+                        "Haare wieder um den Fensterhaken"))
+                .add(neuerSatz(
                         "dann bindet",
                         rapunzelDesc.persPron().nomK(), //"sie"
                         rapunzelDesc.possArt().vor(PL_MFN).akkStr(),// "ihre"
-                        "Haare wieder am Fenster fest"));
+                        "Haare wieder am Fenster fest"))
+                .build();
     }
 
     public static boolean duzen(final int zuneigung) {

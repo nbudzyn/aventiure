@@ -45,31 +45,34 @@ public class AltTimedDescriptionsBuilder {
         altDescriptions = ImmutableList.builder();
     }
 
-    public void addAll(final AltTimedDescriptionsBuilder other) {
-        addAll(other.altDescriptions);
+    public AltTimedDescriptionsBuilder addAll(final AltTimedDescriptionsBuilder other) {
+        return addAll(other.altDescriptions);
     }
 
-    public void addAll(
+    public AltTimedDescriptionsBuilder addAll(
             final Stream<? extends TimedDescription<
                     ? extends AbstractDescription<?>>> stream) {
-        addAll(stream.collect(toImmutableSet()));
+        return addAll(stream.collect(toImmutableSet()));
     }
 
-    public void addAll(
+    public AltTimedDescriptionsBuilder addAll(
             final ImmutableCollection.Builder<
                     ? extends TimedDescription<
                             ? extends AbstractDescription<?>>> builder) {
-        addAll(builder.build());
+        return addAll(builder.build());
     }
 
-    public void addAll(final Iterable<? extends TimedDescription<
+    public AltTimedDescriptionsBuilder addAll(final Iterable<? extends TimedDescription<
             ? extends AbstractDescription<?>>> altTimed) {
         altDescriptions.addAll(altTimed);
+        return this;
     }
 
     @SafeVarargs
-    public final void add(final TimedDescription<? extends AbstractDescription<?>>... altTimed) {
+    public final AltTimedDescriptionsBuilder add(
+            final TimedDescription<? extends AbstractDescription<?>>... altTimed) {
         altDescriptions.add(altTimed);
+        return this;
     }
 
     public AltTimedDescriptionsBuilder komma() {

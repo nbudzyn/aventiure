@@ -71,25 +71,28 @@ public class AltDescriptionsBuilder {
     private AltDescriptionsBuilder() {
     }
 
-    public void addAll(final AltDescriptionsBuilder other) {
-        addAll(other.alt);
+    public AltDescriptionsBuilder addAll(final AltDescriptionsBuilder other) {
+        return addAll(other.alt);
     }
 
-    public void addAll(final Stream<? extends AbstractDescription<?>> stream) {
-        addAll(stream.collect(toImmutableSet()));
+    public AltDescriptionsBuilder addAll(final Stream<? extends AbstractDescription<?>> stream) {
+        return addAll(stream.collect(toImmutableSet()));
     }
 
-    public void addAll(
+    public AltDescriptionsBuilder addAll(
             final ImmutableCollection.Builder<? extends AbstractDescription<?>> builder) {
-        addAll(builder.build());
+        return addAll(builder.build());
     }
 
-    public void addAll(final Iterable<? extends AbstractDescription<?>> altDescriptions) {
+    public AltDescriptionsBuilder addAll(
+            final Iterable<? extends AbstractDescription<?>> altDescriptions) {
         alt.addAll(altDescriptions);
+        return this;
     }
 
-    public void add(final AbstractDescription<?>... altDescriptions) {
+    public AltDescriptionsBuilder add(final AbstractDescription<?>... altDescriptions) {
         alt.add(altDescriptions);
+        return this;
     }
 
     public AltDescriptionsBuilder komma() {

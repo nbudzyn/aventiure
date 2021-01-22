@@ -58,20 +58,13 @@ public class RapunzelsZauberinMovementNarrator extends SimpleMovementNarrator {
         if (!n.isThema(gameObjectId)) {
             if (spatialConnectionMovingGO != null) {
                 alt.add(neuerSatz(spatialConnectionMovingGO.getWo(), // "auf dem Pfad "
-                        "kommt",
-                        desc.nomK(),
-                        "gegangen")
+                        "kommt", desc.nomK(), "gegangen")
                         .beendet(PARAGRAPH));
             }
 
-            alt.add(neuerSatz("Es kommt dir",
-                    desc.nomK(),
-                    "entgegen")
+            alt.add(neuerSatz("Es kommt dir", desc.nomK(), "entgegen")
                     .beendet(PARAGRAPH));
-            alt.add(neuerSatz(PARAGRAPH,
-                    "Dir kommt",
-                    desc.nomK(),
-                    "entgegen")
+            alt.add(neuerSatz(PARAGRAPH, "Dir kommt", desc.nomK(), "entgegen")
                     .beendet(PARAGRAPH));
         }
 

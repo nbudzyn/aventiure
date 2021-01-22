@@ -125,32 +125,32 @@ public class RapunzelsZauberinTalkingComp extends AbstractTalkingComp {
 
     private void scBegruesst() {
         final SubstantivischePhrase anaph = anaph(false);
-        final AltDescriptionsBuilder alt = alt();
 
-        alt.addAll(altNeueSaetze(PARAGRAPH,
-                "„",
-                altBegruessungenCap(),
-                // "Einen schönen guten Tag"
-                "“, sprichst du",
-                anaph.akkK(),
-                "an"));
-        alt.addAll(altNeueSaetze(PARAGRAPH,
-                "„",
-                altBegruessungenCap(),
-                // "Einen schönen guten Tag"
-                "“, redest du",
-                anaph.akkK(),
-                "an"));
-        alt.add(neuerSatz(PARAGRAPH,
-                "„Holla, gute Frau“, sprichst du",
-                anaph.akkK(),
-                "an").dann(),
-                neuerSatz("„Schön euch zu sehen“, sprichst du",
-                        anaph.akkK(),
-                        "an")
-                        .dann(),
-                du(PARAGRAPH, BEGRUESSEN.mit(anaph)));
-        n.narrateAlt(alt, secs(5));
+        n.narrateAlt(alt()
+                        .addAll(altNeueSaetze(PARAGRAPH,
+                                "„",
+                                altBegruessungenCap(),
+                                // "Einen schönen guten Tag"
+                                "“, sprichst du",
+                                anaph.akkK(),
+                                "an"))
+                        .addAll(altNeueSaetze(PARAGRAPH,
+                                "„",
+                                altBegruessungenCap(),
+                                // "Einen schönen guten Tag"
+                                "“, redest du",
+                                anaph.akkK(),
+                                "an"))
+                        .add(neuerSatz(PARAGRAPH,
+                                "„Holla, gute Frau“, sprichst du",
+                                anaph.akkK(),
+                                "an").dann(),
+                                neuerSatz("„Schön euch zu sehen“, sprichst du",
+                                        anaph.akkK(),
+                                        "an")
+                                        .dann(),
+                                du(PARAGRAPH, BEGRUESSEN.mit(anaph))),
+                secs(5));
 
         setTalkingTo(SPIELER_CHARAKTER);
     }
