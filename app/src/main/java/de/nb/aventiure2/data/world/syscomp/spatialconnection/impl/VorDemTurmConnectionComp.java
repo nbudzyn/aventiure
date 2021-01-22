@@ -95,9 +95,9 @@ public class VorDemTurmConnectionComp extends AbstractSpatialConnectionComp {
                                     + "Durch das Fensterchen kletterst du in eine kleine Kammer: "
                                     + "Tisch, Stuhl, ein Bett"),
                     du(SENTENCE, "steigst",
-                            w("vorsichtig hinauf und klettest durch das Fensterchen "
+                            "vorsichtig hinauf und klettest durch das Fensterchen "
                                     + "in eine kleine Kammer. Alles ist dunkel, ein Bett kannst "
-                                    + "du wohl erkennen")).mitVorfeldSatzglied("vorsichtig")
+                                    + "du wohl erkennen").mitVorfeldSatzglied("vorsichtig")
                             .timed(mins(2)),
                     du("steigst",
                             "wieder hinauf. Im Hellen siehst du, dass die Kammer nur "
@@ -130,9 +130,9 @@ public class VorDemTurmConnectionComp extends AbstractSpatialConnectionComp {
                 }
 
                 if (!world.loadSC().memoryComp().isKnown(RAPUNZELS_HAARE)) {
-                    return du("gehst", w("einmal um den Turm herum. Es ist keine "
-                            + "Türe zu sehen, nur ganz oben ein kleines Fensterchen")).timed(
-                            mins(2))
+                    return du("gehst", "einmal um den Turm herum. Es ist keine "
+                            + "Türe zu sehen, nur ganz oben ein kleines Fensterchen")
+                            .timed(mins(2))
                             .withCounterIdIncrementedIfTextIsNarrated(
                                     COUNTER_ALTER_TURM_UMRUNDET);
                 }

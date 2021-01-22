@@ -85,7 +85,7 @@ class SchattenDerBaeumeFactory {
     private TimedDescription<?> getDescIn(
             final Known newLocationKnown, final Lichtverhaeltnisse lichtverhaeltnisse) {
         if (lichtverhaeltnisse == DUNKEL) {
-            return du("setzt", w("dich unter die Bäume")).timed(secs(20))
+            return du("setzt", "dich unter die Bäume").timed(secs(20))
                     .dann();
         }
 
@@ -94,7 +94,8 @@ class SchattenDerBaeumeFactory {
         if (db.counterDao().get(
                 DESC_TO_SCHATTEN_DER_BAEUME__SC_SETZT_SICH_TAGSUEBER_IN_DEN_SCHATTEN_DER_BAEUME)
                 == 0) {
-            return du(PARAGRAPH, "lässt", w("dich im Schatten der umstehenden Bäume nieder"))
+            return du(PARAGRAPH, "lässt",
+                    "dich im Schatten der umstehenden Bäume nieder")
                     .mitVorfeldSatzglied("im Schatten der umstehenden Bäume")
                     .timed(mins(5))
                     .withCounterIdIncrementedIfTextIsNarrated(

@@ -32,7 +32,6 @@ import static de.nb.aventiure2.data.world.syscomp.state.impl.RapunzelState.HAARE
 import static de.nb.aventiure2.data.world.syscomp.state.impl.RapunzelsZauberinState.MACHT_ZURZEIT_KEINE_RAPUNZELBESUCHE;
 import static de.nb.aventiure2.data.world.syscomp.state.impl.RapunzelsZauberinState.VOR_DEM_NAECHSTEN_RAPUNZEL_BESUCH;
 import static de.nb.aventiure2.german.base.StructuralElement.PARAGRAPH;
-import static de.nb.aventiure2.german.base.Wortfolge.w;
 import static de.nb.aventiure2.german.description.AltDescriptionsBuilder.alt;
 import static de.nb.aventiure2.german.description.DescriptionBuilder.du;
 import static de.nb.aventiure2.german.description.DescriptionBuilder.paragraph;
@@ -293,13 +292,13 @@ public enum RapunzelStoryNode implements IStoryNode {
         alt.addAll(altTurmWohnenHineinHeraus(world));
 
         if (world.loadSC().locationComp().hasRecursiveLocation(VOR_DEM_ALTEN_TURM)) {
-            alt.add(du(PARAGRAPH, "wirst", w("bestimmt noch den Turm hinaufkommen!"))
+            alt.add(du(PARAGRAPH, "wirst", "bestimmt noch den Turm hinaufkommen!")
                     .mitVorfeldSatzglied("bestimmt")
                     .beendet(PARAGRAPH));
             alt.add(du(PARAGRAPH, "wirst",
-                    w("bestimmt noch den Turm hinaufkommen – vielleicht musst du dich "
+                    "bestimmt noch den Turm hinaufkommen – vielleicht musst du dich "
                             + "nur einmal auf die Lauer legen und beobachten, ob jemand "
-                            + "hineinkommt?")).mitVorfeldSatzglied("bestimmt")
+                            + "hineinkommt?").mitVorfeldSatzglied("bestimmt")
                     .beendet(PARAGRAPH));
             // FIXME Mehr verschiedene Hinweise, dass man die magere Frau heimlich beobachten sollte
 
@@ -331,7 +330,8 @@ public enum RapunzelStoryNode implements IStoryNode {
                     paragraph(
                             "Plötzlich steht es dir klar vor Augen: Du musst in den Turm steigen – "
                                     +
-                                    "du weißt doch, was du zu rufen hast! Du wirst doch keine Angst "
+                                    "du weißt doch, was du zu rufen hast! Du wirst doch keine "
+                                    + "Angst "
                                     + "vor der dürren Frau haben?"));
             //  FIXME Dies hier nicht, wenn die Zauberin oben im Turm ist?
             //   Es ist ja ein irreführender Tipp!
@@ -339,7 +339,8 @@ public enum RapunzelStoryNode implements IStoryNode {
             // SC hat alles vergessen
             if (!world.loadSC().locationComp().hasRecursiveLocation(VOR_DEM_ALTEN_TURM)) {
                 alt.add(paragraph(
-                        "Hin und wieder musst du an den alten Turm denken. Du hast das Gefühl, etwas "
+                        "Hin und wieder musst du an den alten Turm denken. Du hast das Gefühl, "
+                                + "etwas "
                                 + "Wichtiges vergessen zu haben, aber es will dir partout nicht "
                                 + "einfallen"));
             }
@@ -366,8 +367,8 @@ public enum RapunzelStoryNode implements IStoryNode {
             alt.add(paragraph("Ob jemand im Turm ein und aus geht? Aber wie bloß?"));
         } else {
             alt.add(du(PARAGRAPH, "musst",
-                    w("wieder an den alten Turm denken… wenn dort jemand wohnt, "
-                            + "wie kommt der bloß hinein oder heraus?"))
+                    "wieder an den alten Turm denken… wenn dort jemand wohnt, "
+                            + "wie kommt der bloß hinein oder heraus?")
                     .mitVorfeldSatzglied("wieder")
                     .beendet(PARAGRAPH));
             alt.add(paragraph(

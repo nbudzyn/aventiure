@@ -43,7 +43,6 @@ import static de.nb.aventiure2.german.base.NumerusGenus.M;
 import static de.nb.aventiure2.german.base.Person.P1;
 import static de.nb.aventiure2.german.base.Person.P2;
 import static de.nb.aventiure2.german.base.StructuralElement.PARAGRAPH;
-import static de.nb.aventiure2.german.base.Wortfolge.w;
 import static de.nb.aventiure2.german.description.AltTimedDescriptionsBuilder.altTimed;
 import static de.nb.aventiure2.german.description.DescriptionBuilder.du;
 import static de.nb.aventiure2.german.description.DescriptionBuilder.neuerSatz;
@@ -228,13 +227,13 @@ public class AblegenAction
         final SubstantivischePhrase anaph = world.anaph(gameObject, true);
 
         n.narrate(
-                du("setzt", w(anaph.akkStr() +
-                        " " +
-                        location.storingPlaceComp().getLocationMode().getWohin(false)))
+                du("setzt",
+                        anaph.akkK(),
+                        location.storingPlaceComp().getLocationMode()
+                                .getWohin(false))
                         .timed(secs(2))
                         .undWartest()
-                        .dann()
-                        .phorikKandidat(M, FROSCHPRINZ));
+                        .dann());
 
         narrateUpgradeKnownAndSetLocationAndAction();
         sc.feelingsComp().requestMood(ANGESPANNT);
@@ -328,8 +327,9 @@ public class AblegenAction
 
                 if (sc.memoryComp().getLastAction().is(Action.Type.BEWEGEN) &&
                         wohinDetail == null) {
-                    n.narrate(du("legst", w(gameObjektPersPron.akkStr() +
-                            " zurück")).timed(secs(3)));
+                    n.narrate(du("legst",
+                            gameObjektPersPron.akkK(), " zurück")
+                            .timed(secs(3)));
                     return;
                 }
 

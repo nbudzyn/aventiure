@@ -25,7 +25,6 @@ import static de.nb.aventiure2.data.world.base.Lichtverhaeltnisse.DUNKEL;
 import static de.nb.aventiure2.data.world.gameobject.World.*;
 import static de.nb.aventiure2.data.world.syscomp.state.impl.RapunzelState.SINGEND;
 import static de.nb.aventiure2.german.base.StructuralElement.SENTENCE;
-import static de.nb.aventiure2.german.base.Wortfolge.w;
 import static de.nb.aventiure2.german.description.AltDescriptionsBuilder.alt;
 import static de.nb.aventiure2.german.description.DescriptionBuilder.du;
 import static de.nb.aventiure2.german.description.DescriptionBuilder.neuerSatz;
@@ -75,7 +74,8 @@ public class RastenAction extends AbstractScAction {
         //  - Ab einem Punkt, wo man davon ausgehen kann, dass der Spieler
         //   bewusst rastet, um die Frau zu beobachten, sollte die Frau nach 4x Rasten
         //   oder 4x Warten gekommen
-        //  -  (Alternative zum Warten)  mehrere verschiedenen bestätigende Texte, dass sich das Rasten lohnt
+        //  -  (Alternative zum Warten)  mehrere verschiedenen bestätigende Texte, dass sich das
+        //  Rasten lohnt
         //   (damit der Spieler nicht zu bald aufgibt).
         if (isDefinitivFortsetzung() &&
                 ((IHasStateGO<RapunzelState>) world.load(RAPUNZEL)).stateComp()
@@ -118,7 +118,8 @@ public class RastenAction extends AbstractScAction {
                         + "und es fängt an, dir angst zu werden")
                         .beendet(SENTENCE),
                 neuerSatz("Es ist dunkel und ungemütlich. Krabbelt da etwas auf "
-                        + "deinem rechten Bein? Du schlägst mit der Hand zu, kannst aber nichts erkennen")
+                        + "deinem rechten Bein? Du schlägst mit der Hand zu, kannst aber nichts "
+                        + "erkennen")
                         .beendet(SENTENCE),
                 neuerSatz("In den Ästen über dir knittert und rauscht es. Dich friert"));
     }
@@ -142,7 +143,8 @@ public class RastenAction extends AbstractScAction {
         final AltDescriptionsBuilder alt = alt();
 
         alt.add(
-                du(SENTENCE, "hältst", w("verborgen unter den Bäumen noch eine Zeitlang Rast"))
+                du(SENTENCE, "hältst",
+                        "verborgen unter den Bäumen noch eine Zeitlang Rast")
                         .mitVorfeldSatzglied("verborgen unter den Bäumen")
                         .beendet(SENTENCE)
                         .dann(),
@@ -157,9 +159,10 @@ public class RastenAction extends AbstractScAction {
                 )
                         .beendet(SENTENCE)
                         .dann(),
-                du(SENTENCE, "ruhst", w("noch eine Weile aus und lauschst, wie die "
-                        + "Insekten "
-                        + "zirpen und der Wind saust")).mitVorfeldSatzglied("eine Weile")
+                du(SENTENCE, "ruhst",
+                        "noch eine Weile aus und lauschst, wie die Insekten",
+                        "zirpen und der Wind saust")
+                        .mitVorfeldSatzglied("eine Weile")
                         .beendet(SENTENCE)
                         .dann()
         );

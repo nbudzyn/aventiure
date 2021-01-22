@@ -29,7 +29,6 @@ import static de.nb.aventiure2.data.world.syscomp.feelings.Mood.BETRUEBT;
 import static de.nb.aventiure2.data.world.syscomp.feelings.Mood.NEUTRAL;
 import static de.nb.aventiure2.data.world.syscomp.state.impl.FroschprinzState.HAT_SC_HILFSBEREIT_ANGESPROCHEN;
 import static de.nb.aventiure2.data.world.syscomp.state.impl.FroschprinzState.UNAUFFAELLIG;
-import static de.nb.aventiure2.german.base.Wortfolge.w;
 import static de.nb.aventiure2.german.description.AltTimedDescriptionsBuilder.altTimed;
 import static de.nb.aventiure2.german.description.DescriptionBuilder.du;
 import static de.nb.aventiure2.german.description.DescriptionBuilder.neuerSatz;
@@ -108,7 +107,7 @@ public class HeulenAction extends AbstractScAction {
                     .timed(mins(1)));
         }
 
-        alt.add(du("kannst", w("dich gar nicht mehr beruhigen")).timed(mins(1))
+        alt.add(du("kannst", "dich gar nicht mehr beruhigen").timed(mins(1))
                 .undWartest());
         n.narrateAlt(alt);
     }

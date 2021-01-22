@@ -33,7 +33,6 @@ import static de.nb.aventiure2.data.world.syscomp.feelings.Mood.AUFGEDREHT;
 import static de.nb.aventiure2.data.world.syscomp.state.impl.FroschprinzState.ZURUECKVERWANDELT_IN_VORHALLE;
 import static de.nb.aventiure2.data.world.syscomp.state.impl.FroschprinzState.ZURUECKVERWANDELT_SCHLOSS_VORHALLE_VERLASSEN;
 import static de.nb.aventiure2.data.world.syscomp.state.impl.SchlossfestState.BEGONNEN;
-import static de.nb.aventiure2.german.base.Wortfolge.w;
 import static de.nb.aventiure2.german.description.DescriptionBuilder.du;
 
 /**
@@ -107,17 +106,17 @@ public class SchlossVorhalleConnectionComp extends AbstractSpatialConnectionComp
         if (known == KNOWN_FROM_DARKNESS && lichtverhaeltnisse == HELL) {
             // TODO Vielleicht ist es nur tagsüber / mittags heiß und morgens
             //  noch nicht?
-            return du("verlässt", w("das Schloss. Draußen scheint dir die " +
-                    "Sonne ins Gesicht; "
+            return du("verlässt", "das Schloss. Draußen scheint dir die",
+                    "Sonne ins Gesicht;",
                     // TODO Vielleicht ist es nur tagsüber / mittags heiß und morgens
                     //  noch nicht?
-                    + "der Tag ist recht heiß")).timed(mins(1));
+                    "der Tag ist recht heiß").timed(mins(1));
         }
 
         // TODO: Wenn man aus dem hellen (Schloss) ins Dunkle kommt:
         //  "Draußen ist es dunkel" o.Ä.
 
-        return du("verlässt", w("das Schloss")).timed(mins(1))
+        return du("verlässt", "das Schloss").timed(mins(1))
                 .undWartest()
                 .dann();
     }
@@ -160,7 +159,7 @@ public class SchlossVorhalleConnectionComp extends AbstractSpatialConnectionComp
         if (((IHasStateGO<FroschprinzState>) world.load(FROSCHPRINZ)).stateComp()
                 .hasState(ZURUECKVERWANDELT_IN_VORHALLE,
                         ZURUECKVERWANDELT_SCHLOSS_VORHALLE_VERLASSEN)) {
-            return du("drängst", w("dich durch das Eingangstor")).timed(mins(2))
+            return du("drängst", "dich durch das Eingangstor").timed(mins(2))
                     .undWartest();
         }
 

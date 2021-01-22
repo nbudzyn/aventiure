@@ -23,7 +23,6 @@ import static de.nb.aventiure2.data.time.AvTimeSpan.secs;
 import static de.nb.aventiure2.data.world.base.SpatialConnection.con;
 import static de.nb.aventiure2.data.world.gameobject.World.*;
 import static de.nb.aventiure2.german.base.StructuralElement.SENTENCE;
-import static de.nb.aventiure2.german.base.Wortfolge.w;
 import static de.nb.aventiure2.german.description.DescriptionBuilder.du;
 import static de.nb.aventiure2.german.description.DescriptionBuilder.neuerSatz;
 
@@ -79,7 +78,7 @@ public class VorDerHuetteImWaldConnectionComp extends AbstractSpatialConnectionC
                                 + "ausmachen")
                                 .timed(secs(90))
                                 .withCounterIdIncrementedIfTextIsNarrated(null),
-                        du("schiebst", w("dich noch einmal in die "
+                        du("schiebst", "dich noch einmal in die "
                                 + "kleine Hütte. Durch Ritzen in den "
                                 + "Fensterläden fällt ein wenig Licht: "
                                 + "Die Hütte ist "
@@ -87,7 +86,7 @@ public class VorDerHuetteImWaldConnectionComp extends AbstractSpatialConnectionC
                                 + "bis auf einige "
                                 + "Tausendfüßler "
                                 + "unbewohnt. Du siehst ein Bettgestell, "
-                                + "einen Tisch, aber sonst keine Einrichtung")).timed(mins(1))
+                                + "einen Tisch, aber sonst keine Einrichtung").timed(mins(1))
                                 .komma()
                                 .undWartest(),
                         du("schiebst", "dich noch einmal in die "
@@ -113,13 +112,13 @@ public class VorDerHuetteImWaldConnectionComp extends AbstractSpatialConnectionC
                                 + "eines einzelnen Baums erkennen, vielleicht – "
                                 + "ein Apfelbaum").mitVorfeldSatzglied("vorsichtig")
                                 .timed(mins(1)),
-                        du("schaust", w("noch einmal hinter die Hütte. "
+                        du("schaust", "noch einmal hinter die Hütte. "
                                 + "Im Licht erkennst du dort einen kleinen, völlig "
                                 + "verwilderten Garten mit dem einzelnen Baum in "
-                                + "der Mitte")).timed(secs(30)),
-                        du("schaust", w("noch einmal in den alten "
+                                + "der Mitte").timed(secs(30)),
+                        du("schaust", "noch einmal in den alten "
                                 + "Garten hinter der Hütte, wo der "
-                                + "Baum wächst")).timed(secs(30))
+                                + "Baum wächst").timed(secs(30))
                                 .komma()
                                 .undWartest()
                                 .dann()

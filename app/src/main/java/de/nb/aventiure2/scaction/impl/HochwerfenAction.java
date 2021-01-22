@@ -46,7 +46,6 @@ import static de.nb.aventiure2.data.world.syscomp.state.impl.FroschprinzState.UN
 import static de.nb.aventiure2.german.base.Nominalphrase.HOEHE;
 import static de.nb.aventiure2.german.base.PraepositionMitKasus.IN_AKK;
 import static de.nb.aventiure2.german.base.StructuralElement.PARAGRAPH;
-import static de.nb.aventiure2.german.base.Wortfolge.w;
 import static de.nb.aventiure2.german.description.DescriptionBuilder.du;
 import static de.nb.aventiure2.german.description.DescriptionBuilder.neuerSatz;
 import static de.nb.aventiure2.german.description.DescriptionBuilder.satzanschluss;
@@ -232,15 +231,16 @@ public class HochwerfenAction<OBJ extends IDescribableGO & ILocatableGO>
         final Nominalphrase objectDesc = world.getDescription(object, false);
 
         n.narrate(
-                du(PARAGRAPH, "wirfst", w(objectDesc.akkStr() +
-                        " nur ein einziges Mal in die Höhe, " +
-                        "aber wie das Unglück es will, fällt " +
-                        objectDesc.persPron().akkStr() +
-                        " sofort in den Brunnen: " +
-                        "Platsch! – weg " +
-                        SeinUtil.istSind(objectDesc.getNumerusGenus()) +
-                        " " +
-                        objectDesc.persPron().akkStr())).mitVorfeldSatzglied("nur ein einziges Mal")
+                du(PARAGRAPH, "wirfst",
+                        objectDesc.akkK(),
+                        "nur ein einziges Mal in die Höhe,",
+                        "aber wie das Unglück es will, fällt",
+                        objectDesc.persPron().akkK(),
+                        "sofort in den Brunnen:",
+                        "Platsch! – weg",
+                        SeinUtil.istSind(objectDesc.getNumerusGenus()),
+                        objectDesc.persPron().akkK())
+                        .mitVorfeldSatzglied("nur ein einziges Mal")
                         .timed(secs(10))
                         .dann(!n.dann())
                         .beendet(PARAGRAPH));

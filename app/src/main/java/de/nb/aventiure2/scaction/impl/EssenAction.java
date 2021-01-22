@@ -30,7 +30,6 @@ import static de.nb.aventiure2.data.world.syscomp.state.impl.FroschprinzState.ZU
 import static de.nb.aventiure2.data.world.syscomp.state.impl.SchlossfestState.BEGONNEN;
 import static de.nb.aventiure2.german.base.StructuralElement.PARAGRAPH;
 import static de.nb.aventiure2.german.base.StructuralElement.SENTENCE;
-import static de.nb.aventiure2.german.base.Wortfolge.w;
 import static de.nb.aventiure2.german.description.DescriptionBuilder.du;
 import static de.nb.aventiure2.german.description.DescriptionBuilder.neuerSatz;
 
@@ -229,9 +228,9 @@ public class EssenAction extends AbstractScAction {
                 du("isst", "ein paar Löffel vom Eintopf")
                         .undWartest()
                         .dann(),
-                du(SENTENCE, "bist", w("eigentlich satt, aber einen oder zwei Löffel Eintopf "
+                du(SENTENCE, "bist", "eigentlich satt, aber einen oder zwei Löffel Eintopf "
                         + "lässt du "
-                        + "dir trotzdem schmecken")).mitVorfeldSatzglied("eigentlich")
+                        + "dir trotzdem schmecken").mitVorfeldSatzglied("eigentlich")
                         .dann());
     }
 
@@ -298,14 +297,16 @@ public class EssenAction extends AbstractScAction {
         }
 
         n.narrateAlt(
-                du(SENTENCE, "hast", w("nur wenig Hunger und beißt lustlos in eine der Früchte"))
+                du(SENTENCE, "hast",
+                        "nur wenig Hunger und beißt lustlos in eine der Früchte")
                         .mitVorfeldSatzglied("Hunger")
                         .timed(mins(3))
                         .dann());
         if (counterDao.get(COUNTER_FELSENBIRNEN_SEIT_ENTER) == 0) {
             n.narrateAlt(du(SENTENCE, "lässt",
-                    w("dir die süßen Früchte nicht entgehen, auch wenn du kaum Hunger "
-                            + "hast")).mitVorfeldSatzglied("die süßen Früchte")
+                    "dir die süßen Früchte nicht entgehen, auch wenn du kaum Hunger "
+                            + "hast")
+                    .mitVorfeldSatzglied("die süßen Früchte")
                     .timed(mins(3))
                     .komma()
                     .undWartest()

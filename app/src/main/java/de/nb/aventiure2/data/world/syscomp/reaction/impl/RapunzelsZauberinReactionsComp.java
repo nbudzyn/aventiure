@@ -51,7 +51,6 @@ import static de.nb.aventiure2.data.world.syscomp.state.impl.RapunzelsZauberinSt
 import static de.nb.aventiure2.german.base.StructuralElement.CHAPTER;
 import static de.nb.aventiure2.german.base.StructuralElement.PARAGRAPH;
 import static de.nb.aventiure2.german.base.StructuralElement.SENTENCE;
-import static de.nb.aventiure2.german.base.Wortfolge.w;
 import static de.nb.aventiure2.german.description.DescriptionBuilder.du;
 import static de.nb.aventiure2.german.description.DescriptionBuilder.neuerSatz;
 
@@ -350,12 +349,14 @@ public class RapunzelsZauberinReactionsComp
         if (loadSC().locationComp().hasRecursiveLocation(VOR_DEM_ALTEN_TURM)) {
             final Nominalphrase desc = getDescription(true);
             n.narrate(
-                    du("siehst", w(desc.akkStr()
-                            + " an den Haarflechten hinaufsteigen")).timed(mins(4)));
+                    du("siehst",
+                            desc.akkK(), "an den Haarflechten hinaufsteigen")
+                            .timed(mins(4)));
 
         }
         // STORY UNTER_DEM_BETT_OBEN_IM_ALTEN_TURM
-//        else if (loadSC().locationComp().hasRecursiveLocation(UNTER_DEM_BETT_OBEN_IM_ALTEN_TURM)) {
+//        else if (loadSC().locationComp().hasRecursiveLocation
+//        (UNTER_DEM_BETT_OBEN_IM_ALTEN_TURM)) {
 //            final Nominalphrase desc = getDescription(true);
 //            timeElapsed = timeElapsed.plus(n.add(
 //                    du("hörst", ", "wie ...."
@@ -385,12 +386,10 @@ public class RapunzelsZauberinReactionsComp
         if (loadSC().locationComp().hasRecursiveLocation(VOR_DEM_ALTEN_TURM)) {
             final Nominalphrase desc = getDescription();
             n.narrate(
-                    du("siehst", w(", wie "
-                            + desc.nomStr()
-                            + " an den Haaren herabsteigt")).timed(mins(1))
+                    du("siehst", ", wie", desc.nomK(), "an den Haaren herabsteigt")
+                            .timed(mins(1))
                             .komma()
-                            .beendet(SENTENCE)
-                            .phorikKandidat(desc, RAPUNZELS_ZAUBERIN));
+                            .beendet(SENTENCE));
 
             if (!loadSC().locationComp().hasRecursiveLocation(
                     VOR_DEM_ALTEN_TURM_SCHATTEN_DER_BAEUME) ||

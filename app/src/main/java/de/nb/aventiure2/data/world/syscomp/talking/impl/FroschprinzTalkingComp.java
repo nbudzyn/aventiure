@@ -36,7 +36,6 @@ import static de.nb.aventiure2.german.base.Indefinitpronomen.ALLES;
 import static de.nb.aventiure2.german.base.Nominalphrase.ANGEBOTE;
 import static de.nb.aventiure2.german.base.StructuralElement.PARAGRAPH;
 import static de.nb.aventiure2.german.base.StructuralElement.SENTENCE;
-import static de.nb.aventiure2.german.base.Wortfolge.w;
 import static de.nb.aventiure2.german.description.AltDescriptionsBuilder.alt;
 import static de.nb.aventiure2.german.description.AltDescriptionsBuilder.altNeueSaetze;
 import static de.nb.aventiure2.german.description.DescriptionBuilder.du;
@@ -218,7 +217,7 @@ public class FroschprinzTalkingComp extends AbstractTalkingComp {
                         .timed(NO_TIME));
             }
         } else {
-            n.narrate(du("gibst", w("dir einen Ruck:")).timed(NO_TIME));
+            n.narrate(du("gibst", "dir einen Ruck:").timed(NO_TIME));
         }
 
         froschHatAngesprochen_ReEntry();
@@ -233,7 +232,7 @@ public class FroschprinzTalkingComp extends AbstractTalkingComp {
             return;
         }
 
-        n.narrate(du("bleibst", w("beharrlich:")).timed(NO_TIME));
+        n.narrate(du("bleibst", "beharrlich:").timed(NO_TIME));
 
         froschHatAngesprochen_ReEntry();
     }

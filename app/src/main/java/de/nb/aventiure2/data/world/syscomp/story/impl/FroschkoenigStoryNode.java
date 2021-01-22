@@ -29,7 +29,6 @@ import static de.nb.aventiure2.data.world.gameobject.World.*;
 import static de.nb.aventiure2.data.world.syscomp.feelings.Mood.ETWAS_GEKNICKT;
 import static de.nb.aventiure2.data.world.syscomp.feelings.Mood.UNTROESTLICH;
 import static de.nb.aventiure2.german.base.StructuralElement.PARAGRAPH;
-import static de.nb.aventiure2.german.base.Wortfolge.w;
 import static de.nb.aventiure2.german.description.AltDescriptionsBuilder.alt;
 import static de.nb.aventiure2.german.description.DescriptionBuilder.du;
 import static de.nb.aventiure2.german.description.DescriptionBuilder.paragraph;
@@ -145,7 +144,8 @@ public enum FroschkoenigStoryNode implements IStoryNode {
         final AltDescriptionsBuilder alt = alt();
 
         if (world.loadSC().locationComp().hasRecursiveLocation(SCHLOSS_VORHALLE)) {
-            alt.add(du(PARAGRAPH, "fühlst", w("dich von der goldenen Kugel magisch angezogen"))
+            alt.add(du(PARAGRAPH, "fühlst",
+                    "dich von der goldenen Kugel magisch angezogen")
                     .mitVorfeldSatzglied("von der goldenen Kugel")
                     .beendet(PARAGRAPH));
         } else {
@@ -156,13 +156,17 @@ public enum FroschkoenigStoryNode implements IStoryNode {
                     + "Kopf"));
 
             alt.add(du(PARAGRAPH, "musst",
-                    w("auf einmal wieder an die goldene Kugel denken, die dich im "
-                            + "Schloss so angelacht hat")).mitVorfeldSatzglied("auf einmal")
+                    "auf einmal wieder an die goldene Kugel denken, die dich im",
+                    "Schloss so angelacht hat")
+                    .mitVorfeldSatzglied("auf einmal")
                     .beendet(PARAGRAPH));
 
-            alt.add(du(PARAGRAPH, "musst", w("spontan denken: Bei den reichen Leuten liegen oft so "
-                    + "viele Herrlichkeiten ungenutzt herum… – wie kommst du jetzt "
-                    + "bloß darauf?")).mitVorfeldSatzglied("spontan")
+            alt.add(du(PARAGRAPH,
+                    "musst",
+                    "spontan denken: Bei den reichen Leuten liegen oft so",
+                    "viele Herrlichkeiten ungenutzt herum… – wie kommst du jetzt",
+                    "bloß darauf?")
+                    .mitVorfeldSatzglied("spontan")
                     .beendet(PARAGRAPH));
 
             alt.add(paragraph("Deine Gedanken schweifen ab und du musst an die goldene Kugel "
@@ -320,7 +324,8 @@ public enum FroschkoenigStoryNode implements IStoryNode {
 
         if (world.loadSC().locationComp().hasRecursiveLocation(HUETTE_IM_WALD)) {
             if (world.loadSC().feelingsComp().getMuedigkeit() >= FeelingIntensity.MERKLICH) {
-                alt.add(du(PARAGRAPH, "wirst", w("ausgeschlafen mehr ausrichten können"))
+                alt.add(du(PARAGRAPH, "wirst",
+                        "ausgeschlafen mehr ausrichten können")
                         .mitVorfeldSatzglied("ausgeschlafen")
                         .beendet(PARAGRAPH));
             } else {

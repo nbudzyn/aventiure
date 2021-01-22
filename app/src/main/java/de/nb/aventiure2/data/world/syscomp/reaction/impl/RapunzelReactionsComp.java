@@ -60,7 +60,6 @@ import static de.nb.aventiure2.german.base.NumerusGenus.PL_MFN;
 import static de.nb.aventiure2.german.base.StructuralElement.PARAGRAPH;
 import static de.nb.aventiure2.german.base.StructuralElement.SENTENCE;
 import static de.nb.aventiure2.german.base.StructuralElement.WORD;
-import static de.nb.aventiure2.german.base.Wortfolge.w;
 import static de.nb.aventiure2.german.description.AltDescriptionsBuilder.alt;
 import static de.nb.aventiure2.german.description.AltDescriptionsBuilder.altNeueSaetze;
 import static de.nb.aventiure2.german.description.AltTimedDescriptionsBuilder.altTimed;
@@ -68,7 +67,6 @@ import static de.nb.aventiure2.german.description.DescriptionBuilder.du;
 import static de.nb.aventiure2.german.description.DescriptionBuilder.neuerSatz;
 import static de.nb.aventiure2.german.description.DescriptionBuilder.satz;
 import static de.nb.aventiure2.german.description.TimedDescription.toTimed;
-import static de.nb.aventiure2.german.string.GermanStringUtil.capitalize;
 import static java.util.stream.Collectors.toSet;
 
 /**
@@ -197,7 +195,7 @@ public class RapunzelReactionsComp
                 du("hörst", "es wieder von oben aus dem Turm singen")
                         .mitVorfeldSatzglied("von oben aus dem Turm")
                         .timed(NO_TIME),
-                du(PARAGRAPH, "hörst", w("wieder Gesang von oben"))
+                du(PARAGRAPH, "hörst", "wieder Gesang von oben")
                         .mitVorfeldSatzglied("wieder")
                         .timed(NO_TIME)
                         .beendet(PARAGRAPH),
@@ -430,14 +428,12 @@ public class RapunzelReactionsComp
 
         // Sie
         // Sie
-        alt.add(du(SENTENCE, "hast", w(anaph.akkStr()
-                + " offenbar aus dem Bett "
-                + "geholt. "
-                + capitalize(anaph.persPron().nomStr()) // Sie
-                + " sieht sehr zerknittert "
-                + "aus")).mitVorfeldSatzglied("offenbar")
-                .timed(secs(30))
-                .phorikKandidat(anaph.persPron(), RAPUNZEL));
+        alt.add(du(SENTENCE, "hast", anaph.akkK(),
+                "offenbar aus dem Bett geholt.",
+                anaph.persPron().nomK().capitalize(), // Sie
+                "sieht sehr zerknittert aus")
+                .mitVorfeldSatzglied("offenbar")
+                .timed(secs(30)));
         if (loadSC().memoryComp().getKnown(RAPUNZEL) == KNOWN_FROM_LIGHT) {
             alt.add(neuerSatz(anaph.persPron().nomK(),
                     "ist auch nachts wunderschön – allerdings ist die",
@@ -778,7 +774,7 @@ public class RapunzelReactionsComp
                     du("hörst", "es von oben aus dem Turm singen")
                             .mitVorfeldSatzglied("von oben aus dem Turm")
                             .timed(NO_TIME),
-                    du(PARAGRAPH, "hörst", w("wieder Gesang von oben schallen"))
+                    du(PARAGRAPH, "hörst", "wieder Gesang von oben schallen")
                             .mitVorfeldSatzglied("wieder")
                             .timed(NO_TIME)
                             .beendet(PARAGRAPH),
@@ -795,15 +791,17 @@ public class RapunzelReactionsComp
         }
 
         n.narrateAlt(
-                du(SENTENCE, "hörst", w("aus dem Turmfenster die junge Frau singen. Dir wird ganz "
-                        + "warm beim Zuhören")).mitVorfeldSatzglied("aus dem Turmfenster")
+                du(SENTENCE, "hörst",
+                        "aus dem Turmfenster die junge Frau singen. Dir wird ganz",
+                        "warm beim Zuhören")
+                        .mitVorfeldSatzglied("aus dem Turmfenster")
                         .timed(secs(10))
                         .undWartest()
                         .phorikKandidat(F, RAPUNZEL),
                 du(SENTENCE, "hörst",
-                        w("plötzlich wieder Gesang aus dem Turmfenster. Wann wirst du "
-                                + "die junge Frau "
-                                + "endlich retten können?")).mitVorfeldSatzglied("plötzlich")
+                        "plötzlich wieder Gesang aus dem Turmfenster. Wann wirst du",
+                        "die junge Frau endlich retten können?")
+                        .mitVorfeldSatzglied("plötzlich")
                         .timed(NO_TIME)
                         .beendet(PARAGRAPH)
                         .phorikKandidat(F, RAPUNZEL),

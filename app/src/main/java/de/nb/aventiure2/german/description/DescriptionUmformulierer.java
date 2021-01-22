@@ -16,11 +16,9 @@ import de.nb.aventiure2.german.praedikat.AdverbialeAngabeSkopusSatz;
 import de.nb.aventiure2.german.praedikat.AdverbialeAngabeSkopusVerbAllg;
 import de.nb.aventiure2.german.praedikat.Modalpartikel;
 
-import static de.nb.aventiure2.german.base.GermanUtil.joinToString;
 import static de.nb.aventiure2.german.base.StructuralElement.PARAGRAPH;
 import static de.nb.aventiure2.german.base.StructuralElement.SENTENCE;
 import static de.nb.aventiure2.german.base.StructuralElement.max;
-import static de.nb.aventiure2.german.base.Wortfolge.w;
 import static de.nb.aventiure2.german.description.AltDescriptionsBuilder.alt;
 import static de.nb.aventiure2.german.description.DescriptionBuilder.du;
 import static de.nb.aventiure2.german.description.DescriptionBuilder.neuerSatz;
@@ -307,17 +305,19 @@ public class DescriptionUmformulierer {
 
     @CheckReturnValue
     private static AbstractFlexibleDescription<?> duMitPraefixUndSatzanschluss(
-            // FIXME Haben wir nicht dafür inzwischen bessere Abstraktionen?
+            // FIXME Brauchen wir die Methode noch? Haben wir nicht dafür inzwischen
+            //  bessere Abstraktionen?
             final String praefixVerb,
             final String praefixRemainder,
             @Nullable final String praefixVorfeldSatzglied,
             final AbstractFlexibleDescription<?> desc) {
         final TextDescription descriptionSatzanschlussOhneSubjekt =
                 desc.toTextDescriptionSatzanschlussOhneSubjekt();
-        return du(max(desc.getStartsNew(), PARAGRAPH), praefixVerb, w(joinToString(
+        return du(max(desc.getStartsNew(), PARAGRAPH),
+                praefixVerb,
                 praefixRemainder,
                 "und",
-                descriptionSatzanschlussOhneSubjekt.toWortfolge())))
+                descriptionSatzanschlussOhneSubjekt.toWortfolge())
                 .mitVorfeldSatzglied(praefixVorfeldSatzglied)
                 .dann(desc.isDann())
                 .komma(descriptionSatzanschlussOhneSubjekt.isKommaStehtAus())

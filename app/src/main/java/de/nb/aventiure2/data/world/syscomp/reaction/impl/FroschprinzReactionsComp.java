@@ -45,7 +45,6 @@ import static de.nb.aventiure2.data.world.syscomp.state.impl.SchlossfestState.BE
 import static de.nb.aventiure2.german.base.NumerusGenus.M;
 import static de.nb.aventiure2.german.base.StructuralElement.CHAPTER;
 import static de.nb.aventiure2.german.base.StructuralElement.PARAGRAPH;
-import static de.nb.aventiure2.german.base.Wortfolge.w;
 import static de.nb.aventiure2.german.description.DescriptionBuilder.du;
 import static de.nb.aventiure2.german.description.DescriptionBuilder.neuerSatz;
 import static de.nb.aventiure2.german.description.DescriptionBuilder.satzanschluss;
@@ -260,8 +259,7 @@ public class FroschprinzReactionsComp
 
         // STORY Wenn der Prinz nur rekursiv enthalten ist (Prinz sitzt auf einem Stuhl),
         //  dann genauer beschreiben (vgl. BewegenAction)
-        n.narrate(du("siehst", w(getDescription().akkStr())).timed(NO_TIME)
-                .phorikKandidat(desc, FROSCHPRINZ));
+        n.narrate(du("siehst", getDescription().akkK()).timed(NO_TIME));
     }
 
     private void prinzVerlaesstSchlossVorhalle() {
@@ -287,8 +285,10 @@ public class FroschprinzReactionsComp
 
     private void prinzFaehrtMitWagenDavon() {
         n.narrate(
-                du("siehst", w("noch einen Wagen davonfahren, mit acht weißen Pferden bespannt, "
-                        + "jedes mit weißen Straußfedern auf dem Kopf")).timed(mins(2))
+                du("siehst",
+                        "noch einen Wagen davonfahren, mit acht weißen Pferden bespannt, "
+                                + "jedes mit weißen Straußfedern auf dem Kopf")
+                        .timed(mins(2))
                         .beendet(CHAPTER));
 
         // TODO Nach der Prinzabfahrt. Klares Lob, aber auch Hinweis auf einsame Stimme

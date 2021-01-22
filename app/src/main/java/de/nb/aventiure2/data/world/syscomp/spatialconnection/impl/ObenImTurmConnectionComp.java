@@ -29,7 +29,6 @@ import static de.nb.aventiure2.data.time.AvTimeSpan.mins;
 import static de.nb.aventiure2.data.time.AvTimeSpan.secs;
 import static de.nb.aventiure2.data.world.base.SpatialConnection.con;
 import static de.nb.aventiure2.data.world.gameobject.World.*;
-import static de.nb.aventiure2.german.base.Wortfolge.w;
 import static de.nb.aventiure2.german.description.DescriptionBuilder.du;
 
 /**
@@ -79,7 +78,7 @@ public class ObenImTurmConnectionComp extends AbstractSpatialConnectionComp {
             final Known newLocationKnown, final Lichtverhaeltnisse lichtverhaeltnisse) {
         if (db.counterDao().get(COUNTER_HERABGESTIEGEN) % 2 == 1) {
             // 2.Mal, 4. Mal, ...
-            return du(StructuralElement.WORD, "bist", w("schnell wieder hinab"))
+            return du(StructuralElement.WORD, "bist", "schnell wieder hinab")
                     .mitVorfeldSatzglied("schnell")
                     .timed(secs(30))
                     .withCounterIdIncrementedIfTextIsNarrated(COUNTER_HERABGESTIEGEN)
@@ -88,7 +87,7 @@ public class ObenImTurmConnectionComp extends AbstractSpatialConnectionComp {
         }
 
         if (n.isAnaphorischerBezugMoeglich(RAPUNZELS_HAARE)) {
-            return du("steigst", w("daran hinab")).timed(mins(1))
+            return du("steigst", "daran hinab").timed(mins(1))
                     .withCounterIdIncrementedIfTextIsNarrated(
                             COUNTER_HERABGESTIEGEN)
                     .undWartest()

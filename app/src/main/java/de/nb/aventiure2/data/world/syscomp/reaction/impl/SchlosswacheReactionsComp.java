@@ -31,7 +31,6 @@ import static de.nb.aventiure2.data.world.syscomp.state.impl.SchlossfestState.BE
 import static de.nb.aventiure2.data.world.syscomp.state.impl.SchlosswacheState.AUFMERKSAM;
 import static de.nb.aventiure2.data.world.syscomp.state.impl.SchlosswacheState.UNAUFFAELLIG;
 import static de.nb.aventiure2.german.base.StructuralElement.PARAGRAPH;
-import static de.nb.aventiure2.german.base.Wortfolge.w;
 import static de.nb.aventiure2.german.description.AltTimedDescriptionsBuilder.altTimed;
 import static de.nb.aventiure2.german.description.DescriptionBuilder.du;
 import static de.nb.aventiure2.german.description.DescriptionBuilder.neuerSatz;
@@ -274,7 +273,7 @@ public class SchlosswacheReactionsComp
         sc.feelingsComp().requestMood(ANGESPANNT);
 
         n.narrate(du(PARAGRAPH, "legst",
-                w("die schöne goldene Kugel eingeschüchtert wieder an ihren Platz"))
+                "die schöne goldene Kugel eingeschüchtert wieder an ihren Platz")
                 .mitVorfeldSatzglied("eingeschüchtert")
                 .timed(secs(5))
                 .undWartest()

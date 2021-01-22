@@ -35,7 +35,6 @@ import static de.nb.aventiure2.data.world.gameobject.World.*;
 import static de.nb.aventiure2.data.world.syscomp.state.impl.SchlossfestState.BEGONNEN;
 import static de.nb.aventiure2.german.base.StructuralElement.PARAGRAPH;
 import static de.nb.aventiure2.german.base.StructuralElement.SENTENCE;
-import static de.nb.aventiure2.german.base.Wortfolge.w;
 import static de.nb.aventiure2.german.description.DescriptionBuilder.du;
 import static de.nb.aventiure2.german.description.DescriptionBuilder.neuerSatz;
 
@@ -128,9 +127,11 @@ public class ImWaldNaheDemSchlossConnectionComp extends AbstractSpatialConnectio
                     .komma();
         }
 
-        return du(SENTENCE, "gehst", w("noch eine Weile vorsichtig durch den dunklen "
-                + "Wald, dann öffnet sich der Weg wieder und du stehst im Schlossgarten "
-                + "unter dem Sternenhimmel")).mitVorfeldSatzglied("noch eine Weile")
+        return du(SENTENCE, "gehst",
+                "noch eine Weile vorsichtig durch den dunklen "
+                        + "Wald, dann öffnet sich der Weg wieder und du stehst im Schlossgarten "
+                        + "unter dem Sternenhimmel")
+                .mitVorfeldSatzglied("noch eine Weile")
                 .timed(mins(15));
         // TODO Lichtverhältnisse auch bei den anderen Aktionen berücksichtigen,
         //  insbesondere nach derselben Logik (z.B. "im Schloss ist es immer hell",
@@ -147,14 +148,14 @@ public class ImWaldNaheDemSchlossConnectionComp extends AbstractSpatialConnectio
             final AvTimeSpan timeSpan) {
         if (!world.loadSC().memoryComp().isKnown(SCHLOSSFEST)) {
             world.loadSC().memoryComp().upgradeKnown(SCHLOSSFEST);
-            return du("bist", w("von dem Lärm überrascht, der dir "
+            return du("bist", "von dem Lärm überrascht, der dir "
                     + "schon von weitem "
                     + "entgegenschallt. Als du aus dem Wald heraustrittst, "
                     + "ist der Anblick überwältigend: "
                     + "Überall im Schlossgarten stehen kleine Pagoden "
                     + "in lustigen Farben. Kinder werden auf Kähnen durch Kanäle "
                     + "gestakt und aus dem Schloss duftet es verführerisch nach "
-                    + "Gebratenem")).timed(timeSpan);
+                    + "Gebratenem").timed(timeSpan);
         }
 
         return neuerSatz("Das Schlossfest ist immer noch in vollem Gange")
@@ -172,12 +173,12 @@ public class ImWaldNaheDemSchlossConnectionComp extends AbstractSpatialConnectio
     private TimedDescription<?> getDescTo_VorDemAltenTurm(
             final Known newLocationKnown, final Lichtverhaeltnisse lichtverhaeltnisse) {
         if (newLocationKnown == UNKNOWN && lichtverhaeltnisse == HELL) {
-            final String remainder = "den schmalen Pfad, der sich lange durch "
-                    + "den Wald aufwärts windet. Ein Hase kreuzt den Weg"
-                    + (alleinAufDemPfadZumTurm() ? ", aber keine Menschenseele begegnet dir" : "")
-                    + ". Ganz am Ende – "
-                    + "auf der Hügelkuppe – kommst du an einen alten Turm";
-            return du("nimmst", w(remainder)).timed(mins(25))
+            return du("nimmst",
+                    "den schmalen Pfad, der sich lange durch",
+                    "den Wald aufwärts windet. Ein Hase kreuzt den Weg",
+                    (alleinAufDemPfadZumTurm() ? ", aber keine Menschenseele begegnet dir" : null),
+                    ". Ganz am Ende – auf der Hügelkuppe – kommst du an einen alten Turm")
+                    .timed(mins(25))
                     .beendet(PARAGRAPH);
         }
         if (newLocationKnown == UNKNOWN && lichtverhaeltnisse == DUNKEL) {
@@ -196,8 +197,9 @@ public class ImWaldNaheDemSchlossConnectionComp extends AbstractSpatialConnectio
                     + "auch nicht kürzer, aber endlich stehst du wieder vor dem alten Turm")
                     .timed(mins(25));
         }
-        return du("gehst", w("wieder den langen, schmalen Pfad den Hügel hinauf bis zum "
-                + "Turm")).timed(mins(25));
+        return du("gehst",
+                "wieder den langen, schmalen Pfad den Hügel hinauf bis zum Turm")
+                .timed(mins(25));
     }
 
     private <FROSCHPRINZ extends ILocatableGO & IHasStateGO<FroschprinzState>>

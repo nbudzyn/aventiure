@@ -646,7 +646,8 @@ public class FeelingsComp extends AbstractStatefulComponent<FeelingsPCD> {
                         .undWartest(),
                 neuerSatz("Wann hast du eigentlich zuletzt etwas gegessen? Das "
                         + "muss schon eine Weile her sein."),
-                du(PARAGRAPH, "bekommst", w("so langsam Hunger")).mitVorfeldSatzglied("so langsam"),
+                du(PARAGRAPH, "bekommst", "so langsam Hunger")
+                        .mitVorfeldSatzglied("so langsam"),
                 neuerSatz(PARAGRAPH, "Allmählich überkommt dich der Hunger"),
                 neuerSatz(PARAGRAPH, "Allmählich regt sich wieder der Hunger")
                         .undWartest(),
@@ -800,7 +801,7 @@ public class FeelingsComp extends AbstractStatefulComponent<FeelingsPCD> {
                             .beendet(PARAGRAPH),
                     du("wirst", "etwas schläfrig")
                             .beendet(PARAGRAPH),
-                    du(SENTENCE, "bist", w("darüber etwas schläfrig geworden"))
+                    du(SENTENCE, "bist", "darüber etwas schläfrig geworden")
                             .mitVorfeldSatzglied("darüber")
                             .beendet(SENTENCE)
             );
@@ -968,10 +969,11 @@ public class FeelingsComp extends AbstractStatefulComponent<FeelingsPCD> {
                     du(PARAGRAPH, "bist", "müde – wo ist ein Bett, in dass du dich "
                             + "legen und schlafen kannst?")
                             .beendet(PARAGRAPH),
-                    du(PARAGRAPH, "bist", w("matt und müde")).mitVorfeldSatzglied("matt")
+                    du(PARAGRAPH, "bist", "matt und müde").mitVorfeldSatzglied("matt")
                             .beendet(SENTENCE),
                     neuerSatz(PARAGRAPH, "all die Erlebnisse haben dich müde gemacht"),
-                    du(PARAGRAPH, "möchtest", w("gern ein Auge zutun")).mitVorfeldSatzglied("gern")
+                    du(PARAGRAPH, "möchtest", "gern ein Auge zutun")
+                            .mitVorfeldSatzglied("gern")
                             .beendet(PARAGRAPH)
             );
 
@@ -1003,8 +1005,10 @@ public class FeelingsComp extends AbstractStatefulComponent<FeelingsPCD> {
                             "so müde, dass du auf der Stelle einschlafen könntest")
                             .komma()
                             .beendet(PARAGRAPH),
-                    du(PARAGRAPH, "bist", w("so müde von allem, dass du auf der Stelle einschlafen "
-                            + "könntest")).mitVorfeldSatzglied("von allem")
+                    du(PARAGRAPH, "bist",
+                            "so müde von allem, dass du auf der Stelle einschlafen",
+                            "könntest")
+                            .mitVorfeldSatzglied("von allem")
                             .komma()
                             .beendet(PARAGRAPH),
                     neuerSatz("immer wieder fallen dir die Augen zu")

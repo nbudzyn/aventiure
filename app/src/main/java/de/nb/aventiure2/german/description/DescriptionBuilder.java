@@ -80,8 +80,6 @@ public class DescriptionBuilder {
     @CheckReturnValue
     public static SimpleDuDescription du(final String verb,
                                          @Nullable final Wortfolge remainder) {
-        // FIXME Aufrufer vereinfachen - joinTo... weg, nomK()
-        //  phorikKandidat weg etc.
         return du(WORD, verb, remainder);
     }
 
@@ -89,9 +87,8 @@ public class DescriptionBuilder {
     @CheckReturnValue
     public static SimpleDuDescription du(final StructuralElement startsNew, final String verb,
                                          @Nullable final Wortfolge remainder) {
-        // FIXME Umbauen analog zu mit parts... (analog neuerSatz())
-        // FIXME Aufrufer vereinfachen - joinTo... weg, nomK()
-        //  phorikKandidat weg etc.
+        // FIXME nomStr() etc. suchen und prüfen
+        // FIXME phorikKandidate suchen und prüfen
 
         return new SimpleDuDescription(startsNew,
                 verb,

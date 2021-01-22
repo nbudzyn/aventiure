@@ -53,7 +53,6 @@ import static de.nb.aventiure2.data.world.syscomp.spatialconnection.NumberOfWays
 import static de.nb.aventiure2.data.world.syscomp.state.impl.SchlossfestState.BEGONNEN;
 import static de.nb.aventiure2.german.base.GermanUtil.buildAufzaehlung;
 import static de.nb.aventiure2.german.base.StructuralElement.WORD;
-import static de.nb.aventiure2.german.base.Wortfolge.w;
 import static de.nb.aventiure2.german.description.AltTimedDescriptionsBuilder.altTimed;
 import static de.nb.aventiure2.german.description.DescriptionBuilder.du;
 import static de.nb.aventiure2.german.description.DescriptionBuilder.neuerSatz;
@@ -567,7 +566,7 @@ public class BewegenAction<LOC_DESC extends ILocatableGO & IDescribableGO>
                     lichtverhaeltnisseInNewLocation ==
                             HELL &&
                     n.allowsAdditionalDuSatzreihengliedOhneSubjekt()) {
-                return du("eilst", w("weiter"))
+                return du("eilst", "weiter")
                         .timed(standardDescription.getTimeElapsed().times(0.8))
                         .undWartest();
             }

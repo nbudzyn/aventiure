@@ -25,7 +25,6 @@ import de.nb.aventiure2.german.description.TimedDescription;
 import static de.nb.aventiure2.data.time.AvTimeSpan.mins;
 import static de.nb.aventiure2.data.time.AvTimeSpan.secs;
 import static de.nb.aventiure2.data.world.gameobject.World.*;
-import static de.nb.aventiure2.german.base.Wortfolge.w;
 import static de.nb.aventiure2.german.description.DescriptionBuilder.du;
 import static de.nb.aventiure2.german.description.DescriptionBuilder.neuerSatz;
 
@@ -103,7 +102,7 @@ public class DraussenVorDemSchlossConnectionComp extends AbstractSpatialConnecti
     @NonNull
     private static TimedDescription<?>
     getDescTo_SchlossVorhalle_KeinFest() {
-        return du("gehst", w("wieder hinein in das Schloss")).timed(mins(1))
+        return du("gehst", "wieder hinein in das Schloss").timed(mins(1))
                 .undWartest()
                 .dann();
     }

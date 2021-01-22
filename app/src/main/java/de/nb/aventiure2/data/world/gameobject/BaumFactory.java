@@ -27,7 +27,6 @@ import static de.nb.aventiure2.german.base.Nominalphrase.np;
 import static de.nb.aventiure2.german.base.NumerusGenus.M;
 import static de.nb.aventiure2.german.base.StructuralElement.PARAGRAPH;
 import static de.nb.aventiure2.german.base.StructuralElement.SENTENCE;
-import static de.nb.aventiure2.german.base.Wortfolge.w;
 import static de.nb.aventiure2.german.description.DescriptionBuilder.du;
 import static de.nb.aventiure2.german.description.DescriptionBuilder.neuerSatz;
 import static de.nb.aventiure2.german.praedikat.VerbSubj.ANKOMMEN;
@@ -121,12 +120,12 @@ public class BaumFactory {
 
     @CheckReturnValue
     private static TimedDescription<?> getDescInZweitesMal() {
-        return du(PARAGRAPH, "kletterst", w("noch einmal eine, zwei Etagen den Baum hinauf. "
-                + "Du schaust ins Blattwerk und bist stolz auf dich"))
+        return du(PARAGRAPH, "kletterst",
+                "noch einmal eine, zwei Etagen den Baum hinauf. "
+                        + "Du schaust ins Blattwerk und bist stolz auf dich")
                 .mitVorfeldSatzglied("noch einmal")
                 .timed(mins(6))
-                .withCounterIdIncrementedIfTextIsNarrated(
-                        HOCHKLETTERN)
+                .withCounterIdIncrementedIfTextIsNarrated(HOCHKLETTERN)
                 .dann();
     }
 
@@ -139,12 +138,12 @@ public class BaumFactory {
                 //                        "ein weiteres Mal auf den Baum")
                 //  Dazu noch einmal prüfen, dass die "Wiederholung" nicht doppelt
                 //  ausgedrückt wird.
-                du(PARAGRAPH, "kletterst", w("noch einmal "
-                        + "auf den Baum. Neues gibt es hier oben nicht zu erleben"))
+                du(PARAGRAPH, "kletterst",
+                        "noch einmal auf den Baum. Neues gibt es hier oben",
+                        "nicht zu erleben")
                         .mitVorfeldSatzglied("noch einmal")
                         .timed(mins(7))
-                        .withCounterIdIncrementedIfTextIsNarrated(
-                                HOCHKLETTERN)
+                        .withCounterIdIncrementedIfTextIsNarrated(HOCHKLETTERN)
                         .dann();
     }
 

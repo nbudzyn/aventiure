@@ -47,7 +47,6 @@ import static de.nb.aventiure2.german.base.PraepositionMitKasus.ZU;
 import static de.nb.aventiure2.german.base.StructuralElement.PARAGRAPH;
 import static de.nb.aventiure2.german.base.StructuralElement.SENTENCE;
 import static de.nb.aventiure2.german.base.Wortfolge.joinToWortfolge;
-import static de.nb.aventiure2.german.base.Wortfolge.w;
 import static de.nb.aventiure2.german.description.AltDescriptionsBuilder.alt;
 import static de.nb.aventiure2.german.description.AltDescriptionsBuilder.altNeueSaetze;
 import static de.nb.aventiure2.german.description.AltTimedDescriptionsBuilder.altTimed;
@@ -216,14 +215,14 @@ public class RapunzelTalkingComp extends AbstractTalkingComp {
 
             if (zuneigungSCTowardsRapunzel >= FeelingIntensity.MERKLICH) {
                 if (duzen(zuneigungSCTowardsRapunzel)) {
-                    alt.add(du("schaust ", w(anaph.akkStr()
-                            + " an. „Schön, dich wiederzusehen, sagst du")).timed(secs(5))
-                            .phorikKandidat(anaph, RAPUNZEL)
+                    alt.add(du("schaust ", anaph.akkK(),
+                            "an. „Schön, dich wiederzusehen, sagst du")
+                            .timed(secs(5))
                     );
                 } else {
-                    alt.add(du("schaust ", w(anaph.akkStr()
-                            + " an. „Schön, "
-                            + "euch wiederzusehen, sagst du")).timed(secs(5))
+                    alt.add(du("schaust ", anaph.akkK(),
+                            "an. „Schön, euch wiederzusehen, sagst du")
+                            .timed(secs(5))
                             .phorikKandidat(anaph, RAPUNZEL));
                 }
             }
@@ -459,32 +458,33 @@ public class RapunzelTalkingComp extends AbstractTalkingComp {
         // "ihren"
         // "ihrem"
         // "sie"
-        n.narrate(du(PARAGRAPH, "fängst", w("an ganz freundlich mit "
-                + anaph.datStr()
-                + " zu reden. Du erzählst, dass von "
-                + wovonHerzBewegtDat
-                + " dein Herz so sehr sei bewegt worden, dass es dir "
-                + "keine Ruhe gelassen und du "
-                + anaph.persPron().akkStr()
-                + " selbst habest sehen müssen."
+        n.narrate(du(PARAGRAPH, "fängst",
+                "an ganz freundlich mit",
+                anaph.datK(),
+                "zu reden. Du erzählst, dass von",
+                wovonHerzBewegtDat,
+                "dein Herz so sehr sei bewegt worden, dass es dir",
+                "keine Ruhe gelassen und du",
+                anaph.persPron().akkK(),
+                "selbst habest sehen müssen.",
 
                 // FIXME Dieser zweite Teil muss von Rapunzels
                 //  Zuneigung abhängen!
 
-                + " Da verliert "
-                + desc.nomStr()
-                + " ihre Angst und es bricht aus "
-                + desc.persPron().datStr()
-                + " heraus."
-                + " Eine alte Zauberin hätte "
-                + desc.persPron().akkStr()
-                + " "
-                + desc.possArt().vor(PL_MFN).datStr()  // "ihren"
-                + " Eltern fortgenommen, seit "
-                + desc.possArt().vor(N).datStr()  // "ihrem"
-                + " zwölften Jahre sei "
-                + desc.persPron().nomStr() // "sie"
-                + " in diesen Turm geschlossen")).mitVorfeldSatzglied("ganz freundlich")
+                "Da verliert",
+                desc.nomK(),
+                "ihre Angst und es bricht aus",
+                desc.persPron().datK(),
+                "heraus.",
+                "Eine alte Zauberin hätte",
+                desc.persPron().akkK(),
+                desc.possArt().vor(PL_MFN).datStr(),  // "ihren"
+                "Eltern fortgenommen, seit",
+                desc.possArt().vor(N).datStr(),  // "ihrem"
+                "zwölften Jahre sei",
+                desc.persPron().nomK(), // "sie"
+                "in diesen Turm geschlossen")
+                .mitVorfeldSatzglied("ganz freundlich")
                 .timed(mins(1)));
 
         setSchonBegruesstMitSC(true);
@@ -561,10 +561,10 @@ public class RapunzelTalkingComp extends AbstractTalkingComp {
 
         if (zuneigungSCZuRapunzel >= FeelingIntensity.STARK) {
             alt.add(
-                    du(PARAGRAPH, "spürst", w("plötzlich neuen Tatendrang in dir. „Lass "
-                            + "mich gehen“, "
-                            + "sagst du, "
-                            + "„bald bin ich wieder zurück!“")).mitVorfeldSatzglied("plötzlich")
+                    du(PARAGRAPH, "spürst",
+                            "plötzlich neuen Tatendrang in dir. „Lass mich gehen“,",
+                            "sagst du, „bald bin ich wieder zurück!“")
+                            .mitVorfeldSatzglied("plötzlich")
                             .timed(secs(15))
                             .beendet(PARAGRAPH)
             );
