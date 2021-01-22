@@ -235,7 +235,6 @@ public abstract class AbstractTalkingComp extends AbstractStatefulComponent<Talk
         //  "Du sagst ihr Abschied"
         //  "Du verabschiedest dich von ihr"
 
-
         return GermanStringUtil.capitalize(altVerabschiedungen());
     }
 

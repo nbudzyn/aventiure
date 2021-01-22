@@ -217,7 +217,7 @@ public class FroschprinzReactionsComp
                                         + desc.persPron().nomK(),
                                 "dir nicht in die Essensschale gehüpft ist. Dir läuft",
                                 "ein Schauer über den Rücken, als",
-                                // FIXME Idee: Nur Bezugsobjekt und Kasus übergeben und
+                                // IDEA Nur Bezugsobjekt und Kasus übergeben und
                                 //  Text / Anaphern automatisch wählen lassen?
                                 //  Abhängigkeiten gut bedenken.
                                 desc.persPron().nomK(),

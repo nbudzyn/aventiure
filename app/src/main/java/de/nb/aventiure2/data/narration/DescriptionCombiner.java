@@ -14,6 +14,7 @@ import de.nb.aventiure2.german.description.StructuredDescription;
 import de.nb.aventiure2.german.description.TextDescription;
 
 import static com.google.common.base.Preconditions.checkArgument;
+import static de.nb.aventiure2.german.base.Konstituentenfolge.joinToKonstituentenfolge;
 import static de.nb.aventiure2.german.base.Numerus.SG;
 import static de.nb.aventiure2.german.base.Person.P2;
 import static de.nb.aventiure2.german.base.StructuralElement.WORD;
@@ -75,15 +76,11 @@ class DescriptionCombiner {
 
         return ImmutableList.of(
                 secondDescriptionSatzanschlussOhneSubjekt.mitPraefix(
-                        // FIXME Haben wir nicht dafür inzwischen bessere Abstraktionen?
-                        GermanUtil.joinToString(
+                        joinToKonstituentenfolge(
                                 ",",
                                 first.toTextDescriptionSatzanschlussOhneSubjekt()
                                         .toSingleKonstituente(),
-                                "und ")) // Präfix muss mit Leerzeichen enden
-                        // FIXME Hier gibt es ein Problem: Nachkomma
-                        //  geht verloren, wörtlicheRedeNochOffen wird automatisch
-                        //  geschlossen. Beides Schlecht...
+                                "und"))
                         .undWartest(false));
     }
 

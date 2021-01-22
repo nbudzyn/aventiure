@@ -338,15 +338,8 @@ public class NehmenAction
 
             final AltTimedDescriptionsBuilder alt = altTimed();
             alt.addAll(drueckeAusTimed(DISKONTINUITAET,
-                    // FIXME Dass das hier doppelt ist, ergibt keinen Sinn, oder?
-                    //  Prüfen, ggf. drueckeAusTimed korrigieren, dann entfernen!
-                    du(PARAGRAPH, "nimmst", froschDesc.akkK())
-                            .timed(secs(5))
-                            .withCounterIdIncrementedIfTextIsNarrated(null)
-                            .undWartest(),
                     du(PARAGRAPH, NEHMEN.mit(froschDesc))
                             .timed(secs(5))
-                            .withCounterIdIncrementedIfTextIsNarrated(null)
                             .undWartest()));
 
             n.narrateAlt(alt);

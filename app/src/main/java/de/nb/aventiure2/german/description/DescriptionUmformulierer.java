@@ -5,7 +5,6 @@ import androidx.annotation.Nullable;
 import com.google.common.collect.ImmutableCollection;
 import com.google.common.collect.ImmutableList;
 
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.stream.Collectors;
 
@@ -22,6 +21,7 @@ import static de.nb.aventiure2.german.base.StructuralElement.max;
 import static de.nb.aventiure2.german.description.AltDescriptionsBuilder.alt;
 import static de.nb.aventiure2.german.description.DescriptionBuilder.du;
 import static de.nb.aventiure2.german.description.DescriptionBuilder.neuerSatz;
+import static java.util.Arrays.asList;
 
 /**
  * Statische Methoden, die {@link AbstractDescription}s umformulieren.
@@ -34,8 +34,7 @@ public class DescriptionUmformulierer {
     public static ImmutableCollection<TimedDescription<?>> drueckeAusTimed(
             final Kohaerenzrelation kohaerenzrelation,
             final TimedDescription<?>... desc) {
-        return drueckeAusTimed(kohaerenzrelation,
-                Arrays.asList(desc));
+        return drueckeAusTimed(kohaerenzrelation, asList(desc));
     }
 
     @CheckReturnValue
@@ -57,7 +56,7 @@ public class DescriptionUmformulierer {
             final Kohaerenzrelation kohaerenzrelation,
             final AbstractDescription<?>... desc) {
         return drueckeAus(kohaerenzrelation,
-                Arrays.asList(desc));
+                asList(desc));
     }
 
     @CheckReturnValue
@@ -280,16 +279,12 @@ public class DescriptionUmformulierer {
             final String praefixVerb,
             final String praefixRemainder,
             final AbstractDescription<?> desc) {
-        // FIXME Kann man bestimmt vereinfachen oder entfernen?
-        //  AltDescriptions?
         return desc.altTextDescriptions().stream()
                 .map(d -> du(
                         max(d.getStartsNew(), SENTENCE),
                         praefixVerb,
                         praefixRemainder,
                         d.toSingleKonstituente().capitalize())
-                        .komma(d.isKommaStehtAus())
-                        .phorikKandidat(d.getPhorikKandidat())
                         .beendet(d.getEndsThis()))
                 .collect(Collectors.toSet());
     }
@@ -305,23 +300,17 @@ public class DescriptionUmformulierer {
 
     @CheckReturnValue
     private static AbstractFlexibleDescription<?> duMitPraefixUndSatzanschluss(
-            // FIXME Brauchen wir die Methode noch? Haben wir nicht dafür inzwischen
-            //  bessere Abstraktionen?
             final String praefixVerb,
             final String praefixRemainder,
             @Nullable final String praefixVorfeldSatzglied,
             final AbstractFlexibleDescription<?> desc) {
-        final TextDescription descriptionSatzanschlussOhneSubjekt =
-                desc.toTextDescriptionSatzanschlussOhneSubjekt();
         return du(max(desc.getStartsNew(), PARAGRAPH),
                 praefixVerb,
                 praefixRemainder,
                 "und",
-                descriptionSatzanschlussOhneSubjekt.toSingleKonstituente())
+                desc.toTextDescriptionSatzanschlussOhneSubjekt().toSingleKonstituente())
                 .mitVorfeldSatzglied(praefixVorfeldSatzglied)
                 .dann(desc.isDann())
-                .komma(descriptionSatzanschlussOhneSubjekt.isKommaStehtAus())
-                .phorikKandidat(desc.getPhorikKandidat())
                 .beendet(desc.getEndsThis());
     }
 

@@ -12,11 +12,13 @@ import javax.annotation.CheckReturnValue;
 import javax.annotation.ParametersAreNonnullByDefault;
 
 import de.nb.aventiure2.german.base.Konstituente;
+import de.nb.aventiure2.german.base.Konstituentenfolge;
 import de.nb.aventiure2.german.base.PhorikKandidat;
 import de.nb.aventiure2.german.base.StructuralElement;
 import de.nb.aventiure2.german.string.GermanStringUtil;
 
 import static de.nb.aventiure2.german.base.Konstituente.k;
+import static de.nb.aventiure2.german.base.Konstituentenfolge.joinToKonstituentenfolge;
 import static de.nb.aventiure2.german.base.StructuralElement.PARAGRAPH;
 import static de.nb.aventiure2.german.base.StructuralElement.SENTENCE;
 import static de.nb.aventiure2.german.base.StructuralElement.max;
@@ -81,6 +83,35 @@ public class TextDescription extends AbstractDescription<TextDescription> {
     public ImmutableList<TextDescription> altTextDescriptions() {
         return ImmutableList.of(toTextDescription());
     }
+
+    /**
+     * Gibt eine neue <code>TextDescription</code> zurück, die um dieses Präfix
+     * ergänzt ist. Hier wird also keinesfalls ein Satzglied in das Vorfeld gestellt
+     * oder Ähnliches, sondern es wird rein mechanisch ein Präfix vorangestellt.
+     */
+    @NonNull
+    @CheckReturnValue
+    public TextDescription mitPraefix(final Konstituentenfolge praefixKonstituentenfolge) {
+        return mitPraefix(praefixKonstituentenfolge.joinToSingleKonstituente());
+    }
+
+    /**
+     * Gibt eine neue <code>TextDescription</code> zurück, die um dieses Präfix
+     * ergänzt ist. Hier wird also keinesfalls ein Satzglied in das Vorfeld gestellt
+     * oder Ähnliches, sondern es wird rein mechanisch ein Präfix vorangestellt.
+     */
+    @NonNull
+    @CheckReturnValue
+    private TextDescription mitPraefix(final Konstituente praefixKonstituente) {
+        return new TextDescription(
+                copyParams(),
+                joinToKonstituentenfolge(
+                        praefixKonstituente,
+                        text).joinToSingleKonstituente().getString(),
+                woertlicheRedeNochOffen,
+                kommaStehtAus);
+    }
+
 
     /**
      * Gibt eine neue <code>TextDescription</code> zurück, die um dieses Präfix

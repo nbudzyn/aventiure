@@ -57,11 +57,8 @@ public class AltDescriptionsBuilder {
     @Nonnull
     public static AltDescriptionsBuilder altNeueSaetze(final StructuralElement structuralElement,
                                                        final Object... parts) {
-        // FIXME Prüfen - kann man das durch etwas anderes ersetzen?
-        final AltDescriptionsBuilder res = alt();
-        res.addAll(joinToAltKonstituentenfolgen(parts).stream()
+        return alt().addAll(joinToAltKonstituentenfolgen(parts).stream()
                 .map(k -> neuerSatz(structuralElement, k)));
-        return res;
     }
 
     public static AltDescriptionsBuilder alt() {
