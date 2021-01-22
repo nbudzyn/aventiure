@@ -307,6 +307,7 @@ public class DescriptionUmformulierer {
 
     @CheckReturnValue
     private static AbstractFlexibleDescription<?> duMitPraefixUndSatzanschluss(
+            // FIXME Haben wir nicht dafür inzwischen bessere Abstraktionen?
             final String praefixVerb,
             final String praefixRemainder,
             @Nullable final String praefixVorfeldSatzglied,

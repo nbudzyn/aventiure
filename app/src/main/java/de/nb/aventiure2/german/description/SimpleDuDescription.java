@@ -56,6 +56,8 @@ public class SimpleDuDescription extends AbstractFlexibleDescription<SimpleDuDes
      */
     SimpleDuDescription(final StructuralElement startsNew,
                         final String verb,
+                        // FIXME Sollte hier nicht eher eine Wortfolge übergeben und
+                        //  gespeichert werden?
                         @Nullable final String remainder,
                         final boolean woertlicheRedeNochOffen,
                         final boolean kommaStehtAus,

@@ -75,6 +75,7 @@ class DescriptionCombiner {
 
         return ImmutableList.of(
                 secondDescriptionSatzanschlussOhneSubjekt.mitPraefix(
+                        // FIXME Haben wir nicht dafür inzwischen bessere Abstraktionen?
                         GermanUtil.joinToString(
                                 ",",
                                 first.toTextDescriptionSatzanschlussOhneSubjekt()

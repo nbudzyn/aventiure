@@ -22,7 +22,6 @@ import de.nb.aventiure2.data.world.syscomp.storingplace.ILocationGO;
 import de.nb.aventiure2.german.base.Personalpronomen;
 import de.nb.aventiure2.german.base.StructuralElement;
 import de.nb.aventiure2.german.base.SubstantivischePhrase;
-import de.nb.aventiure2.german.base.Wortfolge;
 import de.nb.aventiure2.german.description.AltTimedDescriptionsBuilder;
 import de.nb.aventiure2.german.praedikat.AbstractAdverbialeAngabe;
 import de.nb.aventiure2.german.praedikat.AdverbialeAngabeSkopusVerbWohinWoher;
@@ -318,13 +317,11 @@ public class AblegenAction
                 }
 
                 if (sc.memoryComp().getLastAction().hasObject(gameObject)) {
-                    final Wortfolge remainder = Wortfolge.joinToWortfolge(
-                            gameObjektPersPron.akkStr(),
-                            (wohinDetail == null ?
-                                    k("hin") :
-                                    wohinDetail.getDescription(P2, SG)));
                     // "auf den Tisch"
-                    n.narrate(du("legst", remainder).timed(secs(5))
+                    n.narrate(du("legst",
+                            gameObjektPersPron.akkK(),
+                            (wohinDetail == null ? k("hin") : wohinDetail.getDescription(P2, SG)))
+                            .timed(secs(5))
                             .undWartest());
                     return;
                 }
@@ -336,11 +333,10 @@ public class AblegenAction
                     return;
                 }
 
-                final Wortfolge remainder = Wortfolge.joinToWortfolge(
-                        gameObjektPersPron.akkStr(),
-                        (wohinDetail == null ? k("hin") :
-                                wohinDetail.getDescription(P2, SG)));
-                n.narrate(du("legst", remainder).timed(secs(3)));
+                n.narrate(du("legst",
+                        gameObjektPersPron.akkK(),
+                        (wohinDetail == null ? k("hin") : wohinDetail.getDescription(P2, SG)))
+                        .timed(secs(3)));
                 return;
             }
         }

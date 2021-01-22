@@ -42,7 +42,6 @@ import static de.nb.aventiure2.german.base.NumerusGenus.M;
 import static de.nb.aventiure2.german.base.Person.P2;
 import static de.nb.aventiure2.german.base.StructuralElement.PARAGRAPH;
 import static de.nb.aventiure2.german.base.StructuralElement.SENTENCE;
-import static de.nb.aventiure2.german.base.Wortfolge.joinToWortfolge;
 import static de.nb.aventiure2.german.base.Wortfolge.w;
 import static de.nb.aventiure2.german.description.DescriptionBuilder.du;
 import static de.nb.aventiure2.german.description.DescriptionBuilder.neuerSatz;
@@ -383,7 +382,8 @@ public class FeelingsComp extends AbstractStatefulComponent<FeelingsPCD> {
 
 
     /**
-     * Gibt eventuell alternative adverbiale Angaben zurück, die beschreiben, welchen Eindruck dieses
+     * Gibt eventuell alternative adverbiale Angaben zurück, die beschreiben, welchen Eindruck
+     * dieses
      * Feeling Being auf den SC macht, wenn die beiden sich begegnen.
      * <p>
      * Die Methode garantiert, dass niemals etwas wie "du, der du..." oder
@@ -549,7 +549,8 @@ public class FeelingsComp extends AbstractStatefulComponent<FeelingsPCD> {
      * Straße. Danach mag die Oma den Schüler ein wenig mehr.
      * <li>Beispiel 3: Die Oma ist vom Schüler total begeistert. Der Schüler hilft der Oma über die
      * Straße. Danach ist die Oma immer noch vom Schüler total begeistert (unverändert).
-     * <li>Beispiel 4: Die Oma kann den Schüler absolut nicht ausstehen.. Der Schüler hilft der Oma über die
+     * <li>Beispiel 4: Die Oma kann den Schüler absolut nicht ausstehen.. Der Schüler hilft der
+     * Oma über die
      * Straße. Danach kann Oma den Schüler immer noch absolut nicht ausstehen (unverändert).
      * (Das stärker Gefühl überschattet das neue.)
      *
@@ -771,7 +772,7 @@ public class FeelingsComp extends AbstractStatefulComponent<FeelingsPCD> {
 
         res.addAll(getPcd().getMuedigkeitsData().altAdjektivphrase().stream()
                 .map(p -> du(PARAGRAPH, "fühlst",
-                        joinToWortfolge("dich auf einmal", p.getPraedikativ(P2, SG)))
+                        "dich auf einmal", p.getPraedikativ(P2, SG))
                         .mitVorfeldSatzglied("auf einmal")
                         .beendet(PARAGRAPH))
                 .collect(toList()));
@@ -923,7 +924,7 @@ public class FeelingsComp extends AbstractStatefulComponent<FeelingsPCD> {
 
         res.addAll(getPcd().getMuedigkeitsData().altAdjektivphrase().stream()
                 .map(p -> du(PARAGRAPH, "fühlst",
-                        joinToWortfolge("dich", p.getPraedikativ(P2, SG)))
+                        "dich", p.getPraedikativ(P2, SG))
                         .beendet(PARAGRAPH))
                 .collect(toList()));
 

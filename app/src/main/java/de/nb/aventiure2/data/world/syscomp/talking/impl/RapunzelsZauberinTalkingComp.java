@@ -28,7 +28,6 @@ import static de.nb.aventiure2.german.base.Nominalphrase.np;
 import static de.nb.aventiure2.german.base.NumerusGenus.F;
 import static de.nb.aventiure2.german.base.NumerusGenus.N;
 import static de.nb.aventiure2.german.base.StructuralElement.PARAGRAPH;
-import static de.nb.aventiure2.german.base.Wortfolge.joinToWortfolge;
 import static de.nb.aventiure2.german.description.AltDescriptionsBuilder.alt;
 import static de.nb.aventiure2.german.description.AltDescriptionsBuilder.altNeueSaetze;
 import static de.nb.aventiure2.german.description.DescriptionBuilder.du;
@@ -121,11 +120,7 @@ public class RapunzelsZauberinTalkingComp extends AbstractTalkingComp {
                 "„Gute Frau“, sprichst du",
                 anaph.akkK(),
                 "an").dann(),
-                du(PARAGRAPH,
-                        "wendest",
-                        joinToWortfolge(
-                                "dich noch einmal",
-                                anaph.datK(), "zu"))
+                du(PARAGRAPH, "wendest", "dich noch einmal", anaph.datK(), "zu")
                         .undWartest()
         );
 
@@ -203,11 +198,10 @@ public class RapunzelsZauberinTalkingComp extends AbstractTalkingComp {
                 .undWartest().dann());
 
         alt.add(du("verabschiedest",
-                joinToWortfolge("dich wieder",
-                        PraepositionMitKasus.VON.mit(anaph).getDescription()))
+                "dich wieder",
+                PraepositionMitKasus.VON.mit(anaph).getDescription())
                         .undWartest().dann(),
-                du("sagst",
-                        joinToWortfolge(anaph.datK(), "Ade"))
+                du("sagst", anaph.datK(), "Ade")
                         .undWartest().dann()
         );
 
@@ -227,7 +221,7 @@ public class RapunzelsZauberinTalkingComp extends AbstractTalkingComp {
 
         n.narrateAlt(NO_TIME,
                 neuerSatz("Aber du lässt nicht locker:"),
-                du("fragst", joinToWortfolge(anaph.akkK(), "erneut:")));
+                du("fragst", anaph.akkK(), "erneut:"));
 
         frageNachZiel();
     }

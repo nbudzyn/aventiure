@@ -401,9 +401,6 @@ public class RapunzelReactionsComp
                     "Ihre Haare glänzen fein wie gesponnen Gold.",
                     altReaktionSaetze.stream().flatMap(s -> s.altVerzweitsaetze().stream()))
                     .timed(secs(30)));
-
-            // FIXME joinTo(Null)Wortfolge() überall durch
-            //  altNeueSaetze ersetzen?
         }
         n.narrateAlt(alt);
     }

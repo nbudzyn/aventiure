@@ -26,6 +26,8 @@ import static java.util.Objects.requireNonNull;
  */
 @Immutable
 public class Wortfolge {
+    // FIXME Kann man Wortfolge nicht ganz durch Konstituente ersetzen?
+
     private static final int GEDAECHTNISWEITE_PHORIK = 6;
 
     /**

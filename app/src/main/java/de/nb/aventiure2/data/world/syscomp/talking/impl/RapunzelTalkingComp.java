@@ -673,6 +673,8 @@ public class RapunzelTalkingComp extends AbstractTalkingComp {
 
     private static ImmutableList<Wortfolge> altDannHaareFestbinden(
             final Nominalphrase rapunzelDesc) {
+        // FIXME Falsche Abstraktion?! Der fachliche Code sollte eher nicht mit
+        //  Wortfolgen agieren müssen, eher mit Alt...Builder etc.
         return ImmutableList.of(
                 joinToWortfolge(
                         "dann bindet",
