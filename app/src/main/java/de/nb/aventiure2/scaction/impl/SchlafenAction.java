@@ -16,7 +16,7 @@ import de.nb.aventiure2.data.world.gameobject.*;
 import de.nb.aventiure2.data.world.syscomp.feelings.FeelingIntensity;
 import de.nb.aventiure2.data.world.syscomp.memory.Action;
 import de.nb.aventiure2.german.description.AltDescriptionsBuilder;
-import de.nb.aventiure2.german.description.TimedDescription;
+import de.nb.aventiure2.german.description.AltTimedDescriptionsBuilder;
 import de.nb.aventiure2.scaction.AbstractScAction;
 import de.nb.aventiure2.scaction.stepcount.SCActionStepCountDao;
 
@@ -31,12 +31,14 @@ import static de.nb.aventiure2.german.base.StructuralElement.CHAPTER;
 import static de.nb.aventiure2.german.base.StructuralElement.SENTENCE;
 import static de.nb.aventiure2.german.base.Wortfolge.w;
 import static de.nb.aventiure2.german.description.AltDescriptionsBuilder.alt;
+import static de.nb.aventiure2.german.description.AltTimedDescriptionsBuilder.altTimed;
 import static de.nb.aventiure2.german.description.DescriptionBuilder.du;
 import static de.nb.aventiure2.german.description.DescriptionBuilder.neuerSatz;
 
 /**
  * Der Spielercharakter legt sich schlafen.
  */
+@SuppressWarnings("ALL")
 public class SchlafenAction extends AbstractScAction {
     public static Collection<SchlafenAction> buildActions(
             final SCActionStepCountDao scActionStepCountDao,
@@ -84,7 +86,7 @@ public class SchlafenAction extends AbstractScAction {
     private void narrateAndDoSchlaeftNichtEin() {
         sc.memoryComp().setLastAction(buildMemorizedAction());
 
-        final ImmutableList.Builder<TimedDescription<?>> alt = ImmutableList.builder();
+        final AltTimedDescriptionsBuilder alt = altTimed();
         if (!isDefinitivWiederholung()) {
             alt.add(du("schließt",
                     "kurz die Augen. Die Aufregung der letzten Stunden "
@@ -143,7 +145,8 @@ public class SchlafenAction extends AbstractScAction {
         //  Text gerendert hat sowie den Zeitpunkt dazu. Wenn wieder Gelegenheit ist, ein Text zu
         //  rendern, wird geprüft, ob sich der Status gegenüber dem Zeitpunkt geändert hat,
         //  außerdem wird geprüft, ob der Zeitpunkt Benutzer etwas versäumt hat oder die ganze
-        //  Zeit anwesend und aufnahmefähig war - entsprechend etwas wie "Plötzlich endet der Gesang"
+        //  Zeit anwesend und aufnahmefähig war - entsprechend etwas wie "Plötzlich endet der
+        //  Gesang"
         //  oder "Es ist kein Gesang mehr zu hören" gerendert.
 
         // IDEA Zum Beispiel wäre der Benutzer über alle Statusänderungen zu unterrichten,

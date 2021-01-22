@@ -8,6 +8,7 @@ import androidx.room.Insert;
 import androidx.room.OnConflictStrategy;
 import androidx.room.Query;
 
+import com.google.common.collect.ImmutableCollection;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 
@@ -91,7 +92,6 @@ public abstract class NarrationDao {
         return combinations;
     }
 
-    @Nullable
     private TextDescription calcBestTextDescription(
             final ImmutableList<TextDescription> alternatives,
             final Narration initialNarration) {
@@ -280,7 +280,7 @@ public abstract class NarrationDao {
      * @param alternatives Der Satz von Alternativen
      */
     private ConsumedAlternatives loadConsumed(
-            final ImmutableList<? extends TextDescription> alternatives) {
+            final ImmutableCollection<? extends TextDescription> alternatives) {
         return loadConsumed(
                 ConsumedNarrationAlternativeInfo.calcAlternativesStringHash(alternatives));
     }
@@ -302,7 +302,8 @@ public abstract class NarrationDao {
                 .collect(toImmutableSet()));
     }
 
-    @Query("SELECT * from ConsumedNarrationAlternativeInfo where :alternativesStringHash = alternativesStringHash")
+    @Query("SELECT * from ConsumedNarrationAlternativeInfo where :alternativesStringHash = "
+            + "alternativesStringHash")
     abstract List<ConsumedNarrationAlternativeInfo> loadConsumedInternal(
             final int alternativesStringHash);
 
@@ -321,7 +322,8 @@ public abstract class NarrationDao {
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     abstract long insert(ConsumedNarrationAlternativeInfo info);
 
-    @Query("DELETE FROM ConsumedNarrationAlternativeInfo WHERE :alternativesStringHash = alternativesStringHash")
+    @Query("DELETE FROM ConsumedNarrationAlternativeInfo WHERE :alternativesStringHash = "
+            + "alternativesStringHash")
     abstract void resetConsumed(int alternativesStringHash);
 
     @Query("SELECT * from Narration")

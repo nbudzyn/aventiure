@@ -3,6 +3,7 @@ package de.nb.aventiure2.german.description;
 import androidx.annotation.NonNull;
 
 import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableSet;
 
 import java.util.Arrays;
 import java.util.Collection;
@@ -20,6 +21,7 @@ import de.nb.aventiure2.german.base.SubstantivischePhrase;
 
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.collect.ImmutableList.toImmutableList;
+import static com.google.common.collect.ImmutableSet.toImmutableSet;
 import static de.nb.aventiure2.german.base.Person.P3;
 
 /**
@@ -45,15 +47,15 @@ public class TimedDescription<
     @CheckReturnValue
     @NonNull
     public static <D extends AbstractDescription<?>>
-    ImmutableList<TimedDescription<D>> toTimed(final AvTimeSpan timeElapsed,
-                                               final D... descriptions) {
+    ImmutableSet<TimedDescription<D>> toTimed(final AvTimeSpan timeElapsed,
+                                              final D... descriptions) {
         return toTimed(Arrays.asList(descriptions), timeElapsed);
     }
 
     @CheckReturnValue
     @NonNull
-    private static <D extends AbstractDescription<?>>
-    ImmutableList<TimedDescription<D>> toTimed(
+    public static <D extends AbstractDescription<?>>
+    ImmutableSet<TimedDescription<D>> toTimed(
             final Collection<D> descriptions, final AvTimeSpan timeElapsed) {
         return toTimed(descriptions, timeElapsed, null);
     }
@@ -61,13 +63,13 @@ public class TimedDescription<
     @CheckReturnValue
     @NonNull
     public static <D extends AbstractDescription<?>>
-    ImmutableList<TimedDescription<D>> toTimed(
+    ImmutableSet<TimedDescription<D>> toTimed(
             final Collection<D> descriptions, final AvTimeSpan timeElapsed,
             @Nullable final String counterIdIncrementedIfTextIsNarrated) {
         return descriptions.stream()
                 .map(d -> new TimedDescription<>(
                         d, timeElapsed, counterIdIncrementedIfTextIsNarrated))
-                .collect(toImmutableList());
+                .collect(toImmutableSet());
     }
 
     @CheckReturnValue

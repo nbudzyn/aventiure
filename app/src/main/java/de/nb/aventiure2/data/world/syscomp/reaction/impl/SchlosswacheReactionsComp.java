@@ -1,10 +1,7 @@
 package de.nb.aventiure2.data.world.syscomp.reaction.impl;
 
-import com.google.common.collect.ImmutableList;
-
 import javax.annotation.Nullable;
 
-import de.nb.aventiure2.data.database.AvDatabase;
 import de.nb.aventiure2.data.narration.Narrator;
 import de.nb.aventiure2.data.time.AvDateTime;
 import de.nb.aventiure2.data.world.base.Lichtverhaeltnisse;
@@ -23,7 +20,7 @@ import de.nb.aventiure2.data.world.syscomp.state.impl.SchlossfestState;
 import de.nb.aventiure2.data.world.syscomp.state.impl.SchlosswacheStateComp;
 import de.nb.aventiure2.data.world.syscomp.storingplace.ILocationGO;
 import de.nb.aventiure2.german.base.NumerusGenus;
-import de.nb.aventiure2.german.description.TimedDescription;
+import de.nb.aventiure2.german.description.AltTimedDescriptionsBuilder;
 
 import static de.nb.aventiure2.data.time.AvTimeSpan.mins;
 import static de.nb.aventiure2.data.time.AvTimeSpan.secs;
@@ -35,6 +32,7 @@ import static de.nb.aventiure2.data.world.syscomp.state.impl.SchlosswacheState.A
 import static de.nb.aventiure2.data.world.syscomp.state.impl.SchlosswacheState.UNAUFFAELLIG;
 import static de.nb.aventiure2.german.base.StructuralElement.PARAGRAPH;
 import static de.nb.aventiure2.german.base.Wortfolge.w;
+import static de.nb.aventiure2.german.description.AltTimedDescriptionsBuilder.altTimed;
 import static de.nb.aventiure2.german.description.DescriptionBuilder.du;
 import static de.nb.aventiure2.german.description.DescriptionBuilder.neuerSatz;
 import static de.nb.aventiure2.german.description.DescriptionBuilder.satzanschluss;
@@ -43,6 +41,7 @@ import static de.nb.aventiure2.german.description.DescriptionBuilder.satzanschlu
  * "Reaktionen" der Schlosswache, z.B. darauf, dass Zeit vergeht,
  * der Benutzer die Goldene Kugel mitnimmt o.Ä.
  */
+@SuppressWarnings("UnnecessaryReturnStatement")
 public class SchlosswacheReactionsComp
         extends AbstractDescribableReactionsComp
         implements IMovementReactions, ITimePassedReactions {
@@ -50,19 +49,15 @@ public class SchlosswacheReactionsComp
     private static final String SCHLOSSWACHE_REACTIONS_ABLEGEN_WACHE_IST_AUFMERKSAM =
             "SchlosswacheReactions_ablegen_wacheIstAufmerksam";
     private final CounterDao counterDao;
-    private final LocationSystem locationSystem;
     private final SchlosswacheStateComp stateComp;
     private final LocationComp locationComp;
 
-    public SchlosswacheReactionsComp(final AvDatabase db,
-                                     final CounterDao counterDao,
+    public SchlosswacheReactionsComp(final CounterDao counterDao,
                                      final Narrator n, final World world,
-                                     final LocationSystem locationSystem,
                                      final SchlosswacheStateComp stateComp,
                                      final LocationComp locationComp) {
         super(SCHLOSSWACHE, n, world);
         this.counterDao = counterDao;
-        this.locationSystem = locationSystem;
         this.stateComp = stateComp;
         this.locationComp = locationComp;
     }
@@ -192,6 +187,7 @@ public class SchlosswacheReactionsComp
      * Gegenstand also genommen, als Geschenk erhalten, heimlich zugesteckt bekommen,
      * in seiner Hand materialisiert o.Ä.
      */
+    @SuppressWarnings("unchecked")
     private void onRelocationToSC(final ILocatableGO locatable,
                                   @Nullable final ILocationGO from) {
         if (from == null || !locationComp.hasRecursiveLocation(from)) {
@@ -294,7 +290,7 @@ public class SchlosswacheReactionsComp
 
     private void scHatGoldeneKugelGenommen_wacheIstAufmerksam_erwischt(
             final ILocatableGO goldeneKugel) {
-        final ImmutableList.Builder<TimedDescription<?>> alt = ImmutableList.builder();
+        final AltTimedDescriptionsBuilder alt = altTimed();
 
         if (n.allowsAdditionalDuSatzreihengliedOhneSubjekt()) {
             alt.add(satzanschluss(", doch keine Sekunde später baut sich die "
@@ -326,7 +322,7 @@ public class SchlosswacheReactionsComp
     }
 
     private void scHatGoldeneKugelGenommen_wacheIstAufmerksam_nichtErwischt() {
-        final ImmutableList.Builder<TimedDescription<?>> alt = ImmutableList.builder();
+        final AltTimedDescriptionsBuilder alt = altTimed();
 
         if (n.allowsAdditionalDuSatzreihengliedOhneSubjekt()) {
             alt.add(satzanschluss(", während",
@@ -355,6 +351,7 @@ public class SchlosswacheReactionsComp
      * Gegenstand also abgelegt, an jemand anderen weitergegeben, gestohlen bekommen,
      * der Gegenstand hat sich aufgelöst o.Ä.
      */
+    @SuppressWarnings("SwitchStatementWithTooFewBranches")
     private void onRelocationFromSC(final ILocationGO to) {
         if (!locationComp.hasSameOuterMostLocationAs(to)) {
             // The Schlosswache does not notice.

@@ -18,7 +18,7 @@ import de.nb.aventiure2.data.world.syscomp.state.IHasStateGO;
 import de.nb.aventiure2.data.world.syscomp.state.impl.FroschprinzState;
 import de.nb.aventiure2.data.world.syscomp.talking.ITalkerGO;
 import de.nb.aventiure2.data.world.syscomp.talking.impl.FroschprinzTalkingComp;
-import de.nb.aventiure2.german.description.TimedDescription;
+import de.nb.aventiure2.german.description.AltTimedDescriptionsBuilder;
 import de.nb.aventiure2.scaction.AbstractScAction;
 import de.nb.aventiure2.scaction.stepcount.SCActionStepCountDao;
 
@@ -30,6 +30,7 @@ import static de.nb.aventiure2.data.world.syscomp.feelings.Mood.NEUTRAL;
 import static de.nb.aventiure2.data.world.syscomp.state.impl.FroschprinzState.HAT_SC_HILFSBEREIT_ANGESPROCHEN;
 import static de.nb.aventiure2.data.world.syscomp.state.impl.FroschprinzState.UNAUFFAELLIG;
 import static de.nb.aventiure2.german.base.Wortfolge.w;
+import static de.nb.aventiure2.german.description.AltTimedDescriptionsBuilder.altTimed;
 import static de.nb.aventiure2.german.description.DescriptionBuilder.du;
 import static de.nb.aventiure2.german.description.DescriptionBuilder.neuerSatz;
 import static de.nb.aventiure2.german.description.DescriptionBuilder.satzanschluss;
@@ -37,6 +38,7 @@ import static de.nb.aventiure2.german.description.DescriptionBuilder.satzanschlu
 /**
  * Der Spielercharakter heult.
  */
+@SuppressWarnings({"unchecked", "IfStatementWithIdenticalBranches"})
 public class HeulenAction extends AbstractScAction {
     public static Collection<HeulenAction> buildActions(
             final SCActionStepCountDao scActionStepCountDao,
@@ -98,7 +100,7 @@ public class HeulenAction extends AbstractScAction {
 
         sc.memoryComp().setLastAction(buildMemorizedAction());
 
-        final ImmutableList.Builder<TimedDescription<?>> alt = ImmutableList.builder();
+        final AltTimedDescriptionsBuilder alt = altTimed();
         if (n.allowsAdditionalDuSatzreihengliedOhneSubjekt()) {
             alt.add(du("weinst").timed(mins(1))
                     .undWartest());
@@ -136,7 +138,7 @@ public class HeulenAction extends AbstractScAction {
     private void narrateAndDoErstesMal() {
         sc.memoryComp().setLastAction(buildMemorizedAction());
 
-        final ImmutableList.Builder<TimedDescription<?>> alt = ImmutableList.builder();
+        final AltTimedDescriptionsBuilder alt = altTimed();
         alt.add(neuerSatz("Dich überkommt ein Schluchzen")
                 .timed(mins(1)));
 

@@ -107,7 +107,7 @@ class CreatureFactory {
         return new ReactionsCreature<>(SCHLOSSWACHE,
                 descriptionComp, locationComp, stateComp,
                 new SchlosswacheReactionsComp(
-                        db, db.counterDao(), n, world, world.getLocationSystem(), stateComp,
+                        db.counterDao(), n, world, stateComp,
                         locationComp));
     }
 
@@ -162,8 +162,8 @@ class CreatureFactory {
                 new RapunzelTalkingComp(db, timeTaker, n, world, stateComp, feelingsComp,
                         false);
         final RapunzelReactionsComp reactionsComp =
-                new RapunzelReactionsComp(db, timeTaker, n, world, memoryComp, stateComp,
-                        world.getLocationSystem(), locationComp, feelingsComp,
+                new RapunzelReactionsComp(timeTaker, n, world, memoryComp, stateComp,
+                        locationComp, feelingsComp,
                         talkingComp);
         final RapunzelTakingComp takingComp =
                 new RapunzelTakingComp(db, n, world, stateComp, memoryComp, feelingsComp);

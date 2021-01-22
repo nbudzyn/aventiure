@@ -8,6 +8,7 @@ import java.util.stream.Stream;
 
 import javax.annotation.Nonnull;
 
+import de.nb.aventiure2.data.time.AvTimeSpan;
 import de.nb.aventiure2.german.base.IBezugsobjekt;
 import de.nb.aventiure2.german.base.NumerusGenus;
 import de.nb.aventiure2.german.base.PhorikKandidat;
@@ -24,8 +25,7 @@ import static de.nb.aventiure2.german.description.DescriptionBuilder.neuerSatz;
  * Ein Builder für alternative {@link AbstractDescription}s.
  */
 public class AltDescriptionsBuilder {
-    private final ImmutableSet.Builder<AbstractDescription<?>> alt =
-            builder();
+    private final ImmutableSet.Builder<AbstractDescription<?>> alt = builder();
 
     private UnaryOperator<AbstractDescription<?>> op = null;
 
@@ -57,7 +57,7 @@ public class AltDescriptionsBuilder {
     @Nonnull
     public static AltDescriptionsBuilder altNeueSaetze(final StructuralElement structuralElement,
                                                        final Object... parts) {
-        // FIXME Prüfen, möglichst durch AltDescriptions ersetzen
+        // FIXME Prüfen - kann man das durch etwas anderes ersetzen?
         final AltDescriptionsBuilder res = alt();
         res.addAll(joinToAltWortfolgen(parts).stream()
                 .map(wortfolge -> neuerSatz(structuralElement, wortfolge)));
@@ -90,10 +90,6 @@ public class AltDescriptionsBuilder {
 
     public void add(final AbstractDescription<?>... altDescriptions) {
         alt.add(altDescriptions);
-    }
-
-    public void add(final AbstractDescription<?> altDescription) {
-        alt.add(altDescription);
     }
 
     public AltDescriptionsBuilder komma() {
@@ -142,6 +138,10 @@ public class AltDescriptionsBuilder {
         }
 
         return this;
+    }
+
+    public AltTimedDescriptionsBuilder timed(final AvTimeSpan timeElapsed) {
+        return new AltTimedDescriptionsBuilder(this, timeElapsed);
     }
 
     public ImmutableSet<AbstractDescription<?>> build() {

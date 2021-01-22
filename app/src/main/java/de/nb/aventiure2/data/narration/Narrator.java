@@ -9,7 +9,6 @@ import androidx.room.OnConflictStrategy;
 
 import com.google.common.base.Objects;
 import com.google.common.base.Preconditions;
-import com.google.common.collect.ImmutableCollection;
 import com.google.common.collect.ImmutableList;
 
 import java.util.Arrays;
@@ -34,10 +33,12 @@ import de.nb.aventiure2.german.base.PhorikKandidat;
 import de.nb.aventiure2.german.base.StructuralElement;
 import de.nb.aventiure2.german.description.AbstractDescription;
 import de.nb.aventiure2.german.description.AltDescriptionsBuilder;
+import de.nb.aventiure2.german.description.AltTimedDescriptionsBuilder;
 import de.nb.aventiure2.german.description.TextDescription;
 import de.nb.aventiure2.german.description.TimedDescription;
 import de.nb.aventiure2.german.stemming.StemmedWords;
 
+import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.collect.ImmutableList.toImmutableList;
 import static de.nb.aventiure2.data.narration.Narration.NarrationSource.REACTIONS;
 import static de.nb.aventiure2.data.narration.TextDescriptionBuilder.distinctByKey;
@@ -120,13 +121,13 @@ public class Narrator {
         narrateAlt(desc);
     }
 
+    public void narrateAlt(final AltTimedDescriptionsBuilder timeAlternatives) {
+        narrateAlt(timeAlternatives.build());
+    }
+
     public void narrateAlt(final AltDescriptionsBuilder alternatives,
                            final AvTimeSpan timeElapsed) {
         narrateAlt(alternatives.build(), timeElapsed);
-    }
-
-    public void narrateAlt(final ImmutableCollection.Builder<TimedDescription<?>> alternatives) {
-        narrateAlt(alternatives.build());
     }
 
     public void narrateAlt(final TimedDescription<?>... alternatives) {
@@ -255,6 +256,8 @@ public class Narrator {
      */
     private boolean narrateTemporaryNarrationAndTryCombiningWithAlternative(
             final Collection<? extends TimedDescription<?>> timedAlternatives) {
+        checkNotNull(temporaryNarration, "temporaryNarration is null");
+
         // Hier gibt es zwei Möglichkeiten:
         // 1. Die temporary Narration und die (neuen) Alternatives werden
         //  gemeinsam in einen Text gegossen, etwa in der Art
@@ -374,6 +377,7 @@ public class Narrator {
     /**
      * Ob dieses Game Object zurzeit <i>Thema</i> ist (im Sinne von Thema - Rhema).
      */
+    @SuppressWarnings("BooleanMethodIsAlwaysInverted")
     public boolean isThema(@NonNull final GameObjectId gameObjectId) {
         // IDEA es gibt auch noch andere Fälle, wo das Game Object Thema sein könnte...
         //  (Auch im NarrationDao anpassen, dort noch analog zu finden.)

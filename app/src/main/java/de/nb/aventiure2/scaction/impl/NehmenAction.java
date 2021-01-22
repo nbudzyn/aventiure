@@ -24,7 +24,7 @@ import de.nb.aventiure2.german.base.Nominalphrase;
 import de.nb.aventiure2.german.base.NumerusGenus;
 import de.nb.aventiure2.german.base.PraepositionMitKasus;
 import de.nb.aventiure2.german.base.SubstantivischePhrase;
-import de.nb.aventiure2.german.description.TimedDescription;
+import de.nb.aventiure2.german.description.AltTimedDescriptionsBuilder;
 import de.nb.aventiure2.german.praedikat.AdverbialeAngabeSkopusSatz;
 import de.nb.aventiure2.german.praedikat.AdverbialeAngabeSkopusVerbWohinWoher;
 import de.nb.aventiure2.german.praedikat.PraedikatMitEinerObjektleerstelle;
@@ -35,7 +35,6 @@ import de.nb.aventiure2.scaction.stepcount.SCActionStepCountDao;
 
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkState;
-import static com.google.common.collect.ImmutableList.builder;
 import static de.nb.aventiure2.data.time.AvTimeSpan.secs;
 import static de.nb.aventiure2.data.world.gameobject.World.*;
 import static de.nb.aventiure2.data.world.syscomp.feelings.Mood.ANGESPANNT;
@@ -46,6 +45,7 @@ import static de.nb.aventiure2.german.base.Numerus.SG;
 import static de.nb.aventiure2.german.base.Person.P1;
 import static de.nb.aventiure2.german.base.Person.P2;
 import static de.nb.aventiure2.german.base.StructuralElement.PARAGRAPH;
+import static de.nb.aventiure2.german.description.AltTimedDescriptionsBuilder.altTimed;
 import static de.nb.aventiure2.german.description.DescriptionBuilder.du;
 import static de.nb.aventiure2.german.description.DescriptionBuilder.neuerSatz;
 import static de.nb.aventiure2.german.description.DescriptionBuilder.satzanschluss;
@@ -107,6 +107,7 @@ public class NehmenAction
         return ImmutableList.of();
     }
 
+    @SuppressWarnings("unchecked")
     private static <LIVGO extends IDescribableGO & ILocatableGO & ILivingBeingGO,
             TARGET_LOC extends IDescribableGO & ILocationGO & ILocatableGO>
     Collection<NehmenAction<LIVGO, TARGET_LOC>> buildFroschprinzActions(
@@ -140,6 +141,7 @@ public class NehmenAction
      * @param targetLocationId der Ort am SC, wohin es genommen wird, z.B.
      *                         in die Hände o.Ä.
      */
+    @SuppressWarnings("unchecked")
     private NehmenAction(
             final SCActionStepCountDao scActionStepCountDao,
             final TimeTaker timeTaker,
@@ -211,6 +213,7 @@ public class NehmenAction
         narrateAndDoObject();
     }
 
+    @SuppressWarnings("unchecked")
     private void narrateAndDoLivingBeing() {
         checkState(gameObject.is(FROSCHPRINZ),
                 "Unexpected creature: " + gameObject);
@@ -222,6 +225,7 @@ public class NehmenAction
         narrateAndDoFroschprinz();
     }
 
+    @SuppressWarnings("unchecked")
     private void narrateAndDoFroschprinz() {
         if (((IHasStateGO<FroschprinzState>) gameObject).stateComp()
                 .hasState(HAT_HOCHHEBEN_GEFORDERT)) {
@@ -332,7 +336,7 @@ public class NehmenAction
 
             final Nominalphrase froschDesc = world.getDescription(gameObject, false);
 
-            final ImmutableList.Builder<TimedDescription<?>> alt = builder();
+            final AltTimedDescriptionsBuilder alt = altTimed();
             alt.addAll(drueckeAusTimed(DISKONTINUITAET,
                     // FIXME Dass das hier doppelt ist, ergibt keinen Sinn, oder?
                     //  Prüfen, ggf. drueckeAusTimed korrigieren, dann entfernen!
@@ -434,7 +438,7 @@ public class NehmenAction
         final Nominalphrase objectDesc = world.getDescription(gameObject);
         final Nominalphrase objectDescShort = world.getDescription(gameObject, true);
 
-        final ImmutableList.Builder<TimedDescription<?>> alt = ImmutableList.builder();
+        final AltTimedDescriptionsBuilder alt = altTimed();
 
         alt.addAll(drueckeAusTimed(DISKONTINUITAET,
                 du(PARAGRAPH, nehmenPraedikat.mit(objectDesc))

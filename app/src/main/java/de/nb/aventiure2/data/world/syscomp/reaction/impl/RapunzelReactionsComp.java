@@ -6,7 +6,6 @@ import com.google.common.collect.ImmutableList;
 
 import javax.annotation.Nullable;
 
-import de.nb.aventiure2.data.database.AvDatabase;
 import de.nb.aventiure2.data.narration.Narrator;
 import de.nb.aventiure2.data.time.AvDateTime;
 import de.nb.aventiure2.data.time.AvTimeSpan;
@@ -16,7 +15,6 @@ import de.nb.aventiure2.data.world.syscomp.feelings.FeelingIntensity;
 import de.nb.aventiure2.data.world.syscomp.feelings.FeelingsComp;
 import de.nb.aventiure2.data.world.syscomp.location.ILocatableGO;
 import de.nb.aventiure2.data.world.syscomp.location.LocationComp;
-import de.nb.aventiure2.data.world.syscomp.location.LocationSystem;
 import de.nb.aventiure2.data.world.syscomp.memory.MemoryComp;
 import de.nb.aventiure2.data.world.syscomp.reaction.AbstractDescribableReactionsComp;
 import de.nb.aventiure2.data.world.syscomp.reaction.interfaces.IMovementReactions;
@@ -33,6 +31,7 @@ import de.nb.aventiure2.german.base.Nominalphrase;
 import de.nb.aventiure2.german.base.PraepositionMitKasus;
 import de.nb.aventiure2.german.base.SubstantivischePhrase;
 import de.nb.aventiure2.german.description.AltDescriptionsBuilder;
+import de.nb.aventiure2.german.description.AltTimedDescriptionsBuilder;
 import de.nb.aventiure2.german.description.TimedDescription;
 import de.nb.aventiure2.german.praedikat.AdverbialeAngabeSkopusSatz;
 import de.nb.aventiure2.german.satz.Satz;
@@ -61,18 +60,21 @@ import static de.nb.aventiure2.german.base.NumerusGenus.PL_MFN;
 import static de.nb.aventiure2.german.base.StructuralElement.PARAGRAPH;
 import static de.nb.aventiure2.german.base.StructuralElement.SENTENCE;
 import static de.nb.aventiure2.german.base.StructuralElement.WORD;
-import static de.nb.aventiure2.german.base.Wortfolge.joinToAltWortfolgen;
 import static de.nb.aventiure2.german.base.Wortfolge.w;
 import static de.nb.aventiure2.german.description.AltDescriptionsBuilder.alt;
+import static de.nb.aventiure2.german.description.AltDescriptionsBuilder.altNeueSaetze;
+import static de.nb.aventiure2.german.description.AltTimedDescriptionsBuilder.altTimed;
 import static de.nb.aventiure2.german.description.DescriptionBuilder.du;
 import static de.nb.aventiure2.german.description.DescriptionBuilder.neuerSatz;
 import static de.nb.aventiure2.german.description.DescriptionBuilder.satz;
+import static de.nb.aventiure2.german.description.TimedDescription.toTimed;
 import static de.nb.aventiure2.german.string.GermanStringUtil.capitalize;
 import static java.util.stream.Collectors.toSet;
 
 /**
  * "Reaktionen" von Rapunzel, z.B. darauf, dass Zeit vergeht
  */
+@SuppressWarnings("UnnecessaryReturnStatement")
 public class RapunzelReactionsComp
         extends AbstractDescribableReactionsComp
         implements IMovementReactions, IRufReactions,
@@ -82,17 +84,14 @@ public class RapunzelReactionsComp
     private final TimeTaker timeTaker;
     private final MemoryComp memoryComp;
     private final RapunzelStateComp stateComp;
-    private final LocationSystem locationSystem;
     private final LocationComp locationComp;
     private final FeelingsComp feelingsComp;
     private final RapunzelTalkingComp talkingComp;
 
-    public RapunzelReactionsComp(final AvDatabase db,
-                                 final TimeTaker timeTaker, final Narrator n,
+    public RapunzelReactionsComp(final TimeTaker timeTaker, final Narrator n,
                                  final World world,
                                  final MemoryComp memoryComp,
                                  final RapunzelStateComp stateComp,
-                                 final LocationSystem locationSystem,
                                  final LocationComp locationComp,
                                  final FeelingsComp feelingsComp,
                                  final RapunzelTalkingComp talkingComp) {
@@ -100,7 +99,6 @@ public class RapunzelReactionsComp
         this.timeTaker = timeTaker;
         this.memoryComp = memoryComp;
         this.stateComp = stateComp;
-        this.locationSystem = locationSystem;
         this.locationComp = locationComp;
         this.feelingsComp = feelingsComp;
         this.talkingComp = talkingComp;
@@ -128,7 +126,7 @@ public class RapunzelReactionsComp
         }
 
         if (locatable.is(GOLDENE_KUGEL)) {
-            onGoldeneKugelEnter(from, to);
+            onGoldeneKugelEnter(to);
             return;
         }
     }
@@ -151,7 +149,7 @@ public class RapunzelReactionsComp
                                            final ILocationGO to) {
         switch (stateComp.getState()) {
             case UNAEUFFAELLIG:
-                onSCEnter_VorDemAltenTurm_Unauffaellig(from, to);
+                onSCEnter_VorDemAltenTurm_Unauffaellig(to);
                 return;
             case SINGEND:
                 onSCEnter_VorDemAltenTurm_Singend(from);
@@ -167,8 +165,7 @@ public class RapunzelReactionsComp
         }
     }
 
-    private void onSCEnter_VorDemAltenTurm_Unauffaellig(@Nullable final ILocationGO from,
-                                                        final ILocationGO to) {
+    private void onSCEnter_VorDemAltenTurm_Unauffaellig(final ILocationGO to) {
         if (to.is(VOR_DEM_ALTEN_TURM_SCHATTEN_DER_BAEUME)) {
             stateComp.narrateAndSetState(STILL);
             // Ab jetzt wird Rapunzel hin und wieder singen.
@@ -216,7 +213,7 @@ public class RapunzelReactionsComp
         if (world.isOrHasRecursiveLocation(from, OBEN_IM_ALTEN_TURM)) {
             stateComp.narrateAndSetState(STILL);
 
-            final ImmutableList.Builder<TimedDescription<?>> alt = ImmutableList.builder();
+            final AltTimedDescriptionsBuilder alt = altTimed();
             alt.addAll(altRapunzelZiehtHaareWiederHoch_VorDemAltenTurm());
             // STORY Wenn Rapunzel das mit der Zauberin erzählt hat (aber auch dann nur
             //  einmal): „Aber komm nicht, wenn die Alte bei mir ist, ruft sie dir noch nach"
@@ -370,7 +367,7 @@ public class RapunzelReactionsComp
         loadSC().feelingsComp().upgradeFeelingsTowards(RAPUNZEL,
                 ZUNEIGUNG_ABNEIGUNG, 0.75f, FeelingIntensity.DEUTLICH);
 
-        final ImmutableList.Builder<TimedDescription<?>> alt = ImmutableList.builder();
+        final AltTimedDescriptionsBuilder alt = altTimed();
 
         final ImmutableList<Satz> altReaktionSaetze =
                 feelingsComp.altReaktionBeiBegegnungMitScSaetze(anaph);
@@ -385,7 +382,7 @@ public class RapunzelReactionsComp
 
             // FIXME Dies beides darf erst erscheinen, wenn Rapunzel von der Zauberin erzählt hat
             //  und den SC um Hilfe gebeten oder der SC Hilfe angeboten hat
-            alt.addAll(TimedDescription.toTimed(secs(15),
+            alt.addAll(toTimed(secs(15),
                     du("findest", "oben die junge Frau ganz ",
                             "aufgeregt vor: „Du bist schon ",
                             "wieder da!“, sagt sie, „Kannst du mir nun helfen?“")
@@ -399,27 +396,20 @@ public class RapunzelReactionsComp
         }
 
         if (loadSC().memoryComp().getKnown(RAPUNZEL) == KNOWN_FROM_DARKNESS) {
-            alt.addAll(
-                    // FIXME AltDescriptionBuilder.toTimed(secs(30))
+            alt.addAll(altNeueSaetze("Am Fenster sitzt die junge Frau, schön als",
+                    "du unter der Sonne noch keine gesehen hast.",
+                    "Ihre Haare glänzen fein wie gesponnen Gold.",
+                    altReaktionSaetze.stream().flatMap(s -> s.altVerzweitsaetze().stream()))
+                    .timed(secs(30)));
 
-                    // FIXME joinTo(Null)Wortfolge() überall durch
-                    //  altNeueSaetze ersetzen?
-                    joinToAltWortfolgen(
-                            "Am Fenster sitzt die junge Frau, schön als",
-                            "du unter der Sonne noch keine gesehen hast.",
-                            "Ihre Haare glänzen fein wie gesponnen Gold.",
-                            altReaktionSaetze.stream()
-                                    .flatMap(s -> s.altVerzweitsaetze().stream()))
-                            .stream()
-                            // FIXME AltDescriptionBuilder.timed() bauen!
-                            .map(wf -> neuerSatz(wf).timed(secs(30)))
-                            .collect(toSet()));
+            // FIXME joinTo(Null)Wortfolge() überall durch
+            //  altNeueSaetze ersetzen?
         }
         n.narrateAlt(alt);
     }
 
     private void narrateAndUpgradeFeelings_ScTrifftRapunzelObenImAltenTurmAn_Nachts() {
-        final ImmutableList.Builder<TimedDescription<?>> alt = ImmutableList.builder();
+        final AltTimedDescriptionsBuilder alt = altTimed();
 
         loadSC().feelingsComp().upgradeFeelingsTowards(RAPUNZEL,
                 ZUNEIGUNG_ABNEIGUNG, 0.75f, FeelingIntensity.DEUTLICH);
@@ -490,8 +480,7 @@ public class RapunzelReactionsComp
         }
     }
 
-    private void onGoldeneKugelEnter(@Nullable final ILocationGO from,
-                                     final ILocationGO to) {
+    private void onGoldeneKugelEnter(final ILocationGO to) {
         if (!locationComp.hasSameOuterMostLocationAs(to)) {
             return;
         }
@@ -579,12 +568,12 @@ public class RapunzelReactionsComp
         }
 
         if (ruftyp == Ruftyp.LASS_DEIN_HAAR_HERUNTER) {
-            onRapunzelruf(rufer);
+            onRapunzelruf();
             return;
         }
     }
 
-    private void onRapunzelruf(final ILocatableGO rufer) {
+    private void onRapunzelruf() {
         if (!stateComp.hasState(SINGEND, STILL)) {
             return;
         }
@@ -672,13 +661,12 @@ public class RapunzelReactionsComp
                                final Enum<?> newState) {
         if (gameObject.is(RAPUNZELS_ZAUBERIN)) {
             onZauberinStateChanged(
-                    (RapunzelsZauberinState) oldState, (RapunzelsZauberinState) newState);
+                    (RapunzelsZauberinState) newState);
             return;
         }
     }
 
-    private void onZauberinStateChanged(
-            final RapunzelsZauberinState oldState, final RapunzelsZauberinState newState) {
+    private void onZauberinStateChanged(final RapunzelsZauberinState newState) {
         if (newState == RapunzelsZauberinState.AUF_DEM_RUECKWEG_VON_RAPUNZEL) {
             onZauberinStateChangedToAufDemRueckwegVonRapunzel();
             return;
@@ -706,11 +694,11 @@ public class RapunzelReactionsComp
         }
 
         if (rapunzelMoechteSingen(endTime)) {
-            onTimePassed_RapunzelMoechteSingen(startTime, endTime);
+            onTimePassed_RapunzelMoechteSingen();
             return;
         }
 
-        onTimePassed_RapunzelMoechteNichtSingen(startTime, endTime);
+        onTimePassed_RapunzelMoechteNichtSingen();
     }
 
     private boolean rapunzelMoechteSingen(final AvDateTime now) {
@@ -757,8 +745,7 @@ public class RapunzelReactionsComp
                 oClock(19));
     }
 
-    private void onTimePassed_RapunzelMoechteSingen(final AvDateTime lastTime,
-                                                    final AvDateTime now) {
+    private void onTimePassed_RapunzelMoechteSingen() {
         if (stateComp.hasState(STILL)) {
             stateComp.narrateAndSetState(SINGEND);
             onTimePassed_moechteSingen_bislangStill();
@@ -835,8 +822,7 @@ public class RapunzelReactionsComp
                 ZUNEIGUNG_ABNEIGUNG, 1, FeelingIntensity.DEUTLICH);
     }
 
-    private void onTimePassed_RapunzelMoechteNichtSingen(final AvDateTime lastTime,
-                                                         final AvDateTime now) {
+    private void onTimePassed_RapunzelMoechteNichtSingen() {
         if (stateComp.hasState(SINGEND)) {
             stateComp.narrateAndSetState(STILL);
             onTimePassed_moechteNichtMehrSingen_bislangGesungen();

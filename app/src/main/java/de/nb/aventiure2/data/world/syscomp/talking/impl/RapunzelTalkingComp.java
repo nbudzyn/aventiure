@@ -17,7 +17,7 @@ import de.nb.aventiure2.german.base.Personalpronomen;
 import de.nb.aventiure2.german.base.SubstantivischePhrase;
 import de.nb.aventiure2.german.base.Wortfolge;
 import de.nb.aventiure2.german.description.AltDescriptionsBuilder;
-import de.nb.aventiure2.german.description.TimedDescription;
+import de.nb.aventiure2.german.description.AltTimedDescriptionsBuilder;
 import de.nb.aventiure2.german.praedikat.AdverbialeAngabeSkopusVerbAllg;
 import de.nb.aventiure2.german.praedikat.AdverbialeAngabeSkopusVerbWohinWoher;
 import de.nb.aventiure2.german.praedikat.PraedikatOhneLeerstellen;
@@ -50,6 +50,7 @@ import static de.nb.aventiure2.german.base.Wortfolge.joinToWortfolge;
 import static de.nb.aventiure2.german.base.Wortfolge.w;
 import static de.nb.aventiure2.german.description.AltDescriptionsBuilder.alt;
 import static de.nb.aventiure2.german.description.AltDescriptionsBuilder.altNeueSaetze;
+import static de.nb.aventiure2.german.description.AltTimedDescriptionsBuilder.altTimed;
 import static de.nb.aventiure2.german.description.DescriptionBuilder.du;
 import static de.nb.aventiure2.german.description.DescriptionBuilder.neuerSatz;
 import static de.nb.aventiure2.german.praedikat.DirektivesVerb.BITTEN;
@@ -60,6 +61,7 @@ import static de.nb.aventiure2.german.praedikat.VerbSubjObj.HINUNTERLASSEN;
  * Component for {@link World#RAPUNZEL}: Der Spieler
  * kann mit Rapunzel im Gespräch sein (dann auch umgekehrt).
  */
+@SuppressWarnings("DuplicateBranchesInSwitch")
 public class RapunzelTalkingComp extends AbstractTalkingComp {
     public static final String SC_BEGRUESST = "RapunzelTalkingComp_sc_begruesst";
     public static final String RAPUNZEL_REAGIERT_AUF_SC_BEGRUESSUNG =
@@ -197,7 +199,7 @@ public class RapunzelTalkingComp extends AbstractTalkingComp {
     private void scBegruesst() {
         final SubstantivischePhrase anaph = anaph();
 
-        final ImmutableList.Builder<TimedDescription<?>> alt = ImmutableList.builder();
+        final AltTimedDescriptionsBuilder alt = altTimed();
 
         if (db.counterDao().get(SC_BEGRUESST) == 0) {
             alt.add(neuerSatz("„Hallihallo!“, sagst du und lächelst breit")
@@ -526,8 +528,7 @@ public class RapunzelTalkingComp extends AbstractTalkingComp {
 
     private void haareHerunterlassenBitte_ExitImmReEntry() {
         final SubstantivischePhrase anaph = anaph(true);
-        final ImmutableList.Builder<TimedDescription<?>> alt =
-                ImmutableList.builder();
+        final AltTimedDescriptionsBuilder alt = altTimed();
 
         alt.add(
                 neuerSatz(PARAGRAPH, "„Jetzt muss ich aber gehen“, sagst du",
@@ -581,8 +582,7 @@ public class RapunzelTalkingComp extends AbstractTalkingComp {
 
     private void hatNachKugelGefragt_haareHerunterlassenBitte_Exit() {
         final SubstantivischePhrase anaph = anaph(true);
-        final ImmutableList.Builder<TimedDescription<?>> alt =
-                ImmutableList.builder();
+        final AltTimedDescriptionsBuilder alt = altTimed();
 
         alt.add(neuerSatz("Doch du reagierst gar nicht darauf, sondern forderst",
                 anaph.akkStr(), // Missverständnis mit Haaren möglich

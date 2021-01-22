@@ -23,7 +23,7 @@ import de.nb.aventiure2.german.base.Personalpronomen;
 import de.nb.aventiure2.german.base.StructuralElement;
 import de.nb.aventiure2.german.base.SubstantivischePhrase;
 import de.nb.aventiure2.german.base.Wortfolge;
-import de.nb.aventiure2.german.description.TimedDescription;
+import de.nb.aventiure2.german.description.AltTimedDescriptionsBuilder;
 import de.nb.aventiure2.german.praedikat.AbstractAdverbialeAngabe;
 import de.nb.aventiure2.german.praedikat.AdverbialeAngabeSkopusVerbWohinWoher;
 import de.nb.aventiure2.german.praedikat.PraedikatMitEinerObjektleerstelle;
@@ -45,6 +45,7 @@ import static de.nb.aventiure2.german.base.Person.P1;
 import static de.nb.aventiure2.german.base.Person.P2;
 import static de.nb.aventiure2.german.base.StructuralElement.PARAGRAPH;
 import static de.nb.aventiure2.german.base.Wortfolge.w;
+import static de.nb.aventiure2.german.description.AltTimedDescriptionsBuilder.altTimed;
 import static de.nb.aventiure2.german.description.DescriptionBuilder.du;
 import static de.nb.aventiure2.german.description.DescriptionBuilder.neuerSatz;
 import static de.nb.aventiure2.german.description.DescriptionBuilder.satzanschluss;
@@ -57,6 +58,7 @@ import static de.nb.aventiure2.german.praedikat.VerbSubjObj.SETZEN;
  * Der Benutzer legt einen Gegenstand ab - z.B. direkt in einen Raum (d.h. auf den Boden o.Ä.)
  * oder auf / in einen Gegenstand, der sich (direkt oder indirekt) in dem Raum befindet.
  */
+@SuppressWarnings("unchecked")
 public class AblegenAction
         <GO extends IDescribableGO & ILocatableGO>
         extends AbstractScAction {
@@ -176,8 +178,7 @@ public class AblegenAction
             return;
         }
 
-        final ImmutableList.Builder<TimedDescription<?>> alt =
-                ImmutableList.builder();
+        final AltTimedDescriptionsBuilder alt = altTimed();
 
         alt.add(du(PARAGRAPH, "wühlst",
                 "in deiner Tasche und auf einmal",
@@ -245,8 +246,7 @@ public class AblegenAction
                 n.allowsAdditionalDuSatzreihengliedOhneSubjekt() &&
                 n.dann()) {
 
-            final ImmutableList.Builder<TimedDescription<?>> alt =
-                    ImmutableList.builder();
+            final AltTimedDescriptionsBuilder alt = altTimed();
             alt.add(satzanschluss(", aber dann denkst du dir: „So ein Ekeltier hat auf",
                     "meiner Tafel nichts",
                     "verloren!“, und setzt den Frosch wieder ab")

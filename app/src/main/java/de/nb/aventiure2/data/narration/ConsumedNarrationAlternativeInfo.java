@@ -23,12 +23,12 @@ public class ConsumedNarrationAlternativeInfo {
     /**
      * Hash-Code des Satzes von Alternativen (nur die Strings werden berücksichtigt)
      */
-    private int alternativesStringHash;
+    private final int alternativesStringHash;
 
     /**
      * Hash-Code der verbrauchten Alternative (nur der String wird berücksichtigt)
      */
-    private int consumedAlternativeStringHash;
+    private final int consumedAlternativeStringHash;
 
     @Ignore
     ConsumedNarrationAlternativeInfo(final ImmutableList<? extends TextDescription> alternatives,
@@ -47,16 +47,8 @@ public class ConsumedNarrationAlternativeInfo {
         return alternativesStringHash;
     }
 
-    void setAlternativesStringHash(final int alternativesStringHash) {
-        this.alternativesStringHash = alternativesStringHash;
-    }
-
     int getConsumedAlternativeStringHash() {
         return consumedAlternativeStringHash;
-    }
-
-    void setConsumedAlternativeStringHash(final int consumedAlternativeStringHash) {
-        this.consumedAlternativeStringHash = consumedAlternativeStringHash;
     }
 
     static int calcAlternativesStringHash(

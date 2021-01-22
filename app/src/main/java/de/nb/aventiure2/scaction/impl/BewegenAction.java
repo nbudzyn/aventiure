@@ -35,6 +35,7 @@ import de.nb.aventiure2.data.world.syscomp.state.impl.SchlossfestState;
 import de.nb.aventiure2.data.world.syscomp.storingplace.ILocationGO;
 import de.nb.aventiure2.german.base.StructuralElement;
 import de.nb.aventiure2.german.description.AbstractFlexibleDescription;
+import de.nb.aventiure2.german.description.AltTimedDescriptionsBuilder;
 import de.nb.aventiure2.german.description.TextDescription;
 import de.nb.aventiure2.german.description.TimedDescription;
 import de.nb.aventiure2.scaction.AbstractScAction;
@@ -53,6 +54,7 @@ import static de.nb.aventiure2.data.world.syscomp.state.impl.SchlossfestState.BE
 import static de.nb.aventiure2.german.base.GermanUtil.buildAufzaehlung;
 import static de.nb.aventiure2.german.base.StructuralElement.WORD;
 import static de.nb.aventiure2.german.base.Wortfolge.w;
+import static de.nb.aventiure2.german.description.AltTimedDescriptionsBuilder.altTimed;
 import static de.nb.aventiure2.german.description.DescriptionBuilder.du;
 import static de.nb.aventiure2.german.description.DescriptionBuilder.neuerSatz;
 import static de.nb.aventiure2.german.description.DescriptionUmformulierer.drueckeAusTimed;
@@ -222,7 +224,8 @@ public class BewegenAction<LOC_DESC extends ILocatableGO & IDescribableGO>
                 world.loadDescribableNonLivingNonMovableInventory(location.getId());
         sc.memoryComp().upgradeKnown(directlyContainedNonLivingNonMovables);
 
-        for (final IGameObject directlyContainedNonLivingNonMovable : directlyContainedNonLivingNonMovables) {
+        for (final IGameObject directlyContainedNonLivingNonMovable :
+                directlyContainedNonLivingNonMovables) {
             if (directlyContainedNonLivingNonMovable instanceof ILocationGO) {
                 upgradeNonLivingNonMovableRecursiveInventoryKnown(
                         (ILocationGO) directlyContainedNonLivingNonMovable);
@@ -257,7 +260,7 @@ public class BewegenAction<LOC_DESC extends ILocatableGO & IDescribableGO>
         for (final Pair<ILocationGO, ? extends List<? extends IDescribableGO>> locationAndDescribables :
                 buildRecursiveLocationsAndDescribables(loadTo())) {
             if (excludedLocation == null ||
-                    !world.isOrHasRecursiveLocation(
+                    !isOrHasRecursiveLocation(
                             locationAndDescribables.first, excludedLocation)) {
                 descriptionsPerLocation.add(
                         //  "auf dem Boden liegen A und B"
@@ -368,6 +371,7 @@ public class BewegenAction<LOC_DESC extends ILocatableGO & IDescribableGO>
                 + buildDescriptionAufzaehlung(movableObjectsInLocation);
     }
 
+    @SuppressWarnings({"unchecked", "RedundantIfStatement"})
     private boolean scWirdMitEssenKonfrontiert() {
         final GameObject newLocation = world.load(spatialConnection.getTo());
 
@@ -390,6 +394,7 @@ public class BewegenAction<LOC_DESC extends ILocatableGO & IDescribableGO>
         return false;
     }
 
+    @SuppressWarnings("RedundantIfStatement")
     private boolean scWirdMitSchlafgelegenheitKonfrontiert() {
         final GameObject newLocation = world.load(spatialConnection.getTo());
         if (oldLocation.is(VOR_DER_HUETTE_IM_WALD) && newLocation.is(HUETTE_IM_WALD)) {
@@ -423,6 +428,7 @@ public class BewegenAction<LOC_DESC extends ILocatableGO & IDescribableGO>
         }
     }
 
+    @SuppressWarnings("UnnecessaryReturnStatement")
     private void narrateLocationOnly(@NonNull final ILocationGO to) {
         // IDEA Verkürzungen automatisch erzeugen, z.B. erzeugen eines Nachfelds nach einem
         //  Prädikat: "und weiter in Richtung Schloss".
@@ -438,7 +444,7 @@ public class BewegenAction<LOC_DESC extends ILocatableGO & IDescribableGO>
                 ((AbstractFlexibleDescription<?>) description.getDescription()).hasSubjektDu() &&
                 n.allowsAdditionalDuSatzreihengliedOhneSubjekt() &&
                 isDefinitivDiskontinuitaet()) {
-            final ImmutableList.Builder<TimedDescription<?>> alt = builder();
+            final AltTimedDescriptionsBuilder alt = altTimed();
 
             final TextDescription descriptionSatzanschlussOhneSubjekt =
                     ((AbstractFlexibleDescription<?>) description.getDescription())
@@ -459,7 +465,7 @@ public class BewegenAction<LOC_DESC extends ILocatableGO & IDescribableGO>
         }
 
         if (isDefinitivDiskontinuitaet()) {
-            final ImmutableList.Builder<TimedDescription<?>> alt = builder();
+            final AltTimedDescriptionsBuilder alt = altTimed();
 
             if (numberOfWays == ONLY_WAY) {
                 alt.addAll(description.getDescription().altTextDescriptions().stream()
