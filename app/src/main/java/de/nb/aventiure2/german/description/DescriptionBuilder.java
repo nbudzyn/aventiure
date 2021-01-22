@@ -87,9 +87,6 @@ public class DescriptionBuilder {
     @CheckReturnValue
     public static SimpleDuDescription du(final StructuralElement startsNew, final String verb,
                                          @Nullable final Wortfolge remainder) {
-        // FIXME nomStr() etc. suchen und prüfen
-        // FIXME phorikKandidate suchen und prüfen
-
         return new SimpleDuDescription(startsNew,
                 verb,
                 remainder != null ? remainder.getString() : null,

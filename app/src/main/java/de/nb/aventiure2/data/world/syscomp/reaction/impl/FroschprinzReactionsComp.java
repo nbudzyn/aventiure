@@ -234,9 +234,7 @@ public class FroschprinzReactionsComp
             default:
                 // STORY Wenn der Frosch nur rekursiv enthalten ist (Frosch sitzt auf dem Tisch),
                 //  dann beschreiben (vgl. BewegenAction)
-                n.narrate(neuerSatz("Hier sitzt " + desc.nomStr())
-                        .timed(NO_TIME)
-                        .phorikKandidat(desc, FROSCHPRINZ));
+                n.narrate(neuerSatz("Hier sitzt", desc.nomK()).timed(NO_TIME));
                 return;
         }
     }

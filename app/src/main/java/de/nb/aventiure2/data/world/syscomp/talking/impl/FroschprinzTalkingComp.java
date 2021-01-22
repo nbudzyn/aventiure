@@ -47,7 +47,6 @@ import static de.nb.aventiure2.german.praedikat.VerbSubjDatAkk.VERSPRECHEN;
 import static de.nb.aventiure2.german.praedikat.VerbSubjObj.DISKUTIEREN;
 import static de.nb.aventiure2.german.praedikat.VerbSubjObj.IGNORIEREN;
 import static de.nb.aventiure2.german.praedikat.VerbSubjObj.REDEN;
-import static de.nb.aventiure2.german.string.GermanStringUtil.capitalize;
 
 /**
  * Component for den {@link World#FROSCHPRINZ}en: Der Spieler
@@ -286,9 +285,9 @@ public class FroschprinzTalkingComp extends AbstractTalkingComp {
             final IDescribableGO objectInDenBrunnenGefallen =
                     objectsInDenBrunnenGefallen.iterator().next();
 
-            n.narrate(neuerSatz("„"
-                    + capitalize(world.getDescription(objectInDenBrunnenGefallen).nomStr())
-                    + " ist mir in den Brunnen hinabgefallen.“")
+            n.narrate(neuerSatz("„",
+                    world.getDescription(objectInDenBrunnenGefallen).nomK().capitalize(),
+                    "ist mir in den Brunnen hinabgefallen.“")
                     .timed(secs(10)));
             setSchonBegruesstMitSC(true);
             return;
@@ -660,8 +659,7 @@ public class FroschprinzTalkingComp extends AbstractTalkingComp {
                         desc.persPron().nomK(),
                         "dich laut an")
                         .mitVorfeldSatzglied("gerade")
-                        .timed(secs(10))
-                        .phorikKandidat(desc, FROSCHPRINZ),
+                        .timed(secs(10)),
                 du(SENTENCE, "druckst",
                         "ein bisschen herum und faselst etwas von",
                         "hygienischen Gründen.",

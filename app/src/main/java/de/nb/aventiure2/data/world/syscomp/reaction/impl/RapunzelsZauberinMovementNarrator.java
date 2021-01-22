@@ -83,7 +83,6 @@ public class RapunzelsZauberinMovementNarrator extends SimpleMovementNarrator {
 
                 alt.add(neuerSatz("Den Pfad herauf kommt",
                         desc.nomK())
-                        .phorikKandidat(desc, RAPUNZELS_ZAUBERIN)
                         .beendet(SENTENCE));
             }
 
@@ -96,9 +95,7 @@ public class RapunzelsZauberinMovementNarrator extends SimpleMovementNarrator {
                 to.is(IM_WALD_NAHE_DEM_SCHLOSS)) {
             if (!n.isThema(gameObjectId)) {
                 alt.add(neuerSatz(PARAGRAPH,
-                        "Von dem Pfad her kommt dir " +
-                                desc.nomStr() +
-                                " entgegen")
+                        "Von dem Pfad her kommt dir", desc.nomK(), "entgegen")
                         .phorikKandidat(desc, RAPUNZELS_ZAUBERIN)
                         .beendet(SENTENCE));
             }
@@ -113,8 +110,7 @@ public class RapunzelsZauberinMovementNarrator extends SimpleMovementNarrator {
 
             if (!n.isThema(gameObjectId)) {
                 alt.add(neuerSatz(PARAGRAPH,
-                        "Von dem Pfad her kommt " +
-                                desc.nomStr())
+                        "Von dem Pfad her kommt", desc.nomK())
                         .phorikKandidat(desc, RAPUNZELS_ZAUBERIN)
                         .beendet(SENTENCE));
             }

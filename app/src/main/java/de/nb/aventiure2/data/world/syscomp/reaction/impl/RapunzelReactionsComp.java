@@ -280,8 +280,7 @@ public class RapunzelReactionsComp
                 "Haare wieder zusammen, dann starrt",
                 desc.persPron().nomK(), // "sie"
                 "dich an")
-                .timed(secs(20))
-                .phorikKandidat(desc, RAPUNZEL));
+                .timed(secs(20)));
 
         stateComp.setState(STILL);
         memoryComp.upgradeKnown(SPIELER_CHARAKTER);
@@ -324,8 +323,7 @@ public class RapunzelReactionsComp
                 "Haare zusammen, dann weicht",
                 desc.persPron().nomK(), // "sie"
                 "vor dir in das dunkle Zimmer zurück")
-                .timed(secs(25))
-                .phorikKandidat(desc, RAPUNZEL));
+                .timed(secs(25)));
 
         stateComp.setState(STILL);
         memoryComp.upgradeKnown(SPIELER_CHARAKTER);

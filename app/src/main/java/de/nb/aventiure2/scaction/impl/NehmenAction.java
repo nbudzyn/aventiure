@@ -395,8 +395,7 @@ public class NehmenAction
             final Nominalphrase objectDesc = world.getDescription(gameObject, true);
             n.narrate(neuerSatz("Dann nimmst du", objectDesc.akkK())
                     .timed(secs(5))
-                    .undWartest()
-                    .phorikKandidat(objectDesc.getNumerusGenus(), gameObject.getId()));
+                    .undWartest());
             return;
         }
 
@@ -409,13 +408,13 @@ public class NehmenAction
 
                 n.narrateAlt(
                         sc.feelingsComp().altAdverbialeAngabenSkopusSatz().stream()
-                                .map(a -> du(PARAGRAPH, praedikatMitObjekt.mitAdverbialerAngabe(a))
+                                .map(a -> du(PARAGRAPH,
+                                        praedikatMitObjekt.mitAdverbialerAngabe(a))
                                         .timed(secs(5))
                                         .withCounterIdIncrementedIfTextIsNarrated(null)
                                         .undWartest(
                                                 praedikatMitObjekt
                                                         .hauptsatzLaesstSichBeiGleichemSubjektMitNachfolgendemVerbzweitsatzZusammenziehen())
-                                        .phorikKandidat(objectDesc, gameObject.getId())
                                         .dann()));
                 return;
             }
@@ -444,14 +443,11 @@ public class NehmenAction
                 du(PARAGRAPH, nehmenPraedikat.mit(objectDesc))
                         .timed(secs(5))
                         .withCounterIdIncrementedIfTextIsNarrated(null)
-                        .undWartest()
-                        .phorikKandidat(objectDesc, gameObject.getId()),
+                        .undWartest(),
                 du(PARAGRAPH, nehmenPraedikat.mit(objectDescShort))
                         .timed(secs(5))
                         .withCounterIdIncrementedIfTextIsNarrated(null)
-                        .undWartest()
-                        .phorikKandidat(objectDescShort, gameObject.getId()))
-        );
+                        .undWartest()));
 
         if (n.allowsAdditionalDuSatzreihengliedOhneSubjekt()) {
             alt.add(satzanschluss(", nur um",

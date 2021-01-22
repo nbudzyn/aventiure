@@ -262,12 +262,9 @@ public class AblegenAction
         }
 
         n.narrate(neuerSatz("Der Frosch will auf den Tisch, aber du setzt den Frosch",
-                (location.is(SCHLOSS_VORHALLE_AM_TISCH_BEIM_FEST) ?
-                        "wieder" :
-                        null),
+                (location.is(SCHLOSS_VORHALLE_AM_TISCH_BEIM_FEST) ? "wieder" : null),
                 location.storingPlaceComp().getLocationMode().getWohin(false),
-                "und",
-                "wendest dich demonstrativ ab")
+                "und wendest dich demonstrativ ab")
                 .timed(secs(5))
                 .dann()
                 .phorikKandidat(M, FROSCHPRINZ));
@@ -304,14 +301,14 @@ public class AblegenAction
 
                 if (sc.memoryComp().getLastAction().is(NEHMEN) &&
                         sc.memoryComp().getLastAction().hasObject(gameObject)) {
-                    n.narrate(du(StructuralElement.WORD, LEGEN.mit(gameObjektPersPron)
-                            .mitAdverbialerAngabe(
-                                    location.storingPlaceComp().getLocationMode()
-                                            .getWohinAdvAngabe(false)))
+                    n.narrate(du(StructuralElement.WORD,
+                            LEGEN.mit(gameObjektPersPron)
+                                    .mitAdverbialerAngabe(
+                                            location.storingPlaceComp().getLocationMode()
+                                                    .getWohinAdvAngabe(false)))
                             .timed(secs(3))
                             .withCounterIdIncrementedIfTextIsNarrated(null)
-                            .dann()
-                            .phorikKandidat(gameObjektPersPron, gameObject.getId()));
+                            .dann());
                     return;
                 }
 

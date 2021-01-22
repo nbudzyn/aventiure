@@ -114,9 +114,7 @@ public class WartenAction<LIVGO extends IDescribableGO & ILocatableGO & ILivingB
         if (kohaerenzrelation == VERSTEHT_SICH_VON_SELBST) {
             final SubstantivischePhrase anaph = world.anaph(erwartet, false);
             n.narrateAlt(secs(5),
-                    du(WARTEN.mit(anaph))
-                            .dann()
-                            .phorikKandidat(anaph, erwartet.getId()),
+                    du(WARTEN.mit(anaph)).dann(),
                     du("beginnst", "auf", anaph.akkK(), "zu warten").dann());
         } else {
             final SubstantivischePhrase anaph =
@@ -130,9 +128,8 @@ public class WartenAction<LIVGO extends IDescribableGO & ILocatableGO & ILivingB
                                             new AdverbialeAngabeSkopusSatz("weiter")
                                     )
                             )
-                                    .dann()
-                                    .phorikKandidat(anaph, erwartet.getId())
-                    ), secs(5));
+                                    .dann()),
+                    secs(5));
         }
     }
 

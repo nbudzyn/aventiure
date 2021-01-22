@@ -222,8 +222,7 @@ public class RapunzelTalkingComp extends AbstractTalkingComp {
                 } else {
                     alt.add(du("schaust ", anaph.akkK(),
                             "an. „Schön, euch wiederzusehen, sagst du")
-                            .timed(secs(5))
-                            .phorikKandidat(anaph, RAPUNZEL));
+                            .timed(secs(5)));
                 }
             }
         }
@@ -272,7 +271,7 @@ public class RapunzelTalkingComp extends AbstractTalkingComp {
                 && zuneigungTowardsSC <= FeelingIntensity.DEUTLICH) {
             alt.addAll(altNeueSaetze(
                     "„Hallo“, sagt",
-                    anaph.nomStr(),
+                    anaph.nomK(),
                     altEindruckAdvAngaben.stream()
                             .map(a -> a.getDescription(anaph.getPerson(), anaph.getNumerus())))
                     .beendet(SENTENCE));
@@ -298,7 +297,7 @@ public class RapunzelTalkingComp extends AbstractTalkingComp {
             );
         } else if (zuneigungTowardsSC == -FeelingIntensity.DEUTLICH) {
             alt.add(neuerSatz("„Was willst du hier?“, gibt",
-                    anaph.nomStr(),
+                    anaph.nomK(),
                     "zur Antwort")
                     .beendet(PARAGRAPH)
             );
@@ -409,7 +408,7 @@ public class RapunzelTalkingComp extends AbstractTalkingComp {
             if (persPron != null) {
                 alt.add(neuerSatz(persPron.possArt().vor(PL_MFN).nomStr(),
                         "Augen strahlen, als",
-                        persPron.nomStr(),
+                        persPron.nomK(),
                         "dich begrüßt"));
             }
 
@@ -505,8 +504,7 @@ public class RapunzelTalkingComp extends AbstractTalkingComp {
                     neuerSatz("„Weißt du“, wendest du dich an",
                             desc.akkK(),
                             ", „eigentlich wollte ich",
-                            "nur schauen, ob's dir gut geht. Lässt du mich wieder hinunter?“")
-                            .phorikKandidat(desc, RAPUNZEL));
+                            "nur schauen, ob's dir gut geht. Lässt du mich wieder hinunter?“"));
         } else {
             n.narrateAlt(secs(10),
                     neuerSatz(PARAGRAPH,
@@ -539,11 +537,11 @@ public class RapunzelTalkingComp extends AbstractTalkingComp {
                         + "sagst du")
                         .timed(secs(10)),
                 neuerSatz(PARAGRAPH, "„Dann will ich wieder ins",
-                        "Abenteuer hinaus“, sagst du "
-                                // FIXME ZU.getDescription(anaph)) sollte keinen
-                                //  String, sondern eine Wortfolge erzeugen und einen
-                                //  Phorik-Kandidaten setzen
-                                + ZU.getDescription(anaph))
+                        "Abenteuer hinaus“, sagst du",
+                        // FIXME ZU.getDescription(anaph)) sollte keinen
+                        //  String, sondern eine Wortfolge erzeugen und einen
+                        //  Phorik-Kandidaten setzen
+                        ZU.getDescription(anaph))
                         .timed(secs(15))
                         .phorikKandidat(anaph, RAPUNZEL)
         );
@@ -652,8 +650,7 @@ public class RapunzelTalkingComp extends AbstractTalkingComp {
                                             //)
                                             .stream()),
                     ",",
-                    altDannHaareFestbinden(rapunzelDesc))
-                    .phorikKandidat(PL_MFN, RAPUNZELS_HAARE));
+                    altDannHaareFestbinden(rapunzelDesc)));
 
             alt.add(neuerSatz(rapunzelDesc.nomK(),
                     "wickelt",

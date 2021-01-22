@@ -110,17 +110,14 @@ public class SimpleMovementNarrator implements IMovementNarrator {
         n.narrateAlt(NO_TIME,
                 du("gehst",
                         "dabei an", desc.datK(), "vorbei")
-                        .phorikKandidat(desc, gameObjectId)
                         .beendet(SENTENCE),
-                du("gehst", "dabei schnellen Schrittes an " +
-                        desc.datStr() +
-                        " vorüber").mitVorfeldSatzglied("dabei")
-                        .phorikKandidat(desc, gameObjectId)
+                du("gehst",
+                        "dabei schnellen Schrittes an", desc.datK(), "vorüber")
+                        .mitVorfeldSatzglied("dabei")
                         .beendet(SENTENCE),
-                du("gehst", "dabei mit schnellen Schritten an " +
-                        desc.datStr() +
-                        " vorüber").mitVorfeldSatzglied("dabei")
-                        .phorikKandidat(desc, gameObjectId)
+                du("gehst",
+                        "dabei mit schnellen Schritten an", desc.datStr(), "vorüber")
+                        .mitVorfeldSatzglied("dabei")
                         .beendet(SENTENCE)
         );
     }
@@ -166,7 +163,6 @@ public class SimpleMovementNarrator implements IMovementNarrator {
                             "Dir kommt",
                             desc.nomK(),
                             "entgegen und geht hinter dir davon")
-                            .phorikKandidat(desc, gameObjectId)
                             .beendet(PARAGRAPH));
         }
 
@@ -223,7 +219,7 @@ public class SimpleMovementNarrator implements IMovementNarrator {
                 "kommt auf dich zu und geht an dir vorbei")
                 .beendet(PARAGRAPH));
         alt.add(neuerSatz(PARAGRAPH,
-                anaphOderDesc.nomStr(),
+                anaphOderDesc.nomK(),
                 "kommt auf dich zu und läuft vorbei")
                 .beendet(PARAGRAPH));
 

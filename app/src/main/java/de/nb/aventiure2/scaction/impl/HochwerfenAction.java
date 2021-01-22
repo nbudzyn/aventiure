@@ -291,7 +291,7 @@ public class HochwerfenAction<OBJ extends IDescribableGO & ILocatableGO>
         }
 
         n.narrate(du("schleuderst",
-                world.getDescription(object).akkStr(),
+                world.getDescription(object).akkK(),
                 "übermütig noch einmal in die Luft, aber sie wieder aufzufangen will dir",
                 "dieses Mal nicht gelingen.",
                 world.getDescription(object, true).nomK().capitalize(),
