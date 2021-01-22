@@ -200,7 +200,8 @@ public class RapunzelReactionsComp
                 du("hörst", "es wieder von oben aus dem Turm singen")
                         .mitVorfeldSatzglied("von oben aus dem Turm")
                         .timed(NO_TIME),
-                du(PARAGRAPH, "hörst", w("wieder Gesang von oben")).mitVorfeldSatzglied("wieder")
+                du(PARAGRAPH, "hörst", w("wieder Gesang von oben"))
+                        .mitVorfeldSatzglied("wieder")
                         .timed(NO_TIME)
                         .beendet(PARAGRAPH),
                 neuerSatz("Erneut hörst du den Gesang aus dem Turmfenster")

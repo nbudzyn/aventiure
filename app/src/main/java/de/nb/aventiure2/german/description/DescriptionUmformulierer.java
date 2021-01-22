@@ -24,7 +24,6 @@ import static de.nb.aventiure2.german.base.Wortfolge.w;
 import static de.nb.aventiure2.german.description.AltDescriptionsBuilder.alt;
 import static de.nb.aventiure2.german.description.DescriptionBuilder.du;
 import static de.nb.aventiure2.german.description.DescriptionBuilder.neuerSatz;
-import static de.nb.aventiure2.german.string.GermanStringUtil.capitalize;
 
 /**
  * Statische Methoden, die {@link AbstractDescription}s umformulieren.
@@ -283,11 +282,14 @@ public class DescriptionUmformulierer {
             final String praefixVerb,
             final String praefixRemainder,
             final AbstractDescription<?> desc) {
+        // FIXME Kann man bestimmt vereinfachen oder entfernen?
+        //  AltDescriptions?
         return desc.altTextDescriptions().stream()
                 .map(d -> du(
                         max(d.getStartsNew(), SENTENCE),
                         praefixVerb,
-                        capitalize(joinToString(praefixRemainder, d.toWortfolge())))
+                        praefixRemainder,
+                        d.toWortfolge().capitalize())
                         .komma(d.isKommaStehtAus())
                         .phorikKandidat(d.getPhorikKandidat())
                         .beendet(d.getEndsThis()))

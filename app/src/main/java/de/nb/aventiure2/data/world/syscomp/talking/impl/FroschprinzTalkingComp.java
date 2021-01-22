@@ -632,17 +632,17 @@ public class FroschprinzTalkingComp extends AbstractTalkingComp {
     private void ansprechen_froschErinnertAnVersprechen(final boolean immediateReEntry) {
         final AltDescriptionsBuilder alt = alt();
 
-        alt.add(du(SENTENCE, "holst", "Luft, aber da kommt dir "
-                        + getDescription().nomStr()
-                        + " schon zuvor: „Wir sehen uns noch!“").beendet(PARAGRAPH),
-                neuerSatz("„Und jetzt, Frosch?“ – "
-                        + "„Du weißt, was du versprochen hast“, gibt er zurück"
+        alt.add(du(SENTENCE, "holst", "Luft, aber da kommt dir",
+                getDescription().nomK(),
+                "schon zuvor: „Wir sehen uns noch!“").beendet(PARAGRAPH),
+                neuerSatz("„Und jetzt, Frosch?“ –",
+                        "„Du weißt, was du versprochen hast“, gibt er zurück"
                 ).beendet(PARAGRAPH));
         if (!immediateReEntry) {
             alt.add(du("sprichst",
-                    getDescription(true).akkStr()
-                            + " an: „Wie läuft's, Frosch? Schönes Wetter heut.“ "
-                            + "„Vergiss dein Versprechen nicht“, sagt er nur")
+                    getDescription(true).akkK(),
+                    "an: „Wie läuft's, Frosch? Schönes Wetter heut.“",
+                    "„Vergiss dein Versprechen nicht“, sagt er nur")
                     .beendet(PARAGRAPH));
         }
 
@@ -663,7 +663,8 @@ public class FroschprinzTalkingComp extends AbstractTalkingComp {
                         .mitVorfeldSatzglied("gerade")
                         .timed(secs(10))
                         .phorikKandidat(desc, FROSCHPRINZ),
-                du(SENTENCE, "druckst", "ein bisschen herum und faselst etwas von",
+                du(SENTENCE, "druckst",
+                        "ein bisschen herum und faselst etwas von",
                         "hygienischen Gründen.",
                         desc.nomK().capitalize(),
                         " schaut dich nur… traurig? verächtlich?… an")

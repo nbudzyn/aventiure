@@ -234,11 +234,9 @@ public class NehmenAction
         n.narrateAlt(secs(10),
                 du(PARAGRAPH,
                         "ekelst",
-                        "dich sehr, aber mit einiger Überwindung nimmst du "
-                                + froschDesc.akkStr()
-                                + " in "
-                                + "die Hand")
-                        .phorikKandidat(froschDesc, FROSCHPRINZ)
+                        "dich sehr, aber mit einiger Überwindung nimmst du",
+                        froschDesc.akkK(),
+                        "in die Hand")
                         .undWartest()
                         .dann(),
                 neuerSatz(PARAGRAPH,
@@ -336,34 +334,34 @@ public class NehmenAction
 
             final ImmutableList.Builder<TimedDescription<?>> alt = builder();
             alt.addAll(drueckeAusTimed(DISKONTINUITAET,
-                    du(PARAGRAPH, "nimmst", froschDesc.akkStr())
+                    // FIXME Dass das hier doppelt ist, ergibt keinen Sinn, oder?
+                    //  Prüfen, ggf. drueckeAusTimed korrigieren, dann entfernen!
+                    du(PARAGRAPH, "nimmst", froschDesc.akkK())
                             .timed(secs(5))
                             .withCounterIdIncrementedIfTextIsNarrated(null)
-                            .undWartest()
-                            .phorikKandidat(froschDesc, FROSCHPRINZ),
+                            .undWartest(),
                     du(PARAGRAPH, NEHMEN.mit(froschDesc))
                             .timed(secs(5))
                             .withCounterIdIncrementedIfTextIsNarrated(null)
-                            .undWartest()
-                            .phorikKandidat(froschDesc, FROSCHPRINZ)));
+                            .undWartest()));
 
             n.narrateAlt(alt);
             return;
 
         }
         n.narrateAlt(
-                du(PARAGRAPH, "zauderst", "und dein Herz klopft gewaltig, als du endlich "
-                        + world.getDescription(gameObject, true).akkStr()
-                        + " greifst")
+                du(PARAGRAPH, "zauderst",
+                        "und dein Herz klopft gewaltig, als du endlich",
+                        world.getDescription(gameObject, true).akkK(),
+                        "greifst")
                         .timed(secs(5))
                         .withCounterIdIncrementedIfTextIsNarrated(null)
-                        .phorikKandidat(world.getDescription(gameObject, true), FROSCHPRINZ)
                         .komma()
                         .dann(),
                 neuerSatz("Dir wird ganz angst, aber was man",
                         "versprochen hat, das muss man auch halten! Du nimmst",
                         world.getDescription(gameObject, true).akkK(),
-                        " in die Hände")
+                        "in die Hände")
                         .timed(secs(15))
                         .undWartest()
                         .dann());

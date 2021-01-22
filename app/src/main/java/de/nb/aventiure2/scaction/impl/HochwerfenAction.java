@@ -176,10 +176,11 @@ public class HochwerfenAction<OBJ extends IDescribableGO & ILocatableGO>
             final Nominalphrase objectDesc = world.getDescription(object);
 
             narrateAndDoHochwerfenAuffangen(
-                    du(PARAGRAPH, "wirfst", objectDesc.akkStr() +
-                            " hoch in die Luft und fängst " +
-                            objectDesc.persPron().akkStr() +
-                            " geschickt wieder auf")
+                    du(PARAGRAPH, "wirfst",
+                            objectDesc.akkK(),
+                            "hoch in die Luft und fängst",
+                            objectDesc.persPron().akkK(),
+                            "geschickt wieder auf")
                             .timed(secs(3))
                             .withCounterIdIncrementedIfTextIsNarrated(null)
                             .dann());
@@ -267,18 +268,19 @@ public class HochwerfenAction<OBJ extends IDescribableGO & ILocatableGO>
         if (location.is(IM_WALD_BEIM_BRUNNEN)) {
             final String dunkelheitNachsatz =
                     location.storingPlaceComp().getLichtverhaeltnisse() == DUNKEL ?
-                            "– bei dieser Dunkelheit schon gar nicht" : "";
+                            "– bei dieser Dunkelheit schon gar nicht" : null;
 
-            n.narrate(du("wirfst", world.getDescription(object).akkStr() +
-                    " noch einmal in die Höhe… doch oh nein, " +
-                    world.getDescription(object, true).nomStr() +
-                    " fällt dir nicht in die Hände, sondern schlägt vorbei " +
-                    "auf den Brunnenrand und rollt geradezu ins Wasser hinein." +
-                    " Du folgst ihr mit den Augen nach, aber " +
-                    world.getDescription(object, true).nomStr() +
-                    " verschwindet, und der Brunnen ist tief, so tief, dass " +
-                    "man keinen Grund sieht"
-                    + dunkelheitNachsatz).mitVorfeldSatzglied("noch einmal")
+            n.narrate(du("wirfst",
+                    world.getDescription(object).akkK(),
+                    "noch einmal in die Höhe… doch oh nein,",
+                    world.getDescription(object, true).nomK(),
+                    "fällt dir nicht in die Hände, sondern schlägt vorbei",
+                    "auf den Brunnenrand und rollt geradezu ins Wasser hinein.",
+                    "Du folgst ihr mit den Augen nach, aber",
+                    world.getDescription(object, true).nomK(),
+                    "verschwindet, und der Brunnen ist tief, so tief, dass",
+                    "man keinen Grund sieht",
+                    dunkelheitNachsatz).mitVorfeldSatzglied("noch einmal")
                     .timed(secs(10))
                     .beendet(PARAGRAPH));
 
@@ -288,13 +290,12 @@ public class HochwerfenAction<OBJ extends IDescribableGO & ILocatableGO>
             return;
         }
 
-        n.narrate(du("schleuderst", world.getDescription(object).akkStr() +
-                " übermütig noch einmal in die Luft, aber sie wieder aufzufangen will dir "
-                +
-                "dieses Mal nicht gelingen. "
-                + GermanStringUtil.capitalize(
-                world.getDescription(object, true).nomStr()) +
-                " landet " +
+        n.narrate(du("schleuderst",
+                world.getDescription(object).akkStr(),
+                "übermütig noch einmal in die Luft, aber sie wieder aufzufangen will dir",
+                "dieses Mal nicht gelingen.",
+                world.getDescription(object, true).nomK().capitalize(),
+                "landet",
                 location.storingPlaceComp().getLocationMode().getWo(false))
                 .mitVorfeldSatzglied("übermütig")
                 .timed(secs(5)));

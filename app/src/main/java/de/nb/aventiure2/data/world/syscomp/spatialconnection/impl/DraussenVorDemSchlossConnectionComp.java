@@ -67,9 +67,10 @@ public class DraussenVorDemSchlossConnectionComp extends AbstractSpatialConnecti
                         "auf dem Weg",
                         "In den Wald gehen",
                         mins(10),
-                        du("folgst", "einem Weg in den Wald. "
-                                + "Nach ein paar Schritten führt rechter Hand ein schmaler Pfad "
-                                + "einen Hügel hinauf"),
+                        du("folgst",
+                                "einem Weg in den Wald.",
+                                "Nach ein paar Schritten führt rechter Hand ein schmaler Pfad",
+                                "einen Hügel hinauf"),
                         neuerSatz("Jeder kennt die Geschichten, die man "
                                 + "sich über den Wald erzählt: Räuber sind noch "
                                 + "die kleinste Gefahr. Aber das schreckt dich ganz "
@@ -78,9 +79,13 @@ public class DraussenVorDemSchlossConnectionComp extends AbstractSpatialConnecti
                                 + "führt rechter Hand ein schmaler, dunkler Pfad einen Hügel "
                                 + "hinauf")
                                 .timed(mins(12)),
-                        du("läufst", "wieder in den dunklen Wald").mitVorfeldSatzglied("wieder")
+                        du("läufst",
+                                "wieder in den dunklen Wald")
+                                .mitVorfeldSatzglied("wieder")
                                 .dann(),
-                        du("läufst", "wieder in den dunklen Wald").mitVorfeldSatzglied("wieder")
+                        du("läufst",
+                                "wieder in den dunklen Wald")
+                                .mitVorfeldSatzglied("wieder")
                                 .dann()));
     }
 

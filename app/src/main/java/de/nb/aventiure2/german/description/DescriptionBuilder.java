@@ -67,16 +67,12 @@ public class DescriptionBuilder {
 
     @CheckReturnValue
     public static SimpleDuDescription du(final String verb, final Object... remainderParts) {
-        // FIXME Aufrufer vereinfachen - joinTo... weg, nomK()
-        //  phorikKandidat weg etc.
         return du(WORD, verb, remainderParts);
     }
 
     @CheckReturnValue
     public static SimpleDuDescription du(final StructuralElement startsNew,
                                          final String verb, final Object... remainderParts) {
-        // FIXME Aufrufer vereinfachen - joinTo... weg, nomK()
-        //  phorikKandidat weg etc.
         return du(startsNew, verb, joinToNullWortfolge(remainderParts));
     }
 

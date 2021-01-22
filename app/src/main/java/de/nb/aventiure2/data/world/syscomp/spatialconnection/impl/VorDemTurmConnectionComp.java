@@ -71,13 +71,15 @@ public class VorDemTurmConnectionComp extends AbstractSpatialConnectionComp {
                 "auf dem Pfad den Hügel hinab",
                 "Den Pfad zurückgehen",
                 mins(18),
-                du(PARAGRAPH, "gehst", "den langen Pfad wieder zurück, den Hügel hinab, bis "
-                        + "zum Waldweg")
+                du(PARAGRAPH, "gehst",
+                        "den langen Pfad wieder zurück, den Hügel hinab, bis "
+                                + "zum Waldweg")
                         .timed(mins(20))
                         .withCounterIdIncrementedIfTextIsNarrated(null)
                         .beendet(PARAGRAPH),
-                du(PARAGRAPH, "gehst", "den Hügel auf dem gewundenen Pfad wieder hinab, "
-                        + "bis du unten am Waldweg ankommst")
+                du(PARAGRAPH, "gehst",
+                        "den Hügel auf dem gewundenen Pfad wieder hinab, "
+                                + "bis du unten am Waldweg ankommst")
                         .komma()
                         .undWartest()
         ));
@@ -117,9 +119,11 @@ public class VorDemTurmConnectionComp extends AbstractSpatialConnectionComp {
             case 0:
                 if (world.loadSC().memoryComp().isKnown(RAPUNZELS_GESANG) &&
                         !world.loadSC().memoryComp().isKnown(RAPUNZEL)) {
-                    return du(SENTENCE, "möchtest", "zu der süßen Stimme hinaufsteigen, "
-                            + "und suchst rundherum nach einer Türe des Turms, aber es ist keine "
-                            + "zu finden")
+                    return du(SENTENCE, "möchtest",
+                            "zu der süßen Stimme hinaufsteigen, "
+                                    + "und suchst rundherum nach einer Türe des Turms, aber es "
+                                    + "ist keine "
+                                    + "zu finden")
                             .timed(mins(2))
                             .withCounterIdIncrementedIfTextIsNarrated(COUNTER_ALTER_TURM_UMRUNDET)
                             .dann();

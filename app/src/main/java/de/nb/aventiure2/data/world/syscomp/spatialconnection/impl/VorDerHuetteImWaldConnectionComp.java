@@ -51,8 +51,8 @@ public class VorDerHuetteImWaldConnectionComp extends AbstractSpatialConnectionC
                         "auf dem Weg",
                         "Auf den Waldweg zurückkehren",
                         mins(2),
-                        du("gehst", "durch Farn und Gestrüpp zurück zum "
-                                + "Waldweg")
+                        du("gehst",
+                                "durch Farn und Gestrüpp zurück zum Waldweg")
                                 .mitVorfeldSatzglied("durch Farn und Gestrüpp")
                                 .undWartest()
                                 .dann()

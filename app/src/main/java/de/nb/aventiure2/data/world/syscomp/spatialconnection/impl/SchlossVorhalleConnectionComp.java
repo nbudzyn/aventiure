@@ -131,19 +131,22 @@ public class SchlossVorhalleConnectionComp extends AbstractSpatialConnectionComp
             //  noch nicht?
             // TODO Vielleicht ist es nur tagsüber / mittags heiß und morgens
             //  noch nicht?
-            return du("gehst", "über eine Marmortreppe hinaus in die Gärten vor dem Schloss.\n\n" +
-                    "Draußen scheint dir die " +
-                    "Sonne ins Gesicht; "
+            return du("gehst",
+                    "über eine Marmortreppe hinaus in die Gärten vor dem",
+                    "Schloss.\n\n",
+                    "Draußen scheint dir die",
+                    "Sonne ins Gesicht;",
                     // TODO Vielleicht ist es nur tagsüber / mittags heiß und morgens
                     //  noch nicht?
-                    + "der Tag ist recht heiß. " +
+                    "der Tag ist recht heiß.",
                     "Nahebei liegt ein großer, dunkler Wald")
                     .mitVorfeldSatzglied("über eine Marmortreppe")
                     .timed(mins(1));
         }
 
-        return du("gehst", "über eine Marmortreppe hinaus den Garten vor dem Schloss.\n\n" +
-                "Draußen ist es dunkel. " +
+        return du("gehst", "über eine Marmortreppe hinaus den "
+                        + "Garten vor dem Schloss.\n\n",
+                "Draußen ist es dunkel.",
                 "In der Nähe liegt ein großer Wald, der sehr bedrohlich wirkt")
                 .mitVorfeldSatzglied("über eine Marmortreppe")
                 .timed(mins(1))

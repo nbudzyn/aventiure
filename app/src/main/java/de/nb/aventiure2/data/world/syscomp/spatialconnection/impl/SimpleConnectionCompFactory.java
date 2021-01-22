@@ -40,8 +40,7 @@ public class SimpleConnectionCompFactory {
                         "in der Tür",
                         "Die Hütte verlassen",
                         secs(15),
-                        du("zwängst", "dich wieder durch die Tür nach "
-                                + "draußen")
+                        du("zwängst", "dich wieder durch die Tür nach draußen")
                                 .undWartest()
                                 .dann()
                 ));
@@ -57,8 +56,7 @@ public class SimpleConnectionCompFactory {
                         "auf dem Weg",
                         "Zur Vorderseite der Hütte gehen",
                         secs(30),
-                        du("kehrst", "zurück zur Vorderseite der "
-                                + "Hütte")
+                        du("kehrst", "zurück zur Vorderseite der Hütte")
                                 .undWartest()
                                 .dann()
                 )

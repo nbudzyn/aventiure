@@ -179,11 +179,12 @@ public class AblegenAction
         final ImmutableList.Builder<TimedDescription<?>> alt =
                 ImmutableList.builder();
 
-        alt.add(du(PARAGRAPH, "wühlst", "in deiner Tasche und auf einmal "
-                + "schauert's dich und "
-                + "der nasse Frosch sitzt in deiner Hand. Schnell "
-                + location.storingPlaceComp().getLocationMode().getWohin(false)
-                + " mit ihm!")
+        alt.add(du(PARAGRAPH, "wühlst",
+                "in deiner Tasche und auf einmal",
+                "schauert's dich und",
+                "der nasse Frosch sitzt in deiner Hand. Schnell",
+                location.storingPlaceComp().getLocationMode().getWohin(false),
+                "mit ihm!")
                 .timed(secs(7))
                 .withCounterIdIncrementedIfTextIsNarrated(null)
                 .dann()
@@ -191,18 +192,21 @@ public class AblegenAction
 
         if (getWohinDetail() == null) {
             // Wenn kein wohin-Detail nötig ist, dann ist es wohl kein Tisch o.Ä. und "fällt" passt.
-            alt.add(du(PARAGRAPH, "schüttest", "deine Tasche aus, bis der Frosch endlich " +
-                    location.storingPlaceComp().getLocationMode().getWohin(false) +
-                    " fällt. Puh.")
+            alt.add(du(PARAGRAPH, "schüttest",
+                    "deine Tasche aus, bis der Frosch endlich",
+                    location.storingPlaceComp().getLocationMode()
+                            .getWohin(false),
+                    "fällt. Puh.")
                     .timed(secs(7))
                     .withCounterIdIncrementedIfTextIsNarrated(null)
                     .dann()
                     .beendet(PARAGRAPH));
         }
 
-        alt.add(du(PARAGRAPH, "wühlst", "in deiner Tasche. Da quakt es erbost, auf einmal "
-                + "springt der Fosch heraus und direkt "
-                + location.storingPlaceComp().getLocationMode().getWohin(false))
+        alt.add(du(PARAGRAPH, "wühlst",
+                "in deiner Tasche. Da quakt es erbost, auf einmal",
+                "springt der Fosch heraus und direkt",
+                location.storingPlaceComp().getLocationMode().getWohin(false))
                 .timed(secs(7))
                 .withCounterIdIncrementedIfTextIsNarrated(null));
 
@@ -342,10 +346,11 @@ public class AblegenAction
         }
 
         if (isDefinitivDiskontinuitaet()) {
-            final String remainder = world.getDescription(gameObject, false).akkStr()
-                    + (wohinDetail != null ? " zurück" : " wieder hin");
             n.narrate(
-                    du(PARAGRAPH, "legst", remainder)
+                    du(PARAGRAPH, "legst",
+                            world.getDescription(gameObject, false)
+                                    .akkK(),
+                            (wohinDetail != null ? " zurück" : " wieder hin"))
                             .timed(secs(5))
                             .withCounterIdIncrementedIfTextIsNarrated(null)
                             .undWartest()
@@ -353,12 +358,10 @@ public class AblegenAction
             return;
         }
 
-        final Wortfolge remainder = Wortfolge.joinToWortfolge(
-                world.getDescription(gameObject, false).akkStr(),
-                (wohinDetail == null ? k("hin") :
-                        wohinDetail.getDescription(P2, SG)));
         n.narrate(
-                du(PARAGRAPH, "legst", remainder)
+                du(PARAGRAPH, "legst",
+                        world.getDescription(gameObject, false).akkK(),
+                        (wohinDetail == null ? k("hin") : wohinDetail.getDescription(P2, SG)))
                         .timed(secs(3))
                         .undWartest()
                         .dann());

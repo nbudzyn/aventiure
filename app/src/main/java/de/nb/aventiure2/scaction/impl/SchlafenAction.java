@@ -191,8 +191,9 @@ public class SchlafenAction extends AbstractScAction {
                         + "Kaum hast du die Augen geschlossen, bist du auch schon "
                         + "eingeschlafen")).mitVorfeldSatzglied("nur kurz")
                         .beendet(CHAPTER),
-                du("fühlst", "dich auf einmal warm und schwer. Du kuschelst dich an "
-                        + "das harte Holz und schon bist du eingeschlafen")
+                du("fühlst",
+                        "dich auf einmal warm und schwer. Du kuschelst dich an",
+                        "das harte Holz und schon bist du eingeschlafen")
                         .mitVorfeldSatzglied("warm und schwer")
                         .beendet(CHAPTER)
         );

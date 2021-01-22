@@ -12,6 +12,8 @@ import java.util.stream.Stream;
 import javax.annotation.Nonnull;
 import javax.annotation.concurrent.Immutable;
 
+import de.nb.aventiure2.german.string.GermanStringUtil;
+
 import static de.nb.aventiure2.german.base.NumerusGenus.F;
 import static de.nb.aventiure2.german.base.NumerusGenus.M;
 import static de.nb.aventiure2.german.base.NumerusGenus.N;
@@ -97,7 +99,8 @@ public class Wortfolge {
     }
 
     /**
-     * Fügt diese Teile zu mehreren alternativen Wortfolgen zusammen. Gibt es für mehrere Teile mehrere Alternativen, so werden
+     * Fügt diese Teile zu mehreren alternativen Wortfolgen zusammen. Gibt es für mehrere Teile
+     * mehrere Alternativen, so werden
      * * alle Kombinationen erzeugt.
      *
      * @return Mehrere alternative Wortfolgen. Wenn eine der Kombinationen ausschließlich
@@ -110,7 +113,8 @@ public class Wortfolge {
     }
 
     /**
-     * Fügt diese Teile zu mehreren alternativen Wortfolgen zusammen. Gibt es für mehrere Teile mehrere Alternativen, so werden
+     * Fügt diese Teile zu mehreren alternativen Wortfolgen zusammen. Gibt es für mehrere Teile
+     * mehrere Alternativen, so werden
      * * alle Kombinationen erzeugt.
      *
      * @return Mehrere alternative Wortfolgen. Wenn eine der Kombinationen ausschließlich
@@ -371,6 +375,11 @@ public class Wortfolge {
         this.woertlicheRedeNochOffen = woertlicheRedeNochOffen;
         this.kommmaStehtAus = kommmaStehtAus;
         this.phorikKandidat = phorikKandidat;
+    }
+
+    public Wortfolge capitalize() {
+        return new Wortfolge(GermanStringUtil.capitalize(string),
+                woertlicheRedeNochOffen, kommmaStehtAus, phorikKandidat);
     }
 
     @NonNull
