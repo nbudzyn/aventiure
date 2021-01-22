@@ -2,6 +2,7 @@ package de.nb.aventiure2.german.base;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.core.util.Pair;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
@@ -21,6 +22,10 @@ import javax.annotation.concurrent.Immutable;
 
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
+import static de.nb.aventiure2.german.base.NumerusGenus.F;
+import static de.nb.aventiure2.german.base.NumerusGenus.M;
+import static de.nb.aventiure2.german.base.NumerusGenus.N;
+import static de.nb.aventiure2.german.base.NumerusGenus.PL_MFN;
 import static java.util.Arrays.asList;
 import static java.util.Objects.requireNonNull;
 import static java.util.stream.Collectors.toSet;
@@ -30,6 +35,7 @@ import static java.util.stream.Collectors.toSet;
  */
 @Immutable
 public class Konstituentenfolge implements Iterable<Konstituente> {
+    private static final int GEDAECHTNISWEITE_PHORIK = 6;
     private final ImmutableList<Konstituente> konstituenten;
 
     @Nullable
@@ -71,11 +77,8 @@ public class Konstituentenfolge implements Iterable<Konstituente> {
      * @return Eine Konstituentenfolge, nie <code>null</code>>
      */
     @Nonnull
-    public static Konstituentenfolge joinToKonstituentenfolge(
-            final
-            // FIXME CharSequence ?! Das wäre quasi type-safe!!
-                    Object... parts) {
-        return Wortfolge.checkJoiningResultNotNull(joinToNullKonstituentenfolge(parts), parts);
+    public static Konstituentenfolge joinToKonstituentenfolge(final Object... parts) {
+        return checkJoiningResultNotNull(joinToNullKonstituentenfolge(parts), parts);
     }
 
     /**
@@ -218,6 +221,148 @@ public class Konstituentenfolge implements Iterable<Konstituente> {
         return res;
     }
 
+    static <R> R checkJoiningResultNotNull(
+            @Nullable final R joiningResult,
+            final Object... parts) {
+        return checkJoiningResultNotNull(joiningResult, asList(parts));
+    }
+
+    private static <R> R checkJoiningResultNotNull(
+            @Nullable final R joiningResult,
+            final Iterable<?> parts) {
+        if (joiningResult == null) {
+            throw new IllegalStateException("Joining result was null. parts: " + parts);
+        }
+
+        return joiningResult;
+    }
+
+    private static Integer interpretPair(final Pair<Integer, Boolean> phorikKandidatAndSicherheit) {
+        if (!phorikKandidatAndSicherheit.second) {
+            return null;
+        }
+
+        return phorikKandidatAndSicherheit.first;
+    }
+
+    private boolean calcKannAlsBezugsobjektVerstandenWerdenFuer(
+            final NumerusGenus numerusGenus) {
+        final Pair<Integer, Boolean> phorikKandidatAndSicherheit =
+                findPhorikKandidatAndSicherheit(numerusGenus);
+        if (phorikKandidatAndSicherheit.first != null) {
+            return true;
+        }
+
+        return !phorikKandidatAndSicherheit.second;
+    }
+
+    @Nullable
+    private NumerusGenus calcKannAlsBezugsobjektVerstandenWerdenFuer() {
+        // Dies ist eine grobe Näherung - natürlich könnten in der Konstituentenfolge
+        // leicht alle möglichen Genera / Numeri als mögliche Bezugsobjekte vorkommen.
+        return Stream.of(M, F, PL_MFN, N)
+                .filter(g -> calcKannAlsBezugsobjektVerstandenWerdenFuer
+                        (g))
+                .findFirst()
+                .orElse(null);
+    }
+
+    private Pair<Integer, Boolean> findPhorikKandidatAndSicherheit(
+            final NumerusGenus numerusGenus) {
+        Integer indexVorigerAbweichenderKandidat = null;
+        Integer indexKandidat = null;
+
+        for (int i = 0; i < size(); i++) {
+            final Konstituente konstituente = get(i);
+
+            if (konstituente.getPhorikKandidat() != null
+                    && konstituente.getPhorikKandidat().getNumerusGenus().equals(numerusGenus)) {
+                if (indexKandidat != null
+                        && !requireNonNull(
+                        get(indexKandidat).getPhorikKandidat())
+                        .getBezugsobjekt().equals(
+                                konstituente.getPhorikKandidat().getBezugsobjekt())) {
+                    // Es gab bereits ein Bezugsobjekt, und zwar ein anderes!
+                    indexVorigerAbweichenderKandidat = indexKandidat;
+                }
+
+                indexKandidat = i;
+            } else if (konstituente.koennteAlsBezugsobjektVerstandenWerdenFuer(numerusGenus)
+                    && indexKandidat != null) {
+
+                //  Doppeldeutigkeit verhindern: "Du nimmst den Ball und den Schuh und wirfst ihn
+                //  in die Luft."
+                indexVorigerAbweichenderKandidat = indexKandidat;
+                indexKandidat = i;
+            }
+
+            if (indexVorigerAbweichenderKandidat != null
+                    && i - indexVorigerAbweichenderKandidat > GEDAECHTNISWEITE_PHORIK) {
+                indexVorigerAbweichenderKandidat = null;
+            }
+
+            if (indexKandidat != null
+                    && i - indexKandidat > GEDAECHTNISWEITE_PHORIK) {
+                // Irgendwann wird der Abstand zu groß. Dinge vermeiden wie "Du stellst
+                // die Lampe auf den Tisch. Der Tisch ist aus Holz und hat viele
+                // schöne Gravuren - er muss sehr wertvoll sein. Dann nimmst du sie wieder
+                // in die Hand."
+
+                indexKandidat = null;
+            }
+        }
+
+        if (indexVorigerAbweichenderKandidat != null) {
+            // Doppeldeutigkeit verhindern: "Du nimmst den Ball und den Schuh und wirfst ihn
+            // in die Luft." -> Es wurde etwas gefunden - aber nichts eindeutiges.
+            // Diese Numerus/Genus-Kombination kann zu Missverständnissenn führen.
+            return new Pair<>(null, false);
+        }
+
+        if (indexKandidat == null) {
+            // Es wurde nichts gefunden. Es kann auch keine Missverständnisse geben.
+            return new Pair<>(null, true);
+        }
+
+        if (get(indexKandidat).getPhorikKandidat() == null) {
+            // Etwas anderes (bei dem kein Bezugsobjekt angegeben wurde) könnte
+            // als Bezugsobjekt verstanden werden.
+            return new Pair<>(null, false);
+        }
+
+        // Es wurde ein eindeutiger Kandidat gefunden
+        return new Pair<>(indexKandidat, true);
+    }
+
+    PhorikKandidat findPhorikKandidat() {
+        final Integer indexKandidatM = interpretPair(
+                findPhorikKandidatAndSicherheit(M));
+        final Integer indexKandidatF = interpretPair(
+                findPhorikKandidatAndSicherheit(F));
+        final Integer indexKandidatN = interpretPair(
+                findPhorikKandidatAndSicherheit(N));
+        final Integer indexKandidatPL = interpretPair(
+                findPhorikKandidatAndSicherheit(PL_MFN));
+
+        if (indexKandidatF != null && indexKandidatPL != null) {
+            // Hier könnte es zu Doppeldeutigkeiten kommen:
+            // "Die Frau füttert die Vögel. Du beobachtest sie." (Die Frau? Die Vögel?)
+            return null;
+        }
+
+        final int bestIndex =
+                Stream.of(indexKandidatM, indexKandidatF, indexKandidatN, indexKandidatPL)
+                        .filter(Objects::nonNull)
+                        .mapToInt(Integer::intValue)
+                        .max()
+                        .orElse(-1);
+        if (bestIndex == -1) {
+            return null;
+        }
+
+        return get(bestIndex).getPhorikKandidat();
+    }
+
     /**
      * Fügt diese Konstituentenfolge zu einem String zusammen, wobei ein nichtleerer
      * String das Ergebnis sein muss. Diese Methode darf nur verwendet werden,
@@ -256,16 +401,69 @@ public class Konstituentenfolge implements Iterable<Konstituente> {
      * @return Eine einzige Konstituente- ggf. null
      */
     private Konstituente joinToNullSingleKonstituente() {
-        final Wortfolge wortfolge = Wortfolge.joinToWortfolge(this);
+        final StringBuilder resString = new StringBuilder(size() * 25);
+        boolean first = true;
+        boolean vorkommaNoetig = false;
+        boolean woertlicheRedeNochOffen = false;
+        boolean kommaStehtAus = false;
+        for (final Konstituente konstituente : this) {
+            if (first) {
+                vorkommaNoetig = konstituente.vorkommaNoetig();
+            }
+            final String konstitentenString = konstituente.getString();
+            if (woertlicheRedeNochOffen) {
+                if (resString.toString().trim().endsWith(".")) {
+                    resString.append("“");
+                    if (GermanUtil.spaceNeeded("“", konstitentenString)) {
+                        resString.append(" ");
+                    }
+                } else if (!konstitentenString.trim().startsWith(".“")
+                        && !konstitentenString.trim().startsWith("!“")
+                        && !konstitentenString.trim().startsWith("?“")
+                        && !konstitentenString.trim().startsWith("…“")
+                        // Kein Satzende
+                        && !konstitentenString.trim().startsWith("“")) {
+                    resString.append("“");
+                    if (GermanUtil.spaceNeeded("“", konstitentenString)) {
+                        resString.append(" ");
+                    }
+                }
+            }
 
+            if ((kommaStehtAus
+                    || (!first && konstituente.vorkommaNoetig()))
+                    && !GermanUtil.beginnDecktKommaAb(konstitentenString)) {
+                resString.append(",");
+                if (GermanUtil.spaceNeeded(",", konstitentenString)) {
+                    resString.append(" ");
+                }
+            } else if (GermanUtil.spaceNeeded(resString, konstitentenString)) {
+                resString.append(" ");
+            }
+
+            resString.append(konstitentenString);
+            kommaStehtAus = konstituente.kommaStehtAus();
+            woertlicheRedeNochOffen = konstituente.woertlicheRedeNochOffen();
+            first = false;
+        }
+
+        final PhorikKandidat phorikKandidat = findPhorikKandidat();
         final NumerusGenus kannAlsBezugsobjektVerstandenWerdenFuer =
-                wortfolge.getPhorikKandidat() != null ?
-                        wortfolge.getPhorikKandidat().getNumerusGenus() :
-                        Wortfolge.
-                                calcKannAlsBezugsobjektVerstandenWerdenFuer(this);
-        return Konstituente.k(wortfolge,
-                kannAlsBezugsobjektVerstandenWerdenFuer)
-                .withVorkommaNoetig(vorkommaNoetig());
+                phorikKandidat != null ?
+                        phorikKandidat.getNumerusGenus() :
+                        calcKannAlsBezugsobjektVerstandenWerdenFuer();
+        // Wenn die Wortfolge mit Komma anfängt, lassen wir es in der Konsituente stehen.
+        // Damit wird das Komma definitiv ausgegeben - auch von Methoden, die das Vorkomma
+        // vielleich sonst (ggf. bewusst) verschlucken. Vgl. Wortfolge#joinToNullWortfolge()
+
+        return new Konstituente(
+                resString.toString().trim(),
+                vorkommaNoetig,
+                woertlicheRedeNochOffen,
+                kommaStehtAus,
+                kannAlsBezugsobjektVerstandenWerdenFuer,
+                phorikKandidat != null ? phorikKandidat.getBezugsobjekt() : null
+        );
     }
 
     private boolean vorkommaNoetig() {

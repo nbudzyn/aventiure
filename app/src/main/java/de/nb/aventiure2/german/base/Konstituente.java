@@ -180,10 +180,10 @@ public class Konstituente {
                 koennteAlsBezugsobjektVerstandenWerdenFuer, null);
     }
 
-    private Konstituente(final String string, final boolean vorkommaNoetig,
-                         final boolean woertlicheRedeNochOffen, final boolean kommmaStehtAus,
-                         @Nullable final NumerusGenus kannAlsBezugsobjektVerstandenWerdenFuer,
-                         @Nullable final IBezugsobjekt bezugsobjekt) {
+    Konstituente(final String string, final boolean vorkommaNoetig,
+                 final boolean woertlicheRedeNochOffen, final boolean kommmaStehtAus,
+                 @Nullable final NumerusGenus kannAlsBezugsobjektVerstandenWerdenFuer,
+                 @Nullable final IBezugsobjekt bezugsobjekt) {
         this.woertlicheRedeNochOffen = woertlicheRedeNochOffen;
         requireNonNull(string, "string");
         checkArgument(!string.isEmpty(), "String ist empty");
@@ -210,7 +210,7 @@ public class Konstituente {
                 kannAlsBezugsobjektVerstandenWerdenFuer, bezugsobjekt);
     }
 
-    public Konstituente ohneBezugsobjekt() {
+    Konstituente ohneBezugsobjekt() {
         return new Konstituente(string,
                 vorkommaNoetig, woertlicheRedeNochOffen, kommmaStehtAus,
                 kannAlsBezugsobjektVerstandenWerdenFuer, null);
