@@ -11,7 +11,7 @@ import java.util.stream.Collectors;
 
 import javax.annotation.CheckReturnValue;
 
-import de.nb.aventiure2.german.base.Wortfolge;
+import de.nb.aventiure2.german.base.Konstituente;
 import de.nb.aventiure2.german.praedikat.AdverbialeAngabeSkopusSatz;
 import de.nb.aventiure2.german.praedikat.AdverbialeAngabeSkopusVerbAllg;
 import de.nb.aventiure2.german.praedikat.Modalpartikel;
@@ -116,13 +116,13 @@ public class DescriptionUmformulierer {
                 alt.add(mitAdvAngabe(sDesc,
                         new AdverbialeAngabeSkopusVerbAllg("sogleich wieder")));
 
-                final Wortfolge duNimmstDieKugelBesserDoch =
-                        Wortfolge.joinToWortfolge(
-                                sDesc.getSatz()
-                                        .mitModalpartikeln(
-                                                new Modalpartikel("besser"),
-                                                new Modalpartikel("doch"))
-                                        .getVerbzweitsatzStandard());
+                final Konstituente duNimmstDieKugelBesserDoch =
+                        sDesc.getSatz()
+                                .mitModalpartikeln(
+                                        new Modalpartikel("besser"),
+                                        new Modalpartikel("doch"))
+                                .getVerbzweitsatzStandard()
+                                .joinToSingleKonstituente();
                 alt.add(neuerSatz(
                         max(fDesc.getStartsNew(), SENTENCE),
                         "Ach nein,",

@@ -13,7 +13,7 @@ import java.util.function.Predicate;
 
 import javax.annotation.CheckReturnValue;
 
-import de.nb.aventiure2.german.base.Wortfolge;
+import de.nb.aventiure2.german.base.Konstituente;
 import de.nb.aventiure2.german.description.AbstractDescription;
 import de.nb.aventiure2.german.description.AbstractFlexibleDescription;
 import de.nb.aventiure2.german.description.DescriptionParams;
@@ -94,10 +94,9 @@ class TextDescriptionBuilder {
     @CheckReturnValue
     private static TextDescription toTextDescriptionsatzanschlussMitUnd(
             final StructuredDescription desc) {
-        final Wortfolge satzanschlussMitUnd =
-                Wortfolge.joinToWortfolge(desc.getSatz()
-                        .mitAnschlusswort("und")
-                        .getSatzanschlussOhneSubjekt());
+        final Konstituente satzanschlussMitUnd =
+                desc.getSatz().mitAnschlusswort("und")
+                        .getSatzanschlussOhneSubjekt().joinToSingleKonstituente();
 
         return desc.toTextDescriptionKeepParams(satzanschlussMitUnd)
                 // Noch nicht einmal bei P2 SG soll ein erneuter und-Anschluss erfolgen!

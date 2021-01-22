@@ -369,47 +369,24 @@ public class Konstituentenfolge implements Iterable<Konstituente> {
      * wenn nach dem letzten der Teile definitiv kein Komma aussteht - oder das
      * ausstehende Kommma auf andere Weise behandelt wird.
      */
+    @NonNull
     public String joinToString() {
-        return Wortfolge.joinToWortfolge(this).toStringFixWoertlicheRedeNochOffen();
+        return joinToSingleKonstituente().toStringFixWoertlicheRedeNochOffen();
     }
 
     /**
-     * Fügt diese Konstituenten zu einer einzigen Konsituente zusammen - es darf
-     * sich nich {@code null} ergeben.
-     * <p>
-     * Diese Methode wird man nur selten verwenden wollen - vgl.
-     * {@link Konstituentenfolge#joinToNullKonstituentenfolge(Object...)}!
-     *
-     * @return Eine einzige Konstituente, nie null
+     * Fügt diese Konstituenten zu einer einzigen Konsituente zusammen. Damit gehen natürlich
+     * Detailinformationen verloren, und man kann nachträglich nicht mehr gut einzelne
+     * Teile entfernen, weil z.B. unklar ist, ob auch Kommata entfernt werden müssen.
      */
+    @NonNull
     public Konstituente joinToSingleKonstituente() {
-        @Nullable final Konstituente res = joinToNullSingleKonstituente();
-
-        if (res == null) {
-            throw new IllegalStateException("Konstituentenfolge was joined to null: " + this);
-        }
-
-        return res;
-    }
-
-    /**
-     * Fügt diese Konstituenten zu einer einzigen Konsituente zusammen.
-     * <p>
-     * Diese Methode wird man nur selten verwenden wollen - vgl.
-     * {@link Konstituentenfolge#joinToNullKonstituentenfolge(Object...)}!
-     *
-     * @return Eine einzige Konstituente- ggf. null
-     */
-    private Konstituente joinToNullSingleKonstituente() {
         final StringBuilder resString = new StringBuilder(size() * 25);
         boolean first = true;
         boolean vorkommaNoetig = false;
         boolean woertlicheRedeNochOffen = false;
         boolean kommaStehtAus = false;
         for (final Konstituente konstituente : this) {
-            if (first) {
-                vorkommaNoetig = konstituente.vorkommaNoetig();
-            }
             final String konstitentenString = konstituente.getString();
             if (woertlicheRedeNochOffen) {
                 if (resString.toString().trim().endsWith(".")) {
@@ -428,6 +405,12 @@ public class Konstituentenfolge implements Iterable<Konstituente> {
                         resString.append(" ");
                     }
                 }
+            }
+
+            if (first) {
+                vorkommaNoetig =
+                        konstituente.vorkommaNoetig() &&
+                                !GermanUtil.beginnDecktKommaAb(konstitentenString);
             }
 
             if ((kommaStehtAus
@@ -452,9 +435,6 @@ public class Konstituentenfolge implements Iterable<Konstituente> {
                 phorikKandidat != null ?
                         phorikKandidat.getNumerusGenus() :
                         calcKannAlsBezugsobjektVerstandenWerdenFuer();
-        // Wenn die Wortfolge mit Komma anfängt, lassen wir es in der Konsituente stehen.
-        // Damit wird das Komma definitiv ausgegeben - auch von Methoden, die das Vorkomma
-        // vielleich sonst (ggf. bewusst) verschlucken. Vgl. Wortfolge#joinToNullWortfolge()
 
         return new Konstituente(
                 resString.toString().trim(),

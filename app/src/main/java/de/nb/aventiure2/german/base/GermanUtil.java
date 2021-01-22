@@ -6,6 +6,7 @@ import androidx.annotation.Nullable;
 import java.util.List;
 
 import static com.google.common.base.Preconditions.checkArgument;
+import static de.nb.aventiure2.german.base.Konstituentenfolge.joinToNullKonstituentenfolge;
 import static java.util.Arrays.asList;
 import static java.util.Objects.requireNonNull;
 
@@ -60,12 +61,12 @@ public class GermanUtil {
      */
     @Nullable
     private static String joinToNullString(final Iterable<?> parts) {
-        @Nullable final Wortfolge res = Wortfolge.joinToNullWortfolge(parts);
+        @Nullable final Konstituentenfolge res = joinToNullKonstituentenfolge(parts);
         if (res == null) {
             return null;
         }
 
-        return res.toStringFixWoertlicheRedeNochOffen();
+        return res.joinToSingleKonstituente().toStringFixWoertlicheRedeNochOffen();
     }
 
     /**

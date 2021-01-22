@@ -216,6 +216,15 @@ public class Konstituente {
                 kannAlsBezugsobjektVerstandenWerdenFuer, null);
     }
 
+    @NonNull
+    String toStringFixWoertlicheRedeNochOffen() {
+        if (woertlicheRedeNochOffen()) {
+            return getString() + "“";
+        }
+
+        return getString();
+    }
+
     @Nonnull
     public String getString() {
         return string;
@@ -225,7 +234,7 @@ public class Konstituente {
         return vorkommaNoetig;
     }
 
-    boolean woertlicheRedeNochOffen() {
+    public boolean woertlicheRedeNochOffen() {
         return woertlicheRedeNochOffen;
     }
 

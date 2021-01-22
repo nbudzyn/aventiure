@@ -11,6 +11,7 @@ import javax.annotation.CheckReturnValue;
 
 import de.nb.aventiure2.data.time.AvTimeSpan;
 import de.nb.aventiure2.german.base.IBezugsobjekt;
+import de.nb.aventiure2.german.base.Konstituente;
 import de.nb.aventiure2.german.base.NumerusGenus;
 import de.nb.aventiure2.german.base.PhorikKandidat;
 import de.nb.aventiure2.german.base.StructuralElement;
@@ -76,6 +77,21 @@ public abstract class AbstractDescription<SELF extends AbstractDescription<SELF>
      */
     abstract Wortfolge
     toWortfolgeMitKonjunktionaladverbWennNoetig(String konjunktionaladverb);
+
+    @NonNull
+    public TextDescription toTextDescriptionKeepParams(final Konstituente konstituente) {
+        // IDEA Hier den PhorikKandidaten aus der Konstituente
+        //  übernehmen und hier separat speichern?
+        //  Aus den params entfernen und params unverändert übergeben?
+        final DescriptionParams newParams = copyParams();
+        if (konstituente.getPhorikKandidat() != null) {
+            newParams.phorikKandidat(konstituente.getPhorikKandidat());
+        }
+        return new TextDescription(
+                newParams,
+                konstituente.getString(),
+                konstituente.woertlicheRedeNochOffen(), konstituente.kommaStehtAus());
+    }
 
     @NonNull
     public TextDescription toTextDescriptionKeepParams(final Wortfolge wortfolge) {

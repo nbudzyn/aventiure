@@ -39,7 +39,7 @@ public class StructuredDescription extends AbstractFlexibleDescription<Structure
     }
 
     private static PhorikKandidat guessPhorikKandidat(final Satz satz) {
-        return Wortfolge.joinToWortfolge(satz.getVerbzweitsatzStandard())
+        return satz.getVerbzweitsatzStandard().joinToSingleKonstituente()
                 .getPhorikKandidat();
     }
 
@@ -64,7 +64,7 @@ public class StructuredDescription extends AbstractFlexibleDescription<Structure
     @Override
     public ImmutableList<TextDescription> altTextDescriptions() {
         return satz.altVerzweitsaetze().stream()
-                .map(Wortfolge::joinToWortfolge)
+                .map(Konstituentenfolge::joinToSingleKonstituente)
                 .map(this::toTextDescriptionKeepParams)
                 .map(TextDescription::beginntZumindestSentence)
                 .collect(toImmutableList());
