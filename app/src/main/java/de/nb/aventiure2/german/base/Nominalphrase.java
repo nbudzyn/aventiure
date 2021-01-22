@@ -28,8 +28,6 @@ public class Nominalphrase
             np(PL_MFN, INDEF, "Angebote", "Angeboten");
     public static final Nominalphrase ASTGABEL =
             np(F, DEF, "Astgabel");
-    public static final Nominalphrase AUGEN =
-            np(PL_MFN, INDEF, "Augen");
     public static final Nominalphrase DEIN_HERZ =
             np(N, null, "dein Herz",
                     "deinem Herzen");

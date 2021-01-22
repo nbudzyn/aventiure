@@ -210,6 +210,12 @@ public class Konstituente {
                 kannAlsBezugsobjektVerstandenWerdenFuer, bezugsobjekt);
     }
 
+    public Konstituente ohneBezugsobjekt() {
+        return new Konstituente(string,
+                vorkommaNoetig, woertlicheRedeNochOffen, kommmaStehtAus,
+                kannAlsBezugsobjektVerstandenWerdenFuer, null);
+    }
+
     @Nonnull
     public String getString() {
         return string;

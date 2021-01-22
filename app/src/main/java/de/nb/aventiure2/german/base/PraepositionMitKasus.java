@@ -6,6 +6,7 @@ import androidx.annotation.Nullable;
 import static com.google.common.base.Preconditions.checkArgument;
 import static de.nb.aventiure2.german.base.Kasus.AKK;
 import static de.nb.aventiure2.german.base.Kasus.DAT;
+import static de.nb.aventiure2.german.base.Konstituentenfolge.joinToKonstituentenfolge;
 import static de.nb.aventiure2.german.base.NumerusGenus.F;
 import static de.nb.aventiure2.german.base.NumerusGenus.M;
 import static de.nb.aventiure2.german.base.NumerusGenus.N;
@@ -63,24 +64,24 @@ public enum PraepositionMitKasus implements KasusOderPraepositionalkasus {
     private final String praepositionVerschmolzenMN;
 
     /**
-     * Präposition, verschmolzen mit dem dem femininem definiten Artikel
+     * Präposition, verschmolzen mit dem femininen definiten Artikel
      * ("zur")
      */
     @Nullable
     private final String praepositionVerschmolzenF;
 
-    private PraepositionMitKasus(final String praeposition, final Kasus kasus) {
+    PraepositionMitKasus(final String praeposition, final Kasus kasus) {
         this(praeposition, kasus, null);
     }
 
-    private PraepositionMitKasus(final String praeposition, final Kasus kasus,
-                                 @Nullable final String praepositionVerschmolzenMN) {
+    PraepositionMitKasus(final String praeposition, final Kasus kasus,
+                         @Nullable final String praepositionVerschmolzenMN) {
         this(praeposition, kasus, praepositionVerschmolzenMN, null);
     }
 
-    private PraepositionMitKasus(final String praeposition, final Kasus kasus,
-                                 @Nullable final String praepositionVerschmolzenMN,
-                                 @Nullable final String praepositionVerschmolzenF) {
+    PraepositionMitKasus(final String praeposition, final Kasus kasus,
+                         @Nullable final String praepositionVerschmolzenMN,
+                         @Nullable final String praepositionVerschmolzenF) {
         checkArgument(
                 kasus == DAT ||
                         (praepositionVerschmolzenMN == null &&
@@ -104,8 +105,7 @@ public enum PraepositionMitKasus implements KasusOderPraepositionalkasus {
                 substPhrOderReflexivpronomen);
     }
 
-    public String getDescription(
-            final SubstPhrOderReflexivpronomen substPhrOderReflPron) {
+    public Konstituente getDescription(final SubstPhrOderReflexivpronomen substPhrOderReflPron) {
         if (substPhrOderReflPron instanceof SubstantivischePhrase) {
             return getDescription((SubstantivischePhrase) substPhrOderReflPron);
         }
@@ -115,7 +115,7 @@ public enum PraepositionMitKasus implements KasusOderPraepositionalkasus {
         return getDescriptionUnverschmolzen(substPhrOderReflPron);
     }
 
-    public String getDescription(final SubstantivischePhrase substantivischePhrase) {
+    public Konstituente getDescription(final SubstantivischePhrase substantivischePhrase) {
         if (kasus == DAT &&
                 // AKK unterstützen wir derzeit nicht
                 substantivischePhrase.erlaubtVerschmelzungVonPraepositionMitArtikel()) {
@@ -123,12 +123,16 @@ public enum PraepositionMitKasus implements KasusOderPraepositionalkasus {
                     (substantivischePhrase.getNumerusGenus() == M ||
                             (substantivischePhrase.getNumerusGenus() == N))) {
                 // TODO Konstituente mit artikellosDatK oder so zurückgeben!
-                return praepositionVerschmolzenMN + " " + substantivischePhrase.artikellosDatStr();
+                return joinToKonstituentenfolge(
+                        praepositionVerschmolzenMN, substantivischePhrase.artikellosDatK())
+                        .joinToSingleKonstituente();
             }
 
             if (praepositionVerschmolzenF != null &&
                     (substantivischePhrase.getNumerusGenus() == F)) {
-                return praepositionVerschmolzenF + " " + substantivischePhrase.artikellosDatStr();
+                return joinToKonstituentenfolge(
+                        praepositionVerschmolzenF, substantivischePhrase.artikellosDatK())
+                        .joinToSingleKonstituente();
             }
         }
 
@@ -136,11 +140,10 @@ public enum PraepositionMitKasus implements KasusOderPraepositionalkasus {
     }
 
     @NonNull
-    private String getDescriptionUnverschmolzen(
+    private Konstituente getDescriptionUnverschmolzen(
             final SubstPhrOderReflexivpronomen substPhrOderReflPron) {
-        // TODO Hier imK verwenden und eine Konstituente zurückgeben!
-
-        return praeposition + " " + substPhrOderReflPron.imStr(kasus);
+        return joinToKonstituentenfolge(praeposition, substPhrOderReflPron.imK(kasus))
+                .joinToSingleKonstituente();
     }
 
     public String getPraeposition() {

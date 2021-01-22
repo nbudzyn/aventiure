@@ -53,6 +53,7 @@ public class Konstituentenfolge implements Iterable<Konstituente> {
      * Gibt denselben Input zurück, wobei ein Vorkomma und ein Folgekomma gefordert werden.
      * Ist der Input leer, wird eine leere Konsitutenten-Liste zurückgeben.
      */
+    @SuppressWarnings("GrazieInspection")
     @Nullable
     public static Konstituentenfolge schliesseInKommaEin(
             @Nullable final Konstituentenfolge input) {
@@ -159,8 +160,10 @@ public class Konstituentenfolge implements Iterable<Konstituente> {
             final ArrayList<ImmutableList.Builder<Konstituente>>
                     ergaenzteAlternativeKonstituentenfolgen = new ArrayList<>();
 
-            for (final ImmutableList.Builder<Konstituente> alternative : alternativeKonstituentenfolgen) {
-                for (final Konstituentenfolge alternativePartKonstituentenfolge : alternativePartKonstituentenfolgen) {
+            for (final ImmutableList.Builder<Konstituente> alternative :
+                    alternativeKonstituentenfolgen) {
+                for (final Konstituentenfolge alternativePartKonstituentenfolge :
+                        alternativePartKonstituentenfolgen) {
                     if (alternativePartKonstituentenfolge != null) {
                         final ImmutableList.Builder<Konstituente> ergaenzteKonstituentenfolge =
                                 ImmutableList.builder();
@@ -178,7 +181,8 @@ public class Konstituentenfolge implements Iterable<Konstituente> {
         }
 
         final HashSet<Konstituentenfolge> res = new HashSet<>();
-        for (final ImmutableList.Builder<Konstituente> alternative : alternativeKonstituentenfolgen) {
+        for (final ImmutableList.Builder<Konstituente> alternative :
+                alternativeKonstituentenfolgen) {
             final ImmutableList<Konstituente> konstituenten = alternative.build();
 
             if (konstituenten.isEmpty()) {
@@ -225,6 +229,25 @@ public class Konstituentenfolge implements Iterable<Konstituente> {
     }
 
     /**
+     * Fügt diese Konstituenten zu einer einzigen Konsituente zusammen - es darf
+     * sich nich {@code null} ergeben.
+     * <p>
+     * Diese Methode wird man nur selten verwenden wollen - vgl.
+     * {@link Konstituentenfolge#joinToNullKonstituentenfolge(Object...)}!
+     *
+     * @return Eine einzige Konstituente, nie null
+     */
+    public Konstituente joinToSingleKonstituente() {
+        @Nullable final Konstituente res = joinToNullSingleKonstituente();
+
+        if (res == null) {
+            throw new IllegalStateException("Konstituentenfolge was joined to null: " + this);
+        }
+
+        return res;
+    }
+
+    /**
      * Fügt diese Konstituenten zu einer einzigen Konsituente zusammen.
      * <p>
      * Diese Methode wird man nur selten verwenden wollen - vgl.
@@ -232,7 +255,7 @@ public class Konstituentenfolge implements Iterable<Konstituente> {
      *
      * @return Eine einzige Konstituente- ggf. null
      */
-    public Konstituente joinToNullSingleKonstituente() {
+    private Konstituente joinToNullSingleKonstituente() {
         final Wortfolge wortfolge = Wortfolge.joinToWortfolge(this);
 
         final NumerusGenus kannAlsBezugsobjektVerstandenWerdenFuer =

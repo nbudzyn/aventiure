@@ -53,8 +53,16 @@ public abstract class SubstantivischePhrase
     public abstract boolean erlaubtVerschmelzungVonPraepositionMitArtikel();
 
     /**
-     * Die substantivische Phrase im Dativ, aber ohne Artikel
-     * ("(zum) Haus")
+     * Gibt die substantivische Phrase im Dativ, aber ohne Artikel, zurück
+     * ("(zum) Haus") - als Konstituente
+     */
+    Konstituente artikellosDatK() {
+        return k(artikellosDatStr(), getNumerusGenus(), getBezugsobjekt());
+    }
+
+    /**
+     * Gibt die substantivische Phrase im Dativ, aber ohne Artikel, zurück
+     * ("(zum) Haus") - als String
      */
     public abstract String artikellosDatStr();
 
@@ -67,7 +75,10 @@ public abstract class SubstantivischePhrase
             final PraepositionMitKasus praepositionMitKasus =
                     (PraepositionMitKasus) kasusOderPraepositionalkasus;
 
-            return praepositionMitKasus.getDescription(this);
+            return praepositionMitKasus.getDescription(this)
+                    // Das dürfen wir machen, weil nach der substantivischen Phrase ganz sicher
+                    // kein Komma aussteht
+                    .getString();
         }
 
         throw new IllegalArgumentException("Unexpected Kasus or Präpositionalkasus: " +

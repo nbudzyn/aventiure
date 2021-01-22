@@ -291,8 +291,7 @@ public class RapunzelReactionsComp
                 -FeelingIntensity.NUR_LEICHT, FeelingIntensity.MERKLICH);
 
         if (loadSC().memoryComp().isKnown(RAPUNZELS_GESANG)) {
-            // Jetzt weiß der SC, wer so schön gesungen hat! Und schön ist
-            // sie obendrein noch!
+            // Jetzt weiß der SC, wer so schön gesungen hat! Und schön ist sie obendrein noch!
             loadSC().feelingsComp().upgradeFeelingsTowards(RAPUNZEL,
                     ZUNEIGUNG_ABNEIGUNG, 2, FeelingIntensity.STARK);
         }
@@ -730,9 +729,9 @@ public class RapunzelReactionsComp
                 oClock(7),
                 // ... immer für ...
                 mins(10),
-                // ... Minuten mit
+                // ... Minuten mit...
                 mins(25),
-                // ... Minuten Pause danach - bis um
+                // ... Minuten Pause danach - bis um...
                 oClock(19));
     }
 

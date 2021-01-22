@@ -3,7 +3,7 @@ package de.nb.aventiure2.german.base;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-import static de.nb.aventiure2.german.base.Konstituente.k;
+import static de.nb.aventiure2.german.base.Konstituentenfolge.joinToKonstituentenfolge;
 
 /**
  * Eine Präpositionalphrase, also eine Präposition mit einer davon abhängigen Phrase
@@ -45,14 +45,13 @@ public class Praepositionalphrase implements Praedikativum {
 
     @Override
     public Konstituentenfolge getPraedikativ(final Person person, final Numerus numerus) {
-        return Konstituentenfolge.joinToKonstituentenfolge(
+        return joinToKonstituentenfolge(
                 modAdverbOderAdjektiv,
-                k(praepositionMitKasus.getDescription(substPhrOderReflPron),
-                        // Es sollte wohl eher selten sein, dass man ein prädikativ
-                        // gebrauchte Phrase danach mit "er..." referenziert.
-                        // Allerdings könnte es eventuell zu Verwirrung führen?
-                        substPhrOderReflPron.kannAlsBezugsobjektVerstandenWerdenFuer(), null)
-        );
+                // Es sollte wohl eher selten sein, dass man ein prädikativ
+                // gebrauchte Phrase danach mit "er..." referenziert.
+                // Allerdings könnte ein enthaltenes Substantiv zur Verwirrung
+                // führen.
+                praepositionMitKasus.getDescription(substPhrOderReflPron).ohneBezugsobjekt());
     }
 
     @Override
@@ -62,11 +61,8 @@ public class Praepositionalphrase implements Praedikativum {
     }
 
     public Konstituentenfolge getDescription() {
-        return Konstituentenfolge.joinToKonstituentenfolge(
+        return joinToKonstituentenfolge(
                 modAdverbOderAdjektiv,
-                k(praepositionMitKasus.getDescription(substPhrOderReflPron),
-                        substPhrOderReflPron
-                                .kannAlsBezugsobjektVerstandenWerdenFuer(),
-                        substPhrOderReflPron.getBezugsobjekt()));
+                praepositionMitKasus.getDescription(substPhrOderReflPron));
     }
 }

@@ -527,12 +527,8 @@ public class RapunzelTalkingComp extends AbstractTalkingComp {
                         .timed(secs(10)),
                 neuerSatz(PARAGRAPH, "„Dann will ich wieder ins",
                         "Abenteuer hinaus“, sagst du",
-                        // FIXME ZU.getDescription(anaph)) sollte keinen
-                        //  String, sondern eine Wortfolge erzeugen und einen
-                        //  Phorik-Kandidaten setzen
                         ZU.getDescription(anaph))
                         .timed(secs(15))
-                        .phorikKandidat(anaph, RAPUNZEL)
         );
 
         final int zuneigungSCZuRapunzel =
