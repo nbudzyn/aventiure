@@ -87,12 +87,7 @@ public class DescriptionBuilder {
     @CheckReturnValue
     public static SimpleDuDescription du(final StructuralElement startsNew, final String verb,
                                          @Nullable final Wortfolge remainder) {
-        return new SimpleDuDescription(startsNew,
-                verb,
-                remainder != null ? remainder.getString() : null,
-                remainder != null && remainder.woertlicheRedeNochOffen(),
-                remainder != null && remainder.kommaStehtAus(),
-                remainder != null ? remainder.getPhorikKandidat() : null);
+        return new SimpleDuDescription(startsNew, verb, remainder);
     }
 
     @CheckReturnValue

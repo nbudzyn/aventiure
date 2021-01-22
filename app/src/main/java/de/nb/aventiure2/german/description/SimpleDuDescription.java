@@ -56,12 +56,28 @@ public class SimpleDuDescription extends AbstractFlexibleDescription<SimpleDuDes
      */
     SimpleDuDescription(final StructuralElement startsNew,
                         final String verb,
-                        // FIXME Sollte hier nicht eher eine Wortfolge übergeben und
-                        //  gespeichert werden?
-                        @Nullable final String remainder,
-                        final boolean woertlicheRedeNochOffen,
-                        final boolean kommaStehtAus,
-                        @Nullable final PhorikKandidat phorikKandidat) {
+                        @Nullable final Wortfolge remainder) {
+        this(startsNew,
+                verb,
+                remainder != null ? remainder.getString() : null,
+                remainder != null && remainder.woertlicheRedeNochOffen(),
+                remainder != null && remainder.kommaStehtAus(),
+                remainder != null ? remainder.getPhorikKandidat() : null);
+    }
+
+    /**
+     * Erzeugt eine {@link SimpleDuDescription} ohne Vorfeld-Satzglied.
+     *
+     * @see #mitVorfeldSatzglied(String)
+     */
+    private SimpleDuDescription(final StructuralElement startsNew,
+                                final String verb,
+                                // FIXME Sollte hier nicht eher eine Wortfolge übergeben und
+                                //  gespeichert werden?
+                                @Nullable final String remainder,
+                                final boolean woertlicheRedeNochOffen,
+                                final boolean kommaStehtAus,
+                                @Nullable final PhorikKandidat phorikKandidat) {
         super(startsNew, phorikKandidat);
         this.verb = verb;
         this.remainder = remainder;
