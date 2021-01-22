@@ -336,7 +336,6 @@ public class RapunzelTalkingComp extends AbstractTalkingComp {
             alt.add(neuerSatz(anaph.nomK(),
                     "erwidert die Begrüßung")
                             .beendet(SENTENCE),
-                    // FIXME phorikKandidat() prüfen - überzählige entfernen!
                     neuerSatz(anaph.nomK(),
                             "gibt den Gruß zurück")
                             .beendet(SENTENCE),
@@ -447,16 +446,6 @@ public class RapunzelTalkingComp extends AbstractTalkingComp {
         }
 
         // FIXME Das hier sollte nur einmal gehen.
-        // FIXME Dieser zweite Teil muss von Rapunzels
-        //  Zuneigung abhängen!
-        // "ihren"
-        // "ihrem"
-        // "sie"
-        // FIXME Dieser zweite Teil muss von Rapunzels
-        //  Zuneigung abhängen!
-        // "ihren"
-        // "ihrem"
-        // "sie"
         n.narrate(du(PARAGRAPH, "fängst",
                 "an ganz freundlich mit",
                 anaph.datK(),
@@ -644,10 +633,7 @@ public class RapunzelTalkingComp extends AbstractTalkingComp {
             alt.addAll(altNeueSaetze(
                     altReaktionSaetze.stream()
                             .flatMap(s ->
-                                    // Das braucht man hier wohl nicht mehr:
-                                    // joinToAltWortfolgen(
                                     s.altVerzweitsaetze()
-                                            //)
                                             .stream()),
                     ",",
                     altDannHaareFestbinden(rapunzelDesc)));

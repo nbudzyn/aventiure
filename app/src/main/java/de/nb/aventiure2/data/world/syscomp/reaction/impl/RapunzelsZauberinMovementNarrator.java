@@ -78,9 +78,6 @@ public class RapunzelsZauberinMovementNarrator extends SimpleMovementNarrator {
         if (world.isOrHasRecursiveLocation(movingGOFrom, IM_WALD_NAHE_DEM_SCHLOSS) &&
                 to.is(VOR_DEM_ALTEN_TURM)) {
             if (!n.isThema(gameObjectId)) {
-                // FIXME Alle Verwendungen von nomStr, datStr etc. suchen
-                //  und ggf. durch nomK etc. ergänzen und .phorikKandidat() entfernen.
-
                 alt.add(neuerSatz("Den Pfad herauf kommt",
                         desc.nomK())
                         .beendet(SENTENCE));

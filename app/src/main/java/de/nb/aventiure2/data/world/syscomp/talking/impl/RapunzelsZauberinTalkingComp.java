@@ -114,23 +114,13 @@ public class RapunzelsZauberinTalkingComp extends AbstractTalkingComp {
         final SubstantivischePhrase anaph = anaph(false);
         final AltDescriptionsBuilder alt = alt();
 
-        alt.add(neuerSatz(PARAGRAPH,
-                // FIXME  joinToWortfolge() möglichst überall
-                //  durch neuerSatz o.Ä. ersetzen.
-                "„Gute Frau“, sprichst du",
-                anaph.akkK(),
-                "an").dann(),
+        alt.add(neuerSatz(PARAGRAPH, "„Gute Frau“, sprichst du", anaph.akkK(), "an").dann(),
                 du(PARAGRAPH, "wendest", "dich noch einmal", anaph.datK(), "zu")
                         .undWartest()
         );
 
         n.narrateAlt(alt, secs(10));
         setTalkingTo(SPIELER_CHARAKTER);
-    }
-
-    private void begruessen() {
-        scBegruesst();
-        zauberinReagiertAufAnsprechen();
     }
 
     private void scBegruesst() {
@@ -180,9 +170,6 @@ public class RapunzelsZauberinTalkingComp extends AbstractTalkingComp {
         final SubstantivischePhrase anaph = anaph(false);
 
         final AltDescriptionsBuilder alt = alt();
-
-        // FIXME joinToAltWortfolgen überall in dieser Art
-        //  ersetzen!
         alt.addAll(altNeueSaetze(
                 "„",
                 altVerabschiedungenCap(),
