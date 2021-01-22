@@ -384,6 +384,26 @@ public class Wortfolge {
                 woertlicheRedeNochOffen, kommmaStehtAus, phorikKandidat);
     }
 
+    public Wortfolge mitPhorikKandidat(@Nullable final PhorikKandidat phorikKandidat) {
+        return new Wortfolge(string, woertlicheRedeNochOffen, kommmaStehtAus, phorikKandidat);
+    }
+
+    public Wortfolge mitKommaStehtAus(final boolean kommmaStehtAus) {
+        return new Wortfolge(string, woertlicheRedeNochOffen, kommmaStehtAus, phorikKandidat);
+    }
+
+    @Nullable
+    public Wortfolge cutFirst(final String subString) {
+        @Nullable final String resultString = GermanUtil.cutFirst(string, subString);
+
+        if (resultString == null) {
+            return null;
+        }
+
+        return new Wortfolge(
+                resultString, woertlicheRedeNochOffen, kommmaStehtAus, phorikKandidat);
+    }
+
     @NonNull
     String toStringFixWoertlicheRedeNochOffen() {
         final StringBuilder resString = new StringBuilder(getString());

@@ -24,6 +24,22 @@ public abstract class AbstractFlexibleDescription<SELF extends AbstractDescripti
         return toTextDescriptionKeepParams(toWortfolgeMitVorfeld(vorfeld));
     }
 
+    @Override
+    public Wortfolge toWortfolgeMitKonjunktionaladverbWennNoetig(
+            final String konjunktionaladverb) {
+        @Nullable final Wortfolge wortfolgeMitSpeziellemVorfeldOrNull =
+                toWortfolgeMitSpeziellemVorfeldOrNull();
+
+        if (wortfolgeMitSpeziellemVorfeldOrNull != null) {
+            return wortfolgeMitSpeziellemVorfeldOrNull;
+        }
+
+        return toWortfolgeMitVorfeld(konjunktionaladverb);
+    }
+
+    @Nullable
+    protected abstract Wortfolge toWortfolgeMitSpeziellemVorfeldOrNull();
+
     abstract Wortfolge toWortfolgeMitVorfeld(final String vorfeld);
 
     @NonNull

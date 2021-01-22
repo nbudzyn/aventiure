@@ -6,14 +6,12 @@ import com.google.common.collect.ImmutableList;
 
 import java.util.Objects;
 
-import de.nb.aventiure2.german.base.GermanUtil;
-import de.nb.aventiure2.german.base.PhorikKandidat;
 import de.nb.aventiure2.german.base.StructuralElement;
 import de.nb.aventiure2.german.base.Wortfolge;
 
 import static com.google.common.base.Preconditions.checkArgument;
-import static de.nb.aventiure2.german.base.GermanUtil.joinToString;
-import static de.nb.aventiure2.german.base.Wortfolge.w;
+import static com.google.common.base.Preconditions.checkState;
+import static de.nb.aventiure2.german.base.Wortfolge.joinToWortfolge;
 
 /**
  * A description - assuming the player character is the (first) subject. Somehting like
@@ -25,29 +23,16 @@ public class SimpleDuDescription extends AbstractFlexibleDescription<SimpleDuDes
      */
     private final String verb;
     /**
-     * Something like "in den Wald"
+     * Wortfolge für etwas wie "in den Wald"
      */
     @Nullable
-    private final String remainder;
+    private Wortfolge remainder;
 
     /**
-     * Ein Teil von {@link #remainder}, der statt "Du" das Vorfeld einnehmen kann.
+     * Ein Teil des {@link #remainder}-Strings, der statt "Du" das Vorfeld einnehmen kann.
      */
     @Nullable
     private String vorfeldSatzglied;
-
-    /**
-     * Ob die wörtliche Rede noch "offen" ist.  Es steht also noch ein schließendes
-     * Anführungszeichen aus. Wenn der Satz beendet wird, muss vielleicht außerdem
-     * noch ein Punkt nach dem Anführungszeitchen gesetzt werden.
-     */
-    private final boolean woertlicheRedeNochOffen;
-
-    /**
-     * Ob ein Komma aussteht. Wenn ein Komma aussteht, muss als nächstes ein Komma folgen -
-     * oder das Satzende.
-     */
-    private boolean kommaStehtAus;
 
     /**
      * Erzeugt eine {@link SimpleDuDescription} ohne Vorfeld-Satzglied.
@@ -57,39 +42,18 @@ public class SimpleDuDescription extends AbstractFlexibleDescription<SimpleDuDes
     SimpleDuDescription(final StructuralElement startsNew,
                         final String verb,
                         @Nullable final Wortfolge remainder) {
-        this(startsNew,
-                verb,
-                remainder != null ? remainder.getString() : null,
-                remainder != null && remainder.woertlicheRedeNochOffen(),
-                remainder != null && remainder.kommaStehtAus(),
-                remainder != null ? remainder.getPhorikKandidat() : null);
-    }
-
-    /**
-     * Erzeugt eine {@link SimpleDuDescription} ohne Vorfeld-Satzglied.
-     *
-     * @see #mitVorfeldSatzglied(String)
-     */
-    private SimpleDuDescription(final StructuralElement startsNew,
-                                final String verb,
-                                // FIXME Sollte hier nicht eher eine Wortfolge übergeben und
-                                //  gespeichert werden?
-                                @Nullable final String remainder,
-                                final boolean woertlicheRedeNochOffen,
-                                final boolean kommaStehtAus,
-                                @Nullable final PhorikKandidat phorikKandidat) {
-        super(startsNew, phorikKandidat);
-        this.verb = verb;
-        this.remainder = remainder;
-        this.kommaStehtAus = kommaStehtAus;
-        this.woertlicheRedeNochOffen = woertlicheRedeNochOffen;
+        super(startsNew, remainder != null ? remainder.getPhorikKandidat() : null);
 
         checkArgument(vorfeldSatzglied == null || remainder != null,
                 "Kein remainder, aber ein vorfeldSatzglied? Unmöglich!");
 
-        checkArgument(vorfeldSatzglied == null || remainder.contains(vorfeldSatzglied),
+        checkArgument(vorfeldSatzglied == null ||
+                        remainder.getString().contains(vorfeldSatzglied),
                 "vorfeldSatzglied nicht im remainder enthalten. Remainder: ",
                 remainder + ", vorfeldSatzglied: " + vorfeldSatzglied);
+
+        this.verb = verb;
+        this.remainder = remainder;
     }
 
     @Override
@@ -115,39 +79,25 @@ public class SimpleDuDescription extends AbstractFlexibleDescription<SimpleDuDes
     }
 
     @Override
-    public Wortfolge toWortfolgeMitKonjunktionaladverbWennNoetig(
-            final String konjunktionaladverb) {
-        @Nullable final Wortfolge wortfolgeMitSpeziellemVorfeldOrNull =
-                toWortfolgeMitSpeziellemVorfeldOrNull();
-
-        if (wortfolgeMitSpeziellemVorfeldOrNull != null) {
-            return wortfolgeMitSpeziellemVorfeldOrNull;
-        }
-
-        return toWortfolgeMitVorfeld(konjunktionaladverb);
-    }
-
-    @Override
     public Wortfolge toWortfolgeMitVorfeld(final String vorfeld) {
-        return w(GermanUtil.buildHauptsatz(vorfeld, // "dann"
+        return joinToWortfolge(
+                vorfeld, // "dann"
                 verb, // "gehst"
-                joinToString("du", remainder)), // "du den Fluss entlang"
-                woertlicheRedeNochOffen,
-                isKommaStehtAus(),
-                copyParams().getPhorikKandidat());
+                "du", // "du"
+                remainder) // "den Fluss entlang"
+                .mitPhorikKandidat(copyParams().getPhorikKandidat());
     }
 
     @Override
     public Wortfolge toWortfolge() {
-        return w(GermanUtil.buildHauptsatz("du",
-                verb,
-                remainder), woertlicheRedeNochOffen,
-                isKommaStehtAus(),
-                copyParams().getPhorikKandidat());
+        return joinToWortfolge(
+                "du",
+                toWortfolgeSatzanschlussOhneSubjekt());
     }
 
+    @Override
     @Nullable
-    private Wortfolge toWortfolgeMitSpeziellemVorfeldOrNull() {
+    protected Wortfolge toWortfolgeMitSpeziellemVorfeldOrNull() {
         if (vorfeldSatzglied == null) {
             return null;
         }
@@ -157,17 +107,12 @@ public class SimpleDuDescription extends AbstractFlexibleDescription<SimpleDuDes
                     "Kein remainder, aber ein Vorfeldsatzglied: " + vorfeldSatzglied);
         }
 
-        @Nullable final String remainderWithoutVorfeldSatzglied =
-                GermanUtil.cutFirst(remainder, vorfeldSatzglied);
-
-        return w(GermanUtil.buildHauptsatz(vorfeldSatzglied,
+        return joinToWortfolge(
+                vorfeldSatzglied,
                 verb,
-                joinToString(
-                        "du",
-                        remainderWithoutVorfeldSatzglied)),
-                woertlicheRedeNochOffen,
-                isKommaStehtAus(),
-                copyParams().getPhorikKandidat());
+                "du",
+                remainder.cutFirst(vorfeldSatzglied))
+                .mitPhorikKandidat(copyParams().getPhorikKandidat());
     }
 
     /**
@@ -175,8 +120,10 @@ public class SimpleDuDescription extends AbstractFlexibleDescription<SimpleDuDes
      */
     @Override
     public Wortfolge toWortfolgeSatzanschlussOhneSubjekt() {
-        return w(joinToString(verb, remainder), woertlicheRedeNochOffen, isKommaStehtAus(),
-                copyParams().getPhorikKandidat());
+        return joinToWortfolge(
+                verb,
+                remainder)
+                .mitPhorikKandidat(copyParams().getPhorikKandidat());
     }
 
     public SimpleDuDescription mitVorfeldSatzglied(@Nullable final String vorfeldSatzglied) {
@@ -191,12 +138,14 @@ public class SimpleDuDescription extends AbstractFlexibleDescription<SimpleDuDes
 
     @Override
     public SimpleDuDescription komma(final boolean kommaStehtAus) {
-        this.kommaStehtAus = kommaStehtAus;
-        return this;
-    }
+        checkState(!kommaStehtAus || remainder != null,
+                "Es soll ein Komma ausstehen, aber ohne remainder?");
 
-    public boolean isKommaStehtAus() {
-        return kommaStehtAus;
+        if (remainder != null) {
+            remainder = remainder.mitKommaStehtAus(kommaStehtAus);
+        }
+
+        return this;
     }
 
     @Override
@@ -204,6 +153,7 @@ public class SimpleDuDescription extends AbstractFlexibleDescription<SimpleDuDes
         return true;
     }
 
+    @SuppressWarnings("ConstantConditions")
     @Override
     public boolean equals(final Object o) {
         if (this == o) {
@@ -216,15 +166,13 @@ public class SimpleDuDescription extends AbstractFlexibleDescription<SimpleDuDes
             return false;
         }
         final SimpleDuDescription that = (SimpleDuDescription) o;
-        return woertlicheRedeNochOffen == that.woertlicheRedeNochOffen &&
-                kommaStehtAus == that.kommaStehtAus &&
-                verb.equals(that.verb) &&
+        return verb.equals(that.verb) &&
                 Objects.equals(remainder, that.remainder) &&
                 Objects.equals(vorfeldSatzglied, that.vorfeldSatzglied);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(super.hashCode(), verb, remainder, vorfeldSatzglied);
+        return Objects.hash(super.hashCode(), verb, remainder);
     }
 }

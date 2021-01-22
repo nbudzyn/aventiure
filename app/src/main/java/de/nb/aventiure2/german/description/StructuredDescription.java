@@ -97,19 +97,6 @@ public class StructuredDescription extends AbstractFlexibleDescription<Structure
     }
 
     @Override
-    public Wortfolge toWortfolgeMitKonjunktionaladverbWennNoetig(
-            final String konjunktionaladverb) {
-        @Nullable final Wortfolge wortfolgeMitSpeziellemVorfeldOrNull =
-                toWortfolgeMitSpeziellemVorfeldOrNull();
-
-        if (wortfolgeMitSpeziellemVorfeldOrNull != null) {
-            return wortfolgeMitSpeziellemVorfeldOrNull;
-        }
-
-        return toWortfolgeMitVorfeld(konjunktionaladverb);
-    }
-
-    @Override
     public Wortfolge toWortfolgeMitVorfeld(final String vorfeld) {
         return Wortfolge.joinToWortfolge(satz.getVerbzweitsatzMitVorfeld(vorfeld));
     }
@@ -119,8 +106,9 @@ public class StructuredDescription extends AbstractFlexibleDescription<Structure
         return Wortfolge.joinToWortfolge(satz.getVerbzweitsatzStandard());
     }
 
+    @Override
     @Nullable
-    private Wortfolge toWortfolgeMitSpeziellemVorfeldOrNull() {
+    protected Wortfolge toWortfolgeMitSpeziellemVorfeldOrNull() {
         @Nullable final Konstituentenfolge speziellesVorfeld =
                 satz.getVerbzweitsatzMitSpeziellemVorfeldAlsWeitereOption();
         if (speziellesVorfeld == null) {
