@@ -43,6 +43,7 @@ import static de.nb.aventiure2.german.description.DescriptionBuilder.neuerSatz;
  * for the {@link World#IM_WALD_NAHE_DEM_SCHLOSS}
  * room.
  */
+@SuppressWarnings("unchecked")
 @ParametersAreNonnullByDefault
 public class ImWaldNaheDemSchlossConnectionComp extends AbstractSpatialConnectionComp {
     public ImWaldNaheDemSchlossConnectionComp(
@@ -52,18 +53,15 @@ public class ImWaldNaheDemSchlossConnectionComp extends AbstractSpatialConnectio
         super(IM_WALD_NAHE_DEM_SCHLOSS, db, timeTaker, n, world);
     }
 
+    @SuppressWarnings("unchecked")
     @Override
     public boolean isAlternativeMovementDescriptionAllowed(final GameObjectId to,
                                                            final Known newLocationKnown,
                                                            final Lichtverhaeltnisse lichtverhaeltnisseInNewLocation) {
-        if (to.equals(DRAUSSEN_VOR_DEM_SCHLOSS)
-                && ((IHasStateGO<SchlossfestState>) world.load(SCHLOSSFEST)).stateComp()
+        return !to.equals(DRAUSSEN_VOR_DEM_SCHLOSS)
+                || !((IHasStateGO<SchlossfestState>) world.load(SCHLOSSFEST)).stateComp()
                 .hasState(BEGONNEN)
-                && !world.loadSC().memoryComp().isKnown(SCHLOSSFEST)) {
-            return false;
-        }
-
-        return true;
+                || world.loadSC().memoryComp().isKnown(SCHLOSSFEST);
     }
 
     @NonNull
@@ -99,12 +97,12 @@ public class ImWaldNaheDemSchlossConnectionComp extends AbstractSpatialConnectio
     private TimedDescription<?> getDescTo_DraussenVorDemSchloss(
             final Known newLocationKnown, final Lichtverhaeltnisse lichtverhaeltnisse) {
 
-        switch (((IHasStateGO<SchlossfestState>) world.load(SCHLOSSFEST)).stateComp().getState()) {
-            case BEGONNEN:
-                return getDescTo_DraussenVorDemSchloss_FestBegonnen(mins(10));
-            default:
-                return getDescTo_DraussenVorDemSchloss_KeinFest(lichtverhaeltnisse);
+        if (((IHasStateGO<SchlossfestState>) world.load(SCHLOSSFEST)).stateComp().getState()
+                == BEGONNEN) {
+            return getDescTo_DraussenVorDemSchloss_FestBegonnen(mins(10));
         }
+
+        return getDescTo_DraussenVorDemSchloss_KeinFest(lichtverhaeltnisse);
     }
 
     @NonNull
@@ -202,6 +200,7 @@ public class ImWaldNaheDemSchlossConnectionComp extends AbstractSpatialConnectio
                 .timed(mins(25));
     }
 
+    @SuppressWarnings("unchecked")
     private <FROSCHPRINZ extends ILocatableGO & IHasStateGO<FroschprinzState>>
     boolean alleinAufDemPfadZumTurm() {
         if (((ILocatableGO) world.load(RAPUNZELS_ZAUBERIN)).locationComp()
@@ -215,12 +214,8 @@ public class ImWaldNaheDemSchlossConnectionComp extends AbstractSpatialConnectio
         }
 
         final FROSCHPRINZ froschprinz = (FROSCHPRINZ) world.load(FROSCHPRINZ);
-        if (froschprinz.stateComp().getState().hasGestalt(FroschprinzState.Gestalt.MENSCH) &&
-                froschprinz.locationComp()
-                        .hasLocation(IM_WALD_NAHE_DEM_SCHLOSS, VOR_DEM_ALTEN_TURM)) {
-            return false;
-        }
-
-        return true;
+        return !froschprinz.stateComp().getState().hasGestalt(FroschprinzState.Gestalt.MENSCH) ||
+                !froschprinz.locationComp()
+                        .hasLocation(IM_WALD_NAHE_DEM_SCHLOSS, VOR_DEM_ALTEN_TURM);
     }
 }

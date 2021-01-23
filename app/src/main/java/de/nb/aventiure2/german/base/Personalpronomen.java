@@ -5,6 +5,7 @@ import androidx.annotation.Nullable;
 import com.google.common.collect.ImmutableMap;
 
 import java.util.Map;
+import java.util.Objects;
 
 import static de.nb.aventiure2.german.base.Flexionsreihe.fr;
 import static de.nb.aventiure2.german.base.NumerusGenus.F;
@@ -73,32 +74,57 @@ public class Personalpronomen extends SubstantivischesPronomenMitVollerFlexionsr
         return requireNonNull(ohneBezugsobjekt).mitBezugsobjekt(bezugsobjekt);
     }
 
-    private Personalpronomen mitBezugsobjekt(@Nullable final IBezugsobjekt bezugsobjekt) {
-        if (bezugsobjekt == null) {
+    /**
+     * Fügt der substantivischen Phrase etwas hinzu wie "auch", "allein", "ausgerechnet",
+     * "wenigstens" etc.
+     */
+    @Override
+    public Personalpronomen ohneFokuspartikel() {
+        return (Personalpronomen) super.ohneFokuspartikel();
+    }
+
+    /**
+     * Fügt der substantivischen Phrase etwas hinzu wie "auch", "allein", "ausgerechnet",
+     * "wenigstens" etc.
+     */
+    @Override
+    public Personalpronomen mitFokuspartikel(@Nullable final String fokuspartikel) {
+        if (Objects.equals(getFokuspartikel(), fokuspartikel)) {
             return this;
         }
 
-        return new Personalpronomen(person, getNumerusGenus(), getFlexionsreihe(), bezugsobjekt);
+        return new Personalpronomen(fokuspartikel, person, getNumerusGenus(),
+                getFlexionsreihe(), getBezugsobjekt());
+    }
+
+    private Personalpronomen mitBezugsobjekt(@Nullable final IBezugsobjekt bezugsobjekt) {
+        if (Objects.equals(getBezugsobjekt(), bezugsobjekt)) {
+            return this;
+        }
+
+        return new Personalpronomen(getFokuspartikel(), person, getNumerusGenus(),
+                getFlexionsreihe(), bezugsobjekt);
     }
 
     private Personalpronomen(final Person person,
                              final NumerusGenus numerusGenus,
                              final Flexionsreihe flexionsreihe) {
-        this(person, numerusGenus, flexionsreihe, null);
+        this(null, person, numerusGenus, flexionsreihe, null);
     }
 
-    private Personalpronomen(final Person person,
+    private Personalpronomen(@Nullable final String fokuspartikel,
+                             final Person person,
                              final NumerusGenus numerusGenus,
                              final Flexionsreihe flexionsreihe,
                              @Nullable final IBezugsobjekt bezugsobjekt) {
-        super(numerusGenus, flexionsreihe,
+        super(fokuspartikel, numerusGenus, flexionsreihe,
                 person == P3 ? bezugsobjekt : null);
         this.person = person;
     }
 
     @Override
     public Personalpronomen persPron() {
-        return this;
+        return ohneFokuspartikel();
     }
 
     @Override
@@ -125,7 +151,7 @@ public class Personalpronomen extends SubstantivischesPronomenMitVollerFlexionsr
 
     @Override
     public boolean isUnbetontesPronomen() {
-        return true;
+        return getFokuspartikel() == null;
     }
 
     @Override

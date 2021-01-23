@@ -1,6 +1,5 @@
 package de.nb.aventiure2.data.world.syscomp.movement;
 
-import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.room.Embedded;
 import androidx.room.Entity;
@@ -15,6 +14,7 @@ import static de.nb.aventiure2.data.world.syscomp.movement.MovementPCD.PauseForS
  * Mutable - and therefore persistent - data of the {@link MovementPCD} component.
  */
 @Entity
+@SuppressWarnings("unused")
 public class MovementPCD extends AbstractPersistentComponentData {
     /**
      * Ob eine Pause eingelegt wurde, damit der SC mit dem
@@ -45,18 +45,28 @@ public class MovementPCD extends AbstractPersistentComponentData {
 
     private PauseForSCAction pauseForSCAction;
 
+    /**
+     * Ob das GO den SC gerade verlassen hat.
+     */
+    private boolean hatDenSCGeradeVerlassen;
+
     @Ignore
-    MovementPCD(@NonNull final GameObjectId gameObjectId,
+    MovementPCD(final GameObjectId gameObjectId,
                 @Nullable final GameObjectId targetLocationId) {
-        this(gameObjectId, targetLocationId, null);
+        this(gameObjectId, targetLocationId, null, UNPAUSED, false);
     }
 
-    MovementPCD(@NonNull final GameObjectId gameObjectId,
-                @Nullable final GameObjectId targetLocationId,
-                @Nullable final MovementStep currentStep) {
+    @SuppressWarnings("WeakerAccess")
+    public MovementPCD(final GameObjectId gameObjectId,
+                       @Nullable final GameObjectId targetLocationId,
+                       @Nullable final MovementStep currentStep,
+                       final PauseForSCAction pauseForSCAction,
+                       final boolean hatDenSCGeradeVerlassen) {
         super(gameObjectId);
         this.targetLocationId = targetLocationId;
         this.currentStep = currentStep;
+        this.pauseForSCAction = pauseForSCAction;
+        this.hatDenSCGeradeVerlassen = hatDenSCGeradeVerlassen;
     }
 
     /**
@@ -66,6 +76,7 @@ public class MovementPCD extends AbstractPersistentComponentData {
         setTargetLocationId(null);
         setCurrentStep(null);
         setPauseForSCAction(UNPAUSED);
+        setHatDenSCGeradeVerlassen(false);
     }
 
     @Nullable
@@ -95,5 +106,18 @@ public class MovementPCD extends AbstractPersistentComponentData {
 
     PauseForSCAction getPauseForSCAction() {
         return pauseForSCAction;
+    }
+
+    void setHatDenSCGeradeVerlassen(final boolean hatDenSCGeradeVerlassen) {
+        if (this.hatDenSCGeradeVerlassen == hatDenSCGeradeVerlassen) {
+            return;
+        }
+
+        setChanged();
+        this.hatDenSCGeradeVerlassen = hatDenSCGeradeVerlassen;
+    }
+
+    boolean isHatDenSCGeradeVerlassen() {
+        return hatDenSCGeradeVerlassen;
     }
 }

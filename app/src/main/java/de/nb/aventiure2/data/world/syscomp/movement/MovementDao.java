@@ -1,5 +1,6 @@
 package de.nb.aventiure2.data.world.syscomp.movement;
 
+import androidx.annotation.Nullable;
 import androidx.room.Dao;
 import androidx.room.Insert;
 import androidx.room.OnConflictStrategy;
@@ -25,4 +26,9 @@ public abstract class MovementDao implements IComponentDao<MovementPCD> {
     @Override
     @Query("SELECT * from MovementPCD where :gameObjectId = gameObjectId")
     public abstract MovementPCD get(GameObjectId gameObjectId);
+
+    @Query("SELECT gameObjectId from MovementPCD where hatDenSCGeradeVerlassen = 1 and toId = "
+            + ":toId")
+    @Nullable
+    abstract GameObjectId findWerDenSCGeradeVerlassenHat(GameObjectId toId);
 }

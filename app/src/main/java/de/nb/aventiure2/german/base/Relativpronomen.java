@@ -24,7 +24,6 @@ public class Relativpronomen extends SubstantivischesPronomenMitVollerFlexionsre
         WERWAS
     }
 
-
     private static final ImmutableMap<Typ,
             ImmutableMap<Person, ImmutableMap<NumerusGenus, Relativpronomen>>>
             ALL;
@@ -172,6 +171,15 @@ public class Relativpronomen extends SubstantivischesPronomenMitVollerFlexionsre
                             @Nullable final IBezugsobjekt bezugsobjekt) {
         super(numerusGenus, flexionsreihe, bezugsobjekt);
         this.person = person;
+    }
+
+    /**
+     * Die Fokuspartikel wird verworfen. Relativpronomen können wohl keine
+     * Fokuspartikeln haben.
+     */
+    @Override
+    public Relativpronomen mitFokuspartikel(@Nullable final String fokuspartikel) {
+        return this;
     }
 
     private Relativpronomen mitBezugsobjekt(@Nullable final IBezugsobjekt bezugsobjekt) {

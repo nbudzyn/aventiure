@@ -268,8 +268,8 @@ public class DescriptionUmformulierer {
     }
 
     @CheckReturnValue
-    private static Collection<TextDescription> mitPraefixCap(final String praefix,
-                                                             final AbstractDescription<?> desc) {
+    public static Collection<TextDescription> mitPraefixCap(final String praefix,
+                                                            final AbstractDescription<?> desc) {
         return desc.altTextDescriptions().stream()
                 .map(d -> d.mitPraefixCapitalize(praefix + " ").beginntZumindestSentence())
                 .collect(Collectors.toSet());

@@ -4,6 +4,7 @@ import androidx.annotation.Nullable;
 
 import java.util.Objects;
 
+import static com.google.common.base.Preconditions.checkArgument;
 import static de.nb.aventiure2.german.base.Kasus.AKK;
 import static de.nb.aventiure2.german.base.Kasus.DAT;
 import static de.nb.aventiure2.german.base.Kasus.NOM;
@@ -16,6 +17,12 @@ import static de.nb.aventiure2.german.base.Person.P3;
  */
 public abstract class SubstantivischePhrase
         implements DeklinierbarePhrase, SubstPhrOderReflexivpronomen, Praedikativum {
+    /**
+     * Etwas hinzu wie "auch", "allein", "ausgerechnet", "wenigstens" etc.
+     */
+    @Nullable
+    private final String fokuspartikel;
+
     private final NumerusGenus numerusGenus;
 
     /**
@@ -27,9 +34,38 @@ public abstract class SubstantivischePhrase
 
     public SubstantivischePhrase(final NumerusGenus numerusGenus,
                                  @Nullable final IBezugsobjekt bezugsobjekt) {
+        this(null, numerusGenus, bezugsobjekt);
+    }
+
+    public SubstantivischePhrase(@Nullable final String fokuspartikel,
+                                 final NumerusGenus numerusGenus,
+                                 @Nullable final IBezugsobjekt bezugsobjekt) {
+        checkArgument(fokuspartikel == null || !fokuspartikel.isEmpty(),
+                "Fokuspartikel ist Leerstring");
+
+        this.fokuspartikel = fokuspartikel;
         this.numerusGenus = numerusGenus;
         this.bezugsobjekt = bezugsobjekt;
     }
+
+    /**
+     * Gibt diese substantivischen Phrase ohne Fokuspartikel zurück
+     */
+    @Override
+    public SubstantivischePhrase ohneFokuspartikel() {
+        if (fokuspartikel == null) {
+            return this;
+        }
+
+        return mitFokuspartikel(null);
+    }
+
+    /**
+     * Fügt der substantivischen Phrase etwas hinzu wie "auch", "allein", "ausgerechnet",
+     * "wenigstens" etc. (sofern die Phrase eine Fokuspartikel erlaubt, ansonsten
+     * wird die Partikel verworfen)
+     */
+    public abstract SubstantivischePhrase mitFokuspartikel(@Nullable final String fokuspartikel);
 
     @Override
     public Konstituentenfolge getPraedikativ(final Person person, final Numerus numerus) {
@@ -143,6 +179,12 @@ public abstract class SubstantivischePhrase
 
     @Override
     @Nullable
+    public String getFokuspartikel() {
+        return fokuspartikel;
+    }
+
+    @Override
+    @Nullable
     public IBezugsobjekt getBezugsobjekt() {
         return bezugsobjekt;
     }
@@ -166,11 +208,13 @@ public abstract class SubstantivischePhrase
             return false;
         }
         final SubstantivischePhrase that = (SubstantivischePhrase) o;
-        return numerusGenus == that.numerusGenus;
+        return Objects.equals(fokuspartikel, that.fokuspartikel) &&
+                numerusGenus == that.numerusGenus &&
+                Objects.equals(bezugsobjekt, that.bezugsobjekt);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(numerusGenus);
+        return Objects.hash(fokuspartikel, numerusGenus, bezugsobjekt);
     }
 }

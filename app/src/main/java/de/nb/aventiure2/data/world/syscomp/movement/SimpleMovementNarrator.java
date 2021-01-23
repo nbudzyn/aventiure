@@ -13,10 +13,14 @@ import de.nb.aventiure2.data.world.syscomp.description.IDescribableGO;
 import de.nb.aventiure2.data.world.syscomp.spatialconnection.ISpatiallyConnectedGO;
 import de.nb.aventiure2.data.world.syscomp.spatialconnection.NumberOfWays;
 import de.nb.aventiure2.data.world.syscomp.storingplace.ILocationGO;
+import de.nb.aventiure2.german.base.GermanUtil;
 import de.nb.aventiure2.german.base.Nominalphrase;
-import de.nb.aventiure2.german.base.Personalpronomen;
 import de.nb.aventiure2.german.base.SubstantivischePhrase;
+import de.nb.aventiure2.german.description.AbstractFlexibleDescription;
 import de.nb.aventiure2.german.description.AltDescriptionsBuilder;
+import de.nb.aventiure2.german.description.DescriptionUmformulierer;
+import de.nb.aventiure2.german.description.StructuredDescription;
+import de.nb.aventiure2.german.description.TimedDescription;
 
 import static de.nb.aventiure2.data.time.AvTimeSpan.NO_TIME;
 import static de.nb.aventiure2.data.world.syscomp.memory.Action.Type.BEWEGEN;
@@ -25,6 +29,7 @@ import static de.nb.aventiure2.data.world.syscomp.spatialconnection.NumberOfWays
 import static de.nb.aventiure2.german.base.StructuralElement.PARAGRAPH;
 import static de.nb.aventiure2.german.base.StructuralElement.SENTENCE;
 import static de.nb.aventiure2.german.description.AltDescriptionsBuilder.alt;
+import static de.nb.aventiure2.german.description.AltDescriptionsBuilder.altNeueSaetze;
 import static de.nb.aventiure2.german.description.DescriptionBuilder.du;
 import static de.nb.aventiure2.german.description.DescriptionBuilder.neuerSatz;
 
@@ -51,6 +56,67 @@ public class SimpleMovementNarrator implements IMovementNarrator {
         this.n = n;
         this.world = world;
         this.eherGross = eherGross;
+    }
+
+    @Override
+    public void narrateScFolgtMovingGO(final TimedDescription<?> normalDesc) {
+        final SubstantivischePhrase anaph = anaph(true);
+        final AltDescriptionsBuilder alt = alt();
+
+        // Wir verwenden hier bewusst kein du(FOLGEN.mit(anaph)). Das Problem ist:
+        // Wir wollen Ergebnisse wir "Der Frau gefolgt nimmst du den Pfad...".
+        // Das Problem daran ist offenbar, dass "Der Frau gefolgt" (oder
+        // "Der Frau hinterhergegangen" etc.) einen Nachzustand beschreibt, der bei
+        // dem folgenden Text ("nimmst du den Pfad" o.Ä.) noch nicht erreicht ist.
+        // Letztlich beschreiben "Der Frau folgen" und "Du nimmst den Pfad..."
+        // ja dasselbe.
+        // Möglich wäre etwas wie "Der Frau gefolgt bis da schnell auf dem Hügel" o.Ä. -
+        // aber wir können hier ja nicht die normalDesc inhaltlich ändern.
+        alt.add(du("folgst", anaph.datK()).undWartest(),
+                du("folgst", anaph.datK(), "nach"),
+                du("gehst", anaph.datK(), "hinterher").undWartest(),
+                du("gehst", anaph.datK(), "hinterher:"),
+                du("läufst", anaph.datK(), "hinterher"),
+                du("gehst", anaph.datK(), "nach"),
+                du("machst", "es wie", anaph.nomK()).undWartest(),
+                du("willst", "da besser schnell hinterher")
+                        .mitVorfeldSatzglied("da")
+        );
+
+        alt.addAll(DescriptionUmformulierer.mitPraefixCap(
+                GermanUtil.joinToString("Schnell", anaph.datStr(), "hinterher!"),
+                normalDesc.getDescription()));
+        alt.addAll(DescriptionUmformulierer.mitPraefixCap(
+                GermanUtil.joinToString("Schnell", anaph.datStr(), "gefolgt!"),
+                normalDesc.getDescription()));
+
+        if (normalDesc.getDescription() instanceof AbstractFlexibleDescription<?>) {
+            final AbstractFlexibleDescription<?> fDesc =
+                    (AbstractFlexibleDescription<?>) normalDesc.getDescription();
+            if (fDesc.hasSubjektDu()) {
+                alt.add(
+                        fDesc.toTextDescriptionMitVorfeld(anaph.datStr() + " hinterher")
+                                .beginntZumindestSentence(),
+                        fDesc.toTextDescriptionMitVorfeld(anaph.datStr() + " folgend")
+                                .beginntZumindestSentence()
+                );
+
+                if (normalDesc.getDescription() instanceof StructuredDescription) {
+                    final StructuredDescription sDesc =
+                            (StructuredDescription) normalDesc.getDescription();
+                    alt.addAll(
+                            // "auch du..."
+                            altNeueSaetze(sDesc.getSatz().mitSubjektFokuspartikel("auch")
+                                    .altVerzweitsaetze())
+                    );
+                }
+            }
+        }
+
+        n.narrateAlt(alt, normalDesc.getTimeElapsed());
+
+        // FIXME Wenn man zum Turm zurückkommt, wo man die Frau zuletzt gesehen hat:
+        //  "Die Frau ist nicht mehr da"
     }
 
     @Override
@@ -116,7 +182,7 @@ public class SimpleMovementNarrator implements IMovementNarrator {
                         .mitVorfeldSatzglied("dabei")
                         .beendet(SENTENCE),
                 du("gehst",
-                        "dabei mit schnellen Schritten an", desc.datStr(), "vorüber")
+                        "dabei mit schnellen Schritten an", desc.datK(), "vorüber")
                         .mitVorfeldSatzglied("dabei")
                         .beendet(SENTENCE)
         );
@@ -133,21 +199,20 @@ public class SimpleMovementNarrator implements IMovementNarrator {
     @Override
     public void narrateScGehtMovingGOEntgegenUndLaesstEsHinterSich() {
         final Nominalphrase desc = getDescription();
-        final SubstantivischePhrase anaphOderDesc =
-                anaph(false);
+        final SubstantivischePhrase anaph = anaph(false);
 
         final AltDescriptionsBuilder alt = alt();
 
-        alt.add(neuerSatz(anaphOderDesc.nomK(),
+        alt.add(neuerSatz(anaph.nomK(),
                 "kommt dir entgegen und geht an dir vorbei"));
         alt.add(
                 neuerSatz(PARAGRAPH,
-                        anaphOderDesc.nomK(),
+                        anaph.nomK(),
                         "kommt auf dich zu und geht an dir vorbei")
                         .beendet(PARAGRAPH));
         alt.add(
                 neuerSatz(PARAGRAPH,
-                        anaphOderDesc.nomK(),
+                        anaph.nomK(),
                         "kommt auf dich zu und läuft vorbei")
                         .beendet(PARAGRAPH));
 
@@ -176,14 +241,12 @@ public class SimpleMovementNarrator implements IMovementNarrator {
             final ILocationGO to,
             @Nullable final SpatialConnection spatialConnection,
             final NumberOfWays numberOfWaysOut) {
-        narrateLeaves(from, to, spatialConnection, numberOfWaysOut);
+        narrateLeaves(spatialConnection, numberOfWaysOut);
 
         world.loadSC().memoryComp().upgradeKnown(gameObjectId);
     }
 
-    private <FROM extends ILocationGO & ISpatiallyConnectedGO>
-    void narrateLeaves(
-            final FROM from, final ILocationGO to,
+    private void narrateLeaves(
             @Nullable final SpatialConnection spatialConnection,
             final NumberOfWays numberOfWaysOut) {
         @Nullable final ILocationGO scLastLocation = loadSC().locationComp().getLastLocation();
@@ -191,35 +254,31 @@ public class SimpleMovementNarrator implements IMovementNarrator {
         if (spatialConnection != null &&
                 world.isOrHasRecursiveLocation(scLastLocation, spatialConnection.getTo())) {
             narrateMovingGOKommtSCEntgegenUndGehtAnSCVorbei(
-                    from, to, spatialConnection);
+            );
             return;
         }
 
-        narrateGehtWeg(from, to, spatialConnection, numberOfWaysOut);
+        narrateGehtWeg(spatialConnection, numberOfWaysOut);
     }
 
-    private <FROM extends ILocationGO & ISpatiallyConnectedGO>
-    void narrateMovingGOKommtSCEntgegenUndGehtAnSCVorbei(
-            final FROM from, final ILocationGO to,
-            @Nullable final SpatialConnection spatialConnection) {
+    private void narrateMovingGOKommtSCEntgegenUndGehtAnSCVorbei() {
         final Nominalphrase desc = getDescription();
-        final SubstantivischePhrase anaphOderDesc =
-                anaph(false);
+        final SubstantivischePhrase anaph = anaph(false);
 
         final AltDescriptionsBuilder alt = alt();
 
         alt.add(neuerSatz(PARAGRAPH,
-                anaphOderDesc.nomK(),
+                anaph.nomK(),
                 "kommt dir entgegen und geht an dir vorbei"));
         alt.add(neuerSatz(PARAGRAPH,
-                anaphOderDesc.nomK(),
+                anaph.nomK(),
                 "kommt dir entgegen und geht an dir vorbei"));
         alt.add(neuerSatz(PARAGRAPH,
-                anaphOderDesc.nomK(),
+                anaph.nomK(),
                 "kommt auf dich zu und geht an dir vorbei")
                 .beendet(PARAGRAPH));
         alt.add(neuerSatz(PARAGRAPH,
-                anaphOderDesc.nomK(),
+                anaph.nomK(),
                 "kommt auf dich zu und läuft vorbei")
                 .beendet(PARAGRAPH));
 
@@ -240,9 +299,7 @@ public class SimpleMovementNarrator implements IMovementNarrator {
         n.narrateAlt(alt, NO_TIME);
     }
 
-    private <FROM extends ILocationGO & ISpatiallyConnectedGO>
-    void narrateGehtWeg(
-            final FROM from, final ILocationGO to,
+    private void narrateGehtWeg(
             @Nullable final SpatialConnection spatialConnection,
             final NumberOfWays numberOfWaysOut) {
         final SubstantivischePhrase anaph = anaph(false);
@@ -310,8 +367,6 @@ public class SimpleMovementNarrator implements IMovementNarrator {
 
             if (World.isOrHasRecursiveLocation(scLastLocation, from)) {
                 narrateMovingGOKommtSCNach(
-                        from,
-                        to,
                         spatialConnection, numberOfWaysIn);
                 return;
             }
@@ -326,45 +381,42 @@ public class SimpleMovementNarrator implements IMovementNarrator {
         }
 
         // Default
-        narrateKommtGegangen(from, to, spatialConnection, numberOfWaysIn);
+        narrateKommtGegangen(spatialConnection, numberOfWaysIn);
     }
 
-    private <FROM extends ILocationGO & ISpatiallyConnectedGO>
-    void narrateMovingGOKommtSCNach(
-            final FROM from, final ILocationGO to,
+    private void narrateMovingGOKommtSCNach(
             @Nullable final SpatialConnection spatialConnection,
             final NumberOfWays numberOfWaysIn) {
         final Nominalphrase desc = getDescription();
-        final SubstantivischePhrase anaphOderDesc =
-                anaph(false);
+        final SubstantivischePhrase anaph = anaph(false);
 
         final String wo = calcWoIfNecessary(spatialConnection, numberOfWaysIn);
 
         final AltDescriptionsBuilder alt = alt();
 
         alt.add(neuerSatz(PARAGRAPH,
-                anaphOderDesc.nomK(),
+                anaph.nomK(),
                 "kommt dir",
                 wo,
                 "hinterher")
                 .beendet(PARAGRAPH));
         alt.add(neuerSatz(PARAGRAPH,
-                anaphOderDesc.nomK(),
+                anaph.nomK(),
                 "kommt dir hinterher")
                 .beendet(PARAGRAPH));
         alt.add(
                 neuerSatz(PARAGRAPH,
-                        anaphOderDesc.nomK(),
+                        anaph.nomK(),
                         "kommt hinter dir her")
                         .beendet(PARAGRAPH));
         alt.add(
                 neuerSatz(PARAGRAPH,
-                        anaphOderDesc.nomK(),
+                        anaph.nomK(),
                         "kommt dir hinterhergegangen")
                         .beendet(PARAGRAPH));
         alt.add(
                 neuerSatz(PARAGRAPH,
-                        anaphOderDesc.nomK(),
+                        anaph.nomK(),
                         "ist dir nachgekommen")
                         .beendet(PARAGRAPH));
 
@@ -389,8 +441,7 @@ public class SimpleMovementNarrator implements IMovementNarrator {
             final NumberOfWays numberOfWaysIn) {
         if (numberOfWaysIn == ONE_IN_ONE_OUT) {
             narrateMovingGOKommtScEntgegen_esVerstehtSichVonSelbstVonWo(
-                    scFrom, to, movingGOFrom,
-                    spatialConnectionMovingGO);
+            );
             return;
         }
 
@@ -398,12 +449,7 @@ public class SimpleMovementNarrator implements IMovementNarrator {
                 scFrom, to, movingGOFrom, spatialConnectionMovingGO);
     }
 
-    private <FROM extends ILocationGO & ISpatiallyConnectedGO>
-    void narrateMovingGOKommtScEntgegen_esVerstehtSichVonSelbstVonWo(
-            @Nullable final ILocationGO scFrom,
-            final ILocationGO to,
-            final FROM movingGOFrom,
-            @Nullable final SpatialConnection spatialConnectionMovingGO) {
+    private void narrateMovingGOKommtScEntgegen_esVerstehtSichVonSelbstVonWo() {
         final Nominalphrase desc = getDescription();
 
         final AltDescriptionsBuilder alt = alt();
@@ -422,17 +468,16 @@ public class SimpleMovementNarrator implements IMovementNarrator {
             final FROM movingGOFrom,
             @Nullable final SpatialConnection spatialConnectionMovingGO) {
         final Nominalphrase desc = getDescription();
-        final SubstantivischePhrase anaphOderDesc =
-                anaph(false);
+        final SubstantivischePhrase anaph = anaph(false);
 
         final AltDescriptionsBuilder alt = alt();
 
-        alt.add(neuerSatz(anaphOderDesc.nomK(),
+        alt.add(neuerSatz(anaph.nomK(),
                 "kommt daher")
                 .beendet(PARAGRAPH));
 
         if (spatialConnectionMovingGO != null) {
-            alt.add(neuerSatz(anaphOderDesc.nomK(),
+            alt.add(neuerSatz(anaph.nomK(),
                     "kommt",
                     spatialConnectionMovingGO.getWo(), // "auf dem Pfad "
                     "daher")
@@ -464,9 +509,7 @@ public class SimpleMovementNarrator implements IMovementNarrator {
         n.narrateAlt(alt, NO_TIME);
     }
 
-    private <FROM extends ILocationGO & ISpatiallyConnectedGO>
-    void narrateKommtGegangen(
-            final FROM from, final ILocationGO to,
+    private void narrateKommtGegangen(
             @Nullable final SpatialConnection spatialConnection,
             final NumberOfWays numberOfWaysIn) {
         final Nominalphrase desc = getDescription();
@@ -510,24 +553,6 @@ public class SimpleMovementNarrator implements IMovementNarrator {
     /**
      * Gibt das Personalpronomen zurück, mit dem ein
      * anaphorischer Bezug auf dieses
-     * Game Object möglich ist - wenn das nicht möglich ist, dann eine kurze
-     * Beschreibung des Game Objects.
-     * <br/>
-     * Es muss sich um eine {@link IDescribableGO} handeln!
-     * <br/>
-     * Beispiel 1: "Du hebst die Lampe auf..." - jetzt ist ein anaphorischer Bezug
-     * auf die Lampe möglich und diese Methode gibt "sie" zurück.
-     * <br/>
-     * Beispiel 2: "Du zündest das Feuer an..." - jetzt ist <i>kein</i> anaphorischer Bezug
-     * auf die Lampe möglich und diese Methode gibt "die Lampe" zurück.
-     */
-    protected final SubstantivischePhrase getAnaphPersPronWennMglSonstShortDescription() {
-        return anaph(true);
-    }
-
-    /**
-     * Gibt das Personalpronomen zurück, mit dem ein
-     * anaphorischer Bezug auf dieses
      * Game Object möglich ist - wenn das nicht möglich ist, dann eine
      * Beschreibung des Game Objects.
      * <br/>
@@ -540,13 +565,7 @@ public class SimpleMovementNarrator implements IMovementNarrator {
     protected final SubstantivischePhrase anaph(final boolean descShortIfKnown) {
         final IDescribableGO describableGO = (IDescribableGO) world.load(getGameObjectId());
 
-        @Nullable final Personalpronomen anaphPersPron =
-                n.getAnaphPersPronWennMgl(describableGO);
-        if (anaphPersPron != null) {
-            return anaphPersPron;
-        }
-
-        return world.getDescription(describableGO, descShortIfKnown);
+        return world.anaph(describableGO, descShortIfKnown);
     }
 
     /**

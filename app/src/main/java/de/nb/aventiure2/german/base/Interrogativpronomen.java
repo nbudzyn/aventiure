@@ -1,5 +1,7 @@
 package de.nb.aventiure2.german.base;
 
+import androidx.annotation.Nullable;
+
 import static de.nb.aventiure2.german.base.Flexionsreihe.fr;
 import static de.nb.aventiure2.german.base.NumerusGenus.M;
 import static de.nb.aventiure2.german.base.NumerusGenus.N;
@@ -19,6 +21,16 @@ public class Interrogativpronomen extends SubstantivischesPronomenMitVollerFlexi
     private Interrogativpronomen(final NumerusGenus numerusGenus,
                                  final Flexionsreihe flextionsreihe) {
         super(numerusGenus, flextionsreihe, null);
+    }
+
+    /**
+     * Die Fokuspartikel wird verworfen. Interrogativpronomen können wohl keine
+     * Fokuspartikeln haben.
+     */
+    @Override
+    public Interrogativpronomen mitFokuspartikel(
+            @Nullable final String fokuspartikel) {
+        return this;
     }
 
     @Override

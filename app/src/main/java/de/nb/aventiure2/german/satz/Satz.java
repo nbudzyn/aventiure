@@ -95,9 +95,19 @@ public class Satz {
         this.angabensatz = angabensatz;
     }
 
-
     public Satz mitAnschlusswort(@Nullable final String anschlusswort) {
         return new Satz(anschlusswort, subjekt, praedikat, angabensatz);
+    }
+
+    /**
+     * Fügt dem Subjekt etwas hinzu wie "auch", "allein", "ausgerechnet",
+     * "wenigstens" etc. (sofern das Subjekt eine Fokuspartikel erlaubt, ansonsten
+     * wird sie verworfen)
+     */
+    public Satz mitSubjektFokuspartikel(
+            @Nullable final String subjektFokuspartikel) {
+        return new Satz(anschlusswort, subjekt.mitFokuspartikel(subjektFokuspartikel),
+                praedikat, angabensatz);
     }
 
     public Satz mitModalpartikeln(final Modalpartikel... modalpartikeln) {

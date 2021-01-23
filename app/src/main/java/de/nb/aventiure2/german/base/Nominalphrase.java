@@ -2,6 +2,8 @@ package de.nb.aventiure2.german.base;
 
 import androidx.annotation.Nullable;
 
+import java.util.Objects;
+
 import static de.nb.aventiure2.german.base.Artikel.Typ.DEF;
 import static de.nb.aventiure2.german.base.Artikel.Typ.INDEF;
 import static de.nb.aventiure2.german.base.Flexionsreihe.fr;
@@ -125,14 +127,36 @@ public class Nominalphrase
                          @Nullable final Artikel.Typ artikelTyp,
                          final Flexionsreihe flexionsreiheArtikellos,
                          @Nullable final IBezugsobjekt bezugsobjekt) {
-        super(numerusGenus, bezugsobjekt);
+        this(null, numerusGenus, artikelTyp, flexionsreiheArtikellos, bezugsobjekt);
+    }
+
+    private Nominalphrase(final @Nullable String fokuspartikel,
+                          final NumerusGenus numerusGenus,
+                          @Nullable final Artikel.Typ artikelTyp,
+                          final Flexionsreihe flexionsreiheArtikellos,
+                          @Nullable final IBezugsobjekt bezugsobjekt) {
+        super(fokuspartikel, numerusGenus, bezugsobjekt);
         this.artikelTyp = artikelTyp;
         this.flexionsreiheArtikellos = flexionsreiheArtikellos;
     }
 
+    /**
+     * Fügt der substantivischen Phrase etwas hinzu wie "auch", "allein", "ausgerechnet",
+     * "wenigstens" etc.
+     */
+    @Override
+    public Nominalphrase mitFokuspartikel(@Nullable final String fokuspartikel) {
+        if (Objects.equals(getFokuspartikel(), fokuspartikel)) {
+            return this;
+        }
+
+        return new Nominalphrase(fokuspartikel, getNumerusGenus(), artikelTyp,
+                flexionsreiheArtikellos, getBezugsobjekt());
+    }
+
     @Override
     public boolean erlaubtVerschmelzungVonPraepositionMitArtikel() {
-        if (artikelTyp == null) {
+        if (artikelTyp == null || getFokuspartikel() != null) {
             return false;
         }
 
@@ -143,38 +167,37 @@ public class Nominalphrase
     public String nomStr() {
         @Nullable final Artikel artikel = getArtikel();
 
-        if (artikel == null) {
-            return flexionsreiheArtikellos.nom();
-        }
-
-        return joinToString(artikel.nomStr(), flexionsreiheArtikellos.nom());
+        return joinToString(
+                getFokuspartikel(),
+                artikel != null ? artikel.nomStr() : null,
+                flexionsreiheArtikellos.nom());
     }
 
     @Override
     public String datStr() {
         @Nullable final Artikel artikel = getArtikel();
 
-        if (artikel == null) {
-            return artikellosDatStr();
-        }
-
-        return joinToString(artikel.datStr(), flexionsreiheArtikellos.dat());
+        return joinToString(
+                getFokuspartikel(),
+                artikel != null ? artikel.datStr() : null,
+                flexionsreiheArtikellos.dat());
     }
 
     @Override
     public String artikellosDatStr() {
-        return flexionsreiheArtikellos.dat();
+        return joinToString(
+                getFokuspartikel(),
+                flexionsreiheArtikellos.dat());
     }
 
     @Override
     public String akkStr() {
         @Nullable final Artikel artikel = getArtikel();
 
-        if (artikel == null) {
-            return flexionsreiheArtikellos.akk();
-        }
-
-        return joinToString(artikel.akkStr(), flexionsreiheArtikellos.akk());
+        return joinToString(
+                getFokuspartikel(),
+                artikel != null ? artikel.akkStr() : null,
+                flexionsreiheArtikellos.akk());
     }
 
     @Nullable
@@ -210,5 +233,26 @@ public class Nominalphrase
     @Override
     public Person getPerson() {
         return P3;
+    }
+
+    @Override
+    public boolean equals(final Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        if (!super.equals(o)) {
+            return false;
+        }
+        final Nominalphrase that = (Nominalphrase) o;
+        return artikelTyp == that.artikelTyp &&
+                flexionsreiheArtikellos.equals(that.flexionsreiheArtikellos);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(super.hashCode(), artikelTyp, flexionsreiheArtikellos);
     }
 }

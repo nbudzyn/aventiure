@@ -27,6 +27,7 @@ import de.nb.aventiure2.data.world.syscomp.feelings.FeelingIntensity;
 import de.nb.aventiure2.data.world.syscomp.feelings.Mood;
 import de.nb.aventiure2.data.world.syscomp.location.ILocatableGO;
 import de.nb.aventiure2.data.world.syscomp.memory.Action;
+import de.nb.aventiure2.data.world.syscomp.movement.IMovingGO;
 import de.nb.aventiure2.data.world.syscomp.spatialconnection.ISpatiallyConnectedGO;
 import de.nb.aventiure2.data.world.syscomp.spatialconnection.NumberOfWays;
 import de.nb.aventiure2.data.world.syscomp.state.IHasStateGO;
@@ -435,83 +436,113 @@ public class BewegenAction<LOC_DESC extends ILocatableGO & IDescribableGO>
         //  noch einmal. Um sicher zu
         //  gehen... noch einmal. Du gehst SOGAR noch einmal...
 
-        final TimedDescription<?> description = getNormalDescription(
+        final TimedDescription<?> timedDescription = getNormalDescription(
                 to.storingPlaceComp().getLichtverhaeltnisse());
 
-        if (description.getDescription() instanceof AbstractFlexibleDescription &&
-                ((AbstractFlexibleDescription<?>) description.getDescription()).hasSubjektDu() &&
-                n.allowsAdditionalDuSatzreihengliedOhneSubjekt() &&
-                isDefinitivDiskontinuitaet()) {
-            final AltTimedDescriptionsBuilder alt = altTimed();
-
-            final TextDescription descriptionSatzanschlussOhneSubjekt =
-                    ((AbstractFlexibleDescription<?>) description.getDescription())
-                            .toTextDescriptionSatzanschlussOhneSubjekt();
-            alt.add(descriptionSatzanschlussOhneSubjekt.mitPraefix(", besinnst dich aber und ")
-                    .timed(description.getTimeElapsed()));
-
-            alt.addAll(drueckeAusTimed(DISKONTINUITAET, description));
-            n.narrateAlt(alt);
+        @Nullable final IMovingGO wemDerSCFolgt = getWemDerSCFolgt(to);
+        if (wemDerSCFolgt != null) {
+            wemDerSCFolgt.movementComp().narrateScFolgtMovingGO(timedDescription);
             return;
         }
 
-        if (description.getStartsNew() == WORD &&
+        if (timedDescription.getDescription() instanceof AbstractFlexibleDescription &&
+                ((AbstractFlexibleDescription<?>) timedDescription.getDescription()).hasSubjektDu()
+                &&
                 n.allowsAdditionalDuSatzreihengliedOhneSubjekt() &&
-                description.getDescription() instanceof AbstractFlexibleDescription) {
-            n.narrate(description);
+                isDefinitivDiskontinuitaet()) {
+            final AbstractFlexibleDescription<?> fDescription =
+                    (AbstractFlexibleDescription<?>) timedDescription.getDescription();
+            narrateDiskontinuitaetDuSatzanschluss(timedDescription, fDescription);
+            return;
+        }
+
+        if (timedDescription.getStartsNew() == WORD &&
+                n.allowsAdditionalDuSatzreihengliedOhneSubjekt() &&
+                timedDescription.getDescription() instanceof AbstractFlexibleDescription) {
+            n.narrate(timedDescription);
             return;
         }
 
         if (isDefinitivDiskontinuitaet()) {
-            final AltTimedDescriptionsBuilder alt = altTimed();
-
-            if (numberOfWays == ONLY_WAY) {
-                alt.addAll(description.getDescription().altTextDescriptions().stream()
-                        .map(d -> d.mitPraefix("dich nur kurz um, dann ")
-                                .timed(description.getTimeElapsed()))
-                        .collect(Collectors.toSet()));
-            } else {
-                alt.addAll(description.getDescription().altTextDescriptions().stream()
-                        .map(d -> d.mitPraefixCapitalize(
-                                "Was willst du hier eigentlich? ")
-                                .beginntZumindestParagraph()
-                                .timed(description.getTimeElapsed()))
-                        .collect(Collectors.toSet()));
-                alt.addAll(drueckeAusTimed(DISKONTINUITAET, description));
-            }
-            n.narrateAlt(alt);
+            narrateDiskontinuitaet(timedDescription);
             return;
         }
 
+        narrateLastActionBewegen(timedDescription);
+    }
+
+    @Nullable
+    private IMovingGO getWemDerSCFolgt(final ILocationGO to) {
+        @Nullable final IMovingGO hatDenSCGeradeInDieRichtungVerlassen =
+                world.loadWerDenSCGeradeVerlassenHat(to.getId());
+        if (hatDenSCGeradeInDieRichtungVerlassen == null
+                || !sc.memoryComp().isKnown(hatDenSCGeradeInDieRichtungVerlassen)) {
+            return null;
+        }
+
+        return hatDenSCGeradeInDieRichtungVerlassen;
+    }
+
+    private void narrateDiskontinuitaetDuSatzanschluss(final TimedDescription<?> description,
+                                                       final AbstractFlexibleDescription<?> fDesc) {
+        final TextDescription descriptionSatzanschlussOhneSubjekt =
+                fDesc.toTextDescriptionSatzanschlussOhneSubjekt();
+
+        final AltTimedDescriptionsBuilder alt = altTimed();
+        alt.add(descriptionSatzanschlussOhneSubjekt.mitPraefix(", besinnst dich aber und ")
+                .timed(description.getTimeElapsed()));
+        alt.addAll(drueckeAusTimed(DISKONTINUITAET, description));
+        n.narrateAlt(alt);
+    }
+
+    private void narrateDiskontinuitaet(final TimedDescription<?> timedDescription) {
+        final AltTimedDescriptionsBuilder alt = altTimed();
+
+        if (numberOfWays == ONLY_WAY) {
+            alt.addAll(timedDescription.getDescription().altTextDescriptions().stream()
+                    .map(d -> d.mitPraefix("dich nur kurz um, dann ")
+                            .timed(timedDescription.getTimeElapsed()))
+                    .collect(Collectors.toSet()));
+        } else {
+            alt.addAll(timedDescription.getDescription().altTextDescriptions().stream()
+                    .map(d -> d.mitPraefixCapitalize(
+                            "Was willst du hier eigentlich? ")
+                            .beginntZumindestParagraph()
+                            .timed(timedDescription.getTimeElapsed()))
+                    .collect(Collectors.toSet()));
+            alt.addAll(drueckeAusTimed(DISKONTINUITAET, timedDescription));
+        }
+        n.narrateAlt(alt);
+    }
+
+    private void narrateLastActionBewegen(final TimedDescription<?> timedDescription) {
         if (sc.memoryComp().getLastAction().is(BEWEGEN)) {
             if (n.endsThisIsExactly(StructuralElement.WORD) && n.dann()) {
                 // "Du stehst wieder vor dem Schloss. Dann gehst du wieder hinein in das Schloss."
-                final TextDescription satzEvtlMitDann = description.getDescription()
+                final TextDescription satzEvtlMitDann = timedDescription.getDescription()
                         .toTextDescriptionMitKonjunktionaladverbWennNoetig("dann")
                         .beginntZumindestSentence();
                 if (satzEvtlMitDann.getText().startsWith("Dann")) {
                     satzEvtlMitDann.dann(false);
                 }
-
-                n.narrate(description.withDescription(satzEvtlMitDann));
-                return;
-            } else {
-                n.narrate(description);
-                return;
-            }
-        } else {
-            if (n.dann()) {
-                n.narrate(description.withDescription(
-                        description.getDescription()
-                                .toTextDescriptionMitKonjunktionaladverbWennNoetig(
-                                        "danach")
-                                .beginntZumindestParagraph()));
+                n.narrate(timedDescription.withDescription(satzEvtlMitDann));
                 return;
             }
 
-            n.narrate(description);
+            n.narrate(timedDescription);
             return;
         }
+
+        if (n.dann()) {
+            n.narrate(timedDescription.withDescription(
+                    timedDescription.getDescription()
+                            .toTextDescriptionMitKonjunktionaladverbWennNoetig(
+                                    "danach")
+                            .beginntZumindestParagraph()));
+            return;
+        }
+
+        n.narrate(timedDescription);
     }
 
     private TimedDescription<?> getNormalDescription(final Lichtverhaeltnisse

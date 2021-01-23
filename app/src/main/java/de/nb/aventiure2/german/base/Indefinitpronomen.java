@@ -1,5 +1,7 @@
 package de.nb.aventiure2.german.base;
 
+import androidx.annotation.Nullable;
+
 import com.google.common.collect.ImmutableMap;
 
 import java.util.Collection;
@@ -83,6 +85,15 @@ public class Indefinitpronomen
                               final Flexionsreihe flextionsreihe) {
         super(numerusGenus, flextionsreihe, null);
         this.relPronTyp = relPronTyp;
+    }
+
+    /**
+     * Die Fokuspartikel wird verworfen. Indefinitpronomen können wohl keine
+     * Fokuspartikeln haben.
+     */
+    @Override
+    public Indefinitpronomen mitFokuspartikel(@Nullable final String fokuspartikel) {
+        return this;
     }
 
     @Override

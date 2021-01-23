@@ -90,7 +90,6 @@ public abstract class AbstractAngabenfaehigesPraedikatOhneLeerstellen
         return new ZuHabenPraedikatOhneLeerstellen(this);
     }
 
-
     @Override
     public final Konstituentenfolge getVerbzweit(final Person person, final Numerus numerus) {
         return Konstituentenfolge.joinToKonstituentenfolge(

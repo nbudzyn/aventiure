@@ -23,6 +23,7 @@ import de.nb.aventiure2.data.world.syscomp.spatialconnection.impl.SpatialStandar
 import de.nb.aventiure2.data.world.syscomp.spatialconnection.system.SpatialConnectionSystem;
 import de.nb.aventiure2.data.world.syscomp.storingplace.ILocationGO;
 import de.nb.aventiure2.data.world.syscomp.talking.AbstractTalkingComp;
+import de.nb.aventiure2.german.description.TimedDescription;
 
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
@@ -150,6 +151,8 @@ public class MovementComp
 
     @Override
     public void onSCActionDone(final AvDateTime startTimeOfUserAction) {
+        getPcd().setHatDenSCGeradeVerlassen(false);
+
         if (getPcd().getPauseForSCAction() == PAUSED && !stayPaused()) {
             setupNextStepIfNecessaryAndPossible(startTimeOfUserAction);
         }
@@ -420,6 +423,8 @@ public class MovementComp
                 getCurrentStepTo(),
                 from.spatialConnectionComp().getConnection(getCurrentStepToId()),
                 from.spatialConnectionComp().getNumberOfWaysOut());
+
+        getPcd().setHatDenSCGeradeVerlassen(true);
     }
 
     public void narrateAndDoScTrifftMovingGOImDazwischen(
@@ -430,8 +435,12 @@ public class MovementComp
         world.loadSC().memoryComp().upgradeKnown(getGameObjectId());
     }
 
-    public void narrateAndDoScTrifftStehendesMovingGOInTo(
-            final ILocationGO scTo) {
+
+    public void narrateScFolgtMovingGO(final TimedDescription<?> normalDescription) {
+        movementNarrator.narrateScFolgtMovingGO(normalDescription);
+    }
+
+    public void narrateAndDoScTrifftStehendesMovingGOInTo(final ILocationGO scTo) {
         narrateScTrifftStehendesMovingGOInTo(scTo);
 
         world.loadSC().memoryComp().upgradeKnown(getGameObjectId());

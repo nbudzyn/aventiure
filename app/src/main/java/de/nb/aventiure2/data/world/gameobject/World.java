@@ -31,6 +31,8 @@ import de.nb.aventiure2.data.world.syscomp.location.ILocatableGO;
 import de.nb.aventiure2.data.world.syscomp.location.LocationSystem;
 import de.nb.aventiure2.data.world.syscomp.location.RoomFactory;
 import de.nb.aventiure2.data.world.syscomp.memory.IHasMemoryGO;
+import de.nb.aventiure2.data.world.syscomp.movement.IMovingGO;
+import de.nb.aventiure2.data.world.syscomp.movement.MovementSystem;
 import de.nb.aventiure2.data.world.syscomp.reaction.IReactions;
 import de.nb.aventiure2.data.world.syscomp.reaction.IResponder;
 import de.nb.aventiure2.data.world.syscomp.reaction.system.ReactionSystem;
@@ -147,6 +149,8 @@ public class World {
 
     private LocationSystem locationSystem;
 
+    private MovementSystem movementSystem;
+
     public static World getInstance(final AvDatabase db,
                                     final TimeTaker timeTaker,
                                     final Narrator n) {
@@ -189,6 +193,10 @@ public class World {
 
         if (locationSystem == null) {
             locationSystem = new LocationSystem(db);
+        }
+
+        if (movementSystem == null) {
+            movementSystem = new MovementSystem(db);
         }
 
         if (spatialConnectionSystem == null) {
@@ -606,8 +614,7 @@ public class World {
     ImmutableList<LOC_DESC> loadDescribableNonLivingNonMovableInventory(
             final GameObjectId locationId) {
         return filterNonLivingBeing(
-                LocationSystem.filterNotMovable(
-                        loadDescribableInventory(locationId)));
+                LocationSystem.filterNotMovable(loadDescribableInventory(locationId)));
     }
 
     /**
@@ -707,7 +714,27 @@ public class World {
     }
 
     /**
-     * (Speichert ggf. alle Änderungen und) lädt (soweit noch nicht geschehen) die Game Objects an dieser
+     * Ermittelt ein {@link IMovingGO}, das den SC gerade verlassen hat
+     * (oder ihm gerade auf dem Weg entgegengekommen ist).
+     *
+     * @param toId Richtung, in der das {@link IMovingGO} gegangen ist.
+     */
+    @Nullable
+    public IMovingGO loadWerDenSCGeradeVerlassenHat(final GameObjectId toId) {
+        prepare();
+        saveAll(false);
+
+        @Nullable final GameObjectId id = movementSystem.findWerDenSCGeradeVerlassenHat(toId);
+        if (id == null) {
+            return null;
+        }
+
+        return (IMovingGO) load(id);
+    }
+
+    /**
+     * (Speichert ggf. alle Änderungen und) lädt (soweit noch nicht geschehen) die Game Objects
+     * an dieser
      * <code>locationId</code> (<i>nicht</i> rekursiv, also <i>nicht</i> die Kugel
      * auf einem Tisch in einem Raum, sondern nur den Tisch)
      * und gibt sie zurück - nur Game Objects, die eine Beschreibung haben,
@@ -1050,9 +1077,12 @@ public class World {
         return res;
     }
 
-
     public LocationSystem getLocationSystem() {
         return locationSystem;
+    }
+
+    public MovementSystem getMovementSystem() {
+        return movementSystem;
     }
 
     SpatialConnectionSystem getSpatialConnectionSystem() {

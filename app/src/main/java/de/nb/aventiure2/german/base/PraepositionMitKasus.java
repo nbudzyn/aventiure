@@ -124,14 +124,18 @@ public enum PraepositionMitKasus implements KasusOderPraepositionalkasus {
                             (substantivischePhrase.getNumerusGenus() == N))) {
                 // TODO Konstituente mit artikellosDatK oder so zurückgeben!
                 return joinToKonstituentenfolge(
-                        praepositionVerschmolzenMN, substantivischePhrase.artikellosDatK())
+                        substantivischePhrase.getFokuspartikel(),
+                        praepositionVerschmolzenMN,
+                        substantivischePhrase.ohneFokuspartikel().artikellosDatK())
                         .joinToSingleKonstituente();
             }
 
             if (praepositionVerschmolzenF != null &&
                     (substantivischePhrase.getNumerusGenus() == F)) {
                 return joinToKonstituentenfolge(
-                        praepositionVerschmolzenF, substantivischePhrase.artikellosDatK())
+                        substantivischePhrase.getFokuspartikel(),
+                        praepositionVerschmolzenF,
+                        substantivischePhrase.ohneFokuspartikel().artikellosDatK())
                         .joinToSingleKonstituente();
             }
         }
@@ -142,7 +146,10 @@ public enum PraepositionMitKasus implements KasusOderPraepositionalkasus {
     @NonNull
     private Konstituente getDescriptionUnverschmolzen(
             final SubstPhrOderReflexivpronomen substPhrOderReflPron) {
-        return joinToKonstituentenfolge(praeposition, substPhrOderReflPron.imK(kasus))
+        return joinToKonstituentenfolge(
+                substPhrOderReflPron.getFokuspartikel(),
+                praeposition,
+                substPhrOderReflPron.ohneFokuspartikel().imK(kasus))
                 .joinToSingleKonstituente();
     }
 

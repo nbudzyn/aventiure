@@ -11,7 +11,7 @@ import java.util.Objects;
 public class AbstractPersistentComponentData {
     @PrimaryKey
     @NonNull
-    private final GameObjectId gameObjectId;
+    private GameObjectId gameObjectId;
 
     private boolean changed = false;
 
@@ -36,6 +36,10 @@ public class AbstractPersistentComponentData {
         return gameObjectId;
     }
 
+    void setGameObjectId(@NonNull final GameObjectId gameObjectId) {
+        this.gameObjectId = gameObjectId;
+    }
+
     @Override
     public boolean equals(final Object o) {
         if (this == o) {
@@ -53,6 +57,7 @@ public class AbstractPersistentComponentData {
         return Objects.hash(gameObjectId);
     }
 
+    @NonNull
     @Override
     public String toString() {
         return getClass().getSimpleName() + " for game object " + gameObjectId;

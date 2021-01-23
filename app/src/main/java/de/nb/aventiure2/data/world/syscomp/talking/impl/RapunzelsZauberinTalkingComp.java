@@ -220,7 +220,7 @@ public class RapunzelsZauberinTalkingComp extends AbstractTalkingComp {
         final SubstantivischePhrase anaph = anaph(false);
 
         feelingsComp.upgradeFeelingsTowards(SPIELER_CHARAKTER,
-                ZUNEIGUNG_ABNEIGUNG, -0.8f, FeelingIntensity.DEUTLICH);
+                ZUNEIGUNG_ABNEIGUNG, -0.34f, FeelingIntensity.DEUTLICH);
 
         final AltDescriptionsBuilder alt = alt();
 

@@ -38,17 +38,16 @@ public class RapunzelsZauberinMovementNarrator extends SimpleMovementNarrator {
             final FROM movingGOFrom,
             @Nullable final SpatialConnection spatialConnectionMovingGO) {
         final Nominalphrase desc = getDescription();
-        final SubstantivischePhrase anaphOderDesc =
-                anaph(false);
+        final SubstantivischePhrase anaph = anaph(false);
 
         final AltDescriptionsBuilder alt = alt();
 
-        alt.add(neuerSatz(anaphOderDesc.nomK(),
+        alt.add(neuerSatz(anaph.nomK(),
                 "kommt daher")
                 .beendet(PARAGRAPH));
 
         if (spatialConnectionMovingGO != null) {
-            alt.add(neuerSatz(anaphOderDesc.nomK(),
+            alt.add(neuerSatz(anaph.nomK(),
                     "kommt",
                     spatialConnectionMovingGO.getWo(), // "auf dem Pfad "
                     "daher")

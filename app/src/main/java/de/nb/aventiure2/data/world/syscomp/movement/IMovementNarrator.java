@@ -6,6 +6,7 @@ import de.nb.aventiure2.data.world.base.SpatialConnection;
 import de.nb.aventiure2.data.world.syscomp.spatialconnection.ISpatiallyConnectedGO;
 import de.nb.aventiure2.data.world.syscomp.spatialconnection.NumberOfWays;
 import de.nb.aventiure2.data.world.syscomp.storingplace.ILocationGO;
+import de.nb.aventiure2.german.description.TimedDescription;
 
 /**
  * Beschreibt dem Spieler die Bewegung eines {@link IMovingGO}. Beschreibt
@@ -52,4 +53,12 @@ public interface IMovementNarrator {
     void narrateAndDoLeaves(FROM from, ILocationGO to,
                             @Nullable SpatialConnection spatialConnection,
                             NumberOfWays numberOfPossibleWaysToLeave);
+
+    /**
+     * Beschreibt, wie der SC diesem {@link IMovingGO} folgt.
+     *
+     * @param normalDescription Die normale Beschreibung, die eigentlich für diese
+     *                          Bewegung vorgesehen wäre
+     */
+    void narrateScFolgtMovingGO(TimedDescription<?> normalDescription);
 }

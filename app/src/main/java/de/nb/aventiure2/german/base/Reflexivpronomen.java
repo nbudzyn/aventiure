@@ -52,6 +52,21 @@ public class Reflexivpronomen implements SubstPhrOderReflexivpronomen {
         this.akkusativ = akkusativ;
     }
 
+    @Nullable
+    @Override
+    public String getFokuspartikel() {
+        // Es wäre etwas wie "sogar sich selbst" möglich - aber nicht bei
+        // echt reflexivem Gebrauch:
+        // "Ich habe sogar mich selbst gewaschen.", aber
+        // *"Ich habe das Buch sogar an mich selbst genommen."
+        return null;
+    }
+
+    @Override
+    public Reflexivpronomen ohneFokuspartikel() {
+        return this;
+    }
+
     public String imStr(final KasusOderPraepositionalkasus kasusOderPraepositionalkasus) {
         // "sich" etc. etablieren wohl kaum einen Bezug auf Bezugsobjekt
         if (kasusOderPraepositionalkasus instanceof Kasus) {

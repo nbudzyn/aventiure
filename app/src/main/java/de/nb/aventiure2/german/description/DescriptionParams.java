@@ -65,7 +65,7 @@ public class DescriptionParams {
     DescriptionParams(final StructuralElement startsNew,
                       @Nullable final PhorikKandidat phorikKandidat) {
         this(startsNew, StructuralElement.WORD,
-                false, false, null);
+                false, false, phorikKandidat);
     }
 
     private DescriptionParams(final StructuralElement startsNew, final StructuralElement endsThis,
