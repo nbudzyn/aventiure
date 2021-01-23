@@ -9,7 +9,7 @@ import de.nb.aventiure2.german.praedikat.PraedikatMitEinerObjektleerstelle;
 import de.nb.aventiure2.german.praedikat.ZweiVerbenSubjObj;
 
 import static de.nb.aventiure2.german.base.PraepositionMitKasus.AUS;
-import static de.nb.aventiure2.german.praedikat.VerbReflPraepositionalkasusAkkObj.AN_SICH_NEHMEN;
+import static de.nb.aventiure2.german.praedikat.ReflVerbSubjObj.AN_SICH_NEHMEN;
 import static de.nb.aventiure2.german.praedikat.VerbSubjObj.AUFHEBEN;
 import static de.nb.aventiure2.german.praedikat.VerbSubjObj.HEBEN;
 import static de.nb.aventiure2.german.praedikat.VerbSubjObj.NEHMEN;

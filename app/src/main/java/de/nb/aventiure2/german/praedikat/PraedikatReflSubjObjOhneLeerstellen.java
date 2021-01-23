@@ -1,5 +1,7 @@
 package de.nb.aventiure2.german.praedikat;
 
+import androidx.annotation.NonNull;
+
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Iterables;
 
@@ -10,6 +12,7 @@ import javax.annotation.Nullable;
 import de.nb.aventiure2.annotations.Komplement;
 import de.nb.aventiure2.annotations.Valenz;
 import de.nb.aventiure2.german.base.Interrogativpronomen;
+import de.nb.aventiure2.german.base.KasusOderPraepositionalkasus;
 import de.nb.aventiure2.german.base.Konstituente;
 import de.nb.aventiure2.german.base.Konstituentenfolge;
 import de.nb.aventiure2.german.base.Numerus;
@@ -18,6 +21,8 @@ import de.nb.aventiure2.german.base.Reflexivpronomen;
 import de.nb.aventiure2.german.base.SubstPhrOderReflexivpronomen;
 import de.nb.aventiure2.german.base.SubstantivischePhrase;
 
+import static de.nb.aventiure2.german.base.Kasus.AKK;
+import static de.nb.aventiure2.german.base.Kasus.DAT;
 import static de.nb.aventiure2.german.base.Konstituentenfolge.kf;
 import static de.nb.aventiure2.german.base.Personalpronomen.isPersonalpronomen;
 
@@ -26,43 +31,63 @@ import static de.nb.aventiure2.german.base.Personalpronomen.isPersonalpronomen;
  * "reflexiven Präpositionalkonstruktion" und einem Akkusativobjet steht -
  * alle Leerstellen besetzt
  */
-class PraedikatSubjReflPraepositionalkasusAkkObjOhneLeerstellen
+class PraedikatReflSubjObjOhneLeerstellen
         extends AbstractAngabenfaehigesPraedikatOhneLeerstellen {
-    private final VerbReflPraepositionalkasusAkkObj verbReflPraepositionalkasusAkkObj;
+    /**
+     * Der Kasus mit dem das Verb reflexiv steht - z.B. Akkusativ ("sich von ... verabschieden")
+     * oder ein Präpositionalkasus ("... an sich nehmen")
+     */
+    @NonNull
+    private final KasusOderPraepositionalkasus reflKasusOderPraepositionalKasus;
+
+    /**
+     * Der Kasus ("die Kugel [an sich nehmen]") oder Präpositionalkasus
+     * (z.B. "[sich] von der Zauberin [verabschieden]"), mit dem dieses Verb inhaltlich
+     * steht (zusätzlich zum reflixiven Kasus)
+     */
+    @NonNull
+    private final KasusOderPraepositionalkasus objektKasusOderPraepositionalkasus;
 
     @Komplement
-    private final SubstantivischePhrase akkObj;
+    private final SubstantivischePhrase objekt;
 
     @Valenz
-    PraedikatSubjReflPraepositionalkasusAkkObjOhneLeerstellen(
-            final VerbReflPraepositionalkasusAkkObj verbReflPraepositionalkasusAkkObj,
-            final SubstantivischePhrase akkObj) {
-        this(verbReflPraepositionalkasusAkkObj, akkObj,
+    PraedikatReflSubjObjOhneLeerstellen(
+            final Verb verb,
+            final KasusOderPraepositionalkasus reflKasusOderPraepositionalKasus,
+            final KasusOderPraepositionalkasus objektKasusOderPraepositionalkasus,
+            final SubstantivischePhrase objekt) {
+        this(verb, reflKasusOderPraepositionalKasus, objektKasusOderPraepositionalkasus,
+                objekt,
                 ImmutableList.of(),
                 null, null,
                 null);
     }
 
-    private PraedikatSubjReflPraepositionalkasusAkkObjOhneLeerstellen(
-            final VerbReflPraepositionalkasusAkkObj verbReflPraepositionalkasusAkkObj,
-            final SubstantivischePhrase akkObj,
+    private PraedikatReflSubjObjOhneLeerstellen(
+            final Verb verb,
+            final KasusOderPraepositionalkasus reflKasusOderPraepositionalKasus,
+            final KasusOderPraepositionalkasus objektKasusOderPraepositionalkasus,
+            final SubstantivischePhrase objekt,
             final Iterable<Modalpartikel> modalpartikeln,
             @Nullable final AdverbialeAngabeSkopusSatz adverbialeAngabeSkopusSatz,
             @Nullable final AdverbialeAngabeSkopusVerbAllg adverbialeAngabeSkopusVerbAllg,
             @Nullable
             final AdverbialeAngabeSkopusVerbWohinWoher adverbialeAngabeSkopusVerbWohinWoher) {
-        super(verbReflPraepositionalkasusAkkObj.getVerb(),
+        super(verb,
                 modalpartikeln, adverbialeAngabeSkopusSatz, adverbialeAngabeSkopusVerbAllg,
                 adverbialeAngabeSkopusVerbWohinWoher);
-        this.verbReflPraepositionalkasusAkkObj = verbReflPraepositionalkasusAkkObj;
-        this.akkObj = akkObj;
+        this.reflKasusOderPraepositionalKasus = reflKasusOderPraepositionalKasus;
+        this.objektKasusOderPraepositionalkasus = objektKasusOderPraepositionalkasus;
+        this.objekt = objekt;
     }
 
     @Override
-    public PraedikatSubjReflPraepositionalkasusAkkObjOhneLeerstellen mitModalpartikeln(
+    public PraedikatReflSubjObjOhneLeerstellen mitModalpartikeln(
             final Collection<Modalpartikel> modalpartikeln) {
-        return new PraedikatSubjReflPraepositionalkasusAkkObjOhneLeerstellen(
-                verbReflPraepositionalkasusAkkObj, akkObj,
+        return new PraedikatReflSubjObjOhneLeerstellen(
+                getVerb(), reflKasusOderPraepositionalKasus, objektKasusOderPraepositionalkasus,
+                objekt,
                 Iterables.concat(getModalpartikeln(), modalpartikeln),
                 getAdverbialeAngabeSkopusSatz(),
                 getAdverbialeAngabeSkopusVerbAllg(),
@@ -71,14 +96,15 @@ class PraedikatSubjReflPraepositionalkasusAkkObjOhneLeerstellen
     }
 
     @Override
-    public PraedikatSubjReflPraepositionalkasusAkkObjOhneLeerstellen mitAdverbialerAngabe(
+    public PraedikatReflSubjObjOhneLeerstellen mitAdverbialerAngabe(
             @Nullable final AdverbialeAngabeSkopusSatz adverbialeAngabe) {
         if (adverbialeAngabe == null) {
             return this;
         }
 
-        return new PraedikatSubjReflPraepositionalkasusAkkObjOhneLeerstellen(
-                verbReflPraepositionalkasusAkkObj, akkObj,
+        return new PraedikatReflSubjObjOhneLeerstellen(
+                getVerb(), reflKasusOderPraepositionalKasus, objektKasusOderPraepositionalkasus,
+                objekt,
                 getModalpartikeln(),
                 adverbialeAngabe, getAdverbialeAngabeSkopusVerbAllg(),
                 getAdverbialeAngabeSkopusVerbWohinWoher()
@@ -86,14 +112,15 @@ class PraedikatSubjReflPraepositionalkasusAkkObjOhneLeerstellen
     }
 
     @Override
-    public PraedikatSubjReflPraepositionalkasusAkkObjOhneLeerstellen mitAdverbialerAngabe(
+    public PraedikatReflSubjObjOhneLeerstellen mitAdverbialerAngabe(
             @Nullable final AdverbialeAngabeSkopusVerbAllg adverbialeAngabe) {
         if (adverbialeAngabe == null) {
             return this;
         }
 
-        return new PraedikatSubjReflPraepositionalkasusAkkObjOhneLeerstellen(
-                verbReflPraepositionalkasusAkkObj, akkObj,
+        return new PraedikatReflSubjObjOhneLeerstellen(
+                getVerb(), reflKasusOderPraepositionalKasus, objektKasusOderPraepositionalkasus,
+                objekt,
                 getModalpartikeln(),
                 getAdverbialeAngabeSkopusSatz(), adverbialeAngabe,
                 getAdverbialeAngabeSkopusVerbWohinWoher()
@@ -101,14 +128,15 @@ class PraedikatSubjReflPraepositionalkasusAkkObjOhneLeerstellen
     }
 
     @Override
-    public PraedikatSubjReflPraepositionalkasusAkkObjOhneLeerstellen mitAdverbialerAngabe(
+    public PraedikatReflSubjObjOhneLeerstellen mitAdverbialerAngabe(
             @Nullable final AdverbialeAngabeSkopusVerbWohinWoher adverbialeAngabe) {
         if (adverbialeAngabe == null) {
             return this;
         }
 
-        return new PraedikatSubjReflPraepositionalkasusAkkObjOhneLeerstellen(
-                verbReflPraepositionalkasusAkkObj, akkObj,
+        return new PraedikatReflSubjObjOhneLeerstellen(
+                getVerb(), reflKasusOderPraepositionalKasus, objektKasusOderPraepositionalkasus,
+                objekt,
                 getModalpartikeln(),
                 getAdverbialeAngabeSkopusSatz(),
                 getAdverbialeAngabeSkopusVerbAllg(),
@@ -131,14 +159,14 @@ class PraedikatSubjReflPraepositionalkasusAkkObjOhneLeerstellen
             return speziellesVorfeldFromSuper;
         }
 
-        final Konstituente akk = akkObj.akkK();
+        final Konstituente objK = objekt.imK(objektKasusOderPraepositionalkasus);
         // Wenn "es" ein Objekt ist, darf es nicht im Vorfeld stehen.
         // (Eisenberg Der Satz 5.4.2)
         // Aber auch andere Personalpronomen wirken im Vorfeld oft eher unangebracht,
         // wenn es sich um ein Objekt handelt.
         // "Ihn nimmst du an dich."
-        if (!isPersonalpronomen(akk.getString())) {
-            return akk;  // "den Frosch"
+        if (!isPersonalpronomen(objK.getString())) {
+            return objK;  // "den Frosch"
         }
 
         return null;
@@ -147,19 +175,16 @@ class PraedikatSubjReflPraepositionalkasusAkkObjOhneLeerstellen
     @Override
     Konstituentenfolge getMittelfeldOhneLinksversetzungUnbetonterPronomen(
             final Person personSubjekt, final Numerus numerusSubjekt) {
-        checkKeinPartikelVerb();
-
         return Konstituentenfolge.joinToKonstituentenfolge(
                 getAdverbialeAngabeSkopusSatzDescriptionFuerMittelfeld(personSubjekt,
                         numerusSubjekt),
                 // "aus einer Laune heraus"
-                akkObj.akkK(), // "die goldene Kugel"
+                objekt.imK(objektKasusOderPraepositionalkasus), // "die goldene Kugel"
                 kf(getModalpartikeln()), // "besser doch"
                 getAdverbialeAngabeSkopusVerbTextDescriptionFuerMittelfeld(personSubjekt,
                         numerusSubjekt), // "erneut"
                 Reflexivpronomen.get(personSubjekt, numerusSubjekt)
-                        .im(verbReflPraepositionalkasusAkkObj
-                                .getPrapositionMitKasus()), // "an dich",
+                        .imStr(reflKasusOderPraepositionalKasus), // "an dich",
                 getAdverbialeAngabeSkopusVerbWohinWoherDescription(personSubjekt, numerusSubjekt)
                 // "in deine Jackentasche"
         );
@@ -169,19 +194,39 @@ class PraedikatSubjReflPraepositionalkasusAkkObjOhneLeerstellen
     @Override
     SubstPhrOderReflexivpronomen getAkk(
             final Person personSubjekt, final Numerus numerusSubjekt) {
-        return akkObj;
-    }
+        if (reflKasusOderPraepositionalKasus == AKK) {
+            return Reflexivpronomen.get(personSubjekt, numerusSubjekt);
+        }
 
-    @Nullable
-    @Override
-    SubstPhrOderReflexivpronomen getZweitesAkk() {
+        if (objektKasusOderPraepositionalkasus == AKK) {
+            return objekt;
+        }
+
         return null;
     }
 
     @Nullable
     @Override
-    SubstPhrOderReflexivpronomen getDat(
-            final Person personSubjekt, final Numerus numerusSubjekt) {
+    SubstPhrOderReflexivpronomen getZweitesAkk() {
+        if (reflKasusOderPraepositionalKasus == AKK && objektKasusOderPraepositionalkasus == AKK) {
+            // Dann ist das Objekt das zweite. (Wenn es sowas überhaupt gibt.)
+            return objekt;
+        }
+
+        return null;
+    }
+
+    @Nullable
+    @Override
+    SubstPhrOderReflexivpronomen getDat(final Person personSubjekt, final Numerus numerusSubjekt) {
+        if (reflKasusOderPraepositionalKasus == DAT) {
+            return Reflexivpronomen.get(personSubjekt, numerusSubjekt);
+        }
+
+        if (objektKasusOderPraepositionalkasus == DAT) {
+            return objekt;
+        }
+
         return null;
     }
 
@@ -194,15 +239,7 @@ class PraedikatSubjReflPraepositionalkasusAkkObjOhneLeerstellen
                         numerusSubjekt),
                 getAdverbialeAngabeSkopusSatzDescriptionFuerZwangsausklammerung(personSubjekt,
                         numerusSubjekt)
-
         );
-    }
-
-    private void checkKeinPartikelVerb() {
-        if (verbReflPraepositionalkasusAkkObj.getVerb().getPartikel() != null) {
-            throw new IllegalStateException("Reflexives Partikel-Verb mit Präpositionalkasus? "
-                    + "Unerwartet!");
-        }
     }
 
     @Override
@@ -218,8 +255,8 @@ class PraedikatSubjReflPraepositionalkasusAkkObjOhneLeerstellen
     @Nullable
     @Override
     public Konstituente getErstesInterrogativpronomen() {
-        if (akkObj instanceof Interrogativpronomen) {
-            return akkObj.akkK();
+        if (objekt instanceof Interrogativpronomen) {
+            return objekt.imK(objektKasusOderPraepositionalkasus);
         }
 
         return null;

@@ -231,10 +231,6 @@ public abstract class AbstractTalkingComp extends AbstractStatefulComponent<Talk
      * aber  ohne Satzschlusszeichen
      */
     protected ImmutableList<String> altVerabschiedungenCap() {
-        // FIXME "Du nimmst Abschied mit ihr"
-        //  "Du sagst ihr Abschied"
-        //  "Du verabschiedest dich von ihr"
-
         return GermanStringUtil.capitalize(altVerabschiedungen());
     }
 

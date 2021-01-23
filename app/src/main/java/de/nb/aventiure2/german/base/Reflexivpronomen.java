@@ -52,7 +52,7 @@ public class Reflexivpronomen implements SubstPhrOderReflexivpronomen {
         this.akkusativ = akkusativ;
     }
 
-    public String im(final KasusOderPraepositionalkasus kasusOderPraepositionalkasus) {
+    public String imStr(final KasusOderPraepositionalkasus kasusOderPraepositionalkasus) {
         // "sich" etc. etablieren wohl kaum einen Bezug auf Bezugsobjekt
         if (kasusOderPraepositionalkasus instanceof Kasus) {
             return imStr((Kasus) kasusOderPraepositionalkasus);

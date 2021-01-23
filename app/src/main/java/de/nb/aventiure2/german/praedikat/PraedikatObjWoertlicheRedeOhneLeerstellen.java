@@ -169,11 +169,6 @@ public class PraedikatObjWoertlicheRedeOhneLeerstellen
         return null;
     }
 
-    // FIXME Man könnte die wörtliche Rede alternativ ins Vorfeld setzen -
-    //  allerdings muss man dann etwas wie erfordertVorDoppelpunkt
-    //  programmieren, damit beim Verschieben nicht am Satzende ein
-    //  leerer Doppelpunkt stehen bleibt.
-
     @Override
     @Nullable
     Konstituentenfolge getMittelfeldOhneLinksversetzungUnbetonterPronomen(

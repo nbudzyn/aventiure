@@ -34,6 +34,7 @@ import static de.nb.aventiure2.german.description.AltDescriptionsBuilder.alt;
 import static de.nb.aventiure2.german.description.AltDescriptionsBuilder.altNeueSaetze;
 import static de.nb.aventiure2.german.description.DescriptionBuilder.du;
 import static de.nb.aventiure2.german.description.DescriptionBuilder.neuerSatz;
+import static de.nb.aventiure2.german.praedikat.ReflVerbSubjObj.SICH_VERABSCHIEDEN;
 import static de.nb.aventiure2.german.praedikat.VerbSubjAkkPraep.FRAGEN_NACH;
 import static de.nb.aventiure2.german.praedikat.VerbSubjObj.ANSPRECHEN;
 import static de.nb.aventiure2.german.praedikat.VerbSubjObj.BEGRUESSEN;
@@ -173,30 +174,29 @@ public class RapunzelsZauberinTalkingComp extends AbstractTalkingComp {
     private void gespraechBeenden() {
         final SubstantivischePhrase anaph = anaph(false);
 
-        final AltDescriptionsBuilder alt = alt();
-        alt.addAll(altNeueSaetze(
-                "„",
-                altVerabschiedungenCap(),
-                // "Tschüss"
-                "!“ Du wendest dich ab").undWartest().dann());
+        n.narrateAlt(alt()
+                .addAll(altNeueSaetze(
+                        "„",
+                        altVerabschiedungenCap(),
+                        // "Tschüss"
+                        "!“ Du wendest dich ab").undWartest().dann())
+                .add(du("sagst", anaph.datK(), "Abschied"),
+                        du(SICH_VERABSCHIEDEN.mit(anaph)))
+                .addAll(altNeueSaetze(
+                        "„",
+                        altVerabschiedungenCap(),
+                        // "Tschüss"
+                        "“, verabschiedest du dich",
+                        PraepositionMitKasus.VON.mit(anaph).getDescription())
+                        .undWartest().dann())
+                .add(du("verabschiedest",
+                        "dich wieder",
+                        PraepositionMitKasus.VON.mit(anaph).getDescription())
+                                .undWartest().dann(),
+                        du("sagst", anaph.datK(), "Ade")
+                                .undWartest().dann()
+                ), secs(10));
 
-        alt.addAll(altNeueSaetze(
-                "„",
-                altVerabschiedungenCap(),
-                // "Tschüss"
-                "“, verabschiedest du dich",
-                PraepositionMitKasus.VON.mit(anaph).getDescription())
-                .undWartest().dann());
-
-        alt.add(du("verabschiedest",
-                "dich wieder",
-                PraepositionMitKasus.VON.mit(anaph).getDescription())
-                        .undWartest().dann(),
-                du("sagst", anaph.datK(), "Ade")
-                        .undWartest().dann()
-        );
-
-        n.narrateAlt(alt, secs(10));
         gespraechspartnerBeendetGespraech();
     }
 
