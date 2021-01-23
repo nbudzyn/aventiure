@@ -112,14 +112,11 @@ public class RapunzelsZauberinTalkingComp extends AbstractTalkingComp {
 
     private void scSprichtAnBereitsBegruesst() {
         final SubstantivischePhrase anaph = anaph(false);
-        final AltDescriptionsBuilder alt = alt();
-
-        alt.add(neuerSatz(PARAGRAPH, "„Gute Frau“, sprichst du", anaph.akkK(), "an").dann(),
+        n.narrateAlt(secs(10),
+                neuerSatz(PARAGRAPH, "„Gute Frau“, sprichst du", anaph.akkK(), "an").dann(),
                 du(PARAGRAPH, "wendest", "dich noch einmal", anaph.datK(), "zu")
-                        .undWartest()
-        );
+                        .undWartest());
 
-        n.narrateAlt(alt, secs(10));
         setTalkingTo(SPIELER_CHARAKTER);
     }
 
@@ -197,8 +194,7 @@ public class RapunzelsZauberinTalkingComp extends AbstractTalkingComp {
     }
 
     private void frageNachZiel_ImmReEntrySCHatteGespraechBeendet() {
-        n.narrateAlt(NO_TIME,
-                neuerSatz("Aber dann fragst du doch noch:"));
+        n.narrateAlt(NO_TIME, neuerSatz("Aber dann fragst du doch noch:"));
 
         frageNachZiel();
     }

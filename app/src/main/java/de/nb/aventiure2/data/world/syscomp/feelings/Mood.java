@@ -55,8 +55,8 @@ public enum Mood {
         this(gradDerFreude,
                 ImmutableList.of(),
                 stream(altAdverbialeAngabenTexte)
-                        .map(s -> new AdverbialeAngabeSkopusSatz(s))
-                        .collect(toImmutableList())
+                        .map(AdverbialeAngabeSkopusSatz::new)
+                        .collect(ImmutableList.toImmutableList())
         );
     }
 
