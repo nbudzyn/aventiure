@@ -339,11 +339,11 @@ public class FeelingsComp extends AbstractStatefulComponent<FeelingsPCD> {
         return dispatchFeelings(
                 SPIELER_CHARAKTER,
                 1,
-                () -> FeelingsSaetzeUtil.toAnsehenSaetze(
+                () -> FeelingsSaetzeUtil.altAnsehenSaetze(
                         gameObjectSubjekt,
                         getPersonalpronomenSC(),
                         altAdverbialeAngabenSkopusVerbAllg()),
-                (feelingTowardsType) -> FeelingsSaetzeUtil.toAnsehenSaetze(gameObjectSubjekt,
+                (feelingTowardsType) -> FeelingsSaetzeUtil.altAnsehenSaetze(gameObjectSubjekt,
                         getPersonalpronomenSC(),
                         feelingTowardsType.altEindruckBeiBegegnungAdvAngaben(
                                 gameObjectSubjekt, getPersonalpronomenSC(),

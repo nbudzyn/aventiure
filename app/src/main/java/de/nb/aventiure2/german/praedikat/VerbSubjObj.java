@@ -88,6 +88,9 @@ public enum VerbSubjObj implements PraedikatMitEinerObjektleerstelle {
             "nehmt",
             "mit",
             Perfektbildung.HABEN, "mitgenommen"),
+    MUSTERN("mustern", AKK, "mustere", "musterst", "mustert",
+            "mustert",
+            Perfektbildung.HABEN, "gemustert"),
     NEHMEN("nehmen", AKK, "nehme", "nimmst", "nimmt",
             "nehmt", Perfektbildung.HABEN, "genommen"),
     POLIEREN("polieren", AKK,
@@ -132,33 +135,33 @@ public enum VerbSubjObj implements PraedikatMitEinerObjektleerstelle {
     @NonNull
     private final KasusOderPraepositionalkasus kasusOderPraepositionalkasus;
 
-    VerbSubjObj(@NonNull final String infinitiv,
-                @NonNull final KasusOderPraepositionalkasus kasusOderPraepositionalkasus,
-                @NonNull final String ichForm,
-                @NonNull final String duForm,
-                @NonNull final String erSieEsForm,
-                @NonNull final String ihrForm,
-                @NonNull final Perfektbildung perfektbildung, final String partizipII) {
+    VerbSubjObj(final String infinitiv,
+                final KasusOderPraepositionalkasus kasusOderPraepositionalkasus,
+                final String ichForm,
+                final String duForm,
+                final String erSieEsForm,
+                final String ihrForm,
+                final Perfektbildung perfektbildung, final String partizipII) {
         this(new Verb(infinitiv, ichForm, duForm, erSieEsForm, ihrForm,
                         perfektbildung, partizipII),
                 kasusOderPraepositionalkasus);
     }
 
-    VerbSubjObj(@NonNull final String infinitiv,
-                @NonNull final KasusOderPraepositionalkasus kasusOderPraepositionalkasus,
-                @NonNull final String ichForm,
-                @NonNull final String duForm,
-                @NonNull final String erSieEsForm,
-                @NonNull final String ihrForm,
+    VerbSubjObj(final String infinitiv,
+                final KasusOderPraepositionalkasus kasusOderPraepositionalkasus,
+                final String ichForm,
+                final String duForm,
+                final String erSieEsForm,
+                final String ihrForm,
                 @Nullable final String partikel,
-                @NonNull final Perfektbildung perfektbildung, final String partizipII) {
+                final Perfektbildung perfektbildung, final String partizipII) {
         this(new Verb(infinitiv, ichForm, duForm, erSieEsForm, ihrForm, partikel, perfektbildung,
                         partizipII),
                 kasusOderPraepositionalkasus);
     }
 
-    VerbSubjObj(@NonNull final Verb verb,
-                @NonNull final KasusOderPraepositionalkasus kasusOderPraepositionalkasus) {
+    VerbSubjObj(final Verb verb,
+                final KasusOderPraepositionalkasus kasusOderPraepositionalkasus) {
         this.verb = verb;
         this.kasusOderPraepositionalkasus = kasusOderPraepositionalkasus;
     }

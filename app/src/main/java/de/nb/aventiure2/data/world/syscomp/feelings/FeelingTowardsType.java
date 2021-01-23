@@ -11,7 +11,6 @@ import de.nb.aventiure2.german.praedikat.AdverbialeAngabeSkopusVerbAllg;
 import de.nb.aventiure2.german.satz.Satz;
 
 import static java.util.stream.Collectors.toList;
-import static java.util.stream.Collectors.toSet;
 
 /**
  * Ein Spektrum von Gefühlen, dass ein {@link IFeelingBeingGO} gegenüber jemandem oder
@@ -19,15 +18,15 @@ import static java.util.stream.Collectors.toSet;
  * Extremen abgrundtiefen Hasses und brennender Liebe ausgeprägt sein.
  */
 public enum FeelingTowardsType {
-    ZUNEIGUNG_ABNEIGUNG(new ZuneigungAbneigungBeiBegegnungDescriber());
+    ZUNEIGUNG_ABNEIGUNG(new ZuneigungAbneigungDescriber());
     // Weitere Gefühle könnten zb sein
     //  - VERTRAUEN_MISSTRAUEN
     //  - Dankbarkeit / Rachedurst
 
-    private final FeelingBeiBegegnungDescriber feelingBeiBegegnungDescriber;
+    private final FeelingsDescriber feelingsDescriber;
 
-    FeelingTowardsType(final FeelingBeiBegegnungDescriber feelingBeiBegegnungDescriber) {
-        this.feelingBeiBegegnungDescriber = feelingBeiBegegnungDescriber;
+    FeelingTowardsType(final FeelingsDescriber feelingsDescriber) {
+        this.feelingsDescriber = feelingsDescriber;
     }
 
     /**
@@ -58,7 +57,7 @@ public enum FeelingTowardsType {
                 toReaktionSaetze(gameObjectSubjekt, targetDesc, altEindruckAdjPhr,
                         adverbialeAngaben));
 
-        res.addAll(feelingBeiBegegnungDescriber.altReaktionBeiBegegnungSaetze(
+        res.addAll(feelingsDescriber.altReaktionBeiBegegnungSaetze(
                 gameObjectSubjekt, targetDesc, feelingIntensity, targetKnown
         ));
 
@@ -119,17 +118,8 @@ public enum FeelingTowardsType {
     public ImmutableList<AdverbialeAngabeSkopusVerbAllg> altEindruckBeiBegegnungAdvAngaben(
             final SubstantivischePhrase gameObjectSubjekt, final SubstantivischePhrase targetDesc,
             final int feelingIntensity, final boolean targetKnown) {
-
-        return ImmutableList.<AdverbialeAngabeSkopusVerbAllg>builder()
-                .addAll(AdjPhrOhneLeerstellen.toAdvAngabenSkopusVerbAllg(gameObjectSubjekt,
-                        altEindruckBeiBegegnungAdjPhr(gameObjectSubjekt,
-                                targetDesc, feelingIntensity,
-                                targetKnown)))
-                .addAll(feelingBeiBegegnungDescriber
-                        .altEindruckBeiBegegnungZusAdverbialeAngaben(feelingIntensity).stream()
-                        .map(AdverbialeAngabeSkopusVerbAllg::new)
-                        .collect(toSet()))
-                .build();
+        return feelingsDescriber.altEindruckBeiBegegnungAdvAngaben(gameObjectSubjekt,
+                targetDesc, feelingIntensity, targetKnown);
     }
 
     /**
@@ -139,7 +129,7 @@ public enum FeelingTowardsType {
      * <i>wirken</i> oder <i>scheinen</i> verbunden werden.
      * <p>
      * Diese Sätze sind in
-     * {@link #altReaktionBeiBegegnungSaetze(SubstantivischePhrase, SubstantivischePhrase, int, boolean)}
+     * {@link #altReaktionBeiBegegnungSaetze(SubstantivischePhrase, SubstantivischePhrase, int, boolean, boolean)}
      * bereits enthalten.
      * <p>
      * Die Methode garantiert, dass niemals etwas wie "du, der du..." oder
@@ -151,7 +141,7 @@ public enum FeelingTowardsType {
             final SubstantivischePhrase gameObjectSubjekt,
             final SubstantivischePhrase targetDesc, final int feelingIntensity,
             final boolean targetKnown) {
-        return feelingBeiBegegnungDescriber.altEindruckBeiBegegnungAdjPhr(
+        return feelingsDescriber.altEindruckBeiBegegnungAdjPhr(
                 gameObjectSubjekt,
                 targetDesc,
                 feelingIntensity, targetKnown
@@ -173,7 +163,7 @@ public enum FeelingTowardsType {
             final NumerusGenus gameObjectSubjektNumerusGenus,
             final SubstantivischePhrase targetDesc, final int feelingIntensity,
             final boolean targetKnown) {
-        return feelingBeiBegegnungDescriber.altEindruckWennTargetGehenMoechteAdjPhr(
+        return feelingsDescriber.altEindruckWennTargetGehenMoechteAdjPhr(
                 gameObjectSubjektPerson, gameObjectSubjektNumerusGenus, targetDesc,
                 feelingIntensity, targetKnown
         );

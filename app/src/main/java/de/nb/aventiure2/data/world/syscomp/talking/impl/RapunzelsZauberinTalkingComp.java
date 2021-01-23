@@ -6,6 +6,7 @@ import de.nb.aventiure2.data.database.AvDatabase;
 import de.nb.aventiure2.data.narration.Narrator;
 import de.nb.aventiure2.data.time.TimeTaker;
 import de.nb.aventiure2.data.world.gameobject.*;
+import de.nb.aventiure2.data.world.syscomp.feelings.FeelingIntensity;
 import de.nb.aventiure2.data.world.syscomp.feelings.FeelingsComp;
 import de.nb.aventiure2.data.world.syscomp.location.LocationComp;
 import de.nb.aventiure2.data.world.syscomp.state.impl.RapunzelsZauberinStateComp;
@@ -19,6 +20,7 @@ import de.nb.aventiure2.german.satz.Satz;
 import static de.nb.aventiure2.data.time.AvTimeSpan.NO_TIME;
 import static de.nb.aventiure2.data.time.AvTimeSpan.secs;
 import static de.nb.aventiure2.data.world.gameobject.World.*;
+import static de.nb.aventiure2.data.world.syscomp.feelings.FeelingTowardsType.ZUNEIGUNG_ABNEIGUNG;
 import static de.nb.aventiure2.data.world.syscomp.talking.impl.SCTalkAction.entryReEntrySt;
 import static de.nb.aventiure2.data.world.syscomp.talking.impl.SCTalkAction.exitSt;
 import static de.nb.aventiure2.data.world.syscomp.talking.impl.SCTalkAction.immReEntryStNSCHatteGespraechBeendet;
@@ -161,6 +163,11 @@ public class RapunzelsZauberinTalkingComp extends AbstractTalkingComp {
         n.narrateAlt(
                 altReaktionSaetze.stream().map(DescriptionBuilder::satz),
                 secs(5));
+
+        if (feelingsComp.getFeelingTowards(SPIELER_CHARAKTER, ZUNEIGUNG_ABNEIGUNG)
+                <= -FeelingIntensity.STARK) {
+            unsetTalkingTo(true);
+        }
     }
 
     private void gespraechBeenden() {
@@ -212,25 +219,39 @@ public class RapunzelsZauberinTalkingComp extends AbstractTalkingComp {
     private void frageNachZiel() {
         final SubstantivischePhrase anaph = anaph(false);
 
-        n.narrateAlt(secs(10),
-                neuerSatz("„Wohin des Wegs?“ – „Was geht es dich an?“, ist",
-                        anaph.possArt().vor(F).nomStr(), // "ihre"
-                        "abweisende Antwort")
-                        .beendet(PARAGRAPH),
-                neuerSatz("„Ihr habt es wohl eilig?“ – „So ist es“, antwortet",
-                        anaph.persPron().nomK(),
-                        "dir")
-                        .beendet(PARAGRAPH)
-        );
+        feelingsComp.upgradeFeelingsTowards(SPIELER_CHARAKTER,
+                ZUNEIGUNG_ABNEIGUNG, -0.8f, FeelingIntensity.DEUTLICH);
 
-        // FIXME Zauberin wird abweisender beim Fragen nach dem Weg
+        final AltDescriptionsBuilder alt = alt();
 
-        // FIXME Weitere Antworten der Zauberin auf Frage nach dem Weg
+        final int zuneigungAbneigungGegenSC =
+                feelingsComp.getFeelingTowards(SPIELER_CHARAKTER, ZUNEIGUNG_ABNEIGUNG);
+        if (zuneigungAbneigungGegenSC >= -FeelingIntensity.MERKLICH) {
+            alt.add(
+                    neuerSatz("„Ihr habt es wohl eilig?“ – „So ist es“, antwortet",
+                            anaph.persPron().nomK(),
+                            "dir")
+                            .beendet(PARAGRAPH)
+            );
+        } else {
+            alt.add(
+                    neuerSatz("„Wohin seid ihr auf dem Weg?“ – „Das ist meine",
+                            "Sache!“, antwortet",
+                            anaph.nomK())
+                            .beendet(PARAGRAPH),
+                    neuerSatz("„Wohin des Wegs?“ – „Was geht es dich an?“, ist",
+                            anaph.possArt().vor(F).nomStr(), // "ihre"
+                            "abweisende Antwort")
+                            .beendet(PARAGRAPH),
+                    neuerSatz("„Wohin geht es denn heute?“ – „Das geht dich überhaupt",
+                            "nichts an!“, gibt",
+                            anaph.nomK(),
+                            "pampig zurück")
+                            .beendet(PARAGRAPH)
+            );
+        }
 
-        // FIXME Wenn im Gespräch: Hexe Kugel geben? (Diebesgut...) (beendet Gespräch, macht
-        //  sie noch abweisender)
-
-        // FIXME Hexe nach Turm fragen? (Abneigung steigt - danach "misstrauisch...")
+        n.narrateAlt(alt, secs(10));
 
         setSchonBegruesstMitSC(true);
         talkerBeendetGespraech();

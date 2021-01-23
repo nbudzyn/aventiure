@@ -22,6 +22,7 @@ import javax.annotation.concurrent.Immutable;
 
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
+import static de.nb.aventiure2.german.base.GermanUtil.spaceNeeded;
 import static de.nb.aventiure2.german.base.NumerusGenus.F;
 import static de.nb.aventiure2.german.base.NumerusGenus.M;
 import static de.nb.aventiure2.german.base.NumerusGenus.N;
@@ -247,6 +248,9 @@ public class Konstituentenfolge implements Iterable<Konstituente> {
     }
 
     private static Integer interpretPair(final Pair<Integer, Boolean> phorikKandidatAndSicherheit) {
+        requireNonNull(phorikKandidatAndSicherheit.second,
+                "phorikKandidatAndSicherheit.second null");
+
         if (!phorikKandidatAndSicherheit.second) {
             return null;
         }
@@ -254,10 +258,13 @@ public class Konstituentenfolge implements Iterable<Konstituente> {
         return phorikKandidatAndSicherheit.first;
     }
 
-    private boolean calcKannAlsBezugsobjektVerstandenWerdenFuer(
-            final NumerusGenus numerusGenus) {
+    private boolean calcKannAlsBezugsobjektVerstandenWerdenFuer(final NumerusGenus numerusGenus) {
         final Pair<Integer, Boolean> phorikKandidatAndSicherheit =
                 findPhorikKandidatAndSicherheit(numerusGenus);
+
+        requireNonNull(phorikKandidatAndSicherheit.second,
+                "phorikKandidatAndSicherheit.second null");
+
         if (phorikKandidatAndSicherheit.first != null) {
             return true;
         }
@@ -270,8 +277,7 @@ public class Konstituentenfolge implements Iterable<Konstituente> {
         // Dies ist eine grobe Näherung - natürlich könnten in der Konstituentenfolge
         // leicht alle möglichen Genera / Numeri als mögliche Bezugsobjekte vorkommen.
         return Stream.of(M, F, PL_MFN, N)
-                .filter(g -> calcKannAlsBezugsobjektVerstandenWerdenFuer
-                        (g))
+                .filter(this::calcKannAlsBezugsobjektVerstandenWerdenFuer)
                 .findFirst()
                 .orElse(null);
     }
@@ -393,47 +399,51 @@ public class Konstituentenfolge implements Iterable<Konstituente> {
         final StringBuilder resString = new StringBuilder(size() * 25);
         boolean first = true;
         boolean vorkommaNoetig = false;
+        boolean vordoppelpunktNoetig = false;
         boolean woertlicheRedeNochOffen = false;
         boolean kommaStehtAus = false;
         for (final Konstituente konstituente : this) {
-            final String konstitentenString = konstituente.getString();
+            final String konstituentenString = konstituente.getString();
             if (woertlicheRedeNochOffen) {
                 if (resString.toString().trim().endsWith(".")) {
                     resString.append("“");
-                    if (GermanUtil.spaceNeeded("“", konstitentenString)) {
-                        resString.append(" ");
-                    }
-                } else if (!konstitentenString.trim().startsWith(".“")
-                        && !konstitentenString.trim().startsWith("!“")
-                        && !konstitentenString.trim().startsWith("?“")
-                        && !konstitentenString.trim().startsWith("…“")
+                } else if (!konstituentenString.trim().startsWith(".“")
+                        && !konstituentenString.trim().startsWith("!“")
+                        && !konstituentenString.trim().startsWith("?“")
+                        && !konstituentenString.trim().startsWith("…“")
                         // Kein Satzende
-                        && !konstitentenString.trim().startsWith("“")) {
+                        && !konstituentenString.trim().startsWith("“")) {
                     resString.append("“");
-                    if (GermanUtil.spaceNeeded("“", konstitentenString)) {
-                        resString.append(" ");
-                    }
                 }
             }
 
             if (first) {
                 vorkommaNoetig =
                         konstituente.vorkommaNoetig() &&
-                                !GermanUtil.beginnDecktKommaAb(konstitentenString);
+                                !GermanUtil.beginnDecktKommaAb(konstituentenString);
+                vordoppelpunktNoetig =
+                        konstituente.vordoppelpunktNoetig() &&
+                                !GermanUtil.beginnDecktDoppelpunktAb(konstituentenString);
             }
 
-            if ((kommaStehtAus
-                    || (!first && konstituente.vorkommaNoetig()))
-                    && !GermanUtil.beginnDecktKommaAb(konstitentenString)) {
-                resString.append(",");
-                if (GermanUtil.spaceNeeded(",", konstitentenString)) {
+            if (!first && konstituente.vordoppelpunktNoetig()
+                    && !GermanUtil.beginnDecktDoppelpunktAb(konstituentenString)) {
+                resString.append(":");
+                if (spaceNeeded(":", konstituentenString)) {
                     resString.append(" ");
                 }
-            } else if (GermanUtil.spaceNeeded(resString, konstitentenString)) {
+            } else if ((kommaStehtAus
+                    || (!first && konstituente.vorkommaNoetig()))
+                    && !GermanUtil.beginnDecktKommaAb(konstituentenString)) {
+                resString.append(",");
+                if (spaceNeeded(",", konstituentenString)) {
+                    resString.append(" ");
+                }
+            } else if (spaceNeeded(resString, konstituentenString)) {
                 resString.append(" ");
             }
 
-            resString.append(konstitentenString);
+            resString.append(konstituentenString);
             kommaStehtAus = konstituente.kommaStehtAus();
             woertlicheRedeNochOffen = konstituente.woertlicheRedeNochOffen();
             first = false;
@@ -448,15 +458,11 @@ public class Konstituentenfolge implements Iterable<Konstituente> {
         return new Konstituente(
                 resString.toString().trim(),
                 vorkommaNoetig,
-                woertlicheRedeNochOffen,
+                vordoppelpunktNoetig, woertlicheRedeNochOffen,
                 kommaStehtAus,
                 kannAlsBezugsobjektVerstandenWerdenFuer,
                 phorikKandidat != null ? phorikKandidat.getBezugsobjekt() : null
         );
-    }
-
-    private boolean vorkommaNoetig() {
-        return iterator().next().vorkommaNoetig();
     }
 
     @Nullable
@@ -503,10 +509,7 @@ public class Konstituentenfolge implements Iterable<Konstituente> {
 
     @SuppressWarnings("UnstableApiUsage")
     @Nullable
-    private Konstituentenfolge cutFirst(
-            @Nullable final Konstituentenfolge part) {
-        requireNonNull(this, "input");
-
+    private Konstituentenfolge cutFirst(@Nullable final Konstituentenfolge part) {
         if (part == null) {
             return this;
         }

@@ -18,8 +18,10 @@ import de.nb.aventiure2.german.praedikat.AdverbialeAngabeSkopusSatz;
 import de.nb.aventiure2.german.praedikat.AdverbialeAngabeSkopusVerbAllg;
 import de.nb.aventiure2.german.praedikat.AdverbialeAngabeSkopusVerbWohinWoher;
 import de.nb.aventiure2.german.praedikat.Modalpartikel;
+import de.nb.aventiure2.german.praedikat.PraedikatMitEinerObjektleerstelle;
 import de.nb.aventiure2.german.praedikat.PraedikatOhneLeerstellen;
 
+import static com.google.common.collect.ImmutableList.toImmutableList;
 import static de.nb.aventiure2.german.base.Numerus.SG;
 import static de.nb.aventiure2.german.base.Person.P2;
 
@@ -52,6 +54,26 @@ public class Satz {
     @Nullable
     private final Konditionalsatz angabensatz;
 
+    public static ImmutableList<Satz> altSubjObjSaetze(
+            final SubstantivischePhrase subjekt,
+            final PraedikatMitEinerObjektleerstelle praedikat, final SubstantivischePhrase objekt,
+            final ImmutableList<AdverbialeAngabeSkopusVerbAllg> adverbialeAngaben) {
+        return altSubjObjSaetze(subjekt, ImmutableList.of(praedikat), objekt, adverbialeAngaben);
+    }
+
+    public static ImmutableList<Satz> altSubjObjSaetze(
+            final SubstantivischePhrase subjekt,
+            final ImmutableList<? extends PraedikatMitEinerObjektleerstelle> praedikate,
+            final SubstantivischePhrase objekt,
+            final ImmutableList<AdverbialeAngabeSkopusVerbAllg> adverbialeAngaben) {
+        return adverbialeAngaben.stream()
+                .flatMap(aa -> praedikate.stream()
+                        .map(v -> v.mit(objekt)
+                                .mitAdverbialerAngabe(aa)
+                                .alsSatzMitSubjekt(subjekt)))
+                .collect(toImmutableList());
+    }
+
     public Satz(final SubstantivischePhrase subjekt,
                 final PraedikatOhneLeerstellen praedikat) {
         this(null, subjekt, praedikat);
@@ -72,6 +94,7 @@ public class Satz {
         this.praedikat = praedikat;
         this.angabensatz = angabensatz;
     }
+
 
     public Satz mitAnschlusswort(@Nullable final String anschlusswort) {
         return new Satz(anschlusswort, subjekt, praedikat, angabensatz);
@@ -237,8 +260,7 @@ public class Satz {
         return Konstituentenfolge.joinToKonstituentenfolge(
                 anschlusswort, // "und"
                 vorfeld,
-                praedikat.getVerbzweitMitSubjektImMittelfeld(subjekt).cutFirst(
-                        vorfeld),
+                praedikat.getVerbzweitMitSubjektImMittelfeld(subjekt).cutFirst(vorfeld),
                 angabensatz != null ?
                         Konstituentenfolge.schliesseInKommaEin(angabensatz.getDescription()) :
                         null);

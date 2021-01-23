@@ -11,9 +11,16 @@ import de.nb.aventiure2.german.base.WoertlicheRede;
  */
 public interface PraedikatMitEinerLeerstelleFuerWoertlicheRede extends Praedikat {
     /**
-     * Füllt die Objekt-Leerstelle mit dieser Woertlichen Rede.
+     * Füllt die Leerstelle mit dieser Woertlichen Rede.
      */
-    PraedikatMitWoertlicherRedeOhneLeerstellen mitWoertlicherRede(
-            final WoertlicheRede woertlicheRede);
+    default PraedikatOhneLeerstellen mitWoertlicheRede(final String woertlicheRede) {
+        return mitWoertlicheRede(new WoertlicheRede(woertlicheRede));
+    }
 
+    /**
+     * Füllt die Leerstelle mit dieser Woertlichen Rede.
+     */
+    PraedikatOhneLeerstellen mitWoertlicheRede(final WoertlicheRede woertlicheRede);
 }
+
+

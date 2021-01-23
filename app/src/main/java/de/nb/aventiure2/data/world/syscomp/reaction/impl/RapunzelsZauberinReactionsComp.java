@@ -4,7 +4,6 @@ import androidx.annotation.NonNull;
 
 import javax.annotation.Nullable;
 
-import de.nb.aventiure2.data.database.AvDatabase;
 import de.nb.aventiure2.data.narration.Narrator;
 import de.nb.aventiure2.data.time.AvDateTime;
 import de.nb.aventiure2.data.time.AvTime;
@@ -13,8 +12,10 @@ import de.nb.aventiure2.data.time.TimeTaker;
 import de.nb.aventiure2.data.world.counter.CounterDao;
 import de.nb.aventiure2.data.world.gameobject.*;
 import de.nb.aventiure2.data.world.syscomp.feelings.FeelingIntensity;
+import de.nb.aventiure2.data.world.syscomp.feelings.FeelingsComp;
 import de.nb.aventiure2.data.world.syscomp.location.ILocatableGO;
 import de.nb.aventiure2.data.world.syscomp.location.LocationComp;
+import de.nb.aventiure2.data.world.syscomp.location.LocationSystem;
 import de.nb.aventiure2.data.world.syscomp.memory.IHasMemoryGO;
 import de.nb.aventiure2.data.world.syscomp.mentalmodel.MentalModelComp;
 import de.nb.aventiure2.data.world.syscomp.movement.MovementComp;
@@ -42,6 +43,7 @@ import static de.nb.aventiure2.data.time.AvTimeSpan.hours;
 import static de.nb.aventiure2.data.time.AvTimeSpan.mins;
 import static de.nb.aventiure2.data.time.AvTimeSpan.secs;
 import static de.nb.aventiure2.data.world.gameobject.World.*;
+import static de.nb.aventiure2.data.world.syscomp.feelings.FeelingTowardsType.ZUNEIGUNG_ABNEIGUNG;
 import static de.nb.aventiure2.data.world.syscomp.state.impl.RapunzelsZauberinState.AUF_DEM_RUECKWEG_VON_RAPUNZEL;
 import static de.nb.aventiure2.data.world.syscomp.state.impl.RapunzelsZauberinState.AUF_DEM_WEG_ZU_RAPUNZEL;
 import static de.nb.aventiure2.data.world.syscomp.state.impl.RapunzelsZauberinState.BEI_RAPUNZEL_OBEN_IM_TURM;
@@ -57,6 +59,7 @@ import static de.nb.aventiure2.german.description.DescriptionBuilder.neuerSatz;
 /**
  * "Reaktionen" von Rapunzels Zauberin, z.B. darauf, dass Zeit vergeht
  */
+@SuppressWarnings({"UnnecessaryReturnStatement", "GrazieInspection"})
 public class RapunzelsZauberinReactionsComp
         extends AbstractDescribableReactionsComp
         implements
@@ -84,16 +87,17 @@ public class RapunzelsZauberinReactionsComp
     private final RapunzelsZauberinStateComp stateComp;
     private final LocationComp locationComp;
     private final MentalModelComp mentalModelComp;
+    private final FeelingsComp feelingsComp;
     private final MovementComp movementComp;
     private final RapunzelsZauberinTalkingComp talkingComp;
 
-    public RapunzelsZauberinReactionsComp(final AvDatabase db,
-                                          final CounterDao counterDao,
+    public RapunzelsZauberinReactionsComp(final CounterDao counterDao,
                                           final TimeTaker timeTaker,
                                           final Narrator n, final World world,
                                           final RapunzelsZauberinStateComp stateComp,
                                           final LocationComp locationComp,
                                           final MentalModelComp mentalModelComp,
+                                          final FeelingsComp feelingsComp,
                                           final MovementComp movementComp,
                                           final RapunzelsZauberinTalkingComp talkingComp) {
         super(RAPUNZELS_ZAUBERIN, n, world);
@@ -102,6 +106,7 @@ public class RapunzelsZauberinReactionsComp
         this.stateComp = stateComp;
         this.locationComp = locationComp;
         this.mentalModelComp = mentalModelComp;
+        this.feelingsComp = feelingsComp;
         this.movementComp = movementComp;
         this.talkingComp = talkingComp;
     }
@@ -151,7 +156,7 @@ public class RapunzelsZauberinReactionsComp
 
         if (locationComp.hasSameOuterMostLocationAs(scFrom)) {
             // Wenn die Zauberin sieht, wie der Spieler weggeht,
-            // weiß sie nicht mehr, wo er ist.
+            // weiß sie nicht mehr, wo er ist
             if (!locationComp.hasSameOuterMostLocationAs(scTo)) {
                 mentalModelComp.unsetAssumedLocation(SPIELER_CHARAKTER);
             }
@@ -172,15 +177,15 @@ public class RapunzelsZauberinReactionsComp
             // Zauberin ist in Bewegung - und gerade im "Dazwischen"
 
             final boolean spielerHatZauberinUeberholt =
-                    world.getLocationSystem().haveSameOuterMostLocation(
+                    LocationSystem.haveSameOuterMostLocation(
                             scFrom, movementComp.getCurrentStepFrom()) &&
-                            world.getLocationSystem().haveSameOuterMostLocation(
+                            LocationSystem.haveSameOuterMostLocation(
                                     scTo, movementComp.getCurrentStepTo());
 
             final boolean spielerUndZauberinKommenEinanderEntgegen =
-                    world.getLocationSystem().haveSameOuterMostLocation(
+                    LocationSystem.haveSameOuterMostLocation(
                             scFrom, movementComp.getCurrentStepTo()) &&
-                            world.getLocationSystem().haveSameOuterMostLocation(
+                            LocationSystem.haveSameOuterMostLocation(
                                     scTo, movementComp.getCurrentStepFrom());
 
             if (spielerHatZauberinUeberholt || spielerUndZauberinKommenEinanderEntgegen) {
@@ -314,19 +319,19 @@ public class RapunzelsZauberinReactionsComp
 
         if (stateComp.hasState(AUF_DEM_WEG_ZU_RAPUNZEL)) {
             onRapunzelStateChangedAufDemWegZuRapunzel(
-                    (RapunzelState) oldState, (RapunzelState) newState);
+                    (RapunzelState) newState);
             return;
         }
 
         if (stateComp.hasState(AUF_DEM_RUECKWEG_VON_RAPUNZEL)) {
             onRapunzelStateChangedAufDemRueckwegVonRapunzel(
-                    (RapunzelState) oldState, (RapunzelState) newState);
+                    (RapunzelState) newState);
             return;
         }
     }
 
     private void onRapunzelStateChangedAufDemWegZuRapunzel(
-            final RapunzelState oldState, final RapunzelState newState
+            final RapunzelState newState
     ) {
         if (!locationComp.hasLocation(VOR_DEM_ALTEN_TURM)) {
             return;
@@ -370,7 +375,7 @@ public class RapunzelsZauberinReactionsComp
     }
 
     private void onRapunzelStateChangedAufDemRueckwegVonRapunzel(
-            final RapunzelState oldState, final RapunzelState newState
+            final RapunzelState newState
     ) {
         if (!locationComp.hasLocation(OBEN_IM_ALTEN_TURM)) {
             return;
@@ -433,6 +438,10 @@ public class RapunzelsZauberinReactionsComp
                     .timed(mins(5)));
         }
 
+        // Zauberin kann den Spieler nicht mehr ausstehen
+        feelingsComp.upgradeFeelingsTowards(SPIELER_CHARAKTER,
+                ZUNEIGUNG_ABNEIGUNG, -3, FeelingIntensity.SEHR_STARK);
+
         // Spieler wird verzaubert und vergisst alles.
         loadSC().memoryComp().forget(RAPUNZEL, RAPUNZELS_ZAUBERIN, RAPUNZELS_GESANG,
                 RAPUNZELS_HAARE, RAPUNZELRUF);
@@ -485,7 +494,7 @@ public class RapunzelsZauberinReactionsComp
 
         switch (stateComp.getState()) {
             case MACHT_ZURZEIT_KEINE_RAPUNZELBESUCHE:
-                onTimePassed_MachtZurzeitKeineRapunzelbesuche(endTime);
+                onTimePassed_MachtZurzeitKeineRapunzelbesuche();
                 return;
             case VOR_DEM_NAECHSTEN_RAPUNZEL_BESUCH:
                 onTimePassed_VorDemNaechstenRapunzelBesuch(endTime);
@@ -510,7 +519,7 @@ public class RapunzelsZauberinReactionsComp
         }
     }
 
-    private static void onTimePassed_MachtZurzeitKeineRapunzelbesuche(final AvDateTime now) {
+    private static void onTimePassed_MachtZurzeitKeineRapunzelbesuche() {
     }
 
     private void onTimePassed_VorDemNaechstenRapunzelBesuch(final AvDateTime now) {
@@ -695,6 +704,7 @@ public class RapunzelsZauberinReactionsComp
                 });
     }
 
+    @SuppressWarnings("unchecked")
     @NonNull
     private <R extends
             IHasMemoryGO &

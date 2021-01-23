@@ -265,8 +265,9 @@ class CreatureFactory {
                 feelingsComp,
                 talkingComp,
                 mentalModelComp,
-                new RapunzelsZauberinReactionsComp(db, db.counterDao(), timeTaker, n, world,
-                        stateComp, locationComp, mentalModelComp, movementComp, talkingComp));
+                new RapunzelsZauberinReactionsComp(db.counterDao(), timeTaker, n, world,
+                        stateComp, locationComp, mentalModelComp, feelingsComp, movementComp,
+                        talkingComp));
     }
 
     private static HungerData createInitialHungerDataForRapunzelsZauberin() {

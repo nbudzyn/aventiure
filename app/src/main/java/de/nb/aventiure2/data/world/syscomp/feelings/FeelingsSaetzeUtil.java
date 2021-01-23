@@ -58,8 +58,8 @@ class FeelingsSaetzeUtil {
             final ImmutableList<AdverbialeAngabeSkopusVerbAllg> eindruckAdverbialeAngaben) {
         final ImmutableList.Builder<Satz> res = ImmutableList.builder();
 
-        res.addAll(
-                toAnsehenSaetze(gameObjectSubjekt, feelingTargetDesc, eindruckAdverbialeAngaben));
+        res.addAll(altAnsehenSaetze(
+                gameObjectSubjekt, feelingTargetDesc, eindruckAdverbialeAngaben));
 
         res.addAll(toEindrueckSaetze(gameObjectSubjekt, eindruckAdjPhr));
 
@@ -79,27 +79,18 @@ class FeelingsSaetzeUtil {
         return res.build();
     }
 
-    static ImmutableList<Satz> toAnsehenSaetze(final SubstantivischePhrase gameObjectSubjekt,
-                                               final SubstantivischePhrase angesehenDesc,
-                                               final ImmutableList<AdverbialeAngabeSkopusVerbAllg> adverbialeAngaben) {
-        return adverbialeAngaben.stream()
-                .flatMap(aa -> Stream.of(ansehenVerben())
-                        .map(v -> v.mit(angesehenDesc)
-                                .mitAdverbialerAngabe(aa)
-                                .alsSatzMitSubjekt(gameObjectSubjekt)))
-                .collect(toImmutableList());
-    }
+    static ImmutableList<Satz> altAnsehenSaetze(
+            final SubstantivischePhrase gameObjectSubjekt,
+            final SubstantivischePhrase angesehenDesc,
+            final ImmutableList<AdverbialeAngabeSkopusVerbAllg> adverbialeAngaben) {
 
-    static ImmutableList<Satz> ansehenSaetze(final SubstantivischePhrase gameObjectSubjekt) {
-        return Stream.of(ansehenVerben())
-                .map(v -> v.mit(gameObjectSubjekt)
-                        .alsSatzMitSubjekt(gameObjectSubjekt))
-                .collect(toImmutableList());
+        return Satz.altSubjObjSaetze(gameObjectSubjekt, ansehenVerben(), angesehenDesc,
+                adverbialeAngaben);
     }
 
     @NonNull
-    private static VerbSubjObj[] ansehenVerben() {
-        return new VerbSubjObj[]{ANBLICKEN, ANSEHEN, ANSCHAUEN};
+    private static ImmutableList<VerbSubjObj> ansehenVerben() {
+        return ImmutableList.of(ANBLICKEN, ANSEHEN, ANSCHAUEN);
     }
 
     static ImmutableList<Satz> toEindrueckSaetze(

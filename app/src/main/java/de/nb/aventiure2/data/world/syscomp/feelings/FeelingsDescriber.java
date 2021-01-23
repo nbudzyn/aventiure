@@ -9,13 +9,40 @@ import de.nb.aventiure2.german.base.NumerusGenus;
 import de.nb.aventiure2.german.base.Person;
 import de.nb.aventiure2.german.base.Praedikativum;
 import de.nb.aventiure2.german.base.SubstantivischePhrase;
+import de.nb.aventiure2.german.praedikat.AdverbialeAngabeSkopusVerbAllg;
 import de.nb.aventiure2.german.satz.Satz;
+
+import static java.util.stream.Collectors.toSet;
 
 /**
  * Beschreibt das Gefühl eines Feeling Beings
  * gegenüber dem Target, wenn die beiden sich begegnen.
  */
-public interface FeelingBeiBegegnungDescriber {
+public interface FeelingsDescriber {
+    /**
+     * Gibt eventuell adverbiale Angaben zurück, die beschreiben, welchen Eindruck dieses
+     * Feeling Being - basiert auf diesem {@link FeelingTowardsType} - auf das  Target
+     * macht, wenn die beiden sich begegnen.
+     * <p>
+     * Die Methode garantiert, dass niemals etwas wie "du, der du..." oder
+     * "du, die du..." oder "du, das du..." generiert wird.
+     *
+     * @return Möglicherweise eine leere Liste!
+     */
+    default ImmutableList<AdverbialeAngabeSkopusVerbAllg> altEindruckBeiBegegnungAdvAngaben(
+            final SubstantivischePhrase gameObjectSubjekt, final SubstantivischePhrase targetDesc,
+            final int feelingIntensity, final boolean targetKnown) {
+        return ImmutableList.<AdverbialeAngabeSkopusVerbAllg>builder()
+                .addAll(AdjPhrOhneLeerstellen.toAdvAngabenSkopusVerbAllg(gameObjectSubjekt,
+                        altEindruckBeiBegegnungAdjPhr(gameObjectSubjekt,
+                                targetDesc, feelingIntensity,
+                                targetKnown)))
+                .addAll(altEindruckBeiBegegnungZusAdverbialeAngaben(feelingIntensity).stream()
+                        .map(AdverbialeAngabeSkopusVerbAllg::new)
+                        .collect(toSet()))
+                .build();
+    }
+
     /**
      * Gibt eventuell alternative Sätze zurück, die auf Basis dieses Gefühls
      * die Reaktion dieses Feeling Beings auf das Target beschreiben, wenn die beiden sich begegnen.

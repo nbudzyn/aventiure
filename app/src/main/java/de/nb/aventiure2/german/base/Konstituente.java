@@ -30,6 +30,19 @@ public class Konstituente {
     private final boolean vorkommaNoetig;
 
     /**
+     * Ob noch ein Doppelpunkt <i>vor dieser Konstituente</i> nötig ist.
+     * Alternativ kann ein Punkt, ein Ausrufezeichen oder ein Fragezeichen vorangehen, das
+     * ebenfalls den Doppelpunkt "abdeckt".
+     * <p>
+     * Vordoppelpunkte sind nur in sehr seltenen Fällen nötig - etwa wenn eine wörtliche
+     * Rede im Nachfeld steht. (<i>Peter sagt: "Genau!"</i>, nicht aber die
+     * <i>"Genau", sagt Peter.</i>)
+     * <p>
+     * Es kann nur entweder ein Vorkomma oder ein Vordoppelpunkt nötig sein.
+     */
+    private final boolean vordoppelpunktNoetig;
+
+    /**
      * Ob die wörtliche Rede noch "offen" ist.  Es steht also noch ein schließendes
      * Anführungszeichen aus. Wenn der Satz beendet wird, muss vielleicht außerdem
      * noch ein Punkt nach dem Anführungszeitchen gesetzt werden.
@@ -64,7 +77,14 @@ public class Konstituente {
     private final IBezugsobjekt bezugsobjekt;
 
     public Konstituente withVorkommaNoetig(final boolean vorkommaNoetig) {
-        return new Konstituente(string, vorkommaNoetig, woertlicheRedeNochOffen, kommmaStehtAus,
+        return new Konstituente(string, vorkommaNoetig, vordoppelpunktNoetig,
+                woertlicheRedeNochOffen, kommmaStehtAus,
+                kannAlsBezugsobjektVerstandenWerdenFuer, bezugsobjekt);
+    }
+
+    public Konstituente withVordoppelpunktNoetig() {
+        return new Konstituente(string, vorkommaNoetig, true,
+                woertlicheRedeNochOffen, kommmaStehtAus,
                 kannAlsBezugsobjektVerstandenWerdenFuer, bezugsobjekt);
     }
 
@@ -112,7 +132,8 @@ public class Konstituente {
         // Wenn der String mit Komma anfängt, lassen wir es in der Konsituente  stehen.
         // Damit wird das Komma definitiv ausgegeben - auch von Methoden, die das Vorkomma
         // vielleich sonst (ggf. bewusst) verschlucken. Vgl. Wortfolge#joinToNullWortfolge()
-        return k(string.trim(), false, false, kannAlsBezugsobjektVerstandenWerdenFuer, bezugsobjekt
+        return k(string.trim(), false, false,
+                kannAlsBezugsobjektVerstandenWerdenFuer, bezugsobjekt
         );
     }
 
@@ -134,24 +155,19 @@ public class Konstituente {
                                  @Nullable
                                  final NumerusGenus kannAlsBezugsobjektVerstandenWerdenFuer,
                                  @Nullable final IBezugsobjekt bezugsobjekt) {
-        return new Konstituente(string, kommaStehtAus, woertlicheRedeNochOffen, false,
-                kannAlsBezugsobjektVerstandenWerdenFuer, bezugsobjekt);
-    }
-
-    public static Konstituente k(final @Nonnull String string,
-                                 final boolean woertlicheRedeNochOffen,
-                                 final boolean kommaStehtAus,
-                                 @Nullable final
-                                 NumerusGenus koennteAlsBezugsobjektVerstandenWerdenFuer) {
-        return new Konstituente(string, kommaStehtAus, woertlicheRedeNochOffen, false,
-                koennteAlsBezugsobjektVerstandenWerdenFuer, null);
+        return new Konstituente(string, false, false,
+                woertlicheRedeNochOffen, kommaStehtAus, kannAlsBezugsobjektVerstandenWerdenFuer,
+                bezugsobjekt);
     }
 
     Konstituente(final String string, final boolean vorkommaNoetig,
+                 final boolean vordoppelpunktNoetig,
                  final boolean woertlicheRedeNochOffen, final boolean kommmaStehtAus,
                  @Nullable final NumerusGenus kannAlsBezugsobjektVerstandenWerdenFuer,
                  @Nullable final IBezugsobjekt bezugsobjekt) {
-        this.woertlicheRedeNochOffen = woertlicheRedeNochOffen;
+        checkArgument(!vorkommaNoetig || !vordoppelpunktNoetig,
+                "Vorkomma und Vordoppelpunkt können nicht gleichzeitig nötig "
+                        + "sein! String: %s", string);
         requireNonNull(string, "string");
         checkArgument(!string.isEmpty(), "String ist empty");
         checkArgument(!string.startsWith(" "));
@@ -163,6 +179,8 @@ public class Konstituente {
 
         this.string = string;
         this.vorkommaNoetig = vorkommaNoetig;
+        this.vordoppelpunktNoetig = vordoppelpunktNoetig;
+        this.woertlicheRedeNochOffen = woertlicheRedeNochOffen;
         this.kommmaStehtAus = kommmaStehtAus;
         this.bezugsobjekt = bezugsobjekt;
         this.kannAlsBezugsobjektVerstandenWerdenFuer =
@@ -179,7 +197,8 @@ public class Konstituente {
 
         return new Konstituente(
                 resultString, vorkommaNoetig,
-                woertlicheRedeNochOffen, kommmaStehtAus, kannAlsBezugsobjektVerstandenWerdenFuer,
+                vordoppelpunktNoetig, woertlicheRedeNochOffen, kommmaStehtAus,
+                kannAlsBezugsobjektVerstandenWerdenFuer,
                 bezugsobjekt);
     }
 
@@ -187,7 +206,7 @@ public class Konstituente {
         return new Konstituente(GermanStringUtil.capitalize(string),
                 // Wenn großgeschrieben werden soll, wäre es sinnlos, ein Komma zuvor
                 // setzen zu vollen.
-                false, woertlicheRedeNochOffen, kommmaStehtAus,
+                false, vordoppelpunktNoetig, woertlicheRedeNochOffen, kommmaStehtAus,
                 kannAlsBezugsobjektVerstandenWerdenFuer, bezugsobjekt);
     }
 
@@ -197,13 +216,13 @@ public class Konstituente {
         }
 
         return new Konstituente(string,
-                vorkommaNoetig, woertlicheRedeNochOffen, kommmaStehtAus,
+                vorkommaNoetig, vordoppelpunktNoetig, woertlicheRedeNochOffen, kommmaStehtAus,
                 phorikKandidat.getNumerusGenus(), phorikKandidat.getBezugsobjekt());
     }
 
     Konstituente ohneBezugsobjekt() {
         return new Konstituente(string,
-                vorkommaNoetig, woertlicheRedeNochOffen, kommmaStehtAus,
+                vorkommaNoetig, vordoppelpunktNoetig, woertlicheRedeNochOffen, kommmaStehtAus,
                 kannAlsBezugsobjektVerstandenWerdenFuer, null);
     }
 
@@ -221,8 +240,12 @@ public class Konstituente {
         return string;
     }
 
-    boolean vorkommaNoetig() {
+    public boolean vorkommaNoetig() {
         return vorkommaNoetig;
+    }
+
+    public boolean vordoppelpunktNoetig() {
+        return vordoppelpunktNoetig;
     }
 
     public boolean woertlicheRedeNochOffen() {

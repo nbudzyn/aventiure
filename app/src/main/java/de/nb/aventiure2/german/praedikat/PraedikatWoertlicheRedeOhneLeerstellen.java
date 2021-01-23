@@ -29,7 +29,7 @@ import static de.nb.aventiure2.german.base.Konstituentenfolge.kf;
  * <p>
  * Adverbiale Angaben ("laut") können immer noch eingefügt werden.
  */
-public class PraedikatMitWoertlicherRedeOhneLeerstellen
+public class PraedikatWoertlicheRedeOhneLeerstellen
         extends AbstractAngabenfaehigesPraedikatOhneLeerstellen {
     /**
      * Die wörtliche Rede
@@ -38,19 +38,14 @@ public class PraedikatMitWoertlicherRedeOhneLeerstellen
     @NonNull
     private final WoertlicheRede woertlicheRede;
 
-    public PraedikatMitWoertlicherRedeOhneLeerstellen(
-            final Verb verb, final String woertlicheRedeText) {
-        this(verb, new WoertlicheRede(woertlicheRedeText));
-    }
-
     @Valenz
-    PraedikatMitWoertlicherRedeOhneLeerstellen(
+    PraedikatWoertlicheRedeOhneLeerstellen(
             final Verb verb, final WoertlicheRede woertlicheRede) {
         this(verb, woertlicheRede, ImmutableList.of(), null,
                 null, null);
     }
 
-    private PraedikatMitWoertlicherRedeOhneLeerstellen(
+    private PraedikatWoertlicheRedeOhneLeerstellen(
             final Verb verb, final WoertlicheRede woertlicheRede,
             final Iterable<Modalpartikel> modalpartikeln,
             @Nullable final AdverbialeAngabeSkopusSatz adverbialeAngabeSkopusSatz,
@@ -63,9 +58,9 @@ public class PraedikatMitWoertlicherRedeOhneLeerstellen
     }
 
     @Override
-    public PraedikatMitWoertlicherRedeOhneLeerstellen mitModalpartikeln(
+    public PraedikatWoertlicheRedeOhneLeerstellen mitModalpartikeln(
             final Collection<Modalpartikel> modalpartikeln) {
-        return new PraedikatMitWoertlicherRedeOhneLeerstellen(
+        return new PraedikatWoertlicheRedeOhneLeerstellen(
                 getVerb(), woertlicheRede,
                 Iterables.concat(getModalpartikeln(), modalpartikeln),
                 getAdverbialeAngabeSkopusSatz(),
@@ -76,13 +71,13 @@ public class PraedikatMitWoertlicherRedeOhneLeerstellen
 
 
     @Override
-    public PraedikatMitWoertlicherRedeOhneLeerstellen mitAdverbialerAngabe(
+    public PraedikatWoertlicheRedeOhneLeerstellen mitAdverbialerAngabe(
             @Nullable final AdverbialeAngabeSkopusSatz adverbialeAngabe) {
         if (adverbialeAngabe == null) {
             return this;
         }
 
-        return new PraedikatMitWoertlicherRedeOhneLeerstellen(
+        return new PraedikatWoertlicheRedeOhneLeerstellen(
                 getVerb(),
                 woertlicheRede,
                 getModalpartikeln(),
@@ -92,13 +87,13 @@ public class PraedikatMitWoertlicherRedeOhneLeerstellen
     }
 
     @Override
-    public PraedikatMitWoertlicherRedeOhneLeerstellen mitAdverbialerAngabe(
+    public PraedikatWoertlicheRedeOhneLeerstellen mitAdverbialerAngabe(
             @Nullable final AdverbialeAngabeSkopusVerbAllg adverbialeAngabe) {
         if (adverbialeAngabe == null) {
             return this;
         }
 
-        return new PraedikatMitWoertlicherRedeOhneLeerstellen(
+        return new PraedikatWoertlicheRedeOhneLeerstellen(
                 getVerb(),
                 woertlicheRede,
                 getModalpartikeln(),
@@ -108,13 +103,13 @@ public class PraedikatMitWoertlicherRedeOhneLeerstellen
     }
 
     @Override
-    public PraedikatMitWoertlicherRedeOhneLeerstellen mitAdverbialerAngabe(
+    public PraedikatWoertlicheRedeOhneLeerstellen mitAdverbialerAngabe(
             @Nullable final AdverbialeAngabeSkopusVerbWohinWoher adverbialeAngabe) {
         if (adverbialeAngabe == null) {
             return this;
         }
 
-        return new PraedikatMitWoertlicherRedeOhneLeerstellen(
+        return new PraedikatWoertlicheRedeOhneLeerstellen(
                 getVerb(),
                 woertlicheRede,
                 getModalpartikeln(),
@@ -127,6 +122,25 @@ public class PraedikatMitWoertlicherRedeOhneLeerstellen
     @Override
     public boolean kannPartizipIIPhraseAmAnfangOderMittenImSatzVerwendetWerden() {
         return false;
+    }
+
+    @Nullable
+    @Override
+    public Konstituente getSpeziellesVorfeldSehrErwuenscht(final Person personSubjekt,
+                                                           final Numerus numerusSubjekt) {
+        final Konstituente speziellesVorfeldSehrErwuenschtFromSuper =
+                super.getSpeziellesVorfeldSehrErwuenscht(personSubjekt, numerusSubjekt);
+        if (speziellesVorfeldSehrErwuenschtFromSuper != null) {
+            return speziellesVorfeldSehrErwuenschtFromSuper;
+        }
+
+        if (!woertlicheRede.isLangOderMehrteilig()) {
+            return k(woertlicheRede.getDescription(),
+                    true,
+                    true); // "„Kommt alle her[“, ]"
+        }
+
+        return null;
     }
 
     @Override
@@ -173,11 +187,13 @@ public class PraedikatMitWoertlicherRedeOhneLeerstellen
                         numerusSubjekt),
                 getAdverbialeAngabeSkopusSatzDescriptionFuerZwangsausklammerung(personSubjekt,
                         numerusSubjekt),
-                k(woertlicheRede.fuerNachfeld(),
+                k(woertlicheRede.getDescription(),
                         true,
-                        true)); // "„Kommt alle her.“"
+                        true)
+                        .withVordoppelpunktNoetig()); // "[: ]„Kommt alle her[.“]"
 
-        //  Laut http://www.pro-publish.com/korrektor/zeichensetzung-interpunktion/den-doppelpunkt-richtig-setzen/
+        //  Laut http://www.pro-publish.com/korrektor/zeichensetzung-interpunktion/den
+        //  -doppelpunkt-richtig-setzen/
         //  ist es möglich, nach dem Doppelpunkt den Satz fortzuführen - dabei darf die
         //  wörtliche Rede allerdings nicht mit Punkt abgeschlossen worden sein:
         //  "Peter sagte: „Ich fahre jetzt nach Hause“, doch es wurde noch viel später an diesem

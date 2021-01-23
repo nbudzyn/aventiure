@@ -23,6 +23,7 @@ import de.nb.aventiure2.german.praedikat.VerbSubjObj;
 import de.nb.aventiure2.german.satz.Konditionalsatz;
 import de.nb.aventiure2.german.satz.Satz;
 
+import static de.nb.aventiure2.data.world.syscomp.feelings.FeelingIntensity.NEUTRAL;
 import static de.nb.aventiure2.german.adjektiv.AdjektivOhneErgaenzungen.BETRUEBT;
 import static de.nb.aventiure2.german.adjektiv.AdjektivOhneErgaenzungen.ENTTAEUSCHT;
 import static de.nb.aventiure2.german.adjektiv.AdjektivOhneErgaenzungen.ERLEICHTERT;
@@ -34,13 +35,16 @@ import static de.nb.aventiure2.german.base.PraepositionMitKasus.VOR;
 import static de.nb.aventiure2.german.praedikat.PraedikativumPraedikatOhneLeerstellen.praedikativumPraedikatMit;
 import static de.nb.aventiure2.german.praedikat.ReflVerbZuInfSubjektkontrolle.SICH_FREUEN_ZU;
 import static de.nb.aventiure2.german.praedikat.VerbSubjObj.ANSTRAHLEN;
+import static de.nb.aventiure2.german.praedikat.VerbSubjObj.MUSTERN;
 import static de.nb.aventiure2.german.praedikat.VerbSubjObj.SEHEN;
+import static de.nb.aventiure2.german.praedikat.VerbSubjObjWoertlicheRede.ENTGEGENBLAFFEN;
+import static de.nb.aventiure2.german.praedikat.VerbSubjObjWoertlicheRede.ENTGEGENRUFEN;
 
 /**
  * Beschreibt die Zuneigung oder Abneigung eines Feeling Beings
  * gegenüber dem Target, wenn die beiden sich begegnen.
  */
-class ZuneigungAbneigungBeiBegegnungDescriber implements FeelingBeiBegegnungDescriber {
+class ZuneigungAbneigungDescriber implements FeelingsDescriber {
     @Override
     @NonNull
     public ImmutableList<Satz> altReaktionBeiBegegnungSaetze(
@@ -51,7 +55,7 @@ class ZuneigungAbneigungBeiBegegnungDescriber implements FeelingBeiBegegnungDesc
         // Keine Relativpronomen von targetDesc erzeugen - jedenfalls nicht solche
         // im Nominativ!
 
-        ImmutableList.Builder<Satz> res = ImmutableList.builder();
+        final ImmutableList.Builder<Satz> res = ImmutableList.builder();
 
         res.addAll(
                 altFeelingBeiBegegnungPraedikativum(
@@ -62,13 +66,20 @@ class ZuneigungAbneigungBeiBegegnungDescriber implements FeelingBeiBegegnungDesc
                         .collect(ImmutableList.toImmutableList())
         );
 
+        if (feelingIntensity <= NEUTRAL) {
+            //"Sie mustert dich misstrauisch"
+            res.addAll(Satz.altSubjObjSaetze(gameObjectSubjekt, MUSTERN, targetDesc,
+                    altEindruckBeiBegegnungAdvAngaben(gameObjectSubjekt, targetDesc,
+                            feelingIntensity, targetKnown)));
+        }
+
         final ImmutableList<VerbSubjObj> altSehenVerben =
                 targetKnown ? ImmutableList.of(VerbSubjObj.WIEDERSEHEN, SEHEN) :
                         ImmutableList.of(SEHEN);
 
         if (feelingIntensity <= -FeelingIntensity.SEHR_STARK) {
             // "ganz außer sich vor Wut, als sie dich sieht"
-            return altSehenVerben.stream()
+            res.addAll(altSehenVerben.stream()
                     .map(v ->
                             praedikativumPraedikatMit(
                                     AUSSER_DAT.mit(gameObjectSubjekt.reflPron())
@@ -81,9 +92,16 @@ class ZuneigungAbneigungBeiBegegnungDescriber implements FeelingBeiBegegnungDesc
                                                     v.mit(targetDesc)
                                                             .alsSatzMitSubjekt(gameObjectSubjekt))
                                     ))
-                    .collect(ImmutableList.toImmutableList());
+                    .collect(ImmutableList.toImmutableList()));
+        } else if (feelingIntensity == -FeelingIntensity.DEUTLICH) {
+            if (targetKnown) {
+                res.add(ENTGEGENRUFEN
+                        .mitObjekt(targetDesc)
+                        .mitWoertlicheRede("Du schon wieder!")
+                        .alsSatzMitSubjekt(gameObjectSubjekt));
+            }
         } else if (feelingIntensity == -FeelingIntensity.STARK) {
-            return altSehenVerben.stream()
+            res.addAll(altSehenVerben.stream()
                     .map(v ->
                             praedikativumPraedikatMit(
                                     AdjektivOhneErgaenzungen.ZORNIG
@@ -94,9 +112,17 @@ class ZuneigungAbneigungBeiBegegnungDescriber implements FeelingBeiBegegnungDesc
                                                     v.mit(targetDesc)
                                                             .alsSatzMitSubjekt(gameObjectSubjekt))
                                     ))
-                    .collect(ImmutableList.toImmutableList());
+                    .collect(ImmutableList.toImmutableList()));
+            res.add(ENTGEGENBLAFFEN
+                    .mitObjekt(targetDesc)
+                    .mitWoertlicheRede("Lass mich in Frieden!")
+                    .alsSatzMitSubjekt(gameObjectSubjekt));
+            res.add(ENTGEGENBLAFFEN
+                    .mitObjekt(targetDesc)
+                    .mitWoertlicheRede("Hör auf, mich zu belästigen!")
+                    .alsSatzMitSubjekt(gameObjectSubjekt));
         } else if (feelingIntensity == FeelingIntensity.MERKLICH) {
-            return altSehenVerben.stream()
+            res.addAll(altSehenVerben.stream()
                     .map(v ->
                             // "Sie freut sich, dich zu sehen"
                             SICH_FREUEN_ZU
@@ -104,10 +130,8 @@ class ZuneigungAbneigungBeiBegegnungDescriber implements FeelingBeiBegegnungDesc
                                             v.mit(targetDesc)
                                     )
                                     .alsSatzMitSubjekt(gameObjectSubjekt))
-                    .collect(ImmutableList.toImmutableList());
+                    .collect(ImmutableList.toImmutableList()));
         } else if (feelingIntensity == FeelingIntensity.STARK) {
-            res = ImmutableList.builder();
-
             res.add(ANSTRAHLEN.mit(gameObjectSubjekt).alsSatzMitSubjekt(targetDesc));
 
             res.addAll(altSehenVerben.stream()
@@ -122,11 +146,9 @@ class ZuneigungAbneigungBeiBegegnungDescriber implements FeelingBeiBegegnungDesc
                                     )
                                     .alsSatzMitSubjekt(gameObjectSubjekt))
                     .collect(ImmutableList.toImmutableList()));
-
-            return res.build();
         } else if (feelingIntensity >= FeelingIntensity.SEHR_STARK) {
             // "außer sich vor Freude, als sie dich sieht"
-            return altSehenVerben.stream()
+            res.addAll(altSehenVerben.stream()
                     .map(v ->
                             praedikativumPraedikatMit(
                                     AUSSER_DAT.mit(gameObjectSubjekt.reflPron()))
@@ -138,11 +160,10 @@ class ZuneigungAbneigungBeiBegegnungDescriber implements FeelingBeiBegegnungDesc
                                                     v.mit(targetDesc)
                                                             .alsSatzMitSubjekt(gameObjectSubjekt))
                                     ))
-                    .collect(ImmutableList.toImmutableList());
+                    .collect(ImmutableList.toImmutableList()));
         }
 
-        return ImmutableList.of();
-
+        return res.build();
     }
 
     @NonNull
@@ -165,7 +186,7 @@ class ZuneigungAbneigungBeiBegegnungDescriber implements FeelingBeiBegegnungDesc
                     AdjektivOhneErgaenzungen.UEBERRASCHT,
                     AdjektivOhneErgaenzungen.UEBERRUMPELT.mitGraduativerAngabe("etwas")
             );
-        } else if (feelingIntensity == FeelingIntensity.NEUTRAL) {
+        } else if (feelingIntensity == NEUTRAL) {
             return ImmutableList.of(
                     new ZweiAdjPhrOhneLeerstellen(
                             AdjektivOhneErgaenzungen.UEBERRASCHT,
@@ -210,7 +231,9 @@ class ZuneigungAbneigungBeiBegegnungDescriber implements FeelingBeiBegegnungDesc
         }
 
         if (feelingIntensity == -FeelingIntensity.MERKLICH) {
-            return ImmutableList.of(AdjektivOhneErgaenzungen.VERSTIMMT);
+            return ImmutableList.of(
+                    AdjektivOhneErgaenzungen.VERSTIMMT,
+                    AdjektivOhneErgaenzungen.MISSTRAUISCH);
         }
 
         if (feelingIntensity == -FeelingIntensity.NUR_LEICHT) {
@@ -221,7 +244,7 @@ class ZuneigungAbneigungBeiBegegnungDescriber implements FeelingBeiBegegnungDesc
                     AdjektivOhneErgaenzungen.VERWUNDERT);
         }
 
-        if (feelingIntensity == FeelingIntensity.NEUTRAL) {
+        if (feelingIntensity == NEUTRAL) {
             return ImmutableList.of(
                     new ZweiAdjPhrOhneLeerstellen(
                             AdjektivOhneErgaenzungen.UEBERRASCHT,

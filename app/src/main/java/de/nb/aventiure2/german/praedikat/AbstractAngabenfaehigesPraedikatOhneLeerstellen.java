@@ -1,8 +1,7 @@
 package de.nb.aventiure2.german.praedikat;
 
-import android.util.Pair;
-
 import androidx.annotation.NonNull;
+import androidx.core.util.Pair;
 
 import com.google.common.collect.ImmutableList;
 
@@ -24,6 +23,7 @@ import static de.nb.aventiure2.german.base.Konstituentenfolge.cutFirstOneByOne;
 import static de.nb.aventiure2.german.base.Konstituentenfolge.kf;
 import static de.nb.aventiure2.german.base.Numerus.SG;
 import static de.nb.aventiure2.german.base.Person.P2;
+import static java.util.Objects.requireNonNull;
 
 /**
  * Ein Prädikat, in dem alle Leerstellen besetzt sind und dem grundsätzlich
@@ -245,13 +245,9 @@ public abstract class AbstractAngabenfaehigesPraedikatOhneLeerstellen
 
     /**
      * Gibt das Dativ-Objekt zurück - sofern es eines gibt.
-     *
-     * @param personSubjekt
-     * @param numerusSubjekt
      */
     @Nullable
-    abstract SubstPhrOderReflexivpronomen getDat(
-            Person personSubjekt, Numerus numerusSubjekt);
+    abstract SubstPhrOderReflexivpronomen getDat(Person personSubjekt, Numerus numerusSubjekt);
 
 
     private static Pair<SubstPhrOderReflexivpronomen, Kasus> toPair(
@@ -270,8 +266,8 @@ public abstract class AbstractAngabenfaehigesPraedikatOhneLeerstellen
             final Pair<SubstPhrOderReflexivpronomen, Kasus>... substantivischePhrasenMitKasus) {
         return Stream.of(substantivischePhrasenMitKasus)
                 .filter(Objects::nonNull)
-                .filter(spk -> spk.first.isUnbetontesPronomen())
-                .map(spk -> spk.first.imK(spk.second))
+                .filter(spk -> requireNonNull(spk.first).isUnbetontesPronomen())
+                .map(spk -> spk.first.imK(requireNonNull(spk.second)))
                 .collect(toImmutableList());
     }
 

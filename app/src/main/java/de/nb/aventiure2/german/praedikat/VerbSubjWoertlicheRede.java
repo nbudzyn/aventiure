@@ -44,9 +44,9 @@ public enum VerbSubjWoertlicheRede implements PraedikatMitEinerLeerstelleFuerWoe
     }
 
     @Override
-    public PraedikatMitWoertlicherRedeOhneLeerstellen mitWoertlicherRede(
+    public PraedikatWoertlicheRedeOhneLeerstellen mitWoertlicheRede(
             final WoertlicheRede woertlicheRede) {
-        return new PraedikatMitWoertlicherRedeOhneLeerstellen(verb,
+        return new PraedikatWoertlicheRedeOhneLeerstellen(verb,
                 woertlicheRede);
     }
 }

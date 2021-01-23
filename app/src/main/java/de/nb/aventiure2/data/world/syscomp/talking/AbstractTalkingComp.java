@@ -150,16 +150,16 @@ public abstract class AbstractTalkingComp extends AbstractStatefulComponent<Talk
      * Setzt den Gesprächspartner auf <code>null</code>.
      */
     @SuppressWarnings("WeakerAccess")
-    public void unsetTalkingTo(final boolean talkerHatletztesGespraechSelbstBeendet) {
+    public void unsetTalkingTo(final boolean esIstDerTalkerDerDasGespraechBeendet) {
         @Nullable final ITalkerGO<?> talkingTo = getTalkingTo();
-        getPcd().setTalkerHatletztesGespraechSelbstBeendet(talkerHatletztesGespraechSelbstBeendet);
+        getPcd().setTalkerHatletztesGespraechSelbstBeendet(esIstDerTalkerDerDasGespraechBeendet);
 
         if (talkingTo == null) {
             return;
         }
 
         getPcd().setTalkingToId(null);
-        talkingTo.talkingComp().unsetTalkingTo(!talkerHatletztesGespraechSelbstBeendet);
+        talkingTo.talkingComp().unsetTalkingTo(!esIstDerTalkerDerDasGespraechBeendet);
     }
 
     public boolean isInConversation() {

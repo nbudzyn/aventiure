@@ -169,6 +169,11 @@ class ValenzClassToBeGenerated {
                         .build();
 
                 classBuilder.addMethod(mit);
+            } else if (leerstelle.getType()
+                    .equals("de.nb.aventiure2.german.base.WoertlicheRede")) {
+                classBuilder.addSuperinterface(ClassName.bestGuess(
+                        "de.nb.aventiure2.german.praedikat"
+                                + ".PraedikatMitEinerLeerstelleFuerWoertlicheRede"));
             }
         } else {
             classBuilder.addSuperinterface(ClassName.bestGuess(
@@ -277,7 +282,7 @@ class ValenzClassToBeGenerated {
 
         if (simpleNameWithoutLeerstellen.endsWith("OhneLeerstellen")) {
             return simpleNameWithoutLeerstellen.substring(0,
-                    simpleNameWithoutLeerstellen.length() - "OhneLeerstellen" .length());
+                    simpleNameWithoutLeerstellen.length() - "OhneLeerstellen".length());
         }
 
         return simpleNameWithoutLeerstellen;

@@ -25,6 +25,7 @@ public enum AdjektivOhneErgaenzungen implements AdjPhrOhneLeerstellen {
     GESPANNT("gespannt"),
     GLUECKLICH("glücklich"),
     HUNDEMUEDE("hundemüde"),
+    MISSTRAUISCH("misstrauisch"),
     MUEDE("müde"),
     TRAURIG("traurig"),
     TODMUEDE("todmüde"),
