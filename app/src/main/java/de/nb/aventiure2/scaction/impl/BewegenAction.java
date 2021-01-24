@@ -340,7 +340,10 @@ public class BewegenAction<LOC_DESC extends ILocatableGO & IDescribableGO>
         // Man muss zusätzlich noch alle Gegenstände prüfen, die
         // sich im actual inventory befinden und nicht erwartet waren!
         for (final IDescribableGO actual : actualDescribableInventory) {
-            if (!expectedDescribableInventory.contains(actual)) {
+            // Den Frosch oder die Schlosswache bemerkt der SC vielleicht gar nicht.
+            if ((!(actual instanceof ILivingBeingGO)
+                    || scBemerkt((IDescribableGO & ILivingBeingGO) actual))
+                    && !expectedDescribableInventory.contains(actual)) {
                 // Actual ("der Käfig") war nicht erwartet!
                 if (actual instanceof ILocationGO) {
                     // Aber wenn schon "der Käfig" da ist, dann wäre vielleicht
@@ -381,7 +384,7 @@ public class BewegenAction<LOC_DESC extends ILocatableGO & IDescribableGO>
             return true;
         }
 
-        return !((IMovementReactions) responder).verbirgtSichVorEintreffendemSC();
+        return !((IMovementReactions) responder.reactionsComp()).verbirgtSichVorEintreffendemSC();
     }
 
     private void narrateAndDoMissingObjects(final List<LOC_DESC> missingObjects) {

@@ -5,6 +5,8 @@ import androidx.annotation.Nullable;
 
 import com.google.common.collect.ImmutableList;
 
+import java.util.Arrays;
+import java.util.Collection;
 import java.util.Map;
 import java.util.Objects;
 
@@ -16,6 +18,8 @@ import de.nb.aventiure2.data.world.base.GameObjectId;
 import de.nb.aventiure2.data.world.gameobject.*;
 import de.nb.aventiure2.data.world.syscomp.location.ILocatableGO;
 import de.nb.aventiure2.data.world.syscomp.storingplace.ILocationGO;
+
+import static java.util.stream.Collectors.toList;
 
 /**
  * Componente für eine {@link de.nb.aventiure2.data.world.base.GameObject}:
@@ -117,9 +121,17 @@ public class MentalModelComp extends AbstractStatefulComponent<MentalModelPCD> {
         return getPcd().getAssumedLocation(locatableId);
     }
 
-    public void unsetAssumedLocations(final Iterable<? extends ILocatableGO> locatables) {
-        for (final ILocatableGO locatable : locatables) {
-            unsetAssumedLocation(locatable.getId());
+    public void unsetAssumedLocations(final GameObjectId... locatables) {
+        unsetAssumedLocations(Arrays.asList(locatables));
+    }
+
+    public void unsetAssumedLocations(final Collection<? extends ILocatableGO> locatables) {
+        unsetAssumedLocations(locatables.stream().map(ILocatableGO::getId).collect(toList()));
+    }
+
+    private void unsetAssumedLocations(final Iterable<? extends GameObjectId> locatableIds) {
+        for (final GameObjectId locatableId : locatableIds) {
+            unsetAssumedLocation(locatableId);
         }
     }
 

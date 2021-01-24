@@ -448,8 +448,10 @@ public class RapunzelsZauberinReactionsComp
                 ZUNEIGUNG_ABNEIGUNG, -3, FeelingIntensity.SEHR_STARK);
 
         // Spieler wird verzaubert und vergisst alles.
-        loadSC().memoryComp().forget(RAPUNZEL, RAPUNZELS_ZAUBERIN, RAPUNZELS_GESANG,
-                RAPUNZELS_HAARE, RAPUNZELRUF);
+        loadSC().mentalModelComp().unsetAssumedLocations(
+                RAPUNZEL, RAPUNZELS_ZAUBERIN, RAPUNZELS_GESANG, RAPUNZELS_HAARE, RAPUNZELRUF);
+        loadSC().memoryComp().forget(
+                RAPUNZEL, RAPUNZELS_ZAUBERIN, RAPUNZELS_GESANG, RAPUNZELS_HAARE, RAPUNZELRUF);
         loadSC().feelingsComp().resetFeelingsTowards(RAPUNZEL);
         loadSC().feelingsComp().narrateAndUpgradeTemporaereMinimalmuedigkeit(
                 FeelingIntensity.NUR_LEICHT, hours(1)

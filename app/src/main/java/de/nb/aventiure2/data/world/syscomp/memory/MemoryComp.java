@@ -64,15 +64,9 @@ public class MemoryComp extends AbstractStatefulComponent<MemoryPCD> {
                 gameObject != null ? gameObject.getId() : null);
     }
 
-    public boolean lastActionWas(final Action.Type actionType,
-                                 @Nullable final GameObjectId gameObjectId) {
+    private boolean lastActionWas(final Action.Type actionType,
+                                  @Nullable final GameObjectId gameObjectId) {
         return lastActionWas(new Action(actionType, gameObjectId));
-    }
-
-    public boolean lastActionWas(final Action.Type actionType,
-                                 @Nullable final IGameObject gameObject,
-                                 @Nullable final IGameObject adverbial) {
-        return lastActionWas(new Action(actionType, gameObject, adverbial));
     }
 
     public boolean lastActionWas(final Action action) {
@@ -120,12 +114,6 @@ public class MemoryComp extends AbstractStatefulComponent<MemoryPCD> {
 
     public boolean isKnownFromLight(final GameObjectId otherGameObjectId) {
         return getKnown(otherGameObjectId) == Known.KNOWN_FROM_LIGHT;
-    }
-
-    public void forget(final IGameObject... otherGameObjects) {
-        for (final IGameObject otherGameObject : otherGameObjects) {
-            forget(otherGameObject.getId());
-        }
     }
 
     public void forget(final GameObjectId... otherGameObjectIds) {
