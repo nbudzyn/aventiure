@@ -76,7 +76,7 @@ public class MentalModelComp extends AbstractStatefulComponent<MentalModelPCD> {
     @SuppressWarnings("unchecked")
     private ImmutableList<ILocatableGO> getAssumedInventory(final GameObjectId locationId) {
         return (ImmutableList<ILocatableGO>) (ImmutableList<?>) world
-                .load(getPcd().getAssumedInLocation(locationId));
+                .load(getPcd().getAssumedInventory(locationId));
     }
 
     /**

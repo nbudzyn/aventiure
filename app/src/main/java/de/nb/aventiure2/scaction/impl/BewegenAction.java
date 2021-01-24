@@ -311,11 +311,11 @@ public class BewegenAction<LOC_DESC extends ILocatableGO & IDescribableGO>
         narrateAndDoMissingObjects(getMissingObjects(locationId));
     }
 
-    private List<LOC_DESC> getMissingObjects(final ILocationGO location) {
+    private ImmutableList<LOC_DESC> getMissingObjects(final ILocationGO location) {
         return getMissingObjects(location.getId());
     }
 
-    private List<LOC_DESC> getMissingObjects(final GameObjectId locationId) {
+    private ImmutableList<LOC_DESC> getMissingObjects(final GameObjectId locationId) {
         final ImmutableList<LOC_DESC> expectedDescribableInventory =
                 loadAssumedDescribableRecursiveInventory(sc, locationId);
 

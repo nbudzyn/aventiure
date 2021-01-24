@@ -68,7 +68,7 @@ public class MentalModelPCD extends AbstractPersistentComponentData {
      * Gibt die IDs aller {@link ILocatableGO}s zurück, die sich
      * - gemäß mentalem Modell - an dieser Location befinden (nicht rekursiv).
      */
-    ImmutableList<GameObjectId> getAssumedInLocation(final GameObjectId locationId) {
+    ImmutableList<GameObjectId> getAssumedInventory(final GameObjectId locationId) {
         return assumedLocations.entrySet().stream()
                 .filter(e -> e.getValue().equals(locationId))
                 .map(Map.Entry::getKey)
