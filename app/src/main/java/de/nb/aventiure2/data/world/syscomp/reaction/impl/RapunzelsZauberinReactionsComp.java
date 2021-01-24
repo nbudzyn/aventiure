@@ -115,8 +115,6 @@ public class RapunzelsZauberinReactionsComp
     public void onLeave(final ILocatableGO locatable,
                         final ILocationGO from,
                         @Nullable final ILocationGO to) {
-        //  IDEA Hexe reagiert auf Kugel hinlegen, werfen.
-
         // FIXME Wenn der SC sich ins Unterholz setzt und die  Zauberin zusieht:
         //  "Die Frau hat dich gesehen", "Die Frau schickt dir böse Blicke hinterher" o.Ä.
         talkingComp.updateSchonBegruesstMitSCOnLeave(locatable, from, to);
@@ -217,6 +215,13 @@ public class RapunzelsZauberinReactionsComp
             movementComp.startMovement(timeTaker.now(),
                     VOR_DEM_ALTEN_TURM, true);
         }
+    }
+
+    @Override
+    public boolean verbirgtSichVorEintreffendemSC() {
+        // FIXME Vielleicht muss man hier noch den Fall berücksichtigen,
+        //  dass die Zauberin im Schlossgarten einfach "verschwindet"...
+        return false;
     }
 
     @Override

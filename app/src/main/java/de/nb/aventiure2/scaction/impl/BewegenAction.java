@@ -15,6 +15,7 @@ import java.util.stream.Collectors;
 import de.nb.aventiure2.data.narration.Narrator;
 import de.nb.aventiure2.data.time.TimeTaker;
 import de.nb.aventiure2.data.world.base.GameObject;
+import de.nb.aventiure2.data.world.base.GameObjectId;
 import de.nb.aventiure2.data.world.base.IGameObject;
 import de.nb.aventiure2.data.world.base.Known;
 import de.nb.aventiure2.data.world.base.Lichtverhaeltnisse;
@@ -22,12 +23,15 @@ import de.nb.aventiure2.data.world.base.SpatialConnection;
 import de.nb.aventiure2.data.world.base.SpatialConnectionData;
 import de.nb.aventiure2.data.world.counter.CounterDao;
 import de.nb.aventiure2.data.world.gameobject.*;
+import de.nb.aventiure2.data.world.syscomp.alive.ILivingBeingGO;
 import de.nb.aventiure2.data.world.syscomp.description.IDescribableGO;
 import de.nb.aventiure2.data.world.syscomp.feelings.FeelingIntensity;
 import de.nb.aventiure2.data.world.syscomp.feelings.Mood;
 import de.nb.aventiure2.data.world.syscomp.location.ILocatableGO;
 import de.nb.aventiure2.data.world.syscomp.memory.Action;
 import de.nb.aventiure2.data.world.syscomp.movement.IMovingGO;
+import de.nb.aventiure2.data.world.syscomp.reaction.IResponder;
+import de.nb.aventiure2.data.world.syscomp.reaction.interfaces.IMovementReactions;
 import de.nb.aventiure2.data.world.syscomp.spatialconnection.ISpatiallyConnectedGO;
 import de.nb.aventiure2.data.world.syscomp.spatialconnection.NumberOfWays;
 import de.nb.aventiure2.data.world.syscomp.state.IHasStateGO;
@@ -35,6 +39,7 @@ import de.nb.aventiure2.data.world.syscomp.state.impl.SchlossfestState;
 import de.nb.aventiure2.data.world.syscomp.storingplace.ILocationGO;
 import de.nb.aventiure2.german.base.StructuralElement;
 import de.nb.aventiure2.german.description.AbstractFlexibleDescription;
+import de.nb.aventiure2.german.description.AltDescriptionsBuilder;
 import de.nb.aventiure2.german.description.AltTimedDescriptionsBuilder;
 import de.nb.aventiure2.german.description.TextDescription;
 import de.nb.aventiure2.german.description.TimedDescription;
@@ -42,6 +47,7 @@ import de.nb.aventiure2.scaction.AbstractScAction;
 import de.nb.aventiure2.scaction.stepcount.SCActionStepCountDao;
 
 import static com.google.common.collect.ImmutableList.builder;
+import static de.nb.aventiure2.data.time.AvTimeSpan.NO_TIME;
 import static de.nb.aventiure2.data.time.AvTimeSpan.mins;
 import static de.nb.aventiure2.data.time.AvTimeSpan.secs;
 import static de.nb.aventiure2.data.world.base.Lichtverhaeltnisse.HELL;
@@ -53,12 +59,15 @@ import static de.nb.aventiure2.data.world.syscomp.spatialconnection.NumberOfWays
 import static de.nb.aventiure2.data.world.syscomp.state.impl.SchlossfestState.BEGONNEN;
 import static de.nb.aventiure2.german.base.GermanUtil.buildAufzaehlung;
 import static de.nb.aventiure2.german.base.StructuralElement.WORD;
+import static de.nb.aventiure2.german.description.AltDescriptionsBuilder.alt;
 import static de.nb.aventiure2.german.description.AltTimedDescriptionsBuilder.altTimed;
 import static de.nb.aventiure2.german.description.DescriptionBuilder.du;
 import static de.nb.aventiure2.german.description.DescriptionBuilder.neuerSatz;
 import static de.nb.aventiure2.german.description.DescriptionUmformulierer.drueckeAusTimed;
 import static de.nb.aventiure2.german.description.Kohaerenzrelation.DISKONTINUITAET;
+import static de.nb.aventiure2.german.praedikat.SeinUtil.istSind;
 import static de.nb.aventiure2.german.string.GermanStringUtil.capitalize;
+import static java.util.Objects.requireNonNull;
 import static java.util.stream.Collectors.toList;
 
 /**
@@ -92,6 +101,7 @@ public class BewegenAction<LOC_DESC extends ILocatableGO & IDescribableGO>
         //  FIXME Man könnte "Der mageren Frau heimlich folgen", wenn sie gerade in eine
         //   Richtung gegangen ist? Dann würde man sie heimlich beobachten (nicht überholen!),
         //   wie sie den Turm hinaufsteigt.
+        //   Aber eigentlich ist das mir zu einfach.
         if (location instanceof ISpatiallyConnectedGO) {
             res.addAll(buildSpatiallyConnectedActions(scActionStepCountDao, timeTaker, counterDao,
                     n, world,
@@ -196,11 +206,6 @@ public class BewegenAction<LOC_DESC extends ILocatableGO & IDescribableGO>
         // dass man z.B. den Tisch bei Dunkelheit nicht sieht, aber
         // trotzdem die Kugel, die drauf liegt?!
 
-        // TODO "Der Frosch ist nicht mehr da" o.Ä !! Wenn man ihn irgendwo hingesetzt hat.
-        //  Aber nur, wenn Frosch (noch) bekannt ist und sein letzter Ort bekannt war
-        //  und es keine guten Gründe gibt, dass er nicht mehr da sein sollte. Und nur einmal,
-        //  dann assumeNoLocation() aufrufen!
-
         // Lebende Dinge, sind hier ausgeschlossen, sie müssen sich ggf. in einer
         // ReactionsComp selbst beschreiben.
         upgradeNonLivingNonMovableRecursiveInventoryKnown(loadTo());
@@ -214,7 +219,7 @@ public class BewegenAction<LOC_DESC extends ILocatableGO & IDescribableGO>
         narrateAndUpdateFeelings();
 
         sc.locationComp().narrateAndSetLocation(spatialConnection.getTo(),
-                this::narrateNonLivingMovableObjectsAndUpgradeKnownAndSetLastAction);
+                this::narrateNonLivingMovableObjectsOrMissingObjectsAndUpgradeKnownAndSetLastAction);
     }
 
     private void upgradeNonLivingNonMovableRecursiveInventoryKnown(
@@ -232,7 +237,7 @@ public class BewegenAction<LOC_DESC extends ILocatableGO & IDescribableGO>
         }
     }
 
-    private void narrateNonLivingMovableObjectsAndUpgradeKnownAndSetLastAction() {
+    private void narrateNonLivingMovableObjectsOrMissingObjectsAndUpgradeKnownAndSetLastAction() {
         // Unbewegliche Objekte sollen bereits in der Location-Beschreibung mitgenannt werden,
         // nicht hier! (Das betrifft auch indirekt enthaltene unbewegliche Objekte.)
 
@@ -246,6 +251,7 @@ public class BewegenAction<LOC_DESC extends ILocatableGO & IDescribableGO>
                     // beschreiben, was sich auf dem Tisch oder vor dem Turm
                     // befindet
                     oldLocation);
+            narrateAndDoMissingObjects(spatialConnection.getTo());
         }
 
         sc.memoryComp().setLastAction(buildMemorizedAction());
@@ -258,6 +264,8 @@ public class BewegenAction<LOC_DESC extends ILocatableGO & IDescribableGO>
         @Nullable IDescribableGO lastObjectInLocation = null;
         for (final Pair<ILocationGO, ? extends List<? extends IDescribableGO>> locationAndDescribables :
                 buildRecursiveLocationsAndDescribables(loadTo())) {
+            requireNonNull(locationAndDescribables.second, "locationAndDescribables.second");
+
             if (excludedLocation == null ||
                     !isOrHasRecursiveLocation(
                             locationAndDescribables.first, excludedLocation)) {
@@ -296,9 +304,123 @@ public class BewegenAction<LOC_DESC extends ILocatableGO & IDescribableGO>
                                 lastObject.getId()));
     }
 
+    /**
+     * Erzeugt eine Beschreibung wie "Die magere Frau ist nicht mehr da"
+     */
+    private void narrateAndDoMissingObjects(final GameObjectId locationId) {
+        narrateAndDoMissingObjects(getMissingObjects(locationId));
+    }
+
+    private List<LOC_DESC> getMissingObjects(final ILocationGO location) {
+        return getMissingObjects(location.getId());
+    }
+
+    private List<LOC_DESC> getMissingObjects(final GameObjectId locationId) {
+        final ImmutableList<LOC_DESC> expectedDescribableInventory =
+                loadAssumedDescribableRecursiveInventory(sc, locationId);
+
+        final ImmutableList<LOC_DESC> actualDescribableInventory =
+                world.loadDescribableRecursiveInventory(locationId);
+
+        final ImmutableList.Builder<LOC_DESC> missing = ImmutableList.builder();
+
+        for (final LOC_DESC expected : expectedDescribableInventory) {
+            if (!actualDescribableInventory.contains(expected)
+                    // Der Frosch oder die Schlosswache ist auch missing, wenn
+                    //  der SC sie erwartet hätte, aber nicht bemerkt.
+                    || (
+                    expected instanceof ILivingBeingGO
+                            && !scBemerkt((IDescribableGO & ILivingBeingGO) expected)
+            )
+            ) {
+                missing.add(expected);
+            }
+        }
+
+        // Man muss zusätzlich noch alle Gegenstände prüfen, die
+        // sich im actual inventory befinden und nicht erwartet waren!
+        for (final IDescribableGO actual : actualDescribableInventory) {
+            if (!expectedDescribableInventory.contains(actual)) {
+                // Actual ("der Käfig") war nicht erwartet!
+                if (actual instanceof ILocationGO) {
+                    // Aber wenn schon "der Käfig" da ist, dann wäre vielleicht
+                    // auch "der Vogel" erwartet, den der SC zuletzt im Käfig
+                    // gesehen hat!
+                    missing.addAll(getMissingObjects((ILocationGO) actual));
+                }
+            }
+        }
+
+        return missing.build();
+
+        // FIXME
+        //  Missing =
+        //  - Wenn etwas zuletzt an diesem Ort gesehen hat
+        //  - Wenn es nicht in Bewegung war (moving)
+        //  - Nur, wenn der Gegenstand (noch) bekannt ist (Konzept:
+        //    immer wenn ein Gegenstand vergessen wird, wird auch sein Ort vergessen?!)
+        //  - Und wenn es keine guten Gründe gibt, dass er nicht mehr da sein sollte.
+        //  - und der Gegenstand nicht mehr da ist
+        //  - Nicht nur non-living-Objekte, auch Living!
+
+        // FIXME Mental model muss aktualisiert werden
+        //  - z.B. wenn der SC einen Raum verlässt? Oder bei jeder Interaktion (nehmen, hinlegen,
+        //  ...)?
+        //  - Oder wenn ein Moving... einen Raum verlässt
+        //   - Oder der SC einen Gegenstand nimmt oder er sich in Luft auflöst...
+    }
+
+    private static <LIV extends IDescribableGO & ILivingBeingGO>
+    boolean scBemerkt(final LIV describableLivingBeing) {
+        if (!(describableLivingBeing instanceof IResponder)) {
+            return true;
+        }
+
+        final IResponder responder = (IResponder) describableLivingBeing;
+        if (!(responder.reactionsComp() instanceof IMovementReactions)) {
+            return true;
+        }
+
+        return !((IMovementReactions) responder).verbirgtSichVorEintreffendemSC();
+    }
+
+    private void narrateAndDoMissingObjects(final List<LOC_DESC> missingObjects) {
+        if (missingObjects.isEmpty()) {
+            return;
+        }
+
+        n.narrateAlt(altMissingObjectsDescriptions(missingObjects), NO_TIME);
+
+        // FIXME Und genauso auch die assumed Locations an verschiedenen Stellen setzen...
+        sc.mentalModelComp().unsetAssumedLocations(missingObjects);
+    }
+
+    private AltDescriptionsBuilder altMissingObjectsDescriptions(
+            final List<? extends IDescribableGO> missingObjects) {
+        final String aufzaehlung = buildDescriptionAufzaehlung(missingObjects);
+        final String istSind = istSind(missingObjects);
+        final IDescribableGO lastObject = missingObjects.get(missingObjects.size() - 1);
+
+        final AltDescriptionsBuilder alt = alt();
+        alt().add(neuerSatz(aufzaehlung, istSind, "nicht mehr da"),
+                neuerSatz(aufzaehlung, istSind, "nirgendwo zu sehen"),
+                neuerSatz(aufzaehlung, istSind, "verschwunden"),
+                neuerSatz("wo", istSind, "denn", aufzaehlung, "geblieben?"),
+                neuerSatz("wo", istSind, "denn", aufzaehlung, "abgeblieben?")
+                // FIXME du("kannst", akk "nirgendwo entdecken"),
+                // FIXME "von dat keine Spur!"
+        ).phorikKandidat(world.getDescription(lastObject, false),
+                lastObject.getId());
+
+        // FIXME "weder... noch ... ist irgendwo zu sehen"
+        return alt;
+    }
+
     private void upgradeKnown(
             @NonNull
             final Pair<ILocationGO, ? extends List<? extends IDescribableGO>> locationAndDescribables) {
+        requireNonNull(locationAndDescribables.second, "locationAndDescribables.second");
+
         sc.memoryComp().upgradeKnown(locationAndDescribables.second);
 
         for (final IGameObject gameObject : locationAndDescribables.second) {
@@ -327,6 +449,8 @@ public class BewegenAction<LOC_DESC extends ILocatableGO & IDescribableGO>
     private String buildObjectsInLocationDescription(
             @NonNull
             final Pair<ILocationGO, ? extends List<? extends IDescribableGO>> locationAndDescribables) {
+        requireNonNull(locationAndDescribables.second, "locationAndDescribables.second");
+
         return buildObjectsInLocationDescription(
                 locationAndDescribables.first,
                 locationAndDescribables.second);
@@ -340,9 +464,7 @@ public class BewegenAction<LOC_DESC extends ILocatableGO & IDescribableGO>
 
     private ImmutableList<Pair<ILocationGO, ? extends List<LOC_DESC>>> buildRecursiveLocationsAndDescribables(
             @NonNull final ILocationGO location) {
-        final ImmutableList.Builder<
-                Pair<ILocationGO, ? extends List<LOC_DESC>>>
-                res = builder();
+        final ImmutableList.Builder<Pair<ILocationGO, ? extends List<LOC_DESC>>> res = builder();
 
         final ImmutableList<LOC_DESC> movableObjectsInLocation =
                 world.loadDescribableNonLivingMovableInventory(location.getId());
@@ -427,7 +549,6 @@ public class BewegenAction<LOC_DESC extends ILocatableGO & IDescribableGO>
         }
     }
 
-    @SuppressWarnings("UnnecessaryReturnStatement")
     private void narrateLocationOnly(@NonNull final ILocationGO to) {
         // IDEA Verkürzungen automatisch erzeugen, z.B. erzeugen eines Nachfelds nach einem
         //  Prädikat: "und weiter in Richtung Schloss".

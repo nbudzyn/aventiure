@@ -20,6 +20,7 @@ import de.nb.aventiure2.data.world.syscomp.feelings.Mood;
 import de.nb.aventiure2.data.world.syscomp.feelings.MuedigkeitsData;
 import de.nb.aventiure2.data.world.syscomp.location.LocationComp;
 import de.nb.aventiure2.data.world.syscomp.memory.MemoryComp;
+import de.nb.aventiure2.data.world.syscomp.mentalmodel.MentalModelComp;
 import de.nb.aventiure2.data.world.syscomp.reaction.impl.ScAutomaticReactionsComp;
 import de.nb.aventiure2.data.world.syscomp.storingplace.StoringPlaceComp;
 import de.nb.aventiure2.data.world.syscomp.talking.impl.NoSCTalkActionsTalkingComp;
@@ -69,10 +70,12 @@ public class SpielerCharakterFactory {
                 null,
                 // Ein NSC könnte den Spieler nicht so mir-nichts-dir-nichts mitnehmen.
                 false);
+        final MentalModelComp mentalModelComp =
+                new MentalModelComp(id, db, world, ImmutableMap.of());
         return new SpielerCharakter(id,
                 locationComp,
-                new StoringPlaceComp(id, timeTaker, locationComp, EINE_TASCHE,
-                        null),
+                mentalModelComp, new StoringPlaceComp(id, timeTaker, locationComp, EINE_TASCHE,
+                null),
                 waitingComp,
                 feelingsComp,
                 memoryComp,

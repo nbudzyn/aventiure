@@ -6,6 +6,7 @@ import androidx.room.Entity;
 import androidx.room.Ignore;
 
 import com.google.common.base.Preconditions;
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 
 import java.util.HashMap;
@@ -16,12 +17,22 @@ import javax.annotation.CheckReturnValue;
 
 import de.nb.aventiure2.data.world.base.AbstractPersistentComponentData;
 import de.nb.aventiure2.data.world.base.GameObjectId;
+import de.nb.aventiure2.data.world.syscomp.location.ILocatableGO;
+
+import static com.google.common.collect.ImmutableList.toImmutableList;
 
 /**
  * Mutable - and therefore persistent - data of the {@link MentalModelComp} component.
  */
 @Entity
 public class MentalModelPCD extends AbstractPersistentComponentData {
+    /**
+     * Map der angenommen Locations.
+     * <ul>
+     * <li>Key (nie {{@code null}}) ist die IDs des Game Objects
+     * <li>Value (auch nie {{@code null}}) die ID der Location, wo es sich (laut Annahme) befindet
+     * </ul>
+     */
     @NonNull
     @Ignore
     private final Map<GameObjectId, GameObjectId> assumedLocations;
@@ -46,17 +57,27 @@ public class MentalModelPCD extends AbstractPersistentComponentData {
      * Darf nur zur Initialisierung aufgerufen werden, nicht zur Änderung!
      */
     void initAssumedLocations(final Map<GameObjectId, GameObjectId> map) {
-        Preconditions.checkState(assumedLocations.isEmpty(), "Already initialized!" );
+        Preconditions.checkState(assumedLocations.isEmpty(), "Already initialized!");
 
         // Kein setChanged() !
         assumedLocations.putAll(map);
     }
 
-    public void setAssumedLocation(final GameObjectId locatableId,
-                                   @Nullable final GameObjectId locationId) {
-        if (Objects.equals(
-                getAssumedLocation(locatableId),
-                locationId)) {
+
+    /**
+     * Gibt die IDs aller {@link ILocatableGO}s zurück, die sich
+     * - gemäß mentalem Modell - an dieser Location befinden (nicht rekursiv).
+     */
+    ImmutableList<GameObjectId> getAssumedInLocation(final GameObjectId locationId) {
+        return assumedLocations.entrySet().stream()
+                .filter(e -> e.getValue().equals(locationId))
+                .map(Map.Entry::getKey)
+                .collect(toImmutableList());
+    }
+
+    void setAssumedLocation(final GameObjectId locatableId,
+                            @Nullable final GameObjectId locationId) {
+        if (Objects.equals(getAssumedLocation(locatableId), locationId)) {
             return;
         }
 
@@ -72,7 +93,7 @@ public class MentalModelPCD extends AbstractPersistentComponentData {
 
     @Nullable
     @CheckReturnValue
-    public GameObjectId getAssumedLocation(final GameObjectId locatableId) {
+    GameObjectId getAssumedLocation(final GameObjectId locatableId) {
         return assumedLocations.get(locatableId);
     }
 }

@@ -114,9 +114,6 @@ public class SimpleMovementNarrator implements IMovementNarrator {
         }
 
         n.narrateAlt(alt, normalDesc.getTimeElapsed());
-
-        // FIXME Wenn man zum Turm zurückkommt, wo man die Frau zuletzt gesehen hat:
-        //  "Die Frau ist nicht mehr da"
     }
 
     @Override

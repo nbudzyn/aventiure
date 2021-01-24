@@ -65,6 +65,11 @@ public class ScAutomaticReactionsComp
     }
 
     @Override
+    public boolean verbirgtSichVorEintreffendemSC() {
+        return false;
+    }
+
+    @Override
     public void onEnter(final ILocatableGO locatable, @Nullable final ILocationGO from,
                         final ILocationGO to) {
         waitingComp.stopWaiting();

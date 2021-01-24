@@ -68,6 +68,16 @@ public class SchlosswacheReactionsComp
     }
 
     @Override
+    public boolean verbirgtSichVorEintreffendemSC() {
+        if (!loadSC().locationComp().hasLocation(SCHLOSS_VORHALLE)) {
+            return true;
+        }
+
+        return stateComp.hasState(UNAUFFAELLIG);
+    }
+
+
+    @Override
     public void onEnter(final ILocatableGO locatable,
                         @Nullable final ILocationGO from,
                         final ILocationGO to) {

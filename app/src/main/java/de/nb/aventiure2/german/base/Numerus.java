@@ -8,5 +8,13 @@ public enum Numerus {
     /**
      * Plural (Mehrzahl)
      */
-    PL
+    PL;
+
+    public static Numerus forNumber(final int number) {
+        if (number == 1) {
+            return SG;
+        }
+
+        return PL;
+    }
 }

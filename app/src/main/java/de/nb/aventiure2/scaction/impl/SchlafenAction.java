@@ -161,10 +161,11 @@ public class SchlafenAction extends AbstractScAction {
         //  man ihn später wieder laden kann. Alternativ auch mehrere Game Objects,
         //  denn nur so kann man prüfen, was sich nach dem Schlafen an einem Ort verändert hat.
 
-        // IDEA Der Benutzer (oder auch andere Game Objects) könnte auch ein "mental model" habe, wo
+        // FIXME Der Benutzer (oder auch andere Game Objects) könnte auch ein "mental model"
+        //  habe, wo
         //  der Stand der Welt, wie der Benutzer ihn sich vorstellt, gespeichert ist
-        //  (z.B. wie ein Raum war als der Benutzer ihn verlassen hat...)
-        //  Dann könnte man beim Erzählen vergleich...
+        //  (z.B. die Welt, oder der Raum bevor der Benutzer eingeschlafen ist...)
+        //  Dann könnte man beim Erzählen (z.B. beim Aufwachen) vergleich...
 
         // IDEA Der Frosch läuft während des Schlafens davon - nicht beim Aufwachen.
         //  Alternativ könnte der Spieler durch das Weglaufen aufgeweckt werden

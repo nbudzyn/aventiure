@@ -31,6 +31,7 @@ import de.nb.aventiure2.data.world.syscomp.location.ILocatableGO;
 import de.nb.aventiure2.data.world.syscomp.location.LocationSystem;
 import de.nb.aventiure2.data.world.syscomp.location.RoomFactory;
 import de.nb.aventiure2.data.world.syscomp.memory.IHasMemoryGO;
+import de.nb.aventiure2.data.world.syscomp.mentalmodel.IHasMentalModelGO;
 import de.nb.aventiure2.data.world.syscomp.movement.IMovingGO;
 import de.nb.aventiure2.data.world.syscomp.movement.MovementSystem;
 import de.nb.aventiure2.data.world.syscomp.reaction.IReactions;
@@ -67,6 +68,7 @@ import static de.nb.aventiure2.german.base.NumerusGenus.PL_MFN;
 /**
  * The world contains and manages all game objects.
  */
+@SuppressWarnings("unchecked")
 public class World {
     public static final AvDateTime SCHLOSSFEST_BEGINN_DATE_TIME =
             new AvDateTime(2,
@@ -182,13 +184,14 @@ public class World {
      * werden die Daten der Objekte <i>noch nicht</i> aus der Datenbank geladen),
      * startet außerdem alle <i>Systems</i> (sofern noch nicht geschehen).
      */
+    @SuppressWarnings("InstantiationOfUtilityClass")
     private void prepare() {
         if (all != null) {
             return;
         }
 
         if (aliveSystem == null) {
-            aliveSystem = new AliveSystem(db);
+            aliveSystem = new AliveSystem();
         }
 
         if (locationSystem == null) {
@@ -498,6 +501,29 @@ public class World {
         return (ImmutableList<G>) (ImmutableList<?>) res;
     }
 
+
+    /**
+     * (Lädt und) gibt alle {@link ILocatableGO}s mit Beschreibung zurück, die sich
+     * <i>gemäß mentalem Modell dieses
+     * {@link de.nb.aventiure2.data.world.syscomp.mentalmodel.IHasMentalModelGO}s</i>
+     * an dieser Location befinden, auch rekursiv
+     * (ebenfalls gemäß dem mentalen Modell: wenn das {@code IHasMentalModelGO}
+     * davon ausgeht, dass hier ein Tisch steht, dann wird auch die Kugel zurückgeben, von der
+     * er ausgeht, dass sie auf dem Tisch liegt).
+     */
+    public static <LOC_DESC extends ILocatableGO & IDescribableGO>
+    ImmutableList<LOC_DESC> loadAssumedDescribableRecursiveInventory(
+            final IHasMentalModelGO hasMentalModelGO,
+            final GameObjectId locationId) {
+        return (ImmutableList<LOC_DESC>) (ImmutableList<?>)
+                hasMentalModelGO.mentalModelComp()
+                        .getAssumedRecursiveInventory(locationId)
+                        .stream()
+                        .filter(locatable -> !locatable.is(SPIELER_CHARAKTER))
+                        .filter(IDescribableGO.class::isInstance)
+                        .collect(toImmutableList());
+    }
+
     /**
      * Lädt (soweit noch nicht geschehen) die nicht-lebenden Game Objects an dieser
      * <code>location</code> (auch rekursiv enthaltene, z.B. Kugel auf Tisch in Raum)
@@ -655,18 +681,6 @@ public class World {
     }
 
     /**
-     * Lädt (soweit noch nicht geschehen) alle lebenden Game Objects im Inventar dieser
-     * <code>location</code>s und gibt sie zurück, auch rekursiv
-     * (also Kugel auf einem Tisch im Raum o.ä.) -
-     * nur Game Objects, die eine Beschreibung haben, nicht den Spieler-Charakter.
-     */
-    public <LIV extends ILocatableGO & IDescribableGO & ILivingBeingGO>
-    ImmutableList<LIV> loadDescribableLivingRecursiveInventory(
-            final ILocationGO location) {
-        return filterLivingBeing(loadDescribableRecursiveInventory(location));
-    }
-
-    /**
      * Lädt (soweit noch nicht geschehen) alle Game Objects an dieser
      * <code>location</code>s (auch rekursiv enthaltene, z.B. Kugel auf einem Tisch in einem Raum)
      * und gibt sie zurück -
@@ -686,31 +700,18 @@ public class World {
      */
     public <LOC_DESC extends ILocatableGO & IDescribableGO>
     ImmutableList<LOC_DESC> loadDescribableRecursiveInventory(final GameObjectId locationId) {
-        final ImmutableList<LOC_DESC> directContainedList =
-                loadDescribableInventory(locationId);
-
         final ImmutableList.Builder<LOC_DESC> res = ImmutableList.builder();
-        res.addAll(directContainedList);
 
-        for (final LOC_DESC directContained : directContainedList) {
-            if (directContained instanceof ILocationGO) {
-                res.addAll(loadDescribableRecursiveInventory((ILocationGO) directContained));
+        final ImmutableList<LOC_DESC> directlyContainedList = loadDescribableInventory(locationId);
+        res.addAll(directlyContainedList);
+
+        for (final LOC_DESC directlyContained : directlyContainedList) {
+            if (directlyContained instanceof ILocationGO) {
+                res.addAll(loadDescribableRecursiveInventory((ILocationGO) directlyContained));
             }
         }
 
         return res.build();
-    }
-
-    /**
-     * Lädt (soweit noch nicht geschehen) die Game Objects an dieser
-     * <code>location</code> (<i>nicht</i> rekursiv, also <i>nicht</i> die Kugel
-     * auf einem Tisch in einem Raum, sondern nur den Tisch)
-     * und gibt sie zurück - nur Game Objects, die eine Beschreibung haben,
-     * nicht den Spieler-Charakter.
-     */
-    private <LOC_DESC extends ILocatableGO & IDescribableGO>
-    ImmutableList<LOC_DESC> loadDescribableInventory(final ILocationGO location) {
-        return loadDescribableInventory(location.getId());
     }
 
     /**
@@ -984,27 +985,12 @@ public class World {
                 observer.memoryComp().isKnown(describable), shortIfKnown);
     }
 
-    public final boolean hasSameOuterMostLocationAsSC(@Nullable final GameObjectId gameObjectId) {
-        if (gameObjectId == null) {
-            return false;
-        }
-
-        return hasSameOuterMostLocationAsSC(load(gameObjectId));
-    }
-
     public final boolean hasSameOuterMostLocationAsSC(@Nullable final IGameObject gameObject) {
         if (gameObject == null) {
             return false;
         }
 
         return loadSC().locationComp().hasSameOuterMostLocationAs(gameObject);
-    }
-
-    /**
-     * Setzt den aktuellen Zeitpunkt. Meistens wird man allerdings passTime() verwenden wollen.
-     */
-    public static void setNow(final AvDateTime dateTime) {
-        ;
     }
 
     /**
@@ -1081,6 +1067,7 @@ public class World {
         return locationSystem;
     }
 
+    @SuppressWarnings({"unused", "RedundantSuppression"})
     public MovementSystem getMovementSystem() {
         return movementSystem;
     }

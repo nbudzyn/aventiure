@@ -14,6 +14,8 @@ import de.nb.aventiure2.data.world.syscomp.location.ILocatableGO;
 import de.nb.aventiure2.data.world.syscomp.location.LocationComp;
 import de.nb.aventiure2.data.world.syscomp.memory.IHasMemoryGO;
 import de.nb.aventiure2.data.world.syscomp.memory.MemoryComp;
+import de.nb.aventiure2.data.world.syscomp.mentalmodel.IHasMentalModelGO;
+import de.nb.aventiure2.data.world.syscomp.mentalmodel.MentalModelComp;
 import de.nb.aventiure2.data.world.syscomp.reaction.IResponder;
 import de.nb.aventiure2.data.world.syscomp.reaction.impl.ScAutomaticReactionsComp;
 import de.nb.aventiure2.data.world.syscomp.storingplace.ILocationGO;
@@ -24,9 +26,11 @@ import de.nb.aventiure2.data.world.syscomp.waiting.IWaitingGO;
 import de.nb.aventiure2.data.world.syscomp.waiting.WaitingComp;
 
 public class SpielerCharakter extends GameObject
-        implements ILocatableGO, ILocationGO, IWaitingGO, IFeelingBeingGO,
+        implements ILocatableGO, ILocationGO,
+        IHasMentalModelGO, IWaitingGO, IFeelingBeingGO,
         ITalkerGO<NoSCTalkActionsTalkingComp>, IHasMemoryGO, ILivingBeingGO, IResponder {
     private final LocationComp locationComp;
+    private final MentalModelComp mentalModelComp;
     private final StoringPlaceComp storingPlaceComp;
     private final WaitingComp waitingComp;
     private final FeelingsComp feelingsComp;
@@ -37,6 +41,7 @@ public class SpielerCharakter extends GameObject
 
     SpielerCharakter(final GameObjectId id,
                      final LocationComp locationComp,
+                     final MentalModelComp mentalModelComp,
                      final StoringPlaceComp storingPlaceComp,
                      final WaitingComp waitingComp,
                      final FeelingsComp feelingsComp,
@@ -46,6 +51,7 @@ public class SpielerCharakter extends GameObject
         super(id);
         // Jede Komponente muss registiert werden!
         this.locationComp = addComponent(locationComp);
+        this.mentalModelComp = addComponent(mentalModelComp);
         this.storingPlaceComp = addComponent(storingPlaceComp);
         this.waitingComp = addComponent(waitingComp);
         this.feelingsComp = addComponent(feelingsComp);
@@ -59,6 +65,12 @@ public class SpielerCharakter extends GameObject
     @Override
     public LocationComp locationComp() {
         return locationComp;
+    }
+
+    @Nonnull
+    @Override
+    public MentalModelComp mentalModelComp() {
+        return mentalModelComp;
     }
 
     @Nonnull

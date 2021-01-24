@@ -82,6 +82,14 @@ public class ReactionSystem
                 reactions -> reactions.onLeave(locatable, from, to));
     }
 
+    @Override
+    public boolean verbirgtSichVorEintreffendemSC() {
+        throw new IllegalStateException(
+                "ReactionSystem#verbirgtSichVorEintreffendemSC() wurde aufgerufen."
+                        + " Das ist ziemlich sinnlos, denn jeder IResponder "
+                        + "erzeugt ja seinen eigenen Rückgabewert.");
+    }
+
     public void onEnter(final GameObjectId locatableId,
                         @Nullable final GameObjectId fromId,
                         final GameObjectId toId) {

@@ -266,10 +266,6 @@ public class FroschprinzTalkingComp extends AbstractTalkingComp {
         if (world.loadSC().memoryComp().getLastAction().is(Action.Type.HEULEN)) {
             final SubstantivischePhrase objectsDesc =
                     world.getDescriptionSingleOrCollective(objectsInDenBrunnenGefallen);
-            // die goldene Kugel
-            // die
-            // die goldene Kugel
-            // die
             n.narrate(neuerSatz("„Ich weine über",
                     objectsDesc.akkK().kommaStehtAus(), // die goldene Kugel
                     objectsDesc.relPron().akkK(), // die

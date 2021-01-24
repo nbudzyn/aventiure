@@ -19,6 +19,7 @@ import de.nb.aventiure2.data.world.syscomp.reaction.interfaces.IMovementReaction
 import de.nb.aventiure2.data.world.syscomp.reaction.interfaces.ITimePassedReactions;
 import de.nb.aventiure2.data.world.syscomp.reaction.interfaces.Ruftyp;
 import de.nb.aventiure2.data.world.syscomp.state.IHasStateGO;
+import de.nb.aventiure2.data.world.syscomp.state.impl.FroschprinzState;
 import de.nb.aventiure2.data.world.syscomp.state.impl.FroschprinzStateComp;
 import de.nb.aventiure2.data.world.syscomp.state.impl.SchlossfestState;
 import de.nb.aventiure2.data.world.syscomp.storingplace.ILocationGO;
@@ -136,6 +137,13 @@ public class FroschprinzReactionsComp
                 neuerSatz("Da springt dir der Frosch aus der Hand – weg ist er!")
                         .timed(secs(3))
                         .beendet(PARAGRAPH));
+    }
+
+    @Override
+    public boolean verbirgtSichVorEintreffendemSC() {
+        final FroschprinzState state = stateComp.getState();
+        return state.equals(UNAUFFAELLIG)
+                || state.equals(WARTET_AUF_SC_BEIM_SCHLOSSFEST);
     }
 
     @Override

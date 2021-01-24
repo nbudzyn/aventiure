@@ -3,6 +3,8 @@ package de.nb.aventiure2.data.world.syscomp.mentalmodel;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
+import com.google.common.collect.ImmutableList;
+
 import java.util.Map;
 import java.util.Objects;
 
@@ -17,7 +19,7 @@ import de.nb.aventiure2.data.world.syscomp.storingplace.ILocationGO;
 
 /**
  * Componente für eine {@link de.nb.aventiure2.data.world.base.GameObject}:
- * Das Game Object (z.B. ein NSC) hat ein mentales Modell
+ * Das Game Object (SC oder ein NSC) hat ein mentales Modell
  * der Welt. Der NSC geht also von gewissen Dingen aus, z.B.
  * dass sich jemand oder etwas irgendwo befindet.
  */
@@ -43,34 +45,38 @@ public class MentalModelComp extends AbstractStatefulComponent<MentalModelPCD> {
     }
 
     /**
-     * Gibt zurück, ob im mentalen Modell gespeichert ist, dass sich das
-     * <i>Locatable</i> an einer dieser <code>locations</code> befindet
-     * (<i>nicht</i> rekursiv, also <i>nicht</i> auf einem Tisch in diesem Raum).
+     * Gibt alle {@link ILocatableGO}s zurück, die sich
+     * <i>gemäß mentalem Modell dieses
+     * {@link de.nb.aventiure2.data.world.syscomp.mentalmodel.IHasMentalModelGO}s</i>
+     * an dieser Location befinden, auch rekursiv
+     * (ebenfalls gemäß dem mentalen Modell: wenn das {@code IHasMentalModelGO}
+     * davon ausgeht, dass hier ein Tisch steht, dann wird auch die Kugel zurückgeben, von der
+     * er ausgeht, dass sie auf dem Tisch liegt).
      */
-    @CheckReturnValue
-    public boolean hasAssumedLocation(final GameObjectId locatableId,
-                                      final ILocationGO... locations) {
-        for (@Nullable final ILocationGO location : locations) {
-            if (location == null) {
-                throw new NullPointerException("location was null");
-            }
-            if (hasAssumedLocation(locatableId, location)) {
-                return true;
+    public ImmutableList<ILocatableGO> getAssumedRecursiveInventory(
+            final GameObjectId locationId) {
+        final ImmutableList.Builder<ILocatableGO> res = ImmutableList.builder();
+
+        final ImmutableList<ILocatableGO> directlyAssumedList = getAssumedInventory(locationId);
+        res.addAll(directlyAssumedList);
+
+        for (final ILocatableGO directlyAssumed : directlyAssumedList) {
+            if (directlyAssumed instanceof ILocationGO) {
+                res.addAll(getAssumedRecursiveInventory(directlyAssumed.getId()));
             }
         }
 
-        return false;
+        return res.build();
     }
 
     /**
-     * Gibt zurück, ob im mentalen Modell gespeichert ist, dass
-     * sich das Game Object an dieser <code>location</code> befindet (<i>nicht</i>
-     * rekursiv, also <i>nicht</i> auf einem Tisch in diesem Raum).
+     * Gibt alle {@link ILocatableGO}s zurück, die sich
+     * - gemäß mentalem Modell - an dieser Location befinden (nicht rekursiv).
      */
-    @CheckReturnValue
-    private boolean hasAssumedLocation(final GameObjectId locatableId,
-                                       final ILocationGO location) {
-        return hasAssumedLocation(locatableId, location.getId());
+    @SuppressWarnings("unchecked")
+    private ImmutableList<ILocatableGO> getAssumedInventory(final GameObjectId locationId) {
+        return (ImmutableList<ILocatableGO>) (ImmutableList<?>) world
+                .load(getPcd().getAssumedInLocation(locationId));
     }
 
     /**
@@ -103,23 +109,18 @@ public class MentalModelComp extends AbstractStatefulComponent<MentalModelPCD> {
 
     @Nullable
     @CheckReturnValue
-    public ILocationGO getAssumedLocation(final GameObjectId locatableId) {
-        @Nullable final GameObjectId locationId = getAssumedLocationId(locatableId);
-        if (locationId == null) {
-            return null;
-        }
-
-        return (ILocationGO) world.load(locationId);
-    }
-
-    @Nullable
-    @CheckReturnValue
     private GameObjectId getAssumedLocationId(final GameObjectId locatableId) {
         if (getGameObjectId().equals(locatableId)) {
             throw new IllegalArgumentException("No assumptions about yourself!");
         }
 
         return getPcd().getAssumedLocation(locatableId);
+    }
+
+    public void unsetAssumedLocations(final Iterable<? extends ILocatableGO> locatables) {
+        for (final ILocatableGO locatable : locatables) {
+            unsetAssumedLocation(locatable.getId());
+        }
     }
 
     public void unsetAssumedLocation(final GameObjectId locatableId) {
