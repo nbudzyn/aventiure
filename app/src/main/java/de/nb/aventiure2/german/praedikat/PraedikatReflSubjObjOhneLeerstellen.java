@@ -13,7 +13,6 @@ import de.nb.aventiure2.annotations.Komplement;
 import de.nb.aventiure2.annotations.Valenz;
 import de.nb.aventiure2.german.base.Interrogativpronomen;
 import de.nb.aventiure2.german.base.KasusOderPraepositionalkasus;
-import de.nb.aventiure2.german.base.Konstituente;
 import de.nb.aventiure2.german.base.Konstituentenfolge;
 import de.nb.aventiure2.german.base.Numerus;
 import de.nb.aventiure2.german.base.Person;
@@ -24,7 +23,6 @@ import de.nb.aventiure2.german.base.SubstantivischePhrase;
 import static de.nb.aventiure2.german.base.Kasus.AKK;
 import static de.nb.aventiure2.german.base.Kasus.DAT;
 import static de.nb.aventiure2.german.base.Konstituentenfolge.kf;
-import static de.nb.aventiure2.german.base.Personalpronomen.isPersonalpronomen;
 
 /**
  * Ein Prädikat wie "die Kugel an sich nehmen", das mit einer
@@ -151,21 +149,21 @@ class PraedikatReflSubjObjOhneLeerstellen
 
     @Nullable
     @Override
-    public Konstituente getSpeziellesVorfeldAlsWeitereOption(final Person person,
-                                                             final Numerus numerus) {
-        @Nullable final Konstituente speziellesVorfeldFromSuper =
+    public Konstituentenfolge getSpeziellesVorfeldAlsWeitereOption(final Person person,
+                                                                   final Numerus numerus) {
+        @Nullable final Konstituentenfolge speziellesVorfeldFromSuper =
                 super.getSpeziellesVorfeldAlsWeitereOption(person, numerus);
         if (speziellesVorfeldFromSuper != null) {
             return speziellesVorfeldFromSuper;
         }
 
-        final Konstituente objK = objekt.imK(objektKasusOderPraepositionalkasus);
+        final Konstituentenfolge objK = objekt.imK(objektKasusOderPraepositionalkasus);
         // Wenn "es" ein Objekt ist, darf es nicht im Vorfeld stehen.
         // (Eisenberg Der Satz 5.4.2)
         // Aber auch andere Personalpronomen wirken im Vorfeld oft eher unangebracht,
         // wenn es sich um ein Objekt handelt.
         // "Ihn nimmst du an dich."
-        if (!isPersonalpronomen(objK.getString())) {
+        if (!objK.isPersonalpronomen()) {
             return objK;  // "den Frosch"
         }
 
@@ -254,7 +252,7 @@ class PraedikatReflSubjObjOhneLeerstellen
 
     @Nullable
     @Override
-    public Konstituente getErstesInterrogativpronomen() {
+    public Konstituentenfolge getErstesInterrogativpronomen() {
         if (objekt instanceof Interrogativpronomen) {
             return objekt.imK(objektKasusOderPraepositionalkasus);
         }

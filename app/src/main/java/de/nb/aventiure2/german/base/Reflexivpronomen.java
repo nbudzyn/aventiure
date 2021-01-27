@@ -7,6 +7,7 @@ import com.google.common.collect.ImmutableMap;
 import java.util.Map;
 
 import static de.nb.aventiure2.german.base.Konstituente.k;
+import static de.nb.aventiure2.german.base.Konstituentenfolge.joinToKonstituentenfolge;
 import static de.nb.aventiure2.german.base.Numerus.PL;
 import static de.nb.aventiure2.german.base.Numerus.SG;
 import static de.nb.aventiure2.german.base.Person.P1;
@@ -99,9 +100,10 @@ public class Reflexivpronomen implements SubstPhrOderReflexivpronomen {
     }
 
     @Override
-    public Konstituente imK(final Kasus kasus) {
-        return k(imStr(kasus), kannAlsBezugsobjektVerstandenWerdenFuer(),
-                getBezugsobjekt());
+    public Konstituentenfolge imK(final Kasus kasus) {
+        return joinToKonstituentenfolge(
+                k(imStr(kasus), kannAlsBezugsobjektVerstandenWerdenFuer(),
+                        getBezugsobjekt()));
     }
 
     @Nullable

@@ -115,6 +115,11 @@ class BankAmTischBeimSchlossfestFactory {
         // Der Tisch wird wieder entfernt, s.o.
         ((ILocatableGO) world.load(SCHLOSS_VORHALLE_LANGER_TISCH_BEIM_FEST))
                 .locationComp().unsetLocation();
+        // Wir müssen auch die Erinnerung des SCs an den Tisch löschen!
+        // Sonst erhalten wir beim Aufstehen einen Text in der Art
+        // "Der lange Brettertisch ist verschwunden!" :-)
+        world.loadSC().mentalModelComp().unsetAssumedLocation(
+                SCHLOSS_VORHALLE_LANGER_TISCH_BEIM_FEST);
 
         // "du stehst vom Tisch auf"
         return du(VerbSubjObj.AUFSTEHEN_VON

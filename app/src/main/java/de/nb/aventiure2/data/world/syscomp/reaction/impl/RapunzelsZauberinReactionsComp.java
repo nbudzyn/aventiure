@@ -284,6 +284,13 @@ public class RapunzelsZauberinReactionsComp
             return;
         }
 
+        // FIXME Zauberin soll nicht einfach verschwinden, wenn sie
+        //  in den Schlossgarten geht. (Vor allem nicht, wenn der SC sie
+        //  auf dem Weg überholt hat!)
+        //  Vielleicht etwas wie "Du verlierst... aus den Augen" - möglicherweise
+        //  kann man das über einen separaten Raum erzeugen, den der SC
+        //  nicht betreten kann??
+
         if (!movementComp.isMoving()) {
             movementComp.narrateAndDoScTrifftStehendesMovingGOInTo(scTo);
         }
@@ -306,7 +313,7 @@ public class RapunzelsZauberinReactionsComp
 
     private void onRapunzelruf(final ILocatableGO rufer) {
         // Zauberin weiß jetzt, wo der Rufer ist
-        mentalModelComp.setAssumedLocation(rufer, world.loadSC().locationComp().getLocation());
+        mentalModelComp.setAssumedLocationToActual(rufer);
 
         if (!rufer.is(SPIELER_CHARAKTER)) {
             return;

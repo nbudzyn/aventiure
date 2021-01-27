@@ -10,7 +10,7 @@ public interface SubstPhrOderReflexivpronomen {
 
     String imStr(Kasus kasus);
 
-    Konstituente imK(Kasus kasus);
+    Konstituentenfolge imK(Kasus kasus);
 
     @Nullable
     NumerusGenus kannAlsBezugsobjektVerstandenWerdenFuer();

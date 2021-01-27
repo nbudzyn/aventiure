@@ -10,7 +10,6 @@ import javax.annotation.Nullable;
 import de.nb.aventiure2.annotations.Komplement;
 import de.nb.aventiure2.annotations.Valenz;
 import de.nb.aventiure2.german.base.Interrogativpronomen;
-import de.nb.aventiure2.german.base.Konstituente;
 import de.nb.aventiure2.german.base.Konstituentenfolge;
 import de.nb.aventiure2.german.base.Numerus;
 import de.nb.aventiure2.german.base.Person;
@@ -139,8 +138,9 @@ public class PraedikativumPraedikatOhneLeerstellen
 
     @Override
     public @Nullable
-    Konstituente getSpeziellesVorfeldAlsWeitereOption(final Person person, final Numerus numerus) {
-        @Nullable final Konstituente speziellesVorfeldFromSuper =
+    Konstituentenfolge getSpeziellesVorfeldAlsWeitereOption(final Person person,
+                                                            final Numerus numerus) {
+        @Nullable final Konstituentenfolge speziellesVorfeldFromSuper =
                 super.getSpeziellesVorfeldAlsWeitereOption(person, numerus);
         if (speziellesVorfeldFromSuper != null) {
             return speziellesVorfeldFromSuper;
@@ -213,14 +213,14 @@ public class PraedikativumPraedikatOhneLeerstellen
 
     @Nullable
     @Override
-    public Konstituente getErstesInterrogativpronomen() {
+    public Konstituentenfolge getErstesInterrogativpronomen() {
         if (praedikativum instanceof Interrogativpronomen) {
             return praedikativum.getPraedikativ(
                     // Person und Numerus spielen beim Interrogativpronomen keine Rolle:
                     // "Sie ist interessiert, wer Peter ist",
                     // "Sie ist interessiert, wer du bist",
                     // "Sie ist interessiert, wer wir sind"
-                    P2, SG).iterator().next();
+                    P2, SG);
         }
 
         return null;

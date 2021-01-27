@@ -54,7 +54,8 @@ public class DeklinierbarePhraseUtil {
         //        adjStarkPl(lexeme, VorgabeFuerNachfolgendesAdjektiv.NICHT_ERZEUGEN, pos,
         //                stamm,
         //                buildFeatureMap(komparation, STAERKE_STARK,
-        //                        valenzFuerImplizitesSubjekt.buildErgaenzungenUndAngabenSlots("3", null,
+        //                        valenzFuerImplizitesSubjekt.buildErgaenzungenUndAngabenSlots
+        //                        ("3", null,
         //                                // (IHRER selbst gedenkende) Männer /
         //                                // Frauen / Kinder,
         //                                // -> alle Genera möglich!

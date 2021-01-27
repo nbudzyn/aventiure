@@ -8,7 +8,6 @@ import java.util.Collection;
 import javax.annotation.Nullable;
 
 import de.nb.aventiure2.annotations.Valenz;
-import de.nb.aventiure2.german.base.Konstituente;
 import de.nb.aventiure2.german.base.Konstituentenfolge;
 import de.nb.aventiure2.german.base.Numerus;
 import de.nb.aventiure2.german.base.Person;
@@ -155,7 +154,7 @@ public class PraedikatSubOhneLeerstellen
 
     @Nullable
     @Override
-    public Konstituente getErstesInterrogativpronomen() {
+    public Konstituentenfolge getErstesInterrogativpronomen() {
         return null;
     }
 }

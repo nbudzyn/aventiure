@@ -126,22 +126,62 @@ public class MentalModelComp extends AbstractStatefulComponent<MentalModelPCD> {
     }
 
     public void unsetAssumedLocations(final Collection<? extends ILocatableGO> locatables) {
-        unsetAssumedLocations(locatables.stream().map(ILocatableGO::getId).collect(toList()));
+        setAssumedLocations(locatables, (ILocationGO) null);
     }
 
     private void unsetAssumedLocations(final Iterable<? extends GameObjectId> locatableIds) {
-        for (final GameObjectId locatableId : locatableIds) {
-            unsetAssumedLocation(locatableId);
-        }
+        setAssumedLocations(locatableIds, (ILocationGO) null);
+    }
+
+    public void unsetAssumedLocation(final ILocatableGO locatable) {
+        unsetAssumedLocation(locatable.getId());
     }
 
     public void unsetAssumedLocation(final GameObjectId locatableId) {
         setAssumedLocation(locatableId, (GameObjectId) null);
     }
 
+    public void setAssumedLocationsToActual(
+            final Collection<? extends ILocatableGO> locatables) {
+        for (final ILocatableGO locatable : locatables) {
+            setAssumedLocationToActual(locatable);
+        }
+    }
+
+    public void setAssumedLocations(
+            final Collection<? extends ILocatableGO> locatables,
+            @Nullable final ILocationGO location) {
+        setAssumedLocations(
+                locatables.stream().map(ILocatableGO::getId).collect(toList()),
+                location);
+    }
+
+    public void setAssumedLocationsToActual(
+            final Iterable<? extends GameObjectId> locatableIds) {
+        for (final GameObjectId locatableId : locatableIds) {
+            setAssumedLocationToActual(locatableId);
+        }
+    }
+
+    private void setAssumedLocations(
+            final Iterable<? extends GameObjectId> locatableIds,
+            @Nullable final ILocationGO location) {
+        for (final GameObjectId locatableId : locatableIds) {
+            setAssumedLocation(locatableId, location);
+        }
+    }
+
+    public void setAssumedLocationToActual(final ILocatableGO locatable) {
+        setAssumedLocation(locatable.getId(), getActualLocationId(locatable));
+    }
+
     public void setAssumedLocation(final ILocatableGO locatable,
                                    @Nullable final ILocationGO location) {
         setAssumedLocation(locatable.getId(), location);
+    }
+
+    public void setAssumedLocationToActual(final GameObjectId locatableId) {
+        setAssumedLocation(locatableId, getActualLocationId(locatableId));
     }
 
     public void setAssumedLocation(final GameObjectId locatableId,
@@ -150,8 +190,8 @@ public class MentalModelComp extends AbstractStatefulComponent<MentalModelPCD> {
                 location != null ? location.getId() : null);
     }
 
-    private void setAssumedLocation(final GameObjectId locatableId,
-                                    @Nullable final GameObjectId locationId) {
+    public void setAssumedLocation(final GameObjectId locatableId,
+                                   @Nullable final GameObjectId locationId) {
         if (getGameObjectId().equals(locatableId)) {
             throw new IllegalArgumentException("No assumptions about yourself!");
         }
@@ -161,6 +201,14 @@ public class MentalModelComp extends AbstractStatefulComponent<MentalModelPCD> {
         }
 
         getPcd().setAssumedLocation(locatableId, locationId);
+    }
+
+    private GameObjectId getActualLocationId(final ILocatableGO locatable) {
+        return getAssumedLocationId(locatable.getId());
+    }
+
+    private GameObjectId getActualLocationId(final GameObjectId locatableId) {
+        return ((ILocatableGO) world.load(locatableId)).locationComp().getLocationId();
     }
 }
 

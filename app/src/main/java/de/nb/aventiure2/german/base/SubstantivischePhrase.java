@@ -2,63 +2,20 @@ package de.nb.aventiure2.german.base;
 
 import androidx.annotation.Nullable;
 
-import java.util.Objects;
-
-import static com.google.common.base.Preconditions.checkArgument;
 import static de.nb.aventiure2.german.base.Kasus.AKK;
 import static de.nb.aventiure2.german.base.Kasus.DAT;
 import static de.nb.aventiure2.german.base.Kasus.NOM;
 import static de.nb.aventiure2.german.base.Konstituente.k;
-import static de.nb.aventiure2.german.base.Person.P3;
 
 /**
  * Eine Phrase, die substantivisch verwendet werden kann, also insbesondere ein Pronomen ("sie",
- * "du", "wir") oder eine (andere) Nominalphrase ("die goldene Kugel").
+ * "du", "wir") oder eine (andere) Nominalphrase ("die goldene Kugel") oder eine
+ * Reihung ("du und der Frosch").
  */
 public abstract class SubstantivischePhrase
         implements DeklinierbarePhrase, SubstPhrOderReflexivpronomen, Praedikativum {
-    /**
-     * Etwas hinzu wie "auch", "allein", "ausgerechnet", "wenigstens" etc.
-     */
-    @Nullable
-    private final String fokuspartikel;
-
-    private final NumerusGenus numerusGenus;
-
-    /**
-     * Eine Person, ein Gegenstand, ein Konzept o.Ä., auf das sich diese substantivische
-     * Phrase bezieht.
-     */
-    @Nullable
-    private final IBezugsobjekt bezugsobjekt;
-
-    public SubstantivischePhrase(final NumerusGenus numerusGenus,
-                                 @Nullable final IBezugsobjekt bezugsobjekt) {
-        this(null, numerusGenus, bezugsobjekt);
-    }
-
-    public SubstantivischePhrase(@Nullable final String fokuspartikel,
-                                 final NumerusGenus numerusGenus,
-                                 @Nullable final IBezugsobjekt bezugsobjekt) {
-        checkArgument(fokuspartikel == null || !fokuspartikel.isEmpty(),
-                "Fokuspartikel ist Leerstring");
-
-        this.fokuspartikel = fokuspartikel;
-        this.numerusGenus = numerusGenus;
-        this.bezugsobjekt = bezugsobjekt;
-    }
-
-    /**
-     * Gibt diese substantivischen Phrase ohne Fokuspartikel zurück
-     */
     @Override
-    public SubstantivischePhrase ohneFokuspartikel() {
-        if (fokuspartikel == null) {
-            return this;
-        }
-
-        return mitFokuspartikel(null);
-    }
+    public abstract SubstantivischePhrase ohneFokuspartikel();
 
     /**
      * Fügt der substantivischen Phrase etwas hinzu wie "auch", "allein", "ausgerechnet",
@@ -73,6 +30,7 @@ public abstract class SubstantivischePhrase
         // *"Petra ist Professor. Er ..."
         return new Konstituentenfolge(k(nomStr()));
     }
+
 
     @Override
     @Nullable
@@ -90,11 +48,9 @@ public abstract class SubstantivischePhrase
 
     /**
      * Gibt die substantivische Phrase im Dativ, aber ohne Artikel, zurück
-     * ("(zum) Haus") - als Konstituente
+     * ("(zum) Haus") - als Konstituentenfolge
      */
-    Konstituente artikellosDatK() {
-        return k(artikellosDatStr(), getNumerusGenus(), getBezugsobjekt());
-    }
+    abstract Konstituentenfolge artikellosDatK();
 
     /**
      * Gibt die substantivische Phrase im Dativ, aber ohne Artikel, zurück
@@ -102,7 +58,7 @@ public abstract class SubstantivischePhrase
      */
     public abstract String artikellosDatStr();
 
-    private String imStr(final KasusOderPraepositionalkasus kasusOderPraepositionalkasus) {
+    String imStr(final KasusOderPraepositionalkasus kasusOderPraepositionalkasus) {
         if (kasusOderPraepositionalkasus instanceof Kasus) {
             return imStr((Kasus) kasusOderPraepositionalkasus);
         }
@@ -126,26 +82,25 @@ public abstract class SubstantivischePhrase
         return DeklinierbarePhrase.super.imStr(kasus);
     }
 
-    public Konstituente nomK() {
+    public Konstituentenfolge nomK() {
         return imK(NOM);
     }
 
-    public Konstituente datK() {
+    public Konstituentenfolge datK() {
         return imK(DAT);
     }
 
-    public Konstituente akkK() {
+    public Konstituentenfolge akkK() {
         return imK(AKK);
     }
 
-    public Konstituente imK(final KasusOderPraepositionalkasus kasusOderPraepositionalkasus) {
-        return k(imStr(kasusOderPraepositionalkasus), getNumerusGenus(), getBezugsobjekt());
+    @Override
+    public Konstituentenfolge imK(final Kasus kasus) {
+        return imK((KasusOderPraepositionalkasus) kasus);
     }
 
-    @Override
-    public Konstituente imK(final Kasus kasus) {
-        return k(imStr(kasus), kannAlsBezugsobjektVerstandenWerdenFuer(), getBezugsobjekt());
-    }
+    public abstract Konstituentenfolge imK(
+            KasusOderPraepositionalkasus kasusOderPraepositionalkasus);
 
     /**
      * Gibt ein Personalpronomen für diese Phrase zurück.
@@ -167,54 +122,9 @@ public abstract class SubstantivischePhrase
      */
     public abstract Relativpronomen relPron();
 
-    @Nullable
-    @Override
-    public NumerusGenus kannAlsBezugsobjektVerstandenWerdenFuer() {
-        if (getPerson() != P3) {
-            return null;
-        }
+    public abstract Numerus getNumerus();
 
-        return numerusGenus;
-    }
-
-    @Override
-    @Nullable
-    public String getFokuspartikel() {
-        return fokuspartikel;
-    }
-
-    @Override
-    @Nullable
-    public IBezugsobjekt getBezugsobjekt() {
-        return bezugsobjekt;
-    }
-
-    public Numerus getNumerus() {
-        return getNumerusGenus().getNumerus();
-    }
-
-    public NumerusGenus getNumerusGenus() {
-        return numerusGenus;
-    }
+    public abstract NumerusGenus getNumerusGenus();
 
     public abstract Person getPerson();
-
-    @Override
-    public boolean equals(final Object o) {
-        if (this == o) {
-            return true;
-        }
-        if (o == null || getClass() != o.getClass()) {
-            return false;
-        }
-        final SubstantivischePhrase that = (SubstantivischePhrase) o;
-        return Objects.equals(fokuspartikel, that.fokuspartikel) &&
-                numerusGenus == that.numerusGenus &&
-                Objects.equals(bezugsobjekt, that.bezugsobjekt);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(fokuspartikel, numerusGenus, bezugsobjekt);
-    }
 }

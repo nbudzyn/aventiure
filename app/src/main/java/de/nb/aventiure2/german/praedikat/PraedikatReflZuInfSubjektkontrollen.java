@@ -14,7 +14,6 @@ import javax.annotation.Nullable;
 import de.nb.aventiure2.annotations.Komplement;
 import de.nb.aventiure2.annotations.Valenz;
 import de.nb.aventiure2.german.base.Kasus;
-import de.nb.aventiure2.german.base.Konstituente;
 import de.nb.aventiure2.german.base.Konstituentenfolge;
 import de.nb.aventiure2.german.base.Numerus;
 import de.nb.aventiure2.german.base.Person;
@@ -149,9 +148,9 @@ public class PraedikatReflZuInfSubjektkontrollen
 
     @Nullable
     @Override
-    public Konstituente getSpeziellesVorfeldAlsWeitereOption(
+    public Konstituentenfolge getSpeziellesVorfeldAlsWeitereOption(
             final Person person, final Numerus numerus) {
-        @Nullable final Konstituente speziellesVorfeldFromSuper =
+        @Nullable final Konstituentenfolge speziellesVorfeldFromSuper =
                 super.getSpeziellesVorfeldAlsWeitereOption(person, numerus);
         if (speziellesVorfeldFromSuper != null) {
             return speziellesVorfeldFromSuper;
@@ -269,7 +268,7 @@ public class PraedikatReflZuInfSubjektkontrollen
 
     @Nullable
     @Override
-    public Konstituente getErstesInterrogativpronomen() {
+    public Konstituentenfolge getErstesInterrogativpronomen() {
         return lexikalischerKern.getErstesInterrogativpronomen();
     }
 }

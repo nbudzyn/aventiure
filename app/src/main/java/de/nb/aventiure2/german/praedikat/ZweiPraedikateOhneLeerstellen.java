@@ -163,8 +163,8 @@ public class ZweiPraedikateOhneLeerstellen
 
     @Nullable
     @Override
-    public Konstituente getSpeziellesVorfeldAlsWeitereOption(final Person person,
-                                                             final Numerus numerus) {
+    public Konstituentenfolge getSpeziellesVorfeldAlsWeitereOption(final Person person,
+                                                                   final Numerus numerus) {
         return ersterSatz.getSpeziellesVorfeldAlsWeitereOption(person, numerus);
     }
 
@@ -176,14 +176,14 @@ public class ZweiPraedikateOhneLeerstellen
 
     @Nullable
     @Override
-    public Konstituente getErstesInterrogativpronomen() {
+    public Konstituentenfolge getErstesInterrogativpronomen() {
         // Das hier ist etwas tricky.
         // Denkbar wäre so etwas wie "Sie ist gespannt, was du aufhebst und mitnimmmst."
         // Dazu müsste sowohl im aufheben- als auch im mitnehmen-Prädikat dasselbe
         // Interrogativpronomen angegeben sein.
-        final Konstituente erstesInterrogativpronomenErsterSatz =
+        final Konstituentenfolge erstesInterrogativpronomenErsterSatz =
                 ersterSatz.getErstesInterrogativpronomen();
-        final Konstituente erstesInterrogativpronomenZweiterSatz =
+        final Konstituentenfolge erstesInterrogativpronomenZweiterSatz =
                 zweiterSatz.getErstesInterrogativpronomen();
 
         if (Objects.equals(

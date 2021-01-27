@@ -235,6 +235,10 @@ public class Konstituente {
         return getString();
     }
 
+    public boolean isPersonalpronomen() {
+        return Personalpronomen.isPersonalpronomen(string);
+    }
+
     @Nonnull
     public String getString() {
         return string;

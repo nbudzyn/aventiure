@@ -242,7 +242,7 @@ public class PraedikatObjWoertlicheRedeOhneLeerstellen
 
     @Nullable
     @Override
-    public Konstituente getErstesInterrogativpronomen() {
+    public Konstituentenfolge getErstesInterrogativpronomen() {
         if (objekt instanceof Interrogativpronomen) {
             return objekt.imK(kasusOderPraepositionalkasus);
         }

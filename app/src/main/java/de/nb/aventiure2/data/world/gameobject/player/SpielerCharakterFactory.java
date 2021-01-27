@@ -80,7 +80,9 @@ public class SpielerCharakterFactory {
                 feelingsComp,
                 memoryComp,
                 new NoSCTalkActionsTalkingComp(SPIELER_CHARAKTER, db, timeTaker, n, world),
-                new ScAutomaticReactionsComp(db, timeTaker, n, world, waitingComp,
+                new ScAutomaticReactionsComp(db, timeTaker, n, world,
+                        locationComp, mentalModelComp,
+                        waitingComp,
                         feelingsComp));
     }
 

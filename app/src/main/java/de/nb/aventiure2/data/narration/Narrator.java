@@ -38,6 +38,7 @@ import de.nb.aventiure2.german.description.TextDescription;
 import de.nb.aventiure2.german.description.TimedDescription;
 import de.nb.aventiure2.german.stemming.StemmedWords;
 
+import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.collect.ImmutableList.toImmutableList;
 import static de.nb.aventiure2.data.narration.Narration.NarrationSource.REACTIONS;
@@ -257,6 +258,7 @@ public class Narrator {
     private boolean narrateTemporaryNarrationAndTryCombiningWithAlternative(
             final Collection<? extends TimedDescription<?>> timedAlternatives) {
         checkNotNull(temporaryNarration, "temporaryNarration is null");
+        checkArgument(!timedAlternatives.isEmpty(), "No timedAlternatives!");
 
         // Hier gibt es zwei Möglichkeiten:
         // 1. Die temporary Narration und die (neuen) Alternatives werden

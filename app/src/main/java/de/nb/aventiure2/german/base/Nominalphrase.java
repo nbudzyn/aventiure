@@ -17,7 +17,7 @@ import static de.nb.aventiure2.german.base.Person.P3;
  * Eine Nominalphrase, z.B. "ein dicker, hässlicher Frosch".
  */
 public class Nominalphrase
-        extends SubstantivischePhrase
+        extends EinzelneSubstantivischePhrase
         implements IErlaubtAttribute {
     @Nullable
     private final Artikel.Typ artikelTyp;

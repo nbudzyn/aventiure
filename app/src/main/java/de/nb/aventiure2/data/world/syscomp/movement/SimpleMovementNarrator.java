@@ -64,10 +64,10 @@ public class SimpleMovementNarrator implements IMovementNarrator {
         final AltDescriptionsBuilder alt = alt();
 
         // Wir verwenden hier bewusst kein du(FOLGEN.mit(anaph)). Das Problem ist:
-        // Wir wollen Ergebnisse wir "Der Frau gefolgt nimmst du den Pfad...".
+        // Wir wollen keine Ergebnisse wie "Der Frau gefolgt nimmst du den Pfad...".
         // Das Problem daran ist offenbar, dass "Der Frau gefolgt" (oder
-        // "Der Frau hinterhergegangen" etc.) einen Nachzustand beschreibt, der bei
-        // dem folgenden Text ("nimmst du den Pfad" o.Ä.) noch nicht erreicht ist.
+        // "Der Frau hinterhergegangen" etc.) einen Nachzustand beschreibt, der für
+        // den folgenden Text ("nimmst du den Pfad" o.Ä.) noch nicht erreicht ist.
         // Letztlich beschreiben "Der Frau folgen" und "Du nimmst den Pfad..."
         // ja dasselbe.
         // Möglich wäre etwas wie "Der Frau gefolgt bis da schnell auf dem Hügel" o.Ä. -

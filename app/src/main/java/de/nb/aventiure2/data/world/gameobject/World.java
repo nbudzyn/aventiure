@@ -51,6 +51,7 @@ import de.nb.aventiure2.data.world.syscomp.storingplace.StoringPlaceType;
 import de.nb.aventiure2.german.base.Indefinitpronomen;
 import de.nb.aventiure2.german.base.Nominalphrase;
 import de.nb.aventiure2.german.base.Personalpronomen;
+import de.nb.aventiure2.german.base.SubstPhrReihung;
 import de.nb.aventiure2.german.base.SubstantivischePhrase;
 
 import static com.google.common.collect.ImmutableList.toImmutableList;
@@ -64,6 +65,7 @@ import static de.nb.aventiure2.german.base.Nominalphrase.np;
 import static de.nb.aventiure2.german.base.NumerusGenus.F;
 import static de.nb.aventiure2.german.base.NumerusGenus.M;
 import static de.nb.aventiure2.german.base.NumerusGenus.PL_MFN;
+import static java.util.stream.Collectors.toList;
 
 /**
  * The world contains and manages all game objects.
@@ -601,6 +603,19 @@ public class World {
     }
 
     /**
+     * Ermittelt alle MovingBeings an dieser <i>locationId</i>
+     * (auch rekursiv enthaltene, z.B. Kugel auf einem Tisch in einem Raum),
+     * die derzeit <i>in Bewegung</i> (<i>moving</i>) sind -
+     * nur solche, die eine Beschreibung haben.
+     */
+    public <MOV extends IMovingGO & ILocatableGO & IDescribableGO>
+    ImmutableList<MOV> loadMovingBeingsMovingDescribableInventory(
+            final GameObjectId locationId) {
+        return MovementSystem.filterMoving(
+                filterMovingGO(loadDescribableRecursiveInventory(locationId)));
+    }
+
+    /**
      * Ermittelt die nicht-lebenden Game Objects,
      * die <i>movable</i> sind (also z.B. vom SC bewegt werden könnten) an dieser
      * <i>locationId</i> (auch rekursiv enthaltene, z.B. Kugel auf einem Tisch in einem Raum),
@@ -692,6 +707,7 @@ public class World {
         return loadDescribableRecursiveInventory(location.getId());
     }
 
+
     /**
      * Lädt (soweit noch nicht geschehen) die Game Objects an dieser
      * <code>locationId</code> (auch rekursiv, z.B. Kugel auf Tisch in Raum)
@@ -712,6 +728,14 @@ public class World {
         }
 
         return res.build();
+    }
+
+    private static <DESC_OBJ extends ILocatableGO & IDescribableGO,
+            MOV extends ILocatableGO & IDescribableGO & IMovingGO>
+    ImmutableList<MOV> filterMovingGO(final List<DESC_OBJ> gameObjects) {
+        return (ImmutableList<MOV>) gameObjects.stream()
+                .filter(IMovingGO.class::isInstance)
+                .collect(toImmutableList());
     }
 
     /**
@@ -804,6 +828,30 @@ public class World {
                 all.values().stream()
                         .filter(ILivingBeingGO.class::isInstance)
                         .collect(toImmutableList());
+    }
+
+    public SubstantivischePhrase getDescriptionSingleOrReihung(
+            final Collection<? extends IDescribableGO> objects) {
+        return getDescriptionSingleOrReihung(objects, false);
+    }
+
+    private SubstantivischePhrase getDescriptionSingleOrReihung(
+            final Collection<? extends IDescribableGO> objects,
+            final boolean shortIfKnown) {
+        if (objects.isEmpty()) {
+            return Indefinitpronomen.NICHTS;
+        }
+
+        if (objects.size() == 1) {
+            final IDescribableGO object = objects.iterator().next();
+
+            return getDescription(object, shortIfKnown);
+        }
+
+        return new SubstPhrReihung(
+                objects.stream()
+                        .map(o -> getDescription(o, shortIfKnown))
+                        .collect(toList()));
     }
 
     /**

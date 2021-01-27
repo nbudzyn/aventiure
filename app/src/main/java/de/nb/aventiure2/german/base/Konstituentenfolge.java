@@ -209,20 +209,20 @@ public class Konstituentenfolge implements Iterable<Konstituente> {
     }
 
     /**
-     * Schneidet die einzelnen <code>singleParts</code> einen nach dem anderen aus dem Input.
+     * Schneidet die einzelnen <code>listOfParts</code> einen nach dem anderen aus dem Input.
      * Doppelt auftretende Texte werden also auch zweimal herausgeschnitten.
      * Für jeden einzelnen Schnitt wird  {@link #cutFirst(Konstituentenfolge)} verwendet.
      */
     @Nullable
     public static Konstituentenfolge cutFirstOneByOne(@Nullable final Konstituentenfolge input,
-                                                      final List<Konstituente> singleParts) {
+                                                      final List<Konstituentenfolge> listOfParts) {
         if (input == null) {
             return null;
         }
 
         Konstituentenfolge res = input;
-        for (final Konstituente singlePart : singleParts) {
-            res = res.cutFirst(singlePart);
+        for (final Konstituentenfolge parts : listOfParts) {
+            res = res.cutFirst(parts);
             if (res == null) {
                 return null;
             }
@@ -256,6 +256,26 @@ public class Konstituentenfolge implements Iterable<Konstituente> {
         }
 
         return phorikKandidatAndSicherheit.first;
+    }
+
+    public boolean kommaStehtAus() {
+        return konstituenten.get(konstituenten.size() - 1).kommaStehtAus();
+    }
+
+    public boolean isPersonalpronomenEs() {
+        if (konstituenten.size() > 1) {
+            return false;
+        }
+
+        return "es".equals(konstituenten.get(0).getString());
+    }
+
+    public boolean isPersonalpronomen() {
+        if (konstituenten.size() > 1) {
+            return false;
+        }
+
+        return konstituenten.get(0).isPersonalpronomen();
     }
 
     private boolean calcKannAlsBezugsobjektVerstandenWerdenFuer(final NumerusGenus numerusGenus) {
@@ -509,7 +529,7 @@ public class Konstituentenfolge implements Iterable<Konstituente> {
 
     @SuppressWarnings("UnstableApiUsage")
     @Nullable
-    private Konstituentenfolge cutFirst(@Nullable final Konstituentenfolge part) {
+    public Konstituentenfolge cutFirst(@Nullable final Konstituentenfolge part) {
         if (part == null) {
             return this;
         }

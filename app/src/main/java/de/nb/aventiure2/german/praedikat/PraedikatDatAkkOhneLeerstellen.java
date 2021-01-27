@@ -12,7 +12,6 @@ import javax.annotation.Nullable;
 import de.nb.aventiure2.annotations.Komplement;
 import de.nb.aventiure2.annotations.Valenz;
 import de.nb.aventiure2.german.base.Interrogativpronomen;
-import de.nb.aventiure2.german.base.Konstituente;
 import de.nb.aventiure2.german.base.Konstituentenfolge;
 import de.nb.aventiure2.german.base.Numerus;
 import de.nb.aventiure2.german.base.Person;
@@ -135,8 +134,9 @@ public class PraedikatDatAkkOhneLeerstellen
 
     @Override
     public @Nullable
-    Konstituente getSpeziellesVorfeldAlsWeitereOption(final Person person, final Numerus numerus) {
-        @Nullable final Konstituente speziellesVorfeldFromSuper =
+    Konstituentenfolge getSpeziellesVorfeldAlsWeitereOption(final Person person,
+                                                            final Numerus numerus) {
+        @Nullable final Konstituentenfolge speziellesVorfeldFromSuper =
                 super.getSpeziellesVorfeldAlsWeitereOption(person, numerus);
         if (speziellesVorfeldFromSuper != null) {
             return speziellesVorfeldFromSuper;
@@ -201,7 +201,7 @@ public class PraedikatDatAkkOhneLeerstellen
 
     @Nullable
     @Override
-    public Konstituente getErstesInterrogativpronomen() {
+    public Konstituentenfolge getErstesInterrogativpronomen() {
         if (dat instanceof Interrogativpronomen) {
             return dat.datK();
         }

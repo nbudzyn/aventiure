@@ -190,16 +190,12 @@ public class RedenAction<TALKER extends IDescribableGO & ILocatableGO & ITalkerG
     public void narrateAndDo() {
         sc.memoryComp().setLastAction(buildMemorizedAction());
 
-        updateTalkersMentalModel();
+        updateMentalModels();
 
         conversationStep.narrateAndDo();
     }
 
-    private void updateTalkersMentalModel() {
-        if (!(talker instanceof IHasMentalModelGO)) {
-            return;
-        }
-
+    private void updateMentalModels() {
         if (!world.hasSameOuterMostLocationAsSC(talker)) {
             return;
         }
@@ -208,10 +204,18 @@ public class RedenAction<TALKER extends IDescribableGO & ILocatableGO & ITalkerG
         // X spricht, weiß X danach auch, wo der SC sich befindet -
         // zumindest, wenn SC und X im selben Raum sind.
         // Es könnte Ausnahmen geben.
+        world.loadSC().mentalModelComp().setAssumedLocationToActual(talker);
+
+        if (!(talker instanceof IHasMentalModelGO)) {
+            return;
+        }
+
+        // Dies ist zumindest der Regelfall: Wenn der SC mit
+        // X spricht, weiß X danach auch, wo der SC sich befindet -
+        // zumindest, wenn SC und X im selben Raum sind.
+        // Es könnte Ausnahmen geben.
         ((IHasMentalModelGO) talker).mentalModelComp()
-                .setAssumedLocation(
-                        SPIELER_CHARAKTER,
-                        world.loadSC().locationComp().getLocation());
+                .setAssumedLocationToActual(SPIELER_CHARAKTER);
     }
 
     @Override

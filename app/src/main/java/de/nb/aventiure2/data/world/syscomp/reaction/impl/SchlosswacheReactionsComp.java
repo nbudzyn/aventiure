@@ -242,8 +242,8 @@ public class SchlosswacheReactionsComp
                         .timed(secs(20)));
 
         stateComp.narrateAndSetState(AUFMERKSAM);
-
-        world.loadSC().memoryComp().upgradeKnown(SCHLOSSWACHE);
+        loadSC().memoryComp().upgradeKnown(SCHLOSSWACHE);
+        loadSC().mentalModelComp().setAssumedLocationToActual(SCHLOSSWACHE);
         sc.feelingsComp().requestMood(ANGESPANNT);
     }
 

@@ -38,6 +38,7 @@ import de.nb.aventiure2.data.world.syscomp.state.IHasStateGO;
 import de.nb.aventiure2.data.world.syscomp.state.impl.SchlossfestState;
 import de.nb.aventiure2.data.world.syscomp.storingplace.ILocationGO;
 import de.nb.aventiure2.german.base.StructuralElement;
+import de.nb.aventiure2.german.base.SubstantivischePhrase;
 import de.nb.aventiure2.german.description.AbstractFlexibleDescription;
 import de.nb.aventiure2.german.description.AltDescriptionsBuilder;
 import de.nb.aventiure2.german.description.AltTimedDescriptionsBuilder;
@@ -58,6 +59,7 @@ import static de.nb.aventiure2.data.world.syscomp.spatialconnection.NumberOfWays
 import static de.nb.aventiure2.data.world.syscomp.spatialconnection.NumberOfWays.ONLY_WAY;
 import static de.nb.aventiure2.data.world.syscomp.state.impl.SchlossfestState.BEGONNEN;
 import static de.nb.aventiure2.german.base.GermanUtil.buildAufzaehlung;
+import static de.nb.aventiure2.german.base.GermanUtil.joinToString;
 import static de.nb.aventiure2.german.base.StructuralElement.WORD;
 import static de.nb.aventiure2.german.description.AltDescriptionsBuilder.alt;
 import static de.nb.aventiure2.german.description.AltTimedDescriptionsBuilder.altTimed;
@@ -68,7 +70,6 @@ import static de.nb.aventiure2.german.description.Kohaerenzrelation.DISKONTINUIT
 import static de.nb.aventiure2.german.praedikat.SeinUtil.istSind;
 import static de.nb.aventiure2.german.string.GermanStringUtil.capitalize;
 import static java.util.Objects.requireNonNull;
-import static java.util.stream.Collectors.toList;
 
 /**
  * Der Spielercharakter bewegt sich in einen anderen Raum oder in ein Objekt, das im
@@ -208,7 +209,7 @@ public class BewegenAction<LOC_DESC extends ILocatableGO & IDescribableGO>
 
         // Lebende Dinge, sind hier ausgeschlossen, sie müssen sich ggf. in einer
         // ReactionsComp selbst beschreiben.
-        upgradeNonLivingNonMovableRecursiveInventoryKnown(loadTo());
+        upgradeNonLivingNonMovableRecursiveInventoryKnownMentalModel(loadTo());
 
         if (scWirdMitEssenKonfrontiert()) {
             sc.feelingsComp().narrateAndDoSCMitEssenKonfrontiert();
@@ -222,16 +223,18 @@ public class BewegenAction<LOC_DESC extends ILocatableGO & IDescribableGO>
                 this::narrateNonLivingMovableObjectsOrMissingObjectsAndUpgradeKnownAndSetLastAction);
     }
 
-    private void upgradeNonLivingNonMovableRecursiveInventoryKnown(
+    private void upgradeNonLivingNonMovableRecursiveInventoryKnownMentalModel(
             @NonNull final ILocationGO location) {
-        final ImmutableList<? extends IGameObject> directlyContainedNonLivingNonMovables =
+        final ImmutableList<LOC_DESC> directlyContainedNonLivingNonMovables =
                 world.loadDescribableNonLivingNonMovableInventory(location.getId());
         sc.memoryComp().upgradeKnown(directlyContainedNonLivingNonMovables);
+        sc.mentalModelComp().setAssumedLocations(
+                directlyContainedNonLivingNonMovables, location);
 
         for (final IGameObject directlyContainedNonLivingNonMovable :
                 directlyContainedNonLivingNonMovables) {
             if (directlyContainedNonLivingNonMovable instanceof ILocationGO) {
-                upgradeNonLivingNonMovableRecursiveInventoryKnown(
+                upgradeNonLivingNonMovableRecursiveInventoryKnownMentalModel(
                         (ILocationGO) directlyContainedNonLivingNonMovable);
             }
         }
@@ -245,7 +248,7 @@ public class BewegenAction<LOC_DESC extends ILocatableGO & IDescribableGO>
             // Wenn man z.B. in einem Zimmer auf einen Tisch steigt: Nicht noch einmal
             // beschreiben, was sonst noch auf dem Tisch steht!
 
-            narrateNonLivingMovableObjectsAndUpgradeKnown(
+            narrateNonLivingMovableObjectsAndUpgradeKnownMentalModel(
                     // Wenn man z.B. von einem Tisch heruntersteigt oder
                     // einmal um einen Turm herumgeht, dann noch noch einmal
                     // beschreiben, was sich auf dem Tisch oder vor dem Turm
@@ -257,12 +260,12 @@ public class BewegenAction<LOC_DESC extends ILocatableGO & IDescribableGO>
         sc.memoryComp().setLastAction(buildMemorizedAction());
     }
 
-    private void narrateNonLivingMovableObjectsAndUpgradeKnown(
+    private void narrateNonLivingMovableObjectsAndUpgradeKnownMentalModel(
             @Nullable final ILocationGO excludedLocation) {
         final ImmutableList.Builder<String> descriptionsPerLocation = builder();
         int numMovableObjectsInLocation = 0;
         @Nullable IDescribableGO lastObjectInLocation = null;
-        for (final Pair<ILocationGO, ? extends List<? extends IDescribableGO>> locationAndDescribables :
+        for (final Pair<ILocationGO, ? extends List<? extends LOC_DESC>> locationAndDescribables :
                 buildRecursiveLocationsAndDescribables(loadTo())) {
             requireNonNull(locationAndDescribables.second, "locationAndDescribables.second");
 
@@ -277,7 +280,7 @@ public class BewegenAction<LOC_DESC extends ILocatableGO & IDescribableGO>
                 lastObjectInLocation = locationAndDescribables.second
                         .get(locationAndDescribables.second.size() - 1);
 
-                upgradeKnown(locationAndDescribables);
+                upgradeKnownMentalModel(locationAndDescribables);
             }
         }
 
@@ -339,6 +342,8 @@ public class BewegenAction<LOC_DESC extends ILocatableGO & IDescribableGO>
 
         // Man muss zusätzlich noch alle Gegenstände prüfen, die
         // sich im actual inventory befinden und nicht erwartet waren!
+        // (Dies ist eher zur Sicherheit, vgl.
+        // upgradeNonLivingNonMovableRecursiveInventoryKnownMentalModel())
         for (final IDescribableGO actual : actualDescribableInventory) {
             // Den Frosch oder die Schlosswache bemerkt der SC vielleicht gar nicht.
             if ((!(actual instanceof ILivingBeingGO)
@@ -355,22 +360,6 @@ public class BewegenAction<LOC_DESC extends ILocatableGO & IDescribableGO>
         }
 
         return missing.build();
-
-        // FIXME
-        //  Missing =
-        //  - Wenn etwas zuletzt an diesem Ort gesehen hat
-        //  - Wenn es nicht in Bewegung war (moving)
-        //  - Nur, wenn der Gegenstand (noch) bekannt ist (Konzept:
-        //    immer wenn ein Gegenstand vergessen wird, wird auch sein Ort vergessen?!)
-        //  - Und wenn es keine guten Gründe gibt, dass er nicht mehr da sein sollte.
-        //  - und der Gegenstand nicht mehr da ist
-        //  - Nicht nur non-living-Objekte, auch Living!
-
-        // FIXME Mental model muss aktualisiert werden
-        //  - z.B. wenn der SC einen Raum verlässt? Oder bei jeder Interaktion (nehmen, hinlegen,
-        //  ...)?
-        //  - Oder wenn ein Moving... einen Raum verlässt
-        //   - Oder der SC einen Gegenstand nimmt oder er sich in Luft auflöst...
     }
 
     private static <LIV extends IDescribableGO & ILivingBeingGO>
@@ -400,31 +389,39 @@ public class BewegenAction<LOC_DESC extends ILocatableGO & IDescribableGO>
 
     private AltDescriptionsBuilder altMissingObjectsDescriptions(
             final List<? extends IDescribableGO> missingObjects) {
-        final String aufzaehlung = buildDescriptionAufzaehlung(missingObjects);
+        final SubstantivischePhrase aufzaehlung =
+                world.getDescriptionSingleOrReihung(missingObjects);
         final String istSind = istSind(missingObjects);
-        final IDescribableGO lastObject = missingObjects.get(missingObjects.size() - 1);
 
         final AltDescriptionsBuilder alt = alt();
-        alt().add(neuerSatz(aufzaehlung, istSind, "nicht mehr da"),
-                neuerSatz(aufzaehlung, istSind, "nirgendwo zu sehen"),
-                neuerSatz(aufzaehlung, istSind, "verschwunden"),
-                neuerSatz("wo", istSind, "denn", aufzaehlung, "geblieben?"),
-                neuerSatz("wo", istSind, "denn", aufzaehlung, "abgeblieben?")
-                // FIXME du("kannst", akk "nirgendwo entdecken"),
-                // FIXME "von dat keine Spur!"
-        ).phorikKandidat(world.getDescription(lastObject, false),
-                lastObject.getId());
+        alt.add(neuerSatz(aufzaehlung.nomK(), istSind, "nicht mehr da"),
+                neuerSatz(aufzaehlung.nomK(), istSind, "nirgendwo zu sehen"),
+                neuerSatz(aufzaehlung.nomK(), istSind, "verschwunden"),
+                neuerSatz("wo", istSind, "denn", aufzaehlung.nomK(), "geblieben?"),
+                neuerSatz("wo", istSind, "denn", aufzaehlung.nomK(), "abgeblieben?"),
+                du("kannst", aufzaehlung.akkK(), "nirgendwo entdecken"),
+                neuerSatz("von", aufzaehlung.datK(), "keine Spur!")
+        );
 
-        // FIXME "weder... noch ... ist irgendwo zu sehen"
+        if (missingObjects.size() == 2) {
+            neuerSatz("weder",
+                    world.getDescription(missingObjects.get(0)),
+                    "noch",
+                    world.getDescription(missingObjects.get(1)),
+                    "ist irgendwo zu sehen");
+        }
+
         return alt;
     }
 
-    private void upgradeKnown(
+    private void upgradeKnownMentalModel(
             @NonNull
-            final Pair<ILocationGO, ? extends List<? extends IDescribableGO>> locationAndDescribables) {
+            final Pair<ILocationGO, ? extends List<? extends LOC_DESC>> locationAndDescribables) {
         requireNonNull(locationAndDescribables.second, "locationAndDescribables.second");
 
         sc.memoryComp().upgradeKnown(locationAndDescribables.second);
+        sc.mentalModelComp().setAssumedLocations(
+                locationAndDescribables.second, locationAndDescribables.first);
 
         for (final IGameObject gameObject : locationAndDescribables.second) {
             if (gameObject instanceof ILocationGO) {
@@ -438,7 +435,8 @@ public class BewegenAction<LOC_DESC extends ILocatableGO & IDescribableGO>
                 // hätten wir zumindest bei den nicht-movablen Locations das Problem,
                 // dass man z.B. die schwere Vase bei Dunkelheit nicht sieht, aber
                 // trotzdem die Kugel, die drauf liegt?!
-                upgradeNonLivingNonMovableRecursiveInventoryKnown((ILocationGO) gameObject);
+                upgradeNonLivingNonMovableRecursiveInventoryKnownMentalModel(
+                        (ILocationGO) gameObject);
             }
         }
     }
@@ -492,7 +490,8 @@ public class BewegenAction<LOC_DESC extends ILocatableGO & IDescribableGO>
         return buildObjectInLocationDescriptionPrefix(location,
                 movableObjectsInLocation.size())
                 + " "
-                + buildDescriptionAufzaehlung(movableObjectsInLocation);
+                + joinToString(
+                world.getDescriptionSingleOrReihung(movableObjectsInLocation).nomK());
     }
 
     @SuppressWarnings({"unchecked", "RedundantIfStatement"})
@@ -753,25 +752,6 @@ public class BewegenAction<LOC_DESC extends ILocatableGO & IDescribableGO>
         }
 
         return res + " liegen";
-    }
-
-    /**
-     * Gibt eine Aufzählung zurück wie "der hässliche Frosch",
-     * "die goldene Kugel und der hässliche Frosch" oder "das schöne Glas, die goldene Kugel und
-     * der hässliche Frosch".
-     */
-    @NonNull
-    private String buildDescriptionAufzaehlung(
-            @NonNull final List<? extends IDescribableGO> describables) {
-        return buildAufzaehlung(
-                describables.stream()
-                        .map(this::getNom)
-                        .collect(toList())
-        );
-    }
-
-    private String getNom(final IDescribableGO d) {
-        return world.getDescription(d, false).nomStr();
     }
 
     @Override

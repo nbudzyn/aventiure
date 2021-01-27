@@ -479,6 +479,7 @@ public class FroschprinzReactionsComp
     private void narrateAndDoFroschHatHochhebenGefordert() {
         loadSC().feelingsComp().requestMood(ANGESPANNT);
         stateComp.narrateAndSetState(HAT_HOCHHEBEN_GEFORDERT);
+        loadSC().mentalModelComp().setAssumedLocationToActual(FROSCHPRINZ);
     }
 
     private void froschprinzHatHochhebenGefordertUndWillMitessen() {

@@ -22,6 +22,7 @@ import de.nb.aventiure2.german.praedikat.PraedikatMitEinerObjektleerstelle;
 import de.nb.aventiure2.german.praedikat.PraedikatOhneLeerstellen;
 
 import static com.google.common.collect.ImmutableList.toImmutableList;
+import static de.nb.aventiure2.german.base.Konstituentenfolge.joinToKonstituentenfolge;
 import static de.nb.aventiure2.german.base.Numerus.SG;
 import static de.nb.aventiure2.german.base.Person.P2;
 
@@ -173,7 +174,7 @@ public class Satz {
             return getIndirekteFrageNachSubjekt();
         }
 
-        @Nullable final Konstituente erstesInterrogativpronomenImPraedikat =
+        @Nullable final Konstituentenfolge erstesInterrogativpronomenImPraedikat =
                 praedikat.getErstesInterrogativpronomen();
 
         if (erstesInterrogativpronomenImPraedikat == null) {
@@ -182,7 +183,7 @@ public class Satz {
         }
 
         // "was du zu berichten hast", "wem er was gegeben hat"
-        return Konstituentenfolge.joinToKonstituentenfolge(
+        return joinToKonstituentenfolge(
                 anschlusswort, // "und"
                 erstesInterrogativpronomenImPraedikat, // "was" / "wem"
                 getVerbletztsatz().cutFirst(
@@ -197,7 +198,7 @@ public class Satz {
     }
 
     private Konstituentenfolge getObFrage() {
-        return Konstituentenfolge.joinToKonstituentenfolge(
+        return joinToKonstituentenfolge(
                 anschlusswort, // "und"
                 "ob",
                 getVerbletztsatz() // "du etwas zu berichten hast"
@@ -209,7 +210,7 @@ public class Satz {
      * Vorfeld gewählt wird, z.B. eine adverbiale Bestimmung: "am Abend hast du etwas zu berichten"
      */
     public Konstituentenfolge getVerbzweitsatzMitSpeziellemVorfeldAlsWeitereOption() {
-        @Nullable final Konstituente speziellesVorfeld =
+        @Nullable final Konstituentenfolge speziellesVorfeld =
                 praedikat.getSpeziellesVorfeldAlsWeitereOption(subjekt.getPerson(),
                         subjekt.getNumerus());
         if (speziellesVorfeld == null) {
@@ -233,7 +234,7 @@ public class Satz {
 
         res.add(getVerbzweitsatzStandard());
 
-        @Nullable final Konstituente speziellesVorfeld =
+        @Nullable final Konstituentenfolge speziellesVorfeld =
                 praedikat.getSpeziellesVorfeldAlsWeitereOption(
                         subjekt.getPerson(), subjekt.getNumerus());
         if (speziellesVorfeld == null) {
@@ -255,7 +256,7 @@ public class Satz {
             return getVerbzweitsatzMitVorfeldAusMittelOderNachfeld(speziellesVorfeld);
         }
 
-        return Konstituentenfolge.joinToKonstituentenfolge(
+        return joinToKonstituentenfolge(
                 anschlusswort, // "und"
                 subjekt.nomK(),
                 praedikat.getVerbzweit(subjekt.getPerson(), subjekt.getNumerus()),
@@ -267,7 +268,13 @@ public class Satz {
 
     private Konstituentenfolge getVerbzweitsatzMitVorfeldAusMittelOderNachfeld(
             final Konstituente vorfeld) {
-        return Konstituentenfolge.joinToKonstituentenfolge(
+        return getVerbzweitsatzMitVorfeldAusMittelOderNachfeld(
+                joinToKonstituentenfolge(vorfeld));
+    }
+
+    private Konstituentenfolge getVerbzweitsatzMitVorfeldAusMittelOderNachfeld(
+            final Konstituentenfolge vorfeld) {
+        return joinToKonstituentenfolge(
                 anschlusswort, // "und"
                 vorfeld,
                 praedikat.getVerbzweitMitSubjektImMittelfeld(subjekt).cutFirst(vorfeld),
@@ -277,7 +284,7 @@ public class Satz {
     }
 
     public Konstituentenfolge getVerbzweitsatzMitVorfeld(final String vorfeld) {
-        return Konstituentenfolge.joinToKonstituentenfolge(
+        return joinToKonstituentenfolge(
                 anschlusswort, // "und"
                 vorfeld,
                 praedikat.getVerbzweitMitSubjektImMittelfeld(subjekt),
@@ -290,7 +297,7 @@ public class Satz {
      * Gibt den Satz als Verbletztsatz aus, z.B. "du etwas zu berichten hast"
      */
     Konstituentenfolge getVerbletztsatz() {
-        return Konstituentenfolge.joinToKonstituentenfolge(
+        return joinToKonstituentenfolge(
                 anschlusswort, // "und"
                 subjekt.nomK(),
                 praedikat.getVerbletzt(subjekt.getPerson(), subjekt.getNumerus()),
@@ -305,7 +312,7 @@ public class Satz {
      * am Abend etwas zu berichten" oder "und nimmst den Ast"
      */
     public Konstituentenfolge getSatzanschlussOhneSubjekt() {
-        return Konstituentenfolge.joinToKonstituentenfolge(
+        return joinToKonstituentenfolge(
                 anschlusswort, // "und"
                 praedikat.getVerbzweit(subjekt.getPerson(), subjekt.getNumerus()),
                 angabensatz != null ?

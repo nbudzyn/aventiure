@@ -12,7 +12,6 @@ import javax.annotation.Nullable;
 import de.nb.aventiure2.annotations.Komplement;
 import de.nb.aventiure2.annotations.Valenz;
 import de.nb.aventiure2.german.base.Interrogativpronomen;
-import de.nb.aventiure2.german.base.Konstituente;
 import de.nb.aventiure2.german.base.Konstituentenfolge;
 import de.nb.aventiure2.german.base.Numerus;
 import de.nb.aventiure2.german.base.Person;
@@ -21,7 +20,6 @@ import de.nb.aventiure2.german.base.SubstPhrOderReflexivpronomen;
 import de.nb.aventiure2.german.base.SubstantivischePhrase;
 
 import static de.nb.aventiure2.german.base.Konstituentenfolge.kf;
-import static de.nb.aventiure2.german.base.Personalpronomen.isPersonalpronomen;
 
 /**
  * Ein Prädikat, in dem ein Akkusativobjekt und ein Präpositionalobjekt gesetzt sind
@@ -142,20 +140,21 @@ public class PraedikatAkkPraepOhneLeerstellen
 
     @Override
     public @Nullable
-    Konstituente getSpeziellesVorfeldAlsWeitereOption(final Person person, final Numerus numerus) {
-        @Nullable final Konstituente speziellesVorfeldFromSuper =
+    Konstituentenfolge getSpeziellesVorfeldAlsWeitereOption(final Person person,
+                                                            final Numerus numerus) {
+        @Nullable final Konstituentenfolge speziellesVorfeldFromSuper =
                 super.getSpeziellesVorfeldAlsWeitereOption(person, numerus);
         if (speziellesVorfeldFromSuper != null) {
             return speziellesVorfeldFromSuper;
         }
 
-        final Konstituente akk = this.akk.akkK();
+        final Konstituentenfolge akk = this.akk.akkK();
         // Wenn "es" ein Objekt ist, darf es nicht im Vorfeld stehen.
         // (Eisenberg Der Satz 5.4.2)
         // Aber auch andere Personalpronomen wirken im Vorfeld oft eher unangebracht,
         // wenn es sich um ein Objekt handelt.
         // "Ihn nimmst du an dich."
-        if (!isPersonalpronomen(akk.getString())) {
+        if (!akk.isPersonalpronomen()) {
             return akk; // "das Teil"
         }
 
@@ -216,7 +215,7 @@ public class PraedikatAkkPraepOhneLeerstellen
 
     @Nullable
     @Override
-    public Konstituente getErstesInterrogativpronomen() {
+    public Konstituentenfolge getErstesInterrogativpronomen() {
         if (akk instanceof Interrogativpronomen) {
             return akk.akkK();
         }

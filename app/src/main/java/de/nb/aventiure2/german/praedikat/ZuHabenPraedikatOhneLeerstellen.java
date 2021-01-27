@@ -73,7 +73,7 @@ public class ZuHabenPraedikatOhneLeerstellen implements PraedikatOhneLeerstellen
 
     @Nullable
     @Override
-    public Konstituente getErstesInterrogativpronomen() {
+    public Konstituentenfolge getErstesInterrogativpronomen() {
         return lexikalischerKern.getErstesInterrogativpronomen();
     }
 
@@ -218,8 +218,8 @@ public class ZuHabenPraedikatOhneLeerstellen implements PraedikatOhneLeerstellen
 
     @Nullable
     @Override
-    public Konstituente getSpeziellesVorfeldAlsWeitereOption(final Person person,
-                                                             final Numerus numerus) {
+    public Konstituentenfolge getSpeziellesVorfeldAlsWeitereOption(final Person person,
+                                                                   final Numerus numerus) {
         // "Spannendes hat er zu berichten."
         return lexikalischerKern.getSpeziellesVorfeldAlsWeitereOption(person, numerus);
     }

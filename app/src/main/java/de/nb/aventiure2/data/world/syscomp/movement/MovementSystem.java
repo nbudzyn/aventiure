@@ -2,8 +2,12 @@ package de.nb.aventiure2.data.world.syscomp.movement;
 
 import androidx.annotation.Nullable;
 
+import com.google.common.collect.ImmutableList;
+
 import de.nb.aventiure2.data.database.AvDatabase;
 import de.nb.aventiure2.data.world.base.GameObjectId;
+
+import static com.google.common.collect.ImmutableList.toImmutableList;
 
 /**
  * Functionality concerned with NPC movement that might span several game objects:
@@ -14,6 +18,14 @@ public class MovementSystem {
 
     public MovementSystem(final AvDatabase db) {
         dao = db.movementDao();
+    }
+
+    public static <MOV extends IMovingGO>
+    ImmutableList<MOV>
+    filterMoving(final ImmutableList<MOV> movingBeings) {
+        return movingBeings.stream()
+                .filter(m -> m.movementComp().isMoving())
+                .collect(toImmutableList());
     }
 
     /**

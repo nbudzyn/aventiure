@@ -7,7 +7,7 @@ import java.util.Objects;
 import static de.nb.aventiure2.german.base.GermanUtil.joinToString;
 
 public abstract class SubstantivischesPronomenMitVollerFlexionsreihe
-        extends SubstantivischePhrase {
+        extends EinzelneSubstantivischePhrase {
     private final Flexionsreihe flexionsreihe;
 
     SubstantivischesPronomenMitVollerFlexionsreihe(final NumerusGenus numerusGenus,

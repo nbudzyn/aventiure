@@ -20,6 +20,7 @@ import de.nb.aventiure2.german.base.SubstantivischePhrase;
 
 import static com.google.common.collect.ImmutableList.toImmutableList;
 import static de.nb.aventiure2.german.base.Konstituentenfolge.cutFirstOneByOne;
+import static de.nb.aventiure2.german.base.Konstituentenfolge.joinToKonstituentenfolge;
 import static de.nb.aventiure2.german.base.Konstituentenfolge.kf;
 import static de.nb.aventiure2.german.base.Numerus.SG;
 import static de.nb.aventiure2.german.base.Person.P2;
@@ -169,16 +170,17 @@ public abstract class AbstractAngabenfaehigesPraedikatOhneLeerstellen
 
     @Nullable
     @Override
-    public Konstituente getSpeziellesVorfeldAlsWeitereOption(final Person personSubjekt,
-                                                             final Numerus numerusSubjekt) {
+    public Konstituentenfolge getSpeziellesVorfeldAlsWeitereOption(final Person personSubjekt,
+                                                                   final Numerus numerusSubjekt) {
         @Nullable final Konstituente
                 adverbialeAngabeSkopusVerbTextDescriptionFuerZwangsausklammerung =
                 getAdverbialeAngabeSkopusVerbTextDescriptionFuerZwangsausklammerung(personSubjekt,
                         numerusSubjekt);
         if (adverbialeAngabeSkopusVerbTextDescriptionFuerZwangsausklammerung != null) {
             // "Und glücklich, sie endlich gefunden zu haben, nimmst du die Kugel."
-            return adverbialeAngabeSkopusVerbTextDescriptionFuerZwangsausklammerung
-                    .withVorkommaNoetig(false);
+            return joinToKonstituentenfolge(
+                    adverbialeAngabeSkopusVerbTextDescriptionFuerZwangsausklammerung
+                            .withVorkommaNoetig(false));
         }
 
         return null;
@@ -195,7 +197,7 @@ public abstract class AbstractAngabenfaehigesPraedikatOhneLeerstellen
         // einige wenige Verben wie "jdn. etw. lehren" haben zwei Akkusativobjekte
         final SubstPhrOderReflexivpronomen zweitesAkkObjekt = getZweitesAkk();
 
-        final ImmutableList<Konstituente> unbetontePronomen =
+        final ImmutableList<Konstituentenfolge> unbetontePronomen =
                 filterUnbetontePronomen(
                         toPair(akkObjekt, Kasus.AKK),
                         toPair(zweitesAkkObjekt, Kasus.AKK),
@@ -261,7 +263,7 @@ public abstract class AbstractAngabenfaehigesPraedikatOhneLeerstellen
     }
 
     @SafeVarargs
-    private static ImmutableList<Konstituente> filterUnbetontePronomen(
+    private static ImmutableList<Konstituentenfolge> filterUnbetontePronomen(
             final Pair<SubstPhrOderReflexivpronomen, Kasus>... substantivischePhrasenMitKasus) {
         return Stream.of(substantivischePhrasenMitKasus)
                 .filter(Objects::nonNull)

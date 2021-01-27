@@ -128,8 +128,8 @@ public interface PraedikatOhneLeerstellen extends Praedikat {
      * so sollte diese Methode etweder einen anderen oder keinen Wert zurückgeben.
      */
     @Nullable
-    Konstituente getSpeziellesVorfeldAlsWeitereOption(Person personSubjekt,
-                                                      Numerus numerusSubjekt);
+    Konstituentenfolge getSpeziellesVorfeldAlsWeitereOption(Person personSubjekt,
+                                                            Numerus numerusSubjekt);
 
     @Nullable
     Konstituentenfolge getNachfeld(Person person, Numerus numerus);
@@ -163,5 +163,5 @@ public interface PraedikatOhneLeerstellen extends Praedikat {
             @Nullable AdverbialeAngabeSkopusVerbWohinWoher adverbialeAngabe);
 
     @Nullable
-    Konstituente getErstesInterrogativpronomen();
+    Konstituentenfolge getErstesInterrogativpronomen();
 }

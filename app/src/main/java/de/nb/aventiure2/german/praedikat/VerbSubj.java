@@ -154,8 +154,8 @@ public enum VerbSubj implements PraedikatOhneLeerstellen {
 
     @Nullable
     @Override
-    public Konstituente getSpeziellesVorfeldAlsWeitereOption(final Person person,
-                                                             final Numerus numerus) {
+    public Konstituentenfolge getSpeziellesVorfeldAlsWeitereOption(final Person person,
+                                                                   final Numerus numerus) {
         return toPraedikatSubj().getSpeziellesVorfeldAlsWeitereOption(person, numerus);
     }
 
@@ -194,7 +194,7 @@ public enum VerbSubj implements PraedikatOhneLeerstellen {
 
     @Nullable
     @Override
-    public Konstituente getErstesInterrogativpronomen() {
+    public Konstituentenfolge getErstesInterrogativpronomen() {
         return null;
     }
 }

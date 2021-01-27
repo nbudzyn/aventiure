@@ -208,7 +208,7 @@ public class PraedikatWoertlicheRedeOhneLeerstellen
 
     @Nullable
     @Override
-    public Konstituente getErstesInterrogativpronomen() {
+    public Konstituentenfolge getErstesInterrogativpronomen() {
         return null;
     }
 }

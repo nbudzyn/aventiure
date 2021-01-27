@@ -15,7 +15,6 @@ import de.nb.aventiure2.annotations.Komplement;
 import de.nb.aventiure2.annotations.Valenz;
 import de.nb.aventiure2.german.base.Interrogativpronomen;
 import de.nb.aventiure2.german.base.Kasus;
-import de.nb.aventiure2.german.base.Konstituente;
 import de.nb.aventiure2.german.base.Konstituentenfolge;
 import de.nb.aventiure2.german.base.Numerus;
 import de.nb.aventiure2.german.base.Person;
@@ -160,17 +159,17 @@ public class PraedikatDirektivesVerbOhneLeerstellen
 
     @Nullable
     @Override
-    public Konstituente getSpeziellesVorfeldAlsWeitereOption(final Person person,
-                                                             final Numerus numerus) {
-        @Nullable final Konstituente speziellesVorfeldFromSuper =
+    public Konstituentenfolge getSpeziellesVorfeldAlsWeitereOption(final Person person,
+                                                                   final Numerus numerus) {
+        @Nullable final Konstituentenfolge speziellesVorfeldFromSuper =
                 super.getSpeziellesVorfeldAlsWeitereOption(person, numerus);
         if (speziellesVorfeldFromSuper != null) {
             return speziellesVorfeldFromSuper;
         }
 
 
-        final Konstituente objektImKasus = objekt.imK(kasus);
-        if (!"es".equals(objektImKasus.getString())) {
+        final Konstituentenfolge objektImKasus = objekt.imK(kasus);
+        if (!objektImKasus.isPersonalpronomenEs()) {
             // Wenn "es" ein Objekt ist, darf es nicht im Vorfeld stehen.
             // (Eisenberg Der Satz 5.4.2)
             return objektImKasus;  // "Die junge Frau (bittest du ...)"
@@ -256,7 +255,7 @@ public class PraedikatDirektivesVerbOhneLeerstellen
 
     @Nullable
     @Override
-    public Konstituente getErstesInterrogativpronomen() {
+    public Konstituentenfolge getErstesInterrogativpronomen() {
         if (objekt instanceof Interrogativpronomen) {
             return objekt.imK(kasus);
         }

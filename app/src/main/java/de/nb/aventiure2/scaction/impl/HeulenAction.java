@@ -132,6 +132,7 @@ public class HeulenAction extends AbstractScAction {
         froschprinz.talkingComp().setTalkingTo(sc);
         sc.feelingsComp().requestMood(NEUTRAL);
         world.loadSC().memoryComp().upgradeKnown(FROSCHPRINZ);
+        sc.mentalModelComp().setAssumedLocationToActual(FROSCHPRINZ);
     }
 
     private void narrateAndDoErstesMal() {
