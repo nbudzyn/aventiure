@@ -383,7 +383,6 @@ public class BewegenAction<LOC_DESC extends ILocatableGO & IDescribableGO>
 
         n.narrateAlt(altMissingObjectsDescriptions(missingObjects), NO_TIME);
 
-        // FIXME Und genauso auch die assumed Locations an verschiedenen Stellen setzen...
         sc.mentalModelComp().unsetAssumedLocations(missingObjects);
     }
 
@@ -405,9 +404,9 @@ public class BewegenAction<LOC_DESC extends ILocatableGO & IDescribableGO>
 
         if (missingObjects.size() == 2) {
             neuerSatz("weder",
-                    world.getDescription(missingObjects.get(0)),
+                    world.getDescription(missingObjects.get(0)).nomK(),
                     "noch",
-                    world.getDescription(missingObjects.get(1)),
+                    world.getDescription(missingObjects.get(1)).nomK(),
                     "ist irgendwo zu sehen");
         }
 
