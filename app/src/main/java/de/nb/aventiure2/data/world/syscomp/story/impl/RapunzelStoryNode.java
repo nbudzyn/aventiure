@@ -304,6 +304,10 @@ public enum RapunzelStoryNode implements IStoryNode {
 
             // FIXME ab dem zb 3. Mal deutlichere Hinweise länger Rasten - sofern das
             //  Warten nicht ohnehin lang genug ist.
+
+            // FIXME Wenn Zauberin abends nicht mehr kommt: Hinweis (beim Rasten) auf Schlafen
+
+            // FIXME Evtl. beim Rasten einschlafen?!
         }
 
         if (world.hasSameOuterMostLocationAsSC((IGameObject) loadZauberin(world))) {

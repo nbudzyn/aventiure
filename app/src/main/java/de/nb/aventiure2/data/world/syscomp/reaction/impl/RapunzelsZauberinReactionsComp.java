@@ -116,7 +116,8 @@ public class RapunzelsZauberinReactionsComp
                         final ILocationGO from,
                         @Nullable final ILocationGO to) {
         // FIXME Wenn der SC sich ins Unterholz setzt und die  Zauberin zusieht:
-        //  "Die Frau hat dich gesehen", "Die Frau schickt dir böse Blicke hinterher" o.Ä.
+        //  "Die Frau hat dich gesehen", "Die Frau schickt dir böse Blicke hinterher",
+        //  "Die Frau sieht dir nach" o.Ä.
         talkingComp.updateSchonBegruesstMitSCOnLeave(locatable, from, to);
 
         // Wenn die Zauberin den SC verlässt, ...
@@ -219,8 +220,6 @@ public class RapunzelsZauberinReactionsComp
 
     @Override
     public boolean verbirgtSichVorEintreffendemSC() {
-        // FIXME Vielleicht muss man hier noch den Fall berücksichtigen,
-        //  dass die Zauberin im Schlossgarten einfach "verschwindet"...
         return false;
     }
 
@@ -426,7 +425,7 @@ public class RapunzelsZauberinReactionsComp
 
         locationComp.narrateAndSetLocation(VOR_DEM_ALTEN_TURM);
 
-        movementComp.startMovement(timeTaker.now(), DRAUSSEN_VOR_DEM_SCHLOSS);
+        movementComp.startMovement(timeTaker.now(), ZWISCHEN_DEN_HECKEN_VOR_DEM_SCHLOSS_EXTERN);
     }
 
     private void zauberinZaubertVergessenszauber() {
@@ -473,7 +472,7 @@ public class RapunzelsZauberinReactionsComp
         // Die Zauberin ist schon weit auf dem Rückweg
         stateComp.narrateAndSetState(AUF_DEM_RUECKWEG_VON_RAPUNZEL);
         locationComp.narrateAndSetLocation(IM_WALD_NAHE_DEM_SCHLOSS);
-        movementComp.startMovement(timeTaker.now(), DRAUSSEN_VOR_DEM_SCHLOSS);
+        movementComp.startMovement(timeTaker.now(), ZWISCHEN_DEN_HECKEN_VOR_DEM_SCHLOSS_EXTERN);
 
         // Rapunzel ist still (Rapunzel hat auch alles vergessen!)
         loadRapunzel().stateComp().narrateAndSetState(RapunzelState.STILL);
@@ -617,7 +616,7 @@ public class RapunzelsZauberinReactionsComp
         //  heruntergelassen hatt, davon aus, dass Rapunzel befreit wurde.
 
         stateComp.narrateAndSetState(AUF_DEM_RUECKWEG_VON_RAPUNZEL);
-        movementComp.startMovement(timeTaker.now(), DRAUSSEN_VOR_DEM_SCHLOSS);
+        movementComp.startMovement(timeTaker.now(), ZWISCHEN_DEN_HECKEN_VOR_DEM_SCHLOSS_EXTERN);
     }
 
     private void zauberinRuftRapunzelspruchUndRapunzelReagiert() {

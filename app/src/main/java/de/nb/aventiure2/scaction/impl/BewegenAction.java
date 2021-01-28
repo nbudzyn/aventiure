@@ -10,6 +10,7 @@ import com.google.common.collect.ImmutableList;
 import org.jetbrains.annotations.Contract;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 import de.nb.aventiure2.data.narration.Narrator;
@@ -113,7 +114,7 @@ public class BewegenAction<LOC_DESC extends ILocatableGO & IDescribableGO>
                 world.loadDescribableNonLivingLocationInventory(location)) {
             @Nullable final SpatialConnectionData inData =
                     inventoryGO.storingPlaceComp().getSpatialConnectionInData();
-            if (inData != null) {
+            if (inData != null && inData.getActionName() != null) {
                 res.add(new BewegenAction<>(
                         scActionStepCountDao, timeTaker,
                         counterDao, n, world, location,
@@ -124,7 +125,8 @@ public class BewegenAction<LOC_DESC extends ILocatableGO & IDescribableGO>
 
         @Nullable final SpatialConnectionData outData =
                 location.storingPlaceComp().getSpatialConnectionOutData();
-        if (outData != null && location instanceof ILocatableGO) {
+        if (outData != null && outData.getActionName() != null
+                && location instanceof ILocatableGO) {
             @Nullable final ILocationGO outerLocation =
                     ((ILocatableGO) location).locationComp().getLocation();
             if (outerLocation != null) {
@@ -154,9 +156,11 @@ public class BewegenAction<LOC_DESC extends ILocatableGO & IDescribableGO>
         final NumberOfWays numberOfWays = NumberOfWays.get(spatialConnections.size());
 
         for (final SpatialConnection spatialConnection : spatialConnections) {
-            res.add(new BewegenAction<>(scActionStepCountDao, nowDao,
-                    counterDao, n, world, location,
-                    spatialConnection, numberOfWays));
+            if (spatialConnection.getActionName() != null) {
+                res.add(new BewegenAction<>(scActionStepCountDao, nowDao,
+                        counterDao, n, world, location,
+                        spatialConnection, numberOfWays));
+            }
         }
 
         return res.build();
@@ -188,7 +192,7 @@ public class BewegenAction<LOC_DESC extends ILocatableGO & IDescribableGO>
     @Override
     @NonNull
     public String getName() {
-        return spatialConnection.getActionName();
+        return Objects.requireNonNull(spatialConnection.getActionName());
     }
 
     @Override
@@ -728,10 +732,11 @@ public class BewegenAction<LOC_DESC extends ILocatableGO & IDescribableGO>
     }
 
     @VisibleForTesting
+    @Nullable
     TimedDescription<?> getStandardDescription(final Known newLocationKnown,
                                                final Lichtverhaeltnisse lichtverhaeltnisseInNewLocation) {
 
-        return spatialConnection.getSCMoveDescriptionProvider()
+        return Objects.requireNonNull(spatialConnection.getSCMoveDescriptionProvider())
                 .getSCMoveTimedDescription(newLocationKnown, lichtverhaeltnisseInNewLocation)
                 .multiplyTimeElapsedWith(calcSpeedFactor());
     }

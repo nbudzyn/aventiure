@@ -1,6 +1,7 @@
 package de.nb.aventiure2.data.world.base;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
 import java.util.function.Supplier;
 
@@ -13,6 +14,7 @@ import static de.nb.aventiure2.data.world.base.Known.UNKNOWN;
 import static de.nb.aventiure2.data.world.base.Lichtverhaeltnisse.DUNKEL;
 import static de.nb.aventiure2.data.world.base.Lichtverhaeltnisse.HELL;
 import static de.nb.aventiure2.data.world.base.SpatialConnectionData.conData;
+import static de.nb.aventiure2.data.world.base.SpatialConnectionData.conDataNichtSC;
 
 /**
  * Die Verbindung von einem {@link de.nb.aventiure2.data.world.syscomp.storingplace.ILocationGO}
@@ -707,6 +709,15 @@ public class SpatialConnection {
                 ));
     }
 
+    /**
+     * Erzeugt eine SpatialConnection, die der SC niemals benutzen kann. Damit können z.B.
+     * die NSCs "in der Ferne verschwinden" o.Ä.
+     */
+    public static SpatialConnection conNichtSC(final GameObjectId to,
+                                               final String wo,
+                                               final AvTimeSpan standardDuration) {
+        return con(to, conDataNichtSC(wo, standardDuration));
+    }
 
     public static SpatialConnection con(final GameObjectId to,
                                         final SpatialConnectionData data) {
@@ -719,6 +730,7 @@ public class SpatialConnection {
         this.data = data;
     }
 
+    @Nullable
     public String getActionName() {
         return data.getActionName();
     }

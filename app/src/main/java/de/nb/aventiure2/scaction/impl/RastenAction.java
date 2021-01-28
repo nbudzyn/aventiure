@@ -70,6 +70,11 @@ public class RastenAction extends AbstractScAction {
 
     @Override
     public void narrateAndDo() {
+        // FIXME Wenn es Abend wird: Hinweis: Die Frau geht bestimmt jetzt auch schlafen?
+
+        // FIXME Wenn es Abend wird: Hinweis: Die Frau kommt morgen bestimmt wieder, weiter
+        //  warten...
+
         // FIXME: Warten auf die richtige Länge setzen. Wenn das NICHT funktioniert:
         //  - Ab einem Punkt, wo man davon ausgehen kann, dass der Spieler
         //   bewusst rastet, um die Frau zu beobachten, sollte die Frau nach 4x Rasten

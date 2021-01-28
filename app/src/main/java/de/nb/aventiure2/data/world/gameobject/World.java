@@ -45,6 +45,7 @@ import de.nb.aventiure2.data.world.syscomp.spatialconnection.impl.SchlossVorhall
 import de.nb.aventiure2.data.world.syscomp.spatialconnection.impl.SimpleConnectionCompFactory;
 import de.nb.aventiure2.data.world.syscomp.spatialconnection.impl.VorDemTurmConnectionComp;
 import de.nb.aventiure2.data.world.syscomp.spatialconnection.impl.VorDerHuetteImWaldConnectionComp;
+import de.nb.aventiure2.data.world.syscomp.spatialconnection.impl.ZwischenDenHeckenVorDemSchlossExternConnectionComp;
 import de.nb.aventiure2.data.world.syscomp.spatialconnection.system.SpatialConnectionSystem;
 import de.nb.aventiure2.data.world.syscomp.storingplace.ILocationGO;
 import de.nb.aventiure2.data.world.syscomp.storingplace.StoringPlaceType;
@@ -113,9 +114,11 @@ public class World {
     // RÄUME
     public static final GameObjectId SCHLOSS_VORHALLE = new GameObjectId(30_000);
     public static final GameObjectId DRAUSSEN_VOR_DEM_SCHLOSS = new GameObjectId(30_002);
-    public static final GameObjectId IM_WALD_NAHE_DEM_SCHLOSS = new GameObjectId(30_003);
-    public static final GameObjectId VOR_DEM_ALTEN_TURM = new GameObjectId(30_004);
-    public static final GameObjectId OBEN_IM_ALTEN_TURM = new GameObjectId(30_005);
+    public static final GameObjectId ZWISCHEN_DEN_HECKEN_VOR_DEM_SCHLOSS_EXTERN =
+            new GameObjectId(30_003);
+    public static final GameObjectId IM_WALD_NAHE_DEM_SCHLOSS = new GameObjectId(30_004);
+    public static final GameObjectId VOR_DEM_ALTEN_TURM = new GameObjectId(30_005);
+    public static final GameObjectId OBEN_IM_ALTEN_TURM = new GameObjectId(30_006);
     public static final GameObjectId ABZWEIG_IM_WALD = new GameObjectId(30_010);
     public static final GameObjectId VOR_DER_HUETTE_IM_WALD = new GameObjectId(30_011);
     public static final GameObjectId HUETTE_IM_WALD = new GameObjectId(30_012);
@@ -238,6 +241,11 @@ public class World {
                         StoringPlaceType.BODEN_VOR_DEM_SCHLOSS,
                         null,
                         new DraussenVorDemSchlossConnectionComp(db, timeTaker, n, this)),
+                room.create(ZWISCHEN_DEN_HECKEN_VOR_DEM_SCHLOSS_EXTERN,
+                        StoringPlaceType.BODEN_VOR_DEM_SCHLOSS,
+                        null,
+                        new ZwischenDenHeckenVorDemSchlossExternConnectionComp(db, timeTaker, n,
+                                this)),
                 room.create(IM_WALD_NAHE_DEM_SCHLOSS, StoringPlaceType.WEG,
                         null,
                         new ImWaldNaheDemSchlossConnectionComp(db, timeTaker, n, this)),

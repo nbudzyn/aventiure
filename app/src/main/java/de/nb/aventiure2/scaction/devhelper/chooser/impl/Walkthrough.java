@@ -171,6 +171,7 @@ public class Walkthrough {
                     "Auf die magere Frau warten",
                     "Auf die magere Frau warten",
                     "Auf die magere Frau warten",
+                    "Auf die magere Frau warten",
                     "Auf die magere Frau warten", // Frau kommt und ruft
                     "Auf die magere Frau warten", // Frau steigt vom Turm herunter und geht
                     "Aus dem Schatten der Bäume treten",

@@ -1,6 +1,7 @@
 package de.nb.aventiure2.data.world.base;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
 import java.util.function.Supplier;
 
@@ -9,6 +10,8 @@ import de.nb.aventiure2.data.world.syscomp.spatialconnection.ISpatiallyConnected
 import de.nb.aventiure2.data.world.syscomp.storingplace.ILocationGO;
 import de.nb.aventiure2.german.description.AbstractDescription;
 import de.nb.aventiure2.german.description.TimedDescription;
+
+import static com.google.common.base.Preconditions.checkArgument;
 
 public class SpatialConnectionData {
     /**
@@ -32,7 +35,11 @@ public class SpatialConnectionData {
      * auskennt, tagsüber.
      */
     private final AvTimeSpan standardDuration;
+
+    @Nullable
     private final Supplier<String> actionNameProvider;
+
+    @Nullable
     private final SCMoveTimedDescriptionProvider scMoveTimedDescriptionProvider;
 
     public static SpatialConnectionData conData(
@@ -85,11 +92,27 @@ public class SpatialConnectionData {
                                 .timed(standardDuration));
     }
 
+    /**
+     * Erzeugt ein SpatialConnectionData, das der SC niemals benutzen kann. Damit können z.B.
+     * die NSCs "in der Ferne verschwinden" o.Ä.
+     */
+    static SpatialConnectionData conDataNichtSC(
+            final String wo,
+            final AvTimeSpan standardDuration) {
+        return new SpatialConnectionData(
+                wo,
+                null,
+                standardDuration,
+                null
+        );
+    }
+
+
     public static SpatialConnectionData conData(
             final String wo,
-            final Supplier<String> actionNameProvider,
+            @Nullable final Supplier<String> actionNameProvider,
             final AvTimeSpan standardDuration,
-            final SCMoveTimedDescriptionProvider scMoveTimedDescriptionProvider) {
+            @Nullable final SCMoveTimedDescriptionProvider scMoveTimedDescriptionProvider) {
         return new SpatialConnectionData(
                 wo,
                 actionNameProvider,
@@ -100,16 +123,34 @@ public class SpatialConnectionData {
 
     private SpatialConnectionData(
             final String wo,
-            final Supplier<String> actionNameProvider,
+            @Nullable final Supplier<String> actionNameProvider,
             final AvTimeSpan standardDuration,
-            final SCMoveTimedDescriptionProvider scMoveTimedDescriptionProvider) {
+            @Nullable final SCMoveTimedDescriptionProvider scMoveTimedDescriptionProvider) {
+        checkArgument((actionNameProvider != null && scMoveTimedDescriptionProvider != null)
+                        ||
+                        (actionNameProvider == null && scMoveTimedDescriptionProvider == null),
+                "actionNameProvider und scMoveTimedDescriptionProvider "
+                        + "müssen entweder beide null sein (für nicht-SC-Connection-Data) oder "
+                        + "beide ungleich null. actionNameProvider: "
+                        + "%s, scMoveTimedDescriptionProvider: %s", actionNameProvider,
+                scMoveTimedDescriptionProvider);
+
         this.wo = wo;
         this.actionNameProvider = actionNameProvider;
         this.standardDuration = standardDuration;
         this.scMoveTimedDescriptionProvider = scMoveTimedDescriptionProvider;
     }
 
-    String getActionName() {
+    /**
+     * Gibt den Namen der Bewegungsaktion für den SC zurück - oder {@code null}, wenn
+     * der SC diese Bewegung nicht durchführen kann (sondern nur NSCs).
+     */
+    @Nullable
+    public String getActionName() {
+        if (actionNameProvider == null) {
+            return null;
+        }
+
         return actionNameProvider.get();
     }
 
@@ -121,6 +162,7 @@ public class SpatialConnectionData {
         return wo;
     }
 
+    @Nullable
     SCMoveTimedDescriptionProvider getSCMoveTimedDescriptionProvider() {
         return scMoveTimedDescriptionProvider;
     }

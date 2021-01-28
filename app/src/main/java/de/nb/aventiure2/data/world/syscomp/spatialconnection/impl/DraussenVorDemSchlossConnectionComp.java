@@ -61,7 +61,10 @@ public class DraussenVorDemSchlossConnectionComp extends AbstractSpatialConnecti
                         "Das Schloss betreten",
                         secs(90),
                         this::getDescTo_SchlossVorhalle),
-
+                SpatialConnection.conNichtSC(
+                        ZWISCHEN_DEN_HECKEN_VOR_DEM_SCHLOSS_EXTERN,
+                        "zwischen den Buchsbaumhecken",
+                        secs(90)),
                 SpatialConnection.con(IM_WALD_NAHE_DEM_SCHLOSS,
                         "auf dem Weg",
                         "In den Wald gehen",
