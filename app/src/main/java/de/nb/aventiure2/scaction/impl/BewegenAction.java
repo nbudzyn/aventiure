@@ -11,7 +11,6 @@ import org.jetbrains.annotations.Contract;
 
 import java.util.List;
 import java.util.Objects;
-import java.util.stream.Collectors;
 
 import de.nb.aventiure2.data.narration.Narrator;
 import de.nb.aventiure2.data.time.TimeTaker;
@@ -624,21 +623,22 @@ public class BewegenAction<LOC_DESC extends ILocatableGO & IDescribableGO>
     private void narrateDiskontinuitaet(final TimedDescription<?> timedDescription) {
         final AltTimedDescriptionsBuilder alt = altTimed();
 
-        if (numberOfWays == ONLY_WAY) {
-            alt.addAll(timedDescription.getDescription().altTextDescriptions().stream()
-                    .map(d -> d.mitPraefix("dich nur kurz um, dann ")
-                            // FIXME Ergibt "kurz um, dann Durch den wilden Wald suchst du
-                            //  dir einen Weg zurück..." Dann müsste aber im Vorfeld stehen!
-                            //  toSatzanschlussTextDescriptionKeepParams()???
-                            .timed(timedDescription.getTimeElapsed()))
-                    .collect(Collectors.toSet()));
+        if (numberOfWays == ONLY_WAY
+                && timedDescription.getDescription() instanceof AbstractFlexibleDescription
+                && ((AbstractFlexibleDescription<?>) timedDescription.getDescription())
+                .hasSubjektDu()) {
+
+            alt.add(((AbstractFlexibleDescription<?>) timedDescription.getDescription())
+                    .toTextDescriptionMitVorfeld("dann")
+                    .mitPraefix("Du siehst dich nur kurz um, ")
+                    .beginntZumindestSentence()
+                    .timed(timedDescription.getTimeElapsed()));
         } else {
             alt.addAll(timedDescription.getDescription().altTextDescriptions().stream()
                     .map(d -> d.mitPraefixCapitalize(
                             "Was willst du hier eigentlich? ")
                             .beginntZumindestParagraph()
-                            .timed(timedDescription.getTimeElapsed()))
-                    .collect(Collectors.toSet()));
+                            .timed(timedDescription.getTimeElapsed())));
             alt.addAll(drueckeAusTimed(DISKONTINUITAET, timedDescription));
         }
         n.narrateAlt(alt);
