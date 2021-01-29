@@ -53,6 +53,7 @@ import static de.nb.aventiure2.german.description.AltDescriptionsBuilder.altNeue
 import static de.nb.aventiure2.german.description.AltTimedDescriptionsBuilder.altTimed;
 import static de.nb.aventiure2.german.description.DescriptionBuilder.du;
 import static de.nb.aventiure2.german.description.DescriptionBuilder.neuerSatz;
+import static de.nb.aventiure2.german.description.DescriptionBuilder.satzanschluss;
 import static de.nb.aventiure2.german.praedikat.DirektivesVerb.BITTEN;
 import static de.nb.aventiure2.german.praedikat.VerbSubjDatAkk.AUSSCHUETTEN;
 import static de.nb.aventiure2.german.praedikat.VerbSubjObj.HINUNTERLASSEN;
@@ -655,17 +656,17 @@ public class RapunzelTalkingComp extends AbstractTalkingComp {
     private static ImmutableSet<AbstractDescription<?>> altDannHaareFestbinden(
             final Nominalphrase rapunzelDesc) {
         return alt()
-                .add(neuerSatz(
+                .add(satzanschluss(
                         "dann bindet",
                         rapunzelDesc.persPron().nomK(), //"sie"
                         rapunzelDesc.possArt().vor(PL_MFN).akkStr(),// "ihre"
                         "Haare wieder um den Haken am Fenster"))
-                .add(neuerSatz(
+                .add(satzanschluss(
                         "dann knotet",
                         rapunzelDesc.persPron().nomK(), //"sie"
                         rapunzelDesc.possArt().vor(PL_MFN).akkStr(),// "ihre"
                         "Haare wieder um den Fensterhaken"))
-                .add(neuerSatz(
+                .add(satzanschluss(
                         "dann bindet",
                         rapunzelDesc.persPron().nomK(), //"sie"
                         rapunzelDesc.possArt().vor(PL_MFN).akkStr(),// "ihre"

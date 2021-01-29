@@ -629,6 +629,7 @@ public class BewegenAction<LOC_DESC extends ILocatableGO & IDescribableGO>
                     .map(d -> d.mitPraefix("dich nur kurz um, dann ")
                             // FIXME Ergibt "kurz um, dann Durch den wilden Wald suchst du
                             //  dir einen Weg zurück..." Dann müsste aber im Vorfeld stehen!
+                            //  toSatzanschlussTextDescriptionKeepParams()???
                             .timed(timedDescription.getTimeElapsed()))
                     .collect(Collectors.toSet()));
         } else {

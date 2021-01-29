@@ -78,7 +78,24 @@ public abstract class AbstractDescription<SELF extends AbstractDescription<SELF>
     toSingleKonstituenteMitKonjunktionaladverbWennNoetig(String konjunktionaladverb);
 
     @NonNull
-    public TextDescription toTextDescriptionKeepParams(final Konstituente konstituente) {
+    public TextDescription toSatzanschlussTextDescriptionKeepParams(
+            final Konstituente konstituente) {
+        // IDEA Hier den PhorikKandidaten aus der Konstituente
+        //  übernehmen und hier separat speichern?
+        //  Aus den params entfernen und params unverändert übergeben?
+        final DescriptionParams newParams = copyParams();
+        newParams.setStartsNew(StructuralElement.WORD);
+        if (konstituente.getPhorikKandidat() != null) {
+            newParams.phorikKandidat(konstituente.getPhorikKandidat());
+        }
+        return new TextDescription(
+                newParams,
+                konstituente.getString(),
+                konstituente.woertlicheRedeNochOffen(), konstituente.kommaStehtAus());
+    }
+
+    @NonNull
+    TextDescription toTextDescriptionKeepParams(final Konstituente konstituente) {
         // IDEA Hier den PhorikKandidaten aus der Konstituente
         //  übernehmen und hier separat speichern?
         //  Aus den params entfernen und params unverändert übergeben?

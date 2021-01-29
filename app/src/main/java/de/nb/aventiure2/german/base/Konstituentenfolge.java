@@ -28,7 +28,6 @@ import static de.nb.aventiure2.german.base.NumerusGenus.N;
 import static de.nb.aventiure2.german.base.NumerusGenus.PL_MFN;
 import static java.util.Arrays.asList;
 import static java.util.Objects.requireNonNull;
-import static java.util.stream.Collectors.toSet;
 
 /**
  * Eine Folge von {@link Konstituente}n.
@@ -157,7 +156,12 @@ public class Konstituentenfolge implements Iterable<Konstituente> {
                                         joinToNullKonstituentenfolge((Konstituentenfolge) part));
             } else if (part instanceof Stream<?>) {
                 alternativePartKonstituentenfolgen =
-                        joinToAltKonstituentenfolgen(((Stream<?>) part).collect(toSet()));
+                        ((Stream<?>) part)
+                                .map(Konstituentenfolge::joinToNullKonstituentenfolge)
+                                .collect(Collectors.toSet());
+                // Früher stand hier dies:
+                // alternativePartKonstituentenfolgen =
+                //       joinToAltKonstituentenfolgen(((Stream<?>) part).collect(toSet()));
             } else if (part instanceof Collection<?>) {
                 alternativePartKonstituentenfolgen =
                         ((Collection<?>) part).stream()
