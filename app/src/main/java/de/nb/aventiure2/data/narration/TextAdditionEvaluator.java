@@ -7,6 +7,7 @@ import com.google.common.collect.ImmutableList;
 import org.jetbrains.annotations.Contract;
 
 import java.util.Arrays;
+import java.util.LinkedList;
 import java.util.List;
 
 import de.nb.aventiure2.german.stemming.StemmedWords;
@@ -29,7 +30,7 @@ class TextAdditionEvaluator {
         Arrays.fill(dummy, "x");
 
         MAX_NUMBER_ADDED_WORDS_STEMMED_WORDS =
-                new StemmedWords(ImmutableList.copyOf(Arrays.asList(dummy)));
+                new StemmedWords(ImmutableList.copyOf(asList(dummy)));
     }
 
     private static final List<String> REPITION_ACCEPTABLE =
@@ -103,8 +104,7 @@ class TextAdditionEvaluator {
     private static float evaluateAdditionEndwiederholungen(final StemmedWords baseStems,
                                                            final String additionCandidate,
                                                            final float bestScoreSoFar) {
-        final int[] nums = {10, 7, 5, 3, 2, 1};
-        // FIXME Reihenfolge umkehren! 1.2.3.5.7.10. Zeitgewinn??
+        final LinkedList<Integer> nums = new LinkedList<>(asList(10, 7, 5, 3, 2, 1));
 
         if (bestScoreSoFar > Float.NEGATIVE_INFINITY &&
                 bestAdditionWordSequenceScoresStillPossible(baseStems,
@@ -131,9 +131,7 @@ class TextAdditionEvaluator {
     private static float evaluateAdditionEndwiederholungen(final StemmedWords baseStems,
                                                            final StemmedWords additionStems,
                                                            final float bestScoreSoFar,
-                                                           // FIXME Besser LinkedList?
-                                                           //  Sublist billig?
-                                                           final int[] nums) {
+                                                           final List<Integer> nums) {
         if (bestScoreSoFar > Float.NEGATIVE_INFINITY &&
                 bestAdditionWordSequenceScoresStillPossible(baseStems, additionStems, nums) <
                         bestScoreSoFar) {
@@ -146,13 +144,13 @@ class TextAdditionEvaluator {
 
         // Das wäre schlecht (negative Zahlen).
         res += evaluateAdditionWordSequence(baseStems, additionStems,
-                TextAdditionEvaluator::calcDeservesPenalty, nums[0]);
+                TextAdditionEvaluator::calcDeservesPenalty, nums.iterator().next());
 
         // Dann suchen wir: Gibt es am Ende von base genau 7 (z.B.) Wortstämme aus addition in
         // Folge?
         // 5? 3? 2? 1?
-        final int[] newNums = Arrays.copyOfRange(nums, 1, nums.length);
-        if (nums.length > 1) {
+        final List<Integer> newNums = nums.subList(1, nums.size());
+        if (!newNums.isEmpty()) {
             res += evaluateAdditionEndwiederholungen(baseStems, additionStems,
                     bestScoreSoFar, newNums);
         }
@@ -164,7 +162,7 @@ class TextAdditionEvaluator {
     private static float bestAdditionWordSequenceScoresStillPossible(
             @NonNull final StemmedWords baseStems,
             final StemmedWords additionStems,
-            final int... nums) {
+            final List<Integer> nums) {
         float res = 0;
 
         for (final int num : nums) {
@@ -188,9 +186,6 @@ class TextAdditionEvaluator {
             final StemmedWords additionStems,
             final IPenaltyChecker penaltyChecker,
             final int num) {
-        // Diese Implementierung hängt eng mit bestAdditionWordSequenceScoresStillPossible()
-        // zusammen!
-        // Wenn man die ändert, muss man vielleicht auch diese hier ändern!
         // Dieser Code wird sehr oft durchlaufen, es ist gut, Zeit zu sparen!
 
         float res = 0;
