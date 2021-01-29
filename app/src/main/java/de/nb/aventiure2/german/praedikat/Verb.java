@@ -142,11 +142,11 @@ public class Verb {
         this.partizipII = partizipII;
 
         checkArgument(partikel == null || infinitiv.startsWith(partikel),
-                "Inifinitiv beginnt nicht mit Partikel! Partikel: " + partikel +
-                        ", Infinitiv: " + infinitiv);
+                "Inifinitiv beginnt nicht mit Partikel! Partikel: %s, "
+                        + "Infinitiv: %s", partikel, infinitiv);
         checkArgument(partikel == null || partizipII.startsWith(partikel),
-                "Partizip II beginnt nicht mit Partikel! Partikel: " + partikel +
-                        ", Partizip II: " + partizipII);
+                "Partizip II beginnt nicht mit Partikel! Partikel: %s, "
+                        + "Partizip II: %s", partikel, partizipII);
     }
 
     public String getZuInfinitiv() {
@@ -178,7 +178,7 @@ public class Verb {
     }
 
     @NonNull
-    public String getPraesensOhnePartikel(final Person person, final Numerus numerus) {
+    String getPraesensOhnePartikel(final Person person, final Numerus numerus) {
         switch (person) {
             case P1:
                 return numerus == SG ? ichFormOhnePartikel : wirSieFormOhnePartikel;

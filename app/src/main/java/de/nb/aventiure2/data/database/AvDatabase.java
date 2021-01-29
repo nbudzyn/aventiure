@@ -172,6 +172,12 @@ public abstract class AvDatabase extends RoomDatabase {
                         world.saveAllInitialState();
 
                         narrator.saveInitialNarration(buildInitialNarration(world));
+                        // Lädt einige Objekte
+
+                        world.saveAll(true);
+                        narrator.saveAll(); // Vermutlich unnötig - egal
+                        timeTaker.save(); // Vermutlich unnötig - egal
+                        // Jetzt ist alles sauber!
                     }));
         }
     };
@@ -181,7 +187,8 @@ public abstract class AvDatabase extends RoomDatabase {
     }
 
     /**
-     * @return Something similar to <code>Du befindest dich in einem Schloss. Hier liegt eine goldene Kugel.</code>
+     * @return Something similar to <code>Du befindest dich in einem Schloss. Hier liegt eine
+     * goldene Kugel.</code>
      */
     private static Narration buildInitialNarration(final World world) {
         final StringBuilder text = new StringBuilder();

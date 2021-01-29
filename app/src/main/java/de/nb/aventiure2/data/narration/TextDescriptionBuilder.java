@@ -82,7 +82,7 @@ class TextDescriptionBuilder {
     private static TextDescription toTextDescriptionsatzanschlussMitUnd(
             final SimpleDuDescription duDesc) {
         checkArgument(duDesc.getStartsNew() == WORD,
-                "Satzanschluss unmöglich für " + duDesc.getStartsNew());
+                "Satzanschluss unmöglich für %s", duDesc.getStartsNew());
 
         final DescriptionParams params = duDesc.copyParams();
         params.undWartest(false);
@@ -108,7 +108,7 @@ class TextDescriptionBuilder {
     private static TextDescription toTextDescriptionMitKommaDann(
             final AbstractFlexibleDescription<?> desc) {
         checkArgument(desc.getStartsNew() == WORD,
-                "Satzanschluss unmöglich für " + desc);
+                "Satzanschluss unmöglich für %s", desc);
 
         return desc.toTextDescriptionMitVorfeld("dann").dann(false).mitPraefix(", ");
     }

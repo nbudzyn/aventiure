@@ -260,7 +260,8 @@ public abstract class NarrationDao {
 
             final float score = TextAdditionEvaluator.evaluateAddition(
                     baseStems, alternative.getText(),
-                    consumedAlternatives.isConsumed(alternative));
+                    consumedAlternatives.isConsumed(alternative),
+                    bestScore);
 
             if (score > bestScore) {
                 bestScore = score;

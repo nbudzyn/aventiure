@@ -627,6 +627,8 @@ public class BewegenAction<LOC_DESC extends ILocatableGO & IDescribableGO>
         if (numberOfWays == ONLY_WAY) {
             alt.addAll(timedDescription.getDescription().altTextDescriptions().stream()
                     .map(d -> d.mitPraefix("dich nur kurz um, dann ")
+                            // FIXME Ergibt "kurz um, dann Durch den wilden Wald suchst du
+                            //  dir einen Weg zurück..." Dann müsste aber im Vorfeld stehen!
                             .timed(timedDescription.getTimeElapsed()))
                     .collect(Collectors.toSet()));
         } else {

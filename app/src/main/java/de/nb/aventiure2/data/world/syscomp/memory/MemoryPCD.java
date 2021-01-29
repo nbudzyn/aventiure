@@ -48,7 +48,7 @@ class MemoryPCD extends AbstractPersistentComponentData {
               final Map<GameObjectId, Known> knownMap) {
         super(gameObjectId);
         this.knownMap = new HashMap<>(knownMap);
-        setLastAction(lastAction);
+        this.lastAction = lastAction;
     }
 
     @NonNull
@@ -58,8 +58,11 @@ class MemoryPCD extends AbstractPersistentComponentData {
 
     void setLastAction(final Action lastAction) {
         checkArgument(!getGameObjectId().equals(lastAction.getObject()),
-                "Interaktion des Game Objects " + getGameObjectId()
-                        + " mit sich selbst nicht erlaubt");
+                "Interaktion des Game Objects %s mit sich selbst "
+                        + "nicht erlaubt", getGameObjectId());
+        if (lastAction.equals(this.lastAction)) {
+            return;
+        }
 
         setChanged();
         this.lastAction = checkNotNull(lastAction, "lastAction");
@@ -94,7 +97,7 @@ class MemoryPCD extends AbstractPersistentComponentData {
         }
     }
 
-    public Known getKnown(final GameObjectId otherGameObjectId) {
+    Known getKnown(final GameObjectId otherGameObjectId) {
         return knownMap.getOrDefault(otherGameObjectId, UNKNOWN);
     }
 }

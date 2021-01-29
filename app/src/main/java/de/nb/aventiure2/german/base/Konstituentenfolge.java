@@ -5,7 +5,6 @@ import androidx.annotation.Nullable;
 import androidx.core.util.Pair;
 
 import com.google.common.collect.ImmutableList;
-import com.google.common.collect.Lists;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -48,12 +47,15 @@ public class Konstituentenfolge implements Iterable<Konstituente> {
         this(ImmutableList.of(konstituente));
     }
 
-    private Konstituentenfolge(final Collection<Konstituente> konstituenten) {
+    private Konstituentenfolge(final ImmutableList<Konstituente> konstituenten) {
+        // Wird auch mit ImmutableList.subList() aufgerufen, was leider zu einer
+        // Kopie führt. Daher ImmutableList verlangen!
+
         checkNotNull(konstituenten, "konstituenten  is null");
         checkArgument(!konstituenten.isEmpty(), "konstituenten  is empty");
         checkArgument(konstituenten.stream().noneMatch(Objects::isNull));
 
-        this.konstituenten = ImmutableList.copyOf(konstituenten);
+        this.konstituenten = konstituenten;
     }
 
     /**
@@ -573,7 +575,7 @@ public class Konstituentenfolge implements Iterable<Konstituente> {
     }
 
     private Konstituentenfolge reverse() {
-        return new Konstituentenfolge(Lists.reverse(konstituenten));
+        return new Konstituentenfolge(konstituenten.reverse());
     }
 
     @NonNull

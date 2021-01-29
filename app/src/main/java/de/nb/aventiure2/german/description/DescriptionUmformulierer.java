@@ -97,6 +97,8 @@ public class DescriptionUmformulierer {
 
             if (fDesc.hasSubjektDu()) {
                 alt.add(duMitPraefixUndSatzanschluss(
+                        // FIXME Das Verb in fDesc wird hier großgeschrieben:
+                        //  "dich aber und Verlässt den Brunnen"...
                         "besinnst", "dich aber",
                         fDesc));
             }

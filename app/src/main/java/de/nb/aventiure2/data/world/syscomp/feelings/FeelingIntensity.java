@@ -20,6 +20,6 @@ public class FeelingIntensity {
 
     static void checkValuePositive(final double intensity) {
         checkArgument(intensity >= NEUTRAL && intensity <= PATHOLOGISCH,
-                "Ungültige Intensität: " + intensity);
+                "Ungültige Intensität: %s", intensity);
     }
 }

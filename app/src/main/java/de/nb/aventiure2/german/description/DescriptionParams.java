@@ -105,9 +105,10 @@ public class DescriptionParams {
     public void phorikKandidat(final SubstantivischePhrase substantivischePhrase,
                                final IGameObject gameObject) {
         checkArgument(substantivischePhrase.getPerson() == P3,
-                "Substantivische Phrase " + substantivischePhrase + " hat falsche "
-                        + "Person: " + substantivischePhrase.getPerson() + ". Für Phorik-Kandiaten "
-                        + "ist nur 3. Person zugelassen.");
+                "Substantivische Phrase %s hat falsche "
+                        + "Person: %s. Für Phorik-Kandiaten "
+                        + "ist nur 3. Person zugelassen.", substantivischePhrase,
+                substantivischePhrase.getPerson());
 
         phorikKandidat(substantivischePhrase.getNumerusGenus(), gameObject.getId());
     }

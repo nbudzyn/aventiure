@@ -9,5 +9,5 @@ import de.nb.aventiure2.data.world.base.IGameObject;
  */
 public interface IDescribableGO extends IGameObject {
     @Nonnull
-    public AbstractDescriptionComp descriptionComp();
+    AbstractDescriptionComp descriptionComp();
 }

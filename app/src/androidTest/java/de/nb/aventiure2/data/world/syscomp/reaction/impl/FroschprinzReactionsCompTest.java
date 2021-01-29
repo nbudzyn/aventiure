@@ -17,6 +17,7 @@ import static com.google.common.truth.Truth.assertThat;
 import static de.nb.aventiure2.data.world.gameobject.World.*;
 import static de.nb.aventiure2.data.world.syscomp.state.impl.FroschprinzState.WARTET_AUF_SC_BEIM_SCHLOSSFEST;
 
+@SuppressWarnings("unchecked")
 @RunWith(AndroidJUnit4.class)
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class FroschprinzReactionsCompTest extends AndroidTestBase {

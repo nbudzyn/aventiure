@@ -107,7 +107,7 @@ public class Narrator {
                                final TimedDescription<D> desc) {
         Preconditions.checkArgument(
                 desc.getCounterIdIncrementedIfTextIsNarrated() != null,
-                "No counter given in TimedDescription " + desc.getDescription());
+                "No counter given in TimedDescription %s", desc.getDescription());
 
         if (counterDao.get(desc.getCounterIdIncrementedIfTextIsNarrated()) == counterValue) {
             narrate(desc);

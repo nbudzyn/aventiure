@@ -80,7 +80,7 @@ public class AvTimeSpan {
 
     public AvTimeSpan minus(@NonNull final AvTimeSpan sub) {
         checkArgument(!shorterThan(sub),
-                "Cannot subtract " + sub + " from " + this);
+                "Cannot subtract %s from %s", sub, this);
 
         return new AvTimeSpan(secs - sub.secs);
     }

@@ -1,17 +1,13 @@
 package de.nb.aventiure2.data.world.base;
 
+import androidx.annotation.Nullable;
+
 /**
  * Abstract super-class for {@link AbstractComponent}s that have mutable - and therefore
  * persistent - data.
  */
 public abstract class AbstractStatefulComponent<PCD extends AbstractPersistentComponentData>
         extends AbstractComponent {
-    private enum InternalState {
-        NOT_LOADED, LOADED
-    }
-
-    private InternalState internalState = InternalState.NOT_LOADED;
-
     private PCD pcd;
 
     private final IComponentDao<PCD> dao;
@@ -33,10 +29,9 @@ public abstract class AbstractStatefulComponent<PCD extends AbstractPersistentCo
 
     @Override
     public final void load() {
-        if (internalState == InternalState.NOT_LOADED) {
+        if (pcd == null) {
             doLoad();
         }
-        internalState = InternalState.LOADED;
     }
 
     /**
@@ -47,16 +42,15 @@ public abstract class AbstractStatefulComponent<PCD extends AbstractPersistentCo
     }
 
     private void setUnchanged() {
-        if (internalState == InternalState.NOT_LOADED) {
+        if (pcd == null) {
             return;
         }
 
         pcd.setChanged(false);
     }
 
-    @Override
-    public boolean isChanged() {
-        if (internalState == InternalState.NOT_LOADED) {
+    private boolean isChanged() {
+        if (pcd == null) {
             return false;
         }
 
@@ -64,15 +58,13 @@ public abstract class AbstractStatefulComponent<PCD extends AbstractPersistentCo
     }
 
     @Override
-    public void save(final boolean unload) {
-        if (internalState != InternalState.NOT_LOADED) {
+    public void saveIfChanged(final boolean unload) {
+        if (isChanged()) {
             doSave();
+            setUnchanged();
         }
 
-        setUnchanged();
-
         if (unload) {
-            internalState = InternalState.NOT_LOADED;
             pcd = null;
         }
     }
@@ -85,6 +77,7 @@ public abstract class AbstractStatefulComponent<PCD extends AbstractPersistentCo
         dao.insert(pcd);
     }
 
+    @Nullable
     public PCD getPcd() {
         return pcd;
     }

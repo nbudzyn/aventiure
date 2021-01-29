@@ -49,8 +49,9 @@ public class SimpleDuDescription extends AbstractFlexibleDescription<SimpleDuDes
 
         checkArgument(vorfeldSatzglied == null ||
                         remainder.getString().contains(vorfeldSatzglied),
-                "vorfeldSatzglied nicht im remainder enthalten. Remainder: ",
-                remainder + ", vorfeldSatzglied: " + vorfeldSatzglied);
+                "vorfeldSatzglied nicht im remainder enthalten. Remainder: "
+                        + "%s, vorfeldSatzglied: %s",
+                remainder, vorfeldSatzglied);
 
         this.verb = verb;
         this.remainder = remainder;

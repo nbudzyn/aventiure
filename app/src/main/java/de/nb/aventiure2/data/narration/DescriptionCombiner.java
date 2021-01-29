@@ -69,7 +69,7 @@ class DescriptionCombiner {
             final AbstractFlexibleDescription<?> first,
             final AbstractFlexibleDescription<?> second) {
         checkArgument(first.getStartsNew() == WORD,
-                "Satzanschluss unmöglich für " + first);
+                "Satzanschluss unmöglich für %s", first);
 
         final TextDescription secondDescriptionSatzanschlussOhneSubjekt =
                 second.toTextDescriptionSatzanschlussOhneSubjekt();

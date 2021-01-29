@@ -83,9 +83,7 @@ public class GameObject implements IGameObject {
         }
 
         for (final IComponent component : components) {
-            if (component.isChanged()) {
-                component.save(unload);
-            }
+            component.saveIfChanged(unload);
         }
 
         if (unload) {

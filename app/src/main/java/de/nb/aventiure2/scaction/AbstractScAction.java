@@ -146,7 +146,8 @@ public abstract class AbstractScAction implements IPlayerAction {
     /**
      * Gibt zurück, ob der Benutzer dasselbe definitiv schon einmal getan und zwischendrin nichts
      * anderes getan hat und dass es sich um eine Wiederholung (also einen zweiten / dritten...
-     * Versuch) handelt. (Es könnte zwischendrin durchaus Reaktionen von anderen Wesen gegeben haben.)
+     * Versuch) handelt. (Es könnte zwischendrin durchaus Reaktionen von anderen Wesen gegeben
+     * haben.)
      * <p>
      * Ein Rückgabewert von {@code false} kann also bedeuten, dass der Benutzer definitiv
      * nicht dasselbe schon einmal getan hat - oder dass sich das System unsicher ist.

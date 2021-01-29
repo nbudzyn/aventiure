@@ -178,10 +178,9 @@ public class Biorhythmus {
         for (int i = 0; i < pairsInTimeOrder.size() - 1; i++) {
             checkArgument(pairsInTimeOrder.get(i).first
                             .isBefore(pairsInTimeOrder.get(i + 1).first),
-                    "Falsch geordnet: "
-                            + pairsInTimeOrder.get(i).first
-                            + ", "
-                            + pairsInTimeOrder.get(i + 1).first);
+                    "Falsch geordnet: %s, %s",
+                    pairsInTimeOrder.get(i).first, pairsInTimeOrder.get(i + 1).first)
+            ;
         }
     }
 

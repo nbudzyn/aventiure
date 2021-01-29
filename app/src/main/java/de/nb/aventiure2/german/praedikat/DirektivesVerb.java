@@ -66,7 +66,7 @@ public enum DirektivesVerb implements Praedikat {
                    @NonNull final Kasus kasus) {
         Preconditions.checkArgument(
                 kasus == DAT || kasus == AKK,
-                "Direktives Verb mit ungültigem Kasus: " + kasus);
+                "Direktives Verb mit ungültigem Kasus: %s", kasus);
         this.verb = verb;
         this.kasus = kasus;
     }

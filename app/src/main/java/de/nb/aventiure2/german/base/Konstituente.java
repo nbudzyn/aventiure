@@ -174,8 +174,8 @@ public class Konstituente {
         checkArgument(!string.endsWith(" "));
         checkArgument(bezugsobjekt == null ||
                         kannAlsBezugsobjektVerstandenWerdenFuer != null,
-                "Bezugsobjekt angegeben, aber kein Numerus / Genus! Bezugsobjekt: "
-                        + bezugsobjekt);
+                "Bezugsobjekt angegeben, aber kein Numerus / Genus! Bezugsobjekt: %s",
+                bezugsobjekt);
 
         this.string = string;
         this.vorkommaNoetig = vorkommaNoetig;

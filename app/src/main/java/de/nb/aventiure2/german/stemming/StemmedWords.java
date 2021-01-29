@@ -4,9 +4,9 @@ import androidx.annotation.NonNull;
 
 import com.google.common.collect.ImmutableList;
 
-import java.util.Collection;
 import java.util.Iterator;
 import java.util.LinkedList;
+import java.util.Objects;
 
 public class StemmedWords implements Iterable<String> {
     private final ImmutableList<String> stemmedWords;
@@ -30,7 +30,7 @@ public class StemmedWords implements Iterable<String> {
                 to--;
             }
             if (to < 0) {
-                return new StemmedWords(res); // ==>
+                return new StemmedWords(ImmutableList.copyOf(res)); // ==>
             }
 
             int from = to;
@@ -42,32 +42,64 @@ public class StemmedWords implements Iterable<String> {
             res.addFirst(GermanStemmer.stemWord(text.substring(from + 1, to + 1)));
 
             if (res.size() >= maxWords) {
-                return new StemmedWords(res);
+                return new StemmedWords(ImmutableList.copyOf(res));
             }
 
             to = from;
         }
     }
 
-    private StemmedWords(final Collection<String> stemmedWords) {
-        this.stemmedWords = ImmutableList.copyOf(stemmedWords);
+    public StemmedWords(final ImmutableList<String> stemmedWords) {
+        this.stemmedWords = stemmedWords;
     }
 
     public boolean isEmpty() {
         return stemmedWords.isEmpty();
     }
 
-    public int size() {
-        return stemmedWords.size();
+
+    public String get(final int index) {
+        return stemmedWords.get(index);
     }
 
-    public StemmedWords subList(final int fromIndex, final int toIndex) {
-        return new StemmedWords(stemmedWords.subList(fromIndex, toIndex));
+    public int size() {
+        return stemmedWords.size();
     }
 
     @NonNull
     @Override
     public Iterator<String> iterator() {
         return stemmedWords.iterator();
+    }
+
+    public static boolean subListsEqual(final StemmedWords one, final int oneFrom,
+                                        final StemmedWords other, final int otherFrom,
+                                        final int length) {
+        for (int i = 0; i < length; i++) {
+            if (!Objects.equals(
+                    one.stemmedWords.get(oneFrom + i),
+                    other.stemmedWords.get(otherFrom + i))) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    @Override
+    public boolean equals(final Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        final StemmedWords strings = (StemmedWords) o;
+        return stemmedWords.equals(strings.stemmedWords);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(stemmedWords);
     }
 }

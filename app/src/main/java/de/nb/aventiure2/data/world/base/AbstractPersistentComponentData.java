@@ -1,6 +1,7 @@
 package de.nb.aventiure2.data.world.base;
 
 import androidx.annotation.NonNull;
+import androidx.room.Ignore;
 import androidx.room.PrimaryKey;
 
 import java.util.Objects;
@@ -13,20 +14,24 @@ public class AbstractPersistentComponentData {
     @NonNull
     private GameObjectId gameObjectId;
 
+    @Ignore
     private boolean changed = false;
 
     public AbstractPersistentComponentData(@NonNull final GameObjectId gameObjectId) {
         this.gameObjectId = gameObjectId;
     }
 
-    public boolean isChanged() {
+    @Ignore
+    boolean isChanged() {
         return changed;
     }
 
+    @Ignore
     protected void setChanged() {
         setChanged(true);
     }
 
+    @Ignore
     public void setChanged(final boolean changed) {
         this.changed = changed;
     }
