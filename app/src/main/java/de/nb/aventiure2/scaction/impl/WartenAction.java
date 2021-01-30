@@ -31,7 +31,7 @@ import static de.nb.aventiure2.data.time.AvTimeSpan.secs;
 import static de.nb.aventiure2.data.world.gameobject.World.*;
 import static de.nb.aventiure2.german.base.Numerus.SG;
 import static de.nb.aventiure2.german.base.Person.P2;
-import static de.nb.aventiure2.german.base.StructuralElement.SENTENCE;
+import static de.nb.aventiure2.german.base.StructuralElement.PARAGRAPH;
 import static de.nb.aventiure2.german.description.DescriptionBuilder.du;
 import static de.nb.aventiure2.german.description.DescriptionBuilder.neuerSatz;
 import static de.nb.aventiure2.german.description.Kohaerenzrelation.VERSTEHT_SICH_VON_SELBST;
@@ -109,8 +109,7 @@ public class WartenAction<LIVGO extends IDescribableGO & ILocatableGO & ILivingB
             narrateAndDoSchlafen();
             return;
         }
-
-
+        
         // FIXME: Warten auf die richtige Länge setzen. Wenn das NICHT funktioniert:
         //  - Ab einem Punkt, wo man davon ausgehen kann, dass der Spieler
         //   bewusst wartet oder rastet, um die Frau zu beobachten, sollte die Frau nach 4x Rasten
@@ -143,7 +142,7 @@ public class WartenAction<LIVGO extends IDescribableGO & ILocatableGO & ILivingB
 
     private void narrateAndDoEinschlafen(final AvTimeSpan schlafdauer) {
         n.narrateAlt(schlafdauer,
-                du(SENTENCE, "wirst",
+                du(PARAGRAPH, "wirst",
                         "über dem Warten schläfrig und nickst schließlich ein")
                         .mitVorfeldSatzglied("über dem Warten"),
                 neuerSatz("da fallen dir die Augen zu, und schon schläfst du fest"),
@@ -152,8 +151,8 @@ public class WartenAction<LIVGO extends IDescribableGO & ILocatableGO & ILivingB
                         .mitVorfeldSatzglied("wachen und warten"),
                 du("fängst", "an, einzuschlafen")
                         .komma().undWartest(),
-                du("machst", "ganz kurz die Augen zu, da bist du auch schon",
-                        "eingeschlafen").mitVorfeldSatzglied("ganz kurz"));
+                du(PARAGRAPH, "machst", "ganz kurz die Augen zu, da bist du",
+                        "auch schon eingeschlafen").mitVorfeldSatzglied("ganz kurz"));
     }
 
     private void narrateWarten() {

@@ -25,7 +25,7 @@ public interface IMovementNarrator {
             ILocationGO to,
             FROM movingGOFrom);
 
-    void narrateScUeberholtMovingGO();
+    void narrateScUeberholtMovingGO(@Nullable SpatialConnection conn);
 
     void narrateScGehtMovingGOEntgegenUndLaesstEsHinterSich();
 

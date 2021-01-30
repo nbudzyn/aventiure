@@ -153,9 +153,18 @@ public class SimpleMovementNarrator implements IMovementNarrator {
             final FROM movingGOFrom) {
         if (scFrom != null) {
             if (World.isOrHasRecursiveLocation(scFrom, movingGOFrom)) {
+                @Nullable SpatialConnection conn = null;
+                if (scFrom instanceof ISpatiallyConnectedGO) {
+                    final ISpatiallyConnectedGO scFromSpatiallyConnected =
+                            (ISpatiallyConnectedGO) scFrom;
+
+                    conn = scFromSpatiallyConnected.spatialConnectionComp()
+                            .getConnection(to.getId());
+                }
+
                 // IMovingGO und SC gehen denselben Weg, das IMovingGO ist noch nicht
                 // angekommen
-                narrateScUeberholtMovingGO();
+                narrateScUeberholtMovingGO(conn);
                 return;
             }
 
@@ -167,19 +176,23 @@ public class SimpleMovementNarrator implements IMovementNarrator {
     }
 
     @Override
-    public void narrateScUeberholtMovingGO() {
+    public void narrateScUeberholtMovingGO(@Nullable final SpatialConnection conn) {
         final Nominalphrase desc = getDescription();
+        final String woDabei = conn != null ? conn.getWo() : "dabei";
 
         n.narrateAlt(NO_TIME,
                 du("gehst",
-                        "dabei an", desc.datK(), "vorbei")
+                        woDabei,
+                        "an", desc.datK(), "vorbei")
                         .beendet(SENTENCE),
                 du("gehst",
-                        "dabei schnellen Schrittes an", desc.datK(), "vorüber")
+                        woDabei,
+                        "schnellen Schrittes an", desc.datK(), "vorüber")
                         .mitVorfeldSatzglied("dabei")
                         .beendet(SENTENCE),
                 du("gehst",
-                        "dabei mit schnellen Schritten an", desc.datK(), "vorüber")
+                        woDabei,
+                        "mit schnellen Schritten an", desc.datK(), "vorüber")
                         .mitVorfeldSatzglied("dabei")
                         .beendet(SENTENCE)
         );
