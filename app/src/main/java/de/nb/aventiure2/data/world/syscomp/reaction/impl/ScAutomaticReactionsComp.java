@@ -7,7 +7,6 @@ import com.google.common.collect.ImmutableList;
 import de.nb.aventiure2.data.database.AvDatabase;
 import de.nb.aventiure2.data.narration.Narrator;
 import de.nb.aventiure2.data.time.AvDateTime;
-import de.nb.aventiure2.data.time.AvTimeSpan;
 import de.nb.aventiure2.data.time.TimeTaker;
 import de.nb.aventiure2.data.world.base.IGameObject;
 import de.nb.aventiure2.data.world.counter.CounterDao;
@@ -33,8 +32,6 @@ import de.nb.aventiure2.data.world.syscomp.storingplace.ILocationGO;
 import de.nb.aventiure2.data.world.syscomp.waiting.WaitingComp;
 import de.nb.aventiure2.scaction.impl.EssenAction;
 
-import static de.nb.aventiure2.data.time.AvTimeSpan.min;
-import static de.nb.aventiure2.data.time.AvTimeSpan.mins;
 import static de.nb.aventiure2.data.world.gameobject.World.*;
 import static de.nb.aventiure2.data.world.syscomp.feelings.Hunger.HUNGRIG;
 
@@ -187,13 +184,7 @@ public class ScAutomaticReactionsComp
     @Override
     public void onTimePassed(final AvDateTime startTime, final AvDateTime endTime) {
         feelingsComp.onTimePassed(startTime, endTime);
-
-        final AvTimeSpan remainingWaitTime = waitingComp.getEndTime().minus(endTime);
-        if (remainingWaitTime.longerThan(AvTimeSpan.NO_TIME)) {
-            // Erzwingen, dass sich die Welt noch weitere 3 Minuten weiterdreht
-            // (oder die remainingWaitTime - wenn die kleiner ist)
-            timeTaker.passTime(min(mins(3), remainingWaitTime));
-        }
+        waitingComp.ifWaitingDoWaitStep(endTime);
     }
 
     @Override

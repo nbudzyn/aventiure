@@ -159,7 +159,8 @@ public class ScActionService {
 
             if (location != null) {
                 res.addAll(WartenAction
-                        .buildActions(db.scActionStepCountDao(), timeTaker, n, world, creature,
+                        .buildActions(db.counterDao(), db.scActionStepCountDao(), timeTaker, n,
+                                world, creature,
                                 location));
             }
         }

@@ -8,10 +8,13 @@ import com.google.common.collect.ImmutableList;
 import java.util.List;
 
 import de.nb.aventiure2.data.narration.Narrator;
+import de.nb.aventiure2.data.time.AvTimeSpan;
 import de.nb.aventiure2.data.time.TimeTaker;
+import de.nb.aventiure2.data.world.counter.CounterDao;
 import de.nb.aventiure2.data.world.gameobject.*;
 import de.nb.aventiure2.data.world.syscomp.alive.ILivingBeingGO;
 import de.nb.aventiure2.data.world.syscomp.description.IDescribableGO;
+import de.nb.aventiure2.data.world.syscomp.feelings.FeelingIntensity;
 import de.nb.aventiure2.data.world.syscomp.location.ILocatableGO;
 import de.nb.aventiure2.data.world.syscomp.memory.Action;
 import de.nb.aventiure2.data.world.syscomp.storingplace.ILocationGO;
@@ -28,7 +31,9 @@ import static de.nb.aventiure2.data.time.AvTimeSpan.secs;
 import static de.nb.aventiure2.data.world.gameobject.World.*;
 import static de.nb.aventiure2.german.base.Numerus.SG;
 import static de.nb.aventiure2.german.base.Person.P2;
+import static de.nb.aventiure2.german.base.StructuralElement.SENTENCE;
 import static de.nb.aventiure2.german.description.DescriptionBuilder.du;
+import static de.nb.aventiure2.german.description.DescriptionBuilder.neuerSatz;
 import static de.nb.aventiure2.german.description.Kohaerenzrelation.VERSTEHT_SICH_VON_SELBST;
 import static de.nb.aventiure2.german.praedikat.VerbSubjObj.WARTEN;
 
@@ -37,11 +42,15 @@ import static de.nb.aventiure2.german.praedikat.VerbSubjObj.WARTEN;
  */
 public class WartenAction<LIVGO extends IDescribableGO & ILocatableGO & ILivingBeingGO>
         extends AbstractScAction {
+    private final CounterDao counterDao;
     private final LIVGO erwartet;
-    private final ILocationGO location;
+
+    private static final String COUNTER_WARTEN_IN_FOLGE =
+            "WartenAction_WARTEN_IN_FOLGE";
 
     public static <LIVGO extends IDescribableGO & ILocatableGO & ILivingBeingGO>
     List<WartenAction<LIVGO>> buildActions(
+            final CounterDao counterDao,
             final SCActionStepCountDao scActionStepCountDao,
             final TimeTaker timeTaker, final Narrator n, final World world,
             final LIVGO erwartet,
@@ -51,23 +60,23 @@ public class WartenAction<LIVGO extends IDescribableGO & ILocatableGO & ILivingB
                 erwartet.is(RAPUNZELS_ZAUBERIN) &&
                 world.loadSC().memoryComp().isKnown(RAPUNZELS_ZAUBERIN) &&
                 !erwartet.locationComp().hasSameOuterMostLocationAs(location)) {
-            res.add(new WartenAction<>(scActionStepCountDao, timeTaker, n, world, erwartet,
-                    location));
+            res.add(new WartenAction<>(counterDao, scActionStepCountDao, timeTaker, n, world,
+                    erwartet));
         }
 
         return res.build();
     }
 
     @VisibleForTesting
-    WartenAction(final SCActionStepCountDao scActionStepCountDao,
+    WartenAction(final CounterDao counterDao,
+                 final SCActionStepCountDao scActionStepCountDao,
                  final TimeTaker timeTaker,
                  final Narrator n,
                  final World world,
-                 final LIVGO erwartet,
-                 final ILocationGO location) {
+                 final LIVGO erwartet) {
         super(scActionStepCountDao, timeTaker, n, world);
+        this.counterDao = counterDao;
         this.erwartet = erwartet;
-        this.location = location;
     }
 
     @Override
@@ -89,31 +98,71 @@ public class WartenAction<LIVGO extends IDescribableGO & ILocatableGO & ILivingB
 
     @Override
     public void narrateAndDo() {
-        // FIXME Weitere Dinge, die das Warten abbrechen?
-        //  - Vermutlich braucht man weitere Möglichkeiten, bei denen das Warten abgebrochen wird,
-        //    z.B. wenn der Spieler müder oder hungriger wird?
-        //  - Rapunzels Gesang sollte das Warten abbrechen - wenn man ihn noch nicht kennt.
-        //  - Reactions-Componente anweisen: Unterbrich den Wartemodus, z.B. wenn
-        //    der Spieler hungriger wird oder müder oder ein Tageszeitenwechsel geschieht o.Ä.).
+        if (!sc.memoryComp().getLastAction().is(Action.Type.WARTEN)) {
+            counterDao.reset(COUNTER_WARTEN_IN_FOLGE);
+        }
 
-        // Der SC wartet
-        narrate();
+        // Der SC beginnt zu warten
+        narrateWarten();
+
+        if (automatischesEinschlafen()) {
+            narrateAndDoSchlafen();
+            return;
+        }
+
+
+        // FIXME: Warten auf die richtige Länge setzen. Wenn das NICHT funktioniert:
+        //  - Ab einem Punkt, wo man davon ausgehen kann, dass der Spieler
+        //   bewusst wartet oder rastet, um die Frau zu beobachten, sollte die Frau nach 4x Rasten
+        //   oder 4x Warten gekommen
+        //  -  (Alternative zum Warten)  mehrere verschiedenen bestätigende Texte, dass sich das
+        //  Rasten lohnt (damit der Spieler nicht zu bald aufgibt).
 
         // Erst einmal vergeht fast keine Zeit. Die ScAutomaticReactionsComp sorgt
         // im onTimePassed() im Zusammenspiel mit der WaitingComp dafür, dass die
         // Zeit vergeht (maximal 3 Stunden).
-        world.loadSC().waitingComp().startWaiting(
-                timeTaker.now().plus(hours(3)));
+        world.loadSC().waitingComp().startWaiting(timeTaker.now().plus(hours(3)));
 
         sc.memoryComp().setLastAction(buildMemorizedAction());
     }
 
-    private void narrate() {
+    private boolean automatischesEinschlafen() {
+        if (counterDao.get(COUNTER_WARTEN_IN_FOLGE) >= 3) {
+            return sc.feelingsComp().getMuedigkeit() >= FeelingIntensity.DEUTLICH;
+        }
+
+        return sc.feelingsComp().getMuedigkeit() >= FeelingIntensity.STARK;
+    }
+
+    private void narrateAndDoSchlafen() {
+        final AvTimeSpan schlafdauer = sc.feelingsComp().calcSchlafdauerMensch();
+
+        narrateAndDoEinschlafen(schlafdauer);
+        sc.feelingsComp().narrateAndDoAufwachenSC(schlafdauer, true);
+    }
+
+    private void narrateAndDoEinschlafen(final AvTimeSpan schlafdauer) {
+        n.narrateAlt(schlafdauer,
+                du(SENTENCE, "wirst",
+                        "über dem Warten schläfrig und nickst schließlich ein")
+                        .mitVorfeldSatzglied("über dem Warten"),
+                neuerSatz("da fallen dir die Augen zu, und schon schläfst du fest"),
+                du("willst", "wachen und warten, aber dann überkommt dich",
+                        "doch der Schlaf")
+                        .mitVorfeldSatzglied("wachen und warten"),
+                du("fängst", "an, einzuschlafen")
+                        .komma().undWartest(),
+                du("machst", "ganz kurz die Augen zu, da bist du auch schon",
+                        "eingeschlafen").mitVorfeldSatzglied("ganz kurz"));
+    }
+
+    private void narrateWarten() {
         final Kohaerenzrelation kohaerenzrelation = getKohaerenzrelationFuerUmformulierung();
 
         if (kohaerenzrelation == VERSTEHT_SICH_VON_SELBST) {
             final SubstantivischePhrase anaph = world.anaph(erwartet, false);
             n.narrateAlt(secs(5),
+                    COUNTER_WARTEN_IN_FOLGE,
                     du(WARTEN.mit(anaph)).dann(),
                     du("beginnst", "auf", anaph.akkK(), "zu warten").dann());
         } else {
@@ -129,7 +178,7 @@ public class WartenAction<LIVGO extends IDescribableGO & ILocatableGO & ILivingB
                                     )
                             )
                                     .dann()),
-                    secs(5));
+                    secs(5), COUNTER_WARTEN_IN_FOLGE);
         }
     }
 

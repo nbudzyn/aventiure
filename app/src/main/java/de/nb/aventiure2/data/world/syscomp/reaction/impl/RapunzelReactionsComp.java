@@ -765,6 +765,8 @@ public class RapunzelReactionsComp
                     .timed(secs(20)));
 
             world.loadSC().memoryComp().upgradeKnown(RAPUNZELS_GESANG);
+            
+            loadSC().waitingComp().stopWaiting();
             return;
         }
 

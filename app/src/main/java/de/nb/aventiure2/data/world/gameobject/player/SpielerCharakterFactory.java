@@ -57,6 +57,7 @@ public class SpielerCharakterFactory {
         final MenschlicherMuedigkeitsBiorhythmus muedigkeitsBiorhythmus =
                 new MenschlicherMuedigkeitsBiorhythmus();
         final FeelingsComp feelingsComp = new FeelingsComp(id, db, timeTaker, n,
+                waitingComp,
                 memoryComp,
                 Mood.NEUTRAL,
                 muedigkeitsBiorhythmus,

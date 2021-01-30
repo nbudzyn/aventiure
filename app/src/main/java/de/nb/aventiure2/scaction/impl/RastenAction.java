@@ -70,13 +70,9 @@ public class RastenAction extends AbstractScAction {
 
     @Override
     public void narrateAndDo() {
-        // FIXME: Warten auf die richtige Länge setzen. Wenn das NICHT funktioniert:
-        //  - Ab einem Punkt, wo man davon ausgehen kann, dass der Spieler
-        //   bewusst rastet, um die Frau zu beobachten, sollte die Frau nach 4x Rasten
-        //   oder 4x Warten gekommen
-        //  -  (Alternative zum Warten)  mehrere verschiedenen bestätigende Texte, dass sich das
-        //  Rasten lohnt
-        //   (damit der Spieler nicht zu bald aufgibt).
+        // FIXME Schläft man (nach mehrfachem Rasten?
+        //  Und bei ausreichender Müdigkeit?) automatisch ein?
+
         if (isDefinitivFortsetzung() &&
                 ((IHasStateGO<RapunzelState>) world.load(RAPUNZEL)).stateComp()
                         .hasState(SINGEND)) {
@@ -155,8 +151,7 @@ public class RastenAction extends AbstractScAction {
                 du(SENTENCE, "streckst", "die Glieder und hörst auf das Rauschen "
                         + "in den "
                         + "Ästen über dir. Ein Rabe setzt "
-                        + "sich neben dich und fliegt nach einer Weile wieder fort"
-                )
+                        + "sich neben dich und fliegt nach einer Weile wieder fort")
                         .beendet(SENTENCE)
                         .dann(),
                 du(SENTENCE, "ruhst",

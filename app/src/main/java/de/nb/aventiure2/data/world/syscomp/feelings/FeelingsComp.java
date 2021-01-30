@@ -24,24 +24,33 @@ import de.nb.aventiure2.data.world.base.AbstractStatefulComponent;
 import de.nb.aventiure2.data.world.base.GameObject;
 import de.nb.aventiure2.data.world.base.GameObjectId;
 import de.nb.aventiure2.data.world.syscomp.memory.MemoryComp;
+import de.nb.aventiure2.data.world.syscomp.waiting.WaitingComp;
 import de.nb.aventiure2.german.adjektiv.AdjPhrOhneLeerstellen;
 import de.nb.aventiure2.german.base.Personalpronomen;
 import de.nb.aventiure2.german.base.SubstantivischePhrase;
 import de.nb.aventiure2.german.description.AbstractDescription;
+import de.nb.aventiure2.german.description.AltDescriptionsBuilder;
 import de.nb.aventiure2.german.praedikat.AdverbialeAngabeSkopusSatz;
 import de.nb.aventiure2.german.praedikat.AdverbialeAngabeSkopusVerbAllg;
 import de.nb.aventiure2.german.satz.Satz;
 import de.nb.aventiure2.scaction.stepcount.SCActionStepCountDao;
 
 import static com.google.common.base.Preconditions.checkArgument;
+import static de.nb.aventiure2.data.time.AvTime.oClock;
 import static de.nb.aventiure2.data.time.AvTimeSpan.NO_TIME;
+import static de.nb.aventiure2.data.time.AvTimeSpan.hours;
+import static de.nb.aventiure2.data.time.AvTimeSpan.mins;
 import static de.nb.aventiure2.data.world.gameobject.World.*;
 import static de.nb.aventiure2.data.world.syscomp.feelings.Hunger.SATT;
+import static de.nb.aventiure2.data.world.syscomp.feelings.Mood.BEWEGT;
+import static de.nb.aventiure2.data.world.syscomp.feelings.Mood.NEUTRAL;
 import static de.nb.aventiure2.german.base.Numerus.SG;
 import static de.nb.aventiure2.german.base.NumerusGenus.M;
 import static de.nb.aventiure2.german.base.Person.P2;
+import static de.nb.aventiure2.german.base.StructuralElement.CHAPTER;
 import static de.nb.aventiure2.german.base.StructuralElement.PARAGRAPH;
 import static de.nb.aventiure2.german.base.StructuralElement.SENTENCE;
+import static de.nb.aventiure2.german.description.AltDescriptionsBuilder.alt;
 import static de.nb.aventiure2.german.description.DescriptionBuilder.du;
 import static de.nb.aventiure2.german.description.DescriptionBuilder.neuerSatz;
 import static de.nb.aventiure2.german.description.DescriptionBuilder.paragraph;
@@ -61,6 +70,8 @@ public class FeelingsComp extends AbstractStatefulComponent<FeelingsPCD> {
 
     protected final Narrator n;
 
+    @Nullable
+    private final WaitingComp waitingComp;
     @Nullable
     private final MemoryComp memoryComp;
 
@@ -93,6 +104,7 @@ public class FeelingsComp extends AbstractStatefulComponent<FeelingsPCD> {
     public FeelingsComp(final GameObjectId gameObjectId,
                         final AvDatabase db,
                         final TimeTaker timeTaker, final Narrator n,
+                        @Nullable final WaitingComp waitingComp,
                         @Nullable final MemoryComp memoryComp,
                         final Mood initialMood,
                         final Biorhythmus muedigkeitsBiorythmus,
@@ -107,6 +119,7 @@ public class FeelingsComp extends AbstractStatefulComponent<FeelingsPCD> {
         this.timeTaker = timeTaker;
         this.n = n;
         scActionStepCountDao = db.scActionStepCountDao();
+        this.waitingComp = waitingComp;
         this.memoryComp = memoryComp;
         this.initialMood = initialMood;
         this.muedigkeitsBiorythmus = muedigkeitsBiorythmus;
@@ -213,7 +226,147 @@ public class FeelingsComp extends AbstractStatefulComponent<FeelingsPCD> {
         return getPcd().getMovementSpeedFactor();
     }
 
-    public void menschAusgeschlafen(final AvTimeSpan schlafdauer) {
+    // FIXME Frosch läuft während des Schlafs weg. Oder kommt ggf. Auch wieder. Oder läuft
+    //  weg und kommt wieder.
+    //  Es sollte in der Zeit keine narrations geben (der Spieler bekommt ja nichts mit, es sei
+    //  denn man lässt ihn dann aufwachen...). Nach dem (regulären) Aufwachen sollte etwas
+    //  kommen wie... ist verschwunden.
+    //  - Für die Tageszeit haben wir ein gutes Konzept.
+    //  - Für das Bewegen (Frosch weg, Kugel weg) funktioniert es gut über die AssumedLocations.
+    //  - Für andere Statusänderungen scheint es nicht zu funktionieren? Wenn
+    //    man die Zeit mittendrin weiterlaufen lässt, funktioniert das mit den Tageszeiten
+    //    nicht mehr!
+    //  Man könnte sagen: Schlafen ist wie Bewegen: Es gibt eine neue Beschreibung der
+    //  äußeren Umstände, zumindest soweit sie sich verändert haben. Dazu muss der Unterschied
+    //  (vorher / nachher) ermittelt werden. Und die Zeit muss zwischendrin vergehen -
+    //  allerdings ohne narration. (Ein Vergehen der Zeit - bisher mit Narration - passiert
+    //  bei der WartenAction.)
+    //  Andere Idee könnte sein: Beim Vergehen von Zeit gibt es DREI Parameter:
+    //  letzter Zeitpunkt, letzter WACHER Zeitpunkt und aktueller Zeitpunkt
+    //  Entsprechend kann dann der Text gestaltet werden, z.B. "Der Gesang hat aufgehört."
+
+    // FIXME Konzept entwickeln, dass diese "Statusübergänge" realisiert:
+    //  - Benutzer schläft ein, während Rapunzel singt, aufhört und wieder anfängt
+    //  - Benutzer schläft ein, während Rapunzel singt und wacht auf und Rapunzel hat
+    //    zwischenzeitlich aufgehört zu singen
+
+    // FIXME Idee: Jede Reaktion speichert den letzten Zustand (PCD), auf Basis dessen sie einen
+    //  Text gerendert hat sowie den Zeitpunkt dazu. Wenn wieder Gelegenheit ist, ein Text zu
+    //  rendern, wird geprüft, ob sich der Status gegenüber dem Zeitpunkt geändert hat,
+    //  außerdem wird geprüft, ob der Zeitpunkt Benutzer etwas versäumt hat oder die ganze
+    //  Zeit anwesend und aufnahmefähig war - entsprechend etwas wie "Plötzlich endet der
+    //  Gesang"
+    //  oder "Es ist kein Gesang mehr zu hören" gerendert.
+
+    // FIXME Zum Beispiel wäre der Benutzer über alle Statusänderungen zu unterrichten,
+    //  Die zwischenzeitlich passiert sind ("der Frosch ist verschwunden").
+
+    // TODO Man könnte auch, wenn der Benutzer erstmals wieder nach draußen kommt, etwas
+    //  schreiben wie "Inzwischen ist es dunkel geworden". Dazu müsste der "Tageszeit-Status"
+    //  (oder zumindest der Zeitpunkt) gespeichert werden, wenn der Benutzer REIN GEHT
+    //  und später beim RAUSTRETEN dieser Status mit dem aktuellen Tageszeitstatus verglichen
+    //  werden.
+    //  Man müsste also die Möglichkeit anbieten, jederzeit den Status eines bestimmten
+    //  Game Objects unter einem "Label" zu persistieren (inkl. Zeitpunkt), so dass
+    //  man ihn später wieder laden kann. Alternativ auch mehrere Game Objects,
+    //  denn nur so kann man prüfen, was sich nach dem Schlafen an einem Ort verändert hat.
+
+    // FIXME Der Benutzer (oder auch andere Game Objects) könnte auch über
+    //  die Assumed Locations hinaus ein Mental Model haben, wo
+    //  der Stand der Welt, wie der Benutzer ihn sich vorstellt, gespeichert ist
+    //  (z.B. die Welt, oder der Raum bevor der Benutzer eingeschlafen ist...)
+    //  Dann könnte man beim Erzählen (z.B. beim Aufwachen) vergleichen...
+
+    // FIXME Der Frosch läuft während des Schlafens davon - nicht beim Aufwachen.
+    //  Alternativ könnte der Spieler durch das Weglaufen aufgeweckt werden
+    //  (so ähnlich, wie das Warten unterbrochen wird).
+
+    // IDEA Konzept dafür entwickeln, dass der Benutzer einen  Ort verlässt, während XYZ
+    //  passiert und zurückkehrt, wenn XYZ nicht mehr passiert
+
+    // FIXME Konzept entwickeln, dass diese "Statusübergänge" realisiert:
+    //  - Benutzer schläft an einem Ort, Rapunzel beginnt dort zu singen und hört wieder auf
+    //     (Benutzer merkt nichts)
+    //  - Benutzer schläft ein, während Rapunzel nicht singt und wacht auf und Rapunzel hat
+    //    zwischenzeitlich angefangen zu singen
+
+    public AvTimeSpan calcSchlafdauerMensch() {
+        final AvDateTime now = timeTaker.now();
+
+        if (getMuedigkeit() < FeelingIntensity.DEUTLICH) {
+            return mins(59);
+        }
+
+        if (now.getTime().isBefore(oClock(16, 30))) {
+            return hours(8);
+        } else {
+            return now.timeSpanUntil(oClock(7));
+        }
+    }
+
+    /**
+     * Der SC wacht nach einem Schlaf wieder auf.
+     *
+     * @param schlafdauer       Wie lange der SC geschlafen hat
+     * @param wollteEinschlafen Ob der SC einschlafen wolle ({@code true}) oder er nur
+     *                          versehentlich weggenickt ist ({@code false}).
+     */
+    public void narrateAndDoAufwachenSC(
+            final AvTimeSpan schlafdauer, final boolean wollteEinschlafen) {
+        menschAusgeschlafen(schlafdauer);
+        requestMoodMin(NEUTRAL);
+        requestMoodMax(BEWEGT);
+
+        final AltDescriptionsBuilder alt = alt();
+
+        if (schlafdauer.longerThanOrEqual(hours(7))) {
+            alt.add(du(CHAPTER, "wachst",
+                    "nach einem langen Schlaf gut erholt wieder auf")
+                    .mitVorfeldSatzglied("nach einem langen Schlaf"));
+        }
+
+        if (schlafdauer.longerThanOrEqual(hours(4))) {
+            alt.add(du(CHAPTER, "schläfst",
+                    "tief und fest und wachst erst nach einigen Stunden wieder auf")
+                    .mitVorfeldSatzglied("tief"));
+        }
+
+        if (schlafdauer.isBetween(hours(3), hours(6))) {
+            alt.add(neuerSatz(CHAPTER,
+                    "Als du die Augen wieder aufschlägst, sind einige Stunden vergangen"));
+        }
+
+        if (schlafdauer.shorterThanOrEqual(hours(1))) {
+            alt.add(du(CHAPTER,
+                    "schläfst", "vielleicht eine Stunde und wachst "
+                            + "gekräftigt wieder auf"));
+        }
+
+        if (schlafdauer.shorterThan(hours(1))) {
+            alt.add(neuerSatz(CHAPTER,
+                    "Keine Stunde und du erwachst wieder"),
+                    du(CHAPTER, "bist",
+                            "nach einem kurzen Nickerchen wieder wach")
+                            .mitVorfeldSatzglied("nach einem kurzen Nickerchen"),
+                    du(CHAPTER, "bist", "nach knapp einer Stunde wieder wach")
+                            .mitVorfeldSatzglied("nach knapp einer Stunde"));
+        }
+
+        if (schlafdauer.shorterThanOrEqual(mins(20))) {
+            if (wollteEinschlafen) {
+                alt.add(neuerSatz(CHAPTER,
+                        "Als du wieder aufwachst, hast du den Eindruck, dich gerade erst "
+                                + "hingelegt zu haben"));
+            } else {
+                alt.add(neuerSatz(CHAPTER,
+                        "Keine halbe Stunde später schreckst du wieder hoch"));
+            }
+        }
+
+        n.narrateAlt(alt, NO_TIME);
+    }
+
+    private void menschAusgeschlafen(final AvTimeSpan schlafdauer) {
         ausgeschlafen(MuedigkeitsData.calcAusschlafenEffektHaeltBeimMenschenVorFuer(schlafdauer));
     }
 
@@ -636,11 +789,11 @@ public class FeelingsComp extends AbstractStatefulComponent<FeelingsPCD> {
 
         if (getGameObjectId() == SPIELER_CHARAKTER &&
                 hungerBisher == SATT && getHunger() != SATT) {
-            narrateScWirdHungrig();
+            narrateAndDoScWirdHungrig();
         }
     }
 
-    private void narrateScWirdHungrig() {
+    private void narrateAndDoScWirdHungrig() {
         n.narrateAlt(NO_TIME,
                 du(PARAGRAPH, "fühlst", "dich allmählich etwas hungrig")
                         .undWartest(),
@@ -656,6 +809,10 @@ public class FeelingsComp extends AbstractStatefulComponent<FeelingsPCD> {
                 du(SENTENCE, "empfindest", "wieder leichten Hunger")
                         .undWartest()
         );
+
+        if (waitingComp != null) {
+            waitingComp.stopWaiting();
+        }
     }
 
     public void narrateAndDoSCMitEssenKonfrontiert() {
@@ -747,7 +904,7 @@ public class FeelingsComp extends AbstractStatefulComponent<FeelingsPCD> {
                 scActionStepCountDao.stepCount(),
                 getMuedigkeitGemaessBiorhythmus());
 
-        narrateMuedigkeitEvtlGeaendert(muedigkeitBisher);
+        narrateAndDoMuedigkeitEvtlErhoeht(muedigkeitBisher);
     }
 
     private void narrateScWirdMuede() {
@@ -877,13 +1034,16 @@ public class FeelingsComp extends AbstractStatefulComponent<FeelingsPCD> {
                 temporaereMinimalmuedigkeit, duration,
                 getMuedigkeitGemaessBiorhythmus());
 
-        narrateMuedigkeitEvtlGeaendert(muedigkeitBisher);
+        narrateAndDoMuedigkeitEvtlErhoeht(muedigkeitBisher);
     }
 
-    private void narrateMuedigkeitEvtlGeaendert(final int muedigkeitBisher) {
-        if (getGameObjectId() == SPIELER_CHARAKTER &&
-                muedigkeitBisher < getMuedigkeit()) {
+    private void narrateAndDoMuedigkeitEvtlErhoeht(final int muedigkeitBisher) {
+        if (getGameObjectId() == SPIELER_CHARAKTER && muedigkeitBisher < getMuedigkeit()) {
             narrateScWirdMuede();
+
+            if (waitingComp != null) {
+                waitingComp.stopWaiting();
+            }
         }
     }
 

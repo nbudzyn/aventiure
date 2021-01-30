@@ -4,11 +4,14 @@ import androidx.annotation.NonNull;
 
 import de.nb.aventiure2.data.database.AvDatabase;
 import de.nb.aventiure2.data.time.AvDateTime;
+import de.nb.aventiure2.data.time.AvTimeSpan;
 import de.nb.aventiure2.data.time.TimeTaker;
 import de.nb.aventiure2.data.world.base.AbstractStatefulComponent;
 import de.nb.aventiure2.data.world.base.GameObject;
 import de.nb.aventiure2.data.world.base.GameObjectId;
 
+import static de.nb.aventiure2.data.time.AvTimeSpan.min;
+import static de.nb.aventiure2.data.time.AvTimeSpan.mins;
 import static de.nb.aventiure2.data.time.AvTimeSpan.secs;
 
 /**
@@ -51,7 +54,16 @@ public class WaitingComp extends AbstractStatefulComponent<WaitingPCD> {
         getPcd().setEndTime(timeTaker.now().minus(secs(1)));
     }
 
-    public AvDateTime getEndTime() {
+    public void ifWaitingDoWaitStep(final AvDateTime now) {
+        final AvTimeSpan remainingWaitTime = getEndTime().minus(now);
+        if (remainingWaitTime.longerThan(AvTimeSpan.NO_TIME)) {
+            // Erzwingen, dass sich die Welt noch weitere 3 Minuten weiterdreht
+            // (oder die remainingWaitTime - wenn die kleiner ist)
+            timeTaker.passTime(min(mins(3), remainingWaitTime));
+        }
+    }
+
+    private AvDateTime getEndTime() {
         return getPcd().getEndTime();
     }
 }

@@ -243,10 +243,6 @@ public enum RapunzelStoryNode implements IStoryNode {
                 paragraph("Was gibt es wohl noch alles im Wald zu entdecken, fragst du dich"),
                 paragraph("Dir kommt der geheimnisvolle Turm in den Sinn - du wirst sein "
                         + "Geheimnis bestimmt noch lüften!"));
-
-        // FIXME (bis SC Rapunzel gefunden hat) Mutter sammelt im
-        //  Wald Holz und klagt ihr Leid: Tochter an Zauberin verloren
-        //  (Oder unnötig?)
         n.narrateAlt(alt, NO_TIME);
     }
 
@@ -346,8 +342,7 @@ public enum RapunzelStoryNode implements IStoryNode {
             //  Warten nicht ohnehin lang genug ist.
 
             // FIXME Kann man unter den Bäumen auch bewusst schlafen? (Falls ja, dann
-            //  Hinweis)
-            //  Oder schläft man automatisch ein, bis Frau wiederkommt (zu einfach)?
+            //  Tipp!)
         }
 
         n.narrateAlt(alt, NO_TIME);

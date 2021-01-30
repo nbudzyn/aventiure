@@ -70,8 +70,7 @@ public class Walkthrough {
                     "In Richtung Schloss gehen",
                     "Den Wald verlassen und in den Schloßgarten gehen",
                     "Das Schloss betreten");
-
-
+    
     private static final Walkthrough SCHLOSSFEST_SCHLOSS_BETRETEN_BIS_PRINZABFAHRT =
             new Walkthrough("An einen Tisch setzen",
                     "Die Kugel auf den Tisch legen",

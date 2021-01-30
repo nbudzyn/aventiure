@@ -77,9 +77,11 @@ public class WartenActionTest extends AndroidTestBase {
     }
 
     @Test
-    public void zauberinKommtNicht_tagsueber_WartenFuerMindestensZweiStunden() {
+    public void zauberinKommtNicht_tagsueber_WartenFuerMindestensDreiStunden() {
         // GIVEN
         world.loadSC().memoryComp().upgradeKnown(RAPUNZELS_ZAUBERIN);
+        world.loadSC().memoryComp().upgradeKnown(RAPUNZELS_GESANG);
+        world.loadSC().feelingsComp().saveSatt();
 
         // WHEN
         final AvDateTime timeBefore = timeTaker.now();
@@ -121,15 +123,16 @@ public class WartenActionTest extends AndroidTestBase {
     @NonNull
     private <LIVGO extends IDescribableGO & ILocatableGO & ILivingBeingGO> WartenAction<LIVGO>
     buildWartenActionAufZauberinImSchattenDerBaume() {
-        return new WartenAction<>(db.scActionStepCountDao(), timeTaker, n, world,
-                ((LIVGO) world.load(RAPUNZELS_ZAUBERIN)),
-                ((ILocationGO) world.load(VOR_DEM_ALTEN_TURM_SCHATTEN_DER_BAEUME)));
+        return new WartenAction<>(db.counterDao(), db.scActionStepCountDao(), timeTaker, n, world,
+                ((LIVGO) world.load(RAPUNZELS_ZAUBERIN)));
     }
 
     private <LIVGO extends IDescribableGO & ILocatableGO & ILivingBeingGO>
     List<WartenAction<LIVGO>> buildWartenActionsImSchattenDerBaeume() {
         return WartenAction.buildActions(
-                db.scActionStepCountDao(), timeTaker, n, world,
+                db.counterDao(),
+                db.scActionStepCountDao(),
+                timeTaker, n, world,
                 (LIVGO) world.load(RAPUNZELS_ZAUBERIN),
                 (ILocationGO) world.load(VOR_DEM_ALTEN_TURM_SCHATTEN_DER_BAEUME));
     }
