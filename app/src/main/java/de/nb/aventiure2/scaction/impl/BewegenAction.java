@@ -99,15 +99,30 @@ public class BewegenAction<LOC_DESC extends ILocatableGO & IDescribableGO>
             @NonNull final ILocationGO location) {
         final ImmutableList.Builder<AbstractScAction> res = builder();
 
-        //  FIXME Man könnte "Der mageren Frau heimlich folgen", wenn sie gerade in eine
-        //   Richtung gegangen ist? Dann würde man sie heimlich beobachten (nicht überholen!),
-        //   wie sie den Turm hinaufsteigt.
-        //   Aber eigentlich ist das mir zu einfach.
         if (location instanceof ISpatiallyConnectedGO) {
             res.addAll(buildSpatiallyConnectedActions(scActionStepCountDao, timeTaker, counterDao,
                     n, world,
                     (ILocationGO & ISpatiallyConnectedGO) location));
         }
+
+        res.addAll(buildInActions(scActionStepCountDao, timeTaker, counterDao, n, world, location));
+
+        final BewegenAction<?> outAction =
+                buildOutAction(scActionStepCountDao, timeTaker, counterDao, n, world, location);
+        if (outAction != null) {
+            res.add(outAction);
+        }
+
+        return res.build();
+    }
+
+    private static <LOC_DESC extends ILocatableGO & IDescribableGO>
+    ImmutableList<BewegenAction<LOC_DESC>> buildInActions(
+            final SCActionStepCountDao scActionStepCountDao,
+            final TimeTaker timeTaker, final CounterDao counterDao, final Narrator n,
+            final World world,
+            @NonNull final ILocationGO location) {
+        final ImmutableList.Builder<BewegenAction<LOC_DESC>> res = builder();
 
         for (final ILocationGO inventoryGO :
                 world.loadDescribableNonLivingLocationInventory(location)) {
@@ -122,6 +137,15 @@ public class BewegenAction<LOC_DESC extends ILocatableGO & IDescribableGO>
             }
         }
 
+        return res.build();
+    }
+
+    private static <LOC_DESC extends ILocatableGO & IDescribableGO>
+    BewegenAction<LOC_DESC> buildOutAction(final SCActionStepCountDao scActionStepCountDao,
+                                           final TimeTaker timeTaker, final CounterDao counterDao,
+                                           final Narrator n,
+                                           final World world,
+                                           @NonNull final ILocationGO location) {
         @Nullable final SpatialConnectionData outData =
                 location.storingPlaceComp().getSpatialConnectionOutData();
         if (outData != null && outData.getActionName() != null
@@ -129,14 +153,14 @@ public class BewegenAction<LOC_DESC extends ILocatableGO & IDescribableGO>
             @Nullable final ILocationGO outerLocation =
                     ((ILocatableGO) location).locationComp().getLocation();
             if (outerLocation != null) {
-                res.add(new BewegenAction<>(scActionStepCountDao, timeTaker,
+                return new BewegenAction<>(scActionStepCountDao, timeTaker,
                         counterDao, n, world, location,
                         con(outerLocation.getId(), outData),
-                        NumberOfWays.NO_WAY));
+                        NumberOfWays.NO_WAY);
             }
         }
 
-        return res.build();
+        return null;
     }
 
     private static <LOC extends ILocationGO & ISpatiallyConnectedGO>
