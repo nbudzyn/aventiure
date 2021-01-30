@@ -203,6 +203,12 @@ public class SimpleMovementNarrator implements IMovementNarrator {
         alt.add(neuerSatz(anaph.nomK(),
                 "kommt dir entgegen und geht an dir vorbei"));
         alt.add(
+                // FIXME Es kam zu dieser Folge: "Die Frage geht auf dem schmalen
+                //  Pfad den Hügel hinauf  davon. Du folgst ihr und gehts dabei an der
+                //  mageren Frau vorbei. Du härst... singen... Plötzlich wird es still.
+                //  Die magere Frau kommt dir hinterher. Sie kommt auf dich zu und
+                //  geht an dir vorbei" (Dann ist sie verschwunden.)
+                //  Vermutlich hat die Frau "mitten in der Bewegung" umgedreht...
                 neuerSatz(PARAGRAPH,
                         anaph.nomK(),
                         "kommt auf dich zu und geht an dir vorbei")

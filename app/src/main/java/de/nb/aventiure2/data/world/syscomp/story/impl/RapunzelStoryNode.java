@@ -27,6 +27,7 @@ import de.nb.aventiure2.german.description.AbstractDescription;
 import de.nb.aventiure2.german.description.AltDescriptionsBuilder;
 
 import static de.nb.aventiure2.data.time.AvTimeSpan.NO_TIME;
+import static de.nb.aventiure2.data.time.Tageszeit.NACHTS;
 import static de.nb.aventiure2.data.world.gameobject.World.*;
 import static de.nb.aventiure2.data.world.syscomp.state.impl.RapunzelState.HAARE_VOM_TURM_HERUNTERGELASSEN;
 import static de.nb.aventiure2.data.world.syscomp.state.impl.RapunzelsZauberinState.MACHT_ZURZEIT_KEINE_RAPUNZELBESUCHE;
@@ -38,37 +39,26 @@ import static de.nb.aventiure2.german.description.DescriptionBuilder.paragraph;
 import static java.util.Arrays.asList;
 
 public enum RapunzelStoryNode implements IStoryNode {
-
     TURM_GEFUNDEN(10, VOR_DEM_ALTEN_TURM,
-            (db, timeTaker, n, world) -> {narrateAndDoHintAction_TurmGefunden(db, n, world);}),
+            RapunzelStoryNode::narrateAndDoHintAction_TurmGefunden),
     RAPUNZEL_SINGEN_GEHOERT(10, VOR_DEM_ALTEN_TURM,
-            (AvDatabase db, TimeTaker timeTaker, Narrator n, World world) -> {
-                narrateAndDoHintAction_RapunzelSingenGehoert(db, n, world);
-            },
-            TURM_GEFUNDEN
-    ),
+            RapunzelStoryNode::narrateAndDoHintAction_RapunzelSingenGehoert,
+            TURM_GEFUNDEN),
 
     //  Dies wird durch checkAndAdvanceIfAppropriate() automatisch freigeschaltet.
-    //  Tipps dafür wäre nicht sinnvoll
+    //  Tipps dafür wären nicht sinnvoll
     ZAUBERIN_MACHT_RAPUNZELBESUCHE,
 
     ZAUBERIN_AUF_TURM_WEG_GETROFFEN(10, VOR_DEM_ALTEN_TURM,
-            (AvDatabase db, TimeTaker timeTaker, Narrator n, World world) -> {
-                narrateAndDoHintAction_ZauberinAufTurmWegGefunden(db, n, world);
-            },
+            RapunzelStoryNode::narrateAndDoHintAction_ZauberinAufTurmWegGefunden,
             TURM_GEFUNDEN),
     ZAUBERIN_HEIMLICH_BEIM_RUFEN_BEOBACHTET(10, VOR_DEM_ALTEN_TURM,
-            (AvDatabase db, TimeTaker timeTaker, Narrator n, World world) -> {
-                narrateAndDoHintAction_ZauberinHeimlichBeimRufenBeobachtet(db, n, world);
-            },
+            RapunzelStoryNode::narrateAndDoHintAction_ZauberinHeimlichBeimRufenBeobachtet,
             TURM_GEFUNDEN
     ),
     ZU_RAPUNZEL_HINAUFGESTIEGEN(10, VOR_DEM_ALTEN_TURM,
-            (AvDatabase db, TimeTaker timeTaker, Narrator n, World world) -> {
-                narrateAndDoHintAction_ZuRapunzelHinaufgestiegen(db, n, world);
-            },
+            RapunzelStoryNode::narrateAndDoHintAction_ZuRapunzelHinaufgestiegen,
             ZAUBERIN_HEIMLICH_BEIM_RUFEN_BEOBACHTET);
-
 
     // FIXME "Mit RAPUNZEL unterhalten"
     //  - "Du fragst sie nach ihrem Namen, aber der ist so ungewöhnlich, dass
@@ -246,7 +236,7 @@ public enum RapunzelStoryNode implements IStoryNode {
     // IDEA Alternativen für Tipp-Texte, bei denen Foreshadowing stärker im
     //  Vordergrund steht
     private static void narrateAndDoHintAction_TurmGefunden(
-            final AvDatabase db, final Narrator n, final World world) {
+            final AvDatabase db, final TimeTaker timeTaker, final Narrator n, final World world) {
         final AltDescriptionsBuilder alt = alt();
         alt.add(
                 paragraph("Hast du den Wald eigentlich schon überall erkundet?"),
@@ -260,7 +250,7 @@ public enum RapunzelStoryNode implements IStoryNode {
     }
 
     private static void narrateAndDoHintAction_RapunzelSingenGehoert(
-            final AvDatabase db, final Narrator n, final World world) {
+            final AvDatabase db, final TimeTaker timeTaker, final Narrator n, final World world) {
         final AltDescriptionsBuilder alt = alt();
 
         if (world.loadSC().locationComp().hasRecursiveLocation(VOR_DEM_ALTEN_TURM)) {
@@ -277,7 +267,7 @@ public enum RapunzelStoryNode implements IStoryNode {
     }
 
     private static void narrateAndDoHintAction_ZauberinAufTurmWegGefunden(
-            final AvDatabase db, final Narrator n, final World world) {
+            final AvDatabase db, final TimeTaker timeTaker, final Narrator n, final World world) {
         final AltDescriptionsBuilder alt = alt();
 
         alt.addAll(altTurmWohnenHineinHeraus(world));
@@ -286,8 +276,59 @@ public enum RapunzelStoryNode implements IStoryNode {
     }
 
     private static void narrateAndDoHintAction_ZauberinHeimlichBeimRufenBeobachtet(
-            final AvDatabase db, final Narrator n, final World world) {
+            final AvDatabase db, final TimeTaker timeTaker, final Narrator n, final World world) {
+        if (world.hasSameOuterMostLocationAsSC((IGameObject) loadZauberin(world))) {
+            narrateAndDoHintAction_ZauberinHeimlichBeimRufenBeobachtet_ZauberinImRaum(n);
+        } else {
+            narrateAndDoHintAction_ZauberinHeimlichBeimRufenBeobachtet_ZauberinNichtImRaum(
+                    timeTaker, n, world);
+        }
+    }
+
+    private static void narrateAndDoHintAction_ZauberinHeimlichBeimRufenBeobachtet_ZauberinImRaum(
+            final Narrator n) {
+        n.narrateAlt(NO_TIME,
+                paragraph("was will die Frau bloß?"),
+                paragraph("was will die Frau wohl?"),
+                paragraph("was mag die Frau wollen?"),
+                paragraph("es wäre spannend, die Frau einmal heimlich zu beobachten"),
+                paragraph("ist es nicht seltsam, dass die Frau so kurz angebunden ist "
+                        + "und nicht erzählen mag, wohin sie eigentlich möchte?"));
+    }
+
+    private static void narrateAndDoHintAction_ZauberinHeimlichBeimRufenBeobachtet_ZauberinNichtImRaum(
+            final TimeTaker timeTaker, final Narrator n, final World world) {
+        if (timeTaker.now().getTageszeit() == NACHTS) {
+            narrateAndDoHintAction_ZauberinHeimlichBeimRufenBeobachtet_ZauberinNichtImRaum_Nachts(
+                    n);
+            return;
+        }
+
+        narrateAndDoHintAction_ZauberinHeimlichBeimRufenBeobachtet_ZauberinNichtImRaum_Tagsueber(n,
+                world);
+    }
+
+    private static void narrateAndDoHintAction_ZauberinHeimlichBeimRufenBeobachtet_ZauberinNichtImRaum_Nachts(
+            final Narrator n) {
+        n.narrateAlt(NO_TIME,
+                du(PARAGRAPH, "musst", "an die magere Frau denken; du "
+                        + "wirst ihr Geheimnis schon knacken! Aber nachts – da schläft "
+                        + "sie ja"
+                        + " wohl?"),
+                paragraph("dir fällt auf: Nachts ist dir die magere Frau noch nie "
+                        + "begegnet"),
+                paragraph("des Nachts scheint hier kaum jemand auf den Beinen zu sein - "
+                        + "außer dir"),
+                paragraph("Es scheint, ein jeder liegt nachts in seinem Bettchen. Und "
+                        + "du?"));
+    }
+
+    private static void narrateAndDoHintAction_ZauberinHeimlichBeimRufenBeobachtet_ZauberinNichtImRaum_Tagsueber(
+            final Narrator n, final World world) {
         final AltDescriptionsBuilder alt = alt();
+
+        alt.add(paragraph("unvermittelt kommt dir die magere Frau in den Sinn, die "
+                + "so geschäftig umherläuft. Wohin will die bloß?"));
 
         alt.addAll(altTurmWohnenHineinHeraus(world));
 
@@ -300,27 +341,19 @@ public enum RapunzelStoryNode implements IStoryNode {
                             + "nur einmal auf die Lauer legen und beobachten, ob jemand "
                             + "hineinkommt?").mitVorfeldSatzglied("bestimmt")
                     .beendet(PARAGRAPH));
-            // FIXME Mehr verschiedene Hinweise, dass man die magere Frau heimlich beobachten sollte
-
-            // FIXME ab dem zb 3. Mal deutlichere Hinweise länger Rasten - sofern das
+            // FIXME ab dem zb 3. Mal deutlichere Hinweise länger Rasten? Sofern das
             //  Warten nicht ohnehin lang genug ist.
 
-            // FIXME Wenn Zauberin abends nicht mehr kommt: Hinweis (beim Rasten) auf Schlafen
-
-            // FIXME Evtl. beim Rasten einschlafen?!
-        }
-
-        if (world.hasSameOuterMostLocationAsSC((IGameObject) loadZauberin(world))) {
-            alt.add(paragraph("Was will die Frau bloß?"),
-                    paragraph("Was will die Frau wohl?"),
-                    paragraph("Was mag die Frau wollen?"));
+            // FIXME Kann man unter den Bäumen auch bewusst schlafen? (Falls ja, dann
+            //  Hinweis)
+            //  Oder schläft man automatisch ein, bis Frau wiederkommt (zu einfach)?
         }
 
         n.narrateAlt(alt, NO_TIME);
     }
 
     private static void narrateAndDoHintAction_ZuRapunzelHinaufgestiegen(
-            final AvDatabase db, final Narrator n, final World world) {
+            final AvDatabase db, final TimeTaker timeTaker, final Narrator n, final World world) {
         final AltDescriptionsBuilder alt = alt();
         final IHasStateGO<RapunzelState> rapunzel = loadRapunzel(world);
 
@@ -383,11 +416,13 @@ public enum RapunzelStoryNode implements IStoryNode {
         return alt.build();
     }
 
+    @SuppressWarnings("unchecked")
     @NonNull
     private static IHasStateGO<RapunzelState> loadRapunzel(final World world) {
         return (IHasStateGO<RapunzelState>) world.load(RAPUNZEL);
     }
 
+    @SuppressWarnings("unchecked")
     @NonNull
     private static <Z extends IHasStateGO<RapunzelsZauberinState> & ILocatableGO>
     Z loadZauberin(final World world) {

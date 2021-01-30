@@ -1079,6 +1079,15 @@ public class World {
     }
 
     /**
+     * Convenience-Methode: Lädt (sofern nicht schon geschehen) das {@link #SCHLOSSFEST} und gibt
+     * es zurück.
+     */
+    @Nonnull
+    public GameObject loadSchlossfest() {
+        return load(SCHLOSSFEST);
+    }
+
+    /**
      * Lädt (sofern nicht schon geschehen) dieses Game Object und gibt es zurück.
      */
     @Nonnull

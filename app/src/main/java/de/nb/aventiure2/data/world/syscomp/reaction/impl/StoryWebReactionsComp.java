@@ -1,11 +1,13 @@
 package de.nb.aventiure2.data.world.syscomp.reaction.impl;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import de.nb.aventiure2.data.database.AvDatabase;
 import de.nb.aventiure2.data.narration.Narrator;
 import de.nb.aventiure2.data.world.counter.CounterDao;
 import de.nb.aventiure2.data.world.gameobject.*;
+import de.nb.aventiure2.data.world.gameobject.player.*;
 import de.nb.aventiure2.data.world.syscomp.alive.ILivingBeingGO;
 import de.nb.aventiure2.data.world.syscomp.location.ILocatableGO;
 import de.nb.aventiure2.data.world.syscomp.reaction.AbstractReactionsComp;
@@ -34,6 +36,7 @@ import static de.nb.aventiure2.data.world.gameobject.World.*;
  * <li>(Es passiert nichts.)
  * </ul>
  */
+@SuppressWarnings("UnnecessaryReturnStatement")
 public class StoryWebReactionsComp
         extends AbstractReactionsComp
         implements IMovementReactions, IStateChangedReactions, ISCActionReactions {
@@ -80,7 +83,7 @@ public class StoryWebReactionsComp
     public void onEnter(final ILocatableGO locatable, @Nullable final ILocationGO from,
                         final ILocationGO to) {
         if (locatable.is(SPIELER_CHARAKTER)) {
-            onSCEnter(from, to);
+            onSCEnter(to);
             return;
         }
 
@@ -119,7 +122,13 @@ public class StoryWebReactionsComp
         }
     }
 
-    private void onSCEnter(@Nullable final ILocationGO from, final ILocationGO to) {
+    @NonNull
+    @Override
+    protected SpielerCharakter loadSC() {
+        return super.loadSC();
+    }
+
+    private void onSCEnter(final ILocationGO to) {
         final ILocatableGO rapunzelsZauberin = (ILocatableGO) world.load(RAPUNZELS_ZAUBERIN);
         if (rapunzelsZauberin.locationComp().hasSameOuterMostLocationAs(to)) {
             reachStoryNode(RapunzelStoryNode.ZAUBERIN_AUF_TURM_WEG_GETROFFEN);

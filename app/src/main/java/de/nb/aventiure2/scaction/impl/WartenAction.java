@@ -89,7 +89,7 @@ public class WartenAction<LIVGO extends IDescribableGO & ILocatableGO & ILivingB
 
     @Override
     public void narrateAndDo() {
-        // FIXME Aktion
+        // FIXME Weitere Dinge, die das Warten abbrechen?
         //  - Vermutlich braucht man weitere Möglichkeiten, bei denen das Warten abgebrochen wird,
         //    z.B. wenn der Spieler müder oder hungriger wird?
         //  - Rapunzels Gesang sollte das Warten abbrechen - wenn man ihn noch nicht kennt.
