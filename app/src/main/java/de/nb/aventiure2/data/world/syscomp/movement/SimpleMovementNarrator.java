@@ -217,7 +217,7 @@ public class SimpleMovementNarrator implements IMovementNarrator {
                 "kommt dir entgegen und geht an dir vorbei"));
         alt.add(
                 // FIXME Es kam zu dieser Folge: "Die Frau geht auf dem schmalen
-                //  Pfad den Hügel hinauf  davon. Du folgst ihr und gehts dabei an der
+                //  Pfad den Hügel hinauf  davon. Du folgst ihr und gehst .. an der
                 //  mageren Frau vorbei. Du härst... singen... Plötzlich wird es still.
                 //  Die magere Frau kommt dir hinterher. Sie kommt auf dich zu und
                 //  geht an dir vorbei" (Dann ist sie verschwunden.)
