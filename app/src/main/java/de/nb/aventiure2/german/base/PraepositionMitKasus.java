@@ -122,7 +122,6 @@ public enum PraepositionMitKasus implements KasusOderPraepositionalkasus {
             if (praepositionVerschmolzenMN != null &&
                     (substantivischePhrase.getNumerusGenus() == M ||
                             (substantivischePhrase.getNumerusGenus() == N))) {
-                // TODO Konstituente mit artikellosDatK oder so zurückgeben!
                 return joinToKonstituentenfolge(
                         substantivischePhrase.getFokuspartikel(),
                         praepositionVerschmolzenMN,

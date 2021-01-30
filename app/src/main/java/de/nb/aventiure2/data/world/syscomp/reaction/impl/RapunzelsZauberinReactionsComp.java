@@ -283,13 +283,6 @@ public class RapunzelsZauberinReactionsComp
             return;
         }
 
-        // FIXME Zauberin soll nicht einfach verschwinden, wenn sie
-        //  in den Schlossgarten geht. (Vor allem nicht, wenn der SC sie
-        //  auf dem Weg überholt hat!)
-        //  Vielleicht etwas wie "Du verlierst... aus den Augen" - möglicherweise
-        //  kann man das über einen separaten Raum erzeugen, den der SC
-        //  nicht betreten kann??
-
         if (!movementComp.isMoving()) {
             movementComp.narrateAndDoScTrifftStehendesMovingGOInTo(scTo);
         }
@@ -544,7 +537,7 @@ public class RapunzelsZauberinReactionsComp
         // Zustandswechsel nötig! Die Zauberin geht zu Rapunzel los.
         onTimePassed_ToAufDemWegZuRapunzel(now);
 
-        // TODO Wenn der World-Tick ungewöhnlich lang war, geht die Zauberin
+        // FIXME Wenn der World-Tick ungewöhnlich lang war, geht die Zauberin
         //  recht spät oder gar nicht mehr los.
         //  Am besten durch ein zentrales Konzept beheben!
     }
@@ -575,7 +568,7 @@ public class RapunzelsZauberinReactionsComp
             return;
         }
 
-        // TODO Wenn der World-Tick ungewöhnlich lang war, passiert das hier
+        // FIXME Wenn der World-Tick ungewöhnlich lang war, passiert das hier
         //  alles zu spät.
         //  Denkbare Lösungen:
         //  - Durch ein zentrales Konzept beheben (World-Ticks nie zu lang)
@@ -701,7 +694,7 @@ public class RapunzelsZauberinReactionsComp
         // Zustandswechsel nötig! Die Zauberin geht zu Rapunzel los.
         onTimePassed_ToAufDemWegZuRapunzel(now);
 
-        // TODO Wenn der World-Tick ungewöhnlich lang war, geht die Zauberin
+        // FIXME Wenn der World-Tick ungewöhnlich lang war, geht die Zauberin
         //  recht spät oder gar nicht mehr los.
         //  Am besten durch ein zentrales Konzept beheben!
     }

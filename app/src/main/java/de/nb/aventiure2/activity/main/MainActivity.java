@@ -62,7 +62,7 @@ public class MainActivity extends AppCompatActivity {
     private ObjectAnimator narrationScrollViewAnimator;
 
     private GuiActionsAdapter guiActionsAdapter;
-    // TODO Text der Geschichte teilen?
+    // TODO Text der Geschichte teilen (share)?
 
     private MainViewModel mainViewModel;
     private Toolbar toolbar;
@@ -260,7 +260,8 @@ public class MainActivity extends AppCompatActivity {
     /**
      * This method converts dp unit to equivalent pixels, depending on device density.
      *
-     * @param dp A value in dp (density independent pixels) unit. Which we need to convert into pixels
+     * @param dp A value in dp (density independent pixels) unit. Which we need to convert into
+     *           pixels
      * @return A float value to represent px equivalent to dp depending on device density
      */
     private int convertDpToPixel(final float dp) {
@@ -274,11 +275,13 @@ public class MainActivity extends AppCompatActivity {
         super.onResume();
 
         // Keep screen on while developing in Android Studio
-        // See https://stackoverflow.com/questions/8840954/how-do-i-keep-my-screen-unlocked-during-usb-debugging
+        // See https://stackoverflow.com/questions/8840954/how-do-i-keep-my-screen-unlocked
+        // -during-usb-debugging
         if (BuildConfig.DEBUG) { // don't even consider it otherwise
             if (Debug.isDebuggerConnected()) {
                 LOGGER.d(
-                        "Keeping screen on for debugging, detach debugger and force an onResume to turn it off.");
+                        "Keeping screen on for debugging, detach debugger and force an onResume "
+                                + "to turn it off.");
                 getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
             } else {
                 getWindow().clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);

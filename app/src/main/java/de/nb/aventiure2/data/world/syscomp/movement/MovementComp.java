@@ -271,7 +271,7 @@ public class MovementComp
      */
     private boolean pauseIfSameOuterMostLocationWithSC() {
         if (locationComp.hasSameOuterMostLocationAs(SPIELER_CHARAKTER)
-            // IDEA Wenn der SC schläft, dann hingegen das Game Object einfach
+            // FIXME Wenn der SC schläft, dann hingegen das Game Object einfach
             //  vorbeilaufen lassen (in diesem Fall sollte es ja aber auch keine
             //  Narration geben...)
         ) {

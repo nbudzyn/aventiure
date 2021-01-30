@@ -164,12 +164,11 @@ public class TageszeitReactionsComp
                         neuerSatz(PARAGRAPH, "Die Abenddämmerung beginnt"),
                         neuerSatz(PARAGRAPH, "Inzwischen steht die Sonne schon tief")
                         // STORY Noch ein paar Texte!
-                        // TODO WENN DER SPIELER DRAUSSEN IST "Heute ist ein schönes Abendrot zu sehen"
+                        // TODO WENN DER SPIELER DRAUSSEN IST "Heute ist ein schönes Abendrot zu
+                        //  sehen"
                 );
                 return;
             case NACHTS:
-                // TODO Der Spieler könnte abends MÜDE werden (und morgens oder nach dem
-                // Schlafen wieder wach / NEUTRAL)
                 n.narrateAlt(AvTimeSpan.NO_TIME,
                         neuerSatz(PARAGRAPH, "Die Sonne ist jetzt untergegangen"),
                         neuerSatz(PARAGRAPH, "Es ist dunkel geworden"),
@@ -212,7 +211,8 @@ public class TageszeitReactionsComp
                                 "Es ist Nacht geworden und man sieht nicht "
                                         + "mehr so gut")
                         // TODO wenn der SC draußen ist:
-                        //  "Jetzt sind am Himmel die Sterne zu sehen. Es ist dunkel und in der Ferne "
+                        //  "Jetzt sind am Himmel die Sterne zu sehen. Es ist dunkel und in der
+                        //  Ferne "
                         //  + "ruft ein Käuzchen"
                 );
                 return;

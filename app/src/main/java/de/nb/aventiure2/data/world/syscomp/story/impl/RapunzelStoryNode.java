@@ -244,8 +244,9 @@ public enum RapunzelStoryNode implements IStoryNode {
                 paragraph("Dir kommt der geheimnisvolle Turm in den Sinn - du wirst sein "
                         + "Geheimnis bestimmt noch lüften!"));
 
-        // STORY (bis SC Rapunzel gefunden hat) Mutter sammelt im
+        // FIXME (bis SC Rapunzel gefunden hat) Mutter sammelt im
         //  Wald Holz und klagt ihr Leid: Tochter an Zauberin verloren
+        //  (Oder unnötig?)
         n.narrateAlt(alt, NO_TIME);
     }
 

@@ -185,7 +185,7 @@ public class BaumFactory {
     @CheckReturnValue
     private static TimedDescription<?> getDescOutNtesMal(
             final Lichtverhaeltnisse lichtverhaeltnisse) {
-        // STORY Die folgenden Konstruktionen möchte ich ebenfalls automatisch erzeugen (konkret
+        // FIXME Die folgenden Konstruktionen möchte ich ebenfalls automatisch erzeugen (konkret
         //  beim Aufwachen - wenn das Sinn ergibt):
         //  - Gut ausgeschlafen bist du voller Tatendrang.
         //  - Konrete Fälle suchen und dann einbauen - oder alternativ erst einmal verwerfen.

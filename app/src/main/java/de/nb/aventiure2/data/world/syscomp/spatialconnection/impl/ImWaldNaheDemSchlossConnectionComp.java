@@ -134,10 +134,12 @@ public class ImWaldNaheDemSchlossConnectionComp extends AbstractSpatialConnectio
         // TODO Lichtverhältnisse auch bei den anderen Aktionen berücksichtigen,
         //  insbesondere nach derselben Logik (z.B. "im Schloss ist es immer hell",
         //  "eine Fackel bringt auch nachts Licht" etc.)
-        // IDEA Wenn man schläft, "verpasst" man Reactions, die man dann später
+        // FIXME Wenn man schläft, "verpasst" man Reactions, die man dann später
         //  (beim Aufwachen) merkt ("Der Frosch ist verschwunden".) Man speichert
         //  am besten den Stand VOR dem Einschlafen und vergleicht mit dem Stand NACH dem
-        //  Einschlafen.
+        //  Einschlafen. Vielleicht beim Aufwachen dasselbe Konzept wie beim Bewegen
+        //  verwenden! (Setzt voraus, dass der SC Änderungen während des Schlafens
+        //  weder erzählt bekommt noch sie in den assumedLocations registriert werden.)
     }
 
     @NonNull

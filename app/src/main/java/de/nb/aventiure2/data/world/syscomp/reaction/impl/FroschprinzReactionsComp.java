@@ -541,9 +541,6 @@ public class FroschprinzReactionsComp
                             .timed(secs(5))
                             .beendet(PARAGRAPH));
         }
-        // IDEA Wenn man nicht erlebt, wie der Frosch weghüpft: "Der Frosch ist verschwunden"
-        //  oder ähnlich, wenn man wieder an den Ort zurückkommt, wo man den Frosch
-        //  abgesetzt (oder zuletzt gesehen) hat. (Assumed Locations verwenden?)
         locationComp.narrateAndSetLocation(
                 SCHLOSS_VORHALLE_AM_TISCH_BEIM_FEST,
                 () -> stateComp.narrateAndSetState(WARTET_AUF_SC_BEIM_SCHLOSSFEST)

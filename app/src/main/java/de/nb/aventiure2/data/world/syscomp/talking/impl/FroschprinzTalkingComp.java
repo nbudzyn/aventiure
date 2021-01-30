@@ -514,10 +514,11 @@ public class FroschprinzTalkingComp extends AbstractTalkingComp {
         world.loadSC().feelingsComp().requestMoodMin(VOLLER_FREUDE);
 
         // die goldene Kugel / die Dinge
-        // die goldene Kugel / die Dinge / IDEA Synonym: "das schöne Spielzeug"
-        // Idee zu Synonymen: Synonyme sollte erst NACH dem Originalbegriff auftauchen
-        // und automatisch gewählt werden, wenn syn() oder Ähnliches
-        // programmiert wird.
+        // die goldene Kugel / die Dinge
+        // IDEA Synonym: "das schöne Spielzeug"
+        //  Idee zu Synonymen: Synonyme sollte erst NACH dem Originalbegriff auftauchen
+        //  und automatisch gewählt werden, wenn syn(), anaph() oder Ähnliches
+        //  programmiert wird.
         n.narrate(satzanschluss("taucht seinen Kopf",
                 "unter, sinkt hinab und über ein Weilchen kommt er wieder herauf gerudert,",
                 "hat",
@@ -527,10 +528,6 @@ public class FroschprinzTalkingComp extends AbstractTalkingComp {
                 descObjectsInDenBrunnenGefallen.persPron().akkK(),
                 "ins Gras. Du",
                 "bist voll Freude, als du",
-                // die goldene Kugel / die Dinge / IDEA Synonym: "das schöne Spielzeug"
-                // Idee zu Synonymen: Synonyme sollte erst NACH dem Originalbegriff auftauchen
-                // und automatisch gewählt werden, wenn syn() oder Ähnliches
-                // programmiert wird.
                 descObjectsInDenBrunnenGefallen.akkK(),
                 "wieder erblickst")
                 .timed(secs(30)));

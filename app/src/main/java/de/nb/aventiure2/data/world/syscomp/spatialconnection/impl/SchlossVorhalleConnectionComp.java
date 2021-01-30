@@ -128,8 +128,6 @@ public class SchlossVorhalleConnectionComp extends AbstractSpatialConnectionComp
         if (lichtverhaeltnisse == HELL) {
             // TODO Vielleicht ist es nur tagsüber / mittags heiß und morgens
             //  noch nicht?
-            // TODO Vielleicht ist es nur tagsüber / mittags heiß und morgens
-            //  noch nicht?
             return du("gehst",
                     "über eine Marmortreppe hinaus in die Gärten vor dem",
                     "Schloss.\n\n",

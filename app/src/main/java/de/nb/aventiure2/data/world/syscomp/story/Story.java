@@ -20,7 +20,7 @@ public enum Story {
 
     // IDEA Meine Story als "Front" (analog Dungeon World) betrachten?
 
-    // IDEA Kernelemente der Geschichte sollten in der Environmet sichtbar sein. Schon zu 
+    // IDEA Kernelemente der Geschichte sollten im Environment sichtbar sein. Schon zu
     //  Beginn (2. Text o.ä.) und danach geändert.
     //  Zb: Flugblatt am Baum, dass den Verschwundenen Prinzen sucht. "Anschlag lesen".
     //  Wird erzeugt oncounterup (neues event oder parameterlambda)
@@ -62,7 +62,8 @@ public enum Story {
     //  Sollte man eine Geschichte parametrisieren? Das Gemeinsame aus zwei Geschichten
     //  finden und A oder B oder etwas dazwischen wählen?
     //  Stories mit Storytelling Theorien in Bezug setzen (Schritt X = Phase Y). Wie
-    //  könnte man eine Story aus einer Storytellingtheorie erzeugen? Was müsste man tun, um andere - ausreichend verschiedene Stories zu erzeugen?
+    //  könnte man eine Story aus einer Storytellingtheorie erzeugen? Was müsste man tun, um
+    //  andere - ausreichend verschiedene Stories zu erzeugen?
     //  Zunächst so programmieren, dass neue Stories immer schneller programmiert
     //  sind (Blöcke / Wiederverwendung?)
     //  In Stories wichtige Punkte manuell austauschen (anderer NPC, amderer Ort,

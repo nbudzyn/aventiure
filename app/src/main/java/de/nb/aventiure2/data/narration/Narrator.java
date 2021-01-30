@@ -174,7 +174,7 @@ public class Narrator {
     }
 
     public void narrateAlt(final Collection<? extends TimedDescription<?>> alternatives) {
-        // IDEA hier könnte ein Adressatenmodell auf Basis des SC (Interface?)
+        // FIXME hier könnte ein Adressatenmodell auf Basis des SC (Interface?)
         //  entscheiden, ob SC z.B. schläft.
 
         if (temporaryNarration != null) {
