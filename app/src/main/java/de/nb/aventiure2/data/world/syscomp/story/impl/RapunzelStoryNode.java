@@ -340,9 +340,6 @@ public enum RapunzelStoryNode implements IStoryNode {
                     .beendet(PARAGRAPH));
             // FIXME ab dem zb 3. Mal deutlichere Hinweise länger Rasten? Sofern das
             //  Warten nicht ohnehin lang genug ist.
-
-            // FIXME Kann man unter den Bäumen auch bewusst schlafen? (Falls ja, dann
-            //  Tipp!)
         }
 
         n.narrateAlt(alt, NO_TIME);

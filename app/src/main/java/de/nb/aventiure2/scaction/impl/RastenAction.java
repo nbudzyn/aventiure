@@ -8,7 +8,9 @@ import com.google.common.collect.ImmutableList;
 import java.util.List;
 
 import de.nb.aventiure2.data.narration.Narrator;
+import de.nb.aventiure2.data.time.AvTimeSpan;
 import de.nb.aventiure2.data.time.TimeTaker;
+import de.nb.aventiure2.data.world.counter.CounterDao;
 import de.nb.aventiure2.data.world.gameobject.*;
 import de.nb.aventiure2.data.world.syscomp.feelings.FeelingIntensity;
 import de.nb.aventiure2.data.world.syscomp.feelings.Mood;
@@ -17,12 +19,12 @@ import de.nb.aventiure2.data.world.syscomp.state.IHasStateGO;
 import de.nb.aventiure2.data.world.syscomp.state.impl.RapunzelState;
 import de.nb.aventiure2.data.world.syscomp.storingplace.ILocationGO;
 import de.nb.aventiure2.german.description.AltDescriptionsBuilder;
-import de.nb.aventiure2.scaction.AbstractScAction;
 import de.nb.aventiure2.scaction.stepcount.SCActionStepCountDao;
 
 import static de.nb.aventiure2.data.time.AvTimeSpan.mins;
 import static de.nb.aventiure2.data.world.base.Lichtverhaeltnisse.DUNKEL;
 import static de.nb.aventiure2.data.world.gameobject.World.*;
+import static de.nb.aventiure2.data.world.syscomp.feelings.Hunger.HUNGRIG;
 import static de.nb.aventiure2.data.world.syscomp.state.impl.RapunzelState.SINGEND;
 import static de.nb.aventiure2.german.base.StructuralElement.SENTENCE;
 import static de.nb.aventiure2.german.description.AltDescriptionsBuilder.alt;
@@ -32,34 +34,32 @@ import static de.nb.aventiure2.german.description.DescriptionBuilder.neuerSatz;
 /**
  * Der Spielercharakter legt (wach!) eine Rast ein.
  */
-public class RastenAction extends AbstractScAction {
+public class RastenAction extends AbstractWartenRastenAction {
     private final ILocationGO location;
 
     public static List<RastenAction> buildActions(
+            final CounterDao counterDao,
             final SCActionStepCountDao scActionStepCountDao,
             final TimeTaker timeTaker,
             final Narrator n, final World world,
             @Nullable final ILocationGO location) {
         final ImmutableList.Builder<RastenAction> res = ImmutableList.builder();
         if (location != null && location.is(VOR_DEM_ALTEN_TURM_SCHATTEN_DER_BAEUME)) {
-            res.add(new RastenAction(scActionStepCountDao, timeTaker, n, world, location));
+            res.add(new RastenAction(
+                    counterDao, scActionStepCountDao, timeTaker, n, world, location));
         }
 
         return res.build();
     }
 
-    private RastenAction(final SCActionStepCountDao scActionStepCountDao,
+    private RastenAction(final CounterDao counterDao,
+                         final SCActionStepCountDao scActionStepCountDao,
                          final TimeTaker timeTaker,
                          final Narrator n,
                          final World world,
                          final ILocationGO location) {
-        super(scActionStepCountDao, timeTaker, n, world);
+        super(counterDao, scActionStepCountDao, timeTaker, n, world);
         this.location = location;
-    }
-
-    @Override
-    public String getType() {
-        return "actionRastenWarten";
     }
 
     @Override
@@ -70,20 +70,44 @@ public class RastenAction extends AbstractScAction {
 
     @Override
     public void narrateAndDo() {
-        // FIXME Schläft man (nach mehrfachem Rasten?
-        //  Und bei ausreichender Müdigkeit?) automatisch ein?
-
-        if (isDefinitivFortsetzung() &&
-                ((IHasStateGO<RapunzelState>) world.load(RAPUNZEL)).stateComp()
-                        .hasState(SINGEND)) {
-            narrateAndDoRapunzelZuhoeren();
-        } else if (location.storingPlaceComp().getLichtverhaeltnisse() == DUNKEL) {
-            narrateAndDoDunkel();
+        if (automatischesEinschlafen()) {
+            narrateAndDoSchlafen();
         } else {
-            narrateAndDoHell();
+            if (isDefinitivFortsetzung() && loadRapunzel().stateComp().hasState(SINGEND)) {
+                narrateAndDoRapunzelZuhoeren();
+            } else if (location.storingPlaceComp().getLichtverhaeltnisse() == DUNKEL) {
+                narrateAndDoDunkel();
+            } else {
+                narrateAndDoHell();
+            }
+        }
+        sc.memoryComp().setLastAction(buildMemorizedAction());
+    }
+
+    @Override
+    protected void narrateAndDoEinschlafen(final AvTimeSpan schlafdauer) {
+        final AltDescriptionsBuilder alt = alt();
+
+        if (isDefinitivWiederholung()) {
+            alt.add(neuerSatz("aber dann fällt dir doch dein Kopf vornüber und du fällst in",
+                    "einen tiefen Schlaf"),
+                    neuerSatz("wie du so an einen Baumstamm gelehnt dasitzt, fallen dir",
+                            "die Augen von selber zu und du schläfst ein"),
+                    neuerSatz("dir fällts aber wie Blei auf die Augen und du schläfst ein"),
+                    neuerSatz("dir fallen die Augen zu und auf einem Lager von Moos",
+                            "schläfst du ein"));
+            if (sc.feelingsComp().getHunger() == HUNGRIG) {
+                alt.add(du("schläfst", "vor Müdigkeit und Hunger ein")
+                        .mitVorfeldSatzglied("vor Müdigkeit und Hunger")
+                        .undWartest());
+            }
+        } else {
+            alt.add(du("lehnst",
+                    "dich an einen Baumstamm, da fallen dir die Augen von selber "
+                            + "zu und du schläfst ein"));
         }
 
-        sc.memoryComp().setLastAction(buildMemorizedAction());
+        n.narrateAlt(alt, schlafdauer);
     }
 
     private void narrateAndDoRapunzelZuhoeren() {
@@ -197,5 +221,11 @@ public class RastenAction extends AbstractScAction {
     @NonNull
     private static Action buildMemorizedAction() {
         return new Action(Action.Type.RASTEN);
+    }
+
+    @SuppressWarnings("unchecked")
+    @NonNull
+    private IHasStateGO<RapunzelState> loadRapunzel() {
+        return (IHasStateGO<RapunzelState>) world.load(RAPUNZEL);
     }
 }

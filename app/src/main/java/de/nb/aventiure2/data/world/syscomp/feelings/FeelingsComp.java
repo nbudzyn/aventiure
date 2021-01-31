@@ -322,7 +322,9 @@ public class FeelingsComp extends AbstractStatefulComponent<FeelingsPCD> {
         if (schlafdauer.longerThanOrEqual(hours(7))) {
             alt.add(du(CHAPTER, "wachst",
                     "nach einem langen Schlaf gut erholt wieder auf")
-                    .mitVorfeldSatzglied("nach einem langen Schlaf"));
+                            .mitVorfeldSatzglied("nach einem langen Schlaf"),
+                    du(CHAPTER, "schläfst", "deine Müdigkeit aus; erst nach langem",
+                            "Schlaf erwachst du wieder"));
         }
 
         if (schlafdauer.longerThanOrEqual(hours(4))) {
@@ -336,7 +338,7 @@ public class FeelingsComp extends AbstractStatefulComponent<FeelingsPCD> {
                     "Als du die Augen wieder aufschlägst, sind einige Stunden vergangen"));
         }
 
-        if (schlafdauer.shorterThanOrEqual(hours(1))) {
+        if (schlafdauer.isBetween(mins(45), mins(7))) {
             alt.add(du(CHAPTER,
                     "schläfst", "vielleicht eine Stunde und wachst "
                             + "gekräftigt wieder auf"));
@@ -355,8 +357,9 @@ public class FeelingsComp extends AbstractStatefulComponent<FeelingsPCD> {
         if (schlafdauer.shorterThanOrEqual(mins(20))) {
             if (wollteEinschlafen) {
                 alt.add(neuerSatz(CHAPTER,
-                        "Als du wieder aufwachst, hast du den Eindruck, dich gerade erst "
-                                + "hingelegt zu haben"));
+                        "Als du wieder aufwachst, hast du",
+                        ImmutableList.of("den Eindruck", "das Gefühl"),
+                        ", dich gerade erst hingelegt zu haben"));
             } else {
                 alt.add(neuerSatz(CHAPTER,
                         "Keine halbe Stunde später schreckst du wieder hoch"));

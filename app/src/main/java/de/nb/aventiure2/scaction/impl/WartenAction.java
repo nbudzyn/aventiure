@@ -14,7 +14,6 @@ import de.nb.aventiure2.data.world.counter.CounterDao;
 import de.nb.aventiure2.data.world.gameobject.*;
 import de.nb.aventiure2.data.world.syscomp.alive.ILivingBeingGO;
 import de.nb.aventiure2.data.world.syscomp.description.IDescribableGO;
-import de.nb.aventiure2.data.world.syscomp.feelings.FeelingIntensity;
 import de.nb.aventiure2.data.world.syscomp.location.ILocatableGO;
 import de.nb.aventiure2.data.world.syscomp.memory.Action;
 import de.nb.aventiure2.data.world.syscomp.storingplace.ILocationGO;
@@ -23,7 +22,6 @@ import de.nb.aventiure2.german.description.DescriptionUmformulierer;
 import de.nb.aventiure2.german.description.Kohaerenzrelation;
 import de.nb.aventiure2.german.praedikat.AdverbialeAngabeSkopusSatz;
 import de.nb.aventiure2.german.string.GermanStringUtil;
-import de.nb.aventiure2.scaction.AbstractScAction;
 import de.nb.aventiure2.scaction.stepcount.SCActionStepCountDao;
 
 import static de.nb.aventiure2.data.time.AvTimeSpan.hours;
@@ -41,12 +39,8 @@ import static de.nb.aventiure2.german.praedikat.VerbSubjObj.WARTEN;
  * Der Spielercharakter legt (wach!) eine Rast ein.
  */
 public class WartenAction<LIVGO extends IDescribableGO & ILocatableGO & ILivingBeingGO>
-        extends AbstractScAction {
-    private final CounterDao counterDao;
+        extends AbstractWartenRastenAction {
     private final LIVGO erwartet;
-
-    private static final String COUNTER_WARTEN_IN_FOLGE =
-            "WartenAction_WARTEN_IN_FOLGE";
 
     public static <LIVGO extends IDescribableGO & ILocatableGO & ILivingBeingGO>
     List<WartenAction<LIVGO>> buildActions(
@@ -74,14 +68,8 @@ public class WartenAction<LIVGO extends IDescribableGO & ILocatableGO & ILivingB
                  final Narrator n,
                  final World world,
                  final LIVGO erwartet) {
-        super(scActionStepCountDao, timeTaker, n, world);
-        this.counterDao = counterDao;
+        super(counterDao, scActionStepCountDao, timeTaker, n, world);
         this.erwartet = erwartet;
-    }
-
-    @Override
-    public String getType() {
-        return "actionRastenWarten";
     }
 
     @Override
@@ -99,7 +87,7 @@ public class WartenAction<LIVGO extends IDescribableGO & ILocatableGO & ILivingB
     @Override
     public void narrateAndDo() {
         if (!sc.memoryComp().getLastAction().is(Action.Type.WARTEN)) {
-            counterDao.reset(COUNTER_WARTEN_IN_FOLGE);
+            counterDao.reset(COUNTER_WARTEN_ODER_RASTEN_IN_FOLGE);
         }
 
         // Der SC beginnt zu warten
@@ -107,40 +95,25 @@ public class WartenAction<LIVGO extends IDescribableGO & ILocatableGO & ILivingB
 
         if (automatischesEinschlafen()) {
             narrateAndDoSchlafen();
-            return;
+        } else {
+            // FIXME: Warten auf die richtige Länge setzen. Wenn das NICHT funktioniert:
+            //  - Ab einem Punkt, wo man davon ausgehen kann, dass der Spieler
+            //   bewusst wartet oder rastet, um die Frau zu beobachten, sollte die Frau nach 4x
+            //   Rasten
+            //   oder 4x Warten gekommen
+            //  -  (Alternative zum Warten)  mehrere verschiedenen bestätigende Texte, dass sich das
+            //  Rasten lohnt (damit der Spieler nicht zu bald aufgibt).
+
+            // Erst einmal vergeht fast keine Zeit. Die ScAutomaticReactionsComp sorgt
+            // im onTimePassed() im Zusammenspiel mit der WaitingComp dafür, dass die
+            // Zeit vergeht (maximal 3 Stunden).
+            world.loadSC().waitingComp().startWaiting(timeTaker.now().plus(hours(3)));
         }
-        
-        // FIXME: Warten auf die richtige Länge setzen. Wenn das NICHT funktioniert:
-        //  - Ab einem Punkt, wo man davon ausgehen kann, dass der Spieler
-        //   bewusst wartet oder rastet, um die Frau zu beobachten, sollte die Frau nach 4x Rasten
-        //   oder 4x Warten gekommen
-        //  -  (Alternative zum Warten)  mehrere verschiedenen bestätigende Texte, dass sich das
-        //  Rasten lohnt (damit der Spieler nicht zu bald aufgibt).
-
-        // Erst einmal vergeht fast keine Zeit. Die ScAutomaticReactionsComp sorgt
-        // im onTimePassed() im Zusammenspiel mit der WaitingComp dafür, dass die
-        // Zeit vergeht (maximal 3 Stunden).
-        world.loadSC().waitingComp().startWaiting(timeTaker.now().plus(hours(3)));
-
         sc.memoryComp().setLastAction(buildMemorizedAction());
     }
 
-    private boolean automatischesEinschlafen() {
-        if (counterDao.get(COUNTER_WARTEN_IN_FOLGE) >= 3) {
-            return sc.feelingsComp().getMuedigkeit() >= FeelingIntensity.DEUTLICH;
-        }
-
-        return sc.feelingsComp().getMuedigkeit() >= FeelingIntensity.STARK;
-    }
-
-    private void narrateAndDoSchlafen() {
-        final AvTimeSpan schlafdauer = sc.feelingsComp().calcSchlafdauerMensch();
-
-        narrateAndDoEinschlafen(schlafdauer);
-        sc.feelingsComp().narrateAndDoAufwachenSC(schlafdauer, true);
-    }
-
-    private void narrateAndDoEinschlafen(final AvTimeSpan schlafdauer) {
+    @Override
+    protected void narrateAndDoEinschlafen(final AvTimeSpan schlafdauer) {
         n.narrateAlt(schlafdauer,
                 du(PARAGRAPH, "wirst",
                         "über dem Warten schläfrig und nickst schließlich ein")
@@ -161,7 +134,7 @@ public class WartenAction<LIVGO extends IDescribableGO & ILocatableGO & ILivingB
         if (kohaerenzrelation == VERSTEHT_SICH_VON_SELBST) {
             final SubstantivischePhrase anaph = world.anaph(erwartet, false);
             n.narrateAlt(secs(5),
-                    COUNTER_WARTEN_IN_FOLGE,
+                    COUNTER_WARTEN_ODER_RASTEN_IN_FOLGE,
                     du(WARTEN.mit(anaph)).dann(),
                     du("beginnst", "auf", anaph.akkK(), "zu warten").dann());
         } else {
@@ -177,7 +150,7 @@ public class WartenAction<LIVGO extends IDescribableGO & ILocatableGO & ILivingB
                                     )
                             )
                                     .dann()),
-                    secs(5), COUNTER_WARTEN_IN_FOLGE);
+                    secs(5), COUNTER_WARTEN_ODER_RASTEN_IN_FOLGE);
         }
     }
 

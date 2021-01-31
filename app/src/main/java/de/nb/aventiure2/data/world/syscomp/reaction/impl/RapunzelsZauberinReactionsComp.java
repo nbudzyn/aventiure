@@ -396,14 +396,12 @@ public class RapunzelsZauberinReactionsComp
             final Nominalphrase desc = getDescription();
             n.narrate(
                     du("siehst", ", wie", desc.nomK(), "an den Haaren herabsteigt")
-                            .timed(mins(1))
-                            .komma()
-                            .beendet(SENTENCE));
+                            .timed(mins(1)).komma().beendet(SENTENCE));
 
             if (!loadSC().locationComp().hasRecursiveLocation(
-                    VOR_DEM_ALTEN_TURM_SCHATTEN_DER_BAEUME) ||
-                    mentalModelComp.hasAssumedLocation(SPIELER_CHARAKTER,
-                            VOR_DEM_ALTEN_TURM_SCHATTEN_DER_BAEUME)) {
+                    VOR_DEM_ALTEN_TURM_SCHATTEN_DER_BAEUME)
+                    || mentalModelComp.hasAssumedLocation(SPIELER_CHARAKTER,
+                    VOR_DEM_ALTEN_TURM_SCHATTEN_DER_BAEUME)) {
                 locationComp.narrateAndSetLocation(VOR_DEM_ALTEN_TURM);
 
                 zauberinZaubertVergessenszauber();
@@ -411,8 +409,7 @@ public class RapunzelsZauberinReactionsComp
             }
 
             n.narrate(neuerSatz(anaph(true).nomK(),
-                    "hat dich nicht bemerkt")
-                    .timed(NO_TIME));
+                    "hat dich nicht bemerkt").timed(NO_TIME));
         }
         // STORY UNTER_DEM_BETT_OBEN_IM_ALTEN_TURM
 
@@ -561,6 +558,8 @@ public class RapunzelsZauberinReactionsComp
     }
 
     private void onTimePassed_AufDemWegZuRapunzel(final AvDateTime now) {
+        final boolean wasMovingBefore = movementComp.isMoving();
+
         movementComp.onTimePassed(now);
 
         if (movementComp.isMoving()) {
@@ -579,11 +578,11 @@ public class RapunzelsZauberinReactionsComp
         // Zauberin ist unten am alten Turm angekommen.
         if (
             // Wenn der SC nicht in der Gegend ist...
-                !loadSC().locationComp().hasLocation(VOR_DEM_ALTEN_TURM) &&
+                !loadSC().locationComp().hasLocation(VOR_DEM_ALTEN_TURM)
                         // ...und die Zauberin nicht gesehen hat, dass der Spieler sich
                         // zwischen die Bäume gestellt hat.
-                        !mentalModelComp.hasAssumedLocation(SPIELER_CHARAKTER,
-                                VOR_DEM_ALTEN_TURM_SCHATTEN_DER_BAEUME)
+                        && !mentalModelComp.hasAssumedLocation(SPIELER_CHARAKTER,
+                        VOR_DEM_ALTEN_TURM_SCHATTEN_DER_BAEUME)
         ) {
             if (loadRapunzel().stateComp()
                     .hasState(RapunzelState.HAARE_VOM_TURM_HERUNTERGELASSEN)) {
@@ -604,9 +603,15 @@ public class RapunzelsZauberinReactionsComp
         }
 
         // Geht aber spätestens dann wieder zurück.
+        if (wasMovingBefore) {
+            // Verhindern, dass die Zauberin sofort wieder umdreht. Das führt zu unsinnigen
+            // Kombinationen in der Art "Die magere Frau kommt dir hinterher. Sie kommt auf
+            // dich zu und geht an dir vorbei"
+            return;
+        }
 
         // FIXME Am Ende geht sie, wenn Rapunzel trotz Rufens die Haare nicht
-        //  heruntergelassen hatt, davon aus, dass Rapunzel befreit wurde.
+        //  heruntergelassen hat, davon aus, dass Rapunzel befreit wurde.
 
         stateComp.narrateAndSetState(AUF_DEM_RUECKWEG_VON_RAPUNZEL);
         movementComp.startMovement(timeTaker.now(), ZWISCHEN_DEN_HECKEN_VOR_DEM_SCHLOSS_EXTERN);

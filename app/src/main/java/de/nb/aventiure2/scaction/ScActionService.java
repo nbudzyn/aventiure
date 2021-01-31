@@ -181,8 +181,8 @@ public class ScActionService {
 
             if (wasSCInDenHaendenHat.isEmpty()) {
                 res.addAll(RastenAction
-                        .buildActions(db.scActionStepCountDao(), timeTaker, n, world,
-                                location));
+                        .buildActions(db.counterDao(), db.scActionStepCountDao(),
+                                timeTaker, n, world, location));
                 res.addAll(SchlafenAction
                         .buildActions(db.scActionStepCountDao(), timeTaker, n, world,
                                 location));

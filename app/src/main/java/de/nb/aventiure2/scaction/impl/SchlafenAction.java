@@ -65,7 +65,7 @@ public class SchlafenAction extends AbstractScAction {
 
     @Override
     public void narrateAndDo() {
-        // FIXME "Vor Hunger kannst du nicht einschlafen"
+        // IDEA "Vor Hunger kannst du nicht einschlafen"
         if (sc.feelingsComp().getMuedigkeit() >=
                 // Es ist nicht besonders gemütlich. NUR_LEICHT müde genügt nicht
                 FeelingIntensity.MERKLICH) {
@@ -115,18 +115,20 @@ public class SchlafenAction extends AbstractScAction {
     private void narrateAndDoEinschlafen(final AvTimeSpan schlafdauer) {
         final AltDescriptionsBuilder alt = alt();
 
-        alt.add(
-                du(SENTENCE, "schließt",
-                        "nur kurz die Augen. Die Erlebnisse der letzten Stunden "
-                                + "gehen dir durch den Kopf. Was wäre wohl passiert, wenn du…\n"
-                                + "Kaum hast du die Augen geschlossen, bist du auch schon "
-                                + "eingeschlafen")
+        alt.add(du(SENTENCE, "schließt",
+                "nur kurz die Augen. Die Erlebnisse der letzten Stunden "
+                        + "gehen dir durch den Kopf. Was wäre wohl passiert, wenn du…\n"
+                        + "Kaum hast du die Augen geschlossen, bist du auch schon "
+                        + "eingeschlafen")
                         .mitVorfeldSatzglied("nur kurz")
                         .beendet(CHAPTER),
                 du("fühlst",
                         "dich auf einmal warm und schwer. Du kuschelst dich an",
                         "das harte Holz und schon bist du eingeschlafen")
                         .mitVorfeldSatzglied("warm und schwer")
+                        .beendet(CHAPTER),
+                du("brauchst", "keines Einwiegens, sondern schläfst sogleich",
+                        "ein")
                         .beendet(CHAPTER)
         );
 
