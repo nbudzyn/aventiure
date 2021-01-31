@@ -54,12 +54,6 @@ public class Personalpronomen extends SubstantivischesPronomenMitVollerFlexionsr
         );
     }
 
-    public static boolean isPersonalpronomen(final String string) {
-        return ALL.values().stream()
-                .flatMap(x -> x.values().stream())
-                .anyMatch(p -> p.isWortform(string));
-    }
-
     /**
      * Gibt das passende Personalpronomen zurück - ohne Bezugsobjekt
      */

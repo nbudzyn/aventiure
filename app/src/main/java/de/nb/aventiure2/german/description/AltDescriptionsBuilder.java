@@ -3,9 +3,11 @@ package de.nb.aventiure2.german.description;
 import com.google.common.collect.ImmutableCollection;
 import com.google.common.collect.ImmutableSet;
 
+import java.util.Collection;
 import java.util.function.UnaryOperator;
 import java.util.stream.Stream;
 
+import javax.annotation.CheckReturnValue;
 import javax.annotation.Nonnull;
 
 import de.nb.aventiure2.data.time.AvTimeSpan;
@@ -14,12 +16,15 @@ import de.nb.aventiure2.german.base.NumerusGenus;
 import de.nb.aventiure2.german.base.PhorikKandidat;
 import de.nb.aventiure2.german.base.StructuralElement;
 import de.nb.aventiure2.german.base.SubstantivischePhrase;
+import de.nb.aventiure2.german.satz.Satz;
 
 import static com.google.common.collect.ImmutableSet.builder;
 import static com.google.common.collect.ImmutableSet.toImmutableSet;
 import static de.nb.aventiure2.german.base.Konstituentenfolge.joinToAltKonstituentenfolgen;
 import static de.nb.aventiure2.german.base.StructuralElement.SENTENCE;
+import static de.nb.aventiure2.german.base.StructuralElement.WORD;
 import static de.nb.aventiure2.german.description.DescriptionBuilder.neuerSatz;
+import static java.util.Arrays.asList;
 
 /**
  * Ein Builder für alternative {@link AbstractDescription}s.
@@ -28,6 +33,32 @@ public class AltDescriptionsBuilder {
     private final ImmutableSet.Builder<AbstractDescription<?>> alt = builder();
 
     private UnaryOperator<AbstractDescription<?>> op = null;
+
+    @Nonnull
+    @CheckReturnValue
+    public static AltDescriptionsBuilder altSaetze(final Collection<Satz> saetze) {
+        return altSaetze(WORD, saetze);
+    }
+
+    @Nonnull
+    @CheckReturnValue
+    public static AltDescriptionsBuilder altNeueSaetze(final Satz... saetze) {
+        return altNeueSaetze(asList(saetze));
+    }
+
+
+    @Nonnull
+    @CheckReturnValue
+    public static AltDescriptionsBuilder altNeueSaetze(final Collection<Satz> saetze) {
+        return altSaetze(SENTENCE, saetze);
+    }
+
+    @Nonnull
+    @CheckReturnValue
+    private static AltDescriptionsBuilder altSaetze(
+            final StructuralElement startsNew, final Collection<Satz> saetze) {
+        return alt().addAll(saetze.stream().map(s -> DescriptionBuilder.satz(startsNew, s)));
+    }
 
     /**
      * Fügt diese Teile zu alternativen {@link AbstractDescription}s
@@ -40,6 +71,7 @@ public class AltDescriptionsBuilder {
      * {@code null} enthalten.
      */
     @Nonnull
+    @CheckReturnValue
     public static AltDescriptionsBuilder altNeueSaetze(final Object... parts) {
         return altNeueSaetze(SENTENCE, parts);
     }
@@ -55,6 +87,7 @@ public class AltDescriptionsBuilder {
      * {@code null} enthalten.
      */
     @Nonnull
+    @CheckReturnValue
     public static AltDescriptionsBuilder altNeueSaetze(final StructuralElement structuralElement,
                                                        final Object... parts) {
         return alt().addAll(joinToAltKonstituentenfolgen(parts).stream()
@@ -72,19 +105,32 @@ public class AltDescriptionsBuilder {
         return addAll(other.alt);
     }
 
-    public AltDescriptionsBuilder addAll(final Stream<? extends AbstractDescription<?>> stream) {
+    public AltDescriptionsBuilder addAll(final Stream<?> stream) {
         return addAll(stream.collect(toImmutableSet()));
     }
 
     public AltDescriptionsBuilder addAll(
-            final ImmutableCollection.Builder<? extends AbstractDescription<?>> builder) {
+            final ImmutableCollection.Builder<?> builder) {
         return addAll(builder.build());
     }
 
     public AltDescriptionsBuilder addAll(
-            final Iterable<? extends AbstractDescription<?>> altDescriptions) {
-        alt.addAll(altDescriptions);
+            final Iterable<?> others) {
+        for (final Object other : others) {
+            if (other instanceof AbstractDescription<?>) {
+                add((AbstractDescription<?>) other);
+            } else if (other instanceof Satz) {
+                add((Satz) other);
+            } else {
+                throw new IllegalArgumentException("Unexpected addition: " + other);
+            }
+        }
+
         return this;
+    }
+
+    public AltDescriptionsBuilder add(final Satz satz) {
+        return add(DescriptionBuilder.satz(satz));
     }
 
     public AltDescriptionsBuilder add(final AbstractDescription<?>... altDescriptions) {

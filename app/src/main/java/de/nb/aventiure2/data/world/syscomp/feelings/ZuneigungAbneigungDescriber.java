@@ -322,8 +322,9 @@ class ZuneigungAbneigungDescriber implements FeelingsDescriber {
             return ImmutableList.of("giftig");
         }
 
-        if (feelingIntensity <= -FeelingIntensity.DEUTLICH) {
-            return ImmutableList.of();
+        if (feelingIntensity == -FeelingIntensity.DEUTLICH) {
+            return ImmutableList.of("missmutig", "verdrossen", "mürrisch", "verdrießlich",
+                    "griesgrämig");
         }
 
         if (feelingIntensity == -FeelingIntensity.MERKLICH) {

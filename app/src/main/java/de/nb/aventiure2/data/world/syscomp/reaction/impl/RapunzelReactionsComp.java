@@ -36,7 +36,6 @@ import de.nb.aventiure2.german.description.TimedDescription;
 import de.nb.aventiure2.german.praedikat.AdverbialeAngabeSkopusSatz;
 import de.nb.aventiure2.german.satz.Satz;
 
-import static com.google.common.collect.ImmutableList.toImmutableList;
 import static de.nb.aventiure2.data.time.AvTime.oClock;
 import static de.nb.aventiure2.data.time.AvTimeSpan.NO_TIME;
 import static de.nb.aventiure2.data.time.AvTimeSpan.mins;
@@ -59,15 +58,14 @@ import static de.nb.aventiure2.german.base.NumerusGenus.F;
 import static de.nb.aventiure2.german.base.NumerusGenus.PL_MFN;
 import static de.nb.aventiure2.german.base.StructuralElement.PARAGRAPH;
 import static de.nb.aventiure2.german.base.StructuralElement.SENTENCE;
-import static de.nb.aventiure2.german.base.StructuralElement.WORD;
 import static de.nb.aventiure2.german.description.AltDescriptionsBuilder.alt;
 import static de.nb.aventiure2.german.description.AltDescriptionsBuilder.altNeueSaetze;
+import static de.nb.aventiure2.german.description.AltDescriptionsBuilder.altSaetze;
 import static de.nb.aventiure2.german.description.AltTimedDescriptionsBuilder.altTimed;
 import static de.nb.aventiure2.german.description.DescriptionBuilder.du;
 import static de.nb.aventiure2.german.description.DescriptionBuilder.neuerSatz;
-import static de.nb.aventiure2.german.description.DescriptionBuilder.satz;
 import static de.nb.aventiure2.german.description.TimedDescription.toTimed;
-import static java.util.stream.Collectors.toSet;
+import static java.util.stream.Collectors.toList;
 
 /**
  * "Reaktionen" von Rapunzel, z.B. darauf, dass Zeit vergeht
@@ -372,8 +370,7 @@ public class RapunzelReactionsComp
         final ImmutableList<Satz> altReaktionSaetze =
                 feelingsComp.altReaktionBeiBegegnungMitScSaetze(anaph);
 
-        alt.addAll(altReaktionSaetze.stream().map(s -> satz(WORD, s)
-                .timed(secs(5))).collect(toSet()));
+        alt.addAll(altSaetze(altReaktionSaetze).timed(secs(5)));
 
         final int zuneigungSCTowardsRapunzel =
                 loadSC().feelingsComp().getFeelingTowards(RAPUNZEL, ZUNEIGUNG_ABNEIGUNG);
@@ -416,17 +413,16 @@ public class RapunzelReactionsComp
         final ImmutableList<Satz> altReaktionSaetze =
                 feelingsComp.altReaktionBeiBegegnungMitScSaetze(anaph);
 
-        alt.addAll(altReaktionSaetze.stream().map(s -> satz(WORD, s)
-                .timed(secs(5))).collect(toSet()));
+        alt.addAll(altSaetze(altReaktionSaetze).timed(secs(5)));
 
-        alt.addAll(feelingsComp.altSCBeiBegegnungAnsehenSaetze(anaph).stream()
-                // Diese Sätze sind bereits in altZuneigungAbneigungSaetze enthalten...
-                // ...aber noch nicht mit dieser Ergänzung:
-                .map(s -> s.mitAdverbialerAngabe(
-                        new AdverbialeAngabeSkopusSatz("oben im dunklen Zimmer")))
-                .map(satz -> satz(WORD, satz)
-                        .timed(secs(15)))
-                .collect(toImmutableList()));
+        alt.addAll(altSaetze(
+                feelingsComp.altSCBeiBegegnungAnsehenSaetze(anaph).stream()
+                        // Diese Sätze sind bereits in altZuneigungAbneigungSaetze enthalten...
+                        // ...aber noch nicht mit dieser Ergänzung:
+                        .map(s -> s.mitAdverbialerAngabe(
+                                new AdverbialeAngabeSkopusSatz("oben im dunklen Zimmer")))
+                        .collect(toList()))
+                .timed(secs(15)));
 
         // Sie
         // Sie
@@ -765,7 +761,7 @@ public class RapunzelReactionsComp
                     .timed(secs(20)));
 
             world.loadSC().memoryComp().upgradeKnown(RAPUNZELS_GESANG);
-            
+
             loadSC().waitingComp().stopWaiting();
             return;
         }

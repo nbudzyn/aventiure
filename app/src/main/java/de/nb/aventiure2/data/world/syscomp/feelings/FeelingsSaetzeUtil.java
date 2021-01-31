@@ -4,6 +4,7 @@ import androidx.annotation.NonNull;
 
 import com.google.common.collect.ImmutableList;
 
+import java.util.Collection;
 import java.util.stream.Stream;
 
 import de.nb.aventiure2.german.adjektiv.AdjPhrOhneLeerstellen;
@@ -18,6 +19,13 @@ import static de.nb.aventiure2.german.praedikat.PraedikativumPraedikatOhneLeerst
 import static de.nb.aventiure2.german.praedikat.VerbSubjObj.ANBLICKEN;
 import static de.nb.aventiure2.german.praedikat.VerbSubjObj.ANSCHAUEN;
 import static de.nb.aventiure2.german.praedikat.VerbSubjObj.ANSEHEN;
+import static de.nb.aventiure2.german.praedikat.VerbSubjObj.HINTERHERSCHAUEN;
+import static de.nb.aventiure2.german.praedikat.VerbSubjObj.HINTERHERSEHEN;
+import static de.nb.aventiure2.german.praedikat.VerbSubjObj.NACHBLICKEN;
+import static de.nb.aventiure2.german.praedikat.VerbSubjObj.NACHSCHAUEN;
+import static de.nb.aventiure2.german.praedikat.VerbSubjObj.NACHSEHEN;
+import static de.nb.aventiure2.german.praedikat.VerbSubjObj.ZUSCHAUEN;
+import static de.nb.aventiure2.german.praedikat.VerbSubjObj.ZUSEHEN;
 import static de.nb.aventiure2.german.praedikat.VerbSubjPraedikativeAdjektivphrase.AUSSEHEN;
 import static de.nb.aventiure2.german.praedikat.VerbSubjPraedikativeAdjektivphrase.DREINSCHAUEN;
 import static de.nb.aventiure2.german.praedikat.VerbSubjPraedikativeAdjektivphrase.SCHAUEN;
@@ -28,7 +36,7 @@ import static de.nb.aventiure2.german.praedikat.VerbSubjPraedikativeAdjektivphra
  * Statische Methode, die {@link de.nb.aventiure2.german.satz.Satz}-Objekte zu
  * Gefühlen erzeugen.
  */
-class FeelingsSaetzeUtil {
+public class FeelingsSaetzeUtil {
     private FeelingsSaetzeUtil() {
     }
 
@@ -88,9 +96,35 @@ class FeelingsSaetzeUtil {
                 adverbialeAngaben);
     }
 
+    public static ImmutableList<Satz> altNachsehenHinterhersehenSaetze(
+            final SubstantivischePhrase gameObjectSubjekt,
+            final SubstantivischePhrase objektDesc) {
+        return Satz
+                .altSubjObjSaetze(gameObjectSubjekt, nachsehenHinterhersehenVerben(), objektDesc);
+    }
+
+    public static ImmutableList<Satz> altZusehenSaetze(
+            final SubstantivischePhrase gameObjectSubjekt,
+            final SubstantivischePhrase objektDesc,
+            final Collection<AdverbialeAngabeSkopusVerbAllg> adverbialeAngaben) {
+        return Satz.altSubjObjSaetze(gameObjectSubjekt, zusehenVerben(), objektDesc,
+                adverbialeAngaben);
+    }
+
     @NonNull
     private static ImmutableList<VerbSubjObj> ansehenVerben() {
         return ImmutableList.of(ANBLICKEN, ANSEHEN, ANSCHAUEN);
+    }
+
+    @NonNull
+    private static ImmutableList<VerbSubjObj> nachsehenHinterhersehenVerben() {
+        return ImmutableList
+                .of(HINTERHERSEHEN, HINTERHERSCHAUEN, NACHBLICKEN, NACHSEHEN, NACHSCHAUEN);
+    }
+
+    @NonNull
+    private static ImmutableList<VerbSubjObj> zusehenVerben() {
+        return ImmutableList.of(ZUSEHEN, ZUSCHAUEN);
     }
 
     static ImmutableList<Satz> toEindrueckSaetze(

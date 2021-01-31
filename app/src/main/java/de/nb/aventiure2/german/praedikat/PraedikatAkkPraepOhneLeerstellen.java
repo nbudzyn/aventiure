@@ -15,6 +15,7 @@ import de.nb.aventiure2.german.base.Interrogativpronomen;
 import de.nb.aventiure2.german.base.Konstituentenfolge;
 import de.nb.aventiure2.german.base.Numerus;
 import de.nb.aventiure2.german.base.Person;
+import de.nb.aventiure2.german.base.Personalpronomen;
 import de.nb.aventiure2.german.base.PraepositionMitKasus;
 import de.nb.aventiure2.german.base.SubstPhrOderReflexivpronomen;
 import de.nb.aventiure2.german.base.SubstantivischePhrase;
@@ -148,14 +149,13 @@ public class PraedikatAkkPraepOhneLeerstellen
             return speziellesVorfeldFromSuper;
         }
 
-        final Konstituentenfolge akk = this.akk.akkK();
         // Wenn "es" ein Objekt ist, darf es nicht im Vorfeld stehen.
         // (Eisenberg Der Satz 5.4.2)
         // Aber auch andere Personalpronomen wirken im Vorfeld oft eher unangebracht,
         // wenn es sich um ein Objekt handelt.
         // "Ihn nimmst du an dich."
-        if (!akk.isPersonalpronomen()) {
-            return akk; // "das Teil"
+        if (!(akk instanceof Personalpronomen)) {
+            return akk.akkK(); // "das Teil"
         }
 
         return null;

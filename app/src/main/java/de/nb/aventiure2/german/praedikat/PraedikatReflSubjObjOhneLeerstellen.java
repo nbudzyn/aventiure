@@ -16,6 +16,7 @@ import de.nb.aventiure2.german.base.KasusOderPraepositionalkasus;
 import de.nb.aventiure2.german.base.Konstituentenfolge;
 import de.nb.aventiure2.german.base.Numerus;
 import de.nb.aventiure2.german.base.Person;
+import de.nb.aventiure2.german.base.Personalpronomen;
 import de.nb.aventiure2.german.base.Reflexivpronomen;
 import de.nb.aventiure2.german.base.SubstPhrOderReflexivpronomen;
 import de.nb.aventiure2.german.base.SubstantivischePhrase;
@@ -157,14 +158,13 @@ class PraedikatReflSubjObjOhneLeerstellen
             return speziellesVorfeldFromSuper;
         }
 
-        final Konstituentenfolge objK = objekt.imK(objektKasusOderPraepositionalkasus);
         // Wenn "es" ein Objekt ist, darf es nicht im Vorfeld stehen.
         // (Eisenberg Der Satz 5.4.2)
         // Aber auch andere Personalpronomen wirken im Vorfeld oft eher unangebracht,
         // wenn es sich um ein Objekt handelt.
         // "Ihn nimmst du an dich."
-        if (!objK.isPersonalpronomen()) {
-            return objK;  // "den Frosch"
+        if (!(objekt instanceof Personalpronomen)) {
+            return objekt.imK(objektKasusOderPraepositionalkasus);  // "den Frosch"
         }
 
         return null;

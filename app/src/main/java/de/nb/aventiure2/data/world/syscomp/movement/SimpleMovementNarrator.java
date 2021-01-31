@@ -29,7 +29,6 @@ import static de.nb.aventiure2.data.world.syscomp.spatialconnection.NumberOfWays
 import static de.nb.aventiure2.german.base.StructuralElement.PARAGRAPH;
 import static de.nb.aventiure2.german.base.StructuralElement.SENTENCE;
 import static de.nb.aventiure2.german.description.AltDescriptionsBuilder.alt;
-import static de.nb.aventiure2.german.description.AltDescriptionsBuilder.altNeueSaetze;
 import static de.nb.aventiure2.german.description.DescriptionBuilder.du;
 import static de.nb.aventiure2.german.description.DescriptionBuilder.neuerSatz;
 
@@ -104,10 +103,9 @@ public class SimpleMovementNarrator implements IMovementNarrator {
                 if (normalDesc.getDescription() instanceof StructuredDescription) {
                     final StructuredDescription sDesc =
                             (StructuredDescription) normalDesc.getDescription();
-                    alt.addAll(
+                    alt.add(
                             // "auch du..."
-                            altNeueSaetze(sDesc.getSatz().mitSubjektFokuspartikel("auch")
-                                    .altVerzweitsaetze())
+                            sDesc.getSatz().mitSubjektFokuspartikel("auch")
                     );
                 }
             }

@@ -98,14 +98,6 @@ public class WartenAction<LIVGO extends IDescribableGO & ILocatableGO & ILivingB
         if (automatischesEinschlafen()) {
             narrateAndDoSchlafen();
         } else {
-            // FIXME: Warten auf die richtige Länge setzen. Wenn das NICHT funktioniert:
-            //  - Ab einem Punkt, wo man davon ausgehen kann, dass der Spieler
-            //   bewusst wartet oder rastet, um die Frau zu beobachten, sollte die Frau nach 4x
-            //   Rasten
-            //   oder 4x Warten gekommen
-            //  -  (Alternative zum Warten)  mehrere verschiedenen bestätigende Texte, dass sich das
-            //  Rasten lohnt (damit der Spieler nicht zu bald aufgibt).
-
             // Erst einmal vergeht fast keine Zeit. Die ScAutomaticReactionsComp sorgt
             // im onTimePassed() im Zusammenspiel mit der WaitingComp dafür, dass die
             // Zeit vergeht (in Summe maximal 3 Stunden).

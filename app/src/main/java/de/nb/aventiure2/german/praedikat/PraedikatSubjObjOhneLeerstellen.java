@@ -16,6 +16,7 @@ import de.nb.aventiure2.german.base.KasusOderPraepositionalkasus;
 import de.nb.aventiure2.german.base.Konstituentenfolge;
 import de.nb.aventiure2.german.base.Numerus;
 import de.nb.aventiure2.german.base.Person;
+import de.nb.aventiure2.german.base.Personalpronomen;
 import de.nb.aventiure2.german.base.SubstPhrOderReflexivpronomen;
 import de.nb.aventiure2.german.base.SubstantivischePhrase;
 
@@ -143,15 +144,13 @@ public class PraedikatSubjObjOhneLeerstellen
             return speziellesVorfeldFromSuper;
         }
 
-        final Konstituentenfolge objektImKasusOderPraepkasus =
-                objekt.imK(kasusOderPraepositionalkasus);
         // Wenn "es" ein Objekt ist, darf es nicht im Vorfeld stehen.
         // (Eisenberg Der Satz 5.4.2)
         // Aber auch andere Personalpronomen wirken im Vorfeld oft eher unangebracht,
         // wenn es sich um ein Objekt handelt.
-        // "Dich sieht die Frau überrascht an."
-        if (!objektImKasusOderPraepkasus.isPersonalpronomen()) {
-            return objektImKasusOderPraepkasus;  // "den Frosch"
+        // "Dich sieht die Frau überrascht an.", "Auf sie wartest du immer noch."
+        if (!(objekt instanceof Personalpronomen)) {
+            return objekt.imK(kasusOderPraepositionalkasus);  // "den Frosch"
         }
 
         return null;

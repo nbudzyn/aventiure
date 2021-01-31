@@ -58,15 +58,23 @@ public class Satz {
     public static ImmutableList<Satz> altSubjObjSaetze(
             final SubstantivischePhrase subjekt,
             final PraedikatMitEinerObjektleerstelle praedikat, final SubstantivischePhrase objekt,
-            final ImmutableList<AdverbialeAngabeSkopusVerbAllg> adverbialeAngaben) {
+            final Collection<AdverbialeAngabeSkopusVerbAllg> adverbialeAngaben) {
         return altSubjObjSaetze(subjekt, ImmutableList.of(praedikat), objekt, adverbialeAngaben);
     }
 
     public static ImmutableList<Satz> altSubjObjSaetze(
             final SubstantivischePhrase subjekt,
-            final ImmutableList<? extends PraedikatMitEinerObjektleerstelle> praedikate,
+            final Collection<? extends PraedikatMitEinerObjektleerstelle> praedikate,
+            final SubstantivischePhrase objekt) {
+        return praedikate.stream().map(v -> v.mit(objekt).alsSatzMitSubjekt(subjekt))
+                .collect(toImmutableList());
+    }
+
+    public static ImmutableList<Satz> altSubjObjSaetze(
+            final SubstantivischePhrase subjekt,
+            final Collection<? extends PraedikatMitEinerObjektleerstelle> praedikate,
             final SubstantivischePhrase objekt,
-            final ImmutableList<AdverbialeAngabeSkopusVerbAllg> adverbialeAngaben) {
+            final Collection<AdverbialeAngabeSkopusVerbAllg> adverbialeAngaben) {
         return adverbialeAngaben.stream()
                 .flatMap(aa -> praedikate.stream()
                         .map(v -> v.mit(objekt)

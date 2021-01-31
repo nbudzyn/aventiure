@@ -1,6 +1,7 @@
 package de.nb.aventiure2.data.world.gameobject;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
 import javax.annotation.CheckReturnValue;
 
@@ -11,6 +12,7 @@ import de.nb.aventiure2.data.world.base.GameObjectId;
 import de.nb.aventiure2.data.world.base.Known;
 import de.nb.aventiure2.data.world.base.Lichtverhaeltnisse;
 import de.nb.aventiure2.data.world.syscomp.description.impl.SimpleDescriptionComp;
+import de.nb.aventiure2.data.world.syscomp.location.ILocatableGO;
 import de.nb.aventiure2.data.world.syscomp.location.LocationComp;
 import de.nb.aventiure2.data.world.syscomp.storingplace.StoringPlaceComp;
 import de.nb.aventiure2.german.description.AbstractDescription;
@@ -84,18 +86,20 @@ class SchattenDerBaeumeFactory {
     @CheckReturnValue
     private TimedDescription<?> getDescIn(
             final Known newLocationKnown, final Lichtverhaeltnisse lichtverhaeltnisse) {
+        final boolean unauffaelligHinweisSinnvoll = isDescInUnauffaelligHinweisSinnvoll();
         if (lichtverhaeltnisse == DUNKEL) {
-            return du("setzt", "dich unter die Bäume").timed(secs(20))
+            return du("setzt",
+                    "dich unter die Bäume",
+                    unauffaelligHinweisSinnvoll ? ". Stockdunkel ist es hier" : null)
+                    .timed(secs(20))
                     .dann();
         }
-
-        // FIXME Klarer machen, dass man unter den Bäumen versteckt ist. (Ggf. als Tipp.)
-
         if (db.counterDao().get(
                 DESC_TO_SCHATTEN_DER_BAEUME__SC_SETZT_SICH_TAGSUEBER_IN_DEN_SCHATTEN_DER_BAEUME)
                 == 0) {
             return du(PARAGRAPH, "lässt",
-                    "dich im Schatten der umstehenden Bäume nieder")
+                    "dich im Schatten der umstehenden Bäume nieder",
+                    unauffaelligHinweisSinnvoll ? ". Ein sehr unauffälliger Platz." : null)
                     .mitVorfeldSatzglied("im Schatten der umstehenden Bäume")
                     .timed(mins(5))
                     .withCounterIdIncrementedIfTextIsNarrated(
@@ -104,9 +108,39 @@ class SchattenDerBaeumeFactory {
                     .dann();
         }
 
-        return du("setzt", "dich wieder in den Schatten der Bäume").timed(secs(30))
-                .undWartest()
+        return du("setzt", "dich wieder in den Schatten der Bäume",
+                unauffaelligHinweisSinnvoll ? unauffaelligTagsueberString() : null)
+                .timed(secs(30))
+                .withCounterIdIncrementedIfTextIsNarrated(
+                        DESC_TO_SCHATTEN_DER_BAEUME__SC_SETZT_SICH_TAGSUEBER_IN_DEN_SCHATTEN_DER_BAEUME)
+                .undWartest(!unauffaelligHinweisSinnvoll)
                 .dann();
+    }
+
+    private boolean isDescInUnauffaelligHinweisSinnvoll() {
+        return (
+                world.loadSC().memoryComp().isKnown(RAPUNZELS_ZAUBERIN)
+                        || world.loadSC().memoryComp().isKnown(RAPUNZELS_GESANG)
+        )
+                && !world.loadSC().memoryComp().isKnown(RAPUNZELRUF)
+                && !((ILocatableGO) world.load(RAPUNZELS_ZAUBERIN)).locationComp()
+                .hasRecursiveLocation(VOR_DEM_ALTEN_TURM);
+    }
+
+    @Nullable
+    private String unauffaelligTagsueberString() {
+        switch (db.counterDao().get(
+                DESC_TO_SCHATTEN_DER_BAEUME__SC_SETZT_SICH_TAGSUEBER_IN_DEN_SCHATTEN_DER_BAEUME)
+                % 4) {
+            case 0:
+                return ". Der Platz vor dem Turm lässt sich von hier aus ganz insgeheim übersehen";
+            case 2:
+                return ". Keiner wird dich hier vermuten";
+            case 3:
+                return ". Hier sitzt es sich ganz versteckt";
+            default:
+                return null;
+        }
     }
 
     private static AbstractDescription<? extends AbstractDescription<?>> getDescOut(

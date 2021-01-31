@@ -2,6 +2,8 @@ package de.nb.aventiure2.data.world.syscomp.reaction.impl;
 
 import androidx.annotation.NonNull;
 
+import com.google.common.collect.ImmutableList;
+
 import javax.annotation.Nullable;
 
 import de.nb.aventiure2.data.narration.Narrator;
@@ -34,6 +36,9 @@ import de.nb.aventiure2.data.world.syscomp.talking.ITalkerGO;
 import de.nb.aventiure2.data.world.syscomp.talking.impl.RapunzelTalkingComp;
 import de.nb.aventiure2.data.world.syscomp.talking.impl.RapunzelsZauberinTalkingComp;
 import de.nb.aventiure2.german.base.Nominalphrase;
+import de.nb.aventiure2.german.base.SubstantivischePhrase;
+import de.nb.aventiure2.german.description.AltDescriptionsBuilder;
+import de.nb.aventiure2.german.praedikat.AdverbialeAngabeSkopusVerbAllg;
 
 import static com.google.common.base.Preconditions.checkArgument;
 import static de.nb.aventiure2.data.time.AvTime.oClock;
@@ -44,6 +49,9 @@ import static de.nb.aventiure2.data.time.AvTimeSpan.mins;
 import static de.nb.aventiure2.data.time.AvTimeSpan.secs;
 import static de.nb.aventiure2.data.world.gameobject.World.*;
 import static de.nb.aventiure2.data.world.syscomp.feelings.FeelingTowardsType.ZUNEIGUNG_ABNEIGUNG;
+import static de.nb.aventiure2.data.world.syscomp.feelings.FeelingsComp.getPersonalpronomenSC;
+import static de.nb.aventiure2.data.world.syscomp.feelings.FeelingsSaetzeUtil.altNachsehenHinterhersehenSaetze;
+import static de.nb.aventiure2.data.world.syscomp.feelings.FeelingsSaetzeUtil.altZusehenSaetze;
 import static de.nb.aventiure2.data.world.syscomp.state.impl.RapunzelsZauberinState.AUF_DEM_RUECKWEG_VON_RAPUNZEL;
 import static de.nb.aventiure2.data.world.syscomp.state.impl.RapunzelsZauberinState.AUF_DEM_WEG_ZU_RAPUNZEL;
 import static de.nb.aventiure2.data.world.syscomp.state.impl.RapunzelsZauberinState.BEI_RAPUNZEL_OBEN_IM_TURM;
@@ -53,8 +61,10 @@ import static de.nb.aventiure2.data.world.syscomp.state.impl.RapunzelsZauberinSt
 import static de.nb.aventiure2.german.base.StructuralElement.CHAPTER;
 import static de.nb.aventiure2.german.base.StructuralElement.PARAGRAPH;
 import static de.nb.aventiure2.german.base.StructuralElement.SENTENCE;
+import static de.nb.aventiure2.german.description.AltDescriptionsBuilder.alt;
 import static de.nb.aventiure2.german.description.DescriptionBuilder.du;
 import static de.nb.aventiure2.german.description.DescriptionBuilder.neuerSatz;
+import static java.util.stream.Collectors.toList;
 
 /**
  * "Reaktionen" von Rapunzels Zauberin, z.B. darauf, dass Zeit vergeht
@@ -115,14 +125,11 @@ public class RapunzelsZauberinReactionsComp
     public void onLeave(final ILocatableGO locatable,
                         final ILocationGO from,
                         @Nullable final ILocationGO to) {
-        // FIXME Wenn der SC sich ins Unterholz setzt und die  Zauberin zusieht:
-        //  "Die Frau hat dich gesehen", "Die Frau schickt dir böse Blicke hinterher",
-        //  "Die Frau sieht dir nach" o.Ä.
         talkingComp.updateSchonBegruesstMitSCOnLeave(locatable, from, to);
 
         // Wenn die Zauberin den SC verlässt, ...
         if (locatable.is(getGameObjectId())) {
-            // ...dann weiß sie nicht, wo das SC sich befindet.
+            // ...dann weiß sie nicht, wo der SC sich befindet.
             // Einzige Ausnahme:
             // Wenn die Zauberin den SC vor dem Turm verlassen hat, geht sie erst einmal
             // davon aus, dass er wohl dort noch ist, denn das ist eine Sackgasse.
@@ -130,16 +137,13 @@ public class RapunzelsZauberinReactionsComp
                     !mentalModelComp.hasAssumedLocation(
                             SPIELER_CHARAKTER,
                             VOR_DEM_ALTEN_TURM,
-                            VOR_DEM_ALTEN_TURM_SCHATTEN_DER_BAEUME)
-            ) {
+                            VOR_DEM_ALTEN_TURM_SCHATTEN_DER_BAEUME)) {
                 mentalModelComp.unsetAssumedLocation(SPIELER_CHARAKTER);
             }
         } else if (locatable.is(SPIELER_CHARAKTER)) {
             onSCLeave(from, to);
             return;
         }
-
-        // IDEA Kugel hinlegen: Kommentar von Hexe?
     }
 
     private void onSCLeave(final ILocationGO scFrom,
@@ -149,6 +153,10 @@ public class RapunzelsZauberinReactionsComp
                 scFrom.is(ABZWEIG_IM_WALD)
                         && scTo != null && scTo.is(IM_WALD_NAHE_DEM_SCHLOSS)) {
             onSCLeave_AbzweigImWald_To_ImWaldNaheDemSchloss();
+        } else if (scFrom.is(VOR_DEM_ALTEN_TURM)
+                && scTo != null && scTo.is(VOR_DEM_ALTEN_TURM_SCHATTEN_DER_BAEUME)
+                && locationComp.hasSameOuterMostLocationAs(SPIELER_CHARAKTER)) {
+            narrateZauberinSiehtSCNach();
         }
 
         narrateAndDoScTrifftEvtlZauberinImDazwischen(scFrom, scTo);
@@ -167,6 +175,19 @@ public class RapunzelsZauberinReactionsComp
             //  Haare herunterlässt?
             return;
         }
+    }
+
+    private void narrateZauberinSiehtSCNach() {
+        final SubstantivischePhrase anaph = anaph();
+        final AltDescriptionsBuilder alt = alt();
+        alt.add(neuerSatz(anaph.nomK(), "schickt dir böse Blicke hinterher"));
+        alt.addAll(altNachsehenHinterhersehenSaetze(getPersonalpronomenSC(), anaph));
+        alt.addAll(altZusehenSaetze(getPersonalpronomenSC(), anaph,
+                ImmutableList.of("ärgerlich", "verdrossen").stream()
+                        .map(AdverbialeAngabeSkopusVerbAllg::new)
+                        .collect(toList())));
+
+        n.narrateAlt(alt, NO_TIME);
     }
 
     private void narrateAndDoScTrifftEvtlZauberinImDazwischen(final ILocationGO scFrom,

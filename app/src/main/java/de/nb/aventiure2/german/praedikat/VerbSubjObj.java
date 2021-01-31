@@ -73,6 +73,10 @@ public enum VerbSubjObj implements PraedikatMitEinerObjektleerstelle {
     HINLEGEN("hinlegen", AKK, "lege", "legst", "legt",
             "legt", "hin",
             Perfektbildung.HABEN, "hingelegt"),
+    HINTERHERSCHAUEN("hinterherschauen", DAT, "schaue", "schaust", "schaut",
+            "schaut", "hinterher", Perfektbildung.HABEN, "hinterhergeschaut"),
+    HINTERHERSEHEN("hinterhersehen", DAT, "sehe", "siehst", "sieht",
+            "seht", "hinterher", Perfektbildung.HABEN, "hinterhergesehen"),
     HINUNTERLASSEN("hinunterlassen", AKK,
             "lasse", "lässt", "lässt",
             "lasst",
@@ -91,6 +95,12 @@ public enum VerbSubjObj implements PraedikatMitEinerObjektleerstelle {
     MUSTERN("mustern", AKK, "mustere", "musterst", "mustert",
             "mustert",
             Perfektbildung.HABEN, "gemustert"),
+    NACHBLICKEN("nachblicken", DAT, "blicke", "blickst", "blickt",
+            "blickt", "nach", Perfektbildung.HABEN, "nachgeblickt"),
+    NACHSCHAUEN("nachschauen", DAT, "schaue", "schaust", "schaut",
+            "schaut", "nach", Perfektbildung.HABEN, "nachgeschaut"),
+    NACHSEHEN("nachsehen", DAT, "sehe", "siehst", "sieht",
+            "seht", "nach", Perfektbildung.HABEN, "nachgesehen"),
     NEHMEN("nehmen", AKK, "nehme", "nimmst", "nimmt",
             "nehmt", Perfektbildung.HABEN, "genommen"),
     POLIEREN("polieren", AKK,
@@ -119,7 +129,11 @@ public enum VerbSubjObj implements PraedikatMitEinerObjektleerstelle {
     WIEDERSEHEN("wiedersehen", AKK,
             "sehe", "siehst", "sieht", "seht",
             "wieder",
-            Perfektbildung.HABEN, "wiedergesehen");
+            Perfektbildung.HABEN, "wiedergesehen"),
+    ZUSCHAUEN("zuschauen", DAT, "schaue", "schaust", "schaut",
+            "schaut", "zu", Perfektbildung.HABEN, "zugeschaut"),
+    ZUSEHEN("zusehen", DAT, "sehe", "siehst", "sieht",
+            "seht", "zu", Perfektbildung.HABEN, "zugesehen");
 
     /**
      * Das Verb an sich, ohne Informationen zur Valenz, ohne Ergänzungen, ohne

@@ -32,6 +32,7 @@ public class DescriptionBuilder {
                 .beendet(PARAGRAPH);
     }
 
+    @CheckReturnValue
     public static TextDescription neuerSatz(final Object... parts) {
         return neuerSatz(SENTENCE, parts);
     }

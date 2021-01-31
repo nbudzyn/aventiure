@@ -14,7 +14,6 @@ import de.nb.aventiure2.data.world.syscomp.talking.AbstractTalkingComp;
 import de.nb.aventiure2.german.base.PraepositionMitKasus;
 import de.nb.aventiure2.german.base.SubstantivischePhrase;
 import de.nb.aventiure2.german.description.AltDescriptionsBuilder;
-import de.nb.aventiure2.german.description.DescriptionBuilder;
 import de.nb.aventiure2.german.satz.Satz;
 
 import static de.nb.aventiure2.data.time.AvTimeSpan.NO_TIME;
@@ -32,6 +31,7 @@ import static de.nb.aventiure2.german.base.NumerusGenus.N;
 import static de.nb.aventiure2.german.base.StructuralElement.PARAGRAPH;
 import static de.nb.aventiure2.german.description.AltDescriptionsBuilder.alt;
 import static de.nb.aventiure2.german.description.AltDescriptionsBuilder.altNeueSaetze;
+import static de.nb.aventiure2.german.description.AltDescriptionsBuilder.altSaetze;
 import static de.nb.aventiure2.german.description.DescriptionBuilder.du;
 import static de.nb.aventiure2.german.description.DescriptionBuilder.neuerSatz;
 import static de.nb.aventiure2.german.praedikat.ReflVerbSubjObj.SICH_VERABSCHIEDEN;
@@ -155,9 +155,7 @@ public class RapunzelsZauberinTalkingComp extends AbstractTalkingComp {
         final ImmutableList<Satz> altReaktionSaetze =
                 feelingsComp.altReaktionBeiBegegnungMitScSaetze(anaph);
 
-        n.narrateAlt(
-                altReaktionSaetze.stream().map(DescriptionBuilder::satz),
-                secs(5));
+        n.narrateAlt(altSaetze(altReaktionSaetze), secs(5));
 
         if (feelingsComp.getFeelingTowards(SPIELER_CHARAKTER, ZUNEIGUNG_ABNEIGUNG)
                 <= -FeelingIntensity.STARK) {

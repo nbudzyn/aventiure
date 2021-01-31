@@ -35,6 +35,7 @@ public enum Mood {
             new AdverbialeAngabeSkopusSatz("etwas geknickt")),
     VERUNSICHERT(-FeelingIntensity.MERKLICH, AdjektivOhneErgaenzungen.VERUNSICHERT),
     BETRUEBT(-FeelingIntensity.DEUTLICH, AdjektivOhneErgaenzungen.BETRUEBT),
+    VERDROSSEN(-FeelingIntensity.DEUTLICH, AdjektivOhneErgaenzungen.VERDROSSEN),
     TRAURIG(-FeelingIntensity.STARK, AdjektivOhneErgaenzungen.TRAURIG),
     UNTROESTLICH(-FeelingIntensity.SEHR_STARK,
             "voller Trauer");

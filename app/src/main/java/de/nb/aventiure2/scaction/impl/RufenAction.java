@@ -7,12 +7,12 @@ import com.google.common.collect.ImmutableList;
 import de.nb.aventiure2.data.narration.Narrator;
 import de.nb.aventiure2.data.time.TimeTaker;
 import de.nb.aventiure2.data.world.gameobject.*;
+import de.nb.aventiure2.data.world.syscomp.feelings.FeelingsComp;
 import de.nb.aventiure2.data.world.syscomp.memory.Action;
 import de.nb.aventiure2.data.world.syscomp.reaction.interfaces.Ruftyp;
 import de.nb.aventiure2.data.world.syscomp.state.IHasStateGO;
 import de.nb.aventiure2.data.world.syscomp.state.impl.RapunzelState;
 import de.nb.aventiure2.data.world.syscomp.storingplace.ILocationGO;
-import de.nb.aventiure2.german.base.Personalpronomen;
 import de.nb.aventiure2.german.description.DescriptionBuilder;
 import de.nb.aventiure2.german.description.Kohaerenzrelation;
 import de.nb.aventiure2.german.string.GermanStringUtil;
@@ -25,9 +25,7 @@ import static de.nb.aventiure2.data.world.gameobject.World.*;
 import static de.nb.aventiure2.data.world.syscomp.reaction.interfaces.Ruftyp.LASS_DEIN_HAAR_HERUNTER;
 import static de.nb.aventiure2.data.world.syscomp.state.impl.RapunzelState.HAARE_VOM_TURM_HERUNTERGELASSEN;
 import static de.nb.aventiure2.german.base.Numerus.SG;
-import static de.nb.aventiure2.german.base.NumerusGenus.M;
 import static de.nb.aventiure2.german.base.Person.P1;
-import static de.nb.aventiure2.german.base.Person.P2;
 import static de.nb.aventiure2.german.base.StructuralElement.WORD;
 import static de.nb.aventiure2.german.description.DescriptionBuilder.du;
 import static de.nb.aventiure2.german.description.DescriptionUmformulierer.drueckeAus;
@@ -94,7 +92,7 @@ public class RufenAction extends AbstractScAction {
                     secs(30));
         } else {
             n.narrate(DescriptionBuilder.satz(WORD, ruftyp.getName()
-                    .alsSatzMitSubjekt(Personalpronomen.get(P2, M, SPIELER_CHARAKTER))
+                    .alsSatzMitSubjekt(FeelingsComp.getPersonalpronomenSC())
                     .mitAnschlusswort("und"))
                     .timed(secs(30)));
         }

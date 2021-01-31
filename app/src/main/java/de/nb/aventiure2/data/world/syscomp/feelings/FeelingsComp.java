@@ -508,6 +508,7 @@ public class FeelingsComp extends AbstractStatefulComponent<FeelingsPCD> {
         );
     }
 
+
     /**
      * Gibt eventuell alternative Sätze zurück, die den Eindruck
      * beschreiben, den dieses Feeling Beings auf den SC macht, wenn die beiden sich
@@ -558,7 +559,7 @@ public class FeelingsComp extends AbstractStatefulComponent<FeelingsPCD> {
                         feelingTowardsType));
     }
 
-    private static Personalpronomen getPersonalpronomenSC() {
+    public static Personalpronomen getPersonalpronomenSC() {
         return Personalpronomen.get(P2,
                 // Wir tun hier so, als wäre der SC männlich, aber das
                 // ist egal - die Methode garantiert, dass niemals etwas

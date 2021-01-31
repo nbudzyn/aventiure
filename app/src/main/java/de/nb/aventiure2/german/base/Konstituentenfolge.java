@@ -276,14 +276,6 @@ public class Konstituentenfolge implements Iterable<Konstituente> {
         return "es".equals(konstituenten.get(0).getString());
     }
 
-    public boolean isPersonalpronomen() {
-        if (konstituenten.size() > 1) {
-            return false;
-        }
-
-        return konstituenten.get(0).isPersonalpronomen();
-    }
-
     private boolean calcKannAlsBezugsobjektVerstandenWerdenFuer(final NumerusGenus numerusGenus) {
         final Pair<Integer, Boolean> phorikKandidatAndSicherheit =
                 findPhorikKandidatAndSicherheit(numerusGenus);
