@@ -16,8 +16,6 @@ public abstract class AbstractFlexibleDescription<SELF extends AbstractDescripti
         super(startsNew, phorikKandidat);
     }
 
-    // FIXME Shift-Alt-L (load context) ausprobieren!
-
     @NonNull
     @CheckReturnValue
     public final TextDescription toTextDescriptionMitVorfeld(final String vorfeld) {

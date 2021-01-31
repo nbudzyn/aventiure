@@ -112,11 +112,6 @@ public class StoryWebComp extends AbstractStatefulComponent<StoryWebPCD> {
     }
 
     public void narrateAndDoHintActionIfAny() {
-        // FIXME Screenshots vom ca. 11.10.2020 durchlesen
-        //  - welche tipps kommen zu früh?
-        //  - welche tipps brazöuchen mehr Abwechslung?
-        //  - wo braucht es deutlichere stufe-2-Tipps? (z.B. ab dem 3. Mal o.Ä.)
-
         @Nullable final IStoryNode storyNode = getStoryNodeForHintAction();
 
         if (storyNode == null) {

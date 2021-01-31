@@ -338,8 +338,6 @@ public enum RapunzelStoryNode implements IStoryNode {
                             + "nur einmal auf die Lauer legen und beobachten, ob jemand "
                             + "hineinkommt?").mitVorfeldSatzglied("bestimmt")
                     .beendet(PARAGRAPH));
-            // FIXME ab dem zb 3. Mal deutlichere Hinweise länger Rasten? Sofern das
-            //  Warten nicht ohnehin lang genug ist.
         }
 
         n.narrateAlt(alt, NO_TIME);
