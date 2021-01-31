@@ -34,6 +34,7 @@ public class Walkthrough {
                     "Den schmalen Pfad aufwärtsgehen", // Frau!
                     "Die Frau ansprechen",
                     "Die Frau nach ihrem Ziel fragen",
+                    "Das Gespräch beenden",
                     "Um den Turm herumgehen",
                     "Die Kugel an den Stamm eines Baumes legen",
                     "Den Pfad zurückgehen",
@@ -70,7 +71,7 @@ public class Walkthrough {
                     "In Richtung Schloss gehen",
                     "Den Wald verlassen und in den Schloßgarten gehen",
                     "Das Schloss betreten");
-    
+
     private static final Walkthrough SCHLOSSFEST_SCHLOSS_BETRETEN_BIS_PRINZABFAHRT =
             new Walkthrough("An einen Tisch setzen",
                     "Die Kugel auf den Tisch legen",
@@ -155,13 +156,15 @@ public class Walkthrough {
             new Walkthrough(
                     "In Richtung Schloss gehen",
                     "Die Frau ansprechen",
-                    "Die Frau nach ihrem Ziel fragen", // Frau geht weg Richtung Turm
+                    "Die Frau nach ihrem Ziel fragen",
+                    "Das Gespräch beenden",  // Frau geht weg Richtung Turm
                     "Den langen schmalen Pfad zum Turm aufwärtsgehen",
                     "Den Pfad zurückgehen",
                     "Den langen schmalen Pfad zum Turm aufwärtsgehen",
                     "In den Schatten der Bäume setzen",
-                    "Auf die magere Frau warten", // Frau steigt vom Turm herunter und geht
-                    "Auf die magere Frau warten",
+                    "Rasten", // Frau steigt vom Turm herunter und geht?
+                    "Rasten", // Frau steigt vom Turm herunter und geht?
+                    "Auf die magere Frau warten", // Frau steigt vom Turm herunter und geht?
                     "Auf die magere Frau warten",
                     "Auf die magere Frau warten",
                     "Auf die magere Frau warten",

@@ -51,6 +51,7 @@ public class WartenAction<LIVGO extends IDescribableGO & ILocatableGO & ILivingB
             final ILocationGO location) {
         final ImmutableList.Builder<WartenAction<LIVGO>> res = ImmutableList.builder();
         if (location.is(VOR_DEM_ALTEN_TURM_SCHATTEN_DER_BAEUME) &&
+                counterDao.get(RastenAction.COUNTER_RASTEN) >= 2 &&
                 erwartet.is(RAPUNZELS_ZAUBERIN) &&
                 world.loadSC().memoryComp().isKnown(RAPUNZELS_ZAUBERIN) &&
                 !erwartet.locationComp().hasSameOuterMostLocationAs(location)) {
@@ -107,7 +108,7 @@ public class WartenAction<LIVGO extends IDescribableGO & ILocatableGO & ILivingB
 
             // Erst einmal vergeht fast keine Zeit. Die ScAutomaticReactionsComp sorgt
             // im onTimePassed() im Zusammenspiel mit der WaitingComp dafür, dass die
-            // Zeit vergeht (maximal 3 Stunden).
+            // Zeit vergeht (in Summe maximal 3 Stunden).
             world.loadSC().waitingComp().startWaiting(timeTaker.now().plus(hours(3)));
         }
         sc.memoryComp().setLastAction(buildMemorizedAction());

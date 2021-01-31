@@ -35,6 +35,8 @@ import static de.nb.aventiure2.german.description.DescriptionBuilder.neuerSatz;
  * Der Spielercharakter legt (wach!) eine Rast ein.
  */
 public class RastenAction extends AbstractWartenRastenAction {
+    static final String COUNTER_RASTEN = "RastenAction_RASTEN";
+
     private final ILocationGO location;
 
     public static List<RastenAction> buildActions(
@@ -70,6 +72,8 @@ public class RastenAction extends AbstractWartenRastenAction {
 
     @Override
     public void narrateAndDo() {
+        counterDao.inc(COUNTER_RASTEN);
+
         if (!sc.memoryComp().getLastAction().is(Action.Type.WARTEN) &&
                 !sc.memoryComp().getLastAction().is(Action.Type.RASTEN)) {
             counterDao.reset(COUNTER_WARTEN_ODER_RASTEN_IN_FOLGE);

@@ -62,8 +62,10 @@ public class WartenActionTest extends AndroidTestBase {
 
     @Test
     public <LIVGO extends IDescribableGO & ILocatableGO & ILivingBeingGO>
-    void zauberinBekanntUndNichtDa_WartenMoeglich() {
+    void zauberinBekanntUndNichtDaBereits2xGerastet_WartenMoeglich() {
         // GIVEN
+        db.counterDao().inc(RastenAction.COUNTER_RASTEN);
+        db.counterDao().inc(RastenAction.COUNTER_RASTEN);
         world.loadSC().memoryComp().upgradeKnown(RAPUNZELS_ZAUBERIN);
         ((ILocatableGO) world.load(RAPUNZELS_ZAUBERIN)).locationComp()
                 .setLocation(IM_WALD_NAHE_DEM_SCHLOSS);

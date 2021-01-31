@@ -11,7 +11,7 @@ import de.nb.aventiure2.scaction.stepcount.SCActionStepCountDao;
 
 public abstract class AbstractWartenRastenAction extends AbstractScAction {
     static final String COUNTER_WARTEN_ODER_RASTEN_IN_FOLGE =
-            "WartenAction_WARTEN_ODER_RASTEN_IN_FOLGE";
+            "AbstractWartenRastenAction_WARTEN_ODER_RASTEN_IN_FOLGE";
     protected final CounterDao counterDao;
 
     AbstractWartenRastenAction(
