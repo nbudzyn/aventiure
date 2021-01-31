@@ -7,7 +7,6 @@ import com.google.common.collect.ImmutableList;
 import de.nb.aventiure2.data.database.AvDatabase;
 import de.nb.aventiure2.data.narration.Narrator;
 import de.nb.aventiure2.data.time.AvDateTime;
-import de.nb.aventiure2.data.time.TimeTaker;
 import de.nb.aventiure2.data.world.base.IGameObject;
 import de.nb.aventiure2.data.world.counter.CounterDao;
 import de.nb.aventiure2.data.world.gameobject.*;
@@ -45,14 +44,12 @@ public class ScAutomaticReactionsComp
         ITimePassedReactions, IEssenReactions,
         ISCActionReactions {
     private final CounterDao counterDao;
-    private final TimeTaker timeTaker;
     private final LocationComp locationComp;
     private final MentalModelComp mentalModelComp;
     private final WaitingComp waitingComp;
     private final FeelingsComp feelingsComp;
 
     public ScAutomaticReactionsComp(final AvDatabase db,
-                                    final TimeTaker timeTaker,
                                     final Narrator n,
                                     final World world,
                                     final LocationComp locationComp,
@@ -61,7 +58,6 @@ public class ScAutomaticReactionsComp
                                     final FeelingsComp feelingsComp) {
         super(SPIELER_CHARAKTER, n, world);
         counterDao = db.counterDao();
-        this.timeTaker = timeTaker;
         this.locationComp = locationComp;
         this.mentalModelComp = mentalModelComp;
         this.waitingComp = waitingComp;
@@ -76,6 +72,21 @@ public class ScAutomaticReactionsComp
         if (locatable.is(SPIELER_CHARAKTER)) {
             onSCLeave(from, to);
             return;
+        }
+
+
+        if (locationComp.hasSameOuterMostLocationAs(from)) {
+            onLeaveScOuterMostLocation(locatable, from, to);
+        }
+    }
+
+    private void onLeaveScOuterMostLocation(
+            final ILocatableGO locatable, final ILocationGO from, @Nullable final ILocationGO to) {
+        if (locationComp.hasSameOuterMostLocationAs(from) &&
+                !locationComp.hasSameOuterMostLocationAs(to)) {
+            // Der SC erlebt, wie das Locatable seinen aktuellen Raum
+            // verlässt. Der SC "vergisst" die Location.
+            mentalModelComp.unsetAssumedLocation(locatable);
         }
     }
 
@@ -112,25 +123,16 @@ public class ScAutomaticReactionsComp
             return;
         }
 
-        if (locationComp.hasSameOuterMostLocationAs(from) ||
-                locationComp.hasSameOuterMostLocationAs(to)) {
-            onEnterFromOrTOScOuterMostLocation(locatable, from, to);
+        if (locationComp.hasSameOuterMostLocationAs(to)) {
+            onEnterScOuterMostLocation(locatable, to);
         }
     }
 
-    private void onEnterFromOrTOScOuterMostLocation(
-            final ILocatableGO locatable, @Nullable final ILocationGO from, final ILocationGO to) {
-        if (locationComp.hasSameOuterMostLocationAs(to)) {
-            if (scBemerktOnEnter(locatable)) {
-                // Der SC hat den Wechsel auf den neuen Ort miterlebt.
-                mentalModelComp.setAssumedLocation(locatable, to);
-            }
-        } else {
-            // !locationComp.hasSameOuterMostLocationAs(to)
-            // && locationComp.hasSameOuterMostLocationAs(from)
-            // Der SC erlebt, wie das Locatable seinen aktuellen Raum
-            // verlässt. Der SC "vergisst" die Location.
-            mentalModelComp.unsetAssumedLocation(locatable);
+    private void onEnterScOuterMostLocation(
+            final ILocatableGO locatable, final ILocationGO to) {
+        if (scBemerktOnEnter(locatable)) {
+            // Der SC hat den Wechsel auf den neuen Ort miterlebt.
+            mentalModelComp.setAssumedLocation(locatable, to);
         }
     }
 

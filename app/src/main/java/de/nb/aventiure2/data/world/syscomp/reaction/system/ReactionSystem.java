@@ -211,7 +211,7 @@ public class ReactionSystem
 
         final List<? extends IResponder> respondersToReaction =
                 world.loadResponders(reactionsInterface);
-        // FIXME: Natürlicher wäre "wachst erst nach einigen Stunden wieder auf" -
+        // IDEA: Natürlicher wäre "wachst erst nach einigen Stunden wieder auf" -
         //  Danach die Tageszeitreactions ("Es ist jetzt vollständig dunkel geworden"),
         //  dann die "Wann hast du eigentlich zuletzt etwas gegessen", dann
         //  "Plitsch platsch" Frosch-Reactions.

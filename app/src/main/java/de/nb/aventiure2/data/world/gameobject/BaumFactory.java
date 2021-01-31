@@ -185,11 +185,6 @@ public class BaumFactory {
     @CheckReturnValue
     private static TimedDescription<?> getDescOutNtesMal(
             final Lichtverhaeltnisse lichtverhaeltnisse) {
-        // FIXME Die folgenden Konstruktionen möchte ich ebenfalls automatisch erzeugen (konkret
-        //  beim Aufwachen - wenn das Sinn ergibt):
-        //  - Gut ausgeschlafen bist du voller Tatendrang.
-        //  - Konrete Fälle suchen und dann einbauen - oder alternativ erst einmal verwerfen.
-
         // STORY Auch dies automatisch erzeugen:
         //  - "Du bist ganz zerknirscht. Du gehst ...." ->  "Ganz zerknirscht gehst du..."??
         //  - Oder so? "Du wirst ganz zerknirscht. Du gehst ...." ->  "Ganz zerknirscht gehst

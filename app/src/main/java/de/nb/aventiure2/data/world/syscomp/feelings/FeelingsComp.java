@@ -226,7 +226,7 @@ public class FeelingsComp extends AbstractStatefulComponent<FeelingsPCD> {
         return getPcd().getMovementSpeedFactor();
     }
 
-    // FIXME Frosch läuft während des Schlafs weg. Oder kommt ggf. Auch wieder. Oder läuft
+    // IDEA Frosch läuft während des Schlafs weg. Oder kommt ggf. Auch wieder. Oder läuft
     //  weg und kommt wieder.
     //  Es sollte in der Zeit keine narrations geben (der Spieler bekommt ja nichts mit, es sei
     //  denn man lässt ihn dann aufwachen...). Nach dem (regulären) Aufwachen sollte etwas
@@ -245,12 +245,12 @@ public class FeelingsComp extends AbstractStatefulComponent<FeelingsPCD> {
     //  letzter Zeitpunkt, letzter WACHER Zeitpunkt und aktueller Zeitpunkt
     //  Entsprechend kann dann der Text gestaltet werden, z.B. "Der Gesang hat aufgehört."
 
-    // FIXME Konzept entwickeln, dass diese "Statusübergänge" realisiert:
+    // IDEA Konzept entwickeln, dass diese "Statusübergänge" realisiert:
     //  - Benutzer schläft ein, während Rapunzel singt, aufhört und wieder anfängt
     //  - Benutzer schläft ein, während Rapunzel singt und wacht auf und Rapunzel hat
     //    zwischenzeitlich aufgehört zu singen
 
-    // FIXME Idee: Jede Reaktion speichert den letzten Zustand (PCD), auf Basis dessen sie einen
+    // IDEA Idee: Jede Reaktion speichert den letzten Zustand (PCD), auf Basis dessen sie einen
     //  Text gerendert hat sowie den Zeitpunkt dazu. Wenn wieder Gelegenheit ist, ein Text zu
     //  rendern, wird geprüft, ob sich der Status gegenüber dem Zeitpunkt geändert hat,
     //  außerdem wird geprüft, ob der Zeitpunkt Benutzer etwas versäumt hat oder die ganze
@@ -258,7 +258,7 @@ public class FeelingsComp extends AbstractStatefulComponent<FeelingsPCD> {
     //  Gesang"
     //  oder "Es ist kein Gesang mehr zu hören" gerendert.
 
-    // FIXME Zum Beispiel wäre der Benutzer über alle Statusänderungen zu unterrichten,
+    // IDEA Zum Beispiel wäre der Benutzer über alle Statusänderungen zu unterrichten,
     //  Die zwischenzeitlich passiert sind ("der Frosch ist verschwunden").
 
     // TODO Man könnte auch, wenn der Benutzer erstmals wieder nach draußen kommt, etwas
@@ -271,20 +271,20 @@ public class FeelingsComp extends AbstractStatefulComponent<FeelingsPCD> {
     //  man ihn später wieder laden kann. Alternativ auch mehrere Game Objects,
     //  denn nur so kann man prüfen, was sich nach dem Schlafen an einem Ort verändert hat.
 
-    // FIXME Der Benutzer (oder auch andere Game Objects) könnte auch über
+    // IDEA Der Benutzer (oder auch andere Game Objects) könnte auch über
     //  die Assumed Locations hinaus ein Mental Model haben, wo
     //  der Stand der Welt, wie der Benutzer ihn sich vorstellt, gespeichert ist
     //  (z.B. die Welt, oder der Raum bevor der Benutzer eingeschlafen ist...)
     //  Dann könnte man beim Erzählen (z.B. beim Aufwachen) vergleichen...
 
-    // FIXME Der Frosch läuft während des Schlafens davon - nicht beim Aufwachen.
+    // IDEA Der Frosch läuft während des Schlafens davon - nicht beim Aufwachen.
     //  Alternativ könnte der Spieler durch das Weglaufen aufgeweckt werden
     //  (so ähnlich, wie das Warten unterbrochen wird).
 
     // IDEA Konzept dafür entwickeln, dass der Benutzer einen  Ort verlässt, während XYZ
     //  passiert und zurückkehrt, wenn XYZ nicht mehr passiert
 
-    // FIXME Konzept entwickeln, dass diese "Statusübergänge" realisiert:
+    // IDEA Konzept entwickeln, dass diese "Statusübergänge" realisiert:
     //  - Benutzer schläft an einem Ort, Rapunzel beginnt dort zu singen und hört wieder auf
     //     (Benutzer merkt nichts)
     //  - Benutzer schläft ein, während Rapunzel nicht singt und wacht auf und Rapunzel hat

@@ -534,7 +534,7 @@ public class RapunzelsZauberinReactionsComp
         // Zustandswechsel nötig! Die Zauberin geht zu Rapunzel los.
         onTimePassed_ToAufDemWegZuRapunzel(now);
 
-        // FIXME Wenn der World-Tick ungewöhnlich lang war, geht die Zauberin
+        // IDEA Wenn der World-Tick ungewöhnlich lang war, geht die Zauberin
         //  recht spät oder gar nicht mehr los.
         //  Am besten durch ein zentrales Konzept beheben!
     }
@@ -567,7 +567,7 @@ public class RapunzelsZauberinReactionsComp
             return;
         }
 
-        // FIXME Wenn der World-Tick ungewöhnlich lang war, passiert das hier
+        // IDEA Wenn der World-Tick ungewöhnlich lang war, passiert das hier
         //  alles zu spät.
         //  Denkbare Lösungen:
         //  - Durch ein zentrales Konzept beheben (World-Ticks nie zu lang)
@@ -699,7 +699,7 @@ public class RapunzelsZauberinReactionsComp
         // Zustandswechsel nötig! Die Zauberin geht zu Rapunzel los.
         onTimePassed_ToAufDemWegZuRapunzel(now);
 
-        // FIXME Wenn der World-Tick ungewöhnlich lang war, geht die Zauberin
+        // IDEA Wenn der World-Tick ungewöhnlich lang war, geht die Zauberin
         //  recht spät oder gar nicht mehr los.
         //  Am besten durch ein zentrales Konzept beheben!
     }

@@ -101,8 +101,7 @@ public class BewegenAction<LOC_DESC extends ILocatableGO & IDescribableGO>
 
         if (location instanceof ISpatiallyConnectedGO) {
             res.addAll(buildSpatiallyConnectedActions(scActionStepCountDao, timeTaker, counterDao,
-                    n, world,
-                    (ILocationGO & ISpatiallyConnectedGO) location));
+                    n, world, (ILocationGO & ISpatiallyConnectedGO) location));
         }
 
         res.addAll(buildInActions(scActionStepCountDao, timeTaker, counterDao, n, world, location));

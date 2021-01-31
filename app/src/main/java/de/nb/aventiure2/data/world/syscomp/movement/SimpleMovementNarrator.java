@@ -263,8 +263,7 @@ public class SimpleMovementNarrator implements IMovementNarrator {
 
         if (spatialConnection != null &&
                 world.isOrHasRecursiveLocation(scLastLocation, spatialConnection.getTo())) {
-            narrateMovingGOKommtSCEntgegenUndGehtAnSCVorbei(
-            );
+            narrateMovingGOKommtSCEntgegenUndGehtAnSCVorbei();
             return;
         }
 
@@ -329,9 +328,6 @@ public class SimpleMovementNarrator implements IMovementNarrator {
                         wo, // "auf dem Weg "
                         "weiter")
                         .beendet(PARAGRAPH),
-                // FIXME SC sitzt im Schatten der Bäume und "Die magere Frau geht weg".
-                //  Danach tritt der SC aus dem SChatten der Bäume und es kommt der Text
-                //  "Die magere Frau ist nicht mehr da" (das sollte dann schon bekannt sein!)
                 neuerSatz(PARAGRAPH,
                         anaph.nomK(),
                         "geht weg")
