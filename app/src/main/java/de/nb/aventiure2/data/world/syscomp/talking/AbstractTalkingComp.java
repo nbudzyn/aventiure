@@ -107,7 +107,7 @@ public abstract class AbstractTalkingComp extends AbstractStatefulComponent<Talk
 
     public void setTalkingTo(@Nullable final GameObjectId talkingToId) {
         if (talkingToId == null) {
-            unsetTalkingTo(true);
+            talkerBeendetGespraech();
             return;
         }
 

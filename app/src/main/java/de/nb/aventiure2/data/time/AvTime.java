@@ -85,7 +85,7 @@ public class AvTime {
 
         return NACHTS;
 
-        // FIXME MITTERNACHT?  "Mitternacht", "mitten in der Nacht", "Geisterstunde"
+        // IDEA MITTERNACHT?  "Mitternacht", "mitten in der Nacht", "Geisterstunde"
     }
 
     AvTimeSpan timeSpanUntil(@NonNull final AvTime other) {

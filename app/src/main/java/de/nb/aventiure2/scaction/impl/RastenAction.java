@@ -70,6 +70,11 @@ public class RastenAction extends AbstractWartenRastenAction {
 
     @Override
     public void narrateAndDo() {
+        if (!sc.memoryComp().getLastAction().is(Action.Type.WARTEN) &&
+                !sc.memoryComp().getLastAction().is(Action.Type.RASTEN)) {
+            counterDao.reset(COUNTER_WARTEN_ODER_RASTEN_IN_FOLGE);
+        }
+
         if (automatischesEinschlafen()) {
             narrateAndDoSchlafen();
         } else {
@@ -113,7 +118,7 @@ public class RastenAction extends AbstractWartenRastenAction {
     private void narrateAndDoRapunzelZuhoeren() {
         sc.feelingsComp().requestMoodMin(Mood.GLUECKLICH);
 
-        n.narrateAlt(mins(4),
+        n.narrateAlt(mins(4), COUNTER_WARTEN_ODER_RASTEN_IN_FOLGE,
                 du("bist", "ganz still")
                         .undWartest()
                         .dann(),
@@ -132,7 +137,7 @@ public class RastenAction extends AbstractWartenRastenAction {
     private void narrateAndDoDunkel() {
         sc.feelingsComp().requestMoodMax(Mood.VERUNSICHERT);
 
-        n.narrateAlt(mins(3),
+        n.narrateAlt(mins(3), COUNTER_WARTEN_ODER_RASTEN_IN_FOLGE,
                 neuerSatz("Die Bäume rauschen in "
                         + "der Dunkelheit, die Eulen schnarren, und "
                         + "und es fängt an, dir angst zu werden")
@@ -153,8 +158,8 @@ public class RastenAction extends AbstractWartenRastenAction {
         //  Rast -> Aufstehen: "Dann..."
         //  Anscheinend setzt "Dann..." eine Art "Aktionsänderung" voraus.
 
-        // IDEA "Dann" nicht bei "statischen Verben" (du hast Glück, du hast Hunger,
-        //  du freust dich) verwenden.
+        // IDEA "Dann" nicht bei (?) oder nach (?) "statischen Verben" (du hast Glück, du hast
+        //  Hunger, du freust dich) verwenden.
 
         // IDEA "Dann" nur verwenden, wenn der es einen Aktor gibt und der Aktor im letzten
         //  Satz gleich war. (Nach der Logik kann man dann auch für Beschreibungen in
@@ -195,7 +200,7 @@ public class RastenAction extends AbstractWartenRastenAction {
                     .dann();
         }
 
-        n.narrateAlt(alt, mins(10));
+        n.narrateAlt(alt, mins(10), COUNTER_WARTEN_ODER_RASTEN_IN_FOLGE);
     }
 
     @Override

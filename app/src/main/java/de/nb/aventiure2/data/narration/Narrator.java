@@ -128,7 +128,13 @@ public class Narrator {
 
     public void narrateAlt(final AltDescriptionsBuilder alternatives,
                            final AvTimeSpan timeElapsed) {
-        narrateAlt(alternatives.build(), timeElapsed);
+        narrateAlt(alternatives, timeElapsed, null);
+    }
+
+    public void narrateAlt(final AltDescriptionsBuilder alternatives,
+                           final AvTimeSpan timeElapsed,
+                           @Nullable final String counterIdIncrementedIfTextIs) {
+        narrateAlt(alternatives.build(), timeElapsed, counterIdIncrementedIfTextIs);
     }
 
     public void narrateAlt(final TimedDescription<?>... alternatives) {
@@ -174,7 +180,7 @@ public class Narrator {
     }
 
     public void narrateAlt(final Collection<? extends TimedDescription<?>> alternatives) {
-        // FIXME hier könnte ein Adressatenmodell auf Basis des SC (Interface?)
+        // IDEA hier könnte ein Adressatenmodell auf Basis des SC (Interface?)
         //  entscheiden, ob SC z.B. schläft.
 
         if (temporaryNarration != null) {

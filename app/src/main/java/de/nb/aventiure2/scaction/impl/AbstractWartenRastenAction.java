@@ -29,7 +29,7 @@ public abstract class AbstractWartenRastenAction extends AbstractScAction {
 
     boolean automatischesEinschlafen() {
         if (counterDao.get(COUNTER_WARTEN_ODER_RASTEN_IN_FOLGE) >= 3) {
-            return sc.feelingsComp().getMuedigkeit() >= FeelingIntensity.DEUTLICH;
+            return sc.feelingsComp().getMuedigkeit() >= FeelingIntensity.MERKLICH;
         }
 
         return sc.feelingsComp().getMuedigkeit() >= FeelingIntensity.STARK;

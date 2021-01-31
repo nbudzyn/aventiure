@@ -86,7 +86,8 @@ public class WartenAction<LIVGO extends IDescribableGO & ILocatableGO & ILivingB
 
     @Override
     public void narrateAndDo() {
-        if (!sc.memoryComp().getLastAction().is(Action.Type.WARTEN)) {
+        if (!sc.memoryComp().getLastAction().is(Action.Type.WARTEN) &&
+                !sc.memoryComp().getLastAction().is(Action.Type.RASTEN)) {
             counterDao.reset(COUNTER_WARTEN_ODER_RASTEN_IN_FOLGE);
         }
 
