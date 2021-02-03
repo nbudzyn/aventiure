@@ -114,6 +114,14 @@ public enum RapunzelStoryNode implements IStoryNode {
     //  Unter dem Bett verstecken
     //  "wie deine Augen noch nie eine erblickt hatten"
 
+    // STORY Wie im Märchen: Rapunzel hat sich verplappert, Zauberin
+    //  hat Rapunzel die Haare abgeschnitten. Und Rapunzel z.B. in
+    //  einen Vogel verwandelt (oder verzaubert Rapunzel in Anwesenheit
+    //  des SC). Vogel in Käfig.
+    //  SC hat Traum (Blume), Blume wächst am Wegesrand,
+    //  SC besiegt Zauberin (oder sie ist gerade nicht da?)
+    //  SC öffnet Käfig und berührt Rapunzel mit Bume (wie anderes Märchen)
+
     // STORY Rapunzel: Will sich vom Spieler aus dem Wald führen lassen
 
     // STORY?! Zauberin, wenn man sie trifft  "sieht dich mit bösen und giftigen Blicken an"
