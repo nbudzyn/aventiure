@@ -99,7 +99,7 @@ class SchattenDerBaeumeFactory {
                 == 0) {
             return du(PARAGRAPH, "lässt",
                     "dich im Schatten der umstehenden Bäume nieder",
-                    unauffaelligHinweisSinnvoll ? ". Ein sehr unauffälliger Platz." : null)
+                    unauffaelligHinweisSinnvoll ? ". Ein sehr unauffälliger Platz" : null)
                     .mitVorfeldSatzglied("im Schatten der umstehenden Bäume")
                     .timed(mins(5))
                     .withCounterIdIncrementedIfTextIsNarrated(
@@ -129,6 +129,11 @@ class SchattenDerBaeumeFactory {
 
     @Nullable
     private String unauffaelligTagsueberString() {
+        // IDEA Solche Hinweis besser in die Story-Komponente aufnehmen?
+        //  Wichtig: Sie sollen immer kommen, nicht nur, wenn der SC nicht weiter kommt!
+        //  (Dazu haben wir noch kein gutes Konzept: Manche Hinweise sollten immer kommen,
+        //  wenn der SC vor Ort ist, andere Hinweise nur, wenn der SC sinnlos durch die
+        //  Gegend läuft.)
         switch (db.counterDao().get(
                 DESC_TO_SCHATTEN_DER_BAEUME__SC_SETZT_SICH_TAGSUEBER_IN_DEN_SCHATTEN_DER_BAEUME)
                 % 4) {

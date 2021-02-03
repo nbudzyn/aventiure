@@ -444,20 +444,26 @@ public class RapunzelsZauberinReactionsComp
             n.narrate(neuerSatz("Jetzt geht alles ganz schnell. Die magere Frau schaut "
                     + "zum Fenster "
                     + "herein. Ihr Blick fällt auf dich – und mit einem Mal "
-                    + "sieht sie direkt in die Augen. Du bist wie gebannt und"
-                    + " kannst deinen Blick gar nicht abwenden…")
+                    + "sieht sie direkt in die Augen. Du bist wie "
+                    + "gebannt und kannst deinen Blick gar nicht abwenden, und die Frau "
+                    + "scheint etwas zu murmeln…")
                     .timed(mins(5)));
         } else if (locationComp.hasRecursiveLocation(OBEN_IM_ALTEN_TURM)) {
             n.narrate(neuerSatz(PARAGRAPH, "Jetzt schaut oben aus dem Turmfenster die "
                     + "magere Frau heraus. "
-                    + "Kurz sucht ihr Blick umher, dann sieht sie dich direkt an. "
-                    + "Ihre Augen sind - du kannst deinen Blick gar nicht abwenden…")
+                    + "Kurz sucht ihr Blick umher, dann sieht sie dich direkt an. Ihre Augen "
+                    + "sind - du kannst deinen Blick gar nicht abwenden. Ihr Mund formt Worte, "
+                    + "die du nicht verstehst, und du bekommst es mit der Angst zu tun…")
                     .timed(mins(5)));
         } else {
-            n.narrate(neuerSatz(PARAGRAPH, "Die magere Frau sieht dich mit einem Mal "
-                    + "direkt an. Ihre Augen sind - du kannst deinen Blick "
-                    + "gar nicht abwenden…")
-                    .timed(mins(5)));
+            n.narrateAlt(mins(5),
+                    neuerSatz(PARAGRAPH, "Die magere Frau sieht dich mit einem Mal "
+                            + "direkt an. Ihre Augen sind - du kannst deinen Blick "
+                            + "gar nicht abwenden. Dann scheint sie etwas zu murmeln - doch nicht "
+                            + "etwa einen Zauberspruch? -"),
+                    neuerSatz(PARAGRAPH, "Plötzlich sieht dir die Frau unmittelbar in",
+                            "die Augen. Du bist wie gebannt und hörst sie fremdartige Worte",
+                            "murmeln - will sie dich etwa verhexen?"));
         }
 
         // Zauberin kann den Spieler nicht mehr ausstehen
@@ -500,14 +506,11 @@ public class RapunzelsZauberinReactionsComp
             ortsbeschreibung = "stehst ganz allein vor dem alten Turm";
         }
 
-        // FIXME Im Text klarer machen, dass der SC verzaubert wurde:
-        //  "Du füllst dich wie verhext", "auf einmal ist alles wie weggeblasen" o.Ä.
-        n.narrate(neuerSatz(CHAPTER, "Du " +
-                ortsbeschreibung +
-                " und "
-                + "fühlst dich etwas verwirrt: Was hattest du "
-                + "eigentlich gerade vor? Ob der Turm wohl "
-                + "bewohnt ist? Niemand ist zu sehen")
+        n.narrate(neuerSatz(CHAPTER, "Auf einmal ist alles wie weggeblasen. Du",
+                ortsbeschreibung,
+                "und fühlst dich etwas verwirrt: Was hattest du "
+                        + "eigentlich gerade vor? Ob der Turm wohl "
+                        + "bewohnt ist? Niemand ist zu sehen")
                 .timed(secs(15)));
     }
 
