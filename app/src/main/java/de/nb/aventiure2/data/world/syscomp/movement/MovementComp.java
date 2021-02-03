@@ -5,8 +5,6 @@ import androidx.annotation.Nullable;
 
 import com.google.common.annotations.VisibleForTesting;
 
-import org.jetbrains.annotations.Contract;
-
 import de.nb.aventiure2.data.database.AvDatabase;
 import de.nb.aventiure2.data.time.AvDateTime;
 import de.nb.aventiure2.data.time.AvTimeSpan;
@@ -367,7 +365,6 @@ public class MovementComp
      *                    ganz normal erzeugt - bei <code>true</code> werden für den
      *                    Schritt 0 Sekunden eingeplant. Der NPC wird also sofort ankommen.
      */
-    @Contract("_, null, _ -> null; _, !null, _ -> new")
     private MovementStep toMovementStep(
             final ILocationGO from,
             @Nullable final SpatialStandardStep spatialStandardStep,

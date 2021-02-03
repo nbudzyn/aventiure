@@ -19,7 +19,7 @@ import de.nb.aventiure2.data.world.gameobject.*;
 public interface IStoryNode {
     // STORY Neue Branches in Twine entwickeln
 
-    // STORY Weitere Schritte in Twine modellieren, insbesondere mit dem Ziel, immer
+    // IDEA Weitere Schritte in Twine modellieren, insbesondere mit dem Ziel, immer
     //  "neue Enden zu finden".
     //  Dazu weitere Teile aus den bestehenden Märchen ausschneiden als Twine-Knoten.
     //  Zusammenbinden der Knoten z.B. über die Charaktere: Was ist mit der Zauberin vorher

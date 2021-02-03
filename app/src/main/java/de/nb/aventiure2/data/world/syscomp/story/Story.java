@@ -14,7 +14,7 @@ import de.nb.aventiure2.data.world.syscomp.story.impl.RapunzelStoryNode;
  * Schritten ({@link IStoryNode}s).
  */
 public enum Story {
-    // IDEA Idee für Märchenumsetzung: von hinten Beginnen! Was ist das Ziel?
+    // FIXME Idee für Märchenumsetzung: von hinten Beginnen! Was ist das Ziel?
     //  Was sind die Zwischenziele? Was sind die Aktionen?
     //  Immer feiner, das aus dem Märchen nehmen, was geht, sonst improvisieren.
 

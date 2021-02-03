@@ -40,7 +40,7 @@ class ValenzAnnotatedClass {
             for (final Set<ArgumentField> combination :
                     Sets.combinations(Sets.newLinkedHashSet(argumente), i)) {
                 res.add(new ValenzClassToBeGenerated(packageName,
-                        packageName.equals("") ? simpleName :
+                        packageName.isEmpty() ? simpleName :
                                 packageName + "." + simpleName,
                         argumente,
                         combination,

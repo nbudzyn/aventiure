@@ -168,7 +168,7 @@ public class RapunzelsZauberinReactionsComp
                 mentalModelComp.unsetAssumedLocation(SPIELER_CHARAKTER);
             }
 
-            // STORY Wenn der Spieler oben im Turm ist
+            // FIXME Wenn der Spieler oben im Turm ist
             //  "Unten vor dem Turm steht eine..."?
             //  Zumindest, wenn der Spieler aus dem Fenster schaut?!
             //  Oder schaut vielleicht Rapunzel aus dem Fenster, bevor sie die
@@ -384,7 +384,7 @@ public class RapunzelsZauberinReactionsComp
                             .timed(mins(4)));
 
         }
-        // STORY UNTER_DEM_BETT_OBEN_IM_ALTEN_TURM
+        // FIXME UNTER_DEM_BETT_OBEN_IM_ALTEN_TURM
 //        else if (loadSC().locationComp().hasRecursiveLocation
 //        (UNTER_DEM_BETT_OBEN_IM_ALTEN_TURM)) {
 //            final Nominalphrase desc = getDescription(true);
@@ -432,7 +432,7 @@ public class RapunzelsZauberinReactionsComp
             n.narrate(neuerSatz(anaph(true).nomK(),
                     "hat dich nicht bemerkt").timed(NO_TIME));
         }
-        // STORY UNTER_DEM_BETT_OBEN_IM_ALTEN_TURM
+        // FIXME UNTER_DEM_BETT_OBEN_IM_ALTEN_TURM
 
         locationComp.narrateAndSetLocation(VOR_DEM_ALTEN_TURM);
 

@@ -38,6 +38,7 @@ import static de.nb.aventiure2.german.description.DescriptionBuilder.du;
 import static de.nb.aventiure2.german.description.DescriptionBuilder.paragraph;
 import static java.util.Arrays.asList;
 
+@SuppressWarnings("UnnecessaryReturnStatement")
 public enum RapunzelStoryNode implements IStoryNode {
     TURM_GEFUNDEN(10, VOR_DEM_ALTEN_TURM,
             RapunzelStoryNode::narrateAndDoHintAction_TurmGefunden),
@@ -100,16 +101,16 @@ public enum RapunzelStoryNode implements IStoryNode {
     //  besorgen - oder Seide kaufen und etwas zum Stricken??? Gold gabs vielleicht
     //  vom Froschprinzen?
 
-    // STORY fremdländisch aussehender Händler auf Schlossfest vor einem Zelt
+    // FIXME fremdländisch aussehender Händler auf Schlossfest vor einem Zelt
 
-    // STORY Seide für großen Klumpen Gold (goldene Kugel,
+    // FIXME Seide für großen Klumpen Gold (goldene Kugel,
     //  dabei stressen, das man sie lieb gewonnen hat)
     //  "kaufst ihm ... ab"
     //  Oder für ein Goldstück, das man vom Prinzen bekommen hat?
     //  Oder Sterntaler / Münzen in Lichtung im Wald, die man brauchen kann, um Seide
     //  für Rapunzel zu kaufen.
 
-    // STORY Wieder hinaufsteigen mit schwerem Ballen Seide
+    // FIXME Wieder hinaufsteigen mit schwerem Ballen Seide
     //  "du warst mich heute schwer heraufzuziehen"
     //  Unter dem Bett verstecken
     //  "wie deine Augen noch nie eine erblickt hatten"
@@ -124,15 +125,13 @@ public enum RapunzelStoryNode implements IStoryNode {
 
     // STORY Rapunzel: Will sich vom Spieler aus dem Wald führen lassen
 
-    // STORY?! Zauberin, wenn man sie trifft  "sieht dich mit bösen und giftigen Blicken an"
+    // FIXME Rapunzel flicht die Leiter
 
-    // STORY Rapunzel flicht die Leiter
-
-    // STORY SC steigt erneut hinauf.
+    // FIXME SC steigt erneut hinauf.
     //  "Die Alte hat nichts gemerkt"
 
-    //  STORY Die Leiter ist fertig.
-    //  STORY Leiter oben am Fensterhaken fest
+    //  FIXME Die Leiter ist fertig.
+    //  FIXME Leiter oben am Fensterhaken fest
     //   lässt sie herab
     //   Beide steigen hinunter, die Leiter bleibt hängen (Raum bleibt zugänglich)
 
@@ -358,7 +357,7 @@ public enum RapunzelStoryNode implements IStoryNode {
 
         if (world.loadSC().locationComp().hasRecursiveLocation(VOR_DEM_ALTEN_TURM) &&
                 rapunzel.stateComp().hasState(HAARE_VOM_TURM_HERUNTERGELASSEN)) {
-            alt.add(paragraph("Warum nicht auch die Haare hinaufsteigen?"));
+            alt.add(paragraph("Ob es wohl gefährlich ist, die Haare hinaufsteigen?"));
         } else if (world.loadSC().memoryComp().isKnown(RAPUNZELRUF)) {
             alt.add(paragraph(
                     "Du bist dir plötzlich sicher: Wenn dich jemand in dieser Welt braucht, "
@@ -376,16 +375,21 @@ public enum RapunzelStoryNode implements IStoryNode {
             if (!world.loadSC().locationComp().hasRecursiveLocation(VOR_DEM_ALTEN_TURM)) {
                 alt.add(paragraph(
                         "Hin und wieder musst du an den alten Turm denken. Du hast das Gefühl, "
-                                + "etwas "
-                                + "Wichtiges vergessen zu haben, aber es will dir partout nicht "
-                                + "einfallen"));
+                                + "etwas Wichtiges vergessen zu haben, aber es will dir partout "
+                                + "nicht einfallen"),
+                        paragraph("Du musst kurz innehalten. Dein Herz zieht dich zum alten Turm "
+                                + "auf der Hügelkuppe. Und du kannst nicht sagen, warum!"),
+                        paragraph("Die Leute sagen ja: Wenn man etwas vergessen hat, soll man noch "
+                                + "einmal an dieselbe Stelle zurückgehen"));
             }
 
             alt.add(paragraph(
                     "Manchmal hast du das Gefühl: Du hast noch eine wichtige Rolle "
                             + "zu spielen. Aber wenn du genauer darüber nachdenkst, weißt "
-                            + "du plötzlich nicht weiter. Es ist wie verhext"));
-            // FIXME Mehr Texte für diesen Fall (Nach dem Verhextwerden)
+                            + "du plötzlich nicht weiter. Es ist wie verhext",
+                    paragraph(
+                            "Du hast die ganze Zeit das Gefühl, etwas Wichtiges vergessen zu "
+                                    + "haben! Aber was bloß?")));
             alt.addAll(altTurmWohnenHineinHeraus(world));
         }
 

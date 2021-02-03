@@ -14,7 +14,6 @@ import static de.nb.aventiure2.data.world.syscomp.movement.MovementPCD.PauseForS
  * Mutable - and therefore persistent - data of the {@link MovementPCD} component.
  */
 @Entity
-@SuppressWarnings("unused")
 public class MovementPCD extends AbstractPersistentComponentData {
     /**
      * Ob eine Pause eingelegt wurde, damit der SC mit dem

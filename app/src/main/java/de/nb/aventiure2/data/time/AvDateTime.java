@@ -170,6 +170,7 @@ public class AvDateTime {
         return Objects.hash(secsSinceBeginning);
     }
 
+    @SuppressWarnings("StringConcatenationMissingWhitespace")
     @NonNull
     @Override
     public String toString() {

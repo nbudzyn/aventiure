@@ -159,7 +159,7 @@ public class RapunzelReactionsComp
                 onSCEnter_VorDemAltenTurm_HaareHeruntergelassen(from);
                 return;
             default:
-                // IDEA Konzept dafür entwickeln, dass der Benutzer Rapunzel gut gelaunt
+                // FIXME Konzept dafür entwickeln, dass der Benutzer Rapunzel gut gelaunt
                 //  verlässt und niedergeschlagen zu Rapunzel zurückkehrt und
                 //  Rapunzel auf den Wechsel reagiert (Mental Model für Rapunzel?)
                 return;
@@ -216,7 +216,7 @@ public class RapunzelReactionsComp
 
             final AltTimedDescriptionsBuilder alt = altTimed();
             alt.addAll(altRapunzelZiehtHaareWiederHoch_VorDemAltenTurm());
-            // STORY Wenn Rapunzel das mit der Zauberin erzählt hat (aber auch dann nur
+            // FIXME Wenn Rapunzel das mit der Zauberin erzählt hat (aber auch dann nur
             //  einmal): „Aber komm nicht, wenn die Alte bei mir ist, ruft sie dir noch nach"
             //  (Das wäre ein neuer RufTyp!)
 
@@ -232,7 +232,7 @@ public class RapunzelReactionsComp
 
         if (world.isOrHasRecursiveLocation(from, IM_WALD_NAHE_DEM_SCHLOSS)) {
             loadSC().feelingsComp().requestMoodMin(NEUTRAL);
-            // STORY Andere und alternative Beschreibungen, wenn der SC
+            // FIXME Andere und alternative Beschreibungen, wenn der SC
             //  Rapunzel schon kennengelernt hat
             n.narrate(neuerSatz("Aus dem kleinen "
                     + "Fenster oben im Turm hängen lange, goldene Haarzöpfe herab")

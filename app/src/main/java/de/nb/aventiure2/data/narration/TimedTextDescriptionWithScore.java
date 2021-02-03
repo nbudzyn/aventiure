@@ -9,7 +9,7 @@ import de.nb.aventiure2.german.description.TimedDescription;
 
 class TimedTextDescriptionWithScore {
     final TimedDescription<TextDescription> timedTextDescription;
-    final float score;
+    private final float score;
 
     TimedTextDescriptionWithScore(
             final TimedDescription<TextDescription> timedTextDescription,
@@ -40,7 +40,7 @@ class TimedTextDescriptionWithScore {
     @Override
     public String toString() {
         return "TimedTextDescriptionWithScore{" +
-                "allgTimedDescription=" + timedTextDescription +
+                "allgTimedDescription=" + timedTextDescription.getDescription().getText() +
                 ", score=" + score +
                 '}';
     }

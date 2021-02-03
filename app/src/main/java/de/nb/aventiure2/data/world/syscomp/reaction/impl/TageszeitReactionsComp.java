@@ -163,7 +163,7 @@ public class TageszeitReactionsComp
                                 + "der Abend an"),
                         neuerSatz(PARAGRAPH, "Die Abenddämmerung beginnt"),
                         neuerSatz(PARAGRAPH, "Inzwischen steht die Sonne schon tief")
-                        // STORY Noch ein paar Texte!
+                        // STORY Noch ein paar Texte frü den Beginn des Abends
                         // TODO WENN DER SPIELER DRAUSSEN IST "Heute ist ein schönes Abendrot zu
                         //  sehen"
                 );

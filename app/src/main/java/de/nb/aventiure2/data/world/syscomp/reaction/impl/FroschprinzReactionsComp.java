@@ -50,6 +50,7 @@ import static de.nb.aventiure2.german.description.DescriptionBuilder.du;
 import static de.nb.aventiure2.german.description.DescriptionBuilder.neuerSatz;
 import static de.nb.aventiure2.german.description.DescriptionBuilder.satzanschluss;
 
+@SuppressWarnings("UnnecessaryReturnStatement")
 public class FroschprinzReactionsComp
         extends AbstractDescribableReactionsComp
         implements IMovementReactions, IEssenReactions, ITimePassedReactions {
@@ -531,10 +532,7 @@ public class FroschprinzReactionsComp
 
     @VisibleForTesting
     void froschprinzLaueftZumSchlossfestLos() {
-        // TODO Find all equals() warnings and fix the code.
-
         if (locationComp.hasSameOuterMostLocationAs(SPIELER_CHARAKTER)) {
-            // IDEA "Wir sehen uns noch!"
             n.narrate(
                     neuerSatz(PARAGRAPH, "Plitsch platsch, plitsch platsch",
                             "hüpft der Frosch davon")

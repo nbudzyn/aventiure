@@ -429,11 +429,11 @@ public class BewegenAction<LOC_DESC extends ILocatableGO & IDescribableGO>
         );
 
         if (missingObjects.size() == 2) {
-            neuerSatz("weder",
+            alt.add(neuerSatz("weder",
                     world.getDescription(missingObjects.get(0)).nomK(),
                     "noch",
                     world.getDescription(missingObjects.get(1)).nomK(),
-                    "ist irgendwo zu sehen");
+                    "ist irgendwo zu sehen"));
         }
 
         return alt;
