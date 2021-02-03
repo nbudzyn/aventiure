@@ -363,13 +363,9 @@ public enum RapunzelStoryNode implements IStoryNode {
                     "Du bist dir plötzlich sicher: Wenn dich jemand in dieser Welt braucht, "
                             + "wartet er – wartet sie! – oben im Turm auf dich!"),
                     paragraph(
-                            "Plötzlich steht es dir klar vor Augen: Du musst in den Turm steigen – "
-                                    +
-                                    "du weißt doch, was du zu rufen hast! Du wirst doch keine "
-                                    + "Angst "
-                                    + "vor der dürren Frau haben?"));
-            //  FIXME Dies hier nicht, wenn die Zauberin oben im Turm ist?
-            //   Es ist ja ein irreführender Tipp!
+                            "Plötzlich steht es dir klar vor Augen: Du musst in den Turm",
+                            "steigen, und du weißt, was du zu rufen hast! –  Aber die dürre Frau, "
+                                    + "die macht dir Angst…"));
         } else {
             // SC hat alles vergessen
             if (!world.loadSC().locationComp().hasRecursiveLocation(VOR_DEM_ALTEN_TURM)) {
