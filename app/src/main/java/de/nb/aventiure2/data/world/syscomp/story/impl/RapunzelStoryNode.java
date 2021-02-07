@@ -69,7 +69,7 @@ public enum RapunzelStoryNode implements IStoryNode {
 
     // FIXME SC steigt erneut hinauf.
     //  "Die Alte hat nichts gemerkt" (Foreshadowing!)
-    
+
     // FIXME Wenn Zauberin kommt: "Du kriechst unter das Bett. Es ist eng und staubig"
     //  - Idee: Das Bett eraufbauen / Drunterkriechen erst ermöglichen, wenn Zauberin kommt
     //    ("versteck dich..." Du schaust um dich und dein Blick fällt auf das Bett")
@@ -119,6 +119,15 @@ public enum RapunzelStoryNode implements IStoryNode {
     //  Der Sturm peitscht die Äste über dir und es ist ziemlich dunkel. Ein geschützter Platz
     //  wäre schön.
     //  Langsam scheint sich das Wetter wieder zu bessern / der Sturm flaut allmählich ab.
+    //  Fürs Wetter lässt sich wohl einiges von Hunger oder Müdigkeit übernehmen.
+    //  Das Wetter müsste quasi eine "Tendenz" erhalten, nach der es sich langsam
+    //  entwickelt. Und man braucht regelmäßige Hinweise (je nach Dramatik des Wettes).
+    //  Außerdem sollten alle "heiß..."–Hinweise dort zentralisiert werden.
+    //  Man könnte auch verschiedene Skalen haben kalt-heiß, windstill-stürmisch...
+    //  und Zielwerte mit Zielzeiten festsetzen. Schwierigkeit: Die Texte müssten
+    //  alle Skalen gleichzeitig berücksichtigen?
+    //  Oder es gibt "Wetterwege" Zwischenstationen, und man gibt nur ein Ziel vor...
+    //  (Ähnlich wie beim movement)
 
     // FIXME Wetter als Konzept ähnlich Tageszeiten? Aber nur dramturgisch geändert, nicht
     //  automatisch?

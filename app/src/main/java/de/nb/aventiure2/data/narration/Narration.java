@@ -470,7 +470,7 @@ public class Narration {
 
         final String lastRelevantCharBase =
                 baseTrimmed.substring(baseTrimmed.length() - 1);
-        if ("….!?:\"“\n".contains(lastRelevantCharBase)) {
+        if ("….!?:\"“–\n".contains(lastRelevantCharBase)) {
             return false;
         }
 

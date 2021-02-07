@@ -100,7 +100,8 @@ public class StoringPlaceComp extends AbstractStatelessComponent {
      * auf diesem Tisch, in der Tasche o.Ä.)
      */
     public Lichtverhaeltnisse getLichtverhaeltnisse() {
-        // IDEA Der SC oder ein anderes Game Object, das sich  "IN" DIESER LOCATION BEFINDET, könnte eine
+        // IDEA Der SC oder ein anderes Game Object, das sich  "IN" DIESER LOCATION BEFINDET,
+        //  könnte eine
         //  Lichtquelle (Fackel) dabei haben.
         //  Hier ist zu bedenken, dass Fackeln zwar von einem Tisch strahlen - aber nicht aus
         //  einer Kiste! Es wäre eine rekursive Prüfung über alle "enthaltenen" Objekte
@@ -133,7 +134,7 @@ public class StoringPlaceComp extends AbstractStatelessComponent {
         // aus den "Umweltverhältnissen", konkret: Aus der Tageszeit
         return timeTaker.now().getTageszeit().getLichtverhaeltnisseDraussen();
 
-        // IDEA Möglicherweise sollen Wetterphänomene (Regen) und der "tageszeitliche Himmel"
+        // FIXME Möglicherweise sollen Wetterphänomene (Regen) und der "tageszeitliche Himmel"
         //  ("du siehst ein schönes Abendrot") nur dann erzählt werden, wenn der SC
         //  "draußen" ist oder "einen Blick auf den Himmel hat". Auch diese Fragen ließen
         //  sich wohl analog rekursiv beantworten.

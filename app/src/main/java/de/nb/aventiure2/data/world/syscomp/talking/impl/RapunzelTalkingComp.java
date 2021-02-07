@@ -805,7 +805,7 @@ public class RapunzelTalkingComp extends AbstractTalkingComp {
         if (counterDao.get(RETTUNG_ZUGESAGT) == 0) {
             n.narrate(neuerSatz("„Du hast mein Wort!“",
                     "Du siehst ihr in die Augen. „Vertrau mir, mir fällt etwas ein! Wir bringen",
-                    "dich hier raus“")
+                    "dich hier raus.“")
                     .timed(secs(10)).withCounterIdIncrementedIfTextIsNarrated(RETTUNG_ZUGESAGT));
         } else {
             n.narrate(du("siehst",

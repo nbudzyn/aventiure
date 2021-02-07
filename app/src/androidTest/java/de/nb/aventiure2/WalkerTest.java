@@ -73,7 +73,7 @@ public class WalkerTest extends AndroidTestBase {
     public void assertNoVerbiddenContentInNarration() {
         final String narrationText = db.narrationDao().requireNarration().getText();
         assertThatDoesNotContainAnyOf(narrationText,
-                "@", "  ", ".!", "!.", "?.", ".?",
+                "@", "  ", ".!", "!.", "?.", ".?", "–.",
                 "\"", // Falsche Anführungszeichen
                 "„.", "„!", "„ ", "„?", ".„", "!„", "?„", "„,",
                 "“.", "“!", "“?", ",“", ", “",

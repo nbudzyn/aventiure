@@ -126,8 +126,6 @@ public class Konstituentenfolge implements Iterable<Konstituente> {
         return joinToAltKonstituentenfolgen(asList(parts));
     }
 
-    // FIXME dich hier raus!" -. Kein Punkt nach Gedankenstrich.
-
     // FIXME Doppelt gemoppelte Verzauberung nach "schaut oben aus dem Turmfenster
     //  die magere Frau heraus". Text ab "Du siehst über dir eine Bewegung"
     //  verhindern - vielleicht Frau direkt in den Wald-Nähe-Schloss teleportieren?
