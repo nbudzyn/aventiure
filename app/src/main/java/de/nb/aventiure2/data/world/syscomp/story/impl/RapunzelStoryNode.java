@@ -69,8 +69,20 @@ public enum RapunzelStoryNode implements IStoryNode {
 
     // FIXME SC steigt erneut hinauf.
     //  "Die Alte hat nichts gemerkt" (Foreshadowing!)
-
+    
     // FIXME Wenn Zauberin kommt: "Du kriechst unter das Bett. Es ist eng und staubig"
+    //  - Idee: Das Bett eraufbauen / Drunterkriechen erst ermöglichen, wenn Zauberin kommt
+    //    ("versteck dich..." Du schaust um dich und dein Blick fällt auf das Bett")
+    //  - Oder: unter-Bett ist immer zugänglich, erhöht Abneigung.
+    //  SC kriecht unter das Bett. Achtung: Rapunzel kann nicht schauen und spricht nicht
+    //   mit SC, der unter dem Bett liegt. Außer "willst du nicht wieder rauskommen??"
+    //   Danach... Rapunzel schaut...
+    //   "Was sollte jetzt das?"
+
+    // FIXME "Vergiss deine Kugel / ... nicht (collective) ruft sie dir noch nach, aber
+    //  da bist du schon unten / stehst du schon vor...
+
+    // FIXME Vor dem Absteigen: Prüfen ob Zauberin da ist?
 
     // FIXME "Die Zauberin und RAPUNZEL unterhalten sich, aber eigentlich haben sie
     //  einander nichts zu sagen."
@@ -86,6 +98,38 @@ public enum RapunzelStoryNode implements IStoryNode {
     // FIXME WARTEN "Du liegst lange Zeit ganz still. Der Staub kribbelt in deiner Nase."
     //  "Endlich verabschiedet sich die ZAUBERIN und steigt herab"
     //  "Du kannst wieder herauskommen - hörst du es lieblich sagen"
+
+    // FIXME "An der Wand lehnt ein alter Rucksack / ... Kiepe...,
+    //  wie man sie zum Holzsammeln verwenden würde"
+    //  Du setzt... auf. Ziemlich schwer. (Man wird schneller müde.)
+    //  Du setzt... ab. Du stellst.... auf den Boden / Waldboden...
+
+    // FIXME Draußen hat sich das Wetter verändert. Es hat deutlich abgekühlt und der
+    //  Himmel bezieht sich.
+    //  Der Wind wird stärker
+    //  Der Wind pfeift dir ums Gesicht
+    //  In der Ferne hörst du Donnergrollen
+    //  Hat es eben geblitzt?
+    //  Ein Sturm zieht auf
+    //  Hoffentlich bleibt es wenigstens trocken
+    //  (Kein Regen - keine nassen Klamotten o.Ä.)
+    //  Der Wind ist jetzt sehr kräftig und angenehm. Kalt ist es geworden.
+    //  Der Sturm biegt die Bäume.
+    //  Ein ziemlicher Krach (Hexe geht nicht mehr spazieren. Schlossfest?!)
+    //  Der Sturm peitscht die Äste über dir und es ist ziemlich dunkel. Ein geschützter Platz
+    //  wäre schön.
+    //  Langsam scheint sich das Wetter wieder zu bessern / der Sturm flaut allmählich ab.
+
+    // FIXME Wetter als Konzept ähnlich Tageszeiten? Aber nur dramturgisch geändert, nicht
+    //  automatisch?
+    // FIXME Wetter beeinflusst Stimmung von SC, Rapunzel, Zauberin (Listener-Konzept!)
+
+    // FIXME "Hier hat der Sturm hat viele Äste von den Bäumen gebrochen. Überall liegt 
+    //  Holz herum, kleine und große Äste.
+    // - Du klaubst Holz auf 
+    // - Holz in armlange Stücke brechen
+
+    // FIXME Binsen, Seil flechten...
 
     private static final String STORY_ADVANCE_COUNTER =
             "RapunzelStoryNode_STORY_ADVANCE_COUNTER";
