@@ -47,6 +47,7 @@ public class MainActivity extends AppCompatActivity {
     //  - Nostalgie
 
     // TODO Symbole für Bewegungsrichtungen (wie auf einer Karte) links am Rand der Buttons
+    //  Wie auf einer Karte von oben...
 
     // IDEA Weitere Symbole für grobe Typen von Aktionen (Gegenstände / Reden...)
 

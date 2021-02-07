@@ -3,6 +3,8 @@ package de.nb.aventiure2.data.world.syscomp.talking.impl;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
 
+import java.util.Collection;
+
 import javax.annotation.Nullable;
 
 import de.nb.aventiure2.data.database.AvDatabase;
@@ -17,6 +19,7 @@ import de.nb.aventiure2.data.world.syscomp.state.impl.FroschprinzState;
 import de.nb.aventiure2.data.world.syscomp.state.impl.RapunzelStateComp;
 import de.nb.aventiure2.data.world.syscomp.talking.AbstractTalkingComp;
 import de.nb.aventiure2.german.base.InterrogativadverbVerbAllg;
+import de.nb.aventiure2.german.base.Konstituentenfolge;
 import de.nb.aventiure2.german.base.Nominalphrase;
 import de.nb.aventiure2.german.base.Personalpronomen;
 import de.nb.aventiure2.german.base.SubstantivischePhrase;
@@ -62,6 +65,8 @@ import static de.nb.aventiure2.german.adjektiv.AdjektivOhneErgaenzungen.BEGEISTE
 import static de.nb.aventiure2.german.adjektiv.AdjektivOhneErgaenzungen.FREUDESTRAHLEND;
 import static de.nb.aventiure2.german.adjektiv.AdjektivOhneErgaenzungen.GENERVT;
 import static de.nb.aventiure2.german.adjektiv.AdjektivOhneErgaenzungen.SKEPTISCH;
+import static de.nb.aventiure2.german.base.Konstituentenfolge.joinToAltKonstituentenfolgen;
+import static de.nb.aventiure2.german.base.Konstituentenfolge.joinToKonstituentenfolge;
 import static de.nb.aventiure2.german.base.Nominalphrase.DEIN_HERZ;
 import static de.nb.aventiure2.german.base.Nominalphrase.EIN_GESPRAECH;
 import static de.nb.aventiure2.german.base.Nominalphrase.GESPRAECH;
@@ -161,9 +166,6 @@ public class RapunzelTalkingComp extends AbstractTalkingComp {
                         st(this::frageNachRapunzelsMutterSinnvoll,
                                 FRAGEN_NACH.mitPraep(world.getDescription(RAPUNZELS_ZAUBERIN)),
                                 this::nachRapunzelsZauberinFragen),
-
-                        // FIXME "Ich muss dich noch was fragen!"
-
                         st(this::herzAusschuettenMoeglich,
                                 // "Der jungen Frau dein Herz ausschütten"
                                 AUSSCHUETTEN.mitAkk(DEIN_HERZ),
@@ -272,6 +274,10 @@ public class RapunzelTalkingComp extends AbstractTalkingComp {
             return;
         }
 
+        gespraechBeginnenOhneBegruessung();
+    }
+
+    private void gespraechBeginnenOhneBegruessung() {
         final int zuneigungSCTowardsRapunzel =
                 loadSC().feelingsComp().getFeelingTowardsForActionsMitEmpathischerSchranke(
                         RAPUNZEL, ZUNEIGUNG_ABNEIGUNG);
@@ -320,45 +326,12 @@ public class RapunzelTalkingComp extends AbstractTalkingComp {
                     "langatmig von Hasen und Raben").timed(mins(2)));
         }
 
-        if (counterDao.get(HERZ_AUSGESCHUETTET_ZAUBERIN_GESCHICHTE_ERZAEHLT) > 0) {
-            alt.add(du("siehst",
-                    "dich um und dein Blick fällt auf die nackte Mauer.",
-                    "„Was ist das hier eigentlich für ein Turm“, fragst du in den Raum.",
-                    "„Der gehört der Zauberin“, sagt",
-                    anaph().nomK(),
-                    zuneigungRapunzelTowardsSC >= FeelingIntensity.MERKLICH
-                            && duzen(zuneigungRapunzelTowardsSC) ?
-                            "Der muss sehr alt sein. Und magisch, wenn du mich fragst" : null,
-                    ".“").timed(secs(30)));
-        }
-
         if (counterDao.get(GESPRAECH_BEGONNEN_ODER_UNMITTELBAR_FORTGESETZT) >= 3) {
             alt.addAll(altParagraphs("„Nachts ist es kälter als draußen“, sagst du.",
                     anaph().nomK().capitalize(),
                     "schaut dich",
                     ImmutableList.of("verständlos", "verwirrt", "irritiert"),
                     "an").timed(secs(10)));
-        }
-
-        {
-            final AltDescriptionsBuilder altAntworten;
-            if (zuneigungRapunzelTowardsSC >= FeelingIntensity.DEUTLICH) {
-                altAntworten = altNeueSaetze(
-                        "„",
-                        ImmutableList.of("Absolut", "Klar"),
-                        "! Deshalb freu ich mich ja immer so, wenn mal jemand Nettes",
-                        "vorbeischaut.“",
-                        anaph().nomK().capitalize(),
-                        "zwinkert dir zu. – Oder du hast dir das eingebildet");
-            } else {
-                altAntworten = altNeueSaetze("Aber", anaph().nomK(), "antwortet nicht");
-                altAntworten.add(neuerSatz("Aber", anaph().nomK(), "bleibt still"));
-            }
-
-            alt.addAll(altNeueSaetze("„Wird",
-                    duzen(zuneigungSCTowardsRapunzel) ? "dir" : "euch",
-                    "hier nicht langweilig?“, fragst du.",
-                    altAntworten).timed(secs(20)));
         }
 
         n.narrateAlt(alt);
@@ -719,8 +692,39 @@ public class RapunzelTalkingComp extends AbstractTalkingComp {
                     .timed(mins(1)));
         }
 
-        // FIXME Hier brauchen wir noch weitere, eher allgemeine Alternativen
+        {
+            final Collection<Konstituentenfolge> altAntworten;
+            if (zuneigungRapunzelZumSC >= FeelingIntensity.DEUTLICH) {
+                altAntworten = joinToAltKonstituentenfolgen(
+                        "„",
+                        ImmutableList.of("Absolut", "Klar"),
+                        "! Deshalb freu ich mich ja immer so, wenn mal jemand Nettes",
+                        "vorbeischaut.“",
+                        anaph().nomK().capitalize(),
+                        "zwinkert dir zu. – Oder du hast dir das eingebildet");
+            } else {
+                altAntworten = ImmutableList.of(
+                        joinToKonstituentenfolge("Aber", anaph().nomK(), "antwortet nicht"),
+                        joinToKonstituentenfolge("Aber", anaph().nomK(), "bleibt still"));
+            }
 
+            alt.addAll(altNeueSaetze("„Wird",
+                    duzen(zuneigungZuRapunzel) ? "dir" : "euch",
+                    "hier nicht langweilig?“, fragst du.",
+                    altAntworten).timed(secs(20)));
+        }
+
+        if (counterDao.get(HERZ_AUSGESCHUETTET_ZAUBERIN_GESCHICHTE_ERZAEHLT) > 0) {
+            alt.add(du("siehst",
+                    "dich um und dein Blick fällt auf die nackte Mauer.",
+                    "„Was ist das hier eigentlich für ein Turm“, fragst du in den Raum.",
+                    "„Der gehört der Zauberin“, sagt",
+                    anaph().nomK(),
+                    zuneigungRapunzelZumSC >= FeelingIntensity.MERKLICH
+                            && duzen(zuneigungZuRapunzel) ?
+                            "Der muss sehr alt sein. Und magisch, wenn du mich fragst" : null,
+                    ".“").timed(secs(30)));
+        }
 
         if (zuneigungZuRapunzel >= FeelingIntensity.MERKLICH &&
                 scHatSeltsameSacheMitFroschErlebt()) {
@@ -739,6 +743,15 @@ public class RapunzelTalkingComp extends AbstractTalkingComp {
                     "Augen leuchten")
                     .timed(mins(2)));
         }
+
+        // FIXME Hier brauchen wir noch weitere, eher allgemeine Alternativen
+        /*
+        "Lebt Ihr hier allein? fragst du SIE. Sie guckt dich nur verunsichert an.";
+
+        "Lebst du / hier das ganze Jahr? Wird das nicht kalt. Ach, ich habe einen Ofen, sagt SIE";
+
+        "Wart ihr / Warst du schon einmal am Meer? fragt sie dich."
+        */
 
         n.narrateAlt(alt);
 
