@@ -38,7 +38,7 @@ public class TageszeitReactionsComp
         //  der Uhrzeit?
         //  - Hinweise, dass die Nacht allmählich naht.
 
-        // TODO Je nach Ort unterscheiden:
+        // FIXME Je nach Ort unterscheiden:
         //  - Dunkelheit ist abhängig von Tageszeit (Raum nicht beleuchtet)
         //  - SC ist draußen / drinnen (z.B. im Wald)
         //  - SC ist unter offener Himmel (z.B. vor dem Schloss)
