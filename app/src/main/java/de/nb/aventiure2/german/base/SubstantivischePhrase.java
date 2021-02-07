@@ -66,15 +66,15 @@ public abstract class SubstantivischePhrase
         if (kasusOderPraepositionalkasus instanceof PraepositionMitKasus) {
             // FIXME Präpositionalkasus mit "es" sind problematisch, da "es"
             //  nicht phrasenbildend ist.
-            // - "in es" etc. wird vertreten durch "hinein", "auf es" durch "darauf" etc.
-            // - Man bräuchte wohl eine neue Klasse adverbialer Angaben
+            //  - "in es" etc. wird vertreten durch "hinein", "auf es" durch "darauf" etc.
+            //  - Man bräuchte wohl eine neue Klasse adverbialer Angaben
             //   wie DARAUF, DARUNTER, HINEIN etc., und jede
             //   Präposition MIT AKKUSATIV müsste zwingend
             //   eines dieser Adverbien referenzieren, das als
             //   Ersatz verwendet wird.
-            // - Dabei ändert sich vielleicht teilweise sogar die Zusammenschreibung?!
-            // ("Du willst es hineinlegen" statt *"Du willst es in es legen"?!)
-            // - Das scheint aber nicht bei belebten Dingen möglich zu sein:
+            //  - Dabei ändert sich vielleicht teilweise sogar die Zusammenschreibung?!
+            //  ("Du willst es hineinlegen" statt *"Du willst es in es legen"?!)
+            //  - Das scheint aber nicht bei belebten Dingen möglich zu sein:
             //  ?"Das ist unser Kind. Wir haben viel Geld hineingesteckt"
             //  ?"Das ist unser Kind. Wir haben einen Nachtisch dafür gekauft."
 
