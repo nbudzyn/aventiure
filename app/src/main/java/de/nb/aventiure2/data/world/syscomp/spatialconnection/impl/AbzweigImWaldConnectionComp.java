@@ -38,6 +38,7 @@ import static de.nb.aventiure2.german.base.StructuralElement.SENTENCE;
 import static de.nb.aventiure2.german.description.DescriptionBuilder.du;
 import static de.nb.aventiure2.german.description.DescriptionBuilder.neuerSatz;
 
+@SuppressWarnings("unchecked")
 public class AbzweigImWaldConnectionComp extends AbstractSpatialConnectionComp {
     public AbzweigImWaldConnectionComp(
             final AvDatabase db, final TimeTaker timeTaker,
@@ -79,7 +80,6 @@ public class AbzweigImWaldConnectionComp extends AbstractSpatialConnectionComp {
                                 + "geschlossen, die Tür hängt nur noch lose "
                                 + "in den Angeln")
                                 .timed(mins(2))
-                                .withCounterIdIncrementedIfTextIsNarrated(null)
                                 .beendet(PARAGRAPH),
 
                         neuerSatz("Hat gerade neben dir im Unterholz geknarzt? "
@@ -144,7 +144,7 @@ public class AbzweigImWaldConnectionComp extends AbstractSpatialConnectionComp {
 
     @NonNull
     private static TimedDescription<?> getDescTo_ImWaldBeimBrunnenUnknownDunkel() {
-        return (TimedDescription<?>) du("gehst", "den breiteren Weg weiter in "
+        return du("gehst", "den breiteren Weg weiter in "
                 + "den Wald hinein. Wohl ist dir dabei nicht.\n"
                 + "In der Ferne heult ein Wolf – oder hast du "
                 + "dir das eingebildet?\nDann kommst du an einen "
@@ -153,7 +153,7 @@ public class AbzweigImWaldConnectionComp extends AbstractSpatialConnectionComp {
     }
 
     private static TimedDescription<?> getDescTo_ImWaldBeimBrunnenDarknessHell() {
-        return (TimedDescription<?>) du("kehrst",
+        return du("kehrst",
                 "zurück zum Brunnen – unter einer Linde, wie "
                         + "du bei Licht erkennen kannst. Hinter dem "
                         + "Brunnen beginnt der wilde Wald").timed(mins(4))
@@ -161,7 +161,7 @@ public class AbzweigImWaldConnectionComp extends AbstractSpatialConnectionComp {
     }
 
     private static TimedDescription<?> getDescTo_ImWaldBeimBrunnenOtherWirNichtTraurig() {
-        return (TimedDescription<?>) du("kehrst", "zurück zum Brunnen")
+        return du("kehrst", "zurück zum Brunnen")
                 .timed(mins(3))
                 .undWartest()
                 .dann();
@@ -178,7 +178,7 @@ public class AbzweigImWaldConnectionComp extends AbstractSpatialConnectionComp {
                 world.getDescriptionSingleOrCollective(objectsInDenBrunnenGefallen);
 
         // steht
-        return (TimedDescription<?>) du("gehst",
+        return du("gehst",
                 "weiter; als du an den Brunnen kommst,",
                 VerbSubjObj.STEHEN.getPraesensOhnePartikel(
                         descObjects.getPerson(), descObjects.getNumerus()), // steht
@@ -189,7 +189,7 @@ public class AbzweigImWaldConnectionComp extends AbstractSpatialConnectionComp {
     }
 
     private static TimedDescription<?> getDescTo_ImWaldBeimBrunnenUnkownHell() {
-        return (TimedDescription<?>) neuerSatz("Der breitere Weg führt zu einer alten "
+        return neuerSatz("Der breitere Weg führt zu einer alten "
                 + "Linde, unter der ist ein Brunnen. "
                 + "Hinter dem Brunnen endet der Weg und der "
                 + "wilde Wald beginnt.\n"

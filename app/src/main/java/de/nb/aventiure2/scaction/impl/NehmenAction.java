@@ -351,7 +351,6 @@ public class NehmenAction
                         world.getDescription(gameObject, true).akkK(),
                         "greifst")
                         .timed(secs(5))
-                        .withCounterIdIncrementedIfTextIsNarrated(null)
                         .komma()
                         .dann(),
                 neuerSatz("Dir wird ganz angst, aber was man",
@@ -403,7 +402,6 @@ public class NehmenAction
                                 .map(a -> du(PARAGRAPH,
                                         praedikatMitObjekt.mitAdverbialerAngabe(a))
                                         .timed(secs(5))
-                                        .withCounterIdIncrementedIfTextIsNarrated(null)
                                         .undWartest(
                                                 praedikatMitObjekt
                                                         .hauptsatzLaesstSichBeiGleichemSubjektMitNachfolgendemVerbzweitsatzZusammenziehen())
@@ -417,7 +415,6 @@ public class NehmenAction
         n.narrate(
                 du(PARAGRAPH, praedikatMitObjekt)
                         .timed(secs(5))
-                        .withCounterIdIncrementedIfTextIsNarrated(null)
                         .undWartest(
                                 praedikatMitObjekt
                                         .hauptsatzLaesstSichBeiGleichemSubjektMitNachfolgendemVerbzweitsatzZusammenziehen())
@@ -434,11 +431,9 @@ public class NehmenAction
         alt.addAll(drueckeAusTimed(DISKONTINUITAET,
                 du(PARAGRAPH, nehmenPraedikat.mit(objectDesc))
                         .timed(secs(5))
-                        .withCounterIdIncrementedIfTextIsNarrated(null)
                         .undWartest(),
                 du(PARAGRAPH, nehmenPraedikat.mit(objectDescShort))
                         .timed(secs(5))
-                        .withCounterIdIncrementedIfTextIsNarrated(null)
                         .undWartest()));
 
         if (n.allowsAdditionalDuSatzreihengliedOhneSubjekt()) {

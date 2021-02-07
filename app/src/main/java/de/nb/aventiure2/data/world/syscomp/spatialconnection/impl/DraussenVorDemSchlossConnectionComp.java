@@ -25,6 +25,7 @@ import de.nb.aventiure2.german.description.TimedDescription;
 import static de.nb.aventiure2.data.time.AvTimeSpan.mins;
 import static de.nb.aventiure2.data.time.AvTimeSpan.secs;
 import static de.nb.aventiure2.data.world.gameobject.World.*;
+import static de.nb.aventiure2.data.world.syscomp.spatialconnection.impl.DraussenVorDemSchlossConnectionComp.Counter.SCHLOSS_VORHALLE_FEST_BEGONNEN;
 import static de.nb.aventiure2.german.description.DescriptionBuilder.du;
 import static de.nb.aventiure2.german.description.DescriptionBuilder.neuerSatz;
 
@@ -35,8 +36,10 @@ import static de.nb.aventiure2.german.description.DescriptionBuilder.neuerSatz;
  */
 @ParametersAreNonnullByDefault
 public class DraussenVorDemSchlossConnectionComp extends AbstractSpatialConnectionComp {
-    private static final String COUNTER_SCHLOSS_VORHALLE_FEST_BEGONNEN =
-            "RoomConnectionBuilder_DraussenVorDemSchloss_SchlossVorhalle_FestBegonnen";
+    @SuppressWarnings({"unused", "RedundantSuppression"})
+    enum Counter {
+        SCHLOSS_VORHALLE_FEST_BEGONNEN
+    }
 
     public DraussenVorDemSchlossConnectionComp(
             final AvDatabase db, final TimeTaker timeTaker,
@@ -91,6 +94,7 @@ public class DraussenVorDemSchlossConnectionComp extends AbstractSpatialConnecti
                                 .dann()));
     }
 
+    @SuppressWarnings("unchecked")
     private TimedDescription<?> getDescTo_SchlossVorhalle(
             final Known newLocationKnown, final Lichtverhaeltnisse lichtverhaeltnisse) {
         switch (((IHasStateGO<SchlossfestState>) world.load(SCHLOSSFEST)).stateComp().getState()) {
@@ -112,14 +116,14 @@ public class DraussenVorDemSchlossConnectionComp extends AbstractSpatialConnecti
 
     private TimedDescription<?>
     getDescTo_SchlossVorhalle_FestBegonnen() {
-        if (db.counterDao().get(COUNTER_SCHLOSS_VORHALLE_FEST_BEGONNEN) == 0) {
+        if (db.counterDao().get(SCHLOSS_VORHALLE_FEST_BEGONNEN) == 0) {
             return neuerSatz("Vor dem Schloss gibt es ein großes Gedränge und es dauert "
                     + "eine Weile, bis "
                     + "die Menge dich hineinschiebt. Die prächtige Vorhalle steht voller "
                     + "Tische, auf denen in großen Schüsseln Eintöpfe dampfen")
                     .timed(mins(7))
                     .withCounterIdIncrementedIfTextIsNarrated(
-                            COUNTER_SCHLOSS_VORHALLE_FEST_BEGONNEN)
+                            SCHLOSS_VORHALLE_FEST_BEGONNEN)
                     .komma();
         }
 

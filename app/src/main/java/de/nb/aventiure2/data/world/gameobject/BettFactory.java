@@ -17,6 +17,7 @@ import de.nb.aventiure2.german.description.TimedDescription;
 
 import static de.nb.aventiure2.data.time.AvTimeSpan.secs;
 import static de.nb.aventiure2.data.world.base.SpatialConnectionData.conData;
+import static de.nb.aventiure2.data.world.gameobject.BettFactory.Counter.*;
 import static de.nb.aventiure2.data.world.gameobject.World.*;
 import static de.nb.aventiure2.data.world.syscomp.storingplace.StoringPlaceType.ECKE_IM_BETTGESTELL;
 import static de.nb.aventiure2.german.base.Artikel.Typ.DEF;
@@ -28,7 +29,11 @@ import static de.nb.aventiure2.german.base.StructuralElement.SENTENCE;
 import static de.nb.aventiure2.german.description.DescriptionBuilder.du;
 
 class BettFactory {
-    private static final String BETT__DESC_IN = "Bett__DescIn";
+    @SuppressWarnings({"unused", "RedundantSuppression"})
+    enum Counter {
+        BETT__DESC_IN
+    }
+
     private final AvDatabase db;
     private final TimeTaker timeTaker;
     private final World world;

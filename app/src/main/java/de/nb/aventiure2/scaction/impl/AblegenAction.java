@@ -184,7 +184,6 @@ public class AblegenAction
                 location.storingPlaceComp().getLocationMode().getWohin(false),
                 "mit ihm!")
                 .timed(secs(7))
-                .withCounterIdIncrementedIfTextIsNarrated(null)
                 .dann()
                 .beendet(PARAGRAPH));
 
@@ -196,7 +195,6 @@ public class AblegenAction
                             .getWohin(false),
                     "fällt. Puh.")
                     .timed(secs(7))
-                    .withCounterIdIncrementedIfTextIsNarrated(null)
                     .dann()
                     .beendet(PARAGRAPH));
         }
@@ -205,8 +203,7 @@ public class AblegenAction
                 "in deiner Tasche. Da quakt es erbost, auf einmal",
                 "springt der Fosch heraus und direkt",
                 location.storingPlaceComp().getLocationMode().getWohin(false))
-                .timed(secs(7))
-                .withCounterIdIncrementedIfTextIsNarrated(null));
+                .timed(secs(7)));
 
         n.narrateAlt(alt);
 
@@ -306,7 +303,6 @@ public class AblegenAction
                                             location.storingPlaceComp().getLocationMode()
                                                     .getWohinAdvAngabe(false)))
                             .timed(secs(3))
-                            .withCounterIdIncrementedIfTextIsNarrated(null)
                             .dann());
                     return;
                 }
@@ -344,7 +340,6 @@ public class AblegenAction
                                     .akkK(),
                             (wohinDetail != null ? " zurück" : " wieder hin"))
                             .timed(secs(5))
-                            .withCounterIdIncrementedIfTextIsNarrated(null)
                             .undWartest()
                             .dann());
             return;

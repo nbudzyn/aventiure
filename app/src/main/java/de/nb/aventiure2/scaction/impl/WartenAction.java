@@ -34,6 +34,7 @@ import static de.nb.aventiure2.german.description.DescriptionBuilder.du;
 import static de.nb.aventiure2.german.description.DescriptionBuilder.neuerSatz;
 import static de.nb.aventiure2.german.description.Kohaerenzrelation.VERSTEHT_SICH_VON_SELBST;
 import static de.nb.aventiure2.german.praedikat.VerbSubjObj.WARTEN;
+import static de.nb.aventiure2.scaction.impl.AbstractWartenRastenAction.Counter.WARTEN_ODER_RASTEN_IN_FOLGE;
 
 /**
  * Der Spielercharakter legt (wach!) eine Rast ein.
@@ -51,7 +52,7 @@ public class WartenAction<LIVGO extends IDescribableGO & ILocatableGO & ILivingB
             final ILocationGO location) {
         final ImmutableList.Builder<WartenAction<LIVGO>> res = ImmutableList.builder();
         if (location.is(VOR_DEM_ALTEN_TURM_SCHATTEN_DER_BAEUME) &&
-                counterDao.get(RastenAction.COUNTER_RASTEN) >= 2 &&
+                counterDao.get(RastenAction.Counter.RASTEN) >= 2 &&
                 erwartet.is(RAPUNZELS_ZAUBERIN) &&
                 world.loadSC().memoryComp().isKnown(RAPUNZELS_ZAUBERIN) &&
                 !erwartet.locationComp().hasSameOuterMostLocationAs(location)) {
@@ -89,7 +90,7 @@ public class WartenAction<LIVGO extends IDescribableGO & ILocatableGO & ILivingB
     public void narrateAndDo() {
         if (!sc.memoryComp().getLastAction().is(Action.Type.WARTEN) &&
                 !sc.memoryComp().getLastAction().is(Action.Type.RASTEN)) {
-            counterDao.reset(COUNTER_WARTEN_ODER_RASTEN_IN_FOLGE);
+            counterDao.reset(WARTEN_ODER_RASTEN_IN_FOLGE);
         }
 
         // Der SC beginnt zu warten
@@ -128,7 +129,7 @@ public class WartenAction<LIVGO extends IDescribableGO & ILocatableGO & ILivingB
         if (kohaerenzrelation == VERSTEHT_SICH_VON_SELBST) {
             final SubstantivischePhrase anaph = world.anaph(erwartet, false);
             n.narrateAlt(secs(5),
-                    COUNTER_WARTEN_ODER_RASTEN_IN_FOLGE,
+                    WARTEN_ODER_RASTEN_IN_FOLGE,
                     du(WARTEN.mit(anaph)).dann(),
                     du("beginnst", "auf", anaph.akkK(), "zu warten").dann());
         } else {
@@ -144,7 +145,7 @@ public class WartenAction<LIVGO extends IDescribableGO & ILocatableGO & ILivingB
                                     )
                             )
                                     .dann()),
-                    secs(5), COUNTER_WARTEN_ODER_RASTEN_IN_FOLGE);
+                    secs(5), WARTEN_ODER_RASTEN_IN_FOLGE);
         }
     }
 

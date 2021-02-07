@@ -152,7 +152,7 @@ public class ScAutomaticReactionsComp
     private void onSCEnter(@Nullable final ILocationGO from, final ILocationGO to) {
         if (!LocationSystem.haveSameOuterMostLocation(from, to)) {
             if (to.is(WALDWILDNIS_HINTER_DEM_BRUNNEN)) {
-                counterDao.reset(EssenAction.COUNTER_FELSENBIRNEN_SEIT_ENTER);
+                counterDao.reset(EssenAction.Counter.FELSENBIRNEN_SEIT_ENTER);
             }
         }
     }

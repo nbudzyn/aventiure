@@ -483,7 +483,7 @@ public class RapunzelsZauberinReactionsComp
         loadSC().feelingsComp().narrateAndUpgradeTemporaereMinimalmuedigkeit(
                 FeelingIntensity.NUR_LEICHT, hours(1)
         );
-        counterDao.reset(VorDemTurmConnectionComp.COUNTER_ALTER_TURM_UMRUNDET);
+        counterDao.reset(VorDemTurmConnectionComp.Counter.ALTER_TURM_UMRUNDET);
 
         // Auch Rapunzel wird verzaubert und vergisst den Spieler!
         loadRapunzel().memoryComp().narretAndForget(SPIELER_CHARAKTER, GOLDENE_KUGEL,

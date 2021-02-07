@@ -29,6 +29,7 @@ import static de.nb.aventiure2.data.time.AvTimeSpan.mins;
 import static de.nb.aventiure2.data.time.AvTimeSpan.secs;
 import static de.nb.aventiure2.data.world.base.SpatialConnection.con;
 import static de.nb.aventiure2.data.world.gameobject.World.*;
+import static de.nb.aventiure2.data.world.syscomp.spatialconnection.impl.ObenImTurmConnectionComp.Counter.HERABGESTIEGEN;
 import static de.nb.aventiure2.german.description.DescriptionBuilder.du;
 
 /**
@@ -36,10 +37,13 @@ import static de.nb.aventiure2.german.description.DescriptionBuilder.du;
  * for the {@link World#OBEN_IM_ALTEN_TURM}
  * room.
  */
+@SuppressWarnings("unchecked")
 @ParametersAreNonnullByDefault
 public class ObenImTurmConnectionComp extends AbstractSpatialConnectionComp {
-    private static final String COUNTER_HERABGESTIEGEN =
-            "ObenImTurmConnectionComp_Herabgestiegen";
+    @SuppressWarnings({"unused", "RedundantSuppression"})
+    enum Counter {
+        HERABGESTIEGEN
+    }
 
     public ObenImTurmConnectionComp(
             final AvDatabase db, final TimeTaker timeTaker,
@@ -76,12 +80,12 @@ public class ObenImTurmConnectionComp extends AbstractSpatialConnectionComp {
     @CheckReturnValue
     private TimedDescription<?> getDescTo_VorDemTurm(
             final Known newLocationKnown, final Lichtverhaeltnisse lichtverhaeltnisse) {
-        if (db.counterDao().get(COUNTER_HERABGESTIEGEN) % 2 == 1) {
+        if (db.counterDao().get(HERABGESTIEGEN) % 2 == 1) {
             // 2.Mal, 4. Mal, ...
             return du(StructuralElement.WORD, "bist", "schnell wieder hinab")
                     .mitVorfeldSatzglied("schnell")
                     .timed(secs(30))
-                    .withCounterIdIncrementedIfTextIsNarrated(COUNTER_HERABGESTIEGEN)
+                    .withCounterIdIncrementedIfTextIsNarrated(HERABGESTIEGEN)
                     .undWartest()
                     .dann();
         }
@@ -89,7 +93,7 @@ public class ObenImTurmConnectionComp extends AbstractSpatialConnectionComp {
         if (n.isAnaphorischerBezugMoeglich(RAPUNZELS_HAARE)) {
             return du("steigst", "daran hinab").timed(mins(1))
                     .withCounterIdIncrementedIfTextIsNarrated(
-                            COUNTER_HERABGESTIEGEN)
+                            HERABGESTIEGEN)
                     .undWartest()
                     .dann();
         }
@@ -98,7 +102,7 @@ public class ObenImTurmConnectionComp extends AbstractSpatialConnectionComp {
                 .mitAdverbialerAngabe(
                         new AdverbialeAngabeSkopusVerbAllg("wieder")))
                 .timed(mins(1))
-                .withCounterIdIncrementedIfTextIsNarrated(COUNTER_HERABGESTIEGEN)
+                .withCounterIdIncrementedIfTextIsNarrated(HERABGESTIEGEN)
                 .undWartest()
                 .dann();
     }

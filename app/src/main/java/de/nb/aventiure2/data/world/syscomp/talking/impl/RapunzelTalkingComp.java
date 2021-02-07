@@ -46,6 +46,11 @@ import static de.nb.aventiure2.data.world.syscomp.feelings.Mood.ZUFRIEDEN;
 import static de.nb.aventiure2.data.world.syscomp.state.impl.RapunzelState.HAARE_VOM_TURM_HERUNTERGELASSEN;
 import static de.nb.aventiure2.data.world.syscomp.state.impl.RapunzelState.HAT_NACH_LIEBSTER_JAHRESZEIT_GEFRAGT;
 import static de.nb.aventiure2.data.world.syscomp.state.impl.RapunzelState.NORMAL;
+import static de.nb.aventiure2.data.world.syscomp.talking.impl.RapunzelTalkingComp.Counter.HERZ_AUSGESCHUETTET_ZAUBERIN_GESCHICHTE_ERZAEHLT;
+import static de.nb.aventiure2.data.world.syscomp.talking.impl.RapunzelTalkingComp.Counter.RAPUNZEL_REAGIERT_AUF_SC_BEGRUESSUNG;
+import static de.nb.aventiure2.data.world.syscomp.talking.impl.RapunzelTalkingComp.Counter.RETTUNG_ZUGESAGT;
+import static de.nb.aventiure2.data.world.syscomp.talking.impl.RapunzelTalkingComp.Counter.SCHWALBENGESCHICHTE_ERZAEHLT;
+import static de.nb.aventiure2.data.world.syscomp.talking.impl.RapunzelTalkingComp.Counter.SC_BEGRUESST;
 import static de.nb.aventiure2.data.world.syscomp.talking.impl.SCTalkAction.entryReEntrySt;
 import static de.nb.aventiure2.data.world.syscomp.talking.impl.SCTalkAction.exitSt;
 import static de.nb.aventiure2.data.world.syscomp.talking.impl.SCTalkAction.immReEntryStNSCHatteGespraechBeendet;
@@ -92,15 +97,14 @@ import static de.nb.aventiure2.german.string.GermanStringUtil.capitalize;
  */
 @SuppressWarnings({"DuplicateBranchesInSwitch", "unchecked"})
 public class RapunzelTalkingComp extends AbstractTalkingComp {
-    // FIXME inner Enum ermöglichen?!
-    private static final String SC_BEGRUESST = "RapunzelTalkingComp_sc_begruesst";
-    private static final String RAPUNZEL_REAGIERT_AUF_SC_BEGRUESSUNG =
-            "RapunzelTalkingComp_Rapunzel_reagiert_auf_SC_Begruessung";
-    private static final String SCHWALBENGESCHICHTE_ERZAEHLT =
-            "RapunzelTalkingComp_SCHWALBENGESCHICHTE_ERZAEHLT";
-    private static final String HERZ_AUSGESCHUETTET_ZAUBERIN_GESCHICHTE_ERZAEHLT =
-            "RapunzelTalkingComp_HERZ_AUSGESCHUETTET";
-    private static final String RETTUNG_ZUGESAGT = "RapunzelTalkComp.RETTUNG_ZUGESAGT";
+    @SuppressWarnings({"unused", "RedundantSuppression"})
+    enum Counter {
+        SC_BEGRUESST, RAPUNZEL_REAGIERT_AUF_SC_BEGRUESSUNG,
+        SCHWALBENGESCHICHTE_ERZAEHLT,
+        HERZ_AUSGESCHUETTET_ZAUBERIN_GESCHICHTE_ERZAEHLT,
+        RETTUNG_ZUGESAGT
+    }
+
     private final MemoryComp memoryComp;
     private final RapunzelStateComp stateComp;
     private final FeelingsComp feelingsComp;
@@ -999,14 +1003,12 @@ public class RapunzelTalkingComp extends AbstractTalkingComp {
                         + "Aus dem Turmfenster fallen auf einmal lange, golden "
                         + "glänzende Haare bis zum Boden herab")
                         .timed(secs(10))
-                        .withCounterIdIncrementedIfTextIsNarrated(null)
                         .dann());
             } else {
                 n.narrate(du(PARAGRAPH, "siehst", " über dir eine Bewegung: "
                         + "Aus dem Turmfenster fallen wieder die "
                         + "langen, golden glänzenden Haare bis zum Boden herab")
                         .timed(secs(10))
-                        .withCounterIdIncrementedIfTextIsNarrated(null)
                         .dann());
             }
             world.loadSC().memoryComp().narrateAndUpgradeKnown(RAPUNZELS_HAARE);

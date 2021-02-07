@@ -84,7 +84,13 @@ public class TimedDescription<
 
     public TimedDescription(final D description,
                             final AvTimeSpan timeElapsed) {
-        this(description, timeElapsed, null);
+        this(description, timeElapsed, (String) null);
+    }
+
+    public TimedDescription(final D description,
+                            final AvTimeSpan timeElapsed,
+                            @Nullable final Enum<?> counterIdIncrementedIfTextIsNarrated) {
+        this(description, timeElapsed, counterIdIncrementedIfTextIsNarrated.name());
     }
 
     public TimedDescription(final D description,
@@ -98,6 +104,12 @@ public class TimedDescription<
     @CheckReturnValue
     public <OTHER extends AbstractDescription<?>> TimedDescription<OTHER>
     withDescription(final OTHER description) {
+        return new TimedDescription<>(description, timeElapsed,
+                counterIdIncrementedIfTextIsNarrated);
+    }
+
+    public TimedDescription<D> withCounterIdIncrementedIfTextIsNarrated(
+            @Nullable final Enum<?> counterIdIncrementedIfTextIsNarrated) {
         return new TimedDescription<>(description, timeElapsed,
                 counterIdIncrementedIfTextIsNarrated);
     }

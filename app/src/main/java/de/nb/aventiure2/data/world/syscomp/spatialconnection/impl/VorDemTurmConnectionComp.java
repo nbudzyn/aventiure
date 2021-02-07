@@ -26,6 +26,7 @@ import static de.nb.aventiure2.data.time.AvTimeSpan.mins;
 import static de.nb.aventiure2.data.time.AvTimeSpan.secs;
 import static de.nb.aventiure2.data.world.base.SpatialConnection.con;
 import static de.nb.aventiure2.data.world.gameobject.World.*;
+import static de.nb.aventiure2.data.world.syscomp.spatialconnection.impl.VorDemTurmConnectionComp.Counter.ALTER_TURM_UMRUNDET;
 import static de.nb.aventiure2.german.base.StructuralElement.PARAGRAPH;
 import static de.nb.aventiure2.german.base.StructuralElement.SENTENCE;
 import static de.nb.aventiure2.german.description.DescriptionBuilder.du;
@@ -36,10 +37,14 @@ import static de.nb.aventiure2.german.description.DescriptionBuilder.neuerSatz;
  * for the {@link World#VOR_DEM_ALTEN_TURM}
  * room.
  */
+@SuppressWarnings("unchecked")
 @ParametersAreNonnullByDefault
 public class VorDemTurmConnectionComp extends AbstractSpatialConnectionComp {
-    public static final String COUNTER_ALTER_TURM_UMRUNDET =
-            "VorDemTurmConnectionComp_AlterTurm_Umrundet";
+    @SuppressWarnings({"unused", "RedundantSuppression"})
+    public
+    enum Counter {
+        ALTER_TURM_UMRUNDET
+    }
 
     public VorDemTurmConnectionComp(
             final AvDatabase db, final TimeTaker timeTaker,
@@ -74,7 +79,6 @@ public class VorDemTurmConnectionComp extends AbstractSpatialConnectionComp {
                         "den langen Pfad wieder zurück, den Hügel hinab, bis "
                                 + "zum Waldweg")
                         .timed(mins(20))
-                        .withCounterIdIncrementedIfTextIsNarrated(null)
                         .beendet(PARAGRAPH),
                 du(PARAGRAPH, "gehst",
                         "den Hügel auf dem gewundenen Pfad wieder hinab, "
@@ -112,8 +116,7 @@ public class VorDemTurmConnectionComp extends AbstractSpatialConnectionComp {
     @CheckReturnValue
     private TimedDescription<?> getDescTo_VorDemTurm(
             final Known newLocationKnown, final Lichtverhaeltnisse lichtverhaeltnisse) {
-        final int count = db.counterDao().get(
-                VorDemTurmConnectionComp.COUNTER_ALTER_TURM_UMRUNDET);
+        final int count = db.counterDao().get(ALTER_TURM_UMRUNDET);
         switch (count) {
             case 0:
                 if (world.loadSC().memoryComp().isKnown(RAPUNZELS_GESANG) &&
@@ -124,7 +127,7 @@ public class VorDemTurmConnectionComp extends AbstractSpatialConnectionComp {
                                     + "ist keine "
                                     + "zu finden")
                             .timed(mins(2))
-                            .withCounterIdIncrementedIfTextIsNarrated(COUNTER_ALTER_TURM_UMRUNDET)
+                            .withCounterIdIncrementedIfTextIsNarrated(ALTER_TURM_UMRUNDET)
                             .dann();
                 }
 
@@ -133,24 +136,24 @@ public class VorDemTurmConnectionComp extends AbstractSpatialConnectionComp {
                             + "Türe zu sehen, nur ganz oben ein kleines Fensterchen")
                             .timed(mins(2))
                             .withCounterIdIncrementedIfTextIsNarrated(
-                                    COUNTER_ALTER_TURM_UMRUNDET);
+                                    ALTER_TURM_UMRUNDET);
                 }
 
                 return du(SENTENCE, "gehst", "einmal um den Turm herum, findest "
                         + "aber nicht die kleinste Tür")
                         .timed(secs(90))
-                        .withCounterIdIncrementedIfTextIsNarrated(COUNTER_ALTER_TURM_UMRUNDET)
+                        .withCounterIdIncrementedIfTextIsNarrated(ALTER_TURM_UMRUNDET)
                         .dann();
             case 1:
                 return du("schaust", "noch einmal um den Turm, ob dir vielleicht "
                         + "eine Tür entgangen wäre – nichts").timed(mins(2))
                         .withCounterIdIncrementedIfTextIsNarrated(
-                                COUNTER_ALTER_TURM_UMRUNDET)
+                                ALTER_TURM_UMRUNDET)
                         .dann();
             default:
                 return du("gehst", "noch einmal um den Turm herum").timed(mins(1))
                         .withCounterIdIncrementedIfTextIsNarrated(
-                                COUNTER_ALTER_TURM_UMRUNDET)
+                                ALTER_TURM_UMRUNDET)
                         .dann();
         }
     }

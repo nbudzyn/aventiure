@@ -20,6 +20,7 @@ import de.nb.aventiure2.german.praedikat.VerbSubjObj;
 
 import static de.nb.aventiure2.data.time.AvTimeSpan.mins;
 import static de.nb.aventiure2.data.world.base.SpatialConnectionData.conData;
+import static de.nb.aventiure2.data.world.gameobject.BankAmTischBeimSchlossfestFactory.Counter.*;
 import static de.nb.aventiure2.data.world.gameobject.World.*;
 import static de.nb.aventiure2.data.world.syscomp.storingplace.StoringPlaceType.NEBEN_SC_AUF_EINER_BANK;
 import static de.nb.aventiure2.german.base.Artikel.Typ.INDEF;
@@ -28,8 +29,11 @@ import static de.nb.aventiure2.german.base.NumerusGenus.M;
 import static de.nb.aventiure2.german.description.DescriptionBuilder.du;
 
 class BankAmTischBeimSchlossfestFactory {
-    private static final String BANK_AM_TISCH_BEIM_SCHLOSSFEST_FACTORY_IN =
-            "BankAmTischBeimSchlossfestFactory_In";
+    @SuppressWarnings({"unused", "RedundantSuppression"})
+    enum Counter {
+        BANK_AM_TISCH_BEIM_SCHLOSSFEST_FACTORY_IN
+    }
+
     private final AvDatabase db;
     private final TimeTaker timeTaker;
     private final World world;

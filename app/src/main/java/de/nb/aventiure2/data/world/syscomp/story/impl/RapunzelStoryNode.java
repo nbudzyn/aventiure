@@ -14,7 +14,6 @@ import de.nb.aventiure2.data.database.AvDatabase;
 import de.nb.aventiure2.data.narration.Narrator;
 import de.nb.aventiure2.data.time.TimeTaker;
 import de.nb.aventiure2.data.world.base.GameObjectId;
-import de.nb.aventiure2.data.world.base.IGameObject;
 import de.nb.aventiure2.data.world.counter.CounterDao;
 import de.nb.aventiure2.data.world.gameobject.*;
 import de.nb.aventiure2.data.world.syscomp.location.ILocatableGO;
@@ -33,6 +32,7 @@ import static de.nb.aventiure2.data.world.gameobject.World.*;
 import static de.nb.aventiure2.data.world.syscomp.state.impl.RapunzelState.HAARE_VOM_TURM_HERUNTERGELASSEN;
 import static de.nb.aventiure2.data.world.syscomp.state.impl.RapunzelsZauberinState.MACHT_ZURZEIT_KEINE_RAPUNZELBESUCHE;
 import static de.nb.aventiure2.data.world.syscomp.state.impl.RapunzelsZauberinState.VOR_DEM_NAECHSTEN_RAPUNZEL_BESUCH;
+import static de.nb.aventiure2.data.world.syscomp.story.impl.RapunzelStoryNode.Counter.STORY_ADVANCE;
 import static de.nb.aventiure2.german.base.StructuralElement.PARAGRAPH;
 import static de.nb.aventiure2.german.description.AltDescriptionsBuilder.alt;
 import static de.nb.aventiure2.german.description.AltDescriptionsBuilder.altParagraphs;
@@ -140,8 +140,10 @@ public enum RapunzelStoryNode implements IStoryNode {
 
     // FIXME Binsen, Seil flechten...
 
-    private static final String STORY_ADVANCE_COUNTER =
-            "RapunzelStoryNode_STORY_ADVANCE_COUNTER";
+    @SuppressWarnings({"unused", "RedundantSuppression"})
+    enum Counter {
+        STORY_ADVANCE
+    }
 
     private final ImmutableSet<RapunzelStoryNode> preconditions;
 
@@ -218,7 +220,7 @@ public enum RapunzelStoryNode implements IStoryNode {
             final World world) {
         final IHasStateGO<RapunzelsZauberinState> zauberin = loadZauberin(world);
 
-        if (db.counterDao().incAndGet(STORY_ADVANCE_COUNTER) > 5) {
+        if (db.counterDao().incAndGet(STORY_ADVANCE) > 5) {
             if (zauberin.stateComp().hasState(MACHT_ZURZEIT_KEINE_RAPUNZELBESUCHE)
                     && world.loadSC().locationComp()
                     .hasRecursiveLocation(IM_WALD_NAHE_DEM_SCHLOSS, VOR_DEM_ALTEN_TURM)
@@ -237,7 +239,7 @@ public enum RapunzelStoryNode implements IStoryNode {
         final IHasStateGO<RapunzelsZauberinState> zauberin = loadZauberin(world);
 
         if (zauberin.stateComp().hasState(MACHT_ZURZEIT_KEINE_RAPUNZELBESUCHE)) {
-            counterDao.reset(STORY_ADVANCE_COUNTER);
+            counterDao.reset(STORY_ADVANCE);
             zauberin.stateComp().narrateAndSetState(VOR_DEM_NAECHSTEN_RAPUNZEL_BESUCH);
             return;
         }
@@ -284,7 +286,7 @@ public enum RapunzelStoryNode implements IStoryNode {
 
     private static void narrateAndDoHintAction_ZauberinHeimlichBeimRufenBeobachtet(
             final AvDatabase db, final TimeTaker timeTaker, final Narrator n, final World world) {
-        if (world.hasSameOuterMostLocationAsSC((IGameObject) loadZauberin(world))) {
+        if (world.hasSameOuterMostLocationAsSC(loadZauberin(world))) {
             narrateAndDoHintAction_ZauberinHeimlichBeimRufenBeobachtet_ZauberinImRaum(n);
         } else {
             narrateAndDoHintAction_ZauberinHeimlichBeimRufenBeobachtet_ZauberinNichtImRaum(

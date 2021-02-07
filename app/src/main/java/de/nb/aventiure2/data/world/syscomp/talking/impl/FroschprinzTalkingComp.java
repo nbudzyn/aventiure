@@ -321,7 +321,6 @@ public class FroschprinzTalkingComp extends AbstractTalkingComp {
     private void froschHatAngesprochen_Exit() {
         n.narrate(du(SENTENCE, "tust", ", als hättest du nichts gehört")
                 .timed(secs(3))
-                .withCounterIdIncrementedIfTextIsNarrated(null)
                 .komma()
                 .undWartest()
                 .dann());
@@ -364,8 +363,7 @@ public class FroschprinzTalkingComp extends AbstractTalkingComp {
 
     private void froschHatNachBelohnungGefragt_ImmReEntry() {
         n.narrate(du(SENTENCE, "gehst", "kurz in dich…")
-                .timed(secs(5))
-                .withCounterIdIncrementedIfTextIsNarrated(null));
+                .timed(secs(5)));
 
         froschHatNachBelohnungGefragt_ReEntry();
     }
@@ -659,8 +657,7 @@ public class FroschprinzTalkingComp extends AbstractTalkingComp {
                         "hygienischen Gründen.",
                         desc.nomK().capitalize(),
                         " schaut dich nur… traurig? verächtlich?… an")
-                        .timed(secs(15))
-                        .withCounterIdIncrementedIfTextIsNarrated(null).beendet(PARAGRAPH));
+                        .timed(secs(15)).beendet(PARAGRAPH));
 
         setSchonBegruesstMitSC(true);
         talkerBeendetGespraech();

@@ -30,12 +30,17 @@ import static de.nb.aventiure2.german.base.StructuralElement.SENTENCE;
 import static de.nb.aventiure2.german.description.AltDescriptionsBuilder.alt;
 import static de.nb.aventiure2.german.description.DescriptionBuilder.du;
 import static de.nb.aventiure2.german.description.DescriptionBuilder.neuerSatz;
+import static de.nb.aventiure2.scaction.impl.AbstractWartenRastenAction.Counter.WARTEN_ODER_RASTEN_IN_FOLGE;
+import static de.nb.aventiure2.scaction.impl.RastenAction.Counter.RASTEN;
 
 /**
  * Der Spielercharakter legt (wach!) eine Rast ein.
  */
 public class RastenAction extends AbstractWartenRastenAction {
-    static final String COUNTER_RASTEN = "RastenAction_RASTEN";
+    @SuppressWarnings({"unused", "RedundantSuppression"})
+    enum Counter {
+        RASTEN
+    }
 
     private final ILocationGO location;
 
@@ -72,11 +77,11 @@ public class RastenAction extends AbstractWartenRastenAction {
 
     @Override
     public void narrateAndDo() {
-        counterDao.inc(COUNTER_RASTEN);
+        counterDao.inc(RASTEN);
 
         if (!sc.memoryComp().getLastAction().is(Action.Type.WARTEN) &&
                 !sc.memoryComp().getLastAction().is(Action.Type.RASTEN)) {
-            counterDao.reset(COUNTER_WARTEN_ODER_RASTEN_IN_FOLGE);
+            counterDao.reset(WARTEN_ODER_RASTEN_IN_FOLGE);
         }
 
         if (automatischesEinschlafen()) {
@@ -122,7 +127,7 @@ public class RastenAction extends AbstractWartenRastenAction {
     private void narrateAndDoRapunzelZuhoeren() {
         sc.feelingsComp().requestMoodMin(Mood.GLUECKLICH);
 
-        n.narrateAlt(mins(4), COUNTER_WARTEN_ODER_RASTEN_IN_FOLGE,
+        n.narrateAlt(mins(4), WARTEN_ODER_RASTEN_IN_FOLGE,
                 du("bist", "ganz still")
                         .undWartest()
                         .dann(),
@@ -141,7 +146,7 @@ public class RastenAction extends AbstractWartenRastenAction {
     private void narrateAndDoDunkel() {
         sc.feelingsComp().requestMoodMax(Mood.VERUNSICHERT);
 
-        n.narrateAlt(mins(3), COUNTER_WARTEN_ODER_RASTEN_IN_FOLGE,
+        n.narrateAlt(mins(3), WARTEN_ODER_RASTEN_IN_FOLGE,
                 neuerSatz("Die Bäume rauschen in "
                         + "der Dunkelheit, die Eulen schnarren, und "
                         + "und es fängt an, dir angst zu werden")
@@ -204,7 +209,7 @@ public class RastenAction extends AbstractWartenRastenAction {
                     .dann();
         }
 
-        n.narrateAlt(alt, mins(10), COUNTER_WARTEN_ODER_RASTEN_IN_FOLGE);
+        n.narrateAlt(alt, mins(10), WARTEN_ODER_RASTEN_IN_FOLGE);
     }
 
     @Override

@@ -128,7 +128,14 @@ public class Narrator {
 
     public void narrateAlt(final AltDescriptionsBuilder alternatives,
                            final AvTimeSpan timeElapsed) {
-        narrateAlt(alternatives, timeElapsed, null);
+        narrateAlt(alternatives, timeElapsed, (String) null);
+    }
+
+    public void narrateAlt(final AltDescriptionsBuilder alternatives,
+                           final AvTimeSpan timeElapsed,
+                           @Nullable final Enum<?> counterIdIncrementedIfTextIs) {
+        narrateAlt(alternatives, timeElapsed,
+                counterIdIncrementedIfTextIs.name());
     }
 
     public void narrateAlt(final AltDescriptionsBuilder alternatives,
@@ -151,6 +158,14 @@ public class Narrator {
     @SafeVarargs
     public final <D extends AbstractDescription<?>>
     void narrateAlt(final AvTimeSpan timeElapsed,
+                    final Enum<?> counterIdIncrementedIfTextIsNarrated,
+                    final D... alternatives) {
+        narrateAlt(timeElapsed, counterIdIncrementedIfTextIsNarrated.name(), alternatives);
+    }
+
+    @SafeVarargs
+    public final <D extends AbstractDescription<?>>
+    void narrateAlt(final AvTimeSpan timeElapsed,
                     final String counterIdIncrementedIfTextIsNarrated,
                     final D... alternatives) {
         narrateAlt(asList(alternatives), timeElapsed, counterIdIncrementedIfTextIsNarrated);
@@ -164,7 +179,14 @@ public class Narrator {
     public <D extends AbstractDescription<?>>
     void narrateAlt(final Collection<D> alternatives,
                     final AvTimeSpan timeElapsed) {
-        narrateAlt(alternatives, timeElapsed, null);
+        narrateAlt(alternatives, timeElapsed, (String) null);
+    }
+
+    public <D extends AbstractDescription<?>>
+    void narrateAlt(final Collection<D> alternatives,
+                    final AvTimeSpan timeElapsed,
+                    @Nullable final Enum<?> counterIdIncrementedIfTextIs) {
+        narrateAlt(alternatives, timeElapsed, counterIdIncrementedIfTextIs.name());
     }
 
     public <D extends AbstractDescription<?>>

@@ -27,6 +27,9 @@ import static de.nb.aventiure2.data.time.AvTimeSpan.secs;
 import static de.nb.aventiure2.data.world.gameobject.World.*;
 import static de.nb.aventiure2.data.world.syscomp.feelings.Mood.ANGESPANNT;
 import static de.nb.aventiure2.data.world.syscomp.feelings.Mood.NEUTRAL;
+import static de.nb.aventiure2.data.world.syscomp.reaction.impl.SchlosswacheReactionsComp.Counter.SCHLOSSWACHE_NEHMEN_GOLDENE_KUGEL_WACHE_IST_AUFMERKSAM;
+import static de.nb.aventiure2.data.world.syscomp.reaction.impl.SchlosswacheReactionsComp.Counter.SCHLOSSWACHE_ON_ENTER_ROOM_SCHLOSS_VORHALLE;
+import static de.nb.aventiure2.data.world.syscomp.reaction.impl.SchlosswacheReactionsComp.Counter.SCHLOSSWACHE_REACTIONS_ABLEGEN_WACHE_IST_AUFMERKSAM;
 import static de.nb.aventiure2.data.world.syscomp.state.impl.SchlossfestState.BEGONNEN;
 import static de.nb.aventiure2.data.world.syscomp.state.impl.SchlosswacheState.AUFMERKSAM;
 import static de.nb.aventiure2.data.world.syscomp.state.impl.SchlosswacheState.UNAUFFAELLIG;
@@ -44,9 +47,13 @@ import static de.nb.aventiure2.german.description.DescriptionBuilder.satzanschlu
 public class SchlosswacheReactionsComp
         extends AbstractDescribableReactionsComp
         implements IMovementReactions, ITimePassedReactions {
+    @SuppressWarnings({"unused", "RedundantSuppression"})
+    enum Counter {
+        SCHLOSSWACHE_ON_ENTER_ROOM_SCHLOSS_VORHALLE,
+        SCHLOSSWACHE_REACTIONS_ABLEGEN_WACHE_IST_AUFMERKSAM,
+        SCHLOSSWACHE_NEHMEN_GOLDENE_KUGEL_WACHE_IST_AUFMERKSAM
+    }
 
-    private static final String SCHLOSSWACHE_REACTIONS_ABLEGEN_WACHE_IST_AUFMERKSAM =
-            "SchlosswacheReactions_ablegen_wacheIstAufmerksam";
     private final CounterDao counterDao;
     private final SchlosswacheStateComp stateComp;
     private final LocationComp locationComp;
@@ -115,8 +122,7 @@ public class SchlosswacheReactionsComp
         final ILocatableGO goldeneKugel = (ILocatableGO) world.load(GOLDENE_KUGEL);
         if (!goldeneKugel.locationComp().hasRecursiveLocation(SPIELER_CHARAKTER)
                 && goldeneKugel.locationComp().hasRecursiveLocation(SCHLOSS_VORHALLE)) {
-            if (counterDao.incAndGet(
-                    "SchlosswacheReactions_onEnterRoom_SchlossVorhalle") > 1) {
+            if (counterDao.incAndGet(SCHLOSSWACHE_ON_ENTER_ROOM_SCHLOSS_VORHALLE) > 1) {
                 n.narrate(neuerSatz(getDescription(true).nomK(),
                         "scheint dich nicht zu bemerken")
                         .timed(secs(3)));
@@ -257,8 +263,7 @@ public class SchlosswacheReactionsComp
 
         // Spieler hat goldene Kugel in SCHLOSS_VORHALLE genommen
 
-        if (counterDao.incAndGet(
-                "SchlosswacheReactions_nehmenGoldeneKugel_wacheIstAufmerksam") == 1) {
+        if (counterDao.incAndGet(SCHLOSSWACHE_NEHMEN_GOLDENE_KUGEL_WACHE_IST_AUFMERKSAM) == 1) {
             scHatGoldeneKugelGenommen_wacheIstAufmerksam_erwischt(goldeneKugel);
             return;
         }

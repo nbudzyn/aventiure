@@ -69,15 +69,13 @@ public class VorDerHuetteImWaldConnectionComp extends AbstractSpatialConnectionC
                                 + "Tausendfüßler "
                                 + "unbewohnt. Du siehst ein Bettgestell, "
                                 + "einen Tisch, aber sonst keine Einrichtung")
-                                .timed(mins(1))
-                                .withCounterIdIncrementedIfTextIsNarrated(null),
+                                .timed(mins(1)),
                         du(SENTENCE, "schiebst", "die Tür zur Seite und "
                                 + "zwängst dich hinein. Erst ist alles "
                                 + "stockdunkel, aber dann kannst du doch mit "
                                 + "Mühe ein Bettgestell und einen Tisch "
                                 + "ausmachen")
-                                .timed(secs(90))
-                                .withCounterIdIncrementedIfTextIsNarrated(null),
+                                .timed(secs(90)),
                         du("schiebst", "dich noch einmal in die "
                                 + "kleine Hütte. Durch Ritzen in den "
                                 + "Fensterläden fällt ein wenig Licht: "
@@ -94,7 +92,7 @@ public class VorDerHuetteImWaldConnectionComp extends AbstractSpatialConnectionC
                                 + "Bett wenig zu sehen gibt")
                                 .komma()
                                 .undWartest()),
-                // TODO Klar machen, dass die Hütte kein kühler Ort ist! "Die Hütte ist
+                // FIXME Klar machen, dass die Hütte kein kühler Ort ist! "Die Hütte ist
                 //  ordentlich aufgeheizt" oder ähnlich
                 con(HINTER_DER_HUETTE,
                         "im Garten",

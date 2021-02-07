@@ -32,14 +32,20 @@ import static de.nb.aventiure2.german.base.StructuralElement.PARAGRAPH;
 import static de.nb.aventiure2.german.base.StructuralElement.SENTENCE;
 import static de.nb.aventiure2.german.description.DescriptionBuilder.du;
 import static de.nb.aventiure2.german.description.DescriptionBuilder.neuerSatz;
+import static de.nb.aventiure2.scaction.impl.EssenAction.Counter.FELSENBIRNEN;
+import static de.nb.aventiure2.scaction.impl.EssenAction.Counter.FELSENBIRNEN_SEIT_ENTER;
 
 /**
  * Der SC möchte etwas essen.
  */
+@SuppressWarnings("unchecked")
 public class EssenAction extends AbstractScAction {
-    private static final String COUNTER_FELSENBIRNEN = "EssenAction_Felsenbirnen";
-    public static final String COUNTER_FELSENBIRNEN_SEIT_ENTER =
-            "EssenAction_Felsenbirnen_SeitEnter";
+    @SuppressWarnings({"unused", "RedundantSuppression"})
+    public
+    enum Counter {
+        FELSENBIRNEN, FELSENBIRNEN_SEIT_ENTER
+    }
+
     private final CounterDao counterDao;
     private final ILocationGO location;
 
@@ -239,7 +245,7 @@ public class EssenAction extends AbstractScAction {
 
         narrateFelsenbirnen(hunger);
 
-        counterDao.inc(COUNTER_FELSENBIRNEN_SEIT_ENTER);
+        counterDao.inc(FELSENBIRNEN_SEIT_ENTER);
 
         saveSatt();
     }
@@ -265,7 +271,7 @@ public class EssenAction extends AbstractScAction {
                         + "Mmh! Die Frucht ist saftig und schmeckt süß wie Marzipan!\n"
                         + "Du isst dich an den Früchten satt")
                         .timed(mins(10))
-                        .withCounterIdIncrementedIfTextIsNarrated(COUNTER_FELSENBIRNEN)
+                        .withCounterIdIncrementedIfTextIsNarrated(FELSENBIRNEN)
                         .undWartest()
                         .dann())) {
             return;
@@ -290,7 +296,7 @@ public class EssenAction extends AbstractScAction {
                 du(SENTENCE, "nimmst", "eine von den Früchten und beißt hinein. "
                         + "Sie ist überraschend süß und saftig. Du isst die Frucht auf")
                         .timed(mins(3))
-                        .withCounterIdIncrementedIfTextIsNarrated(COUNTER_FELSENBIRNEN)
+                        .withCounterIdIncrementedIfTextIsNarrated(FELSENBIRNEN)
                         .undWartest()
                         .dann())) {
             return;
@@ -302,7 +308,7 @@ public class EssenAction extends AbstractScAction {
                         .mitVorfeldSatzglied("Hunger")
                         .timed(mins(3))
                         .dann());
-        if (counterDao.get(COUNTER_FELSENBIRNEN_SEIT_ENTER) == 0) {
+        if (counterDao.get(FELSENBIRNEN_SEIT_ENTER) == 0) {
             n.narrateAlt(du(SENTENCE, "lässt",
                     "dir die süßen Früchte nicht entgehen, auch wenn du kaum Hunger "
                             + "hast")

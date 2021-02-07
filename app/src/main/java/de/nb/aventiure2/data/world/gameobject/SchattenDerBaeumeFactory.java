@@ -24,6 +24,7 @@ import static de.nb.aventiure2.data.time.AvTimeSpan.mins;
 import static de.nb.aventiure2.data.time.AvTimeSpan.secs;
 import static de.nb.aventiure2.data.world.base.Lichtverhaeltnisse.DUNKEL;
 import static de.nb.aventiure2.data.world.base.SpatialConnectionData.conData;
+import static de.nb.aventiure2.data.world.gameobject.SchattenDerBaeumeFactory.Counter.*;
 import static de.nb.aventiure2.data.world.gameobject.World.*;
 import static de.nb.aventiure2.data.world.syscomp.storingplace.StoringPlaceType.STAMM_EINES_BAUMS;
 import static de.nb.aventiure2.german.base.Artikel.Typ.DEF;
@@ -34,9 +35,11 @@ import static de.nb.aventiure2.german.base.StructuralElement.SENTENCE;
 import static de.nb.aventiure2.german.description.DescriptionBuilder.du;
 
 class SchattenDerBaeumeFactory {
-    private static final String
-            DESC_TO_SCHATTEN_DER_BAEUME__SC_SETZT_SICH_TAGSUEBER_IN_DEN_SCHATTEN_DER_BAEUME =
-            "DescTo_SchattenDerBaeume__SCSetztSichTagsueberInDenSchattenDerBaeume";
+    @SuppressWarnings({"unused", "RedundantSuppression"})
+    enum Counter {
+        DESC_TO_SCHATTEN_DER_BAEUME__SC_SETZT_SICH_TAGSUEBER_IN_DEN_SCHATTEN_DER_BAEUME
+    }
+
     private final AvDatabase db;
     private final TimeTaker timeTaker;
     private final World world;

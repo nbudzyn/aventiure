@@ -9,9 +9,14 @@ import de.nb.aventiure2.data.world.syscomp.feelings.FeelingIntensity;
 import de.nb.aventiure2.scaction.AbstractScAction;
 import de.nb.aventiure2.scaction.stepcount.SCActionStepCountDao;
 
+import static de.nb.aventiure2.scaction.impl.AbstractWartenRastenAction.Counter.WARTEN_ODER_RASTEN_IN_FOLGE;
+
 public abstract class AbstractWartenRastenAction extends AbstractScAction {
-    static final String COUNTER_WARTEN_ODER_RASTEN_IN_FOLGE =
-            "AbstractWartenRastenAction_WARTEN_ODER_RASTEN_IN_FOLGE";
+    @SuppressWarnings({"unused", "RedundantSuppression"})
+    enum Counter {
+        WARTEN_ODER_RASTEN_IN_FOLGE
+    }
+
     protected final CounterDao counterDao;
 
     AbstractWartenRastenAction(
@@ -28,7 +33,7 @@ public abstract class AbstractWartenRastenAction extends AbstractScAction {
     }
 
     boolean automatischesEinschlafen() {
-        if (counterDao.get(COUNTER_WARTEN_ODER_RASTEN_IN_FOLGE) >= 3) {
+        if (counterDao.get(WARTEN_ODER_RASTEN_IN_FOLGE) >= 3) {
             return sc.feelingsComp().getMuedigkeit() >= FeelingIntensity.MERKLICH;
         }
 

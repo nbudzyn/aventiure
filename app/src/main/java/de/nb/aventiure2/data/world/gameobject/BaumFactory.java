@@ -19,6 +19,7 @@ import de.nb.aventiure2.german.praedikat.AdverbialeAngabeSkopusVerbAllg;
 import static de.nb.aventiure2.data.time.AvTimeSpan.mins;
 import static de.nb.aventiure2.data.world.base.Lichtverhaeltnisse.DUNKEL;
 import static de.nb.aventiure2.data.world.base.SpatialConnectionData.conData;
+import static de.nb.aventiure2.data.world.gameobject.BaumFactory.Counter.*;
 import static de.nb.aventiure2.data.world.gameobject.World.*;
 import static de.nb.aventiure2.data.world.syscomp.storingplace.StoringPlaceType.ASTGABEL;
 import static de.nb.aventiure2.german.base.Artikel.Typ.DEF;
@@ -32,8 +33,10 @@ import static de.nb.aventiure2.german.description.DescriptionBuilder.neuerSatz;
 import static de.nb.aventiure2.german.praedikat.VerbSubj.ANKOMMEN;
 
 public class BaumFactory {
-    public static final String HOCHKLETTERN = "BaumFactory_HOCHKLETTERN";
-    public static final String HINABKLETTERN = "BaumFactory_HINABKLETTERN";
+    public enum Counter {
+        HOCHKLETTERN, HINABKLETTERN;
+    }
+
     private final AvDatabase db;
     private final TimeTaker timeTaker;
     private final World world;
@@ -114,8 +117,7 @@ public class BaumFactory {
                         + "nicht, und Äpfel sind auch keine zu finden. Vielleicht doch kein "
                         + "Apfelbaum")
                 .timed(mins(6))
-                .withCounterIdIncrementedIfTextIsNarrated(
-                        HOCHKLETTERN);
+                .withCounterIdIncrementedIfTextIsNarrated(HOCHKLETTERN);
     }
 
     @CheckReturnValue

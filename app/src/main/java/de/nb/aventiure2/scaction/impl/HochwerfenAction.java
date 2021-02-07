@@ -51,14 +51,20 @@ import static de.nb.aventiure2.german.description.DescriptionBuilder.neuerSatz;
 import static de.nb.aventiure2.german.description.DescriptionBuilder.satzanschluss;
 import static de.nb.aventiure2.german.praedikat.VerbSubjObj.AUFFANGEN;
 import static de.nb.aventiure2.german.praedikat.VerbSubjObj.WERFEN;
+import static de.nb.aventiure2.scaction.impl.HochwerfenAction.Counter.HOCHWERFEN_ACTION_WIEDERHOLUNG;
 
 /**
  * Der Spieler(charakter) wirft einen Gegenstand hoch.
  */
+@SuppressWarnings("unchecked")
 @ParametersAreNonnullByDefault
 public class HochwerfenAction<OBJ extends IDescribableGO & ILocatableGO>
         extends AbstractScAction {
-    private static final String HOCHWERFEN_ACTION_WIEDERHOLUNG = "HochwerfenAction_Wiederholung";
+    @SuppressWarnings({"unused", "RedundantSuppression"})
+    enum Counter {
+        HOCHWERFEN_ACTION_WIEDERHOLUNG
+    }
+
     private final CounterDao counterDao;
     @NonNull
     private final OBJ object;
@@ -115,6 +121,7 @@ public class HochwerfenAction<OBJ extends IDescribableGO & ILocatableGO>
         sc.memoryComp().setLastAction(buildMemorizedAction());
     }
 
+    @SuppressWarnings("unchecked")
     private void narrateAndDoErstesMal() {
         final IHasStateGO<FroschprinzState> froschprinz =
                 (IHasStateGO<FroschprinzState>) world.load(FROSCHPRINZ);
@@ -153,7 +160,6 @@ public class HochwerfenAction<OBJ extends IDescribableGO & ILocatableGO>
                                                 "wieder"))
                 ))
                         .timed(secs(3))
-                        .withCounterIdIncrementedIfTextIsNarrated(null)
                         .dann())
                 .collect(toImmutableList()));
     }
@@ -181,7 +187,6 @@ public class HochwerfenAction<OBJ extends IDescribableGO & ILocatableGO>
                             objectDesc.persPron().akkK(),
                             "geschickt wieder auf")
                             .timed(secs(3))
-                            .withCounterIdIncrementedIfTextIsNarrated(null)
                             .dann());
             return;
         }
@@ -315,6 +320,7 @@ public class HochwerfenAction<OBJ extends IDescribableGO & ILocatableGO>
         return false;
     }
 
+    @SuppressWarnings("IfStatementWithIdenticalBranches")
     @Override
     protected boolean isDefinitivDiskontinuitaet() {
         if (n.lastNarrationWasFromReaction()) {

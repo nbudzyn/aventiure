@@ -562,12 +562,12 @@ public class BewegenAction<LOC_DESC extends ILocatableGO & IDescribableGO>
                 && sc.feelingsComp().hasMood(Mood.ANGESPANNT)) {
             sc.feelingsComp().requestMood(Mood.NEUTRAL);
         } else if (spatialConnection.getTo().equals(BAUM_IM_GARTEN_HINTER_DER_HUETTE_IM_WALD) &&
-                counterDao.get(BaumFactory.HOCHKLETTERN) > 2) {
+                counterDao.get(BaumFactory.Counter.HOCHKLETTERN) > 2) {
             sc.feelingsComp().narrateAndUpgradeTemporaereMinimalmuedigkeit(
                     FeelingIntensity.NUR_LEICHT, mins(15)
             );
         } else if (oldLocation.is(BAUM_IM_GARTEN_HINTER_DER_HUETTE_IM_WALD) &&
-                counterDao.get(BaumFactory.HINABKLETTERN) != 2) {
+                counterDao.get(BaumFactory.Counter.HINABKLETTERN) != 2) {
             sc.feelingsComp().narrateAndUpgradeTemporaereMinimalmuedigkeit(
                     FeelingIntensity.MERKLICH, mins(45)
             );
