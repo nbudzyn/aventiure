@@ -62,6 +62,7 @@ import static de.nb.aventiure2.german.base.StructuralElement.CHAPTER;
 import static de.nb.aventiure2.german.base.StructuralElement.PARAGRAPH;
 import static de.nb.aventiure2.german.base.StructuralElement.SENTENCE;
 import static de.nb.aventiure2.german.description.AltDescriptionsBuilder.alt;
+import static de.nb.aventiure2.german.description.AltDescriptionsBuilder.altNeueSaetze;
 import static de.nb.aventiure2.german.description.DescriptionBuilder.du;
 import static de.nb.aventiure2.german.description.DescriptionBuilder.neuerSatz;
 import static java.util.stream.Collectors.toList;
@@ -440,6 +441,28 @@ public class RapunzelsZauberinReactionsComp
     }
 
     private void zauberinZaubertVergessenszauber() {
+        narrateUnmittelbarerVergessenszauber();
+
+        // Zauberin kann den Spieler nicht mehr ausstehen
+        feelingsComp.upgradeFeelingsTowards(SPIELER_CHARAKTER,
+                ZUNEIGUNG_ABNEIGUNG, -3, FeelingIntensity.SEHR_STARK);
+
+        scUndRapunzelVergessenAlles();
+
+        // Die Zauberin ist schon weit auf dem Rückweg
+        locationComp.narrateAndSetLocation(IM_WALD_NAHE_DEM_SCHLOSS);
+        stateComp.narrateAndSetState(AUF_DEM_RUECKWEG_VON_RAPUNZEL);
+        movementComp.startMovement(timeTaker.now(), ZWISCHEN_DEN_HECKEN_VOR_DEM_SCHLOSS_EXTERN);
+
+        if (loadSC().locationComp().hasRecursiveLocation(OBEN_IM_ALTEN_TURM)) {
+            // Ohne Reactions - der Spieler bekommt ja nichts davon mit.
+            loadSC().locationComp().setLocation(VOR_DEM_ALTEN_TURM_SCHATTEN_DER_BAEUME);
+        }
+
+        narrateNachDemVergessenszauber();
+    }
+
+    private void narrateUnmittelbarerVergessenszauber() {
         if (loadSC().locationComp().hasRecursiveLocation(OBEN_IM_ALTEN_TURM)) {
             n.narrate(neuerSatz("Jetzt geht alles ganz schnell. Die magere Frau schaut "
                     + "zum Fenster "
@@ -465,11 +488,9 @@ public class RapunzelsZauberinReactionsComp
                             "die Augen. Du bist wie gebannt und hörst sie fremdartige Worte",
                             "murmeln - will sie dich etwa verhexen?"));
         }
+    }
 
-        // Zauberin kann den Spieler nicht mehr ausstehen
-        feelingsComp.upgradeFeelingsTowards(SPIELER_CHARAKTER,
-                ZUNEIGUNG_ABNEIGUNG, -3, FeelingIntensity.SEHR_STARK);
-
+    private void scUndRapunzelVergessenAlles() {
         // Spieler wird verzaubert und vergisst alles.
         loadSC().mentalModelComp().unsetAssumedLocations(
                 RAPUNZEL, RAPUNZELS_ZAUBERIN);
@@ -490,20 +511,11 @@ public class RapunzelsZauberinReactionsComp
                 SC_HAT_RAPUNZEL_RETTUNG_ZUGESAGT);
         loadRapunzel().talkingComp().forgetAll();
 
-        // Die Zauberin ist schon weit auf dem Rückweg
-        stateComp.narrateAndSetState(AUF_DEM_RUECKWEG_VON_RAPUNZEL);
-        locationComp.narrateAndSetLocation(IM_WALD_NAHE_DEM_SCHLOSS);
-        movementComp.startMovement(timeTaker.now(), ZWISCHEN_DEN_HECKEN_VOR_DEM_SCHLOSS_EXTERN);
+        // Rapunzel ist still
+        loadRapunzel().stateComp().narrateAndSetState(RapunzelState.NORMAL);
+    }
 
-        // Rapunzel ist still (Rapunzel hat auch alles vergessen!)
-        loadRapunzel().stateComp().narrateAndSetState(
-                RapunzelState.NORMAL);
-
-        if (loadSC().locationComp().hasRecursiveLocation(OBEN_IM_ALTEN_TURM)) {
-            // Ohne Reactions - der Spieler bekommt ja nichts davon mit.
-            loadSC().locationComp().setLocation(VOR_DEM_ALTEN_TURM_SCHATTEN_DER_BAEUME);
-        }
-
+    private void narrateNachDemVergessenszauber() {
         final String ortsbeschreibung;
         if (loadSC().locationComp().hasLocation(VOR_DEM_ALTEN_TURM_SCHATTEN_DER_BAEUME)) {
             ortsbeschreibung = "sitzt im Unterholz vor dem alten Turm";
@@ -511,7 +523,9 @@ public class RapunzelsZauberinReactionsComp
             ortsbeschreibung = "stehst ganz allein vor dem alten Turm";
         }
 
-        n.narrate(neuerSatz(CHAPTER, "Auf einmal ist alles wie weggeblasen. Du",
+        n.narrateAlt(altNeueSaetze(CHAPTER,
+                ImmutableList.of("Auf einmal", "Plötzlich", "Jetzt"),
+                "ist alles wie weggeblasen. Du",
                 ortsbeschreibung,
                 "und fühlst dich etwas verwirrt: Was hattest du "
                         + "eigentlich gerade vor? Ob der Turm wohl "

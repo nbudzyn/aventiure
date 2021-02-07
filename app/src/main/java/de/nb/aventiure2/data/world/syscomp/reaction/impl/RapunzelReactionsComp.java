@@ -486,7 +486,9 @@ public class RapunzelReactionsComp
         if (world.isOrHasRecursiveLocation(to, SPIELER_CHARAKTER)
                 // Der Spieler hat die goldene Kugel genommen, aufgefangen o.Ä.
                 && !memoryComp.isKnown(GOLDENE_KUGEL)
-            // und Rapunzel kennt die goldene Kugel noch nicht
+                // und Rapunzel kennt die goldene Kugel noch nicht
+                && stateComp.hasState(NORMAL)
+            // und Rapunzel hat nicht gerade die Haare heruntergelassen o.Ä.
         ) {
             rapunzelMoechteGoldeneKugelHaben();
             return;
@@ -676,8 +678,7 @@ public class RapunzelReactionsComp
     }
 
     private void onZauberinStateChangedToAufDemRueckwegVonRapunzel() {
-        if (loadZauberin().locationComp()
-                .hasRecursiveLocation(OBEN_IM_ALTEN_TURM) &&
+        if (loadZauberin().locationComp().hasRecursiveLocation(OBEN_IM_ALTEN_TURM) &&
                 locationComp.hasRecursiveLocation(OBEN_IM_ALTEN_TURM) &&
                 !stateComp.hasState(HAARE_VOM_TURM_HERUNTERGELASSEN)) {
             talkingComp.rapunzelLaesstHaareZumAbstiegHerunter();

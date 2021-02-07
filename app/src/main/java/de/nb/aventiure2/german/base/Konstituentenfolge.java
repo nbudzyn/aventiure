@@ -126,10 +126,6 @@ public class Konstituentenfolge implements Iterable<Konstituente> {
         return joinToAltKonstituentenfolgen(asList(parts));
     }
 
-    // FIXME Doppelt gemoppelte Verzauberung nach "schaut oben aus dem Turmfenster
-    //  die magere Frau heraus". Text ab "Du siehst über dir eine Bewegung"
-    //  verhindern - vielleicht Frau direkt in den Wald-Nähe-Schloss teleportieren?
-
     /**
      * Fügt diese Teile zu mehreren alternativen Konstituentenfolgen zusammen.
      *
