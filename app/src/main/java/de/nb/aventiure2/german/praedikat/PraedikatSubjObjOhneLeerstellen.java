@@ -147,13 +147,22 @@ public class PraedikatSubjObjOhneLeerstellen
             return speziellesVorfeldFromSuper;
         }
 
-        // Wenn "es" ein Objekt ist, darf es nicht im Vorfeld stehen.
-        // (Eisenberg Der Satz 5.4.2)
-        // Aber auch andere Personalpronomen wirken im Vorfeld oft eher unangebracht,
-        // wenn es sich um ein Objekt handelt.
-        // "Dich sieht die Frau überrascht an.", "Auf sie wartest du immer noch."
-        if (!(objekt instanceof Personalpronomen)) {
-            return objekt.imK(kasusOderPraepositionalkasus);  // "den Frosch"
+        /*
+         * Wenn "es" ein Objekt ist, darf es nicht im Vorfeld stehen.
+         * (Eisenberg Der Satz 5.4.2)
+         * ("es" ist nicht phrasenbildend, kann also keine Fokuspartikel haben)
+         */
+        if (Personalpronomen.isPersonalpronomenEs(objekt, kasusOderPraepositionalkasus)) {
+            return null;
+        }
+
+        /*
+         * Phrasen (auch Personalpronomen) mit Fokuspartikel
+         * sind häufig kontrastiv und daher oft für das Vorfeld geeignet.
+         */
+        if (objekt.getFokuspartikel() != null) {
+            // "Nur die Kugel nimmst du"
+            return objekt.imK(kasusOderPraepositionalkasus);
         }
 
         return null;

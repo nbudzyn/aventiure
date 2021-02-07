@@ -221,7 +221,7 @@ public class RapunzelReactionsComp
             alt.addAll(altRapunzelZiehtHaareWiederHoch_VorDemAltenTurm());
             // FIXME Wenn Rapunzel das mit der Zauberin erzählt hat (aber auch dann nur
             //  einmal): „Aber komm nicht, wenn die Alte bei mir ist, ruft sie dir noch nach"
-            //  (Das wäre ein neuer RufTyp!)
+            //  (Wäre das ein neuer RufTyp? Haben wir beim Frosch auch nicht...)
 
             alt.add(neuerSatz("Als du unten bist, verschwinden die goldenen Haare "
                     + "wieder oben im Fenster")

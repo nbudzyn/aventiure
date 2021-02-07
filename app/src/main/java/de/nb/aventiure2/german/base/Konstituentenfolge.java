@@ -126,10 +126,6 @@ public class Konstituentenfolge implements Iterable<Konstituente> {
         return joinToAltKonstituentenfolgen(asList(parts));
     }
 
-    // FIXME "Die Kugel nimmst du" nicht generieren - Ausnahme vielleicht
-    //  (nachlesen): "Hier legen ein Schwert und eine Kugel. Die Kugel nimmst du."
-    //  (in Abgrenzung zu etwas anderem, das man nicht nimmt)
-
     // FIXME "Und Lass dein Haar herunter rufst du" - vermeiden. Wörtliche
     //  Rede nur im Vorfeld, wenn kein und.
 

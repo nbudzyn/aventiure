@@ -21,6 +21,7 @@ import de.nb.aventiure2.german.base.Kasus;
 import de.nb.aventiure2.german.base.Konstituentenfolge;
 import de.nb.aventiure2.german.base.Numerus;
 import de.nb.aventiure2.german.base.Person;
+import de.nb.aventiure2.german.base.Personalpronomen;
 import de.nb.aventiure2.german.base.SubstPhrOderReflexivpronomen;
 import de.nb.aventiure2.german.base.SubstantivischePhrase;
 
@@ -171,12 +172,22 @@ public class PraedikatDirektivesVerbOhneLeerstellen
             return speziellesVorfeldFromSuper;
         }
 
+        /*
+         * Wenn "es" ein Objekt ist, darf es nicht im Vorfeld stehen.
+         * (Eisenberg Der Satz 5.4.2)
+         * ("es" ist nicht phrasenbildend, kann also keine Fokuspartikel haben)
+         */
+        if (Personalpronomen.isPersonalpronomenEs(objekt, kasus)) {
+            return null;
+        }
 
-        final Konstituentenfolge objektImKasus = objekt.imK(kasus);
-        if (!objektImKasus.isPersonalpronomenEs()) {
-            // Wenn "es" ein Objekt ist, darf es nicht im Vorfeld stehen.
-            // (Eisenberg Der Satz 5.4.2)
-            return objektImKasus;  // "Die junge Frau (bittest du ...)"
+        /*
+         * Phrasen (auch Personalpronomen) mit Fokuspartikel
+         * sind häufig kontrastiv und daher oft für das Vorfeld geeignet.
+         */
+        if (objekt.getFokuspartikel() != null) {
+            // "Nur die junge Frau bittest du..."
+            return objekt.imK(kasus);
         }
 
         return null;

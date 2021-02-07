@@ -72,7 +72,8 @@ public abstract class EinzelneSubstantivischePhrase extends SubstantivischePhras
     }
 
     @Override
-    public Konstituentenfolge imK(final KasusOderPraepositionalkasus kasusOderPraepositionalkasus) {
+    public final Konstituentenfolge imK(
+            final KasusOderPraepositionalkasus kasusOderPraepositionalkasus) {
         return joinToKonstituentenfolge(
                 k(imStr(kasusOderPraepositionalkasus), kannAlsBezugsobjektVerstandenWerdenFuer(),
                         getBezugsobjekt()));

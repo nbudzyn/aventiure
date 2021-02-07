@@ -161,15 +161,29 @@ class PraedikatReflSubjObjOhneLeerstellen
             return speziellesVorfeldFromSuper;
         }
 
-        // Wenn "es" ein Objekt ist, darf es nicht im Vorfeld stehen.
-        // (Eisenberg Der Satz 5.4.2)
-        // Aber auch andere Personalpronomen wirken im Vorfeld oft eher unangebracht,
-        // wenn es sich um ein Objekt handelt.
-        // "Ihn nimmst du an dich."
-        if (!(objekt instanceof Personalpronomen)) {
-            return objekt.imK(objektKasusOderPraepositionalkasus);  // "den Frosch"
+        /*
+         * Wenn "es" ein Objekt ist, darf es nicht im Vorfeld stehen.
+         * (Eisenberg Der Satz 5.4.2)
+         * ("es" ist nicht phrasenbildend, kann also keine Fokuspartikel haben)
+         */
+        if (Personalpronomen.isPersonalpronomenEs(objekt, objektKasusOderPraepositionalkasus)) {
+            return null;
         }
 
+        /*
+         * Auch obligatorisch Reflexsivpronomen sind im Vorfeld unmöglich:
+         * *Sich steigern die Verluste <-> Die Verluste steigern sich.
+         */
+
+        /*
+         * Phrasen (auch Personalpronomen) mit Fokuspartikel
+         * sind häufig kontrastiv und daher oft für das Vorfeld geeignet.
+         */
+        if (objekt.getFokuspartikel() != null) {
+            // "Nur die Kugel nimmst du"
+            return objekt.imK(objektKasusOderPraepositionalkasus);
+        }
+        
         return null;
     }
 

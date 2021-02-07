@@ -141,6 +141,15 @@ public enum PraepositionMitKasus implements KasusOderPraepositionalkasus {
             }
         }
 
+        // FIXME Hier fehlt noch ein Sonderfall:
+        //  Statt *"auf es" (Neutrum Sg. Akk.) heißt es "darauf",
+        //  Statt *"unter es" heißt es "darunter" etc.
+        //  Man bräuchte wohl eine neue Klasse adverbialer Angaben
+        //  wie DARAUF, DARUNTER, HINEIN etc., und jede
+        //  Präposition MIT AKKUSATIV müsste zwingend
+        //  eine dieser Adverbien referenzieren, das als
+        //  Ersatz verwendet wird.
+
         return getDescriptionUnverschmolzen(substantivischePhrase);
     }
 

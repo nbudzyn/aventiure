@@ -129,6 +129,58 @@ public interface PraedikatOhneLeerstellen extends Praedikat {
      * <p>
      * Wenn {@link #getSpeziellesVorfeldSehrErwuenscht(Person, Numerus)} einen Wert zurückgibt,
      * so sollte diese Methode etweder einen anderen oder keinen Wert zurückgeben.
+     * <p>
+     * Generell gibt es gewisse Regeln für das Vorfeld, die bei der Implementierung dieser
+     * Methode berücksichtigt werden müssen:
+     * <ul>
+     * <li> Wenn "es" ein Objekt ist, darf es nicht im Vorfeld stehen.
+     * (Eisenberg Der Satz 5.4.2)
+     * ("es" ist nicht phrasenbildend, kann also keine Fokuspartikel haben)
+     * <li>Auch obligatorisch Reflexsivpronomen sind im Vorfeld unmöglich:
+     * *Sich steigern die Verluste <-> Die Verluste steigern sich.
+     * <li>Der ethische Dativ ist im Vorfeld verboten:
+     * *Mir komm nur nicht zu spät. <-> Komm mir nur nicht zu spät.
+     * <li>"Nicht" ("Negationssupplement") ist im Vorfeld sehr, sehr selten.
+     * <li>Tendenziell enthält das Vorfeld (unmarkiert)
+     * Hintergrund-Informationen, also die Informationen,
+     * die bereits bekannt sind und auf die
+     * nicht die Aufmerksamkeit gelenkt werden soll.
+     * Daher stehen im Vorfeld zumeist das Subjekt oder
+     * adverbiale Angaben.
+     * Da Prädikatsteile (Objekte, Prädikative) in der Regel rhematisch sind
+     * (nicht Thema), sollen sie in der Regel nicht ins Vorfeld.
+     * Es gibt zwei Ausnahmen:
+     * <ol>
+     * <li>Die "Hintergrundsetzung":
+     * Der Prädikatsteil soll als neuer Hintergrund für
+     * ein (neues), im Satz folgendes Rhema gesetzt werden.
+     * Daher sind diese Vorfeldbesetzung mit Nicht-Subjekt
+     * mit Negationen im Mittelfeld natürlich:
+     * "Den Karl [neues Thema] liebt die Maria aber nicht [Rhema]"
+     * "Groß [neues Thema] ist Karl nicht [Rhema]."
+     * <li>Die "Hervorhebung":
+     * Es gibt mehrere Vorderund-Informationen, von denen
+     * eine besonders Akzeptuiert werden soll. Diese Information
+     * kann in das Vorfeld gestellt werden ("Hervorhebung").
+     * "Hervorhebungen" sind also vor allem möglich, wenn
+     * das Prädikats-Mittelfeld
+     * - mehrere weitere
+     * - oder weitere längere
+     * Elemente enthält.
+     * <li>Daher sind generell Personalpronomen ohne Fokuspartikel im Vorfeld oft
+     * eher unangebracht, wenn es sich um ein Objekt handelt. Selbst wenn
+     * das Personalpronomen in einem Präpositionalkasus steht.
+     * ?"Dich sieht die Frau überrascht an.", ?"Auf sie wartest du immer noch."
+     * </ol>
+     * <li> <i>Rhematische</i> prädikative Elemente sind im Vorfeld nur möglich,
+     * wenn sie
+     * <ol>
+     * <li>Antwort auf eine Frage sind ("Dich habe ich gesucht!")
+     * <li>oder kontrastiv ("Wir haben eine Katze. Ein Hund
+     * kommt uns nicht ins Haus.") - Phrasen (auch Personalpronomen) mit Fokuspartikel
+     * sind häufig kontrastiv und daher oft für das Vorfeld geeignet.
+     * </ol>
+     * </ul>
      */
     @Nullable
     Konstituentenfolge getSpeziellesVorfeldAlsWeitereOption(Person personSubjekt,

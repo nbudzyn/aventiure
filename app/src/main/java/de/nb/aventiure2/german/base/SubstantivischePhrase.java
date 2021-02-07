@@ -58,12 +58,20 @@ public abstract class SubstantivischePhrase
      */
     public abstract String artikellosDatStr();
 
-    String imStr(final KasusOderPraepositionalkasus kasusOderPraepositionalkasus) {
+    final String imStr(final KasusOderPraepositionalkasus kasusOderPraepositionalkasus) {
         if (kasusOderPraepositionalkasus instanceof Kasus) {
             return imStr((Kasus) kasusOderPraepositionalkasus);
         }
 
         if (kasusOderPraepositionalkasus instanceof PraepositionMitKasus) {
+            // FIXME Präpositionalkasus mit "es" sind problematisch, da "es"
+            //  nicht phrasenbildend ist.
+            // - "in es" etc. wird vertreten durch "hinein" etc.
+            // - Dabei ändert sich vielleicht teilweise sogar die Zusammenschreibung?!
+            // - Das scheint aber nicht bei belebten Dingen möglich zu sein:
+            //  ?"Das ist unser Kind. Wir haben viel Geld hineingesteckt"
+            //  ?"Das ist unser Kind. Wir haben einen Nachtisch dafür gekauft."
+
             final PraepositionMitKasus praepositionMitKasus =
                     (PraepositionMitKasus) kasusOderPraepositionalkasus;
 
@@ -95,7 +103,7 @@ public abstract class SubstantivischePhrase
     }
 
     @Override
-    public Konstituentenfolge imK(final Kasus kasus) {
+    public final Konstituentenfolge imK(final Kasus kasus) {
         return imK((KasusOderPraepositionalkasus) kasus);
     }
 

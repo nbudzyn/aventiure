@@ -8,6 +8,8 @@ import java.util.Map;
 import java.util.Objects;
 
 import static de.nb.aventiure2.german.base.Flexionsreihe.fr;
+import static de.nb.aventiure2.german.base.Kasus.AKK;
+import static de.nb.aventiure2.german.base.Kasus.NOM;
 import static de.nb.aventiure2.german.base.NumerusGenus.F;
 import static de.nb.aventiure2.german.base.NumerusGenus.M;
 import static de.nb.aventiure2.german.base.NumerusGenus.N;
@@ -38,6 +40,20 @@ public class Personalpronomen extends SubstantivischesPronomenMitVollerFlexionsr
     );
 
     private final Person person;
+
+    public static boolean isPersonalpronomenEs(
+            final SubstPhrOderReflexivpronomen substPhrOderReflexivpronomen,
+            final KasusOderPraepositionalkasus kasusOderPraepositionalkasus) {
+        if (!(substPhrOderReflexivpronomen instanceof Personalpronomen)) {
+            return false;
+        }
+
+        final Personalpronomen personalpronomen = (Personalpronomen) substPhrOderReflexivpronomen;
+
+        return personalpronomen.getPerson() == P3
+                && personalpronomen.getNumerusGenus() == N
+                && (kasusOderPraepositionalkasus == NOM || kasusOderPraepositionalkasus == AKK);
+    }
 
     private static Map<NumerusGenus, Personalpronomen>
     alleGenera(final Person person,
@@ -78,8 +94,10 @@ public class Personalpronomen extends SubstantivischesPronomenMitVollerFlexionsr
     }
 
     /**
-     * Fügt der substantivischen Phrase etwas hinzu wie "auch", "allein", "ausgerechnet",
-     * "wenigstens" etc.
+     * Fügt dem Personalpronomen etwas hinzu wie "auch", "allein", "ausgerechnet",
+     * "wenigstens" etc. Es ist zu beachten, das "es" nicht phrasenfähig ist - statt
+     * *"auch es" zu erzeugen, wird das "auch" in dem Fall verworfen (während "auch ihm"
+     * erzeugt wird).
      */
     @Override
     public Personalpronomen mitFokuspartikel(@Nullable final String fokuspartikel) {
@@ -115,6 +133,17 @@ public class Personalpronomen extends SubstantivischesPronomenMitVollerFlexionsr
                 person == P3 ? bezugsobjekt : null);
         this.person = person;
     }
+
+    @Override
+    public final String imStr(final Kasus kasus) {
+        if (getFokuspartikel() != null
+                && isPersonalpronomenEs(this, kasus)) {
+            return ohneFokuspartikel().imStr(kasus);
+        }
+
+        return super.imStr(kasus);
+    }
+
 
     @Override
     public Personalpronomen persPron() {

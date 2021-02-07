@@ -18,9 +18,11 @@ import de.nb.aventiure2.german.base.Interrogativpronomen;
 import de.nb.aventiure2.german.base.Konstituentenfolge;
 import de.nb.aventiure2.german.base.Numerus;
 import de.nb.aventiure2.german.base.Person;
+import de.nb.aventiure2.german.base.Personalpronomen;
 import de.nb.aventiure2.german.base.SubstPhrOderReflexivpronomen;
 import de.nb.aventiure2.german.base.SubstantivischePhrase;
 
+import static de.nb.aventiure2.german.base.Kasus.AKK;
 import static de.nb.aventiure2.german.base.Konstituentenfolge.kf;
 
 /**
@@ -135,7 +137,6 @@ public class PraedikatDatAkkOhneLeerstellen
         return true;
     }
 
-    @SuppressWarnings("RedundantIfStatement")
     @Override
     public @Nullable
     Konstituentenfolge getSpeziellesVorfeldAlsWeitereOption(final Person person,
@@ -146,8 +147,27 @@ public class PraedikatDatAkkOhneLeerstellen
             return speziellesVorfeldFromSuper;
         }
 
-        // "Die Kugel gibst du dem Frosch" - nicht schön, da meist "der
-        // Frosch" das Thema ist und "die Kugel" das Rhema.
+        /*
+         * Wenn "es" ein Objekt ist, darf es nicht im Vorfeld stehen.
+         * (Eisenberg Der Satz 5.4.2)
+         * ("es" ist nicht phrasenbildend, kann also keine Fokuspartikel haben)
+         */
+        if (Personalpronomen.isPersonalpronomenEs(akk, AKK)) {
+            return null;
+        }
+
+        /*
+         * Phrasen (auch Personalpronomen) mit Fokuspartikel
+         * sind häufig kontrastiv und daher oft für das Vorfeld geeignet.
+         */
+        if (akk.getFokuspartikel() != null) {
+            // "Nur dem Frosch gibst du die Kugel"
+            return akk.akkK();
+        }
+        if (dat.getFokuspartikel() != null) {
+            // "Nur die Kugel gibst du dem Frosch"
+            return dat.datK();
+        }
 
         return null;
     }
