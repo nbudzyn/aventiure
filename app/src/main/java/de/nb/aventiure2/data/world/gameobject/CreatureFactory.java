@@ -20,6 +20,8 @@ import de.nb.aventiure2.data.world.syscomp.alive.ILivingBeingGO;
 import de.nb.aventiure2.data.world.syscomp.description.AbstractDescriptionComp;
 import de.nb.aventiure2.data.world.syscomp.description.IDescribableGO;
 import de.nb.aventiure2.data.world.syscomp.description.impl.FroschprinzDescriptionComp;
+import de.nb.aventiure2.data.world.syscomp.description.impl.MultiDescriptionComp;
+import de.nb.aventiure2.data.world.syscomp.description.impl.RapunzeDescriptionComp;
 import de.nb.aventiure2.data.world.syscomp.description.impl.RapunzelsZauberinDescriptionComp;
 import de.nb.aventiure2.data.world.syscomp.description.impl.SimpleDescriptionComp;
 import de.nb.aventiure2.data.world.syscomp.feelings.FeelingIntensity;
@@ -114,7 +116,7 @@ class CreatureFactory {
 
     GameObject createFroschprinz() {
         final FroschprinzStateComp stateComp = new FroschprinzStateComp(db, timeTaker, n, world);
-        final FroschprinzDescriptionComp descriptionComp =
+        final MultiDescriptionComp descriptionComp =
                 new FroschprinzDescriptionComp(stateComp);
         final LocationComp locationComp =
                 new LocationComp(FROSCHPRINZ, db, world, IM_WALD_BEIM_BRUNNEN, ABZWEIG_IM_WALD,
@@ -132,14 +134,7 @@ class CreatureFactory {
 
     GameObject createRapunzel() {
         final RapunzelStateComp stateComp = new RapunzelStateComp(db, timeTaker, n, world);
-        final AbstractDescriptionComp descriptionComp =
-                new SimpleDescriptionComp(RAPUNZEL,
-                        np(F, INDEF, "wunderschöne junge Frau",
-                                "wunderschönen jungen Frau", RAPUNZEL),
-                        np(F, DEF, "schöne junge Frau",
-                                "schönen jungen Frau", RAPUNZEL),
-                        np(F, DEF, "junge Frau",
-                                "jungen Frau", RAPUNZEL));
+        final AbstractDescriptionComp descriptionComp = new RapunzeDescriptionComp(world);
         final LocationComp locationComp =
                 new LocationComp(RAPUNZEL, db, world, OBEN_IM_ALTEN_TURM, VOR_DEM_ALTEN_TURM,
                         false);

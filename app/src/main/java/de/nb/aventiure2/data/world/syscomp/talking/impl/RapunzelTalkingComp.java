@@ -829,6 +829,7 @@ public class RapunzelTalkingComp extends AbstractTalkingComp {
             }
 
             if (rettungZugesagtCount == 4 && zuneigungZuSC >= -FeelingIntensity.DEUTLICH) {
+                alt.add(neuerSatz(anaph().nomK(), "zieht eine Augenbraue hoch"));
                 alt.addAll(altEindrueckSaetze(anaph(), SKEPTISCH.mitGraduativerAngabe("etwas")));
             }
 

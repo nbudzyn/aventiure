@@ -2,7 +2,6 @@ package de.nb.aventiure2.data.world.syscomp.description.impl;
 
 import de.nb.aventiure2.data.world.syscomp.description.AbstractDescriptionComp;
 import de.nb.aventiure2.data.world.syscomp.state.impl.FroschprinzStateComp;
-import de.nb.aventiure2.german.base.Nominalphrase;
 
 import static de.nb.aventiure2.data.world.gameobject.World.*;
 import static de.nb.aventiure2.german.base.Artikel.Typ.DEF;
@@ -14,7 +13,7 @@ import static de.nb.aventiure2.german.base.NumerusGenus.M;
  * Implementierung von {@link AbstractDescriptionComp} für den
  * Froschprinzen.
  */
-public class FroschprinzDescriptionComp extends AbstractDescriptionComp {
+public class FroschprinzDescriptionComp extends MultiDescriptionComp {
     private final FroschprinzStateComp stateComp;
 
     private final DescriptionTriple froschDescriptionTriple;
@@ -42,21 +41,7 @@ public class FroschprinzDescriptionComp extends AbstractDescriptionComp {
     }
 
     @Override
-    public Nominalphrase getDescriptionAtFirstSight() {
-        return chooseDescriptionTriple().getDescriptionAtFirstSight();
-    }
-
-    @Override
-    public Nominalphrase getNormalDescriptionWhenKnown() {
-        return chooseDescriptionTriple().getNormalDescriptionWhenKnown();
-    }
-
-    @Override
-    public Nominalphrase getShortDescriptionWhenKnown() {
-        return chooseDescriptionTriple().getShortDescriptionWhenKnown();
-    }
-
-    private DescriptionTriple chooseDescriptionTriple() {
+    protected DescriptionTriple chooseDescriptionTriple() {
         switch (stateComp.getState().getGestalt()) {
             case FROSCH:
                 return froschDescriptionTriple;
