@@ -47,14 +47,14 @@ public class FeelingsSaetzeUtil {
      * Wandelt diese Adjektivphrasen - die Eindrücke beschreiben - in Sätze um.
      */
     static ImmutableList<Satz> toReaktionSaetze(
-            final SubstantivischePhrase gameObjectSubjekt,
+            final SubstantivischePhrase subjekt,
             final SubstantivischePhrase feelingTargetDesc,
             final ImmutableList<AdjPhrOhneLeerstellen> eindruckAdjPhr) {
         final ImmutableList<AdverbialeAngabeSkopusVerbAllg> adverbialeAngaben =
                 AdjPhrOhneLeerstellen
-                        .toAdvAngabenSkopusVerbAllg(gameObjectSubjekt, eindruckAdjPhr);
+                        .toAdvAngabenSkopusVerbAllg(subjekt, eindruckAdjPhr);
 
-        return toReaktionSaetze(gameObjectSubjekt, feelingTargetDesc, eindruckAdjPhr,
+        return toReaktionSaetze(subjekt, feelingTargetDesc, eindruckAdjPhr,
                 adverbialeAngaben);
     }
 
@@ -63,16 +63,16 @@ public class FeelingsSaetzeUtil {
      * Angaben in Sätze um.
      */
     static ImmutableList<Satz> toReaktionSaetze(
-            final SubstantivischePhrase gameObjectSubjekt,
+            final SubstantivischePhrase subjekt,
             final SubstantivischePhrase feelingTargetDesc,
             final ImmutableList<AdjPhrOhneLeerstellen> eindruckAdjPhr,
             final ImmutableList<AdverbialeAngabeSkopusVerbAllg> eindruckAdverbialeAngaben) {
         final ImmutableList.Builder<Satz> res = ImmutableList.builder();
 
         res.addAll(altAnsehenSaetze(
-                gameObjectSubjekt, feelingTargetDesc, eindruckAdverbialeAngaben));
+                subjekt, feelingTargetDesc, eindruckAdverbialeAngaben));
 
-        res.addAll(altEindrueckSaetze(gameObjectSubjekt, eindruckAdjPhr));
+        res.addAll(altEindrueckSaetze(subjekt, eindruckAdjPhr));
 
         res.addAll(eindruckAdjPhr.stream()
                 .flatMap(adjPhr ->
@@ -83,7 +83,7 @@ public class FeelingsSaetzeUtil {
                                                         .mitAdverbialerAngabe(
                                                                 new AdverbialeAngabeSkopusSatz(
                                                                         advAng))
-                                                        .alsSatzMitSubjekt(gameObjectSubjekt)
+                                                        .alsSatzMitSubjekt(subjekt)
                                 )
                 ).collect(toImmutableList()));
 
@@ -91,41 +91,41 @@ public class FeelingsSaetzeUtil {
     }
 
     public static ImmutableList<Satz> altAnsehenSaetze(
-            final SubstantivischePhrase gameObjectSubjekt,
+            final SubstantivischePhrase subjekt,
             final SubstantivischePhrase angesehenDesc,
             final AdjPhrOhneLeerstellen adjektivPhrase) {
-        return altAnsehenSaetze(gameObjectSubjekt, angesehenDesc,
+        return altAnsehenSaetze(subjekt, angesehenDesc,
                 adjektivPhrase.alsAdverbialeAngabeSkopusVerbAllg());
     }
 
     public static ImmutableList<Satz> altAnsehenSaetze(
-            final SubstantivischePhrase gameObjectSubjekt,
+            final SubstantivischePhrase subjekt,
             final SubstantivischePhrase angesehenDesc,
             final AdverbialeAngabeSkopusVerbAllg adverbialeAngabe) {
-        return altAnsehenSaetze(gameObjectSubjekt, angesehenDesc,
+        return altAnsehenSaetze(subjekt, angesehenDesc,
                 ImmutableList.of(adverbialeAngabe));
     }
 
     public static ImmutableList<Satz> altAnsehenSaetze(
-            final SubstantivischePhrase gameObjectSubjekt,
+            final SubstantivischePhrase subjekt,
             final SubstantivischePhrase angesehenDesc,
             final ImmutableList<AdverbialeAngabeSkopusVerbAllg> adverbialeAngaben) {
-        return Satz.altSubjObjSaetze(gameObjectSubjekt, ansehenVerben(), angesehenDesc,
+        return Satz.altSubjObjSaetze(subjekt, ansehenVerben(), angesehenDesc,
                 adverbialeAngaben);
     }
 
     public static ImmutableList<Satz> altNachsehenHinterhersehenSaetze(
-            final SubstantivischePhrase gameObjectSubjekt,
-            final SubstantivischePhrase objektDesc) {
+            final SubstantivischePhrase subjekt,
+            final SubstantivischePhrase objekt) {
         return Satz
-                .altSubjObjSaetze(gameObjectSubjekt, nachsehenHinterhersehenVerben(), objektDesc);
+                .altSubjObjSaetze(subjekt, nachsehenHinterhersehenVerben(), objekt);
     }
 
     public static ImmutableList<Satz> altZusehenSaetze(
-            final SubstantivischePhrase gameObjectSubjekt,
-            final SubstantivischePhrase objektDesc,
+            final SubstantivischePhrase subjekt,
+            final SubstantivischePhrase objekt,
             final Collection<AdverbialeAngabeSkopusVerbAllg> adverbialeAngaben) {
-        return Satz.altSubjObjSaetze(gameObjectSubjekt, zusehenVerben(), objektDesc,
+        return Satz.altSubjObjSaetze(subjekt, zusehenVerben(), objekt,
                 adverbialeAngaben);
     }
 
@@ -146,17 +146,17 @@ public class FeelingsSaetzeUtil {
     }
 
     public static ImmutableList<Satz> altEindrueckSaetze(
-            final SubstantivischePhrase gameObjectSubjekt,
+            final SubstantivischePhrase subjekt,
             final AdjPhrOhneLeerstellen adjektivPhrase) {
-        return altEindrueckSaetze(gameObjectSubjekt, ImmutableList.of(adjektivPhrase));
+        return altEindrueckSaetze(subjekt, ImmutableList.of(adjektivPhrase));
     }
 
     public static ImmutableList<Satz> altEindrueckSaetze(
-            final SubstantivischePhrase gameObjectSubjekt,
+            final SubstantivischePhrase subjekt,
             final ImmutableList<AdjPhrOhneLeerstellen> adjektivPhrasen) {
         return adjektivPhrasen.stream()
                 .flatMap(ap -> Stream.of(AUSSEHEN, DREINSCHAUEN, GUCKEN, SCHAUEN, SCHEINEN, WIRKEN)
-                        .map(v -> v.mit(ap).alsSatzMitSubjekt(gameObjectSubjekt)))
+                        .map(v -> v.mit(ap).alsSatzMitSubjekt(subjekt)))
                 .collect(toImmutableList());
     }
 }

@@ -623,6 +623,8 @@ public class RapunzelTalkingComp extends AbstractTalkingComp {
                     .mitVorfeldSatzglied("ganz freundlich")
                     .undWartest()
                     .timed(mins(1)));
+
+            // FIXME Hier brauchen wir noch weitere, eher allgemeine Alternativen
         }
 
         if (zuneigungZuRapunzel >= FeelingIntensity.MERKLICH &&

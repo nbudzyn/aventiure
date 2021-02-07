@@ -332,10 +332,10 @@ public enum RapunzelStoryNode implements IStoryNode {
             alt.add(paragraph(
                     "Manchmal hast du das Gefühl: Du hast noch eine wichtige Rolle "
                             + "zu spielen. Aber wenn du genauer darüber nachdenkst, weißt "
-                            + "du plötzlich nicht weiter. Es ist wie verhext",
+                            + "du plötzlich nicht weiter. Es ist wie verhext"),
                     paragraph(
                             "Du hast die ganze Zeit das Gefühl, etwas Wichtiges vergessen zu "
-                                    + "haben! Aber was bloß?")));
+                                    + "haben! Aber was bloß?"));
             alt.addAll(altTurmWohnenHineinHeraus(world));
         }
 

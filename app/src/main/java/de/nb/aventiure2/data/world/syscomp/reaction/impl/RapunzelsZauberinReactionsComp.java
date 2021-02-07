@@ -181,8 +181,8 @@ public class RapunzelsZauberinReactionsComp
         final SubstantivischePhrase anaph = anaph();
         final AltDescriptionsBuilder alt = alt();
         alt.add(neuerSatz(anaph.nomK(), "schickt dir böse Blicke hinterher"));
-        alt.addAll(altNachsehenHinterhersehenSaetze(getPersonalpronomenSC(), anaph));
-        alt.addAll(altZusehenSaetze(getPersonalpronomenSC(), anaph,
+        alt.addAll(altNachsehenHinterhersehenSaetze(anaph, getPersonalpronomenSC()));
+        alt.addAll(altZusehenSaetze(anaph, getPersonalpronomenSC(),
                 ImmutableList.of("ärgerlich", "verdrossen").stream()
                         .map(AdverbialeAngabeSkopusVerbAllg::new)
                         .collect(toList())));

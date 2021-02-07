@@ -16,7 +16,7 @@ import static de.nb.aventiure2.german.praedikat.VerbSubjObj.SEHEN;
 public enum VerbSubjPraedikativeAdjektivphrase implements VerbMitValenz {
     // Verben ohne Präfix
     GUCKEN("gucken",
-            "gucke", "guckst", "guckst", "guckt",
+            "gucke", "guckst", "guckt", "guckt",
             Perfektbildung.HABEN, "geguckt"),
     SCHAUEN("schauen",
             "schaue", "schaust", "schaut", "schaut",
