@@ -78,8 +78,7 @@ public class MainActivity extends AppCompatActivity {
 
         narrationTextView = binding.narrationView;
 
-        // TODO Blocksatz?
-        // TODO Automatische Trennung?!
+        // TODO Automatische Silbentrennung?!
         narrationScrollView = binding.narrationScrollView;
         narrationTextView.setOnTouchListener(new View.OnTouchListener() {
             @Override
