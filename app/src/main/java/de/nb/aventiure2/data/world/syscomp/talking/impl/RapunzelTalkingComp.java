@@ -41,6 +41,8 @@ import static de.nb.aventiure2.data.world.syscomp.feelings.Mood.AUFGEDREHT;
 import static de.nb.aventiure2.data.world.syscomp.feelings.Mood.BETRUEBT;
 import static de.nb.aventiure2.data.world.syscomp.feelings.Mood.BEWEGT;
 import static de.nb.aventiure2.data.world.syscomp.feelings.Mood.ETWAS_GEKNICKT;
+import static de.nb.aventiure2.data.world.syscomp.feelings.Mood.NEUTRAL;
+import static de.nb.aventiure2.data.world.syscomp.feelings.Mood.ZUFRIEDEN;
 import static de.nb.aventiure2.data.world.syscomp.state.impl.RapunzelState.HAARE_VOM_TURM_HERUNTERGELASSEN;
 import static de.nb.aventiure2.data.world.syscomp.state.impl.RapunzelState.HAT_NACH_LIEBSTER_JAHRESZEIT_GEFRAGT;
 import static de.nb.aventiure2.data.world.syscomp.state.impl.RapunzelState.NORMAL;
@@ -527,30 +529,58 @@ public class RapunzelTalkingComp extends AbstractTalkingComp {
     }
 
     private void nachNameFragen() {
+        scFragtNachName();
+        rapunzelBeantwortenNamensfrage();
+    }
+
+    private void scFragtNachName() {
         final SubstantivischePhrase anaph = anaph();
-        n.narrate(du("fragst",
-                anaph.akkK(),
-                "nach",
-                anaph.possArt().vor(M).datStr(),
-                "Namen")
-                .timed(secs(10)));
-
-        n.narrate(satzanschluss(
-                ", aber der ist so ungewöhnlich, dass du ihn dir nicht merken",
-                "kannst. Es ist dir zu unangenehm, noch einmal zu fragen")
-                .timed(secs(10)));
-
-        // FIXME Namen Fragen:
-        //  "Ach, sagt SIE, du kannst mich Rapunzel nennen."
-        //  Sie grinst verlegen. "Ich ess die so gern." -
-        //  "Sie presst die Lippen aufeinander und sagt kein Wort"
-
-        feelingsComp.upgradeFeelingsTowards(SPIELER_CHARAKTER, ZUNEIGUNG_ABNEIGUNG,
-                0.2f, FeelingIntensity.MERKLICH);
+        n.narrateAlt(secs(10),
+                du("fragst", anaph.akkK(), "nach",
+                        anaph.possArt().vor(M).datStr(), "Namen"),
+                du("fragst", anaph.akkK(), ", wie",
+                        anaph.persPron().nomK(), "heißt"),
+                du("möchtest",
+                        anaph.possArt().vor(M).akkStr(), "Namen wissen"));
 
         setSchonBegruesstMitSC(true);
-        loadSC().memoryComp().narrateAndUpgradeKnown(RAPUNZELS_NAME);
-        loadSC().feelingsComp().requestMoodMax(BEWEGT);
+    }
+
+    private void rapunzelBeantwortenNamensfrage() {
+        final SubstantivischePhrase anaph = anaph();
+
+        if (feelingsComp.getFeelingTowards(SPIELER_CHARAKTER, ZUNEIGUNG_ABNEIGUNG)
+                >= FeelingIntensity.MERKLICH) {
+            n.narrate(neuerSatz(
+                    "„Ach“, sagt",
+                    anaph.nomK(), ", „du kannst mich einfach Rapunzel nennen.“",
+                    anaph.persPron().nomK().capitalize(), "grinst verlegen.",
+                    "„Ich ess die so gern.“")
+                    .beendet(PARAGRAPH)
+                    .timed(secs(10)));
+
+            feelingsComp.upgradeFeelingsTowards(SPIELER_CHARAKTER, ZUNEIGUNG_ABNEIGUNG,
+                    0.2f, FeelingIntensity.MERKLICH);
+            loadSC().feelingsComp().upgradeFeelingsTowards(RAPUNZEL,
+                    ZUNEIGUNG_ABNEIGUNG, 0.3f, FeelingIntensity.MERKLICH);
+            loadSC().memoryComp().narrateAndUpgradeKnown(RAPUNZELS_NAME);
+            loadSC().feelingsComp().requestMoodMin(ZUFRIEDEN);
+        } else {
+            n.narrateAlt(secs(10),
+                    satzanschluss(
+                            ", aber",
+                            anaph.nomK(), "presst nur die Lippen aufeinander und sagt kein Wort")
+                            .beendet(PARAGRAPH),
+                    satzanschluss(
+                            ", aber",
+                            anaph.nomK(), "gibt dir keine Antwort")
+                            .beendet(PARAGRAPH));
+
+            feelingsComp.upgradeFeelingsTowards(SPIELER_CHARAKTER, ZUNEIGUNG_ABNEIGUNG,
+                    0.15f, FeelingIntensity.MERKLICH);
+
+            loadSC().feelingsComp().requestMoodMax(NEUTRAL);
+        }
     }
 
     private void unterhalten_allg() {

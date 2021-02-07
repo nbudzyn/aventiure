@@ -114,6 +114,7 @@ public class Walkthrough {
                     "Dich mit der jungen Frau unterhalten",
                     "Dich mit der jungen Frau unterhalten",
                     "Dich mit der jungen Frau unterhalten",
+                    "Dich mit der jungen Frau unterhalten",
                     "Der jungen Frau antworten: „Den Winter“",
                     "Der jungen Frau die goldene Kugel geben",
                     "Der jungen Frau dein Herz ausschütten",
